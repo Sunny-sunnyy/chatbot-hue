@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+
+# Environment and secrets
+.env
+.env.*
+
+# Test and tool caches
+.pytest_cache/
+.coverage
+htmlcov/
+.codegraph/
+
+# Local data artifacts
+data/
+logs/
+tai_lieu/
+qdrant_storage/
+
+# OS/editor noise
+.DS_Store
+.vscode/
+
+# Superpowers workflow scratch
+.superpowers/
