@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-06 20:53:45 +07`
+Last updated: `2026-08-06 20:55:36 +07`
 
 ## Mục tiêu dự án
 
@@ -128,17 +128,19 @@ Thay đổi đã thực hiện:
 - Rà soát worktree trước khi commit và push theo yêu cầu người dùng.
 - Đồng bộ số lượng curated restaurants trong phần tổng quan từ 55 lên 56.
 - Giữ nguyên các thay đổi hiện có của knowledge base, category guides, metadata và session context; không sửa raw data.
+- Commit `94669d4` đã được push thành công lên `origin/main`.
 
 Validation đã chạy:
 
 - Kiểm tra branch `main`, remote `origin` và danh sách thay đổi hiện tại.
 - Đếm lại `knowledge-base-hue/foods/restaurants/`: 56 file Markdown.
 - Kiểm tra không có filename untracked chứa pattern secret phổ biến.
-- Validation cấu trúc và `git diff --check` sẽ được chạy lại sau khi stage toàn bộ thay đổi.
+- Validation cấu trúc và `git diff --cached --check` đã pass trước commit.
+- Sau push, `HEAD` và `origin/main` cùng trỏ tới `94669d4`; worktree sạch.
 
 Next action đề xuất:
 
-- Commit toàn bộ thay đổi hiện tại và push commit lên `origin/main`.
+- Tiếp tục curate địa điểm tiếp theo khi người dùng cung cấp dữ liệu có nguồn.
 
 ### 2026-08-06 20:51:02 +07
 
