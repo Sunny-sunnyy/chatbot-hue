@@ -6,7 +6,7 @@ Bún bò Mụ Rơi nằm sát bên Đại Nội Huế, nổi tiếng với nồi
 
 ## Thông tin
 
-- Địa chỉ: 48 Nguyễn Chí Diễu, TP Huế
+- Địa chỉ: 40 Nguyễn Chí Diễu, TP Huế
 - Mức giá: Từ 35.000 VNĐ/tô
 - Giờ hoạt động: 6h - 10h
 

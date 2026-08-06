@@ -57,20 +57,39 @@ Khi cần hiểu converter/source dump, đọc thêm:
 `Agent_session_prompt.md` là context cũ đã được thay thế. Nguồn context chính từ
 bây giờ là `Session_Prompt.md` và `Project_Status.md`.
 
-## Quy trình làm việc
+## Quy trình chính
 
-Với task phức tạp hoặc có nhiều cách hiểu:
+Luôn bắt đầu bằng `using-superpowers` và ưu tiên process skill phù hợp trước khi
+thực hiện task.
 
-1. Đọc context liên quan.
-2. Nêu giả định.
-3. Hỏi rõ điểm làm thay đổi scope/design/test/implementation.
-4. Đợi người dùng xác nhận nếu task đang ở giai đoạn brainstorming.
-5. Sau khi được xác nhận, thực hiện surgical changes.
-6. Validate bằng check nhỏ nhất phù hợp.
-7. Cập nhật `Project_Status.md`.
+Với task có thay đổi file, behavior hoặc design, dùng quy trình:
 
-Nếu người dùng yêu cầu dùng `brainstorming`, phải thảo luận và chốt design trước
-khi tạo/sửa file.
+```text
+using-superpowers
+  -> brainstorming
+  -> hỏi làm rõ từng câu một
+  -> đề xuất 2-3 approaches
+  -> design approval
+  -> implementation
+  -> validation
+  -> cập nhật Project_Status.md
+```
+
+Quy tắc của quy trình:
+
+- Ưu tiên câu hỏi multiple-choice có recommended option.
+- Không viết code hoặc sửa file trước khi design được người dùng xác nhận.
+- Chỉ dùng `rich-elicitation` khi còn ít nhất hai chiều mơ hồ quan trọng và mỗi
+  chiều có ít nhất ba hướng hợp lý.
+- Task read-only đơn giản có thể xử lý trực tiếp, không bắt buộc brainstorming.
+
+## Quy tắc làm việc
+
+- Kiểm tra `git status` trước khi sửa file.
+- Không revert hoặc xóa thay đổi có sẵn của người dùng.
+- Chỉ sửa đúng scope đã được xác nhận.
+- Sau task có thay đổi, cập nhật `Project_Status.md` với timestamp UTC+7, thay
+  đổi, file chính, validation và next action.
 
 ## Quy tắc dữ liệu
 
@@ -93,6 +112,18 @@ knowledge-base-hue/_source-dumps/huegov_culture_and_tourism
 Source dumps chỉ là bản chuyển kỹ thuật từ raw sang Markdown. Không chunk trực
 tiếp từ `_source-dumps` cho RAG thật sự nếu chưa curate.
 
+Quy tắc source và curation:
+
+- Kiểm tra duplicate và chọn slug ASCII dạng kebab-case trước khi tạo file.
+- Một file đại diện một entity; entity cùng tên phải được phân biệt theo địa chỉ
+  hoặc thông tin định danh khác.
+- Nếu giá, giờ hoặc địa chỉ có conflict, giữ qualifier theo từng nguồn; không tự
+  chọn một giá trị duy nhất.
+- Nếu không có source cụ thể, ghi `Nội dung người dùng cung cấp`.
+- Không nâng claim marketing thành factual claim mạnh hơn dữ liệu gốc.
+- Không ghi field hoặc section khi người dùng/source không cung cấp dữ liệu.
+- Không ghi thông tin thiếu như backlog bắt buộc trong curated content hoặc status.
+
 Curated knowledge base nằm trong:
 
 ```text
@@ -112,13 +143,10 @@ raw
 
 ## Task hiện tại gần nhất
 
-Trọng tâm hiện tại là tiếp tục curate folder:
+Trọng tâm hiện tại là tiếp tục curate `knowledge-base-hue/foods`. Số liệu, tiến
+độ và next action mới nhất nằm trong `Project_Status.md`.
 
-```text
-knowledge-base-hue/foods
-```
-
-Thiết kế template cho `foods` đã được cập nhật tại:
+Template chính:
 
 ```text
 knowledge-base-hue/meta/foods-template.md
@@ -143,55 +171,8 @@ Chuẩn curated Markdown hiện tại:
 - Nếu có ảnh, đặt ảnh trong section `## Món ăn / trải nghiệm`, không thêm
   caption nguồn ảnh vào body.
 
-Hiện có 20 file curated trong:
-
-```text
-knowledge-base-hue/foods/restaurants/
-  banh-ep-gia-di.md
-  banh-ep-hue.md
-  banh-loc-hue-ba-van.md
-  bun-bo-ba-nga.md
-  bun-bo-canh-van.md
-  bun-bo-hanh.md
-  bun-bo-mu-roi.md
-  bun-bo-o-nhon.md
-  com-hen-17-han-mac-tu.md
-  com-hen-ba-cam.md
-  com-hen-bun-hen-lanh.md
-  com-hen-dap-da.md
-  com-hen-hoa-dong.md
-  com-hen-thu-hien.md
-  nha-hang-banh-ba-do.md
-  quan-ba-cu.md
-  quan-banh-chi.md
-  quan-bun-bo-me-keo.md
-  quan-nho.md
-  quan-o-giau.md
-```
-
-Commit bún bò trước đó đã push lên `origin/main`:
-
-```text
-3ca366b Curate Hue beef noodle restaurants
-```
-
-Đợt curate chiều 2026-08-06 đã tạo thêm 14 file mới cho nhóm cơm hến/bún hến,
-bánh Huế và bánh ép. Trước khi kết phiên, người dùng yêu cầu cập nhật trạng thái,
-commit và push để tiếp tục ở session sau.
-
-Next action đề xuất:
-
-- Session sau bắt đầu bằng việc đọc lại `Session_Prompt.md`, `Project_Status.md`
-  và `knowledge-base-hue/meta/foods-template.md`.
-- Rà soát các điểm còn cần xác nhận:
-  - `banh-ep-hue.md`: địa chỉ `116` hay `118 Lê Ngô Cát`.
-  - `quan-ba-cu.md`: giờ mở cửa nên chốt `07:00 - 21:00` hay `07:15 - 20:00`.
-  - `quan-o-giau.md`: giờ mở cửa nên ghi `10:00 - 19:00` hay `10:00 - hết bánh`.
-  - `banh-ep-gia-di.md`: bổ sung giờ mở cửa nếu có.
-- Có thể tạo `local_specialties/com-hen.md`, `local_specialties/banh-ep.md`
-  hoặc file nhóm bánh Huế sau khi các địa điểm tiêu biểu đã ổn.
-- Không tự tạo 6794 food files. Giai đoạn đầu chỉ curate khoảng 20-50 địa điểm
-  nổi bật và 5-8 món đặc sản.
+- Không tự tạo toàn bộ 6794 food records; giai đoạn đầu chỉ curate khoảng 20-50
+  địa điểm nổi bật và 5-8 món đặc sản.
 
 ## Cập nhật trạng thái dự án
 
