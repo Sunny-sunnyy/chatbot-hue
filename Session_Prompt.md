@@ -191,4 +191,6 @@ Mỗi lần cập nhật phải ghi:
 - Next action đề xuất.
 
 Được phép sửa/xóa nội dung không còn chính xác trong `Project_Status.md` để file
-luôn phản ánh trạng thái mới nhất.
+Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
+
+Đừng bắt đầu bất kỳ công việc nào khác ngoài việc đọc và kiểm tra cấu trúc thư mục. Khi bạn đã đọc xong tất cả, hãy cho tôi biết nếu bạn có thắc mắc trước khi chúng ta bắt đầu.luôn phản ánh trạng thái mới nhất.
