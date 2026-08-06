@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-05 21:45:34 +07`
+Last updated: `2026-08-06 11:53:16 +07`
 
 ## Cách cập nhật file này
 
@@ -187,10 +187,60 @@ knowledge-base-hue/tourism
 ```text
 knowledge-base-hue/foods/
   restaurants/
+    bun-bo-ba-nga.md
+    bun-bo-canh-van.md
+    bun-bo-hanh.md
+    bun-bo-mu-roi.md
+    bun-bo-o-nhon.md
+    quan-bun-bo-me-keo.md
   cafes/
   local_specialties/
   food-guides.md
 ```
+
+## Cập nhật gần nhất
+
+### 2026-08-06 11:53:16 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo 5 file curated mới trong `knowledge-base-hue/foods/restaurants/` từ thông
+  tin người dùng cung cấp:
+  - `bun-bo-mu-roi.md`
+  - `bun-bo-canh-van.md`
+  - `bun-bo-hanh.md`
+  - `bun-bo-o-nhon.md`
+  - `bun-bo-ba-nga.md`
+- Cập nhật `knowledge-base-hue/meta/foods-template.md`:
+  - bỏ section `Liên kết nội bộ`;
+  - thống nhất heading `## Món ăn / trải nghiệm`;
+  - giữ `Menu và giá tham khảo` là optional section, chỉ dùng khi có menu hoặc
+    giá theo từng món;
+  - field hoặc section thiếu dữ liệu thì bỏ hẳn, không ghi `chưa có dữ liệu`
+    hoặc `không có thông tin`.
+  - ghi chú retrieval chuyển sang hướng không nhúng graph/cross-reference vào
+    nội dung `.md`; nếu cần thì dùng sidecar/index riêng.
+- 5 file mới không dùng frontmatter, không có section menu rỗng, không có liên
+  hệ/website khi không có dữ liệu.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- `UV_CACHE_DIR=/tmp/uv-cache uv run python -c "..."`
+  kiểm tra 6 file trong `knowledge-base-hue/foods/restaurants`: bắt đầu bằng
+  H1, không có YAML frontmatter, không có `Liên kết nội bộ`, không có
+  `chưa có dữ liệu`/`không có thông tin`, không có dòng `Liên hệ:` hoặc
+  `Website:` khi thiếu dữ liệu: pass.
+- `rg` kiểm tra restaurants không chứa section `Liên kết nội bộ` hoặc các mẫu
+  thiếu dữ liệu; template chỉ còn nhắc `Liên kết nội bộ` trong quy tắc cấm thêm
+  section này vào body.
+- Đọc lại phần đầu của 5 file mới để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng đọc 5 file mới và bổ sung thông tin/ảnh nếu cần.
+- Sau khi mẫu 6 file bún bò ổn, curate tiếp nhóm bánh Huế hoặc chè Huế theo
+  cùng format tối giản.
 
 ## Thiết kế foods đã chốt
 
@@ -207,20 +257,18 @@ Quyết định:
 - `cafes/*.md`: entity quán cà phê hoặc đồ uống.
 - `local_specialties/*.md`: entity món ăn/đặc sản.
 - `food-guides.md`: guide tổng hợp theo nhu cầu người dùng.
-- Core frontmatter bắt buộc có metadata phục vụ source tracking, RAG,
-  recommender và Agentic RAG.
-- YAML keys dùng English `snake_case`.
-- YAML text values và Markdown body dùng tiếng Việt có dấu.
-- Optional fields thiếu dữ liệu thì bỏ, không bịa dữ liệu.
-- `menu_items` lưu cả frontmatter ngắn và body chi tiết.
+- Curated `.md` trong `foods` không dùng YAML frontmatter; file bắt đầu trực
+  tiếp bằng heading `#` để giảm nhiễu khi chunk/embedding.
+- Source tracking tối giản được lưu trong section `## Nguồn dữ liệu`, không
+  nhúng metadata pipeline vào đầu file.
+- Nếu sau này cần structured metadata cho recommender/filtering, tạo sidecar
+  hoặc index riêng thay vì nhúng YAML vào `.md`.
+- Nội dung người dùng nhìn thấy và nội dung RAG đọc ưu tiên tiếng Việt có dấu.
+- Field hoặc section thiếu dữ liệu thì bỏ hẳn, không ghi `chưa có dữ liệu` hoặc
+  `không có thông tin`.
 - Nếu raw chỉ có khoảng giá chung theo địa điểm, không tự gán giá cho từng món.
-- Ban đầu dùng `status: "draft"` và `enrichment_status: "needs_enrichment"`.
-- Dùng cross-reference nhẹ:
-  - file quán chứa chi tiết canonical
-  - file món có danh sách địa điểm tiêu biểu ngắn
-  - guide trỏ tới món/quán liên quan
-- Query rewriting và second-hop retrieval sau này có thể dùng
-  `related_places` và `related_food_topics`.
+- Không thêm section `Liên kết nội bộ` vào curated `.md` ở giai đoạn này để
+  tránh nhiễu nội dung RAG.
 
 Tiêu chí chọn 20-50 địa điểm đầu tiên:
 
@@ -320,7 +368,8 @@ knowledge-base-hue/_source-dumps/huegov_department_of_tourism/danh-sach-dia-diem
 3. Chọn 20-50 địa điểm theo tiêu chí đã chốt.
 4. Chọn 5-8 món đặc sản có đủ raw mentions.
 5. Tạo curated files theo template.
-6. Validate frontmatter/sections.
+6. Validate file bắt đầu bằng heading `#`, không có YAML frontmatter và có các
+   section nội dung chính.
 7. Cập nhật `Project_Status.md`.
 
 ## Update log
@@ -344,3 +393,16 @@ knowledge-base-hue/_source-dumps/huegov_department_of_tourism/danh-sach-dia-diem
 - Ghi nhận `Agent_session_prompt.md` đã được thay thế bởi hai file context mới.
 - Không commit các file `.md` rỗng trong taxonomy folders để tránh placeholder
   không có nội dung.
+
+### 2026-08-05 21:49:29 +07
+
+- Khôi phục `.git` hợp lệ trực tiếp trong `/home/hieu0606sunny/hue_rag` bằng Git
+  metadata từ `/tmp/hue_rag_git`.
+- Xác nhận lệnh Git bình thường trong project đã hoạt động lại:
+  - `git status --short --branch`
+  - `git log -2 --oneline --decorate`
+  - `git remote -v`
+- Remote vẫn là `https://github.com/Sunny-sunnyy/chatbot-hue.git`, branch `main`
+  đang track `origin/main`.
+- Sau khi khôi phục, Git UI/VS Code có thể hiển thị lại trạng thái `modified` và
+  `untracked` trong chính folder dự án.
