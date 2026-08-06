@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-06 11:53:16 +07`
+Last updated: `2026-08-06 15:57:57 +07`
 
 ## Cách cập nhật file này
 
@@ -187,18 +187,344 @@ knowledge-base-hue/tourism
 ```text
 knowledge-base-hue/foods/
   restaurants/
+    banh-ep-hue.md
+    banh-ep-gia-di.md
+    banh-loc-hue-ba-van.md
     bun-bo-ba-nga.md
     bun-bo-canh-van.md
     bun-bo-hanh.md
     bun-bo-mu-roi.md
     bun-bo-o-nhon.md
+    com-hen-17-han-mac-tu.md
+    com-hen-ba-cam.md
+    com-hen-bun-hen-lanh.md
+    com-hen-dap-da.md
+    com-hen-hoa-dong.md
+    com-hen-thu-hien.md
+    nha-hang-banh-ba-do.md
+    quan-ba-cu.md
+    quan-banh-chi.md
     quan-bun-bo-me-keo.md
+    quan-nho.md
+    quan-o-giau.md
   cafes/
   local_specialties/
   food-guides.md
 ```
 
 ## Cập nhật gần nhất
+
+### 2026-08-06 15:57:57 +07
+
+Thay đổi đã thực hiện:
+
+- Cập nhật `Session_Prompt.md` để session sau phản ánh trạng thái foods mới nhất:
+  hiện có 20 file curated trong `knowledge-base-hue/foods/restaurants/`.
+- Ghi lại các điểm cần rà soát ở session sau:
+  - `banh-ep-hue.md`: địa chỉ `116` hay `118 Lê Ngô Cát`.
+  - `quan-ba-cu.md`: giờ mở cửa `07:00 - 21:00` hay `07:15 - 20:00`.
+  - `quan-o-giau.md`: giờ mở cửa `10:00 - 19:00` hay `10:00 - hết bánh`.
+  - `banh-ep-gia-di.md`: chưa có giờ mở cửa.
+- Cập nhật trạng thái trước khi commit/push các file Markdown cần thiết cho đợt
+  curate foods chiều 2026-08-06 theo yêu cầu người dùng.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- `UV_CACHE_DIR=/tmp/uv-cache uv run python -c "..."`
+  kiểm tra 20 file trong `knowledge-base-hue/foods/restaurants`: file bắt đầu
+  bằng H1, không có YAML frontmatter, không có section `Liên kết nội bộ`, không
+  có cụm `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính:
+  pass.
+
+Next action đề xuất:
+
+- Session sau đọc lại `Session_Prompt.md`, `Project_Status.md` và
+  `knowledge-base-hue/meta/foods-template.md` trước khi tiếp tục.
+- Tiếp tục rà soát các điểm còn mâu thuẫn nhỏ về địa chỉ/giờ mở cửa, rồi cân
+  nhắc tạo `local_specialties/com-hen.md` hoặc `local_specialties/banh-ep.md`.
+
+### 2026-08-06 15:56:19 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/banh-ep-hue.md` từ
+  thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: hue.aeonmall-vietnam.com` theo dữ liệu người dùng cung cấp.
+- Dữ liệu địa chỉ có hai số nhà `116` và `118`; file dùng `116 Lê Ngô Cát` theo
+  dòng địa chỉ chính và giữ ghi chú cần rà soát trong phần trải nghiệm.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `banh-ep-hue.md`: file bắt đầu bằng H1, không có
+  YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `banh-ep-hue.md`, đặc biệt là địa chỉ `116` hay
+  `118 Lê Ngô Cát`.
+- Tiếp tục curate thêm các quán bánh ép/ăn vặt nổi bật hoặc tạo file
+  `local_specialties/banh-ep.md` sau khi có đủ địa điểm tiêu biểu.
+
+### 2026-08-06 15:54:52 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/banh-ep-gia-di.md`
+  từ thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: hue.aeonmall-vietnam.com` theo dữ liệu người dùng cung cấp.
+- Ghi khoảng giá chung theo cái trong section `Thông tin`; không tạo bảng
+  `Menu và giá tham khảo` vì chưa có giá theo từng loại bánh.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `banh-ep-gia-di.md`: file bắt đầu bằng H1, không có
+  YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `banh-ep-gia-di.md`, bổ sung giờ mở cửa hoặc kênh liên hệ
+  nếu có.
+- Tiếp tục curate thêm các quán bánh Huế/ăn vặt nổi bật hoặc tạo file
+  `local_specialties` cho nhóm bánh Huế sau khi có đủ địa điểm tiêu biểu.
+
+### 2026-08-06 15:48:46 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/quan-o-giau.md` từ
+  thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: hue.aeonmall-vietnam.com` theo dữ liệu người dùng cung cấp.
+- Dữ liệu giờ mở cửa có hai cách ghi; file dùng `10:00 - 19:00` trong section
+  `Thông tin` và giữ ghi chú thường hết bánh sớm trong phần trải nghiệm.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `quan-o-giau.md`: file bắt đầu bằng H1, không có
+  YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `quan-o-giau.md`, đặc biệt là giờ mở cửa nếu muốn ghi
+  `10:00 - hết bánh` thay cho khung giờ cố định.
+- Tiếp tục curate thêm các quán bánh Huế nổi bật hoặc tạo file
+  `local_specialties` cho nhóm bánh Huế sau khi có đủ địa điểm tiêu biểu.
+
+### 2026-08-06 15:45:35 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/banh-loc-hue-ba-van.md`
+  từ thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Menu và giá
+  tham khảo`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: hue.aeonmall-vietnam.com` theo dữ liệu người dùng cung cấp.
+- Thêm bảng `Menu và giá tham khảo` vì dữ liệu có giá theo đĩa và giá túi mang
+  về cụ thể.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `banh-loc-hue-ba-van.md`: file bắt đầu bằng H1,
+  không có YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `banh-loc-hue-ba-van.md`, đặc biệt là bảng giá mang về nếu
+  muốn tách riêng bánh sống và bánh chín.
+- Tiếp tục curate thêm các quán bánh Huế nổi bật hoặc tạo file
+  `local_specialties` cho nhóm bánh Huế sau khi có đủ địa điểm tiêu biểu.
+
+### 2026-08-06 15:42:55 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/quan-ba-cu.md` từ
+  thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: hue.aeonmall-vietnam.com` theo dữ liệu người dùng cung cấp.
+- Dữ liệu giờ mở cửa có hai phiên bản; file ghi khoảng giờ chung trong section
+  `Thông tin` và giữ ghi chú chi tiết `07:15 - 20:00 hằng ngày` trong phần trải
+  nghiệm.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `quan-ba-cu.md`: file bắt đầu bằng H1, không có YAML
+  frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `quan-ba-cu.md`, đặc biệt là giờ mở cửa nếu muốn chốt một
+  phiên bản duy nhất.
+- Tiếp tục curate thêm các quán bánh Huế nổi bật hoặc tạo file
+  `local_specialties` cho nhóm bánh Huế sau khi có đủ địa điểm tiêu biểu.
+
+### 2026-08-06 15:38:14 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/quan-banh-chi.md`
+  từ thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: hue.aeonmall-vietnam.com` theo dữ liệu người dùng cung cấp.
+- Ghi mức giá chung trong section `Thông tin`; thông tin `15.000 VNĐ - 20.000
+  VNĐ/đĩa` được ghi trong phần trải nghiệm vì chưa có bảng giá theo từng món đầy
+  đủ.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `quan-banh-chi.md`: file bắt đầu bằng H1, không có
+  YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `quan-banh-chi.md`, bổ sung ảnh hoặc URL Facebook cụ thể
+  nếu muốn.
+- Tiếp tục curate thêm các quán bánh Huế nổi bật hoặc tạo file
+  `local_specialties` cho nhóm bánh Huế sau khi có đủ địa điểm tiêu biểu.
+
+### 2026-08-06 15:34:03 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/nha-hang-banh-ba-do.md`
+  từ thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: khamphahue.com.vn` theo dữ liệu người dùng cung cấp.
+- Ghi khoảng giá chung trong section `Thông tin`; không tạo bảng
+  `Menu và giá tham khảo` vì chưa có giá theo từng món.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `nha-hang-banh-ba-do.md`: file bắt đầu bằng H1,
+  không có YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `nha-hang-banh-ba-do.md`, bổ sung ảnh hoặc URL Facebook
+  cụ thể nếu muốn.
+- Tiếp tục curate thêm các quán bánh Huế nổi bật hoặc tạo file
+  `local_specialties` cho nhóm bánh bèo, bánh nậm, bánh lọc sau khi có đủ địa
+  điểm tiêu biểu.
+
+### 2026-08-06 15:26:33 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo 6 file curated mới trong `knowledge-base-hue/foods/restaurants/` từ thông
+  tin người dùng cung cấp:
+  - `com-hen-ba-cam.md`
+  - `quan-nho.md`
+  - `com-hen-dap-da.md`
+  - `com-hen-17-han-mac-tu.md`
+  - `com-hen-bun-hen-lanh.md`
+  - `com-hen-thu-hien.md`
+- Các file mới dùng format restaurants hiện tại: không frontmatter, bắt đầu
+  bằng H1, có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`,
+  `Nguồn dữ liệu`.
+- Ghi `Nguồn chính: mia.vn` cho các quán theo yêu cầu của người dùng.
+- Ghi khoảng giá chung trong section `Thông tin`; không tạo bảng
+  `Menu và giá tham khảo` vì chưa có giá theo từng món.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho 7 file cơm hến/bún hến hiện có trong
+  `knowledge-base-hue/foods/restaurants`: file bắt đầu bằng H1, không có YAML
+  frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`, có đủ các section chính.
+- Đọc lại danh sách file trong `restaurants` sau khi tạo.
+
+Next action đề xuất:
+
+- Người dùng rà soát 7 file cơm hến/bún hến, bổ sung ảnh hoặc nguồn URL cụ thể
+  nếu muốn.
+- Sau khi nhóm địa điểm cơm hến ổn, tạo file `local_specialties/com-hen.md` để
+  tổng hợp món cơm hến và trỏ về các địa điểm tiêu biểu.
+
+### 2026-08-06 15:19:25 +07
+
+Thay đổi đã thực hiện:
+
+- Tạo file curated mới `knowledge-base-hue/foods/restaurants/com-hen-hoa-dong.md`
+  từ thông tin người dùng cung cấp.
+- File mới dùng format restaurants hiện tại: không frontmatter, bắt đầu bằng H1,
+  có các section `Tóm tắt`, `Thông tin`, `Món ăn / trải nghiệm`, `Nguồn dữ liệu`.
+- Ghi khoảng giá chung của quán trong section `Thông tin`; không tạo bảng
+  `Menu và giá tham khảo` vì chưa có giá theo từng món.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Kiểm tra format cơ bản cho `com-hen-hoa-dong.md`: file bắt đầu bằng H1, không
+  có YAML frontmatter, không có section `Liên kết nội bộ`, không có cụm
+  `chưa có dữ liệu` hoặc `không có thông tin`.
+- Đọc lại nội dung file sau khi tạo để kiểm tra cấu trúc và nội dung.
+
+Next action đề xuất:
+
+- Người dùng rà soát `com-hen-hoa-dong.md`, bổ sung ảnh hoặc nguồn cụ thể nếu
+  muốn.
+- Tiếp tục curate thêm các địa điểm cơm hến/bún hến Huế hoặc tạo file
+  `local_specialties` cho món cơm hến sau khi có đủ vài địa điểm tiêu biểu.
+
+### 2026-08-06 12:05:49 +07
+
+Thay đổi đã thực hiện:
+
+- Cập nhật `Session_Prompt.md` để phản ánh trạng thái mới nhất cho session buổi
+  chiều:
+  - foods template hiện dùng Markdown không frontmatter;
+  - không ghi field/section thiếu dữ liệu;
+  - không dùng section `Liên kết nội bộ`;
+  - ảnh đặt trong section `## Món ăn / trải nghiệm`;
+  - đã có 6 file bún bò trong `knowledge-base-hue/foods/restaurants/`;
+  - commit đã push: `3ca366b Curate Hue beef noodle restaurants`.
+- Không sửa raw data, không gọi web.
+
+Validation đã chạy:
+
+- Đọc lại `Session_Prompt.md`, `Project_Status.md` và `foods-template.md` sau
+  cập nhật context.
+- `git status --short --branch` xác nhận `main` đang track `origin/main`; commit
+  foods đã push, hiện chỉ còn thay đổi context chưa commit.
+
+Next action đề xuất:
+
+- Buổi chiều bắt đầu bằng việc đọc lại `Session_Prompt.md`,
+  `Project_Status.md`, `knowledge-base-hue/meta/foods-template.md`.
+- Người dùng rà soát 5 file bún bò mới và bổ sung thông tin/ảnh nếu cần.
+- Sau đó curate tiếp nhóm bánh Huế hoặc chè Huế theo format tối giản.
 
 ### 2026-08-06 11:53:16 +07
 
