@@ -22,8 +22,8 @@ Vai trò file:
 
 - `restaurants/*.md`: entity địa điểm ăn uống.
 - `cafes/*.md`: entity quán cà phê hoặc đồ uống.
-- `local_specialties/*.md`: entity món ăn hoặc đặc sản Huế.
-- `food-guides.md`: guide được tổ chức theo nhu cầu của du khách.
+- `local_specialties/*.md`: entity món ăn hoặc nhóm món đặc sản Huế.
+- `food-guides.md`: guide tổng hợp được tổ chức theo nhu cầu của du khách.
 
 Các file curated ban đầu chỉ được dùng dữ liệu raw/source dump hoặc nội dung đã
 được người dùng cập nhật thủ công. Không gọi web, không enrich và không thêm
@@ -44,7 +44,8 @@ Quy ước:
 
 - Không đặt block `--- ... ---` ở đầu file curated.
 - Không lưu metadata phục vụ pipeline dưới dạng YAML trong file nội dung.
-- Thông tin nguồn tối giản nằm trong section Markdown ở cuối file.
+- Thông tin nguồn tối giản nằm trong section Markdown ở cuối file, ngoại trừ
+  `food-guides.md` là guide tổng hợp nên không bắt buộc có `## Nguồn dữ liệu`.
 - Nếu sau này cần structured metadata cho recommender/filtering, tạo sidecar
   hoặc index riêng, ví dụ `.meta.yml`/`.json`, thay vì nhúng vào `.md`.
 - Nội dung người dùng nhìn thấy và nội dung RAG đọc ưu tiên tiếng Việt có dấu.
@@ -102,10 +103,21 @@ Optional section, chỉ dùng khi có dữ liệu menu hoặc giá theo từng m
 
 ## Body Cho Local Specialties
 
-Các file `local_specialties` chỉ nên tổng hợp những gì có trong mô tả raw của
-các địa điểm liên quan hoặc nội dung đã được người dùng cập nhật thủ công. Phần
-giải thích ẩm thực độc lập cần được enrich sau bằng nguồn đã xác minh nếu chưa
-có dữ liệu đáng tin.
+Các file `local_specialties` đại diện cho món ăn hoặc nhóm món đặc sản Huế. Nội
+dung có thể dùng dữ liệu research có nguồn do người dùng cung cấp, kết hợp với
+dữ liệu quán đã curate trong `restaurants/` và `cafes/`. Không tự viết thêm
+thành phần, cách làm, nguồn gốc hoặc claim lịch sử nếu nguồn không cung cấp.
+
+Giai đoạn đầu ưu tiên 8 món hoặc nhóm món:
+
+- Bún bò Huế
+- Cơm hến / bún hến
+- Cơm âm phủ
+- Bánh Huế: bánh bèo, bánh nậm, bánh lọc
+- Chè Huế / chè heo quay
+- Bánh ép
+- Mè xửng
+- Bánh canh Huế: bánh canh Nam Phổ / bánh canh cá lóc
 
 
 ```md
@@ -113,23 +125,27 @@ có dữ liệu đáng tin.
 
 ## Tóm tắt
 
-<Tổng hợp ngắn từ các mô tả raw liên quan.>
+<Giới thiệu ngắn về món hoặc nhóm món từ dữ liệu có nguồn.>
 
-## Đặc điểm món ăn
+## Thành phần và đặc điểm
 
-<Tổng hợp đặc điểm món ăn từ dữ liệu có nguồn. Nếu chưa đủ thông tin thì bỏ section này hoặc dừng lại hỏi người dùng, không tự bịa.>
+<Tổng hợp thành phần và đặc điểm món ăn từ dữ liệu có nguồn. Nếu chưa đủ thông tin thì bỏ section này.>
 
-## Địa điểm tiêu biểu từ dữ liệu gốc
+## Cách làm tóm tắt
 
-<Chỉ tạo section này khi có dữ liệu địa điểm tiêu biểu.>
+<Tóm tắt cách làm từ dữ liệu có nguồn. Không biến section này thành recipe chi tiết nếu source không đủ rõ.>
 
-| Địa điểm | Địa chỉ | Giá tham khảo | Ghi chú | File liên quan |
-|---|---|---:|---|---|
-| <Tên địa điểm> | <Địa chỉ> | <Khoảng giá nếu có> | <Ghi chú ngắn từ raw> | `foods/restaurants/<slug>.md` |
+## Nguồn gốc và bối cảnh
 
-## Ghi chú về giá
+<Chỉ tạo section này khi source cung cấp thông tin nguồn gốc hoặc bối cảnh văn hóa đáng tin cậy.>
 
-<Chỉ tạo section này khi cần làm rõ raw cung cấp giá theo địa điểm hay theo món. Không tự suy giá.>
+## Địa điểm tiêu biểu
+
+<Chỉ tạo section này khi có dữ liệu địa điểm tiêu biểu đã curate. Không đưa file path vào body.>
+
+| Tên quán | Địa chỉ |
+|---|---|
+| <Tên quán> | <Địa chỉ> |
 
 ## Nguồn dữ liệu
 
@@ -139,6 +155,15 @@ có dữ liệu đáng tin.
 
 ## Body Cho Food Guide
 
+`food-guides.md` là guide tổng hợp cho du khách, tập trung vào câu hỏi ăn gì,
+ăn ở đâu, đi theo lịch trình nào và chọn theo nhu cầu nào. File này không phải
+entity món ăn và không chứa mô tả dài về thành phần, cách làm hoặc nguồn gốc.
+Các phần chi tiết đó nằm trong `local_specialties/*.md`.
+
+`food-guides.md` là exception của chuẩn source tracking: không bắt buộc có
+section `## Nguồn dữ liệu`, vì nội dung guide được tổng hợp từ các file curated
+khác trong `foods`.
+
 ```md
 # Food Guides Huế
 
@@ -146,22 +171,34 @@ có dữ liệu đáng tin.
 
 ## Gợi ý ăn sáng
 
+## Gợi ý ăn trưa
+
+## Gợi ý ăn chiều và ăn vặt
+
+## Gợi ý ăn tối
+
+## Cà phê và đồ uống
+
 ## Gợi ý món chay
 
 ## Gợi ý món ngọt
 
-## Gợi ý đi chợ và ăn vặt
-
 ## Theo ngân sách
 
-## Nguồn dữ liệu
+## Gợi ý theo nhóm người dùng
 
-- Nguồn chính:
-- Ngày cập nhật nội dung:
+## Food tour nửa ngày
+
+## Food tour 1 ngày
+
+## Food tour 2 ngày
+
+## Food tour 3 ngày
 ```
 
-`food-guides.md` nên tóm tắt và điều hướng người dùng tới các món/địa điểm liên
-quan. Không duplicate mô tả dài từ file địa điểm hoặc file đặc sản.
+Trong `food-guides.md`, mỗi món chỉ diễn giải rất ngắn để phục vụ ngữ cảnh du
+lịch. Gợi ý địa điểm dùng tên quán và địa chỉ ngắn, không duplicate mô tả dài
+từ file địa điểm hoặc file đặc sản.
 
 ## Tiêu chí chọn dữ liệu ban đầu
 
