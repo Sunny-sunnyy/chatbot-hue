@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-07 15:52:13 +07`
+Last updated: `2026-08-07 16:53:16 +07`
 
 ## Mục tiêu dự án
 
@@ -27,11 +27,11 @@ Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 ## Trạng thái foods
 
 - `restaurants/`: 56 file curated.
-- `cafes/`: 9 file curated.
+- `cafes/`: 23 file curated.
 - `local_specialties/`: 0 file curated.
 - `food-guides.md`: 1 file guide.
 
-Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#`, chỉ ghi dữ liệu có nguồn, source tracking ở `## Nguồn dữ liệu`, không thêm `Liên kết nội bộ` vào body.
+Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#`, chỉ ghi dữ liệu có nguồn, source tracking ở `## Nguồn dữ liệu`, không thêm `Liên kết nội bộ` vào body. Tên file trong `restaurants/` và `cafes/` đã được chuẩn hóa bằng cách thay dấu gạch bằng khoảng trắng.
 
 ## Trạng thái triển khai
 
@@ -40,7 +40,7 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Khảo sát raw data và source dumps của hai nguồn HueGov.
 - Tạo source dumps, README ghi chú chuyển đổi và taxonomy folders.
 - Chốt template/chuẩn curated cho `foods`.
-- Curate 56 restaurants và 9 cafes từ dữ liệu người dùng cung cấp.
+- Curate 56 restaurants và 23 cafes từ dữ liệu người dùng cung cấp.
 
 Chưa thực hiện:
 
@@ -51,9 +51,9 @@ Chưa thực hiện:
 
 ## Cập nhật gần nhất
 
-### 2026-08-07 15:52:13 +07
+### 2026-08-07 16:53:16 +07
 
-- Thay đổi: Rút gọn `Project_Status.md` thành snapshot hiện tại; xóa log chi tiết từng task, nội dung lặp lại và thông tin không còn cần cho bàn giao session.
-- File chính: `Project_Status.md`.
-- Validation: Kiểm tra lại số lượng `restaurants`, `cafes`, `local_specialties` và `food-guides.md`; chạy `git diff --check`.
+- Thay đổi: Cập nhật snapshot foods sau khi curate thêm các cafe có nguồn do người dùng cung cấp; tổng số cafe curated hiện tại là 23. Chuẩn hóa tên file trong `restaurants/` và `cafes/`.
+- File chính: `Project_Status.md`, `knowledge-base-hue/foods/cafes/`.
+- Validation: Kiểm tra số lượng `restaurants`, `cafes`, `local_specialties` và `food-guides.md`; chạy `git diff --check` cho các file cafe mới.
 - Next action: Tiếp tục curate cafe hoặc địa điểm ăn uống khi người dùng cung cấp dữ liệu có nguồn; sau đó hoàn thiện `local_specialties` và `food-guides.md`.
