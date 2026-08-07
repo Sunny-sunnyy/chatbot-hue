@@ -62,7 +62,22 @@ bây giờ là `Session_Prompt.md` và `Project_Status.md`.
 Luôn bắt đầu bằng `using-superpowers` và ưu tiên process skill phù hợp trước khi
 thực hiện task.
 
-Với task có thay đổi file, behavior hoặc design, dùng quy trình:
+Với task curate một entity trong `knowledge-base-hue/` từ nội dung và source do
+người dùng cung cấp, dùng quy trình gọn:
+
+```text
+using-superpowers
+  -> đọc context cần thiết
+  -> kiểm tra git status và duplicate
+  -> tự chọn slug/template và tạo một file
+  -> validation
+```
+
+Không hỏi confirmation lại khi scope là một entity và dữ liệu đủ để curate. Tự
+quyết định slug, cấu trúc file và cách diễn đạt theo các policy source/curation.
+
+Với task nhiều file, thay đổi schema/behavior, architecture hoặc yêu cầu design,
+dùng quy trình:
 
 ```text
 using-superpowers
@@ -72,13 +87,11 @@ using-superpowers
   -> design approval
   -> implementation
   -> validation
-  -> cập nhật Project_Status.md
 ```
 
 Quy tắc của quy trình:
 
-- Ưu tiên câu hỏi multiple-choice có recommended option.
-- Không viết code hoặc sửa file trước khi design được người dùng xác nhận.
+- Ưu tiên câu hỏi multiple-choice có recommended option khi task cần làm rõ.
 - Chỉ dùng `rich-elicitation` khi còn ít nhất hai chiều mơ hồ quan trọng và mỗi
   chiều có ít nhất ba hướng hợp lý.
 - Task read-only đơn giản có thể xử lý trực tiếp, không bắt buộc brainstorming.
@@ -88,8 +101,9 @@ Quy tắc của quy trình:
 - Kiểm tra `git status` trước khi sửa file.
 - Không revert hoặc xóa thay đổi có sẵn của người dùng.
 - Chỉ sửa đúng scope đã được xác nhận.
-- Sau task có thay đổi, cập nhật `Project_Status.md` với timestamp UTC+7, thay
-  đổi, file chính, validation và next action.
+- `Project_Status.md` là snapshot bàn giao, không phải audit log. Không cập nhật
+  sau từng file curated; chỉ cập nhật khi người dùng nói kết thúc session hoặc
+  sau khi xin phép khi context gần đầy.
 
 ## Quy tắc dữ liệu
 
@@ -123,6 +137,9 @@ Quy tắc source và curation:
 - Không nâng claim marketing thành factual claim mạnh hơn dữ liệu gốc.
 - Không ghi field hoặc section khi người dùng/source không cung cấp dữ liệu.
 - Không ghi thông tin thiếu như backlog bắt buộc trong curated content hoặc status.
+- Khi có conflict về giá, giờ hoặc địa chỉ, tự tạo file với qualifier riêng theo
+  từng nguồn; không tự chọn một giá trị duy nhất và không hỏi lại.
+- Khi thiếu field, bỏ field đó; không tự suy đoán hoặc dừng task chỉ vì field thiếu.
 
 Curated knowledge base nằm trong:
 
@@ -176,21 +193,21 @@ Chuẩn curated Markdown hiện tại:
 
 ## Cập nhật trạng thái dự án
 
-Sau mỗi task hoặc session có thay đổi, cập nhật:
+`Project_Status.md` chỉ giữ snapshot trạng thái gần nhất, không duy trì log lịch
+sử và không tạo archive.
 
-```text
-Project_Status.md
-```
+Chỉ cập nhật file này khi:
+
+- Người dùng nói kết thúc session.
+- Context gần đầy và người dùng cho phép cập nhật.
 
 Mỗi lần cập nhật phải ghi:
 
 - Thời gian Việt Nam UTC+7.
-- Ngày hiện tại.
-- Nội dung đã thay đổi.
+- Nội dung trạng thái hiện tại hoặc thay đổi gần nhất.
+- File chính nếu có.
 - Validation đã chạy.
 - Next action đề xuất.
 
-Được phép sửa/xóa nội dung không còn chính xác trong `Project_Status.md` để file
-Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
-
-Đừng bắt đầu bất kỳ công việc nào khác ngoài việc đọc và kiểm tra cấu trúc thư mục. Khi bạn đã đọc xong tất cả, hãy cho tôi biết nếu bạn có thắc mắc trước khi chúng ta bắt đầu.luôn phản ánh trạng thái mới nhất.
+Có thể sửa hoặc xóa nội dung không còn chính xác để snapshot phản ánh trạng thái
+mới nhất.
