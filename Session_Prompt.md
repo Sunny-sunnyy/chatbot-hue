@@ -211,3 +211,7 @@ Mỗi lần cập nhật phải ghi:
 
 Có thể sửa hoặc xóa nội dung không còn chính xác để snapshot phản ánh trạng thái
 mới nhất.
+
+Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
+
+Đừng bắt đầu bất kỳ công việc nào khác ngoài việc đọc và kiểm tra cấu trúc thư mục. Khi bạn đã đọc xong tất cả, hãy cho tôi biết nếu bạn có thắc mắc trước khi chúng ta bắt đầu.
