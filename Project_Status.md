@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-08 16:57:54 +07`
+Last updated: `2026-08-08 20:29 +07`
 
 ## Mục tiêu dự án
 
@@ -24,17 +24,19 @@ Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 - Curated knowledge base: `knowledge-base-hue/`
 - Foods template: `knowledge-base-hue/meta/foods-template.md`
 - Food guides spec: `knowledge-base-hue/meta/food-guides-spec.md`
+- Evaluation foods: `knowledge-base-hue/foods/evaluation/` (`tests.jsonl` + `validate_tests.py`)
 
 ## Trạng thái foods
 
 - `restaurants/`: 57 file curated.
-- `cafes/`: 23 file curated.
-- `local_specialties/`: 8 file hiện có và đã hoàn thiện: `bun bo hue.md`, `com hen.md`, `com am phu.md`, `banh ep.md`, `me xung.md`, `che heo quay.md`, `banh canh nam pho.md` và `banh nam.md`.
-- `food-guides.md`: đã hoàn thiện với 17 sections, tổng hợp từ dữ liệu curated và 4 bài Cẩm nang AEON MALL Huế cập nhật 2026 (chi phí, ăn sáng, ăn trưa, ăn đêm). Spec tương ứng đã cập nhật tại `meta/food-guides-spec.md`.
+- `cafes/`: 24 file curated (thêm `quan ca phe muoi.md`).
+- `local_specialties/`: 9 file curated: `bun bo hue.md`, `com hen.md`, `com am phu.md`, `banh ep.md`, `me xung.md`, `che heo quay.md`, `banh canh nam pho.md`, `banh nam.md` và `ca phe muoi.md`.
+- `food-guides.md`: đã hoàn thiện với 17 sections, tổng hợp từ dữ liệu curated và 4 bài Cẩm nang AEON MALL Huế cập nhật 2026.
+- `evaluation/`: bộ test đánh giá RAG foods gồm `tests.jsonl` (104 câu, schema TestQuestion cũ: question / keywords / reference_answer / category, 8 category) và `validate_tests.py` (script kiểm tra chất lượng bộ test, chạy bằng uv).
 
 Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#`, chỉ ghi dữ liệu có nguồn, source tracking ở `## Nguồn dữ liệu`, không thêm `Liên kết nội bộ` vào body. Riêng `food-guides.md` là guide tổng hợp và không bắt buộc có `## Nguồn dữ liệu`. Tên file trong `restaurants/` và `cafes/` đã được chuẩn hóa bằng cách thay dấu gạch bằng khoảng trắng.
 
-8 món hoặc nhóm món đặc sản đã curate:
+9 món hoặc nhóm món đặc sản đã curate:
 
 - Bún bò Huế
 - Cơm hến
@@ -44,6 +46,17 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Bánh ép
 - Mè xửng
 - Bánh canh Nam Phổ
+- Cà phê muối
+
+## Trạng thái evaluation foods
+
+- Bộ test `knowledge-base-hue/foods/evaluation/tests.jsonl`: 104 câu, tiếng Việt có dấu, không câu hỏi về giá, không câu bẫy.
+- Schema giữ nguyên của khóa học: question / keywords / reference_answer / category.
+- Category: 7 category cũ (direct_fact, temporal, comparative, numerical, relationship, spanning, holistic) + 2 mới (food_knowledge, guide_planning); bộ test hiện dùng 8 category (không numerical).
+- Phân bố: direct_fact 21, relationship 16, spanning 17, guide_planning 13, holistic 11, temporal 10, food_knowledge 10, comparative 6.
+- Keywords: 1-5 từ, trích nguyên văn từ KB, viết hoa tên riêng (case-insensitive matching nên không ảnh hưởng), không generic; câu hỏi chủ đề mở (holistic/guide_planning) dùng keyword chủ đề, không gắn quán cụ thể.
+- Reference answer: 1-2 câu, chứa toàn bộ keywords của test, ≤ 850 ký tự (tour 3 ngày là exception).
+- `validate_tests.py`: kiểm tra JSON hợp lệ, category hợp lệ, question duy nhất, keyword không generic, keyword tồn tại trong KB và trong reference answer. Chạy: `UV_CACHE_DIR=/tmp/uv-cache uv run python knowledge-base-hue/foods/evaluation/validate_tests.py`.
 
 ## Trạng thái triển khai
 
@@ -55,27 +68,21 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Curate 56 restaurants và 23 cafes từ dữ liệu người dùng cung cấp.
 - Cập nhật chuẩn `foods-template.md` cho `local_specialties` và exception của `food-guides.md`.
 - Tạo spec/plan cho `food-guides.md` tại `knowledge-base-hue/meta/food-guides-spec.md`.
-- Curate `foods/local_specialties/bun bo hue.md`.
-- Curate `foods/local_specialties/banh ep.md`.
-- Đổi tên và curate `foods/local_specialties/com hen.md`.
-- Curate `foods/local_specialties/com am phu.md`.
-- Curate `foods/local_specialties/me xung.md`.
-- Curate `foods/local_specialties/che heo quay.md`.
-- Đổi tên và curate `foods/local_specialties/banh canh nam pho.md`.
-- Đổi tên và curate `foods/local_specialties/banh nam.md`.
-- Curate `foods/restaurants/che mo ton dich.md`.
-- Hoàn thiện `foods/food-guides.md` (17 sections) và cập nhật `meta/food-guides-spec.md` cho khớp design đã duyệt.
+- Curate 9 món đặc sản trong `local_specialties/`, gồm `ca phe muoi.md` (thêm `quan ca phe muoi.md` vào `cafes/` và cập nhật bảng Địa điểm tiêu biểu).
+- Hoàn thiện `foods/food-guides.md` (17 sections) và cập nhật `meta/food-guides-spec.md`.
+- Thiết kế và tạo bộ test đánh giá foods: `foods/evaluation/tests.jsonl` (104 câu, 8 category) + `foods/evaluation/validate_tests.py`, dựa trên thiết kế evaluation của khóa học cũ (`rag_old/evaluation/`), có research đối chiếu 5 bài Cẩm nang AEON MALL Huế 2026 (giữ dữ liệu theo KB curated).
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
 - Enrichment có nguồn xác minh; chunking, embedding, indexing, retriever và recommender.
+- Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) khi có hệ RAG foods.
 
 ## Cập nhật gần nhất
 
-### 2026-08-08 16:57:54 +07
+### 2026-08-08 20:29 +07
 
-- Thay đổi: Hoàn thiện `foods/food-guides.md` với 17 sections (8 món đặc sản, ăn theo thời điểm trong ngày gồm cả ăn đêm, cà phê, chay, ngọt, ngân sách, nhóm người dùng, 4 food tour) từ dữ liệu curated + 4 bài Cẩm nang AEON MALL Huế 2026 do người dùng cung cấp; cập nhật `meta/food-guides-spec.md` cho khớp (tên 8 file món thực tế, section ăn đêm, quy tắc ngân sách/nghiên cứu, địa chỉ đã xác nhận). Quy trình: brainstorming đầy đủ trong chat, user duyệt từng quyết định trước khi viết file. Chỉ dùng quán có trong curated; địa chỉ chuẩn theo xác nhận của người dùng (Bà Cam 49 Tùng Thiện Vương, O Hoa 3 Trịnh Công Sơn, O Tho 14 Trần Cao Vân); Bánh bà Chi (2/64 Hoàng Diệu) là quán khác nên không dùng.
-- File chính: `knowledge-base-hue/foods/food-guides.md`, `knowledge-base-hue/meta/food-guides-spec.md`, `Project_Status.md`.
-- Validation: 51/51 quán trong guide có file curated, địa chỉ khớp từng file; đủ headings, không YAML, không section `Nguồn dữ liệu`, không file path; không section rỗng; `git diff --check` sạch; không đụng thay đổi có sẵn của người dùng trong `knowledge-base/`.
-- Next action: Chuyển sang curate các category heritage, festivals, performing arts, tourism, services, tickets và statistics; sau đó enrichment có nguồn xác minh, chunking, embedding, indexing, retriever và recommender.
+- Thay đổi: Tạo `foods/evaluation/` gồm `tests.jsonl` (104 câu, 8 category, schema cũ question/keywords/reference_answer/category) và `validate_tests.py`; curate `local_specialties/ca phe muoi.md` và `cafes/quan ca phe muoi.md`, thêm quán gốc vào bảng Địa điểm tiêu biểu của file món. Quy trình: brainstorming đầy đủ trong chat; user chốt schema cũ, 9 category (dùng 8), 60-80 câu (mở rộng lên 104 sau khi bổ sung cafes + cà phê muối), tiếng Việt có dấu, không câu giá, không câu bẫy, tập trung nổi bật + cross-file; user duyệt trước khi tạo file. Keywords câu chủ đề (holistic/guide_planning) không gắn quán cụ thể theo góp ý của user; research 5 bài Cẩm nang AEON MALL Huế để đối chiếu, giữ fact theo KB curated khi web conflict (ví dụ O Tho 14 Trần Cao Vân).
+- File chính: `knowledge-base-hue/foods/evaluation/tests.jsonl`, `knowledge-base-hue/foods/evaluation/validate_tests.py`, `knowledge-base-hue/foods/local_specialties/ca phe muoi.md`, `knowledge-base-hue/foods/cafes/quan ca phe muoi.md`, `Project_Status.md`.
+- Validation: `validate_tests.py` PASS 104 tests (JSON hợp lệ, category hợp lệ, question duy nhất, keyword không generic, keyword có trong KB và reference answer); `git diff --check` sạch; không đụng thay đổi có sẵn của người dùng trong `knowledge-base/`.
+- Next action: Chạy bộ test trên evaluator thật khi có pipeline RAG foods; sau đó curate các category heritage, festivals, performing arts, tourism, services, tickets và statistics; tiếp tục enrichment có nguồn xác minh, chunking, embedding, indexing, retriever và recommender.
