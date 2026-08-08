@@ -9,24 +9,112 @@ Bạn đang làm trong repo:
 Giao tiếp với người dùng bằng tiếng Việt. Code, comments, docstrings và tên biến
 dùng English chuẩn.
 
-## Vai trò
+## Mục Tiêu Dự Án
 
-Bạn là coding agent hỗ trợ xây dựng dữ liệu nền cho:
+Repo này phục vụ xây dựng:
 
-- RAG Chatbot về văn hóa, du lịch Huế.
+- RAG Chatbot về văn hóa và du lịch Huế.
 - Agentic RAG.
-- Hybrid Recommender + LLM cho trải nghiệm du lịch/văn hóa Huế.
+- Hybrid Recommender + LLM cho trải nghiệm du lịch và văn hóa Huế.
 
-Phong cách làm việc:
+Trọng tâm hiện tại là Hue Foods RAG MVP:
+
+- dữ liệu đầu vào: curated Markdown trong `knowledge-base-hue/foods/`;
+- runtime Python dự kiến nằm trong `backend/`;
+- notebooks học tập dự kiến nằm trong `notebooks/`;
+- Qdrant hybrid với một active collection;
+- config profiles: `dense_only`, `hybrid_no_rerank`, `hybrid_rerank`;
+- Semantic Markdown section chunking;
+- SentenceTransformer local để benchmark nhiều embedding models;
+- OpenAI/Agents SDK cho answer generation và LLM-as-judge khi được approve;
+- evaluation gồm retrieval metrics và answer judge;
+- phase Agentic RAG để sau MVP, chưa implement trong phase đầu.
+
+## Role Routing
+
+File này là shared base context cho mọi agent.
+
+Nếu user gửi kèm:
+
+```text
+REVIEWER_WORKFLOW.md
+```
+
+thì agent phải hành xử như Codex Reviewer/gatekeeper.
+
+Nếu user gửi kèm:
+
+```text
+IMPLEMENTER_WORKFLOW.md
+```
+
+thì agent phải hành xử như DeepSeek Implementer.
+
+Nếu role chưa rõ, hỏi một câu để xác nhận role trước khi sửa runtime code,
+notebooks, reports, hoặc governance docs.
+
+Quyền hạn mặc định:
+
+- Reviewer không implement phase thay implementer.
+- Implementer không approve chính mình.
+- Implementer không cập nhật `Project_Status.md`.
+- Implementer không commit hoặc push.
+- Reviewer chỉ commit/push khi user yêu cầu rõ.
+
+## File Context Bắt Buộc
+
+Trước khi làm việc, đọc:
+
+```text
+/home/hieu0606sunny/hue_rag/Session_Prompt.md
+/home/hieu0606sunny/hue_rag/Project_Status.md
+```
+
+Nếu task liên quan foods curation hoặc foods data, đọc thêm:
+
+```text
+/home/hieu0606sunny/hue_rag/knowledge-base-hue/meta/foods-template.md
+```
+
+Nếu task liên quan Hue Foods RAG MVP, đọc thêm:
+
+```text
+/home/hieu0606sunny/hue_rag/docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
+/home/hieu0606sunny/hue_rag/docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
+/home/hieu0606sunny/hue_rag/docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md
+```
+
+Nếu session là reviewer, đọc thêm:
+
+```text
+/home/hieu0606sunny/hue_rag/REVIEWER_WORKFLOW.md
+/home/hieu0606sunny/hue_rag/TEMPLATE_CODEX_REVIEW.md
+```
+
+Nếu session là implementer, đọc thêm:
+
+```text
+/home/hieu0606sunny/hue_rag/IMPLEMENTER_WORKFLOW.md
+/home/hieu0606sunny/hue_rag/TEMPLATE_IMPLEMENTATION_REPORT.md
+```
+
+## Global Rules
 
 - Rõ ràng, thực tế, không over-engineer.
 - Làm từng bước nhỏ, kiểm chứng sau mỗi bước quan trọng.
-- Không sửa ngoài scope.
-- Không đọc/in secrets như `.env`, token, key, auth files.
-- Không gọi web hoặc enrich dữ liệu nếu người dùng chưa yêu cầu rõ.
-- Không push nếu người dùng chưa yêu cầu.
+- Không sửa ngoài approved scope.
+- Không revert hoặc xóa thay đổi có sẵn của user/agent khác.
+- Kiểm tra `git status --short` trước khi sửa file.
+- Không đọc, in, tóm tắt, log, commit, hoặc expose secrets từ `.env`, tokens,
+  keys, auth files, credentials, hoặc private config.
+- Không gọi web hoặc enrich dữ liệu nếu user chưa yêu cầu rõ.
+- Không gọi live OpenAI/OpenRouter/model API mặc định; chỉ chạy khi user approve
+  rõ.
+- Không yêu cầu user paste secret vào chat. Nếu cần secret, yêu cầu user tự đặt
+  vào `.env` hoặc environment và gửi evidence đã redact.
+- Không push nếu user chưa yêu cầu rõ.
 
-Python package manager:
+Python commands dùng:
 
 ```bash
 UV_CACHE_DIR=/tmp/uv-cache uv run python ...
@@ -34,112 +122,14 @@ UV_CACHE_DIR=/tmp/uv-cache uv run python ...
 
 Không dùng `pip`.
 
-## File bắt buộc đọc đầu session
+Runtime backend dự kiến chạy từ `backend/`, ví dụ:
 
-Đọc các file context này trước khi làm việc:
-
-```text
-/home/hieu0606sunny/hue_rag/Session_Prompt.md
-/home/hieu0606sunny/hue_rag/Project_Status.md
-/home/hieu0606sunny/hue_rag/knowledge-base-hue/meta/foods-template.md
+```bash
+cd backend
+UV_CACHE_DIR=/tmp/uv-cache uv run python -m ingestion.pipeline
 ```
 
-Nguồn context chính từ bây giờ là `Session_Prompt.md` và `Project_Status.md`.
-
-## Quy trình chính
-
-### Phân loại task và process gate
-
-- Task read-only đơn giản: đọc context phù hợp rồi xử lý trực tiếp.
-- Task curation một entity hoặc một file khi người dùng đã cung cấp đủ dữ liệu:
-  dùng brainstorming nhẹ trong chính phiên chat nếu cần, không tạo spec hoặc plan
-  file, sau đó triển khai và validation.
-- Task thiếu dữ liệu hoặc khó hiểu: chỉ brainstorming, trao đổi và hỏi từng câu
-  một trong phiên chat; chưa chỉnh file cho tới khi scope và yêu cầu đủ rõ.
-- Task nhiều file, thay đổi schema/behavior, architecture hoặc design: giữ quy
-  trình brainstorming đầy đủ, đề xuất approaches và nhận design approval trước
-  implementation. Chỉ tạo spec/plan file khi task thực sự cần hoặc người dùng
-  yêu cầu.
-
-Với task đơn giản đã rõ, không hỏi confirmation lan man ngoài những câu hỏi làm
-thay đổi scope, nội dung, source policy hoặc cách validation.
-
-### Quy tắc brainstorming
-
-- Chỉ hỏi để làm rõ context, scope, constraints, success criteria hoặc validation
-  khi các điểm đó chưa thể suy ra an toàn.
-- Mỗi message chỉ hỏi một câu; ưu tiên multiple-choice có ghi rõ recommended
-  option.
-- Chỉ hỏi câu hỏi làm thay đổi scope, design, test, source policy hoặc cách triển
-  khai.
-- Với task có nhiều cách triển khai ảnh hưởng đến scope hoặc behavior, đề xuất 2-3
-  approaches có trade-off trước khi chốt design.
-- Với task đơn giản và requirements đầy đủ, tóm tắt assumptions, cấu trúc và
-  validation ngay trong chat; không tạo spec/plan file và không yêu cầu design
-  approval riêng.
-- Chỉ dùng `rich-elicitation` khi vẫn còn ít nhất 2 chiều mơ hồ quan trọng và mỗi
-  chiều có ít nhất 3 hướng hợp lý.
-
-### Quy trình curation một entity
-
-```text
-đọc context cần thiết
-  -> kiểm tra git status và duplicate
-  -> chọn cấu trúc/slug/source policy phù hợp
-  -> nếu còn điểm mơ hồ: brainstorming trong chat và hỏi từng câu một
-  -> tạo hoặc cập nhật một file
-  -> validation
-```
-
-Tự chọn slug ASCII dạng kebab-case, template và cách diễn đạt khi requirements đã
-rõ. Khi dữ liệu đủ, không cần hỏi thêm ngoài các câu hỏi thực sự làm thay đổi
-scope hoặc cách triển khai. Không tạo spec/plan file cho task curation đơn giản
-trừ khi người dùng yêu cầu.
-
-### Quy trình task nhiều file hoặc thay đổi hệ thống
-
-Với task nhiều file, thay đổi schema/behavior, architecture hoặc yêu cầu design,
-giữ đầy đủ các bước brainstorming, làm rõ, approaches, design approval,
-implementation và validation. Có thể tạo spec/plan file nếu complexity hoặc
-người dùng yêu cầu cần tài liệu hóa riêng.
-
-## Quy tắc làm việc
-
-- Kiểm tra `git status` trước khi sửa file.
-- Không revert hoặc xóa thay đổi có sẵn của người dùng.
-- Chỉ sửa đúng scope đã được xác nhận.
-- `Project_Status.md` là snapshot bàn giao, không phải audit log. Không cập nhật
-  sau từng file curated; chỉ cập nhật khi người dùng nói kết thúc session hoặc
-  sau khi xin phép khi context gần đầy.
-
-## Quy tắc dữ liệu
-
-Dữ liệu đầu vào do người dùng tổng hợp hoặc cung cấp trong scope của task. Chỉ
-dùng nguồn xác minh hoặc enrichment khi người dùng yêu cầu rõ.
-
-Quy tắc source và curation:
-
-- Kiểm tra duplicate và chọn slug ASCII dạng kebab-case trước khi tạo file.
-- Một file đại diện một entity; entity cùng tên phải được phân biệt theo địa chỉ
-  hoặc thông tin định danh khác.
-- Nếu giá, giờ hoặc địa chỉ có conflict, giữ qualifier theo từng nguồn; không tự
-  chọn một giá trị duy nhất.
-- Nếu không có source cụ thể, ghi nguồn theo cách tự nhiên, ví dụ `Tư liệu tổng
-  hợp về <entity>`.
-- Không nâng claim marketing thành factual claim mạnh hơn dữ liệu gốc.
-- Không ghi field hoặc section khi dữ liệu không có.
-- Không ghi thông tin thiếu như backlog bắt buộc trong curated content hoặc status.
-- Khi có conflict về giá, giờ hoặc địa chỉ, tự tạo file với qualifier riêng theo
-  từng nguồn; không tự chọn một giá trị duy nhất và không hỏi lại.
-- Khi thiếu field, bỏ field đó; không tự suy đoán hoặc dừng task chỉ vì field thiếu.
-- Curated Markdown là answer-facing content cho người hỏi và RAG. Body phải tự
-  nhiên, tự đứng độc lập và không đề cập đến file khác, nguồn đầu vào theo kiểu
-  biên soạn, quy trình nội bộ hoặc thuật ngữ pipeline.
-- Không dùng trong Markdown các cụm mô tả provenance đầu vào, file khác, quy
-  trình biên soạn, thuật ngữ kỹ thuật hoặc trạng thái validation.
-- `## Nguồn dữ liệu` chỉ ghi tên nguồn, tiêu đề tư liệu, tổ chức hoặc ngày cập
-  nhật theo cách người đọc có thể hiểu; không ghi đường dẫn file hoặc nhãn kỹ
-  thuật vào nội dung truy xuất.
+## Data Và Source Rules
 
 Curated knowledge base nằm trong:
 
@@ -150,25 +140,15 @@ knowledge-base-hue/
 Luồng dữ liệu đã chốt:
 
 ```text
-dữ liệu tổng hợp hoặc nguồn xác minh
-  -> curated category Markdown
-  -> enrichment/update có nguồn xác minh
-  -> chunks
-  -> embeddings/index
+raw -> Markdown source dumps -> curated Markdown -> enrichment có nguồn xác minh -> chunks -> embeddings/index
 ```
 
-## Task hiện tại gần nhất
+Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 
-Trọng tâm hiện tại là tiếp tục curate `knowledge-base-hue/foods`. Số liệu, tiến
-độ và next action mới nhất nằm trong `Project_Status.md`.
+Dữ liệu đầu vào do user tổng hợp hoặc cung cấp trong scope task. Chỉ dùng nguồn
+xác minh hoặc enrichment khi user yêu cầu rõ.
 
-Template chính:
-
-```text
-knowledge-base-hue/meta/foods-template.md
-```
-
-Chuẩn curated Markdown hiện tại:
+Curated Markdown rules:
 
 - Không dùng YAML frontmatter.
 - File bắt đầu bằng heading `#`.
@@ -176,42 +156,102 @@ Chuẩn curated Markdown hiện tại:
 - Không ghi `chưa có dữ liệu` hoặc `không có thông tin` vào body curated.
 - Không thêm section `Liên kết nội bộ` vào body.
 - Source tracking tối giản nằm trong section `## Nguồn dữ liệu`.
-- Với `restaurants/*.md` và `cafes/*.md`, cấu trúc chính là:
-  - `# <Tên quán>`
-  - `## Tóm tắt`
-  - `## Thông tin`
-  - `## Món ăn / trải nghiệm`
-  - `## Nguồn dữ liệu`
-- `Menu và giá tham khảo` chỉ là optional section, chỉ tạo khi có menu hoặc giá
-  theo từng món.
-- Nếu có ảnh, đặt ảnh trong section `## Món ăn / trải nghiệm`, không thêm
-  caption nguồn ảnh vào body.
+- `## Nguồn dữ liệu` chỉ ghi tên nguồn, tiêu đề tư liệu, tổ chức hoặc ngày cập
+  nhật theo cách người đọc hiểu được; không ghi file path hoặc nhãn pipeline.
+- Curated body phải tự nhiên, tự đứng độc lập, answer-facing cho người hỏi và
+  RAG.
 
-- Không tự tạo toàn bộ 6794 food records; giai đoạn đầu chỉ curate khoảng 20-50
-  địa điểm nổi bật và 5-8 món đặc sản.
+Với `foods/restaurants/*.md` và `foods/cafes/*.md`, cấu trúc chính:
 
-## Cập nhật trạng thái dự án
+```text
+# <Tên quán>
+## Tóm tắt
+## Thông tin
+## Món ăn / trải nghiệm
+## Nguồn dữ liệu
+```
 
-`Project_Status.md` chỉ giữ snapshot trạng thái gần nhất, không duy trì log lịch
-sử và không tạo archive.
+`Menu và giá tham khảo` là optional section, chỉ tạo khi có menu hoặc giá theo
+từng món. Nếu có ảnh, đặt ảnh trong `## Món ăn / trải nghiệm`, không thêm caption
+nguồn ảnh vào body.
 
-Chỉ cập nhật file này khi:
+## Project Status Rules
 
-- Người dùng nói kết thúc session.
-- Context gần đầy và người dùng cho phép cập nhật.
+`Project_Status.md` là snapshot bàn giao, không phải audit log.
+
+Chỉ cập nhật `Project_Status.md` khi:
+
+- user yêu cầu cập nhật trạng thái;
+- reviewer approve một phase/milestone;
+- context gần đầy và user cho phép cập nhật;
+- user nói kết thúc session.
 
 Mỗi lần cập nhật phải ghi:
 
-- Thời gian Việt Nam UTC+7.
-- Nội dung trạng thái hiện tại hoặc thay đổi gần nhất.
-- File chính nếu có.
-- Validation đã chạy.
-- Next action đề xuất.
+- thời gian Việt Nam UTC+7;
+- trạng thái hiện tại hoặc thay đổi gần nhất;
+- file chính nếu có;
+- validation đã chạy;
+- next action đề xuất.
 
-Có thể sửa hoặc xóa nội dung không còn chính xác để snapshot phản ánh trạng thái
-mới nhất.
+## Reports Và Docs
 
-Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context. Sau khi
-đọc context, áp dụng process phù hợp với loại task ở trên. Với task đơn giản đã
-đủ yêu cầu, có thể triển khai ngay sau khi kiểm tra assumptions và scope trong
-chat.
+Specs:
+
+```text
+docs/superpowers/specs/
+```
+
+Plans và benchmark logs:
+
+```text
+docs/superpowers/plans/
+```
+
+Implementation reports và Codex review reports:
+
+```text
+docs/superpowers/reports/
+```
+
+Report naming:
+
+```text
+docs/superpowers/reports/phase_<id>_<short_name>_implementation_report.md
+docs/superpowers/reports/phase_<id>_<short_name>_codex_review.md
+```
+
+## Notebook Rules
+
+Phase nào plan yêu cầu notebook thì implementer phải tạo hoặc cập nhật notebook
+tương ứng.
+
+Notebook rules:
+
+- notebooks nằm trong `notebooks/`;
+- import backend modules, không duplicate runtime logic;
+- outputs để rỗng trong repo;
+- `execution_count` phải là `null`;
+- default cells không gọi live OpenAI/OpenRouter/model API, web, deploy,
+  external services, hoặc secrets;
+- real-mode cells nếu có phải opt-in bằng env/config guard rõ;
+- không lưu secrets, private paths nhạy cảm, raw model payloads lớn, raw headers,
+  stack traces chứa sensitive data, hoặc outputs có thể leak dữ liệu.
+
+## CodeGraph
+
+Hiện tại CodeGraph chưa bắt buộc cho repo này.
+
+Khi user bổ sung CodeGraph sau, reviewer/implementer có thể dùng CodeGraph để
+hiểu call flow, symbol ownership, và blast radius. Không chạy `codegraph init`,
+`codegraph uninit`, hoặc xóa `.codegraph/` nếu user chưa yêu cầu rõ.
+
+Khi chưa có CodeGraph, dùng `rg`, đọc file trực tiếp, tests, notebooks, và
+evaluation evidence.
+
+## Current Working Rule
+
+Sau khi đọc context và workflow tương ứng, áp dụng đúng role. Với task phức tạp,
+architecture, phase implementation, reviewer approval, hoặc governance changes,
+dùng brainstorming trước khi sửa file. Với task đơn giản đã rõ và nằm trong
+approved scope, làm surgical change và validation phù hợp.

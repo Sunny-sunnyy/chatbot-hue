@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-08 20:29 +07`
+Last updated: `2026-08-08 22:57 +07`
 
 ## Mục tiêu dự án
 
@@ -25,6 +25,14 @@ Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 - Foods template: `knowledge-base-hue/meta/foods-template.md`
 - Food guides spec: `knowledge-base-hue/meta/food-guides-spec.md`
 - Evaluation foods: `knowledge-base-hue/foods/evaluation/` (`tests.jsonl` + `validate_tests.py`)
+- Hue Foods RAG MVP design: `docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md`
+- Hue Foods RAG MVP implementation plan: `docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md`
+- Hue Foods RAG benchmark log: `docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md`
+- Shared session prompt: `Session_Prompt.md`
+- Reviewer workflow: `REVIEWER_WORKFLOW.md`
+- Implementer workflow: `IMPLEMENTER_WORKFLOW.md`
+- Implementation report template: `TEMPLATE_IMPLEMENTATION_REPORT.md`
+- Codex review template: `TEMPLATE_CODEX_REVIEW.md`
 
 ## Trạng thái foods
 
@@ -65,24 +73,27 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Khảo sát raw data và source dumps của hai nguồn HueGov.
 - Tạo source dumps, README ghi chú chuyển đổi và taxonomy folders.
 - Chốt template/chuẩn curated cho `foods`.
-- Curate 56 restaurants và 23 cafes từ dữ liệu người dùng cung cấp.
+- Curate 57 restaurants và 24 cafes từ dữ liệu người dùng cung cấp.
 - Cập nhật chuẩn `foods-template.md` cho `local_specialties` và exception của `food-guides.md`.
 - Tạo spec/plan cho `food-guides.md` tại `knowledge-base-hue/meta/food-guides-spec.md`.
 - Curate 9 món đặc sản trong `local_specialties/`, gồm `ca phe muoi.md` (thêm `quan ca phe muoi.md` vào `cafes/` và cập nhật bảng Địa điểm tiêu biểu).
 - Hoàn thiện `foods/food-guides.md` (17 sections) và cập nhật `meta/food-guides-spec.md`.
 - Thiết kế và tạo bộ test đánh giá foods: `foods/evaluation/tests.jsonl` (104 câu, 8 category) + `foods/evaluation/validate_tests.py`, dựa trên thiết kế evaluation của khóa học cũ (`rag_old/evaluation/`), có research đối chiếu 5 bài Cẩm nang AEON MALL Huế 2026 (giữ dữ liệu theo KB curated).
+- Brainstorm và tài liệu hóa thiết kế Hue Foods RAG MVP dựa trên `llm_rag` và `rag_old`: backend modular trong `backend/`, notebooks học tập trong `notebooks/`, Qdrant hybrid, config profiles (`dense_only`, `hybrid_no_rerank`, `hybrid_rerank`), Semantic Markdown section chunking, SentenceTransformer local, OpenAI/Agents SDK, JSON API, retrieval + answer evaluation và benchmark log.
+- Tách governance workflow: `Session_Prompt.md` là shared base context + role routing; `REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `TEMPLATE_IMPLEMENTATION_REPORT.md` và `TEMPLATE_CODEX_REVIEW.md`; reports phase sẽ nằm trong `docs/superpowers/reports/`.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Enrichment có nguồn xác minh; chunking, embedding, indexing, retriever và recommender.
-- Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) khi có hệ RAG foods.
+- Implement Hue Foods RAG MVP runtime: backend modules, notebooks, chunking, embedding, Qdrant ingestion, retrieval profiles, reranking, OpenAI generation, API và evaluator thật.
+- Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
+- Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
 
-### 2026-08-08 20:29 +07
+### 2026-08-08 22:57 +07
 
-- Thay đổi: Tạo `foods/evaluation/` gồm `tests.jsonl` (104 câu, 8 category, schema cũ question/keywords/reference_answer/category) và `validate_tests.py`; curate `local_specialties/ca phe muoi.md` và `cafes/quan ca phe muoi.md`, thêm quán gốc vào bảng Địa điểm tiêu biểu của file món. Quy trình: brainstorming đầy đủ trong chat; user chốt schema cũ, 9 category (dùng 8), 60-80 câu (mở rộng lên 104 sau khi bổ sung cafes + cà phê muối), tiếng Việt có dấu, không câu giá, không câu bẫy, tập trung nổi bật + cross-file; user duyệt trước khi tạo file. Keywords câu chủ đề (holistic/guide_planning) không gắn quán cụ thể theo góp ý của user; research 5 bài Cẩm nang AEON MALL Huế để đối chiếu, giữ fact theo KB curated khi web conflict (ví dụ O Tho 14 Trần Cao Vân).
-- File chính: `knowledge-base-hue/foods/evaluation/tests.jsonl`, `knowledge-base-hue/foods/evaluation/validate_tests.py`, `knowledge-base-hue/foods/local_specialties/ca phe muoi.md`, `knowledge-base-hue/foods/cafes/quan ca phe muoi.md`, `Project_Status.md`.
-- Validation: `validate_tests.py` PASS 104 tests (JSON hợp lệ, category hợp lệ, question duy nhất, keyword không generic, keyword có trong KB và reference answer); `git diff --check` sạch; không đụng thay đổi có sẵn của người dùng trong `knowledge-base/`.
-- Next action: Chạy bộ test trên evaluator thật khi có pipeline RAG foods; sau đó curate các category heritage, festivals, performing arts, tourism, services, tickets và statistics; tiếp tục enrichment có nguồn xác minh, chunking, embedding, indexing, retriever và recommender.
+- Thay đổi: Cập nhật governance workflow cho repo. `Session_Prompt.md` được rút gọn thành shared base context + role routing; tạo `REVIEWER_WORKFLOW.md` cho Codex reviewer/gatekeeper, `IMPLEMENTER_WORKFLOW.md` cho DeepSeek implementer, `TEMPLATE_IMPLEMENTATION_REPORT.md` và `TEMPLATE_CODEX_REVIEW.md`. Quy ước chính: Codex review/approve/update status; DeepSeek implement/write report; reports phase nằm trong `docs/superpowers/reports/`; notebooks bắt buộc khi phase plan yêu cầu và phải để outputs rỗng; live model/API calls mặc định không chạy nếu user chưa approve rõ; CodeGraph hiện là future/optional.
+- File chính: `Session_Prompt.md`, `REVIEWER_WORKFLOW.md`, `IMPLEMENTER_WORKFLOW.md`, `TEMPLATE_IMPLEMENTATION_REPORT.md`, `TEMPLATE_CODEX_REVIEW.md`, `Project_Status.md`, cùng 3 file Hue Foods RAG MVP docs đã tạo trước đó trong `docs/superpowers/`.
+- Validation: kiểm tra workflow files không còn sót tên dự án mẫu; placeholder scan không có kết quả; `git diff --check` sạch cho workflow/status/docs; chưa implement code runtime.
+- Next action: Commit và push approved governance + RAG MVP planning docs theo yêu cầu của user; sau đó user có thể gửi `Session_Prompt.md` + workflow tương ứng cho Codex reviewer hoặc DeepSeek implementer.
