@@ -23,9 +23,8 @@ Phong cách làm việc:
 - Làm từng bước nhỏ, kiểm chứng sau mỗi bước quan trọng.
 - Không sửa ngoài scope.
 - Không đọc/in secrets như `.env`, token, key, auth files.
-- Không sửa raw data.
 - Không gọi web hoặc enrich dữ liệu nếu người dùng chưa yêu cầu rõ.
-- Không push/commit nếu người dùng chưa yêu cầu.
+- Không push nếu người dùng chưa yêu cầu.
 
 Python package manager:
 
@@ -37,7 +36,7 @@ Không dùng `pip`.
 
 ## File bắt buộc đọc đầu session
 
-Đọc các file này trước khi làm việc:
+Đọc các file context này trước khi làm việc:
 
 ```text
 /home/hieu0606sunny/hue_rag/Session_Prompt.md
@@ -45,56 +44,74 @@ Không dùng `pip`.
 /home/hieu0606sunny/hue_rag/knowledge-base-hue/meta/foods-template.md
 ```
 
-Khi cần hiểu converter/source dump, đọc thêm:
-
-```text
-/home/hieu0606sunny/hue_rag/backend/scripts/convert_huegov_department_raw_to_md.py
-/home/hieu0606sunny/hue_rag/backend/scripts/convert_huegov_culture_raw_to_md.py
-/home/hieu0606sunny/hue_rag/knowledge-base-hue/_source-dumps/huegov_department_of_tourism/README.md
-/home/hieu0606sunny/hue_rag/knowledge-base-hue/_source-dumps/huegov_culture_and_tourism/README.md
-```
-
-`Agent_session_prompt.md` là context cũ đã được thay thế. Nguồn context chính từ
-bây giờ là `Session_Prompt.md` và `Project_Status.md`.
+Nguồn context chính từ bây giờ là `Session_Prompt.md` và `Project_Status.md`.
 
 ## Quy trình chính
 
-Luôn bắt đầu bằng `using-superpowers` và ưu tiên process skill phù hợp trước khi
-thực hiện task.
+### Process Gate bắt buộc
 
-Với task curate một entity trong `knowledge-base-hue/` từ nội dung và source do
-người dùng cung cấp, dùng quy trình gọn:
+Luôn bắt đầu bằng `using-superpowers`.
+
+Với mọi task có thay đổi file, behavior, schema, dữ liệu curated, architecture,
+design hoặc implementation, dùng `brainstorming` làm process chính:
 
 ```text
 using-superpowers
   -> đọc context cần thiết
-  -> kiểm tra git status và duplicate
-  -> tự chọn slug/template và tạo một file
-  -> validation
-```
-
-Không hỏi confirmation lại khi scope là một entity và dữ liệu đủ để curate. Tự
-quyết định slug, cấu trúc file và cách diễn đạt theo các policy source/curation.
-
-Với task nhiều file, thay đổi schema/behavior, architecture hoặc yêu cầu design,
-dùng quy trình:
-
-```text
-using-superpowers
   -> brainstorming
   -> hỏi làm rõ từng câu một
   -> đề xuất 2-3 approaches
+  -> trình bày design
   -> design approval
   -> implementation
   -> validation
 ```
 
-Quy tắc của quy trình:
+Không bắt đầu implementation, chỉnh file hoặc action thay đổi state trước khi
+người dùng đã thống nhất yêu cầu và approve design. Khi requirements đã rõ, không
+hỏi confirmation lan man ngoài design approval cần thiết.
 
-- Ưu tiên câu hỏi multiple-choice có recommended option khi task cần làm rõ.
-- Chỉ dùng `rich-elicitation` khi còn ít nhất hai chiều mơ hồ quan trọng và mỗi
-  chiều có ít nhất ba hướng hợp lý.
-- Task read-only đơn giản có thể xử lý trực tiếp, không bắt buộc brainstorming.
+Task read-only đơn giản có thể xử lý trực tiếp sau khi đọc context phù hợp, không
+bắt buộc brainstorming.
+
+### Quy tắc brainstorming
+
+- Hỏi cho tới khi nắm đủ context, scope, constraints, success criteria và cách
+  validation.
+- Mỗi message chỉ hỏi một câu; ưu tiên multiple-choice có ghi rõ recommended
+  option.
+- Chỉ hỏi câu hỏi làm thay đổi scope, design, test hoặc implementation plan.
+- Luôn đề xuất 2-3 approaches có trade-off trước khi chốt design.
+- Trình bày design ngắn gọn, nhận approval trước implementation và quay lại làm rõ
+  nếu người dùng chưa đồng ý.
+- Chỉ dùng `rich-elicitation` khi vẫn còn ít nhất 2 chiều mơ hồ quan trọng và mỗi
+  chiều có ít nhất 3 hướng hợp lý.
+- Với task một entity hoặc một file có requirements đầy đủ, brainstorming có thể
+  ở dạng lightweight: tóm tắt assumptions, cấu trúc dự kiến, validation và xin
+  design approval; không tự ý bỏ qua approval.
+
+### Quy trình curation một entity
+
+```text
+using-superpowers
+  -> đọc context cần thiết
+  -> brainstorming lightweight
+  -> kiểm tra git status và duplicate
+  -> đề xuất cấu trúc/slug/source policy
+  -> design approval
+  -> tạo hoặc cập nhật một file
+  -> validation
+```
+
+Tự chọn slug ASCII dạng kebab-case, template và cách diễn đạt sau khi design đã
+được approve. Khi dữ liệu đủ, không cần hỏi thêm ngoài các câu hỏi thực sự làm
+thay đổi scope hoặc cách triển khai.
+
+### Quy trình task nhiều file hoặc thay đổi hệ thống
+
+Với task nhiều file, thay đổi schema/behavior, architecture hoặc yêu cầu design,
+giữ đầy đủ các bước brainstorming, làm rõ, approaches, design approval,
+implementation và validation như Process Gate ở trên.
 
 ## Quy tắc làm việc
 
@@ -107,24 +124,8 @@ Quy tắc của quy trình:
 
 ## Quy tắc dữ liệu
 
-Raw data nằm ở:
-
-```text
-backend/data/huegov_department_of_tourism/raw
-backend/data/huegov_culture_and_tourism/raw
-```
-
-Không sửa raw data.
-
-Markdown source dumps nằm ở:
-
-```text
-knowledge-base-hue/_source-dumps/huegov_department_of_tourism
-knowledge-base-hue/_source-dumps/huegov_culture_and_tourism
-```
-
-Source dumps chỉ là bản chuyển kỹ thuật từ raw sang Markdown. Không chunk trực
-tiếp từ `_source-dumps` cho RAG thật sự nếu chưa curate.
+Dữ liệu đầu vào do người dùng tổng hợp hoặc cung cấp trong scope của task. Chỉ
+dùng nguồn xác minh hoặc enrichment khi người dùng yêu cầu rõ.
 
 Quy tắc source và curation:
 
@@ -133,13 +134,22 @@ Quy tắc source và curation:
   hoặc thông tin định danh khác.
 - Nếu giá, giờ hoặc địa chỉ có conflict, giữ qualifier theo từng nguồn; không tự
   chọn một giá trị duy nhất.
-- Nếu không có source cụ thể, ghi `Nội dung người dùng cung cấp`.
+- Nếu không có source cụ thể, ghi nguồn theo cách tự nhiên, ví dụ `Tư liệu tổng
+  hợp về <entity>`.
 - Không nâng claim marketing thành factual claim mạnh hơn dữ liệu gốc.
-- Không ghi field hoặc section khi người dùng/source không cung cấp dữ liệu.
+- Không ghi field hoặc section khi dữ liệu không có.
 - Không ghi thông tin thiếu như backlog bắt buộc trong curated content hoặc status.
 - Khi có conflict về giá, giờ hoặc địa chỉ, tự tạo file với qualifier riêng theo
   từng nguồn; không tự chọn một giá trị duy nhất và không hỏi lại.
 - Khi thiếu field, bỏ field đó; không tự suy đoán hoặc dừng task chỉ vì field thiếu.
+- Curated Markdown là answer-facing content cho người hỏi và RAG. Body phải tự
+  nhiên, tự đứng độc lập và không đề cập đến file khác, nguồn đầu vào theo kiểu
+  biên soạn, quy trình nội bộ hoặc thuật ngữ pipeline.
+- Không dùng trong Markdown các cụm mô tả provenance đầu vào, file khác, quy
+  trình biên soạn, thuật ngữ kỹ thuật hoặc trạng thái validation.
+- `## Nguồn dữ liệu` chỉ ghi tên nguồn, tiêu đề tư liệu, tổ chức hoặc ngày cập
+  nhật theo cách người đọc có thể hiểu; không ghi đường dẫn file hoặc nhãn kỹ
+  thuật vào nội dung truy xuất.
 
 Curated knowledge base nằm trong:
 
@@ -150,8 +160,7 @@ knowledge-base-hue/
 Luồng dữ liệu đã chốt:
 
 ```text
-raw
-  -> Markdown source dumps
+dữ liệu tổng hợp hoặc nguồn xác minh
   -> curated category Markdown
   -> enrichment/update có nguồn xác minh
   -> chunks
@@ -212,6 +221,9 @@ Mỗi lần cập nhật phải ghi:
 Có thể sửa hoặc xóa nội dung không còn chính xác để snapshot phản ánh trạng thái
 mới nhất.
 
-Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
+Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context. Sau khi
+đọc context, tuân thủ Process Gate ở trên trước khi thực hiện task.
 
+
+Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
 Đừng bắt đầu bất kỳ công việc nào khác ngoài việc đọc và kiểm tra cấu trúc thư mục. Khi bạn đã đọc xong tất cả, hãy cho tôi biết nếu bạn có thắc mắc trước khi chúng ta bắt đầu.
