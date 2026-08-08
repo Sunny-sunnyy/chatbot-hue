@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-08 15:58:50 +07`
+Last updated: `2026-08-08 16:57:54 +07`
 
 ## Mục tiêu dự án
 
@@ -30,7 +30,7 @@ Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 - `restaurants/`: 57 file curated.
 - `cafes/`: 23 file curated.
 - `local_specialties/`: 8 file hiện có và đã hoàn thiện: `bun bo hue.md`, `com hen.md`, `com am phu.md`, `banh ep.md`, `me xung.md`, `che heo quay.md`, `banh canh nam pho.md` và `banh nam.md`.
-- `food-guides.md`: 1 file guide hiện còn trống; đã có spec/plan để coding agent khác triển khai sau khi có dữ liệu research.
+- `food-guides.md`: đã hoàn thiện với 17 sections, tổng hợp từ dữ liệu curated và 4 bài Cẩm nang AEON MALL Huế cập nhật 2026 (chi phí, ăn sáng, ăn trưa, ăn đêm). Spec tương ứng đã cập nhật tại `meta/food-guides-spec.md`.
 
 Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#`, chỉ ghi dữ liệu có nguồn, source tracking ở `## Nguồn dữ liệu`, không thêm `Liên kết nội bộ` vào body. Riêng `food-guides.md` là guide tổng hợp và không bắt buộc có `## Nguồn dữ liệu`. Tên file trong `restaurants/` và `cafes/` đã được chuẩn hóa bằng cách thay dấu gạch bằng khoảng trắng.
 
@@ -64,18 +64,18 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Đổi tên và curate `foods/local_specialties/banh canh nam pho.md`.
 - Đổi tên và curate `foods/local_specialties/banh nam.md`.
 - Curate `foods/restaurants/che mo ton dich.md`.
+- Hoàn thiện `foods/food-guides.md` (17 sections) và cập nhật `meta/food-guides-spec.md` cho khớp design đã duyệt.
 
 Chưa thực hiện:
 
-- Hoàn thiện `foods/food-guides.md` dựa trên spec/plan và dữ liệu đã curate.
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
 - Enrichment có nguồn xác minh; chunking, embedding, indexing, retriever và recommender.
 
 ## Cập nhật gần nhất
 
-### 2026-08-08 15:58:50 +07
+### 2026-08-08 16:57:54 +07
 
-- Thay đổi: Hoàn thiện 8 local specialties đầu tiên, bổ sung Chè Mợ Tôn Đích vào restaurants và cập nhật process curation đơn giản dùng brainstorming nhẹ trong chat, không tạo spec/plan file.
-- File chính: `Session_Prompt.md`, `Project_Status.md`, `knowledge-base-hue/foods/local_specialties/`, `knowledge-base-hue/foods/restaurants/che mo ton dich.md`.
-- Validation: Kiểm tra heading, frontmatter, section `Liên kết nội bộ`, dữ liệu rỗng và địa chỉ liên quan của các file mới/cập nhật; chạy `git diff --check`.
-- Next action: Hoàn thiện `foods/food-guides.md` theo spec hiện có, sau đó chuyển sang các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
+- Thay đổi: Hoàn thiện `foods/food-guides.md` với 17 sections (8 món đặc sản, ăn theo thời điểm trong ngày gồm cả ăn đêm, cà phê, chay, ngọt, ngân sách, nhóm người dùng, 4 food tour) từ dữ liệu curated + 4 bài Cẩm nang AEON MALL Huế 2026 do người dùng cung cấp; cập nhật `meta/food-guides-spec.md` cho khớp (tên 8 file món thực tế, section ăn đêm, quy tắc ngân sách/nghiên cứu, địa chỉ đã xác nhận). Quy trình: brainstorming đầy đủ trong chat, user duyệt từng quyết định trước khi viết file. Chỉ dùng quán có trong curated; địa chỉ chuẩn theo xác nhận của người dùng (Bà Cam 49 Tùng Thiện Vương, O Hoa 3 Trịnh Công Sơn, O Tho 14 Trần Cao Vân); Bánh bà Chi (2/64 Hoàng Diệu) là quán khác nên không dùng.
+- File chính: `knowledge-base-hue/foods/food-guides.md`, `knowledge-base-hue/meta/food-guides-spec.md`, `Project_Status.md`.
+- Validation: 51/51 quán trong guide có file curated, địa chỉ khớp từng file; đủ headings, không YAML, không section `Nguồn dữ liệu`, không file path; không section rỗng; `git diff --check` sạch; không đụng thay đổi có sẵn của người dùng trong `knowledge-base/`.
+- Next action: Chuyển sang curate các category heritage, festivals, performing arts, tourism, services, tickets và statistics; sau đó enrichment có nguồn xác minh, chunking, embedding, indexing, retriever và recommender.
