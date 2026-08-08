@@ -48,70 +48,60 @@ Nguồn context chính từ bây giờ là `Session_Prompt.md` và `Project_Stat
 
 ## Quy trình chính
 
-### Process Gate bắt buộc
+### Phân loại task và process gate
 
-Luôn bắt đầu bằng `using-superpowers`.
+- Task read-only đơn giản: đọc context phù hợp rồi xử lý trực tiếp.
+- Task curation một entity hoặc một file khi người dùng đã cung cấp đủ dữ liệu:
+  dùng brainstorming nhẹ trong chính phiên chat nếu cần, không tạo spec hoặc plan
+  file, sau đó triển khai và validation.
+- Task thiếu dữ liệu hoặc khó hiểu: chỉ brainstorming, trao đổi và hỏi từng câu
+  một trong phiên chat; chưa chỉnh file cho tới khi scope và yêu cầu đủ rõ.
+- Task nhiều file, thay đổi schema/behavior, architecture hoặc design: giữ quy
+  trình brainstorming đầy đủ, đề xuất approaches và nhận design approval trước
+  implementation. Chỉ tạo spec/plan file khi task thực sự cần hoặc người dùng
+  yêu cầu.
 
-Với mọi task có thay đổi file, behavior, schema, dữ liệu curated, architecture,
-design hoặc implementation, dùng `brainstorming` làm process chính:
-
-```text
-using-superpowers
-  -> đọc context cần thiết
-  -> brainstorming
-  -> hỏi làm rõ từng câu một
-  -> đề xuất 2-3 approaches
-  -> trình bày design
-  -> design approval
-  -> implementation
-  -> validation
-```
-
-Không bắt đầu implementation, chỉnh file hoặc action thay đổi state trước khi
-người dùng đã thống nhất yêu cầu và approve design. Khi requirements đã rõ, không
-hỏi confirmation lan man ngoài design approval cần thiết.
-
-Task read-only đơn giản có thể xử lý trực tiếp sau khi đọc context phù hợp, không
-bắt buộc brainstorming.
+Với task đơn giản đã rõ, không hỏi confirmation lan man ngoài những câu hỏi làm
+thay đổi scope, nội dung, source policy hoặc cách validation.
 
 ### Quy tắc brainstorming
 
-- Hỏi cho tới khi nắm đủ context, scope, constraints, success criteria và cách
-  validation.
+- Chỉ hỏi để làm rõ context, scope, constraints, success criteria hoặc validation
+  khi các điểm đó chưa thể suy ra an toàn.
 - Mỗi message chỉ hỏi một câu; ưu tiên multiple-choice có ghi rõ recommended
   option.
-- Chỉ hỏi câu hỏi làm thay đổi scope, design, test hoặc implementation plan.
-- Luôn đề xuất 2-3 approaches có trade-off trước khi chốt design.
-- Trình bày design ngắn gọn, nhận approval trước implementation và quay lại làm rõ
-  nếu người dùng chưa đồng ý.
+- Chỉ hỏi câu hỏi làm thay đổi scope, design, test, source policy hoặc cách triển
+  khai.
+- Với task có nhiều cách triển khai ảnh hưởng đến scope hoặc behavior, đề xuất 2-3
+  approaches có trade-off trước khi chốt design.
+- Với task đơn giản và requirements đầy đủ, tóm tắt assumptions, cấu trúc và
+  validation ngay trong chat; không tạo spec/plan file và không yêu cầu design
+  approval riêng.
 - Chỉ dùng `rich-elicitation` khi vẫn còn ít nhất 2 chiều mơ hồ quan trọng và mỗi
   chiều có ít nhất 3 hướng hợp lý.
-- Với task một entity hoặc một file có requirements đầy đủ, brainstorming có thể
-  ở dạng lightweight: tóm tắt assumptions, cấu trúc dự kiến, validation và xin
-  design approval; không tự ý bỏ qua approval.
 
 ### Quy trình curation một entity
 
 ```text
-using-superpowers
-  -> đọc context cần thiết
-  -> brainstorming lightweight
+đọc context cần thiết
   -> kiểm tra git status và duplicate
-  -> đề xuất cấu trúc/slug/source policy
-  -> design approval
+  -> chọn cấu trúc/slug/source policy phù hợp
+  -> nếu còn điểm mơ hồ: brainstorming trong chat và hỏi từng câu một
   -> tạo hoặc cập nhật một file
   -> validation
 ```
 
-Tự chọn slug ASCII dạng kebab-case, template và cách diễn đạt sau khi design đã
-được approve. Khi dữ liệu đủ, không cần hỏi thêm ngoài các câu hỏi thực sự làm
-thay đổi scope hoặc cách triển khai.
+Tự chọn slug ASCII dạng kebab-case, template và cách diễn đạt khi requirements đã
+rõ. Khi dữ liệu đủ, không cần hỏi thêm ngoài các câu hỏi thực sự làm thay đổi
+scope hoặc cách triển khai. Không tạo spec/plan file cho task curation đơn giản
+trừ khi người dùng yêu cầu.
 
 ### Quy trình task nhiều file hoặc thay đổi hệ thống
 
 Với task nhiều file, thay đổi schema/behavior, architecture hoặc yêu cầu design,
 giữ đầy đủ các bước brainstorming, làm rõ, approaches, design approval,
-implementation và validation như Process Gate ở trên.
+implementation và validation. Có thể tạo spec/plan file nếu complexity hoặc
+người dùng yêu cầu cần tài liệu hóa riêng.
 
 ## Quy tắc làm việc
 
@@ -222,8 +212,6 @@ Có thể sửa hoặc xóa nội dung không còn chính xác để snapshot ph
 mới nhất.
 
 Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context. Sau khi
-đọc context, tuân thủ Process Gate ở trên trước khi thực hiện task.
-
-
-Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
-Đừng bắt đầu bất kỳ công việc nào khác ngoài việc đọc và kiểm tra cấu trúc thư mục. Khi bạn đã đọc xong tất cả, hãy cho tôi biết nếu bạn có thắc mắc trước khi chúng ta bắt đầu.
+đọc context, áp dụng process phù hợp với loại task ở trên. Với task đơn giản đã
+đủ yêu cầu, có thể triển khai ngay sau khi kiểm tra assumptions và scope trong
+chat.

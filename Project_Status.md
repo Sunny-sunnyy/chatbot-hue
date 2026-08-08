@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-07 20:09:22 +07`
+Last updated: `2026-08-08 15:58:50 +07`
 
 ## Mục tiêu dự án
 
@@ -27,23 +27,23 @@ Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 
 ## Trạng thái foods
 
-- `restaurants/`: 56 file curated.
+- `restaurants/`: 57 file curated.
 - `cafes/`: 23 file curated.
-- `local_specialties/`: 0 file curated; đã chốt scope 8 món hoặc nhóm món đặc sản đầu tiên.
+- `local_specialties/`: 8 file hiện có và đã hoàn thiện: `bun bo hue.md`, `com hen.md`, `com am phu.md`, `banh ep.md`, `me xung.md`, `che heo quay.md`, `banh canh nam pho.md` và `banh nam.md`.
 - `food-guides.md`: 1 file guide hiện còn trống; đã có spec/plan để coding agent khác triển khai sau khi có dữ liệu research.
 
 Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#`, chỉ ghi dữ liệu có nguồn, source tracking ở `## Nguồn dữ liệu`, không thêm `Liên kết nội bộ` vào body. Riêng `food-guides.md` là guide tổng hợp và không bắt buộc có `## Nguồn dữ liệu`. Tên file trong `restaurants/` và `cafes/` đã được chuẩn hóa bằng cách thay dấu gạch bằng khoảng trắng.
 
-8 món hoặc nhóm món đặc sản dự kiến curate trước:
+8 món hoặc nhóm món đặc sản đã curate:
 
 - Bún bò Huế
-- Cơm hến / bún hến
+- Cơm hến
 - Cơm âm phủ
-- Bánh Huế: bánh bèo, bánh nậm, bánh lọc
-- Chè Huế / chè heo quay
+- Bánh nậm
+- Chè heo quay
 - Bánh ép
 - Mè xửng
-- Bánh canh Huế: bánh canh Nam Phổ / bánh canh cá lóc
+- Bánh canh Nam Phổ
 
 ## Trạng thái triển khai
 
@@ -55,19 +55,27 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Curate 56 restaurants và 23 cafes từ dữ liệu người dùng cung cấp.
 - Cập nhật chuẩn `foods-template.md` cho `local_specialties` và exception của `food-guides.md`.
 - Tạo spec/plan cho `food-guides.md` tại `knowledge-base-hue/meta/food-guides-spec.md`.
+- Curate `foods/local_specialties/bun bo hue.md`.
+- Curate `foods/local_specialties/banh ep.md`.
+- Đổi tên và curate `foods/local_specialties/com hen.md`.
+- Curate `foods/local_specialties/com am phu.md`.
+- Curate `foods/local_specialties/me xung.md`.
+- Curate `foods/local_specialties/che heo quay.md`.
+- Đổi tên và curate `foods/local_specialties/banh canh nam pho.md`.
+- Đổi tên và curate `foods/local_specialties/banh nam.md`.
+- Curate `foods/restaurants/che mo ton dich.md`.
 
 Chưa thực hiện:
 
-- Curate 8 file đầu tiên trong `foods/local_specialties/` từ research/source do người dùng cung cấp.
 - Hoàn thiện `foods/food-guides.md` dựa trên spec/plan và dữ liệu đã curate.
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
 - Enrichment có nguồn xác minh; chunking, embedding, indexing, retriever và recommender.
 
 ## Cập nhật gần nhất
 
-### 2026-08-07 20:09:22 +07
+### 2026-08-08 15:58:50 +07
 
-- Thay đổi: Chốt thiết kế mới cho `foods/local_specialties/` và `foods/food-guides.md`. `local_specialties` sẽ chứa 8 món hoặc nhóm món đặc sản đầu tiên; `food-guides.md` là guide tổng hợp theo thời điểm, ngân sách, nhóm người dùng và itinerary nửa ngày/1 ngày/2 ngày/3 ngày.
-- File chính: `Project_Status.md`, `knowledge-base-hue/meta/foods-template.md`, `knowledge-base-hue/meta/food-guides-spec.md`.
-- Validation: Kiểm tra số lượng `restaurants`, `cafes`, `local_specialties`; chạy `git diff --check` cho `foods-template.md` và `food-guides-spec.md`; scan `food-guides-spec.md` để loại marker placeholder phổ biến.
-- Next action: Khi người dùng cung cấp research/source, curate lần lượt 8 file `foods/local_specialties/*.md`; sau đó giao `food-guides.md` cho coding agent khác triển khai theo `food-guides-spec.md`.
+- Thay đổi: Hoàn thiện 8 local specialties đầu tiên, bổ sung Chè Mợ Tôn Đích vào restaurants và cập nhật process curation đơn giản dùng brainstorming nhẹ trong chat, không tạo spec/plan file.
+- File chính: `Session_Prompt.md`, `Project_Status.md`, `knowledge-base-hue/foods/local_specialties/`, `knowledge-base-hue/foods/restaurants/che mo ton dich.md`.
+- Validation: Kiểm tra heading, frontmatter, section `Liên kết nội bộ`, dữ liệu rỗng và địa chỉ liên quan của các file mới/cập nhật; chạy `git diff --check`.
+- Next action: Hoàn thiện `foods/food-guides.md` theo spec hiện có, sau đó chuyển sang các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
