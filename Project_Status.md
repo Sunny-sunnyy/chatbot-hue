@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-08 22:57 +07`
+Last updated: `2026-08-09 08:54 +07`
 
 ## Mục tiêu dự án
 
@@ -80,20 +80,35 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Hoàn thiện `foods/food-guides.md` (17 sections) và cập nhật `meta/food-guides-spec.md`.
 - Thiết kế và tạo bộ test đánh giá foods: `foods/evaluation/tests.jsonl` (104 câu, 8 category) + `foods/evaluation/validate_tests.py`, dựa trên thiết kế evaluation của khóa học cũ (`rag_old/evaluation/`), có research đối chiếu 5 bài Cẩm nang AEON MALL Huế 2026 (giữ dữ liệu theo KB curated).
 - Brainstorm và tài liệu hóa thiết kế Hue Foods RAG MVP dựa trên `llm_rag` và `rag_old`: backend modular trong `backend/`, notebooks học tập trong `notebooks/`, Qdrant hybrid, config profiles (`dense_only`, `hybrid_no_rerank`, `hybrid_rerank`), Semantic Markdown section chunking, SentenceTransformer local, OpenAI/Agents SDK, JSON API, retrieval + answer evaluation và benchmark log.
-- Tách governance workflow: `Session_Prompt.md` là shared base context + role routing; `REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `TEMPLATE_IMPLEMENTATION_REPORT.md` và `TEMPLATE_CODEX_REVIEW.md`; reports phase sẽ nằm trong `docs/superpowers/reports/`.
+- Tách governance workflow: `Session_Prompt.md` là shared base context + role routing; `REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `TEMPLATE_IMPLEMENTATION_REPORT.md` và `TEMPLATE_CODEX_REVIEW.md`; reports phase nằm trong `/home/hieu0606sunny/hue_rag/reports/`.
+- Approve Phase 1 Hue Foods RAG MVP: backend skeleton và central configuration đã tạo trong `backend/`, gồm `settings.yaml`, `logging.yaml`, `settings_loader.py`, `logging_setup.py`, `schema.py` và package markers theo approved design.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Implement Hue Foods RAG MVP runtime: backend modules, notebooks, chunking, embedding, Qdrant ingestion, retrieval profiles, reranking, OpenAI generation, API và evaluator thật.
+- Implement các phase còn lại của Hue Foods RAG MVP runtime: foods Markdown chunking, embedding, Qdrant ingestion, retrieval profiles, reranking, OpenAI generation, API, notebooks và evaluator thật.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
 
+### 2026-08-09 08:54 +07
+
+- Thay đổi: Cập nhật governance report path theo yêu cầu user. Implementation reports và Codex review reports hiện phải viết trong thư mục gốc `/home/hieu0606sunny/hue_rag/reports/`, với naming `reports/phase_<id>_<short_name>_implementation_report.md` và `reports/phase_<id>_<short_name>_codex_review.md`.
+- File chính: `Session_Prompt.md`, `REVIEWER_WORKFLOW.md`, `IMPLEMENTER_WORKFLOW.md`, `TEMPLATE_IMPLEMENTATION_REPORT.md`, `TEMPLATE_CODEX_REVIEW.md`, `Project_Status.md`, `reports/phase_1_backend_skeleton_codex_review.md`.
+- Validation: `rg` không còn reference đường dẫn reports cũ trong các file Markdown; `git diff --check` sạch cho các file governance/report đã sửa.
+- Next action: Các phase report tiếp theo của DeepSeek và Codex dùng `reports/` ở repo root.
+
+### 2026-08-09 08:48 +07
+
+- Thay đổi: Codex review Phase 1 Backend Skeleton và approve gate. Phase 1 tạo backend package skeleton, central settings loader, logging setup, shared `RetrievedDocument` schema, config profiles `dense_only`, `hybrid_no_rerank`, `hybrid_rerank`, và config docs. Không có blocker hoặc major findings; các giới hạn được chấp nhận là verify OpenAI model IDs trước Phase 6, kiểm Qdrant/Docker ở Phase 4, và defer env overrides đến phase cần secrets/config runtime.
+- File chính: `backend/config/settings.yaml`, `backend/config/logging.yaml`, `backend/config/README_config.md`, `backend/core/settings_loader.py`, `backend/core/logging_setup.py`, `backend/core/schema.py`, package markers trong `backend/`, `reports/phase_1_backend_skeleton_implementation_report.md`, `reports/phase_1_backend_skeleton_codex_review.md`.
+- Validation: `load_settings()` trả `dense_only`; `py_compile` sạch cho 3 core module; cả 3 profile resolve đúng mode/BM25/rerank flags; invalid profile raise `ValueError` có danh sách profile hợp lệ; logging smoke test ghi console + `backend/logs/application.log` và đã xóa log residue; scope/security scan không thấy secrets.
+- Next action: Có thể chuyển sang Phase 2 Foods Markdown discovery and chunking. Logic này ổn định; nên commit approved unit trước khi đi tiếp nếu user đồng ý.
+
 ### 2026-08-08 22:57 +07
 
-- Thay đổi: Cập nhật governance workflow cho repo. `Session_Prompt.md` được rút gọn thành shared base context + role routing; tạo `REVIEWER_WORKFLOW.md` cho Codex reviewer/gatekeeper, `IMPLEMENTER_WORKFLOW.md` cho DeepSeek implementer, `TEMPLATE_IMPLEMENTATION_REPORT.md` và `TEMPLATE_CODEX_REVIEW.md`. Quy ước chính: Codex review/approve/update status; DeepSeek implement/write report; reports phase nằm trong `docs/superpowers/reports/`; notebooks bắt buộc khi phase plan yêu cầu và phải để outputs rỗng; live model/API calls mặc định không chạy nếu user chưa approve rõ; CodeGraph hiện là future/optional.
+- Thay đổi: Cập nhật governance workflow cho repo. `Session_Prompt.md` được rút gọn thành shared base context + role routing; tạo `REVIEWER_WORKFLOW.md` cho Codex reviewer/gatekeeper, `IMPLEMENTER_WORKFLOW.md` cho DeepSeek implementer, `TEMPLATE_IMPLEMENTATION_REPORT.md` và `TEMPLATE_CODEX_REVIEW.md`. Quy ước chính: Codex review/approve/update status; DeepSeek implement/write report; reports phase nằm trong `/home/hieu0606sunny/hue_rag/reports/`; notebooks bắt buộc khi phase plan yêu cầu và phải để outputs rỗng; live model/API calls mặc định không chạy nếu user chưa approve rõ; CodeGraph hiện là future/optional.
 - File chính: `Session_Prompt.md`, `REVIEWER_WORKFLOW.md`, `IMPLEMENTER_WORKFLOW.md`, `TEMPLATE_IMPLEMENTATION_REPORT.md`, `TEMPLATE_CODEX_REVIEW.md`, `Project_Status.md`, cùng 3 file Hue Foods RAG MVP docs đã tạo trước đó trong `docs/superpowers/`.
 - Validation: kiểm tra workflow files không còn sót tên dự án mẫu; placeholder scan không có kết quả; `git diff --check` sạch cho workflow/status/docs; chưa implement code runtime.
 - Next action: Commit và push approved governance + RAG MVP planning docs theo yêu cầu của user; sau đó user có thể gửi `Session_Prompt.md` + workflow tương ứng cho Codex reviewer hoặc DeepSeek implementer.

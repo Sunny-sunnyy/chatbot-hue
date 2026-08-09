@@ -1,0 +1,70 @@
+version: 1
+
+# Example line: [2026-08-09 10:15:30] INFO - retrieval - Retrieved 10 documents
+formatters:
+  simple:
+    format: '[%(asctime)s] %(levelname)s - %(name)s - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: simple
+    stream: ext://sys.stdout
+
+  file:
+    class: logging.FileHandler
+    level: INFO
+    formatter: simple
+    filename: logs/application.log
+
+loggers:
+  ingestion:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  embedding:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  scoring:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  vector_database:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  llm:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  retrieval:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  reranking:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  evaluation:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+  chat:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
+root:
+  level: INFO
+  handlers: [console, file]

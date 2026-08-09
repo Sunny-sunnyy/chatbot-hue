@@ -211,14 +211,14 @@ docs/superpowers/plans/
 Implementation reports và Codex review reports:
 
 ```text
-docs/superpowers/reports/
+/home/hieu0606sunny/hue_rag/reports/
 ```
 
 Report naming:
 
 ```text
-docs/superpowers/reports/phase_<id>_<short_name>_implementation_report.md
-docs/superpowers/reports/phase_<id>_<short_name>_codex_review.md
+reports/phase_<id>_<short_name>_implementation_report.md
+reports/phase_<id>_<short_name>_codex_review.md
 ```
 
 ## Notebook Rules
@@ -255,3 +255,7 @@ Sau khi đọc context và workflow tương ứng, áp dụng đúng role. Với
 architecture, phase implementation, reviewer approval, hoặc governance changes,
 dùng brainstorming trước khi sửa file. Với task đơn giản đã rõ và nằm trong
 approved scope, làm surgical change và validation phù hợp.
+
+
+Đọc cả các hướng dẫn/link liên quan nếu thực sự cần để hiểu đúng context.
+Đừng bắt đầu bất kỳ công việc nào khác ngoài việc đọc và kiểm tra cấu trúc thư mục. Khi bạn đã đọc xong tất cả, hãy cho tôi biết nếu bạn có thắc mắc trước khi chúng ta bắt đầu.

@@ -2,6 +2,12 @@
 
 Implementer: DeepSeek
 Date: YYYY-MM-DD
+Report path:
+
+```text
+reports/phase_<id>_<short_name>_implementation_report.md
+```
+
 Approved spec/plan:
 
 ```text

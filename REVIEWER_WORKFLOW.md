@@ -22,8 +22,15 @@ TEMPLATE_CODEX_REVIEW.md
 docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
 docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
 docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md
-the relevant implementation report under docs/superpowers/reports/
+the relevant implementation report under /home/hieu0606sunny/hue_rag/reports/
 the relevant phase guide or plan section
+```
+
+Nếu review liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
+dụng:
+
+```text
+skills/karpathy-guidelines/SKILL.md
 ```
 
 Nếu review liên quan foods curation hoặc foods data, đọc thêm:
@@ -48,10 +55,12 @@ Codex reviewer phải:
 
 - review implementation report và các files mà report nói đã tạo/sửa;
 - đối chiếu implementation với approved spec/plan/phase scope;
+- áp dụng `skills/karpathy-guidelines/SKILL.md` khi review code để phát hiện
+  overcomplication, scope creep, assumptions mơ hồ, và success criteria yếu;
 - kiểm tra code, docs, notebooks, tests, benchmark logs, và verification
   evidence liên quan;
 - kiểm tra security, data safety, reliability, performance, và scope control;
-- viết Codex review file riêng trong `docs/superpowers/reports/`;
+- viết Codex review file riêng trong `/home/hieu0606sunny/hue_rag/reports/`;
 - yêu cầu correction khi findings chặn approval;
 - chỉ cập nhật `Project_Status.md` sau khi phase/milestone được approve;
 - nhắc user commit sau checkpoint ổn định nếu phù hợp.
@@ -166,14 +175,14 @@ Finding severity:
 Với mỗi phase hoặc milestone, viết:
 
 ```text
-docs/superpowers/reports/phase_<id>_<short_name>_codex_review.md
+reports/phase_<id>_<short_name>_codex_review.md
 ```
 
 Ví dụ:
 
 ```text
-docs/superpowers/reports/phase_1_backend_skeleton_codex_review.md
-docs/superpowers/reports/phase_4_qdrant_ingestion_codex_review.md
+reports/phase_1_backend_skeleton_codex_review.md
+reports/phase_4_qdrant_ingestion_codex_review.md
 ```
 
 Dùng cấu trúc trong:

@@ -26,6 +26,13 @@ the approved phase section in the implementation plan
 relevant Codex review feedback, if resubmitting fixes
 ```
 
+Nếu implement liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
+dụng:
+
+```text
+skills/karpathy-guidelines/SKILL.md
+```
+
 Nếu implement liên quan foods curation hoặc foods data, đọc thêm:
 
 ```text
@@ -48,6 +55,8 @@ Implementer phải:
 
 - chỉ implement user-approved phase hoặc milestone;
 - làm theo spec/plan hiện hành;
+- áp dụng `skills/karpathy-guidelines/SKILL.md` khi viết code để giữ assumptions
+  rõ ràng, code đơn giản, thay đổi surgical, và success criteria có thể verify;
 - trước mỗi phần quan trọng, thực hiện mini research/brainstorming trong repo
   như plan yêu cầu;
 - làm surgical changes, không refactor ngoài scope;
@@ -56,7 +65,7 @@ Implementer phải:
 - notebook phải import backend modules, không duplicate runtime logic;
 - chạy smallest relevant verification trước, rồi broader checks khi cần;
 - tự kiểm tra security, data safety, reliability, performance trước handoff;
-- viết implementation report trong `docs/superpowers/reports/`;
+- viết implementation report trong `/home/hieu0606sunny/hue_rag/reports/`;
 - phản hồi Codex feedback bằng cách sửa code/docs/report của implementer khi
   cần.
 
@@ -128,14 +137,14 @@ TEMPLATE_IMPLEMENTATION_REPORT.md
 Report path:
 
 ```text
-docs/superpowers/reports/phase_<id>_<short_name>_implementation_report.md
+reports/phase_<id>_<short_name>_implementation_report.md
 ```
 
 Ví dụ:
 
 ```text
-docs/superpowers/reports/phase_1_backend_skeleton_implementation_report.md
-docs/superpowers/reports/phase_4_qdrant_ingestion_implementation_report.md
+reports/phase_1_backend_skeleton_implementation_report.md
+reports/phase_4_qdrant_ingestion_implementation_report.md
 ```
 
 Report phải nêu:

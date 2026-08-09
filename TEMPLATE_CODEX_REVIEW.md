@@ -3,10 +3,16 @@
 Decision: approved / changes_requested / blocked
 Reviewer: Codex
 Date: YYYY-MM-DD
+Review path:
+
+```text
+reports/phase_<id>_<short_name>_codex_review.md
+```
+
 Implementer report:
 
 ```text
-docs/superpowers/reports/<implementation_report>.md
+reports/<implementation_report>.md
 ```
 
 ## Tóm Tắt
