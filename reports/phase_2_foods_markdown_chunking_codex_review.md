@@ -1,6 +1,6 @@
 # Codex Review: Phase 2 Foods Markdown Chunking
 
-Decision: approved
+Decision: ready_for_user_confirmation
 Reviewer: Codex
 Date: 2026-08-09
 Review path:
@@ -15,126 +15,96 @@ Implementer report:
 reports/phase_2_foods_markdown_chunking_implementation_report.md
 ```
 
-## Tóm Tắt
+## Tóm tắt
 
-Reviewed Phase 2 foods Markdown discovery, semantic section chunking, tests, and learning notebook against the approved Hue Foods RAG MVP spec and plan. The implementation stays within Phase 2 scope, discovers only curated foods Markdown, creates stable metadata, excludes configured folders, avoids absolute paths in metadata, and keeps notebook outputs empty.
+Phần sửa bổ sung đã đạt yêu cầu kỹ thuật. Danh sách có dòng xuống hàng được
+giữ theo đúng mục, bảng Markdown không bị cắt, nội dung thường không vượt 400
+ký tự và toàn bộ nội dung nguồn được bảo toàn. Notebook và báo cáo triển khai
+đã được cập nhật theo hiện trạng mới.
 
-## Findings
+Phase 2 sẵn sàng để người dùng chạy lại notebook và xác nhận. Đây chưa phải là
+phê duyệt cuối cùng và Phase 3 vẫn chưa được mở.
 
-Không có blocker hoặc major findings.
+## Phát hiện
 
-- minor: The notebook imports `_discover_markdown_files`, a private helper, for inspection. This is acceptable for a learning notebook because runtime behavior still lives in backend modules and no duplicate chunking pipeline is implemented.
+Không có lỗi mức blocker hoặc major.
 
-## Verification
+- minor: Notebook dùng một số hàm nội bộ như `_discover_markdown_files`,
+  `_is_table` và `_split_blocks` để minh họa. Mã xử lý vẫn nằm trong `backend/`,
+  notebook không chép lại thuật toán. Giới hạn này chấp nhận được cho notebook
+  học tập của MVP.
 
-Commands run and important results.
+## Kiểm tra độc lập
+
+Đã chạy từ `backend/`:
 
 ```bash
-git status --short
-# Worktree already had unrelated knowledge-base deletions and untracked rag_old/skills.
-# Phase 2 files are untracked under backend/ingestion, backend/tests, notebooks, and reports/.
-
-sed -n '1,260p' reports/phase_2_foods_markdown_chunking_implementation_report.md
-# Implementation report reviewed.
-
-sed -n '1,260p' guides/phase_2_foods_markdown_chunking.md
-# Phase 2 as-built scope and gate reviewed after documentation migration.
-
-sed -n '1,280p' guides/phase_0_mvp_foundation.md
-# Foundation chunking, metadata and safety requirements reviewed after documentation migration.
-
-sed -n '1,260p' skills/karpathy-guidelines/SKILL.md
-# Reviewer code-quality guideline read.
-
-sed -n '1,260p' knowledge-base-hue/meta/foods-template.md
-sed -n '1,260p' knowledge-base-hue/foods/evaluation/validate_tests.py
-# Foods rules and evaluation context reviewed.
-
-cd backend
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile ingestion/helpers/markdown_parser.py ingestion/helpers/make_metadata.py ingestion/helpers/split_text.py ingestion/chunking/markdown_chunker.py
-# clean
-
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from ingestion.chunking.markdown_chunker import chunk_foods_markdown; chunks = chunk_foods_markdown(); print(len(chunks)); print(chunks[0]['metadata'])"
-# 366
-# {'chunk_id': 'foods/cafes/anh kafe hue.md|Tóm tắt|0', 'source': 'foods/cafes/anh kafe hue.md', 'title': 'ANH KAFE tại Huế', 'section': 'Tóm tắt', 'category': 'foods', 'subcategory': 'cafes', 'chunk_type': 'section'}
+# đạt
 
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest tests/ -q
-# 17 passed in 0.15s
-
-cd ..
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "import json; from pathlib import Path; nb=json.loads(Path('notebooks/01_foods_data_and_chunking.ipynb').read_text(encoding='utf-8')); print(nb.get('nbformat'), len(nb.get('cells', []))); print([(c.get('cell_type'), c.get('execution_count'), len(c.get('outputs', []))) for c in nb['cells']]); bad=[]; [bad.append((i,'execution_count')) for i,c in enumerate(nb['cells']) if c.get('cell_type') == 'code' and c.get('execution_count') is not None]; [bad.append((i,'outputs')) for i,c in enumerate(nb['cells']) if c.get('outputs')]; print('bad', bad)"
-# 4 9
-# bad []
-
-cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from collections import Counter; from ingestion.chunking.markdown_chunker import chunk_foods_markdown; chunks=chunk_foods_markdown(); required={'chunk_id','source','title','section','category','subcategory','chunk_type'}; print('chunks', len(chunks)); print('files', len({c['metadata']['source'] for c in chunks})); print(Counter(c['metadata']['subcategory'] for c in chunks)); print('empty_text', sum(not c['text'].strip() for c in chunks)); print('missing_meta', sum(not required <= c['metadata'].keys() for c in chunks)); print('absolute_meta', sum(any(str(v).startswith('/') for v in c['metadata'].values()) for c in chunks)); print('excluded', sum(any(p in {'evaluation','_source-dumps','meta'} for p in c['metadata']['source'].split('/')) for c in chunks)); print('source_sections', sum(c['metadata']['section']=='Nguồn dữ liệu' for c in chunks)); print('image_markdown', sum('![' in c['text'] for c in chunks)); print('unique_ids', len({c['metadata']['chunk_id'] for c in chunks}) == len(chunks))"
-# chunks 366
-# files 91
-# Counter({'restaurants': 187, 'cafes': 100, 'local_specialties': 62, 'guide': 17})
-# empty_text 0
-# missing_meta 0
-# absolute_meta 0
-# excluded 0
-# source_sections 0
-# image_markdown 0
-# unique_ids True
-
-rg -n "OPENAI_API_KEY|API_KEY|SECRET|TOKEN|PASSWORD|BEGIN PRIVATE|\\.env|dotenv|openai|OpenAI|requests|http://|https://|qdrant|Qdrant|uvicorn|FastAPI|subprocess|curl" backend/ingestion backend/tests notebooks/01_foods_data_and_chunking.ipynb reports/phase_2_foods_markdown_chunking_implementation_report.md
-# Only safe documentation text, report text, and one test fixture image URL were found.
-
-git diff --check -- backend/ingestion backend/tests notebooks reports/phase_2_foods_markdown_chunking_implementation_report.md
-# clean
+# 31 passed in 0.25s
 ```
 
-## Scope Check
+Kết quả kiểm tra toàn bộ dữ liệu:
 
-The work stayed inside the approved Phase 2 scope:
+- 572 đoạn từ 91 tệp;
+- restaurants 249, cafes 162, local_specialties 118, guide 43;
+- độ dài phần nội dung: trung bình 272,75, trung vị 285, lớn nhất 927;
+- 24 bảng, trong đó 8 bảng vượt 400 ký tự và đều được giữ nguyên;
+- không có đoạn thường vượt 400 ký tự;
+- không có nội dung rỗng, thiếu metadata, trùng mã đoạn hoặc đường dẫn tuyệt
+  đối;
+- không có mục `Nguồn dữ liệu` hoặc dòng ảnh trong dữ liệu đầu ra;
+- ghép lại nội dung theo từng mục cho kết quả trùng với nội dung gốc sau khi bỏ
+  khác biệt khoảng trắng;
+- mọi mục danh sách không quá 400 ký tự, gồm cả dòng xuống hàng, đều nằm trọn
+  trong một đoạn;
+- mã đoạn không đổi giữa hai lần chạy;
+- 38 loại tiêu đề dùng để trả lời đều có quy tắc nhãn.
 
-- created the four runtime chunking modules requested by the plan;
-- added `backend/tests/test_markdown_chunker.py`;
-- added `notebooks/01_foods_data_and_chunking.ipynb`;
-- did not implement embeddings, Qdrant, retrieval, reranking, API, generation, or evaluation runtime.
+Trường hợp từng bị lỗi đã đạt: đoạn
+`foods/local_specialties/banh canh nam pho.md|Thành phần và đặc điểm|2` dài 208
+ký tự và chứa cả `Nhân tôm cua` lẫn câu `Phần nhân có màu đỏ gạch`.
 
-Accepted implementation decisions:
+Notebook có 16 cell, gồm 7 cell mã. Toàn bộ cell mã chạy được theo thứ tự và
+cho 572 đoạn. Tệp lưu trong repo có outputs rỗng và mọi `execution_count` là
+`null`. Notebook dùng lại cách nhận diện bảng từ `backend/`; không gọi mạng,
+mô hình hoặc dịch vụ ngoài.
 
-- `## Nguồn dữ liệu` sections are excluded from chunks. This matches the project rule that source tracking is not answer-facing content for RAG answers.
-- Image-only Markdown lines are stripped from chunk text. This avoids indexing URL noise and does not create new factual content.
-- `max_chars=1500` remains a local splitter default. The approved plan did not define a chunking config section, and only two current sections split.
+`git diff --check` đạt. Quét các tệp trong phạm vi không phát hiện lệnh truy cập
+bí mật hoặc gọi dịch vụ ngoài. URL duy nhất được tìm thấy là dữ liệu mẫu trong
+một kiểm thử loại dòng ảnh.
 
-## Safety And Quality Check
+## Kiểm tra phạm vi
 
-- Security: no secrets were read, printed, logged, or exposed. No live model/API/web/deploy calls were introduced.
-- Data safety: curated foods Markdown was read only; no knowledge base files were modified; metadata stores KB-relative paths only.
-- Reliability: discovery is sorted and deterministic; chunk IDs are stable across runs; excluded folders are filtered by path segment; tests cover corpus gates and helper behavior.
-- Performance: the chunker performs a bounded local pass over 91 small Markdown files; no model loading or external services.
-- Tests: `py_compile`, Phase 2 plan command, focused pytest suite, notebook JSON checks, and additional corpus gate checks all passed.
-- Notebooks: JSON parses; all `execution_count` values are `null`; all `outputs` are empty; cells import backend modules and contain no live API, web, Qdrant, deploy, or secret calls.
-- Evaluation: not applicable in Phase 2; no retrieval or answer metrics were claimed.
+DeepSeek chỉ sửa năm tệp đã được giao: hai tệp xử lý, một tệp kiểm thử, notebook
+Phase 2 và báo cáo triển khai. Không sửa dữ liệu curated, guide, báo cáo Codex,
+user report hoặc `Project_Status.md`. Các thay đổi ngoài phạm vi có sẵn trong
+worktree không được đưa vào đánh giá.
 
-## Required Changes
+## An toàn và chất lượng
 
-Not applicable.
+- Bảo mật: không đọc hoặc in bí mật; không gọi dịch vụ ngoài.
+- An toàn dữ liệu: chỉ đọc dữ liệu Foods, không sửa tài liệu nguồn.
+- Độ ổn định: thứ tự tệp và mã đoạn ổn định giữa các lần chạy.
+- Hiệu năng: xử lý cục bộ một lượt trên 91 tệp, phù hợp với MVP.
+- Ảnh hưởng về sau: Phase 3 đến Phase 8 phải lập chỉ mục từ toàn bộ 572 đoạn và
+  không dùng lại số liệu 366 đoạn cũ.
 
-## Approval Notes
+## Phần bắt buộc sửa
 
-Approved files:
+Không áp dụng.
+
+## Kết luận
+
+Kiểm tra kỹ thuật đã đạt. Báo cáo dành cho người dùng được cập nhật tại:
 
 ```text
-backend/ingestion/helpers/markdown_parser.py
-backend/ingestion/helpers/make_metadata.py
-backend/ingestion/helpers/split_text.py
-backend/ingestion/chunking/markdown_chunker.py
-backend/tests/test_markdown_chunker.py
-notebooks/01_foods_data_and_chunking.ipynb
-reports/phase_2_foods_markdown_chunking_implementation_report.md
+reports/user_reports/phase_2_foods_markdown_chunking_user_report.md
 ```
 
-Accepted limitations:
-
-- Chunking config is not yet exposed in `settings.yaml`.
-- Notebook uses a private discovery helper for inspection.
-- `## Nguồn dữ liệu` sections are not indexed in Phase 2.
-
-Next phase allowed: Phase 3 Embedding and sparse representation.
-
-`Project_Status.md` was updated after approval.
+Người dùng cần chạy lại notebook Phase 2 vì cách chia danh sách và tổng số đoạn
+đã thay đổi. Chỉ sau khi người dùng xác nhận Phase 1-2, Reviewer mới chuyển
+trạng thái sang `approved`, cập nhật `Project_Status.md` và thực hiện bước bàn
+giao cuối theo quyền đã được cấp.

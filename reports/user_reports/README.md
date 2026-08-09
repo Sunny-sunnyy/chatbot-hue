@@ -1,23 +1,46 @@
-# Báo cáo phase dành cho người dùng
+# Báo cáo dành cho người dùng
 
-## Mục đích
+Thư mục này chứa các báo cáo giúp người đang học kỹ thuật AI hiểu từng giai
+đoạn của dự án, tự kiểm tra kết quả và quyết định xác nhận hay yêu cầu sửa.
 
-Thư mục này chứa báo cáo tiếng Việt dễ hiểu để người dùng biết dự án đang ở đâu,
-mỗi phase giải quyết vấn đề gì, đã xây được chức năng nào, cách hoạt động ra sao,
-cách tự kiểm tra bằng notebook và còn giới hạn gì.
+Báo cáo dành cho người dùng không phải bản dịch của báo cáo kỹ thuật. Báo cáo
+chỉ giữ thông tin cần để hiểu kết quả và đưa ra quyết định. Chi tiết dành cho
+Codex và DeepSeek nằm trong thư mục `reports/` và `guides/`.
 
-Các technical reports ở thư mục cha `reports/` dành cho DeepSeek Implementer và
-Codex Reviewer. Người dùng không cần đọc hoặc can thiệp vào các technical report
-đó để xác nhận phase.
+## Người viết báo cáo
 
-## Quyền sở hữu
+Chỉ Codex Reviewer tạo hoặc cập nhật các báo cáo trong thư mục này. DeepSeek
+viết báo cáo triển khai trong thư mục cha và không sửa báo cáo dành cho người
+dùng.
 
-- Chỉ Codex Reviewer tạo hoặc cập nhật user report.
-- DeepSeek Implementer chỉ viết technical implementation report trong `reports/`.
-- User report phải dựa trên guide, technical reports, code/notebook và validation
-  Codex đã kiểm tra độc lập.
-- User report không thay guide, không mở rộng scope và không được che failed hoặc
-  skipped checks.
+Mọi kết quả phải dựa trên bằng chứng Codex đã tự kiểm tra. Không được ghi một
+kiểm tra là đạt nếu chưa chạy hoặc đang không đạt.
+
+## Cấu trúc bắt buộc
+
+Mỗi báo cáo dùng đúng tám mục:
+
+1. Trạng thái hiện tại.
+2. Bạn nhận được gì từ giai đoạn này.
+3. Hệ thống hoạt động như thế nào.
+4. Kết quả Codex đã kiểm tra.
+5. Cách bạn tự kiểm tra.
+6. Giới hạn hiện tại.
+7. Bước tiếp theo và cách xác nhận.
+8. Nếu bạn muốn xem chi tiết kỹ thuật.
+
+Mẫu đầy đủ nằm tại `session_prompt/TEMPLATE_USER_REPORT.md`.
+
+## Cách viết
+
+- Viết cho người đang học, không giả định đã hiểu hệ thống.
+- Dùng tiếng Việt thông thường và câu ngắn.
+- Giải thích thuật ngữ bắt buộc ở lần đầu, sau đó dùng cách gọi tiếng Việt.
+- Giải thích ý nghĩa của con số thay vì chỉ liệt kê kết quả.
+- Lấy tệp thực hành (notebook) làm cách người dùng tự kiểm tra chính.
+- Không đưa mã trạng thái nội bộ vào báo cáo.
+- Không đưa chi tiết gỡ lỗi, mã băm hoặc đường dẫn riêng tư.
+- Không nối thêm lịch sử cũ nếu lịch sử đó không còn ảnh hưởng đến hiện tại.
 
 ## Tên file
 
@@ -25,27 +48,19 @@ Codex Reviewer. Người dùng không cần đọc hoặc can thiệp vào các 
 reports/user_reports/phase_<id>_<short_name>_user_report.md
 ```
 
-Mỗi phase có đúng một user report canonical. Nếu phase được mở lại, Codex cập
-nhật chính file đó với trạng thái, thời gian, validation và giới hạn mới nhất.
+Mỗi giai đoạn có một báo cáo chính. Khi kết quả thay đổi, Codex viết lại báo
+cáo đó thành bản hiện trạng mới nhất.
 
-## Vòng đời xác nhận
+## Quá trình xác nhận
 
 ```text
-technical review đạt
-  -> Codex tạo user report: pending
-  -> guide: awaiting_user_confirmation
-  -> user đọc report và kiểm tra notebook
-  -> user xác nhận hoặc yêu cầu sửa
-  -> confirmed + approved, hoặc changes_requested
+Codex kiểm tra kỹ thuật và đạt
+  -> Codex viết báo cáo dễ hiểu
+  -> người dùng chạy tệp thực hành
+  -> người dùng xác nhận hoặc yêu cầu sửa
+  -> Codex cập nhật trạng thái và tài liệu bàn giao
 ```
 
-Chỉ sau khi user xác nhận, Codex mới cập nhật `Project_Status.md`, audit approved
-phase package, commit và push. Xác nhận không cho phép đưa thay đổi ngoài scope
-vào commit.
-
-## Nội dung bắt buộc
-
-Mỗi report phải theo `session_prompt/TEMPLATE_USER_REPORT.md`, gồm trạng thái,
-mục tiêu, vấn đề được giải quyết, deliverables, chức năng, luồng, file quan
-trọng, notebook, cách tự kiểm tra, validation thực tế, kỹ thuật, giới hạn,
-external API/cost, bước tiếp theo và checklist xác nhận.
+Chỉ sau khi người dùng xác nhận, Codex mới cập nhật `Project_Status.md`, kiểm
+tra đúng nhóm file được duyệt và thực hiện bước bàn giao theo quyền người dùng
+đã cấp. Xác nhận không cho phép đưa thay đổi ngoài phạm vi vào bản lưu.

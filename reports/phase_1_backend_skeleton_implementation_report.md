@@ -59,7 +59,7 @@ were left untouched.
 
 ## Notebooks Created Or Modified
 
-None. The plan assigns no notebook to Phase 1.
+- `notebooks/01_backend_foundation.ipynb` - created in the 2026-08-09 remediation scope (see Remediation Evidence below). Learning notebook for the Phase 1 gate: package layout, settings, logging and shared schema; imports backend modules only, no duplicate runtime logic.
 
 ## Commands Run
 
@@ -141,6 +141,41 @@ N/A. Phase 1 has no retrieval or answer evaluation.
 ## Live Access / Secrets Statement
 
 No live network/model/deploy/secret access occurred.
+
+## Remediation Evidence (2026-08-09)
+
+Governance retrofit scope per `Project_Status.md` next action and the Phase 1 guide Notebook section: create `notebooks/01_backend_foundation.ipynb`.
+
+Files created in remediation:
+
+- `notebooks/01_backend_foundation.ipynb` - 12 cells (6 markdown, 6 code). Markdown cells explain the backend package layout, settings, logging and shared schema in Vietnamese. Code cells import Phase 1 modules (`core.settings_loader`, `core.logging_setup`, `core.schema`) and run safe smoke checks only.
+
+Commands run in remediation:
+
+```bash
+cd backend
+UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.settings_loader import load_settings; print(load_settings()['active_profile'])"
+# dense_only
+
+UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile core/settings_loader.py core/logging_setup.py core/schema.py
+# clean
+
+UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.settings_loader import load_settings, _validate_active_profile; ..."
+# all three profiles resolve with correct mode/bm25/rerank flags
+# invalid profile raises ValueError with valid list
+
+UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.logging_setup import setup_logging; ..."
+# console and file output OK; smoke log file removed afterwards
+
+UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.schema import RetrievedDocument; ..."
+# dataclass constructs with id/score/text/metadata
+```
+
+Notebook verification:
+
+- JSON valid, `nbformat` 4, 12 cells, all code cells `execution_count` null, all `outputs` empty.
+- No live model/API/web/deploy/Qdrant/secret tokens in cell sources (scan clean).
+- Every code cell logic executed once against the real backend modules from `backend/`: path resolution, package listing, settings load, profile validation, invalid-profile `ValueError`, logging smoke (log file created then removed), schema construction.
 
 ## Handoff To Codex
 

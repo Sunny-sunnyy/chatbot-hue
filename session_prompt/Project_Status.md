@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-09 12:42 +07`
+Last updated: `2026-08-09 22:30 +07`
 
 ## Mục tiêu dự án
 
@@ -84,25 +84,26 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Thiết kế và tạo bộ test đánh giá foods: `foods/evaluation/tests.jsonl` (104 câu, 8 category) + `foods/evaluation/validate_tests.py`, dựa trên thiết kế evaluation của khóa học cũ (`rag_old/evaluation/`), có research đối chiếu 5 bài Cẩm nang AEON MALL Huế 2026 (giữ dữ liệu theo KB curated).
 - Brainstorm và tài liệu hóa Phase 0–9 trong `guides/`: backend modular, semantic chunking, một active Qdrant collection, ba retrieval profiles, local `multilingual-e5-small`/MiniLM baseline trước OpenRouter, OpenAI Agents SDK generation/judge, controlled evaluation và post-MVP Agentic RAG hard gate.
 - Tách governance workflow: `session_prompt/Session_Prompt.md` là shared base context + role routing; `session_prompt/REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `session_prompt/IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md` và `session_prompt/TEMPLATE_CODEX_REVIEW.md`; reports phase nằm trong `/home/hieu0606sunny/hue_rag/reports/`.
-- Technical review Phase 1 đã đạt theo contract cũ: backend skeleton và central configuration đã tạo trong `backend/`, gồm `settings.yaml`, `logging.yaml`, `settings_loader.py`, `logging_setup.py`, `schema.py` và package markers. Final user confirmation đang được mở lại theo governance mới.
-- Technical review Phase 2 đã đạt theo contract cũ: foods Markdown discovery và semantic section chunking đã tạo 366 chunks từ 91 curated foods files, kèm unit tests và notebook hiện tại `notebooks/01_foods_data_and_chunking.ipynb`. Notebook đang chờ rename thành `notebooks/02_foods_data_and_chunking.ipynb` trước final user confirmation.
+- Giai đoạn 1 `approved`: backend skeleton, cấu hình chung, logging, shared schema và `notebooks/01_backend_foundation.ipynb` đã được Codex kiểm tra; người dùng đã chạy notebook và xác nhận.
+- Giai đoạn 2 `approved`: đọc 91 curated foods files và tạo 572 đoạn; nội dung thường giới hạn 400 ký tự, bảng được giữ nguyên, mỗi đoạn có nhãn ngữ cảnh ngắn; 31 kiểm thử và `notebooks/02_foods_data_and_chunking.ipynb` đã đạt; người dùng quan sát đúng 572 đoạn, 0 đoạn thường vượt 400 và 8 bảng vượt 400 rồi xác nhận.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
-- Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tiếng Việt dễ hiểu; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
+- Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Hoàn tất Phase 1 remediation notebook và Phase 2 notebook rename; Codex review rồi tạo hai user reports để người dùng xác nhận lại.
-- Brainstorm và implement Phase 3–8 của Hue Foods RAG MVP theo guide; Phase 3 đang `not_ready` cho đến khi Phase 1–2 trở lại `approved`.
+- Brainstorm và implement Phase 3–8 của Hue Foods RAG MVP theo guide; Phase 3
+  đang `not_ready` cho đến khi phạm vi embedding và sparse representation được
+  người dùng phê duyệt.
 - Chạy local E5/MiniLM three-profile benchmark rồi mới thử OpenRouter; ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
 
-### 2026-08-09 12:42 +07
+### 2026-08-09 22:30 +07
 
-- Trạng thái: Dual-report và hard user-confirmation governance đã được người dùng phê duyệt. Phase 0 `completed`; Phase 1–2 `changes_requested` cho notebook/user-report retrofit nhưng giữ nguyên technical acceptance history; Phase 3–8 `not_ready`; Phase 9 `design_only`.
-- File chính: `guides/README.md`, Phase 0–9 guides, `session_prompt/Session_Prompt.md`, hai role workflows, ba report templates và `reports/user_reports/README.md`. Reviewer tự bootstrap context, tạo user report và finalize; Implementer tự bootstrap context, tạo notebook/technical report và không sửa user report.
-- Validation: status/index, notebook mapping Phase 1–8, workflow bootstrap, dual-report ownership, 17-section user-report template, Markdown structure, secret/placeholder scan, local references và Git scope đều được kiểm tra; `git diff --check` sạch. Governance patch không sửa hoặc chạy runtime/notebook/model/API.
-- Next action: Giao DeepSeek focused remediation: tạo `notebooks/01_backend_foundation.ipynb`, rename notebook Phase 2 thành `notebooks/02_foods_data_and_chunking.ipynb`, cập nhật references và technical implementation reports; sau đó Codex review và tạo hai user reports `pending`.
+- Trạng thái: Phase 0 `completed`; Giai đoạn 1–2 `approved`; Giai đoạn 3–8 `not_ready`; Giai đoạn 9 `design_only`. Người dùng đã chạy hai notebook và xác nhận báo cáo Giai đoạn 1–2.
+- File chính: `notebooks/01_backend_foundation.ipynb`, `notebooks/02_foods_data_and_chunking.ipynb`, mã chia đoạn trong `backend/ingestion/`, guides Giai đoạn 1–2, báo cáo kỹ thuật/Codex và hai báo cáo trong `reports/user_reports/`.
+- Validation: Phase 1 safe smoke checks đạt; Phase 2 `py_compile` đạt, 31 kiểm thử đạt, tạo 572 đoạn từ 91 tệp, 0 đoạn thường vượt 400 ký tự, 8 bảng vượt 400 được giữ nguyên, mã đoạn không trùng và ổn định; hai notebook chạy đạt, không gọi dịch vụ ngoài. Quy tắc báo cáo người dùng tám mục, đường dẫn và Markdown đã được kiểm tra; `git diff --check` sạch.
+- Next action: Brainstorm Giai đoạn 3 theo `guides/phase_3_embedding_sparse_representation.md`; không gọi mô hình hoặc dịch vụ ngoài nếu người dùng chưa phê duyệt.

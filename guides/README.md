@@ -48,7 +48,7 @@ Khi có khác biệt giữa tài liệu, áp dụng thứ tự sau:
 - Review độc lập code, test, notebook, report, security, data safety, reliability và performance.
 - Ghi `reports/phase_<id>_<short_name>_codex_review.md` với verdict rõ ràng.
 - Khi technical review đạt, tạo user report dễ hiểu và chuyển phase sang `awaiting_user_confirmation`.
-- Chỉ sau khi người dùng xác nhận mới cập nhật user report thành `confirmed`, chuyển phase sang `approved`, cập nhật `Project_Status.md`, commit và push approved phase package.
+- Chỉ sau khi người dùng xác nhận mới đổi trạng thái tiếng Việt trong user report, chuyển phase sang `approved`, cập nhật `Project_Status.md`, commit và push approved phase package.
 - Không implement thay DeepSeek trong một phase runtime, trừ khi người dùng thay đổi scope và giao nhiệm vụ rõ ràng.
 
 ## Vòng đời phase
@@ -85,9 +85,10 @@ Quyền ghi trạng thái được tách rõ:
   ghi trong handoff hoặc implementation report; DeepSeek không sửa guide.
 - Khi nhận implementation report, Codex đối chiếu scope rồi chuyển guide từ
   `ready` sang `under_review` trước khi review.
-- Sau technical verdict đạt, Codex tạo user report `pending` và chuyển guide
-  sang `awaiting_user_confirmation`. User confirmation mới cho phép Codex cập
-  nhật user report thành `confirmed`, chuyển guide sang `approved`, cập nhật
+- Sau technical verdict đạt, Codex tạo user report với trạng thái tiếng Việt
+  đang chờ xác nhận và chuyển guide sang `awaiting_user_confirmation`. User
+  confirmation mới cho phép Codex đổi user report sang trạng thái đã xác nhận,
+  chuyển guide sang `approved`, cập nhật
   `Project_Status.md`, commit/push và mở phase tiếp theo.
 
 ## Mức brainstorming
@@ -107,8 +108,8 @@ Chỉ dùng rich elicitation khi còn ít nhất hai chiều mơ hồ quan trọ
 | Phase | Guide | Trạng thái hiện tại | Brainstorming | Kết quả chính |
 |---:|---|---|---|---|
 | 0 | `phase_0_mvp_foundation.md` | `completed` | Level 0 | Kiến trúc, provider boundary, data flow và governance của MVP |
-| 1 | `phase_1_backend_skeleton.md` | `changes_requested` | Level 1 | Backend skeleton, settings, logging và shared schema; chờ notebook/user confirmation retrofit |
-| 2 | `phase_2_foods_markdown_chunking.md` | `changes_requested` | Level 1 | Curated Markdown discovery và semantic section chunks; chờ notebook rename/user confirmation retrofit |
+| 1 | `phase_1_backend_skeleton.md` | `approved` | Level 1 | Mã nền, notebook và báo cáo đã được người dùng xác nhận |
+| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Level 2 | 572 đoạn, giới hạn 400 ký tự, bảng và nhãn đã được xác nhận |
 | 3 | `phase_3_embedding_sparse_representation.md` | `not_ready` | Level 2 | Dense embedding provider và sparse representation |
 | 4 | `phase_4_qdrant_ingestion.md` | `not_ready` | Level 2 | Một active Qdrant collection và dense+sparse points |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `not_ready` | Level 3 | Ba retrieval profiles, BM25, reranking và context |
@@ -125,9 +126,9 @@ Phase sau không được implement trước khi dependency phase trước đạ
 2. Codex cập nhật guide với quyết định đã chốt và chuyển phase sang `ready`.
 3. DeepSeek implement theo guide, chạy validation và tạo implementation report.
 4. Codex review độc lập, tạo Codex review report.
-5. Nếu technical review đạt, Codex tạo user report với `User confirmation: pending` và chuyển guide sang `awaiting_user_confirmation`.
+5. Nếu technical review đạt, Codex tạo user report với trạng thái tiếng Việt đang chờ xác nhận và chuyển guide sang `awaiting_user_confirmation`.
 6. Người dùng đọc user report, kiểm tra notebook và xác nhận hoặc yêu cầu sửa.
-7. Khi người dùng xác nhận, Codex cập nhật user report thành `confirmed`, guide thành `approved` và cập nhật `Project_Status.md`.
+7. Khi người dùng xác nhận, Codex đổi trạng thái tiếng Việt trong user report, chuyển guide thành `approved` và cập nhật `Project_Status.md`.
 8. Xác nhận hoàn tất phase đồng thời cho phép Codex audit allowlist, commit và push đúng approved phase package.
 
 Tên report bắt buộc:
@@ -171,4 +172,6 @@ Affected scope
 Revisit trigger
 ```
 
-Guide của Phase 1–2 giữ nguyên lịch sử technical acceptance. Notebook/user-report retrofit là scope governance mới, không được sửa lịch sử report để hợp thức hóa behavior mới.
+Guide của Phase 1–2 giữ nguyên lịch sử kiểm tra kỹ thuật. Phần notebook và báo
+cáo dành cho người dùng đã được xác nhận ngày 2026-08-09; không viết lại bằng
+chứng kỹ thuật cũ để làm thay đổi lịch sử.

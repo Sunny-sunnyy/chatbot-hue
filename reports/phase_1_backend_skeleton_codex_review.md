@@ -1,8 +1,14 @@
 # Codex Review: Phase 1 Backend Skeleton
 
-Decision: approved
+Decision: ready_for_user_confirmation
 Reviewer: Codex
 Date: 2026-08-09
+Review path:
+
+```text
+reports/phase_1_backend_skeleton_codex_review.md
+```
+
 Implementer report:
 
 ```text
@@ -11,117 +17,88 @@ reports/phase_1_backend_skeleton_implementation_report.md
 
 ## Tóm Tắt
 
-Reviewed Phase 1 backend skeleton and configuration against the approved Hue Foods RAG MVP scope, now preserved in `guides/phase_0_mvp_foundation.md` and `guides/phase_1_backend_skeleton.md`. The implementation stays within Phase 1 scope, settings load correctly, all retrieval profiles validate, core modules compile, and logging writes to the intended backend log path without leaving a test log residue.
+Backend skeleton, configuration, logging và shared schema đã được technical
+review chấp nhận trước governance retrofit. Review hiện tại kiểm tra remediation
+notebook bắt buộc của Phase 1. Notebook mới import trực tiếp backend modules,
+chạy được toàn bộ safe smoke checks và không thay đổi runtime code.
+
+Decision hiện tại là `ready_for_user_confirmation`. Đây chưa phải final phase
+approval và chưa mở Phase 3.
 
 ## Findings
 
 Không có blocker hoặc major findings.
 
-- minor: OpenAI model IDs in `backend/config/settings.yaml` are intentionally unverified defaults and must be checked against official OpenAI sources before Phase 6 implementation or execution.
-- minor: Qdrant/Docker availability was not validated in Phase 1. This remains deferred to Phase 4 as planned.
+- minor: Khi người dùng tự chạy, notebook in local resolved paths để xác nhận
+  cwd-independent behavior. Repo không lưu outputs và không hard-code private
+  path, nên observation này được chấp nhận cho notebook local.
 
 ## Verification
 
-Commands run and important results.
+Các kiểm tra độc lập đã chạy:
 
 ```bash
-git status --short
-# Worktree already had unrelated modified/deleted/untracked files. Phase 1 files are untracked under backend/ and reports/.
-
-sed -n '1,260p' skills/karpathy-guidelines/SKILL.md
-# Reviewer guideline read for runtime code review.
-
-sed -n '1,260p' reports/phase_1_backend_skeleton_implementation_report.md
-# Implementation report reviewed.
-
-find backend/config backend/core backend/api backend/embedding backend/evaluation backend/ingestion backend/llm backend/reranking backend/retrieval backend/scoring backend/vectorstore -type f -not -path '*/__pycache__/*' | sort
-# Confirmed 20 Phase 1 files, excluding ignored Python bytecode cache.
-
 cd backend
+UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile core/settings_loader.py core/logging_setup.py core/schema.py
+# passed
+
 UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.settings_loader import load_settings; print(load_settings()['active_profile'])"
 # dense_only
 
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile core/settings_loader.py core/logging_setup.py core/schema.py
-# clean
+# Profile/schema smoke: 3 profiles đúng mode/BM25/reranker flags;
+# invalid profile raises ValueError với valid list; RetrievedDocument khởi tạo được.
 
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.settings_loader import load_settings, _validate_active_profile; s=load_settings(); print([(k, v['retrieval_mode'], v['use_bm25'], v['use_reranker']) for k, v in s['profiles'].items()]); bad=dict(s, active_profile='bad_profile');\
-try:\
-    _validate_active_profile(bad)\
-except ValueError as exc:\
-    print(str(exc))"
-# [('dense_only', 'dense', False, False), ('hybrid_no_rerank', 'hybrid', True, False), ('hybrid_rerank', 'hybrid', True, True)]
-# Unknown active_profile: 'bad_profile'. Valid profiles: ['dense_only', 'hybrid_no_rerank', 'hybrid_rerank']
+# Logging smoke: console message emitted, application.log created, then removed.
 
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.logging_setup import setup_logging, LOGS_DIR, LOG_FILE_NAME; import logging; setup_logging(); logging.getLogger('retrieval').info('codex review logging smoke'); path=LOGS_DIR / LOG_FILE_NAME; print(path.exists(), path.name); path.unlink(missing_ok=True)"
-# Console log emitted.
-# True application.log
-
-find backend/logs -maxdepth 2 -type f -print
-# no files
-
-rg -n "OPENAI_API_KEY|API_KEY|SECRET|TOKEN|PASSWORD|BEGIN PRIVATE|\\.env|os\\.environ|getenv|dotenv|http://|https://" backend/config backend/core reports/phase_1_backend_skeleton_implementation_report.md
-# Only safe documentation references to .env/API key guidance and local Qdrant URL were found.
+# Notebook code cells được thực thi tuần tự từ backend/.
+# Kết quả: 10 packages; dense_only; 3 profiles đúng flags; ValueError đúng;
+# logging file tạo rồi xóa; RetrievedDocument khởi tạo thành công.
 ```
+
+Notebook JSON được parse trực tiếp: `nbformat=4`, 12 cells, sáu code cells có
+`execution_count=null`, tất cả outputs rỗng. Cell sources đã được đọc để xác
+nhận không có model/API/web/Qdrant/deploy call hoặc secret access.
+
+Một lần dựng reviewer command ban đầu trả về `SyntaxError` do escape newline
+trong shell wrapper. Command được sửa và chạy lại thành công; đây không phải lỗi
+repo hay notebook.
 
 ## Scope Check
 
-The work stayed inside the approved Phase 1 scope: backend package skeleton, central settings YAML, settings loader, logging setup, shared schema dataclass, and package markers. No runtime ingestion, retrieval, model calls, notebooks, API server, data curation, or evaluation implementation was added.
+Remediation giữ đúng approved scope:
 
-Accepted deviations:
+- tạo `notebooks/01_backend_foundation.ipynb`;
+- cập nhật implementation report với notebook và remediation evidence;
+- không sửa runtime code, Phase 2 code, guide, project status hoặc user report
+  từ phía Implementer.
 
-- `backend/config/README_config.md` was created. The design tree includes it, and it is harmless documentation.
-- `vector_database.vector_size` is duplicated alongside `embedding.vector_size`, matching the design requirement and adding a useful reindex warning.
-- Environment overrides are deferred until Phase 6, which keeps Phase 1 minimal.
-- Logging pins the file path to `backend/logs/application.log`, which improves cwd independence.
+Các deletion/untracked files ngoài Phase 1 không được đưa vào review scope.
 
 ## Safety And Quality Check
 
-- Security: no secrets were read, printed, logged, or exposed. The scan found only safe `.env` guidance and the local Qdrant URL.
-- Data safety: no knowledge base, raw data, chunks, payloads, or evaluation data were modified.
-- Reliability: settings loading is deterministic; invalid profile fails fast with a clear valid-profile list; logging creates `backend/logs/` as needed.
-- Performance: Phase 1 does no model loading, network calls, Qdrant calls, or unbounded work.
-- Tests: Phase 1 gate commands passed; no unit test files are required by the approved Phase 1 plan.
-- Notebooks: none created or modified, which matches Phase 1 scope.
-- Evaluation: not applicable in Phase 1; no benchmark or answer/retrieval evaluation was claimed.
+- Security: không đọc/in secret; không có live API, model, web hoặc deploy call.
+- Data safety: không sửa knowledge base hoặc runtime payload.
+- Reliability: settings fail fast; logging cleanup chạy thành công; notebook
+  import implementation thật.
+- Performance: chỉ có local bounded smoke checks, không load model.
+- Tests: compile và behavior smoke đều passed.
+- Notebooks: JSON hợp lệ, outputs rỗng, execution counts null, safe-default.
+- Evaluation: không áp dụng cho Phase 1.
 
 ## Required Changes
 
 Not applicable.
 
-## Approval Notes
+## User Confirmation Readiness
 
-Approved files:
-
-```text
-backend/config/settings.yaml
-backend/config/logging.yaml
-backend/config/README_config.md
-backend/core/settings_loader.py
-backend/core/logging_setup.py
-backend/core/schema.py
-backend/api/__init__.py
-backend/api/routes/__init__.py
-backend/core/__init__.py
-backend/embedding/__init__.py
-backend/evaluation/__init__.py
-backend/ingestion/__init__.py
-backend/ingestion/chunking/__init__.py
-backend/ingestion/helpers/__init__.py
-backend/llm/__init__.py
-backend/reranking/__init__.py
-backend/reranking/models/__init__.py
-backend/retrieval/__init__.py
-backend/scoring/__init__.py
-backend/vectorstore/__init__.py
-reports/phase_1_backend_skeleton_implementation_report.md
-```
-
-Accepted limitations:
-
-- OpenAI model IDs must be verified before Phase 6.
-- Qdrant availability is deferred to Phase 4.
-- No environment override layer until a later phase needs runtime secrets/config.
-
-Next phase allowed: Phase 2 Foods Markdown discovery and chunking.
-
-`Project_Status.md` was updated after approval.
+- Technically accepted remediation files:
+  `notebooks/01_backend_foundation.ipynb` và phần remediation trong
+  `reports/phase_1_backend_skeleton_implementation_report.md`.
+- Accepted limitations: chưa có ingestion/retrieval/model/API/evaluation;
+  OpenAI model IDs chờ Phase 6; Qdrant availability chờ Phase 4.
+- Canonical notebook: `notebooks/01_backend_foundation.ipynb`; safety check đạt.
+- User report: `reports/user_reports/phase_1_backend_skeleton_user_report.md`.
+- Người dùng cần chạy notebook theo thứ tự, đối chiếu checklist và xác nhận các
+  smoke results đúng như report.
+- Phase 3 vẫn đóng cho đến khi cả Phase 1 và Phase 2 được user xác nhận.
+- `Project_Status.md` chưa được đánh dấu approved trong review này.

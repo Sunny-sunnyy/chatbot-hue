@@ -7,7 +7,7 @@ Phase 1 tạo bộ khung Python ổn định cho toàn bộ Hue Foods RAG MVP: c
 ## Trạng thái
 
 ```text
-Status: changes_requested
+Status: approved
 Document type: as-built technical history with governance remediation
 Brainstorming level: Level 1 - focused remediation
 Implementer: DeepSeek
@@ -15,7 +15,9 @@ Reviewer: Codex
 Approval date +07: 2026-08-09
 ```
 
-Technical implementation đã được Codex phê duyệt theo contract cũ. Phase cần notebook và user report retrofit trước khi người dùng xác nhận lại; không sửa lịch sử technical acceptance.
+Mã xử lý và notebook đã được Codex kiểm tra đạt. Báo cáo dành cho người dùng đã
+được viết lại bằng tiếng Việt đơn giản hơn và đang chờ người dùng xác nhận.
+DeepSeek không cần sửa Phase 1.
 
 ## Dependency
 
@@ -133,7 +135,8 @@ Phase đã hoàn tất. Nếu có scope mới:
 
 ## Notebook
 
-DeepSeek phải tạo `notebooks/01_backend_foundation.ipynb` trong remediation scope. Notebook phải:
+Notebook remediation `notebooks/01_backend_foundation.ipynb` đã được tạo và
+technical review đạt. Notebook:
 
 - giải thích backend package layout, settings, logging và shared schema bằng tiếng Việt;
 - import Phase 1 modules thay vì duplicate logic;
@@ -186,7 +189,8 @@ reports/phase_1_backend_skeleton_codex_review.md
 reports/user_reports/phase_1_backend_skeleton_user_report.md
 ```
 
-Technical Codex verdict lịch sử: `approved`. Canonical phase status hiện là `changes_requested` cho notebook/user-confirmation retrofit. User report chỉ được tạo sau khi remediation technical review đạt.
+Kết luận kỹ thuật: `approved`. Người dùng đã chạy notebook, đọc báo cáo mới và
+xác nhận Giai đoạn 1 ngày 2026-08-09.
 
 ## Tiêu chí phê duyệt
 
@@ -199,8 +203,10 @@ Technical Codex verdict lịch sử: `approved`. Canonical phase status hiện l
 - Notebook Phase 1 đạt safety contract.
 - User report mô tả đúng validation/limitations và được người dùng xác nhận.
 
-Technical criteria đã đạt ngày 2026-08-09; governance retrofit criteria đang chờ.
+Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã đạt ngày
+2026-08-09.
 
 ## Bước tiếp theo
 
-DeepSeek thực hiện focused remediation để tạo notebook Phase 1 và implementation report bổ sung. Sau Codex review, người dùng xác nhận user report/notebook trước khi phase trở lại `approved`.
+Giai đoạn 1 đã hoàn tất. Bước tiếp theo là chuẩn bị Giai đoạn 3 sau khi gói Giai
+đoạn 1–2 được commit và push.

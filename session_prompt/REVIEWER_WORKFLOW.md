@@ -259,11 +259,49 @@ validation thực tế. Không copy nguyên technical report, không bịa pass,
 che failed/skipped checks và không thay scope. Dùng đúng cấu trúc trong
 `session_prompt/TEMPLATE_USER_REPORT.md`.
 
+### Cấu trúc và cách viết bắt buộc
+
+Người đọc chính là người đang học kỹ thuật AI, không phải agent viết mã. Báo
+cáo phải đọc được trong khoảng năm phút và dùng đúng tám mục trong
+`session_prompt/TEMPLATE_USER_REPORT.md`:
+
+1. Trạng thái hiện tại.
+2. Bạn nhận được gì từ giai đoạn này.
+3. Hệ thống hoạt động như thế nào.
+4. Kết quả Codex đã kiểm tra.
+5. Cách bạn tự kiểm tra.
+6. Giới hạn hiện tại.
+7. Bước tiếp theo và cách xác nhận.
+8. Nếu bạn muốn xem chi tiết kỹ thuật.
+
+Quy tắc bắt buộc:
+
+- diễn giải trạng thái bằng tiếng Việt; không đưa mã trạng thái nội bộ vào báo
+  cáo dành cho người dùng;
+- ưu tiên tiếng Việt thông thường và câu ngắn;
+- giải thích thuật ngữ bắt buộc ở lần đầu, sau đó dùng cách gọi tiếng Việt;
+- giải thích ý nghĩa của số liệu, không chỉ liệt kê con số;
+- dùng notebook làm cách người dùng tự kiểm tra chính;
+- chỉ đưa câu lệnh kỹ thuật khi người dùng thật sự cần chạy ngoài notebook;
+- phân biệt rõ kết quả đã có, giới hạn hiện tại và hành động tiếp theo;
+- cập nhật báo cáo thành bản hiện trạng, không nối thêm lịch sử sửa lỗi không
+  còn ảnh hưởng;
+- không chép nguyên báo cáo kỹ thuật, chi tiết gỡ lỗi hoặc mã băm nội bộ;
+- không dùng giọng quảng bá, câu dẫn chung chung hoặc kết luận phóng đại.
+
+Mã trạng thái chính xác vẫn được giữ trong guide và Codex review để quản lý
+quy trình. Việc bỏ mã đó khỏi báo cáo người dùng không thay đổi vòng đời phase.
+
+Trước khi xin người dùng xác nhận, Codex phải trả lời đủ chín câu hỏi tự kiểm
+tra ở cuối `session_prompt/TEMPLATE_USER_REPORT.md`. Nếu một câu trả lời là
+“không”, sửa báo cáo trước khi gửi.
+
 ## Final Approval, Project Status, Commit Và Push
 
 Sau khi user xác nhận user report và notebook:
 
-1. Cập nhật user report từ `pending` thành `confirmed` và ghi thời gian UTC+7.
+1. Đổi trạng thái trong user report thành `Đã được bạn xác nhận` và ghi thời
+   gian UTC+7.
 2. Chuyển guide từ `awaiting_user_confirmation` sang `approved`.
 3. Cập nhật `guides/README.md` và `Project_Status.md` thành snapshot mới nhất.
 4. Ghi file chính, validation và next action.

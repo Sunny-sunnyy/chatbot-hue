@@ -7,9 +7,9 @@ Phase 2 chuyển curated Markdown về ẩm thực Huế thành semantic chunks 
 ## Trạng thái
 
 ```text
-Status: changes_requested
+Status: approved
 Document type: as-built technical history with governance remediation
-Brainstorming level: Level 1 - focused remediation
+Brainstorming level: Level 2 - standard
 Implementer: DeepSeek
 Reviewer: Codex
 Approval date +07: 2026-08-09
@@ -22,6 +22,10 @@ Approval date +07: 2026-08-09
 - Không dùng `_source-dumps`, `meta` hoặc evaluation data làm chunk input.
 - Không cần embedding, Qdrant, model API hoặc web.
 
+Người dùng đã chạy notebook, yêu cầu cải thiện cách hiển thị mẫu và phê duyệt
+thay đổi cách chia đoạn. Phạm vi mới đã được làm rõ và sẵn sàng giao DeepSeek.
+Lịch sử kiểm tra kỹ thuật trước thay đổi được giữ nguyên.
+
 ## Corpus research đã thực hiện
 
 Mini research kiểm tra toàn corpus:
@@ -31,14 +35,24 @@ Mini research kiểm tra toàn corpus:
 - 24 cafe files;
 - 9 local specialty files;
 - một `food-guides.md`;
-- 908 H2 sections trước exclusion/aggregation;
+- 454 mục H2 tổng cộng;
+- 90 mục `Nguồn dữ liệu` bị loại;
+- 364 mục H2 dùng để tạo nội dung trả lời;
 - hai image-only Markdown lines trong hai restaurant files;
-- khoảng 40 menu tables cùng các bảng local specialty;
+- 24 bảng Markdown; 8 bảng dài hơn 400 ký tự, bảng dài nhất 927 ký tự;
 - có H3 subsections nằm trong H2 body;
 - chỉ hai sections dài hơn 1.500 ký tự, đều trong `food-guides.md`, dài nhất 2.298 ký tự;
 - tất cả files bắt đầu bằng đúng một H1, không có pre-H2 content hoặc empty section trong corpus đã khảo sát.
 
-## Chức năng đã thực hiện
+Phân bố độ dài đã đo trực tiếp trên 364 mục dùng để trả lời:
+
+| Phạm vi | Trung bình | Trung vị | 90% không vượt quá | Lớn nhất |
+|---|---:|---:|---:|---:|
+| Một mục H2 | 430 | 349 | 800 | 2.298 |
+| Một khối đoạn văn hoặc bảng | 258 | 227 | 524 | 1.261 |
+| Một bảng Markdown | 391 | 266 | 835 | 927 |
+
+## Chức năng lịch sử đã thực hiện
 
 - Discover Markdown deterministically theo sorted path.
 - Parse H1 thành document title.
@@ -50,6 +64,22 @@ Mini research kiểm tra toàn corpus:
 - Không tách một block đơn lẻ lớn hơn limit để tránh phá table.
 - Tạo stable metadata và deterministic `chunk_id`.
 - Tạo learning notebook chỉ import runtime modules.
+
+## Phạm vi thay đổi đã được phê duyệt
+
+- Giữ H2 làm ranh giới nội dung chính.
+- Đổi giới hạn phần nội dung từ 1.500 xuống 400 ký tự.
+- Không tính nhãn ngữ cảnh vào giới hạn 400 ký tự.
+- Ưu tiên ngắt tại đoạn văn, cuối câu và giữa các dòng danh sách.
+- Nếu một câu vẫn dài hơn 400 ký tự, ngắt tại khoảng trắng gần nhất; không cắt
+  giữa từ.
+- Không chồng lặp giữa hai chunk liên tiếp.
+- Giữ nguyên một bảng Markdown như một khối, kể cả khi dài hơn 400 ký tự.
+- Thêm một nhãn ngữ cảnh ngắn vào đầu mỗi chunk bằng quy tắc cố định, không gọi
+  AI và không thêm dữ liệu ngoài file nguồn.
+- Giữ nguyên bảy trường metadata và công thức `chunk_id` ổn định.
+- Cải thiện notebook để người học phân biệt nội dung thật, phần xem trước và cú
+  pháp bảng Markdown.
 
 ## Files canonical
 
@@ -87,7 +117,7 @@ Mỗi chunk có shape:
 
 ```python
 {
-    "text": "Nội dung section không rỗng",
+    "text": "Tên tài liệu — nhãn ngắn\nNội dung section không rỗng",
     "metadata": {
         "chunk_id": "foods/cafes/example.md|Tóm tắt|0",
         "source": "foods/cafes/example.md",
@@ -113,7 +143,31 @@ Metadata invariants:
 
 ### Section boundary
 
-H2 heading đi vào `metadata.section`; chunk text chỉ chứa body. H3 không tạo top-level chunk mới vì nó thuộc ngữ nghĩa của H2 hiện tại.
+H2 heading đi vào `metadata.section`. H3 không tạo top-level chunk mới vì nó
+thuộc ngữ nghĩa của H2 hiện tại. Chunk text bắt đầu bằng tiêu đề tài liệu và một
+nhãn ngữ cảnh ngắn, sau đó mới tới phần nội dung gốc.
+
+### Nhãn ngữ cảnh
+
+Nhãn phải ngắn, tự nhiên và đúng với nội dung thật, ví dụ:
+
+```text
+ANH KAFE tại Huế — địa chỉ
+```
+
+Quy tắc:
+
+- restaurants/cafes dùng các nhãn như `giới thiệu`, `địa chỉ`,
+  `giờ hoạt động`, `mức giá`, `menu`, `trải nghiệm`;
+- local specialties dùng các nhãn như `giới thiệu`, `thành phần`, `cách làm`,
+  `nguồn gốc`, `địa điểm`;
+- food guide dùng chủ đề ngắn của mục như `ăn sáng`, `ăn tối`, `món chay`,
+  `tour 1 ngày`;
+- mục có tên rõ như menu hoặc nguồn gốc được ánh xạ trực tiếp;
+- với mục chung như `Thông tin`, chỉ dùng nhãn cụ thể khi phần nội dung có đúng
+  một chủ đề nhận diện được; nếu có nhiều chủ đề thì dùng nhãn chung như
+  `thông tin quán`;
+- không chép địa chỉ thật vào nhãn và không ghép danh sách dài các chủ đề.
 
 ### Source section exclusion
 
@@ -125,22 +179,36 @@ Image-only line `![alt](url)` bị loại vì alt text và URL không cung cấp
 
 ### Long section handling
 
-`split_text` greedily pack paragraph blocks đến `max_chars=1500`. Oversized atomic block được giữ nguyên, tránh phá Markdown table hoặc làm mất cấu trúc.
+`split_text` giới hạn phần nội dung thông thường ở `max_chars=400`. Hàm phải
+nhận biết đoạn văn, danh sách và bảng; ưu tiên ranh giới tự nhiên, không cắt giữa
+từ và không chồng lặp. Bảng là khối nguyên tử và được phép vượt giới hạn.
 
-## Brainstorming
+## Quyết định thiết kế đã chốt
 
-Không brainstorm lại Phase 2. Các interpretation trên đã được Codex phê duyệt.
+Ba hướng đã được cân nhắc: sao chép nguyên `split_paragraphs()` của `llm_rag`,
+giữ mức 1.500 ký tự, hoặc kế thừa nguyên tắc `llm_rag` nhưng điều chỉnh cho
+Markdown. Người dùng chọn hướng thứ ba.
 
-Nếu thay threshold, exclusion rule, chunk granularity, metadata fields hoặc ID formula, phải:
-
-1. mở scope mới;
-2. đánh giá ảnh hưởng đến embedding/index/evaluation artifacts;
-3. quyết định có cần reindex và regenerate relevance judgments;
-4. cập nhật guide qua Codex trước implementation.
+Hàm cũ không được sao chép nguyên xi vì có thể cắt cứng giữa bảng, câu hoặc từ.
+Mức 400 ký tự được dùng làm cấu hình nền ban đầu vì trung vị của mục H2 hiện là
+349 ký tự, tổng dữ liệu dự kiến vẫn nhỏ và đây là mốc đã dùng trong `llm_rag`.
+Phase 8 có thể so sánh 400 với 600 hoặc 800 bằng cùng bộ câu hỏi đánh giá.
 
 ## Nhiệm vụ của DeepSeek Implementer
 
-Phase đã hoàn tất. Với scope mới, implementer phải giữ deterministic behavior, thêm test trước khi sửa parser/splitter và không sửa curated data để làm test pass.
+DeepSeek chỉ thực hiện phạm vi đã phê duyệt:
+
+- sửa `split_text.py`, `markdown_chunker.py` và tests cần thiết;
+- giữ parser và metadata contract nếu không có bằng chứng bắt buộc phải đổi;
+- tạo nhãn bằng quy tắc cố định, không dùng model hoặc web;
+- không sửa curated Markdown để làm test pass;
+- đo lại số chunk và phân bố thật, không giữ cứng con số 366;
+- cập nhật notebook Phase 2 với ba ví dụ có chủ đích: một đoạn văn, một bảng và
+  một đoạn food guide; dùng hiển thị Markdown để bảng có hàng/cột rõ ràng;
+- ghi độ dài phần nội dung, giải thích phần xem trước không cắt dữ liệu thật;
+- làm sạch outputs và đưa mọi `execution_count` về `null` trước handoff;
+- cập nhật implementation report với file, lệnh và kết quả kiểm tra thật;
+- không sửa guide, Codex review, user report hoặc `Project_Status.md`.
 
 ## Nhiệm vụ của Codex Reviewer
 
@@ -149,18 +217,20 @@ Phase đã hoàn tất. Với scope mới, implementer phải giữ deterministi
 - Đánh giá blast radius đến Phase 3–8 nếu chunk output thay đổi.
 - Không approve re-chunking mà không nêu yêu cầu reindex và benchmark comparability.
 
-## Notebook contract đã đạt
+## Notebook contract cho lần sửa này
 
-Notebook hiện tại phải được rename nguyên nội dung thành `notebooks/02_foods_data_and_chunking.ipynb` để số notebook trùng Phase 2:
+Notebook giữ tên `notebooks/02_foods_data_and_chunking.ipynb` và import backend
+modules, không chép lại logic chia đoạn. Notebook phải:
 
-- 9 cells;
-- import backend modules, không duplicate parser/chunker;
-- hiển thị discovery, schema, corpus statistics và sample theo document type khi người dùng tự chạy;
+- hiển thị discovery, metadata schema và số liệu corpus mới;
+- hiển thị đúng ba ví dụ: đoạn văn, bảng Markdown đã render và food guide;
+- giải thích dấu `|`, hàng `---`, giới hạn 400, ngoại lệ bảng và nhãn ngữ cảnh;
+- phân biệt rõ phần xem trước với nội dung chunk thật;
 - committed outputs rỗng;
 - mọi `execution_count` là `null`;
 - không chứa live API, web, Qdrant, secret hoặc private absolute path.
 
-## Validation đã được phê duyệt
+## Kiểm tra lịch sử đã được chấp nhận
 
 ```bash
 cd backend
@@ -181,11 +251,29 @@ Accepted evidence:
 - `Nguồn dữ liệu` không trở thành chunk;
 - IDs unique và stable qua repeated runs.
 
+Các số liệu 366 chunks và 17 tests chỉ là lịch sử trước thay đổi, không phải kết
+quả mong đợi cố định của lần triển khai mới.
+
+## Kiểm tra bắt buộc cho thay đổi mới
+
+- Phần nội dung thông thường không vượt 400 ký tự trước khi thêm nhãn.
+- Bảng Markdown giữ nguyên và được phép vượt 400 ký tự.
+- Không cắt giữa từ; danh sách ưu tiên ngắt giữa các dòng.
+- Mỗi chunk có đúng một nhãn ngắn và nhãn không thêm dữ liệu mới.
+- Không có chunk rỗng; đủ bảy metadata fields.
+- `chunk_id` unique và stable qua hai lần chạy với cùng input.
+- Vẫn xử lý đủ 91 files và loại đúng folders/sections đã chốt.
+- Không còn yêu cầu số chunk phải bằng 366; report phải ghi số thật.
+- Toàn bộ tests cũ còn phù hợp phải tiếp tục đạt; bổ sung tests cho hành vi mới.
+- Notebook JSON hợp lệ, outputs rỗng, execution counts null và không external
+  call.
+
 ## Accepted deviations và limitations
 
 - Không có deviation khỏi approved phase scope.
-- `Nguồn dữ liệu` exclusion và 1.500-character default là approved interpretations.
-- Threshold nằm trong module default thay vì `settings.yaml`; thay đổi sau này cần controlled chunking experiment.
+- `Nguồn dữ liệu` exclusion tiếp tục được giữ nguyên.
+- Giới hạn mới là 400 ký tự cho phần nội dung; bảng là ngoại lệ có chủ ý.
+- Threshold tiếp tục nằm trong module; Phase 8 mới thực hiện so sánh có kiểm soát.
 - `backend/tests/` không có `__init__.py`; approved command chạy từ `backend/` nên imports resolve đúng.
 
 ## Security, data safety, reliability và performance
@@ -204,21 +292,46 @@ reports/phase_2_foods_markdown_chunking_codex_review.md
 reports/user_reports/phase_2_foods_markdown_chunking_user_report.md
 ```
 
-Technical Codex verdict lịch sử: `approved`. Canonical phase status hiện là `changes_requested` cho notebook rename/user-confirmation retrofit. User report chỉ được tạo sau khi remediation technical review đạt.
+Kết luận kỹ thuật: `approved`. Người dùng đã chạy notebook mới, quan sát đúng
+572 đoạn, 0 đoạn thường vượt 400 ký tự và 8 bảng vượt 400 ký tự, sau đó xác
+nhận Giai đoạn 2 ngày 2026-08-09.
 
 ## Tiêu chí phê duyệt
 
 - Corpus discovery đúng scope.
-- Semantic section chunks có text không rỗng.
+- Semantic section chunks có text không rỗng và có nhãn ngữ cảnh ngắn.
 - Required metadata đầy đủ và paths an toàn.
-- Tables/H3 giữ được ngữ cảnh; image/source-only lines không gây noise.
+- Nội dung thường tuân giới hạn 400; bảng/H3 giữ được ngữ cảnh;
+  image/source-only lines không gây noise.
 - Tests, notebook safety và deterministic IDs đạt gate.
 - Không có external access hoặc data mutation.
-- Notebook đã rename đúng Phase 2, mọi references được cập nhật và safety validation vẫn đạt.
+- Notebook đúng tên Phase 2, hiển thị ba mẫu đã chốt và đạt quy tắc an toàn.
 - User report mô tả đúng validation/limitations và được người dùng xác nhận.
 
-Technical criteria đã đạt ngày 2026-08-09; governance retrofit criteria đang chờ.
+Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã đạt ngày
+2026-08-09.
 
 ## Bước tiếp theo
 
-DeepSeek rename notebook Phase 2, cập nhật references và ghi remediation evidence. Sau Codex review, người dùng xác nhận user report/notebook; Phase 3 chỉ mở lại sau Phase 1–2 `approved`.
+Giai đoạn 2 đã hoàn tất. Bước tiếp theo là chuẩn bị Giai đoạn 3 và lập chỉ mục
+từ toàn bộ 572 đoạn mới; không dùng lại số liệu 366 đoạn cũ.
+
+## Quyết định được người dùng phê duyệt ngày 2026-08-09
+
+```text
+Decision: Dùng H2 làm ranh giới chính; chia phần nội dung thường ở 400 ký tự; giữ nguyên bảng; không chồng lặp; thêm một nhãn ngữ cảnh ngắn.
+Approved by: User
+Approval date +07: 2026-08-09
+Evidence: Brainstorming sau khi người dùng chạy notebook Phase 2 và yêu cầu xem lại cách chia đoạn.
+Affected scope: split_text.py, markdown_chunker.py, tests, notebook Phase 2, implementation report, Codex review và user report Phase 2.
+Revisit trigger: Kết quả kiểm tra retrieval cho thấy 400 ký tự làm mất ngữ cảnh hoặc Phase 8 bắt đầu so sánh kích thước chunk.
+```
+
+```text
+Decision: Sửa số liệu corpus thành 454 mục H2 tổng cộng, loại 90 mục Nguồn dữ liệu và dùng 364 mục trả lời.
+Approved by: User
+Approval date +07: 2026-08-09
+Evidence: Đo trực tiếp 91 curated foods files bằng parser hiện tại và được người dùng xác nhận.
+Affected scope: Guide, notebook, implementation report, Codex review và user report Phase 2.
+Revisit trigger: Curated foods corpus thay đổi.
+```
