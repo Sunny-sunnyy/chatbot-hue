@@ -49,7 +49,8 @@ Không chunk trực tiếp từ `_source-dumps`. Enrichment chỉ thực hiện 
 | `backend/` | Runtime Python và unit/integration tests |
 | `notebooks/` | Notebook học tập, import backend modules |
 | `guides/` | Hướng dẫn canonical theo phase |
-| `reports/` | Implementation evidence, Codex review và benchmark summary |
+| `reports/` | Technical implementation evidence, Codex review và benchmark summary dành cho coding agents |
+| `reports/user_reports/` | Báo cáo phase dễ hiểu dành cho người dùng, chỉ Codex Reviewer tạo/cập nhật |
 | `backend/evaluation/results/` | JSONL outputs chi tiết khi evaluation đã implement |
 | `session_prompt/Project_Status.md` | Snapshot bàn giao hiện tại |
 
@@ -186,7 +187,8 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Giữ module nhỏ, interface rõ và không implement future flexibility.
 - Dùng `UV_CACHE_DIR=/tmp/uv-cache uv run ...`, không dùng `pip`.
 - Chạy test không live trước; xin approval riêng cho external services.
-- Tạo notebook và implementation report đúng phase.
+- Tạo notebook bắt buộc cho Phase 1–8 và implementation report đúng phase.
+- Không tạo hoặc sửa user report.
 
 ## Nhiệm vụ của Codex Reviewer
 
@@ -194,16 +196,42 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Xác minh implementation report bằng command độc lập phù hợp.
 - Không chấp nhận claim chỉ dựa trên notebook output hoặc lời mô tả.
 - Không approve nếu silent fallback, fabricated metrics, uncontrolled comparison hoặc destructive action thiếu evidence.
-- Chỉ cập nhật status sau verdict `approved`.
+- Khi technical review đạt, tạo user report `pending` và chuyển phase sang `awaiting_user_confirmation`.
+- Chỉ sau user confirmation mới chuyển phase sang `approved`, cập nhật `Project_Status.md`, audit approved package, commit và push.
 
 ## Notebook contract
 
+- Mọi implementation phase từ Phase 1 đến Phase 8 có đúng một notebook canonical; số notebook trùng số phase.
 - Notebook nằm trong `notebooks/` và import backend modules.
 - Không duplicate runtime logic.
 - Mọi output rỗng; mọi `execution_count` là `null` trong repo.
 - Default cells không gọi live model/API, web, deploy, Qdrant bên ngoài hoặc secrets.
 - Real mode phải opt-in bằng environment/config guard rõ ràng.
 - Không lưu private path, raw headers, raw model payload lớn hoặc stack trace có sensitive data.
+
+Notebook canonical:
+
+```text
+notebooks/01_backend_foundation.ipynb
+notebooks/02_foods_data_and_chunking.ipynb
+notebooks/03_embedding_models.ipynb
+notebooks/04_qdrant_ingestion.ipynb
+notebooks/05_retrieval_profiles.ipynb
+notebooks/06_generation_and_api.ipynb
+notebooks/07_evaluation.ipynb
+notebooks/08_benchmark_model_selection.ipynb
+```
+
+Phase 0 được miễn. Phase 9 chỉ có notebook sau khi rời `design_only` bằng một design và implementation approval riêng.
+
+## Report và user confirmation contract
+
+- DeepSeek viết technical implementation report trong `reports/`.
+- Codex viết technical review report trong `reports/`.
+- Sau technical review đạt, Codex viết `reports/user_reports/phase_<id>_<short_name>_user_report.md` bằng tiếng Việt dễ hiểu.
+- User report phải có trạng thái, mục tiêu, chức năng, luồng, file quan trọng, notebook, lệnh tự kiểm tra, validation thực tế, kỹ thuật, giới hạn, external API/cost, bước tiếp theo và checklist xác nhận.
+- Phase chỉ được `approved` sau khi user xác nhận user report và notebook.
+- User confirmation cho phép Codex commit/push đúng approved phase package sau staged-scope audit; không bao gồm thay đổi ngoài scope.
 
 ## Evaluation và benchmark contract
 
@@ -238,6 +266,7 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Ba retrieval profiles có semantics khác nhau rõ ràng.
 - One-active-collection lifecycle và deletion gate được chốt.
 - Evaluation, benchmark, notebook và report contracts được chốt.
+- Dual-report model và hard user-confirmation gate được chốt.
 - Phase 9 có hard gate thiết kế riêng.
 
 ## Quyết định đã phê duyệt
@@ -260,6 +289,15 @@ Affected scope: Phase 3, 4, 5, 7 và 8.
 Revisit trigger: Local resource preflight thất bại hoặc baseline không thể chạy hợp lệ.
 ```
 
+```text
+Decision: Tách technical reports cho coding agents và user reports cho người dùng; Phase 1–8 cần notebook và user confirmation trước approved.
+Approved by: User
+Approval date +07: 2026-08-09
+Evidence: Brainstorming governance trong session reviewer hiện tại.
+Affected scope: Phase 1–9, guides, workflows, report templates, notebooks và Project_Status lifecycle.
+Revisit trigger: Người dùng yêu cầu thay đổi approval authority, report audience hoặc notebook gate.
+```
+
 ## Bước tiếp theo
 
-Phase 1 và Phase 2 đã được phê duyệt. Phase 3 là phase kế tiếp và phải hoàn tất Level 2 brainstorming trước khi Codex chuyển trạng thái sang `ready`.
+Phase 1–2 cần hoàn tất notebook/user-report retrofit và được người dùng xác nhận lại. Phase 3 giữ `not_ready` cho đến khi cả hai phase trở lại `approved`.

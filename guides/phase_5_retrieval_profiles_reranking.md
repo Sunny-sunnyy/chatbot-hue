@@ -49,7 +49,7 @@ backend/tests/test_bm25.py
 backend/tests/test_retrieval_service.py
 backend/tests/test_reranker.py
 backend/tests/test_context_builder.py
-notebooks/04_retrieval_profiles.ipynb
+notebooks/05_retrieval_profiles.ipynb
 ```
 
 OpenRouter reranker file chỉ implement sau exact endpoint/model preflight; mocked provider contract vẫn phải test được.
@@ -262,7 +262,7 @@ Mỗi lựa chọn phải nêu hypothesis, metric sẽ phân biệt và stop con
 
 ## Notebook bắt buộc
 
-`notebooks/04_retrieval_profiles.ipynb` phải:
+`notebooks/05_retrieval_profiles.ipynb` phải:
 
 - import retrieval service và ContextBuilder;
 - giải thích ba profiles bằng tiếng Việt;
@@ -310,6 +310,7 @@ Manual real retrieval probes cần Qdrant/local model approval và chỉ là pre
 - Remote adapter nếu có được mock-test và không silent fallback trong benchmark.
 - Context bounded, deterministic và giữ sources.
 - Notebook an toàn, report đầy đủ, không live access ngoài approval.
+- User report phản ánh đúng profile behavior/limitations và được người dùng xác nhận cùng notebook.
 - Representative food queries trả documents; quality winner chưa được tuyên bố trước Phase 7–8.
 
 ## Reports và benchmark
@@ -318,9 +319,10 @@ Manual real retrieval probes cần Qdrant/local model approval và chỉ là pre
 reports/phase_5_retrieval_profiles_reranking_implementation_report.md
 reports/phase_5_retrieval_profiles_reranking_codex_review.md
 reports/hue_foods_rag_benchmark.md
+reports/user_reports/phase_5_retrieval_profiles_reranking_user_report.md
 ```
 
-Codex chỉ cập nhật `Project_Status.md` sau approval.
+Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
 
 ## Bước tiếp theo
 

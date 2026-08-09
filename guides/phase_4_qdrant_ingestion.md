@@ -15,7 +15,7 @@ Implementer: DeepSeek after Phase 3 approval and Phase 4 readiness
 
 ## Dependency
 
-- Phase 3 phải được Codex phê duyệt.
+- Phase 3 phải được người dùng xác nhận và có status `approved`.
 - Dense model ID, actual dimension, normalization và sparse state contract đã khóa.
 - Qdrant local availability chưa được giả định; phải preflight.
 - User approval bắt buộc trước collection deletion/reset.
@@ -42,7 +42,7 @@ backend/ingestion/pipeline.py
 backend/tests/test_qdrant_schema.py
 backend/tests/test_hybrid_index.py
 backend/tests/test_ingestion_pipeline.py
-notebooks/03_qdrant_ingestion.ipynb
+notebooks/04_qdrant_ingestion.ipynb
 ```
 
 File list chỉ thay đổi sau brainstorming nếu có lý do cụ thể về ownership; không copy module thừa từ `llm_rag`.
@@ -186,7 +186,7 @@ Collection đang tồn tại chỉ được inspect read-only trong preflight; k
 
 ## Notebook bắt buộc
 
-`notebooks/03_qdrant_ingestion.ipynb` phải:
+`notebooks/04_qdrant_ingestion.ipynb` phải:
 
 - import Phase 2–4 modules;
 - giải thích named vectors, payload và one-active-collection lifecycle;
@@ -246,6 +246,7 @@ reset flag và approval evidence
 - Payload không có absolute private path hoặc secret.
 - `reset_collection=false` bảo vệ collection.
 - Notebook an toàn và report có destructive-action evidence.
+- User report phản ánh đúng collection actions/limitations và được người dùng xác nhận cùng notebook.
 - Không tuyên bố sparse query behavior chưa implement.
 
 ## Reports và cập nhật trạng thái
@@ -253,9 +254,10 @@ reset flag và approval evidence
 ```text
 reports/phase_4_qdrant_ingestion_implementation_report.md
 reports/phase_4_qdrant_ingestion_codex_review.md
+reports/user_reports/phase_4_qdrant_ingestion_user_report.md
 ```
 
-Model/collection metadata và ingestion run summary được nối vào `reports/hue_foods_rag_benchmark.md`. Codex cập nhật `Project_Status.md` sau approval.
+Model/collection metadata và ingestion run summary được nối vào `reports/hue_foods_rag_benchmark.md`. Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
 
 ## Bước tiếp theo
 

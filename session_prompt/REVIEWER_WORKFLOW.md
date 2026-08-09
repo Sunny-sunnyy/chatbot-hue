@@ -6,9 +6,8 @@ Dùng file này khi user giao session hiện tại cho Codex làm reviewer và
 gatekeeper cho `hue_rag`.
 
 Codex không phải default implementer. Codex review phần DeepSeek hoặc
-implementation agent đã nộp, viết review feedback, approve hoặc block việc
-chuyển phase, cập nhật `Project_Status.md` sau approval, và chỉ commit/push khi
-user yêu cầu rõ.
+implementation agent đã nộp, viết technical review, tạo user report dễ hiểu,
+điều phối user-confirmation gate và chỉ finalize phase sau khi user xác nhận.
 
 ## Context Bắt Buộc
 
@@ -19,12 +18,29 @@ Trước khi review, đọc:
 /home/hieu0606sunny/hue_rag/session_prompt/REVIEWER_WORKFLOW.md
 /home/hieu0606sunny/hue_rag/session_prompt/Project_Status.md
 /home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_CODEX_REVIEW.md
+/home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_USER_REPORT.md
 guides/README.md
 guides/phase_0_mvp_foundation.md
 guide của phase đang review: guides/phase_<id>_<short_name>.md
 implementation report tương ứng: reports/phase_<id>_<short_name>_implementation_report.md
+Codex review report cũ nếu đã tồn tại: reports/phase_<id>_<short_name>_codex_review.md
+user report nếu đã tồn tại: reports/user_reports/phase_<id>_<short_name>_user_report.md
 reports/hue_foods_rag_benchmark.md nếu phase liên quan model, retrieval, evaluation hoặc benchmark
 ```
+
+## Session Bootstrap Contract
+
+Khi user chỉ cung cấp `Session_Prompt.md` và `REVIEWER_WORKFLOW.md`, reviewer tự:
+
+1. xác định repo root và role Reviewer;
+2. đọc `Project_Status.md`, `guides/README.md` và Phase 0 foundation;
+3. suy ra phase hiện tại từ status snapshot và guide index;
+4. đọc current phase guide, implementation report và mọi review/user report đã tồn tại;
+5. đọc đúng templates trước khi viết report;
+6. đọc benchmark ledger khi phase liên quan model, retrieval, evaluation hoặc benchmark.
+
+Nếu không suy ra duy nhất một phase, thiếu file bắt buộc hoặc trạng thái không
+cho phép review, dừng và hỏi user đúng một câu thay vì đoán.
 
 Nếu review liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
 dụng:
@@ -61,24 +77,29 @@ Codex reviewer phải:
   evidence liên quan;
 - kiểm tra security, data safety, reliability, performance, và scope control;
 - viết Codex review file riêng trong `/home/hieu0606sunny/hue_rag/reports/`;
+- khi technical review đạt, viết user report trong `reports/user_reports/` theo
+  `TEMPLATE_USER_REPORT.md` và dùng giọng văn tiếng Việt dễ hiểu;
 - chỉ sửa canonical phase guide trong reviewer scope và không thay acceptance
   lịch sử của phase đã khóa;
 - sau brainstorming được user phê duyệt, ghi decision record vào guide và chỉ
   chuyển phase sang `ready` khi mọi hard gate đã rõ;
 - khi nhận implementation report, đối chiếu report với guide rồi chuyển trạng
-  thái canonical sang `under_review`; sau verdict chuyển sang `approved`,
-  `changes_requested` hoặc `blocked`;
+  thái canonical sang `under_review`; sau technical verdict chuyển sang
+  `awaiting_user_confirmation`, `changes_requested` hoặc `blocked`;
 - yêu cầu correction khi findings chặn approval;
-- chỉ cập nhật `Project_Status.md` sau khi phase/milestone được approve;
-- nhắc user commit sau checkpoint ổn định nếu phù hợp.
+- chỉ cập nhật `Project_Status.md` sau khi user xác nhận user report/notebook và
+  phase được chuyển sang `approved`;
+- coi xác nhận hoàn tất phase của user là quyền commit/push đúng approved phase
+  package sau validation và staged-scope audit.
 
 Codex reviewer không được:
 
 - sửa runtime code của implementer để fix hộ phase;
 - sửa implementation report của implementer;
+- để DeepSeek tạo hoặc sửa user report;
 - mặc định hành động như phase implementer;
 - cập nhật `Project_Status.md` trước approval;
-- commit hoặc push nếu user chưa yêu cầu rõ;
+- commit hoặc push trước final user confirmation hoặc ngoài approved phase package;
 - chạy live OpenAI/OpenRouter/model API, web enrichment, dependency install,
   deploy command, hoặc external service call nếu chưa được user approve rõ;
 - đọc hoặc in secrets từ `.env`, credentials, keys, tokens, auth files, hoặc
@@ -88,7 +109,8 @@ Codex chỉ được thực hiện finalization edits nhỏ khi chúng thuộc r
 hoặc user yêu cầu rõ, ví dụ:
 
 - viết review file;
-- cập nhật `Project_Status.md` sau approval;
+- viết/cập nhật user report;
+- cập nhật guide, user report và `Project_Status.md` sau user confirmation;
 - sửa governance/status docs hẹp để finalize approval.
 
 ## Human-Assisted Tasks
@@ -130,9 +152,9 @@ user chưa yêu cầu rõ.
 Khi chưa có CodeGraph, dùng `rg`, file reads, tests, notebooks, và evaluation
 evidence.
 
-## Notebook Review Rules
+## Notebook Review Và User Confirmation Rules
 
-Khi phase có notebook, reviewer phải kiểm tra:
+Phase 1–8 bắt buộc có notebook canonical mang đúng số phase. Reviewer phải kiểm tra:
 
 - notebook JSON parse được;
 - `execution_count` là `null`;
@@ -143,6 +165,13 @@ Khi phase có notebook, reviewer phải kiểm tra:
 - real-mode cells nếu có opt-in rõ bằng env/config guard;
 - notebook không chứa secrets, private paths nhạy cảm, raw headers, raw model
   payloads lớn, hoặc stack traces chứa sensitive data.
+- Markdown cells giải thích mục tiêu, prerequisites, luồng, expected observations,
+  cách user xác nhận và giới hạn bằng tiếng Việt dễ hiểu;
+- notebook path khớp mapping trong Phase 0 foundation và current phase guide.
+
+Nếu user tự chạy notebook làm phát sinh outputs, Codex chỉ ghi evidence cần thiết
+vào user report rồi làm sạch outputs và đặt mọi `execution_count=null` trước
+commit. Không commit raw model/API payload.
 
 ## Safety And Quality Review Bắt Buộc
 
@@ -178,13 +207,17 @@ Danh sách changed files phải khớp approved guide và implementation report.
 Reviewer phải ghi rõ validation nào không chạy được; không suy diễn pass từ
 partial checks hoặc lời khai của implementer.
 
-## Review Decision
+## Technical Review Decision
 
 Dùng đúng một decision:
 
-- `approved`: phase hoặc milestone có thể chuyển sang bước tiếp theo.
+- `ready_for_user_confirmation`: technical review đạt; Codex phải tạo user
+  report `pending` và chuyển guide sang `awaiting_user_confirmation`.
 - `changes_requested`: gần đạt nhưng còn required fixes.
 - `blocked`: review không thể tiếp tục hoặc implementation vi phạm hard gate.
+
+`ready_for_user_confirmation` không phải final phase approval và không mở phase
+tiếp theo. Chỉ user confirmation mới tạo final status `approved`.
 
 Finding severity:
 
@@ -213,27 +246,39 @@ Dùng cấu trúc trong:
 session_prompt/TEMPLATE_CODEX_REVIEW.md
 ```
 
-## Approval Và Project Status
+## User Report
 
-Sau approval:
-
-1. Cập nhật `Project_Status.md` thành snapshot mới nhất.
-2. Ghi file chính, validation, và next action.
-3. Không commit trừ khi user yêu cầu rõ.
-4. Nếu logic ổn định, hỏi user:
+Khi technical decision là `ready_for_user_confirmation`, tạo hoặc cập nhật:
 
 ```text
-Logic này ổn định. Commit bây giờ trước khi đi tiếp không?
+reports/user_reports/phase_<id>_<short_name>_user_report.md
 ```
 
-Nếu user yêu cầu commit, chỉ commit approved unit và không include unrelated
-changes.
+User report phải dựa trên guide, implementation report, Codex review, code và
+validation thực tế. Không copy nguyên technical report, không bịa pass, không
+che failed/skipped checks và không thay scope. Dùng đúng cấu trúc trong
+`session_prompt/TEMPLATE_USER_REPORT.md`.
+
+## Final Approval, Project Status, Commit Và Push
+
+Sau khi user xác nhận user report và notebook:
+
+1. Cập nhật user report từ `pending` thành `confirmed` và ghi thời gian UTC+7.
+2. Chuyển guide từ `awaiting_user_confirmation` sang `approved`.
+3. Cập nhật `guides/README.md` và `Project_Status.md` thành snapshot mới nhất.
+4. Ghi file chính, validation và next action.
+5. Chạy lại verification cuối và audit exact approved phase package.
+6. Stage, commit và push đúng package; không include unrelated changes.
 
 Trước commit:
 
 ```bash
 git status --short
+git diff --check
 git diff --cached --name-only
+git diff --cached --check
 ```
 
-Không push nếu user chưa yêu cầu rõ.
+Xác nhận hoàn tất phase của user là explicit authorization cho bước commit/push
+này. Không force-push. Nếu user chỉ xác nhận một phần hoặc yêu cầu chưa commit,
+phải tuân theo giới hạn mới nhất đó.

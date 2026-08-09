@@ -8,7 +8,7 @@ Report path:
 reports/phase_<id>_<short_name>_implementation_report.md
 ```
 
-Approved guide context:
+Phase guide context:
 
 ```text
 guides/phase_0_mvp_foundation.md
@@ -35,7 +35,8 @@ Briefly summarize what was implemented.
 
 ## Notebooks Created Or Modified
 
-- `notebooks/example.ipynb` - purpose, default safety mode
+- `notebooks/0<phase>_<short_name>.ipynb` - purpose, default safety mode,
+  expected observations and how the user can verify the phase
 
 ## Commands Run
 
@@ -92,3 +93,6 @@ No live network/model/deploy/secret access occurred.
 ## Handoff To Codex
 
 State what Codex should review first and any specific risk areas.
+
+Include the canonical notebook path and the exact safe-default steps Codex/user
+can use to verify the phase. Do not create or modify a user report.

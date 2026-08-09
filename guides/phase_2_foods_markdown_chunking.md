@@ -7,9 +7,9 @@ Phase 2 chuyển curated Markdown về ẩm thực Huế thành semantic chunks 
 ## Trạng thái
 
 ```text
-Status: approved
-Document type: as-built, locked
-Brainstorming level: Level 0 - locked
+Status: changes_requested
+Document type: as-built technical history with governance remediation
+Brainstorming level: Level 1 - focused remediation
 Implementer: DeepSeek
 Reviewer: Codex
 Approval date +07: 2026-08-09
@@ -59,7 +59,7 @@ backend/ingestion/helpers/make_metadata.py
 backend/ingestion/helpers/split_text.py
 backend/ingestion/chunking/markdown_chunker.py
 backend/tests/test_markdown_chunker.py
-notebooks/01_foods_data_and_chunking.ipynb
+notebooks/02_foods_data_and_chunking.ipynb
 ```
 
 ## Input contract
@@ -151,7 +151,7 @@ Phase đã hoàn tất. Với scope mới, implementer phải giữ deterministi
 
 ## Notebook contract đã đạt
 
-`notebooks/01_foods_data_and_chunking.ipynb`:
+Notebook hiện tại phải được rename nguyên nội dung thành `notebooks/02_foods_data_and_chunking.ipynb` để số notebook trùng Phase 2:
 
 - 9 cells;
 - import backend modules, không duplicate parser/chunker;
@@ -201,9 +201,10 @@ Accepted evidence:
 ```text
 reports/phase_2_foods_markdown_chunking_implementation_report.md
 reports/phase_2_foods_markdown_chunking_codex_review.md
+reports/user_reports/phase_2_foods_markdown_chunking_user_report.md
 ```
 
-Codex verdict: `approved`.
+Technical Codex verdict lịch sử: `approved`. Canonical phase status hiện là `changes_requested` cho notebook rename/user-confirmation retrofit. User report chỉ được tạo sau khi remediation technical review đạt.
 
 ## Tiêu chí phê duyệt
 
@@ -213,9 +214,11 @@ Codex verdict: `approved`.
 - Tables/H3 giữ được ngữ cảnh; image/source-only lines không gây noise.
 - Tests, notebook safety và deterministic IDs đạt gate.
 - Không có external access hoặc data mutation.
+- Notebook đã rename đúng Phase 2, mọi references được cập nhật và safety validation vẫn đạt.
+- User report mô tả đúng validation/limitations và được người dùng xác nhận.
 
-Tất cả tiêu chí đã đạt ngày 2026-08-09.
+Technical criteria đã đạt ngày 2026-08-09; governance retrofit criteria đang chờ.
 
 ## Bước tiếp theo
 
-Phase 3 phải dùng 366 canonical chunks này làm baseline input và hoàn tất Level 2 brainstorming trước implementation.
+DeepSeek rename notebook Phase 2, cập nhật references và ghi remediation evidence. Sau Codex review, người dùng xác nhận user report/notebook; Phase 3 chỉ mở lại sau Phase 1–2 `approved`.

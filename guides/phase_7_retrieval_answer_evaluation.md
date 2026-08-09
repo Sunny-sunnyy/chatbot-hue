@@ -46,7 +46,7 @@ backend/evaluation/results/.gitkeep
 backend/tests/test_evaluation_loader.py
 backend/tests/test_evaluation_metrics.py
 backend/tests/test_answer_judge.py
-notebooks/06_evaluation.ipynb
+notebooks/07_evaluation.ipynb
 ```
 
 ## Test-case contract
@@ -233,7 +233,7 @@ Mỗi decision phải giữ test corpus/config frozen để Phase 8 so sánh cô
 
 ## Notebook bắt buộc
 
-`notebooks/06_evaluation.ipynb` phải:
+`notebooks/07_evaluation.ipynb` phải:
 
 - import evaluation modules;
 - giải thích ground truth và metrics bằng tiếng Việt;
@@ -272,6 +272,7 @@ Offline/mock gate pass trước external run. Retrieval command cần local Qdra
 - Approved answer subset/judge dùng đúng model/rubric, có cost/failure evidence.
 - Notebook an toàn, outputs sạch.
 - Ledger chỉ ghi kết quả thực.
+- User report phản ánh đúng metrics, failed/skipped runs và được người dùng xác nhận cùng notebook.
 
 ## Reports và cập nhật trạng thái
 
@@ -279,9 +280,10 @@ Offline/mock gate pass trước external run. Retrieval command cần local Qdra
 reports/phase_7_retrieval_answer_evaluation_implementation_report.md
 reports/phase_7_retrieval_answer_evaluation_codex_review.md
 reports/hue_foods_rag_benchmark.md
+reports/user_reports/phase_7_retrieval_answer_evaluation_user_report.md
 ```
 
-Codex cập nhật `Project_Status.md` sau approval, không phải sau partial live run.
+Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report, không phải sau partial live run.
 
 ## Bước tiếp theo
 

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-09 12:03 +07`
+Last updated: `2026-08-09 12:42 +07`
 
 ## Mục tiêu dự án
 
@@ -34,6 +34,8 @@ Không chunk trực tiếp từ `_source-dumps` nếu chưa curate.
 - Implementer workflow: `session_prompt/IMPLEMENTER_WORKFLOW.md`
 - Implementation report template: `session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md`
 - Codex review template: `session_prompt/TEMPLATE_CODEX_REVIEW.md`
+- User report template: `session_prompt/TEMPLATE_USER_REPORT.md`
+- User-facing phase reports: `reports/user_reports/`
 
 ## Trạng thái foods
 
@@ -82,23 +84,25 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Thiết kế và tạo bộ test đánh giá foods: `foods/evaluation/tests.jsonl` (104 câu, 8 category) + `foods/evaluation/validate_tests.py`, dựa trên thiết kế evaluation của khóa học cũ (`rag_old/evaluation/`), có research đối chiếu 5 bài Cẩm nang AEON MALL Huế 2026 (giữ dữ liệu theo KB curated).
 - Brainstorm và tài liệu hóa Phase 0–9 trong `guides/`: backend modular, semantic chunking, một active Qdrant collection, ba retrieval profiles, local `multilingual-e5-small`/MiniLM baseline trước OpenRouter, OpenAI Agents SDK generation/judge, controlled evaluation và post-MVP Agentic RAG hard gate.
 - Tách governance workflow: `session_prompt/Session_Prompt.md` là shared base context + role routing; `session_prompt/REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `session_prompt/IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md` và `session_prompt/TEMPLATE_CODEX_REVIEW.md`; reports phase nằm trong `/home/hieu0606sunny/hue_rag/reports/`.
-- Approve Phase 1 Hue Foods RAG MVP: backend skeleton và central configuration đã tạo trong `backend/`, gồm `settings.yaml`, `logging.yaml`, `settings_loader.py`, `logging_setup.py`, `schema.py` và package markers theo approved design.
-- Approve Phase 2 Hue Foods RAG MVP: foods Markdown discovery và semantic section chunking đã tạo 366 chunks từ 91 curated foods files, kèm unit tests và notebook học tập `notebooks/01_foods_data_and_chunking.ipynb`.
+- Technical review Phase 1 đã đạt theo contract cũ: backend skeleton và central configuration đã tạo trong `backend/`, gồm `settings.yaml`, `logging.yaml`, `settings_loader.py`, `logging_setup.py`, `schema.py` và package markers. Final user confirmation đang được mở lại theo governance mới.
+- Technical review Phase 2 đã đạt theo contract cũ: foods Markdown discovery và semantic section chunking đã tạo 366 chunks từ 91 curated foods files, kèm unit tests và notebook hiện tại `notebooks/01_foods_data_and_chunking.ipynb`. Notebook đang chờ rename thành `notebooks/02_foods_data_and_chunking.ipynb` trước final user confirmation.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
+- Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tiếng Việt dễ hiểu; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Brainstorm và implement Phase 3–8 của Hue Foods RAG MVP theo guide; Phase 3 là phase kế tiếp và đang ở `brainstorming_required`.
+- Hoàn tất Phase 1 remediation notebook và Phase 2 notebook rename; Codex review rồi tạo hai user reports để người dùng xác nhận lại.
+- Brainstorm và implement Phase 3–8 của Hue Foods RAG MVP theo guide; Phase 3 đang `not_ready` cho đến khi Phase 1–2 trở lại `approved`.
 - Chạy local E5/MiniLM three-profile benchmark rồi mới thử OpenRouter; ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
 
-### 2026-08-09 12:03 +07
+### 2026-08-09 12:42 +07
 
-- Trạng thái: Hoàn tất milestone migration tài liệu Hue Foods RAG sang phase guides tiếng Việt có dấu và harden workflow điều hành theo guide. Phase 0 `completed`; Phase 1–2 giữ `approved/as-built`; Phase 3 `brainstorming_required`; Phase 4–8 `not_ready`; Phase 9 `design_only` và không được implement nếu chưa có design riêng.
-- File chính: `guides/README.md`, `guides/phase_0_mvp_foundation.md`, `guides/phase_1_backend_skeleton.md` đến `guides/phase_9_agentic_rag_roadmap.md`, `reports/hue_foods_rag_benchmark.md`, các workflow/templates trong `session_prompt/` và bốn report Phase 1–2 đã migration references. `guides/README.md` là nguồn chuẩn về lifecycle; Reviewer sở hữu canonical status, còn Implementer chỉ ghi operational status trong handoff/report.
-- Validation: đủ 11 guide files; required section scan pass cho 10 phase guides; Vietnamese diacritics, local links, workflow consistency, legacy-reference, placeholder và secret-value scans đều pass; thay đổi không chạm `backend/`, `notebooks/` hoặc `knowledge-base-hue/`; `git diff --check` sạch. Runtime test baseline trong worktree không chạy được offline vì cache thiếu `nvidia-nvjitlink`; user đã cho phép tiếp tục bằng Markdown/Git validation, không download dependency.
-- Next action: Bắt đầu Level 2 brainstorming cho `guides/phase_3_embedding_sparse_representation.md`; xác nhận local model cache/download permission, batch size, provider adapter timing, sparse state và dimension fail-fast policy trước implementation.
+- Trạng thái: Dual-report và hard user-confirmation governance đã được người dùng phê duyệt. Phase 0 `completed`; Phase 1–2 `changes_requested` cho notebook/user-report retrofit nhưng giữ nguyên technical acceptance history; Phase 3–8 `not_ready`; Phase 9 `design_only`.
+- File chính: `guides/README.md`, Phase 0–9 guides, `session_prompt/Session_Prompt.md`, hai role workflows, ba report templates và `reports/user_reports/README.md`. Reviewer tự bootstrap context, tạo user report và finalize; Implementer tự bootstrap context, tạo notebook/technical report và không sửa user report.
+- Validation: status/index, notebook mapping Phase 1–8, workflow bootstrap, dual-report ownership, 17-section user-report template, Markdown structure, secret/placeholder scan, local references và Git scope đều được kiểm tra; `git diff --check` sạch. Governance patch không sửa hoặc chạy runtime/notebook/model/API.
+- Next action: Giao DeepSeek focused remediation: tạo `notebooks/01_backend_foundation.ipynb`, rename notebook Phase 2 thành `notebooks/02_foods_data_and_chunking.ipynb`, cập nhật references và technical implementation reports; sau đó Codex review và tạo hai user reports `pending`.

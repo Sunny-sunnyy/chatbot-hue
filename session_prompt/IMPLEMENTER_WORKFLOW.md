@@ -5,8 +5,8 @@
 Dùng file này khi user giao session hiện tại cho DeepSeek hoặc implementation
 agent khác để implement approved phase/milestone trong `hue_rag`.
 
-Implementer xây đúng approved scope, chạy verification, tạo/cập nhật notebooks
-khi phase yêu cầu, và viết implementation report. Implementer không approve
+Implementer xây đúng approved scope, chạy verification, tạo/cập nhật notebook
+bắt buộc cho Phase 1–8, và viết technical implementation report. Implementer không approve
 chính work của mình, không cập nhật `Project_Status.md`, không commit và không
 push.
 
@@ -21,10 +21,25 @@ Trước khi implement, đọc:
 /home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
 guides/README.md
 guides/phase_0_mvp_foundation.md
-guide đã được phê duyệt: guides/phase_<id>_<short_name>.md
+guide của phase được giao/remediation: guides/phase_<id>_<short_name>.md
 reports/hue_foods_rag_benchmark.md nếu phase liên quan model, retrieval, evaluation hoặc benchmark
 Codex review report tương ứng nếu đang sửa findings
+user report tương ứng nếu đang sửa feedback/remediation: reports/user_reports/phase_<id>_<short_name>_user_report.md
 ```
+
+## Session Bootstrap Contract
+
+Khi user chỉ cung cấp `Session_Prompt.md` và `IMPLEMENTER_WORKFLOW.md`, implementer tự:
+
+1. xác định repo root và role Implementer;
+2. đọc `Project_Status.md`, `guides/README.md` và Phase 0 foundation;
+3. suy ra phase được giao từ user request, status snapshot và guide index;
+4. đọc current phase guide và implementation-report template;
+5. nếu là remediation, đọc Codex review và pending user report liên quan;
+6. đọc benchmark ledger khi phase liên quan model, retrieval, evaluation hoặc benchmark.
+
+Nếu không suy ra duy nhất một phase, thiếu file bắt buộc hoặc status không cho
+phép implementation/remediation, dừng và hỏi user đúng một câu thay vì đoán.
 
 Nếu implement liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
 dụng:
@@ -54,7 +69,8 @@ overwrite files ngoài approved scope.
 Implementer phải:
 
 - chỉ implement user-approved phase hoặc milestone;
-- chỉ bắt đầu khi phase guide có trạng thái `ready` và làm theo guide hiện hành;
+- chỉ bắt đầu khi phase guide có trạng thái `ready`, hoặc `changes_requested`
+  kèm exact remediation scope trong guide/Codex review/user feedback;
 - xem canonical guide là read-only; mọi scope/interface/acceptance change phải
   quay lại user và Codex Reviewer;
 - không sửa trạng thái trong guide; ghi `implementing` và
@@ -66,7 +82,7 @@ Implementer phải:
   với user phải hoàn tất trước khi phase chuyển sang `ready`;
 - làm surgical changes, không refactor ngoài scope;
 - tạo runtime `.py` dưới `backend/` khi phase yêu cầu;
-- tạo/cập nhật `.ipynb` dưới `notebooks/` khi phase yêu cầu;
+- tạo/cập nhật notebook canonical dưới `notebooks/` cho mọi Phase 1–8;
 - notebook phải import backend modules, không duplicate runtime logic;
 - chạy smallest relevant verification trước, rồi broader checks khi cần;
 - tự kiểm tra security, data safety, reliability, performance trước handoff;
@@ -77,6 +93,7 @@ Implementer phải:
 Implementer không được:
 
 - sửa Codex review files;
+- tạo hoặc sửa file trong `reports/user_reports/`;
 - cập nhật `Project_Status.md`;
 - approve chính work của mình;
 - commit hoặc push;
@@ -109,8 +126,9 @@ embedding model đã sẵn sàng.
 
 ## Notebook Rules
 
-Phase nào guide yêu cầu notebook thì implementer bắt buộc tạo hoặc cập nhật
-notebook tương ứng.
+Mọi implementation phase từ Phase 1 đến Phase 8 bắt buộc có notebook canonical
+mang đúng số phase. Phase 0 được miễn; Phase 9 chỉ có notebook khi design mới đã
+phê duyệt exact implementation scope và filename.
 
 Notebook requirements:
 
@@ -125,6 +143,19 @@ Notebook requirements:
 - không lưu secrets, private paths nhạy cảm, raw headers, raw model payloads lớn,
   hoặc stack traces chứa sensitive data;
 - Markdown cells ghi expected output hoặc cách user tự chạy lại nếu cần.
+
+Notebook canonical:
+
+```text
+notebooks/01_backend_foundation.ipynb
+notebooks/02_foods_data_and_chunking.ipynb
+notebooks/03_embedding_models.ipynb
+notebooks/04_qdrant_ingestion.ipynb
+notebooks/05_retrieval_profiles.ipynb
+notebooks/06_generation_and_api.ipynb
+notebooks/07_evaluation.ipynb
+notebooks/08_benchmark_model_selection.ipynb
+```
 
 ## CodeGraph
 
@@ -141,8 +172,9 @@ evidence.
 
 ## Implementation Report
 
-Sau khi hoàn tất implementation và validation của phase có trạng thái `ready`,
-viết report để bàn giao Codex review theo:
+Sau khi hoàn tất implementation và validation của phase `ready`, hoặc exact
+remediation của phase `changes_requested`, viết/cập nhật report để bàn giao
+Codex review theo:
 
 ```text
 session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
@@ -167,6 +199,7 @@ Report phải nêu:
 - files created;
 - files modified;
 - notebooks created/modified;
+- notebook path, safe-default behavior, expected observations và cách user tự kiểm tra;
 - commands run;
 - tests run;
 - verification evidence;

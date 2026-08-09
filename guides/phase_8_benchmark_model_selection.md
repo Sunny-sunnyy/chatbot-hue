@@ -172,9 +172,16 @@ Research phải ưu tiên model hỗ trợ tiếng Việt/multilingual. Giá và
 - Cùng user chọn winner hoặc yêu cầu focused rerun.
 - Chỉ approve sau final winner collection được rebuild và protected.
 
-## Notebook
+## Notebook bắt buộc
 
-Phase 8 không tạo notebook mới mặc định. Dùng notebooks Phase 3–7 để học/inspect; benchmark chạy bằng backend commands. Notebook dashboard mới là scope riêng cần safety review.
+`notebooks/08_benchmark_model_selection.ipynb` phải:
+
+- import evaluation/benchmark readers thay vì duplicate metric hoặc selection logic;
+- giải thích experiment groups, controlled variables, metrics, latency, reliability và cost bằng tiếng Việt;
+- safe default chỉ đọc sample hoặc existing local artifacts đã được kiểm tra;
+- không tự chạy paid benchmark, model download, collection reset/delete hoặc live API;
+- hiển thị cách người dùng so sánh candidates và kiểm tra winner decision;
+- giữ committed outputs rỗng và mọi `execution_count=null`.
 
 ## Validation và evidence
 
@@ -211,6 +218,8 @@ Commands thực tế lấy từ approved Phase 4/7 implementation và ghi exact 
 - User/Codex decision nêu trade-off dựa trên evidence.
 - Winner collection được rebuild, verified và protected.
 - Ledger/reports đầy đủ, không fabricated result.
+- Notebook Phase 8 giải thích đúng artifacts và giúp người dùng xác nhận trade-off/winner.
+- User report phản ánh đúng controlled comparisons, failures, cost và final selection; được người dùng xác nhận cùng notebook.
 
 ## Reports và cập nhật trạng thái
 
@@ -218,9 +227,10 @@ Commands thực tế lấy từ approved Phase 4/7 implementation và ghi exact 
 reports/phase_8_benchmark_model_selection_implementation_report.md
 reports/phase_8_benchmark_model_selection_codex_review.md
 reports/hue_foods_rag_benchmark.md
+reports/user_reports/phase_8_benchmark_model_selection_user_report.md
 ```
 
-Codex cập nhật `Project_Status.md` sau winner approval.
+Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report và winner decision.
 
 ## Bước tiếp theo
 

@@ -181,7 +181,7 @@ Không có implementation task hiện tại. DeepSeek chỉ được đọc road
 
 ## Notebook
 
-Không tạo notebook Phase 9 ở trạng thái `design_only`. Notebook simulation/trace chỉ được xác định trong design mới nếu có giá trị học tập rõ.
+Không tạo notebook Phase 9 ở trạng thái `design_only`. Nếu Phase 9 được tách thành implementation phases sau design riêng, mỗi implementation phase phải có notebook mang prefix `09_`, import runtime modules, có safe default và phục vụ user confirmation; exact filename được khóa trong design mới.
 
 ## Tiêu chí để chuyển từ roadmap sang design-ready
 
@@ -196,7 +196,7 @@ Các tiêu chí chỉ cho phép lập implementation plan; không tự động c
 
 ## Reports và cập nhật trạng thái
 
-Không tạo implementation/Codex review report cho Phase 9 trước implementation thực tế. `Project_Status.md` tiếp tục mô tả Phase 9 là post-MVP/design-only cho đến khi user thay đổi.
+Không tạo implementation, Codex review hoặc user report cho Phase 9 trước implementation thực tế. Nếu implementation được phê duyệt riêng, áp dụng dual-report model và hard user-confirmation gate như Phase 1–8. `Project_Status.md` tiếp tục mô tả Phase 9 là post-MVP/design-only cho đến khi user thay đổi.
 
 ## Bước tiếp theo
 

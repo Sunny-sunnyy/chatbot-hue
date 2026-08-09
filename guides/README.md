@@ -16,7 +16,8 @@ Khi có khác biệt giữa tài liệu, áp dụng thứ tự sau:
 4. Guide của phase đang làm cho scope, interface, nhiệm vụ và acceptance gate.
 5. Codex review report đã phê duyệt phase.
 6. DeepSeek implementation report của phase.
-7. `session_prompt/Project_Status.md` cho snapshot bàn giao hiện tại.
+7. User report của phase cho bản giải thích dành cho người dùng.
+8. `session_prompt/Project_Status.md` cho snapshot bàn giao hiện tại.
 
 `Project_Status.md` không thay thế guide và không phải audit log. Report là bằng chứng của công việc đã thực hiện, không phải quyền tự động mở rộng scope.
 
@@ -27,6 +28,7 @@ Khi có khác biệt giữa tài liệu, áp dụng thứ tự sau:
 - Xác nhận mục tiêu, scope, lựa chọn kỹ thuật quan trọng và chi phí được phép.
 - Phê duyệt kết quả brainstorming trước khi implementation bắt đầu.
 - Cho phép riêng đối với live API, model download, collection deletion, commit hoặc push.
+- Đọc user report, chạy hoặc kiểm tra notebook và xác nhận kết quả cuối của phase.
 - Quyết định cuối cùng khi chất lượng, latency và cost tạo ra trade-off không có đáp án tuyệt đối.
 
 ### DeepSeek Implementer
@@ -34,8 +36,9 @@ Khi có khác biệt giữa tài liệu, áp dụng thứ tự sau:
 - Đọc guide như execution contract chỉ đọc.
 - Chỉ implement phase có trạng thái `ready` và đúng scope đã phê duyệt.
 - Thực hiện từng phần nhỏ, kiểm chứng sau mỗi phần quan trọng.
-- Tạo notebook khi guide yêu cầu, giữ output rỗng và không gọi dịch vụ ngoài mặc định.
+- Tạo notebook bắt buộc cho Phase 1–8, giữ output rỗng và không gọi dịch vụ ngoài mặc định.
 - Viết `reports/phase_<id>_<short_name>_implementation_report.md` sau khi implementation và validation thực sự hoàn tất.
+- Không tạo hoặc sửa file trong `reports/user_reports/`.
 - Không tự sửa guide để hợp thức hóa deviation, không tự phê duyệt phase, không cập nhật `Project_Status.md`, không commit và không push.
 
 ### Codex Reviewer
@@ -44,7 +47,8 @@ Khi có khác biệt giữa tài liệu, áp dụng thứ tự sau:
 - Điều phối brainstorming theo đúng mức của phase; ghi rõ quyết định, bằng chứng và revisit trigger.
 - Review độc lập code, test, notebook, report, security, data safety, reliability và performance.
 - Ghi `reports/phase_<id>_<short_name>_codex_review.md` với verdict rõ ràng.
-- Chỉ cập nhật `Project_Status.md` sau khi phase hoặc milestone được phê duyệt.
+- Khi technical review đạt, tạo user report dễ hiểu và chuyển phase sang `awaiting_user_confirmation`.
+- Chỉ sau khi người dùng xác nhận mới cập nhật user report thành `confirmed`, chuyển phase sang `approved`, cập nhật `Project_Status.md`, commit và push approved phase package.
 - Không implement thay DeepSeek trong một phase runtime, trừ khi người dùng thay đổi scope và giao nhiệm vụ rõ ràng.
 
 ## Vòng đời phase
@@ -58,12 +62,14 @@ not_ready
   -> implementing
   -> implementation_reported
   -> under_review
+  -> awaiting_user_confirmation
   -> approved
 ```
 
 Nhánh ngoại lệ:
 
 - `changes_requested`: reviewer tìm thấy blocker hoặc major issue; quay lại implementer sau khi scope vẫn còn hiệu lực.
+- User phát hiện vấn đề ở user report hoặc notebook cũng chuyển phase về `changes_requested`.
 - `blocked`: không thể tiến triển vì thiếu quyết định, quyền truy cập, dependency, dữ liệu hoặc thay đổi trạng thái bên ngoài.
 - `design_only`: chỉ đủ để nghiên cứu và thiết kế; tuyệt đối không phải quyền implement.
 - `completed`: milestone nền tảng đã chốt, không có runtime deliverable cần review lại.
@@ -73,15 +79,16 @@ Chỉ Codex Reviewer mới thay đổi trạng thái canonical trong guide sau k
 Quyền ghi trạng thái được tách rõ:
 
 - Codex Reviewer cập nhật trạng thái canonical trong guide: `not_ready`,
-  `brainstorming_required`, `ready`, `under_review`, `approved`,
-  `changes_requested` hoặc `blocked`.
+  `brainstorming_required`, `ready`, `under_review`,
+  `awaiting_user_confirmation`, `approved`, `changes_requested` hoặc `blocked`.
 - `implementing` và `implementation_reported` là trạng thái vận hành do DeepSeek
   ghi trong handoff hoặc implementation report; DeepSeek không sửa guide.
 - Khi nhận implementation report, Codex đối chiếu scope rồi chuyển guide từ
   `ready` sang `under_review` trước khi review.
-- Sau verdict, Codex cập nhật guide thành `approved`, `changes_requested` hoặc
-  `blocked`. Chỉ verdict `approved` mới cho phép cập nhật `Project_Status.md` và
-  mở phase tiếp theo.
+- Sau technical verdict đạt, Codex tạo user report `pending` và chuyển guide
+  sang `awaiting_user_confirmation`. User confirmation mới cho phép Codex cập
+  nhật user report thành `confirmed`, chuyển guide sang `approved`, cập nhật
+  `Project_Status.md`, commit/push và mở phase tiếp theo.
 
 ## Mức brainstorming
 
@@ -100,9 +107,9 @@ Chỉ dùng rich elicitation khi còn ít nhất hai chiều mơ hồ quan trọ
 | Phase | Guide | Trạng thái hiện tại | Brainstorming | Kết quả chính |
 |---:|---|---|---|---|
 | 0 | `phase_0_mvp_foundation.md` | `completed` | Level 0 | Kiến trúc, provider boundary, data flow và governance của MVP |
-| 1 | `phase_1_backend_skeleton.md` | `approved` | Level 0 | Backend skeleton, settings, logging và shared schema |
-| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Level 0 | Curated Markdown discovery và semantic section chunks |
-| 3 | `phase_3_embedding_sparse_representation.md` | `brainstorming_required` | Level 2 | Dense embedding provider và sparse representation |
+| 1 | `phase_1_backend_skeleton.md` | `changes_requested` | Level 1 | Backend skeleton, settings, logging và shared schema; chờ notebook/user confirmation retrofit |
+| 2 | `phase_2_foods_markdown_chunking.md` | `changes_requested` | Level 1 | Curated Markdown discovery và semantic section chunks; chờ notebook rename/user confirmation retrofit |
+| 3 | `phase_3_embedding_sparse_representation.md` | `not_ready` | Level 2 | Dense embedding provider và sparse representation |
 | 4 | `phase_4_qdrant_ingestion.md` | `not_ready` | Level 2 | Một active Qdrant collection và dense+sparse points |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `not_ready` | Level 3 | Ba retrieval profiles, BM25, reranking và context |
 | 6 | `phase_6_generation_api.md` | `not_ready` | Level 2 | Grounded answer generation và JSON API |
@@ -118,15 +125,25 @@ Phase sau không được implement trước khi dependency phase trước đạ
 2. Codex cập nhật guide với quyết định đã chốt và chuyển phase sang `ready`.
 3. DeepSeek implement theo guide, chạy validation và tạo implementation report.
 4. Codex review độc lập, tạo Codex review report.
-5. Nếu verdict là `approved`, Codex cập nhật guide và `Project_Status.md`.
-6. Nếu verdict là `changes_requested`, `Project_Status.md` không được mô tả phase là hoàn tất.
+5. Nếu technical review đạt, Codex tạo user report với `User confirmation: pending` và chuyển guide sang `awaiting_user_confirmation`.
+6. Người dùng đọc user report, kiểm tra notebook và xác nhận hoặc yêu cầu sửa.
+7. Khi người dùng xác nhận, Codex cập nhật user report thành `confirmed`, guide thành `approved` và cập nhật `Project_Status.md`.
+8. Xác nhận hoàn tất phase đồng thời cho phép Codex audit allowlist, commit và push đúng approved phase package.
 
 Tên report bắt buộc:
 
 ```text
 reports/phase_<id>_<short_name>_implementation_report.md
 reports/phase_<id>_<short_name>_codex_review.md
+reports/user_reports/phase_<id>_<short_name>_user_report.md
 ```
+
+Hai nhóm report có audience riêng:
+
+- `reports/*.md` là technical evidence để DeepSeek Implementer và Codex Reviewer đọc và ghi.
+- `reports/user_reports/*.md` là bản giải thích tiếng Việt dễ hiểu để người dùng đọc; chỉ Codex Reviewer tạo hoặc cập nhật.
+
+User report không được bịa validation, che giấu failed/skipped checks hoặc thay đổi scope đã phê duyệt. Nếu khác technical evidence, Codex phải sửa user report trước khi xin user confirmation.
 
 Benchmark xuyên phase được tổng hợp tại `reports/hue_foods_rag_benchmark.md`; per-question outputs ở dạng JSONL chỉ được tạo khi phase evaluation tương ứng đã implement.
 
@@ -154,4 +171,4 @@ Affected scope
 Revisit trigger
 ```
 
-Guide của Phase 1–2 là tài liệu as-built đã khóa. Không sửa lịch sử acceptance để khớp với implementation mới; thay đổi mới phải được quản lý như scope mới.
+Guide của Phase 1–2 giữ nguyên lịch sử technical acceptance. Notebook/user-report retrofit là scope governance mới, không được sửa lịch sử report để hợp thức hóa behavior mới.

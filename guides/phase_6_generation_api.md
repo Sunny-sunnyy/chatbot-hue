@@ -42,7 +42,7 @@ backend/api/routes/__init__.py
 backend/api/routes/chat.py
 backend/tests/test_llm_generator_openai.py
 backend/tests/test_api_chat.py
-notebooks/05_generation_and_api.ipynb
+notebooks/06_generation_and_api.ipynb
 ```
 
 ## Trong scope
@@ -220,7 +220,7 @@ Codex và người dùng phải chốt:
 
 ## Notebook bắt buộc
 
-`notebooks/05_generation_and_api.ipynb` phải:
+`notebooks/06_generation_and_api.ipynb` phải:
 
 - giải thích grounded prompt và API flow bằng tiếng Việt;
 - import runtime generator/API schemas;
@@ -270,6 +270,7 @@ Live smoke chỉ chạy sau user approval; result vào report/benchmark ledger, 
 - Default tests/notebook không live.
 - Approved live smoke dùng `gpt-5.4-nano` qua OpenAI Agents SDK và có cost evidence.
 - Không implement SSE, frontend hoặc Agentic RAG.
+- User report phản ánh đúng API/generation limitations và được người dùng xác nhận cùng notebook.
 
 ## Reports và cập nhật trạng thái
 
@@ -277,9 +278,10 @@ Live smoke chỉ chạy sau user approval; result vào report/benchmark ledger, 
 reports/phase_6_generation_api_implementation_report.md
 reports/phase_6_generation_api_codex_review.md
 reports/hue_foods_rag_benchmark.md
+reports/user_reports/phase_6_generation_api_user_report.md
 ```
 
-Codex chỉ cập nhật `Project_Status.md` sau approval.
+Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
 
 ## Bước tiếp theo
 

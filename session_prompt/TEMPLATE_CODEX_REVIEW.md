@@ -1,6 +1,6 @@
 # Codex Review: Phase <id> <name>
 
-Decision: approved / changes_requested / blocked
+Decision: ready_for_user_confirmation / changes_requested / blocked
 Reviewer: Codex
 Date: YYYY-MM-DD
 Review path:
@@ -15,13 +15,14 @@ Implementer report:
 reports/<implementation_report>.md
 ```
 
-Approved guide context:
+Phase guide context:
 
 ```text
 guides/phase_0_mvp_foundation.md
 guides/phase_<id>_<short_name>.md
 session_prompt/Project_Status.md
 reports/hue_foods_rag_benchmark.md  # only when relevant
+reports/user_reports/phase_<id>_<short_name>_user_report.md  # if already present
 ```
 
 ## Tóm Tắt
@@ -76,13 +77,16 @@ If not applicable, write:
 Not applicable.
 ```
 
-## Approval Notes
+## User Confirmation Readiness
 
-Only for `approved`.
+Only for `ready_for_user_confirmation`.
 
 Include:
 
-- approved files;
+- technically accepted files;
 - accepted limitations;
-- next phase allowed;
-- whether `Project_Status.md` was updated.
+- canonical notebook path and notebook safety result;
+- user report path to create/update;
+- exact checks the user should perform;
+- confirmation that next phase remains closed;
+- confirmation that `Project_Status.md` was not marked approved yet.

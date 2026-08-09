@@ -61,6 +61,8 @@ Quyền hạn mặc định:
 - Implementer không cập nhật `Project_Status.md`.
 - Implementer không commit hoặc push.
 - Reviewer chỉ commit/push khi user yêu cầu rõ.
+- Xác nhận hoàn tất phase của user được tính là quyền rõ ràng để Reviewer commit
+  và push đúng approved phase package sau validation và staged-scope audit.
 
 ## File Context Bắt Buộc
 
@@ -84,6 +86,7 @@ Nếu task liên quan Hue Foods RAG MVP, đọc thêm:
 /home/hieu0606sunny/hue_rag/guides/phase_0_mvp_foundation.md
 guide của phase đang làm trong /home/hieu0606sunny/hue_rag/guides/
 relevant implementation và Codex review reports trong /home/hieu0606sunny/hue_rag/reports/
+user report của phase trong /home/hieu0606sunny/hue_rag/reports/user_reports/ nếu đã tồn tại
 ```
 
 Nếu task liên quan embedding, retrieval, reranking, evaluation hoặc model
@@ -98,6 +101,7 @@ Nếu session là reviewer, đọc thêm:
 ```text
 /home/hieu0606sunny/hue_rag/session_prompt/REVIEWER_WORKFLOW.md
 /home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_CODEX_REVIEW.md
+/home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_USER_REPORT.md
 ```
 
 Nếu session là implementer, đọc thêm:
@@ -186,12 +190,14 @@ nguồn ảnh vào body.
 
 ## Project Status Rules
 
-`Project_Status.md` là snapshot bàn giao, không phải audit log.
+`Project_Status.md` là snapshot bàn giao, không phải audit log. Technical review
+đạt chưa đủ để mô tả phase là hoàn tất; phase chỉ được ghi `approved` sau khi
+user xác nhận user report và notebook.
 
 Chỉ cập nhật `Project_Status.md` khi:
 
 - user yêu cầu cập nhật trạng thái;
-- reviewer approve một phase/milestone;
+- user xác nhận một phase/milestone sau technical review;
 - context gần đầy và user cho phép cập nhật;
 - user nói kết thúc session.
 
@@ -216,7 +222,8 @@ Hướng dẫn canonical theo phase:
 có đúng một guide chi tiết; DeepSeek Implementer xem guide là read-only và
 scope change phải quay lại user/Codex Reviewer.
 
-Implementation reports và Codex review reports:
+Technical implementation reports và Codex review reports dành cho coding
+agents:
 
 ```text
 /home/hieu0606sunny/hue_rag/reports/
@@ -229,6 +236,17 @@ reports/phase_<id>_<short_name>_implementation_report.md
 reports/phase_<id>_<short_name>_codex_review.md
 ```
 
+User reports dành cho người dùng, do Codex Reviewer viết sau khi technical
+review đạt:
+
+```text
+reports/user_reports/phase_<id>_<short_name>_user_report.md
+```
+
+User report phải dùng tiếng Việt dễ hiểu, mô tả đúng trạng thái, notebook, cách
+tự kiểm tra, validation thực tế và giới hạn. DeepSeek Implementer không tạo hoặc
+sửa user report. User report không thay guide hay technical evidence.
+
 Benchmark model/pipeline summary:
 
 ```text
@@ -237,8 +255,10 @@ reports/hue_foods_rag_benchmark.md
 
 ## Notebook Rules
 
-Phase nào guide yêu cầu notebook thì implementer phải tạo hoặc cập nhật notebook
-tương ứng.
+Mọi implementation phase từ Phase 1 đến Phase 8 phải có một notebook để người
+dùng tự kiểm tra trước final approval. Số notebook phải trùng số phase. Phase 0
+được miễn; Phase 9 chỉ bắt buộc notebook khi có implementation được phê duyệt
+riêng.
 
 Notebook rules:
 
@@ -251,6 +271,19 @@ Notebook rules:
 - real-mode cells nếu có phải opt-in bằng env/config guard rõ;
 - không lưu secrets, private paths nhạy cảm, raw model payloads lớn, raw headers,
   stack traces chứa sensitive data, hoặc outputs có thể leak dữ liệu.
+
+Notebook canonical:
+
+```text
+notebooks/01_backend_foundation.ipynb
+notebooks/02_foods_data_and_chunking.ipynb
+notebooks/03_embedding_models.ipynb
+notebooks/04_qdrant_ingestion.ipynb
+notebooks/05_retrieval_profiles.ipynb
+notebooks/06_generation_and_api.ipynb
+notebooks/07_evaluation.ipynb
+notebooks/08_benchmark_model_selection.ipynb
+```
 
 ## CodeGraph
 

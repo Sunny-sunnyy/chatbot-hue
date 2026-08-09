@@ -7,17 +7,17 @@ Phase 3 tạo hai biểu diễn có thể tái lập cho 366 canonical food chun
 ## Trạng thái
 
 ```text
-Status: brainstorming_required
+Status: not_ready
 Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek after status becomes ready
 ```
 
-Không được implement chỉ từ guide hiện tại. Codex phải brainstorm với người dùng, ghi decision record và chuyển status thành `ready`.
+Không được implement chỉ từ guide hiện tại. Phase 1–2 phải trở lại `approved`; sau đó Codex mới mở Level 2 brainstorming, ghi decision record và chuyển status thành `ready`.
 
 ## Dependency
 
-- Phase 0–2 đã hoàn tất.
+- Phase 1–2 phải hoàn tất governance retrofit và được người dùng xác nhận.
 - Input baseline là 366 chunks từ `chunk_foods_markdown()`.
 - `backend/config/settings.yaml` đang dùng `intfloat/multilingual-e5-small`, 384 dimensions, CPU.
 - Phase này không tạo, reset, upsert hoặc query Qdrant.
@@ -44,7 +44,7 @@ backend/embedding/batch_embed.py
 backend/embedding/sparse_embedder.py
 backend/tests/test_embedder.py
 backend/tests/test_sparse_embedder.py
-notebooks/02_embedding_models.ipynb
+notebooks/03_embedding_models.ipynb
 ```
 
 Nếu OpenRouter adapter được implement ngay ở phase này, file dự kiến là:
@@ -219,7 +219,7 @@ Decision record phải ghi exact lựa chọn, evidence và revisit trigger. Đ�
 
 ## Notebook bắt buộc
 
-`notebooks/02_embedding_models.ipynb` phải:
+`notebooks/03_embedding_models.ipynb` phải:
 
 - giải thích dense vs sparse bằng tiếng Việt;
 - import Phase 2 chunks và Phase 3 modules;
@@ -269,6 +269,7 @@ Live/local model smoke command phải được ghi chính xác trong implementat
 - Sparse vocabulary non-empty và deterministic trên 366 chunks.
 - OpenRouter boundary không cho phép mixed vector spaces hoặc silent fallback.
 - Notebook an toàn và report đầy đủ.
+- User report phản ánh đúng validation/limitations và được người dùng xác nhận cùng notebook.
 - Không có Qdrant mutation hoặc live paid run ngoài approval.
 
 ## Reports và cập nhật trạng thái
@@ -278,10 +279,11 @@ Sau implementation thực tế:
 ```text
 reports/phase_3_embedding_sparse_representation_implementation_report.md
 reports/phase_3_embedding_sparse_representation_codex_review.md
+reports/user_reports/phase_3_embedding_sparse_representation_user_report.md
 ```
 
-Benchmark evidence liên quan model/resource được nối vào `reports/hue_foods_rag_benchmark.md`. Codex chỉ cập nhật `Project_Status.md` sau approval.
+Benchmark evidence liên quan model/resource được nối vào `reports/hue_foods_rag_benchmark.md`. Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
 
 ## Bước tiếp theo
 
-Sau khi Phase 3 được phê duyệt, brainstorm Phase 4 về Qdrant availability, exact collection schema, reset safety và point-count gate.
+Sau khi Phase 1–2 trở lại `approved`, brainstorm Phase 3. Chỉ sau user confirmation của Phase 3 mới mở Phase 4.
