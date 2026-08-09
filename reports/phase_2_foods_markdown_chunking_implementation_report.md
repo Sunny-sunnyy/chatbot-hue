@@ -8,11 +8,11 @@ Report path:
 reports/phase_2_foods_markdown_chunking_implementation_report.md
 ```
 
-Approved spec/plan:
+Canonical guide context after documentation migration:
 
 ```text
-docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
+guides/phase_0_mvp_foundation.md
+guides/phase_2_foods_markdown_chunking.md
 ```
 
 ## Approved Scope

@@ -19,11 +19,11 @@ Trước khi review, đọc:
 /home/hieu0606sunny/hue_rag/session_prompt/REVIEWER_WORKFLOW.md
 /home/hieu0606sunny/hue_rag/session_prompt/Project_Status.md
 /home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_CODEX_REVIEW.md
-docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md
-the relevant implementation report under /home/hieu0606sunny/hue_rag/reports/
-the relevant phase guide or plan section
+guides/README.md
+guides/phase_0_mvp_foundation.md
+guide của phase đang review: guides/phase_<id>_<short_name>.md
+implementation report tương ứng: reports/phase_<id>_<short_name>_implementation_report.md
+reports/hue_foods_rag_benchmark.md nếu phase liên quan model, retrieval, evaluation hoặc benchmark
 ```
 
 Nếu review liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
@@ -54,13 +54,20 @@ delete, stage, commit, push, hoặc overwrite files không liên quan.
 Codex reviewer phải:
 
 - review implementation report và các files mà report nói đã tạo/sửa;
-- đối chiếu implementation với approved spec/plan/phase scope;
+- đối chiếu implementation với foundation guide và approved phase guide;
 - áp dụng `skills/karpathy-guidelines/SKILL.md` khi review code để phát hiện
   overcomplication, scope creep, assumptions mơ hồ, và success criteria yếu;
 - kiểm tra code, docs, notebooks, tests, benchmark logs, và verification
   evidence liên quan;
 - kiểm tra security, data safety, reliability, performance, và scope control;
 - viết Codex review file riêng trong `/home/hieu0606sunny/hue_rag/reports/`;
+- chỉ sửa canonical phase guide trong reviewer scope và không thay acceptance
+  lịch sử của phase đã khóa;
+- sau brainstorming được user phê duyệt, ghi decision record vào guide và chỉ
+  chuyển phase sang `ready` khi mọi hard gate đã rõ;
+- khi nhận implementation report, đối chiếu report với guide rồi chuyển trạng
+  thái canonical sang `under_review`; sau verdict chuyển sang `approved`,
+  `changes_requested` hoặc `blocked`;
 - yêu cầu correction khi findings chặn approval;
 - chỉ cập nhật `Project_Status.md` sau khi phase/milestone được approve;
 - nhắc user commit sau checkpoint ổn định nếu phù hợp.
@@ -154,7 +161,22 @@ Trước khi approve, Codex phải check changed scope về:
   secrets hoặc paid API calls;
 - notebooks: outputs rỗng và safe theo notebook rules;
 - evaluation: metrics/result files khớp approved scope, không claim pass nếu
-  chưa có evidence.
+  chưa có evidence;
+- benchmark: actual provider, model, profile và config khớp artifacts; không có
+  silent fallback hoặc uncontrolled variable change;
+- destructive actions: collection reset/delete có exact target, evidence và
+  user approval riêng; không suy diễn quyền từ một config flag.
+
+Trước verdict, chạy tối thiểu:
+
+```bash
+git diff --check
+git diff --name-only
+```
+
+Danh sách changed files phải khớp approved guide và implementation report.
+Reviewer phải ghi rõ validation nào không chạy được; không suy diễn pass từ
+partial checks hoặc lời khai của implementer.
 
 ## Review Decision
 

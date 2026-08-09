@@ -37,11 +37,11 @@ git status --short
 sed -n '1,260p' reports/phase_2_foods_markdown_chunking_implementation_report.md
 # Implementation report reviewed.
 
-sed -n '130,230p' docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
-# Phase 2 plan and gate reviewed.
+sed -n '1,260p' guides/phase_2_foods_markdown_chunking.md
+# Phase 2 as-built scope and gate reviewed after documentation migration.
 
-sed -n '120,210p' docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-# Chunking strategy and metadata requirements reviewed.
+sed -n '1,280p' guides/phase_0_mvp_foundation.md
+# Foundation chunking, metadata and safety requirements reviewed after documentation migration.
 
 sed -n '1,260p' skills/karpathy-guidelines/SKILL.md
 # Reviewer code-quality guideline read.

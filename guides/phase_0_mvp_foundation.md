@@ -1,0 +1,265 @@
+# Phase 0: Nền tảng kiến trúc Hue Foods RAG MVP
+
+## Mục tiêu và giá trị cho người dùng
+
+Phase 0 xác lập kiến trúc, ranh giới provider, data flow, governance và tiêu chuẩn chất lượng chung cho Hue Foods RAG MVP. Người dùng có thể đọc file này để hiểu hệ thống sẽ xây gì, chưa xây gì và lý do các phase được sắp xếp theo thứ tự hiện tại.
+
+## Trạng thái
+
+```text
+Status: completed
+Brainstorming level: Level 0 - locked
+Owner: Codex Reviewer
+Implementation: not applicable
+```
+
+Phase 0 đã được người dùng xác nhận. Chỉ mở lại khi một quyết định xuyên phase thay đổi kiến trúc hoặc acceptance contract.
+
+## Chức năng của MVP
+
+MVP nhận dữ liệu Markdown tiếng Việt đã curate về ẩm thực Huế, tạo semantic chunks, biểu diễn chunks bằng dense và sparse vectors, index vào một active Qdrant collection, truy xuất theo ba profile, sinh câu trả lời grounded có nguồn và đánh giá cả retrieval lẫn answer quality.
+
+Agentic RAG, frontend và streaming không thuộc MVP đầu tiên.
+
+## Data flow canonical
+
+```text
+raw data
+  -> Markdown source dumps
+  -> curated Markdown trong knowledge-base-hue/foods/
+  -> semantic Markdown section chunks
+  -> dense embeddings + sparse representations
+  -> một active Qdrant collection
+  -> dense candidates
+  -> optional Python BM25 fusion
+  -> optional reranking
+  -> bounded context
+  -> grounded answer generation
+  -> retrieval metrics + answer judge
+  -> benchmark evidence và model selection
+```
+
+Không chunk trực tiếp từ `_source-dumps`. Enrichment chỉ thực hiện khi người dùng yêu cầu và nguồn đã được xác minh.
+
+## Quyền sở hữu thư mục
+
+| Đường dẫn | Trách nhiệm |
+|---|---|
+| `knowledge-base-hue/foods/` | Curated Markdown answer-facing |
+| `backend/` | Runtime Python và unit/integration tests |
+| `notebooks/` | Notebook học tập, import backend modules |
+| `guides/` | Hướng dẫn canonical theo phase |
+| `reports/` | Implementation evidence, Codex review và benchmark summary |
+| `backend/evaluation/results/` | JSONL outputs chi tiết khi evaluation đã implement |
+| `session_prompt/Project_Status.md` | Snapshot bàn giao hiện tại |
+
+## Ranh giới component
+
+| Component | Nhận vào | Trả ra | Không chịu trách nhiệm |
+|---|---|---|---|
+| Markdown chunker | Curated food Markdown | Chunk dictionaries ổn định | Embedding, Qdrant, generation |
+| Dense embedder | List text hoặc query | Normalized dense vectors | Collection lifecycle, ranking fusion |
+| Sparse embedder | Corpus và text | Sparse `indices`/`values` | Qdrant query fusion trong MVP |
+| Qdrant ingestion | Chunks và vectors | Named-vector points | Retrieval tuning, answer generation |
+| Retrieval service | Query và active profile | `RetrievedDocument` list | Prompt hoặc provider API |
+| Reranker | Query và candidates | Candidates sắp hạng lại | Vector indexing |
+| Context builder | Ranked documents | Bounded evidence context | Retrieval hoặc model call |
+| Generator | Query và evidence | Grounded answer + sources | Judge score hoặc index mutation |
+| Evaluation | Test cases và pipeline output | Metrics, JSONL evidence, summary | Tự thay config để cải thiện score |
+
+## Model và provider đã chốt
+
+| Vai trò | Baseline hoặc provider | Quy tắc |
+|---|---|---|
+| Local dense embedding | `intfloat/multilingual-e5-small`, CPU | Baseline đầu tiên, 384 dimensions, benchmark trước remote models |
+| Local sparse representation | Custom TF-IDF-style `SparseEmbedder` | Fit trên cùng corpus chunks; deterministic vocabulary/IDF |
+| Local lexical scoring | Python BM25 | Baseline theo kỹ thuật từ `llm_rag` |
+| Local reranker | `cross-encoder/ms-marco-MiniLM-L-6-v2`, CPU | Baseline nhẹ; phải ghi giới hạn tiếng Việt |
+| Remote embedding | OpenRouter embeddings endpoint | Qwen3 Embedding là family ưu tiên sau catalog preflight |
+| Remote reranking | OpenRouter native rerank endpoint | Chọn model thực sự có trong catalog ở Phase 5; Qwen3-Reranker vẫn là candidate |
+| Answer generation | OpenAI Agents SDK, `gpt-5.4-nano` | Baseline generation trực tiếp qua OpenAI |
+| Answer judge | OpenAI Agents SDK, `gpt-5.4-mini` | Tách riêng với answer model |
+| Future generation | OpenRouter, `qwen/qwen3.5-9b` | Chỉ benchmark sau khi pipeline baseline ổn định |
+
+`OPENAI_API_KEY` và `OPENROUTER_API_KEY` được quản lý độc lập trong environment. Không lưu value vào YAML, Markdown, notebook hoặc report.
+
+## Qdrant active collection contract
+
+- Tại một thời điểm chỉ có một collection active cho Hue Foods benchmark/runtime.
+- Collection gắn chặt với embedding model, vector dimension, distance và payload schema.
+- Thay embedding model hoặc dimension luôn yêu cầu reset/reindex; không thể fallback theo request sang vector space khác.
+- Trong một embedding experiment, cùng collection được dùng cho cả ba retrieval profiles.
+- Chỉ xóa collection sau khi đã kiểm tra exact name, model, dimension, point count, result artifacts và nhận user approval.
+- Sau khi chọn winner, reindex winner, kiểm tra count/schema rồi đặt reset thành `false`.
+
+Named vectors dự kiến:
+
+```text
+dense
+sparse
+```
+
+Sparse vector được lưu để sẵn sàng cho nghiên cứu sau này. MVP hybrid hiện tại dùng dense candidates kết hợp Python BM25; việc chỉ lưu sparse vector không được tính là một sparse retrieval run.
+
+## Retrieval profiles canonical
+
+| Profile | Candidate retrieval | BM25 fusion | Reranker |
+|---|---|---:|---:|
+| `dense_only` | Qdrant dense | Không | Không |
+| `hybrid_no_rerank` | Qdrant dense lấy dư candidates | Có | Không |
+| `hybrid_rerank` | Cùng hybrid pipeline | Có | Có |
+
+Các profile phải dùng chung corpus, chunk IDs và embedding collection trong cùng model experiment. Candidate depth, fusion weights, `top_k`, rerank depth và context limits phải được ghi vào benchmark record.
+
+## Data contracts
+
+Chunk object:
+
+```python
+{
+    "text": "...",
+    "metadata": {
+        "chunk_id": "foods/restaurants/example.md|Tóm tắt|0",
+        "source": "foods/restaurants/example.md",
+        "title": "Tên tài liệu",
+        "section": "Tóm tắt",
+        "category": "foods",
+        "subcategory": "restaurants",
+        "chunk_type": "section",
+    },
+}
+```
+
+Retrieval result phải dựa trên shared `RetrievedDocument` và có khả năng ghi các score thực sự đã được tính:
+
+```text
+id
+score
+text
+metadata.source
+metadata.title
+metadata.section
+metadata.dense_score
+metadata.bm25_score       # chỉ khi BM25 đã chạy
+metadata.hybrid_score     # chỉ khi fusion đã chạy
+metadata.rerank_score     # chỉ khi reranker đã chạy
+```
+
+Không tạo score field giả cho stage không chạy.
+
+## Configuration contract
+
+Các nhóm config canonical:
+
+```yaml
+active_profile: dense_only
+profiles: {}
+knowledge_base: {}
+embedding: {}
+vector_database: {}
+retrieval: {}
+reranking: {}
+llm: {}
+evaluation: {}
+```
+
+Mọi config thay đổi vector dimension, collection reset, live provider hoặc benchmark controlled variable phải được ghi trong report/ledger. API key chỉ đến từ environment.
+
+## Brainstorming và decision gates
+
+Phase 0 không yêu cầu brainstorm lại. Các phase sau phải dừng để hỏi người dùng nếu có:
+
+- provider/model mới hoặc model ID không còn tồn tại;
+- dependency mới hoặc model download;
+- thay đổi dimension, schema hay collection deletion/reset;
+- live paid call hoặc full judge run;
+- thay đổi phase boundary, acceptance metric hoặc notebook contract;
+- benchmark result mâu thuẫn hoặc không so sánh được;
+- privacy, security, data provenance hoặc license concern.
+
+Decision record dùng sáu field trong `guides/README.md`.
+
+## Nhiệm vụ của DeepSeek Implementer
+
+- Đọc Phase 0 trước mọi phase runtime.
+- Không copy trực tiếp provider/storage choices từ `llm_rag` hoặc `rag_old`; chỉ tái sử dụng kỹ thuật đã được guide phê duyệt.
+- Giữ module nhỏ, interface rõ và không implement future flexibility.
+- Dùng `UV_CACHE_DIR=/tmp/uv-cache uv run ...`, không dùng `pip`.
+- Chạy test không live trước; xin approval riêng cho external services.
+- Tạo notebook và implementation report đúng phase.
+
+## Nhiệm vụ của Codex Reviewer
+
+- Kiểm tra scope, interface, dependency, secret exposure, data mutation và benchmark comparability.
+- Xác minh implementation report bằng command độc lập phù hợp.
+- Không chấp nhận claim chỉ dựa trên notebook output hoặc lời mô tả.
+- Không approve nếu silent fallback, fabricated metrics, uncontrolled comparison hoặc destructive action thiếu evidence.
+- Chỉ cập nhật status sau verdict `approved`.
+
+## Notebook contract
+
+- Notebook nằm trong `notebooks/` và import backend modules.
+- Không duplicate runtime logic.
+- Mọi output rỗng; mọi `execution_count` là `null` trong repo.
+- Default cells không gọi live model/API, web, deploy, Qdrant bên ngoài hoặc secrets.
+- Real mode phải opt-in bằng environment/config guard rõ ràng.
+- Không lưu private path, raw headers, raw model payload lớn hoặc stack trace có sensitive data.
+
+## Evaluation và benchmark contract
+
+- Retrieval evaluation chạy toàn bộ 104 câu khi Phase 7 sẵn sàng.
+- Answer generation/judge bắt đầu bằng stratified subset để kiểm soát cost.
+- Chỉ chạy full 104 answer judge khi người dùng phê duyệt chi phí.
+- Markdown ledger chỉ lưu registry, summary và decision; per-question evidence lưu JSONL.
+- Không tuyên bố winner trước khi runs có cùng corpus, metric definitions và controlled variables.
+
+## Security, reliability và performance
+
+- Không đọc hoặc log `.env`, token, key, auth header hay credential file.
+- Network/model/API mặc định tắt trong test và notebook.
+- Model local được cache một lần mỗi process; batch operation phải bounded.
+- Context có giới hạn document và character/token budget.
+- Provider error phải rõ ràng; benchmark không được tự đổi model.
+- Collection reset fail closed khi target không khớp exact expected configuration.
+
+## Ngoài scope MVP
+
+- Agentic query router, query rewrite, decomposition và retry judge.
+- Parent-child retrieval.
+- Frontend, SSE hoặc production deployment.
+- Qdrant native sparse fusion như một profile chính thức.
+- Automatic multi-provider embedding fallback.
+- Data enrichment không được người dùng yêu cầu.
+
+## Tiêu chí hoàn tất Phase 0
+
+- Kiến trúc và phase boundaries được người dùng xác nhận.
+- Provider, model baseline và key separation được chốt.
+- Ba retrieval profiles có semantics khác nhau rõ ràng.
+- One-active-collection lifecycle và deletion gate được chốt.
+- Evaluation, benchmark, notebook và report contracts được chốt.
+- Phase 9 có hard gate thiết kế riêng.
+
+## Quyết định đã phê duyệt
+
+```text
+Decision: Dùng phase guides làm nguồn hướng dẫn canonical, reports làm evidence và Project_Status.md làm snapshot.
+Approved by: User
+Approval date +07: 2026-08-09
+Evidence: Brainstorming trong session reviewer hiện tại.
+Affected scope: Phase 0–9 và governance documentation.
+Revisit trigger: Người dùng yêu cầu đổi source-of-truth hierarchy.
+```
+
+```text
+Decision: Benchmark local llm_rag baseline trước OpenRouter models.
+Approved by: User
+Approval date +07: 2026-08-09
+Evidence: User xác nhận intfloat/multilingual-e5-small và CrossEncoder nhẹ chạy trên máy.
+Affected scope: Phase 3, 4, 5, 7 và 8.
+Revisit trigger: Local resource preflight thất bại hoặc baseline không thể chạy hợp lệ.
+```
+
+## Bước tiếp theo
+
+Phase 1 và Phase 2 đã được phê duyệt. Phase 3 là phase kế tiếp và phải hoàn tất Level 2 brainstorming trước khi Codex chuyển trạng thái sang `ready`.

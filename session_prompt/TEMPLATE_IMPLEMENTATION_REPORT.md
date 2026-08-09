@@ -8,11 +8,13 @@ Report path:
 reports/phase_<id>_<short_name>_implementation_report.md
 ```
 
-Approved spec/plan:
+Approved guide context:
 
 ```text
-docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
+guides/phase_0_mvp_foundation.md
+guides/phase_<id>_<short_name>.md
+session_prompt/Project_Status.md
+reports/hue_foods_rag_benchmark.md  # only when relevant
 ```
 
 ## Approved Scope
@@ -55,9 +57,9 @@ Answer result file:
 Benchmark log updated:
 ```
 
-## Deviations From Plan
+## Deviations From Approved Guide
 
-State any deviation from the approved plan. If none, write:
+State any deviation from the approved guide. If none, write:
 
 ```text
 None.

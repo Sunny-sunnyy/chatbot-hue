@@ -2,11 +2,11 @@
 
 Implementer: DeepSeek
 Date: 2026-08-09
-Approved spec/plan:
+Canonical guide context after documentation migration:
 
 ```text
-docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
+guides/phase_0_mvp_foundation.md
+guides/phase_1_backend_skeleton.md
 ```
 
 ## Approved Scope

@@ -11,7 +11,7 @@ reports/phase_1_backend_skeleton_implementation_report.md
 
 ## Tóm Tắt
 
-Reviewed Phase 1 backend skeleton and configuration against the approved Hue Foods RAG MVP spec and plan. The implementation stays within Phase 1 scope, settings load correctly, all retrieval profiles validate, core modules compile, and logging writes to the intended backend log path without leaving a test log residue.
+Reviewed Phase 1 backend skeleton and configuration against the approved Hue Foods RAG MVP scope, now preserved in `guides/phase_0_mvp_foundation.md` and `guides/phase_1_backend_skeleton.md`. The implementation stays within Phase 1 scope, settings load correctly, all retrieval profiles validate, core modules compile, and logging writes to the intended backend log path without leaving a test log residue.
 
 ## Findings
 

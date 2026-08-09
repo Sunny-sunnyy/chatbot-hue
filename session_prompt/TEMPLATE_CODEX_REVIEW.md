@@ -15,6 +15,15 @@ Implementer report:
 reports/<implementation_report>.md
 ```
 
+Approved guide context:
+
+```text
+guides/phase_0_mvp_foundation.md
+guides/phase_<id>_<short_name>.md
+session_prompt/Project_Status.md
+reports/hue_foods_rag_benchmark.md  # only when relevant
+```
+
 ## Tóm Tắt
 
 Summarize what was reviewed and the decision.

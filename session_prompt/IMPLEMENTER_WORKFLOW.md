@@ -19,11 +19,11 @@ Trước khi implement, đọc:
 /home/hieu0606sunny/hue_rag/session_prompt/IMPLEMENTER_WORKFLOW.md
 /home/hieu0606sunny/hue_rag/session_prompt/Project_Status.md
 /home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
-docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
-docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md
-the approved phase section in the implementation plan
-relevant Codex review feedback, if resubmitting fixes
+guides/README.md
+guides/phase_0_mvp_foundation.md
+guide đã được phê duyệt: guides/phase_<id>_<short_name>.md
+reports/hue_foods_rag_benchmark.md nếu phase liên quan model, retrieval, evaluation hoặc benchmark
+Codex review report tương ứng nếu đang sửa findings
 ```
 
 Nếu implement liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
@@ -54,11 +54,16 @@ overwrite files ngoài approved scope.
 Implementer phải:
 
 - chỉ implement user-approved phase hoặc milestone;
-- làm theo spec/plan hiện hành;
+- chỉ bắt đầu khi phase guide có trạng thái `ready` và làm theo guide hiện hành;
+- xem canonical guide là read-only; mọi scope/interface/acceptance change phải
+  quay lại user và Codex Reviewer;
+- không sửa trạng thái trong guide; ghi `implementing` và
+  `implementation_reported` trong handoff hoặc implementation report để Codex
+  cập nhật trạng thái canonical;
 - áp dụng `skills/karpathy-guidelines/SKILL.md` khi viết code để giữ assumptions
   rõ ràng, code đơn giản, thay đổi surgical, và success criteria có thể verify;
-- trước mỗi phần quan trọng, thực hiện mini research/brainstorming trong repo
-  như plan yêu cầu;
+- trước mỗi phần quan trọng, thực hiện mini research theo guide; brainstorming
+  với user phải hoàn tất trước khi phase chuyển sang `ready`;
 - làm surgical changes, không refactor ngoài scope;
 - tạo runtime `.py` dưới `backend/` khi phase yêu cầu;
 - tạo/cập nhật `.ipynb` dưới `notebooks/` khi phase yêu cầu;
@@ -88,15 +93,23 @@ checks.
 
 Không gọi live OpenAI/OpenRouter/model API mặc định.
 
-Chỉ chạy live model/evaluation answer judge khi user approve rõ. Nếu cần API
-key, yêu cầu user tự đặt vào `.env` hoặc environment và gửi evidence đã redact.
+Chỉ chạy live embedding, reranking, answer generation hoặc answer judge khi user
+approve rõ cho đúng provider, model và run scope. Nếu cần API key, yêu cầu user
+tự đặt vào `.env` hoặc environment và gửi evidence đã redact.
+
+Model download và Qdrant collection reset/delete cần approval riêng. Với
+collection mutation, phải xác minh exact collection name, model, dimension,
+point count và artifact evidence trước action.
+
+Benchmark mode không được silent fallback. Report phải ghi actual provider,
+model, profile, config và mọi failed/partial run.
 
 Retrieval evaluation không cần model judge có thể chạy local nếu Qdrant và local
 embedding model đã sẵn sàng.
 
 ## Notebook Rules
 
-Phase nào plan yêu cầu notebook thì implementer bắt buộc tạo hoặc cập nhật
+Phase nào guide yêu cầu notebook thì implementer bắt buộc tạo hoặc cập nhật
 notebook tương ứng.
 
 Notebook requirements:
@@ -128,7 +141,8 @@ evidence.
 
 ## Implementation Report
 
-Sau mỗi approved phase hoặc milestone, viết report theo:
+Sau khi hoàn tất implementation và validation của phase có trạng thái `ready`,
+viết report để bàn giao Codex review theo:
 
 ```text
 session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
@@ -157,7 +171,7 @@ Report phải nêu:
 - tests run;
 - verification evidence;
 - known issues;
-- deviations from plan;
+- deviations from approved guide;
 - whether live network/model/deploy/secret access occurred;
 - self-check về security, data safety, reliability, performance, tests, và
   notebooks.
@@ -170,13 +184,15 @@ Trước khi nói phase/milestone sẵn sàng cho Codex review, implementer ph�
 - data safety: chunks, metadata, API responses, debug data, model errors, và
   result files chỉ chứa dữ liệu safe/intentional;
 - reliability: failure paths deterministic, reset/reindex behavior rõ ràng,
-  import paths ổn định, và commands chạy từ `backend/` như plan;
+  import paths ổn định, và commands chạy từ `backend/` như guide;
 - performance: không thêm repeated expensive model loads, unbounded work, hoặc
   bottlenecks không được document;
 - tests: default verification không cần secrets, paid model calls, deploy, hoặc
   external services;
 - notebooks: JSON hợp lệ, outputs rỗng, execution counts null, default cells
-  safe.
+  safe;
+- scope: `git diff --check` sạch và `git diff --name-only` chỉ chứa files thuộc
+  approved guide hoặc deviation đã được user/Codex chấp thuận.
 
 Nếu có accepted local-MVP limitation, ghi trong `Known Issues` với severity và
 lý do không block current phase.

@@ -25,7 +25,8 @@ Trọng tâm hiện tại là Hue Foods RAG MVP:
 - Qdrant hybrid với một active collection;
 - config profiles: `dense_only`, `hybrid_no_rerank`, `hybrid_rerank`;
 - Semantic Markdown section chunking;
-- SentenceTransformer local để benchmark nhiều embedding models;
+- baseline local nhẹ từ `llm_rag` trước khi benchmark embedding/reranking qua
+  OpenRouter;
 - OpenAI/Agents SDK cho answer generation và LLM-as-judge khi được approve;
 - evaluation gồm retrieval metrics và answer judge;
 - phase Agentic RAG để sau MVP, chưa implement trong phase đầu.
@@ -79,9 +80,17 @@ Nếu task liên quan foods curation hoặc foods data, đọc thêm:
 Nếu task liên quan Hue Foods RAG MVP, đọc thêm:
 
 ```text
-/home/hieu0606sunny/hue_rag/docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
-/home/hieu0606sunny/hue_rag/docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
-/home/hieu0606sunny/hue_rag/docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md
+/home/hieu0606sunny/hue_rag/guides/README.md
+/home/hieu0606sunny/hue_rag/guides/phase_0_mvp_foundation.md
+guide của phase đang làm trong /home/hieu0606sunny/hue_rag/guides/
+relevant implementation và Codex review reports trong /home/hieu0606sunny/hue_rag/reports/
+```
+
+Nếu task liên quan embedding, retrieval, reranking, evaluation hoặc model
+selection, đọc thêm:
+
+```text
+/home/hieu0606sunny/hue_rag/reports/hue_foods_rag_benchmark.md
 ```
 
 Nếu session là reviewer, đọc thêm:
@@ -194,19 +203,18 @@ Mỗi lần cập nhật phải ghi:
 - validation đã chạy;
 - next action đề xuất.
 
-## Reports Và Docs
+## Guides, Reports Và Docs
 
-Specs:
-
-```text
-docs/superpowers/specs/
-```
-
-Plans và benchmark logs:
+Hướng dẫn canonical theo phase:
 
 ```text
-docs/superpowers/plans/
+/home/hieu0606sunny/hue_rag/guides/
 ```
+
+`guides/README.md` định nghĩa navigation, lifecycle và vai trò.
+`guides/phase_0_mvp_foundation.md` định nghĩa contract xuyên phase. Mỗi phase
+có đúng một guide chi tiết; DeepSeek Implementer xem guide là read-only và
+scope change phải quay lại user/Codex Reviewer.
 
 Implementation reports và Codex review reports:
 
@@ -221,9 +229,15 @@ reports/phase_<id>_<short_name>_implementation_report.md
 reports/phase_<id>_<short_name>_codex_review.md
 ```
 
+Benchmark model/pipeline summary:
+
+```text
+reports/hue_foods_rag_benchmark.md
+```
+
 ## Notebook Rules
 
-Phase nào plan yêu cầu notebook thì implementer phải tạo hoặc cập nhật notebook
+Phase nào guide yêu cầu notebook thì implementer phải tạo hoặc cập nhật notebook
 tương ứng.
 
 Notebook rules:
