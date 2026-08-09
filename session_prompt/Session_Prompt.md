@@ -66,8 +66,8 @@ Quyền hạn mặc định:
 Trước khi làm việc, đọc:
 
 ```text
-/home/hieu0606sunny/hue_rag/Session_Prompt.md
-/home/hieu0606sunny/hue_rag/Project_Status.md
+/home/hieu0606sunny/hue_rag/session_prompt/Session_Prompt.md
+/home/hieu0606sunny/hue_rag/session_prompt/Project_Status.md
 ```
 
 Nếu task liên quan foods curation hoặc foods data, đọc thêm:
@@ -87,15 +87,15 @@ Nếu task liên quan Hue Foods RAG MVP, đọc thêm:
 Nếu session là reviewer, đọc thêm:
 
 ```text
-/home/hieu0606sunny/hue_rag/REVIEWER_WORKFLOW.md
-/home/hieu0606sunny/hue_rag/TEMPLATE_CODEX_REVIEW.md
+/home/hieu0606sunny/hue_rag/session_prompt/REVIEWER_WORKFLOW.md
+/home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_CODEX_REVIEW.md
 ```
 
 Nếu session là implementer, đọc thêm:
 
 ```text
-/home/hieu0606sunny/hue_rag/IMPLEMENTER_WORKFLOW.md
-/home/hieu0606sunny/hue_rag/TEMPLATE_IMPLEMENTATION_REPORT.md
+/home/hieu0606sunny/hue_rag/session_prompt/IMPLEMENTER_WORKFLOW.md
+/home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
 ```
 
 ## Global Rules

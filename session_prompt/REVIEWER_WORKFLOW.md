@@ -15,10 +15,10 @@ user yêu cầu rõ.
 Trước khi review, đọc:
 
 ```text
-Session_Prompt.md
-REVIEWER_WORKFLOW.md
-Project_Status.md
-TEMPLATE_CODEX_REVIEW.md
+/home/hieu0606sunny/hue_rag/session_prompt/Session_Prompt.md
+/home/hieu0606sunny/hue_rag/session_prompt/REVIEWER_WORKFLOW.md
+/home/hieu0606sunny/hue_rag/session_prompt/Project_Status.md
+/home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_CODEX_REVIEW.md
 docs/superpowers/specs/2026-08-08-hue-foods-rag-mvp-design.md
 docs/superpowers/plans/2026-08-08-hue-foods-rag-mvp-plan.md
 docs/superpowers/plans/2026-08-08-hue-foods-rag-benchmark-log.md
@@ -188,7 +188,7 @@ reports/phase_4_qdrant_ingestion_codex_review.md
 Dùng cấu trúc trong:
 
 ```text
-TEMPLATE_CODEX_REVIEW.md
+session_prompt/TEMPLATE_CODEX_REVIEW.md
 ```
 
 ## Approval Và Project Status
