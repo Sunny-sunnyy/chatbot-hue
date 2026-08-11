@@ -2,23 +2,23 @@
 
 ## Mục tiêu và giá trị cho người dùng
 
-Phase 3 tạo hai biểu diễn có thể tái lập cho 366 canonical food chunks: dense vectors để tìm tương đồng ngữ nghĩa và sparse vectors để giữ tín hiệu từ khóa. Phase này khóa interface giữa text và vector trước khi Qdrant ingestion bắt đầu.
+Phase 3 tạo hai biểu diễn có thể tái lập cho 572 canonical food chunks: dense vectors để tìm tương đồng ngữ nghĩa và sparse vectors để giữ tín hiệu từ khóa. Phase này khóa interface giữa text và vector trước khi Qdrant ingestion bắt đầu.
 
 ## Trạng thái
 
 ```text
-Status: not_ready
+Status: approved
 Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
-Implementer: DeepSeek after status becomes ready
+Implementer: DeepSeek
 ```
 
-Không được implement chỉ từ guide hiện tại. Phase 1–2 phải trở lại `approved`; sau đó Codex mới mở Level 2 brainstorming, ghi decision record và chuyển status thành `ready`.
+Level 2 brainstorming đã được người dùng phê duyệt ngày 2026-08-11 +07. Người dùng đã chạy và xác nhận notebook `notebooks/03_embedding_models.ipynb` ngày 2026-08-11 +07. Phase 3 được approved; Phase 4 vẫn cần brainstorming riêng trước implementation.
 
 ## Dependency
 
 - Phase 1–2 phải hoàn tất governance retrofit và được người dùng xác nhận.
-- Input baseline là 366 chunks từ `chunk_foods_markdown()`.
+- Input baseline là 572 chunks từ `chunk_foods_markdown()`.
 - `backend/config/settings.yaml` đang dùng `intfloat/multilingual-e5-small`, 384 dimensions, CPU.
 - Phase này không tạo, reset, upsert hoặc query Qdrant.
 
@@ -42,6 +42,7 @@ backend/embedding/base.py
 backend/embedding/embedder.py
 backend/embedding/batch_embed.py
 backend/embedding/sparse_embedder.py
+backend/config/settings.yaml
 backend/tests/test_embedder.py
 backend/tests/test_sparse_embedder.py
 notebooks/03_embedding_models.ipynb
@@ -208,6 +209,53 @@ Codex phải làm rõ với người dùng:
 
 Decision record phải ghi exact lựa chọn, evidence và revisit trigger. Đây là năm câu hỏi thay đổi implementation/test; không thêm câu hỏi không ảnh hưởng design.
 
+## Decision record đã được phê duyệt
+
+```text
+Decision: Dùng 572 chunks từ chunk_foods_markdown() theo thứ tự ổn định làm corpus canonical cho Phase 3, thay mọi tham chiếu lịch sử 366 chunks.
+Approved by: User
+Approval date +07: 2026-08-11
+Evidence: User xác nhận sau khi đối chiếu Project Status, Phase 2 evidence và Phase 3 guide.
+Affected scope: Dense/sparse fit, tests, notebook và acceptance criteria của Phase 3.
+Revisit trigger: Canonical chunking của Phase 2 thay đổi và được người dùng phê duyệt.
+```
+
+```text
+Decision: Dùng intfloat/multilingual-e5-small đã có trong local cache, CPU và batch_size=64 là mức tối đa ban đầu; chỉ giảm sau local smoke có evidence CPU/RAM không đủ.
+Approved by: User
+Approval date +07: 2026-08-11
+Evidence: Local cache preflight xác nhận model hiện diện; user xác nhận batch policy.
+Affected scope: Local SentenceTransformer embedder, batching, local smoke và notebook.
+Revisit trigger: Local smoke vượt resource limit hoặc model cache không còn dùng được.
+```
+
+```text
+Decision: Implement OpenRouter embedding adapter live-ready trong Phase 3. Adapter dùng endpoint embeddings hiện hành, input_type tách query/document, batch bounded, timeout 30 giây và tối đa hai retries cho 429 hoặc lỗi 5xx; không retry lỗi auth/config/input và không fallback sang E5.
+Approved by: User
+Approval date +07: 2026-08-11
+Evidence: User chọn live-ready adapter; OpenRouter official embeddings API và catalog model qwen/qwen3-embedding-0.6b được reviewer xác minh read-only.
+Affected scope: backend/embedding/openrouter_embedder.py, settings embedding và unit tests mock HTTP client.
+Revisit trigger: OpenRouter đổi endpoint/schema/catalog, provider limits thay đổi, hoặc user không còn cho phép live embedding run.
+```
+
+```text
+Decision: SparseEmbedder reset state và fit lại từ toàn bộ 572 canonical chunk texts mỗi process; không serialize vocabulary/IDF artifact trong MVP Phase 3. Consumers nhận SparseEmbedder instance tường minh, không dùng mutable module global.
+Approved by: User
+Approval date +07: 2026-08-11
+Evidence: User xác nhận đề xuất sau khi reviewer đối chiếu sparse pipeline của llm_rag.
+Affected scope: SparseEmbedder, Phase 4 point building boundary và Phase 5 BM25 startup boundary.
+Revisit trigger: Corpus đủ lớn để startup fit trở thành bottleneck có đo đạc, hoặc sparse retrieval/native state cần artifact versioned.
+```
+
+```text
+Decision: Dimension runtime phải khớp dimension cấu hình; mismatch fail-fast trước khi vector được trả về hoặc index. Không tự sửa config, pad/truncate vector hay fallback sang model khác. Remote model có dimension khác cần experiment/collection mới và reindex được user phê duyệt.
+Approved by: User
+Approval date +07: 2026-08-11
+Evidence: User xác nhận fail-fast policy.
+Affected scope: BaseEmbedder, local/remote validation, config và Phase 4 collection contract.
+Revisit trigger: User phê duyệt model hoặc dimension mới cho experiment khác.
+```
+
 ## Nhiệm vụ của DeepSeek Implementer
 
 - Viết failing tests cho empty input, output order, dimension mismatch, model cache và sparse state trước implementation.
@@ -266,7 +314,7 @@ Live/local model smoke command phải được ghi chính xác trong implementat
 - Local E5 interface và sparse representation đúng contracts.
 - Unit tests pass mà không cần network/model download.
 - Approved local smoke xác nhận 384-dimensional normalized vectors.
-- Sparse vocabulary non-empty và deterministic trên 366 chunks.
+- Sparse vocabulary non-empty và deterministic trên 572 chunks.
 - OpenRouter boundary không cho phép mixed vector spaces hoặc silent fallback.
 - Notebook an toàn và report đầy đủ.
 - User report phản ánh đúng validation/limitations và được người dùng xác nhận cùng notebook.

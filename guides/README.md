@@ -110,7 +110,7 @@ Chỉ dùng rich elicitation khi còn ít nhất hai chiều mơ hồ quan trọ
 | 0 | `phase_0_mvp_foundation.md` | `completed` | Level 0 | Kiến trúc, provider boundary, data flow và governance của MVP |
 | 1 | `phase_1_backend_skeleton.md` | `approved` | Level 1 | Mã nền, notebook và báo cáo đã được người dùng xác nhận |
 | 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Level 2 | 572 đoạn, giới hạn 400 ký tự, bảng và nhãn đã được xác nhận |
-| 3 | `phase_3_embedding_sparse_representation.md` | `not_ready` | Level 2 | Dense embedding provider và sparse representation |
+| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Level 2 | Dense embedding provider và sparse representation |
 | 4 | `phase_4_qdrant_ingestion.md` | `not_ready` | Level 2 | Một active Qdrant collection và dense+sparse points |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `not_ready` | Level 3 | Ba retrieval profiles, BM25, reranking và context |
 | 6 | `phase_6_generation_api.md` | `not_ready` | Level 2 | Grounded answer generation và JSON API |

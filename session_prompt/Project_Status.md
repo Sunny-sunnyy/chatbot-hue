@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-09 22:30 +07`
+Last updated: `2026-08-11 16:43 +07`
 
 ## Mục tiêu dự án
 
@@ -86,24 +86,25 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Tách governance workflow: `session_prompt/Session_Prompt.md` là shared base context + role routing; `session_prompt/REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `session_prompt/IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md` và `session_prompt/TEMPLATE_CODEX_REVIEW.md`; reports phase nằm trong `/home/hieu0606sunny/hue_rag/reports/`.
 - Giai đoạn 1 `approved`: backend skeleton, cấu hình chung, logging, shared schema và `notebooks/01_backend_foundation.ipynb` đã được Codex kiểm tra; người dùng đã chạy notebook và xác nhận.
 - Giai đoạn 2 `approved`: đọc 91 curated foods files và tạo 572 đoạn; nội dung thường giới hạn 400 ký tự, bảng được giữ nguyên, mỗi đoạn có nhãn ngữ cảnh ngắn; 31 kiểm thử và `notebooks/02_foods_data_and_chunking.ipynb` đã đạt; người dùng quan sát đúng 572 đoạn, 0 đoạn thường vượt 400 và 8 bảng vượt 400 rồi xác nhận.
+- Giai đoạn 3 `approved`: dense E5 local với vector 384 chiều đã chuẩn hóa, sparse TF-IDF deterministic trên 572 đoạn và OpenRouter embedding adapter live-ready đã được kiểm tra bằng mock; 74 kiểm thử đạt. Người dùng đã chạy `notebooks/03_embedding_models.ipynb` ở default mode, quan sát 572 đoạn, vocabulary 2093, kết quả deterministic, thứ tự vector được giữ và TF-IDF khớp.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Brainstorm và implement Phase 3–8 của Hue Foods RAG MVP theo guide; Phase 3
-  đang `not_ready` cho đến khi phạm vi embedding và sparse representation được
-  người dùng phê duyệt.
+- Brainstorm và implement Phase 4–8 của Hue Foods RAG MVP theo guide; Phase 4
+  đang `not_ready` cho đến khi collection Qdrant và ingestion scope được người
+  dùng phê duyệt.
 - Chạy local E5/MiniLM three-profile benchmark rồi mới thử OpenRouter; ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
 
-### 2026-08-09 22:30 +07
+### 2026-08-11 16:43 +07
 
-- Trạng thái: Phase 0 `completed`; Giai đoạn 1–2 `approved`; Giai đoạn 3–8 `not_ready`; Giai đoạn 9 `design_only`. Người dùng đã chạy hai notebook và xác nhận báo cáo Giai đoạn 1–2.
-- File chính: `notebooks/01_backend_foundation.ipynb`, `notebooks/02_foods_data_and_chunking.ipynb`, mã chia đoạn trong `backend/ingestion/`, guides Giai đoạn 1–2, báo cáo kỹ thuật/Codex và hai báo cáo trong `reports/user_reports/`.
-- Validation: Phase 1 safe smoke checks đạt; Phase 2 `py_compile` đạt, 31 kiểm thử đạt, tạo 572 đoạn từ 91 tệp, 0 đoạn thường vượt 400 ký tự, 8 bảng vượt 400 được giữ nguyên, mã đoạn không trùng và ổn định; hai notebook chạy đạt, không gọi dịch vụ ngoài. Quy tắc báo cáo người dùng tám mục, đường dẫn và Markdown đã được kiểm tra; `git diff --check` sạch.
-- Next action: Brainstorm Giai đoạn 3 theo `guides/phase_3_embedding_sparse_representation.md`; không gọi mô hình hoặc dịch vụ ngoài nếu người dùng chưa phê duyệt.
+- Trạng thái: Phase 0 `completed`; Giai đoạn 1–3 `approved`; Giai đoạn 4–8 `not_ready`; Giai đoạn 9 `design_only`. Người dùng đã chạy và xác nhận ba notebook đầu.
+- File chính: `backend/embedding/`, `backend/config/settings.yaml`, `notebooks/03_embedding_models.ipynb`, guide/báo cáo kỹ thuật/Codex và user report Phase 3.
+- Validation: 74 tests đạt; `py_compile` năm module embedding đạt; local E5 offline trả vector 384 chiều norm 1; notebook schema hợp lệ, outputs được làm sạch sau user run; `git diff --check` sạch. Không gọi OpenRouter, Qdrant hoặc dịch vụ trả phí.
+- Next action: Brainstorm Giai đoạn 4 theo `guides/phase_4_qdrant_ingestion.md`; Qdrant collection mutation hoặc model/API live run vẫn cần approval riêng.
