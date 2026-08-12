@@ -77,7 +77,7 @@ Không chunk trực tiếp từ `_source-dumps`. Enrichment chỉ thực hiện 
 | Local lexical scoring | Python BM25 | Baseline theo kỹ thuật từ `llm_rag` |
 | Local reranker | `cross-encoder/ms-marco-MiniLM-L-6-v2`, CPU | Baseline nhẹ; phải ghi giới hạn tiếng Việt |
 | Remote embedding | OpenRouter embeddings endpoint | Qwen3 Embedding là family ưu tiên sau catalog preflight |
-| Remote reranking | OpenRouter native rerank endpoint | Chọn model thực sự có trong catalog ở Phase 5; Qwen3-Reranker vẫn là candidate |
+| Remote reranking | OpenRouter native rerank endpoint | Hoãn adapter, exact model preflight và benchmark sang Phase 8; Phase 5 chỉ dùng local MiniLM |
 | Answer generation | OpenAI Agents SDK, `gpt-5.4-nano` | Baseline generation trực tiếp qua OpenAI |
 | Answer judge | OpenAI Agents SDK, `gpt-5.4-mini` | Tách riêng với answer model |
 | Future generation | OpenRouter, `qwen/qwen3.5-9b` | Chỉ benchmark sau khi pipeline baseline ổn định |
@@ -298,8 +298,17 @@ Affected scope: Phase 1–9, guides, workflows, report templates, notebooks và 
 Revisit trigger: Người dùng yêu cầu thay đổi approval authority, report audience hoặc notebook gate.
 ```
 
+```text
+Decision: Phase 5 dùng local MiniLM reranker; hoãn OpenRouter reranker adapter, exact model preflight và controlled benchmark sang Phase 8.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: Level 3 brainstorming Phase 5 sau khi đối chiếu pipeline llm_rag đã chạy local với contract hue_rag.
+Affected scope: Phase 5 retrieval/reranking, Phase 8 benchmark và remote-provider gate.
+Revisit trigger: Local reranker không đạt latency gate hoặc Phase 7–8 quality evidence tạo hypothesis rõ cho remote reranker.
+```
+
 ## Bước tiếp theo
 
-Phase 1–3 đã được người dùng xác nhận và có status `approved`. Phase 4 đã hoàn
-thành Level 2 brainstorming, có status `ready` và được bàn giao cho DeepSeek
-Implementer; Phase 5 vẫn đóng cho đến khi Phase 4 được người dùng xác nhận.
+Phase 1–5 đã được người dùng xác nhận và có status `approved`. Phase 6 có status
+`not_ready` và cần Level 2 brainstorming trước implementation. Live model/API,
+external service hoặc scope expansion vẫn cần user approval riêng.

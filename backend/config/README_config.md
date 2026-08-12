@@ -26,14 +26,16 @@ Các profile có sẵn:
 | `hybrid_no_rerank` | yes | yes | no |
 | `hybrid_rerank` | yes | yes | yes |
 
-Mọi profile dùng chung một code path; profile chỉ thay đổi hành vi qua config.
+Profile quyết định component nào được khởi tạo khi service start:
+`dense_only` chỉ tạo dense retriever; `hybrid_no_rerank` thêm BM25 fit trên toàn
+bộ corpus; `hybrid_rerank` thêm local CrossEncoder reranker.
 
 ### Các nhóm cấu hình
 
 - `knowledge_base`: thư mục curated knowledge base, globs include và exclude parts.
 - `embedding`: model SentenceTransformer, vector size, device, batch size.
-- `vector_database`: Qdrant URL, active collection name, vector size, distance, timeout, upsert batch size và retry limit. `reset_collection` luôn là `false` khi ingestion chạy; xóa collection chỉ qua command `vectorstore.reset` riêng với user approval và confirmation string chính xác.
-- `retrieval`: top_k, candidate multiplier, score threshold, dense/bm25 weights.
+- `vector_database`: Qdrant URL, active collection name, vector size, distance, timeout, upsert batch size, retry limit và `scroll_batch_size` (bounded startup scroll cho hybrid profiles, chỉ lấy payload không lấy vector). `reset_collection` luôn là `false` khi ingestion chạy; xóa collection chỉ qua command `vectorstore.reset` riêng với user approval và confirmation string chính xác.
+- `retrieval`: top_k, candidate multiplier, score threshold, dense/bm25 weights và whole-chunk context budget (`max_context_documents`, `max_context_characters` tính cả source label và separator).
 - `reranking`: CrossEncoder model, device, top_k cuối cùng.
 - `llm`: provider, answer model, temperature, max output tokens.
 - `evaluation`: đường dẫn test file, judge model.

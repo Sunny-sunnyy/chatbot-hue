@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-12 18:06 +07`
+Last updated: `2026-08-12 23:41 +07`
 
 ## Mục tiêu dự án
 
@@ -88,19 +88,27 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Giai đoạn 2 `approved`: đọc 91 curated foods files và tạo 572 đoạn; nội dung thường giới hạn 400 ký tự, bảng được giữ nguyên, mỗi đoạn có nhãn ngữ cảnh ngắn; 31 kiểm thử và `notebooks/02_foods_data_and_chunking.ipynb` đã đạt; người dùng quan sát đúng 572 đoạn, 0 đoạn thường vượt 400 và 8 bảng vượt 400 rồi xác nhận.
 - Giai đoạn 3 `approved`: dense E5 local với vector 384 chiều đã chuẩn hóa, sparse TF-IDF deterministic trên 572 đoạn và OpenRouter embedding adapter live-ready đã được kiểm tra bằng mock; 74 kiểm thử đạt. Người dùng đã chạy `notebooks/03_embedding_models.ipynb` ở default mode, quan sát 572 đoạn, vocabulary 2093, kết quả deterministic, thứ tự vector được giữ và TF-IDF khớp.
 - Giai đoạn 4 `approved`: Qdrant 1.18.3 chạy local bằng Docker Compose pinned image; collection `hue_foods_e5_small_384` có 572 points, named dense vector 384 chiều cosine và sparse index. Codex đã kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận phase và chọn không tự chạy notebook trước khi phê duyệt.
+- Giai đoạn 5 `approved`: ba retrieval profiles `dense_only`, `hybrid_no_rerank` và `hybrid_rerank`; Python BM25 + min-max fusion 0.6/0.4; local MiniLM cache-only reranker; whole-chunk context tối đa 5 nguồn/3.000 ký tự; typed failures, immutable startup snapshot và safe payload projection. Codex đã kiểm tra 99 tests Phase 5, 217 tests toàn backend, notebook default fake mode và các failure probes; người dùng xác nhận final approval.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Brainstorm và implement Phase 5–8 của Hue Foods RAG MVP theo guide; Phase 5
-  đang `not_ready` và cần brainstorming Level 3 trước implementation.
-- Chạy local E5/MiniLM three-profile benchmark rồi mới thử OpenRouter; ledger hiện chưa có benchmark result hoặc winner.
+- Brainstorm và implement Phase 6–8 của Hue Foods RAG MVP theo guide; Phase 6
+  đang `not_ready` và cần brainstorming Level 2 trước implementation.
+- Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-12 23:41 +07
+
+- Trạng thái: Giai đoạn 5 `approved` sau revision 3, Codex technical review và xác nhận final approval của người dùng. Giai đoạn 6 vẫn `not_ready` và chưa được implement.
+- File chính: `backend/retrieval/`, `backend/scoring/bm25.py`, `backend/reranking/`, `backend/core/startup.py`, `notebooks/05_retrieval_profiles.ipynb`, guide và ba báo cáo Phase 5.
+- Validation: 99 kiểm thử Phase 5 và 217 kiểm thử toàn backend đạt; `py_compile` 10 module đạt; reviewer probes cho non-numeric/non-finite scores, duplicate reranker input, embedder model identity và config staleness đạt; notebook schema sạch và default fake mode chạy đạt; `git diff --check` sạch; CodeGraph index up to date với 54 Python files, 834 nodes và 2.424 edges. Chưa chạy real Qdrant/E5/MiniLM hoặc p95 latency gate vì chưa có approval riêng.
+- Next action: Brainstorm Giai đoạn 6 theo Level 2; chưa implement answer generation, OpenAI Agents SDK hoặc JSON API trước khi user phê duyệt design. Real model/API/service calls vẫn cần approval riêng.
 
 ### 2026-08-12 18:06 +07
 
