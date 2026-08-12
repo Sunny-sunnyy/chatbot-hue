@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-12 23:41 +07`
+Last updated: `2026-08-13 00:34 +07`
 
 ## Mục tiêu dự án
 
@@ -89,19 +89,43 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Giai đoạn 3 `approved`: dense E5 local với vector 384 chiều đã chuẩn hóa, sparse TF-IDF deterministic trên 572 đoạn và OpenRouter embedding adapter live-ready đã được kiểm tra bằng mock; 74 kiểm thử đạt. Người dùng đã chạy `notebooks/03_embedding_models.ipynb` ở default mode, quan sát 572 đoạn, vocabulary 2093, kết quả deterministic, thứ tự vector được giữ và TF-IDF khớp.
 - Giai đoạn 4 `approved`: Qdrant 1.18.3 chạy local bằng Docker Compose pinned image; collection `hue_foods_e5_small_384` có 572 points, named dense vector 384 chiều cosine và sparse index. Codex đã kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận phase và chọn không tự chạy notebook trước khi phê duyệt.
 - Giai đoạn 5 `approved`: ba retrieval profiles `dense_only`, `hybrid_no_rerank` và `hybrid_rerank`; Python BM25 + min-max fusion 0.6/0.4; local MiniLM cache-only reranker; whole-chunk context tối đa 5 nguồn/3.000 ký tự; typed failures, immutable startup snapshot và safe payload projection. Codex đã kiểm tra 99 tests Phase 5, 217 tests toàn backend, notebook default fake mode và các failure probes; người dùng xác nhận final approval.
+- Hoàn tất Level 2 brainstorming và planning Giai đoạn 6; guide đã chuyển sang
+  `ready`. Thiết kế chốt deterministic retrieval -> context -> tool-less OpenAI
+  Agents SDK generation, JSON API stateless, cached readiness, safe source/error
+  contracts, notebook safe-default và live-smoke budget có approval riêng. Chưa
+  implement runtime, tests, notebook hoặc gọi `gpt-5.4-nano`.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Brainstorm và implement Phase 6–8 của Hue Foods RAG MVP theo guide; Phase 6
-  đang `not_ready` và cần brainstorming Level 2 trước implementation.
+- Implement Phase 6–8 của Hue Foods RAG MVP theo guide; Phase 6 đang `ready`
+  nhưng implementation chưa bắt đầu.
 - Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-13 00:34 +07
+
+- Trạng thái: Giai đoạn 6 đã hoàn tất planning Level 2 và chuyển sang `ready`;
+  chưa implement, chưa technical review và chưa approved. Giai đoạn 9 được bổ
+  sung hướng persistent history, standalone-query rewriting, structured router
+  và Hue-only web escalation nhưng vẫn `design_only`, không có implementation
+  authorization.
+- File chính: `guides/phase_6_generation_api.md`,
+  `guides/phase_9_agentic_rag_roadmap.md` và `guides/README.md`.
+- Validation: self-review placeholder/consistency/scope đạt; diff chỉ gồm ba
+  guide files trước cập nhật snapshot; `git diff --check` sạch; CodeGraph index
+  up to date với 54 Python files, 834 nodes và 2.424 edges. Không sửa runtime,
+  tests, notebook hoặc report; không gọi Docker, OpenAI, OpenRouter, web hay
+  external service.
+- Next action: Dự kiến ngày 2026-08-14 +07 mở session DeepSeek Implementer để
+  triển khai Giai đoạn 6 theo guide `ready`. Default implementation/validation
+  phải offline bằng fakes; live OpenAI smoke, real-service checks và chi phí vẫn
+  cần người dùng phê duyệt riêng.
 
 ### 2026-08-12 23:41 +07
 

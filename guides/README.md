@@ -113,7 +113,7 @@ Chỉ dùng rich elicitation khi còn ít nhất hai chiều mơ hồ quan trọ
 | 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Level 2 | Dense embedding provider và sparse representation |
 | 4 | `phase_4_qdrant_ingestion.md` | `approved` | Level 2 | Một active Qdrant collection và dense+sparse points |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Level 3 | Ba retrieval profiles, BM25, reranking và context |
-| 6 | `phase_6_generation_api.md` | `not_ready` | Level 2 | Grounded answer generation và JSON API |
+| 6 | `phase_6_generation_api.md` | `ready` | Level 2 | Grounded answer generation và JSON API |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `not_ready` | Level 3 | Retrieval metrics và LLM-as-judge |
 | 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Level 3 | Controlled benchmark và lựa chọn cấu hình cuối |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `design_only` | Level 4 | Roadmap thiết kế Agentic RAG sau MVP |

@@ -63,6 +63,40 @@ Future tools có thể gồm local retrieval, structured place/food lookup hoặ
 
 Phân biệt request-local state, conversation history, user preference memory và persistent profile. Bước đầu nên dùng bounded request/conversation state. Persistent memory cần privacy, retention và deletion design riêng.
 
+### Định hướng multi-turn và routing đã chốt từ Phase 6
+
+Phase 6 chỉ tạo/echo `session_id` và không lưu lịch sử. Khi Phase 9 vượt đủ hard
+gate, design riêng phải nghiên cứu luồng ưu tiên sau:
+
+```text
+bounded persistent conversation history
+  -> standalone-query contextualizer trước retrieval
+  -> structured input router
+       casual conversation -> Conversation Agent, không retrieval/web
+       Hue culture/travel -> RAG path
+       out of domain -> safe out-of-scope response
+  -> Hue RAG thiếu evidence
+       -> explicit evidence-sufficiency gate
+       -> Web Agent chỉ tra cứu văn hóa/du lịch Huế
+       -> answer có web provenance riêng
+```
+
+Standalone-query contextualizer phải giải quyết follow-up có đại từ hoặc entity
+ẩn, ví dụ biến "Các quán ăn nổi tiếng về nó?" thành câu độc lập vẫn giữ đúng
+"cơm hến" từ lịch sử trước khi retrieval. Rewrite không được thêm facts hoặc bỏ
+constraints của người dùng.
+
+Router nên trả structured route enum như `casual`, `hue_rag`,
+`out_of_scope`, kèm confidence và safe reason code; không lưu hoặc trả hidden
+chain-of-thought. Không để một agent tự đoán rằng KB thiếu dữ liệu rồi bỏ qua
+RAG: với query thuộc Huế, RAG chạy trước và web escalation chỉ mở sau evidence
+gate rõ ràng.
+
+Web Agent không phải trợ lý web tổng quát. Nó chỉ được xử lý câu hỏi thuộc văn
+hóa/du lịch Huế mà curated RAG thiếu evidence, không silent fallback, phải lưu
+URL/thời điểm truy cập và phân biệt nguồn web với nguồn curated. Nội dung web
+không tự động ghi vào `knowledge-base-hue/`.
+
 ## Ba architecture options bắt buộc so sánh
 
 1. Modern/SOTA: graph/state-machine orchestration với router, parallel subqueries và evidence judge.
@@ -178,6 +212,30 @@ Không có implementation task hiện tại. DeepSeek chỉ được đọc road
 - Yêu cầu evidence rằng complexity giải quyết failure thật.
 - Điều phối design riêng và kiểm tra scope creep.
 - Không approve plan thiếu budgets, tools, evaluation hoặc security model.
+
+## Định hướng đã được người dùng xác nhận
+
+```text
+Decision: Future multi-turn flow dùng bounded persistent history và standalone-query contextualization trước retrieval; Phase 6 chỉ giữ stateless session_id.
+Approved by: User
+Approval date +07: 2026-08-13
+Evidence: Phase 6 Level 2 brainstorming với follow-up "nó" tham chiếu "cơm hến".
+Affected scope: Phase 9 memory, query rewrite và retrieval input design.
+Revisit trigger: Phase 8 baseline ổn định và có multi-turn evaluation set, privacy/retention/deletion contract.
+```
+
+```text
+Decision: Future structured router tách casual conversation, Hue RAG và out-of-scope; web escalation chỉ dành cho Hue culture/travel query thiếu RAG evidence.
+Approved by: User
+Approval date +07: 2026-08-13
+Evidence: Phase 6 roadmap discussion.
+Affected scope: Phase 9 router, Conversation Agent, RAG path, evidence gate và Web Agent.
+Revisit trigger: Có route/evidence-sufficiency dataset, web provenance policy, numeric tool/cost budgets và separate approved design.
+```
+
+Hai decision records trên chỉ khóa hướng nghiên cứu. Chúng không thay đổi
+`Status: design_only`, không tạo implementation authorization và không bỏ qua
+Level 4 separate design gate.
 
 ## Notebook
 
