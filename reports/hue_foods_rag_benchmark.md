@@ -138,6 +138,19 @@ Không dùng wildcard/prefix deletion. Sau winner selection phải rebuild winne
 - Judge: accuracy, completeness, relevance, groundedness, scale 1–5.
 - Answer/judge chạy stratified subset trước; full 104 cần approval riêng.
 
+## Phase 4 ingestion evidence
+
+Đây là bằng chứng tạo index, không phải retrieval benchmark và không chứng minh
+native sparse retrieval hoặc model winner.
+
+| Run ID | Status | Corpus checksum | Embedding | Qdrant | Schema | Points | Evidence | Decision |
+|---|---|---|---|---|---|---:|---|---|
+| `phase4-ingestion-20260812` | `completed` | SHA-256 `936063a91a69083fe7070096da17656920cff3b93917a3e6fcc4384d697c8fde` trên 572 chunk dictionaries | Local `intfloat/multilingual-e5-small`, 384, `passage:` | Qdrant 1.18.3, `hue_foods_e5_small_384` | `dense` 384 cosine + indexed `sparse` | 572 | `reports/phase_4_qdrant_ingestion_implementation_report.md`; `reports/phase_4_qdrant_ingestion_codex_review.md` | Index đạt schema/count/identity gate; chưa chạy retrieval |
+
+Run dùng `backend/config/settings.yaml`, E5 offline từ cache và Qdrant image pin
+bằng digest trong `docker-compose.yml`. Read-only audit xác nhận expected/actual
+UUID5 ID sets bằng nhau và toàn bộ payload identity khớp model/dimension.
+
 ## Retrieval results
 
 Chưa có retrieval benchmark run nào được ghi nhận.

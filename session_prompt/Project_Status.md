@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-12 15:19 +07`
+Last updated: `2026-08-12 18:06 +07`
 
 ## Mục tiêu dự án
 
@@ -87,20 +87,27 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Giai đoạn 1 `approved`: backend skeleton, cấu hình chung, logging, shared schema và `notebooks/01_backend_foundation.ipynb` đã được Codex kiểm tra; người dùng đã chạy notebook và xác nhận.
 - Giai đoạn 2 `approved`: đọc 91 curated foods files và tạo 572 đoạn; nội dung thường giới hạn 400 ký tự, bảng được giữ nguyên, mỗi đoạn có nhãn ngữ cảnh ngắn; 31 kiểm thử và `notebooks/02_foods_data_and_chunking.ipynb` đã đạt; người dùng quan sát đúng 572 đoạn, 0 đoạn thường vượt 400 và 8 bảng vượt 400 rồi xác nhận.
 - Giai đoạn 3 `approved`: dense E5 local với vector 384 chiều đã chuẩn hóa, sparse TF-IDF deterministic trên 572 đoạn và OpenRouter embedding adapter live-ready đã được kiểm tra bằng mock; 74 kiểm thử đạt. Người dùng đã chạy `notebooks/03_embedding_models.ipynb` ở default mode, quan sát 572 đoạn, vocabulary 2093, kết quả deterministic, thứ tự vector được giữ và TF-IDF khớp.
+- Giai đoạn 4 `approved`: Qdrant 1.18.3 chạy local bằng Docker Compose pinned image; collection `hue_foods_e5_small_384` có 572 points, named dense vector 384 chiều cosine và sparse index. Codex đã kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận phase và chọn không tự chạy notebook trước khi phê duyệt.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Brainstorm và implement Phase 4–8 của Hue Foods RAG MVP theo guide; Phase 4
-  đang `not_ready` cho đến khi collection Qdrant và ingestion scope được người
-  dùng phê duyệt.
+- Brainstorm và implement Phase 5–8 của Hue Foods RAG MVP theo guide; Phase 5
+  đang `not_ready` và cần brainstorming Level 3 trước implementation.
 - Chạy local E5/MiniLM three-profile benchmark rồi mới thử OpenRouter; ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-12 18:06 +07
+
+- Trạng thái: Giai đoạn 4 `approved`. Người dùng xác nhận kết quả và cho phép commit/push dù chưa tự chạy notebook; Codex đã chạy notebook ở default mode và real read-only mode trước approval. Giai đoạn 5 vẫn `not_ready`.
+- File chính: `backend/vectorstore/`, `backend/ingestion/pipeline.py`, `docker-compose.yml`, `notebooks/04_qdrant_ingestion.ipynb`, guide và ba báo cáo Phase 4.
+- Validation: 44 kiểm thử Phase 4 và 118 kiểm thử toàn backend đạt; `py_compile` năm module đạt; Docker Compose config hợp lệ; Qdrant 1.18.3 có collection green với đúng 572 points, dense 384 cosine, sparse index và 572/572 identity hợp lệ; notebook schema sạch và chạy đạt ở default mode cùng real read-only mode; `git diff --check` sạch; CodeGraph index up to date với 43 files, 513 nodes và 1.336 edges. Chưa live-test ingestion rerun hoặc reset collection.
+- Next action: Brainstorm Giai đoạn 5 theo Level 3; chưa implement retrieval profiles, reranking hoặc retrieval benchmark trước khi user phê duyệt design.
 
 ### 2026-08-12 15:19 +07
 

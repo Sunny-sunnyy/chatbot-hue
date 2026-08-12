@@ -7,17 +7,24 @@ Phase 4 đưa canonical food chunks cùng dense/sparse representations vào mộ
 ## Trạng thái
 
 ```text
-Status: not_ready
+Status: approved
 Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
-Implementer: DeepSeek after Phase 3 approval and Phase 4 readiness
+Implementer: DeepSeek
 ```
+
+Level 2 brainstorming được người dùng phê duyệt ngày 2026-08-12 +07. Codex đã
+kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận
+Phase 4 ngày 2026-08-12 +07 và chọn không tự chạy notebook trước khi phê duyệt.
+Phase 4 được approved; Phase 5 vẫn cần brainstorming Level 3 riêng trước
+implementation.
 
 ## Dependency
 
 - Phase 3 phải được người dùng xác nhận và có status `approved`.
 - Dense model ID, actual dimension, normalization và sparse state contract đã khóa.
-- Qdrant local availability chưa được giả định; phải preflight.
+- Qdrant chạy riêng cho `hue_rag` bằng Docker Compose local; availability vẫn
+  phải preflight trước mọi mutation.
 - User approval bắt buộc trước collection deletion/reset.
 
 ## Chức năng phải tạo
@@ -34,6 +41,11 @@ Implementer: DeepSeek after Phase 3 approval and Phase 4 readiness
 ## Files dự kiến
 
 ```text
+docker-compose.yml
+pyproject.toml
+uv.lock
+backend/config/settings.yaml
+backend/config/README_config.md
 backend/vectorstore/qdrant.py
 backend/vectorstore/hybrid_index.py
 backend/vectorstore/upsert.py
@@ -43,9 +55,29 @@ backend/tests/test_qdrant_schema.py
 backend/tests/test_hybrid_index.py
 backend/tests/test_ingestion_pipeline.py
 notebooks/04_qdrant_ingestion.ipynb
+reports/phase_4_qdrant_ingestion_implementation_report.md
 ```
 
-File list chỉ thay đổi sau brainstorming nếu có lý do cụ thể về ownership; không copy module thừa từ `llm_rag`.
+`qdrant_storage/` là ignored local artifact, không phải deliverable. Không sửa
+`llm_rag`, không xóa `nmk_chatbot_collection` và không copy module thừa từ repo
+tham khảo.
+
+## Qdrant local runtime contract
+
+Phase 4 dùng Qdrant server riêng cho `hue_rag`:
+
+```text
+REST: http://localhost:6333
+gRPC: localhost:6334
+storage: ./qdrant_storage:/qdrant/storage
+image version: v1.18.3
+image: qdrant/qdrant@sha256:0bd98fa7977f1e75694779359ca4e212822e5a71334e28421182f72f209d5286
+```
+
+Không dùng `latest`, embedded mode hoặc Qdrant Cloud. `llm_rag` đã ngừng chạy
+nhưng storage cũ được giữ nguyên. Hai Docker Compose projects dùng cùng host
+ports nên không chạy đồng thời; Phase 4 không thêm port configurability ngoài
+scope local MVP.
 
 ## Active collection invariant
 
@@ -53,7 +85,10 @@ File list chỉ thay đổi sau brainstorming nếu có lý do cụ thể về o
 - Một embedding model dùng cùng collection cho `dense_only`, `hybrid_no_rerank` và `hybrid_rerank`.
 - Khi đổi embedding model/dimension: lưu artifacts của model cũ, xin user approval, xóa exact collection, tạo lại với model mới, reindex toàn corpus.
 - Không giữ nhiều experiment collections trong MVP.
-- Collection name phải deterministic và phản ánh Hue Foods cùng embedding identity đủ để ngăn nhầm schema. Exact naming được chốt trong brainstorming.
+- Active collection cho baseline local là `hue_foods_e5_small_384`.
+- Collection name không thay thế schema/payload validation; runtime vẫn kiểm tra
+  exact model `intfloat/multilingual-e5-small`, dimension `384`, distance và
+  vector names.
 
 ## Collection schema contract
 
@@ -78,10 +113,13 @@ Trước upsert, runtime phải kiểm tra:
 - collection name;
 - dense vector name, dimension và distance;
 - sparse vector name;
-- payload fields/version nếu guide quyết định có schema version;
-- embedding model identity được ghi trong collection metadata/config evidence.
+- payload identity fields trên mọi existing point;
+- embedding model identity và dimension trong payload/config evidence.
 
 Nếu existing schema khác expected schema và reset chưa được phép, pipeline phải dừng với actionable error; không tự recreate.
+Nếu collection đã có points, existing point IDs phải là tập con của 572 expected
+UUID5 IDs và payload identity phải khớp. Point lạ, count lớn hơn 572 hoặc payload
+không tương thích đều fail closed trước upsert.
 
 ## Point contract
 
@@ -89,7 +127,7 @@ Mỗi Qdrant point:
 
 ```python
 {
-    "id": "deterministic Qdrant-compatible ID derived from chunk_id",
+    "id": "UUID5 derived from hue-rag:<chunk_id>",
     "vector": {
         "dense": [0.01, 0.02],
         "sparse": {
@@ -112,7 +150,9 @@ Mỗi Qdrant point:
 }
 ```
 
-Point ID không được random fallback khi `chunk_id` thiếu. Missing/invalid `chunk_id` phải fail trước upsert. Nếu Qdrant client version không nhận arbitrary string IDs, dùng deterministic UUID5 từ `chunk_id` và giữ original `chunk_id` trong payload.
+Point ID dùng `uuid.uuid5(uuid.NAMESPACE_URL, f"hue-rag:{chunk_id}")`. Original
+`chunk_id` luôn được giữ trong payload. Không có random fallback; missing/invalid
+`chunk_id` phải fail trước upsert.
 
 Dense/sparse arrays phải cùng số lượng với chunks. `zip()` không được phép che giấu length mismatch; kiểm tra lengths trước khi build points.
 
@@ -126,10 +166,10 @@ load settings
   -> fit sparse embedder on all chunk texts
   -> embed all chunk texts with document instructions
   -> validate vector count/dimension/finiteness
-  -> preflight Qdrant and expected collection schema
-  -> guarded create/reset
+  -> preflight Qdrant, expected schema and existing point identity
+  -> create collection only when absent
   -> build deterministic dense+sparse points
-  -> batch upsert
+  -> batch upsert 64 points with wait=true
   -> verify collection schema and exact point count
   -> emit non-sensitive summary
 ```
@@ -138,7 +178,25 @@ Expected baseline point count là 572 khi curated corpus/chunking không đổi.
 
 ## Reset và deletion safety
 
-`reset_collection: true` chỉ là điều kiện cần, không phải quyền đủ để xóa. Trước destructive call phải có:
+Ingestion không bao giờ delete/recreate collection. Canonical config là:
+
+```yaml
+vector_database:
+  url: http://localhost:6333
+  collection_name: hue_foods_e5_small_384
+  reset_collection: false
+  vector_size: 384
+  distance: cosine
+  timeout: 30
+  upsert_batch_size: 64
+  upsert_max_retries: 1
+```
+
+Nếu `reset_collection: true`, ingestion phải từ chối chạy và hướng dẫn dùng
+`vectorstore.reset` sau khi có user approval. Reset là command riêng và chỉ
+xóa collection; ingestion lần sau chịu trách nhiệm tạo lại.
+
+Trước destructive command phải có:
 
 ```text
 exact target collection name
@@ -157,28 +215,40 @@ Guard rules:
 - không recreate khi Qdrant preflight không trả exact metadata;
 - log action summary nhưng không log key/header;
 - reset failure dừng pipeline, không tiếp tục upsert vào schema không rõ;
+- confirmation string phải đúng `DELETE hue_foods_e5_small_384`;
+- sau delete phải xác minh exact collection không còn tồn tại;
 - `reset_collection: false` tuyệt đối không gọi delete/recreate.
+
+Phase 4 validation không chạy live reset chỉ để chứng minh guard. Reset safety
+được kiểm tra bằng mock; mọi live deletion vẫn cần approval riêng.
 
 ## Sparse storage boundary
 
 Phase 4 lưu named sparse vectors nhưng không chứng minh native sparse retrieval. Current MVP hybrid ở Phase 5 vẫn là dense candidates + Python BM25. Benchmark ledger phải mô tả đúng retrieval path; không gọi run là dense+sparse hybrid chỉ vì points có sparse field.
 
-## Brainstorming bắt buộc trước implementation
+## Kiến trúc đã phê duyệt
 
-Codex phải xác nhận với người dùng:
+Phase 4 dùng các module chức năng nhỏ thay vì một stateful service class hoặc
+module ingestion gộp lớn:
 
-1. Qdrant chạy qua Docker Desktop/WSL, local process hay một endpoint khác đã được user đặt trong scope.
-2. Exact active collection naming convention có chứa embedding slug/dimension hay dùng fixed name cùng metadata guard.
-3. Qdrant client version và deterministic point-ID format được hỗ trợ.
-4. Batch size, timeout và retry policy phù hợp 572 chunks.
-5. Cơ chế user approval cho reset trong CLI/config: confirmation flag hay separate command.
+- `qdrant.py`: cache client, availability, collection create/inspect/schema validation;
+- `hybrid_index.py`: validate chunks/vectors và build deterministic points;
+- `upsert.py`: bounded batch upsert, transient retry và count verification;
+- `reset.py`: destructive command riêng;
+- `ingestion/pipeline.py`: điều phối Phase 2–4, không có deletion path.
 
-Collection đang tồn tại chỉ được inspect read-only trong preflight; không reset khi brainstorming chưa chốt.
+Mỗi batch có 64 points, timeout 30 giây và tối đa một retry chỉ cho lỗi
+connection/timeout. Validation, schema, bad request và data errors không retry.
+Nếu batch trước đã thành công rồi batch sau thất bại, pipeline ghi safe completed
+count và dừng; không rollback bằng collection deletion. Rerun chỉ tiếp tục khi
+existing IDs/payload là tập con hợp lệ của expected corpus.
 
 ## Nhiệm vụ của DeepSeek Implementer
 
 - Mock Qdrant client trong unit tests.
-- Viết tests cho exact schema, vector length mismatch, missing ID, reset false, wrong target và point-count verification.
+- Viết tests cho exact schema, existing-ID subset, vector length mismatch,
+  missing ID, retry boundary, reset false/true, wrong target và point-count
+  verification.
 - Không dùng deprecated/destructive collection helper khi behavior không rõ; chọn API hiện hành sau local dependency inspection.
 - Không ghi API key vào settings/report.
 - Giữ ingestion deterministic, bounded batches và actionable errors.
@@ -191,8 +261,9 @@ Collection đang tồn tại chỉ được inspect read-only trong preflight; k
 - import Phase 2–4 modules;
 - giải thích named vectors, payload và one-active-collection lifecycle;
 - safe default chỉ build/inspect sample point hoặc mock client;
-- real-mode cells có guard rõ cho Qdrant và reset;
-- không chứa auto-delete cell mặc định;
+- real mode dùng guard `HUE_RAG_QDRANT_REAL=1` và chỉ inspect read-only
+  collection đã được ingestion tạo;
+- không chứa reset/delete cell;
 - committed outputs rỗng và `execution_count=null`.
 
 ## Tests và validation dự kiến
@@ -206,7 +277,11 @@ Mocked tests:
 - `reset_collection=false` không delete;
 - deterministic point IDs;
 - exact payload fields;
-- vector count/dimension mismatch;
+- vector count/dimension/non-finite/sparse mismatch;
+- batch boundaries `64 * 8 + 60` cho 572 points;
+- connection/timeout retry đúng một lần, lỗi khác không retry;
+- partial upsert và idempotent rerun;
+- reset command exact-target/confirmation guards;
 - batch upsert và final point count.
 
 Commands:
@@ -214,10 +289,15 @@ Commands:
 ```bash
 cd backend
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile vectorstore/qdrant.py vectorstore/hybrid_index.py vectorstore/upsert.py vectorstore/reset.py ingestion/pipeline.py
-UV_CACHE_DIR=/tmp/uv-cache uv run pytest tests/test_qdrant_schema.py tests/test_hybrid_index.py tests/test_ingestion_pipeline.py -q --tb=short
+UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest tests/test_qdrant_schema.py tests/test_hybrid_index.py tests/test_ingestion_pipeline.py -q --tb=short
 ```
 
-Live local Qdrant validation chỉ chạy sau user approval và phải ghi:
+Live validation có hai approval riêng: (1) khởi động pinned local Qdrant và
+availability/schema preflight read-only; (2) chạy local E5 offline từ cache,
+tạo collection mới và upsert 572 points. Nếu model cache không đủ và cần
+download, dừng để xin approval mới.
+
+Live evidence phải ghi:
 
 ```text
 collection name
@@ -234,18 +314,22 @@ reset flag và approval evidence
 - Chỉ index curated answer-facing chunks.
 - Upsert idempotent nhờ deterministic IDs.
 - Partial upsert không được báo thành công; final count là gate.
+- Upsert batch 64, `wait=True`; chỉ transient connection/timeout retry một lần.
 - Collection deletion là destructive action được kiểm tra hai lớp.
 - Với 572 chunks, tránh concurrency hoặc retry framework phức tạp chưa cần thiết.
 
 ## Tiêu chí phê duyệt Phase 4
 
 - Mocked tests chứng minh schema và reset safety.
+- Docker Compose pin đúng Qdrant `v1.18.3` digest và dùng storage riêng.
 - Approved real preflight xác nhận Qdrant reachable.
 - Collection có named `dense` và `sparse`, dense dimension đúng model.
-- Upsert count bằng canonical chunk count.
+- Collection là `hue_foods_e5_small_384`; upsert count bằng canonical chunk count 572.
 - Payload không có absolute private path hoặc secret.
 - `reset_collection=false` bảo vệ collection.
-- Notebook an toàn và report có destructive-action evidence.
+- Rerun idempotent và partial failure không được báo thành công.
+- Notebook default không gọi Qdrant/model, real mode read-only và report ghi
+  đúng collection actions; không có live deletion chỉ để validation.
 - User report phản ánh đúng collection actions/limitations và được người dùng xác nhận cùng notebook.
 - Không tuyên bố sparse query behavior chưa implement.
 
@@ -259,7 +343,7 @@ reports/user_reports/phase_4_qdrant_ingestion_user_report.md
 
 Model/collection metadata và ingestion run summary được nối vào `reports/hue_foods_rag_benchmark.md`. Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
 
-## Quyết định đã phê duyệt trước brainstorming
+## Quyết định đã phê duyệt
 
 ```text
 Decision: Dùng 572 canonical chunks và giới hạn 400 ký tự cho nội dung thường; bảng Markdown là ngoại lệ được giữ nguyên.
@@ -270,6 +354,54 @@ Affected scope: Phase 4 point count, batch planning, ingestion validation và be
 Revisit trigger: Curated corpus hoặc Phase 2 chunking contract được user phê duyệt thay đổi.
 ```
 
+```text
+Decision: Dùng Qdrant Docker Compose riêng cho hue_rag, storage riêng và pin image local v1.18.3 bằng exact digest; không dùng embedded, Cloud hoặc latest.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: User chọn phương án Docker riêng sau khi đối chiếu llm_rag và xác nhận exact image pin trong Phase 4 brainstorming.
+Affected scope: docker-compose.yml, local Qdrant lifecycle, ports 6333/6334 và Phase 4 live validation.
+Revisit trigger: Image/client incompatibility, cần chạy đồng thời llm_rag hoặc chuyển sang remote Qdrant.
+```
+
+```text
+Decision: Active collection là hue_foods_e5_small_384; point ID là UUID5 từ hue-rag:<chunk_id> và original chunk_id được giữ trong payload.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: User chọn collection naming chứa embedding identity và UUID5 trong Phase 4 brainstorming.
+Affected scope: collection schema validation, point identity, idempotent upsert, payload và Phase 5 retrieval IDs.
+Revisit trigger: Embedding model/dimension hoặc chunk ID contract được phê duyệt thay đổi.
+```
+
+```text
+Decision: Upsert dùng batch 64, timeout 30 giây và một retry chỉ cho connection/timeout; ingestion không delete, reset là exact-target command riêng.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: User xác nhận batch/retry policy, separate reset command và failure policy trong Phase 4 brainstorming.
+Affected scope: vectorstore/upsert.py, vectorstore/reset.py, ingestion pipeline, config và tests.
+Revisit trigger: Live evidence cho thấy batch/timeout không phù hợp hoặc Qdrant client error taxonomy thay đổi.
+```
+
+```text
+Decision: Dùng kiến trúc module chức năng nhỏ; notebook default local/mock, real mode read-only; live preflight và live ingestion cần approval riêng, không live-delete để test.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: User phê duyệt năm phần thiết kế và toàn bộ exact scope/acceptance của Phase 4.
+Affected scope: Phase 4 modules, tests, notebook, implementation report và Reviewer validation.
+Revisit trigger: Implementation cần file ownership mới, notebook không đủ evidence hoặc acceptance không thể kiểm chứng trong local environment.
+```
+
+```text
+Decision: Gỡ dependency PyPI vectorstore 0.0.0 vì shadow local backend/vectorstore package; dùng uv run python -m pytest làm canonical test command.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: Reviewer tái hiện uv run pytest import nhầm site-packages/vectorstore và user phê duyệt mở rộng allowlist sau non-live checkpoint review.
+Affected scope: pyproject.toml, uv.lock, Phase 4 import reliability và validation commands.
+Revisit trigger: Project được đóng gói lại với package layout hoặc test runner configuration mới.
+```
+
 ## Bước tiếp theo
 
-Sau Phase 4 approval, Phase 5 brainstorm candidate depth, normalization/fusion, reranker behavior, fallback và context limits.
+DeepSeek Implementer thực hiện đúng approved scope, chạy mocked/local-safe
+validation trước và dừng xin approval trước live Qdrant preflight hoặc ingestion.
+Phase 5 vẫn đóng cho đến khi Phase 4 được technical review, người dùng kiểm tra
+notebook/user report và xác nhận final approval.

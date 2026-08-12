@@ -50,13 +50,18 @@ embedding:
 
 vector_database:
   url: http://localhost:6333
-  collection_name: hue_foods_rag
-  reset_collection: true
+  collection_name: hue_foods_e5_small_384
+  reset_collection: false
   vector_size: 384
   distance: cosine
+  timeout: 30
+  upsert_batch_size: 64
+  upsert_max_retries: 1
   # Warning: changing embedding.model or embedding.vector_size requires
-  # reindexing. Keep vector_database.vector_size in sync with embedding.vector_size
-  # and set reset_collection: true before re-running ingestion.
+  # reindexing. Keep vector_database.vector_size in sync with embedding.vector_size.
+  # Ingestion never deletes; reset is a separate command
+  # (uv run python -m vectorstore.reset) with user approval and an exact
+  # confirmation string.
 
 retrieval:
   top_k: 10

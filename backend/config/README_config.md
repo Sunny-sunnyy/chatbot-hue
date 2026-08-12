@@ -32,7 +32,7 @@ Mọi profile dùng chung một code path; profile chỉ thay đổi hành vi qu
 
 - `knowledge_base`: thư mục curated knowledge base, globs include và exclude parts.
 - `embedding`: model SentenceTransformer, vector size, device, batch size.
-- `vector_database`: Qdrant URL, collection name, reset behavior, vector size, distance.
+- `vector_database`: Qdrant URL, active collection name, vector size, distance, timeout, upsert batch size và retry limit. `reset_collection` luôn là `false` khi ingestion chạy; xóa collection chỉ qua command `vectorstore.reset` riêng với user approval và confirmation string chính xác.
 - `retrieval`: top_k, candidate multiplier, score threshold, dense/bm25 weights.
 - `reranking`: CrossEncoder model, device, top_k cuối cùng.
 - `llm`: provider, answer model, temperature, max output tokens.
@@ -42,8 +42,8 @@ Mọi profile dùng chung một code path; profile chỉ thay đổi hành vi qu
 
 - Không đặt API key trong file này. Key lấy từ `.env` hoặc environment khi có phase sử dụng model.
 - `embedding.vector_size` và `vector_database.vector_size` phải khớp nhau.
-- Đổi `embedding.model` hoặc vector size phải set `vector_database.reset_collection: true` rồi chạy lại ingestion để reindex.
-- Sau khi chọn model/profile cuối cùng, set `reset_collection: false` để giữ collection active cho runtime.
+- Đổi `embedding.model` hoặc vector size cần: 1) user approval; 2) chạy exact `vectorstore.reset` command với confirmation string và expected count; 3) giữ `vector_database.reset_collection: false`; 4) chạy ingestion để tạo lại collection.
+- Không bao giờ đặt `vector_database.reset_collection: true`; ingestion từ chối giá trị này và collection chỉ bị xóa qua command reset riêng.
 - Model ID của OpenAI (`llm.answer_model`, `evaluation.judge_model`) phải được xác minh với tài liệu chính thức trước khi chạy.
 
 ## logging.yaml

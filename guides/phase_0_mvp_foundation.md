@@ -300,4 +300,6 @@ Revisit trigger: Người dùng yêu cầu thay đổi approval authority, repor
 
 ## Bước tiếp theo
 
-Phase 1–2 cần hoàn tất notebook/user-report retrofit và được người dùng xác nhận lại. Phase 3 giữ `not_ready` cho đến khi cả hai phase trở lại `approved`.
+Phase 1–3 đã được người dùng xác nhận và có status `approved`. Phase 4 đã hoàn
+thành Level 2 brainstorming, có status `ready` và được bàn giao cho DeepSeek
+Implementer; Phase 5 vẫn đóng cho đến khi Phase 4 được người dùng xác nhận.
