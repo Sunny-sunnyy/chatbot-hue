@@ -1,6 +1,6 @@
 # Sổ bằng chứng benchmark Hue Foods RAG
 
-Last updated: `2026-08-09 +07`
+Last updated: `2026-08-12 +07`
 
 ## Mục đích
 
@@ -41,7 +41,7 @@ Tại thời điểm tạo ledger, chưa có Hue Foods retrieval hoặc answer b
 
 | Component | Baseline | Thay đổi được | Primary evidence |
 |---|---|---|---|
-| Chunking | H2 sections, paragraph split 1.500 chars | Rules/limit trong dedicated group | Chunk count, retrieval, source integrity |
+| Chunking | H2 sections, 400-character regular-content chunks; Markdown tables preserved whole | Rules/limit trong dedicated group | 572 chunks, retrieval, source integrity |
 | Dense embedding | `multilingual-e5-small` | Local Vietnamese, OpenRouter Qwen3 | Recall/MRR/nDCG, latency, resource/cost |
 | Sparse representation | Custom TF-IDF | Tokenizer/weighting | Vocabulary stability, keyword diagnostic |
 | Lexical scoring | BM25 `k1=1.5`, `b=0.75` | k1/b/tokenizer | Retrieval delta, latency |

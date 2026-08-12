@@ -134,7 +134,7 @@ load settings
   -> emit non-sensitive summary
 ```
 
-Expected baseline point count là 366 khi curated corpus/chunking không đổi. Nếu count khác, implementation report phải giải thích input diff; không cập nhật expected count âm thầm.
+Expected baseline point count là 572 khi curated corpus/chunking không đổi. Nếu count khác, implementation report phải giải thích input diff; không cập nhật expected count âm thầm.
 
 ## Reset và deletion safety
 
@@ -170,7 +170,7 @@ Codex phải xác nhận với người dùng:
 1. Qdrant chạy qua Docker Desktop/WSL, local process hay một endpoint khác đã được user đặt trong scope.
 2. Exact active collection naming convention có chứa embedding slug/dimension hay dùng fixed name cùng metadata guard.
 3. Qdrant client version và deterministic point-ID format được hỗ trợ.
-4. Batch size, timeout và retry policy phù hợp 366 chunks.
+4. Batch size, timeout và retry policy phù hợp 572 chunks.
 5. Cơ chế user approval cho reset trong CLI/config: confirmation flag hay separate command.
 
 Collection đang tồn tại chỉ được inspect read-only trong preflight; không reset khi brainstorming chưa chốt.
@@ -235,7 +235,7 @@ reset flag và approval evidence
 - Upsert idempotent nhờ deterministic IDs.
 - Partial upsert không được báo thành công; final count là gate.
 - Collection deletion là destructive action được kiểm tra hai lớp.
-- Với 366 chunks, tránh concurrency hoặc retry framework phức tạp chưa cần thiết.
+- Với 572 chunks, tránh concurrency hoặc retry framework phức tạp chưa cần thiết.
 
 ## Tiêu chí phê duyệt Phase 4
 
@@ -258,6 +258,17 @@ reports/user_reports/phase_4_qdrant_ingestion_user_report.md
 ```
 
 Model/collection metadata và ingestion run summary được nối vào `reports/hue_foods_rag_benchmark.md`. Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
+
+## Quyết định đã phê duyệt trước brainstorming
+
+```text
+Decision: Dùng 572 canonical chunks và giới hạn 400 ký tự cho nội dung thường; bảng Markdown là ngoại lệ được giữ nguyên.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: Phase 2 đã approved và user xác nhận sửa contract cũ trước brainstorming Phase 4.
+Affected scope: Phase 4 point count, batch planning, ingestion validation và benchmark ledger.
+Revisit trigger: Curated corpus hoặc Phase 2 chunking contract được user phê duyệt thay đổi.
+```
 
 ## Bước tiếp theo
 

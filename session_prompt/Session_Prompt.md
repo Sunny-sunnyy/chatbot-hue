@@ -287,14 +287,16 @@ notebooks/08_benchmark_model_selection.ipynb
 
 ## CodeGraph
 
-Hiện tại CodeGraph chưa bắt buộc cho repo này.
+CodeGraph đã được user phê duyệt và khởi tạo cho repo này. Trước task liên quan
+runtime code, reviewer/implementer chạy `codegraph status .`; khi index up to
+date, dùng CodeGraph để hiểu call flow, symbol ownership, affected tests và
+blast radius trước khi sửa hoặc review.
 
-Khi user bổ sung CodeGraph sau, reviewer/implementer có thể dùng CodeGraph để
-hiểu call flow, symbol ownership, và blast radius. Không chạy `codegraph init`,
-`codegraph uninit`, hoặc xóa `.codegraph/` nếu user chưa yêu cầu rõ.
-
-Khi chưa có CodeGraph, dùng `rg`, đọc file trực tiếp, tests, notebooks, và
-evaluation evidence.
+CodeGraph là công cụ discovery, không thay thế `rg`, đọc source trực tiếp,
+tests, notebooks hoặc evaluation evidence. Kết quả CodeGraph không tự đủ để
+approve phase. Telemetry phải giữ ở trạng thái tắt; `.codegraph/` là local
+ignored artifact. Không chạy `codegraph uninit`, xóa `.codegraph/` hoặc thay đổi
+telemetry nếu user chưa yêu cầu rõ.
 
 ## Current Working Rule
 

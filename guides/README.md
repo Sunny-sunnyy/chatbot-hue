@@ -148,6 +148,24 @@ User report không được bịa validation, che giấu failed/skipped checks h
 
 Benchmark xuyên phase được tổng hợp tại `reports/hue_foods_rag_benchmark.md`; per-question outputs ở dạng JSONL chỉ được tạo khi phase evaluation tương ứng đã implement.
 
+## CodeGraph trong workflow
+
+CodeGraph được dùng cho runtime discovery và impact analysis từ Phase 4 trở đi.
+Reviewer và Implementer kiểm tra `codegraph status .` trước task runtime, rồi
+dùng graph để tìm call flow, symbol ownership, affected tests và blast radius.
+Graph không thay thế source reads, `rg`, tests, notebooks hoặc technical
+evidence và không tự tạo quyền approve phase. Telemetry giữ ở trạng thái tắt;
+`.codegraph/` là local ignored artifact.
+
+```text
+Decision: Áp dụng CodeGraph cho runtime discovery và impact analysis, nhưng không dùng làm approval evidence duy nhất.
+Approved by: User
+Approval date +07: 2026-08-12
+Evidence: User xác nhận áp dụng CodeGraph trước khi bắt đầu brainstorming Phase 4.
+Affected scope: Reviewer/Implementer workflow và Phase 4–8 runtime work.
+Revisit trigger: Graph không ổn định, gây context overhead không chấp nhận được hoặc không cải thiện review/implementation workflow.
+```
+
 ## Quy tắc benchmark và live API approval
 
 - Bắt đầu bằng baseline local nhẹ đã dùng trong `llm_rag` trước khi thử OpenRouter.

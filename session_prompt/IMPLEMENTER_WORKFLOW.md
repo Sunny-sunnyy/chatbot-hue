@@ -159,16 +159,71 @@ notebooks/08_benchmark_model_selection.ipynb
 
 ## CodeGraph
 
-CodeGraph chưa bắt buộc cho `hue_rag`.
+CodeGraph đã được user phê duyệt và khởi tạo cho `hue_rag`. Implementer dùng
+graph để hiểu code trước khi sửa, giới hạn blast radius và chọn tests; graph
+không thay guide, source reads hoặc validation thực tế.
 
-Khi user bổ sung CodeGraph sau, implementer có thể dùng CodeGraph để hiểu call
-flow, symbol ownership, và impact trước khi sửa runtime code.
+### Checkpoint bắt buộc
 
-Không chạy `codegraph init`, `codegraph uninit`, hoặc xóa `.codegraph/` nếu user
-chưa yêu cầu rõ.
+Tại đầu mọi session mới, chạy từ repo root:
 
-Khi chưa có CodeGraph, dùng `rg`, file reads, tests, notebooks, và evaluation
-evidence.
+```bash
+codegraph status .
+```
+
+Xử lý kết quả theo đúng thứ tự:
+
+- `Index is up to date`: tiếp tục công việc.
+- Có pending files hoặc index stale: chạy `codegraph sync .`, sau đó chạy lại
+  `codegraph status .` và chỉ tiếp tục khi index up to date.
+- `Not initialized`: dừng và báo user/Reviewer; không tự chạy `codegraph init`.
+- Sync/status lỗi hoặc vẫn stale sau sync: báo blocker; không đoán call graph.
+
+Khi hoàn thành implementation hoặc correction theo một phase guide, trước khi
+viết implementation report/handoff, chạy lại checkpoint:
+
+```bash
+codegraph status .
+# Chỉ khi status báo stale hoặc pending:
+codegraph sync .
+codegraph status .
+```
+
+### Cách dùng trước và trong implementation
+
+Trước khi sửa runtime code, dùng query hẹp theo task:
+
+```bash
+codegraph explore "Trace how <entry point> reaches <dependency or side effect>."
+codegraph node <symbol-or-file>
+codegraph callers <symbol>
+codegraph callees <symbol>
+codegraph impact <symbol>
+```
+
+Sau khi xác định changed files hoặc trước khi chạy tests:
+
+```bash
+git diff --name-only | codegraph affected --stdin
+codegraph affected backend/path/to/module.py
+```
+
+Implementer dùng output để:
+
+- xác định module và interface hiện có cần reuse;
+- tìm callers/callees trước khi đổi signature hoặc behavior;
+- kiểm tra blast radius có vượt approved guide hay không;
+- chọn smallest relevant tests trước, rồi broader tests nếu shared behavior bị
+  ảnh hưởng.
+
+Nếu CodeGraph chỉ ra scope ngoài approved guide, dừng và báo Reviewer/user;
+không tự mở rộng implementation. Nếu graph thiếu symbol hoặc mâu thuẫn với
+source, đọc source và dùng test evidence làm nguồn quyết định; ghi giới hạn vào
+implementation report nếu ảnh hưởng validation.
+
+Không đưa secrets, tokens, private endpoint hoặc credential path vào query.
+Không chạy `codegraph init`, `codegraph uninit`, xóa `.codegraph/` hoặc bật
+telemetry nếu user chưa yêu cầu rõ.
 
 ## Implementation Report
 

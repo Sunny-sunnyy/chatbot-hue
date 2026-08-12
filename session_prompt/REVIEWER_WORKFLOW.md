@@ -132,25 +132,72 @@ tự đặt vào `.env` hoặc environment và gửi evidence đã redact.
 
 ## CodeGraph
 
-CodeGraph chưa bắt buộc cho `hue_rag`.
+CodeGraph đã được user phê duyệt và khởi tạo cho `hue_rag`. Reviewer dùng graph
+để tìm call flow, symbol ownership, affected tests và blast radius; graph không
+thay source review hoặc verification evidence.
 
-Khi user bổ sung CodeGraph sau, reviewer nên chạy:
+### Checkpoint bắt buộc
+
+Tại đầu mọi session mới, chạy từ repo root:
 
 ```bash
 codegraph status .
 ```
 
-Nếu index up to date, tiếp tục review. Nếu stale và cần cho review, có thể chạy:
+Xử lý kết quả theo đúng thứ tự:
+
+- `Index is up to date`: tiếp tục công việc.
+- Có pending files hoặc index stale: chạy `codegraph sync .`, sau đó chạy lại
+  `codegraph status .` và chỉ tiếp tục khi index up to date.
+- `Not initialized`: dừng và báo user; không tự chạy `codegraph init`.
+- Sync/status lỗi hoặc vẫn stale sau sync: ghi blocker và dùng file reads/`rg`
+  cho phần có thể kiểm tra an toàn; không tuyên bố graph đã cập nhật.
+
+Khi hoàn thành công việc theo một phase guide, trước technical verdict, report
+hoặc handoff, chạy lại checkpoint:
 
 ```bash
+codegraph status .
+# Chỉ khi status báo stale hoặc pending:
 codegraph sync .
+codegraph status .
 ```
 
-Không chạy `codegraph init`, `codegraph uninit`, hoặc xóa `.codegraph/` nếu
-user chưa yêu cầu rõ.
+### Cách dùng trong review
 
-Khi chưa có CodeGraph, dùng `rg`, file reads, tests, notebooks, và evaluation
-evidence.
+Ưu tiên một query hẹp, nêu rõ flow hoặc symbol cần kiểm tra:
+
+```bash
+codegraph explore "Trace how <entry point> reaches <dependency or side effect>."
+codegraph node <symbol-or-file>
+codegraph callers <symbol>
+codegraph callees <symbol>
+codegraph impact <symbol>
+```
+
+Trước khi chọn test scope, dùng changed source files thực tế:
+
+```bash
+git diff --name-only | codegraph affected --stdin
+codegraph affected backend/path/to/module.py
+```
+
+Reviewer dùng output để:
+
+- đối chiếu files trong implementation report với actual call graph;
+- tìm callers/callees có thể nằm ngoài declared scope;
+- xác định tests cần chạy và blast radius cần đọc trực tiếp;
+- phát hiện route, dependency hoặc side effect mà diff file-by-file dễ bỏ sót.
+
+Không dựa duy nhất vào CodeGraph để kết luận correctness hoặc approval. Sau khi
+graph chỉ ra vùng liên quan, reviewer vẫn phải đọc source/diff, chạy tests phù
+hợp và kiểm tra notebook/evaluation evidence theo guide. Nếu graph thiếu symbol
+hoặc kết quả mâu thuẫn với source, source và test evidence có ưu tiên; ghi giới
+hạn đó trong review khi ảnh hưởng verdict.
+
+Không đưa secrets, tokens, private endpoint hoặc credential path vào query.
+Không chạy `codegraph init`, `codegraph uninit`, xóa `.codegraph/` hoặc bật
+telemetry nếu user chưa yêu cầu rõ.
 
 ## Notebook Review Và User Confirmation Rules
 

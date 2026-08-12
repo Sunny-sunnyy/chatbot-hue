@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-11 16:43 +07`
+Last updated: `2026-08-12 15:19 +07`
 
 ## Mục tiêu dự án
 
@@ -101,6 +101,20 @@ Chưa thực hiện:
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-12 15:19 +07
+
+- Trạng thái: CodeGraph workflow đã được chi tiết hóa cho Reviewer và Implementer; Phase 4 vẫn `not_ready` và chưa bắt đầu brainstorming/implementation.
+- File chính: `session_prompt/REVIEWER_WORKFLOW.md` và `session_prompt/IMPLEMENTER_WORKFLOW.md`. `rag_old/` đã được chuyển sang `llm_rag/tai_lieu/rag_old` theo yêu cầu của user.
+- Validation: thư mục đích có đủ 88 files và không còn `rag_old/` trong repo hoặc temporary backup; hai workflow yêu cầu status/sync ở đầu session và cuối guide handoff; `git diff --check` sạch.
+- Next action: Mở session Reviewer mới, chạy CodeGraph checkpoint rồi brainstorm Phase 4 theo Level 2.
+
+### 2026-08-12 15:10 +07
+
+- Trạng thái: Phase 1–3 giữ `approved`; Phase 4 vẫn `not_ready` và sẽ brainstorm trong session mới. User xác nhận 572 chunks cùng giới hạn 400 ký tự là contract đúng cho Phase 4–8.
+- File chính: `guides/phase_4_qdrant_ingestion.md`, `reports/hue_foods_rag_benchmark.md`, shared session context và role workflows. `rag_old/` đã được đưa ra khỏi repo; các thay đổi có sẵn khác của user được giữ nguyên.
+- Validation: CodeGraph 1.5.0 đã init local với telemetry tắt; index up to date gồm 34 files, 352 nodes và 824 edges; truy vấn thử nhận diện đúng chunking/sparse embedding flow; contract active không còn dùng 366 chunks hoặc giới hạn 1.500 ký tự; `git diff --check` sạch.
+- Next action: Mở session Reviewer mới, đọc context rồi brainstorm Phase 4 theo Level 2. Không implement hoặc mutate Qdrant trước khi Phase 4 được user phê duyệt thành `ready`.
 
 ### 2026-08-11 16:43 +07
 
