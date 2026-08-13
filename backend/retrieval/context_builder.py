@@ -1,4 +1,5 @@
 """Whole-chunk bounded context assembly with source mapping."""
+import json
 from dataclasses import dataclass
 
 
@@ -13,7 +14,10 @@ class ContextResult:
 class ContextBuilder:
     """Build a bounded context from whole chunks; never truncates content.
 
-    The character budget includes the source label and separators. Empty
+    The context is a JSON array of evidence objects serialized with the
+    standard library, so untrusted document text can never forge a
+    structural field of its own: every block maps 1:1 to its chunk_id. The
+    character budget includes the serialized array and its brackets. Empty
     documents are skipped, rank order is preserved and input documents are
     never mutated.
     """
@@ -24,24 +28,31 @@ class ContextBuilder:
 
     def build(self, documents):
         """Return context and sources; stop before the first chunk that does not fit."""
-        parts = []
+        blocks = []
         sources = []
-        length = 0
+        length = 0  # length of "[" + ",".join(serialized blocks) + "]"
         for rank, document in enumerate(documents, start=1):
             text = document.text
             if not text.strip():
                 continue
             metadata = document.metadata
-            label = f"[{metadata.get('source', '')} | {metadata.get('section', '')}]"
-            block = f"{label}\n{text}"
-            separator = "\n\n" if parts else ""
+            block = {
+                "chunk_id": metadata.get("chunk_id"),
+                "source": metadata.get("source"),
+                "section": metadata.get("section"),
+                "title": metadata.get("title"),
+                "text": text,
+            }
+            serialized = json.dumps(block, ensure_ascii=False, sort_keys=True)
+            # Opening/closing brackets for the first item, ", " for the rest.
+            overhead = 2
             if (
-                len(parts) >= self._max_documents
-                or length + len(separator) + len(block) > self._max_characters
+                len(blocks) >= self._max_documents
+                or length + overhead + len(serialized) > self._max_characters
             ):
                 break
-            parts.append(block)
-            length += len(separator) + len(block)
+            blocks.append(block)
+            length += overhead + len(serialized)
             sources.append(
                 {
                     "chunk_id": metadata.get("chunk_id"),
@@ -51,4 +62,5 @@ class ContextBuilder:
                     "rank": rank,
                 }
             )
-        return ContextResult(context="\n\n".join(parts), sources=sources)
+        context = json.dumps(blocks, ensure_ascii=False, sort_keys=True)
+        return ContextResult(context=context, sources=sources)

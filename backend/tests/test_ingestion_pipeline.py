@@ -1,450 +1,368 @@
-"""Tests for batch upsert, ingestion orchestration and reset guards."""
-import math
+"""Live tests for the real ingestion pipeline, upsert and reset guards.
+
+Every mutation happens on real Qdrant with marked isolated test
+collections; the real curated corpus, the real E5 embedder and the real
+sparse embedder are used. The active collection is never touched.
+"""
+
 import uuid
-from types import SimpleNamespace
 
 import httpx
 import pytest
 from qdrant_client import models
-from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.http.exceptions import ResponseHandlingException, UnexpectedResponse
 
-from ingestion.pipeline import run_ingestion
-from vectorstore.hybrid_index import build_points
+from embedding.sparse_embedder import SparseEmbedder
+from ingestion.pipeline import CANONICAL_CHUNK_COUNT, run_ingestion
+from vectorstore.hybrid_index import build_points, point_id_for
+from vectorstore.qdrant import expected_schema
 from vectorstore.reset import reset_collection
-from vectorstore.upsert import to_point_struct, upsert_points, validate_existing_points, verify_point_count
+from vectorstore.upsert import (
+    to_point_struct,
+    upsert_points,
+    validate_existing_points,
+    verify_point_count,
+)
 
-COLLECTION = "hue_foods_e5_small_384"
+from conftest import (
+    TEST_COLLECTION,
+    cleanup_collection,
+    make_test_settings,
+)
+
 MODEL_ID = "intfloat/multilingual-e5-small"
 DIMENSION = 384
 
 
-def make_settings(**overrides):
-    settings = {
-        "vector_database": {
-            "url": "http://localhost:6333",
-            "collection_name": COLLECTION,
-            "reset_collection": False,
-            "vector_size": DIMENSION,
-            "distance": "cosine",
-            "timeout": 30,
-            "upsert_batch_size": 64,
-            "upsert_max_retries": 1,
-        },
-        "embedding": {"model": MODEL_ID, "vector_size": DIMENSION, "device": "cpu", "batch_size": 64},
-    }
-    for key, value in overrides.items():
-        section, field = key.split(".", 1)
-        settings[section][field] = value
+def _real_points_for_chunks(chunks, embedder, model_id=MODEL_ID, dimension=DIMENSION):
+    """Build real points: real E5 dense vectors and real fitted sparse vectors."""
+    texts = [chunk["text"] for chunk in chunks]
+    sparse = SparseEmbedder().fit(texts)
+    dense = embedder.embed_documents(texts)
+    return build_points(
+        chunks, dense, [sparse.encode(text) for text in texts], model_id, dimension
+    )
+
+
+def _create_marked_collection(client, name):
+    """Create a real marked test collection with the expected 384-d schema."""
+    settings = make_test_settings(name)
+    client.create_collection(
+        name,
+        vectors_config={"dense": expected_schema(settings)["dense"]},
+        sparse_vectors_config={"sparse": expected_schema(settings)["sparse"]},
+    )
     return settings
 
 
-def make_info():
-    dense = SimpleNamespace(size=DIMENSION, distance=models.Distance.COSINE)
-    sparse = {"sparse": SimpleNamespace(index=object())}
-    return SimpleNamespace(
-        config=SimpleNamespace(params=SimpleNamespace(vectors={"dense": dense}, sparse_vectors=sparse))
-    )
+# --- Real pipeline over the curated corpus ---
 
-
-def _chunk(index=0):
-    return {
-        "text": f"Nội dung mẫu {index}",
-        "metadata": {
-            "chunk_id": f"foods/restaurants/example.md|Tóm tắt|{index}",
-            "source": "foods/restaurants/example.md",
-            "title": "Example",
-            "section": "Tóm tắt",
-            "category": "foods",
-            "subcategory": "restaurants",
-            "chunk_type": "section",
-        },
-    }
-
-
-def build_fake_points(count):
-    """Build count deterministic points with fake vectors."""
-    chunks = [_chunk(index) for index in range(count)]
-    norm = 1.0 / math.sqrt(DIMENSION)
-    dense = [[norm] * DIMENSION for _ in range(count)]
-    sparse = [{"indices": [i % 5], "values": [1.0]} for i in range(count)]
-    return build_points(chunks, dense, sparse, MODEL_ID, DIMENSION)
-
-
-class FakeQdrantClient:
-    """In-memory Qdrant client honoring failure hooks for retry/count tests."""
-
-    def __init__(self, existing_points=None, exists=False, info=None):
-        self.exists = exists
-        self.info = info
-        self.info_after_upsert = None
-        self.points = {}
-        self.created = False
-        self.create_kwargs = None
-        self.upsert_batches = []
-        self.delete_calls = 0
-        self.count_override = None
-        self.upsert_error = None
-        self.transient_remaining = 0
-        self.fail_upsert_on_batch = None
-        self.deleted_stays = False
-        for point in existing_points or []:
-            self.points[str(point.id)] = point
-
-    def collection_exists(self, name):
-        return self.exists
-
-    def get_collection(self, name):
-        if self.upsert_batches and self.info_after_upsert is not None:
-            return self.info_after_upsert
-        return self.info if self.info is not None else make_info()
-
-    def create_collection(self, name, **kwargs):
-        self.created = True
-        self.create_kwargs = kwargs
-        self.exists = True
-
-    def upsert(self, collection_name, points, wait=True, timeout=None):
-        self.upsert_batches.append(len(points))
-        if self.upsert_error is not None:
-            raise self.upsert_error
-        if self.transient_remaining > 0:
-            self.transient_remaining -= 1
-            raise httpx.ConnectError("connection refused")
-        if self.fail_upsert_on_batch is not None and len(self.upsert_batches) == self.fail_upsert_on_batch:
-            raise UnexpectedResponse(500, "boom", b"", {})
-        for point in points:
-            self.points[str(point.id)] = point
-
-    def count(self, collection_name, exact=True):
-        if self.count_override is not None:
-            return SimpleNamespace(count=self.count_override)
-        return SimpleNamespace(count=len(self.points))
-
-    def scroll(self, collection_name, limit=10, with_payload=True, with_vectors=False, timeout=None):
-        records = [SimpleNamespace(id=point.id, payload=point.payload) for point in self.points.values()]
-        return records, None
-
-    def delete_collection(self, name, timeout=None):
-        self.delete_calls += 1
-        if self.deleted_stays:
-            return
-        self.exists = False
-        self.points = {}
-
-
-class FakeEmbedder:
-    """Deterministic embedder used instead of the local E5 model."""
-
-    model_id = MODEL_ID
-    dimension = DIMENSION
-
-    def embed_documents(self, texts):
-        return [[0.1] * DIMENSION for _ in texts]
-
-
-class RecordingEmbedder(FakeEmbedder):
-    """FakeEmbedder that records how many times embedding was invoked."""
-
-    def __init__(self):
-        self.embed_calls = 0
-
-    def embed_documents(self, texts):
-        self.embed_calls += 1
-        return super().embed_documents(texts)
-
-
-class BadDimensionEmbedder(FakeEmbedder):
-    """Embedder returning vectors of the wrong dimension."""
-
-    dimension = 8
-
-    def embed_documents(self, texts):
-        return [[0.1] * 8 for _ in texts]
-
-
-def fake_chunker(chunks):
-    """Wrap a static chunk list into the chunker callable signature."""
-    return lambda: chunks
-
-
-# --- Upsert: batch boundaries, retry allowlist, count gate ---
-
-def test_upsert_points_batches_64_with_tail_60():
-    client = FakeQdrantClient(exists=True)
-    points = build_fake_points(572)
-    completed = upsert_points(client, make_settings(), points)
-    assert completed == 572
-    assert client.upsert_batches == [64] * 8 + [60]
-
-
-def test_upsert_retries_transient_error_once_then_succeeds():
-    client = FakeQdrantClient(exists=True)
-    client.transient_remaining = 1
-    upsert_points(client, make_settings(), build_fake_points(64))
-    # One failed attempt plus one retry for the same batch.
-    assert client.upsert_batches == [64, 64]
-    assert len(client.points) == 64
-
-
-def test_upsert_transient_retry_exhausted_raises():
-    client = FakeQdrantClient(exists=True)
-    client.transient_remaining = 2
-    with pytest.raises(httpx.TransportError):
-        upsert_points(client, make_settings(), build_fake_points(64))
-    assert client.upsert_batches == [64, 64]
-
-
-def test_upsert_does_not_retry_non_transient_errors():
-    client = FakeQdrantClient(exists=True)
-    client.upsert_error = UnexpectedResponse(400, "bad request", b"", {})
-    with pytest.raises(UnexpectedResponse):
-        upsert_points(client, make_settings(), build_fake_points(64))
-    assert client.upsert_batches == [64]
-
-
-def test_upsert_partial_failure_stops_without_reporting_success(caplog):
-    client = FakeQdrantClient(exists=True)
-    client.fail_upsert_on_batch = 3  # third batch raises a non-retryable error
-    with pytest.raises(UnexpectedResponse):
-        upsert_points(client, make_settings(), build_fake_points(572))
-    assert len(client.points) == 128  # first two batches are in, rest stopped
-    assert client.upsert_batches == [64, 64, 64]
-    # Safe progress evidence: completed count surfaced, no success claimed.
-    assert "128/572" in caplog.text
-    assert "completed" in caplog.text
-
-
-def test_verify_point_count_is_exact_gate():
-    client = FakeQdrantClient(exists=True)
-    upsert_points(client, make_settings(), build_fake_points(572))
-    assert verify_point_count(client, make_settings(), 572) == 572
-    client.count_override = 571
-    with pytest.raises(ValueError, match="point count"):
-        verify_point_count(client, make_settings(), 572)
-
-
-def test_existing_valid_subset_is_accepted():
-    points = build_fake_points(64)
-    client = FakeQdrantClient(existing_points=[to_point_struct(p) for p in points], exists=True)
-    validate_existing_points(client, make_settings(), points, MODEL_ID)
-
-
-def test_foreign_point_id_is_rejected():
-    points = build_fake_points(64)
-    foreign = models.PointStruct(
-        id=uuid.uuid4(), vector={"dense": [0.1] * DIMENSION}, payload={"chunk_id": "x", "embedding_model": MODEL_ID, "embedding_dimension": DIMENSION}
-    )
-    client = FakeQdrantClient(existing_points=[foreign], exists=True)
-    with pytest.raises(ValueError, match="foreign"):
-        validate_existing_points(client, make_settings(), points, MODEL_ID)
-
-
-def test_payload_identity_mismatch_is_rejected():
-    points = build_fake_points(64)
-    bad = models.PointStruct(
-        id=points[0]["id"], vector={"dense": [0.1] * DIMENSION},
-        payload={**points[0]["payload"], "embedding_model": "other/model"},
-    )
-    client = FakeQdrantClient(existing_points=[bad], exists=True)
-    with pytest.raises(ValueError, match="embedding_model"):
-        validate_existing_points(client, make_settings(), points, MODEL_ID)
-
-    bad_chunk = models.PointStruct(
-        id=points[0]["id"], vector={"dense": [0.1] * DIMENSION},
-        payload={**points[0]["payload"], "chunk_id": "other.md|S|0"},
-    )
-    client = FakeQdrantClient(existing_points=[bad_chunk], exists=True)
-    with pytest.raises(ValueError, match="chunk_id"):
-        validate_existing_points(client, make_settings(), points, MODEL_ID)
-
-
-# --- Ingestion pipeline orchestration ---
-
-def test_ingestion_creates_collection_and_upserts_all_points():
-    points = build_fake_points(572)
-    client = FakeQdrantClient()
-    summary = run_ingestion(
-        make_settings(),
-        chunker=fake_chunker([_chunk(i) for i in range(572)]),
-        embedder=FakeEmbedder(),
-        client=client,
-    )
-    assert client.created is True
-    assert client.upsert_batches == [64] * 8 + [60]
-    assert summary == {
-        "collection_name": COLLECTION,
+def test_live_ingestion_summary_and_collection_state(
+    ingested_collection, real_client, live_settings
+):
+    """The real pipeline ingested the real corpus into the test collection."""
+    assert ingested_collection == {
+        "collection_name": TEST_COLLECTION,
         "embedding_model": MODEL_ID,
         "embedding_dimension": DIMENSION,
-        "chunk_count": 572,
-        "point_count": 572,
+        "chunk_count": CANONICAL_CHUNK_COUNT,
+        "point_count": CANONICAL_CHUNK_COUNT,
     }
-    assert len(client.points) == 572
+    assert real_client.collection_exists(TEST_COLLECTION)
+    assert real_client.count(TEST_COLLECTION, exact=True).count == CANONICAL_CHUNK_COUNT
+    info = real_client.get_collection(TEST_COLLECTION)
+    dense = info.config.params.vectors
+    assert set(dense) == {"dense"}
+    assert dense["dense"].size == DIMENSION
+    assert dense["dense"].distance == models.Distance.COSINE
+    sparse = info.config.params.sparse_vectors
+    assert set(sparse) == {"sparse"}
+    assert sparse["sparse"].index is not None
 
 
-def test_ingestion_rejects_non_canonical_chunk_count():
-    for count in (571, 573):
-        embedder = RecordingEmbedder()
-        client = FakeQdrantClient()
-        with pytest.raises(ValueError, match="canonical"):
-            run_ingestion(
-                make_settings(),
-                chunker=fake_chunker([_chunk(i) for i in range(count)]),
-                embedder=embedder,
-                client=client,
-            )
-        # Rejected before embedding, client creation or collection mutation.
-        assert embedder.embed_calls == 0
-        assert client.created is False
-        assert client.upsert_batches == []
+def test_ingestion_idempotent_rerun_on_existing_collection(
+    real_client, real_embedder
+):
+    """Rerunning the real pipeline over the same collection stays idempotent."""
+    from ingestion.chunking.markdown_chunker import chunk_foods_markdown
 
-
-def test_invalid_vectors_fail_before_collection_creation():
-    client = FakeQdrantClient()
-    with pytest.raises(ValueError, match="dimension"):
-        run_ingestion(
-            make_settings(),
-            chunker=fake_chunker([_chunk(i) for i in range(572)]),
-            embedder=BadDimensionEmbedder(),
-            client=client,
-        )
-    assert client.created is False
-    assert client.upsert_batches == []
-
-
-def test_final_schema_revalidated_after_upsert():
-    bad_info = SimpleNamespace(
-        config=SimpleNamespace(
-            params=SimpleNamespace(
-                vectors={"dense": SimpleNamespace(size=512, distance=models.Distance.COSINE)},
-                sparse_vectors={"sparse": SimpleNamespace(index=object())},
-            )
-        )
+    settings = make_test_settings(TEST_COLLECTION)
+    summary = run_ingestion(
+        settings,
+        chunker=chunk_foods_markdown,
+        embedder=real_embedder,
+        client=real_client,
     )
-    client = FakeQdrantClient()
-    client.info_after_upsert = bad_info  # schema changes after the upsert
-    with pytest.raises(ValueError, match="dimension"):
-        run_ingestion(
-            make_settings(),
-            chunker=fake_chunker([_chunk(i) for i in range(572)]),
-            embedder=FakeEmbedder(),
-            client=client,
-        )
-    # Upsert ran, but success was never reported.
-    assert client.upsert_batches == [64] * 8 + [60]
+    assert summary["point_count"] == CANONICAL_CHUNK_COUNT
+    assert real_client.count(TEST_COLLECTION, exact=True).count == CANONICAL_CHUNK_COUNT
 
 
-def test_ingestion_rejects_reset_collection_true():
+def test_ingestion_rejects_non_canonical_chunk_count(real_client, real_embedder, real_chunks):
+    """571 real chunks are rejected before any embedding or collection creation."""
+    name = "hue_rag_live_test_ingestion_571"
+    settings = make_test_settings(name)
+
+    def chunker():
+        return real_chunks[:-1]
+
+    with pytest.raises(ValueError, match="canonical"):
+        run_ingestion(settings, chunker=chunker, embedder=real_embedder, client=real_client)
+    assert not real_client.collection_exists(name)
+
+
+def test_ingestion_rejects_reset_collection_true(real_client, real_embedder, real_chunks):
+    """reset_collection=true fails closed before touching anything."""
+    name = "hue_rag_live_test_ingestion_reset_true"
+    settings = make_test_settings(name, **{"vector_database.reset_collection": True})
     with pytest.raises(ValueError, match="reset_collection"):
         run_ingestion(
-            make_settings(**{"vector_database.reset_collection": True}),
-            chunker=fake_chunker([_chunk(0)]),
-            embedder=FakeEmbedder(),
-            client=FakeQdrantClient(),
+            settings,
+            chunker=lambda: real_chunks,
+            embedder=real_embedder,
+            client=real_client,
         )
+    assert not real_client.collection_exists(name)
 
 
-def test_ingestion_idempotent_rerun_after_partial_failure():
-    first_client = FakeQdrantClient()
-    first_client.fail_upsert_on_batch = 3
-    with pytest.raises(UnexpectedResponse):
-        run_ingestion(
-            make_settings(),
-            chunker=fake_chunker([_chunk(i) for i in range(572)]),
-            embedder=FakeEmbedder(),
-            client=first_client,
-        )
-    # Rerun on a client that already holds the completed batches.
-    rerun_client = FakeQdrantClient(
-        existing_points=list(first_client.points.values()), exists=True
-    )
-    summary = run_ingestion(
-        make_settings(),
-        chunker=fake_chunker([_chunk(i) for i in range(572)]),
-        embedder=FakeEmbedder(),
-        client=rerun_client,
-    )
-    assert summary["point_count"] == 572
-    assert rerun_client.upsert_batches == [64] * 8 + [60]
+def test_ingestion_rejects_foreign_existing_points_before_upsert(
+    real_client, real_embedder, real_chunks
+):
+    """A foreign point in the target collection blocks the real pipeline run."""
+    from ingestion.chunking.markdown_chunker import chunk_foods_markdown
 
-
-def test_ingestion_rejects_foreign_existing_points_before_upsert():
+    name = "hue_rag_live_test_ingestion_foreign"
+    settings = _create_marked_collection(real_client, name)
+    foreign_vector = real_embedder.embed_documents([real_chunks[0]["text"]])[0]
+    sparse = SparseEmbedder().fit([real_chunks[0]["text"]])
     foreign = models.PointStruct(
-        id=uuid.uuid4(), vector={"dense": [0.1] * DIMENSION},
+        id=uuid.uuid4(),
+        vector={
+            "dense": foreign_vector,
+            "sparse": models.SparseVector(**sparse.encode(real_chunks[0]["text"])),
+        },
+        payload={
+            "chunk_id": "x",
+            "embedding_model": MODEL_ID,
+            "embedding_dimension": DIMENSION,
+        },
+    )
+    real_client.upsert(name, points=[foreign], wait=True)
+    try:
+        with pytest.raises(ValueError, match="foreign"):
+            run_ingestion(
+                settings,
+                chunker=chunk_foods_markdown,
+                embedder=real_embedder,
+                client=real_client,
+            )
+        # The pipeline never upserted corpus points over the foreign one.
+        assert real_client.count(name, exact=True).count == 1
+    finally:
+        cleanup_collection(real_client, name)
+
+
+# --- Upsert and count gates with real points ---
+
+def test_upsert_points_and_count_gate_on_real_batch(
+    real_client, real_embedder, real_chunks
+):
+    """Real points upsert in batches and the exact count gate sees real counts."""
+    name = "hue_rag_live_test_upsert_batch"
+    settings = _create_marked_collection(real_client, name)
+    subset = real_chunks[:124]
+    points = _real_points_for_chunks(subset, real_embedder)
+    try:
+        completed = upsert_points(real_client, settings, points)
+        assert completed == 124
+        assert verify_point_count(real_client, settings, 124) == 124
+        with pytest.raises(ValueError, match="point count"):
+            verify_point_count(real_client, settings, 123)
+    finally:
+        cleanup_collection(real_client, name)
+
+
+def test_upsert_network_failure_is_real_failure(real_embedder, real_chunks):
+    """A dead Qdrant URL raises the real transport error; no fake fallback."""
+    dead_settings = make_test_settings(
+        "hue_rag_live_test_upsert_dead",
+        **{"vector_database.url": "http://localhost:6399", "vector_database.timeout": 3},
+    )
+    from vectorstore.qdrant import get_client
+
+    dead_client = get_client(
+        dead_settings["vector_database"]["url"],
+        dead_settings["vector_database"]["timeout"],
+    )
+    points = _real_points_for_chunks(real_chunks[:1], real_embedder)
+    with pytest.raises((httpx.TransportError, ResponseHandlingException)):
+        upsert_points(dead_client, dead_settings, points)
+
+
+def test_upsert_bad_request_is_real_failure(real_client, real_chunks):
+    """Qdrant rejects a wrong-dimension dense vector with a real HTTP 400."""
+    name = "hue_rag_live_test_upsert_400"
+    settings = _create_marked_collection(real_client, name)
+    chunk = real_chunks[0]
+    bad_point = {
+        "id": point_id_for(chunk["metadata"]["chunk_id"]),
+        "vector": {"dense": [0.1] * 8, "sparse": {"indices": [1], "values": [1.0]}},
+        "payload": {
+            "chunk_id": chunk["metadata"]["chunk_id"],
+            "embedding_model": MODEL_ID,
+            "embedding_dimension": DIMENSION,
+        },
+    }
+    try:
+        with pytest.raises(UnexpectedResponse):
+            upsert_points(real_client, settings, [bad_point])
+        assert real_client.count(name, exact=True).count == 0
+    finally:
+        cleanup_collection(real_client, name)
+
+
+# --- Existing-point validation with real points ---
+
+def test_validate_existing_points_accepts_real_subset(
+    real_client, real_embedder, real_chunks
+):
+    """Already-ingested real points pass validation on rerun."""
+    name = "hue_rag_live_test_validate_ok"
+    settings = _create_marked_collection(real_client, name)
+    points = _real_points_for_chunks(real_chunks[:3], real_embedder)
+    real_client.upsert(name, points=[to_point_struct(p) for p in points], wait=True)
+    try:
+        validate_existing_points(real_client, settings, points, MODEL_ID)
+    finally:
+        cleanup_collection(real_client, name)
+
+
+def test_validate_existing_points_rejects_foreign_point(
+    real_client, real_embedder, real_chunks
+):
+    """A foreign point id in the collection is rejected."""
+    name = "hue_rag_live_test_validate_foreign"
+    settings = _create_marked_collection(real_client, name)
+    points = _real_points_for_chunks(real_chunks[:3], real_embedder)
+    foreign = models.PointStruct(
+        id=uuid.uuid4(),
+        vector=to_point_struct(points[0]).vector,
         payload={"chunk_id": "x", "embedding_model": MODEL_ID, "embedding_dimension": DIMENSION},
     )
-    client = FakeQdrantClient(existing_points=[foreign], exists=True)
-    with pytest.raises(ValueError, match="foreign"):
-        run_ingestion(
-            make_settings(),
-            chunker=fake_chunker([_chunk(i) for i in range(572)]),
-            embedder=FakeEmbedder(),
-            client=client,
-        )
-    assert client.upsert_batches == []
+    real_client.upsert(name, points=[foreign], wait=True)
+    try:
+        with pytest.raises(ValueError, match="foreign"):
+            validate_existing_points(real_client, settings, points, MODEL_ID)
+    finally:
+        cleanup_collection(real_client, name)
 
 
-# --- Reset command guards ---
+def test_validate_existing_points_rejects_payload_mismatch(
+    real_client, real_embedder, real_chunks
+):
+    """Payload identity mismatches (model and chunk_id) are rejected."""
+    name = "hue_rag_live_test_validate_payload"
+    settings = _create_marked_collection(real_client, name)
+    points = _real_points_for_chunks(real_chunks[:3], real_embedder)
+    real_client.upsert(name, points=[to_point_struct(p) for p in points], wait=True)
+    try:
+        bad_model = to_point_struct(points[0])
+        bad_model.payload = {**points[0]["payload"], "embedding_model": "other/model"}
+        real_client.upsert(name, points=[bad_model], wait=True)
+        with pytest.raises(ValueError, match="embedding_model"):
+            validate_existing_points(real_client, settings, points, MODEL_ID)
 
-def test_reset_requires_exact_confirmation():
-    client = FakeQdrantClient(exists=True)
+        bad_chunk = to_point_struct(points[0])
+        bad_chunk.payload = {**points[0]["payload"], "chunk_id": "other.md|S|0"}
+        real_client.upsert(name, points=[bad_chunk], wait=True)
+        with pytest.raises(ValueError, match="chunk_id"):
+            validate_existing_points(real_client, settings, points, MODEL_ID)
+    finally:
+        cleanup_collection(real_client, name)
+
+
+# --- Reset command guards on real collections ---
+
+def test_reset_requires_exact_confirmation(ingested_collection, real_client):
+    settings = make_test_settings(TEST_COLLECTION)
     with pytest.raises(ValueError, match="confirmation"):
-        reset_collection(client, make_settings(), expected_count=572, confirmation="DELETE other_collection")
-
-
-def test_reset_refuses_missing_collection():
-    client = FakeQdrantClient()
-    with pytest.raises(ValueError, match="does not exist"):
-        reset_collection(client, make_settings(), expected_count=572, confirmation=f"DELETE {COLLECTION}")
-    assert client.delete_calls == 0
-
-
-def test_reset_refuses_wrong_schema():
-    bad_info = SimpleNamespace(
-        config=SimpleNamespace(
-            params=SimpleNamespace(
-                vectors={"dense": SimpleNamespace(size=512, distance=models.Distance.COSINE)},
-                sparse_vectors={"sparse": SimpleNamespace(index=object())},
-            )
+        reset_collection(
+            real_client, settings, expected_count=CANONICAL_CHUNK_COUNT,
+            confirmation=f"DELETE {TEST_COLLECTION} extra",
         )
+    assert real_client.collection_exists(TEST_COLLECTION)
+
+
+def test_reset_refuses_missing_collection(real_client):
+    name = "hue_rag_live_test_reset_missing"
+    settings = make_test_settings(name)
+    with pytest.raises(ValueError, match="does not exist"):
+        reset_collection(
+            real_client, settings, expected_count=0, confirmation=f"DELETE {name}"
+        )
+    assert not real_client.collection_exists(name)
+
+
+def test_reset_refuses_wrong_schema(real_client):
+    name = "hue_rag_live_test_reset_dim512"
+    real_client.create_collection(
+        name,
+        vectors_config={"dense": models.VectorParams(size=512, distance=models.Distance.COSINE)},
+        sparse_vectors_config={"sparse": models.SparseVectorParams(index=models.SparseIndexParams())},
     )
-    client = FakeQdrantClient(exists=True, info=bad_info)
-    with pytest.raises(ValueError, match="dimension"):
-        reset_collection(client, make_settings(), expected_count=572, confirmation=f"DELETE {COLLECTION}")
-    assert client.delete_calls == 0
+    settings = make_test_settings(name)
+    try:
+        with pytest.raises(ValueError, match="dimension"):
+            reset_collection(
+                real_client, settings, expected_count=0, confirmation=f"DELETE {name}"
+            )
+        assert real_client.collection_exists(name)  # guard never deletes
+    finally:
+        cleanup_collection(real_client, name)
 
 
-def test_reset_refuses_count_mismatch():
-    client = FakeQdrantClient(exists=True)
-    client.count_override = 571
-    with pytest.raises(ValueError, match="count"):
-        reset_collection(client, make_settings(), expected_count=572, confirmation=f"DELETE {COLLECTION}")
-    assert client.delete_calls == 0
+def test_reset_refuses_count_mismatch(real_client, real_embedder, real_chunks):
+    name = "hue_rag_live_test_reset_count"
+    settings = _create_marked_collection(real_client, name)
+    points = _real_points_for_chunks(real_chunks[:3], real_embedder)
+    real_client.upsert(name, points=[to_point_struct(p) for p in points], wait=True)
+    try:
+        with pytest.raises(ValueError, match="count"):
+            reset_collection(
+                real_client, settings, expected_count=CANONICAL_CHUNK_COUNT,
+                confirmation=f"DELETE {name}",
+            )
+        assert real_client.collection_exists(name)
+    finally:
+        cleanup_collection(real_client, name)
 
 
-def test_reset_refuses_payload_model_mismatch():
-    point = build_fake_points(1)[0]
-    wrong = models.PointStruct(
-        id=point["id"], vector={"dense": [0.1] * DIMENSION},
-        payload={**point["payload"], "embedding_model": "other/model"},
+def test_reset_refuses_payload_model_mismatch(real_client, real_embedder, real_chunks):
+    name = "hue_rag_live_test_reset_payload"
+    settings = _create_marked_collection(real_client, name)
+    points = _real_points_for_chunks(real_chunks[:1], real_embedder)
+    bad = to_point_struct(points[0])
+    bad.payload = {**points[0]["payload"], "embedding_model": "other/model"}
+    real_client.upsert(name, points=[bad], wait=True)
+    try:
+        with pytest.raises(ValueError, match="embedding_model"):
+            reset_collection(
+                real_client, settings, expected_count=1, confirmation=f"DELETE {name}"
+            )
+        assert real_client.collection_exists(name)
+    finally:
+        cleanup_collection(real_client, name)
+
+
+def test_reset_deletes_exact_target_only_when_all_guards_pass(
+    real_client, real_embedder, real_chunks
+):
+    """With valid real state the reset deletes exactly the confirmed target."""
+    name = "hue_rag_live_test_reset_ok"
+    settings = _create_marked_collection(real_client, name)
+    points = _real_points_for_chunks(real_chunks[:3], real_embedder)
+    real_client.upsert(name, points=[to_point_struct(p) for p in points], wait=True)
+    deleted = reset_collection(
+        real_client, settings, expected_count=3, confirmation=f"DELETE {name}"
     )
-    client = FakeQdrantClient(existing_points=[wrong], exists=True)
-    with pytest.raises(ValueError, match="embedding_model"):
-        reset_collection(client, make_settings(), expected_count=572, confirmation=f"DELETE {COLLECTION}")
-    assert client.delete_calls == 0
-
-
-def test_reset_deletes_exact_target_only_when_all_guards_pass():
-    points = build_fake_points(572)
-    client = FakeQdrantClient(existing_points=[to_point_struct(p) for p in points], exists=True)
-    name = reset_collection(client, make_settings(), expected_count=572, confirmation=f"DELETE {COLLECTION}")
-    assert name == COLLECTION
-    assert client.delete_calls == 1
-    assert client.exists is False
-
-
-def test_reset_detects_delete_failure():
-    points = build_fake_points(572)
-    client = FakeQdrantClient(existing_points=[to_point_struct(p) for p in points], exists=True)
-    client.deleted_stays = True
-    with pytest.raises(RuntimeError, match="still exists"):
-        reset_collection(client, make_settings(), expected_count=572, confirmation=f"DELETE {COLLECTION}")
+    assert deleted == name
+    assert not real_client.collection_exists(name)

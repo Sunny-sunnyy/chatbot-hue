@@ -7,7 +7,7 @@ Phase 6 biến ranked evidence từ retrieval thành câu trả lời tiếng Vi
 ## Trạng thái
 
 ```text
-Status: ready
+Status: approved
 Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek
@@ -292,8 +292,9 @@ Success response:
 
 - giải thích grounded prompt và API flow bằng tiếng Việt;
 - import runtime generator/API schemas;
-- safe default dùng fake generator và sample context;
-- real OpenAI cell có opt-in guard `HUE_RAG_PHASE6_REAL=1`, không in key;
+- Run All nhận một biến question và gọi full API path thật đúng một lần;
+  `OPENAI_API_KEY` phải đã có trong environment, không in key và không có fake
+  fallback hoặc opt-in guard;
 - không lưu raw provider response;
 - committed outputs rỗng và `execution_count=null`.
 
@@ -410,7 +411,9 @@ Revisit trigger: Phase 8 baseline ổn định và có multi-turn/route/evidence
 
 ## Bước tiếp theo
 
-Phase 6 đã `ready`. DeepSeek Implementer có thể implement đúng contract trong
-guide này, tạo notebook/report và không chạy live OpenAI hoặc real-service smoke
-trước approval riêng. Sau Phase 6 approval, Phase 7 brainstorm relevance ground
-truth, stratified answer subset, judge rubric, cost ceiling và artifact schema.
+Live-smoke gate đã đạt. Đợt đầu phủ sáu category và đạt 6/6; người dùng phê
+duyệt thêm một đợt sáu calls để lấy usage thật, với 5 success và một
+`InvalidGeneratorOutputError` bị fail-closed đúng contract. Tổng 12 calls,
+không retry, chi phí 0,01493875 USD dưới hard ceiling 0,25 USD. Người dùng đã
+chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Phase 7 vẫn cần
+hoàn tất design gate và implementation approval riêng trước khi mở.

@@ -85,8 +85,9 @@ llm:
   answer_model: gpt-5.4-nano
   temperature: 0.2
   max_output_tokens: 1024
-  # Model IDs must be verified against official OpenAI docs before Phase 6
-  # implementation or execution.
+  timeout: 45
+  # Model IDs verified 2026-08-13 against developers.openai.com:
+  # gpt-5.4-nano supports temperature and up to 128k output tokens.
 
 evaluation:
   test_file: ../knowledge-base-hue/foods/evaluation/tests.jsonl

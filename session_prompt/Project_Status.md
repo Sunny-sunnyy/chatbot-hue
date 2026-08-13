@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-13 17:23 +07`
+Last updated: `2026-08-13 20:44 +07`
 
 ## Mục tiêu dự án
 
@@ -99,27 +99,57 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
   local MiniLM cache-only reranker; whole-chunk context tối đa 5 nguồn/3.000 ký
   tự; typed failures, immutable startup snapshot và safe payload projection.
   Người dùng đã xác nhận final approval.
-- Giai đoạn 6 `awaiting_user_confirmation`: grounded prompt có structural
+- Giai đoạn 6 `approved`: grounded prompt có structural
   boundary, tool-less OpenAI Agents SDK generator, stateless JSON API, cached
   readiness và safe errors. Live smoke chạy 12 calls với Qdrant 572 points và
   `gpt-5.4-nano`, tổng chi phí `$0.01493875`; no-evidence probe có 0 model call.
   Notebook 01–06 đã chuyển sang runtime-real; runtime audit sửa token telemetry
-  và full backend suite đạt 274 tests. Technical review đạt, nhưng user chưa
-  xác nhận final Phase 6.
+  và full backend live-only suite đạt 205 tests. Người dùng đã chạy notebook 06
+  và xác nhận final Phase 6.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Migration toàn bộ backend test suite sang live-only validation qua Qdrant,
-  local models và provider thật trong session DeepSeek mới; Phase 7–8 chưa
-  implement.
+- Phase 7–8 chưa implement.
 - Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-13 20:44 +07
+
+- Trạng thái: migration toàn bộ backend test suite sang live-only đã được
+  Codex technical accepted. Test/runtime không còn fake runner hoặc component
+  injection; phase 6 vẫn `approved` theo xác nhận người dùng trước đó.
+- File chính: `backend/tests/`, `backend/api/`, `backend/llm/`,
+  `reports/backend_tests_live_only_migration_implementation_report.md` và
+  `reports/backend_tests_live_only_migration_codex_review.md`.
+- Validation: DeepSeek re-run 205 tests pass trong 177,21 giây với 5 calls
+  `gpt-5.4-nano`, không retry; marker collection cleanup thành công và active
+  collection còn nguyên 572 points. Codex re-review compile pass, 17 pure
+  contract tests pass, `git diff --check` sạch và CodeGraph index up to date.
+- Next action: staged-scope commit Phase 6 và migration live-only; sau đó Phase
+  7 chỉ mở bằng design/implementation approval riêng.
+
+### 2026-08-13 18:08 +07
+
+- Trạng thái: Giai đoạn 6 `approved` sau khi người dùng chạy
+  `notebooks/06_generation_and_api.ipynb` và xác nhận kết quả. Phase 7 vẫn
+  `not_ready`; baseline lifecycle/runtime và evaluation ground-truth đã được
+  brainstorm nhưng chưa mở implementation.
+- File chính: `guides/phase_6_generation_api.md`, `guides/README.md`,
+  `reports/user_reports/phase_6_generation_api_user_report.md` và Phase 6
+  runtime/notebook/reports đã technical review.
+- Validation: technical review ghi 60 targeted tests, 269 full backend tests,
+  notebook runtime thật, 12 live smoke calls tổng `$0.01493875`, no-evidence
+  zero model call và runtime telemetry audit `tokens=421/48`. Finalization
+  audit chạy `git diff --check` và CodeGraph status index up to date.
+- Next action: DeepSeek hoàn tất live-only migration toàn backend test suite;
+  Codex review implementation report riêng. Phase 7 chỉ chuyển tiếp sau
+  design/approval phù hợp.
 
 ### 2026-08-13 17:23 +07
 
@@ -128,8 +158,8 @@ Chưa thực hiện:
   phép, không đặt API cost ceiling. `gpt-5.4-nano` dùng cho generation/API;
   `gpt-5.4-mini` chỉ dành cho LLM-as-judge hoặc quality evaluation được ghi rõ.
   Active Hue Qdrant collection giữ read-only; live tests dùng isolated marked
-  test collection và phải report cleanup outcome. Phase 6 vẫn
-  `awaiting_user_confirmation`, chưa `approved`.
+  test collection và phải report cleanup outcome. Tại thời điểm snapshot này,
+  Phase 6 vẫn `awaiting_user_confirmation`, chưa `approved`.
 - File chính: `session_prompt/Session_Prompt.md`,
   `session_prompt/IMPLEMENTER_WORKFLOW.md`,
   `session_prompt/REVIEWER_WORKFLOW.md`, `backend/llm/`, `backend/api/`,

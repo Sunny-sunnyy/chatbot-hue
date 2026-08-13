@@ -37,7 +37,7 @@ bộ corpus; `hybrid_rerank` thêm local CrossEncoder reranker.
 - `vector_database`: Qdrant URL, active collection name, vector size, distance, timeout, upsert batch size, retry limit và `scroll_batch_size` (bounded startup scroll cho hybrid profiles, chỉ lấy payload không lấy vector). `reset_collection` luôn là `false` khi ingestion chạy; xóa collection chỉ qua command `vectorstore.reset` riêng với user approval và confirmation string chính xác.
 - `retrieval`: top_k, candidate multiplier, score threshold, dense/bm25 weights và whole-chunk context budget (`max_context_documents`, `max_context_characters` tính cả source label và separator).
 - `reranking`: CrossEncoder model, device, top_k cuối cùng.
-- `llm`: provider, answer model, temperature, max output tokens.
+- `llm`: provider, answer model, temperature, max output tokens, timeout (giây).
 - `evaluation`: đường dẫn test file, judge model.
 
 ### Ghi chú quan trọng

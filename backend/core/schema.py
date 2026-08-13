@@ -19,6 +19,23 @@ class RetrievalDependencyError(RuntimeError):
     """Raised when an embedder, Qdrant or reranker call fails."""
 
 
+class GeneratorNotConfiguredError(RuntimeError):
+    """Raised when the OpenAI key or generator configuration is missing."""
+
+
+class GeneratorTimeoutError(RuntimeError):
+    """Raised when answer generation exceeds the provider timeout."""
+
+
+class GeneratorUnavailableError(RuntimeError):
+    """Raised when the OpenAI provider call fails (connection/API error)."""
+
+
+class InvalidGeneratorOutputError(RuntimeError):
+    """Raised when the model output is blank, out of schema or references
+    unknown source IDs."""
+
+
 @dataclass
 class RetrievedDocument:
     """Document returned by retrieval for prompt context building."""
