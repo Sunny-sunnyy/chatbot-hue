@@ -97,32 +97,30 @@ Implementer không được:
 - cập nhật `Project_Status.md`;
 - approve chính work của mình;
 - commit hoặc push;
-- chạy live OpenAI/OpenRouter/model API, web enrichment, deploy, dependency
-  install, hoặc external service call nếu user chưa approve rõ;
+- chạy web enrichment, deploy hoặc dependency install ngoài approved scope;
 - đọc hoặc in secrets từ `.env`, credentials, keys, tokens, auth files, hoặc
   private config;
 - yêu cầu user paste secret vào chat.
 
-## Live Model/API Policy
+## Live-Only Validation Responsibilities
 
-Default implementation và tests phải dùng mocks, dry-runs, fixtures, hoặc local
-checks.
+Implementer phải chạy runtime, notebook và backend tests qua dependency thật;
+không dùng fake/mock client, fake runner, sample vector, replay fixture hoặc
+real-mode guard. Preflight phải xác nhận dependency/model/provider thật có thể
+truy cập mà không đọc hoặc in credential.
 
-Không gọi live OpenAI/OpenRouter/model API mặc định.
-
-Chỉ chạy live embedding, reranking, answer generation hoặc answer judge khi user
-approve rõ cho đúng provider, model và run scope. Nếu cần API key, yêu cầu user
-tự đặt vào `.env` hoặc environment và gửi evidence đã redact.
-
-Model download và Qdrant collection reset/delete cần approval riêng. Với
-collection mutation, phải xác minh exact collection name, model, dimension,
-point count và artifact evidence trước action.
-
-Benchmark mode không được silent fallback. Report phải ghi actual provider,
-model, profile, config và mọi failed/partial run.
-
-Retrieval evaluation không cần model judge có thể chạy local nếu Qdrant và local
-embedding model đã sẵn sàng.
+- Dùng `gpt-5.4-nano` cho generation và API integration validation; chỉ dùng
+  `gpt-5.4-mini` cho LLM-as-judge hoặc quality evaluation ghi rõ mục đích.
+- Lỗi network, quota, provider, model hoặc Qdrant là validation failure thực tế;
+  không được thay bằng fallback giả hoặc bỏ qua evidence.
+- Active Hue collection chỉ read-only. Test có mutation phải dùng isolated
+  Qdrant collection với marker rõ, xác minh exact name trước action và report
+  cleanup thành công hay thất bại.
+- Live logs được phép ghi full question, full answer, model, latency, usage và
+  estimated cost. Không ghi credential, system prompt, raw provider payload hay
+  full retrieved context.
+- Report phải ghi actual provider, model, profile/config, call count, latency,
+  usage/cost khi có, và mọi failed/partial run.
 
 ## Notebook Rules
 
@@ -137,9 +135,10 @@ Notebook requirements:
 - không duplicate runtime pipeline logic;
 - outputs rỗng trong repo;
 - `execution_count` là `null`;
-- default cells không gọi live OpenAI/OpenRouter/model API, web, deploy,
-  external services, hoặc secrets;
-- real-mode cells nếu có phải opt-in bằng env/config guard rõ;
+- Run All dùng runtime thật; thiếu model cache, Qdrant hay key phải fail
+  actionable. Không dùng fake fallback, replay fixture hoặc real-mode guard.
+- Backend tests phải dùng dependency thật theo Live-Only Validation
+  Responsibilities. Notebook phải ghi rõ prerequisite và quan sát thật.
 - không lưu secrets, private paths nhạy cảm, raw headers, raw model payloads lớn,
   hoặc stack traces chứa sensitive data;
 - Markdown cells ghi expected output hoặc cách user tự chạy lại nếu cần.
@@ -254,13 +253,14 @@ Report phải nêu:
 - files created;
 - files modified;
 - notebooks created/modified;
-- notebook path, safe-default behavior, expected observations và cách user tự kiểm tra;
+- notebook path, runtime-real behavior, expected observations và cách user tự kiểm tra;
 - commands run;
 - tests run;
 - verification evidence;
 - known issues;
 - deviations from approved guide;
-- whether live network/model/deploy/secret access occurred;
+- provider/model/Qdrant access, model, call count, latency, usage, estimated cost
+  và test-collection cleanup result;
 - self-check về security, data safety, reliability, performance, tests, và
   notebooks.
 
@@ -271,14 +271,15 @@ Trước khi nói phase/milestone sẵn sàng cho Codex review, implementer ph�
 - security: không có secrets bị đọc, in, log, commit, hoặc expose;
 - data safety: chunks, metadata, API responses, debug data, model errors, và
   result files chỉ chứa dữ liệu safe/intentional;
-- reliability: failure paths deterministic, reset/reindex behavior rõ ràng,
-  import paths ổn định, và commands chạy từ `backend/` như guide;
+- reliability: failure paths thật được report rõ ràng, reset/reindex behavior
+  của isolated test collection rõ ràng, import paths ổn định, và commands chạy
+  từ `backend/` như guide;
 - performance: không thêm repeated expensive model loads, unbounded work, hoặc
   bottlenecks không được document;
-- tests: default verification không cần secrets, paid model calls, deploy, hoặc
-  external services;
-- notebooks: JSON hợp lệ, outputs rỗng, execution counts null, default cells
-  safe;
+- tests: verification dùng dependency thật, evidence đủ model/cost/cleanup và
+  không expose credential;
+- notebooks: JSON hợp lệ, outputs rỗng, execution counts null, runtime-real và
+  không expose credential;
 - scope: `git diff --check` sạch và `git diff --name-only` chỉ chứa files thuộc
   approved guide hoặc deviation đã được user/Codex chấp thuận.
 

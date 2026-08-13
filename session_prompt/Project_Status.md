@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-13 00:34 +07`
+Last updated: `2026-08-13 17:23 +07`
 
 ## Mục tiêu dự án
 
@@ -86,27 +86,65 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 - Tách governance workflow: `session_prompt/Session_Prompt.md` là shared base context + role routing; `session_prompt/REVIEWER_WORKFLOW.md` dành cho Codex reviewer/gatekeeper; `session_prompt/IMPLEMENTER_WORKFLOW.md` dành cho DeepSeek implementer; thêm `session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md` và `session_prompt/TEMPLATE_CODEX_REVIEW.md`; reports phase nằm trong `/home/hieu0606sunny/hue_rag/reports/`.
 - Giai đoạn 1 `approved`: backend skeleton, cấu hình chung, logging, shared schema và `notebooks/01_backend_foundation.ipynb` đã được Codex kiểm tra; người dùng đã chạy notebook và xác nhận.
 - Giai đoạn 2 `approved`: đọc 91 curated foods files và tạo 572 đoạn; nội dung thường giới hạn 400 ký tự, bảng được giữ nguyên, mỗi đoạn có nhãn ngữ cảnh ngắn; 31 kiểm thử và `notebooks/02_foods_data_and_chunking.ipynb` đã đạt; người dùng quan sát đúng 572 đoạn, 0 đoạn thường vượt 400 và 8 bảng vượt 400 rồi xác nhận.
-- Giai đoạn 3 `approved`: dense E5 local với vector 384 chiều đã chuẩn hóa, sparse TF-IDF deterministic trên 572 đoạn và OpenRouter embedding adapter live-ready đã được kiểm tra bằng mock; 74 kiểm thử đạt. Người dùng đã chạy `notebooks/03_embedding_models.ipynb` ở default mode, quan sát 572 đoạn, vocabulary 2093, kết quả deterministic, thứ tự vector được giữ và TF-IDF khớp.
-- Giai đoạn 4 `approved`: Qdrant 1.18.3 chạy local bằng Docker Compose pinned image; collection `hue_foods_e5_small_384` có 572 points, named dense vector 384 chiều cosine và sparse index. Codex đã kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận phase và chọn không tự chạy notebook trước khi phê duyệt.
-- Giai đoạn 5 `approved`: ba retrieval profiles `dense_only`, `hybrid_no_rerank` và `hybrid_rerank`; Python BM25 + min-max fusion 0.6/0.4; local MiniLM cache-only reranker; whole-chunk context tối đa 5 nguồn/3.000 ký tự; typed failures, immutable startup snapshot và safe payload projection. Codex đã kiểm tra 99 tests Phase 5, 217 tests toàn backend, notebook default fake mode và các failure probes; người dùng xác nhận final approval.
-- Hoàn tất Level 2 brainstorming và planning Giai đoạn 6; guide đã chuyển sang
-  `ready`. Thiết kế chốt deterministic retrieval -> context -> tool-less OpenAI
-  Agents SDK generation, JSON API stateless, cached readiness, safe source/error
-  contracts, notebook safe-default và live-smoke budget có approval riêng. Chưa
-  implement runtime, tests, notebook hoặc gọi `gpt-5.4-nano`.
+- Giai đoạn 3 `approved`: dense E5 local với vector 384 chiều đã chuẩn hóa,
+  sparse TF-IDF deterministic trên 572 đoạn và OpenRouter embedding adapter;
+  74 kiểm thử đạt. Người dùng đã chạy `notebooks/03_embedding_models.ipynb`,
+  quan sát 572 đoạn, vocabulary 2093, thứ tự vector được giữ và TF-IDF khớp.
+- Giai đoạn 4 `approved`: Qdrant 1.18.3 chạy local bằng Docker Compose pinned
+  image; collection `hue_foods_e5_small_384` có 572 points, named dense vector
+  384 chiều cosine và sparse index. Notebook thực hiện Qdrant read-only check;
+  người dùng đã xác nhận phase.
+- Giai đoạn 5 `approved`: ba retrieval profiles `dense_only`,
+  `hybrid_no_rerank` và `hybrid_rerank`; Python BM25 + min-max fusion 0.6/0.4;
+  local MiniLM cache-only reranker; whole-chunk context tối đa 5 nguồn/3.000 ký
+  tự; typed failures, immutable startup snapshot và safe payload projection.
+  Người dùng đã xác nhận final approval.
+- Giai đoạn 6 `awaiting_user_confirmation`: grounded prompt có structural
+  boundary, tool-less OpenAI Agents SDK generator, stateless JSON API, cached
+  readiness và safe errors. Live smoke chạy 12 calls với Qdrant 572 points và
+  `gpt-5.4-nano`, tổng chi phí `$0.01493875`; no-evidence probe có 0 model call.
+  Notebook 01–06 đã chuyển sang runtime-real; runtime audit sửa token telemetry
+  và full backend suite đạt 274 tests. Technical review đạt, nhưng user chưa
+  xác nhận final Phase 6.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Implement Phase 6–8 của Hue Foods RAG MVP theo guide; Phase 6 đang `ready`
-  nhưng implementation chưa bắt đầu.
+- Migration toàn bộ backend test suite sang live-only validation qua Qdrant,
+  local models và provider thật trong session DeepSeek mới; Phase 7–8 chưa
+  implement.
 - Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-13 17:23 +07
+
+- Trạng thái: User đã phê duyệt Live-Only Validation Policy. Runtime, canonical
+  notebooks và backend test suite phải dùng dependency thật, network/API được
+  phép, không đặt API cost ceiling. `gpt-5.4-nano` dùng cho generation/API;
+  `gpt-5.4-mini` chỉ dành cho LLM-as-judge hoặc quality evaluation được ghi rõ.
+  Active Hue Qdrant collection giữ read-only; live tests dùng isolated marked
+  test collection và phải report cleanup outcome. Phase 6 vẫn
+  `awaiting_user_confirmation`, chưa `approved`.
+- File chính: `session_prompt/Session_Prompt.md`,
+  `session_prompt/IMPLEMENTER_WORKFLOW.md`,
+  `session_prompt/REVIEWER_WORKFLOW.md`, `backend/llm/`, `backend/api/`,
+  `backend/tests/`, `notebooks/01` đến `notebooks/06` và Phase 6 reports.
+- Validation: Phase 6 live smoke 12 calls đạt tổng `$0.01493875`; live runtime
+  audit ghi `tokens=421/48`; no-evidence probe gọi 0 model; notebooks 01–05 được
+  Codex chạy runtime thật và notebook 06 có evidence full API call; latest full
+  backend suite đạt 274 tests với một `StarletteDeprecationWarning` đã biết.
+  Documentation policy scan xác nhận không còn rule active yêu cầu offline/fake
+  test behavior; `git diff --check` sạch.
+- Next action: user mở session DeepSeek Implementer mới với prompt live-only
+  migration; DeepSeek inventory và thay toàn bộ backend test fake/mock bằng real
+  dependency tests, dùng isolated Qdrant test collection, report question,
+  answer, model, latency, usage/cost và cleanup. Codex re-review trước final
+  Phase 6 confirmation.
 
 ### 2026-08-13 00:34 +07
 
@@ -122,16 +160,14 @@ Chưa thực hiện:
   up to date với 54 Python files, 834 nodes và 2.424 edges. Không sửa runtime,
   tests, notebook hoặc report; không gọi Docker, OpenAI, OpenRouter, web hay
   external service.
-- Next action: Dự kiến ngày 2026-08-14 +07 mở session DeepSeek Implementer để
-  triển khai Giai đoạn 6 theo guide `ready`. Default implementation/validation
-  phải offline bằng fakes; live OpenAI smoke, real-service checks và chi phí vẫn
-  cần người dùng phê duyệt riêng.
+- Next action: mục này đã được thay thế bởi Live-Only Validation Policy ngày
+  2026-08-13 17:23 +07; xem snapshot hiện hành ở trên.
 
 ### 2026-08-12 23:41 +07
 
 - Trạng thái: Giai đoạn 5 `approved` sau revision 3, Codex technical review và xác nhận final approval của người dùng. Giai đoạn 6 vẫn `not_ready` và chưa được implement.
 - File chính: `backend/retrieval/`, `backend/scoring/bm25.py`, `backend/reranking/`, `backend/core/startup.py`, `notebooks/05_retrieval_profiles.ipynb`, guide và ba báo cáo Phase 5.
-- Validation: 99 kiểm thử Phase 5 và 217 kiểm thử toàn backend đạt; `py_compile` 10 module đạt; reviewer probes cho non-numeric/non-finite scores, duplicate reranker input, embedder model identity và config staleness đạt; notebook schema sạch và default fake mode chạy đạt; `git diff --check` sạch; CodeGraph index up to date với 54 Python files, 834 nodes và 2.424 edges. Chưa chạy real Qdrant/E5/MiniLM hoặc p95 latency gate vì chưa có approval riêng.
+- Validation: 99 kiểm thử Phase 5 và 217 kiểm thử toàn backend đạt; `py_compile` 10 module đạt; reviewer probes cho non-numeric/non-finite scores, duplicate reranker input, embedder model identity và config staleness đạt; notebook schema sạch và kiểm tra runtime read-only đạt; `git diff --check` sạch; CodeGraph index up to date với 54 Python files, 834 nodes và 2.424 edges. Chưa chạy real Qdrant/E5/MiniLM hoặc p95 latency gate vì chưa có approval riêng.
 - Next action: Brainstorm Giai đoạn 6 theo Level 2; chưa implement answer generation, OpenAI Agents SDK hoặc JSON API trước khi user phê duyệt design. Real model/API/service calls vẫn cần approval riêng.
 
 ### 2026-08-12 18:06 +07
@@ -159,5 +195,5 @@ Chưa thực hiện:
 
 - Trạng thái: Phase 0 `completed`; Giai đoạn 1–3 `approved`; Giai đoạn 4–8 `not_ready`; Giai đoạn 9 `design_only`. Người dùng đã chạy và xác nhận ba notebook đầu.
 - File chính: `backend/embedding/`, `backend/config/settings.yaml`, `notebooks/03_embedding_models.ipynb`, guide/báo cáo kỹ thuật/Codex và user report Phase 3.
-- Validation: 74 tests đạt; `py_compile` năm module embedding đạt; local E5 offline trả vector 384 chiều norm 1; notebook schema hợp lệ, outputs được làm sạch sau user run; `git diff --check` sạch. Không gọi OpenRouter, Qdrant hoặc dịch vụ trả phí.
+- Validation: 74 tests đạt; `py_compile` năm module embedding đạt; local E5 cache-only trả vector 384 chiều norm 1; notebook schema hợp lệ, outputs được làm sạch sau user run; `git diff --check` sạch. Không gọi OpenRouter, Qdrant hoặc dịch vụ trả phí.
 - Next action: Brainstorm Giai đoạn 4 theo `guides/phase_4_qdrant_ingestion.md`; Qdrant collection mutation hoặc model/API live run vẫn cần approval riêng.

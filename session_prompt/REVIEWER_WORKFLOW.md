@@ -100,8 +100,8 @@ Codex reviewer không được:
 - mặc định hành động như phase implementer;
 - cập nhật `Project_Status.md` trước approval;
 - commit hoặc push trước final user confirmation hoặc ngoài approved phase package;
-- chạy live OpenAI/OpenRouter/model API, web enrichment, dependency install,
-  deploy command, hoặc external service call nếu chưa được user approve rõ;
+- chạy web enrichment, dependency install hoặc deploy command ngoài approved
+  scope;
 - đọc hoặc in secrets từ `.env`, credentials, keys, tokens, auth files, hoặc
   private config.
 
@@ -207,9 +207,11 @@ Phase 1–8 bắt buộc có notebook canonical mang đúng số phase. Reviewer
 - `execution_count` là `null`;
 - `outputs` rỗng;
 - notebook import backend modules, không duplicate runtime pipeline;
-- default cells không gọi live OpenAI/OpenRouter/model API, web, deploy,
-  external services, hoặc secrets;
-- real-mode cells nếu có opt-in rõ bằng env/config guard;
+- Với notebook 01–06, Run All phải đi qua runtime thật theo quyết định user
+  ngày 2026-08-13; reviewer kiểm tra exact prerequisites, no-fallback behavior,
+  active-collection read-only boundary và isolated test-collection lifecycle.
+- Tests và notebooks phải dùng dependency thật theo Live-Only Validation Policy;
+  provider/network failure là failure thực tế, không thay bằng kết quả giả;
 - notebook không chứa secrets, private paths nhạy cảm, raw headers, raw model
   payloads lớn, hoặc stack traces chứa sensitive data.
 - Markdown cells giải thích mục tiêu, prerequisites, luồng, expected observations,
@@ -225,23 +227,26 @@ commit. Không commit raw model/API payload.
 Trước khi approve, Codex phải check changed scope về:
 
 - security: không có secrets bị đọc, in, log, commit, hoặc expose qua API
-  responses; không có live model calls, web enrichment, deploy, hoặc dependency
-  install mới nếu chưa được approve;
+  responses; live logs không có system prompt, raw provider payload hoặc full
+  retrieved context;
 - data safety: curated content, chunks, payloads, sources, errors, và debug data
   chỉ được lưu/trả về ở dạng safe, intentional;
-- reliability: failure paths deterministic, reset/reindex behavior rõ ràng, và
-  phase không làm workflow đã approve bị stuck;
+- reliability: failure paths thật được report rõ, test collection có marker và
+  cleanup evidence, active collection không bị write/reset/reindex, và phase
+  không làm workflow đã approve bị stuck;
 - performance: không thêm unbounded work, repeated expensive model loads, hoặc
   avoidable bottlenecks ngoài accepted MVP limitations;
-- tests: verification mặc định dùng mocks/fixtures/local checks và không cần
-  secrets hoặc paid API calls;
+- tests: verification dùng Qdrant/model/provider thật; reviewer kiểm tra model,
+  call count, latency, usage/cost khi có, question/answer log, collection
+  isolation và cleanup result;
 - notebooks: outputs rỗng và safe theo notebook rules;
 - evaluation: metrics/result files khớp approved scope, không claim pass nếu
   chưa có evidence;
 - benchmark: actual provider, model, profile và config khớp artifacts; không có
   silent fallback hoặc uncontrolled variable change;
-- destructive actions: collection reset/delete có exact target, evidence và
-  user approval riêng; không suy diễn quyền từ một config flag.
+- destructive actions: active collection reset/delete cần exact target, evidence
+  và user approval riêng; isolated test collection chỉ được delete khi marker
+  và exact target đã được xác minh, rồi phải report cleanup result.
 
 Trước verdict, chạy tối thiểu:
 

@@ -120,12 +120,27 @@ Nếu session là implementer, đọc thêm:
 - Kiểm tra `git status --short` trước khi sửa file.
 - Không đọc, in, tóm tắt, log, commit, hoặc expose secrets từ `.env`, tokens,
   keys, auth files, credentials, hoặc private config.
-- Không gọi web hoặc enrich dữ liệu nếu user chưa yêu cầu rõ.
-- Không gọi live OpenAI/OpenRouter/model API mặc định; chỉ chạy khi user approve
-  rõ.
+- Không tự enrich hoặc mutate curated data bằng web source nếu chưa có scope dữ
+  liệu rõ.
 - Không yêu cầu user paste secret vào chat. Nếu cần secret, yêu cầu user tự đặt
   vào `.env` hoặc environment và gửi evidence đã redact.
 - Không push nếu user chưa yêu cầu rõ.
+
+## Live-Only Validation Policy
+
+- Runtime, canonical notebooks và backend test suite phải dùng dependency thật
+  và cho kết quả thật. Không dùng fake/mock client, fake runner, sample vector,
+  replay fixture, fake Qdrant client hoặc opt-in real-mode guard.
+- Network và provider API được phép dùng cho validation. Lỗi network, quota,
+  model, provider hoặc Qdrant là failure thực tế; không thay bằng fallback giả.
+- Dùng `gpt-5.4-nano` cho generation và API integration validation. Chỉ dùng
+  `gpt-5.4-mini` cho LLM-as-judge hoặc quality evaluation được nêu rõ.
+- Live log được phép có toàn bộ user question, toàn bộ model answer, model ID,
+  latency, usage khi provider trả về và estimated cost. Không log credential,
+  system prompt, raw provider payload hoặc full retrieved context.
+- Active Hue Qdrant collection chỉ read-only. Live tests chỉ được tạo, ingest và
+  xóa isolated test collection có marker rõ; report phải ghi cleanup thành công
+  hay thất bại.
 
 Python commands dùng:
 
@@ -266,9 +281,11 @@ Notebook rules:
 - import backend modules, không duplicate runtime logic;
 - outputs để rỗng trong repo;
 - `execution_count` phải là `null`;
-- default cells không gọi live OpenAI/OpenRouter/model API, web, deploy,
-  external services, hoặc secrets;
-- real-mode cells nếu có phải opt-in bằng env/config guard rõ;
+- Run All đi qua runtime thật theo Live-Only Validation Policy: local model,
+  Qdrant read-only hoặc full API path tùy phase; thiếu prerequisite phải fail
+  rõ ràng. Notebook 06 gọi OpenAI thật qua full API path.
+- Backend tests phải được migration sang dependency thật theo Live-Only
+  Validation Policy; không giữ fake/mock/replay behavior trong test path.
 - không lưu secrets, private paths nhạy cảm, raw model payloads lớn, raw headers,
   stack traces chứa sensitive data, hoặc outputs có thể leak dữ liệu.
 
