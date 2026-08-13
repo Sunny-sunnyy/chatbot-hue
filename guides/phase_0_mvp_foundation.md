@@ -205,8 +205,13 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Notebook nằm trong `notebooks/` và import backend modules.
 - Không duplicate runtime logic.
 - Mọi output rỗng; mọi `execution_count` là `null` trong repo.
-- Default cells không gọi live model/API, web, deploy, Qdrant bên ngoài hoặc secrets.
-- Real mode phải opt-in bằng environment/config guard rõ ràng.
+- Theo quyết định user ngày 2026-08-13, Run All của notebook 01–06 đi qua
+  runtime thật: local cached model, Qdrant read-only hoặc full API path tùy
+  phase. Không có fake fallback hoặc real-mode guard; thiếu prerequisite fail
+  rõ ràng. Notebook 06 giới hạn đúng một OpenAI call mỗi Run All theo ngân sách
+  user duyệt.
+- Tests vẫn mặc định offline. Notebook Phase 7–8 chỉ chạy live sau approval
+  riêng trong guide và từ user.
 - Không lưu private path, raw headers, raw model payload lớn hoặc stack trace có sensitive data.
 
 Notebook canonical:
@@ -244,7 +249,8 @@ Phase 0 được miễn. Phase 9 chỉ có notebook sau khi rời `design_only` 
 ## Security, reliability và performance
 
 - Không đọc hoặc log `.env`, token, key, auth header hay credential file.
-- Network/model/API mặc định tắt trong test và notebook.
+- Network/model/API mặc định tắt trong tests. Notebook 01–06 tuân theo
+  runtime-real contract ở trên; Phase 7–8 vẫn cần approval live riêng.
 - Model local được cache một lần mỗi process; batch operation phải bounded.
 - Context có giới hạn document và character/token budget.
 - Provider error phải rõ ràng; benchmark không được tự đổi model.
@@ -296,6 +302,15 @@ Approval date +07: 2026-08-09
 Evidence: Brainstorming governance trong session reviewer hiện tại.
 Affected scope: Phase 1–9, guides, workflows, report templates, notebooks và Project_Status lifecycle.
 Revisit trigger: Người dùng yêu cầu thay đổi approval authority, report audience hoặc notebook gate.
+```
+
+```text
+Decision: Notebook canonical 01–06 chạy runtime thật khi Run All; fake chỉ giữ trong tests. Notebook 03/05 dùng model local cache-only, 04 chỉ Qdrant read-only, 06 gọi đúng một OpenAI call qua full API path.
+Approved by: User
+Approval date +07: 2026-08-13
+Evidence: Yêu cầu redesign notebook và live validation độc lập của Codex.
+Affected scope: Notebook 01–06, notebook rules và reviewer/implementer workflows.
+Revisit trigger: User yêu cầu khôi phục safe-default, thay đổi budget/call limit hoặc Phase 7–8 được phê duyệt live.
 ```
 
 ```text

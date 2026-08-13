@@ -36,7 +36,7 @@ implementation.
 - Batch upsert và kiểm tra point count.
 - Ingestion pipeline kết nối Phase 2–4.
 - Reset guard fail closed và chỉ xóa exact expected collection.
-- Notebook ingestion an toàn, real mode opt-in.
+- Notebook inspect collection thật ở read-only, không có mutation path.
 
 ## Files dự kiến
 
@@ -260,9 +260,8 @@ existing IDs/payload là tập con hợp lệ của expected corpus.
 
 - import Phase 2–4 modules;
 - giải thích named vectors, payload và one-active-collection lifecycle;
-- safe default chỉ build/inspect sample point hoặc mock client;
-- real mode dùng guard `HUE_RAG_QDRANT_REAL=1` và chỉ inspect read-only
-  collection đã được ingestion tạo;
+- Run All inspect read-only collection thật đã được ingestion tạo, kiểm tra
+  schema/count/payload projection và không có fake fallback;
 - không chứa reset/delete cell;
 - committed outputs rỗng và `execution_count=null`.
 
@@ -328,8 +327,8 @@ reset flag và approval evidence
 - Payload không có absolute private path hoặc secret.
 - `reset_collection=false` bảo vệ collection.
 - Rerun idempotent và partial failure không được báo thành công.
-- Notebook default không gọi Qdrant/model, real mode read-only và report ghi
-  đúng collection actions; không có live deletion chỉ để validation.
+- Notebook Run All chỉ đọc Qdrant thật, kiểm tra đúng schema/count/payload
+  projection và report ghi đúng collection actions; không có live deletion.
 - User report phản ánh đúng collection actions/limitations và được người dùng xác nhận cùng notebook.
 - Không tuyên bố sparse query behavior chưa implement.
 
@@ -382,7 +381,7 @@ Revisit trigger: Live evidence cho thấy batch/timeout không phù hợp hoặc
 ```
 
 ```text
-Decision: Dùng kiến trúc module chức năng nhỏ; notebook default local/mock, real mode read-only; live preflight và live ingestion cần approval riêng, không live-delete để test.
+Decision: Dùng kiến trúc module chức năng nhỏ; notebook Run All Qdrant read-only, live preflight và live ingestion cần approval riêng, không live-delete để test.
 Approved by: User
 Approval date +07: 2026-08-12
 Evidence: User phê duyệt năm phần thiết kế và toàn bộ exact scope/acceptance của Phase 4.

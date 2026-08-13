@@ -271,7 +271,8 @@ Revisit trigger: User phê duyệt model hoặc dimension mới cho experiment k
 
 - giải thích dense vs sparse bằng tiếng Việt;
 - import Phase 2 chunks và Phase 3 modules;
-- có safe default mode dùng fake/mock vectors hoặc local cached baseline theo guard đã duyệt;
+- Run All chunk 572 foods và tạo dense vectors thật bằng local E5 cache-only
+  (`HF_HUB_OFFLINE=1`), không có fake fallback;
 - hiển thị model ID, dimension, vector norms, sparse vocabulary size và sample sparse indices/values;
 - không gọi OpenRouter mặc định;
 - giữ committed outputs rỗng và `execution_count=null`.

@@ -43,21 +43,17 @@ không khớp, hệ thống dừng để tránh ghi nhầm.
 | Số điểm | Đúng 572/572 | Mỗi đoạn đã curate có đúng một điểm, không thiếu hoặc có điểm lạ. |
 | Dense và sparse | Dense 384 cosine; sparse index bật | Dữ liệu đã sẵn sàng cho dense retrieval và nghiên cứu hybrid ở phase sau. |
 | Danh tính dữ liệu | Toàn bộ 572 UUID5 và payload khớp | Mỗi điểm truy ngược đúng đoạn nguồn, model và dimension. |
-| Tệp thực hành | 15 cells, schema hợp lệ, bản repo sạch | Notebook không lưu output hoặc dữ liệu nhạy cảm; chế độ mặc định không gọi Qdrant/model. |
+| Tệp thực hành | 11 cells, schema hợp lệ, bản repo sạch | Notebook không lưu output hoặc dữ liệu nhạy cảm; Run All chỉ đọc Qdrant thật. |
 
 E5 được chạy offline từ cache. Không có OpenAI, OpenRouter, web hoặc dịch vụ trả
 phí nào được gọi.
 
 ## Cách bạn tự kiểm tra
 
-Mở `notebooks/04_qdrant_ingestion.ipynb` và chạy từ trên xuống ở chế độ mặc
-định. Bạn cần thấy 572 đoạn, UUID5 ổn định, sample point có hai vector `dense`
-và `sparse`, dense dài 384; cell real mode sẽ báo skip. Chế độ này không gọi
-dịch vụ ngoài và không phát sinh chi phí.
-
-Nếu muốn kiểm tra collection thật, khởi động Jupyter với
-`HUE_RAG_QDRANT_REAL=1` rồi chạy lại notebook. Cell real mode chỉ đọc và cần
-hiện `hue_foods_e5_small_384`, dense 384 cosine, sparse index bật và 572 points.
+Mở `notebooks/04_qdrant_ingestion.ipynb` và chạy từ trên xuống. Notebook kết
+nối collection thật theo chế độ read-only; bạn cần thấy `hue_foods_e5_small_384`,
+dense 384 cosine, sparse index bật, 572 points và metadata an toàn của hai
+payload. Notebook không upsert, reset hoặc delete và không phát sinh chi phí API.
 
 ## Giới hạn hiện tại
 

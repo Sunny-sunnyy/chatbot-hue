@@ -45,16 +45,16 @@ dừng ngay thay vì tạo dữ liệu tìm kiếm sai.
 
 ## Cách bạn tự kiểm tra
 
-Mở `notebooks/03_embedding_models.ipynb` và chạy từ trên xuống. Ở chế độ mặc
-định, notebook chỉ dùng vector minh họa và dữ liệu cục bộ; không tải model,
-không gọi OpenRouter và không phát sinh chi phí.
+Mở `notebooks/03_embedding_models.ipynb` và chạy từ trên xuống. Notebook dùng
+E5 thật từ local cache với `HF_HUB_OFFLINE=1`, không tải thêm model, không gọi
+OpenRouter và không phát sinh chi phí.
 
 Bạn cần thấy 572 đoạn dữ liệu, sparse vocabulary 2093 từ, kết quả ổn định khi
 fit lại, thứ tự vector được giữ nguyên và ví dụ TF-IDF tính tay khớp. Các kết
 quả này cho thấy dữ liệu đã sẵn sàng cho bước lập chỉ mục ở Giai đoạn 4.
 
-Bạn có thể bật `HUE_RAG_LOCAL_E5=1` nếu muốn chạy E5 từ cache local. Đây vẫn là
-chế độ offline nhưng cần khoảng 1,5 GiB RAM cho process; không cần dùng API key.
+Notebook chạy E5 từ cache local khi Run All; process cần khoảng 1,5 GiB RAM và
+không cần API key.
 
 ## Giới hạn hiện tại
 

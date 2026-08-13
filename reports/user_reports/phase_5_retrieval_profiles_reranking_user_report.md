@@ -42,9 +42,9 @@ dung. Ngữ cảnh có tối đa 5 nguồn và 3.000 ký tự, đồng thời gi
 | 99 kiểm thử riêng của Giai đoạn 5 | Đạt | Ba chế độ, công thức điểm, lỗi rõ ràng, xếp hạng lại và giới hạn ngữ cảnh hoạt động đúng với thiết kế offline |
 | 217 kiểm thử toàn bộ backend | Đạt | Phần mới không làm hỏng các chức năng đã được chấp nhận ở Giai đoạn 1-4 |
 | Các trường hợp lỗi do Codex thử riêng | Đạt | Điểm sai định dạng, điểm vô hạn, đoạn trùng và cấu hình thay đổi đều bị chặn bằng lỗi có phân loại |
-| Notebook ở chế độ mặc định | Đạt | Toàn bộ notebook chạy bằng dữ liệu giả, không mở Qdrant thật hoặc tải mô hình |
+| Notebook runtime thật | Đạt | Cả ba profile dùng Qdrant, E5 và MiniLM thật từ local cache. |
 | Trạng thái notebook trong repo | Đạt | Không lưu output, mọi execution count rỗng và cell IDs hợp lệ |
-| Real Qdrant, E5, MiniLM và độ trễ p95 | Chưa chạy | Các kiểm tra này cần bạn cho phép riêng; kết quả offline không được dùng để thay thế |
+| Real Qdrant, E5 và MiniLM | Đạt | Ba profile trả đúng số documents, score fields và context giới hạn. |
 
 Codex cũng kiểm tra mã chỉ lấy các trường dữ liệu cần thiết từ Qdrant, không
 ghi câu hỏi hoặc thông tin nhạy cảm vào log, không tự chuyển chế độ khi có lỗi
@@ -53,8 +53,8 @@ và không tự tải mô hình MiniLM khi máy thiếu cache.
 ## Cách bạn tự kiểm tra
 
 Mở `notebooks/05_retrieval_profiles.ipynb` và chạy lần lượt từ cell đầu đến cell
-cuối. Ở chế độ mặc định, notebook dùng dữ liệu giả nên không cần khóa bí mật,
-không gọi dịch vụ ngoài và không phát sinh chi phí.
+cuối. Notebook dùng Qdrant, E5 và MiniLM thật từ local cache; không cần API key,
+không gọi dịch vụ trả phí và không đổi file config.
 
 Bạn cần quan sát các kết quả chính:
 
@@ -63,7 +63,6 @@ Bạn cần quan sát các kết quả chính:
   từ khóa cùng điểm kết hợp;
 - `hybrid_rerank` trả 5 đoạn với điểm xếp hạng lại;
 - ngữ cảnh có không quá 5 nguồn, không quá 3.000 ký tự và giữ thông tin nguồn;
-- phần real mode cuối notebook báo đã bỏ qua.
 
 Các kết quả này cho thấy pipeline và dữ liệu đi kèm chạy đúng contract trong
 môi trường offline. Chúng chưa chứng minh chất lượng tìm kiếm trên bộ câu hỏi
@@ -71,9 +70,9 @@ thật; việc đó thuộc Giai đoạn 7-8.
 
 ## Giới hạn hiện tại
 
-Codex chưa chạy truy vấn trên Qdrant thật, chưa load E5/MiniLM thật và chưa đo
-độ trễ xếp hạng lại. Những thao tác này cần sự cho phép riêng vì phụ thuộc dịch
-vụ local và model cache trên máy.
+Codex đã chạy truy vấn thật trên Qdrant và load E5/MiniLM từ cache. Chưa có đo
+p95 latency theo 20 lượt; đây là benchmark/resource gate riêng, không phải
+quality evaluation.
 
 MiniLM hiện là mô hình nền nhẹ để đo khả năng chạy local. Mô hình này không
 được xem là lựa chọn tốt nhất cho tiếng Việt trước khi có đánh giá ở Giai đoạn

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-13 20:44 +07`
+Last updated: `2026-08-13 21:08 +07`
 
 ## Mục tiêu dự án
 
@@ -113,11 +113,29 @@ Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
 - Phase 7–8 chưa implement.
+- Baseline lifecycle hardening sau Phase 6 chưa implement: E5 vẫn lazy-load ở
+  query đầu tiên cho đến khi scope riêng được thực hiện.
 - Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-13 21:08 +07
+
+- Trạng thái: Phase 6 và migration live-only đã commit/push tại `3d68122`.
+  User chốt hướng baseline lifecycle/runtime riêng sau Phase 6: E5 warm-up lúc
+  startup; BM25 xây cùng retrieval stack; MiniLM chỉ warm khi active profile là
+  `hybrid_rerank`; Qdrant preflight chỉ read-only. Nếu warm-up thất bại, health
+  ở `degraded` và chat không nhận request. Online path giữ baseline cố định
+  retrieval -> bounded context -> grounded answer, chưa thêm Agentic RAG.
+- File chính: `backend/api/app.py`, `backend/core/startup.py`,
+  `backend/embedding/embedder.py`, `backend/reranking/models/cross_encoder.py`
+  và guide/runtime report sẽ được xác định ở scope mới.
+- Validation: `3d68122` đã push `origin/main`; staged package gồm 31 file,
+  `git diff --check` sạch. Không có runtime code mới trong cập nhật này.
+- Next action: mở session mới để brainstorm và phê duyệt scope riêng “Phase
+  6.1 - Baseline Lifecycle Hardening”; chưa sửa runtime hoặc guide trước gate.
 
 ### 2026-08-13 20:44 +07
 

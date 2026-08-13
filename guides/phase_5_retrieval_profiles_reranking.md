@@ -44,7 +44,7 @@ dùng đã xác nhận final approval ngày 2026-08-12 +07. Phase 5 đã hoàn t
 - Whole-chunk ContextBuilder có bounded context và source mapping.
 - Profile-scoped startup/cache lifecycle.
 - Typed errors và safe retrieval debug metadata.
-- Unit/integration tests offline và notebook safe-default.
+- Unit/integration tests offline và notebook runtime-real.
 
 Không implement OpenRouter reranker adapter trong Phase 5. Remote reranking,
 native Qdrant sparse retrieval, tuning grid, retrieval metrics và winner
@@ -247,7 +247,7 @@ Phase 5 không tuyên bố model này tốt cho tiếng Việt.
 
 - Chỉ dùng model đã có trong local cache.
 - Nếu cache thiếu, dừng và xin user approval trước model download.
-- Unit tests và notebook default dùng fake scorer, không load model.
+- Unit tests dùng fake scorer; Run All notebook dùng MiniLM cache thật.
 - Real validation có một warm-up không tính vào kết quả.
 - Sau warm-up, đo 20 lượt, mỗi lượt rerank đúng 10 pairs trên CPU.
 - p95 rerank latency phải không quá 3 giây.
@@ -392,7 +392,7 @@ cần. Không thêm tuning grid hoặc speculative knobs.
 4. Implement reranker contract với fake scorer trước, sau đó wrapper MiniLM.
 5. Implement whole-chunk ContextBuilder và source mapping.
 6. Implement profile-scoped startup lifecycle và immutable snapshot.
-7. Tạo notebook safe-default và implementation report.
+7. Tạo notebook runtime-real và implementation report.
 8. Chạy smallest relevant tests trước, sau đó full backend regression.
 9. Xin approval riêng trước real Qdrant/cached-model validation.
 
@@ -406,11 +406,9 @@ ContextBuilder không tính separator vào budget.
 
 - import `RetrievalService` và `ContextBuilder` từ backend;
 - giải thích ba profiles bằng tiếng Việt;
-- default mode dùng fake dependencies và không mở Qdrant, tải model hoặc gọi
-  external API;
+- Run All build cả ba profile bằng Qdrant/E5/MiniLM thật từ local cache; không
+  có fake dependency hoặc config-file mutation;
 - hiển thị score fields đúng với từng stage và whole-chunk bounded context;
-- có explicit environment guard cho real local mode;
-- real mode chỉ dùng Qdrant local và model đã có trong cache;
 - không gọi OpenRouter hoặc bất kỳ paid API nào;
 - committed outputs rỗng và mọi `execution_count=null`.
 
