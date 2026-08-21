@@ -102,8 +102,9 @@ Codex reviewer không được:
 - commit hoặc push trước final user confirmation hoặc ngoài approved phase package;
 - chạy web enrichment, dependency install hoặc deploy command ngoài approved
   scope;
-- đọc hoặc in secrets từ `.env`, credentials, keys, tokens, auth files, hoặc
-  private config.
+- mở, `cat`, in, log hoặc expose nội dung/giá trị secrets từ `.env`,
+  credentials, keys, tokens, auth files, hoặc private config; safe env-file
+  loading cho approved review/validation được phép theo mục bên dưới.
 
 Codex chỉ được thực hiện finalization edits nhỏ khi chúng thuộc reviewer scope
 hoặc user yêu cầu rõ, ví dụ:
@@ -123,6 +124,34 @@ xác minh project dùng `uv run python ...`, `uv run pytest ...`,
 chỉ dùng cho OS-level diagnostic ngoài project; chỉ đánh dấu runtime PASS dựa
 trên lệnh chạy qua `uv run`.
 
+## Env Keys Và Online Access
+
+User cấp standing authorization ngày 2026-08-21 để Reviewer và coding agents
+chạy online, dùng dependency/provider thật và nạp các key cần thiết đã có trong
+repo-root `.env` cho approved implementation/review/validation scope.
+
+Ưu tiên `uv` env-file loader; không `source` `.env` như shell script:
+
+```bash
+# Từ repo root
+uv run --env-file .env python -m pytest backend/tests/ -q
+
+# Từ backend/
+uv run --env-file ../.env python -m pytest tests/ -q
+```
+
+- Chỉ kiểm tra key presence; không in value, `cat`/`grep` `.env`, dump toàn bộ
+  environment hoặc đưa secret vào command, tool output, report, notebook hay
+  log.
+- Network, Hugging Face Hub, Qdrant, OpenAI/OpenRouter và exact provider/model
+  đã được approved được phép dùng mà không cần xin lại cho từng bounded run.
+- Không mặc định đặt `HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1` hoặc
+  `UV_OFFLINE`. Chỉ bật khi guide/test đang xác minh exact cache-only/offline
+  contract; online authorization không được dùng để làm yếu contract đó.
+- Standing authorization không cho phép tự đổi provider/model, mở rộng phase,
+  chạy full costly benchmark/judge ngoài approved budget, web enrichment,
+  deploy, dependency install ngoài scope hoặc mutate active collection.
+
 ## Human-Assisted Tasks
 
 Nếu reviewer không thể tự kiểm chứng một thao tác vì sandbox, quyền truy cập,
@@ -137,8 +166,9 @@ Khi cần user hỗ trợ, hỏi rõ:
 - dữ liệu nào không được paste trực tiếp, đặc biệt là secrets, tokens, private
   keys, credentials, hoặc nội dung nhạy cảm.
 
-Nếu cần API key/env key, không yêu cầu user paste secret vào chat. Yêu cầu user
-tự đặt vào `.env` hoặc environment và gửi evidence đã redact.
+Nếu key cần thiết chưa có trong environment hoặc safe env-file loading không
+khả dụng, không yêu cầu user paste secret vào chat. Yêu cầu user tự đặt key vào
+`.env` hoặc environment và chỉ gửi evidence đã redact.
 
 ## CodeGraph
 
@@ -254,6 +284,9 @@ Trước khi approve, Codex phải check changed scope về:
   retrieved context;
 - data safety: curated content, chunks, payloads, sources, errors, và debug data
   chỉ được lưu/trả về ở dạng safe, intentional;
+- data authenticity: validation đọc đúng curated/canonical data và actual
+  service state theo phase contract; fixture, synthetic/sample data hoặc prior
+  output không được chấp nhận làm PASS evidence;
 - reliability: failure paths thật được report rõ, test collection có marker và
   cleanup evidence, active collection không bị write/reset/reindex, và phase
   không làm workflow đã approve bị stuck;
@@ -262,6 +295,10 @@ Trước khi approve, Codex phải check changed scope về:
 - tests: verification dùng Qdrant/model/provider thật; reviewer kiểm tra model,
   call count, latency, usage/cost khi có, question/answer log, collection
   isolation và cleanup result;
+- result authenticity: evidence được thu mới từ exact command/run, actual
+  counts/schema/metrics khớp artifacts, failed/skipped/partial outcomes được giữ
+  nguyên; không chấp nhận fabricated, cherry-picked hoặc expected-as-observed
+  results;
 - notebooks: outputs rỗng và safe theo notebook rules;
 - evaluation: metrics/result files khớp approved scope, không claim pass nếu
   chưa có evidence;

@@ -118,8 +118,10 @@ Nếu session là implementer, đọc thêm:
 - Không sửa ngoài approved scope.
 - Không revert hoặc xóa thay đổi có sẵn của user/agent khác.
 - Kiểm tra `git status --short` trước khi sửa file.
-- Không đọc, in, tóm tắt, log, commit, hoặc expose secrets từ `.env`, tokens,
-  keys, auth files, credentials, hoặc private config.
+- Không mở, `cat`, in, tóm tắt, log, commit, hoặc expose nội dung/giá trị secret
+  từ `.env`, tokens, keys, auth files, credentials, hoặc private config. Coding
+  agent được phép nạp `.env` vào process bằng env-file loader an toàn để chạy
+  approved runtime/validation; chỉ kiểm tra presence, không hiển thị value.
 - Không tự enrich hoặc mutate curated data bằng web source nếu chưa có scope dữ
   liệu rõ.
 - Không yêu cầu user paste secret vào chat. Nếu cần secret, yêu cầu user tự đặt
@@ -131,8 +133,24 @@ Nếu session là implementer, đọc thêm:
 - Runtime, canonical notebooks và backend test suite phải dùng dependency thật
   và cho kết quả thật. Không dùng fake/mock client, fake runner, sample vector,
   replay fixture, fake Qdrant client hoặc opt-in real-mode guard.
+- Validation phải đọc dữ liệu curated/canonical và trạng thái service thật đúng
+  với phase contract; fixture, synthetic/sample data hoặc output cũ không được
+  dùng làm bằng chứng PASS. Mutation test vẫn phải cách ly khỏi active data.
+- Evidence phải được thu mới từ exact command/run được report, giữ nguyên
+  failed/skipped/partial outcome và actual counts/metrics; không bịa, sao chép
+  kết quả run trước hoặc trình bày expected value như kết quả đã quan sát.
 - Network và provider API được phép dùng cho validation. Lỗi network, quota,
   model, provider hoặc Qdrant là failure thực tế; không thay bằng fallback giả.
+- User cấp standing authorization ngày 2026-08-21 cho coding agents dùng
+  network, Hugging Face Hub, Qdrant và provider API thật trong approved
+  implementation/validation scope, đồng thời dùng các key đã có trong `.env`.
+  Không cần xin lại cho từng bounded validation run đã nằm trong guide. Vẫn cần
+  approval mới khi đổi provider/model, mở rộng scope, tăng chi phí đáng kể,
+  deploy, web enrichment hoặc thực hiện destructive action.
+- Không đặt `HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1` hoặc `UV_OFFLINE` như
+  mặc định chung. Chỉ dùng offline/cache-only khi exact phase contract hoặc test
+  case yêu cầu; nếu không, coding agent được phép tải/kiểm tra exact approved
+  model online và phải report model, download/cache behavior cùng failure thật.
 - Dùng `gpt-5.4-nano` cho generation và API integration validation. Chỉ dùng
   `gpt-5.4-mini` cho LLM-as-judge hoặc quality evaluation được nêu rõ.
 - Live log được phép có toàn bộ user question, toàn bộ model answer, model ID,
@@ -167,6 +185,19 @@ uv run python ...
 uv run pytest ...
 uv run uvicorn api.app:app --port 8000
 ```
+
+Khi command cần key trong repo-root `.env`, ưu tiên env-file loader của `uv`:
+
+```bash
+# Từ repo root
+uv run --env-file .env python -m pytest backend/tests/ -q
+
+# Từ backend/
+uv run --env-file ../.env python -m pytest tests/ -q
+```
+
+Không dùng `cat .env`, `grep .env`, `printenv`, `env`, `set` hoặc debug dump có
+thể lộ secret. Không ghi env values vào notebook, report, log hay tool output.
 
 Runtime backend chạy từ `backend/`, ví dụ:
 

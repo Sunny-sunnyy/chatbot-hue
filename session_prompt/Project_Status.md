@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-21 22:40 +07`
+Last updated: `2026-08-21 22:50 +07`
 
 ## Mục tiêu dự án
 
@@ -118,11 +118,32 @@ Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
 - Phase 7–8 chưa implement.
-- Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
+- Retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8; ledger
+  hiện chưa có benchmark result hoặc winner. Bounded real E5/MiniLM/provider
+  validation trong approved scope đã có standing authorization.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-21 22:50 +07
+
+- Trạng thái: User cấp standing authorization cho coding agents và Reviewer
+  chạy online, dùng dependency/provider thật và nạp key sẵn có từ repo-root
+  `.env` bằng safe env-file loader trong approved implementation/review/
+  validation scope.
+- File chính: `session_prompt/Session_Prompt.md`,
+  `session_prompt/IMPLEMENTER_WORKFLOW.md`,
+  `session_prompt/REVIEWER_WORKFLOW.md`, `guides/README.md` và
+  `guides/phase_0_mvp_foundation.md`.
+- Boundary: không mở/in/log secret values; không mặc định ép
+  `HF_HUB_OFFLINE`, `TRANSFORMERS_OFFLINE` hoặc `UV_OFFLINE`. Provider/model
+  mới, scope/cost expansion đáng kể, full judge, deploy, web enrichment và
+  destructive action vẫn cần approval riêng.
+- Validation contract: chạy dependency/runtime thật, đọc curated/canonical data
+  và actual service state, rồi report fresh observed results từ exact run;
+  fixture, synthetic/sample data hoặc prior output không phải PASS evidence.
+- Next action: Phase 7 vẫn `not_ready`; mở Level 3 design gate khi user yêu cầu.
 
 ### 2026-08-21 22:40 +07
 

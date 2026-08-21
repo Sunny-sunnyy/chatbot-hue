@@ -98,8 +98,9 @@ Implementer không được:
 - approve chính work của mình;
 - commit hoặc push;
 - chạy web enrichment, deploy hoặc dependency install ngoài approved scope;
-- đọc hoặc in secrets từ `.env`, credentials, keys, tokens, auth files, hoặc
-  private config;
+- mở, `cat`, in, log hoặc expose nội dung/giá trị secrets từ `.env`,
+  credentials, keys, tokens, auth files, hoặc private config; safe env-file
+  loading cho approved runtime/validation được phép theo mục bên dưới;
 - yêu cầu user paste secret vào chat.
 
 ## Python/Runtime (uv) Bắt Buộc
@@ -112,13 +113,48 @@ xác minh project dùng `uv run python ...`, `uv run pytest ...`,
 chỉ dùng cho OS-level diagnostic ngoài project; chỉ đánh dấu runtime PASS dựa
 trên lệnh chạy qua `uv run`.
 
+## Env Keys Và Online Access
+
+User cấp standing authorization ngày 2026-08-21 để coding agents chạy online,
+dùng dependency/provider thật và nạp các key cần thiết đã có trong repo-root
+`.env` cho approved implementation/validation scope.
+
+Ưu tiên `uv` env-file loader; không `source` `.env` như shell script:
+
+```bash
+# Từ repo root
+uv run --env-file .env python -m pytest backend/tests/ -q
+
+# Từ backend/
+uv run --env-file ../.env python -m pytest tests/ -q
+```
+
+- Chỉ kiểm tra key presence; không in value, `cat`/`grep` `.env`, dump toàn bộ
+  environment hoặc đưa secret vào command/report/notebook/log.
+- Network, Hugging Face Hub, Qdrant, OpenAI/OpenRouter và exact provider/model
+  đã được approved được phép dùng mà không cần xin lại cho từng bounded run.
+- Không mặc định đặt `HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1` hoặc
+  `UV_OFFLINE`. Chỉ bật khi guide/test đang xác minh exact cache-only/offline
+  contract; report phải nói rõ vì sao dùng và cache miss phải fail thật.
+- Standing authorization không cho phép tự đổi provider/model, mở rộng phase,
+  chạy full costly benchmark/judge ngoài approved budget, web enrichment,
+  deploy, dependency install ngoài scope hoặc mutate active collection.
+
 ## Live-Only Validation Responsibilities
 
 Implementer phải chạy runtime, notebook và backend tests qua dependency thật;
 không dùng fake/mock client, fake runner, sample vector, replay fixture hoặc
 real-mode guard. Preflight phải xác nhận dependency/model/provider thật có thể
-truy cập mà không đọc hoặc in credential.
+truy cập bằng safe env-file loading và chỉ kiểm tra credential presence.
 
+- Validation phải đọc curated/canonical input và actual service state đúng phase
+  contract. Fixture, synthetic/sample data, hard-coded expected output hoặc
+  output từ run cũ không được dùng làm evidence PASS; mutation test phải dùng
+  isolated test data/collection và không thay thế read-only check trên active
+  data khi acceptance yêu cầu.
+- Evidence phải được thu mới từ exact command/run trong report, gồm actual
+  counts, schema/payload observations, metrics và mọi failed/skipped/partial
+  outcome; không fabricate, cherry-pick hoặc ghi expected result như observed.
 - Dùng `gpt-5.4-nano` cho generation và API integration validation; chỉ dùng
   `gpt-5.4-mini` cho LLM-as-judge hoặc quality evaluation ghi rõ mục đích.
 - Lỗi network, quota, provider, model hoặc Qdrant là validation failure thực tế;
@@ -129,8 +165,8 @@ truy cập mà không đọc hoặc in credential.
 - Live logs được phép ghi full question, full answer, model, latency, usage và
   estimated cost. Không ghi credential, system prompt, raw provider payload hay
   full retrieved context.
-- Report phải ghi actual provider, model, profile/config, call count, latency,
-  usage/cost khi có, và mọi failed/partial run.
+- Report phải ghi actual provider, model, profile/config, data source/snapshot,
+  call count, latency, usage/cost khi có, và mọi failed/skipped/partial run.
 
 ## Notebook Rules
 
@@ -145,8 +181,9 @@ Notebook requirements:
 - không duplicate runtime pipeline logic;
 - outputs rỗng trong repo;
 - `execution_count` là `null`;
-- Run All dùng runtime thật; thiếu model cache, Qdrant hay key phải fail
-  actionable. Không dùng fake fallback, replay fixture hoặc real-mode guard.
+- Run All dùng runtime thật; thiếu model, Qdrant hay key phải fail actionable.
+  Online model access/download được phép khi exact approved contract không yêu
+  cầu cache-only. Không dùng fake fallback, replay fixture hoặc real-mode guard.
 - Backend tests phải dùng dependency thật theo Live-Only Validation
   Responsibilities. Notebook phải ghi rõ prerequisite và quan sát thật.
 - không lưu secrets, private paths nhạy cảm, raw headers, raw model payloads lớn,
@@ -291,7 +328,8 @@ Report phải nêu:
 
 Trước khi nói phase/milestone sẵn sàng cho Codex review, implementer phải check:
 
-- security: không có secrets bị đọc, in, log, commit, hoặc expose;
+- security: env chỉ được nạp bằng safe loader cho approved command; không có
+  secret value bị in, log, commit, dump hoặc expose;
 - data safety: chunks, metadata, API responses, debug data, model errors, và
   result files chỉ chứa dữ liệu safe/intentional;
 - reliability: failure paths thật được report rõ ràng, reset/reindex behavior

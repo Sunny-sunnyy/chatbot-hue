@@ -27,7 +27,10 @@ Khi có khác biệt giữa tài liệu, áp dụng thứ tự sau:
 
 - Xác nhận mục tiêu, scope, lựa chọn kỹ thuật quan trọng và chi phí được phép.
 - Phê duyệt kết quả brainstorming trước khi implementation bắt đầu.
-- Cho phép riêng đối với live API, model download, collection deletion, commit hoặc push.
+- Đã cấp standing authorization ngày 2026-08-21 cho bounded live API/network
+  validation và download exact model đã approved; vẫn cho phép riêng khi đổi
+  provider/model, tăng chi phí đáng kể, xóa active collection, deploy, commit
+  hoặc push.
 - Đọc user report, chạy hoặc kiểm tra notebook và xác nhận kết quả cuối của phase.
 - Quyết định cuối cùng khi chất lượng, latency và cost tạo ra trade-off không có đáp án tuyệt đối.
 
@@ -178,7 +181,14 @@ Revisit trigger: Graph không ổn định, gây context overhead không chấp 
 - Mỗi experiment group chỉ thay đổi một nhóm biến đã khai báo.
 - Thay embedding model hoặc vector dimension bắt buộc reindex; không request-level fallback giữa hai vector space.
 - Benchmark không được silent fallback. Model thực tế, provider, profile và lỗi phải được ghi đúng.
-- Live OpenAI/OpenRouter call, full answer-judge run, model download và chi phí trả phí đều cần người dùng phê duyệt rõ ràng trước từng đợt chạy.
+- Validation/benchmark phải dùng curated/canonical data và actual service state
+  đúng approved contract. Evidence phải được thu mới từ exact run; fixture,
+  synthetic/sample data, prior output hoặc expected value không được dùng làm
+  observed PASS result.
+- Bounded live OpenAI/OpenRouter call và download exact model đã approved nằm
+  trong standing authorization ngày 2026-08-21. Full answer-judge run, provider
+  hoặc model mới và mọi mở rộng chi phí đáng kể vẫn cần người dùng phê duyệt rõ
+  ràng trước khi chạy.
 - Không ghi API key, raw header, private payload hoặc chain-of-thought vào guide, report hay artifact.
 
 ## Quy tắc thay đổi guide

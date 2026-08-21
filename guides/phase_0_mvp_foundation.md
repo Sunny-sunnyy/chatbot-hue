@@ -171,9 +171,9 @@ Mọi config thay đổi vector dimension, collection reset, live provider hoặ
 Phase 0 không yêu cầu brainstorm lại. Các phase sau phải dừng để hỏi người dùng nếu có:
 
 - provider/model mới hoặc model ID không còn tồn tại;
-- dependency mới hoặc model download;
+- dependency mới hoặc model/provider chưa được approved;
 - thay đổi dimension, schema hay collection deletion/reset;
-- live paid call hoặc full judge run;
+- live paid call vượt approved bounded validation/budget hoặc full judge run;
 - thay đổi phase boundary, acceptance metric hoặc notebook contract;
 - benchmark result mâu thuẫn hoặc không so sánh được;
 - privacy, security, data provenance hoặc license concern.
@@ -186,7 +186,13 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Không copy trực tiếp provider/storage choices từ `llm_rag` hoặc `rag_old`; chỉ tái sử dụng kỹ thuật đã được guide phê duyệt.
 - Giữ module nhỏ, interface rõ và không implement future flexibility.
 - Chuỗi runtime bắt buộc: `pyproject.toml + uv.lock -> uv -> project .venv -> uv run`; dựng/đồng bộ bằng `uv sync`, chạy bằng `uv run python ...` / `uv run pytest ...`; không dùng `pip` và không chạy project bằng `python`/`python3`/`pytest`/`uvicorn` từ system environment.
-- Chạy test không live trước; xin approval riêng cho external services.
+- Chạy smallest relevant tests trước, sau đó chạy live validation cần thiết qua
+  dependency/external service thật trong approved scope; standing authorization
+  ngày 2026-08-21 loại bỏ việc xin lại cho từng bounded run.
+- Dùng curated/canonical input và actual service state đúng phase contract;
+  fixture, synthetic/sample data hoặc prior output không được dùng làm PASS
+  evidence. Ghi fresh actual counts/schema/metrics cùng mọi failed/skipped/
+  partial outcome từ exact command/run.
 - Tạo notebook bắt buộc cho Phase 1–8 và implementation report đúng phase.
 - Không tạo hoặc sửa user report.
 
@@ -195,6 +201,9 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Kiểm tra scope, interface, dependency, secret exposure, data mutation và benchmark comparability.
 - Xác minh implementation report bằng command độc lập phù hợp.
 - Không chấp nhận claim chỉ dựa trên notebook output hoặc lời mô tả.
+- Đối chiếu data source/snapshot, actual counts/schema/metrics và raw-safe
+  artifacts từ fresh independent run; không chấp nhận fixture, synthetic/sample
+  data, prior output hoặc expected value làm observed PASS evidence.
 - Không approve nếu silent fallback, fabricated metrics, uncontrolled comparison hoặc destructive action thiếu evidence.
 - Khi technical review đạt, tạo user report `pending` và chuyển phase sang `awaiting_user_confirmation`.
 - Chỉ sau user confirmation mới chuyển phase sang `approved`, cập nhật `Project_Status.md`, audit approved package, commit và push.
@@ -210,8 +219,9 @@ Decision record dùng sáu field trong `guides/README.md`.
   phase. Không có fake fallback hoặc real-mode guard; thiếu prerequisite fail
   rõ ràng. Notebook 06 giới hạn đúng một OpenAI call mỗi Run All theo ngân sách
   user duyệt.
-- Tests vẫn mặc định offline. Notebook Phase 7–8 chỉ chạy live sau approval
-  riêng trong guide và từ user.
+- Tests và notebook được phép dùng network/dependency thật theo approved scope;
+  không đặt offline flags làm mặc định chung. Phase 7–8 vẫn cần guide riêng chốt
+  experiment scope, budget và full-run gate trước implementation.
 - Không lưu private path, raw headers, raw model payload lớn hoặc stack trace có sensitive data.
 
 Notebook canonical:
@@ -248,9 +258,12 @@ Phase 0 được miễn. Phase 9 chỉ có notebook sau khi rời `design_only` 
 
 ## Security, reliability và performance
 
-- Không đọc hoặc log `.env`, token, key, auth header hay credential file.
-- Network/model/API mặc định tắt trong tests. Notebook 01–06 tuân theo
-  runtime-real contract ở trên; Phase 7–8 vẫn cần approval live riêng.
+- Không mở, `cat`, in hoặc log nội dung/giá trị `.env`, token, key, auth header
+  hay credential file. Được nạp repo-root `.env` trực tiếp vào approved process
+  bằng `uv run --env-file`; chỉ kiểm tra key presence và không dump environment.
+- Network/model/API được phép dùng trong approved live validation. Không mặc
+  định đặt `HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1` hoặc `UV_OFFLINE`; chỉ
+  dùng khi exact guide/test yêu cầu cache-only/offline behavior.
 - Model local được cache một lần mỗi process; batch operation phải bounded.
 - Context có giới hạn document và character/token budget.
 - Provider error phải rõ ràng; benchmark không được tự đổi model.
@@ -322,8 +335,18 @@ Affected scope: Phase 5 retrieval/reranking, Phase 8 benchmark và remote-provid
 Revisit trigger: Local reranker không đạt latency gate hoặc Phase 7–8 quality evidence tạo hypothesis rõ cho remote reranker.
 ```
 
+```text
+Decision: Cấp standing authorization cho coding agents và Reviewer chạy online, dùng dependency/provider thật và nạp key đã có trong repo-root .env bằng safe env-file loader cho approved implementation/review/validation scope; offline flags không phải mặc định chung.
+Approved by: User
+Approval date +07: 2026-08-21
+Evidence: User xác nhận các key cần thiết đã có trong .env và cho phép coding agents chạy thật, kiểm tra thật và chạy online.
+Affected scope: Shared session prompt, Reviewer/Implementer workflows và Phase 1–8 runtime validation.
+Revisit trigger: User thu hồi quyền, provider/model/scope thay đổi, chi phí tăng đáng kể, hoặc exact guide/test yêu cầu cache-only/offline behavior.
+```
+
 ## Bước tiếp theo
 
-Phase 1–5 đã được người dùng xác nhận và có status `approved`. Phase 6 có status
-`not_ready` và cần Level 2 brainstorming trước implementation. Live model/API,
-external service hoặc scope expansion vẫn cần user approval riêng.
+Phase 1–6 và Milestone 6.1 đã được người dùng xác nhận với status `approved`.
+Phase 7 có status `not_ready` và cần Level 3 brainstorming trước implementation.
+Provider/model mới, scope expansion, chi phí tăng đáng kể hoặc destructive
+action vẫn cần user approval riêng.
