@@ -185,7 +185,7 @@ Decision record dùng sáu field trong `guides/README.md`.
 - Đọc Phase 0 trước mọi phase runtime.
 - Không copy trực tiếp provider/storage choices từ `llm_rag` hoặc `rag_old`; chỉ tái sử dụng kỹ thuật đã được guide phê duyệt.
 - Giữ module nhỏ, interface rõ và không implement future flexibility.
-- Dùng `UV_CACHE_DIR=/tmp/uv-cache uv run ...`, không dùng `pip`.
+- Chuỗi runtime bắt buộc: `pyproject.toml + uv.lock -> uv -> project .venv -> uv run`; dựng/đồng bộ bằng `uv sync`, chạy bằng `uv run python ...` / `uv run pytest ...`; không dùng `pip` và không chạy project bằng `python`/`python3`/`pytest`/`uvicorn` từ system environment.
 - Chạy test không live trước; xin approval riêng cho external services.
 - Tạo notebook bắt buộc cho Phase 1–8 và implementation report đúng phase.
 - Không tạo hoặc sửa user report.

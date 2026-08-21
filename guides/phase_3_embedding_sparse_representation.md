@@ -295,8 +295,8 @@ Commands sau chỉ chạy sau khi dependency/model access đã được người
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile embedding/base.py embedding/embedder.py embedding/batch_embed.py embedding/sparse_embedder.py
-UV_CACHE_DIR=/tmp/uv-cache uv run pytest tests/test_embedder.py tests/test_sparse_embedder.py -q --tb=short
+uv run python -m py_compile embedding/base.py embedding/embedder.py embedding/batch_embed.py embedding/sparse_embedder.py
+uv run pytest tests/test_embedder.py tests/test_sparse_embedder.py -q --tb=short
 ```
 
 Live/local model smoke command phải được ghi chính xác trong implementation report sau brainstorming; không đưa secret vào command.

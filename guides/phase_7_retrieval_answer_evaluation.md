@@ -247,8 +247,8 @@ Mỗi decision phải giữ test corpus/config frozen để Phase 8 so sánh cô
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile evaluation/test_loader.py evaluation/metrics.py evaluation/retrieval_eval.py evaluation/answer_eval.py evaluation/run_retrieval.py evaluation/run_answers.py
-UV_CACHE_DIR=/tmp/uv-cache uv run pytest tests/test_evaluation_loader.py tests/test_evaluation_metrics.py tests/test_answer_judge.py -q --tb=short
+uv run python -m py_compile evaluation/test_loader.py evaluation/metrics.py evaluation/retrieval_eval.py evaluation/answer_eval.py evaluation/run_retrieval.py evaluation/run_answers.py
+uv run pytest tests/test_evaluation_loader.py tests/test_evaluation_metrics.py tests/test_answer_judge.py -q --tb=short
 ```
 
 Offline/mock gate pass trước external run. Retrieval command cần local Qdrant readiness. Answer/judge command cần user approval và cost estimate trước execution.

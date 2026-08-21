@@ -416,9 +416,9 @@ ContextBuilder không tính separator vào budget.
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile core/startup.py retrieval/dense_retriever.py retrieval/hybrid_retriever.py retrieval/service.py retrieval/context_builder.py scoring/bm25.py reranking/base.py reranking/models/cross_encoder.py reranking/reranker.py
-UV_CACHE_DIR=/tmp/uv-cache uv run pytest tests/test_bm25.py tests/test_retrieval_service.py tests/test_reranker.py tests/test_context_builder.py tests/test_startup.py -q --tb=short
-UV_CACHE_DIR=/tmp/uv-cache uv run pytest tests/ -q --tb=short
+uv run python -m py_compile core/startup.py retrieval/dense_retriever.py retrieval/hybrid_retriever.py retrieval/service.py retrieval/context_builder.py scoring/bm25.py reranking/base.py reranking/models/cross_encoder.py reranking/reranker.py
+uv run pytest tests/test_bm25.py tests/test_retrieval_service.py tests/test_reranker.py tests/test_context_builder.py tests/test_startup.py -q --tb=short
+uv run pytest tests/ -q --tb=short
 ```
 
 Required test evidence:

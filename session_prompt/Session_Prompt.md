@@ -142,19 +142,37 @@ Nếu session là implementer, đọc thêm:
   xóa isolated test collection có marker rõ; report phải ghi cleanup thành công
   hay thất bại.
 
-Python commands dùng:
+## Python/Runtime Rules (uv)
 
-```bash
-UV_CACHE_DIR=/tmp/uv-cache uv run python ...
+`uv` là công cụ chuẩn và bắt buộc để quản lý Python/runtime của `hue_rag`.
+Chuỗi bắt buộc:
+
+```text
+pyproject.toml + uv.lock -> uv -> project .venv -> uv run <command>
 ```
 
-Không dùng `pip`.
+- Dựng/đồng bộ dependencies bằng `uv sync`; không dùng `pip` hoặc `pip install`.
+- Không dùng trực tiếp `python`, `python3`, `pip`, `pytest` hoặc `uvicorn` từ
+  system environment để chạy hoặc xác minh project. Ưu tiên:
+  `uv run python ...`, `uv run pytest ...`, `uv run uvicorn api.app:app ...`,
+  `uv run python -m <module>`.
+- System `python3` chỉ dùng cho OS-level diagnostic ngoài project; kết quả đó
+  không được dùng để kết luận project runtime PASS.
+- System Python 3.12 không thay thế runtime `>=3.13` của `hue_rag`.
 
-Runtime backend dự kiến chạy từ `backend/`, ví dụ:
+Python commands dùng (uv cache mặc định, không cần `UV_CACHE_DIR`):
+
+```bash
+uv run python ...
+uv run pytest ...
+uv run uvicorn api.app:app --port 8000
+```
+
+Runtime backend chạy từ `backend/`, ví dụ:
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m ingestion.pipeline
+uv run python -m ingestion.pipeline
 ```
 
 ## Data Và Source Rules

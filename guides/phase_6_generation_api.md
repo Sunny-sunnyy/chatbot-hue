@@ -302,10 +302,10 @@ Success response:
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile llm/prompt.py llm/generator_openai.py api/app.py api/health.py api/routes/chat.py
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest tests/test_llm_generator_openai.py tests/test_api_chat.py -q --tb=short
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest tests/ -q --tb=short
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "import importlib; importlib.import_module('api.app'); print('api.app import ok')"
+uv run python -m py_compile llm/prompt.py llm/generator_openai.py api/app.py api/health.py api/routes/chat.py
+uv run python -m pytest tests/test_llm_generator_openai.py tests/test_api_chat.py -q --tb=short
+uv run python -m pytest tests/ -q --tb=short
+uv run python -c "import importlib; importlib.import_module('api.app'); print('api.app import ok')"
 ```
 
 Mocked test matrix:

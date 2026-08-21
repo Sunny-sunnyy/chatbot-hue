@@ -148,8 +148,8 @@ technical review đạt. Notebook:
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from core.settings_loader import load_settings; print(load_settings()['active_profile'])"
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile core/settings_loader.py core/logging_setup.py core/schema.py
+uv run python -c "from core.settings_loader import load_settings; print(load_settings()['active_profile'])"
+uv run python -m py_compile core/settings_loader.py core/logging_setup.py core/schema.py
 ```
 
 Bằng chứng đã chấp nhận:

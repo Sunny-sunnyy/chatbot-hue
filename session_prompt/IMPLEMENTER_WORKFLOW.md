@@ -102,6 +102,16 @@ Implementer không được:
   private config;
 - yêu cầu user paste secret vào chat.
 
+## Python/Runtime (uv) Bắt Buộc
+
+Chuỗi bắt buộc: `pyproject.toml + uv.lock -> uv -> project .venv -> uv run`.
+Dựng/đồng bộ dependencies bằng `uv sync`; không dùng `pip`. Mọi lệnh chạy hoặc
+xác minh project dùng `uv run python ...`, `uv run pytest ...`,
+`uv run uvicorn api.app:app ...`, `uv run python -m <module>`; không gọi
+`python`/`python3`/`pytest`/`uvicorn` từ system environment. System Python 3.12
+chỉ dùng cho OS-level diagnostic ngoài project; chỉ đánh dấu runtime PASS dựa
+trên lệnh chạy qua `uv run`.
+
 ## Live-Only Validation Responsibilities
 
 Implementer phải chạy runtime, notebook và backend tests qua dependency thật;
@@ -214,6 +224,19 @@ Implementer dùng output để:
 - kiểm tra blast radius có vượt approved guide hay không;
 - chọn smallest relevant tests trước, rồi broader tests nếu shared behavior bị
   ảnh hưởng.
+
+### Ví dụ (xác minh trên CodeGraph 1.5.0)
+
+- `codegraph status .`: kết thúc bằng `✓ Index is up to date` khi index sạch;
+  dir chưa init hiện `⚠ Not initialized`; thay đổi chưa sync hiện mục
+  `### Pending sync:` rồi chạy `codegraph sync .`.
+- `codegraph explore "<query>"`: trả về `Found N symbols across X files` kèm
+  blast radius (callers + tests liên quan) và verbatim source theo file.
+- `codegraph affected <file>`: liệt kê test files bị ảnh hưởng, ví dụ
+  `codegraph affected backend/core/startup.py` → 4 test files.
+- `codegraph query <keyword>`: tìm symbol khi chưa biết chính xác tên
+  (FTS5); dùng trước khi `node`/`callers`/`impact` — nếu `impact` báo
+  `Symbol not found`, kiểm tra lại tên bằng `query`.
 
 Nếu CodeGraph chỉ ra scope ngoài approved guide, dừng và báo Reviewer/user;
 không tự mở rộng implementation. Nếu graph thiếu symbol hoặc mâu thuẫn với

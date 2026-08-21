@@ -113,6 +113,16 @@ hoặc user yêu cầu rõ, ví dụ:
 - cập nhật guide, user report và `Project_Status.md` sau user confirmation;
 - sửa governance/status docs hẹp để finalize approval.
 
+## Python/Runtime (uv) Bắt Buộc
+
+Chuỗi bắt buộc: `pyproject.toml + uv.lock -> uv -> project .venv -> uv run`.
+Dựng/đồng bộ dependencies bằng `uv sync`; không dùng `pip`. Mọi lệnh chạy hoặc
+xác minh project dùng `uv run python ...`, `uv run pytest ...`,
+`uv run uvicorn api.app:app ...`, `uv run python -m <module>`; không gọi
+`python`/`python3`/`pytest`/`uvicorn` từ system environment. System Python 3.12
+chỉ dùng cho OS-level diagnostic ngoài project; chỉ đánh dấu runtime PASS dựa
+trên lệnh chạy qua `uv run`.
+
 ## Human-Assisted Tasks
 
 Nếu reviewer không thể tự kiểm chứng một thao tác vì sandbox, quyền truy cập,
@@ -188,6 +198,19 @@ Reviewer dùng output để:
 - tìm callers/callees có thể nằm ngoài declared scope;
 - xác định tests cần chạy và blast radius cần đọc trực tiếp;
 - phát hiện route, dependency hoặc side effect mà diff file-by-file dễ bỏ sót.
+
+### Ví dụ (xác minh trên CodeGraph 1.5.0)
+
+- `codegraph status .`: kết thúc bằng `✓ Index is up to date` khi index sạch;
+  dir chưa init hiện `⚠ Not initialized`; thay đổi chưa sync hiện mục
+  `### Pending sync:` rồi chạy `codegraph sync .`.
+- `codegraph explore "<query>"`: trả về `Found N symbols across X files` kèm
+  blast radius (callers + tests liên quan) và verbatim source theo file.
+- `codegraph affected <file>`: liệt kê test files bị ảnh hưởng, ví dụ
+  `codegraph affected backend/core/startup.py` → 4 test files.
+- `codegraph query <keyword>`: tìm symbol khi chưa biết chính xác tên
+  (FTS5); dùng trước khi `node`/`callers`/`impact` — nếu `impact` báo
+  `Symbol not found`, kiểm tra lại tên bằng `query`.
 
 Không dựa duy nhất vào CodeGraph để kết luận correctness hoặc approval. Sau khi
 graph chỉ ra vùng liên quan, reviewer vẫn phải đọc source/diff, chạy tests phù
