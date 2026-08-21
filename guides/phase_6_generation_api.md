@@ -414,7 +414,7 @@ Revisit trigger: Phase 8 baseline ổn định và có multi-turn/route/evidence
 ### Trạng thái và mục tiêu
 
 ```text
-Status: ready
+Status: approved
 Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek
@@ -622,7 +622,8 @@ Live-smoke gate đã đạt. Đợt đầu phủ sáu category và đạt 6/6; n
 duyệt thêm một đợt sáu calls để lấy usage thật, với 5 success và một
 `InvalidGeneratorOutputError` bị fail-closed đúng contract. Tổng 12 calls,
 không retry, chi phí 0,01493875 USD dưới hard ceiling 0,25 USD. Người dùng đã
-chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Milestone 6.1 đã
-được brainstorm và có status `ready`; DeepSeek Implementer được phép triển khai
-đúng scope ở trên rồi nộp implementation report. Phase 7 vẫn cần hoàn tất
-design gate và implementation approval riêng trước khi mở.
+chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Milestone 6.1 đã được
+triển khai, sửa xong hai major findings của vòng review đầu, đạt technical
+re-review và được người dùng xác nhận ngày 2026-08-21. Milestone có status
+`approved`. Phase 7 vẫn cần hoàn tất design gate và implementation approval
+riêng trước khi mở.

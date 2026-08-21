@@ -31,6 +31,10 @@ CANONICAL_CHUNK_COUNT = 572
 
 PROFILE_RERANK = "hybrid_rerank"
 
+# Internal warm-up texts: never user queries, never sent to a provider and
+# never logged. They only verify the real local models during startup.
+E5_WARMUP_QUERY = "món ăn Huế"
+
 SCROLL_PAYLOAD_FIELDS = [
     "chunk_id",
     "text",
@@ -73,6 +77,21 @@ def _query_embedder(settings):
         device=embedding["device"],
         batch_size=embedding["batch_size"],
     )
+
+
+def _warm_embedder(embedder):
+    """Load the real embedding model and verify one warm-up vector.
+
+    embed_query() applies the shared BaseEmbedder validation: dimension,
+    finiteness, non-zero norm and L2 normalization. The warm-up text is an
+    internal constant: never a user query and never logged.
+    """
+    try:
+        embedder.embed_query(E5_WARMUP_QUERY)
+    except Exception as exc:  # model load/encode or validation failures
+        raise ComponentNotReadyError(
+            "embedder warm-up failed; the local model is unusable"
+        ) from exc
 
 
 def _scroll_all_payloads(client, collection_name, batch_size, timeout):
@@ -216,8 +235,9 @@ def build_retrieval_stack(
     dimension, canonical point count, unique chunk_ids, non-empty texts and
     embedding model identity must all match before any component is usable.
     For hybrid_rerank the MiniLM model is loaded once from the local cache
-    (downloads disabled); a missing cache fails startup. The snapshot records
-    what was verified; see verify_snapshot() for detecting stale state later.
+    (downloads disabled) and runs one warm-up prediction; a missing cache or
+    an invalid warm-up score fails startup. The snapshot records what was
+    verified; see verify_snapshot() for detecting stale state later.
     """
     settings = load_settings() if settings is None else settings
     profile = settings["active_profile"]
@@ -242,6 +262,7 @@ def build_retrieval_stack(
     reranker_ready = profile == PROFILE_RERANK
     embedder = _query_embedder(settings) if embedder is None else embedder
     _verify_config_consistency(settings, embedder)
+    _warm_embedder(embedder)
     dense_retriever = DenseRetriever(
         client=client,
         embedder=embedder,
@@ -269,7 +290,10 @@ def build_retrieval_stack(
         chunk_ids = [chunk_id for chunk_id, _ in corpus_pairs]
         if len(chunk_ids) != len(set(chunk_ids)):
             raise ComponentNotReadyError("collection has duplicate chunk_id values")
-        bm25 = BM25().fit([text for _, text in corpus_pairs])
+        try:
+            bm25 = BM25().fit([text for _, text in corpus_pairs])
+        except Exception as exc:  # corpus-scoped fit failures
+            raise ComponentNotReadyError("BM25 fit failed at startup") from exc
         hybrid_retriever = HybridRetriever(
             dense_retriever=dense_retriever,
             bm25=bm25,
@@ -287,6 +311,7 @@ def build_retrieval_stack(
             reranker_instance.load()
         else:
             reranker_instance = reranker
+        reranker_instance.warm_up()
     snapshot = RetrievalSnapshot(
         collection_name=collection_name,
         point_count=actual_count,

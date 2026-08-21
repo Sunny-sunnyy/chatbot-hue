@@ -1,8 +1,14 @@
 """Local MiniLM CrossEncoder reranker baseline on CPU, cache-only."""
+import math
 from functools import lru_cache
 
 from core.schema import ComponentNotReadyError
 from reranking.reranker import ScorerReranker
+
+# Internal warm-up pair: verifies the cached model produces one finite score
+# at startup; never a user query and never logged.
+WARMUP_QUERY = "món ăn Huế"
+WARMUP_DOCUMENT = "Bún bò Huế là một món ăn nổi tiếng của Huế."
 
 
 @lru_cache(maxsize=4)
@@ -41,6 +47,38 @@ class CrossEncoderReranker(ScorerReranker):
             raise ComponentNotReadyError(
                 "local reranker model is not available from cache; downloads are disabled"
             ) from exc
+
+    def warm_up(self):
+        """Run one prediction on the internal pair; fail when score is invalid.
+
+        A cached model that loads but returns a non-numeric, non-finite or
+        unexpected number of scores must never be marked ready.
+        """
+        try:
+            model = _get_cross_encoder(self._model_id, self._device)
+            scores = model.predict(
+                [(WARMUP_QUERY, WARMUP_DOCUMENT)], show_progress_bar=False
+            ).tolist()
+        except Exception as exc:  # load or prediction failures
+            raise ComponentNotReadyError(
+                "local reranker warm-up prediction failed"
+            ) from exc
+        if len(scores) != 1:
+            raise ComponentNotReadyError(
+                "local reranker warm-up returned an unexpected score count"
+            )
+        raw = scores[0]
+        try:
+            score = float(raw)
+        except (TypeError, ValueError) as exc:
+            raise ComponentNotReadyError(
+                "local reranker warm-up returned a non-numeric score"
+            ) from exc
+        if not math.isfinite(score):
+            raise ComponentNotReadyError(
+                "local reranker warm-up returned a non-finite score"
+            )
+        return score
 
     def _score_pairs(self, query, documents):
         model = _get_cross_encoder(self._model_id, self._device)

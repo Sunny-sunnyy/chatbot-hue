@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-13 21:08 +07`
+Last updated: `2026-08-21 22:40 +07`
 
 ## Mục tiêu dự án
 
@@ -106,6 +106,11 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
   Notebook 01–06 đã chuyển sang runtime-real; runtime audit sửa token telemetry
   và full backend live-only suite đạt 205 tests. Người dùng đã chạy notebook 06
   và xác nhận final Phase 6.
+- Milestone 6.1 `Baseline Lifecycle Hardening` `approved`: FastAPI lifespan
+  warm E5 cho mọi profile, fit BM25 cho hai profile hybrid và chỉ load/predict
+  MiniLM cho `hybrid_rerank` trước khi publish readiness. First retrieval không
+  tạo model cache miss mới; failure path fail closed, active collection giữ
+  read-only và notebook 06 đã được cập nhật với Evidence A/A2/B.
 - Hoàn tất migration tài liệu điều hành: `guides/README.md`, 10 phase guides và `reports/hue_foods_rag_benchmark.md` thay thế ba spec/plan/benchmark documents cũ dưới `docs/superpowers/`; workflows, templates và Phase 1–2 report references đã được cập nhật.
 - Chốt dual-report governance: technical reports trong `reports/` dành cho coding agents; user reports trong `reports/user_reports/` do Codex viết bằng tám mục, tiếng Việt dễ hiểu, không hiển thị mã trạng thái nội bộ; Phase 1–8 bắt buộc có notebook mang đúng số phase và chỉ `approved` sau user confirmation.
 
@@ -113,13 +118,29 @@ Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
 - Phase 7–8 chưa implement.
-- Baseline lifecycle hardening sau Phase 6 chưa implement: E5 vẫn lazy-load ở
-  query đầu tiên cho đến khi scope riêng được thực hiện.
 - Chạy real local E5/MiniLM probes và latency gate khi được user approve; retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8, ledger hiện chưa có benchmark result hoặc winner.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-21 22:40 +07
+
+- Trạng thái: Milestone 6.1 `Baseline Lifecycle Hardening` đã được người dùng
+  xác nhận và chuyển sang `approved`. Phase 6 tiếp tục giữ `approved`; Phase 7
+  vẫn `not_ready` và chưa có quyền implementation.
+- File chính: `backend/core/startup.py`,
+  `backend/reranking/models/cross_encoder.py`, `backend/tests/test_startup.py`,
+  `backend/tests/test_api_chat.py`, `notebooks/06_generation_and_api.ipynb`,
+  guide cùng ba report Milestone 6.1.
+- Validation: DeepSeek full live-only suite đạt 214 tests trong 241,36 giây;
+  Codex chạy độc lập 8 lifecycle tests và 36 affected tests, notebook qua
+  `nbformat.validate` và sạch outputs/metadata, active collection còn 572
+  points, CodeGraph up to date và `git diff --check` sạch. Live suite dùng năm
+  OpenAI success calls và một dead-provider attempt, không retry, chi phí ước
+  tính `$0.0039370`; isolated collection cleanup đều `ok`.
+- Next action: mở design gate riêng cho Phase 7 nếu người dùng yêu cầu; chưa
+  implement evaluation hoặc chạy LLM-as-judge trước approval mới.
 
 ### 2026-08-13 21:08 +07
 
