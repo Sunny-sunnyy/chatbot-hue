@@ -409,11 +409,220 @@ Affected scope: Phase 6 session contract và Phase 9 roadmap.
 Revisit trigger: Phase 8 baseline ổn định và có multi-turn/route/evidence-sufficiency evaluation data.
 ```
 
+## Milestone 6.1: Baseline Lifecycle Hardening
+
+### Trạng thái và mục tiêu
+
+```text
+Status: ready
+Brainstorming level: Level 2 - standard
+Owner: Codex Reviewer
+Implementer: DeepSeek
+Design approved by: User
+Design approval date +07: 2026-08-13
+```
+
+Milestone 6.1 chuyển toàn bộ cold-start bắt buộc của retrieval stack vào
+FastAPI lifespan. Milestone không mở lại acceptance lịch sử của Phase 6 và
+không thay retrieval ranking, generation, API response hoặc active collection.
+
+Thiết kế kế thừa nguyên tắc khởi tạo một lần từ baseline `llm_rag`, nhưng không
+sao chép ba giới hạn của baseline: E5 lazy-load ở request hoặc health đầu tiên,
+health endpoint tự gọi dependency thật và MiniLM luôn load dù profile không
+dùng reranking.
+
+Các mô tả fake/mock trong acceptance lịch sử của Phase 6 phía trên không áp
+dụng cho implementation hoặc validation hiện hành. Live-Only Validation Policy
+và contract của milestone này có ưu tiên: backend tests, notebook và review
+evidence đều phải dùng dependency thật.
+
+### Lifecycle contract
+
+Startup chạy theo thứ tự fail-fast:
+
+```text
+Qdrant read-only preflight
+  -> create và warm E5 bằng một query nội bộ cố định
+  -> nếu hybrid: scroll 572 payloads và fit BM25
+  -> nếu hybrid_rerank: load MiniLM và chạy một prediction nội bộ
+  -> publish immutable RetrievalStack
+  -> set retrieval_ready=true
+```
+
+Profile-scoped behavior:
+
+| Profile | E5 | BM25 | MiniLM |
+|---|---|---|---|
+| `dense_only` | Warm thật | Không tạo | Không load |
+| `hybrid_no_rerank` | Warm thật | Fit 572 chunks thật | Không load |
+| `hybrid_rerank` | Warm thật | Fit 572 chunks thật | Prediction thật |
+
+E5 warm-up gọi `embed_query()` hiện có. Vector đi qua validation chung trong
+`BaseEmbedder`: đúng dimension, toàn bộ giá trị finite, norm khác zero và được
+L2-normalize. Warm-up query là hằng số nội bộ, không phải user query, không gửi
+ra provider và không được log.
+
+BM25 chỉ được đánh dấu ready sau khi payload contract và corpus count đạt rồi
+`fit()` thành công trên toàn bộ 572 texts. Không cần BM25 query giả vì `fit()`
+đã hoàn tất toàn bộ corpus-scoped initialization và `score()` không có lazy
+dependency.
+
+MiniLM chỉ tồn tại trong profile `hybrid_rerank`. Sau khi load từ local cache,
+startup chạy đúng một prediction trên một cặp text nội bộ và chỉ đánh dấu ready
+khi nhận đúng một numeric finite score.
+
+Qdrant preflight giữ read-only: collection existence, schema, exact point count
+và safe payload scroll khi profile cần corpus. Milestone không chạy similarity
+search lúc startup và không reset, reindex, upsert hoặc delete active
+collection.
+
+### Failure và readiness policy
+
+- Qdrant transport/network failure là `RetrievalDependencyError`.
+- Collection, config hoặc model identity mismatch là
+  `RetrievalConfigurationError` hoặc `ComponentNotReadyError`.
+- E5 load/encode failure, BM25 fit failure và MiniLM load/prediction failure là
+  `ComponentNotReadyError` tại lifecycle boundary.
+- Không retry, fallback profile, fallback model hoặc publish partial stack.
+- Khi component bắt buộc thất bại, app vẫn alive nhưng
+  `retrieval_ready=false`, `/health` trả `degraded` và `/api/chat` trả HTTP 503
+  `retrieval_not_ready`.
+- `/health` tiếp tục chỉ đọc cached `app.state`; endpoint không ping Qdrant,
+  load model, fit BM25 hoặc gọi OpenAI.
+
+Logging chỉ được ghi active profile, component/model ID, thời gian từng stage,
+tổng startup và outcome hoặc exception type. Không log warm-up text, corpus
+content, vector, score, credential, raw exception payload, prompt hoặc retrieved
+context.
+
+### Files trong scope
+
+```text
+backend/core/startup.py
+backend/reranking/models/cross_encoder.py
+backend/tests/test_startup.py
+backend/tests/test_api_chat.py
+notebooks/06_generation_and_api.ipynb
+guides/phase_6_generation_api.md
+guides/README.md
+reports/phase_6_1_baseline_lifecycle_hardening_implementation_report.md
+reports/phase_6_1_baseline_lifecycle_hardening_codex_review.md
+reports/user_reports/phase_6_1_baseline_lifecycle_hardening_user_report.md
+```
+
+`backend/embedding/embedder.py` và `backend/api/app.py` nằm ngoài implementation
+scope: milestone dùng trực tiếp `embed_query()` và cached readiness hiện có.
+Không thêm config, module hoặc abstraction mới.
+
+DeepSeek Implementer chỉ sửa runtime, tests, notebook và implementation report
+trong allowlist. Codex Reviewer sở hữu thay đổi guide/README, Codex review và
+user report theo workflow hiện hành.
+
+### Ngoài scope
+
+- Thay retrieval profile semantics, ranking, weights hoặc context limits.
+- Qdrant similarity probe ở startup, ingestion hoặc active collection mutation.
+- Generation, OpenAI model, prompt, source contract hoặc API schema changes.
+- Retry, fallback, background recovery, hot reload hoặc periodic health probe.
+- Evaluation, benchmark winner selection, frontend hoặc Agentic RAG.
+
+### Live-only validation contract
+
+Mọi approval evidence phải dùng dependency thật và kết quả thật. Không dùng
+fake/mock client, fake model/runner, sample vector, replay fixture hoặc opt-in
+real-mode guard.
+
+- Positive matrix chạy cả ba profiles với Qdrant thật, E5 thật, BM25 fit corpus
+  thật và MiniLM prediction thật khi profile yêu cầu.
+- Validation dùng isolated test collection có marker rõ và đủ 572 points thật;
+  active Hue collection chỉ read-only.
+- Failure matrix dùng trạng thái thật: dead Qdrant URL, isolated collection sai
+  schema/count/payload, E5 dimension mismatch với vector thật và MiniLM model
+  không có trong local cache.
+- Cache evidence trước/sau startup và first retrieval phải chứng minh model load
+  xảy ra ở startup và first retrieval không tạo thêm model cache miss.
+- Report phải ghi profile, model ID, startup latency, first-retrieval latency,
+  collection marker, point count và cleanup outcome.
+- Network, Qdrant hoặc model failure là test failure thực tế; không thay bằng
+  fallback giả.
+
+Không đặt hard latency threshold trong milestone này vì phụ thuộc máy chạy.
+Latency thực tế vẫn phải được đo và report; quality/latency gate định lượng
+thuộc Phase 7-8 hoặc scope riêng được người dùng phê duyệt.
+
+### Notebook và user confirmation
+
+Không tạo notebook `06_1`. `notebooks/06_generation_and_api.ipynb` được cập
+nhật như notebook canonical của Phase 6 để:
+
+1. khởi động app với dependency thật;
+2. hiển thị active profile và startup latency;
+3. chứng minh component được warm đúng theo profile;
+4. gọi cached `/health` mà không kích hoạt dependency work mới;
+5. chạy đúng một câu hỏi qua full API path thật với `gpt-5.4-nano` mỗi Run All.
+
+Notebook không có fake fallback, không in credential hoặc raw provider payload,
+và phải commit với outputs rỗng cùng `execution_count=null`. Phase 6 giữ trạng
+thái `approved`; milestone 6.1 có technical report, Codex review và user report
+riêng rồi chờ người dùng chạy lại notebook 06 để xác nhận.
+
+### Acceptance criteria
+
+- Ba profiles đạt đúng lifecycle matrix.
+- E5 và MiniLM cần thiết đã warm trước khi `retrieval_ready=true`.
+- First retrieval không tạo model cache miss mới.
+- Failure paths thật fail closed với degraded health và chat 503.
+- Targeted tests và full backend live-only suite đạt.
+- Active collection không thay đổi; isolated test collections được cleanup và
+  report kết quả.
+- Startup và first-retrieval latency được ghi bằng số thực tế.
+- Notebook 06 chạy runtime thật, giữ API call limit và có committed JSON sạch.
+- Không có scope creep sang ranking, generation, evaluation hoặc Agentic RAG.
+
+### Reports
+
+```text
+reports/phase_6_1_baseline_lifecycle_hardening_implementation_report.md
+reports/phase_6_1_baseline_lifecycle_hardening_codex_review.md
+reports/user_reports/phase_6_1_baseline_lifecycle_hardening_user_report.md
+```
+
+### Quyết định đã phê duyệt
+
+```text
+Decision: Dùng verified component warm-up thay vì full retrieval startup probe hoặc load-only; Qdrant preflight read-only, E5 encode thật, BM25 fit theo profile và MiniLM prediction thật theo profile trước khi publish readiness.
+Approved by: User
+Approval date +07: 2026-08-13
+Evidence: Level 2 brainstorming Phase 6.1 sau khi đọc toàn bộ rag_agent_handoff_current_repo.md, rag_system_pipeline_deep_dive.md và đối chiếu runtime thật của llm_rag/hue_rag.
+Affected scope: Phase 6 retrieval lifecycle, FastAPI lifespan, live tests và notebook 06.
+Revisit trigger: Startup latency không chấp nhận được, profile semantics thay đổi hoặc Phase 7-8 đưa ra lifecycle requirement mới.
+```
+
+```text
+Decision: Quản lý Phase 6.1 như milestone mở rộng của Phase 6; giữ Phase 6 approved, dùng guide và notebook 06 hiện có nhưng tạo technical/user reports riêng cho milestone.
+Approved by: User
+Approval date +07: 2026-08-13
+Evidence: User xác nhận artifact contract A trong brainstorming Phase 6.1.
+Affected scope: guides/phase_6_generation_api.md, notebooks/06_generation_and_api.ipynb và reports Phase 6.1.
+Revisit trigger: Milestone cần notebook độc lập hoặc thay đổi API contract vượt khỏi Phase 6.
+```
+
+```text
+Decision: Toàn bộ validation Phase 6.1 phải chạy dependency thật và cho kết quả thật; cấm fake/mock/replay/fallback, active collection read-only và mọi mutation chỉ dùng isolated marked test collection có cleanup evidence.
+Approved by: User
+Approval date +07: 2026-08-13
+Evidence: User bổ sung live-only hard gate sau khi xác nhận failure và observability design.
+Affected scope: Phase 6.1 implementation, tests, notebook, implementation report và Codex review.
+Revisit trigger: Không có; đây là hard validation policy của milestone.
+```
+
 ## Bước tiếp theo
 
 Live-smoke gate đã đạt. Đợt đầu phủ sáu category và đạt 6/6; người dùng phê
 duyệt thêm một đợt sáu calls để lấy usage thật, với 5 success và một
 `InvalidGeneratorOutputError` bị fail-closed đúng contract. Tổng 12 calls,
 không retry, chi phí 0,01493875 USD dưới hard ceiling 0,25 USD. Người dùng đã
-chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Phase 7 vẫn cần
-hoàn tất design gate và implementation approval riêng trước khi mở.
+chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Milestone 6.1 đã
+được brainstorm và có status `ready`; DeepSeek Implementer được phép triển khai
+đúng scope ở trên rồi nộp implementation report. Phase 7 vẫn cần hoàn tất
+design gate và implementation approval riêng trước khi mở.

@@ -120,6 +120,12 @@ Chỉ dùng rich elicitation khi còn ít nhất hai chiều mơ hồ quan trọ
 
 Phase sau không được implement trước khi dependency phase trước đạt gate, trừ khi người dùng phê duyệt một thay đổi thứ tự có phân tích blast radius.
 
+Milestone 6.1 `Baseline Lifecycle Hardening` được quản lý trong
+`phase_6_generation_api.md` và có status `ready`. Milestone giữ nguyên trạng
+thái `approved` của Phase 6, dùng lại notebook 06, có implementation/Codex/user
+report riêng và bắt buộc validation live-only trước user confirmation. Phase 7
+vẫn `not_ready` trong khi milestone này được triển khai và review.
+
 ## Quy trình thực hiện, báo cáo, review và cập nhật trạng thái
 
 1. Codex và người dùng brainstorm theo mức của phase.
