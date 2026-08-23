@@ -7,13 +7,13 @@ Phase 9 mô tả các câu hỏi thiết kế cần giải quyết trước khi 
 ## Trạng thái
 
 ```text
-Status: design_only
-Brainstorming level: Level 4 - separate approved design
+Status: not_ready
 Owner: Codex Reviewer
 Implementation authorization: none
 ```
 
-Không được implement Phase 9 từ guide này. Trước runtime code phải có design riêng, evaluation plan riêng và user approval riêng.
+Không được implement Phase 9 từ guide này. Trước runtime code phải có separate
+design, cách đánh giá rõ ràng và user approval.
 
 ## Dependency hard gate
 
@@ -23,7 +23,7 @@ Không được implement Phase 9 từ guide này. Trước runtime code phải 
 - Có cost/latency/loop limits và agentic evaluation set.
 - Parent-child data model, memory policy và tool boundary được phê duyệt.
 
-Nếu chưa đủ năm điều kiện, Phase 9 giữ `design_only`.
+Nếu chưa đủ năm điều kiện, Phase 9 giữ `not_ready`.
 
 ## Capability có thể nghiên cứu
 
@@ -187,9 +187,10 @@ Từ `rag_old`:
 
 Không copy Chroma/SQLite/OpenAI embedding choices, paid LLM ingestion, provider-specific code, evaluator inconsistencies, English-only assumptions hoặc directory tools chưa threat-model.
 
-Từ `llm_rag` có thể học module boundaries, bounded context, startup caching và mocked tests; không mặc định reuse SSE/frontend hoặc English-centric reranker.
+Từ `llm_rag` có thể học module boundaries, bounded context và startup caching;
+không mặc định reuse SSE/frontend, mocked tests hoặc English-centric reranker.
 
-## Brainstorming Level 4 bắt buộc
+## Separate design bắt buộc
 
 Design session riêng phải:
 
@@ -208,7 +209,7 @@ Không có implementation task hiện tại. DeepSeek chỉ được đọc road
 
 ## Nhiệm vụ của Codex Reviewer
 
-- Giữ hard gate `design_only`.
+- Giữ Phase 9 ở `not_ready` đến khi user duyệt separate design.
 - Yêu cầu evidence rằng complexity giải quyết failure thật.
 - Điều phối design riêng và kiểm tra scope creep.
 - Không approve plan thiếu budgets, tools, evaluation hoặc security model.
@@ -216,30 +217,26 @@ Không có implementation task hiện tại. DeepSeek chỉ được đọc road
 ## Định hướng đã được người dùng xác nhận
 
 ```text
-Decision: Future multi-turn flow dùng bounded persistent history và standalone-query contextualization trước retrieval; Phase 6 chỉ giữ stateless session_id.
-Approved by: User
-Approval date +07: 2026-08-13
-Evidence: Phase 6 Level 2 brainstorming với follow-up "nó" tham chiếu "cơm hến".
-Affected scope: Phase 9 memory, query rewrite và retrieval input design.
-Revisit trigger: Phase 8 baseline ổn định và có multi-turn evaluation set, privacy/retention/deletion contract.
+Decision: Future multi-turn flow nghiên cứu bounded persistent history và standalone-query contextualization; Phase 6 giữ stateless session_id.
+Reason: Follow-up như "nó" cần ngữ cảnh hội thoại nhưng không thuộc MVP hiện tại.
+Date +07: 2026-08-13.
 ```
 
 ```text
-Decision: Future structured router tách casual conversation, Hue RAG và out-of-scope; web escalation chỉ dành cho Hue culture/travel query thiếu RAG evidence.
-Approved by: User
-Approval date +07: 2026-08-13
-Evidence: Phase 6 roadmap discussion.
-Affected scope: Phase 9 router, Conversation Agent, RAG path, evidence gate và Web Agent.
-Revisit trigger: Có route/evidence-sufficiency dataset, web provenance policy, numeric tool/cost budgets và separate approved design.
+Decision: Future router nghiên cứu tách casual conversation, Hue RAG và out-of-scope; web escalation chỉ dành cho Hue query thiếu RAG evidence.
+Reason: Giữ direct RAG fast path và chỉ thêm agent/tool khi có failure thật.
+Date +07: 2026-08-13.
 ```
 
 Hai decision records trên chỉ khóa hướng nghiên cứu. Chúng không thay đổi
-`Status: design_only`, không tạo implementation authorization và không bỏ qua
-Level 4 separate design gate.
+`Status: not_ready` và không tạo implementation authorization.
 
 ## Notebook
 
-Không tạo notebook Phase 9 ở trạng thái `design_only`. Nếu Phase 9 được tách thành implementation phases sau design riêng, mỗi implementation phase phải có notebook mang prefix `09_`, import runtime modules, có safe default và phục vụ user confirmation; exact filename được khóa trong design mới.
+Không tạo notebook Phase 9 ở trạng thái `not_ready`. Nếu Phase 9 được tách thành
+implementation phases sau design riêng, mỗi implementation phase phải có
+notebook mang prefix `09_`, import runtime modules và phục vụ user confirmation;
+exact filename được khóa trong design mới.
 
 ## Tiêu chí để chuyển từ roadmap sang design-ready
 
@@ -254,8 +251,12 @@ Các tiêu chí chỉ cho phép lập implementation plan; không tự động c
 
 ## Reports và cập nhật trạng thái
 
-Không tạo implementation, Codex review hoặc user report cho Phase 9 trước implementation thực tế. Nếu implementation được phê duyệt riêng, áp dụng dual-report model và hard user-confirmation gate như Phase 1–8. `Project_Status.md` tiếp tục mô tả Phase 9 là post-MVP/design-only cho đến khi user thay đổi.
+Không tạo implementation, Codex review hoặc user report cho Phase 9 trước
+implementation thực tế. Nếu implementation được phê duyệt riêng, áp dụng
+workflow và user confirmation hiện hành. `Project_Status.md` tiếp tục mô tả
+Phase 9 là post-MVP và `not_ready` cho đến khi user thay đổi.
 
 ## Bước tiếp theo
 
-Không có action trong Phase 9 trong MVP hiện tại. Bước hợp lệ là hoàn thành Phase 3–8 theo thứ tự và thu thập evidence.
+Không có action Phase 9 trong MVP hiện tại. Bước hợp lệ là hoàn thành Phase 7,
+review Phase 0 đến Phase 6, rồi mới cân nhắc Phase 8.

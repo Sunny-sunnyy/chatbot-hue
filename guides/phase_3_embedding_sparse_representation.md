@@ -8,12 +8,19 @@ Phase 3 tạo hai biểu diễn có thể tái lập cho 572 canonical food chun
 
 ```text
 Status: approved
-Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek
 ```
 
-Level 2 brainstorming đã được người dùng phê duyệt ngày 2026-08-11 +07. Người dùng đã chạy và xác nhận notebook `notebooks/03_embedding_models.ipynb` ngày 2026-08-11 +07. Phase 3 được approved; Phase 4 vẫn cần brainstorming riêng trước implementation.
+> **Lưu ý governance hiện hành:** Các đoạn bên dưới mô tả implementation và
+> test contract lịch sử của Phase 3, bao gồm mock/cache-only/per-run approval.
+> Chúng không áp dụng cho công việc mới. `session_prompt/Session_Prompt.md` cấm
+> mock/fake và yêu cầu real execution trong approved scope. Phase 3 sẽ được
+> review lại trong chuỗi Phase 0 đến Phase 6 sau Phase 7.
+
+Brainstorming đã được người dùng phê duyệt ngày 2026-08-11 +07. Người dùng đã
+chạy và xác nhận notebook `notebooks/03_embedding_models.ipynb` ngày
+2026-08-11 +07. Phase 3 được approved.
 
 ## Dependency
 
@@ -331,8 +338,12 @@ reports/phase_3_embedding_sparse_representation_codex_review.md
 reports/user_reports/phase_3_embedding_sparse_representation_user_report.md
 ```
 
-Benchmark evidence liên quan model/resource được nối vào `reports/hue_foods_rag_benchmark.md`. Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
+Benchmark evidence liên quan model/resource nằm trong
+`reports/hue_foods_rag_benchmark.md`. User report và notebook Phase 3 đã được
+người dùng xác nhận.
 
 ## Bước tiếp theo
 
-Sau khi Phase 1–2 trở lại `approved`, brainstorm Phase 3. Chỉ sau user confirmation của Phase 3 mới mở Phase 4.
+Phase 3 đã hoàn thành và `approved`. Sau Phase 7, Phase 3 sẽ được review lại
+trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
+`guides/README.md`.

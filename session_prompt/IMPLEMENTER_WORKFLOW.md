@@ -1,243 +1,140 @@
-# DeepSeek Implementer Workflow
+# Implementer Workflow
 
-## Mục Đích
+## Mục đích
 
-Dùng file này khi user giao session hiện tại cho DeepSeek hoặc implementation
-agent khác để implement approved phase/milestone trong `hue_rag`.
+Dùng file này khi user giao một phase hoặc correction đã được duyệt cho
+Implementer. Implementer viết code rõ ràng, chạy hệ thống thật và bàn giao bằng
+một report ngắn. Implementer không tự approve.
 
-Implementer xây đúng approved scope, chạy verification, tạo/cập nhật notebook
-bắt buộc cho Phase 1–8, và viết technical implementation report. Implementer không approve
-chính work của mình, không cập nhật `Project_Status.md`, không commit và không
-push.
-
-## Context Bắt Buộc
-
-Trước khi implement, đọc:
+Quy tắc chung nằm trong:
 
 ```text
-/home/hieu0606sunny/hue_rag/session_prompt/Session_Prompt.md
-/home/hieu0606sunny/hue_rag/session_prompt/IMPLEMENTER_WORKFLOW.md
-/home/hieu0606sunny/hue_rag/session_prompt/Project_Status.md
-/home/hieu0606sunny/hue_rag/session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
-guides/README.md
-guides/phase_0_mvp_foundation.md
-guide của phase được giao/remediation: guides/phase_<id>_<short_name>.md
-reports/hue_foods_rag_benchmark.md nếu phase liên quan model, retrieval, evaluation hoặc benchmark
-Codex review report tương ứng nếu đang sửa findings
-user report tương ứng nếu đang sửa feedback/remediation: reports/user_reports/phase_<id>_<short_name>_user_report.md
+/home/minhhieu/hue_rag/session_prompt/Session_Prompt.md
 ```
 
-## Session Bootstrap Contract
+File này chỉ bổ sung trách nhiệm riêng của Implementer.
 
-Khi user chỉ cung cấp `Session_Prompt.md` và `IMPLEMENTER_WORKFLOW.md`, implementer tự:
+## Bắt đầu session
 
-1. xác định repo root và role Implementer;
-2. đọc `Project_Status.md`, `guides/README.md` và Phase 0 foundation;
-3. suy ra phase được giao từ user request, status snapshot và guide index;
-4. đọc current phase guide và implementation-report template;
-5. nếu là remediation, đọc Codex review và pending user report liên quan;
-6. đọc benchmark ledger khi phase liên quan model, retrieval, evaluation hoặc benchmark.
+Đọc:
 
-Nếu không suy ra duy nhất một phase, thiếu file bắt buộc hoặc status không cho
-phép implementation/remediation, dừng và hỏi user đúng một câu thay vì đoán.
+```text
+/home/minhhieu/hue_rag/session_prompt/Session_Prompt.md
+/home/minhhieu/hue_rag/session_prompt/Project_Status.md
+/home/minhhieu/hue_rag/session_prompt/IMPLEMENTER_WORKFLOW.md
+/home/minhhieu/hue_rag/guides/README.md
+/home/minhhieu/hue_rag/guides/phase_0_mvp_foundation.md
+guide canonical của phase được giao
+/home/minhhieu/hue_rag/session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
+```
 
-Nếu implement liên quan code runtime, notebooks, tests, hoặc refactor, đọc và áp
-dụng:
+Nếu đang sửa finding, đọc Codex review hiện hành. Nếu task liên quan model,
+retrieval, evaluation hoặc benchmark, đọc
+`reports/hue_foods_rag_benchmark.md`.
+
+Task code, notebook, test hoặc refactor phải đọc và áp dụng:
 
 ```text
 skills/karpathy-guidelines/SKILL.md
 ```
 
-Nếu implement liên quan foods curation hoặc foods data, đọc thêm:
+Chạy `git status --short`. Giữ nguyên mọi thay đổi không liên quan.
 
-```text
-knowledge-base-hue/meta/foods-template.md
-knowledge-base-hue/foods/evaluation/validate_tests.py
-```
+Nếu không xác định được duy nhất phase, guide hoặc correction scope, hỏi user
+đúng một câu thay vì đoán.
 
-Cũng chạy:
+## Khi nào được implement
 
-```bash
-git status --short
-```
+Chỉ bắt đầu khi:
 
-Giữ nguyên unrelated changes. Không reset, delete, stage, commit, push, hoặc
-overwrite files ngoài approved scope.
+- guide canonical có trạng thái `ready`; hoặc
+- trạng thái là `changes_requested` và Codex review/user feedback ghi rõ phần
+  cần sửa.
 
-## Responsibilities
+Guide là read-only với Implementer. Thay đổi scope, interface, acceptance,
+provider, model hoặc data contract phải quay lại Reviewer và user.
 
-Implementer phải:
+## Cách implement
 
-- chỉ implement user-approved phase hoặc milestone;
-- chỉ bắt đầu khi phase guide có trạng thái `ready`, hoặc `changes_requested`
-  kèm exact remediation scope trong guide/Codex review/user feedback;
-- xem canonical guide là read-only; mọi scope/interface/acceptance change phải
-  quay lại user và Codex Reviewer;
-- không sửa trạng thái trong guide; ghi `implementing` và
-  `implementation_reported` trong handoff hoặc implementation report để Codex
-  cập nhật trạng thái canonical;
-- áp dụng `skills/karpathy-guidelines/SKILL.md` khi viết code để giữ assumptions
-  rõ ràng, code đơn giản, thay đổi surgical, và success criteria có thể verify;
-- trước mỗi phần quan trọng, thực hiện mini research theo guide; brainstorming
-  với user phải hoàn tất trước khi phase chuyển sang `ready`;
-- làm surgical changes, không refactor ngoài scope;
-- tạo runtime `.py` dưới `backend/` khi phase yêu cầu;
-- tạo/cập nhật notebook canonical dưới `notebooks/` cho mọi Phase 1–8;
-- notebook phải import backend modules, không duplicate runtime logic;
-- chạy smallest relevant verification trước, rồi broader checks khi cần;
-- tự kiểm tra security, data safety, reliability, performance trước handoff;
-- viết implementation report trong `/home/hieu0606sunny/hue_rag/reports/`;
-- phản hồi Codex feedback bằng cách sửa code/docs/report của implementer khi
-  cần.
+- Giải thích được data flow bằng ngôn ngữ thông thường.
+- Bắt đầu bằng giải pháp nhỏ nhất đáp ứng nhu cầu.
+- Một file/hàm có nhiệm vụ rõ ràng.
+- Reuse backend hiện có khi phù hợp; không copy một pipeline thứ hai.
+- Khi sửa Phase 0–6 sau review, đối chiếu guide và finding với source code,
+  notebook cùng hành vi live hiện có; tài liệu ngoài chỉ bổ sung khi user cung
+  cấp và thực sự hữu ích.
+- Không thêm abstraction, wrapper, validator hoặc flexibility phòng xa.
+- Không refactor ngoài phạm vi.
+- Xóa import, biến hoặc code do chính thay đổi hiện tại làm dư thừa.
+- Không giữ cơ chế đã bị guide yêu cầu loại bỏ bằng cách đổi tên hoặc chuyển file.
 
-Implementer không được:
+Kỹ thuật nâng cao chỉ được đề xuất khi có vấn đề thật, giải pháp đơn giản không
+đủ, lợi ích có thể giải thích và real-system run chứng minh lợi ích. Nếu độ
+phức tạp vượt lợi ích, phải bỏ kỹ thuật đó.
 
-- sửa Codex review files;
-- tạo hoặc sửa file trong `reports/user_reports/`;
-- cập nhật `Project_Status.md`;
-- approve chính work của mình;
-- commit hoặc push;
-- chạy web enrichment, deploy hoặc dependency install ngoài approved scope;
-- mở, `cat`, in, log hoặc expose nội dung/giá trị secrets từ `.env`,
-  credentials, keys, tokens, auth files, hoặc private config; safe env-file
-  loading cho approved runtime/validation được phép theo mục bên dưới;
-- yêu cầu user paste secret vào chat.
+## Test
 
-## Python/Runtime (uv) Bắt Buộc
+- Chỉ tạo test cho hành vi thật và lỗi thực tế quan trọng.
+- Không đặt mục tiêu số lượng test hoặc coverage.
+- Không tạo nhiều test files cho edge case kỹ thuật hiếm.
+- Không dùng mock hoặc fake.
+- Dùng real project data và dependency thật phù hợp với hành vi đang kiểm tra.
+- Mỗi test phải dễ đọc và trả lời được nó bảo vệ nhu cầu nào của user.
+- Trước khi giữ test cũ, đặt lại đúng câu hỏi đó.
+- Test pass không thay live run.
 
-Chuỗi bắt buộc: `pyproject.toml + uv.lock -> uv -> project .venv -> uv run`.
-Dựng/đồng bộ dependencies bằng `uv sync`; không dùng `pip`. Mọi lệnh chạy hoặc
-xác minh project dùng `uv run python ...`, `uv run pytest ...`,
-`uv run uvicorn api.app:app ...`, `uv run python -m <module>`; không gọi
-`python`/`python3`/`pytest`/`uvicorn` từ system environment. System Python 3.12
-chỉ dùng cho OS-level diagnostic ngoài project; chỉ đánh dấu runtime PASS dựa
-trên lệnh chạy qua `uv run`.
+Chạy smallest relevant test trước. Chỉ mở rộng test scope khi shared behavior
+thực sự bị ảnh hưởng.
 
-## Env Keys Và Online Access
+## Chạy và xác minh thật
 
-User cấp standing authorization ngày 2026-08-21 để coding agents chạy online,
-dùng dependency/provider thật và nạp các key cần thiết đã có trong repo-root
-`.env` cho approved implementation/validation scope.
+- Dùng curated/canonical data, actual service state và production backend path.
+- Dùng Qdrant, local model và provider API thật theo guide.
+- Online và paid API calls trong approved phase được phép, không cần consent
+  gate hoặc cost code.
+- Không dùng fake ID/data/provider/artifact, mock response, replay hoặc prior
+  output làm PASS evidence.
+- Ghi đúng failed, skipped và partial outcome.
+- Active Hue collection chỉ read-only; mutation cần exact approved isolated
+  target hoặc user approval riêng.
+- Không đổi provider/model, mở rộng dataset/scope, deploy hoặc thực hiện
+  destructive action nếu chưa được duyệt.
 
-Ưu tiên `uv` env-file loader; không `source` `.env` như shell script:
+Dùng `uv` và safe env-file loader theo `Session_Prompt.md`. Không mở hoặc in
+secret values.
 
-```bash
-# Từ repo root
-uv run --env-file .env python -m pytest backend/tests/ -q
+## Notebook
 
-# Từ backend/
-uv run --env-file ../.env python -m pytest tests/ -q
-```
+Mỗi implementation Phase 1–8 cập nhật đúng một notebook canonical.
 
-- Chỉ kiểm tra key presence; không in value, `cat`/`grep` `.env`, dump toàn bộ
-  environment hoặc đưa secret vào command/report/notebook/log.
-- Network, Hugging Face Hub, Qdrant, OpenAI/OpenRouter và exact provider/model
-  đã được approved được phép dùng mà không cần xin lại cho từng bounded run.
-- Không mặc định đặt `HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1` hoặc
-  `UV_OFFLINE`. Chỉ bật khi guide/test đang xác minh exact cache-only/offline
-  contract; report phải nói rõ vì sao dùng và cache miss phải fail thật.
-- Standing authorization không cho phép tự đổi provider/model, mở rộng phase,
-  chạy full costly benchmark/judge ngoài approved budget, web enrichment,
-  deploy, dependency install ngoài scope hoặc mutate active collection.
-
-## Live-Only Validation Responsibilities
-
-Implementer phải chạy runtime, notebook và backend tests qua dependency thật;
-không dùng fake/mock client, fake runner, sample vector, replay fixture hoặc
-real-mode guard. Preflight phải xác nhận dependency/model/provider thật có thể
-truy cập bằng safe env-file loading và chỉ kiểm tra credential presence.
-
-- Validation phải đọc curated/canonical input và actual service state đúng phase
-  contract. Fixture, synthetic/sample data, hard-coded expected output hoặc
-  output từ run cũ không được dùng làm evidence PASS; mutation test phải dùng
-  isolated test data/collection và không thay thế read-only check trên active
-  data khi acceptance yêu cầu.
-- Evidence phải được thu mới từ exact command/run trong report, gồm actual
-  counts, schema/payload observations, metrics và mọi failed/skipped/partial
-  outcome; không fabricate, cherry-pick hoặc ghi expected result như observed.
-- Dùng `gpt-5.4-nano` cho generation và API integration validation; chỉ dùng
-  `gpt-5.4-mini` cho LLM-as-judge hoặc quality evaluation ghi rõ mục đích.
-- Lỗi network, quota, provider, model hoặc Qdrant là validation failure thực tế;
-  không được thay bằng fallback giả hoặc bỏ qua evidence.
-- Active Hue collection chỉ read-only. Test có mutation phải dùng isolated
-  Qdrant collection với marker rõ, xác minh exact name trước action và report
-  cleanup thành công hay thất bại.
-- Live logs được phép ghi full question, full answer, model, latency, usage và
-  estimated cost. Không ghi credential, system prompt, raw provider payload hay
-  full retrieved context.
-- Report phải ghi actual provider, model, profile/config, data source/snapshot,
-  call count, latency, usage/cost khi có, và mọi failed/skipped/partial run.
-
-## Notebook Rules
-
-Mọi implementation phase từ Phase 1 đến Phase 8 bắt buộc có notebook canonical
-mang đúng số phase. Phase 0 được miễn; Phase 9 chỉ có notebook khi design mới đã
-phê duyệt exact implementation scope và filename.
-
-Notebook requirements:
-
-- nằm trong `notebooks/`;
-- import backend modules;
-- không duplicate runtime pipeline logic;
-- outputs rỗng trong repo;
-- `execution_count` là `null`;
-- Run All dùng runtime thật; thiếu model, Qdrant hay key phải fail actionable.
-  Online model access/download được phép khi exact approved contract không yêu
-  cầu cache-only. Không dùng fake fallback, replay fixture hoặc real-mode guard.
-- Backend tests phải dùng dependency thật theo Live-Only Validation
-  Responsibilities. Notebook phải ghi rõ prerequisite và quan sát thật.
-- không lưu secrets, private paths nhạy cảm, raw headers, raw model payloads lớn,
-  hoặc stack traces chứa sensitive data;
-- Markdown cells ghi expected output hoặc cách user tự chạy lại nếu cần.
-
-Notebook canonical:
-
-```text
-notebooks/01_backend_foundation.ipynb
-notebooks/02_foods_data_and_chunking.ipynb
-notebooks/03_embedding_models.ipynb
-notebooks/04_qdrant_ingestion.ipynb
-notebooks/05_retrieval_profiles.ipynb
-notebooks/06_generation_and_api.ipynb
-notebooks/07_evaluation.ipynb
-notebooks/08_benchmark_model_selection.ipynb
-```
+- Mỗi cell làm một việc.
+- Markdown ngắn đứng trước code.
+- Code ngắn và gọi backend, không duplicate logic.
+- Notebook không phải validator, audit package hoặc test suite.
+- Repository notebook sạch outputs và execution counts.
+- Run All thật trên temporary copy.
+- Dùng đúng style references trong `Session_Prompt.md`.
 
 ## CodeGraph
 
-CodeGraph đã được user phê duyệt và khởi tạo cho `hue_rag`. Implementer dùng
-graph để hiểu code trước khi sửa, giới hạn blast radius và chọn tests; graph
-không thay guide, source reads hoặc validation thực tế.
+CodeGraph là công cụ tùy chọn để hiểu code và giới hạn blast radius. Nó không
+phải checkpoint bắt buộc. Missing/stale index hoặc lỗi CodeGraph không chặn
+task; tiếp tục bằng `rg`, đọc source trực tiếp và real verification.
 
-### Checkpoint bắt buộc
-
-Tại đầu mọi session mới, chạy từ repo root:
+Khi CodeGraph sẵn sàng và hữu ích:
 
 ```bash
 codegraph status .
 ```
 
-Xử lý kết quả theo đúng thứ tự:
-
-- `Index is up to date`: tiếp tục công việc.
-- Có pending files hoặc index stale: chạy `codegraph sync .`, sau đó chạy lại
-  `codegraph status .` và chỉ tiếp tục khi index up to date.
-- `Not initialized`: dừng và báo user/Reviewer; không tự chạy `codegraph init`.
-- Sync/status lỗi hoặc vẫn stale sau sync: báo blocker; không đoán call graph.
-
-Khi hoàn thành implementation hoặc correction theo một phase guide, trước khi
-viết implementation report/handoff, chạy lại checkpoint:
-
-```bash
-codegraph status .
-# Chỉ khi status báo stale hoặc pending:
-codegraph sync .
-codegraph status .
-```
+- `Index is up to date`: có thể dùng graph.
+- Có pending files hoặc index stale: có thể chạy `codegraph sync .`.
+- `Not initialized` hoặc sync lỗi: không tự init/uninit; tiếp tục bằng công cụ
+  đọc source thông thường và ghi giới hạn nếu nó ảnh hưởng công việc.
 
 ### Cách dùng trước và trong implementation
 
-Trước khi sửa runtime code, dùng query hẹp theo task:
+Ưu tiên query hẹp:
 
 ```bash
 codegraph explore "Trace how <entry point> reaches <dependency or side effect>."
@@ -247,124 +144,77 @@ codegraph callees <symbol>
 codegraph impact <symbol>
 ```
 
-Sau khi xác định changed files hoặc trước khi chạy tests:
+Sau khi xác định changed files hoặc trước khi chọn tests:
 
 ```bash
 git diff --name-only | codegraph affected --stdin
 codegraph affected backend/path/to/module.py
 ```
 
-Implementer dùng output để:
+Dùng output để:
 
-- xác định module và interface hiện có cần reuse;
-- tìm callers/callees trước khi đổi signature hoặc behavior;
-- kiểm tra blast radius có vượt approved guide hay không;
-- chọn smallest relevant tests trước, rồi broader tests nếu shared behavior bị
-  ảnh hưởng.
+- tìm module và interface hiện có cần reuse;
+- tìm callers/callees trước khi đổi signature;
+- kiểm tra blast radius;
+- chọn smallest relevant tests.
 
-### Ví dụ (xác minh trên CodeGraph 1.5.0)
+### Ví dụ CodeGraph 1.5.0
 
-- `codegraph status .`: kết thúc bằng `✓ Index is up to date` khi index sạch;
-  dir chưa init hiện `⚠ Not initialized`; thay đổi chưa sync hiện mục
-  `### Pending sync:` rồi chạy `codegraph sync .`.
-- `codegraph explore "<query>"`: trả về `Found N symbols across X files` kèm
-  blast radius (callers + tests liên quan) và verbatim source theo file.
-- `codegraph affected <file>`: liệt kê test files bị ảnh hưởng, ví dụ
-  `codegraph affected backend/core/startup.py` → 4 test files.
-- `codegraph query <keyword>`: tìm symbol khi chưa biết chính xác tên
-  (FTS5); dùng trước khi `node`/`callers`/`impact` — nếu `impact` báo
-  `Symbol not found`, kiểm tra lại tên bằng `query`.
+- `codegraph status .`: index sạch kết thúc bằng
+  `✓ Index is up to date`; thay đổi chưa sync hiện `### Pending sync:`.
+- `codegraph explore "<query>"`: trả symbols, files, callers và tests liên
+  quan.
+- `codegraph affected <file>`: gợi ý test files bị ảnh hưởng.
+- `codegraph query <keyword>`: tìm symbol trước khi dùng
+  `node`/`callers`/`impact`.
 
-Nếu CodeGraph chỉ ra scope ngoài approved guide, dừng và báo Reviewer/user;
-không tự mở rộng implementation. Nếu graph thiếu symbol hoặc mâu thuẫn với
-source, đọc source và dùng test evidence làm nguồn quyết định; ghi giới hạn vào
-implementation report nếu ảnh hưởng validation.
+CodeGraph không thay guide, source reads, tests hoặc evidence thật. Khi graph
+mâu thuẫn với source, source và real execution có ưu tiên. Không đưa secrets,
+private endpoints hoặc credentials vào query. Không init, uninit, xóa
+`.codegraph/` hoặc đổi telemetry nếu user chưa yêu cầu.
 
-Không đưa secrets, tokens, private endpoint hoặc credential path vào query.
-Không chạy `codegraph init`, `codegraph uninit`, xóa `.codegraph/` hoặc bật
-telemetry nếu user chưa yêu cầu rõ.
+## Implementation report
 
-## Implementation Report
-
-Sau khi hoàn tất implementation và validation của phase `ready`, hoặc exact
-remediation của phase `changes_requested`, viết/cập nhật report để bàn giao
-Codex review theo:
-
-```text
-session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md
-```
-
-Report path:
+Sau khi hoàn tất scope, viết:
 
 ```text
 reports/phase_<id>_<short_name>_implementation_report.md
 ```
 
-Ví dụ:
+Dùng `session_prompt/TEMPLATE_IMPLEMENTATION_REPORT.md` với sáu mục:
 
-```text
-reports/phase_1_backend_skeleton_implementation_report.md
-reports/phase_4_qdrant_ingestion_implementation_report.md
-```
+1. phạm vi;
+2. thay đổi chính;
+3. cách đã chạy thật;
+4. kết quả quan sát;
+5. lỗi và giới hạn;
+6. handoff cho Reviewer.
 
-Report phải nêu:
+Không lặp governance checklist. Chỉ ghi security/data-safety detail khi task có
+rủi ro hoặc hành động liên quan. Không trình bày expected result như observed.
 
-- approved scope;
-- files created;
-- files modified;
-- notebooks created/modified;
-- notebook path, runtime-real behavior, expected observations và cách user tự kiểm tra;
-- commands run;
-- tests run;
-- verification evidence;
-- known issues;
-- deviations from approved guide;
-- provider/model/Qdrant access, model, call count, latency, usage, estimated cost
-  và test-collection cleanup result;
-- self-check về security, data safety, reliability, performance, tests, và
-  notebooks.
+## Phản hồi review
 
-## Self-Check Bắt Buộc Trước Handoff
+1. Đọc Codex review.
+2. Sửa blocker và major trong exact correction scope.
+3. Sửa minor khi đơn giản, cần thiết và không mở rộng thiết kế.
+4. Chạy lại kiểm tra thật bị ảnh hưởng.
+5. Cập nhật implementation report.
+6. Không sửa Codex review.
 
-Trước khi nói phase/milestone sẵn sàng cho Codex review, implementer phải check:
+Nếu correction yêu cầu interface hoặc kiến trúc ngoài guide, dừng và trả lại
+Reviewer/user.
 
-- security: env chỉ được nạp bằng safe loader cho approved command; không có
-  secret value bị in, log, commit, dump hoặc expose;
-- data safety: chunks, metadata, API responses, debug data, model errors, và
-  result files chỉ chứa dữ liệu safe/intentional;
-- reliability: failure paths thật được report rõ ràng, reset/reindex behavior
-  của isolated test collection rõ ràng, import paths ổn định, và commands chạy
-  từ `backend/` như guide;
-- performance: không thêm repeated expensive model loads, unbounded work, hoặc
-  bottlenecks không được document;
-- tests: verification dùng dependency thật, evidence đủ model/cost/cleanup và
-  không expose credential;
-- notebooks: JSON hợp lệ, outputs rỗng, execution counts null, runtime-real và
-  không expose credential;
-- scope: `git diff --check` sạch và `git diff --name-only` chỉ chứa files thuộc
-  approved guide hoặc deviation đã được user/Codex chấp thuận.
+Sau lần `changes_requested` thứ 4, không bắt đầu vòng sửa thứ 5. Reviewer phải
+audit lại guide, design, plan, acceptance và findings trước.
 
-Nếu có accepted local-MVP limitation, ghi trong `Known Issues` với severity và
-lý do không block current phase.
+## Không thuộc quyền Implementer
 
-## Phản Hồi Codex Feedback
+- Tự approve phase.
+- Sửa guide canonical hoặc trạng thái phase.
+- Sửa Codex review, user report hoặc `Project_Status.md`.
+- Commit hoặc push.
+- Mở rộng scope, đổi provider/model hoặc deploy.
+- Sửa runtime ngoài approved phase.
 
-Khi Codex viết review file:
-
-1. Đọc Codex review file.
-2. Sửa mọi `blocker` và `major` finding trừ khi user explicitly changes scope.
-3. Sửa `minor` findings khi cheap và local.
-4. Cập nhật implementation report với:
-   - thay đổi sau review;
-   - commands/tests mới;
-   - remaining known issues.
-5. Không sửa Codex review file.
-6. Hand work lại cho Codex review lần nữa.
-
-## Commit Và Push
-
-Implementer có thể inspect git status nhưng mặc định không được commit hoặc
-push.
-
-Nếu commit hoặc push có vẻ cần thiết, dừng lại và yêu cầu user để Codex review
-và approve hành động đó.
+Kết thúc bằng `git diff --check`, danh sách changed files và handoff rõ ràng.

@@ -1,232 +1,137 @@
-# Sổ bằng chứng benchmark Hue Foods RAG
+# Hue Foods RAG — Model và benchmark summary
 
-Last updated: `2026-08-22 +07`
+Last updated: `2026-08-23 +07`
 
 ## Mục đích
 
-File này là model registry và Markdown summary ledger cho các thử nghiệm Hue Foods RAG. Per-question outputs được lưu dạng JSONL trong `backend/evaluation/results/` sau khi Phase 7 implement; file này chỉ lưu protocol, cấu hình, summary, failure và quyết định có bằng chứng.
+File này giữ:
 
-Tại thời điểm tạo ledger, chưa có Hue Foods retrieval hoặc answer benchmark run nào được ghi nhận. Không có model/profile winner.
+- model và pipeline baseline hiện hành;
+- kết quả chạy thật còn hữu ích;
+- giới hạn so sánh;
+- quyết định benchmark hiện tại.
 
-## Quy tắc bằng chứng
+File không quản lý run package, identity, checksum, cost, resume hoặc artifact
+audit. Kết quả chi tiết do chương trình Phase 7 ghi vào hai CSV đơn giản.
 
-- Không ghi số liệu ước đoán vào cột kết quả thực tế.
-- Không ghi API key, auth header, raw provider payload hoặc chain-of-thought.
-- Mỗi run có immutable run ID, config snapshot, dataset checksum và artifact paths.
-- Failed/partial runs được giữ với status và safe error type.
-- Benchmark mode không silent fallback.
-- Paid API, model download và collection deletion cần user approval riêng.
-- Model availability/pricing phải re-verify ngay trước run.
+Chưa có model/profile winner được user và Reviewer phê duyệt.
 
-## Model registry
+## Baseline hiện hành
 
-| Vai trò | Provider | Exact model ID | Execution | Hỗ trợ tiếng Việt | Dimension | License/cost | Verified +07 | Trạng thái | Evidence và ghi chú |
-|---|---|---|---|---|---:|---|---|---|---|
-| Dense baseline | Local/Hugging Face | `intfloat/multilingual-e5-small` | CPU | Multilingual | 384 | MIT; local resource | 2026-08-09 | `baseline_approved` | [Model card](https://huggingface.co/intfloat/multilingual-e5-small); dùng `query:`/`passage:` |
-| Local reranker | Local/Hugging Face | `cross-encoder/ms-marco-MiniLM-L-6-v2` | CPU | Không thiết kế riêng cho tiếng Việt | N/A | Apache-2.0; local resource | 2026-08-09 | `baseline_approved_with_language_limit` | [Model card](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L-6-v2); latency baseline từ `llm_rag` |
-| Remote embedding | OpenRouter | `qwen/qwen3-embedding-0.6b` candidate | API | Multilingual, cần đo tiếng Việt | Provider dependent | Re-verify price | 2026-08-09 | `candidate_preflight_required` | [Model page](https://openrouter.ai/qwen/qwen3-embedding-0.6b); re-verify availability/dimension |
-| Remote embedding lớn | OpenRouter | Qwen3 Embedding 4B/8B family | API | Multilingual | Provider dependent | Re-verify price | 2026-08-09 | `candidate_resource_cost_gate` | Chỉ chạy khi smaller candidate chưa đủ và user approve |
-| Native reranker | OpenRouter | `cohere/rerank-v3.5` candidate | API | Cần benchmark tiếng Việt | N/A | Re-verify price | 2026-08-09 | `candidate_preflight_required` | [Rerank docs](https://openrouter.ai/docs/api-reference/reranking); re-verify catalog/model |
-| Future reranker | OpenRouter | Qwen3-Reranker exact native ID | API | Multilingual candidate | N/A | Re-verify price | 2026-08-09 | `deferred_until_native_support` | [Qwen3-Reranker card](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B); local card không chứng minh OpenRouter support |
-| Vietnamese embedding | Local/Hugging Face | `huyydangg/DEk21_hcmute_embedding_v2` | CPU candidate | Vietnamese | Chưa xác minh | Chưa xác minh | 2026-08-09 | `exact_id_unverified` | Không chạy trước khi exact repository/model card được xác minh |
-| Vietnamese embedding | Local/Hugging Face | `bkai-foundation-models/vietnamese-bi-encoder` | CPU candidate | Vietnamese | Re-verify | Re-verify license/resource | 2026-08-09 | `optional_resource_preflight` | [Model card](https://huggingface.co/bkai-foundation-models/vietnamese-bi-encoder) |
-| Vietnamese embedding | Local/Hugging Face | `AITeamVN/Vietnamese_Embedding_v2` | CPU candidate | Vietnamese | Re-verify | Re-verify license/resource | 2026-08-09 | `optional_resource_preflight` | [Model card](https://huggingface.co/AITeamVN/Vietnamese_Embedding_v2) |
-| Vietnamese reranker | Local/Hugging Face | `AITeamVN/Vietnamese_Reranker` | Resource-preflight candidate | Vietnamese | N/A | Re-verify license/resource | 2026-08-09 | `optional_resource_preflight` | [Model card](https://huggingface.co/AITeamVN/Vietnamese_Reranker) |
-| Vietnamese reranker | Local/Hugging Face | `namdp-ptit/ViRanker` | Resource-preflight candidate | Vietnamese | N/A | Re-verify license/resource | 2026-08-09 | `optional_resource_preflight` | [Model card](https://huggingface.co/namdp-ptit/ViRanker) |
-| Answer baseline | OpenAI | `gpt-5.4-nano` | Agents SDK/API | Đo trên Hue Foods | N/A | Re-verify OpenAI price | 2026-08-09 | `approved_for_phase_6` | [Official docs](https://platform.openai.com/docs/models/gpt-5.4-nano); dùng `OPENAI_API_KEY` |
-| Answer judge | OpenAI | `gpt-5.4-mini` | Agents SDK/API | Cần calibrate tiếng Việt | N/A | Re-verify OpenAI price | 2026-08-09 | `approved_for_phase_7` | [Official docs](https://platform.openai.com/docs/models/gpt-5.4-mini); tách answer model |
-| Future answer | OpenRouter | `qwen/qwen3.5-9b` | API | Multilingual/Vietnamese candidate | N/A | Re-verify price | 2026-08-09 | `deferred_until_stable_baseline` | [Model page](https://openrouter.ai/qwen/qwen3.5-9b) |
+| Vai trò | Provider/model | Trạng thái |
+|---|---|---|
+| Dense embedding | Local `intfloat/multilingual-e5-small`, CPU, 384 dimensions | Baseline đã dùng |
+| Sparse representation | Custom TF-IDF-style `SparseEmbedder` | Baseline đã dùng |
+| Lexical scoring | Python BM25 | Dùng trong hybrid profiles |
+| Local reranker | `cross-encoder/ms-marco-MiniLM-L-6-v2`, CPU | Baseline đã dùng; có giới hạn tiếng Việt |
+| Answer generation | OpenAI `gpt-5.4-nano` | Phase 6/7 baseline |
+| Answer judge | OpenAI `gpt-5.4-mini` | Phase 7 baseline |
 
-## Pipeline component registry
+Candidates cho Phase 8 chỉ được chạy sau khi exact provider/model và experiment
+scope được user duyệt:
 
-| Component | Baseline | Thay đổi được | Primary evidence |
-|---|---|---|---|
-| Chunking | H2 sections, 400-character regular-content chunks; Markdown tables preserved whole | Rules/limit trong dedicated group | 572 chunks, retrieval, source integrity |
-| Dense embedding | `multilingual-e5-small` | Local Vietnamese, OpenRouter Qwen3 | Recall/MRR/nDCG, latency, resource/cost |
-| Sparse representation | Custom TF-IDF | Tokenizer/weighting | Vocabulary stability, keyword diagnostic |
-| Lexical scoring | BM25 `k1=1.5`, `b=0.75` | k1/b/tokenizer | Retrieval delta, latency |
-| Hybrid fusion | Normalized weighted sum | normalization, weights, candidate depth | Retrieval delta by category |
-| Reranking | Local MiniLM CrossEncoder | OpenRouter native/Vietnamese candidates | Retrieval delta, p95 latency, cost |
-| Context | Bounded ranked evidence | doc/token/character limits | Groundedness/completeness |
-| Generator | `gpt-5.4-nano` | future `qwen/qwen3.5-9b` | Answer rubric, latency, cost |
-| Judge | `gpt-5.4-mini` | rubric/version unless approved | Calibration consistency |
+- OpenRouter Qwen3 embedding family;
+- OpenRouter native reranker candidates;
+- local Vietnamese embedding/reranker candidates;
+- future answer model qua OpenRouter.
+
+Không tự đổi provider/model hoặc silent fallback.
+
+## Pipeline baseline
+
+| Component | Hiện hành |
+|---|---|
+| Chunking | H2 sections; regular content tối đa 400 characters; tables giữ nguyên |
+| Corpus | 572 curated food chunks |
+| Dense | E5 small, normalized 384-dimensional vectors |
+| Qdrant | `hue_foods_e5_small_384`, 572 points, cosine, read-only |
+| BM25 | `k1=1.5`, `b=0.75` |
+| Hybrid fusion | Dense/BM25 normalized weighted sum |
+| Reranker | Local MiniLM |
+| Context | Tối đa 5 documents và 3,000 characters |
+| Generator | `gpt-5.4-nano` |
+| Judge | `gpt-5.4-mini` |
 
 ## Retrieval profiles
 
-| Profile | Dense search | Python BM25 | Reranker | Sparse Qdrant query |
-|---|---:|---:|---:|---:|
-| `dense_only` | Có | Không | Không | Không |
-| `hybrid_no_rerank` | Có | Có | Không | Không |
-| `hybrid_rerank` | Có | Có | Có | Không |
+| Profile | Dense search | Python BM25 | Reranker |
+|---|---:|---:|---:|
+| `dense_only` | Có | Không | Không |
+| `hybrid_no_rerank` | Có | Có | Không |
+| `hybrid_rerank` | Có | Có | Có |
 
-Stored sparse vectors không làm thay đổi bảng này. Qdrant native sparse fusion sau này là profile/group mới cần approval.
+Stored sparse vectors không có nghĩa là native sparse retrieval đã chạy.
 
-## Thứ tự benchmark canonical
+## Kết quả retrieval thật đã quan sát
 
-### Vòng 1: Local baseline
+Ba kết quả dưới đây được chạy trước Phase 7 simplicity reset trên cùng 104 câu,
+572-point E5 collection và ba profiles. Chúng là baseline tham khảo cho Phase 8,
+không phải winner và không phải acceptance evidence của implementation Phase 7
+mới.
 
-```text
-intfloat/multilingual-e5-small collection
-  -> dense_only, 104 retrieval cases
-  -> hybrid_no_rerank, same collection and cases
-  -> hybrid_rerank with cross-encoder/ms-marco-MiniLM-L-6-v2
-  -> approved stratified answer/judge subset when required
-  -> verify artifacts and record decision
-```
+| Profile | Cases | Recall@1/3/5/10 | MRR@10 | nDCG@5/10 | Macro Recall@5 | Keyword coverage @5/@10 | Median/p95 latency |
+|---|---:|---|---:|---:|---:|---:|---|
+| `dense_only` | 104/104 | 0.389 / 0.623 / **0.721** / 0.790 | 0.571 | 0.586 / 0.610 | **0.725** | 0.939 / 0.971 | 29 / 50 ms |
+| `hybrid_no_rerank` | 104/104 | 0.366 / 0.632 / **0.712** / 0.813 | 0.566 | 0.577 / 0.610 | 0.700 | 0.942 / 0.984 | 28 / 40 ms |
+| `hybrid_rerank` | 104/104 | 0.275 / 0.542 / **0.645** / 0.645 | 0.464 | 0.492 / 0.491 | 0.641 | 0.925 / 0.925 | 293 / 652 ms |
 
-### Vòng 2: OpenRouter
+Ý nghĩa quan sát:
 
-Với mỗi verified remote embedding model, reindex một active collection rồi lặp đúng ba profiles. Native reranker chỉ thay trong reranker group, giữ pre-rerank candidates cố định.
+- `dense_only` có Recall@5 và macro Recall@5 cao nhất trong ba run cũ.
+- `hybrid_no_rerank` có Recall@10 cao nhất và latency gần `dense_only`.
+- MiniLM reranker làm giảm các retrieval metrics quan sát được và tăng latency
+  rõ rệt.
+- Kết quả chưa đủ để tuyên bố winner vì Phase 8 chưa chạy controlled model
+  selection theo governance mới.
 
-### Vòng 3: Optional candidates
+Các run answer/judge cũ dùng architecture và rubric đã bị Phase 7 reset thay
+thế, nên không được giữ làm comparison baseline hiện hành.
 
-Chỉ mở local Vietnamese hoặc larger remote model khi vòng trước không đạt quality floor hoặc có hypothesis rõ. Candidate không đạt resource/exact-ID gate được ghi skipped.
+## Phase 7 evaluation hiện hành
 
-## Run record bắt buộc
-
-```text
-run_id
-timestamp_utc_plus_7
-status
-experiment_group
-hypothesis
-dataset_path_and_checksum
-corpus_and_chunk_count
-retrieval_profile
-embedding_provider_model_dimension_instructions
-sparse_tokenizer_and_state_version
-bm25_k1_b
-qdrant_collection_schema_point_count
-candidate_depth_top_k_threshold
-normalization_and_fusion_weights
-reranker_provider_model_top_k
-context_limits
-answer_provider_model_prompt_version
-judge_provider_model_rubric_version
-retrieval_metrics
-answer_metrics
-latency_resource_usage_cost
-completed_failed_case_counts
-artifact_paths
-decision
-next_action
-```
-
-## Collection transition checklist
+Phase 7 dùng luồng:
 
 ```text
-exact collection name
-embedding provider and model
-dense dimension and distance
-sparse vector name/schema
-point count
-completed retrieval artifact paths
-completed answer/judge artifacts when applicable
-config snapshot path
-user approval evidence
-next model and dimension
+question -> retrieve -> build context -> generate -> judge -> report
 ```
 
-Không dùng wildcard/prefix deletion. Sau winner selection phải rebuild winner và đặt `reset_collection: false`.
+Đầu tiên chạy:
 
-## Dataset và metrics contract
+- 20 real questions trong `test2.jsonl`;
+- profile `dense_only`;
+- keyword-based MRR, nDCG và coverage;
+- generation thật bằng `gpt-5.4-nano`;
+- judge thật bằng `gpt-5.4-mini`;
+- accuracy, completeness, relevance và feedback.
 
-- Retrieval dataset: 104 rows từ `knowledge-base-hue/foods/evaluation/tests.jsonl`.
-- Proper Recall/MRR/nDCG cần relevance definition đã approve.
-- Keyword metrics phải ghi là proxy/diagnostic nếu chưa có gold sources.
-- Report overall, per category, median/p95 latency và complete-case rate.
-- Judge: accuracy, completeness, relevance, groundedness, scale 1–5.
-- Answer/judge chạy stratified subset trước; full 104 cần approval riêng.
+Sau khi ổn định, chỉ đổi input path sang bộ 104 câu. Output cố định:
 
-## Phase 4 ingestion evidence
+```text
+backend/evaluation/retrieval_results.csv
+backend/evaluation/answer_results.csv
+```
 
-Đây là bằng chứng tạo index, không phải retrieval benchmark và không chứng minh
-native sparse retrieval hoặc model winner.
+Không có calibration, resume, run identity, checksum, package matching,
+tamper detection, partial artifact, consent gate hoặc cost accounting.
 
-| Run ID | Status | Corpus checksum | Embedding | Qdrant | Schema | Points | Evidence | Decision |
-|---|---|---|---|---|---|---:|---|---|
-| `phase4-ingestion-20260812` | `completed` | SHA-256 `936063a91a69083fe7070096da17656920cff3b93917a3e6fcc4384d697c8fde` trên 572 chunk dictionaries | Local `intfloat/multilingual-e5-small`, 384, `passage:` | Qdrant 1.18.3, `hue_foods_e5_small_384` | `dense` 384 cosine + indexed `sparse` | 572 | `reports/phase_4_qdrant_ingestion_implementation_report.md`; `reports/phase_4_qdrant_ingestion_codex_review.md` | Index đạt schema/count/identity gate; chưa chạy retrieval |
+## Quy tắc evidence
 
-Run dùng `backend/config/settings.yaml`, E5 offline từ cache và Qdrant image pin
-bằng digest trong `docker-compose.yml`. Read-only audit xác nhận expected/actual
-UUID5 ID sets bằng nhau và toàn bộ payload identity khớp model/dimension.
+- Chỉ ghi kết quả từ exact real run.
+- Dùng canonical data và actual service state.
+- Không dùng mock/fake, replay hoặc prior output làm fresh evidence.
+- Giữ đúng failed, skipped và partial outcome.
+- Ghi model/profile/data cần thiết để hiểu kết quả, không tạo audit package.
+- Paid API trong approved guide được phép.
+- Active Hue collection chỉ read-only.
 
-## Retrieval results
+## Bước tiếp theo
 
-Retrieval evaluation (Phase 7) với gold evidence **tối thiểu nhưng đủ** — 104
-cases trên dataset `tests.jsonl` (SHA-256
-`6d023e0a891e6536d31f7dc70c07f9e1d5cd06f00033f50fa438721344646d8c`), active
-collection `hue_foods_e5_small_384` (572 points, E5 384d cosine, read-only),
-corpus checksum `da602fbeee68ff2ea312ce7136ad3f0e4d73088e7e16c01411eaf4d6b5fb8965`
-(giống nhau cả ba run; xác minh trong notebook 07). Gold mappings do DeepSeek
-đối chiếu curated KB (**135 evidence units, 91 cases single-section**; audit
-sửa 11 case qua 2 lần: chọn đúng section chứa descriptor, bỏ unit trùng, và
-bỏ CỦI khỏi foods-0085 vì KB chỉ có "gần sông Hương", không có "tầm nhìn sông
-Hương" — reference_answer đã sửa theo), người dùng audit mappings chính xác
-trong notebook 07. Recall@k/MRR/nDCG dùng binary relevance trên evidence units;
-`macro Recall@5` = trọng số bằng nhau trên 8 category. Mỗi run 104/104 cases
-hoàn thành, 0 failed.
+1. Implement và approve Phase 7 đơn giản.
+2. Review và đơn giản hóa Phase 0 đến Phase 6.
+3. Chạy lại affected Phase 7 evaluation sau thay đổi liên quan.
+4. Chỉ Phase 8 mới so sánh đầy đủ profiles/models và đề xuất winner.
 
-| Run ID | Status | Profile | Embedding | Reranker | Cases | Recall@1/3/5/10 | MRR@10 | nDCG@5/10 | macro Recall@5 | Keyword cov@5/@10 | Median/p95 latency (ms) | Artifact | Decision |
-|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---|---|
-| `retrieval-20260822-211408-dense_only-6d023e0a` | `completed` | `dense_only` | E5 local 384 | Không | 104 | 0.389 / 0.623 / **0.721** / 0.790 | 0.571 | 0.586 / 0.610 | **0.725** | 0.939 / 0.971 | 29 / 50 | `evaluation/results/retrieval/<run_id>.jsonl` + `.summary.json` | Không tuyên bố winner (Phase 8) |
-| `retrieval-20260822-211408-hybrid_no_rerank-6d023e0a` | `completed` | `hybrid_no_rerank` | E5 local 384 | Không | 104 | 0.366 / 0.632 / **0.712** / 0.813 | 0.566 | 0.577 / 0.610 | 0.700 | 0.942 / 0.984 | 28 / 40 | `evaluation/results/retrieval/<run_id>.jsonl` + `.summary.json` | Không tuyên bố winner (Phase 8) |
-| `retrieval-20260822-211408-hybrid_rerank-6d023e0a` | `completed` | `hybrid_rerank` | E5 local 384 | MiniLM | 104 | 0.275 / 0.542 / **0.645** / 0.645 | 0.464 | 0.492 / 0.491 | 0.641 | 0.925 / 0.925 | 293 / 652 | `evaluation/results/retrieval/<run_id>.jsonl` + `.summary.json` | Không tuyên bố winner (Phase 8); reranker giảm recall/MRR, tăng latency |
-
-Đọc ghi chú:
-
-- `config_checksum` là fingerprint **theo profile**: `ea3dd165…` cho
-  `dense_only`/`hybrid_no_rerank`, `957db8fa…` cho `hybrid_rerank` (bao gồm
-  reranking model/device/top_k); khác nhau là đúng theo `_semantic_config`.
-  `corpus_checksum` và dataset checksum giống nhau cả ba run.
-- `hybrid_rerank` trả về tối đa 5 docs (rerank top_k=5) nên Recall@5 = Recall@10.
-- Keyword coverage là lexical diagnostic, không thay gold relevance và không
-  dùng để chọn profile.
-- Run retrieval **sau gold audit cuối** (checksum `6d023e0a…`) là evidence
-  hiện tại cho Phase 8. Các run cũ (`cf601f16…`, `5c6ba589…`, `c894017f…`)
-  cùng các run subset `--max-cases 20` (status `partial`) giữ nguyên trong
-  `evaluation/results/retrieval/` nhưng chỉ mang tính diagnostic — không dùng
-  làm Phase 8 comparison evidence.
-
-## Answer và judge results
-
-Answer evaluation (Phase 7) trên subset cố định `answer_subset_v1.json` (24
-cases, 3/category), profile `hybrid_rerank` (đây là profile chạy answer, không
-phải Phase 8 winner), generation `gpt-5.4-nano` + judge `gpt-5.4-mini` (rubric
-v1, 4 dimensions 1-5, concurrency 1).
-
-**Package hiện tại gắn với dataset cũ** (`5c6ba589…`, gold trước audit; 56
-provider calls: 8 calibration + 24 generation + 24 judge, cap 64 / $0.50; judge
-usage thật 31,756/2,518 tokens ≈$0.0253; calibration 5,809/715 ≈$0.0053;
-generation usage ước lượng 2,033/3,813 ≈$0.0026; tổng ước ≈$0.0332). Vì gold
-audit đổi `tests.jsonl` sang checksum `c894017f…`, package này **chỉ là
-diagnostic** — không dùng làm Phase 8 evidence.
-
-| Run ID | Status | Generation | Judge | Cases | Accuracy | Completeness | Relevance | Groundedness | Latency/cost | Artifact | Decision |
-|---|---|---|---|---|---|---:|---:|---:|---:|---:|---|---|---|
-| `generation-20260822-133217-hybrid_rerank-5c6ba589` + `judge-20260822-133217-hybrid_rerank-5c6ba589` | `superseded` | `gpt-5.4-nano` (prompt hash `e6fbcef3…`) | `gpt-5.4-mini` (rubric v1, hash `4e45983e…`) | 24/24 generation + 24/24 judge | mean 4.38 | mean 4.33 | mean 4.96 | mean 4.33 | median judge call ~1-2s; ≈$0.0332 tổng (ước) | `evaluation/results/generations/<gen>.jsonl`; `judges/<judge>.jsonl`; `summaries/<judge>.json` | 20/24 pass; dataset checksum cũ → diagnostic; paid rerun trên checksum mới cần user authorization |
-
-## Failed và skipped runs
-
-| Run ID | Stage | Status | Model/profile | Safe error hoặc gate | Note |
-|---|---|---|---|---|---|
-| `calibration-20260822-122207-judge-` | calibration | `failed_gate` | `gpt-5.4-mini` | gate không pass (dữ liệu evidence 0039 bị truncate) | Artifact giữ nguyên (checksum dataset cũ `cf601f16…`); không dùng làm evidence |
-| `calibration-20260822-122340-judge-` | calibration | `failed_gate` | `gpt-5.4-mini` | gate kiểm theo case_id (bug, đã sửa thành generation_run_id) | Artifact giữ nguyên; scores thực tế đạt nhưng summary ghi gate false — không dùng |
-| `generation-20260822-122703-hybrid_rerank-cf601f16` | generation | `crashed` | `gpt-5.4-nano` | NameError trong record builder (đã sửa + tái cấu trúc) | Không có row hoàn chỉnh; run mới thay thế |
-| `generation-20260822-122809-hybrid_rerank-cf601f16` | generation+judge | `superseded` | `gpt-5.4-nano`/`mini` | 23/24 gen, 1 `InvalidGeneratorOutputError` | Dataset checksum cũ; không dùng làm Phase 8 evidence |
-| `calibration-20260822-132944-judge-5c6ba589` | calibration | `failed_gate` | `gpt-5.4-mini` | `_judge_one` chưa tồn tại trong module tái cấu trúc (đã sửa) | 8 rows `error`; giữ nguyên; không dùng |
-| `retrieval-20260822-132605-{dense_only,hybrid_no_rerank,hybrid_rerank}-5c6ba589` | retrieval | `superseded` | E5 local 384 | Gold audit đổi dataset → checksum cũ | Giữ nguyên; diagnostic (bảng trên thay thế) |
-| `retrieval-20260822-121703/121731/121736-*-cf601f16` | retrieval | `superseded` | E5 local 384 | Gold trước audit lần 2 | Giữ nguyên; diagnostic |
-| `retrieval-20260822-203848/204108-*-c894017f` | retrieval | `superseded` | E5 local 384 | Checksum trước lần sửa foods-0085 | Giữ nguyên; diagnostic (subset 203848 là `partial`) |
-| `retrieval-20260822-211325-{dense_only,hybrid_no_rerank,hybrid_rerank}-6d023e0a` | retrieval | `partial` | E5 local 384 | `--max-cases 20` subset (diagnostic nhanh, 20/20 complete mỗi profile) | Giữ nguyên; partial run không dùng làm comparison evidence |
-
-## Final selection
-
-Chưa có final embedding, profile, reranker hoặc generation model được chọn từ Hue Foods benchmark evidence.
-
-Final selection chỉ ghi sau khi candidates vượt quality/reliability floors, user quyết định trade-off, Codex audit comparability, winner collection rebuild/verify và reset đặt `false`.
-
-## Liên kết phase
+## Guide liên quan
 
 ```text
 guides/phase_3_embedding_sparse_representation.md

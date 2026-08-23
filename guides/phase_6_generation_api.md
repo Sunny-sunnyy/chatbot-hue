@@ -8,12 +8,17 @@ Phase 6 biến ranked evidence từ retrieval thành câu trả lời tiếng Vi
 
 ```text
 Status: approved
-Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek
 Design approved by: User
 Design approval date +07: 2026-08-13
 ```
+
+> **Lưu ý governance hiện hành:** Phần Phase 6 lịch sử bên dưới còn mô tả
+> fake/mock tests, cost ceiling và per-run approval. Các quy tắc đó đã bị
+> Milestone 6.1 và `session_prompt/Session_Prompt.md` thay thế; chúng không áp
+> dụng cho công việc mới. Phase 6 sẽ được review lại trong chuỗi Phase 0 đến
+> Phase 6 sau khi Phase 7 đơn giản hoàn tất.
 
 ## Dependency
 
@@ -369,7 +374,7 @@ reports/hue_foods_rag_benchmark.md
 reports/user_reports/phase_6_generation_api_user_report.md
 ```
 
-Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
+User report và notebook Phase 6 đã được người dùng xác nhận.
 
 ## Quyết định đã phê duyệt
 
@@ -377,7 +382,7 @@ Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nh�
 Decision: Dùng deterministic retrieval -> context -> tool-less OpenAI Agents SDK generation pipeline; dependencies được tạo trong FastAPI lifespan và inject qua app.state.
 Approved by: User
 Approval date +07: 2026-08-13
-Evidence: Level 2 brainstorming Phase 6 sau khi đối chiếu source và bài học từ llm_rag.
+Evidence: Brainstorming Phase 6 sau khi đối chiếu source và bài học từ llm_rag.
 Affected scope: Phase 6 runtime, tests, notebook và API lifecycle.
 Revisit trigger: Phase 8 evidence hoặc Phase 9 design chứng minh agent-controlled retrieval tạo lợi ích đo được.
 ```
@@ -386,7 +391,7 @@ Revisit trigger: Phase 8 evidence hoặc Phase 9 design chứng minh agent-contr
 Decision: Query tối đa 500 ký tự, tối đa 5 sources; no-evidence skip model; Phase 6 chỉ trả JSON sources và invalid structured output không retry.
 Approved by: User
 Approval date +07: 2026-08-13
-Evidence: Level 2 brainstorming Phase 6.
+Evidence: Brainstorming Phase 6.
 Affected scope: Chat request, grounded prompt, source mapping và error behavior.
 Revisit trigger: Phase 7 có valid long-query evidence để tăng lên 1.000 ký tự hoặc source mapping/evaluation ổn định để thêm inline markers.
 ```
@@ -395,16 +400,16 @@ Revisit trigger: Phase 7 có valid long-query evidence để tăng lên 1.000 k�
 Decision: Baseline gpt-5.4-nano dùng timeout 45 giây, maximum output tokens 1024 và temperature 0.2; live smoke tối đa 6 calls với hard ceiling 0,25 USD và approval execution riêng.
 Approved by: User
 Approval date +07: 2026-08-13
-Evidence: Level 2 brainstorming Phase 6.
+Evidence: Brainstorming Phase 6.
 Affected scope: OpenAI generator config, live validation và cost reporting.
 Revisit trigger: Official capability/pricing preflight không khớp hoặc Phase 8 mở benchmark qwen/qwen3.5-9b.
 ```
 
 ```text
-Decision: Phase 6 tạo/echo session_id nhưng không lưu history; persistent history, standalone-query rewriting, input routing và Hue-only web escalation được hoãn sang Phase 9 design-only.
+Decision: Phase 6 tạo/echo session_id nhưng không lưu history; persistent history, standalone-query rewriting, input routing và Hue-only web escalation được hoãn sang Phase 9.
 Approved by: User
 Approval date +07: 2026-08-13
-Evidence: Level 2 brainstorming Phase 6 và thảo luận multi-turn/router roadmap.
+Evidence: Brainstorming Phase 6 và thảo luận multi-turn/router roadmap.
 Affected scope: Phase 6 session contract và Phase 9 roadmap.
 Revisit trigger: Phase 8 baseline ổn định và có multi-turn/route/evidence-sufficiency evaluation data.
 ```
@@ -415,7 +420,6 @@ Revisit trigger: Phase 8 baseline ổn định và có multi-turn/route/evidence
 
 ```text
 Status: approved
-Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek
 Design approved by: User
@@ -593,7 +597,7 @@ reports/user_reports/phase_6_1_baseline_lifecycle_hardening_user_report.md
 Decision: Dùng verified component warm-up thay vì full retrieval startup probe hoặc load-only; Qdrant preflight read-only, E5 encode thật, BM25 fit theo profile và MiniLM prediction thật theo profile trước khi publish readiness.
 Approved by: User
 Approval date +07: 2026-08-13
-Evidence: Level 2 brainstorming Phase 6.1 sau khi đọc toàn bộ rag_agent_handoff_current_repo.md, rag_system_pipeline_deep_dive.md và đối chiếu runtime thật của llm_rag/hue_rag.
+Evidence: Brainstorming Phase 6.1 sau khi đọc toàn bộ rag_agent_handoff_current_repo.md, rag_system_pipeline_deep_dive.md và đối chiếu runtime thật của llm_rag/hue_rag.
 Affected scope: Phase 6 retrieval lifecycle, FastAPI lifespan, live tests và notebook 06.
 Revisit trigger: Startup latency không chấp nhận được, profile semantics thay đổi hoặc Phase 7-8 đưa ra lifecycle requirement mới.
 ```
@@ -623,7 +627,7 @@ duyệt thêm một đợt sáu calls để lấy usage thật, với 5 success 
 `InvalidGeneratorOutputError` bị fail-closed đúng contract. Tổng 12 calls,
 không retry, chi phí 0,01493875 USD dưới hard ceiling 0,25 USD. Người dùng đã
 chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Milestone 6.1 đã được
-triển khai, sửa xong hai major findings của vòng review đầu, đạt technical
-re-review và được người dùng xác nhận ngày 2026-08-21. Milestone có status
-`approved`. Phase 7 vẫn cần hoàn tất design gate và implementation approval
-riêng trước khi mở.
+triển khai, review và người dùng xác nhận ngày 2026-08-21. Phase 6 giữ
+`approved` và đã hoàn thành. Sau Phase 7, Phase 6 sẽ được review lại trong
+chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong `guides/README.md`.
+Phase 7 hiện `ready` theo guide canonical và là bước implementation tiếp theo.

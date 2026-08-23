@@ -5,13 +5,15 @@
 `ready` — thiết kế đơn giản mới đã được người dùng duyệt và sẵn sàng để
 Implementer xây dựng.
 
-Đặc tả canonical:
+Guide này là nguồn canonical cho scope, trạng thái và acceptance của Phase 7.
+
+Đặc tả hỗ trợ:
 
 ```text
 /home/minhhieu/hue_rag/docs/superpowers/specs/2026-08-23-phase-7-simple-evaluation-design.md
 ```
 
-Kế hoạch triển khai:
+Kế hoạch triển khai hỗ trợ:
 
 ```text
 /home/minhhieu/hue_rag/docs/superpowers/plans/2026-08-23-phase-7-simple-evaluation-implementation.md
@@ -201,7 +203,7 @@ Chỉ giữ:
 backend/tests/test_evaluation.py
 ```
 
-Khoảng 6–8 kiểm tra dễ hiểu:
+Giữ một nhóm test nhỏ và dễ hiểu cho các hành vi thật:
 
 - đọc 20 và 104 câu từ đúng đường dẫn;
 - kiểm tra fields cần dùng;
@@ -293,6 +295,7 @@ Phase 7 đạt khi:
 
 ## Gate trước Phase 8
 
-Sau Phase 7, review Phase 6 về Phase 0 bằng tài liệu riêng do người dùng cung
-cấp. Kiểm tra code, tests, folders và notebooks; đơn giản hóa hoặc xây dựng lại
-phần over-engineered. Chỉ mở Phase 8 sau khi gate này hoàn tất.
+Sau Phase 7, review Phase 0 đến Phase 6 theo dependency order bằng tài liệu
+riêng do người dùng cung cấp. Kiểm tra code, tests, folders và notebooks; đơn
+giản hóa hoặc xây dựng lại phần over-engineered. Chạy lại affected Phase 7
+evaluation sau thay đổi liên quan. Chỉ mở Phase 8 khi toàn bộ gate này hoàn tất.

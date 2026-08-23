@@ -9,14 +9,12 @@ Phase 1 tạo bộ khung Python ổn định cho toàn bộ Hue Foods RAG MVP: c
 ```text
 Status: approved
 Document type: as-built technical history with governance remediation
-Brainstorming level: Level 1 - focused remediation
 Implementer: DeepSeek
 Reviewer: Codex
 Approval date +07: 2026-08-09
 ```
 
-Mã xử lý và notebook đã được Codex kiểm tra đạt. Báo cáo dành cho người dùng đã
-được viết lại bằng tiếng Việt đơn giản hơn và đang chờ người dùng xác nhận.
+Mã xử lý và notebook đã được Codex kiểm tra; người dùng đã xác nhận Phase 1.
 DeepSeek không cần sửa Phase 1.
 
 ## Dependency
@@ -208,5 +206,6 @@ Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã
 
 ## Bước tiếp theo
 
-Giai đoạn 1 đã hoàn tất. Bước tiếp theo là chuẩn bị Giai đoạn 3 sau khi gói Giai
-đoạn 1–2 được commit và push.
+Phase 1 đã hoàn thành và `approved`. Sau Phase 7, Phase 1 sẽ được review lại
+trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
+`guides/README.md`.

@@ -2,91 +2,53 @@
 
 Decision: ready_for_user_confirmation / changes_requested / blocked
 Reviewer: Codex
-Date: YYYY-MM-DD
-Review path:
+Date:
+Canonical guide:
+Implementation report:
 
-```text
-reports/phase_<id>_<short_name>_codex_review.md
-```
+## 1. Phạm vi đã review
 
-Implementer report:
+Nêu phần implementation, source, notebook và evidence thực sự đã đọc/chạy.
 
-```text
-reports/<implementation_report>.md
-```
+## 2. Findings
 
-Phase guide context:
+Dùng severity:
 
-```text
-guides/phase_0_mvp_foundation.md
-guides/phase_<id>_<short_name>.md
-session_prompt/Project_Status.md
-reports/hue_foods_rag_benchmark.md  # only when relevant
-reports/user_reports/phase_<id>_<short_name>_user_report.md  # if already present
-```
+- `blocker`: sai chức năng, mất an toàn dữ liệu, fake evidence hoặc vi phạm
+  hard boundary;
+- `major`: hành vi cần thiết chưa đúng, scope sai hoặc over-engineering phải
+  sửa;
+- `minor`: cải thiện nhỏ không chặn chức năng thật.
 
-## Tóm Tắt
+Nếu không có blocker hoặc major, ghi rõ. Reviewer phải yêu cầu bỏ kỹ thuật khó
+hiểu hoặc phức tạp hơn nhu cầu thật.
 
-Summarize what was reviewed and the decision.
+## 3. Cách Reviewer chạy lại thật
 
-## Findings
+Ghi exact commands/notebook và real data, database, model, provider, profile đã
+dùng. Không chép expected command chưa chạy và không expose secrets.
 
-Use severity:
+## 4. Kết quả quan sát
 
-- blocker:
-- major:
-- minor:
+Ghi fresh observed results, ý nghĩa của chúng và mọi failed/skipped/partial
+outcome. Không suy diễn PASS từ report của Implementer, mock/fake hoặc output cũ.
 
-If there are no blocker or major findings, write:
+## 5. Giới hạn hoặc phần chưa chạy
 
-```text
-Không có blocker hoặc major findings.
-```
+Nêu điều Reviewer chưa kiểm tra được và ảnh hưởng đến decision. Nếu không có,
+ghi `Không có giới hạn review đã biết trong phạm vi này.`
 
-## Verification
+## 6. Decision và bước tiếp theo
 
-Commands run and important results.
+Với `ready_for_user_confirmation`:
 
-```bash
-# commands
-```
+- nêu notebook và user report;
+- guide giữ `under_review` đến khi user xác nhận;
+- phase tiếp theo vẫn đóng.
 
-## Scope Check
+Với `changes_requested` hoặc `blocked`:
 
-State whether the work stayed inside the approved phase/milestone.
+- nêu exact correction hoặc điều kiện cần thay đổi;
+- nếu đây là lần thứ 4, kích hoạt complexity reset trước vòng sửa thứ 5.
 
-## Safety And Quality Check
-
-Cover:
-
-- Security:
-- Data safety:
-- Reliability:
-- Performance:
-- Tests:
-- Notebooks:
-- Evaluation:
-
-## Required Changes
-
-Only for `changes_requested` or `blocked`.
-
-If not applicable, write:
-
-```text
-Not applicable.
-```
-
-## User Confirmation Readiness
-
-Only for `ready_for_user_confirmation`.
-
-Include:
-
-- technically accepted files;
-- accepted limitations;
-- canonical notebook path and notebook safety result;
-- user report path to create/update;
-- exact checks the user should perform;
-- confirmation that next phase remains closed;
-- confirmation that `Project_Status.md` was not marked approved yet.
+Reviewer không sửa runtime và không commit/push nếu user chưa yêu cầu riêng.

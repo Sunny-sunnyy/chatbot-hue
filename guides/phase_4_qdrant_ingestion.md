@@ -8,16 +8,20 @@ Phase 4 đưa canonical food chunks cùng dense/sparse representations vào mộ
 
 ```text
 Status: approved
-Brainstorming level: Level 2 - standard
 Owner: Codex Reviewer
 Implementer: DeepSeek
 ```
 
-Level 2 brainstorming được người dùng phê duyệt ngày 2026-08-12 +07. Codex đã
+> **Lưu ý governance hiện hành:** Các đoạn bên dưới mô tả implementation và
+> test contract lịch sử của Phase 4, bao gồm mocked validation và per-run
+> approval. Chúng không áp dụng cho công việc mới. Shared governance hiện hành
+> yêu cầu real execution, không mock/fake và chỉ giữ approval riêng cho active
+> mutation hoặc destructive action. Phase 4 sẽ được review lại sau Phase 7.
+
+Brainstorming được người dùng phê duyệt ngày 2026-08-12 +07. Codex đã
 kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận
 Phase 4 ngày 2026-08-12 +07 và chọn không tự chạy notebook trước khi phê duyệt.
-Phase 4 được approved; Phase 5 vẫn cần brainstorming Level 3 riêng trước
-implementation.
+Phase 4 được approved.
 
 ## Dependency
 
@@ -340,7 +344,9 @@ reports/phase_4_qdrant_ingestion_codex_review.md
 reports/user_reports/phase_4_qdrant_ingestion_user_report.md
 ```
 
-Model/collection metadata và ingestion run summary được nối vào `reports/hue_foods_rag_benchmark.md`. Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report.
+Model/collection metadata và kết quả thật cần thiết nằm trong
+`reports/hue_foods_rag_benchmark.md`. User report và notebook Phase 4 đã được
+người dùng xác nhận.
 
 ## Quyết định đã phê duyệt
 
@@ -400,7 +406,6 @@ Revisit trigger: Project được đóng gói lại với package layout hoặc 
 
 ## Bước tiếp theo
 
-DeepSeek Implementer thực hiện đúng approved scope, chạy mocked/local-safe
-validation trước và dừng xin approval trước live Qdrant preflight hoặc ingestion.
-Phase 5 vẫn đóng cho đến khi Phase 4 được technical review, người dùng kiểm tra
-notebook/user report và xác nhận final approval.
+Phase 4 đã hoàn thành và `approved`. Sau Phase 7, Phase 4 sẽ được review lại
+trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
+`guides/README.md`. Shared governance hiện hành áp dụng cho mọi correction mới.

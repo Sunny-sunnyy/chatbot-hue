@@ -1,237 +1,137 @@
-# Phase 8: Benchmark và lựa chọn model/pipeline
-
-## Mục tiêu và giá trị cho người dùng
-
-Phase 8 so sánh có kiểm soát các thành phần của Hue Foods RAG, bắt đầu bằng baseline local nhẹ rồi mới dùng OpenRouter. Kết quả cuối là cấu hình được chọn từ quality, latency, reliability và cost evidence, không chọn theo cảm tính hoặc leaderboard ngoài domain.
+# Phase 8 — Benchmark và lựa chọn model/pipeline
 
 ## Trạng thái
 
-```text
-Status: not_ready
-Brainstorming level: Level 3 - deep
-Owner: Codex Reviewer
-Implementer: DeepSeek after Phase 7 approval and Phase 8 readiness
-```
+`not_ready`
 
-## Dependency
+Phase 8 chưa có implementation authorization. Chỉ mở sau khi:
 
-- Phase 3–7 đã được approve.
-- Dataset, relevance definition, metric version và artifact schema đã khóa.
-- Active collection lifecycle và exact deletion guard hoạt động.
-- `reports/hue_foods_rag_benchmark.md` là ledger canonical.
-- Mỗi paid experiment có user approval riêng.
+1. Phase 7 đơn giản được `approved`;
+2. Phase 0 đến Phase 6 đã được review và đơn giản hóa bằng Repo, live system và
+   tài liệu bổ sung thực sự hữu ích nếu có;
+3. affected Phase 7 evaluation đã được chạy lại.
 
-## Thành phần có thể thay đổi
+## Mục tiêu
 
-Không chỉ có embedding, sparse representation, hybrid retriever và reranker. Pipeline có các experiment groups:
+So sánh các lựa chọn Hue Foods RAG bằng cùng dữ liệu và metric để user chọn
+trade-off giữa quality, latency, reliability và simplicity.
 
-| Group | Biến có thể thay đổi | Điều giữ cố định khi test group |
-|---|---|---|
-| Chunking | section rules, max length | corpus version, embedding, retrieval, metrics |
-| Dense embedding | provider, model, dimension, instruction | chunks, profiles, evaluation set |
-| Sparse representation | tokenizer, TF-IDF weighting | dense candidates, corpus, BM25/fusion |
-| Lexical scoring | BM25 k1/b/tokenizer | dense model, candidates, reranker off |
-| Hybrid fusion | normalization, weights, candidate depth | embedding, BM25, reranker off |
-| Reranker | provider/model/top-k | pre-rerank candidates và hybrid config |
-| Context | document/budget/source formatting | retrieval output, generator |
-| Generator | provider/model/prompt/settings | context, test subset, judge rubric |
-| Judge | model/rubric/version | frozen generated answers |
+Không chọn winner theo leaderboard ngoài domain hoặc cảm tính. Không xây
+benchmark orchestration trước khi user duyệt candidates và phép so sánh thật sự
+cần chạy.
 
-MVP ưu tiên dense embedding, BM25 hybrid và reranking. Chỉ mở chunking/context/generation/judge group khi evidence cho thấy bottleneck hoặc user yêu cầu.
+## Baseline
 
-## Local-first sequence bắt buộc
+Local baseline:
 
 ```text
 Dense: intfloat/multilingual-e5-small, CPU, 384 dimensions
 Sparse: custom TF-IDF-style SparseEmbedder
-Lexical: Python BM25, initial k1=1.5 and b=0.75
+Lexical: Python BM25
 Reranker: cross-encoder/ms-marco-MiniLM-L-6-v2, CPU
+Generator: gpt-5.4-nano
+Judge: gpt-5.4-mini
 ```
 
-Trên cùng active E5 collection:
+Ba retrieval profiles:
 
-1. Chạy `dense_only` trên 104 retrieval cases.
-2. Chạy `hybrid_no_rerank` trên cùng cases và collection.
-3. Chạy `hybrid_rerank` với cùng hybrid candidates/config.
-4. Chạy approved stratified answer subset cho cấu hình cần đánh giá answer.
-5. Ghi metrics, latency, failures, resource/cost và decision.
+- `dense_only`;
+- `hybrid_no_rerank`;
+- `hybrid_rerank`.
 
-Chỉ sau khi local artifacts hợp lệ và đã review mới chuyển sang OpenRouter.
+## Experiment groups
 
-## OpenRouter sequence
+Mỗi experiment chỉ thay đổi một nhóm biến:
 
-Đối với mỗi verified OpenRouter embedding model:
+| Group | Có thể thay đổi | Giữ cố định |
+|---|---|---|
+| Dense embedding | provider, model, dimension, instruction | chunks, evaluation data, retrieval settings |
+| BM25/fusion | tokenizer, parameters, weights, candidate depth | dense model, corpus, reranker off |
+| Reranker | provider/model/top-k | pre-rerank candidates |
+| Context | document/character limits | retrieval output và generator |
+| Generator | provider/model/prompt/settings | context, questions và judge |
 
-1. Xác minh exact model ID, endpoint, dimension, input limit, Vietnamese evidence và price snapshot.
-2. Xin user approval cho estimated request/token count và cost ceiling.
-3. Xác minh artifacts collection cũ; xin approval xóa exact collection.
-4. Tạo/reindex một collection cho embedding model mới.
-5. Lặp đúng ba profiles với dataset/metrics frozen.
-6. Native reranker experiment giữ pre-rerank candidates/config cố định.
-7. Ghi failed run; không silent fallback.
-8. Chỉ xóa collection khi artifacts/config/result files đã tồn tại và user approve transition.
+Chỉ mở một group khi Phase 7 hoặc user cho thấy vấn đề thật cần giải quyết.
 
-Qwen3 Embedding là remote priority family. Qwen3-Reranker chỉ là candidate đến khi OpenRouter native support được verify. `cohere/rerank-v3.5` là native candidate cần re-verify catalog, price và Vietnamese suitability.
+## So sánh công bằng
 
-## Optional local Vietnamese models
+- Dùng cùng canonical corpus và evaluation questions.
+- Giữ metric definition và k giống nhau.
+- Chỉ đổi variables thuộc experiment group đang xét.
+- Ghi rõ actual provider, model, profile và settings cần để hiểu kết quả.
+- Không silent fallback.
+- Không gộp metrics từ dữ liệu hoặc ground truth khác nhau.
+- Giữ failed/skipped/partial outcome đúng như quan sát.
+- Không dùng run ID, checksum, package matching hoặc artifact audit.
 
-DEk21/BKAI/AITeamVN candidates không chen giữa E5 baseline runs. Chúng chỉ mở sau:
+Một comparison có thể được hiểu và chạy lại bằng input path, model/profile
+settings và command/notebook đơn giản; không cần immutable run package.
 
-- exact model ID/model card verified;
-- license và training domain được ghi;
-- dimension/pooling/instruction xác nhận;
-- CPU RAM/disk/latency preflight chấp nhận;
-- user approval cho download/resource use.
+## Trình tự
 
-Candidate không đạt gate được ghi `skipped_resource_gate`, không gọi kết quả bằng 0.
+1. Chạy lại local baseline qua Phase 7 evaluation.
+2. Xác định failure hoặc limitation thật.
+3. User duyệt candidate và một experiment group.
+4. Chạy candidate bằng cùng dữ liệu/metric.
+5. So sánh quality, latency, reliability và độ phức tạp.
+6. Loại candidate không tạo lợi ích tương xứng.
+7. User chọn trade-off cuối.
 
-## One-active-collection lifecycle
+Remote embedding có dimension khác cần exact reindex design. Active collection
+không bị xóa hoặc thay đổi nếu user chưa duyệt exact transition.
 
-```text
-verify model and dimension
-  -> reset approval
-  -> create exact dense+sparse schema
-  -> ingest canonical chunks
-  -> verify point count
-  -> run all approved profiles
-  -> verify JSONL and Markdown evidence
-  -> transition approval
-  -> delete exact collection
-  -> next embedding model
-```
+## Real execution
 
-Embedding không fallback theo request. Reranker có thể fallback ngoài benchmark nếu runtime policy cho phép, nhưng benchmark mode phải fail rõ.
+Reviewer và Implementer được dùng online, model download và paid API nằm trong
+approved Phase 8 guide/design. Không cần consent gate, cost cap hoặc code tính
+chi phí.
 
-Sau khi chọn winner:
+Không dùng mock/fake, replay output hoặc synthetic benchmark làm evidence. Dùng
+actual backend, canonical data, Qdrant, models và APIs.
 
-1. Rebuild winner collection từ canonical corpus.
-2. Verify model, dimension, schema và point count.
-3. Rerun winner smoke/retrieval gate.
-4. Set `reset_collection: false`.
-5. Update ledger, Phase 8 reports và Project Status sau Codex approval.
-
-## Controlled experiment rules
-
-- Một run ID ánh xạ một immutable config snapshot.
-- Chỉ đổi variables thuộc group đang xét.
-- Dataset checksum, chunks, relevance version, metric code/version và k giữ giống nhau.
-- Warm-up/cache policy và machine context được ghi cho latency.
-- Failed/partial runs không bị xóa.
-- Không average metrics từ runs có ground truth/corpus khác.
-- Manual tuning tạo run mới, không overwrite.
-
-## Selection framework
-
-Trước khi chạy, brainstorming xác định:
-
-- primary retrieval metric và minimum quality;
-- answer quality floor cho accuracy/groundedness;
-- maximum p95 retrieval/rerank latency;
-- remote cost ceiling;
-- complete-case rate/provider failure tolerance;
-- tie-break order giữa quality, latency, cost và simplicity.
-
-Không dùng composite score nếu weights chưa được user duyệt. Khuyến nghị dùng constraints trước, rồi Pareto comparison. Nếu không có winner tuyệt đối, user chọn trade-off và decision record giải thích.
-
-## Generation experiment sau baseline
-
-Baseline answer vẫn là OpenAI Agents SDK `gpt-5.4-nano`; judge là `gpt-5.4-mini`. Chỉ khi pipeline ổn định mới thử OpenRouter `qwen/qwen3.5-9b` trên cùng frozen answer subset, prompt/context và judge rubric.
-
-Không đổi generator cùng lúc với embedding/reranker nếu mục tiêu là đo tác động retrieval.
-
-## Brainstorming Level 3 bắt buộc
-
-Codex và người dùng phải chốt:
-
-1. Candidate list thực sự chạy trong vòng đầu.
-2. Experiment order và stop criteria.
-3. Primary metrics, quality floors, latency/cost ceilings và tie-break.
-4. Exact paid-call budgets và approval boundaries.
-5. Collection deletion checkpoints.
-6. Cách xử lý variance/mâu thuẫn và rerun count.
-7. Winner runtime config và rollback evidence.
-
-Research phải ưu tiên model hỗ trợ tiếng Việt/multilingual. Giá và availability luôn re-verify.
-
-## Nhiệm vụ của DeepSeek Implementer
-
-- Không tự thay biến ngoài group.
-- Trước run, emit safe config summary không chứa secret.
-- Kiểm tra collection schema/count và dataset checksum.
-- Chạy retrieval 104 cases; answer/judge theo approved subset.
-- Ghi JSONL trước Markdown summary.
-- Không xóa collection hoặc gọi paid API khi chưa approval.
-- Không tuyên bố winner; cung cấp evidence.
-
-## Nhiệm vụ của Codex Reviewer
-
-- Audit comparability, metric math, artifacts, failures và cost.
-- Re-run sample metric calculations độc lập.
-- Reject uncontrolled comparisons và silent fallback.
-- Xác nhận destructive transition evidence.
-- Cùng user chọn winner hoặc yêu cầu focused rerun.
-- Chỉ approve sau final winner collection được rebuild và protected.
-
-## Notebook bắt buộc
+## Notebook 08
 
 `notebooks/08_benchmark_model_selection.ipynb` phải:
 
-- import evaluation/benchmark readers thay vì duplicate metric hoặc selection logic;
-- giải thích experiment groups, controlled variables, metrics, latency, reliability và cost bằng tiếng Việt;
-- safe default chỉ đọc sample hoặc existing local artifacts đã được kiểm tra;
-- không tự chạy paid benchmark, model download, collection reset/delete hoặc live API;
-- hiển thị cách người dùng so sánh candidates và kiểm tra winner decision;
-- giữ committed outputs rỗng và mọi `execution_count=null`.
+- giải thích candidates và biến được giữ cố định;
+- mỗi cell làm một việc;
+- gọi backend/evaluation functions rõ ràng;
+- chạy approved real comparison;
+- hiển thị metrics, latency, failures và ý nghĩa;
+- không là validator, audit package hoặc test suite;
+- giữ repository outputs rỗng và execution counts null.
 
-## Validation và evidence
+## Reports
 
-Mỗi run phải có:
+Implementation report ghi:
 
-```text
-config snapshot
-dataset checksum
-collection metadata and point count
-retrieval JSONL
-answer/judge JSONL when applicable
-summary overall and by category
-latency/resource/cost summary
-completed/failed case counts
-decision and next action
-```
+- comparison đã được duyệt;
+- exact real commands/notebook;
+- observed metrics và latency;
+- failures/limitations;
+- handoff cho Reviewer.
 
-Commands thực tế lấy từ approved Phase 4/7 implementation và ghi exact trong run record.
+Codex review chạy lại comparison cần thiết và kiểm tra:
 
-## Security, reliability và performance gates
+- cùng data/metrics;
+- chỉ một experiment group thay đổi;
+- actual provider/model/profile đúng;
+- không fallback hoặc fabricated result;
+- complexity có tương xứng lợi ích.
 
-- Paid calls bounded và approved.
-- No secret/header/raw SDK object.
-- Exact destructive target verification.
-- Resume không duplicate/skip sai cases.
-- Actual model/provider luôn được ghi.
-- Winner có reproducible rebuild và reset disabled.
+Benchmark summary cập nhật tại
+`reports/hue_foods_rag_benchmark.md`.
 
-## Tiêu chí phê duyệt Phase 8
+## Acceptance
 
-- Local E5 ba-profile ladder hoàn tất với valid artifacts.
-- Approved OpenRouter candidates được chạy cùng protocol hoặc ghi rõ skip/failure.
-- Comparisons controlled, metric/version/dataset nhất quán.
-- User/Codex decision nêu trade-off dựa trên evidence.
-- Winner collection được rebuild, verified và protected.
-- Ledger/reports đầy đủ, không fabricated result.
-- Notebook Phase 8 giải thích đúng artifacts và giúp người dùng xác nhận trade-off/winner.
-- User report phản ánh đúng controlled comparisons, failures, cost và final selection; được người dùng xác nhận cùng notebook.
+Phase 8 chỉ `approved` khi:
 
-## Reports và cập nhật trạng thái
+1. candidate scope được user duyệt;
+2. comparisons dùng real system và cùng data/metrics;
+3. Reviewer xác minh kết quả độc lập;
+4. winner hoặc quyết định giữ baseline có lý do dễ hiểu;
+5. configuration cuối được chạy lại;
+6. notebook 08 giúp user hiểu và tự kiểm tra;
+7. user xác nhận kết quả.
 
-```text
-reports/phase_8_benchmark_model_selection_implementation_report.md
-reports/phase_8_benchmark_model_selection_codex_review.md
-reports/hue_foods_rag_benchmark.md
-reports/user_reports/phase_8_benchmark_model_selection_user_report.md
-```
-
-Sau technical review đạt, Codex tạo user report `pending`; chỉ cập nhật `Project_Status.md` sau khi người dùng xác nhận notebook/report và winner decision.
-
-## Bước tiếp theo
-
-Sau MVP benchmark, hệ thống vận hành với selected pipeline. Phase 9 chỉ mở design session riêng khi user muốn Agentic RAG.
+Commit/push cần yêu cầu riêng.

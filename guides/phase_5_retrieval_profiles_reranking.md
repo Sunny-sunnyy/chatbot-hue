@@ -12,15 +12,19 @@ lượng chính thức ở Phase 7–8.
 
 ```text
 Status: approved
-Brainstorming level: Level 3 - deep completed
 Owner: Codex Reviewer
 Implementer: DeepSeek
 ```
 
+> **Lưu ý governance hiện hành:** Các đoạn bên dưới mô tả implementation và
+> test contract lịch sử của Phase 5, bao gồm fake dependencies, offline tests
+> và per-run approval. Chúng không áp dụng cho công việc mới. Shared governance
+> hiện hành cấm mock/fake và cho phép real online/API execution trong approved
+> scope. Phase 5 sẽ được review lại sau Phase 7.
+
 Thiết kế trong guide này đã được người dùng phê duyệt ngày 2026-08-12 +07.
 DeepSeek đã bàn giao correction revision 3; Codex technical review đạt và người
-dùng đã xác nhận final approval ngày 2026-08-12 +07. Phase 5 đã hoàn tất; Phase
-6 vẫn cần brainstorming Level 2 riêng trước implementation.
+dùng đã xác nhận final approval ngày 2026-08-12 +07.
 
 ## Dependency đã đạt
 
@@ -487,8 +491,8 @@ Phase 7–8; không tuning vô hạn trong Phase 5.
 - Notebook an toàn và implementation report đầy đủ.
 - Không remote reranker, live API, reindex, tuning grid hoặc winner claim.
 
-Technical review đạt chỉ chuyển phase sang `awaiting_user_confirmation`. Phase 5
-chỉ `approved` sau khi người dùng đọc user report và xác nhận notebook/kết quả.
+Technical review đạt giữ phase ở `under_review`. Phase 5 chỉ `approved` sau khi
+người dùng đọc user report và xác nhận notebook/kết quả.
 
 ## Reports và benchmark
 
@@ -518,7 +522,7 @@ Revisit trigger: Local reranker không đạt latency gate hoặc Phase 7–8 qu
 Decision: Dùng baseline depth dense 10; hybrid dense candidates 30, fusion top 10; rerank đúng 10 pairs thành top 5; context tối đa 5 documents.
 Approved by: User
 Approval date +07: 2026-08-12
-Evidence: User chọn phương án A trong Level 3 brainstorming Phase 5.
+Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Retrieval depth, rerank depth, context size và latency measurement.
 Revisit trigger: Phase 7–8 retrieval evidence cho thấy relevant chunks thường nằm ngoài pre-rerank top 10.
 ```
@@ -527,7 +531,7 @@ Revisit trigger: Phase 7–8 retrieval evidence cho thấy relevant chunks thư�
 Decision: Normalize dense và BM25 độc lập bằng min-max trên 30 candidates, constant signal về 0.0 và fusion baseline 0.6/0.4; hoãn weight grid sang Phase 8.
 Approved by: User
 Approval date +07: 2026-08-12
-Evidence: User chọn phương án A trong Level 3 brainstorming Phase 5.
+Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Hybrid score semantics, metadata, tests và benchmark configuration.
 Revisit trigger: Controlled evaluation cho thấy min-max hoặc baseline weights không ổn định theo query/category.
 ```
@@ -536,7 +540,7 @@ Revisit trigger: Controlled evaluation cho thấy min-max hoặc baseline weight
 Decision: Dùng fail-explicit typed errors; chỉ trả [] khi retrieval thành công nhưng không có candidate và cấm silent fallback.
 Approved by: User
 Approval date +07: 2026-08-12
-Evidence: User chọn phương án A trong Level 3 brainstorming Phase 5.
+Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Retrieval service, startup state, tests và Phase 6 API error mapping.
 Revisit trigger: Phase 6 cần bổ sung một public error category nhưng không được thay đổi retrieval semantics.
 ```
@@ -554,7 +558,7 @@ Revisit trigger: Phase 6 token budget hoặc Phase 7 groundedness evidence yêu 
 Decision: MiniLM latency gate là một warm-up, 20 lượt rerank 10 pairs trên CPU, p95 không quá 3 giây; cold-load time ghi riêng và thiếu cache phải xin phép download.
 Approved by: User
 Approval date +07: 2026-08-12
-Evidence: User chọn phương án A trong Level 3 brainstorming Phase 5.
+Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Real local validation, acceptance evidence và model resource policy.
 Revisit trigger: Máy local không đạt gate với controlled measurement hoặc resource environment thay đổi.
 ```
@@ -563,7 +567,7 @@ Revisit trigger: Máy local không đạt gate với controlled measurement ho�
 Decision: Khởi tạo components theo active profile, giữ immutable collection/config/corpus snapshot và yêu cầu tạo service mới hoặc restart khi stale.
 Approved by: User
 Approval date +07: 2026-08-12
-Evidence: User chọn phương án A trong Level 3 brainstorming Phase 5.
+Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Startup lifecycle, component availability, cache invalidation và performance tests.
 Revisit trigger: Runtime cần hot reload/reindex lifecycle được thiết kế và phê duyệt riêng.
 ```
@@ -572,14 +576,13 @@ Revisit trigger: Runtime cần hot reload/reindex lifecycle được thiết k�
 Decision: Dùng safe metadata allowlist với stage-conditional scores; Phase 6 không serialize nguyên Qdrant payload.
 Approved by: User
 Approval date +07: 2026-08-12
-Evidence: User chọn phương án A trong Level 3 brainstorming Phase 5.
+Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: RetrievedDocument metadata, notebook diagnostics, benchmark artifacts và Phase 6 API sources.
 Revisit trigger: User-facing source UI cần thêm một field cụ thể đã được security/data-safety review.
 ```
 
 ## Bước tiếp theo
 
-Brainstorm Phase 6 theo Level 2 về grounded generation, JSON API contract,
-OpenAI Agents SDK behavior và error mapping. Model download, real Qdrant probes,
-collection mutation, live API, scope change hoặc dependency mới vẫn cần user
-approval riêng.
+Phase 5 đã hoàn thành và `approved`. Sau khi Phase 7 đơn giản hoàn tất, Phase 5
+sẽ được review lại trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung
+trong `guides/README.md`.

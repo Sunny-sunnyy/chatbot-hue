@@ -9,7 +9,6 @@ Phase 2 chuyển curated Markdown về ẩm thực Huế thành semantic chunks 
 ```text
 Status: approved
 Document type: as-built technical history with governance remediation
-Brainstorming level: Level 2 - standard
 Implementer: DeepSeek
 Reviewer: Codex
 Approval date +07: 2026-08-09
@@ -23,7 +22,7 @@ Approval date +07: 2026-08-09
 - Không cần embedding, Qdrant, model API hoặc web.
 
 Người dùng đã chạy notebook, yêu cầu cải thiện cách hiển thị mẫu và phê duyệt
-thay đổi cách chia đoạn. Phạm vi mới đã được làm rõ và sẵn sàng giao DeepSeek.
+thay đổi cách chia đoạn. Phạm vi đó đã được triển khai, review và xác nhận.
 Lịch sử kiểm tra kỹ thuật trước thay đổi được giữ nguyên.
 
 ## Corpus research đã thực hiện
@@ -313,8 +312,9 @@ Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã
 
 ## Bước tiếp theo
 
-Giai đoạn 2 đã hoàn tất. Bước tiếp theo là chuẩn bị Giai đoạn 3 và lập chỉ mục
-từ toàn bộ 572 đoạn mới; không dùng lại số liệu 366 đoạn cũ.
+Phase 2 đã hoàn thành và `approved`. Sau Phase 7, Phase 2 sẽ được review lại
+trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
+`guides/README.md`; corpus hiện hành vẫn là 572 chunks.
 
 ## Quyết định được người dùng phê duyệt ngày 2026-08-09
 
