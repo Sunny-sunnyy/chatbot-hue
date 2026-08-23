@@ -1,0 +1,127 @@
+{
+ "dataset_version": "v1-baseline-104",
+ "dataset_file": "knowledge-base-hue/foods/evaluation/tests.jsonl",
+ "selection_note": "Fixed 24-case answer subset: 3 per category, one relatively direct, one needing more evidence, one broader/harder. No random resampling.",
+ "cases": [
+  {
+   "case_id": "foods-0001",
+   "category": "direct_fact",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0004",
+   "category": "direct_fact",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0012",
+   "category": "direct_fact",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0029",
+   "category": "relationship",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0031",
+   "category": "relationship",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0037",
+   "category": "relationship",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0039",
+   "category": "spanning",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0086",
+   "category": "spanning",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0093",
+   "category": "spanning",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0050",
+   "category": "holistic",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0051",
+   "category": "holistic",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0088",
+   "category": "holistic",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0094",
+   "category": "guide_planning",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0065",
+   "category": "guide_planning",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0068",
+   "category": "guide_planning",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0017",
+   "category": "temporal",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0022",
+   "category": "temporal",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0084",
+   "category": "temporal",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0023",
+   "category": "comparative",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0025",
+   "category": "comparative",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0027",
+   "category": "comparative",
+   "selection": "broader"
+  },
+  {
+   "case_id": "foods-0057",
+   "category": "food_knowledge",
+   "selection": "direct"
+  },
+  {
+   "case_id": "foods-0060",
+   "category": "food_knowledge",
+   "selection": "more_evidence"
+  },
+  {
+   "case_id": "foods-0103",
+   "category": "food_knowledge",
+   "selection": "broader"
+  }
+ ]
+}

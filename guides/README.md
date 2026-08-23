@@ -117,7 +117,7 @@ Chỉ dùng rich elicitation khi còn ít nhất hai chiều mơ hồ quan trọ
 | 4 | `phase_4_qdrant_ingestion.md` | `approved` | Level 2 | Một active Qdrant collection và dense+sparse points |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Level 3 | Ba retrieval profiles, BM25, reranking và context |
 | 6 | `phase_6_generation_api.md` | `approved` | Level 2 | Grounded answer generation và JSON API; notebook, technical review và live smoke đã được người dùng xác nhận |
-| 7 | `phase_7_retrieval_answer_evaluation.md` | `not_ready` | Level 3 | Retrieval metrics và LLM-as-judge |
+| 7 | `phase_7_retrieval_answer_evaluation.md` | `changes_requested` | Level 3 | Revision 9 sửa consent/NaN; còn blockers calibration-final wiring và durable journal integrity |
 | 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Level 3 | Controlled benchmark và lựa chọn cấu hình cuối |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `design_only` | Level 4 | Roadmap thiết kế Agentic RAG sau MVP |
 
@@ -127,7 +127,11 @@ Milestone 6.1 `Baseline Lifecycle Hardening` được quản lý trong
 `phase_6_generation_api.md` và có status `approved`. Milestone giữ nguyên trạng
 thái `approved` của Phase 6, dùng lại notebook 06, có implementation/Codex/user
 report riêng, đạt validation live-only và được người dùng xác nhận ngày
-2026-08-21. Phase 7 vẫn `not_ready` cho đến khi hoàn tất design gate riêng.
+2026-08-21. Phase 7 đã hoàn tất design gate Level 3 ngày 2026-08-22 và tiếp tục
+`changes_requested` sau Codex re-review revision 9 vì calibration-final CLI path
+bypass strict validation/recovery, durable budget loader chưa fail closed và
+row-attempt journal linkage chưa được chứng minh.
+Milestone 6.1 tiếp tục giữ nguyên trạng thái `approved`.
 
 ## Quy trình thực hiện, báo cáo, review và cập nhật trạng thái
 

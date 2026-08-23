@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-21 22:50 +07`
+Last updated: `2026-08-23 +07`
 
 ## Mục tiêu dự án
 
@@ -117,14 +117,39 @@ Chuẩn curated cốt lõi: không YAML frontmatter, file bắt đầu bằng `#
 Chưa thực hiện:
 
 - Curate đầy đủ các category heritage, festivals, performing arts, tourism, services, tickets và statistics.
-- Phase 7–8 chưa implement.
-- Retrieval quality benchmark và winner selection vẫn thuộc Phase 7–8; ledger
-  hiện chưa có benchmark result hoặc winner. Bounded real E5/MiniLM/provider
-  validation trong approved scope đã có standing authorization.
+- Phase 7 đã có evaluation harness, dataset/validator, notebook 07 và durable
+  budget prototype, nhưng vẫn `changes_requested` sau khoảng 10 vòng
+  implementation/re-review. Paid answer/judge batch chưa được cấp phép; Phase 7
+  tạm dừng để brainstorm lại architecture trong session tiếp theo.
+- Phase 8 vẫn `not_ready`. Retrieval quality benchmark và winner selection vẫn
+  thuộc Phase 7–8; ledger chưa có final benchmark result hoặc winner được duyệt.
 - Enrichment có nguồn xác minh; recommender; Agentic RAG sau MVP.
 - Chạy bộ test trên evaluator thật (retrieval MRR/nDCG + LLM-judge) sau khi có pipeline RAG foods.
 
 ## Cập nhật gần nhất
+
+### 2026-08-23 +07
+
+- Trạng thái: Phase 7 `changes_requested` sau Codex re-review Revision 9. Bốn
+  regressions Revision 8 đã sửa, nhưng production calibration-final wiring,
+  durable budget schema integrity và exact row-attempt journal linkage vẫn còn
+  blocker/major findings. Sau khoảng 10 vòng sửa, user quyết định checkpoint và
+  brainstorm lại Phase 7 architecture trong session tiếp theo thay vì tiếp tục
+  vá Revision 10 ngay. Paid gate tiếp tục khóa; Phase 8 `not_ready`.
+- File chính: `backend/evaluation/`, Phase 7 tests/config,
+  `knowledge-base-hue/foods/evaluation/`, `notebooks/07_evaluation.ipynb`,
+  `guides/phase_7_retrieval_answer_evaluation.md`, Phase 7 implementation/Codex
+  reports và benchmark ledger.
+- Validation: 141 targeted tests pass; dataset validator 104/104; bốn Revision 8
+  reviewer probes pass nhưng năm Revision 9 integration/integrity probes fail;
+  notebook 07 sạch nbformat 4.5; active Qdrant collection read-only còn 572
+  points; CodeGraph up to date và `git diff --check` sạch. Không có paid provider
+  call trong Revision 9 re-review.
+- Next action: mở session Reviewer mới để brainstorm lại Phase 7 theo Level 3,
+  ưu tiên một canonical calibration resume path, một fail-closed durable budget
+  schema và shared exact attempt-linkage validator. Chưa implement Revision 10,
+  chưa chạy paid batch, chưa tạo user report và chưa mở Phase 8 trước khi design
+  mới được user phê duyệt.
 
 ### 2026-08-21 22:50 +07
 

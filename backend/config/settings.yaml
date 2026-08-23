@@ -91,4 +91,5 @@ llm:
 
 evaluation:
   test_file: ../knowledge-base-hue/foods/evaluation/tests.jsonl
+  answer_model: gpt-5.4-nano
   judge_model: gpt-5.4-mini
