@@ -16,9 +16,10 @@ starting level of complexity should be comparable to:
 - `/home/minhhieu/llm_rag/tai_lieu/rag_old_0/evaluator2.py`
 - `/home/minhhieu/llm_rag/tai_lieu/rag_old_0/pro_implementation`
 
-These references are design and coding-style references. Phase 7 must reuse the
-current Hue RAG backend instead of copying a second RAG implementation into the
-repository.
+These are direct design and coding-style references for Phase 7 evaluation.
+Phase 7 must reuse the current Hue RAG backend instead of copying a second RAG
+implementation into the repository. They are not implementation blueprints for
+unrelated backend phases.
 
 Later phases may research, optimize, or introduce a more advanced technique when
 there is a demonstrated need. An advanced technique must still be explained
@@ -253,14 +254,20 @@ The Phase 7 verification order is:
 Code across the whole project must be easy to understand, simple, clear, and no
 more technical than the demonstrated requirement needs.
 
-The initial design for a phase should begin at the level demonstrated by:
+The initial Phase 7 evaluation design should begin at the level demonstrated by:
 
 - `/home/minhhieu/llm_rag/tai_lieu/rag_old_0/evaluator2.py`
 - `/home/minhhieu/llm_rag/tai_lieu/rag_old_0/pro_implementation`
 
-This is a starting principle, not a permanent ban on advanced techniques.
-Implementers may research and optimize when a real requirement, measured problem,
-or verified limitation justifies it. The reviewer must then ask:
+Phase 0 through Phase 6 will use separate, phase-appropriate reference material
+provided by the user. Those phases should not copy the Phase 7 references merely
+to satisfy a general style rule.
+
+The whole project inherits the general principles of readable code, simple data
+flow, minimal necessary structure, and real-system verification. This is not a
+permanent ban on advanced techniques. Implementers may research and optimize when
+a real requirement, measured problem, or verified limitation justifies it. The
+reviewer must then ask:
 
 1. What real problem does this solve?
 2. Is there a simpler solution?
@@ -330,7 +337,9 @@ The documents must state plainly that:
 
 - code must be understandable, simple, clear, and not over-engineered or more
   technical than necessary;
-- initial phase designs should use the two full-path code references above;
+- Phase 7 evaluation should use the two full-path code references above;
+- Phase 0 through Phase 6 should use the separate reference material supplied by
+  the user for each phase;
 - notebook design should use the two full-path notebook directories above;
 - implementers and reviewers may run real online services and approved paid APIs;
 - fake execution and fake evidence are prohibited across the entire system;
