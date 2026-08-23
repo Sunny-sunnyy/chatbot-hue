@@ -969,112 +969,54 @@ Run `git diff --check`. Expected: clean. Do not stage or commit.
 
 ---
 
-### Task 7: Remove the rejected Phase 7 machinery and simplify project documentation
+### Task 7: Remove the rejected Phase 7 runtime and tests
 
 **Files:**
 - Delete: the rejected modules, test files, and artifact result directories listed in the locked file map
-- Modify: `session_prompt/REVIEWER_WORKFLOW.md`
-- Modify: `session_prompt/IMPLEMENTER_WORKFLOW.md`
-- Modify: `session_prompt/Session_Prompt.md`
-- Modify: `session_prompt/Project_Status.md`
-- Modify: `guides/phase_7_retrieval_answer_evaluation.md`
-- Modify: `guides/README.md`
-- Rewrite: `reports/phase_7_retrieval_answer_evaluation_implementation_report.md`
-- Review and modify only if conflicting: workflow/report templates and `reports/hue_foods_rag_benchmark.md`
 
 **Interfaces:**
-- Consumes: the approved specification and observed real results from Tasks 3–6.
-- Produces: one consistent project policy and an accurate implementation report.
+- Consumes: the working four-file Phase 7 implementation from Tasks 1–6.
+- Produces: one small evaluation package and one Phase 7 test file.
+
+The session, workflow, status, and Phase 7 guide documents were already
+simplified and committed before implementation began. Treat them as approved
+instructions; do not rewrite them during this task.
 
 - [ ] **Step 1: Delete only the rejected Phase 7 files**
 
-Use `apply_patch` to delete the exact files in the locked file map. Remove the
-old nested artifact results only after confirming the two new CSV files exist.
-Do not delete unrelated reports, knowledge-base content, or backend tests.
+Use `apply_patch` to delete the exact modules and tests in the locked file map.
+Inventory files under the old nested `backend/evaluation/results/` directories,
+then delete those old artifact files only after confirming the two new CSV files
+exist. Do not delete unrelated reports, knowledge-base content, or backend tests.
 
-- [ ] **Step 2: Replace old Phase 7 guide language**
+- [ ] **Step 2: Confirm the package is small**
 
-Make `guides/phase_7_retrieval_answer_evaluation.md` point to the approved spec
-and describe only:
+Run:
 
-```text
-20 real questions -> dense retrieval -> keyword metrics
-20 real questions -> dense retrieval -> context -> nano answer -> mini judge
-two UI buttons -> two fixed CSV files
-then switch the input path to the 104-question file
+```bash
+find backend/evaluation -maxdepth 1 -type f -printf '%f\n' | sort
+find backend/tests -maxdepth 1 -type f -name '*evaluation*' -printf '%f\n' | sort
 ```
 
-Remove all cost, consent, calibration, resume, identity, checksum, package,
-tamper, artifact, and multi-validator requirements.
-
-- [ ] **Step 3: Add the whole-project simplicity policy to both workflows**
-
-Add a prominent section to `REVIEWER_WORKFLOW.md` and
-`IMPLEMENTER_WORKFLOW.md` containing these rules in Vietnamese:
+Expected Phase 7 source files:
 
 ```text
-- Code phải dễ hiểu, đơn giản, rõ ràng và không quá kỹ thuật so với nhu cầu thật.
-- Không dùng fake ID, fake data, fake provider, fake artifact, mock provider
-  response hoặc kết quả bịa đặt trong implementation, test hay bằng chứng.
-- Implementer và reviewer được phép dùng online service và approved paid API thật.
-- Test bảo vệ hành vi cần thiết; không chạy theo số lượng test.
-- Chỉ thêm kỹ thuật nâng cao khi có vấn đề thật, giải pháp đơn giản không đủ và
-  kết quả chạy thật chứng minh lợi ích. Nếu trở thành over-engineering thì phải bỏ.
+__init__.py
+answer_results.csv
+eval.py
+evaluator.py
+retrieval_results.csv
+template.py
+test.py
 ```
 
-State explicitly that the two Phase 7 code references apply directly to Phase 7
-only. Phase 0–6 use separate phase-appropriate references supplied by the user.
-
-- [ ] **Step 4: Remove conflicting workflow rules**
-
-Delete or rewrite statements that still require:
+Expected Phase 7 test file:
 
 ```text
-cost/usage reporting, cost caps, paid-call gates, consent flags,
-calibration, resume, run identity, timestamps for evaluation packages,
-checksums, package matching, tamper detection, fake/mocked test paths,
-mandatory large test suites
+test_evaluation.py
 ```
 
-Keep secret safety, read-only active Qdrant, `uv`, real service access, and
-non-destructive worktree rules because those protect real user data rather than
-evaluation bureaucracy.
-
-- [ ] **Step 5: Update shared session context and status**
-
-`Session_Prompt.md` must state the whole-system simplicity and real-only policy.
-
-`Project_Status.md` must state:
-
-```text
-- Phase 7 architecture reset: approved simple design is being implemented.
-- The old five-stage/calibration/artifact architecture is rejected.
-- Phase 8 is blocked until Phase 7 is approved and Phase 6 -> Phase 0 have each
-  been reviewed for over-engineering.
-- The user will provide separate reference material for each earlier phase.
-- Notebooks 01 -> 06 must be simplified during those phase reviews where needed.
-```
-
-- [ ] **Step 6: Rewrite the implementation report with observed evidence only**
-
-The report must list:
-
-- the final four evaluation modules;
-- the single test file;
-- the 20 selected real questions;
-- actual Qdrant collection/count/profile observed;
-- actual generation and judge models observed;
-- the real 20-question retrieval summary;
-- the real 20-question answer summary;
-- the exact locations of the two CSV files;
-- notebook Run All result;
-- every failed question or provider error without hiding it;
-- confirmation that no fake/mocked path was used.
-
-Do not report call cost, estimate cost, run identity, checksum, or artifact
-package details.
-
-- [ ] **Step 7: Scan for rejected concepts**
+- [ ] **Step 3: Scan for rejected concepts**
 
 Run:
 
@@ -1082,10 +1024,10 @@ Run:
 rg -n "calibrat|run_id|generation_run_id|checksum|tamper|partial\.jsonl|confirm-paid|cost_usd|InvocationMeter|matching package" backend/evaluation backend/tests/test_evaluation.py notebooks/07_evaluation.ipynb guides/phase_7_retrieval_answer_evaluation.md session_prompt
 ```
 
-Expected: no Phase 7 implementation requirement remains. Any occurrence in a
-historical statement must clearly say the mechanism was rejected, not required.
+Expected: no rejected implementation remains. Mentions in the approved docs may
+only state that a mechanism is prohibited or was rejected.
 
-- [ ] **Step 8: Check the task diff**
+- [ ] **Step 4: Check the task diff**
 
 Run `git diff --check`. Expected: clean. Do not stage or commit.
 
