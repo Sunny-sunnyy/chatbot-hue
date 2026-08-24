@@ -2,8 +2,8 @@
 
 ## Trạng thái
 
-`ready` — thiết kế đơn giản mới đã được người dùng duyệt và sẵn sàng để
-Implementer xây dựng.
+`approved` — correction vòng 1 đã đạt technical review và được người dùng xác
+nhận sau khi kiểm tra Notebook 07 ngày 2026-08-24 +07.
 
 Guide này là nguồn canonical cho scope, trạng thái và acceptance của Phase 7.
 
@@ -128,8 +128,13 @@ Với mỗi câu:
 1. Gọi real `dense_only` retrieval service.
 2. Giữ retrieved chunks theo thứ tự trả về.
 3. Tìm từng keyword trong chunk text, không phân biệt hoa thường.
-4. Tính MRR, nDCG và keyword coverage.
+4. Tính reciprocal rank và nDCG riêng cho từng keyword, sau đó lấy trung bình
+   trên các keywords; keyword coverage là phần trăm keywords được tìm thấy.
 5. Hiển thị row và ghi CSV.
+
+Implementation giữ các biến trung gian như `avg_mrr`, `avg_ndcg`,
+`keywords_found`, `total_keywords` và `keyword_coverage` để công thức dễ đọc;
+không đổi semantics của `rag_old_0`.
 
 Không dùng gold source hoặc section để tính MRR/nDCG.
 
@@ -158,9 +163,16 @@ Với mỗi câu:
 
 Ba điểm:
 
-- accuracy;
-- completeness;
-- relevance.
+- accuracy: sai thực chất phải là 1; mức chấp nhận được là 3; chỉ hoàn toàn
+  chính xác mới là 5;
+- completeness: chỉ là 5 khi đủ toàn bộ thông tin quan trọng trong reference;
+- relevance: chỉ là 5 khi trả lời trực tiếp và không thêm thông tin ngoài câu
+  hỏi.
+
+Output schema dùng integer 1–5 với validation bounds và mô tả ngắn cho ba điểm
+cùng feedback. Judge không nhận retrieved context nên prompt/schema không được
+tuyên bố rằng nó chấm groundedness. Giữ `temperature=0` để chấm ổn định và
+`max_tokens=600` để feedback ngắn có giới hạn rõ ràng.
 
 Không có groundedness.
 
@@ -188,7 +200,7 @@ Giao diện hiển thị:
 - một slider concurrency;
 - hai nút evaluation độc lập;
 - progress;
-- bảng kết quả;
+- bảng kết quả có đúng named columns tương ứng với retrieval hoặc answer;
 - summary điểm trung bình;
 - đường dẫn CSV đã ghi.
 

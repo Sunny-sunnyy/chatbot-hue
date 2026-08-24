@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-23 +07`
+Last updated: `2026-08-24 +07`
 
 ## Mục tiêu
 
@@ -30,7 +30,7 @@ Dữ liệu foods:
 - 9 local specialties;
 - `food-guides.md` gồm 17 sections;
 - `knowledge-base-hue/foods/evaluation/tests.jsonl` gồm 104 câu thật;
-- Phase 7 sẽ dùng thêm `test2.jsonl` gồm 20 câu được chọn nguyên vẹn từ bộ 104.
+- Phase 7 dùng thêm `test2.jsonl` gồm 20 câu được chọn nguyên vẹn từ bộ 104.
 
 Runtime hiện có:
 
@@ -58,7 +58,7 @@ thông thường.
 | 4 | `approved` | Đã hoàn thành: Qdrant collection 572 points và notebook 04; sẽ được review lại sau Phase 7 |
 | 5 | `approved` | Đã hoàn thành: ba retrieval profiles, context và notebook 05; sẽ được review lại sau Phase 7 |
 | 6 | `approved` | Đã hoàn thành: generation, API, lifecycle warm-up và notebook 06; sẽ được review lại sau Phase 7 |
-| 7 | `ready` | Thiết kế evaluation đơn giản đã duyệt; chưa có implementation mới được review/approve |
+| 7 | `approved` | Evaluation đơn giản đã chạy thật, đạt technical review và được user xác nhận |
 | 8 | `not_ready` | Chưa mở; chỉ bắt đầu sau Phase 7 và review đơn giản hóa Phase 0–6 |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
 
@@ -68,9 +68,10 @@ nhận.
 ## Trạng thái hiện tại
 
 Governance đơn giản hóa toàn dự án đã được user thiết kế, phê duyệt, review và
-cập nhật vào các tài liệu hiện hành. Phase 7 giữ trạng thái canonical `ready`
-theo
-`guides/phase_7_retrieval_answer_evaluation.md`.
+cập nhật vào các tài liệu hiện hành. Phase 7 hiện ở `approved` theo
+`guides/phase_7_retrieval_answer_evaluation.md`: implementation đơn giản đã
+chạy real Qdrant, nano/mini, 20/104 questions và Notebook 07; correction vòng 1
+đã đạt technical review và được user xác nhận ngày 2026-08-24 +07.
 
 Phase 7 mới phải đi theo luồng:
 
@@ -78,9 +79,9 @@ Phase 7 mới phải đi theo luồng:
 question -> retrieve -> build context -> generate -> judge -> report
 ```
 
-Existing Phase 7 files và worktree có thể còn code/artifacts của các vòng cũ.
-Chúng không phải implementation mới đã được chấp nhận và không thay đổi trạng
-thái canonical. Implementer phải đối chiếu exact guide trước khi sửa hoặc xóa.
+Hai CSV cố định hiện giữ fresh full-run 104 rows. Một answer row ghi đúng lỗi
+model tham chiếu source ID không hợp lệ; batch vẫn hoàn thành và không dùng
+retry hoặc fallback giả.
 
 Phase 8 vẫn đóng.
 
@@ -124,11 +125,7 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-user review governance docs
--> Implementer xây Phase 7 đơn giản theo guide canonical
--> Reviewer đọc source và chạy lại Phase 7 bằng dữ liệu/API thật
--> user chạy notebook 07 và xác nhận
--> review, thiết kế lại khi cần và đơn giản hóa Phase 0 -> Phase 6
+review, thiết kế lại khi cần và đơn giản hóa Phase 0 -> Phase 6
 -> chạy lại affected Phase 7 evaluation sau mỗi thay đổi liên quan
 -> chỉ sau đó mới cân nhắc Phase 8
 ```
