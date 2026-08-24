@@ -53,8 +53,8 @@ thông thường.
 |---:|---|---|
 | 0 | `approved` | Simplicity review đã approved; docs-only, không đổi runtime hoặc active collection |
 | 1 | `approved` | Backend foundation đã đơn giản hóa, chạy thật, review và được user xác nhận |
-| 2 | `approved` | Giữ approval cũ; bước tiếp theo là brainstorm simplicity review Phase 2 |
-| 3 | `approved` | Giữ approval cũ; chờ review Phase 2 |
+| 2 | `approved` | Foods Markdown chunking đã đơn giản hóa, chạy thật, review và được user xác nhận |
+| 3 | `approved` | Giữ approval cũ; bước tiếp theo là brainstorm simplicity review Phase 3 |
 | 4 | `approved` | Giữ approval cũ; chờ review Phase 3 |
 | 5 | `approved` | Giữ approval cũ; chờ review Phase 4 |
 | 6 | `approved` | Giữ approval cũ; chờ review Phase 5 |
@@ -98,6 +98,14 @@ validation đã inline; Notebook 01 và config README trùng lặp đã xóa. Li
 settings/logging/Uvicorn/Gradio/Qdrant checks đạt và active collection vẫn 572
 points. Hai suite 74/222 tests đã chạy là observed history quá rộng, không phải
 acceptance target hoặc bằng chứng rằng mọi test đều cần thiết.
+
+Phase 2 simplicity implementation đã được review và user xác nhận ngày
+`2026-08-24 +07`. Parser và metadata helper đã được hấp thụ vào chunker, text
+splitter được giữ riêng, Notebook 02 chỉ gọi public API và ordered corpus vẫn
+khớp tuyệt đối 572 chunks từ 91 files. Focused suite 15 tests bảo vệ distinct
+Phase 2 behaviors; downstream 79 và full 206 test runs chỉ là observed evidence
+theo blast radius của refactor, không phải acceptance target hoặc checkpoint
+mặc định cho các lần chạy sau.
 
 ## Quyết định hiện hành
 
@@ -155,10 +163,10 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-Brainstorm simplicity review Phase 2
--> audit code/test thuộc ownership Phase 2
+Brainstorm simplicity review Phase 3
+-> audit code/test thuộc ownership Phase 3
 -> Implementer thực hiện approved scope và Reviewer chạy exact live path
--> tiếp tục lần lượt Phase 3 -> Phase 6
+-> tiếp tục lần lượt Phase 4 -> Phase 6
 -> chạy Phase 7 evaluation 20 câu khi thay đổi có thể ảnh hưởng chất lượng RAG
 -> chạy final full backend suite sau khi Phase 0–6 hoàn tất
 -> chỉ sau đó mới cân nhắc Phase 8
@@ -192,6 +200,9 @@ guides/llm_rag_reference_for_hue_rag.md
 docs/superpowers/specs/2026-08-24-phase-1-backend-foundation-simplicity-design.md
 docs/superpowers/plans/2026-08-24-phase-1-backend-foundation-simplicity-implementation.md
 reports/phase_1_backend_skeleton_simplicity_review.md
+docs/superpowers/specs/2026-08-24-phase-2-foods-markdown-chunking-simplicity-design.md
+docs/superpowers/plans/2026-08-24-phase-2-foods-markdown-chunking-simplicity-implementation.md
+reports/phase_2_foods_markdown_chunking_simplicity_review.md
 ```
 
 Phase 7:

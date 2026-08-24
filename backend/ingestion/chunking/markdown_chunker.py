@@ -4,14 +4,22 @@ Discovers files from the knowledge_base settings, parses each file into
 H2 sections, and returns chunk dicts with stable metadata.
 """
 import re
+from pathlib import Path
 
 from core.settings_loader import BACKEND_DIR, load_settings
-from ingestion.helpers.make_metadata import make_metadata
-from ingestion.helpers.markdown_parser import parse_document
 from ingestion.helpers.split_text import split_text
 
 EXCLUDED_SECTIONS = {"Nguồn dữ liệu"}
 IMAGE_LINE = re.compile(r"\s*!\[.*\]\(.*\)\s*$")
+REQUIRED_METADATA = {
+    "chunk_id",
+    "source",
+    "title",
+    "section",
+    "category",
+    "subcategory",
+    "chunk_type",
+}
 
 # Fixed-rule context labels for known section headings.
 _DIRECT_LABELS = {
@@ -65,8 +73,20 @@ def chunk_foods_markdown():
     """Discover curated foods Markdown and return list of chunk dicts."""
     root, files = _discover_markdown_files()
     chunks = []
+    seen_ids = set()
     for path in files:
-        chunks.extend(_chunk_file(path, root))
+        for chunk in _chunk_file(path, root):
+            text = chunk["text"]
+            if not text.strip():
+                raise ValueError(f"Empty chunk text in {chunk['metadata'].get('source')}")
+            meta = chunk["metadata"]
+            if set(meta.keys()) != REQUIRED_METADATA:
+                raise ValueError(f"Invalid metadata keys in {meta.get('chunk_id')}: {set(meta.keys())}")
+            cid = meta["chunk_id"]
+            if cid in seen_ids:
+                raise ValueError(f"Duplicate chunk_id: {cid}")
+            seen_ids.add(cid)
+            chunks.append(chunk)
     return chunks
 
 
@@ -88,10 +108,53 @@ def _is_excluded(path, exclude_parts, root):
     return any(part in exclude_parts for part in path.relative_to(root).parts)
 
 
+def _parse_markdown(text):
+    """Parse markdown text into (title, sections).
+
+    The H1 line becomes the title. Each H2 heading starts a new section
+    dict with keys "heading" (heading text) and "body" (remaining lines).
+    Content before the first H2 is returned as a section with an empty
+    heading. H3 and deeper headings stay inside the section body.
+    Sections without body content are omitted.
+    """
+    title = ""
+    sections = []
+    current = {"heading": "", "body": []}
+    for line in text.splitlines():
+        if line.startswith("# "):
+            title = line[2:].strip()
+        elif line.startswith("## "):
+            sections.append(current)
+            current = {"heading": line[3:].strip(), "body": []}
+        else:
+            current["body"].append(line)
+    sections.append(current)
+    return title, [
+        s for s in sections if "\n".join(s["body"]).strip()
+    ]
+
+
 def _chunk_file(path, root):
     """Chunk one markdown file into section chunks."""
-    title, sections = parse_document(path.read_text(encoding="utf-8"))
-    source = str(path.relative_to(root)).replace("\\", "/")
+    try:
+        source = str(path.relative_to(root)).replace("\\", "/")
+    except ValueError as e:
+        raise ValueError(f"File {path} is outside knowledge base root {root}") from e
+
+    text = path.read_text(encoding="utf-8")
+    title, sections = _parse_markdown(text)
+
+    if not title:
+        raise ValueError(f"File {source} missing H1 title")
+
+    # Check if there is at least one non-empty answer-facing H2 section after cleaning
+    has_answer_h2 = any(
+        s["heading"] and s["heading"] not in EXCLUDED_SECTIONS and _clean_body(s["body"])
+        for s in sections
+    )
+    if not has_answer_h2:
+        raise ValueError(f"File {source} has no non-empty answer-facing H2 sections")
+
     subcategory = _subcategory_for(source)
     chunks = []
     index = 0
@@ -102,7 +165,15 @@ def _chunk_file(path, root):
             continue
         for piece in split_text(body):
             label = _context_label(subcategory, heading, piece)
-            metadata = make_metadata(source, title, heading, subcategory, index)
+            metadata = {
+                "chunk_id": f"{source}|{heading}|{index}",
+                "source": source,
+                "title": title,
+                "section": heading,
+                "category": "foods",
+                "subcategory": subcategory,
+                "chunk_type": "section" if heading else "intro",
+            }
             chunks.append({"text": f"{title} — {label}\n{piece}", "metadata": metadata})
             index += 1
     return chunks

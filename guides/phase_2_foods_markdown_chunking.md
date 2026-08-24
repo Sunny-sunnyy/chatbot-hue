@@ -12,7 +12,14 @@ Document type: as-built technical history with governance remediation
 Implementer: DeepSeek
 Reviewer: Codex
 Approval date +07: 2026-08-09
+Simplicity design approval +07: 2026-08-24
+Simplicity technical review +07: ready_for_user_confirmation 2026-08-24
+Simplicity confirmation +07: 2026-08-24
 ```
+
+Phase 2 vẫn giữ approval lịch sử ngày `2026-08-09 +07`. Implementation đơn giản
+hóa đã đạt independent technical review sau correction round 1 và được user
+xác nhận ngày `2026-08-24 +07`; phase hiện ở `approved`.
 
 ## Dependency
 
@@ -83,13 +90,15 @@ Phân bố độ dài đã đo trực tiếp trên 364 mục dùng để trả l
 ## Files canonical
 
 ```text
-backend/ingestion/helpers/markdown_parser.py
-backend/ingestion/helpers/make_metadata.py
 backend/ingestion/helpers/split_text.py
 backend/ingestion/chunking/markdown_chunker.py
 backend/tests/test_markdown_chunker.py
 notebooks/02_foods_data_and_chunking.ipynb
 ```
+
+Parsing, minimal validation và metadata construction nằm trực tiếp trong
+`markdown_chunker.py`. `split_text.py` là helper duy nhất còn lại vì thuật toán
+splitting có hành vi độc lập cần đọc và kiểm tra riêng.
 
 ## Input contract
 

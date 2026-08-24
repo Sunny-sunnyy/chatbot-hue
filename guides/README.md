@@ -85,8 +85,8 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 |---:|---|---|---|
 | 0 | `phase_0_mvp_foundation.md` | `approved` | Simplicity review đã approved; Phase 1 cũng đã trở lại `approved` |
 | 1 | `phase_1_backend_skeleton.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
-| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Giữ approval cũ; bước tiếp theo là brainstorm simplicity review Phase 2 |
-| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Giữ approval cũ; chờ review Phase 2 |
+| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
+| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Giữ approval cũ; bước tiếp theo là brainstorm simplicity review Phase 3 |
 | 4 | `phase_4_qdrant_ingestion.md` | `approved` | Giữ approval cũ; chờ review Phase 3 |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Giữ approval cũ; chờ review Phase 4 |
 | 6 | `phase_6_generation_api.md` | `approved` | Giữ approval cũ; chờ review Phase 5 |

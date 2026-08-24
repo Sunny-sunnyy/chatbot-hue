@@ -1,17 +1,10 @@
-"""Tests for foods Markdown parsing and chunking."""
+"""Tests for foods Markdown chunking and text splitting."""
 import re
-from pathlib import Path
+import pytest
 
-from ingestion.chunking.markdown_chunker import (
-    EXCLUDED_SECTIONS,
-    _chunk_file,
-    _clean_body,
-    _context_label,
-    chunk_foods_markdown,
-)
-from ingestion.helpers.make_metadata import make_metadata
-from ingestion.helpers.markdown_parser import parse_document
-from ingestion.helpers.split_text import _LIST_ITEM, split_text
+from ingestion.chunking import markdown_chunker
+from ingestion.chunking.markdown_chunker import chunk_foods_markdown
+from ingestion.helpers.split_text import split_text
 
 REQUIRED_METADATA = {
     "chunk_id",
@@ -24,11 +17,7 @@ REQUIRED_METADATA = {
 }
 
 TABLE_SEPARATOR = re.compile(r"^\s*\|?[\s|:.-]*\|\s*$")
-
-
-def _content_of(chunk):
-    """Return the chunk content without the leading label line."""
-    return chunk["text"].split("\n", 1)[1]
+LIST_ITEM_RE = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
 
 
 def _contains_table(content):
@@ -40,28 +29,7 @@ def _contains_table(content):
     )
 
 
-def test_parse_document_splits_sections():
-    text = (
-        "# Quán X\n\n"
-        "## Tóm tắt\n\n"
-        "Nội dung.\n\n"
-        "### Chi tiết\n\n"
-        "- điểm\n\n"
-        "## Thông tin\n\n"
-        "- Địa chỉ: A\n"
-    )
-    title, sections = parse_document(text)
-    assert title == "Quán X"
-    assert [s["heading"] for s in sections] == ["Tóm tắt", "Thông tin"]
-    assert "### Chi tiết" in sections[0]["body"]
-
-
-def test_parse_document_captures_intro_content():
-    text = "# Quán X\n\nGiới thiệu ngắn.\n\n## Thông tin\n\n- Địa chỉ: A\n"
-    title, sections = parse_document(text)
-    assert title == "Quán X"
-    assert sections[0]["heading"] == ""
-    assert "Giới thiệu ngắn." in sections[0]["body"]
+# --- Splitter tests ---
 
 
 def test_split_text_keeps_short_text_whole():
@@ -73,19 +41,11 @@ def test_split_text_packs_paragraphs_within_max():
     assert split_text(text, max_chars=250) == ["a" * 100 + "\n" + "b" * 100, "c" * 100]
 
 
-def test_split_text_keeps_unbreakable_block_whole():
-    # No sentence end and no space: the block cannot be cut without splitting
-    # words, so it stays whole even when longer than the limit.
-    block = "x" * 2000
-    assert split_text(block, max_chars=500) == [block]
-
-
 def test_split_text_prefers_sentence_boundary():
     text = "Đây là câu một. " * 40
     chunks = split_text(text, max_chars=200)
     assert all(len(c) <= 200 for c in chunks)
     assert len(chunks) > 1
-    # No character is lost or duplicated: cuts only remove whitespace.
     assert "".join(chunks).replace(" ", "") == text.replace(" ", "")
 
 
@@ -97,12 +57,9 @@ def test_split_text_splits_long_sentence_at_space():
     assert "".join(chunks).replace(" ", "") == text.replace(" ", "")
 
 
-def test_split_text_keeps_table_whole():
-    rows = "| Món | Giá |\n|---|---:|\n" + "".join(
-        f"| Món {i} | 50.000 VNĐ |\n" for i in range(40)
-    )
-    assert len(rows) > 400
-    assert split_text(rows, max_chars=400) == [rows.strip()]
+def test_split_text_keeps_unbreakable_block_whole():
+    block = "x" * 2000
+    assert split_text(block, max_chars=500) == [block]
 
 
 def test_split_text_breaks_list_between_lines():
@@ -117,179 +74,189 @@ def test_split_text_breaks_list_between_lines():
 
 
 def test_split_text_keeps_wrapped_list_item_whole():
-    # Tái hiện foods/local_specialties/banh canh nam pho.md, mục
-    # "Thành phần và đặc điểm": dòng xuống hàng thụt lề thuộc mục trước.
     text = (
         "- **Sợi bánh:** Bột gạo được pha với bột lọc theo tỷ lệ gia truyền, thường được\n"
         "  mô tả khoảng 3 phần bột gạo và 1 phần bột lọc. Sợi bánh có màu trắng trong.\n"
         "- **Nhân tôm cua:** Tôm tươi và thịt ba chỉ được giã hoặc xay nhuyễn, vo viên\n"
         "  nhỏ hoặc dàn mỏng rồi nấu chín. Phần nhân có màu đỏ gạch tự nhiên và hòa\n"
-        "  quyện trong nước dùng thay vì chỉ đặt riêng bên trên.\n"
+        "  quyện trong nước dùng thay vị chỉ đặt riêng bên trên.\n"
         "- **Nước dùng:** Nước được ninh từ xương cùng nước luộc tôm, cua.\n"
     )
     chunks = split_text(text, max_chars=400)
-    # "Phần nhân..." không được tách khỏi mục "Nhân tôm cua" khi cả mục < 400.
     target = next(c for c in chunks if "**Nhân tôm cua:**" in c)
     assert "Phần nhân có màu đỏ gạch" in target
     assert len(target) <= 400
-    # Điểm chia chỉ nằm giữa các mục, không bao giờ giữa một mục.
     for chunk in chunks:
         for line in chunk.splitlines()[1:]:
-            assert _LIST_ITEM.match(line) or line.startswith("  ")
+            assert LIST_ITEM_RE.match(line) or line.startswith("  ")
 
 
-def test_wrapped_list_items_stay_together_in_corpus():
-    chunks = chunk_foods_markdown()
-    target = next(
-        c for c in chunks
-        if c["metadata"]["source"] == "foods/local_specialties/banh canh nam pho.md"
-        and c["metadata"]["section"] == "Thành phần và đặc điểm"
-        and "**Nhân tôm cua:**" in c["text"]
+def test_split_text_keeps_table_whole():
+    rows = "| Món | Giá |\n|---|---:|\n" + "".join(
+        f"| Món {i} | 50.000 VNĐ |\n" for i in range(40)
     )
-    assert "Phần nhân có màu đỏ gạch" in target["text"]
+    assert len(rows) > 400
+    assert split_text(rows, max_chars=400) == [rows.strip()]
 
 
-def test_no_chunk_starts_with_wrapped_list_line():
-    for chunk in chunk_foods_markdown():
-        first = chunk["text"].split("\n", 1)[1].splitlines()[0]
-        assert _LIST_ITEM.match(first) or not first.startswith("  "), (
-            "chunk must not start with a wrapped line cut off its item"
-        )
+# --- Chunker unit tests with discovery seam ---
 
 
-def test_make_metadata_fields():
-    metadata = make_metadata(
-        "foods/restaurants/quan x.md", "Quán X", "Thông tin", "restaurants", 3
-    )
-    assert metadata["chunk_id"] == "foods/restaurants/quan x.md|Thông tin|3"
-    assert metadata["category"] == "foods"
-    assert metadata["chunk_type"] == "section"
-
-
-def test_clean_body_drops_image_lines():
-    lines = ["Đoạn văn.", "![Ảnh](https://example.com/x.jpg?w=100)", "- Món ngon"]
-    assert _clean_body(lines) == "Đoạn văn.\n- Món ngon"
-
-
-def test_context_label_direct_mapping():
-    assert _context_label("restaurants", "Tóm tắt", "Nội dung.") == "giới thiệu"
-    assert _context_label("cafes", "Menu và giá tham khảo", "Bảng.") == "menu"
-    assert _context_label("cafes", "Món ăn / trải nghiệm", "Nội dung.") == "trải nghiệm"
-    assert _context_label("local_specialties", "Cách làm tóm tắt", "Nội dung.") == "cách làm"
-    assert _context_label("local_specialties", "Nguồn gốc và bối cảnh", "Nội dung.") == "nguồn gốc"
-    assert _context_label("guide", "Gợi ý ăn sáng", "Nội dung.") == "ăn sáng"
-    assert _context_label("guide", "Food tour 1 ngày", "Nội dung.") == "tour 1 ngày"
-
-
-def test_context_label_thong_tin_single_topic():
-    assert _context_label("restaurants", "Thông tin", "- Địa chỉ: 52 Tôn Thất Thiệp.") == "địa chỉ"
-    assert _context_label("cafes", "Thông tin", "- Giờ hoạt động: 07:30 – 21:30.") == "giờ hoạt động"
-    assert _context_label("restaurants", "Thông tin", "- Mức giá: 25.000 VNĐ.") == "mức giá"
-
-
-def test_context_label_thong_tin_multi_or_no_topic():
-    multi = "- Địa chỉ: A.\n- Giờ hoạt động: B.\n- Mức giá: C."
-    assert _context_label("restaurants", "Thông tin", multi) == "thông tin quán"
-    assert _context_label("cafes", "Thông tin", "- Điện thoại: 0123.") == "thông tin quán"
-
-
-def test_context_label_fallback_is_short_heading():
-    assert _context_label("restaurants", "Ưu đãi tham khảo", "Nội dung.") == "ưu đãi"
-    assert _context_label("restaurants", "Mục chưa biết", "Nội dung.") == "mục chưa biết"
-
-
-def test_chunk_file_skips_source_sections(tmp_path):
-    path = tmp_path / "mon x.md"
-    path.write_text(
-        "# Món X\n\n## Thông tin\n\n- Địa chỉ: A\n\n## Nguồn dữ liệu\n\n- src\n",
+def test_chunk_file_h1_title_h2_sections_and_h3_retained(tmp_path, monkeypatch):
+    file_path = tmp_path / "foods" / "restaurants" / "quan_x.md"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(
+        "# Quán X tại Huế\n\n"
+        "## Tóm tắt\n\n"
+        "Giới thiệu quán X.\n\n"
+        "### Không gian\n\n"
+        "Không gian rộng rãi.\n\n"
+        "## Thông tin\n\n"
+        "- Địa chỉ: 123 Đường Y, Huế\n",
         encoding="utf-8",
     )
-    chunks = _chunk_file(path, tmp_path)
+    monkeypatch.setattr(
+        markdown_chunker, "_discover_markdown_files", lambda: (tmp_path, [file_path])
+    )
+    chunks = chunk_foods_markdown()
+    assert len(chunks) == 2
+
+    # First chunk (Tóm tắt + H3 retained in body)
+    c0 = chunks[0]
+    assert c0["metadata"]["title"] == "Quán X tại Huế"
+    assert c0["metadata"]["section"] == "Tóm tắt"
+    assert c0["metadata"]["subcategory"] == "restaurants"
+    assert c0["metadata"]["category"] == "foods"
+    assert c0["metadata"]["chunk_type"] == "section"
+    assert c0["metadata"]["source"] == "foods/restaurants/quan_x.md"
+    assert c0["metadata"]["chunk_id"] == "foods/restaurants/quan_x.md|Tóm tắt|0"
+    assert c0["text"].startswith("Quán X tại Huế — giới thiệu\n")
+    assert "### Không gian" in c0["text"]
+
+    # Second chunk (Thông tin with single topic)
+    c1 = chunks[1]
+    assert c1["metadata"]["section"] == "Thông tin"
+    assert c1["metadata"]["chunk_id"] == "foods/restaurants/quan_x.md|Thông tin|1"
+    assert c1["text"].startswith("Quán X tại Huế — địa chỉ\n")
+
+
+def test_chunk_file_excludes_source_section_and_image_lines(tmp_path, monkeypatch):
+    file_path = tmp_path / "foods" / "cafes" / "cafe_y.md"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(
+        "# Cà Phê Y\n\n"
+        "## Giới thiệu\n\n"
+        "Quán cà phê view đẹp.\n"
+        "![Hình ảnh quán](https://example.com/photo.jpg)\n"
+        "Đồ uống ngon.\n\n"
+        "## Nguồn dữ liệu\n\n"
+        "- https://example.com/source\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        markdown_chunker, "_discover_markdown_files", lambda: (tmp_path, [file_path])
+    )
+    chunks = chunk_foods_markdown()
     assert len(chunks) == 1
-    assert chunks[0]["metadata"]["section"] == "Thông tin"
-    assert chunks[0]["metadata"]["subcategory"] == "guide"
+    assert chunks[0]["metadata"]["section"] == "Giới thiệu"
+    assert "![" not in chunks[0]["text"]
+    assert "Quán cà phê view đẹp.\nĐồ uống ngon." in chunks[0]["text"]
 
 
-def test_chunk_file_text_has_context_label(tmp_path):
-    path = tmp_path / "quan x.md"
-    path.write_text("# Quán X\n\n## Tóm tắt\n\nNội dung ngắn.\n", encoding="utf-8")
-    chunks = _chunk_file(path, tmp_path)
-    assert len(chunks) == 1
-    assert chunks[0]["text"].startswith("Quán X — giới thiệu\n")
-    assert chunks[0]["text"].endswith("Nội dung ngắn.")
+def test_chunk_file_fails_fast_on_missing_h1(tmp_path, monkeypatch):
+    file_path = tmp_path / "foods" / "restaurants" / "no_h1.md"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(
+        "## Tóm tắt\n\nNội dung không có H1.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        markdown_chunker, "_discover_markdown_files", lambda: (tmp_path, [file_path])
+    )
+    with pytest.raises(ValueError, match="H1"):
+        chunk_foods_markdown()
 
 
-def test_chunk_file_splits_long_sections(tmp_path):
-    body = "\n\n".join("Câu một. " * 50 for _ in range(3))
-    path = tmp_path / "mon y.md"
-    path.write_text(f"# Món Y\n\n## Thông tin\n\n{body}\n", encoding="utf-8")
-    chunks = _chunk_file(path, tmp_path)
-    assert len(chunks) == 6
-    assert all(chunk["metadata"]["section"] == "Thông tin" for chunk in chunks)
-    assert all(len(_content_of(chunk)) <= 400 for chunk in chunks)
-    ids = [chunk["metadata"]["chunk_id"] for chunk in chunks]
-    assert len(ids) == len(set(ids))
+def test_chunk_file_fails_fast_on_missing_answer_h2(tmp_path, monkeypatch):
+    file_path = tmp_path / "foods" / "restaurants" / "only_source.md"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(
+        "# Quán Chỉ Có Nguồn\n\n## Nguồn dữ liệu\n\n- https://example.com\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        markdown_chunker, "_discover_markdown_files", lambda: (tmp_path, [file_path])
+    )
+    with pytest.raises(ValueError, match="H2"):
+        chunk_foods_markdown()
 
 
-def test_chunk_foods_markdown_gate():
+def test_chunk_file_fails_fast_on_image_only_answer_h2(tmp_path, monkeypatch):
+    file_path = tmp_path / "foods" / "restaurants" / "only_image.md"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(
+        "# Quán Chỉ Có Ảnh\n\n"
+        "## Giới thiệu\n\n"
+        "![Hình ảnh](https://example.com/pic.jpg)\n\n"
+        "## Nguồn dữ liệu\n\n"
+        "- https://example.com\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        markdown_chunker, "_discover_markdown_files", lambda: (tmp_path, [file_path])
+    )
+    with pytest.raises(ValueError, match="H2"):
+        chunk_foods_markdown()
+
+
+# --- Full real corpus tests ---
+
+
+def test_chunk_foods_markdown_real_corpus_invariants():
     chunks = chunk_foods_markdown()
     assert chunks
+
+    sources = set()
+    chunk_ids = []
     for chunk in chunks:
-        assert chunk["text"].strip()
-        assert REQUIRED_METADATA <= chunk["metadata"].keys()
-        assert chunk["text"].count("\n") >= 1
+        # Non-empty text and label line
+        text = chunk["text"]
+        assert text.strip()
+        lines = text.split("\n", 1)
+        assert len(lines) == 2, "chunk must have a label line and body"
+        label_line, body = lines[0], lines[1]
+        assert label_line.startswith(chunk["metadata"]["title"] + " — ")
+        assert "![" not in text
+        assert chunk["metadata"]["section"] != "Nguồn dữ liệu"
 
+        # Exact 7 metadata fields
+        meta = chunk["metadata"]
+        assert set(meta.keys()) == REQUIRED_METADATA
 
-def test_chunk_sources_are_kb_relative():
-    sources = {c["metadata"]["source"] for c in chunk_foods_markdown()}
-    assert sources
-    assert all(source.startswith("foods/") for source in sources)
-    assert "foods/food-guides.md" in sources
-
-
-def test_no_excluded_folders_indexed():
-    for chunk in chunk_foods_markdown():
-        parts = chunk["metadata"]["source"].split("/")
+        # Source is KB-relative
+        src = meta["source"]
+        assert not src.startswith("/")
+        assert src.startswith("foods/")
+        parts = src.split("/")
         assert "evaluation" not in parts
         assert "_source-dumps" not in parts
         assert "meta" not in parts
+        sources.add(src)
+
+        # ID uniqueness and format
+        cid = meta["chunk_id"]
+        assert cid == f"{src}|{meta['section']}|{cid.rsplit('|', 1)[-1]}"
+        chunk_ids.append(cid)
+
+        # Length limit (normal chunks <= 400 chars, table exception allowed)
+        if not _contains_table(body):
+            assert len(body) <= 400
+
+    assert sources
+    assert len(chunk_ids) == len(set(chunk_ids)), "chunk_id must be unique across corpus"
 
 
-def test_no_absolute_paths_in_metadata():
-    for chunk in chunk_foods_markdown():
-        for value in chunk["metadata"].values():
-            assert not str(value).startswith("/")
-
-
-def test_chunk_ids_unique():
-    chunks = chunk_foods_markdown()
-    ids = [c["metadata"]["chunk_id"] for c in chunks]
-    assert len(ids) == len(set(ids))
-
-
-def test_chunk_ids_stable_across_runs():
-    first = [c["metadata"]["chunk_id"] for c in chunk_foods_markdown()]
-    second = [c["metadata"]["chunk_id"] for c in chunk_foods_markdown()]
-    assert first == second
-
-
-def test_source_sections_excluded_from_corpus():
-    sections = {c["metadata"]["section"] for c in chunk_foods_markdown()}
-    assert EXCLUDED_SECTIONS.isdisjoint(sections)
-
-
-def test_no_image_markdown_in_chunk_text():
-    for chunk in chunk_foods_markdown():
-        assert "![" not in chunk["text"]
-
-
-def test_no_normal_chunk_over_400():
-    for chunk in chunk_foods_markdown():
-        content = _content_of(chunk)
-        if not _contains_table(content):
-            assert len(content) <= 400
-
-
-def test_corpus_covers_91_files():
-    sources = {c["metadata"]["source"] for c in chunk_foods_markdown()}
-    assert len(sources) == 91
+def test_chunk_foods_markdown_deterministic_output():
+    run1 = chunk_foods_markdown()
+    run2 = chunk_foods_markdown()
+    assert run1 == run2
