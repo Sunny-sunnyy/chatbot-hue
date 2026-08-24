@@ -201,7 +201,11 @@ private endpoints hoặc credentials vào query. Không init, uninit, xóa
 
 ## Notebook review
 
-Phase 1–8 có một notebook canonical. Reviewer kiểm tra:
+Reviewer chỉ review notebook khi canonical guide của phase yêu cầu. Không tạo
+finding vì một phase không có notebook nếu guide đã xác định notebook không có
+giá trị học tập. Phase 1 không cần notebook sau simplicity review.
+
+Khi phase có notebook, Reviewer kiểm tra:
 
 - notebook parse được;
 - outputs rỗng và execution counts null trong repo;
@@ -212,7 +216,8 @@ Phase 1–8 có một notebook canonical. Reviewer kiểm tra:
 - không chứa secrets hoặc sensitive output;
 - temporary Run All đi qua real path và cho observed result thật.
 
-Notebook là cách user tự kiểm tra chính.
+Notebook là một cách user tự kiểm tra khi nó phù hợp; report và real run vẫn là
+bằng chứng bắt buộc cho mọi phase.
 
 ## Technical decision
 

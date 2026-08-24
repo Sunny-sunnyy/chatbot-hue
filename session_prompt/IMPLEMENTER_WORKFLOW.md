@@ -105,7 +105,9 @@ secret values.
 
 ## Notebook
 
-Mỗi implementation Phase 1–8 cập nhật đúng một notebook canonical.
+Chỉ tạo hoặc cập nhật notebook khi canonical guide của phase yêu cầu vì có giá
+trị học tập thật. Không tạo notebook chỉ để đủ số phase. Phase 1 không cần
+notebook sau simplicity review.
 
 - Mỗi cell làm một việc.
 - Markdown ngắn đứng trước code.
@@ -114,6 +116,9 @@ Mỗi implementation Phase 1–8 cập nhật đúng một notebook canonical.
 - Repository notebook sạch outputs và execution counts.
 - Run All thật trên temporary copy.
 - Dùng đúng style references trong `Session_Prompt.md`.
+
+Nếu guide không yêu cầu notebook, implementation report ghi rõ `not
+applicable`; không thay thế notebook bằng validator hoặc smoke-test artifact.
 
 ## CodeGraph
 

@@ -4,10 +4,19 @@
 
 `approved`
 
-Phase 0 đã hoàn thành và định nghĩa kiến trúc cùng contract xuyên suốt MVP. Sau
-khi Phase 7 đơn giản được approve, đây là phase đầu tiên được review lại để hệ
-thống đơn giản, rõ ràng, dễ đọc và con người review được. Review đó không tự mở
-quyền sửa trước khi design mới được duyệt.
+Phase 0 đã hoàn thành simplicity review ngày `2026-08-24 +07`. Review chỉ cập
+nhật kiến trúc và quy trình tài liệu; không thay đổi runtime, test, notebook,
+dữ liệu hoặc active Qdrant collection. Phase 1 simplicity design đã được user
+duyệt và đang ở `ready`; runtime chỉ được sửa theo exact scope của guide Phase
+1.
+
+Tài liệu liên quan:
+
+```text
+docs/superpowers/specs/2026-08-24-phase-0-simplicity-review-design.md
+reports/phase_0_mvp_foundation_simplicity_review.md
+guides/llm_rag_reference_for_hue_rag.md
+```
 
 ## Mục tiêu
 
@@ -62,6 +71,13 @@ duyệt dữ liệu và nguồn.
 
 Boundary phải giúp người đọc theo được luồng. Không tạo thêm interface hoặc
 component chỉ để dự phòng tương lai.
+
+Chỉ giữ abstraction khi có từ hai implementation thật đang dùng hoặc một
+provider boundary thật. Vì vậy embedding và generation giữ boundary cho các
+provider hiện tại/tương lai đã xác định; ba retrieval profiles dùng một service
+nhỏ; MiniLM dùng implementation cụ thể khi chưa có reranker thứ hai. Snapshot,
+fingerprint, validator hoặc typed error chỉ được giữ khi có nhu cầu runtime và
+caller behavior khác biệt đang tồn tại.
 
 ## Model và provider
 
@@ -169,6 +185,21 @@ trong guide/report liên quan. Secrets chỉ đến từ environment.
 - Test pass không thay real-system run.
 - Reviewer/Implementer áp dụng `skills/karpathy-guidelines/SKILL.md`.
 
+Verification đi theo phạm vi ảnh hưởng:
+
+```text
+targeted real tests
+-> canonical notebook Run All trên temporary copy nếu phase có notebook
+-> affected downstream flows
+-> full backend suite
+-> Phase 7 evaluation nếu chất lượng RAG có thể thay đổi
+```
+
+Mỗi Phase 0–6 có một simplicity review ghi Before, capability cần giữ, thay đổi
+được duyệt, ảnh hưởng downstream, kết quả After, bug và cách xử lý. Không chạy
+lại paid 104-question evaluation cho thay đổi chỉ thuộc tài liệu hoặc refactor
+đã chứng minh không đổi hành vi.
+
 Chi tiết chung thuộc `session_prompt/Session_Prompt.md`.
 
 ## Real execution
@@ -202,7 +233,8 @@ Phase 7.
 
 ## Notebook
 
-Phase 1–8 có một notebook canonical. Notebook phải:
+Chỉ phase có giá trị học tập thật mới có notebook canonical. Không tạo notebook
+để đủ số phase. Notebook được giữ phải:
 
 - giúp con người hiểu hệ thống;
 - mỗi cell làm một việc;
@@ -226,21 +258,21 @@ Một phase implementation chỉ đạt `approved` khi:
 1. code đúng guide và dễ hiểu;
 2. tests cần thiết bảo vệ hành vi thật;
 3. Reviewer đã chạy independent real verification;
-4. notebook sạch trong repo và user có thể Run All;
-5. user đã đọc report, chạy/kiểm tra notebook và xác nhận.
+4. notebook sạch và Run All được nếu canonical guide yêu cầu notebook;
+5. user đã đọc report, kiểm tra kết quả, chạy notebook nếu có và xác nhận.
 
 Commit/push cần yêu cầu riêng.
 
 ## Thứ tự tiếp theo
 
 ```text
-Phase 7 đơn giản
--> Phase 0 -> Phase 6 simplicity reviews
+Phase 0 simplicity review đã approved
+-> Phase 1 -> Phase 6 simplicity reviews
 -> re-run affected Phase 7 evaluation
 -> Phase 8
 ```
 
-Mỗi review Phase 0–6 bắt đầu từ Repo và live system: guide, reports, source
+Mỗi review Phase 1–6 bắt đầu từ Repo và live system: guide, reports, source
 code, notebook và real run. Tài liệu ngoài do user cung cấp là tùy chọn khi
 thực sự hữu ích; nếu thiếu mà còn lựa chọn quan trọng, brainstorm với user.
 Không áp Phase 7 reference như blueprint cho phase khác.
@@ -260,9 +292,27 @@ Date +07: 2026-08-09.
 ```
 
 ```text
-Decision: Phase 1–8 có notebook và cần user confirmation trước approved.
-Reason: User cần tự đọc, chạy và hiểu hệ thống trước khi mở phase tiếp theo.
-Date +07: 2026-08-09, notebook policy simplified 2026-08-23.
+Decision: Giữ capability của MVP nhưng cho phép đơn giản hóa internal structures.
+Reason: Wrapper, validator hoặc compatibility nội bộ không phải chức năng người dùng nếu cùng hành vi có thể được viết trực tiếp và dễ hiểu hơn.
+Date +07: 2026-08-24.
+```
+
+```text
+Decision: Chỉ giữ abstraction cho nhiều implementation thật hoặc provider boundary thật.
+Reason: Local/OpenRouter embedding, OpenAI/OpenRouter generation và ba retrieval profiles là biến thể thật; abstraction phòng xa khác không có nhu cầu hiện tại.
+Date +07: 2026-08-24.
+```
+
+```text
+Decision: Quyết định giữ, bỏ hoặc query native sparse vectors được hoãn tới review Phase 3–5.
+Reason: Collection hiện tại vẫn đúng với runtime dense candidates + Python BM25 và Phase 0 không có quyền đổi dữ liệu/index.
+Date +07: 2026-08-24.
+```
+
+```text
+Decision: Chỉ phase có giá trị học tập thật mới có notebook; Phase 1 không cần notebook.
+Reason: Notebook phải giúp con người hiểu hệ thống, không làm validator hoặc tồn tại chỉ để đủ số phase.
+Date +07: 2026-08-24.
 ```
 
 ```text

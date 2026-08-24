@@ -51,13 +51,13 @@ thông thường.
 
 | Phase | Trạng thái | Kết quả hiện có / việc còn lại |
 |---:|---|---|
-| 0 | `approved` | Đã hoàn thành: kiến trúc và contract nền tảng; sẽ được review đơn giản hóa lại sau Phase 7 |
-| 1 | `approved` | Đã hoàn thành: backend skeleton, config, logging và notebook 01; sẽ được review lại sau Phase 7 |
-| 2 | `approved` | Đã hoàn thành: curated foods loader, 572 chunks và notebook 02; sẽ được review lại sau Phase 7 |
-| 3 | `approved` | Đã hoàn thành: dense/sparse representation và notebook 03; sẽ được review lại sau Phase 7 |
-| 4 | `approved` | Đã hoàn thành: Qdrant collection 572 points và notebook 04; sẽ được review lại sau Phase 7 |
-| 5 | `approved` | Đã hoàn thành: ba retrieval profiles, context và notebook 05; sẽ được review lại sau Phase 7 |
-| 6 | `approved` | Đã hoàn thành: generation, API, lifecycle warm-up và notebook 06; sẽ được review lại sau Phase 7 |
+| 0 | `approved` | Simplicity review đã approved; docs-only, không đổi runtime hoặc active collection |
+| 1 | `ready` | Design/plan đã sẵn sàng; user chưa giao Implementer và runtime chưa thay đổi |
+| 2 | `approved` | Giữ approval cũ; chờ Phase 1 trở lại `approved` để review |
+| 3 | `approved` | Giữ approval cũ; chờ review Phase 2 |
+| 4 | `approved` | Giữ approval cũ; chờ review Phase 3 |
+| 5 | `approved` | Giữ approval cũ; chờ review Phase 4 |
+| 6 | `approved` | Giữ approval cũ; chờ review Phase 5 |
 | 7 | `approved` | Evaluation đơn giản đã chạy thật, đạt technical review và được user xác nhận |
 | 8 | `not_ready` | Chưa mở; chỉ bắt đầu sau Phase 7 và review đơn giản hóa Phase 0–6 |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
@@ -85,6 +85,20 @@ retry hoặc fallback giả.
 
 Phase 8 vẫn đóng.
 
+Phase 0 simplicity review đã được user duyệt ngày `2026-08-24 +07`. Review giữ
+nguyên capability của MVP, đặt concrete code làm mặc định, chỉ giữ abstraction
+cho nhiều implementation thật hoặc provider boundary thật, và yêu cầu mỗi
+Phase 1–6 có một hồ sơ Before/After. Không có runtime change; baseline mới nhất
+vẫn là full backend `222 passed, 4 warnings`.
+
+Phase 1 simplicity design đã được user duyệt ngày `2026-08-24 +07` và phase
+được mở lại ở `ready`. Approved scope: giữ YAML/settings/schema/package layout,
+kết nối `setup_logging()` tại API lifespan, ingestion main và evaluation main;
+inline active-profile validation; xóa Notebook 01 và config README trùng lặp.
+Downstream config và error classes chưa thay đổi. Runtime implementation vẫn
+chưa bắt đầu. Implementation plan đã sẵn sàng, nhưng user chưa giao nhiệm vụ
+cho Implementer; handoff sẽ diễn ra trong session tiếp theo.
+
 ## Quyết định hiện hành
 
 - Mỗi phase có một guide canonical.
@@ -98,11 +112,19 @@ Phase 8 vẫn đóng.
   trong guide.
 - Provider/model/scope mới, deploy, active mutation và destructive action cần
   user approval.
-- Mỗi implementation Phase 1–8 có một notebook ngắn dành cho con người.
+- Chỉ phase có giá trị học tập thật mới có notebook; canonical guide quyết định.
 - Xác nhận phase không tự cấp quyền commit/push.
 - Sau lần `changes_requested` thứ 4, dừng để audit lại design/guide/plan trước
   vòng sửa thứ 5.
 - CodeGraph được giữ như công cụ discovery tùy chọn, không phải blocker.
+- Chỉ giữ abstraction khi có nhiều implementation thật hoặc provider boundary
+  thật; internal wrappers không phải compatibility requirement.
+- Mỗi Phase 0–6 có một simplicity review ghi Before/After, capability được giữ,
+  ảnh hưởng downstream, verification, bug và cách xử lý.
+- Verification đi theo blast radius; chỉ chạy lại Phase 7 evaluation khi thay
+  đổi có thể ảnh hưởng chất lượng RAG.
+- Quyết định giữ, bỏ hoặc dùng native Qdrant sparse vectors thuộc review Phase
+  3–5; collection hiện tại được giữ nguyên trong Phase 0.
 
 Các cơ chế cost accounting, consent gate, calibration, resume, run identity,
 timestamp package, checksum, package matching, tamper detection, partial
@@ -125,7 +147,10 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-review, thiết kế lại khi cần và đơn giản hóa Phase 0 -> Phase 6
+Session tiếp theo: user giao Phase 1 plan cho Implementer
+-> Implementer thực hiện và bàn giao report
+-> Reviewer kiểm tra độc lập, user xác nhận Phase 1
+-> brainstorm và đơn giản hóa lần lượt Phase 2 -> Phase 6
 -> chạy lại affected Phase 7 evaluation sau mỗi thay đổi liên quan
 -> chỉ sau đó mới cân nhắc Phase 8
 ```
@@ -147,6 +172,17 @@ workflow đúng với vai trò
 guides/README.md
 guides/phase_0_mvp_foundation.md
 guide canonical của phase đang làm
+```
+
+Review đơn giản hóa Phase 1–6:
+
+```text
+docs/superpowers/specs/2026-08-24-phase-0-simplicity-review-design.md
+reports/phase_0_mvp_foundation_simplicity_review.md
+guides/llm_rag_reference_for_hue_rag.md
+docs/superpowers/specs/2026-08-24-phase-1-backend-foundation-simplicity-design.md
+docs/superpowers/plans/2026-08-24-phase-1-backend-foundation-simplicity-implementation.md
+reports/phase_1_backend_skeleton_simplicity_review.md
 ```
 
 Phase 7:

@@ -1,66 +1,95 @@
 # Phase 1: Backend skeleton và configuration
 
-## Mục tiêu và giá trị cho người dùng
+## Mục tiêu
 
-Phase 1 tạo bộ khung Python ổn định cho toàn bộ Hue Foods RAG MVP: cấu hình tập trung, logging nhất quán, shared retrieval schema và package layout rõ ràng. Phase này giúp các phase sau thêm chức năng mà không phải tự phát minh lại cấu trúc hoặc config contract.
+Phase 1 giữ nền tảng Python nhỏ và dễ đọc cho Hue Foods RAG:
+
+- package layout rõ theo data flow;
+- một file YAML cấu hình tập trung;
+- một hàm đọc settings và kiểm tra profile đang dùng;
+- một cấu hình logging chung được các runtime entrypoint gọi thật;
+- một shared `RetrievedDocument` cho retrieval, reranking và context.
 
 ## Trạng thái
 
 ```text
-Status: approved
-Document type: as-built technical history with governance remediation
-Implementer: DeepSeek
+Status: ready
+Previous approval +07: 2026-08-09
+Simplicity design approval +07: 2026-08-24
+Implementer: not assigned
 Reviewer: Codex
-Approval date +07: 2026-08-09
 ```
 
-Mã xử lý và notebook đã được Codex kiểm tra; người dùng đã xác nhận Phase 1.
-DeepSeek không cần sửa Phase 1.
+Phase 1 từng được approve và đã làm nền cho Phase 2–7. User đã duyệt design
+đơn giản hóa mới; phase được mở lại ở trạng thái `ready`. Chưa có runtime change
+nào của vòng mới được thực hiện hoặc chấp nhận. Implementation plan đã sẵn
+sàng, nhưng user chưa giao nhiệm vụ cho Implementer; công việc sẽ bắt đầu trong
+session tiếp theo sau khi user thực hiện handoff.
 
-## Dependency
+Tài liệu bắt buộc:
 
-- Phase 0 architecture foundation đã hoàn tất.
-- `pyproject.toml` và `uv.lock` đã tồn tại.
-- Phase này không cần Qdrant, embedding model, API key hoặc live service.
+```text
+docs/superpowers/specs/2026-08-24-phase-1-backend-foundation-simplicity-design.md
+docs/superpowers/plans/2026-08-24-phase-1-backend-foundation-simplicity-implementation.md
+reports/phase_1_backend_skeleton_simplicity_review.md
+guides/llm_rag_reference_for_hue_rag.md
+```
 
-## Chức năng đã thực hiện
+## Baseline cần giữ
 
-- Tạo backend package tree cho API, ingestion, embedding, vector store, retrieval, scoring, reranking, LLM và evaluation.
-- Tạo `settings.yaml` chứa ba retrieval profiles và các nhóm config dự kiến cho MVP.
-- Tạo YAML settings loader và fail-fast validation cho `active_profile`.
-- Tạo logging setup ghi console và `backend/logs/application.log` độc lập với current working directory.
-- Tạo shared `RetrievedDocument` dataclass cho retrieval pipeline.
+- Ba profiles: `dense_only`, `hybrid_no_rerank`, `hybrid_rerank`.
+- Settings groups hiện tại và mọi value downstream đang dùng.
+- Logging ra console và `backend/logs/application.log`.
+- `RetrievedDocument(id, score, text, metadata)`.
+- Mọi hành vi ingestion, embedding, Qdrant, retrieval, generation, API và
+  evaluation đang hoạt động.
+- Full backend baseline trước review: `222 passed, 4 warnings`.
 
-## Files canonical
+Active Hue Qdrant collection giữ read-only.
+
+## Package và file nền tảng
+
+Giữ package layout hiện tại của:
+
+```text
+api
+core
+embedding
+evaluation
+ingestion
+llm
+reranking
+retrieval
+scoring
+vectorstore
+```
+
+Files nền tảng được giữ:
 
 ```text
 backend/config/settings.yaml
 backend/config/logging.yaml
-backend/config/README_config.md
 backend/core/settings_loader.py
 backend/core/logging_setup.py
 backend/core/schema.py
-backend/api/__init__.py
-backend/api/routes/__init__.py
-backend/core/__init__.py
-backend/embedding/__init__.py
-backend/evaluation/__init__.py
-backend/ingestion/__init__.py
-backend/ingestion/chunking/__init__.py
-backend/ingestion/helpers/__init__.py
-backend/llm/__init__.py
-backend/reranking/__init__.py
-backend/reranking/models/__init__.py
-backend/retrieval/__init__.py
-backend/scoring/__init__.py
-backend/vectorstore/__init__.py
 ```
 
-`backend/data/`, `backend/scripts/` và `backend/test.ipynb` có sẵn trước phase và không thuộc scope.
+Không tạo package, interface hoặc factory mới trong Phase 1.
 
-## Configuration contract đã chấp nhận
+## Configuration contract
 
-Ba profile phải resolve như sau:
+`load_settings()` phải:
+
+1. đọc `backend/config/settings.yaml` bằng `yaml.safe_load`;
+2. kiểm tra `active_profile` nằm trong `profiles`;
+3. trả về settings mapping;
+4. ném `ValueError` có danh sách profile hợp lệ khi profile sai.
+
+Validation được viết trực tiếp trong `load_settings()`. Không giữ helper chỉ có
+một caller, không tạo typed/nested settings model và không thêm environment
+override dài.
+
+Ba profiles giữ nguyên:
 
 | Profile | `retrieval_mode` | `use_bm25` | `use_reranker` |
 |---|---|---:|---:|
@@ -68,144 +97,136 @@ Ba profile phải resolve như sau:
 | `hybrid_no_rerank` | `hybrid` | `true` | `false` |
 | `hybrid_rerank` | `hybrid` | `true` | `true` |
 
-Các nhóm config hiện có:
+Phase 1 chỉ sở hữu loader và profile validation. Các settings groups được
+review ở phase sở hữu chúng:
 
-```text
-active_profile
-profiles
-knowledge_base
-embedding
-vector_database
-retrieval
-reranking
-llm
-evaluation
-```
+| Group | Phase |
+|---|---:|
+| `knowledge_base` | 2 |
+| `embedding` | 3 |
+| `vector_database` | 4 |
+| `retrieval`, `reranking` | 5 |
+| `llm` | 6 |
+| `evaluation` | 7 impact assessment |
 
-`embedding.vector_size` và `vector_database.vector_size` cùng tồn tại trong as-built config. Chúng phải đồng bộ; thay model/dimension yêu cầu reindex với collection reset được phê duyệt.
+Implementer không xóa hoặc kết nối field downstream trong scope Phase 1.
 
-## Interface contract
+## Logging contract
 
-`load_settings()`:
-
-- đọc YAML settings canonical;
-- trả về mapping settings;
-- xác nhận `active_profile` tồn tại trong `profiles`;
-- ném `ValueError` có danh sách profile hợp lệ khi profile sai;
-- không đọc environment secret trong Phase 1.
-
-`setup_logging()`:
+`setup_logging()` tiếp tục:
 
 - tạo `backend/logs/` khi cần;
-- áp dụng `backend/config/logging.yaml`;
-- log file luôn là `backend/logs/application.log` dù command chạy từ cwd nào;
-- không log config secret hoặc environment.
+- đọc `backend/config/logging.yaml`;
+- áp dụng config bằng `logging.config.dictConfig`;
+- pin log file theo backend path để không phụ thuộc cwd.
 
-`RetrievedDocument` là shared schema cho các phase retrieval/reranking/context sau này. Phase 1 chỉ định nghĩa schema, không tạo retrieval behavior.
+Ba runtime entrypoint phải gọi hàm này:
 
-## Brainstorming
+```text
+FastAPI lifespan -> setup_logging() -> build runtime
+ingestion main() -> setup_logging() -> run_ingestion()
+evaluation main() -> setup_logging() -> launch Gradio
+```
 
-Không cần brainstorming lại. Các quyết định sau đã khóa:
+Không gọi `setup_logging()` ở import time. Module con chỉ dùng
+`logging.getLogger(...)`. Không thêm wrapper, decorator, middleware, retry,
+rotation hoặc remote logging.
 
-- Dùng YAML config tập trung.
-- Profile validation fail fast.
-- Package markers giữ tối giản.
-- Environment override được hoãn đến phase thực sự cần provider credentials.
-- Phase 1 không thêm unit test file vì approved gate dùng compile và smoke commands.
+Log được phép chứa identifiers, counts, startup state và non-sensitive summary.
+Không log secrets, environment values, full settings, raw question/context/
+answer, vectors hoặc knowledge-base body. Logging config lỗi phải fail rõ ràng;
+không có fallback âm thầm.
 
-Nếu thay config group, schema field hoặc secret-loading policy, phải mở scope mới và phân tích ảnh hưởng đến Phase 3–8.
+## Shared schema và errors
 
-## Nhiệm vụ của DeepSeek Implementer
+`RetrievedDocument` là data contract Phase 1 cần giữ:
 
-Phase đã hoàn tất. Nếu có scope mới:
+```text
+id
+score
+text
+metadata
+```
 
-- không refactor adjacent modules;
-- duy trì backward compatibility cho guide phase sau hoặc cập nhật guide qua Codex trước;
-- viết test tái hiện nếu sửa logic;
-- không tự thay profile semantics;
-- tạo implementation report mới theo scope được phê duyệt.
+Các retrieval/generation error classes hiện có trong `core/schema.py` do Phase
+5–6 thêm vào. Phase 1 không sửa chúng. Phase 5 và Phase 6 sẽ quyết định giữ,
+đơn giản hóa hoặc xóa sau khi affected Phase 7 flow và toàn hệ thống an toàn.
 
-## Nhiệm vụ của Codex Reviewer
+## Scope của Implementer
 
-- Bảo vệ trạng thái as-built và accepted deviations.
-- Khi review scope mới, kiểm tra config drift, logging secret exposure, schema blast radius và import safety.
-- Không cho phép thay đổi lịch sử report/verdict để hợp thức hóa behavior mới.
+Sửa:
+
+```text
+backend/core/settings_loader.py
+backend/api/app.py
+backend/ingestion/pipeline.py
+backend/evaluation/evaluator.py
+```
+
+Xóa:
+
+```text
+notebooks/01_backend_foundation.ipynb
+backend/config/README_config.md
+```
+
+Không sửa config values, logging YAML structure, schema errors, tests hoặc
+module downstream ngoài thay đổi import/call tối thiểu đã nêu. Nếu cần mở rộng
+scope, dừng và báo user/Reviewer.
+
+Implementer viết implementation report mới, không sửa guide, simplicity
+review, Project Status hoặc reports lịch sử; không stage, commit hay push.
 
 ## Notebook
 
-Notebook remediation `notebooks/01_backend_foundation.ipynb` đã được tạo và
-technical review đạt. Notebook:
+Phase 1 không cần notebook. Notebook 01 hiện là smoke/validation suite cho
+package, config, logging và dataclass; code và guide đã đủ để con người hiểu.
 
-- giải thích backend package layout, settings, logging và shared schema bằng tiếng Việt;
-- import Phase 1 modules thay vì duplicate logic;
-- dùng safe smoke checks không cần network, model, Qdrant hoặc secret;
-- nêu kết quả mong đợi và checklist để người dùng xác nhận;
-- có outputs rỗng và mọi `execution_count=null` trước commit.
-
-## Validation đã được phê duyệt
-
-```bash
-cd backend
-uv run python -c "from core.settings_loader import load_settings; print(load_settings()['active_profile'])"
-uv run python -m py_compile core/settings_loader.py core/logging_setup.py core/schema.py
-```
-
-Bằng chứng đã chấp nhận:
-
-- `active_profile` trả về `dense_only`.
-- Cả ba profiles resolve đúng mode/BM25/reranker flags.
-- Profile không hợp lệ ném `ValueError` kèm valid list.
-- Ba core modules compile sạch.
-- Logging ghi console và đúng log path; smoke-test log được xóa sau validation.
-- Không đọc hoặc in secrets.
-
-## Accepted deviations
-
-- Có thêm `backend/config/README_config.md` để khớp directory design.
-- `vector_size` xuất hiện trong cả embedding và vector database config cùng cảnh báo sync/reindex.
-- Environment-variable override được hoãn đến Phase 6.
-- Logging file path được pin theo absolute backend path để không phụ thuộc cwd.
-
-## Known limitations
-
-- OpenAI model IDs trong config thời điểm review là defaults chưa được xác minh; Phase 6 phải dùng quyết định model mới đã được user chốt.
-- Qdrant/Docker availability chưa được kiểm tra; Phase 4 chịu trách nhiệm preflight.
-- Chưa có runtime ingestion, retrieval, model call, API hoặc evaluation.
-
-## Security, reliability và performance
-
-- Không có secret hoặc live access.
-- Settings loading deterministic và invalid profile fail fast.
-- Không có model loading hay external service overhead.
-- Logging không để lại smoke artifact sau review.
-
-## Reports và bằng chứng
+Notebook chỉ được tạo cho phase có giá trị học tập thật. Khi một phase giữ
+notebook, bắt buộc tham khảo:
 
 ```text
-reports/phase_1_backend_skeleton_implementation_report.md
-reports/phase_1_backend_skeleton_codex_review.md
-reports/user_reports/phase_1_backend_skeleton_user_report.md
+/home/minhhieu/llm_rag/tai_lieu/rag_old_0/*.ipynb
+/home/minhhieu/llm_rag/tai_lieu/notebook_simple/**/*.ipynb
 ```
 
-Kết luận kỹ thuật: `approved`. Người dùng đã chạy notebook, đọc báo cáo mới và
-xác nhận Giai đoạn 1 ngày 2026-08-09.
+## Verification
 
-## Tiêu chí phê duyệt
+Implementer và Reviewer phải dùng bằng chứng thật:
 
-- Backend package skeleton đúng phạm vi.
-- Settings load và profile validation hoạt động.
-- Logging hoạt động độc lập cwd.
-- Shared schema import được.
-- Không có network/model/Qdrant/data mutation.
-- Không có secret exposure.
-- Notebook Phase 1 đạt safety contract.
-- User report mô tả đúng validation/limitations và được người dùng xác nhận.
+1. compile các module bị ảnh hưởng;
+2. load canonical settings và kiểm tra cả ba profiles;
+3. gọi logging thật, quan sát console và `application.log`;
+4. start API với real Qdrant và local E5, kiểm tra startup/health;
+5. start evaluation UI đủ để xác nhận logging setup;
+6. chạy affected downstream integration tests;
+7. chạy full backend suite;
+8. chạy `git diff --check` và scan conflict marker.
 
-Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã đạt ngày
-2026-08-09.
+Không dùng mock/fake hoặc prior output làm completion evidence. Không mutation
+active collection. Nếu ingestion verification cần ghi Qdrant, dùng isolated
+real test collection.
+
+Không cần chạy lại full 104-question Phase 7 evaluation vì scope này không đổi
+RAG quality. Nếu implementation chạm chunk, vector, retrieval, context, prompt,
+model hoặc metric, dừng và mở rộng verification.
+
+## Acceptance
+
+Phase 1 chỉ trở lại `approved` khi:
+
+- code đúng exact scope, trực tiếp và user đọc được;
+- logging chạy qua cả ba real entrypoints;
+- settings/profile và `RetrievedDocument` không regression;
+- Notebook 01 và config README trùng lặp đã bị xóa;
+- affected flows và full backend suite pass bằng hệ thống thật;
+- không conflict hoặc thay đổi ngoài phạm vi;
+- simplicity review có After state và Reviewer conclusion;
+- user xác nhận kết quả.
 
 ## Bước tiếp theo
 
-Phase 1 đã hoàn thành và `approved`. Sau Phase 7, Phase 1 sẽ được review lại
-trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
-`guides/README.md`.
+Implementer thực hiện đúng guide/design và bàn giao implementation report.
+Reviewer sau đó chuyển phase sang `under_review`, kiểm tra độc lập và cập nhật
+living simplicity review. Phase 2 chỉ bắt đầu brainstorming sau khi Phase 1
+trở lại `approved`.

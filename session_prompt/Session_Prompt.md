@@ -237,8 +237,9 @@ Chi tiết foods curation thuộc
 
 ## Notebook
 
-Mỗi implementation Phase 1–8 có một notebook canonical mang đúng số phase.
-Milestone chỉ sửa governance/docs không cần notebook mới.
+Notebook không bắt buộc cho mọi phase. Canonical guide quyết định phase có cần
+notebook hay không dựa trên giá trị học tập thật. Không tạo notebook chỉ để đủ
+số phase; milestone chỉ sửa governance/docs không cần notebook.
 
 - Notebook phải giúp con người hiểu hệ thống.
 - Mỗi cell chỉ làm một việc.
@@ -250,6 +251,10 @@ Milestone chỉ sửa governance/docs không cần notebook mới.
 - Reviewer chạy Run All thật trên temporary copy.
 - Không lưu secrets, raw headers, raw provider payload hoặc sensitive stack
   trace.
+
+Phase 1 không cần notebook sau simplicity review. Notebook hiện có của Phase
+2–8 được giữ hoặc xóa tại review của chính phase đó, không quyết định thay từ
+Phase 1.
 
 Phong cách bắt buộc:
 

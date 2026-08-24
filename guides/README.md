@@ -30,7 +30,7 @@ Report không tạo requirement hoặc quyền mở rộng scope.
 - Chốt mục tiêu, phạm vi và lựa chọn quan trọng.
 - Duyệt design trước implementation.
 - Cho phép provider/model/data/run type trong guide.
-- Chạy notebook và xác nhận hoặc yêu cầu sửa.
+- Chạy notebook và xác nhận khi phase đó thực sự cần notebook.
 - Cấp quyền commit/push riêng khi muốn.
 
 ### Implementer
@@ -38,13 +38,13 @@ Report không tạo requirement hoặc quyền mở rộng scope.
 - Chỉ implement phase `ready` hoặc exact correction scope.
 - Xem guide là read-only.
 - Viết code đơn giản và chạy real system.
-- Tạo/cập nhật notebook Phase 1–8.
+- Chỉ tạo/cập nhật notebook khi canonical guide yêu cầu vì có giá trị học tập.
 - Viết implementation report.
 - Không tự approve, sửa guide/status, user report, commit hoặc push.
 
 ### Codex Reviewer
 
-- Review độc lập source, notebook, tests và real execution.
+- Review độc lập source, tests, real execution và notebook nếu phase có notebook.
 - Coi over-engineering là finding và yêu cầu loại bỏ.
 - Không sửa runtime thay Implementer.
 - Viết Codex review và user report.
@@ -72,8 +72,8 @@ Luồng:
 4. Nếu cần sửa, dùng `changes_requested`.
 5. Nếu technical review đạt, guide vẫn `under_review`; user report ghi bằng
    tiếng Việt rằng đang chờ user xác nhận.
-6. Sau khi user chạy notebook và xác nhận, Reviewer chuyển guide thành
-   `approved` và cập nhật project status.
+6. Sau khi user kiểm tra kết quả, và chạy notebook nếu phase có notebook,
+   Reviewer chuyển guide thành `approved` và cập nhật project status.
 
 Sau lần `changes_requested` thứ 4, dừng trước vòng sửa thứ 5 để audit lại
 guide, design, plan, acceptance và findings. Nếu thiết kế quá phức tạp hoặc quá
@@ -83,13 +83,13 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 
 | Phase | Guide | Trạng thái | Kết quả / bước kế tiếp |
 |---:|---|---|---|
-| 0 | `phase_0_mvp_foundation.md` | `approved` | Đã hoàn thành; review đơn giản hóa sau Phase 7 |
-| 1 | `phase_1_backend_skeleton.md` | `approved` | Đã hoàn thành; review lại sau Phase 7 |
-| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Đã hoàn thành; review lại sau Phase 7 |
-| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Đã hoàn thành; review lại sau Phase 7 |
-| 4 | `phase_4_qdrant_ingestion.md` | `approved` | Đã hoàn thành; review lại sau Phase 7 |
-| 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Đã hoàn thành; review lại sau Phase 7 |
-| 6 | `phase_6_generation_api.md` | `approved` | Đã hoàn thành; review lại sau Phase 7 |
+| 0 | `phase_0_mvp_foundation.md` | `approved` | Simplicity review đã approved; Phase 1 đã chuyển sang `ready` |
+| 1 | `phase_1_backend_skeleton.md` | `ready` | Design/plan đã sẵn sàng; user chưa giao Implementer |
+| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Giữ approval cũ; chờ Phase 1 trở lại `approved` để review |
+| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Giữ approval cũ; chờ review Phase 2 |
+| 4 | `phase_4_qdrant_ingestion.md` | `approved` | Giữ approval cũ; chờ review Phase 3 |
+| 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Giữ approval cũ; chờ review Phase 4 |
+| 6 | `phase_6_generation_api.md` | `approved` | Giữ approval cũ; chờ review Phase 5 |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Evaluation đơn giản đã chạy thật, review và được user xác nhận |
 | 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Chờ review và đơn giản hóa Phase 0–6 |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
@@ -99,16 +99,15 @@ Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 ## Thứ tự thực hiện
 
 ```text
-hoàn tất governance đơn giản
--> implement và approve Phase 7 đơn giản
--> review và đơn giản hóa Phase 0 -> Phase 6
+Phase 0 simplicity review đã approved
+-> review và đơn giản hóa Phase 1 -> Phase 6
 -> chạy lại affected Phase 7 evaluation
 -> cân nhắc Phase 8
 ```
 
 Review Phase 0–6 theo dependency order để thay đổi nền tảng không làm invalid
 phase cao vừa sửa. Repo và live system là nguồn đối chiếu chính: guide,
-reports, source code, notebook và real run đủ để bắt đầu. Tài liệu ngoài do
+reports, source code, notebook nếu có và real run đủ để bắt đầu. Tài liệu ngoài do
 user cung cấp chỉ dùng khi thực sự hữu ích; nếu thiếu mà còn lựa chọn quan
 trọng, brainstorm với user trước khi duyệt design thay đổi.
 
@@ -129,22 +128,23 @@ cần thiết.
 
 ## Notebook
 
-Mỗi implementation Phase 1–8 có một notebook canonical:
+Notebook chỉ tồn tại khi nó giúp con người hiểu hoặc quan sát một luồng quan
+trọng tốt hơn code và guide. Canonical guide của từng phase phải nói rõ phase
+có cần notebook hay không. Không tạo notebook để đủ số phase.
+
+Phase 1 không cần notebook sau simplicity review. Notebook của Phase 2–8 được
+đánh giá tại review của chính phase đó.
+
+Notebook được giữ phải: mỗi cell làm một việc, giải thích ngắn trước code, gọi
+hàm backend bằng code ngắn, không chứa validator/audit/test suite, có repository
+outputs rỗng và được Run All thật trên temporary copy.
+
+Phong cách bắt buộc:
 
 ```text
-notebooks/01_backend_foundation.ipynb
-notebooks/02_foods_data_and_chunking.ipynb
-notebooks/03_embedding_models.ipynb
-notebooks/04_qdrant_ingestion.ipynb
-notebooks/05_retrieval_profiles.ipynb
-notebooks/06_generation_and_api.ipynb
-notebooks/07_evaluation.ipynb
-notebooks/08_benchmark_model_selection.ipynb
+/home/minhhieu/llm_rag/tai_lieu/rag_old_0/*.ipynb
+/home/minhhieu/llm_rag/tai_lieu/notebook_simple/**/*.ipynb
 ```
-
-Notebook là tài liệu học cho con người: mỗi cell làm một việc, giải thích ngắn,
-code ngắn gọi backend, không chứa validator/audit/test suite, repository outputs
-rỗng và Run All thật trên temporary copy.
 
 ## Reports
 
@@ -152,11 +152,15 @@ rỗng và Run All thật trên temporary copy.
 reports/phase_<id>_<short_name>_implementation_report.md
 reports/phase_<id>_<short_name>_codex_review.md
 reports/user_reports/phase_<id>_<short_name>_user_report.md
+reports/phase_<id>_<short_name>_simplicity_review.md
 ```
 
 - Implementation report: sáu mục, ghi việc đã làm và observed results.
 - Codex review: sáu mục, ghi findings và independent real run.
-- User report: năm mục, dễ hiểu và hướng dẫn user chạy notebook.
+- User report: năm mục, dễ hiểu và hướng dẫn user kiểm tra kết quả, gồm notebook
+  khi phase có notebook.
+- Simplicity review: living record ghi Before/After, capability được giữ, phạm
+  vi ảnh hưởng, real verification, bug và cách xử lý khi review lại Phase 0–6.
 
 Reports không tạo governance mới, không che lỗi và không dùng expected/fake/old
 output làm fresh evidence.
