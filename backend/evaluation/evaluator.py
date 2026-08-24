@@ -2,6 +2,7 @@ from pathlib import Path
 
 import gradio as gr
 
+from core.logging_setup import setup_logging
 from evaluation.eval import (
     ANSWER_COLUMNS,
     ANSWER_RESULTS_FILE,
@@ -67,6 +68,7 @@ def build_app():
 
 
 def main():
+    setup_logging()
     build_app().launch(inbrowser=True)
 
 

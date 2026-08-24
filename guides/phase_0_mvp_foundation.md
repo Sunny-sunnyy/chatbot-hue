@@ -188,17 +188,23 @@ trong guide/report liên quan. Secrets chỉ đến từ environment.
 Verification đi theo phạm vi ảnh hưởng:
 
 ```text
-targeted real tests
--> canonical notebook Run All trên temporary copy nếu phase có notebook
+exact live path
+-> smallest necessary targeted tests nếu thực sự cần
+-> notebook Run All nếu phase có notebook và có giá trị học tập
 -> affected downstream flows
--> full backend suite
--> Phase 7 evaluation nếu chất lượng RAG có thể thay đổi
+-> full backend suite chỉ cho broad shared change hoặc final Phase 0–6 check
+-> Phase 7 evaluation 20 câu nếu chất lượng RAG có thể thay đổi
 ```
 
 Mỗi Phase 0–6 có một simplicity review ghi Before, capability cần giữ, thay đổi
 được duyệt, ảnh hưởng downstream, kết quả After, bug và cách xử lý. Không chạy
-lại paid 104-question evaluation cho thay đổi chỉ thuộc tài liệu hoặc refactor
-đã chứng minh không đổi hành vi.
+lại paid 104-question evaluation trong simplicity review thông thường.
+
+Mỗi phase chỉ audit test thuộc ownership và downstream scope bị ảnh hưởng trực
+tiếp. Test không bảo vệ nhu cầu người dùng, chỉ dựng lỗi giả định hiếm, trùng
+live path hoặc chỉ phục vụ cơ chế cần loại bỏ phải được xóa và không chạy. Một
+phase có thể không cần automated test. Failure test chỉ giữ cho lỗi thực tế
+quan trọng có nguy cơ tái diễn.
 
 Chi tiết chung thuộc `session_prompt/Session_Prompt.md`.
 

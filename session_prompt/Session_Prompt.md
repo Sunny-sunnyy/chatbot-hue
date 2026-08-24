@@ -151,9 +151,49 @@ cao hơn.
 - Mỗi test phải dễ đọc và giải thích được.
 - Trước khi giữ test cũ, trả lời: “Test này bảo vệ hành vi nào mà người dùng
   thực sự cần?”
+- Audit test theo ownership của phase hiện tại và downstream scope bị ảnh hưởng
+  trực tiếp; không audit lại toàn bộ suite ở mỗi phase.
+- Xóa test nếu không nêu được nhu cầu người dùng, chỉ dựng lỗi giả định hiếm,
+  trùng một live path rõ hơn hoặc chỉ bảo vệ cơ chế kỹ thuật cần loại bỏ.
+- Không chạy test đã xác định là không cần thiết. Một phase có thể không cần
+  automated test khi live verification đã đủ.
 - Task chỉ sửa docs hoặc không đổi logic có thể không cần automated test.
 - Không dùng mock hoặc fake trong test hay implementation.
 - Test pass không thay thế live integration run.
+
+Chọn verification theo blast radius:
+
+- bắt đầu bằng exact live path và smallest relevant test nếu test đó thực sự
+  cần;
+- chỉ chạy full backend suite khi shared runtime/data contract ảnh hưởng nhiều
+  phase hoặc ở cuối chiến dịch simplicity review Phase 0–6;
+- chỉ chạy evaluation 20 câu khi thay đổi có thể ảnh hưởng chunking, vector,
+  retrieval, reranking, context, prompt, model, judge hoặc metric;
+- không mặc định chạy evaluation 104 câu trong simplicity review.
+
+Failure test chỉ được giữ khi lỗi đã xảy ra thực tế, ảnh hưởng quan trọng và có
+nguy cơ tái diễn. Không dựng dead URL, xóa collection giữa request hoặc thay
+environment chỉ để tạo một lỗi giả định.
+
+## Debugging và tự review
+
+Khi có bug thật:
+
+```text
+tái tạo nhất quán -> thu bằng chứng -> chứng minh nguyên nhân gốc
+-> thử một focused fix -> chạy lại exact live path
+```
+
+- Không sửa nhiều giả thuyết cùng lúc hoặc chồng fallback/guard để che lỗi.
+- Chỉ thêm regression test khi bug quan trọng và có nguy cơ tái diễn; test phải
+  ngắn hơn và rõ hơn hành vi nó bảo vệ.
+- Sau thay đổi, tự review exact diff để tìm code/test dư thừa, logic lặp,
+  helper một-caller, abstraction phòng xa và data flow khó hiểu.
+- Chỉ giải thích design pattern khi pattern được chọn có chủ đích cho một
+  trade-off thật; giải pháp trực tiếp không cần gắn nhãn pattern.
+- Review security theo blast radius thật: input/API, secret, provider, data và
+  destructive target bị ảnh hưởng. Không tạo security checklist cho phần không
+  chạm security boundary.
 
 ## Chạy thật, dữ liệu thật
 

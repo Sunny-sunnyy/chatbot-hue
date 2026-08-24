@@ -1,6 +1,7 @@
 """Ingestion orchestration connecting chunking, embedding and Qdrant index."""
 import logging
 
+from core.logging_setup import setup_logging
 from core.settings_loader import load_settings
 from embedding.batch_embed import embed_in_batches
 from embedding.embedder import SentenceTransformerEmbedder
@@ -94,7 +95,7 @@ def run_ingestion(settings=None, *, chunker=None, embedder=None, client=None):
 
 def main():
     """Run ingestion with settings from disk and print the summary."""
-    logging.basicConfig(level=logging.INFO)
+    setup_logging()
     print(run_ingestion())
 
 

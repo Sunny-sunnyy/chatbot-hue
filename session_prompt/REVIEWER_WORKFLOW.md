@@ -119,6 +119,28 @@ reference bên ngoài.
 - Provider/network failure là kết quả thật, không thay bằng fallback giả.
 - Active Hue collection chỉ read-only.
 
+Trước khi chạy test, Reviewer audit test thuộc ownership của phase và affected
+scope trực tiếp:
+
+- test bảo vệ nhu cầu người dùng nào;
+- lỗi đã xảy ra thật, quan trọng và có nguy cơ tái diễn hay chỉ là giả định;
+- có live path ngắn, trực tiếp và dễ hiểu hơn hay không;
+- test có chỉ bảo vệ snapshot, fingerprint, validator, cost logic hoặc cơ chế
+  khác đang bị loại bỏ hay không.
+
+Test không cần thiết phải được yêu cầu xóa và không dùng làm verification.
+Không dựng dead URL, xóa collection giữa request hoặc thay environment chỉ để
+tạo failure giả định. Reviewer ưu tiên exact live path và smallest relevant
+test. Full backend suite chỉ chạy khi shared runtime/data contract có blast
+radius rộng hoặc ở cuối simplicity review Phase 0–6. Evaluation 20 câu chỉ
+chạy khi chất lượng RAG có thể thay đổi; không mặc định chạy bộ 104 câu.
+
+Khi review bug fix, Reviewer kiểm tra evidence tái tạo, root cause, một focused
+fix và exact live rerun. Chỉ yêu cầu regression test cho bug quan trọng có nguy
+cơ tái diễn. Reviewer cũng kiểm tra exact diff về simplicity, duplication và
+security boundary thực sự bị ảnh hưởng; không bắt buộc pattern hoặc security
+checklist khi chúng không có giá trị.
+
 Reviewer và Implementer được dùng online và paid API trong approved phase.
 Không yêu cầu consent gate, cost cap hoặc cost code. Provider/model/scope mới,
 deploy, active mutation hoặc destructive action vẫn cần user approval.
@@ -288,6 +310,8 @@ Không commit hoặc push trừ khi user yêu cầu riêng.
 
 - Đọc source/diff thuộc changed scope.
 - Chạy real verification phù hợp với guide.
+- Chỉ chạy test sau khi xác định test đó bảo vệ hành vi thật trong affected
+  scope; không dùng full suite như checkpoint mặc định.
 - Kiểm tra notebook theo quy tắc trên.
 - Chạy `git diff --check` và xem changed files.
 - Ghi rõ phần không thể kiểm tra.

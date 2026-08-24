@@ -142,25 +142,29 @@ the detailed audit trail. `Project_Status.md` holds only the current snapshot.
 Verification follows the actual blast radius:
 
 ```text
-targeted real tests
--> canonical notebook Run All on a temporary copy
+exact live path
+-> smallest necessary targeted tests, if any
 -> affected downstream flows
--> full backend suite
--> Phase 7 evaluation when RAG quality can change
+-> full backend suite only for broad shared changes or final Phase 0–6 check
+-> Phase 7 20-question evaluation only when RAG quality can change
 ```
 
 Pure deterministic calculations may be tested without an external service;
 that is not fake behavior. Claims about ingestion, retrieval, generation or
 API behavior require the real dependency.
 
-Re-run Phase 7 when a change affects chunks, answer-facing metadata,
+Run the Phase 7 20-question dataset when a change affects chunks, answer-facing metadata,
 embeddings, vector space, Qdrant payloads, retrieval, fusion, reranking,
-context, prompts or generation. Do not repeat paid 104-question evaluation for
-documentation-only changes or a refactor demonstrated not to change behavior.
+context, prompts, generation, judge or metrics. Do not repeat the paid
+104-question evaluation during ordinary simplicity review.
 
-Every phase ends with the full backend suite and `git diff --check`. Before
-editing, agents inspect `git status --short` and the exact file diffs. They
-preserve all out-of-scope user changes and check for merge markers.
+Each phase audits only tests it owns and tests directly affected by its changes.
+Tests that do not protect a real user need, reproduce only a hypothetical rare
+failure, duplicate a clearer live path or exist only for removed machinery are
+deleted and not run. A phase may require no automated test. Full backend runs
+are reserved for broad shared-contract changes and the final Phase 0–6 check.
+Every phase still runs `git diff --check`, inspects exact diffs, preserves
+out-of-scope user changes and checks for merge markers.
 
 ## Dependency order and blast radius
 

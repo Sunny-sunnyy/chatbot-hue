@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 
 from api.health import router as health_router
 from api.routes.chat import router as chat_router
+from core.logging_setup import setup_logging
 from core.settings_loader import load_settings
 from core.startup import build_retrieval_stack
 from llm.generator_openai import OpenAIAnswerGenerator
@@ -46,6 +47,7 @@ def create_app(settings=None):
 
     @asynccontextmanager
     async def lifespan(app):
+        setup_logging()
         retrieval_service = None
         retrieval_ready = False
         try:

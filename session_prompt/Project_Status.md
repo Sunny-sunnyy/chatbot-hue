@@ -52,8 +52,8 @@ thông thường.
 | Phase | Trạng thái | Kết quả hiện có / việc còn lại |
 |---:|---|---|
 | 0 | `approved` | Simplicity review đã approved; docs-only, không đổi runtime hoặc active collection |
-| 1 | `ready` | Design/plan đã sẵn sàng; user chưa giao Implementer và runtime chưa thay đổi |
-| 2 | `approved` | Giữ approval cũ; chờ Phase 1 trở lại `approved` để review |
+| 1 | `approved` | Backend foundation đã đơn giản hóa, chạy thật, review và được user xác nhận |
+| 2 | `approved` | Giữ approval cũ; bước tiếp theo là brainstorm simplicity review Phase 2 |
 | 3 | `approved` | Giữ approval cũ; chờ review Phase 2 |
 | 4 | `approved` | Giữ approval cũ; chờ review Phase 3 |
 | 5 | `approved` | Giữ approval cũ; chờ review Phase 4 |
@@ -91,13 +91,13 @@ cho nhiều implementation thật hoặc provider boundary thật, và yêu cầ
 Phase 1–6 có một hồ sơ Before/After. Không có runtime change; baseline mới nhất
 vẫn là full backend `222 passed, 4 warnings`.
 
-Phase 1 simplicity design đã được user duyệt ngày `2026-08-24 +07` và phase
-được mở lại ở `ready`. Approved scope: giữ YAML/settings/schema/package layout,
-kết nối `setup_logging()` tại API lifespan, ingestion main và evaluation main;
-inline active-profile validation; xóa Notebook 01 và config README trùng lặp.
-Downstream config và error classes chưa thay đổi. Runtime implementation vẫn
-chưa bắt đầu. Implementation plan đã sẵn sàng, nhưng user chưa giao nhiệm vụ
-cho Implementer; handoff sẽ diễn ra trong session tiếp theo.
+Phase 1 simplicity implementation đã được review và user xác nhận ngày
+`2026-08-24 +07`. YAML/settings/schema/package layout được giữ; logging chung
+đã kết nối tại API lifespan, ingestion main và evaluation main; active-profile
+validation đã inline; Notebook 01 và config README trùng lặp đã xóa. Live
+settings/logging/Uvicorn/Gradio/Qdrant checks đạt và active collection vẫn 572
+points. Hai suite 74/222 tests đã chạy là observed history quá rộng, không phải
+acceptance target hoặc bằng chứng rằng mọi test đều cần thiết.
 
 ## Quyết định hiện hành
 
@@ -105,6 +105,14 @@ cho Implementer; handoff sẽ diễn ra trong session tiếp theo.
 - Code phải rõ ràng, dễ hiểu và không kỹ thuật hơn nhu cầu thật.
 - Reviewer phải yêu cầu bỏ over-engineering.
 - Chỉ tạo test cho hành vi thật và lỗi quan trọng; không chạy theo số lượng.
+- Audit test theo ownership của phase; xóa và không chạy test không bảo vệ nhu
+  cầu người dùng, chỉ dựng lỗi giả định hoặc chỉ phục vụ cơ chế bị loại bỏ.
+- Exact live path là bằng chứng chính; một phase có thể không cần automated
+  test.
+- Full backend suite chỉ chạy cho shared runtime/data contract có blast radius
+  rộng hoặc final Phase 0–6 check.
+- Evaluation 20 câu chỉ chạy khi thay đổi có thể ảnh hưởng chất lượng RAG;
+  không mặc định chạy bộ 104 câu trong simplicity review.
 - Không dùng mock/fake trong test, implementation hoặc evidence.
 - Completion evidence đến từ dữ liệu và hệ thống thật.
 - Reviewer/Implementer được dùng online và paid API trong approved phase.
@@ -147,11 +155,12 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-Session tiếp theo: user giao Phase 1 plan cho Implementer
--> Implementer thực hiện và bàn giao report
--> Reviewer kiểm tra độc lập, user xác nhận Phase 1
--> brainstorm và đơn giản hóa lần lượt Phase 2 -> Phase 6
--> chạy lại affected Phase 7 evaluation sau mỗi thay đổi liên quan
+Brainstorm simplicity review Phase 2
+-> audit code/test thuộc ownership Phase 2
+-> Implementer thực hiện approved scope và Reviewer chạy exact live path
+-> tiếp tục lần lượt Phase 3 -> Phase 6
+-> chạy Phase 7 evaluation 20 câu khi thay đổi có thể ảnh hưởng chất lượng RAG
+-> chạy final full backend suite sau khi Phase 0–6 hoàn tất
 -> chỉ sau đó mới cân nhắc Phase 8
 ```
 

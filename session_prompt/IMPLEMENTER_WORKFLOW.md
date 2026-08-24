@@ -81,10 +81,37 @@ phức tạp vượt lợi ích, phải bỏ kỹ thuật đó.
 - Dùng real project data và dependency thật phù hợp với hành vi đang kiểm tra.
 - Mỗi test phải dễ đọc và trả lời được nó bảo vệ nhu cầu nào của user.
 - Trước khi giữ test cũ, đặt lại đúng câu hỏi đó.
+- Audit test thuộc phase hiện tại và downstream scope bị ảnh hưởng trực tiếp.
+- Xóa test cũ nếu không còn bảo vệ nhu cầu thật, chỉ dựng lỗi giả định, trùng
+  live verification hoặc chỉ phục vụ cơ chế đang bị loại bỏ.
+- Không chạy test đã xác định là không cần thiết; phase có thể không cần
+  automated test.
 - Test pass không thay live run.
 
-Chạy smallest relevant test trước. Chỉ mở rộng test scope khi shared behavior
-thực sự bị ảnh hưởng.
+Chạy exact live path và smallest relevant test trước. Chỉ chạy full backend
+suite khi shared runtime/data contract ảnh hưởng nhiều phase hoặc ở cuối chiến
+dịch simplicity review Phase 0–6. Chỉ chạy evaluation 20 câu khi thay đổi có
+thể ảnh hưởng chất lượng RAG; không mặc định chạy bộ 104 câu.
+
+Không dựng dead URL, xóa collection giữa request hoặc thay environment chỉ để
+tạo failure giả định. Chỉ giữ failure test cho lỗi thực tế quan trọng có nguy
+cơ tái diễn.
+
+## Debugging và tự review
+
+Khi có bug thật:
+
+1. tái tạo lỗi nhất quán;
+2. thu bằng chứng và chứng minh nguyên nhân gốc;
+3. thử một focused fix tại một thời điểm;
+4. sửa nguyên nhân thay vì thêm fallback hoặc guard che lỗi;
+5. chạy lại exact live path; chỉ thêm regression test khi thật sự cần.
+
+Trước handoff, tự review exact diff về code/test dư thừa, duplication,
+helper một-caller, abstraction phòng xa và data flow khó hiểu. Giải thích lựa
+chọn chỉ khi có trade-off thật; không bắt buộc nêu design pattern. Kiểm tra
+security theo input/API, secret, provider, data và destructive target thực sự
+bị thay đổi; không tạo security audit giả cho scope không liên quan.
 
 ## Chạy và xác minh thật
 

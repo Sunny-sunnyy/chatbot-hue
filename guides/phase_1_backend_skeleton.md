@@ -13,18 +13,18 @@ Phase 1 giữ nền tảng Python nhỏ và dễ đọc cho Hue Foods RAG:
 ## Trạng thái
 
 ```text
-Status: ready
+Status: approved
 Previous approval +07: 2026-08-09
 Simplicity design approval +07: 2026-08-24
-Implementer: not assigned
+Simplicity confirmation +07: 2026-08-24
+Implementer: Antigravity
 Reviewer: Codex
 ```
 
 Phase 1 từng được approve và đã làm nền cho Phase 2–7. User đã duyệt design
-đơn giản hóa mới; phase được mở lại ở trạng thái `ready`. Chưa có runtime change
-nào của vòng mới được thực hiện hoặc chấp nhận. Implementation plan đã sẵn
-sàng, nhưng user chưa giao nhiệm vụ cho Implementer; công việc sẽ bắt đầu trong
-session tiếp theo sau khi user thực hiện handoff.
+đơn giản hóa mới, implementation đã hoàn tất technical review độc lập và được
+user xác nhận ngày `2026-08-24 +07`. Phase đã trở lại `approved`; bước tiếp
+theo là brainstorm simplicity design Phase 2.
 
 Tài liệu bắt buộc:
 
@@ -43,7 +43,8 @@ guides/llm_rag_reference_for_hue_rag.md
 - `RetrievedDocument(id, score, text, metadata)`.
 - Mọi hành vi ingestion, embedding, Qdrant, retrieval, generation, API và
   evaluation đang hoạt động.
-- Full backend baseline trước review: `222 passed, 4 warnings`.
+- Full backend baseline lịch sử trước review: `222 passed, 4 warnings`; số test
+  không phải acceptance target hoặc bằng chứng rằng mọi test đều cần thiết.
 
 Active Hue Qdrant collection giữ read-only.
 
@@ -199,13 +200,14 @@ Implementer và Reviewer phải dùng bằng chứng thật:
 3. gọi logging thật, quan sát console và `application.log`;
 4. start API với real Qdrant và local E5, kiểm tra startup/health;
 5. start evaluation UI đủ để xác nhận logging setup;
-6. chạy affected downstream integration tests;
-7. chạy full backend suite;
-8. chạy `git diff --check` và scan conflict marker.
+6. xác nhận active collection và Phase 7 CSV không đổi;
+7. chạy `git diff --check` và scan conflict marker.
 
 Không dùng mock/fake hoặc prior output làm completion evidence. Không mutation
-active collection. Nếu ingestion verification cần ghi Qdrant, dùng isolated
-real test collection.
+active collection. Phase 1 không cần automated test: exact live paths trên đủ
+để chứng minh logging/settings wiring. Affected `74` tests và full `222` tests
+đã chạy trong review chỉ là observed history quá rộng, không phải requirement
+cho lần chạy lại.
 
 Không cần chạy lại full 104-question Phase 7 evaluation vì scope này không đổi
 RAG quality. Nếu implementation chạm chunk, vector, retrieval, context, prompt,
@@ -219,14 +221,12 @@ Phase 1 chỉ trở lại `approved` khi:
 - logging chạy qua cả ba real entrypoints;
 - settings/profile và `RetrievedDocument` không regression;
 - Notebook 01 và config README trùng lặp đã bị xóa;
-- affected flows và full backend suite pass bằng hệ thống thật;
+- API, Gradio, logging, settings và Qdrant live checks đạt;
 - không conflict hoặc thay đổi ngoài phạm vi;
 - simplicity review có After state và Reviewer conclusion;
 - user xác nhận kết quả.
 
 ## Bước tiếp theo
 
-Implementer thực hiện đúng guide/design và bàn giao implementation report.
-Reviewer sau đó chuyển phase sang `under_review`, kiểm tra độc lập và cập nhật
-living simplicity review. Phase 2 chỉ bắt đầu brainstorming sau khi Phase 1
-trở lại `approved`.
+Brainstorm simplicity review Phase 2. Audit code/test theo ownership Phase 2,
+ưu tiên live Markdown/chunking path và không mặc định chạy full backend suite.
