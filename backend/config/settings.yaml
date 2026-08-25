@@ -27,26 +27,10 @@ knowledge_base:
     - meta
 
 embedding:
-  provider: sentence_transformer
   model: intfloat/multilingual-e5-small
   vector_size: 384
   device: cpu
   batch_size: 64
-  # E5 instruction prefixes; document indexing and query retrieval must use
-  # their own prefix, never the raw string for both paths.
-  document_prefix: "passage: "
-  query_prefix: "query: "
-  # OpenRouter adapter is live-ready only and never activates by default.
-  # No vector_size here: the exact Qwen3 Embedding dimension must be
-  # re-verified from the OpenRouter catalog/model card before any live run.
-  remote:
-    provider: openrouter
-    model: qwen/qwen3-embedding-0.6b
-    input_type_document: search_document
-    input_type_query: search_query
-    batch_size: 64
-    timeout: 30
-    max_retries: 2
 
 vector_database:
   url: http://localhost:6333

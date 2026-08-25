@@ -105,10 +105,10 @@ def real_chunks():
 @pytest.fixture(scope="session")
 def real_embedder():
     """The real local E5 embedder loaded once per session."""
-    from embedding.embedder import SentenceTransformerEmbedder
+    from embedding.embedder import E5Embedder
 
     embedding = load_settings()["embedding"]
-    return SentenceTransformerEmbedder(
+    return E5Embedder(
         model_id=embedding["model"],
         dimension=embedding["vector_size"],
         device=embedding["device"],

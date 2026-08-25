@@ -3,8 +3,7 @@ import logging
 
 from core.logging_setup import setup_logging
 from core.settings_loader import load_settings
-from embedding.batch_embed import embed_in_batches
-from embedding.embedder import SentenceTransformerEmbedder
+from embedding.embedder import E5Embedder
 from embedding.sparse_embedder import SparseEmbedder
 from ingestion.chunking.markdown_chunker import chunk_foods_markdown
 from vectorstore.hybrid_index import build_points, validate_chunks
@@ -40,7 +39,7 @@ def _reject_reset(settings):
 def _build_embedder(settings):
     """Build the local dense embedder from settings."""
     embedding = settings["embedding"]
-    return SentenceTransformerEmbedder(
+    return E5Embedder(
         model_id=embedding["model"],
         dimension=embedding["vector_size"],
         device=embedding["device"],
@@ -69,11 +68,8 @@ def run_ingestion(settings=None, *, chunker=None, embedder=None, client=None):
         )
     texts = [chunk["text"] for chunk in chunks]
     sparse_embedder = SparseEmbedder().fit(texts)
-    dense = embed_in_batches(
-        embedder if embedder is not None else _build_embedder(settings),
-        texts,
-        embedding["batch_size"],
-    )
+    dense_embedder = embedder if embedder is not None else _build_embedder(settings)
+    dense = dense_embedder.embed_documents(texts)
     sparse = [sparse_embedder.encode(text) for text in texts]
     points = build_points(chunks, dense, sparse, embedding["model"], db["vector_size"])
     client = client_from_settings(settings) if client is None else client

@@ -11,7 +11,7 @@ from core.schema import (
     RetrievalDependencyError,
 )
 from core.settings_loader import load_settings
-from embedding.embedder import SentenceTransformerEmbedder
+from embedding.embedder import E5Embedder
 from reranking.base import BaseReranker
 from reranking.models.cross_encoder import CrossEncoderReranker
 from retrieval.dense_retriever import DenseRetriever
@@ -71,7 +71,7 @@ class RetrievalStack:
 def _query_embedder(settings):
     """Build the local query embedder from settings; model loads lazily."""
     embedding = settings["embedding"]
-    return SentenceTransformerEmbedder(
+    return E5Embedder(
         model_id=embedding["model"],
         dimension=embedding["vector_size"],
         device=embedding["device"],
@@ -82,9 +82,9 @@ def _query_embedder(settings):
 def _warm_embedder(embedder):
     """Load the real embedding model and verify one warm-up vector.
 
-    embed_query() applies the shared BaseEmbedder validation: dimension,
-    finiteness, non-zero norm and L2 normalization. The warm-up text is an
-    internal constant: never a user query and never logged.
+    embed_query() validates non-empty query text and embedding dimension.
+    The warm-up text is an internal constant: never a user query and never
+    logged.
     """
     try:
         embedder.embed_query(E5_WARMUP_QUERY)

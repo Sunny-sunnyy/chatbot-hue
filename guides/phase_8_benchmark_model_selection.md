@@ -26,18 +26,39 @@ Local baseline:
 
 ```text
 Dense: intfloat/multilingual-e5-small, CPU, 384 dimensions
-Sparse: custom TF-IDF-style SparseEmbedder
 Lexical: Python BM25
 Reranker: cross-encoder/ms-marco-MiniLM-L-6-v2, CPU
 Generator: gpt-5.4-nano
 Judge: gpt-5.4-mini
 ```
 
-Ba retrieval profiles:
+Custom TF-IDF sparse vectors hiện còn được lưu để giữ compatibility với Phase
+4, nhưng query runtime không dùng chúng. Canonical lexical path cho benchmark
+là dense Qdrant candidates rồi Python BM25 fusion; coordinated review Phase
+4–5 quyết định thời điểm bỏ sparse storage/schema.
 
-- `dense_only`;
-- `hybrid_no_rerank`;
-- `hybrid_rerank`.
+Ba retrieval profiles có exact mapping:
+
+```yaml
+profiles:
+  dense_only:
+    retrieval_mode: dense
+    use_bm25: false
+    use_reranker: false
+  hybrid_no_rerank:
+    retrieval_mode: hybrid
+    use_bm25: true
+    use_reranker: false
+  hybrid_rerank:
+    retrieval_mode: hybrid
+    use_bm25: true
+    use_reranker: true
+```
+
+`hybrid_no_rerank` lấy dense candidates trước rồi thêm Python BM25. Profile
+`hybrid_rerank` dùng đúng output đó và thêm CrossEncoder; nó không mở một
+candidate-generation path khác. Không mặc định hybrid luôn tốt hơn
+`dense_only`; winner phải đến từ observed metrics.
 
 ## Experiment groups
 
@@ -52,6 +73,40 @@ Mỗi experiment chỉ thay đổi một nhóm biến:
 | Generator | provider/model/prompt/settings | context, questions và judge |
 
 Chỉ mở một group khi Phase 7 hoặc user cho thấy vấn đề thật cần giải quyết.
+
+## Dense embedding candidates và OpenRouter
+
+Local E5 là control baseline. OpenRouter embedding chỉ được implement khi user
+duyệt một dense-embedding experiment group cụ thể ở Phase 8.
+
+Trước khi viết adapter hoặc chạy paid comparison phải xác minh lại bằng API và
+catalog hiện hành:
+
+- exact embeddings endpoint và response schema;
+- exact provider/model ID;
+- output dimension hoặc dimension parameter;
+- query/document instructions hoặc input types;
+- input/token limits và batching support;
+- pricing, rate limits, timeout và observed provider reliability;
+- multilingual/Vietnamese relevance đủ để đưa candidate vào controlled run.
+
+Không mang lại `OpenRouterEmbedder`, config hoặc tests lịch sử từ Phase 3.
+Adapter/config Phase 8 được viết theo actual candidate đã duyệt, chạy real API
+và fail rõ; không mock HTTP, fake vector hoặc silent fallback sang local E5.
+
+Nếu model có dimension hoặc vector space khác baseline, tạo exact isolated
+collection/index cho candidate sau khi user duyệt transition. Không trộn vectors
+từ hai models và không mutate active baseline collection.
+
+Mỗi embedding candidate chạy trên cùng canonical chunks, evaluation questions,
+retrieval settings và metrics. Khi user duyệt đủ scope, candidate được so sánh
+trên cùng tập profile trong ba profile ở trên. Báo cáo tách rõ:
+
+- retrieval quality/accuracy;
+- embedding và end-to-end latency;
+- failures, variance và reliability/stability giữa các run;
+- actual API cost/usage quan sát được;
+- độ phức tạp vận hành và code phải duy trì.
 
 ## So sánh công bằng
 
@@ -73,7 +128,8 @@ settings và command/notebook đơn giản; không cần immutable run package.
 2. Xác định failure hoặc limitation thật.
 3. User duyệt candidate và một experiment group.
 4. Chạy candidate bằng cùng dữ liệu/metric.
-5. So sánh quality, latency, reliability và độ phức tạp.
+5. So sánh quality/accuracy, latency, reliability/stability, actual cost và độ
+   phức tạp.
 6. Loại candidate không tạo lợi ích tương xứng.
 7. User chọn trade-off cuối.
 

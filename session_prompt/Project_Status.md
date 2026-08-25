@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-24 +07`
+Last updated: `2026-08-25 +07`
 
 ## Mục tiêu
 
@@ -54,8 +54,8 @@ thông thường.
 | 0 | `approved` | Simplicity review đã approved; docs-only, không đổi runtime hoặc active collection |
 | 1 | `approved` | Backend foundation đã đơn giản hóa, chạy thật, review và được user xác nhận |
 | 2 | `approved` | Foods Markdown chunking đã đơn giản hóa, chạy thật, review và được user xác nhận |
-| 3 | `approved` | Giữ approval cũ; bước tiếp theo là brainstorm simplicity review Phase 3 |
-| 4 | `approved` | Giữ approval cũ; chờ review Phase 3 |
+| 3 | `approved` | Embedding/sparse đã được đơn giản hóa, chạy thật, review và được user xác nhận |
+| 4 | `approved` | Giữ approval cũ; bước tiếp theo là simplicity review Phase 4 |
 | 5 | `approved` | Giữ approval cũ; chờ review Phase 4 |
 | 6 | `approved` | Giữ approval cũ; chờ review Phase 5 |
 | 7 | `approved` | Evaluation đơn giản đã chạy thật, đạt technical review và được user xác nhận |
@@ -107,6 +107,22 @@ Phase 2 behaviors; downstream 79 và full 206 test runs chỉ là observed evide
 theo blast radius của refactor, không phải acceptance target hoặc checkpoint
 mặc định cho các lần chạy sau.
 
+Phase 3 simplicity implementation đã được review và user xác nhận ngày
+`2026-08-25 +07`. Dense runtime nay chỉ còn concrete `E5Embedder` với
+instance-owned lazy model, E5 prefixes cố định và native batching; provider
+abstraction, outer batching và OpenRouter adapter/config/tests đã bị xóa. Sparse
+TF-IDF được làm rõ hơn nhưng giữ Phase 4 compatibility.
+
+Observed Phase 3 result:
+
+- Notebook 03 Run All: 572 x 384, norm 1.0, 26.13 giây;
+- active `dense_only` query trả 10 results với top chunk Bún bò Huế;
+- focused 10, affected 59 và full backend 190 tests đã pass;
+- active `hue_foods_e5_small_384` vẫn 572 points và không còn guarded
+  test collection;
+- không chạy lại Phase 7 evaluation vì model, dimension, instructions và
+  retrieval behavior được giữ; real active query đã pass.
+
 ## Quyết định hiện hành
 
 - Mỗi phase có một guide canonical.
@@ -141,6 +157,12 @@ mặc định cho các lần chạy sau.
   đổi có thể ảnh hưởng chất lượng RAG.
 - Quyết định giữ, bỏ hoặc dùng native Qdrant sparse vectors thuộc review Phase
   3–5; collection hiện tại được giữ nguyên trong Phase 0.
+- Lexical target đã được user chốt: Qdrant dense candidates -> Python BM25
+  fusion -> optional CrossEncoder. Stored sparse vectors tạm giữ trong Phase 3
+  và sẽ được xử lý có phối hợp ở review Phase 4–5.
+- OpenRouter embedding không còn là Phase 3 runtime boundary. Phase 8 mới xác
+  minh exact API/model/dimension/limits/pricing và tạo adapter/config theo
+  candidate được duyệt.
 
 Các cơ chế cost accounting, consent gate, calibration, resume, run identity,
 timestamp package, checksum, package matching, tamper detection, partial
@@ -163,10 +185,8 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-Brainstorm simplicity review Phase 3
--> audit code/test thuộc ownership Phase 3
--> Implementer thực hiện approved scope và Reviewer chạy exact live path
--> tiếp tục lần lượt Phase 4 -> Phase 6
+Phase 3 simplicity review đã approved
+-> tiếp tục simplicity review Phase 4 -> Phase 6
 -> chạy Phase 7 evaluation 20 câu khi thay đổi có thể ảnh hưởng chất lượng RAG
 -> chạy final full backend suite sau khi Phase 0–6 hoàn tất
 -> chỉ sau đó mới cân nhắc Phase 8
@@ -203,6 +223,10 @@ reports/phase_1_backend_skeleton_simplicity_review.md
 docs/superpowers/specs/2026-08-24-phase-2-foods-markdown-chunking-simplicity-design.md
 docs/superpowers/plans/2026-08-24-phase-2-foods-markdown-chunking-simplicity-implementation.md
 reports/phase_2_foods_markdown_chunking_simplicity_review.md
+docs/superpowers/specs/2026-08-24-phase-3-embedding-sparse-representation-simplicity-design.md
+docs/superpowers/plans/2026-08-24-phase-3-embedding-sparse-representation-simplicity-implementation.md
+reports/phase_3_embedding_sparse_representation_simplicity_review.md
+guides/phase_3_embedding_sparse_representation.md
 ```
 
 Phase 7:

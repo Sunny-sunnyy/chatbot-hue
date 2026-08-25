@@ -1,78 +1,76 @@
 # Báo cáo dành cho người dùng: Giai đoạn 3 - Biểu diễn dữ liệu để tìm kiếm
 
-## Trạng thái hiện tại
-
 ```text
 Trạng thái: Đã được bạn xác nhận
-Cập nhật lúc: 11-08-2026 16:43
-Tệp thực hành cần kiểm tra: notebooks/03_embedding_models.ipynb
+Cập nhật lúc: 25-08-2026 09:36 +07
+Notebook cần kiểm tra: notebooks/03_embedding_models.ipynb
 ```
 
-Kiểm tra kỹ thuật đã đạt và bạn đã chạy, xác nhận tệp thực hành. Giai đoạn 3
-đã hoàn tất.
+## 1. Bạn nhận được gì
 
-## Bạn nhận được gì từ giai đoạn này
+572 đoạn dữ liệu ẩm thực Huế có thể được biến thành dense vectors để
+tìm nội dung gần nghĩa và sparse TF-IDF vectors để giữ tín hiệu từ khóa.
+Dense embedding chạy local bằng multilingual E5 trên CPU; không cần
+OpenRouter hay API trả phí.
 
-Hệ thống giờ có hai cách biểu diễn mỗi đoạn dữ liệu ẩm thực Huế. Dense vector
-giúp tìm nội dung gần nghĩa; sparse vector giữ tín hiệu từ khóa như tên món,
-tên quán và địa điểm.
+Mã nguồn nay đi thẳng qua một `E5Embedder`, bỏ các lớp provider,
+batching vòng ngoài và adapter remote chưa dùng. Kết quả dễ đọc hơn mà
+vẫn truy vấn được active Qdrant hiện tại.
 
-Giai đoạn này cũng chuẩn bị một adapter OpenRouter để dùng trong benchmark sau.
-Adapter chưa gọi dịch vụ ngoài và chưa tạo chi phí.
-
-## Hệ thống hoạt động như thế nào
+## 2. Hệ thống hoạt động như thế nào
 
 ```text
-572 đoạn dữ liệu đã curate
-  -> E5 local tạo dense vector đã chuẩn hóa
-  -> TF-IDF tạo sparse vector từ từ khóa
-  -> Giai đoạn 4 sẽ lưu cả hai vào Qdrant
+572 đoạn dữ liệu ẩm thực
+-> E5 thêm vai trò passage cho tài liệu
+-> tạo vector 384 chiều đã chuẩn hóa
+-> câu hỏi dùng vai trò query
+-> Qdrant tìm các đoạn gần nghĩa
 ```
 
-E5 dùng tiền tố khác nhau cho tài liệu và câu hỏi để mô hình phân biệt hai mục
-đích. Nếu vector sai kích thước, không hợp lệ hoặc không thể chuẩn hóa, hệ thống
-dừng ngay thay vì tạo dữ liệu tìm kiếm sai.
+Sparse TF-IDF đếm từ trong corpus theo thứ tự ổn định. Biểu diễn
+này tạm thời được giữ để tương thích với schema Giai đoạn 4; luồng
+tìm kiếm hybrid hiện dùng dense candidates rồi chấm Python BM25.
 
-## Kết quả Codex đã kiểm tra
+## 3. Codex đã chạy và quan sát gì
 
-| Nội dung kiểm tra | Kết quả | Ý nghĩa |
+| Nội dung | Kết quả quan sát | Ý nghĩa |
 |---|---|---|
-| Kiểm thử tự động | 74 kiểm thử đạt | Dense, sparse, batching, lỗi kích thước, zero vector và lỗi adapter remote đều có kiểm tra cục bộ. |
-| E5 local offline | 384 số cho một câu hỏi, norm bằng 1 | Vector phù hợp với cấu hình cosine và không cần tải model từ mạng. |
-| Sparse vector | Kiểm tra TF-IDF và thứ tự vocabulary đạt | Từ khóa tiếng Việt được biểu diễn ổn định giữa các lần fit cùng corpus. |
-| Tệp thực hành | Schema hợp lệ, 13 cells, outputs trống | Tệp an toàn để bạn chạy; bản lưu trong repo không chứa kết quả hay dữ liệu nhạy cảm. |
-| Dịch vụ ngoài | Không có lệnh gọi nào | Không phát sinh phí OpenRouter, không dùng Qdrant và không cần API key ở chế độ mặc định. |
+| E5 và sparse focused checks | 10 checks đạt | Các vai trò query/document, kích thước, norm và TF-IDF hoạt động trên model/code thật |
+| Notebook Run All | 572 x 384, norm 1.0, 26.13 giây | Toàn bộ corpus được embed local thành công |
+| Ví dụ query/document | Cosine 0.9401 | E5 dùng hai vai trò khác nhau nhưng cùng biểu diễn đúng nội dung |
+| Active Qdrant query | 10 kết quả; top là bài Bún bò Huế | Implementation mới tương thích index 572 points hiện tại |
+| Downstream/full backend | 59 và 190 checks đạt | Không quan sát regression trong shared runtime |
+| An toàn dữ liệu | Active collection vẫn 572 points; không còn test collection | Review không ghi vào active collection |
 
-## Cách bạn tự kiểm tra
+Thư viện sentence-transformers có cảnh báo đổi tên một method dimension.
+Kết quả 384 dimensions vẫn đúng; đây không phải lỗi runtime hiện tại.
 
-Mở `notebooks/03_embedding_models.ipynb` và chạy từ trên xuống. Notebook dùng
-E5 thật từ local cache với `HF_HUB_OFFLINE=1`, không tải thêm model, không gọi
-OpenRouter và không phát sinh chi phí.
+## 4. Cách bạn chạy lại
 
-Bạn cần thấy 572 đoạn dữ liệu, sparse vocabulary 2093 từ, kết quả ổn định khi
-fit lại, thứ tự vector được giữ nguyên và ví dụ TF-IDF tính tay khớp. Các kết
-quả này cho thấy dữ liệu đã sẵn sàng cho bước lập chỉ mục ở Giai đoạn 4.
+Mở `notebooks/03_embedding_models.ipynb` từ repo root và chọn **Run All**.
+Máy cần project environment đã cài bằng `uv`, local E5 model cache và
+572 curated foods chunks. Notebook không cần Qdrant, API key, internet hay paid
+API.
 
-Notebook chạy E5 từ cache local khi Run All; process cần khoảng 1,5 GiB RAM và
-không cần API key.
+Kết quả quan trọng cần thấy:
 
-## Giới hạn hiện tại
+- `chunk_count: 572` và `dense_shape: 572 x 384`;
+- `first_vector_norm` xấp xỉ `1.0`;
+- query và document đều có 384 dimensions;
+- sparse sample có 3 documents, vocabulary size 7 và indices/values hiển thị.
 
-- Chưa có Qdrant, truy xuất hay câu trả lời chatbot; đây là các giai đoạn sau.
-- Adapter OpenRouter mới sẵn sàng về mặt mã nguồn. Chưa có live request, chưa
-  đo chất lượng và chưa xác minh dimension thực tế của model remote.
-- Sparse vocabulary/IDF được tạo lại mỗi khi process khởi động. Với 572 đoạn
-  hiện tại, đây là chi phí nhỏ và tránh dùng artifact cũ.
+Các kết quả này chứng minh Notebook đang gọi public backend flow trên dữ
+liệu và model thật.
 
-## Bước tiếp theo và cách xác nhận
+## 5. Giới hạn và bước tiếp theo
 
-Bạn đã xác nhận Giai đoạn 3. Bước tiếp theo là brainstorming Giai đoạn 4 để
-chốt collection Qdrant và ingestion; Giai đoạn 4 chưa được mở để implement.
-
-## Nếu bạn muốn xem chi tiết kỹ thuật
-
-- [Hướng dẫn Giai đoạn 3](../../guides/phase_3_embedding_sparse_representation.md): phạm vi, quyết định và điều kiện kiểm tra.
-- [Kết quả Codex kiểm tra](../phase_3_embedding_sparse_representation_codex_review.md): lệnh và bằng chứng kỹ thuật.
-- [Báo cáo triển khai](../phase_3_embedding_sparse_representation_implementation_report.md): chi tiết implementation và giới hạn đã biết.
-- [Dense embedder](../../backend/embedding/embedder.py): E5 local, prefix và model cache.
-- [Sparse embedder](../../backend/embedding/sparse_embedder.py): cách tạo sparse vector từ từ khóa.
+- OpenRouter embedding chưa được implement; việc chọn candidate và chạy API
+  thật thuộc Giai đoạn 8.
+- Sparse vectors vẫn được lưu để giữ compatibility. Simplicity review
+  Giai đoạn 4–5 sẽ xử lý schema này có phối hợp.
+- Phase 7 evaluation không chạy lại vì model, instruction và retrieval
+  behavior không đổi; real active query đã đạt.
+- Bạn đã xác nhận Giai đoạn 3 ngày 25-08-2026; phase hiện
+  `approved`.
+- Bước tiếp theo là simplicity review Giai đoạn 4. Việc commit/push
+  vẫn cần yêu cầu riêng.

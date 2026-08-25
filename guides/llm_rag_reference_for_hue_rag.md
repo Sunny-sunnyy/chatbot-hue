@@ -221,9 +221,15 @@ Phần nên học:
 
 - load local model một lần;
 - normalized dense vectors;
-- batching trực tiếp;
+- truyền batch size trực tiếp cho model thay vì chia cùng workload ở hai tầng;
 - vocabulary/DF/IDF dễ đọc cho BM25;
 - OpenAI Agents SDK có thể dùng với OpenAI-compatible OpenRouter endpoint.
+
+Phase 3 simplicity review đã chốt local baseline thành một concrete
+`E5Embedder`: instance sở hữu lazy-loaded model, tự thêm `passage:`/`query:`,
+gọi SentenceTransformer native batching và chỉ validate input/count/dimension
+cần thiết. Không copy module-global singleton hoặc helper batching của
+`llm_rag`; không giữ `BaseEmbedder` khi chỉ có một implementation thật.
 
 `hue_rag` có hai nhu cầu OpenRouter khác nhau và phải giữ chúng tách biệt:
 
@@ -234,6 +240,10 @@ Phần nên học:
 OpenRouter là nhu cầu roadmap thật, nhưng adapter chỉ được coi là hoàn thành
 khi code đơn giản và đã chạy API thật với model/dimension được chọn. Mock HTTP
 không phải completion evidence.
+
+Vì Phase 3 hiện chỉ dùng local E5, `OpenRouterEmbedder`, remote embedding config
+và tests của adapter được xóa. Phase 8 sẽ thiết kế lại từ exact API/catalog,
+dimension, limits và pricing hiện hành; không giữ code dự phòng từ Phase 3.
 
 ### Phase 4 — Qdrant ingestion
 
@@ -257,13 +267,23 @@ query runtime chỉ tìm bằng named dense vector rồi tính BM25 trong Python
 `hue_rag` kế thừa đúng mô hình này. Sparse storage hiện không gây sai kết quả,
 nhưng làm schema, ingestion và tests phức tạp hơn mà chưa có query consumer.
 
-Trong lúc review Phase 3–5 phải chốt đúng một lexical path canonical:
+Simplicity brainstorming Phase 3 đã chốt lexical path canonical:
 
-- Python BM25 và Qdrant chỉ lưu dense; hoặc
-- native sparse retrieval thật trong Qdrant và bỏ đường lexical trùng lặp.
+```text
+Qdrant dense candidates
+-> Python BM25 fusion trên cùng candidate set
+-> optional CrossEncoder reranking
+```
 
-Không giữ cả hai chỉ vì reference từng triển khai cả hai. Active Hue collection
-vẫn read-only; mọi collection mới, reindex hoặc mutation phải được user duyệt.
+Vì vậy target architecture là Python BM25 và Qdrant dense-only; native Qdrant
+sparse không phải query path được chọn. Phase 3 vẫn giữ `SparseEmbedder` để
+không phá Phase 4 schema/ingestion hiện hành. Review Phase 4–5 sẽ phối hợp bỏ
+sparse storage/schema và chuyển shared tokenization về lexical ownership phù
+hợp. Không làm thay đổi đó xuyên phase trong Phase 3.
+
+Active Hue collection vẫn read-only. Existing tests chỉ được mutate guarded
+collection có prefix `hue_rag_live_test_`; collection candidate mới, reindex
+hoặc active mutation cần đúng scope được user duyệt.
 
 ### Phase 5 — Retrieval, BM25, reranking và context
 
@@ -297,14 +317,27 @@ Phần cần review kỹ trong `hue_rag`:
 
 Ba profiles cần tiếp tục được chạy thật:
 
-```text
-dense_only
-hybrid_no_rerank
-hybrid_rerank
+```yaml
+profiles:
+  dense_only:
+    retrieval_mode: dense
+    use_bm25: false
+    use_reranker: false
+  hybrid_no_rerank:
+    retrieval_mode: hybrid
+    use_bm25: true
+    use_reranker: false
+  hybrid_rerank:
+    retrieval_mode: hybrid
+    use_bm25: true
+    use_reranker: true
 ```
 
 Phase 7 cung cấp evaluation engine; việc so sánh profiles và embedding models
-thuộc benchmark Phase 8.
+thuộc benchmark Phase 8. `HybridRetriever` của Hue composition trên
+`DenseRetriever`; nó không thay thế dense component hoặc embed query lần hai.
+Existing benchmark cho thấy mỗi profile thắng ở metric khác nhau, nên không
+tuyên bố hybrid luôn tốt hơn trước controlled comparison.
 
 ### Phase 6 — Generation và API
 
@@ -349,13 +382,13 @@ session memory, rate limiter hoặc frontend contract trước khi có nhu cầu
 | Local E5 baseline | Giữ |
 | Semantic domain-aware chunking | Giữ ý tưởng, dùng Markdown implementation |
 | Small shared retrieval schema | Giữ, đơn giản hóa nếu đang quá rộng |
-| Python BM25 | Giữ cho tới khi có quyết định native sparse khác |
+| Python BM25 | Lexical path canonical đã chọn; giữ và benchmark thật |
 | Three retrieval profiles | Giữ và benchmark thật |
 | MiniLM reranker | Giữ baseline, ghi đúng giới hạn tiếng Việt |
 | Bounded context | Giữ |
 | OpenAI Agents SDK | Giữ |
-| OpenRouter capability | Giữ nhu cầu; adapter phải chạy thật và dễ đọc |
-| Stored sparse vector không được query | Không mặc định giữ; quyết định ở Phase 3–5 |
+| OpenRouter capability | Giữ roadmap Phase 8; không giữ adapter dự phòng ở Phase 3 |
+| Stored sparse vector không được query | Bỏ có phối hợp trong review Phase 4–5 |
 | Dense/Ollama legacy paths | Không mang sang chỉ để rollback/học tập |
 | Random UUID chunk IDs | Không áp dụng; giữ deterministic IDs của Markdown |
 | Mock/fake completion evidence | Không áp dụng |

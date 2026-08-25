@@ -1,116 +1,93 @@
 # Codex Review: Phase 3 Dense Embedding và Sparse Representation
 
-Decision: ready_for_user_confirmation
+Decision: `ready_for_user_confirmation`
 Reviewer: Codex
-Date: 2026-08-11
-Review path:
+Date: `2026-08-25 +07`
+Canonical guide: `guides/phase_3_embedding_sparse_representation.md`
+Implementation report:
+`reports/phase_3_embedding_sparse_representation_simplicity_implementation_report.md`
 
-```text
-reports/phase_3_embedding_sparse_representation_codex_review.md
-```
+## 1. Phạm vi đã review
 
-Implementer report:
+Codex đã đọc approved design/plan, source và exact diff của embedding,
+config, ingestion/startup wiring, tests trực tiếp, Notebook 03 và ba guide liên
+quan. Review cũ ngày 11-08 cho kiến trúc OpenRouter/mock không được dùng
+làm evidence cho verdict này.
 
-```text
-reports/phase_3_embedding_sparse_representation_implementation_report.md
-```
+## 2. Findings
 
-Phase guide context:
+Không có `blocker` hoặc `major` finding.
 
-```text
-guides/phase_0_mvp_foundation.md
-guides/phase_3_embedding_sparse_representation.md
-session_prompt/Project_Status.md
-reports/hue_foods_rag_benchmark.md
-```
+- `minor`: `SentenceTransformer.get_sentence_embedding_dimension()` phát
+  `FutureWarning` vì thư viện hiện tại đã đổi tên method thành
+  `get_embedding_dimension()`. Runtime vẫn trả đúng 384 dimensions; warning
+  này không chặn Phase 3 nhưng nên được đổi khi dependency bỏ alias cũ.
 
-## Tóm Tắt
+Implementation đúng simplicity scope: chỉ còn concrete `E5Embedder`, không
+có wrapper/provider code thay thế, batching hai tầng hoặc OpenRouter embedding
+dự phòng. `SparseEmbedder` giữ contract Phase 4 với data flow dễ theo dõi.
 
-Phase 3 đã technical accepted sau corrective review. Implementation cung cấp E5
-local dense embedder với prefix tách query/document, batching, normalized vector
-và dimension fail-fast; TF-IDF sparse representation deterministic; và OpenRouter
-embedding boundary live-ready nhưng mock-tested mặc định.
+## 3. Cách Reviewer chạy lại thật
 
-Corrections đã xử lý notebook schema, zero-norm vectors, remote constructor and
-response guards, và rate-limit backoff. Chưa có live OpenRouter, Qdrant hoặc
-benchmark run nào. Phase chờ người dùng chạy notebook trước final approval.
-
-## Findings
-
-Không có blocker hoặc major findings.
-
-- minor: Retry-After dạng HTTP-date chưa được parse; adapter ưu tiên giá trị số
-  và fallback về exponential backoff capped. Đây là giới hạn chấp nhận được cho
-  live-ready MVP và cần xem lại trước remote production-scale run.
-
-## Verification
-
-Đã chạy độc lập:
+Reviewer dùng project `uv`, local cached
+`intfloat/multilingual-e5-small`, 572 canonical foods chunks và Qdrant thật:
 
 ```bash
 cd backend
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m py_compile embedding/base.py embedding/embedder.py embedding/batch_embed.py embedding/sparse_embedder.py embedding/openrouter_embedder.py
-# đạt
-
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest tests/ -q --tb=short
-# 74 passed in 3.33s
-
-HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/uv-cache uv run python -c "from embedding.embedder import SentenceTransformerEmbedder; embedder = SentenceTransformerEmbedder('intfloat/multilingual-e5-small', 384); vector = embedder.embed_query('Bún bò Huế có đặc điểm gì?'); assert len(vector) == 384; assert abs(sum(value * value for value in vector) - 1.0) < 1e-6; print(embedder.model_id, embedder.dimension, len(vector))"
-# intfloat/multilingual-e5-small 384 384
+UV_CACHE_DIR=/tmp/hue-rag-review-phase3-uv-cache uv run python -m compileall -q embedding ingestion/pipeline.py core/startup.py
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-review-phase3-uv-cache uv run --env-file ../.env python -m pytest tests/test_embedder.py tests/test_sparse_embedder.py -q --tb=short
 
 cd ..
-UV_CACHE_DIR=/tmp/uv-cache uv run python -c "import nbformat; from pathlib import Path; notebook = nbformat.read(Path('notebooks/03_embedding_models.ipynb'), as_version=4); nbformat.validate(notebook); assert all(cell.get('execution_count') is None and cell.get('outputs') == [] for cell in notebook.cells if cell.cell_type == 'code')"
-# đạt
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-review-phase3-uv-cache uv run --env-file .env jupyter nbconvert --execute --to notebook notebooks/03_embedding_models.ipynb --output /tmp/03_embedding_models-phase3-codex-review.ipynb --ExecutePreprocessor.timeout=900
 
-git diff --check
-# đạt
+cd backend
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-review-phase3-uv-cache uv run --env-file ../.env python -m pytest tests/test_ingestion_pipeline.py tests/test_startup.py tests/test_hybrid_index.py -q --tb=short
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-review-phase3-uv-cache uv run --env-file ../.env python -m pytest tests -q --tb=short
 ```
 
-Reviewer sandbox không cho Jupyter kernel mở local socket, nên không thể chạy
-default notebook độc lập tại đây. Implementer evidence ghi default notebook đã
-chạy sạch; reviewer đã xác minh schema hợp lệ, outputs trống, execution counts
-null và không có external call ở default mode. User notebook gate vẫn là điều
-kiện bắt buộc trước final approval.
+Reviewer cũng chạy read-only active collection count, guarded-leftover scan và
+một query `dense_only` qua `build_service()` sau khi khởi động Qdrant service
+đã định nghĩa trong repo.
 
-## Scope Check
+## 4. Kết quả quan sát
 
-Implementer chỉ tạo/sửa approved Phase 3 package: năm module embedding, một
-config file, hai test files, notebook Phase 3 và implementation report. Guide
-index, Phase 3 guide, review report và user report là reviewer scope. Các
-deletion trong `knowledge-base/`, notebook Phase 1–2, `rag_old/` và `skills/`
-là thay đổi có sẵn, không thuộc review package.
+- Compile affected modules: đạt.
+- Focused Phase 3: `10 passed, 3 warnings in 12.66s`.
+- Notebook 03 temporary Run All: 572 chunks, shape `572 x 384`, norm `1.0`,
+  26.13 giây, query/document cosine `0.9401`; sparse mini-corpus có 3
+  documents, 7 tokens và output deterministic mong đợi.
+- Active query: profile `dense_only`, 10 results, top chunk
+  `foods/local_specialties/bun bo hue.md|Tóm tắt|0`.
+- Affected downstream: `59 passed, 8 warnings in 94.94s`.
+- Full backend: `190 passed, 31 warnings in 204.00s`.
+- Sau full suite: active `hue_foods_e5_small_384` vẫn 572 points;
+  `guarded_leftovers=[]`.
+- Repository notebook: nbformat hợp lệ, 11 cells, mọi code output rỗng và
+  `execution_count=null`.
+- Scoped `git diff --check`: đạt; scan không cò API/import/config embedding
+  đã bị xóa.
 
-## Safety And Quality Check
+## 5. Giới hạn hoặc phần chưa chạy
 
-- Security: tests dùng fake model/session; adapter chỉ đọc environment khi
-  request thực sự chạy và không log key. Không có live provider call.
-- Data safety: chỉ đọc curated chunks; không mutate Markdown, Qdrant hoặc data
-  source.
-- Reliability: zero norm, dimension mismatch, malformed remote indexes, invalid
-  batch/timeout/retry values và provider retry đều fail-safe hoặc có test.
-- Performance: local model lazy-cache một instance/process; batches bounded;
-  429/5xx retry dùng delay capped, không hammer provider.
-- Tests: 74 tests pass, gồm 43 tests Phase 3 với fake SentenceTransformer,
-  HTTP session và sleep injection.
-- Notebooks: JSON/schema hợp lệ, outputs rỗng, execution count null; default
-  mode không gọi model/API/network, local E5 là opt-in.
-- Evaluation: không có retrieval/answer result hoặc claim model winner.
+Qdrant ban đầu không chạy và trả `Connection refused`; Reviewer đã khởi
+động service `qdrant` trong Docker Compose rồi chạy lại thành công. Service
+hiện vẫn đang chạy.
 
-## Required Changes
+Không chạy Phase 7 evaluation 20/104 câu vì model, dimension, E5
+instructions và retrieval algorithms không đổi; real active query đã chứng minh
+compatibility. Global `git diff --check` bị file ngoài scope
+`backend/evaluation/retrieval_results.csv` chặn do CRLF/trailing whitespace;
+scoped Phase 3 check sạch và Reviewer không sửa file ngoài scope này.
 
-Not applicable.
+## 6. Decision và bước tiếp theo
 
-## User Confirmation Readiness
+Decision là `ready_for_user_confirmation`. Guide Phase 3 giữ
+`under_review` cho tới khi user chạy
+`notebooks/03_embedding_models.ipynb` và xác nhận. Báo cáo dành cho user:
 
-- Technically accepted files: `backend/embedding/`,
-  `backend/config/settings.yaml`, Phase 3 tests, notebook và implementation
-  report trong approved scope.
-- Accepted limitations: OpenRouter chưa có live run/dimension evidence; sparse
-  state refit mỗi process; retry HTTP-date là minor limitation.
-- Canonical notebook: `notebooks/03_embedding_models.ipynb`; committed file
-  schema-valid, outputs rỗng và default mode safe.
-- User checks: chạy notebook từ trên xuống, xác nhận 572 chunks, vocabulary
-  sparse 2093, deterministic result, preserved order và TF-IDF sample match;
-  sau đó tùy chọn local E5 mode nếu muốn resource evidence.
-- User report: `reports/user_reports/phase_3_embedding_sparse_representation_user_report.md`.
-- Phase 4 vẫn đóng. `Project_Status.md` chưa được đánh dấu approved.
+```text
+reports/user_reports/phase_3_embedding_sparse_representation_user_report.md
+```
+
+Simplicity review Phase 4 chưa bắt đầu. Reviewer không commit/push và
+không chuyển Phase 3 sang `approved` trước user confirmation.

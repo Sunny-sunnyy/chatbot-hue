@@ -69,9 +69,9 @@ def build_stack(profile, client, embedder):
 
 def make_fresh_embedder():
     """A real E5 embedder instance, separate from the session-scoped fixture."""
-    from embedding.embedder import SentenceTransformerEmbedder
+    from embedding.embedder import E5Embedder
 
-    return SentenceTransformerEmbedder(
+    return E5Embedder(
         model_id=MODEL_ID,
         dimension=DIMENSION,
         device="cpu",
@@ -410,18 +410,12 @@ def test_build_service_factory_routes_active_profile(
 
 def test_e5_warm_up_loads_model_during_build(ingested_collection, real_client):
     """build_retrieval_stack must warm E5; the model loads at startup, not on
-    the first query. Cache misses on build are counted against the real
-    sentence-transformers process cache."""
-    from embedding.embedder import _get_model
-
-    _get_model.cache_clear()
+    the first query."""
     embedder = make_fresh_embedder()
-    before = _get_model.cache_info().misses
+    assert embedder._model is None
     stack = build_stack("dense_only", real_client, embedder)
-    loaded_on_build = _get_model.cache_info().misses - before
-    assert loaded_on_build == 1, (
-        "build_retrieval_stack must run exactly one E5 warm-up embed_query; "
-        f"model loads during build = {loaded_on_build}"
+    assert embedder._model is not None, (
+        "build_retrieval_stack must run E5 warm-up so model is loaded at build time"
     )
     assert stack.snapshot.bm25_ready is False
 
@@ -430,18 +424,14 @@ def test_first_dense_search_after_warm_build_adds_no_model_load(
     ingested_collection, real_client
 ):
     """After a warm startup the first real search reuses the loaded model."""
-    from embedding.embedder import _get_model
-
-    _get_model.cache_clear()
     embedder = make_fresh_embedder()
     stack = build_stack("dense_only", real_client, embedder)
-    before = _get_model.cache_info().misses
+    model_instance = embedder._model
+    assert model_instance is not None
     documents = stack.dense_retriever.search("bún bò Huế")
-    after = _get_model.cache_info().misses
     assert documents, "real dense search returned no documents"
-    assert after == before, (
-        "first retrieval after a warm build must add no model load; "
-        f"new model loads = {after - before}"
+    assert embedder._model is model_instance, (
+        "first retrieval after a warm build must reuse the loaded model instance"
     )
 
 
@@ -500,15 +490,12 @@ def test_lifecycle_latency_evidence(ingested_collection, real_client):
     """Measure real startup and first-retrieval latency per profile.
 
     No hard threshold (machine dependent, per guide); these numbers are
-    evidence for the implementation report and notebook. Cache is cleared
-    before each profile so every measurement starts from a cold process cache.
+    evidence for the implementation report and notebook.
     """
-    from embedding.embedder import _get_model
     from reranking.models import cross_encoder as rerank_module
 
     results = []
     for profile in ("dense_only", "hybrid_no_rerank", "hybrid_rerank"):
-        _get_model.cache_clear()
         rerank_module._get_cross_encoder.cache_clear()
         embedder = make_fresh_embedder()
         started = time.monotonic()

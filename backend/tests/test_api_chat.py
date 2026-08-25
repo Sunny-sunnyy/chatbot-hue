@@ -331,10 +331,8 @@ class TestLifecycleWarmup:
 
     def test_lifespan_warms_e5_and_minilm_before_ready(self, ingested_collection):
         """hybrid_rerank lifespan loads E5 AND MiniLM before /health is ready."""
-        from embedding.embedder import _get_model
         from reranking.models import cross_encoder as rerank_module
 
-        _get_model.cache_clear()
         rerank_module._get_cross_encoder.cache_clear()
         app = make_app(profile="hybrid_rerank")
         with TestClient(app) as client:
@@ -343,23 +341,27 @@ class TestLifecycleWarmup:
         components = health.json()["components"]
         assert components["qdrant"] == "ready"
         assert components["retrieval"] == "ready"
-        assert _get_model.cache_info().misses >= 1, "E5 must load during startup"
+        assert (
+            app.state.retrieval_service._stack.dense_retriever._embedder._model
+            is not None
+        ), "E5 must load during startup"
         assert (
             rerank_module._get_cross_encoder.cache_info().misses >= 1
         ), "MiniLM must load during startup"
 
     def test_dense_only_lifespan_loads_e5_but_never_minilm(self, ingested_collection):
         """Profile scoping at app level: dense_only warms E5, skips MiniLM."""
-        from embedding.embedder import _get_model
         from reranking.models import cross_encoder as rerank_module
 
-        _get_model.cache_clear()
         rerank_module._get_cross_encoder.cache_clear()
         app = make_app(profile="dense_only")
         with TestClient(app) as client:
             health = client.get("/health")
         assert health.json()["components"]["qdrant"] == "ready"
-        assert _get_model.cache_info().misses >= 1, "E5 must load during startup"
+        assert (
+            app.state.retrieval_service._stack.dense_retriever._embedder._model
+            is not None
+        ), "E5 must load during startup"
         assert (
             rerank_module._get_cross_encoder.cache_info().misses == 0
         ), "dense_only must not load MiniLM"

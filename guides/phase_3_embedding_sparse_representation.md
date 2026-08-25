@@ -1,8 +1,4 @@
-# Phase 3: Dense embedding và sparse representation
-
-## Mục tiêu và giá trị cho người dùng
-
-Phase 3 tạo hai biểu diễn có thể tái lập cho 572 canonical food chunks: dense vectors để tìm tương đồng ngữ nghĩa và sparse vectors để giữ tín hiệu từ khóa. Phase này khóa interface giữa text và vector trước khi Qdrant ingestion bắt đầu.
+# Phase 3 — Dense embedding và sparse representation
 
 ## Trạng thái
 
@@ -10,340 +6,335 @@ Phase 3 tạo hai biểu diễn có thể tái lập cho 572 canonical food chun
 Status: approved
 Owner: Codex Reviewer
 Implementer: DeepSeek
+Implementation: complete; technical review passed on 2026-08-25 +07
+User confirmation: completed on 2026-08-25 +07
 ```
 
-> **Lưu ý governance hiện hành:** Các đoạn bên dưới mô tả implementation và
-> test contract lịch sử của Phase 3, bao gồm mock/cache-only/per-run approval.
-> Chúng không áp dụng cho công việc mới. `session_prompt/Session_Prompt.md` cấm
-> mock/fake và yêu cầu real execution trong approved scope. Phase 3 sẽ được
-> review lại trong chuỗi Phase 0 đến Phase 6 sau Phase 7.
-
-Brainstorming đã được người dùng phê duyệt ngày 2026-08-11 +07. Người dùng đã
-chạy và xác nhận notebook `notebooks/03_embedding_models.ipynb` ngày
-2026-08-11 +07. Phase 3 được approved.
-
-## Dependency
-
-- Phase 1–2 phải hoàn tất governance retrofit và được người dùng xác nhận.
-- Input baseline là 572 chunks từ `chunk_foods_markdown()`.
-- `backend/config/settings.yaml` đang dùng `intfloat/multilingual-e5-small`, 384 dimensions, CPU.
-- Phase này không tạo, reset, upsert hoặc query Qdrant.
-
-## Chức năng phải tạo
-
-- Local dense embedding bằng SentenceTransformer, cache một model instance mỗi process.
-- Phân biệt query text và document text khi model yêu cầu instruction/prefix.
-- Batch embedding có giới hạn và thứ tự output khớp input.
-- Vector normalization và dimension validation.
-- Provider boundary đủ để thêm OpenRouter embeddings mà không thay đổi consumer interface.
-- Custom sparse representation tương thích kỹ thuật đã dùng trong `llm_rag`.
-- Unit tests không download model hoặc gọi API mặc định.
-- Notebook học tập cho model metadata, sample vectors và resource preflight.
-
-## Scope được đề xuất để brainstorming phê duyệt
-
-### Trong scope
+Simplicity design được người dùng phê duyệt ngày `2026-08-24 +07`:
 
 ```text
-backend/embedding/base.py
+docs/superpowers/specs/2026-08-24-phase-3-embedding-sparse-representation-simplicity-design.md
+```
+
+Implementation plan:
+
+```text
+docs/superpowers/plans/2026-08-24-phase-3-embedding-sparse-representation-simplicity-implementation.md
+```
+
+Guide này thay contract lịch sử đã dùng provider abstraction, OpenRouter
+adapter, batching hai tầng và mock-only tests. Implementation mới phải theo
+thiết kế simplicity đã duyệt và bằng chứng chạy thật.
+
+## Mục tiêu
+
+Phase 3 biến 572 canonical food chunks thành:
+
+- dense vectors bằng local `intfloat/multilingual-e5-small` để
+  `DenseRetriever` truy vấn ngữ nghĩa;
+- sparse TF-IDF vectors deterministic để giữ compatibility với Phase 4 hiện
+  vẫn lưu named sparse vector.
+
+Code phải đủ chi tiết để người học theo được data flow, nhưng không giữ
+abstraction, validation hoặc provider code cho nhu cầu chưa tồn tại.
+
+## Dependency và ranh giới
+
+- Phase 1–2 đã `approved`.
+- Input là output ổn định của `chunk_foods_markdown()` gồm 572 chunks.
+- Local E5 đã có trong cache và chạy trên CPU.
+- Active collection `hue_foods_e5_small_384` luôn read-only.
+- Existing tests chỉ được mutate collection cô lập có prefix
+  `hue_rag_live_test_` và phải cleanup rõ ràng.
+
+Trong scope:
+
+```text
+backend/embedding/base.py                         # delete
+backend/embedding/batch_embed.py                  # delete
+backend/embedding/openrouter_embedder.py          # delete
 backend/embedding/embedder.py
-backend/embedding/batch_embed.py
 backend/embedding/sparse_embedder.py
 backend/config/settings.yaml
+backend/ingestion/pipeline.py                     # compatibility wiring
+backend/core/startup.py                           # compatibility wiring
+backend/tests/conftest.py
 backend/tests/test_embedder.py
 backend/tests/test_sparse_embedder.py
+backend/tests/test_startup.py                     # stale class name only
 notebooks/03_embedding_models.ipynb
 ```
 
-Nếu OpenRouter adapter được implement ngay ở phase này, file dự kiến là:
+Ngoài scope:
+
+- thay Qdrant schema hoặc active collection;
+- bỏ stored sparse vectors;
+- đổi BM25, fusion, candidate depth hoặc reranker;
+- chọn retrieval profile/model winner;
+- OpenRouter embedding implementation hoặc paid run;
+- Phase 7 evaluation rerun khi real verification xác nhận behavior được giữ.
+
+## Local E5 baseline
 
 ```text
-backend/embedding/openrouter_embedder.py
+Model: intfloat/multilingual-e5-small
+Execution: local CPU
+Dimension: 384
+Batch size: 64
+Document prefix: passage:
+Query prefix: query:
 ```
 
-Adapter remote chỉ được test bằng mock. Live embedding run thuộc benchmark gate và cần user approval.
-
-### Ngoài scope
-
-- Qdrant client, collection schema hoặc ingestion.
-- Retrieval, BM25 score fusion và reranking.
-- Model quality winner selection.
-- Live OpenRouter benchmark trước khi local end-to-end baseline có retrieval evidence.
-- Tự tải nhiều Vietnamese-specific models mà chưa kiểm tra RAM, disk, license và exact model ID.
-
-## Dense embedder interface contract
-
-Consumer không được phụ thuộc trực tiếp vào SentenceTransformer hoặc HTTP payload. Interface tối thiểu:
+Chỉ giữ một concrete class:
 
 ```python
-class BaseEmbedder:
-    @property
-    def model_id(self) -> str: ...
-
-    @property
-    def dimension(self) -> int: ...
+class E5Embedder:
+    model_id: str
+    dimension: int
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]: ...
-
     def embed_query(self, query: str) -> list[float]: ...
 ```
 
-Behavior:
+Không giữ `BaseEmbedder`, `EmbeddingError`, provider factory/protocol hoặc
+compatibility wrapper.
 
-- `embed_documents([])` trả `[]` mà không load model hoặc gọi provider.
-- Empty/whitespace query bị reject bằng validation error rõ ràng.
-- Một output vector cho mỗi input text, cùng thứ tự.
-- Mỗi vector là `list[float]`, finite và đúng `dimension`.
-- Dense vectors được normalize khi cosine distance được dùng.
-- Provider/model ID thực tế được expose cho logging và benchmark metadata, không log input corpus hoặc credentials.
-- Không request-level fallback giữa embedding models vì vector spaces không tương thích.
+### Model lifecycle
 
-## Local baseline bắt buộc
+Model được lazy-load vào chính `E5Embedder` instance:
 
-Model đầu tiên:
+- API startup tạo một instance, warm-up thật và giữ nó trong
+  `DenseRetriever` cho mọi request;
+- ingestion là process riêng và dùng một instance cho toàn bộ corpus;
+- health endpoint chỉ đọc readiness đã cache ở startup.
 
-```text
-Model ID: intfloat/multilingual-e5-small
-Execution: local CPU
-Expected dimension: 384
-Library: sentence-transformers
-Role: initial offline baseline
-```
+Không cần module-global singleton hoặc `lru_cache`.
 
-Preflight phải xác nhận:
+### Dense data flow
 
-- model đã có trong local cache hoặc người dùng cho phép download;
-- RAM/disk đủ;
-- dimension thực tế bằng config;
-- `query:` và `passage:` prefixes được áp dụng đúng khuyến nghị của E5;
-- Vietnamese sample có finite normalized vectors;
-- latency và peak memory của sample batch được ghi, nhưng chưa tuyên bố quality winner.
-
-Document indexing và query retrieval phải dùng đúng instruction pair. Không embed cùng raw string cho cả hai đường nếu model contract yêu cầu prefix khác nhau.
-
-## OpenRouter embedding boundary
-
-OpenRouter là provider remote cho vòng benchmark sau local baseline. Trước implementation/live run phải xác minh lại:
-
-- exact catalog model ID của Qwen3 Embedding candidate;
-- embeddings endpoint và response schema hiện hành;
-- output dimension hoặc dimension parameter;
-- input limits, batching support, pricing và Vietnamese/multilingual evidence;
-- retry/timeout/rate-limit policy;
-- `OPENROUTER_API_KEY` tồn tại trong environment nhưng không được in.
-
-OpenRouter error không được tự đổi sang local embedding trong cùng collection. Run phải fail rõ để tránh index chứa trộn vector spaces.
-
-## Optional Vietnamese embedding candidates
-
-Các model sau chỉ vào benchmark mở rộng sau resource/model-card preflight:
-
-| Candidate | Trạng thái guide | Gate |
-|---|---|---|
-| `huyydangg/DEk21_hcmute_embedding_v2` | Exact ID chưa được xác minh | Xác minh model card, dimension, training domain, license và resource |
-| `bkai-foundation-models/vietnamese-bi-encoder` | Optional local | Xác minh license, pooling, instruction và resource |
-| `AITeamVN/Vietnamese_Embedding_v2` | Optional local | Xác minh exact ID, dimension, license và benchmark relevance |
-| Qwen3 Embedding | Remote priority family | Xác minh exact OpenRouter catalog ID trước mỗi paid batch |
-
-Không dùng leaderboard tổng quát làm bằng chứng đủ cho domain foods Huế; winner chỉ đến từ Phase 8 controlled evaluation.
-
-## Sparse representation contract
-
-Sparse baseline kế thừa kỹ thuật từ `llm_rag`, nhưng implementation mới phải có English code/comments và tests rõ ràng.
-
-Tokenization baseline:
+Document path:
 
 ```text
-lowercase
-replace non-word/non-space characters with spaces
-split on whitespace
-preserve Vietnamese Unicode word characters
+572 ordered chunk texts
+-> prepend passage:
+-> SentenceTransformer.encode(batch_size=64, normalize_embeddings=True)
+-> 572 ordered vectors x 384 dimensions
 ```
 
-Fit behavior:
+Query path:
 
-- fit đúng toàn bộ canonical chunk texts theo deterministic order;
-- tạo token-to-index vocabulary ổn định;
-- đếm document frequency một lần mỗi unique token trong document;
-- lưu `num_documents`;
-- calling `fit()` lần hai phải reset state hoặc bị reject rõ, không cộng dồn âm thầm.
+```text
+non-empty query
+-> prepend query:
+-> same loaded model
+-> one normalized 384-dimensional vector
+-> DenseRetriever
+```
 
-Encode behavior:
+SentenceTransformer xử lý batching trực tiếp. Xóa outer `embed_in_batches()`;
+không chia cùng một workload ở hai tầng.
+
+### Validation tối thiểu
+
+Fail bằng `ValueError` rõ ràng khi:
+
+- query không phải non-empty string;
+- dimension thật của model khác config;
+- số output vectors khác số input texts;
+- một output vector sai dimension.
+
+Không normalize lần hai bằng NumPy. Phase 4 tiếp tục kiểm tra finite values tại
+index boundary. Không pad/truncate, silent fallback hoặc tự sửa config.
+
+## Cấu hình
+
+Phase 3 chỉ giữ cấu hình được local runtime sử dụng:
+
+```yaml
+embedding:
+  model: intfloat/multilingual-e5-small
+  vector_size: 384
+  device: cpu
+  batch_size: 64
+```
+
+Xóa:
+
+```text
+embedding.provider
+embedding.remote
+embedding.document_prefix
+embedding.query_prefix
+```
+
+Hai E5 prefixes thuộc concrete `E5Embedder`. Phase 8 sẽ thiết kế provider và
+instruction config mới dựa trên exact candidate/API thật. OpenAI configuration
+cho answer generation là subsystem khác và không thay đổi ở Phase 3.
+
+## Sparse representation
+
+Giữ deterministic TF-IDF contract hiện tại:
+
+```text
+lowercase Unicode text
+-> replace non-word/non-space characters with spaces
+-> split on whitespace
+-> ordered vocabulary + document frequency
+-> term frequency x IDF
+-> aligned indices/values
+```
 
 ```text
 idf(term) = log((num_documents + 1) / (document_frequency + 1)) + 1
 value = term_frequency * idf(term)
 ```
 
-Output:
-
-```python
-{
-    "indices": [0, 4, 9],
-    "values": [1.2, 2.4, 1.0],
-}
-```
-
 Invariants:
 
-- indices và values cùng length;
-- indices là unique integers thuộc vocabulary;
-- values là finite positive floats;
-- unknown query tokens bị bỏ qua;
-- empty text trả hai lists rỗng;
-- encode trước fit bị reject rõ;
-- vocabulary/IDF state có thể tái tạo từ cùng corpus.
+- vocabulary index theo first occurrence trong ordered corpus;
+- DF đếm một token tối đa một lần trong mỗi document;
+- `fit()` lần hai reset toàn bộ state;
+- cùng corpus/order tạo cùng vectors;
+- unknown và empty text trả empty indices/values;
+- `encode()` trước fit bị reject;
+- indices/values aligned và values positive finite.
 
-Phase 3 không tuyên bố sparse retrieval quality. Sparse vector chỉ là representation được Phase 4 lưu và Phase 5 có thể dùng gián tiếp qua cùng tokenization/BM25 corpus.
+Runtime code dùng type hints, tên biến đầy đủ, docstring ngắn và comment giải
+thích lý do ở chỗ không hiển nhiên. Ví dụ tính tay dài nằm trong Notebook 03,
+không nhồi vào source.
 
-## Batching và performance contract
+BM25 chỉ import chung `tokenize()`; BM25 không phụ thuộc class
+`SparseEmbedder`. Class này tạm giữ vì Phase 4 vẫn tạo sparse vectors. Quyết
+định bỏ sparse storage/schema thuộc coordinated simplicity review Phase 4–5.
 
-- `batch_size` lấy từ config, baseline là 64 nhưng phải giảm nếu CPU/RAM preflight yêu cầu.
-- Không giữ hai bản sao lớn không cần thiết của toàn corpus vectors.
-- Local model load đúng một lần mỗi process.
-- Remote batching tuân provider limit; không gửi toàn corpus trong một request không bounded.
-- Ghi elapsed time, item count, provider/model và dimension; không log full texts.
+## Retrieval compatibility
 
-## Brainstorming bắt buộc trước implementation
-
-Codex phải làm rõ với người dùng:
-
-1. Model đã có trong local Hugging Face cache hay cần cho phép download `multilingual-e5-small`.
-2. Giữ `batch_size=64` hay giảm sau CPU/RAM sample preflight.
-3. Provider interface có implement OpenRouter adapter ngay trong Phase 3 bằng mock, hay chỉ khóa interface rồi thêm adapter khi benchmark remote bắt đầu.
-4. Sparse state chỉ tái fit từ corpus hay cần artifact serialization trong MVP.
-5. Dimension được lấy từ model runtime và so với config theo fail-fast policy nào.
-
-Decision record phải ghi exact lựa chọn, evidence và revisit trigger. Đây là năm câu hỏi thay đổi implementation/test; không thêm câu hỏi không ảnh hưởng design.
-
-## Decision record đã được phê duyệt
+Hue RAG đã có cả hai retriever:
 
 ```text
-Decision: Dùng 572 chunks từ chunk_foods_markdown() theo thứ tự ổn định làm corpus canonical cho Phase 3, thay mọi tham chiếu lịch sử 366 chunks.
-Approved by: User
-Approval date +07: 2026-08-11
-Evidence: User xác nhận sau khi đối chiếu Project Status, Phase 2 evidence và Phase 3 guide.
-Affected scope: Dense/sparse fit, tests, notebook và acceptance criteria của Phase 3.
-Revisit trigger: Canonical chunking của Phase 2 thay đổi và được người dùng phê duyệt.
+E5Embedder
+-> DenseRetriever
+-> optional HybridRetriever with Python BM25
+-> optional CrossEncoder
 ```
 
-```text
-Decision: Dùng intfloat/multilingual-e5-small đã có trong local cache, CPU và batch_size=64 là mức tối đa ban đầu; chỉ giảm sau local smoke có evidence CPU/RAM không đủ.
-Approved by: User
-Approval date +07: 2026-08-11
-Evidence: Local cache preflight xác nhận model hiện diện; user xác nhận batch policy.
-Affected scope: Local SentenceTransformer embedder, batching, local smoke và notebook.
-Revisit trigger: Local smoke vượt resource limit hoặc model cache không còn dùng được.
+`HybridRetriever` composition trên `DenseRetriever`, không tự embed query lần
+nữa. Nó chỉ chấm BM25 trên dense candidate set và không query named sparse
+vector.
+
+Ba profile giữ nguyên:
+
+```yaml
+profiles:
+  dense_only:
+    retrieval_mode: dense
+    use_bm25: false
+    use_reranker: false
+  hybrid_no_rerank:
+    retrieval_mode: hybrid
+    use_bm25: true
+    use_reranker: false
+  hybrid_rerank:
+    retrieval_mode: hybrid
+    use_bm25: true
+    use_reranker: true
 ```
 
-```text
-Decision: Implement OpenRouter embedding adapter live-ready trong Phase 3. Adapter dùng endpoint embeddings hiện hành, input_type tách query/document, batch bounded, timeout 30 giây và tối đa hai retries cho 429 hoặc lỗi 5xx; không retry lỗi auth/config/input và không fallback sang E5.
-Approved by: User
-Approval date +07: 2026-08-11
-Evidence: User chọn live-ready adapter; OpenRouter official embeddings API và catalog model qwen/qwen3-embedding-0.6b được reviewer xác minh read-only.
-Affected scope: backend/embedding/openrouter_embedder.py, settings embedding và unit tests mock HTTP client.
-Revisit trigger: OpenRouter đổi endpoint/schema/catalog, provider limits thay đổi, hoặc user không còn cho phép live embedding run.
-```
+`dense_only` tiếp tục là active MVP. Existing benchmark không chứng minh hybrid
+luôn tốt hơn; Phase 8 mới so sánh quality, latency, reliability và cost rồi để
+user chọn winner.
 
-```text
-Decision: SparseEmbedder reset state và fit lại từ toàn bộ 572 canonical chunk texts mỗi process; không serialize vocabulary/IDF artifact trong MVP Phase 3. Consumers nhận SparseEmbedder instance tường minh, không dùng mutable module global.
-Approved by: User
-Approval date +07: 2026-08-11
-Evidence: User xác nhận đề xuất sau khi reviewer đối chiếu sparse pipeline của llm_rag.
-Affected scope: SparseEmbedder, Phase 4 point building boundary và Phase 5 BM25 startup boundary.
-Revisit trigger: Corpus đủ lớn để startup fit trở thành bottleneck có đo đạc, hoặc sparse retrieval/native state cần artifact versioned.
-```
+## Test contract
 
-```text
-Decision: Dimension runtime phải khớp dimension cấu hình; mismatch fail-fast trước khi vector được trả về hoặc index. Không tự sửa config, pad/truncate vector hay fallback sang model khác. Remote model có dimension khác cần experiment/collection mới và reindex được user phê duyệt.
-Approved by: User
-Approval date +07: 2026-08-11
-Evidence: User xác nhận fail-fast policy.
-Affected scope: BaseEmbedder, local/remote validation, config và Phase 4 collection contract.
-Revisit trigger: User phê duyệt model hoặc dimension mới cho experiment khác.
-```
+Focused tests bảo vệ distinct behavior, không chạy theo số lượng.
 
-## Nhiệm vụ của DeepSeek Implementer
+Dense tests dùng E5 thật:
 
-- Viết failing tests cho empty input, output order, dimension mismatch, model cache và sparse state trước implementation.
-- Mock SentenceTransformer/OpenRouter client trong unit tests; default tests không download hoặc gọi network.
-- Dùng English identifiers, comments và docstrings.
-- Không thêm Qdrant dependency behavior vào Phase 3 modules.
-- Tạo notebook import runtime modules, không copy embedding/sparse algorithms.
-- Ghi model cache/resource evidence đã được phép vào implementation report, không ghi private cache path nếu không cần.
+- empty documents và invalid query;
+- vector count/order/dimension/norm;
+- query/document roles khác nhau;
+- wrong configured dimension fail với model thật.
 
-## Notebook bắt buộc
+Sparse tests dùng corpus nhỏ tính tay được:
+
+- Vietnamese tokenization;
+- known TF-IDF/DF;
+- deterministic output;
+- repeated-fit reset;
+- empty/unknown text;
+- encode-before-fit rejection.
+
+Xóa test cho OpenRouter adapter, outer batching, custom prefixes và shared
+process cache. Không dùng mock/fake SentenceTransformer, HTTP hoặc provider làm
+evidence.
+
+Existing ingestion/startup/hybrid-index tests chỉ là downstream wiring smoke.
+Full backend suite chạy một lần trước handoff vì Phase 3 API được nhiều phase
+dùng. Test pass không thay Notebook và live query.
+
+## Notebook 03
 
 `notebooks/03_embedding_models.ipynb` phải:
 
-- giải thích dense vs sparse bằng tiếng Việt;
-- import Phase 2 chunks và Phase 3 modules;
-- Run All chunk 572 foods và tạo dense vectors thật bằng local E5 cache-only
-  (`HF_HUB_OFFLINE=1`), không có fake fallback;
-- hiển thị model ID, dimension, vector norms, sparse vocabulary size và sample sparse indices/values;
-- không gọi OpenRouter mặc định;
-- giữ committed outputs rỗng và `execution_count=null`.
+- giải thích dense E5 và sparse TF-IDF bằng tiếng Việt;
+- import public Phase 2/3 APIs, không copy algorithms;
+- embed toàn bộ 572 chunks thật trên CPU, batch size 64;
+- hiển thị model, shape `572 x 384`, norm và elapsed time;
+- minh họa query/document roles;
+- giải thích sparse bằng mini corpus và public output;
+- không truy cập private state;
+- không chứa OpenRouter code;
+- giữ repository outputs rỗng và execution counts null.
 
-## Tests và validation dự kiến
+Reviewer chạy Run All trên temporary copy. Elapsed time là observed result,
+không phải flaky pass threshold.
 
-Unit tests tối thiểu:
-
-- empty dense batch;
-- query/document instruction separation;
-- vector count/order/dimension/norm;
-- model cache chỉ khởi tạo một lần;
-- provider error không fallback sang vector space khác;
-- deterministic sparse vocabulary;
-- TF-IDF values trên corpus nhỏ biết trước;
-- empty/unknown tokens;
-- fit-state reset/reject behavior.
-
-Commands sau chỉ chạy sau khi dependency/model access đã được người dùng cho phép:
-
-```bash
-cd backend
-uv run python -m py_compile embedding/base.py embedding/embedder.py embedding/batch_embed.py embedding/sparse_embedder.py
-uv run pytest tests/test_embedder.py tests/test_sparse_embedder.py -q --tb=short
-```
-
-Live/local model smoke command phải được ghi chính xác trong implementation report sau brainstorming; không đưa secret vào command.
-
-## Security, reliability và performance gates
-
-- Không đọc `.env`; chỉ environment access trong provider adapter được phê duyệt.
-- Không log texts, vectors đầy đủ, key hoặc raw provider response.
-- Dimension mismatch fail trước Phase 4 ingestion.
-- Partial remote batch không được coi là complete corpus.
-- Model download và paid API cần approval riêng.
-- Không dùng GPU mặc định khi resource preflight chưa xác nhận.
-
-## Tiêu chí phê duyệt Phase 3
-
-- Local E5 interface và sparse representation đúng contracts.
-- Unit tests pass mà không cần network/model download.
-- Approved local smoke xác nhận 384-dimensional normalized vectors.
-- Sparse vocabulary non-empty và deterministic trên 572 chunks.
-- OpenRouter boundary không cho phép mixed vector spaces hoặc silent fallback.
-- Notebook an toàn và report đầy đủ.
-- User report phản ánh đúng validation/limitations và được người dùng xác nhận cùng notebook.
-- Không có Qdrant mutation hoặc live paid run ngoài approval.
-
-## Reports và cập nhật trạng thái
-
-Sau implementation thực tế:
+## Real verification
 
 ```text
-reports/phase_3_embedding_sparse_representation_implementation_report.md
-reports/phase_3_embedding_sparse_representation_codex_review.md
-reports/user_reports/phase_3_embedding_sparse_representation_user_report.md
+compile affected modules
+-> focused real E5/sparse tests
+-> Notebook 03 over 572 real chunks
+-> active Qdrant count read-only = 572
+-> one real query through E5 and active collection
+-> affected ingestion/startup/hybrid-index tests
+-> one final full backend suite
+-> diff/deleted-import/config audit
 ```
 
-Benchmark evidence liên quan model/resource nằm trong
-`reports/hue_foods_rag_benchmark.md`. User report và notebook Phase 3 đã được
-người dùng xác nhận.
+Active collection không được mutate. Test collection mutation chỉ hợp lệ khi
+tên bắt đầu bằng `hue_rag_live_test_`, existing guards còn nguyên và cleanup
+được báo cáo.
 
-## Bước tiếp theo
+Không cần exact float hash. Batching có thể tạo sai số float nhỏ; compatibility
+được chứng minh bằng same model/dimension/instructions và successful real query.
 
-Phase 3 đã hoàn thành và `approved`. Sau Phase 7, Phase 3 sẽ được review lại
-trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
-`guides/README.md`.
+## Phase 8 handoff
+
+OpenRouter embedding vẫn là roadmap thật nhưng không có code dự phòng ở Phase
+3. Khi Phase 8 được mở, phải xác minh lại:
+
+- actual embeddings API và response schema;
+- exact catalog model ID;
+- dimension/instruction/input limits/batching;
+- pricing, rate limit, timeout và reliability;
+- collection/index transition cho vector space mới.
+
+Phase 8 dùng API/model/data thật và so sánh local E5 với approved remote
+candidates trên ba retrieval profiles. Không mock/fake, silent fallback hoặc
+leaderboard-only winner.
+
+## Acceptance
+
+Technical review chỉ đạt khi:
+
+1. ba module thừa đã xóa, không có wrapper thay thế;
+2. `E5Embedder` direct flow đúng prefixes, native batching và instance lifecycle;
+3. sparse behavior deterministic, rõ ràng và vẫn tương thích Phase 4;
+4. config chỉ chứa local settings được dùng;
+5. focused tests, Notebook 03, read-only active query và affected/full suite đạt;
+6. active collection còn nguyên 572 points và test collections cleanup hết;
+7. implementation report ghi observed evidence và limitations;
+8. Reviewer audit độc lập, sau đó user xác nhận.
+
+Commit/push cần yêu cầu riêng. Implementer không tự approve hoặc sửa guide này.
