@@ -1,6 +1,6 @@
 # Hue Foods RAG — Model và benchmark summary
 
-Last updated: `2026-08-23 +07`
+Last updated: `2026-08-25 +07`
 
 ## Mục đích
 
@@ -21,7 +21,7 @@ Chưa có model/profile winner được user và Reviewer phê duyệt.
 | Vai trò | Provider/model | Trạng thái |
 |---|---|---|
 | Dense embedding | Local `intfloat/multilingual-e5-small`, CPU, 384 dimensions | Baseline đã dùng |
-| Sparse representation | Custom TF-IDF-style `SparseEmbedder` | Baseline đã dùng |
+| Sparse representation | Custom TF-IDF-style `SparseEmbedder` | Hiện còn để compatibility; đã quyết định bỏ khỏi active Qdrant baseline trong Phase 4–5 |
 | Lexical scoring | Python BM25 | Dùng trong hybrid profiles |
 | Local reranker | `cross-encoder/ms-marco-MiniLM-L-6-v2`, CPU | Baseline đã dùng; có giới hạn tiếng Việt |
 | Answer generation | OpenAI `gpt-5.4-nano` | Phase 6/7 baseline |
@@ -44,7 +44,7 @@ Không tự đổi provider/model hoặc silent fallback.
 | Chunking | H2 sections; regular content tối đa 400 characters; tables giữ nguyên |
 | Corpus | 572 curated food chunks |
 | Dense | E5 small, normalized 384-dimensional vectors |
-| Qdrant | `hue_foods_e5_small_384`, 572 points, cosine, read-only |
+| Qdrant | `hue_foods_e5_small_384`, 572 points, cosine, hiện read-only; blue-green target là `hue_foods_e5_small_384_dense` |
 | BM25 | `k1=1.5`, `b=0.75` |
 | Hybrid fusion | Dense/BM25 normalized weighted sum |
 | Reranker | Local MiniLM |
@@ -60,7 +60,15 @@ Không tự đổi provider/model hoặc silent fallback.
 | `hybrid_no_rerank` | Có | Có | Không |
 | `hybrid_rerank` | Có | Có | Có |
 
-Stored sparse vectors không có nghĩa là native sparse retrieval đã chạy.
+Stored sparse vectors hiện tại không có nghĩa là native sparse retrieval đã
+chạy. User đã chốt active production target dense-only; Python BM25 và
+CrossEncoder vẫn được giữ cho ba profile.
+
+Phase 8 sẽ đánh giá true hybrid retrieval bằng isolated candidate collection có
+sparse vectors, không mutate active baseline. Candidate phải dùng cùng corpus,
+questions và metrics, chỉ thay đổi approved candidate-generation/fusion group.
+Sparse storage chỉ được đề xuất quay lại production nếu real results chứng minh
+lợi ích tương xứng complexity và user duyệt exact transition.
 
 ## Kết quả retrieval thật đã quan sát
 
@@ -130,6 +138,11 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
 2. Review và đơn giản hóa Phase 0 đến Phase 6.
 3. Chạy lại affected Phase 7 evaluation sau thay đổi liên quan.
 4. Chỉ Phase 8 mới so sánh đầy đủ profiles/models và đề xuất winner.
+
+Approved Phase 4–5 blue-green checkpoint trước Phase 8: chạy fresh 104-question
+retrieval-only comparison cho cả ba profiles trên current active baseline và
+`hue_foods_e5_small_384_dense`. Run này chứng minh equivalence/regression cho
+cutover; không dùng generator/judge và không tuyên bố profile winner.
 
 ## Guide liên quan
 

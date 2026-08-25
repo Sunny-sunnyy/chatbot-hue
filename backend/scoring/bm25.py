@@ -1,8 +1,16 @@
 """Corpus-scoped BM25 lexical scoring and min-max normalization utilities."""
 import math
+import re
 from collections import Counter
 
-from embedding.sparse_embedder import tokenize
+TOKEN_PATTERN = re.compile(r"\w+", flags=re.UNICODE)
+
+
+def tokenize(text: str) -> list[str]:
+    if not isinstance(text, str):
+        raise TypeError("text must be a string")
+    return TOKEN_PATTERN.findall(text.lower())
+
 
 K1 = 1.5
 B = 0.75

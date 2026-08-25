@@ -16,25 +16,24 @@ from api.health import router as health_router
 from api.routes.chat import router as chat_router
 from core.logging_setup import setup_logging
 from core.settings_loader import load_settings
-from core.startup import build_retrieval_stack
+from core.startup import build_retrieval_service
 from llm.generator_openai import OpenAIAnswerGenerator
 from retrieval.context_builder import ContextBuilder
-from retrieval.service import RetrievalService
 
 logger = logging.getLogger(__name__)
 
 
 def _runtime_info(retrieval_service, settings):
-    """Immutable startup snapshot fields exposed through retrieval_debug."""
-    snapshot = (
-        retrieval_service.snapshot if retrieval_service is not None else None
+    """Immutable startup status fields exposed through retrieval_debug."""
+    status = (
+        retrieval_service.status if retrieval_service is not None else None
     )
     return {
-        "profile": snapshot.active_profile if snapshot else None,
-        "embedding_model": snapshot.embedding_model if snapshot else None,
+        "profile": status.active_profile if status else None,
+        "embedding_model": status.embedding_model if status else None,
         "reranker_model": (
             settings["reranking"]["model"]
-            if snapshot is not None and snapshot.reranker_ready
+            if status is not None and status.reranker_ready
             else None
         ),
     }
@@ -51,10 +50,7 @@ def create_app(settings=None):
         retrieval_service = None
         retrieval_ready = False
         try:
-            built = build_retrieval_stack(settings)
-            retrieval_service = RetrievalService(
-                built, rerank_top_k=settings["reranking"]["top_k"]
-            )
+            retrieval_service = build_retrieval_service(settings)
             retrieval_ready = True
         except Exception as exc:  # any retrieval dependency/config failure
             logger.warning(

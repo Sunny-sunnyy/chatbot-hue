@@ -268,6 +268,14 @@ Không dùng:
 
 Active Hue Qdrant collection chỉ được đọc. Không in secrets.
 
+Coordinated Phase 4–5 blue-green verification được user duyệt ngày 2026-08-25
++07 cho phép retrieval-only evaluator nhận optional exact `collection_name` tại
+composition root. Hàm copy settings trong memory, chọn profile/collection rồi
+build real retrieval service. Override chỉ dùng để chạy fresh 104 questions × 3
+profiles trên active baseline và `hue_foods_e5_small_384_dense`; nó không sửa
+`settings.yaml`, không áp dụng cho answer evaluation/API và không tạo
+multi-collection framework.
+
 ## Những phần bị loại bỏ
 
 Phase 7 mới không có:

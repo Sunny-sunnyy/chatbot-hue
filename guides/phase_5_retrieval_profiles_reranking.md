@@ -22,6 +22,26 @@ Implementer: DeepSeek
 > hiện hành cấm mock/fake và cho phép real online/API execution trong approved
 > scope. Phase 5 sẽ được review lại sau Phase 7.
 
+> **Quyết định coordinated simplification ngày 2026-08-25 +07:** Phase 4 bỏ
+> stored sparse vectors khỏi active Qdrant baseline; trong cùng implementation
+> scope, Phase 5 nhận lexical tokenization về BM25 ownership. `SparseEmbedder`
+> chỉ bị xóa sau khi không còn runtime/test/notebook consumer. BM25 và
+> CrossEncoder behavior của ba canonical profiles phải được bảo toàn.
+
+> Phase 4 và phần Phase 5 liên quan trực tiếp được brainstorming chung. Test
+> policy ưu tiên pure behavior và real guarded-system evidence; không có test
+> count target, mock/fake system evidence hoặc test chỉ bảo vệ implementation
+> mechanics không có user-visible need.
+
+> Qdrant client không có module cache: API startup hoặc ingestion composition
+> root tạo một client và truyền xuống. CrossEncoder instance cũng không có app
+> cache; thư viện model cache chỉ tái sử dụng downloaded files bình thường.
+>
+> Thiết kế coordinated Phase 4–5 đã được user duyệt ngày `2026-08-25 +07` tại
+> `docs/superpowers/specs/2026-08-25-phase-4-5-qdrant-retrieval-simplicity-design.md`.
+> Trạng thái này chỉ cho phép viết implementation plan; chưa cho phép sửa
+> runtime, mutate/cut over/delete collection, commit hoặc push.
+
 Thiết kế trong guide này đã được người dùng phê duyệt ngày 2026-08-12 +07.
 DeepSeek đã bàn giao correction revision 3; Codex technical review đạt và người
 dùng đã xác nhận final approval ngày 2026-08-12 +07.
@@ -29,8 +49,13 @@ dùng đã xác nhận final approval ngày 2026-08-12 +07.
 ## Dependency đã đạt
 
 - Phase 4 có status `approved`.
-- Active collection `hue_foods_e5_small_384` có 572 points, named dense vector
-  384 chiều cosine và sparse index.
+- Active collection hiện tại `hue_foods_e5_small_384` có 572 points, named dense
+  vector 384 chiều cosine và sparse index lịch sử. Target sau approved Phase 4–5
+  simplification là blue-green cutover sang dense-only candidate
+  `hue_foods_e5_small_384_dense`; mọi active config transition vẫn cần user
+  approval riêng.
+- Point payload giữ `embedding_model` để xác minh vector-space identity;
+  `embedding_dimension` bị loại vì dense schema/config đã là nguồn chuẩn.
 - Query embedder dùng `intfloat/multilingual-e5-small`, prefix `query: ` và cùng
   dimension với indexed document embeddings.
 - Canonical corpus gồm 572 chunks với stable `chunk_id` và curated payload.
@@ -62,11 +87,12 @@ selection được hoãn sang Phase 7–8.
 | `BM25` | Fit corpus statistics và score exact lexical matches | Query Qdrant hoặc normalize score |
 | `HybridRetriever` | Score BM25, normalize, fusion và giữ top candidates | Load model hoặc build context |
 | `CrossEncoderReranker` | Score 10 query-document pairs và trả top 5 | Retrieval candidate generation |
-| `RetrievalService` | Route profile và enforce component availability | API error mapping hoặc generation |
+| `RetrievalService` | Route profile, giữ đúng concrete components và runtime status | API error mapping hoặc generation |
 | `ContextBuilder` | Ghép whole chunks trong budget và giữ source mapping | Retrieval hoặc prompt generation |
 
-Mỗi component nhận dependencies qua constructor hoặc input rõ ràng để tests có
-thể dùng fakes mà không mở Qdrant hoặc load model.
+Mỗi component nhận dependencies qua constructor hoặc input rõ ràng. Verification
+dùng pure behavior tests hoặc actual guarded Qdrant/models; dependency injection
+không phải lý do để tạo fake implementation.
 
 ## Ba retrieval profiles canonical
 
@@ -140,7 +166,8 @@ b = 0.75
 ```
 
 - Fit trên đủ 572 non-empty active corpus chunk texts, không fit mỗi request.
-- Query/document dùng cùng `tokenize()` contract với `SparseEmbedder`.
+- Query/document dùng chung một lexical `tokenize()` contract do BM25/scoring
+  ownership quản lý; retrieval không import từ embedding package.
 - Average document length chỉ tính non-empty documents.
 - Query terms được deduplicate trước khi cộng BM25 term contributions.
 - Term ngoài vocabulary hoặc không xuất hiện trong document đóng góp `0.0`.
@@ -249,9 +276,10 @@ Phase 5 không tuyên bố model này tốt cho tiếng Việt.
 
 ## Local latency và resource gate
 
-- Chỉ dùng model đã có trong local cache.
-- Nếu cache thiếu, dừng và xin user approval trước model download.
-- Unit tests dùng fake scorer; Run All notebook dùng MiniLM cache thật.
+- Profile `hybrid_rerank` load/download MiniLM thật khi cần trong approved run;
+  hai profile khác không load model.
+- Reranker behavior cần evidence từ MiniLM thật; pure ordering/validation
+  logic có thể được test trực tiếp không qua fake scorer.
 - Real validation có một warm-up không tính vào kết quả.
 - Sau warm-up, đo 20 lượt, mỗi lượt rerank đúng 10 pairs trên CPU.
 - p95 rerank latency phải không quá 3 giây.
@@ -280,7 +308,7 @@ Corpus Hue Foods có chunk thường tối đa 400 ký tự; bảng là atomic v
 nhất đã xác minh ở Phase 2 là 927 ký tự. Whole-chunk policy vì vậy giữ cấu trúc
 bảng mà vẫn cho phép khoảng 3–5 evidence trong baseline budget.
 
-## Startup và cache lifecycle
+## Startup và runtime status
 
 Service initialization theo active profile:
 
@@ -289,35 +317,31 @@ inspect exact collection/schema/count/model/dimension
   -> dense_only: create dense retriever only
   -> hybrid_no_rerank: bounded scroll 572 payloads -> fit BM25 once
   -> hybrid_rerank: same hybrid initialization -> load MiniLM once
-  -> expose immutable component status and snapshot
+  -> construct RetrievalService directly with small immutable runtime status
 ```
 
-Snapshot gồm:
+Runtime status chỉ gồm dữ liệu có consumer thật:
 
 ```text
 collection_name
 point_count
 embedding_model
 embedding_dimension
-corpus_fingerprint
 active_profile
 bm25_ready
 reranker_ready
-config_fingerprint
 ```
 
 Lifecycle rules:
 
 - Scroll theo bounded batches, `with_vectors=False`, chỉ lấy safe payload fields.
+- Batch size là constant nội bộ 128; không có settings key, function override
+  hoặc test chỉ kiểm tuning seam này.
 - Xác minh đúng 572 unique `chunk_id` và non-empty text.
-- Corpus fingerprint tính deterministic từ sorted `chunk_id + text` pairs.
-- Config fingerprint tính deterministic từ retrieval depth/fusion settings và
-  thêm reranker model/device/top-k khi profile dùng reranker. Baseline dùng
-  conservative shared retrieval fingerprint cho mọi profile, nên thay đổi
-  fusion config có thể làm `dense_only` stale dù chưa dùng BM25.
 - BM25 và reranker giữ immutable trong vòng đời service.
-- Collection/config/fingerprint thay đổi làm snapshot stale và yêu cầu tạo
-  service mới hoặc restart; không tự refit giữa requests.
+- Collection/config thay đổi yêu cầu restart; không tự refit giữa requests.
+- Không tạo corpus/config fingerprint hoặc `verify_snapshot()` vì production
+  runtime không có consumer cho cơ chế staleness audit này.
 - Không thêm persistent cache artifact trong Phase 5.
 - Optional component failure không làm profile khác âm thầm đổi semantics.
 
@@ -329,7 +353,7 @@ Phase 5 dùng fail-explicit policy:
 |---|---|
 | Query rỗng/whitespace | `InvalidQueryError` |
 | Profile hoặc config sai | `RetrievalConfigurationError` |
-| Required component missing hoặc snapshot stale | `ComponentNotReadyError` |
+| Required component missing hoặc startup corpus invalid | `ComponentNotReadyError` |
 | Embedder, Qdrant hoặc model failure | `RetrievalDependencyError` |
 | Retrieval chạy thành công nhưng không có candidate | `[]` |
 
@@ -353,9 +377,7 @@ backend/retrieval/hybrid_retriever.py
 backend/retrieval/service.py
 backend/retrieval/context_builder.py
 backend/scoring/bm25.py
-backend/reranking/base.py
-backend/reranking/models/cross_encoder.py
-backend/reranking/reranker.py
+backend/reranking/cross_encoder.py
 backend/tests/test_bm25.py
 backend/tests/test_retrieval_service.py
 backend/tests/test_reranker.py
@@ -366,9 +388,11 @@ reports/phase_5_retrieval_profiles_reranking_implementation_report.md
 reports/hue_foods_rag_benchmark.md
 ```
 
-Không tạo `backend/reranking/openrouter_reranker.py` trong Phase 5. Không sửa
-ingestion, chunking, embedding model/dimension, Qdrant schema, collection
-contents, generation, API hoặc frontend.
+Không tạo `backend/reranking/openrouter_reranker.py` trong Phase 5. Coordinated
+implementation chỉ được chạm Phase 4 Qdrant schema/ingestion và Phase 5 lexical
+ownership đã duyệt; không đổi embedding model/dimension, retrieval profile
+semantics, generation, API hoặc frontend. Active collection contents vẫn không
+được mutate nếu chưa có approval riêng.
 
 ## Cấu hình baseline
 
@@ -385,20 +409,22 @@ reranking.device = cpu
 reranking.top_k = 5
 ```
 
-Chỉ bổ sung context limits và bounded startup scroll size nếu implementation
-cần. Không thêm tuning grid hoặc speculative knobs.
+Giữ context limits hiện có. Startup scroll batch là constant 128 trong code;
+không thêm tuning grid hoặc speculative knobs.
 
 ## Nhiệm vụ của DeepSeek Implementer
 
-1. Implement BM25 và normalization thuần, kiểm tra bằng known corpus.
-2. Implement dense/hybrid retrievers với injected fake Qdrant và fake embedder.
+1. Move lexical tokenizer vào BM25 ownership; giữ self-contained BM25 corpus
+   statistics và normalization, kiểm tra bằng known corpus.
+2. Implement dense/hybrid retrievers và verify bằng guarded Qdrant/E5 thật.
 3. Implement profile routing, score metadata và typed errors.
-4. Implement reranker contract với fake scorer trước, sau đó wrapper MiniLM.
+4. Implement một concrete CrossEncoder reranker và verify bằng MiniLM thật.
 5. Implement whole-chunk ContextBuilder và source mapping.
-6. Implement profile-scoped startup lifecycle và immutable snapshot.
+6. Implement profile-scoped startup lifecycle và small runtime status.
 7. Tạo notebook runtime-real và implementation report.
 8. Chạy smallest relevant tests trước, sau đó full backend regression.
-9. Xin approval riêng trước real Qdrant/cached-model validation.
+9. Chạy real guarded Qdrant/model validation trong approved scope; chỉ
+   active mutation/destructive transition cần approval riêng.
 
 Không copy nguyên code `llm_rag`. Đặc biệt không copy raw-score fusion, broad
 exception-to-empty behavior, eager all-component startup, input mutation hoặc
@@ -410,7 +436,7 @@ ContextBuilder không tính separator vào budget.
 
 - import `RetrievalService` và `ContextBuilder` từ backend;
 - giải thích ba profiles bằng tiếng Việt;
-- Run All build cả ba profile bằng Qdrant/E5/MiniLM thật từ local cache; không
+- Run All build cả ba profile bằng Qdrant/E5/MiniLM thật; không
   có fake dependency hoặc config-file mutation;
 - hiển thị score fields đúng với từng stage và whole-chunk bounded context;
 - không gọi OpenRouter hoặc bất kỳ paid API nào;
@@ -420,7 +446,7 @@ ContextBuilder không tính separator vào budget.
 
 ```bash
 cd backend
-uv run python -m py_compile core/startup.py retrieval/dense_retriever.py retrieval/hybrid_retriever.py retrieval/service.py retrieval/context_builder.py scoring/bm25.py reranking/base.py reranking/models/cross_encoder.py reranking/reranker.py
+uv run python -m py_compile core/startup.py retrieval/dense_retriever.py retrieval/hybrid_retriever.py retrieval/service.py retrieval/context_builder.py scoring/bm25.py reranking/cross_encoder.py
 uv run pytest tests/test_bm25.py tests/test_retrieval_service.py tests/test_reranker.py tests/test_context_builder.py tests/test_startup.py -q --tb=short
 uv run pytest tests/ -q --tb=short
 ```
@@ -435,7 +461,8 @@ Required test evidence:
 - Deterministic ties theo `chunk_id`.
 - Reranker score count, finite score, duplicate/foreign output và no mutation.
 - Context whole-chunk budget tính cả source label/separator và giữ source order.
-- Startup bounded scroll, 572 unique IDs, fingerprint và profile-scoped loading.
+- Startup bounded scroll, 572 unique IDs, small runtime status và profile-scoped
+  loading.
 - Typed errors không bị chuyển thành `[]`.
 
 ## Real local validation cần approval riêng
@@ -450,9 +477,9 @@ Sau offline tests, reviewer/implementer chỉ chạy khi user cho phép rõ:
 - MiniLM warm-up một lượt, đo 20 lượt rerank 10 pairs, p95 không quá 3 giây;
   cold-load time ghi riêng.
 
-Nếu thiếu local model cache, dừng và xin approval trước download. Nếu real local
-validation không được phê duyệt, implementation report phải ghi rõ check chưa
-chạy; không suy diễn pass từ mocks.
+Model download/load/predict failure phải được ghi đúng và fail explicit; không
+fallback, skip hoặc suy diễn pass. Approved implementation không cần approval
+riêng cho từng download/run.
 
 ## Hypothesis, metrics và stop conditions
 
@@ -485,7 +512,7 @@ Phase 7–8; không tuning vô hạn trong Phase 5.
 - Ba profiles có semantics đúng và tests độc lập.
 - Query E5 dùng đúng prefix/model/dimension của Phase 3–4.
 - Hybrid dùng normalized dense + Python BM25, không misleading sparse claim.
-- Local MiniLM chạy CPU và đạt latency gate khi real validation được approve.
+- Local MiniLM chạy CPU và đạt latency gate trong real validation.
 - Context whole-chunk, bounded, deterministic và giữ source mapping.
 - Typed failures rõ, không biến dependency error thành empty retrieval.
 - Notebook an toàn và implementation report đầy đủ.
@@ -508,6 +535,197 @@ và safe failure record đã chạy thật. Retrieval quality metrics và winner
 thuộc Phase 7–8.
 
 ## Quyết định đã phê duyệt
+
+```text
+Decision: Dùng coordinated Phase 4–5 implementation. Phase 4 bỏ stored custom
+TF-IDF sparse vectors khỏi active-baseline schema/point/ingestion; Phase 5 chuyển
+shared tokenize() sang lexical BM25/scoring ownership. Xóa SparseEmbedder và
+tests riêng của nó chỉ sau khi repository không còn consumer.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn phương án A trong Phase 4 simplicity brainstorming.
+Capability invariant: Giữ nguyên dense_only, hybrid_no_rerank và hybrid_rerank;
+Python BM25 và CrossEncoder không bị xóa hoặc đổi semantics.
+Affected scope: backend/scoring/bm25.py, embedding/sparse_embedder.py, Phase 4
+schema/point/upsert/ingestion, affected tests/notebooks và import ownership.
+Safety boundary: Code/test changes không authorize delete/recreate/reindex active
+collection; destructive transition cần exact plan và user approval riêng.
+Revisit trigger: Consumer audit phát hiện sparse embedding behavior thật ngoài
+Qdrant storage hoặc BM25 tokenization không thể tách mà đổi retrieval semantics.
+```
+
+```text
+Decision: Dùng blue-green migration. Giữ hue_foods_e5_small_384 read-only trong
+khi dense-only candidate tên mới chạy real Phase 4 ingestion và affected Phase 5
+retrieval verification. Sau technical review dừng xin user approval trước config
+cutover; giữ old collection làm rollback và xin approval khác trước cleanup.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn migration phương án A trong joint Phase 4–5 brainstorming.
+Affected scope: schema transition, startup/retrieval verification, active-data
+safety và implementation checkpoints.
+Revisit trigger: Candidate không chứng minh retrieval tương đương hoặc exact
+cutover/rollback plan phát hiện data risk mới.
+```
+
+```text
+Decision: Phase 5 đọc/validate embedding_model từ corpus payload khi đã scroll
+cho BM25; không yêu cầu embedding_dimension trong payload. Dimension/distance
+được validate từ Qdrant dense schema và config.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn payload identity phương án A sau llm_rag comparison.
+Affected scope: startup corpus projection/validation, retrieval snapshot fields,
+tests và notebook diagnostics.
+Revisit trigger: Dense-only startup cần một collection-level model identity
+mechanism khác hoặc Phase 8 model transition thay đổi contract.
+```
+
+```text
+Decision: Giữ small immutable runtime status cho API/health/debug nhưng xóa
+corpus_fingerprint, config_fingerprint, verify_snapshot() và tests chỉ phục vụ
+staleness machinery. Status giữ collection, point count, embedding model/
+dimension, active profile và BM25/reranker readiness. Collection/config đổi thì
+restart process.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: Source audit xác nhận verify_snapshot không có production caller; user
+chọn phương án A và cho phép chạy real evidence/xóa code-test vô nghĩa.
+Affected scope: core/startup.py, retrieval service status, API debug/health,
+startup tests và imports/hash dependencies.
+Revisit trigger: Runtime thật cần hot reload hoặc external collection mutation
+không thể quản lý bằng explicit restart/deployment lifecycle.
+```
+
+```text
+Decision: Reranking dùng một concrete reranking/cross_encoder.py với
+CrossEncoderReranker instance-owned model. Class trực tiếp load/warm-up/predict,
+validate exact finite score count, deterministic sort theo score rồi chunk_id và
+trả fresh documents không mutate input. Xóa BaseReranker, ScorerReranker,
+models/cross_encoder wrapper, module lru_cache và fake-scorer seam.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: Direct source comparison với llm_rag cho thấy base/model wrappers chỉ
+có một implementation; user xác nhận đề xuất concrete class.
+Failure policy: Model/scoring error fail explicit cho hybrid_rerank, không silent
+fallback sang profile khác.
+Test boundary: Real MiniLM startup/rerank evidence và pure output invariants cần
+thiết; không FakeReranker hoặc test abstraction đã xóa.
+Affected scope: reranking package, startup typing/imports, service tests, notebook
+và runtime status.
+Revisit trigger: Phase 8 duyệt và implement một second real reranker cùng tồn tại;
+chỉ lúc đó mới cân nhắc shared interface.
+```
+
+```text
+Decision: CrossEncoder model loading được phép online trong approved run. Chỉ
+hybrid_rerank tạo instance và load/warm-up MiniLM thật; dùng library download
+cache bình thường nhưng không app lru_cache, local_files_only gate, preload script
+hoặc missing-cache tests. Load/download/predict failure fail explicit.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn model-loading phương án A và đã cho phép real online
+execution.
+Affected scope: reranking/cross_encoder.py, startup, tests/notebook và resource
+documentation.
+Revisit trigger: Deployment environment thật yêu cầu offline artifact policy.
+```
+
+```text
+Decision: scoring/bm25.py tự sở hữu Vietnamese-safe tokenizer, corpus DF/IDF,
+BM25 scoring, min-max normalization và fusion-weight validation. Xóa
+embedding/sparse_embedder.py và test_sparse_embedder.py sau consumer audit; không
+thêm rank_bm25 dependency hoặc giữ SparseEmbedder làm statistics provider.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: Source comparison cho thấy llm_rag gắn BM25 vào SparseEmbedder trong
+khi Hue BM25 đã tự fit statistics; user chọn phương án A.
+Test boundary: Gom về các behavior dễ giải thích: Vietnamese tokenization,
+known-corpus ranking, normalization/config validity và real hybrid retrieval;
+không giữ 19 micro-tests theo từng implementation branch.
+Affected scope: scoring/bm25.py, sparse module deletion, startup imports, BM25/
+retrieval tests và Notebook 03/05 references.
+Revisit trigger: Approved Phase 8 lexical experiment chọn tokenizer/library khác
+và real metrics chứng minh lợi ích.
+```
+
+```text
+Decision: Giữ DenseRetriever, HybridRetriever và RetrievalService vì chúng ánh
+xạ ba hành vi thật; xóa RetrievalStack optional-component container. Startup lắp
+đúng components theo active profile rồi trả RetrievalService trực tiếp. Service
+sở hữu small runtime status; không test các stack thiếu/sai component được dựng
+thủ công ngoài production path.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: Caller/source audit cho thấy ba concrete classes có trách nhiệm riêng,
+nhưng RetrievalStack chỉ chuyển optional fields sang service; user chọn phương án
+A.
+Affected scope: core/startup.py, retrieval/service.py, API lifespan/debug access,
+type imports và startup/retrieval tests.
+Revisit trigger: Một second real composition path cần chia sẻ immutable component
+bundle ngoài service.
+```
+
+```text
+Decision: Giữ ContextBuilder và JSON evidence-block contract vì API, evaluation
+và prompt có real consumers. Giữ whole chunks, max 5 documents/3.000 serialized
+characters, source mapping, structural isolation và non-mutation. Không đổi sang
+plaintext hoặc function chỉ để giảm class count.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: Caller/source audit xác nhận implementation chỉ 66 dòng và JSON
+structure bảo vệ mapping chunk/source; user chọn phương án A.
+Test boundary: Gom test_context_builder về whole-chunk budget/max-documents, JSON
+structural safety/source mapping và empty/non-mutation behavior; generator tests
+chỉ giữ mapping integration không trùng toàn bộ cases.
+Affected scope: test_context_builder.py và overlapping generator tests; runtime
+behavior được bảo toàn.
+Revisit trigger: Prompt/generator contract thật chuyển khỏi structured evidence.
+```
+
+```text
+Decision: Bỏ vector_database.scroll_batch_size, startup override argument và test
+override. Giữ bounded Qdrant payload pagination bằng constant nội bộ 128 cho
+canonical 572-point corpus; real candidate run phải xác nhận đọc đủ 572 unique
+payloads.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn scroll phương án A; không có runtime consumer cần tune batch.
+Affected scope: settings/config docs, core/startup.py, startup tests và notebook
+runtime explanation.
+Revisit trigger: Real Qdrant execution cho thấy batch 128 gây observed latency/
+reliability problem hoặc corpus contract tăng đáng kể.
+```
+
+```text
+Decision: Affected Phase 5 verification chạy fresh retrieval-only evaluation trên
+104 canonical questions cho cả ba profiles, trước refactor với active collection
+và sau refactor với dense-only candidate. Giữ cùng data/settings và báo metrics,
+latency, failures cùng relevant per-query diffs. Không chạy paid generation/judge
+vì prompt/generator không đổi.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn comparison phương án A.
+Acceptance boundary: Không cần exact floating-point equality nếu model/library có
+observed numerical noise, nhưng mọi ranking/metric delta phải được giải thích
+trước cutover approval.
+Revisit trigger: Retrieval differences ảnh hưởng context selection hoặc source
+mapping và cần downstream answer evaluation.
+```
+
+```text
+Decision: Candidate verification truyền optional exact collection_name qua
+ingestion/evaluation composition roots và in-memory settings copy. Production API
+vẫn dùng canonical settings.yaml; không sửa config trước cutover, không thêm
+candidate settings file hoặc global environment override.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn candidate-targeting phương án A.
+Affected scope: service builder inputs, evaluation builder/batch inputs, notebooks
+và real comparison commands.
+Revisit trigger: Override lan xuống component internals thay vì dừng ở composition
+root hoặc tạo multi-collection runtime semantics.
+```
 
 ```text
 Decision: Dùng local-first Phase 5 với E5 dense, Python BM25 và local cross-encoder/ms-marco-MiniLM-L-6-v2; hoãn OpenRouter reranker sang Phase 8.
@@ -561,6 +779,9 @@ Approval date +07: 2026-08-12
 Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Real local validation, acceptance evidence và model resource policy.
 Revisit trigger: Máy local không đạt gate với controlled measurement hoặc resource environment thay đổi.
+Superseded in part: Quyết định 2026-08-25 cho phép normal online model load trong
+approved run và bỏ cache-only/missing-cache gates; warm-up/latency measurement
+vẫn giữ.
 ```
 
 ```text
@@ -570,6 +791,9 @@ Approval date +07: 2026-08-12
 Evidence: User chọn phương án A trong brainstorming Phase 5.
 Affected scope: Startup lifecycle, component availability, cache invalidation và performance tests.
 Revisit trigger: Runtime cần hot reload/reindex lifecycle được thiết kế và phê duyệt riêng.
+Superseded: Quyết định 2026-08-25 chỉ giữ small runtime status và explicit
+restart; xóa fingerprints, verify_snapshot và stale-state tests không có
+production consumer.
 ```
 
 ```text

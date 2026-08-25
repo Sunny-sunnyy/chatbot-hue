@@ -3,8 +3,8 @@
 Every collection this suite creates or mutates carries the
 TEST_COLLECTION_PREFIX marker; the active collection is never written to.
 The session fixture ingests the curated foods corpus through the real
-ingestion pipeline (real chunker, real E5, real sparse embedder, real
-Qdrant) into one isolated test collection and deletes it at session end,
+ingestion pipeline (real chunker, real E5 embedder, real Qdrant)
+into one isolated test collection and deletes it at session end,
 printing the cleanup outcome. A final sweep removes any leftover marked
 test collections and reports each outcome.
 """
@@ -14,7 +14,7 @@ import copy
 import pytest
 
 from core.settings_loader import load_settings
-from vectorstore.qdrant import get_client
+from vectorstore.qdrant import client_from_settings
 
 TEST_COLLECTION_PREFIX = "hue_rag_live_test_"
 TEST_COLLECTION = "hue_rag_live_test_e5_small_384"
@@ -87,9 +87,8 @@ def live_settings():
 
 @pytest.fixture(scope="session")
 def real_client():
-    """The real cached Qdrant client for the configured server."""
-    db = load_settings()["vector_database"]
-    return get_client(db["url"], db["timeout"])
+    """The real uncached Qdrant client for the configured server."""
+    return client_from_settings(load_settings())
 
 
 @pytest.fixture(scope="session")
@@ -120,8 +119,8 @@ def real_embedder():
 def ingested_collection(real_client, real_embedder):
     """Ingest the real curated corpus through the real pipeline.
 
-    chunk_foods_markdown, the E5 embedder, the sparse embedder and Qdrant
-    are all real; the summary is yielded to tests and the marked test
+    chunk_foods_markdown, the E5 embedder and Qdrant are all real;
+    the summary is yielded to tests and the marked test
     collection is deleted at session end with a reported outcome.
     """
     from ingestion.chunking.markdown_chunker import chunk_foods_markdown
@@ -139,7 +138,7 @@ def ingested_collection(real_client, real_embedder):
 
 @pytest.fixture(scope="session")
 def ingested_point_structs(ingested_collection, real_client):
-    """Real PointStructs (with real dense/sparse vectors) scrolled back."""
+    """Real PointStructs (with real dense vectors) scrolled back."""
     records, _ = real_client.scroll(
         TEST_COLLECTION, limit=1000, with_payload=True, with_vectors=True
     )

@@ -267,6 +267,12 @@ query runtime chỉ tìm bằng named dense vector rồi tính BM25 trong Python
 `hue_rag` kế thừa đúng mô hình này. Sparse storage hiện không gây sai kết quả,
 nhưng làm schema, ingestion và tests phức tạp hơn mà chưa có query consumer.
 
+`llm_rag` chỉ lưu text/chunk metadata, không lưu explicit embedding model hoặc
+dimension trong payload và cũng không validate existing collection model space.
+Hue không sao chép điểm này: user đã chốt giữ `embedding_model` để phát hiện
+same-dimension model mismatch, nhưng bỏ `embedding_dimension` vì Qdrant schema
+đã là nguồn chuẩn.
+
 Simplicity brainstorming Phase 3 đã chốt lexical path canonical:
 
 ```text
@@ -276,10 +282,18 @@ Qdrant dense candidates
 ```
 
 Vì vậy target architecture là Python BM25 và Qdrant dense-only; native Qdrant
-sparse không phải query path được chọn. Phase 3 vẫn giữ `SparseEmbedder` để
-không phá Phase 4 schema/ingestion hiện hành. Review Phase 4–5 sẽ phối hợp bỏ
-sparse storage/schema và chuyển shared tokenization về lexical ownership phù
-hợp. Không làm thay đổi đó xuyên phase trong Phase 3.
+sparse không phải query path của ba canonical profiles. Phase 3 vẫn giữ
+`SparseEmbedder` để không phá Phase 4 schema/ingestion hiện hành. Ngày
+2026-08-25 +07, user đã duyệt coordinated Phase 4–5 simplification: bỏ sparse
+storage/schema khỏi active baseline và chuyển shared tokenization về lexical
+BM25/scoring ownership trong cùng implementation scope, đồng thời giữ Python
+BM25 và CrossEncoder capability. `SparseEmbedder` chỉ bị xóa sau consumer audit
+xác nhận không còn dependency.
+
+Phase 8 sẽ đánh giá true hybrid retrieval bằng isolated candidate collection có
+sparse vectors và fair controlled comparison. Candidate không mutate active
+dense-only baseline. Stored sparse chỉ được đề xuất quay lại production khi real
+results chứng minh lợi ích tương xứng complexity và user duyệt exact transition.
 
 Active Hue collection vẫn read-only. Existing tests chỉ được mutate guarded
 collection có prefix `hue_rag_live_test_`; collection candidate mới, reindex
@@ -374,6 +388,12 @@ Phần không sao chép nguyên trạng:
 `hue_rag` hiện dùng JSON API thay vì frontend SSE. Không thêm streaming,
 session memory, rate limiter hoặc frontend contract trước khi có nhu cầu thật.
 
+BM25 comparison ngày 2026-08-25 +07 xác nhận `llm_rag` phụ thuộc
+`SparseEmbedder` cho vocabulary/DF. Hue không giữ coupling này sau khi bỏ Qdrant
+sparse: `scoring/bm25.py` sở hữu tokenizer và corpus statistics trực tiếp; không
+thêm dependency `rank_bm25`. Tests tập trung vào lexical/ranking behavior và real
+hybrid retrieval thay vì micro-testing implementation branches.
+
 ## Những phần nên giữ, sửa hoặc loại bỏ
 
 | Nhóm | Hướng áp dụng cho `hue_rag` |
@@ -388,12 +408,20 @@ session memory, rate limiter hoặc frontend contract trước khi có nhu cầu
 | Bounded context | Giữ |
 | OpenAI Agents SDK | Giữ |
 | OpenRouter capability | Giữ roadmap Phase 8; không giữ adapter dự phòng ở Phase 3 |
-| Stored sparse vector không được query | Bỏ có phối hợp trong review Phase 4–5 |
+| Stored sparse vector không được query | Bỏ khỏi active baseline trong coordinated Phase 4–5; chỉ thử true-hybrid trên isolated Phase 8 candidate |
 | Dense/Ollama legacy paths | Không mang sang chỉ để rollback/học tập |
 | Random UUID chunk IDs | Không áp dụng; giữ deterministic IDs của Markdown |
 | Mock/fake completion evidence | Không áp dụng |
 | Frontend/SSE | Ngoài Phase 0–6 hiện tại |
 | Snapshot/fingerprint/tamper machinery | Chỉ giữ nếu một failure thật chứng minh cần |
+
+Reranking comparison ngày 2026-08-25 +07 xác nhận `llm_rag` dùng BaseReranker,
+một thin CrossEncoderModel wrapper và CrossEncoderReranker cho đúng một real
+implementation. Hue học luồng batch scoring trực tiếp nhưng không sao chép
+global state, eager load, input mutation, zip truncation hoặc silent fallback.
+Approved Phase 5 target là một concrete `reranking/cross_encoder.py` với
+instance-owned model và real MiniLM evidence; chỉ tạo shared interface khi Phase
+8 có second real reranker cùng tồn tại.
 
 ## Chuẩn review rút ra cho `hue_rag`
 

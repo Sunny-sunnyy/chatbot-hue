@@ -1,10 +1,7 @@
 """Qdrant client factory, collection schema validation and guarded create."""
-from functools import lru_cache
-
 from qdrant_client import QdrantClient, models
 
 DENSE_VECTOR_NAME = "dense"
-SPARSE_VECTOR_NAME = "sparse"
 DISTANCE = models.Distance.COSINE
 
 
@@ -12,39 +9,39 @@ class QdrantSchemaError(ValueError):
     """Raised when an existing collection deviates from the expected schema."""
 
 
-@lru_cache(maxsize=4)
-def get_client(url, timeout):
-    """Return one cached QdrantClient per (url, timeout) pair."""
-    return QdrantClient(url=url, timeout=timeout)
-
-
 def client_from_settings(settings=None):
-    """Build a cached client from the vector_database settings group."""
+    """Build an uncached client from the vector_database settings group."""
     if settings is None:
         from core.settings_loader import load_settings
 
         settings = load_settings()
     db = settings["vector_database"]
-    return get_client(db["url"], db["timeout"])
+    return QdrantClient(url=db["url"], timeout=db["timeout"])
 
 
 def expected_schema(settings):
-    """Return the expected named-vector schema for the current settings."""
+    """Return the expected dense named-vector schema for the current settings."""
     dimension = settings["vector_database"]["vector_size"]
-    return {
-        DENSE_VECTOR_NAME: models.VectorParams(size=dimension, distance=DISTANCE),
-        SPARSE_VECTOR_NAME: models.SparseVectorParams(index=models.SparseIndexParams()),
-    }
+    return {DENSE_VECTOR_NAME: models.VectorParams(size=dimension, distance=DISTANCE)}
 
 
-def validate_collection_info(info, settings):
-    """Raise QdrantSchemaError when an existing collection deviates from expectations."""
+def validate_collection_info(info, settings, *, strict_dense_only=True):
+    """Raise QdrantSchemaError when an existing collection deviates from expectations.
+
+    Checks that the named 'dense' vector exists with the configured size and cosine distance.
+    When strict_dense_only=True (default, used for ingestion and candidate validation),
+    rejects any unexpected sparse vectors or non-dense vector names.
+    When strict_dense_only=False (used by retrieval startup before cutover),
+    accepts legacy collections that contain the required dense vector and ignores unused sparse fields.
+    """
     params = info.config.params
     expected_dimension = settings["vector_database"]["vector_size"]
     dense = params.vectors
-    if not isinstance(dense, dict) or set(dense) != {DENSE_VECTOR_NAME}:
+    if not isinstance(dense, dict) or DENSE_VECTOR_NAME not in dense:
         names = sorted(dense) if isinstance(dense, dict) else "single (non-named) vector config"
-        raise QdrantSchemaError(f"collection vectors {names} != expected ['dense']")
+        raise QdrantSchemaError(f"collection vectors {names} missing expected 'dense'")
+    if strict_dense_only and set(dense) != {DENSE_VECTOR_NAME}:
+        raise QdrantSchemaError(f"collection vectors {sorted(dense)} != expected ['dense']")
     dense_params = dense[DENSE_VECTOR_NAME]
     if dense_params.size != expected_dimension:
         raise QdrantSchemaError(
@@ -53,25 +50,20 @@ def validate_collection_info(info, settings):
     if dense_params.distance != DISTANCE:
         raise QdrantSchemaError(f"dense distance {dense_params.distance!r} != cosine")
     sparse = params.sparse_vectors or {}
-    if not isinstance(sparse, dict) or set(sparse) != {SPARSE_VECTOR_NAME}:
-        names = sorted(sparse) if isinstance(sparse, dict) else "missing"
-        raise QdrantSchemaError(f"sparse vectors {names} != expected ['sparse']")
-    if sparse[SPARSE_VECTOR_NAME].index is None:
-        raise QdrantSchemaError("sparse vector has no index enabled")
+    if strict_dense_only and sparse:
+        raise QdrantSchemaError(f"collection has unexpected sparse vectors: {sorted(sparse)}")
 
 
 def ensure_collection(client, settings):
-    """Create the collection only when absent; validate schema when it exists."""
+    """Create the collection only when absent; validate strict schema when it exists."""
     db = settings["vector_database"]
     name = db["collection_name"]
     if client.collection_exists(name):
-        validate_collection_info(client.get_collection(name), settings)
+        validate_collection_info(client.get_collection(name), settings, strict_dense_only=True)
         return "existing"
-    schema = expected_schema(settings)
     client.create_collection(
         name,
-        vectors_config={DENSE_VECTOR_NAME: schema[DENSE_VECTOR_NAME]},
-        sparse_vectors_config={SPARSE_VECTOR_NAME: schema[SPARSE_VECTOR_NAME]},
+        vectors_config=expected_schema(settings),
         timeout=db["timeout"],
     )
     return "created"

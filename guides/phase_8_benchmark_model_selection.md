@@ -32,10 +32,11 @@ Generator: gpt-5.4-nano
 Judge: gpt-5.4-mini
 ```
 
-Custom TF-IDF sparse vectors hiện còn được lưu để giữ compatibility với Phase
-4, nhưng query runtime không dùng chúng. Canonical lexical path cho benchmark
-là dense Qdrant candidates rồi Python BM25 fusion; coordinated review Phase
-4–5 quyết định thời điểm bỏ sparse storage/schema.
+Active production baseline target đã được user chốt là Qdrant dense-only; custom
+TF-IDF sparse storage/schema sẽ được loại trong coordinated Phase 4–5
+simplification. Canonical lexical path cho ba baseline profiles là dense Qdrant
+candidates rồi Python BM25 fusion. Quyết định bỏ stored sparse không xóa BM25
+hoặc CrossEncoder capability trước benchmark.
 
 Ba retrieval profiles có exact mapping:
 
@@ -60,6 +61,39 @@ profiles:
 candidate-generation path khác. Không mặc định hybrid luôn tốt hơn
 `dense_only`; winner phải đến từ observed metrics.
 
+Ba profile trên không query Qdrant sparse vectors. BM25 chỉ chấm các dense
+candidates nên không thể phục hồi tài liệu đã vắng khỏi dense candidate set.
+Đây là baseline semantics cần được báo cáo đúng, không được gọi là native
+dense+sparse retrieval.
+
+## Isolated true-hybrid candidate
+
+Phase 8 đánh giá true hybrid retrieval trong một controlled experiment riêng,
+không thay đổi semantics của ba canonical profiles. Candidate path lấy dense và
+sparse candidates độc lập rồi fusion trước optional reranking. Exact sparse
+representation, candidate depths, fusion method và reranker setting phải được
+user duyệt trong experiment design; guide này không mặc định trước winner hoặc
+thuật toán chưa được đo.
+
+Experiment phải:
+
+- tạo exact isolated candidate collection có sparse vectors; không thêm sparse
+  vào hoặc mutate active dense-only baseline collection;
+- dùng cùng 572 canonical chunks, evaluation questions, metric definitions và
+  dense model với run đối chứng;
+- thay đổi duy nhất candidate-generation/fusion group trong comparison chính;
+- ghi rõ dense candidate depth, sparse candidate depth, fusion và reranker state;
+- báo cáo retrieval quality, end-to-end quality, latency, reliability và code/
+  operational complexity;
+- không coi việc collection chứa sparse vectors là bằng chứng retrieval tốt hơn;
+- không chuyển candidate collection thành production hoặc thay đổi active config
+  nếu chưa có real observed benefit và exact user-approved transition.
+
+Nếu true-hybrid candidate không tạo lợi ích tương xứng, sparse storage không
+được đưa trở lại production. Nếu có lợi ích, kết quả chỉ là evidence cho một
+transition proposal; delete/recreate/reindex active collection vẫn là destructive
+action cần user approval riêng.
+
 ## Experiment groups
 
 Mỗi experiment chỉ thay đổi một nhóm biến:
@@ -68,6 +102,7 @@ Mỗi experiment chỉ thay đổi một nhóm biến:
 |---|---|---|
 | Dense embedding | provider, model, dimension, instruction | chunks, evaluation data, retrieval settings |
 | BM25/fusion | tokenizer, parameters, weights, candidate depth | dense model, corpus, reranker off |
+| True-hybrid candidate generation | sparse representation, sparse candidate depth, fusion | dense model, corpus, evaluation data |
 | Reranker | provider/model/top-k | pre-rerank candidates |
 | Context | document/character limits | retrieval output và generator |
 | Generator | provider/model/prompt/settings | context, questions và judge |
@@ -133,6 +168,10 @@ settings và command/notebook đơn giản; không cần immutable run package.
 6. Loại candidate không tạo lợi ích tương xứng.
 7. User chọn trade-off cuối.
 
+True-hybrid candidate dùng isolated collection và chạy như experiment group
+riêng sau local dense-only baseline. Không trộn kết quả của candidate-generation
+experiment với BM25-weight hoặc reranker-model experiment trong cùng comparison.
+
 Remote embedding có dimension khác cần exact reindex design. Active collection
 không bị xóa hoặc thay đổi nếu user chưa duyệt exact transition.
 
@@ -189,5 +228,46 @@ Phase 8 chỉ `approved` khi:
 5. configuration cuối được chạy lại;
 6. notebook 08 giúp user hiểu và tự kiểm tra;
 7. user xác nhận kết quả.
+
+Nếu true-hybrid candidate được mở, Phase 8 còn phải xác minh:
+
+- active dense-only baseline collection không bị mutate;
+- candidate collection và query path thực sự có stored/query sparse vectors;
+- comparison giữ đúng corpus, questions, metrics và fixed variables;
+- quyết định production dựa trên observed benefit lẫn complexity, không dựa trên
+  sự tồn tại của sparse schema.
+
+## Quyết định đã phê duyệt
+
+```text
+Decision: Giữ ba canonical profiles dense_only, hybrid_no_rerank và
+hybrid_rerank với exact semantics dense candidates -> optional Python BM25 ->
+optional CrossEncoder. Active production baseline là Qdrant dense-only.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User chọn phương án A sau khi review Phase 8 và source llm_rag.
+Affected scope: Phase 4–5 simplification, Phase 7 evaluation compatibility và
+Phase 8 baseline comparisons.
+Revisit trigger: Approved benchmark evidence yêu cầu thay đổi canonical profile.
+```
+
+```text
+Decision: Phase 8 đánh giá true hybrid retrieval bằng isolated candidate
+collection có sparse vectors và fair controlled comparison. Candidate không
+mutate active dense-only baseline. Sparse storage chỉ được đề xuất quay lại
+production khi real results chứng minh lợi ích tương xứng complexity; exact
+production transition cần user approval riêng.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: User yêu cầu ghi rõ candidate-collection experiment sau khi chọn
+active-baseline phương án A.
+Affected scope: Phase 8 experiment design, candidate collection lifecycle,
+evaluation reports và eventual production transition proposal.
+Open design details: sparse representation, fusion algorithm, candidate depths,
+reranker state và exact candidate collection name sẽ được brainstorming trước
+implementation; quyết định này chưa authorize code, paid run hoặc mutation.
+Revisit trigger: Candidate experiment không còn cần thiết do evaluation evidence,
+hoặc user thay đổi benchmark scope trước implementation authorization.
+```
 
 Commit/push cần yêu cầu riêng.

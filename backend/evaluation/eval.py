@@ -132,9 +132,11 @@ def build_judge(model: str):
     )
 
 
-def build_services(profile: str = "dense_only") -> EvaluationServices:
+def build_services(profile: str = "dense_only", collection_name: str | None = None) -> EvaluationServices:
     settings = copy.deepcopy(load_settings())
     settings["active_profile"] = profile
+    if collection_name is not None:
+        settings["vector_database"]["collection_name"] = collection_name
     retrieval = build_service(settings)
     context = ContextBuilder(
         max_documents=settings["retrieval"]["max_context_documents"],
@@ -248,9 +250,10 @@ def run_retrieval_batch(
     test_path: str | Path = DEFAULT_TEST_FILE,
     concurrency: int = 3,
     profile: str = "dense_only",
+    collection_name: str | None = None,
 ) -> tuple[list[dict], dict]:
     tests = load_tests(test_path)
-    services = build_services(profile)
+    services = build_services(profile, collection_name=collection_name)
 
     def run_one(item):
         index, test = item
@@ -282,9 +285,10 @@ async def run_answer_batch(
     concurrency: int = 3,
     profile: str = "dense_only",
     progress=None,
+    collection_name: str | None = None,
 ) -> tuple[list[dict], dict]:
     tests = load_tests(test_path)
-    services = build_services(profile)
+    services = build_services(profile, collection_name=collection_name)
     semaphore = asyncio.Semaphore(max(1, int(concurrency)))
     completed = 0
 

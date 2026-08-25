@@ -45,8 +45,7 @@ def create_with_points(client, name, structs):
     settings = make_test_settings(name)
     client.create_collection(
         name,
-        vectors_config={"dense": expected_schema(settings)["dense"]},
-        sparse_vectors_config={"sparse": expected_schema(settings)["sparse"]},
+        vectors_config=expected_schema(settings),
     )
     if structs:
         client.upsert(name, points=structs, wait=True)
@@ -331,9 +330,6 @@ class TestLifecycleWarmup:
 
     def test_lifespan_warms_e5_and_minilm_before_ready(self, ingested_collection):
         """hybrid_rerank lifespan loads E5 AND MiniLM before /health is ready."""
-        from reranking.models import cross_encoder as rerank_module
-
-        rerank_module._get_cross_encoder.cache_clear()
         app = make_app(profile="hybrid_rerank")
         with TestClient(app) as client:
             health = client.get("/health")
@@ -342,26 +338,24 @@ class TestLifecycleWarmup:
         assert components["qdrant"] == "ready"
         assert components["retrieval"] == "ready"
         assert (
-            app.state.retrieval_service._stack.dense_retriever._embedder._model
+            app.state.retrieval_service._dense._embedder._model
             is not None
         ), "E5 must load during startup"
         assert (
-            rerank_module._get_cross_encoder.cache_info().misses >= 1
+            app.state.retrieval_service._reranker._model
+            is not None
         ), "MiniLM must load during startup"
 
     def test_dense_only_lifespan_loads_e5_but_never_minilm(self, ingested_collection):
         """Profile scoping at app level: dense_only warms E5, skips MiniLM."""
-        from reranking.models import cross_encoder as rerank_module
-
-        rerank_module._get_cross_encoder.cache_clear()
         app = make_app(profile="dense_only")
         with TestClient(app) as client:
             health = client.get("/health")
         assert health.json()["components"]["qdrant"] == "ready"
         assert (
-            app.state.retrieval_service._stack.dense_retriever._embedder._model
+            app.state.retrieval_service._dense._embedder._model
             is not None
         ), "E5 must load during startup"
         assert (
-            rerank_module._get_cross_encoder.cache_info().misses == 0
+            app.state.retrieval_service._reranker is None
         ), "dense_only must not load MiniLM"

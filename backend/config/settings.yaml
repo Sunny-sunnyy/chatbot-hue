@@ -35,14 +35,10 @@ embedding:
 vector_database:
   url: http://localhost:6333
   collection_name: hue_foods_e5_small_384
-  reset_collection: false
   vector_size: 384
   distance: cosine
   timeout: 30
   upsert_batch_size: 64
-  upsert_max_retries: 1
-  # Bounded startup scroll batch for hybrid profiles; payloads only, no vectors.
-  scroll_batch_size: 128
   # Warning: changing embedding.model or embedding.vector_size requires
   # reindexing. Keep vector_database.vector_size in sync with embedding.vector_size.
   # Ingestion never deletes; reset is a separate command

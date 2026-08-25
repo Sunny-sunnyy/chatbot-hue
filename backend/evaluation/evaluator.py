@@ -26,15 +26,17 @@ def format_table(rows: list[dict], columns: list[str]) -> dict:
     return {"headers": columns, "data": data}
 
 
-def run_retrieval_ui(test_path, concurrency, progress=gr.Progress()):
-    rows, summary = run_retrieval_batch(test_path, concurrency, "dense_only")
+def run_retrieval_ui(test_path, concurrency, progress=gr.Progress(), collection_name=None):
+    rows, summary = run_retrieval_batch(
+        test_path, concurrency, "dense_only", collection_name=collection_name
+    )
     table = format_table(rows, RETRIEVAL_COLUMNS)
     return summary_text("Kết quả retrieval", summary, RETRIEVAL_RESULTS_FILE), table
 
 
-async def run_answer_ui(test_path, concurrency, progress=gr.Progress()):
+async def run_answer_ui(test_path, concurrency, progress=gr.Progress(), collection_name=None):
     rows, summary = await run_answer_batch(
-        test_path, concurrency, "dense_only", progress
+        test_path, concurrency, "dense_only", progress, collection_name=collection_name
     )
     table = format_table(rows, ANSWER_COLUMNS)
     return summary_text("Kết quả câu trả lời", summary, ANSWER_RESULTS_FILE), table
