@@ -1,5 +1,9 @@
 # Báo cáo dành cho người dùng: Giai đoạn 2 - Chia dữ liệu ẩm thực Huế
 
+> **Historical — superseded:** Report này ghi Phase 2 trước simplicity review.
+> Hiện trạng sau đơn giản hóa nằm tại
+> `phase_2_foods_markdown_chunking_simplicity_user_report.md`.
+
 ## Trạng thái hiện tại
 
 ```text

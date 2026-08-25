@@ -23,8 +23,8 @@ Reviewer: Codex
 
 Phase 1 từng được approve và đã làm nền cho Phase 2–7. User đã duyệt design
 đơn giản hóa mới, implementation đã hoàn tất technical review độc lập và được
-user xác nhận ngày `2026-08-24 +07`. Phase đã trở lại `approved`; bước tiếp
-theo là brainstorm simplicity design Phase 2.
+user xác nhận ngày `2026-08-24 +07`. Phase đã trở lại `approved`. Phase 2–5
+simplicity review cũng đã hoàn tất; bước tiếp theo của campaign là Phase 6.
 
 Tài liệu bắt buộc:
 
@@ -32,6 +32,9 @@ Tài liệu bắt buộc:
 docs/superpowers/specs/2026-08-24-phase-1-backend-foundation-simplicity-design.md
 docs/superpowers/plans/2026-08-24-phase-1-backend-foundation-simplicity-implementation.md
 reports/phase_1_backend_skeleton_simplicity_review.md
+reports/phase_1_backend_skeleton_simplicity_implementation_report.md
+reports/phase_1_backend_skeleton_simplicity_codex_review.md
+reports/user_reports/phase_1_backend_skeleton_simplicity_user_report.md
 guides/llm_rag_reference_for_hue_rag.md
 ```
 
@@ -150,8 +153,9 @@ metadata
 ```
 
 Các retrieval/generation error classes hiện có trong `core/schema.py` do Phase
-5–6 thêm vào. Phase 1 không sửa chúng. Phase 5 và Phase 6 sẽ quyết định giữ,
-đơn giản hóa hoặc xóa sau khi affected Phase 7 flow và toàn hệ thống an toàn.
+5–6 thêm vào nên Phase 1 không sửa chúng. Coordinated Phase 4–5 review đã xử lý
+retrieval ownership; các class thuộc generation/API được audit trong simplicity
+review Phase 6 tiếp theo.
 
 ## Scope của Implementer
 
@@ -228,5 +232,5 @@ Phase 1 chỉ trở lại `approved` khi:
 
 ## Bước tiếp theo
 
-Brainstorm simplicity review Phase 2. Audit code/test theo ownership Phase 2,
-ưu tiên live Markdown/chunking path và không mặc định chạy full backend suite.
+Phase 1–5 simplicity review đã hoàn tất và được user xác nhận. Bước tiếp theo
+của simplicity campaign là Phase 6 theo `guides/README.md`.

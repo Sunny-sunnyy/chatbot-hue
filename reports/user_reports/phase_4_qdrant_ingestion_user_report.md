@@ -1,5 +1,9 @@
 # Báo cáo dành cho người dùng: Giai đoạn 4 - Lưu dữ liệu vào Qdrant
 
+> **Historical — superseded:** Report này ghi Phase 4 trước coordinated
+> simplicity review Phase 4–5. Hiện trạng nằm tại
+> `phase_4_5_qdrant_retrieval_simplicity_user_report.md`.
+
 ## Trạng thái hiện tại
 
 ```text

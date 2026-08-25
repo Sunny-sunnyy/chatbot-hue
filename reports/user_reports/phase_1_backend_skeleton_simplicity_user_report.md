@@ -65,7 +65,7 @@ Qdrant và local embedding model thật, nhưng không tự gọi paid answer AP
   đã phục vụ và trả HTTP 200.
 - Full 104-question paid evaluation không chạy lại vì Phase 1 không thay đổi
   retrieval, context, prompt, model hoặc metric.
-- Phase 1 đã được xác nhận; bước tiếp theo là brainstorm simplicity review
-  Phase 2.
+- Phase 1 đã được xác nhận. Tại thời điểm report, bước tiếp theo là simplicity
+  review Phase 2; tiến độ hiện hành xem tại `session_prompt/Project_Status.md`.
 
 Không còn bước xác nhận nào cho Phase 1. Commit/push vẫn cần yêu cầu riêng.

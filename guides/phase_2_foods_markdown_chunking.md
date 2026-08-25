@@ -13,7 +13,7 @@ Implementer: DeepSeek
 Reviewer: Codex
 Approval date +07: 2026-08-09
 Simplicity design approval +07: 2026-08-24
-Simplicity technical review +07: ready_for_user_confirmation 2026-08-24
+Simplicity technical review +07: passed 2026-08-24
 Simplicity confirmation +07: 2026-08-24
 ```
 
@@ -294,15 +294,25 @@ quả mong đợi cố định của lần triển khai mới.
 
 ## Reports và bằng chứng
 
+Current simplicity evidence:
+
+```text
+reports/phase_2_foods_markdown_chunking_simplicity_review.md
+reports/phase_2_foods_markdown_chunking_simplicity_implementation_report.md
+reports/phase_2_foods_markdown_chunking_simplicity_codex_review.md
+reports/user_reports/phase_2_foods_markdown_chunking_simplicity_user_report.md
+```
+
+Historical Phase 2 evidence trước simplicity review:
+
 ```text
 reports/phase_2_foods_markdown_chunking_implementation_report.md
 reports/phase_2_foods_markdown_chunking_codex_review.md
 reports/user_reports/phase_2_foods_markdown_chunking_user_report.md
 ```
 
-Kết luận kỹ thuật: `approved`. Người dùng đã chạy notebook mới, quan sát đúng
-572 đoạn, 0 đoạn thường vượt 400 ký tự và 8 bảng vượt 400 ký tự, sau đó xác
-nhận Giai đoạn 2 ngày 2026-08-09.
+Phase 2 gốc được user xác nhận ngày `2026-08-09`; simplicity implementation
+được user xác nhận ngày `2026-08-24 +07`. Kết luận hiện hành: `approved`.
 
 ## Tiêu chí phê duyệt
 
@@ -321,9 +331,9 @@ Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã
 
 ## Bước tiếp theo
 
-Phase 2 đã hoàn thành và `approved`. Sau Phase 7, Phase 2 sẽ được review lại
-trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
-`guides/README.md`; corpus hiện hành vẫn là 572 chunks.
+Phase 2 đã hoàn thành simplicity review và giữ `approved`; corpus hiện hành vẫn
+là 572 chunks. Phase 3–5 simplicity review cũng đã được user xác nhận. Bước
+tiếp theo của simplicity campaign là Phase 6 theo `guides/README.md`.
 
 ## Quyết định được người dùng phê duyệt ngày 2026-08-09
 

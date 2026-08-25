@@ -59,7 +59,7 @@ thông thường.
 | 3 | `approved` | Embedding/sparse đã được đơn giản hóa, chạy thật, review và được user xác nhận |
 | 4 | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận; candidate chưa cutover |
 | 5 | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
-| 6 | `approved` | Giữ approval cũ; chờ review Phase 5 |
+| 6 | `approved` | Functional phase và Milestone 6.1 đã approved; simplicity review là bước tiếp theo |
 | 7 | `approved` | Evaluation đơn giản đã chạy thật, đạt technical review và được user xác nhận |
 | 8 | `not_ready` | Chưa mở; đã ghi quyết định ba canonical profiles và isolated true-hybrid candidate collection |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
@@ -287,8 +287,8 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-Phase 3 simplicity review đã approved
--> tiếp tục simplicity review Phase 4 -> Phase 6
+Phase 0–5 simplicity review đã approved
+-> tiếp tục simplicity review Phase 6
 -> chạy Phase 7 evaluation 20 câu khi thay đổi có thể ảnh hưởng chất lượng RAG
 -> chạy final full backend suite sau khi Phase 0–6 hoàn tất
 -> chỉ sau đó mới cân nhắc Phase 8

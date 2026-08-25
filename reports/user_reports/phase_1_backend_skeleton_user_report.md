@@ -1,5 +1,9 @@
 # Báo cáo dành cho người dùng: Giai đoạn 1 - Nền tảng mã xử lý phía sau
 
+> **Historical — superseded:** Report này ghi Phase 1 trước simplicity review.
+> Hiện trạng sau đơn giản hóa nằm tại
+> `phase_1_backend_skeleton_simplicity_user_report.md`.
+
 ## Trạng thái hiện tại
 
 ```text

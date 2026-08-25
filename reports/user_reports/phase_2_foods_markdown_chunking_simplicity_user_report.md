@@ -69,5 +69,6 @@ paid API.
 - Còn hai chi tiết nhỏ không ảnh hưởng kết quả: một import không dùng và một
   lỗi chính tả trong dữ liệu test tổng hợp.
 - Bạn đã xác nhận Phase 2 ngày 24-08-2026 +07.
-- Bước tiếp theo là brainstorm simplicity review Phase 3.
+- Tại thời điểm report, bước tiếp theo là simplicity review Phase 3; tiến độ
+  hiện hành xem tại `session_prompt/Project_Status.md`.
 - Commit/push vẫn cần yêu cầu riêng và chưa được thực hiện.

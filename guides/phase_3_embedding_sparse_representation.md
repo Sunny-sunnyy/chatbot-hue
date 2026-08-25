@@ -26,6 +26,12 @@ Guide này thay contract lịch sử đã dùng provider abstraction, OpenRouter
 adapter, batching hai tầng và mock-only tests. Implementation mới phải theo
 thiết kế simplicity đã duyệt và bằng chứng chạy thật.
 
+> **Downstream update `2026-08-25 +07`:** Coordinated simplicity review Phase
+> 4–5 đã xóa `SparseEmbedder` và stored sparse vectors khỏi target code và
+> dense-only candidate. Các đoạn về sparse TF-IDF bên dưới ghi acceptance lịch
+> sử tại thời điểm Phase 3 được review, không phải runtime requirement hiện
+> hành. Dense E5 contract của Phase 3 vẫn được giữ.
+
 ## Mục tiêu
 
 Phase 3 biến 572 canonical food chunks thành:
@@ -203,9 +209,10 @@ Runtime code dùng type hints, tên biến đầy đủ, docstring ngắn và co
 thích lý do ở chỗ không hiển nhiên. Ví dụ tính tay dài nằm trong Notebook 03,
 không nhồi vào source.
 
-BM25 chỉ import chung `tokenize()`; BM25 không phụ thuộc class
-`SparseEmbedder`. Class này tạm giữ vì Phase 4 vẫn tạo sparse vectors. Quyết
-định bỏ sparse storage/schema thuộc coordinated simplicity review Phase 4–5.
+Tại thời điểm Phase 3 được duyệt, BM25 chỉ import chung `tokenize()` và không
+phụ thuộc class `SparseEmbedder`; class này được giữ tạm cho Phase 4. Coordinated
+simplicity review Phase 4–5 sau đó đã chuyển tokenizer sang BM25 ownership và
+xóa `SparseEmbedder` cùng stored sparse schema khỏi target code.
 
 ## Retrieval compatibility
 

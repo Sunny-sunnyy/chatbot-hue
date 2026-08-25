@@ -1,5 +1,10 @@
 # Báo cáo dành cho người dùng: Giai đoạn 6 - Sinh câu trả lời có nguồn và JSON API
 
+> **Current progression note:** Report này là functional evidence của Phase 6
+> trước simplicity campaign. Phase 7 sau đó đã được implement, review và user
+> xác nhận. Functional Phase 6 vẫn `approved`; simplicity review Phase 6 là
+> bước tiếp theo.
+
 ## Trạng thái hiện tại
 
 ```text
@@ -40,7 +45,7 @@ và active collection giữ nguyên 572 points.
 
 ## Cách bạn tự kiểm tra
 
-Mở [notebooks/06_generation_and_api.ipynb](/home/hieu0606sunny/hue_rag/notebooks/06_generation_and_api.ipynb) từ Jupyter process đã có `OPENAI_API_KEY` trong environment, rồi chạy từ trên xuống. Bạn cần thấy health của app sẵn sàng, một câu trả lời tiếng Việt có sources và retrieval debug. Mỗi Run All gọi đúng một lần OpenAI và có chi phí nhỏ trong ngân sách đã duyệt; notebook không đọc hoặc hiển thị key.
+Mở [notebooks/06_generation_and_api.ipynb](/home/minhhieu/hue_rag/notebooks/06_generation_and_api.ipynb) từ Jupyter process đã có `OPENAI_API_KEY` trong environment, rồi chạy từ trên xuống. Bạn cần thấy health của app sẵn sàng, một câu trả lời tiếng Việt có sources và retrieval debug. Mỗi Run All gọi đúng một lần OpenAI và có chi phí nhỏ trong ngân sách đã duyệt; notebook không đọc hoặc hiển thị key.
 
 ## Giới hạn hiện tại
 
@@ -48,10 +53,12 @@ API chưa có streaming, giao diện web, lưu lịch sử hội thoại, xác t
 
 ## Bước tiếp theo và cách xác nhận
 
-Bạn đã xác nhận kết quả sau khi chạy notebook. Phase 7 vẫn đóng cho đến khi reviewer hoàn tất design gate và có implementation được phê duyệt riêng.
+Bạn đã xác nhận kết quả sau khi chạy notebook. Tại thời điểm report, Phase 7
+vẫn đóng; Phase 7 sau đó đã hoàn tất và được user xác nhận. Bước tiếp theo hiện
+tại là simplicity review Phase 6.
 
 ## Nếu bạn muốn xem chi tiết kỹ thuật
 
-- [Guide Phase 6](/home/hieu0606sunny/hue_rag/guides/phase_6_generation_api.md) mô tả phạm vi và contract API.
-- [Codex review](/home/hieu0606sunny/hue_rag/reports/phase_6_generation_api_codex_review.md) ghi evidence kiểm tra và các giới hạn kỹ thuật.
-- [Chat route](/home/hieu0606sunny/hue_rag/backend/api/routes/chat.py) là nơi điều phối retrieval, context và generation.
+- [Guide Phase 6](/home/minhhieu/hue_rag/guides/phase_6_generation_api.md) mô tả phạm vi và contract API.
+- [Codex review](/home/minhhieu/hue_rag/reports/phase_6_generation_api_codex_review.md) ghi evidence kiểm tra và các giới hạn kỹ thuật.
+- [Chat route](/home/minhhieu/hue_rag/backend/api/routes/chat.py) là nơi điều phối retrieval, context và generation.

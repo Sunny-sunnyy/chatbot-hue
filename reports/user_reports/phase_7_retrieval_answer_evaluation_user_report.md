@@ -1,5 +1,9 @@
 # Báo cáo dành cho người dùng: Giai đoạn 7 - Đánh giá Retrieval và Câu trả lời
 
+> **Current progression note:** Phase 7 vẫn `approved`. Sau report này,
+> simplicity review Phase 0–5 đã hoàn tất và được user xác nhận; Phase 6 là
+> simplicity review tiếp theo. Phase 8 vẫn đóng.
+
 ```text
 Trạng thái: Đã được bạn xác nhận
 Cập nhật lúc: 24-08-2026 09:24 +07
@@ -62,6 +66,6 @@ Phase 7 hiện chỉ chạy profile `dense_only`. Một provider/model output đ
 thể thất bại; lỗi được ghi vào CSV thay vì che bằng fallback. So sánh profiles
 và models chưa mở trong Phase 7.
 
-Bạn đã xác nhận Phase 7 ngày 24-08-2026 +07. Phase 8 vẫn đóng; bước tiếp theo là
-review và đơn giản hóa Phase 0–6 theo dependency order, chạy lại Phase 7 khi có
-thay đổi liên quan rồi mới cân nhắc Phase 8.
+Bạn đã xác nhận Phase 7 ngày 24-08-2026 +07. Phase 0–5 simplicity review sau đó
+đã hoàn tất; Phase 6 là bước tiếp theo. Phase 7 chỉ chạy lại khi thay đổi Phase
+6 có thể ảnh hưởng RAG quality. Phase 8 vẫn đóng.

@@ -17,8 +17,9 @@ Design approval date +07: 2026-08-13
 > **Lưu ý governance hiện hành:** Phần Phase 6 lịch sử bên dưới còn mô tả
 > fake/mock tests, cost ceiling và per-run approval. Các quy tắc đó đã bị
 > Milestone 6.1 và `session_prompt/Session_Prompt.md` thay thế; chúng không áp
-> dụng cho công việc mới. Phase 6 sẽ được review lại trong chuỗi Phase 0 đến
-> Phase 6 sau khi Phase 7 đơn giản hoàn tất.
+> dụng cho công việc mới. Functional Phase 6 và Milestone 6.1 đã approved;
+> simplicity review Phase 6 chưa thực hiện và là bước tiếp theo sau khi
+> simplicity review Phase 4–5 đã hoàn tất.
 
 ## Dependency
 
@@ -628,6 +629,7 @@ duyệt thêm một đợt sáu calls để lấy usage thật, với 5 success 
 không retry, chi phí 0,01493875 USD dưới hard ceiling 0,25 USD. Người dùng đã
 chạy notebook 06 và xác nhận Giai đoạn 6 ngày 2026-08-13. Milestone 6.1 đã được
 triển khai, review và người dùng xác nhận ngày 2026-08-21. Phase 6 giữ
-`approved` và đã hoàn thành. Sau Phase 7, Phase 6 sẽ được review lại trong
-chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong `guides/README.md`.
-Phase 7 hiện `ready` theo guide canonical và là bước implementation tiếp theo.
+`approved` và đã hoàn thành về chức năng. Phase 7 cũng đã được đơn giản hóa,
+review và user xác nhận. Bước tiếp theo là simplicity review Phase 6 theo nguồn
+đối chiếu chung trong `guides/README.md`; trạng thái functional approval hiện
+tại được giữ cho tới khi lifecycle review mới yêu cầu thay đổi.

@@ -1,5 +1,10 @@
 # Báo cáo dành cho người dùng: Giai đoạn 3 - Biểu diễn dữ liệu để tìm kiếm
 
+> **Downstream update:** Sau report này, coordinated simplicity review Phase
+> 4–5 đã xóa `SparseEmbedder` và stored sparse vectors khỏi target code và
+> dense-only candidate. Dense E5 behavior được giữ; Phase 4–5 đã approved và
+> Phase 6 là simplicity review tiếp theo.
+
 ```text
 Trạng thái: Đã được bạn xác nhận
 Cập nhật lúc: 25-08-2026 09:36 +07
@@ -66,11 +71,13 @@ liệu và model thật.
 
 - OpenRouter embedding chưa được implement; việc chọn candidate và chạy API
   thật thuộc Giai đoạn 8.
-- Sparse vectors vẫn được lưu để giữ compatibility. Simplicity review
-  Giai đoạn 4–5 sẽ xử lý schema này có phối hợp.
+- Tại thời điểm report, sparse vectors còn được lưu để giữ compatibility.
+  Coordinated simplicity review Phase 4–5 sau đó đã xử lý schema này như ghi
+  trong downstream update ở đầu report.
 - Phase 7 evaluation không chạy lại vì model, instruction và retrieval
   behavior không đổi; real active query đã đạt.
 - Bạn đã xác nhận Giai đoạn 3 ngày 25-08-2026; phase hiện
   `approved`.
-- Bước tiếp theo là simplicity review Giai đoạn 4. Việc commit/push
-  vẫn cần yêu cầu riêng.
+- Tại thời điểm report, bước tiếp theo là simplicity review Giai đoạn 4; tiến
+  độ hiện hành xem tại `session_prompt/Project_Status.md`. Việc commit/push vẫn
+  cần yêu cầu riêng.

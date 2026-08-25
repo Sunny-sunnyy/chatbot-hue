@@ -20,14 +20,15 @@ Implementer: DeepSeek
 > test contract lịch sử của Phase 4, bao gồm mocked validation và per-run
 > approval. Chúng không áp dụng cho công việc mới. Shared governance hiện hành
 > yêu cầu real execution, không mock/fake và chỉ giữ approval riêng cho active
-> mutation hoặc destructive action. Phase 4 sẽ được review lại sau Phase 7.
+> mutation hoặc destructive action. Coordinated simplicity review Phase 4–5
+> đã hoàn tất và được user xác nhận ngày `2026-08-25 +07`.
 
-> **Quyết định simplification ngày 2026-08-25 +07:** Target active baseline là
-> Qdrant dense-only. Stored custom TF-IDF sparse vectors không được query trong
-> runtime hiện tại nên sẽ bị loại khỏi active schema, point construction và
-> ingestion. Quyết định này không xóa Python BM25 hoặc CrossEncoder và chưa phải
-> authorization để sửa code hay mutate active collection. Các chi tiết Phase 4
-> khác vẫn phải được chốt qua brainstorming.
+> **Kết quả simplification ngày 2026-08-25 +07:** Target production baseline là
+> Qdrant dense-only. Stored custom TF-IDF sparse vectors đã được loại khỏi point
+> construction, ingestion code và dense-only candidate; Python BM25 và
+> CrossEncoder được giữ. Active collection cũ vẫn có sparse vectors lịch sử vì
+> candidate chưa được cutover. Cutover hoặc mutation active vẫn cần user
+> approval riêng.
 
 > Phase 4 và phần lexical/startup liên quan trực tiếp của Phase 5 được
 > brainstorming cùng một lần để tránh thiết kế hai nửa không khớp. Scope chung
@@ -36,8 +37,8 @@ Implementer: DeepSeek
 >
 > Thiết kế coordinated Phase 4–5 đã được user duyệt ngày `2026-08-25 +07` tại
 > `docs/superpowers/specs/2026-08-25-phase-4-5-qdrant-retrieval-simplicity-design.md`.
-> Trạng thái này chỉ cho phép viết implementation plan; chưa cho phép sửa
-> runtime, mutate/cut over/delete collection, commit hoặc push.
+> Implementation, independent review và user confirmation đã hoàn tất. Approval
+> đó không tự cho phép cutover/delete collection, commit hoặc push.
 
 Brainstorming được người dùng phê duyệt ngày 2026-08-12 +07. Codex đã
 kiểm tra notebook ở default mode và real read-only mode; người dùng xác nhận
@@ -376,6 +377,16 @@ reset action/confirmation và approval evidence nếu có destructive run
 
 ## Reports và cập nhật trạng thái
 
+Current coordinated simplicity evidence:
+
+```text
+reports/phase_4_5_qdrant_retrieval_simplicity_implementation.md
+reports/phase_4_5_qdrant_retrieval_simplicity_codex_review.md
+reports/user_reports/phase_4_5_qdrant_retrieval_simplicity_user_report.md
+```
+
+Historical Phase 4 evidence trước simplicity review:
+
 ```text
 reports/phase_4_qdrant_ingestion_implementation_report.md
 reports/phase_4_qdrant_ingestion_codex_review.md
@@ -383,8 +394,8 @@ reports/user_reports/phase_4_qdrant_ingestion_user_report.md
 ```
 
 Model/collection metadata và kết quả thật cần thiết nằm trong
-`reports/hue_foods_rag_benchmark.md`. User report và notebook Phase 4 đã được
-người dùng xác nhận.
+`reports/hue_foods_rag_benchmark.md`. Cả Phase 4 gốc và coordinated simplicity
+review Phase 4–5 đã được người dùng xác nhận.
 
 ## Quyết định đã phê duyệt
 
@@ -652,6 +663,7 @@ Revisit trigger: Project được đóng gói lại với package layout hoặc 
 
 ## Bước tiếp theo
 
-Phase 4 đã hoàn thành và `approved`. Sau Phase 7, Phase 4 sẽ được review lại
-trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung trong
-`guides/README.md`. Shared governance hiện hành áp dụng cho mọi correction mới.
+Phase 4 đã hoàn thành coordinated simplicity review cùng Phase 5 và giữ
+`approved`. Dense-only candidate chưa cutover; cutover vẫn là quyết định riêng.
+Bước tiếp theo của simplicity campaign là Phase 6 theo `guides/README.md`.
+Shared governance hiện hành áp dụng cho mọi correction mới.

@@ -20,7 +20,8 @@ Implementer: DeepSeek
 > test contract lịch sử của Phase 5, bao gồm fake dependencies, offline tests
 > và per-run approval. Chúng không áp dụng cho công việc mới. Shared governance
 > hiện hành cấm mock/fake và cho phép real online/API execution trong approved
-> scope. Phase 5 sẽ được review lại sau Phase 7.
+> scope. Coordinated simplicity review Phase 4–5 đã hoàn tất và được user xác
+> nhận ngày `2026-08-25 +07`.
 
 > **Quyết định coordinated simplification ngày 2026-08-25 +07:** Phase 4 bỏ
 > stored sparse vectors khỏi active Qdrant baseline; trong cùng implementation
@@ -39,8 +40,8 @@ Implementer: DeepSeek
 >
 > Thiết kế coordinated Phase 4–5 đã được user duyệt ngày `2026-08-25 +07` tại
 > `docs/superpowers/specs/2026-08-25-phase-4-5-qdrant-retrieval-simplicity-design.md`.
-> Trạng thái này chỉ cho phép viết implementation plan; chưa cho phép sửa
-> runtime, mutate/cut over/delete collection, commit hoặc push.
+> Implementation, independent review và user confirmation đã hoàn tất. Approval
+> đó không tự cho phép cutover/delete collection, commit hoặc push.
 
 Thiết kế trong guide này đã được người dùng phê duyệt ngày 2026-08-12 +07.
 DeepSeek đã bàn giao correction revision 3; Codex technical review đạt và người
@@ -523,6 +524,16 @@ người dùng đọc user report và xác nhận notebook/kết quả.
 
 ## Reports và benchmark
 
+Current coordinated simplicity evidence:
+
+```text
+reports/phase_4_5_qdrant_retrieval_simplicity_implementation.md
+reports/phase_4_5_qdrant_retrieval_simplicity_codex_review.md
+reports/user_reports/phase_4_5_qdrant_retrieval_simplicity_user_report.md
+```
+
+Historical Phase 5 evidence trước simplicity review:
+
 ```text
 reports/phase_5_retrieval_profiles_reranking_implementation_report.md
 reports/phase_5_retrieval_profiles_reranking_codex_review.md
@@ -807,6 +818,7 @@ Revisit trigger: User-facing source UI cần thêm một field cụ thể đã �
 
 ## Bước tiếp theo
 
-Phase 5 đã hoàn thành và `approved`. Sau khi Phase 7 đơn giản hoàn tất, Phase 5
-sẽ được review lại trong chuỗi Phase 0 đến Phase 6 theo nguồn đối chiếu chung
-trong `guides/README.md`.
+Phase 5 đã hoàn thành coordinated simplicity review cùng Phase 4 và giữ
+`approved`. Ba canonical profiles vẫn được bảo toàn; dense-only candidate chưa
+cutover. Bước tiếp theo của simplicity campaign là Phase 6 theo
+`guides/README.md`.

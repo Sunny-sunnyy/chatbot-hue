@@ -1,5 +1,9 @@
 # Báo cáo dành cho người dùng: Giai đoạn 6.1 - Chuẩn bị hệ thống trước câu hỏi đầu tiên
 
+> **Current progression note:** Report này giữ evidence của Milestone 6.1 tại
+> thời điểm xác nhận. Phase 7 sau đó đã được implement, review và user xác nhận.
+> Milestone 6.1 vẫn `approved`; simplicity review Phase 6 là bước tiếp theo.
+
 ## Trạng thái hiện tại
 
 ```text
@@ -81,8 +85,9 @@ từ milestone này.
 ## Bước tiếp theo và cách xác nhận
 
 Bạn đã xác nhận Milestone 6.1 và yêu cầu Codex hoàn tất tài liệu, commit và
-push đúng gói đã phê duyệt. Giai đoạn 7 vẫn chưa được mở; bước tiếp theo là
-hoàn tất design gate riêng trước khi cho phép triển khai evaluation.
+push đúng gói đã phê duyệt. Tại thời điểm report, Giai đoạn 7 chưa được mở;
+Phase 7 sau đó đã hoàn tất và được user xác nhận. Bước tiếp theo hiện tại là
+simplicity review Phase 6.
 
 ## Nếu bạn muốn xem chi tiết kỹ thuật
 

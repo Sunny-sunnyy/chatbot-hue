@@ -6,9 +6,8 @@
 
 Phase 0 đã hoàn thành simplicity review ngày `2026-08-24 +07`. Review chỉ cập
 nhật kiến trúc và quy trình tài liệu; không thay đổi runtime, test, notebook,
-dữ liệu hoặc active Qdrant collection. Phase 1 simplicity design đã được user
-duyệt và đang ở `ready`; runtime chỉ được sửa theo exact scope của guide Phase
-1.
+dữ liệu hoặc active Qdrant collection. Phase 1–5 simplicity review sau đó đã
+hoàn tất và được user xác nhận; Phase 6 là simplicity review tiếp theo.
 
 Tài liệu liên quan:
 
@@ -272,14 +271,14 @@ Commit/push cần yêu cầu riêng.
 ## Thứ tự tiếp theo
 
 ```text
-Phase 0 simplicity review đã approved
--> Phase 1 -> Phase 6 simplicity reviews
+Phase 0–5 simplicity review đã approved
+-> Phase 6 simplicity review
 -> re-run affected Phase 7 evaluation
 -> Phase 8
 ```
 
-Mỗi review Phase 1–6 bắt đầu từ Repo và live system: guide, reports, source
-code, notebook và real run. Tài liệu ngoài do user cung cấp là tùy chọn khi
+Simplicity review Phase 6 bắt đầu từ Repo và live system: guide, reports,
+source code, notebook và real run. Tài liệu ngoài do user cung cấp là tùy chọn khi
 thực sự hữu ích; nếu thiếu mà còn lựa chọn quan trọng, brainstorm với user.
 Không áp Phase 7 reference như blueprint cho phase khác.
 
