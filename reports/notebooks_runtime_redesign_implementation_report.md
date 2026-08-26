@@ -222,7 +222,7 @@ Codex nên review trước tiên:
 Safe-default steps để Codex/user tự xác minh lại (không tốn phí cho 01-05):
 
 ```bash
-cd /home/hieu0606sunny/hue_rag
+cd /home/minhhieu/hue_rag
 UV_CACHE_DIR=/tmp/uv-cache uv run python -c "import nbformat; [nbformat.validate(nbformat.read(p, as_version=4)) for p in __import__('glob').glob('notebooks/*.ipynb')]"
 # 01: uv run jupyter nbconvert --to notebook --execute notebooks/01_backend_foundation.ipynb --output /tmp/nb01.ipynb
 # 02: tuong tu notebooks/02_foods_data_and_chunking.ipynb
