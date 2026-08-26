@@ -90,7 +90,7 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 4 | `phase_4_qdrant_ingestion.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận; candidate chưa cutover |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
-| 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Evaluation đơn giản đã chạy thật, review và được user xác nhận |
+| 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline đã được xác nhận; post-simplicity correction hẹp đã duyệt scope và chờ triển khai/xác minh lại |
 | 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Giữ ba canonical profiles; true-hybrid chỉ thử bằng isolated candidate collection |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
 
@@ -100,7 +100,9 @@ Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 
 ```text
 Phase 0–6 simplicity review đã approved
--> chạy final backend verification phù hợp và bảo toàn dirty evaluation CSV
+-> Phase 7 post-simplicity correction scope đã được duyệt
+-> brainstorming golden dataset ở session riêng
+-> triển khai và xác minh lại Phase 7 theo exact approved scope
 -> chỉ sau đó mới cân nhắc Phase 8
 ```
 

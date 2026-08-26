@@ -2,8 +2,12 @@
 
 ## Trạng thái
 
-`approved` — correction vòng 1 đã đạt technical review và được người dùng xác
-nhận sau khi kiểm tra Notebook 07 ngày 2026-08-24 +07.
+`approved` — baseline correction vòng 1 đã đạt technical review và được người
+dùng xác nhận sau khi kiểm tra Notebook 07 ngày 2026-08-24 +07.
+
+`post-simplicity correction ready` — sau khi Phase 0–6 được đơn giản hóa, user
+đã duyệt ngày 2026-08-26 +07 một correction hẹp và một lần xác minh lại. Ghi chú
+này không hủy approval lịch sử và không mở scope sửa dataset.
 
 Guide này là nguồn canonical cho scope, trạng thái và acceptance của Phase 7.
 
@@ -11,12 +15,14 @@ Guide này là nguồn canonical cho scope, trạng thái và acceptance của P
 
 ```text
 /home/minhhieu/hue_rag/docs/superpowers/specs/2026-08-23-phase-7-simple-evaluation-design.md
+/home/minhhieu/hue_rag/docs/superpowers/specs/2026-08-26-phase-7-post-simplicity-correction-design.md
 ```
 
 Kế hoạch triển khai hỗ trợ:
 
 ```text
 /home/minhhieu/hue_rag/docs/superpowers/plans/2026-08-23-phase-7-simple-evaluation-implementation.md
+/home/minhhieu/hue_rag/docs/superpowers/plans/2026-08-26-phase-7-post-simplicity-correction.md
 ```
 
 ## Mục tiêu
@@ -106,13 +112,27 @@ Hai nút dùng chung slider `Số câu chạy cùng lúc`, mặc định 3.
 
 ### Chạy thử
 
-`test2.jsonl` chứa 20 câu thật được copy nguyên vẹn từ bộ 104 câu và phân bổ
-tương đối đều trên 8 category.
+`test2.jsonl` chứa 20 câu thật được copy nguyên vẹn từ bộ 104 câu và phủ đủ 8
+category hiện hành. Đây là smoke set để kiểm tra pipeline nhanh và tiết kiệm
+chi phí, không phải bằng chứng chất lượng cuối cùng.
+
+Audit ngày 2026-08-26 xác nhận smoke set hiện chưa có câu thuộc nhóm cafe và
+golden dataset còn các vấn đề annotation/keyword cần thảo luận riêng:
+
+```text
+/home/minhhieu/hue_rag/reports/phase_7_golden_dataset_audit.md
+```
+
+Không sửa `test2.jsonl`, `tests.jsonl` hoặc tạo golden dataset mới trong
+post-simplicity correction cho tới khi user duyệt design dữ liệu ở session
+brainstorming riêng.
 
 ### Chạy đầy đủ
 
-Sau khi 20 câu ổn định, chỉ thay input path thành `tests.jsonl` để chạy 104 câu.
-Không thêm workflow hoặc cấu trúc output mới cho lần chạy lớn hơn.
+Sau khi implementation, dataset và smoke run đã sẵn sàng, chỉ thay input path
+thành `tests.jsonl` để chạy 104 câu. Không thêm workflow hoặc cấu trúc output
+mới cho lần chạy lớn hơn. Full run là evidence đánh giá đầy đủ; không suy rộng
+kết luận chất lượng từ smoke set 20 câu.
 
 Loader chỉ cần:
 
@@ -156,7 +176,7 @@ keywords_found, total_keywords, keyword_coverage, error
 Với mỗi câu:
 
 1. Gọi retrieval thật.
-2. Build context bằng backend hiện tại.
+2. Build labeled context string bằng `ContextBuilder.build(documents)`.
 3. Sinh câu trả lời thật với `gpt-5.4-nano`.
 4. So sánh generated answer với reference answer bằng `gpt-5.4-mini`.
 5. Trả ba điểm 1–5 và feedback.
@@ -169,10 +189,24 @@ Ba điểm:
 - relevance: chỉ là 5 khi trả lời trực tiếp và không thêm thông tin ngoài câu
   hỏi.
 
+Relevance evaluation áp dụng answer-style contract của Phase 6: không thưởng
+cho greeting, praise, emoji hoặc closing invitation máy móc. Nội dung lặp không
+giúp trả lời câu hỏi có thể làm giảm relevance; list chỉ cần khi nhiều items hoặc
+steps thực sự rõ hơn paragraph ngắn.
+
 Output schema dùng integer 1–5 với validation bounds và mô tả ngắn cho ba điểm
 cùng feedback. Judge không nhận retrieved context nên prompt/schema không được
 tuyên bố rằng nó chấm groundedness. Giữ `temperature=0` để chấm ổn định và
 `max_tokens=600` để feedback ngắn có giới hạn rõ ràng.
+
+Generator và judge vẫn dùng OpenAI Agents SDK, nhưng SDK tracing tắt mặc định
+theo Phase 6 simplicity decision ngày 2026-08-25. Phase 7 không phụ thuộc Trace
+Dashboard và không bật tracing riêng cho evaluation. CSV kết quả cùng safe local
+logs là observability đủ cho scope hiện tại.
+
+Evaluator nhận trực tiếp context string; không đọc `.context`, `.sources` hoặc
+reconstruct source IDs. Empty string dùng cùng no-context policy với production
+route.
 
 Không có groundedness.
 
@@ -267,6 +301,8 @@ Không dùng:
 - kết quả cũ hoặc bịa đặt làm evidence.
 
 Active Hue Qdrant collection chỉ được đọc. Không in secrets.
+Không bật Agents SDK tracing; không ghi full prompt, retrieved context hoặc raw
+provider response vào logs/artifacts.
 
 Coordinated Phase 4–5 blue-green verification được user duyệt ngày 2026-08-25
 +07 cho phép retrieval-only evaluator nhận optional exact `collection_name` tại
@@ -275,6 +311,38 @@ build real retrieval service. Override chỉ dùng để chạy fresh 104 questi
 profiles trên active baseline và `hue_foods_e5_small_384_dense`; nó không sửa
 `settings.yaml`, không áp dụng cho answer evaluation/API và không tạo
 multi-collection framework.
+
+## Post-simplicity correction đã được duyệt
+
+Reviewer đã xác nhận Phase 7 hiện dùng đúng contract đơn giản của Phase 6:
+
+- `ContextBuilder.build(documents)` trả labeled context string;
+- generator nhận question và context string rồi trả answer string;
+- judge chỉ nhận question, reference answer và generated answer;
+- tracing vẫn disabled.
+
+Không cần redesign hoặc viết lại Phase 7 lần ba. Correction code chỉ gồm:
+
+1. bỏ tham số `collection_name` khỏi `run_answer_batch()` và
+   `run_answer_ui()` cùng các call/test chỉ phục vụ hai public answer paths này;
+2. giữ optional collection override cho retrieval-only comparison và các
+   guarded retrieval verification cần thiết;
+3. không thêm abstraction, compatibility wrapper hoặc validation layer để thực
+   hiện việc tách này.
+
+Correction artifact gồm:
+
+1. xóa execution counts và outputs khỏi canonical Notebook 07; bản Run All để
+   kiểm chứng phải ghi ra `/tmp`;
+2. giữ hai CSV cố định và ghi đúng dataset của lần chạy gần nhất; hiện tại mỗi
+   CSV có 20 rows, còn full-run 104 rows trước đây là historical evidence trong
+   implementation/review reports;
+3. chưa chạy lại paid 104-answer batch cho tới khi scope dữ liệu ở audit được
+   user chốt và Implementer/Reviewer sẵn sàng.
+
+User đã duyệt exact correction design ngày 2026-08-26 +07. Implementer chỉ được
+triển khai sau khi nhận prompt trỏ tới guide và implementation plan; không được
+mở rộng sang dataset, metric, provider/model hoặc architecture khác.
 
 ## Những phần bị loại bỏ
 
@@ -312,6 +380,20 @@ Phase 7 đạt khi:
 10. repository notebook sạch outputs;
 11. implementation report mới ghi đúng observed results và mọi lỗi;
 12. Reviewer chạy lại độc lập và người dùng xác nhận.
+13. Agents SDK tracing giữ disabled cho cả generator và judge.
+
+Các mục trên ghi acceptance của baseline đã được duyệt. Post-simplicity
+correction chỉ được đóng khi:
+
+1. public answer batch/UI không còn collection override;
+2. retrieval-only override vẫn chạy đúng exact approved comparison path;
+3. Phase 6 context-string/generator-string contract vẫn được giữ;
+4. canonical Notebook 07 không có execution count hoặc output;
+5. tài liệu ghi đúng row count và nguồn gốc của artifact hiện hành;
+6. dataset và full-run acceptance tuân theo design được duyệt ở session dữ liệu
+   riêng;
+7. Implementer báo cáo observed results, Reviewer kiểm tra độc lập và user xác
+   nhận correction.
 
 ## Gate trước Phase 8
 

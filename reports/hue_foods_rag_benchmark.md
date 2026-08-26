@@ -1,6 +1,6 @@
 # Hue Foods RAG — Model và benchmark summary
 
-Last updated: `2026-08-25 +07`
+Last updated: `2026-08-26 +07`
 
 ## Mục đích
 
@@ -21,7 +21,7 @@ Chưa có model/profile winner được user và Reviewer phê duyệt.
 | Vai trò | Provider/model | Trạng thái |
 |---|---|---|
 | Dense embedding | Local `intfloat/multilingual-e5-small`, CPU, 384 dimensions | Baseline đã dùng |
-| Sparse representation | Custom TF-IDF-style `SparseEmbedder` | Hiện còn để compatibility; đã quyết định bỏ khỏi active Qdrant baseline trong Phase 4–5 |
+| Sparse representation | Không còn `SparseEmbedder` trong runtime hiện hành | Legacy active collection có thể còn sparse fields vật lý; production target và dense candidate không dùng chúng |
 | Lexical scoring | Python BM25 | Dùng trong hybrid profiles |
 | Local reranker | `cross-encoder/ms-marco-MiniLM-L-6-v2`, CPU | Baseline đã dùng; có giới hạn tiếng Việt |
 | Answer generation | OpenAI `gpt-5.4-nano` | Phase 6/7 baseline |
@@ -60,9 +60,10 @@ Không tự đổi provider/model hoặc silent fallback.
 | `hybrid_no_rerank` | Có | Có | Không |
 | `hybrid_rerank` | Có | Có | Có |
 
-Stored sparse vectors hiện tại không có nghĩa là native sparse retrieval đã
-chạy. User đã chốt active production target dense-only; Python BM25 và
-CrossEncoder vẫn được giữ cho ba profile.
+Stored sparse vectors còn tồn tại trong legacy active collection không có nghĩa
+là native sparse retrieval đang chạy. `SparseEmbedder` đã bị loại khỏi runtime
+sau Phase 4–5 simplicity implementation. User đã chốt production target
+dense-only; Python BM25 và CrossEncoder vẫn được giữ cho ba profile.
 
 Phase 8 sẽ đánh giá true hybrid retrieval bằng isolated candidate collection có
 sparse vectors, không mutate active baseline. Candidate phải dùng cùng corpus,
@@ -119,6 +120,18 @@ backend/evaluation/retrieval_results.csv
 backend/evaluation/answer_results.csv
 ```
 
+Hai CSV hiện mỗi file có 20 rows từ lần chạy gần nhất. Kết quả full-run 104 câu
+đã được ghi như historical evidence trong Phase 7 implementation/Codex review
+reports; không được mô tả chúng là nội dung hiện tại của CSV.
+
+Golden dataset hiện hành đủ làm baseline học tập nhưng còn các finding về
+smoke-set coverage, annotations và keyword proxy. Design dữ liệu tiếp theo nằm
+ở:
+
+```text
+reports/phase_7_golden_dataset_audit.md
+```
+
 Không có calibration, resume, run identity, checksum, package matching,
 tamper detection, partial artifact, consent gate hoặc cost accounting.
 
@@ -134,10 +147,12 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
 
 ## Bước tiếp theo
 
-1. Implement và approve Phase 7 đơn giản.
-2. Review và đơn giản hóa Phase 0 đến Phase 6.
-3. Chạy lại affected Phase 7 evaluation sau thay đổi liên quan.
-4. Chỉ Phase 8 mới so sánh đầy đủ profiles/models và đề xuất winner.
+1. Giữ baseline Phase 7 đã approved như historical state.
+2. Triển khai correction hẹp đã được duyệt: collection override retrieval-only,
+   Notebook 07 sạch và artifact/documentation truth đồng bộ.
+3. Brainstorm golden dataset ở session riêng trước khi sửa hoặc tạo dataset.
+4. Implementer triển khai và Reviewer chạy lại exact verification đã duyệt.
+5. Chỉ Phase 8 mới so sánh đầy đủ profiles/models và đề xuất winner.
 
 Approved Phase 4–5 blue-green checkpoint trước Phase 8: chạy fresh 104-question
 retrieval-only comparison cho cả ba profiles trên current active baseline và
@@ -152,4 +167,5 @@ guides/phase_4_qdrant_ingestion.md
 guides/phase_5_retrieval_profiles_reranking.md
 guides/phase_7_retrieval_answer_evaluation.md
 guides/phase_8_benchmark_model_selection.md
+reports/phase_7_golden_dataset_audit.md
 ```

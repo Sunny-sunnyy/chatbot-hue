@@ -90,10 +90,13 @@ collection vẫn 572 points và scoped diff sạch. Broad suite và batch 20 câ
 không chạy lại ở correction vì correction không đổi success path.
 
 Governance đơn giản hóa toàn dự án đã được user thiết kế, phê duyệt, review và
-cập nhật vào các tài liệu hiện hành. Phase 7 hiện ở `approved` theo
-`guides/phase_7_retrieval_answer_evaluation.md`: implementation đơn giản đã
-chạy real Qdrant, nano/mini, 20/104 questions và Notebook 07; correction vòng 1
-đã đạt technical review và được user xác nhận ngày 2026-08-24 +07.
+cập nhật vào các tài liệu hiện hành. Phase 7 giữ trạng thái baseline `approved`
+theo `guides/phase_7_retrieval_answer_evaluation.md`: implementation đơn giản
+đã chạy real Qdrant, nano/mini, 20/104 questions và Notebook 07; correction vòng
+1 đã đạt technical review và được user xác nhận ngày 2026-08-24 +07. Sau khi
+Phase 0–6 được đơn giản hóa, Phase 7 có nhãn `post-simplicity correction ready`;
+user đã duyệt exact correction scope ngày 2026-08-26 +07. Nhãn này không hủy
+approval lịch sử và không cấp quyền sửa dataset.
 
 Phase 7 mới phải đi theo luồng:
 
@@ -101,9 +104,21 @@ Phase 7 mới phải đi theo luồng:
 question -> retrieve -> build context -> generate -> judge -> report
 ```
 
-Hai CSV cố định hiện giữ fresh full-run 104 rows. Một answer row ghi đúng lỗi
-model tham chiếu source ID không hợp lệ; batch vẫn hoàn thành và không dùng
-retry hoặc fallback giả.
+Hai CSV cố định hiện mỗi file giữ 20 rows từ lần chạy gần nhất. Full-run 104 rows
+và một answer row lỗi model tham chiếu source ID không hợp lệ vẫn được giữ như
+historical evidence trong implementation/Codex review reports, không phải nội
+dung hiện tại của CSV. Canonical Notebook 07 hiện có execution counts/outputs
+và cần được làm sạch trong correction; Run All evidence phải dùng bản tạm ở
+`/tmp`.
+
+Phase 7 code đã tương thích đúng Phase 6 context-string/generator-string. Scope
+code đã được user duyệt chỉ là bỏ `collection_name` khỏi public answer batch/UI,
+giữ override ở retrieval-only path, rồi xác minh lại mà không thêm abstraction.
+Audit và design golden dataset được tách sang session riêng:
+
+```text
+reports/phase_7_golden_dataset_audit.md
+```
 
 Phase 8 vẫn đóng.
 
@@ -308,7 +323,9 @@ một số thay đổi không liên quan. Coding agent phải:
 
 ```text
 Phase 0–6 simplicity review đã approved
--> chạy final backend verification phù hợp và bảo toàn dirty evaluation CSV
+-> Phase 7 post-simplicity correction scope đã được duyệt
+-> brainstorming golden dataset ở session riêng
+-> Implementer triển khai, Reviewer xác minh theo scope đã duyệt
 -> chỉ sau đó mới cân nhắc Phase 8
 ```
 
@@ -359,5 +376,9 @@ Phase 7:
 guides/phase_7_retrieval_answer_evaluation.md
 docs/superpowers/specs/2026-08-23-phase-7-simple-evaluation-design.md
 docs/superpowers/plans/2026-08-23-phase-7-simple-evaluation-implementation.md
+docs/superpowers/specs/2026-08-26-phase-7-post-simplicity-correction-design.md
+docs/superpowers/plans/2026-08-26-phase-7-post-simplicity-correction.md
+reports/phase_7_golden_dataset_audit.md
+session_prompt/phase_7_post_simplicity_implementer_prompt.md
 reports/hue_foods_rag_benchmark.md
 ```
