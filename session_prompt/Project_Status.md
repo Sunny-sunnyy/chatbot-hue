@@ -123,6 +123,64 @@ reports/phase_7_golden_dataset_audit.md
 
 Phase 8 vẫn đóng.
 
+Phase 8 master design đã bắt đầu ngày `2026-08-26 +07`, nhưng benchmark vẫn bị
+chặn bởi golden dataset correction ở scope riêng. User đã khóa candidate order
+từ nhẹ đến mạnh cho sáu embedding families và ba rerankers; primary language là
+tiếng Việt, latency là first-class metric, generator end-to-end là
+`qwen/qwen3.5-9b` qua OpenRouter và judge là `gpt-5.4-mini`. Selection rule:
+khi quality không khác biệt đáng tin cậy, ưu tiên model/pipeline nhẹ, nhanh và
+đơn giản; chỉ chọn candidate nặng hơn nếu có quality gain rõ, không regression
+category quan trọng và latency/complexity chấp nhận được. GTX 1650 WSL2 GPU
+enablement được tách sang session khác; CPU fallback được chấp nhận. Canonical
+drafts:
+
+```text
+docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
+docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+```
+
+Hai draft là `design_in_progress`, không authorize code, dataset edit, model
+download, CUDA/PyTorch change, paid run hoặc Qdrant mutation.
+
+User cũng đã duyệt notebook theo group ngày `2026-08-26 +07`: `08a` embedding,
+`08b` retrieval/fusion, `08c` reranker, `08d` full local matrix, `08e`
+generation finalists và `08_benchmark_model_selection` tổng hợp. Style bắt buộc
+tham khảo `rag_old_0/*.ipynb` và `notebook_simple/**/*.ipynb`. Canonical
+notebooks giữ sạch. Mỗi experiment group dùng một cumulative CSV làm checkpoint
+restart đơn giản; không run ID, timestamp package, JSON song song, opaque
+configuration ID, audit/resume engine hoặc memory manager. Notebook giải thích
+trước khi chạy, dùng real systems, lưu kết quả trước khi release model/data lớn,
+sau đó collect RAM và clear CUDA cache khi có.
+
+User đã xác nhận full compatible retrieval coverage: dense-only, independent
+BM25-only, current dense→BM25 rescoring, true hybrid dense+BM25, custom TF-IDF
+SparseEmbedder-only, true hybrid dense+TF-IDF, BGE-M3 learned sparse-only và
+BGE-M3 dense+learned-sparse hybrid. Notebook 08d ghép mọi valid pre-rerank path
+với no-rerank và ba rerankers. Không lặp BM25/TF-IDF-only theo embedding label
+hoặc tạo learned-sparse pairing không được model hỗ trợ.
+
+Initial true-hybrid fusion đã khóa ở hai phương pháp: RRF và independent min-max
+weighted sum `0.6 dense / 0.4 sparse`. Không grid-search weights; chỉ đề xuất
+targeted tuning nếu real evidence cho thấy weighted fusion có lợi và tuning có
+khả năng thay đổi quyết định.
+
+User đã khóa `llm_rag_reference_on_hue` làm mandatory baseline đúng runtime
+flow: E5-small dense top 30 → raw `0.6 dense + 0.4 BM25` trên cùng candidates →
+top 10 → current MiniLM input 10/output 5 → context tối đa 5 whole chunks/3000
+ký tự → Qwen3.5-9B OpenRouter → GPT-5.4-mini judge. Mọi local path dùng generator
+depth 30, fusion top 10, reranker 10→5 và no-rerank final top 5; report
+Recall@30, Recall@10 và final MRR/nDCG/Recall@5. Top 10 không đi vào LLM.
+
+Qwen3 Embedding 0.6B đã khóa hai configurations: 384D MRL cho lightweight/
+storage trade-off và native 1024D cho maximum quality; không test 768D ban đầu.
+Phase 8 có sáu embedding model families nhưng bảy dense configurations, mỗi
+vector space dùng isolated index riêng.
+
+Notebook 08b đã khóa một comparison tokenizer tiếng Việt: Unicode `\w+` hiện
+hành versus Underthesea `word_tokenize(..., format="text")`. Underthesea chỉ
+được giữ nếu quality theo corrected Vietnamese gold tăng đủ để biện minh latency
+và dependency; initial scope không thêm tokenizer thứ ba.
+
 Phase 0 simplicity review đã được user duyệt ngày `2026-08-24 +07`. Review giữ
 nguyên capability của MVP, đặt concrete code làm mặc định, chỉ giữ abstraction
 cho nhiều implementation thật hoặc provider boundary thật, và yêu cầu mỗi
@@ -327,8 +385,32 @@ Phase 0–6 simplicity review đã approved
 -> Phase 7 post-simplicity correction đã approved
 -> brainstorming golden dataset ở session riêng
 -> chỉ sửa dataset sau design được user duyệt
--> sau đó mới cân nhắc Phase 8
+-> tiếp tục hoàn tất Phase 8 design song song ở mức tài liệu
+-> chỉ chạy Phase 8 sau khi golden correction được approved và exact experiment
+   group được user authorize
 ```
+
+User đang bận và đã chuyển toàn bộ trao đổi còn lại sang session sau. Backlog
+canonical nằm tại:
+
+```text
+reports/phase_7_golden_dataset_audit.md#9-handoff-bắt-buộc-cho-session-tiếp-theo
+docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
+guides/phase_8_benchmark_model_selection.md#backlog-bắt-buộc-cho-session-brainstorming-tiếp-theo
+```
+
+Thứ tự bắt buộc của session sau:
+
+1. audit/correction 104-case golden dataset và exact 20-case smoke set;
+2. quyết định ground truth đủ mạnh cho Phase 8, relevance labels và quality/
+   category gates;
+3. exact embedding/reranker/BGE sparse/BM25 settings và matrix manifest;
+4. latency/failure/device protocol, paid-finalist gate, CSV/notebook/test/review
+   contract;
+5. chỉ sau mọi approval mới viết implementation plan và authorize Implementer.
+
+GPU/WSL2 remediation vẫn là session riêng. Production cutover hoặc active
+collection mutation không nằm trong Phase 8 benchmark authorization.
 
 Khi review Phase 0–6, Repo và live system là nguồn đối chiếu chính: guide,
 reports, source code, notebook và real run đủ để bắt đầu. Tài liệu ngoài do

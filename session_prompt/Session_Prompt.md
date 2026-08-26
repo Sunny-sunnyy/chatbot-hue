@@ -330,5 +330,72 @@ hoàn tất governance đơn giản
 -> implement và approve Phase 7 đơn giản
 -> review lại các Phase 0 -> Phase 6 đã hoàn thành theo thứ tự dependency
 -> chạy lại Phase 7 khi thay đổi có thể ảnh hưởng kết quả
--> mới cân nhắc Phase 8
+-> hoàn tất golden dataset correction ở scope riêng
+-> tiếp tục Phase 8 master design nhưng không benchmark trước golden approval
+-> chỉ implement/run exact Phase 8 experiment group sau user authorization
 ```
+
+Phase 8 design drafts hiện hành:
+
+```text
+docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
+docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+```
+
+Đã khóa: local embedding/reranker chạy từ nhẹ đến mạnh; đánh giá bằng corrected
+Vietnamese gold và latency; khi quality không khác biệt đáng tin cậy thì ưu tiên
+model nhẹ/nhanh/đơn giản. End-to-end generator là `qwen/qwen3.5-9b` qua
+OpenRouter, judge là `gpt-5.4-mini`. GPU/WSL2 GTX 1650 remediation thuộc session
+khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready` cho tới khi golden
+correction và exact experiment authorization hoàn tất.
+
+Notebook topology đã được user khóa theo group: `08a` embedding, `08b`
+retrieval/fusion, `08c` reranker, `08d` full local matrix, `08e` generation
+finalists và `08_benchmark_model_selection` tổng hợp. Notebook là tài liệu học:
+heading/giải thích trước code, cell ngắn, chạy real data/services/models, không
+fake evidence và không audit machinery. Mỗi group có một cumulative CSV đơn
+giản để lưu tiến độ trước khi cleanup model/RAM/VRAM; canonical notebook clean,
+không run ID/JSON package/opaque configuration ID/resume engine.
+
+Retrieval coverage đã khóa gồm tám path: dense-only, BM25-only toàn corpus,
+dense→BM25 rescoring, true hybrid dense+BM25, TF-IDF SparseEmbedder-only, true
+hybrid dense+TF-IDF, BGE-M3 learned sparse-only và BGE-M3 dense+sparse hybrid.
+Full local matrix ghép mọi path tương thích với no-rerank và ba rerankers, nhưng
+không chạy duplicate hoặc ghép capability không tồn tại.
+
+Fusion ban đầu đã khóa: RRF và independent min-max weighted sum
+`0.6 dense / 0.4 sparse`; không weight grid nếu chưa có observed evidence.
+
+Mandatory `llm_rag_reference_on_hue` baseline giữ exact runtime flow: E5-small
+dense 30 → raw dense/BM25 0.6/0.4 → top 10 → current MiniLM 10→5 → context tối
+đa 5 whole chunks/3000 ký tự → Qwen3.5-9B OpenRouter → GPT-5.4-mini. Shared
+depth contract cho local matrix là candidate 30, fusion 10, rerank 10→5 và
+no-rerank final top 5; report Recall@30, Recall@10 và final metrics @5.
+
+Qwen3 Embedding 0.6B chạy hai variants 384D và native 1024D, không 768D ban đầu.
+Tổng cộng sáu embedding families/bảy dense configurations; mỗi vector space có
+isolated index riêng, không trộn model chỉ vì cùng dimension.
+
+Notebook 08b còn so sánh đúng hai BM25 tokenizer variants: lowercase Unicode
+`\w+` hiện hành và Underthesea `word_tokenize(..., format="text")`. Underthesea
+chỉ được giữ nếu corrected Vietnamese evidence biện minh latency/dependency;
+không thêm PyVi, VnCoreNLP hoặc tokenizer grid ban đầu.
+
+User đã hoãn toàn bộ câu hỏi thiết kế còn lại sang session tiếp theo. Bắt đầu
+session đó bằng golden dataset, không bắt đầu code:
+
+```text
+1. audit đủ 104 cases và quyết định surgical correction hay dataset mới riêng
+2. khóa exact edits và exact smoke subset 20 cases phủ 8 categories/4 source groups
+3. khóa correction acceptance và real rerun scope
+4. quyết định Phase 8 cần chunk/document relevance labels hay keyword proxy đủ
+5. khóa category regressions, uncertainty và clear-quality-gain rule
+6. khóa exact embedding/reranker settings và BGE-M3 learned-sparse Qdrant design
+7. khóa BM25 parameters, exact non-duplicate matrix và latency/failure/device rules
+8. khóa paid finalist count/rule, generator/judge settings, CSV/notebook/tests/review
+9. chỉ sau user approval mới viết implementation plan hoặc giao Implementer
+```
+
+Danh sách chi tiết canonical nằm trong Phase 8 design/guide và mục 9 của
+`reports/phase_7_golden_dataset_audit.md`. GPU/WSL2 remediation và mọi production
+cutover/active mutation vẫn là scope riêng.

@@ -2,7 +2,7 @@
 
 Date: `2026-08-26 +07`
 
-Status: `discussion_input`
+Status: `next_session_brainstorming_required`
 
 ## 1. Mục đích
 
@@ -301,3 +301,33 @@ Chưa tạo path hoặc file golden dataset mới trong session hiện tại.
 
 Chưa tạo implementation plan hoặc prompt cho Implementer cho đến khi các lựa
 chọn này được brainstorming và user duyệt.
+
+## 9. Handoff bắt buộc cho session tiếp theo
+
+User đã yêu cầu hoãn phần trao đổi còn lại và ghi đầy đủ backlog. Session tiếp
+theo phải xử lý lần lượt:
+
+1. Audit trực tiếp đủ 104 cases với declared source/section; lập danh sách lỗi
+   chắc chắn và case mơ hồ thay vì suy ra từ validator structural.
+2. Quyết định cuối cùng **surgical correction** hay **dataset mới** bằng tiêu chí
+   ở mục 6. Dataset mới, nếu thật sự cần, không được overwrite path hiện hành.
+3. Khóa exact edit set: category, keywords, relevant sources, relevant sections,
+   và chỉ sửa question/reference answer khi bằng chứng chứng minh không grounded
+   hoặc mơ hồ.
+4. Chọn exact 20 case từ corrected full set, phủ tám category hiện hành và bốn
+   nhóm nguồn restaurants, local specialties, food guides, cafes.
+5. Quyết định có thêm một consistency check nhỏ cho lỗi tái diễn hay giữ manual
+   review; không thêm LLM validator, registry, checksum hoặc audit framework.
+6. Khóa acceptance và real verification: validator, exact subset, grounding
+   review, retrieval run và phạm vi answer-generation run nếu cần.
+7. Tách rõ mục tiêu Phase 7 và Phase 8: smoke 20 chỉ kiểm tra pipeline; full set
+   mới là quality evidence Phase 7, nhưng keyword proxy hiện tại có thể chưa đủ
+   để phân biệt model gần nhau trong Phase 8.
+8. Vì vậy, quyết định Phase 8 cần binary/graded relevant chunk/document labels
+   hay vẫn dùng corrected keyword/source/section annotations; đồng thời khóa
+   category distribution, regression blockers và uncertainty/clear-gain rule.
+
+Quyết định trước đó vẫn hiệu lực: không thêm `numerical` chỉ để lấp category
+trống trong Phase 7 correction. Nếu Phase 8 cần taxonomy/use case khác, thiết kế
+đó thuộc benchmark-grade dataset scope riêng và phải được user duyệt trước khi
+tạo file.
