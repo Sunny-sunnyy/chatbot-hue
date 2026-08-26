@@ -28,4 +28,4 @@ Bạn hãy dùng `brainstorming` làm quy trình chính để cùng tôi thảo 
 
 Dừng lại trao đổi với tôi, tôi xác nhận mới tạo file
 
-Bạn có thể tự khám phá các file, folder chứa code khác để hiểu rõ thêm về bài học nếu thấy cần thiết hoặc nếu tôi cung cấp thiếu ngữ cảnh
+Bạn có thể tự khám phá các file, folder chứa code khác để hiểu rõ thêm về dự án nếu thấy cần thiết hoặc nếu tôi cung cấp thiếu ngữ cảnh

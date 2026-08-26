@@ -292,10 +292,9 @@ async def run_answer_batch(
     concurrency: int = 3,
     profile: str = "dense_only",
     progress=None,
-    collection_name: str | None = None,
 ) -> tuple[list[dict], dict]:
     tests = load_tests(test_path)
-    services = build_services(profile, collection_name=collection_name)
+    services = build_services(profile)
     semaphore = asyncio.Semaphore(max(1, int(concurrency)))
     completed = 0
 

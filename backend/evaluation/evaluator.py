@@ -34,9 +34,9 @@ def run_retrieval_ui(test_path, concurrency, progress=gr.Progress(), collection_
     return summary_text("Kết quả retrieval", summary, RETRIEVAL_RESULTS_FILE), table
 
 
-async def run_answer_ui(test_path, concurrency, progress=gr.Progress(), collection_name=None):
+async def run_answer_ui(test_path, concurrency, progress=gr.Progress()):
     rows, summary = await run_answer_batch(
-        test_path, concurrency, "dense_only", progress, collection_name=collection_name
+        test_path, concurrency, "dense_only", progress
     )
     table = format_table(rows, ANSWER_COLUMNS)
     return summary_text("Kết quả câu trả lời", summary, ANSWER_RESULTS_FILE), table

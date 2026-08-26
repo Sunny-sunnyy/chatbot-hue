@@ -61,15 +61,104 @@ Future tools có thể gồm local retrieval, structured place/food lookup hoặ
 
 ### Memory và session
 
-Phân biệt request-local state, conversation history, user preference memory và persistent profile. Bước đầu nên dùng bounded request/conversation state. Persistent memory cần privacy, retention và deletion design riêng.
+Phân biệt request-local state, conversation history, user preference memory và
+persistent profile. Bước đầu nên dùng bounded conversation history. Persistent
+memory cần privacy, retention, deletion, conflict resolution và poisoning design
+riêng.
+
+Tên định danh future chat là `conversation_id`, không phải `session_id`.
+`session_id` trong web thường chỉ authentication session; không được dùng một
+conversation identifier như authentication credential. Phase 6 không còn
+identifier placeholder. `conversation_id` chỉ được thêm cùng feature lưu history
+hoàn chỉnh trong separate conversational design.
+
+### Research baseline cho conversation và memory
+
+Research được người dùng yêu cầu và xác nhận ngày 2026-08-25 khóa terminology:
+
+| Khái niệm | Phạm vi | Storage/lifetime dự kiến |
+|---|---|---|
+| Request-local state | Một request | Không persist |
+| Conversation history | User/assistant messages trong một thread | Persist theo `conversation_id`, bounded khi đưa vào model |
+| Long-term user memory | Preference/fact qua nhiều thread | Separate opt-in policy; chưa được phép implement |
+| RAG knowledge | Curated Huế corpus | Qdrant/index hiện hành, không trộn với user memory |
+| Authentication session | Identity/access control của web app | Separate security boundary |
+
+CoALA phân biệt episodic, semantic và procedural memory. Đối với follow-up như
+`Bún bò Huế là gì?` -> `Các quán nổi tiếng?`, requirement thực tế chỉ là
+conversation history trong cùng thread và contextualized retrieval query; chưa
+cần semantic user profile, cross-session memory hoặc MemGPT-style hierarchical
+memory.
+
+OpenAI Agents SDK hỗ trợ application-owned history, SDK `Session`, OpenAI
+Conversations và `previous_response_id`. Design phải chọn đúng một persistence
+strategy trên mỗi conversation để tránh duplicate context. Hue RAG retrieval
+chạy trước answer `Runner`, nên SDK Session chỉ đặt ở generator không đủ: history
+phải được đọc ở application layer trước retrieval để tạo standalone query.
+
+Phase 6 giữ một tool-less `Agent/Runner` với one-field `AnswerOutput`, nhưng đây
+chỉ là final-generation boundary, không phải authorization cho agent loop.
+Phase 9 được phép reuse Agents SDK; mỗi capability phải có schema nhỏ riêng như
+`RewriteOutput`, `RouteDecision` hoặc `SufficiencyOutput`, không mở rộng một
+answer schema thành object chứa mọi state.
+
+Query rewriting research (QReCC/CONQRR) chỉ ra cách chuyển context-dependent
+follow-up thành self-contained query dùng được với off-the-shelf retriever. Không
+nối thẳng toàn bộ prior user questions như `rag_old_0`, vì topic switch có thể
+làm retrieval bị nhiễu. Rewrite phải giữ original query để evaluation, không
+thêm facts và không bỏ constraints.
+
+Không gửi toàn bộ lịch sử vô hạn vào model. `Lost in the Middle` cho thấy long
+context không bảo đảm model dùng tốt evidence ở mọi vị trí. Candidate design
+phải budget riêng recent messages, older-history summary và retrieved evidence.
+LongMemEval cho thấy cần đánh giá riêng information extraction, multi-session
+reasoning, temporal reasoning, knowledge updates và abstention; lưu được message
+không đồng nghĩa memory system đã đúng.
+
+Persistent user memory là attack surface riêng. MINJA cho thấy memory bank của
+agent có thể bị injection; PoisonedRAG cho thấy knowledge base cũng có thể bị
+poisoning. Nội dung retrieved, web content và assistant-generated summaries đều
+phải được xem là untrusted. Không cho model tự động biến retrieved content thành
+durable user memory.
+
+Nguồn research canonical:
+
+- OpenAI Agents SDK state/conversation management:
+  <https://openai.github.io/openai-agents-python/running_agents/>
+- OpenAI Agents SDK Session protocol:
+  <https://openai.github.io/openai-agents-python/ref/memory/session/>
+- OpenAI Agents SDK encrypted session với TTL:
+  <https://openai.github.io/openai-agents-python/sessions/encrypted_session/>
+- OWASP Session Management Cheat Sheet:
+  <https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html>
+- CoALA:
+  <https://arxiv.org/abs/2309.02427>
+- MemGPT:
+  <https://arxiv.org/abs/2310.08560>
+- QReCC:
+  <https://arxiv.org/abs/2010.04898>
+- CONQRR:
+  <https://aclanthology.org/2022.emnlp-main.679/>
+- Lost in the Middle:
+  <https://arxiv.org/abs/2307.03172>
+- LongMemEval:
+  <https://arxiv.org/abs/2410.10813>
+- LoCoMo — very long-term conversational memory evaluation:
+  <https://aclanthology.org/2024.acl-long.747/>
+- MINJA:
+  <https://papers.nips.cc/paper_files/paper/2025/file/42a97bbd9844d2bf68596730af80bcdf-Paper-Conference.pdf>
+- PoisonedRAG:
+  <https://www.usenix.org/system/files/usenixsecurity25-zou-poisonedrag.pdf>
 
 ### Định hướng multi-turn và routing đã chốt từ Phase 6
 
-Phase 6 chỉ tạo/echo `session_id` và không lưu lịch sử. Khi Phase 9 vượt đủ hard
-gate, design riêng phải nghiên cứu luồng ưu tiên sau:
+Phase 6 là single-turn stateless API và không tạo identifier. Khi Phase 9 vượt
+đủ hard gate, design riêng phải nghiên cứu luồng ưu tiên sau:
 
 ```text
-bounded persistent conversation history
+new conversation -> server tạo conversation_id -> persist ownership/lifecycle
+  -> user message được lưu đúng thứ tự
+  -> load bounded recent history
   -> standalone-query contextualizer trước retrieval
   -> structured input router
        casual conversation -> Conversation Agent, không retrieval/web
@@ -79,6 +168,7 @@ bounded persistent conversation history
        -> explicit evidence-sufficiency gate
        -> Web Agent chỉ tra cứu văn hóa/du lịch Huế
        -> answer có web provenance riêng
+  -> persist final assistant answer
 ```
 
 Standalone-query contextualizer phải giải quyết follow-up có đại từ hoặc entity
@@ -96,6 +186,29 @@ Web Agent không phải trợ lý web tổng quát. Nó chỉ được xử lý 
 hóa/du lịch Huế mà curated RAG thiếu evidence, không silent fallback, phải lưu
 URL/thời điểm truy cập và phân biệt nguồn web với nguồn curated. Nội dung web
 không tự động ghi vào `knowledge-base-hue/`.
+
+### Conversation lifecycle tối thiểu phải thiết kế
+
+Separate conversational design phải chốt:
+
+- API tạo conversation mới và cách frontend nhận/lưu `conversation_id` mà
+  không hiển thị trong chat content;
+- persistent conversation/message repository; SQLite là baseline local đơn
+  giản, còn production storage phải được chọn theo durability, multi-worker và
+  transaction requirements thực tế;
+- association giữa conversation và authenticated `user_id` khi authentication
+  tồn tại; biết ID không đồng nghĩa có quyền đọc conversation;
+- message ordering, concurrent requests, idempotency và behavior khi regenerate;
+- bounded recent-history window, summary policy và token budget;
+- retention, user deletion/export, encryption và safe logging;
+- provider portability: application-owned source of truth, không đồng thời lưu
+  cùng history ở app và provider mà không có reconciliation rõ ràng;
+- conversation delete/expiry không để orphaned summaries hoặc memory vectors.
+
+Long-term memory qua nhiều conversation là phase con độc lập sau conversation
+history. Không tự động trích xuất preference/profile trong realtime; trước tiên
+phải có opt-in, provenance, update/supersede rules, TTL/deletion và memory
+retrieval evaluation.
 
 ## Ba architecture options bắt buộc so sánh
 
@@ -120,6 +233,9 @@ class AgentTraceSummary: ...
 Mỗi interface phải có input/output fields, maximum budgets, allowed transitions, failure/stop reasons, source lineage và safe trace fields.
 
 Không lưu hidden chain-of-thought. Observability dùng structured summaries: route, tool name, latency, candidate/source count, stop reason và token/cost usage.
+Agents SDK tracing tiếp tục tắt mặc định. Chỉ được mở lại sau một observability
+design riêng có field allowlist, retention/privacy policy và user opt-in; không
+dùng Trace Dashboard như điều kiện để runtime hoạt động.
 
 ## Evaluation requirements trước implementation
 
@@ -133,6 +249,21 @@ Agentic evaluation set phải thêm:
 - query rewrite needed;
 - evidence insufficient;
 - direct query để kiểm tra agent không làm chậm vô ích.
+
+Conversation evaluation set phải tách riêng và tối thiểu có:
+
+- follow-up ẩn entity: `bún bò` -> `các quán nổi tiếng?`;
+- đại từ/coreference: `cơm hến` -> `món đó cay không?`;
+- constraint carry-over và constraint update;
+- topic switch để bảo đảm history cũ không làm nhiễu retrieval;
+- câu độc lập không cần rewrite;
+- rewrite không thêm fact hoặc bỏ constraint;
+- isolation giữa hai `conversation_id`;
+- unauthorized cross-user access bị từ chối;
+- concurrent/out-of-order messages;
+- history quá dài, summary và token budget;
+- delete/expiry và provider/storage failure;
+- không đủ evidence sau rewrite vẫn trả safe fallback.
 
 Metrics thêm:
 
@@ -155,6 +286,9 @@ Agentic system chỉ có giá trị khi cải thiện failure categories mà kh�
 - Agent được gọi tools nào và tối đa bao nhiêu lần?
 - Web/external data có được phép không, provenance lưu thế nào?
 - Conversation/user data giữ và xóa thế nào?
+- Conversation ID được bind với user/tenant và authorize ra sao?
+- Concurrent messages, replay và idempotency được xử lý thế nào?
+- Retrieved/web content có được phép ghi durable memory không? Mặc định là không.
 - Trace nào an toàn, không lộ query/context nhạy cảm?
 - Provider outage có fast-path fallback hay fail rõ?
 
@@ -220,6 +354,15 @@ Không có implementation task hiện tại. DeepSeek chỉ được đọc road
 Decision: Future multi-turn flow nghiên cứu bounded persistent history và standalone-query contextualization; Phase 6 giữ stateless session_id.
 Reason: Follow-up như "nó" cần ngữ cảnh hội thoại nhưng không thuộc MVP hiện tại.
 Date +07: 2026-08-13.
+Status: superseded ngày 2026-08-25 bởi decision bên dưới.
+```
+
+```text
+Decision: Phase 6 không có session/conversation identifier. Future conversational phase thêm server-generated conversation_id chỉ cùng lúc với persistent message storage, lifecycle/ownership policy và standalone-query contextualization trước retrieval. Long-term cross-conversation memory là scope độc lập, chưa được phép implement.
+Reason: Identifier echo-only không tạo memory; SDK generator session không contextualize retrieval; application-owned conversation state rõ ràng và provider-portable hơn cho Hue RAG.
+Evidence: OpenAI Agents SDK, OWASP, CoALA, MemGPT, QReCC/CONQRR, Lost in the Middle, LongMemEval, MINJA và PoisonedRAG research.
+Approved by: User
+Date +07: 2026-08-25.
 ```
 
 ```text
@@ -228,7 +371,7 @@ Reason: Giữ direct RAG fast path và chỉ thêm agent/tool khi có failure th
 Date +07: 2026-08-13.
 ```
 
-Hai decision records trên chỉ khóa hướng nghiên cứu. Chúng không thay đổi
+Các decision records trên chỉ khóa hướng nghiên cứu. Chúng không thay đổi
 `Status: not_ready` và không tạo implementation authorization.
 
 ## Notebook

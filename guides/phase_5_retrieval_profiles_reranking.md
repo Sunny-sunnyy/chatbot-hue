@@ -71,7 +71,7 @@ dùng đã xác nhận final approval ngày 2026-08-12 +07.
 - Min-max normalization và weighted fusion deterministic.
 - Profile router/service cho ba profile canonical.
 - Local MiniLM CrossEncoder reranker chạy CPU.
-- Whole-chunk ContextBuilder có bounded context và source mapping.
+- Whole-chunk ContextBuilder trả bounded labeled context string.
 - Profile-scoped startup/cache lifecycle.
 - Typed errors và safe retrieval debug metadata.
 - Unit/integration tests offline và notebook runtime-real.
@@ -89,7 +89,7 @@ selection được hoãn sang Phase 7–8.
 | `HybridRetriever` | Score BM25, normalize, fusion và giữ top candidates | Load model hoặc build context |
 | `CrossEncoderReranker` | Score 10 query-document pairs và trả top 5 | Retrieval candidate generation |
 | `RetrievalService` | Route profile, giữ đúng concrete components và runtime status | API error mapping hoặc generation |
-| `ContextBuilder` | Ghép whole chunks trong budget và giữ source mapping | Retrieval hoặc prompt generation |
+| `ContextBuilder` | Ghép whole chunks thành labeled context string trong budget | Retrieval hoặc prompt generation |
 
 Mỗi component nhận dependencies qua constructor hoặc input rõ ràng. Verification
 dùng pure behavior tests hoặc actual guarded Qdrant/models; dependency injection
@@ -290,8 +290,12 @@ Phase 5 không tuyên bố model này tốt cho tiếng Việt.
 
 ## ContextBuilder contract
 
-ContextBuilder nhận ranked documents sau stage cuối và trả một typed result gồm
-context text cùng source mapping theo rank.
+ContextBuilder nhận ranked documents sau stage cuối và trả thẳng context string:
+
+```python
+def build(documents) -> str:
+    ...
+```
 
 Rules:
 
@@ -300,10 +304,11 @@ Rules:
 - Chỉ thêm whole chunk; nếu chunk kế tiếp không vừa thì dừng.
 - Không truncate bảng, câu hoặc metadata nguồn để lấp đầy budget.
 - Bỏ empty text, giữ rank order và không mutate documents.
-- Empty input trả empty context và empty sources.
-- Source mapping giữ tối thiểu `chunk_id`, `source`, `title`, `section` và rank.
-- Context chỉ chứa curated evidence và safe source label, không chứa debug
-  payload hoặc secrets.
+- Empty input hoặc không có non-empty chunk trả `""`.
+- Mỗi block chỉ có nhãn thứ tự, `title`, `section` và whole chunk content; không
+  có `chunk_id`, file path, score, rank metadata hoặc parallel source list.
+- Context chỉ chứa curated evidence và safe labels, không chứa debug payload
+  hoặc secrets.
 
 Corpus Hue Foods có chunk thường tối đa 400 ký tự; bảng là atomic và bảng dài
 nhất đã xác minh ở Phase 2 là 927 ký tự. Whole-chunk policy vì vậy giữ cấu trúc
@@ -420,7 +425,7 @@ không thêm tuning grid hoặc speculative knobs.
 2. Implement dense/hybrid retrievers và verify bằng guarded Qdrant/E5 thật.
 3. Implement profile routing, score metadata và typed errors.
 4. Implement một concrete CrossEncoder reranker và verify bằng MiniLM thật.
-5. Implement whole-chunk ContextBuilder và source mapping.
+5. Implement whole-chunk ContextBuilder trả labeled context string.
 6. Implement profile-scoped startup lifecycle và small runtime status.
 7. Tạo notebook runtime-real và implementation report.
 8. Chạy smallest relevant tests trước, sau đó full backend regression.
@@ -461,7 +466,8 @@ Required test evidence:
 - Score fields chỉ xuất hiện khi stage đã chạy.
 - Deterministic ties theo `chunk_id`.
 - Reranker score count, finite score, duplicate/foreign output và no mutation.
-- Context whole-chunk budget tính cả source label/separator và giữ source order.
+- Context whole-chunk budget tính cả labels/separators, giữ document order và
+  trả empty string khi không có usable chunk.
 - Startup bounded scroll, 572 unique IDs, small runtime status và profile-scoped
   loading.
 - Typed errors không bị chuyển thành `[]`.
@@ -514,7 +520,7 @@ Phase 7–8; không tuning vô hạn trong Phase 5.
 - Query E5 dùng đúng prefix/model/dimension của Phase 3–4.
 - Hybrid dùng normalized dense + Python BM25, không misleading sparse claim.
 - Local MiniLM chạy CPU và đạt latency gate trong real validation.
-- Context whole-chunk, bounded, deterministic và giữ source mapping.
+- Context string whole-chunk, labeled, bounded và deterministic.
 - Typed failures rõ, không biến dependency error thành empty retrieval.
 - Notebook an toàn và implementation report đầy đủ.
 - Không remote reranker, live API, reindex, tuning grid hoặc winner claim.
@@ -692,6 +698,17 @@ chỉ giữ mapping integration không trùng toàn bộ cases.
 Affected scope: test_context_builder.py và overlapping generator tests; runtime
 behavior được bảo toàn.
 Revisit trigger: Prompt/generator contract thật chuyển khỏi structured evidence.
+Status: superseded ngày 2026-08-25 vì Phase 6 prompt/generator contract đã chuyển sang labeled text và public API bỏ sources/debug.
+```
+
+```text
+Decision: Giữ ContextBuilder class nhưng đơn giản hóa build(documents) -> str. Output là labeled whole-chunk text với title/section; bỏ ContextResult dataclass, JSON evidence array và parallel source mapping. Empty/no-usable input trả empty string.
+Approved by: User
+Approval date +07: 2026-08-25
+Evidence: Phase 6 simplicity brainstorming sau khi public sources, retrieval_debug và model-selected source IDs bị loại bỏ; typed result không còn consumer thật.
+Test boundary: Whole-chunk budget/max-documents, labels/order, empty input và non-mutation; không còn JSON/source-mapping tests.
+Affected scope: Phase 5 ContextBuilder/tests/notebook và Phase 6–7 callers.
+Revisit trigger: Một user-facing provenance feature có contract được phê duyệt và cần mapping song song thật.
 ```
 
 ```text
@@ -781,6 +798,7 @@ Approval date +07: 2026-08-12
 Evidence: User chọn phương án A sau khi Codex xác minh chunk dài nhất 927 ký tự và bảng là atomic từ Phase 2.
 Affected scope: ContextBuilder, source contract, tests, notebook và Phase 6 prompt input.
 Revisit trigger: Phase 6 token budget hoặc Phase 7 groundedness evidence yêu cầu context policy khác.
+Status: source-mapping portion superseded ngày 2026-08-25; whole-chunk, 5-document và 3.000-character limits vẫn giữ.
 ```
 
 ```text

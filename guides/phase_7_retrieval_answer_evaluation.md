@@ -5,9 +5,9 @@
 `approved` — baseline correction vòng 1 đã đạt technical review và được người
 dùng xác nhận sau khi kiểm tra Notebook 07 ngày 2026-08-24 +07.
 
-`post-simplicity correction ready` — sau khi Phase 0–6 được đơn giản hóa, user
-đã duyệt ngày 2026-08-26 +07 một correction hẹp và một lần xác minh lại. Ghi chú
-này không hủy approval lịch sử và không mở scope sửa dataset.
+`post-simplicity correction approved` — correction hẹp đã được Implementer
+hoàn tất, đạt independent technical review và được người dùng xác nhận sau khi
+chạy Notebook 07 ngày 2026-08-26 +07. Ghi chú này không mở scope sửa dataset.
 
 Guide này là nguồn canonical cho scope, trạng thái và acceptance của Phase 7.
 
