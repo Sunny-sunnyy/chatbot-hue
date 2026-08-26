@@ -12,7 +12,11 @@ không phải nguồn tiến độ hiện hành và không tạo requirement m�
 3. `guides/README.md` và guide canonical của phase.
 
 Hiện tại dự án chức năng đã hoàn thành và được xác nhận đến Phase 7. Simplicity
-campaign đã hoàn thành Phase 0–5; Phase 6 là bước tiếp theo. Phase 8 vẫn đóng.
+campaign đã hoàn thành và được user xác nhận cho Phase 0–6. Phase 7
+post-simplicity correction cũng đã approved. Phase 8 vẫn `not_ready`: session
+tiếp theo dành cho Implementer thực hiện Golden Dataset V2 theo design/plan đã
+duyệt. Sau Gate 0 review mới tiếp tục các experiment-contract decisions còn mở;
+chưa được triển khai hoặc chạy Phase 8 benchmark.
 
 ## Evidence hiện hành của simplicity campaign
 
@@ -23,8 +27,19 @@ campaign đã hoàn thành Phase 0–5; Phase 6 là bước tiếp theo. Phase 8
 | 2 | `phase_2_foods_markdown_chunking_simplicity_review.md` và bộ report có `simplicity` trong tên | Approved |
 | 3 | `phase_3_embedding_sparse_representation_simplicity_review.md`, `phase_3_embedding_sparse_representation_simplicity_implementation_report.md`, `phase_3_embedding_sparse_representation_codex_review.md` | Approved |
 | 4–5 | `phase_4_5_qdrant_retrieval_simplicity_implementation.md`, `phase_4_5_qdrant_retrieval_simplicity_codex_review.md`, `user_reports/phase_4_5_qdrant_retrieval_simplicity_user_report.md` | Approved; candidate chưa cutover |
-| 6 | Các report Phase 6 và Milestone 6.1 hiện là functional/history evidence | Simplicity review là bước tiếp theo |
+| 6 | Các report Phase 6, Milestone 6.1 và simplicity review | Approved |
 | 7 | Bộ report `phase_7_retrieval_answer_evaluation_*` | Approved |
+
+Phase 8 hiện mới có design/sequence documents, chưa có implementation evidence:
+
+```text
+docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
+docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
+docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
+docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+guides/phase_8_benchmark_model_selection.md
+reports/phase_7_golden_dataset_audit.md
+```
 
 ## Historical evidence
 

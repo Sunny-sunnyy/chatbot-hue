@@ -381,21 +381,22 @@ Notebook 08b còn so sánh đúng hai BM25 tokenizer variants: lowercase Unicode
 chỉ được giữ nếu corrected Vietnamese evidence biện minh latency/dependency;
 không thêm PyVi, VnCoreNLP hoặc tokenizer grid ban đầu.
 
-User đã hoãn toàn bộ câu hỏi thiết kế còn lại sang session tiếp theo. Bắt đầu
-session đó bằng golden dataset, không bắt đầu code:
+Golden Dataset V2 đã được user duyệt về design và implementation plan. Session
+tiếp theo là session Implementer, chỉ thực hiện prerequisite này:
 
 ```text
-1. audit đủ 104 cases và quyết định surgical correction hay dataset mới riêng
-2. khóa exact edits và exact smoke subset 20 cases phủ 8 categories/4 source groups
-3. khóa correction acceptance và real rerun scope
-4. quyết định Phase 8 cần chunk/document relevance labels hay keyword proxy đủ
-5. khóa category regressions, uncertainty và clear-quality-gain rule
-6. khóa exact embedding/reranker settings và BGE-M3 learned-sparse Qdrant design
-7. khóa BM25 parameters, exact non-duplicate matrix và latency/failure/device rules
-8. khóa paid finalist count/rule, generator/judge settings, CSV/notebook/tests/review
-9. chỉ sau user approval mới viết implementation plan hoặc giao Implementer
+session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md
+docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
+docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
 ```
 
-Danh sách chi tiết canonical nằm trong Phase 8 design/guide và mục 9 của
-`reports/phase_7_golden_dataset_audit.md`. GPU/WSL2 remediation và mọi production
-cutover/active mutation vẫn là scope riêng.
+Implementer phải giữ Phase 7 files, active collection và Phase 8 benchmark ngoài
+scope; dừng ở reviewer checkpoints khi corpus thiếu hoặc mâu thuẫn. Sau khi
+implementation được Reviewer/user chấp nhận, tiếp tục brainstorming Gate 1 bằng:
+
+```text
+session_prompt/phase_8_brainstorming_handoff_prompt.md
+```
+
+GPU/WSL2 remediation và mọi production cutover/active mutation vẫn là scope
+riêng.

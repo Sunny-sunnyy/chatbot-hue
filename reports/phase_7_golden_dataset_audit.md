@@ -2,7 +2,15 @@
 
 Date: `2026-08-26 +07`
 
-Status: `next_session_brainstorming_required`
+Status: `historical_findings_superseded_by_approved_golden_v2_design`
+
+> **Current progression note (2026-08-26 +07):** Các findings trong report này
+> đã được dùng để thiết kế Golden Dataset V2. Canonical scope hiện hành nằm tại
+> `docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md` và
+> `docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md`.
+> Session tiếp theo dùng
+> `session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md`; không dùng
+> backlog cũ bên dưới để brainstorming lại Gate 0.
 
 ## 1. Mục đích
 

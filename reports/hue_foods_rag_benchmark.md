@@ -148,10 +148,13 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
 ## Bước tiếp theo
 
 1. Giữ baseline Phase 7 đã approved như historical state.
-2. Triển khai correction hẹp đã được duyệt: collection override retrieval-only,
-   Notebook 07 sạch và artifact/documentation truth đồng bộ.
-3. Brainstorm golden dataset ở session riêng trước khi sửa hoặc tạo dataset.
-4. Implementer triển khai và Reviewer chạy lại exact verification đã duyệt.
+2. Implementer thực hiện Golden Dataset V2 theo approved spec/plan, giữ nguyên
+   Phase 7 dataset và dừng ở các reviewer checkpoint đã khóa.
+3. Reviewer audit đủ 100 case, smoke subset và real source/section metadata;
+   user xác nhận Gate 0.
+4. Sau Gate 0, hoàn tất các Phase 8 experiment-contract decisions còn mở trong
+   canonical design/guide; chưa viết code benchmark khi design chưa được user
+   duyệt.
 5. Chỉ Phase 8 mới so sánh đầy đủ profiles/models và đề xuất winner.
 
 Approved Phase 4–5 blue-green checkpoint trước Phase 8: chạy fresh 104-question

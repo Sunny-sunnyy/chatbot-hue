@@ -400,4 +400,7 @@ correction chỉ được đóng khi:
 Sau Phase 7, review Phase 0 đến Phase 6 theo dependency order bằng tài liệu
 riêng do người dùng cung cấp. Kiểm tra code, tests, folders và notebooks; đơn
 giản hóa hoặc xây dựng lại phần over-engineered. Chạy lại affected Phase 7
-evaluation sau thay đổi liên quan. Chỉ mở Phase 8 khi toàn bộ gate này hoàn tất.
+evaluation sau thay đổi liên quan. Các review/correction này đã được user
+approved; gate còn lại trước Phase 8 benchmark là hoàn tất và phê duyệt golden
+dataset V2 implementation/real review theo design/plan đã duyệt, rồi tiếp tục
+brainstorm và duyệt exact Phase 8 experiment contract.

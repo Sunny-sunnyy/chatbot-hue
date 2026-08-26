@@ -12,7 +12,8 @@ quality đáng tin cậy, latency và simplicity.
 
 ## Global gates
 
-1. Golden dataset correction phải hoàn tất và được user phê duyệt ở scope riêng.
+1. Golden Dataset V2 phải được implement, Reviewer kiểm tra và user chấp nhận
+   theo approved spec/plan ở scope riêng.
 2. Không sửa dataset trong Phase 8 design/benchmark implementation.
 3. Không mutate active Qdrant collection; mọi reindex dùng isolated collection.
 4. Chỉ thay đổi một experiment group trong mỗi comparison chính.
@@ -24,7 +25,7 @@ quality đáng tin cậy, latency và simplicity.
 
 | Stage | Experiment group | Ordered candidates/capabilities | Fixed boundary |
 |---:|---|---|---|
-| 0 | Golden prerequisite | corrected Vietnamese golden dataset | separate scope; no Phase 8 run before approval |
+| 0 | Golden prerequisite | approved 100-case Golden Dataset V2 + exact 20-case smoke subset | implement `2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md`; no Phase 8 run before Reviewer approval |
 | 1 | Dense embedding | E5 small → multilingual MiniLM-L12 → E5 base → E5 large → BGE-M3 dense → Qwen3 Embedding 0.6B at 384D → Qwen3 Embedding 0.6B at 1024D | chunks, gold, dense retrieval settings, metrics |
 | 2 | Lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → BGE-M3 learned sparse → true hybrid | selected/fixed dense evidence, reranker off |
 | 3 | Reranker | current MiniLM-L6 → BGE reranker base → Qwen3 Reranker 0.6B | identical pre-rerank candidate artifacts |
@@ -139,30 +140,35 @@ Implementation tasks, exact commands, test cases, notebook structure and commit
 boundaries will be written only after the remaining design questions are user
 approved.
 
-## Deferred discussion queue for the next session
+## Next authorized session: Golden Dataset V2 implementation
+
+Start that session with
+`session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md` and execute the
+approved plan without running a Phase 8 benchmark.
+
+## Deferred discussion queue after Gate 0 review
+
+After the implemented dataset is Reviewer/user approved, start brainstorming
+with `session_prompt/phase_8_brainstorming_handoff_prompt.md`.
 
 Resolve these gates in order; do not let an Implementer infer them:
 
-1. Finish the separate 104-case golden-data audit/correction design, lock the
-   representative 20-case smoke subset, and decide surgical correction versus
-   a separately named new dataset from evidence.
-2. Decide whether Phase 8 needs chunk/document relevance labels beyond the
-   current keyword proxy; lock category distribution, regression blockers and
-   uncertainty/clear-gain rules.
-3. Lock exact embedding instructions/pooling/normalization/truncation/dtype/
+1. Lock category regression blockers and uncertainty/
+   clear-gain rules using the known 100-case distribution.
+2. Lock exact embedding instructions/pooling/normalization/truncation/dtype/
    batching and reranker formatting/truncation/batching for every candidate.
-4. Design BGE-M3 learned-sparse representation, isolated Qdrant schema,
+3. Design BGE-M3 learned-sparse representation, isolated Qdrant schema,
    collection naming and retention/cleanup without touching the active
    collection.
-5. Enumerate the exact non-duplicate matrix manifest, including both fusion
+4. Enumerate the exact non-duplicate matrix manifest, including both fusion
    methods and the mandatory `llm_rag_reference_on_hue` row.
-6. Lock warm-up/repetition, p50/p95, cold-load, failure/OOM and CPU-versus-GPU
+5. Lock warm-up/repetition, p50/p95, cold-load, failure/OOM and CPU-versus-GPU
    measurement rules.
-7. Lock the paid-finalist rule/count, Qwen generator settings, GPT judge rubric
+6. Lock the paid-finalist rule/count, Qwen generator settings, GPT judge rubric
    and repetition policy.
-8. Lock readable CSV columns/category views, notebook update behavior, focused
+7. Lock readable CSV columns/category views, notebook update behavior, focused
    tests, real Run All review commands and final winner rerun.
-9. Treat any production switch, active collection mutation or cleanup as a
+8. Treat any production switch, active collection mutation or cleanup as a
    later proposal requiring explicit user approval.
 
 GPU/WSL2 remediation remains a different session. Model catalogs, licenses,

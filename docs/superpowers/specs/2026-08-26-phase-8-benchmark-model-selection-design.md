@@ -9,8 +9,10 @@ Qdrant mutation, commit hoặc push.
 
 ## Boundary và prerequisite
 
-- Golden dataset correction là scope riêng và phải được user phê duyệt trước
-  bất kỳ Phase 8 benchmark nào.
+- Golden Dataset V2 là scope riêng đã được user phê duyệt thiết kế tại
+  `docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md`.
+  Implementer phải hoàn tất plan riêng và qua Reviewer Gate 0 trước bất kỳ
+  Phase 8 benchmark nào.
 - Phase 8 hiện chỉ thiết kế master framework và thứ tự experiment groups.
 - Active Qdrant collection tiếp tục read-only; candidate indexes/collections
   phải isolated.
@@ -221,10 +223,9 @@ they are not the durable checkpoint or committed evidence.
 
 ## Decisions still requiring brainstorming
 
-- Golden dataset prerequisite described in the next section;
 - exact finalist gate/count before paid generation and judging;
-- exact corrected-gold relevance labels, uncertainty method and statistical/
-  category gates;
+- exact uncertainty method, clear-gain rule and statistical/category gates over
+  the approved Golden Dataset V2 distribution;
 - BGE-M3 learned-sparse representation and isolated storage/query path;
 - exact per-model embedding instructions, normalization, truncation, dtype and
   batch settings needed for a fair comparison;
@@ -253,57 +254,38 @@ dependency. Keep it only if observed Vietnamese quality gain justifies its
 latency and maintenance cost. Do not add PyVi, VnCoreNLP or a tokenizer grid to
 the initial scope.
 
-## Mandatory next-session backlog: golden dataset first
+## Approved Gate 0: Golden Dataset V2
 
-No Phase 8 benchmark may run until a separate golden-data session resolves and
-the user approves all items below.
+Implementation plan:
+`docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md`.
 
-### Phase 7 correction decisions
+No Phase 8 benchmark may run until that plan produces a Reviewer-approved
+100-case `golden_v2.jsonl` and exact 20-case smoke subset.
 
-- Complete direct source/section review of all 104 cases, beginning with the
-  known findings in `reports/phase_7_golden_dataset_audit.md`.
-- Decide from that evidence whether surgical correction remains sufficient. If
-  the evaluation objective, taxonomy or relevance representation must change
-  broadly, preserve the current dataset and design a new file/schema instead of
-  silently rewriting the baseline.
-- Lock the exact edits to categories, keywords, relevant sources and relevant
-  sections. Keep case IDs and grounded question/reference-answer content unless
-  direct review proves a case ambiguous or unsupported.
-- Select the exact 20-case smoke subset from the corrected 104 cases so it
-  covers all eight current categories and all four source families, including
-  cafes. The smoke set checks the pipeline; it is not final quality evidence.
-- Decide whether one small structural/consistency check protects a demonstrated
-  recurring error. Do not build semantic validators, LLM labeling machinery,
-  version registries or audit packages without a concrete need.
-- Lock correction acceptance: JSONL validity, exact subset relationship,
-  direct grounding review, real retrieval verification and the exact scope of
-  any answer-generation rerun.
+### Locked dataset decisions
 
-The existing decision not to add `numerical` merely to fill an empty category
-remains in force for the Phase 7 correction. Revisit taxonomy only if the later
-benchmark-grade design shows a real Hue user need.
+- Preserve Phase 7 `tests.jsonl` unchanged; curated rebuild may reuse good old
+  cases but writes a separately named 100-case dataset.
+- Use exactly nine approved categories, including eight natural grounded
+  `numerical` cases, and the approved 40/20/20/20 source targets.
+- Keep only six row fields: `case_id`, `question`, `keywords`,
+  `reference_answer`, `category`, `evidence`.
+- Use binary exact `source + section` relevance; no keyword proxy, LLM labeling
+  or stored chunk IDs for Phase 8 retrieval ground truth.
+- Smoke contains 20 exact full-dataset rows and covers all nine categories and
+  all four source families, including cafes.
+- Stop and ask the user when sources conflict or cannot support a natural quota;
+  never force weak questions to make counts pass.
 
-### Benchmark-grade ground truth decisions
+### Benchmark-grade ground truth decisions resolved by Gate 0
 
-The current keyword metric is a useful Phase 7 proxy but cannot by itself
-reliably distinguish close Phase 8 candidates. Before implementation, decide:
+The new evidence mapping is stable across embedding-specific isolated indexes
+because it labels canonical source/section pairs rather than chunk IDs. The full
+100 cases support final local retrieval selection; the 20-case subset is smoke
+only. Winner regression blockers, uncertainty and the paid generation subset
+remain Phase 8 design questions.
 
-- whether corrected sources/sections/keywords are enough or whether Phase 8
-  needs explicit relevant chunk/document labels, including whether relevance is
-  binary or graded;
-- how labels remain stable across embedding-specific isolated indexes while all
-  indexes represent the same canonical 572 chunks;
-- the final category/use-case distribution and which categories are important
-  enough to block a winner when they regress;
-- the uncertainty/repetition method and what counts as a clear quality gain;
-- which dataset supports local retrieval selection and which subset, if any,
-  supports paid generation/judging.
-
-If new benchmark-grade data is required, it is a new separately named artifact
-with its own approved spec and plan. It must not overwrite
-`knowledge-base-hue/foods/evaluation/tests.jsonl`.
-
-## Mandatory next-session backlog: Phase 8 execution details
+## Mandatory backlog after Gate 0 implementation
 
 After golden-data approval, resume brainstorming in this order:
 

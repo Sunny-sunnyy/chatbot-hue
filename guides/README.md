@@ -91,7 +91,7 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
-| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Giữ ba canonical profiles; true-hybrid chỉ thử bằng isolated candidate collection |
+| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Golden V2 design/plan đã duyệt; chờ Implementer và Gate 0 review trước khi tiếp tục brainstorming Phase 8 |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
 
 Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
@@ -101,8 +101,10 @@ Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 ```text
 Phase 0–6 simplicity review đã approved
 -> Phase 7 post-simplicity correction đã approved
--> brainstorming golden dataset ở session riêng trước mọi thay đổi dữ liệu
--> chỉ sau đó mới cân nhắc Phase 8
+-> Implementer thực hiện approved Golden Dataset V2 plan
+-> Reviewer/user chấp nhận Gate 0 trên dữ liệu và real verification
+-> hoàn tất Phase 8 design decisions và user duyệt exact experiment contract
+-> chỉ sau đó mới viết implementation plan hoặc chạy Phase 8 benchmark
 ```
 
 Review Phase 0–6 theo dependency order để thay đổi nền tảng không làm invalid

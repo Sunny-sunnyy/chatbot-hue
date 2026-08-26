@@ -456,47 +456,49 @@ Codex review chạy lại comparison cần thiết và kiểm tra:
 Benchmark summary cập nhật tại
 `reports/hue_foods_rag_benchmark.md`.
 
-## Backlog bắt buộc cho session brainstorming tiếp theo
+## Gate 0 đã duyệt về thiết kế — session Implementer tiếp theo
 
-### Gate 0 — Golden dataset correction và ground truth
+Canonical files:
 
-Session tiếp theo phải bắt đầu từ `reports/phase_7_golden_dataset_audit.md` và
-khóa các quyết định sau trước mọi benchmark:
+```text
+session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md
+docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
+docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
+```
 
-1. audit trực tiếp đủ 104 case với curated source/section và quyết định sửa
-   surgical hay tạo một dataset mới riêng nếu lỗi mang tính hệ thống;
-2. exact edits cho category, keywords, relevant sources/sections và các case
-   mơ hồ/không grounded;
-3. exact smoke subset 20 case phủ tám category hiện hành và bốn nhóm nguồn,
-   bắt buộc có cafes;
-4. acceptance và exact real reruns cho correction; chỉ thêm một validator nhỏ
-   nếu nó bảo vệ lỗi đã chứng minh;
-5. Phase 8 có cần relevant chunk/document labels thay keyword proxy hay không,
-   binary hay graded relevance, category distribution, regression blockers và
-   cách xác định một quality gain đủ rõ;
-6. nếu cần benchmark-grade dataset mới, giữ nguyên dataset cũ, chọn path/schema
-   mới và viết spec/plan riêng trước implementation.
+Implementer phải tạo riêng full 100-case `golden_v2.jsonl` và exact 20-case
+smoke subset, giữ Phase 7 files unchanged, dùng binary exact source/section
+relevance và dừng ở reviewer checkpoints khi corpus thiếu hoặc mâu thuẫn.
 
-Quyết định không thêm category `numerical` chỉ để lấp chỗ trống vẫn giữ nguyên
-cho Phase 7 correction. Chỉ mở lại taxonomy nếu use case Hue thật yêu cầu.
+Không chạy Phase 8 benchmark cho tới khi Reviewer kiểm tra direct evidence,
+strict validator, real retrieval metadata và user chấp nhận Gate 0 trên dữ liệu
+đã triển khai.
 
-### Gate 1 — Exact Phase 8 experiment contract
+## Backlog brainstorming sau Gate 0 implementation
 
-Sau khi golden data được duyệt, tiếp tục brainstorming theo thứ tự:
+Sau khi Golden Dataset V2 được Reviewer/user chấp nhận, bắt đầu session bằng:
 
-1. exact embedding query/document instructions, pooling, normalization,
+```text
+session_prompt/phase_8_brainstorming_handoff_prompt.md
+```
+
+Tiếp tục theo thứ tự:
+
+1. category regression blockers, uncertainty và clear-quality-gain rule dựa
+   trên 100 case đã duyệt;
+2. exact embedding query/document instructions, pooling, normalization,
    truncation, dimension, dtype và batch size;
-2. exact reranker input format, truncation và batch size; depth đã khóa 10→5;
-3. BGE-M3 learned-sparse representation, isolated Qdrant schema/query path,
+3. exact reranker input format, truncation và batch size; depth đã khóa 10→5;
+4. BGE-M3 learned-sparse representation, isolated Qdrant schema/query path,
    collection names và retention/cleanup policy;
-4. BM25 parameters cho comparison tokenizer Unicode versus Underthesea;
-5. exact non-duplicate matrix manifest và execution order;
-6. warm-up/repetition, cold/warm p50/p95, memory, failure/OOM và device policy;
-7. paid finalist gate/count, Qwen generation settings, GPT judge rubric và
+5. BM25 parameters cho comparison tokenizer Unicode versus Underthesea;
+6. exact non-duplicate matrix manifest và execution order;
+7. warm-up/repetition, cold/warm p50/p95, memory, failure/OOM và device policy;
+8. paid finalist gate/count, Qwen generation settings, GPT judge rubric và
    repetition policy;
-8. exact readable CSV columns/category views, notebook update/cleanup behavior,
+9. exact readable CSV columns/category views, notebook update/cleanup behavior,
    focused tests và Reviewer Run All commands;
-9. final winner rerun, report/handoff và proposal production riêng. Không tự
+10. final winner rerun, report/handoff và proposal production riêng. Không tự
    cutover, mutate active collection hoặc cleanup candidate data.
 
 GPU/WSL2 GTX 1650 remediation vẫn ở session riêng. Ngay trước implementation/

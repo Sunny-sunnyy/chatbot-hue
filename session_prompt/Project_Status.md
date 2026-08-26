@@ -383,31 +383,39 @@ yêu cầu riêng của user. Coding agent tiếp theo vẫn phải:
 ```text
 Phase 0–6 simplicity review đã approved
 -> Phase 7 post-simplicity correction đã approved
--> brainstorming golden dataset ở session riêng
--> chỉ sửa dataset sau design được user duyệt
--> tiếp tục hoàn tất Phase 8 design song song ở mức tài liệu
--> chỉ chạy Phase 8 sau khi golden correction được approved và exact experiment
-   group được user authorize
+-> Golden Dataset V2 design/plan đã được user duyệt
+-> session tiếp theo: Implementer thực hiện plan và dừng ở các reviewer checkpoint
+-> Reviewer kiểm tra đủ 100 case, smoke 20 case và real source/section relevance
+-> user chấp nhận Gate 0
+-> tiếp tục brainstorming các Phase 8 experiment-contract decisions còn mở
+-> chỉ chạy Phase 8 sau khi exact experiment group được user authorize
 ```
 
-User đang bận và đã chuyển toàn bộ trao đổi còn lại sang session sau. Backlog
-canonical nằm tại:
+Prompt canonical cho session Implementer tiếp theo:
 
 ```text
-reports/phase_7_golden_dataset_audit.md#9-handoff-bắt-buộc-cho-session-tiếp-theo
-docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
-guides/phase_8_benchmark_model_selection.md#backlog-bắt-buộc-cho-session-brainstorming-tiếp-theo
+session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md
+docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
+docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
 ```
 
-Thứ tự bắt buộc của session sau:
+Sau khi Gate 0 implementation được Reviewer/user chấp nhận, dùng:
 
-1. audit/correction 104-case golden dataset và exact 20-case smoke set;
-2. quyết định ground truth đủ mạnh cho Phase 8, relevance labels và quality/
-   category gates;
-3. exact embedding/reranker/BGE sparse/BM25 settings và matrix manifest;
-4. latency/failure/device protocol, paid-finalist gate, CSV/notebook/test/review
-   contract;
-5. chỉ sau mọi approval mới viết implementation plan và authorize Implementer.
+```text
+session_prompt/phase_8_brainstorming_handoff_prompt.md
+docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
+guides/phase_8_benchmark_model_selection.md#backlog-brainstorming-sau-gate-0-implementation
+```
+
+Thứ tự bắt buộc từ trạng thái hiện tại:
+
+1. Implementer xây riêng Golden Dataset V2 theo approved spec/plan, không sửa
+   Phase 7 baseline;
+2. Reviewer đối chiếu curated evidence, strict validator và real retrieval
+   metadata; user quyết định Gate 0;
+3. brainstorm category/winner gates, exact model/sparse/matrix/latency/paid
+   finalist/CSV/notebook/verification contracts;
+4. chỉ sau mọi approval mới viết Phase 8 implementation plan và authorize run.
 
 GPU/WSL2 remediation vẫn là session riêng. Production cutover hoặc active
 collection mutation không nằm trong Phase 8 benchmark authorization.

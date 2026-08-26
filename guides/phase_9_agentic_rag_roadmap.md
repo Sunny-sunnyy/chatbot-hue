@@ -401,5 +401,6 @@ Phase 9 là post-MVP và `not_ready` cho đến khi user thay đổi.
 
 ## Bước tiếp theo
 
-Không có action Phase 9 trong MVP hiện tại. Bước hợp lệ là hoàn thành Phase 7,
-review Phase 0 đến Phase 6, rồi mới cân nhắc Phase 8.
+Không có action Phase 9 trong MVP hiện tại. Phase 0–7 và simplicity reviews đã
+approved; bước hợp lệ là implement/review Golden Dataset V2, hoàn tất thiết kế/
+chạy/duyệt Phase 8, rồi mới cân nhắc Phase 9 từ failure evidence thật.
