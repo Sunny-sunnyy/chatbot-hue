@@ -33,7 +33,6 @@ Canonical simplicity artifacts:
 ```text
 docs/superpowers/specs/2026-08-25-phase-6-generation-api-simplicity-design.md
 docs/superpowers/plans/2026-08-25-phase-6-generation-api-simplicity-implementation.md
-session_prompt/PHASE_6_SIMPLICITY_IMPLEMENTER_HANDOFF.md
 ```
 
 ## Dependency

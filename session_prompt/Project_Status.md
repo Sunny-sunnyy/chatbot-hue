@@ -73,7 +73,6 @@ Phase 6 simplicity design và implementation plan được user xác nhận ngà
 ```text
 docs/superpowers/specs/2026-08-25-phase-6-generation-api-simplicity-design.md
 docs/superpowers/plans/2026-08-25-phase-6-generation-api-simplicity-implementation.md
-session_prompt/PHASE_6_SIMPLICITY_IMPLEMENTER_HANDOFF.md
 ```
 
 Phase 6 simplicity implementation đã đơn giản hóa context/prompt/generator/API/
@@ -470,6 +469,5 @@ docs/superpowers/plans/2026-08-23-phase-7-simple-evaluation-implementation.md
 docs/superpowers/specs/2026-08-26-phase-7-post-simplicity-correction-design.md
 docs/superpowers/plans/2026-08-26-phase-7-post-simplicity-correction.md
 reports/phase_7_golden_dataset_audit.md
-session_prompt/phase_7_post_simplicity_implementer_prompt.md
 reports/hue_foods_rag_benchmark.md
 ```
