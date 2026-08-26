@@ -1,64 +1,69 @@
-# Báo cáo dành cho người dùng: Giai đoạn 6 - Sinh câu trả lời có nguồn và JSON API
-
-> **Current progression note:** Report này là functional evidence của Phase 6
-> trước simplicity campaign. Phase 7 sau đó đã được implement, review và user
-> xác nhận. Functional Phase 6 vẫn `approved`; simplicity review Phase 6 là
-> bước tiếp theo.
-
-## Trạng thái hiện tại
+# Báo cáo dành cho người dùng: Giai đoạn 6 - Câu trả lời và API đơn giản
 
 ```text
 Trạng thái: Đã được bạn xác nhận
-Cập nhật lúc: 13-08-2026 18:08 +07
-Tệp thực hành cần kiểm tra: notebooks/06_generation_and_api.ipynb
+Cập nhật lúc: 26-08-2026 09:09 +07
+Notebook cần kiểm tra: notebooks/06_generation_and_api.ipynb
 ```
 
-## Bạn nhận được gì từ giai đoạn này
+## 1. Bạn nhận được gì
 
-Chatbot đã có phần tạo câu trả lời tiếng Việt từ các đoạn dữ liệu được truy
-xuất, cùng API JSON tối giản để ứng dụng khác có thể gọi. Câu trả lời chỉ được
-phép dùng các nguồn đã đưa vào ngữ cảnh; khi không có bằng chứng, hệ thống trả
-lời an toàn thay vì gọi model hoặc suy đoán.
+Chatbot nhận một câu hỏi về ẩm thực Huế và trả về JSON chỉ có câu trả lời:
+`{"answer": "..."}`. Các chi tiết kỹ thuật như source mapping, session ID và
+retrieval debug đã được bỏ khỏi public response để API nhỏ và dễ dùng hơn.
 
-## Hệ thống hoạt động như thế nào
+Nếu không tìm được ngữ cảnh phù hợp, hệ thống trả câu thông báo cố định mà
+không gọi model. Lỗi retrieval hoặc OpenAI được trả bằng thông báo an toàn,
+không để lộ chi tiết nội bộ.
 
-`POST /api/chat` nhận câu hỏi, tìm các đoạn liên quan, giới hạn ngữ cảnh rồi gửi
-cho answer generator. Generator trả câu trả lời và các mã nguồn đã dùng; API
-chỉ trả các nguồn đó theo thứ tự bằng chứng. Lỗi provider, timeout hoặc output
-không đúng cấu trúc đều được trả thành lỗi JSON an toàn, không tự thử lại.
+## 2. Hệ thống hoạt động như thế nào
 
-## Kết quả Codex đã kiểm tra
+Câu hỏi đi qua retrieval để lấy các đoạn dữ liệu liên quan. ContextBuilder ghép
+tối đa năm đoạn nguyên vẹn trong giới hạn 3.000 ký tự, sau đó `gpt-5.4-nano`
+sinh câu trả lời tiếng Việt. API chỉ gửi câu trả lời cho client; các bước và lỗi
+kỹ thuật được ghi ở backend log.
 
-| Nội dung kiểm tra | Kết quả | Ý nghĩa |
+## 3. Codex đã chạy và quan sát gì
+
+| Nội dung | Kết quả quan sát | Ý nghĩa |
 |---|---|---|
-| Backend live-only suite | 205 test đạt | Test dùng Qdrant, E5/MiniLM và OpenAI thật khi cần; không còn fake/mock dependency. |
-| Notebook runtime thật | Đạt | Notebook đi qua `/api/chat` thật, Qdrant/E5 thật và đúng một OpenAI call. |
-| Live smoke | Đạt trong ngân sách | 12 calls được user phê duyệt, tổng chi phí 0,01493875 USD, không retry. |
+| Focused runtime suite | 10 test đạt trong 54,35 giây | Context, validation và một API call thật hoạt động cùng nhau |
+| Notebook 05 | Ba retrieval profile chạy thành công | Contract context string hoạt động với dense, BM25 và MiniLM thật |
+| Notebook 06 | Health `ok`, HTTP 200, chỉ có `answer` | Luồng đầy đủ Qdrant → E5 → OpenAI hoạt động đúng public contract |
+| An toàn dữ liệu | Active collection vẫn 572 points | Review không thay đổi dữ liệu Qdrant đang dùng |
 
-Live smoke phủ sáu loại câu hỏi. Đợt đầu trả lời đạt cả sáu; đợt đo usage thật
-có một output model không hợp lệ và hệ thống chặn đúng thiết kế, không bịa nguồn
-hay thử lại. Khi không có bằng chứng, probe xác nhận model không bị gọi.
+Hai notebook trong repo vẫn sạch output. Scoped source/notebook/report diff
+không có lỗi định dạng.
 
-Migration test live-only sau đó chạy lại toàn suite trong 177,21 giây: 205 test
-đạt, năm OpenAI calls thật không retry, mọi collection test được dọn thành công
-và active collection giữ nguyên 572 points.
+## 4. Cách bạn chạy lại
 
-## Cách bạn tự kiểm tra
+Mở
+[notebooks/06_generation_and_api.ipynb](/home/minhhieu/hue_rag/notebooks/06_generation_and_api.ipynb)
+bằng Jupyter được khởi động từ environment có `OPENAI_API_KEY`; Qdrant local và
+collection `hue_foods_e5_small_384` cần đang sẵn sàng.
 
-Mở [notebooks/06_generation_and_api.ipynb](/home/minhhieu/hue_rag/notebooks/06_generation_and_api.ipynb) từ Jupyter process đã có `OPENAI_API_KEY` trong environment, rồi chạy từ trên xuống. Bạn cần thấy health của app sẵn sàng, một câu trả lời tiếng Việt có sources và retrieval debug. Mỗi Run All gọi đúng một lần OpenAI và có chi phí nhỏ trong ngân sách đã duyệt; notebook không đọc hoặc hiển thị key.
+Bạn có thể sửa biến `question` tại cell “Câu hỏi”, rồi chọn **Run All** từ trên
+xuống. Kết quả quan trọng cần thấy:
 
-## Giới hạn hiện tại
+- `OPENAI_API_KEY present: True`;
+- health có trạng thái `ok`;
+- chat status là `200`;
+- response fields chỉ là `['answer']`;
+- câu trả lời tiếng Việt dựa trên dữ liệu Huế.
 
-API chưa có streaming, giao diện web, lưu lịch sử hội thoại, xác thực hoặc Agentic RAG. Một output từ model thật đã bị từ chối do sai cấu trúc; đó là hành vi fail-closed đúng contract nhưng Phase 7 cần đánh giá tần suất và chất lượng câu trả lời kỹ hơn. Token usage của Agents SDK đã được audit và runtime log được sửa để đọc số liệu khi provider trả về.
+Mỗi lần Run All gọi một OpenAI API call thật và có phát sinh chi phí nhỏ.
+Notebook không đọc hoặc hiển thị giá trị secret.
 
-## Bước tiếp theo và cách xác nhận
+## 5. Giới hạn và bước tiếp theo
 
-Bạn đã xác nhận kết quả sau khi chạy notebook. Tại thời điểm report, Phase 7
-vẫn đóng; Phase 7 sau đó đã hoàn tất và được user xác nhận. Bước tiếp theo hiện
-tại là simplicity review Phase 6.
+API hiện là single-turn: chưa có streaming, lịch sử hội thoại, frontend hoặc
+Agentic RAG. Full backend suite và batch đánh giá 20 câu không được chạy lại ở
+correction này vì thay đổi chỉ liên quan exception boundary và notebook, không
+đổi success path tạo câu trả lời.
 
-## Nếu bạn muốn xem chi tiết kỹ thuật
+Hai CSV đang có khác biệt line ending trong worktree nên full-worktree format
+check vẫn báo lỗi; điều này không ảnh hưởng API và Reviewer không sửa file dữ
+liệu ngoài correction scope. Phase 8 vẫn đóng.
 
-- [Guide Phase 6](/home/minhhieu/hue_rag/guides/phase_6_generation_api.md) mô tả phạm vi và contract API.
-- [Codex review](/home/minhhieu/hue_rag/reports/phase_6_generation_api_codex_review.md) ghi evidence kiểm tra và các giới hạn kỹ thuật.
-- [Chat route](/home/minhhieu/hue_rag/backend/api/routes/chat.py) là nơi điều phối retrieval, context và generation.
+Bạn đã chạy Notebook 06 và xác nhận Giai đoạn 6 ngày 26-08-2026. Phase 6 đã
+hoàn tất; Phase 8 vẫn đóng cho đến khi bước kiểm tra cuối Phase 0–6 được xử lý.

@@ -89,7 +89,7 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
 | 4 | `phase_4_qdrant_ingestion.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận; candidate chưa cutover |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
-| 6 | `phase_6_generation_api.md` | `approved` | Functional phase và Milestone 6.1 đã approved; simplicity review là bước tiếp theo |
+| 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Evaluation đơn giản đã chạy thật, review và được user xác nhận |
 | 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Giữ ba canonical profiles; true-hybrid chỉ thử bằng isolated candidate collection |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
@@ -99,10 +99,9 @@ Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 ## Thứ tự thực hiện
 
 ```text
-Phase 0–5 simplicity review đã approved
--> review và đơn giản hóa Phase 6
--> chạy lại affected Phase 7 evaluation
--> cân nhắc Phase 8
+Phase 0–6 simplicity review đã approved
+-> chạy final backend verification phù hợp và bảo toàn dirty evaluation CSV
+-> chỉ sau đó mới cân nhắc Phase 8
 ```
 
 Review Phase 0–6 theo dependency order để thay đổi nền tảng không làm invalid

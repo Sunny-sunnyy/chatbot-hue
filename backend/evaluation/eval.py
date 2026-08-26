@@ -13,6 +13,7 @@ from core.settings_loader import load_settings
 from evaluation.template import JUDGE_SYSTEM_PROMPT, build_judge_message
 from evaluation.test import DEFAULT_TEST_FILE, TestQuestion, load_tests
 from llm.generator_openai import OpenAIAnswerGenerator
+from llm.prompt import INSUFFICIENT_ANSWER
 from retrieval.context_builder import ContextBuilder
 from retrieval.service import build_service
 
@@ -166,19 +167,25 @@ def evaluate_retrieval(test: TestQuestion, services: EvaluationServices) -> dict
 
 
 async def evaluate_answer(test: TestQuestion, services: EvaluationServices) -> dict:
-    # Await waits for the online model without blocking other questions
-    documents = await asyncio.to_thread(services.retrieval.search, test.question)
-    context = services.context.build(documents)
-    available_ids = [source["chunk_id"] for source in context.sources]
-    generated = await services.generator.generate_answer(
-        test.question, context.context, available_ids
+    documents = await asyncio.to_thread(
+        services.retrieval.search,
+        test.question,
     )
+    context = services.context.build(documents)
+    if context:
+        generated_answer = await services.generator.generate_answer(
+            test.question,
+            context,
+        )
+    else:
+        generated_answer = INSUFFICIENT_ANSWER
+
     judged = await Runner.run(
         services.judge,
         build_judge_message(
             test.question,
             test.reference_answer,
-            generated.answer,
+            generated_answer,
         ),
     )
     scores = judged.final_output
@@ -186,7 +193,7 @@ async def evaluate_answer(test: TestQuestion, services: EvaluationServices) -> d
         "category": test.category,
         "question": test.question,
         "reference_answer": test.reference_answer,
-        "generated_answer": generated.answer,
+        "generated_answer": generated_answer,
         "accuracy": scores.accuracy,
         "completeness": scores.completeness,
         "relevance": scores.relevance,

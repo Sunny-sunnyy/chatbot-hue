@@ -1,40 +1,26 @@
-"""Tool-less OpenAI Agents SDK answer generator running the real Runner."""
+"""Tool-less OpenAI Agents SDK answer generator."""
 import asyncio
 import logging
 import os
 import time
 
-from agents import Agent, ModelSettings, Runner
-from agents.exceptions import ModelBehaviorError
+from agents import Agent, ModelSettings, Runner, set_tracing_disabled
+from agents.exceptions import AgentsException
+from openai import OpenAIError
 from pydantic import BaseModel
 
-from core.schema import (
-    GeneratorNotConfiguredError,
-    GeneratorTimeoutError,
-    GeneratorUnavailableError,
-    InvalidGeneratorOutputError,
-    InvalidQueryError,
-)
+from core.schema import GenerationError
 from llm.prompt import SYSTEM_INSTRUCTIONS, build_user_message
 
 logger = logging.getLogger("llm")
 
 
-class GeneratedAnswer(BaseModel):
-    """Structured output of the answer generator."""
-
+class AnswerOutput(BaseModel):
     answer: str
-    used_source_ids: list[str]
 
 
 class OpenAIAnswerGenerator:
-    """Grounded answer generator over one fixed tool-less Agent.
-
-    Every call runs the real OpenAI Agents SDK Runner with a hard timeout;
-    there is no injected runner path. The API key is read from the
-    environment once at construction; a missing key marks the generator as
-    not configured instead of raising at import time.
-    """
+    """Generate one grounded answer with one fixed tool-less Agent."""
 
     def __init__(
         self,
@@ -49,77 +35,66 @@ class OpenAIAnswerGenerator:
         self._timeout_seconds = timeout_seconds
         key = os.environ.get(api_key_env)
         self.configured = bool(key and key.strip())
+        set_tracing_disabled(True)
         self._agent = Agent(
             name="hue_foods_answerer",
             instructions=SYSTEM_INSTRUCTIONS,
             model=model,
             model_settings=ModelSettings(
                 temperature=temperature,
-                # SDK 0.19 maps ModelSettings.max_tokens to the Responses
-                # API max_output_tokens parameter.
                 max_tokens=max_output_tokens,
             ),
-            output_type=GeneratedAnswer,
+            output_type=AnswerOutput,
         )
 
     @property
     def model(self):
         return self._model
 
-    async def generate_answer(self, query, context, available_source_ids):
-        """Generate a grounded answer; every failure raises a typed error."""
+    async def generate_answer(self, query: str, context: str) -> str:
         if not self.configured:
-            raise GeneratorNotConfiguredError("OpenAI generator is not configured")
+            raise GenerationError("OpenAI generator is not configured")
         if not context.strip():
-            raise InvalidQueryError("context must be a non-empty string")
-        message = build_user_message(query, context, available_source_ids)
+            raise GenerationError("context is empty")
+
+        logger.info(f"Generating answer with model: {self._model}")
         started = time.monotonic()
         try:
             result = await asyncio.wait_for(
-                Runner.run(self._agent, message),
+                Runner.run(self._agent, build_user_message(query, context)),
                 timeout=self._timeout_seconds,
             )
-        except asyncio.TimeoutError as exc:
-            raise GeneratorTimeoutError("answer generation timed out") from exc
-        except ModelBehaviorError as exc:
-            raise InvalidGeneratorOutputError(
-                "model returned invalid structured output"
-            ) from exc
-        except Exception as exc:  # provider connection/API failures
-            raise GeneratorUnavailableError("answer generation failed") from exc
+        except asyncio.TimeoutError as error:
+            raise GenerationError(
+                f"Answer generation timed out after {self._timeout_seconds} seconds"
+            ) from error
+        except AgentsException as error:
+            raise GenerationError(f"OpenAI agent execution failed: {error}") from error
+        except OpenAIError as error:
+            raise GenerationError(f"OpenAI answer generation failed: {error}") from error
+
         output = result.final_output
-        if not isinstance(output, GeneratedAnswer):
-            raise InvalidGeneratorOutputError("model returned an unexpected output type")
-        if not output.answer or not output.answer.strip():
-            raise InvalidGeneratorOutputError("model returned a blank answer")
-        allowed = set(available_source_ids)
-        unknown = [sid for sid in output.used_source_ids if sid not in allowed]
-        if unknown:
-            raise InvalidGeneratorOutputError("model referenced unknown source IDs")
+        if not isinstance(output, AnswerOutput):
+            raise GenerationError("Model returned an unexpected output type")
+        answer = output.answer.strip()
+        if not answer:
+            raise GenerationError("Model returned an empty answer")
+
+        latency_ms = round((time.monotonic() - started) * 1000)
         logger.info(
-            "answer generated model=%s outcome=success latency_ms=%d "
-            "source_count=%d tokens=%s",
-            self._model,
-            round((time.monotonic() - started) * 1000),
-            len(output.used_source_ids),
-            _usage_tokens(result),
+            f"Generated answer successfully in {latency_ms} ms; "
+            f"tokens={_usage_tokens(result)}"
         )
-        return output
+        return answer
 
 
 def _usage_tokens(result):
-    """Return a compact token summary from the run result when available.
-
-    Agents SDK 0.19.4 exposes usage on raw_responses entries, not on
-    RunResult itself. Only an entry carrying both token counts is used;
-    partial entries are skipped, and no complete entry yields "unknown".
-    """
-    for raw in getattr(result, "raw_responses", None) or []:
-        usage = getattr(raw, "usage", None)
+    for response in getattr(result, "raw_responses", None) or []:
+        usage = getattr(response, "usage", None)
         if usage is None:
             continue
-        tokens_in = getattr(usage, "input_tokens", None)
-        tokens_out = getattr(usage, "output_tokens", None)
-        if tokens_in is not None and tokens_out is not None:
-            return f"{tokens_in}/{tokens_out}"
+        input_tokens = getattr(usage, "input_tokens", None)
+        output_tokens = getattr(usage, "output_tokens", None)
+        if input_tokens is not None and output_tokens is not None:
+            return f"{input_tokens}/{output_tokens}"
     return "unknown"

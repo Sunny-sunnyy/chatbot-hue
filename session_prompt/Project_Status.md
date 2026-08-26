@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-25 +07`
+Last updated: `2026-08-26 +07`
 
 ## Mục tiêu
 
@@ -59,7 +59,7 @@ thông thường.
 | 3 | `approved` | Embedding/sparse đã được đơn giản hóa, chạy thật, review và được user xác nhận |
 | 4 | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận; candidate chưa cutover |
 | 5 | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
-| 6 | `approved` | Functional phase và Milestone 6.1 đã approved; simplicity review là bước tiếp theo |
+| 6 | `approved` | Answer-only API và notebooks đã chạy thật, đạt Codex review vòng 2 và được user xác nhận |
 | 7 | `approved` | Evaluation đơn giản đã chạy thật, đạt technical review và được user xác nhận |
 | 8 | `not_ready` | Chưa mở; đã ghi quyết định ba canonical profiles và isolated true-hybrid candidate collection |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
@@ -67,7 +67,27 @@ thông thường.
 Milestone 6.1 Baseline Lifecycle Hardening thuộc Phase 6 và đã được user xác
 nhận.
 
+Phase 6 simplicity design và implementation plan được user xác nhận ngày
+`2026-08-25 +07`:
+
+```text
+docs/superpowers/specs/2026-08-25-phase-6-generation-api-simplicity-design.md
+docs/superpowers/plans/2026-08-25-phase-6-generation-api-simplicity-implementation.md
+session_prompt/PHASE_6_SIMPLICITY_IMPLEMENTER_HANDOFF.md
+```
+
+Phase 6 simplicity implementation đã đơn giản hóa context/prompt/generator/API/
+logging và migrate direct Phase 7/notebook consumers. Scope không mở
+conversation memory, streaming, retry, source response hoặc provider mới.
+
 ## Trạng thái hiện tại
+
+Phase 6 simplicity implementation đã đạt Codex review vòng 2 và được user xác
+nhận ngày `2026-08-26 +07`. Public chat response chỉ còn `answer`; context là
+labeled string; generator trả string và gom known SDK/provider failures thành
+HTTP 503. Fresh Reviewer run đạt 10 tests, Notebook 05–06 Run All thật, active
+collection vẫn 572 points và scoped diff sạch. Broad suite và batch 20 câu
+không chạy lại ở correction vì correction không đổi success path.
 
 Governance đơn giản hóa toàn dự án đã được user thiết kế, phê duyệt, review và
 cập nhật vào các tài liệu hiện hành. Phase 7 hiện ở `approved` theo
@@ -287,10 +307,8 @@ một số thay đổi không liên quan. Coding agent phải:
 ## Next action
 
 ```text
-Phase 0–5 simplicity review đã approved
--> tiếp tục simplicity review Phase 6
--> chạy Phase 7 evaluation 20 câu khi thay đổi có thể ảnh hưởng chất lượng RAG
--> chạy final full backend suite sau khi Phase 0–6 hoàn tất
+Phase 0–6 simplicity review đã approved
+-> chạy final backend verification phù hợp và bảo toàn dirty evaluation CSV
 -> chỉ sau đó mới cân nhắc Phase 8
 ```
 
