@@ -6,8 +6,13 @@ Repo:
 /home/minhhieu/hue_rag
 ```
 
-Giao tiếp với người dùng bằng tiếng Việt. Code, comments, docstrings và tên
-biến dùng English chuẩn.
+Giao tiếp với người dùng bằng tiếng Việt. Code và các tên định danh như biến,
+hàm, class, type, API và schema dùng English chuẩn. Comments và docstrings cần
+thiết viết bằng tiếng Việt.
+
+Không mở rộng Phase 8 hiện tại chỉ để đổi comments/docstrings cũ. Sau khi hoàn
+thành Phase 8, rà soát code hiện có theo một scope riêng và chuyển comments/
+docstrings tiếng Anh sang tiếng Việt khi chúng vẫn cần thiết.
 
 ## Mục tiêu dự án
 
