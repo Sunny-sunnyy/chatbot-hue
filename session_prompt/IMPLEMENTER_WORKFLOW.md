@@ -35,7 +35,7 @@ retrieval, evaluation hoặc benchmark, đọc
 Task code, notebook, test hoặc refactor phải đọc và áp dụng:
 
 ```text
-skills/karpathy-guidelines/SKILL.md
+skills/practical-project-coding/SKILL.md
 ```
 
 Chạy `git status --short`. Giữ nguyên mọi thay đổi không liên quan.

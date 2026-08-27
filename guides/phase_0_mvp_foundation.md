@@ -182,7 +182,7 @@ trong guide/report liên quan. Secrets chỉ đến từ environment.
 - Không đặt test-count target.
 - Không mock/fake.
 - Test pass không thay real-system run.
-- Reviewer/Implementer áp dụng `skills/karpathy-guidelines/SKILL.md`.
+- Reviewer/Implementer áp dụng `skills/practical-project-coding/SKILL.md`.
 
 Verification đi theo phạm vi ảnh hưởng:
 

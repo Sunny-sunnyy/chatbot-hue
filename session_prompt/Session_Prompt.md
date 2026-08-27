@@ -146,7 +146,7 @@ Kỹ thuật nâng cao chỉ được thêm khi:
 Khi viết, review hoặc refactor code, Reviewer và Implementer đọc và áp dụng:
 
 ```text
-skills/karpathy-guidelines/SKILL.md
+skills/practical-project-coding/SKILL.md
 ```
 
 Skill này hỗ trợ cách làm đơn giản và surgical; không tạo checkpoint, checklist
