@@ -1,5 +1,9 @@
 # Prompt handoff — Implement Golden Dataset V2
 
+> **Historical — superseded 2026-08-27:** Không dùng prompt này để bắt đầu
+> session mới. User đã duyệt Golden Dataset V3 complexity reset. Dùng
+> `session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md`.
+
 Bạn là **Codex Implementer** cho repository:
 
 ```text

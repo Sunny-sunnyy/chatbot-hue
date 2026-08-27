@@ -2,9 +2,10 @@
 
 > **Current progression note (2026-08-26 +07):** baseline Phase 7 vẫn
 > `approved`. Simplicity review Phase 0–6 đã hoàn tất; một post-simplicity
-> correction hẹp đã được duyệt. Golden Dataset V2 design/plan đã được user xác
-> nhận và đang chờ session Implementer; Phase 8 benchmark vẫn đóng cho tới khi
-> Gate 0 implementation được Reviewer/user chấp nhận.
+> correction hẹp đã được duyệt. Golden Dataset V2 sau đó dừng ở historical
+> `changes_requested`; Golden Dataset V3 design/plan đã được user duyệt ngày
+> 2026-08-27. Phase 8 benchmark vẫn đóng cho tới khi V3 được Reviewer/user chấp
+> nhận.
 
 ```text
 Trạng thái: Đã được bạn xác nhận

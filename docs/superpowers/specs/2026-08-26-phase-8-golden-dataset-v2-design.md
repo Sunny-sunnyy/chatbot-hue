@@ -1,6 +1,10 @@
 # Phase 8 Golden Dataset V2 Design
 
-**Status:** `approved_for_implementation`
+> **Historical — superseded 2026-08-27:** V2 dừng sau ba vòng
+> `changes_requested`. Golden Dataset V3 design là canonical Gate 0 hiện hành:
+> `docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md`.
+
+**Status:** `historical_superseded`
 
 **Purpose:** Xây một golden dataset tiếng Việt mới, rõ ràng và có bằng chứng
 trực tiếp cho Phase 8. Dataset mới phục vụ so sánh retrieval và answer quality;

@@ -9,8 +9,8 @@ Qdrant mutation, commit hoặc push.
 
 ## Boundary và prerequisite
 
-- Golden Dataset V2 là scope riêng đã được user phê duyệt thiết kế tại
-  `docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md`.
+- Golden Dataset V3 là scope riêng đã được user phê duyệt thiết kế tại
+  `docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md`.
   Implementer phải hoàn tất plan riêng và qua Reviewer Gate 0 trước bất kỳ
   Phase 8 benchmark nào.
 - Phase 8 hiện chỉ thiết kế master framework và thứ tự experiment groups.
@@ -225,7 +225,7 @@ they are not the durable checkpoint or committed evidence.
 
 - exact finalist gate/count before paid generation and judging;
 - exact uncertainty method, clear-gain rule and statistical/category gates over
-  the approved Golden Dataset V2 distribution;
+  the approved final Golden Dataset V3 distribution;
 - BGE-M3 learned-sparse representation and isolated storage/query path;
 - exact per-model embedding instructions, normalization, truncation, dtype and
   batch settings needed for a fair comparison;
@@ -254,36 +254,42 @@ dependency. Keep it only if observed Vietnamese quality gain justifies its
 latency and maintenance cost. Do not add PyVi, VnCoreNLP or a tokenizer grid to
 the initial scope.
 
-## Approved Gate 0: Golden Dataset V2
+## Approved Gate 0 design: Golden Dataset V3
 
 Implementation plan:
-`docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md`.
+`docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md`.
 
 No Phase 8 benchmark may run until that plan produces a Reviewer-approved
-100-case `golden_v2.jsonl` and exact 20-case smoke subset.
+`golden_v3.jsonl` with exactly 40, 45, or 50 cases and an exact 10-case smoke
+subset, followed by user approval.
 
 ### Locked dataset decisions
 
-- Preserve Phase 7 `tests.jsonl` unchanged; curated rebuild may reuse good old
-  cases but writes a separately named 100-case dataset.
-- Use exactly nine approved categories, including eight natural grounded
-  `numerical` cases, and the approved 40/20/20/20 source targets.
+- Preserve Phase 7 and V2 datasets unchanged; V3 may reuse, rewrite, or reject
+  good V2 candidates but writes a separately named dataset.
+- Keep the nine approved category names for diagnostics without category or
+  source-family quotas and without a cross-matrix.
 - Keep only six row fields: `case_id`, `question`, `keywords`,
   `reference_answer`, `category`, `evidence`.
 - Use binary exact `source + section` relevance; no keyword proxy, LLM labeling
   or stored chunk IDs for Phase 8 retrieval ground truth.
-- Smoke contains 20 exact full-dataset rows and covers all nine categories and
-  all four source families, including cafes.
-- Stop and ask the user when sources conflict or cannot support a natural quota;
-  never force weak questions to make counts pass.
+- Smoke contains 10 exact full-dataset rows selected simply, without coverage
+  quotas.
+- Questions are natural Vietnamese tourist questions. Stop and ask the user
+  when a useful case requires absent/conflicted corpus knowledge; never force a
+  weak question to make 50, 45, a category, or a source count pass.
+- Web research may inform naturalness and identify missing knowledge, but an URL
+  is not evidence. Missing knowledge requires an approved/indexed Markdown
+  update before the case can enter V3.
 
 ### Benchmark-grade ground truth decisions resolved by Gate 0
 
 The new evidence mapping is stable across embedding-specific isolated indexes
-because it labels canonical source/section pairs rather than chunk IDs. The full
-100 cases support final local retrieval selection; the 20-case subset is smoke
-only. Winner regression blockers, uncertainty and the paid generation subset
-remain Phase 8 design questions.
+because it labels canonical source/section pairs rather than chunk IDs. The
+user-approved full 40/45/50 cases support final local retrieval selection; the
+10-case subset is smoke only. Winner regression blockers, uncertainty and the
+paid generation subset remain Phase 8 design questions and must use the actual
+final V3 distribution rather than assuming V2 quotas.
 
 ## Mandatory backlog after Gate 0 implementation
 

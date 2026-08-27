@@ -12,7 +12,7 @@ quality đáng tin cậy, latency và simplicity.
 
 ## Global gates
 
-1. Golden Dataset V2 phải được implement, Reviewer kiểm tra và user chấp nhận
+1. Golden Dataset V3 phải được implement, Reviewer kiểm tra và user chấp nhận
    theo approved spec/plan ở scope riêng.
 2. Không sửa dataset trong Phase 8 design/benchmark implementation.
 3. Không mutate active Qdrant collection; mọi reindex dùng isolated collection.
@@ -25,7 +25,7 @@ quality đáng tin cậy, latency và simplicity.
 
 | Stage | Experiment group | Ordered candidates/capabilities | Fixed boundary |
 |---:|---|---|---|
-| 0 | Golden prerequisite | approved 100-case Golden Dataset V2 + exact 20-case smoke subset | implement `2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md`; no Phase 8 run before Reviewer approval |
+| 0 | Golden prerequisite | approved 40/45/50-case Golden Dataset V3 + exact 10-case smoke subset | implement `2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md`; no Phase 8 run before Reviewer and user approval |
 | 1 | Dense embedding | E5 small → multilingual MiniLM-L12 → E5 base → E5 large → BGE-M3 dense → Qwen3 Embedding 0.6B at 384D → Qwen3 Embedding 0.6B at 1024D | chunks, gold, dense retrieval settings, metrics |
 | 2 | Lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → BGE-M3 learned sparse → true hybrid | selected/fixed dense evidence, reranker off |
 | 3 | Reranker | current MiniLM-L6 → BGE reranker base → Qwen3 Reranker 0.6B | identical pre-rerank candidate artifacts |
@@ -140,21 +140,22 @@ Implementation tasks, exact commands, test cases, notebook structure and commit
 boundaries will be written only after the remaining design questions are user
 approved.
 
-## Next authorized session: Golden Dataset V2 implementation
+## Next authorized session: Golden Dataset V3 implementation
 
 Start that session with
-`session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md` and execute the
+`session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md` and execute the
 approved plan without running a Phase 8 benchmark.
 
 ## Deferred discussion queue after Gate 0 review
 
-After the implemented dataset is Reviewer/user approved, start brainstorming
-with `session_prompt/phase_8_brainstorming_handoff_prompt.md`.
+After the implemented dataset is Reviewer/user approved, create an updated Gate
+1 brainstorming handoff based on the actual final V3 distribution. The old V2
+brainstorming handoff is historical and must not restore V2 quotas.
 
 Resolve these gates in order; do not let an Implementer infer them:
 
 1. Lock category regression blockers and uncertainty/
-   clear-gain rules using the known 100-case distribution.
+   clear-gain rules using the approved final V3 distribution.
 2. Lock exact embedding instructions/pooling/normalization/truncation/dtype/
    batching and reranker formatting/truncation/batching for every candidate.
 3. Design BGE-M3 learned-sparse representation, isolated Qdrant schema,

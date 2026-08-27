@@ -26,7 +26,12 @@ raw -> Markdown source dumps -> curated Markdown
 ```
 
 Không chunk trực tiếp từ `_source-dumps`. Không enrich hoặc sửa curated data
-bằng web nếu người dùng chưa duyệt phạm vi dữ liệu.
+bằng web nếu người dùng chưa duyệt phạm vi dữ liệu. Riêng Golden Dataset V3,
+user đã cho phép research internet để nghiên cứu cách hỏi tự nhiên, nhu cầu du
+khách và phát hiện mâu thuẫn/thông tin có thể đã thay đổi. Web không phải Golden
+evidence. Nếu web phát hiện kiến thức hữu ích chưa có trong corpus, Implementer
+phải đề xuất exact Markdown update và chờ Reviewer/user duyệt, sau đó chỉ dùng
+case tương ứng khi Markdown đã được duyệt và index.
 
 ## Nguồn sự thật
 
@@ -271,6 +276,9 @@ pyproject.toml + uv.lock -> uv -> project .venv -> uv run <command>
 - Không thêm `Liên kết nội bộ` vào body.
 - Source tracking tối giản nằm trong `## Nguồn dữ liệu`.
 - Curated body phải tự nhiên, độc lập và answer-facing.
+- Research bên ngoài phải tách khỏi closed-world ground truth. Khi web mâu thuẫn
+  với corpus, ghi rõ source/link/date, tính thời điểm, ảnh hưởng và quyết định
+  cần từ Reviewer/user; không tự chọn một phía hoặc âm thầm sửa corpus.
 
 Chi tiết foods curation thuộc
 `knowledge-base-hue/meta/foods-template.md`.
@@ -381,22 +389,54 @@ Notebook 08b còn so sánh đúng hai BM25 tokenizer variants: lowercase Unicode
 chỉ được giữ nếu corrected Vietnamese evidence biện minh latency/dependency;
 không thêm PyVi, VnCoreNLP hoặc tokenizer grid ban đầu.
 
-Golden Dataset V2 đã được user duyệt về design và implementation plan. Session
-tiếp theo là session Implementer, chỉ thực hiện prerequisite này:
+Golden Dataset V2 đã qua ba vòng `changes_requested`. User đã thực hiện
+complexity reset ngày `2026-08-27 +07` và duyệt Golden Dataset V3 làm Gate 0
+canonical mới. V2 cùng reports/handoffs cũ được giữ làm historical evidence và
+candidate pool; không tiếp tục correction vòng 4/5 theo contract 100 case.
+
+V3 có đúng một trong ba mức `50`, `45` hoặc `40` case, ưu tiên mức cao nhất mà
+mọi câu đều tự nhiên, rõ ràng, phổ thông và có khả năng được khách du lịch hỏi.
+Không còn exact category quotas, source quotas hoặc ma trận 40/20/20/20 × 9.
+Bốn source families và tourist-needs checklist chỉ là định hướng định tính.
+Câu hỏi là Vietnamese single-turn, một intent chính; không tạo price-only hoặc
+opening-time-only question. Location question được phép khi hữu ích. Reference
+answer thường 2–4 câu và có thể bổ sung giá/giờ/địa chỉ nếu trực tiếp liên quan
+và được evidence hỗ trợ.
+
+Canonical V3 design, plan và handoff prompts:
 
 ```text
-session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md
-docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
-docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
+docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
+docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
+session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md
+session_prompt/phase_8_golden_dataset_v3_reviewer_prompt.md
 ```
 
-Implementer phải giữ Phase 7 files, active collection và Phase 8 benchmark ngoài
-scope; dừng ở reviewer checkpoints khi corpus thiếu hoặc mâu thuẫn. Sau khi
-implementation được Reviewer/user chấp nhận, tiếp tục brainstorming Gate 1 bằng:
+V3 giữ exact six-field schema `case_id`, `question`, `keywords`,
+`reference_answer`, `category`, `evidence`; ID là `foods-v3-NNNN`; mỗi row có
+2–4 keywords xuất hiện trong reference. Evidence vẫn là canonical Markdown
+`source + H2 section`, tối thiểu nhưng đủ. Full dataset là benchmark chính;
+smoke chỉ gồm 10 row deep-equal được chọn đơn giản sau khi full được duyệt.
+
+Implementer curate V2 trước, tạo baseline 40 rồi chỉ thêm theo batch 5 khi đủ
+chất lượng để đạt 45/50. Implementer đề xuất mức cao nhất; Reviewer đọc toàn bộ
+case và declared evidence; user đọc toàn bộ câu hỏi và quyết định final content/
+size cùng Reviewer. Deterministic validator không thay manual quality approval.
+
+Historical V2 inputs, không còn authorize implementation:
 
 ```text
-session_prompt/phase_8_brainstorming_handoff_prompt.md
+reports/phase_8_golden_dataset_v2_codex_review.md
+reports/phase_8_golden_dataset_v2_language_quality_audit.md
+session_prompt/phase_8_golden_dataset_v2_correction_round_3_prompt.md
+session_prompt/phase_8_golden_dataset_v2_implementer_handoff_round_3.md
+session_prompt/phase_8_golden_dataset_v2_reviewer_handoff_round_4.md
 ```
+
+Implementer phải giữ Phase 7 files, V2, active collection và Phase 8 benchmark
+ngoài scope. Sau V3 implementation, Reviewer dùng V3 reviewer prompt; chỉ sau
+Reviewer/user approval mới tạo handoff brainstorming Gate 1 cập nhật theo final
+V3 distribution.
 
 GPU/WSL2 remediation và mọi production cutover/active mutation vẫn là scope
 riêng.

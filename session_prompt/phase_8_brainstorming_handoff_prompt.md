@@ -1,5 +1,9 @@
 # Prompt handoff — tiếp tục brainstorming Phase 8 sau Golden Dataset V2
 
+> **Historical — superseded 2026-08-27:** Prompt này khóa distribution V2 nên
+> không còn dùng được. Chỉ tạo Gate 1 brainstorming handoff mới sau khi Golden
+> Dataset V3 được Reviewer/user duyệt và final distribution đã biết.
+
 Bạn là **Codex Reviewer và design collaborator** cho repository:
 
 ```text

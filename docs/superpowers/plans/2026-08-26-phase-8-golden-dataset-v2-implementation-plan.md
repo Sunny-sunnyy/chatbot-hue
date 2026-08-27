@@ -1,5 +1,8 @@
 # Phase 8 Golden Dataset V2 Implementation Plan
 
+> **Historical — superseded 2026-08-27:** Không execute plan này cho session
+> mới. Dùng `docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `subagent-driven-development` (recommended) or `executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Do not dispatch subagents unless the user explicitly asks for delegation.
 
 **Goal:** Build and verify a new 100-case Vietnamese golden dataset plus an exact 20-case smoke subset, with source/section evidence suitable for deterministic Phase 8 retrieval evaluation.

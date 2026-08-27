@@ -13,10 +13,11 @@ không phải nguồn tiến độ hiện hành và không tạo requirement m�
 
 Hiện tại dự án chức năng đã hoàn thành và được xác nhận đến Phase 7. Simplicity
 campaign đã hoàn thành và được user xác nhận cho Phase 0–6. Phase 7
-post-simplicity correction cũng đã approved. Phase 8 vẫn `not_ready`: session
-tiếp theo dành cho Implementer thực hiện Golden Dataset V2 theo design/plan đã
-duyệt. Sau Gate 0 review mới tiếp tục các experiment-contract decisions còn mở;
-chưa được triển khai hoặc chạy Phase 8 benchmark.
+post-simplicity correction cũng đã approved. Phase 8 vẫn `not_ready`: Golden V2
+dừng ở historical `changes_requested` sau ba vòng và user đã duyệt Golden
+Dataset V3 complexity reset. Session tiếp theo dành cho Implementer thực hiện V3
+40/45/50 theo design/plan đã duyệt. Sau Gate 0 review mới tiếp tục các
+experiment-contract decisions còn mở; chưa được chạy Phase 8 benchmark.
 
 ## Evidence hiện hành của simplicity campaign
 
@@ -33,8 +34,8 @@ chưa được triển khai hoặc chạy Phase 8 benchmark.
 Phase 8 hiện mới có design/sequence documents, chưa có implementation evidence:
 
 ```text
-docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
-docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
+docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
+docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
 docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
 docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
 guides/phase_8_benchmark_model_selection.md

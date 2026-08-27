@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -11,10 +11,12 @@ DEFAULT_TEST_FILE = (
 
 
 class TestQuestion(BaseModel):
+    case_id: str = ""
     question: str
     keywords: list[str]
     reference_answer: str
     category: str
+    evidence: dict[str, list[str]] = Field(default_factory=dict)
 
 
 def load_tests(path: str | Path = DEFAULT_TEST_FILE) -> list[TestQuestion]:

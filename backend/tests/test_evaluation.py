@@ -10,11 +10,21 @@ from evaluation.eval import (
     evaluate_retrieval,
 )
 from evaluation.evaluator import run_retrieval_ui
+from evaluation.golden_dataset import (
+    CATEGORY_QUOTAS,
+    SOURCE_TARGETS,
+    document_is_relevant,
+    load_golden,
+    validate_full,
+    validate_smoke,
+)
 from evaluation.test import load_tests
 
 REPO = Path(__file__).resolve().parents[2]
 SMALL_DATASET = REPO / "knowledge-base-hue/foods/evaluation/test2.jsonl"
 FULL_DATASET = REPO / "knowledge-base-hue/foods/evaluation/tests.jsonl"
+GOLDEN_V2 = REPO / "knowledge-base-hue/foods/evaluation/golden_v2.jsonl"
+GOLDEN_V2_SMOKE = REPO / "knowledge-base-hue/foods/evaluation/golden_v2_smoke.jsonl"
 
 
 def test_small_dataset_contains_twenty_real_questions():
@@ -122,3 +132,39 @@ def test_retrieval_comparison_reports_latency_failures_and_rank_changes():
     assert comparison[0]["same_ids_in_order"] is False
     assert comparison[0]["active_ids"] == ["a", "b"]
     assert comparison[0]["candidate_ids"] == ["b", "a"]
+
+
+def test_golden_v2_contract_and_distribution():
+    cases = load_golden(GOLDEN_V2)
+    summary = validate_full(cases)
+    assert summary["cases"] == 100
+    assert summary["categories"] == CATEGORY_QUOTAS
+    assert all(
+        summary["source_coverage"][family] >= target
+        for family, target in SOURCE_TARGETS.items()
+    )
+
+
+def test_golden_v2_smoke_is_exact_representative_subset():
+    full = load_golden(GOLDEN_V2)
+    smoke = load_golden(GOLDEN_V2_SMOKE)
+    summary = validate_smoke(full, smoke)
+    assert summary == {"cases": 20, "categories": 9, "source_families": 4}
+
+
+def test_golden_v2_binary_relevance_uses_real_retrieval_metadata(ingested_collection):
+    from conftest import TEST_COLLECTION
+
+    smoke = load_golden(GOLDEN_V2_SMOKE)
+    assert len(smoke) == 20
+    services = build_services("dense_only", collection_name=TEST_COLLECTION)
+
+    for case in smoke:
+        documents = services.retrieval.search(case.question)
+        assert len(documents) > 0
+        for doc in documents:
+            assert isinstance(doc.metadata.get("source"), str)
+            assert doc.metadata["source"].startswith("foods/")
+            assert isinstance(doc.metadata.get("section"), str)
+            relevance = document_is_relevant(case, doc)
+            assert isinstance(relevance, bool)

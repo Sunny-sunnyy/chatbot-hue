@@ -456,36 +456,36 @@ Codex review chạy lại comparison cần thiết và kiểm tra:
 Benchmark summary cập nhật tại
 `reports/hue_foods_rag_benchmark.md`.
 
-## Gate 0 đã duyệt về thiết kế — session Implementer tiếp theo
+## Gate 0 Golden Dataset V3 đã duyệt về thiết kế
 
 Canonical files:
 
 ```text
-session_prompt/phase_8_golden_dataset_v2_implementer_prompt.md
-docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
-docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
+session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md
+session_prompt/phase_8_golden_dataset_v3_reviewer_prompt.md
+docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
+docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
 ```
 
-Implementer phải tạo riêng full 100-case `golden_v2.jsonl` và exact 20-case
-smoke subset, giữ Phase 7 files unchanged, dùng binary exact source/section
-relevance và dừng ở reviewer checkpoints khi corpus thiếu hoặc mâu thuẫn.
+V2 dừng ở historical `changes_requested` sau ba vòng. V3 là complexity reset đã
+được user duyệt: Implementer tạo full `golden_v3.jsonl` ở mức cao nhất đạt chất
+lượng trong đúng `40`, `45`, `50` và exact 10-row smoke subset. Không còn quota
+category, source family hoặc ma trận chéo. Mọi case vẫn dùng binary exact
+source/section relevance và Phase 7/V2 files phải giữ nguyên.
 
 Không chạy Phase 8 benchmark cho tới khi Reviewer kiểm tra direct evidence,
-strict validator, real retrieval metadata và user chấp nhận Gate 0 trên dữ liệu
-đã triển khai.
+deterministic validator, real retrieval metadata, toàn bộ câu hỏi/reference và
+user chấp nhận Gate 0 trên dữ liệu đã triển khai.
 
 ## Backlog brainstorming sau Gate 0 implementation
 
-Sau khi Golden Dataset V2 được Reviewer/user chấp nhận, bắt đầu session bằng:
-
-```text
-session_prompt/phase_8_brainstorming_handoff_prompt.md
-```
+Sau khi Golden Dataset V3 được Reviewer/user chấp nhận, tạo handoff brainstorming
+mới dựa trên final 40/45/50 distribution. Handoff V2 cũ không còn canonical.
 
 Tiếp tục theo thứ tự:
 
 1. category regression blockers, uncertainty và clear-quality-gain rule dựa
-   trên 100 case đã duyệt;
+   trên final V3 distribution đã duyệt;
 2. exact embedding query/document instructions, pooling, normalization,
    truncation, dimension, dtype và batch size;
 3. exact reranker input format, truncation và batch size; depth đã khóa 10→5;
