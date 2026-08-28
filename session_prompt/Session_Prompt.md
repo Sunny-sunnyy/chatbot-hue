@@ -344,24 +344,34 @@ hoàn tất governance đơn giản
 -> review lại các Phase 0 -> Phase 6 đã hoàn thành theo thứ tự dependency
 -> chạy lại Phase 7 khi thay đổi có thể ảnh hưởng kết quả
 -> Golden Dataset V3 Gate 0 đã approved với 45 full + 10 smoke cases
--> tiếp tục Gate 1 brainstorming và Phase 8 master design
--> chỉ implement/run exact Phase 8 experiment group sau user authorization
+-> Phase 8 Gate 1 common contracts đã approved
+-> exact Notebook 08a design/plan đã approved; implementation + Run All authorized
+-> Implementer thực hiện 08a, Reviewer xác minh độc lập, user xác nhận
+-> chỉ sau đó mới research + brainstorm Notebook 08b
 ```
 
-Phase 8 design drafts hiện hành:
+Phase 8 canonical design/sequence documents hiện hành:
 
 ```text
 docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
 docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
 ```
 
 Đã khóa: local embedding/reranker chạy từ nhẹ đến mạnh; đánh giá bằng corrected
 Vietnamese gold và latency; khi quality không khác biệt đáng tin cậy thì ưu tiên
 model nhẹ/nhanh/đơn giản. End-to-end generator là `qwen/qwen3.5-9b` qua
 OpenRouter, judge là `gpt-5.4-mini`. GPU/WSL2 GTX 1650 remediation thuộc session
-khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready`: Gate 0 đã approved
-nhưng Gate 1 experiment contracts và exact implementation/run authorization
-chưa hoàn tất.
+khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready`: Gate 0 và Gate 1
+common contracts đã approved; exact Notebook 08a work package đã `ready`, nhưng
+chưa có implementation/review/user confirmation và later groups vẫn đóng.
+
+Gate 1 common contract bảo vệ cả chín V3 categories, dùng paired bootstrap
+10.000 lần/fixed seed/95% percentile CI và clear-gain threshold đã khóa trong
+master design. Main local profile là CPU FP32; một warm-up và ba full 45-case
+repetitions; failed/OOM không được silent retry hoặc đổi setting. Paid stage có
+hai reference rows và tối đa ba new finalists.
 
 Notebook topology đã được user khóa theo group: `08a` embedding, `08b`
 retrieval/fusion, `08c` reranker, `08d` full local matrix, `08e` generation
@@ -451,10 +461,12 @@ Reviewer V3 được retire sau Gate 0 approval ngày `2026-08-28 +07`; lifecycl
 evidence được giữ trong design, plan và hai reports. Khi cần audit prompt cũ,
 xem lịch sử Git; không phục hồi chúng làm session entrypoint.
 
-Session entrypoint hiện hành là
-`session_prompt/phase_8_gate_1_brainstorming_prompt.md`, dựa trên distribution
-V3 45 câu đã approved. Gate 1 chỉ làm rõ design; không sửa V3, chạy benchmark,
-download model, gọi paid generation/judge hoặc mutate active collection.
+Gate 1 brainstorming prompt đã được loại khỏi cây hiện hành sau khi user duyệt
+common contracts và exact 08a design/plan ngày `2026-08-28 +07`; lịch sử vẫn ở
+Git. Session tiếp theo dùng exact Notebook 08a Implementer handoff được cung cấp
+trực tiếp. User đã authorize code, pinned model downloads và real Run All chỉ
+trên bảy isolated 08a collections. Không cho phép sửa V3, paid generation/judge,
+active collection mutation, production cutover hoặc work của Notebook 08b–08e.
 
 GPU/WSL2 remediation và mọi production cutover/active mutation vẫn là scope
 riêng.

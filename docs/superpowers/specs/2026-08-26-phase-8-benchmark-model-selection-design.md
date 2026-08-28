@@ -1,11 +1,14 @@
 # Phase 8 Benchmark Model Selection Design
 
-**Status:** `design_in_progress`
+**Status:** `gate_1_common_contracts_approved`; exact Notebook 08a design/plan
+and its isolated implementation/real-run authorization are also approved.
+Later notebook-specific designs and execution remain pending.
 
 **Purpose:** Khóa các quyết định Phase 8 đã được user xác nhận trong khi tiếp
-tục brainstorming những biến thí nghiệm còn lại. Tài liệu này không authorize
-code, dataset correction, model download, CUDA/PyTorch changes, paid runs,
-Qdrant mutation, commit hoặc push.
+tục brainstorming những biến thí nghiệm còn lại. Bản master này tự nó không
+authorize code, dataset correction, model download, CUDA/PyTorch changes, paid
+runs, Qdrant mutation, commit hoặc push; exact 08a authorization nằm trong hai
+tài liệu 08a đã duyệt và yêu cầu mới nhất của user.
 
 ## Boundary và prerequisite
 
@@ -14,7 +17,8 @@ Qdrant mutation, commit hoặc push.
   Reviewer đã xác minh và user phê duyệt Gate 0 ngày `2026-08-28 +07` với
   `45` câu full và `10` câu smoke. Approval này khóa input benchmark nhưng không
   authorize implementation hoặc execution Phase 8.
-- Phase 8 hiện chỉ thiết kế master framework và thứ tự experiment groups.
+- Phase 8 master framework và thứ tự experiment groups đã khóa; exact 08a work
+  package đã `ready`, còn later groups vẫn ở design checkpoints.
 - Active Qdrant collection tiếp tục read-only; candidate indexes/collections
   phải isolated.
 - Mỗi comparison chính chỉ thay đổi một experiment group.
@@ -130,6 +134,40 @@ Model code producing scores for Vietnamese input is integration evidence, not
 quality evidence. Models without an explicit Vietnamese claim are not rejected
 before measurement, but cannot win without corrected-gold Vietnamese evidence.
 
+## Approved common model execution profile
+
+Các thiết lập dưới đây là baseline chung đã được user duyệt. Trước notebook chứa
+model tương ứng vẫn phải kiểm tra lại model card/API/dependency hiện hành; chỉ
+reopen quyết định khi có exact evidence về incompatibility hoặc resource limit.
+
+- Dùng native query/document contract và native pooling của từng embedding:
+  E5 dùng `query:`/`passage:` cùng attention-mask mean pooling; multilingual
+  MiniLM dùng raw text cùng mean pooling; BGE-M3 dùng official `dense_vecs`;
+  Qwen dùng last-token pooling.
+- L2-normalize mọi dense query/document vector sau pooling. Qwen 384D dùng
+  official SentenceTransformers `truncate_dim=384`, normalize sau truncation;
+  Qwen 1024D dùng native output. Không manual slicing hoặc PCA.
+- Truncation bật với maximum 512 tokens cho E5/BGE-M3/Qwen và native 128 cho
+  multilingual MiniLM; ghi `truncated_document_count`.
+- Main local profile là CPU FP32, không quantization. Document batch size là 8,
+  query batch size là 1 và không silent auto-shrink. CUDA/dtype GPU chỉ được
+  thiết kế trong session GPU riêng.
+- Qwen embedding dùng instruction tiếng Việt đã được user chủ động chọn:
+  `Instruct: Với một câu hỏi du lịch ẩm thực Huế, hãy truy xuất các đoạn văn liên quan có thể trả lời câu hỏi.\nQuery: {question}`.
+  Document để raw. Đây là intentional override đối với khuyến nghị instruction
+  tiếng Anh cho multilingual use trong model card hiện hành; không tự đổi ngôn
+  ngữ instruction.
+- MiniLM/BGE reranker nhận raw `(question, chunk_text)`. Qwen reranker dùng
+  official chat/template cùng task instruction tiếng Việt:
+  `Với một câu hỏi du lịch ẩm thực Huế, hãy đánh giá liệu tài liệu có chứa thông tin liên quan để trả lời câu hỏi hay không.`
+  Mọi pair cap 512 tokens bằng `longest_first`, ghi `truncated_pair_count`, CPU
+  pair batch size 4. Giữ native score để xếp hạng trong từng model; exact tie
+  giữ nguyên pre-rerank order.
+- BGE-M3 learned sparse giữ original token IDs làm sorted integer sparse indices
+  và `lexical_weights` làm values; bỏ zero/empty output, không hashing,
+  token-string remap, min-max hoặc pruning. Exact Qdrant schema/name/retention
+  được hoãn đến checkpoint Notebook 08b.
+
 ## Measurement contract
 
 Every candidate records:
@@ -148,17 +186,55 @@ Every candidate records:
 CPU and GPU measurements are separate execution profiles. A model running on
 CPU is not directly ranked against another model running on GPU for latency.
 
+Mỗi local configuration đo cold model load riêng một lần, chạy một warm-up bị
+loại khỏi thống kê, rồi chạy ba full repetitions trên đủ 45 cases. Warm latency
+báo `p50`/`p95`; quality lấy từ một deterministic run, còn ba repetitions dùng
+để phát hiện instability. Finalist phải thành công `3/3`. Nếu ranking khác nhau
+giữa các lần, báo exact variation và review thay vì che bằng mean.
+
+Memory observation giữ nhẹ: process RSS trước/sau load và observed peak RSS;
+nếu một GPU session sau này được duyệt thì thêm PyTorch peak allocated/reserved.
+Không thêm profiler hoặc sampling timeline.
+
+Khi failed/OOM, ghi `status=failed` cùng exact error, giải phóng model/tensors/
+cache rồi tiếp tục configurations độc lập. Không auto-retry, shrink batch, đổi
+device hoặc fallback. Mọi changed rerun phải quay lại research/brainstorming.
+Failure, OOM hoặc dưới `3/3` là technical blocker; chưa có arbitrary latency SLA.
+
 ## Approved selection rule
 
-When Vietnamese quality differences are not trustworthy, select the lighter,
-faster and simpler model/pipeline. A heavier candidate wins only when it shows a
-clear quality improvement, does not regress important categories, and its
-latency and operational complexity remain acceptable. Tiny aggregate gains do
-not override simplicity by themselves.
+Mọi candidate phải bảo vệ cả chín category trong final Golden Dataset V3.
 
-Exact uncertainty method and category thresholds will be designed against the
-approved corrected golden dataset, rather than invented before that dataset is
-known.
+- Với category lớn `n >= 6` (`relationship`, `direct_fact`, `food_knowledge`,
+  `comparative`): trước hết số cases có ít nhất một exact relevant
+  `source + section` trong Top 5 không được giảm. Khi hit count bằng nhau,
+  category `nDCG@5` là gate và `MRR@5` là supporting metric. Candidate bị block
+  nếu `delta nDCG@5 < -0.02`.
+- Với category nhỏ `n <= 3` (`holistic`, `spanning`, `guide_planning`,
+  `numerical`, `temporal`): dùng exact per-case guardrail. Nếu baseline có ít
+  nhất một exact relevant evidence trong Top 5, candidate không được làm mất
+  toàn bộ relevant evidence khỏi Top 5. Rank movement bên trong Top 5 không tự
+  động là blocker.
+
+Uncertainty dùng paired bootstrap trên 45 candidate-baseline case pairs: 10.000
+resamples, fixed seed và 95% percentile CI cho delta Recall@5/nDCG@5/MRR@5.
+Small-category guardrail vẫn exact per-case, không dùng bootstrap.
+
+`clear quality gain` chỉ tồn tại khi candidate vượt mọi category guardrail,
+aggregate `delta nDCG@5 >= +0.03`, đồng thời lower bound của bootstrap 95% CI
+cho `delta nDCG@5` lớn hơn 0. Recall@5 và MRR@5 được báo để đối chiếu nhưng không
+thay thế hai điều kiện này.
+
+Trong mỗi group, mọi candidate so với fixed control. Survivor/heavier candidate
+còn phải clear gain so với best lighter finalist. Controls là E5-small
+dense-only cho embedding, Unicode `\w+` cho tokenizer, same-embedding dense-only
+cho lexical/sparse/hybrid, same pre-rerank ranking với no-rerank cho reranker,
+và cả production baseline lẫn `llm_rag_reference_on_hue` làm reference rows cho
+full pipeline.
+
+Nếu quality không clear, chọn pipeline nhẹ, nhanh và đơn giản hơn. Complexity
+không dùng composite score: chỉ `low`/`medium`/`high` kèm rationale theo models,
+dependencies, extra collections/indexes và retrieval stages.
 
 ## GPU boundary
 
@@ -195,6 +271,23 @@ to read the result. Cells remain short and direct. Helpers are allowed only when
 they visibly remove repetition. Real Hue data/services/models are mandatory;
 fake data or mocked execution cannot be implementation or evidence.
 
+Markdown trình bày bằng tiếng Việt; function, variable và configuration
+identifiers dùng tiếng Anh. Mỗi cell chỉ làm một việc, Markdown ngắn đứng ngay
+trước code, bản đơn giản được giới thiệu trước rồi mới thêm bước theo trình tự
+tự nhiên. Notebook import backend functions thay vì duplicate runtime logic và
+không nhồi validator, package matching, audit logic hoặc test suite vào cells.
+Mỗi canonical notebook phải Run All thật trên temporary copy để review, sau đó
+repository copy giữ outputs rỗng và `execution_count: null`.
+
+Trước khi implement hoặc chạy từng notebook group `08a`–`08e`, bắt buộc:
+
+1. research primary/current sources, hardware và dependency contracts;
+2. brainstorm exact settings với user;
+3. nhận user approval cho group đó;
+4. sau đó mới implement và Run All.
+
+Evidence mới, failure/OOM hoặc scope conflict đưa group trở lại brainstorming.
+
 ## Minimal persistence and memory cleanup
 
 Each experiment notebook writes one cumulative CSV:
@@ -208,10 +301,11 @@ Each experiment notebook writes one cumulative CSV:
 | Generation finalists | `evaluation/results/phase8_generation_results.csv` |
 
 No run ID, timestamped package, checksum manifest, duplicate JSON artifact or
-opaque `configuration_id` is needed. Human-readable configuration columns
-identify results. Minimal `status` and `error` columns preserve real failures;
-category results remain visible because the approved selection rule forbids
-hiding important regressions behind an aggregate mean.
+opaque `configuration_id` is needed. Human-readable setting columns identify
+results. CSV dùng long format: một row `category=overall` và các category rows
+cho mỗi setting. Approved rerun upsert theo human-readable setting key, thay thế
+row của lần được duyệt trước và lưu ngay sau configuration; không giữ history
+registry. Minimal `status` và `error` phản ánh approved attempt mới nhất.
 
 After each model/configuration, save or update its CSV row before releasing the
 model and large temporary tensors/embeddings. Run Python garbage collection and
@@ -222,24 +316,46 @@ Canonical notebooks are committed with null execution counts and empty outputs.
 Interactive outputs may remain visible while the user is running locally, but
 they are not the durable checkpoint or committed evidence.
 
-## Decisions still requiring brainstorming
+## Notebook-specific decisions
 
-- exact finalist gate/count before paid generation and judging;
-- exact uncertainty method, clear-gain rule and statistical/category gates over
-  the approved final Golden Dataset V3 distribution;
-- BGE-M3 learned-sparse representation and isolated storage/query path;
-- exact per-model embedding instructions, normalization, truncation, dtype and
-  batch settings needed for a fair comparison;
-- reranker input formatting, truncation and batching (depth is already fixed at
-  input 10/output 5);
-- latency repetition/warm-up method and treatment of real failed runs;
-- exact generator settings and judge rubric/repetition policy for finalists;
-- exact human-readable columns and compact category presentation in each CSV;
-- exact implementation checkpoints, verification commands and reviewer reruns;
-- post-benchmark rule for proposing, but not automatically performing, a
-  production transition.
+Gate 1 common contracts đã được user duyệt ngày `2026-08-28 +07`. Notebook 08a
+đã hoàn tất research/brainstorming và có exact approved documents:
 
-No item in this section may be assumed by an Implementer.
+```text
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
+```
+
+User đã authorize implementation và real local Run All trong isolated 08a
+scope. Không viết chi tiết giả định cho các notebook còn lại trước checkpoint
+tương ứng.
+
+- `08b`: BM25 parameters; exact BGE-M3 isolated Qdrant schema, names, query path
+  và retention/cleanup.
+- `08c`: exact current-library reranker integration compatibility.
+- `08d`: exact non-duplicate matrix manifest và lightweight-to-heavy run order.
+- `08e`: exact Qwen generation settings, GPT judge rubric/repetitions và paid
+  call protocol.
+- Từng notebook: exact readable CSV columns/setting key và Reviewer Run All
+  command sau khi structure đã được brainstorm.
+
+Paid stage giữ hai fixed reference rows và tối đa ba new finalists. Nếu chỉ một
+hoặc hai candidates pass thì không fill quota. Nếu nhiều hơn ba candidates đủ
+điều kiện, chọn quality leader, fastest/simplest passing leader và balanced
+Pareto leader; một configuration giữ nhiều vai trò không bị nhân bản.
+
+Sau khi user chọn winner, chạy clean-kernel full 45-case confirmation cho winner
+và nearest simpler comparator; nếu winner là baseline/lightest thì chỉ chạy
+winner. Cập nhật benchmark summary nhưng không production cutover. Transition
+production luôn là proposal riêng cần user approval.
+
+## Focused verification contract
+
+Automated tests chỉ bao phủ reusable deterministic behavior: metric/gate logic,
+paired bootstrap, category aggregation và cumulative CSV upsert. Model, Qdrant
+và provider integration phải được xác minh bằng real temporary-notebook Run All;
+mock, fake vector, replay output hoặc synthetic result không phải completion
+evidence.
 
 ## BM25 Vietnamese tokenizer decision
 
@@ -263,7 +379,7 @@ Implementation plan:
 Plan đã tạo `golden_v3.jsonl` gồm `45` cases và exact 10-case smoke subset.
 Reviewer đã xác minh độc lập và user phê duyệt final content/size ngày
 `2026-08-28 +07`. Gate 0 đã hoàn tất; Phase 8 benchmark vẫn không được chạy cho
-tới khi Gate 1 contracts, design/plan và exact execution group được user duyệt.
+tới khi exact notebook group hoàn tất research/brainstorming và được user duyệt.
 
 ### Locked dataset decisions
 
@@ -289,44 +405,18 @@ tới khi Gate 1 contracts, design/plan và exact execution group được user 
 The new evidence mapping is stable across embedding-specific isolated indexes
 because it labels canonical source/section pairs rather than chunk IDs. The
 user-approved full 45 cases support final local retrieval selection; the
-10-case subset is smoke only. Winner regression blockers, uncertainty and the
-paid generation subset remain Phase 8 design questions and must use the actual
-final V3 distribution rather than assuming V2 quotas.
+10-case subset is smoke only. Gate 1 common winner/uncertainty contracts above
+use the actual V3 distribution and do not restore historical V2 quotas.
 
-## Mandatory backlog after Gate 0 implementation
+## Current handoff after Notebook 08a approval
 
-Gate 0 đã approved; resume Gate 1 brainstorming in this order:
+Global contracts and Notebook 08a's exact design/plan are approved. Implementer
+may execute only that scope and must hand observed evidence to an independent
+Reviewer. Continue to Notebook 08b research/brainstorming only after technical
+review and user confirmation of 08a; do not pre-design every later setting in
+this master document.
 
-1. **Ground-truth contract and winner gates:** resolve the items above first,
-   because they define whether model differences are meaningful.
-2. **Exact model settings:** query/document instructions, pooling,
-   normalization, max length, dimension, dtype and batch size for every dense
-   candidate; input format, truncation and batch size for every reranker.
-3. **Sparse/index design:** exact BGE-M3 learned-sparse output, Qdrant schema,
-   isolated collection names, indexing/query flow and cleanup/retention policy.
-4. **Notebook 08b protocol:** keep current Unicode BM25 as control, compare the
-   confirmed Underthesea variant, lock BM25 parameters, and define identical
-   RRF/min-max inputs without adding a weight grid.
-5. **Matrix manifest:** enumerate every valid, non-duplicate configuration and
-   the lightweight-to-heavy run order before implementation so full coverage is
-   measurable and unsupported pairings cannot appear.
-6. **Latency/reliability protocol:** warm-up count, measured repetitions,
-   cold-load versus warm-query reporting, CPU/GPU separation, memory notes and
-   explicit handling of failed or out-of-memory configurations.
-7. **Paid finalist gate:** exact number or rule for finalists, category and
-   quality requirements, generator settings, judge rubric/repeats and cost/
-   latency fields. Paid evaluation remains finalist-only.
-8. **Notebook/result contract:** exact CSV columns, category views, overwrite/
-   update behavior, cleanup cells and which temporary notebook copies the
-   Reviewer must Run All.
-9. **Verification and handoff:** focused automated tests only for reusable
-   behavior, real notebook/service runs as primary evidence, final winner rerun,
-   report update and a separate user-approved production transition if needed.
-10. **GPU prerequisite if desired:** diagnose WSL2/GTX 1650 and dependency
-    compatibility in its already-separated session. CPU fallback remains valid;
-    latency rankings must never mix different device policies.
-
-Before real execution, current model/provider availability, model IDs, licenses,
-dimensions, API schemas and limits must be reverified from primary sources.
-That verification may refine settings but must not silently expand the approved
-candidate set.
+Before each real group, reverify current model/provider availability, model IDs,
+licenses, dimensions, API schemas, limits and machine compatibility from primary
+sources. That verification may trigger a user-reviewed refinement but cannot
+silently expand scope or authorize execution.

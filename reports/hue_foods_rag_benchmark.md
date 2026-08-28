@@ -1,6 +1,6 @@
 # Hue Foods RAG — Model và benchmark summary
 
-Last updated: `2026-08-26 +07`
+Last updated: `2026-08-28 +07`
 
 ## Mục đích
 
@@ -124,12 +124,14 @@ Hai CSV hiện mỗi file có 20 rows từ lần chạy gần nhất. Kết qu�
 đã được ghi như historical evidence trong Phase 7 implementation/Codex review
 reports; không được mô tả chúng là nội dung hiện tại của CSV.
 
-Golden dataset hiện hành đủ làm baseline học tập nhưng còn các finding về
-smoke-set coverage, annotations và keyword proxy. Design dữ liệu tiếp theo nằm
-ở:
+Golden Dataset V3 Gate 0 hiện hành đã được Reviewer và user phê duyệt với 45
+full cases cùng exact 10-row smoke subset. Canonical lifecycle evidence:
 
 ```text
-reports/phase_7_golden_dataset_audit.md
+docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
+docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
+reports/phase_8_golden_dataset_v3_implementation_report.md
+reports/phase_8_golden_dataset_v3_codex_review.md
 ```
 
 Không có calibration, resume, run identity, checksum, package matching,
@@ -148,14 +150,18 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
 ## Bước tiếp theo
 
 1. Giữ baseline Phase 7 đã approved như historical state.
-2. Implementer thực hiện Golden Dataset V3 theo approved spec/plan, giữ nguyên
-   Phase 7/V2 datasets và đề xuất mức cao nhất đạt chuẩn trong 40/45/50.
-3. Reviewer audit toàn bộ full V3, exact 10-row smoke subset và real
-   source/section metadata; user đọc toàn bộ câu hỏi và xác nhận Gate 0.
-4. Sau Gate 0, hoàn tất các Phase 8 experiment-contract decisions còn mở trong
-   canonical design/guide; chưa viết code benchmark khi design chưa được user
-   duyệt.
-5. Chỉ Phase 8 mới so sánh đầy đủ profiles/models và đề xuất winner.
+2. Giữ nguyên Golden Dataset V3 đã approved; không tối ưu dataset theo candidate.
+3. Implementer thực hiện exact approved Notebook 08a design/plan bằng real local
+   models, canonical data và isolated Qdrant targets.
+4. Implementer bàn giao observed evidence; Reviewer xác minh độc lập trước khi
+   user xác nhận và chuyển sang Notebook 08b.
+
+Canonical Notebook 08a contract:
+
+```text
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
+```
 
 Approved Phase 4–5 blue-green checkpoint trước Phase 8: chạy fresh 104-question
 retrieval-only comparison cho cả ba profiles trên current active baseline và

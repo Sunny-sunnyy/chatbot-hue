@@ -12,12 +12,12 @@ không phải nguồn tiến độ hiện hành và không tạo requirement m�
 3. `guides/README.md` và guide canonical của phase.
 
 Hiện tại dự án chức năng đã hoàn thành và được xác nhận đến Phase 7. Simplicity
-campaign đã hoàn thành và được user xác nhận cho Phase 0–6. Phase 7
-post-simplicity correction cũng đã approved. Phase 8 vẫn `not_ready`: Golden V2
-dừng ở historical `changes_requested` sau ba vòng và user đã duyệt Golden
-Dataset V3 complexity reset. Session tiếp theo dành cho Implementer thực hiện V3
-40/45/50 theo design/plan đã duyệt. Sau Gate 0 review mới tiếp tục các
-experiment-contract decisions còn mở; chưa được chạy Phase 8 benchmark.
+campaign Phase 0–6 và Phase 7 post-simplicity correction đã approved. Phase 8
+vẫn `not_ready`, nhưng Golden Dataset V3 Gate 0 và Gate 1 common contracts đã
+được user phê duyệt ngày `2026-08-28 +07`. Exact Notebook 08a design/plan cũng
+đã approved và implementation + real isolated Run All đã được authorize. Bước
+tiếp theo là Implementer thực hiện 08a và viết implementation report; chưa có
+technical review hoặc user approval cho kết quả 08a.
 
 ## Evidence hiện hành của simplicity campaign
 
@@ -31,13 +31,19 @@ experiment-contract decisions còn mở; chưa được chạy Phase 8 benchmark
 | 6 | Các report Phase 6, Milestone 6.1 và simplicity review | Approved |
 | 7 | Bộ report `phase_7_retrieval_answer_evaluation_*` | Approved |
 
-Phase 8 hiện mới có design/sequence documents, chưa có implementation evidence:
+Phase 8 benchmark hiện có approved Gate 0 evidence và common design/sequence
+contracts cùng exact approved 08a design/plan; chưa có Notebook 08a
+implementation evidence:
 
 ```text
 docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
 docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
+reports/phase_8_golden_dataset_v3_implementation_report.md
+reports/phase_8_golden_dataset_v3_codex_review.md
 docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
 docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
 guides/phase_8_benchmark_model_selection.md
 reports/phase_7_golden_dataset_audit.md
 ```

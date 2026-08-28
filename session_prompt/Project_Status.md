@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-27 +07`
+Last updated: `2026-08-28 +07`
 
 ## Mục tiêu
 
@@ -61,7 +61,7 @@ thông thường.
 | 5 | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `approved` | Answer-only API và notebooks đã chạy thật, đạt Codex review vòng 2 và được user xác nhận |
 | 7 | `approved` | Baseline và post-simplicity correction đã chạy thật, đạt independent review và được user xác nhận |
-| 8 | `not_ready` | Golden Dataset V3 Gate 0 đã approved với 45 full cases và 10 smoke cases; bước kế tiếp là brainstorming Gate 1, chưa authorize benchmark |
+| 8 | `not_ready` | Phase tổng thể chưa ready; exact Notebook 08a work package đã `ready` cho implementation + real isolated Run All |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
 
 Milestone 6.1 Baseline Lifecycle Hardening thuộc Phase 6 và đã được user xác
@@ -145,36 +145,52 @@ Web search được phép để nghiên cứu naturalness, tourist needs và con
 web không phải evidence. Kiến thức mới chỉ được dùng sau một exact curated
 Markdown proposal được Reviewer/user duyệt và index.
 
-Phase 8 master design đã bắt đầu ngày `2026-08-26 +07`. Golden dataset
-correction không còn là blocker sau approval Gate 0, nhưng benchmark vẫn chưa
-được authorize: Gate 1 phải brainstorm và khóa các experiment contract còn mở,
-sau đó user phải duyệt exact design/plan và exact experiment group. User đã khóa candidate order
-từ nhẹ đến mạnh cho sáu embedding families và ba rerankers; primary language là
-tiếng Việt, latency là first-class metric, generator end-to-end là
-`qwen/qwen3.5-9b` qua OpenRouter và judge là `gpt-5.4-mini`. Selection rule:
-khi quality không khác biệt đáng tin cậy, ưu tiên model/pipeline nhẹ, nhanh và
-đơn giản; chỉ chọn candidate nặng hơn nếu có quality gain rõ, không regression
-category quan trọng và latency/complexity chấp nhận được. GTX 1650 WSL2 GPU
-enablement được tách sang session khác; CPU fallback được chấp nhận. Canonical
-drafts:
+Phase 8 Gate 1 common contracts đã được user phê duyệt ngày `2026-08-28 +07`.
+Notebook 08a cũng đã hoàn tất research/brainstorming; exact design/plan được
+approved và user đã authorize implementation cùng real local Run All trên bảy
+isolated Qdrant collections. Bước kế tiếp là Implementer thực hiện 08a, viết
+implementation report, sau đó Reviewer xác minh độc lập. Phase 8 tổng thể vẫn
+`not_ready` và các Notebook 08b–08e chưa được authorize.
+
+Common gates bảo vệ cả chín V3 categories, dùng hierarchical large-category và
+exact small-category guardrails, paired bootstrap 10.000 lần với fixed seed và
+95% percentile CI. Clear gain yêu cầu mọi guardrail, aggregate
+`delta nDCG@5 >= +0.03` và lower CI bound lớn hơn 0. Mỗi candidate so fixed
+control rồi survivor/heavier candidate so best lighter finalist.
+
+Main local profile là CPU FP32, không quantization; document batch 8, query batch
+1, reranker pair batch 4. Mỗi configuration đo cold load riêng, bỏ một warm-up
+và chạy ba full 45-case repetitions; finalist phải đạt `3/3`. Failed/OOM được
+ghi đúng và không auto retry/shrink/change device/fallback. GTX 1650 WSL2 GPU
+enablement vẫn là session riêng.
+
+Paid stage giữ production baseline và `llm_rag_reference_on_hue`, cộng tối đa ba
+role-deduplicated finalists. Complexity dùng `low`/`medium`/`high` với rationale.
+Canonical documents:
 
 ```text
 docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
 docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
 ```
 
-Hai draft là `design_in_progress`, không authorize code, dataset edit, model
-download, CUDA/PyTorch change, paid run hoặc Qdrant mutation.
+Master design/plan giữ sequencing toàn Phase 8. Exact 08a documents authorize
+code, pinned local model downloads và isolated candidate writes chỉ cho 08a;
+chúng không authorize dataset edit, CUDA/PyTorch change, paid run, active Qdrant
+mutation, production cutover hoặc later notebook groups.
 
 User cũng đã duyệt notebook theo group ngày `2026-08-26 +07`: `08a` embedding,
 `08b` retrieval/fusion, `08c` reranker, `08d` full local matrix, `08e`
 generation finalists và `08_benchmark_model_selection` tổng hợp. Style bắt buộc
 tham khảo `rag_old_0/*.ipynb` và `notebook_simple/**/*.ipynb`. Canonical
-notebooks giữ sạch. Mỗi experiment group dùng một cumulative CSV làm checkpoint
-restart đơn giản; không run ID, timestamp package, JSON song song, opaque
-configuration ID, audit/resume engine hoặc memory manager. Notebook giải thích
-trước khi chạy, dùng real systems, lưu kết quả trước khi release model/data lớn,
-sau đó collect RAM và clear CUDA cache khi có.
+notebooks giữ sạch. Markdown notebook dùng tiếng Việt, code identifiers dùng
+tiếng Anh; mỗi cell một việc, Markdown ngắn trước code và backend functions được
+reuse thay vì duplicate runtime logic. Mỗi experiment group dùng một long-format
+cumulative CSV (`overall` và category rows), upsert theo human-readable setting
+key; không run ID, timestamp package, JSON song song, opaque configuration ID,
+audit/resume engine hoặc memory manager. Repository outputs rỗng/
+`execution_count: null`; Reviewer Run All thật trên temporary copy.
 
 User đã xác nhận full compatible retrieval coverage: dense-only, independent
 BM25-only, current dense→BM25 rescoring, true hybrid dense+BM25, custom TF-IDF
@@ -392,8 +408,9 @@ giữ lại.
 
 ## Worktree và an toàn
 
-Snapshot này được hoàn tất bằng một commit gom toàn bộ thay đổi hiện hành theo
-yêu cầu riêng của user. Coding agent tiếp theo vẫn phải:
+Gate 1 và exact Notebook 08a documentation sync được user yêu cầu commit/push
+ngày `2026-08-28 +07`. Agent tiếp theo vẫn phải coi working tree là shared state
+và:
 
 - chạy `git status --short` trước khi sửa;
 - đọc diff của exact files trong scope;
@@ -411,37 +428,40 @@ Phase 0–6 simplicity review đã approved
 -> user đã duyệt complexity reset và Golden Dataset V3 design/plan
 -> Implementer đã tạo V3; Reviewer kiểm tra toàn bộ 45 câu, smoke 10 và evidence
 -> user đã chấp nhận final content/size; Gate 0 approved ngày 2026-08-28 +07
--> tiếp tục brainstorming các Phase 8 experiment-contract decisions còn mở
--> chỉ chạy Phase 8 sau khi exact experiment group được user authorize
+-> Gate 1 common contracts approved ngày 2026-08-28 +07
+-> exact Notebook 08a design/plan approved; implementation + Run All authorized
+-> Implementer thực hiện 08a và viết implementation report
+-> Reviewer kiểm tra diff, focused deterministic tests và real temporary Run All
+-> user xác nhận 08a trước khi research + brainstorm Notebook 08b
 ```
 
-Session entrypoint canonical tiếp theo:
-
-```text
-session_prompt/phase_8_gate_1_brainstorming_prompt.md
-```
-
-Hai prompt Implementer/Reviewer V3 đã retire; lifecycle history nằm trong Git,
-design/plan và reports. Gate 1 dùng final V3 distribution cùng:
+Session tiếp theo dùng handoff Notebook 08a được cung cấp trực tiếp cho
+Implementer/Reviewer. Gate 1 brainstorming prompt đã bị loại khỏi cây hiện hành
+sau khi hoàn tất; lịch sử vẫn truy xuất được qua Git.
+Nguồn canonical hiện hành:
 
 ```text
 docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
-guides/phase_8_benchmark_model_selection.md#backlog-brainstorming-sau-gate-0-implementation
+docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
+guides/phase_8_benchmark_model_selection.md
 ```
 
 Thứ tự bắt buộc từ trạng thái hiện tại:
 
 1. giữ nguyên Golden Dataset V3 đã approved gồm 45 full + 10 smoke cases;
-2. brainstorm category/winner gates, exact model/sparse/matrix/latency/paid
-   finalist/CSV/notebook/verification contracts;
-3. cập nhật design, viết implementation plan và xin user duyệt;
-4. chỉ sau approval riêng mới authorize exact implementation/run group.
+2. Implementer thực hiện đúng exact 08a spec/plan và authorization boundaries;
+3. Implementer bàn giao report, Reviewer xác minh độc lập và user xác nhận trước
+   khi chuyển sang Notebook 08b.
 
 V3 là complexity reset đã được user duyệt và Gate 0 đã approved. Các
 prompt/handoff V2 đã được retire khỏi cây hiện hành ngày `2026-08-27 +07`;
 hai prompt Implementer/Reviewer V3 cũng được retire sau Gate 0 approval ngày
-`2026-08-28 +07`. Không khôi phục các handoff đã hoàn tất; dùng prompt Gate 1
-mới dựa trên V3 45 câu. Lịch sử prompt cũ vẫn truy xuất được qua Git.
+`2026-08-28 +07`. Gate 1 brainstorming handoff đã được loại khỏi cây hiện hành
+sau khi exact 08a design/plan được approved. Không khôi phục các handoff đã hoàn
+tất; dùng exact Notebook 08a Implementer/Reviewer handoff dựa trên canonical
+design/plan hiện hành.
 
 GPU/WSL2 remediation vẫn là session riêng. Production cutover hoặc active
 collection mutation không nằm trong Phase 8 benchmark authorization.

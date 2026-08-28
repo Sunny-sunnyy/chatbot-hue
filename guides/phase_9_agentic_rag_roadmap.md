@@ -402,5 +402,8 @@ Phase 9 là post-MVP và `not_ready` cho đến khi user thay đổi.
 ## Bước tiếp theo
 
 Không có action Phase 9 trong MVP hiện tại. Phase 0–7 và simplicity reviews đã
-approved; bước hợp lệ là implement/review Golden Dataset V3, hoàn tất thiết kế/
-chạy/duyệt Phase 8, rồi mới cân nhắc Phase 9 từ failure evidence thật.
+approved; Golden Dataset V3 Gate 0 và Phase 8 Gate 1 common contracts cũng đã
+approved. Exact Notebook 08a design/plan và isolated implementation/Run All đã
+được authorize; bước hợp lệ là hoàn tất implementation, independent review và
+user confirmation của 08a, rồi tiếp tục từng Notebook 08 group theo authorization
+riêng. Chỉ sau khi Phase 8 hoàn tất mới cân nhắc Phase 9 từ failure evidence thật.

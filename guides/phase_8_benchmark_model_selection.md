@@ -4,7 +4,7 @@
 
 `not_ready`
 
-Phase 8 chưa có implementation authorization. Chỉ mở sau khi:
+Phase 8 tổng thể chưa có production/final-selection authorization. Chỉ mở sau khi:
 
 1. Phase 7 đơn giản được `approved`;
 2. Phase 0 đến Phase 6 đã được review và đơn giản hóa bằng Repo, live system và
@@ -12,9 +12,12 @@ Phase 8 chưa có implementation authorization. Chỉ mở sau khi:
 3. affected Phase 7 evaluation đã được chạy lại.
 
 Golden Dataset V3 Gate 0 đã được Reviewer kiểm tra và user phê duyệt ở kích
-thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 hiện
-chỉ brainstorm khung, thứ tự thí nghiệm và các experiment contract còn mở;
-không sửa dataset, cài GPU/CUDA, viết code benchmark hoặc chạy model.
+thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 common
+contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design/plan cũng
+đã được duyệt và work package 08a ở trạng thái `ready`: Implementer được phép
+viết đúng scope, tải pinned local models và chạy real Run All trên bảy isolated
+Qdrant collections. Authorization này không cho phép sửa dataset, cài GPU/CUDA,
+gọi paid API, mutate active collection, cutover production hoặc làm 08b–08e.
 
 ## Mục tiêu
 
@@ -339,8 +342,49 @@ hơn khi nó tạo cải thiện chất lượng rõ ràng, không gây regressi
 quan trọng và latency/độ phức tạp vẫn chấp nhận được. Không chọn winner chỉ vì
 mean score cao hơn rất nhỏ.
 
-Exact statistical comparison và category gates tiếp tục được thiết kế sau khi
-corrected golden dataset được duyệt.
+Exact common statistical/category contract đã được Gate 1 khóa:
+
+- bảo vệ cả chín category;
+- category `n >= 6` không được giảm số cases có relevant hit Top 5 và block khi
+  hit count bằng nhau nhưng `delta nDCG@5 < -0.02`;
+- category `n <= 3` dùng exact per-case guardrail: baseline đã tìm thấy exact
+  relevant `source + section` trong Top 5 thì candidate không được làm mất toàn
+  bộ relevant evidence khỏi Top 5;
+- paired bootstrap 45 pairs, 10.000 resamples, fixed seed, 95% percentile CI;
+- clear gain yêu cầu mọi guardrail, aggregate `delta nDCG@5 >= +0.03` và lower
+  CI bound cho `delta nDCG@5 > 0`.
+
+Mỗi candidate so fixed control của group; survivor/heavier candidate còn phải
+clear gain so với best lighter finalist.
+
+Fixed controls là E5-small dense-only cho embedding, Unicode `\w+` cho
+tokenizer, same-embedding dense-only cho lexical/sparse/hybrid, same pre-rerank
+ranking với no-rerank cho reranker, và cả production baseline lẫn
+`llm_rag_reference_on_hue` cho full pipeline.
+
+### Gate 1 common execution protocol
+
+Main local profile là CPU FP32, không quantization. Dense document batch size 8,
+query batch size 1; reranker pair batch size 4. Không silent auto-shrink. Native
+instruction/pooling được giữ theo model, dense vectors được L2-normalize và
+truncation được ghi nhận. Exact model contracts đã khóa nằm trong master design;
+chúng chỉ được reopen tại notebook checkpoint khi có evidence mới.
+
+Mỗi configuration đo cold load một lần, bỏ một warm-up, rồi chạy ba full
+repetitions trên đủ 45 cases. Finalist phải thành công `3/3`; warm latency báo
+`p50`/`p95`, ranking variation phải được trình bày chính xác. Memory observation
+chỉ gồm RSS trước/sau load và observed peak RSS; CUDA metrics chỉ thêm sau một
+GPU session được duyệt.
+
+Failure/OOM phải lưu exact `status`/`error`, giải phóng resources và tiếp tục
+configuration độc lập. Không tự retry, giảm batch, đổi device hoặc fallback.
+Chưa đặt arbitrary latency cutoff.
+
+Paid stage giữ production baseline và `llm_rag_reference_on_hue` làm hai
+reference rows, cộng tối đa ba new finalists. Nếu có hơn ba candidate hợp lệ,
+chọn và deduplicate quality leader, fastest/simplest passing leader và balanced
+Pareto leader. Complexity chỉ dùng `low`/`medium`/`high` kèm rationale, không
+dùng composite score.
 
 True-hybrid candidate dùng isolated collection và chạy như experiment group
 riêng sau local dense-only baseline. Không trộn kết quả của candidate-generation
@@ -351,9 +395,10 @@ không bị xóa hoặc thay đổi nếu user chưa duyệt exact transition.
 
 ## Real execution
 
-Reviewer và Implementer được dùng online, model download và paid API nằm trong
-approved Phase 8 guide/design. Không cần consent gate, cost cap hoặc code tính
-chi phí.
+Gate 1 common approval tự nó không authorize model download, API call, benchmark
+run hoặc Qdrant mutation. Notebook 08a đã vượt checkpoint này bằng exact approved
+design/plan và isolated-run authorization; các group còn lại chỉ được
+implement/chạy sau exact research, brainstorming và user approval riêng.
 
 Không dùng mock/fake, replay output hoặc synthetic benchmark làm evidence. Dùng
 actual backend, canonical data, Qdrant, models và APIs.
@@ -393,6 +438,7 @@ Mỗi notebook phải:
 - hiển thị metrics, latency, failures và ý nghĩa;
 - dùng code trực tiếp, dễ hiểu; chỉ tạo helper nhỏ khi nó thực sự giảm lặp;
 - không là validator, audit package, test suite, run registry hoặc resume engine;
+- dùng Markdown tiếng Việt và code identifiers tiếng Anh;
 - giữ repository outputs rỗng và execution counts null.
 
 Phong cách trình bày bắt buộc tham khảo:
@@ -405,6 +451,10 @@ Phong cách trình bày bắt buộc tham khảo:
 Chỉ kế thừa cách dạy theo section, giải thích trước code, cell ngắn và output dễ
 đọc. Không kế thừa fake/demo data hoặc abstraction vượt nhu cầu; Phase 8 vẫn
 chạy actual Hue data, Qdrant, local models và approved APIs.
+
+Trước từng notebook `08a`–`08e`: research primary sources/hardware/dependencies,
+brainstorm exact settings, nhận user approval, rồi mới implement và Run All.
+Evidence mới, failure/OOM hoặc scope conflict phải quay lại brainstorming.
 
 ### Kết quả và restart kernel
 
@@ -419,17 +469,16 @@ evaluation/results/phase8_generation_results.csv
 ```
 
 Không tạo run ID, timestamp package, checksum manifest, JSON song song hoặc
-opaque `configuration_id`. Các cột dễ đọc như `embedding`, `retrieval`,
-`reranker`, `device`, `dtype`, `top_k` đủ nhận diện một cấu hình. Chỉ giữ
-`status` và `error` tối thiểu để không silently drop một real failure. Category
-table được giữ vì aggregate mean có thể che regression ở nhóm câu hỏi quan
-trọng.
+opaque `configuration_id`. CSV dùng long format với một `category=overall` row
+và category rows cho mỗi setting. Approved rerun upsert theo human-readable
+setting key, thay thế row trước và lưu ngay sau configuration. `status` và
+`error` phản ánh approved attempt mới nhất; không tạo history registry.
 
-Sau mỗi model/configuration chạy thành công, notebook hiển thị kết quả, cập nhật
-dòng tương ứng trong CSV rồi giải phóng model, tensor/embedding lớn, chạy Python
-garbage collection và clear CUDA cache nếu có. Không cần memory manager. Khi
-restart kernel, cell setup đọc lại cumulative CSV để hiển thị tiến độ; không
-dựa vào in-memory variables hoặc saved notebook output làm checkpoint.
+Sau mỗi model/configuration, notebook hiển thị observed result, cập nhật dòng
+tương ứng trong CSV kể cả khi failed, rồi giải phóng model, tensor/embedding lớn,
+chạy Python garbage collection và clear CUDA cache nếu có. Không cần memory
+manager. Khi restart kernel, cell setup đọc lại cumulative CSV để hiển thị tiến
+độ; không dựa vào in-memory variables hoặc saved notebook output làm checkpoint.
 
 Trong lúc chạy tương tác, user có thể thấy và lưu output cục bộ. Trước commit,
 canonical notebooks phải được làm sạch outputs/execution counts; CSV là kết quả
@@ -473,39 +522,46 @@ regression và real retrieval metadata; user xác nhận final content/size ngà
 `2026-08-28 +07`. Full `golden_v3.jsonl` có `45` câu và smoke có `10` row
 deep-equal. Gate 0 đã `approved`.
 
-Approval này chỉ khóa dữ liệu benchmark. Không chạy Phase 8 benchmark cho tới
-khi Gate 1 hoàn tất brainstorming, exact design/plan được user duyệt và exact
-experiment group được authorize.
+Approval này chỉ khóa dữ liệu benchmark. Gate 1 common contracts đã được duyệt,
+nhưng không chạy Phase 8 benchmark cho tới khi exact notebook group hoàn tất
+research/brainstorming và được user authorize riêng.
 
 Hai prompt Implementer/Reviewer V3 là handoff vận hành một lần và đã được retire
 sau approval; lịch sử của chúng vẫn có trong Git. Không dùng lại chúng làm
 session entrypoint.
 
-## Backlog brainstorming sau Gate 0 implementation
+## Notebook 08a đã approved để implementation
 
 Golden Dataset V3 đã được Reviewer/user chấp nhận ở final distribution `45` câu.
-Handoff Gate 1 mới là
-`session_prompt/phase_8_gate_1_brainstorming_prompt.md`; handoff khóa theo V2 cũ
-không còn canonical.
+Gate 1 brainstorming prompt đã được loại khỏi cây hiện hành sau khi hoàn tất;
+lịch sử vẫn có trong Git. Session tiếp theo dùng exact Notebook 08a Implementer
+handoff dựa trên:
 
-Tiếp tục theo thứ tự:
+```text
+docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
+docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
+```
 
-1. category regression blockers, uncertainty và clear-quality-gain rule dựa
-   trên final V3 distribution đã duyệt;
-2. exact embedding query/document instructions, pooling, normalization,
-   truncation, dimension, dtype và batch size;
-3. exact reranker input format, truncation và batch size; depth đã khóa 10→5;
-4. BGE-M3 learned-sparse representation, isolated Qdrant schema/query path,
-   collection names và retention/cleanup policy;
-5. BM25 parameters cho comparison tokenizer Unicode versus Underthesea;
-6. exact non-duplicate matrix manifest và execution order;
-7. warm-up/repetition, cold/warm p50/p95, memory, failure/OOM và device policy;
-8. paid finalist gate/count, Qwen generation settings, GPT judge rubric và
-   repetition policy;
-9. exact readable CSV columns/category views, notebook update/cleanup behavior,
-   focused tests và Reviewer Run All commands;
-10. final winner rerun, report/handoff và proposal production riêng. Không tự
-   cutover, mutate active collection hoặc cleanup candidate data.
+Common regression/statistical gates, CPU measurement/reliability, finalist
+count/roles, notebook style, long-format CSV/upsert, focused-test boundary và
+final confirmation rerun đã được user duyệt ngày `2026-08-28 +07`.
+
+Notebook 08a đã khóa bảy dense configurations, native contracts, isolated
+collections, metrics/gates, CSV, notebook cells, focused tests và real Run All.
+Sau implementation report, Reviewer mới bắt đầu independent technical review.
+Chỉ khi Reviewer đạt và user xác nhận Notebook 08a mới chuyển sang 08b.
+
+Chi tiết còn lại chỉ được giải quyết tại checkpoint của group tương ứng:
+
+1. `08b`: BM25 parameters, BGE-M3 isolated schema/names/query/retention;
+2. `08c`: current-library reranker integration;
+3. `08d`: exact non-duplicate matrix manifest và execution order;
+4. `08e`: exact Qwen generation, GPT judge rubric/repetitions và paid protocol;
+5. từng later notebook: exact readable columns/key và Reviewer Run All command.
+
+Sau khi user chọn winner, clean-kernel rerun đủ 45 cases cho winner và nearest
+simpler comparator; nếu winner là baseline/lightest thì chỉ chạy winner. Không
+tự cutover production.
 
 GPU/WSL2 GTX 1650 remediation vẫn ở session riêng. Ngay trước implementation/
 execution phải kiểm tra lại model availability, IDs, licenses, dimensions,
@@ -660,6 +716,38 @@ User xác nhận nội dung và kích thước 45 câu.
 Affected scope: Phase 8 canonical benchmark input và Gate 1 design assumptions.
 Boundary: Không authorize benchmark implementation/execution, paid calls,
 model download, Qdrant mutation hoặc production cutover.
+```
+
+```text
+Decision: Phase 8 Gate 1 common contracts được approved: bảo vệ cả chín
+categories; hierarchical large-category và exact small-category guardrails;
+paired bootstrap 10.000 lần với fixed seed/95% percentile CI; clear-gain
+threshold; fixed-control rồi best-lighter comparison; CPU FP32 measurement và
+failure protocol; tối đa ba role-deduplicated finalists; notebook learning style;
+long-format CSV upsert; focused deterministic tests; final clean-kernel rerun.
+Approved by: User
+Approval date +07: 2026-08-28
+Evidence: User xác nhận consolidated common Gate 1 contract sau brainstorming.
+Affected scope: Master guide/design/experiment plan và mọi Notebook 08 group.
+Boundary: Exact settings/schema/matrix/generator/judge details vẫn phải research,
+brainstorm và được user duyệt tại notebook tương ứng; không authorize code,
+model download, API call, benchmark execution, Qdrant mutation hoặc cutover.
+```
+
+```text
+Decision: Exact Notebook 08a dense embedding design và implementation plan được
+approved. Implementer được authorize viết đúng allowlist, tải bảy pinned local
+model configurations và chạy real Run All trên bảy isolated Qdrant collections;
+E5-small chạy ở một cell riêng, sáu candidates chạy tuần tự ở một cell.
+Approved by: User
+Approval date +07: 2026-08-28
+Evidence: User xác nhận toàn bộ 08a brainstorming sections, sau đó yêu cầu bàn
+giao exact spec/plan cho Implementer thực hiện và Reviewer kiểm tra ở session kế.
+Affected scope: Notebook 08a dense-only implementation, deterministic tests,
+long-format CSV, implementation report và independent review.
+Boundary: Không authorize BM25/sparse/fusion/reranker/generation/judge, paid API,
+Golden V3 edit, active collection mutation, production cutover hoặc Notebook
+08b–08e implementation.
 ```
 
 Commit/push cần yêu cầu riêng.

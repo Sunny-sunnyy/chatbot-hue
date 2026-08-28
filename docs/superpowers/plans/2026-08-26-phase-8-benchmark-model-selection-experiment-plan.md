@@ -1,7 +1,8 @@
 # Phase 8 Benchmark Model Selection Master Experiment Plan
 
-**Status:** `design_in_progress`; sequencing plan only, not an implementation
-plan or execution authorization.
+**Status:** Gate 1 common contracts and exact Notebook 08a design/plan approved
+`2026-08-28 +07`. Notebook 08a implementation and real local Run All are
+authorized within its isolated scope; later notebook groups remain pending.
 
 **Goal:** So sánh các embedding, lexical/sparse/hybrid, reranker và final RAG
 pipeline trên tiếng Việt bằng controlled experiment groups, đồng thời ưu tiên
@@ -12,20 +13,25 @@ quality đáng tin cậy, latency và simplicity.
 
 ## Global gates
 
-1. Golden Dataset V3 phải được implement, Reviewer kiểm tra và user chấp nhận
-   theo approved spec/plan ở scope riêng.
+1. Golden Dataset V3 đã được Reviewer kiểm tra và user chấp nhận với 45 full
+   cases cùng exact 10-case smoke subset.
 2. Không sửa dataset trong Phase 8 design/benchmark implementation.
 3. Không mutate active Qdrant collection; mọi reindex dùng isolated collection.
 4. Chỉ thay đổi một experiment group trong mỗi comparison chính.
 5. Không dùng mock/fake/replayed output làm benchmark evidence.
 6. User phải duyệt detailed experiment group trước khi implement hoặc chạy.
 7. GPU/WSL2 remediation thuộc session riêng; CPU fallback được chấp nhận.
+8. Trước mỗi notebook group: research current primary sources/hardware/
+   dependencies, brainstorm exact settings, nhận user approval, rồi mới
+   implement hoặc Run All.
+9. Evidence mới, failure/OOM hoặc scope conflict bắt buộc quay lại brainstorming;
+   không silent retry, shrink batch, đổi device hoặc fallback.
 
 ## Experiment order
 
 | Stage | Experiment group | Ordered candidates/capabilities | Fixed boundary |
 |---:|---|---|---|
-| 0 | Golden prerequisite | approved 40/45/50-case Golden Dataset V3 + exact 10-case smoke subset | implement `2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md`; no Phase 8 run before Reviewer and user approval |
+| 0 | Golden prerequisite | approved 45-case Golden Dataset V3 + exact 10-case smoke subset | completed and approved; dataset remains unchanged during benchmark work |
 | 1 | Dense embedding | E5 small → multilingual MiniLM-L12 → E5 base → E5 large → BGE-M3 dense → Qwen3 Embedding 0.6B at 384D → Qwen3 Embedding 0.6B at 1024D | chunks, gold, dense retrieval settings, metrics |
 | 2 | Lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → BGE-M3 learned sparse → true hybrid | selected/fixed dense evidence, reranker off |
 | 3 | Reranker | current MiniLM-L6 → BGE reranker base → Qwen3 Reranker 0.6B | identical pre-rerank candidate artifacts |
@@ -36,7 +42,49 @@ quality đáng tin cậy, latency và simplicity.
 All local model stages run sequentially from lightweight to heavier candidates.
 The local retrieval/reranking stage uses the full compatibility-aware matrix.
 Only the later paid generation/judge stage uses finalists selected from that
-matrix; its exact gate/count remains a design question.
+matrix: two fixed reference rows plus at most three new finalists.
+
+## Gate 1 quality and regression gates
+
+- Protect all nine V3 categories.
+- Large categories (`n >= 6`) may not lose Top-5 hit cases; with equal hit count,
+  block `delta nDCG@5 < -0.02`. Report MRR@5 as support.
+- Small categories (`n <= 3`) use exact per-case protection: a case where the
+  baseline found exact relevant `source + section` in Top 5 may not lose all
+  relevant evidence from Top 5.
+- Compute paired bootstrap over 45 candidate-baseline pairs with 10,000
+  resamples, fixed seed and 95% percentile CI.
+- Clear gain requires every guardrail, aggregate `delta nDCG@5 >= +0.03`, and
+  bootstrap 95% CI lower bound for `delta nDCG@5 > 0`.
+- Compare every candidate to the group fixed control; survivors/heavier choices
+  also compare against the best lighter finalist.
+
+Fixed controls are E5-small dense-only for embedding, Unicode `\w+` for
+tokenization, same-embedding dense-only for lexical/sparse/hybrid, the same
+pre-rerank ranking with no-rerank for rerankers, and both production baseline
+and `llm_rag_reference_on_hue` as full-pipeline reference rows.
+
+Focused automated tests cover only deterministic reusable metrics/gates,
+paired bootstrap, category aggregation and CSV upsert. Real model/Qdrant/
+provider behavior is verified by temporary-copy notebook Run All, never by
+mock/fake completion evidence.
+
+## Common execution and result protocol
+
+- Main profile: CPU FP32, no quantization; document batch 8, query batch 1,
+  reranker pair batch 4; no silent auto-shrink. GPU policy remains separate.
+- Measure cold load once, discard one warm-up, then run three full 45-case
+  repetitions. A finalist must succeed `3/3`; report warm `p50`/`p95` and exact
+  ranking variation.
+- Record RSS before/after load and observed peak RSS. If CUDA is separately
+  approved later, add PyTorch peak allocated/reserved.
+- On failure/OOM, persist exact `status`/`error`, release resources and continue
+  independent settings without changing configuration.
+- Use one long-format cumulative CSV per notebook: `overall` plus category rows.
+  Upsert by human-readable setting key after each approved configuration; no
+  run registry or historical duplicate artifacts.
+- Complexity is `low`/`medium`/`high` with rationale, not a numeric composite.
+- No arbitrary latency cutoff is invented before evidence is observed.
 
 ### Valid retrieval coverage
 
@@ -123,6 +171,13 @@ in plain language. The required style references are `rag_old_0/*.ipynb` and
 `notebook_simple/**/*.ipynb`; their presentation style is reused, not any fake
 data or unnecessary framework code.
 
+Notebook Markdown is Vietnamese and code identifiers are English. Each cell has
+one job, a short Markdown explanation immediately before code, and short code
+that imports clear backend functions instead of duplicating runtime logic. Do
+not turn notebooks into validators, audit packages or test suites. Verify each
+with a real Run All on a temporary copy; repository notebooks keep empty outputs
+and null execution counts.
+
 Each completed configuration updates a human-readable CSV row before its model
 and large temporary data are released. Python garbage collection and CUDA cache
 cleanup happen between models. After kernel restart, the setup cell reloads the
@@ -136,44 +191,38 @@ regressions. Among candidates with a trustworthy quality improvement, compare
 latency, reliability, cost and operational complexity. If quality is not
 meaningfully different, select the lighter, faster and simpler candidate.
 
-Implementation tasks, exact commands, test cases, notebook structure and commit
-boundaries will be written only after the remaining design questions are user
-approved.
+Paid evaluation keeps production baseline and `llm_rag_reference_on_hue` as
+reference rows and adds at most three passing finalists. When more than three
+are eligible, deduplicate the quality leader, fastest/simplest passing leader
+and balanced Pareto leader roles.
 
-## Next authorized session: Gate 1 brainstorming
+After user winner selection, run a clean-kernel 45-case confirmation for the
+winner and nearest simpler comparator. If the winner is baseline/lightest, run
+only the winner. Update the benchmark summary; production transition is a
+separate proposal requiring explicit user approval.
 
-Golden Dataset V3 Gate 0 đã approved với 45 full cases và 10 smoke cases; hai
-prompt Implementer/Reviewer V3 đã được retire sau khi hoàn tất lifecycle. Session
-tiếp theo bắt đầu bằng
-`session_prompt/phase_8_gate_1_brainstorming_prompt.md`. Đây chỉ là design
-brainstorming, chưa authorize benchmark implementation hoặc execution.
+Detailed implementation tasks, exact commands and notebook cells are written
+only at the approved research/brainstorm checkpoint for that notebook group.
 
-## Deferred discussion queue after Gate 0 review
+## Notebook-specific design queue
 
-After the implemented dataset is Reviewer/user approved, create an updated Gate
-1 brainstorming handoff based on the actual final V3 distribution. The old V2
-brainstorming handoff is historical and must not restore V2 quotas.
+Gate 1 common decisions and the exact Notebook 08a design/implementation plan
+are approved. This master plan deliberately does not guess later groups:
 
-Resolve these gates in order; do not let an Implementer infer them:
+1. `08a`: implement and Run All the approved exact design/plan, then independent
+   review and user confirmation before starting 08b.
+2. `08b`: research and brainstorm BM25 parameters plus exact BGE-M3 isolated
+   schema, collection naming, query path and retention/cleanup.
+3. `08c`: verify current reranker library/template compatibility and brainstorm
+   exact integration.
+4. `08d`: enumerate and approve the exact non-duplicate matrix and execution
+   order only after upstream evidence exists.
+5. `08e`: approve exact Qwen generation, GPT judge rubric/repetition and paid
+   protocol after finalists exist.
+6. Final notebook: read approved CSV evidence and present trade-offs; do not
+   rerun the entire matrix.
 
-1. Lock category regression blockers and uncertainty/
-   clear-gain rules using the approved final V3 distribution.
-2. Lock exact embedding instructions/pooling/normalization/truncation/dtype/
-   batching and reranker formatting/truncation/batching for every candidate.
-3. Design BGE-M3 learned-sparse representation, isolated Qdrant schema,
-   collection naming and retention/cleanup without touching the active
-   collection.
-4. Enumerate the exact non-duplicate matrix manifest, including both fusion
-   methods and the mandatory `llm_rag_reference_on_hue` row.
-5. Lock warm-up/repetition, p50/p95, cold-load, failure/OOM and CPU-versus-GPU
-   measurement rules.
-6. Lock the paid-finalist rule/count, Qwen generator settings, GPT judge rubric
-   and repetition policy.
-7. Lock readable CSV columns/category views, notebook update behavior, focused
-   tests, real Run All review commands and final winner rerun.
-8. Treat any production switch, active collection mutation or cleanup as a
-   later proposal requiring explicit user approval.
-
-GPU/WSL2 remediation remains a different session. Model catalogs, licenses,
-provider IDs, API schemas and resource compatibility must be rechecked from
-primary sources immediately before implementation/execution.
+GPU/WSL2 remediation remains a different session. Recheck model catalogs,
+licenses, provider IDs, API schemas and resource compatibility from primary
+sources immediately before the affected notebook; this check cannot silently
+expand candidate scope.
