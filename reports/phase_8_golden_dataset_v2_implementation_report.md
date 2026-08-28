@@ -237,4 +237,6 @@ Kết quả thực tế đo được:
 - **Active Collection Safety**: `hue_foods_e5_small_384` duy trì chính xác 572 points trước và sau kiểm tra (0 mutations, read-only hoàn toàn).
 - **Phase 7 Baselines Integrity**: `knowledge-base-hue/foods/evaluation/tests.jsonl` và `test2.jsonl` không có bất kỳ thay đổi nào (`git diff` trả về 0 diff).
 - **Code Cleanliness**: `git diff --check` sạch 100%, không có trailing whitespace.
-- **Trạng thái Repo**: Sẵn sàng chuyển giao cho Codex Reviewer thực hiện Re-review Round 4.
+- **Trạng thái lịch sử**: Bản V2 này từng sẵn sàng cho Re-review Round 4, nhưng
+  workflow đó đã bị hủy sau complexity reset ngày `2026-08-27 +07`. V3 hiện là
+  Gate 0 canonical; không dùng report này để khởi động lại V2 correction/review.

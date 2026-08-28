@@ -140,11 +140,13 @@ Implementation tasks, exact commands, test cases, notebook structure and commit
 boundaries will be written only after the remaining design questions are user
 approved.
 
-## Next authorized session: Golden Dataset V3 implementation
+## Next authorized session: Gate 1 brainstorming
 
-Start that session with
-`session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md` and execute the
-approved plan without running a Phase 8 benchmark.
+Golden Dataset V3 Gate 0 đã approved với 45 full cases và 10 smoke cases; hai
+prompt Implementer/Reviewer V3 đã được retire sau khi hoàn tất lifecycle. Session
+tiếp theo bắt đầu bằng
+`session_prompt/phase_8_gate_1_brainstorming_prompt.md`. Đây chỉ là design
+brainstorming, chưa authorize benchmark implementation hoặc execution.
 
 ## Deferred discussion queue after Gate 0 review
 

@@ -11,10 +11,10 @@ Phase 8 chưa có implementation authorization. Chỉ mở sau khi:
    tài liệu bổ sung thực sự hữu ích nếu có;
 3. affected Phase 7 evaluation đã được chạy lại.
 
-Ngoài các gate trên, user đã xác nhận golden dataset correction là một scope
-riêng phải hoàn tất trước mọi Phase 8 benchmark. Session Phase 8 hiện tại chỉ
-thiết kế khung, thứ tự thí nghiệm và tiêu chí lựa chọn; không sửa dataset, cài
-GPU/CUDA, viết code benchmark hoặc chạy model.
+Golden Dataset V3 Gate 0 đã được Reviewer kiểm tra và user phê duyệt ở kích
+thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 hiện
+chỉ brainstorm khung, thứ tự thí nghiệm và các experiment contract còn mở;
+không sửa dataset, cài GPU/CUDA, viết code benchmark hoặc chạy model.
 
 ## Mục tiêu
 
@@ -456,31 +456,37 @@ Codex review chạy lại comparison cần thiết và kiểm tra:
 Benchmark summary cập nhật tại
 `reports/hue_foods_rag_benchmark.md`.
 
-## Gate 0 Golden Dataset V3 đã duyệt về thiết kế
+## Gate 0 Golden Dataset V3 đã approved
 
 Canonical files:
 
 ```text
-session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md
-session_prompt/phase_8_golden_dataset_v3_reviewer_prompt.md
 docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
 docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
+reports/phase_8_golden_dataset_v3_implementation_report.md
+reports/phase_8_golden_dataset_v3_codex_review.md
 ```
 
-V2 dừng ở historical `changes_requested` sau ba vòng. V3 là complexity reset đã
-được user duyệt: Implementer tạo full `golden_v3.jsonl` ở mức cao nhất đạt chất
-lượng trong đúng `40`, `45`, `50` và exact 10-row smoke subset. Không còn quota
-category, source family hoặc ma trận chéo. Mọi case vẫn dùng binary exact
-source/section relevance và Phase 7/V2 files phải giữ nguyên.
+V2 dừng ở historical `changes_requested` sau ba vòng. V3 là complexity reset:
+Reviewer đã đọc đủ `45/45` câu, mở mọi declared evidence, chạy validator,
+regression và real retrieval metadata; user xác nhận final content/size ngày
+`2026-08-28 +07`. Full `golden_v3.jsonl` có `45` câu và smoke có `10` row
+deep-equal. Gate 0 đã `approved`.
 
-Không chạy Phase 8 benchmark cho tới khi Reviewer kiểm tra direct evidence,
-deterministic validator, real retrieval metadata, toàn bộ câu hỏi/reference và
-user chấp nhận Gate 0 trên dữ liệu đã triển khai.
+Approval này chỉ khóa dữ liệu benchmark. Không chạy Phase 8 benchmark cho tới
+khi Gate 1 hoàn tất brainstorming, exact design/plan được user duyệt và exact
+experiment group được authorize.
+
+Hai prompt Implementer/Reviewer V3 là handoff vận hành một lần và đã được retire
+sau approval; lịch sử của chúng vẫn có trong Git. Không dùng lại chúng làm
+session entrypoint.
 
 ## Backlog brainstorming sau Gate 0 implementation
 
-Sau khi Golden Dataset V3 được Reviewer/user chấp nhận, tạo handoff brainstorming
-mới dựa trên final 40/45/50 distribution. Handoff V2 cũ không còn canonical.
+Golden Dataset V3 đã được Reviewer/user chấp nhận ở final distribution `45` câu.
+Handoff Gate 1 mới là
+`session_prompt/phase_8_gate_1_brainstorming_prompt.md`; handoff khóa theo V2 cũ
+không còn canonical.
 
 Tiếp tục theo thứ tự:
 
@@ -641,6 +647,19 @@ tăng đủ để biện minh latency và dependency; không thêm tokenizer gri
 Approved by: User
 Approval date +07: 2026-08-26
 Affected scope: Notebook 08b, BM25 evidence và dependency decision.
+```
+
+```text
+Decision: Golden Dataset V3 Gate 0 được approved với 45 full cases và exact
+10-row smoke subset.
+Approved by: User
+Approval date +07: 2026-08-28
+Evidence: Codex technical review `ready_for_user_confirmation` sau manual audit
+45/45, declared evidence audit, validator/regression và real retrieval metadata;
+User xác nhận nội dung và kích thước 45 câu.
+Affected scope: Phase 8 canonical benchmark input và Gate 1 design assumptions.
+Boundary: Không authorize benchmark implementation/execution, paid calls,
+model download, Qdrant mutation hoặc production cutover.
 ```
 
 Commit/push cần yêu cầu riêng.

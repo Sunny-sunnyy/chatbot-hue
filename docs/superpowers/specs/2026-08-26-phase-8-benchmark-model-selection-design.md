@@ -9,10 +9,11 @@ Qdrant mutation, commit hoặc push.
 
 ## Boundary và prerequisite
 
-- Golden Dataset V3 là scope riêng đã được user phê duyệt thiết kế tại
+- Golden Dataset V3 là scope riêng tại
   `docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md`.
-  Implementer phải hoàn tất plan riêng và qua Reviewer Gate 0 trước bất kỳ
-  Phase 8 benchmark nào.
+  Reviewer đã xác minh và user phê duyệt Gate 0 ngày `2026-08-28 +07` với
+  `45` câu full và `10` câu smoke. Approval này khóa input benchmark nhưng không
+  authorize implementation hoặc execution Phase 8.
 - Phase 8 hiện chỉ thiết kế master framework và thứ tự experiment groups.
 - Active Qdrant collection tiếp tục read-only; candidate indexes/collections
   phải isolated.
@@ -254,14 +255,15 @@ dependency. Keep it only if observed Vietnamese quality gain justifies its
 latency and maintenance cost. Do not add PyVi, VnCoreNLP or a tokenizer grid to
 the initial scope.
 
-## Approved Gate 0 design: Golden Dataset V3
+## Approved Gate 0: Golden Dataset V3
 
 Implementation plan:
 `docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md`.
 
-No Phase 8 benchmark may run until that plan produces a Reviewer-approved
-`golden_v3.jsonl` with exactly 40, 45, or 50 cases and an exact 10-case smoke
-subset, followed by user approval.
+Plan đã tạo `golden_v3.jsonl` gồm `45` cases và exact 10-case smoke subset.
+Reviewer đã xác minh độc lập và user phê duyệt final content/size ngày
+`2026-08-28 +07`. Gate 0 đã hoàn tất; Phase 8 benchmark vẫn không được chạy cho
+tới khi Gate 1 contracts, design/plan và exact execution group được user duyệt.
 
 ### Locked dataset decisions
 
@@ -286,14 +288,14 @@ subset, followed by user approval.
 
 The new evidence mapping is stable across embedding-specific isolated indexes
 because it labels canonical source/section pairs rather than chunk IDs. The
-user-approved full 40/45/50 cases support final local retrieval selection; the
+user-approved full 45 cases support final local retrieval selection; the
 10-case subset is smoke only. Winner regression blockers, uncertainty and the
 paid generation subset remain Phase 8 design questions and must use the actual
 final V3 distribution rather than assuming V2 quotas.
 
 ## Mandatory backlog after Gate 0 implementation
 
-After golden-data approval, resume brainstorming in this order:
+Gate 0 đã approved; resume Gate 1 brainstorming in this order:
 
 1. **Ground-truth contract and winner gates:** resolve the items above first,
    because they define whether model differences are meaningful.

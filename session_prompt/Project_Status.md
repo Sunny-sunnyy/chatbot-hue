@@ -61,7 +61,7 @@ thông thường.
 | 5 | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `approved` | Answer-only API và notebooks đã chạy thật, đạt Codex review vòng 2 và được user xác nhận |
 | 7 | `approved` | Baseline và post-simplicity correction đã chạy thật, đạt independent review và được user xác nhận |
-| 8 | `not_ready` | Golden Dataset V3 design/plan đã được user duyệt; chờ Implementer tạo 40/45/50 full cases, smoke 10, rồi Reviewer/user duyệt Gate 0 trước mọi benchmark |
+| 8 | `not_ready` | Golden Dataset V3 Gate 0 đã approved với 45 full cases và 10 smoke cases; bước kế tiếp là brainstorming Gate 1, chưa authorize benchmark |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
 
 Milestone 6.1 Baseline Lifecycle Hardening thuộc Phase 6 và đã được user xác
@@ -131,23 +131,24 @@ V3 là Gate 0 canonical hiện hành:
 ```text
 docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
 docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
-session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md
-session_prompt/phase_8_golden_dataset_v3_reviewer_prompt.md
+reports/phase_8_golden_dataset_v3_implementation_report.md
+reports/phase_8_golden_dataset_v3_codex_review.md
 ```
 
-V3 chỉ chấp nhận đúng 40, 45 hoặc 50 câu. Implementer curate V2 trước, tạo
-baseline 40 rồi chỉ tăng theo batch 5 khi đủ câu đạt chuẩn. Không có category/
-source/checklist quota. Full dùng six-field schema và exact source/H2 evidence;
-smoke là 10 row deep-equal được chọn đơn giản sau full approval. Implementer đề
-xuất size; Reviewer đọc toàn bộ; user đọc toàn bộ câu hỏi và quyết định final
-size/content cùng Reviewer.
+V3 final có `45` câu và smoke có `10` row deep-equal. Reviewer đã đọc toàn bộ
+question/category/keywords/reference/evidence, mở mọi declared Markdown H2,
+chạy validator, V2 regression và real retrieval metadata trên collection cô
+lập. Technical verdict là `ready_for_user_confirmation`; user xác nhận final
+content/size ngày `2026-08-28 +07`, vì vậy Gate 0 đã `approved`.
 
 Web search được phép để nghiên cứu naturalness, tourist needs và conflict. URL
 web không phải evidence. Kiến thức mới chỉ được dùng sau một exact curated
 Markdown proposal được Reviewer/user duyệt và index.
 
-Phase 8 master design đã bắt đầu ngày `2026-08-26 +07`, nhưng benchmark vẫn bị
-chặn bởi golden dataset correction ở scope riêng. User đã khóa candidate order
+Phase 8 master design đã bắt đầu ngày `2026-08-26 +07`. Golden dataset
+correction không còn là blocker sau approval Gate 0, nhưng benchmark vẫn chưa
+được authorize: Gate 1 phải brainstorm và khóa các experiment contract còn mở,
+sau đó user phải duyệt exact design/plan và exact experiment group. User đã khóa candidate order
 từ nhẹ đến mạnh cho sáu embedding families và ba rerankers; primary language là
 tiếng Việt, latency là first-class metric, generator end-to-end là
 `qwen/qwen3.5-9b` qua OpenRouter và judge là `gpt-5.4-mini`. Selection rule:
@@ -408,22 +409,20 @@ Phase 0–6 simplicity review đã approved
 -> Phase 7 post-simplicity correction đã approved
 -> Golden Dataset V2 dừng ở historical changes_requested sau 3 vòng
 -> user đã duyệt complexity reset và Golden Dataset V3 design/plan
--> Implementer session mới tạo V3 ở mức cao nhất đạt chuẩn trong 40/45/50
--> Reviewer kiểm tra toàn bộ V3, smoke 10 và real source/section relevance
--> user chấp nhận Gate 0
+-> Implementer đã tạo V3; Reviewer kiểm tra toàn bộ 45 câu, smoke 10 và evidence
+-> user đã chấp nhận final content/size; Gate 0 approved ngày 2026-08-28 +07
 -> tiếp tục brainstorming các Phase 8 experiment-contract decisions còn mở
 -> chỉ chạy Phase 8 sau khi exact experiment group được user authorize
 ```
 
-Hai prompt handoff canonical cho session tiếp theo:
+Session entrypoint canonical tiếp theo:
 
 ```text
-session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md
-session_prompt/phase_8_golden_dataset_v3_reviewer_prompt.md
+session_prompt/phase_8_gate_1_brainstorming_prompt.md
 ```
 
-Sau khi V3 được Reviewer/user chấp nhận, cập nhật/tạo handoff brainstorming Gate
-1 dựa trên final V3 distribution và dùng:
+Hai prompt Implementer/Reviewer V3 đã retire; lifecycle history nằm trong Git,
+design/plan và reports. Gate 1 dùng final V3 distribution cùng:
 
 ```text
 docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
@@ -432,17 +431,17 @@ guides/phase_8_benchmark_model_selection.md#backlog-brainstorming-sau-gate-0-imp
 
 Thứ tự bắt buộc từ trạng thái hiện tại:
 
-1. Implementer thực hiện Golden Dataset V3 plan, curate V2 làm candidates nhưng
-   không sửa V2/Phase 7 hoặc tối ưu gold theo model hiện tại;
-2. Reviewer đối chiếu toàn bộ 40/45/50 cases với curated evidence, validator,
-   smoke 10 và real retrieval metadata; user quyết định Gate 0;
-3. brainstorm category/winner gates, exact model/sparse/matrix/latency/paid
+1. giữ nguyên Golden Dataset V3 đã approved gồm 45 full + 10 smoke cases;
+2. brainstorm category/winner gates, exact model/sparse/matrix/latency/paid
    finalist/CSV/notebook/verification contracts;
-4. chỉ sau mọi approval mới viết Phase 8 implementation plan và authorize run.
+3. cập nhật design, viết implementation plan và xin user duyệt;
+4. chỉ sau approval riêng mới authorize exact implementation/run group.
 
-V3 là complexity reset đã được user duyệt; V2 correction handoffs không còn là
-next action. Mọi V3 `changes_requested` phải được xử lý theo Reviewer workflow
-và không được tự nới contract để ép PASS.
+V3 là complexity reset đã được user duyệt và Gate 0 đã approved. Các
+prompt/handoff V2 đã được retire khỏi cây hiện hành ngày `2026-08-27 +07`;
+hai prompt Implementer/Reviewer V3 cũng được retire sau Gate 0 approval ngày
+`2026-08-28 +07`. Không khôi phục các handoff đã hoàn tất; dùng prompt Gate 1
+mới dựa trên V3 45 câu. Lịch sử prompt cũ vẫn truy xuất được qua Git.
 
 GPU/WSL2 remediation vẫn là session riêng. Production cutover hoặc active
 collection mutation không nằm trong Phase 8 benchmark authorization.

@@ -2,6 +2,8 @@ import asyncio
 import math
 from pathlib import Path
 
+import pytest
+
 from evaluation.eval import (
     build_services,
     calculate_mrr,
@@ -11,12 +13,16 @@ from evaluation.eval import (
 )
 from evaluation.evaluator import run_retrieval_ui
 from evaluation.golden_dataset import (
+    ALLOWED_CATEGORIES,
     CATEGORY_QUOTAS,
     SOURCE_TARGETS,
+    V3_ALLOWED_COUNTS,
     document_is_relevant,
     load_golden,
     validate_full,
     validate_smoke,
+    validate_v3_full,
+    validate_v3_smoke,
 )
 from evaluation.test import load_tests
 
@@ -25,6 +31,37 @@ SMALL_DATASET = REPO / "knowledge-base-hue/foods/evaluation/test2.jsonl"
 FULL_DATASET = REPO / "knowledge-base-hue/foods/evaluation/tests.jsonl"
 GOLDEN_V2 = REPO / "knowledge-base-hue/foods/evaluation/golden_v2.jsonl"
 GOLDEN_V2_SMOKE = REPO / "knowledge-base-hue/foods/evaluation/golden_v2_smoke.jsonl"
+GOLDEN_V3 = REPO / "knowledge-base-hue/foods/evaluation/golden_v3.jsonl"
+GOLDEN_V3_SMOKE = REPO / "knowledge-base-hue/foods/evaluation/golden_v3_smoke.jsonl"
+
+
+def test_golden_v3_rejects_a_full_size_outside_approved_levels():
+    assert V3_ALLOWED_COUNTS == {40, 45, 50}
+    with pytest.raises(ValueError, match="expected 40, 45, or 50 cases"):
+        validate_v3_full([])
+
+
+def test_golden_v3_smoke_requires_exactly_ten_rows():
+    with pytest.raises(ValueError, match="expected 10 smoke cases"):
+        validate_v3_smoke([], [])
+
+
+def test_golden_v3_keeps_the_nine_diagnostic_category_names_without_quotas():
+    assert ALLOWED_CATEGORIES == set(CATEGORY_QUOTAS)
+
+
+def test_golden_v3_contract_uses_an_approved_size_without_distribution_quotas():
+    cases = load_golden(GOLDEN_V3)
+    summary = validate_v3_full(cases)
+    assert summary["cases"] in V3_ALLOWED_COUNTS
+    assert sum(summary["categories"].values()) == summary["cases"]
+    assert set(summary["categories"]) <= ALLOWED_CATEGORIES
+
+
+def test_golden_v3_smoke_is_an_exact_ten_row_subset():
+    full = load_golden(GOLDEN_V3)
+    smoke = load_golden(GOLDEN_V3_SMOKE)
+    assert validate_v3_smoke(full, smoke) == {"cases": 10}
 
 
 def test_small_dataset_contains_twenty_real_questions():
@@ -168,3 +205,20 @@ def test_golden_v2_binary_relevance_uses_real_retrieval_metadata(ingested_collec
             assert isinstance(doc.metadata.get("section"), str)
             relevance = document_is_relevant(case, doc)
             assert isinstance(relevance, bool)
+
+
+def test_golden_v3_binary_relevance_uses_real_retrieval_metadata(ingested_collection):
+    from conftest import TEST_COLLECTION
+
+    smoke = load_golden(GOLDEN_V3_SMOKE)
+    assert len(smoke) == 10
+    services = build_services("dense_only", collection_name=TEST_COLLECTION)
+
+    for case in smoke:
+        documents = services.retrieval.search(case.question)
+        assert len(documents) > 0
+        for document in documents:
+            assert isinstance(document.metadata.get("source"), str)
+            assert document.metadata["source"].startswith("foods/")
+            assert isinstance(document.metadata.get("section"), str)
+            assert isinstance(document_is_relevant(case, document), bool)

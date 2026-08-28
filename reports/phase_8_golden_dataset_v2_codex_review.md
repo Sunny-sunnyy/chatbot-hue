@@ -14,8 +14,9 @@ Implementation report: `reports/phase_8_golden_dataset_v2_implementation_report.
 
 User-confirmed language audit:
 `reports/phase_8_golden_dataset_v2_language_quality_audit.md`
-Consolidated correction prompt:
-`session_prompt/phase_8_golden_dataset_v2_correction_round_3_prompt.md`
+Hướng dẫn correction hợp nhất đã được loại khỏi cây hiện hành sau V3 reset;
+snapshot cuối của tài liệu vẫn có thể truy xuất tại
+`6c44c0b:session_prompt/phase_8_golden_dataset_v2_correction_round_3_prompt.md`.
 
 ## 1. Kết quả các finding vòng 2
 

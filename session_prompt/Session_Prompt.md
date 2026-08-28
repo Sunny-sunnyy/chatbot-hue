@@ -343,8 +343,8 @@ hoàn tất governance đơn giản
 -> implement và approve Phase 7 đơn giản
 -> review lại các Phase 0 -> Phase 6 đã hoàn thành theo thứ tự dependency
 -> chạy lại Phase 7 khi thay đổi có thể ảnh hưởng kết quả
--> hoàn tất golden dataset correction ở scope riêng
--> tiếp tục Phase 8 master design nhưng không benchmark trước golden approval
+-> Golden Dataset V3 Gate 0 đã approved với 45 full + 10 smoke cases
+-> tiếp tục Gate 1 brainstorming và Phase 8 master design
 -> chỉ implement/run exact Phase 8 experiment group sau user authorization
 ```
 
@@ -359,8 +359,9 @@ docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-p
 Vietnamese gold và latency; khi quality không khác biệt đáng tin cậy thì ưu tiên
 model nhẹ/nhanh/đơn giản. End-to-end generator là `qwen/qwen3.5-9b` qua
 OpenRouter, judge là `gpt-5.4-mini`. GPU/WSL2 GTX 1650 remediation thuộc session
-khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready` cho tới khi golden
-correction và exact experiment authorization hoàn tất.
+khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready`: Gate 0 đã approved
+nhưng Gate 1 experiment contracts và exact implementation/run authorization
+chưa hoàn tất.
 
 Notebook topology đã được user khóa theo group: `08a` embedding, `08b`
 retrieval/fusion, `08c` reranker, `08d` full local matrix, `08e` generation
@@ -395,12 +396,15 @@ chỉ được giữ nếu corrected Vietnamese evidence biện minh latency/dep
 không thêm PyVi, VnCoreNLP hoặc tokenizer grid ban đầu.
 
 Golden Dataset V2 đã qua ba vòng `changes_requested`. User đã thực hiện
-complexity reset ngày `2026-08-27 +07` và duyệt Golden Dataset V3 làm Gate 0
-canonical mới. V2 cùng reports/handoffs cũ được giữ làm historical evidence và
-candidate pool; không tiếp tục correction vòng 4/5 theo contract 100 case.
+complexity reset ngày `2026-08-27 +07`; Reviewer xác minh V3 và user phê duyệt
+Gate 0 ngày `2026-08-28 +07` với `45` full cases cùng `10` smoke cases. V2
+dataset, spec, plan và reports được giữ làm historical evidence/candidate pool;
+các prompt/handoff vận hành V2 đã được loại khỏi cây hiện hành để tránh khởi
+động nhầm workflow cũ. Không tiếp tục correction vòng 4/5 theo contract 100 case.
 
-V3 có đúng một trong ba mức `50`, `45` hoặc `40` case, ưu tiên mức cao nhất mà
-mọi câu đều tự nhiên, rõ ràng, phổ thông và có khả năng được khách du lịch hỏi.
+Final V3 có `45` case, là mức cao nhất Reviewer xác định defensible sau khi đọc
+toàn bộ câu hỏi và evidence; mọi câu đều tự nhiên, rõ ràng, phổ thông và có khả
+năng được khách du lịch hỏi.
 Không còn exact category quotas, source quotas hoặc ma trận 40/20/20/20 × 9.
 Bốn source families và tourist-needs checklist chỉ là định hướng định tính.
 Câu hỏi là Vietnamese single-turn, một intent chính; không tạo price-only hoặc
@@ -408,13 +412,13 @@ opening-time-only question. Location question được phép khi hữu ích. Ref
 answer thường 2–4 câu và có thể bổ sung giá/giờ/địa chỉ nếu trực tiếp liên quan
 và được evidence hỗ trợ.
 
-Canonical V3 design, plan và handoff prompts:
+Canonical V3 lifecycle artifacts:
 
 ```text
 docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
 docs/superpowers/plans/2026-08-27-phase-8-golden-dataset-v3-implementation-plan.md
-session_prompt/phase_8_golden_dataset_v3_implementer_prompt.md
-session_prompt/phase_8_golden_dataset_v3_reviewer_prompt.md
+reports/phase_8_golden_dataset_v3_implementation_report.md
+reports/phase_8_golden_dataset_v3_codex_review.md
 ```
 
 V3 giữ exact six-field schema `case_id`, `question`, `keywords`,
@@ -423,25 +427,34 @@ V3 giữ exact six-field schema `case_id`, `question`, `keywords`,
 `source + H2 section`, tối thiểu nhưng đủ. Full dataset là benchmark chính;
 smoke chỉ gồm 10 row deep-equal được chọn đơn giản sau khi full được duyệt.
 
-Implementer curate V2 trước, tạo baseline 40 rồi chỉ thêm theo batch 5 khi đủ
-chất lượng để đạt 45/50. Implementer đề xuất mức cao nhất; Reviewer đọc toàn bộ
-case và declared evidence; user đọc toàn bộ câu hỏi và quyết định final content/
-size cùng Reviewer. Deterministic validator không thay manual quality approval.
+Lifecycle implementation/review đã hoàn tất: Reviewer đọc toàn bộ 45 cases và
+declared evidence; user xác nhận final content/size. Deterministic validator
+không thay manual quality approval và kết quả Gate 0 này không được tối ưu lại
+theo một model candidate trong Gate 1.
 
-Historical V2 inputs, không còn authorize implementation:
+Historical V2 inputs còn được giữ để audit và curate candidates, không authorize
+implementation:
 
 ```text
+knowledge-base-hue/foods/evaluation/golden_v2.jsonl
+knowledge-base-hue/foods/evaluation/golden_v2_smoke.jsonl
+docs/superpowers/specs/2026-08-26-phase-8-golden-dataset-v2-design.md
+docs/superpowers/plans/2026-08-26-phase-8-golden-dataset-v2-implementation-plan.md
 reports/phase_8_golden_dataset_v2_codex_review.md
 reports/phase_8_golden_dataset_v2_language_quality_audit.md
-session_prompt/phase_8_golden_dataset_v2_correction_round_3_prompt.md
-session_prompt/phase_8_golden_dataset_v2_implementer_handoff_round_3.md
-session_prompt/phase_8_golden_dataset_v2_reviewer_handoff_round_4.md
+reports/phase_8_golden_dataset_v2_implementation_report.md
 ```
 
-Implementer phải giữ Phase 7 files, V2, active collection và Phase 8 benchmark
-ngoài scope. Sau V3 implementation, Reviewer dùng V3 reviewer prompt; chỉ sau
-Reviewer/user approval mới tạo handoff brainstorming Gate 1 cập nhật theo final
-V3 distribution.
+Các V2 implementer/correction/reviewer handoffs và Gate 1 brainstorming handoff
+khóa theo V2 đã được retire ngày `2026-08-27 +07`. Hai prompt Implementer/
+Reviewer V3 được retire sau Gate 0 approval ngày `2026-08-28 +07`; lifecycle
+evidence được giữ trong design, plan và hai reports. Khi cần audit prompt cũ,
+xem lịch sử Git; không phục hồi chúng làm session entrypoint.
+
+Session entrypoint hiện hành là
+`session_prompt/phase_8_gate_1_brainstorming_prompt.md`, dựa trên distribution
+V3 45 câu đã approved. Gate 1 chỉ làm rõ design; không sửa V3, chạy benchmark,
+download model, gọi paid generation/judge hoặc mutate active collection.
 
 GPU/WSL2 remediation và mọi production cutover/active mutation vẫn là scope
 riêng.

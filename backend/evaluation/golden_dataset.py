@@ -12,6 +12,11 @@ FULL_PATH = KB_ROOT / "foods" / "evaluation" / "golden_v2.jsonl"
 SMOKE_PATH = KB_ROOT / "foods" / "evaluation" / "golden_v2_smoke.jsonl"
 CASE_ID = re.compile(r"foods-\d{4}")
 
+V3_FULL_PATH = KB_ROOT / "foods" / "evaluation" / "golden_v3.jsonl"
+V3_SMOKE_PATH = KB_ROOT / "foods" / "evaluation" / "golden_v3_smoke.jsonl"
+V3_CASE_ID = re.compile(r"foods-v3-\d{4}")
+V3_ALLOWED_COUNTS = {40, 45, 50}
+
 CATEGORY_QUOTAS = {
     "direct_fact": 18,
     "temporal": 10,
@@ -23,6 +28,7 @@ CATEGORY_QUOTAS = {
     "food_knowledge": 12,
     "guide_planning": 10,
 }
+ALLOWED_CATEGORIES = set(CATEGORY_QUOTAS)
 SOURCE_TARGETS = {
     "restaurants": 40,
     "cafes": 20,
@@ -121,6 +127,77 @@ def _evidence_text(case: GoldenCase, issues: list[str]) -> tuple[str, set[str]]:
 def _raise_issues(issues: list[str]) -> None:
     if issues:
         raise ValueError("golden validation failed:\n- " + "\n- ".join(issues))
+
+
+def _normalize_question(question: str) -> str:
+    return re.sub(r"\s+", " ", question.strip().casefold())
+
+
+def validate_v3_full(cases: list[GoldenCase]) -> dict:
+    issues: list[str] = []
+    count = len(cases)
+    if count not in V3_ALLOWED_COUNTS:
+        issues.append(f"expected 40, 45, or 50 cases, found {count}")
+
+    expected_ids = [f"foods-v3-{index:04d}" for index in range(1, count + 1)]
+    actual_ids = [case.case_id for case in cases]
+    if actual_ids != expected_ids:
+        issues.append("case IDs must be sequential foods-v3-0001.. in file order")
+
+    normalized_questions = [_normalize_question(case.question) for case in cases]
+    if len(set(normalized_questions)) != len(normalized_questions):
+        issues.append("questions must be unique after whitespace/case normalization")
+
+    category_counts = Counter(case.category for case in cases)
+    source_coverage: Counter[str] = Counter()
+    for case in cases:
+        if not V3_CASE_ID.fullmatch(case.case_id):
+            issues.append(f"invalid V3 case_id: {case.case_id}")
+        if not case.question.strip():
+            issues.append(f"{case.case_id}: question is empty")
+        if not case.reference_answer.strip():
+            issues.append(f"{case.case_id}: reference_answer is empty")
+        if case.category not in ALLOWED_CATEGORIES:
+            issues.append(f"{case.case_id}: invalid category {case.category}")
+
+        _, families = _evidence_text(case, issues)
+        for family in families:
+            source_coverage[family] += 1
+
+        for keyword in case.keywords:
+            normalized = keyword.strip().casefold()
+            if not normalized:
+                issues.append(f"{case.case_id}: keyword is empty")
+            elif normalized not in case.reference_answer.casefold():
+                issues.append(f"{case.case_id}: keyword {keyword!r} missing from reference")
+
+    _raise_issues(issues)
+    return {
+        "cases": count,
+        "categories": dict(category_counts),
+        "source_coverage": dict(source_coverage),
+    }
+
+
+def validate_v3_smoke(full: list[GoldenCase], smoke: list[GoldenCase]) -> dict:
+    issues: list[str] = []
+    if len(smoke) != 10:
+        issues.append(f"expected 10 smoke cases, found {len(smoke)}")
+
+    full_by_id = {case.case_id: case for case in full}
+    smoke_ids = [case.case_id for case in smoke]
+    if len(set(smoke_ids)) != len(smoke_ids):
+        issues.append("smoke case IDs must be unique")
+
+    for case in smoke:
+        full_case = full_by_id.get(case.case_id)
+        if full_case is None:
+            issues.append(f"smoke case missing from full: {case.case_id}")
+        elif case.model_dump() != full_case.model_dump():
+            issues.append(f"smoke row differs from full: {case.case_id}")
+
+    _raise_issues(issues)
+    return {"cases": len(smoke)}
 
 
 def validate_full(cases: list[GoldenCase]) -> dict:
