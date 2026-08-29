@@ -40,17 +40,10 @@ from embedding.dense_benchmark import (
     DenseBenchmarkSetting,
     DocumentEmbeddingResult,
     E5_SMALL_SETTING,
-    MINILM_L12_SETTING,
     HUYDANG_DEK21_SETTING,
     E5_BASE_SETTING,
-    QWEN3_384_SETTING,
-    E5_LARGE_SETTING,
-    BGE_M3_SETTING,
-    QWEN3_1024_SETTING,
     ALL_DENSE_SETTINGS,
-    AUTHORIZED_DENSE_SETTINGS,
-    AUTHORIZED_DENSE_CANDIDATE_SETTINGS,
-    DEFERRED_DENSE_SETTINGS,
+    DENSE_CANDIDATE_SETTINGS,
     build_dense_runner,
 )
 
@@ -58,8 +51,6 @@ CANONICAL_CHUNK_COUNT = 572
 EMBEDDING_RESULTS_PATH = REPO_ROOT / "evaluation" / "results" / "phase8_embedding_results.csv"
 
 CANONICAL_SETTINGS_MAP = {s.setting_key: s for s in ALL_DENSE_SETTINGS}
-AUTHORIZED_SETTING_KEYS = {s.setting_key for s in AUTHORIZED_DENSE_SETTINGS}
-DEFERRED_SETTING_KEYS = {s.setting_key for s in DEFERRED_DENSE_SETTINGS}
 APPROVED_COLLECTIONS = {s.collection_name for s in ALL_DENSE_SETTINGS}
 
 CSV_COLUMNS = (
@@ -543,13 +534,7 @@ def run_embedding_benchmark(
     if setting != canonical:
         raise ValueError(f"forged or altered setting object for {setting.setting_key!r}")
 
-    # Boundary check 3: deferred settings must be rejected at runtime boundary
-    if setting.setting_key in DEFERRED_SETTING_KEYS:
-        raise ValueError(f"setting {setting.setting_key!r} is deferred and not authorized in this run round")
-    if setting.setting_key not in AUTHORIZED_SETTING_KEYS:
-        raise ValueError(f"setting {setting.setting_key!r} is not authorized for execution")
-
-    # Boundary check 4: collection must be in approved isolated list and not equal to active collection
+    # Boundary check 3: collection must be in approved isolated list and not equal to active collection
     if setting.collection_name not in APPROVED_COLLECTIONS:
         raise ValueError(f"unapproved isolated collection target: {setting.collection_name!r}")
 
@@ -557,7 +542,7 @@ def run_embedding_benchmark(
     if setting.collection_name == active_name:
         raise ValueError(f"cannot use active production collection {active_name!r} as benchmark write target")
 
-    # Boundary check 5: active collection snapshot unchanged before any mutation
+    # Boundary check 4: active collection snapshot unchanged before any mutation
     current_active_snap = snapshot_active_collection(benchmark_inputs)
     if current_active_snap != expected_active_snapshot:
         raise ValueError(f"active collection snapshot mismatch before running {setting.setting_key}")
@@ -950,7 +935,6 @@ def describe_embedding_benchmark_environment() -> dict[str, str]:
     """Hiển thị thông tin môi trường thực thi CPU FP32, Qdrant và các gói phụ thuộc an toàn."""
     import importlib.metadata as m
     packages = {
-        "FlagEmbedding": m.version("FlagEmbedding"),
         "sentence-transformers": m.version("sentence-transformers"),
         "transformers": m.version("transformers"),
         "torch": m.version("torch"),
@@ -966,7 +950,7 @@ def describe_embedding_benchmark_environment() -> dict[str, str]:
 
 
 def settings_table() -> pl.DataFrame:
-    """Trả về bảng 8 cấu hình dense embedding trong catalog Phase 8 08a kèm trạng thái authorized/deferred."""
+    """Trả về bảng 3 cấu hình dense embedding trong catalog Phase 8 08a."""
     data = [
         {
             "Order": s.order,
@@ -977,7 +961,7 @@ def settings_table() -> pl.DataFrame:
             "Dim": s.dimension,
             "Max Len": s.max_length,
             "Collection": s.collection_name,
-            "Scope Status": "Authorized (Now)" if s in AUTHORIZED_DENSE_SETTINGS else "Deferred (Future)",
+            "Scope Status": "Authorized (Control)" if s.order == 1 else "Authorized (Candidate)",
         }
         for s in ALL_DENSE_SETTINGS
     ]

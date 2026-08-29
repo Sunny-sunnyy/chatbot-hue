@@ -30,9 +30,9 @@ Chưa có model/profile winner được user và Reviewer phê duyệt.
 Candidates cho Phase 8 chỉ được chạy sau khi exact provider/model và experiment
 scope được user duyệt:
 
-- local E5-small, MiniLM-L12, Huydang DEk21 768D và E5-base;
+- local E5-small, Huydang DEk21 768D và E5-base;
 - future paid OpenRouter `intfloat/multilingual-e5-large` và `baai/bge-m3`
-  dense proposal sau khi local four hoàn tất;
+  dense proposal sau khi local three hoàn tất;
 - OpenRouter native reranker candidates;
 - local Vietnamese embedding/reranker candidates;
 - future answer model qua OpenRouter.
@@ -153,10 +153,9 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
 
 1. Giữ baseline Phase 7 đã approved như historical state.
 2. Giữ nguyên Golden Dataset V3 đã approved; không tối ưu dataset theo candidate.
-3. Implementer thực hiện exact approved Notebook 08a design/plan bằng real local
-   models, canonical data và isolated Qdrant targets.
-4. Implementer bàn giao observed evidence; Reviewer xác minh độc lập trước khi
-   user xác nhận và chuyển sang Notebook 08b.
+3. Notebook 08a đã hoàn tất bằng real local models, canonical data và isolated
+   Qdrant targets; Reviewer xác minh độc lập và user xác nhận.
+4. Research và brainstorm exact Notebook 08b; chưa implement/run trước approval.
 
 Qwen3 Embedding 0.6B 384D đã được chạy đủ để tạo historical evidence nhưng bị
 user loại khỏi local scope ngày `2026-08-29 +07`: chất lượng thấp hơn E5-small,
@@ -164,6 +163,12 @@ không đạt category guardrails và CPU indexing quá chậm. Không chạy l�
 không đưa nó vào 08b/08d hoặc finalist selection. Mười CSV rows của Qwen được
 giữ làm historical evidence; cache model và isolated collection
 `hue_foods_08a_qwen3_06b_384` đã được Reviewer xóa theo authorization riêng.
+
+MiniLM-L12 384D cũng đã bị user loại khỏi local scope ngày `2026-08-29 +07`:
+nDCG@5 chỉ `0.4709`, trượt 7/9 guardrails và truncate 83/572 chunks ở max length
+128. Mười CSV rows được giữ làm historical evidence; cache và isolated
+collection `hue_foods_08a_minilm_l12_384` đã bị xóa. Final local dense catalog
+cho 08b/08d chỉ còn E5-small, Huydang DEk21 và E5-base.
 
 Canonical Notebook 08a contract:
 

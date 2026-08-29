@@ -1,10 +1,10 @@
 # Phase 8 — Notebook 08a Dense Embedding Benchmark Implementation Plan
 
-**Status:** `ready_for_implementation`. User approved this exact plan and
-authorized its amended real local Run All on `2026-08-28 +07`. Authorization is limited
-to the approved 08a files, pinned local model downloads, four isolated Qdrant
-collections and the durable 08a CSV; it excludes paid calls, active collection
-mutation, production cutover and later Notebook 08 groups.
+**Status:** `completed_and_user_confirmed`. User approved the plan on
+`2026-08-28 +07`; implementation, independent review and user Run All
+confirmation completed on `2026-08-29 +07`. Final scope has three models and
+three isolated Qdrant collections. Paid calls, active mutation, production
+cutover and later Notebook 08 implementation remain excluded.
 
 > **For Implementer:** Start with `using-superpowers`. Read and apply
 > `/home/minhhieu/hue_rag/skills/practical-project-coding/SKILL.md`, execute this
@@ -12,14 +12,14 @@ mutation, production cutover and later Notebook 08 groups.
 > use `requesting-code-review` for the handoff. Do not commit or push.
 
 **Goal:** Implement one educational Notebook 08a and the smallest reusable
-backend needed to benchmark the four approved local dense vector spaces on the real
+backend needed to benchmark the three approved local dense vector spaces on the real
 Hue food corpus without changing production retrieval behavior.
 
 **Architecture:** Keep native model loading and encoding in one small embedding
 module. Keep canonical input loading, isolated Qdrant lifecycle, exact metrics,
 gates, timings, resource observations and CSV persistence in one evaluation
 module. The notebook is presentation and orchestration only: one explicit cell
-for the E5-small control, then one sequential loop cell for the three authorized candidates.
+for the E5-small control, then one sequential loop cell for the two authorized candidates.
 
 The local execution amendment at the end supersedes every earlier
 five/seven-model and Qwen/1024D local instruction retained as history.
@@ -178,7 +178,7 @@ class DocumentEmbeddingResult:
     truncated_document_count: int
 ```
 
-Do not add a registry. Define the four local constants directly in approved order,
+Do not add a registry. Define the three local constants directly in approved order,
 then expose:
 
 ```python
@@ -918,7 +918,7 @@ control_result = run_embedding_benchmark(
 The next cells display its overall/category metrics and confirm the active
 snapshot still equals `active_before`.
 
-**Step 4: Put all three authorized candidates in one sequential run cell**
+**Step 4: Put both authorized candidates in one sequential run cell**
 
 Use exactly:
 
@@ -1026,7 +1026,7 @@ Expected: no implementation diff in these files.
   `evaluation/results/phase8_embedding_results.csv`
 - Do not modify repository notebook outputs
 
-This task mutates only the four approved isolated Qdrant collections and the
+This task mutates only the three approved isolated Qdrant collections and the
 one durable CSV. The required real-run authorization is recorded in this plan's
 status; an available Qdrant service is still required. It uses real pinned
 models, full 45 cases and all 572 chunks.
@@ -1173,33 +1173,32 @@ confirmation.
 
 ## Local execution amendment (2026-08-29 +07, superseding earlier local scope)
 
-Implement and execute exactly these 4 local dense configurations:
+The final executable catalog contains exactly these 3 local dense configurations:
 1. `e5-small-384` (Control, 384D, Authorized)
-2. `multilingual-minilm-l12-384` (384D, Authorized)
-3. `huydang-dek21-embedding-768` (PhoBERT ~135M params, 768D, max length 256, PyVi segmentation, Authorized)
-4. `e5-base-768` (768D, Authorized)
+2. `huydang-dek21-embedding-768` (PhoBERT ~135M params, 768D, max length 256, PyVi segmentation, Authorized)
+3. `e5-base-768` (768D, Authorized)
 
-Do not locally download or execute `e5-large-1024`, `bge-m3-dense-1024`,
+Do not locally download or execute `multilingual-minilm-l12-384`,
+`e5-large-1024`, `bge-m3-dense-1024`,
 `qwen3-embedding-0.6b-384` or `qwen3-embedding-0.6b-1024`. Runtime boundaries must reject them before model
 load, network access or Qdrant mutation. Notebook Run All must iterate an exact
 three-candidate tuple after the separate control cell, never the historical full
 catalog.
 
-The local implementation should remove both Qwen settings and runner, the three
+The local implementation removes MiniLM-L12, both Qwen settings/runners, the
 1024D setting constants, their local collection targets and local-only
-adapter/test paths. In particular, remove the BGE-M3 local runner and direct
-`FlagEmbedding` dependency if no other authorized local consumer remains. A future OpenRouter adapter must be designed
+adapter/test paths. It also removes the BGE-M3 local runner and direct
+`FlagEmbedding` dependency. A future OpenRouter adapter must be designed
 from the remote API contract rather than retaining the local BGE adapter.
 
-After the four-setting local run is complete, write a proposal only—not an
+After the three-setting local run is complete, write a proposal only—not an
 adapter or paid run—for OpenRouter `intfloat/multilingual-e5-large` and
 `baai/bge-m3`. Any remote benchmark requires a new explicit user authorization,
 budget, exact model IDs, current embeddings schema, preprocessing contract and
 isolated remote-vector collections. Do not propose or run Qwen3 Embedding unless
 the user explicitly reopens that scope.
 
-Reviewer fresh evidence from `2026-08-29 +07` already covers all four retained
-models at 3/3 repetitions on 45 cases and 572 chunks. The correction handoff may
-reuse that evidence without rerunning models when code changes only remove
-Qwen/deferred paths and do not alter encoding, retrieval or metrics. Historical
-Qwen CSV rows remain evidence only; do not recreate its cache or collection.
+Reviewer evidence from `2026-08-29 +07` covers all three retained models at 3/3
+repetitions on 45 cases and 572 chunks. Historical MiniLM-L12/Qwen CSV rows
+remain evidence only; do not recreate their caches or collections. Notebook 08a
+is approved; the next step is exact Notebook 08b research/brainstorming.

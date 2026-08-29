@@ -345,10 +345,9 @@ hoàn tất governance đơn giản
 -> chạy lại Phase 7 khi thay đổi có thể ảnh hưởng kết quả
 -> Golden Dataset V3 Gate 0 đã approved với 45 full + 10 smoke cases
 -> Phase 8 Gate 1 common contracts đã approved
--> exact Notebook 08a design/plan đã approved; implementation + Run All authorized
--> Implementer correction 08a về exact four-model scope
--> Reviewer xác minh độc lập, user xác nhận
--> chỉ sau đó mới research + brainstorm Notebook 08b
+-> Notebook 08a đã triển khai, review độc lập và được user xác nhận
+-> exact local dense catalog còn E5-small, Huydang DEk21 và E5-base
+-> research + brainstorm Notebook 08b
 ```
 
 Phase 8 canonical design/sequence documents hiện hành:
@@ -364,10 +363,9 @@ docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation
 Vietnamese gold và latency; khi quality không khác biệt đáng tin cậy thì ưu tiên
 model nhẹ/nhanh/đơn giản. End-to-end generator là `qwen/qwen3.5-9b` qua
 OpenRouter, judge là `gpt-5.4-mini`. GPU/WSL2 GTX 1650 remediation thuộc session
-khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready`: Gate 0 và Gate 1
-common contracts đã approved; Notebook 08a implementation đang
-`changes_requested` để đồng bộ exact four-model scope, chưa có user confirmation
-và later groups vẫn đóng.
+khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready`: Gate 0, Gate 1 và
+Notebook 08a đã approved; later groups chưa được implement. Bước hiện hành là
+research và brainstorming exact Notebook 08b.
 
 Gate 1 common contract bảo vệ cả chín V3 categories, dùng paired bootstrap
 10.000 lần/fixed seed/95% percentile CI và clear-gain threshold đã khóa trong
@@ -398,11 +396,11 @@ dense 30 → raw dense/BM25 0.6/0.4 → top 10 → current MiniLM 10→5 → con
 depth contract cho local matrix là candidate 30, fusion 10, rerank 10→5 và
 no-rerank final top 5; report Recall@30, Recall@10 và final metrics @5.
 
-Qwen3 Embedding 0.6B đã bị user loại khỏi toàn bộ local embedding scope ngày
-`2026-08-29 +07` sau khi historical 384D evidence cho thấy quality regression
-và CPU indexing quá chậm. Exact local matrix chỉ còn bốn configurations:
-E5-small 384D, MiniLM-L12 384D, Huydang DEk21 768D và E5-base 768D. Không chạy
-lại Qwen hoặc đưa nó vào 08b/08d; mười CSV rows cũ chỉ là historical evidence.
+Qwen3 Embedding 0.6B và MiniLM-L12 đã bị user loại khỏi toàn bộ local embedding
+scope ngày `2026-08-29 +07` sau observed 08a regressions. Exact local dense
+catalog chỉ còn E5-small 384D, Huydang DEk21 768D và E5-base 768D. Không chạy lại
+hai model đã loại hoặc đưa chúng vào 08b/08d; các CSV rows cũ chỉ là historical
+evidence.
 
 Notebook 08b còn so sánh đúng hai BM25 tokenizer variants: lowercase Unicode
 `\w+` hiện hành và Underthesea `word_tokenize(..., format="text")`. Underthesea
@@ -467,28 +465,27 @@ xem lịch sử Git; không phục hồi chúng làm session entrypoint.
 
 Gate 1 brainstorming prompt đã được loại khỏi cây hiện hành sau khi user duyệt
 common contracts và exact 08a design/plan ngày `2026-08-28 +07`; lịch sử vẫn ở
-Git. Session tiếp theo dùng exact Notebook 08a Implementer handoff được cung cấp
-trực tiếp. User đã authorize code, pinned model downloads và real Run All chỉ
-trên bốn isolated 08a collections. Không cho phép sửa V3, paid generation/judge,
-active collection mutation, production cutover hoặc work của Notebook 08b–08e.
+Git. Notebook 08a đã hoàn tất lifecycle và được user xác nhận. Session tiếp theo
+research và brainstorm exact Notebook 08b; chưa authorize implementation/run
+08b, sửa V3, paid generation/judge, active collection mutation hoặc production
+cutover.
 
 GPU/WSL2 remediation và mọi production cutover/active mutation vẫn là scope
 riêng.
 
-Resource amendment ngày `2026-08-29 +07` supersede mọi câu về local matrix năm
-hoặc bảy configurations phía trên. Local Notebook 08a chỉ còn E5-small 384D,
-MiniLM-L12 384D, Huydang DEk21 768D và E5-base 768D. Không download/chạy local
-Qwen3 Embedding ở bất kỳ dimension nào, E5-large 1024D hoặc BGE-M3 1024D. BGE
-learned sparse/hybrid cũng bị loại khỏi local 08b/08d.
+Final local amendment ngày `2026-08-29 +07` supersede mọi câu về local matrix
+phía trên. Local dense catalog chỉ còn E5-small 384D, Huydang DEk21 768D và
+E5-base 768D. Không download/chạy lại MiniLM-L12, Qwen3 Embedding, E5-large
+1024D hoặc BGE-M3 1024D. BGE learned sparse/hybrid cũng bị loại khỏi local
+08b/08d.
 
-Sau local four, chỉ được research và viết proposal paid OpenRouter cho
+Sau local three, chỉ được research và viết proposal paid OpenRouter cho
 `intfloat/multilingual-e5-large` cùng `baai/bge-m3` dense. Chưa được đọc key,
 implement adapter, gọi API hoặc tạo remote-vector collection nếu chưa có exact
 plan/budget và user authorization mới. E5-large project artifacts từ Reviewer
 run trước đã được user authorize cleanup và đã xóa; không phục hồi chúng làm
 PASS evidence.
 
-Reviewer đã tạo fresh evidence cho bốn model còn lại ngày `2026-08-29 +07`, đủ
-3/3 repetitions trên 45 cases và 572 chunks. Reviewer session kế tiếp không cần
-chạy lại bốn model này nếu correction chỉ xóa Qwen/deferred code và không đổi
-encoding, retrieval hoặc metric behavior.
+08a evidence gồm E5-small, Huydang DEk21 và E5-base đủ 3/3 repetitions trên 45
+cases và 572 chunks. MiniLM-L12/Qwen rows được giữ làm historical rejection
+evidence; cache và isolated collections của hai model đã bị xóa.

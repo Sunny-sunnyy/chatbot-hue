@@ -61,7 +61,7 @@ thông thường.
 | 5 | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `approved` | Answer-only API và notebooks đã chạy thật, đạt Codex review vòng 2 và được user xác nhận |
 | 7 | `approved` | Baseline và post-simplicity correction đã chạy thật, đạt independent review và được user xác nhận |
-| 8 | `not_ready` | Phase tổng thể chưa ready; exact Notebook 08a work package đã `ready` cho implementation + real isolated Run All |
+| 8 | `not_ready` | Notebook 08a đã approved với ba local dense models; bước kế tiếp là research/brainstorming exact 08b |
 | 9 | `not_ready` | Roadmap Agentic RAG, chưa có implementation scope được duyệt |
 
 Milestone 6.1 Baseline Lifecycle Hardening thuộc Phase 6 và đã được user xác
@@ -146,13 +146,12 @@ web không phải evidence. Kiến thức mới chỉ được dùng sau một e
 Markdown proposal được Reviewer/user duyệt và index.
 
 Phase 8 Gate 1 common contracts đã được user phê duyệt ngày `2026-08-28 +07`.
-Notebook 08a cũng đã hoàn tất research/brainstorming; exact design/plan được
-approved và user đã authorize amended implementation cùng real local Run All trên bốn
-isolated Qdrant collections. Implementation/report hiện có đang
-`changes_requested`: Implementer phải loại toàn bộ Qwen/deferred local paths và
-`FlagEmbedding`, đồng bộ notebook/tests/report về exact four-model scope, rồi
-Reviewer review lại. Phase 8 tổng thể vẫn `not_ready` và các Notebook 08b–08e
-chưa được authorize.
+Notebook 08a đã hoàn tất research, implementation, real Run All, independent
+review và được user xác nhận ngày `2026-08-29 +07`. Final executable local dense
+catalog có E5-small, Huydang DEk21 và E5-base; MiniLM-L12/Qwen bị loại sau
+observed regression, còn CSV rows được giữ làm historical evidence. Phase 8
+tổng thể vẫn `not_ready`; bước kế tiếp là research/brainstorming exact 08b và
+chưa authorize implementation/run 08b–08e.
 
 Common gates bảo vệ cả chín V3 categories, dùng hierarchical large-category và
 exact small-category guardrails, paired bootstrap 10.000 lần với fixed seed và
@@ -213,11 +212,11 @@ ký tự → Qwen3.5-9B OpenRouter → GPT-5.4-mini judge. Mọi local path dùn
 depth 30, fusion top 10, reranker 10→5 và no-rerank final top 5; report
 Recall@30, Recall@10 và final MRR/nDCG/Recall@5. Top 10 không đi vào LLM.
 
-Qwen3 Embedding 0.6B đã bị user loại khỏi local scope ngày `2026-08-29 +07` do
-quality regression và CPU indexing quá chậm. Exact local 08a matrix chỉ còn bốn
-configurations: E5-small 384D, MiniLM-L12 384D, Huydang DEk21 768D và E5-base
-768D. Historical Qwen CSV rows được giữ, nhưng Qwen không được chạy lại hoặc đưa
-vào 08b/08d.
+Qwen3 Embedding 0.6B và MiniLM-L12 đã bị user loại khỏi local scope ngày
+`2026-08-29 +07` do quality regression; Qwen còn quá chậm trên CPU, MiniLM bị
+truncate 83/572 chunks ở max length 128. Exact local dense catalog chỉ còn
+E5-small 384D, Huydang DEk21 768D và E5-base 768D. Historical CSV rows được giữ,
+nhưng hai model không được chạy lại hoặc đưa vào 08b/08d.
 
 Notebook 08b đã khóa một comparison tokenizer tiếng Việt: Unicode `\w+` hiện
 hành versus Underthesea `word_tokenize(..., format="text")`. Underthesea chỉ
@@ -432,16 +431,13 @@ Phase 0–6 simplicity review đã approved
 -> Implementer đã tạo V3; Reviewer kiểm tra toàn bộ 45 câu, smoke 10 và evidence
 -> user đã chấp nhận final content/size; Gate 0 approved ngày 2026-08-28 +07
 -> Gate 1 common contracts approved ngày 2026-08-28 +07
--> exact Notebook 08a design/plan approved; implementation + Run All authorized
--> Implementer correction exact four-model scope và viết report mới
--> Reviewer kiểm tra diff/focused tests; reuse fresh four-model evidence nếu
-   correction không đổi encoding/retrieval/metrics
--> user xác nhận 08a trước khi research + brainstorm Notebook 08b
+-> Notebook 08a đã triển khai, review độc lập và được user xác nhận
+-> MiniLM-L12/Qwen bị loại khỏi executable catalog; historical CSV giữ lại
+-> research + brainstorm exact Notebook 08b
 ```
 
-Session tiếp theo dùng handoff Notebook 08a được cung cấp trực tiếp cho
-Implementer/Reviewer. Gate 1 brainstorming prompt đã bị loại khỏi cây hiện hành
-sau khi hoàn tất; lịch sử vẫn truy xuất được qua Git.
+Session tiếp theo research và brainstorm exact Notebook 08b. Gate 1/08a handoff
+đã hoàn tất; lịch sử vẫn truy xuất được qua Git.
 Nguồn canonical hiện hành:
 
 ```text
@@ -455,10 +451,8 @@ guides/phase_8_benchmark_model_selection.md
 Thứ tự bắt buộc từ trạng thái hiện tại:
 
 1. giữ nguyên Golden Dataset V3 đã approved gồm 45 full + 10 smoke cases;
-2. Implementer correction source/tests/notebook/dependencies/report về exact
-   four-model scope;
-3. Implementer bàn giao report mới, Reviewer xác minh độc lập và user xác nhận trước
-   khi chuyển sang Notebook 08b.
+2. giữ Notebook 08a và ba-model catalog đã approved;
+3. research/brainstorm exact Notebook 08b và chờ user duyệt trước implementation.
 
 V3 là complexity reset đã được user duyệt và Gate 0 đã approved. Các
 prompt/handoff V2 đã được retire khỏi cây hiện hành ngày `2026-08-27 +07`;
@@ -526,13 +520,13 @@ reports/hue_foods_rag_benchmark.md
 
 ## Phase 8 local resource amendment — 2026-08-29 +07
 
-User đã hủy local execution cho toàn bộ Qwen3 Embedding cùng `e5-large-1024` và
-`bge-m3-dense-1024` trên máy hiện tại. Exact local 08a matrix chỉ còn bốn
-settings: E5-small 384D, MiniLM-L12 384D, Huydang DEk21 768D và E5-base 768D.
-Mọi runtime/notebook boundary phải reject các settings đã loại trước download,
-model load hoặc Qdrant write.
+User đã hủy local execution cho MiniLM-L12, toàn bộ Qwen3 Embedding,
+`e5-large-1024` và `bge-m3-dense-1024` trên máy hiện tại. Exact local dense
+catalog chỉ còn E5-small 384D, Huydang DEk21 768D và E5-base 768D. Mọi
+runtime/notebook boundary phải reject settings đã loại trước download, model
+load hoặc Qdrant write.
 
-Sau khi bốn local models hoàn tất, có thể research/propose paid OpenRouter dense
+Sau khi ba local models hoàn tất, có thể research/propose paid OpenRouter dense
 benchmark cho `intfloat/multilingual-e5-large` và `baai/bge-m3`; chưa authorize
 adapter, key access, API call hoặc budget. BGE learned sparse/ColBERT không được
 OpenRouter dense output thay thế và bị loại khỏi local 08b/08d matrix. Phase 8
@@ -542,11 +536,8 @@ User đã authorize cleanup E5-large artifact từ Reviewer run trước. Collec
 `hue_foods_08a_e5_large_1024` và 10 `e5-large-1024` CSV rows đã được xóa ngày
 2026-08-28 +07; active production collection không thuộc cleanup target.
 
-Reviewer đã chạy fresh bốn-model path ngày `2026-08-29 +07`; E5-small,
-MiniLM-L12, Huydang DEk21 và E5-base đều hoàn tất 3/3 repetitions trên 45 cases
-và 572 chunks. User cho phép Reviewer session kế tiếp dùng evidence này mà không
-rerun nếu Implementer chỉ correction scope Qwen/deferred removal. Cache Qwen
-khoảng 1.2 GiB và isolated collection `hue_foods_08a_qwen3_06b_384` đã bị xóa;
-10 Qwen CSV rows được giữ làm historical evidence. 08a vẫn `changes_requested`
-cho tới khi source/tests/notebook/dependencies/report được Implementer đồng bộ
-với exact four-model scope và Reviewer review lại.
+E5-small, Huydang DEk21 và E5-base đều có 3/3 evidence trên 45 cases và 572
+chunks. Cache/isolated collections của MiniLM-L12 và Qwen đã bị xóa; historical
+CSV rows của cả hai được giữ. Reviewer xác minh catalog ba-model, tests, lockfile,
+notebook và Qdrant read-only; user chạy notebook thành công và xác nhận 08a ngày
+`2026-08-29 +07`.

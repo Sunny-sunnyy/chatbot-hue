@@ -1,8 +1,8 @@
 # Phase 8 Benchmark Model Selection Master Experiment Plan
 
-**Status:** Gate 1 common contracts and exact Notebook 08a design/plan approved
-`2026-08-28 +07`. Notebook 08a implementation and real local Run All are
-authorized within its isolated scope; later notebook groups remain pending.
+**Status:** Gate 1 common contracts approved; Notebook 08a completed and user
+confirmed on `2026-08-29 +07`. Notebook 08b research/brainstorming is next;
+later notebook implementation/execution remains pending.
 
 **Goal:** So sánh các embedding, lexical/sparse/hybrid, reranker và final RAG
 pipeline trên tiếng Việt bằng controlled experiment groups, đồng thời ưu tiên
@@ -32,7 +32,7 @@ quality đáng tin cậy, latency và simplicity.
 | Stage | Experiment group | Ordered candidates/capabilities | Fixed boundary |
 |---:|---|---|---|
 | 0 | Golden prerequisite | approved 45-case Golden Dataset V3 + exact 10-case smoke subset | completed and approved; dataset remains unchanged during benchmark work |
-| 1 | Local dense embedding | E5 small → multilingual MiniLM-L12 → Huydang DEk21 768D → E5 base | chunks, gold, dense retrieval settings, metrics |
+| 1 | Local dense embedding | E5 small → Huydang DEk21 768D → E5 base; completed/approved | chunks, gold, dense retrieval settings, metrics |
 | 2 | Local lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → true hybrid dense+BM25/TF-IDF | selected/fixed dense evidence, reranker off |
 | 3 | Reranker | current MiniLM-L6 → BGE reranker base → Qwen3 Reranker 0.6B | identical pre-rerank candidate artifacts |
 | 4 | Context | maximum 5 whole chunks/3000 characters | retrieval output and generator |
@@ -227,17 +227,16 @@ expand candidate scope.
 
 ## Resource-bound execution amendment (2026-08-29 +07)
 
-Run exactly four local embedding settings: E5-small 384D, MiniLM-L12 384D,
-Huydang DEk21 768D and E5-base 768D. Remove E5-large 1024D, BGE-M3 1024D,
-every Qwen3 Embedding setting and all BGE learned-sparse paths from local
-execution plans.
+Run exactly three local embedding settings: E5-small 384D, Huydang DEk21 768D
+and E5-base 768D. Remove MiniLM-L12, E5-large 1024D, BGE-M3 1024D, every Qwen3
+Embedding setting and all BGE learned-sparse paths from local execution plans.
 
-Only after the local four finish may the next checkpoint propose paid OpenRouter
+Only after the local three finish may a later checkpoint propose paid OpenRouter
 dense runs for `intfloat/multilingual-e5-large` and `baai/bge-m3`. Do not write
 the remote adapter, read a key, create remote-vector collections or make an API
 request without a new exact plan, budget and explicit user authorization.
 
-Reviewer fresh evidence from `2026-08-29 +07` covers the retained four models
-at 3/3 repetitions. Do not rerun them for a correction limited to removing
-Qwen/deferred code. The Qwen cache and isolated collection have been deleted;
-the Qwen CSV rows remain historical evidence.
+Reviewer evidence from `2026-08-29 +07` covers the retained three models at 3/3
+repetitions. MiniLM-L12/Qwen caches and isolated collections have been deleted;
+their CSV rows remain historical evidence. Notebook 08a is approved and the
+next action is exact Notebook 08b research/brainstorming.

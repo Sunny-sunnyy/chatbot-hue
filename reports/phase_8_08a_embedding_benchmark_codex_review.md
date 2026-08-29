@@ -1,10 +1,14 @@
 # Codex Review: Phase 8 — Notebook 08a Dense Embedding Benchmark
 
-Decision: changes_requested
+Decision: approved
 Reviewer: Codex
-Date: 2026-08-28 +07
+Date: 2026-08-29 +07
 Canonical guide: `guides/phase_8_benchmark_model_selection.md`
 Implementation report: `reports/phase_8_08a_embedding_benchmark_implementation_report.md`
+
+> Lưu ý về diễn tiến review: Sections 1–10 ghi lại các vòng review lịch sử và
+> các finding đã được supersede/correct. Quyết định hiện hành nằm ở Section 11;
+> phạm vi executable cuối cùng là ba model.
 
 ## 1. Phạm vi đã review
 
@@ -270,3 +274,200 @@ loop bốn candidates. Đây là `major` scope/over-engineering finding so với
 four-model amendment. Implementer phải xóa các path/dependency/test/display đó,
 giữ CSV Qwen như historical evidence, cập nhật implementation report và bàn giao
 lại. Reviewer không sửa runtime code thay Implementer và chưa tạo user report.
+
+## 9. Reviewer Addendum — kiểm tra handoff chưa có correction ngày 2026-08-29 +07
+
+Decision tiếp tục là `changes_requested`.
+
+### 9.1. Phạm vi và trạng thái diff
+
+Reviewer kiểm tra commit handoff
+`332662d3d3abe65d2adfbb901e41a65742e7222f`. `HEAD` vẫn đúng commit này,
+worktree sạch và diff từ handoff tới trạng thái hiện tại bằng rỗng. Vì vậy chưa
+có bản sửa mới của Implementer để đáp ứng Section 8.
+
+### 9.2. Findings
+
+#### major — executable catalog và dependency vẫn vượt exact four-model scope
+
+`backend/embedding/dense_benchmark.py:92-178` vẫn khai báo Qwen 384D, ba setting
+1024D, catalog tám setting và authorized tuple gồm Qwen. File này còn giữ
+`Qwen3DenseRunner`, `BGEM3DenseRunner` và factory branches tương ứng tại
+`backend/embedding/dense_benchmark.py:381-552`.
+`backend/evaluation/embedding_benchmark.py:39-63` tiếp tục import/catalog các
+setting đã loại và allowlist collection từ cả tám setting; Qwen vẫn vượt qua
+runtime authorization. `FlagEmbedding` vẫn là direct dependency tại
+`pyproject.toml:28` và còn trong `uv.lock`.
+
+Đây là sai phạm vi và over-engineering chặn approval: runtime hiện vẫn có thể
+load/write Qwen dù cache và collection của nó đã được xóa theo quyết định user.
+Implementer phải giữ đúng bốn canonical setting/collection, control E5-small và
+ba candidates MiniLM/Huydang/E5-base; xóa toàn bộ Qwen/deferred/BGE executable
+paths cùng dependency/test không còn consumer. Canonical object equality và
+mandatory active snapshot hiện có tại
+`backend/evaluation/embedding_benchmark.py:526-563` cần được giữ nguyên cho
+four-model boundary.
+
+#### major — canonical notebook vẫn trình bày và chạy catalog cũ
+
+Notebook vẫn ghi “Danh mục 8 Cấu hình” tại
+`notebooks/08a_embedding_benchmark.ipynb:149`, mô tả bốn candidates gồm Qwen tại
+`notebooks/08a_embedding_benchmark.ipynb:234-236`, và loop
+`AUTHORIZED_DENSE_CANDIDATE_SETTINGS` tại
+`notebooks/08a_embedding_benchmark.ipynb:249`. Kết luận còn diễn giải Qwen như
+candidate hiện hành tại `notebooks/08a_embedding_benchmark.ipynb:407`.
+
+Implementer phải đồng bộ notebook về đúng bốn model tổng cộng và ba candidates;
+Qwen chỉ có thể được nhắc rõ như historical rejected evidence, không được nằm
+trong import, settings table hoặc run loop.
+
+#### major — implementation report chưa được cập nhật theo quyết định hiện hành
+
+Implementation report vẫn tuyên bố catalog tám setting/năm model authorized,
+bao gồm Qwen, tại
+`reports/phase_8_08a_embedding_benchmark_implementation_report.md:28-49` và vẫn
+tuyên bố collection Qwen tồn tại tại cùng file `:141-149`, trái cleanup đã hoàn
+tất. Report cần correction handoff mới, nhưng phải giữ 10 CSV rows Qwen như
+historical evidence thay vì xóa chúng.
+
+### 9.3. Verification quan sát mới
+
+- Focused offline tests: `23 passed, 1 warning in 8.81s`.
+- `git diff --check`: pass, không có output.
+- Golden V3: `45` full cases và `10` smoke cases; không có diff từ handoff.
+- Production `backend/config/settings.yaml` và `backend/embedding/embedder.py`:
+  không có diff từ handoff; active config vẫn `dense_only`, collection
+  `hue_foods_e5_small_384`, vector size 384 và production E5 prefixes giữ nguyên.
+- Canonical notebook parse được; mọi code cell có output rỗng và
+  `execution_count: null`.
+- CSV có 50 data rows của năm model: bốn model hiện hành cộng 10 historical Qwen
+  rows. Đây là đúng retention policy và không phải lỗi row count.
+
+Focused tests pass không chứng minh scope correction vì tests hiện vẫn import và
+bảo vệ catalog cũ. Reviewer không chạy lại model benchmark vì không có thay đổi
+encode/retrieval/scoring/metric và user đã cho phép reuse fresh four-model
+evidence.
+
+### 9.4. Giới hạn và handoff
+
+Qdrant tại `localhost:6333` không kết nối được trong vòng này (`curl` exit 7),
+nên active/four-isolated collection schema/count được ghi `not verified`, không
+suy diễn PASS từ report cũ. Không collection nào bị mutate; Qwen không được tải,
+chạy hoặc tái tạo.
+
+Implementer cần tạo correction thực tế, cập nhật implementation report rồi bàn
+giao lại. Reviewer không sửa runtime code, không tạo user report, không bắt đầu
+08b, không commit hoặc push. Phase 8 tiếp tục `not_ready`.
+
+## 10. Reviewer Addendum — correction four-model đã đạt ngày 2026-08-29 +07
+
+Decision hiện hành là `ready_for_user_confirmation`. Sections 1–9 giữ lịch sử
+các vòng `changes_requested`; section này supersede verdict trước.
+
+### 10.1. Phạm vi đã review
+
+Reviewer đọc exact worktree diff từ commit handoff
+`332662d3d3abe65d2adfbb901e41a65742e7222f` cho source, orchestration, focused
+tests, notebook, dependencies/lockfile và implementation report. Correction chỉ
+thu hẹp catalog/executable paths và presentation; không thay đổi encoding,
+retrieval, scoring, bootstrap, metric hoặc CSV behavior của bốn model giữ lại.
+Vì vậy Reviewer dùng quyền reuse fresh four-model evidence đã được user cho
+phép và không chạy lại model benchmark.
+
+### 10.2. Findings
+
+Không còn `blocker` hoặc `major`.
+
+`minor` — `DenseBenchmarkSetting.truncate_dim` không còn consumer sau khi Qwen
+bị xóa (`backend/embedding/dense_benchmark.py:26`), và
+`DENSE_CANDIDATE_SETTINGS` được import nhưng không dùng trong evaluation module
+(`backend/evaluation/embedding_benchmark.py:47`). Đây là cleanup nhỏ, không mở
+executable path, không ảnh hưởng four-model boundary và không chặn user
+confirmation. Nên xóa khi có lượt docs/code cleanup phù hợp, không cần thêm một
+correction round riêng.
+
+### 10.3. Cách Reviewer kiểm tra độc lập
+
+Focused deterministic tests:
+
+```bash
+cd /home/minhhieu/hue_rag/backend
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-phase8-08a-review-uv-cache \
+  uv run --env-file ../.env python -m pytest \
+  tests/test_embedding_benchmark.py -q --tb=short
+```
+
+Reviewer còn chạy `uv lock --check`, import/assert four-model contract,
+`git diff --check`, notebook JSON/clean-output checks, Golden/CSV row counts,
+production-file diff checks và Qdrant REST read-only collection inspection.
+
+### 10.4. Kết quả quan sát
+
+- Focused suite: `23 passed, 1 warning in 5.12s`.
+- Lockfile: `Resolved 207 packages`; không còn `FlagEmbedding` hoặc các package
+  chỉ do dependency này kéo vào.
+- Catalog runtime: đúng 4 canonical settings; candidate tuple đúng 3 model
+  MiniLM-L12, Huydang DEk21 và E5-base.
+- Không còn Qwen/BGE/E5-large setting, runner, instruction, factory branch hoặc
+  executable collection target. Notebook chỉ nhắc Qwen như historical rejected
+  evidence.
+- Runtime boundary vẫn yêu cầu expected active snapshot, canonical object
+  equality, non-active target và allowlist lấy từ đúng bốn isolated collections.
+- Qdrant live: active `hue_foods_e5_small_384` green, 572 points, dense cosine
+  384D và legacy sparse name `sparse`; bốn isolated collections đều green,
+  dense-only, 572 points và dimensions 384/384/768/768. Collection list không có
+  Qwen, BGE hoặc E5-large 08a target.
+- Golden V3 vẫn 45 full + 10 smoke cases và không có diff. Production settings,
+  production E5 embedder và CSV không có diff từ handoff.
+- CSV giữ 50 data rows: 40 rows của bốn model hiện hành và 10 Qwen rows lịch sử.
+- Repository notebook parse được; mọi code cell có output rỗng và
+  `execution_count: null`.
+- `git diff --check` pass.
+
+### 10.5. Giới hạn
+
+Reviewer không chạy lại model encoding/indexing/retrieval vì correction không
+đổi behavior của bốn model và user đã cho phép reuse fresh 3/3 evidence. Không
+gọi paid API, không mutate active collection, không cutover production và không
+bắt đầu 08b.
+
+### 10.6. Decision và bước tiếp theo
+
+Notebook 08a đạt technical review và chờ user chạy/kiểm tra notebook rồi xác
+nhận. Phase 8 tổng thể tiếp tục `not_ready`; guide/status chưa chuyển approved
+và Notebook 08b vẫn đóng. Reviewer không commit hoặc push.
+
+## 11. User confirmation và final three-model cleanup — 2026-08-29 +07
+
+User xác nhận đã chạy Notebook 08a thành công và chấp nhận kết quả. Sau khi đọc
+exact correction diff, Reviewer xác minh final executable catalog chỉ còn:
+
+1. `e5-small-384`;
+2. `huydang-dek21-embedding-768`;
+3. `e5-base-768`.
+
+MiniLM-L12 đã bị loại khỏi source, boundary allowlist, tests và notebook loop;
+`truncate_dim` cũng được xóa. Historical MiniLM/Qwen CSV rows được giữ làm
+negative evidence, không phải executable settings.
+
+Fresh final verification:
+
+- focused tests: `23 passed, 1 warning in 6.12s`;
+- `uv lock --check`: pass, 207 packages resolved;
+- catalog import assertion: 3 settings, 2 candidates;
+- canonical notebook: valid JSON, outputs rỗng, execution counts null;
+- Golden V3: 45 full + 10 smoke;
+- Qdrant live: active 572-point 384D collection và ba isolated collections
+  572 points với dimensions 384/768/768; MiniLM/Qwen/E5-large collections absent;
+- production settings/embedder unchanged; `git diff --check` pass.
+- CSV giữ đúng 50 data rows: 30 rows của ba model hiện hành, 10 MiniLM và 10
+  Qwen historical rows. Các số latency/resource của lần Run All mới nhất trong
+  CSV là evidence canonical; bảng performance trong implementation report ghi
+  lại lần chạy 3/3 trước đó và không được Reviewer tự sửa.
+
+Không còn blocker hoặc major. Hai minor không mở executable path và không chặn
+approval: evaluation module còn unused import `DENSE_CANDIDATE_SETTINGS`, và
+docstring của generic `SentenceTransformerDenseRunner` còn nhắc MiniLM dù runner
+hiện chỉ có consumer E5. Notebook 08a được `approved`; Phase 8 tổng thể vẫn `not_ready`.
+Next action là research/brainstorming exact Notebook 08b, chưa phải
+implementation/run 08b hoặc production cutover.

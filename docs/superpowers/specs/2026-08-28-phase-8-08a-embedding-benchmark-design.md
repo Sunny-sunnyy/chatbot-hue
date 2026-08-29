@@ -2,16 +2,15 @@
 
 Date: 2026-08-28 (+07)
 
-Status: design and implementation plan approved by the user on 2026-08-28.
-The user authorized the exact Notebook 08a implementation and real local Run
-All described by those documents as amended below, including pinned model
-downloads and writes only to the four approved isolated Qdrant collections. Paid calls, active
-collection mutation, production cutover and later Notebook 08 groups remain
-unauthorized.
+Status: `approved`. Design/plan were approved on `2026-08-28 +07`; implementation,
+independent review and user Run All confirmation completed on `2026-08-29 +07`.
+Final local scope has three models and three approved isolated Qdrant
+collections. Paid calls, active collection mutation, production cutover and
+later Notebook 08 implementation remain unauthorized.
 
 ## Purpose
 
-Notebook 08a teaches and measures four local dense embedding configurations on
+Notebook 08a teaches and measures three local dense embedding configurations on
 the Hue food corpus. It uses Golden Dataset V3, production chunking and dense
 retrieval semantics, and isolated Qdrant collections. Its output is technical
 evidence for later model selection, not a production cutover.
@@ -53,9 +52,8 @@ executed or modified here:
 08a compares exactly these configurations in this order:
 
 1. multilingual E5-small 384D, the fixed control;
-2. multilingual MiniLM-L12 384D;
-3. Huydang DEk21 native 768D;
-4. multilingual E5-base 768D;
+2. Huydang DEk21 native 768D;
+3. multilingual E5-base 768D;
 
 It uses real local models, CPU FP32, the canonical 572 chunks, all 45 Golden V3
 cases, actual isolated Qdrant targets, and production backend data paths.
@@ -82,21 +80,18 @@ are pinned during loading.
 | Order | Setting key | Model ID | Revision | License | Dim | Max | Collection |
 |---:|---|---|---|---|---:|---:|---|
 | 1 | e5-small-384 | intfloat/multilingual-e5-small | 614241f622f53c4eeff9890bdc4f31cfecc418b3 | MIT | 384 | 512 | hue_foods_08a_e5_small_384 |
-| 2 | multilingual-minilm-l12-384 | sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 | e8f8c211226b894fcb81acc59f3b34ba3efd5f42 | Apache-2.0 | 384 | 128 | hue_foods_08a_minilm_l12_384 |
-| 3 | huydang-dek21-embedding-768 | CODE4LIFEOFFICIAL/huydang-dek21-embedding | 517f1af7dd04a57194f1de2990f0c6ede0a3109b | Apache-2.0 | 768 | 256 | hue_foods_08a_huydang_dek21_768 |
-| 4 | e5-base-768 | intfloat/multilingual-e5-base | d128750597153bb5987e10b1c3493a34e5a4502a | MIT | 768 | 512 | hue_foods_08a_e5_base_768 |
+| 2 | huydang-dek21-embedding-768 | CODE4LIFEOFFICIAL/huydang-dek21-embedding | 517f1af7dd04a57194f1de2990f0c6ede0a3109b | Apache-2.0 | 768 | 256 | hue_foods_08a_huydang_dek21_768 |
+| 3 | e5-base-768 | intfloat/multilingual-e5-base | d128750597153bb5987e10b1c3493a34e5a4502a | MIT | 768 | 512 | hue_foods_08a_e5_base_768 |
 
 Official sources:
 
 - https://huggingface.co/intfloat/multilingual-e5-small
 - https://huggingface.co/intfloat/multilingual-e5-base
-- https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
 - https://huggingface.co/CODE4LIFEOFFICIAL/huydang-dek21-embedding
 
 Exact human-readable labels are:
 
 - `E5-small 384D (control)`;
-- `Multilingual MiniLM-L12 384D`;
 - `Huydang DEk21 768D`;
 - `E5-base 768D`;
 
@@ -117,11 +112,11 @@ All query and document vectors are L2-normalized after native pooling.
 - Use the model attention-mask mean pooling.
 - Cap tokenized input at 512 tokens.
 
-### Multilingual MiniLM-L12
+### Historical Multilingual MiniLM-L12 contract — removed
 
-- Use raw query and document text.
-- Use the model mean-pooling configuration.
-- Keep its native maximum of 128 tokens.
+MiniLM-L12 was measured with raw text, mean pooling and native maximum 128
+tokens. It is no longer an executable setting; these notes only explain the
+historical CSV evidence and must not be used to restore its runner/collection.
 
 ### Historical BGE-M3 dense design — cancelled for local execution
 
@@ -438,7 +433,7 @@ cells in seven sections.
 
 ### 4. Settings and isolation
 
-- Display four pinned local settings.
+- Display three pinned local settings.
 - Explain isolated collections.
 - Capture/display the safe active snapshot.
 
@@ -559,7 +554,7 @@ After Run All, Reviewer:
 
 1. reconciles CSV with the temporary notebook;
 2. independently recomputes at least one sample metric and gate;
-3. confirms all four authorized isolated collections have 572 points and dimensions;
+3. confirms all three authorized isolated collections have 572 points and dimensions;
 5. confirms active schema/count and production config are unchanged;
 6. parses the repository notebook and confirms clean outputs/counts;
 7. runs focused tests and git diff --check;
@@ -576,29 +571,29 @@ authorized implementation/run. Reviewer writes
 reports/phase_8_08a_embedding_benchmark_codex_review.md and, only for
 ready_for_user_confirmation, the matching user report.
 
-## Local execution amendment (2026-08-29 +07, superseding earlier local scope)
+## Final local execution amendment (2026-08-29 +07, superseding earlier local scope)
 
-The executable local 08a matrix is permanently limited to these 4 settings:
+The executable local 08a matrix is permanently limited to these 3 settings:
 1. `e5-small-384` (Control, 384D, Authorized)
-2. `multilingual-minilm-l12-384` (384D, Authorized)
-3. `huydang-dek21-embedding-768` (PhoBERT ~135M params, 768D, max length 256, PyVi segmentation, Authorized)
-4. `e5-base-768` (768D, Authorized)
+2. `huydang-dek21-embedding-768` (PhoBERT ~135M params, 768D, max length 256, PyVi segmentation, Authorized)
+3. `e5-base-768` (768D, Authorized)
 
 The following settings are no longer authorized for local download or execution
 on this machine because their resource requirements exceed the accepted local
 profile:
 
+- `multilingual-minilm-l12-384`;
 - `e5-large-1024`;
 - `bge-m3-dense-1024`;
 - `qwen3-embedding-0.6b-384` and `qwen3-embedding-0.6b-1024`.
 
-After the four local settings finish, a separate paid/remote proposal may
+After the three local settings finish, a separate paid/remote proposal may
 benchmark `intfloat/multilingual-e5-large` and `baai/bge-m3` through the current
 OpenRouter embeddings API. That remote experiment is outside this local 08a Run
 All and requires fresh catalog/schema/pricing verification plus explicit user
 approval. Qwen3 Embedding has no authorized local or remote run.
 
-Runtime boundaries fail closed for every setting outside the exact four-setting
+Runtime boundaries fail closed for every setting outside the exact three-setting
 local tuple. Historical 1024D adapter code or design text is not execution
 authorization.
 
@@ -607,14 +602,13 @@ The final local implementation should not retain Qwen settings/runners, unused
 direct `FlagEmbedding` dependency solely for the removed local paths. Future OpenRouter support is a
 separate remote API design, not reuse authorization for the local BGE adapter.
 
-Historical Qwen3 384D CSV rows remain as evidence explaining its rejection;
-they are not executable catalog entries or four-model row-count acceptance.
-The Qwen cache and isolated collection were deleted by the Reviewer with user
-authorization on `2026-08-29 +07`.
+Historical MiniLM-L12 and Qwen3 384D CSV rows remain as evidence explaining
+their rejection; they are not executable catalog entries. Their caches and
+isolated collections were deleted with user authorization on `2026-08-29 +07`.
 
-Technical readiness does not approve 08a automatically. The user must inspect
-and confirm the notebook. Only then may canonical guide/design/plan,
-guides/README.md, Project_Status.md and the reports index mark 08a approved and
-move to Notebook 08b research/brainstorming. Phase 8 remains not_ready.
+The user inspected and successfully ran the notebook, then confirmed 08a on
+`2026-08-29 +07`. Notebook 08a is approved. Phase 8 remains `not_ready`; the next
+action is Notebook 08b research/brainstorming.
 
-No commit or push is part of this workflow.
+The user separately authorized the final documentation sync commit and push on
+`2026-08-29 +07`.

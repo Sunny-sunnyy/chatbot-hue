@@ -14,10 +14,11 @@ Phase 8 tổng thể chưa có production/final-selection authorization. Chỉ m
 Golden Dataset V3 Gate 0 đã được Reviewer kiểm tra và user phê duyệt ở kích
 thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 common
 contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design/plan cũng
-đã được duyệt và work package 08a ở trạng thái `ready`: Implementer được phép
-viết đúng scope, tải pinned local models và chạy real Run All trên bốn isolated
-Qdrant collections. Authorization này không cho phép sửa dataset, cài GPU/CUDA,
-gọi paid API, mutate active collection, cutover production hoặc làm 08b–08e.
+đã được duyệt, triển khai, review độc lập và được user xác nhận ngày
+`2026-08-29 +07`. Work package 08a đã `approved` với ba model local còn lại và
+ba isolated Qdrant collections. Phase 8 tổng thể vẫn `not_ready`; bước kế tiếp
+là research và brainstorming exact Notebook 08b, chưa authorize implementation
+hoặc execution 08b–08e.
 
 ## Mục tiêu
 
@@ -130,12 +131,12 @@ Phase 8 phải tạo real evidence cho toàn bộ các retrieval paths sau:
 
 | Path | Candidate generation/fusion semantics | Embedding dependency |
 |---|---|---|
-| Dense-only | Qdrant dense retrieval | Chạy cho cả bốn local dense configurations |
+| Dense-only | Qdrant dense retrieval | Chạy cho cả ba local dense configurations |
 | BM25-only | Python BM25 sinh candidates độc lập trên toàn corpus | Chạy một lần; không phụ thuộc dense embedding |
-| Dense → BM25 rescoring | Dense candidates trước, BM25 chỉ chấm lại candidate set hiện hành | Chạy cho cả bốn local dense configurations |
-| True hybrid dense + BM25 | Dense và full-corpus BM25 sinh candidates độc lập rồi fusion | Chạy cho cả bốn local dense configurations |
+| Dense → BM25 rescoring | Dense candidates trước, BM25 chỉ chấm lại candidate set hiện hành | Chạy cho cả ba local dense configurations |
+| True hybrid dense + BM25 | Dense và full-corpus BM25 sinh candidates độc lập rồi fusion | Chạy cho cả ba local dense configurations |
 | TF-IDF sparse-only | Custom `SparseEmbedder` sinh/query sparse candidates độc lập | Experimental control chạy một lần |
-| True hybrid dense + TF-IDF | Dense và custom TF-IDF sparse sinh candidates độc lập rồi fusion | Chạy cho cả bốn local dense configurations |
+| True hybrid dense + TF-IDF | Dense và custom TF-IDF sparse sinh candidates độc lập rồi fusion | Chạy cho cả ba local dense configurations |
 
 Coverage đầy đủ nghĩa là mọi component/path và mọi tổ hợp tương thích ở trên có
 kết quả thật, không phải lặp cùng một computation dưới tên cấu hình khác. BM25-
@@ -210,8 +211,8 @@ VnCoreNLP hoặc tokenizer grid.
 
 ## Dense embedding local và OpenRouter remote-only
 
-Local E5 là control baseline. Máy local chỉ chạy exact four-setting matrix dưới
-đây. OpenRouter embedding chỉ được đề xuất sau khi bốn local settings hoàn tất và
+Local E5 là control baseline. Máy local chỉ chạy exact three-setting matrix dưới
+đây. OpenRouter embedding chỉ được đề xuất sau khi ba local settings hoàn tất và
 chỉ được implement/chạy khi
 user duyệt riêng paid remote experiment.
 
@@ -224,17 +225,17 @@ không phải xếp hạng chất lượng được giả định trước.
 | Thứ tự | Model | Vector/đặc điểm cần giữ trong manifest | Trạng thái tiếng Việt |
 |---:|---|---|---|
 | 1 | `intfloat/multilingual-e5-small` | 384D; control hiện hành | multilingual; benchmark domain vẫn quyết định |
-| 2 | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | 384D; candidate nhẹ | multilingual; benchmark domain vẫn quyết định |
-| 3 | `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | native 768D; max length 256; PyVi segmentation | Vietnamese legal-domain fine-tune; Hue-food benchmark quyết định |
-| 4 | `intfloat/multilingual-e5-base` | 768D | multilingual; benchmark domain vẫn quyết định |
-Bốn model chạy tuần tự, không chạy song song.
+| 2 | `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | native 768D; max length 256; PyVi segmentation | Vietnamese legal-domain fine-tune; Hue-food benchmark quyết định |
+| 3 | `intfloat/multilingual-e5-base` | 768D | multilingual; benchmark domain vẫn quyết định |
+Ba model chạy tuần tự, không chạy song song. MiniLM-L12 đã bị loại sau 08a do
+quality regression và truncation; CSV rows của nó chỉ là historical evidence.
 
-### Remote-only candidates sau local four
+### Remote-only candidates sau local three
 
 | Model ID OpenRouter hiện hành | Output | Trạng thái |
 |---|---:|---|
-| `intfloat/multilingual-e5-large` | 1024D | Có thể đề xuất paid remote benchmark sau local four |
-| `baai/bge-m3` | 1024D dense | Có thể đề xuất paid remote benchmark sau local four |
+| `intfloat/multilingual-e5-large` | 1024D | Có thể đề xuất paid remote benchmark sau local three |
+| `baai/bge-m3` | 1024D dense | Có thể đề xuất paid remote benchmark sau local three |
 
 Nguồn catalog hiện hành:
 
@@ -557,10 +558,10 @@ Common regression/statistical gates, CPU measurement/reliability, finalist
 count/roles, notebook style, long-format CSV/upsert, focused-test boundary và
 final confirmation rerun đã được user duyệt ngày `2026-08-28 +07`.
 
-Notebook 08a hiện khóa bốn local dense configurations, native contracts, isolated
-collections, metrics/gates, CSV, notebook cells, focused tests và real Run All.
-Sau implementation report, Reviewer mới bắt đầu independent technical review.
-Chỉ khi Reviewer đạt và user xác nhận Notebook 08a mới chuyển sang 08b.
+Notebook 08a đã khóa ba local dense configurations, native contracts, isolated
+collections, metrics/gates, CSV, notebook cells và focused tests. Reviewer đã
+xác minh correction ba-model; user đã chạy notebook và xác nhận 08a ngày
+`2026-08-29 +07`. Bước tiếp theo là research và brainstorming Notebook 08b.
 
 Chi tiết còn lại chỉ được giải quyết tại checkpoint của group tương ứng:
 
@@ -768,7 +769,7 @@ Golden V3 edit, active collection mutation, production cutover hoặc Notebook
 Commit/push cần yêu cầu riêng.
 
 ```text
-Decision superseding earlier 1024D/local-matrix decisions: Máy hiện tại không
+Historical decision, superseded by the later MiniLM removal decision: Máy hiện tại không
 chạy local e5-large-1024, bge-m3-dense-1024 hoặc bất kỳ Qwen3 Embedding setting
 nào. Exact local 08a matrix có bốn settings: E5-small, MiniLM-L12, Huydang DEk21
 768D và E5-base. Sau khi bốn local settings hoàn tất, chỉ E5-large multilingual
@@ -792,4 +793,27 @@ category guardrails, query latency cao và CPU corpus embedding khoảng 765 gi�
 Approved by: User
 Approval date +07: 2026-08-29
 Affected scope: Exact 08a correction, later local matrix, docs/status và cleanup.
+```
+
+```text
+Decision: Loại `multilingual-minilm-l12-384` khỏi executable local catalog và
+mọi matrix 08b/08d. Giữ 10 CSV rows làm historical rejection evidence; xóa
+cache model và collection `hue_foods_08a_minilm_l12_384`. Exact local dense
+catalog còn E5-small, Huydang DEk21 768D và E5-base 768D.
+Reason: 08a evidence cho thấy nDCG@5 = 0.4709, trượt 7/9 guardrails và 83/572
+chunks bị truncate ở max length 128, không có lợi ích tương xứng.
+Approved by: User
+Approval date +07: 2026-08-29
+Affected scope: 08a final catalog, 08b/08d local matrix, Qdrant/cache cleanup và
+canonical documentation.
+```
+
+```text
+Decision: Notebook 08a dense embedding benchmark được approved sau independent
+Reviewer verification và user Run All confirmation. CSV giữ historical MiniLM
+và Qwen rows; production E5-small/config không cutover hoặc thay đổi.
+Approved by: User
+Approval date +07: 2026-08-29
+Next action: Research và brainstorming exact Notebook 08b; implementation/run
+08b vẫn cần approval riêng.
 ```

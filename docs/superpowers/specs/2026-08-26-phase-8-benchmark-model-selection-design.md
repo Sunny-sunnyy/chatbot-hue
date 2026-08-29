@@ -1,8 +1,8 @@
 # Phase 8 Benchmark Model Selection Design
 
-**Status:** `gate_1_common_contracts_approved`; exact Notebook 08a design/plan
-and its isolated implementation/real-run authorization are also approved.
-Later notebook-specific designs and execution remain pending.
+**Status:** `gate_1_common_contracts_approved`; Notebook 08a implementation,
+independent review and user confirmation are complete. Notebook 08b is the next
+research/brainstorming checkpoint; later execution remains pending.
 
 **Purpose:** Khóa các quyết định Phase 8 đã được user xác nhận trong khi tiếp
 tục brainstorming những biến thí nghiệm còn lại. Bản master này tự nó không
@@ -62,13 +62,13 @@ tài nguyên. Nó không giả định trước winner.
 | Thứ tự | Model | Dimension/capability | Vietnamese policy |
 |---:|---|---|---|
 | 1 | `intfloat/multilingual-e5-small` | 384D; current control | benchmark corrected Vietnamese gold |
-| 2 | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | 384D; lightweight multilingual | benchmark corrected Vietnamese gold |
-| 3 | `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | native 768D; PyVi segmentation | benchmark corrected Vietnamese gold; legal-domain transfer risk |
-| 4 | `intfloat/multilingual-e5-base` | 768D | benchmark corrected Vietnamese gold |
+| 2 | `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | native 768D; PyVi segmentation | benchmark corrected Vietnamese gold; legal-domain transfer risk |
+| 3 | `intfloat/multilingual-e5-base` | 768D | benchmark corrected Vietnamese gold |
 
-The local scope contains four dense configurations. Equal dimensions never make
-embeddings from different models compatible. The 1024D candidates are governed
-only by the remote-only amendment below.
+The local scope contains three dense configurations. MiniLM-L12 was measured and
+then removed because of quality regression and truncation; its CSV rows remain
+historical evidence. The 1024D candidates are governed only by the remote-only
+amendment below.
 
 ## Sparse and hybrid capabilities in scope
 
@@ -76,12 +76,12 @@ Phase 8 must create controlled real comparisons for:
 
 | Retrieval path | Required compatible coverage |
 |---|---|
-| Dense-only | All four local dense configurations |
+| Dense-only | All three local dense configurations |
 | Independent full-corpus BM25-only | Once; embedding-independent |
-| Current dense-candidate then BM25 rescoring | All four local dense configurations |
-| True hybrid dense + independent full-corpus BM25 | All four local dense configurations |
+| Current dense-candidate then BM25 rescoring | All three local dense configurations |
+| True hybrid dense + independent full-corpus BM25 | All three local dense configurations |
 | Custom TF-IDF `SparseEmbedder`-only | Once as an experimental control |
-| True hybrid dense + custom TF-IDF sparse | All four local dense configurations |
+| True hybrid dense + custom TF-IDF sparse | All three local dense configurations |
 
 Notebook 08d combines every valid pre-rerank pipeline with no reranker and each
 of the three reranker candidates. Complete coverage means every real component,
@@ -396,11 +396,10 @@ use the actual V3 distribution and do not restore historical V2 quotas.
 
 ## Current handoff after Notebook 08a approval
 
-Global contracts and Notebook 08a's exact design/plan are approved. Implementer
-may execute only that scope and must hand observed evidence to an independent
-Reviewer. Continue to Notebook 08b research/brainstorming only after technical
-review and user confirmation of 08a; do not pre-design every later setting in
-this master document.
+Global contracts and Notebook 08a are approved. Implementation, independent
+review and user confirmation completed on `2026-08-29 +07`. Continue with
+Notebook 08b research/brainstorming; its implementation/run still requires an
+exact approved design.
 
 Before each real group, reverify current model/provider availability, model IDs,
 licenses, dimensions, API schemas, limits and machine compatibility from primary
@@ -409,20 +408,20 @@ silently expand scope or authorize execution.
 
 ## Resource-bound execution amendment (2026-08-29 +07)
 
-This amendment supersedes the earlier five/seven-configuration local matrices and BGE
-learned-sparse local coverage. Local execution is limited to E5-small 384D,
-MiniLM-L12 384D, Huydang DEk21 native 768D and E5-base 768D. E5-large 1024D,
-BGE-M3 1024D and every Qwen3 Embedding variant must not be downloaded or
-executed locally. Historical Qwen3 384D CSV rows remain rejection evidence only.
+This amendment supersedes the earlier local matrices and BGE learned-sparse
+coverage. Local execution is limited to E5-small 384D, Huydang DEk21 native
+768D and E5-base 768D. MiniLM-L12, E5-large 1024D, BGE-M3 1024D and every Qwen3
+Embedding variant must not be downloaded or executed locally. Historical
+MiniLM-L12 and Qwen3 384D CSV rows remain rejection evidence only.
 
-After the four local settings complete, a separate paid proposal may cover
+After the three local settings complete, a separate paid proposal may cover
 OpenRouter `intfloat/multilingual-e5-large` and `baai/bge-m3` dense embeddings.
 The proposal is not implementation/run authorization and must reverify current
 catalog, schema, pricing, provider behavior and exact preprocessing. OpenRouter
 dense embeddings do not authorize or provide evidence for BGE learned sparse or
 ColBERT, so those paths are removed from the local 08b/08d matrix.
 
-The Qwen model cache and isolated collection were deleted with user
-authorization on `2026-08-29 +07`. Reviewer fresh evidence already covers all
-four retained models at 3/3 repetitions; a pure removal correction does not
-require another model run.
+The MiniLM-L12/Qwen model caches and isolated collections were deleted with user
+authorization on `2026-08-29 +07`. Reviewer evidence covers all three retained
+models at 3/3 repetitions. Notebook 08a is approved; 08b is the next design
+checkpoint.

@@ -9,12 +9,10 @@ from core.schema import RetrievedDocument
 from evaluation.golden_dataset import GoldenCase
 from embedding.dense_benchmark import (
     ALL_DENSE_SETTINGS,
-    AUTHORIZED_DENSE_SETTINGS,
-    DEFERRED_DENSE_SETTINGS,
+    DENSE_CANDIDATE_SETTINGS,
     E5_SMALL_SETTING,
-    E5_BASE_SETTING,
     HUYDANG_DEK21_SETTING,
-    E5_LARGE_SETTING,
+    E5_BASE_SETTING,
     DenseBenchmarkSetting,
 )
 from evaluation.embedding_benchmark import (
@@ -493,7 +491,19 @@ def test_run_embedding_benchmark_rejects_forged_setting():
         run_embedding_benchmark(forged_setting, fake_inputs, expected_active_snapshot={})
 
 
-def test_run_embedding_benchmark_rejects_deferred_setting():
+def test_run_embedding_benchmark_rejects_unapproved_collection():
+    fake_setting = DenseBenchmarkSetting(
+        order=1,
+        setting_key="e5-small-384",
+        setting_label="E5-small 384D (control)",
+        model_id="intfloat/multilingual-e5-small",
+        revision="614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        dimension=384,
+        max_length=512,
+        collection_name="unapproved_collection_name",
+        runner_kind="sentence_transformer",
+        input_contract="e5",
+    )
     fake_inputs = EmbeddingBenchmarkInputs(
         cases=[],
         chunks=[],
@@ -501,8 +511,8 @@ def test_run_embedding_benchmark_rejects_deferred_setting():
         settings={"vector_database": {"collection_name": "hue_foods_e5_small_384"}},
     )
 
-    with pytest.raises(ValueError, match="deferred and not authorized"):
-        run_embedding_benchmark(E5_LARGE_SETTING, fake_inputs, expected_active_snapshot={})
+    with pytest.raises(ValueError, match="forged or altered setting object"):
+        run_embedding_benchmark(fake_setting, fake_inputs, expected_active_snapshot={})
 
 
 def test_run_embedding_benchmark_rejects_active_target():
@@ -608,9 +618,11 @@ def test_category_table_helper():
 
 def test_settings_table_helper():
     df = settings_table()
-    assert df.shape == (8, 9)
+    assert df.shape == (3, 9)
     assert "Scope Status" in df.columns
     assert "huydang-dek21-embedding-768" in df["Key"].to_list()
+    assert len(ALL_DENSE_SETTINGS) == 3
+    assert len(DENSE_CANDIDATE_SETTINGS) == 2
 
 
 # --- 10. Huydang DEk21 & PyVi Integration tests ---
@@ -618,7 +630,7 @@ def test_settings_table_helper():
 
 def test_huydang_dek21_setting_contract():
     s = HUYDANG_DEK21_SETTING
-    assert s.order == 3
+    assert s.order == 2
     assert s.setting_key == "huydang-dek21-embedding-768"
     assert s.model_id == "CODE4LIFEOFFICIAL/huydang-dek21-embedding"
     assert s.revision == "517f1af7dd04a57194f1de2990f0c6ede0a3109b"
