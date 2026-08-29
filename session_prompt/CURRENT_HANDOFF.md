@@ -5,7 +5,7 @@ Authored by: implementer
 Handoff kind: final_review
 State: active
 Base commit: b4452dd617757565840622228054b5679eff3713
-Head commit: worktree
+Head commit: HEAD
 Risk level: medium
 Git authorization: none
 
@@ -107,7 +107,8 @@ kiểm tra theo Review Contract.
 - Codex thực hiện docs correction theo direct user instruction thay vì Gemini.
   Independent review vẫn bắt buộc; handoff này không tuyên bố approval.
 - Runtime/live checks được chủ đích bỏ qua vì không có product path thay đổi.
-- Git authorization là `none`; mọi thay đổi chỉ nằm trong worktree.
+- Checkpoint đã được commit/push theo yêu cầu riêng của user. Git authorization
+  hiện là `none`; handoff này không cấp quyền Git tiếp theo cho Reviewer.
 
 ## 9. Kế hoạch đóng phê duyệt
 

@@ -103,7 +103,7 @@ Fresh checks:
 | Project skill diff | PASS, cả hai skill không đổi |
 | Canonical path checks | PASS |
 | Active production mutation | Không thực hiện |
-| Git staging/commit/push | Không thực hiện |
+| Git checkpoint | Đã commit/push theo yêu cầu riêng của user sau implementation; handoff không cấp quyền Git tiếp theo |
 
 Responsibility audit:
 
@@ -140,7 +140,9 @@ Manual scenarios:
 - Không có runtime/live verification vì runtime không đổi. Kết quả Phase 8 cũ
   không được relabel thành fresh evidence cho correction này.
 - `session_prompt_old/` vẫn untracked và không thuộc implementation output.
-- Không có Git authorization; toàn bộ thay đổi nằm ở worktree.
+- User đã cấp authorization riêng để commit/push checkpoint sau implementation.
+  `CURRENT_HANDOFF.md` dùng symbolic `HEAD` và giữ `Git authorization: none` cho
+  lượt Reviewer tiếp theo.
 
 ## 6. Handoff cho Reviewer
 
