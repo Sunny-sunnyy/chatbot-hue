@@ -17,8 +17,8 @@ contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design
 đã được duyệt, triển khai, review độc lập và được user xác nhận ngày
 `2026-08-29 +07`. Work package 08a đã `approved` với ba model local còn lại và
 ba isolated Qdrant collections. Phase 8 tổng thể vẫn `not_ready`; bước kế tiếp
-là research và brainstorming exact Notebook 08b, chưa authorize implementation
-hoặc execution 08b–08e.
+là implementation và batch execution exact Notebook 08b. Design/spec/plan 08b
+đã được user duyệt ngày `2026-08-29 +07`; 08c–08e vẫn chưa authorize.
 
 ## Mục tiêu
 
@@ -561,7 +561,17 @@ final confirmation rerun đã được user duyệt ngày `2026-08-28 +07`.
 Notebook 08a đã khóa ba local dense configurations, native contracts, isolated
 collections, metrics/gates, CSV, notebook cells và focused tests. Reviewer đã
 xác minh correction ba-model; user đã chạy notebook và xác nhận 08a ngày
-`2026-08-29 +07`. Bước tiếp theo là research và brainstorming Notebook 08b.
+`2026-08-29 +07`. Exact Notebook 08b staged design và implementation plan đã
+được user duyệt ngày `2026-08-29 +07` tại:
+
+```text
+docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
+docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
+```
+
+08b được phép chạy theo số batch tùy điều kiện tài nguyên, persist sau từng
+setting và resume chỉ khi exact provenance khớp. Chia batch không thay đổi 45
+cases, ba repetitions, exact 20-setting matrix hoặc reconciliation gate.
 
 Chi tiết còn lại chỉ được giải quyết tại checkpoint của group tương ứng:
 
@@ -816,4 +826,17 @@ Approved by: User
 Approval date +07: 2026-08-29
 Next action: Research và brainstorming exact Notebook 08b; implementation/run
 08b vẫn cần approval riêng.
+```
+
+```text
+Decision: Exact Notebook 08b retrieval/fusion design và implementation plan đã
+được user approved. Main matrix có 20 settings trên 45 Golden V3 cases; 900
+per-case records là 20 kết quả cho mỗi trong 45 câu, không phải 900 Golden cases.
+Implementer được chia execution thành số batch tùy ý, checkpoint sau từng
+setting, giải phóng tài nguyên giữa batch và chỉ shortlist sau full
+reconciliation.
+Approved by: User
+Approval date +07: 2026-08-29
+Next action: Implementer thực hiện exact 08b plan; không mở rộng sang festivals,
+reranker, generation, paid API, active mutation hoặc production cutover.
 ```

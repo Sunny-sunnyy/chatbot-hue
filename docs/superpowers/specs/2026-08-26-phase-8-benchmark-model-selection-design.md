@@ -1,8 +1,9 @@
 # Phase 8 Benchmark Model Selection Design
 
-**Status:** `gate_1_common_contracts_approved`; Notebook 08a implementation,
-independent review and user confirmation are complete. Notebook 08b is the next
-research/brainstorming checkpoint; later execution remains pending.
+**Status:** `not_ready`; Notebook 08a implementation, independent review and
+user confirmation are complete. Exact Notebook 08b design/plan were approved
+on `2026-08-29 +07` and are ready for the Implementer handoff. Notebook 08c–08e
+and production selection remain pending.
 
 **Purpose:** Khóa các quyết định Phase 8 đã được user xác nhận trong khi tiếp
 tục brainstorming những biến thí nghiệm còn lại. Bản master này tự nó không
@@ -394,12 +395,21 @@ user-approved full 45 cases support final local retrieval selection; the
 10-case subset is smoke only. Gate 1 common winner/uncertainty contracts above
 use the actual V3 distribution and do not restore historical V2 quotas.
 
-## Current handoff after Notebook 08a approval
+## Current handoff after Notebook 08b design approval
 
-Global contracts and Notebook 08a are approved. Implementation, independent
-review and user confirmation completed on `2026-08-29 +07`. Continue with
-Notebook 08b research/brainstorming; its implementation/run still requires an
-exact approved design.
+Global contracts and Notebook 08a are approved. Exact 08b requirements are now
+owned by:
+
+```text
+docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
+docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
+```
+
+The user approved both documents on `2026-08-29 +07` and requested an
+Implementer handoff. The 08b run may be partitioned into any practical number
+of sequential batches with atomic per-setting persistence, exact resume and
+resource release. Final reconciliation still requires all 20 settings, 200
+summary rows and 900 per-case setting/case records.
 
 Before each real group, reverify current model/provider availability, model IDs,
 licenses, dimensions, API schemas, limits and machine compatibility from primary
@@ -423,5 +433,5 @@ ColBERT, so those paths are removed from the local 08b/08d matrix.
 
 The MiniLM-L12/Qwen model caches and isolated collections were deleted with user
 authorization on `2026-08-29 +07`. Reviewer evidence covers all three retained
-models at 3/3 repetitions. Notebook 08a is approved; 08b is the next design
-checkpoint.
+models at 3/3 repetitions. Notebook 08a is approved; 08b is the next
+implementation/review work package.

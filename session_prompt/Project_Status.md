@@ -73,7 +73,7 @@ Mỗi model có 3/3 repetition evidence trên 45 Golden V3 cases và 572 chunks.
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1 và Notebook 08a approved; 08b–08e chưa implement |
+| 8 | `not_ready` | Gate 0, Gate 1, Notebook 08a và exact 08b design/plan approved; 08b chờ implementation/review |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -92,6 +92,12 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   `0.6 dense / 0.4 sparse`; không weight grid khi chưa có observed need.
 - Notebook 08b chỉ so sánh tokenizer BM25 Unicode `\w+` hiện hành với
   Underthesea `word_tokenize(..., format="text")`; không mở tokenizer grid.
+- Notebook 08b có exact 20-setting matrix trên 45 Golden V3 cases. `900`
+  per-case records là một record cho mỗi setting/case để audit ranking và
+  fusion, không phải mở rộng Golden Dataset lên 900 câu.
+- Implementer 08b được chia run thành số batch tùy tài nguyên, persist atomically
+  sau từng setting, resume theo exact provenance và giải phóng tài nguyên giữa
+  batch. Không shortlist trước khi reconcile đủ matrix.
 - Canonical notebooks là learning documents, gọi backend trực tiếp và giữ sạch
   outputs/execution counts trong repo.
 - Runtime/code/test practice dùng `skills/practical-project-coding/SKILL.md`.
@@ -147,6 +153,13 @@ reports/phase_8_08a_embedding_benchmark_codex_review.md
 evaluation/results/phase8_embedding_results.csv
 ```
 
+Approved 08b design package:
+
+```text
+docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
+docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
+```
+
 Governance designs and plans:
 
 ```text
@@ -158,11 +171,13 @@ docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-p
 
 ## Current next action
 
-Hoàn tất governance correction để khôi phục các nguyên tắc coding,
-implementation và review cốt lõi trong ba bootstrap behavior files. Correction
-phải qua independent review và user confirmation trước khi chuyển sang research
-và brainstorming exact Notebook 08b.
+Exact Notebook 08b design và implementation plan đã được user duyệt ngày
+`2026-08-29 +07`. Current next action là Implementer thực hiện plan theo TDD,
+chia batch/checkpoint tùy tài nguyên, tạo/reuse đúng isolated TF-IDF collection,
+chạy real 45-case evidence và bàn giao independent review. Active collection,
+paid API, reranker, generation và production cutover vẫn ngoài scope.
 
-08b hiện chưa authorize implementation/run, dependency/provider mới, paid API,
-active Qdrant mutation hoặc production cutover. Reviewer phải brainstorm và tạo
-exact spec/plan cùng Review Contract trước khi giao Implementer.
+Queued separate reviewer session, không thuộc 08b handoff: đánh giá khả năng mở
+rộng backend hiện tại sang curated Markdown dưới `knowledge-base-hue/festivals`
+và một Golden Dataset festivals mới. Chưa có kết luận/authorization thay đổi
+code hoặc data cho festivals.
