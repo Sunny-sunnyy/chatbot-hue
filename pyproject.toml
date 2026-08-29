@@ -25,4 +25,6 @@ dependencies = [
     "openai>=2.48.0",
     "openai-agents>=0.18.3",
     "gradio>=6.25.0",
+    "flagembedding==1.4.0",
+    "pyvi==0.1.1",
 ]

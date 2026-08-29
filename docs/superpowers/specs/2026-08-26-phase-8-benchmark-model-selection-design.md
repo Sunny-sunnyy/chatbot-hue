@@ -63,16 +63,12 @@ tài nguyên. Nó không giả định trước winner.
 |---:|---|---|---|
 | 1 | `intfloat/multilingual-e5-small` | 384D; current control | benchmark corrected Vietnamese gold |
 | 2 | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | 384D; lightweight multilingual | benchmark corrected Vietnamese gold |
-| 3 | `intfloat/multilingual-e5-base` | 768D | benchmark corrected Vietnamese gold |
-| 4 | `intfloat/multilingual-e5-large` | 1024D | benchmark corrected Vietnamese gold |
-| 5 | `BAAI/bge-m3` | 1024D; dense + learned sparse + multi-vector | dense và sparse/hybrid ở separate groups |
-| 6a | `Qwen/Qwen3-Embedding-0.6B` | 384D MRL variant; instruction-aware | lightweight/storage trade-off |
-| 6b | `Qwen/Qwen3-Embedding-0.6B` | native 1024D; instruction-aware | maximum-quality variant |
+| 3 | `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | native 768D; PyVi segmentation | benchmark corrected Vietnamese gold; legal-domain transfer risk |
+| 4 | `intfloat/multilingual-e5-base` | 768D | benchmark corrected Vietnamese gold |
 
-The scope therefore contains six model families and seven dense configurations.
-Do not add a 768D Qwen variant initially. Each Qwen dimension uses its own
-isolated index; equal dimensions never make embeddings from different models
-compatible.
+The local scope contains four dense configurations. Equal dimensions never make
+embeddings from different models compatible. The 1024D candidates are governed
+only by the remote-only amendment below.
 
 ## Sparse and hybrid capabilities in scope
 
@@ -80,14 +76,12 @@ Phase 8 must create controlled real comparisons for:
 
 | Retrieval path | Required compatible coverage |
 |---|---|
-| Dense-only | All seven dense configurations |
+| Dense-only | All four local dense configurations |
 | Independent full-corpus BM25-only | Once; embedding-independent |
-| Current dense-candidate then BM25 rescoring | All seven dense configurations |
-| True hybrid dense + independent full-corpus BM25 | All seven dense configurations |
+| Current dense-candidate then BM25 rescoring | All four local dense configurations |
+| True hybrid dense + independent full-corpus BM25 | All four local dense configurations |
 | Custom TF-IDF `SparseEmbedder`-only | Once as an experimental control |
-| True hybrid dense + custom TF-IDF sparse | All seven dense configurations |
-| BGE-M3 learned sparse-only | BGE-M3 only |
-| BGE-M3 dense + learned sparse true hybrid | BGE-M3 only |
+| True hybrid dense + custom TF-IDF sparse | All four local dense configurations |
 
 Notebook 08d combines every valid pre-rerank pipeline with no reranker and each
 of the three reranker candidates. Complete coverage means every real component,
@@ -142,31 +136,23 @@ reopen quyết định khi có exact evidence về incompatibility hoặc resour
 
 - Dùng native query/document contract và native pooling của từng embedding:
   E5 dùng `query:`/`passage:` cùng attention-mask mean pooling; multilingual
-  MiniLM dùng raw text cùng mean pooling; BGE-M3 dùng official `dense_vecs`;
-  Qwen dùng last-token pooling.
-- L2-normalize mọi dense query/document vector sau pooling. Qwen 384D dùng
-  official SentenceTransformers `truncate_dim=384`, normalize sau truncation;
-  Qwen 1024D dùng native output. Không manual slicing hoặc PCA.
-- Truncation bật với maximum 512 tokens cho E5/BGE-M3/Qwen và native 128 cho
-  multilingual MiniLM; ghi `truncated_document_count`.
+  MiniLM dùng raw text cùng mean pooling; Huydang dùng PyVi segmentation và
+  native mean pooling.
+- L2-normalize mọi dense query/document vector sau pooling.
+- Truncation bật với maximum 512 tokens cho E5, native 128 cho multilingual
+  MiniLM và native 256 cho Huydang; ghi `truncated_document_count`.
 - Main local profile là CPU FP32, không quantization. Document batch size là 8,
   query batch size là 1 và không silent auto-shrink. CUDA/dtype GPU chỉ được
   thiết kế trong session GPU riêng.
-- Qwen embedding dùng instruction tiếng Việt đã được user chủ động chọn:
-  `Instruct: Với một câu hỏi du lịch ẩm thực Huế, hãy truy xuất các đoạn văn liên quan có thể trả lời câu hỏi.\nQuery: {question}`.
-  Document để raw. Đây là intentional override đối với khuyến nghị instruction
-  tiếng Anh cho multilingual use trong model card hiện hành; không tự đổi ngôn
-  ngữ instruction.
 - MiniLM/BGE reranker nhận raw `(question, chunk_text)`. Qwen reranker dùng
   official chat/template cùng task instruction tiếng Việt:
   `Với một câu hỏi du lịch ẩm thực Huế, hãy đánh giá liệu tài liệu có chứa thông tin liên quan để trả lời câu hỏi hay không.`
   Mọi pair cap 512 tokens bằng `longest_first`, ghi `truncated_pair_count`, CPU
   pair batch size 4. Giữ native score để xếp hạng trong từng model; exact tie
   giữ nguyên pre-rerank order.
-- BGE-M3 learned sparse giữ original token IDs làm sorted integer sparse indices
-  và `lexical_weights` làm values; bỏ zero/empty output, không hashing,
-  token-string remap, min-max hoặc pruning. Exact Qdrant schema/name/retention
-  được hoãn đến checkpoint Notebook 08b.
+- BGE-M3 learned sparse/ColBERT không còn thuộc local experiment matrix. Một
+  OpenRouter dense response trong future proposal không được coi là equivalent
+  hoặc evidence cho các representation này.
 
 ## Measurement contract
 
@@ -330,8 +316,8 @@ User đã authorize implementation và real local Run All trong isolated 08a
 scope. Không viết chi tiết giả định cho các notebook còn lại trước checkpoint
 tương ứng.
 
-- `08b`: BM25 parameters; exact BGE-M3 isolated Qdrant schema, names, query path
-  và retention/cleanup.
+- `08b`: BM25 parameters, Vietnamese tokenizer and exact TF-IDF isolated Qdrant
+  schema/query/fusion behavior. BGE learned sparse is no longer local scope.
 - `08c`: exact current-library reranker integration compatibility.
 - `08d`: exact non-duplicate matrix manifest và lightweight-to-heavy run order.
 - `08e`: exact Qwen generation settings, GPT judge rubric/repetitions và paid
@@ -420,3 +406,23 @@ Before each real group, reverify current model/provider availability, model IDs,
 licenses, dimensions, API schemas, limits and machine compatibility from primary
 sources. That verification may trigger a user-reviewed refinement but cannot
 silently expand scope or authorize execution.
+
+## Resource-bound execution amendment (2026-08-29 +07)
+
+This amendment supersedes the earlier five/seven-configuration local matrices and BGE
+learned-sparse local coverage. Local execution is limited to E5-small 384D,
+MiniLM-L12 384D, Huydang DEk21 native 768D and E5-base 768D. E5-large 1024D,
+BGE-M3 1024D and every Qwen3 Embedding variant must not be downloaded or
+executed locally. Historical Qwen3 384D CSV rows remain rejection evidence only.
+
+After the four local settings complete, a separate paid proposal may cover
+OpenRouter `intfloat/multilingual-e5-large` and `baai/bge-m3` dense embeddings.
+The proposal is not implementation/run authorization and must reverify current
+catalog, schema, pricing, provider behavior and exact preprocessing. OpenRouter
+dense embeddings do not authorize or provide evidence for BGE learned sparse or
+ColBERT, so those paths are removed from the local 08b/08d matrix.
+
+The Qwen model cache and isolated collection were deleted with user
+authorization on `2026-08-29 +07`. Reviewer fresh evidence already covers all
+four retained models at 3/3 repetitions; a pure removal correction does not
+require another model run.

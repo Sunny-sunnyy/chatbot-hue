@@ -32,8 +32,8 @@ quality đáng tin cậy, latency và simplicity.
 | Stage | Experiment group | Ordered candidates/capabilities | Fixed boundary |
 |---:|---|---|---|
 | 0 | Golden prerequisite | approved 45-case Golden Dataset V3 + exact 10-case smoke subset | completed and approved; dataset remains unchanged during benchmark work |
-| 1 | Dense embedding | E5 small → multilingual MiniLM-L12 → E5 base → E5 large → BGE-M3 dense → Qwen3 Embedding 0.6B at 384D → Qwen3 Embedding 0.6B at 1024D | chunks, gold, dense retrieval settings, metrics |
-| 2 | Lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → BGE-M3 learned sparse → true hybrid | selected/fixed dense evidence, reranker off |
+| 1 | Local dense embedding | E5 small → multilingual MiniLM-L12 → Huydang DEk21 768D → E5 base | chunks, gold, dense retrieval settings, metrics |
+| 2 | Local lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → true hybrid dense+BM25/TF-IDF | selected/fixed dense evidence, reranker off |
 | 3 | Reranker | current MiniLM-L6 → BGE reranker base → Qwen3 Reranker 0.6B | identical pre-rerank candidate artifacts |
 | 4 | Context | maximum 5 whole chunks/3000 characters | retrieval output and generator |
 | 5 | End-to-end finalists | selected retrieval/reranking finalists | `qwen/qwen3.5-9b` via OpenRouter; judge `gpt-5.4-mini` |
@@ -90,22 +90,20 @@ mock/fake completion evidence.
 
 | Retrieval path | Runs required before reranking |
 |---|---:|
-| Dense-only | Seven, one per dense configuration |
+| Dense-only | Four, one per local dense configuration |
 | BM25-only full corpus | One |
-| Dense → BM25 rescoring | Seven, one per dense configuration |
-| True hybrid dense + BM25 | Seven, one per dense configuration |
+| Dense → BM25 rescoring | Four, one per local dense configuration |
+| True hybrid dense + BM25 | Four, one per local dense configuration |
 | TF-IDF SparseEmbedder-only | One |
-| True hybrid dense + TF-IDF | Seven, one per dense configuration |
-| BGE-M3 learned sparse-only | One |
-| BGE-M3 dense + learned sparse | One |
+| True hybrid dense + TF-IDF | Four, one per local dense configuration |
 
 The full local matrix applies four reranker states—none, current MiniLM, BGE
 reranker base and Qwen3 Reranker 0.6B—to each valid pre-rerank pipeline. It does
 not duplicate BM25-only/TF-IDF-only by embedding label and does not construct an
 unsupported learned-sparse pairing.
 
-Qwen3 Embedding contributes two configurations, 384D and native 1024D. Each is
-indexed separately. Do not include 768D in the initial experiment matrix.
+Qwen3 Embedding is excluded from this machine's experiment matrix at every
+dimension. Historical 384D rows remain rejection evidence only.
 
 For every true-hybrid path, run RRF and independent min-max weighted fusion at
 `0.6 dense / 0.4 sparse`. Do not add a fusion-weight grid to the initial matrix.
@@ -211,8 +209,8 @@ are approved. This master plan deliberately does not guess later groups:
 
 1. `08a`: implement and Run All the approved exact design/plan, then independent
    review and user confirmation before starting 08b.
-2. `08b`: research and brainstorm BM25 parameters plus exact BGE-M3 isolated
-   schema, collection naming, query path and retention/cleanup.
+2. `08b`: research and brainstorm BM25 parameters, Vietnamese tokenizer and
+   exact TF-IDF isolated schema/query/fusion behavior.
 3. `08c`: verify current reranker library/template compatibility and brainstorm
    exact integration.
 4. `08d`: enumerate and approve the exact non-duplicate matrix and execution
@@ -226,3 +224,20 @@ GPU/WSL2 remediation remains a different session. Recheck model catalogs,
 licenses, provider IDs, API schemas and resource compatibility from primary
 sources immediately before the affected notebook; this check cannot silently
 expand candidate scope.
+
+## Resource-bound execution amendment (2026-08-29 +07)
+
+Run exactly four local embedding settings: E5-small 384D, MiniLM-L12 384D,
+Huydang DEk21 768D and E5-base 768D. Remove E5-large 1024D, BGE-M3 1024D,
+every Qwen3 Embedding setting and all BGE learned-sparse paths from local
+execution plans.
+
+Only after the local four finish may the next checkpoint propose paid OpenRouter
+dense runs for `intfloat/multilingual-e5-large` and `baai/bge-m3`. Do not write
+the remote adapter, read a key, create remote-vector collections or make an API
+request without a new exact plan, budget and explicit user authorization.
+
+Reviewer fresh evidence from `2026-08-29 +07` covers the retained four models
+at 3/3 repetitions. Do not rerun them for a correction limited to removing
+Qwen/deferred code. The Qwen cache and isolated collection have been deleted;
+the Qwen CSV rows remain historical evidence.

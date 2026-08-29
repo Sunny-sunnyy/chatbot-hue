@@ -15,7 +15,7 @@ Golden Dataset V3 Gate 0 đã được Reviewer kiểm tra và user phê duyệt
 thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 common
 contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design/plan cũng
 đã được duyệt và work package 08a ở trạng thái `ready`: Implementer được phép
-viết đúng scope, tải pinned local models và chạy real Run All trên bảy isolated
+viết đúng scope, tải pinned local models và chạy real Run All trên bốn isolated
 Qdrant collections. Authorization này không cho phép sửa dataset, cài GPU/CUDA,
 gọi paid API, mutate active collection, cutover production hoặc làm 08b–08e.
 
@@ -130,19 +130,17 @@ Phase 8 phải tạo real evidence cho toàn bộ các retrieval paths sau:
 
 | Path | Candidate generation/fusion semantics | Embedding dependency |
 |---|---|---|
-| Dense-only | Qdrant dense retrieval | Chạy cho cả bảy dense configurations |
+| Dense-only | Qdrant dense retrieval | Chạy cho cả bốn local dense configurations |
 | BM25-only | Python BM25 sinh candidates độc lập trên toàn corpus | Chạy một lần; không phụ thuộc dense embedding |
-| Dense → BM25 rescoring | Dense candidates trước, BM25 chỉ chấm lại candidate set hiện hành | Chạy cho cả bảy dense configurations |
-| True hybrid dense + BM25 | Dense và full-corpus BM25 sinh candidates độc lập rồi fusion | Chạy cho cả bảy dense configurations |
+| Dense → BM25 rescoring | Dense candidates trước, BM25 chỉ chấm lại candidate set hiện hành | Chạy cho cả bốn local dense configurations |
+| True hybrid dense + BM25 | Dense và full-corpus BM25 sinh candidates độc lập rồi fusion | Chạy cho cả bốn local dense configurations |
 | TF-IDF sparse-only | Custom `SparseEmbedder` sinh/query sparse candidates độc lập | Experimental control chạy một lần |
-| True hybrid dense + TF-IDF | Dense và custom TF-IDF sparse sinh candidates độc lập rồi fusion | Chạy cho cả bảy dense configurations |
-| BGE-M3 learned sparse-only | Learned sparse output của BGE-M3 sinh/query candidates | Chỉ áp dụng cho BGE-M3 |
-| BGE-M3 dense + learned sparse | Dense và learned sparse BGE-M3 sinh candidates độc lập rồi fusion | Chỉ áp dụng cho BGE-M3 |
+| True hybrid dense + TF-IDF | Dense và custom TF-IDF sparse sinh candidates độc lập rồi fusion | Chạy cho cả bốn local dense configurations |
 
 Coverage đầy đủ nghĩa là mọi component/path và mọi tổ hợp tương thích ở trên có
 kết quả thật, không phải lặp cùng một computation dưới tên cấu hình khác. BM25-
-only và TF-IDF sparse-only không chạy lại sáu lần theo embedding; BGE-M3 learned
-sparse không gắn giả tạo vào model không sinh representation đó.
+only và TF-IDF sparse-only không chạy lại theo từng embedding. BGE-M3 learned
+sparse không còn trong local matrix vì BGE-M3 không được chạy trên máy này.
 
 `08b_retrieval_fusion_benchmark.ipynb` giải thích và đo từng path. Sau đó
 `08d_full_pipeline_matrix.ipynb` kết hợp từng valid pre-rerank pipeline với
@@ -160,8 +158,8 @@ True-hybrid paths bắt đầu với đúng hai fusion methods:
 
 Không grid-search thêm weights trong initial matrix. Chỉ mở targeted weight
 tuning nếu observed evidence cho thấy weighted fusion tạo lợi ích thật và tuning
-có khả năng thay đổi quyết định cuối. Quy tắc này áp dụng cho dense+BM25,
-dense+TF-IDF và BGE-M3 dense+learned-sparse; mỗi path phải ghi rõ fusion method
+có khả năng thay đổi quyết định cuối. Quy tắc này áp dụng cho dense+BM25 và
+dense+TF-IDF; mỗi path phải ghi rõ fusion method
 trong bảng kết quả.
 
 ### Candidate, rerank và context depth đã xác nhận
@@ -210,10 +208,12 @@ Underthesea chỉ trở thành dependency runtime nếu kết quả thật chứ
 tương xứng latency và maintenance cost. Initial scope không thêm PyVi,
 VnCoreNLP hoặc tokenizer grid.
 
-## Dense embedding candidates và OpenRouter
+## Dense embedding local và OpenRouter remote-only
 
-Local E5 là control baseline. OpenRouter embedding chỉ được implement khi user
-duyệt một dense-embedding experiment group cụ thể ở Phase 8.
+Local E5 là control baseline. Máy local chỉ chạy exact four-setting matrix dưới
+đây. OpenRouter embedding chỉ được đề xuất sau khi bốn local settings hoàn tất và
+chỉ được implement/chạy khi
+user duyệt riêng paid remote experiment.
 
 ### Candidate set và thứ tự chạy đã xác nhận
 
@@ -225,16 +225,27 @@ không phải xếp hạng chất lượng được giả định trước.
 |---:|---|---|---|
 | 1 | `intfloat/multilingual-e5-small` | 384D; control hiện hành | multilingual; benchmark domain vẫn quyết định |
 | 2 | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | 384D; candidate nhẹ | multilingual; benchmark domain vẫn quyết định |
-| 3 | `intfloat/multilingual-e5-base` | 768D | multilingual; benchmark domain vẫn quyết định |
-| 4 | `intfloat/multilingual-e5-large` | 1024D | multilingual; benchmark domain vẫn quyết định |
-| 5 | `BAAI/bge-m3` | 1024D; hỗ trợ dense, learned sparse và multi-vector | multilingual; benchmark dense và sparse/hybrid tách group |
-| 6a | `Qwen/Qwen3-Embedding-0.6B` | 384D MRL variant; instruction-aware | multilingual; lightweight/storage trade-off |
-| 6b | `Qwen/Qwen3-Embedding-0.6B` | native 1024D; instruction-aware | multilingual; maximum-quality variant |
+| 3 | `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | native 768D; max length 256; PyVi segmentation | Vietnamese legal-domain fine-tune; Hue-food benchmark quyết định |
+| 4 | `intfloat/multilingual-e5-base` | 768D | multilingual; benchmark domain vẫn quyết định |
+Bốn model chạy tuần tự, không chạy song song.
 
-Đây là sáu embedding model families nhưng bảy dense configurations. Không chạy
-Qwen3 768D trong initial scope: 384D đo trade-off nhẹ và 1024D đo native quality
-đã đủ trả lời quyết định. Hai Qwen dimensions dùng isolated indexes riêng; Qwen
-384D không được ghi vào E5-small collection chỉ vì có cùng dimension.
+### Remote-only candidates sau local four
+
+| Model ID OpenRouter hiện hành | Output | Trạng thái |
+|---|---:|---|
+| `intfloat/multilingual-e5-large` | 1024D | Có thể đề xuất paid remote benchmark sau local four |
+| `baai/bge-m3` | 1024D dense | Có thể đề xuất paid remote benchmark sau local four |
+
+Nguồn catalog hiện hành:
+
+- https://openrouter.ai/intfloat/multilingual-e5-large
+- https://openrouter.ai/baai/bge-m3
+- https://openrouter.ai/docs/api/api-reference/embeddings/list-embeddings-models
+
+OpenRouter dense output không thay thế BGE-M3 learned sparse/ColBERT. Vì BGE-M3
+không còn được chạy local, learned-sparse-only và dense+learned-sparse paths bị
+loại khỏi local Notebook 08b/08d scope trừ khi một API tương lai chứng minh và
+được user duyệt exact sparse output contract.
 
 Không loại một candidate chỉ vì model card không ghi riêng tiếng Việt. Mọi
 candidate phải được đo trên corrected Vietnamese golden dataset. Language claim
@@ -546,14 +557,15 @@ Common regression/statistical gates, CPU measurement/reliability, finalist
 count/roles, notebook style, long-format CSV/upsert, focused-test boundary và
 final confirmation rerun đã được user duyệt ngày `2026-08-28 +07`.
 
-Notebook 08a đã khóa bảy dense configurations, native contracts, isolated
+Notebook 08a hiện khóa bốn local dense configurations, native contracts, isolated
 collections, metrics/gates, CSV, notebook cells, focused tests và real Run All.
 Sau implementation report, Reviewer mới bắt đầu independent technical review.
 Chỉ khi Reviewer đạt và user xác nhận Notebook 08a mới chuyển sang 08b.
 
 Chi tiết còn lại chỉ được giải quyết tại checkpoint của group tương ứng:
 
-1. `08b`: BM25 parameters, BGE-M3 isolated schema/names/query/retention;
+1. `08b`: BM25 parameters, Vietnamese tokenizer và TF-IDF isolated
+   schema/query/fusion behavior;
 2. `08c`: current-library reranker integration;
 3. `08d`: exact non-duplicate matrix manifest và execution order;
 4. `08e`: exact Qwen generation, GPT judge rubric/repetitions và paid protocol;
@@ -649,7 +661,8 @@ GPU session xác minh một device policy khác cần user phê duyệt.
 ```
 
 ```text
-Decision: Phase 8 tạo real comparison evidence cho tám retrieval paths:
+Historical decision, superseded by the 2026-08-28 resource amendment: Phase 8
+ban đầu dự kiến real comparison evidence cho tám retrieval paths:
 dense-only, BM25-only toàn corpus, dense->BM25 rescoring hiện hành, true hybrid
 dense+BM25, TF-IDF SparseEmbedder-only, true hybrid dense+TF-IDF, BGE-M3 learned
 sparse-only và BGE-M3 dense+learned-sparse hybrid. Full local matrix bao phủ mọi
@@ -686,7 +699,8 @@ Affected scope: Baseline table, Notebooks 08b–08e, retrieval metrics và conte
 ```
 
 ```text
-Decision: `Qwen/Qwen3-Embedding-0.6B` chạy hai dimension variants: 384D để đo
+Historical decision, superseded by the 2026-08-28 resource amendment:
+`Qwen/Qwen3-Embedding-0.6B` ban đầu dự kiến chạy hai dimension variants: 384D để đo
 lightweight/storage trade-off và native 1024D để đo maximum quality. Không thêm
 768D vào initial scope. Mỗi vector space dùng isolated index và không trộn với
 model khác có cùng dimension.
@@ -735,9 +749,10 @@ model download, API call, benchmark execution, Qdrant mutation hoặc cutover.
 ```
 
 ```text
-Decision: Exact Notebook 08a dense embedding design và implementation plan được
-approved. Implementer được authorize viết đúng allowlist, tải bảy pinned local
-model configurations và chạy real Run All trên bảy isolated Qdrant collections;
+Historical decision, superseded by the 2026-08-28 resource amendment: Exact
+Notebook 08a dense embedding design và implementation plan từng authorize viết
+đúng allowlist, tải bảy pinned local model configurations và chạy real Run All
+trên bảy isolated Qdrant collections;
 E5-small chạy ở một cell riêng, sáu candidates chạy tuần tự ở một cell.
 Approved by: User
 Approval date +07: 2026-08-28
@@ -751,3 +766,30 @@ Golden V3 edit, active collection mutation, production cutover hoặc Notebook
 ```
 
 Commit/push cần yêu cầu riêng.
+
+```text
+Decision superseding earlier 1024D/local-matrix decisions: Máy hiện tại không
+chạy local e5-large-1024, bge-m3-dense-1024 hoặc bất kỳ Qwen3 Embedding setting
+nào. Exact local 08a matrix có bốn settings: E5-small, MiniLM-L12, Huydang DEk21
+768D và E5-base. Sau khi bốn local settings hoàn tất, chỉ E5-large multilingual
+và BGE-M3 dense có thể được đề
+xuất qua OpenRouter trong một paid remote experiment riêng; chưa authorize code,
+API call hoặc budget. BGE learned sparse/ColBERT không được suy ra từ dense API.
+Approved by: User
+Approval date +07: 2026-08-29
+Affected scope: Notebook 08a local execution, 08b/08d local matrix và future
+OpenRouter embedding proposal.
+Cleanup authorization: Xóa isolated E5-large collection và stored E5-large CSV
+rows từ lần chạy Reviewer trước.
+```
+
+```text
+Decision: Loại Qwen3 Embedding 0.6B 384D khỏi Phase 8 local scope và mọi matrix
+08b/08d. Historical CSV evidence được giữ; không chạy lại Qwen. Cache model và
+isolated collection hue_foods_08a_qwen3_06b_384 được xóa.
+Reason: Fresh evidence cho thấy Qwen giảm nDCG@5 so với E5-small, không đạt
+category guardrails, query latency cao và CPU corpus embedding khoảng 765 giây.
+Approved by: User
+Approval date +07: 2026-08-29
+Affected scope: Exact 08a correction, later local matrix, docs/status và cleanup.
+```

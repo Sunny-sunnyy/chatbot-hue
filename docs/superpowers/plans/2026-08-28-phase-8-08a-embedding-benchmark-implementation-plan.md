@@ -1,8 +1,8 @@
 # Phase 8 — Notebook 08a Dense Embedding Benchmark Implementation Plan
 
 **Status:** `ready_for_implementation`. User approved this exact plan and
-authorized its real local Run All on `2026-08-28 +07`. Authorization is limited
-to the approved 08a files, pinned local model downloads, seven isolated Qdrant
+authorized its amended real local Run All on `2026-08-28 +07`. Authorization is limited
+to the approved 08a files, pinned local model downloads, four isolated Qdrant
 collections and the durable 08a CSV; it excludes paid calls, active collection
 mutation, production cutover and later Notebook 08 groups.
 
@@ -12,17 +12,20 @@ mutation, production cutover and later Notebook 08 groups.
 > use `requesting-code-review` for the handoff. Do not commit or push.
 
 **Goal:** Implement one educational Notebook 08a and the smallest reusable
-backend needed to benchmark the seven approved dense vector spaces on the real
+backend needed to benchmark the four approved local dense vector spaces on the real
 Hue food corpus without changing production retrieval behavior.
 
 **Architecture:** Keep native model loading and encoding in one small embedding
 module. Keep canonical input loading, isolated Qdrant lifecycle, exact metrics,
 gates, timings, resource observations and CSV persistence in one evaluation
 module. The notebook is presentation and orchestration only: one explicit cell
-for the E5-small control, then one sequential loop cell for the six candidates.
+for the E5-small control, then one sequential loop cell for the three authorized candidates.
+
+The local execution amendment at the end supersedes every earlier
+five/seven-model and Qwen/1024D local instruction retained as history.
 
 **Tech stack:** Python 3.13, uv, PyTorch CPU FP32, SentenceTransformers 5.6.1,
-Transformers 5.14.1, FlagEmbedding 1.4.0, Qdrant client 1.19.0, NumPy,
+Transformers 5.14.1, PyVi 0.1.1, Qdrant client 1.19.0, NumPy,
 Polars, the already-resolved psutil package, pytest and Jupyter.
 
 **Approved design:**
@@ -79,7 +82,11 @@ Expected: active profile remains `dense_only`; production collection remains
 
 ---
 
-## Task 1: Add the one approved dependency
+## Historical Task 1 — cancelled: do not add or retain FlagEmbedding for local 08a
+
+The commands below are retained only as superseded history. Current local scope
+uses pinned PyVi for Huydang DEk21 preprocessing and removes `FlagEmbedding`
+when no other authorized local consumer remains.
 
 **Files:**
 
@@ -143,8 +150,8 @@ Create these public shapes:
 from dataclasses import dataclass
 from typing import Literal
 
-RunnerKind = Literal["sentence_transformer", "qwen3", "bge_m3"]
-InputContract = Literal["e5", "minilm", "qwen3", "bge_m3"]
+RunnerKind = Literal["sentence_transformer", "huydang"]
+InputContract = Literal["e5", "minilm", "pyvi_segmented"]
 
 
 @dataclass(frozen=True)
@@ -171,17 +178,13 @@ class DocumentEmbeddingResult:
     truncated_document_count: int
 ```
 
-Do not add a registry. Define the seven constants directly in approved order,
+Do not add a registry. Define the four local constants directly in approved order,
 then expose:
 
 ```python
 E5_SMALL_SETTING: DenseBenchmarkSetting
 DENSE_CANDIDATE_SETTINGS: tuple[DenseBenchmarkSetting, ...]
 ALL_DENSE_SETTINGS: tuple[DenseBenchmarkSetting, ...]
-QWEN_QUERY_INSTRUCTION = (
-    "Instruct: Với một câu hỏi du lịch ẩm thực Huế, hãy truy xuất các đoạn văn "
-    "liên quan có thể trả lời câu hỏi.\nQuery: {question}"
-)
 ```
 
 Copy every model ID, revision, dimension, maximum length, label and isolated
@@ -189,8 +192,7 @@ collection name exactly from the approved design.
 
 **Step 2: Implement shared observable behavior without a base framework**
 
-Each of `SentenceTransformerDenseRunner`, `Qwen3DenseRunner` and
-`BGEM3DenseRunner` exposes only:
+Each of `SentenceTransformerDenseRunner` and `HuydangDenseRunner` exposes only:
 
 ```python
 model_id: str
@@ -231,20 +233,11 @@ Python lists.
 Do not reuse production `E5Embedder`: it has batch size 64 and does not expose
 revision/max-length/truncation evidence. Do not change that production class.
 
-**Step 4: Implement the Qwen native contract**
+**Historical Step 5 — cancelled: do not implement or retain the local BGE-M3 adapter**
 
-Construct SentenceTransformers with the pinned revision and, only for the 384D
-setting, official `truncate_dim=384`. Set maximum length to 512. Documents are
-raw. The query passed to encode must equal:
-
-```python
-QWEN_QUERY_INSTRUCTION.format(question=question)
-```
-
-Use the model's native last-token pooling and its official truncation path. L2
-normalization happens after that path. Never slice arrays and never use PCA.
-
-**Step 5: Implement the BGE-M3 exact-batch adapter**
+The text below records the superseded design only. The current resource
+amendment prohibits local BGE-M3 download/execution and requires removal of the
+unused local adapter/dependency.
 
 Load `BGEM3FlagModel` at the exact revision on CPU with FP32 behavior. Keep the
 public class for loading/tokenizer/model ownership, but do not call its public
@@ -276,10 +269,8 @@ occurs, let it escape immediately so orchestration records the exact failure.
 def build_dense_runner(setting: DenseBenchmarkSetting):
     if setting.runner_kind == "sentence_transformer":
         return SentenceTransformerDenseRunner(setting)
-    if setting.runner_kind == "qwen3":
-        return Qwen3DenseRunner(setting)
-    if setting.runner_kind == "bge_m3":
-        return BGEM3DenseRunner(setting)
+    if setting.runner_kind == "huydang":
+        return HuydangDenseRunner(setting)
     raise ValueError(f"unsupported runner kind: {setting.runner_kind}")
 ```
 
@@ -291,7 +282,7 @@ entry points, YAML model catalogs or duplicate configurations.
 Run from `backend/`:
 
 ```bash
-HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-phase8-08a-test-uv-cache uv run python -c "from embedding.dense_benchmark import ALL_DENSE_SETTINGS, DENSE_CANDIDATE_SETTINGS, E5_SMALL_SETTING; assert len(ALL_DENSE_SETTINGS) == 7; assert E5_SMALL_SETTING.order == 1; assert len(DENSE_CANDIDATE_SETTINGS) == 6; assert len({s.collection_name for s in ALL_DENSE_SETTINGS}) == 7; print('dense setting contracts: PASS')"
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-phase8-08a-test-uv-cache uv run python -c "from embedding.dense_benchmark import ALL_DENSE_SETTINGS, DENSE_CANDIDATE_SETTINGS, E5_SMALL_SETTING; assert len(ALL_DENSE_SETTINGS) == 4; assert E5_SMALL_SETTING.order == 1; assert len(DENSE_CANDIDATE_SETTINGS) == 3; assert len({s.collection_name for s in ALL_DENSE_SETTINGS}) == 4; print('dense setting contracts: PASS')"
 ```
 
 Expected: `dense setting contracts: PASS` without loading any model.
@@ -927,7 +918,7 @@ control_result = run_embedding_benchmark(
 The next cells display its overall/category metrics and confirm the active
 snapshot still equals `active_before`.
 
-**Step 4: Put all six candidates in one sequential run cell**
+**Step 4: Put all three authorized candidates in one sequential run cell**
 
 Use exactly:
 
@@ -1035,7 +1026,7 @@ Expected: no implementation diff in these files.
   `evaluation/results/phase8_embedding_results.csv`
 - Do not modify repository notebook outputs
 
-This task mutates only the seven approved isolated Qdrant collections and the
+This task mutates only the four approved isolated Qdrant collections and the
 one durable CSV. The required real-run authorization is recorded in this plan's
 status; an available Qdrant service is still required. It uses real pinned
 models, full 45 cases and all 572 chunks.
@@ -1096,8 +1087,7 @@ Then verify from the temporary notebook and real Qdrant:
 - exactly 3 successful repetitions for each finalist-eligible setting;
 - latency arrays exclude warm-up and contain 135 values for completed settings;
 - all successful isolated collections have 572 points and exact dimensions;
-- Qwen 384 uses official `truncate_dim=384`;
-- BGE uses the exact-batch adapter and dense vectors only;
+- no removed Qwen/BGE/E5-large collection is created or mutated;
 - production active snapshot equals the baseline;
 - `backend/config/settings.yaml` remains unchanged.
 
@@ -1180,3 +1170,36 @@ Do not update canonical guides, README indexes, Project Status or Phase 8 status
 Do not mark 08a approved. Do not begin 08b. Do not commit or push. User approval
 comes only after independent technical review and the user's own Notebook 08a
 confirmation.
+
+## Local execution amendment (2026-08-29 +07, superseding earlier local scope)
+
+Implement and execute exactly these 4 local dense configurations:
+1. `e5-small-384` (Control, 384D, Authorized)
+2. `multilingual-minilm-l12-384` (384D, Authorized)
+3. `huydang-dek21-embedding-768` (PhoBERT ~135M params, 768D, max length 256, PyVi segmentation, Authorized)
+4. `e5-base-768` (768D, Authorized)
+
+Do not locally download or execute `e5-large-1024`, `bge-m3-dense-1024`,
+`qwen3-embedding-0.6b-384` or `qwen3-embedding-0.6b-1024`. Runtime boundaries must reject them before model
+load, network access or Qdrant mutation. Notebook Run All must iterate an exact
+three-candidate tuple after the separate control cell, never the historical full
+catalog.
+
+The local implementation should remove both Qwen settings and runner, the three
+1024D setting constants, their local collection targets and local-only
+adapter/test paths. In particular, remove the BGE-M3 local runner and direct
+`FlagEmbedding` dependency if no other authorized local consumer remains. A future OpenRouter adapter must be designed
+from the remote API contract rather than retaining the local BGE adapter.
+
+After the four-setting local run is complete, write a proposal only—not an
+adapter or paid run—for OpenRouter `intfloat/multilingual-e5-large` and
+`baai/bge-m3`. Any remote benchmark requires a new explicit user authorization,
+budget, exact model IDs, current embeddings schema, preprocessing contract and
+isolated remote-vector collections. Do not propose or run Qwen3 Embedding unless
+the user explicitly reopens that scope.
+
+Reviewer fresh evidence from `2026-08-29 +07` already covers all four retained
+models at 3/3 repetitions on 45 cases and 572 chunks. The correction handoff may
+reuse that evidence without rerunning models when code changes only remove
+Qwen/deferred paths and do not alter encoding, retrieval or metrics. Historical
+Qwen CSV rows remain evidence only; do not recreate its cache or collection.

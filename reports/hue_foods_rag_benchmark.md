@@ -1,6 +1,6 @@
 # Hue Foods RAG — Model và benchmark summary
 
-Last updated: `2026-08-28 +07`
+Last updated: `2026-08-29 +07`
 
 ## Mục đích
 
@@ -30,7 +30,9 @@ Chưa có model/profile winner được user và Reviewer phê duyệt.
 Candidates cho Phase 8 chỉ được chạy sau khi exact provider/model và experiment
 scope được user duyệt:
 
-- OpenRouter Qwen3 embedding family;
+- local E5-small, MiniLM-L12, Huydang DEk21 768D và E5-base;
+- future paid OpenRouter `intfloat/multilingual-e5-large` và `baai/bge-m3`
+  dense proposal sau khi local four hoàn tất;
 - OpenRouter native reranker candidates;
 - local Vietnamese embedding/reranker candidates;
 - future answer model qua OpenRouter.
@@ -155,6 +157,13 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
    models, canonical data và isolated Qdrant targets.
 4. Implementer bàn giao observed evidence; Reviewer xác minh độc lập trước khi
    user xác nhận và chuyển sang Notebook 08b.
+
+Qwen3 Embedding 0.6B 384D đã được chạy đủ để tạo historical evidence nhưng bị
+user loại khỏi local scope ngày `2026-08-29 +07`: chất lượng thấp hơn E5-small,
+không đạt category guardrails và CPU indexing quá chậm. Không chạy lại Qwen,
+không đưa nó vào 08b/08d hoặc finalist selection. Mười CSV rows của Qwen được
+giữ làm historical evidence; cache model và isolated collection
+`hue_foods_08a_qwen3_06b_384` đã được Reviewer xóa theo authorization riêng.
 
 Canonical Notebook 08a contract:
 

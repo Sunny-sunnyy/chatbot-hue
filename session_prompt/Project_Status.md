@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-28 +07`
+Last updated: `2026-08-29 +07`
 
 ## Mục tiêu
 
@@ -147,10 +147,12 @@ Markdown proposal được Reviewer/user duyệt và index.
 
 Phase 8 Gate 1 common contracts đã được user phê duyệt ngày `2026-08-28 +07`.
 Notebook 08a cũng đã hoàn tất research/brainstorming; exact design/plan được
-approved và user đã authorize implementation cùng real local Run All trên bảy
-isolated Qdrant collections. Bước kế tiếp là Implementer thực hiện 08a, viết
-implementation report, sau đó Reviewer xác minh độc lập. Phase 8 tổng thể vẫn
-`not_ready` và các Notebook 08b–08e chưa được authorize.
+approved và user đã authorize amended implementation cùng real local Run All trên bốn
+isolated Qdrant collections. Implementation/report hiện có đang
+`changes_requested`: Implementer phải loại toàn bộ Qwen/deferred local paths và
+`FlagEmbedding`, đồng bộ notebook/tests/report về exact four-model scope, rồi
+Reviewer review lại. Phase 8 tổng thể vẫn `not_ready` và các Notebook 08b–08e
+chưa được authorize.
 
 Common gates bảo vệ cả chín V3 categories, dùng hierarchical large-category và
 exact small-category guardrails, paired bootstrap 10.000 lần với fixed seed và
@@ -192,12 +194,12 @@ key; không run ID, timestamp package, JSON song song, opaque configuration ID,
 audit/resume engine hoặc memory manager. Repository outputs rỗng/
 `execution_count: null`; Reviewer Run All thật trên temporary copy.
 
-User đã xác nhận full compatible retrieval coverage: dense-only, independent
-BM25-only, current dense→BM25 rescoring, true hybrid dense+BM25, custom TF-IDF
-SparseEmbedder-only, true hybrid dense+TF-IDF, BGE-M3 learned sparse-only và
-BGE-M3 dense+learned-sparse hybrid. Notebook 08d ghép mọi valid pre-rerank path
-với no-rerank và ba rerankers. Không lặp BM25/TF-IDF-only theo embedding label
-hoặc tạo learned-sparse pairing không được model hỗ trợ.
+Current local retrieval coverage: dense-only, independent BM25-only, current
+dense→BM25 rescoring, true hybrid dense+BM25, custom TF-IDF SparseEmbedder-only
+và true hybrid dense+TF-IDF. BGE-M3 learned sparse cùng dense+learned-sparse đã
+bị user loại khỏi local execution do giới hạn tài nguyên. Notebook 08d ghép mọi
+valid local pre-rerank path với no-rerank và ba rerankers, không lặp
+BM25/TF-IDF-only theo embedding label.
 
 Initial true-hybrid fusion đã khóa ở hai phương pháp: RRF và independent min-max
 weighted sum `0.6 dense / 0.4 sparse`. Không grid-search weights; chỉ đề xuất
@@ -211,10 +213,11 @@ ký tự → Qwen3.5-9B OpenRouter → GPT-5.4-mini judge. Mọi local path dùn
 depth 30, fusion top 10, reranker 10→5 và no-rerank final top 5; report
 Recall@30, Recall@10 và final MRR/nDCG/Recall@5. Top 10 không đi vào LLM.
 
-Qwen3 Embedding 0.6B đã khóa hai configurations: 384D MRL cho lightweight/
-storage trade-off và native 1024D cho maximum quality; không test 768D ban đầu.
-Phase 8 có sáu embedding model families nhưng bảy dense configurations, mỗi
-vector space dùng isolated index riêng.
+Qwen3 Embedding 0.6B đã bị user loại khỏi local scope ngày `2026-08-29 +07` do
+quality regression và CPU indexing quá chậm. Exact local 08a matrix chỉ còn bốn
+configurations: E5-small 384D, MiniLM-L12 384D, Huydang DEk21 768D và E5-base
+768D. Historical Qwen CSV rows được giữ, nhưng Qwen không được chạy lại hoặc đưa
+vào 08b/08d.
 
 Notebook 08b đã khóa một comparison tokenizer tiếng Việt: Unicode `\w+` hiện
 hành versus Underthesea `word_tokenize(..., format="text")`. Underthesea chỉ
@@ -430,8 +433,9 @@ Phase 0–6 simplicity review đã approved
 -> user đã chấp nhận final content/size; Gate 0 approved ngày 2026-08-28 +07
 -> Gate 1 common contracts approved ngày 2026-08-28 +07
 -> exact Notebook 08a design/plan approved; implementation + Run All authorized
--> Implementer thực hiện 08a và viết implementation report
--> Reviewer kiểm tra diff, focused deterministic tests và real temporary Run All
+-> Implementer correction exact four-model scope và viết report mới
+-> Reviewer kiểm tra diff/focused tests; reuse fresh four-model evidence nếu
+   correction không đổi encoding/retrieval/metrics
 -> user xác nhận 08a trước khi research + brainstorm Notebook 08b
 ```
 
@@ -451,8 +455,9 @@ guides/phase_8_benchmark_model_selection.md
 Thứ tự bắt buộc từ trạng thái hiện tại:
 
 1. giữ nguyên Golden Dataset V3 đã approved gồm 45 full + 10 smoke cases;
-2. Implementer thực hiện đúng exact 08a spec/plan và authorization boundaries;
-3. Implementer bàn giao report, Reviewer xác minh độc lập và user xác nhận trước
+2. Implementer correction source/tests/notebook/dependencies/report về exact
+   four-model scope;
+3. Implementer bàn giao report mới, Reviewer xác minh độc lập và user xác nhận trước
    khi chuyển sang Notebook 08b.
 
 V3 là complexity reset đã được user duyệt và Gate 0 đã approved. Các
@@ -518,3 +523,30 @@ docs/superpowers/plans/2026-08-26-phase-7-post-simplicity-correction.md
 reports/phase_7_golden_dataset_audit.md
 reports/hue_foods_rag_benchmark.md
 ```
+
+## Phase 8 local resource amendment — 2026-08-29 +07
+
+User đã hủy local execution cho toàn bộ Qwen3 Embedding cùng `e5-large-1024` và
+`bge-m3-dense-1024` trên máy hiện tại. Exact local 08a matrix chỉ còn bốn
+settings: E5-small 384D, MiniLM-L12 384D, Huydang DEk21 768D và E5-base 768D.
+Mọi runtime/notebook boundary phải reject các settings đã loại trước download,
+model load hoặc Qdrant write.
+
+Sau khi bốn local models hoàn tất, có thể research/propose paid OpenRouter dense
+benchmark cho `intfloat/multilingual-e5-large` và `baai/bge-m3`; chưa authorize
+adapter, key access, API call hoặc budget. BGE learned sparse/ColBERT không được
+OpenRouter dense output thay thế và bị loại khỏi local 08b/08d matrix. Phase 8
+vẫn `not_ready`.
+
+User đã authorize cleanup E5-large artifact từ Reviewer run trước. Collection
+`hue_foods_08a_e5_large_1024` và 10 `e5-large-1024` CSV rows đã được xóa ngày
+2026-08-28 +07; active production collection không thuộc cleanup target.
+
+Reviewer đã chạy fresh bốn-model path ngày `2026-08-29 +07`; E5-small,
+MiniLM-L12, Huydang DEk21 và E5-base đều hoàn tất 3/3 repetitions trên 45 cases
+và 572 chunks. User cho phép Reviewer session kế tiếp dùng evidence này mà không
+rerun nếu Implementer chỉ correction scope Qwen/deferred removal. Cache Qwen
+khoảng 1.2 GiB và isolated collection `hue_foods_08a_qwen3_06b_384` đã bị xóa;
+10 Qwen CSV rows được giữ làm historical evidence. 08a vẫn `changes_requested`
+cho tới khi source/tests/notebook/dependencies/report được Implementer đồng bộ
+với exact four-model scope và Reviewer review lại.

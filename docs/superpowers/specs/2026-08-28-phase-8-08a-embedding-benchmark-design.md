@@ -4,17 +4,20 @@ Date: 2026-08-28 (+07)
 
 Status: design and implementation plan approved by the user on 2026-08-28.
 The user authorized the exact Notebook 08a implementation and real local Run
-All described by those documents, including pinned model downloads and writes
-only to the seven approved isolated Qdrant collections. Paid calls, active
+All described by those documents as amended below, including pinned model
+downloads and writes only to the four approved isolated Qdrant collections. Paid calls, active
 collection mutation, production cutover and later Notebook 08 groups remain
 unauthorized.
 
 ## Purpose
 
-Notebook 08a teaches and measures seven local dense embedding configurations on
+Notebook 08a teaches and measures four local dense embedding configurations on
 the Hue food corpus. It uses Golden Dataset V3, production chunking and dense
 retrieval semantics, and isolated Qdrant collections. Its output is technical
 evidence for later model selection, not a production cutover.
+
+The local execution amendment at the end of this document supersedes every
+earlier five/seven-model and Qwen/1024D local statement retained as history.
 
 The notebook must help a person understand the system. Markdown is Vietnamese,
 identifiers are English, each cell has one purpose, and code cells stay short by
@@ -51,11 +54,8 @@ executed or modified here:
 
 1. multilingual E5-small 384D, the fixed control;
 2. multilingual MiniLM-L12 384D;
-3. multilingual E5-base 768D;
-4. multilingual E5-large 1024D;
-5. BGE-M3 dense 1024D;
-6. Qwen3 Embedding 0.6B with official 384D truncation;
-7. Qwen3 Embedding 0.6B native 1024D.
+3. Huydang DEk21 native 768D;
+4. multilingual E5-base 768D;
 
 It uses real local models, CPU FP32, the canonical 572 chunks, all 45 Golden V3
 cases, actual isolated Qdrant targets, and production backend data paths.
@@ -83,35 +83,22 @@ are pinned during loading.
 |---:|---|---|---|---|---:|---:|---|
 | 1 | e5-small-384 | intfloat/multilingual-e5-small | 614241f622f53c4eeff9890bdc4f31cfecc418b3 | MIT | 384 | 512 | hue_foods_08a_e5_small_384 |
 | 2 | multilingual-minilm-l12-384 | sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 | e8f8c211226b894fcb81acc59f3b34ba3efd5f42 | Apache-2.0 | 384 | 128 | hue_foods_08a_minilm_l12_384 |
-| 3 | e5-base-768 | intfloat/multilingual-e5-base | d128750597153bb5987e10b1c3493a34e5a4502a | MIT | 768 | 512 | hue_foods_08a_e5_base_768 |
-| 4 | e5-large-1024 | intfloat/multilingual-e5-large | 3d7cfbdacd47fdda877c5cd8a79fbcc4f2a574f3 | MIT | 1024 | 512 | hue_foods_08a_e5_large_1024 |
-| 5 | bge-m3-dense-1024 | BAAI/bge-m3 | 5617a9f61b028005a4858fdac845db406aefb181 | MIT | 1024 | 512 | hue_foods_08a_bge_m3_1024 |
-| 6 | qwen3-embedding-0.6b-384 | Qwen/Qwen3-Embedding-0.6B | 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3 | Apache-2.0 | 384 | 512 | hue_foods_08a_qwen3_06b_384 |
-| 7 | qwen3-embedding-0.6b-1024 | Qwen/Qwen3-Embedding-0.6B | 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3 | Apache-2.0 | 1024 | 512 | hue_foods_08a_qwen3_06b_1024 |
+| 3 | huydang-dek21-embedding-768 | CODE4LIFEOFFICIAL/huydang-dek21-embedding | 517f1af7dd04a57194f1de2990f0c6ede0a3109b | Apache-2.0 | 768 | 256 | hue_foods_08a_huydang_dek21_768 |
+| 4 | e5-base-768 | intfloat/multilingual-e5-base | d128750597153bb5987e10b1c3493a34e5a4502a | MIT | 768 | 512 | hue_foods_08a_e5_base_768 |
 
 Official sources:
 
 - https://huggingface.co/intfloat/multilingual-e5-small
 - https://huggingface.co/intfloat/multilingual-e5-base
-- https://huggingface.co/intfloat/multilingual-e5-large
 - https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
-- https://huggingface.co/BAAI/bge-m3
-- https://huggingface.co/Qwen/Qwen3-Embedding-0.6B
-- https://github.com/QwenLM/Qwen3-Embedding
-- https://github.com/FlagOpen/FlagEmbedding
-
-Qwen 384D and 1024D are separate vector spaces. Qwen 384D never shares the
-E5-small collection merely because both have 384 dimensions.
+- https://huggingface.co/CODE4LIFEOFFICIAL/huydang-dek21-embedding
 
 Exact human-readable labels are:
 
 - `E5-small 384D (control)`;
 - `Multilingual MiniLM-L12 384D`;
+- `Huydang DEk21 768D`;
 - `E5-base 768D`;
-- `E5-large 1024D`;
-- `BGE-M3 dense 1024D`;
-- `Qwen3 Embedding 0.6B 384D`;
-- `Qwen3 Embedding 0.6B native 1024D`.
 
 Every setting also records the same locked 08a profile fields:
 
@@ -121,8 +108,7 @@ Every setting also records the same locked 08a profile fields:
 
 ## Native encoding contracts
 
-All query and document vectors are L2-normalized after native pooling. Qwen
-384D is normalized after official SentenceTransformers truncation.
+All query and document vectors are L2-normalized after native pooling.
 
 ### E5 family
 
@@ -137,20 +123,10 @@ All query and document vectors are L2-normalized after native pooling. Qwen
 - Use the model mean-pooling configuration.
 - Keep its native maximum of 128 tokens.
 
-### Qwen3 Embedding 0.6B
+### Historical BGE-M3 dense design — cancelled for local execution
 
-- Use last-token pooling.
-- Keep documents raw.
-- Use this exact query instruction:
-
-    Instruct: Với một câu hỏi du lịch ẩm thực Huế, hãy truy xuất các đoạn văn liên quan có thể trả lời câu hỏi.
-    Query: {question}
-
-- The 384D setting passes official truncate_dim=384. Manual slicing and PCA are
-  forbidden.
-- The 1024D setting uses native output.
-
-### BGE-M3 dense
+The following adapter notes are retained only as design history and must not be
+implemented or executed in the current local matrix.
 
 - Add and pin FlagEmbedding==1.4.0.
 - Download the pinned model snapshot and pass its local path to BGEM3FlagModel.
@@ -203,13 +179,12 @@ This module owns model loading and dense encoding only. It contains:
 - E5_SMALL_SETTING;
 - DENSE_CANDIDATE_SETTINGS in approved order;
 - SentenceTransformerDenseRunner;
-- Qwen3DenseRunner;
-- BGEM3DenseRunner;
+- HuydangDenseRunner;
 - build_dense_runner(setting), using explicit if/elif branches.
 
 There is no dynamic registry, plug-in system, inheritance hierarchy or
 validator framework. The notebook cannot supply arbitrary prefixes, pooling
-modes or Qwen instructions.
+modes or model instructions.
 
 Every runner exposes:
 
@@ -463,7 +438,7 @@ cells in seven sections.
 
 ### 4. Settings and isolation
 
-- Display seven pinned settings.
+- Display four pinned local settings.
 - Explain isolated collections.
 - Capture/display the safe active snapshot.
 
@@ -478,9 +453,9 @@ One cell runs:
 
 A later cell displays its summary and category rows.
 
-### 6. Six candidates
+### 6. Three candidates
 
-One cell runs all six sequentially:
+One cell runs all three sequentially:
 
     candidate_results = []
 
@@ -517,9 +492,11 @@ Current lock includes:
 - torch==2.13.0;
 - qdrant-client==1.19.0.
 
-Implementation adds FlagEmbedding==1.4.0 to pyproject.toml and uv.lock. There is
-no second environment or notebook installation cell. Dependency or Python 3.13
-integration failure reopens the design; versions are not changed silently.
+Implementation pins PyVi 0.1.1 for the authorized Huydang preprocessing contract
+and removes the direct FlagEmbedding dependency when no authorized local
+consumer remains. There is no second environment or notebook installation cell.
+Dependency or Python 3.13 integration failure reopens the design; versions are
+not changed silently.
 
 ## Exact implementation file scope
 
@@ -582,14 +559,11 @@ After Run All, Reviewer:
 
 1. reconciles CSV with the temporary notebook;
 2. independently recomputes at least one sample metric and gate;
-3. confirms Qwen 384D used official truncate_dim=384;
-4. compares one successful exact BGE adapter batch with public dense_vecs when
-   the public call succeeds without shrinking;
-5. confirms all seven isolated collections have 572 points and dimensions;
-6. confirms active schema/count and production config are unchanged;
-7. parses the repository notebook and confirms clean outputs/counts;
-8. runs focused tests and git diff --check;
-9. reads the complete diff and all changed files.
+3. confirms all four authorized isolated collections have 572 points and dimensions;
+5. confirms active schema/count and production config are unchanged;
+6. parses the repository notebook and confirms clean outputs/counts;
+7. runs focused tests and git diff --check;
+8. reads the complete diff and all changed files.
 
 Dependency, download, Qdrant or RAM failure is reported as failed, partial or
 blocked. No benchmark setting is changed to manufacture PASS.
@@ -601,6 +575,42 @@ reports/phase_8_08a_embedding_benchmark_implementation_report.md after an
 authorized implementation/run. Reviewer writes
 reports/phase_8_08a_embedding_benchmark_codex_review.md and, only for
 ready_for_user_confirmation, the matching user report.
+
+## Local execution amendment (2026-08-29 +07, superseding earlier local scope)
+
+The executable local 08a matrix is permanently limited to these 4 settings:
+1. `e5-small-384` (Control, 384D, Authorized)
+2. `multilingual-minilm-l12-384` (384D, Authorized)
+3. `huydang-dek21-embedding-768` (PhoBERT ~135M params, 768D, max length 256, PyVi segmentation, Authorized)
+4. `e5-base-768` (768D, Authorized)
+
+The following settings are no longer authorized for local download or execution
+on this machine because their resource requirements exceed the accepted local
+profile:
+
+- `e5-large-1024`;
+- `bge-m3-dense-1024`;
+- `qwen3-embedding-0.6b-384` and `qwen3-embedding-0.6b-1024`.
+
+After the four local settings finish, a separate paid/remote proposal may
+benchmark `intfloat/multilingual-e5-large` and `baai/bge-m3` through the current
+OpenRouter embeddings API. That remote experiment is outside this local 08a Run
+All and requires fresh catalog/schema/pricing verification plus explicit user
+approval. Qwen3 Embedding has no authorized local or remote run.
+
+Runtime boundaries fail closed for every setting outside the exact four-setting
+local tuple. Historical 1024D adapter code or design text is not execution
+authorization.
+
+The final local implementation should not retain Qwen settings/runners, unused
+1024D setting constants, local collection targets, BGE-M3 runner code or a
+direct `FlagEmbedding` dependency solely for the removed local paths. Future OpenRouter support is a
+separate remote API design, not reuse authorization for the local BGE adapter.
+
+Historical Qwen3 384D CSV rows remain as evidence explaining its rejection;
+they are not executable catalog entries or four-model row-count acceptance.
+The Qwen cache and isolated collection were deleted by the Reviewer with user
+authorization on `2026-08-29 +07`.
 
 Technical readiness does not approve 08a automatically. The user must inspect
 and confirm the notebook. Only then may canonical guide/design/plan,

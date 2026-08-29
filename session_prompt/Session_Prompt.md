@@ -346,7 +346,8 @@ hoàn tất governance đơn giản
 -> Golden Dataset V3 Gate 0 đã approved với 45 full + 10 smoke cases
 -> Phase 8 Gate 1 common contracts đã approved
 -> exact Notebook 08a design/plan đã approved; implementation + Run All authorized
--> Implementer thực hiện 08a, Reviewer xác minh độc lập, user xác nhận
+-> Implementer correction 08a về exact four-model scope
+-> Reviewer xác minh độc lập, user xác nhận
 -> chỉ sau đó mới research + brainstorm Notebook 08b
 ```
 
@@ -364,8 +365,9 @@ Vietnamese gold và latency; khi quality không khác biệt đáng tin cậy th
 model nhẹ/nhanh/đơn giản. End-to-end generator là `qwen/qwen3.5-9b` qua
 OpenRouter, judge là `gpt-5.4-mini`. GPU/WSL2 GTX 1650 remediation thuộc session
 khác; CPU fallback được chấp nhận. Phase 8 vẫn `not_ready`: Gate 0 và Gate 1
-common contracts đã approved; exact Notebook 08a work package đã `ready`, nhưng
-chưa có implementation/review/user confirmation và later groups vẫn đóng.
+common contracts đã approved; Notebook 08a implementation đang
+`changes_requested` để đồng bộ exact four-model scope, chưa có user confirmation
+và later groups vẫn đóng.
 
 Gate 1 common contract bảo vệ cả chín V3 categories, dùng paired bootstrap
 10.000 lần/fixed seed/95% percentile CI và clear-gain threshold đã khóa trong
@@ -381,11 +383,11 @@ fake evidence và không audit machinery. Mỗi group có một cumulative CSV �
 giản để lưu tiến độ trước khi cleanup model/RAM/VRAM; canonical notebook clean,
 không run ID/JSON package/opaque configuration ID/resume engine.
 
-Retrieval coverage đã khóa gồm tám path: dense-only, BM25-only toàn corpus,
-dense→BM25 rescoring, true hybrid dense+BM25, TF-IDF SparseEmbedder-only, true
-hybrid dense+TF-IDF, BGE-M3 learned sparse-only và BGE-M3 dense+sparse hybrid.
-Full local matrix ghép mọi path tương thích với no-rerank và ba rerankers, nhưng
-không chạy duplicate hoặc ghép capability không tồn tại.
+Current local retrieval coverage gồm sáu path: dense-only, BM25-only toàn corpus,
+dense→BM25 rescoring, true hybrid dense+BM25, TF-IDF SparseEmbedder-only và true
+hybrid dense+TF-IDF. BGE-M3 learned sparse/dense+sparse đã bị loại khỏi local
+scope do không còn chạy BGE-M3 trên máy này. Full local matrix ghép mọi path
+tương thích với no-rerank và ba rerankers, không chạy duplicate.
 
 Fusion ban đầu đã khóa: RRF và independent min-max weighted sum
 `0.6 dense / 0.4 sparse`; không weight grid nếu chưa có observed evidence.
@@ -396,9 +398,11 @@ dense 30 → raw dense/BM25 0.6/0.4 → top 10 → current MiniLM 10→5 → con
 depth contract cho local matrix là candidate 30, fusion 10, rerank 10→5 và
 no-rerank final top 5; report Recall@30, Recall@10 và final metrics @5.
 
-Qwen3 Embedding 0.6B chạy hai variants 384D và native 1024D, không 768D ban đầu.
-Tổng cộng sáu embedding families/bảy dense configurations; mỗi vector space có
-isolated index riêng, không trộn model chỉ vì cùng dimension.
+Qwen3 Embedding 0.6B đã bị user loại khỏi toàn bộ local embedding scope ngày
+`2026-08-29 +07` sau khi historical 384D evidence cho thấy quality regression
+và CPU indexing quá chậm. Exact local matrix chỉ còn bốn configurations:
+E5-small 384D, MiniLM-L12 384D, Huydang DEk21 768D và E5-base 768D. Không chạy
+lại Qwen hoặc đưa nó vào 08b/08d; mười CSV rows cũ chỉ là historical evidence.
 
 Notebook 08b còn so sánh đúng hai BM25 tokenizer variants: lowercase Unicode
 `\w+` hiện hành và Underthesea `word_tokenize(..., format="text")`. Underthesea
@@ -465,8 +469,26 @@ Gate 1 brainstorming prompt đã được loại khỏi cây hiện hành sau kh
 common contracts và exact 08a design/plan ngày `2026-08-28 +07`; lịch sử vẫn ở
 Git. Session tiếp theo dùng exact Notebook 08a Implementer handoff được cung cấp
 trực tiếp. User đã authorize code, pinned model downloads và real Run All chỉ
-trên bảy isolated 08a collections. Không cho phép sửa V3, paid generation/judge,
+trên bốn isolated 08a collections. Không cho phép sửa V3, paid generation/judge,
 active collection mutation, production cutover hoặc work của Notebook 08b–08e.
 
 GPU/WSL2 remediation và mọi production cutover/active mutation vẫn là scope
 riêng.
+
+Resource amendment ngày `2026-08-29 +07` supersede mọi câu về local matrix năm
+hoặc bảy configurations phía trên. Local Notebook 08a chỉ còn E5-small 384D,
+MiniLM-L12 384D, Huydang DEk21 768D và E5-base 768D. Không download/chạy local
+Qwen3 Embedding ở bất kỳ dimension nào, E5-large 1024D hoặc BGE-M3 1024D. BGE
+learned sparse/hybrid cũng bị loại khỏi local 08b/08d.
+
+Sau local four, chỉ được research và viết proposal paid OpenRouter cho
+`intfloat/multilingual-e5-large` cùng `baai/bge-m3` dense. Chưa được đọc key,
+implement adapter, gọi API hoặc tạo remote-vector collection nếu chưa có exact
+plan/budget và user authorization mới. E5-large project artifacts từ Reviewer
+run trước đã được user authorize cleanup và đã xóa; không phục hồi chúng làm
+PASS evidence.
+
+Reviewer đã tạo fresh evidence cho bốn model còn lại ngày `2026-08-29 +07`, đủ
+3/3 repetitions trên 45 cases và 572 chunks. Reviewer session kế tiếp không cần
+chạy lại bốn model này nếu correction chỉ xóa Qwen/deferred code và không đổi
+encoding, retrieval hoặc metric behavior.
