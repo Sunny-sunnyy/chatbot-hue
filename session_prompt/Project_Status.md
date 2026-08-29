@@ -30,7 +30,6 @@ Foods corpus hiện gồm:
 - 9 local specialties;
 - `food-guides.md` với 17 sections;
 - 91 curated Markdown files tạo 572 deterministic chunks;
-- legacy evaluation corpus `tests.jsonl` có 104 câu;
 - Golden Dataset V3 canonical có 45 full cases và 10 smoke rows deep-equal.
 
 Không chunk trực tiếp từ source dumps. Curated Markdown là closed-world source
@@ -60,9 +59,7 @@ Golden V3 cases và 572 chunks. Executable catalog hiện chỉ gồm:
 2. `huydang-dek21-embedding-768` — candidate 768D;
 3. `e5-base-768` — candidate 768D.
 
-Mỗi model có 3/3 repetition evidence. MiniLM-L12 và Qwen3 Embedding đã bị loại
-sau observed regression; cache/isolated collections của chúng đã xóa. CSV giữ
-rows của chúng làm historical rejection evidence, không phải executable scope.
+Mỗi model có 3/3 repetition evidence trên 45 Golden V3 cases và 572 chunks.
 
 ## Phase status
 
@@ -90,9 +87,7 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
 - Main local benchmark profile là CPU FP32; failed/OOM phải được ghi đúng, không
   silent fallback hoặc đổi setting.
 - Khi quality không khác biệt đáng tin cậy, ưu tiên model nhẹ, nhanh và đơn giản.
-- Local dense Phase 8 chỉ có ba model hiện hành nêu trên; không chạy lại
-  MiniLM-L12, Qwen3 Embedding, E5-large 1024D hoặc BGE-M3 1024D.
-- BGE learned sparse/ColBERT không nằm trong local 08b/08d scope.
+- Local dense Phase 8 chỉ có ba model executable hiện hành nêu trên.
 - Initial fusion comparison dùng RRF và independent min-max weighted sum
   `0.6 dense / 0.4 sparse`; không weight grid khi chưa có observed need.
 - Notebook 08b chỉ so sánh tokenizer BM25 Unicode `\w+` hiện hành với
@@ -152,19 +147,21 @@ reports/phase_8_08a_embedding_benchmark_codex_review.md
 evaluation/results/phase8_embedding_results.csv
 ```
 
-Risk-gated workflow design/plan:
+Governance designs and plans:
 
 ```text
 docs/superpowers/specs/2026-08-29-risk-gated-agent-review-design.md
 docs/superpowers/plans/2026-08-29-risk-gated-agent-review-implementation-plan.md
+docs/superpowers/specs/2026-08-29-restore-core-coding-behaviors-design.md
+docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-plan.md
 ```
 
 ## Current next action
 
-Hoàn tất independent review và user closure cho risk-gated workflow. Sau
-closure, next handoff giao Reviewer research và brainstorm exact Notebook 08b:
-retrieval/fusion comparison trên Golden V3 bằng current local catalog và các
-contract đã approved.
+Hoàn tất governance correction để khôi phục các nguyên tắc coding,
+implementation và review cốt lõi trong ba bootstrap behavior files. Correction
+phải qua independent review và user confirmation trước khi chuyển sang research
+và brainstorming exact Notebook 08b.
 
 08b hiện chưa authorize implementation/run, dependency/provider mới, paid API,
 active Qdrant mutation hoặc production cutover. Reviewer phải brainstorm và tạo

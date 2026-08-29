@@ -2,181 +2,156 @@
 
 ## 1. Phạm vi
 
-Triển khai workflow governance dạng risk-gated theo design và plan đã được user
-duyệt. Phạm vi chỉ gồm shared skill, bốn tài liệu bootstrap, một current
-handoff và báo cáo này; không thay đổi runtime, tests, notebooks, dependencies,
-datasets hoặc Phase 8 benchmark artifacts.
-
-## 2. Thay đổi chính
-
-- Tạo generic shared skill `risk-gated-agent-review` với hai role branches,
-  tiered context loading, Review Contract, risk-trigger matrix, evidence reuse,
-  correction/closure và gated Git contract.
-- Skill không chứa tên model, service, phase hoặc coding/test doctrine riêng của
-  Hue RAG.
-- Rút `Session_Prompt.md` về stable source-of-truth, role/context routing,
-  project boundaries, safety, skill pointers và Git authorization.
-- Viết lại `Project_Status.md` thành project overview, system/data map, current
-  runtime, compact phase table, active decisions, boundaries, canonical map và
-  một next action.
-- Rút hai role workflows về project-specific authority adapters; shared
-  evidence/risk protocol nằm duy nhất trong skill mới.
-- Tạo một `CURRENT_HANDOFF.md` target Reviewer cho independent final review,
-  chứa Review Contract, acceptance mapping, evidence index và proposed closure
-  sang 08b `next_design`.
-
-## 3. Cách đã kiểm tra
-
-Đang thu thập evidence bằng word-count comparison, responsibility mapping,
-Markdown/path checks, exact diff audit và bốn tabletop scenarios.
-
-Task 1 đã chạy:
+Thực hiện `major` governance correction đã được user duyệt trong:
 
 ```text
-rg project/coding-specific terms trong SKILL.md
-rg coordination contract terms trong SKILL.md
-skill-creator quick_validate.py skills/risk-gated-agent-review
+docs/superpowers/specs/2026-08-29-restore-core-coding-behaviors-design.md
+docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-plan.md
 ```
 
-Final governance validation đã chạy:
+Correction khôi phục các hành vi coding, test, debugging, live verification,
+implementation và review cốt lõi nhưng giữ nguyên kiến trúc
+`risk-gated-agent-review`.
 
-```text
-wc -w trên năm bootstrap/role files
-git diff --name-only <base> trên protected và declared paths
-git diff --check cùng trailing-whitespace scan cho untracked files
-repository-relative path existence checks
-single active handoff scan
-official skill quick validation
-four manual tabletop scenarios
-```
-
-## 4. Kết quả quan sát
-
-Fresh baseline trước implementation:
-
-| Bootstrap file | Word count |
-|---|---:|
-| `session_prompt/Session_Prompt.md` | 3,292 |
-| `session_prompt/Project_Status.md` | 4,005 |
-| `session_prompt/REVIEWER_WORKFLOW.md` | 1,763 |
-| `session_prompt/IMPLEMENTER_WORKFLOW.md` | 1,480 |
-| **Tổng bốn file** | **10,540** |
-
-Baseline được đo bằng `wc -w` tại commit `8ef5da5` trước khi sửa workflow.
-
-Task 1 observed results:
-
-- project/coding-specific term scan: không có match;
-- coordination terms: có đầy đủ Reviewer, Implementer, Review Contract và Git
-  authorization contract;
-- official skill validation: `Skill is valid!`;
-- không tạo scripts, references, assets, UI metadata hoặc dependency vì skill
-  tự chứa đủ protocol cần thiết.
-
-Task 2 observed results:
-
-- `Session_Prompt.md`: giảm từ 3.292 xuống 836 từ;
-- retained-invariant scan tìm thấy source-of-truth, role routing,
-  `CURRENT_HANDOFF`, hai skill pointers, active read-only, secrets và Git rules;
-- history scan cho Golden V2, Qwen embedding, Notebook 08a và Phase 0–6 không có
-  match;
-- current phase/runtime facts được chuyển trách nhiệm sang `Project_Status.md`,
-  không bị biến thành requirement mới trong session prompt.
-
-Task 3 observed results:
-
-- `Project_Status.md`: giảm từ 4.005 xuống 908 từ;
-- current-fact scan tìm thấy project goal, 572 chunks, active read-only
-  collection, Golden V3 45+10, exact three-model catalog và next 08b boundary;
-- audit-history scan không có match cho correction/revision narrative;
-- file vẫn đóng vai trò README-level map bằng project overview, current runtime,
-  phase table và canonical pointers.
-
-Task 4 observed results:
-
-- `REVIEWER_WORKFLOW.md`: giảm từ 1.763 xuống 656 từ;
-- `IMPLEMENTER_WORKFLOW.md`: giảm từ 1.480 xuống 623 từ;
-- required-term scans tìm thấy shared-skill pointer, current handoff, verdicts,
-  correction/closure, evidence và Git boundaries;
-- scan `fake`/`coverage` còn ba match cần thiết: hai safety/severity definitions
-  và một câu cấm dùng coverage làm blocker; không lặp implementation doctrine.
-
-Responsibility map:
-
-| Nội dung | Decision owner | Editing role / condition |
-|---|---|---|
-| Requirement, spec, plan, Review Contract | Reviewer + user approval | Reviewer |
-| Runtime, tests, notebooks, dependencies | Approved plan | Implementer trong exact scope |
-| Implementation report, technical docs | Implementer | Implementer; escalate nếu đổi contract |
-| Codex review, user report, guide/status decision | Reviewer | Reviewer; Implementer chỉ mechanical closure fields |
-| `CURRENT_HANDOFF.md` | Outgoing role | Reviewer hoặc Implementer tạo cho next role |
-| Approval closure | Reviewer + user confirmation | Implementer thi hành exact contract |
-| Commit/push | User/current handoff | Role được cấp exact Git authorization |
-
-Final context measurement:
-
-| File | Words |
-|---|---:|
-| `Session_Prompt.md` | 836 |
-| `Project_Status.md` | 908 |
-| `REVIEWER_WORKFLOW.md` | 656 |
-| `IMPLEMENTER_WORKFLOW.md` | 623 |
-| `CURRENT_HANDOFF.md` | 650 |
-
-Per-role bootstrap comparison:
-
-| Role bundle | Old words | New words | Reduction |
-|---|---:|---:|---:|
-| Reviewer | 9,060 | 3,050 | 6,010 (66.3%) |
-| Implementer | 8,777 | 3,017 | 5,760 (65.6%) |
-
-Hai bundle đều thấp hơn soft target khoảng 4.000 từ mà vẫn giữ project map,
-safety/authority boundaries và current task. Handoff thấp hơn soft target 800
-từ; không cần cắt thêm context.
-
-Tabletop replay:
-
-| Scenario | Result | Observed routing |
-|---|---|---|
-| 08b next design | `PASS` | Project Status và proposed closure xác định research/brainstorming; cấm implementation/run, paid API, active mutation và cutover |
-| 08a cleanup replay | `PASS` | Dependency/functional triggers chọn exact diff, focused checks, lock và safe integration inspection; unchanged model behavior không bị full rerun |
-| Major correction | `PASS` | Reviewer tạo một correction delta với severity, affected requirement, reruns và reusable evidence; Implementer không tự close |
-| Approval closure | `PASS` | Reviewer quyết định và khóa contract; sau user confirmation Implementer chỉ update exact fields/Git và chuyển `next_design` |
-
-Final checks observed:
-
-- official skill validator: `Skill is valid!`;
-- all explicit repository-relative bootstrap/canonical pointers checked exist;
-- exactly one active handoff file: `session_prompt/CURRENT_HANDOFF.md`;
-- protected runtime/notebook/evaluation/dependency paths: no diff from base;
-- exact implementation scope: four modified bootstrap files plus three new
-  files (skill, current handoff, report);
-- `git diff --check`: pass; explicit trailing-whitespace scan on untracked files
-  has no match;
-- no sub-agent, backend test, notebook, Qdrant, model or paid API was run.
-
-## 5. Lỗi và giới hạn
-
-Không chạy runtime tests hoặc live services vì implementation không thay đổi
-runtime behavior. Tabletop chỉ chứng minh routing/document contract, không phải
-evidence cho product runtime. Codex thực hiện implementation theo yêu cầu trực
-tiếp của user; vì vậy một Reviewer session sau vẫn phải dùng handoff và
-independent diff gate, không được coi report này là self-approval.
-
-User đã authorize checkpoint commit/push sau implementation. Handoff dùng
-`Head commit: HEAD` từ base `8ef5da51affe5dddcbb0d5b83f17443b44a18faf`;
-checkpoint không mang nghĩa technical approval.
-
-## 6. Handoff cho Reviewer
-
-Reviewer session mới đọc theo thứ tự:
+Phạm vi implementation:
 
 ```text
 session_prompt/Session_Prompt.md
-session_prompt/Project_Status.md
 session_prompt/REVIEWER_WORKFLOW.md
+session_prompt/IMPLEMENTER_WORKFLOW.md
+session_prompt/Project_Status.md
 session_prompt/CURRENT_HANDOFF.md
+reports/risk_gated_agent_review_implementation_report.md
 ```
 
-Thực hiện đúng medium-risk Review Contract trong current handoff. Không bắt đầu
-08b; commit đã push chỉ là immutable review target, không phải approval.
+Không sửa runtime, tests, dependencies, datasets, notebooks, Qdrant, evaluation
+artifacts hoặc hai project skills. `session_prompt_old/` là untracked context
+được user cung cấp và được giữ nguyên.
+
+## 2. Thay đổi chính
+
+- `Session_Prompt.md` khôi phục shared Hue RAG policy về simplicity, useful
+  tests, no mock/fake/stub dependency, root-cause debugging, real evidence,
+  online/paid API, secrets, conditional complexity removal, `uv`, curated data,
+  notebook và worktree/Git safety.
+- `REVIEWER_WORKFLOW.md` khôi phục simplicity questions, test audit, exact live
+  verification, bug-fix review, complexity reset, optional CodeGraph, notebook
+  review, verdict và report behavior.
+- `IMPLEMENTER_WORKFLOW.md` khôi phục direct implementation, useful tests,
+  focused debugging, real verification, exact-diff self-review, optional
+  CodeGraph, notebook, report và correction behavior.
+- Skill routing giữ hai project skills tại repo; Codex Reviewer dùng native
+  loading và Gemini Implementer được chỉ root `~/.codex/skills/`.
+- `Project_Status.md` chỉ giữ current Golden V3 45+10, approved 08a, executable
+  E5-small/Huydang DEk21/E5-base catalog, Phase 8 state và governance-correction
+  next action. Retired corpus/model narrative đã được bỏ.
+- `CURRENT_HANDOFF.md` được thay bằng compact final-review packet với
+  `Git authorization: none`.
+
+## 3. Cách đã kiểm tra
+
+Đã chạy fresh documentation checks:
+
+```text
+git rev-parse HEAD
+git status --short
+git diff --name-only
+git diff --stat
+wc -w trên bốn stable governance files
+required-behavior rg scans cho từng file
+obsolete-state rg scans
+git diff --check
+protected runtime/artifact/skill diff và status checks
+repository-relative canonical path checks
+manual responsibility và ten-scenario replay
+```
+
+Không chạy backend tests, notebooks, models, Qdrant hoặc paid API vì exact diff
+chỉ thay governance Markdown và không mở product-runtime trigger.
+
+## 4. Kết quả quan sát
+
+Base được xác nhận:
+
+```text
+b4452dd617757565840622228054b5679eff3713
+```
+
+Fresh word counts sau correction:
+
+| Stable file | Words |
+|---|---:|
+| `Session_Prompt.md` | 1,940 |
+| `Project_Status.md` | 865 |
+| `REVIEWER_WORKFLOW.md` | 1,419 |
+| `IMPLEMENTER_WORKFLOW.md` | 1,441 |
+| **Tổng** | **5,665** |
+
+Bundle vượt soft target cũ vì user yêu cầu khôi phục explicit core behavior.
+Soft context target không phải correctness gate; phase history và retired facts
+vẫn không được đưa trở lại.
+
+Fresh checks:
+
+| Check | Observed result |
+|---|---|
+| Required behavior scans | PASS cho skill routing, simplicity, tests, 45+10, debugging, `uv`, CodeGraph, notebook và lifecycle |
+| Obsolete behavior/state scans | PASS, không có active rule cũ trong ba behavior files và không có retired corpus/model narrative trong status |
+| `git diff --check` | PASS, không có output |
+| Protected runtime/artifact diff | PASS, không có output |
+| Protected runtime/artifact status | PASS, không có output |
+| Project skill diff | PASS, cả hai skill không đổi |
+| Canonical path checks | PASS |
+| Active production mutation | Không thực hiện |
+| Git staging/commit/push | Không thực hiện |
+
+Responsibility audit:
+
+| Concern | Canonical owner |
+|---|---|
+| Role/risk/handoff protocol | `risk-gated-agent-review` |
+| Reusable coding foundation | `practical-project-coding` |
+| Shared Hue RAG behavior | `Session_Prompt.md` |
+| Reviewer application | `REVIEWER_WORKFLOW.md` |
+| Implementer application | `IMPLEMENTER_WORKFLOW.md` |
+| Current project facts | `Project_Status.md` |
+| Exact active task | `CURRENT_HANDOFF.md` |
+
+Manual scenarios:
+
+| Scenario | Result | Supporting behavior |
+|---|---|---|
+| Codex/Gemini skill loading | PASS | Session skill routing và hai role skill sections |
+| Docs-only task avoids runtime checkpoint | PASS | Reviewer live-evidence rules và Review Contract |
+| Pure values are not test-double/integration evidence | PASS | Shared/Implementer test rules |
+| Integration change selects exact real path | PASS | Shared và Reviewer verification routing |
+| Smoke 10 versus full 45 | PASS | Shared cùng hai role workflows |
+| Broad suite needs blast-radius reason | PASS | Shared cùng two-role test rules |
+| Unchanged correction evidence reuse | PASS | Shared/Reviewer/Implementer evidence rules |
+| Over-engineering creates bounded major correction | PASS | Reviewer simplicity/correction sections |
+| Implementer cannot self-approve | PASS | Both role lifecycle boundaries |
+| Git work needs exact authorization | PASS | Shared cùng two-role Git boundaries |
+
+## 5. Lỗi và giới hạn
+
+- Codex thực hiện correction sau direct user instruction dù design dự kiến
+  Gemini Implementer. Vì vậy một lượt Reviewer độc lập vẫn phải đọc exact diff;
+  report này không phải self-approval.
+- Không có runtime/live verification vì runtime không đổi. Kết quả Phase 8 cũ
+  không được relabel thành fresh evidence cho correction này.
+- `session_prompt_old/` vẫn untracked và không thuộc implementation output.
+- Không có Git authorization; toàn bộ thay đổi nằm ở worktree.
+
+## 6. Handoff cho Reviewer
+
+Reviewer đọc theo four-file bootstrap rồi mở đầy đủ:
+
+```text
+docs/superpowers/specs/2026-08-29-restore-core-coding-behaviors-design.md
+docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-plan.md
+reports/risk_gated_agent_review_implementation_report.md
+```
+
+Thực hiện medium-risk documentation Review Contract trong
+`session_prompt/CURRENT_HANDOFF.md`. Không bắt đầu Notebook 08b, không sửa
+runtime thay Implementer và không commit/push.
