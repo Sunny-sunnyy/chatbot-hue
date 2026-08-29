@@ -37,18 +37,29 @@ architecture, risk hoặc quyền, nêu rõ và xin quyết định thay vì t�
 
 ## Skill and role routing
 
-Mỗi task bắt đầu bằng `using-superpowers` để chọn workflow. Reviewer Codex dùng
-cơ chế native để load Superpowers skills. Implementer Gemini load Superpowers
-skills từ:
+Khi bắt đầu session mới hoặc khi role, objective hay workflow chưa rõ, dùng
+`using-superpowers` để chọn workflow. Nếu current handoff đã xác định exact role
+và một next action, activate trực tiếp các skill mà handoff, plan hoặc role
+workflow yêu cầu. Không reload skill đã active trong cùng top-level task.
+
+Top-level task là một objective hoặc một handoff series, không phải từng tool
+call, plan step hay correction nhỏ. Route lại khi role, objective hoặc yêu cầu
+mới làm thay đổi workflow đã chọn.
+
+Reviewer Codex dùng cơ chế native để load Superpowers skills. Khi Implementer
+Gemini cần tìm hoặc load Superpowers skill phù hợp, tìm tại:
 
 ```text
 ~/.codex/skills/
 ```
 
-Phase mới, architecture, governance hoặc creative design dùng `brainstorming`.
-Chỉ chuyển sang `writing-plans` sau khi user duyệt written spec và chỉ execute
-approved plan bằng execution skill phù hợp. Sự tồn tại của parallel-agent skill
-không tự cấp quyền dùng sub-agent; user hoặc Review Contract phải cho phép rõ.
+Phase mới, architecture, governance hoặc creative design chưa được giải quyết
+dùng `brainstorming`. Chỉ chuyển sang `writing-plans` sau khi user duyệt written
+spec và chỉ execute approved plan bằng execution skill phù hợp. Exact
+`implementation`, `correction`, `final_review` hoặc `closure` handoff là routing
+decision đã hoàn thành; không brainstorm hoặc viết lại plan nếu requirement
+không đổi. Sự tồn tại của parallel-agent skill không tự cấp quyền dùng
+sub-agent; user hoặc Review Contract phải cho phép rõ.
 
 - User giao `REVIEWER_WORKFLOW.md`: hành xử như Reviewer.
 - User giao `IMPLEMENTER_WORKFLOW.md`: hành xử như Implementer.
@@ -76,7 +87,7 @@ risk hoặc thay requirement đã duyệt.
 
 ## Context loading
 
-Sau khi `using-superpowers` chọn workflow, nạp project context theo thứ tự:
+Sau khi workflow được xác định, nạp project context theo thứ tự:
 
 ```text
 session_prompt/Session_Prompt.md

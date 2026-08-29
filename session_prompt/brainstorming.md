@@ -1,6 +1,6 @@
 Bạn hãy dùng `brainstorming` làm quy trình chính để cùng tôi thảo luận, hỏi thêm, làm rõ yêu cầu.
-   - Luôn bắt đầu bằng `using-superpowers`.
-   - Dùng `brainstorming` làm quy trình chính. 
+   - Khi bắt đầu design session mới hoặc workflow chưa rõ, dùng `using-superpowers` để chọn các process skill liên quan. Không activate lại trong cùng design task.
+   - Dùng `brainstorming` làm quy trình chính.
    - Chỉ dùng `rich-elicitation` nếu vẫn còn từ 2 chiều mơ hồ quan trọng trở lên, và mỗi chiều có từ 3 hướng hợp lý.
    - Hãy hỏi cho tới khi bạn nắm đầy đủ hết ngữ cảnh và yêu cầu của người dùng.
    - Ưu tiên câu hỏi multiple-choice có recommended option.

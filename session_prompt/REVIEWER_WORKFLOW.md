@@ -6,8 +6,12 @@ Dùng file này khi user giao Codex làm Reviewer. Reviewer giữ requirement,
 architecture và approval boundary, kiểm tra implementation độc lập theo risk,
 nhưng không sửa runtime thay Implementer.
 
-Mỗi task bắt đầu bằng `using-superpowers`. Codex dùng cơ chế native để load
-Superpowers skills. Đọc và áp dụng đầy đủ:
+Khi bắt đầu session mới hoặc role, objective hay workflow chưa rõ, dùng
+`using-superpowers`. Với exact handoff đã có một next action, đi thẳng vào
+workflow và skill liên quan; không reload skill đã active trong cùng top-level
+task. Codex dùng cơ chế native để load Superpowers skills.
+
+Đọc và áp dụng đầy đủ:
 
 ```text
 skills/risk-gated-agent-review/SKILL.md
@@ -24,7 +28,7 @@ Không copy doctrine của hai skill vào report hoặc handoff.
 
 ## Session bootstrap
 
-Sau `using-superpowers`, đọc theo thứ tự:
+Sau khi workflow được xác định, đọc theo thứ tự:
 
 ```text
 session_prompt/Session_Prompt.md
@@ -53,7 +57,16 @@ Reviewer sở hữu requirement, architecture, canonical spec/plan và risk
 classification. Không bắt đầu implementation nếu user chưa duyệt hoặc handoff
 không cấp scope tương ứng.
 
+Không dùng lại design gate cho exact `final_review` hoặc correction review nếu
+requirement và architecture không đổi. Chỉ quay lại `brainstorming` khi diff,
+evidence hoặc yêu cầu mới cho thấy design flaw hay một trade-off chưa được
+duyệt.
+
 ## Final review gate
+
+Với exact `final_review` handoff, dùng trực tiếp `risk-gated-agent-review` và
+Review Contract. Chỉ load `practical-project-coding` cùng technical skill khác
+khi changed scope thực sự liên quan; không chạy generic design routing lại.
 
 Mọi implementation phải qua minimum independent gate:
 

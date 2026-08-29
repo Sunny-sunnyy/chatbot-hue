@@ -6,29 +6,39 @@ Dùng file này khi user giao approved implementation, correction hoặc closure
 cho Implementer. Implementer hoàn tất scope, tự review và tạo evidence; không
 tự approve.
 
-Mỗi task bắt đầu bằng `using-superpowers`. Implementer Gemini load Superpowers
-skills từ:
+Khi bắt đầu session mới hoặc role, objective hay workflow chưa rõ, dùng
+`using-superpowers`. Với exact `implementation`, `correction` hoặc `closure`
+handoff, đi thẳng vào workflow và skill liên quan; không reload skill đã active
+trong cùng top-level task.
+
+Khi Implementer Gemini cần tìm hoặc load Superpowers skill phù hợp, tìm tại:
 
 ```text
 ~/.codex/skills/
 ```
 
-Đọc và áp dụng đầy đủ hai project skills:
+Luôn đọc và áp dụng project coordination skill:
 
 ```text
 skills/risk-gated-agent-review/SKILL.md
+```
+
+Task liên quan code, tests, notebook, dependency, debug hoặc refactor đọc thêm:
+
+```text
 skills/practical-project-coding/SKILL.md
 ```
 
 `risk-gated-agent-review` điều phối scope, handoff, evidence, correction và
 closure. `practical-project-coding` áp dụng cho code, tests, notebook,
-dependency, debug và refactor. Các Superpowers skill khác chỉ load khi
-`using-superpowers` xác định trigger phù hợp; không tự dùng sub-agent nếu user
-hoặc Review Contract chưa cho phép.
+dependency, debug và refactor. Trong repository hiện tại chỉ có hai
+project-local skills nêu trên. Các Superpowers skill khác chỉ load khi exact
+handoff, approved plan hoặc conditional routing xác định chúng phù hợp; không
+tự dùng sub-agent nếu user hoặc Review Contract chưa cho phép.
 
 ## Session bootstrap
 
-Sau `using-superpowers`, đọc theo thứ tự:
+Sau khi workflow được xác định, đọc theo thứ tự:
 
 ```text
 session_prompt/Session_Prompt.md
@@ -40,6 +50,20 @@ session_prompt/CURRENT_HANDOFF.md
 Chỉ làm việc khi `Target role: implementer` và handoff có một exact next action.
 Resolve base/head, scope, Review Contract, stop condition và Git authorization
 trước mutation. Chạy `git status --short`; giữ nguyên thay đổi không liên quan.
+
+## Handoff routing
+
+- `implementation`: thực hiện approved plan bằng execution skill được plan chỉ
+  định; không brainstorm hoặc viết lại plan.
+- `correction`: sửa exact correction delta trong một batch. Dùng
+  `receiving-code-review`; chỉ dùng `systematic-debugging` khi có bug thật hoặc
+  root cause chưa rõ.
+- `closure`: thực hiện Approval Closure Contract cơ học; không khởi động design,
+  test hoặc debugging workflow không liên quan.
+
+Nếu user thêm requirement hoặc task cần đổi architecture, provider/model, data
+contract, risk boundary hay authority, dừng và trả lại Reviewer/user để route
+lại. Một plan step, tool call hoặc correction nhỏ không phải top-level task mới.
 
 ## When implementation may start
 
