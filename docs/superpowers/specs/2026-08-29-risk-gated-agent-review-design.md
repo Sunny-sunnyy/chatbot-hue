@@ -1,6 +1,6 @@
 # Risk-Gated Agent Review Design
 
-Status: design approved; written specification awaiting user review
+Status: approved for implementation planning
 Date: 2026-08-29 +07
 Scope: reusable Reviewer/Implementer coordination and context optimization
 
@@ -169,7 +169,7 @@ Authored by:
 Handoff kind:
 State: active
 Base commit:
-Head commit:
+Head commit: `HEAD`, an external commit SHA, or `worktree`
 Risk level:
 Git authorization:
 ```
@@ -260,7 +260,8 @@ Supported handoff kinds:
 Only one handoff is active. An agent must stop and report a handoff problem when:
 
 - the target role does not match the assigned role;
-- base/head commits are invalid or do not describe the declared diff;
+- the base commit is invalid, or the head is neither `HEAD`, a valid external
+  commit nor `worktree`, or the declared range does not match the diff;
 - canonical inputs do not exist;
 - current requirements conflict with the latest user decision;
 - the worktree contains undeclared changes that cannot be isolated safely;
@@ -442,6 +443,7 @@ Create:
 ```text
 skills/risk-gated-agent-review/SKILL.md
 session_prompt/CURRENT_HANDOFF.md
+reports/risk_gated_agent_review_implementation_report.md
 ```
 
 Refactor only as needed:
@@ -463,9 +465,12 @@ notebooks
 Phase 8 benchmark artifacts
 ```
 
-The first current handoff targets Reviewer and requests Phase 8 Notebook 08b
-research and brainstorming. It does not authorize implementation, benchmark
-execution, paid API use, active collection mutation or production cutover.
+During rollout, Implementer first creates a `final_review` handoff so Reviewer
+can verify the workflow implementation. The Approval Closure Contract then
+replaces it with the first steady-state handoff: a `next_design` handoff that
+asks Reviewer to research and brainstorm Phase 8 Notebook 08b. The 08b handoff
+does not authorize implementation, benchmark execution, paid API use, active
+collection mutation or production cutover.
 
 ## 16. Research basis
 
