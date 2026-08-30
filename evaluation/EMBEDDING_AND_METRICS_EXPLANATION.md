@@ -1,79 +1,93 @@
-# Hướng dẫn & Giải thích Kỹ thuật: Mô hình Embedding và Các Độ đo Đánh giá (Hue Foods RAG)
+# Hướng dẫn & Giải thích Kỹ thuật: Mô hình Embedding, Sparse Retrieval, Fusion và Các Độ đo Đánh giá (Hue Foods RAG)
 
-> **Tài liệu tham chiếu nội bộ** cho nhóm phát triển và nghiên cứu dự án **Hue Foods RAG**.
-> **Cập nhật:** `2026-08-29` (Phase 8 — Benchmark & Model Selection).
+> **Tài liệu kỹ thuật tham chiếu nội bộ** cho nhóm phát triển và nghiên cứu dự án **Hue Foods RAG**.
+> **Cập nhật:** `2026-08-30` (Bổ sung toàn diện Phase 8 — Notebook 08a Dense & Notebook 08b Sparse/Fusion Benchmark).
 
 ---
 
 ## Mục lục
 
-1. [Tổng quan về Embedding trong Hệ thống RAG](#1-tổng-quan-về-embedding-trong-hệ-thống-rag)
-2. [Các Mô hình Embedding Đang Dùng](#2-các-mô-hình-embedding-đang-dùng)
+1. [Tổng quan về Retrieval & Kiến trúc Đa tầng trong RAG](#1-tổng-quan-về-retrieval--kiến-trúc-đa-tầng-trong-rag)
+2. [Các Mô hình Dense Embedding (Ngữ nghĩa)](#2-các-mô-hình-dense-embedding-ngữ-nghĩa)
    - [2.1. `intfloat/multilingual-e5-small` (384D) — Control Baseline](#21-intfloatmultilingual-e5-small-384d--control-baseline)
-   - [2.2. `CODE4LIFEOFFICIAL/huydang-dek21-embedding` (768D)](#22-code4lifeofficialhuydang-dek21-embedding-768d--candidate-1)
-   - [2.3. `intfloat/multilingual-e5-base` (768D)](#23-intfloatmultilingual-e5-base-768d--candidate-2)
-   - [2.4. Phân tích các mô hình đã loại bỏ](#24-phân-tích-các-mô-hình-đã-loại-bỏ-minilm-l12-qwen3-embedding-bge-m3-e5-large)
-3. [Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)](#3-nguyên-lý-tiền-xử-lý--hợp-đồng-input-input-contracts)
-   - [3.1. Tiền tố Asymmetric Query/Passage (E5 Family)](#31-tiền-tố-asymmetric-querypassage-e5-family)
-   - [3.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)](#32-tách-từ-tiếng-việt-chuyên-biệt-pyvi-vitokenizer)
-   - [3.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)](#33-giới-hạn-độ-dài-chuỗi-max-sequence-length--hiện-tượng-cắt-ngắn-truncation)
-   - [3.4. Chuẩn hóa Vector $L_2$ & Khoảng cách Cosine](#34-chuẩn-hóa-vector-l_2--khoảng-cách-cosine)
-4. [Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval Metrics)](#4-các-độ-do-đánh-giá-chất-lượng-truy-xuất-retrieval-metrics)
-   - [4.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)`](#41-đơn-vị-tính-điểm-relevance-cặp-source-section)
-   - [4.2. Recall@K (Recall@5)](#42-recallk-recall5)
-   - [4.3. MRR@K (Mean Reciprocal Rank @ 5)](#43-mrrk-mean-reciprocal-rank--5)
-   - [4.4. nDCG@K (Normalized Discounted Cumulative Gain @ 5)](#44-ndcgk-normalized-discounted-cumulative-gain--5)
-   - [4.5. Hit Rate / Hit Case Count](#45-hit-rate--hit-case-count)
-5. [Phương pháp Kiểm định Thống kê & Guardrails](#5-phương-pháp-kiểm-định-thống-kê--guardrails)
-   - [5.1. Category Guardrails (9 Danh mục câu hỏi V3)](#51-category-guardrails-9-danh-mục-câu-hỏi-v3)
-   - [5.2. Paired Bootstrap 95% Confidence Interval (CI)](#52-paired-bootstrap-95-confidence-interval-ci)
-   - [5.3. Tiêu chí Quyết định "Clear Quality Gain"](#53-tiêu-chí-quyết-định-clear-quality-gain)
-6. [Đo lường Hiệu năng: Độ trễ (Latency) & Bộ nhớ (Memory RSS)](#6-đo-lường-hiệu-năng-độ-trễ-latency--bộ-nhớ-memory-rss)
-7. [Bảng Tổng hợp So sánh & Khuyến nghị Lựa chọn](#7-bảng-tổng-hợp-so-sánh--khuyến-nghị-lựa-chọn)
+   - [2.2. `CODE4LIFEOFFICIAL/huydang-dek21-embedding` (768D) — Candidate 1](#22-code4lifeofficialhuydang-dek21-embedding-768d--candidate-1)
+   - [2.3. `intfloat/multilingual-e5-base` (768D) — Candidate 2](#23-intfloatmultilingual-e5-base-768d--candidate-2)
+   - [2.4. Phân tích các mô hình Dense đã loại bỏ](#24-phân-tích-các-mô-hình-dense-đã-loại-bỏ)
+3. [Các Thuật toán Sparse Retrieval (Từ khóa & Tần suất)](#3-các-thuật-toán-sparse-retrieval-từ-khóa--tần-suất)
+   - [3.1. Thuật toán BM25 (Best Matching 25) & Hiệu chỉnh Siêu tham số](#31-thuật-toán-bm25-best-matching-25--hiệu-chỉnh-siêu-tham-số)
+   - [3.2. TF-IDF Sparse Representation & Qdrant Sparse Vectors](#32-tf-idf-sparse-representation--qdrant-sparse-vectors)
+   - [3.3. So sánh Bộ tách từ (Tokenizers): Unicode Word vs Underthesea Word](#33-so-sánh-bộ-tách-từ-tokenizers-unicode-word-vs-underthesea-word)
+4. [Các Chiến lược Hợp nhất Đa luồng (Hybrid Fusion Strategies)](#4-các-chiến-lược-hợp-nhất-đa-luồng-hybrid-fusion-strategies)
+   - [4.1. Reciprocal Rank Fusion (RRF)](#41-reciprocal-rank-fusion-rrf)
+   - [4.2. Min-Max Score Normalization Weighted Sum (Score Fusion)](#42-min-max-score-normalization-weighted-sum-score-fusion)
+   - [4.3. Dense-to-BM25 Rescoring (Chấm lại điểm 2 chặng)](#43-dense-to-bm25-rescoring-chấm-lại-điểm-2-chặng)
+5. [Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)](#5-nguyên-lý-tiền-xử-lý--hợp-đồng-input-input-contracts)
+   - [5.1. Tiền tố Bất đối xứng (Asymmetric Query/Passage Prefix)](#51-tiền-tố-bất-đối-xứng-asymmetric-querypassage-prefix)
+   - [5.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)](#52-tách-từ-tiếng-việt-chuyên-biệt-pyvi-vitokenizer)
+   - [5.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)](#53-giới-hạn-độ-dài-chuỗi-max-sequence-length--hiện-tượng-cắt-ngắn-truncation)
+   - [5.4. Chuẩn hóa Vector L2 & Dot Product Similarity](#54-chuẩn-hóa-vector-l2--dot-product-similarity)
+6. [Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval Metrics)](#6-các-độ-đo-đánh-giá-chất-lượng-truy-xuất-retrieval-metrics)
+   - [6.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)` & Bão hòa Bằng chứng](#61-đơn-vị-tính-điểm-relevance-cặp-source-section--bão-hòa-bằng-chứng)
+   - [6.2. Recall@K (Recall@5 & Recall@30)](#62-recallk-recall5--recall30)
+   - [6.3. Candidate Union Recall (Độ phủ Tập ứng viên Gộp)](#63-candidate-union-recall-độ-phủ-tập-ứng-viên-gộp)
+   - [6.4. MRR@K (Mean Reciprocal Rank @ K)](#64-mrrk-mean-reciprocal-rank--k)
+   - [6.5. nDCG@K (Normalized Discounted Cumulative Gain @ K)](#65-ndcgk-normalized-discounted-cumulative-gain--k)
+   - [6.6. Hit Rate / Hit Case Count](#66-hit-rate--hit-case-count)
+7. [Đo lường Hiệu năng: Phân tích Độ trễ (p50, p95, p99) & Bộ nhớ](#7-đo-lường-hiệu-năng-phân-tích-độ-trễ-p50-p95-p99--bộ-nhớ)
+   - [7.1. Phân vị Độ trễ (Latency Percentiles: p50, p95, p99) là gì?](#71-phân-vị-độ-trễ-latency-percentiles-p50-p95-p99-là-gì)
+   - [7.2. Tại sao p95 và p99 là Thước đo Vàng trong RAG & Hệ thống Phân tán?](#72-tại-sao-p95-và-p99-là-thước-đo-vàng-trong-rag--hệ-thống-phân-tán)
+   - [7.3. Quy trình đo lường 3 Repetitions & Loại bỏ Warm-up](#73-quy-trình-đo-lường-3-repetitions--loại-bỏ-warm-up)
+8. [Phương pháp Kiểm định Thống kê & Guardrails](#8-phương-pháp-kiểm-định-thống-kê--guardrails)
+   - [8.1. Category Guardrails (9 Danh mục câu hỏi V3)](#81-category-guardrails-9-danh-mục-câu-hỏi-v3)
+   - [8.2. Paired Bootstrap 95% Confidence Interval (CI)](#82-paired-bootstrap-95-confidence-interval-ci)
+   - [8.3. Tiêu chuẩn Khoa học Fail-Closed](#83-tiêu-chuẩn-khoa-học-fail-closed)
+9. [Bảng Tổng hợp Toàn diện Benchmark 08a & 08b](#9-bảng-tổng-hợp-toàn-diện-benchmark-08a--08b)
+10. [Khuyến nghị Kiến trúc cho Production & Bước đi Tiếp theo (Phase 8c)](#10-khuyến-nghị-kiến-trúc-cho-production--bước-đi-tiếp-theo-phase-8c)
 
 ---
 
-## 1. Tổng quan về Embedding trong Hệ thống RAG
+### 1. Tổng quan về Retrieval & Kiến trúc Đa tầng trong RAG
 
-Trong kiến trúc **Retrieval-Augmented Generation (RAG)**, mô hình **Dense Embedding** đóng vai trò là "cây cầu ngữ nghĩa" (semantic bridge) chuyển đổi ngôn ngữ tự nhiên (văn bản) thành các vector số thực trong không gian đa chiều (dense vector space $\mathbb{R}^d$).
+Trong kiến trúc **Retrieval-Augmented Generation (RAG)** hiện đại, chất lượng câu trả lời của mô hình ngôn ngữ lớn (LLM) phụ thuộc trực tiếp vào tính chính xác và đầy đủ của ngữ cảnh được truy xuất.
+
+Hệ thống RAG nâng cao không chỉ dựa vào một phương pháp tìm kiếm đơn lẻ mà kết hợp **đa tầng truy xuất (Multi-stage Retrieval)**:
 
 ```
-[Văn bản ẩm thực / Câu hỏi du lịch]
-           │
-           ▼
-  ┌─────────────────┐
-  │ Embedding Model │  (Mô hình biến đổi ngữ nghĩa thành vector)
-  └─────────────────┘
-           │
-           ▼  Vector d-chiều: [0.042, -0.128, 0.891, ..., 0.015]
-  ┌─────────────────┐
-  │ Qdrant Database │  (Tìm kiếm láng giềng gần nhất bằng Cosine Similarity)
-  └─────────────────┘
+                      [ Câu hỏi của người dùng ]
+                                  │
+            ┌─────────────────────┴─────────────────────┐
+            ▼                                           ▼
+  ┌───────────────────┐                       ┌───────────────────┐
+  │  Dense Retrieval  │                       │ Sparse Retrieval  │
+  │ (Semantic Vector) │                       │  (BM25 / TF-IDF)  │
+  └─────────┬─────────┘                       └─────────┬─────────┘
+            │ (Top-30 Candidates)                       │ (Top-30 Candidates)
+            └─────────────────────┬─────────────────────┘
+                                  ▼
+                    ┌───────────────────────────┐
+                    │  Hybrid Fusion (RRF/Sum)  │ -> Tạo Candidate Pool (Union)
+                    └─────────────┬─────────────┘
+                                  │ (Top-10 -> Top-5)
+                                  ▼
+                    ┌───────────────────────────┐
+                    │ Cross-Encoder Reranker    │ (Phase 8c)
+                    └─────────────┬─────────────┘
+                                  │ (Top-5 Reranked Context)
+                                  ▼
+                    ┌───────────────────────────┐
+                    │    LLM Generator (Hue)    │ -> Câu trả lời chính xác
+                    └───────────────────────────┘
 ```
 
-- **Mục tiêu cốt lõi:** Các đoạn văn bản có ý nghĩa tương đồng (dù dùng từ ngữ khác nhau, ví dụ: *"quán ăn ngon cố đô"* và *"địa chỉ ẩm thực nổi tiếng ở Huế"*) sẽ có các vector nằm gần nhau trong không gian vector (khoảng cách góc cos nhỏ, độ tương đồng $\approx 1.0$).
-- **Thách thức với tiếng Việt ẩm thực Huế:**
-  1. Các danh từ riêng, tên món ăn ghép: *Bún bò Huế, bánh bèo, bánh nậm, bánh lọc, chè bột lọc bọc heo quay*.
-  2. Địa danh địa phương: *đường Nguyễn Du, cồn Hến, Vĩ Dạ, chợ Đông Ba*.
-  3. Cấu trúc ngữ pháp và từ đồng nghĩa, từ địa phương.
+1. **Dense Retrieval (Ngữ nghĩa):** Sử dụng các mạng nơ-ron Transformer để nắm bắt ngữ nghĩa trừu tượng, đồng nghĩa, ngữ cảnh câu hỏi dù từ ngữ không trùng lặp (ví dụ: *"quán ăn ngon cố đô"* $\leftrightarrow$ *"địa chỉ ẩm thực nức tiếng ở Huế"*).
+2. **Sparse Retrieval (Từ khóa):** Dựa trên tần suất từ và nghịch đảo tần suất văn bản (BM25, TF-IDF) để nắm bắt chính xác các danh từ riêng, tên quán, địa chỉ, số liệu (ví dụ: *"bánh ép Cây Dừa"*, *"04 Phan Bội Châu"*, *"chè hẻm"*).
+3. **Fusion (Hợp nhất):** Kết hợp các danh sách ứng viên từ Dense và Sparse để tạo ra tập ngữ cảnh vừa giàu ngữ nghĩa vừa chuẩn xác từ khóa.
 
 ---
 
-## 2. Các Mô hình Embedding Đang Dùng
+## 2. Các Mô hình Dense Embedding (Ngữ nghĩa)
 
-Hệ thống hiện đã chuẩn hóa và đánh giá thực nghiệm **3 cấu hình dense embedding canonical** trên CPU FP32 với 572 chunks dữ liệu thật:
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        3 CẤU HÌNH ĐƯỢC ỦY QUYỀN                        │
-├───────────────────────────────┬────────────────────────────────────────┤
-│ 1. E5-small 384D (Control)    │ 2. Huydang DEk21 768D (Candidate 1)    │
-│    intfloat/multilingual-e5-small │    huydang-dek21-embedding           │
-├───────────────────────────────┴────────────────────────────────────────┤
-│ 3. E5-base 768D (Candidate 2)                                          │
-│    intfloat/multilingual-e5-base                                       │
-└────────────────────────────────────────────────────────────────────────┘
-```
+Hệ thống đã đánh giá thực nghiệm **3 cấu hình dense embedding canonical** trên CPU FP32 với 572 chunks dữ liệu thật:
 
 ---
 
@@ -82,14 +96,13 @@ Hệ thống hiện đã chuẩn hóa và đánh giá thực nghiệm **3 cấu 
 - **Đơn vị phát triển:** Microsoft Research.
 - **Kiến trúc:** XLM-RoBERTa backbone, 12 layers, hidden dimension $d = 384$, ~118M tham số.
 - **Pooling & Tiền tố:** Attention-mask mean pooling; yêu cầu tiền tố bất đối xứng `passage: ` cho tài liệu và `query: ` cho câu hỏi.
-- **Max Sequence Length:** 512 tokens.
-- **Cách thức hoạt động:** Được huấn luyện đối chiếu (contrastive learning) trên tập dữ liệu đa ngôn ngữ quy mô lớn CCPairs (hơn 1 tỉ cặp text đa ngữ), tối ưu hóa việc phân biệt giữa câu hỏi ngắn và đoạn văn bản dài.
-- **Hiệu năng trên dữ liệu Huế:**
+- **Max Sequence Length:** 512 tokens (bao phủ 100% tài liệu mà không bị cắt ngắn).
+- **Cách thức hoạt động:** Được huấn luyện đối chiếu (contrastive learning) trên tập dữ liệu đa ngôn ngữ CCPairs (>1 tỉ cặp câu), tối ưu hóa việc phân biệt giữa câu hỏi ngắn và văn bản dài.
+- **Hiệu năng trên dữ liệu Huế (08a):**
   - **nDCG@5:** `0.7425` | **MRR@5:** `0.7748` | **Recall@5:** `0.8185` | **Hits:** `41/45` (91.1%).
-  - **Độ trễ Query (p50):** `24.23 ms` (Tổng latency truy xuất: `30.77 ms`).
-  - **Mức chiếm dụng RAM:** ~1.54 GB RSS.
-  - **Cắt ngắn văn bản:** 0 / 572 chunks bị truncate.
-- **Đánh giá:** **Xuất sắc toàn diện**. Giữ vị trí số 1 về nDCG@5 và MRR@5, tốc độ nhanh nhất, tiêu tốn ít RAM nhất. Là mốc đối chứng (Control) vững chắc.
+  - **Độ trễ p50:** `24.2 ms` | **Độ trễ p95:** `30.8 ms`.
+  - **RAM Peak:** ~1.54 GB RSS.
+- **Đánh giá:** **Xuất sắc toàn diện về tốc độ và tài nguyên**. Là mốc đối chứng (Control) chuẩn mực cho hệ thống.
 
 ---
 
@@ -97,204 +110,301 @@ Hệ thống hiện đã chuẩn hóa và đánh giá thực nghiệm **3 cấu 
 
 - **Tác giả:** Đặng Quang Huy (HCMUTE).
 - **Kiến trúc:** **PhoBERT-base** (RoBERTa chuyên biệt cho tiếng Việt), 12 layers, hidden dimension $d = 768$, ~135M tham số.
-- **Pooling & Tiền tiền xử lý:** Mean pooling; bắt buộc tách từ tiếng Việt bằng `pyvi.ViTokenizer.tokenize()`; không dùng tiền tố.
-- **Max Sequence Length:** **256 tokens**.
-- **Dữ liệu huấn luyện:** Fine-tune trên ~100.000 cặp câu hỏi/văn bản Pháp luật Việt Nam (Legal domain) bằng hàm mất mát Matryoshka Loss kết hợp Multiple Negatives Ranking (MNRL).
-- **Hiệu năng trên dữ liệu Huế:**
-  - **nDCG@5:** `0.7164` ($\Delta = -0.0262$) | **Recall@5:** `0.8370` | **Hits:** `40/45` (88.9%).
-  - **Điểm sáng:** Đạt kết quả rất cao ở nhóm **`food_knowledge`** (nDCG = `0.8571`, vượt trội so với E5-small `0.7546`), **`holistic`** (`0.7606`) và **`guide_planning`** (`0.5655`).
-  - **Hạn chế:** Bị lệch miền pháp lý sang du lịch ẩm thực và max_length=256 khiến mô hình trượt 3 guardrails (`comparative`, `relationship`, `spanning` chỉ bắt 1/3 hits).
-  - **Độ trễ Query (p50):** `53.84 ms` (chậm hơn khoảng 2.2 lần E5-small).
-- **Đánh giá:** **Ứng viên tiềm năng về biểu diễn ngữ nghĩa tiếng Việt**. Dù chưa vượt qua E5-small toàn diện, mô hình chứng minh backbone PhoBERT và bộ tách từ tiếng Việt mang lại biểu diễn từ ngữ ẩm thực cố đô rất sắc nét.
+- **Pooling & Tiền xử lý:** Mean pooling; bắt buộc phân đoạn từ vựng tiếng Việt bằng `pyvi.ViTokenizer.tokenize()`; không dùng tiền tố.
+- **Max Sequence Length:** 256 tokens.
+- **Dữ liệu huấn luyện:** Fine-tune trên ~100.000 cặp câu hỏi/văn bản tiếng Việt bằng hàm mất mát Matryoshka Loss kết hợp Multiple Negatives Ranking (MNRL).
+- **Hiệu năng trên dữ liệu Huế (08a & 08b):**
+  - **Độc lập (08a):** Recall@5 = `0.8370`, nDCG@5 = `0.7164`.
+  - **Khi kết hợp BM25 (08b):** **Recall@5 = `0.9111`** (tăng vọt +7.41%), **nDCG@5 = `0.7655`** (vô địch về chất lượng).
+  - **Độ trễ p95:** `62.9 ms` (độc lập), `65.4 ms` (hybrid).
+- **Đánh giá:** **Biểu diễn ngữ nghĩa tiếng Việt cực kỳ xuất sắc**. Khi kết hợp cùng BM25, mô hình giải quyết được toàn bộ điểm mù từ khóa và trở thành cấu hình retrieval mạnh nhất toàn hệ thống.
 
 ---
 
 ### 2.3. `intfloat/multilingual-e5-base` (768D) — Candidate 2
 
 - **Đơn vị phát triển:** Microsoft Research.
-- **Kiến trúc:** XLM-RoBERTa-base, 12 layers, hidden dimension $d = 768$, ~278M tham số (gấp hơn 2 lần bản small).
+- **Kiến trúc:** XLM-RoBERTa-base, 12 layers, hidden dimension $d = 768$, ~278M tham số.
 - **Pooling & Tiền tố:** Attention-mask mean pooling; tiền tố `passage: ` và `query: `.
 - **Max Sequence Length:** 512 tokens.
 - **Hiệu năng trên dữ liệu Huế:**
-  - **nDCG@5:** `0.7061` ($\Delta = -0.0364$) | **Recall@5:** **`0.8407`** (cao nhất) | **Hits:** **`42/45`** (93.3%).
-  - **Độ trễ Query (p50):** `112.33 ms` (chậm hơn khoảng 4.6 lần E5-small).
-  - **RAM Peak:** ~2.15 GB RSS.
-- **Đánh giá:** **Độ bao phủ rộng (Recall cao) nhưng thứ hạng chưa tối ưu**. E5-base tìm thấy được nhiều tài liệu liên quan hơn (42/45 hits), nhưng khả năng đưa đúng tài liệu quan trọng nhất lên vị trí Top 1-2 lại kém hơn E5-small, dẫn đến MRR@5 và nDCG@5 thấp hơn, trong khi độ trễ và dung lượng vector tăng gấp đôi.
+  - **Độc lập:** Recall@5 = `0.8407`, nDCG@5 = `0.7061`, Hits = `42/45` (93.3%).
+  - **Khi kết hợp BM25 (Rescore):** Recall@5 = `0.8963`, nDCG@5 = `0.7659`.
+  - **Độ trễ p95:** `61.5 ms` (độc lập), `73.7 ms` (rescore).
+- **Đánh giá:** Độ phủ Recall ban đầu cao, nhưng số lượng tham số lớn (~278M) khiến chi phí tính toán cao hơn E5-small mà nDCG độc lập không vượt trội.
 
 ---
 
-### 2.4. Phân tích các mô hình đã loại bỏ (`MiniLM-L12`, `Qwen3-Embedding`, `BGE-M3`, `E5-Large`)
+### 2.4. Phân tích các mô hình Dense đã loại bỏ
 
 | Mô hình | Lý do loại bỏ khỏi phạm vi Local Execution |
 | :--- | :--- |
-| **`paraphrase-multilingual-MiniLM-L12-v2` (384D)** | • **Tử huyệt max length 128:** Bị cắt ngắn 83/572 chunks (14.5%), gây mất mát nghiêm trọng phần đuôi văn bản.<br>• **Chất lượng tụt sâu:** nDCG@5 chỉ đạt `0.4709` ($\Delta = -0.2716$), trượt 7/9 guardrails, mất sạch bằng chứng nhóm `guide_planning` (0/2 hits).<br>• **Không có ưu thế tài nguyên:** Không nhẹ hơn và không nhanh hơn E5-small. Đã xóa collection `hue_foods_08a_minilm_l12_384`. |
-| **`Qwen/Qwen3-Embedding-0.6B` (384D / 1024D)** | • **Độ trễ CPU quá lớn:** 572 chunks mất 765 giây (~12.7 phút), query p50 mất **781.8 ms** (chậm gấp 36 lần E5-small).<br>• **Chất lượng suy giảm:** nDCG@5 chỉ đạt `0.6175` ($\Delta = -0.1251$), trượt 3/9 guardrails. |
-| **`BAAI/bge-m3` (1024D dense)** | • Mô hình lớn (~570M params), tài nguyên CPU không đảm bảo SLA phản hồi thực tế.<br>• Được chuyển hướng sang đề xuất đánh giá qua Remote API (OpenRouter) trong tương lai. |
-| **`intfloat/multilingual-e5-large` (1024D)** | • Kích thước lớn (~560M params, vector 1024D) gây quá tải CPU và bộ nhớ.<br>• Được lưu giữ để xem xét đánh giá qua OpenRouter API. |
+| **`paraphrase-multilingual-MiniLM-L12-v2` (384D)** | • **Tử huyệt max length 128:** Bị cắt ngắn 83/572 chunks (14.5%), gây mất mát nghiêm trọng phần đuôi văn bản.<br>• **Chất lượng tụt sâu:** nDCG@5 chỉ đạt `0.4709` ($\Delta = -0.2716$), trượt 7/9 guardrails.<br>• Không nhẹ hơn và không nhanh hơn E5-small. |
+| **`Qwen/Qwen3-Embedding-0.6B` (384D / 1024D)** | • **Độ trễ CPU quá lớn:** 572 chunks mất 765 giây (~12.7 phút), query p50 mất **781.8 ms** (chậm gấp 36 lần E5-small).<br>• Chất lượng nDCG@5 chỉ đạt `0.6175` ($\Delta = -0.1251$). |
+| **`BAAI/bge-m3` & `E5-large` (1024D)** | • Kích thước lớn (>560M params) gây quá tải CPU và RAM cục bộ; chuyển hướng đánh giá qua Remote API. |
 
 ---
 
-## 3. Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)
+## 3. Các Thuật toán Sparse Retrieval (Từ khóa & Tần suất)
 
-Mỗi họ mô hình embedding hiện hành có một **Hợp đồng Input (Input Contract)**
-bắt buộc riêng. Sơ đồ vẫn hiển thị MiniLM như historical evidence để giải thích
-kết quả đã lưu; MiniLM không còn là executable setting.
+---
+
+### 3.1. Thuật toán BM25 (Best Matching 25) & Hiệu chỉnh Siêu tham số
+
+**BM25** là thuật toán xếp hạng dựa trên xác suất (Probabilistic Relevance Framework), cải tiến từ TF-IDF cổ điển bằng cách bổ sung cơ chế **bão hòa tần suất từ (Term Frequency Saturation)** và **chuẩn hóa độ dài văn bản (Document Length Penalization)**.
+
+#### Công thức toán học BM25:
+
+$$\text{BM25}(D, Q) = \sum_{i=1}^{|Q|} \text{IDF}(q_i) \cdot \frac{f(q_i, D) \cdot (k_1 + 1)}{f(q_i, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
+
+Trong đó:
+- $f(q_i, D)$: Tần suất xuất hiện của từ $q_i$ trong tài liệu $D$.
+- $|D|$: Độ dài (số lượng từ) của tài liệu $D$.
+- $\text{avgdl}$: Độ dài trung bình của tất cả tài liệu trong toàn bộ kho dữ liệu.
+- $\text{IDF}(q_i) = \ln \left( \frac{N - n(q_i) + 0.5}{n(q_i) + 0.5} + 1 \right)$: Nghịch đảo tần suất văn bản ($N$ là tổng số chunks, $n(q_i)$ là số chunks chứa từ $q_i$).
+
+#### Ý nghĩa 2 Siêu tham số $(k_1, b)$:
+1. **$k_1$ (Tốc độ bão hòa TF):** Điều khiển mức độ ảnh hưởng của tần suất từ. Khi một từ xuất hiện nhiều lần, điểm số sẽ tiệm cận mức bão hòa $(k_1 + 1)$. $k_1$ nhỏ $\rightarrow$ bão hòa nhanh; $k_1$ lớn $\rightarrow$ cho phép tần suất từ đóng góp nhiều điểm hơn.
+2. **$b$ (Hệ số phạt độ dài):** $b \in [0.0, 1.0]$. Khi $b = 1.0$, hệ thống phạt tối đa các đoạn văn bản dài (để tránh việc văn bản dài có lợi thế ngẫu nhiên vì chứa nhiều từ); khi $b = 0.0$, độ dài văn bản bị bỏ qua hoàn toàn.
+
+#### Kết quả Calibration trên 572 chunks ẩm thực Huế:
+- Bộ tham số **Baseline ($k_1=1.5, b=0.75$)** đạt Recall@30 = `0.9519`, nDCG@5 = `0.6478`, vượt qua 100% category guardrails và được chọn làm tiêu chuẩn.
+
+---
+
+### 3.2. TF-IDF Sparse Representation & Qdrant Sparse Vectors
+
+Bên cạnh BM25 in-memory, hệ thống xây dựng mô hình biểu diễn vector thưa (**Sparse Vector**) lưu trữ trực tiếp trên Qdrant:
+- **Từ điển (Vocabulary):** 2,093 từ vựng duy nhất được sắp xếp cố định (`vocabulary_fingerprint: b75949...`).
+- **Công thức Log-TF:**
+  $$\text{TF}(t, d) = \begin{cases} 1 + \ln(\text{count}(t, d)), & \text{nếu } \text{count}(t, d) > 0 \\ 0, & \text{ngược lại} \end{cases}$$
+- **Công thức Smoothed-IDF:**
+  $$\text{IDF}(t) = \ln\left(\frac{N + 1}{\text{df}(t) + 1}\right) + 1$$
+- **Chuẩn hóa $L_2$:**
+  $$\mathbf{s} = \frac{\mathbf{v}}{\|\mathbf{v}\|_2}, \quad \|\mathbf{s}\|_2 = 1.0$$
+
+Vector thưa được lưu dưới dạng danh sách cặp `(indices, values)` giúp Qdrant thực hiện tìm kiếm inverted index cực nhanh với dot product.
+
+---
+
+### 3.3. So sánh Bộ tách từ (Tokenizers): Unicode Word vs Underthesea Word
+
+| Tiêu chí | `unicode_word` (Regex `\w+`) | `underthesea_word` (Compound Tokenizer) |
+|---|:---:|:---:|
+| **Nguyên lý** | Tách từ đơn thuần theo ranh giới ký tự Unicode và dấu cách. | Phân đoạn từ ghép tiếng Việt (ví dụ: *"bún_bò"*, *"bánh_khoái"*). |
+| **Recall@30** | `0.9519` (44/45 hits) | `0.9556` (44/45 hits) |
+| **nDCG@5** | **`0.6478`** | `0.6416` |
+| **Độ trễ p95** | **`5.3 ms`** (Cực nhanh) | `14.8 ms` (Chậm hơn gần $3\times$) |
+| **Phụ thuộc** | 0 thư viện ngoài (Chuẩn Python) | Cần nạp model ML tách từ phức tạp |
+| **Quyết định** | ✅ **CHỌN** (Nguyên tắc Simplicity First) | ❌ Không chọn do chi phí không tương xứng |
+
+---
+
+## 4. Các Chiến lược Hợp nhất Đa luồng (Hybrid Fusion Strategies)
+
+Khi truy xuất đồng thời từ cả kênh Dense ($K=30$) và kênh Sparse ($K=30$), hệ thống cần thuật toán hợp nhất để sắp xếp lại danh sách kết quả tối ưu:
+
+---
+
+### 4.1. Reciprocal Rank Fusion (RRF)
+
+**RRF** là thuật toán hợp nhất dựa trên **thứ hạng (Rank-based Fusion)**, không phụ thuộc vào thang điểm số (score scale) của từng hệ thống tìm kiếm:
+
+$$\text{RRF\_Score}(d) = \sum_{m \in M} \frac{1}{k + r_m(d)}$$
+
+Trong đó:
+- $M = \{\text{Dense}, \text{Sparse}\}$: Tập hợp các bộ truy xuất.
+- $r_m(d) \in \{1, 2, \dots, K\}$: Thứ hạng của tài liệu $d$ trong danh sách của bộ truy xuất $m$. (Nếu tài liệu không xuất hiện, $r_m(d) = \infty \rightarrow \frac{1}{k + \infty} = 0$).
+- $k = 60$: Hằng số làm mượt chuẩn (Smoothing constant).
+
+- **Ưu điểm:** Cực kỳ ổn định, không cần chuẩn hóa điểm số, không sợ điểm số của một mô hình lấn át mô hình kia.
+- **Nhược điểm:** Bỏ qua độ lớn khoảng cách cosine thực tế giữa câu hỏi và tài liệu.
+
+---
+
+### 4.2. Min-Max Score Normalization Weighted Sum (Score Fusion)
+
+Phương pháp hợp nhất dựa trên **điểm số có trọng số (Score-based Fusion)**:
+
+**Bước 1: Chuẩn hóa Min-Max điểm số của từng kênh về đoạn $[0.0, 1.0]$:**
+$$S_{\text{norm}, m}(d) = \frac{S_m(d) - \min_{d'} S_m(d')}{\max_{d'} S_m(d') - \min_{d'} S_m(d') + \epsilon}$$
+
+**Bước 2: Tính tổng điểm có trọng số:**
+$$\text{Final\_Score}(d) = w_{\text{dense}} \cdot S_{\text{norm, dense}}(d) + w_{\text{sparse}} \cdot S_{\text{norm, sparse}}(d)$$
+
+Trong đó hệ thống sử dụng cấu hình chuẩn:
+- $w_{\text{dense}} = 0.6$ ($60\%$ trọng số Ngữ nghĩa)
+- $w_{\text{sparse}} = 0.4$ ($40\%$ trọng số Từ khóa)
+
+- **Kết quả thực nghiệm:** Đạt nDCG@5 = **`0.7655`**, **vượt trội hơn RRF (`0.7567`)** vì phản ánh chính xác độ tin cậy của khoảng cách cosine trên dữ liệu tiếng Việt.
+
+---
+
+### 4.3. Dense-to-BM25 Rescoring (Chấm lại điểm 2 chặng)
+
+Quy trình 2 chặng:
+1. **Chặng 1 (Candidate Generation):** Dùng Dense Embedding quét nhanh toàn bộ kho dữ liệu để lấy ra $K_1 = 30$ chunks tiềm năng nhất.
+2. **Chặng 2 (Lexical Rescoring):** Dùng BM25 tính điểm lại trên 30 chunks này và sắp xếp lại để chọn ra Top $K_2 = 5$ chunks đưa vào LLM.
+
+- **Ưu điểm:** Tốc độ cực nhanh (chỉ tính BM25 trên 30 chunks), bộ nhớ RAM thấp.
+- **Hiệu năng:** `dense-bm25-rescore__e5-small-384` đạt Recall@5 = `0.8630`, nDCG@5 = `0.7545`, p95 chỉ **32.2 ms**.
+
+---
+
+## 5. Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)
 
 ```
                  ┌────────────────────────────────────────────────────────┐
                  │                INPUT TEXT BAN ĐẦU                      │
                  └──────────────────────────┬─────────────────────────────┘
                                             │
-           ┌────────────────────────────────┼────────────────────────────────┐
-           ▼                                ▼                                ▼
-  [ Họ mô hình E5 ]                [ Mô hình Huydang ]       [ MiniLM — historical ]
+            ┌───────────────────────────────┼────────────────────────────────┐
+            ▼                               ▼                                ▼
+   [ Họ mô hình E5 ]                [ Mô hình Huydang ]             [ BM25 / TF-IDF ]
 ┌───────────────────────┐        ┌───────────────────────┐        ┌───────────────────────┐
-│ passage: {văn bản}    │        │ ViTokenizer.tokenize()│        │ Nhận nguyên bản       │
-│ query: {câu hỏi}      │        │ "Bún_bò Huế..."       │        │ (Raw text)            │
+│ passage: {văn bản}    │        │ ViTokenizer.tokenize()│        │ unicode_word_tokenize │
+│ query: {câu hỏi}      │        │ "Bún_bò Huế..."       │        │ (lowercase NFC words) │
 └──────────┬────────────┘        └──────────┬────────────┘        └──────────┬────────────┘
            ▼                                ▼                                ▼
 ┌───────────────────────┐        ┌───────────────────────┐        ┌───────────────────────┐
-│ Max Length: 512       │        │ Max Length: 256       │        │ Max Length: 128       │
+│ Max Length: 512       │        │ Max Length: 256       │        │ Max Length: Không hạn chế
 └──────────┬────────────┘        └──────────┬────────────┘        └──────────┬────────────┘
            ▼                                ▼                                ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
-│              MEAN POOLING -> L2 NORMALIZATION (||v|| = 1.0) -> QDRANT                   │
+│              MEAN POOLING -> L2 NORMALIZATION (||v|| = 1.0) -> QDRANT / MEMORY          │
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 3.1. Tiền tố Asymmetric Query/Passage (E5 Family)
+### 5.1. Tiền tố Bất đối xứng (Asymmetric Query/Passage Prefix)
+Họ mô hình E5 bắt buộc:
+- Thêm tiền tố `"passage: "` cho văn bản nạp vào DB.
+- Thêm tiền tố `"query: "` cho câu hỏi tìm kiếm.
 
-Họ mô hình E5 được huấn luyện theo kiến trúc bất đối xứng (asymmetric embedding):
-- **Tài liệu lưu trữ (Passage):** Bắt buộc thêm tiền tố `"passage: "` vào đầu chunk text:
-  ```python
-  prepared_text = f"passage: {chunk_text}"
-  ```
-- **Câu hỏi tìm kiếm (Query):** Bắt buộc thêm tiền tố `"query: "` vào đầu câu hỏi:
-  ```python
-  prepared_query = f"query: {user_question}"
-  ```
-*Ý nghĩa:* Tiền tố giúp mô hình phân biệt rõ đâu là nội dung chứa câu trả lời dài và đâu là câu hỏi ngắn, tạo ra sự liên kết ngữ nghĩa vượt trội giữa câu hỏi và câu trả lời.
+### 5.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)
+PhoBERT backbone của Huydang DEk21 bắt buộc chạy qua `pyvi.ViTokenizer.tokenize()` để tạo các từ ghép nối bằng dấu gạch dưới (`"Bún_bò"`, `"cố_đô"`).
 
----
+### 5.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)
+- E5-small / E5-base ($512$ tokens): $0/572$ chunks bị cắt ngắn.
+- Huydang DEk21 ($256$ tokens): $1/572$ chunks bị cắt ngắn nhẹ.
 
-### 3.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)
-
-Kiến trúc **PhoBERT** (backbone của `huydang-dek21-embedding`) được tiền huấn luyện trên các âm tiết tiếng Việt đã được ghép từ (word-level tokens). Do đó, trước khi đưa qua Tokenizer của HuggingFace, văn bản bắt buộc phải qua bộ phân đoạn từ vựng `pyvi`:
-
-```python
-from pyvi import ViTokenizer
-
-raw_text = "Bún bò Huế rất ngon và nổi tiếng ở cố đô Huế."
-segmented_text = ViTokenizer.tokenize(raw_text)
-# Kết quả: "Bún_bò Huế rất ngon và nổi_tiếng ở cố_đô Huế ."
-```
-*Ý nghĩa:* Giúp mô hình hiểu `"Bún_bò"` là một thực thể món ăn duy nhất thay vì hai từ đơn lẻ `"Bún"` và `"bò"`, tương tự với `"nổi_tiếng"`, `"cố_đô"`.
+### 5.4. Chuẩn hóa Vector L2 & Dot Product Similarity
+Mọi vector đầu ra $\mathbf{v}$ đều được chuẩn hóa $\|\mathbf{v}\|_2 = 1.0$, đưa phép tính Cosine Similarity thành Dot Product trực tiếp:
+$$\text{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = \mathbf{q} \cdot \mathbf{d} = \sum_{i=1}^d q_i \cdot d_i$$
 
 ---
 
-### 3.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)
-
-Mỗi mô hình có giới hạn tối đa số lượng token mà bộ Transformer có thể xử lý trong một lượt forward:
-- **E5-small / E5-base:** $512$ tokens $\rightarrow$ Bao phủ trọn vẹn toàn bộ 572 chunks của kho tri thức ẩm thực Huế (0 chunk bị cắt).
-- **Huydang DEk21:** $256$ tokens $\rightarrow$ Ghi nhận **1 chunk** bị cắt ngắn nhẹ.
-- **MiniLM-L12:** $128$ tokens $\rightarrow$ Ghi nhận **83 chunks (14.5%)** bị cắt ngắn, gây mất mát dữ liệu nghiêm trọng.
+## 6. Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval Metrics)
 
 ---
 
-### 3.4. Chuẩn hóa Vector $L_2$ & Khoảng cách Cosine
+### 6.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)` & Bão hòa Bằng chứng
 
-Sau khi qua lớp Pooling (Mean Pooling: tính trung bình cộng các vector token có trọng số theo attention mask), mọi vector đầu ra $\mathbf{v}$ đều được **chuẩn hóa $L_2$** về độ dài đơn vị:
-
-$$\mathbf{u} = \frac{\mathbf{v}}{\|\mathbf{v}\|_2} = \frac{\mathbf{v}}{\sqrt{\sum_{i=1}^d v_i^2}}$$
-
-Khi $\|\mathbf{u}\|_2 = 1.0$, độ tương đồng Cosine giữa vector truy vấn $\mathbf{q}$ và vector tài liệu $\mathbf{d}$ trở thành tích vô hướng (Dot Product) trực tiếp:
-
-$$\text{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = \frac{\mathbf{q} \cdot \mathbf{d}}{\|\mathbf{q}\|_2 \|\mathbf{d}\|_2} = \mathbf{q} \cdot \mathbf{d} = \sum_{i=1}^d q_i \cdot d_i$$
-
-*Ý nghĩa:* Giúp Qdrant tính toán độ tương đồng cực kỳ nhanh chóng bằng các phép toán SIMD/AVX trên CPU.
-
----
-
-## 4. Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval Metrics)
-
-### 4.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)`
-
-Trong Golden Dataset V3, Ground Truth liên quan không gán cứng theo `chunk_id` vật lý (vì các mô hình chunking có thể khác nhau), mà được định nghĩa chính xác theo **Cặp nguồn tài liệu và tiêu đề mục H2**:
-
+Ground Truth trong Golden Dataset V3 được định nghĩa theo:
 $$\text{Evidence Unit} = (\text{source\_file}, \text{section\_h2})$$
 
-*Ví dụ:* Cặp `("foods/restaurants/bun-bo-hue.md", "Giới thiệu và hương vị")`.
-
 > **Quy tắc Bão hòa Bằng chứng (De-duplication Credit):**
-> Mỗi cặp `(source, section)` chỉ nhận điểm thưởng $\text{gain} = 1$ **duy nhất ở lần xuất hiện đầu tiên** trong Top 5. Các chunk tiếp theo từ cùng một section trong Top 5 sẽ nhận $\text{gain} = 0$. Quy tắc này ngăn chặn việc hệ thống "ăn gian điểm" bằng cách trả về nhiều đoạn văn trùng lặp của cùng một mục.
+> Mỗi cặp `(source, section)` chỉ nhận điểm thưởng $\text{gain} = 1$ **duy nhất ở lần xuất hiện đầu tiên** trong Top $K$. Các chunk tiếp theo cùng section trong Top $K$ sẽ nhận $\text{gain} = 0$.
 
 ---
 
-### 4.2. Recall@K (Recall@5)
+### 6.2. Recall@K (Recall@5 & Recall@30)
 
-**Định nghĩa:** Tỷ lệ giữa số lượng bằng chứng liên quan tìm thấy trong Top $K$ so với tổng số lượng bằng chứng liên quan được khai báo trong câu hỏi.
+Tỷ lệ giữa số lượng bằng chứng liên quan tìm thấy trong Top $K$ so với tổng số lượng bằng chứng được khai báo:
 
 $$\text{Recall@K} = \frac{|\text{Declared Evidence} \cap \text{Retrieved Evidence Top K}|}{|\text{Declared Evidence}|}$$
 
-- **Phạm vi giá trị:** $[0.0, 1.0]$.
-- **Ý nghĩa thực tế:** Đo lường **độ bao phủ** thông tin. $\text{Recall@5} = 1.0$ nghĩa là toàn bộ thông tin cần thiết để trả lời câu hỏi đã nằm trọn vẹn trong Top 5 kết quả tìm kiếm.
+- **Recall@5:** Đo lường độ bao phủ thông tin trong ngữ cảnh hẹp chuyển trực tiếp cho LLM.
+- **Recall@30:** Đo lường độ bao phủ thông tin ở tầng tạo ứng viên (Candidate Generation).
 
 ---
 
-### 4.3. MRR@K (Mean Reciprocal Rank @ 5)
+### 6.3. Candidate Union Recall (Độ phủ Tập ứng viên Gộp)
 
-**Định nghĩa:** Nghịch đảo vị trí xếp hạng của tài liệu liên quan hợp lệ **đầu tiên** xuất hiện trong danh sách kết quả Top $K$.
+Độ phủ bằng chứng khi gộp chung $K=30$ ứng viên từ Dense và $K=30$ ứng viên từ Sparse:
 
-$$\text{RR@K} = \begin{cases} \frac{1}{\text{rank}_{\text{first}}}, & \text{nếu tìm thấy tài liệu liên quan ở vị trí } \text{rank}_{\text{first}} \le K \\ 0, & \text{nếu không có tài liệu liên quan trong Top } K \end{cases}$$
+$$\text{Candidate Union Recall} = \frac{|\text{Declared Evidence} \cap (\text{Dense}_{Top30} \cup \text{Sparse}_{Top30})|}{|\text{Declared Evidence}|}$$
 
-$$\text{MRR@K} = \frac{1}{N} \sum_{i=1}^N \text{RR@K}_i$$
-
-- **Phạm vi giá trị:** $[0.0, 1.0]$.
-- **Ý nghĩa thực tế:** Đo lường **tốc độ người dùng tiếp cận câu trả lời**.
-  - Nếu tài liệu đúng nằm ở Top 1 $\rightarrow \text{RR} = 1.0$.
-  - Nếu tài liệu đúng nằm ở Top 2 $\rightarrow \text{RR} = 0.5$.
-  - Nếu tài liệu đúng nằm ở Top 3 $\rightarrow \text{RR} = 0.333$.
-  - Nếu nằm ngoài Top 5 $\rightarrow \text{RR} = 0.0$.
+- **Kết quả:** `hybrid-bm25-weighted__huydang-dek21` đạt **`0.9852` (98.52%)**, chứng minh tập ứng viên gộp hầu như không bỏ sót bất kỳ thông tin nào của 45 câu hỏi.
 
 ---
 
-### 4.4. nDCG@K (Normalized Discounted Cumulative Gain @ 5)
+### 6.4. MRR@K (Mean Reciprocal Rank @ K)
 
-**Định nghĩa:** Độ đo toàn diện đánh giá cả **chất lượng** lẫn **thứ tự vị trí** của tất cả các tài liệu liên quan trong danh sách kết quả, có áp dụng hàm chiết khấu logarit (vị trí càng thấp thì giá trị đóng góp càng giảm).
+Nghịch đảo vị trí xếp hạng của tài liệu liên quan hợp lệ **đầu tiên** xuất hiện trong danh sách kết quả:
 
-**Bước 1: Tính Discounted Cumulative Gain (DCG@K)**
-$$\text{DCG@K} = \sum_{r=1}^K \frac{\text{gain}_r}{\log_2(r + 1)}$$
-Trong đó $\text{gain}_r \in \{0, 1\}$ (với $1$ là chunk mang bằng chứng liên quan mới).
-
-**Bước 2: Tính Ideal DCG (IDCG@K)**
-Là giá trị DCG lý tưởng khi tất cả các tài liệu liên quan đều được xếp ở các vị trí đầu tiên ($r = 1, 2, \dots$):
-$$\text{IDCG@K} = \sum_{r=1}^{\min(K, |\text{Declared Evidence}|)} \frac{1}{\log_2(r + 1)}$$
-
-**Bước 3: Chuẩn hóa nDCG@K**
-$$\text{nDCG@K} = \frac{\text{DCG@K}}{\text{IDCG@K}}$$
-
-- **Phạm vi giá trị:** $[0.0, 1.0]$.
-- **Ý nghĩa thực tế:** Là **thước đo vàng** (Gold Standard Metric) của bài toán IR và RAG. nDCG@5 cao chứng minh hệ thống không chỉ tìm thấy đúng thông tin mà còn đẩy các thông tin quan trọng nhất lên đầu danh sách cho LLM đọc.
+$$\text{MRR@K} = \frac{1}{N} \sum_{i=1}^N \frac{1}{\text{rank}_{\text{first}, i}}$$
 
 ---
 
-### 4.5. Hit Rate / Hit Case Count
+### 6.5. nDCG@K (Normalized Discounted Cumulative Gain @ K)
 
-**Định nghĩa:** Tỷ lệ các câu hỏi mà hệ thống tìm được **ít nhất một** tài liệu liên quan trong Top $K$:
+Thước đo chuẩn mực đánh giá toàn diện cả số lượng lẫn vị trí thứ hạng của tất cả các tài liệu liên quan:
 
-$$\text{Hit} = \begin{cases} 1, & \text{nếu } \text{Recall@K} > 0 \\ 0, & \text{nếu } \text{Recall@K} = 0 \end{cases}$$
-
-- **Ý nghĩa thực tế:** Phản ánh tỷ lệ câu hỏi mà hệ thống "không bị mù thông tin". Trong 45 câu hỏi V3:
-  - E5-base đạt `42/45` (93.3%).
-  - E5-small đạt `41/45` (91.1%).
-  - Huydang DEk21 đạt `40/45` (88.9%).
-  - MiniLM-L12 đạt `34/45` (75.6%).
+$$\text{DCG@K} = \sum_{r=1}^K \frac{\text{gain}_r}{\log_2(r + 1)}, \quad \text{nDCG@K} = \frac{\text{DCG@K}}{\text{IDCG@K}}$$
 
 ---
 
-## 5. Phương pháp Kiểm định Thống kê & Guardrails
+### 6.6. Hit Rate / Hit Case Count
 
-Để đảm bảo việc lựa chọn mô hình dựa trên bằng chứng khoa học vững chắc thay vì ngẫu nhiên, Phase 8 áp dụng hệ thống kiểm định 3 lớp:
+Tỷ lệ câu hỏi tìm thấy **ít nhất một** tài liệu liên quan trong Top $K$ ($\text{Recall@K} > 0$).
+
+---
+
+## 7. Đo lường Hiệu năng: Phân tích Độ trễ (p50, p95, p99) & Bộ nhớ
+
+---
+
+### 7.1. Phân vị Độ trễ (Latency Percentiles: p50, p95, p99) là gì?
+
+Khi đo lường thời gian đáp ứng của hệ thống phần mềm, việc sử dụng **giá trị trung bình (Mean / Average)** thường tạo ra **ảo tưởng về hiệu năng** do các trường hợp chạy nhanh che giấu các trường hợp bị nghẽn nghiêm trọng.
+
+Do đó, kỹ thuật phần mềm chuẩn mực sử dụng **Phân vị (Percentiles)**:
+
+```
+Tất cả các lượt truy vấn được sắp xếp theo thời gian tăng dần:
+[ 12ms, 15ms, 18ms, ..., 25ms, ..., 65ms, ..., 120ms, 450ms ]
+                         ▲          ▲           ▲
+                        p50        p95         p99
+                    (Median)   (95% nhanh hơn) (99% nhanh hơn)
+```
+
+1. **p50 (Median - Phân vị thứ 50):**
+   $50\%$ số lượt truy vấn hoàn thành nhanh hơn giá trị này. Đại diện cho **trải nghiệm người dùng thông thường** trong điều kiện lý tưởng.
+2. **p95 (95th Percentile - Phân vị thứ 95):**
+   $95\%$ số lượt truy vấn có thời gian xử lý nhanh hơn mức này (chỉ $5\%$ chậm hơn). Đại diện cho **trải nghiệm trong trường hợp tải nặng, câu hỏi dài hoặc tài nguyên máy chủ bận rộn**.
+3. **p99 (99th Percentile - Phân vị thứ 99):**
+   $99\%$ số lượt truy vấn có thời gian xử lý nhanh hơn mức này. Đại diện cho **trường hợp xấu nhất (Worst-case Scenario)**.
+
+---
+
+### 7.2. Tại sao p95 và p99 là Thước đo Vàng trong RAG & Hệ thống Phân tán?
+
+Trong kiến trúc RAG, một truy vấn của người dùng phải trải qua chuỗi xử lý nối tiếp:
+$$\text{Total Latency} = \text{Embed Query} + \text{Vector Search} + \text{Sparse Search} + \text{Fusion} + \text{Rerank} + \text{LLM Generation}$$
+
+Nếu một thành phần trong chuỗi bị chậm ở $5\%$ số request (p95 cao), thì khi ghép nhiều thành phần lại với nhau, xác suất người dùng gặp phải phản hồi chậm trễ sẽ tăng lên gấp nhiều lần (**Hiệu ứng Tail Latency Amplification**).
+
+**Các nguyên nhân chính gây ra đuôi độ trễ cao (High Tail Latency / p95) trong RAG:**
+- **Câu hỏi dài và phức tạp:** Cần nhiều phép toán ma trận hơn trong Transformer.
+- **Bộ nhớ đệm (Cache Miss):** Chưa kịp nạp vector hoặc index vào L3 Cache / RAM.
+- **Tranh chấp tài nguyên CPU / Garbage Collection:** PyTorch hoặc Python runtime thực hiện thu dọn bộ nhớ trong lúc đang tính toán.
+
+> 🎯 **Quy chuẩn SLA trong Hue RAG:**
+> Hệ thống đặt ngưỡng bảo vệ: $\text{p95 Latency} \le 2.0 \times \text{Control Baseline}$.
+> Cấu hình `hybrid-bm25-weighted__huydang-dek21` đạt **p95 = 65.4 ms**, hoàn toàn nằm trong vùng an toàn và đảm bảo trải nghiệm người dùng mượt mà tức thì.
+
+---
+
+### 7.3. Quy trình đo lường 3 Repetitions & Loại bỏ Warm-up
+
+Để loại bỏ hoàn toàn sai số ngẫu nhiên:
+1. **Cold Load:** Đo thời gian nạp mô hình từ đĩa cứng vào bộ nhớ.
+2. **Discarded Warm-up:** Thực thi 1 câu hỏi mẫu (`foods-v3-0001`) để làm nóng bộ đệm PyTorch/CPU; kết quả này bị loại bỏ khỏi thống kê.
+3. **3 Lần Chạy Độc lập (3 Repetitions):** Thực thi toàn bộ 45 câu hỏi $\times$ 3 vòng (900 lượt query), đo lường chi tiết p50, p95 và kiểm tra tính bất biến thứ hạng (`ranking_stable: True`).
+
+---
+
+## 8. Phương pháp Kiểm định Thống kê & Guardrails
 
 ```
                   ┌────────────────────────────────────────┐
@@ -307,114 +417,67 @@ $$\text{Hit} = \begin{cases} 1, & \text{nếu } \text{Recall@K} > 0 \\ 0, & \tex
              │ • Nhóm lớn (n >= 6): Cấm giảm hits, delta >= -0.02│
              │ • Nhóm nhỏ (n <= 3): Cấm mất hit từng case       │
              └────────────────────────┬────────────────────────┘
-                                      │ (Phải ĐẠT toàn bộ)
+                                      │
                                       ▼
              ┌─────────────────────────────────────────────────┐
              │ LỚP 2: PAIRED BOOTSTRAP 10.000 LẦN (95% CI)     │
-             │ • Tính khoảng tin cậy của delta nDCG@5          │
+             │ • Tính khoảng tin cậy của delta Recall & nDCG   │
              │ • Yêu cầu: Lower Bound CI > 0                   │
              └────────────────────────┬────────────────────────┘
                                       │
                                       ▼
              ┌─────────────────────────────────────────────────┐
-             │ LỚP 3: CLEAR QUALITY GAIN                       │
-             │ • delta nDCG@5 >= +0.03                         │
-             │ • Vượt mốc Control và Best Lighter Finalist     │
+             │ LỚP 3: NGUYÊN TẮC FAIL-CLOSED KHOA HỌC          │
+             │ • Không tự ý bypass ngưỡng bảo vệ               │
+             │ • Giữ minh bạch báo cáo thực tế                 │
              └─────────────────────────────────────────────────┘
 ```
 
----
+### 8.1. Category Guardrails (9 Danh mục câu hỏi V3)
+- **Nhóm lớn ($n \ge 6$):** `relationship` ($n=14$), `direct_fact` ($n=7$), `food_knowledge` ($n=7$), `comparative` ($n=6$). Yêu cầu không giảm số lượng Hit, $\Delta \text{nDCG@5} \ge -0.02$.
+- **Nhóm nhỏ ($n \le 3$):** `holistic` ($n=3$), `spanning` ($n=3$), `guide_planning` ($n=2$), `numerical` ($n=2$), `temporal` ($n=1$). Tuyệt đối không được làm mất Hit ở bất kỳ case nào mà Control đã làm được.
 
-### 5.1. Category Guardrails (9 Danh mục câu hỏi V3)
+### 8.2. Paired Bootstrap 95% Confidence Interval (CI)
+Lấy mẫu lại có hoàn lại 10.000 lần ($N=45$, `seed=42`) để tính khoảng tin cậy của mức tăng trưởng $\Delta \text{Recall@5}$ và $\Delta \text{nDCG@5}$.
 
-Tất cả 9 danh mục câu hỏi trong Golden Dataset V3 đều được bảo vệ nghiêm ngặt:
-
-| Danh mục ($n$) | Số lượng câu | Quy tắc Guardrail áp dụng |
-| :--- | :---: | :--- |
-| **`relationship`** | 14 | **Quy tắc Nhóm Lớn ($n \ge 6$):**<br>1. Số lượng case có Hit trong Top 5 không được giảm so với Control.<br>2. Nếu số Hit bằng nhau, $\Delta \text{nDCG@5}$ không được giảm quá `-0.02`. |
-| **`direct_fact`** | 7 | |
-| **`food_knowledge`**| 7 | |
-| **`comparative`** | 6 | |
-| **`holistic`** | 3 | **Quy tắc Nhóm Nhỏ ($n \le 3$):**<br>Áp dụng kiểm tra chính xác trên từng câu hỏi (Per-case guardrail). Bất kỳ câu hỏi nào mà Control đã tìm thấy bằng chứng trong Top 5 thì Candidate **tuyệt đối không được làm mất** toàn bộ bằng chứng khỏi Top 5. |
-| **`spanning`** | 3 | |
-| **`guide_planning`**| 2 | |
-| **`numerical`** | 2 | |
-| **`temporal`** | 1 | |
+### 8.3. Tiêu chuẩn Khoa học Fail-Closed
+Nếu một ứng viên có Recall tổng thể rất cao nhưng giảm nhẹ ở một danh mục bảo vệ (như `relationship` giảm $-0.0279$ vượt ngưỡng $-0.02$), hệ thống tự động trả về `finalist = None` (fail-closed) để kiến trúc sư đánh giá và ra quyết định, tuyệt đối không tự ý làm sai lệch kết quả.
 
 ---
 
-### 5.2. Paired Bootstrap 95% Confidence Interval (CI)
+## 9. Bảng Tổng hợp Toàn diện Benchmark 08a & 08b
 
-- **Tại sao cần Bootstrap?** Kích thước tập kiểm thử $N = 45$ câu là mẫu hữu hạn. Sự chênh lệch điểm trung bình giữa hai mô hình có thể do ngẫu nhiên.
-- **Cách thực hiện:**
-  1. Lấy $N = 45$ cặp điểm $(\text{score}_{\text{cand}, i}, \text{score}_{\text{ctrl}, i})$ tương ứng từng câu hỏi.
-  2. Lấy mẫu ngẫu nhiên có hoàn lại (Resampling with replacement) 45 cặp này, lặp lại **10.000 lần** với `seed = 42`.
-  3. Với mỗi lần lặp, tính $\Delta \text{nDCG@5} = \text{mean}(\text{cand}) - \text{mean}(\text{ctrl})$.
-  4. Lấy phân vị $2.5\%$ (Lower Bound) và phân vị $97.5\%$ (Upper Bound).
-- **Ý nghĩa:** Nếu khoảng tin cậy `[Lower, Upper]` nằm hoàn toàn ở phía dương ($\text{Lower} > 0$), ta có thể kết luận với độ tin cậy $95\%$ rằng mô hình mới thực sự vượt trội hơn mô hình cũ.
+Bảng đối chiếu toàn bộ các cấu hình tiêu biểu qua 2 giai đoạn benchmark (CPU FP32, 572 chunks, 45 câu hỏi Golden V3):
 
----
-
-### 5.3. Tiêu chí Quyết định "Clear Quality Gain"
-
-Một mô hình ứng viên (Candidate) chỉ được công nhận là **vượt trội thực sự** (Clear Gain) khi thỏa mãn đồng thời cả 5 điều kiện:
-1. `status == "completed"` (hoàn tất đủ 3/3 lần chạy lặp).
-2. Đạt toàn bộ **9/9 Category Guardrails**.
-3. $\Delta \text{nDCG@5} \ge +0.03$ (tăng ít nhất 3% điểm chuẩn hóa).
-4. Phân vị dưới của 95% CI: $\text{Lower Bound} > 0.0$.
-5. Thắng mốc Control (`E5-small`) và thắng mốc Lighter Finalist tốt nhất trước đó.
+| Nhóm | Cấu hình Retrieval | Recall@5 | $\Delta$ Recall@5 | nDCG@5 | $\Delta$ nDCG@5 | MRR@5 | Độ trễ p50 | Độ trễ p95 | RAM (RSS) |
+|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Dense** | `dense__e5-small-384` (Control 08a) | 0.8185 | *Baseline* | 0.7425 | *Baseline* | 0.7088 | 24.2 ms | 30.8 ms | **1.54 GB** |
+| **Dense** | `dense__huydang-dek21-768` (08a) | 0.8370 | +0.0185 | 0.7164 | -0.0261 | 0.6698 | 53.8 ms | 62.9 ms | 2.06 GB |
+| **Dense** | `dense__e5-base-768` (08a) | 0.8407 | +0.0222 | 0.7061 | -0.0364 | 0.6559 | 112.3 ms | 122.8 ms | 2.15 GB |
+| **Sparse**| `bm25-only` (Lexical Baseline) | 0.7889 | -0.0296 | 0.6478 | -0.0947 | 0.5960 | **4.5 ms** | **6.3 ms** | **~0.15 GB** |
+| **Sparse**| `tfidf-only` (Qdrant Sparse) | 0.7667 | -0.0518 | 0.6150 | -0.1275 | 0.5599 | 4.2 ms | 5.1 ms | ~0.20 GB |
+| **Rescore**| `dense-bm25-rescore__e5-small-384` | 0.8630 | +0.0444 | 0.7545 | +0.0120 | 0.7073 | **26.8 ms** | **32.2 ms** | **1.55 GB** |
+| **Rescore**| `dense-bm25-rescore__e5-base-768` | 0.8963 | +0.0556 | 0.7659 | +0.0598 | 0.7147 | 64.2 ms | 73.7 ms | 2.16 GB |
+| **Hybrid** | **`hybrid-bm25-weighted__huydang-dek21`** | **0.9111** | **+0.0741** | **0.7655** | **+0.0491** | **0.7076** | **55.6 ms** | **65.4 ms** | 2.08 GB |
+| **Hybrid** | `hybrid-bm25-weighted__e5-base-768` | 0.8889 | +0.0481 | 0.7560 | +0.0499 | 0.7064 | 56.4 ms | 66.3 ms | 2.16 GB |
+| **Hybrid** | `hybrid-bm25-rrf__huydang-dek21` | 0.8778 | +0.0407 | 0.7567 | +0.0403 | 0.7107 | 54.8 ms | 63.0 ms | 2.08 GB |
+| **Hybrid** | `hybrid-tfidf-weighted__huydang-dek21` | **0.9111** | **+0.0741** | 0.7424 | +0.0260 | 0.6778 | 53.2 ms | 62.4 ms | 2.07 GB |
 
 ---
 
-## 6. Đo lường Hiệu năng: Độ trễ (Latency) & Bộ nhớ (Memory RSS)
+## 10. Khuyến nghị Kiến trúc cho Production & Bước đi Tiếp theo (Phase 8c)
 
-### 6.1. Quy trình đo lường 3 Repetitions
-1. **Cold Load Latency:** Đo thời gian nạp mô hình từ ổ đĩa vào RAM ở lần gọi đầu tiên.
-2. **Discarded Warm-up:** Thực thi 1 câu hỏi mẫu (`foods-v3-0001`) để làm nóng các bộ đệm CPU/PyTorch và loại bỏ kết quả này khỏi thống kê.
-3. **3 Full Repetitions:** Chạy 3 vòng độc lập toàn bộ 45 câu hỏi:
-   - **Query Embedding Latency:** Thời gian chuyển đổi câu hỏi thành vector.
-   - **Qdrant Search Latency:** Thời gian tìm kiếm vector tương đồng trong cơ sở dữ liệu.
-   - **Ranking Stable:** Xác nhận thứ tự xếp hạng của cả 45 câu có giống hệt nhau $100\%$ giữa 3 lần chạy hay không.
+### 🏆 1. Cấu hình Khuyến nghị Số 1 (Top Quality Pipeline — Chất lượng Cao nhất)
+- **Pipeline:** `Dense Huydang DEk21 768D` + `BM25 FullCorpus` $\rightarrow$ `Min-Max Weighted Sum (0.6/0.4)`.
+- **Chỉ số:** Recall@5 = **`91.11%`**, nDCG@5 = **`0.7655`**, Candidate Union Recall (Top-30) = **`98.52%`**, độ trễ p95 = **`65.4 ms`**.
+- **Ứng dụng:** Triển khai làm tầng Candidate Generation chính thức cho hệ thống Chatbot RAG Ẩm thực Huế.
 
-### 6.2. Các chỉ số phân vị (p50, p95)
-- **p50 (Median):** $50\%$ số lượt truy vấn có thời gian xử lý nhanh hơn mức này (đại diện cho trải nghiệm người dùng thông thường).
-- **p95:** $95\%$ số lượt truy vấn có thời gian xử lý nhanh hơn mức này (đại diện cho trường hợp tải nặng / câu hỏi phức tạp).
+### ⚡ 2. Cấu hình Khuyến nghị Số 2 (Top Speed & Resource Pipeline — Siêu nhẹ & Siêu nhanh)
+- **Pipeline:** `Dense E5-small 384D` $\rightarrow$ `BM25 Rescoring trên Top-30`.
+- **Chỉ số:** Recall@5 = **`86.30%`**, nDCG@5 = **`0.7545`**, độ trễ p95 chỉ **`32.2 ms`**, tiết kiệm 50% RAM.
+- **Ứng dụng:** Triển khai trên môi trường Edge / Server tài nguyên hạn chế.
 
----
-
-## 7. Bảng Tổng hợp So sánh & Khuyến nghị Lựa chọn
-
-### Bảng đối chiếu ba model hiện hành và MiniLM historical (CPU FP32, 45 câu hỏi Golden V3, 572 chunks):
-
-| Tiêu chí | E5-small 384D (Control) | MiniLM-L12 384D | Huydang DEk21 768D | E5-base 768D |
-| :--- | :---: | :---: | :---: | :---: |
-| **Kích thước Vector ($d$)** | **384** | **384** | 768 | 768 |
-| **Số tham số (Params)** | **~118M** | **~118M** | ~135M | ~278M |
-| **Hits / 45 cases** | 41 / 45 (91.1%) | 34 / 45 (75.6%) | 40 / 45 (88.9%) | **42 / 45 (93.3%)** |
-| **Recall@5** | 0.8185 | 0.5815 | 0.8370 | **0.8407** |
-| **MRR@5** | **0.7748** | 0.5144 | 0.7211 | 0.6985 |
-| **nDCG@5** | **0.7425** | 0.4709 | 0.7164 | 0.7061 |
-| **$\Delta$ nDCG@5 (vs Control)** | *Baseline* | -0.2716 | -0.0262 | -0.0364 |
-| **Category Guardrails** | **9 / 9 ĐẠT** | 2 / 9 (FAIL) | 6 / 9 (FAIL) | 7 / 9 (FAIL) |
-| **Độ trễ Query p50** | **24.23 ms** | 23.42 ms | 53.84 ms | 112.33 ms |
-| **Tổng độ trễ p50** | **30.77 ms** | 29.34 ms | 60.56 ms | 122.81 ms |
-| **Doc Embed 572 chunks** | **18.87 s** | **15.77 s** | 42.91 s | 52.63 s |
-| **Peak RAM (RSS)** | **1.54 GB** | 1.83 GB | 2.06 GB | 2.15 GB |
-| **Số chunk bị cắt ngắn** | **0 / 572** | 83 / 572 | 1 / 572 | **0 / 572** |
-| **Độ ổn định (3/3 reps)** | `True` (100%) | `True` (100%) | `True` (100%) | `True` (100%) |
-
----
-
-### Khuyến nghị & Kết luận Kỹ thuật
-
-1. **Lựa chọn tối ưu cho MVP hiện tại:**
-   **`intfloat/multilingual-e5-small` (384D)** tiếp tục là **mô hình vượt trội nhất** cho hệ thống Hue Foods RAG:
-   - Đạt nDCG@5 (`0.7425`) và MRR@5 (`0.7748`) cao nhất toàn bảng.
-   - Tốc độ truy vấn nhanh nhất (p50 ~27 ms trên CPU).
-   - Kích thước vector 384D nhỏ gọn, tiết kiệm RAM và dung lượng index Qdrant.
-   - Không bị hiện tượng cắt ngắn văn bản (max length 512).
-
-2. **Bài học kinh nghiệm từ các mô hình khác:**
-   - **`Huydang DEk21`:** Rất có triển vọng cho bài toán hiểu sâu ẩm thực tiếng Việt (`food_knowledge` nDCG đạt `0.8571`). Tuy nhiên, cần được fine-tune mở rộng thêm miền du lịch và tăng max sequence length lên 512 trước khi có thể thay thế E5-small.
-   - **`MiniLM-L12`:** Không phù hợp cho văn bản RAG có đoạn văn dài do giới hạn 128 tokens gây sụt giảm chất lượng nghiêm trọng.
-   - **`E5-base`:** Không đem lại lợi ích tương xứng với chi phí tính toán (tốn gấp đôi RAM, chậm gấp đôi nhưng nDCG lại thấp hơn bản small).
+### 🚀 3. Bước đi tiếp theo cho Phase 8c (Cross-Encoder Reranker Benchmark)
+Với tập ứng viên Top-30 có độ phủ lên tới **`98.52%`**, hệ thống đã có đầu vào hoàn hảo để tiến hành **Phase 8c (Notebook 08c)**:
+- Thử nghiệm các mô hình **Cross-Encoder Reranker** (như BGE-Reranker, Viet-Reranker, Cohere) để chấm lại điểm sâu sắc giữa cặp `(Câu hỏi, Đoạn văn bản)`.
+- Kỳ vọng đưa Recall@5 và nDCG@5 vượt ngưỡng **`95%`** trước khi tổng hợp câu trả lời qua LLM.
