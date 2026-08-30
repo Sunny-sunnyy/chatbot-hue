@@ -18,11 +18,11 @@ contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design
 `2026-08-29 +07`. Work package 08a đã `approved` với ba model local còn lại và
 ba isolated Qdrant collections. Notebook 08b đã được triển khai, review độc lập
 và được user xác nhận ngày `2026-08-30 +07`; không có BM25/TF-IDF finalist do
-category guardrail `relationship`. Exact Notebook 08c conversational design và
-written spec đã được user xác nhận ngày `2026-08-30 +07`; implementation plan
-và Review Contract đang chờ user review.
-Phase 8 tổng thể vẫn `not_ready`; production không cutover và 08c–08e vẫn chưa
-authorize implementation/run.
+category guardrail `relationship`. Notebook 08c cũng đã được triển khai, review
+độc lập và được user xác nhận ngày `2026-08-30 +07`; cả ba MiniLM pairings đều
+`eligible=False`, không có reranker finalist và production không cutover.
+Phase 8 tổng thể vẫn `not_ready`; post-08c multi-domain implementation chưa được
+authorize.
 
 ## Mục tiêu
 
@@ -889,4 +889,21 @@ Approval date +07: 2026-08-30
 Boundary: Chưa authorize thay đổi corpus/code, tạo embedding/index/Golden mới,
 Qdrant mutation, multi-domain benchmark, commit hoặc push. Exact scope cần design
 và plan riêng sau khi 08c đóng.
+```
+
+```text
+Decision: Notebook 08c MiniLM reranker benchmark được approved sau real
+single-load Run All, complexity reset và independent Reviewer verification.
+Artifacts hoàn tất 60 summary rows/135 per-case records. Cả ba pairing đều
+eligible=False: E5-small delta nDCG@5 -0.0702672, HuyDang dense +0.0064876 nhưng
+vi phạm category guardrails, và hybrid diagnostic -0.0605046 với
+production_safety=False. Không chọn reranker finalist; production reranking và
+active collection giữ nguyên.
+Approved by: User
+Approval date +07: 2026-08-30
+Next action: Reviewer thiết kế exact workstream hoàn thiện curated
+answer-facing Markdown trên toàn bộ domain phù hợp dưới `knowledge-base-hue/`,
+sau đó mới thiết kế domain-aware chunking/metadata, embeddings, isolated
+full-corpus index và Combined Golden Dataset. Chưa authorize corpus/code edit,
+embedding/index creation, Qdrant mutation hoặc benchmark rerun.
 ```

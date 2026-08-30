@@ -14,10 +14,11 @@ không phải nguồn tiến độ hiện hành và không tạo requirement m�
 Hiện tại dự án chức năng đã hoàn thành và được xác nhận đến Phase 7. Simplicity
 campaign Phase 0–6 và Phase 7 post-simplicity correction đã approved. Phase 8
 vẫn `not_ready`, nhưng Golden Dataset V3 Gate 0, Gate 1 common contracts,
-Notebook 08a và Notebook 08b đã được triển khai/review/xác nhận. 08b không chọn
-BM25 hoặc TF-IDF finalist do relationship guardrail; production giữ nguyên.
-Bước tiếp theo là research và brainstorming exact Notebook 08c; chưa authorize
-implementation hoặc benchmark run 08c.
+Notebooks 08a, 08b và 08c đã được triển khai/review/xác nhận. 08b không chọn
+BM25 hoặc TF-IDF finalist; 08c không chọn MiniLM reranker finalist; production
+giữ nguyên. Bước tiếp theo là research và brainstorming exact design để hoàn
+thiện curated multi-domain data dưới `knowledge-base-hue/`; implementation,
+index/Golden creation và benchmark rerun chưa được authorize.
 
 ## Evidence hiện hành của simplicity campaign
 
@@ -32,9 +33,10 @@ implementation hoặc benchmark run 08c.
 | 7 | Bộ report `phase_7_retrieval_answer_evaluation_*` | Approved |
 | 8/08a | `phase_8_08a_embedding_benchmark_*` và user report tương ứng | Approved work package; Phase 8 tổng thể chưa approved |
 | 8/08b | `phase_8_08b_retrieval_fusion_benchmark_*` và user report tương ứng | Approved work package; không có sparse finalist/cutover |
+| 8/08c | `phase_8_08c_reranker_benchmark_*` và user report tương ứng | Approved work package; không có reranker finalist/cutover |
 
 Phase 8 benchmark hiện có approved Gate 0 evidence, common design/sequence
-contracts và approved work packages 08a–08b:
+contracts và approved work packages 08a–08c:
 
 ```text
 docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
@@ -51,6 +53,10 @@ docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.
 docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
 reports/phase_8_08b_retrieval_fusion_benchmark_codex_review.md
 reports/user_reports/phase_8_08b_retrieval_fusion_benchmark_user_report.md
+docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md
+docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md
+reports/phase_8_08c_reranker_benchmark_codex_review.md
+reports/user_reports/phase_8_08c_reranker_benchmark_user_report.md
 guides/phase_8_benchmark_model_selection.md
 reports/phase_7_golden_dataset_audit.md
 ```

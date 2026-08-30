@@ -2,9 +2,10 @@
 
 Date: 2026-08-30 (+07)
 
-Status: `approved_design` by the user on 2026-08-30 (+07). Implementation and
-benchmark execution remain gated by approval of the separate implementation
-plan and Review Contract.
+Status: `approved_design` by the user on 2026-08-30 (+07). The separate
+implementation plan and Review Contract were approved by the user later that
+day; exact implementation and real local MiniLM execution are now authorized
+through the current Implementer handoff.
 
 ## Purpose
 
@@ -346,6 +347,32 @@ Implementation is technically ready only when:
 10. Golden V3, corpus, 08a/08b artifacts, Qdrant and production configuration
     are unchanged.
 
-The written specification is approved. Implementation/run remain unauthorized
-until the user separately approves the implementation plan and Review Contract.
-Git authorization remains separate.
+The written specification, implementation plan and Review Contract are
+approved. Exact implementation and real local MiniLM execution are authorized
+through the current Implementer handoff. Git authorization remains separate.
+
+## Approved complexity-reset amendment — 2026-08-30 (+07)
+
+Sau verdict `changes_requested` thứ tư, user đã xác nhận complexity reset cho
+numeric reconciliation boundary. Amendment này không đổi benchmark design,
+producer, schema, notebook, artifacts hoặc quality decision.
+
+Reconciler phải normalize mọi persisted numeric value bắt buộc qua một finite
+numeric boundary trước compare/recompute. Parse failure, `NaN`, `+Inf` và `-Inf`
+đều fail closed. Field phải blank theo schema được kiểm blank riêng và không bị
+coerce thành zero. Tests dùng helper/parameterization để giữ prior tamper
+coverage mà không tiếp tục thêm duplicated one-off validation branches.
+
+Vì artifact-producing data flow không đổi, approved reset reuse real MiniLM Run
+All và durable artifacts đã pass trong cùng implementation series. Reset không
+authorize model load/run mới, artifact rewrite, dependency/network action,
+Qdrant access/mutation, Git operation hoặc production change.
+
+## Approval closure — 2026-08-30 (+07)
+
+User đã xác nhận Notebook 08c sau independent final review. Work package hiện
+`approved`; cả ba MiniLM pairings đều `eligible=False`, không có reranker
+finalist và production giữ nguyên. Foods evidence này không đại diện cho full
+Hue corpus. Next boundary là thiết kế riêng cho curated multi-domain data,
+domain-aware chunking/metadata, isolated index và Combined Golden Dataset; chưa
+authorize implementation hoặc mutation của workstream đó.

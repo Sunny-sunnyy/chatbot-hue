@@ -2,8 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-Status: `pending_user_review`. This plan does not authorize implementation,
-model execution, artifact creation, commit or push.
+Status: `approved` by the user on 2026-08-30 (+07). The exact implementation,
+real local MiniLM execution and approved 08c artifact creation are authorized
+through the current Implementer handoff. Commit and push remain unauthorized.
 
 **Goal:** Build an auditable Foods-only benchmark that compares no-rerank with the existing `cross-encoder/ms-marco-MiniLM-L-6-v2` runtime on exactly three immutable 08b Top-10 inputs and reports evidence for a user decision.
 
@@ -1153,3 +1154,71 @@ and create a balanced combined Golden Dataset spanning every included domain.
 Only after those prerequisites pass review does evaluation restart from the
 Phase 7 baseline and rerun the affected Phase 8 experiments. None of that work
 is authorized by this 08c implementation plan.
+
+## Approved complexity-reset implementation delta — 2026-08-30 (+07)
+
+User đã xác nhận reset direction sau Correction Review 4. Delta này supersede
+mọi đề xuất tiếp tục vá reconciler theo từng field.
+
+### Exact changed paths
+
+- `backend/evaluation/reranker_benchmark.py`: refactor only
+  `reconcile_reranker_artifacts()` và local reconciliation helpers.
+- `backend/tests/test_reranker_benchmark.py`: refactor duplicated tamper setup và
+  thêm representative non-finite cases.
+- `reports/phase_8_08c_reranker_benchmark_implementation_report.md`: cập nhật
+  fresh/reused evidence.
+- `session_prompt/CURRENT_HANDOFF.md`: return `final_review` packet.
+
+Không sửa producer functions, production reranker, notebook, CSV/JSONL
+artifacts, schema constants, inputs, metrics, thresholds hoặc flags.
+
+### Required implementation shape
+
+1. Tạo một local helper/path parse required numeric value thành `float`; chỉ trả
+   value khi `np.isfinite(value)` là true, còn lại append exact reconciliation
+   error và fail closed.
+2. Mọi persisted required numeric field được dùng trong case metrics, summary
+   metrics/deltas, bootstrap bounds, summary latency và resource checks phải đi
+   qua boundary này trước compare/recompute.
+3. Blank-by-schema checks giữ riêng; không dùng `or 0.0` để biến missing/blank
+   thành giá trị hợp lệ.
+4. Reuse normalized value cho downstream eligibility/clear-gain/resource
+   relations; không parse lại bằng distributed raw `float(...)` calls.
+5. Gom copy/write/tamper test setup bằng helper hoặc parameterization. Prior ten
+   tamper behaviors phải tiếp tục pass. Thêm representative `NaN`, `+Inf` và
+   `-Inf` probes cho ít nhất: per-case metric, summary metric/delta, bootstrap CI,
+   summary p50/p95 và resource numeric field.
+6. Không thêm generic validator framework, typed artifact layer, manifest,
+   checksum machinery hoặc artifact mới.
+
+### Acceptance and reruns
+
+Từ `backend/`:
+
+```bash
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-08c-reset-uv-cache uv run python -m pytest tests/test_reranker_benchmark.py -q --tb=short -s
+PYTHONPATH=. HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-08c-reset-uv-cache uv run python -c "from evaluation.reranker_benchmark import reconcile_reranker_artifacts; r=reconcile_reranker_artifacts(); assert r.complete and r.summary_rows == 60 and r.case_records == 135 and not r.errors"
+git diff --check
+```
+
+Acceptance cần chứng minh:
+
+- current untampered artifacts vẫn `complete=True` 60/135;
+- representative non-finite probes đều `complete=False`;
+- prior ten tamper boundaries vẫn fail closed;
+- focused suite pass;
+- no diff ở producer/notebook/durable artifacts và concurrent 08b work được giữ.
+
+Không chạy lại MiniLM/Notebook vì producer/data flow/artifacts không đổi. Nếu
+implementation cần chạm một trong các phần đó, dừng và trả Reviewer để đổi
+contract. Git và sub-agent authorization vẫn `none`.
+
+## Approval closure — 2026-08-30 (+07)
+
+Complexity reset và independent final review đã pass; user xác nhận Notebook
+08c. Implementation plan này đã hoàn thành. Closure giữ kết luận ba pairings
+`eligible=False`, không có reranker finalist/cutover và chuyển lifecycle sang
+next-design cho full curated `knowledge-base-hue` coverage. Post-08c corpus,
+chunking, embedding/index, Combined Golden Dataset và benchmark work chưa được
+authorize bởi plan này.

@@ -80,7 +80,7 @@ Production config và active collection không thay đổi.
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1, Notebook 08a và 08b approved; exact 08c design/spec approved, implementation plan chờ user review; chưa authorize implementation/run |
+| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; post-08c multi-domain design is next |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -177,10 +177,16 @@ evaluation/results/phase8_sparse_results.csv
 evaluation/results/phase8_sparse_cases.jsonl
 ```
 
-Exact 08c written specification approved by the user on `2026-08-30 +07`:
+Approved 08c work package, confirmed by the user on `2026-08-30 +07`:
 
 ```text
 docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md
+docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md
+notebooks/08c_reranker_benchmark.ipynb
+evaluation/results/phase8_reranker_results.csv
+evaluation/results/phase8_reranker_cases.jsonl
+reports/phase_8_08c_reranker_benchmark_codex_review.md
+reports/user_reports/phase_8_08c_reranker_benchmark_user_report.md
 ```
 
 Governance designs and plans:
@@ -194,14 +200,13 @@ docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-p
 
 ## Current next action
 
-Notebook 08b đã được triển khai, review độc lập và user xác nhận ngày
-`2026-08-30 +07`. Exact Notebook 08c conversational design đã được user xác
-nhận và written spec nằm tại
-`docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md`.
-Current next action là user review implementation plan cùng Review Contract tại
-`docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md`.
-Chưa có authorization cho implementation, benchmark run, paid API, active
-mutation hoặc production cutover cho 08c.
+Notebooks 08a, 08b và 08c đã được triển khai, review độc lập và user xác nhận.
+08c hoàn tất 60 summary rows/135 cases; cả ba MiniLM pairings
+`eligible=False`, không có reranker finalist và production không cutover.
+Current next action là Reviewer research/brainstorm exact design để hoàn thiện
+curated answer-facing data trên toàn bộ domain phù hợp dưới
+`knowledge-base-hue/`, rồi mới thiết kế domain-aware chunking/metadata,
+embeddings, isolated full-corpus index và Combined Golden Dataset.
 
 Post-08c queued reviewer workstream: hoàn thiện toàn bộ curated answer-facing
 Markdown dưới `knowledge-base-hue/` cho Foods, Festivals, Heritage, Tourism,
@@ -212,5 +217,5 @@ và per-domain. Evaluation bắt đầu lại từ Phase 7 baseline rồi chạy
 Phase 8 bị ảnh hưởng. Kết quả hiện tại chỉ là Foods historical evidence.
 
 Chưa có authorization thay đổi corpus/code, tạo embedding/index/Golden mới,
-mutate Qdrant hoặc chạy benchmark đa lĩnh vực; exact post-08c design bắt đầu sau
-khi lifecycle 08c Foods đóng.
+mutate Qdrant hoặc chạy benchmark đa lĩnh vực. User chỉ authorize đóng 08c,
+chuẩn bị next-design context và commit/push work package 08c hiện hành.
