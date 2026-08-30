@@ -13,11 +13,11 @@ không phải nguồn tiến độ hiện hành và không tạo requirement m�
 
 Hiện tại dự án chức năng đã hoàn thành và được xác nhận đến Phase 7. Simplicity
 campaign Phase 0–6 và Phase 7 post-simplicity correction đã approved. Phase 8
-vẫn `not_ready`, nhưng Golden Dataset V3 Gate 0 và Gate 1 common contracts đã
-được user phê duyệt ngày `2026-08-28 +07`. Exact Notebook 08a design/plan cũng
-đã approved và implementation + real isolated Run All đã được authorize. Bước
-tiếp theo là Implementer thực hiện 08a và viết implementation report; chưa có
-technical review hoặc user approval cho kết quả 08a.
+vẫn `not_ready`, nhưng Golden Dataset V3 Gate 0, Gate 1 common contracts,
+Notebook 08a và Notebook 08b đã được triển khai/review/xác nhận. 08b không chọn
+BM25 hoặc TF-IDF finalist do relationship guardrail; production giữ nguyên.
+Bước tiếp theo là research và brainstorming exact Notebook 08c; chưa authorize
+implementation hoặc benchmark run 08c.
 
 ## Evidence hiện hành của simplicity campaign
 
@@ -30,10 +30,11 @@ technical review hoặc user approval cho kết quả 08a.
 | 4–5 | `phase_4_5_qdrant_retrieval_simplicity_implementation.md`, `phase_4_5_qdrant_retrieval_simplicity_codex_review.md`, `user_reports/phase_4_5_qdrant_retrieval_simplicity_user_report.md` | Approved; candidate chưa cutover |
 | 6 | Các report Phase 6, Milestone 6.1 và simplicity review | Approved |
 | 7 | Bộ report `phase_7_retrieval_answer_evaluation_*` | Approved |
+| 8/08a | `phase_8_08a_embedding_benchmark_*` và user report tương ứng | Approved work package; Phase 8 tổng thể chưa approved |
+| 8/08b | `phase_8_08b_retrieval_fusion_benchmark_*` và user report tương ứng | Approved work package; không có sparse finalist/cutover |
 
-Phase 8 benchmark hiện có approved Gate 0 evidence và common design/sequence
-contracts cùng exact approved 08a design/plan; chưa có Notebook 08a
-implementation evidence:
+Phase 8 benchmark hiện có approved Gate 0 evidence, common design/sequence
+contracts và approved work packages 08a–08b:
 
 ```text
 docs/superpowers/specs/2026-08-27-phase-8-golden-dataset-v3-design.md
@@ -44,6 +45,12 @@ docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
 docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
 docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
 docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
+reports/phase_8_08a_embedding_benchmark_codex_review.md
+reports/user_reports/phase_8_08a_embedding_benchmark_user_report.md
+docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
+docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
+reports/phase_8_08b_retrieval_fusion_benchmark_codex_review.md
+reports/user_reports/phase_8_08b_retrieval_fusion_benchmark_user_report.md
 guides/phase_8_benchmark_model_selection.md
 reports/phase_7_golden_dataset_audit.md
 ```

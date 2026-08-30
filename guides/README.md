@@ -91,7 +91,7 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
-| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebook 08a đã approved với E5-small, Huydang DEk21 và E5-base; bước kế tiếp là research/brainstorming 08b |
+| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08b đã approved; không có 08b sparse finalist, bước kế tiếp là research/brainstorming 08c |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
 
 Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
@@ -105,7 +105,9 @@ Phase 0–6 simplicity review đã approved
 -> Phase 8 Gate 1 common contracts đã approved
 -> Notebook 08a đã được triển khai, review độc lập và user xác nhận
 -> MiniLM-L12/Qwen bị loại khỏi executable local catalog; historical CSV giữ lại
--> research + brainstorm exact Notebook 08b
+-> Notebook 08b đã hoàn tất 20-setting matrix, review và user xác nhận
+-> không có BM25/TF-IDF finalist; production giữ nguyên
+-> research + brainstorm exact Notebook 08c
 ```
 
 Review Phase 0–6 theo dependency order để thay đổi nền tảng không làm invalid

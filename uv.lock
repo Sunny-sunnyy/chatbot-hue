@@ -960,6 +960,11 @@ dependencies = [
     { name = "uvicorn", extra = ["standard"] },
 ]
 
+[package.dev-dependencies]
+evaluation = [
+    { name = "underthesea" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4" },
@@ -985,6 +990,9 @@ requires-dist = [
     { name = "sentence-transformers" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.0" },
 ]
+
+[package.metadata.requires-dev]
+evaluation = [{ name = "underthesea", specifier = ">=9.5,<10" }]
 
 [[package]]
 name = "huggingface-hub"
@@ -3400,6 +3408,46 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/92/ff/5a28bdfd8c3ebec42564ac7d0e54ca3db65044a9314a97f9564fa7a1e926/tzdata-2026.3.tar.gz", hash = "sha256:4a1518b8993086a7982523e071643f3c0e5f213e75b21318e78bcabfff9d1415", size = 198674, upload-time = "2026-07-10T08:50:37.887Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/6d/b53b99a9f2766d095985947a5782f1702cabb129a34f7a802d7197af832f/tzdata-2026.3-py2.py3-none-any.whl", hash = "sha256:dc096730c87af6cab1b171c9d532be840741ff5d459015e7f6947bd7d7e54931", size = 348168, upload-time = "2026-07-10T08:50:36.46Z" },
+]
+
+[[package]]
+name = "underthesea"
+version = "9.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "huggingface-hub" },
+    { name = "joblib" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tqdm" },
+    { name = "underthesea-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2d/84/a30d22b98e9b0f48d41c0a4534618fdeb1e7f9cbe60bc3ab2ff603bd237a/underthesea-9.5.0.tar.gz", hash = "sha256:ad6261e9fa5a26f6314ec283513260f82ac227844a2811c520ee62b6d967a4f4", size = 7219950, upload-time = "2026-05-17T11:13:02.244Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/d5/9d81c3d04ad8aac071115bbc8e1870741308d6dadffd201be7a6fde0329f/underthesea-9.5.0-py3-none-any.whl", hash = "sha256:81400f41b75ceff6f80c52b4ad043806c80f5899ec555d8e6374d468a59bce56", size = 7273326, upload-time = "2026-05-17T11:12:59.674Z" },
+]
+
+[[package]]
+name = "underthesea-core"
+version = "3.3.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/62/a67e1ce6a0a7cf5a050d5debe3f4e1dad511bdf625fc4b169721c27da4be/underthesea_core-3.3.2.tar.gz", hash = "sha256:7019f8f6d13f14556c032c63a9e5f77e107426654edce5e92d6513bb8ee8141a", size = 683496, upload-time = "2026-05-24T10:21:39.137Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bf/0b/be9c16262eba6c04dd549106ee6b0235663358cb07e8fbe3f7ca4a215975/underthesea_core-3.3.2-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:85c438d9127d286813774de6ebc515486e496322bab7fad29f1d18081dcee8b3", size = 1398237, upload-time = "2026-05-24T10:21:21.078Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/f8/c1035dbf6ae8b91ca216eb2016f294012a31054bc81ccc40acfe76dfd65e/underthesea_core-3.3.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:7558eefb6ee5bf68647366bf4a87ecbff9454fe67d1690970128b6c63c8cb5a6", size = 1352366, upload-time = "2026-05-24T10:21:22.442Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/f6/f74082f8719ab7fba0e3debbde27643676b6a20313779f45c329e4f88356/underthesea_core-3.3.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:69db760a7d314e44bd493907d9c1e8b7ac7a3c56c1b87b2430cfe597e467dc5b", size = 1519268, upload-time = "2026-05-24T10:21:23.737Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/b4/e8d8368ac26166602f93495204f6f2356b24ed301d9b30f416da7c15ba22/underthesea_core-3.3.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:26ebe87cc81a3061cb6034d65894c5cd03e5f7fcd285b76a14499c62f518e512", size = 1525167, upload-time = "2026-05-24T10:21:24.983Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/8c/9a87bee682f3f093810066b76e42feef6c31fceeeb09f676c4103c185bfd/underthesea_core-3.3.2-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:aaeb74bfb31410d78dbb5c5d14f1f640d844554a1ba2c0ad723f5d22c452d9e3", size = 1693699, upload-time = "2026-05-24T10:21:26.175Z" },
+    { url = "https://files.pythonhosted.org/packages/66/94/66f9b6850f9cfe06905b3605e2d6d0b2df3675a3c305803243e5f3b7e0e3/underthesea_core-3.3.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:f53cfb95afa5adf614af58b96c1227c634da4b482bb9763d3feafa2c8ad06c7a", size = 1777422, upload-time = "2026-05-24T10:21:27.461Z" },
+    { url = "https://files.pythonhosted.org/packages/16/ab/187384359fd51dd3d193fd05b30b72858c76f81504a7616844c2accdc322/underthesea_core-3.3.2-cp313-cp313-win_amd64.whl", hash = "sha256:906437c03216a7a816067fd05792dfd56c58655cd80070a591d9c6952a822fbf", size = 1234107, upload-time = "2026-05-24T10:21:28.782Z" },
+    { url = "https://files.pythonhosted.org/packages/bf/99/bb47891c480224543e628a3fe1e5a69d80ac5d14549b50c815b3e2c2b0fc/underthesea_core-3.3.2-cp314-cp314-macosx_10_12_x86_64.whl", hash = "sha256:87c9db877279b3a266dc596a6bbd582692015151f170e352a467948bd9068ba4", size = 1398737, upload-time = "2026-05-24T10:21:30.063Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/ad/10fa2eb3b9ce45a6073bf687dd4adb49e799beb1b7a026b814d72a15abeb/underthesea_core-3.3.2-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:9c27520091e34bf8f96316e6e44a61e525df33340eb8c9bc35b674f307886730", size = 1352814, upload-time = "2026-05-24T10:21:31.386Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/36/82af05d25f676b7ef77e3c2ec869e50f7b91d4598d2c2e324bcc322aeff5/underthesea_core-3.3.2-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6605901a5dfe29a674ce9787938d7d48694be0b35e8139ddedb4268485e7a7c6", size = 1521562, upload-time = "2026-05-24T10:21:32.702Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/d1/c16da7321fb9c7aea89d9a595739118fd79f9febae380964feb5fa1505a8/underthesea_core-3.3.2-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:49523c604624b1428c8c9ed49ea1a07fa5cabfe2b72b1f93dcf64599ba9d6905", size = 1525653, upload-time = "2026-05-24T10:21:34.052Z" },
+    { url = "https://files.pythonhosted.org/packages/49/8e/f49331c215edc7c0cf9ea5ff43b8e6133a81e841ca0a3de245fe490afcd4/underthesea_core-3.3.2-cp314-cp314-musllinux_1_2_aarch64.whl", hash = "sha256:0bc76b1433316240e2d763ff72526380a7ed1182aff0ceccd1e683d7fe0c74f6", size = 1695755, upload-time = "2026-05-24T10:21:35.361Z" },
+    { url = "https://files.pythonhosted.org/packages/e6/ab/048190b8f762ee3e5acf894c304d4924e27460c65c0677cb8b319b3d8b3f/underthesea_core-3.3.2-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:0b049a4161585e51e119db177217cb4485ed0ef3939753b4995c17d99032db89", size = 1778212, upload-time = "2026-05-24T10:21:36.585Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/21/7fd06fc0672aebfc8e564dce51b4dc34329269ac45c012605a361003ece6/underthesea_core-3.3.2-cp314-cp314-win_amd64.whl", hash = "sha256:87b6868a62135efbb4127596777ffb44c683933910b110ed7e874c4aac58bb63", size = 1235303, upload-time = "2026-05-24T10:21:37.787Z" },
 ]
 
 [[package]]

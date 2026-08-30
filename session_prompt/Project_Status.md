@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-08-29 +07`
+Last updated: `2026-08-30 +07`
 
 ## Project overview
 
@@ -61,6 +61,13 @@ Golden V3 cases và 572 chunks. Executable catalog hiện chỉ gồm:
 
 Mỗi model có 3/3 repetition evidence trên 45 Golden V3 cases và 572 chunks.
 
+Phase 8 Notebook 08b đã hoàn tất 20-setting retrieval/fusion matrix với 70
+calibration rows, 200 result rows và 900 per-case records. Unicode tokenizer
+được giữ vì Underthesea không cải thiện đủ để tăng complexity. Hybrid tăng
+overall recall nhưng cả BM25 và TF-IDF finalist đều `None`: category
+`relationship` có nDCG@5 delta `-0.0279273`, thấp hơn guardrail `-0.02`.
+Production config và active collection không thay đổi.
+
 ## Phase status
 
 | Phase | Status | Current result / next boundary |
@@ -73,7 +80,7 @@ Mỗi model có 3/3 repetition evidence trên 45 Golden V3 cases và 572 chunks.
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1, Notebook 08a và exact 08b design/plan approved; 08b chờ implementation/review |
+| 8 | `not_ready` | Gate 0, Gate 1, Notebook 08a và 08b approved; next boundary là exact 08c design, chưa authorize run |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -153,11 +160,18 @@ reports/phase_8_08a_embedding_benchmark_codex_review.md
 evaluation/results/phase8_embedding_results.csv
 ```
 
-Approved 08b design package:
+Approved 08b work package:
 
 ```text
 docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
 docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
+notebooks/08b_retrieval_fusion_benchmark.ipynb
+reports/phase_8_08b_retrieval_fusion_benchmark_codex_review.md
+reports/user_reports/phase_8_08b_retrieval_fusion_benchmark_user_report.md
+evaluation/results/phase8_sparse_manifest.json
+evaluation/results/phase8_sparse_calibration.csv
+evaluation/results/phase8_sparse_results.csv
+evaluation/results/phase8_sparse_cases.jsonl
 ```
 
 Governance designs and plans:
@@ -171,11 +185,11 @@ docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-p
 
 ## Current next action
 
-Exact Notebook 08b design và implementation plan đã được user duyệt ngày
-`2026-08-29 +07`. Current next action là Implementer thực hiện plan theo TDD,
-chia batch/checkpoint tùy tài nguyên, tạo/reuse đúng isolated TF-IDF collection,
-chạy real 45-case evidence và bàn giao independent review. Active collection,
-paid API, reranker, generation và production cutover vẫn ngoài scope.
+Notebook 08b đã được triển khai, review độc lập và user xác nhận ngày
+`2026-08-30 +07`. Current next action là Reviewer research và brainstorming
+exact Notebook 08c reranker benchmark trên fixed pre-rerank inputs. Chưa có
+authorization viết spec/plan cuối, implementation, benchmark run, paid API,
+active mutation hoặc production cutover cho 08c.
 
 Queued separate reviewer session, không thuộc 08b handoff: đánh giá khả năng mở
 rộng backend hiện tại sang curated Markdown dưới `knowledge-base-hue/festivals`

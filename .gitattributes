@@ -1,0 +1,3 @@
+# Python csv.DictWriter emits RFC-compatible CRLF records for durable CSV evidence.
+evaluation/results/phase8_sparse_calibration.csv whitespace=cr-at-eol
+evaluation/results/phase8_sparse_results.csv whitespace=cr-at-eol

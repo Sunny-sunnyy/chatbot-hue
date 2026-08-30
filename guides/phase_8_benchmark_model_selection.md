@@ -17,8 +17,10 @@ contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design
 đã được duyệt, triển khai, review độc lập và được user xác nhận ngày
 `2026-08-29 +07`. Work package 08a đã `approved` với ba model local còn lại và
 ba isolated Qdrant collections. Phase 8 tổng thể vẫn `not_ready`; bước kế tiếp
-là implementation và batch execution exact Notebook 08b. Design/spec/plan 08b
-đã được user duyệt ngày `2026-08-29 +07`; 08c–08e vẫn chưa authorize.
+là research và brainstorming exact Notebook 08c. Notebook 08b đã được triển
+khai, review độc lập và được user xác nhận ngày `2026-08-30 +07`; không có
+BM25/TF-IDF finalist do category guardrail `relationship`. Production không
+cutover; 08c–08e vẫn chưa authorize implementation/run.
 
 ## Mục tiêu
 
@@ -839,4 +841,16 @@ Approved by: User
 Approval date +07: 2026-08-29
 Next action: Implementer thực hiện exact 08b plan; không mở rộng sang festivals,
 reranker, generation, paid API, active mutation hoặc production cutover.
+```
+
+```text
+Decision: Notebook 08b retrieval/fusion benchmark được approved sau independent
+Reviewer verification và user confirmation. Exact matrix hoàn tất 20 settings,
+70 calibration rows, 200 result rows và 900 per-case records. Unicode tokenizer
+được giữ; cả BM25 và TF-IDF finalist đều None vì relationship nDCG@5 delta
+-0.0279273 vi phạm guardrail -0.02. Production config/collection không đổi.
+Approved by: User
+Approval date +07: 2026-08-30
+Next action: Research và brainstorming exact Notebook 08c reranker benchmark;
+implementation/run 08c vẫn cần design/spec/plan và user approval riêng.
 ```

@@ -1,0 +1,218 @@
+{
+  "schema_version": "phase8-sparse-manifest-v1",
+  "experiment_version": "phase8-08b-v1",
+  "immutable_identity": {
+    "corpus_fingerprint": "5297c86043352511ca7ef282c8631e7e83d128e33e7d75a8e8dbcfae1d196d81",
+    "golden_fingerprint": "8506eac3f5672a5b7cc3e4bcba337a62c410a162a8225dcb12cc47192a6c0bee",
+    "chunker_fingerprint": "d5e61db34b76a0d14cc66dbd4da62501b2362a000b1442c768f6456b334bb8b6",
+    "dense_prerequisites": [
+      {
+        "dense_setting_key": "e5-small-384",
+        "model_id": "intfloat/multilingual-e5-small",
+        "model_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "dimension": 384,
+        "collection_name": "hue_foods_08a_e5_small_384"
+      },
+      {
+        "dense_setting_key": "huydang-dek21-embedding-768",
+        "model_id": "CODE4LIFEOFFICIAL/huydang-dek21-embedding",
+        "model_revision": "517f1af7dd04a57194f1de2990f0c6ede0a3109b",
+        "dimension": 768,
+        "collection_name": "hue_foods_08a_huydang_dek21_768"
+      },
+      {
+        "dense_setting_key": "e5-base-768",
+        "model_id": "intfloat/multilingual-e5-base",
+        "model_revision": "d128750597153bb5987e10b1c3493a34e5a4502a",
+        "dimension": 768,
+        "collection_name": "hue_foods_08a_e5_base_768"
+      }
+    ],
+    "dependencies": {
+      "underthesea": "9.5.0"
+    },
+    "selected_bm25": {
+      "setting_key": "baseline",
+      "k1": 1.5,
+      "b": 0.75
+    },
+    "selected_tokenizer": "unicode_word",
+    "tfidf": {
+      "formula_version": "phase8-tfidf-logtf-smoothedidf-l2-v1",
+      "vocabulary_fingerprint": "b75949abab2efec0f7f03b8fe30b93b6c9919c35804a4b070fbfa252b22226d0",
+      "collection_name": "hue_rag_phase8_08b_tfidf_v1_unicode_word_5297c8604335"
+    },
+    "fusion": {
+      "rrf_k": 60,
+      "dense_weight": 0.6,
+      "sparse_weight": 0.4
+    },
+    "depths": {
+      "generator": 30,
+      "fusion": 10,
+      "final": 5
+    },
+    "repetitions": 3,
+    "bootstrap": {
+      "samples": 10000,
+      "seed": 42
+    },
+    "artifact_schemas": {
+      "calibration": 1,
+      "results": 1,
+      "cases": 1
+    },
+    "active_snapshot_before": {
+      "collection_name": "hue_foods_e5_small_384",
+      "points_count": 572,
+      "dense_vector_name": "dense",
+      "dense_size": 384,
+      "dense_distance": "Cosine",
+      "sparse_vector_names": [
+        "sparse"
+      ]
+    }
+  },
+  "batch_history": [
+    {
+      "batch_index": 1,
+      "timestamp": "2026-08-29T15:23:19.702180+00:00",
+      "requested_keys": [
+        "dense__e5-small-384",
+        "dense__huydang-dek21-embedding-768",
+        "dense__e5-base-768",
+        "bm25-only",
+        "dense-bm25-rescore__e5-small-384",
+        "dense-bm25-rescore__huydang-dek21-embedding-768",
+        "dense-bm25-rescore__e5-base-768",
+        "hybrid-bm25-rrf__e5-small-384",
+        "hybrid-bm25-weighted__e5-small-384",
+        "hybrid-bm25-rrf__huydang-dek21-embedding-768",
+        "hybrid-bm25-weighted__huydang-dek21-embedding-768",
+        "hybrid-bm25-rrf__e5-base-768",
+        "hybrid-bm25-weighted__e5-base-768",
+        "tfidf-only",
+        "hybrid-tfidf-rrf__e5-small-384",
+        "hybrid-tfidf-weighted__e5-small-384",
+        "hybrid-tfidf-rrf__huydang-dek21-embedding-768",
+        "hybrid-tfidf-weighted__huydang-dek21-embedding-768",
+        "hybrid-tfidf-rrf__e5-base-768",
+        "hybrid-tfidf-weighted__e5-base-768"
+      ],
+      "executed_keys": [
+        "dense__e5-small-384",
+        "dense__huydang-dek21-embedding-768",
+        "dense__e5-base-768",
+        "bm25-only",
+        "dense-bm25-rescore__e5-small-384",
+        "dense-bm25-rescore__huydang-dek21-embedding-768",
+        "dense-bm25-rescore__e5-base-768",
+        "hybrid-bm25-rrf__e5-small-384",
+        "hybrid-bm25-weighted__e5-small-384",
+        "hybrid-bm25-rrf__huydang-dek21-embedding-768",
+        "hybrid-bm25-weighted__huydang-dek21-embedding-768",
+        "hybrid-bm25-rrf__e5-base-768",
+        "hybrid-bm25-weighted__e5-base-768",
+        "tfidf-only",
+        "hybrid-tfidf-rrf__e5-small-384",
+        "hybrid-tfidf-weighted__e5-small-384",
+        "hybrid-tfidf-rrf__huydang-dek21-embedding-768",
+        "hybrid-tfidf-weighted__huydang-dek21-embedding-768",
+        "hybrid-tfidf-rrf__e5-base-768",
+        "hybrid-tfidf-weighted__e5-base-768"
+      ],
+      "skipped_keys": [],
+      "failed_keys": [],
+      "active_snapshot_before": {
+        "collection_name": "hue_foods_e5_small_384",
+        "points_count": 572,
+        "dense_vector_name": "dense",
+        "dense_size": 384,
+        "dense_distance": "Cosine",
+        "sparse_vector_names": [
+          "sparse"
+        ]
+      },
+      "active_snapshot_after": {
+        "collection_name": "hue_foods_e5_small_384",
+        "points_count": 572,
+        "dense_vector_name": "dense",
+        "dense_size": 384,
+        "dense_distance": "Cosine",
+        "sparse_vector_names": [
+          "sparse"
+        ]
+      }
+    },
+    {
+      "batch_index": 2,
+      "timestamp": "2026-08-29T15:24:00.860020+00:00",
+      "requested_keys": [
+        "dense__e5-small-384",
+        "dense__huydang-dek21-embedding-768",
+        "dense__e5-base-768",
+        "bm25-only",
+        "dense-bm25-rescore__e5-small-384",
+        "dense-bm25-rescore__huydang-dek21-embedding-768",
+        "dense-bm25-rescore__e5-base-768",
+        "hybrid-bm25-rrf__e5-small-384",
+        "hybrid-bm25-weighted__e5-small-384",
+        "hybrid-bm25-rrf__huydang-dek21-embedding-768",
+        "hybrid-bm25-weighted__huydang-dek21-embedding-768",
+        "hybrid-bm25-rrf__e5-base-768",
+        "hybrid-bm25-weighted__e5-base-768",
+        "tfidf-only",
+        "hybrid-tfidf-rrf__e5-small-384",
+        "hybrid-tfidf-weighted__e5-small-384",
+        "hybrid-tfidf-rrf__huydang-dek21-embedding-768",
+        "hybrid-tfidf-weighted__huydang-dek21-embedding-768",
+        "hybrid-tfidf-rrf__e5-base-768",
+        "hybrid-tfidf-weighted__e5-base-768"
+      ],
+      "executed_keys": [],
+      "skipped_keys": [
+        "dense__e5-small-384",
+        "dense__huydang-dek21-embedding-768",
+        "dense__e5-base-768",
+        "bm25-only",
+        "dense-bm25-rescore__e5-small-384",
+        "dense-bm25-rescore__huydang-dek21-embedding-768",
+        "dense-bm25-rescore__e5-base-768",
+        "hybrid-bm25-rrf__e5-small-384",
+        "hybrid-bm25-weighted__e5-small-384",
+        "hybrid-bm25-rrf__huydang-dek21-embedding-768",
+        "hybrid-bm25-weighted__huydang-dek21-embedding-768",
+        "hybrid-bm25-rrf__e5-base-768",
+        "hybrid-bm25-weighted__e5-base-768",
+        "tfidf-only",
+        "hybrid-tfidf-rrf__e5-small-384",
+        "hybrid-tfidf-weighted__e5-small-384",
+        "hybrid-tfidf-rrf__huydang-dek21-embedding-768",
+        "hybrid-tfidf-weighted__huydang-dek21-embedding-768",
+        "hybrid-tfidf-rrf__e5-base-768",
+        "hybrid-tfidf-weighted__e5-base-768"
+      ],
+      "failed_keys": [],
+      "active_snapshot_before": {
+        "collection_name": "hue_foods_e5_small_384",
+        "points_count": 572,
+        "dense_vector_name": "dense",
+        "dense_size": 384,
+        "dense_distance": "Cosine",
+        "sparse_vector_names": [
+          "sparse"
+        ]
+      },
+      "active_snapshot_after": {
+        "collection_name": "hue_foods_e5_small_384",
+        "points_count": 572,
+        "dense_vector_name": "dense",
+        "dense_size": 384,
+        "dense_distance": "Cosine",
+        "sparse_vector_names": [
+          "sparse"
+        ]
+      }
+    }
+  ]
+}

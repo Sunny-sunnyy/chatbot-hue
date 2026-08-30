@@ -27,3 +27,8 @@ dependencies = [
     "gradio>=6.25.0",
     "pyvi==0.1.1",
 ]
+
+[dependency-groups]
+evaluation = [
+    "underthesea>=9.5,<10",
+]
