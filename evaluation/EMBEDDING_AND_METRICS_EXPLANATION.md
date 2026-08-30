@@ -1,14 +1,14 @@
-# Hướng dẫn & Giải thích Kỹ thuật: Mô hình Embedding, Sparse Retrieval, Fusion và Các Độ đo Đánh giá (Hue Foods RAG)
+# Hướng dẫn & Giải thích Kỹ thuật: Mô hình Embedding, Sparse Retrieval, Fusion, Cross-Encoder Reranking và Các Độ đo Đánh giá (Hue Foods RAG)
 
 > **Tài liệu kỹ thuật tham chiếu nội bộ** cho nhóm phát triển và nghiên cứu dự án **Hue Foods RAG**.
-> **Cập nhật:** `2026-08-30` (Đồng bộ verdict 08b và exact design scope 08c).
+> **Cập nhật:** `2026-08-30` (Đồng bộ đầy đủ kết quả thực nghiệm và verdict của Phase 8: Notebook 08a, 08b và 08c).
 
 ---
 
 ## Mục lục
 
 1. [Tổng quan về Retrieval & Kiến trúc Đa tầng trong RAG](#1-tổng-quan-về-retrieval--kiến-trúc-đa-tầng-trong-rag)
-2. [Các Mô hình Dense Embedding (Ngữ nghĩa)](#2-các-mô-hình-dense-embedding-ngữ-nghĩa)
+2. [Các Mô hình Dense Embedding (Ngữ nghĩa — Bi-Encoder)](#2-các-mô-hình-dense-embedding-ngữ-nghĩa--bi-encoder)
    - [2.1. `intfloat/multilingual-e5-small` (384D) — Control Baseline](#21-intfloatmultilingual-e5-small-384d--control-baseline)
    - [2.2. `CODE4LIFEOFFICIAL/huydang-dek21-embedding` (768D) — Candidate 1](#22-code4lifeofficialhuydang-dek21-embedding-768d--candidate-1)
    - [2.3. `intfloat/multilingual-e5-base` (768D) — Candidate 2](#23-intfloatmultilingual-e5-base-768d--candidate-2)
@@ -21,28 +21,34 @@
    - [4.1. Reciprocal Rank Fusion (RRF)](#41-reciprocal-rank-fusion-rrf)
    - [4.2. Min-Max Score Normalization Weighted Sum (Score Fusion)](#42-min-max-score-normalization-weighted-sum-score-fusion)
    - [4.3. Dense-to-BM25 Rescoring (Chấm lại điểm 2 chặng)](#43-dense-to-bm25-rescoring-chấm-lại-điểm-2-chặng)
-5. [Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)](#5-nguyên-lý-tiền-xử-lý--hợp-đồng-input-input-contracts)
-   - [5.1. Tiền tố Bất đối xứng (Asymmetric Query/Passage Prefix)](#51-tiền-tố-bất-đối-xứng-asymmetric-querypassage-prefix)
-   - [5.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)](#52-tách-từ-tiếng-việt-chuyên-biệt-pyvi-vitokenizer)
-   - [5.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)](#53-giới-hạn-độ-dài-chuỗi-max-sequence-length--hiện-tượng-cắt-ngắn-truncation)
-   - [5.4. Chuẩn hóa Vector L2 & Dot Product Similarity](#54-chuẩn-hóa-vector-l2--dot-product-similarity)
-6. [Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval Metrics)](#6-các-độ-đo-đánh-giá-chất-lượng-truy-xuất-retrieval-metrics)
-   - [6.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)` & Bão hòa Bằng chứng](#61-đơn-vị-tính-điểm-relevance-cặp-source-section--bão-hòa-bằng-chứng)
-   - [6.2. Recall@K (Recall@5 & Recall@30)](#62-recallk-recall5--recall30)
-   - [6.3. Candidate Union Recall (Độ phủ Tập ứng viên Gộp)](#63-candidate-union-recall-độ-phủ-tập-ứng-viên-gộp)
-   - [6.4. MRR@K (Mean Reciprocal Rank @ K)](#64-mrrk-mean-reciprocal-rank--k)
-   - [6.5. nDCG@K (Normalized Discounted Cumulative Gain @ K)](#65-ndcgk-normalized-discounted-cumulative-gain--k)
-   - [6.6. Hit Rate / Hit Case Count](#66-hit-rate--hit-case-count)
-7. [Đo lường Hiệu năng: Phân tích Độ trễ (p50, p95, p99) & Bộ nhớ](#7-đo-lường-hiệu-năng-phân-tích-độ-trễ-p50-p95-p99--bộ-nhớ)
-   - [7.1. Phân vị Độ trễ (Latency Percentiles: p50, p95, p99) là gì?](#71-phân-vị-độ-trễ-latency-percentiles-p50-p95-p99-là-gì)
-   - [7.2. Tại sao p95 và p99 là Thước đo Vàng trong RAG & Hệ thống Phân tán?](#72-tại-sao-p95-và-p99-là-thước-đo-vàng-trong-rag--hệ-thống-phân-tán)
-   - [7.3. Quy trình đo lường 3 Repetitions & Loại bỏ Warm-up](#73-quy-trình-đo-lường-3-repetitions--loại-bỏ-warm-up)
-8. [Phương pháp Kiểm định Thống kê & Guardrails](#8-phương-pháp-kiểm-định-thống-kê--guardrails)
-   - [8.1. Category Guardrails (9 Danh mục câu hỏi V3)](#81-category-guardrails-9-danh-mục-câu-hỏi-v3)
-   - [8.2. Paired Bootstrap 95% Confidence Interval (CI)](#82-paired-bootstrap-95-confidence-interval-ci)
-   - [8.3. Tiêu chuẩn Khoa học Fail-Closed](#83-tiêu-chuẩn-khoa-học-fail-closed)
-9. [Bảng Tổng hợp Toàn diện Benchmark 08a & 08b](#9-bảng-tổng-hợp-toàn-diện-benchmark-08a--08b)
-10. [Kết luận 08b và bước tiếp theo Phase 8c](#10-kết-luận-08b-và-bước-tiếp-theo-phase-8c)
+5. [Mô hình Cross-Encoder Reranking (Chấm điểm Tương tác Chéo)](#5-mô-hình-cross-encoder-reranking-chấm-điểm-tương-tác-chéo)
+   - [5.1. So sánh Kiến trúc: Bi-Encoder vs Cross-Encoder](#51-so-sánh-kiến-trúc-bi-encoder-vs-cross-encoder)
+   - [5.2. Mô hình `cross-encoder/ms-marco-MiniLM-L-6-v2`](#52-mô-hình-cross-encoderms-marco-minilm-l-6-v2)
+   - [5.3. Chi phí Tính toán, Cold-load và Độ trễ Phân vị (Latency Profile)](#53-chi-phí-tính-toán-cold-load-và-độ-trễ-phân-vị-latency-profile)
+   - [5.4. Đánh giá Thực nghiệm Reranker trên Dữ liệu Ẩm thực Huế (08c)](#54-đánh-giá-thực-nghiệm-reranker-trên-dữ-liệu-ẩm-thực-huế-08c)
+6. [Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)](#6-nguyên-lý-tiền-xử-lý--hợp-đồng-input-input-contracts)
+   - [6.1. Tiền tố Bất đối xứng (Asymmetric Query/Passage Prefix)](#61-tiền-tố-bất-đối-xứng-asymmetric-querypassage-prefix)
+   - [6.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)](#62-tách-từ-tiếng-việt-chuyên-biệt-pyvi-vitokenizer)
+   - [6.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)](#63-giới-hạn-độ-dài-chuỗi-max-sequence-length--hiện-tượng-cắt-ngắn-truncation)
+   - [6.4. Chuẩn hóa Vector L2 & Dot Product Similarity](#64-chuẩn-hóa-vector-l2--dot-product-similarity)
+7. [Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval & Reranking Metrics)](#7-các-độ-đo-đánh-giá-chất-lượng-truy-xuất-retrieval--reranking-metrics)
+   - [7.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)` & Bão hòa Bằng chứng](#71-đơn-vị-tính-điểm-relevance-cặp-source-section--bão-hòa-bằng-chứng)
+   - [7.2. Recall@K (Recall@5 & Recall@30)](#72-recallk-recall5--recall30)
+   - [7.3. Candidate Union Recall (Độ phủ Tập ứng viên Gộp)](#73-candidate-union-recall-độ-phủ-tập-ứng-viên-gộp)
+   - [7.4. MRR@K (Mean Reciprocal Rank @ K)](#74-mrrk-mean-reciprocal-rank--k)
+   - [7.5. nDCG@K (Normalized Discounted Cumulative Gain @ K)](#75-ndcgk-normalized-discounted-cumulative-gain--k)
+   - [7.6. Hit Rate / Hit Case Count & Hit Transitions (`gained`, `lost`, `unchanged`)](#76-hit-rate--hit-case-count--hit-transitions-gained-lost-unchanged)
+8. [Đo lường Hiệu năng: Phân tích Độ trễ (p50, p95, p99) & Bộ nhớ](#8-đo-lường-hiệu-năng-phân-tích-độ-trễ-p50-p95-p99--bộ-nhớ)
+   - [8.1. Phân vị Độ trễ (Latency Percentiles: p50, p95, p99) là gì?](#81-phân-vị-độ-trễ-latency-percentiles-p50-p95-p99-là-gì)
+   - [8.2. Tại sao p95 và p99 là Thước đo Vàng trong RAG & Hệ thống Phân tán?](#82-tại-sao-p95-và-p99-là-thước-đo-vàng-trong-rag--hệ-thống-phân-tán)
+   - [8.3. Quy trình đo lường 3 Repetitions & Loại bỏ Warm-up](#83-quy-trình-đo-lường-3-repetitions--loại-bỏ-warm-up)
+9. [Phương pháp Kiểm định Thống kê, Guardrails & Tính Toàn vẹn Hệ thống](#9-phương-pháp-kiểm-định-thống-kê-guardrails--tính-toàn-vẹn-hệ-thống)
+   - [9.1. Category Guardrails (9 Danh mục câu hỏi V3)](#91-category-guardrails-9-danh-mục-câu-hỏi-v3)
+   - [9.2. Paired Bootstrap 95% Confidence Interval (CI)](#92-paired-bootstrap-95-confidence-interval-ci)
+   - [9.3. Tiêu chuẩn Khoa học Fail-Closed](#93-tiêu-chuẩn-khoa-học-fail-closed)
+   - [9.4. Chuẩn hóa Số thực & Phòng vệ IEEE 754 NaN trong Đối soát Artifacts](#94-chuẩn-hóa-số-thực--phòng-vệ-ieee-754-nan-trong-đối-soát-artifacts)
+10. [Bảng Tổng hợp Toàn diện Benchmark Phase 8 (08a, 08b, 08c)](#10-bảng-tổng-hợp-toàn-diện-benchmark-phase-8-08a-08b-08c)
+11. [Tổng kết Phase 8 và Lộ trình Mở rộng Đa miền (Multi-domain)](#11-tổng-kết-phase-8-và-lộ-trình-mở-rộng-đa-miền-multi-domain)
 
 ---
 
@@ -67,7 +73,7 @@ Hệ thống RAG nâng cao không chỉ dựa vào một phương pháp tìm ki�
                     ┌───────────────────────────┐
                     │  Hybrid Fusion (RRF/Sum)  │ -> Tạo Candidate Pool (Union)
                     └─────────────┬─────────────┘
-                                  │ (Top-10 -> Top-5)
+                                  │ (Top-10 Candidates)
                                   ▼
                     ┌───────────────────────────┐
                     │ Cross-Encoder Reranker    │ (Phase 8c)
@@ -79,13 +85,14 @@ Hệ thống RAG nâng cao không chỉ dựa vào một phương pháp tìm ki�
                     └───────────────────────────┘
 ```
 
-1. **Dense Retrieval (Ngữ nghĩa):** Sử dụng các mạng nơ-ron Transformer để nắm bắt ngữ nghĩa trừu tượng, đồng nghĩa, ngữ cảnh câu hỏi dù từ ngữ không trùng lặp (ví dụ: *"quán ăn ngon cố đô"* $\leftrightarrow$ *"địa chỉ ẩm thực nức tiếng ở Huế"*).
-2. **Sparse Retrieval (Từ khóa):** Dựa trên tần suất từ và nghịch đảo tần suất văn bản (BM25, TF-IDF) để nắm bắt chính xác các danh từ riêng, tên quán, địa chỉ, số liệu (ví dụ: *"bánh ép Cây Dừa"*, *"04 Phan Bội Châu"*, *"chè hẻm"*).
-3. **Fusion (Hợp nhất):** Kết hợp các danh sách ứng viên từ Dense và Sparse để tạo ra tập ngữ cảnh vừa giàu ngữ nghĩa vừa chuẩn xác từ khóa.
+1. **Dense Retrieval (Ngữ nghĩa — Bi-Encoder):** Sử dụng mạng nơ-ron Transformer để nắm bắt ngữ nghĩa trừu tượng, đồng nghĩa, ngữ cảnh câu hỏi dù từ ngữ không trùng lặp (ví dụ: *"quán ăn ngon cố đô"* $\leftrightarrow$ *"địa chỉ ẩm thực nức tiếng ở Huế"*).
+2. **Sparse Retrieval (Từ khóa — Lexical):** Dựa trên tần suất từ và nghịch đảo tần suất văn bản (BM25, TF-IDF) để nắm bắt chính xác các danh từ riêng, tên quán, địa chỉ, số liệu (ví dụ: *"bánh ép Cây Dừa"*, *"04 Phan Bội Châu"*, *"chè hẻm"*).
+3. **Fusion (Hợp nhất):** Kết hợp các danh sách ứng viên từ Dense và Sparse để tạo ra tập ứng viên Top-10 vừa giàu ngữ nghĩa vừa chuẩn xác từ khóa.
+4. **Cross-Encoder Reranking (Tái xếp hạng):** Đưa toàn bộ cặp câu hỏi và từng đoạn văn qua mô hình tương tác chéo để chấm điểm độ tương quan sâu ở mức token, lọc ra Top-5 tinh túy nhất cho LLM.
 
 ---
 
-## 2. Các Mô hình Dense Embedding (Ngữ nghĩa)
+## 2. Các Mô hình Dense Embedding (Ngữ nghĩa — Bi-Encoder)
 
 Hệ thống đã đánh giá thực nghiệm **3 cấu hình dense embedding canonical** trên CPU FP32 với 572 chunks dữ liệu thật:
 
@@ -251,7 +258,88 @@ Quy trình 2 chặng:
 
 ---
 
-## 5. Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)
+## 5. Mô hình Cross-Encoder Reranking (Chấm điểm Tương tác Chéo)
+
+---
+
+### 5.1. So sánh Kiến trúc: Bi-Encoder vs Cross-Encoder
+
+Sự khác biệt cốt lõi giữa hai trường phái chấm điểm tương quan trong Information Retrieval:
+
+```
+[ BI-ENCODER (Dense Embedding) ]           [ CROSS-ENCODER (Reranker) ]
+
+ Câu hỏi (Q)          Văn bản (D)               Câu hỏi (Q) + Văn bản (D)
+     │                     │                               │
+     ▼                     ▼                               ▼
+┌───────────┐         ┌───────────┐               ┌─────────────────┐
+│ Encoder A │         │ Encoder B │               │  Cross-Encoder  │
+│ (PhoBERT) │         │ (PhoBERT) │               │  Full Attention │
+└─────┬─────┘         └─────┬─────┘               └────────┬────────┘
+      ▼                     ▼                              ▼
+  Vector v_q            Vector v_d                     Score s
+      └──────────┬──────────┘                              │
+                 ▼                                         ▼
+         Cosine Similarity                       Mức tương quan sâu
+          (Độc lập, $O(1)$)                       (Tốn chi phí tính toán)
+```
+
+1. **Bi-Encoder:**
+   - Mã hóa câu hỏi và văn bản hoàn toàn độc lập thành 2 vector riêng biệt.
+   - Ưu điểm: Vector văn bản được tính trước và lập chỉ mục (index) trong cơ sở dữ liệu vector. Khi tìm kiếm, chỉ cần mã hóa câu hỏi và tính dot product $\rightarrow$ Tốc độ tìm kiếm hàng triệu tài liệu chỉ mất vài phần nghìn giây ($O(1)$ lookup).
+   - Nhược điểm: Token của câu hỏi không được tương tác trực tiếp với token của văn bản trong các lớp Self-Attention (Late Interaction / No Token-level Cross Attention).
+2. **Cross-Encoder:**
+   - Nối câu hỏi và văn bản thành một chuỗi duy nhất: `[CLS] Câu hỏi [SEP] Văn bản [SEP]` và đưa qua toàn bộ các lớp Transformer.
+   - Ưu điểm: Cơ chế Full Self-Attention cho phép mọi từ trong câu hỏi soi chiếu trực tiếp vào mọi từ trong văn bản $\rightarrow$ Độ chính xác phân loại tương quan vượt trội so với Bi-Encoder.
+   - Nhược điểm: Không thể tính trước vector; phải tính toán toàn bộ ma trận Attention cho từng cặp $(Q, D)$ tại thời điểm truy vấn $\rightarrow$ Chi phí tính toán $O(N \cdot (L_q + L_d)^2)$, độ trễ lớn hơn Bi-Encoder từ $10\times$ đến $50\times$.
+
+---
+
+### 5.2. Mô hình `cross-encoder/ms-marco-MiniLM-L-6-v2`
+
+- **Kiến trúc:** MiniLMv2 (6 layers, hidden dimension $d = 384$, 12 attention heads), ~22.7M tham số.
+- **Nguồn gốc & Huấn luyện:** Được chưng cất tri thức (Knowledge Distillation) từ các mô hình BERT-Large / RoBERTa-Large trên tập dữ liệu MS-MARCO Passage Ranking (tiếng Anh).
+- **Cơ chế đầu ra:** Lớp phân loại tuyến tính (Classification Head) trên token `[CLS]` xuất ra giá trị logit thực biểu thị mức độ phù hợp của đoạn văn bản đối với câu hỏi.
+
+---
+
+### 5.3. Chi phí Tính toán, Cold-load và Độ trễ Phân vị (Latency Profile)
+
+Thực nghiệm đo đạc độc lập trên CPU FP32 trong môi trường cục bộ:
+- **Cold Load Time:** **`10.85 – 11.32 giây`** (Thời gian nạp weights thật từ đĩa vào RAM và khởi tạo PyTorch tensor).
+- **Bộ nhớ tiêu thụ (RSS):**
+  - Trước khi load model: `929.7 MB`
+  - Sau khi load model: `953.6 MB` ($\Delta \text{RSS} \approx 24 \text{ MB}$)
+  - Đỉnh tải bộ nhớ trong benchmark (Peak RSS): `1,115.8 – 1,117.1 MB`
+- **Độ trễ tính toán Rerank (Top-10 chunks $\rightarrow$ Top-5):**
+  - **p50 Latency:** `257.9 – 279.8 ms` (chậm gấp ~5 lần so với Hybrid Search).
+  - **p95 Latency:** `510.5 – 609.5 ms` (vẫn nằm trong trần SLA $\le 3,000\text{ ms}$).
+
+---
+
+### 5.4. Đánh giá Thực nghiệm Reranker trên Dữ liệu Ẩm thực Huế (08c)
+
+Benchmark Phase 8 Notebook 08c đã thực hiện đối soát khoa học 2 trạng thái (`no-rerank Top-5` vs `minilm Top-5`) trên 3 tập ứng viên Top-10 cố định (45 câu hỏi $\times$ 3 lần lặp):
+
+| Setting | Input Candidate Key | State | Recall@5 | MRR@5 | nDCG@5 | $\Delta$ nDCG@5 | 95% Bootstrap CI $\Delta$nDCG | All Guardrails Pass? | Eligible? | Clear Gain? | Production Safety? |
+|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **1** | `dense__e5-small-384` | `no-rerank`<br>`minilm` | 0.8185<br>0.7852 | 0.7748<br>0.6944 | 0.7425<br>0.6723 | <br>**-0.0703** | <br>[-0.1349, -0.0083] | <br>`False` (Trượt 4 cat) | <br>`False` | <br>`False` | <br>— |
+| **2** | `dense__huydang-dek21-embedding-768` | `no-rerank`<br>`minilm` | 0.8370<br>0.8741 | 0.7211<br>0.7204 | 0.7164<br>0.7228 | <br>**+0.0065** | <br>[-0.0891, +0.1057] | <br>`False` (Trượt 2 cat) | <br>`False` | <br>`False` | <br>— |
+| **3** | `hybrid-bm25-weighted__huydang-dek21` | `no-rerank`<br>`minilm` | 0.9111<br>0.8407 | 0.7674<br>0.7230 | 0.7655<br>0.7050 | <br>**-0.0605** | <br>[-0.1496, +0.0243] | <br>`False` (Trượt 2 cat) | <br>`False` | <br>`False` | <br>`False` |
+
+#### Phân tích Chuyên sâu Nguyên nhân Reranker MiniLM Thất bại:
+1. **Lệch pha ngôn ngữ và miền tri thức (Domain & Language Mismatch):**
+   - MiniLM được tiền huấn luyện trên tiếng Anh (MS-MARCO). Khi nhận văn bản tiếng Việt chứa nhiều thuật ngữ văn hóa, ẩm thực Huế đặc thù (*"bánh nậm"*, *"bánh ép Cây Dừa"*, *"cơm hến Hoa Đông"*), cơ chế Attention của mô hình gán trọng số sai lệch, hạ điểm các chunk đúng và đẩy các chunk chung chung lên đầu.
+2. **Hiện tượng Suy giảm Thứ hạng (Ranking Degradation):**
+   - Trên Setting 1 (E5-small): nDCG@5 bị tụt nghiêm trọng $-0.0703$ (Bootstrap CI $[-0.1349, -0.0083]$ hoàn toàn nằm dưới $0$).
+   - Trên Setting 3 (Hybrid): Recall@5 bị tụt từ $91.1\%$ xuống $84.07\%$ (mất hit ở case `foods-v3-0021`), nDCG@5 tụt $-0.0605$.
+3. **Không khắc phục được điểm nghẽn danh mục `relationship`:**
+   - Trong 14 câu hỏi thuộc danh mục `relationship`, MiniLM không cải thiện được nDCG và làm mất 1 bằng chứng hợp lệ.
+4. **Kết luận Nghiệm thu:** Cả 3 cấu hình đều nhận verdict `eligible: False` và `clear_gain: False`. **Hệ thống từ chối đưa MiniLM vào Production Pipeline**.
+
+---
+
+## 6. Nguyên lý Tiền xử lý & Hợp đồng Input (Input Contracts)
 
 ```
                  ┌────────────────────────────────────────────────────────┐
@@ -275,29 +363,29 @@ Quy trình 2 chặng:
 └─────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 5.1. Tiền tố Bất đối xứng (Asymmetric Query/Passage Prefix)
+### 6.1. Tiền tố Bất đối xứng (Asymmetric Query/Passage Prefix)
 Họ mô hình E5 bắt buộc:
 - Thêm tiền tố `"passage: "` cho văn bản nạp vào DB.
 - Thêm tiền tố `"query: "` cho câu hỏi tìm kiếm.
 
-### 5.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)
+### 6.2. Tách từ tiếng Việt chuyên biệt (PyVi ViTokenizer)
 PhoBERT backbone của Huydang DEk21 bắt buộc chạy qua `pyvi.ViTokenizer.tokenize()` để tạo các từ ghép nối bằng dấu gạch dưới (`"Bún_bò"`, `"cố_đô"`).
 
-### 5.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)
+### 6.3. Giới hạn độ dài chuỗi (Max Sequence Length) & Hiện tượng Cắt ngắn (Truncation)
 - E5-small / E5-base ($512$ tokens): $0/572$ chunks bị cắt ngắn.
 - Huydang DEk21 ($256$ tokens): $1/572$ chunks bị cắt ngắn nhẹ.
 
-### 5.4. Chuẩn hóa Vector L2 & Dot Product Similarity
+### 6.4. Chuẩn hóa Vector L2 & Dot Product Similarity
 Mọi vector đầu ra $\mathbf{v}$ đều được chuẩn hóa $\|\mathbf{v}\|_2 = 1.0$, đưa phép tính Cosine Similarity thành Dot Product trực tiếp:
 $$\text{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = \mathbf{q} \cdot \mathbf{d} = \sum_{i=1}^d q_i \cdot d_i$$
 
 ---
 
-## 6. Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval Metrics)
+## 7. Các Độ đo Đánh giá Chất lượng Truy xuất (Retrieval & Reranking Metrics)
 
 ---
 
-### 6.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)` & Bão hòa Bằng chứng
+### 7.1. Đơn vị Tính điểm Relevance: Cặp `(source, section)` & Bão hòa Bằng chứng
 
 Ground Truth trong Golden Dataset V3 được định nghĩa theo:
 $$\text{Evidence Unit} = (\text{source\_file}, \text{section\_h2})$$
@@ -307,7 +395,7 @@ $$\text{Evidence Unit} = (\text{source\_file}, \text{section\_h2})$$
 
 ---
 
-### 6.2. Recall@K (Recall@5 & Recall@30)
+### 7.2. Recall@K (Recall@5 & Recall@30)
 
 Tỷ lệ giữa số lượng bằng chứng liên quan tìm thấy trong Top $K$ so với tổng số lượng bằng chứng được khai báo:
 
@@ -318,7 +406,7 @@ $$\text{Recall@K} = \frac{|\text{Declared Evidence} \cap \text{Retrieved Evidenc
 
 ---
 
-### 6.3. Candidate Union Recall (Độ phủ Tập ứng viên Gộp)
+### 7.3. Candidate Union Recall (Độ phủ Tập ứng viên Gộp)
 
 Độ phủ bằng chứng khi gộp chung $K=30$ ứng viên từ Dense và $K=30$ ứng viên từ Sparse:
 
@@ -328,7 +416,7 @@ $$\text{Candidate Union Recall} = \frac{|\text{Declared Evidence} \cap (\text{De
 
 ---
 
-### 6.4. MRR@K (Mean Reciprocal Rank @ K)
+### 7.4. MRR@K (Mean Reciprocal Rank @ K)
 
 Nghịch đảo vị trí xếp hạng của tài liệu liên quan hợp lệ **đầu tiên** xuất hiện trong danh sách kết quả:
 
@@ -336,7 +424,7 @@ $$\text{MRR@K} = \frac{1}{N} \sum_{i=1}^N \frac{1}{\text{rank}_{\text{first}, i}
 
 ---
 
-### 6.5. nDCG@K (Normalized Discounted Cumulative Gain @ K)
+### 7.5. nDCG@K (Normalized Discounted Cumulative Gain @ K)
 
 Thước đo chuẩn mực đánh giá toàn diện cả số lượng lẫn vị trí thứ hạng của tất cả các tài liệu liên quan:
 
@@ -344,17 +432,22 @@ $$\text{DCG@K} = \sum_{r=1}^K \frac{\text{gain}_r}{\log_2(r + 1)}, \quad \text{n
 
 ---
 
-### 6.6. Hit Rate / Hit Case Count
+### 7.6. Hit Rate / Hit Case Count & Hit Transitions (`gained`, `lost`, `unchanged`)
 
-Tỷ lệ câu hỏi tìm thấy **ít nhất một** tài liệu liên quan trong Top $K$ ($\text{Recall@K} > 0$).
+- **Hit Rate:** Tỷ lệ câu hỏi tìm thấy **ít nhất một** tài liệu liên quan trong Top $K$ ($\text{Recall@K} > 0$).
+- **Hit Transition Categories (Theo dõi biến động Hit khi Rerank):**
+  - `gained`: Trước khi rerank bị trượt ($\text{Hit}=False$), sau khi rerank tìm thấy ($\text{Hit}=True$).
+  - `lost`: Trước khi rerank trúng ($\text{Hit}=True$), sau khi rerank làm mất ($\text{Hit}=False$) $\rightarrow$ *Tín hiệu cảnh báo nguy hiểm*.
+  - `unchanged_hit`: Cả trước và sau đều trúng ($\text{Hit}=True$).
+  - `unchanged_miss`: Cả trước và sau đều trượt ($\text{Hit}=False$).
 
 ---
 
-## 7. Đo lường Hiệu năng: Phân tích Độ trễ (p50, p95, p99) & Bộ nhớ
+## 8. Đo lường Hiệu năng: Phân tích Độ trễ (p50, p95, p99) & Bộ nhớ
 
 ---
 
-### 7.1. Phân vị Độ trễ (Latency Percentiles: p50, p95, p99) là gì?
+### 8.1. Phân vị Độ trễ (Latency Percentiles: p50, p95, p99) là gì?
 
 Khi đo lường thời gian đáp ứng của hệ thống phần mềm, việc sử dụng **giá trị trung bình (Mean / Average)** thường tạo ra **ảo tưởng về hiệu năng** do các trường hợp chạy nhanh che giấu các trường hợp bị nghẽn nghiêm trọng.
 
@@ -377,7 +470,7 @@ Tất cả các lượt truy vấn được sắp xếp theo thời gian tăng d
 
 ---
 
-### 7.2. Tại sao p95 và p99 là Thước đo Vàng trong RAG & Hệ thống Phân tán?
+### 8.2. Tại sao p95 và p99 là Thước đo Vàng trong RAG & Hệ thống Phân tán?
 
 Trong kiến trúc RAG, một truy vấn của người dùng phải trải qua chuỗi xử lý nối tiếp:
 $$\text{Total Latency} = \text{Embed Query} + \text{Vector Search} + \text{Sparse Search} + \text{Fusion} + \text{Rerank} + \text{LLM Generation}$$
@@ -390,12 +483,12 @@ Nếu một thành phần trong chuỗi bị chậm ở $5\%$ số request (p95 
 - **Tranh chấp tài nguyên CPU / Garbage Collection:** PyTorch hoặc Python runtime thực hiện thu dọn bộ nhớ trong lúc đang tính toán.
 
 > 🎯 **Quy chuẩn SLA trong Hue RAG:**
-> Hệ thống đặt ngưỡng bảo vệ: $\text{p95 Latency} \le 2.0 \times \text{Control Baseline}$.
-> Cấu hình `hybrid-bm25-weighted__huydang-dek21` đạt **p95 = 65.4 ms**, hoàn toàn nằm trong vùng an toàn và đảm bảo trải nghiệm người dùng mượt mà tức thì.
+> - Retrieval SLA: $\text{p95 Latency} \le 150 \text{ ms}$.
+> - Reranking SLA: $\text{p95 Latency} \le 3,000 \text{ ms}$.
 
 ---
 
-### 7.3. Quy trình đo lường 3 Repetitions & Loại bỏ Warm-up
+### 8.3. Quy trình đo lường 3 Repetitions & Loại bỏ Warm-up
 
 Để loại bỏ hoàn toàn sai số ngẫu nhiên:
 1. **Cold Load:** Đo thời gian nạp mô hình từ đĩa cứng vào bộ nhớ.
@@ -404,7 +497,7 @@ Nếu một thành phần trong chuỗi bị chậm ở $5\%$ số request (p95 
 
 ---
 
-## 8. Phương pháp Kiểm định Thống kê & Guardrails
+## 9. Phương pháp Kiểm định Thống kê, Guardrails & Tính Toàn vẹn Hệ thống
 
 ```
                   ┌────────────────────────────────────────┐
@@ -429,82 +522,58 @@ Nếu một thành phần trong chuỗi bị chậm ở $5\%$ số request (p95 
              ┌─────────────────────────────────────────────────┐
              │ LỚP 3: NGUYÊN TẮC FAIL-CLOSED KHOA HỌC          │
              │ • Không tự ý bypass ngưỡng bảo vệ               │
-             │ • Giữ minh bạch báo cáo thực tế                 │
+             │ • Chống lọt lưới IEEE 754 NaN trong đối soát    │
              └─────────────────────────────────────────────────┘
 ```
 
-### 8.1. Category Guardrails (9 Danh mục câu hỏi V3)
+### 9.1. Category Guardrails (9 Danh mục câu hỏi V3)
 - **Nhóm lớn ($n \ge 6$):** `relationship` ($n=14$), `direct_fact` ($n=7$), `food_knowledge` ($n=7$), `comparative` ($n=6$). Yêu cầu không giảm số lượng Hit, $\Delta \text{nDCG@5} \ge -0.02$.
 - **Nhóm nhỏ ($n \le 3$):** `holistic` ($n=3$), `spanning` ($n=3$), `guide_planning` ($n=2$), `numerical` ($n=2$), `temporal` ($n=1$). Tuyệt đối không được làm mất Hit ở bất kỳ case nào mà Control đã làm được.
 
-### 8.2. Paired Bootstrap 95% Confidence Interval (CI)
+### 9.2. Paired Bootstrap 95% Confidence Interval (CI)
 Lấy mẫu lại có hoàn lại 10.000 lần ($N=45$, `seed=42`) để tính khoảng tin cậy của mức tăng trưởng $\Delta \text{Recall@5}$ và $\Delta \text{nDCG@5}$.
 
-### 8.3. Tiêu chuẩn Khoa học Fail-Closed
+### 9.3. Tiêu chuẩn Khoa học Fail-Closed
 Nếu một ứng viên có Recall tổng thể rất cao nhưng giảm nhẹ ở một danh mục bảo vệ (như `relationship` giảm $-0.0279$ vượt ngưỡng $-0.02$), hệ thống tự động trả về `finalist = None` (fail-closed) để kiến trúc sư đánh giá và ra quyết định, tuyệt đối không tự ý làm sai lệch kết quả.
 
----
-
-## 9. Bảng Tổng hợp Toàn diện Benchmark 08a & 08b
-
-Bảng đối chiếu toàn bộ các cấu hình tiêu biểu qua 2 giai đoạn benchmark (CPU FP32, 572 chunks, 45 câu hỏi Golden V3):
-
-| Nhóm | Cấu hình Retrieval | Recall@5 | $\Delta$ Recall@5 | nDCG@5 | $\Delta$ nDCG@5 | MRR@5 | Độ trễ p50 | Độ trễ p95 | RAM (RSS) |
-|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Dense** | `dense__e5-small-384` (Control 08a) | 0.8185 | *Baseline* | 0.7425 | *Baseline* | 0.7088 | 24.2 ms | 30.8 ms | **1.54 GB** |
-| **Dense** | `dense__huydang-dek21-768` (08a) | 0.8370 | +0.0185 | 0.7164 | -0.0261 | 0.6698 | 53.8 ms | 62.9 ms | 2.06 GB |
-| **Dense** | `dense__e5-base-768` (08a) | 0.8407 | +0.0222 | 0.7061 | -0.0364 | 0.6559 | 112.3 ms | 122.8 ms | 2.15 GB |
-| **Sparse**| `bm25-only` (Lexical Baseline) | 0.7889 | -0.0296 | 0.6478 | -0.0947 | 0.5960 | **4.5 ms** | **6.3 ms** | **~0.15 GB** |
-| **Sparse**| `tfidf-only` (Qdrant Sparse) | 0.7667 | -0.0518 | 0.6150 | -0.1275 | 0.5599 | 4.2 ms | 5.1 ms | ~0.20 GB |
-| **Rescore**| `dense-bm25-rescore__e5-small-384` | 0.8630 | +0.0444 | 0.7545 | +0.0120 | 0.7073 | **26.8 ms** | **32.2 ms** | **1.55 GB** |
-| **Rescore**| `dense-bm25-rescore__e5-base-768` | 0.8963 | +0.0556 | 0.7659 | +0.0598 | 0.7147 | 64.2 ms | 73.7 ms | 2.16 GB |
-| **Hybrid** | **`hybrid-bm25-weighted__huydang-dek21`** | **0.9111** | **+0.0741** | **0.7655** | **+0.0491** | **0.7076** | **55.6 ms** | **65.4 ms** | 2.08 GB |
-| **Hybrid** | `hybrid-bm25-weighted__e5-base-768` | 0.8889 | +0.0481 | 0.7560 | +0.0499 | 0.7064 | 56.4 ms | 66.3 ms | 2.16 GB |
-| **Hybrid** | `hybrid-bm25-rrf__huydang-dek21` | 0.8778 | +0.0407 | 0.7567 | +0.0403 | 0.7107 | 54.8 ms | 63.0 ms | 2.08 GB |
-| **Hybrid** | `hybrid-tfidf-weighted__huydang-dek21` | **0.9111** | **+0.0741** | 0.7424 | +0.0260 | 0.6778 | 53.2 ms | 62.4 ms | 2.07 GB |
+### 9.4. Chuẩn hóa Số thực & Phòng vệ IEEE 754 NaN trong Đối soát Artifacts
+Trong kỹ thuật kiểm thử tự động, phép so sánh `abs(actual - expected) > tolerance` sẽ **bị vô hiệu (fail-open) khi gặp giá trị `NaN`** vì theo chuẩn IEEE 754 mọi phép so sánh với `NaN` đều trả về `False`.
+Hệ thống thiết lập lớp kiểm định số học hữu hạn (`np.isfinite()`) độc lập để từ chối 100% các giá trị `NaN`, `+Inf`, `-Inf` trước khi thực hiện đối soát.
 
 ---
 
-## 10. Kết luận 08b và bước tiếp theo Phase 8c
+## 10. Bảng Tổng hợp Toàn diện Benchmark Phase 8 (08a, 08b, 08c)
 
-### 10.1. Verdict 08b
+Bảng đối chiếu toàn bộ các cấu hình tiêu biểu qua 3 giai đoạn thực nghiệm (CPU FP32, 572 chunks, 45 câu hỏi Golden V3):
 
-Một số hybrid settings tăng aggregate Recall@5 hoặc nDCG@5, nhưng không có
-BM25/TF-IDF finalist. Cả hai sparse families đều vi phạm category guardrail.
-Finding quyết định nằm ở `relationship`: Huydang dense control có nDCG@5
-`0.8586956`, trong khi hybrid weighted đạt `0.8307683`, delta
-`-0.0279273`, thấp hơn giới hạn `-0.02`.
+| Giai đoạn | Nhóm | Cấu hình Thử nghiệm | Recall@5 | $\Delta$ Recall@5 | nDCG@5 | $\Delta$ nDCG@5 | MRR@5 | Độ trễ p50 | Độ trễ p95 | RAM (RSS) | Quyết định |
+|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **08a** | **Dense** | `dense__e5-small-384` | 0.8185 | *Baseline* | 0.7425 | *Baseline* | 0.7748 | 24.2 ms | 30.8 ms | **1.54 GB** | ✅ **Control Baseline** |
+| **08a** | **Dense** | `dense__huydang-dek21-768` | 0.8370 | +0.0185 | 0.7164 | -0.0261 | 0.7211 | 53.8 ms | 62.9 ms | 2.06 GB | ⚠️ Candidate 1 |
+| **08a** | **Dense** | `dense__e5-base-768` | 0.8407 | +0.0222 | 0.7061 | -0.0364 | 0.6559 | 112.3 ms | 122.8 ms | 2.15 GB | ❌ Không chọn |
+| **08b** | **Sparse**| `bm25-only` (Lexical Baseline) | 0.7889 | -0.0296 | 0.6478 | -0.0947 | 0.5960 | **4.5 ms** | **6.3 ms** | **~0.15 GB**| ⚠️ Lexical Only |
+| **08b** | **Sparse**| `tfidf-only` (Qdrant Sparse) | 0.7667 | -0.0518 | 0.6150 | -0.1275 | 0.5599 | 4.2 ms | 5.1 ms | ~0.20 GB | ❌ Thấp hơn BM25 |
+| **08b** | **Rescore**| `dense-bm25-rescore__e5-small` | 0.8630 | +0.0444 | 0.7545 | +0.0120 | 0.7073 | **26.8 ms** | **32.2 ms** | **1.55 GB** | ⚠️ Rescore Nhanh |
+| **08b** | **Hybrid** | **`hybrid-bm25-weighted__huydang`**| **0.9111** | **+0.0741** | **0.7655** | **+0.0491** | **0.7674** | **55.6 ms** | **65.4 ms** | 2.08 GB | 🏆 **Top Quality Retrieval** |
+| **08b** | **Hybrid** | `hybrid-bm25-rrf__huydang-dek21` | 0.8778 | +0.0407 | 0.7567 | +0.0403 | 0.7107 | 54.8 ms | 63.0 ms | 2.08 GB | ⚠️ RRF Rank-based |
+| **08c** | **Rerank** | `minilm__on_e5-small` | 0.7852 | -0.0333 | 0.6723 | -0.0703 | 0.6944 | 279.8 ms | 609.5 ms | 1.12 GB | ❌ Regression sâu |
+| **08c** | **Rerank** | `minilm__on_huydang` | 0.8741 | +0.0370 | 0.7228 | +0.0065 | 0.7204 | 257.9 ms | 535.6 ms | 1.12 GB | ❌ Trượt Guardrails |
+| **08c** | **Rerank** | `minilm__on_hybrid-huydang` | 0.8407 | -0.0704 | 0.7050 | -0.0605 | 0.7230 | 269.2 ms | 510.5 ms | 1.12 GB | ❌ Mất Hit, Trượt Safety |
 
-Vì vậy 08b không khuyến nghị production hybrid, không cutover configuration và
-không mutate active collection. Aggregate metric cao hơn là evidence cần phân
-tích, không đủ để bỏ qua regression theo category.
+---
 
-### 10.2. Exact Notebook 08c
+## 11. Tổng kết Phase 8 và Lộ trình Mở rộng Đa miền (Multi-domain)
 
-08c không mở rộng model grid. Nó so sánh đúng hai states:
+### 11.1. Kết luận Đóng Phase 8
+1. **Dense Retrieval (08a):** `multilingual-e5-small` là baseline đối chứng cực kỳ vững chắc và nhẹ nhàng. `huydang-dek21` mang lại biểu diễn tiếng Việt sâu sắc.
+2. **Hybrid Fusion (08b):** `hybrid-bm25-weighted__huydang-dek21` đạt chất lượng retrieval cao nhất (Recall@5 = `0.9111`, nDCG@5 = `0.7655`), đạt Candidate Union Recall `0.9852`. Tuy nhiên, do trượt nhẹ guardrail ở `relationship`, hệ thống tuân thủ nguyên tắc fail-closed và không tự ý cutover production.
+3. **Cross-Encoder Reranking (08c):** Mô hình MiniLM (`cross-encoder/ms-marco-MiniLM-L-6-v2`) không tương thích tốt với ngữ liệu ẩm thực tiếng Việt, gây giảm sút nDCG trên cả 3 cấu hình và không sửa được điểm nghẽn `relationship`. Do đó, **MiniLM không được phê duyệt để đưa vào production**.
 
-- no-rerank Top 5;
-- current lightweight `cross-encoder/ms-marco-MiniLM-L-6-v2` rerank Top 10
-  thành Top 5.
-
-Ba immutable Foods Top-10 inputs lấy từ approved 08b evidence là E5-small dense,
-Huydang dense và Huydang + BM25 weighted diagnostic. Input hybrid được giữ để
-kiểm tra liệu MiniLM có sửa regression `relationship` hay không; nó không tự trở
-thành production candidate.
-
-BGE/Qwen rerankers không còn trong active Phase 8. Reviewer sẽ trình quality,
-category, bootstrap, latency và resource evidence; user quyết định có giữ
-MiniLM hoặc mở 08d hay không. Không đặt trước kỳ vọng Recall/nDCG phải đạt 95%.
-
-Sau khi 08c Foods đóng, dự án sẽ mở một scope riêng để bổ sung đầy đủ curated
-Markdown cho toàn bộ các domain answer-facing dưới `knowledge-base-hue/`, không
-chỉ làm festivals pilot. Phạm vi dự kiến gồm Foods, Festivals, Heritage,
-Tourism, Performing Arts và các domain được duyệt khác như Services, Statistics
-và Tickets; `_source-dumps` và `meta` không tự động trở thành retrieval corpus.
-
-Corpus mới phải được review, chunk theo metadata có domain, embed lại và đưa vào
-một isolated full-corpus index trước khi đánh giá. Sau đó tạo Combined Golden
-Dataset có quota/evidence theo từng domain, đủ lớn và cân bằng để báo cáo cả
-overall lẫn per-domain. Chuỗi evaluation bắt đầu lại từ baseline Phase 7 rồi
-chạy lại các benchmark Phase 8 bị ảnh hưởng. Kết quả hiện tại chỉ là Foods
-evidence lịch sử, không đại diện khách quan cho toàn bộ hệ thống.
+### 11.2. Lộ trình Mở rộng Đa miền (Multi-Domain Knowledge Base)
+Sau khi hoàn tất Phase 8 trên tập dữ liệu ẩm thực (Foods), dự án sẽ bước sang giai đoạn mở rộng quy mô tri thức toàn diện cho thành phố Huế:
+- **Phạm vi miền tri thức:** Bổ sung các domain chính thống: **Ẩm thực (Foods), Lễ hội (Festivals), Di sản & Di tích (Heritage), Du lịch & Điểm đến (Tourism), Nghệ thuật Biểu diễn (Performing Arts), Dịch vụ & Tiện ích (Services), Vé & Quy định (Tickets)**.
+- **Quy chuẩn Pipeline Đa miền:**
+  1. Toàn bộ corpus mới phải được chuẩn hóa Markdown, gán metadata phân loại domain (`domain: heritage`, `domain: festival`, ...).
+  2. Xây dựng **Combined Golden Dataset** đa miền cân bằng số lượng câu hỏi và bằng chứng theo từng domain.
+  3. Lập chỉ mục trên một Qdrant Collection đa miền độc lập.
+  4. Chạy lại chuỗi đánh giá từ Phase 7 (Baseline) đến Phase 8 (Embedding, Fusion, Reranking) để có cái nhìn tổng thể, khách quan và khoa học nhất trên toàn bộ hệ thống.
