@@ -1,6 +1,6 @@
 # Hue Foods RAG — Model và benchmark summary
 
-Last updated: `2026-08-29 +07`
+Last updated: `2026-08-30 +07`
 
 ## Mục đích
 
@@ -33,8 +33,7 @@ scope được user duyệt:
 - local E5-small, Huydang DEk21 768D và E5-base;
 - future paid OpenRouter `intfloat/multilingual-e5-large` và `baai/bge-m3`
   dense proposal sau khi local three hoàn tất;
-- OpenRouter native reranker candidates;
-- local Vietnamese embedding/reranker candidates;
+- current local `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker only;
 - future answer model qua OpenRouter.
 
 Không tự đổi provider/model hoặc silent fallback.
@@ -155,7 +154,37 @@ tamper detection, partial artifact, consent gate hoặc cost accounting.
 2. Giữ nguyên Golden Dataset V3 đã approved; không tối ưu dataset theo candidate.
 3. Notebook 08a đã hoàn tất bằng real local models, canonical data và isolated
    Qdrant targets; Reviewer xác minh độc lập và user xác nhận.
-4. Research và brainstorm exact Notebook 08b; chưa implement/run trước approval.
+4. Notebook 08b đã hoàn tất 20 settings, 70 calibration rows, 200 result rows
+   và 900 per-case records; Reviewer xác minh độc lập và user xác nhận ngày
+   `2026-08-30 +07`.
+5. Unicode tokenizer được giữ. BM25 finalist và TF-IDF finalist đều là `None`
+   vì category `relationship` có `delta nDCG@5=-0.0279273`, thấp hơn guardrail
+   `-0.02`. Aggregate gain không override regression này.
+6. Exact Notebook 08c written spec so sánh no-rerank với current MiniLM trên ba
+   immutable Top-10 Foods inputs đã được user duyệt. Implementation plan/Review
+   Contract đang chờ user review; implementation/run chưa được authorize.
+
+## Giới hạn Foods-only và kế hoạch đánh giá lại đa lĩnh vực
+
+Toàn bộ kết quả Phase 7 và Phase 8 hiện tại chỉ dựa trên corpus và Golden
+Dataset của Foods. Vì vậy chúng có giá trị để so sánh có kiểm soát trong domain
+Foods, nhưng chưa phải bằng chứng khách quan cho toàn bộ Hue RAG.
+
+Sau khi 08c đóng, dự án sẽ mở scope riêng để hoàn thiện curated Markdown trong
+toàn bộ `knowledge-base-hue/`: Foods, Festivals, Heritage, Tourism, Performing
+Arts và các domain answer-facing được duyệt khác. Sau bước review dữ liệu sẽ cập
+nhật chunking/metadata theo domain, tạo embedding mới, xây isolated full-corpus
+index và tạo Combined Golden Dataset có quota/evidence cho tất cả domain.
+
+Baseline evaluation bắt đầu lại từ Phase 7 trên corpus/Golden mới, sau đó chạy
+lại các thí nghiệm Phase 8 bị ảnh hưởng. Báo cáo này tiếp tục được giữ làm
+Foods historical baseline; không tự động carry forward model winner hoặc
+production recommendation sang benchmark đa lĩnh vực.
+
+Active Phase 8 không còn BGE/Qwen reranker candidates. Chúng bị loại vì
+resource/integration complexity không cần thiết khi nhu cầu thật là đo current
+lightweight MiniLM so với no-rerank. Historical references không phải execution
+authorization.
 
 Qwen3 Embedding 0.6B 384D đã được chạy đủ để tạo historical evidence nhưng bị
 user loại khỏi local scope ngày `2026-08-29 +07`: chất lượng thấp hơn E5-small,
@@ -175,6 +204,22 @@ Canonical Notebook 08a contract:
 ```text
 docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
 docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
+```
+
+Canonical Notebook 08b evidence:
+
+```text
+docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
+reports/phase_8_08b_retrieval_fusion_benchmark_codex_review.md
+evaluation/results/phase8_sparse_manifest.json
+evaluation/results/phase8_sparse_results.csv
+evaluation/results/phase8_sparse_cases.jsonl
+```
+
+Exact Notebook 08c written specification:
+
+```text
+docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md
 ```
 
 Approved Phase 4–5 blue-green checkpoint trước Phase 8: chạy fresh 104-question

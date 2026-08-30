@@ -16,11 +16,13 @@ thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 c
 contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design/plan cũng
 đã được duyệt, triển khai, review độc lập và được user xác nhận ngày
 `2026-08-29 +07`. Work package 08a đã `approved` với ba model local còn lại và
-ba isolated Qdrant collections. Phase 8 tổng thể vẫn `not_ready`; bước kế tiếp
-là research và brainstorming exact Notebook 08c. Notebook 08b đã được triển
-khai, review độc lập và được user xác nhận ngày `2026-08-30 +07`; không có
-BM25/TF-IDF finalist do category guardrail `relationship`. Production không
-cutover; 08c–08e vẫn chưa authorize implementation/run.
+ba isolated Qdrant collections. Notebook 08b đã được triển khai, review độc lập
+và được user xác nhận ngày `2026-08-30 +07`; không có BM25/TF-IDF finalist do
+category guardrail `relationship`. Exact Notebook 08c conversational design và
+written spec đã được user xác nhận ngày `2026-08-30 +07`; implementation plan
+và Review Contract đang chờ user review.
+Phase 8 tổng thể vẫn `not_ready`; production không cutover và 08c–08e vẫn chưa
+authorize implementation/run.
 
 ## Mục tiêu
 
@@ -146,8 +148,8 @@ only và TF-IDF sparse-only không chạy lại theo từng embedding. BGE-M3 le
 sparse không còn trong local matrix vì BGE-M3 không được chạy trên máy này.
 
 `08b_retrieval_fusion_benchmark.ipynb` giải thích và đo từng path. Sau đó
-`08d_full_pipeline_matrix.ipynb` kết hợp từng valid pre-rerank pipeline với
-no-rerank và ba reranker candidates để quan sát interaction trước khi chọn
+`08d_full_pipeline_matrix.ipynb` có thể kết hợp từng valid pre-rerank pipeline
+với no-rerank và MiniLM để quan sát interaction trước khi chọn
 end-to-end finalists.
 
 ### Fusion methods đã xác nhận
@@ -311,31 +313,31 @@ settings và command/notebook đơn giản; không cần immutable run package.
 2. Chạy dense embedding candidates theo thứ tự nhẹ đến mạnh đã khóa ở trên.
 3. Trên cùng fixed dense evidence, so sánh BM25/fusion và true-hybrid candidate
    generation, gồm BM25 độc lập, custom TF-IDF sparse chỉ như experimental
-   control, và learned sparse của BGE-M3.
-4. Chạy reranker candidates từ nhẹ đến mạnh trên cùng pre-rerank candidate
-   artifacts.
+   control; BGE-M3 learned sparse đã bị loại khỏi local scope.
+4. So sánh no-rerank và MiniLM trên fixed pre-rerank candidate artifacts.
 5. Chạy end-to-end finalists với fixed generator/judge đã xác nhận.
 6. So sánh quality tiếng Việt, latency, reliability/stability, actual cost và
    độ phức tạp vận hành.
 7. Áp dụng selection rule, trình evidence để user chọn cấu hình cuối.
 
-Local retrieval/reranking dùng full compatibility-aware matrix: mọi valid pre-
-rerank path được ghép với no-rerank và ba reranker candidates. Staged selection
+Local retrieval/reranking dùng compatibility-aware matrix: mọi valid pre-rerank
+path được ghép với no-rerank và MiniLM sau exact 08c user decision. Staged selection
 chỉ áp dụng sau matrix này để chọn số ít finalists chạy paid generation/judge;
 không chạy paid answer evaluation cho mọi local combination.
 
-### Reranker candidates và thứ tự chạy
+### Reranker scope đã xác nhận cho Notebook 08c
 
-| Thứ tự | Model | Language claim trên model card | Vai trò Phase 8 |
-|---:|---|---|---|
-| 1 | `cross-encoder/ms-marco-MiniLM-L-6-v2` | English | baseline rất nhẹ/nhanh; đo đầy đủ bằng tiếng Việt |
-| 2 | `BAAI/bge-reranker-base` | Chinese, English | candidate trung bình; chỉ giữ nếu evidence tiếng Việt đạt gate |
-| 3 | `Qwen/Qwen3-Reranker-0.6B` | multilingual | candidate nặng hơn và là ứng viên tiếng Việt chính |
+| State | Model | Vai trò Phase 8 |
+|---|---|---|
+| Control | Không rerank | Top 5 đầu của cùng fixed pre-rerank Top 10 |
+| Candidate | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Lightweight runtime hiện hành; đo đầy đủ bằng tiếng Việt |
 
 Code hoạt động và trả score với text tiếng Việt không tự chứng minh model cải
 thiện ranking. `llm_rag` dùng MiniLM thành công ở mức integration, nhưng không có
 quality benchmark riêng cho reranker thật; Hue RAG vì vậy giữ MiniLM làm
-lightweight baseline và quyết định bằng corrected golden evidence.
+candidate duy nhất và quyết định bằng corrected golden evidence. BGE/Qwen
+rerankers đã bị loại khỏi active 08c/08d scope; historical references chỉ được
+giữ khi đánh dấu rõ là superseded.
 
 ### Generator và judge đã xác nhận
 
@@ -472,7 +474,7 @@ Evidence mới, failure/OOM hoặc scope conflict phải quay lại brainstormin
 
 ### Kết quả và restart kernel
 
-Mỗi notebook group giữ đúng một cumulative CSV đơn giản:
+Mỗi notebook group giữ một cumulative summary CSV đơn giản:
 
 ```text
 evaluation/results/phase8_embedding_results.csv
@@ -482,11 +484,13 @@ evaluation/results/phase8_pipeline_matrix.csv
 evaluation/results/phase8_generation_results.csv
 ```
 
-Không tạo run ID, timestamp package, checksum manifest, JSON song song hoặc
-opaque `configuration_id`. CSV dùng long format với một `category=overall` row
-và category rows cho mỗi setting. Approved rerun upsert theo human-readable
-setting key, thay thế row trước và lưu ngay sau configuration. `status` và
-`error` phản ánh approved attempt mới nhất; không tạo history registry.
+Không tạo run ID, timestamp package, checksum package hoặc opaque
+`configuration_id`. CSV dùng long format với một `category=overall` row và
+category rows cho mỗi setting. Approved rerun upsert theo human-readable setting
+key, thay thế row trước và lưu ngay sau configuration. `status` và `error` phản
+ánh approved attempt mới nhất; không tạo history registry. Exact 08b và 08c
+specs được phép thêm một per-case JSONL khi raw ranking evidence cần thiết và
+không bị duplicate trong summary CSV.
 
 Sau mỗi model/configuration, notebook hiển thị observed result, cập nhật dòng
 tương ứng trong CSV kể cả khi failed, rồi giải phóng model, tensor/embedding lớn,
@@ -575,11 +579,11 @@ docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-impleme
 setting và resume chỉ khi exact provenance khớp. Chia batch không thay đổi 45
 cases, ba repetitions, exact 20-setting matrix hoặc reconciliation gate.
 
-Chi tiết còn lại chỉ được giải quyết tại checkpoint của group tương ứng:
+Các checkpoint hiện hành:
 
-1. `08b`: BM25 parameters, Vietnamese tokenizer và TF-IDF isolated
-   schema/query/fusion behavior;
-2. `08c`: current-library reranker integration;
+1. `08b`: completed và approved; không có BM25/TF-IDF finalist;
+2. `08c`: exact spec tại
+   `docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md`;
 3. `08d`: exact non-duplicate matrix manifest và execution order;
 4. `08e`: exact Qwen generation, GPT judge rubric/repetitions và paid protocol;
 5. từng later notebook: exact readable columns/key và Reviewer Run All command.
@@ -674,13 +678,15 @@ GPU session xác minh một device policy khác cần user phê duyệt.
 ```
 
 ```text
-Historical decision, superseded by the 2026-08-28 resource amendment: Phase 8
+Historical decision, superseded by the 2026-08-28 resource amendment and the
+2026-08-30 reranker simplification: Phase 8
 ban đầu dự kiến real comparison evidence cho tám retrieval paths:
 dense-only, BM25-only toàn corpus, dense->BM25 rescoring hiện hành, true hybrid
 dense+BM25, TF-IDF SparseEmbedder-only, true hybrid dense+TF-IDF, BGE-M3 learned
-sparse-only và BGE-M3 dense+learned-sparse hybrid. Full local matrix bao phủ mọi
-tổ hợp tương thích với no-rerank và ba rerankers, nhưng không nhân bản retrieval
-không phụ thuộc embedding hoặc tạo capability pairing không có thật.
+sparse-only và BGE-M3 dense+learned-sparse hybrid. Full local matrix ban đầu bao
+phủ mọi tổ hợp tương thích với no-rerank và ba reranker candidates, nhưng không
+nhân bản retrieval không phụ thuộc embedding hoặc tạo capability pairing không
+có thật.
 Approved by: User
 Approval date +07: 2026-08-26
 Evidence: User yêu cầu đầy đủ, đa dạng kết quả và xác nhận exact retrieval set.
@@ -851,6 +857,36 @@ Reviewer verification và user confirmation. Exact matrix hoàn tất 20 setting
 -0.0279273 vi phạm guardrail -0.02. Production config/collection không đổi.
 Approved by: User
 Approval date +07: 2026-08-30
-Next action: Research và brainstorming exact Notebook 08c reranker benchmark;
-implementation/run 08c vẫn cần design/spec/plan và user approval riêng.
+Next action: User review implementation plan cùng Review Contract cho exact
+Notebook 08c tại
+`docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md`;
+implementation/run 08c vẫn chưa được authorize.
+```
+
+```text
+Decision: Active Phase 8 reranker scope chỉ còn no-rerank và
+`cross-encoder/ms-marco-MiniLM-L-6-v2`. BGE/Qwen rerankers bị loại khỏi 08c và
+08d vì resource/integration complexity không cần thiết. Notebook 08c dùng đúng
+ba immutable Top-10 inputs từ 08b: E5-small dense, Huydang dense và Huydang +
+BM25 weighted diagnostic. Reviewer trình evidence; user quyết định mọi bước 08d.
+Approved by: User
+Approval date +07: 2026-08-30
+Boundary: Written spec đã được user xác nhận ngày `2026-08-30 +07`; chưa
+authorize implementation, model run, Qdrant mutation, multi-domain work,
+commit hoặc push trước khi plan/Review Contract được duyệt.
+```
+
+```text
+Decision: Sau khi lifecycle 08c Foods đóng, dự án sẽ hoàn thiện toàn bộ curated
+answer-facing data dưới knowledge-base-hue thay vì chỉ làm festivals pilot.
+Corpus mới bao phủ Foods, Festivals, Heritage, Tourism, Performing Arts và các
+domain được duyệt khác; sau review sẽ chunk/embed lại, xây isolated full-corpus
+index và tạo Combined Golden Dataset có quota/evidence theo domain. Evaluation
+bắt đầu lại từ Phase 7 baseline rồi rerun các phần Phase 8 bị ảnh hưởng. Foods
+results hiện tại chỉ là historical domain evidence.
+Approved by: User
+Approval date +07: 2026-08-30
+Boundary: Chưa authorize thay đổi corpus/code, tạo embedding/index/Golden mới,
+Qdrant mutation, multi-domain benchmark, commit hoặc push. Exact scope cần design
+và plan riêng sau khi 08c đóng.
 ```

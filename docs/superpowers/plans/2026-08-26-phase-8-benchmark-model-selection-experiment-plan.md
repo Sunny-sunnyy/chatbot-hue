@@ -1,8 +1,8 @@
 # Phase 8 Benchmark Model Selection Master Experiment Plan
 
-**Status:** Gate 1 common contracts approved; Notebook 08a completed and user
-confirmed on `2026-08-29 +07`. Notebook 08b research/brainstorming is next;
-later notebook implementation/execution remains pending.
+**Status:** Gate 1 common contracts and Notebooks 08a/08b are approved. Exact
+Notebook 08c design and written specification were approved on `2026-08-30
++07`; a separate implementation plan and Review Contract remain pending.
 
 **Goal:** So sánh các embedding, lexical/sparse/hybrid, reranker và final RAG
 pipeline trên tiếng Việt bằng controlled experiment groups, đồng thời ưu tiên
@@ -34,13 +34,14 @@ quality đáng tin cậy, latency và simplicity.
 | 0 | Golden prerequisite | approved 45-case Golden Dataset V3 + exact 10-case smoke subset | completed and approved; dataset remains unchanged during benchmark work |
 | 1 | Local dense embedding | E5 small → Huydang DEk21 768D → E5 base; completed/approved | chunks, gold, dense retrieval settings, metrics |
 | 2 | Local lexical/sparse/fusion | current BM25-on-dense candidates → independent BM25 candidates → experimental TF-IDF sparse → true hybrid dense+BM25/TF-IDF | selected/fixed dense evidence, reranker off |
-| 3 | Reranker | current MiniLM-L6 → BGE reranker base → Qwen3 Reranker 0.6B | identical pre-rerank candidate artifacts |
+| 3 | Reranker | no-rerank control vs current MiniLM-L6 on three fixed Top-10 inputs | immutable approved 08b per-case artifacts |
 | 4 | Context | maximum 5 whole chunks/3000 characters | retrieval output and generator |
 | 5 | End-to-end finalists | selected retrieval/reranking finalists | `qwen/qwen3.5-9b` via OpenRouter; judge `gpt-5.4-mini` |
 | 6 | Final decision | quality, latency, reliability, cost, complexity | approved selection rule |
 
-All local model stages run sequentially from lightweight to heavier candidates.
-The local retrieval/reranking stage uses the full compatibility-aware matrix.
+All local model stages run sequentially. The later local retrieval/reranking
+matrix uses only no-rerank and MiniLM, and opens only after the exact 08c user
+decision.
 Only the later paid generation/judge stage uses finalists selected from that
 matrix: two fixed reference rows plus at most three new finalists.
 
@@ -71,8 +72,9 @@ mock/fake completion evidence.
 
 ## Common execution and result protocol
 
-- Main profile: CPU FP32, no quantization; document batch 8, query batch 1,
-  reranker pair batch 4; no silent auto-shrink. GPU policy remains separate.
+- Main profile: CPU FP32, no quantization; document batch 8 and query batch 1.
+  Exact 08c calls the current runtime MiniLM implementation without adding a
+  benchmark-only pair-batch contract. GPU policy remains separate.
 - Measure cold load once, discard one warm-up, then run three full 45-case
   repetitions. A finalist must succeed `3/3`; report warm `p50`/`p95` and exact
   ranking variation.
@@ -97,8 +99,8 @@ mock/fake completion evidence.
 | TF-IDF SparseEmbedder-only | One |
 | True hybrid dense + TF-IDF | Four, one per local dense configuration |
 
-The full local matrix applies four reranker states—none, current MiniLM, BGE
-reranker base and Qwen3 Reranker 0.6B—to each valid pre-rerank pipeline. It does
+The later local matrix may apply two reranker states—none and current MiniLM—to
+each valid pre-rerank pipeline after the 08c user decision. It does
 not duplicate BM25-only/TF-IDF-only by embedding label and does not construct an
 unsupported learned-sparse pairing.
 
@@ -163,6 +165,11 @@ the final ranked output.
 | 5 | `notebooks/08e_generation_finalists.ipynb` | `evaluation/results/phase8_generation_results.csv` |
 | 6 | `notebooks/08_benchmark_model_selection.ipynb` | Reads the five group CSVs and explains the final choice |
 
+Exact 08c also writes
+`evaluation/results/phase8_reranker_cases.jsonl` for 135 paired before/after
+ranking records. It is case-level evidence, not a duplicate summary or run
+registry.
+
 Every notebook is a human learning document: heading and explanation precede
 each runnable section, cells are short and direct, and outputs are interpreted
 in plain language. The required style references are `rag_old_0/*.ipynb` and
@@ -204,21 +211,32 @@ only at the approved research/brainstorm checkpoint for that notebook group.
 
 ## Notebook-specific design queue
 
-Gate 1 common decisions and the exact Notebook 08a design/implementation plan
-are approved. This master plan deliberately does not guess later groups:
+Gate 1 common decisions and Notebooks 08a/08b are approved. Current queue:
 
-1. `08a`: implement and Run All the approved exact design/plan, then independent
-   review and user confirmation before starting 08b.
-2. `08b`: research and brainstorm BM25 parameters, Vietnamese tokenizer and
-   exact TF-IDF isolated schema/query/fusion behavior.
-3. `08c`: verify current reranker library/template compatibility and brainstorm
-   exact integration.
+1. `08a`: completed, independently reviewed and user confirmed.
+2. `08b`: completed, independently reviewed and user confirmed; no BM25/TF-IDF
+   finalist.
+3. `08c`: follow the exact written spec at
+   `docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md`;
+   spec is approved; implementation/run wait for approval of
+   `docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md`
+   and its Review Contract.
 4. `08d`: enumerate and approve the exact non-duplicate matrix and execution
    order only after upstream evidence exists.
 5. `08e`: approve exact Qwen generation, GPT judge rubric/repetition and paid
    protocol after finalists exist.
 6. Final notebook: read approved CSV evidence and present trade-offs; do not
    rerun the entire matrix.
+
+After the Foods-only 08c lifecycle closes, pause this queue for a separately
+approved full-corpus expansion. Curate all approved answer-facing domains under
+`knowledge-base-hue/`, update domain-aware chunking/metadata, create fresh
+embeddings and an isolated combined index, then create a balanced cross-domain
+Golden Dataset covering Foods, Festivals, Heritage, Tourism, Performing Arts
+and the other included domains. Evaluation restarts from Phase 7 on that new
+contract and reruns every Phase 8 group whose inputs or conclusions are
+affected. Foods-only evidence remains historical and is not copied forward as
+cross-domain proof.
 
 GPU/WSL2 remediation remains a different session. Recheck model catalogs,
 licenses, provider IDs, API schemas and resource compatibility from primary

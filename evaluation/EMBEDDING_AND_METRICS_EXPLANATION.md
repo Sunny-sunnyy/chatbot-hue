@@ -1,7 +1,7 @@
 # Hướng dẫn & Giải thích Kỹ thuật: Mô hình Embedding, Sparse Retrieval, Fusion và Các Độ đo Đánh giá (Hue Foods RAG)
 
 > **Tài liệu kỹ thuật tham chiếu nội bộ** cho nhóm phát triển và nghiên cứu dự án **Hue Foods RAG**.
-> **Cập nhật:** `2026-08-30` (Bổ sung toàn diện Phase 8 — Notebook 08a Dense & Notebook 08b Sparse/Fusion Benchmark).
+> **Cập nhật:** `2026-08-30` (Đồng bộ verdict 08b và exact design scope 08c).
 
 ---
 
@@ -42,7 +42,7 @@
    - [8.2. Paired Bootstrap 95% Confidence Interval (CI)](#82-paired-bootstrap-95-confidence-interval-ci)
    - [8.3. Tiêu chuẩn Khoa học Fail-Closed](#83-tiêu-chuẩn-khoa-học-fail-closed)
 9. [Bảng Tổng hợp Toàn diện Benchmark 08a & 08b](#9-bảng-tổng-hợp-toàn-diện-benchmark-08a--08b)
-10. [Khuyến nghị Kiến trúc cho Production & Bước đi Tiếp theo (Phase 8c)](#10-khuyến-nghị-kiến-trúc-cho-production--bước-đi-tiếp-theo-phase-8c)
+10. [Kết luận 08b và bước tiếp theo Phase 8c](#10-kết-luận-08b-và-bước-tiếp-theo-phase-8c)
 
 ---
 
@@ -465,19 +465,46 @@ Bảng đối chiếu toàn bộ các cấu hình tiêu biểu qua 2 giai đoạ
 
 ---
 
-## 10. Khuyến nghị Kiến trúc cho Production & Bước đi Tiếp theo (Phase 8c)
+## 10. Kết luận 08b và bước tiếp theo Phase 8c
 
-### 🏆 1. Cấu hình Khuyến nghị Số 1 (Top Quality Pipeline — Chất lượng Cao nhất)
-- **Pipeline:** `Dense Huydang DEk21 768D` + `BM25 FullCorpus` $\rightarrow$ `Min-Max Weighted Sum (0.6/0.4)`.
-- **Chỉ số:** Recall@5 = **`91.11%`**, nDCG@5 = **`0.7655`**, Candidate Union Recall (Top-30) = **`98.52%`**, độ trễ p95 = **`65.4 ms`**.
-- **Ứng dụng:** Triển khai làm tầng Candidate Generation chính thức cho hệ thống Chatbot RAG Ẩm thực Huế.
+### 10.1. Verdict 08b
 
-### ⚡ 2. Cấu hình Khuyến nghị Số 2 (Top Speed & Resource Pipeline — Siêu nhẹ & Siêu nhanh)
-- **Pipeline:** `Dense E5-small 384D` $\rightarrow$ `BM25 Rescoring trên Top-30`.
-- **Chỉ số:** Recall@5 = **`86.30%`**, nDCG@5 = **`0.7545`**, độ trễ p95 chỉ **`32.2 ms`**, tiết kiệm 50% RAM.
-- **Ứng dụng:** Triển khai trên môi trường Edge / Server tài nguyên hạn chế.
+Một số hybrid settings tăng aggregate Recall@5 hoặc nDCG@5, nhưng không có
+BM25/TF-IDF finalist. Cả hai sparse families đều vi phạm category guardrail.
+Finding quyết định nằm ở `relationship`: Huydang dense control có nDCG@5
+`0.8586956`, trong khi hybrid weighted đạt `0.8307683`, delta
+`-0.0279273`, thấp hơn giới hạn `-0.02`.
 
-### 🚀 3. Bước đi tiếp theo cho Phase 8c (Cross-Encoder Reranker Benchmark)
-Với tập ứng viên Top-30 có độ phủ lên tới **`98.52%`**, hệ thống đã có đầu vào hoàn hảo để tiến hành **Phase 8c (Notebook 08c)**:
-- Thử nghiệm các mô hình **Cross-Encoder Reranker** (như BGE-Reranker, Viet-Reranker, Cohere) để chấm lại điểm sâu sắc giữa cặp `(Câu hỏi, Đoạn văn bản)`.
-- Kỳ vọng đưa Recall@5 và nDCG@5 vượt ngưỡng **`95%`** trước khi tổng hợp câu trả lời qua LLM.
+Vì vậy 08b không khuyến nghị production hybrid, không cutover configuration và
+không mutate active collection. Aggregate metric cao hơn là evidence cần phân
+tích, không đủ để bỏ qua regression theo category.
+
+### 10.2. Exact Notebook 08c
+
+08c không mở rộng model grid. Nó so sánh đúng hai states:
+
+- no-rerank Top 5;
+- current lightweight `cross-encoder/ms-marco-MiniLM-L-6-v2` rerank Top 10
+  thành Top 5.
+
+Ba immutable Foods Top-10 inputs lấy từ approved 08b evidence là E5-small dense,
+Huydang dense và Huydang + BM25 weighted diagnostic. Input hybrid được giữ để
+kiểm tra liệu MiniLM có sửa regression `relationship` hay không; nó không tự trở
+thành production candidate.
+
+BGE/Qwen rerankers không còn trong active Phase 8. Reviewer sẽ trình quality,
+category, bootstrap, latency và resource evidence; user quyết định có giữ
+MiniLM hoặc mở 08d hay không. Không đặt trước kỳ vọng Recall/nDCG phải đạt 95%.
+
+Sau khi 08c Foods đóng, dự án sẽ mở một scope riêng để bổ sung đầy đủ curated
+Markdown cho toàn bộ các domain answer-facing dưới `knowledge-base-hue/`, không
+chỉ làm festivals pilot. Phạm vi dự kiến gồm Foods, Festivals, Heritage,
+Tourism, Performing Arts và các domain được duyệt khác như Services, Statistics
+và Tickets; `_source-dumps` và `meta` không tự động trở thành retrieval corpus.
+
+Corpus mới phải được review, chunk theo metadata có domain, embed lại và đưa vào
+một isolated full-corpus index trước khi đánh giá. Sau đó tạo Combined Golden
+Dataset có quota/evidence theo từng domain, đủ lớn và cân bằng để báo cáo cả
+overall lẫn per-domain. Chuỗi evaluation bắt đầu lại từ baseline Phase 7 rồi
+chạy lại các benchmark Phase 8 bị ảnh hưởng. Kết quả hiện tại chỉ là Foods
+evidence lịch sử, không đại diện khách quan cho toàn bộ hệ thống.

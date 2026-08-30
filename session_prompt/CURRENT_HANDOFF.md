@@ -29,32 +29,49 @@ Phase 8 tổng thể vẫn `not_ready`.
 
 ## 2. Next action duy nhất
 
-Reviewer research và brainstorming exact Notebook 08c reranker benchmark trên
-fixed pre-rerank inputs. Trước tiên phải đọc canonical Phase 8 guide cùng
-existing high-level 08c design context, kiểm tra current reranker library/model
-compatibility và trình bày các trade-off cần user quyết định.
+User review implementation plan cùng Review Contract cho exact Notebook 08c:
+
+```text
+docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md
+```
+
+Conversational design, written specification approval, documentation sync và
+implementation plan đã hoàn tất. Implementer handoff chỉ được tạo sau khi user
+duyệt plan.
 
 Không được bắt đầu implementation, benchmark run, model download mới, paid API,
 active Qdrant mutation, production cutover hoặc sửa Golden V3 trong handoff này.
 
 ## 3. Design gate
 
-Reviewer phải:
+Đã hoàn tất:
 
-1. xác nhận exact 08c scope và dependencies từ current repo/live environment;
-2. brainstorm các quyết định ảnh hưởng candidates, fixed inputs, metrics,
-   resource limits và acceptance;
-3. trình bày 2–3 hướng cùng khuyến nghị;
-4. chỉ viết exact spec sau user duyệt design;
-5. chỉ viết implementation plan/Review Contract sau user duyệt spec;
-6. chỉ tạo Implementer handoff sau user duyệt plan.
+1. exact scope/dependency research;
+2. candidates, fixed inputs, metrics, resource và acceptance brainstorming;
+3. comparison of three approaches và user selection;
+4. written exact specification cùng Reviewer documentation sync.
+
+Còn lại:
+
+1. user review implementation plan/Review Contract;
+2. Implementer handoff chỉ sau plan approval.
 
 ## 4. Boundaries phải giữ
 
 - Reuse approved Golden V3 45 full + 10 smoke cases.
 - 08b artifacts là immutable evidence; không chọn sparse finalist sau approval.
+- Active 08c scope chỉ có no-rerank và current MiniLM trên ba fixed Top-10
+  inputs đã duyệt; BGE/Qwen rerankers không còn trong 08c/08d.
 - Active `hue_foods_e5_small_384` read-only.
 - Không silent fallback, fake provider/data hoặc đổi experiment inputs để tạo
   winner.
 - Phase 8 và 08c implementation/run vẫn chưa authorized.
 - Git authorization là `none` cho next-design work.
+- Sau khi 08c Foods đóng, next workstream không còn là festivals-only pilot mà
+  là hoàn thiện toàn bộ answer-facing `knowledge-base-hue/`, tạo embedding/index
+  mới và Combined Golden Dataset cân bằng trên Foods, Festivals, Heritage,
+  Tourism, Performing Arts cùng các domain được duyệt khác. Evaluation bắt đầu
+  lại từ Phase 7 rồi rerun các phần Phase 8 bị ảnh hưởng.
+- Foods 07/08 results chỉ là historical domain evidence; post-08c corpus,
+  chunking, index, Golden và benchmark work chưa được authorize trong handoff
+  hiện tại.

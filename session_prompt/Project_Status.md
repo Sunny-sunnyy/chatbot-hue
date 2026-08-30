@@ -80,7 +80,7 @@ Production config và active collection không thay đổi.
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1, Notebook 08a và 08b approved; next boundary là exact 08c design, chưa authorize run |
+| 8 | `not_ready` | Gate 0, Gate 1, Notebook 08a và 08b approved; exact 08c design/spec approved, implementation plan chờ user review; chưa authorize implementation/run |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -95,6 +95,9 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   silent fallback hoặc đổi setting.
 - Khi quality không khác biệt đáng tin cậy, ưu tiên model nhẹ, nhanh và đơn giản.
 - Local dense Phase 8 chỉ có ba model executable hiện hành nêu trên.
+- Active reranker comparison chỉ có no-rerank và current local
+  `cross-encoder/ms-marco-MiniLM-L-6-v2`; BGE/Qwen rerankers không còn thuộc
+  08c/08d scope.
 - Initial fusion comparison dùng RRF và independent min-max weighted sum
   `0.6 dense / 0.4 sparse`; không weight grid khi chưa có observed need.
 - Notebook 08b chỉ so sánh tokenizer BM25 Unicode `\w+` hiện hành với
@@ -174,6 +177,12 @@ evaluation/results/phase8_sparse_results.csv
 evaluation/results/phase8_sparse_cases.jsonl
 ```
 
+Exact 08c written specification approved by the user on `2026-08-30 +07`:
+
+```text
+docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md
+```
+
 Governance designs and plans:
 
 ```text
@@ -186,12 +195,22 @@ docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-p
 ## Current next action
 
 Notebook 08b đã được triển khai, review độc lập và user xác nhận ngày
-`2026-08-30 +07`. Current next action là Reviewer research và brainstorming
-exact Notebook 08c reranker benchmark trên fixed pre-rerank inputs. Chưa có
-authorization viết spec/plan cuối, implementation, benchmark run, paid API,
-active mutation hoặc production cutover cho 08c.
+`2026-08-30 +07`. Exact Notebook 08c conversational design đã được user xác
+nhận và written spec nằm tại
+`docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md`.
+Current next action là user review implementation plan cùng Review Contract tại
+`docs/superpowers/plans/2026-08-30-phase-8-08c-reranker-benchmark-implementation-plan.md`.
+Chưa có authorization cho implementation, benchmark run, paid API, active
+mutation hoặc production cutover cho 08c.
 
-Queued separate reviewer session, không thuộc 08b handoff: đánh giá khả năng mở
-rộng backend hiện tại sang curated Markdown dưới `knowledge-base-hue/festivals`
-và một Golden Dataset festivals mới. Chưa có kết luận/authorization thay đổi
-code hoặc data cho festivals.
+Post-08c queued reviewer workstream: hoàn thiện toàn bộ curated answer-facing
+Markdown dưới `knowledge-base-hue/` cho Foods, Festivals, Heritage, Tourism,
+Performing Arts và các domain được duyệt khác; sau đó cập nhật domain-aware
+chunking/metadata, tạo embedding mới và isolated full-corpus index. Một Combined
+Golden Dataset mới phải có quota/evidence trên tất cả domain để báo cáo overall
+và per-domain. Evaluation bắt đầu lại từ Phase 7 baseline rồi chạy lại các phần
+Phase 8 bị ảnh hưởng. Kết quả hiện tại chỉ là Foods historical evidence.
+
+Chưa có authorization thay đổi corpus/code, tạo embedding/index/Golden mới,
+mutate Qdrant hoặc chạy benchmark đa lĩnh vực; exact post-08c design bắt đầu sau
+khi lifecycle 08c Foods đóng.

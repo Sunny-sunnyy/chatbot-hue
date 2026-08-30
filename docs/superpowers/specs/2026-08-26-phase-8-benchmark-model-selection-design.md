@@ -1,9 +1,9 @@
 # Phase 8 Benchmark Model Selection Design
 
-**Status:** `not_ready`; Notebook 08a implementation, independent review and
-user confirmation are complete. Exact Notebook 08b design/plan were approved
-on `2026-08-29 +07` and are ready for the Implementer handoff. Notebook 08c–08e
-and production selection remain pending.
+**Status:** `not_ready`; Notebooks 08a and 08b are approved. Exact Notebook 08c
+design and written specification were approved on `2026-08-30 +07`; its
+implementation plan is pending. Notebook 08c implementation/run, 08d–08e and
+production selection remain unauthorized.
 
 **Purpose:** Khóa các quyết định Phase 8 đã được user xác nhận trong khi tiếp
 tục brainstorming những biến thí nghiệm còn lại. Bản master này tự nó không
@@ -84,8 +84,8 @@ Phase 8 must create controlled real comparisons for:
 | Custom TF-IDF `SparseEmbedder`-only | Once as an experimental control |
 | True hybrid dense + custom TF-IDF sparse | All three local dense configurations |
 
-Notebook 08d combines every valid pre-rerank pipeline with no reranker and each
-of the three reranker candidates. Complete coverage means every real component,
+Notebook 08d may combine every valid pre-rerank pipeline with no reranker and
+MiniLM after the exact 08c user decision. Complete coverage means every real component,
 path and compatible interaction is measured. It does not mean repeating an
 embedding-independent result under six embedding labels or inventing a learned-
 sparse pairing for a model that cannot produce that representation.
@@ -117,17 +117,16 @@ change the final decision.
 This keeps final retrieval comparisons at the same depth. Ten documents are
 never passed directly to the generator under this contract.
 
-## Reranker candidate order
+## Active reranker scope
 
-| Thứ tự | Model | Published language scope | Design treatment |
-|---:|---|---|---|
-| 1 | `cross-encoder/ms-marco-MiniLM-L-6-v2` | English | lightweight current baseline; full Vietnamese measurement |
-| 2 | `BAAI/bge-reranker-base` | Chinese, English | retain only if Vietnamese evidence passes quality gates |
-| 3 | `Qwen/Qwen3-Reranker-0.6B` | multilingual | heavier primary multilingual candidate |
+| State | Model | Design treatment |
+|---|---|---|
+| Control | No reranker | First five documents from the same fixed Top 10 |
+| Candidate | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Existing lightweight runtime; full Vietnamese measurement |
 
 Model code producing scores for Vietnamese input is integration evidence, not
-quality evidence. Models without an explicit Vietnamese claim are not rejected
-before measurement, but cannot win without corrected-gold Vietnamese evidence.
+quality evidence. BGE/Qwen rerankers are removed from active 08c/08d scope;
+historical references are superseded context only.
 
 ## Approved common model execution profile
 
@@ -145,12 +144,10 @@ reopen quyết định khi có exact evidence về incompatibility hoặc resour
 - Main local profile là CPU FP32, không quantization. Document batch size là 8,
   query batch size là 1 và không silent auto-shrink. CUDA/dtype GPU chỉ được
   thiết kế trong session GPU riêng.
-- MiniLM/BGE reranker nhận raw `(question, chunk_text)`. Qwen reranker dùng
-  official chat/template cùng task instruction tiếng Việt:
-  `Với một câu hỏi du lịch ẩm thực Huế, hãy đánh giá liệu tài liệu có chứa thông tin liên quan để trả lời câu hỏi hay không.`
-  Mọi pair cap 512 tokens bằng `longest_first`, ghi `truncated_pair_count`, CPU
-  pair batch size 4. Giữ native score để xếp hạng trong từng model; exact tie
-  giữ nguyên pre-rerank order.
+- Notebook 08c calls the existing concrete MiniLM `CrossEncoderReranker`
+  directly on raw `(question, chunk_text)` pairs. It does not add a model
+  adapter or change production batching/truncation behavior. Native scores rank
+  within the model and exact ties follow the current deterministic runtime.
 - BGE-M3 learned sparse/ColBERT không còn thuộc local experiment matrix. Một
   OpenRouter dense response trong future proposal không được coi là equivalent
   hoặc evidence cho các representation này.
@@ -240,7 +237,7 @@ configuration:
 |---|---|
 | `notebooks/08a_embedding_benchmark.ipynb` | Learn and compare all dense embedding candidates |
 | `notebooks/08b_retrieval_fusion_benchmark.ipynb` | Learn and compare lexical, sparse and fusion paths |
-| `notebooks/08c_reranker_benchmark.ipynb` | Compare no-rerank and all reranker candidates on fixed inputs |
+| `notebooks/08c_reranker_benchmark.ipynb` | Compare no-rerank and MiniLM on three fixed Foods Top-10 inputs |
 | `notebooks/08d_full_pipeline_matrix.ipynb` | Run the approved local embedding × retrieval × reranker matrix |
 | `notebooks/08e_generation_finalists.ipynb` | Generate and judge answers for approved finalists |
 | `notebooks/08_benchmark_model_selection.ipynb` | Read group results, explain trade-offs and select the final pipeline |
@@ -287,12 +284,14 @@ Each experiment notebook writes one cumulative CSV:
 | Full local matrix | `evaluation/results/phase8_pipeline_matrix.csv` |
 | Generation finalists | `evaluation/results/phase8_generation_results.csv` |
 
-No run ID, timestamped package, checksum manifest, duplicate JSON artifact or
+No run ID, timestamped package, checksum package, duplicate result artifact or
 opaque `configuration_id` is needed. Human-readable setting columns identify
 results. CSV dùng long format: một row `category=overall` và các category rows
 cho mỗi setting. Approved rerun upsert theo human-readable setting key, thay thế
 row của lần được duyệt trước và lưu ngay sau configuration; không giữ history
-registry. Minimal `status` và `error` phản ánh approved attempt mới nhất.
+registry. Minimal `status` và `error` phản ánh approved attempt mới nhất. Exact
+08b/08c specs may add one per-case JSONL when raw ranking evidence cannot fit the
+summary CSV without duplication or loss.
 
 After each model/configuration, save or update its CSV row before releasing the
 model and large temporary tensors/embeddings. Run Python garbage collection and
@@ -305,21 +304,31 @@ they are not the durable checkpoint or committed evidence.
 
 ## Notebook-specific decisions
 
-Gate 1 common contracts đã được user duyệt ngày `2026-08-28 +07`. Notebook 08a
-đã hoàn tất research/brainstorming và có exact approved documents:
+Gate 1 common contracts đã được user duyệt ngày `2026-08-28 +07`. Notebooks 08a
+và 08b đã hoàn tất implementation, independent review và user confirmation.
+Exact approved 08a documents:
 
 ```text
 docs/superpowers/specs/2026-08-28-phase-8-08a-embedding-benchmark-design.md
 docs/superpowers/plans/2026-08-28-phase-8-08a-embedding-benchmark-implementation-plan.md
 ```
 
-User đã authorize implementation và real local Run All trong isolated 08a
-scope. Không viết chi tiết giả định cho các notebook còn lại trước checkpoint
-tương ứng.
+Exact approved 08b documents:
 
-- `08b`: BM25 parameters, Vietnamese tokenizer and exact TF-IDF isolated Qdrant
-  schema/query/fusion behavior. BGE learned sparse is no longer local scope.
-- `08c`: exact current-library reranker integration compatibility.
+```text
+docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md
+docs/superpowers/plans/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-implementation-plan.md
+```
+
+Không viết chi tiết giả định cho các notebook còn lại trước checkpoint tương
+ứng.
+
+- `08b`: completed and approved; BGE learned sparse is not local scope and no
+  BM25/TF-IDF finalist was selected.
+- `08c`: exact written spec is
+  `docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md`;
+  written spec is approved; implementation/run wait for implementation-plan
+  and Review Contract approval.
 - `08d`: exact non-duplicate matrix manifest và lightweight-to-heavy run order.
 - `08e`: exact Qwen generation settings, GPT judge rubric/repetitions và paid
   call protocol.
@@ -431,7 +440,36 @@ catalog, schema, pricing, provider behavior and exact preprocessing. OpenRouter
 dense embeddings do not authorize or provide evidence for BGE learned sparse or
 ColBERT, so those paths are removed from the local 08b/08d matrix.
 
-The MiniLM-L12/Qwen model caches and isolated collections were deleted with user
+The MiniLM-L12/Qwen embedding model caches and isolated collections were deleted with user
 authorization on `2026-08-29 +07`. Reviewer evidence covers all three retained
-models at 3/3 repetitions. Notebook 08a is approved; 08b is the next
-implementation/review work package.
+models at 3/3 repetitions. Notebooks 08a and 08b and the exact 08c written
+specification are approved. The active next gate is user review of the exact
+08c implementation plan and Review Contract.
+
+## Reranker simplification amendment (2026-08-30 +07)
+
+Active Phase 8 reranker scope contains only no-rerank and the existing
+`cross-encoder/ms-marco-MiniLM-L-6-v2`. BGE/Qwen rerankers are removed from 08c
+and 08d. Exact 08c uses three immutable Top-10 inputs from approved 08b evidence:
+E5-small dense, Huydang dense and Huydang + BM25 weighted diagnostic. Reviewer
+reports evidence and the user decides whether any MiniLM work proceeds to 08d.
+This amendment does not authorize implementation, model execution, Qdrant
+mutation, multi-domain work, commit or push.
+
+## Post-08c full-corpus evaluation amendment (2026-08-30 +07)
+
+Current Phase 7/8 evidence is based only on Foods and therefore cannot be used
+as an objective estimate for the complete Hue knowledge base. After 08c closes,
+the next separately approved scope will complete curated Markdown throughout
+the answer-facing domains under `knowledge-base-hue/`, including Foods,
+Festivals, Heritage, Tourism, Performing Arts and other approved domains such
+as Services, Statistics and Tickets.
+
+That scope must review corpus quality, extend domain-aware chunking/metadata,
+create fresh embeddings and an isolated full-corpus index, and build a new
+combined Golden Dataset with explicit per-domain quotas and evidence. Phase 7
+baseline evaluation then runs again on this combined contract, followed by all
+affected Phase 8 comparisons. Existing Foods results remain historical
+domain-specific evidence and do not pre-approve a cross-domain model or
+pipeline. Corpus/index/Golden changes and Qdrant mutation require their own
+design, plan and user authorization.
