@@ -9,7 +9,7 @@
 
 | STT | Tên chuẩn hóa (Canonical Name) | Tên thường gọi / Alias | Phân loại | Chu kỳ / Thời gian tổ chức | Địa điểm chính |
 |:---:|---|---|---|---|---|
-| 1 | **Festival Huế** | Festival Bốn Mùa | Sự kiện đương đại | Định kỳ quanh năm (chia 4 mùa: Xuân, Hạ, Thu, Đông) | Toàn thành phố Huế & các di tích |
+| 1 | **Festival Huế** | — (Mô hình: Festival Bốn Mùa) | Sự kiện đương đại | Định kỳ quanh năm (chia 4 mùa: Xuân, Hạ, Thu, Đông) | Toàn thành phố Huế & các di tích |
 | 2 | **Festival Nghề truyền thống Huế** | Festival Làng nghề Huế | Sự kiện đương đại / Làng nghề | Định kỳ các năm lẻ (thường vào tháng 4 - 5) | Trung tâm TP. Huế (trục đôi bờ sông Hương) |
 | 3 | **Lễ hội Áo dài Huế** | Tuần lễ Áo dài Huế | Sự kiện văn hóa | Thường niên (trong khuôn khổ Festival Huế hoặc tháng 6 - 7) | Các không gian di sản, Bia Quốc Học, Quốc Tử Giám |
 | 4 | **Lễ hội Điện Huệ Nam** | Lễ hội Điện Hòn Chén | Tín ngưỡng Mẫu | 2 lần/năm: Xuân tế (tháng 3 ÂL), Thu tế (tháng 7 ÂL) | Điện Huệ Nam (Hương Hồ, Hương Trà) & sông Hương |
