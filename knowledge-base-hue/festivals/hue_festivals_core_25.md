@@ -9,11 +9,12 @@
 
 | STT | Tên chuẩn hóa (Canonical Name) | Tên thường gọi / Alias | Phân loại | Chu kỳ / Thời gian tổ chức | Địa điểm chính |
 |:---:|---|---|---|---|---|
+| 0 | **Lễ hội Ẩm thực Huế** | Ngày hội Văn hóa Ẩm thực xứ Huế, Ngày hội Ẩm thực Huế, Lễ hội Ẩm thực chay Huế | Sự kiện văn hóa / Ẩm thực | Thường niên (trong khuôn khổ Festival Huế hoặc tháng 4 - 9, dịp 2/9) | Công viên Thương Bạc, phố đi bộ Nguyễn Đình Chiểu, Trung tâm VHTT TP. Huế, đôi bờ sông Hương |
 | 1 | **Festival Huế** | — (Mô hình: Festival Bốn Mùa) | Sự kiện đương đại | Định kỳ quanh năm (chia 4 mùa: Xuân, Hạ, Thu, Đông) | Toàn thành phố Huế & các di tích |
 | 2 | **Festival Nghề truyền thống Huế** | Festival Làng nghề Huế | Sự kiện đương đại / Làng nghề | Định kỳ các năm lẻ (thường vào tháng 4 - 5) | Trung tâm TP. Huế (trục đôi bờ sông Hương) |
 | 3 | **Lễ hội Áo dài Huế** | Tuần lễ Áo dài Huế | Sự kiện văn hóa | Thường niên (trong khuôn khổ Festival Huế hoặc tháng 6 - 7) | Các không gian di sản, Bia Quốc Học, Quốc Tử Giám |
 | 4 | **Lễ hội Điện Huệ Nam** | Lễ hội Điện Hòn Chén | Tín ngưỡng Mẫu | 2 lần/năm: Xuân tế (tháng 3 ÂL), Thu tế (tháng 7 ÂL) | Điện Huệ Nam (Hương Hồ, Hương Trà) & sông Hương |
-| 5 | **Lễ hội Cầu ngư làng Thai Dương Hạ** | Lễ hội Cầu ngư Thuận An, Lễ hội Trò Triêng | Dân gian / Ngư nghiệp | Đại lễ 3 năm/lần (tam niên đáo lệ các năm Tý - Mão - Ngọ - Dậu, 10-12/1 ÂL); lệ thường cúng hàng năm | Đình làng Thai Dương Hạ, thị trấn Thuận An |
+| 5 | **Lễ hội Cầu ngư** | Lễ hội Cầu ngư làng Thai Dương Hạ, Lễ hội Cầu ngư Thuận An, Lễ hội Trò Triêng | Dân gian / Ngư nghiệp | Đại lễ 3 năm/lần (tam niên đáo lệ các năm Tý - Mão - Ngọ - Dậu, 10-12/1 ÂL); lệ thường cúng hàng năm | Đình làng Thai Dương Hạ, phường Thuận An |
 | 6 | **Lễ tế Nam Giao** | Đại lễ Nam Giao triều Nguyễn | Cung đình (Tái hiện) | Định kỳ trong các kỳ Festival Huế (trước đây tế 3 năm/lần hoặc xuân tế) | Đàn Nam Giao (phường Trường An, TP. Huế) |
 | 7 | **Lễ tế Xã Tắc** | Lễ tế Đàn Xã Tắc | Cung đình (Tái hiện) | Thường niên vào dịp mùa xuân (tháng 2 ÂL) | Đàn Xã Tắc (phường Thuận Hòa, TP. Huế) |
 | 8 | **Lễ Ban Sóc triều Nguyễn** | Lễ phát lịch Hoàng cung | Cung đình (Tái hiện) | Thường niên vào đầu tháng Chạp (mở màn Festival Mùa Xuân) | Quảng trường Ngọ Môn - Đại Nội Huế |
@@ -40,7 +41,7 @@
 ## Ghi chú về ranh giới dữ liệu và chuẩn hóa
 
 1. **Phân biệt 3 lớp định danh:**
-   - `canonical_name`: Tên định danh chính xác, có cơ sở di sản/lịch sử/văn bản nhà nước (ví dụ: *Lễ hội Điện Huệ Nam*, *Lễ hội Cầu ngư làng Thai Dương Hạ*).
+   - `canonical_name`: Tên định danh chính xác, có cơ sở di sản/lịch sử/văn bản nhà nước (ví dụ: *Lễ hội Điện Huệ Nam*, *Lễ hội Cầu ngư*).
    - `aliases`: Các tên gọi dân gian hoặc tên cũ phổ biến (*Điện Hòn Chén*, *Cầu ngư Thuận An*).
    - `year_specific_names`: Các tên chương trình theo chủ đề từng năm (ví dụ: *Tuần lễ Festival Nghệ thuật Quốc tế Huế 2026*, *Lễ hội Thanh trà Huế lần thứ VIII*).
 
