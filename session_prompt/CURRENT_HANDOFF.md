@@ -17,33 +17,33 @@ Sub-agent authorization: none
 - Triển khai xây dựng dữ liệu tri thức chuẩn hóa (curated answer-facing knowledge base) cho domain `festivals/` dưới `/home/minhhieu/hue_rag/knowledge-base-hue/festivals/`.
 - Khuôn mẫu biên soạn chuẩn: `knowledge-base-hue/meta/festivals-template.md`.
 - Danh mục 25 lễ hội cốt lõi đã phê duyệt và cập nhật: `knowledge-base-hue/festivals/hue_festivals_core_25.md` (đã bổ sung entity 0 *Lễ hội Ẩm thực Huế*, chuẩn hóa tên gọi entity 5 *Lễ hội Cầu ngư*).
-- Đã hoàn thành 100% việc biên soạn, rà soát và kiểm chứng độc lập với các nguồn tư liệu chính thống cho toàn bộ 26 entity lễ hội cốt lõi (từ Entity 0 đến Entity 25):
-  1. `knowledge-base-hue/festivals/festival/0 Lễ hội Ẩm thực Huế.md`
-  2. `knowledge-base-hue/festivals/festival/1 Festival Huế.md`
-  3. `knowledge-base-hue/festivals/festival/2 Festival Nghề truyền thống Huế.md`
-  4. `knowledge-base-hue/festivals/festival/3 Lễ hội Áo dài Huế.md`
-  5. `knowledge-base-hue/festivals/festival/4 Lễ hội Điện Huệ Nam.md`
-  6. `knowledge-base-hue/festivals/festival/5 Lễ hội Cầu ngư.md`
-  7. `knowledge-base-hue/festivals/festival/6 Lễ tế Nam Giao.md`
-  8. `knowledge-base-hue/festivals/festival/7 Lễ tế Xã Tắc.md`
-  9. `knowledge-base-hue/festivals/festival/8 Lễ Ban Sóc triều Nguyễn.md`
-  10. `knowledge-base-hue/festivals/festival/9 Lễ hội Đền Huyền Trân Công chúa.md`
-  11. `knowledge-base-hue/festivals/festival/10 Hội vật làng Sình.md`
-  12. `knowledge-base-hue/festivals/festival/11 Hội vật làng Thủ Lễ.md`
-  13. `knowledge-base-hue/festivals/festival/12 Lễ hội Đua ghe truyền thống Huế.md`
-  14. `knowledge-base-hue/festivals/festival/13 Đại lễ Phật đản tại Huế.md`
-  15. `knowledge-base-hue/festivals/festival/14 Lễ hội Quán Thế Âm tại Huế.md`
-  16. `knowledge-base-hue/festivals/festival/15 Lễ hội Thanh Trà Huế.md`
-  17. `knowledge-base-hue/festivals/festival/16 Chợ quê ngày hội – Cầu ngói Thanh Toàn.md`
-  18. `knowledge-base-hue/festivals/festival/17 Lễ hội Hương xưa làng cổ – Phước Tích.md`
-  19. `knowledge-base-hue/festivals/festival/18 Lễ hội Sóng nước Tam Giang.md`
-  20. `knowledge-base-hue/festivals/festival/19 Ngày hội Sen Huế.md`
-  21. `knowledge-base-hue/festivals/festival/20 Ngày hội Hoàng Mai Huế.md`
-  22. `knowledge-base-hue/festivals/festival/21 Lễ hội làng Dương Nỗ.md`
-  23. `knowledge-base-hue/festivals/festival/22 Lễ Thu tế làng An Truyền.md`
-  24. `knowledge-base-hue/festivals/festival/23 Hội xuân Gia Lạc.md`
-  25. `knowledge-base-hue/festivals/festival/24 Lễ giỗ Tổ nghề Kim hoàn.md`
-  26. `knowledge-base-hue/festivals/festival/25 Lễ tế Bà Bún Vân Cù.md`
+- Đã hoàn thành 100% việc biên soạn, rà soát và kiểm chứng độc lập với các nguồn tư liệu chính thống cho toàn bộ 26 entity lễ hội cốt lõi:
+  1. `knowledge-base-hue/festivals/festival/Lễ hội Ẩm thực Huế.md`
+  2. `knowledge-base-hue/festivals/festival/Festival Huế.md`
+  3. `knowledge-base-hue/festivals/festival/Festival Nghề truyền thống Huế.md`
+  4. `knowledge-base-hue/festivals/festival/Lễ hội Áo dài Huế.md`
+  5. `knowledge-base-hue/festivals/festival/Lễ hội Điện Huệ Nam.md`
+  6. `knowledge-base-hue/festivals/festival/Lễ hội Cầu ngư.md`
+  7. `knowledge-base-hue/festivals/festival/Lễ tế Nam Giao.md`
+  8. `knowledge-base-hue/festivals/festival/Lễ tế Xã Tắc.md`
+  9. `knowledge-base-hue/festivals/festival/Lễ Ban Sóc triều Nguyễn.md`
+  10. `knowledge-base-hue/festivals/festival/Lễ hội Đền Huyền Trân Công chúa.md`
+  11. `knowledge-base-hue/festivals/festival/Hội vật làng Sình.md`
+  12. `knowledge-base-hue/festivals/festival/Hội vật làng Thủ Lễ.md`
+  13. `knowledge-base-hue/festivals/festival/Lễ hội Đua ghe truyền thống Huế.md`
+  14. `knowledge-base-hue/festivals/festival/Đại lễ Phật đản tại Huế.md`
+  15. `knowledge-base-hue/festivals/festival/Lễ hội Quán Thế Âm tại Huế.md`
+  16. `knowledge-base-hue/festivals/festival/Lễ hội Thanh Trà Huế.md`
+  17. `knowledge-base-hue/festivals/festival/Chợ quê ngày hội – Cầu ngói Thanh Toàn.md`
+  18. `knowledge-base-hue/festivals/festival/Lễ hội Hương xưa làng cổ – Phước Tích.md`
+  19. `knowledge-base-hue/festivals/festival/Lễ hội Sóng nước Tam Giang.md`
+  20. `knowledge-base-hue/festivals/festival/Ngày hội Sen Huế.md`
+  21. `knowledge-base-hue/festivals/festival/Ngày hội Hoàng Mai Huế.md`
+  22. `knowledge-base-hue/festivals/festival/Lễ hội làng Dương Nỗ.md`
+  23. `knowledge-base-hue/festivals/festival/Lễ Thu tế làng An Truyền.md`
+  24. `knowledge-base-hue/festivals/festival/Hội xuân Gia Lạc.md`
+  25. `knowledge-base-hue/festivals/festival/Lễ giỗ Tổ nghề Kim hoàn.md`
+  26. `knowledge-base-hue/festivals/festival/Lễ tế Bà Bún Vân Cù.md`
 - Toàn bộ các file tuân thủ nghiêm ngặt nguyên tắc: chính xác, ranh giới entity rõ ràng, tri thức bền vững (temporal grounding), không suy diễn, không đưa giá vé chi tiết vào entity file, bám sát `knowledge-base-hue/meta/festivals-template.md`.
 - Đã cập nhật bảng `knowledge-base-hue/festivals/hue_festivals_core_25.md` chuẩn xác.
 - Người dùng yêu cầu không commit và push lẻ tẻ trong quá trình làm; gom hoàn thành xong hết toàn bộ 25 lễ hội mới commit và push một lần.
