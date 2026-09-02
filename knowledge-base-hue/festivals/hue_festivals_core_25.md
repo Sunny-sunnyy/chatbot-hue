@@ -21,7 +21,7 @@
 | 9 | **Lễ hội Đền Huyền Trân Công chúa** | Hội đền Huyền Trân | Lịch sử / Tín ngưỡng | Thường niên: Mùng 8 - 9 tháng Giêng ÂL (lễ chính mùng 9) | Trung tâm Văn hóa Huyền Trân (núi Ngũ Phong, An Tây) |
 | 10 | **Hội vật làng Sình** | Hội vật Lại Ân | Dân gian / Thượng võ | Thường niên: Mùng 10 tháng Giêng ÂL | Làng Sình (Lại Ân), xã Phú Mậu, TP. Huế |
 | 11 | **Hội vật làng Thủ Lễ** | Hội vật đình Thủ Lễ | Dân gian / Thượng võ | Thường niên: Mùng 6 tháng Giêng ÂL | Đình cổ làng Thủ Lễ, thị trấn Sịa, huyện Quảng Điền |
-| 12 | **Lễ hội đua ghe truyền thống trên sông Hương** | Hội đua thuyền truyền thống Huế | Dân gian / Thể thao | Thường niên: Dịp Quốc khánh 2/9 (hoặc giải mùa xuân dịp Tết) | Sông Hương (khu vực Nghinh Lương Đình - Phu Văn Lâu) |
+| 12 | **Lễ hội Đua ghe truyền thống Huế** | Giải Đua ghe truyền thống trên sông Hương | Dân gian / Thể thao | Thường niên: Dịp Quốc khánh 2/9 (hoặc giải mùa xuân dịp Tết) | Sông Hương (khu vực Nghinh Lương Đình - Phu Văn Lâu) |
 | 13 | **Đại lễ Phật đản tại Huế** | Tuần lễ Phật đản Huế | Tôn giáo (Phật giáo) | Thường niên: Tuần lễ từ mùng 8 đến rằm tháng 4 ÂL | Tổ đình Từ Đàm, Quốc tự Diệu Đế, sông Hương |
 | 14 | **Lễ hội Quán Thế Âm tại Huế** | Lễ vía Bồ Tát Quán Thế Âm | Tôn giáo (Phật giáo) | Thường niên: Các ngày vía Quan Âm (tiêu biểu 19/6 ÂL) | Trung tâm Du lịch tâm linh Phật giáo Quán Thế Âm (núi Tứ Tượng) |
 | 15 | **Lễ hội Thanh Trà Huế** | Lễ hội Thanh trà Thủy Biều | Sản vật / Nông nghiệp | Định kỳ 2 năm/lần (vào mùa thu hoạch, tháng 8 - 9) | Phường Thủy Biều, TP. Huế |
@@ -32,9 +32,9 @@
 | 20 | **Ngày hội Hoàng Mai Huế** | Lễ hội Mai Vàng xứ Huế | Văn hóa / Sinh vật cảnh | Thường niên từ 2022 vào dịp giáp Tết/đầu xuân | Công viên Thương Bạc, Quảng trường Ngọ Môn |
 | 21 | **Lễ hội làng Dương Nỗ** | Ngày hội làng Dương Nỗ | Lịch sử / Làng xã | Thường niên vào tháng 5 (dịp 18 - 20/5) | Cụm di tích Bác Hồ và đình làng Dương Nỗ (xã Phú Dương) |
 | 22 | **Lễ Thu tế làng An Truyền** | Lễ hội làng Chuồn | Dân gian / Làng xã | Thường niên: Ngày 15 - 17 tháng 7 ÂL | Đình làng An Truyền, đầm Chuồn (xã Phú An, huyện Phú Vang) |
-| 23 | **Hội xuân Gia Lạc** | Chợ phiên Gia Lạc ngày Tết | Dân gian / Chợ Tết cổ | Thường niên: Mùng 1 đến Mùng 3 Tết Nguyên Đán | Xã Phú Thượng, TP. Huế (khu vực chợ Gia Lạc) |
-| 24 | **Lễ giỗ Tổ nghề Kim hoàn** | Lễ giỗ tổ Kim Hoàn Huế | Làng nghề truyền thống | Thường niên: Ngày 27 - 28 tháng 2 ÂL | Lăng Cao Tổ Kim Hoàn (P. Trường An) & Làng Kế Môn |
-| 25 | **Lễ hội Bà Bún / Lễ tế Bà Bún Vân Cù** | Lễ giỗ tổ nghề Bún Vân Cù | Làng nghề truyền thống | Thường niên: Ngày 22 tháng Giêng ÂL | Làng Vân Cù, phường Hương Toàn, thị xã Hương Trà |
+| 23 | **Hội xuân Gia Lạc** | Chợ Tết Gia Lạc, Chợ phiên Gia Lạc ngày Tết, Hội chợ xuân Gia Lạc | Dân gian / Chợ Tết cổ | Thường niên: Mùng 1 đến Mùng 3 Tết Nguyên Đán | Ngã ba Nam Phổ, phường Phú Thượng, TP. Huế |
+| 24 | **Lễ giỗ Tổ nghề Kim hoàn** | Lễ giỗ Tổ sư nghề Kim hoàn Việt Nam tại Huế, Lễ tế Tổ nghề kim hoàn | Làng nghề truyền thống | Thường niên: Ngày mồng 7 tháng 2 ÂL (chính tế) & 27 tháng 2 ÂL | Nhà thờ Tổ (số 7 đường Chùa Ông, P. Phú Xuân) & Lăng mộ Nhị vị Tổ sư (P. Trường An), TP. Huế |
+| 25 | **Lễ tế Bà Bún Vân Cù** | Lễ hội Bà Bún, Lễ tế Tổ nghề bún Vân Cù, Lễ hội làng nghề bún Vân Cù | Làng nghề truyền thống | Thường niên: Ngày 22 tháng Giêng ÂL (chính tế) | Miếu Bà Bún, Đình làng Vân Cù & sông Bồ (xã Hương Toàn, TX. Hương Trà, TP. Huế) |
 
 ---
 
