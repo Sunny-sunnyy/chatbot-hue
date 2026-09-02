@@ -7,7 +7,7 @@
 - **Loại hình:** Lễ hội cung đình (nghi lễ triều chính hoàng gia triều Nguyễn được nghiên cứu phục dựng) / Điển lễ phát lịch đón năm mới
 - **Thời gian tổ chức:**
   - *Thời kỳ triều Nguyễn (1806–1945):* Tổ chức định kỳ vào **ngày mồng 1 tháng Chạp âm lịch** hằng năm (tháng Gia bình, tháng Chạp cuối năm), đánh dấu thời điểm chuẩn bị bước sang năm mới. Ngoại lệ như năm Tự Đức thứ 32 (1879), do Khâm Thiên Giám dự báo có nhật thực vào mồng 1 nên lễ ban lịch năm Canh Thìn (1880) được chuyển sang cử hành vào ngày mồng 2 tháng Chạp.
-  - *Thời kỳ đương đại (phục dựng):* Được Trung tâm Bảo tồn Di tích Cố đô Huế nghiên cứu phục dựng và tái hiện từ năm 2021 dưới hình thức sân khấu hóa tại Ngọ Môn; hiện nay được ấn định tổ chức **thường niên vào ngày đầu năm mới (thường vào ngày 1/1 Dương lịch hoặc đầu tháng Chạp Âm lịch)**, đóng vai trò nghi lễ mở màn chính thức cho chuỗi sự kiện Festival Huế (mở đầu Festival Mùa Xuân).
+  - *Thời kỳ đương đại (phục dựng):* Được Trung tâm Bảo tồn Di tích Cố đô Huế nghiên cứu phục dựng và tái hiện từ năm 2021 dưới hình thức sân khấu hóa tại Ngọ Môn; các kỳ phục dựng gần đây thường tổ chức vào ngày 1/1 Dương lịch (cần kiểm tra thông báo chính thức từng năm), đóng vai trò nghi lễ mở màn cho chuỗi sự kiện Festival Huế.
 - **Nơi tổ chức:**
   - *Thời kỳ triều Nguyễn:* Từ năm 1806 đến trước năm 1840, lễ được tổ chức tại sân điện Thái Hòa; từ tháng 12 năm Minh Mạng thứ 21 (1840) và năm Thiệu Trị thứ nhất (1841), lễ được chuyển ra tổ chức chính thức tại khu vực trước cửa Ngọ Môn (Hoàng đế ngự trên lầu Ngũ Phụng), và được vua Tự Đức chuẩn định làm điển lệ lâu dài từ năm 1849.
   - *Thời kỳ đương đại:* Quảng trường Ngọ Môn (khu vực trước cửa Ngọ Môn và lầu Ngũ Phụng, Đại Nội Huế).
@@ -66,7 +66,7 @@ Lễ Ban Sóc gợi cảm hứng thi ca sâu sắc cho các vị vua thi sĩ nh�
 Sau khi chế độ quân chủ khép lại vào tháng 8/1945, lễ Ban Sóc ngừng hoạt động suốt 75 năm.
 - Đến năm 2021 (năm Tân Sửu, đúng 180 năm sau dấu mốc năm Tân Sửu 1841 khi lễ Ban Sóc lần đầu ban lịch tại Ngọ Môn), Trung tâm Bảo tồn Di tích Cố đô Huế đã chính thức phục dựng và sân khấu hóa thành công lễ Ban Sóc tại Quảng trường Ngọ Môn.
 - Công trình phục dựng do nhà nghiên cứu Nguyễn Phước Hải Trung chỉ huy dàn dựng, dựa trên nền tảng Châu bản triều Nguyễn, Đại Nam thực lục và Khâm định Đại Nam Hội điển sự lệ. Để tăng tính hấp dẫn và khả năng tiếp nhận cho công chúng, chương trình bổ sung nhân vật "người dẫn chuyện" trong trang phục cung tần thời xưa đóng vai trò chứng nhân lịch sử, giải thích tuần tự các nghi thức và tái hiện màn trao tặng bản lịch năm mới, thơ ngự chế son cho du khách.
-- Từ đó đến nay, lễ Ban Sóc được duy trì tổ chức thường niên vào ngày đầu năm mới (ngày 1 tháng 1), trở thành nghi lễ mở màn cho Festival Huế bốn mùa.
+- Từ đó đến nay, trong các kỳ phục dựng gần đây, lễ Ban Sóc thường được tổ chức vào ngày 1/1 Dương lịch (cần kiểm tra thông báo từng năm), đóng vai trò nghi lễ mở màn cho Festival Huế bốn mùa.
 
 ---
 
@@ -120,11 +120,11 @@ Các bản bảo lịch dành cho cơ quan trung ương, đại thần và hoàn
 ## Thời gian và chu kỳ tổ chức
 
 ### Chu kỳ âm lịch truyền thống
-- Trong suốt giai đoạn 1806–1945, lễ Ban Sóc luôn diễn ra đúng vào **ngày mồng 1 tháng Chạp âm lịch** hằng năm.
-- Buổi lễ thường được cử hành vào lúc sáng sớm (khoảng giờ Mão, từ 5 giờ đến 7 giờ sáng), khi ánh bình minh bắt đầu chiếu rọi lên lầu Ngũ Phụng.
+- Theo điển lệ triều Nguyễn, lễ Ban Sóc định kỳ cử hành vào **ngày mồng 1 tháng Chạp âm lịch** hằng năm; tuy nhiên có thể có ngoại lệ do thiên tượng đặc biệt (như năm 1879 dời sang mồng 2 do dự báo nhật thực) hoặc bối cảnh lịch sử.
+- Buổi lễ theo điển lệ thường được cử hành vào lúc sáng sớm, khi ánh bình minh chiếu rọi lên lầu Ngũ Phụng.
 
 ### Chu kỳ tổ chức phục dựng đương đại
-- Trong đời sống đương đại, lễ Ban Sóc được tái hiện định kỳ **mỗi năm một lần vào ngày 1 tháng 1 Dương lịch** (Tết Dương lịch) tại Quảng trường Ngọ Môn.
+- Trong đời sống đương đại, các kỳ phục dựng gần đây thường tổ chức vào ngày 1/1 Dương lịch tại Quảng trường Ngọ Môn (du khách cần kiểm tra thông báo chính thức từng năm).
 - Đây là sự kiện mở màn cho Festival Huế Bốn Mùa (khởi động chương trình Festival Mùa Xuân với chủ đề "Xuân Cố đô").
 
 ---
@@ -171,39 +171,35 @@ Theo ghi chép trong *Đại Nam thực lục*, *Khâm định Đại Nam Hội 
 
 ### 2. Kịch bản phục dựng sân khấu hóa đương đại tại Ngọ Môn
 
-Trong các kỳ tái hiện gần đây của Trung tâm Bảo tồn Di tích Cố đô Huế, buổi lễ được sân khấu hóa trang trọng với thời lượng khoảng 45–60 phút theo các hồi mạch lạc:
+Trong các kỳ phục dựng gần đây do Trung tâm Bảo tồn Di tích Cố đô Huế thực hiện, buổi lễ thường được dàn dựng sân khấu hóa theo các phân đoạn tiêu biểu:
 
-1. **Khai lễ:** Tiếng kèn đại từ trên lầu Ngọ Môn đối xứng thổi 3 hồi; tiếp nối là 3 hồi chiêng và 9 hồi trống đại gióng giả vang dội. Quan Bộ Lễ xướng lệnh "Ban Sóc Lễ cử tiến", dẫn đội hình hơn một trăm diễn viên trong trang phục lính thị vệ, đội cờ phan, đội cầm búa, đội nhã nhạc tiểu nhạc, thân công hoàng tử và các quan văn võ tiến ra sân Ngọ Môn an vị theo ban bệ.
-2. **Hỏa lệnh thần công:** Hiệu cờ phất lệnh, lính pháo thủ châm ngòi bắn các phát súng thần công chào mừng, tạo âm hưởng hào hùng chấn động không gian Hoàng thành.
-3. **Cử lễ dâng lịch và ngũ bái:** Đội ngũ Khâm Thiên Giám nghiêm trang rước 2 hòm Ngự lịch đặt vào Long đình và 2 tráp lịch đặt lên bàn vàng. Bách quan đồng loạt quỳ lạy 5 lạy theo lời xướng "Bách quan giai quỳ... Bái... Hưng... Bình thân".
-4. **Tiến lịch vào Cung:** Đội tiểu nhạc tấu khúc nhạc cổ *Đăng đàn cung*, đoàn rước Long đình mang ngự lịch cùng lọng vàng che chắn trang nghiêm tiến qua cửa chính Ngọ Môn, đi qua cầu Trung Đạo tiến sâu vào Đại Nội.
-5. **Tuyên đọc Dụ ban lịch:** Quan Bộ Lễ trên lầu Ngọ Môn dõng dạc tuyên đọc bản Dụ viết theo thể văn biền ngẫu, nhắc lại truyền thống trọng nông, ý nghĩa của việc xem lịch số làm mùa vụ và công bố ban phát lịch Hiệp Kỷ cho bách tính muôn nơi.
-6. **Nghi thức trao lịch và tặng thơ son:**
-   - Đại diện các Thân công, Hoàng tử và quan lại tiến lên bàn vàng nhận lĩnh lịch trong tiếng nhã nhạc, hô vang lời chúc vạn tuế tạ ơn thiên tử.
-   - Các vị quan viên nhận bản thơ ngự chế đầu xuân in mực son đỏ thắm (viết chữ thư pháp).
-7. **Phát lịch may mắn đầu năm cho du khách:** Kết thúc buổi lễ, các quan viên và diễn viên mang những cuốn lịch mới tinh cùng các bản thư pháp chữ son rời khỏi ban bệ, trực tiếp trao tặng tận tay người dân và du khách tham dự dưới chân Ngọ Môn như một món quà may mắn đầu năm mới.
+1. **Khai lễ:** Tiếng kèn đại từ trên lầu Ngọ Môn vang lên cùng các hồi chiêng trống đại. Đội hình diễn viên trong trang phục lính thị vệ, đội cờ phan, đội nhã nhạc, hoàng thân và các quan văn võ tiến ra khu vực sân Ngọ Môn an vị theo ban bệ.
+2. **Hỏa lệnh thần công:** Trong một số kỳ phục dựng, hiệu lệnh phất cờ đi kèm màn bắn pháo thần công chào mừng.
+3. **Cử lễ dâng lịch và bái lễ:** Đội ngũ diễn viên đóng vai Khâm Thiên Giám rước hòm Ngự lịch đặt vào Long đình và tráp lịch đặt lên bàn án; các quan viên thực hiện động tác bái lễ theo hiệu lệnh xướng truyền.
+4. **Tiến lịch vào Cung:** Đội tiểu nhạc tấu khúc nhạc cổ, đoàn rước Long đình mang ngự lịch cùng lọng che tiến qua cửa chính Ngọ Môn vào phía trong Đại Nội.
+5. **Tuyên đọc Dụ ban lịch:** Diễn viên trong vai quan Bộ Lễ trên lầu Ngọ Môn tuyên đọc bản Dụ nhắc lại ý nghĩa lịch số nông vụ và công bố ban phát lịch Hiệp Kỷ.
+6. **Nghi thức trao lịch:** Đại diện hoàng thân và quan chức nhận lĩnh lịch trong tiếng nhạc cung đình.
+7. **Tặng lịch may mắn đầu năm:** Ở phần kết của một số kỳ phục dựng, ban tổ chức có hoạt động trao tặng tượng trưng các bản lịch năm mới hoặc bản thư pháp cho đại biểu và khán giả tham dự.
 
 ---
 
 ## Những nét đặc trưng
 
-- **Tính chất cung đình hướng về đại chúng:** Khác với phần lớn các nghi lễ hoàng gia diễn ra khép kín sau bức tường Tử Cấm Thành hay trong nội điện uy nghiêm, lễ Ban Sóc là điển lễ cung đình hiếm hoi được đưa ra mặt tiền kinh thành (trước cửa Ngọ Môn) với mục đích phụng sự trực tiếp nhu cầu thiết thân của đại chúng nhân dân.
-- **Sự kết hợp giữa khoa học lịch pháp và nghệ thuật cung đình:** Buổi lễ phản ánh trình độ quan sát thiên văn đỉnh cao của cơ quan Khâm Thiên Giám thời Nguyễn kết hợp nhuần nhuyễn với nghệ thuật diễn xướng, nghi trượng, trang phục phẩm hàm, bài trí mộc bản in ấn và hệ thống nhã nhạc cung đình (các bản nhạc *Nguyên bình*, *Hàm bình*, *Đăng đàn cung*).
-- **Hệ thống hiện vật gắn liền đặc sắc:** Gắn liền với lễ Ban Sóc là hệ thống di sản vật thể độc đáo như Mộc bản triều Nguyễn (Di sản tư liệu thế giới UNESCO ghi danh năm 2009), các bản ngọc tỷ hoàng đế (*Trị lịch minh thời chi bảo*), hòm lịch vẽ rồng sơn thếp, khăn trùm vàng tết cánh bạc và kiến trúc lầu Ngũ Phụng - Ngọ Môn.
-- **Thông điệp nhân văn đầu xuân:** Lễ Ban Sóc tái hiện không khí chuyển giao giữa năm cũ và năm mới, mang đậm lời chúc thái bình, mưa thuận gió hòa, mùa màng tươi tốt và thịnh vượng cho toàn thể cộng đồng.
+- **Tính chất cung đình hướng về đại chúng:** Khác với phần lớn các nghi lễ hoàng gia diễn ra khép kín trong nội điện, lễ Ban Sóc là điển lễ cung đình được đưa ra không gian trước cửa Ngọ Môn với mục đích ban bố thời gian và lịch pháp phục vụ đời sống nhân dân.
+- **Sự kết hợp giữa khoa học lịch pháp và nghệ thuật cung đình:** Buổi lễ phản ánh thành tựu quan sát thiên văn của cơ quan Khâm Thiên Giám thời Nguyễn kết hợp với nghệ thuật diễn xướng, nghi trượng, trang phục phẩm hàm và hệ thống nhã nhạc cung đình.
+- **Hệ thống hiện vật gắn liền đặc sắc:** Gắn liền với lễ Ban Sóc là hệ thống di sản vật thể độc đáo như Mộc bản triều Nguyễn (Di sản tư liệu thế giới UNESCO ghi danh năm 2009), các bản ngọc tỷ hoàng đế (*Trị lịch minh thời chi bảo*), hòm lịch vẽ rồng sơn thếp và kiến trúc Ngọ Môn - lầu Ngũ Phụng.
+- **Thông điệp nhân văn đầu xuân:** Tái hiện không khí chuyển giao giữa năm cũ và năm mới, mang lời chúc thái bình, mùa màng tươi tốt và thịnh vượng cho cộng đồng.
 
 ---
 
 ## Thông tin dành cho du khách
 
 ### Thời điểm tham quan
-- Lễ Ban Sóc thường được tổ chức vào **buổi sáng ngày 1 tháng 1 Dương lịch (Tết Dương lịch)** hằng năm. Du khách nên có mặt tại Quảng trường Ngọ Môn từ khoảng 7h30 đến 8h00 sáng để chọn vị trí quan sát thuận lợi trước khi lễ chính thức diễn ra.
+- Các kỳ phục dựng gần đây thường tổ chức vào **ngày 1 tháng 1 Dương lịch** tại Quảng trường Ngọ Môn; du khách nên kiểm tra thông báo chính thức từng năm từ Trung tâm Bảo tồn Di tích Cố đô Huế để nắm rõ khung giờ và lịch trình cụ thể.
 
-### Không gian và vé tham quan
-- Buổi lễ tái hiện được tổ chức tại **Quảng trường Ngọ Môn (khu vực ngoài trời)** nên người dân và du khách được **tham dự hoàn toàn miễn phí**, tự do chụp ảnh và chiêm ngưỡng toàn bộ nghi thức đại triều mà không cần mua vé.
-- Nếu sau khi xem lễ, du khách có nhu cầu bước qua cửa Ngọ Môn để vào tham quan bên trong Hoàng cung (Đại Nội Huế), cần tuân thủ quy định mua vé tham quan di tích theo biểu mức hiện hành của Trung tâm Bảo tồn Di tích Cố đô Huế.
+### Không gian và quy định tham quan
+- Buổi lễ tái hiện thường diễn ra tại không gian mở ở Quảng trường Ngọ Môn. Du khách đứng xem cần tuân thủ phân luồng an ninh của ban tổ chức.
+- Trường hợp du khách có nhu cầu bước qua cửa Ngọ Môn để vào tham quan bên trong Đại Nội Huế, cần mua vé tham quan di tích theo quy định hiện hành của Trung tâm Bảo tồn Di tích Cố đô Huế.
 
-### Văn hóa ứng xử và trải nghiệm
-- Du khách nên mặc trang phục lịch sự, kín đáo, phù hợp với không gian tôn nghiêm của khu di sản hoàng gia.
-- Giữ trật tự trong lúc các hồi chuông trống, phát lệnh súng thần công và lời tuyên đọc dụ chỉ vang lên.
-- Du khách đứng ở hàng đầu có cơ hội được các diễn viên trong vai quan lại triều Nguyễn trao tặng những cuốn lịch năm mới và tấm thư pháp chữ son may mắn đầu năm.
+### Văn hóa ứng xử
+- Du khách nên mặc trang phục lịch sự, giữ trật tự và không cản trở khu vực di chuyển của đoàn diễn xướng cung đình trong suốt thời gian diễn ra nghi lễ.
