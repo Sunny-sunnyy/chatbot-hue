@@ -1,4 +1,8 @@
-# Food Guides Huế
+# Cẩm nang ẩm thực Huế
+
+## Huế nổi tiếng với những món ăn nào?
+
+Huế nổi tiếng với **bún bò Huế, cơm hến, cơm âm phủ, bánh bèo, bánh nậm, bánh bột lọc, bánh canh Nam Phổ, bánh ép, chè Huế, mè xửng và cà phê muối**. Đây là những món ăn, thức uống tiêu biểu thường được nhắc đến khi du khách hỏi “đến Huế nên ăn gì?”.
 
 ## Lần đầu đến Huế nên thử gì?
 
@@ -10,6 +14,10 @@
 - Bánh ép, bánh tráng ép nướng giòn với nhiều loại nhân, chấm nước chấm chua cay. Có thể tham khảo Bánh ép Huệ (116 Lê Ngô Cát).
 - Chè Huế với nhiều loại chè truyền thống, trong đó có chè heo quay. Có thể tham khảo Chè Mợ Tôn Đích (3/3 Đinh Tiên Hoàng) hoặc Chè Hẻm Huế (1 kiệt 29 Hùng Vương).
 - Mè xửng, món ngọt truyền thống thường được chọn làm quà khi đến Huế. Có thể tham khảo Mè xửng Nam Thuận (201 Huỳnh Thúc Kháng).
+
+## Đặc trưng hương vị và lưu ý khi thưởng thức
+
+Ẩm thực Huế thường đậm vị mắm ruốc, nước mắm, sả hoặc ớt, nhưng không phải món nào cũng cay; người ăn nhạt nên xin để riêng ớt, sa tế và nước chấm. Bánh Huế và món ăn vặt thường có phần nhỏ, có thể gọi thêm sau. Một số quán chỉ bán theo buổi hoặc nghỉ khi hết món; quán trong kiệt tiện hơn nếu đi bộ hoặc xe máy. Người dị ứng tôm, cua, đậu phộng, mè hay thịt heo cần hỏi kỹ thành phần trước khi gọi.
 
 ## Gợi ý ăn sáng
 
@@ -28,7 +36,6 @@
 - Bánh canh Nam Phổ: Thúy - Bánh canh Nam Phổ (16 Phạm Hồng Thái, từ khoảng 11:15, thường hết sớm trước 17:00).
 - Bánh cuốn thịt heo: Bánh cuốn thịt heo DONALD TRUNG (28 Hoàng Văn Thụ hoặc Tầng 4 AEON MALL Huế, 8 Võ Nguyên Giáp).
 - Cơm niêu: Nhà hàng cơm niêu Vỹ Dạ Xưa (131 Nguyễn Sinh Cung) hoặc Nhà hàng cơm niêu Chạn (01 Nguyễn Thái Học).
-- Bún thịt nướng và nem lụi: Bún thịt nướng và nem lụi Bà Tý (81 Đào Duy Từ hoặc 10 Lê Minh).
 
 ## Gợi ý ăn chiều và ăn vặt
 
@@ -79,6 +86,10 @@
 - Mè xửng làm quà: Mè xửng Nam Thuận (201 Huỳnh Thúc Kháng), Mè xửng Thiên Hương (20 Chi Lăng) hoặc Mè xửng Thuận Hưng (147 Chi Lăng).
 - Bánh ngọt và bánh Huế: Nhà hàng bánh Bà Đỏ (8 Nguyễn Bỉnh Khiêm, 8:00 – 21:00).
 
+## Đặc sản Huế mua về làm quà
+
+Mè xửng dễ bảo quản; có thể tham khảo Nam Thuận (201 Huỳnh Thúc Kháng), Thiên Hương (20 Chi Lăng) hoặc Thuận Hưng (147 Chi Lăng). Bánh ép khô cũng phù hợp mang xa. Bánh lọc hoặc bánh nậm đóng gói tại Bà Vân (106B Lương Ngọc Quyến) cần hỏi cách giữ lạnh và thời gian dùng. Với mọi sản phẩm, nên kiểm tra cơ sở sản xuất, thành phần, ngày đóng gói, hạn dùng và điều kiện bảo quản.
+
 ## Theo ngân sách
 
 Mức chi tiêu tham khảo: các món địa phương như cơm hến, bún bò Huế, bánh lọc khoảng 20.000 – 40.000 VNĐ/phần; chi phí ăn uống trung bình khoảng 150.000 – 300.000 VNĐ/người/ngày, thêm cà phê và ăn vặt khoảng 100.000 VNĐ/ngày. Mức tham khảo theo Cẩm nang AEON MALL Huế cập nhật 2026.
@@ -109,12 +120,6 @@ Mức chi tiêu tham khảo: các món địa phương như cơm hến, bún bò
 
 ## Gợi ý theo nhóm người dùng
 
-### Lần đầu đến Huế
-
-- Bắt đầu với bún bò Huế, cơm hến và bánh canh Nam Phổ; tham khảo gợi ý trong mục "Lần đầu đến Huế nên thử gì?".
-- Dành thời gian cho bánh Huế (Quán Bánh Chi, 52-54 Lê Viết Lượng) và chè Huế (Chè Mợ Tôn Đích, 3/3 Đinh Tiên Hoàng).
-- Mua mè xửng làm quà tại Mè xửng Nam Thuận (201 Huỳnh Thúc Kháng).
-
 ### Đi gia đình
 
 - Cơm niêu phù hợp bữa chính: Nhà hàng cơm niêu Vỹ Dạ Xưa (131 Nguyễn Sinh Cung) hoặc Nhà hàng cơm niêu Chạn (01 Nguyễn Thái Học).
@@ -134,13 +139,6 @@ Mức chi tiêu tham khảo: các món địa phương như cơm hến, bún bò
 - Bữa chay bình dân: Quán chay Thanh Liễu (50 Nguyễn Công Trứ) hoặc Ẩm thực chay Tịnh Tâm Đinh Vũ (168 Trịnh Công Sơn).
 - Bữa chay nhà hàng: Nhà hàng chay Hoa Viên (4A Võ Thị Sáu), Nhà hàng chay Sala (04 Phan Bội Châu) hoặc Nhà hàng cơm chay Bồ Đề (11 Lê Lợi).
 - Trải nghiệm chay không gian vườn: An Nhien Garden Vegetarian (Kiệt 11, đường Nguyễn Đình Tứ).
-
-### Thích ăn vặt hoặc món ngọt
-
-- Bánh ép và bánh lọc: Bánh ép Huệ (116 Lê Ngô Cát), Bánh Lọc Huế Bà Vân (106B Lương Ngọc Quyến).
-- Chè: Chè Hẻm Huế (1 kiệt 29 Hùng Vương) hoặc Chè Mợ Tôn Đích (3/3 Đinh Tiên Hoàng).
-- Bánh ngọt và bánh Huế: Nhà hàng bánh Bà Đỏ (8 Nguyễn Bỉnh Khiêm).
-- Mè xửng mang về: Mè xửng Nam Thuận (201 Huỳnh Thúc Kháng) hoặc Mè xửng Thiên Hương (20 Chi Lăng).
 
 ## Food tour nửa ngày
 
