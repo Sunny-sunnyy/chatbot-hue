@@ -176,6 +176,19 @@ context/generation và evaluation — các phần đã làm từ Phase 2 đến 
 nhưng áp dụng cho toàn corpus. Đây là định hướng user xác nhận, chưa phải quyền
 chạy benchmark, thay Golden, mutate index hay triển khai runtime.
 
+Domain `heritages` đã hoàn tất biên soạn trọn vẹn 28 thực thể di sản chuẩn hóa
+trong `knowledge-base-hue/heritages/heritage/` và cẩm nang tổng hợp
+`knowledge-base-hue/heritages/heritage-guides.md`. Cấu trúc thư mục được chuẩn hóa
+theo mô hình `heritages/heritage` và đã được người dùng nghiệm thu ngày 2026-09-05.
+
+Trong domain `performing_arts`, user đã xác nhận inventory gồm 11 chương trình
+hoặc sự kiện nổi bật và thiết kế template biên soạn ngày 2026-09-05. Các entity
+sẽ được đặt trực tiếp trong `knowledge-base-hue/performing_arts/`; các thư mục
+con rỗng trước đó đã được xóa theo chỉ đạo của user. Chưa bắt đầu biên soạn 11
+file entity. Implementer phải đọc URL do user cung cấp, đối chiếu bằng web
+search độc lập, kiểm tra địa giới hành chính tại tháng 09/2026 và thực hiện
+self-verification sau khi hoàn thành từng file.
+
 **Governance:** user đã duyệt phương án và cho phép Reviewer chỉnh trực tiếp
 các tài liệu hiện có, không cần spec/plan riêng cho exact task 2026-09-05.
 Đã hoàn tất tự kiểm tra docs-only, `ready_for_user_confirmation`; chưa được
@@ -185,9 +198,11 @@ Chi tiết tiến độ dữ liệu nằm trong inventory/evidence/report, khôn
 entity ở đây. Các claim Implementer báo hoàn tất và QA chưa được Reviewer xác
 minh lại trong governance session. Pointers giữ công việc đang dở:
 
-- `knowledge-base-hue/heritage/heritage-entities-inventory.md`;
+- `knowledge-base-hue/meta/heritage-entities-inventory.md`;
 - `knowledge-base-hue/meta/heritage-research-evidence.md`;
 - `knowledge-base-hue/meta/heritage-template.md`;
+- `knowledge-base-hue/performing_arts/performing-arts-entities-inventory.md`;
+- `knowledge-base-hue/meta/performing-arts-template.md`;
 - `reports/heritage_batch_01_implementation_correction_report_2026_09_04.md`;
 - `reports/heritage_batch_01_codex_rereview_response_report_2026_09_04.md`;
 - `reports/governance_pre_edit_coordination_snapshot_2026_09_05.md` — bản lưu
