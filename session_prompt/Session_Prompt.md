@@ -13,7 +13,33 @@ ràng. Comment/docstring cần thiết viết bằng tiếng Việt, trừ khi e
 quy định khác.
 
 `Project_Status.md` là project map và current snapshot, không phải timeline.
-`CURRENT_HANDOFF.md` mô tả đúng một task đang active.
+`CURRENT_HANDOFF.md` mô tả một task hiện hành; khi đã đóng mà chưa có task mới,
+ghi completed và chờ user theo lifecycle trong coordination skill.
+
+## Phối hợp qua session
+
+User cung cấp nhu cầu/tài liệu và cùng Reviewer tập trung một khía cạnh. Reviewer
+tự tổng hợp quyết định, soạn spec để user duyệt, rồi soạn plan và Review Contract
+để user duyệt riêng. User quyết định scope, acceptance và quyền; không phải
+quyết định từng chi tiết code. Các điểm duyệt không tự mất đi vì task nhỏ;
+ngoại lệ phải là yêu cầu trực tiếp của user cho exact task.
+
+Sau khi plan được duyệt, Reviewer cập nhật `CURRENT_HANDOFF.md` cho Implementer.
+Implementer hoàn tất scope, tự review, lập report và chuyển handoff về Reviewer.
+Correction trong requirement/acceptance/quyền đã duyệt không cần user duyệt
+riêng. User chuyển tiếp giữa các session; không có agent tự khởi chạy hay gửi
+thông điệp cho vai trò khác nếu chưa được cấp quyền.
+
+Mỗi lần bàn giao, vai trò gửi tự chuẩn bị prompt ngắn: tên role, bốn bootstrap
+files bên dưới và yêu cầu đọc các tài liệu canonical mà handoff dẫn tới trước
+khi làm việc. Prompt không chép requirement thành một bản độc lập. User không
+cần tự tổng hợp report hoặc yêu cầu tạo prompt thêm lần nữa.
+
+Reviewer trình user khi có trade-off chưa chốt, bất đồng chưa giải quyết, cần
+đổi requirement/acceptance/kiến trúc/quyền hoặc blocker thực sự. Khi đạt kỹ thuật,
+user xác nhận cuối từ tóm tắt kết quả, evidence và giới hạn; không bắt buộc tự
+chạy lại kỹ thuật. Kiểm tra trải nghiệm của user chỉ bắt buộc khi acceptance đã
+duyệt yêu cầu. Approval và Git authorization vẫn là hai việc riêng.
 
 ## Source of truth
 
@@ -45,6 +71,16 @@ workflow yêu cầu. Không reload skill đã active trong cùng top-level task.
 Top-level task là một objective hoặc một handoff series, không phải từng tool
 call, plan step hay correction nhỏ. Route lại khi role, objective hoặc yêu cầu
 mới làm thay đổi workflow đã chọn.
+
+Yêu cầu trực tiếp mới của user xác định role/objective hiện tại. Handoff cũ khác
+nhiệm vụ không chặn đọc hoặc brainstorming theo yêu cầu mới và không cấp quyền
+tiếp tục task cũ. Bảo toàn tiến độ cũ bằng pointers trước khi thay handoff trong
+scope được phép. Nếu đang thực hiện chính handoff đó mà target/scope không khớp,
+dừng phần phụ thuộc và báo user.
+
+Khi user nói "brainstorming" hoặc "brainstorming thôi", đọc và áp dụng
+`session_prompt/brainstorming.md` nếu chưa đọc trong task này. User không cần
+copy nội dung file. "Brainstorming thôi" chưa cấp quyền chỉnh file.
 
 Reviewer Codex dùng cơ chế native để load Superpowers skills. Khi Implementer
 Gemini cần tìm hoặc load Superpowers skill phù hợp, tìm tại:
@@ -112,7 +148,8 @@ context budget không phải correctness gate.
 ## Stable project and data boundaries
 
 Hue RAG xây RAG chatbot về văn hóa/du lịch Huế và Hue Foods RAG MVP. Current
-runtime, data, phase status và next action nằm trong `Project_Status.md`.
+runtime, data và phase status nằm trong `Project_Status.md`; next action duy nhất
+nằm trong `CURRENT_HANDOFF.md`.
 
 Data flow chuẩn:
 
@@ -144,11 +181,16 @@ raw -> curated Markdown -> chunks -> embeddings/index
 
 Kỹ thuật nâng cao chỉ được thêm khi:
 
-1. có vấn đề thật đã quan sát được;
+1. có vấn đề thật đã quan sát được hoặc contract/requirement đã rõ cần bảo vệ;
 2. giải pháp trực tiếp không đáp ứng;
 3. lợi ích cụ thể và giải thích được;
-4. real-system evidence chứng minh lợi ích; và
+4. evidence phù hợp chứng minh lợi ích; integration phải từ hệ thống thật; và
 5. độ phức tạp tăng thêm tương xứng.
+
+Không cần đợi sự cố xảy ra mới bảo vệ contract đã rõ. Contract cũng không tự
+biện minh mọi cơ chế: vẫn phải chứng minh cách trực tiếp không đủ. Tiêu chí
+data flow, responsibility, naming và abstraction nằm trong coding skill;
+không dùng line count hoặc số caller làm lệnh cấm class/helper.
 
 ## Test vừa đủ
 
@@ -248,7 +290,8 @@ Các mechanism sau phải được loại bỏ khi chúng không bảo vệ nhu 
 - test kỹ thuật chỉ phục vụ các mechanism trên.
 
 Đây không phải blacklist cấm vĩnh viễn. Một mechanism chỉ hợp lý khi có observed
-need, giải pháp trực tiếp không đủ và evidence chứng minh lợi ích tương xứng.
+need hoặc contract thật, giải pháp trực tiếp không đủ và evidence chứng minh
+lợi ích tương xứng.
 Nếu approved scope đã yêu cầu loại bỏ, không đổi tên hoặc chuyển nơi để giữ lại.
 
 ## Python runtime
@@ -304,8 +347,11 @@ Phong cách tham khảo:
 
 ## Project state, worktree and Git authorization
 
-`Project_Status.md` chỉ giữ current facts và next action. `CURRENT_HANDOFF.md`
-giữ exact task/risk/authority. File này không chứa phase timeline.
+`Project_Status.md` giữ tổng quan, baseline, workstream status và canonical map;
+không giữ next action độc lập hay chi tiết từng entity. `CURRENT_HANDOFF.md`
+giữ một exact task/risk/authority/next action, dẫn tới report thay vì chép report.
+Phân biệt Implementer báo hoàn tất, Reviewer đã xác minh và user đã approved.
+File này không chứa phase timeline.
 
 - Chạy `git status --short` trước mutation và giữ nguyên thay đổi không liên
   quan.

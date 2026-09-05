@@ -3,11 +3,12 @@
 ```text
 Trạng thái: Đang chờ bạn xác nhận
 Cập nhật lúc: DD-MM-YYYY HH:MM +07
-Notebook cần kiểm tra: notebooks/0<số>_<tên>.ipynb
+Notebook tham khảo (nếu thuộc scope): notebooks/0<số>_<tên>.ipynb
 ```
 
 Báo cáo phải đơn giản, rõ ràng, dễ đọc và dễ hiểu. Chỉ dùng kết quả Codex đã
-chạy thật. Không chép technical report, mã trạng thái nội bộ, chi tiết audit,
+kiểm chứng; phân biệt fresh execution với reused evidence đủ điều kiện. Không
+chép technical report, mã trạng thái nội bộ, chi tiết audit,
 mã băm, cost accounting hoặc nội dung gỡ lỗi không giúp user quyết định.
 
 ## 1. Bạn nhận được gì
@@ -25,7 +26,8 @@ liệt kê toàn bộ kiến trúc hoặc module.
 
 ## 3. Codex đã chạy và quan sát gì
 
-Chỉ ghi fresh observed results. Mỗi số liệu phải có ý nghĩa đi kèm.
+Ghi đúng fresh observed results và evidence reuse đủ điều kiện, dẫn nguồn và
+lý do reuse; không gọi reused evidence là lần chạy mới. Mỗi số liệu có ý nghĩa đi kèm.
 
 Nếu có từ ba kiểm tra trở lên, dùng bảng:
 
@@ -34,11 +36,13 @@ Nếu có từ ba kiểm tra trở lên, dùng bảng:
 | <real check> | Đạt / Không đạt / Chưa chạy | <user hiểu được gì> |
 
 Nói rõ failed, skipped hoặc partial outcome. Không dùng expected result,
-mock/fake hoặc output cũ như bằng chứng.
+mock/fake hoặc output cũ làm fresh evidence. Docs-only ghi kiểm tra tài liệu.
 
-## 4. Cách bạn chạy lại
+## 4. Cách bạn kiểm tra thêm nếu cần
 
-Notebook là cách kiểm tra chính. Ghi:
+User xác nhận từ tóm tắt kết quả, evidence và giới hạn; không bắt buộc chạy lại
+kỹ thuật. Nếu acceptance đã duyệt yêu cầu đánh giá trải nghiệm, chỉ rõ phần user
+cần kiểm tra. Khi notebook thuộc scope và hữu ích cho việc chạy lại, ghi:
 
 - đường dẫn notebook;
 - prerequisite cần thiết;
@@ -62,10 +66,11 @@ Nêu:
 Khi chờ xác nhận, kết thúc bằng:
 
 ```text
-Sau khi chạy notebook, bạn có thể phản hồi:
+Sau khi đọc kết quả và thực hiện phần kiểm tra user được acceptance yêu cầu (nếu có), bạn có thể phản hồi:
 - Tôi xác nhận Giai đoạn <số>.
 - Tôi muốn sửa: <nội dung cần sửa>.
 ```
 
-Khi user xác nhận, Reviewer đổi trạng thái thành `Đã được bạn xác nhận`, cập
-nhật guide và `Project_Status.md`. Commit/push vẫn cần yêu cầu riêng.
+Khi user xác nhận, Reviewer cập nhật trạng thái trong tài liệu mình sở hữu theo
+Approval Closure Contract, hoặc giao Implementer exact mechanical edits được
+contract cho phép. Commit/push vẫn cần exact Git authorization riêng.

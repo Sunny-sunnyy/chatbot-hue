@@ -44,14 +44,16 @@ state và fresh execution phù hợp. Code hiện tại hoặc một run cũ kh�
 requirement đã duyệt; chúng là evidence để đối chiếu implementation với
 requirement.
 
-Nếu instruction và hành vi thật mâu thuẫn theo cách làm thay đổi behavior,
-scope, data contract, kiến trúc hoặc verification, nêu rõ mâu thuẫn và xin
-quyết định thay vì tự chọn.
+Nếu giải quyết mâu thuẫn cần đổi requirement/acceptance đã duyệt, scope, data
+contract, kiến trúc hoặc quyền, nêu rõ và xin quyết định thay vì tự chọn. Behavior
+chưa đạt requirement rõ ràng là issue để sửa trong approved scope; không cần
+xin đổi requirement hay xin duyệt lại từng focused fix.
 
 ## Ngôn ngữ
 
 - Tên biến, hàm, class, type, API và schema dùng English rõ ràng.
-- Comment và docstring cần thiết ưu tiên viết bằng tiếng Việt, trừ khi project
+- Thêm comment/docstring bằng tiếng Việt khi mục đích, bước xử lý hoặc constraint
+  chưa rõ từ code; dùng ngôn ngữ khác chỉ khi project
   governance quy định rõ ngôn ngữ khác.
 - Chỉ comment về mục đích, lý do, constraint, assumption hoặc trade-off mà code
   không tự thể hiện; không chú thích lại câu lệnh hiển nhiên.
@@ -93,6 +95,9 @@ cache, concurrency hoặc generic framework nếu chúng không giải quyết m
   phân tán logic vốn cần đọc cùng nhau.
 - Ưu tiên function; dùng class khi state, lifecycle hoặc interface thật sự cần.
 - File dài không tự động là lỗi. Khó hiểu và trộn responsibility mới là lỗi.
+- Naming phải cho biết vai trò của dữ liệu và thao tác, nhất quán với domain.
+  Người đọc lần theo được nơi biến đổi dữ liệu, gọi dependency và tạo side effect;
+  không phải đoán từ tên chung chung hoặc nhảy qua layer không có trách nhiệm rõ.
 
 ### Chỉ thêm abstraction khi có bằng chứng
 
@@ -109,6 +114,11 @@ Trước khi thêm kỹ thuật phức tạp, phải giải thích được:
 - vì sao complexity tăng thêm là tương xứng.
 
 Không trả lời được thì giữ giải pháp trực tiếp.
+
+Requirement/contract đã rõ là nhu cầu thật, không cần đợi lỗi production xảy ra.
+Evidence phải tương xứng claim: đọc code/deterministic check cho pure logic,
+real-system run cho lợi ích integration. Không dùng số dòng, số caller hoặc
+lệnh cấm class/helper máy móc để thay việc đánh giá tác động.
 
 ### Giữ thay đổi surgical
 
@@ -145,8 +155,8 @@ thể do skill chuyên biệt quyết định.
   hợp lệ để kiểm tra output, invariant hoặc error contract.
 - Input nhỏ như vậy không phải evidence cho database, provider, model, network
   hoặc production integration.
-- Không dùng mock, fake, stub dependency, replay, response cũ hoặc artifact cũ
-  để tuyên bố integration hoặc completion PASS.
+- Không dùng mock, fake hoặc stub dependency trong implementation hay test.
+- Không dùng replay, response cũ hoặc artifact cũ làm fresh PASS evidence.
 - Khi behavior phụ thuộc integration, phải chạy dependency và production path
   thật trong exact target an toàn được phép.
 
@@ -157,7 +167,10 @@ thể do skill chuyên biệt quyết định.
 - Shared contract hoặc blast radius rộng: affected checks trước; full suite chỉ
   khi phạm vi thực sự biện minh.
 - Test pass không thay live run khi behavior cần integration.
-- Chỉ fresh execution của task hiện tại được ghi là observed PASS.
+- Chỉ fresh execution trên phần thay đổi được ghi là fresh observed PASS.
+- Evidence đã pass trong cùng implementation/correction series chỉ được reuse
+  khi inputs, dependencies, environment và data flow không đổi; ghi nguồn, phần
+  được reuse và lý do theo coordination contract. Không gọi đó là run mới.
 
 Nếu môi trường hoặc quyền không cho phép chạy, ghi đúng `not verified`,
 `partial`, `failed` hoặc `blocked`; không thay bằng evidence giả.

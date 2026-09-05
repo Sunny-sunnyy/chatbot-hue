@@ -31,8 +31,8 @@ skills/practical-project-coding/SKILL.md
 
 `risk-gated-agent-review` điều phối scope, handoff, evidence, correction và
 closure. `practical-project-coding` áp dụng cho code, tests, notebook,
-dependency, debug và refactor. Trong repository hiện tại chỉ có hai
-project-local skills nêu trên. Các Superpowers skill khác chỉ load khi exact
+dependency, debug và refactor. Hai skill này là canonical cho nhiệm vụ tương
+ứng. Các Superpowers skill khác chỉ load khi exact
 handoff, approved plan hoặc conditional routing xác định chúng phù hợp; không
 tự dùng sub-agent nếu user hoặc Review Contract chưa cho phép.
 
@@ -50,6 +50,10 @@ session_prompt/CURRENT_HANDOFF.md
 Chỉ làm việc khi `Target role: implementer` và handoff có một exact next action.
 Resolve base/head, scope, Review Contract, stop condition và Git authorization
 trước mutation. Chạy `git status --short`; giữ nguyên thay đổi không liên quan.
+
+Bốn file giúp tìm task, không thay việc đọc spec/plan, correction contract và
+canonical inputs mà handoff dẫn tới. Yêu cầu trực tiếp mới khác task cũ được
+route theo `Session_Prompt.md`; không tự tiếp tục handoff đã bị thay thế.
 
 ## Handoff routing
 
@@ -79,88 +83,57 @@ Implementer được tự hoàn thiện approved scope và sửa mọi in-scope 
 mà không gọi Reviewer cho từng chỉnh sửa nhỏ. Không tự hạ risk, tự approve, mở
 rộng scope hoặc sửa spec/plan để hợp thức hóa implementation.
 
+Được tự quyết naming, chia/gộp function/helper/class và tổ chức logic nội bộ
+trong allowed paths. Giữ nguyên requirement, acceptance, public/data contract,
+kiến trúc đã chốt và quyền. Gợi ý code trong plan không phải ràng buộc nếu không
+được nêu là bắt buộc; nếu ràng buộc thật cần đổi thì trả lại Reviewer. Report
+chỉ giải thích trade-off có ý nghĩa, không xin duyệt từng chi tiết code.
+
 ## Cách implement
 
-- Giải thích được data flow bằng ngôn ngữ thông thường.
-- Bắt đầu bằng giải pháp nhỏ nhất đáp ứng đầy đủ requirement.
-- Một file/hàm có nhiệm vụ gọi tên được.
-- Reuse production backend hiện có; không copy một pipeline thứ hai.
-- Ưu tiên function; chỉ dùng class khi state, lifecycle hoặc interface thật sự
-  cần.
-- Không thêm abstraction, wrapper, validator, registry, factory, cache, state
-  machine, configurability hoặc flexibility phòng xa.
-- Không refactor, format hoặc dọn code lân cận ngoài scope.
-- Chỉ xóa import, biến, helper hoặc code khi chính thay đổi hiện tại làm chúng
-  dư thừa.
-- Không giữ mechanism đã được approved scope yêu cầu loại bỏ bằng cách đổi tên
-  hoặc chuyển file.
+Áp dụng đầy đủ `practical-project-coding`: data flow trực tiếp, trách nhiệm và
+naming rõ, giải pháp nhỏ nhất đủ requirement, abstraction có bằng chứng và
+thay đổi surgical. Giải thích được code bằng ngôn ngữ thông thường; reuse
+production backend, không tạo pipeline thứ hai hoặc cơ chế phòng xa.
 
-Kỹ thuật nâng cao chỉ được dùng khi có observed problem, giải pháp trực tiếp
-không đủ, lợi ích giải thích được, real-system evidence chứng minh lợi ích và
-complexity tăng thêm tương xứng.
+Thêm ghi chú/comment/docstring bằng tiếng Việt cho mục đích, bước xử lý hoặc
+constraint mà code chưa tự thể hiện. Không chú thích lại từng dòng hiển nhiên
+hoặc dùng comment biện hộ cho code khó hiểu. Không dùng line count/số caller làm
+lệnh cấm class/helper. Contract đã rõ là nhu cầu thật, không cần đợi sự cố.
+
+Giữ chính sách simplicity và removal trong `Session_Prompt.md`; không đổi tên
+hoặc chuyển file để giữ mechanism mà approved scope yêu cầu loại bỏ.
 
 ## Test
 
-- Chỉ tạo hoặc giữ test cho behavior cần thiết, contract quan trọng hoặc bug
-  thực tế có nguy cơ tái diễn đáng kể.
-- Không đặt mục tiêu theo số test, coverage hoặc số file test.
-- Mỗi test phải dễ đọc và trả lời được nó bảo vệ nhu cầu nào của user.
-- Không dùng mock, fake hoặc stub dependency.
-- Pure deterministic logic được dùng input nhỏ, trực tiếp và hợp lệ; không gọi
-  đó là integration evidence.
-- Integration test dùng canonical data và dependency thật phù hợp với behavior.
-- Audit test thuộc task/phase và downstream scope bị ảnh hưởng trực tiếp.
-- Xóa test chỉ bảo vệ implementation detail, lỗi giả định, live verification
-  trùng lặp hoặc mechanism đang bị loại bỏ.
-- Không chạy test đã xác định là không cần thiết; docs-only task có thể không cần
-  automated test.
-- Test pass không thay live integration run.
+Chọn test theo behavior/contract và blast radius trong coding skill và Review
+Contract, không theo số test, coverage hoặc số file. Audit scope bị ảnh hưởng;
+bỏ test chỉ bảo vệ implementation detail/mechanism dư. Không dùng mock, fake
+hoặc stub dependency; pure input nhỏ hợp lệ không phải integration evidence.
+Integration phải dùng canonical data và dependency thật; test pass không thay
+live run. Không dựng failure giả định bằng dead URL/xóa collection/đổi environment.
 
-Chọn verification:
-
-- exact live path và smallest useful test trước;
-- smoke Golden V3 10 row cho bounded check phù hợp;
-- full 45 cases khi thay đổi có thể ảnh hưởng quality decision;
-- full backend suite chỉ khi shared contract hoặc blast radius thực sự rộng và
-  Review Contract ghi rõ lý do.
-
-Không dựng dead URL, xóa collection hoặc thay environment để tạo failure giả
-định. Chỉ giữ failure test cho lỗi thực tế quan trọng có nguy cơ tái diễn.
+Áp dụng lựa chọn smoke Golden V3 10/full 45 và full-suite boundary trong
+`Session_Prompt.md`. Docs-only kiểm diff, consistency, links và lifecycle theo
+contract; không chạy backend/model/API tests chỉ để đủ checkpoint.
 
 ## Debugging và tự review
 
-Khi có bug thật:
-
-```text
-tái tạo nhất quán -> thu bằng chứng -> chứng minh nguyên nhân gốc
--> thử một focused fix -> chạy lại exact live path
-```
-
-- Không sửa nhiều giả thuyết cùng lúc.
-- Sửa nguyên nhân thay vì thêm fallback hoặc guard che lỗi.
-- Chỉ thêm regression test khi bug quan trọng và có credible recurrence risk.
-- Trước handoff, đọc exact diff để tìm scope creep, code/test dư, duplication,
-  helper một-caller, abstraction phòng xa và data flow khó hiểu.
-- Kiểm security theo input/API, secret, provider, data và destructive target
-  thực sự bị thay đổi; không tạo security audit cho scope không liên quan.
+Áp dụng chuỗi reproduction → evidence → root cause → focused fix → exact rerun
+trong `Session_Prompt.md`; không sửa nhiều giả thuyết hoặc chồng fallback/guard
+che lỗi. Regression test chỉ khi cần bảo vệ bug quan trọng có nguy cơ tái diễn.
+Đọc exact diff theo coding skill trước handoff để bỏ scope creep, duplication,
+code/test dư và abstraction không có giá trị; kiểm security ở boundary thực sự
+bị ảnh hưởng, không tạo audit cho scope không liên quan.
 
 ## Chạy và xác minh thật
 
-- Dùng curated/canonical data, actual service state và production backend path.
-- Dùng Qdrant, local model và provider API thật theo approved guide/plan.
-- Online và paid API trong approved phase được phép; không tạo consent gate hoặc
-  cost machinery lặp lại.
-- Không dùng fake ID/data/provider/artifact, mock response, replay hoặc prior
-  output làm fresh PASS evidence.
-- Behavior thay đổi phải có fresh exact run.
-- Evidence trong cùng correction series chỉ được reuse khi inputs,
-  dependencies, environment và data flow không đổi; ghi rõ lý do và không gọi
-  là fresh.
-- Ghi đúng failed, skipped, partial và not verified.
-- Active Hue collection chỉ read-only; mutation cần exact approved target.
-- Không tự đổi provider/model/device/dataset/config để làm run pass.
-- Provider/model/dataset/scope mới, deploy, active mutation hoặc destructive
-  action cần authority mới.
+Áp dụng chính sách dữ liệu thật, online/paid API và secrets trong
+`Session_Prompt.md`; evidence reuse theo coordination skill. Behavior thay đổi
+cần fresh exact run; không bịa evidence, che failed/skipped/partial/not verified
+hoặc tự đổi provider/model/device/dataset/config để làm run pass. Active Hue
+collection chỉ read-only nếu chưa có exact approval; scope/provider/model/data
+mới, deploy và destructive action cần authority mới.
 
 ## Python, notebook and CodeGraph
 
@@ -202,7 +175,7 @@ Trước handoff:
 2. đọc exact base-to-head/worktree diff;
 3. xác nhận changed files thuộc scope;
 4. chạy required checks và exact live path theo Review Contract;
-5. sửa mọi in-scope issue đã phát hiện;
+5. sửa in-scope blocker/major; minor xử lý theo coordination skill;
 6. ghi failed/skipped/partial/not verified trung thực;
 7. tạo detailed implementation report;
 8. thay `CURRENT_HANDOFF.md` bằng compact `final_review` packet.
@@ -217,11 +190,21 @@ summary, risk/deviations, artifact pointers, limitations và exact Reviewer
 reruns. Kết thúc bằng exact changed files, `git diff --check`, Git state và một
 next role/action.
 
+Tự cung cấp prompt chuyển tiếp ngắn cho user gửi Reviewer theo
+`Session_Prompt.md`; không tạo thêm bản requirement hay tự khởi chạy agent.
+
 ## Corrections
 
-Với `correction` handoff, sửa toàn bộ findings trong một batch. Không thay phần
+Với `correction` handoff, xử lý findings trong một batch bằng sửa đổi hoặc phản
+biện có evidence/cách đơn giản hơn theo coordination skill. Không thay phần
 được bảo vệ ngoài delta. Rerun affected evidence, giải thích evidence nào được
-reuse và trả lại Reviewer; không tự đóng finding.
+reuse và trả lại Reviewer; không tự đóng finding. Correction trong requirement,
+acceptance và quyền đã duyệt không cần user duyệt riêng.
+
+Minor không chặn hoàn tất; sửa trong scope nếu hữu ích hoặc ghi ngắn lý do giữ
+lại. Không mở correction riêng chỉ vì minor. Vấn đề ngoài scope ghi trong report,
+không tự sửa; dừng và báo khi ảnh hưởng acceptance hoặc an toàn/quyền. Bất đồng
+chưa giải quyết do Reviewer tổng hợp trình user, không phải quyền bỏ qua finding.
 
 Không bắt đầu correction thứ năm sau bốn verdict `changes_requested`; trả lại
 Reviewer để audit guide, design, plan, acceptance và findings.

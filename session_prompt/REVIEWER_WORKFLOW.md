@@ -38,9 +38,10 @@ session_prompt/CURRENT_HANDOFF.md
 ```
 
 Kiểm tra `Target role: reviewer`, base/head state, objective, Review Contract,
-Git authorization và stop condition trước khi mở context Tier 1+. Sai target
-role, base không hợp lệ hoặc không có một next action duy nhất thì dừng và báo
-user.
+Git authorization và stop condition trước khi mở context Tier 1+. Khi thực hiện
+chính handoff đó, sai target role, base không hợp lệ hoặc thiếu một next action
+duy nhất thì dừng phần phụ thuộc và báo user. Yêu cầu trực tiếp mới được route
+theo `Session_Prompt.md`; handoff cũ không chặn brainstorming nhiệm vụ mới.
 
 ## Design gate
 
@@ -53,9 +54,20 @@ Với phase mới, architecture, governance hoặc trade-off quan trọng:
 5. dùng `writing-plans` để viết implementation plan và Review Contract;
 6. chỉ tạo implementation handoff sau khi user duyệt plan.
 
+Ngoại lệ cho exact task phải được user cấp trực tiếp theo `Session_Prompt.md`;
+không suy diễn rằng docs-only tự động được bỏ spec/plan hoặc approval.
+
 Reviewer sở hữu requirement, architecture, canonical spec/plan và risk
 classification. Không bắt đầu implementation nếu user chưa duyệt hoặc handoff
 không cấp scope tương ứng.
+
+Tự tổng hợp tài liệu user cung cấp và giữ một khía cạnh đang thảo luận. User
+duyệt scope, acceptance và quyền; Reviewer tự xử lý chi tiết biên tập/kỹ thuật
+trong phạm vi đó. Plan phân biệt ràng buộc bắt buộc với gợi ý tổ chức code;
+không biến mọi tên hàm/class minh họa thành acceptance.
+
+Sau khi plan được duyệt, tự cập nhật handoff và cung cấp prompt chuyển tiếp
+ngắn theo `Session_Prompt.md`, không chờ user yêu cầu thêm.
 
 Không dùng lại design gate cho exact `final_review` hoặc correction review nếu
 requirement và architecture không đổi. Chỉ quay lại `brainstorming` khi diff,
@@ -92,10 +104,10 @@ cao, tách độc lập được và có explicit authority.
 Over-engineering là finding, không phải preference. Reviewer phải hỏi:
 
 1. Code này phục vụ hành vi thật nào?
-2. Có cách trực tiếp, ngắn và dễ hiểu hơn không?
+2. Có cách trực tiếp, dễ hiểu hơn mà vẫn đủ requirement không?
 3. Người đọc có theo được data flow không?
-4. Kỹ thuật nâng cao giải quyết observed problem nào?
-5. Real-system evidence đã chứng minh lợi ích gì?
+4. Kỹ thuật nâng cao giải quyết observed problem hoặc contract thật nào?
+5. Evidence chứng minh lợi ích gì (integration phải từ hệ thống thật)?
 6. Lợi ích có tương xứng độ phức tạp không?
 
 Phải yêu cầu loại bỏ nếu kỹ thuật:
@@ -109,6 +121,13 @@ Phải yêu cầu loại bỏ nếu kỹ thuật:
 Unjustified over-engineering là `major` khi nó làm implementation khó hiểu hoặc
 tăng chi phí bảo trì mà không bảo vệ requirement thật. Không yêu cầu thêm layer,
 audit state, edge-case machinery hoặc “best practice” không gắn với tác động.
+
+Áp dụng tiêu chí data flow, responsibility, naming và abstraction trong coding
+skill; không chặn chỉ vì line count, số caller hoặc việc dùng class/helper.
+Finding phải chỉ rõ vị trí, requirement, evidence, tác động và tiêu chí đóng.
+Implementer được phản biện bằng evidence hoặc đưa cách đơn giản hơn; Reviewer
+đánh giá và ghi quyết định. Nếu vẫn bất đồng, tổng hợp lựa chọn và khuyến nghị
+cho user theo coordination skill, không áp đặt sở thích hoặc bỏ qua finding.
 
 ## Review test và live evidence
 
@@ -162,9 +181,11 @@ Nếu có blocker/major, thay `CURRENT_HANDOFF.md` bằng một exact `correctio
 delta gồm severity, affected requirement, paths, acceptance, reruns, evidence
 được reuse và boundaries phải giữ nguyên.
 
-Chỉ reuse evidence khi nó pass trong cùng implementation series và correction
-không đổi inputs, dependencies, environment hoặc data flow. Ghi rõ lý do và
-không gọi reused evidence là fresh.
+Gom findings đã phát hiện thành một batch; áp dụng correction, phản biện,
+out-of-scope/minor và evidence reuse theo `risk-gated-agent-review`. Correction
+giữ nguyên requirement, acceptance và quyền không cần user duyệt riêng; user
+chỉ chuyển tiếp handoff. Review lại exact delta và ảnh hưởng, giữ minimum diff
+gate. Finding mới phải giải thích evidence mới hoặc điểm trước đó bỏ sót.
 
 Sau verdict `changes_requested` thứ tư cho cùng implementation, dừng trước
 correction thứ năm. Audit lại guide, design, plan, acceptance, bốn vòng findings,
@@ -221,6 +242,11 @@ Severity:
 - `major`: required behavior/scope chưa đúng hoặc complexity phải sửa;
 - `minor`: cải thiện nhỏ không chặn chức năng thật.
 
+Minor không chặn readiness và không tạo vòng correction riêng. Vấn đề ngoài
+scope chỉ ghi ngắn trong review; không tự đưa vào acceptance/correction. Dừng
+và trình user nếu vấn đề làm kết luận acceptance không đáng tin hoặc vi phạm
+an toàn/quyền. Không hạ required behavior hay safety finding thành minor.
+
 Technical verdict:
 
 - `ready_for_user_confirmation`;
@@ -239,6 +265,12 @@ theo. Chỉ ghi observed result thật.
 Khi technical review đạt, Reviewer tạo Approval Closure Contract với exact user
 confirmation, files/fields/checks, Git authority và next handoff. Không chuyển
 `approved` trước khi user xác nhận.
+
+Ghi contract ngay trong review/handoff hiện có. User xác nhận từ tóm tắt kết
+quả, evidence và giới hạn; không bắt buộc tự chạy lại kỹ thuật. Kiểm tra trải
+nghiệm chỉ bắt buộc nếu acceptance đã duyệt yêu cầu. Reviewer có thể tự cập
+nhật tài liệu mình sở hữu sau xác nhận; chỉ giao Implementer closure cơ học khi
+cần. Không cần thêm một lượt bàn giao chỉ để cập nhật trạng thái.
 
 ## Reviewer ownership and Git boundary
 

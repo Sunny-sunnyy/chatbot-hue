@@ -1,13 +1,13 @@
 # Project Status
 
-Last updated: `2026-08-30 +07`
+Last updated: `2026-09-05 +07`
 
 ## Project overview
 
-`hue_rag` xây dựng hệ thống RAG về văn hóa và du lịch Huế. Milestone hiện tại
-là Hue Foods RAG MVP: truy vấn dữ liệu ẩm thực đã curate, tìm đúng evidence,
-tạo context có giới hạn và sinh câu trả lời grounded. Sau khi MVP ổn định,
-roadmap mới mở rộng sang Hybrid Recommender và Agentic RAG.
+`hue_rag` xây dựng hệ thống RAG về văn hóa và du lịch Huế. Baseline đã có là
+Hue Foods RAG MVP. Dự án đang bổ sung dữ liệu trong `knowledge-base-hue` để mở
+rộng sang toàn bộ corpus. Hybrid Recommender và Agentic RAG là roadmap chưa có
+scope triển khai trong nhiệm vụ governance hiện hành.
 
 Project ưu tiên code/data flow dễ hiểu, complexity tương xứng nhu cầu và bằng
 chứng từ dữ liệu, database, model cùng API thật.
@@ -28,7 +28,7 @@ Foods corpus hiện gồm:
 - 57 restaurants;
 - 24 cafes;
 - 9 local specialties;
-- `food-guides.md` với 17 sections;
+- `food-guides.md` với 18 sections;
 - 91 curated Markdown files tạo 572 deterministic chunks;
 - Golden Dataset V3 canonical có 45 full cases và 10 smoke rows deep-equal.
 
@@ -52,21 +52,10 @@ read-only trong implementation/review thông thường. Dense-only candidate
 `hue_foods_e5_small_384_dense` tồn tại làm blue-green evidence; production chưa
 cutover.
 
-Phase 8 Notebook 08a đã benchmark local dense embeddings trên CPU FP32 với 45
-Golden V3 cases và 572 chunks. Executable catalog hiện chỉ gồm:
-
-1. `e5-small-384` — control 384D;
-2. `huydang-dek21-embedding-768` — candidate 768D;
-3. `e5-base-768` — candidate 768D.
-
-Mỗi model có 3/3 repetition evidence trên 45 Golden V3 cases và 572 chunks.
-
-Phase 8 Notebook 08b đã hoàn tất 20-setting retrieval/fusion matrix với 70
-calibration rows, 200 result rows và 900 per-case records. Unicode tokenizer
-được giữ vì Underthesea không cải thiện đủ để tăng complexity. Hybrid tăng
-overall recall nhưng cả BM25 và TF-IDF finalist đều `None`: category
-`relationship` có nDCG@5 delta `-0.0279273`, thấp hơn guardrail `-0.02`.
-Production config và active collection không thay đổi.
+Notebooks 08a/08b/08c đã có evidence benchmark trên Foods; kết quả và artifact
+chi tiết nằm trong canonical map phía dưới. Evidence này không chứng minh chất
+lượng trên toàn bộ dữ liệu đang bổ sung. Baseline trên được giữ từ trạng thái
+đã ghi nhận, không được chạy lại trong session docs-only này.
 
 ## Phase status
 
@@ -80,7 +69,7 @@ Production config và active collection không thay đổi.
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; post-08c multi-domain design is next |
+| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; mở rộng toàn corpus chưa có approved implementation scope |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -88,34 +77,14 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
 
 ## Decisions currently in force
 
-- Mỗi phase có một canonical guide; reports/status không tự tạo requirement.
-- Golden Dataset V3 45+10 đã approved và không được sửa trong Phase 8 benchmark
-  nếu chưa có scope riêng.
-- Main local benchmark profile là CPU FP32; failed/OOM phải được ghi đúng, không
-  silent fallback hoặc đổi setting.
-- Khi quality không khác biệt đáng tin cậy, ưu tiên model nhẹ, nhanh và đơn giản.
-- Local dense Phase 8 chỉ có ba model executable hiện hành nêu trên.
-- Active reranker comparison chỉ có no-rerank và current local
-  `cross-encoder/ms-marco-MiniLM-L-6-v2`; BGE/Qwen rerankers không còn thuộc
-  08c/08d scope.
-- Initial fusion comparison dùng RRF và independent min-max weighted sum
-  `0.6 dense / 0.4 sparse`; không weight grid khi chưa có observed need.
-- Notebook 08b chỉ so sánh tokenizer BM25 Unicode `\w+` hiện hành với
-  Underthesea `word_tokenize(..., format="text")`; không mở tokenizer grid.
-- Notebook 08b có exact 20-setting matrix trên 45 Golden V3 cases. `900`
-  per-case records là một record cho mỗi setting/case để audit ranking và
-  fusion, không phải mở rộng Golden Dataset lên 900 câu.
-- Implementer 08b được chia run thành số batch tùy tài nguyên, persist atomically
-  sau từng setting, resume theo exact provenance và giải phóng tài nguyên giữa
-  batch. Không shortlist trước khi reconcile đủ matrix.
-- Canonical notebooks là learning documents, gọi backend trực tiếp và giữ sạch
-  outputs/execution counts trong repo.
-- Runtime/code/test practice dùng `skills/practical-project-coding/SKILL.md`.
-- Reviewer/Implementer coordination dùng
-  `skills/risk-gated-agent-review/SKILL.md` và một current handoff.
-- Không thêm cost accounting, repeated consent gate, resume/run-identity,
-  checksum/tamper audit hoặc validator machinery nếu exact approved scope không
-  có observed need tương xứng.
+- Mỗi phase có canonical guide; report/status không tự tạo requirement.
+- Golden V3 45+10 và benchmark hiện tại thuộc Foods. Tạo Golden mới cho toàn bộ
+  dữ liệu cần scope và thiết kế riêng; chưa thay Golden hiện hành.
+- Chi tiết experiment/model/matrix đã duyệt nằm trong guide/spec/plan Phase 8
+  được dẫn dưới đây; không chép lại thành requirement độc lập trong status.
+- Coding/testing dùng `skills/practical-project-coding/SKILL.md`; điều phối dùng
+  `skills/risk-gated-agent-review/SKILL.md` và các workflow.
+- Nhiệm vụ và next action duy nhất nằm trong `session_prompt/CURRENT_HANDOFF.md`.
 
 ## Safety and authorization boundaries
 
@@ -198,24 +167,33 @@ docs/superpowers/specs/2026-08-29-restore-core-coding-behaviors-design.md
 docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-plan.md
 ```
 
-## Current next action
+## Workstream và roadmap
 
-Notebooks 08a, 08b và 08c đã được triển khai, review độc lập và user xác nhận.
-08c hoàn tất 60 summary rows/135 cases; cả ba MiniLM pairings
-`eligible=False`, không có reranker finalist và production không cutover.
-Current next action là Reviewer research/brainstorm exact design để hoàn thiện
-curated answer-facing data trên toàn bộ domain phù hợp dưới
-`knowledge-base-hue/`, rồi mới thiết kế domain-aware chunking/metadata,
-embeddings, isolated full-corpus index và Combined Golden Dataset.
+**Dữ liệu:** đang bổ sung và curate `knowledge-base-hue`. Sau khi dữ liệu hoàn
+tất và được review, tạo lại Golden evaluation cho toàn bộ dữ liệu mới, rồi
+nghiên cứu/thiết kế lại chunking, embedding, indexing/ingestion, retrieval,
+context/generation và evaluation — các phần đã làm từ Phase 2 đến Phase 7,
+nhưng áp dụng cho toàn corpus. Đây là định hướng user xác nhận, chưa phải quyền
+chạy benchmark, thay Golden, mutate index hay triển khai runtime.
 
-Post-08c queued reviewer workstream: hoàn thiện toàn bộ curated answer-facing
-Markdown dưới `knowledge-base-hue/` cho Foods, Festivals, Heritage, Tourism,
-Performing Arts và các domain được duyệt khác; sau đó cập nhật domain-aware
-chunking/metadata, tạo embedding mới và isolated full-corpus index. Một Combined
-Golden Dataset mới phải có quota/evidence trên tất cả domain để báo cáo overall
-và per-domain. Evaluation bắt đầu lại từ Phase 7 baseline rồi chạy lại các phần
-Phase 8 bị ảnh hưởng. Kết quả hiện tại chỉ là Foods historical evidence.
+**Governance:** user đã duyệt phương án và cho phép Reviewer chỉnh trực tiếp
+các tài liệu hiện có, không cần spec/plan riêng cho exact task 2026-09-05.
+Đã hoàn tất tự kiểm tra docs-only, `ready_for_user_confirmation`; chưa được
+user xác nhận kết quả cuối. Evidence và closure contract ở current handoff.
 
-Chưa có authorization thay đổi corpus/code, tạo embedding/index/Golden mới,
-mutate Qdrant hoặc chạy benchmark đa lĩnh vực. User chỉ authorize đóng 08c,
-chuẩn bị next-design context và commit/push work package 08c hiện hành.
+Chi tiết tiến độ dữ liệu nằm trong inventory/evidence/report, không lặp từng
+entity ở đây. Các claim Implementer báo hoàn tất và QA chưa được Reviewer xác
+minh lại trong governance session. Pointers giữ công việc đang dở:
+
+- `knowledge-base-hue/heritage/heritage-entities-inventory.md`;
+- `knowledge-base-hue/meta/heritage-research-evidence.md`;
+- `knowledge-base-hue/meta/heritage-template.md`;
+- `reports/heritage_batch_01_implementation_correction_report_2026_09_04.md`;
+- `reports/heritage_batch_01_codex_rereview_response_report_2026_09_04.md`;
+- `reports/governance_pre_edit_coordination_snapshot_2026_09_05.md` — bản lưu
+  inactive của status/handoff chưa commit, không cấp quyền tiếp tục task cũ.
+
+Delta `knowledge-base-hue/festivals/festival/Lễ hội Áo dài Huế.md` và tài liệu
+chưa tracked `HOTEL_RECOMMENDER_PHASE_A_HANDOFF.md` được giữ ngoài task này.
+Không mở lại review Phase 7 hoặc tự khởi động công việc dữ liệu/runtime từ
+roadmap; scope cụ thể phải đi qua các điểm duyệt của workflow.

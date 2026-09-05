@@ -33,7 +33,9 @@ Ghi kết quả mới từ exact run:
 - output/result path nếu có;
 - failed, skipped hoặc partial outcome.
 
-Không dùng fake/mock, replay hoặc kết quả cũ làm bằng chứng.
+Không dùng fake/mock/stub hoặc replay làm PASS. Evidence reuse hợp lệ trong cùng
+series phải ghi nguồn, phần không đổi và lý do theo coordination skill; không
+gọi là fresh run. Docs-only ghi exact kiểm tra tài liệu đã thực hiện.
 
 ## 5. Lỗi và giới hạn
 
@@ -49,8 +51,11 @@ Nêu:
 
 - Reviewer nên đọc gì trước;
 - real path cần chạy lại;
-- notebook người dùng sẽ chạy;
+- notebook nếu thuộc acceptance; user chỉ bắt buộc kiểm tra khi acceptance yêu cầu;
 - deviation đã được user duyệt nếu có.
 
-Implementer không sửa guide, Codex review, user report hoặc
-`Project_Status.md`; không commit/push.
+Implementer không tự sửa guide, Codex review, user report hoặc
+`Project_Status.md`; chỉ mechanical edits được exact Approval Closure Contract
+cấp sau user confirmation. Commit/push chỉ theo exact Git authorization; report
+không tự cấp quyền. Cập nhật `CURRENT_HANDOFF.md` và cung cấp prompt chuyển tiếp
+ngắn theo workflow, không chép report vào handoff.
