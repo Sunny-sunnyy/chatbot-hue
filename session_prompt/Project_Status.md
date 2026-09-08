@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-09-05 +07`
+Last updated: `2026-09-08 +07`
 
 ## Project overview
 
@@ -78,6 +78,11 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
 ## Decisions currently in force
 
 - Mỗi phase có canonical guide; report/status không tự tạo requirement.
+- User đã chỉ đạo và hoàn tất Taxonomy Migration ngày 08/09/2026:
+  Cấu trúc `knowledge-base-hue/tourism/` đã được di chuyển hoàn toàn sang
+  `knowledge-base-hue/travel/` với ba nhánh con: `travel/places/`,
+  `travel/services/` và `travel/tickets/`. Toàn bộ 47 file đã được phân bổ
+  và đồng bộ đường dẫn; thư mục cũ `tourism/` đã được thu hồi.
 - Golden V3 45+10 và benchmark hiện tại thuộc Foods. Tạo Golden mới cho toàn bộ
   dữ liệu cần scope và thiết kế riêng; chưa thay Golden hiện hành.
 - Chi tiết experiment/model/matrix đã duyệt nằm trong guide/spec/plan Phase 8
@@ -176,39 +181,58 @@ context/generation và evaluation — các phần đã làm từ Phase 2 đến 
 nhưng áp dụng cho toàn corpus. Đây là định hướng user xác nhận, chưa phải quyền
 chạy benchmark, thay Golden, mutate index hay triển khai runtime.
 
-Domain `heritages` đã hoàn tất biên soạn trọn vẹn 28 thực thể di sản chuẩn hóa
-trong `knowledge-base-hue/heritages/heritage/` và cẩm nang tổng hợp
-`knowledge-base-hue/heritages/heritage-guides.md`. Cấu trúc thư mục được chuẩn hóa
-theo mô hình `heritages/heritage` và đã được người dùng nghiệm thu ngày 2026-09-05.
+Dự án đã hoàn tất bước Taxonomy Migration từ `knowledge-base-hue/tourism/`
+sang `knowledge-base-hue/travel/` ngày 08/09/2026 với ba nhánh con rõ ràng:
+- `travel/places/`: 35 file entity điểm đến + cẩm nang `travel_guides.md` (được đổi tên từ `tourism_guides.md`).
+- `travel/services/`: 04 cẩm nang dịch vụ du lịch + 01 inventory.
+- `travel/tickets/`: 05 cẩm nang vé du lịch + 01 inventory.
+Thư mục cũ `tourism/` đã được dọn sạch hoàn toàn, cố định cấu trúc đường dẫn canonical
+trước khi khởi chạy pipeline chunking cho toàn bộ corpus.
 
-Trong domain `performing_arts`, user đã xác nhận inventory gồm 11 chương trình
-hoặc sự kiện nổi bật và thiết kế template biên soạn ngày 2026-09-05. Các entity
-sẽ được đặt trực tiếp trong `knowledge-base-hue/performing_arts/`; các thư mục
-con rỗng trước đó đã được xóa theo chỉ đạo của user. Chưa bắt đầu biên soạn 11
-file entity. Implementer phải đọc URL do user cung cấp, đối chiếu bằng web
-search độc lập, kiểm tra địa giới hành chính tại tháng 09/2026 và thực hiện
-self-verification sau khi hoàn thành từng file.
+Trạng thái biên soạn dữ liệu theo domain tại ngày 08/09/2026:
 
-**Governance:** user đã duyệt phương án và cho phép Reviewer chỉnh trực tiếp
-các tài liệu hiện có, không cần spec/plan riêng cho exact task 2026-09-05.
-Đã hoàn tất tự kiểm tra docs-only, `ready_for_user_confirmation`; chưa được
-user xác nhận kết quả cuối. Evidence và closure contract ở current handoff.
+- `foods`: 91 file Markdown curated, gồm guide và các entity thực phẩm; đây vẫn
+  là corpus duy nhất đang được runtime ingestion sử dụng.
+- `heritages`: đã hoàn tất 28 entity trong `heritages/heritage/` và
+  `heritage-guides.md`.
+- `festivals`: đã có 26 entity trong `festivals/festival/` và
+  `festival-guides.md`.
+- `performing_arts`: đã có 11 entity trong `performing_arts/arts/` và
+  `performing_arts_guides.md`.
+- `travel/places`: 35 entity điểm đến và cẩm nang tổng quan `travel_guides.md` đã hoàn tất thẩm định.
+- `travel/services`: 04 guide answer-facing và 01 inventory.
+- `travel/tickets`: 05 file answer-facing đã hoàn tất biên soạn, thẩm định độc
+  lập 2 lượt (reports/tickets_codex_review_2026_09_08.md và
+  reports/tickets_codex_rereview_2026_09_08.md), khắc phục 100% (06/06) findings,
+  lập User Report và được người dùng chính thức phê duyệt nghiệm thu ngày 08/09/2026.
+  Bao gồm 05 cẩm nang answer-facing, 01 danh mục thực thể kiểm soát (inventory) và
+  hồ sơ kiểm chứng tại mục XLIV–XLVIII của evidence.
 
-Chi tiết tiến độ dữ liệu nằm trong inventory/evidence/report, không lặp từng
-entity ở đây. Các claim Implementer báo hoàn tất và QA chưa được Reviewer xác
-minh lại trong governance session. Pointers giữ công việc đang dở:
+Giai đoạn biên soạn và chuẩn hóa dữ liệu (Data Curation) cùng bước Taxonomy Migration
+của toàn bộ kho tri thức `knowledge-base-hue` (gồm 5 domain: `foods`, `heritages`,
+`festivals`, `performing_arts`, `travel`) đã HOÀN TẤT 100%.
 
-- `knowledge-base-hue/meta/heritage-entities-inventory.md`;
-- `knowledge-base-hue/meta/heritage-research-evidence.md`;
-- `knowledge-base-hue/meta/heritage-template.md`;
-- `knowledge-base-hue/performing_arts/performing-arts-entities-inventory.md`;
-- `knowledge-base-hue/meta/performing-arts-template.md`;
-- `reports/heritage_batch_01_implementation_correction_report_2026_09_04.md`;
-- `reports/heritage_batch_01_codex_rereview_response_report_2026_09_04.md`;
-- `reports/governance_pre_edit_coordination_snapshot_2026_09_05.md` — bản lưu
-  inactive của status/handoff chưa commit, không cấp quyền tiếp tục task cũ.
+**Định hướng và lộ trình tiếp theo đã được người dùng xác nhận:**
 
-Delta `knowledge-base-hue/festivals/festival/Lễ hội Áo dài Huế.md` và tài liệu
-chưa tracked `HOTEL_RECOMMENDER_PHASE_A_HANDOFF.md` được giữ ngoài task này.
-Không mở lại review Phase 7 hoặc tự khởi động công việc dữ liệu/runtime từ
-roadmap; scope cụ thể phải đi qua các điểm duyệt của workflow.
+1. **Mở rộng Phase 2 (Markdown Chunking toàn corpus):**
+   Mở rộng quy trình từ `guides/phase_2_foods_markdown_chunking.md` áp dụng cho
+   toàn bộ corpus đa domain (`foods`, `heritages`, `festivals`, `performing_arts`,
+   `travel`), phân tích cấu trúc H1/H2 và tạo ra các deterministic semantic chunks
+   kèm metadata phong phú.
+
+2. **Thiết kế Golden Datasets đa domain:**
+   Thiết kế các bộ Golden Dataset đánh giá cho từng domain mới (`heritages`,
+   `festivals`, `performing_arts`, `travel`) tương tự như cấu trúc chuẩn
+   `knowledge-base-hue/foods/evaluation/golden_v3.jsonl` để làm căn cứ đánh giá
+   (ground truth) cho retrieval và answer evaluation ở các phase sau.
+
+Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
+
+- `knowledge-base-hue/travel/services/services-research-and-entities-inventory.md`;
+- `knowledge-base-hue/travel/tickets/tickets-research-and-entities-inventory.md`;
+- `knowledge-base-hue/meta/tourism-research-evidence.md`;
+- `reports/tourism_guides_implementation_report_2026_09_07.md`;
+- `reports/services_batches_01_03_minimal_reset_implementation_report_2026_09_08.md`;
+- `reports/tickets_codex_review_2026_09_08.md`;
+- `reports/tickets_codex_rereview_2026_09_08.md`;
+- `session_prompt/CURRENT_HANDOFF.md`.
