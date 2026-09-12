@@ -14,25 +14,22 @@ chứng từ dữ liệu, database, model cùng API thật.
 
 ## Current active handoff snapshot
 
-Full-corpus RAG Wave 1 chưa approved hoặc completed. Initial final review ngày
-2026-09-12 có verdict `changes_requested` với W1-R1..R5. Implementer gửi
-Correction 1 và artifact báo `PASS`, nhưng independent static review vẫn có
-verdict `changes_requested`: một Blocker W1-C1-R1 về implementation report không
-khớp artifact/source, cùng hai Major W1-C1-R2/R3 về condition/tokenizer settings
-và acceptance-test coverage.
+User đã xác nhận closure **Full-corpus RAG Wave 1** ngày 2026-09-12 sau ba
+correction và independent static review. Toàn bộ W1-R1..R5, W1-C1-R1..R3 và
+W1-C2-R1 đã đóng; final review là
+`reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`.
 
-Implementer đã báo hoàn tất **Wave 1 Correction 2** và chuyển handoff sang
-target `reviewer`, kind `correction`, risk `medium`. Kết quả chưa được independent
-review và không tự đóng W1-C1-R1..R3. Không có sub-agent authorization. Contract:
-`handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md`; review điều khiển:
-`reports/full_corpus_rag_wave_1_correction_1_codex_review_2026_09_12.md`. Next
-action duy nhất là Reviewer full-read report/artifact và ba source/test đã đổi,
-rồi review độc lập; không review từ chat summary.
-
-Artifact Correction 1 hiện ghi `205` files, `8460` chunks, ba rules, zero
-errors/oversized và HuyDang max `255/256`. Đây là Implementer artifact đang được
-correction, không phải Reviewer proof hoặc User approval. `8460` là observed
+Observed Wave 1 artifact: `PASS`, 205 sorted/unique files, 8460 chunks, ba
+condition rules, zero blocking errors/oversized; max token `366/512`, `366/512`,
+`255/256`. Implementer báo fresh offline suite `39 passed, 1 warning` và repeated
+preview byte-identical; Reviewer không rerun dynamic checks. `8460` là observed
 artifact count, không phải hard-coded product invariant.
+
+Next session thuộc **Reviewer**, handoff kind `next_design`. Nhiệm vụ duy nhất là
+bắt đầu design gate Phase 3/Wave 2.1 từ evidence Wave 1: cập nhật detailed Phase
+3 guide, brainstorming từng quyết định còn mở (mỗi lượt một quyết định), rồi soạn
+exact Wave 2.1 spec/addendum, implementation plan và Review Contract để User duyệt
+trọn package. Chưa giao Implementer, chưa embedding/Qdrant/API/live/paid.
 
 ## System and data map
 
@@ -89,9 +86,9 @@ Chọn markdown-it-py 4.2.0/table enabled cho thiết kế locator trên source 
 đã sửa ranh giới; counts input sai không dùng làm PASS.
 
 Full-corpus đã có Written Spec, Implementation Plan và Review Contract được User
-duyệt ngày 2026-09-11. Wave 1 parser/locator đã qua initial review và Correction
-1 review nhưng chưa đạt closure; Correction 2 đang chờ independent re-review. Chưa có
-quyền live/runtime cho các wave sau. Guide umbrella hiện hành là
+duyệt ngày 2026-09-11. Wave 1 discovery/parser/chunker/locator/Representation A
+preview đã được User xác nhận closure ngày 2026-09-12. Chưa có quyền
+implementation/live/runtime cho các wave sau. Guide umbrella hiện hành là
 `guides/full_corpus_rag.md`. Khảo sát parser, hai input Ca Huế VN/QT,
 Golden/evaluation reference, schema deep-dive và simplicity evaluation
 `rag_old_0` đều đã được Reviewer kiểm và User xác nhận `approved/completed`.
@@ -114,7 +111,8 @@ temperature 0, B output 256, answer 16384/2048/512, timeout 90 giây; Agentic RA
 dùng profile/contract riêng. #6e chốt UI inline citation/source cards. Decision
 Queue tiền-spec đã hoàn tất; Written Spec đã được User duyệt ngày 2026-09-11.
 Implementation Plan + Review Contract đã được User duyệt ngày 2026-09-11;
-Reviewer hiện chỉ được thực hiện exact Wave 1 Correction 2 re-review.
+Reviewer tiếp theo chỉ được bắt đầu design gate Phase 3/Wave 2.1; chưa giao
+Implementer trước khi User duyệt exact guide/addendum/plan/Review Contract.
 User tiếp tục chốt workflow tuần tự: sau mỗi wave phải review/User closure và
 cập nhật detailed phase guide; trước wave kế tiếp Reviewer phải dùng evidence
 dependency để hoàn tất guide + wave spec/addendum + plan + Review Contract và
@@ -140,7 +138,7 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; full-corpus Wave 1 Correction 2 chờ re-review, chưa closure; các wave/live gate sau chưa active |
+| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; full-corpus Wave 1 đã closure nhưng Wave 2.1+ và benchmark/live gate chưa active |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -272,10 +270,14 @@ docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
 handoff_prompt/FULL_CORPUS_RAG_WAVE_1_IMPLEMENTATION_PROMPT.md
 handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_1_PROMPT.md
-handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md  # active correction
+handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md
+handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_3_PROMPT.md
 reports/full_corpus_rag_wave_1_codex_review_2026_09_12.md
-reports/full_corpus_rag_wave_1_correction_1_codex_review_2026_09_12.md  # active findings
-reports/full_corpus_rag_wave_1_correction_1_implementation_report_2026_09_12.md  # must be corrected
+reports/full_corpus_rag_wave_1_correction_1_codex_review_2026_09_12.md
+reports/full_corpus_rag_wave_1_correction_2_codex_review_2026_09_12.md
+reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md  # final approved review
+reports/full_corpus_rag_wave_1_correction_1_implementation_report_2026_09_12.md  # final evidence index
+reports/user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md
 reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json
 handoff_prompt/LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_PROMPT.md
 handoff_prompt/LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_CORRECTION_1_PROMPT.md
@@ -366,8 +368,8 @@ Contract đọc reference:
 Thiết kế điều chỉnh embedding, indexing/ingestion, retrieval,
 context/generation và evaluation — các phần đã làm từ Phase 2 đến Phase 7,
 nhưng áp dụng cho toàn corpus. Spec/Plan/Review Contract đã được User duyệt;
-Wave 1 Correction 2 đã được Implementer bàn giao và đang chờ re-review sau hai
-verdict `changes_requested`. Chưa có quyền
+Wave 1 đã qua ba correction, independent review và User closure ngày 2026-09-12.
+Chưa có quyền
 chạy benchmark, thay Golden, mutate index hoặc thực hiện wave/live gate sau.
 
 Golden organization đã được user chốt theo giai đoạn và theo P7: biên soạn/review
@@ -389,8 +391,7 @@ locator, #4 retrieval/fusion/reranker matrix và #5 representation B timing đã
 và #6c generator/provider + judge separation cũng đã chốt. #6d đã khóa exact
 generator settings/numeric budgets và tách Agentic RAG sang profile/contract
 riêng; #6e chốt UI inline citation/source cards. Bước hiện hành là Reviewer
-re-review duy nhất Wave 1 Correction 2 theo exact correction contract; các
-wave/live gate sau chưa active.
+design gate Phase 3/Wave 2.1; các implementation/live gate sau chưa active.
 Exact next action nằm trong CURRENT_HANDOFF.
 
 Simplicity survey `rag_old_0` đã qua hai correction, independent Reviewer review
@@ -461,9 +462,10 @@ của toàn bộ kho tri thức `knowledge-base-hue` (gồm 5 domain: `foods`, `
    correction ceiling và được thay bằng Verified Architecture Extraction theo
    complexity reset User xác nhận. Extraction đã qua hai correction, Reviewer
    review và User closure. Decision Queue đã hoàn tất; Written Spec, Plan và
-   Review Contract đã được duyệt. Active handoff chỉ giao Reviewer re-review
-   Wave 1 Correction 2; các wave và live gate sau tiếp tục cần đúng closure/approval
-   trong Plan. Hai working notes ngày 2026-09-09 không phải các artifact đã
+   Review Contract đã được duyệt. Wave 1 đã User-closed; active handoff giao
+   Reviewer thiết kế Phase 3/Wave 2.1, chưa giao Implementer. Các wave và live
+   gate sau tiếp tục cần đúng closure/approval trong Plan. Hai working notes ngày
+   2026-09-09 không phải các artifact đã
    duyệt này.
 
 Chi tiết tiến độ và các artifact nghiệm thu nằm tại:

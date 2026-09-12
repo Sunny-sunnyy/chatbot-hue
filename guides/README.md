@@ -15,19 +15,19 @@
 > Written Spec tại
 > `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` đã được User
 > duyệt ngày 2026-09-11. Plan + Review Contract cũng đã được User duyệt. Wave 1
-> Correction 2 đã được Implementer bàn giao và chờ re-review sau hai verdict
-> `changes_requested`; chưa cấp quyền live
-> hoặc wave sau.
+> đã qua ba correction, independent review và User closure ngày 2026-09-12.
+> Session tiếp theo là Reviewer design gate Phase 3/Wave 2.1; chưa cấp quyền
+> implementation/live hoặc wave sau.
 > Agentic RAG dùng profile/contract riêng.
 > Xem [bộ handoff](../handoff_prompt/README.md).
 
 
-## Workstream toàn corpus — Wave 1 Correction 2, cập nhật 2026-09-12
+## Workstream toàn corpus — Wave 1 closed, cập nhật 2026-09-12
 
 Written Spec, Implementation Plan và Review Contract cho toàn curated corpus đã
-được User duyệt; Reviewer chỉ đang được giao exact Wave 1 Correction 2 re-review. Các trạng
-thái `approved` trong bảng bên dưới thuộc Foods và không tự mở wave/live gate
-full-corpus khác. Guide umbrella
+được User duyệt; Wave 1 đã User-closed với offline preview 205 files/8460 chunks,
+zero errors/oversized. Các trạng thái `approved` trong bảng bên dưới thuộc Foods
+history và không tự mở wave/live gate full-corpus khác. Guide umbrella
 [Full-corpus RAG](full_corpus_rag.md) giữ phạm vi, quyết định đã chốt và chuỗi
 duyệt; guide Phase 2–8 hiện có tiếp tục mô tả behavior Foods đã thực hiện.
 
@@ -136,11 +136,12 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
-| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08c đã approved; full-corpus Wave 1 Correction 2 chờ re-review, chưa mở benchmark/live gate |
+| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08c đã approved; full-corpus Wave 1 closed, Wave 2.1+ và benchmark/live gate chưa active |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
 
-Workstream `full_corpus_rag.md` đang re-review Wave 1 Correction 2 và nối các thay đổi xuyên
-Phase 2–8; nó không tạo phase mới hoặc thay trạng thái các phase trong bảng.
+Workstream `full_corpus_rag.md` đã closure Wave 1 và chuyển sang Reviewer design
+gate Phase 3/Wave 2.1; nó không tự thay trạng thái các phase trong bảng hoặc cấp
+quyền implementation.
 
 Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 

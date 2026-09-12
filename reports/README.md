@@ -23,19 +23,18 @@ working/non-canonical. Verified Architecture Extraction thay thế đã qua hai
 correction, independent review và User closure ngày 2026-09-11; đây là approved
 evidence companion. Decision Queue tiền-spec đã hoàn tất qua #6e. Written Spec
 đã được User duyệt ngày 2026-09-11. Plan + Review Contract cũng đã được duyệt.
-Wave 1 Correction 2 đã được Implementer bàn giao sau initial review và Correction
-1 re-review đều `changes_requested`; active handoff chỉ authorize exact static
-Reviewer re-review.
+Wave 1 đã qua ba correction, independent static review và được User xác nhận
+closure ngày 2026-09-12. Active handoff chuyển sang Reviewer/`next_design` cho
+Phase 3/Wave 2.1; chưa authorize implementation hoặc live gate.
 Agentic RAG dùng
 profile/contract riêng. Index/Golden creation, live systems và benchmark rerun
 chưa được authorize.
 
-Review hiện hành là
-`full_corpus_rag_wave_1_correction_1_codex_review_2026_09_12.md`; active contract
-là `handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md`. Correction 1
-implementation report phải được Implementer sửa vì counts/test/output claims
-không khớp artifact/source. Preview `PASS` hiện hành là evidence đang review,
-không phải proof, approval hoặc completion.
+Final Wave 1 review là
+`full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`; User report là
+`user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`. Canonical preview
+`PASS`/205/8460/zero errors đã được closure trong đúng phạm vi offline Wave 1;
+không chứng minh Wave 2+ hoặc live runtime.
 
 Guide trạng thái của workstream là `guides/full_corpus_rag.md`. Khảo sát
 Golden/evaluation reference, schema deep-dive và simplicity evaluation
@@ -90,11 +89,17 @@ reports/phase_7_golden_dataset_audit.md
 - `full_corpus_rag_wave_1_codex_review_2026_09_12.md`: initial Wave 1 verdict
   `changes_requested`, W1-R1..R5.
 - `full_corpus_rag_wave_1_correction_1_codex_review_2026_09_12.md`: active review
-  finding set W1-C1-R1..R3 và route sang Correction 2.
+  history W1-C1-R1..R3 và route sang Correction 2.
+- `full_corpus_rag_wave_1_correction_2_codex_review_2026_09_12.md`: đóng hai
+  production/report branches, giữ W1-C2-R1 test-evidence Major.
+- `full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`: final static
+  review, không còn Blocker/Major; Approval Closure Contract đã được User xác nhận.
 - `full_corpus_rag_wave_1_correction_1_implementation_report_2026_09_12.md`:
-  evidence index cần correction; không dùng các counts/claims mâu thuẫn làm PASS.
+  final evidence index sau Correction 3; execution evidence, không tự là proof.
 - `artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json`: artifact hiện ghi
-  PASS/205/8460/zero errors; chưa được Reviewer/User closure.
+  PASS/205/8460/zero errors; User-closed trong phạm vi offline Wave 1.
+- `user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`: summary và
+  limitations được User xác nhận ngày 2026-09-12.
 
 - `full_corpus_parser_locator_codex_review_2026_09_09.md`: completed và User
   approved; parser/source locator design evidence.
@@ -119,8 +124,9 @@ reports/phase_7_golden_dataset_audit.md
   companion cho design, không phải approval runtime/Spec/Plan.
 - `llm_rag_verified_architecture_extraction_codex_review_2026_09_11.md`: review
   chain, technical closure và Approval Closure Contract đã được User xác nhận.
-- Ba implementation reports initial/Correction 1/Correction 2 là evidence lịch
-  sử của quá trình triển khai; Correction 2 là evidence được dùng ở re-review.
+- Initial implementation report và evidence index hợp nhất Correction 1–3 ghi
+  lịch sử triển khai; final acceptance dựa trên independent Correction 3 review
+  cùng User closure, không dựa riêng vào report Implementer.
 
 Các report completed cung cấp evidence cho written spec sau này. Chúng không
 thay `CURRENT_HANDOFF.md`, không chọn schema và không cấp quyền implementation.

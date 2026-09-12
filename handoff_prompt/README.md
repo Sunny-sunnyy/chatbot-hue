@@ -26,7 +26,8 @@ contracts để user chuyển giữa Reviewer và Implementer; không tự cấp
 | [Full-corpus implementation Review Contract](FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md) | Approved 2026-09-11; áp dụng theo từng active wave |
 | [Full-corpus RAG Wave 1](FULL_CORPUS_RAG_WAVE_1_IMPLEMENTATION_PROMPT.md) | Approved initial scope; đã qua initial review, không còn là active correction |
 | [Wave 1 Correction 1](FULL_CORPUS_RAG_WAVE_1_CORRECTION_1_PROMPT.md) | Đã implement nhưng re-review còn W1-C1-R1..R3 |
-| [Wave 1 Correction 2](FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md) | Implementer đã bàn giao; **active Reviewer re-review**, không live/Wave 2.1 |
+| [Wave 1 Correction 2](FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md) | Prompt lịch sử; còn W1-C2-R1 test-evidence Major |
+| [Wave 1 Correction 3](FULL_CORPUS_RAG_WAVE_1_CORRECTION_3_PROMPT.md) | Completed; final finding đã đóng và User closure 2026-09-12 |
 | [Context thiết kế](FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md) | Đọc snapshot đầu file trước; lịch sử/evidence phía dưới |
 | [Khảo sát parser/locator](FULL_CORPUS_PARSER_LOCATOR_SURVEY_HANDOFF.md) | Completed/user-approved; chỉ là contract lịch sử |
 | [Đo hai input VN/QT](FULL_CORPUS_VN_QT_TOKEN_CHECK_HANDOFF.md) | Completed/user-approved; chỉ là contract lịch sử |
@@ -34,8 +35,9 @@ contracts để user chuyển giữa Reviewer và Implementer; không tự cấp
 Guide umbrella là [`guides/full_corpus_rag.md`](../guides/full_corpus_rag.md).
 Hai tài liệu ngày 2026-09-09 ở `docs/superpowers/` vẫn là decision/experiment
 notes, không phải approval artifact. Written Spec, Implementation Plan và Review
-Contract ngày 2026-09-11 đã được User duyệt; active scope chỉ là Reviewer
-re-review Wave 1 Correction 2.
+Contract ngày 2026-09-11 đã được User duyệt; Wave 1 đã User-closed ngày
+2026-09-12. Active scope là Reviewer design gate Phase 3/Wave 2.1, chưa phải
+Implementer hoặc live action.
 Approval các khảo sát không duyệt runtime toàn corpus hoặc cấp quyền API/index/Git.
 
 Các FULL_CORPUS files dưới `session_prompt/` nay chỉ chứa link chuyển tiếp.
@@ -63,8 +65,9 @@ independent review và User closure ngày 2026-09-11. Decision #1 lexical
 baseline/sparse consumer, #2 index lifecycle, #3 payload/source locator, #4
 retrieval/fusion/reranker matrix và #5 representation B timing đã chốt.
 Decision Queue tiền-spec đã hoàn tất qua #6e. Written Spec, Plan và Review
-Contract đã được User duyệt ngày 2026-09-11; `CURRENT_HANDOFF.md` giao Reviewer
-duy nhất Wave 1 Correction 2 re-review, chưa mở wave/live gate sau.
+Contract đã được User duyệt ngày 2026-09-11; Wave 1 đã qua Correction 3 và User
+closure. `CURRENT_HANDOFF.md` giao Reviewer bắt đầu design gate Phase 3/Wave 2.1,
+chưa mở implementation/live gate sau.
 Agentic RAG dùng profile/contract riêng, không dùng one-shot budget.
 
 Hai snapshot `/home/minhhieu/llm_rag/tai_lieu/rag_agent_handoff_current_repo.md`

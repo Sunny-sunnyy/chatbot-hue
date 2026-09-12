@@ -26,6 +26,39 @@ knowledge_base:
     - _source-dumps
     - meta
 
+full_corpus:
+  knowledge_base:
+    root_dir: ../knowledge-base-hue
+    include_globs:
+      - foods/**/*.md
+      - heritages/**/*.md
+      - festivals/**/*.md
+      - performing_arts/**/*.md
+      - travel/places/**/*.md
+      - travel/services/**/*.md
+      - travel/tickets/**/*.md
+    exclude_parts:
+      - evaluation
+      - _source-dumps
+      - meta
+    exclude_files:
+      - travel/services/services-research-and-entities-inventory.md
+      - travel/tickets/tickets-research-and-entities-inventory.md
+  conditions_file: config/full_corpus_conditions.json
+  embedding_models:
+    - id: intfloat/multilingual-e5-small
+      max_tokens: 512
+      prefix: "passage: "
+      word_segment: false
+    - id: intfloat/multilingual-e5-base
+      max_tokens: 512
+      prefix: "passage: "
+      word_segment: false
+    - id: CODE4LIFEOFFICIAL/huydang-dek21-embedding
+      max_tokens: 256
+      prefix: ""
+      word_segment: true
+
 embedding:
   model: intfloat/multilingual-e5-small
   vector_size: 384

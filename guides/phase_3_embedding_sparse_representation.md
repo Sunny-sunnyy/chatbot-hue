@@ -1,11 +1,14 @@
 # Phase 3 — Dense embedding và sparse representation
 
-> **Full-corpus extension gate — 2026-09-11:** chưa active. Chỉ sau Wave 1/
-> Phase 2 technical review và User closure, Reviewer mới dùng chunk/tokenizer
-> evidence thật để brainstorming và cập nhật guide này. Trước Implementer phải
-> có User-approved Wave 2.1 spec/addendum, plan và Review Contract. Contract mới
-> phải chốt ba dense candidates, preprocessing/dimensions, sparse formula,
-> representation-A input và failure behavior; không suy từ Foods history.
+> **Full-corpus extension gate — 2026-09-12:** active cho Reviewer design-only.
+> Wave 1 đã User-closed với observed preview 205 files/8460 chunks, zero errors/
+> oversized và max token `366/512`, `366/512`, `255/256`. Session tiếp theo phải
+> brainstorming từng quyết định còn mở rồi cập nhật guide này; chưa có quyền
+> implementation. Trước Implementer phải có User-approved Wave 2.1 spec/addendum,
+> plan và Review Contract. Package phải chốt ba dense candidates, verified local
+> preprocessing/dimensions, sparse formula/consumer, Representation-A input và
+> failure behavior; không suy từ Foods history hoặc preview counts thành live
+> model/index evidence.
 
 ## Trạng thái
 
@@ -15,6 +18,7 @@ Owner: Codex Reviewer
 Implementer: DeepSeek
 Implementation: complete; technical review passed on 2026-08-25 +07
 User confirmation: completed on 2026-08-25 +07
+Full-corpus extension: design_gate_active; implementation not authorized
 ```
 
 Simplicity design được người dùng phê duyệt ngày `2026-08-24 +07`:
