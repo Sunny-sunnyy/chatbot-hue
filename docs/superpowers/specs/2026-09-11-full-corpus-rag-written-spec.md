@@ -4,8 +4,8 @@
 Status: approved by User
 Date: 2026-09-11
 Runtime authorization: none
-Implementation Plan: approved by User 2026-09-11; Wave 1 active
-Sequential wave workflow amendment: approved by User 2026-09-11
+Implementation Plan: approved by User 2026-09-11; Phase 3 active
+Sequential phase workflow amendment: approved by User 2026-09-11; terminology updated 2026-09-12
 ```
 
 ## 1. Mục tiêu và ranh giới
@@ -395,11 +395,12 @@ Architecture Extraction là evidence companion; report survey `llm_rag` 885 dòn
 vẫn frozen/non-canonical và không phải nguồn contract.
 
 User đã duyệt spec, Implementation Plan và Review Contract ngày 2026-09-11.
-Reviewer đã kích hoạt duy nhất Wave 1 qua active handoff. Các wave sau và mọi
+Phase 2 đã User-closed; Reviewer đã kích hoạt duy nhất Phase 3 hiện hành qua
+active handoff. Các phase sau và mọi
 runtime/API/Qdrant/paid benchmark vẫn giữ gate riêng trong Plan/Review Contract.
 
-Spec này là umbrella behavior contract. Trước từng wave sau Wave 1, Reviewer
-phải cập nhật guide phase và soạn exact wave spec/addendum, plan cùng Review
+Spec này là umbrella behavior contract. Trước từng phase sau Phase 2, Reviewer
+phải cập nhật guide phase và soạn exact phase spec, plan cùng Review
 Contract dựa trên evidence dependency trước đó; User duyệt package rồi mới giao
 Implementer. Addendum không được âm thầm đổi quyết định umbrella hoặc mô tả
 behavior chưa triển khai như observed result.

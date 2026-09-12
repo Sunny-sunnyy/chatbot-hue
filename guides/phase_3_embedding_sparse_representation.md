@@ -1,25 +1,142 @@
-# Phase 3 — Dense embedding và sparse representation
+# Phase 3 — Full-corpus dense embedding và sparse representation
 
-> **Full-corpus extension gate — 2026-09-12:** active cho Reviewer design-only.
-> Wave 1 đã User-closed với observed preview 205 files/8460 chunks, zero errors/
-> oversized và max token `366/512`, `366/512`, `255/256`. Session tiếp theo phải
-> brainstorming từng quyết định còn mở rồi cập nhật guide này; chưa có quyền
-> implementation. Trước Implementer phải có User-approved Wave 2.1 spec/addendum,
-> plan và Review Contract. Package phải chốt ba dense candidates, verified local
-> preprocessing/dimensions, sparse formula/consumer, Representation-A input và
-> failure behavior; không suy từ Foods history hoặc preview counts thành live
-> model/index evidence.
+> **Canonical Phase 3 closure — 2026-09-12:** User đã xác nhận Phase 3 sau
+> implementation, hai correction và independent final review `PASS`. Fresh
+> evidence: 205 files/8.460 chunks, sparse deterministic và bốn bounded dense
+> candidates PASS; Qwen chạy GTX 1650/CUDA FP16/eager/native 1024D.
 
 ## Trạng thái
 
 ```text
-Status: approved
+Status: approved/completed — User-confirmed on 2026-09-12 +07
 Owner: Codex Reviewer
 Implementer: DeepSeek
-Implementation: complete; technical review passed on 2026-08-25 +07
-User confirmation: completed on 2026-08-25 +07
-Full-corpus extension: design_gate_active; implementation not authorized
+Foods baseline: completed and User-confirmed on 2026-08-25 +07
+Full-corpus Phase 3 design: approved by User on 2026-09-12 +07
+Full-corpus Phase 3 implementation: authorized only through CURRENT_HANDOFF.md
+Git authorization: none
+Sub-agent authorization: user-standing; Implementer decides under workflow
 ```
+
+Canonical full-corpus package:
+
+```text
+docs/superpowers/specs/2026-09-12-phase-3-full-corpus-embedding-sparse-written-spec.md
+docs/superpowers/plans/2026-09-12-phase-3-full-corpus-embedding-sparse-implementation-plan.md
+```
+
+Review Contract nằm trong implementation plan. Guide này là entrypoint
+canonical của Phase 3; spec khóa behavior, plan khóa paths/commands/quyền và
+Review Contract khóa evidence cùng independent review.
+
+Closure evidence:
+
+```text
+reports/full_corpus_phase_3_embedding_sparse_correction_2_codex_review_2026_09_12.md
+reports/user_reports/full_corpus_phase_3_embedding_sparse_user_report_2026_09_12.md
+```
+
+## Full-corpus Phase 3 target đã duyệt
+
+Phase 3 nhận fresh ordered Representation A chunks từ Phase 2. Nó tokenize toàn
+corpus bằng exact native preprocessing của bốn candidates nhưng chỉ dense-encode
+một mẫu deterministic 10–15 chunks. Dense encoding toàn corpus và mọi Qdrant
+schema/write thuộc Phase 4.
+
+| Candidate | Exact revision | Dimension | Execution | Input contract |
+|---|---|---:|---|---|
+| `intfloat/multilingual-e5-small` | `614241f622f53c4eeff9890bdc4f31cfecc418b3` | 384 | CPU/FP32 | document `passage: `, query `query: ` |
+| `intfloat/multilingual-e5-base` | `d128750597153bb5987e10b1c3493a34e5a4502a` | 768 | CPU/FP32 | document `passage: `, query `query: ` |
+| `CODE4LIFEOFFICIAL/huydang-dek21-embedding` | `517f1af7dd04a57194f1de2990f0c6ede0a3109b` | 768 | CPU/FP32 | PyVi 0.1.1 cho document/query |
+| `Qwen/Qwen3-Embedding-0.6B` | `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3` | native 1024 | GTX 1650/CUDA FP16, batch 1 | raw Representation A document; custom English query instruction |
+
+Qwen query input phải đúng:
+
+```text
+Instruct: Given a Vietnamese question about Hue culture, heritage,
+festivals, performing arts, food, and travel, retrieve relevant
+Vietnamese passages that answer the question.
+Query: {question}
+```
+
+Không dùng instruction cho Qwen documents. Không dùng CPU fallback,
+quantization, FlashAttention, `device_map=auto`, `truncate_dim`, slicing/PCA,
+batch auto-shrink hoặc revision khác. Phase 3 chỉ PASS khi Qwen chạy thật trên
+GTX 1650 bằng CUDA FP16, eager attention, batch 1 và output 1024D normalized.
+
+### Representation A và dense evidence
+
+Input document giữ nguyên `FullCorpusChunk.search_text`:
+
+```text
+title
+heading path nối bằng " > " khi có
+evidence parts theo thứ tự nguồn
+```
+
+Không thêm `Tiêu đề:`/`Nội dung:` hoặc renderer thứ hai. Mẫu dense phải phủ cả
+bảy P7, paragraph/list/table/condition và per-model longest chunks; nếu coverage
+không nằm trong 10–15 chunks thì fail closed. Mọi model output phải đúng order,
+count, dimension, finite và L2 norm xấp xỉ 1. Cosine/timing chỉ là diagnostic,
+không có quality threshold hoặc winner trong Phase 3.
+
+### Sparse state
+
+Sparse state fit một lần trên ordered full-corpus `search_text` và dùng chung
+cho Phase 4 document vectors cùng Phase 5 query vectors:
+
+```text
+tokenizer = backend.scoring.bm25.tokenize
+k1 = 1.5
+b = 0.75
+vocabulary = mọi corpus term sắp lexicographic, index từ 0
+idf(term) = ln(1 + (N - df + 0.5) / (df + 0.5))
+document value = idf × BM25 TF saturation
+known query value = 1.0, một lần mỗi term
+```
+
+Dot product sparse phải bằng BM25 hiện hành. Artifact chỉ lưu corpus identity,
+counts, constants, tokenizer, ordered vocabulary và aligned IDF; không lưu
+8.460 document vectors hoặc lặp metadata ở mỗi point. Cùng exact input/config
+phải tạo byte-identical artifact.
+
+### Artifacts, Notebook và failure
+
+Generated sparse state:
+
+```text
+data/full_corpus_builds/phase_3_sparse_state.json
+```
+
+Versioned summary evidence:
+
+```text
+reports/artifacts/full_corpus_phase_3_embedding_sparse_preflight_2026_09_12.json
+```
+
+JSON không chứa dense vectors, corpus text, secrets hoặc absolute cache path.
+`notebooks/03_embedding_models.ipynb` gọi backend Phase 3 trên bounded sample;
+canonical outputs rỗng/execution counts null, Run All chỉ trên copy `/tmp`.
+
+GPU unavailable, Qwen OOM, wrong device/dtype/dimension, snapshot mismatch,
+tokenizer over-limit hoặc Phase 2 identity mismatch đều giữ trạng thái observed
+và block/fail Phase 3. Không có fallback. Nếu Windows passthrough đã hoạt động
+nhưng locked Torch không dùng CUDA, Implementer báo exact versions/evidence và
+xin User duyệt một lệnh `uv` cụ thể trước dependency change.
+
+### Quyền và handoff
+
+Implementer được sửa đúng code/tests/notebook/artifacts/report trong approved
+plan và tải bốn public snapshots ở exact revisions sau khi CUDA readiness đạt.
+Implementer được tự quyết dùng sub-agent theo standing User authorization trong
+`session_prompt/IMPLEMENTER_WORKFLOW.md`; mọi sub-agent giữ nguyên exact scope,
+allowed paths, stop conditions và không có quyền Git rộng hơn task cha. User tự
+thực hiện Windows/Administrator actions. Không Git write, Qdrant, dense
+full-corpus encoding, Foods mutation, Golden/evaluation, paid API hoặc Phase 4
+implementation. Sau self-review, Implementer bàn giao Reviewer; chỉ User mới
+xác nhận Phase 3 closure và mở design Phase 4.
+
+## Foods baseline lịch sử đã đóng
 
 Simplicity design được người dùng phê duyệt ngày `2026-08-24 +07`:
 
@@ -43,7 +160,7 @@ thiết kế simplicity đã duyệt và bằng chứng chạy thật.
 > sử tại thời điểm Phase 3 được review, không phải runtime requirement hiện
 > hành. Dense E5 contract của Phase 3 vẫn được giữ.
 
-## Mục tiêu
+## Foods history — mục tiêu
 
 Phase 3 biến 572 canonical food chunks thành:
 
@@ -55,7 +172,7 @@ Phase 3 biến 572 canonical food chunks thành:
 Code phải đủ chi tiết để người học theo được data flow, nhưng không giữ
 abstraction, validation hoặc provider code cho nhu cầu chưa tồn tại.
 
-## Dependency và ranh giới
+## Foods history — dependency và ranh giới
 
 - Phase 1–2 đã `approved`.
 - Input là output ổn định của `chunk_foods_markdown()` gồm 572 chunks.
@@ -91,7 +208,7 @@ Ngoài scope:
 - OpenRouter embedding implementation hoặc paid run;
 - Phase 7 evaluation rerun khi real verification xác nhận behavior được giữ.
 
-## Local E5 baseline
+## Foods history — local E5 baseline
 
 ```text
 Model: intfloat/multilingual-e5-small
@@ -163,7 +280,7 @@ Fail bằng `ValueError` rõ ràng khi:
 Không normalize lần hai bằng NumPy. Phase 4 tiếp tục kiểm tra finite values tại
 index boundary. Không pad/truncate, silent fallback hoặc tự sửa config.
 
-## Cấu hình
+## Foods history — cấu hình
 
 Phase 3 chỉ giữ cấu hình được local runtime sử dụng:
 
@@ -188,7 +305,7 @@ Hai E5 prefixes thuộc concrete `E5Embedder`. Phase 8 sẽ thiết kế provide
 instruction config mới dựa trên exact candidate/API thật. OpenAI configuration
 cho answer generation là subsystem khác và không thay đổi ở Phase 3.
 
-## Sparse representation
+## Foods history — sparse representation
 
 Giữ deterministic TF-IDF contract hiện tại:
 
@@ -225,7 +342,7 @@ phụ thuộc class `SparseEmbedder`; class này được giữ tạm cho Phase 
 simplicity review Phase 4–5 sau đó đã chuyển tokenizer sang BM25 ownership và
 xóa `SparseEmbedder` cùng stored sparse schema khỏi target code.
 
-## Retrieval compatibility
+## Foods history — retrieval compatibility
 
 Hue RAG đã có cả hai retriever:
 
@@ -262,7 +379,7 @@ profiles:
 luôn tốt hơn; Phase 8 mới so sánh quality, latency, reliability và cost rồi để
 user chọn winner.
 
-## Test contract
+## Foods history — test contract
 
 Focused tests bảo vệ distinct behavior, không chạy theo số lượng.
 
@@ -290,7 +407,7 @@ Existing ingestion/startup/hybrid-index tests chỉ là downstream wiring smoke.
 Full backend suite chạy một lần trước handoff vì Phase 3 API được nhiều phase
 dùng. Test pass không thay Notebook và live query.
 
-## Notebook 03
+## Foods history — Notebook 03
 
 `notebooks/03_embedding_models.ipynb` phải:
 
@@ -307,7 +424,7 @@ dùng. Test pass không thay Notebook và live query.
 Reviewer chạy Run All trên temporary copy. Elapsed time là observed result,
 không phải flaky pass threshold.
 
-## Real verification
+## Foods history — real verification
 
 ```text
 compile affected modules
@@ -327,7 +444,7 @@ tên bắt đầu bằng `hue_rag_live_test_`, existing guards còn nguyên và 
 Không cần exact float hash. Batching có thể tạo sai số float nhỏ; compatibility
 được chứng minh bằng same model/dimension/instructions và successful real query.
 
-## Phase 8 handoff
+## Foods history — Phase 8 handoff
 
 OpenRouter embedding vẫn là roadmap thật nhưng không có code dự phòng ở Phase
 3. Khi Phase 8 được mở, phải xác minh lại:
@@ -342,7 +459,7 @@ Phase 8 dùng API/model/data thật và so sánh local E5 với approved remote
 candidates trên ba retrieval profiles. Không mock/fake, silent fallback hoặc
 leaderboard-only winner.
 
-## Acceptance
+## Foods history — acceptance
 
 Technical review chỉ đạt khi:
 

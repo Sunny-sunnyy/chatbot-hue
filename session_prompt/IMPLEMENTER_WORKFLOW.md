@@ -32,9 +32,34 @@ skills/practical-project-coding/SKILL.md
 `risk-gated-agent-review` điều phối scope, handoff, evidence, correction và
 closure. `practical-project-coding` áp dụng cho code, tests, notebook,
 dependency, debug và refactor. Hai skill này là canonical cho nhiệm vụ tương
-ứng. Các Superpowers skill khác chỉ load khi exact
-handoff, approved plan hoặc conditional routing xác định chúng phù hợp; không
-tự dùng sub-agent nếu user hoặc Review Contract chưa cho phép.
+ứng. Các Superpowers skill khác chỉ load khi exact handoff, approved plan hoặc
+conditional routing xác định chúng phù hợp. Việc dùng sub-agent tuân theo
+standing authorization dưới đây.
+
+## Standing sub-agent authorization
+
+User xác nhận ngày 2026-09-12 rằng Implementer được **tự quyết định dùng hoặc
+không dùng sub-agent** khi thấy hữu ích, cho task hiện tại và mọi task tương lai.
+Implementer không cần xin lại Reviewer/User cho từng lần dispatch, trừ khi chỉ
+dẫn trực tiếp mới hơn của User thu hẹp hoặc thu hồi quyền này.
+
+Quyền này chỉ cho phép phân công cách thực hiện; nó không mở rộng task:
+
+- lead Implementer vẫn chịu trách nhiệm cuối cùng về completeness, correctness,
+  self-review, evidence và handoff;
+- mọi sub-agent kế thừa nguyên scope, allowed paths, risk boundary, stop
+  conditions, network/secrets/destructive-action và Git authorization của task
+  cha; không có quyền rộng hơn;
+- lead phải chia ownership rõ, tránh hai agent sửa cùng file; trong shared
+  worktree ưu tiên sub-agent read-only hoặc giao exact disjoint paths;
+- không dùng sub-agent để bỏ qua dependency order, approval gate, real evidence,
+  independent Reviewer review hoặc User closure;
+- report cuối phải ghi ngắn việc đã dùng sub-agent, phần việc được giao và cách
+  lead đã kiểm kết quả; không cần ghi nội dung điều phối vụn vặt.
+
+Các dòng `Sub-agent authorization: none` trong prompt/report/plan **lịch sử đã
+đóng** vẫn được giữ làm evidence theo thời điểm. Với task active hoặc tương lai,
+standing authorization này có hiệu lực trừ khi User đưa restriction mới hơn.
 
 ## Session bootstrap
 

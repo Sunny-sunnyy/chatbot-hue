@@ -1,8 +1,8 @@
 # Phase 7 — Retrieval và Answer Evaluation
 
-> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc Wave 3/
-> Phase 6 closure. Reviewer phải cập nhật guide này bằng hai package tuần tự:
-> Wave 4 Golden P7 và Wave 5A evaluator. Mỗi P7 có spec/plan/review scope riêng,
+> **Full-corpus extension gate — 2026-09-12:** chưa active và phụ thuộc Phase 6
+> closure. Reviewer phải cập nhật guide này bằng hai package tuần tự:
+> Phase 7A Golden P7 và Phase 7B evaluator. Mỗi P7 có spec/plan/review scope riêng,
 > Implementer report, full-row Reviewer review và User closure trước P7 kế tiếp;
 > evaluator chỉ bắt đầu sau canonical Golden closure. Foods evaluation dưới đây
 > vẫn là as-built history.

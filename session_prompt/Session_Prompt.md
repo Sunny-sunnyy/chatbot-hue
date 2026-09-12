@@ -45,6 +45,12 @@ Correction trong requirement/acceptance/quyền đã duyệt không cần user d
 riêng. User chuyển tiếp giữa các session; không có agent tự khởi chạy hay gửi
 thông điệp cho vai trò khác nếu chưa được cấp quyền.
 
+Đơn vị lifecycle active và tương lai chỉ gọi là `Phase`. Sau khi brainstorming,
+Written Spec, Implementation Plan và Review Contract của một Phase đã được User
+duyệt, Reviewer cập nhật guide canonical cùng các Markdown active cần thiết rồi
+mới giao Implementer. Không tạo lớp phân chia song song bằng tên khác. Tên file,
+report và artifact lịch sử đã đóng được giữ nguyên để bảo toàn audit trail.
+
 Mỗi lần bàn giao, vai trò gửi tự chuẩn bị prompt ngắn: tên role, bootstrap và
 các active artifacts cần đọc trước khi làm việc. Prompt phải gắn mỗi input bằng
 một trong ba mức `full-read`, `targeted-read`, `reference-only` theo chính sách

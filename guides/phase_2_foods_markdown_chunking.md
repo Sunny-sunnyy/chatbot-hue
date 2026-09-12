@@ -1,9 +1,10 @@
 # Phase 2: Khám phá và chunking Foods Markdown
 
 > Full-corpus extension cập nhật 2026-09-12: Written Spec, Plan, Review Contract
-> và exact Wave 1 prompt đã được User duyệt. Wave 1 discovery/parser/chunker/
+> và exact Phase 2 prompt đã được User duyệt. Phase 2 discovery/parser/chunker/
 > locator/Representation A preview đã qua ba correction, independent review và
-> được User xác nhận closure ngày 2026-09-12. Chưa có quyền Wave 2.1
+> được User xác nhận closure ngày 2026-09-12. Phase 3 chỉ được triển khai theo
+> package và active handoff đã được User duyệt;
 > implementation, embedding/Qdrant/live. Khảo sát parser/source locator đã
 > approved sau correction lượt 3. [Review/closure](../reports/full_corpus_parser_locator_codex_review_2026_09_09.md)
 > là evidence thiết kế. Chọn markdown-it-py/table enabled. Hai input VN/QT đúng
@@ -16,8 +17,8 @@
 
 Guide này vẫn là contract đã approved cho Foods Phase 2. Entry point của thiết
 kế đa domain là [Full-corpus RAG](full_corpus_rag.md); phần extension cùng
-approved Spec/Plan/Review Contract và exact Wave 1 prompt tạo design package
-hiện hành. Các mục Foods lịch sử không tự mở rộng quyền ngoài Wave 1 prompt.
+approved Spec/Plan/Review Contract và exact Phase 2 prompt tạo design package
+hiện hành. Các mục Foods lịch sử không tự mở rộng quyền ngoài Phase 2 prompt.
 
 MVP mới kế thừa và điều chỉnh MVP Foods trong guides/backend cho toàn bộ curated
 corpus, không chỉ đổi glob ingestion. User đã xác nhận hướng chunking baseline:
@@ -45,17 +46,17 @@ cắt body/điều kiện hoặc đổi boundaries. Context sinh lưu riêng, kh
 evidence/Golden. Báo cáo tỷ lệ được bổ sung và chất lượng trên toàn bộ tập
 câu hỏi. Đây không phải bước lấy thêm điều kiện sau Top-5 hoặc quyền gọi API.
 
-Contract Wave 1 nằm trong Written Spec, Implementation Plan, Review Contract,
+Contract Phase 2 nằm trong Written Spec, Implementation Plan, Review Contract,
 initial prompt và correction chain. Observed canonical artifact sau closure ghi
 205 sorted/unique files, 8460 chunks, ba condition rules, zero errors/oversized;
 max token `366/512`, `366/512`, `255/256`. Implementer báo 39 offline tests pass
 và repeated preview byte-identical; Reviewer không rerun dynamic checks. `8460`
-là observed result, không phải hard invariant. Wave 1 chưa embedding, chưa ghi
+ là observed result, không phải hard invariant. Phase 2 chưa embedding, chưa ghi
 Qdrant/build record và không cutover Foods runtime.
 
 Phân định trạng thái: Foods Phase 2 bên dưới là as-built history 91 files/572
 chunks của runtime hiện hành; full-corpus target là behavior trong approved
-Spec/Plan; observed Wave 1 là offline preview 205 files/8460 chunks. Ba lớp này
+Spec/Plan; observed Phase 2 là offline preview 205 files/8460 chunks. Ba lớp này
 không được dùng thay thế lẫn nhau.
 
 Các mục bên dưới giữ contract và approval **Foods lịch sử**, được đối chiếu với
@@ -394,10 +395,10 @@ Các tiêu chí kỹ thuật, notebook và xác nhận của người dùng đã
 ## Bước tiếp theo
 
 Foods Phase 2 đã hoàn thành simplicity review và giữ `approved`; production
-Foods vẫn là 572 chunks. Full-corpus Wave 1 cũng đã User-closed nhưng chưa
-cutover. Session tiếp theo thuộc Reviewer: bắt đầu design gate Phase 3/Wave 2.1,
-brainstorm từng quyết định còn mở, cập nhật detailed Phase 3 guide và trình User
-duyệt exact addendum/plan/Review Contract trước khi giao Implementer.
+Foods vẫn là 572 chunks. Full-corpus Phase 2 cũng đã User-closed nhưng chưa
+cutover. Phase 3 Written Spec, Plan và Review Contract đã được User duyệt ngày
+2026-09-12; active handoff giao Implementer thực hiện bounded dense/sparse
+preflight, chưa mở Phase 4 hoặc Qdrant.
 
 ## Quyết định được người dùng phê duyệt ngày 2026-08-09
 

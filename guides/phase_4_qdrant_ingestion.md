@@ -1,11 +1,130 @@
-# Phase 4: Qdrant ingestion và deterministic dense points
+# Phase 4: Qdrant ingestion và deterministic points
 
-> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc closure
-> Wave 2.1/Phase 3. Reviewer phải cập nhật guide này rồi trình User duyệt Wave
-> 2.2 spec/addendum, plan và Review Contract trước implementation. Package phải
-> khóa named dense/sparse schema, payload năm field, build identity, fresh-target
-> guard và completion verification. Mọi collection write là live gate riêng với
-> exact targets; Foods collections luôn read-only.
+> **Full-corpus design gate — 2026-09-12:** Phase 3 đã User-closed. User đã duyệt
+> conceptual design, Written Spec, Implementation Plan và Review Contract Phase
+> 4. Active handoff giao Implementer thực hiện Tasks 1–6 và một read-only
+> preflight trên đúng bốn targets. Chưa có dense full-corpus hoặc live-write
+> authority. Mọi Foods collection luôn read-only; replacement, cleanup, cutover
+> và Phase 5 vẫn đóng.
+
+## Full-corpus Phase 4 — approved package, preflight implementation active
+
+Canonical Written Spec:
+
+```text
+docs/superpowers/specs/2026-09-12-phase-4-full-corpus-qdrant-ingestion-written-spec.md
+```
+
+Canonical Implementation Plan và Review Contract:
+
+```text
+docs/superpowers/plans/2026-09-12-phase-4-full-corpus-qdrant-ingestion-implementation-plan.md
+```
+
+Trạng thái:
+
+```text
+Conceptual design: User-approved on 2026-09-12 +07
+Written Spec: User-approved on 2026-09-12 +07
+Implementation Plan: User-approved on 2026-09-12 +07
+Review Contract: User-approved on 2026-09-12 +07
+Implementation authority: Tasks 1–6 through active handoff
+Read-only Qdrant authority: exact four-target preflight only
+Dense full-corpus authority: none
+Live Qdrant write authority: none; separate post-preflight approval required
+Git authorization: none
+```
+
+### Dependency đã đóng
+
+- `205` canonical files và `8.460` deterministic Representation A chunks;
+- corpus identity
+  `0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223`;
+- Phase 3 sparse-state SHA-256
+  `5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be`;
+- bốn exact dense contracts đã PASS bounded real preflight, gồm Qwen3 1024D
+  CUDA/FP16/eager/batch 1 trên GTX 1650.
+
+Phase 4 rediscover/chunk fresh trước từng candidate và fail closed nếu file,
+chunk, corpus hoặc sparse identity lệch. Preview/artifact cũ không là runtime
+input.
+
+### Candidate collections
+
+```text
+hue_full_corpus_a_e5_small_384
+hue_full_corpus_a_e5_base_768
+hue_full_corpus_a_huydang_dek21_768
+hue_full_corpus_a_qwen3_06b_1024
+```
+
+Mỗi candidate ID ánh xạ tĩnh tới đúng một Phase 3 model contract và collection
+name. CLI không nhận arbitrary model/collection override; active Foods config
+không đổi.
+
+Mỗi collection có:
+
+- named dense vector `dense`, cosine, exact candidate dimension;
+- named sparse vector `sparse`, Qdrant default `SparseVectorParams()` và không
+  bật `Modifier.IDF` vì document values Phase 3 đã gồm IDF;
+- cùng `8.460` deterministic UUID5 IDs;
+- payload đúng năm fields `search_text`, `source`, `title`, `heading_path`,
+  `evidence_parts`;
+- Qdrant default storage/index behavior, không quantization, on-disk tuning,
+  custom HNSW hoặc payload index.
+
+### Fresh-target và execution
+
+Target absent hoặc empty với exact schema mới hợp lệ. Target non-empty hoặc
+final build-record path đã tồn tại làm ingestion dừng trước dense encoding/write.
+Không replace, delete, reconcile, resume, retry hoặc automatic suffix.
+
+Bốn candidates chạy tuần tự. Mỗi candidate giữ một NumPy dense matrix đã validate
+trong RAM, rồi chỉ dựng dense+sparse `PointStruct` theo batch 64. Collection chỉ
+được tạo sau khi toàn dense matrix đúng count/dimension/finite/norm và target
+state/build-record absence được recheck ngay trước write. Lỗi partial upsert giữ
+failed target, không tạo build record và dừng; recovery delete cần exact User
+approval mới.
+
+Một preflight package liệt kê cả bốn exact targets, model contracts, target
+state, commands và resources. Sau Reviewer check, User có thể xác nhận một
+live-write gate cho cả bốn; execution vẫn dừng ở lỗi đầu tiên. Approval này
+không bao gồm Foods, recovery deletion, replacement, cleanup hoặc cutover.
+
+### Completion và build records
+
+Mỗi collection phải đạt exact schema/count, full point-ID/payload comparison và
+readback exact deterministic 12-point Phase 3 sample cho cả dense/sparse. Không
+đọc lại toàn bộ vector matrices. Completed target còn phải chứng minh non-empty
+guard dừng trước model/write.
+
+Final-only atomic record:
+
+```text
+data/full_corpus_builds/<collection_name>.json
+```
+
+Record tự chứa collection/representation, dense model/revision/dimension,
+sparse-state identity, corpus identity, `205` relative source LF hashes,
+file/chunk/point counts và vector schema. Không timestamp, run ID, endpoint,
+secret, vector, full payload hoặc shared registry/manifest.
+
+Phase 4 chỉ PASS khi đủ bốn collections/records cùng corpus và sparse identity.
+Partial successes giữ evidence riêng nhưng không làm Phase PASS.
+
+### Verification và phase boundary
+
+Không dùng mock/fake/stub client, embedded Qdrant hoặc collection tạo riêng chỉ
+để test failure. Pure checks bảo vệ registry/schema/point/record/guard logic;
+real candidate builds là integration evidence. Notebook 04 chỉ inspect bốn
+completed candidates read-only và không có model/mutation path.
+
+Phase 4 chỉ chứng minh index contract. Dense retrieval, dense + BM25-local,
+native dense/sparse + RRF và reranker thuộc Phase 5 design/implementation; full
+quality metrics và winner/cutover thuộc Phase 8. Foods collections được giữ
+read-only tới post-winner cleanup gate riêng.
+
+## Foods as-built history
 
 ## Mục tiêu và giá trị cho người dùng
 

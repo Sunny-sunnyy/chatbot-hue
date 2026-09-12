@@ -1,8 +1,8 @@
 # Phase 5: Retrieval profiles, reranking và context
 
-> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc Wave
-> 2.2/Phase 4 evidence. Reviewer phải brainstorming rồi cập nhật guide này và
-> trình User duyệt Wave 2.3 spec/addendum, plan, Review Contract trước
+> **Full-corpus extension gate — 2026-09-12:** chưa active và phụ thuộc Phase 4
+> evidence. Reviewer phải brainstorming rồi cập nhật guide này và trình User
+> duyệt Phase 5 written spec, plan, Review Contract trước
 > implementation. Package phải phân biệt dense+BM25-local baseline với native
 > dense/sparse hybrid, khóa RRF/depth/tie-break/failure behavior và chỉ mở
 > reranker theo staged finalist rule. Foods profiles dưới đây là history.

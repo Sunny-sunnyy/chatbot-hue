@@ -1,11 +1,12 @@
 # Full-corpus RAG workstream
 
 ```text
-Status: Wave 1 user-approved closure; Phase 3/Wave 2.1 design gate next
-Runtime authorization: no Wave 2.1 implementation or live systems
+Status: Phase 2 user-approved closure; Phase 3 implementation package approved
+Runtime authorization: Phase 3 only through CURRENT_HANDOFF; no Qdrant/live systems
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
+Active Phase 3 package: docs/superpowers/specs/2026-09-12-phase-3-full-corpus-embedding-sparse-written-spec.md + docs/superpowers/plans/2026-09-12-phase-3-full-corpus-embedding-sparse-implementation-plan.md
 ```
 
 ## Vai trò của guide này
@@ -16,18 +17,22 @@ này nối các thay đổi xuyên Phase 2–8 và phân biệt chúng với beh
 approval của full-corpus Written Spec không thay đổi approval lịch sử của chúng
 hoặc tự approve implementation.
 
-## Workflow tuần tự theo wave và guide
+## Workflow tuần tự theo phase và guide
 
-Spec/Plan hiện hành là umbrella. Mỗi wave sau Wave 1 chỉ được giao Implementer
+User chốt ngày 2026-09-12: `Phase` là đơn vị lifecycle duy nhất cho tài liệu
+active/tương lai. Tên report/artifact lịch sử đã đóng giữ nguyên để bảo toàn
+audit trail; chúng không khôi phục thuật ngữ cũ thành một lớp execution mới.
+
+Spec/Plan hiện hành là umbrella. Mỗi phase sau Phase 2 chỉ được giao Implementer
 sau chuỗi sau:
 
 ```text
-evidence + closure wave trước
+evidence + closure phase trước
 -> Reviewer cập nhật guide phase phụ thuộc
 -> brainstorming từng quyết định còn mở
--> exact wave spec/addendum + implementation plan + Review Contract
+-> exact phase spec + implementation plan + Review Contract
 -> User duyệt design package
--> Implementer thực hiện đúng một wave và báo cáo
+-> Implementer thực hiện đúng một phase và báo cáo
 -> Reviewer independent review/correction
 -> User closure
 -> đồng bộ guide/status rồi quay lại design gate kế tiếp
@@ -35,22 +40,22 @@ evidence + closure wave trước
 
 Guide phải tách `Foods as-built history`, `full-corpus approved target` và
 `observed implementation result`. Không ghi kế hoạch thành kết quả đã chạy.
-Không chờ Wave 6 mới cập nhật guide phase đã hoàn tất; Wave 6 chỉ rà soát tích
-hợp cuối.
+Không chờ integrated closure mới cập nhật guide phase đã hoàn tất; bước closure
+cuối chỉ rà soát tích hợp.
 
 Thứ tự dependency:
 
-| Design package | Guide canonical cần cập nhật trước implementation | Dependency |
+| Phase package | Guide canonical cần cập nhật trước implementation | Dependency |
 |---|---|---|
-| Wave 1 | Phase 2 | User closure 2026-09-12; observed offline preview recorded |
-| Wave 2.1 | Phase 3 | Wave 1 technical review + User closure |
-| Wave 2.2 | Phase 4 | Wave 2.1 closure; live index là approval riêng |
-| Wave 2.3 | Phase 5 | Wave 2.2 code/index evidence theo gate |
-| Wave 3 | Phase 6 | Wave 2.3 closure; live API là approval riêng |
-| Wave 4 | Phase 7 Golden | Wave 3 closure; từng P7 closure tuần tự |
-| Wave 5A | Phase 7 evaluator | Golden canonical closure |
-| Wave 5B | Phase 8 | Evaluator/index readiness; từng paid stage riêng |
-| Wave 6 | Các guide bị ảnh hưởng | Mọi wave cần thiết đã closure |
+| Phase 2 | Phase 2 | User closure 2026-09-12; observed offline preview recorded |
+| Phase 3 | Phase 3 | Phase 2 technical review + User closure |
+| Phase 4 | Phase 4 | Phase 3 closure; live index là approval riêng |
+| Phase 5 | Phase 5 | Phase 4 code/index evidence theo gate |
+| Phase 6 | Phase 6 | Phase 5 closure; live API là approval riêng |
+| Phase 7A | Phase 7 Golden | Phase 6 closure; từng P7 closure tuần tự |
+| Phase 7B | Phase 7 evaluator | Golden canonical closure |
+| Phase 8 | Phase 8 | Evaluator/index readiness; từng paid stage riêng |
+| Integrated closure | Các guide bị ảnh hưởng | Mọi phase cần thiết đã closure |
 
 Nếu evidence làm thay đổi architecture, data/public contract hoặc quyền, dừng
 để sửa và duyệt lại package; không hợp thức hóa sau khi Implementer đã làm.
@@ -93,7 +98,7 @@ Verified Architecture Extraction thay thế đã qua hai correction, independent
 Reviewer review và được User xác nhận closure ngày 2026-09-11. Artifact này là
 approved evidence companion cho design, không phải approval runtime/Spec/Plan.
 
-Wave 1 initial review ngày 2026-09-12 yêu cầu Correction 1 cho năm Major; hai
+Phase 2 initial review ngày 2026-09-12 yêu cầu Correction 1 cho năm Major; hai
 review sau tạo các delta hẹp cho report/schema/cache/test evidence. Correction 3
 đã đóng finding cuối và User xác nhận closure ngày 2026-09-12. Observed canonical
 artifact là `PASS`: 205 sorted/unique files, 8460 chunks, ba condition rules,
@@ -101,14 +106,14 @@ zero errors/oversized; max token E5-small `366/512`, E5-base `366/512`, HuyDang
 `255/256`. Implementer báo fresh offline suite `39 passed, 1 warning` và repeated
 preview byte-identical; Reviewer chỉ static-review, không rerun dynamic checks.
 Con số 8460 là observed result, không phải product invariant. Full backend/live
-ingestion suites không thuộc Wave 1 acceptance vì dùng real embedder/Qdrant.
+ingestion suites không thuộc Phase 2 acceptance vì dùng real embedder/Qdrant.
 
-Wave 1 đã triển khai discovery, strict UTF-8/LF/hash, Markdown structure/spans,
+Phase 2 đã triển khai discovery, strict UTF-8/LF/hash, Markdown structure/spans,
 condition exact-one matching, semantic split, exact `EvidencePart`, deterministic
-chunk IDs/UUID5 và Representation A tokenizer preview. Wave này chưa embedding,
+chunk IDs/UUID5 và Representation A tokenizer preview. Phase này chưa embedding,
 chưa tạo Qdrant point/build record, chưa retrieval/generation/API/UI/Golden/
 benchmark. Foods runtime 572 points/chunks là as-built history riêng và không bị
-Wave 1 cutover hoặc mutation.
+Phase 2 cutover hoặc mutation.
 
 ## Quyết định đã chốt
 
@@ -420,12 +425,15 @@ baseline.
    `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` đã được
    User duyệt ngày 2026-09-11.
 4. Implementation Plan và Review Contract đã được User duyệt ngày 2026-09-11.
-5. Wave 1 đã User-closed ngày 2026-09-12; final review là
+5. Phase 2 đã User-closed ngày 2026-09-12; final review là
    `reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`.
-6. **Hiện hành:** `CURRENT_HANDOFF.md` giao Reviewer bắt đầu design gate Phase
-   3/Wave 2.1. Reviewer brainstorming từng quyết định còn mở, cập nhật detailed
-   Phase 3 guide và soạn exact addendum/plan/Review Contract để User duyệt; chưa
-   giao Implementer và mọi live gate vẫn đóng.
+6. Phase 3 Written Spec, Implementation Plan và Review Contract đã được User
+   duyệt ngày 2026-09-12; implementation đã independent review và User-closed.
+7. Phase 4 conceptual design, Written Spec, Implementation Plan và Review
+   Contract đã được User duyệt ngày 2026-09-12.
+8. **Hiện hành:** `CURRENT_HANDOFF.md` giao Implementer thực hiện Phase 4 Tasks
+   1–6 và một exact read-only four-target preflight. Dense full-corpus và mọi
+   Qdrant write vẫn đóng tới post-preflight User approval riêng.
 
 Không pre-create hoặc cố định tên ngày cho spec/plan trước gate. Reviewer chọn
 exact path khi bắt đầu artifact sau khi decision queue đủ; path không tự tạo
@@ -434,7 +442,7 @@ approval.
 ## Tài liệu hiện hành
 
 - Trạng thái task: `session_prompt/CURRENT_HANDOFF.md`.
-- Wave 1 final review/closure:
+- Phase 2 final review/closure:
   `reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md` và
   `reports/user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`.
 - Correction 1–3 prompts/reviews là lifecycle history, không còn active contract.

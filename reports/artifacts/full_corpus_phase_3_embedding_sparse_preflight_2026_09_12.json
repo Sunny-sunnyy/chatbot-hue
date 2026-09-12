@@ -1,0 +1,428 @@
+{
+  "schema_version": "phase_3_preflight_evidence:v1",
+  "status": "PASS",
+  "corpus": {
+    "total_files": 205,
+    "total_chunks": 8460,
+    "condition_rules_count": 3,
+    "corpus_identity": "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223"
+  },
+  "sample": [
+    {
+      "index": 0,
+      "chunk_id": "foods/cafes/anh kafe hue.md#0",
+      "source": "foods/cafes/anh kafe hue.md",
+      "heading_path": [
+        "Tóm tắt"
+      ],
+      "tags": [
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 68,
+        "e5-base-768": 68,
+        "huydang-dek21-768": 49,
+        "qwen3-embedding-0.6b-1024": 74
+      }
+    },
+    {
+      "index": 1,
+      "chunk_id": "heritages/heritage-guides.md#0",
+      "source": "heritages/heritage-guides.md",
+      "heading_path": [
+        "Huế nổi tiếng với những di sản và di tích nào?"
+      ],
+      "tags": [
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 170,
+        "e5-base-768": 170,
+        "huydang-dek21-768": 120,
+        "qwen3-embedding-0.6b-1024": 192
+      }
+    },
+    {
+      "index": 2,
+      "chunk_id": "festivals/festival-guides.md#0",
+      "source": "festivals/festival-guides.md",
+      "heading_path": [
+        "Huế và đời sống lễ hội"
+      ],
+      "tags": [
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 112,
+        "e5-base-768": 112,
+        "huydang-dek21-768": 80,
+        "qwen3-embedding-0.6b-1024": 120
+      }
+    },
+    {
+      "index": 3,
+      "chunk_id": "performing_arts/arts/Ca Huế trên sông Hương.md#0",
+      "source": "performing_arts/arts/Ca Huế trên sông Hương.md",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "tags": [
+        "list"
+      ],
+      "tokens": {
+        "e5-small-384": 25,
+        "e5-base-768": 25,
+        "huydang-dek21-768": 22,
+        "qwen3-embedding-0.6b-1024": 25
+      }
+    },
+    {
+      "index": 4,
+      "chunk_id": "travel/places/Bãi biển Bình An.md#0",
+      "source": "travel/places/Bãi biển Bình An.md",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "tags": [
+        "list"
+      ],
+      "tokens": {
+        "e5-small-384": 26,
+        "e5-base-768": 26,
+        "huydang-dek21-768": 18,
+        "qwen3-embedding-0.6b-1024": 22
+      }
+    },
+    {
+      "index": 5,
+      "chunk_id": "travel/services/Chi phí du lịch Huế.md#0",
+      "source": "travel/services/Chi phí du lịch Huế.md",
+      "heading_path": [
+        "Cách tính tổng ngân sách du lịch Huế"
+      ],
+      "tags": [
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 26,
+        "e5-base-768": 26,
+        "huydang-dek21-768": 18,
+        "qwen3-embedding-0.6b-1024": 31
+      }
+    },
+    {
+      "index": 6,
+      "chunk_id": "travel/tickets/Hướng dẫn mua và sử dụng vé du lịch Huế.md#0",
+      "source": "travel/tickets/Hướng dẫn mua và sử dụng vé du lịch Huế.md",
+      "heading_path": [],
+      "tags": [
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 166,
+        "e5-base-768": 166,
+        "huydang-dek21-768": 114,
+        "qwen3-embedding-0.6b-1024": 185
+      }
+    },
+    {
+      "index": 7,
+      "chunk_id": "festivals/festival/Lễ Ban Sóc triều Nguyễn.md#5",
+      "source": "festivals/festival/Lễ Ban Sóc triều Nguyễn.md",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "tags": [
+        "list",
+        "table"
+      ],
+      "tokens": {
+        "e5-small-384": 131,
+        "e5-base-768": 131,
+        "huydang-dek21-768": 105,
+        "qwen3-embedding-0.6b-1024": 143
+      }
+    },
+    {
+      "index": 8,
+      "chunk_id": "travel/services/Chi phí du lịch Huế.md#13",
+      "source": "travel/services/Chi phí du lịch Huế.md",
+      "heading_path": [
+        "Dự toán một ngày tại Huế"
+      ],
+      "tags": [
+        "condition",
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 283,
+        "e5-base-768": 283,
+        "huydang-dek21-768": 210,
+        "qwen3-embedding-0.6b-1024": 470
+      }
+    },
+    {
+      "index": 9,
+      "chunk_id": "foods/cafes/quan ca phe muoi.md#11",
+      "source": "foods/cafes/quan ca phe muoi.md",
+      "heading_path": [
+        "Menu và giá tham khảo"
+      ],
+      "tags": [
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 366,
+        "e5-base-768": 366,
+        "huydang-dek21-768": 242,
+        "qwen3-embedding-0.6b-1024": 444
+      }
+    },
+    {
+      "index": 10,
+      "chunk_id": "travel/places/Hòn Vượn.md#31",
+      "source": "travel/places/Hòn Vượn.md",
+      "heading_path": [
+        "Tuyến trekking từ chùa Huyền Không Sơn Thượng lên đỉnh Hòn Vượn",
+        "Lộ trình và phân đoạn hai chặng leo núi Hòn Vượn"
+      ],
+      "tags": [
+        "list"
+      ],
+      "tokens": {
+        "e5-small-384": 333,
+        "e5-base-768": 333,
+        "huydang-dek21-768": 255,
+        "qwen3-embedding-0.6b-1024": 350
+      }
+    },
+    {
+      "index": 11,
+      "chunk_id": "travel/services/Chi phí du lịch Huế.md#18",
+      "source": "travel/services/Chi phí du lịch Huế.md",
+      "heading_path": [
+        "Dự toán ba ngày hai đêm tại Huế"
+      ],
+      "tags": [
+        "condition",
+        "paragraph"
+      ],
+      "tokens": {
+        "e5-small-384": 327,
+        "e5-base-768": 327,
+        "huydang-dek21-768": 241,
+        "qwen3-embedding-0.6b-1024": 560
+      }
+    }
+  ],
+  "queries": [
+    "Đại Nội Huế có những điểm tham quan nào?",
+    "Lễ hội truyền thống ở Huế thường diễn ra khi nào?",
+    "Tôi nên ăn món gì và di chuyển thế nào khi du lịch Huế?"
+  ],
+  "models": {
+    "e5-small-384": {
+      "model_id": "intfloat/multilingual-e5-small",
+      "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "dimension": 384,
+      "max_tokens": 512,
+      "input_contract": "e5",
+      "device": "cpu",
+      "dtype": "float32",
+      "batch_size": 8,
+      "configured": {
+        "native_output_dimension": 384,
+        "parameter_device": "cpu",
+        "parameter_dtype": "float32",
+        "attention_implementation": null,
+        "batch_size": 8,
+        "input_contract": "e5",
+        "document_preprocessing": "prefix: passage: ",
+        "query_instruction": "prefix: query: "
+      },
+      "tokenizer_scan": {
+        "max_observed_tokens": 366,
+        "max_chunk_id": "foods/cafes/quan ca phe muoi.md#11",
+        "over_limit_count": 0,
+        "over_limit_ids": []
+      },
+      "smoke": {
+        "document_count": 12,
+        "query_count": 3,
+        "dimension": 384,
+        "norm_min": 0.9999999654628561,
+        "norm_max": 1.0000000938109386,
+        "elapsed_seconds": 3.497
+      },
+      "observed": {
+        "native_output_dimension": 384,
+        "parameter_device": "cpu",
+        "parameter_dtype": "torch.float32",
+        "attention_implementation": "sdpa",
+        "batch_size": 8,
+        "document_preprocessing": "prefix: passage: ",
+        "query_instruction": "prefix: query: "
+      }
+    },
+    "e5-base-768": {
+      "model_id": "intfloat/multilingual-e5-base",
+      "revision": "d128750597153bb5987e10b1c3493a34e5a4502a",
+      "dimension": 768,
+      "max_tokens": 512,
+      "input_contract": "e5",
+      "device": "cpu",
+      "dtype": "float32",
+      "batch_size": 8,
+      "configured": {
+        "native_output_dimension": 768,
+        "parameter_device": "cpu",
+        "parameter_dtype": "float32",
+        "attention_implementation": null,
+        "batch_size": 8,
+        "input_contract": "e5",
+        "document_preprocessing": "prefix: passage: ",
+        "query_instruction": "prefix: query: "
+      },
+      "tokenizer_scan": {
+        "max_observed_tokens": 366,
+        "max_chunk_id": "foods/cafes/quan ca phe muoi.md#11",
+        "over_limit_count": 0,
+        "over_limit_ids": []
+      },
+      "smoke": {
+        "document_count": 12,
+        "query_count": 3,
+        "dimension": 768,
+        "norm_min": 0.9999999625436427,
+        "norm_max": 1.0000000822417627,
+        "elapsed_seconds": 4.9514
+      },
+      "observed": {
+        "native_output_dimension": 768,
+        "parameter_device": "cpu",
+        "parameter_dtype": "torch.float32",
+        "attention_implementation": "sdpa",
+        "batch_size": 8,
+        "document_preprocessing": "prefix: passage: ",
+        "query_instruction": "prefix: query: "
+      }
+    },
+    "huydang-dek21-768": {
+      "model_id": "CODE4LIFEOFFICIAL/huydang-dek21-embedding",
+      "revision": "517f1af7dd04a57194f1de2990f0c6ede0a3109b",
+      "dimension": 768,
+      "max_tokens": 256,
+      "input_contract": "pyvi",
+      "device": "cpu",
+      "dtype": "float32",
+      "batch_size": 8,
+      "configured": {
+        "native_output_dimension": 768,
+        "parameter_device": "cpu",
+        "parameter_dtype": "float32",
+        "attention_implementation": null,
+        "batch_size": 8,
+        "input_contract": "pyvi",
+        "document_preprocessing": "pyvi_tokenize",
+        "query_instruction": "pyvi_tokenize"
+      },
+      "tokenizer_scan": {
+        "max_observed_tokens": 255,
+        "max_chunk_id": "travel/places/Hòn Vượn.md#31",
+        "over_limit_count": 0,
+        "over_limit_ids": []
+      },
+      "smoke": {
+        "document_count": 12,
+        "query_count": 3,
+        "dimension": 768,
+        "norm_min": 0.9999999315487743,
+        "norm_max": 1.00000010059044,
+        "elapsed_seconds": 1.8349
+      },
+      "observed": {
+        "native_output_dimension": 768,
+        "parameter_device": "cpu",
+        "parameter_dtype": "torch.float32",
+        "attention_implementation": "sdpa",
+        "batch_size": 8,
+        "document_preprocessing": "pyvi_tokenize",
+        "query_instruction": "pyvi_tokenize"
+      }
+    },
+    "qwen3-embedding-0.6b-1024": {
+      "model_id": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "dimension": 1024,
+      "max_tokens": 32768,
+      "input_contract": "qwen3",
+      "device": "cuda",
+      "dtype": "float16",
+      "batch_size": 1,
+      "configured": {
+        "native_output_dimension": 1024,
+        "parameter_device": "cuda",
+        "parameter_dtype": "float16",
+        "attention_implementation": "eager",
+        "batch_size": 1,
+        "input_contract": "qwen3",
+        "document_preprocessing": "raw_representation_a",
+        "query_instruction": "Given a Vietnamese question about Hue culture, heritage, festivals, performing arts, food, and travel, retrieve relevant Vietnamese passages that answer the question."
+      },
+      "tokenizer_scan": {
+        "max_observed_tokens": 560,
+        "max_chunk_id": "travel/services/Chi phí du lịch Huế.md#18",
+        "over_limit_count": 0,
+        "over_limit_ids": []
+      },
+      "smoke": {
+        "document_count": 12,
+        "query_count": 3,
+        "dimension": 1024,
+        "norm_min": 0.9997628100598939,
+        "norm_max": 1.0002702134458026,
+        "elapsed_seconds": 12.9433,
+        "vram": {
+          "allocated_bytes": 1200088064,
+          "reserved_bytes": 1409286144,
+          "peak_bytes": 1323201536
+        }
+      },
+      "observed": {
+        "native_output_dimension": 1024,
+        "parameter_device": "cuda:0",
+        "parameter_dtype": "torch.float16",
+        "attention_implementation": "eager",
+        "batch_size": 1,
+        "document_preprocessing": "raw_representation_a",
+        "query_instruction": "Given a Vietnamese question about Hue culture, heritage, festivals, performing arts, food, and travel, retrieve relevant Vietnamese passages that answer the question."
+      }
+    }
+  },
+  "gpu": {
+    "torch_version": "2.13.0+cu130",
+    "torch_cuda_version": "13.0",
+    "cuda_available": true,
+    "device_count": 1,
+    "device_index": 0,
+    "device_name": "NVIDIA GeForce GTX 1650",
+    "total_vram_bytes": 4294639616,
+    "qwen_vram": {
+      "allocated_bytes": 1200088064,
+      "reserved_bytes": 1409286144,
+      "peak_bytes": 1323201536
+    }
+  },
+  "sparse": {
+    "schema_version": "phase_3_sparse_state:v1",
+    "sha256": "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be",
+    "document_count": 8460,
+    "vocabulary_size": 5662,
+    "average_document_length": 67.87423167848699,
+    "k1": 1.5,
+    "b": 0.75,
+    "repeated_byte_identical": true,
+    "round_trip_equality": true
+  },
+  "errors": []
+}

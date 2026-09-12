@@ -14,27 +14,32 @@
 > approved evidence companion. Decision Queue tiền-spec đã hoàn tất qua #6e.
 > Written Spec tại
 > `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` đã được User
-> duyệt ngày 2026-09-11. Plan + Review Contract cũng đã được User duyệt. Wave 1
+> duyệt ngày 2026-09-11. Plan + Review Contract cũng đã được User duyệt. Phase 2
 > đã qua ba correction, independent review và User closure ngày 2026-09-12.
-> Session tiếp theo là Reviewer design gate Phase 3/Wave 2.1; chưa cấp quyền
-> implementation/live hoặc wave sau.
+> Phase 3 đã User-closed. Phase 4 conceptual design, Written Spec, Plan và Review
+> Contract được User duyệt ngày 2026-09-12; active handoff giao Implementer
+> Tasks 1–6 và exact read-only preflight, chưa cấp dense full-corpus/Qdrant write.
 > Agentic RAG dùng profile/contract riêng.
 > Xem [bộ handoff](../handoff_prompt/README.md).
 
 
-## Workstream toàn corpus — Wave 1 closed, cập nhật 2026-09-12
+## Workstream toàn corpus — Phase 4 Tasks 1–6, cập nhật 2026-09-12
 
 Written Spec, Implementation Plan và Review Contract cho toàn curated corpus đã
-được User duyệt; Wave 1 đã User-closed với offline preview 205 files/8460 chunks,
+được User duyệt; Phase 2 đã User-closed với offline preview 205 files/8460 chunks,
 zero errors/oversized. Các trạng thái `approved` trong bảng bên dưới thuộc Foods
-history và không tự mở wave/live gate full-corpus khác. Guide umbrella
+history và không tự mở phase/live gate full-corpus khác. Guide umbrella
 [Full-corpus RAG](full_corpus_rag.md) giữ phạm vi, quyết định đã chốt và chuỗi
 duyệt; guide Phase 2–8 hiện có tiếp tục mô tả behavior Foods đã thực hiện.
 
 Mỗi guide Phase 2–8 có một `full-corpus extension gate`. Sau closure của
-dependency, Reviewer cập nhật guide, soạn wave spec/plan/Review Contract và xin
+dependency, Reviewer cập nhật guide, soạn phase spec/plan/Review Contract và xin
 User duyệt trước khi giao Implementer. Sau implementation lại review, User
-closure và cập nhật observed result rồi mới thiết kế phase/wave kế tiếp.
+closure và cập nhật observed result rồi mới thiết kế phase kế tiếp.
+
+Terminology đã được User chốt ngày 2026-09-12: active/future work chỉ dùng
+`Phase`; không tạo một lớp phân chia song song. Tên file/report/artifact lịch sử
+đã đóng giữ nguyên để bảo toàn liên kết và audit trail.
 
 Điểm bắt đầu: [Full-corpus RAG](full_corpus_rag.md),
 [bản ghi quyết định](../docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md),
@@ -131,17 +136,16 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 0 | `phase_0_mvp_foundation.md` | `approved` | Simplicity review đã approved; Phase 1 cũng đã trở lại `approved` |
 | 1 | `phase_1_backend_skeleton.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
 | 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
-| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
-| 4 | `phase_4_qdrant_ingestion.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận; candidate chưa cutover |
+| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Full-corpus implementation đã independent review và User-closed |
+| 4 | `phase_4_qdrant_ingestion.md` | `ready_for_implementation` | Full-corpus package approved; Tasks 1–6/read-only preflight active; dense/Qdrant write cần gate riêng |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
-| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08c đã approved; full-corpus Wave 1 closed, Wave 2.1+ và benchmark/live gate chưa active |
+| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08c approved; full-corpus Phase 4 preflight implementation active; benchmark/live gate chưa active |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
 
-Workstream `full_corpus_rag.md` đã closure Wave 1 và chuyển sang Reviewer design
-gate Phase 3/Wave 2.1; nó không tự thay trạng thái các phase trong bảng hoặc cấp
-quyền implementation.
+Workstream `full_corpus_rag.md` đã closure Phase 2–3 và chuyển sang Implementer
+Phase 4 Tasks 1–6. Handoff không tự mở dense full-corpus hoặc Qdrant write.
 
 Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 

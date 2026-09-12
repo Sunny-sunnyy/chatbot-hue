@@ -14,22 +14,30 @@ chứng từ dữ liệu, database, model cùng API thật.
 
 ## Current active handoff snapshot
 
-User đã xác nhận closure **Full-corpus RAG Wave 1** ngày 2026-09-12 sau ba
+User đã xác nhận closure **Full-corpus Phase 2** ngày 2026-09-12 sau ba
 correction và independent static review. Toàn bộ W1-R1..R5, W1-C1-R1..R3 và
 W1-C2-R1 đã đóng; final review là
 `reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`.
 
-Observed Wave 1 artifact: `PASS`, 205 sorted/unique files, 8460 chunks, ba
+Observed Phase 2 artifact: `PASS`, 205 sorted/unique files, 8460 chunks, ba
 condition rules, zero blocking errors/oversized; max token `366/512`, `366/512`,
 `255/256`. Implementer báo fresh offline suite `39 passed, 1 warning` và repeated
 preview byte-identical; Reviewer không rerun dynamic checks. `8460` là observed
 artifact count, không phải hard-coded product invariant.
 
-Next session thuộc **Reviewer**, handoff kind `next_design`. Nhiệm vụ duy nhất là
-bắt đầu design gate Phase 3/Wave 2.1 từ evidence Wave 1: cập nhật detailed Phase
-3 guide, brainstorming từng quyết định còn mở (mỗi lượt một quyết định), rồi soạn
-exact Wave 2.1 spec/addendum, implementation plan và Review Contract để User duyệt
-trọn package. Chưa giao Implementer, chưa embedding/Qdrant/API/live/paid.
+User đã xác nhận closure **Full-corpus Phase 3** ngày 2026-09-12 sau hai
+correction và independent final review. Fresh offline preflight `PASS`: 205
+files, 8.460 chunks, sample 12, zero tokenizer over-limit, sparse deterministic;
+Qwen3-Embedding-0.6B chạy GTX 1650 bằng CUDA FP16/eager/native 1024D, batch 1.
+Final review:
+`reports/full_corpus_phase_3_embedding_sparse_correction_2_codex_review_2026_09_12.md`.
+
+Active handoff thuộc **Implementer**, kind `implementation`, cho Full-corpus
+Phase 4 Tasks 1–6. Conceptual design, Written Spec, Implementation Plan và
+Review Contract đã được User duyệt ngày 2026-09-12. Handoff cho phép code,
+deterministic checks và một read-only preflight chỉ trên bốn exact full-corpus
+targets. Chưa có quyền dense-encode toàn corpus hoặc Qdrant mutation; Task 7
+live build cần User approval riêng sau khi Reviewer kiểm preflight.
 
 ## System and data map
 
@@ -86,9 +94,9 @@ Chọn markdown-it-py 4.2.0/table enabled cho thiết kế locator trên source 
 đã sửa ranh giới; counts input sai không dùng làm PASS.
 
 Full-corpus đã có Written Spec, Implementation Plan và Review Contract được User
-duyệt ngày 2026-09-11. Wave 1 discovery/parser/chunker/locator/Representation A
+duyệt ngày 2026-09-11. Phase 2 discovery/parser/chunker/locator/Representation A
 preview đã được User xác nhận closure ngày 2026-09-12. Chưa có quyền
-implementation/live/runtime cho các wave sau. Guide umbrella hiện hành là
+implementation/live/runtime cho các phase sau ngoài exact active handoff. Guide umbrella hiện hành là
 `guides/full_corpus_rag.md`. Khảo sát parser, hai input Ca Huế VN/QT,
 Golden/evaluation reference, schema deep-dive và simplicity evaluation
 `rag_old_0` đều đã được Reviewer kiểm và User xác nhận `approved/completed`.
@@ -111,12 +119,15 @@ temperature 0, B output 256, answer 16384/2048/512, timeout 90 giây; Agentic RA
 dùng profile/contract riêng. #6e chốt UI inline citation/source cards. Decision
 Queue tiền-spec đã hoàn tất; Written Spec đã được User duyệt ngày 2026-09-11.
 Implementation Plan + Review Contract đã được User duyệt ngày 2026-09-11;
-Reviewer tiếp theo chỉ được bắt đầu design gate Phase 3/Wave 2.1; chưa giao
-Implementer trước khi User duyệt exact guide/addendum/plan/Review Contract.
-User tiếp tục chốt workflow tuần tự: sau mỗi wave phải review/User closure và
-cập nhật detailed phase guide; trước wave kế tiếp Reviewer phải dùng evidence
-dependency để hoàn tất guide + wave spec/addendum + plan + Review Contract và
-xin User duyệt. Không author ahead hoặc giao Implementer liên tục qua nhiều wave.
+Phase 3 guide, Written Spec, Implementation Plan và Review Contract đã được User
+duyệt ngày 2026-09-12; implementation qua hai correction đã independent review
+PASS và được User xác nhận closure cùng ngày. Phase 4 design/spec/plan/Review
+Contract đã được User duyệt; active Implementer handoff chỉ mở Tasks 1–6 và
+exact read-only preflight. Dense full-corpus cùng mọi Qdrant write vẫn đóng.
+User tiếp tục chốt workflow tuần tự: sau mỗi phase phải review/User closure và
+cập nhật detailed phase guide; trước phase kế tiếp Reviewer phải dùng evidence
+dependency để hoàn tất guide + phase spec + plan + Review Contract và xin User
+duyệt. Không author ahead hoặc giao Implementer liên tục qua nhiều phase.
 Quyết định/ngữ cảnh tại
 `handoff_prompt/FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md`, snapshot đầu
 file và các mục mới nhất. Session mới khởi động bằng bốn file chuẩn
@@ -133,12 +144,12 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 0 | `approved` | MVP foundation và simplicity governance |
 | 1 | `approved` | Backend foundation |
 | 2 | `approved` | Foods Markdown chunking |
-| 3 | `approved` | Dense embedding và sparse representation simplification |
-| 4 | `approved` | Qdrant ingestion; dense-only candidate chưa cutover |
+| 3 | `approved` | Full-corpus embedding/sparse preflight User-closed; Qwen CUDA FP16 PASS trên GTX 1650 |
+| 4 | `approved` | Foods history approved; full-corpus package approved, Tasks 1–6/read-only preflight active; dense/Qdrant write vẫn đóng |
 | 5 | `approved` | Retrieval profiles và reranking |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; full-corpus Wave 1 đã closure nhưng Wave 2.1+ và benchmark/live gate chưa active |
+| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; full-corpus Phase 4 Tasks 1–6/preflight đang active |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -146,6 +157,10 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
 
 ## Decisions currently in force
 
+- Tài liệu active và tương lai chỉ dùng `Phase` làm đơn vị lifecycle. Sau khi
+  Spec/Plan/Review Contract của Phase được User duyệt, Reviewer cập nhật guide
+  canonical và active Markdown trước Implementer handoff. Tên file/report/
+  artifact lịch sử đã đóng giữ nguyên để bảo toàn audit trail.
 - Mỗi phase có canonical guide; report/status không tự tạo requirement.
 - User đã chỉ đạo và hoàn tất Taxonomy Migration ngày 08/09/2026:
   Cấu trúc `knowledge-base-hue/tourism/` đã được di chuyển hoàn toàn sang
@@ -225,13 +240,13 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   mọi tài liệu được dẫn”.
 - Nhiệm vụ và next action duy nhất nằm trong `session_prompt/CURRENT_HANDOFF.md`.
 - Full-corpus thực hiện tuần tự:
-  `Phase 2/Wave 1 → Phase 3/Wave 2.1 → Phase 4/Wave 2.2 → Phase 5/Wave 2.3 → Phase 6/Wave 3 → Phase 7 Golden/Wave 4 → Phase 7 Evaluator/Wave 5A → Phase 8 Benchmark/Wave 5B → Wave 6 integrated closure`.
-  Mỗi wave phải có guide + spec/addendum + plan + Review Contract và User duyệt
-  trước implementation; wave trước phải independent review và User closure trước.
+  `Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7A Golden → Phase 7B Evaluator → Phase 8 Benchmark → integrated closure`.
+  Mỗi phase phải có guide + spec + plan + Review Contract và User duyệt trước
+  implementation; phase trước phải independent review và User closure trước.
 - Correction 2 đã loại khỏi acceptance việc chạy toàn bộ `backend/tests` và
   `test_ingestion_pipeline.py`, vì các suite đó gọi real embedder/Qdrant và mâu
-  thuẫn hard boundary offline của Wave 1. Chỉ chạy exact offline checks ghi trong
-  Correction 2; không dùng full-suite failure làm Wave 1 evidence.
+  thuẫn hard boundary offline của Phase 2. Chỉ chạy exact offline checks ghi trong
+  Correction 2; không dùng full-suite failure làm Phase 2 evidence.
 - Live Qdrant/API/paid, từng P7, finalist, representation B, winner/cutover/
   replacement/cleanup và Agentic RAG luôn cần exact approval riêng.
 
@@ -368,9 +383,9 @@ Contract đọc reference:
 Thiết kế điều chỉnh embedding, indexing/ingestion, retrieval,
 context/generation và evaluation — các phần đã làm từ Phase 2 đến Phase 7,
 nhưng áp dụng cho toàn corpus. Spec/Plan/Review Contract đã được User duyệt;
-Wave 1 đã qua ba correction, independent review và User closure ngày 2026-09-12.
+Phase 2 đã qua ba correction, independent review và User closure ngày 2026-09-12.
 Chưa có quyền
-chạy benchmark, thay Golden, mutate index hoặc thực hiện wave/live gate sau.
+chạy benchmark, thay Golden, mutate index hoặc thực hiện phase/live gate sau.
 
 Golden organization đã được user chốt theo giai đoạn và theo P7: biên soạn/review
 `foods`, `heritages`, `festivals`, `performing_arts`, `travel_places`,
@@ -390,9 +405,11 @@ locator, #4 retrieval/fusion/reranker matrix và #5 representation B timing đã
 được User chốt; #6a strict minimal response/citation/error, #6b context budget
 và #6c generator/provider + judge separation cũng đã chốt. #6d đã khóa exact
 generator settings/numeric budgets và tách Agentic RAG sang profile/contract
-riêng; #6e chốt UI inline citation/source cards. Bước hiện hành là Reviewer
-design gate Phase 3/Wave 2.1; các implementation/live gate sau chưa active.
-Exact next action nằm trong CURRENT_HANDOFF.
+riêng; #6e chốt UI inline citation/source cards. Phase 3 đã independent review
+PASS và User-confirmed closure. Phase 4 design/spec/plan/Review Contract đã được
+User duyệt; active Implementer handoff chỉ mở Tasks 1–6 và exact read-only
+preflight. Dense full-corpus cùng Qdrant write vẫn đóng. Exact next action nằm
+trong CURRENT_HANDOFF.
 
 Simplicity survey `rag_old_0` đã qua hai correction, independent Reviewer review
 và User confirmation. Các phiên sau tham khảo hai report survey/review trong
@@ -425,13 +442,13 @@ Trạng thái biên soạn dữ liệu theo domain tại ngày 08/09/2026:
 - `festivals`: đã có 26 entity trong `festivals/festival/` và
   `festival-guides.md`.
 - `performing_arts`: có 11 entity trong `performing_arts/arts/`,
-  `performing_arts_guides.md` và một inventory; Wave 1 discovery hiện tính cả 13
+  `performing_arts_guides.md` và một inventory; Phase 2 discovery hiện tính cả 13
   file theo approved scope.
 - `travel/places`: 35 entity điểm đến và cẩm nang tổng quan `travel_guides.md` đã hoàn tất thẩm định.
 - `travel/services`: 04 guide answer-facing và 01 inventory; inventory bị loại
-  khỏi Wave 1 discovery.
+  khỏi Phase 2 discovery.
 - `travel/tickets`: 05 file answer-facing và 01 inventory; inventory bị loại
-  khỏi Wave 1 discovery. Năm file answer-facing đã hoàn tất biên soạn, thẩm định độc
+  khỏi Phase 2 discovery. Năm file answer-facing đã hoàn tất biên soạn, thẩm định độc
   lập 2 lượt (reports/tickets_codex_review_2026_09_08.md và
   reports/tickets_codex_rereview_2026_09_08.md), khắc phục 100% (06/06) findings,
   lập User Report và được người dùng chính thức phê duyệt nghiệm thu ngày 08/09/2026.
@@ -462,9 +479,10 @@ của toàn bộ kho tri thức `knowledge-base-hue` (gồm 5 domain: `foods`, `
    correction ceiling và được thay bằng Verified Architecture Extraction theo
    complexity reset User xác nhận. Extraction đã qua hai correction, Reviewer
    review và User closure. Decision Queue đã hoàn tất; Written Spec, Plan và
-   Review Contract đã được duyệt. Wave 1 đã User-closed; active handoff giao
-   Reviewer thiết kế Phase 3/Wave 2.1, chưa giao Implementer. Các wave và live
-   gate sau tiếp tục cần đúng closure/approval trong Plan. Hai working notes ngày
+   Review Contract đã được duyệt. Phase 2 và Phase 3 đã User-closed; Phase 4
+   package riêng đã được duyệt và active handoff mở Tasks 1–6/read-only
+   preflight, chưa mở dense full-corpus hoặc Qdrant write. Các phase và live gate
+   sau tiếp tục cần đúng closure/approval trong Plan. Hai working notes ngày
    2026-09-09 không phải các artifact đã
    duyệt này.
 

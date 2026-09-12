@@ -96,20 +96,20 @@ giữ một handoff thực thi hiện hành và bảo toàn tiến độ thiết
 Sau khi plan được duyệt, tự cập nhật handoff và cung cấp prompt chuyển tiếp
 ngắn theo `Session_Prompt.md`, không chờ user yêu cầu thêm.
 
-Với workstream chia nhiều wave/phase phụ thuộc nhau, approval của plan umbrella
-không tự mở mọi wave. Trước từng wave mới, Reviewer phải:
+Với workstream chia nhiều phase phụ thuộc nhau, approval của plan umbrella
+không tự mở mọi phase. Trước từng phase mới, Reviewer phải:
 
-1. đóng wave trước bằng independent review và User closure khi handoff yêu cầu;
+1. đóng phase trước bằng independent review và User closure khi handoff yêu cầu;
 2. dùng evidence vừa đạt để cập nhật guide phase liên quan, phân biệt target đã
    duyệt với behavior đã quan sát;
 3. brainstorming từng quyết định mới theo thứ tự dependency;
-4. tạo hoặc cập nhật exact wave spec, implementation plan và Review Contract;
+4. tạo hoặc cập nhật exact phase spec, implementation plan và Review Contract;
 5. xin User duyệt trọn design package;
-6. chỉ sau đó mới tạo Implementer handoff cho đúng một wave.
+6. chỉ sau đó mới tạo Implementer handoff cho đúng một phase.
 
-Nếu một guide/wave phụ thuộc kết quả guide/wave trước, không author ahead như đã
-biết kết quả. Spec/plan umbrella giữ kiến trúc chung; wave addendum chỉ chứa
-delta, exact paths, acceptance, evidence và quyền của wave đó. Không nhân bản
+Nếu một phase phụ thuộc kết quả phase trước, không author ahead như đã biết kết
+quả. Spec/plan umbrella giữ kiến trúc chung; phase spec/plan chỉ chứa delta,
+exact paths, acceptance, evidence và quyền của phase đó. Không nhân bản
 toàn bộ requirement lịch sử vào mỗi artifact.
 
 Không dùng lại design gate cho exact `final_review` hoặc correction review nếu

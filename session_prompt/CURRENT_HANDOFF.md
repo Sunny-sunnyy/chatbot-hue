@@ -1,94 +1,146 @@
-# Bàn giao hiện hành — Phase 3 / Full-corpus Wave 2.1 Design Gate
+# Bàn giao hiện hành — Full-corpus Phase 4 Tasks 1–6
 
-Target role: reviewer
+Target role: implementer
 Authored by: reviewer
-Handoff kind: next_design
+Handoff kind: implementation
 State: active
-Base commit: d631d3cc47a66d7a43c71f36c585d73ae9d21f9e
-Head commit: closure commit on origin/main; verify at session start
-Risk level: medium
+Base commit: 071b1137bd5d1af60053bd3bb2c3fe47ba29ac0f
+Head commit at authoring: worktree
+Risk level: high
 Git authorization: none
-Sub-agent authorization: none
+Sub-agent authorization: user-standing
 
-## Closed dependency
+## Approved package
 
-Full-corpus RAG Wave 1 được User xác nhận closure ngày 2026-09-12. Final review:
-`reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`.
-Observed offline result: `PASS`, 205 sorted/unique files, 8460 chunks, ba
-condition rules, zero errors/oversized; max token `366/512`, `366/512`,
-`255/256`. Implementer báo 39 tests pass và repeated preview byte-identical;
-Reviewer không rerun dynamic checks. Wave 1 chưa embedding hoặc Qdrant mutation.
+User đã duyệt conceptual design, Written Spec, Implementation Plan và Review
+Contract Full-corpus Phase 4 ngày 2026-09-12 +07.
 
-## Objective
+Canonical artifacts:
 
-Bắt đầu design gate Phase 3/Full-corpus Wave 2.1 từ evidence thật của Wave 1.
-Reviewer phải xác định các quyết định embedding/sparse representation còn mở,
-brainstorm với User **mỗi lượt một quyết định**, rồi cập nhật detailed Phase 3
-guide và soạn exact Wave 2.1 spec/addendum, implementation plan cùng Review
-Contract. Trình User duyệt trọn design package trước khi tạo Implementer handoff.
+- Written Spec:
+  `docs/superpowers/specs/2026-09-12-phase-4-full-corpus-qdrant-ingestion-written-spec.md`;
+- Implementation Plan + Review Contract:
+  `docs/superpowers/plans/2026-09-12-phase-4-full-corpus-qdrant-ingestion-implementation-plan.md`;
+- canonical guide: `guides/phase_4_qdrant_ingestion.md`.
 
-Không bắt đầu implementation, không giao Implementer Wave 2.1 trong session
-bootstrap và không author ahead nội dung phụ thuộc như đã có live result.
+Closed dependency: Full-corpus Phase 3 User-closed với `205` files, `8.460`
+chunks, corpus identity
+`0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223`,
+sparse SHA-256
+`5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be`
+và bốn bounded dense candidates PASS.
 
-## Active design inputs
+## Objective duy nhất
+
+Thực hiện đúng **Tasks 1–6** của approved Plan bằng
+`superpowers:executing-plans`: NumPy dense matrix path; reusable sparse lookup;
+deterministic record helpers; exact Qdrant schema/fresh-target guards; bounded
+64-point construction/completion verification; static registry, CLI, checks và
+một exact read-only preflight package.
+
+Sau Task 6, dừng và trả exact preflight evidence cho User/Reviewer. Không thực
+hiện Task 7 hoặc Task 8 trong handoff này.
+
+## Context loading
 
 ### Full-read
 
-- Full-corpus umbrella/status/observed Wave 1:
-  `guides/full_corpus_rag.md`
-- Detailed Phase 3 guide, gồm Foods as-built history và extension gate:
-  `guides/phase_3_embedding_sparse_representation.md`
-- Final Wave 1 technical review và limitations:
-  `reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`
-
-Nếu output của bất kỳ file `full-read` nào bị truncate, tiếp tục từ dòng dừng tới
-EOF.
+- `session_prompt/Session_Prompt.md`;
+- `session_prompt/IMPLEMENTER_WORKFLOW.md`;
+- file này;
+- `skills/risk-gated-agent-review/SKILL.md`;
+- `skills/practical-project-coding/SKILL.md`;
+- Written Spec, Implementation Plan + Review Contract và guide Phase 4 nêu trên.
 
 ### Targeted-read
 
-- `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md`: exact
-  embedding, Representation A/B, payload và Wave 2.1 dependency requirements;
-- `docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md`:
-  design-gate workflow và exact Wave 2.1/Phase 3 roadmap sections;
-- `handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md`: Wave 2
-  static/code review requirements và authority boundaries;
-- canonical preview artifact chỉ các totals/tokenizer limits cần làm Wave 2.1
-  dependency evidence.
+- `backend/embedding/full_corpus.py` và test tương ứng: Phase 3 dense APIs;
+- `backend/embedding/sparse.py` và test tương ứng: sparse contract;
+- `backend/ingestion/source_state.py`, full-corpus chunker/schema anchors;
+- `backend/vectorstore/qdrant.py`, `points.py`, `upsert.py`: giữ Foods behavior;
+- Phase 3 preflight JSON: corpus/sparse/model/sample identities;
+- `session_prompt/Project_Status.md`: current Phase 4 snapshot.
 
 ### Reference-only
 
-Correction prompts/reports cũ, production Foods code/data history, full corpus
-source text, `.env`, logs, caches, Qdrant state, notebooks và mọi Wave 2.2+ nội
-dung chưa cần cho quyết định đang hỏi.
+- Phase 2/3 correction history ngoài final review;
+- Foods Phase 4–8 reports, Golden/evaluation và old benchmark artifacts;
+- umbrella full-corpus package và `llm_rag` reports trừ khi có mâu thuẫn;
+- Notebook 04, API/frontend/generation/retrieval và phases 5–8.
 
-## Design boundaries
+## Allowed paths
 
-- Foods runtime/collections giữ read-only; Wave 1 không cutover chúng.
-- Không chạy tests, model/API, embedding inference, Qdrant, frontend, notebook
-  hoặc benchmark trong design gate.
-- Không tạo collection/point/build record, không paid call và không Git write.
-- E5-small, E5-base và HuyDang là approved dense candidates; exact local model
-  readiness/dimensions/preprocessing phải được Wave 2.1 plan kiểm bằng evidence,
-  không suy từ tên model.
-- Representation B chỉ thuộc staged finalists sau này, không triển khai trong
-  Wave 2.1 nếu exact new approval chưa cho phép.
-- Giữ chuỗi Wave 2.1 → Wave 2.2 → Wave 2.3; không gộp embedding, live indexing và
-  retrieval chỉ để giảm số gate.
+```text
+backend/embedding/full_corpus.py
+backend/embedding/sparse.py
+backend/ingestion/source_state.py
+backend/vectorstore/qdrant.py
+backend/vectorstore/points.py
+backend/vectorstore/upsert.py
+backend/ingestion/full_corpus_pipeline.py
+backend/tests/test_full_corpus_embedding.py
+backend/tests/test_full_corpus_sparse.py
+backend/tests/test_full_corpus_qdrant_ingestion.py
+reports/artifacts/full_corpus_phase_4_qdrant_preflight_2026_09_12.json
+```
 
-## Required design outputs trước Implementer handoff
+Không sửa Spec/Plan/Review Contract, guide/status/workflow,
+`CURRENT_HANDOFF.md`, Notebook 04 hoặc implementation report trong handoff này.
+Giữ nguyên mọi thay đổi User/phase trước đang có trong dirty worktree.
 
-1. danh sách quyết định còn mở, hỏi User từng quyết định một;
-2. detailed Phase 3 guide cập nhật với target behavior, exclusions, evidence và
-   trạng thái `proposed`/`ready` đúng lifecycle;
-3. exact Wave 2.1 spec/addendum;
-4. exact Wave 2.1 implementation plan;
-5. exact Wave 2.1 Review Contract;
-6. một lần trình User duyệt toàn bộ package; chỉ sau approval mới tạo Implementer
-   handoff Wave 2.1.
+## Authority hiện hành
+
+Được phép code/TDD/pure checks Tasks 1–6; đọc canonical input/closed artifacts;
+không load dense model. Sau khi pure checks PASS, được kết nối cùng Hue RAG
+Qdrant local và chỉ gọi `info`, `collection_exists`, `get_collection`, `count`
+cho đúng bốn targets:
+
+```text
+hue_full_corpus_a_e5_small_384
+hue_full_corpus_a_e5_base_768
+hue_full_corpus_a_huydang_dek21_768
+hue_full_corpus_a_qwen3_06b_1024
+```
+
+Được ghi atomic preflight artifact đúng allowed path.
+
+Không được load/run dense model hoặc dense-encode full corpus; không
+create/upsert/delete/reset/recreate/query/scroll/retrieve collection; không truy
+cập Foods collections; không Task 7/8; không đổi model/schema/payload/ID,
+dependency/settings/Docker/corpus/Golden/retrieval/generation/API/frontend;
+không paid service hay Git operation.
+
+## Required execution and evidence
+
+1. Resolve base/head và complete dirty-worktree inventory trước khi sửa.
+2. Thực hiện Tasks 1–6 theo dependency order và RED/GREEN commands.
+3. Chạy focused deterministic suite trong Review Contract; không fake/mock/stub
+   Qdrant client, embedded Qdrant hoặc disposable collection.
+4. Chạy `git diff --check` và audit exact diff/immutable paths.
+5. Chỉ khi code/pure checks đạt, chạy exact read-only commands:
+
+```bash
+docker compose ps
+docker compose config --images
+HF_HUB_OFFLINE=1 UV_CACHE_DIR=/tmp/hue-rag-phase4-preflight-uv-cache \
+uv run --env-file .env python -m backend.ingestion.full_corpus_pipeline \
+  preflight \
+  --output reports/artifacts/full_corpus_phase_4_qdrant_preflight_2026_09_12.json
+```
+
+6. Report actual results, target states/blockers, identities/resources và mọi
+   failed/skipped/not-verified; không biến expected value thành observed result.
+
+## Stop conditions
+
+- Cần đổi requirement/architecture/model/schema/payload/ID/risk/authority/path:
+  dừng và trả Reviewer/User.
+- Qdrant unavailable, target mismatched/non-empty, record exists hoặc identity
+  lệch: ghi `BLOCKED`; không model, mutation, delete/recovery/retry.
+- Preflight `READY`: vẫn dừng và trả artifact/evidence. Task 7 chỉ mở sau User
+  live-write approval riêng nêu đủ bốn targets.
 
 ## Next action duy nhất
 
-Reviewer nạp context theo bốn file bootstrap chuẩn, kiểm cấu trúc thư mục, rồi
-đọc ba full-read inputs trên. Sau đó tóm tắt dependency Wave 1 và hỏi User **một
-quyết định thiết kế Phase 3 đầu tiên**; chưa sửa guide/spec/plan trước khi
-brainstorm đủ các quyết định cần thiết và chưa giao Implementer.
+Implementer đọc full active package, thực hiện Tasks 1–6, tự review rồi trả kết
+quả preflight qua User. Không claim PASS/approval/closure và không tự thay handoff.

@@ -3,16 +3,16 @@
 ```text
 Status: approved by User 2026-09-11
 Written Spec: approved 2026-09-11
-Implementation authorization: Wave 1 only through active handoff
+Implementation authorization: current Phase only through active handoff
 Runtime/live authorization: gated below
-Sequential wave workflow amendment: approved by User 2026-09-11
+Sequential phase workflow amendment: approved by User 2026-09-11; terminology updated 2026-09-12
 ```
 
 ## 1. Outcome
 
 Triển khai approved
 [Full-corpus RAG Written Spec](../specs/2026-09-11-full-corpus-rag-written-spec.md)
-theo các wave nhỏ, mỗi wave có artifact, self-verification và independent review.
+theo các phase nhỏ, mỗi phase có artifact, self-verification và independent review.
 Kết quả cuối là pipeline full-corpus có locator/citation, hai retrieval
 treatments, staged reranker/representation B, UI inline và full evaluation thật.
 
@@ -22,12 +22,12 @@ Agentic RAG. Mỗi cơ chế dưới đây phải có consumer hoặc acceptance
 ## 2. Quyền và ranh giới
 
 Trước khi User duyệt Plan, không giao Implementer và không sửa runtime/data.
-Sau approval, chỉ wave hiện hành trong `CURRENT_HANDOFF.md` được phép thực hiện.
-Hoàn tất một wave phải bàn giao Reviewer; không tự bắt đầu wave tiếp theo.
+Sau approval, chỉ phase hiện hành trong `CURRENT_HANDOFF.md` được phép thực hiện.
+Hoàn tất một phase phải bàn giao Reviewer; không tự bắt đầu phase tiếp theo.
 
 Quyền mặc định sau Plan approval:
 
-- được sửa code/config/tests/docs đúng wave đang active;
+- được sửa code/config/tests/docs đúng phase đang active;
 - được cài dependency đã liệt kê qua lockfile và chạy unit/integration tests;
 - không Git commit/push/reset/clean;
 - không đọc/in secrets; report không chứa key, header hoặc response nhạy cảm;
@@ -40,41 +40,42 @@ Reviewer không chạy model/API/Qdrant/tests/frontend/notebook/benchmark theo
 authority hiện hành. Reviewer kiểm source/diff/artifacts độc lập và dùng
 Implementer execution evidence; User có thể cấp authority mới bằng văn bản.
 
-### 2.1 Design package và closure bắt buộc cho từng wave
+### 2.1 Design package và closure bắt buộc cho từng phase
 
 Plan này là roadmap/umbrella, không phải một lệnh triển khai liên tục. Trước mỗi
-wave sau Wave 1, Reviewer phải dùng kết quả wave trước để soạn một design package
+phase sau Phase 2, Reviewer phải dùng kết quả phase trước để soạn một design package
 nhỏ nhưng đầy đủ:
 
 1. cập nhật exact guide phase liên quan với dependency, target behavior,
    exclusions và trạng thái `proposed`;
-2. exact wave spec/addendum cho behavior và data/public contracts;
-3. exact wave implementation plan cho paths, thứ tự, tests/artifacts và stop
+2. exact phase spec cho behavior và data/public contracts;
+3. exact phase implementation plan cho paths, thứ tự, tests/artifacts và stop
    condition;
 4. exact Review Contract cho evidence, independent checks, severity và quyền;
 5. User approval cho cả package trước khi tạo Implementer handoff.
 
 Sau implementation, Implementer bàn giao report; Reviewer review/correction,
 trình User closure rồi đồng bộ guide thành target/observed status. Handoff tiếp
-theo quay về Reviewer design gate, không tự nhảy sang Implementer wave kế tiếp.
-Không author chi tiết phụ thuộc như thể evidence wave trước đã tồn tại.
+theo quay về Reviewer design gate, không tự nhảy sang Implementer phase kế tiếp.
+Không author chi tiết phụ thuộc như thể evidence phase trước đã tồn tại.
 
-Wave 1 đã thỏa design gate bằng approved Written Spec, Plan, Review Contract,
-phần full-corpus trong guide Phase 2 và exact Wave 1 implementation prompt. Mọi
-wave sau vẫn chưa có implementation authorization.
+Phase 2 đã thỏa design gate bằng approved Written Spec, Plan, Review Contract,
+phần full-corpus trong guide Phase 2 và exact Phase 2 implementation prompt.
+Phase 3 đã có package riêng được User duyệt ngày 2026-09-12; phase sau vẫn chưa
+có implementation authorization.
 
 Dependency order cho các package tiếp theo:
 
 ```text
-Wave 1 / Phase 2 parser-locator closure
--> Wave 2.1 / Phase 3 dense+sparse representation design and implementation
--> Wave 2.2 / Phase 4 index schema+lifecycle design, then separate live gate
--> Wave 2.3 / Phase 5 retrieval+fusion+reranker design and implementation
--> Wave 3 / Phase 6 context+generation+API+UI, then separate live gate
--> Wave 4 / Phase 7 Golden P7, one approved partition at a time
--> Wave 5A / Phase 7 evaluator
--> Wave 5B / Phase 8 staged real benchmark and selection gates
--> Wave 6 / integrated documentation and final closure
+Phase 2 parser-locator closure
+-> Phase 3 dense+sparse representation design and implementation
+-> Phase 4 index schema+lifecycle design, then separate live gate
+-> Phase 5 retrieval+fusion+reranker design and implementation
+-> Phase 6 context+generation+API+UI, then separate live gate
+-> Phase 7A Golden P7, one approved partition at a time
+-> Phase 7B evaluator
+-> Phase 8 staged real benchmark and selection gates
+-> integrated documentation and final closure
 ```
 
 Reviewer có thể gộp spec/plan của hai bước chỉ khi dependency đã có evidence và
@@ -124,7 +125,7 @@ Giữ module hiện có khi phù hợp; chỉ tách module khi có một trách 
 - full-corpus tests dưới `backend/tests/`;
 - generated build records dưới ignored `data/full_corpus_builds/`.
 
-Tên có thể điều chỉnh trong wave report nếu responsibility không đổi. Không tạo
+Tên có thể điều chỉnh trong phase report nếu responsibility không đổi. Không tạo
 provider/plugin framework, repository layer, event bus, migration engine hoặc
 generic graph abstraction.
 
@@ -141,7 +142,7 @@ Implementation dùng một contract cố định, khai báo trong config và rep
   evaluation; context lấy Top-5.
 
 Nếu source/API của library khiến một constant không thể áp dụng đúng, Implementer
-dừng wave và báo trade-off; không thay số âm thầm.
+dừng phase và báo trade-off; không thay số âm thầm.
 
 ### 3.4 Sparse representation
 
@@ -156,7 +157,7 @@ không cập nhật vocabulary tại request time.
 Baseline local BM25 dùng cùng tokenization contract nhưng chỉ chấm 30 dense
 candidates. Native hybrid query dense và sparse độc lập, mỗi branch 30, rồi RRF.
 
-## 4. Wave 1 — Discovery, parser, chunker và locator
+## 4. Phase 2 — Discovery, parser, chunker và locator
 
 Mục tiêu: tạo deterministic full-corpus preview, chưa embedding hoặc ghi Qdrant.
 
@@ -186,16 +187,16 @@ Tests bắt buộc:
 
 Deliverables:
 
-- code/config/tests của Wave 1;
+- code/config/tests của Phase 2;
 - preview artifact tĩnh chỉ chứa counts/errors/paths, không dump toàn corpus;
 - implementation report ánh xạ acceptance → evidence;
 - handoff Reviewer/final_review.
 
-## 5. Wave 2 — Embedding, sparse index, Qdrant lifecycle và retrieval
+## 5. Phases 3–5 — Embedding, sparse index, Qdrant lifecycle và retrieval
 
 Mục tiêu: triển khai components/index contract; mutation live chỉ ở gate 5B.
 
-### Wave 2A — code và tests không live collection
+### Phases 3–5 — code và tests trước live collection
 
 1. Khai báo explicit dense candidates:
    `intfloat/multilingual-e5-small`,
@@ -215,7 +216,7 @@ Tests dùng fake/in-memory clients cho schema, vector/payload, fresh-target guar
 RRF/tie-break, sparse vocabulary stability, unknown terms, component failures và
 reranker skip-whole-request. Không gọi model hoặc Qdrant live trong 2A.
 
-### Gate 2B — fresh live candidate indexes
+### Phase 4 live gate — fresh candidate indexes
 
 Trước write, Implementer nộp preflight:
 
@@ -229,9 +230,9 @@ Reviewer kiểm tĩnh và User xác nhận exact targets. Sau đó Implementer m
 ba A collections thật, verify schema/count/build records và bàn giao report.
 Không chạy quality benchmark ở gate này.
 
-## 6. Wave 3 — Context, Qwen generation, API/citations và static UI
+## 6. Phase 6 — Context, Qwen generation, API/citations và static UI
 
-### Wave 3A — code và tests
+### Phase 6A — code và tests
 
 1. Thay character context budget bằng tokenizer-aware whole-chunk packing:
    context 16384, output reserve 2048, margin 512, Top-5.
@@ -257,14 +258,14 @@ Tests dùng mocked provider:
 - XSS-safe Markdown, duplicate-submit state, keyboard citation/source mapping;
 - startup stale/missing/incomplete build behavior.
 
-### Wave 3B — bounded live smoke
+### Phase 6B — bounded live smoke
 
 Sau 3A review, Implementer nộp exact upstream/model availability preflight và
 bounded call list. User xác nhận paid live smoke. Chỉ chạy số call tối thiểu để
 chứng minh OpenRouter request/response, pinning, representation-B schema và
 one-shot answer/citation path; đây chưa là official benchmark.
 
-## 7. Wave 4 — Full-corpus Golden P7
+## 7. Phase 7A — Full-corpus Golden P7
 
 Thực hiện đúng thứ tự, mỗi partition là một handoff riêng:
 
@@ -294,9 +295,9 @@ Sau P7 closure:
 5. đề xuất 10 smoke rows, mỗi P7 ít nhất một, rồi chờ User/Reviewer approval;
 6. tạo smoke deep-equal, giữ relative order.
 
-## 8. Wave 5 — Evaluator và staged real benchmark
+## 8. Phases 7B–8 — Evaluator và staged real benchmark
 
-### Wave 5A — evaluator implementation
+### Phase 7B — evaluator implementation
 
 1. Loader canonical bốn field và category vocabulary bảy nhãn.
 2. MRR@10, nDCG@10, Keyword Coverage@10 per case.
@@ -312,7 +313,7 @@ Sau P7 closure:
 Tests phải kiểm formulas, schema, deterministic ordering, failure semantics,
 judge output validation và không công bố aggregate khi incomplete.
 
-### Wave 5B — paid/live benchmark gate
+### Phase 8 — paid/live benchmark gate
 
 Trước mỗi paid stage, Implementer nộp:
 
@@ -339,7 +340,7 @@ Run order:
 Không dùng smoke làm official result. Không đặt metric threshold/composite hoặc
 winner trước evidence.
 
-## 9. Wave 6 — Documentation và final handoff
+## 9. Integrated documentation và final handoff
 
 Sau khi các gate cần thiết hoàn tất:
 
@@ -354,14 +355,14 @@ Không tự ghi `approved/completed`; Reviewer review và User closure là gate 
 
 ## 10. Verification commands dự kiến cho Implementer
 
-Exact commands được khóa trong từng wave handoff. Baseline tối thiểu:
+Exact commands được khóa trong từng phase handoff. Baseline tối thiểu:
 
 ```bash
 uv run python -m pytest backend/tests -q --tb=short
 git diff --check
 ```
 
-Wave có frontend phải thêm bounded static/UI contract checks. Wave có Qdrant/API
+Phase có frontend phải thêm bounded static/UI contract checks. Phase có Qdrant/API
 phải dùng exact approved commands/targets và lưu machine-readable results dưới
 `evaluation/results/` hoặc task report path; không sửa notebook outputs.
 
@@ -376,12 +377,13 @@ Implementer dừng và trả Reviewer nếu cần:
 - tăng paid calls ngoài estimate được User xác nhận;
 - thêm fallback/retry, agentic behavior, session/memory hoặc metadata field.
 
-Bug fix nội bộ không đổi contract được phép trong active wave và phải ghi report.
+Bug fix nội bộ không đổi contract được phép trong active phase và phải ghi report.
 Mọi scope expansion cần User approval trước implementation.
 
 ## 12. Plan approval effect
 
-User đã duyệt Plan ngày 2026-09-11; Reviewer đã kích hoạt **Wave 1** trong
-`CURRENT_HANDOFF.md` và giao Implementer. Các wave sau vẫn cần Reviewer closure
-của wave trước; live Qdrant/API/paid gates cần exact preflight/confirmation như
+User đã duyệt Plan ngày 2026-09-11; Phase 2 đã User-closed và Reviewer đã kích
+hoạt **Phase 3** trong `CURRENT_HANDOFF.md` sau khi User duyệt exact package ngày
+2026-09-12. Các phase sau vẫn cần Reviewer closure của phase trước; live
+Qdrant/API/paid gates cần exact preflight/confirmation như
 đã nêu. Plan approval không tự cấp quyền cleanup, cutover hoặc Agentic RAG.

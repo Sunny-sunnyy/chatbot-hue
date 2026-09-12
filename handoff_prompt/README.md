@@ -1,81 +1,126 @@
-# Handoff và context full-corpus
+# Handoff Prompt Index
 
-`session_prompt/` vẫn giữ bootstrap/workflow và
-[`CURRENT_HANDOFF.md`](../session_prompt/CURRENT_HANDOFF.md), nơi duy nhất xác
-định task thực thi hiện hành. Thư mục này tập hợp canonical context/prompt và
-contracts để user chuyển giữa Reviewer và Implementer; không tự cấp quyền chạy.
+Thư mục này lưu context và prompt đã dùng để chuyển việc giữa User, Reviewer và
+Implementer. **Prompt ghi chỉ dẫn tại một thời điểm, không phải kết luận kỹ
+thuật và không tự chứng minh công việc đã hoàn tất.**
 
-| Tài liệu | Vai trò hiện tại |
-|---|---|
-| [Golden/evaluation reference](FULL_CORPUS_GOLDEN_EVALUATION_REFERENCE_HANDOFF.md) | Completed/user-approved; chỉ là contract lịch sử |
-| [Correction 2 Golden/evaluation reference](FULL_CORPUS_IMPLEMENTER_CORRECTION_2_PROMPT.md) | Prompt lịch sử; R1–R3 đã đóng trong khảo sát completed |
-| [Prompt Implementer correction 3](FULL_CORPUS_IMPLEMENTER_CORRECTION_3_PROMPT.md) | Prompt lịch sử; correction đã qua Reviewer re-review |
-| [Khảo sát sâu schema Golden](FULL_CORPUS_GOLDEN_SCHEMA_REFERENCE_DEEP_DIVE_PROMPT.md) | Completed/user-approved sau correction lượt 3 |
-| [Correction 1 schema Golden](FULL_CORPUS_GOLDEN_SCHEMA_REFERENCE_CORRECTION_1_PROMPT.md) | Prompt lịch sử; R1/R5 đạt, R2–R4 còn phần hẹp |
-| [Correction 2 schema Golden](FULL_CORPUS_GOLDEN_SCHEMA_REFERENCE_CORRECTION_2_PROMPT.md) | Prompt lịch sử; R2/R4 và phần lớn R3 đã đạt |
-| [Correction 3 schema Golden](FULL_CORPUS_GOLDEN_SCHEMA_REFERENCE_CORRECTION_3_PROMPT.md) | Prompt lịch sử; R3 đã đóng |
-| [Khảo sát simplicity evaluation rag_old_0](FULL_CORPUS_RAG_OLD_0_EVALUATION_SIMPLICITY_SURVEY_PROMPT.md) | Completed/user-approved sau hai correction; prompt lịch sử |
-| [Correction 1 simplicity evaluation](FULL_CORPUS_RAG_OLD_0_EVALUATION_SIMPLICITY_CORRECTION_1_PROMPT.md) | Prompt lịch sử; C1–C5 đã được xử lý/review |
-| [Correction 2 simplicity evaluation](FULL_CORPUS_RAG_OLD_0_EVALUATION_SIMPLICITY_CORRECTION_2_PROMPT.md) | Prompt lịch sử; survey đã đóng sau independent review |
-| [Khảo sát toàn bộ project llm_rag](LLM_RAG_FULL_PROJECT_REFERENCE_SURVEY_PROMPT.md) | Prompt gốc; report đã chạm correction ceiling và bị đóng băng non-canonical |
-| [Correction 1 khảo sát llm_rag](LLM_RAG_FULL_PROJECT_REFERENCE_SURVEY_CORRECTION_1_PROMPT.md) | Contract correction lịch sử; không tiếp tục Correction 5 |
-| [Verified Architecture Extraction](LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_PROMPT.md) | Contract lịch sử; artifact đã thành approved evidence companion sau User closure |
-| [Correction 1 extraction](LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_CORRECTION_1_PROMPT.md) | Contract correction lịch sử; còn findings trước Correction 2 |
-| [Correction 2 extraction](LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_CORRECTION_2_PROMPT.md) | Contract correction đã đóng VAE-R1–VAE-R4 qua independent re-review |
-| [Prompt tiếp tục Reviewer](FULL_CORPUS_REVIEWER_NEXT_SESSION_PROMPT.md) | Bootstrap lịch sử; bốn file chuẩn trong `session_prompt/` nay đủ route session mới |
-| [Full-corpus implementation Review Contract](FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md) | Approved 2026-09-11; áp dụng theo từng active wave |
-| [Full-corpus RAG Wave 1](FULL_CORPUS_RAG_WAVE_1_IMPLEMENTATION_PROMPT.md) | Approved initial scope; đã qua initial review, không còn là active correction |
-| [Wave 1 Correction 1](FULL_CORPUS_RAG_WAVE_1_CORRECTION_1_PROMPT.md) | Đã implement nhưng re-review còn W1-C1-R1..R3 |
-| [Wave 1 Correction 2](FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md) | Prompt lịch sử; còn W1-C2-R1 test-evidence Major |
-| [Wave 1 Correction 3](FULL_CORPUS_RAG_WAVE_1_CORRECTION_3_PROMPT.md) | Completed; final finding đã đóng và User closure 2026-09-12 |
-| [Context thiết kế](FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md) | Đọc snapshot đầu file trước; lịch sử/evidence phía dưới |
-| [Khảo sát parser/locator](FULL_CORPUS_PARSER_LOCATOR_SURVEY_HANDOFF.md) | Completed/user-approved; chỉ là contract lịch sử |
-| [Đo hai input VN/QT](FULL_CORPUS_VN_QT_TOKEN_CHECK_HANDOFF.md) | Completed/user-approved; chỉ là contract lịch sử |
+> **Phạm vi của index này — 2026-09-12:** đây là entrypoint định tuyến tạm thời,
+> chưa phải quyết định giữ/xóa cuối cùng cho toàn bộ `handoff_prompt/`.
 
-Guide umbrella là [`guides/full_corpus_rag.md`](../guides/full_corpus_rag.md).
-Hai tài liệu ngày 2026-09-09 ở `docs/superpowers/` vẫn là decision/experiment
-notes, không phải approval artifact. Written Spec, Implementation Plan và Review
-Contract ngày 2026-09-11 đã được User duyệt; Wave 1 đã User-closed ngày
-2026-09-12. Active scope là Reviewer design gate Phase 3/Wave 2.1, chưa phải
-Implementer hoặc live action.
-Approval các khảo sát không duyệt runtime toàn corpus hoặc cấp quyền API/index/Git.
+Audit contract và registry hợp nhất đang được xây dựng tại
+[`PROJECT_DOCUMENT_REGISTRY.md`](../PROJECT_DOCUMENT_REGISTRY.md).
 
-Các FULL_CORPUS files dưới `session_prompt/` nay chỉ chứa link chuyển tiếp.
-Đường dẫn cũ trong prompt đã copy, report hoặc script lịch sử vẫn tìm được
-contract tương ứng. Không sửa artifacts/implementation reports cũ chỉ để
-viết lại lịch sử đường dẫn; nội dung canonical chỉ tồn tại ở thư mục này.
+## Nguồn task duy nhất
 
-Review report Golden/evaluation đã phát hiện R1–R3 cần correction:
-[Codex review](../reports/full_corpus_golden_evaluation_reference_codex_review_2026_09_09.md).
-Correction lượt 2 đã đóng R1–R3. Reviewer phát hiện R4 mới khi đối chiếu schema
-Foods V3; correction lượt 3 đã sửa đạt và R1–R4 đều đóng. User xác nhận khảo sát
-ngày 2026-09-10; trạng thái là `approved/completed`. Tại thời điểm khảo sát,
-spec/plan chưa approved và task không tạo Golden hoặc triển khai evaluator. User đã thay
-Evidence C bằng schema metric-only bốn field, giữ một canonical file đích và P7.
+Task, role, authority và next action hiện hành chỉ lấy từ
+[`session_prompt/CURRENT_HANDOFF.md`](../session_prompt/CURRENT_HANDOFF.md).
+Không tiếp tục một prompt trong thư mục này chỉ vì tên hoặc nội dung của nó nói
+“next”, “implementation” hay “correction”.
 
-Khảo sát sâu schema đã qua correction 3; simplicity survey `rag_old_0` đã qua
-hai correction; cả hai có independent Reviewer review và User confirmation.
-Các findings đều đóng. Từ phiên sau chỉ dùng hai report simplicity survey/review
-để tham khảo `rag_old_0`, không phân tích lại raw project mặc định.
+Trạng thái hiện tại:
 
-Survey toàn project `llm_rag` đã nhận bốn verdict `changes_requested`; report
-885 dòng còn RR11 Major nên bị đóng băng working/non-canonical sau complexity
-reset. Verified Architecture Extraction thay thế đã qua hai correction,
-independent review và User closure ngày 2026-09-11. Decision #1 lexical
-baseline/sparse consumer, #2 index lifecycle, #3 payload/source locator, #4
-retrieval/fusion/reranker matrix và #5 representation B timing đã chốt.
-Decision Queue tiền-spec đã hoàn tất qua #6e. Written Spec, Plan và Review
-Contract đã được User duyệt ngày 2026-09-11; Wave 1 đã qua Correction 3 và User
-closure. `CURRENT_HANDOFF.md` giao Reviewer bắt đầu design gate Phase 3/Wave 2.1,
-chưa mở implementation/live gate sau.
-Agentic RAG dùng profile/contract riêng, không dùng one-shot budget.
+- Full-corpus Phase 2 đã được User xác nhận closure ngày 2026-09-12.
+- Phase 3 đã independent review và User-closed.
+- Phase 4 conceptual design, Written Spec, Plan và Review Contract đã được User duyệt.
+- Active handoff là **Implementer/implementation cho Phase 4 Tasks 1–6**, risk
+  `high`, gồm exact read-only preflight trên bốn full-corpus targets.
+- Chưa có quyền dense toàn corpus, Qdrant write, live cutover hoặc Git write.
+- Lead Implementer được User cấp standing authorization để tự quyết dùng
+  sub-agent; sub-agent không có scope/authority rộng hơn task cha.
+- Tài liệu active/tương lai chỉ dùng `Phase`; chuỗi `WAVE` trong exact filename
+  cũ được giữ để bảo toàn link và audit trail, nhưng các file đó là Phase 2 history.
 
-Hai snapshot `/home/minhhieu/llm_rag/tai_lieu/rag_agent_handoff_current_repo.md`
-và `rag_system_pipeline_deep_dive.md` là `reference-only`, không full-read mặc
-định và không làm primary evidence. Prompt extraction và Reviewer prompt đều
-yêu cầu xác minh claim bằng exact source hiện hành.
+## Cách định tuyến
 
-Từ 2026-09-12, bốn file bootstrap chuẩn trong `session_prompt/` đủ để tìm task;
-`CURRENT_HANDOFF.md` phải gắn active input là `full-read`, `targeted-read` hoặc
-`reference-only` theo `Session_Prompt.md`. Chỉ full-read file mới có yêu cầu đọc
-tiếp khi tool hiển thị thiếu; không áp câu này cho mọi link/canonical history.
+| Cần làm/hiểu | Mở trước | Vai trò của prompt cũ |
+|---|---|---|
+| Thực hiện Phase 4 Tasks 1–6 | `CURRENT_HANDOFF.md`, guide Phase 4, exact Phase 4 spec/plan ngày 2026-09-12 | Không dùng prompt Phase 3 để mở live-write scope |
+| Hiểu quyết định full-corpus | Umbrella written spec/plan và exact Phase spec/plan | `FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md` chỉ là context lịch sử hữu ích |
+| Tra cứu `llm_rag` | Hai verified architecture extraction reports trong `reports/` | Survey/correction prompts chỉ cho biết yêu cầu đã giao |
+| Tra cứu `rag_old_0` | Hai final simplicity survey/review reports trong `reports/` | Correction prompts không phải kết luận canonical |
+| Kiểm tra closure Phase 2 | Final Correction 3 Codex review, user report và preview artifact | Prompt implementation/correction chỉ phục vụ audit trail |
+
+## Phân loại hiện tại của các prompt
+
+Các nhãn dưới đây mô tả **cách sử dụng hiện tại**, chưa phải retention verdict:
+
+- `REFERENCE_CONTEXT`: có giá trị giải thích quyết định, chỉ đọc khi cần.
+- `HISTORICAL_PROMPT`: công việc đã hoàn tất hoặc đã bị thay thế; không thực thi.
+- `HISTORICAL_CONTRACT`: contract từng được duyệt nhưng không còn là active task.
+- `SUPERSEDED_BOOTSTRAP`: bootstrap cũ, đã được bốn file chuẩn trong
+  `session_prompt/` thay thế.
+
+### Full-corpus context và governance
+
+| Tài liệu | Phân loại | Cách dùng |
+|---|---|---|
+| [Context brainstorming](FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md) | `REFERENCE_CONTEXT` | Lịch sử thiết kế quan trọng; ưu tiên spec/plan đã duyệt cho requirement hiện hành |
+| [Review Contract full-corpus](FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md) | `HISTORICAL_CONTRACT` | Umbrella contract được duyệt 2026-09-11; exact Review Contract Phase 3 nằm trong plan Phase 3 |
+| [Prompt tiếp tục Reviewer](FULL_CORPUS_REVIEWER_NEXT_SESSION_PROMPT.md) | `SUPERSEDED_BOOTSTRAP` | Không dùng mở phiên mới; bootstrap bằng `session_prompt/` |
+
+### Phase 2 implementation history
+
+Các exact filename bên dưới chứa `WAVE_1` vì là tên lịch sử. Tất cả đều thuộc
+Phase 2 và không phải active Phase 3 input mặc định.
+
+| Tài liệu | Phân loại | Trạng thái |
+|---|---|---|
+| [Initial implementation](FULL_CORPUS_RAG_WAVE_1_IMPLEMENTATION_PROMPT.md) | `HISTORICAL_PROMPT` | Scope ban đầu đã hoàn tất |
+| [Correction 1](FULL_CORPUS_RAG_WAVE_1_CORRECTION_1_PROMPT.md) | `HISTORICAL_PROMPT` | Findings đã được xử lý tiếp |
+| [Correction 2](FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md) | `HISTORICAL_PROMPT` | Findings đã được xử lý tiếp |
+| [Correction 3](FULL_CORPUS_RAG_WAVE_1_CORRECTION_3_PROMPT.md) | `HISTORICAL_PROMPT` | Final finding đã đóng; User closure 2026-09-12 |
+
+Final evidence không nằm trong các prompt này. Dùng:
+
+- `reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`;
+- `reports/user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`;
+- `reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json`.
+
+### Golden/evaluation và parser research history
+
+| Tài liệu/chuỗi | Phân loại | Nguồn kết quả thay thế |
+|---|---|---|
+| [Golden/evaluation handoff](FULL_CORPUS_GOLDEN_EVALUATION_REFERENCE_HANDOFF.md) và Correction 2–3 | `HISTORICAL_PROMPT` | `reports/full_corpus_golden_evaluation_reference_codex_review_2026_09_09.md` |
+| [Golden schema deep-dive](FULL_CORPUS_GOLDEN_SCHEMA_REFERENCE_DEEP_DIVE_PROMPT.md) và Correction 1–3 | `HISTORICAL_PROMPT` | Final deep-dive report và Codex review ngày 2026-09-10 |
+| [Parser/locator survey](FULL_CORPUS_PARSER_LOCATOR_SURVEY_HANDOFF.md) | `HISTORICAL_PROMPT` | `reports/full_corpus_parser_locator_codex_review_2026_09_09.md` |
+| [VN/QT token check](FULL_CORPUS_VN_QT_TOKEN_CHECK_HANDOFF.md) | `HISTORICAL_PROMPT` | `reports/full_corpus_vn_qt_token_check_codex_review_2026_09_09.md` |
+
+### `rag_old_0` history
+
+| Tài liệu | Phân loại | Cách dùng |
+|---|---|---|
+| [Survey prompt](FULL_CORPUS_RAG_OLD_0_EVALUATION_SIMPLICITY_SURVEY_PROMPT.md) | `HISTORICAL_PROMPT` | Không dùng như kết luận |
+| [Correction 1](FULL_CORPUS_RAG_OLD_0_EVALUATION_SIMPLICITY_CORRECTION_1_PROMPT.md) | `HISTORICAL_PROMPT` | C1–C5 đã được xử lý/review |
+| [Correction 2](FULL_CORPUS_RAG_OLD_0_EVALUATION_SIMPLICITY_CORRECTION_2_PROMPT.md) | `HISTORICAL_PROMPT` | Survey đã đóng sau independent review |
+
+Nguồn cần đọc là
+`reports/full_corpus_rag_old_0_evaluation_simplicity_survey_2026_09_10.md` và
+Codex review tương ứng.
+
+### `llm_rag` history
+
+| Tài liệu | Phân loại | Cách dùng |
+|---|---|---|
+| [Full-project survey](LLM_RAG_FULL_PROJECT_REFERENCE_SURVEY_PROMPT.md) | `HISTORICAL_PROMPT` | Report dài đã đóng băng working/non-canonical |
+| [Survey Correction 1](LLM_RAG_FULL_PROJECT_REFERENCE_SURVEY_CORRECTION_1_PROMPT.md) | `HISTORICAL_PROMPT` | Không tiếp tục correction chain |
+| [Verified extraction](LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_PROMPT.md) | `HISTORICAL_PROMPT` | Artifact kết quả đã được User đóng |
+| [Extraction Correction 1](LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_CORRECTION_1_PROMPT.md) | `HISTORICAL_PROMPT` | Findings trước Correction 2 |
+| [Extraction Correction 2](LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_CORRECTION_2_PROMPT.md) | `HISTORICAL_PROMPT` | Findings đã đóng qua independent re-review |
+
+Nguồn cần đọc là
+`reports/llm_rag_verified_architecture_extraction_2026_09_11.md` và Codex review
+tương ứng. Survey dài chỉ mở khi cần raw history, không dùng làm basis cho
+spec/plan mới.
+
+## Quy tắc bảo toàn trước audit
+
+- Không thực thi prompt lịch sử.
+- Không suy ra completion từ implementation prompt/report nếu thiếu independent
+  review và User closure.
+- Không xóa prompt chỉ vì đã completed: trước hết kiểm tra nội dung unique,
+  canonical replacement và inbound references.
+- Không đổi tên exact file lịch sử chỉ để thay thuật ngữ; active prose dùng
+  `Phase`, tên file cũ được giữ nguyên.
+- Registry hợp nhất đang ở trạng thái `audit_in_progress`; sau audit nó sẽ ghi
+  exact vai trò, thời điểm cần đọc, canonical replacement và retention decision
+  của những file thực sự quan trọng.
