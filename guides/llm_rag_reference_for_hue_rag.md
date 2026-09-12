@@ -3,7 +3,7 @@
 ## Vai trò của tài liệu
 
 Tài liệu này ghi những bài học hữu ích từ dự án `llm_rag` để dùng khi review và
-đơn giản hóa `hue_rag` từ Phase 0 đến Phase 6.
+thiết kế `hue_rag`, gồm baseline Foods và full-corpus workstream.
 
 `llm_rag` là reference baseline về cách tổ chức một RAG pipeline dễ đọc. Nó
 không phải canonical guide của `hue_rag`, không tự tạo requirement và không
@@ -11,7 +11,25 @@ không phải canonical guide của `hue_rag`, không tự tạo requirement và
 user, guide canonical của từng phase, source code và real execution trong
 `hue_rag`.
 
-Snapshot reference được đọc và đối chiếu ngày `2026-08-24 +07`.
+Snapshot ban đầu được đọc và đối chiếu ngày `2026-08-24 +07`. Survey rộng theo
+reference SHA `920c5798e855b67fc073b3c8b117db65c61df6b6` đã qua bốn correction
+nhưng vẫn còn RR11 Major và chạm correction ceiling ngày `2026-09-11`. User đã
+xác nhận complexity reset: report 885 dòng được đóng băng working/non-canonical,
+không có Correction 5. Active task tạo một Verified Architecture Extraction
+ngắn; artifact này cần Reviewer review và User confirmation riêng trước khi
+dùng làm approved evidence companion.
+
+Điều phối/evidence hiện hành:
+
+```text
+handoff_prompt/LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_PROMPT.md
+reports/llm_rag_full_project_reference_survey_codex_review_2026_09_11.md
+reports/llm_rag_verified_architecture_extraction_2026_09_11.md  # in progress, not reviewed
+```
+
+Original survey prompt, bốn correction prompts và report 885 dòng là
+historical/non-canonical; chỉ dùng để audit diễn tiến, không làm implementation
+basis.
 
 ## Đường dẫn nguồn
 
@@ -21,12 +39,18 @@ Repository tham khảo:
 /home/minhhieu/llm_rag
 ```
 
-Hai tài liệu mô tả toàn hệ thống:
+Hai tài liệu mô tả toàn hệ thống dưới đây là snapshot lịch sử, `reference-only`:
 
 ```text
 /home/minhhieu/llm_rag/tai_lieu/rag_system_pipeline_deep_dive.md
 /home/minhhieu/llm_rag/tai_lieu/rag_agent_handoff_current_repo.md
 ```
+
+Không full-read chúng mặc định. `rag_agent_handoff_current_repo.md` là snapshot
+2026-08-08; `rag_system_pipeline_deep_dive.md` dài 3.024 dòng và mô tả trạng
+thái khoảng 2026-08-02. Chỉ targeted-read để tìm source pointer khi cần, rồi
+xác minh bằng source code; không dùng chúng làm primary evidence hoặc nguồn
+trạng thái hiện hành.
 
 Các báo cáo trạng thái đã đọc:
 
@@ -92,7 +116,8 @@ Các baseline kỹ thuật chính:
 - context tối đa 5 documents và khoảng 3000 characters;
 - OpenAI Agents SDK gọi Qwen qua OpenRouter;
 - FastAPI trả streaming SSE cho frontend;
-- dữ liệu đã ghi nhận gồm 450 chunks từ JSON records.
+- dữ liệu lịch sử đã ghi nhận gồm 450 chunks từ JSON records. Đây là saved/
+  documented run result, không phải live Qdrant verification của survey 2026-09-11.
 
 ## Vì sao `llm_rag` hữu ích cho `hue_rag`
 
@@ -126,7 +151,7 @@ Những nguyên tắc nên dùng làm chuẩn đọc code cho `hue_rag`:
 | Chunk boundary | Domain fields như `specs`, `style`, `context` | Semantic Markdown sections |
 | Source identity | Tên JSON table/record | Relative Markdown path + section |
 | Chunk ID lịch sử | Random UUID | Deterministic source/section/index |
-| Corpus hiện hành | 450 chunks | 572 chunks |
+| Corpus/index đã ghi nhận | 450 JSON chunks theo historical docs | Foods runtime: 572 chunks; full curated corpus chưa được ingest/index |
 
 Do đó không sao chép bảy JSON chunker của `llm_rag` sang `hue_rag`. Bài học cần
 giữ là semantic chunking theo cấu trúc thật của dữ liệu. Với Markdown, heading
@@ -264,8 +289,20 @@ Phần nên học:
 
 Một hạn chế lịch sử quan trọng: `llm_rag` lưu sparse vectors trong Qdrant nhưng
 query runtime chỉ tìm bằng named dense vector rồi tính BM25 trong Python.
-`hue_rag` kế thừa đúng mô hình này. Sparse storage hiện không gây sai kết quả,
-nhưng làm schema, ingestion và tests phức tạp hơn mà chưa có query consumer.
+Đây chỉ là dense candidate retrieval rồi lexical rescoring trong candidate set,
+không phải lexical retrieval có thể cứu tài liệu đã bị dense search bỏ ngoài.
+Sparse storage hiện không có query consumer, làm schema/ingestion phức tạp hơn
+và không nên được Hue copy chỉ để dự phòng.
+
+Weighted fusion của reference cộng trực tiếp dense cosine score với raw BM25
+score mà không normalize/calibrate. Vì hai thang điểm khác nhau, hệ số 0.6/0.4
+không tự chứng minh tỷ lệ đóng góp 60/40 và phải được benchmark như một candidate,
+không coi là default tối ưu cho Hue.
+
+Sparse vocabulary của reference không persist mapping token→index và xây index
+từ iteration trên `set(tokens)`. Ingestion/startup fit các instance riêng, nên
+native sparse query về sau có rủi ro lệch index qua process. Rủi ro này dormant
+vì runtime hiện không query sparse; Hue không copy cơ chế đó nếu chọn true sparse.
 
 `llm_rag` chỉ lưu text/chunk metadata, không lưu explicit embedding model hoặc
 dimension trong payload và cũng không validate existing collection model space.
@@ -273,7 +310,8 @@ Hue không sao chép điểm này: user đã chốt giữ `embedding_model` đ�
 same-dimension model mismatch, nhưng bỏ `embedding_dimension` vì Qdrant schema
 đã là nguồn chuẩn.
 
-Simplicity brainstorming Phase 3 đã chốt lexical path canonical:
+Simplicity review đã chốt lexical path canonical cho **Foods runtime hiện
+hành**:
 
 ```text
 Qdrant dense candidates
@@ -281,8 +319,8 @@ Qdrant dense candidates
 -> optional CrossEncoder reranking
 ```
 
-Vì vậy target architecture là Python BM25 và Qdrant dense-only; native Qdrant
-sparse không phải query path của ba canonical profiles. Phase 3 vẫn giữ
+Vì vậy Foods target architecture là Python BM25 và Qdrant dense-only; native
+Qdrant sparse không phải query path của ba canonical profiles. Phase 3 vẫn giữ
 `SparseEmbedder` để không phá Phase 4 schema/ingestion hiện hành. Ngày
 2026-08-25 +07, user đã duyệt coordinated Phase 4–5 simplification: bỏ sparse
 storage/schema khỏi active baseline và chuyển shared tokenization về lexical
@@ -290,10 +328,20 @@ BM25/scoring ownership trong cùng implementation scope, đồng thời giữ Py
 BM25 và CrossEncoder capability. `SparseEmbedder` chỉ bị xóa sau consumer audit
 xác nhận không còn dependency.
 
-Phase 8 sẽ đánh giá true hybrid retrieval bằng isolated candidate collection có
-sparse vectors và fair controlled comparison. Candidate không mutate active
-dense-only baseline. Stored sparse chỉ được đề xuất quay lại production khi real
-results chứng minh lợi ích tương xứng complexity và user duyệt exact transition.
+Thiết kế full-corpus không tự kế thừa việc phải đánh giá native sparse. Khuyến
+nghị hiện hành là dùng dense candidates + BM25 local cho baseline và chỉ thêm
+true-hybrid isolated candidate khi User chốt một sparse query consumer cùng câu
+hỏi benchmark cụ thể. Stored sparse chỉ được đề xuất khi kết quả thật chứng minh
+lợi ích tương xứng complexity và User duyệt exact transition. Đây vẫn là open
+decision, không phải canonical full-corpus choice.
+
+Full-corpus design ngày 2026-09-11 đã chốt ba isolated candidate collections
+cho E5-small, E5-base và HuyDang; tối đa sáu nếu giữ đồng thời A/B cho cả ba.
+Đây là lựa chọn cách ly benchmark/schema/lifecycle/cutover của Hue, không phải
+giới hạn tuyệt đối rằng Qdrant không thể chứa nhiều named vectors. Sparse không
+nhân collection; chỉ lưu khi có query consumer thật. BM25, reranker, fusion và
+scoring không cần collection riêng. Exact names, payload, recreate/replacement,
+cleanup và cutover vẫn chưa chốt.
 
 Active Hue collection vẫn read-only. Existing tests chỉ được mutate guarded
 collection có prefix `hue_rag_live_test_`; collection candidate mới, reindex
@@ -451,6 +499,6 @@ tại song song, sparse vectors không được query, global startup state, dup
 routes và tests dựa nhiều vào monkeypatch. `hue_rag` không cần lặp lại các hạn
 chế đó để giữ quan hệ với dự án gốc.
 
-Mục tiêu cuối cùng vẫn là một Hue Foods RAG giữ đủ capability thật, nhưng code
-ngắn, rõ, dễ trace và đủ gần cách viết của `llm_rag` để user có thể tự đọc và
-hiểu toàn bộ hệ thống.
+Mục tiêu hiện hành là mở rộng từ Foods baseline sang một full-corpus Hue RAG có
+capability thật, nhưng data flow vẫn trực tiếp, dễ trace và chỉ mang các pattern
+từ `llm_rag` khi chúng có consumer cùng evidence phù hợp với Markdown.

@@ -1,5 +1,12 @@
 # Phase 8 — Benchmark và lựa chọn model/pipeline
 
+> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc full-
+> corpus Golden, evaluator, indexes và upstream readiness đã closure. Reviewer
+> phải cập nhật guide này và trình User duyệt Wave 5B spec/addendum, plan cùng
+> Review Contract trước execution. Mỗi stage retrieval, reranker, representation
+> B, end-to-end judge, winner/cutover và cleanup dừng ở exact evidence/paid/live
+> gate riêng; không dùng kết quả Foods để chọn winner full-corpus.
+
 ## Trạng thái
 
 `not_ready`

@@ -1,5 +1,12 @@
 # Phase 3 — Dense embedding và sparse representation
 
+> **Full-corpus extension gate — 2026-09-11:** chưa active. Chỉ sau Wave 1/
+> Phase 2 technical review và User closure, Reviewer mới dùng chunk/tokenizer
+> evidence thật để brainstorming và cập nhật guide này. Trước Implementer phải
+> có User-approved Wave 2.1 spec/addendum, plan và Review Contract. Contract mới
+> phải chốt ba dense candidates, preprocessing/dimensions, sparse formula,
+> representation-A input và failure behavior; không suy từ Foods history.
+
 ## Trạng thái
 
 ```text

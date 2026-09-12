@@ -1,5 +1,65 @@
 # Phase 2: Khám phá và chunking Foods Markdown
 
+> Full-corpus extension cập nhật 2026-09-12: Written Spec, Plan, Review Contract
+> và exact Wave 1 prompt đã được User duyệt. Wave 1
+> discovery/parser/chunker/locator đã được Implementer bàn giao Correction 2 và
+> đang chờ independent re-review sau hai verdict
+> `changes_requested`; chưa technical readiness/User closure và chưa có quyền
+> embedding/Qdrant/live. Khảo sát parser/source locator đã
+> approved sau correction lượt 3. [Review/closure](../reports/full_corpus_parser_locator_codex_review_2026_09_09.md)
+> là evidence thiết kế. Chọn markdown-it-py/table enabled. Hai input VN/QT đúng
+> ranh giới đã đo bổ sung và user-approved: [review](../reports/full_corpus_vn_qt_token_check_codex_review_2026_09_09.md).
+> VN: E5 290/290, HuyDang 224, MiniLM orig/long 411/453; QT: 268/268,
+> 208, 385/427. Chỉ áp dụng inputs/queries mẫu; không dùng counts input sai.
+
+
+## Tham chiếu thiết kế mở rộng toàn corpus — cập nhật 2026-09-12
+
+Guide này vẫn là contract đã approved cho Foods Phase 2. Entry point của thiết
+kế đa domain là [Full-corpus RAG](full_corpus_rag.md); phần extension cùng
+approved Spec/Plan/Review Contract và exact Wave 1 prompt tạo design package
+hiện hành. Các mục Foods lịch sử không tự mở rộng quyền ngoài Wave 1 prompt.
+
+MVP mới kế thừa và điều chỉnh MVP Foods trong guides/backend cho toàn bộ curated
+corpus, không chỉ đổi glob ingestion. User đã xác nhận hướng chunking baseline:
+
+- discovery ổn định trên năm domain, chỉ lấy tài liệu answer-facing;
+- chia theo cấu trúc Markdown H2/H3/H4 và ngân sách token tính cả nhãn/context;
+- giữ mục ngắn, list cha/con, bảng và điều kiện liên quan khi phù hợp; không
+  mặc định mỗi heading là một chunk hoặc mọi bảng đều được vượt input limit;
+- dùng tên tài liệu và heading gốc, bỏ nhãn đặc thù Foods;
+- bảo toàn nguyên văn và vị trí nguồn, tách text tìm kiếm khỏi evidence;
+- chưa dùng LLM chia đoạn hoặc tự mở rộng context sau Top-5 ở baseline;
+- dùng chung bộ chunk cho benchmark E5-small, E5-base và HuyDang; kiểm input
+  thực bằng từng tokenizer, giữ preprocessing theo model và evidence gốc;
+- đánh giá trên corpus mới; 400 ký tự, bảy metadata fields và 572 chunks không
+  phải acceptance của thiết kế full-corpus;
+- user chọn chặn ingest trước embedding/ghi index nếu nhóm tối thiểu vẫn
+  vượt limit mà chưa chia đủ nghĩa; không ingest thiếu các nhóm đó;
+- chuẩn hóa CRLF/CR thành LF cho source locator; đổi kiểu xuống dòng đơn
+  thuần không yêu cầu ingest lại, không tự đổi dấu hoặc gộp whitespace.
+
+Nhánh thử nghiệm B sau baseline đã chốt theo hướng có chọn lọc: giữ nguyên
+bộ chunk A, chỉ thêm context tìm kiếm do API sinh khi input đầy đủ vừa cả
+E5-small, E5-base và HuyDang. Chunk không vừa giữ representation A; không
+cắt body/điều kiện hoặc đổi boundaries. Context sinh lưu riêng, không phải
+evidence/Golden. Báo cáo tỷ lệ được bổ sung và chất lượng trên toàn bộ tập
+câu hỏi. Đây không phải bước lấy thêm điều kiện sau Top-5 hoặc quyền gọi API.
+
+Contract Wave 1 nằm trong Written Spec, Implementation Plan, Review Contract,
+initial prompt và correction chain. Correction 1 artifact hiện ghi 205 files,
+8460 observed chunks, zero errors/oversized và HuyDang max 255/256, nhưng report
+không khớp artifact/source và acceptance coverage còn thiếu. Active contract là
+`handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md`; Implementer đã
+bàn giao delta và Reviewer chưa kết luận. Các số này chưa
+phải as-built approved result hoặc hard invariant. Sau correction, Reviewer phải
+review độc lập, trình User closure và chỉ khi đó mới cập nhật observed closure/
+limitations trước design package Phase 3.
+
+Các mục bên dưới giữ contract và approval **Foods lịch sử**, được đối chiếu với
+simplicity implementation/review/user report. Chúng không khẳng định backend
+đã triển khai các thay đổi full-corpus ở trên.
+
 ## Mục tiêu và giá trị cho người dùng
 
 Phase 2 chuyển curated Markdown về ẩm thực Huế thành semantic chunks ổn định, answer-facing và có metadata đủ để index, truy xuất, trích nguồn và đánh giá ở các phase sau.

@@ -16,7 +16,22 @@ quy định khác.
 `CURRENT_HANDOFF.md` mô tả một task hiện hành; khi đã đóng mà chưa có task mới,
 ghi completed và chờ user theo lifecycle trong coordination skill.
 
+`session_prompt/` giữ bootstrap, role workflows, templates và CURRENT_HANDOFF.
+`handoff_prompt/` giữ context/prompt/contracts theo task full-corpus; xem README
+tại đó. FULL_CORPUS files ở vị trí cũ chỉ là chỉ dẫn chuyển đường dẫn cho prompt/
+report lịch sử, không bản requirement thứ hai. Task state vẫn chỉ ở
+`session_prompt/CURRENT_HANDOFF.md`; không khởi chạy contract đã completed.
+
 ## Phối hợp qua session
+
+Để tiết kiệm giới hạn sử dụng của Reviewer, mặc định giao việc thực thi và thu
+thập evidence cho Implementer qua prompt do user chuyển: code/scripts, đọc
+thông số, đo token, tests, khảo sát có phạm vi và tóm tắt reference. Reviewer
+tập trung phân tích kết quả, brainstorming, quyết định thiết kế và viết
+specs/plans/guides; chỉ tự kiểm chọn lọc khi quyết định hoặc review độc lập cần.
+Không tạo nhiệm vụ thừa chỉ để giao việc, không tự spawn hoặc gửi tool message
+cho vai trò khác. Prompt phải dẫn đủ canonical inputs, scope, outputs và giới
+hạn. Phân công này không bỏ các điểm duyệt spec/plan của implementation runtime.
 
 User cung cấp nhu cầu/tài liệu và cùng Reviewer tập trung một khía cạnh. Reviewer
 tự tổng hợp quyết định, soạn spec để user duyệt, rồi soạn plan và Review Contract
@@ -30,10 +45,28 @@ Correction trong requirement/acceptance/quyền đã duyệt không cần user d
 riêng. User chuyển tiếp giữa các session; không có agent tự khởi chạy hay gửi
 thông điệp cho vai trò khác nếu chưa được cấp quyền.
 
-Mỗi lần bàn giao, vai trò gửi tự chuẩn bị prompt ngắn: tên role, bốn bootstrap
-files bên dưới và yêu cầu đọc các tài liệu canonical mà handoff dẫn tới trước
-khi làm việc. Prompt không chép requirement thành một bản độc lập. User không
-cần tự tổng hợp report hoặc yêu cầu tạo prompt thêm lần nữa.
+Mỗi lần bàn giao, vai trò gửi tự chuẩn bị prompt ngắn: tên role, bootstrap và
+các active artifacts cần đọc trước khi làm việc. Prompt phải gắn mỗi input bằng
+một trong ba mức `full-read`, `targeted-read`, `reference-only` theo chính sách
+Context loading bên dưới; không dùng câu chung “đọc toàn bộ mọi tài liệu được
+dẫn”. Prompt không chép requirement thành một bản độc lập. User không cần tự
+tổng hợp report hoặc yêu cầu tạo prompt thêm lần nữa.
+
+Bốn file bootstrap sau phải luôn đủ để một session mới tìm đúng role, trạng
+thái và next action mà không cần next-session prompt riêng:
+
+```text
+session_prompt/<ROLE>_WORKFLOW.md
+session_prompt/Session_Prompt.md
+session_prompt/Project_Status.md
+session_prompt/CURRENT_HANDOFF.md
+```
+
+Khi user yêu cầu “đọc toàn bộ” đúng bốn file này, đó là explicit `full-read` cho
+cả bốn và override mặc định targeted-read của status. `CURRENT_HANDOFF.md` phải
+tự dẫn active contract/report/artifact bằng read level cụ thể. Nếu target role
+khác role user vừa giao, session chỉ bootstrap và kiểm cấu trúc cần thiết, không
+thực hiện task của role kia; chờ đúng report/handoff hoặc chỉ dẫn mới.
 
 Reviewer trình user khi có trade-off chưa chốt, bất đồng chưa giải quyết, cần
 đổi requirement/acceptance/kiến trúc/quyền hoặc blocker thực sự. Khi đạt kỹ thuật,
@@ -123,27 +156,54 @@ risk hoặc thay requirement đã duyệt.
 
 ## Context loading
 
-Sau khi workflow được xác định, nạp project context theo thứ tự:
+Mục tiêu là đọc đủ nguồn cần cho exact task mà không lặp lại toàn bộ lịch sử,
+source hoặc report đã được Implementer khảo sát. Ba mức đọc canonical:
+
+- `full-read`: đọc toàn văn vì file trực tiếp điều khiển role/task/acceptance
+  hoặc là artifact đang được review. Nếu tool chỉ hiển thị một phần của chính
+  file này, tiếp tục từ vị trí dừng tới cuối file.
+- `targeted-read`: chỉ đọc snapshot, heading, section hoặc range được prompt/
+  handoff nêu. Không mở rộng tới toàn file nếu không có mâu thuẫn hoặc evidence
+  gap liên quan.
+- `reference-only`: biết path và vai trò; chỉ mở phần cần thiết khi active
+  artifacts không đủ trả lời một câu hỏi/finding cụ thể.
+
+File không được biến thành `full-read` chỉ vì nó được liên kết. Prompt/handoff
+phải nói rõ mức đọc; nếu thiếu nhãn, active contract/spec/plan/correction/report
+đang review là `full-read`, còn history/report đã approved là `reference-only`.
+Mọi `SKILL.md` đã được chọn cho task luôn là `full-read` theo skill routing.
+
+Sau khi workflow được xác định, nạp project context theo thứ tự mặc định:
 
 ```text
-session_prompt/Session_Prompt.md
-session_prompt/Project_Status.md
-session_prompt/<ROLE>_WORKFLOW.md
-session_prompt/CURRENT_HANDOFF.md
+full-read: session_prompt/Session_Prompt.md
+targeted-read: current snapshot/status/map được chỉ định trong Project_Status.md
+full-read: session_prompt/<ROLE>_WORKFLOW.md
+full-read: session_prompt/CURRENT_HANDOFF.md
 ```
+
+Explicit prompt yêu cầu full-read `Project_Status.md` được ưu tiên như quy tắc
+bốn-file bootstrap ở trên. Sau bốn file, `CURRENT_HANDOFF.md` là router duy nhất;
+không tự coi mọi link trong status là active input.
 
 Xác nhận target role và exact next action trước khi mở context tiếp theo:
 
 ```text
-Tier 0: bốn bootstrap files
-Tier 1: Review Contract và exact base/head diff
-Tier 2: affected source, focused checks và linked evidence theo risk
-Tier 3: live systems, external research hoặc broad verification khi cần
+Tier 0: stable role rules + current snapshot + current handoff
+Tier 1: full-read active contract/spec/plan/correction/report
+Tier 2: targeted affected source, exact diff/checks và linked evidence theo risk
+Tier 3: reference history, live systems, external research hoặc broad verification khi cần
 ```
 
+Reviewer đọc full active Implementer report nhưng chỉ kiểm source anchors/diff
+theo Review Contract và risk; không lặp lại broad survey mặc định. Implementer
+đọc full exact source/input mà approved plan hoặc survey contract giao, nhưng
+không đọc history/vendor/generated state ngoài scope.
+
 Không đọc toàn bộ reports/history để “cho chắc”. Mở rộng context khi có mâu
-thuẫn, risk trigger, safety boundary hoặc quyết định cần thêm evidence. Soft
-context budget không phải correctness gate.
+thuẫn, risk trigger, safety boundary hoặc quyết định cần thêm evidence. Giới hạn
+sử dụng không cho phép bỏ active requirement; tiết kiệm bằng routing đúng mức,
+không bằng đọc dở một file đã được đánh dấu `full-read`.
 
 ## Stable project and data boundaries
 

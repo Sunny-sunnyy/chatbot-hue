@@ -1,5 +1,12 @@
 # Phase 4: Qdrant ingestion và deterministic dense points
 
+> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc closure
+> Wave 2.1/Phase 3. Reviewer phải cập nhật guide này rồi trình User duyệt Wave
+> 2.2 spec/addendum, plan và Review Contract trước implementation. Package phải
+> khóa named dense/sparse schema, payload năm field, build identity, fresh-target
+> guard và completion verification. Mọi collection write là live gate riêng với
+> exact targets; Foods collections luôn read-only.
+
 ## Mục tiêu và giá trị cho người dùng
 
 Phase 4 đưa canonical food chunks cùng dense representations vào một active

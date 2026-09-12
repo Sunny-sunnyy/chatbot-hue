@@ -38,14 +38,19 @@ tự dùng sub-agent nếu user hoặc Review Contract chưa cho phép.
 
 ## Session bootstrap
 
-Sau khi workflow được xác định, đọc theo thứ tự:
+Áp dụng ba mức đọc trong `Session_Prompt.md`. Sau khi workflow được xác định,
+đọc theo thứ tự:
 
 ```text
-session_prompt/Session_Prompt.md
-session_prompt/Project_Status.md
-session_prompt/IMPLEMENTER_WORKFLOW.md
-session_prompt/CURRENT_HANDOFF.md
+full-read: session_prompt/Session_Prompt.md
+targeted-read: current sections được handoff/prompt chỉ định trong Project_Status.md
+full-read: session_prompt/IMPLEMENTER_WORKFLOW.md
+full-read: session_prompt/CURRENT_HANDOFF.md
 ```
+
+Nếu prompt bootstrap của user nói đọc toàn bộ bốn file chuẩn, full-read cả
+`Project_Status.md`. Bốn file đó đủ để tìm active task; sau đó chỉ mở các active
+inputs mà `CURRENT_HANDOFF.md` phân loại. Không cần next-session prompt riêng.
 
 Chỉ làm việc khi `Target role: implementer` và handoff có một exact next action.
 Resolve base/head, scope, Review Contract, stop condition và Git authorization
@@ -54,6 +59,13 @@ trước mutation. Chạy `git status --short`; giữ nguyên thay đổi không
 Bốn file giúp tìm task, không thay việc đọc spec/plan, correction contract và
 canonical inputs mà handoff dẫn tới. Yêu cầu trực tiếp mới khác task cũ được
 route theo `Session_Prompt.md`; không tự tiếp tục handoff đã bị thay thế.
+
+Active approved spec/plan/correction và exact inputs/source nằm trong scope thực
+thi là `full-read`; Implementer phải đọc đủ và tiếp tục phần thiếu nếu tool
+truncation. Project history, report đã approved, raw reference ngoài scope,
+vendor/generated/binary state là `reference-only` hoặc bị loại theo contract.
+Khả năng đọc rộng của Implementer không phải lý do mở rộng scope; prompt khảo
+sát phải nói rõ nhóm full-read, sampled/inventory và skipped.
 
 ## Handoff routing
 
@@ -70,6 +82,12 @@ contract, risk boundary hay authority, dừng và trả lại Reviewer/user đ�
 lại. Một plan step, tool call hoặc correction nhỏ không phải top-level task mới.
 
 ## When implementation may start
+
+Với khảo sát hỗ trợ thiết kế do user trực tiếp yêu cầu qua handoff giới hạn,
+chỉ thực hiện contract khảo sát đó; có thể dùng script riêng trong allowed
+paths khi được nêu rõ. Không coi đây là implementation runtime hoặc cần viết
+lại spec/plan cho MVP. Thiếu dữ liệu/quyền thì báo đúng blocker, không tự mở
+rộng sang tải dependencies, đổi corpus hoặc chạy model/API.
 
 Implementation bắt đầu khi handoff trỏ tới spec/plan đã được user duyệt hoặc
 một exact correction/closure contract. Report, status snapshot hoặc expected

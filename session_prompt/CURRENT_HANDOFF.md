@@ -1,67 +1,59 @@
-# Bàn giao hiện hành
+# Bàn giao hiện hành — Full-corpus RAG Wave 1 Correction 2
 
-Target role: implementer
-Authored by: reviewer
-Handoff kind: closure
-State: completed
-Base commit: 8739744feabe6574d8bd6d1a9bf1664521dad0fa
+Target role: reviewer
+Authored by: implementer
+Handoff kind: correction
+State: active
+Base commit: ea87d3ed52851f6b6ab5c47b138540ebc8ff8340
 Head commit: worktree
-Risk level: low
+Risk level: medium
 Git authorization: none
 Sub-agent authorization: none
-Technical verdict: approved
 
-## Mục tiêu
+## Objective
 
-Đã hoàn thành toàn diện việc biên soạn, thẩm định độc lập 2 lượt và nghiệm thu nhánh Du lịch Huế - Vé tham quan và trải nghiệm (Tickets), đồng thời khép lại toàn bộ giai đoạn biên soạn và chuẩn hóa dữ liệu (Data Curation) của kho tri thức `knowledge-base-hue`. Người dùng đã chính thức phê duyệt nghiệm thu ngày 08/09/2026.
+Review nghiệm thu Full-corpus RAG Wave 1 sau khi Implementer đã hoàn tất Correction 2 (đóng trọn ba finding W1-C1-R1..R3). Đây là delta hẹp của Wave 1; không mở Wave 2.1.
 
-## Tổng kết trạng thái nghiệm thu
+## Active review inputs
 
-1. **Nhánh vé tham quan (Tickets):**
-   - Đã tạo đủ 05 cẩm nang answer-facing chuẩn RAG trong `knowledge-base-hue/travel/tickets/`.
-   - Danh mục kiểm soát `tickets-research-and-entities-inventory.md` và bằng chứng pháp lý cấp 1 tại Mục XLIV–XLVIII của `tourism-research-evidence.md` đồng bộ 100%.
-   - Đã khắc phục triệt để 06/06 findings (03 Major, 03 Minor) qua một đợt sửa đổi tập trung.
-   - Báo cáo người dùng (User Report) đã được trình bày và người dùng đã xác nhận hoàn tất.
+### Full-read
 
-2. **Hoàn tất Taxonomy Migration `tourism/` -> `travel/`:**
-   - Đã di chuyển toàn bộ 47 file từ `knowledge-base-hue/tourism/` sang `knowledge-base-hue/travel/`:
-     + `travel/places/`: 35 file entity điểm đến + cẩm nang `travel_guides.md` (đổi tên từ `tourism_guides.md`).
-     + `travel/services/`: 04 cẩm nang dịch vụ du lịch + 01 inventory.
-     + `travel/tickets/`: 05 cẩm nang vé + 01 inventory.
-   - Thư mục cũ `tourism/` đã được dọn dẹp sạch sẽ. Cấu trúc đường dẫn canonical đã cố định vĩnh viễn.
+- Implementation report (đã sửa thành evidence index trung thực):
+  `reports/full_corpus_rag_wave_1_correction_1_implementation_report_2026_09_12.md`
+- Canonical preview artifact (PASS, zero errors/oversized, 8460 chunks):
+  `reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json`
+- Correction 2 contract:
+  `handoff_prompt/FULL_CORPUS_RAG_WAVE_1_CORRECTION_2_PROMPT.md`
+- Review Correction 1:
+  `reports/full_corpus_rag_wave_1_correction_1_codex_review_2026_09_12.md`
+- Mọi source/test Implementer sửa trong Correction 2:
+  - `backend/ingestion/chunking/full_corpus_chunker.py`
+  - `backend/ingestion/preview.py`
+  - `backend/tests/test_full_corpus_chunker.py`
 
-3. **Toàn bộ kho dữ liệu `knowledge-base-hue` (100% Data Curation & Taxonomy Complete):**
-   - `foods`: 91 file Markdown (nhà hàng, quán cafe, món đặc sản và cẩm nang).
-   - `heritages`: 28 entity di sản và `heritage-guides.md`.
-   - `festivals`: 26 entity lễ hội và `festival-guides.md`.
-   - `performing_arts`: 11 entity nghệ thuật và `performing_arts_guides.md`.
-   - `travel`: 35 entity điểm đến, `travel_guides.md`, 04 cẩm nang `services` và 05 cẩm nang `tickets`.
+Nếu output của bất kỳ file `full-read` nào bị truncate, tiếp tục từ dòng dừng tới
+EOF.
 
-## Artifact pointers
+### Targeted-read
 
-- Inventory Tickets: `knowledge-base-hue/travel/tickets/tickets-research-and-entities-inventory.md`
-- Inventory Services: `knowledge-base-hue/travel/services/services-research-and-entities-inventory.md`
-- Evidence: `knowledge-base-hue/meta/tourism-research-evidence.md` (Mục XLIV đến XLVIII)
-- Implementation Report gốc: `reports/tickets_implementation_report_2026_09_08.md`
-- Codex Review (Lượt 1): `reports/tickets_codex_review_2026_09_08.md`
-- Implementation Correction Report: `reports/tickets_implementation_correction_report_2026_09_08.md`
-- Codex Re-review (Lượt 2): `reports/tickets_codex_rereview_2026_09_08.md`
-- User Confirmation: Ghi nhận ngày 08/09/2026 ("chúng ta đã xong toàn bộ phần dữ liệu")
+Chỉ đọc exact requirement/range mà Correction 2 hoặc review report dẫn tới trong
+approved Written Spec, Implementation Plan, Implementation Review Contract, Wave
+1 prompt và Correction 1 contract.
 
-## Kế hoạch và định hướng cho phiên tiếp theo
+### Reference-only
 
-Người dùng đã xác nhận định hướng công việc tiếp theo:
+Guides/status history, reports cũ, corpus ngoài sáu named samples và Điện Hòn Chén, `.env`, logs, caches, Qdrant state, notebooks và mọi wave sau.
 
-1. **Mở rộng Phase 2 (Markdown Chunking toàn bộ corpus đa domain)**
-   - Tham chiếu và mở rộng từ `guides/phase_2_foods_markdown_chunking.md`.
-   - Thiết kế quy trình chunking tổng quát cho cả 5 domain (`foods`, `heritages`, `festivals`, `performing_arts`, `travel`).
-   - Đảm bảo trích xuất deterministic chunk ID, tiêu đề H1/H2, breadcrumbs và metadata phong phú cho từng chunk.
+## Authority boundaries
 
-2. **Thiết kế Golden Datasets đa domain**
-   - Thiết kế các bộ ground truth đánh giá cho từng folder/domain tương tự `knowledge-base-hue/foods/evaluation/golden_v3.jsonl`.
-   - Chuẩn bị các trường hợp truy vấn thực tế (query, ground-truth context, reference answer, relevant chunk IDs) để phục vụ benchmark và đánh giá pipeline ở Phase 7.
+Reviewer thực hiện static / read-only review theo Review Contract và Correction 2 Contract. Không sửa corpus, guides/status/spec/plan/contracts; không chạy full backend suite hoặc live ingestion suite; không gọi model/API, embedding inference, Qdrant, frontend, notebook, benchmark, Git write hoặc subagent. Không bắt đầu Wave 2.1.
 
-## Next role and action
+## Required outputs
 
-- Target role: `implementer` (hoặc khởi động session mới)
-- Next action: Thực hiện bước Prerequisite (Taxonomy Migration `tourism/` -> `travel/`), sau đó mở rộng Phase 2 Markdown Chunking và thiết kế Golden Datasets cho toàn bộ corpus theo chỉ đạo của người dùng.
+- Review report đánh giá Wave 1 Correction 2;
+- Quyết định `ready_for_user_confirmation` hoặc `changes_requested`;
+- Cập nhật `session_prompt/CURRENT_HANDOFF.md` cho bước tiếp theo.
+
+## Next action duy nhất
+
+Reviewer thực hiện review Wave 1 Correction 2 theo Review Contract, đối chiếu mã nguồn và evidence index với 3 findings W1-C1-R1..R3 để đưa ra kết luận nghiệm thu. Không mở Wave 2.1.

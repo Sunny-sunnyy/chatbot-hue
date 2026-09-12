@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "task": "full_corpus_vn_qt_token_check",
+    "contract": "session_prompt/FULL_CORPUS_VN_QT_TOKEN_CHECK_HANDOFF.md",
+    "date": "2026-09-09",
+    "python_version": "3.13.15",
+    "transformers_version": "5.14.1",
+    "pyvi_version": "0.1.1",
+    "models_and_tokenizers": {
+      "e5_small": {
+        "model_id": "intfloat/multilingual-e5-small",
+        "snapshot_path": "/home/minhhieu/.cache/huggingface/hub/models--intfloat--multilingual-e5-small/snapshots/614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+        "configured_limit": 512,
+        "model_max_length_attribute": 512
+      },
+      "e5_base": {
+        "model_id": "intfloat/multilingual-e5-base",
+        "snapshot_path": "/home/minhhieu/.cache/huggingface/hub/models--intfloat--multilingual-e5-base/snapshots/d128750597153bb5987e10b1c3493a34e5a4502a",
+        "revision": "d128750597153bb5987e10b1c3493a34e5a4502a",
+        "configured_limit": 512,
+        "model_max_length_attribute": 512
+      },
+      "huydang": {
+        "model_id": "CODE4LIFEOFFICIAL/huydang-dek21-embedding",
+        "snapshot_path": "/home/minhhieu/.cache/huggingface/hub/models--CODE4LIFEOFFICIAL--huydang-dek21-embedding/snapshots/517f1af7dd04a57194f1de2990f0c6ede0a3109b",
+        "revision": "517f1af7dd04a57194f1de2990f0c6ede0a3109b",
+        "configured_limit": 256,
+        "model_max_length_attribute": 256
+      },
+      "minilm": {
+        "model_id": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+        "snapshot_path": "/home/minhhieu/.cache/huggingface/hub/models--cross-encoder--ms-marco-MiniLM-L-6-v2/snapshots/233902d25c440f23af6f7d6e94d2946bac0bee0a",
+        "revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+        "configured_limit": 512,
+        "model_max_length_attribute": 512
+      }
+    },
+    "queries_used": {
+      "orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?"
+    }
+  },
+  "samples": {
+    "ca_hue_tour_ghep_vn": {
+      "chunk_id": "ca_hue_tour_ghep_vn_with_lead_and_exclusions",
+      "source": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "body_span": [
+        10901,
+        11141
+      ],
+      "body_characters": 240,
+      "search_text_characters": 931,
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "evidence_parts": [
+        {
+          "role": "condition",
+          "start": 10409,
+          "end": 10591,
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "header",
+          "start": 10760,
+          "end": 10900,
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "body",
+          "start": 10901,
+          "end": 11141,
+          "characters": 240,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |",
+          "exact_match": true
+        },
+        {
+          "role": "condition",
+          "start": 12117,
+          "end": 12287,
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "queries": {
+        "orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+        "long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?"
+      },
+      "token_counts": {
+        "e5_small": 290,
+        "e5_base": 290,
+        "huydang": 224,
+        "minilm_orig": 411,
+        "minilm_long": 453
+      },
+      "token_limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm_orig": 512,
+        "minilm_long": 512
+      },
+      "token_margins": {
+        "e5_small": 222,
+        "e5_base": 222,
+        "huydang": 32,
+        "minilm_orig": 101,
+        "minilm_long": 59
+      },
+      "exceeded_models": [],
+      "verdict": "VỪA (PASS_ALL)"
+    },
+    "ca_hue_tour_ghep_qt": {
+      "chunk_id": "ca_hue_tour_ghep_qt_with_lead_and_exclusions",
+      "source": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "body_span": [
+        11142,
+        11317
+      ],
+      "body_characters": 175,
+      "search_text_characters": 866,
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "evidence_parts": [
+        {
+          "role": "condition",
+          "start": 10409,
+          "end": 10591,
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "header",
+          "start": 10760,
+          "end": 10900,
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "body",
+          "start": 11142,
+          "end": 11317,
+          "characters": 175,
+          "text": "| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        },
+        {
+          "role": "condition",
+          "start": 12117,
+          "end": 12287,
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "queries": {
+        "orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+        "long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?"
+      },
+      "token_counts": {
+        "e5_small": 268,
+        "e5_base": 268,
+        "huydang": 208,
+        "minilm_orig": 385,
+        "minilm_long": 427
+      },
+      "token_limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm_orig": 512,
+        "minilm_long": 512
+      },
+      "token_margins": {
+        "e5_small": 244,
+        "e5_base": 244,
+        "huydang": 48,
+        "minilm_orig": 127,
+        "minilm_long": 85
+      },
+      "exceeded_models": [],
+      "verdict": "VỪA (PASS_ALL)"
+    }
+  },
+  "summary": {
+    "all_inputs_pass": true,
+    "conclusion": "Cả hai composite Ca Huế (VN và QT) với ranh giới hàng đã sửa hoàn chỉnh đều nằm trong toàn bộ các giới hạn token của E5-small (512), E5-base (512), HuyDang (256) và MiniLM pair (512 cho cả query_orig lẫn query_long)."
+  }
+}

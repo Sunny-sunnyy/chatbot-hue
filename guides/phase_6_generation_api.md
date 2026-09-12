@@ -1,5 +1,12 @@
 # Phase 6: Grounded answer generation và JSON API
 
+> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc Wave
+> 2.3/Phase 5 closure. Trước implementation, Reviewer phải cập nhật guide này và
+> trình User duyệt Wave 3 spec/addendum, plan, Review Contract cho context budget,
+> Qwen/OpenRouter profile, typed API/citation contract và static inline UI.
+> Wave 3A code/tests và Wave 3B paid live smoke là hai gate tách biệt; Agentic
+> RAG không thuộc package này.
+
 ## Mục tiêu và giá trị cho người dùng
 
 Phase 6 biến ranked evidence từ retrieval thành câu trả lời tiếng Việt grounded

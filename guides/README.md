@@ -1,4 +1,49 @@
-# Hướng dẫn các phase của Hue Foods RAG
+# Hướng dẫn Hue RAG
+
+> Cập nhật 2026-09-10: user đã approved khảo sát parser/source locator sau
+> correction lượt 3. [Review/closure](../reports/full_corpus_parser_locator_codex_review_2026_09_09.md)
+> là evidence thiết kế, không tự approve runtime. Chọn markdown-it-py/table
+> enabled, chưa triển khai runtime. Hai input VN/QT đúng
+> ranh giới đã đo bổ sung và user-approved: [review](../reports/full_corpus_vn_qt_token_check_codex_review_2026_09_09.md).
+> Counts input sai không dùng. Các khảo sát Golden/evaluation reference, schema
+> deep-dive và simplicity evaluation `rag_old_0` đều đã approved/completed.
+> User đã chọn Golden metric-only bốn field.
+> Survey dài `llm_rag` đã chạm correction ceiling và bị đóng băng
+> working/non-canonical. Verified Architecture Extraction thay thế đã qua hai
+> correction, independent review và User closure ngày 2026-09-11; đây là
+> approved evidence companion. Decision Queue tiền-spec đã hoàn tất qua #6e.
+> Written Spec tại
+> `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` đã được User
+> duyệt ngày 2026-09-11. Plan + Review Contract cũng đã được User duyệt. Wave 1
+> Correction 2 đã được Implementer bàn giao và chờ re-review sau hai verdict
+> `changes_requested`; chưa cấp quyền live
+> hoặc wave sau.
+> Agentic RAG dùng profile/contract riêng.
+> Xem [bộ handoff](../handoff_prompt/README.md).
+
+
+## Workstream toàn corpus — Wave 1 Correction 2, cập nhật 2026-09-12
+
+Written Spec, Implementation Plan và Review Contract cho toàn curated corpus đã
+được User duyệt; Reviewer chỉ đang được giao exact Wave 1 Correction 2 re-review. Các trạng
+thái `approved` trong bảng bên dưới thuộc Foods và không tự mở wave/live gate
+full-corpus khác. Guide umbrella
+[Full-corpus RAG](full_corpus_rag.md) giữ phạm vi, quyết định đã chốt và chuỗi
+duyệt; guide Phase 2–8 hiện có tiếp tục mô tả behavior Foods đã thực hiện.
+
+Mỗi guide Phase 2–8 có một `full-corpus extension gate`. Sau closure của
+dependency, Reviewer cập nhật guide, soạn wave spec/plan/Review Contract và xin
+User duyệt trước khi giao Implementer. Sau implementation lại review, User
+closure và cập nhật observed result rồi mới thiết kế phase/wave kế tiếp.
+
+Điểm bắt đầu: [Full-corpus RAG](full_corpus_rag.md),
+[bản ghi quyết định](../docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md),
+[ghi chú cho plan sau này](../docs/superpowers/plans/2026-09-09-full-corpus-context-experiment-notes.md).
+Hai file ngày 2026-09-09 là working notes, chưa phải written spec hoặc
+implementation plan được duyệt.
+User yêu cầu đối chiếu các reports có `simplicity` của phase liên quan với code
+và guides trước khi viết thiết kế. Reports là evidence theo từng lần chạy;
+quyết định mới nhất của user và source hiện tại phân định điều gì còn áp dụng.
 
 ## Mục đích
 
@@ -91,8 +136,11 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Ba profiles, notebooks và full non-paid suite đã đạt và được user xác nhận |
 | 6 | `phase_6_generation_api.md` | `approved` | Answer-only API và notebooks đã chạy thật, đạt technical review và được user xác nhận |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
-| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08c đã approved; không có sparse/reranker finalist, bước kế tiếp là full-corpus multi-domain design |
+| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Notebooks 08a–08c đã approved; full-corpus Wave 1 Correction 2 chờ re-review, chưa mở benchmark/live gate |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
+
+Workstream `full_corpus_rag.md` đang re-review Wave 1 Correction 2 và nối các thay đổi xuyên
+Phase 2–8; nó không tạo phase mới hoặc thay trạng thái các phase trong bảng.
 
 Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 

@@ -28,20 +28,40 @@ Không copy doctrine của hai skill vào report hoặc handoff.
 
 ## Session bootstrap
 
-Sau khi workflow được xác định, đọc theo thứ tự:
+Áp dụng ba mức đọc trong `Session_Prompt.md`. Sau khi workflow được xác định,
+đọc theo thứ tự:
 
 ```text
-session_prompt/Session_Prompt.md
-session_prompt/Project_Status.md
-session_prompt/REVIEWER_WORKFLOW.md
-session_prompt/CURRENT_HANDOFF.md
+full-read: session_prompt/Session_Prompt.md
+targeted-read: current sections được next-session prompt chỉ định trong Project_Status.md
+full-read: session_prompt/REVIEWER_WORKFLOW.md
+full-read: session_prompt/CURRENT_HANDOFF.md
 ```
+
+Nếu prompt bootstrap của user nói đọc toàn bộ bốn file chuẩn, full-read cả
+`Project_Status.md`. Bốn file đó đủ để tìm active task; không cần mở thêm
+`FULL_CORPUS_REVIEWER_NEXT_SESSION_PROMPT.md` trừ khi `CURRENT_HANDOFF.md` dẫn nó
+cho một câu hỏi cụ thể.
+
+Sau bootstrap, chỉ active Review Contract/spec/plan/correction và report đang
+review là `full-read`. Guide/decision/context dài dùng `targeted-read`; report
+đã approved, history, raw reference project và source ngoài focused checks là
+`reference-only`. Reviewer không biến mọi link trong handoff thành full-read.
+
+Nếu một `full-read` file bị tool truncation, đọc tiếp phần thiếu của riêng file
+đó. Với `targeted-read`, dừng ở section/range đã chỉ định trừ khi có mâu thuẫn,
+risk hoặc evidence gap cần mở rộng.
 
 Kiểm tra `Target role: reviewer`, base/head state, objective, Review Contract,
 Git authorization và stop condition trước khi mở context Tier 1+. Khi thực hiện
 chính handoff đó, sai target role, base không hợp lệ hoặc thiếu một next action
 duy nhất thì dừng phần phụ thuộc và báo user. Yêu cầu trực tiếp mới được route
 theo `Session_Prompt.md`; handoff cũ không chặn brainstorming nhiệm vụ mới.
+
+Nếu user khởi động Reviewer trong lúc `CURRENT_HANDOFF.md` vẫn target
+`implementer`, Reviewer chỉ xác nhận trạng thái và chờ Implementer hoàn tất
+report/artifact/handoff. Không review từ bản tóm tắt chat và không kết luận từ
+implementation report khi handoff chưa chuyển về `reviewer` với kind phù hợp.
 
 ## Design gate
 
@@ -66,8 +86,31 @@ duyệt scope, acceptance và quyền; Reviewer tự xử lý chi tiết biên t
 trong phạm vi đó. Plan phân biệt ràng buộc bắt buộc với gợi ý tổ chức code;
 không biến mọi tên hàm/class minh họa thành acceptance.
 
+Theo phân công tiết kiệm giới hạn sử dụng trong Session_Prompt.md, chủ động
+soạn prompt giao Implementer các việc thực thi/thu thập/tóm tắt có ích cho
+quyết định. Không tự chạy lại việc đã có evidence đủ. Khảo sát phục vụ thiết
+kế phải có exact scope và authority riêng, không dùng nó để triển khai runtime
+trước spec/plan approval. Khi chờ evidence, tiếp tục phần thiết kế độc lập;
+giữ một handoff thực thi hiện hành và bảo toàn tiến độ thiết kế trong context.
+
 Sau khi plan được duyệt, tự cập nhật handoff và cung cấp prompt chuyển tiếp
 ngắn theo `Session_Prompt.md`, không chờ user yêu cầu thêm.
+
+Với workstream chia nhiều wave/phase phụ thuộc nhau, approval của plan umbrella
+không tự mở mọi wave. Trước từng wave mới, Reviewer phải:
+
+1. đóng wave trước bằng independent review và User closure khi handoff yêu cầu;
+2. dùng evidence vừa đạt để cập nhật guide phase liên quan, phân biệt target đã
+   duyệt với behavior đã quan sát;
+3. brainstorming từng quyết định mới theo thứ tự dependency;
+4. tạo hoặc cập nhật exact wave spec, implementation plan và Review Contract;
+5. xin User duyệt trọn design package;
+6. chỉ sau đó mới tạo Implementer handoff cho đúng một wave.
+
+Nếu một guide/wave phụ thuộc kết quả guide/wave trước, không author ahead như đã
+biết kết quả. Spec/plan umbrella giữ kiến trúc chung; wave addendum chỉ chứa
+delta, exact paths, acceptance, evidence và quyền của wave đó. Không nhân bản
+toàn bộ requirement lịch sử vào mỗi artifact.
 
 Không dùng lại design gate cho exact `final_review` hoặc correction review nếu
 requirement và architecture không đổi. Chỉ quay lại `brainstorming` khi diff,
@@ -94,6 +137,11 @@ Implementation report là evidence index, không tự chứng minh PASS. Sau min
 gate, chỉ mở/rerun phần Review Contract, actual diff, risk trigger, deviation
 hoặc contradictory evidence yêu cầu. Ghi đúng failed, skipped, partial và not
 verified.
+
+Reviewer phải đọc đầy đủ report đang review để đánh giá tính tự nhất quán và
+coverage, nhưng không mặc định đọc lại toàn bộ source mà Implementer đã khảo
+sát. Independent review dùng exact diff, selected high-impact anchors và các
+điểm contract/risk còn mở.
 
 Không mặc định đọc toàn bộ history, chạy full suite/full evaluation, lặp mọi
 lệnh Implementer hoặc spawn sub-agent. Sub-agent chỉ dùng cho audit có giá trị

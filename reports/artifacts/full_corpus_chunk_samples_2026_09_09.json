@@ -1,0 +1,2819 @@
+{
+  "metadata": {
+    "timestamp": "2026-09-09T16:30:00+07:00",
+    "title": "Khảo sát độ dài tokenizer thực tế cho các mẫu chunking toàn corpus Huế (Cập nhật 3)",
+    "scope": "Khảo sát text/tokenizer có mục tiêu; không chạy inference embedding/reranker, không gọi Qdrant/API",
+    "models": {
+      "e5_small": [
+        "intfloat--multilingual-e5-small",
+        "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+      ],
+      "e5_base": [
+        "intfloat--multilingual-e5-base",
+        "d128750597153bb5987e10b1c3493a34e5a4502a"
+      ],
+      "huydang": [
+        "CODE4LIFEOFFICIAL--huydang-dek21-embedding",
+        "517f1af7dd04a57194f1de2990f0c6ede0a3109b"
+      ],
+      "minilm": [
+        "cross-encoder--ms-marco-MiniLM-L-6-v2",
+        "233902d25c440f23af6f7d6e94d2946bac0bee0a"
+      ]
+    },
+    "limits": {
+      "e5_small": 512,
+      "e5_base": 512,
+      "huydang": 256,
+      "minilm": 512
+    },
+    "queries": {
+      "gia_lac": {
+        "orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+        "long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?"
+      },
+      "ngo_mon": {
+        "orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+        "long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?"
+      },
+      "ca_hue": {
+        "orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+        "long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?"
+      },
+      "control_me_keo": {
+        "orig": "Quán bún bò Mệ Kéo mở cửa đến mấy giờ?",
+        "long": "Quán bún bò Mệ Kéo nằm ở địa chỉ nào tại Huế, mở bán trong khung giờ nào và mức giá mỗi tô dao động khoảng bao nhiêu?"
+      },
+      "control_sea_module": {
+        "orig": "Có thể thay ngày cuối bằng đi biển và đầm phá không?",
+        "long": "Nếu muốn đổi lịch trình ngày thứ ba sang tham quan biển Thuận An hoặc phá Tam Giang thì cần lưu ý những điều kiện thời tiết nào?"
+      }
+    },
+    "normalization": "UTF-8 decoded; CRLF/CR -> LF; Unicode code points zero-based, end exclusive; no Unicode normalization"
+  },
+  "chunks": [
+    {
+      "chunk_id": "gia_lac_baseline_oversized",
+      "sample_group": "gia_lac",
+      "proposal_type": "baseline_oversized",
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "title": "Hội xuân Gia Lạc",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "description": "Khối nguyên mẫu mục Thông tin chung đo ở phiên trước; vượt giới hạn HuyDang (272 > 256) và chạm trần MiniLM (512).",
+      "evidence_parts": [
+        {
+          "role": "full_body",
+          "span": {
+            "start": 40,
+            "end": 1211
+          },
+          "characters": 1171,
+          "text": "- **Tên lễ hội:** Hội xuân Gia Lạc\n- **Tên gọi khác:** Chợ Tết Gia Lạc, Chợ xuân Gia Lạc, Chợ phiên Gia Lạc\n- **Loại hình:** Phiên chợ hội xuân truyền thống kết hợp sinh hoạt văn hóa – phong tục Tết cổ truyền (giao thoa giữa văn hóa cung đình và đời sống dân gian xứ Huế)\n- **Thời gian tổ chức:**\n  - *Truyền thống lịch sử:* Xưa kia họp trong 3 ngày Tết Nguyên đán (từ mồng 1 đến hết mồng 3 tháng Giêng Âm lịch).\n  - *Giai đoạn hiện nay:* Được chính quyền và ngành văn hóa phục dựng theo chuyên đề vào các dịp Tết Nguyên đán hoặc các kỳ Festival Huế.\n- **Nơi tổ chức:**\n  - *Địa điểm lịch sử:* Khu vực ngã ba làng Nam Phổ (trên trục đường từ Vỹ Dạ đi về Nam Phổ, Dương Nỗ) trước phủ đệ của Định Viễn Quận vương.\n  - *Địa điểm phục dựng đương đại:* Được tổ chức theo chương trình từng kỳ tại các không gian công cộng trên địa bàn thành phố (như kỳ phục dựng Tết Ất Tỵ 2025 tại khu vực ngã ba Chợ Mai – đường Nguyễn Đình Tứ, phường Phú Thượng, thành phố Huế).\n- **Phân biệt với các phiên chợ Tết thương mại:** Chợ Tết Gia Lạc truyền thống không mang tính thương mại đơn thuần mà nhấn mạnh việc du xuân, cầu may mắn, trao gửi lời chúc đầu năm và vui chơi giải trí lành mạnh.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Hội xuân Gia Lạc\nThông tin chung\n- **Tên lễ hội:** Hội xuân Gia Lạc\n- **Tên gọi khác:** Chợ Tết Gia Lạc, Chợ xuân Gia Lạc, Chợ phiên Gia Lạc\n- **Loại hình:** Phiên chợ hội xuân truyền thống kết hợp sinh hoạt văn hóa – phong tục Tết cổ truyền (giao thoa giữa văn hóa cung đình và đời sống dân gian xứ Huế)\n- **Thời gian tổ chức:**\n  - *Truyền thống lịch sử:* Xưa kia họp trong 3 ngày Tết Nguyên đán (từ mồng 1 đến hết mồng 3 tháng Giêng Âm lịch).\n  - *Giai đoạn hiện nay:* Được chính quyền và ngành văn hóa phục dựng theo chuyên đề vào các dịp Tết Nguyên đán hoặc các kỳ Festival Huế.\n- **Nơi tổ chức:**\n  - *Địa điểm lịch sử:* Khu vực ngã ba làng Nam Phổ (trên trục đường từ Vỹ Dạ đi về Nam Phổ, Dương Nỗ) trước phủ đệ của Định Viễn Quận vương.\n  - *Địa điểm phục dựng đương đại:* Được tổ chức theo chương trình từng kỳ tại các không gian công cộng trên địa bàn thành phố (như kỳ phục dựng Tết Ất Tỵ 2025 tại khu vực ngã ba Chợ Mai – đường Nguyễn Đình Tứ, phường Phú Thượng, thành phố Huế).\n- **Phân biệt với các phiên chợ Tết thương mại:** Chợ Tết Gia Lạc truyền thống không mang tính thương mại đơn thuần mà nhấn mạnh việc du xuân, cầu may mắn, trao gửi lời chúc đầu năm và vui chơi giải trí lành mạnh.",
+      "search_text_characters": 1204,
+      "label_characters": 33,
+      "body_characters": 1171,
+      "query_orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+      "query_long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?",
+      "tokens": {
+        "e5_small": 352,
+        "e5_base": 352,
+        "huydang": 272,
+        "minilm_orig": 512,
+        "minilm_long": 540
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_long"
+    },
+    {
+      "chunk_id": "gia_lac_p1_chunk_1",
+      "sample_group": "gia_lac",
+      "proposal_type": "preferred_p1",
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "title": "Hội xuân Gia Lạc",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "description": "Định danh, loại hình phiên chợ và thời gian tổ chức; bảo toàn quan hệ cha-con phân biệt mốc 3 ngày Tết cổ truyền và phục dựng hiện nay.",
+      "evidence_parts": [
+        {
+          "role": "body",
+          "span": {
+            "start": 40,
+            "end": 590
+          },
+          "characters": 550,
+          "text": "- **Tên lễ hội:** Hội xuân Gia Lạc\n- **Tên gọi khác:** Chợ Tết Gia Lạc, Chợ xuân Gia Lạc, Chợ phiên Gia Lạc\n- **Loại hình:** Phiên chợ hội xuân truyền thống kết hợp sinh hoạt văn hóa – phong tục Tết cổ truyền (giao thoa giữa văn hóa cung đình và đời sống dân gian xứ Huế)\n- **Thời gian tổ chức:**\n  - *Truyền thống lịch sử:* Xưa kia họp trong 3 ngày Tết Nguyên đán (từ mồng 1 đến hết mồng 3 tháng Giêng Âm lịch).\n  - *Giai đoạn hiện nay:* Được chính quyền và ngành văn hóa phục dựng theo chuyên đề vào các dịp Tết Nguyên đán hoặc các kỳ Festival Huế.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Hội xuân Gia Lạc\nThông tin chung\n- **Tên lễ hội:** Hội xuân Gia Lạc\n- **Tên gọi khác:** Chợ Tết Gia Lạc, Chợ xuân Gia Lạc, Chợ phiên Gia Lạc\n- **Loại hình:** Phiên chợ hội xuân truyền thống kết hợp sinh hoạt văn hóa – phong tục Tết cổ truyền (giao thoa giữa văn hóa cung đình và đời sống dân gian xứ Huế)\n- **Thời gian tổ chức:**\n  - *Truyền thống lịch sử:* Xưa kia họp trong 3 ngày Tết Nguyên đán (từ mồng 1 đến hết mồng 3 tháng Giêng Âm lịch).\n  - *Giai đoạn hiện nay:* Được chính quyền và ngành văn hóa phục dựng theo chuyên đề vào các dịp Tết Nguyên đán hoặc các kỳ Festival Huế.",
+      "search_text_characters": 583,
+      "label_characters": 33,
+      "body_characters": 550,
+      "query_orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+      "query_long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?",
+      "tokens": {
+        "e5_small": 177,
+        "e5_base": 177,
+        "huydang": 142,
+        "minilm_orig": 256,
+        "minilm_long": 284
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "gia_lac_p1_chunk_2",
+      "sample_group": "gia_lac",
+      "proposal_type": "preferred_p1",
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "title": "Hội xuân Gia Lạc",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "description": "Địa điểm tổ chức lịch sử vs đương đại và nét văn hóa đặc thù du xuân cầu may, phân biệt với chợ thương mại.",
+      "evidence_parts": [
+        {
+          "role": "body",
+          "span": {
+            "start": 591,
+            "end": 1211
+          },
+          "characters": 620,
+          "text": "- **Nơi tổ chức:**\n  - *Địa điểm lịch sử:* Khu vực ngã ba làng Nam Phổ (trên trục đường từ Vỹ Dạ đi về Nam Phổ, Dương Nỗ) trước phủ đệ của Định Viễn Quận vương.\n  - *Địa điểm phục dựng đương đại:* Được tổ chức theo chương trình từng kỳ tại các không gian công cộng trên địa bàn thành phố (như kỳ phục dựng Tết Ất Tỵ 2025 tại khu vực ngã ba Chợ Mai – đường Nguyễn Đình Tứ, phường Phú Thượng, thành phố Huế).\n- **Phân biệt với các phiên chợ Tết thương mại:** Chợ Tết Gia Lạc truyền thống không mang tính thương mại đơn thuần mà nhấn mạnh việc du xuân, cầu may mắn, trao gửi lời chúc đầu năm và vui chơi giải trí lành mạnh.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Hội xuân Gia Lạc\nThông tin chung\n- **Nơi tổ chức:**\n  - *Địa điểm lịch sử:* Khu vực ngã ba làng Nam Phổ (trên trục đường từ Vỹ Dạ đi về Nam Phổ, Dương Nỗ) trước phủ đệ của Định Viễn Quận vương.\n  - *Địa điểm phục dựng đương đại:* Được tổ chức theo chương trình từng kỳ tại các không gian công cộng trên địa bàn thành phố (như kỳ phục dựng Tết Ất Tỵ 2025 tại khu vực ngã ba Chợ Mai – đường Nguyễn Đình Tứ, phường Phú Thượng, thành phố Huế).\n- **Phân biệt với các phiên chợ Tết thương mại:** Chợ Tết Gia Lạc truyền thống không mang tính thương mại đơn thuần mà nhấn mạnh việc du xuân, cầu may mắn, trao gửi lời chúc đầu năm và vui chơi giải trí lành mạnh.",
+      "search_text_characters": 653,
+      "label_characters": 33,
+      "body_characters": 620,
+      "query_orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+      "query_long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?",
+      "tokens": {
+        "e5_small": 186,
+        "e5_base": 186,
+        "huydang": 138,
+        "minilm_orig": 290,
+        "minilm_long": 318
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "gia_lac_p2_chunk_1",
+      "sample_group": "gia_lac",
+      "proposal_type": "alternative_p2",
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "title": "Hội xuân Gia Lạc",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "description": "Phương án 2 Chunk 1: Tách riêng định danh và tính chất phi thương mại (ghép 2 đoạn không liên tục; 155 HuyDang tokens).",
+      "evidence_parts": [
+        {
+          "role": "identity_and_type",
+          "span": {
+            "start": 40,
+            "end": 396
+          },
+          "characters": 356,
+          "text": "- **Tên lễ hội:** Hội xuân Gia Lạc\n- **Tên gọi khác:** Chợ Tết Gia Lạc, Chợ xuân Gia Lạc, Chợ phiên Gia Lạc\n- **Loại hình:** Phiên chợ hội xuân truyền thống kết hợp sinh hoạt văn hóa – phong tục Tết cổ truyền (giao thoa giữa văn hóa cung đình và đời sống dân gian xứ Huế)\n- **Thời gian tổ chức:**\n  - *Truyền thống lịch sử:* Xưa kia họp trong 3 ngày Tết Ng",
+          "exact_match": true
+        },
+        {
+          "role": "cultural_nature",
+          "span": {
+            "start": 939,
+            "end": 1211
+          },
+          "characters": 272,
+          "text": "– đường Nguyễn Đình Tứ, phường Phú Thượng, thành phố Huế).\n- **Phân biệt với các phiên chợ Tết thương mại:** Chợ Tết Gia Lạc truyền thống không mang tính thương mại đơn thuần mà nhấn mạnh việc du xuân, cầu may mắn, trao gửi lời chúc đầu năm và vui chơi giải trí lành mạnh.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Hội xuân Gia Lạc\nThông tin chung\n- **Tên lễ hội:** Hội xuân Gia Lạc\n- **Tên gọi khác:** Chợ Tết Gia Lạc, Chợ xuân Gia Lạc, Chợ phiên Gia Lạc\n- **Loại hình:** Phiên chợ hội xuân truyền thống kết hợp sinh hoạt văn hóa – phong tục Tết cổ truyền (giao thoa giữa văn hóa cung đình và đời sống dân gian xứ Huế)\n- **Thời gian tổ chức:**\n  - *Truyền thống lịch sử:* Xưa kia họp trong 3 ngày Tết Ng\n– đường Nguyễn Đình Tứ, phường Phú Thượng, thành phố Huế).\n- **Phân biệt với các phiên chợ Tết thương mại:** Chợ Tết Gia Lạc truyền thống không mang tính thương mại đơn thuần mà nhấn mạnh việc du xuân, cầu may mắn, trao gửi lời chúc đầu năm và vui chơi giải trí lành mạnh.",
+      "search_text_characters": 662,
+      "label_characters": 33,
+      "body_characters": 629,
+      "query_orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+      "query_long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?",
+      "tokens": {
+        "e5_small": 192,
+        "e5_base": 192,
+        "huydang": 155,
+        "minilm_orig": 292,
+        "minilm_long": 320
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "gia_lac_p2_chunk_2",
+      "sample_group": "gia_lac",
+      "proposal_type": "alternative_p2",
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "title": "Hội xuân Gia Lạc",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "description": "Phương án 2 Chunk 2: Chỉ giữ mục thời gian tổ chức (giữ phân nhánh lịch sử và hiện nay; 51 HuyDang tokens).",
+      "evidence_parts": [
+        {
+          "role": "time_schedule",
+          "span": {
+            "start": 397,
+            "end": 590
+          },
+          "characters": 193,
+          "text": "yên đán (từ mồng 1 đến hết mồng 3 tháng Giêng Âm lịch).\n  - *Giai đoạn hiện nay:* Được chính quyền và ngành văn hóa phục dựng theo chuyên đề vào các dịp Tết Nguyên đán hoặc các kỳ Festival Huế.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Hội xuân Gia Lạc\nThông tin chung\nyên đán (từ mồng 1 đến hết mồng 3 tháng Giêng Âm lịch).\n  - *Giai đoạn hiện nay:* Được chính quyền và ngành văn hóa phục dựng theo chuyên đề vào các dịp Tết Nguyên đán hoặc các kỳ Festival Huế.",
+      "search_text_characters": 226,
+      "label_characters": 33,
+      "body_characters": 193,
+      "query_orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+      "query_long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?",
+      "tokens": {
+        "e5_small": 65,
+        "e5_base": 65,
+        "huydang": 51,
+        "minilm_orig": 109,
+        "minilm_long": 137
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "gia_lac_p2_chunk_3",
+      "sample_group": "gia_lac",
+      "proposal_type": "alternative_p2",
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "title": "Hội xuân Gia Lạc",
+      "heading_path": [
+        "Thông tin chung"
+      ],
+      "description": "Phương án 2 Chunk 3: Chỉ giữ mục địa điểm tổ chức (phân biệt ngã ba Nam Phổ và địa điểm công cộng như Chợ Mai; 85 HuyDang tokens).",
+      "evidence_parts": [
+        {
+          "role": "locations",
+          "span": {
+            "start": 591,
+            "end": 938
+          },
+          "characters": 347,
+          "text": "- **Nơi tổ chức:**\n  - *Địa điểm lịch sử:* Khu vực ngã ba làng Nam Phổ (trên trục đường từ Vỹ Dạ đi về Nam Phổ, Dương Nỗ) trước phủ đệ của Định Viễn Quận vương.\n  - *Địa điểm phục dựng đương đại:* Được tổ chức theo chương trình từng kỳ tại các không gian công cộng trên địa bàn thành phố (như kỳ phục dựng Tết Ất Tỵ 2025 tại khu vực ngã ba Chợ Mai",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Hội xuân Gia Lạc\nThông tin chung\n- **Nơi tổ chức:**\n  - *Địa điểm lịch sử:* Khu vực ngã ba làng Nam Phổ (trên trục đường từ Vỹ Dạ đi về Nam Phổ, Dương Nỗ) trước phủ đệ của Định Viễn Quận vương.\n  - *Địa điểm phục dựng đương đại:* Được tổ chức theo chương trình từng kỳ tại các không gian công cộng trên địa bàn thành phố (như kỳ phục dựng Tết Ất Tỵ 2025 tại khu vực ngã ba Chợ Mai",
+      "search_text_characters": 380,
+      "label_characters": 33,
+      "body_characters": 347,
+      "query_orig": "Hội xuân Gia Lạc tổ chức ở đâu và vào thời gian nào?",
+      "query_long": "Lễ hội xuân Gia Lạc trong lịch sử và các kỳ phục dựng chuyên đề hiện nay được tổ chức vào thời gian nào, tại địa điểm nào?",
+      "tokens": {
+        "e5_small": 118,
+        "e5_base": 118,
+        "huydang": 85,
+        "minilm_orig": 180,
+        "minilm_long": 208
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ngo_mon_baseline_oversized",
+      "sample_group": "ngo_mon",
+      "proposal_type": "baseline_oversized",
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "title": "Đại Nội Huế",
+      "heading_path": [
+        "Các công trình kiến trúc hạt nhân của Hoàng thành",
+        "Ngọ Môn"
+      ],
+      "description": "Toàn bộ mục Ngọ Môn 1.726 ký tự đo ở phiên trước; vượt giới hạn của tất cả mô hình (E5: 530 > 512, HuyDang: 423 > 256, MiniLM: 738 > 512).",
+      "evidence_parts": [
+        {
+          "role": "full_body",
+          "span": {
+            "start": 10219,
+            "end": 11945
+          },
+          "characters": 1726,
+          "text": "Ngọ Môn là cửa chính phía Nam của Hoàng thành Huế, được khởi công xây dựng vào năm Minh Mạng thứ 14 (1833) trên vị trí của Nam Khuyết Đài thời Gia Long. Tên gọi \"Ngọ Môn\" mang ý nghĩa sâu xa trong Kinh Dịch: phương Ngọ là phương chính Nam, phương của ánh sáng mặt trời rực rỡ và là hướng của bậc minh quân nhìn về cai trị thiên hạ.\n\n- **Cấu trúc phần đài nền:** Phần dưới là đài nền đồ sộ hình chữ U (kích thước đáy 57,77 m, cạnh cánh gà 27,6 m), cao hơn 5 m, được xây dựng kiên cố bằng đá Thanh và gạch vồ trổ 5 lối đi vòm cuốn:\n  - *Lối giữa (Ngọ Môn):* Lối đi thẳng trên trục Dũng đạo chỉ dành riêng cho hoàng đế;\n  - *Tả Giáp môn và Hữu Giáp môn:* Hai lối đi hai bên cửa giữa dành cho quan văn, quan võ trong đoàn ngự đạo;\n  - *Tả Dịch môn và Hữu Dịch môn:* Hai lối đi uốn cong ở hai cánh chữ U dành cho binh lính, voi chiến và ngựa ngự hộ tống.\n- **Lầu Ngũ Phụng:** Tọa lạc trên đỉnh đài nền là lầu Ngũ Phụng hai tầng bằng gỗ lim với 100 cây cột tượng trưng cho bách tính muôn dân. Công trình có cấu trúc thanh thoát với hệ thống mái kép gồm 9 bộ mái riêng biệt ghép lại (tầng trên 1 bộ mái lớn, tầng dưới 8 bộ mái nhỏ) tạo dáng như bầy chim phụng đang dang cánh múa. Bộ mái chính giữa lợp ngói hoàng lưu ly tráng men vàng dành cho nơi vua ngự; 8 bộ mái phụ xung quanh lợp ngói thanh lưu ly men xanh dành cho các quan hầu cận.\n- **Ý nghĩa lịch sử:** Lầu Ngũ Phụng là nơi hoàng đế ngự chứng kiến các lễ nghi quốc gia trọng đại như Lễ Truyền Lô (xướng danh các tân tiến sĩ đỗ đạt), Lễ Ban Sóc (phát lịch mới đầu năm cho thần dân), duyệt binh ngự tiễn tướng sĩ xuất quân. Chiều ngày 30/08/1945, tại chính lễ đài này, vị hoàng đế cuối cùng Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, trao quyền lãnh đạo đất nước cho nhân dân.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Đại Nội Huế\nCác công trình kiến trúc hạt nhân của Hoàng thành > Ngọ Môn\nNgọ Môn là cửa chính phía Nam của Hoàng thành Huế, được khởi công xây dựng vào năm Minh Mạng thứ 14 (1833) trên vị trí của Nam Khuyết Đài thời Gia Long. Tên gọi \"Ngọ Môn\" mang ý nghĩa sâu xa trong Kinh Dịch: phương Ngọ là phương chính Nam, phương của ánh sáng mặt trời rực rỡ và là hướng của bậc minh quân nhìn về cai trị thiên hạ.\n\n- **Cấu trúc phần đài nền:** Phần dưới là đài nền đồ sộ hình chữ U (kích thước đáy 57,77 m, cạnh cánh gà 27,6 m), cao hơn 5 m, được xây dựng kiên cố bằng đá Thanh và gạch vồ trổ 5 lối đi vòm cuốn:\n  - *Lối giữa (Ngọ Môn):* Lối đi thẳng trên trục Dũng đạo chỉ dành riêng cho hoàng đế;\n  - *Tả Giáp môn và Hữu Giáp môn:* Hai lối đi hai bên cửa giữa dành cho quan văn, quan võ trong đoàn ngự đạo;\n  - *Tả Dịch môn và Hữu Dịch môn:* Hai lối đi uốn cong ở hai cánh chữ U dành cho binh lính, voi chiến và ngựa ngự hộ tống.\n- **Lầu Ngũ Phụng:** Tọa lạc trên đỉnh đài nền là lầu Ngũ Phụng hai tầng bằng gỗ lim với 100 cây cột tượng trưng cho bách tính muôn dân. Công trình có cấu trúc thanh thoát với hệ thống mái kép gồm 9 bộ mái riêng biệt ghép lại (tầng trên 1 bộ mái lớn, tầng dưới 8 bộ mái nhỏ) tạo dáng như bầy chim phụng đang dang cánh múa. Bộ mái chính giữa lợp ngói hoàng lưu ly tráng men vàng dành cho nơi vua ngự; 8 bộ mái phụ xung quanh lợp ngói thanh lưu ly men xanh dành cho các quan hầu cận.\n- **Ý nghĩa lịch sử:** Lầu Ngũ Phụng là nơi hoàng đế ngự chứng kiến các lễ nghi quốc gia trọng đại như Lễ Truyền Lô (xướng danh các tân tiến sĩ đỗ đạt), Lễ Ban Sóc (phát lịch mới đầu năm cho thần dân), duyệt binh ngự tiễn tướng sĩ xuất quân. Chiều ngày 30/08/1945, tại chính lễ đài này, vị hoàng đế cuối cùng Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, trao quyền lãnh đạo đất nước cho nhân dân.",
+      "search_text_characters": 1798,
+      "label_characters": 72,
+      "body_characters": 1726,
+      "query_orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+      "query_long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?",
+      "tokens": {
+        "e5_small": 530,
+        "e5_base": 530,
+        "huydang": 423,
+        "minilm_orig": 738,
+        "minilm_long": 774
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "e5_small",
+        "e5_base",
+        "huydang",
+        "minilm_orig",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_e5_small_e5_base_huydang_minilm_orig_minilm_long"
+    },
+    {
+      "chunk_id": "ngo_mon_p1_chunk_1",
+      "sample_group": "ngo_mon",
+      "proposal_type": "preferred_p1",
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "title": "Đại Nội Huế",
+      "heading_path": [
+        "Các công trình kiến trúc hạt nhân của Hoàng thành",
+        "Ngọ Môn"
+      ],
+      "description": "Khái quát khởi dựng 1833, ý nghĩa Kinh Dịch phương Nam và cấu trúc đài nền chữ U với 5 lối đi vòm cuốn (Ngọ Môn, Tả/Hữu Giáp, Tả/Hữu Dịch).",
+      "evidence_parts": [
+        {
+          "role": "intro_and_base_platform",
+          "span": {
+            "start": 10219,
+            "end": 11068
+          },
+          "characters": 849,
+          "text": "Ngọ Môn là cửa chính phía Nam của Hoàng thành Huế, được khởi công xây dựng vào năm Minh Mạng thứ 14 (1833) trên vị trí của Nam Khuyết Đài thời Gia Long. Tên gọi \"Ngọ Môn\" mang ý nghĩa sâu xa trong Kinh Dịch: phương Ngọ là phương chính Nam, phương của ánh sáng mặt trời rực rỡ và là hướng của bậc minh quân nhìn về cai trị thiên hạ.\n\n- **Cấu trúc phần đài nền:** Phần dưới là đài nền đồ sộ hình chữ U (kích thước đáy 57,77 m, cạnh cánh gà 27,6 m), cao hơn 5 m, được xây dựng kiên cố bằng đá Thanh và gạch vồ trổ 5 lối đi vòm cuốn:\n  - *Lối giữa (Ngọ Môn):* Lối đi thẳng trên trục Dũng đạo chỉ dành riêng cho hoàng đế;\n  - *Tả Giáp môn và Hữu Giáp môn:* Hai lối đi hai bên cửa giữa dành cho quan văn, quan võ trong đoàn ngự đạo;\n  - *Tả Dịch môn và Hữu Dịch môn:* Hai lối đi uốn cong ở hai cánh chữ U dành cho binh lính, voi chiến và ngựa ngự hộ tống.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Đại Nội Huế\nCác công trình kiến trúc hạt nhân của Hoàng thành > Ngọ Môn\nNgọ Môn là cửa chính phía Nam của Hoàng thành Huế, được khởi công xây dựng vào năm Minh Mạng thứ 14 (1833) trên vị trí của Nam Khuyết Đài thời Gia Long. Tên gọi \"Ngọ Môn\" mang ý nghĩa sâu xa trong Kinh Dịch: phương Ngọ là phương chính Nam, phương của ánh sáng mặt trời rực rỡ và là hướng của bậc minh quân nhìn về cai trị thiên hạ.\n\n- **Cấu trúc phần đài nền:** Phần dưới là đài nền đồ sộ hình chữ U (kích thước đáy 57,77 m, cạnh cánh gà 27,6 m), cao hơn 5 m, được xây dựng kiên cố bằng đá Thanh và gạch vồ trổ 5 lối đi vòm cuốn:\n  - *Lối giữa (Ngọ Môn):* Lối đi thẳng trên trục Dũng đạo chỉ dành riêng cho hoàng đế;\n  - *Tả Giáp môn và Hữu Giáp môn:* Hai lối đi hai bên cửa giữa dành cho quan văn, quan võ trong đoàn ngự đạo;\n  - *Tả Dịch môn và Hữu Dịch môn:* Hai lối đi uốn cong ở hai cánh chữ U dành cho binh lính, voi chiến và ngựa ngự hộ tống.",
+      "search_text_characters": 921,
+      "label_characters": 72,
+      "body_characters": 849,
+      "query_orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+      "query_long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?",
+      "tokens": {
+        "e5_small": 273,
+        "e5_base": 273,
+        "huydang": 223,
+        "minilm_orig": 393,
+        "minilm_long": 429
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ngo_mon_p1_chunk_2",
+      "sample_group": "ngo_mon",
+      "proposal_type": "preferred_p1",
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "title": "Đại Nội Huế",
+      "heading_path": [
+        "Các công trình kiến trúc hạt nhân của Hoàng thành",
+        "Ngọ Môn"
+      ],
+      "description": "Kiến trúc lầu Ngũ Phụng (100 cột, 9 bộ mái phụng bay, ngói hoàng/thanh lưu ly) và các đại lễ quốc gia cùng sự kiện vua Bảo Đại thoái vị 30/08/1945.",
+      "evidence_parts": [
+        {
+          "role": "ngu_phung_and_history",
+          "span": {
+            "start": 11069,
+            "end": 11945
+          },
+          "characters": 876,
+          "text": "- **Lầu Ngũ Phụng:** Tọa lạc trên đỉnh đài nền là lầu Ngũ Phụng hai tầng bằng gỗ lim với 100 cây cột tượng trưng cho bách tính muôn dân. Công trình có cấu trúc thanh thoát với hệ thống mái kép gồm 9 bộ mái riêng biệt ghép lại (tầng trên 1 bộ mái lớn, tầng dưới 8 bộ mái nhỏ) tạo dáng như bầy chim phụng đang dang cánh múa. Bộ mái chính giữa lợp ngói hoàng lưu ly tráng men vàng dành cho nơi vua ngự; 8 bộ mái phụ xung quanh lợp ngói thanh lưu ly men xanh dành cho các quan hầu cận.\n- **Ý nghĩa lịch sử:** Lầu Ngũ Phụng là nơi hoàng đế ngự chứng kiến các lễ nghi quốc gia trọng đại như Lễ Truyền Lô (xướng danh các tân tiến sĩ đỗ đạt), Lễ Ban Sóc (phát lịch mới đầu năm cho thần dân), duyệt binh ngự tiễn tướng sĩ xuất quân. Chiều ngày 30/08/1945, tại chính lễ đài này, vị hoàng đế cuối cùng Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, trao quyền lãnh đạo đất nước cho nhân dân.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Đại Nội Huế\nCác công trình kiến trúc hạt nhân của Hoàng thành > Ngọ Môn\n- **Lầu Ngũ Phụng:** Tọa lạc trên đỉnh đài nền là lầu Ngũ Phụng hai tầng bằng gỗ lim với 100 cây cột tượng trưng cho bách tính muôn dân. Công trình có cấu trúc thanh thoát với hệ thống mái kép gồm 9 bộ mái riêng biệt ghép lại (tầng trên 1 bộ mái lớn, tầng dưới 8 bộ mái nhỏ) tạo dáng như bầy chim phụng đang dang cánh múa. Bộ mái chính giữa lợp ngói hoàng lưu ly tráng men vàng dành cho nơi vua ngự; 8 bộ mái phụ xung quanh lợp ngói thanh lưu ly men xanh dành cho các quan hầu cận.\n- **Ý nghĩa lịch sử:** Lầu Ngũ Phụng là nơi hoàng đế ngự chứng kiến các lễ nghi quốc gia trọng đại như Lễ Truyền Lô (xướng danh các tân tiến sĩ đỗ đạt), Lễ Ban Sóc (phát lịch mới đầu năm cho thần dân), duyệt binh ngự tiễn tướng sĩ xuất quân. Chiều ngày 30/08/1945, tại chính lễ đài này, vị hoàng đế cuối cùng Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, trao quyền lãnh đạo đất nước cho nhân dân.",
+      "search_text_characters": 948,
+      "label_characters": 72,
+      "body_characters": 876,
+      "query_orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+      "query_long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?",
+      "tokens": {
+        "e5_small": 278,
+        "e5_base": 278,
+        "huydang": 214,
+        "minilm_orig": 394,
+        "minilm_long": 430
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ngo_mon_p2_chunk_1",
+      "sample_group": "ngo_mon",
+      "proposal_type": "alternative_p2",
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "title": "Đại Nội Huế",
+      "heading_path": [
+        "Các công trình kiến trúc hạt nhân của Hoàng thành",
+        "Ngọ Môn"
+      ],
+      "description": "Phương án 2 Chunk 1: Tương tự P1 Chunk 1 (Đoạn dẫn + Đài nền 5 cửa vòm; đo cùng bộ query chuẩn hóa).",
+      "evidence_parts": [
+        {
+          "role": "intro_and_base_platform",
+          "span": {
+            "start": 10219,
+            "end": 11068
+          },
+          "characters": 849,
+          "text": "Ngọ Môn là cửa chính phía Nam của Hoàng thành Huế, được khởi công xây dựng vào năm Minh Mạng thứ 14 (1833) trên vị trí của Nam Khuyết Đài thời Gia Long. Tên gọi \"Ngọ Môn\" mang ý nghĩa sâu xa trong Kinh Dịch: phương Ngọ là phương chính Nam, phương của ánh sáng mặt trời rực rỡ và là hướng của bậc minh quân nhìn về cai trị thiên hạ.\n\n- **Cấu trúc phần đài nền:** Phần dưới là đài nền đồ sộ hình chữ U (kích thước đáy 57,77 m, cạnh cánh gà 27,6 m), cao hơn 5 m, được xây dựng kiên cố bằng đá Thanh và gạch vồ trổ 5 lối đi vòm cuốn:\n  - *Lối giữa (Ngọ Môn):* Lối đi thẳng trên trục Dũng đạo chỉ dành riêng cho hoàng đế;\n  - *Tả Giáp môn và Hữu Giáp môn:* Hai lối đi hai bên cửa giữa dành cho quan văn, quan võ trong đoàn ngự đạo;\n  - *Tả Dịch môn và Hữu Dịch môn:* Hai lối đi uốn cong ở hai cánh chữ U dành cho binh lính, voi chiến và ngựa ngự hộ tống.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Đại Nội Huế\nCác công trình kiến trúc hạt nhân của Hoàng thành > Ngọ Môn\nNgọ Môn là cửa chính phía Nam của Hoàng thành Huế, được khởi công xây dựng vào năm Minh Mạng thứ 14 (1833) trên vị trí của Nam Khuyết Đài thời Gia Long. Tên gọi \"Ngọ Môn\" mang ý nghĩa sâu xa trong Kinh Dịch: phương Ngọ là phương chính Nam, phương của ánh sáng mặt trời rực rỡ và là hướng của bậc minh quân nhìn về cai trị thiên hạ.\n\n- **Cấu trúc phần đài nền:** Phần dưới là đài nền đồ sộ hình chữ U (kích thước đáy 57,77 m, cạnh cánh gà 27,6 m), cao hơn 5 m, được xây dựng kiên cố bằng đá Thanh và gạch vồ trổ 5 lối đi vòm cuốn:\n  - *Lối giữa (Ngọ Môn):* Lối đi thẳng trên trục Dũng đạo chỉ dành riêng cho hoàng đế;\n  - *Tả Giáp môn và Hữu Giáp môn:* Hai lối đi hai bên cửa giữa dành cho quan văn, quan võ trong đoàn ngự đạo;\n  - *Tả Dịch môn và Hữu Dịch môn:* Hai lối đi uốn cong ở hai cánh chữ U dành cho binh lính, voi chiến và ngựa ngự hộ tống.",
+      "search_text_characters": 921,
+      "label_characters": 72,
+      "body_characters": 849,
+      "query_orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+      "query_long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?",
+      "tokens": {
+        "e5_small": 273,
+        "e5_base": 273,
+        "huydang": 223,
+        "minilm_orig": 393,
+        "minilm_long": 429
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ngo_mon_p2_chunk_2",
+      "sample_group": "ngo_mon",
+      "proposal_type": "alternative_p2",
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "title": "Đại Nội Huế",
+      "heading_path": [
+        "Các công trình kiến trúc hạt nhân của Hoàng thành",
+        "Ngọ Môn"
+      ],
+      "description": "Phương án 2 Chunk 2: Tách riêng mô tả mỹ thuật và kết cấu kiến trúc của Lầu Ngũ Phụng.",
+      "evidence_parts": [
+        {
+          "role": "ngu_phung_architecture",
+          "span": {
+            "start": 11069,
+            "end": 11550
+          },
+          "characters": 481,
+          "text": "- **Lầu Ngũ Phụng:** Tọa lạc trên đỉnh đài nền là lầu Ngũ Phụng hai tầng bằng gỗ lim với 100 cây cột tượng trưng cho bách tính muôn dân. Công trình có cấu trúc thanh thoát với hệ thống mái kép gồm 9 bộ mái riêng biệt ghép lại (tầng trên 1 bộ mái lớn, tầng dưới 8 bộ mái nhỏ) tạo dáng như bầy chim phụng đang dang cánh múa. Bộ mái chính giữa lợp ngói hoàng lưu ly tráng men vàng dành cho nơi vua ngự; 8 bộ mái phụ xung quanh lợp ngói thanh lưu ly men xanh dành cho các quan hầu cận.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Đại Nội Huế\nCác công trình kiến trúc hạt nhân của Hoàng thành > Ngọ Môn\n- **Lầu Ngũ Phụng:** Tọa lạc trên đỉnh đài nền là lầu Ngũ Phụng hai tầng bằng gỗ lim với 100 cây cột tượng trưng cho bách tính muôn dân. Công trình có cấu trúc thanh thoát với hệ thống mái kép gồm 9 bộ mái riêng biệt ghép lại (tầng trên 1 bộ mái lớn, tầng dưới 8 bộ mái nhỏ) tạo dáng như bầy chim phụng đang dang cánh múa. Bộ mái chính giữa lợp ngói hoàng lưu ly tráng men vàng dành cho nơi vua ngự; 8 bộ mái phụ xung quanh lợp ngói thanh lưu ly men xanh dành cho các quan hầu cận.",
+      "search_text_characters": 553,
+      "label_characters": 72,
+      "body_characters": 481,
+      "query_orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+      "query_long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?",
+      "tokens": {
+        "e5_small": 168,
+        "e5_base": 168,
+        "huydang": 129,
+        "minilm_orig": 235,
+        "minilm_long": 271
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ngo_mon_p2_chunk_3",
+      "sample_group": "ngo_mon",
+      "proposal_type": "alternative_p2",
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "title": "Đại Nội Huế",
+      "heading_path": [
+        "Các công trình kiến trúc hạt nhân của Hoàng thành",
+        "Ngọ Môn"
+      ],
+      "description": "Phương án 2 Chunk 3: Tách riêng các đại lễ quốc gia và biến cố thoái vị năm 1945 thành chunk độc lập.",
+      "evidence_parts": [
+        {
+          "role": "historical_significance",
+          "span": {
+            "start": 11551,
+            "end": 11945
+          },
+          "characters": 394,
+          "text": "- **Ý nghĩa lịch sử:** Lầu Ngũ Phụng là nơi hoàng đế ngự chứng kiến các lễ nghi quốc gia trọng đại như Lễ Truyền Lô (xướng danh các tân tiến sĩ đỗ đạt), Lễ Ban Sóc (phát lịch mới đầu năm cho thần dân), duyệt binh ngự tiễn tướng sĩ xuất quân. Chiều ngày 30/08/1945, tại chính lễ đài này, vị hoàng đế cuối cùng Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, trao quyền lãnh đạo đất nước cho nhân dân.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Đại Nội Huế\nCác công trình kiến trúc hạt nhân của Hoàng thành > Ngọ Môn\n- **Ý nghĩa lịch sử:** Lầu Ngũ Phụng là nơi hoàng đế ngự chứng kiến các lễ nghi quốc gia trọng đại như Lễ Truyền Lô (xướng danh các tân tiến sĩ đỗ đạt), Lễ Ban Sóc (phát lịch mới đầu năm cho thần dân), duyệt binh ngự tiễn tướng sĩ xuất quân. Chiều ngày 30/08/1945, tại chính lễ đài này, vị hoàng đế cuối cùng Bảo Đại đã trao ấn kiếm tuyên bố thoái vị, trao quyền lãnh đạo đất nước cho nhân dân.",
+      "search_text_characters": 466,
+      "label_characters": 72,
+      "body_characters": 394,
+      "query_orig": "Ngọ Môn có cấu trúc và ý nghĩa lịch sử như thế nào?",
+      "query_long": "Cửa Ngọ Môn Hoàng thành Huế được xây dựng vào năm nào, cấu trúc đài nền cùng lầu Ngũ Phụng có đặc điểm kiến trúc và ý nghĩa lịch sử ra sao?",
+      "tokens": {
+        "e5_small": 131,
+        "e5_base": 131,
+        "huydang": 99,
+        "minilm_orig": 208,
+        "minilm_long": 244
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_baseline_table_only",
+      "sample_group": "ca_hue",
+      "proposal_type": "baseline_oversized",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "Khối bảng 4 hàng đo ở phiên trước; thiếu intro và thiếu điều kiện bao gồm/không bao gồm; vượt HuyDang (339 > 256) và MiniLM (574 > 512).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "table_all_rows",
+          "span": {
+            "start": 10901,
+            "end": 11810
+          },
+          "characters": 909,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+      "search_text_characters": 1244,
+      "label_characters": 194,
+      "body_characters": 1050,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 444,
+        "e5_base": 444,
+        "huydang": 339,
+        "minilm_orig": 574,
+        "minilm_long": 616
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_orig",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_orig_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_test_forced_adult_with_cond",
+      "sample_group": "ca_hue",
+      "proposal_type": "diagnostic_forced_violation",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "Thử nghiệm ép gộp điều kiện Bao gồm/Không bao gồm vào bảng vé người lớn; vượt HuyDang (283 > 256) và MiniLM (548 > 512).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "adult_rows",
+          "span": {
+            "start": 10901,
+            "end": 11317
+          },
+          "characters": 416,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        },
+        {
+          "role": "conditions",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 1228,
+      "label_characters": 194,
+      "body_characters": 1034,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 379,
+        "e5_base": 379,
+        "huydang": 283,
+        "minilm_orig": 540,
+        "minilm_long": 582
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_orig",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_orig_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_test_forced_child_with_cond",
+      "sample_group": "ca_hue",
+      "proposal_type": "diagnostic_forced_violation",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "Thử nghiệm ép gộp điều kiện Bao gồm/Không bao gồm vào bảng vé trẻ em; vượt HuyDang (344 > 256) và MiniLM (598 > 512).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_rows",
+          "span": {
+            "start": 11318,
+            "end": 11810
+          },
+          "characters": 492,
+          "text": "| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "conditions",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 1304,
+      "label_characters": 194,
+      "body_characters": 1110,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 434,
+        "e5_base": 434,
+        "huydang": 344,
+        "minilm_orig": 598,
+        "minilm_long": 640
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_orig",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_orig_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_p1_chunk_1",
+      "sample_group": "ca_hue",
+      "proposal_type": "preferred_p1",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P1 Chunk 1: Vé ghép thuyền người lớn (Khách VN 100k-130k và Khách QT 150k kèm hoa đăng, thuyết minh song ngữ).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "adult_rows",
+          "span": {
+            "start": 10901,
+            "end": 11317
+          },
+          "characters": 416,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+      "search_text_characters": 751,
+      "label_characters": 194,
+      "body_characters": 557,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 249,
+        "e5_base": 249,
+        "huydang": 182,
+        "minilm_orig": 342,
+        "minilm_long": 384
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p1_chunk_2",
+      "sample_group": "ca_hue",
+      "proposal_type": "preferred_p1",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P1 Chunk 2: Chính sách vé trẻ em theo 2 tiêu chí khảo sát: chiều cao (Lá Quê) và độ tuổi (Thuyền Rồng Huế); HuyDang 243 tokens (sát trần 95%).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_rows",
+          "span": {
+            "start": 11318,
+            "end": 11810
+          },
+          "characters": 492,
+          "text": "| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+      "search_text_characters": 827,
+      "label_characters": 194,
+      "body_characters": 633,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 304,
+        "e5_base": 304,
+        "huydang": 243,
+        "minilm_orig": 400,
+        "minilm_long": 442
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p1_chunk_3",
+      "sample_group": "ca_hue",
+      "proposal_type": "preferred_p1",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P1 Chunk 3: Hình thức ghép thuyền rồng đôi (25-35 khách) và điều kiện chi tiết: Bao gồm (50 phút, áo dài, hoa đăng) + Không bao gồm (đưa đón, ăn uống cá nhân, tip).",
+      "evidence_parts": [
+        {
+          "role": "intro_tour_format",
+          "span": {
+            "start": 10643,
+            "end": 10758
+          },
+          "characters": 115,
+          "text": "Hình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+          "exact_match": true
+        },
+        {
+          "role": "conditions",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nHình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 786,
+      "label_characters": 194,
+      "body_characters": 592,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 215,
+        "e5_base": 215,
+        "huydang": 167,
+        "minilm_orig": 348,
+        "minilm_long": 390
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p2_chunk_1",
+      "sample_group": "ca_hue",
+      "proposal_type": "alternative_p2",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P2 Chunk 1: Vé người lớn (tương tự P1 Chunk 1).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "adult_rows",
+          "span": {
+            "start": 10901,
+            "end": 11317
+          },
+          "characters": 416,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+      "search_text_characters": 751,
+      "label_characters": 194,
+      "body_characters": 557,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 249,
+        "e5_base": 249,
+        "huydang": 182,
+        "minilm_orig": 342,
+        "minilm_long": 384
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p2_chunk_2a",
+      "sample_group": "ca_hue",
+      "proposal_type": "alternative_p2",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P2 Chunk 2a: Bảng giá trẻ em Lá Quê Travel theo chiều cao (<1m miễn phí, 1m-<1.3m 70k-100k, >=1.3m vé người lớn).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_la_que",
+          "span": {
+            "start": 11318,
+            "end": 11581
+          },
+          "characters": 263,
+          "text": "| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |",
+      "search_text_characters": 598,
+      "label_characters": 194,
+      "body_characters": 404,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 211,
+        "e5_base": 211,
+        "huydang": 166,
+        "minilm_orig": 294,
+        "minilm_long": 336
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p2_chunk_2b",
+      "sample_group": "ca_hue",
+      "proposal_type": "alternative_p2",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P2 Chunk 2b: Bảng giá trẻ em Thuyền Rồng Huế theo độ tuổi (<4 tuổi miễn phí, 4-9 tuổi 50%-70%, >=10 tuổi 100%).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_thuyen_rong",
+          "span": {
+            "start": 11582,
+            "end": 11810
+          },
+          "characters": 228,
+          "text": "| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+      "search_text_characters": 563,
+      "label_characters": 194,
+      "body_characters": 369,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 202,
+        "e5_base": 202,
+        "huydang": 163,
+        "minilm_orig": 274,
+        "minilm_long": 316
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p2_chunk_3",
+      "sample_group": "ca_hue",
+      "proposal_type": "alternative_p2",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P2 Chunk 3: Điều kiện dịch vụ và hình thức tour ghép (tương tự P1 Chunk 3).",
+      "evidence_parts": [
+        {
+          "role": "intro_tour_format",
+          "span": {
+            "start": 10643,
+            "end": 10758
+          },
+          "characters": 115,
+          "text": "Hình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+          "exact_match": true
+        },
+        {
+          "role": "conditions",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nHình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 786,
+      "label_characters": 194,
+      "body_characters": 592,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 215,
+        "e5_base": 215,
+        "huydang": 167,
+        "minilm_orig": 348,
+        "minilm_long": 390
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3a_chunk_1",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3a",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3a Chunk 1: Hàng Khách VN + Header + ĐẦY ĐỦ Bao gồm & Không bao gồm; vượt MiniLM long (517 > 512).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "row_khach_vn",
+          "span": {
+            "start": 10901,
+            "end": 11158
+          },
+          "characters": 257,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc t",
+          "exact_match": true
+        },
+        {
+          "role": "conditions_all",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc t\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 1069,
+      "label_characters": 194,
+      "body_characters": 875,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 328,
+        "e5_base": 328,
+        "huydang": 249,
+        "minilm_orig": 475,
+        "minilm_long": 517
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_p3a_chunk_2",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3a",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3a Chunk 2: Hàng Khách QT + Header + ĐẦY ĐỦ Bao gồm & Không bao gồm; PASS các model do hàng QT ngắn.",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "row_khach_qt",
+          "span": {
+            "start": 11159,
+            "end": 11317
+          },
+          "characters": 158,
+          "text": "** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        },
+        {
+          "role": "conditions_all",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 970,
+      "label_characters": 194,
+      "body_characters": 776,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 290,
+        "e5_base": 290,
+        "huydang": 222,
+        "minilm_orig": 431,
+        "minilm_long": 473
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3a_chunk_3",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3a",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3a Chunk 3: Trẻ em Lá Quê (chiều cao) + Header + ĐẦY ĐỦ Bao gồm & Không bao gồm; vượt HuyDang (267 > 256) và MiniLM long (534 > 512).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_la_que",
+          "span": {
+            "start": 11318,
+            "end": 11581
+          },
+          "characters": 263,
+          "text": "| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "conditions_all",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 1075,
+      "label_characters": 194,
+      "body_characters": 881,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 341,
+        "e5_base": 341,
+        "huydang": 267,
+        "minilm_orig": 492,
+        "minilm_long": 534
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_p3a_chunk_4",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3a",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3a Chunk 4: Trẻ em Thuyền Rồng (độ tuổi) + Header + ĐẦY ĐỦ Bao gồm & Không bao gồm; vượt HuyDang (264 > 256) và MiniLM long (514 > 512).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_thuyen_rong",
+          "span": {
+            "start": 11582,
+            "end": 11810
+          },
+          "characters": 228,
+          "text": "| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "conditions_all",
+          "span": {
+            "start": 11812,
+            "end": 12287
+          },
+          "characters": 475,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 1040,
+      "label_characters": 194,
+      "body_characters": 846,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 332,
+        "e5_base": 332,
+        "huydang": 264,
+        "minilm_orig": 472,
+        "minilm_long": 514
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_p3a_chunk_5",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3a",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3a Chunk 5: Chỉ giữ đoạn dẫn hình thức tour ghép thuyền rồng đôi (sức chứa 25-35 khách).",
+      "evidence_parts": [
+        {
+          "role": "intro_tour_format",
+          "span": {
+            "start": 10643,
+            "end": 10758
+          },
+          "characters": 115,
+          "text": "Hình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nHình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+      "search_text_characters": 309,
+      "label_characters": 194,
+      "body_characters": 115,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 85,
+        "e5_base": 85,
+        "huydang": 66,
+        "minilm_orig": 150,
+        "minilm_long": 192
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_chunk_1",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Chunk 1: Vé người lớn (VN+QT) + Header + Điều kiện loại trừ 'Không bao gồm' (không đưa đón, ăn uống cá nhân, tip); HuyDang 224 tokens (PASS).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "adult_rows",
+          "span": {
+            "start": 10901,
+            "end": 11317
+          },
+          "characters": 416,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 923,
+      "label_characters": 194,
+      "body_characters": 729,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 296,
+        "e5_base": 296,
+        "huydang": 224,
+        "minilm_orig": 416,
+        "minilm_long": 458
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_chunk_2",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Chunk 2: Trẻ em Lá Quê Travel (chiều cao) + Header + Điều kiện loại trừ 'Không bao gồm'; HuyDang 208 tokens (PASS).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_la_que",
+          "span": {
+            "start": 11318,
+            "end": 11581
+          },
+          "characters": 263,
+          "text": "| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 770,
+      "label_characters": 194,
+      "body_characters": 576,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 258,
+        "e5_base": 258,
+        "huydang": 208,
+        "minilm_orig": 368,
+        "minilm_long": 410
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_chunk_3",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Chunk 3: Trẻ em Thuyền Rồng Huế (độ tuổi) + Header + Điều kiện loại trừ 'Không bao gồm'; HuyDang 205 tokens (PASS).",
+      "evidence_parts": [
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_thuyen_rong",
+          "span": {
+            "start": 11582,
+            "end": 11810
+          },
+          "characters": 228,
+          "text": "| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 735,
+      "label_characters": 194,
+      "body_characters": 541,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 249,
+        "e5_base": 249,
+        "huydang": 205,
+        "minilm_orig": 348,
+        "minilm_long": 390
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_chunk_4",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Chunk 4: Dịch vụ bổ sung: Đoạn dẫn tour ghép + Điều kiện 'Bao gồm' chi tiết (50 phút, trang phục áo dài, ngắm cầu, hoa đăng giấy); HuyDang 125 tokens (PASS).",
+      "evidence_parts": [
+        {
+          "role": "intro_tour_format",
+          "span": {
+            "start": 10643,
+            "end": 10758
+          },
+          "characters": 115,
+          "text": "Hình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+          "exact_match": true
+        },
+        {
+          "role": "condition_inclusions",
+          "span": {
+            "start": 11812,
+            "end": 12116
+          },
+          "characters": 304,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nHình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.",
+      "search_text_characters": 615,
+      "label_characters": 194,
+      "body_characters": 421,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 168,
+        "e5_base": 168,
+        "huydang": 125,
+        "minilm_orig": 274,
+        "minilm_long": 316
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_1_merged",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 (Thử nghiệm gộp VN+QT + Câu dẫn 2.3 + Không bao gồm): VƯỢT HuyDang (264 > 256) và MiniLM long (527 > 512).",
+      "evidence_parts": [
+        {
+          "role": "survey_lead_2_3",
+          "span": {
+            "start": 10409,
+            "end": 10591
+          },
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "adult_rows",
+          "span": {
+            "start": 10901,
+            "end": 11317
+          },
+          "characters": 416,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 1107,
+      "label_characters": 194,
+      "body_characters": 913,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 349,
+        "e5_base": 349,
+        "huydang": 264,
+        "minilm_orig": 485,
+        "minilm_long": 527
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [
+        "huydang",
+        "minilm_long"
+      ],
+      "status": "EXCEEDS_huydang_minilm_long"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_1a",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 Chunk 1a: Tách riêng Khách VN + Header + Câu dẫn 2.3 + Không bao gồm; HuyDang 230 tokens, MiniLM long 462 tokens (PASS ALL).",
+      "evidence_parts": [
+        {
+          "role": "survey_lead_2_3",
+          "span": {
+            "start": 10409,
+            "end": 10591
+          },
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "row_khach_vn",
+          "span": {
+            "start": 10901,
+            "end": 11158
+          },
+          "characters": 257,
+          "text": "| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc t",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc t\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 948,
+      "label_characters": 194,
+      "body_characters": 754,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 298,
+        "e5_base": 298,
+        "huydang": 230,
+        "minilm_orig": 420,
+        "minilm_long": 462
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_1b",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 Chunk 1b: Tách riêng Khách QT + Header + Câu dẫn 2.3 + Không bao gồm; HuyDang 203 tokens, MiniLM long 418 tokens (PASS ALL).",
+      "evidence_parts": [
+        {
+          "role": "survey_lead_2_3",
+          "span": {
+            "start": 10409,
+            "end": 10591
+          },
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "row_khach_qt",
+          "span": {
+            "start": 11159,
+            "end": 11317
+          },
+          "characters": 158,
+          "text": "** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 849,
+      "label_characters": 194,
+      "body_characters": 655,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 260,
+        "e5_base": 260,
+        "huydang": 203,
+        "minilm_orig": 376,
+        "minilm_long": 418
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_2",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 Chunk 2: Trẻ em Lá Quê Travel (chiều cao) + Header + Câu dẫn 2.3 + Không bao gồm; HuyDang 248 tokens (sát trần 96.9%), MiniLM long 479 tokens (PASS ALL).",
+      "evidence_parts": [
+        {
+          "role": "survey_lead_2_3",
+          "span": {
+            "start": 10409,
+            "end": 10591
+          },
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_la_que",
+          "span": {
+            "start": 11318,
+            "end": 11581
+          },
+          "characters": 263,
+          "text": "| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 954,
+      "label_characters": 194,
+      "body_characters": 760,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 311,
+        "e5_base": 311,
+        "huydang": 248,
+        "minilm_orig": 437,
+        "minilm_long": 479
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_3",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 Chunk 3: Trẻ em Thuyền Rồng Huế (độ tuổi) + Header + Câu dẫn 2.3 + Không bao gồm; HuyDang 245 tokens (sát trần 95.7%), MiniLM long 459 tokens (PASS ALL).",
+      "evidence_parts": [
+        {
+          "role": "survey_lead_2_3",
+          "span": {
+            "start": 10409,
+            "end": 10591
+          },
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "table_header",
+          "span": {
+            "start": 10760,
+            "end": 10900
+          },
+          "characters": 140,
+          "text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|",
+          "exact_match": true
+        },
+        {
+          "role": "child_row_thuyen_rong",
+          "span": {
+            "start": 11582,
+            "end": 11810
+          },
+          "characters": 228,
+          "text": "| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |",
+          "exact_match": true
+        },
+        {
+          "role": "condition_exclusions",
+          "span": {
+            "start": 12117,
+            "end": 12287
+          },
+          "characters": 170,
+          "text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\n| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |\n\n- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm).",
+      "search_text_characters": 919,
+      "label_characters": 194,
+      "body_characters": 725,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 302,
+        "e5_base": 302,
+        "huydang": 245,
+        "minilm_orig": 417,
+        "minilm_long": 459
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_4_service",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 Chunk 4 (Dịch vụ riêng, không mang theo câu dẫn 2.3): Tour ghép + Bao gồm chi tiết; HuyDang 125 tokens, MiniLM long 316 tokens (PASS ALL).",
+      "evidence_parts": [
+        {
+          "role": "intro_tour_format",
+          "span": {
+            "start": 10643,
+            "end": 10758
+          },
+          "characters": 115,
+          "text": "Hình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+          "exact_match": true
+        },
+        {
+          "role": "condition_inclusions",
+          "span": {
+            "start": 11812,
+            "end": 12116
+          },
+          "characters": 304,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nHình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.",
+      "search_text_characters": 615,
+      "label_characters": 194,
+      "body_characters": 421,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 168,
+        "e5_base": 168,
+        "huydang": 125,
+        "minilm_orig": 274,
+        "minilm_long": 316
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "ca_hue_p3b_lead_chunk_4_service_with_lead",
+      "sample_group": "ca_hue",
+      "proposal_type": "supplementary_p3b_lead",
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "title": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương",
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "description": "P3b Lượt 3 Chunk 4 (Biến thể thử nghiệm: mang theo câu dẫn 2.3 vào dịch vụ): HuyDang 165 tokens, MiniLM long 385 tokens (PASS ALL).",
+      "evidence_parts": [
+        {
+          "role": "survey_lead_2_3",
+          "span": {
+            "start": 10409,
+            "end": 10591
+          },
+          "characters": 182,
+          "text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:",
+          "exact_match": true
+        },
+        {
+          "role": "intro_tour_format",
+          "span": {
+            "start": 10643,
+            "end": 10758
+          },
+          "characters": 115,
+          "text": "Hình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:",
+          "exact_match": true
+        },
+        {
+          "role": "condition_inclusions",
+          "span": {
+            "start": 11812,
+            "end": 12116
+          },
+          "characters": 304,
+          "text": "- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Vé biểu diễn nghệ thuật và trải nghiệm sông Hương\n2. Ca Huế trên sông Hương và dịch vụ thuyền rồng > 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế > A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)\nDưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:\n\nHình thức ghép chung du khách lẻ lên một thuyền rồng đôi lớn (sức chứa từ 25 đến 35 khách) để thưởng thức đêm nhạc:\n\n- **Bao gồm:** Suất nghe trọn vẹn chương trình Ca Huế đúng quy chuẩn nhà nước (tối thiểu 50 phút, dàn nghệ sĩ ca sĩ nhạc công trang phục áo dài truyền thống), thuyền rồng di chuyển ngắm cảnh cầu Trường Tiền, cầu Phú Xuân, mỗi khách được phát 01 hoa đăng giấy thắp nến để thả xuống sông Hương cầu bình an.",
+      "search_text_characters": 799,
+      "label_characters": 194,
+      "body_characters": 605,
+      "query_orig": "Vé Ca Huế cho trẻ em được tính như thế nào?",
+      "query_long": "Giá vé xem Ca Huế ghép thuyền trên sông Hương cho người lớn và trẻ em bao nhiêu tiền một người, áp dụng điều kiện bao gồm và không bao gồm những dịch vụ gì?",
+      "tokens": {
+        "e5_small": 221,
+        "e5_base": 221,
+        "huydang": 165,
+        "minilm_orig": 343,
+        "minilm_long": 385
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "control_me_keo_info",
+      "sample_group": "control_me_keo",
+      "proposal_type": "control_intact",
+      "source_file": "foods/restaurants/quan bun bo me keo.md",
+      "title": "Quán bún bò Mệ Kéo",
+      "heading_path": [
+        "Thông tin"
+      ],
+      "description": "Đối chứng mục ngắn Foods: Địa chỉ, mức giá, giờ hoạt động và lưu ý 'thường hết sớm hơn'.",
+      "evidence_parts": [
+        {
+          "role": "body",
+          "span": {
+            "start": 516,
+            "end": 790
+          },
+          "characters": 274,
+          "text": "- Địa chỉ: Số 20 đường Bạch Đằng, phường Phú Cát, Thành phố Huế (ngay khu vực chân cầu Gia Hội, không gian nằm trong một ngôi nhà gỗ cổ kính đậm chất Huế).\n- Mức giá: Dao động từ 25.000 VNĐ – 50.000 VNĐ/tô\n- Giờ hoạt động: Khoảng 6:00 sáng – 10:00 sáng (thường hết sớm hơn).",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Quán bún bò Mệ Kéo\nThông tin\n- Địa chỉ: Số 20 đường Bạch Đằng, phường Phú Cát, Thành phố Huế (ngay khu vực chân cầu Gia Hội, không gian nằm trong một ngôi nhà gỗ cổ kính đậm chất Huế).\n- Mức giá: Dao động từ 25.000 VNĐ – 50.000 VNĐ/tô\n- Giờ hoạt động: Khoảng 6:00 sáng – 10:00 sáng (thường hết sớm hơn).",
+      "search_text_characters": 303,
+      "label_characters": 29,
+      "body_characters": 274,
+      "query_orig": "Quán bún bò Mệ Kéo mở cửa đến mấy giờ?",
+      "query_long": "Quán bún bò Mệ Kéo nằm ở địa chỉ nào tại Huế, mở bán trong khung giờ nào và mức giá mỗi tô dao động khoảng bao nhiêu?",
+      "tokens": {
+        "e5_small": 97,
+        "e5_base": 97,
+        "huydang": 78,
+        "minilm_orig": 144,
+        "minilm_long": 173
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    },
+    {
+      "chunk_id": "control_sea_module",
+      "sample_group": "control_sea_module",
+      "proposal_type": "control_intact",
+      "source_file": "travel/services/Lịch trình du lịch Huế 3 ngày 2 đêm.md",
+      "title": "Lịch trình du lịch Huế 3 ngày 2 đêm",
+      "heading_path": [
+        "Module thay thế: Biển và đầm phá"
+      ],
+      "description": "Đối chứng mục cẩm nang có cấu trúc H3 lồng và điều kiện áp dụng: Phạm vi thay thế, cách chọn và điều kiện thời tiết.",
+      "evidence_parts": [
+        {
+          "role": "body",
+          "span": {
+            "start": 3182,
+            "end": 3811
+          },
+          "characters": 629,
+          "text": "### Phạm vi thay thế\n\nDùng module này để thay Ngày 3, hoặc thay toàn bộ Ngày 2 nếu biển và đầm phá là\nmục tiêu chính. Không cộng module vào lịch trình mặc định.\n\n### Cách chọn\n\n- **Thuận An:** phù hợp khi muốn quãng di chuyển vừa phải từ trung tâm.\n- **Đầm Chuồn hoặc một điểm Tam Giang–Cầu Hai:** phù hợp với trải nghiệm đầm\n  phá và cần nhiều thời gian hơn.\n- **Vịnh Lăng Cô–Đầm Lập An:** là nhánh xa, nên dành phần lớn ngày và chọn điểm\n  rời Huế phù hợp.\n\n### Điều kiện áp dụng\n\nKiểm tra dự báo gió, mưa, tình trạng mặt nước và thông báo của đơn vị vận hành.\nHoãn tắm biển, đi thuyền hoặc hoạt động trên nước khi có cảnh báo.",
+          "exact_match": true
+        }
+      ],
+      "search_text": "Lịch trình du lịch Huế 3 ngày 2 đêm\nModule thay thế: Biển và đầm phá\n### Phạm vi thay thế\n\nDùng module này để thay Ngày 3, hoặc thay toàn bộ Ngày 2 nếu biển và đầm phá là\nmục tiêu chính. Không cộng module vào lịch trình mặc định.\n\n### Cách chọn\n\n- **Thuận An:** phù hợp khi muốn quãng di chuyển vừa phải từ trung tâm.\n- **Đầm Chuồn hoặc một điểm Tam Giang–Cầu Hai:** phù hợp với trải nghiệm đầm\n  phá và cần nhiều thời gian hơn.\n- **Vịnh Lăng Cô–Đầm Lập An:** là nhánh xa, nên dành phần lớn ngày và chọn điểm\n  rời Huế phù hợp.\n\n### Điều kiện áp dụng\n\nKiểm tra dự báo gió, mưa, tình trạng mặt nước và thông báo của đơn vị vận hành.\nHoãn tắm biển, đi thuyền hoặc hoạt động trên nước khi có cảnh báo.",
+      "search_text_characters": 698,
+      "label_characters": 69,
+      "body_characters": 629,
+      "query_orig": "Có thể thay ngày cuối bằng đi biển và đầm phá không?",
+      "query_long": "Nếu muốn đổi lịch trình ngày thứ ba sang tham quan biển Thuận An hoặc phá Tam Giang thì cần lưu ý những điều kiện thời tiết nào?",
+      "tokens": {
+        "e5_small": 204,
+        "e5_base": 204,
+        "huydang": 160,
+        "minilm_orig": 305,
+        "minilm_long": 334
+      },
+      "limits": {
+        "e5_small": 512,
+        "e5_base": 512,
+        "huydang": 256,
+        "minilm": 512
+      },
+      "exceeded_models": [],
+      "status": "PASS_ALL"
+    }
+  ],
+  "coverage_audit": {
+    "gia_lac": {
+      "source_file": "festivals/festival/Hội xuân Gia Lạc.md",
+      "target_section": "## Thông tin chung",
+      "target_span": [
+        40,
+        1211
+      ],
+      "total_target_characters": 1171,
+      "content_coverage_status": "complete_excluding_whitespace_gaps",
+      "preferred_p1_coverage": {
+        "chunks": [
+          "gia_lac_p1_chunk_1",
+          "gia_lac_p1_chunk_2"
+        ],
+        "covered_spans": [
+          [
+            40,
+            590
+          ],
+          [
+            591,
+            1211
+          ]
+        ],
+        "covered_content_characters": 1170,
+        "whitespace_gaps": [
+          {
+            "span": [
+              590,
+              591
+            ],
+            "char": "\\n",
+            "count": 1,
+            "explanation": "Ký tự xuống dòng giữa bullet thời gian và bullet nơi tổ chức"
+          }
+        ],
+        "repeated_parts": [],
+        "extra_parts": [],
+        "character_accounting": "550 (chunk 1) + 1 (gap \\n) + 620 (chunk 2) = 1171 / 1171 ký tự"
+      }
+    },
+    "ngo_mon": {
+      "source_file": "heritages/heritage/Đại Nội Huế.md",
+      "target_section": "### Ngọ Môn (thuộc ## Các công trình kiến trúc hạt nhân của Hoàng thành)",
+      "target_span": [
+        10219,
+        11945
+      ],
+      "total_target_characters": 1726,
+      "content_coverage_status": "complete_excluding_whitespace_gaps",
+      "preferred_p1_coverage": {
+        "chunks": [
+          "ngo_mon_p1_chunk_1",
+          "ngo_mon_p1_chunk_2"
+        ],
+        "covered_spans": [
+          [
+            10219,
+            11068
+          ],
+          [
+            11069,
+            11945
+          ]
+        ],
+        "covered_content_characters": 1725,
+        "whitespace_gaps": [
+          {
+            "span": [
+              11068,
+              11069
+            ],
+            "char": "\\n",
+            "count": 1,
+            "explanation": "Ký tự xuống dòng giữa bullet đài nền và bullet Lầu Ngũ Phụng"
+          }
+        ],
+        "repeated_parts": [],
+        "extra_parts": [],
+        "character_accounting": "849 (chunk 1) + 1 (gap \\n) + 876 (chunk 2) = 1726 / 1726 ký tự"
+      }
+    },
+    "ca_hue": {
+      "source_file": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+      "target_section": "### 2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế -> #### A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)",
+      "target_span": [
+        10409,
+        12287
+      ],
+      "total_target_characters": 1878,
+      "content_coverage_status": "complete_excluding_whitespace_gaps_and_heading_A",
+      "preferred_p1_coverage": {
+        "scope": "Chỉ tính riêng tiểu mục A (chưa gồm câu dẫn 2.3)",
+        "target_span": [
+          10643,
+          12287
+        ],
+        "total_target_characters": 1644,
+        "chunks": [
+          "ca_hue_p1_chunk_1",
+          "ca_hue_p1_chunk_2",
+          "ca_hue_p1_chunk_3"
+        ],
+        "covered_spans": [
+          {
+            "chunk": "ca_hue_p1_chunk_1",
+            "spans": [
+              [
+                10760,
+                10900
+              ],
+              [
+                10901,
+                11317
+              ]
+            ]
+          },
+          {
+            "chunk": "ca_hue_p1_chunk_2",
+            "spans": [
+              [
+                10760,
+                10900
+              ],
+              [
+                11318,
+                11810
+              ]
+            ]
+          },
+          {
+            "chunk": "ca_hue_p1_chunk_3",
+            "spans": [
+              [
+                10643,
+                10758
+              ],
+              [
+                11812,
+                12287
+              ]
+            ]
+          }
+        ],
+        "covered_content_characters": 1638,
+        "whitespace_gaps": [
+          {
+            "span": [
+              10758,
+              10760
+            ],
+            "chars": "\\n\\n",
+            "count": 2,
+            "explanation": "Dòng trống giữa đoạn dẫn tour ghép và bảng giá"
+          },
+          {
+            "span": [
+              10900,
+              10901
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng giữa header bảng và hàng dữ liệu đầu tiên"
+          },
+          {
+            "span": [
+              11317,
+              11318
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng giữa hàng vé người lớn và hàng vé trẻ em"
+          },
+          {
+            "span": [
+              11810,
+              11812
+            ],
+            "chars": "\\n\\n",
+            "count": 2,
+            "explanation": "Dòng trống giữa bảng giá và khối điều kiện Bao gồm"
+          }
+        ],
+        "repeated_parts": [
+          {
+            "role": "table_header",
+            "span": [
+              10760,
+              10900
+            ],
+            "characters": 140,
+            "explanation": "Tiêu đề cột bảng lặp lại ở Chunk 1 và Chunk 2 (ở P2/P3 lặp thêm ở các hàng con)."
+          }
+        ],
+        "extra_parts": [
+          {
+            "role": "intro_and_conditions",
+            "spans": [
+              [
+                10643,
+                10758
+              ],
+              [
+                11812,
+                12287
+              ]
+            ],
+            "characters": 590,
+            "explanation": "Đoạn dẫn tour ghép và khối điều kiện Bao gồm/Không bao gồm ngoài bảng giá."
+          }
+        ],
+        "character_accounting": "115 (intro) + 2 (gap) + 140 (header) + 1 (gap) + 416 (adults) + 1 (gap) + 492 (children) + 2 (gap) + 475 (cond) = 1644 / 1644 ký tự"
+      },
+      "updated_p3b_coverage": {
+        "scope": "Toàn bộ khối khảo sát giá mục 2.3 gồm câu dẫn thời điểm 09/2026 và tiểu mục A",
+        "target_span": [
+          10409,
+          12287
+        ],
+        "total_target_characters": 1878,
+        "chunks": [
+          "ca_hue_p3b_lead_chunk_1a",
+          "ca_hue_p3b_lead_chunk_1b",
+          "ca_hue_p3b_lead_chunk_2",
+          "ca_hue_p3b_lead_chunk_3",
+          "ca_hue_p3b_lead_chunk_4_service"
+        ],
+        "covered_spans": [
+          {
+            "role": "survey_lead_2_3",
+            "span": [
+              10409,
+              10591
+            ],
+            "chars": 182
+          },
+          {
+            "role": "table_header",
+            "span": [
+              10760,
+              10900
+            ],
+            "chars": 140
+          },
+          {
+            "role": "row_khach_vn",
+            "span": [
+              10901,
+              11158
+            ],
+            "chars": 257
+          },
+          {
+            "role": "row_khach_qt",
+            "span": [
+              11159,
+              11317
+            ],
+            "chars": 158
+          },
+          {
+            "role": "child_row_la_que",
+            "span": [
+              11318,
+              11581
+            ],
+            "chars": 263
+          },
+          {
+            "role": "child_row_thuyen_rong",
+            "span": [
+              11582,
+              11810
+            ],
+            "chars": 228
+          },
+          {
+            "role": "intro_tour_format",
+            "span": [
+              10643,
+              10758
+            ],
+            "chars": 115
+          },
+          {
+            "role": "condition_inclusions",
+            "span": [
+              11812,
+              12116
+            ],
+            "chars": 304
+          },
+          {
+            "role": "condition_exclusions",
+            "span": [
+              12117,
+              12287
+            ],
+            "chars": 170
+          }
+        ],
+        "covered_content_characters": 1817,
+        "heading_metadata_span": {
+          "role": "heading_A",
+          "span": [
+            10593,
+            10641
+          ],
+          "chars": 48,
+          "explanation": "Được bảo toàn nguyên vẹn trong metadata heading_path và label của tất cả chunk."
+        },
+        "whitespace_gaps": [
+          {
+            "span": [
+              10591,
+              10593
+            ],
+            "chars": "\\n\\n",
+            "count": 2,
+            "explanation": "Dòng trống giữa câu dẫn 2.3 và heading A"
+          },
+          {
+            "span": [
+              10641,
+              10643
+            ],
+            "chars": "\\n\\n",
+            "count": 2,
+            "explanation": "Dòng trống giữa heading A và đoạn dẫn tour ghép"
+          },
+          {
+            "span": [
+              10758,
+              10760
+            ],
+            "chars": "\\n\\n",
+            "count": 2,
+            "explanation": "Dòng trống giữa đoạn dẫn tour ghép và bảng giá"
+          },
+          {
+            "span": [
+              10900,
+              10901
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng sau header bảng"
+          },
+          {
+            "span": [
+              11158,
+              11159
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng giữa hàng VN và hàng QT"
+          },
+          {
+            "span": [
+              11317,
+              11318
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng giữa hàng QT và hàng Trẻ em Lá Quê"
+          },
+          {
+            "span": [
+              11581,
+              11582
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng giữa hàng Trẻ em Lá Quê và hàng Trẻ em Thuyền Rồng"
+          },
+          {
+            "span": [
+              11810,
+              11812
+            ],
+            "chars": "\\n\\n",
+            "count": 2,
+            "explanation": "Dòng trống sau bảng giá"
+          },
+          {
+            "span": [
+              12116,
+              12117
+            ],
+            "chars": "\\n",
+            "count": 1,
+            "explanation": "Dấu xuống dòng giữa điều kiện Bao gồm và Không bao gồm"
+          }
+        ],
+        "repeated_parts": [
+          {
+            "role": "survey_lead_2_3",
+            "span": [
+              10409,
+              10591
+            ],
+            "chars": 182,
+            "repeat_count": 4,
+            "explanation": "Lặp ở 4 chunk giá vé (1a, 1b, 2, 3) để xác định mốc thời gian 09/2026 và 3 đơn vị khảo sát."
+          },
+          {
+            "role": "table_header",
+            "span": [
+              10760,
+              10900
+            ],
+            "chars": 140,
+            "repeat_count": 4,
+            "explanation": "Lặp ở 4 chunk giá vé để giữ cấu trúc cột bảng."
+          },
+          {
+            "role": "condition_exclusions",
+            "span": [
+              12117,
+              12287
+            ],
+            "chars": 170,
+            "repeat_count": 4,
+            "explanation": "Lặp ở 4 chunk giá vé để bảo đảm điều kiện loại trừ tối cần thiết."
+          }
+        ],
+        "service_chunk_lead_analysis": {
+          "included_in_service_chunk": false,
+          "explanation": "Chunk dịch vụ (ca_hue_p3b_lead_chunk_4_service) không chứa mức giá khảo sát nào, chỉ chứa quy cách dịch vụ chung (thuyền rồng đôi 25-35 khách, thời lượng tối thiểu 50 phút theo quy chuẩn nhà nước, dàn nghệ sĩ áo dài, thả hoa đăng giấy). Câu dẫn 2.3 xác định mức giá khảo sát thời điểm 09/2026 không cần thiết cho dịch vụ và có thể gây nhiễu ngữ nghĩa (semantic noise). Biến thể có câu dẫn (ca_hue_p3b_lead_chunk_4_service_with_lead) vẫn PASS tokenizer (165 tokens HuyDang)."
+        },
+        "character_accounting": "182 (lead) + 2 (gap) + 48 (heading A) + 2 (gap) + 115 (intro) + 2 (gap) + 140 (header) + 1 (gap) + 257 (VN) + 1 (gap) + 158 (QT) + 1 (gap) + 263 (child Lá Quê) + 1 (gap) + 228 (child Thuyền Rồng) + 2 (gap) + 304 (bao gồm) + 1 (gap) + 170 (không bao gồm) = 1878 / 1878 ký tự"
+      }
+    },
+    "control_me_keo": {
+      "source_file": "foods/restaurants/quan bun bo me keo.md",
+      "target_span": [
+        516,
+        790
+      ],
+      "total_target_characters": 274,
+      "content_coverage_status": "exact_character_coverage_100"
+    },
+    "control_sea_module": {
+      "source_file": "travel/services/Lịch trình du lịch Huế 3 ngày 2 đêm.md",
+      "target_span": [
+        3182,
+        3811
+      ],
+      "total_target_characters": 629,
+      "content_coverage_status": "exact_character_coverage_100"
+    }
+  }
+}
