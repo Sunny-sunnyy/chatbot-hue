@@ -5,7 +5,7 @@ và tuần tự hóa không chứa document vectors hay metadata dư thừa.
 """
 
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 import hashlib
 import json
@@ -99,37 +99,36 @@ def fit_sparse_state(chunks: Sequence[FullCorpusChunk]) -> SparseState:
     )
 
 
-def encode_sparse_document(text: str, state: SparseState) -> SparseVector:
-    """Mã hóa văn bản thành vector thưa với trọng số BM25 TF-IDF."""
+def build_vocabulary_index(state: SparseState) -> dict[str, int]:
+    return {term: index for index, term in enumerate(state.vocabulary)}
+
+
+def encode_sparse_document(
+    text: str,
+    state: SparseState,
+    vocabulary_index: Mapping[str, int] | None = None,
+) -> SparseVector:
     tokens = tokenize(text)
     if not tokens:
         return SparseVector(indices=(), values=())
-
+    lookup = build_vocabulary_index(state) if vocabulary_index is None else vocabulary_index
     tf_counts = Counter(tokens)
     doc_length = len(tokens)
-
-    vocab_map = {term: idx for idx, term in enumerate(state.vocabulary)}
     matched: list[tuple[int, float]] = []
-
     for term, tf in tf_counts.items():
-        idx = vocab_map.get(term)
+        idx = lookup.get(term)
         if idx is None:
             continue
-        idf = state.idf[idx]
         denominator = tf + state.k1 * (
             1.0 - state.b + state.b * doc_length / state.average_document_length
         )
-        val = idf * (tf * (state.k1 + 1.0)) / denominator
-        matched.append((idx, float(val)))
-
-    if not matched:
-        return SparseVector(indices=(), values=())
-
-    # Căn chỉnh các chỉ số theo thứ tự tăng dần
-    matched.sort(key=lambda x: x[0])
-    indices = tuple(item[0] for item in matched)
-    values = tuple(item[1] for item in matched)
-    return SparseVector(indices=indices, values=values)
+        value = state.idf[idx] * (tf * (state.k1 + 1.0)) / denominator
+        matched.append((idx, float(value)))
+    matched.sort(key=lambda item: item[0])
+    return SparseVector(
+        indices=tuple(item[0] for item in matched),
+        values=tuple(item[1] for item in matched),
+    )
 
 
 def encode_sparse_query(query: str, state: SparseState) -> SparseVector:

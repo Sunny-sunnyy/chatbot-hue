@@ -1,0 +1,81 @@
+{
+  "build_commands": [
+    "python -m backend.ingestion.full_corpus_pipeline build --candidate e5-small-384",
+    "python -m backend.ingestion.full_corpus_pipeline build --candidate e5-base-768",
+    "python -m backend.ingestion.full_corpus_pipeline build --candidate huydang-dek21-768",
+    "python -m backend.ingestion.full_corpus_pipeline build --candidate qwen3-embedding-0.6b-1024"
+  ],
+  "corpus": {
+    "chunk_count": 8460,
+    "file_count": 205,
+    "identity": "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223",
+    "source_state_sha256": "ffeb682812c3355118091fd65820c39fcd6b0ef8670edc9c44c06283593c160d"
+  },
+  "qdrant": {
+    "client_version": "1.19.0",
+    "server_version": "1.18.3"
+  },
+  "resources": {
+    "disk": {
+      "free_bytes": 947614961664,
+      "total_bytes": 1081101176832
+    },
+    "gpu": {
+      "cuda_available": true,
+      "device_name": "NVIDIA GeForce GTX 1650",
+      "torch_cuda_version": "13.0",
+      "torch_version": "2.13.0+cu130",
+      "total_vram_bytes": 4294639616
+    },
+    "memory": {
+      "MemAvailable": 12271235072,
+      "MemTotal": 16652054528,
+      "SwapFree": 4294967296,
+      "SwapTotal": 4294967296
+    }
+  },
+  "schema_version": "phase_4_qdrant_preflight:v1",
+  "sparse": {
+    "state_sha256": "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be",
+    "vocabulary_size": 5662
+  },
+  "status": "READY",
+  "targets": [
+    {
+      "blockers": [],
+      "build_record_exists": false,
+      "candidate_id": "e5-small-384",
+      "collection_name": "hue_full_corpus_a_e5_small_384",
+      "dimension": 384,
+      "point_count": 0,
+      "state": "absent"
+    },
+    {
+      "blockers": [],
+      "build_record_exists": false,
+      "candidate_id": "e5-base-768",
+      "collection_name": "hue_full_corpus_a_e5_base_768",
+      "dimension": 768,
+      "point_count": 0,
+      "state": "absent"
+    },
+    {
+      "blockers": [],
+      "build_record_exists": false,
+      "candidate_id": "huydang-dek21-768",
+      "collection_name": "hue_full_corpus_a_huydang_dek21_768",
+      "dimension": 768,
+      "point_count": 0,
+      "state": "absent"
+    },
+    {
+      "blockers": [],
+      "build_record_exists": false,
+      "candidate_id": "qwen3-embedding-0.6b-1024",
+      "collection_name": "hue_full_corpus_a_qwen3_06b_1024",
+      "dimension": 1024,
+      "point_count": 0,
+      "state": "absent"
+    }
+  ]
+}

@@ -179,6 +179,34 @@ def validate_vectors(
     return validated
 
 
+def validate_vector_matrix(
+    vectors: np.ndarray,
+    expected_count: int,
+    expected_dim: int,
+) -> np.ndarray:
+    """Validate a dense matrix without materializing nested Python lists."""
+    if not isinstance(vectors, np.ndarray):
+        raise ValueError("Dense vectors must be a NumPy array")
+    if vectors.shape != (expected_count, expected_dim):
+        raise ValueError(
+            f"Dense matrix shape {vectors.shape} != "
+            f"({expected_count}, {expected_dim})"
+        )
+    if not np.issubdtype(vectors.dtype, np.floating):
+        raise ValueError(f"Dense matrix must have floating dtype, got {vectors.dtype}")
+    if not np.isfinite(vectors).all():
+        raise ValueError("Dense matrix contains non-finite values")
+    norms = np.linalg.norm(vectors.astype(np.float64, copy=False), axis=1)
+    invalid = np.flatnonzero(~np.isclose(norms, 1.0, rtol=1e-3, atol=1e-3))
+    if invalid.size:
+        index = int(invalid[0])
+        raise ValueError(
+            f"Dense vector {index} L2 norm is {norms[index]:.6f}, "
+            "expected unit vector (~1.0)"
+        )
+    return vectors
+
+
 class FullCorpusDenseRunner:
     """Runner thực thi tuần tự cho từng dense embedding candidate trong Phase 3."""
 
@@ -243,16 +271,14 @@ class FullCorpusDenseRunner:
         assert self._model is not None
         return self._model.tokenizer
 
-    def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
-        """Mã hóa danh sách văn bản theo đúng document preprocessing và kiểm tra vector đầu ra."""
+    def embed_documents_matrix(self, texts: Sequence[str]) -> np.ndarray:
+        """Encode documents into one validated NumPy matrix for Phase 4."""
         if self._model is None:
             self.load()
         assert self._model is not None
-
         if not texts:
-            return []
-
-        prepared = [prepare_document(self.spec, t) for t in texts]
+            return np.empty((0, self.spec.dimension), dtype=np.float32)
+        prepared = [prepare_document(self.spec, text) for text in texts]
         raw_vectors = self._model.encode(
             prepared,
             batch_size=self.spec.batch_size,
@@ -260,7 +286,13 @@ class FullCorpusDenseRunner:
             convert_to_numpy=True,
             show_progress_bar=False,
         )
-        return validate_vectors(raw_vectors, expected_count=len(texts), expected_dim=self.spec.dimension)
+        if not isinstance(raw_vectors, np.ndarray):
+            raise ValueError("SentenceTransformer did not return a NumPy array")
+        return validate_vector_matrix(raw_vectors, len(texts), self.spec.dimension)
+
+    def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
+        """Preserve the bounded Phase 3 list API."""
+        return self.embed_documents_matrix(texts).tolist()
 
     def embed_queries(self, queries: Sequence[str]) -> list[list[float]]:
         """Mã hóa danh sách câu hỏi theo đúng query preprocessing và kiểm tra vector đầu ra."""

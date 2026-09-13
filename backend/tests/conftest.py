@@ -94,7 +94,9 @@ def live_settings():
 @pytest.fixture(scope="session")
 def real_client():
     """The real uncached Qdrant client for the configured server."""
-    return client_from_settings(load_settings())
+    client = client_from_settings(load_settings())
+    yield client
+    sweep_test_collections(client)
 
 
 @pytest.fixture(scope="session")
@@ -168,7 +170,7 @@ def real_retrieved_docs(ingested_collection, real_client, real_embedder):
     return documents
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def _live_cleanup_sweep(real_client):
     """Guarantee no marked test collection survives a test session."""
     yield

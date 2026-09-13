@@ -13,6 +13,7 @@ from backend.embedding.full_corpus import (
     prepare_document,
     prepare_query,
     validate_snapshot_path,
+    validate_vector_matrix,
     validate_vectors,
 )
 
@@ -182,3 +183,32 @@ def test_validate_vectors_non_unit_norm() -> None:
     vec_unnorm = [[2.0, 0.0]]
     with pytest.raises(ValueError, match="expected unit vector"):
         validate_vectors(vec_unnorm, expected_count=1, expected_dim=2)
+
+
+def test_validate_vector_matrix_preserves_numpy_storage() -> None:
+    matrix = np.asarray([[1.0, 0.0], [0.0, 1.0]], dtype=np.float32)
+    validated = validate_vector_matrix(matrix, expected_count=2, expected_dim=2)
+    assert validated is matrix
+    assert validated.dtype == np.float32
+
+
+def test_validate_vector_matrix_rejects_wrong_shape() -> None:
+    with pytest.raises(ValueError, match="shape"):
+        validate_vector_matrix(
+            np.ones((2, 3), dtype=np.float32), expected_count=1, expected_dim=2
+        )
+
+
+@pytest.mark.parametrize(
+    ("matrix", "message"),
+    [
+        (np.asarray([[float("nan"), 0.0]], dtype=np.float32), "non-finite"),
+        (np.asarray([[2.0, 0.0]], dtype=np.float32), "unit vector"),
+        (np.asarray([[1, 0]], dtype=np.int64), "floating dtype"),
+    ],
+)
+def test_validate_vector_matrix_rejects_invalid_values(
+    matrix: np.ndarray, message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        validate_vector_matrix(matrix, expected_count=1, expected_dim=2)

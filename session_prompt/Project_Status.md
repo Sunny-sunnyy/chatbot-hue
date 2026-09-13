@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-09-12 +07`
+Last updated: `2026-09-13 +07`
 
 ## Project overview
 
@@ -32,12 +32,27 @@ Qwen3-Embedding-0.6B chạy GTX 1650 bằng CUDA FP16/eager/native 1024D, batch 
 Final review:
 `reports/full_corpus_phase_3_embedding_sparse_correction_2_codex_review_2026_09_12.md`.
 
-Active handoff thuộc **Implementer**, kind `implementation`, cho Full-corpus
-Phase 4 Tasks 1–6. Conceptual design, Written Spec, Implementation Plan và
-Review Contract đã được User duyệt ngày 2026-09-12. Handoff cho phép code,
-deterministic checks và một read-only preflight chỉ trên bốn exact full-corpus
-targets. Chưa có quyền dense-encode toàn corpus hoặc Qdrant mutation; Task 7
-live build cần User approval riêng sau khi Reviewer kiểm preflight.
+Reviewer đã hoàn tất independent final review Phase 4 Tasks 1–8 ngày
+2026-09-13 với verdict `PASS WITH LIMITATIONS`; User xác nhận closure cùng ngày.
+Fresh read-only Notebook 04 xác minh trên cả bốn
+exact targets: schema đúng, 8.460 points, 8.460 exact ID/payloads và 12 sampled
+dense+sparse vectors; bốn final records cùng corpus/source/sparse identity.
+Final review:
+`reports/full_corpus_phase_4_final_codex_review_2026_09_13.md`.
+
+Current handoff đã `completed`; chưa có task mới. Hai minor không chặn là
+cleanup fixture dư và lỗi documentation trong Qwen auxiliary report. Report phụ
+đã được sửa sau closure để dùng đúng payload fields và loại remote estimate chưa
+đo khỏi observed facts. Fresh post-closure audit quét đủ 8.460 Qwen points,
+không tìm thấy ID/payload/dense/sparse anomaly; 12 mẫu tái encode bằng exact
+Qwen revision khớp stored vectors với minimum cosine `0.99987924`. Remote-Qwen
+research vẫn deferred và chưa được kích hoạt. Chưa có quyền cloud, upload,
+benchmark, tunnel, implementation hoặc paid action.
+
+Expected next user-directed task là brainstorming Full-corpus Phase 5. Bootstrap
+session mới chỉ đọc bốn file chuẩn và kiểm cấu trúc; không tự bắt đầu
+brainstorming cho tới khi User ra lệnh tiếp theo. Phase 5 vẫn cần phase-specific
+design/spec/plan/Review Contract và approval trước implementation.
 
 ## System and data map
 
@@ -122,8 +137,10 @@ Implementation Plan + Review Contract đã được User duyệt ngày 2026-09-1
 Phase 3 guide, Written Spec, Implementation Plan và Review Contract đã được User
 duyệt ngày 2026-09-12; implementation qua hai correction đã independent review
 PASS và được User xác nhận closure cùng ngày. Phase 4 design/spec/plan/Review
-Contract đã được User duyệt; active Implementer handoff chỉ mở Tasks 1–6 và
-exact read-only preflight. Dense full-corpus cùng mọi Qdrant write vẫn đóng.
+Contract đã được User duyệt; latest read-only state cho thấy bốn full-corpus
+targets và final records đã tồn tại sau live sequence. Independent final review
+đã đạt `PASS WITH LIMITATIONS` và User đã xác nhận closure. Remote GPU research
+được queue nhưng chưa được kích hoạt.
 User tiếp tục chốt workflow tuần tự: sau mỗi phase phải review/User closure và
 cập nhật detailed phase guide; trước phase kế tiếp Reviewer phải dùng evidence
 dependency để hoàn tất guide + phase spec + plan + Review Contract và xin User
@@ -145,11 +162,11 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 1 | `approved` | Backend foundation |
 | 2 | `approved` | Foods Markdown chunking |
 | 3 | `approved` | Full-corpus embedding/sparse preflight User-closed; Qwen CUDA FP16 PASS trên GTX 1650 |
-| 4 | `approved` | Foods history approved; full-corpus package approved, Tasks 1–6/read-only preflight active; dense/Qdrant write vẫn đóng |
-| 5 | `approved` | Retrieval profiles và reranking |
+| 4 | `approved` | User-closed 2026-09-13 với final review PASS WITH LIMITATIONS |
+| 5 | `approved` | Umbrella target: retrieval profiles/reranking; full-corpus phase-specific design package chưa bắt đầu |
 | 6 | `approved` | Context, generation và answer-only API |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; full-corpus Phase 4 Tasks 1–6/preflight đang active |
+| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; remote-Qwen research queued riêng sau Phase 4 closure |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -311,6 +328,16 @@ docs/superpowers/specs/2026-08-26-phase-8-benchmark-model-selection-design.md
 docs/superpowers/plans/2026-08-26-phase-8-benchmark-model-selection-experiment-plan.md
 ```
 
+Full-corpus Phase 4 closure và Qwen post-closure integrity evidence:
+
+```text
+reports/full_corpus_phase_4_qdrant_ingestion_implementation_2026_09_12.md
+reports/full_corpus_phase_4_final_codex_review_2026_09_13.md
+reports/full_corpus_phase_4_qwen_post_closure_audit_2026_09_13.md
+reports/qwen3_gtx1650_embedding_execution_report_2026_09_13.md
+reports/qwen3_remote_gpu_offloading_research_context_2026_09_13.md  # deferred, not approved
+```
+
 Historical/non-canonical `llm_rag` artifacts, chỉ dùng khi cần audit lịch sử:
 
 ```text
@@ -407,9 +434,10 @@ và #6c generator/provider + judge separation cũng đã chốt. #6d đã khóa 
 generator settings/numeric budgets và tách Agentic RAG sang profile/contract
 riêng; #6e chốt UI inline citation/source cards. Phase 3 đã independent review
 PASS và User-confirmed closure. Phase 4 design/spec/plan/Review Contract đã được
-User duyệt; active Implementer handoff chỉ mở Tasks 1–6 và exact read-only
-preflight. Dense full-corpus cùng Qdrant write vẫn đóng. Exact next action nằm
-trong CURRENT_HANDOFF.
+User duyệt; latest read-only state cho thấy cả bốn target và final records đã
+tồn tại; independent final review đã đạt `PASS WITH LIMITATIONS` và User đã xác
+nhận closure. Remote GPU research vẫn queued, chưa có active authority. Exact
+state nằm trong CURRENT_HANDOFF.
 
 Simplicity survey `rag_old_0` đã qua hai correction, independent Reviewer review
 và User confirmation. Các phiên sau tham khảo hai report survey/review trong
@@ -480,11 +508,12 @@ của toàn bộ kho tri thức `knowledge-base-hue` (gồm 5 domain: `foods`, `
    complexity reset User xác nhận. Extraction đã qua hai correction, Reviewer
    review và User closure. Decision Queue đã hoàn tất; Written Spec, Plan và
    Review Contract đã được duyệt. Phase 2 và Phase 3 đã User-closed; Phase 4
-   package riêng đã được duyệt và active handoff mở Tasks 1–6/read-only
-   preflight, chưa mở dense full-corpus hoặc Qdrant write. Các phase và live gate
-   sau tiếp tục cần đúng closure/approval trong Plan. Hai working notes ngày
-   2026-09-09 không phải các artifact đã
-   duyệt này.
+   independent final review đã đạt `PASS WITH LIMITATIONS` trên cả bốn target
+   và được User xác nhận closure ngày 2026-09-13. Future Qwen remote-GPU
+   research đã được queue nhưng chưa active; mọi cloud
+   rental/upload/benchmark/implementation vẫn cần approval riêng. Các phase và live gate sau tiếp tục cần đúng
+   closure/approval trong Plan. Hai working notes ngày 2026-09-09 không phải
+   các artifact đã duyệt này.
 
 Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 

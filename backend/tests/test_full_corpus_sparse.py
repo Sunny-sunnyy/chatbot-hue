@@ -8,6 +8,7 @@ from backend.core.schema import FullCorpusChunk
 from backend.embedding.sparse import (
     SparseState,
     SparseVector,
+    build_vocabulary_index,
     compute_corpus_identity,
     encode_sparse_document,
     encode_sparse_query,
@@ -206,3 +207,15 @@ def test_load_sparse_state_validation_failures(tmp_path: Path) -> None:
     p.write_text(json.dumps(bad_idf), encoding="utf-8")
     with pytest.raises(ValueError, match="Non-finite IDF"):
         load_sparse_state(p)
+
+
+def test_reusable_vocabulary_index_keeps_document_vector_exact() -> None:
+    state = fit_sparse_state([
+        make_chunk("c1", "bún bò huế"),
+        make_chunk("c2", "cơm hến huế"),
+    ])
+    index = build_vocabulary_index(state)
+    assert index == {term: position for position, term in enumerate(state.vocabulary)}
+    assert encode_sparse_document("bún bò huế", state, index) == (
+        encode_sparse_document("bún bò huế", state)
+    )

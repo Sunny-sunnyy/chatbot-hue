@@ -6,14 +6,20 @@ Wave 1 constraint: Never write completion build records.
 """
 from __future__ import annotations
 
+from collections.abc import Mapping
 import hashlib
+import json
+import os
 from pathlib import Path
 from typing import Any
+import uuid
 
 try:
     from backend.core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+    from backend.embedding.sparse import SparseState
 except ModuleNotFoundError:
     from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+    from embedding.sparse import SparseState
 
 
 def normalize_lf(text: str) -> str:
@@ -123,3 +129,102 @@ def verify_build_record_freshness(
             )
 
     return len(discrepancies) == 0, discrepancies
+
+
+FULL_CORPUS_BUILD_SCHEMA = "phase_4_full_corpus_build:v1"
+
+
+def make_full_corpus_build_record(
+    *,
+    collection_name: str,
+    candidate_id: str,
+    model_id: str,
+    revision: str,
+    dimension: int,
+    corpus_identity: str,
+    sources: Mapping[str, str],
+    sparse_state: SparseState,
+    sparse_state_sha256: str,
+) -> dict[str, Any]:
+    if len(sources) != 205:
+        raise ValueError(f"Source count {len(sources)} != expected 205")
+    if sparse_state.corpus_identity != corpus_identity:
+        raise ValueError("Sparse state corpus identity mismatch")
+    if sparse_state.document_count != 8460 or len(sparse_state.vocabulary) != 5662:
+        raise ValueError("Sparse state count or vocabulary mismatch")
+    return {
+        "schema_version": FULL_CORPUS_BUILD_SCHEMA,
+        "status": "complete",
+        "collection_name": collection_name,
+        "representation": "A",
+        "corpus": {
+            "identity": corpus_identity,
+            "file_count": 205,
+            "chunk_count": 8460,
+            "sources": dict(sorted(sources.items())),
+        },
+        "dense": {
+            "candidate_id": candidate_id,
+            "model_id": model_id,
+            "revision": revision,
+            "dimension": dimension,
+        },
+        "sparse": {
+            "schema_version": sparse_state.schema_version,
+            "state_sha256": sparse_state_sha256,
+            "vocabulary_size": len(sparse_state.vocabulary),
+        },
+        "qdrant": {
+            "dense_vector_name": "dense",
+            "sparse_vector_name": "sparse",
+            "distance": "cosine",
+            "point_count": 8460,
+        },
+    }
+
+
+def serialize_full_corpus_build_record(record: Mapping[str, Any]) -> bytes:
+    return (
+        json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+
+
+def write_final_full_corpus_build_record(
+    record: Mapping[str, Any], path: Path
+) -> str:
+    if path.exists():
+        raise FileExistsError(f"Final build record already exists: {path}")
+    data = serialize_full_corpus_build_record(record)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.tmp.{uuid.uuid4().hex}")
+    try:
+        temporary.write_bytes(data)
+        try:
+            os.link(temporary, path)
+        except FileExistsError:
+            raise FileExistsError(f"Final build record already exists: {path}") from None
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return hashlib.sha256(data).hexdigest()
+
+
+def verify_full_corpus_record_freshness(
+    current_state: Mapping[str, str], record: Mapping[str, Any]
+) -> tuple[bool, list[str]]:
+    corpus = record.get("corpus")
+    recorded = corpus.get("sources") if isinstance(corpus, dict) else None
+    if not isinstance(recorded, dict):
+        return False, ["Full-corpus build record missing corpus.sources mapping"]
+    discrepancies: list[str] = []
+    current_keys = set(current_state)
+    recorded_keys = set(recorded)
+    if current_keys - recorded_keys:
+        discrepancies.append(f"Added files: {sorted(current_keys - recorded_keys)}")
+    if recorded_keys - current_keys:
+        discrepancies.append(f"Deleted files: {sorted(recorded_keys - current_keys)}")
+    for path in sorted(current_keys & recorded_keys):
+        if current_state[path] != recorded[path]:
+            discrepancies.append(f"Content changed: {path}")
+    return not discrepancies, discrepancies
