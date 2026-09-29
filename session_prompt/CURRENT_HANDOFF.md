@@ -5,7 +5,7 @@ Authored by: reviewer
 Handoff kind: implementation
 State: active
 Base commit: 92f2e2cce0e85c9b4f733aaab038bc99cad314c0
-Head commit: worktree on 9242178bfe381011dd0d74875181a6a624410de3
+Head commit: HEAD after Metadata v2 Gate 1–2 checkpoint commit
 Risk level: high — canonical full-corpus retrieval cutover trên bốn metadata-v2 targets
 Git authorization: none
 Sub-agent authorization: none
