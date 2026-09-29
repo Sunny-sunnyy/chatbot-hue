@@ -1,14 +1,16 @@
 # Full-corpus RAG workstream
 
 ```text
-Status: Phase 2–5 User-closed; Phase 6 paused before implementation for metadata redesign
-Runtime authorization: none — Reviewer design/assessment only
+Status: Phase 2–5 User-closed; Metadata v2 Gate 1 active; Phase 6 remains paused
+Runtime authorization: Metadata v2 Tasks 1–4 only — code/tests/read-only preflight; no Qdrant write or cutover
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
 Completed Phase 5 package: docs/superpowers/specs/2026-09-13-phase-5-full-corpus-retrieval-reranking-written-spec.md + docs/superpowers/plans/2026-09-13-phase-5-full-corpus-retrieval-reranking-implementation-plan.md
 Paused Phase 6 spec: docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md
 Paused Phase 6 plan + Review Contract: docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
+Approved Metadata v2 spec: docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md
+Approved Metadata v2 plan + Review Contract: docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md
 ```
 
 ## Vai trò của guide này
@@ -102,15 +104,17 @@ approved evidence companion cho design, không phải approval runtime/Spec/Plan
 
 Full-corpus Phase 6 brainstorming đã hoàn tất ngày 2026-09-14 và package từng
 được User duyệt. Ngày 2026-09-29, User dừng Phase 6 trước implementation để mở
-lại thiết kế metadata. Guide/spec/plan Phase 6 hiện chỉ là reference cho phân
-tích dependency; authority code/test/startup/năm Qwen calls đã bị thu hồi. Bốn
-canonical collections vẫn read-only.
+lại thiết kế metadata. Metadata v2 Written Spec, Implementation Plan và Review
+Contract đã được User duyệt cùng ngày; Gate 1/Tasks 1–4 hiện active. Gate 1 chỉ
+cho sửa code/tests, đọc local corpus và read-only preflight bốn legacy
+collections. Qdrant create/upsert, runtime cutover và Phase 6 vẫn chưa có quyền.
 
-Metadata contract hiện hành vẫn mô tả đúng artifact đã xây: payload năm field,
-domain/subdomain suy từ `source`, identity model/hash ở cấp build. Tuy nhiên,
-Decision #3 không còn là target mặc định cho implementation tương lai cho tới
-khi User duyệt metadata redesign. Exact `evidence_parts` provenance là dependency
-đã kiểm chứng cần được bảo toàn hoặc thay đổi có chủ đích với evidence tương xứng.
+Artifact Phase 4 hiện hành vẫn đúng với contract lịch sử: payload năm field,
+domain suy từ `source`, model/hash ở cấp build. Target metadata v2 thay thế cho
+implementation tương lai có payload đúng bảy field: năm field cũ cộng
+`chunk_id` và enum `domain`. Build record v2 tách build schema/payload schema,
+giữ source/model/sparse identity ở build level và ghi vector-copy lineage.
+Exact `evidence_parts` provenance được giữ nguyên.
 
 Phase 2 initial review ngày 2026-09-12 yêu cầu Correction 1 cho năm Major; hai
 review sau tạo các delta hẹp cho report/schema/cache/test evidence. Correction 3
@@ -287,14 +291,15 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   không in-place reconcile; cho phép nhiều collections khi mỗi collection gắn
   với candidate/variant được duyệt. Exact replacement là lối phụ cần verify
   target và approval riêng. Sau benchmark đề xuất giữ khoảng 1–3 collections
-  tốt nhất; cleanup không tự động và luôn cần exact targets/authority. Exact
-  names còn chờ spec/plan.
-  Decision #3 chốt mỗi Qdrant point có point ID và hai named vectors
-  `dense`/`sparse` ở trường chuẩn của Qdrant; không lặp chúng trong payload.
-  Payload chỉ giữ `search_text`, `source`, `title`, `heading_path` và
-  `evidence_parts[{role,start,end,text}]`. Model/representation identity thuộc
-  collection/build; source fingerprint thuộc file/index; domain/subdomain suy
-  từ `source`. Không thêm metadata per-point khi chưa có consumer.
+  tốt nhất; cleanup không tự động và luôn cần exact targets/authority.
+  Metadata-v2 target names hiện đã fixed trong approved Plan; mọi replacement
+  hoặc cleanup target khác vẫn cần authority riêng.
+  Decision #3 ban đầu chốt payload năm field và vẫn mô tả đúng bốn legacy
+  collections. Metadata v2 amendment được User duyệt 2026-09-29 supersede target
+  tương lai: payload có đúng `search_text`, `source`, `title`, `heading_path`,
+  `evidence_parts`, `chunk_id`, `domain`. `domain` có năm giá trị và được derive
+  từ first source component; không thêm subdomain/document type/tags. Model,
+  source hashes, schema versions và vector-copy lineage thuộc build record.
   Decision #4 chốt matrix theo giai đoạn. Với mỗi dense model, so baseline A
   (dense pool + BM25 local, fusion bằng RRF trong pool) với native hybrid
   (dense/sparse retrieval độc lập, fusion bằng RRF). Chỉ retrieval finalists mới
@@ -389,7 +394,8 @@ Top30→Top10, private `RetrievalTrace`, strict readiness và real seven-P7/16-c
 verification. Bốn canonical collections chỉ read-only; isolated absent
 experiment authority của Phase 5 đã kết thúc. Quality benchmark vẫn chờ exact
 Phase 8 lifecycle gate. Context/API/static UI thuộc Phase 6 package hiện đã
-pause để chờ metadata redesign.
+pause cho tới khi Metadata v2 hoàn tất các gate, được User closure và Phase 6
+nhận approval mới.
 
 ## Thiết kế umbrella đã chốt — lịch sử quyết định
 
@@ -407,11 +413,12 @@ dưới đây là lịch sử quyết định, không phải active task song so
    mới/rỗng; cho phép nhiều experiment collections, không reconcile in place.
    Exact replacement và cleanup cần target/approval riêng; sau benchmark đề xuất
    giữ khoảng 1–3 collections tốt nhất.
-3. **Đã chốt 2026-09-11, mở lại để đánh giá 2026-09-29 — payload/source
-   locator:** artifact hiện có dùng point ID và dense/sparse vectors ở trường
-   Qdrant chuẩn; payload có `search_text`, `source`, `title`, `heading_path`,
-   `evidence_parts`. User đã dừng Phase 6 để đánh giá lại metadata theo consumer;
-   contract thay thế chưa được thiết kế hoặc duyệt.
+3. **Superseded target 2026-09-29 — payload/source locator:** bốn legacy
+   collections giữ nguyên payload năm field và read-only. Metadata v2 target đã
+   được User duyệt với exact seven-field payload, logical `chunk_id`, five-value
+   `domain`, strict source freshness và build/payload schema versions riêng.
+   Bốn fresh targets sẽ copy verified dense+sparse vectors; không re-embed,
+   không payload index/filter và không cutover trước Gate 3.
 4. **Đã chốt 2026-09-11 — retrieval/fusion/reranker matrix:** staged comparison
    baseline A với native hybrid bằng RRF; chỉ retrieval finalists so một
    reranker với no-rerank. Báo exact metrics/results, không full Cartesian matrix
@@ -471,9 +478,12 @@ baseline.
 9. Full-corpus Phase 6 Written Spec và Implementation Plan kèm Review Contract
    đã hoàn tất ngày 2026-09-14 nhưng bị User pause trước implementation ngày
    2026-09-29.
-10. **Hiện hành:** `CURRENT_HANDOFF.md` giao Reviewer đánh giá lại metadata và
-    blast radius xuyên Phase 2/4/5/6. Không có runtime, paid API, Qdrant mutation,
-    rebuild, cutover hoặc Git authority trong design handoff kế tiếp.
+10. Metadata v2 Written Spec, Implementation Plan và embedded Review Contract
+    đã được User duyệt ngày 2026-09-29. Exact four fresh target names và ba gate
+    nằm trong package này.
+11. **Hiện hành:** `CURRENT_HANDOFF.md` giao Implementer thực hiện riêng Gate 1,
+    Tasks 1–4 và dừng tại read-only preflight. Không có Qdrant create/upsert,
+    build-record v2 write, runtime cutover, paid API/model hoặc Phase 6 authority.
 
 Không pre-create hoặc cố định tên ngày cho spec/plan trước gate. Reviewer chọn
 exact path khi bắt đầu artifact sau khi decision queue đủ; path không tự tạo
@@ -482,7 +492,11 @@ approval.
 ## Tài liệu hiện hành
 
 - Trạng thái task: `session_prompt/CURRENT_HANDOFF.md`.
-- Active Full-corpus Phase 6 guide/spec/plan:
+- Active Metadata v2 package:
+  `docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md`
+  và
+  `docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md`.
+- Paused Full-corpus Phase 6 guide/spec/plan:
   `guides/phase_6_generation_api.md`,
   `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md`
   và
