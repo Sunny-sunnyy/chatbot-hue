@@ -1,6 +1,9 @@
 import math
 
-from core.schema import ComponentNotReadyError, RetrievedDocument, RetrievalDependencyError
+try:
+    from backend.core.schema import ComponentNotReadyError, RetrievedDocument, RetrievalDependencyError
+except ModuleNotFoundError:
+    from core.schema import ComponentNotReadyError, RetrievedDocument, RetrievalDependencyError
 
 WARMUP_QUERY = "món ăn Huế"
 WARMUP_DOCUMENT = "Bún bò Huế là một món ăn nổi tiếng của Huế."
@@ -15,6 +18,21 @@ class CrossEncoderReranker:
     @property
     def model_id(self):
         return self._model_id
+
+    @property
+    def max_length(self) -> int:
+        self.load()
+        tokenizer = getattr(self._model, "tokenizer", None)
+        max_len = getattr(tokenizer, "model_max_length", 512)
+        return int(max_len) if isinstance(max_len, int) else 512
+
+    def input_token_count(self, query: str, document: str) -> int:
+        self.load()
+        tokenizer = getattr(self._model, "tokenizer", None)
+        if tokenizer is None:
+            raise ComponentNotReadyError("reranker tokenizer not available")
+        tokens = tokenizer.encode(query, document, add_special_tokens=True, truncation=False)
+        return len(tokens)
 
     def load(self):
         if self._model is None:
@@ -52,6 +70,12 @@ class CrossEncoderReranker:
             converted.append(value)
         return converted
 
+    def score_documents(self, query: str, documents: list[RetrievedDocument]) -> list[float]:
+        if not documents:
+            return []
+        pairs = [(query, doc.text) for doc in documents]
+        return self._finite_scores(self._predict(pairs), len(documents))
+
     def warm_up(self):
         try:
             return self._finite_scores(self._predict([(WARMUP_QUERY, WARMUP_DOCUMENT)]), 1)[0]
@@ -70,9 +94,7 @@ class CrossEncoderReranker:
             raise RetrievalDependencyError("reranker input document has an invalid chunk_id")
         if len(chunk_ids) != len(set(chunk_ids)):
             raise RetrievalDependencyError("reranker input contains duplicate chunk_id")
-        scores = self._finite_scores(
-            self._predict([(query, doc.text) for doc in documents]), len(documents)
-        )
+        scores = self.score_documents(query, documents)
         ranked = sorted(zip(scores, documents), key=lambda item: (-item[0], item[1].metadata["chunk_id"]))
         return [
             RetrievedDocument(

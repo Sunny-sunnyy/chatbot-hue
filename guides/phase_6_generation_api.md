@@ -1,11 +1,54 @@
 # Phase 6: Grounded answer generation và JSON API
 
-> **Full-corpus extension gate — 2026-09-12:** chưa active và phụ thuộc Phase 5
-> closure. Trước implementation, Reviewer phải cập nhật guide này và trình User
-> duyệt Phase 6 written spec, plan, Review Contract cho context budget,
-> Qwen/OpenRouter profile, typed API/citation contract và static inline UI.
-> Phase 6A code/tests và Phase 6B paid live smoke là hai gate tách biệt; Agentic
-> RAG không thuộc package này.
+> **Full-corpus Phase 6 — paused trước implementation, 2026-09-29:** Phase 5 đã
+> User-closed và package Phase 6 ngày 2026-09-14 được giữ làm lịch sử đã duyệt.
+> User đã dừng Phase 6 trước Task 1 để đánh giá lại metadata xuyên Phase 2/4/5/6.
+> Spec/Plan cũ không còn cấp authority code/test/startup, năm Qwen calls hoặc
+> runtime action. Current handoff thuộc Reviewer `next_design`.
+
+## Full-corpus package đang pause
+
+Các artifact dưới đây là reference cho dependency/blast-radius analysis, không
+phải nguồn triển khai cho tới khi metadata redesign được User duyệt:
+
+```text
+docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md
+docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
+session_prompt/CURRENT_HANDOFF.md
+```
+
+Contract đã duyệt ngày 2026-09-14, hiện đang pause, tóm tắt:
+
+- runtime validation dùng một cell cấu hình
+  `e5-small-384 + dense_bm25_rrf + none`; không chọn winner và không bật
+  reranker trong Phase 6 smoke;
+- context pack tối đa Top 5 nguyên chunk theo rank bằng tokenizer immutable của
+  `Qwen/Qwen3.5-9B`; evidence chỉ lấy từ `evidence_parts`;
+- generation dùng direct asynchronous `AsyncOpenAI` với
+  `qwen/qwen3.5-9b` qua OpenRouter, `temperature=0`, không Agent/Runner, không
+  application retry và không model fallback;
+- OpenRouter tự route/fallback giữa upstreams phục vụ cùng model; request gửi
+  `provider.require_parameters=true`, không pin provider/order;
+- `OPENROUTER_API_KEY` chỉ đọc bằng `os.getenv` từ process environment;
+- API thành công chỉ trả `{answer,sources}` với response-local citation `[n]`;
+  backend tự validate citation và dựng source từ evidence thực tế;
+- UI hiện tại là static HTML/CSS/JavaScript, render Markdown đã sanitize bằng
+  marked và DOMPurify được pin/local; Next.js được để dành cho frontend phase
+  sau và không thay đổi API contract này;
+- chỉ hỗ trợ hành vi người dùng tiếng Việt; không thêm language detector;
+- không mock/fake/stub. Acceptance dùng corpus, Qdrant, tokenizer, model và API
+  thật; bounded live evidence có đúng một call Representation B và bốn answer
+  calls, không tự thay case lỗi bằng call thứ sáu.
+
+Review Contract nằm ngay trong Implementation Plan. Full-corpus Written Spec và
+Plan mới hơn có ưu tiên khi bất kỳ nội dung Foods lịch sử nào bên dưới xung đột.
+
+## Ranh giới lịch sử
+
+Toàn bộ phần còn lại của file ghi lại **Foods Phase 6 đã hoàn tất trong quá
+khứ**. Các lựa chọn cũ như `gpt-5.4-nano`, Agent/Runner, answer-only response,
+mocked tests, notebook/API Foods và “không frontend” không phải yêu cầu triển
+khai Full-corpus Phase 6 hiện hành.
 
 ## Mục tiêu và giá trị cho người dùng
 
@@ -24,6 +67,8 @@ Implementer: DeepSeek
 Design approved by: User
 Current simplicity design approval date +07: 2026-08-25
 Prior functional Phase 6 and Milestone 6.1 status: approved
+Full-corpus extension status at this historical snapshot: design not started
+Superseded by: Full-corpus target hiện hành ở đầu file
 ```
 
 > **Lưu ý governance hiện hành:** Phần Phase 6 lịch sử bên dưới còn mô tả

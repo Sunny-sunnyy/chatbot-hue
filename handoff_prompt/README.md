@@ -21,12 +21,16 @@ Trạng thái hiện tại:
 
 - Full-corpus Phase 2 đã được User xác nhận closure ngày 2026-09-12.
 - Phase 3 đã independent review và User-closed.
-- Phase 4 conceptual design, Written Spec, Plan và Review Contract đã được User duyệt.
-- Active handoff là **Implementer/implementation cho Phase 4 Tasks 1–6**, risk
-  `high`, gồm exact read-only preflight trên bốn full-corpus targets.
-- Chưa có quyền dense toàn corpus, Qdrant write, live cutover hoặc Git write.
-- Lead Implementer được User cấp standing authorization để tự quyết dùng
-  sub-agent; sub-agent không có scope/authority rộng hơn task cha.
+- Phase 4 đã independent review và User-closed ngày 2026-09-13.
+- Phase 5 implementation qua ba correction đã independent review đạt và được
+  User xác nhận closure ngày 2026-09-14.
+- Full-corpus Phase 6 brainstorming/Written Spec/Implementation Plan + Review
+  Contract đã hoàn tất ngày 2026-09-14 nhưng User dừng trước implementation
+  ngày 2026-09-29 để đánh giá lại metadata.
+- Current handoff là Reviewer `next_design` cho metadata; không có runtime,
+  paid-call, rebuild, Qdrant mutation, cutover hoặc Git authority.
+- Phase 6 spec/plan là reference cho blast-radius analysis, không được thực thi
+  chỉ vì từng được duyệt trước quyết định pause.
 - Tài liệu active/tương lai chỉ dùng `Phase`; chuỗi `WAVE` trong exact filename
   cũ được giữ để bảo toàn link và audit trail, nhưng các file đó là Phase 2 history.
 
@@ -34,7 +38,9 @@ Trạng thái hiện tại:
 
 | Cần làm/hiểu | Mở trước | Vai trò của prompt cũ |
 |---|---|---|
-| Thực hiện Phase 4 Tasks 1–6 | `CURRENT_HANDOFF.md`, guide Phase 4, exact Phase 4 spec/plan ngày 2026-09-12 | Không dùng prompt Phase 3 để mở live-write scope |
+| Đánh giá lại metadata Full-corpus | Bốn file bootstrap, current handoff và targeted metadata/payload sections trong guides/source | Brainstorm consumer trước; chưa triển khai hoặc rebuild |
+| Tra cứu package Phase 6 đã pause | Phase 6 guide/spec/plan | Reference-only để đánh giá dependency; không cấp runtime authority |
+| Kiểm tra closure Phase 5 | Final Codex review, user report và Phase 5 section trong `Project_Status.md` | Phase 5 spec/plan/report là history đã đóng, không cấp runtime authority |
 | Hiểu quyết định full-corpus | Umbrella written spec/plan và exact Phase spec/plan | `FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md` chỉ là context lịch sử hữu ích |
 | Tra cứu `llm_rag` | Hai verified architecture extraction reports trong `reports/` | Survey/correction prompts chỉ cho biết yêu cầu đã giao |
 | Tra cứu `rag_old_0` | Hai final simplicity survey/review reports trong `reports/` | Correction prompts không phải kết luận canonical |

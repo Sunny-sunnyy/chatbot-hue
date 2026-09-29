@@ -1,13 +1,67 @@
-# Phase 5: Retrieval profiles, reranking và context
+# Phase 5: Retrieval profiles và reranking
 
-> **Full-corpus extension gate — 2026-09-12:** chưa active và phụ thuộc Phase 4
-> evidence. Reviewer phải brainstorming rồi cập nhật guide này và trình User
-> duyệt Phase 5 written spec, plan, Review Contract trước
-> implementation. Package phải phân biệt dense+BM25-local baseline với native
-> dense/sparse hybrid, khóa RRF/depth/tie-break/failure behavior và chỉ mở
-> reranker theo staged finalist rule. Foods profiles dưới đây là history.
+> **Full-corpus package — User-approved 2026-09-13 +07:** Phase 4 đã closure;
+> Phase 5 Written Spec, Implementation Plan và Review Contract đã được User
+> duyệt. Active implementation chỉ lấy từ `session_prompt/CURRENT_HANDOFF.md`.
+> [Written Spec](../docs/superpowers/specs/2026-09-13-phase-5-full-corpus-retrieval-reranking-written-spec.md)
+> và [Implementation Plan + Review Contract](../docs/superpowers/plans/2026-09-13-phase-5-full-corpus-retrieval-reranking-implementation-plan.md)
+> là nguồn contract hiện hành. ContextBuilder đã chuyển sang Phase 6; toàn bộ
+> phần Foods bên dưới là as-built history, không phải target Full-corpus mới.
 
-## Mục tiêu và giá trị cho người dùng
+## Full-corpus target hiện hành
+
+```text
+Status: approved — User-confirmed closure 2026-09-14 +07
+Owner: Codex Reviewer
+Target role: none — completed
+Risk: high
+Git authorization: none
+```
+
+Phase 5 tạo một canonical Full-corpus retrieval path trên bốn completed
+Representation A collections. Mỗi collection chạy bốn tổ hợp từ hai axes:
+
+```text
+retrieval_treatment = dense_bm25_rrf | native_hybrid_rrf
+reranker = none | minilm
+```
+
+Contract chính:
+
+- dense và sparse candidate depth đều là Top 30;
+- baseline chỉ BM25-score 30 dense candidates, positive-only lexical rank;
+- native hybrid query dense và sparse độc lập;
+- Python RRF dùng `sum(1 / (60 + rank))`, rank từ 1, tie theo point UUID;
+- no-rerank và MiniLM đều trả Top 10; MiniLM score tối đa 30
+  `(query, search_text)` pairs trên CPU;
+- output là typed `RetrievalResult(documents, trace)`; trace nội bộ không đi ra
+  API và không chứa private text;
+- strict readiness, typed failure và không silent fallback;
+- bảy private P7 questions kiểm đủ 16 configurations bằng Qdrant/models thật;
+  Phase 5 không tính quality metrics hoặc chọn winner.
+
+Nếu BM25 toàn `0`, sparse query không có vocabulary token hoặc Implementer gặp
+bất kỳ hành vi khó hiểu/bất thường khác, affected cell phải là
+`REVIEW_REQUIRED`; Implementer báo Reviewer và không tự đổi contract hay
+đóng Phase. Contract chắc chắn bị phá là `FAIL`. Phase chỉ có thể đạt khi không
+còn `FAIL`/`REVIEW_REQUIRED` chưa giải quyết.
+
+`knowledge-base-hue/`, Qdrant storage, fixed questions và detailed traces chỉ
+ở local/ignored. Tracked artifacts không chứa `search_text`, `evidence_parts`,
+query, corpus excerpt hoặc payload dump. Có thể tạo absent isolated experiment
+collection khi observed need yêu cầu và phải có local manifest/comparison;
+không ghi đè, replace, delete hoặc cleanup collection hiện có.
+
+Reranker hiện hành vẫn là `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+`Qwen/Qwen3-Reranker-0.6B` chỉ là deferred research candidate: nếu Phase 8 cho
+thấy MiniLM không có lợi ích rõ ràng, giảm metric quan trọng hoặc không đạt
+resource/coverage contract, Reviewer mới trình User mở research/design/spec/
+plan riêng. Không implement hoặc fallback sang Qwen trong Phase 5.
+
+Full-corpus Phase 5 dừng ở ranked Top 10. Context/generation/API/UI thuộc Phase
+6; Golden metrics, finalist/winner/cutover và cleanup thuộc Phase 8.
+
+## Foods as-built history — mục tiêu và giá trị
 
 Phase 5 tạo retrieval pipeline local có ba chế độ so sánh được: dense semantic
 baseline, dense kết hợp lexical BM25 và hybrid có CrossEncoder reranking. Mỗi

@@ -1,12 +1,14 @@
 # Full-corpus RAG workstream
 
 ```text
-Status: Phase 2 user-approved closure; Phase 3 implementation package approved
-Runtime authorization: Phase 3 only through CURRENT_HANDOFF; no Qdrant/live systems
+Status: Phase 2–5 User-closed; Phase 6 paused before implementation for metadata redesign
+Runtime authorization: none — Reviewer design/assessment only
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
-Active Phase 3 package: docs/superpowers/specs/2026-09-12-phase-3-full-corpus-embedding-sparse-written-spec.md + docs/superpowers/plans/2026-09-12-phase-3-full-corpus-embedding-sparse-implementation-plan.md
+Completed Phase 5 package: docs/superpowers/specs/2026-09-13-phase-5-full-corpus-retrieval-reranking-written-spec.md + docs/superpowers/plans/2026-09-13-phase-5-full-corpus-retrieval-reranking-implementation-plan.md
+Paused Phase 6 spec: docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md
+Paused Phase 6 plan + Review Contract: docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
 ```
 
 ## Vai trò của guide này
@@ -97,6 +99,18 @@ Survey toàn project `llm_rag` đã chạm correction ceiling sau bốn verdict
 Verified Architecture Extraction thay thế đã qua hai correction, independent
 Reviewer review và được User xác nhận closure ngày 2026-09-11. Artifact này là
 approved evidence companion cho design, không phải approval runtime/Spec/Plan.
+
+Full-corpus Phase 6 brainstorming đã hoàn tất ngày 2026-09-14 và package từng
+được User duyệt. Ngày 2026-09-29, User dừng Phase 6 trước implementation để mở
+lại thiết kế metadata. Guide/spec/plan Phase 6 hiện chỉ là reference cho phân
+tích dependency; authority code/test/startup/năm Qwen calls đã bị thu hồi. Bốn
+canonical collections vẫn read-only.
+
+Metadata contract hiện hành vẫn mô tả đúng artifact đã xây: payload năm field,
+domain/subdomain suy từ `source`, identity model/hash ở cấp build. Tuy nhiên,
+Decision #3 không còn là target mặc định cho implementation tương lai cho tới
+khi User duyệt metadata redesign. Exact `evidence_parts` provenance là dependency
+đã kiểm chứng cần được bảo toàn hoặc thay đổi có chủ đích với evidence tương xứng.
 
 Phase 2 initial review ngày 2026-09-12 yêu cầu Correction 1 cho năm Major; hai
 review sau tạo các delta hẹp cho report/schema/cache/test evidence. Correction 3
@@ -293,9 +307,9 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   representation A trên mọi dense model/retrieval method, chọn finalists bằng
   metrics đã chốt, rồi tạo B và fresh indexes thật chỉ cho finalists. A/B giữ
   model, retrieval, fusion và reranker tương đương. Official evidence phải từ
-  API/index/full-corpus run thật; mock chỉ phục vụ technical tests. User chấp
-  nhận chi phí, nhưng exact provider/model/prompt/budget và execution authority
-  vẫn chờ Decision #6, Written Spec và approved Plan.
+  API/index/full-corpus run thật. Riêng Phase 6, User đã loại cả mock/fake/stub
+  khỏi implementation/acceptance evidence và chấp nhận chi phí bounded live
+  run; former bounded authority được ghi trong Phase 6 Plan hiện đã pause.
   Decision #6a chốt strict minimal public contract: success chỉ có `answer` và
   `sources`; answer dùng response-local `[n]`, mỗi source chỉ có
   `{id,title,heading_path,excerpts}` và phải được answer tham chiếu. Technical/
@@ -310,19 +324,22 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   budget; report phải ghi exact values. Chunk hạng đầu không vừa là typed
   configuration/input error.
   Decision #6c chốt `qwen/qwen3.5-9b` qua OpenRouter cho cả representation B và
-  answer generation. Mỗi benchmark run pin một upstream provider và không
-  automatic routing/silent failover; exact upstream được preflight rồi khóa
-  trong approved plan/run. Evaluation judge vẫn là `gpt-5.4-mini` qua OpenAI
+  answer generation. **Phase 6 amendment được User duyệt 2026-09-14:** không pin
+  upstream/provider order; OpenRouter được automatic routing/fallback giữa các
+  upstream phục vụ cùng model, request gửi `provider.require_parameters=true`.
+  Không có model fallback. Evaluation judge vẫn là `gpt-5.4-mini` qua OpenAI
   API, độc lập với candidate generator. Representation B chỉ bổ sung context tìm
   kiếm do Qwen sinh vào `search_text` của chunk A đủ chỗ; phần bổ sung không là
   evidence/citation/Golden và không tạo vector type mới.
   Decision #6d chốt profile Qwen balanced/reproducible: `temperature=0`, không
   set sampling knobs khác; representation B `max_output_tokens=256`; answer
   generation có `context_limit=16384`, `reserved_output_tokens=2048`,
-  `safety_margin=512`, timeout 90 giây và không automatic retry/failover. Exact
-  upstream được preflight, pin và ghi trước approved run. Agentic RAG tương lai
-  phải có profile/contract riêng cho tools, plan/state, steps và tổng budget;
-  không dùng ngân sách one-shot này cho agentic workflow.
+  `safety_margin=512`, timeout 90 giây và không application retry. Phase 6 dùng
+  direct `AsyncOpenAI`, không Agent/Runner; credential lấy từ
+  `OPENROUTER_API_KEY` trong process environment. OpenRouter upstream routing
+  tuân theo amendment #6c ở trên. Agentic RAG tương lai phải có
+  profile/contract riêng cho tools, plan/state, steps và tổng budget; không dùng
+  ngân sách one-shot này cho agentic workflow.
   Decision #6e chốt UI inline tối giản: một ô câu hỏi/nút gửi, loading và chặn
   submit trùng; answer Markdown an toàn; click/keyboard citation `[n]` cuộn và
   focus source card tương ứng ngay dưới answer. Card chỉ hiển thị title,
@@ -361,14 +378,27 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   trong phase evaluation hiện hành.
 - Taxonomy sản phẩm vẫn có năm domain; P7 chỉ là cách chia việc authoring/review.
 
-## Nội dung chưa chốt
+Phase 3 đã User-closed ngày 2026-09-12. Phase 4 đã ingest và kiểm chứng bốn
+canonical dense+sparse collections, independent final review đạt
+`PASS WITH LIMITATIONS`, rồi được User xác nhận closure ngày 2026-09-13.
+
+Phase 5 package ngày 2026-09-13 đã qua ba correction, independent review và
+User closure ngày 2026-09-14. Implementation gồm hai retrieval
+treatments (`dense_bm25_rrf`, `native_hybrid_rrf`), optional MiniLM, Python RRF,
+Top30→Top10, private `RetrievalTrace`, strict readiness và real seven-P7/16-cell
+verification. Bốn canonical collections chỉ read-only; isolated absent
+experiment authority của Phase 5 đã kết thúc. Quality benchmark vẫn chờ exact
+Phase 8 lifecycle gate. Context/API/static UI thuộc Phase 6 package hiện đã
+pause để chờ metadata redesign.
+
+## Thiết kế umbrella đã chốt — lịch sử quyết định
 
 Golden schema, authoring P7, review, merge/shuffle, smoke và full-evaluation
 contracts đã chốt ở mức design notes. Verified Architecture Extraction từ
 `llm_rag` đã được approved làm evidence companion sau closure ngày 2026-09-11.
 
-Decision Queue hiện hoạt động tại mục #6. Mỗi lượt chỉ hỏi một quyết định có ảnh
-hưởng contract, cập nhật câu trả lời vào guide/decision notes trước mục kế tiếp:
+Decision Queue đã hoàn tất và được đưa vào umbrella Written Spec/Plan. Các mục
+dưới đây là lịch sử quyết định, không phải active task song song:
 
 1. **Đã chốt 2026-09-11 — lexical baseline/sparse consumer:** baseline A dùng
    dense candidates + BM25 local; hybrid là controlled candidate có sparse query
@@ -377,34 +407,37 @@ hưởng contract, cập nhật câu trả lời vào guide/decision notes trư�
    mới/rỗng; cho phép nhiều experiment collections, không reconcile in place.
    Exact replacement và cleanup cần target/approval riêng; sau benchmark đề xuất
    giữ khoảng 1–3 collections tốt nhất.
-3. **Đã chốt 2026-09-11 — payload/source locator:** point ID và dense/sparse
-   vectors dùng trường Qdrant chuẩn; payload chỉ có `search_text`, `source`,
-   `title`, `heading_path`, `evidence_parts`. Không lặp model/hash/domain metadata
-   ở từng point.
+3. **Đã chốt 2026-09-11, mở lại để đánh giá 2026-09-29 — payload/source
+   locator:** artifact hiện có dùng point ID và dense/sparse vectors ở trường
+   Qdrant chuẩn; payload có `search_text`, `source`, `title`, `heading_path`,
+   `evidence_parts`. User đã dừng Phase 6 để đánh giá lại metadata theo consumer;
+   contract thay thế chưa được thiết kế hoặc duyệt.
 4. **Đã chốt 2026-09-11 — retrieval/fusion/reranker matrix:** staged comparison
    baseline A với native hybrid bằng RRF; chỉ retrieval finalists so một
    reranker với no-rerank. Báo exact metrics/results, không full Cartesian matrix
    hoặc chọn winner trước evidence.
 5. **Đã chốt 2026-09-11 — representation B timing:** staged finalists sau
    representation A; dùng API/index/full-corpus run thật, không dùng mock làm
-   official evidence. User chấp nhận chi phí thực nghiệm.
-6. **Đang chốt — context/generator/API/citation/frontend:** #6a strict minimal
+   official evidence. Phase 6 amendment 2026-09-14 cấm mock/fake/stub trong
+   implementation/acceptance evidence và cho phép bounded paid run.
+6. **Đã chốt — context/generator/API/citation/frontend:** #6a strict minimal
    response/citation/error, #6b dynamic-per-profile/fixed-per-run context budget
-   và #6c Qwen/OpenRouter pinned-provider + OpenAI judge separation đã chốt;
-   #6d chốt exact profile 16384/2048/512, B output 256, temperature 0, timeout
-   90 giây và agentic profile riêng; #6e chốt UI inline citation/source cards.
-   Decision #6 đã đủ đầu vào cho Written Spec.
+   và #6c Qwen/OpenRouter + OpenAI judge separation đã chốt. Phase 6 amendment
+   bỏ provider pin, cho same-model OpenRouter routing với
+   `require_parameters=true`; #6d chốt exact profile 16384/2048/512, B output
+   256, temperature 0, timeout 90 giây, direct `AsyncOpenAI` và agentic profile
+   riêng; #6e chốt UI inline citation/source cards.
 7. metric thresholds/cutover chỉ sau khi có full-corpus baseline thật.
 
 Decision #6 được chốt theo từng subdecision có một consumer rõ. #6a public
 response/citation/error, #6b context budget, #6c generator/provider + judge
 separation, #6d exact generator settings/numeric budgets và #6e UI interaction
-đã chốt. Không gom thêm agentic workflow vào MVP; bước kế tiếp là Written Spec.
+đã chốt. Không gom thêm agentic workflow vào MVP; umbrella Written Spec đã được
+User duyệt ngày 2026-09-11.
 
 Các quyết định chunking, embedding, ingestion/indexing, retrieval/reranking,
-context/generation, API/frontend và evaluation sẽ được gom thành một written
-spec toàn corpus. Những ghi chú hiện có trong `docs/superpowers/` là đầu vào cho
-spec đó, chưa phải spec hoặc plan được duyệt.
+context/generation, API/frontend và evaluation đã được gom trong umbrella
+Written Spec. Exact phase spec/plan mới hơn vẫn có ưu tiên cho phase đang active.
 
 Các quyết định đã chốt không hỏi lại: A theo cấu trúc Markdown; B giữ nguyên A
 và chỉ bổ sung chọn lọc; Top-5 primary chunks; reranker là capability MVP nhưng
@@ -430,10 +463,17 @@ baseline.
 6. Phase 3 Written Spec, Implementation Plan và Review Contract đã được User
    duyệt ngày 2026-09-12; implementation đã independent review và User-closed.
 7. Phase 4 conceptual design, Written Spec, Implementation Plan và Review
-   Contract đã được User duyệt ngày 2026-09-12.
-8. **Hiện hành:** `CURRENT_HANDOFF.md` giao Implementer thực hiện Phase 4 Tasks
-   1–6 và một exact read-only four-target preflight. Dense full-corpus và mọi
-   Qdrant write vẫn đóng tới post-preflight User approval riêng.
+   Contract đã được User duyệt ngày 2026-09-12; implementation/final review đã
+   hoàn tất và User xác nhận closure ngày 2026-09-13.
+8. Phase 5 Written Spec, Implementation Plan và Review Contract đã được User
+   duyệt ngày 2026-09-13; implementation qua ba correction đã independent review
+   đạt và User-closed ngày 2026-09-14.
+9. Full-corpus Phase 6 Written Spec và Implementation Plan kèm Review Contract
+   đã hoàn tất ngày 2026-09-14 nhưng bị User pause trước implementation ngày
+   2026-09-29.
+10. **Hiện hành:** `CURRENT_HANDOFF.md` giao Reviewer đánh giá lại metadata và
+    blast radius xuyên Phase 2/4/5/6. Không có runtime, paid API, Qdrant mutation,
+    rebuild, cutover hoặc Git authority trong design handoff kế tiếp.
 
 Không pre-create hoặc cố định tên ngày cho spec/plan trước gate. Reviewer chọn
 exact path khi bắt đầu artifact sau khi decision queue đủ; path không tự tạo
@@ -442,6 +482,11 @@ approval.
 ## Tài liệu hiện hành
 
 - Trạng thái task: `session_prompt/CURRENT_HANDOFF.md`.
+- Active Full-corpus Phase 6 guide/spec/plan:
+  `guides/phase_6_generation_api.md`,
+  `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md`
+  và
+  `docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md`.
 - Phase 2 final review/closure:
   `reports/full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md` và
   `reports/user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`.
