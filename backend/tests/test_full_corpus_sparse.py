@@ -23,7 +23,7 @@ from backend.scoring.bm25 import BM25
 def make_chunk(chunk_id: str, text: str) -> FullCorpusChunk:
     return FullCorpusChunk(
         chunk_id=chunk_id,
-        source="knowledge-base-hue/foods/test.md",
+        source="foods/test.md",
         title="Tiêu đề thử nghiệm",
         heading_path=["Mục 1"],
         evidence_parts=[],

@@ -31,10 +31,13 @@ việc đó. Khi các nguồn mâu thuẫn, áp dụng thứ tự nguồn sự t
 - Full-corpus Phase 2 đã được User xác nhận closure ngày 2026-09-12. Evidence
   quan sát: 205 file, 8.460 chunks, ba condition rules, zero errors/oversized.
 - Full-corpus Phase 3 đã independent review và User-closed ngày 2026-09-12.
-- Phase 4 conceptual design, Written Spec, Plan và Review Contract đã được User
-  duyệt; `CURRENT_HANDOFF.md` giao **Implementer/implementation** Tasks 1–6,
-  risk `high`, Git `none` và exact four-target read-only preflight.
-- Chưa cấp quyền dense toàn corpus, Qdrant write, benchmark winner hoặc cutover.
+- Full-corpus Metadata v2 Gate 1 và Gate 2 đã independent review rồi User-closed
+  ngày 2026-09-29. Bốn metadata-v2 targets đã verify đủ 33.840 points, exact
+  payload/vector equality, v2 lineage và legacy immutability.
+- `CURRENT_HANDOFF.md` giao **Implementer/implementation** riêng Gate 3 / Task 6,
+  risk `high`, Git `none`: strict runtime retrieval cutover, focused tests và
+  selected read-only smoke. Task 7, cleanup/delete, re-embedding, evaluation và
+  Phase 6 chưa được mở.
 - Tài liệu active/tương lai chỉ dùng thuật ngữ `Phase`. Chuỗi `wave` chỉ còn
   xuất hiện trong exact filename lịch sử đã đóng và không phải lifecycle mới.
 
@@ -42,8 +45,8 @@ việc đó. Khi các nguồn mâu thuẫn, áp dụng thứ tự nguồn sự t
 
 | Cần biết | Nguồn nên đọc | Không dùng làm nguồn chính |
 |---|---|---|
-| Task Phase 4 hiện tại | `session_prompt/CURRENT_HANDOFF.md`; `guides/phase_4_qdrant_ingestion.md`; exact Phase 4 spec/plan ngày 2026-09-12 | Report/prompt Phase 3 không mở live-write scope |
-| Full-corpus decisions | Umbrella spec/plan và exact Phase 4 spec/plan | Brainstorming context chỉ là reference lịch sử |
+| Metadata v2 Gate 3 hiện tại | `session_prompt/CURRENT_HANDOFF.md`; `guides/full_corpus_rag.md`; exact Metadata v2 spec/plan ngày 2026-09-29 | Gate 1/2 reports là evidence đã đóng, không mở Task 7 hoặc Phase 6 |
+| Full-corpus decisions | Umbrella spec/plan và exact Metadata v2 spec/plan | Brainstorming context chỉ là reference lịch sử |
 | Closure Phase 2 | `full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`; `user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`; preview JSON | Initial/correction reports riêng lẻ nếu không điều tra lịch sử finding |
 | Kiến trúc `llm_rag` | `llm_rag_verified_architecture_extraction_2026_09_11.md`; Codex review tương ứng | Survey dài `llm_rag_full_project_reference_survey_2026_09_11.md` là working/non-canonical |
 | Simplicity của `rag_old_0` | `full_corpus_rag_old_0_evaluation_simplicity_survey_2026_09_10.md`; Codex review tương ứng | Các correction prompt là lịch sử chỉ dẫn, không phải kết luận |

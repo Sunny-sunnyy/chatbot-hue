@@ -67,6 +67,7 @@ class FullCorpusCandidate:
     candidate_id: str
     collection_name: str
     dense_spec: DenseModelSpec
+    metadata_v2_collection_name: str
 
 
 _COLLECTION_BY_CANDIDATE = {
@@ -75,10 +76,26 @@ _COLLECTION_BY_CANDIDATE = {
     "huydang-dek21-768": "hue_full_corpus_a_huydang_dek21_768",
     "qwen3-embedding-0.6b-1024": "hue_full_corpus_a_qwen3_06b_1024",
 }
+_METADATA_V2_COLLECTION_BY_CANDIDATE = {
+    "e5-small-384": "hue_full_corpus_a_e5_small_384_metadata_v2",
+    "e5-base-768": "hue_full_corpus_a_e5_base_768_metadata_v2",
+    "huydang-dek21-768": "hue_full_corpus_a_huydang_dek21_768_metadata_v2",
+    "qwen3-embedding-0.6b-1024": "hue_full_corpus_a_qwen3_06b_1024_metadata_v2",
+}
 if set(_COLLECTION_BY_CANDIDATE) != {spec.key for spec in DENSE_MODEL_SPECS}:
     raise RuntimeError("Phase 4 collection mapping does not match Phase 3 dense specs")
+if set(_METADATA_V2_COLLECTION_BY_CANDIDATE) != {spec.key for spec in DENSE_MODEL_SPECS}:
+    raise RuntimeError("Metadata v2 collection mapping does not match Phase 3 dense specs")
+if len(set(_COLLECTION_BY_CANDIDATE.values()) | set(_METADATA_V2_COLLECTION_BY_CANDIDATE.values())) != 8:
+    raise RuntimeError("Collection names must be 8 unique names")
+
 FULL_CORPUS_CANDIDATES = tuple(
-    FullCorpusCandidate(spec.key, _COLLECTION_BY_CANDIDATE[spec.key], spec)
+    FullCorpusCandidate(
+        spec.key,
+        _COLLECTION_BY_CANDIDATE[spec.key],
+        spec,
+        _METADATA_V2_COLLECTION_BY_CANDIDATE[spec.key],
+    )
     for spec in DENSE_MODEL_SPECS
 )
 

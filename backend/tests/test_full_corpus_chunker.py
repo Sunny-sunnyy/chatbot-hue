@@ -22,7 +22,14 @@ import pytest
 from pyvi import ViTokenizer
 from transformers import AutoTokenizer
 
-from core.schema import EvidencePart, FullCorpusChunk, point_id_for_chunk_id
+from core.schema import (
+    EvidencePart,
+    FullCorpusChunk,
+    point_id_for_chunk_id,
+    FULL_CORPUS_DOMAINS,
+    domain_for_source,
+    validate_chunk_id,
+)
 from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
 from ingestion.chunking.full_corpus_chunker import (
     ConditionManager,
@@ -411,7 +418,7 @@ def test_oversized_paragraph_sentence_boundary_split():
         "Câu thứ hai trình bày chi tiết về kiến trúc các gian điện và tượng Phật thờ phụng bên trong. "
         "Câu thứ ba kết luận về giá trị tâm linh sâu sắc đối với Phật tử bốn phương về chiêm bái."
     )
-    doc = parse_markdown_blocks("para.md", text)
+    doc = parse_markdown_blocks("foods/para.md", text)
     assert len(doc.blocks) == 1
 
     # Budget function forcing splitting across sentences
@@ -440,12 +447,12 @@ def test_oversized_table_row_split_preserves_header_and_condition(tmp_path):
         "| Vé trẻ em | 50.000đ |\n"
         "| Vé sinh viên | 70.000đ |\n"
     )
-    doc = parse_markdown_blocks("table.md", text)
+    doc = parse_markdown_blocks("foods/table.md", text)
     assert len(doc.blocks) == 2
 
     cond_file = tmp_path / "cond.json"
     cond_file.write_text(json.dumps([{
-        "source": "table.md",
+        "source": "foods/table.md",
         "condition": {"heading_path": [], "block_type": "paragraph", "exact_text": "Đoạn dẫn điều kiện giá vé."},
         "targets": [{"heading_path": ["Bảng Dịch Vụ"], "block_type": "table", "exact_text": "| Loại vé | Giá vé |\n|---|---:|\n| Vé người lớn | 100.000đ |\n| Vé trẻ em | 50.000đ |\n| Vé sinh viên | 70.000đ |"}],
     }]), encoding="utf-8")
@@ -482,7 +489,7 @@ def test_oversized_nested_list_split_preserves_parent_and_sub_items():
         "  - Điều hai: Giữ gìn vệ sinh và không xả rác bừa bãi.\n"
         "  - Điều ba: Không tự ý chạm vào hiện vật trưng bày.\n"
     )
-    doc = parse_markdown_blocks("list.md", text)
+    doc = parse_markdown_blocks("foods/list.md", text)
     assert len(doc.blocks) == 1
 
     # Budget function forcing each sub-item into separate chunk
@@ -511,7 +518,7 @@ def test_sentence_boundary_splitting_preserves_label_and_exact_spans():
         "Câu thứ tư khẳng định công cuộc trùng tu lớn lao. "
         "Câu thứ năm mở đầu cho thời kỳ phục hưng đương đại."
     )
-    doc = parse_markdown_blocks("test_split.md", raw_md)
+    doc = parse_markdown_blocks("foods/test_split.md", raw_md)
     assert len(doc.blocks) == 1
     block = doc.blocks[0]
     assert block.block_type == "list_item"
@@ -1042,3 +1049,64 @@ def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
     assert sum(p["chunk_count"] for p in preview_data["p7_breakdown"].values()) == expected_chunks
     assert sum(d["file_count"] for d in preview_data["domain_breakdown"].values()) == expected_files
     assert sum(p["file_count"] for p in preview_data["p7_breakdown"].values()) == expected_files
+
+
+# --- 11. Metadata v2: Domain and Chunk Identity Relations ---
+
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        ("foods/a.md", "foods"),
+        ("heritages/a.md", "heritages"),
+        ("festivals/a.md", "festivals"),
+        ("performing_arts/a.md", "performing_arts"),
+        ("travel/places/a.md", "travel"),
+        ("travel/services/a.md", "travel"),
+        ("travel/tickets/a.md", "travel"),
+    ],
+)
+def test_domain_for_source_is_exact(source, expected):
+    assert domain_for_source(source) == expected
+
+
+@pytest.mark.parametrize(
+    "source",
+    ["tourism/a.md", "/foods/a.md", "foods\\a.md", "foods/../a.md", ""],
+)
+def test_domain_for_source_rejects_noncanonical_source(source):
+    with pytest.raises(ValueError):
+        domain_for_source(source)
+
+
+def test_chunk_payload_v2_and_identity_relation():
+    chunk = FullCorpusChunk(
+        chunk_id="foods/test.md#0",
+        source="foods/test.md",
+        title="Món Huế",
+        heading_path=["Tóm tắt"],
+        evidence_parts=[EvidencePart(role="body", start=0, end=7, text="Bún bò")],
+        search_text="Món Huế\nTóm tắt\nBún bò",
+    )
+    assert chunk.domain == "foods"
+    assert set(chunk.to_qdrant_payload()) == {
+        "search_text", "source", "title", "heading_path", "evidence_parts",
+        "chunk_id", "domain",
+    }
+    assert chunk.to_qdrant_payload()["chunk_id"] == chunk.chunk_id
+    assert chunk.to_qdrant_payload()["domain"] == "foods"
+    assert validate_chunk_id(chunk.source, chunk.chunk_id) == 0
+
+
+@pytest.mark.parametrize(
+    ("source", "chunk_id"),
+    [
+        ("foods/test.md", "foods/other.md#0"),
+        ("foods/test.md", "foods/test.md"),
+        ("foods/test.md", "foods/test.md#-1"),
+        ("foods/test.md", "foods/test.md#01"),
+        ("foods/test.md", "foods/test.md#abc"),
+    ],
+)
+def test_validate_chunk_id_rejects_invalid_ordinal_or_prefix(source, chunk_id):
+    with pytest.raises(ValueError):
+        validate_chunk_id(source, chunk_id)

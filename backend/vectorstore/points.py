@@ -6,11 +6,19 @@ import numpy as np
 from qdrant_client import models
 
 try:
-    from backend.core.schema import FullCorpusChunk
+    from backend.core.schema import (
+        FullCorpusChunk,
+        point_id_for_chunk_id,
+        validate_chunk_id,
+    )
     from backend.embedding.full_corpus import validate_vector_matrix
     from backend.embedding.sparse import SparseState, SparseVector, encode_sparse_document
 except ModuleNotFoundError:
-    from core.schema import FullCorpusChunk
+    from core.schema import (
+        FullCorpusChunk,
+        point_id_for_chunk_id,
+        validate_chunk_id,
+    )
     from embedding.full_corpus import validate_vector_matrix
     from embedding.sparse import SparseState, SparseVector, encode_sparse_document
 
@@ -95,9 +103,13 @@ def validate_full_corpus_point_inputs(
     if len(set(point_ids)) != len(point_ids):
         raise ValueError("Duplicate point ID in full corpus")
     required_payload = {
-        "search_text", "source", "title", "heading_path", "evidence_parts"
+        "search_text", "source", "title", "heading_path", "evidence_parts",
+        "chunk_id", "domain",
     }
     for chunk in chunks:
+        validate_chunk_id(chunk.source, chunk.chunk_id)
+        if chunk.point_id != point_id_for_chunk_id(chunk.chunk_id):
+            raise ValueError(f"Point ID mismatch for chunk: {chunk.chunk_id}")
         if set(chunk.to_qdrant_payload()) != required_payload:
             raise ValueError(f"Payload fields mismatch for {chunk.chunk_id}")
         sparse = encode_sparse_document(
@@ -122,13 +134,17 @@ def build_full_corpus_point_batch(
         raise ValueError("Duplicate chunk_id in full-corpus point batch")
     points: list[models.PointStruct] = []
     for chunk, dense_row in zip(chunks, dense_rows, strict=True):
+        validate_chunk_id(chunk.source, chunk.chunk_id)
+        if chunk.point_id != point_id_for_chunk_id(chunk.chunk_id):
+            raise ValueError(f"Point ID mismatch for chunk: {chunk.chunk_id}")
         sparse = encode_sparse_document(
             chunk.search_text, sparse_state, vocabulary_index
         )
         _validate_sparse_vector(chunk.chunk_id, sparse)
         payload = chunk.to_qdrant_payload()
         if set(payload) != {
-            "search_text", "source", "title", "heading_path", "evidence_parts"
+            "search_text", "source", "title", "heading_path", "evidence_parts",
+            "chunk_id", "domain",
         }:
             raise ValueError(f"Payload fields mismatch for {chunk.chunk_id}")
         points.append(models.PointStruct(

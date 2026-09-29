@@ -1,0 +1,69 @@
+{
+  "status": "READY",
+  "schema_version": "phase_4_metadata_v2_preflight:v1",
+  "summary": {
+    "total_pairs": 4,
+    "ready_pairs": 4,
+    "blocked_pairs": 0,
+    "total_mutations": 0
+  },
+  "candidates": [
+    {
+      "candidate_id": "e5-small-384",
+      "source_collection": "hue_full_corpus_a_e5_small_384",
+      "target_collection": "hue_full_corpus_a_e5_small_384_metadata_v2",
+      "dimension": 384,
+      "source_points_count": 8460,
+      "source_build_record_sha256": "ea19021a57c1adb9b283b3198d4883d26f0f18a2451eaf2eaafc815f83571c76",
+      "corpus_identity": "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223",
+      "sparse_state_sha256": "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be",
+      "target_collection_absent": true,
+      "target_build_record_absent": true,
+      "status": "READY",
+      "errors": []
+    },
+    {
+      "candidate_id": "e5-base-768",
+      "source_collection": "hue_full_corpus_a_e5_base_768",
+      "target_collection": "hue_full_corpus_a_e5_base_768_metadata_v2",
+      "dimension": 768,
+      "source_points_count": 8460,
+      "source_build_record_sha256": "0cd69406b4bc8ab17953ea0abac3c93011660882cf34c85b0b8645b095ea9d7b",
+      "corpus_identity": "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223",
+      "sparse_state_sha256": "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be",
+      "target_collection_absent": true,
+      "target_build_record_absent": true,
+      "status": "READY",
+      "errors": []
+    },
+    {
+      "candidate_id": "huydang-dek21-768",
+      "source_collection": "hue_full_corpus_a_huydang_dek21_768",
+      "target_collection": "hue_full_corpus_a_huydang_dek21_768_metadata_v2",
+      "dimension": 768,
+      "source_points_count": 8460,
+      "source_build_record_sha256": "10b3f847d9e30bf06acc0e21d83a1cb4b166455bef45c0dd3d5703b3f8371c4a",
+      "corpus_identity": "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223",
+      "sparse_state_sha256": "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be",
+      "target_collection_absent": true,
+      "target_build_record_absent": true,
+      "status": "READY",
+      "errors": []
+    },
+    {
+      "candidate_id": "qwen3-embedding-0.6b-1024",
+      "source_collection": "hue_full_corpus_a_qwen3_06b_1024",
+      "target_collection": "hue_full_corpus_a_qwen3_06b_1024_metadata_v2",
+      "dimension": 1024,
+      "source_points_count": 8460,
+      "source_build_record_sha256": "2faa9d4f102127093c0ebd5c14c19eef3bd7743ca0e34d434beb5aa40919bdd5",
+      "corpus_identity": "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223",
+      "sparse_state_sha256": "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be",
+      "target_collection_absent": true,
+      "target_build_record_absent": true,
+      "status": "READY",
+      "errors": []
+    }
+  ],
+  "errors": []
+}
