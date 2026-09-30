@@ -1,23 +1,25 @@
 # Phase 6: Grounded answer generation và JSON API
 
-> **Full-corpus Phase 6 — paused trước implementation, 2026-09-29:** Phase 5 đã
-> User-closed và package Phase 6 ngày 2026-09-14 được giữ làm lịch sử đã duyệt.
-> User đã dừng Phase 6 trước Task 1 để đánh giá lại metadata xuyên Phase 2/4/5/6.
-> Spec/Plan cũ không còn cấp authority code/test/startup, năm Qwen calls hoặc
-> runtime action. Current handoff thuộc Reviewer `next_design`.
+> **Full-corpus Phase 6 — implementation handoff active, 2026-09-30:** Metadata
+> v2 Tasks 1–7 đã User-closed. User đã duyệt amendment, Implementation Plan và
+> Review Contract mới; `CURRENT_HANDOFF.md` cấp một implementation scope cho
+> Implementer. Không commit/push, không mutation Qdrant và không chạy paid call
+> trước non-paid gate.
 
-## Full-corpus package đang pause
+## Full-corpus package hiện hành
 
-Các artifact dưới đây là reference cho dependency/blast-radius analysis, không
-phải nguồn triển khai cho tới khi metadata redesign được User duyệt:
+Các artifact hiện hành theo thứ tự ưu tiên:
 
 ```text
-docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md
-docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
+docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md
+docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md
 session_prompt/CURRENT_HANDOFF.md
 ```
 
-Contract đã duyệt ngày 2026-09-14, hiện đang pause, tóm tắt:
+Spec và plan ngày 2026-09-14 là canonical history cho behavior được amendment
+giữ nguyên, nhưng không tự cấp execution authority.
+
+Contract hiện hành tóm tắt:
 
 - runtime validation dùng một cell cấu hình
   `e5-small-384 + dense_bm25_rrf + none`; không chọn winner và không bật

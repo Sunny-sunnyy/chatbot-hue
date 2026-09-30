@@ -1,16 +1,18 @@
 # Full-corpus RAG workstream
 
 ```text
-Status: Phase 2–5 User-closed; Metadata v2 Tasks 1–7 User-closed; Phase 6 remains paused
-Runtime authorization: none — cleanup and Phase 6 require new approval
+Status: Phase 2–5 and Metadata v2 Tasks 1–7 User-closed; Phase 6 implementation active
+Runtime authorization: one Phase 6 handoff — cleanup and Git remain unauthorized
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
 Completed Phase 5 package: docs/superpowers/specs/2026-09-13-phase-5-full-corpus-retrieval-reranking-written-spec.md + docs/superpowers/plans/2026-09-13-phase-5-full-corpus-retrieval-reranking-implementation-plan.md
-Paused Phase 6 spec: docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md
-Paused Phase 6 plan + Review Contract: docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
+Historical Phase 6 spec: docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md
+Historical Phase 6 plan: docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
 Approved Metadata v2 spec: docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md
 Approved Metadata v2 plan + Review Contract: docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md
+Active Phase 6 amendment: docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md
+Active Phase 6 plan + Review Contract: docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md
 ```
 
 ## Vai trò của guide này
@@ -111,7 +113,9 @@ và được User xác nhận closure ngày 2026-09-29. Gate 3 / Task 6 qua mộ
 independent review đạt và được User xác nhận closure ngày 2026-09-30. Task 7
 final regression/report/handoff sau đó qua independent final review và được
 User xác nhận closure cùng ngày. Cleanup/delete, re-embedding, evaluation và
-Phase 6 vẫn chưa có quyền.
+Git vẫn chưa có quyền. User đã duyệt Phase 6 Metadata v2 amendment,
+Implementation Plan và Review Contract ngày 2026-09-30; một Implementer handoff
+hiện active, với đúng năm Qwen attempts chỉ sau non-paid gate.
 
 Artifact Phase 4 hiện hành vẫn đúng với contract lịch sử: payload năm field,
 domain suy từ `source`, model/hash ở cấp build. Target metadata v2 thay thế cho
@@ -318,7 +322,8 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   model, retrieval, fusion và reranker tương đương. Official evidence phải từ
   API/index/full-corpus run thật. Riêng Phase 6, User đã loại cả mock/fake/stub
   khỏi implementation/acceptance evidence và chấp nhận chi phí bounded live
-  run; former bounded authority được ghi trong Phase 6 Plan hiện đã pause.
+  run; bounded authority hiện nằm trong Phase 6 plan ngày 2026-09-30, với
+  non-paid gate bắt buộc trước đúng năm Qwen attempts.
   Decision #6a chốt strict minimal public contract: success chỉ có `answer` và
   `sources`; answer dùng response-local `[n]`, mỗi source chỉ có
   `{id,title,heading_path,excerpts}` và phải được answer tham chiếu. Technical/
@@ -397,9 +402,8 @@ treatments (`dense_bm25_rrf`, `native_hybrid_rrf`), optional MiniLM, Python RRF,
 Top30→Top10, private `RetrievalTrace`, strict readiness và real seven-P7/16-cell
 verification. Bốn canonical collections chỉ read-only; isolated absent
 experiment authority của Phase 5 đã kết thúc. Quality benchmark vẫn chờ exact
-Phase 8 lifecycle gate. Context/API/static UI thuộc Phase 6 package hiện đã
-pause cho tới khi Metadata v2 hoàn tất các gate, được User closure và Phase 6
-nhận approval mới.
+Phase 8 lifecycle gate. Metadata v2 đã User-closed; context/API/static UI thuộc
+Phase 6 package ngày 2026-09-30 hiện có một implementation handoff active.
 
 ## Thiết kế umbrella đã chốt — lịch sử quyết định
 
@@ -493,8 +497,9 @@ baseline.
 12. Metadata v2 Gate 3 / Task 6 strict runtime cutover đã qua Correction 1;
     Task 7 final review đạt `158 passed` và complete verification đủ 33.840
     points. Toàn bộ Tasks 1–7 được User xác nhận closure ngày 2026-09-30.
-    Cleanup/delete, re-embedding, evaluation, paid API/model và Phase 6 không
-    thuộc authority.
+13. Phase 6 Metadata v2 amendment, Implementation Plan và Review Contract được
+    User duyệt ngày 2026-09-30. Một Implementer handoff hiện active; cleanup,
+    re-embedding, evaluation ngoài plan và Git không thuộc authority.
 
 Không pre-create hoặc cố định tên ngày cho spec/plan trước gate. Reviewer chọn
 exact path khi bắt đầu artifact sau khi decision queue đủ; path không tự tạo
@@ -510,8 +515,12 @@ approval.
   final closure tại
   `reports/full_corpus_metadata_v2_final_codex_review_2026_09_29.md` và
   `reports/user_reports/full_corpus_metadata_v2_final_user_report_2026_09_30.md`.
-- Paused Full-corpus Phase 6 guide/spec/plan:
+- Active Full-corpus Phase 6 guide/amendment/plan:
   `guides/phase_6_generation_api.md`,
+  `docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md`
+  và
+  `docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md`.
+- Historical Phase 6 behavior package retained by reference:
   `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md`
   và
   `docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md`.

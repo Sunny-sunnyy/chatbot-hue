@@ -20,22 +20,23 @@
 > review đạt và được User xác nhận closure ngày 2026-09-14. Bốn canonical
 > Phase 4 collections là read-only;
 > không có quyền replace/delete/cleanup, production cutover hoặc Git write.
-> Full-corpus Phase 6 đã hoàn tất brainstorming/Written Spec/Implementation
-> Plan + Review Contract ngày 2026-09-14, nhưng User đã dừng package trước
-> implementation ngày 2026-09-29 để đánh giá lại metadata xuyên Phase 2/4/5/6.
-> Không còn runtime hay paid-call authority từ package Phase 6 cũ.
+> Full-corpus Phase 6 bị dừng trước implementation ngày 2026-09-29 để đánh giá
+> lại metadata xuyên Phase 2/4/5/6. Metadata v2 Tasks 1–7 đã User-closed; User
+> duyệt Phase 6 Metadata v2 amendment/plan/Review Contract và mở một Implementer
+> handoff ngày 2026-09-30. Package Phase 6 cũ chỉ còn là history được plan mới
+> tham chiếu.
 > Agentic RAG dùng profile/contract riêng.
 > Xem [bộ handoff](../handoff_prompt/README.md).
 
 
-## Workstream toàn corpus — Metadata redesign gate, cập nhật 2026-09-29
+## Workstream toàn corpus — Phase 6 implementation gate, cập nhật 2026-09-30
 
 Written Spec, Implementation Plan và Review Contract umbrella đã được User
-duyệt; Phase 2–5 đã User-closed và Full-corpus retrieval trên bốn dense+sparse
-collections đã được kiểm chứng. Phase 6 Spec/Plan được giữ làm lịch sử, nhưng
-implementation đã bị dừng trước Task 1. Current handoff giao Reviewer đánh giá
-lại metadata và blast radius trước khi sửa spec/plan. Các trạng thái `approved` lịch sử trong bảng không tự mở
-phase/live gate full-corpus khác. Guide umbrella
+duyệt; Phase 2–5 và Metadata v2 Tasks 1–7 đã User-closed, bốn metadata-v2
+collections đã được kiểm chứng. Phase 6 package ngày 2026-09-14 được giữ làm
+lịch sử; amendment/plan ngày 2026-09-30 và current handoff cấp một scope cho
+Implementer. Các trạng thái `approved` lịch sử trong bảng không tự mở phase/live
+gate full-corpus khác. Guide umbrella
 [Full-corpus RAG](full_corpus_rag.md) giữ phạm vi, quyết định đã chốt và chuỗi
 duyệt; guide Phase 2–8 hiện có tiếp tục mô tả behavior Foods đã thực hiện.
 
@@ -52,9 +53,9 @@ Terminology đã được User chốt ngày 2026-09-12: active/future work chỉ
 [`CURRENT_HANDOFF.md`](../session_prompt/CURRENT_HANDOFF.md), rồi targeted-read
 các contract metadata/payload/source-locator trong guide Phase 2, 4, 5, 6 và
 [Full-corpus RAG](full_corpus_rag.md). Phase 6
-[Written Spec](../docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md)
-và [Implementation Plan](../docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md)
-chỉ là reference cho blast-radius analysis tới khi metadata design được duyệt lại.
+[amendment](../docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md)
+và [Implementation Plan](../docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md)
+là authority hiện hành; package ngày 2026-09-14 là history được tham chiếu.
 [Full-corpus RAG](full_corpus_rag.md),
 [bản ghi quyết định](../docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md)
 và
@@ -154,13 +155,13 @@ khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
 | 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Full-corpus implementation đã independent review và User-closed |
 | 4 | `phase_4_qdrant_ingestion.md` | `approved` | Full-corpus four-collection ingestion User-closed 2026-09-13 |
 | 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Full-corpus implementation User-closed 2026-09-14; Foods result remains history |
-| 6 | `phase_6_generation_api.md` | `paused_before_implementation` | Chờ metadata redesign; spec/plan 2026-09-14 không còn runtime authority |
+| 6 | `phase_6_generation_api.md` | `implementation_active` | Metadata v2 amendment/plan approved; một Implementer handoff active |
 | 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
 | 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Foods Notebooks 08a–08c approved; Full-corpus benchmark waits for Phase 5–7 dependencies |
 | 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
 
-Workstream `full_corpus_rag.md` đã closure Phase 2–5. Phase 6 dừng trước
-implementation; current authority chỉ là Reviewer assessment/design metadata.
+Workstream `full_corpus_rag.md` đã closure Phase 2–5 và Metadata v2 Tasks 1–7.
+Phase 6 hiện có một Implementer handoff theo plan ngày 2026-09-30.
 
 Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
 
