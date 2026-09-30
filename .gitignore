@@ -22,6 +22,7 @@ data/
 logs/
 tai_lieu/
 qdrant_storage/
+knowledge-base-hue/
 
 # OS/editor noise
 .DS_Store
