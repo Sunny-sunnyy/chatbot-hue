@@ -28,7 +28,11 @@ try:
         RetrievalConfigurationError,
         RetrievalDependencyError,
         RetrievedDocument,
+        domain_for_source,
+        point_id_for_chunk_id,
+        validate_chunk_id,
     )
+    from backend.core.settings_loader import load_settings
     from backend.embedding.full_corpus import (
         FullCorpusDenseRunner,
         resolve_snapshot,
@@ -48,6 +52,13 @@ try:
         EXPECTED_CORPUS_IDENTITY,
         EXPECTED_SPARSE_SHA256,
     )
+    from backend.ingestion.source_state import (
+        FULL_CORPUS_BUILD_SCHEMA_V2,
+        FULL_CORPUS_PAYLOAD_SCHEMA_V2,
+        compute_corpus_state,
+        discover_full_corpus_files,
+        verify_full_corpus_record_freshness,
+    )
     from backend.reranking.cross_encoder import CrossEncoderReranker
     from backend.vectorstore.qdrant import (
         client_from_settings,
@@ -60,7 +71,11 @@ except ModuleNotFoundError:
         RetrievalConfigurationError,
         RetrievalDependencyError,
         RetrievedDocument,
+        domain_for_source,
+        point_id_for_chunk_id,
+        validate_chunk_id,
     )
+    from core.settings_loader import load_settings
     from embedding.full_corpus import (
         FullCorpusDenseRunner,
         resolve_snapshot,
@@ -79,6 +94,13 @@ except ModuleNotFoundError:
         EXPECTED_CHUNK_COUNT,
         EXPECTED_CORPUS_IDENTITY,
         EXPECTED_SPARSE_SHA256,
+    )
+    from ingestion.source_state import (
+        FULL_CORPUS_BUILD_SCHEMA_V2,
+        FULL_CORPUS_PAYLOAD_SCHEMA_V2,
+        compute_corpus_state,
+        discover_full_corpus_files,
+        verify_full_corpus_record_freshness,
     )
     from reranking.cross_encoder import CrossEncoderReranker
     from vectorstore.qdrant import (
@@ -175,13 +197,23 @@ def compute_sparse_dot_product(query_vec: SparseVector, doc_vec: SparseVector) -
     return float(score)
 
 
-REQUIRED_PAYLOAD_FIELDS = frozenset({"search_text", "source", "title", "heading_path", "evidence_parts"})
+REQUIRED_PAYLOAD_FIELDS = frozenset(
+    {
+        "search_text",
+        "source",
+        "title",
+        "heading_path",
+        "evidence_parts",
+        "chunk_id",
+        "domain",
+    }
+)
 REQUIRED_EVIDENCE_PART_FIELDS = frozenset({"role", "start", "end", "text"})
 ALLOWED_EVIDENCE_ROLES = frozenset({"body", "header", "condition"})
 
 
 def validate_point_payload(point_id: str, payload: Any) -> dict[str, Any]:
-    """Validate that point payload is a dict with exact 5 expected fields and valid types.
+    """Validate that point payload is a dict with exact 7 expected fields and valid types.
 
     Fails closed with RetrievalDependencyError if malformed.
     """
@@ -210,6 +242,31 @@ def validate_point_payload(point_id: str, payload: Any) -> dict[str, Any]:
     if not isinstance(payload["evidence_parts"], list):
         raise RetrievalDependencyError(f"Point {point_id} evidence_parts must be list")
 
+    source = payload["source"]
+    chunk_id = payload["chunk_id"]
+    domain = payload["domain"]
+
+    try:
+        validate_chunk_id(source, chunk_id)
+    except Exception:
+        raise RetrievalDependencyError(f"Point {point_id} has invalid chunk identity relation") from None
+
+    try:
+        expected_point_id = point_id_for_chunk_id(chunk_id)
+    except Exception:
+        raise RetrievalDependencyError(f"Point {point_id} cannot compute point ID from chunk identity") from None
+
+    if str(expected_point_id) != str(point_id):
+        raise RetrievalDependencyError(f"Point {point_id} chunk identity does not match point ID")
+
+    try:
+        expected_domain = domain_for_source(source)
+    except Exception:
+        raise RetrievalDependencyError(f"Point {point_id} has invalid source for domain derivation") from None
+
+    if domain != expected_domain:
+        raise RetrievalDependencyError(f"Point {point_id} has domain mismatch")
+
     for idx, part in enumerate(payload["evidence_parts"]):
         if not isinstance(part, dict):
             raise RetrievalDependencyError(f"Point {point_id} evidence_parts[{idx}] must be dict")
@@ -226,9 +283,7 @@ def validate_point_payload(point_id: str, payload: Any) -> dict[str, Any]:
 
         role = part["role"]
         if not isinstance(role, str) or role not in ALLOWED_EVIDENCE_ROLES:
-            raise RetrievalDependencyError(
-                f"Point {point_id} evidence_parts[{idx}] invalid role: {role!r}. Allowed: {sorted(ALLOWED_EVIDENCE_ROLES)}"
-            )
+            raise RetrievalDependencyError(f"Point {point_id} evidence_parts[{idx}] invalid role")
 
         text = part["text"]
         if not isinstance(text, str):
@@ -242,11 +297,162 @@ def validate_point_payload(point_id: str, payload: Any) -> dict[str, Any]:
             or start < 0
             or end < start
         ):
-            raise RetrievalDependencyError(
-                f"Point {point_id} evidence_parts[{idx}] invalid start/end offsets: start={start!r}, end={end!r}"
-            )
+            raise RetrievalDependencyError(f"Point {point_id} evidence_parts[{idx}] invalid start/end offsets")
 
     return payload
+
+
+def format_stage_entry(
+    point_id: str,
+    payload: Mapping[str, Any],
+    rank: int,
+    score: float,
+) -> dict[str, Any]:
+    """Format an allowlisted stage row for technical trace.
+
+    Contains only point_id, chunk_id, domain, rank, score.
+    """
+    return {
+        "point_id": str(point_id),
+        "chunk_id": payload["chunk_id"],
+        "domain": payload["domain"],
+        "rank": rank,
+        "score": float(score),
+    }
+
+
+def build_retrieved_document(
+    payload: Mapping[str, Any],
+    final_score: float,
+) -> RetrievedDocument:
+    """Build canonical RetrievedDocument with logical chunk_id and 5 metadata fields."""
+    return RetrievedDocument(
+        id=payload["chunk_id"],
+        score=float(final_score),
+        text=payload["search_text"],
+        metadata={
+            "source": payload["source"],
+            "title": payload["title"],
+            "heading_path": list(payload.get("heading_path", [])),
+            "evidence_parts": list(payload.get("evidence_parts", [])),
+            "domain": payload["domain"],
+        },
+    )
+
+
+def assemble_final_documents(
+    candidate_docs: Mapping[str, Any],
+    ranked_point_ids_and_scores: Sequence[tuple[str, float]],
+) -> list[RetrievedDocument]:
+    """Assemble final RetrievedDocument list up to limit using validated candidate doc payloads."""
+    documents: list[RetrievedDocument] = []
+    for pid, score in ranked_point_ids_and_scores:
+        pt = candidate_docs[pid]
+        documents.append(build_retrieved_document(pt.payload, score))
+    return documents
+
+
+def validate_full_corpus_build_record(
+    record_data: Mapping[str, Any],
+    candidate: FullCorpusCandidate,
+    current_sources: Mapping[str, str] | None = None,
+    build_records_dir: Path | None = None,
+) -> None:
+    """Validate build record v2 contract, target, lineage, invariants, and source freshness.
+
+    Fails closed with ComponentNotReadyError.
+    """
+    if record_data.get("status") != "complete":
+        raise ComponentNotReadyError(f"Build record status is not complete: {record_data.get('status')}")
+    if record_data.get("representation") != "A":
+        raise ComponentNotReadyError(f"Build record representation is not A: {record_data.get('representation')}")
+    if record_data.get("schema_version") != FULL_CORPUS_BUILD_SCHEMA_V2:
+        raise ComponentNotReadyError(
+            f"Build record schema_version invalid: {record_data.get('schema_version')}, expected {FULL_CORPUS_BUILD_SCHEMA_V2}"
+        )
+    if record_data.get("collection_name") != candidate.metadata_v2_collection_name:
+        raise ComponentNotReadyError(
+            f"Build record collection_name mismatch: {record_data.get('collection_name')}, expected {candidate.metadata_v2_collection_name}"
+        )
+
+    qdrant_info = record_data.get("qdrant", {})
+    if not isinstance(qdrant_info, dict):
+        raise ComponentNotReadyError("Build record missing qdrant info dictionary")
+    if qdrant_info.get("payload_schema_version") != FULL_CORPUS_PAYLOAD_SCHEMA_V2:
+        raise ComponentNotReadyError(
+            f"Build record payload_schema_version invalid: {qdrant_info.get('payload_schema_version')}, expected {FULL_CORPUS_PAYLOAD_SCHEMA_V2}"
+        )
+    if qdrant_info.get("dense_vector_name") != "dense":
+        raise ComponentNotReadyError(
+            f"Build record qdrant dense_vector_name invalid: {qdrant_info.get('dense_vector_name')}, expected 'dense'"
+        )
+    if qdrant_info.get("sparse_vector_name") != "sparse":
+        raise ComponentNotReadyError(
+            f"Build record qdrant sparse_vector_name invalid: {qdrant_info.get('sparse_vector_name')}, expected 'sparse'"
+        )
+    if qdrant_info.get("distance") != "cosine":
+        raise ComponentNotReadyError(
+            f"Build record qdrant distance invalid: {qdrant_info.get('distance')}, expected 'cosine'"
+        )
+    if qdrant_info.get("point_count") != EXPECTED_CHUNK_COUNT:
+        raise ComponentNotReadyError(
+            f"Build record qdrant point_count invalid: {qdrant_info.get('point_count')}, expected {EXPECTED_CHUNK_COUNT}"
+        )
+
+    migration_info = record_data.get("migration", {})
+    if not isinstance(migration_info, dict):
+        raise ComponentNotReadyError("Build record missing migration info dictionary")
+    if migration_info.get("mode") != "copy_verified_vectors":
+        raise ComponentNotReadyError(f"Migration mode invalid: {migration_info.get('mode')}")
+    if migration_info.get("source_collection") != candidate.collection_name:
+        raise ComponentNotReadyError(
+            f"Migration source_collection mismatch: {migration_info.get('source_collection')}, expected {candidate.collection_name}"
+        )
+
+    # Read exact legacy build record selected by candidate.collection_name and verify lineage SHA-256
+    records_dir = build_records_dir if build_records_dir is not None else BUILD_RECORDS_DIR
+    legacy_record_path = records_dir / f"{candidate.collection_name}.json"
+    if not legacy_record_path.is_file():
+        raise ComponentNotReadyError(f"Legacy source build record not found: {legacy_record_path.name}")
+    try:
+        legacy_bytes = legacy_record_path.read_bytes()
+    except Exception as exc:
+        raise ComponentNotReadyError(f"Failed to read legacy source build record: {legacy_record_path.name}") from exc
+    expected_lineage_sha = hashlib.sha256(legacy_bytes).hexdigest()
+    recorded_lineage_sha = migration_info.get("source_build_record_sha256")
+    if not isinstance(recorded_lineage_sha, str) or recorded_lineage_sha != expected_lineage_sha:
+        raise ComponentNotReadyError(
+            f"Migration source_build_record_sha256 mismatch with legacy build record: {recorded_lineage_sha}, expected {expected_lineage_sha}"
+        )
+
+    corpus_info = record_data.get("corpus", {})
+    if corpus_info.get("identity") != EXPECTED_CORPUS_IDENTITY:
+        raise ComponentNotReadyError(f"Corpus identity mismatch in build record: {corpus_info.get('identity')}")
+    if corpus_info.get("chunk_count") != EXPECTED_CHUNK_COUNT:
+        raise ComponentNotReadyError(f"Chunk count mismatch in build record: {corpus_info.get('chunk_count')}")
+
+    dense_info = record_data.get("dense", {})
+    if dense_info.get("candidate_id") != candidate.candidate_id:
+        raise ComponentNotReadyError(f"Dense candidate_id mismatch: {dense_info.get('candidate_id')}")
+    if dense_info.get("dimension") != candidate.dense_spec.dimension:
+        raise ComponentNotReadyError(f"Dense dimension mismatch: {dense_info.get('dimension')}")
+    if dense_info.get("model_id") != candidate.dense_spec.model_id:
+        raise ComponentNotReadyError(f"Dense model_id mismatch: {dense_info.get('model_id')}")
+    if dense_info.get("revision") != candidate.dense_spec.revision:
+        raise ComponentNotReadyError(f"Dense revision mismatch: {dense_info.get('revision')}")
+
+    sparse_info = record_data.get("sparse", {})
+    if sparse_info.get("schema_version") != "phase_3_sparse_state:v1":
+        raise ComponentNotReadyError(f"Sparse schema_version mismatch: {sparse_info.get('schema_version')}")
+    if sparse_info.get("state_sha256") != EXPECTED_SPARSE_SHA256:
+        raise ComponentNotReadyError(f"Sparse state SHA256 mismatch: {sparse_info.get('state_sha256')}")
+    if sparse_info.get("vocabulary_size") != 5662:
+        raise ComponentNotReadyError(f"Sparse vocabulary size mismatch: {sparse_info.get('vocabulary_size')}")
+
+    if current_sources is not None:
+        fresh, _ = verify_full_corpus_record_freshness(current_sources, record_data)
+        if not fresh:
+            raise ComponentNotReadyError("Full-corpus source state is stale")
 
 
 class FullCorpusRetrievalService:
@@ -291,11 +497,19 @@ class FullCorpusRetrievalService:
 
         try:
             dense_response = self.client.query_points(
-                collection_name=self.candidate.collection_name,
+                collection_name=self.candidate.metadata_v2_collection_name,
                 query=dense_vec,
                 using="dense",
                 limit=30,
-                with_payload=["search_text", "source", "title", "heading_path", "evidence_parts"],
+                with_payload=[
+                    "search_text",
+                    "source",
+                    "title",
+                    "heading_path",
+                    "evidence_parts",
+                    "chunk_id",
+                    "domain",
+                ],
                 with_vectors=False,
             )
         except Exception as exc:
@@ -320,7 +534,7 @@ class FullCorpusRetrievalService:
             validate_point_payload(pid, p.payload)
             candidate_docs[pid] = p
             dense_ranked_ids.append(pid)
-            dense_stage.append({"point_id": pid, "rank": rank, "score": score})
+            dense_stage.append(format_stage_entry(point_id=pid, payload=p.payload, rank=rank, score=score))
 
         stages["dense"] = dense_stage
         if len(dense_ranked_ids) == 0:
@@ -350,7 +564,12 @@ class FullCorpusRetrievalService:
 
             bm25_scores_map = dict(bm25_scores)
             bm25_stage = [
-                {"point_id": pid, "rank": rank, "score": bm25_scores_map[pid]}
+                format_stage_entry(
+                    point_id=pid,
+                    payload=candidate_docs[pid].payload,
+                    rank=rank,
+                    score=bm25_scores_map[pid],
+                )
                 for rank, pid in enumerate(bm25_ranked_ids, start=1)
             ]
             stages["bm25"] = bm25_stage
@@ -371,14 +590,22 @@ class FullCorpusRetrievalService:
             else:
                 try:
                     sparse_response = self.client.query_points(
-                        collection_name=self.candidate.collection_name,
+                        collection_name=self.candidate.metadata_v2_collection_name,
                         query=models.SparseVector(
                             indices=list(sparse_q.indices),
                             values=list(sparse_q.values),
                         ),
                         using="sparse",
                         limit=30,
-                        with_payload=["search_text", "source", "title", "heading_path", "evidence_parts"],
+                        with_payload=[
+                            "search_text",
+                            "source",
+                            "title",
+                            "heading_path",
+                            "evidence_parts",
+                            "chunk_id",
+                            "domain",
+                        ],
                         with_vectors=False,
                     )
                     sparse_points = sparse_response.points
@@ -402,7 +629,7 @@ class FullCorpusRetrievalService:
                 if pid not in candidate_docs:
                     candidate_docs[pid] = p
                 sparse_ranked_ids.append(pid)
-                sparse_stage.append({"point_id": pid, "rank": rank, "score": score})
+                sparse_stage.append(format_stage_entry(point_id=pid, payload=p.payload, rank=rank, score=score))
 
             stages["sparse"] = sparse_stage
             t_sparse_end = time.perf_counter()
@@ -419,7 +646,12 @@ class FullCorpusRetrievalService:
         fused = reciprocal_rank_fusion(branches, k=60, limit=30)
         counts["rrf_pre_rerank"] = len(fused)
         stages["rrf"] = [
-            {"point_id": pid, "rank": rank, "score": round(score, 6)}
+            format_stage_entry(
+                point_id=pid,
+                payload=candidate_docs[pid].payload,
+                rank=rank,
+                score=round(score, 6),
+            )
             for rank, (pid, score) in enumerate(fused, start=1)
         ]
         t_rrf_end = time.perf_counter()
@@ -430,23 +662,7 @@ class FullCorpusRetrievalService:
         if self.reranker == "none":
             rerank_status = "not_applicable"
             timings["rerank_ms"] = 0.0
-            final_fused = fused[:10]
-            for pid, score in final_fused:
-                pt = candidate_docs[pid]
-                pl = pt.payload
-                documents.append(
-                    RetrievedDocument(
-                        id=pid,
-                        score=float(score),
-                        text=pl["search_text"],
-                        metadata={
-                            "source": pl["source"],
-                            "title": pl["title"],
-                            "heading_path": list(pl.get("heading_path", [])),
-                            "evidence_parts": pl.get("evidence_parts", []),
-                        },
-                    )
-                )
+            documents = assemble_final_documents(candidate_docs, fused[:10])
         elif self.reranker == "minilm":
             if self.reranker_instance is None:
                 raise ComponentNotReadyError("MiniLM reranker instance is not initialized")
@@ -463,23 +679,7 @@ class FullCorpusRetrievalService:
             if overlength:
                 rerank_status = "skipped_overlength"
                 timings["rerank_ms"] = round((time.perf_counter() - t_rerank_start) * 1000.0, 3)
-                final_fused = fused[:10]
-                for pid, score in final_fused:
-                    pt = candidate_docs[pid]
-                    pl = pt.payload
-                    documents.append(
-                        RetrievedDocument(
-                            id=pid,
-                            score=float(score),
-                            text=pl["search_text"],
-                            metadata={
-                                "source": pl["source"],
-                                "title": pl["title"],
-                                "heading_path": list(pl.get("heading_path", [])),
-                                "evidence_parts": pl.get("evidence_parts", []),
-                            },
-                        )
-                    )
+                documents = assemble_final_documents(candidate_docs, fused[:10])
             else:
                 candidate_docs_for_rerank = [
                     RetrievedDocument(
@@ -496,26 +696,16 @@ class FullCorpusRetrievalService:
                     key=lambda item: (-item[0], item[1].id),
                 )
                 stages["rerank"] = [
-                    {"point_id": doc.id, "rank": rank, "score": score}
+                    format_stage_entry(
+                        point_id=doc.id,
+                        payload=candidate_docs[doc.id].payload,
+                        rank=rank,
+                        score=score,
+                    )
                     for rank, (score, doc) in enumerate(ranked_pairs, start=1)
                 ]
-                final_pairs = ranked_pairs[:10]
-                for score, doc in final_pairs:
-                    pt = candidate_docs[doc.id]
-                    pl = pt.payload
-                    documents.append(
-                        RetrievedDocument(
-                            id=doc.id,
-                            score=float(score),
-                            text=pl["search_text"],
-                            metadata={
-                                "source": pl["source"],
-                                "title": pl["title"],
-                                "heading_path": list(pl.get("heading_path", [])),
-                                "evidence_parts": pl.get("evidence_parts", []),
-                            },
-                        )
-                    )
+                final_pairs = [(doc.id, score) for score, doc in ranked_pairs[:10]]
+                documents = assemble_final_documents(candidate_docs, final_pairs)
                 rerank_status = "completed"
                 timings["rerank_ms"] = round((time.perf_counter() - t_rerank_start) * 1000.0, 3)
         else:
@@ -529,14 +719,14 @@ class FullCorpusRetrievalService:
 
         trace = RetrievalTrace(
             candidate_id=self.candidate.candidate_id,
-            collection_name=self.candidate.collection_name,
+            collection_name=self.candidate.metadata_v2_collection_name,
             retrieval_treatment=self.retrieval_treatment,
             reranker=self.reranker,
             counts=counts,
             timings_ms=timings,
             stages=stages,
             rerank_status=rerank_status,
-            anomalies=tuple(anomalies),
+            anomalies=tuple(sorted(set(anomalies))),
             classification=classification,
         )
         return RetrievalResult(documents=documents, trace=trace)
@@ -567,9 +757,10 @@ def build_full_corpus_retrieval_service(
     if reranker not in ("none", "minilm"):
         raise RetrievalConfigurationError(f"Unsupported reranker mode: {reranker}")
 
-    # 1. Validate matching build record
-    build_record_path = BUILD_RECORDS_DIR / f"{candidate.collection_name}.json"
-    rel_build_record = f"data/full_corpus_builds/{candidate.collection_name}.json"
+    # 1. Validate matching build record and source freshness
+    collection_name = candidate.metadata_v2_collection_name
+    build_record_path = BUILD_RECORDS_DIR / f"{collection_name}.json"
+    rel_build_record = f"data/full_corpus_builds/{collection_name}.json"
     if not build_record_path.is_file():
         raise ComponentNotReadyError(f"Build record does not exist: {rel_build_record}")
 
@@ -578,36 +769,11 @@ def build_full_corpus_retrieval_service(
     except Exception as exc:
         raise ComponentNotReadyError(f"Failed to read build record: {rel_build_record}") from exc
 
-    if record_data.get("status") != "complete":
-        raise ComponentNotReadyError(f"Build record status is not complete: {record_data.get('status')}")
-    if record_data.get("representation") != "A":
-        raise ComponentNotReadyError(f"Build record representation is not A: {record_data.get('representation')}")
-    if record_data.get("schema_version") != "phase_4_full_corpus_build:v1":
-        raise ComponentNotReadyError(f"Build record schema_version invalid: {record_data.get('schema_version')}")
-
-    corpus_info = record_data.get("corpus", {})
-    if corpus_info.get("identity") != EXPECTED_CORPUS_IDENTITY:
-        raise ComponentNotReadyError(f"Corpus identity mismatch in build record: {corpus_info.get('identity')}")
-    if corpus_info.get("chunk_count") != EXPECTED_CHUNK_COUNT:
-        raise ComponentNotReadyError(f"Chunk count mismatch in build record: {corpus_info.get('chunk_count')}")
-
-    dense_info = record_data.get("dense", {})
-    if dense_info.get("candidate_id") != candidate.candidate_id:
-        raise ComponentNotReadyError(f"Dense candidate_id mismatch: {dense_info.get('candidate_id')}")
-    if dense_info.get("dimension") != candidate.dense_spec.dimension:
-        raise ComponentNotReadyError(f"Dense dimension mismatch: {dense_info.get('dimension')}")
-    if dense_info.get("model_id") != candidate.dense_spec.model_id:
-        raise ComponentNotReadyError(f"Dense model_id mismatch: {dense_info.get('model_id')}")
-    if dense_info.get("revision") != candidate.dense_spec.revision:
-        raise ComponentNotReadyError(f"Dense revision mismatch: {dense_info.get('revision')}")
-
-    sparse_info = record_data.get("sparse", {})
-    if sparse_info.get("schema_version") != "phase_3_sparse_state:v1":
-        raise ComponentNotReadyError(f"Sparse schema_version mismatch: {sparse_info.get('schema_version')}")
-    if sparse_info.get("state_sha256") != EXPECTED_SPARSE_SHA256:
-        raise ComponentNotReadyError(f"Sparse state SHA256 mismatch: {sparse_info.get('state_sha256')}")
-    if sparse_info.get("vocabulary_size") != 5662:
-        raise ComponentNotReadyError(f"Sparse vocabulary size mismatch: {sparse_info.get('vocabulary_size')}")
+    if settings is None:
+        settings = load_settings()
+    root, rel_paths = discover_full_corpus_files(settings)
+    current_sources = compute_corpus_state(root, rel_paths)
+    validate_full_corpus_build_record(record_data, candidate, current_sources=current_sources)
 
     # 2. Validate sparse state file
     rel_sparse_state = "data/full_corpus_builds/phase_3_sparse_state.json"
@@ -633,14 +799,18 @@ def build_full_corpus_retrieval_service(
     if client is None:
         client = client_from_settings(settings)
 
-    if not client.collection_exists(candidate.collection_name):
-        raise ComponentNotReadyError(f"Qdrant collection {candidate.collection_name} does not exist")
+    if not client.collection_exists(collection_name):
+        raise ComponentNotReadyError(f"Qdrant collection {collection_name} does not exist")
 
-    info = client.get_collection(candidate.collection_name)
-    validate_full_corpus_collection_info(info, candidate.dense_spec.dimension)
+    info = client.get_collection(collection_name)
+    try:
+        validate_full_corpus_collection_info(info, candidate.dense_spec.dimension)
+    except Exception as exc:
+        raise ComponentNotReadyError(f"Collection {collection_name} schema invalid") from exc
+
     if info.points_count != EXPECTED_CHUNK_COUNT:
         raise ComponentNotReadyError(
-            f"Collection {candidate.collection_name} point count mismatch: {info.points_count} != {EXPECTED_CHUNK_COUNT}"
+            f"Collection {collection_name} point count mismatch: {info.points_count} != {EXPECTED_CHUNK_COUNT}"
         )
 
     # 4. Resolve and load dense model

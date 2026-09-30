@@ -31,13 +31,13 @@ việc đó. Khi các nguồn mâu thuẫn, áp dụng thứ tự nguồn sự t
 - Full-corpus Phase 2 đã được User xác nhận closure ngày 2026-09-12. Evidence
   quan sát: 205 file, 8.460 chunks, ba condition rules, zero errors/oversized.
 - Full-corpus Phase 3 đã independent review và User-closed ngày 2026-09-12.
-- Full-corpus Metadata v2 Gate 1 và Gate 2 đã independent review rồi User-closed
-  ngày 2026-09-29. Bốn metadata-v2 targets đã verify đủ 33.840 points, exact
-  payload/vector equality, v2 lineage và legacy immutability.
-- `CURRENT_HANDOFF.md` giao **Implementer/implementation** riêng Gate 3 / Task 6,
-  risk `high`, Git `none`: strict runtime retrieval cutover, focused tests và
-  selected read-only smoke. Task 7, cleanup/delete, re-embedding, evaluation và
-  Phase 6 chưa được mở.
+- Full-corpus Metadata v2 Tasks 1–7 đã independent review và User-closed ngày
+  2026-09-30. Bốn metadata-v2 targets đã verify đủ 33.840 points, exact
+  payload/vector equality, v2 lineage và legacy immutability; runtime cutover
+  đã qua Correction 1 và final focused suite đạt `158 passed`.
+- `CURRENT_HANDOFF.md` hiện `completed`; không có task active. Phase 6 vẫn
+  paused, còn cleanup/delete, re-embedding, evaluation và paid model/API chưa
+  được mở.
 - Tài liệu active/tương lai chỉ dùng thuật ngữ `Phase`. Chuỗi `wave` chỉ còn
   xuất hiện trong exact filename lịch sử đã đóng và không phải lifecycle mới.
 
@@ -45,7 +45,7 @@ việc đó. Khi các nguồn mâu thuẫn, áp dụng thứ tự nguồn sự t
 
 | Cần biết | Nguồn nên đọc | Không dùng làm nguồn chính |
 |---|---|---|
-| Metadata v2 Gate 3 hiện tại | `session_prompt/CURRENT_HANDOFF.md`; `guides/full_corpus_rag.md`; exact Metadata v2 spec/plan ngày 2026-09-29 | Gate 1/2 reports là evidence đã đóng, không mở Task 7 hoặc Phase 6 |
+| Metadata v2 closure | `full_corpus_metadata_v2_final_codex_review_2026_09_29.md`; `user_reports/full_corpus_metadata_v2_final_user_report_2026_09_30.md`; exact Metadata v2 spec/plan ngày 2026-09-29 | Gate/correction reports chỉ dùng khi điều tra lịch sử; closure không tự mở Phase 6 |
 | Full-corpus decisions | Umbrella spec/plan và exact Metadata v2 spec/plan | Brainstorming context chỉ là reference lịch sử |
 | Closure Phase 2 | `full_corpus_rag_wave_1_correction_3_codex_review_2026_09_12.md`; `user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`; preview JSON | Initial/correction reports riêng lẻ nếu không điều tra lịch sử finding |
 | Kiến trúc `llm_rag` | `llm_rag_verified_architecture_extraction_2026_09_11.md`; Codex review tương ứng | Survey dài `llm_rag_full_project_reference_survey_2026_09_11.md` là working/non-canonical |

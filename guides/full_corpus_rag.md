@@ -1,8 +1,8 @@
 # Full-corpus RAG workstream
 
 ```text
-Status: Phase 2–5 User-closed; Metadata v2 Gates 1–2 User-closed; Gate 3 / Task 6 active; Phase 6 remains paused
-Runtime authorization: Metadata v2 Task 6 only — strict retrieval cutover, focused tests and selected read-only smoke; no Task 7 or cleanup
+Status: Phase 2–5 User-closed; Metadata v2 Tasks 1–7 User-closed; Phase 6 remains paused
+Runtime authorization: none — cleanup and Phase 6 require new approval
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
@@ -107,9 +107,11 @@ Full-corpus Phase 6 brainstorming đã hoàn tất ngày 2026-09-14 và package 
 lại thiết kế metadata. Metadata v2 Written Spec, Implementation Plan và Review
 Contract đã được User duyệt cùng ngày. Gate 1 đã đóng sau correction 3; Gate 2
 đã tạo và independent-verify bốn metadata-v2 targets, mỗi target 8.460 points,
-và được User xác nhận closure ngày 2026-09-29. Gate 3 / Task 6 hiện active cho
-strict runtime retrieval cutover, focused tests và selected read-only smoke.
-Task 7, cleanup/delete, re-embedding, evaluation và Phase 6 vẫn chưa có quyền.
+và được User xác nhận closure ngày 2026-09-29. Gate 3 / Task 6 qua một correction,
+independent review đạt và được User xác nhận closure ngày 2026-09-30. Task 7
+final regression/report/handoff sau đó qua independent final review và được
+User xác nhận closure cùng ngày. Cleanup/delete, re-embedding, evaluation và
+Phase 6 vẫn chưa có quyền.
 
 Artifact Phase 4 hiện hành vẫn đúng với contract lịch sử: payload năm field,
 domain suy từ `source`, model/hash ở cấp build. Target metadata v2 thay thế cho
@@ -421,7 +423,8 @@ dưới đây là lịch sử quyết định, không phải active task song so
    `domain`, strict source freshness và build/payload schema versions riêng.
    Bốn fresh targets đã copy và independent-verify dense+sparse vectors cùng
    exact seven-field payload; không re-embed và không payload index/filter.
-   User đã mở Gate 3 / Task 6 cho strict runtime cutover.
+   Gate 3 / Task 6 strict runtime cutover đã qua Correction 1, independent review
+   và User closure ngày 2026-09-30.
 4. **Đã chốt 2026-09-11 — retrieval/fusion/reranker matrix:** staged comparison
    baseline A với native hybrid bằng RRF; chỉ retrieval finalists so một
    reranker với no-rerank. Báo exact metrics/results, không full Cartesian matrix
@@ -487,10 +490,11 @@ baseline.
 11. Metadata v2 Gate 1 và Gate 2 đã independent review rồi User-closed ngày
     2026-09-29; bốn metadata-v2 targets có tổng 33.840 verified points và matching
     v2 lineage records.
-12. **Hiện hành:** `CURRENT_HANDOFF.md` giao Implementer thực hiện riêng Gate 3 /
-    Task 6: strict runtime cutover, focused tests và selected read-only retrieval
-    smoke. Task 7, cleanup/delete, re-embedding, evaluation, paid API/model và
-    Phase 6 không thuộc authority.
+12. Metadata v2 Gate 3 / Task 6 strict runtime cutover đã qua Correction 1;
+    Task 7 final review đạt `158 passed` và complete verification đủ 33.840
+    points. Toàn bộ Tasks 1–7 được User xác nhận closure ngày 2026-09-30.
+    Cleanup/delete, re-embedding, evaluation, paid API/model và Phase 6 không
+    thuộc authority.
 
 Không pre-create hoặc cố định tên ngày cho spec/plan trước gate. Reviewer chọn
 exact path khi bắt đầu artifact sau khi decision queue đủ; path không tự tạo
@@ -499,10 +503,13 @@ approval.
 ## Tài liệu hiện hành
 
 - Trạng thái task: `session_prompt/CURRENT_HANDOFF.md`.
-- Active Metadata v2 package:
+- Completed Metadata v2 Tasks 1–7 package:
   `docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md`
   và
-  `docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md`.
+  `docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md`;
+  final closure tại
+  `reports/full_corpus_metadata_v2_final_codex_review_2026_09_29.md` và
+  `reports/user_reports/full_corpus_metadata_v2_final_user_report_2026_09_30.md`.
 - Paused Full-corpus Phase 6 guide/spec/plan:
   `guides/phase_6_generation_api.md`,
   `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md`

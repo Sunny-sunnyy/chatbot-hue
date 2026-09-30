@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-09-29 +07`
+Last updated: `2026-09-30 +07`
 
 ## Project overview
 
@@ -64,8 +64,12 @@ Review Contract đã được User duyệt ngày 2026-09-29. Gate 1 đã đóng 
 correction 3. Gate 2 / Task 5 đã tạo và independent-verify bốn metadata-v2
 targets, mỗi target 8.460 points, rồi được User xác nhận closure cùng ngày. User
 đã mở riêng Gate 3 / Task 6 cho strict runtime retrieval cutover, focused tests
-và selected read-only retrieval smoke. Task 7, cleanup/delete, re-embedding,
-evaluation, paid API/model và Phase 6 vẫn chưa có authority.
+và selected read-only retrieval smoke. Sau Correction 1, independent review đạt
+và User xác nhận closure ngày 2026-09-30. Task 7 final regression/report/handoff
+sau đó qua independent final review với `158 passed`, complete verification đủ
+33.840 points và được User xác nhận closure cùng ngày. Metadata v2 Tasks 1–7
+hiện `approved`; cleanup/delete, evaluation, paid API/model và Phase 6 vẫn chưa
+có authority.
 
 ## System and data map
 
@@ -170,8 +174,10 @@ tất ngày 2026-09-14 nhưng User dừng trước implementation ngày 2026-09-
 calls là contract của package đã pause, không phải authority hiện hành.
 Metadata v2 design package đã được User duyệt ngày 2026-09-29. Gate 1 và Gate 2
 đã User-closed; bốn metadata-v2 targets đã independent-verify đủ 33.840 points,
-payload/vector equality, lineage và legacy immutability. Gate 3 / Task 6 hiện
-active theo exact runtime cutover authority; Task 7 và Phase 6 vẫn đóng.
+payload/vector equality, lineage và legacy immutability. Gate 3 / Task 6 qua một
+correction, independent review và được User xác nhận closure ngày 2026-09-30.
+Task 7 final review cũng được User xác nhận closure cùng ngày; toàn workstream
+Metadata v2 Tasks 1–7 đã đóng. Phase 6 vẫn paused và cần approval mới.
 User tiếp tục chốt workflow tuần tự: sau mỗi phase phải review/User closure và
 cập nhật detailed phase guide; trước phase kế tiếp Reviewer phải dùng evidence
 dependency để hoàn tất guide + phase spec + plan + Review Contract và xin User
@@ -195,7 +201,7 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 3 | `approved` | Full-corpus embedding/sparse preflight User-closed; Qwen CUDA FP16 PASS trên GTX 1650 |
 | 4 | `approved` | User-closed 2026-09-13 với final review PASS WITH LIMITATIONS |
 | 5 | `approved` | User-closed 2026-09-14 sau Correction 3 final review |
-| 6 | `paused_before_implementation` | Metadata v2 Gate 3 / Task 6 active; Phase 6 chỉ tiếp tục sau metadata closure và approval mới |
+| 6 | `paused_before_implementation` | Metadata v2 Tasks 1–7 User-closed; Phase 6 chỉ tiếp tục sau approval mới |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
 | 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; remote-Qwen research queued riêng sau Phase 4 closure |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
@@ -266,9 +272,8 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   first source component trong năm product domains; không có subdomain,
   document type hoặc tags. Không payload index/filter/router trong baseline.
   Bốn target names, build/payload schema versions và vector-copy migration được
-  khóa trong approved metadata v2 Plan. Gate 1 và Gate 2 đã User-closed; User đã
-  phê duyệt riêng Gate 3 / Task 6 cho runtime cutover. Task 7 và cleanup vẫn cần
-  lifecycle/authority tiếp theo.
+  khóa trong approved metadata v2 Plan. Tasks 1–7 đã independent review và
+  User-closed; cleanup vẫn cần lifecycle/authority riêng.
 - Survey dài `llm_rag` không phải canonical reference: sau bốn correction vẫn
   còn RR11 Major và đã bị đóng băng working/non-canonical. Verified Architecture
   Extraction thay thế đã qua hai correction, independent Reviewer review và
@@ -304,17 +309,15 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   thuẫn hard boundary offline của Phase 2. Chỉ chạy exact offline checks ghi trong
   Correction 2; không dùng full-suite failure làm Phase 2 evidence.
 - Phase 6 package hiện paused và không còn quyền read-only startup hay năm paid
-  Qwen call attempts. Metadata v2 Gate 3 chỉ cho Task 6 runtime mapping,
-  readiness, focused tests và selected read-only retrieval smoke trên bốn target
-  đã xác minh; Task 7, paid call, P7, finalist build, replacement/cleanup và
-  Agentic RAG cần exact approval riêng.
+  Qwen call attempts. Metadata v2 Tasks 1–7 đã User-closed; paid call, P7,
+  finalist build, replacement/cleanup và Agentic RAG cần exact approval riêng.
 
 ## Safety and authorization boundaries
 
 - Active `hue_foods_e5_small_384` chỉ read-only nếu không có exact user approval.
 - Bốn canonical Full-corpus Phase 4 collections và bốn metadata-v2 targets là
-  immutable/read-only trong Gate 3. Active authority chỉ cho runtime cutover và
-  read-only retrieval smoke; không cho create/upsert, replace/delete/cleanup.
+  immutable/read-only. Gate 3 đã User-closed; hiện không có authority cho
+  create/upsert, replace/delete/cleanup hoặc retrieval smoke mới.
 - `knowledge-base-hue/`, Qdrant storage, fixed smoke questions và detailed trace
   là local/private; tracked artifacts không được chứa corpus/query/payload dump.
 - Không expose secret hoặc đọc raw `.env` content.
@@ -405,11 +408,13 @@ docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-
 docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
 ```
 
-Active Full-corpus Metadata v2 Gate 3 package:
+Completed Full-corpus Metadata v2 Tasks 1–7 package:
 
 ```text
 docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md
 docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md
+reports/full_corpus_metadata_v2_final_codex_review_2026_09_29.md
+reports/user_reports/full_corpus_metadata_v2_final_user_report_2026_09_30.md
 ```
 
 Historical/non-canonical `llm_rag` artifacts, chỉ dùng khi cần audit lịch sử:
@@ -589,8 +594,8 @@ của toàn bộ kho tri thức `knowledge-base-hue` (gồm 5 domain: `foods`, `
    correction đã independent review đạt và được User xác nhận closure ngày
    2026-09-14. Phase 6 Written Spec/Plan/Review Contract đã được hoàn tất nhưng
    bị pause trước implementation ngày 2026-09-29. Metadata v2 Spec/Plan/Review
-   Contract đã được User duyệt; Gate 1 và Gate 2 đã User-closed, current handoff
-   giao Implementer riêng Gate 3 / Task 6 runtime cutover và read-only smoke.
+   Contract đã được User duyệt; Tasks 1–7 đã independent review và User-closed
+   ngày 2026-09-30, với Gate 3 runtime cutover đóng sau Correction 1.
    Future Qwen remote-GPU
    research và Qwen3-Reranker vẫn chưa active; mọi cloud, external corpus
    upload, benchmark chất lượng và production cutover cần approval riêng. Các
