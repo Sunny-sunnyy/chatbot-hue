@@ -2,7 +2,7 @@
 
 ```text
 Status: Phase 2–5 and Metadata v2 Tasks 1–7 User-closed; Phase 6 implementation active
-Runtime authorization: one Phase 6 handoff — cleanup and Git remain unauthorized
+Runtime authorization: one GPT Phase 6 handoff; Git and collection mutation unauthorized
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
@@ -11,8 +11,11 @@ Historical Phase 6 spec: docs/superpowers/specs/2026-09-14-phase-6-full-corpus-g
 Historical Phase 6 plan: docs/superpowers/plans/2026-09-14-phase-6-full-corpus-generation-api-ui-implementation-plan.md
 Approved Metadata v2 spec: docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md
 Approved Metadata v2 plan + Review Contract: docs/superpowers/plans/2026-09-29-full-corpus-metadata-v2-implementation-plan.md
-Active Phase 6 amendment: docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md
-Active Phase 6 plan + Review Contract: docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md
+Approved Phase 6 model amendment: docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md
+Active revised Phase 6 plan: docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md
+Active revised Review Contract: handoff_prompt/PHASE_6_OPENAI_BASELINE_REVIEW_CONTRACT.md
+Historical Phase 6 Metadata v2 amendment: docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md
+Historical Phase 6 Metadata v2 base plan: docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md
 ```
 
 ## Vai trò của guide này
@@ -114,8 +117,12 @@ independent review đạt và được User xác nhận closure ngày 2026-09-30
 final regression/report/handoff sau đó qua independent final review và được
 User xác nhận closure cùng ngày. Cleanup/delete, re-embedding, evaluation và
 Git vẫn chưa có quyền. User đã duyệt Phase 6 Metadata v2 amendment,
-Implementation Plan và Review Contract ngày 2026-09-30; một Implementer handoff
-hiện active, với đúng năm Qwen attempts chỉ sau non-paid gate.
+Implementation Plan và Review Contract ngày 2026-09-30. Ngày 2026-10-01, User
+yêu cầu đổi lifecycle: Phase 6 dùng GPT-5.4-nano baseline, Phase 8 bắt buộc quay
+lại benchmark Qwen. Vì thay đổi này ảnh hưởng model/provider và paid-call
+contract, Qwen handoff cũ phải dừng. User đã duyệt amendment, revised plan và
+Review Contract mới cùng ngày; current GPT handoff hiện active. Live calls chỉ
+được phép qua exact bounded runner sau complete non-paid gate.
 
 Artifact Phase 4 hiện hành vẫn đúng với contract lịch sử: payload năm field,
 domain suy từ `source`, model/hash ở cấp build. Target metadata v2 thay thế cho
@@ -322,8 +329,8 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   model, retrieval, fusion và reranker tương đương. Official evidence phải từ
   API/index/full-corpus run thật. Riêng Phase 6, User đã loại cả mock/fake/stub
   khỏi implementation/acceptance evidence và chấp nhận chi phí bounded live
-  run; bounded authority hiện nằm trong Phase 6 plan ngày 2026-09-30, với
-  non-paid gate bắt buộc trước đúng năm Qwen attempts.
+  run; bounded authority hiện nằm trong revised Phase 6 plan ngày 2026-10-01,
+  với non-paid gate bắt buộc trước đúng năm GPT generation attempts.
   Decision #6a chốt strict minimal public contract: success chỉ có `answer` và
   `sources`; answer dùng response-local `[n]`, mỗi source chỉ có
   `{id,title,heading_path,excerpts}` và phải được answer tham chiếu. Technical/
@@ -337,7 +344,7 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   tiếp không vừa, không skip/truncate/summarize. Đổi model/profile mới được đổi
   budget; report phải ghi exact values. Chunk hạng đầu không vừa là typed
   configuration/input error.
-  Decision #6c chốt `qwen/qwen3.5-9b` qua OpenRouter cho cả representation B và
+  Decision #6c lịch sử chốt `qwen/qwen3.5-9b` qua OpenRouter cho cả representation B và
   answer generation. **Phase 6 amendment được User duyệt 2026-09-14:** không pin
   upstream/provider order; OpenRouter được automatic routing/fallback giữa các
   upstream phục vụ cùng model, request gửi `provider.require_parameters=true`.
@@ -345,7 +352,7 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   API, độc lập với candidate generator. Representation B chỉ bổ sung context tìm
   kiếm do Qwen sinh vào `search_text` của chunk A đủ chỗ; phần bổ sung không là
   evidence/citation/Golden và không tạo vector type mới.
-  Decision #6d chốt profile Qwen balanced/reproducible: `temperature=0`, không
+  Decision #6d lịch sử chốt profile Qwen balanced/reproducible: `temperature=0`, không
   set sampling knobs khác; representation B `max_output_tokens=256`; answer
   generation có `context_limit=16384`, `reserved_output_tokens=2048`,
   `safety_margin=512`, timeout 90 giây và không application retry. Phase 6 dùng
@@ -403,7 +410,8 @@ Top30→Top10, private `RetrievalTrace`, strict readiness và real seven-P7/16-c
 verification. Bốn canonical collections chỉ read-only; isolated absent
 experiment authority của Phase 5 đã kết thúc. Quality benchmark vẫn chờ exact
 Phase 8 lifecycle gate. Metadata v2 đã User-closed; context/API/static UI thuộc
-Phase 6 package ngày 2026-09-30 hiện có một implementation handoff active.
+Phase 6. Handoff Qwen ngày 2026-09-30 là lịch sử; revised GPT execution package
+và current handoff ngày 2026-10-01 đã được User duyệt và đang active.
 
 ## Thiết kế umbrella đã chốt — lịch sử quyết định
 
@@ -437,20 +445,26 @@ dưới đây là lịch sử quyết định, không phải active task song so
    representation A; dùng API/index/full-corpus run thật, không dùng mock làm
    official evidence. Phase 6 amendment 2026-09-14 cấm mock/fake/stub trong
    implementation/acceptance evidence và cho phép bounded paid run.
-6. **Đã chốt — context/generator/API/citation/frontend:** #6a strict minimal
+6. **Đã chốt lịch sử; model revision đã duyệt 2026-10-01 —
+   context/generator/API/citation/frontend:** #6a strict minimal
    response/citation/error, #6b dynamic-per-profile/fixed-per-run context budget
    và #6c Qwen/OpenRouter + OpenAI judge separation đã chốt. Phase 6 amendment
    bỏ provider pin, cho same-model OpenRouter routing với
    `require_parameters=true`; #6d chốt exact profile 16384/2048/512, B output
    256, temperature 0, timeout 90 giây, direct `AsyncOpenAI` và agentic profile
-   riêng; #6e chốt UI inline citation/source cards.
+   riêng; #6e chốt UI inline citation/source cards. User direction 2026-10-01
+   giữ #6a/#6b/#6e và supersede #6c/#6d: Phase 6 dùng alias `gpt-5.4-nano`,
+   không pin snapshot và không cấu hình/truyền reasoning/sampling parameters;
+   Qwen trở thành mandatory Phase 8 candidate. Chi tiết nằm trong amendment
+   2026-10-01 đã được User duyệt; execution authority nằm trong current GPT
+   handoff và paid calls vẫn chờ non-paid gate.
 7. metric thresholds/cutover chỉ sau khi có full-corpus baseline thật.
 
 Decision #6 được chốt theo từng subdecision có một consumer rõ. #6a public
-response/citation/error, #6b context budget, #6c generator/provider + judge
-separation, #6d exact generator settings/numeric budgets và #6e UI interaction
-đã chốt. Không gom thêm agentic workflow vào MVP; umbrella Written Spec đã được
-User duyệt ngày 2026-09-11.
+response/citation/error, #6b context budget và #6e UI interaction giữ nguyên;
+#6c/#6d dùng OpenAI baseline revision ngày 2026-10-01 thay Qwen/OpenRouter lịch
+sử. Không gom thêm agentic workflow vào MVP; umbrella Written Spec đã được User
+duyệt ngày 2026-09-11.
 
 Các quyết định chunking, embedding, ingestion/indexing, retrieval/reranking,
 context/generation, API/frontend và evaluation đã được gom trong umbrella
@@ -498,8 +512,11 @@ baseline.
     Task 7 final review đạt `158 passed` và complete verification đủ 33.840
     points. Toàn bộ Tasks 1–7 được User xác nhận closure ngày 2026-09-30.
 13. Phase 6 Metadata v2 amendment, Implementation Plan và Review Contract được
-    User duyệt ngày 2026-09-30. Một Implementer handoff hiện active; cleanup,
-    re-embedding, evaluation ngoài plan và Git không thuộc authority.
+    User duyệt ngày 2026-09-30 nhưng Qwen execution scope đã bị supersede.
+14. OpenAI baseline amendment, revised Implementation Plan và separate Review
+    Contract được User duyệt ngày 2026-10-01. Exact GPT Implementer handoff hiện
+    active; cleanup, re-embedding, evaluation ngoài plan và Git không thuộc
+    authority.
 
 Không pre-create hoặc cố định tên ngày cho spec/plan trước gate. Reviewer chọn
 exact path khi bắt đầu artifact sau khi decision queue đủ; path không tự tạo
@@ -515,11 +532,11 @@ approval.
   final closure tại
   `reports/full_corpus_metadata_v2_final_codex_review_2026_09_29.md` và
   `reports/user_reports/full_corpus_metadata_v2_final_user_report_2026_09_30.md`.
-- Active Full-corpus Phase 6 guide/amendment/plan:
+- Active Full-corpus Phase 6 guide/amendment/plan/Review Contract:
   `guides/phase_6_generation_api.md`,
-  `docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md`
-  và
-  `docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md`.
+  `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md`,
+  `docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md`
+  và `handoff_prompt/PHASE_6_OPENAI_BASELINE_REVIEW_CONTRACT.md`.
 - Historical Phase 6 behavior package retained by reference:
   `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md`
   và

@@ -106,3 +106,21 @@ evaluation:
   test_file: ../knowledge-base-hue/foods/evaluation/tests.jsonl
   answer_model: gpt-5.4-nano
   judge_model: gpt-5.4-mini
+
+full_corpus_runtime:
+  candidate_id: e5-small-384
+  retrieval_treatment: dense_bm25_rrf
+  reranker: none
+
+full_corpus_generation:
+  provider: openai
+  model: gpt-5.4-nano
+  api_key_env: OPENAI_API_KEY
+  token_encoding: o200k_base
+  answer_max_output_tokens: 2048
+  representation_b_max_output_tokens: 256
+  timeout_seconds: 45
+  context_limit: 16384
+  reserved_output_tokens: 2048
+  safety_margin: 512
+  max_context_documents: 5

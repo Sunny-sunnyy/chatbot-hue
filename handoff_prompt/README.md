@@ -26,11 +26,12 @@ Trạng thái hiện tại:
   User xác nhận closure ngày 2026-09-14.
 - Full-corpus Phase 6 bị dừng trước implementation ngày 2026-09-29 để đánh giá
   lại metadata. Metadata v2 Tasks 1–7 sau đó đã User-closed.
-- User đã duyệt Phase 6 Metadata v2 amendment/plan/Review Contract ngày
-  2026-09-30; current handoff thuộc Implementer `implementation`.
-- Phase 6 package ngày 2026-09-14 chỉ là canonical history cho behavior được
-  amendment mới giữ lại; execution authority nằm ở plan và handoff ngày
-  2026-09-30.
+- Phase 6 Qwen scope ngày 2026-09-30 đã bị supersede. User duyệt OpenAI baseline
+  amendment, revised plan và Review Contract ngày 2026-10-01; current handoff
+  thuộc Implementer `implementation`.
+- Phase 6 packages ngày 2026-09-14 và 2026-09-30 là canonical history/base
+  contract; execution authority nằm ở revised plan, Review Contract và handoff
+  ngày 2026-10-01.
 - Tài liệu active/tương lai chỉ dùng `Phase`; chuỗi `WAVE` trong exact filename
   cũ được giữ để bảo toàn link và audit trail, nhưng các file đó là Phase 2 history.
 
@@ -38,7 +39,7 @@ Trạng thái hiện tại:
 
 | Cần làm/hiểu | Mở trước | Vai trò của prompt cũ |
 |---|---|---|
-| Triển khai Full-corpus Phase 6 | Bốn file bootstrap, current handoff và Phase 6 Metadata v2 amendment/plan | Package ngày 2026-09-14 chỉ cung cấp behavior lịch sử được plan mới tham chiếu |
+| Triển khai Full-corpus Phase 6 | Bốn file bootstrap, current handoff và OpenAI baseline amendment/revised plan/Review Contract | Packages ngày 2026-09-14 và 2026-09-30 chỉ cung cấp history/base contract được delta plan tham chiếu |
 | Tra cứu quyết định pause Phase 6 | Phase 6 package ngày 2026-09-14 và Metadata v2 closure | Reference-only cho lifecycle/blast-radius; không thay authority hiện hành |
 | Kiểm tra closure Phase 5 | Final Codex review, user report và Phase 5 section trong `Project_Status.md` | Phase 5 spec/plan/report là history đã đóng, không cấp runtime authority |
 | Hiểu quyết định full-corpus | Umbrella written spec/plan và exact Phase spec/plan | `FULL_CORPUS_BRAINSTORMING_CONTEXT_2026_09_09.md` chỉ là context lịch sử hữu ích |

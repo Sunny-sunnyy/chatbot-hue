@@ -24,6 +24,14 @@ class GenerationError(RuntimeError):
     """Raised when answer generation cannot return a valid answer."""
 
 
+class ContextBudgetError(RuntimeError):
+    """Raised when the highest-ranked evidence block cannot fit the input budget."""
+
+
+class CitationIntegrityError(RuntimeError):
+    """Raised when a generated answer violates the response-local citation contract."""
+
+
 @dataclass
 class RetrievedDocument:
     """Document returned by retrieval for prompt context building."""

@@ -25,6 +25,53 @@ design, cách đánh giá rõ ràng và user approval.
 
 Nếu chưa đủ năm điều kiện, Phase 9 giữ `not_ready`.
 
+## Model lifecycle đầu vào Phase 9
+
+Phase 9 không tự chọn model. Lifecycle được User duyệt ngày 2026-10-01 là:
+
+```text
+Phase 6 GPT-5.4-nano baseline
+  -> Phase 7 full-corpus evaluation baseline
+  -> Phase 8 GPT-5.4-nano vs qwen/qwen3.5-9b cùng điều kiện
+  -> User duyệt winner
+  -> Phase 9 dùng winner
+```
+
+`gpt-5.4-mini` giữ vai trò evaluation judge. Qwen không phải fallback tự động
+và không phải lựa chọn trực tiếp của người dùng runtime. Phase 9 chỉ thay model
+sau một comparison/approval mới, không tự thay khi provider lỗi.
+
+## Research inputs và freshness gate
+
+Khi bắt đầu design/implementation Phase 9, Reviewer và Implementer phải đọc đầy
+đủ artifact nghiên cứu cục bộ sau như background/historical evidence:
+
+```text
+/home/minhhieu/hue_rag/báo cáo nghiên cứu github.txt
+```
+
+Report này không thay thế fresh source inspection. Ngay khi Phase 9 thực sự bắt
+đầu, Reviewer phải yêu cầu User cung cấp lại danh sách link GitHub/paper hiện
+hành, rồi khảo sát lại revision/source mới trước khi chốt spec. README hoặc báo
+cáo cũ không được coi là bằng chứng rằng code/API của dự án tham khảo vẫn giống
+hiện tại. Research chỉ cung cấp pattern/candidate; không copy architecture hoặc
+dependency nếu chưa chứng minh phù hợp với Hue RAG.
+
+Các kết luận thiết kế được phép kế thừa từ report, nhưng vẫn phải kiểm chứng lại:
+
+- ưu tiên knowledge-based/constraint-guided recommendation vì dự án chưa có
+  user-item interaction thật; không tạo rating giả hoặc thêm collaborative
+  filtering chỉ để gọi là recommender;
+- dùng một LLM call để trích xuất constraints rồi deterministic assembly, thay
+  vì để LLM tự do bịa và sắp toàn bộ lịch trình;
+- state đa lượt có thể merge theo field với quy tắc rõ ràng; thông tin mới ghi
+  đè field tương ứng, không làm mất constraint còn hiệu lực;
+- rule/condition routing phù hợp cho constraint cứng như thời gian và thời tiết;
+- không mang Neo4j GraphRAG, cloud multi-agent graph hoặc transaction/booking
+  vào initial scope khi chưa có failure evidence;
+- citation phải trỏ evidence thực sự được dùng, không chỉ đính kèm Top-K; các
+  claim benchmark từ repository thiếu data/script tái lập chỉ là tham khảo.
+
 ## Capability có thể nghiên cứu
 
 ### Query classification và routing
@@ -39,13 +86,41 @@ Phân biệt:
 
 Direct questions phải giữ fast path nếu baseline đủ tốt; không bắt mọi query qua agent loop.
 
+Routing dùng cascade đã chọn:
+
+1. rule router xử lý intent hiển nhiên như chào hỏi/cảm ơn mà không retrieval;
+2. các query còn lại đi qua một LLM query-understanding call có structured
+   output gồm `standalone_query`, `route`, `domains[]`, `confidence` và
+   `needs_decomposition`;
+3. casual conversation phong phú dùng cùng model đã được Phase 8 chọn nhưng với
+   prompt riêng, không retrieval và không tools;
+4. LLM không trả hidden chain-of-thought; invalid schema fail rõ theo contract.
+
+Rule router không cố bao phủ ngôn ngữ tự nhiên phức tạp. LLM router chỉ được gọi
+sau rules để giảm latency/cost nhưng vẫn xử lý tốt câu không khớp luật.
+
+### Domain-aware metadata routing
+
+Các domain canonical là `foods`, `heritages`, `festivals`, `performing_arts` và
+`travel`. Router có thể trả nhiều domain. Chỉ áp dụng metadata allowlist filter
+khi confidence đủ cao; câu mơ hồ hoặc thực sự liên-domain được phép tìm toàn
+corpus. Nếu filtered retrieval không đủ evidence, controller được retry đúng
+một lần không domain filter và phải ghi stop/fallback reason.
+
 ### Query rewrite
 
 Chuẩn hóa diễn đạt, typo hoặc implicit entity. Design phải giữ user constraints và lưu original/rewrite cho evaluation. Rewrite không thêm facts không có trong query.
 
+Ở bản đầu, rewrite chỉ dùng recent history được giới hạn, dự kiến 4–6 messages
+và exact token budget phải khóa trong spec. Không có LLM history summary và
+không có long-term memory qua nhiều conversation ở initial implementation.
+
 ### Query decomposition
 
 Tách multi-part/multi-hop question thành bounded subqueries, retrieve độc lập rồi merge/deduplicate evidence. Giới hạn số subqueries, parallelism, candidates và total token/cost.
+
+Chỉ gọi decomposition khi `needs_decomposition=true`; đây là call riêng sau
+query understanding. Tối đa ba subqueries, không recursive decomposition.
 
 ### Evidence sufficiency và retrieval retry
 
@@ -58,6 +133,41 @@ Có thể tham khảo `rag_old`: retrieve child chunks nhưng trả parent conte
 ### Tool use
 
 Future tools có thể gồm local retrieval, structured place/food lookup hoặc itinerary constraints. Web search/enrichment không tự động được phép chỉ vì có agent; vẫn cần user scope và source policy.
+
+Tool policy đã chọn cho bản đầu:
+
+- thông tin Huế tương đối tĩnh: RAG trước, chỉ web/tool khi explicit evidence-
+  sufficiency gate kết luận thiếu;
+- intent rõ ràng cần dữ liệu hiện thời như thời tiết, giá, giờ mở cửa hoặc sự
+  kiện đang diễn ra: route thẳng đến typed tool phù hợp;
+- initial tools gồm SerpAPI web search và một weather API chuyên biệt; maps/
+  route optimization để giai đoạn sau;
+- weather API là primary. Nếu thiếu cấu hình hoặc một real call thất bại, chỉ
+  fallback một lần sang SerpAPI và ghi `fallback_reason`; không retry loop;
+- kết quả cuối hợp nhất nhưng source phải phân loại `curated`, `web`, `tool`.
+  Web ghi URL/access time; tool ghi provider/observation time.
+
+External content luôn untrusted, không được tự ghi vào curated corpus hoặc
+durable user memory.
+
+### Recommendation và lịch trình cơ bản
+
+Pipeline đã chọn:
+
+```text
+LLM trích xuất constraints
+  -> RAG lấy candidates
+  -> deterministic dedupe/limit/day-session assembly
+  -> LLM trình bày và gắn citations
+```
+
+Candidate chỉ được đưa vào lịch trình khi dữ liệu cần thiết như vị trí, giờ mở
+cửa và thời lượng tham quan đủ cho constraint đang xét; thiếu dữ liệu phải nêu
+rõ hoặc dùng tool theo policy, không hallucinate và không âm thầm sửa Metadata
+v2 đã khóa. Hệ thống được hỏi tối đa ba lượt làm rõ, chỉ về dữ liệu thực sự còn
+thiếu như số ngày, sở thích và constraint điều kiện (ngân sách, người đi cùng,
+khả năng di chuyển/điểm bắt đầu). Sau đó phải tiếp tục với default/assumption
+được công khai.
 
 ### Memory và session
 
@@ -109,8 +219,9 @@ làm retrieval bị nhiễu. Rewrite phải giữ original query để evaluatio
 thêm facts và không bỏ constraints.
 
 Không gửi toàn bộ lịch sử vô hạn vào model. `Lost in the Middle` cho thấy long
-context không bảo đảm model dùng tốt evidence ở mọi vị trí. Candidate design
-phải budget riêng recent messages, older-history summary và retrieved evidence.
+context không bảo đảm model dùng tốt evidence ở mọi vị trí. Initial design phải
+budget riêng recent messages và retrieved evidence; older-history summary chỉ
+được xem xét ở phase sau nếu baseline chứng minh cần.
 LongMemEval cho thấy cần đánh giá riêng information extraction, multi-session
 reasoning, temporal reasoning, knowledge updates và abstention; lưu được message
 không đồng nghĩa memory system đã đúng.
@@ -158,11 +269,14 @@ Phase 6 là single-turn stateless API và không tạo identifier. Khi Phase 9 v
 ```text
 new conversation -> server tạo conversation_id -> persist ownership/lifecycle
   -> user message được lưu đúng thứ tự
-  -> load bounded recent history
-  -> standalone-query contextualizer trước retrieval
-  -> structured input router
+  -> raw-input Rule router
+       greeting/thanks -> deterministic response, không retrieval/web
+  -> load bounded recent history cho query chưa được Rule router xử lý
+  -> structured LLM query-understanding
+       trả standalone_query + route + domains + confidence + decomposition flag
        casual conversation -> Conversation Agent, không retrieval/web
        Hue culture/travel -> RAG path
+       clearly live intent -> typed tool path
        out of domain -> safe out-of-scope response
   -> Hue RAG thiếu evidence
        -> explicit evidence-sufficiency gate
@@ -176,11 +290,12 @@ Standalone-query contextualizer phải giải quyết follow-up có đại từ 
 "cơm hến" từ lịch sử trước khi retrieval. Rewrite không được thêm facts hoặc bỏ
 constraints của người dùng.
 
-Router nên trả structured route enum như `casual`, `hue_rag`,
-`out_of_scope`, kèm confidence và safe reason code; không lưu hoặc trả hidden
-chain-of-thought. Không để một agent tự đoán rằng KB thiếu dữ liệu rồi bỏ qua
-RAG: với query thuộc Huế, RAG chạy trước và web escalation chỉ mở sau evidence
-gate rõ ràng.
+Router nên trả structured route enum như `casual`, `hue_rag`, `live_tool`,
+`out_of_scope`, kèm domain allowlist, confidence và safe reason code; không lưu
+hoặc trả hidden chain-of-thought. Không để một agent tự đoán rằng KB thiếu dữ
+liệu rồi bỏ qua RAG: với thông tin Huế tương đối tĩnh, RAG chạy trước và web
+escalation chỉ mở sau evidence gate rõ ràng. Intent rõ ràng cần dữ liệu hiện
+thời được đi thẳng typed tool theo policy đã khóa.
 
 Web Agent không phải trợ lý web tổng quát. Nó chỉ được xử lý câu hỏi thuộc văn
 hóa/du lịch Huế mà curated RAG thiếu evidence, không silent fallback, phải lưu
@@ -199,7 +314,8 @@ Separate conversational design phải chốt:
 - association giữa conversation và authenticated `user_id` khi authentication
   tồn tại; biết ID không đồng nghĩa có quyền đọc conversation;
 - message ordering, concurrent requests, idempotency và behavior khi regenerate;
-- bounded recent-history window, summary policy và token budget;
+- bounded recent-history window và token budget; initial implementation không
+  tạo summary, summary policy chỉ được thiết kế nếu một phase sau chứng minh cần;
 - retention, user deletion/export, encryption và safe logging;
 - provider portability: application-owned source of truth, không đồng thời lưu
   cùng history ở app và provider mà không có reconciliation rõ ràng;
@@ -210,13 +326,14 @@ history. Không tự động trích xuất preference/profile trong realtime; tr
 phải có opt-in, provenance, update/supersede rules, TTL/deletion và memory
 retrieval evaluation.
 
-## Ba architecture options bắt buộc so sánh
+## Architecture direction đã chọn
 
-1. Modern/SOTA: graph/state-machine orchestration với router, parallel subqueries và evidence judge.
-2. Safe/stable: deterministic controller, rule-first direct path và tối đa một LLM-planned retry.
-3. Simple/MVP: một query classifier, optional rewrite và một retrieval retry.
-
-Khuyến nghị ban đầu là safe/stable hoặc simple MVP. Chỉ chọn graph orchestration khi evaluation chứng minh nhiều categories cần branching/state.
+Ba hướng đã được thảo luận: graph/state-machine, safe/stable deterministic
+controller và classifier MVP tối giản. User chọn safe/stable: Python controller
+sở hữu state/transitions/limits; LLM chỉ thực hiện các structured tasks nhỏ.
+OpenAI Agents SDK hoặc SDK tương đương có thể là model boundary, nhưng initial
+implementation không dùng LangGraph hay multi-agent handoff. Chỉ xem lại graph
+orchestration khi evaluation chứng minh branching/state hiện tại không đủ.
 
 ## Interface boundaries cần thiết kế
 
@@ -250,6 +367,9 @@ Agentic evaluation set phải thêm:
 - evidence insufficient;
 - direct query để kiểm tra agent không làm chậm vô ích.
 
+Set này phải được tạo và freeze riêng trước tuning; không sửa hoặc tái sử dụng
+Golden hiện hành như một tập agentic để tránh làm mất baseline lịch sử.
+
 Conversation evaluation set phải tách riêng và tối thiểu có:
 
 - follow-up ẩn entity: `bún bò` -> `các quán nổi tiếng?`;
@@ -276,6 +396,11 @@ Metrics thêm:
 - token/cost per category;
 - loop/timeout/error rate;
 - direct-path regression.
+
+Đánh giá phải tách component và end-to-end: routing, domain selection, rewrite
+giữ entity/constraints, decomposition validity, retrieval improvement, tool
+trigger correctness, itinerary constraint satisfaction và final answer. Exact
+threshold chỉ được đặt sau khi có baseline quan sát được.
 
 Agentic system chỉ có giá trị khi cải thiện failure categories mà không làm direct queries suy giảm quá mức.
 
@@ -324,12 +449,26 @@ Không copy Chroma/SQLite/OpenAI embedding choices, paid LLM ingestion, provider
 Từ `llm_rag` có thể học module boundaries, bounded context và startup caching;
 không mặc định reuse SSE/frontend, mocked tests hoặc English-centric reranker.
 
+## Sáu implementation gates dự kiến
+
+Sau khi đủ dependency hard gate và separate design được duyệt, implementation
+đi tuần tự; mỗi gate cần acceptance/review riêng:
+
+1. phân tích failures và freeze Agentic Evaluation Set;
+2. conversation history, Rule router và LLM query understanding;
+3. domain metadata routing, filtered retrieval và decomposition;
+4. recommendation và itinerary cơ bản;
+5. web/tool/weather cùng provenance;
+6. integrated evaluation, security và closure.
+
+Gate sau không được dùng kết quả kế hoạch của gate trước như evidence thực thi.
+
 ## Separate design bắt buộc
 
 Design session riêng phải:
 
 1. Phân tích Phase 8 failure cases và problem statement.
-2. So sánh ba architecture options.
+2. Ghi nhận architecture direction đã chọn và điều kiện được phép xem lại.
 3. Chọn state transitions, tool permissions và budgets.
 4. Thiết kế data/interface/source-lineage contracts.
 5. Thiết kế agentic evaluation và regression gates.
@@ -374,6 +513,27 @@ Date +07: 2026-08-13.
 Các decision records trên chỉ khóa hướng nghiên cứu. Chúng không thay đổi
 `Status: not_ready` và không tạo implementation authorization.
 
+```text
+Decision: Rule-first rồi LLM query-understanding fallback; structured output
+gồm standalone_query, route, domains, confidence và needs_decomposition. Domain
+filter chỉ dùng khi confidence cao, có đúng một unfiltered retry; decomposition
+tối đa ba subqueries và không đệ quy.
+Decision: Initial memory chỉ là application-owned bounded conversation history;
+không summary hoặc cross-conversation long-term memory.
+Decision: Static Hue knowledge dùng RAG-first sufficiency gate; live intent dùng
+typed tool. Weather API primary, SerpAPI fallback một lần; SerpAPI cũng là web
+search ban đầu. Curated/web/tool provenance phải phân biệt.
+Decision: Recommendation/itinerary dùng LLM constraint extraction, RAG
+candidates, deterministic assembly và LLM presentation; tối đa ba clarification
+turns rồi tiếp tục với assumptions công khai.
+Decision: Deterministic Python controller được chọn; chưa dùng LangGraph hoặc
+multi-agent handoff. Agentic Evaluation Set tách khỏi Golden và freeze trước
+tuning. Implementation chia sáu gates tuần tự.
+Approved direction by: User
+Date +07: 2026-10-01
+Scope: Phase 9 roadmap/design direction only; no implementation authorization.
+```
+
 ## Notebook
 
 Không tạo notebook Phase 9 ở trạng thái `not_ready`. Nếu Phase 9 được tách thành
@@ -401,9 +561,8 @@ Phase 9 là post-MVP và `not_ready` cho đến khi user thay đổi.
 
 ## Bước tiếp theo
 
-Không có action Phase 9 trong MVP hiện tại. Phase 0–7 và simplicity reviews đã
-approved; Golden Dataset V3 Gate 0 và Phase 8 Gate 1 common contracts cũng đã
-approved. Exact Notebook 08a design/plan và isolated implementation/Run All đã
-được authorize; bước hợp lệ là hoàn tất implementation, independent review và
-user confirmation của 08a, rồi tiếp tục từng Notebook 08 group theo authorization
-riêng. Chỉ sau khi Phase 8 hoàn tất mới cân nhắc Phase 9 từ failure evidence thật.
+Không implement Phase 9 lúc này. Trước hết phải duyệt và triển khai đúng package
+Phase 6 GPT baseline, đóng Phase 7 baseline rồi thực hiện Phase 8 model/pipeline
+selection. Khi Phase 9 thực sự mở, Reviewer phải yêu cầu User gửi lại danh sách
+link GitHub/paper, đọc full local research report và khảo sát revision mới; sau
+đó mới phân tích failure evidence, soạn separate design/spec và trình duyệt.

@@ -8,7 +8,7 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 SETTINGS_PATH = BACKEND_DIR / "config" / "settings.yaml"
 
 
-def load_settings():
+def load_settings(validate_private_paths: bool = True):
     """Load settings and reject an unknown active retrieval profile."""
     with SETTINGS_PATH.open() as file:
         settings = yaml.safe_load(file)
@@ -20,11 +20,74 @@ def load_settings():
             f"Valid profiles: {sorted(profiles)}"
         )
     if "full_corpus" in settings:
-        validate_full_corpus_settings(settings["full_corpus"])
+        validate_full_corpus_settings(
+            settings["full_corpus"], validate_private_paths=validate_private_paths
+        )
+    if "full_corpus_runtime" in settings or "full_corpus_generation" in settings:
+        validate_phase6_settings(settings)
     return settings
 
 
-def validate_full_corpus_settings(full_corpus: dict) -> None:
+def validate_phase6_settings(settings: dict) -> None:
+    """Validate Phase 6 full-corpus runtime and generation settings fail-closed."""
+    if not isinstance(settings, dict):
+        raise ValueError("settings must be a dictionary")
+
+    runtime = settings.get("full_corpus_runtime")
+    if not isinstance(runtime, dict):
+        raise ValueError("full_corpus_runtime configuration must be a dictionary")
+    if runtime.get("candidate_id") != "e5-small-384":
+        raise ValueError(f"Invalid full_corpus_runtime.candidate_id: {runtime.get('candidate_id')!r}")
+    if runtime.get("retrieval_treatment") != "dense_bm25_rrf":
+        raise ValueError(f"Invalid full_corpus_runtime.retrieval_treatment: {runtime.get('retrieval_treatment')!r}")
+    if runtime.get("reranker") != "none":
+        raise ValueError(f"Invalid full_corpus_runtime.reranker: {runtime.get('reranker')!r}")
+
+    generation = settings.get("full_corpus_generation")
+    if not isinstance(generation, dict):
+        raise ValueError("full_corpus_generation configuration must be a dictionary")
+
+    forbidden_keys = {
+        "temperature",
+        "top_p",
+        "reasoning_effort",
+        "verbosity",
+        "fallback",
+        "retry",
+        "require_parameters",
+        "base_url",
+    }
+    found_forbidden = forbidden_keys.intersection(generation.keys())
+    if found_forbidden:
+        raise ValueError(f"full_corpus_generation contains forbidden keys: {sorted(found_forbidden)}")
+
+    if generation.get("provider") != "openai":
+        raise ValueError(f"Invalid provider: {generation.get('provider')!r}")
+    if generation.get("model") != "gpt-5.4-nano":
+        raise ValueError(f"Invalid model: {generation.get('model')!r}")
+    if generation.get("api_key_env") != "OPENAI_API_KEY":
+        raise ValueError(f"Invalid api_key_env: {generation.get('api_key_env')!r}")
+    if generation.get("token_encoding") != "o200k_base":
+        raise ValueError(f"Invalid token_encoding: {generation.get('token_encoding')!r}")
+    if generation.get("answer_max_output_tokens") != 2048:
+        raise ValueError(f"Invalid answer_max_output_tokens: {generation.get('answer_max_output_tokens')!r}")
+    if generation.get("representation_b_max_output_tokens") != 256:
+        raise ValueError(f"Invalid representation_b_max_output_tokens: {generation.get('representation_b_max_output_tokens')!r}")
+    if generation.get("timeout_seconds") != 45:
+        raise ValueError(f"Invalid timeout_seconds: {generation.get('timeout_seconds')!r}")
+    if generation.get("context_limit") != 16384:
+        raise ValueError(f"Invalid context_limit: {generation.get('context_limit')!r}")
+    if generation.get("reserved_output_tokens") != 2048:
+        raise ValueError(f"Invalid reserved_output_tokens: {generation.get('reserved_output_tokens')!r}")
+    if generation.get("safety_margin") != 512:
+        raise ValueError(f"Invalid safety_margin: {generation.get('safety_margin')!r}")
+    if generation.get("max_context_documents") != 5:
+        raise ValueError(f"Invalid max_context_documents: {generation.get('max_context_documents')!r}")
+
+
+def validate_full_corpus_settings(
+    full_corpus: dict, validate_private_paths: bool = True
+) -> None:
     """Validate full-corpus settings fail-closed."""
     if not isinstance(full_corpus, dict):
         raise ValueError("full_corpus configuration must be a dictionary")
@@ -35,7 +98,7 @@ def validate_full_corpus_settings(full_corpus: dict) -> None:
     if not root_dir or not isinstance(root_dir, str):
         raise ValueError("full_corpus.knowledge_base.root_dir must be a non-empty string")
     resolved_root = (BACKEND_DIR / root_dir).resolve()
-    if not resolved_root.is_dir():
+    if validate_private_paths and not resolved_root.is_dir():
         raise ValueError(f"full_corpus knowledge base root does not exist: {resolved_root}")
 
     include_globs = kb.get("include_globs")
@@ -56,7 +119,7 @@ def validate_full_corpus_settings(full_corpus: dict) -> None:
     if not conditions_file or not isinstance(conditions_file, str):
         raise ValueError("full_corpus.conditions_file must be a non-empty string")
     resolved_cond = (BACKEND_DIR / conditions_file).resolve()
-    if not resolved_cond.is_file():
+    if validate_private_paths and not resolved_cond.is_file():
         raise ValueError(f"full_corpus conditions file does not exist: {resolved_cond}")
 
     embedding_models = full_corpus.get("embedding_models")

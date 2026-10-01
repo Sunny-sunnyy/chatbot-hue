@@ -1,37 +1,45 @@
 # Phase 6: Grounded answer generation và JSON API
 
-> **Full-corpus Phase 6 — implementation handoff active, 2026-09-30:** Metadata
-> v2 Tasks 1–7 đã User-closed. User đã duyệt amendment, Implementation Plan và
-> Review Contract mới; `CURRENT_HANDOFF.md` cấp một implementation scope cho
-> Implementer. Không commit/push, không mutation Qdrant và không chạy paid call
-> trước non-paid gate.
+> **Full-corpus Phase 6 — implementation handoff active, 2026-10-01:** User đã
+> duyệt OpenAI baseline amendment, revised Implementation Plan và Review
+> Contract. `CURRENT_HANDOFF.md` cấp đúng một scope cho Implementer; paid calls
+> chỉ được mở sau complete non-paid gate. Qwen chờ mandatory Phase 8 comparison.
 
 ## Full-corpus package hiện hành
 
-Các artifact hiện hành theo thứ tự ưu tiên:
+Các artifact thiết kế hiện hành theo thứ tự ưu tiên:
 
 ```text
-docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md
-docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md
+docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md (approved)
+docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md (approved)
+handoff_prompt/PHASE_6_OPENAI_BASELINE_REVIEW_CONTRACT.md (approved)
 session_prompt/CURRENT_HANDOFF.md
+docs/superpowers/specs/2026-09-30-phase-6-full-corpus-generation-api-ui-amendment.md (historical retained contract)
+docs/superpowers/plans/2026-09-30-phase-6-full-corpus-generation-api-ui-metadata-v2-implementation-plan.md (historical base plan)
 ```
+
+Plan và handoff ngày 2026-09-30 là audit history. Plan cũ chỉ còn cung cấp các
+phần Metadata v2/API/UI mà delta plan 2026-10-01 giữ lại; execution authority
+duy nhất nằm trong current GPT handoff.
 
 Spec và plan ngày 2026-09-14 là canonical history cho behavior được amendment
 giữ nguyên, nhưng không tự cấp execution authority.
 
-Contract hiện hành tóm tắt:
+Contract full-corpus hiện hành:
 
 - runtime validation dùng một cell cấu hình
   `e5-small-384 + dense_bm25_rrf + none`; không chọn winner và không bật
   reranker trong Phase 6 smoke;
-- context pack tối đa Top 5 nguyên chunk theo rank bằng tokenizer immutable của
-  `Qwen/Qwen3.5-9B`; evidence chỉ lấy từ `evidence_parts`;
-- generation dùng direct asynchronous `AsyncOpenAI` với
-  `qwen/qwen3.5-9b` qua OpenRouter, `temperature=0`, không Agent/Runner, không
-  application retry và không model fallback;
-- OpenRouter tự route/fallback giữa upstreams phục vụ cùng model; request gửi
-  `provider.require_parameters=true`, không pin provider/order;
-- `OPENROUTER_API_KEY` chỉ đọc bằng `os.getenv` từ process environment;
+- context pack tối đa Top 5 nguyên chunk theo rank bằng `tiktoken/o200k_base`;
+  evidence chỉ lấy từ `evidence_parts`;
+- generation dùng tool-less OpenAI Agents SDK với alias `gpt-5.4-nano`,
+  structured output và `Runner.max_turns=1`; không pin snapshot;
+- không cấu hình hoặc truyền reasoning, temperature, top-p, penalties hay
+  verbosity; model/SDK tự dùng các giá trị mặc định;
+- `OPENAI_API_KEY` chỉ đọc từ process environment; client `max_retries=0`,
+  timeout 45 giây, không application retry hoặc model fallback;
+- answer cap 2048, Representation B cap 256 và context profile
+  `16384/2048/512`;
 - API thành công chỉ trả `{answer,sources}` với response-local citation `[n]`;
   backend tự validate citation và dựng source từ evidence thực tế;
 - UI hiện tại là static HTML/CSS/JavaScript, render Markdown đã sanitize bằng
@@ -42,8 +50,9 @@ Contract hiện hành tóm tắt:
   thật; bounded live evidence có đúng một call Representation B và bốn answer
   calls, không tự thay case lỗi bằng call thứ sáu.
 
-Review Contract nằm ngay trong Implementation Plan. Full-corpus Written Spec và
-Plan mới hơn có ưu tiên khi bất kỳ nội dung Foods lịch sử nào bên dưới xung đột.
+Review Contract hiện hành là file riêng ngày 2026-10-01. Amendment/delta plan
+mới có ưu tiên; plan 2026-09-30 chỉ áp dụng cho phần không bị override. Nội dung
+Foods lịch sử bên dưới không override full-corpus package hiện hành.
 
 ## Ranh giới lịch sử
 

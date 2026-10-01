@@ -18,6 +18,11 @@ Phase 8 tổng thể chưa có production/final-selection authorization. Chỉ m
    tài liệu bổ sung thực sự hữu ích nếu có;
 3. affected Phase 7 evaluation đã được chạy lại.
 
+> **Model-lifecycle revision đã được User duyệt — 2026-10-01:** Phase 6 dựng
+> `gpt-5.4-nano` baseline; Phase 7 freeze/evaluate baseline đó; Phase 8 bắt buộc
+> so cùng điều kiện với `qwen/qwen3.5-9b`; Phase 9 dùng winner sau User approval.
+> Qwen không phải runtime fallback và không được tự động promote.
+
 Golden Dataset V3 Gate 0 đã được Reviewer kiểm tra và user phê duyệt ở kích
 thước `45` câu cùng smoke subset `10` câu ngày `2026-08-28 +07`. Gate 1 common
 contracts đã được user phê duyệt cùng ngày. Exact Notebook 08a design/plan cũng
@@ -65,9 +70,13 @@ Fusion: raw 0.6 * dense_score + 0.4 * bm25_score, không normalize
 Pre-rerank output: top 10
 Reranker: cross-encoder/ms-marco-MiniLM-L-6-v2, input 10 -> output 5
 Context: tối đa 5 whole chunks và 3000 ký tự
-Generator: qwen/qwen3.5-9b qua OpenRouter
+Generator: gpt-5.4-nano control; qwen/qwen3.5-9b là mandatory candidate
 Judge: gpt-5.4-mini
 ```
+
+Reference flow giữ nguyên retrieval/reranking semantics của `llm_rag`; generator
+không còn là một bất biến Qwen. End-to-end generation group phải chạy control
+GPT và Qwen candidate trên cùng frozen evidence/questions/prompt/schema/budgets.
 
 Baseline này giữ cả raw-score fusion dù dense/BM25 khác scale vì mục tiêu là
 tái hiện đúng reference flow, không tuyên bố nó là phương pháp fusion tốt. Source
@@ -349,13 +358,18 @@ giữ khi đánh dấu rõ là superseded.
 ### Generator và judge đã xác nhận
 
 ```text
-Generator: qwen/qwen3.5-9b qua OpenRouter
+Control generator: gpt-5.4-nano alias đã dùng ở Phase 6
+Mandatory candidate: qwen/qwen3.5-9b qua OpenRouter
 Judge: gpt-5.4-mini
 ```
 
-Generator/judge được giữ cố định khi so retrieval và reranking. Generator chỉ
-được gọi ở end-to-end group sau khi retrieval evidence đã được khóa, tránh dùng
-answer quality để che regression retrieval.
+Control generator và judge được giữ cố định khi so retrieval và reranking.
+Generator comparison chỉ được mở ở end-to-end group sau khi retrieval evidence
+đã khóa, tránh dùng answer quality để che regression retrieval. Hai generators
+dùng cùng questions/evidence, prompt, structured schema, context/output budgets
+và judge trong phạm vi provider cho phép; mọi khác biệt phải được ghi lại.
+Không application fallback giữa hai model, không runtime user-selectable model
+và không cutover nếu chưa có User approval.
 
 ### Selection rule đã xác nhận
 
@@ -592,7 +606,8 @@ Các checkpoint hiện hành:
 2. `08c`: exact spec tại
    `docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md`;
 3. `08d`: exact non-duplicate matrix manifest và execution order;
-4. `08e`: exact Qwen generation, GPT judge rubric/repetitions và paid protocol;
+4. `08e`: exact GPT-control/Qwen-candidate generation comparison, GPT judge
+   rubric/repetitions và paid protocol;
 5. từng later notebook: exact readable columns/key và Reviewer Run All command.
 
 Sau khi user chọn winner, clean-kernel rerun đủ 45 cases cho winner và nearest
@@ -682,6 +697,20 @@ Affected scope: Phase 8 generation boundary, judge consistency và execution
 environment documentation.
 Revisit trigger: Provider/model availability thay đổi trước real execution hoặc
 GPU session xác minh một device policy khác cần user phê duyệt.
+```
+
+```text
+Decision revision approved: Phase 8 giữ alias gpt-5.4-nano đã ổn định ở Phase 6
+làm control và bắt buộc đánh giá qwen/qwen3.5-9b như generation
+candidate trên cùng điều kiện. gpt-5.4-mini tiếp tục là judge độc lập. Không có
+automatic fallback, runtime model selector hoặc automatic promotion; User chọn
+winner sau khi xem quality, groundedness/citation, latency, reliability và cost.
+Reason: Ưu tiên dựng baseline ổn định trước nhưng vẫn bảo đảm Qwen được kiểm tra
+thật, thay vì bị loại hoặc được chọn trước evidence.
+Approved by: User
+Date +07: 2026-10-01
+Status: approved; supersedes generation-only phần của decision 2026-08-26 ở
+ngay trên. Không cấp execution authorization cho Phase 8.
 ```
 
 ```text

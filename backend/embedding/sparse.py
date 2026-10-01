@@ -13,8 +13,12 @@ import math
 from pathlib import Path
 import uuid
 
-from backend.core.schema import FullCorpusChunk
-from backend.scoring.bm25 import B, K1, tokenize
+try:
+    from backend.core.schema import FullCorpusChunk
+    from backend.scoring.bm25 import B, K1, tokenize
+except ModuleNotFoundError:
+    from core.schema import FullCorpusChunk
+    from scoring.bm25 import B, K1, tokenize
 
 SCHEMA_VERSION: str = "phase_3_sparse_state:v1"
 TOKENIZER_ID: str = "backend.scoring.bm25.tokenize:v1"

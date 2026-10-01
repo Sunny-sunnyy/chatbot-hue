@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trợ lý Tra cứu Văn hóa & Du lịch Huế</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Hỏi đáp Văn hóa & Du lịch Huế</h1>
+      <p class="subtitle">Hệ thống RAG tra cứu tri thức toàn diện về Huế</p>
+    </header>
+
+    <form id="chat-form">
+      <label for="query">Nhập câu hỏi của bạn:</label>
+      <textarea id="query" rows="3" placeholder="Ví dụ: Giá vé tham quan Đại Nội Huế được quy định thế nào?"></textarea>
+      <div class="actions">
+        <button type="submit" id="submit">Hỏi về Huế</button>
+        <button type="button" id="retry" hidden>Thử lại</button>
+      </div>
+    </form>
+
+    <div id="status" aria-live="polite" class="status-message"></div>
+
+    <section class="results">
+      <article id="answer" class="answer-box"></article>
+      <section id="sources" class="sources-list" aria-label="Nguồn tham khảo"></section>
+    </section>
+  </main>
+
+  <script src="/static/vendor/marked.umd.js"></script>
+  <script src="/static/vendor/purify.min.js"></script>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
