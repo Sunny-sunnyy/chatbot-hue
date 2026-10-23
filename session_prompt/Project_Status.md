@@ -96,8 +96,13 @@ User xác nhận closure Phase 6 ngày 2026-10-23 (Option A, PASS WITH
 LIMITATIONS): live run 5 calls `gpt-6-luna`, 4 PASS / 1 FAIL. `conditional_evidence`
 FAIL do retrieval không đưa chunk bảng giá vé lẻ vào top-30 (root cause đã chứng
 minh, chuyển Phase 8). Synthesis đa nguồn chưa được chứng minh (đo ở Phase 7).
-Review: `reports/full_corpus_phase_6_gpt_6_luna_review_2026_10_23.md`. Bước kế
-tiếp chờ User mở thiết kế Phase 7A.
+Review: `reports/full_corpus_phase_6_gpt_6_luna_review_2026_10_23.md`. Phase 7A đã
+brainstorming với User ngày 2026-10-23 (tham khảo `rag_old_0` + phiên âm bài học, survey
+`reports/phase_7a_golden_reference_rag_old_0_survey_2026_10_23.md`). Spec
+`docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` và plan
+`docs/superpowers/plans/2026-10-23-phase-7a-golden-full-corpus-implementation-plan.md`
+được User duyệt; chúng supersede các bullet Golden thời Codex bên dưới (category,
+quota, review, thứ tự P7, shuffle, keyword rule, Foods V3 copy).
 
 ## System and data map
 
@@ -236,6 +241,7 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 5 | `approved` | User-closed 2026-09-14 sau Correction 3 final review |
 | 6 | `approved` | User-closed 2026-10-23, PASS WITH LIMITATIONS trên `gpt-6-luna` (4/5 live calls); limitation: retrieval miss bảng giá (F2), synthesis chưa chứng minh (F1) |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
+| 7A | `in_progress` | Golden full-corpus: spec/plan User-approved 2026-10-23; handoff Task 1–2 (module kiểm tra + pilot `heritages`) tới GATE P |
 | 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; remote-Qwen research queued riêng sau Phase 4 closure |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
