@@ -1,5 +1,12 @@
 # Phase 6: Grounded answer generation và JSON API
 
+> **Full-corpus Phase 6 — approved 2026-10-23 (PASS WITH LIMITATIONS):** model
+> đổi sang `gpt-6-luna`, Qdrant host port 6335/6336 theo
+> `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`. Live run
+> 4/5 PASS; limitation F1 (synthesis đa nguồn chưa chứng minh) và F2 (retrieval
+> miss bảng giá vé) tại `reports/full_corpus_phase_6_gpt_6_luna_review_2026_10_23.md`.
+> Ghi chú bên dưới về `gpt-5.4-nano` là lịch sử.
+
 > **Full-corpus Phase 6 — implementation handoff active, 2026-10-01:** User đã
 > duyệt OpenAI baseline amendment, revised Implementation Plan và Review
 > Contract. `CURRENT_HANDOFF.md` cấp đúng một scope cho Implementer; paid calls

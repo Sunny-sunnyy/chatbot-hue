@@ -124,7 +124,7 @@ def build_record_path(candidate: FullCorpusCandidate) -> Path:
 def _phase4_settings() -> dict[str, Any]:
     settings = load_settings()
     database = settings.get("vector_database", {})
-    if database.get("url") != "http://localhost:6333":
+    if database.get("url") != "http://localhost:6335":
         raise ValueError("Phase 4 requires the pinned local Hue Qdrant URL")
     if database.get("timeout") != QDRANT_TIMEOUT:
         raise ValueError("Phase 4 Qdrant timeout must remain 30 seconds")

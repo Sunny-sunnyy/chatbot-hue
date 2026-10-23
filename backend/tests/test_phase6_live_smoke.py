@@ -243,7 +243,7 @@ def test_build_live_smoke_artifact_after_count_null_yields_unverified_immutabili
     git_info = {"commit": "test_sha", "dirty": False}
     artifact = build_live_smoke_artifact(
         git_info=git_info,
-        settings={"full_corpus_generation": {"model": "gpt-5.4-nano"}, "full_corpus_runtime": {}},
+        settings={"full_corpus_generation": {"model": "gpt-6-luna"}, "full_corpus_runtime": {}},
         before_count=8460,
         after_count=None,
         calls_record=[],
@@ -266,7 +266,7 @@ def test_evidence_recorder_preserves_generation_metadata_on_citation_error():
     gen = GeneratedText(
         text="Câu trả lời thiếu trích dẫn.",
         response_id="chatcmpl-test-abc",
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
         latency_ms=320,
         input_tokens=400,
         output_tokens=40,
@@ -283,7 +283,7 @@ def test_evidence_recorder_preserves_generation_metadata_on_citation_error():
     assert evidence.status == "ERROR"
     assert evidence.error == "citation_integrity_failed"
     assert evidence.response_id == "chatcmpl-test-abc"
-    assert evidence.model == "gpt-5.4-nano"
+    assert evidence.model == "gpt-6-luna"
     assert evidence.latency_ms == 320
     assert evidence.input_tokens == 400
     assert evidence.output_tokens == 40

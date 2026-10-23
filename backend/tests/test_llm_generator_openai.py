@@ -9,7 +9,7 @@ from llm.prompt import (
 )
 from retrieval.context_builder import ContextBuilder
 
-MODEL = "gpt-5.4-nano"
+MODEL = "gpt-6-luna"
 
 
 def test_prompt_keeps_policy_in_system_instructions_and_data_in_runner_message():

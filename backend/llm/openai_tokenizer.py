@@ -2,7 +2,7 @@
 from functools import lru_cache
 import tiktoken
 
-OPENAI_GENERATION_MODEL: str = "gpt-5.4-nano"
+OPENAI_GENERATION_MODEL: str = "gpt-6-luna"
 OPENAI_TOKEN_ENCODING: str = "o200k_base"
 
 

@@ -66,7 +66,7 @@ embedding:
   batch_size: 64
 
 vector_database:
-  url: http://localhost:6333
+  url: http://localhost:6335
   collection_name: hue_foods_e5_small_384
   vector_size: 384
   distance: cosine
@@ -95,17 +95,17 @@ reranking:
 
 llm:
   provider: openai
-  answer_model: gpt-5.4-nano
+  answer_model: gpt-6-luna
   temperature: 0.2
   max_output_tokens: 1024
   timeout: 45
-  # Model IDs verified 2026-08-13 against developers.openai.com:
-  # gpt-5.4-nano supports temperature and up to 128k output tokens.
+  # gpt-6-luna listed by GET /v1/models on 2026-10-23 (Reviewer);
+  # temperature support not live-verified (amendment R4).
 
 evaluation:
   test_file: ../knowledge-base-hue/foods/evaluation/tests.jsonl
-  answer_model: gpt-5.4-nano
-  judge_model: gpt-5.4-mini
+  answer_model: gpt-6-luna
+  judge_model: gpt-6-luna
 
 full_corpus_runtime:
   candidate_id: e5-small-384
@@ -114,7 +114,7 @@ full_corpus_runtime:
 
 full_corpus_generation:
   provider: openai
-  model: gpt-5.4-nano
+  model: gpt-6-luna
   api_key_env: OPENAI_API_KEY
   token_encoding: o200k_base
   answer_max_output_tokens: 2048

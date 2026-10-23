@@ -23,7 +23,7 @@ def test_structured_outputs_have_one_field():
 
 def test_real_environment_builds_openai_generator(require_openai_key):
     generator = OpenAIFullCorpusGenerator.from_environment(load_settings())
-    assert generator.model == "gpt-5.4-nano"
+    assert generator.model == "gpt-6-luna"
     assert generator.timeout == 45
     assert generator.client.max_retries == 0
 

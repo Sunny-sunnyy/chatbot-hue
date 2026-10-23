@@ -108,7 +108,7 @@ class OpenAIFullCorpusGenerator:
         self.answer_max_output_tokens = answer_max_output_tokens
         self.representation_b_max_output_tokens = representation_b_max_output_tokens
 
-        # Create one shared OpenAIResponsesModel with gpt-5.4-nano alias
+        # Create one shared OpenAIResponsesModel with gpt-6-luna alias
         self.responses_model = OpenAIResponsesModel(
             model=self.model, openai_client=self.client
         )
@@ -150,7 +150,7 @@ class OpenAIFullCorpusGenerator:
         if not api_key:
             raise GenerationError(f"{api_key_env} is missing from environment")
 
-        model = config.get("model", "gpt-5.4-nano")
+        model = config.get("model", "gpt-6-luna")
         timeout = config.get("timeout_seconds", 45)
         answer_max = config.get("answer_max_output_tokens", 2048)
         rep_b_max = config.get("representation_b_max_output_tokens", 256)

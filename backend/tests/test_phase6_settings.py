@@ -13,7 +13,7 @@ def test_phase6_settings_are_exact():
     }
     assert settings["full_corpus_generation"] == {
         "provider": "openai",
-        "model": "gpt-5.4-nano",
+        "model": "gpt-6-luna",
         "api_key_env": "OPENAI_API_KEY",
         "token_encoding": "o200k_base",
         "answer_max_output_tokens": 2048,
@@ -51,7 +51,7 @@ def test_openai_tokenizer_constants_and_loading():
         load_openai_tokenizer,
     )
 
-    assert OPENAI_GENERATION_MODEL == "gpt-5.4-nano"
+    assert OPENAI_GENERATION_MODEL == "gpt-6-luna"
     assert OPENAI_TOKEN_ENCODING == "o200k_base"
 
     tokenizer = load_openai_tokenizer()

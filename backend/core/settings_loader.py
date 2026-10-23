@@ -63,7 +63,7 @@ def validate_phase6_settings(settings: dict) -> None:
 
     if generation.get("provider") != "openai":
         raise ValueError(f"Invalid provider: {generation.get('provider')!r}")
-    if generation.get("model") != "gpt-5.4-nano":
+    if generation.get("model") != "gpt-6-luna":
         raise ValueError(f"Invalid model: {generation.get('model')!r}")
     if generation.get("api_key_env") != "OPENAI_API_KEY":
         raise ValueError(f"Invalid api_key_env: {generation.get('api_key_env')!r}")

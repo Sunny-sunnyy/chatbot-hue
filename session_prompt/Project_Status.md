@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-01 +07`
+Last updated: `2026-10-23 +07`
 
 ## Project overview
 
@@ -83,6 +83,22 @@ replacement invocation tối đa 5 attempted calls, nhưng yêu cầu hoãn exec
 Implementer với approval fingerprint; authority chưa tiêu thụ. Cleanup/delete,
 evaluation và quyền Git vẫn chưa được cấp.
 
+**Cập nhật 2026-10-23:** sau ba tuần tạm dừng, User quyết định đổi toàn bộ model
+OpenAI (Phase 6 generation, Foods answer, evaluation answer/judge) sang
+`gpt-6-luna` và đổi host port Qdrant hue sang `127.0.0.1:6335/6336` để chạy song
+song `mekongai-template`. Paid authority `gpt-5.4-nano` ngày 2026-10-01 chưa bị
+tiêu thụ (0 calls) và đã bị thay. Cả Reviewer và Implementer hiện là Claude Opus
+5.5; quy trình giữ nguyên. Delta tại
+`docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`; task hiện
+hành trong `CURRENT_HANDOFF.md`.
+
+User xác nhận closure Phase 6 ngày 2026-10-23 (Option A, PASS WITH
+LIMITATIONS): live run 5 calls `gpt-6-luna`, 4 PASS / 1 FAIL. `conditional_evidence`
+FAIL do retrieval không đưa chunk bảng giá vé lẻ vào top-30 (root cause đã chứng
+minh, chuyển Phase 8). Synthesis đa nguồn chưa được chứng minh (đo ở Phase 7).
+Review: `reports/full_corpus_phase_6_gpt_6_luna_review_2026_10_23.md`. Bước kế
+tiếp chờ User mở thiết kế Phase 7A.
+
 ## System and data map
 
 Luồng chính:
@@ -115,7 +131,7 @@ Production baseline hiện dùng:
 - profiles `dense_only`, `hybrid_no_rerank`, `hybrid_rerank`;
 - Python BM25 và concrete local MiniLM cross-encoder reranker;
 - bounded whole-chunk context;
-- grounded generation bằng `gpt-5.4-nano`;
+- grounded generation bằng `gpt-6-luna` (đổi 2026-10-23; trước là `gpt-5.4-nano`);
 - answer-only JSON API và startup warm-up.
 
 Active collection còn legacy sparse vector state từ các phase trước nhưng là
@@ -165,7 +181,7 @@ Decision #6a chốt strict minimal public response/citation/error contract;
 alias `gpt-5.4-nano` qua tool-less OpenAI Agents SDK, không pin snapshot và
 không cấu hình/truyền reasoning hoặc sampling parameters; `o200k_base`, answer/B caps 2048/256,
 context 16384/2048/512, timeout 45, client retries 0 và Runner max turns 1.
-`gpt-5.4-mini` giữ vai trò evaluation judge; Qwen là mandatory Phase 8
+`gpt-5.4-mini` từng là evaluation judge (từ 2026-10-23 mọi model, kể cả judge, là `gpt-6-luna`); Qwen là mandatory Phase 8
 candidate, không fallback. #6e giữ static UI inline citation/source cards. Decision
 Queue tiền-spec đã hoàn tất; Written Spec đã được User duyệt ngày 2026-09-11.
 Implementation Plan + Review Contract đã được User duyệt ngày 2026-09-11;
@@ -218,7 +234,7 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 3 | `approved` | Full-corpus embedding/sparse preflight User-closed; Qwen CUDA FP16 PASS trên GTX 1650 |
 | 4 | `approved` | User-closed 2026-09-13 với final review PASS WITH LIMITATIONS |
 | 5 | `approved` | User-closed 2026-09-14 sau Correction 3 final review |
-| 6 | `authorized_pending_execution` | Correction 4 non-paid PASS; User đã cấp đúng một bounded 5-call replacement invocation, hoãn sang phiên tiếp theo; authority chưa tiêu thụ |
+| 6 | `approved` | User-closed 2026-10-23, PASS WITH LIMITATIONS trên `gpt-6-luna` (4/5 live calls); limitation: retrieval miss bảng giá (F2), synthesis chưa chứng minh (F1) |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
 | 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; remote-Qwen research queued riêng sau Phase 4 closure |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
@@ -316,6 +332,7 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   quan; `reference-only` cho history, raw reference và report đã approved.
   Reviewer đọc full report đang review nhưng chỉ focused-check source; Implementer
   đọc full exact source/input trong approved scope. Không dùng câu “đọc toàn bộ
+  mọi tài liệu được dẫn”.
 - Nhiệm vụ và next action duy nhất nằm trong `session_prompt/CURRENT_HANDOFF.md`.
 - Full-corpus thực hiện tuần tự:
   `Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7A Golden → Phase 7B Evaluator → Phase 8 Benchmark → integrated closure`.
