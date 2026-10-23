@@ -29,6 +29,8 @@ Trạng thái hiện tại:
 - Phase 6 Qwen scope ngày 2026-09-30 đã bị supersede. User duyệt OpenAI baseline
   amendment, revised plan và Review Contract ngày 2026-10-01; current handoff
   thuộc Implementer `implementation`.
+- Phase 7A Golden full-corpus User-closed ngày 2026-10-23; xem
+  `reports/phase_7a_golden_review_2026_10_23.md`.
 - Phase 6 User-closed ngày 2026-10-23 (PASS WITH LIMITATIONS) sau amendment
   `gpt-6-luna` + Qdrant port 6335; xem
   `reports/full_corpus_phase_6_gpt_6_luna_review_2026_10_23.md`.

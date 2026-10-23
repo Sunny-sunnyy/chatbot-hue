@@ -150,6 +150,14 @@ Phase 2 cutover hoặc mutation.
 
 ## Quyết định đã chốt
 
+> **Phase 7A — User-closed 2026-10-23.** Golden full-corpus hiện hành do
+> `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` quy định.
+> Spec này supersede các bullet Golden bên dưới về: 5 category, ~175 case theo tỷ lệ
+> mềm, keyword mang đáp án, `out_of_scope`, viết mới thay vì copy Foods V3, Reviewer
+> duyệt toàn bộ + User đọc mẫu, pilot rồi song song, merge không shuffle. Kết quả:
+> 176 case + smoke 10 (private); review `reports/phase_7a_golden_review_2026_10_23.md`.
+> Phần còn lại bên dưới là lịch sử thiết kế.
+
 - Golden đích là một file JSONL canonical cho official evaluation.
 - Biên soạn và review dùng bảy working partitions P7: `foods`, `heritages`,
   `festivals`, `performing_arts`, `travel_places`, `travel_services` và
