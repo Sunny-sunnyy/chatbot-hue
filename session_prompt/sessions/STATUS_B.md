@@ -1,20 +1,23 @@
-# STATUS B — cập nhật 2026-10-24 14:00
+# STATUS B — cập nhật 2026-10-24
 
-Terminal: `hue-rag-c0` · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Không có. Phase 7A2 Gate 3 đang ở trạng thái "chờ review" của A.
+- B2 — Phase 7B Gate 1: review thiết kế xong (A đồng ý 6 mặc định); đang code.
 
 ## Đang khai báo sửa
-- Không.
+- `backend/evaluation/full_corpus_eval.py` (mới)
+- `backend/evaluation/full_corpus_judge_prompt.md` (mới)
+- `backend/tests/test_full_corpus_eval.py` (mới, logic thuần)
+- `reports/phase_7b_gate_1_evaluator_implementation_2026_10_24.md` (mới)
+- Kết quả private: `data/evaluation/phase_7b/` (file mới, không ghi đè `subsets.json`)
 
 ## Vừa xong
-- Gate 3 xong: 13 collection đã xóa; Qdrant còn đúng 3 collection
-  (572 / 572 / 8.459); `data/full_corpus_builds/` còn 2 file; health 200.
-  Report: `reports/phase_7a2_gate_3_cleanup_implementation_2026_10_24.md`.
-- Review chéo Governance v2: `reports/governance_v2_cross_review_2026_10_24.md`.
-  A đã sửa đủ và commit `86e9431`.
-- Gate 2 + Correction 1: `reports/phase_7a2_gate_2_reindex_implementation_2026_10_24.md`.
+- B1 xong, A đã đóng: `reports/phase_7b_gate_0_health_audit_2026_10_24.md` — nền
+  full-corpus khớp tài liệu; test free 211/213 pass (2 fail do hằng số cũ); sự cố
+  deselect (collection test tạm + 1 request OpenAI 400 ~0 USD + ghi đè CSV, đã khôi phục).
+- Phase 7A2 đã User-closed 2026-10-24 (Gate 1–3). Report của B: gate 2 reindex,
+  gate 3 cleanup, governance v2 cross review.
 
 ## Đã học / bẫy gặp
 - Git của B là `none`, nên dùng `rm` thường, không dùng `git rm` (lệnh này stage vào index).
@@ -24,10 +27,11 @@ Terminal: `hue-rag-c0` · Agent: Claude Opus 5.5 · Vai: thực thi
   lifespan + `httpx.ASGITransport`.
 - Auto-mode permission của B chặn `rm` và `kill`. Khi bị chặn: dừng, nhờ User
   chạy bằng `!` trong terminal B.
-- B xin User xác nhận một dòng trong terminal B trước thao tác paid/xóa
-  (Session_Prompt §1 ngoại lệ).
-- Script tạm và evidence private của Gate 2/3: `/tmp/phase7a2_gate2/`.
+- pytest: rootdir là gốc repo, node id là `backend/tests/…`; `--deselect tests/…`
+  không khớp. Chỉ liệt kê file test free, không dựa vào deselect.
+- Test Foods cũ ghi đè `backend/evaluation/retrieval_results.csv` (tracked); conftest
+  `ingested_collection` tạo collection tạm Qdrant.
+- User 2026-10-24: báo cáo trực tiếp với A; việc A giao = User giao.
 
 ## Việc dở / câu hỏi cho A
-- Mục "Đang chờ User" trong `CURRENT_HANDOFF.md` (thuộc A) đã xong cả hai lệnh;
-  A cập nhật khi review Gate 3.
+- Không.

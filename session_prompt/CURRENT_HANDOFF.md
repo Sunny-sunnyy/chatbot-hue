@@ -8,8 +8,8 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B1 kiểm sức khỏe Phase trước → B2 Phase 7B Gate 1 | đang làm |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C2 danh sách dọn sau Phase 7 | đang làm |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B2 Phase 7B Gate 1 | đang làm |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 chờ 7B Gate 3 | rảnh |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
 session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKFLOW.md` §7).
@@ -29,35 +29,18 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 
 ## Việc của A
 
-1. Review C2.
-2. Review B1, B2. Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
+1. Trình User danh sách dọn C2 (sau khi 7B đóng).
+2. Review B2. Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
    partition, seed 20261025): `data/evaluation/phase_7b/subsets.json` (private, `case_index` 0-based).
 3. Điều phối các Gate còn lại của 7B; chuẩn bị file chấm cho User.
 
 ## Việc của B
 
-### B1 — Kiểm sức khỏe các Phase trước (free, rủi ro thấp)
+### B1 — Kiểm sức khỏe các Phase trước — A đóng 2026-10-24
 
-- **Mục tiêu:** trước khi lấy baseline 7B, xác nhận hệ thống thật khớp tài liệu (User
-  2026-10-24: "kiểm tra các phase trước đó, nhớ ghi báo cáo"). Nền hỏng thì baseline
-  vô nghĩa.
-- **Đọc:** `targeted-read` `Project_Status.md` §4, §8; `guides/full_corpus_rag.md` mục
-  cập nhật 7A2.
-- **Làm (chỉ đọc + chạy free):**
-  1. Corpus: số file 205, số chunk 8.459 (chunker hiện hành, không ghi file).
-  2. Build record khớp corpus (freshness); Qdrant point count, payload 7 field, có
-     dense + sparse; sparse state vocabulary 5.660.
-  3. Runtime: dựng app in-process (`create_app` + lifespan + `httpx.ASGITransport`),
-     `/health` 200; một lượt retrieval thật không gọi generation.
-  4. Golden: `golden_full_corpus.py` kiểm file chính thức + smoke không lỗi.
-  5. Test suite free trong `backend/tests/` (bỏ test có paid call, ví dụ
-     `test_llm_generator_openai.py`): ghi pass/fail/skip; test gãy vì tên Foods/collection
-     cũ thì ghi lại, **không sửa** (thuộc việc dọn).
-  6. Đối chiếu nhanh `Project_Status.md` §4 với số đo; ghi mọi chỗ lệch.
-- **Không làm:** sửa code/dữ liệu/Qdrant; gọi paid; build lại index.
-- **Đầu ra:** `reports/phase_7b_gate_0_health_audit_2026_10_24.md` (bảng mục kiểm →
-  PASS/PARTIAL/FAIL/NOT RUN + bằng chứng; lệch; đề xuất); `STATUS_B.md`; nhắn A.
-- **Dừng:** runtime không khởi động hoặc freshness fail → báo A ngay.
+`reports/phase_7b_gate_0_health_audit_2026_10_24.md`: nền full-corpus khớp `Project_Status.md` §4
+(A chạy lại `audit.py`: PASS; 2 test fail do hằng số/dữ liệu cũ — đích dọn). Sự cố deselect §5.1
+đã xử lý (CSV khôi phục; bẫy ghi §8). Nền đủ để lấy baseline 7B.
 
 ### B2 — Phase 7B Gate 1 (sau B1, trung bình, paid ≤0,02 USD)
 
@@ -84,23 +67,19 @@ không lộ Golden). Dùng làm input brainstorm Phase 8 sau baseline 7B. Câu h
 một phần vs từ chối cả câu) là quyết định của User → đưa vào brainstorm Phase 8. Cột "Cách làm
 phổ biến" cập nhật nguồn khi có kết quả ChatGPT.
 
-### C2 — Danh sách dọn sau Phase 7 (chỉ đọc, rủi ro thấp)
+### C2 — Danh sách dọn sau Phase 7 — A đóng 2026-10-24
 
-- **Mục tiêu:** liệt kê đích dọn để A trình User (`Project_Status.md` §5: sau Phase 7 xóa
-  mọi collection không dùng kèm gỡ code/test/notebook Foods cũ).
-- **Làm:** với mỗi đích (2 collection Foods; code/test/notebook/settings tham chiếu Foods
-  cũ hoặc collection/model đã xóa — notebook 03, 04, 06, 08a, 08b; evaluator Foods
-  `backend/evaluation/{eval,evaluator,test,golden_dataset,…}.py`; file trỏ cũ trong
-  `session_prompt/`): đường dẫn/tên chính xác, ai đang tham chiếu (grep), xóa có làm gãy
-  gì đang dùng không, đề xuất xóa/giữ/sửa. **Không** đụng các file Phase 7B đang khai báo
-  (`backend/evaluation/full_corpus_*`), và ghi rõ hàm metric `eval.py` đang được 7B chép.
-- **Không làm:** xóa/sửa bất cứ gì.
-- **Đầu ra:** `reports/phase_7_cleanup_inventory_2026_10_24.md`; `STATUS_C.md`; nhắn A.
-- Sau C2: C chờ 7B Gate 3 (Claude judge, spec 7B §4.3).
+`reports/phase_7_cleanup_inventory_2026_10_24.md`: đích, người tham chiếu, ràng buộc thứ tự (đợi
+B2 chép metric; sửa `settings.yaml` + `settings_loader` cùng lúc; giữ
+`knowledge-base-hue/foods/evaluation/golden_full_corpus_authoring.jsonl`). A trình User trước khi
+xóa (sau khi 7B đóng).
+
+### C3 — chờ 7B Gate 3 (Claude judge, spec 7B §4.3)
 
 ## Đang chờ User
 
 - Gửi ChatGPT hai file trong `gửi chatgpt/tìm thông tin/`:
   `phase_7b_rag_evaluation_2026_10_24.md`, `phase_8_retrieval_improvements_2026_10_24.md`.
 - Quyết định Phase 8 (khi brainstorm): trả lời phần có căn cứ hay từ chối cả câu (C1 §5.1, H8).
+- Duyệt danh sách dọn C2 (xóa code/test/notebook Foods, 2 collection Foods).
 - Chấm tay ~20 case 7B khi A báo file chấm sẵn sàng.

@@ -3,20 +3,24 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ A review việc "rà soát lựa chọn Phase 2–6 cho Phase 8 (chỉ đọc)"
-  (`CURRENT_HANDOFF.md` → Việc của C).
+- Chờ A review C2; sau đó chờ 7B Gate 3 (Claude judge, spec 7B §4.3).
+
 
 ## Đang khai báo sửa
-- không (đã xong: `reports/phase_8_candidate_hypotheses_2026_10_24.md`,
-  `gửi chatgpt/tìm thông tin/phase_8_retrieval_improvements_2026_10_24.md`)
+- không
 
 ## Vừa xong
+- C2: `reports/phase_7_cleanup_inventory_2026_10_24.md` (chỉ đọc; đồ thị import AST `/tmp/c_probe/imports.py`; gồm input B1).
+- C1 A đóng, commit `1027ec3`.
 - Report giả thuyết Phase 8: 14 giả thuyết (H1–H14), 11 quan sát đo được (O1–O11),
   thứ tự đề xuất. Probe chỉ đọc bằng `uv run` (script `/tmp/c_probe/`, không commit);
   không sửa code/dữ liệu/Qdrant, không gọi paid.
 - Yêu cầu nghiên cứu ChatGPT (9 câu, đòi URL) — chờ User gửi.
 
 ## Đã học / bẫy gặp
+- `knowledge-base-hue/foods/evaluation/` vừa có Golden Foods cũ vừa có file authoring 7A đang dùng — không xóa cả thư mục.
+- `load_settings` bắt buộc `active_profile` ∈ `profiles` (Foods); `vector_database.url/timeout` vẫn được full-corpus dùng.
+- Grep với brace-expansion `--exclude-dir={…}` có tên tiếng Việt bị safety check chặn; dùng nhiều `--exclude-dir=` riêng.
 - Lần mở này A = `hue-rag-77`, B = `hue-rag-64`.
 - Lấy thông tin ngoài: file yêu cầu (kèm URL) trong `gửi chatgpt/tìm thông tin/` → báo A
   → đọc `gửi chatgpt/kết quả nghiên cứu/` + WebFetch đối chiếu.

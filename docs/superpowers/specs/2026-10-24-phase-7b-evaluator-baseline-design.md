@@ -79,6 +79,12 @@ riêng, không đổi tham số sinh.
 - **Lỗi kỹ thuật** (provider, mạng, timeout): ghi nguyên lỗi; run có lỗi là `incomplete`
   (7A). Chạy lại riêng case lỗi, tính vào giới hạn tiền.
 - **Chi phí:** cộng `input_tokens`/`output_tokens` từ usage mỗi lượt gọi, nhân giá §2.
+- **Lỗi citation** (B2 review, A chốt): khi `select_cited_sources` raise `CitationIntegrityError`
+  (API trả 500), vẫn đưa text đã sinh cho judge; dòng ghi `citation_error`; report tỉ lệ lỗi
+  citation (tổng, theo category) = tỉ lệ User thấy lỗi. Không phải lỗi kỹ thuật, không làm run
+  `incomplete`. Không có nguồn sau đóng gói → `INSUFFICIENT_ANSWER`, không gọi sinh, như API.
+- Từ chối = `answer.strip() == INSUFFICIENT_ANSWER`; keyword so khớp NFC + casefold hai phía
+  trên `search_text` top-10.
 
 ### 4.3 Judge
 
@@ -89,8 +95,13 @@ riêng, không đổi tham số sinh.
 - **Claude (chính):** C chấm (độc lập với B là người dựng pipeline). C dùng sub-agent, mỗi
   sub-agent một lô ≤10 case, chỉ nhận prompt judge + case của lô; mỗi case chấm độc lập.
   Lần chấm lại dùng lô xáo khác. Không cho judge thấy điểm lần trước, điểm User hay tên run.
-- **Luna (phụ):** một lượt gọi mỗi case qua OpenAI, cùng model/provider như generation,
-  structured output 3 số nguyên + feedback; không thêm tham số sampling.
+- **Luna (phụ):** một lượt gọi mỗi case qua OpenAI, cùng model/client như generation,
+  structured output 3 số nguyên + feedback; `max_tokens` 1024; **không** truyền `temperature`
+  (luna trả 400, B1) hay tham số sampling khác.
+- **Giao diện file** (B định ở Gate 1, ghi trong report): đầu vào chấm JSONL
+  `{case_index, question, reference_answer, answer}` — không category, run hay điểm, xáo theo
+  seed để chia lô (lần chấm lại seed khác); điểm JSONL `{case_index, accuracy, completeness,
+  relevance, feedback}`, mỗi nguồn chấm một file (luna kèm usage). Aggregator đọc mọi nguồn.
 
 ### 4.4 Tập con chấm lại (30 case) và mẫu User (~20 case)
 
