@@ -3,14 +3,16 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ A review B5; Gate 4 tổng hợp khi C (Claude) và User chấm xong.
+- Chờ C review chéo B6 (Gate 4); khi User chấm xong: chạy parse-user-scores + 3 compare (report Gate 4 §5) rồi cập nhật report.
 
 ## Đang khai báo sửa
-- `backend/evaluation/full_corpus_eval.py`, `backend/tests/test_full_corpus_eval.py`
-- `reports/phase_8_probe_context_top10_2026_10_24.md` (mới); private `data/evaluation/phase_8_probe/`
+- `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md` (mới); script phân tích `/tmp/phase7b_b6/extra.py`
 
 ## Vừa xong
-- B5 (probe context 10, exploratory) xong, chờ review A; 0,00495 USD. Tổng paid B ~0,087 USD.
+- B6 (Gate 4) xong, chờ review chéo: baseline Claude Run 1 A/C/R 4,426/4,284/4,455; nhiễu cả
+  đường ≤0,011, 0 case lệch ≥2; 121 case 5/5/5, 22 case 1/1/1 = đúng 22 từ chối nhầm.
+- B5 A đóng, commit `f80737a`.
+- B5 (probe context 10): 0,00495 USD. Tổng paid B ~0,087 USD.
 - B4 A đóng, commit `9514f75`.
 - B4 chi tiết: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; nhiễu judge
   luna rất thấp (30/30 lệch ≤1); 22 từ chối nhầm = 8 retrieval miss / 10 một phần / 4 đủ keyword.

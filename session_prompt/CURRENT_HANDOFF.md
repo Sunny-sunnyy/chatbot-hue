@@ -8,8 +8,8 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B6 report baseline 7B (Gate 4) | đang làm |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C4 chờ việc | rảnh |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B7 sửa minor Gate 4; chờ điểm User | đang làm |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C6 chờ kiểm phần User của Gate 4 | rảnh |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
 session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKFLOW.md` §7).
@@ -69,16 +69,19 @@ nhiễu. Tiền 7B tới đây ~0,082 USD.
 còn 12/22 từ chối, 0 lỗi citation. Chưa chấm điểm; n=22 chọn theo lỗi. Tiền 0,005 USD. Input cho
 brainstorm Phase 8 (H4), không phải quyết định. `settings.yaml` không đổi.
 
-### B6 — Phase 7B Gate 4: report baseline tổng hợp (free)
+### B6 — Phase 7B Gate 4 report baseline — C review: `ready_for_user_confirmation` (chờ phần User)
 
-- **Làm:** theo spec 7B §4.4, §7 viết `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md`:
-  6 metric + 2 tỉ lệ từ chối + tỉ lệ lỗi citation (tổng, theo category) — điểm chính thức là
-  Claude Run 1; bảng nhiễu (Claude chấm lại 30, luna chấm lại 30, Claude Run 1 vs Run 2) và mức khớp
-  (Claude–luna 176); phân bố điểm (bao nhiêu case 5/5/5, 1/1/1); trung bình khi bỏ case từ chối
-  nhầm (để thấy phần mất điểm đến từ đâu); tiền thật toàn 7B; giới hạn (spec §7.6). Mục **khớp
-  với User**: để `NOT RUN — chờ User chấm` kèm đúng lệnh `parse-user-scores` + `compare` sẽ chạy.
-- **Không làm:** đặt ngưỡng đạt/không đạt; kết luận Phase 8.
-- **Đầu ra:** report; `STATUS_B.md`; nhắn A. Sau đó C review chéo (C5).
+`reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md`; review
+`reports/phase_7b_review_2026_10_24.md` (C chạy lại mọi số: khớp; 3 minor).
+
+### B7 — Sửa 3 minor của C5 ngay; phần User khi User chấm xong (free)
+
+- Ngay: m1 (§5.1: retrieval tất định — cái chưa biết là chênh native vs runtime có vượt biến thiên
+  do mẫu 158 case không), m2 (§3 thay placeholder `<rerun_30>` bằng cách lấy từ `subsets.json`), m3
+  (§6 ghi quota Claude Code ~1,1M token cho judge Claude).
+- Khi A nhắn User đã chấm: `parse-user-scores` → `user_scores.jsonl`; `compare` User–Claude, User–luna
+  trên 20 case; điền §5 report; nếu Claude lệch User có hệ thống (chênh TB ≥1 ở một metric) thì báo A
+  trước (spec §4.4). Nhắn A; C kiểm lại phần User.
 
 ## Việc của C
 
@@ -103,9 +106,9 @@ A kiểm: `score_errors` rỗng cả 3 file; đọc ngẫu nhiên 6 feedback —
 kiến thức ngoài. Số tổng hợp (A chạy `compare`): Claude chấm lại 30 lệch ≤1 ở 100%; Run 1 vs Run 2
 chênh TB ≤0,011 mọi metric; Claude vs luna trùng 89–96%, lệch ≤1 ở ≥99,4%.
 
-### C5 — review chéo report Gate 4 của B (khi B báo xong)
+### C5 — review chéo Gate 4 — xong: `ready_for_user_confirmation` (điều kiện: phần User)
 
-Theo skill `risk-gated-agent-review`: số trong report khớp lệnh `summarize`/`compare` chạy lại; không lộ nội dung private; đủ tiêu chí spec 7B §7 (trừ phần User). Viết `reports/phase_7b_review_2026_10_24.md`.
+### C6 — kiểm lại phần User của report Gate 4 khi B báo
 
 ## Đang chờ User
 

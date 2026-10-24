@@ -3,12 +3,14 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ A review C3 (Claude judge 7B Gate 3).
+- C5 xong, chờ A: `reports/phase_7b_review_2026_10_24.md` — ready_for_user_confirmation có điều kiện
+  (phần User NOT RUN); minor m1–m3. Khi User chấm xong: kiểm lại phần User của report Gate 4.
 
 ## Đang khai báo sửa
 - không
 
 ## Vừa xong
+- C3 A đóng, commit `1994ea5`.
 - C3: 3 file điểm Claude (`claude_run1`, `claude_run1_rerun30`, `claude_run2` trong `data/evaluation/phase_7b/`),
   39 sub-agent / 39 lô, 0 lỗi, `score_errors` rỗng; ~8 phút. Report
   `reports/phase_7b_gate_3_claude_judge_implementation_2026_10_24.md`. Script `/tmp/c_judge/` (ngoài repo).
