@@ -3,8 +3,9 @@
 Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối (User chỉ làm việc với A)
 
 ## Đang làm
-- Điều phối Phase 7B (spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`).
-- Chờ B1 (kiểm sức khỏe) → B2 (7B Gate 1); chờ C2 (danh sách dọn).
+- Phase 7B gần xong: Gate 1–4 xong + review chéo C `ready_for_user_confirmation`, chỉ chờ User chấm
+  20 case (`data/evaluation/phase_7b/user_scoring.md`) → B7 điền phần User → C6 kiểm → A trình User đóng.
+- B7 đang sửa 3 minor report Gate 4; C rảnh.
 
 ## Đang khai báo sửa
 - `session_prompt/` (governance, handoff, status), `docs/superpowers/specs/2026-10-24-phase-7b-*`.
@@ -22,5 +23,6 @@ Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối (User ch
 - `báo cáo nghiên cứu github.txt` ở gốc repo: User nói giữ nguyên (untracked, không commit).
 
 ## Việc dở / câu hỏi
-- Chọn tập chấm lại 30 + mẫu User ~20 trước Run 1 (spec 7B §4.4); làm file chấm cho User.
-- Chờ User: gửi 2 yêu cầu ChatGPT; quyết H8 (trả lời một phần) khi brainstorm Phase 8.
+- Khi User dậy: (1) nhờ chấm 20 case; (2) gửi 2 yêu cầu ChatGPT; (3) trình danh sách dọn C2;
+  (4) sau khi 7B đóng: brainstorm Phase 8 với input C1 + B4 (từ chối nhầm) + B5 (context 10).
+- Tiền paid session: ~0,087 USD / 1 USD.

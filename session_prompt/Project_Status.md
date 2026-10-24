@@ -52,7 +52,7 @@ brainstorm với User, một tài liệu thiết kế. Song song: C rà soát l�
 | 7 | `approved` | Evaluation baseline Foods (lịch sử) |
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
-| 7B | `in_progress` | Evaluator full-corpus + baseline 176 case; spec 2026-10-24 approved |
+| 7B | `in_progress` | Baseline 176 case xong + review chéo đạt; chờ User chấm mẫu 20 case rồi đóng |
 | 8 | `not_ready` | Đợt ổn định trước Phase 9 (mục 5); spec/plan phải thiết kế lại |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
