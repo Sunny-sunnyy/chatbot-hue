@@ -1,12 +1,11 @@
 """Source state and LF normalization utilities for full-corpus RAG.
 
 Handles strict UTF-8 reading, CRLF/CR to LF normalization, SHA-256 hashing,
-deterministic file discovery, and build-record validation helpers.
-Wave 1 constraint: Never write completion build records.
+deterministic file discovery, and build-record helpers.
 """
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 import hashlib
 import json
 import os
@@ -131,8 +130,7 @@ def verify_build_record_freshness(
     return len(discrepancies) == 0, discrepancies
 
 
-FULL_CORPUS_BUILD_SCHEMA = "phase_4_full_corpus_build:v1"
-FULL_CORPUS_BUILD_SCHEMA_V2 = "phase_4_full_corpus_build:v2"
+FULL_CORPUS_BUILD_SCHEMA = "full_corpus_build:v3"
 FULL_CORPUS_PAYLOAD_SCHEMA_V2 = "full_corpus_qdrant_payload:v2"
 
 
@@ -140,20 +138,22 @@ def make_full_corpus_build_record(
     *,
     collection_name: str,
     candidate_id: str,
-    model_id: str,
-    revision: str,
-    dimension: int,
-    corpus_identity: str,
+    dense: Mapping[str, Any],
     sources: Mapping[str, str],
+    chunk_count: int,
+    corpus_identity: str,
     sparse_state: SparseState,
     sparse_state_sha256: str,
+    providers: Sequence[str] = (),
 ) -> dict[str, Any]:
-    if len(sources) != 205:
-        raise ValueError(f"Source count {len(sources)} != expected 205")
+    """Tạo build record: nguồn sự thật duy nhất cho việc collection khớp corpus nào.
+
+    Số file, số chunk và identity lấy từ chính lần build, không so với hằng số.
+    `dense` gồm `model_id`, `revision`, `dimension`; `providers` là các provider
+    OpenRouter đã phục vụ (rỗng với model local).
+    """
     if sparse_state.corpus_identity != corpus_identity:
         raise ValueError("Sparse state corpus identity mismatch")
-    if sparse_state.document_count != 8460 or len(sparse_state.vocabulary) != 5662:
-        raise ValueError("Sparse state count or vocabulary mismatch")
     return {
         "schema_version": FULL_CORPUS_BUILD_SCHEMA,
         "status": "complete",
@@ -161,15 +161,16 @@ def make_full_corpus_build_record(
         "representation": "A",
         "corpus": {
             "identity": corpus_identity,
-            "file_count": 205,
-            "chunk_count": 8460,
+            "file_count": len(sources),
+            "chunk_count": chunk_count,
             "sources": dict(sorted(sources.items())),
         },
         "dense": {
             "candidate_id": candidate_id,
-            "model_id": model_id,
-            "revision": revision,
-            "dimension": dimension,
+            "model_id": dense["model_id"],
+            "revision": dense["revision"],
+            "dimension": dense["dimension"],
+            "providers": sorted(providers),
         },
         "sparse": {
             "schema_version": sparse_state.schema_version,
@@ -180,62 +181,8 @@ def make_full_corpus_build_record(
             "dense_vector_name": "dense",
             "sparse_vector_name": "sparse",
             "distance": "cosine",
-            "point_count": 8460,
-        },
-    }
-
-
-def make_full_corpus_metadata_v2_build_record(
-    *,
-    collection_name: str,
-    source_collection: str,
-    source_build_record_sha256: str,
-    candidate_id: str,
-    model_id: str,
-    revision: str,
-    dimension: int,
-    corpus_identity: str,
-    sources: Mapping[str, str],
-    sparse_state: SparseState,
-    sparse_state_sha256: str,
-) -> dict[str, Any]:
-    if collection_name == source_collection:
-        raise ValueError("source_collection must be distinct from collection_name")
-    if not isinstance(source_build_record_sha256, str) or len(source_build_record_sha256) != 64:
-        raise ValueError("source_build_record_sha256 must be a 64-character hex string")
-    try:
-        int(source_build_record_sha256, 16)
-    except ValueError:
-        raise ValueError("source_build_record_sha256 must be a valid hex string")
-
-    v1_record = make_full_corpus_build_record(
-        collection_name=collection_name,
-        candidate_id=candidate_id,
-        model_id=model_id,
-        revision=revision,
-        dimension=dimension,
-        corpus_identity=corpus_identity,
-        sources=sources,
-        sparse_state=sparse_state,
-        sparse_state_sha256=sparse_state_sha256,
-    )
-
-    return {
-        "schema_version": FULL_CORPUS_BUILD_SCHEMA_V2,
-        "status": v1_record["status"],
-        "collection_name": collection_name,
-        "representation": v1_record["representation"],
-        "corpus": v1_record["corpus"],
-        "dense": v1_record["dense"],
-        "sparse": v1_record["sparse"],
-        "qdrant": {
-            **v1_record["qdrant"],
             "payload_schema_version": FULL_CORPUS_PAYLOAD_SCHEMA_V2,
-        },
-        "migration": {
-            "mode": "copy_verified_vectors",
-            "source_collection": source_collection,
-            "source_build_record_sha256": source_build_record_sha256,
+            "point_count": chunk_count,
         },
     }
 

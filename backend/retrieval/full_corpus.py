@@ -35,7 +35,8 @@ try:
     from backend.core.settings_loader import load_settings
     from backend.embedding.full_corpus import (
         FullCorpusDenseRunner,
-        resolve_snapshot,
+        OpenRouterDenseRunner,
+        create_dense_runner,
     )
     from backend.embedding.sparse import (
         SparseState,
@@ -46,14 +47,13 @@ try:
         load_sparse_state,
     )
     from backend.ingestion.full_corpus_pipeline import (
+        SPARSE_STATE_PATH,
         FullCorpusCandidate,
+        build_record_path,
         candidate_by_id,
-        EXPECTED_CHUNK_COUNT,
-        EXPECTED_CORPUS_IDENTITY,
-        EXPECTED_SPARSE_SHA256,
     )
     from backend.ingestion.source_state import (
-        FULL_CORPUS_BUILD_SCHEMA_V2,
+        FULL_CORPUS_BUILD_SCHEMA,
         FULL_CORPUS_PAYLOAD_SCHEMA_V2,
         compute_corpus_state,
         discover_full_corpus_files,
@@ -78,7 +78,8 @@ except ModuleNotFoundError:
     from core.settings_loader import load_settings
     from embedding.full_corpus import (
         FullCorpusDenseRunner,
-        resolve_snapshot,
+        OpenRouterDenseRunner,
+        create_dense_runner,
     )
     from embedding.sparse import (
         SparseState,
@@ -89,14 +90,13 @@ except ModuleNotFoundError:
         load_sparse_state,
     )
     from ingestion.full_corpus_pipeline import (
+        SPARSE_STATE_PATH,
         FullCorpusCandidate,
+        build_record_path,
         candidate_by_id,
-        EXPECTED_CHUNK_COUNT,
-        EXPECTED_CORPUS_IDENTITY,
-        EXPECTED_SPARSE_SHA256,
     )
     from ingestion.source_state import (
-        FULL_CORPUS_BUILD_SCHEMA_V2,
+        FULL_CORPUS_BUILD_SCHEMA,
         FULL_CORPUS_PAYLOAD_SCHEMA_V2,
         compute_corpus_state,
         discover_full_corpus_files,
@@ -113,8 +113,6 @@ RerankerMode = Literal["none", "minilm"]
 Classification = Literal["PASS", "REVIEW_REQUIRED", "FAIL"]
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-BUILD_RECORDS_DIR = REPO_ROOT / "data/full_corpus_builds"
-SPARSE_STATE_FILE = BUILD_RECORDS_DIR / "phase_3_sparse_state.json"
 
 
 @dataclass(frozen=True)
@@ -355,10 +353,9 @@ def assemble_final_documents(
 def validate_full_corpus_build_record(
     record_data: Mapping[str, Any],
     candidate: FullCorpusCandidate,
-    current_sources: Mapping[str, str] | None = None,
-    build_records_dir: Path | None = None,
+    current_sources: Mapping[str, str],
 ) -> None:
-    """Validate build record v2 contract, target, lineage, invariants, and source freshness.
+    """Kiểm build record khớp candidate, schema Qdrant và corpus hiện tại (freshness).
 
     Fails closed with ComponentNotReadyError.
     """
@@ -366,13 +363,13 @@ def validate_full_corpus_build_record(
         raise ComponentNotReadyError(f"Build record status is not complete: {record_data.get('status')}")
     if record_data.get("representation") != "A":
         raise ComponentNotReadyError(f"Build record representation is not A: {record_data.get('representation')}")
-    if record_data.get("schema_version") != FULL_CORPUS_BUILD_SCHEMA_V2:
+    if record_data.get("schema_version") != FULL_CORPUS_BUILD_SCHEMA:
         raise ComponentNotReadyError(
-            f"Build record schema_version invalid: {record_data.get('schema_version')}, expected {FULL_CORPUS_BUILD_SCHEMA_V2}"
+            f"Build record schema_version invalid: {record_data.get('schema_version')}, expected {FULL_CORPUS_BUILD_SCHEMA}"
         )
-    if record_data.get("collection_name") != candidate.metadata_v2_collection_name:
+    if record_data.get("collection_name") != candidate.collection_name:
         raise ComponentNotReadyError(
-            f"Build record collection_name mismatch: {record_data.get('collection_name')}, expected {candidate.metadata_v2_collection_name}"
+            f"Build record collection_name mismatch: {record_data.get('collection_name')}, expected {candidate.collection_name}"
         )
 
     qdrant_info = record_data.get("qdrant", {})
@@ -394,42 +391,12 @@ def validate_full_corpus_build_record(
         raise ComponentNotReadyError(
             f"Build record qdrant distance invalid: {qdrant_info.get('distance')}, expected 'cosine'"
         )
-    if qdrant_info.get("point_count") != EXPECTED_CHUNK_COUNT:
-        raise ComponentNotReadyError(
-            f"Build record qdrant point_count invalid: {qdrant_info.get('point_count')}, expected {EXPECTED_CHUNK_COUNT}"
-        )
-
-    migration_info = record_data.get("migration", {})
-    if not isinstance(migration_info, dict):
-        raise ComponentNotReadyError("Build record missing migration info dictionary")
-    if migration_info.get("mode") != "copy_verified_vectors":
-        raise ComponentNotReadyError(f"Migration mode invalid: {migration_info.get('mode')}")
-    if migration_info.get("source_collection") != candidate.collection_name:
-        raise ComponentNotReadyError(
-            f"Migration source_collection mismatch: {migration_info.get('source_collection')}, expected {candidate.collection_name}"
-        )
-
-    # Read exact legacy build record selected by candidate.collection_name and verify lineage SHA-256
-    records_dir = build_records_dir if build_records_dir is not None else BUILD_RECORDS_DIR
-    legacy_record_path = records_dir / f"{candidate.collection_name}.json"
-    if not legacy_record_path.is_file():
-        raise ComponentNotReadyError(f"Legacy source build record not found: {legacy_record_path.name}")
-    try:
-        legacy_bytes = legacy_record_path.read_bytes()
-    except Exception as exc:
-        raise ComponentNotReadyError(f"Failed to read legacy source build record: {legacy_record_path.name}") from exc
-    expected_lineage_sha = hashlib.sha256(legacy_bytes).hexdigest()
-    recorded_lineage_sha = migration_info.get("source_build_record_sha256")
-    if not isinstance(recorded_lineage_sha, str) or recorded_lineage_sha != expected_lineage_sha:
-        raise ComponentNotReadyError(
-            f"Migration source_build_record_sha256 mismatch with legacy build record: {recorded_lineage_sha}, expected {expected_lineage_sha}"
-        )
 
     corpus_info = record_data.get("corpus", {})
-    if corpus_info.get("identity") != EXPECTED_CORPUS_IDENTITY:
-        raise ComponentNotReadyError(f"Corpus identity mismatch in build record: {corpus_info.get('identity')}")
-    if corpus_info.get("chunk_count") != EXPECTED_CHUNK_COUNT:
-        raise ComponentNotReadyError(f"Chunk count mismatch in build record: {corpus_info.get('chunk_count')}")
+    if qdrant_info.get("point_count") != corpus_info.get("chunk_count"):
+        raise ComponentNotReadyError(
+            f"Build record qdrant point_count invalid: {qdrant_info.get('point_count')}, expected corpus chunk_count {corpus_info.get('chunk_count')}"
+        )
 
     dense_info = record_data.get("dense", {})
     if dense_info.get("candidate_id") != candidate.candidate_id:
@@ -444,15 +411,10 @@ def validate_full_corpus_build_record(
     sparse_info = record_data.get("sparse", {})
     if sparse_info.get("schema_version") != "phase_3_sparse_state:v1":
         raise ComponentNotReadyError(f"Sparse schema_version mismatch: {sparse_info.get('schema_version')}")
-    if sparse_info.get("state_sha256") != EXPECTED_SPARSE_SHA256:
-        raise ComponentNotReadyError(f"Sparse state SHA256 mismatch: {sparse_info.get('state_sha256')}")
-    if sparse_info.get("vocabulary_size") != 5662:
-        raise ComponentNotReadyError(f"Sparse vocabulary size mismatch: {sparse_info.get('vocabulary_size')}")
 
-    if current_sources is not None:
-        fresh, _ = verify_full_corpus_record_freshness(current_sources, record_data)
-        if not fresh:
-            raise ComponentNotReadyError("Full-corpus source state is stale")
+    fresh, _ = verify_full_corpus_record_freshness(current_sources, record_data)
+    if not fresh:
+        raise ComponentNotReadyError("Full-corpus source state is stale")
 
 
 class FullCorpusRetrievalService:
@@ -463,7 +425,7 @@ class FullCorpusRetrievalService:
         candidate: FullCorpusCandidate,
         retrieval_treatment: RetrievalTreatment,
         reranker: RerankerMode,
-        dense_runner: FullCorpusDenseRunner,
+        dense_runner: FullCorpusDenseRunner | OpenRouterDenseRunner,
         sparse_state: SparseState,
         vocabulary_index: dict[str, int],
         client: QdrantClient,
@@ -497,7 +459,7 @@ class FullCorpusRetrievalService:
 
         try:
             dense_response = self.client.query_points(
-                collection_name=self.candidate.metadata_v2_collection_name,
+                collection_name=self.candidate.collection_name,
                 query=dense_vec,
                 using="dense",
                 limit=30,
@@ -590,7 +552,7 @@ class FullCorpusRetrievalService:
             else:
                 try:
                     sparse_response = self.client.query_points(
-                        collection_name=self.candidate.metadata_v2_collection_name,
+                        collection_name=self.candidate.collection_name,
                         query=models.SparseVector(
                             indices=list(sparse_q.indices),
                             values=list(sparse_q.values),
@@ -719,7 +681,7 @@ class FullCorpusRetrievalService:
 
         trace = RetrievalTrace(
             candidate_id=self.candidate.candidate_id,
-            collection_name=self.candidate.metadata_v2_collection_name,
+            collection_name=self.candidate.collection_name,
             retrieval_treatment=self.retrieval_treatment,
             reranker=self.reranker,
             counts=counts,
@@ -758,14 +720,14 @@ def build_full_corpus_retrieval_service(
         raise RetrievalConfigurationError(f"Unsupported reranker mode: {reranker}")
 
     # 1. Validate matching build record and source freshness
-    collection_name = candidate.metadata_v2_collection_name
-    build_record_path = BUILD_RECORDS_DIR / f"{collection_name}.json"
-    rel_build_record = f"data/full_corpus_builds/{collection_name}.json"
-    if not build_record_path.is_file():
+    collection_name = candidate.collection_name
+    record_path = build_record_path(candidate)
+    rel_build_record = f"data/full_corpus_builds/{record_path.name}"
+    if not record_path.is_file():
         raise ComponentNotReadyError(f"Build record does not exist: {rel_build_record}")
 
     try:
-        record_data = json.loads(build_record_path.read_text(encoding="utf-8"))
+        record_data = json.loads(record_path.read_text(encoding="utf-8"))
     except Exception as exc:
         raise ComponentNotReadyError(f"Failed to read build record: {rel_build_record}") from exc
 
@@ -773,24 +735,20 @@ def build_full_corpus_retrieval_service(
         settings = load_settings()
     root, rel_paths = discover_full_corpus_files(settings)
     current_sources = compute_corpus_state(root, rel_paths)
-    validate_full_corpus_build_record(record_data, candidate, current_sources=current_sources)
+    validate_full_corpus_build_record(record_data, candidate, current_sources)
 
-    # 2. Validate sparse state file
-    rel_sparse_state = "data/full_corpus_builds/phase_3_sparse_state.json"
-    if not SPARSE_STATE_FILE.is_file():
+    # 2. Validate shared sparse state against the build record
+    rel_sparse_state = f"data/full_corpus_builds/{SPARSE_STATE_PATH.name}"
+    if not SPARSE_STATE_PATH.is_file():
         raise ComponentNotReadyError(f"Sparse state file not found: {rel_sparse_state}")
 
-    state_bytes = SPARSE_STATE_FILE.read_bytes()
-    state_sha = hashlib.sha256(state_bytes).hexdigest()
-    if state_sha != EXPECTED_SPARSE_SHA256:
-        raise ComponentNotReadyError(f"Sparse state SHA-256 mismatch: {state_sha} != {EXPECTED_SPARSE_SHA256}")
+    state_sha = hashlib.sha256(SPARSE_STATE_PATH.read_bytes()).hexdigest()
+    expected_state_sha = record_data["sparse"].get("state_sha256")
+    if state_sha != expected_state_sha:
+        raise ComponentNotReadyError(f"Sparse state SHA-256 mismatch: {state_sha} != {expected_state_sha}")
 
-    sparse_state = load_sparse_state(SPARSE_STATE_FILE)
-    if sparse_state.document_count != EXPECTED_CHUNK_COUNT:
-        raise ComponentNotReadyError(f"Sparse state document count mismatch: {sparse_state.document_count}")
-    if len(sparse_state.vocabulary) != 5662:
-        raise ComponentNotReadyError(f"Sparse state vocabulary size mismatch: {len(sparse_state.vocabulary)}")
-    if sparse_state.corpus_identity != EXPECTED_CORPUS_IDENTITY:
+    sparse_state = load_sparse_state(SPARSE_STATE_PATH)
+    if sparse_state.corpus_identity != record_data["corpus"].get("identity"):
         raise ComponentNotReadyError(f"Sparse state corpus identity mismatch: {sparse_state.corpus_identity}")
 
     vocab_index = build_vocabulary_index(sparse_state)
@@ -808,15 +766,15 @@ def build_full_corpus_retrieval_service(
     except Exception as exc:
         raise ComponentNotReadyError(f"Collection {collection_name} schema invalid") from exc
 
-    if info.points_count != EXPECTED_CHUNK_COUNT:
+    expected_points = record_data["corpus"].get("chunk_count")
+    if info.points_count != expected_points:
         raise ComponentNotReadyError(
-            f"Collection {collection_name} point count mismatch: {info.points_count} != {EXPECTED_CHUNK_COUNT}"
+            f"Collection {collection_name} point count mismatch: {info.points_count} != {expected_points}"
         )
 
-    # 4. Resolve and load dense model
+    # 4. Load dense runner (local model or OpenRouter) and warm up with one query
     try:
-        snapshot_path = resolve_snapshot(candidate.dense_spec, allow_download=False)
-        dense_runner = FullCorpusDenseRunner(candidate.dense_spec, snapshot_path)
+        dense_runner = create_dense_runner(candidate.dense_spec)
         dense_runner.load()
         warm_vec = dense_runner.embed_queries(["ấm trà cung đình Huế"])
         if len(warm_vec) != 1 or len(warm_vec[0]) != candidate.dense_spec.dimension:

@@ -62,7 +62,7 @@ def test_rrf_rejects_empty_or_non_string_point_ids():
 def test_retrieval_trace_fields_and_privacy_boundary():
     trace = RetrievalTrace(
         candidate_id="e5-small-384",
-        collection_name="hue_full_corpus_a_e5_small_384",
+        collection_name="hue_full_corpus_7a2_e5_small_384",
         retrieval_treatment="dense_bm25_rrf",
         reranker="none",
         counts={"dense": 30, "bm25": 12, "rrf_pre_rerank": 30, "final": 10},
@@ -89,7 +89,7 @@ def test_retrieval_trace_fields_and_privacy_boundary():
 def test_retrieval_result_structure():
     trace = RetrievalTrace(
         candidate_id="e5-small-384",
-        collection_name="hue_full_corpus_a_e5_small_384",
+        collection_name="hue_full_corpus_7a2_e5_small_384",
         retrieval_treatment="dense_bm25_rrf",
         reranker="none",
         counts={},
@@ -339,7 +339,7 @@ def test_validate_selectors_rejects_unknown_and_empty():
 
     # Valid full selectors
     c, t, r, q = validate_selectors(None, None, None, None)
-    assert len(c) == 4
+    assert len(c) == 2
     assert len(t) == 2
     assert len(r) == 2
     assert len(q) == 7
@@ -606,196 +606,85 @@ def test_v2_payload_validation_errors_never_leak_private_paths_or_text():
     assert secret_text not in err
 
 
-def test_v2_build_record_rejects_wrong_build_or_payload_schema():
-    import hashlib
-    from backend.retrieval.full_corpus import BUILD_RECORDS_DIR, validate_full_corpus_build_record
-    from backend.core.schema import ComponentNotReadyError
-    from backend.ingestion.full_corpus_pipeline import (
-        candidate_by_id,
-        EXPECTED_CORPUS_IDENTITY,
-        EXPECTED_CHUNK_COUNT,
-        EXPECTED_SPARSE_SHA256,
-    )
+def _valid_build_record_and_sources():
+    from backend.embedding.sparse import fit_sparse_state
+    from backend.ingestion.full_corpus_pipeline import candidate_by_id
+    from backend.ingestion.source_state import make_full_corpus_build_record
 
     candidate = candidate_by_id("e5-small-384")
-    legacy_path = BUILD_RECORDS_DIR / f"{candidate.collection_name}.json"
-    legacy_sha = hashlib.sha256(legacy_path.read_bytes()).hexdigest()
-
-    valid_record = {
-        "schema_version": "phase_4_full_corpus_build:v2",
-        "status": "complete",
-        "collection_name": candidate.metadata_v2_collection_name,
-        "representation": "A",
-        "corpus": {
-            "identity": EXPECTED_CORPUS_IDENTITY,
-            "file_count": 205,
-            "chunk_count": EXPECTED_CHUNK_COUNT,
-            "sources": {"foods/a.md": "a" * 64},
-        },
-        "dense": {
-            "candidate_id": candidate.candidate_id,
+    chunk = FullCorpusChunk(
+        chunk_id="foods/a.md#0",
+        source="foods/a.md",
+        title="Bún bò",
+        heading_path=[],
+        evidence_parts=[],
+        search_text="Bún bò Huế",
+    )
+    state = fit_sparse_state([chunk])
+    sources = {"foods/a.md": "a" * 64, "foods/b.md": "b" * 64}
+    record = make_full_corpus_build_record(
+        collection_name=candidate.collection_name,
+        candidate_id=candidate.candidate_id,
+        dense={
             "model_id": candidate.dense_spec.model_id,
             "revision": candidate.dense_spec.revision,
             "dimension": candidate.dense_spec.dimension,
         },
-        "sparse": {
-            "schema_version": "phase_3_sparse_state:v1",
-            "state_sha256": EXPECTED_SPARSE_SHA256,
-            "vocabulary_size": 5662,
-        },
-        "qdrant": {
-            "payload_schema_version": "full_corpus_qdrant_payload:v2",
-            "dense_vector_name": "dense",
-            "sparse_vector_name": "sparse",
-            "distance": "cosine",
-            "point_count": EXPECTED_CHUNK_COUNT,
-        },
-        "migration": {
-            "mode": "copy_verified_vectors",
-            "source_collection": candidate.collection_name,
-            "source_build_record_sha256": legacy_sha,
-        },
-    }
-
-    # Should pass when valid
-    validate_full_corpus_build_record(valid_record, candidate)
-
-    # Wrong build record schema_version
-    bad_build = copy.deepcopy(valid_record)
-    bad_build["schema_version"] = "phase_4_full_corpus_build:v1"
-    with pytest.raises(ComponentNotReadyError, match="schema_version"):
-        validate_full_corpus_build_record(bad_build, candidate)
-
-    # Wrong collection_name (target collection mismatch)
-    bad_col = copy.deepcopy(valid_record)
-    bad_col["collection_name"] = "wrong_target_collection"
-    with pytest.raises(ComponentNotReadyError, match="collection_name mismatch"):
-        validate_full_corpus_build_record(bad_col, candidate)
-
-    # Wrong payload_schema_version
-    bad_payload = copy.deepcopy(valid_record)
-    bad_payload["qdrant"]["payload_schema_version"] = "full_corpus_qdrant_payload:v1"
-    with pytest.raises(ComponentNotReadyError, match="payload_schema_version"):
-        validate_full_corpus_build_record(bad_payload, candidate)
-
-    # Missing payload_schema_version
-    missing_payload = copy.deepcopy(valid_record)
-    del missing_payload["qdrant"]["payload_schema_version"]
-    with pytest.raises(ComponentNotReadyError, match="payload_schema_version"):
-        validate_full_corpus_build_record(missing_payload, candidate)
-
-    # Wrong dense_vector_name
-    bad_dense = copy.deepcopy(valid_record)
-    bad_dense["qdrant"]["dense_vector_name"] = "wrong_dense"
-    with pytest.raises(ComponentNotReadyError, match="dense_vector_name invalid"):
-        validate_full_corpus_build_record(bad_dense, candidate)
-
-    # Wrong sparse_vector_name
-    bad_sparse = copy.deepcopy(valid_record)
-    bad_sparse["qdrant"]["sparse_vector_name"] = "wrong_sparse"
-    with pytest.raises(ComponentNotReadyError, match="sparse_vector_name invalid"):
-        validate_full_corpus_build_record(bad_sparse, candidate)
-
-    # Wrong distance
-    bad_dist = copy.deepcopy(valid_record)
-    bad_dist["qdrant"]["distance"] = "dot"
-    with pytest.raises(ComponentNotReadyError, match="distance invalid"):
-        validate_full_corpus_build_record(bad_dist, candidate)
-
-    # Wrong point_count
-    bad_pts = copy.deepcopy(valid_record)
-    bad_pts["qdrant"]["point_count"] = 8459
-    with pytest.raises(ComponentNotReadyError, match="point_count invalid"):
-        validate_full_corpus_build_record(bad_pts, candidate)
-
-    # Wrong migration source collection
-    bad_source_col = copy.deepcopy(valid_record)
-    bad_source_col["migration"]["source_collection"] = "wrong_source"
-    with pytest.raises(ComponentNotReadyError, match="source_collection"):
-        validate_full_corpus_build_record(bad_source_col, candidate)
-
-    # Wrong lineage SHA-256
-    bad_lineage = copy.deepcopy(valid_record)
-    bad_lineage["migration"]["source_build_record_sha256"] = "f" * 64
-    with pytest.raises(ComponentNotReadyError, match="source_build_record_sha256 mismatch"):
-        validate_full_corpus_build_record(bad_lineage, candidate)
-
-    # Malformed lineage SHA
-    malformed_lineage = copy.deepcopy(valid_record)
-    malformed_lineage["migration"]["source_build_record_sha256"] = 12345
-    with pytest.raises(ComponentNotReadyError, match="source_build_record_sha256 mismatch"):
-        validate_full_corpus_build_record(malformed_lineage, candidate)
+        sources=sources,
+        chunk_count=1,
+        corpus_identity=state.corpus_identity,
+        sparse_state=state,
+        sparse_state_sha256="c" * 64,
+    )
+    return candidate, record, sources
 
 
-def test_v2_freshness_rejects_added_deleted_and_changed_source():
+def test_build_record_rejects_wrong_schema_target_or_dense_contract():
     from backend.retrieval.full_corpus import validate_full_corpus_build_record
     from backend.core.schema import ComponentNotReadyError
-    from backend.ingestion.full_corpus_pipeline import (
-        candidate_by_id,
-        EXPECTED_CORPUS_IDENTITY,
-        EXPECTED_CHUNK_COUNT,
-        EXPECTED_SPARSE_SHA256,
-    )
 
-    import hashlib
-    from backend.retrieval.full_corpus import BUILD_RECORDS_DIR
-    candidate = candidate_by_id("e5-small-384")
-    legacy_path = BUILD_RECORDS_DIR / f"{candidate.collection_name}.json"
-    legacy_sha = hashlib.sha256(legacy_path.read_bytes()).hexdigest()
-    recorded_sources = {
-        "foods/file1.md": "sha_1111",
-        "foods/file2.md": "sha_2222",
-    }
-    base_record = {
-        "schema_version": "phase_4_full_corpus_build:v2",
-        "status": "complete",
-        "collection_name": candidate.metadata_v2_collection_name,
-        "representation": "A",
-        "corpus": {
-            "identity": EXPECTED_CORPUS_IDENTITY,
-            "file_count": 205,
-            "chunk_count": EXPECTED_CHUNK_COUNT,
-            "sources": recorded_sources,
-        },
-        "dense": {
-            "candidate_id": candidate.candidate_id,
-            "model_id": candidate.dense_spec.model_id,
-            "revision": candidate.dense_spec.revision,
-            "dimension": candidate.dense_spec.dimension,
-        },
-        "sparse": {
-            "schema_version": "phase_3_sparse_state:v1",
-            "state_sha256": EXPECTED_SPARSE_SHA256,
-            "vocabulary_size": 5662,
-        },
-        "qdrant": {
-            "payload_schema_version": "full_corpus_qdrant_payload:v2",
-            "dense_vector_name": "dense",
-            "sparse_vector_name": "sparse",
-            "distance": "cosine",
-            "point_count": EXPECTED_CHUNK_COUNT,
-        },
-        "migration": {
-            "mode": "copy_verified_vectors",
-            "source_collection": candidate.collection_name,
-            "source_build_record_sha256": legacy_sha,
-        },
-    }
+    candidate, valid_record, sources = _valid_build_record_and_sources()
+    validate_full_corpus_build_record(valid_record, candidate, sources)
 
-    # Added source
-    added = {**recorded_sources, "foods/file3.md": "sha_3333"}
-    with pytest.raises(ComponentNotReadyError, match="stale"):
-        validate_full_corpus_build_record(base_record, candidate, current_sources=added)
+    def mutated(path, value):
+        record = copy.deepcopy(valid_record)
+        target = record
+        for key in path[:-1]:
+            target = target[key]
+        if value is None:
+            del target[path[-1]]
+        else:
+            target[path[-1]] = value
+        return record
 
-    # Deleted source
-    deleted = {"foods/file1.md": "sha_1111"}
-    with pytest.raises(ComponentNotReadyError, match="stale"):
-        validate_full_corpus_build_record(base_record, candidate, current_sources=deleted)
+    cases = [
+        (("schema_version",), "phase_4_full_corpus_build:v2", "schema_version"),
+        (("collection_name",), "wrong_target_collection", "collection_name mismatch"),
+        (("qdrant", "payload_schema_version"), None, "payload_schema_version"),
+        (("qdrant", "dense_vector_name"), "wrong_dense", "dense_vector_name invalid"),
+        (("qdrant", "distance"), "dot", "distance invalid"),
+        (("qdrant", "point_count"), 2, "point_count invalid"),
+        (("dense", "candidate_id"), "qwen3-embedding-8b-4096", "candidate_id mismatch"),
+        (("dense", "dimension"), 4096, "dimension mismatch"),
+        (("dense", "revision"), "0" * 40, "revision mismatch"),
+    ]
+    for path, value, message in cases:
+        with pytest.raises(ComponentNotReadyError, match=message):
+            validate_full_corpus_build_record(mutated(path, value), candidate, sources)
 
-    # Changed source
-    changed = {"foods/file1.md": "sha_1111", "foods/file2.md": "sha_CHANGED"}
-    with pytest.raises(ComponentNotReadyError, match="stale"):
-        validate_full_corpus_build_record(base_record, candidate, current_sources=changed)
+
+def test_build_record_freshness_rejects_added_deleted_and_changed_source():
+    from backend.retrieval.full_corpus import validate_full_corpus_build_record
+    from backend.core.schema import ComponentNotReadyError
+
+    candidate, record, sources = _valid_build_record_and_sources()
+
+    added = {**sources, "foods/c.md": "c" * 64}
+    deleted = {"foods/a.md": "a" * 64}
+    changed = {**sources, "foods/b.md": "f" * 64}
+    for current in (added, deleted, changed):
+        with pytest.raises(ComponentNotReadyError, match="stale"):
+            validate_full_corpus_build_record(record, candidate, current)
 
 
 def test_result_uses_chunk_id_and_domain_but_rrf_ties_still_use_point_id():
@@ -917,7 +806,7 @@ def test_trace_contains_only_point_id_chunk_id_domain_rank_score_allowlist():
 
     trace = RetrievalTrace(
         candidate_id="e5-small-384",
-        collection_name="hue_full_corpus_a_e5_small_384_metadata_v2",
+        collection_name="hue_full_corpus_7a2_e5_small_384",
         retrieval_treatment="dense_bm25_rrf",
         reranker="minilm",
         counts={"final": 1},

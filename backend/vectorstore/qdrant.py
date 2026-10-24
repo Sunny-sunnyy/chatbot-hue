@@ -77,7 +77,7 @@ def ensure_collection(client, settings):
 def expected_full_corpus_schema(
     dimension: int,
 ) -> tuple[dict[str, models.VectorParams], dict[str, models.SparseVectorParams]]:
-    if dimension not in {384, 768, 1024}:
+    if dimension not in {384, 4096}:
         raise ValueError(f"Unsupported full-corpus dense dimension: {dimension}")
     return (
         {DENSE_VECTOR_NAME: models.VectorParams(size=dimension, distance=DISTANCE)},

@@ -4,12 +4,11 @@ import math
 from pathlib import Path
 import numpy as np
 import pytest
-from pyvi import ViTokenizer
 
 from backend.embedding.full_corpus import (
     DENSE_MODEL_SPECS,
-    QWEN_QUERY_TASK,
     DenseModelSpec,
+    parse_embeddings_response,
     prepare_document,
     prepare_query,
     validate_snapshot_path,
@@ -26,9 +25,11 @@ def test_dense_specs_are_exact_and_ordered() -> None:
             s.revision,
             s.dimension,
             s.max_tokens,
+            s.input_contract,
             s.device,
             s.dtype,
             s.batch_size,
+            s.provider,
         )
         for s in DENSE_MODEL_SPECS
     ] == [
@@ -38,51 +39,31 @@ def test_dense_specs_are_exact_and_ordered() -> None:
             "614241f622f53c4eeff9890bdc4f31cfecc418b3",
             384,
             512,
+            "e5",
             "cpu",
             "float32",
             8,
+            "local",
         ),
         (
-            "e5-base-768",
-            "intfloat/multilingual-e5-base",
-            "d128750597153bb5987e10b1c3493a34e5a4502a",
-            768,
-            512,
-            "cpu",
-            "float32",
-            8,
-        ),
-        (
-            "huydang-dek21-768",
-            "CODE4LIFEOFFICIAL/huydang-dek21-embedding",
-            "517f1af7dd04a57194f1de2990f0c6ede0a3109b",
-            768,
-            256,
-            "cpu",
-            "float32",
-            8,
-        ),
-        (
-            "qwen3-embedding-0.6b-1024",
-            "Qwen/Qwen3-Embedding-0.6B",
-            "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
-            1024,
+            "qwen3-embedding-8b-4096",
+            "qwen/qwen3-embedding-8b",
+            None,
+            4096,
             32768,
-            "cuda",
-            "float16",
-            1,
+            "qwen3",
+            None,
+            None,
+            64,
+            "openrouter",
         ),
     ]
 
 
 def test_role_preprocessing_is_exact() -> None:
-    e5_small, e5_base, huydang, qwen = DENSE_MODEL_SPECS
+    e5_small, qwen = DENSE_MODEL_SPECS
     assert prepare_document(e5_small, "Văn bản") == "passage: Văn bản"
     assert prepare_query(e5_small, "Câu hỏi") == "query: Câu hỏi"
-    assert prepare_document(e5_base, "Văn bản") == "passage: Văn bản"
-    assert prepare_query(e5_base, "Câu hỏi") == "query: Câu hỏi"
-    assert prepare_document(huydang, "Văn bản") == ViTokenizer.tokenize("Văn bản")
-    assert prepare_query(huydang, "Câu hỏi") == ViTokenizer.tokenize("Câu hỏi")
     assert prepare_document(qwen, "Văn bản") == "Văn bản"
     assert prepare_query(qwen, "Câu hỏi") == (
         "Instruct: Given a Vietnamese question about Hue culture, heritage, "
@@ -111,6 +92,7 @@ def test_role_preprocessing_rejects_unknown_contract() -> None:
         device="cpu",
         dtype="float32",
         batch_size=1,
+        provider="local",
     )
     with pytest.raises(ValueError, match="Unknown input contract"):
         prepare_document(invalid_spec, "Hợp lệ")
@@ -212,3 +194,37 @@ def test_validate_vector_matrix_rejects_invalid_values(
 ) -> None:
     with pytest.raises(ValueError, match=message):
         validate_vector_matrix(matrix, expected_count=1, expected_dim=2)
+
+
+def test_parse_embeddings_response_orders_by_index_and_checks_dimension() -> None:
+    body = {"provider": "Nebius", "data": [
+        {"index": 1, "embedding": [0.0, 1.0]},
+        {"index": 0, "embedding": [1.0, 0.0]},
+    ]}
+    vectors, provider = parse_embeddings_response(body, expected_count=2, dimension=2)
+    assert vectors.tolist() == [[1.0, 0.0], [0.0, 1.0]]
+    assert provider == "Nebius"
+
+
+@pytest.mark.parametrize(
+    ("body", "message"),
+    [
+        ({"provider": "Nebius", "data": [{"index": 0, "embedding": [1.0]}]}, "shape"),
+        ({"provider": "Nebius", "data": [{"index": 0, "embedding": [1.0, 0.0]}]}, "index"),
+        ({"provider": "Nebius", "data": [
+            {"index": 0, "embedding": [1.0, 0.0]},
+            {"index": 2, "embedding": [0.0, 1.0]},
+        ]}, "index"),
+        ({"error": {"code": 429}}, "no data"),
+        ({"provider": "SiliconFlow", "data": [
+            {"index": 0, "embedding": [1.0, 0.0]},
+            {"index": 1, "embedding": [0.0, 1.0]},
+        ]}, "provider"),
+    ],
+)
+def test_parse_embeddings_response_rejects_wrong_dimension_count_or_error(
+    body: dict, message: str
+) -> None:
+    expected_count = 1 if message == "shape" else 2
+    with pytest.raises(ValueError, match=message):
+        parse_embeddings_response(body, expected_count=expected_count, dimension=2)

@@ -5,51 +5,52 @@ import pytest
 
 from backend.embedding.sparse import SparseState
 from backend.ingestion.source_state import (
-    FULL_CORPUS_BUILD_SCHEMA_V2,
-    FULL_CORPUS_PAYLOAD_SCHEMA_V2,
     make_full_corpus_build_record,
-    make_full_corpus_metadata_v2_build_record,
     serialize_full_corpus_build_record,
     verify_full_corpus_record_freshness,
     write_final_full_corpus_build_record,
 )
 
-CORPUS_ID = "0e5c059516cd942b151286cf597f785c65e642cacd1b0421124fe50fe574f223"
-SPARSE_SHA = "5dcdda79cef8824eb0e4cc2b78cf1eb275b29dd892162b34d27ba804b5ccb3be"
+CORPUS_ID = "a" * 64
+SPARSE_SHA = "b" * 64
 
 
 def sparse_state() -> SparseState:
     return SparseState(
         schema_version="phase_3_sparse_state:v1",
         corpus_identity=CORPUS_ID,
-        document_count=8460,
-        average_document_length=67.87423167848699,
+        document_count=3,
+        average_document_length=4.0,
         k1=1.5,
         b=0.75,
         tokenizer="backend.scoring.bm25.tokenize:v1",
-        vocabulary=tuple(f"term-{index:04d}" for index in range(5662)),
-        idf=tuple(1.0 for _ in range(5662)),
+        vocabulary=("bún", "bò", "huế"),
+        idf=(1.0, 1.0, 1.0),
     )
 
 
 def source_hashes() -> dict[str, str]:
     return {
         f"foods/source-{index:03d}.md": hashlib.sha256(str(index).encode()).hexdigest()
-        for index in range(205)
+        for index in range(3)
     }
 
 
-def build_record() -> dict[str, object]:
+def build_record(providers: tuple[str, ...] = ()) -> dict[str, object]:
     return make_full_corpus_build_record(
-        collection_name="hue_full_corpus_a_e5_small_384",
+        collection_name="hue_full_corpus_7a2_e5_small_384",
         candidate_id="e5-small-384",
-        model_id="intfloat/multilingual-e5-small",
-        revision="614241f622f53c4eeff9890bdc4f31cfecc418b3",
-        dimension=384,
-        corpus_identity=CORPUS_ID,
+        dense={
+            "model_id": "intfloat/multilingual-e5-small",
+            "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+            "dimension": 384,
+        },
         sources=source_hashes(),
+        chunk_count=3,
+        corpus_identity=CORPUS_ID,
         sparse_state=sparse_state(),
         sparse_state_sha256=SPARSE_SHA,
+        providers=providers,
     )
 
 
@@ -60,6 +61,14 @@ def test_full_corpus_record_is_exact_and_deterministic() -> None:
         "corpus", "dense", "sparse", "qdrant",
     }
     assert record["status"] == "complete"
+    assert record["schema_version"] == "full_corpus_build:v3"
+    # Số file/chunk lấy từ chính lần build, không từ hằng số cứng
+    assert record["corpus"]["file_count"] == 3
+    assert record["corpus"]["chunk_count"] == 3
+    assert record["qdrant"]["point_count"] == 3
+    assert record["qdrant"]["payload_schema_version"] == "full_corpus_qdrant_payload:v2"
+    assert record["dense"]["providers"] == []
+    assert build_record(("SiliconFlow", "Nebius"))["dense"]["providers"] == ["Nebius", "SiliconFlow"]
     assert serialize_full_corpus_build_record(record) == (
         serialize_full_corpus_build_record(build_record())
     )
@@ -69,7 +78,7 @@ def test_full_corpus_record_is_exact_and_deterministic() -> None:
 
 
 def test_final_record_write_is_atomic_and_exclusive(tmp_path: Path) -> None:
-    path = tmp_path / "hue_full_corpus_a_e5_small_384.json"
+    path = tmp_path / "hue_full_corpus_7a2_e5_small_384.json"
     expected = serialize_full_corpus_build_record(build_record())
     digest = write_final_full_corpus_build_record(build_record(), path)
     assert path.read_bytes() == expected
@@ -115,9 +124,9 @@ from backend.vectorstore.qdrant import (
 
 
 def test_full_corpus_schema_is_exact_and_has_no_idf_modifier() -> None:
-    dense, sparse = expected_full_corpus_schema(768)
+    dense, sparse = expected_full_corpus_schema(4096)
     assert set(dense) == {"dense"}
-    assert dense["dense"].size == 768
+    assert dense["dense"].size == 4096
     assert dense["dense"].distance == models.Distance.COSINE
     assert dense["dense"].on_disk is None
     assert dense["dense"].quantization_config is None
@@ -378,117 +387,17 @@ from backend.ingestion.full_corpus_pipeline import (
 )
 
 
-def test_phase4_candidate_registry_is_exact_ordered_and_isolated() -> None:
+def test_full_corpus_candidate_registry_is_exact_ordered_and_isolated() -> None:
     assert [
-        (item.candidate_id, item.collection_name, item.dense_spec.dimension)
+        (item.candidate_id, item.collection_name, item.dense_spec.dimension, item.dense_spec.provider)
         for item in FULL_CORPUS_CANDIDATES
     ] == [
-        ("e5-small-384", "hue_full_corpus_a_e5_small_384", 384),
-        ("e5-base-768", "hue_full_corpus_a_e5_base_768", 768),
-        ("huydang-dek21-768", "hue_full_corpus_a_huydang_dek21_768", 768),
-        ("qwen3-embedding-0.6b-1024", "hue_full_corpus_a_qwen3_06b_1024", 1024),
+        ("e5-small-384", "hue_full_corpus_7a2_e5_small_384", 384, "local"),
+        ("qwen3-embedding-8b-4096", "hue_full_corpus_7a2_qwen3_8b_4096", 4096, "openrouter"),
     ]
     assert not {
         "hue_foods_e5_small_384", "hue_foods_e5_small_384_dense"
     } & {item.collection_name for item in FULL_CORPUS_CANDIDATES}
     assert candidate_by_id("e5-small-384") is FULL_CORPUS_CANDIDATES[0]
-    with pytest.raises(ValueError, match="Unknown Phase 4 candidate"):
+    with pytest.raises(ValueError, match="Unknown full-corpus candidate"):
         candidate_by_id("arbitrary-model")
-
-
-def test_phase4_candidate_registry_has_metadata_v2_targets() -> None:
-    assert [
-        (
-            item.candidate_id,
-            item.collection_name,
-            item.metadata_v2_collection_name,
-            item.dense_spec.dimension,
-        )
-        for item in FULL_CORPUS_CANDIDATES
-    ] == [
-        ("e5-small-384", "hue_full_corpus_a_e5_small_384", "hue_full_corpus_a_e5_small_384_metadata_v2", 384),
-        ("e5-base-768", "hue_full_corpus_a_e5_base_768", "hue_full_corpus_a_e5_base_768_metadata_v2", 768),
-        ("huydang-dek21-768", "hue_full_corpus_a_huydang_dek21_768", "hue_full_corpus_a_huydang_dek21_768_metadata_v2", 768),
-        ("qwen3-embedding-0.6b-1024", "hue_full_corpus_a_qwen3_06b_1024", "hue_full_corpus_a_qwen3_06b_1024_metadata_v2", 1024),
-    ]
-
-
-def test_full_corpus_metadata_v2_build_record_schema_and_lineage() -> None:
-    record = make_full_corpus_metadata_v2_build_record(
-        collection_name="hue_full_corpus_a_e5_small_384_metadata_v2",
-        source_collection="hue_full_corpus_a_e5_small_384",
-        source_build_record_sha256="a" * 64,
-        candidate_id="e5-small-384",
-        model_id="intfloat/multilingual-e5-small",
-        revision="614241f622f53c4eeff9890bdc4f31cfecc418b3",
-        dimension=384,
-        corpus_identity=CORPUS_ID,
-        sources=source_hashes(),
-        sparse_state=sparse_state(),
-        sparse_state_sha256=SPARSE_SHA,
-    )
-    assert set(record) == {
-        "schema_version", "status", "collection_name", "representation",
-        "corpus", "dense", "sparse", "qdrant", "migration",
-    }
-    assert record["schema_version"] == "phase_4_full_corpus_build:v2"
-    assert record["collection_name"] == "hue_full_corpus_a_e5_small_384_metadata_v2"
-    assert record["qdrant"]["payload_schema_version"] == "full_corpus_qdrant_payload:v2"
-    assert record["migration"] == {
-        "mode": "copy_verified_vectors",
-        "source_collection": "hue_full_corpus_a_e5_small_384",
-        "source_build_record_sha256": "a" * 64,
-    }
-
-    # v1 constructor still returns v1 without migration or payload_schema_version
-    v1_record = build_record()
-    assert v1_record["schema_version"] == "phase_4_full_corpus_build:v1"
-    assert "migration" not in v1_record
-    assert "payload_schema_version" not in v1_record["qdrant"]
-
-    # Rejects non-hex or non-64 hash
-    with pytest.raises(ValueError):
-        make_full_corpus_metadata_v2_build_record(
-            collection_name="hue_full_corpus_a_e5_small_384_metadata_v2",
-            source_collection="hue_full_corpus_a_e5_small_384",
-            source_build_record_sha256="short",
-            candidate_id="e5-small-384",
-            model_id="intfloat/multilingual-e5-small",
-            revision="rev",
-            dimension=384,
-            corpus_identity=CORPUS_ID,
-            sources=source_hashes(),
-            sparse_state=sparse_state(),
-            sparse_state_sha256=SPARSE_SHA,
-        )
-
-    with pytest.raises(ValueError):
-        make_full_corpus_metadata_v2_build_record(
-            collection_name="hue_full_corpus_a_e5_small_384_metadata_v2",
-            source_collection="hue_full_corpus_a_e5_small_384",
-            source_build_record_sha256="z" * 64,
-            candidate_id="e5-small-384",
-            model_id="intfloat/multilingual-e5-small",
-            revision="rev",
-            dimension=384,
-            corpus_identity=CORPUS_ID,
-            sources=source_hashes(),
-            sparse_state=sparse_state(),
-            sparse_state_sha256=SPARSE_SHA,
-        )
-
-    # Rejects source == target
-    with pytest.raises(ValueError):
-        make_full_corpus_metadata_v2_build_record(
-            collection_name="hue_full_corpus_a_e5_small_384",
-            source_collection="hue_full_corpus_a_e5_small_384",
-            source_build_record_sha256="a" * 64,
-            candidate_id="e5-small-384",
-            model_id="intfloat/multilingual-e5-small",
-            revision="rev",
-            dimension=384,
-            corpus_identity=CORPUS_ID,
-            sources=source_hashes(),
-            sparse_state=sparse_state(),
-            sparse_state_sha256=SPARSE_SHA,
-        )

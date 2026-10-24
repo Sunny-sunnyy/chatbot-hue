@@ -30,7 +30,7 @@ Thứ tự: Phase 7A (Golden) → **Phase 7A2** → Phase 7B (Evaluator) → Pha
 | Dense embedding | Chỉ `e5-small-384` (local) và `qwen/qwen3-embedding-8b` (OpenRouter). Bỏ `e5-base-768`, `huydang-dek21-768`, `qwen3-embedding-0.6b-1024` |
 | Cách build | Build thẳng ra schema metadata v2 vào collection tên mới; build record là nguồn sự thật duy nhất |
 | Runtime mặc định | e5-small mới; cutover sang 8B chờ bằng chứng Phase 7B/8 |
-| Provider OpenRouter | Không pin provider; mọi request gửi `data_collection: "deny"` |
+| Provider OpenRouter | ~~Không pin provider~~ → **pin Nebius** (amendment User 2026-10-24, xem §5.2); mọi request gửi `data_collection: "deny"` |
 | Golden | `check` trước/sau + tìm giá trị cũ trong 176 + smoke 10; sửa tối thiểu case bị ảnh hưởng |
 | Nghiệm thu cutover | Live smoke Phase 6 (5 call `gpt-6-luna`) + retrieval smoke 10 trên cả hai index |
 | Backup corpus | Copy file gốc vào backup private trước khi sửa; xóa khi Phase đóng |
@@ -126,7 +126,11 @@ Hợp đồng OpenRouter (từ survey):
 - document gửi nguyên `search_text`, không instruction; query có prefix
   `Instruct: {task}\nQuery: {query}` như Qwen hiện hành;
 - không gửi `dimensions` (dùng 4096 gốc); `encoding_format: "float"`;
-- không pin provider; mọi request gửi `provider.data_collection: "deny"`;
+- **pin Nebius** cho cả build lẫn query: `provider: {"order": ["nebius"],
+  "allow_fallbacks": false, "data_collection": "deny"}`; response phải có
+  `provider == "Nebius"`, khác thì raise (amendment User 2026-10-24: build không
+  pin đầu tiên trộn DeepInfra/Nebius/SiliconFlow, cos mẫu min 0,99535 < 0,999;
+  survey đo Nebius lặp lại cos 1,0);
 - kiểm mỗi response: đủ số vector, đúng thứ tự `index`, đúng 4096 chiều;
 - lỗi bất kỳ (HTTP, thiếu vector, sai chiều) làm build dừng và ghi lỗi thật;
   không retry, không fallback, không resume.
@@ -180,6 +184,11 @@ không phải sửa code.
    bỏ được xóa. Không còn import/tham chiếu tới module/spec đã xóa trong
    `backend/`. Không mock/fake/stub.
 
+**Amendment 2026-10-24 (User):** build 8B lần 1 (không pin) trộn 3 provider
+(cos mẫu 0,9954); build lần 2 (pin Nebius) lỗi HTTP 504. Index
+`hue_full_corpus_7a2_qwen3_8b_4096` **hoãn sang Phase 8**; Gate 2 đóng với e5.
+Phase 8 thiết kế lại cách gọi (batch, thử lại khi 504/429) dựa trên hai lỗi này.
+
 ### 5.6 Quyền paid và data trong Gate 2
 
 - OpenRouter `qwen/qwen3-embedding-8b`: build toàn bộ chunk (ước ~133 batch,
@@ -222,10 +231,11 @@ collection 7a2 mới.
 
 ### 6.3 Acceptance Gate 3
 
-- Qdrant chỉ còn đúng bốn collection ở §6.1; point count của bốn collection này
-  không đổi so với trước khi xóa.
-- `data/full_corpus_builds/` chỉ còn build record và sparse state của hai
-  collection 7a2.
+- Qdrant chỉ còn đúng ba collection: hai collection Foods và
+  `hue_full_corpus_7a2_e5_small_384` (8B hoãn sang Phase 8, amendment
+  2026-10-24); point count không đổi so với trước khi xóa.
+- `data/full_corpus_builds/` chỉ còn build record e5 7a2 và
+  `full_corpus_sparse_state.json`.
 - Health runtime vẫn PASS.
 
 ## 7. Tài liệu khi đóng Phase
@@ -241,7 +251,7 @@ Phase 8 phải thiết kế lại trước khi chạy.
 - Cutover runtime sang 8B; cấu hình chọn model.
 - Full evaluation 176 case (Phase 7B).
 - Foods production collection và Foods Golden V2/V3.
-- Pin provider, retry, resume, checkpoint, cost accounting.
+- Retry, resume, checkpoint, cost accounting; provider dự phòng khi Nebius lỗi.
 
 ## 9. Rủi ro
 

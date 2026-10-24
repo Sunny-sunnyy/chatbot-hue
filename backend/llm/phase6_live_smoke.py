@@ -108,31 +108,17 @@ def get_git_info() -> dict:
 
 
 def make_fits_all_checker():
-    from transformers import AutoTokenizer
-    from embedding.full_corpus import DENSE_MODEL_SPECS
+    # Dùng đúng bộ tokenizer local quyết định ranh giới chunk (full_corpus.embedding_models).
+    from ingestion.chunking.full_corpus_chunker import get_default_tokenizer_checker
 
-    tokenizers = [
-        (
-            AutoTokenizer.from_pretrained(
-                spec.model_id, revision=spec.revision, local_files_only=True
-            ),
-            spec.max_tokens,
-        )
-        for spec in DENSE_MODEL_SPECS
-    ]
-
-    def checker(text: str) -> bool:
-        for tok, max_tokens in tokenizers:
-            if len(tok.encode(text, truncation=False)) > max_tokens:
-                return False
-        return True
-
-    return checker
+    return get_default_tokenizer_checker()
 
 
 def get_metadata_v2_point_count(settings: dict) -> int:
+    from ingestion.full_corpus_pipeline import candidate_by_id
+
     client = client_from_settings(settings)
-    collection_name = "hue_full_corpus_a_e5_small_384_metadata_v2"
+    collection_name = candidate_by_id(settings["full_corpus_runtime"]["candidate_id"]).collection_name
     info = client.get_collection(collection_name)
     return info.points_count
 

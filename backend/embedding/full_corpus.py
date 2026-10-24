@@ -1,34 +1,43 @@
-"""Khai báo hợp đồng dense model, tiền xử lý vai trò và runner tuần tự cho Phase 3."""
+"""Khai báo hợp đồng dense model, tiền xử lý vai trò và runner local/OpenRouter cho full-corpus."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass
 import gc
+import logging
 import math
+import os
 from pathlib import Path
 from typing import Any, Literal
+import httpx
 from huggingface_hub import snapshot_download
 import numpy as np
-from pyvi import ViTokenizer
 from sentence_transformers import SentenceTransformer
 import torch
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
 class DenseModelSpec:
-    """Hợp đồng bất biến cho một ứng viên dense embedding trong Phase 3."""
+    """Hợp đồng bất biến cho một ứng viên dense embedding full-corpus.
+
+    Model `local` chạy bằng SentenceTransformer từ snapshot HF đúng revision;
+    model `openrouter` gọi API nên không có revision/device/dtype local.
+    """
 
     key: str
     model_id: str
-    revision: str
+    revision: str | None
     dimension: int
     max_tokens: int
-    input_contract: Literal["e5", "pyvi", "qwen3"]
-    device: Literal["cpu", "cuda"]
-    dtype: Literal["float32", "float16"]
+    input_contract: Literal["e5", "qwen3"]
+    device: Literal["cpu", "cuda"] | None
+    dtype: Literal["float32", "float16"] | None
     batch_size: int
+    provider: Literal["local", "openrouter"]
 
 
-# Bốn dense model specs chuẩn hóa đã được User phê duyệt trong Phase 3
+# Hai dense model specs full-corpus được User chốt trong Phase 7A2
 DENSE_MODEL_SPECS: tuple[DenseModelSpec, ...] = (
     DenseModelSpec(
         key="e5-small-384",
@@ -40,39 +49,19 @@ DENSE_MODEL_SPECS: tuple[DenseModelSpec, ...] = (
         device="cpu",
         dtype="float32",
         batch_size=8,
+        provider="local",
     ),
     DenseModelSpec(
-        key="e5-base-768",
-        model_id="intfloat/multilingual-e5-base",
-        revision="d128750597153bb5987e10b1c3493a34e5a4502a",
-        dimension=768,
-        max_tokens=512,
-        input_contract="e5",
-        device="cpu",
-        dtype="float32",
-        batch_size=8,
-    ),
-    DenseModelSpec(
-        key="huydang-dek21-768",
-        model_id="CODE4LIFEOFFICIAL/huydang-dek21-embedding",
-        revision="517f1af7dd04a57194f1de2990f0c6ede0a3109b",
-        dimension=768,
-        max_tokens=256,
-        input_contract="pyvi",
-        device="cpu",
-        dtype="float32",
-        batch_size=8,
-    ),
-    DenseModelSpec(
-        key="qwen3-embedding-0.6b-1024",
-        model_id="Qwen/Qwen3-Embedding-0.6B",
-        revision="97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
-        dimension=1024,
+        key="qwen3-embedding-8b-4096",
+        model_id="qwen/qwen3-embedding-8b",
+        revision=None,
+        dimension=4096,
         max_tokens=32768,
         input_contract="qwen3",
-        device="cuda",
-        dtype="float16",
-        batch_size=1,
+        device=None,
+        dtype=None,
+        batch_size=64,
+        provider="openrouter",
     ),
 )
 
@@ -91,8 +80,6 @@ def prepare_document(spec: DenseModelSpec, text: str) -> str:
 
     if spec.input_contract == "e5":
         return f"passage: {text}"
-    elif spec.input_contract == "pyvi":
-        return ViTokenizer.tokenize(text)
     elif spec.input_contract == "qwen3":
         # Document của Qwen giữ nguyên Representation A, không gắn instruction
         return text
@@ -107,8 +94,6 @@ def prepare_query(spec: DenseModelSpec, query: str) -> str:
 
     if spec.input_contract == "e5":
         return f"query: {query}"
-    elif spec.input_contract == "pyvi":
-        return ViTokenizer.tokenize(query)
     elif spec.input_contract == "qwen3":
         return f"Instruct: {QWEN_QUERY_TASK}\nQuery: {query}"
     else:
@@ -135,12 +120,6 @@ def resolve_snapshot(spec: DenseModelSpec, allow_download: bool) -> Path:
         local_files_only=not allow_download,
     )
     return validate_snapshot_path(Path(raw_path), spec.revision)
-
-
-def count_tokens(tokenizer: Any, prepared_text: str) -> int:
-    """Đếm số token khi áp dụng đầy đủ special tokens và không cắt ngắn (truncation=False)."""
-    tokens = tokenizer.encode(prepared_text, add_special_tokens=True, truncation=False)
-    return len(tokens)
 
 
 def validate_vectors(
@@ -208,7 +187,7 @@ def validate_vector_matrix(
 
 
 class FullCorpusDenseRunner:
-    """Runner thực thi tuần tự cho từng dense embedding candidate trong Phase 3."""
+    """Runner local chạy SentenceTransformer cho một dense candidate."""
 
     def __init__(self, spec: DenseModelSpec, snapshot_path: Path) -> None:
         self.spec = spec
@@ -264,13 +243,6 @@ class FullCorpusDenseRunner:
                     f"Parameter dtype mismatch for {self.spec.key}: actual {first_param.dtype} != expected {expected_torch_dtype}"
                 )
 
-    def tokenizer(self) -> Any:
-        """Trả về tokenizer của mô hình."""
-        if self._model is None:
-            self.load()
-        assert self._model is not None
-        return self._model.tokenizer
-
     def embed_documents_matrix(self, texts: Sequence[str]) -> np.ndarray:
         """Encode documents into one validated NumPy matrix for Phase 4."""
         if self._model is None:
@@ -289,10 +261,6 @@ class FullCorpusDenseRunner:
         if not isinstance(raw_vectors, np.ndarray):
             raise ValueError("SentenceTransformer did not return a NumPy array")
         return validate_vector_matrix(raw_vectors, len(texts), self.spec.dimension)
-
-    def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
-        """Preserve the bounded Phase 3 list API."""
-        return self.embed_documents_matrix(texts).tolist()
 
     def embed_queries(self, queries: Sequence[str]) -> list[list[float]]:
         """Mã hóa danh sách câu hỏi theo đúng query preprocessing và kiểm tra vector đầu ra."""
@@ -313,45 +281,113 @@ class FullCorpusDenseRunner:
         )
         return validate_vectors(raw_vectors, expected_count=len(queries), expected_dim=self.spec.dimension)
 
-    def runtime_identity(self) -> dict[str, object]:
-        """Trả về thông tin định danh runtime phục vụ kiểm tra bằng chứng."""
-        return {
-            "key": self.spec.key,
-            "model_id": self.spec.model_id,
-            "revision": self.spec.revision,
-            "dimension": self.spec.dimension,
-            "max_tokens": self.spec.max_tokens,
-            "input_contract": self.spec.input_contract,
-            "device": self.spec.device,
-            "dtype": self.spec.dtype,
-            "batch_size": self.spec.batch_size,
-            "snapshot_path": str(self.snapshot_path),
-            "loaded": self._model is not None,
-        }
-
-    def observed_runtime_state(self) -> dict[str, Any]:
-        """Trả về các trường quan sát thực tế từ model instance đã nạp."""
-        if self._model is None:
-            return {}
-        first_param = next(self._model.parameters(), None)
-        dim_getter = getattr(self._model, "get_embedding_dimension", None) or getattr(
-            self._model, "get_sentence_embedding_dimension", None
-        )
-        actual_dim = dim_getter() if dim_getter is not None else None
-        return {
-            "dimension": actual_dim,
-            "parameter_device": str(first_param.device) if first_param is not None else None,
-            "parameter_dtype": str(first_param.dtype) if first_param is not None else None,
-            "attn_implementation": getattr(
-                getattr(self._model, "config", None),
-                "_attn_implementation",
-                "eager",
-            ),
-        }
-
     def close(self) -> None:
         """Giải phóng mô hình khỏi bộ nhớ RAM/VRAM và dọn dẹp cache CUDA."""
         self._model = None
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+
+
+OPENROUTER_EMBEDDINGS_URL = "https://openrouter.ai/api/v1/embeddings"
+# Pin một provider cho cả build và query: build không pin đầu tiên trộn ba provider
+# và cho cos mẫu min 0,99535 (amendment User 2026-10-24, spec §5.2).
+OPENROUTER_PROVIDER_ROUTING = {"order": ["nebius"], "allow_fallbacks": False, "data_collection": "deny"}
+OPENROUTER_EXPECTED_PROVIDER = "Nebius"
+
+
+def parse_embeddings_response(
+    body: dict[str, Any], expected_count: int, dimension: int
+) -> tuple[np.ndarray, str]:
+    """Sắp vector theo `index`, kiểm số lượng/số chiều và provider đã pin; sai thì raise.
+
+    Trả về ma trận vector và tên provider đã phục vụ (field `provider` của body).
+    """
+    if "data" not in body:
+        raise ValueError(f"OpenRouter response has no data: {body.get('error')}")
+    if body.get("provider") != OPENROUTER_EXPECTED_PROVIDER:
+        raise ValueError(
+            f"OpenRouter provider {body.get('provider')!r} != {OPENROUTER_EXPECTED_PROVIDER!r}"
+        )
+    rows = sorted(body["data"], key=lambda item: item["index"])
+    if [item["index"] for item in rows] != list(range(expected_count)):
+        raise ValueError("OpenRouter response index mismatch")
+    matrix = np.asarray([item["embedding"] for item in rows], dtype=np.float32)
+    if matrix.shape != (expected_count, dimension):
+        raise ValueError(
+            f"OpenRouter response shape {matrix.shape} != {(expected_count, dimension)}"
+        )
+    return matrix, body["provider"]
+
+
+class OpenRouterDenseRunner:
+    """Gọi OpenRouter embeddings theo batch cố định; lỗi thì raise, không retry/fallback.
+
+    Mọi request pin Nebius (`allow_fallbacks: false`) và yêu cầu `data_collection: deny`.
+    `providers_seen` ghi các provider đã thực sự phục vụ để đưa vào build record.
+    """
+
+    def __init__(self, spec: DenseModelSpec) -> None:
+        self.spec = spec
+        self.providers_seen: set[str] = set()
+        self._client: httpx.Client | None = None
+
+    def load(self) -> None:
+        if self._client is not None:
+            return
+        self._client = httpx.Client(
+            timeout=180,
+            headers={"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"},
+        )
+
+    def _embed(self, texts: Sequence[str]) -> np.ndarray:
+        if self._client is None:
+            self.load()
+        assert self._client is not None
+        response = self._client.post(OPENROUTER_EMBEDDINGS_URL, json={
+            "model": self.spec.model_id,
+            "input": list(texts),
+            "encoding_format": "float",
+            "provider": OPENROUTER_PROVIDER_ROUTING,
+        })
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"OpenRouter HTTP {response.status_code}: {response.text[:500]}"
+            )
+        matrix, provider = parse_embeddings_response(
+            response.json(), len(texts), self.spec.dimension
+        )
+        self.providers_seen.add(provider)
+        return matrix
+
+    def embed_documents_matrix(self, texts: Sequence[str]) -> np.ndarray:
+        """Embed documents theo batch `spec.batch_size`; một batch lỗi làm cả lần build dừng."""
+        if not texts:
+            return np.empty((0, self.spec.dimension), dtype=np.float32)
+        prepared = [prepare_document(self.spec, text) for text in texts]
+        size = self.spec.batch_size
+        batches = [prepared[i:i + size] for i in range(0, len(prepared), size)]
+        matrices = []
+        for number, batch in enumerate(batches, start=1):
+            matrices.append(self._embed(batch))
+            logger.info("OpenRouter embedding batch %d/%d done", number, len(batches))
+        return validate_vector_matrix(np.vstack(matrices), len(texts), self.spec.dimension)
+
+    def embed_queries(self, queries: Sequence[str]) -> list[list[float]]:
+        """Một request cho toàn bộ queries truyền vào (runtime gọi với một query)."""
+        if not queries:
+            return []
+        matrix = self._embed([prepare_query(self.spec, q) for q in queries])
+        return validate_vectors(matrix, expected_count=len(queries), expected_dim=self.spec.dimension)
+
+    def close(self) -> None:
+        if self._client is not None:
+            self._client.close()
+            self._client = None
+
+
+def create_dense_runner(spec: DenseModelSpec) -> FullCorpusDenseRunner | OpenRouterDenseRunner:
+    """Chọn runner theo provider của spec; dùng chung cho build và runtime."""
+    if spec.provider == "openrouter":
+        return OpenRouterDenseRunner(spec)
+    return FullCorpusDenseRunner(spec, resolve_snapshot(spec, allow_download=False))
