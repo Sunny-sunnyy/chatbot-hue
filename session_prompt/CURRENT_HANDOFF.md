@@ -44,6 +44,14 @@ sub-agent khác và tạo mẫu mới cho User (mẫu `sealed_user_sample.md` c�
 **B13** (phá hòa sparse native) xong → C19 review. Mốc native mới sha `1fbb5c17…`
 (`data/phase_8_1/baseline/retrieval_native_hybrid_rrf_b13.jsonl`).
 
+**User 21:40 — độ tự nhiên của câu hỏi:** Golden #18, #142 "không tự nhiên, không ai hỏi"; #32 (so giờ mở quán)
+"ít gặp, chỉ để đo năng lực". User chọn: **giữ Golden, gắn nhãn** `natural / capability_only / unnatural`
+(`data/phase_8_1/golden_realism.jsonl`, sub-agent đang gắn) — **số chính = phần câu `natural`**, cả bộ là số phụ;
+câu kín không tự nhiên thì thay (sub-agent đang làm cùng sửa dòng 36). G1 plan (B15) A duyệt 21:42 kèm báo theo
+realism; B chạy G1.1–G1.5 + G1.6 4 tầng tự động. Đoạn đúng đã áp m1–m8 (B14) → khóa cho G1.
+**Kho tự mâu thuẫn (B14 phát hiện, chờ User):** `travel/places/Đèo Hải Vân.md:84` (miễn phí từ 01/08/2024) vs phí
+70.000 ở `travel/tickets/Vé tham quan Hải Vân Quan.md` — sửa corpus cần User duyệt.
+
 ## Câu hỏi còn mở cho User
 
 - H8 (trả lời phần có căn cứ hay từ chối cả câu): 8.1 chỉ **thử** (G2); quyết ở 8.2 trên số đo.
@@ -56,8 +64,8 @@ sub-agent khác và tạo mẫu mới cho User (mẫu `sealed_user_sample.md` c�
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối 8.1; G0.4 câu kín; review | đang làm |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B13 → B14 | B13 xong 21:23 (chờ C review, report B12 §7); đang B14 |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C17 xong (21:17): câu kín changes_requested, chờ User duyệt mẫu; C16/C18 đạt |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B15 (kế hoạch G1 + harness) | xong 21:46 — chờ A duyệt kế hoạch `phase_8_1_g1_plan.md` |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C19 đạt; C20 xong (21:35): câu kín còn dòng 36 mơ hồ, chờ sửa + User duyệt mẫu |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
