@@ -1,6 +1,6 @@
 # Implementation Report: Phase <id> <name>
 
-Implementer:
+Người làm: <A|B|C> (<agent>)
 Date:
 Canonical guide:
 
@@ -14,7 +14,7 @@ Nêu ngắn gọn phần đã được duyệt và phần thực sự được t
 
 ## 2. Thay đổi chính
 
-Liệt kê các thay đổi giúp Reviewer hiểu luồng mới. Chỉ nêu file quan trọng và
+Liệt kê các thay đổi giúp người kiểm hiểu luồng mới. Chỉ nêu file quan trọng và
 mục đích; không chép toàn bộ `git diff --name-only`.
 
 ## 3. Cách đã chạy thật
@@ -45,17 +45,16 @@ Nêu lỗi còn lại, phần chưa chạy và ảnh hưởng thực tế. Nếu
 Chỉ ghi security hoặc data-safety detail khi task có rủi ro hay hành động liên
 quan.
 
-## 6. Handoff cho Reviewer
+## 6. Bàn giao cho người kiểm
 
 Nêu:
 
-- Reviewer nên đọc gì trước;
+- người kiểm nên đọc gì trước;
 - real path cần chạy lại;
 - notebook nếu thuộc acceptance; user chỉ bắt buộc kiểm tra khi acceptance yêu cầu;
 - deviation đã được user duyệt nếu có.
 
-Implementer không tự sửa guide, Codex review, user report hoặc
-`Project_Status.md`; chỉ mechanical edits được exact Approval Closure Contract
-cấp sau user confirmation. Commit/push chỉ theo exact Git authorization; report
-không tự cấp quyền. Cập nhật `CURRENT_HANDOFF.md` và cung cấp prompt chuyển tiếp
-ngắn theo workflow, không chép report vào handoff.
+Người làm không tự sửa guide, review, user report hoặc `Project_Status.md`
+(thuộc A). Không commit/push trừ khi việc ghi rõ. Xong thì cập nhật trạng thái mục
+việc của mình trong `CURRENT_HANDOFF.md`, `sessions/STATUS_<X>.md` và nhắn A
+(`WORKFLOW.md` §4).

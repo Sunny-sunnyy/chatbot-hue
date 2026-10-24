@@ -25,17 +25,9 @@ so sánh phương án và chờ duyệt thiết kế trước khi implement.
 
 ### Quyền hạn và requirement
 
-Khi các instruction khác nhau, ưu tiên:
-
-1. safety, permission và ràng buộc của platform;
-2. yêu cầu mới nhất đã được người dùng xác nhận;
-3. project governance áp dụng cho exact path;
-4. workflow đúng với vai trò hiện tại;
-5. canonical guide hoặc contract của task/phase;
-6. design và implementation plan đã được duyệt.
-
-Report, status snapshot và convention quan sát được không tự tạo requirement
-mới. Không âm thầm chọn một nguồn thấp hơn để override nguồn cao hơn.
+Thứ tự ưu tiên giữa các nguồn theo project governance (hue_rag:
+`session_prompt/Session_Prompt.md` §2). Report, status snapshot và convention
+quan sát được không tự tạo requirement mới.
 
 ### Evidence về hành vi thực tế
 

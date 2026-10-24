@@ -6,7 +6,7 @@ Cập nhật lúc: DD-MM-YYYY HH:MM +07
 Notebook tham khảo (nếu thuộc scope): notebooks/0<số>_<tên>.ipynb
 ```
 
-Báo cáo phải đơn giản, rõ ràng, dễ đọc và dễ hiểu. Chỉ dùng kết quả Codex đã
+Báo cáo phải đơn giản, rõ ràng, dễ đọc và dễ hiểu. Chỉ dùng kết quả agent đã
 kiểm chứng; phân biệt fresh execution với reused evidence đủ điều kiện. Không
 chép technical report, mã trạng thái nội bộ, chi tiết audit,
 mã băm, cost accounting hoặc nội dung gỡ lỗi không giúp user quyết định.
@@ -24,7 +24,7 @@ Giải thích trong một hoặc hai đoạn:
 Mô tả data flow bằng từ thông thường. Chỉ giữ các bước user cần để hiểu; không
 liệt kê toàn bộ kiến trúc hoặc module.
 
-## 3. Codex đã chạy và quan sát gì
+## 3. Agent đã chạy và quan sát gì
 
 Ghi đúng fresh observed results và evidence reuse đủ điều kiện, dẫn nguồn và
 lý do reuse; không gọi reused evidence là lần chạy mới. Mỗi số liệu có ý nghĩa đi kèm.
@@ -71,6 +71,5 @@ Sau khi đọc kết quả và thực hiện phần kiểm tra user được acc
 - Tôi muốn sửa: <nội dung cần sửa>.
 ```
 
-Khi user xác nhận, Reviewer cập nhật trạng thái trong tài liệu mình sở hữu theo
-Approval Closure Contract, hoặc giao Implementer exact mechanical edits được
-contract cho phép. Commit/push vẫn cần exact Git authorization riêng.
+Khi User xác nhận, A cập nhật `CURRENT_HANDOFF.md`, `Project_Status.md`,
+`PROJECT_HISTORY.md` và commit/push (`WORKFLOW.md` §9).

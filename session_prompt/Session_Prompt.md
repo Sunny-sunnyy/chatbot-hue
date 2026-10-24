@@ -1,436 +1,151 @@
-# Session Prompt
-
-## Repository and communication
-
-Repository:
-
-```text
-/home/minhhieu/hue_rag
-```
-
-Giao tiếp với user bằng tiếng Việt. Code identifiers và schema dùng English rõ
-ràng. Comment/docstring cần thiết viết bằng tiếng Việt, trừ khi exact scope có
-quy định khác.
-
-`Project_Status.md` là project map và current snapshot, không phải timeline.
-`CURRENT_HANDOFF.md` mô tả một task hiện hành; khi đã đóng mà chưa có task mới,
-ghi completed và chờ user theo lifecycle trong coordination skill.
-
-`session_prompt/` giữ bootstrap, role workflows, templates và CURRENT_HANDOFF.
-`handoff_prompt/` giữ context/prompt/contracts theo task full-corpus; xem README
-tại đó. FULL_CORPUS files ở vị trí cũ chỉ là chỉ dẫn chuyển đường dẫn cho prompt/
-report lịch sử, không bản requirement thứ hai. Task state vẫn chỉ ở
-`session_prompt/CURRENT_HANDOFF.md`; không khởi chạy contract đã completed.
-
-## Phối hợp qua session
-
-Để tiết kiệm giới hạn sử dụng của Reviewer, mặc định giao việc thực thi và thu
-thập evidence cho Implementer qua prompt do user chuyển: code/scripts, đọc
-thông số, đo token, tests, khảo sát có phạm vi và tóm tắt reference. Reviewer
-tập trung phân tích kết quả, brainstorming, quyết định thiết kế và viết
-specs/plans/guides; chỉ tự kiểm chọn lọc khi quyết định hoặc review độc lập cần.
-Không tạo nhiệm vụ thừa chỉ để giao việc, không tự spawn hoặc gửi tool message
-cho vai trò khác. Prompt phải dẫn đủ canonical inputs, scope, outputs và giới
-hạn. Phân công này không bỏ các điểm duyệt spec/plan của implementation runtime.
-
-User cung cấp nhu cầu/tài liệu và cùng Reviewer tập trung một khía cạnh. Reviewer
-tự tổng hợp quyết định, soạn spec để user duyệt, rồi soạn plan và Review Contract
-để user duyệt riêng. User quyết định scope, acceptance và quyền; không phải
-quyết định từng chi tiết code. Các điểm duyệt không tự mất đi vì task nhỏ;
-ngoại lệ phải là yêu cầu trực tiếp của user cho exact task.
-
-Sau khi plan được duyệt, Reviewer cập nhật `CURRENT_HANDOFF.md` cho Implementer.
-Implementer hoàn tất scope, tự review, lập report và chuyển handoff về Reviewer.
-Correction trong requirement/acceptance/quyền đã duyệt không cần user duyệt
-riêng. User chuyển tiếp giữa các session; không có agent tự khởi chạy hay gửi
-thông điệp cho vai trò khác nếu chưa được cấp quyền.
-
-Đơn vị lifecycle active và tương lai chỉ gọi là `Phase`. Sau khi brainstorming,
-Written Spec, Implementation Plan và Review Contract của một Phase đã được User
-duyệt, Reviewer cập nhật guide canonical cùng các Markdown active cần thiết rồi
-mới giao Implementer. Không tạo lớp phân chia song song bằng tên khác. Tên file,
-report và artifact lịch sử đã đóng được giữ nguyên để bảo toàn audit trail.
-
-Mỗi lần bàn giao, vai trò gửi tự chuẩn bị prompt ngắn: tên role, bootstrap và
-các active artifacts cần đọc trước khi làm việc. Prompt phải gắn mỗi input bằng
-một trong ba mức `full-read`, `targeted-read`, `reference-only` theo chính sách
-Context loading bên dưới; không dùng câu chung “đọc toàn bộ mọi tài liệu được
-dẫn”. Prompt không chép requirement thành một bản độc lập. User không cần tự
-tổng hợp report hoặc yêu cầu tạo prompt thêm lần nữa.
-
-Bốn file bootstrap sau phải luôn đủ để một session mới tìm đúng role, trạng
-thái và next action mà không cần next-session prompt riêng:
-
-```text
-session_prompt/<ROLE>_WORKFLOW.md
-session_prompt/Session_Prompt.md
-session_prompt/Project_Status.md
-session_prompt/CURRENT_HANDOFF.md
-```
-
-Khi user yêu cầu “đọc toàn bộ” đúng bốn file này, đó là explicit `full-read` cho
-cả bốn và override mặc định targeted-read của status. `CURRENT_HANDOFF.md` phải
-tự dẫn active contract/report/artifact bằng read level cụ thể. Nếu target role
-khác role user vừa giao, session chỉ bootstrap và kiểm cấu trúc cần thiết, không
-thực hiện task của role kia; chờ đúng report/handoff hoặc chỉ dẫn mới.
-
-Reviewer trình user khi có trade-off chưa chốt, bất đồng chưa giải quyết, cần
-đổi requirement/acceptance/kiến trúc/quyền hoặc blocker thực sự. Khi đạt kỹ thuật,
-user xác nhận cuối từ tóm tắt kết quả, evidence và giới hạn; không bắt buộc tự
-chạy lại kỹ thuật. Kiểm tra trải nghiệm của user chỉ bắt buộc khi acceptance đã
-duyệt yêu cầu. Approval và Git authorization vẫn là hai việc riêng.
-
-## Source of truth
-
-Khi instruction khác nhau, ưu tiên:
-
-1. safety, permission và platform constraints;
-2. yêu cầu mới nhất đã được user xác nhận;
-3. file này;
-4. workflow của đúng role;
-5. canonical guide hoặc Review Contract của task/phase;
-6. approved design và implementation plan;
-7. reports làm evidence;
-8. `Project_Status.md` làm snapshot bàn giao.
-
-Report và status không tự tạo requirement mới. Source code, canonical data,
-dependency state và fresh execution cho biết hệ thống thực tế đang làm gì;
-chúng không override requirement đã duyệt.
-
-Nếu hai nguồn mâu thuẫn theo cách làm đổi behavior, scope, data contract,
-architecture, risk hoặc quyền, nêu rõ và xin quyết định thay vì tự chọn.
-
-## Skill and role routing
-
-Khi bắt đầu session mới hoặc khi role, objective hay workflow chưa rõ, dùng
-`using-superpowers` để chọn workflow. Nếu current handoff đã xác định exact role
-và một next action, activate trực tiếp các skill mà handoff, plan hoặc role
-workflow yêu cầu. Không reload skill đã active trong cùng top-level task.
-
-Top-level task là một objective hoặc một handoff series, không phải từng tool
-call, plan step hay correction nhỏ. Route lại khi role, objective hoặc yêu cầu
-mới làm thay đổi workflow đã chọn.
-
-Yêu cầu trực tiếp mới của user xác định role/objective hiện tại. Handoff cũ khác
-nhiệm vụ không chặn đọc hoặc brainstorming theo yêu cầu mới và không cấp quyền
-tiếp tục task cũ. Bảo toàn tiến độ cũ bằng pointers trước khi thay handoff trong
-scope được phép. Nếu đang thực hiện chính handoff đó mà target/scope không khớp,
-dừng phần phụ thuộc và báo user.
-
-Khi user nói "brainstorming" hoặc "brainstorming thôi", đọc và áp dụng
-`session_prompt/brainstorming.md` nếu chưa đọc trong task này. User không cần
-copy nội dung file. "Brainstorming thôi" chưa cấp quyền chỉnh file.
-
-Reviewer Codex dùng cơ chế native để load Superpowers skills. Khi Implementer
-Gemini cần tìm hoặc load Superpowers skill phù hợp, tìm tại:
-
-```text
-~/.codex/skills/
-```
-
-Phase mới, architecture, governance hoặc creative design chưa được giải quyết
-dùng `brainstorming`. Chỉ chuyển sang `writing-plans` sau khi user duyệt written
-spec và chỉ execute approved plan bằng execution skill phù hợp. Exact
-`implementation`, `correction`, `final_review` hoặc `closure` handoff là routing
-decision đã hoàn thành; không brainstorm hoặc viết lại plan nếu requirement
-không đổi. Sự tồn tại của parallel-agent skill không tự cấp quyền dùng
-sub-agent; user hoặc Review Contract phải cho phép rõ.
-
-- User giao `REVIEWER_WORKFLOW.md`: hành xử như Reviewer.
-- User giao `IMPLEMENTER_WORKFLOW.md`: hành xử như Implementer.
-- Role chưa rõ và làm thay đổi quyền sửa: hỏi đúng một câu trước mutation.
-
-Mỗi role phải đọc và áp dụng:
-
-```text
-skills/risk-gated-agent-review/SKILL.md
-```
-
-Task thiết kế implementation, code, test, debug, refactor, notebook, dependency
-hoặc technical review phải đọc và áp dụng:
-
-```text
-skills/practical-project-coding/SKILL.md
-```
-
-`risk-gated-agent-review` điều phối role, handoff, risk, correction và closure.
-`practical-project-coding` hướng dẫn data flow, complexity, scope, test và fresh
-evidence. Hai role workflow áp dụng các nguyên tắc đó cho Hue RAG.
-
-Reviewer không sửa runtime thay Implementer. Implementer không tự approve, hạ
-risk hoặc thay requirement đã duyệt.
-
-## Context loading
-
-Mục tiêu là đọc đủ nguồn cần cho exact task mà không lặp lại toàn bộ lịch sử,
-source hoặc report đã được Implementer khảo sát. Ba mức đọc canonical:
-
-- `full-read`: đọc toàn văn vì file trực tiếp điều khiển role/task/acceptance
-  hoặc là artifact đang được review. Nếu tool chỉ hiển thị một phần của chính
-  file này, tiếp tục từ vị trí dừng tới cuối file.
-- `targeted-read`: chỉ đọc snapshot, heading, section hoặc range được prompt/
-  handoff nêu. Không mở rộng tới toàn file nếu không có mâu thuẫn hoặc evidence
-  gap liên quan.
-- `reference-only`: biết path và vai trò; chỉ mở phần cần thiết khi active
-  artifacts không đủ trả lời một câu hỏi/finding cụ thể.
-
-File không được biến thành `full-read` chỉ vì nó được liên kết. Prompt/handoff
-phải nói rõ mức đọc; nếu thiếu nhãn, active contract/spec/plan/correction/report
-đang review là `full-read`, còn history/report đã approved là `reference-only`.
-Mọi `SKILL.md` đã được chọn cho task luôn là `full-read` theo skill routing.
-
-Sau khi workflow được xác định, nạp project context theo thứ tự mặc định:
-
-```text
-full-read: session_prompt/Session_Prompt.md
-targeted-read: current snapshot/status/map được chỉ định trong Project_Status.md
-full-read: session_prompt/<ROLE>_WORKFLOW.md
-full-read: session_prompt/CURRENT_HANDOFF.md
-```
-
-Explicit prompt yêu cầu full-read `Project_Status.md` được ưu tiên như quy tắc
-bốn-file bootstrap ở trên. Sau bốn file, `CURRENT_HANDOFF.md` là router duy nhất;
-không tự coi mọi link trong status là active input.
-
-Xác nhận target role và exact next action trước khi mở context tiếp theo:
-
-```text
-Tier 0: stable role rules + current snapshot + current handoff
-Tier 1: full-read active contract/spec/plan/correction/report
-Tier 2: targeted affected source, exact diff/checks và linked evidence theo risk
-Tier 3: reference history, live systems, external research hoặc broad verification khi cần
-```
-
-Reviewer đọc full active Implementer report nhưng chỉ kiểm source anchors/diff
-theo Review Contract và risk; không lặp lại broad survey mặc định. Implementer
-đọc full exact source/input mà approved plan hoặc survey contract giao, nhưng
-không đọc history/vendor/generated state ngoài scope.
-
-Không đọc toàn bộ reports/history để “cho chắc”. Mở rộng context khi có mâu
-thuẫn, risk trigger, safety boundary hoặc quyết định cần thêm evidence. Giới hạn
-sử dụng không cho phép bỏ active requirement; tiết kiệm bằng routing đúng mức,
-không bằng đọc dở một file đã được đánh dấu `full-read`.
-
-## Stable project and data boundaries
-
-Hue RAG xây RAG chatbot về văn hóa/du lịch Huế và Hue Foods RAG MVP. Current
-runtime, data và phase status nằm trong `Project_Status.md`; next action duy nhất
-nằm trong `CURRENT_HANDOFF.md`.
-
-Data flow chuẩn:
-
-```text
-raw -> curated Markdown -> chunks -> embeddings/index
--> retrieval -> context -> answer
-```
-
-- Không chunk trực tiếp từ source dumps.
-- Không enrich hoặc sửa curated knowledge bằng web nếu chưa có exact approved
-  data scope.
-- External research có thể hỗ trợ quyết định, nhưng URL web không tự trở thành
-  canonical evidence cho closed-world evaluation.
-- Active production data chỉ read-only trong công việc thông thường. Mutation
-  cần exact approved target hoặc user authorization riêng.
-
-## Đơn giản là mặc định
-
-- Code phải rõ ràng, dễ đọc, dễ giải thích và dễ theo dõi data flow.
-- Bắt đầu bằng giải pháp nhỏ nhất đáp ứng đầy đủ nhu cầu thật, không phải giải
-  pháp có ít dòng nhất.
-- Một đơn vị code nên có nhiệm vụ gọi tên được bằng ngôn ngữ thông thường.
-- Không tự thêm abstraction, wrapper, validator, state machine, configurability
-  hoặc workflow phòng xa.
-- Không tối ưu cho tình huống giả định chưa xảy ra.
-- Không giữ kỹ thuật chỉ vì đã tốn công xây dựng.
-- Reviewer phải coi over-engineering là finding khi implementation khó hiểu hơn
-  mức cần thiết hoặc không chứng minh được giá trị thực tế.
-
-Kỹ thuật nâng cao chỉ được thêm khi:
-
-1. có vấn đề thật đã quan sát được hoặc contract/requirement đã rõ cần bảo vệ;
-2. giải pháp trực tiếp không đáp ứng;
-3. lợi ích cụ thể và giải thích được;
-4. evidence phù hợp chứng minh lợi ích; integration phải từ hệ thống thật; và
-5. độ phức tạp tăng thêm tương xứng.
-
-Không cần đợi sự cố xảy ra mới bảo vệ contract đã rõ. Contract cũng không tự
-biện minh mọi cơ chế: vẫn phải chứng minh cách trực tiếp không đủ. Tiêu chí
-data flow, responsibility, naming và abstraction nằm trong coding skill;
-không dùng line count hoặc số caller làm lệnh cấm class/helper.
-
-## Test vừa đủ
-
-- Chỉ tạo hoặc giữ test khi nó bảo vệ behavior cần thiết, contract quan trọng
-  hoặc bug thực tế có chi phí tái diễn đáng kể.
-- Không đặt mục tiêu theo số test, coverage hoặc số file test.
-- Mỗi test phải dễ đọc và trả lời được nó bảo vệ nhu cầu nào của user.
-- Audit test theo ownership của task/phase và downstream scope bị ảnh hưởng trực
-  tiếp; không audit lại toàn bộ suite theo thói quen.
-- Xóa test chỉ bảo vệ implementation detail, lỗi giả định hiếm, live path trùng
-  lặp hoặc mechanism đang bị loại bỏ.
-- Không dùng mock, fake hoặc stub dependency trong implementation hay test.
-- Pure deterministic logic được dùng input nhỏ, trực tiếp và hợp lệ; input đó
-  không phải evidence cho database, model, provider, network hoặc integration.
-- Test pass không thay live integration run khi acceptance phụ thuộc hệ thống
-  thật.
-
-Chọn verification theo behavior và blast radius:
-
-- bắt đầu bằng exact live path và smallest useful test;
-- full backend suite chỉ chạy khi shared contract hoặc blast radius thực sự rộng
-  và Review Contract ghi rõ lý do;
-- Golden V3 có 45 full cases canonical và smoke subset 10 row deep-equal;
-- smoke 10 dùng cho bounded check phù hợp;
-- full 45 dùng khi thay đổi có thể ảnh hưởng quyết định chất lượng benchmark.
-
-Không dựng dead URL, xóa collection hoặc thay environment chỉ để tạo một
-failure giả định. Failure test chỉ giữ cho lỗi thực tế quan trọng có nguy cơ tái
-diễn.
-
-## Debugging và tự review
-
-Khi có bug thật:
-
-```text
-tái tạo nhất quán -> thu bằng chứng -> chứng minh nguyên nhân gốc
--> thử một focused fix -> chạy lại exact live path
-```
-
-- Không sửa nhiều giả thuyết cùng lúc hoặc chồng fallback/guard để che lỗi.
-- Chỉ thêm regression test khi bug quan trọng và có nguy cơ tái diễn.
-- Sau thay đổi, tự review exact diff về scope creep, code/test dư, duplication,
-  helper một-caller, abstraction phòng xa và data flow khó hiểu.
-- Chỉ giải thích pattern khi có trade-off thật; giải pháp trực tiếp không cần
-  gắn nhãn pattern.
-- Review security theo input/API, secret, provider, data và destructive target
-  thực sự bị ảnh hưởng; không tạo security checklist cho scope không liên quan.
-
-## Chạy thật, dữ liệu thật
-
-- Dùng curated/canonical data và backend, Qdrant, dependency, model, API thật
-  phù hợp với approved guide/plan.
-- Không dùng fake ID, fake dataset, fake provider, fake artifact, mock response,
-  replay output, kết quả cũ hoặc expected value làm fresh PASS evidence.
-- Evidence cho behavior đã thay đổi phải đến từ exact run đang được report.
-- Trong cùng correction series, evidence cho path không đổi chỉ được reuse khi
-  inputs, dependencies, environment và data flow không đổi; phải ghi rõ lý do và
-  không gọi đó là fresh run.
-- Giữ nguyên failed, skipped, partial và not verified outcome; không che bằng
-  fallback giả.
-- Active Hue Qdrant collection chỉ read-only. Mutation chỉ dùng exact isolated
-  target hoặc active target đã được user duyệt rõ.
-
-## Online, paid API and secrets
-
-Reviewer và Implementer được dùng internet, dependency/provider thật và paid
-API trong approved phase khi guide/plan ghi exact provider, model, data và loại
-run. Không cần consent gate lặp lại, cost cap, cost accounting hoặc xin lại
-approval cho từng bounded/full run đã nằm trong contract.
-
-Cần approval mới khi đổi provider/model, mở rộng dataset hoặc phase scope,
-deploy, mutate active data hoặc thực hiện destructive action.
-
-Ưu tiên nạp repo-root `.env` bằng safe env-file loader, ví dụ:
-
-```bash
-uv run --env-file .env python -m pytest backend/tests/ -q
-```
-
-Không mở, `cat`, `grep`, in, log hoặc expose secret values. Không yêu cầu user
-paste secret vào chat.
-
-## Loại bỏ complexity không phục vụ nhu cầu thật
-
-Các mechanism sau phải được loại bỏ khi chúng không bảo vệ nhu cầu thật:
-
-- cost accounting hoặc cost-estimation code;
-- consent gate cho API đã được duyệt;
-- calibration;
-- resume workflow;
-- run identity hoặc generation run identity;
-- timestamp quản lý evaluation package;
-- checksum hoặc package matching;
-- tamper detection;
-- partial artifact hoặc artifact audit phức tạp;
-- validator chồng nhiều lớp;
-- test kỹ thuật chỉ phục vụ các mechanism trên.
-
-Đây không phải blacklist cấm vĩnh viễn. Một mechanism chỉ hợp lý khi có observed
-need hoặc contract thật, giải pháp trực tiếp không đủ và evidence chứng minh
-lợi ích tương xứng.
-Nếu approved scope đã yêu cầu loại bỏ, không đổi tên hoặc chuyển nơi để giữ lại.
-
-## Python runtime
-
-`uv` là công cụ chuẩn:
-
-```text
-pyproject.toml + uv.lock -> uv -> project .venv -> uv run <command>
-```
-
-- Dùng `uv sync`, không dùng `pip install`.
-- Chạy project bằng `uv run python ...`, `uv run python -m pytest ...` hoặc
-  `uv run uvicorn ...`.
-- Không dùng system Python làm project runtime PASS evidence.
-- Không mặc định đặt `HF_HUB_OFFLINE`, `TRANSFORMERS_OFFLINE` hoặc `UV_OFFLINE`;
-  chỉ dùng khi exact contract yêu cầu.
-
-## Curated data
-
-- Không YAML frontmatter; file bắt đầu bằng `#`.
-- Không ghi field hoặc section không có dữ liệu.
-- Không thêm `Liên kết nội bộ` vào body.
-- Source tracking tối giản nằm trong `## Nguồn dữ liệu`.
-- Curated body phải tự nhiên, độc lập và answer-facing.
-- Research bên ngoài phải tách khỏi closed-world ground truth. Khi web mâu thuẫn
-  với corpus, ghi source/link/date, tính thời điểm, ảnh hưởng và quyết định cần
-  từ Reviewer/user; không tự chọn một phía hoặc âm thầm sửa corpus.
-
-Chi tiết foods curation thuộc
-`knowledge-base-hue/meta/foods-template.md`.
-
-## Notebook
-
-Notebook chỉ tồn tại khi canonical guide xác định giá trị học tập thật. Không
-tạo notebook để đủ số phase hoặc thay notebook bằng validator/smoke artifact.
-
-- Notebook phải giúp con người hiểu hệ thống.
-- Mỗi cell chỉ làm một việc và có Markdown ngắn trước code.
-- Code cell ngắn, gọi backend và không duplicate runtime pipeline.
-- Notebook không phải validator, audit package hoặc test suite.
-- Repository notebook có outputs rỗng và `execution_count: null`.
-- Khi notebook execution thuộc acceptance, Reviewer Run All thật trên temporary
-  copy qua exact production path.
-- Không lưu secrets, raw headers, raw provider payload hoặc sensitive stack
-  trace.
-
-Phong cách tham khảo:
-
-```text
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0/*.ipynb
-/home/minhhieu/llm_rag/tai_lieu/notebook_simple/**/*.ipynb
-```
-
-## Project state, worktree and Git authorization
-
-`Project_Status.md` giữ tổng quan, baseline, workstream status và canonical map;
-không giữ next action độc lập hay chi tiết từng entity. `CURRENT_HANDOFF.md`
-giữ một exact task/risk/authority/next action, dẫn tới report thay vì chép report.
-Phân biệt Implementer báo hoàn tất, Reviewer đã xác minh và user đã approved.
-File này không chứa phase timeline.
-
-- Chạy `git status --short` trước mutation và giữ nguyên thay đổi không liên
-  quan.
-- Không reset, checkout, overwrite hoặc broad-delete ngoài approved scope.
-- Resolve exact target trước mutation; ưu tiên thao tác recoverable.
-- User confirmation về design/phase không tự cấp quyền Git.
-
-Chỉ commit/push khi latest instruction hoặc current handoff ghi exact scope:
-
-```text
-git_authorization: none
-git_authorization: commit
-git_authorization: commit_and_push
-```
-
-Git authorization cho phép thao tác Git, không mở rộng quyền sửa nội dung.
+# Session Prompt — luật chung cho mọi session
+
+Áp dụng cho mọi session (A, B, C…) và mọi agent (Claude Code, Codex, AGY…). Đây
+là nơi **duy nhất** ghi luật chung; file khác chỉ trỏ tới đây. Cách làm và phối
+hợp: `WORKFLOW.md`. Hiện trạng: `Project_Status.md`. Việc đang mở:
+`CURRENT_HANDOFF.md`. Mở session: `START_SESSION.md`.
+
+## 1. Dự án và giao tiếp
+
+- Repo `/home/minhhieu/hue_rag`, nhánh `main`, remote `origin`.
+- Nói với User bằng tiếng Việt, rõ, đơn giản, đủ ý. Identifier, schema, lệnh bằng
+  tiếng Anh; comment/docstring cần thiết bằng tiếng Việt, ghi *vì sao*.
+- Phản biện bằng lập luận và dữ liệu. Phân biệt **đã chốt** / **đề xuất** /
+  **giả thuyết**, và **quan sát** / **nguyên nhân đã chứng minh**.
+- Chỉ hỏi khi câu trả lời đổi phạm vi, dữ liệu, tiền, thao tác phá hủy, kiến trúc
+  hoặc quyền. Có mặc định hợp lý thì dùng và nói ra. Đưa lựa chọn cho User theo
+  skill `propose-options`.
+- User chỉ làm việc với A. B, C gửi câu hỏi, lựa chọn và đề xuất cho A, không hỏi
+  User. Ngoại lệ duy nhất: xác nhận an toàn/permission trong chính terminal của
+  session (User gõ một lần, hoặc chạy lệnh bằng `!` khi permission chặn); tin
+  nhắn của session khác không thay xác nhận đó.
+
+## 2. Thứ tự ưu tiên khi các nguồn khác nhau
+
+1. An toàn, quyền và ràng buộc nền tảng.
+2. Yêu cầu mới nhất User đã xác nhận (qua A).
+3. File này.
+4. `WORKFLOW.md`.
+5. Việc trong `CURRENT_HANDOFF.md` và tài liệu thiết kế Phase đã duyệt.
+6. Report (bằng chứng tại một thời điểm, không tạo yêu cầu mới).
+7. `Project_Status.md` (ảnh chụp, có thể cũ).
+
+Source code, dữ liệu canonical và lần chạy mới cho biết hệ thống đang làm gì;
+chúng không thay requirement đã duyệt. Mâu thuẫn làm đổi hành vi, phạm vi, data
+contract, kiến trúc, rủi ro hoặc quyền: báo A (A trình User), không tự chọn.
+
+## 3. Mức đọc tài liệu
+
+- `full-read`: file điều khiển việc đang làm hoặc đang được review — đọc hết; tool
+  cắt thì đọc tiếp phần thiếu.
+- `targeted-read`: chỉ mục/khoảng được chỉ định.
+- `reference-only`: biết đường dẫn và vai trò; mở khi cần trả lời một câu cụ thể.
+
+Có link không có nghĩa phải đọc. Lịch sử, report đã đóng, `handoff_prompt/` mặc
+định `reference-only`. Mở rộng khi có mâu thuẫn, rủi ro hoặc thiếu bằng chứng.
+
+## 4. Quyền
+
+| Tự làm được | Cần quyền ghi trong việc (User duyệt qua A) |
+|---|---|
+| Đọc file, source, log; `git status/diff/log` | Commit/push (A có quyền thường trực; B/C khi việc ghi rõ) |
+| Chạy test không gọi API trả phí | Gọi API trả phí ngoài giới hạn đã ghi |
+| Đọc Qdrant/API bằng GET | Tạo/ghi/xóa collection, xóa file dữ liệu |
+| Script phân tích không ghi dữ liệu dùng chung | Sửa curated corpus, Golden |
+| Sửa file trong vùng việc được giao | Provider/model/dataset mới, dependency mới, deploy |
+
+Không ai tự duyệt việc của chính mình, tự hạ mức rủi ro, hay sửa spec/tiêu chí
+nghiệm thu để hợp thức hóa kết quả — kể cả A khi A tự làm (người khác kiểm).
+Quyền đã ghi trong việc thì không xin lại từng lệnh. Duyệt cho A đồng nghĩa duyệt
+cho B/C (User 2026-10-24). Sub-agent: được dùng khi hữu ích, kế thừa nguyên phạm
+vi và quyền của việc; session giao chịu trách nhiệm kết quả và ghi ngắn trong
+report.
+
+## 5. Dữ liệu và bí mật
+
+- Data flow chuẩn: `raw -> curated Markdown -> chunks -> embeddings/index ->
+  retrieval -> context -> answer`. Không chunk trực tiếp từ source dumps.
+- `knowledge-base-hue/`, `data/`, Qdrant storage, Golden, trace chi tiết,
+  `gửi chatgpt/` là private: không commit, report tracked không chép nội dung,
+  câu hỏi Golden, vector hay payload.
+- Corpus không có Git: backup file gốc vào `knowledge-base-hue/meta/` trước khi
+  sửa, review bằng diff với backup.
+- Curated Markdown: không YAML frontmatter, file bắt đầu bằng `#`; không ghi
+  field/section rỗng; không thêm "Liên kết nội bộ"; nguồn tối giản ở
+  `## Nguồn dữ liệu`; nội dung tự nhiên, độc lập, answer-facing. Chi tiết foods:
+  `knowledge-base-hue/meta/foods-template.md`.
+- Không enrich/sửa corpus bằng web khi chưa có phạm vi duyệt. Web mâu thuẫn corpus:
+  ghi nguồn/link/ngày, báo A, không tự chọn một phía. URL web không tự thành
+  evidence closed-world.
+- Không mở, `cat`, `grep`, in, log `.env` hay secret; không bắt User dán secret.
+  Nạp env bằng `uv run --env-file .env …`.
+- Stage Git theo đường dẫn; không reset/checkout/xóa rộng ngoài phạm vi; giữ
+  nguyên thay đổi không phải của mình.
+
+## 6. Bằng chứng
+
+- Dùng dữ liệu canonical và backend, Qdrant, model, API thật theo việc đã duyệt.
+- Không dùng mock, fake, stub, replay, kết quả cũ hay giá trị mong đợi làm PASS.
+- Logic thuần được test bằng input nhỏ hợp lệ; đó không phải bằng chứng cho
+  database/provider/model/network.
+- Ghi đúng `PASS / PARTIAL / FAIL / NOT RUN`; giữ nguyên failed, skipped,
+  not verified. Lỗi provider/mạng là kết quả quan sát, không che bằng fallback.
+- Dùng lại bằng chứng cũ chỉ khi đầu vào, dependency, môi trường và luồng dữ liệu
+  không đổi; ghi rõ là dùng lại và lý do.
+- Thí nghiệm: ghi tiêu chí **trước** khi chạy; kết quả âm cũng giữ.
+
+## 7. Đơn giản là mặc định
+
+- Code rõ, dễ đọc, theo được data flow; giải pháp nhỏ nhất đủ nhu cầu thật (không
+  phải ít dòng nhất); mỗi đơn vị code có nhiệm vụ gọi tên được.
+- Không thêm abstraction, wrapper, validator, state machine, cấu hình, retry,
+  fallback hay workflow phòng xa. Kỹ thuật nâng cao chỉ khi: có vấn đề quan sát
+  được hoặc contract rõ; cách trực tiếp không đủ; lợi ích giải thích được; có
+  bằng chứng (integration từ hệ thống thật); độ phức tạp tương xứng.
+- Các cơ chế từng bị loại vì không phục vụ nhu cầu thật (cost accounting, consent
+  gate cho API đã duyệt, calibration, resume, run identity, checksum/package
+  matching, tamper detection, validator chồng lớp…) chỉ quay lại khi có nhu cầu
+  quan sát được.
+- Over-engineering là finding khi review, không phải sở thích.
+- Mỗi thay đổi code giải thích được cho User bằng lời thường.
+- Code/test/debug theo skill `practical-project-coding`.
+
+## 8. Test và verification
+
+- Test chỉ khi bảo vệ behavior cần thiết, contract quan trọng hoặc bug thật có
+  nguy cơ tái diễn; không đặt mục tiêu số test/coverage.
+- Chọn kiểm tra theo hành vi và phạm vi ảnh hưởng: logic thuần → kiểm tra nhỏ;
+  DB/API/model/retrieval → đường thật bị ảnh hưởng; full suite chỉ khi việc ghi
+  rõ lý do. Test pass không thay live run khi nghiệm thu cần hệ thống thật.
+- Golden full-corpus: smoke 10 cho kiểm nhanh; đủ 176 case khi thay đổi có thể đổi
+  quyết định chất lượng. (Foods Golden V3 45 + 10 là lịch sử.)
+- Không dựng dead URL, xóa collection hay đổi môi trường để tạo lỗi giả.
+- Bug thật: tái tạo → bằng chứng → nguyên nhân gốc → một sửa tập trung → chạy lại
+  đường thật. Không chồng nhiều giả thuyết, fallback hay guard che lỗi.
+
+## 9. Online, paid API
+
+Được dùng internet, provider thật và API trả phí trong việc đã duyệt có ghi
+provider, model, dữ liệu và giới hạn. Không cần xin lại từng lần trong giới hạn.
+Cần duyệt mới khi đổi provider/model, mở rộng dữ liệu, vượt giới hạn, deploy,
+ghi/xóa dữ liệu đang chạy.
+
+Không có WebSearch: cần tìm thông tin bên ngoài thì viết yêu cầu vào
+`gửi chatgpt/tìm thông tin/`, User gửi ChatGPT và lưu kết quả vào
+`gửi chatgpt/kết quả nghiên cứu/`; đọc kết quả rồi WebFetch URL để đối chiếu.
+
+## 10. Môi trường
+
+- `uv` là công cụ chuẩn: `uv sync`, `uv run python …`, `uv run python -m pytest …`;
+  không `pip install`, không dùng system Python làm bằng chứng PASS.
+- Qdrant `127.0.0.1:6335` (gRPC 6336). Không mặc định đặt `HF_HUB_OFFLINE`; dùng
+  khi việc hoặc bẫy đã biết yêu cầu (`Project_Status.md` §8).
+- CodeGraph là công cụ tùy chọn; lỗi/thiếu index không chặn việc; không init/xóa
+  `.codegraph/`.
+
+## 11. Notebook
+
+Chỉ tạo khi có giá trị học tập thật: mỗi cell một việc, Markdown ngắn trước code,
+code ngắn gọi backend (không lặp pipeline); không phải validator/test suite;
+outputs rỗng và `execution_count: null` trong repo; Run All thật trên bản tạm khi
+thuộc nghiệm thu; không lưu secret hay raw provider payload.
