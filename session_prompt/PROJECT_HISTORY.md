@@ -4,6 +4,15 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-24 (17:10) — Báo cáo cho User ở `bao_cao_he_thong/`; cách làm MekongAI; dọn Foods (dở)
+
+- Báo cáo cho User gom về `bao_cao_he_thong/` (README mục lục, `LUONG_HOAT_DONG_HE_THONG.md`, 9
+  `BAO_CAO_<khâu>.md` cho Phase 0–7B, `nhat_ky/`); viết lại + kiểm "hôm nay còn đúng không" (B 0–4,
+  C 5–7A2, A 7B + luồng), review chéo đạt. Lệch tìm thấy ghi `Project_Status.md` §4/§8.
+- Cách làm việc học MekongAI (`0a709db`): `WORKFLOW.md` §6/§8/§9.6–9.8, mẫu báo cáo khâu sống + nhật ký.
+- B9 dọn Foods (User duyệt) đang làm, chưa commit; phiên sau C review rồi A commit.
+- Chi tiết: `report_agent/2026-10-24_to_chuc_bao_cao/TONG_HOP.md`. Phiên sau: brainstorm Phase 8.
+
 ## 2026-10-24 (khuya) — Đóng Phase 7B; tổ chức lại report
 
 - User quyết bỏ chấm tay 20 case ("các câu hỏi đã ổn"), đóng 7B với Claude là judge chính; giới hạn

@@ -1,30 +1,33 @@
-# STATUS A — cập nhật 2026-10-24 (tối)
+# STATUS A — cập nhật 17:10 24/10/2026 (kết phiên)
 
-Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối (User chỉ làm việc với A)
+Terminal (24/10): `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối (User chỉ làm việc với A)
 
 ## Đang làm
-- Phase 7B gần xong: Gate 1–4 xong + review chéo C `ready_for_user_confirmation`, chỉ chờ User chấm
-  20 case (`data/evaluation/phase_7b/user_scoring.md`) → B7 điền phần User → C6 kiểm → A trình User đóng.
-- B7 đang sửa 3 minor report Gate 4; C rảnh.
+- Không. Kết phiên theo yêu cầu User. Phiên sau: `CURRENT_HANDOFF.md` mục "PHIÊN SAU — ĐỌC TRƯỚC NHẤT".
 
 ## Đang khai báo sửa
-- `session_prompt/` (governance, handoff, status), `docs/superpowers/specs/2026-10-24-phase-7b-*`.
+- không
 
-## Vừa xong
-- Brainstorm 7B với User: D1 kiểm độ tin thước đo, D2 User chấm ~20 + Claude chấm 176,
-  D3 judge chính Claude. Sau khi User cho giá luna, A thêm D4 (Run 2 đủ 176), D5 (luna judge phụ).
-- `.gitignore` thêm `gửi chatgpt/`; commit `b970cd0` (spec 7B + handoff), `1027ec3` (C1 đóng).
-- Yêu cầu ChatGPT 7B: `gửi chatgpt/tìm thông tin/phase_7b_rag_evaluation_2026_10_24.md`.
+## Vừa xong (24/10)
+- Phase 7B: brainstorm → spec → điều phối Gate 0–4 → User đóng (bỏ chấm tay). Baseline Claude
+  4,43 / 4,28 / 4,45; từ chối nhầm 22/158. Guide + Project_Status cập nhật.
+- Đóng các việc B1–B8, C1–C8; review chéo đủ; tiền paid cả phiên ~0,09 USD.
+- Tổ chức báo cáo: `bao_cao_he_thong/` (README, luồng hệ thống, 9 báo cáo khâu, nhật ký 24/10),
+  `report_agent/<đợt>/`, `gửi chatgpt/<ngày>/`. Cách làm MekongAI áp dụng (`0a709db`).
+- Giao B9 (dọn Foods, User duyệt) — chưa xong/chưa review lúc kết phiên.
 
 ## Đã học / bẫy gặp
-- **2026-10-24:** `git add bao_cao_he_thong` (cả thư mục) đã commit + push bản nháp chưa review của B/C
-  (`8c57701`), gồm một số liệu corpus (sau đó C đã sửa). Luôn stage theo **từng file đã review**.
-- User rất nhạy chi phí: luôn ước USD trước (giá luna 0,1$/1M in, 0,5$/1M out); ngân sách
-  session ≤1$ (tối đa 1,5$); 7B ≤0,6$.
-- User ủy quyền rộng (2026-10-24): tự điều phối, thử nghiệm, tối ưu, commit/push theo mốc.
-- `báo cáo nghiên cứu github.txt` ở gốc repo: User nói giữ nguyên (untracked, không commit).
+- **Stage từng file đã review**, không `git add <thư mục>`: `8c57701` lỡ đẩy nháp chưa review (gồm
+  một số liệu corpus) lên `origin`. Luôn `git diff --cached --stat` trước commit.
+- Auto mode có lúc chặn lệnh commit vì "nội dung trước đó trong hội thoại" — không lách; nhờ User
+  chuyển permission mode mặc định hoặc chạy bằng `!`.
+- User rất nhạy chi phí: ước USD trước mọi lượt paid; ưu tiên đường free (retrieval local, Claude judge).
+- Không đưa ngưỡng cố định "chênh ≥ X là thật" — dùng so cặp (paired bootstrap) như nghiên cứu 7B.
+- Khi review báo cáo cho User: kiểm cả nguyên nhân được gán (B bắt lỗi A gán sai nguyên nhân chunk vụn).
+- Script tạm của A: `/tmp/a_7b/` (chọn tập con, tạo file chấm User) — mất khi khởi động lại; dữ liệu
+  thật ở `data/evaluation/phase_7b/`.
 
 ## Việc dở / câu hỏi
-- Khi User dậy: (1) nhờ chấm 20 case; (2) gửi 2 yêu cầu ChatGPT; (3) trình danh sách dọn C2;
-  (4) sau khi 7B đóng: brainstorm Phase 8 với input C1 + B4 (từ chối nhầm) + B5 (context 10).
-- Tiền paid session: ~0,087 USD / 1 USD.
+- Phiên sau: hỏi lại quyền phiên; C review B9 → A commit; brainstorm Phase 8 (câu hỏi đánh số trong
+  `CURRENT_HANDOFF.md` "Câu hỏi cho User").
+- `báo cáo nghiên cứu github.txt` ở gốc: User bảo giữ nguyên (untracked, không commit).

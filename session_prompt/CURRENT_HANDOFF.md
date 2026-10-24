@@ -1,70 +1,78 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 2026-10-24 tối (A). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở; việc
-xong chuyển tóm tắt sang `PROJECT_HISTORY.md`. Đợt hiện tại: `report_agent/2026-10-24_to_chuc_bao_cao/`.
+Cập nhật: 17:10 24/10/2026 (A, kết phiên). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc
+đang mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/TONG_HOP.md`.
+
+## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
+
+**Hệ thống lúc kết phiên 24/10:** `main` (A commit cuối ghi trong `sessions/STATUS_A.md`); chatbot
+full-corpus chạy được (`/health` 200 ở B1); Qdrant trước khi B9 xóa: 3 collection (kiểm lại bằng
+`curl -s http://127.0.0.1:6335/collections` — B9 có thể đã xóa 2 collection Foods, xem `STATUS_B.md`).
+**Working tree có thay đổi CHƯA COMMIT của B9** (xóa code/test/notebook Foods, sửa `settings.yaml`,
+`settings_loader.py`, `conftest.py`, `vectorstore/*`, `scoring/bm25.py`, test chunker): chưa review —
+**không commit, không revert** trước khi C review.
+
+**Thứ tự việc phiên sau:**
+
+1. Mở A/B/C bằng `START_SESSION.md`; A `ListAgents` cập nhật bảng Session; A **hỏi lại User quyền
+   phiên** (quyền đặc biệt 24/10 đã hết hạn — `WORKFLOW.md` §9.8): tự điều phối rộng, trần tiền
+   `gpt-6-luna`, commit/push.
+2. **C review B9** (dọn) theo `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2) + report B
+   `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` + skill
+   `risk-gated-agent-review`; chạy lại phần kiểm then chốt (so byte retrieval, test full-corpus,
+   `/health`). Đạt → A commit theo từng đường dẫn (`git diff --cached --stat`), cập nhật
+   `Project_Status.md` §4 (Qdrant còn 1 collection, code Foods đã gỡ), `bao_cao_he_thong/` (4 chỗ,
+   `WORKFLOW.md` §6). B9 dở → B làm nốt trước.
+3. **Brainstorm Phase 8 với User** (A, skill `propose-options`, mỗi lần một câu). Input:
+   - giả thuyết + thứ tự ưu tiên: `reports/phase_8_candidate_hypotheses_2026_10_24.md` §8.4;
+   - baseline 7B: `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`, `guides/full_corpus_rag.md` "Cập nhật Phase 7B";
+   - từ chối nhầm: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`;
+   - thăm dò context 10: `reports/phase_8_probe_context_top10_2026_10_24.md`;
+   - nghiên cứu: `gửi chatgpt/2026-10-24/kết quả nghiên cứu/` (2 file, private).
+   Kết quả: **một** spec Phase 8 trong `docs/superpowers/specs/`, User duyệt một lần; mở đợt
+   `report_agent/<ngày>_phase_8_<chủ_đề>/`.
+4. Việc nhỏ có thể giao song song khi rảnh (free): đưa 9 file `bao_cao_he_thong/BAO_CAO_*.md` về mẫu
+   mới (`TEMPLATE_USER_REPORT.md`: dòng "Cập nhật lần cuối … bản N", Tóm tắt đầu file, checklist thang
+   5 mức, mã nội bộ xuống Phụ lục) — B các file B viết, C các file C viết, A 2 file của A.
+
+## Câu hỏi cho User (phiên sau)
+
+1. **Quyền phiên:** tiếp tục cho A tự điều phối rộng + commit/push? Trần tiền `gpt-6-luna` cho phiên?
+   (24/10: ≤1 USD, đã dùng ~0,09 USD.)
+2. **Phase 8 — H8:** khi chỉ có bằng chứng cho một phần câu hỏi, bot **trả lời phần có căn cứ (nói rõ
+   phần thiếu)** hay **từ chối cả câu** như hiện nay? (Spec umbrella §1/Decision #6a cho phép trả phần
+   có căn cứ; spec Phase 6 §10 + prompt hiện tại bắt từ chối cả câu.)
+3. **Phase 8 — Golden:** có tách 176 câu thành nhóm phát triển / nhóm giữ kín để chấm cuối không? (C7:
+   tối ưu và báo trên cùng bộ là đo lạc quan; spec 7A §8 từng chốt không chia; MekongAI dùng bộ kiểm
+   cuối "chưa ai thấy", chấm mù.)
+4. **Phase 8 — luật so sánh:** dùng paired bootstrap / permutation trên cùng 176 câu (nghiên cứu 7B
+   khuyên), không đặt ngưỡng cố định — User đồng ý?
+5. **Phase 8 — thứ tự làm:** đồng ý thứ tự C7 §8.4 (0 đo candidate recall + bằng chứng chuẩn → 1 context 10
+   + H8 → 2 bảng/BM25 bigram/tách câu hỏi → 3 gộp chunk → 4 reranker → 5 phần có phí)?
+6. Chunker có 3 cặp đoạn lặp nội dung (blockquote trong list item) — sửa cùng đợt chunker Phase 8?
+7. **Phase 8 — bằng chứng chuẩn:** gắn tay đoạn/dòng đúng cho 30–40 câu khó (để đo "đoạn đúng có
+   vào nhóm ứng viên không", C7 §8.4 bước 0)? Tốn công người (agent soạn, User duyệt mẫu).
+8. Model/dependency mới cần duyệt khi đề xuất: reranker `bge-reranker-v2-m3`, `Qwen3-Embedding-0.6B`,
+   tách từ `pyvi` (C7).
 
 ## Session
 
-| Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
+| Vai | Terminal (24/10) | Agent | Liên lạc | Việc phiên sau | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều chỉnh cách làm việc theo MekongAI | đang làm |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B9 dọn sau Phase 7 | đang làm |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | — | rảnh |
+| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | hỏi quyền; commit B9 sau review; brainstorm Phase 8 | kết phiên |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | làm nốt B9 nếu dở; sửa minor review; báo cáo khâu theo mẫu mới | xem `STATUS_B.md` |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | review B9; báo cáo khâu theo mẫu mới | xem `STATUS_C.md` |
 
-User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
+Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
-## Quyền đang hiệu lực (User duyệt qua A)
+## Quyền
 
-- **User 2026-10-24 (trước khi nghỉ):** A được commit, push, tự điều phối, tự kiểm
-  tra, tự tối ưu và phát triển hệ thống; tự dùng chi phí `gpt-6-luna` trong ngân sách.
-- **Ngân sách `gpt-6-luna`:** giá 0,1 USD/1M input, 0,5 USD/1M output. Tổng session
-  ≤1 USD (không bao giờ vượt 1,5 USD), "không cần dùng hết". Đã dùng ~0,087 USD (7B + thăm dò).
-  Mỗi session gọi paid phải ghi usage token và báo tổng tiền trong report.
-- Git: A commit/push `origin main`; B/C không commit.
-- Qdrant: chỉ đọc.
-- Duyệt cho A = duyệt cho B/C (User 2026-10-24). User đồng ý xóa những gì không còn
-  cần/lỗi thời — A vẫn liệt kê đích và trình trước khi xóa thứ gì chưa có trong
-  một việc đã duyệt.
-
-## Việc chung — viết lại user report các Phase (User 2026-10-24, rủi ro thấp, free)
-
-- **Mục tiêu:** User đọc để hiểu hệ thống từng Phase làm gì và **hôm nay còn đúng không**. 27 user
-  report cũ ở `reports/user_reports/` (lịch sử) lẫn nhiều bản Foods, khó đọc thành mạch.
-- **Nơi ghi (User 2026-10-24, theo MekongAI):** `bao_cao_he_thong/` ở gốc repo, mỗi khâu một file
-  (tiêu đề ghi Phase tương ứng):
-
-| Phase | File trong `bao_cao_he_thong/` | Ai |
-|---|---|---|
-| 0–1 | `BAO_CAO_NEN_TANG.md` | B |
-| 2 | `BAO_CAO_CHIA_DOAN.md` | B |
-| 3 | `BAO_CAO_EMBEDDING_TU_KHOA.md` | B |
-| 4 | `BAO_CAO_LUU_TRU_QDRANT.md` | B |
-| 5 | `BAO_CAO_TIM_KIEM.md` | C |
-| 6 | `BAO_CAO_SINH_CAU_TRA_LOI_API.md` | C |
-| 7, 7A | `BAO_CAO_BO_CAU_HOI_GOLDEN.md` | C |
-| 7A2 | `BAO_CAO_KHO_DU_LIEU.md` | C |
-| 7B | `BAO_CAO_DANH_GIA.md` | A (xong) |
-| — | `LUONG_HOAT_DONG_HE_THONG.md` | A (xong) |
-
-- **Mẫu:** `session_prompt/TEMPLATE_USER_REPORT.md`, tiếng Việt thường, ngắn (~60–120 dòng), thêm mục
-  bắt buộc **"Hôm nay còn đúng không"**: mỗi kết quả/quyết định chính → *còn dùng* / *đã thay bởi …
-  (Phase nào)* / *đã bỏ*, kiểm bằng code + `Project_Status.md` hiện tại (dẫn file:dòng), không chép
-  report cũ. Đây cũng là bước "kiểm tra lại các Phase trước" User yêu cầu: chỗ nào tài liệu và code lệch
-  thì ghi ở cuối file mục "Lệch phát hiện" và nhắn A.
-- **Đọc:** `reference-only` report/spec/history của Phase đó (`PROJECT_HISTORY.md`, `reports/`,
-  `docs/superpowers/specs/`), `guides/`; mở khi cần trả lời câu cụ thể. Không chép Golden/corpus.
-- **Không làm:** sửa code, dữ liệu, Qdrant; gọi paid; sửa report cũ.
-- **Xong:** cập nhật `STATUS_<X>.md` ngay sau mỗi file; nhắn A danh sách file; A review (người làm khác
-  người kiểm).
-
-## Việc của A
-
-1. **A1:** `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` và `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md`;
-   **Xong, chờ review** — B review A1 sau khi xong B8 (đối chiếu số với report 7B + code).
-2. Khi User gửi `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`: tối ưu
-   governance/report cho hue_rag (đề xuất cho User trước khi đổi lớn).
-3. B8, C8 A đóng 2026-10-24 (báo cáo Phase 0–7A2 trong `bao_cao_he_thong/`); C7 đóng. A1: B review
-   `changes_requested` → A sửa → B kiểm lại: đóng cả 7 finding (A1 đóng). Sau đó: trình User danh sách dọn C2; brainstorm Phase 8.
+- **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C;
+  Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report.
+- **Phiên 24/10 (đã hết hạn khi kết phiên, hỏi lại — §9.8):** A tự điều phối/thử nghiệm/tối ưu rộng;
+  ngân sách `gpt-6-luna` ≤1 USD (tối đa 1,5) — dùng ~0,09 USD; User duyệt dọn B9 (đích C2). **B9 đã
+  được duyệt trong phiên 24/10** — làm nốt phần dở ở phiên sau không cần xin lại, trong đúng đích C2.
+- Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
 
 ## Việc của B
 
@@ -101,21 +109,8 @@ Mức rủi ro: cao (xóa code + 2 collection). Đích = `reports/phase_7_cleanu
 
 ## Việc của C
 
-### C7 — Cập nhật giả thuyết Phase 8 bằng nghiên cứu (free)
+- Phiên sau: review B9 (mục "Phiên sau" bước 2). Báo cáo khâu theo mẫu mới (bước 4).
 
-- Đọc `gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_rag_retrieval_2026_10_24.md` (+ phần liên
-  quan của `phase_7b_rag_evaluation_2026_10_24.md`); WebFetch đối chiếu vài URL then chốt; cập nhật
-  cột "Cách làm phổ biến" + nguồn trong `reports/phase_8_candidate_hypotheses_2026_10_24.md` (sửa tại
-  chỗ, ghi mục "Cập nhật"); thêm input B4/B5 (từ chối nhầm, context 10) vào thứ tự ưu tiên nếu đổi.
+## Việc của A
 
-### C8 — User report Phase 5, 6, 7/7A, 7A2 (theo "Việc chung")
-
-- File: theo bảng ở "Việc chung" (C tự chuyển 4 file đang viết từ `report_agent/user_reports/`).
-
-## Đang chờ User
-
-- Gửi prompt `report_agent/2026-10-24_to_chuc_bao_cao/PROMPT_GUI_MEKONGAI.md` cho Claude ở MekongAI,
-  lưu kết quả `MO_TA_CACH_LAM_VIEC_MEKONGAI.md` cùng folder.
-- Quyết định Phase 8 khi brainstorm: trả lời phần có căn cứ hay từ chối cả câu (H8).
-- Quyết định Phase 8: có tách Golden thành nhóm phát triển / giữ kín không (C7 §8: tối ưu trên cả 176
-  rồi báo trên chính bộ đó là đo lạc quan; spec 7A §8 từng chốt không chia).
+- Phiên sau: bước 1–3 mục "Phiên sau". Viết spec Phase 8 sau brainstorm.

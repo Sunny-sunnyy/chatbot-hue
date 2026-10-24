@@ -14,7 +14,7 @@ Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 
 | Folder | Nội dung | Trạng thái |
 |---|---|---|
-| [2026-10-24_to_chuc_bao_cao/](2026-10-24_to_chuc_bao_cao/) | Tổ chức lại report + viết lại user report các Phase; học cách làm của MekongAI | đang làm |
+| [2026-10-24_to_chuc_bao_cao/](2026-10-24_to_chuc_bao_cao/) | Tổ chức lại báo cáo (`bao_cao_he_thong/`), viết lại báo cáo Phase 0–7B, học cách làm MekongAI (`0a709db`), dọn Foods (B9) — [TONG_HOP.md](2026-10-24_to_chuc_bao_cao/TONG_HOP.md) | **chưa đóng** — B9 chờ C review phiên sau |
 
 Phase 7B (2026-10-24): report nằm ở `reports/phase_7b_*` và `reports/phase_8_*` (viết trước khi đổi
 cấu trúc, giữ nguyên để không gãy link).
