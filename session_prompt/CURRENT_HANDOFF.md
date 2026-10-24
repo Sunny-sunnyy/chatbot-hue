@@ -30,7 +30,8 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 ## Việc của A
 
 1. Review C2.
-2. Review B1, B2; chọn tập chấm lại 30 + mẫu User ~20 trước Run 1 (spec 7B §4.4).
+2. Review B1, B2. Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
+   partition, seed 20261025): `data/evaluation/phase_7b/subsets.json` (private, `case_index` 0-based).
 3. Điều phối các Gate còn lại của 7B; chuẩn bị file chấm cho User.
 
 ## Việc của B
