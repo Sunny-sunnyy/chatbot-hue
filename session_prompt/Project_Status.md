@@ -29,8 +29,8 @@ plan `docs/superpowers/plans/2026-10-23-phase-7a2-corpus-correction-reindex-impl
 - Gate 1 (sửa 25 mục corpus): User-closed 2026-10-24.
 - Gate 2 (build index + cutover): User-closed 2026-10-24 **với giới hạn** — chỉ
   index e5; index 8B hoãn sang Phase 8.
-- Gate 3 (xóa 13 collection + build record cũ): đang làm — collection đã xóa;
-  9 file record cũ chờ xóa.
+- Gate 3 (xóa 13 collection + build record cũ): xong, review đạt
+  (`reports/phase_7a2_gate_3_review_2026_10_24.md`), chờ User đóng.
 
 Mốc kế tiếp: đóng Gate 3 → đóng Phase 7A2 (xóa backup Gate 1, cập nhật guide) →
 **Phase 7B** (evaluator, baseline 176 case trên chunker hiện hành).
@@ -47,7 +47,7 @@ Mốc kế tiếp: đóng Gate 3 → đóng Phase 7A2 (xóa backup Gate 1, cập
 | 6 | `approved` | Generation/API/UI trên `gpt-6-luna`, live 4/5; giới hạn F1 (đa nguồn), F2 (bảng giá ngoài top-30) |
 | 7 | `approved` | Evaluation baseline Foods (lịch sử) |
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
-| 7A2 | `in_progress` | Gate 1–2 đóng; Gate 3 đang làm |
+| 7A2 | `in_progress` | Gate 1–2 đóng; Gate 3 xong, chờ User đóng |
 | 7B | `not_ready` | Evaluator full-corpus + baseline 176 case; chờ 7A2 đóng |
 | 8 | `not_ready` | Đợt ổn định trước Phase 9 (mục 5); spec/plan phải thiết kế lại |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
@@ -75,7 +75,7 @@ Mốc kế tiếp: đóng Gate 3 → đóng Phase 7A2 (xóa backup Gate 1, cập
 8B chưa có index.
 
 **Qdrant** `127.0.0.1:6335` (gRPC 6336; port đổi để chạy song song
-`mekongai-template`). Sau Gate 3 còn đúng 3 collection:
+`mekongai-template`). Còn đúng 3 collection (sau Gate 3):
 `hue_full_corpus_7a2_e5_small_384`, `hue_foods_e5_small_384` (572),
 `hue_foods_e5_small_384_dense` (572). Hai collection Foods không đứng sau API nào;
 chỉ settings/tests/benchmark Foods cũ tham chiếu; collection Foods còn địa chỉ cũ
