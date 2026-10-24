@@ -123,8 +123,10 @@ thứ hai.
   Khâu không đọc ngầm cấu hình toàn cục ở sâu bên trong và không gắn cứng đường dẫn hay tên collection.
   Các con số quyết định chất lượng (pool, k, top-k, prompt, model setting, tokenizer) không giấu thành
   hằng số. Dependency như Qdrant client, hàm embedding hay model client được truyền vào làm tham số.
-- **Tham số mặc định = hành vi đang chạy.** Runtime gọi không truyền gì thì phải chạy y như cũ. Thêm
-  tham số phải kèm kiểm "runtime không đổi" (retrieval giống từng byte mốc, test đạt).
+- **Tham số mặc định = hành vi đang chạy.** "Tham số" ở đây là keyword argument có giá trị mặc định trong
+  code, **không** phải key mới trong `settings.yaml`. Runtime gọi không truyền gì thì phải chạy y như cũ.
+  Thêm tham số phải kèm kiểm "runtime không đổi": retrieval giống từng byte mốc, test đạt. Mốc phải được chạy
+  lại bằng code HEAD **trước** khi sửa để chắc nó tái lập được.
 - Cấu hình được đọc **ở rìa** (entrypoint, factory dựng service của API), không đọc trong logic khâu.
 - Chỉ gọi là **"đóng gói xong"** khi khâu đã được dùng thật ở chỗ thứ hai (harness, notebook, dự án
   khác) và ra cùng kết quả. Chưa có chỗ dùng thứ hai thì không dựng interface, plugin hay registry "để

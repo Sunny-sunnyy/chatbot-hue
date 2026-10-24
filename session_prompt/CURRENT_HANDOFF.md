@@ -25,6 +25,14 @@ nhắn A "xong", chạy `git diff | grep -i mekong` trên file mình sửa.
 được": B11 và harness 8.1 áp đúng luật này; khâu còn dính ngoài phạm vi ⇒ ghi vào report (G5 gom lại cho 8.2).
 A sửa skill ⇒ B review khi xong B11.
 
+**Tiến độ G0 (21:10):** C16 xong 21:03 (tự kiểm âm/dương PASS) → B review. B11 xong 21:07 (gate PASS) → C
+review. **B12** (A giao 21:10): mốc `native_hybrid_rrf` 7B không tái lập (6/158 câu khác thứ tự, có từ trước
+B11) → chạy 2 lần bằng HEAD, tìm nguyên nhân, đề xuất mốc mới (A duyệt). **C17**: review mù 36 câu kín qua
+sub-agent mới, xuất mẫu ~10 câu cho User. Tên nhóm: `dev` / `test`.
+**Khâu còn dính (gom cho G3/G5):** `build_candidate` chưa nhận chunk từ harness (G3 cần); prepare/build tự đọc
+settings + tự tạo client; top-10 `fused[:10]` là hằng; `run_retrieval_eval`/`context_keyword_coverage` gọi
+`load_settings` bên trong.
+
 **Thứ tự G0** (spec §5): B11 (G0.5) ‖ C16 (G0.1 + G0.2) chạy song song (file không chồng) → G0.3 đoạn đúng
 (giao sau khi có file chia) ‖ G0.4 câu kín (A, sub-agent mới) → G0.6 khóa baseline → đóng G0 → G1.
 
@@ -40,8 +48,8 @@ A sửa skill ⇒ B review khi xong B11.
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối 8.1; G0.4 câu kín; review | đang làm |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B11 (G0.5) | giao 20:49 |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | giao 20:49 |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B11 (G0.5 tham số) | xong 21:07 — chờ C review (report `phase_8_1_g0_5_params_implementation.md`) |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C16 xong (21:03), chờ B review; rảnh nhận G0.4 review |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 

@@ -28,7 +28,7 @@ experiment_id: <gate>_<tên ngắn>
 baseline: <cấu hình đang chạy, commit>
 changed_variable: <đúng một thứ>
 unchanged: [corpus, chunker, embedding, retrieval, prompt, model, judge]   # trừ thứ đổi
-data: {split: phase_8_1/split.json, group: dev}       # dev để chọn, check để xác nhận
+data: {split: knowledge-base-hue/evaluation/phase_8_1/split.json, group: dev}   # dev để chọn, test để xác nhận
 primary_metric: <ví dụ đoạn đúng trong 5 đoạn đưa model>
 guardrails: [<0 câu mất đoạn đúng>, <OOS 18/18>, <latency p95 ≤ …>, <USD ≤ …>]
 result: {paired_delta: null, ci95: null, wins_ties_losses: null}
@@ -37,7 +37,7 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 
 ## 2. Bộ câu và nhãn
 
-- **Chọn trên nhóm thử (120), xác nhận trên nhóm kiểm (56)**, file chia
+- **Chọn trên nhóm thử `dev` (120), xác nhận trên nhóm kiểm `test` (56)**, file chia
   `knowledge-base-hue/evaluation/phase_8_1/split.json`. **Câu kín** (`phase_8_1/sealed*.jsonl`) chỉ mở ở mốc
   cuối do User quyết; người điều phối không đọc nội dung câu kín.
 - Nhóm đã dùng để quyết thì từ đó chỉ là bộ hồi quy. Ghi rõ trong report bộ nào **đã thấy**, bộ nào **kín**.
@@ -47,8 +47,10 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 
 ## 3. Đo
 
-1. **Mốc trước:** chạy lại baseline cùng bộ, cùng cách đo. Retrieval baseline phải giống từng byte mốc đã
-   lưu; khác thì dừng, tìm nguyên nhân trước.
+1. **Mốc trước:** chạy lại baseline bằng code HEAD, cùng bộ, cùng cách đo. Retrieval baseline phải giống
+   từng byte mốc đã lưu. Khác thì dừng: chạy lại baseline 2 lần bằng HEAD. Nếu hai lượt giống nhau mà vẫn
+   khác mốc cũ thì tìm nguyên nhân (skill debugging). Nếu chính nó dao động giữa các lượt thì ghi mức dao
+   động, và chỉ dùng lượt mới làm mốc sau khi A duyệt. Không so biến thể với một mốc không tái lập được.
 2. **Đổi một thứ**, đo lại đúng đầu vào đó. Mỗi biến thể index có collection `hue_81_*` (hoặc tiền tố của
    đợt) **và build record + sparse state riêng**; không bao giờ ghi vào collection runtime.
 3. **Theo cặp:** `full_corpus_eval compare` (paired bootstrap, CI 95%, thắng/hòa/thua, theo loại câu; Holm
