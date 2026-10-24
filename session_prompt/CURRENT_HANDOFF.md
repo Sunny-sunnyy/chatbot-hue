@@ -12,12 +12,23 @@ full-corpus chạy được (`/health` 200 ở B1); Qdrant trước khi B9 xóa:
 `settings_loader.py`, `conftest.py`, `vectorstore/*`, `scoring/bm25.py`, test chunker): chưa review —
 **không commit, không revert** trước khi C review.
 
+**Qdrant `127.0.0.1:6335` ĐÃ TẮT lúc ~17:10 24/10** (không do agent): phiên sau kiểm `curl -s
+http://127.0.0.1:6335/collections` trước; tắt thì nhờ User bật lại (không tự bật/đổi môi trường). API
+không khởi động được khi Qdrant tắt.
+
+**B9 dừng ở điểm an toàn** (report `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md`
+§6): đã gỡ code/test/notebook Foods + sửa settings/notebook (working tree, chưa commit); import toàn
+backend, grep sạch, Run All notebook 03/04 đạt; pytest 15 lỗi đều "Connection refused" (Qdrant tắt).
+**Chưa** chạy so byte retrieval, `/health`, smoke 10; **chưa** xóa 2 collection Foods và 5 file
+`data/full_corpus_metadata_v2_*.json`. Mốc so byte: `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl`
+(bản `/tmp/phase7_cleanup/` có thể mất). Bỏ thay đổi được bằng `git restore` theo đường dẫn.
+
 **Thứ tự việc phiên sau:**
 
 1. Mở A/B/C bằng `START_SESSION.md`; A `ListAgents` cập nhật bảng Session; A **hỏi lại User quyền
    phiên** (quyền đặc biệt 24/10 đã hết hạn — `WORKFLOW.md` §9.8): tự điều phối rộng, trần tiền
    `gpt-6-luna`, commit/push.
-2. **C review B9** (dọn) theo `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2) + report B
+2. **B làm nốt B9 §6 bước 1–6** khi Qdrant chạy lại, rồi **C review B9** (dọn) theo `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2) + report B
    `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` + skill
    `risk-gated-agent-review`; chạy lại phần kiểm then chốt (so byte retrieval, test full-corpus,
    `/health`). Đạt → A commit theo từng đường dẫn (`git diff --cached --stat`), cập nhật
@@ -52,6 +63,8 @@ full-corpus chạy được (`/health` 200 ở B1); Qdrant trước khi B9 xóa:
 6. Chunker có 3 cặp đoạn lặp nội dung (blockquote trong list item) — sửa cùng đợt chunker Phase 8?
 7. **Phase 8 — bằng chứng chuẩn:** gắn tay đoạn/dòng đúng cho 30–40 câu khó (để đo "đoạn đúng có
    vào nhóm ứng viên không", C7 §8.4 bước 0)? Tốn công người (agent soạn, User duyệt mẫu).
+9. (A tự quyết, báo User) `backend/test.ipynb` và `backend/scripts/` không thuộc danh sách dọn C2 — B9
+   hỏi có cần dọn không; A xem nội dung rồi đề xuất.
 8. Model/dependency mới cần duyệt khi đề xuất: reranker `bge-reranker-v2-m3`, `Qwen3-Embedding-0.6B`,
    tách từ `pyvi` (C7).
 
@@ -60,7 +73,7 @@ full-corpus chạy được (`/health` 200 ở B1); Qdrant trước khi B9 xóa:
 | Vai | Terminal (24/10) | Agent | Liên lạc | Việc phiên sau | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | hỏi quyền; commit B9 sau review; brainstorm Phase 8 | kết phiên |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | làm nốt B9 nếu dở; sửa minor review; báo cáo khâu theo mẫu mới | xem `STATUS_B.md` |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B9 dọn sau Phase 7: **dở** — code/test/notebook đã gỡ (chưa commit); Qdrant tắt 17:10 nên chưa kiểm xong, chưa xóa collection/data | xem `STATUS_B.md` + `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` §6 |
 | C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | review B9; báo cáo khâu theo mẫu mới | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
