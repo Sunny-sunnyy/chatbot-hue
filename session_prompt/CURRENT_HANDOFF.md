@@ -58,6 +58,8 @@ nhiễu. Tiền 7B tới đây ~0,082 USD.
 
 ### B4 — Phase 7B Gate 4 chuẩn bị + chẩn đoán từ chối nhầm (free)
 
+**Trạng thái (B):** xong, chờ review A — `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md` (lệnh `compare`, `parse-user-scores`, `diagnose-refusals`; 14 test pass; free).
+
 - **(a) Tổng hợp nhiễu và mức khớp** (spec 7B §4.4): thêm vào `full_corpus_eval.py` phần so hai
   file điểm theo `case_index` (chênh trung bình có dấu, tỉ lệ trùng, tỉ lệ lệch ≤1, tỉ lệ đổi ≥2,
   theo metric) + đọc điểm User từ `data/evaluation/phase_7b/user_scoring.md` qua

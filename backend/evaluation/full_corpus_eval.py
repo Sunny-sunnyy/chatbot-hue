@@ -15,6 +15,7 @@ import asyncio
 import json
 import math
 import random
+import re
 import sys
 import unicodedata
 from collections import defaultdict
@@ -463,6 +464,138 @@ def summarize_answers(answer_rows: list[dict], score_rows: list[dict] | None) ->
     return summary
 
 
+# ---------- So điểm giữa hai nguồn (Gate 4, spec 7B §4.4) ----------
+
+def valid_score_map(rows: list[dict]) -> dict[int, dict]:
+    """Chỉ giữ dòng không lỗi và đủ ba điểm nguyên 1–5 (dòng hỏng đã được `validate_score_rows` báo)."""
+    valid = {}
+    for row in rows:
+        if row.get("error"):
+            continue
+        if all(isinstance(row.get(m), int) and not isinstance(row.get(m), bool)
+               and 1 <= row[m] <= 5 for m in ANSWER_METRICS):
+            valid[row["case_index"]] = row
+    return valid
+
+
+def compare_scores(a_rows: list[dict], b_rows: list[dict], case_indexes: list[int] | None = None) -> dict:
+    """So nguồn B với nguồn A trên các case cả hai cùng có điểm hợp lệ.
+
+    Theo từng metric: chênh trung bình có dấu (B − A), tỉ lệ trùng, tỉ lệ lệch ≤1, tỉ lệ lệch ≥2.
+    """
+    a, b = valid_score_map(a_rows), valid_score_map(b_rows)
+    # Mặc định: giao hai nguồn (vd. 176 với chấm lại 30); có --cases thì báo cả case thiếu.
+    wanted = set(a) & set(b) if case_indexes is None else set(case_indexes)
+    common = sorted(wanted & set(a) & set(b))
+    result = {
+        "n": len(common),
+        "missing_in_a": sorted(wanted - set(a)),
+        "missing_in_b": sorted(wanted - set(b)),
+    }
+    for metric in ANSWER_METRICS:
+        diffs = [b[i][metric] - a[i][metric] for i in common]
+        n = len(diffs)
+        result[metric] = {
+            "mean_signed_diff": sum(diffs) / n if n else None,
+            "exact_rate": sum(d == 0 for d in diffs) / n if n else None,
+            "within_1_rate": sum(abs(d) <= 1 for d in diffs) / n if n else None,
+            "diff_ge_2_rate": sum(abs(d) >= 2 for d in diffs) / n if n else None,
+        }
+    return result
+
+
+def parse_user_scores(markdown: str, question_to_case: dict[str, int]) -> tuple[list[dict], list[str]]:
+    """Đọc dòng `Điểm: a / c / r` (và `Ghi chú:`) dưới mỗi `## Câu N` của file chấm User."""
+    rows, errors = [], []
+    sections = re.split(r"^## Câu (\d+)[ \t]*$", markdown, flags=re.MULTILINE)
+    # re.split với một group: [phần đầu, số câu, nội dung, số câu, nội dung, ...]
+    for number, body in zip(sections[1::2], sections[2::2]):
+        if number not in question_to_case:
+            errors.append(f"Câu {number}: không có trong map")
+            continue
+        score_lines = re.findall(r"^Điểm:[ \t]*(.*?)[ \t]*$", body, flags=re.MULTILINE)
+        if len(score_lines) != 1:
+            errors.append(f"Câu {number}: cần đúng một dòng `Điểm:`, thấy {len(score_lines)}")
+            continue
+        parts = [part.strip() for part in score_lines[0].split("/")]
+        if len(parts) != 3 or not all(part in {"1", "2", "3", "4", "5"} for part in parts):
+            errors.append(f"Câu {number}: điểm chưa đủ hoặc không hợp lệ: {score_lines[0]!r}")
+            continue
+        notes = re.findall(r"^Ghi chú:[ \t]*(.*?)[ \t]*$", body, flags=re.MULTILINE)
+        rows.append({
+            "case_index": question_to_case[number],
+            **dict(zip(ANSWER_METRICS, (int(part) for part in parts))),
+            "feedback": notes[0] if notes else "",
+        })
+    missing = sorted(set(question_to_case) - set(sections[1::2]), key=int)
+    errors += [f"Câu {number}: không thấy trong file" for number in missing]
+    return rows, errors
+
+
+# ---------- Chẩn đoán từ chối nhầm ----------
+
+def answer_keywords(case: dict) -> list[str]:
+    """Keyword mang đáp án: có trong reference_answer, không có trong câu hỏi (cùng luật Golden 7A)."""
+    question, reference = _fold(case["question"]), _fold(case["reference_answer"])
+    return [k for k in case["keywords"] if _fold(k) not in question and _fold(k) in reference]
+
+
+def classify_refusal_evidence(keywords: list[str], context_text: str) -> str:
+    """`retrieval_miss`: không keyword đáp án nào trong context; `evidence_present`: có đủ;
+    `partial_evidence`: có một phần (không kết luận được model sai hay context thiếu)."""
+    context = _fold(context_text)
+    found = sum(_fold(k) in context for k in keywords)
+    if found == 0:
+        return "retrieval_miss"
+    return "evidence_present" if found == len(keywords) else "partial_evidence"
+
+
+def diagnose_false_refusals(cases: list[dict], answer_rows: list[dict]) -> list[dict]:
+    """Dựng lại đúng context của case bị từ chối nhầm (retrieval local + context builder như
+    `answer_case`, không gọi sinh) rồi kiểm keyword có nằm trong context model đã thấy không."""
+    by_index = {case["case_index"]: case for case in cases}
+    refused = [row for row in answer_rows
+               if not row["error"] and row["refusal"] and row["category"] != OUT_OF_SCOPE]
+    settings = load_settings(validate_private_paths=False)
+    service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
+    context_builder = build_context_builder(settings)
+    rows = []
+    try:
+        for row in refused:
+            case = by_index[row["case_index"]]
+            question = case["question"].strip()
+            result = service.search(question)
+            packed = context_builder.build(question, result.documents)
+            keywords = answer_keywords(case)
+            context = _fold(packed.text)
+            rows.append({
+                "case_index": case["case_index"],
+                "category": case["category"],
+                # Retrieval tất định (Gate 1), nên context dựng lại phải trùng lần sinh.
+                "same_top_chunks_as_run": [d.id for d in result.documents[:RETRIEVAL_K]] == row["top_chunk_ids"],
+                "answer_keywords": len(keywords),
+                "answer_keywords_in_context": sum(_fold(k) in context for k in keywords),
+                "all_keywords": len(case["keywords"]),
+                "all_keywords_in_context": sum(_fold(k) in context for k in case["keywords"]),
+                "all_keywords_in_top10": sum(
+                    any(_fold(k) in _fold(d.text) for d in result.documents[:RETRIEVAL_K])
+                    for k in case["keywords"]
+                ),
+                "diagnosis": classify_refusal_evidence(keywords, packed.text),
+            })
+    finally:
+        service.close()
+    return rows
+
+
+def count_by_category(rows: list[dict], field: str) -> dict:
+    table: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for row in rows:
+        table["overall"][row[field]] += 1
+        table[row["category"]][row[field]] += 1
+    return {category: dict(counts) for category, counts in sorted(table.items())}
+
+
 # ---------- CLI ----------
 
 def _path(name: str) -> Path:
@@ -500,6 +633,20 @@ def main(argv: list[str] | None = None) -> int:
     export.add_argument("--cases", type=int, nargs="*")
     export.add_argument("--seed", type=int, required=True)
     export.add_argument("--out", required=True)
+
+    compare = commands.add_parser("compare", help="so hai file điểm: nhiễu / mức khớp (free)")
+    compare.add_argument("--a", required=True, help="nguồn gốc so (ví dụ lần chấm 1)")
+    compare.add_argument("--b", required=True, help="nguồn so với A (chênh = B − A)")
+    compare.add_argument("--cases", type=int, nargs="*", help="giới hạn case_index")
+
+    user = commands.add_parser("parse-user-scores", help="đọc điểm User từ user_scoring.md")
+    user.add_argument("--sheet", default="user_scoring.md")
+    user.add_argument("--map", default="user_scoring_map.json")
+    user.add_argument("--out", default="user_scores.jsonl")
+
+    diagnose = commands.add_parser("diagnose-refusals", help="chẩn đoán từ chối nhầm (local, free)")
+    diagnose.add_argument("--answers", required=True)
+    diagnose.add_argument("--out", required=True)
 
     summary = commands.add_parser("summarize", help="tổng hợp ra JSON (stdout)")
     summary.add_argument("--retrieval")
@@ -549,6 +696,26 @@ def main(argv: list[str] | None = None) -> int:
         rows = judge_input_rows(answered_cases(cases, answer_rows, args.cases), answer_rows, args.seed)
         write_jsonl(_path(args.out), rows)
         print(f"judge input: {len(rows)} rows")
+    elif args.command == "compare":
+        result = compare_scores(read_jsonl(_path(args.a)), read_jsonl(_path(args.b)), args.cases)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == "parse-user-scores":
+        mapping = json.loads(_path(args.map).read_text(encoding="utf-8"))["question_number_to_case_index"]
+        rows, errors = parse_user_scores(_path(args.sheet).read_text(encoding="utf-8"), mapping)
+        for error in errors:
+            print(error)
+        if errors:
+            return 1
+        write_jsonl(_path(args.out), rows)
+        print(f"user scores: {len(rows)} rows")
+    elif args.command == "diagnose-refusals":
+        rows = diagnose_false_refusals(cases, read_jsonl(_path(args.answers)))
+        write_jsonl(_path(args.out), rows)
+        print(json.dumps({
+            "false_refusals": len(rows),
+            "same_top_chunks_as_run": sum(r["same_top_chunks_as_run"] for r in rows),
+            "diagnosis": count_by_category(rows, "diagnosis"),
+        }, ensure_ascii=False, indent=2))
     else:
         result = {}
         if args.retrieval:

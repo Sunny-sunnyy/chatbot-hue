@@ -3,7 +3,8 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- C3: chờ A nhắn có file chấm 7B Gate 3 (Claude judge, spec 7B §4.3). Chưa chấm gì.
+- C3 đang chấm (A giao, bắt đầu 2026-10-24 14:56): (1) run1 → (2) rerun30 → (3) run2. Lô ở
+  `data/evaluation/phase_7b/claude_batches/<run>/batch_NN.jsonl`, điểm từng lô `scores_NN.jsonl`.
 - Đã chuẩn bị (ngoài repo, mất khi reboot thì viết lại): `/tmp/c_judge/batches.py`
   (`split` lô ≤10 giữ thứ tự đã xáo, kiểm đúng 4 key đầu vào; `merge` kiểm đủ/không trùng
   case, số nguyên 1–5, có feedback) — đã thử với input giả 2 case; `/tmp/c_judge/subagent_prompt.md`
@@ -12,7 +13,8 @@ Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
   trong `data/evaluation/phase_7b/` (private, tên con theo report Gate 1 của B).
 
 ## Đang khai báo sửa
-- không
+- `data/evaluation/phase_7b/claude_batches/`, `claude_run1.jsonl`, `claude_run1_rerun30.jsonl`,
+  `claude_run2.jsonl` (private); `reports/phase_7b_gate_3_claude_judge_implementation_2026_10_24.md`; file này
 
 ## Vừa xong
 - C2 A đóng, commit `dba4881`: `reports/phase_7_cleanup_inventory_2026_10_24.md` (chỉ đọc; đồ thị import AST `/tmp/c_probe/imports.py`; gồm input B1).

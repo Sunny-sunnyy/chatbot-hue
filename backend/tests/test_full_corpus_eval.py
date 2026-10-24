@@ -3,6 +3,10 @@ import math
 import unicodedata
 
 from evaluation.full_corpus_eval import (
+    answer_keywords,
+    classify_refusal_evidence,
+    compare_scores,
+    parse_user_scores,
     answered_cases,
     citation_error_rates,
     cost_usd,
@@ -130,3 +134,55 @@ def test_cases_flag_without_values_selects_no_case_to_judge():
     assert answered_cases(cases, answers, []) == []
     assert answered_cases(cases, answers, None) == [{"case_index": 0}, {"case_index": 2}]
     assert answered_cases(cases, answers, [1, 2]) == [{"case_index": 2}]
+
+
+def _score(index, a, c, r):
+    return {"case_index": index, "accuracy": a, "completeness": c, "relevance": r, "feedback": ""}
+
+
+def test_compare_scores_signed_diff_and_agreement_rates():
+    first = [_score(0, 5, 5, 5), _score(1, 4, 4, 4), _score(2, 3, 3, 3), _score(3, 5, 5, 5)]
+    second = [_score(0, 5, 4, 5), _score(1, 2, 4, 5), _score(2, 3, 3, 3),
+              {"case_index": 3, "error": "Timeout"}]
+    result = compare_scores(first, second)
+    assert result["n"] == 3  # case 3 lỗi ở nguồn B bị bỏ
+    acc = result["accuracy"]
+    assert math.isclose(acc["mean_signed_diff"], -2 / 3)
+    assert math.isclose(acc["exact_rate"], 2 / 3)
+    assert math.isclose(acc["within_1_rate"], 2 / 3)
+    assert math.isclose(acc["diff_ge_2_rate"], 1 / 3)
+    assert math.isclose(result["completeness"]["within_1_rate"], 1.0)
+    assert compare_scores(first, second, [0, 3, 9])["missing_in_b"] == [3, 9]
+
+
+def test_parse_user_scores_reads_score_lines_and_reports_unscored():
+    sheet = """# Chấm tay
+
+Ghi điểm vào dòng `Điểm:` theo thứ tự, ví dụ `Điểm: 5 / 4 / 5`.
+
+## Câu 1
+
+> Bot: Điểm: 1 / 1 / 1 nằm trong câu trả lời, không phải dòng chấm.
+
+Điểm: 5 / 4 / 3
+Ghi chú: thiếu giờ mở cửa
+
+## Câu 2
+
+Điểm: _ / _ / _
+"""
+    rows, errors = parse_user_scores(sheet, {"1": 17, "2": 40, "3": 99})
+    assert rows == [{"case_index": 17, "accuracy": 5, "completeness": 4, "relevance": 3,
+                     "feedback": "thiếu giờ mở cửa"}]
+    assert errors == ["Câu 2: điểm chưa đủ hoặc không hợp lệ: '_ / _ / _'",
+                      "Câu 3: không thấy trong file"]
+
+
+def test_answer_keywords_and_refusal_evidence_classes():
+    case = {"question": "Quán Mệ Kéo ở đâu?", "reference_answer": "Quán Mệ Kéo ở số 20 Bạch Đằng.",
+            "keywords": ["Mệ Kéo", "Bạch Đằng", "số 20"]}
+    keywords = answer_keywords(case)
+    assert keywords == ["Bạch Đằng", "số 20"]
+    assert classify_refusal_evidence(keywords, "Mệ Kéo: món bún") == "retrieval_miss"
+    assert classify_refusal_evidence(keywords, "địa chỉ BẠCH ĐẰNG") == "partial_evidence"
+    assert classify_refusal_evidence(keywords, "số 20 Bạch Đằng") == "evidence_present"
