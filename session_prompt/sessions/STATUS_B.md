@@ -3,7 +3,7 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ A review B2 (Phase 7B Gate 1); sau đó Gate 2 (Run 1/2 + judge luna) nếu A giao.
+- Chờ A review B3 (Gate 2); sau đó Gate 4 (tổng hợp) khi C xong Gate 3.
 
 ## Đang khai báo sửa
 - `backend/evaluation/full_corpus_eval.py` (mới)
@@ -13,7 +13,10 @@ Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 - Kết quả private: `data/evaluation/phase_7b/` (file mới, không ghi đè `subsets.json`)
 
 ## Vừa xong
-- B2 xong, chờ review A: `reports/phase_7b_gate_1_evaluator_implementation_2026_10_24.md`;
+- B3 (Gate 2) xong, chờ review A: `reports/phase_7b_gate_2_runs_implementation_2026_10_24.md`;
+  Run 1/2 176/176, judge luna 176+30 hợp lệ; Gate 2 0,0792 USD, tổng B 7B 0,0820 USD.
+- B2 (Gate 1) A đóng, commit `ea5a1d5`.
+- B2 chi tiết: `reports/phase_7b_gate_1_evaluator_implementation_2026_10_24.md`;
   retrieval tất định; smoke 10 sạch, 0,0028 USD; dự báo Gate 2 ~0,077 USD.
 - B1 xong, A đã đóng: `reports/phase_7b_gate_0_health_audit_2026_10_24.md` — nền
   full-corpus khớp tài liệu; test free 211/213 pass (2 fail do hằng số cũ); sự cố

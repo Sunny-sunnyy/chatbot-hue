@@ -30,7 +30,7 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 ## Việc của A
 
 1. Trình User danh sách dọn C2 (sau khi 7B đóng).
-2. Review B3; khi có `judge_input_*` nhắn C chấm (C3). Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
+2. Review B4, C3. Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
    partition, seed 20261025): `data/evaluation/phase_7b/subsets.json` (private, `case_index` 0-based).
 3. Điều phối các Gate còn lại của 7B; chuẩn bị file chấm cho User.
 
@@ -49,21 +49,26 @@ khớp `api/routes/chat.py`; 10 test pass; hai file retrieval `dense_bm25_rrf` g
 summarize khớp report (0,0028 USD). Finding minor m1 (sửa ở B3): `judge-luna --cases` không
 kèm giá trị → `[] or …` thành mọi case (paid); `export-judge-input` cùng mẫu (free).
 
-### B3 — Phase 7B Gate 2: Run 1 + Run 2 + judge luna (paid ≤0,6 USD; dự báo ~0,08–0,16)
+### B3 — Phase 7B Gate 2 — A đóng 2026-10-24
 
-- **Trước khi chạy:** sửa m1 (`--cases` rỗng = không case nào, giống `select_cases`) + test hồi quy.
-- **Làm** (tên file trong `data/evaluation/phase_7b/`):
-  1. `generate --golden full --out run1_answers.jsonl`; có lỗi thì `retry generate`.
-  2. `generate --golden full --out run2_answers.jsonl`; có lỗi thì `retry`.
-  3. `judge-luna --answers run1_answers.jsonl --out run1_judge_luna.jsonl`.
-  4. `judge-luna --answers run1_answers.jsonl --cases <rerun_30 trong subsets.json> --out run1_judge_luna_rerun30.jsonl`.
-  5. `export-judge-input`: run1 đủ, seed 1 → `judge_input_run1.jsonl`; run1 `rerun_30`, seed 2 →
-     `judge_input_run1_rerun30.jsonl`; run2 đủ, seed 3 → `judge_input_run2.jsonl`.
-- **Không làm:** tổng hợp cuối (Gate 4); sửa runtime/prompt sinh/prompt judge/Golden.
-- **Dừng:** tiền cộng dồn (usage) chạm 0,6 USD; >10% case lỗi kỹ thuật sau một lần retry;
-  runtime từ chối khởi động. Báo A ngay.
-- **Đầu ra:** `reports/phase_7b_gate_2_runs_implementation_2026_10_24.md` (lệnh, số case, lỗi,
-  citation error, từ chối, usage + USD từng bước và tổng; không chép nội dung); `STATUS_B.md`; nhắn A.
+`reports/phase_7b_gate_2_runs_implementation_2026_10_24.md`. A kiểm: m1 đúng (`answered_cases`), 11
+test pass; summarize Run 1 + luna khớp report; 352 response id khác nhau; 64/176 câu trả lời giống
+hệt chữ giữa hai run; **0 case đổi quyết định từ chối** → 22 từ chối nhầm là hệ thống, không phải
+nhiễu. Tiền 7B tới đây ~0,082 USD.
+
+### B4 — Phase 7B Gate 4 chuẩn bị + chẩn đoán từ chối nhầm (free)
+
+- **(a) Tổng hợp nhiễu và mức khớp** (spec 7B §4.4): thêm vào `full_corpus_eval.py` phần so hai
+  file điểm theo `case_index` (chênh trung bình có dấu, tỉ lệ trùng, tỉ lệ lệch ≤1, tỉ lệ đổi ≥2,
+  theo metric) + đọc điểm User từ `data/evaluation/phase_7b/user_scoring.md` qua
+  `user_scoring_map.json` (`Điểm: a / c / r`). Test logic thuần. Chạy được ngay cho luna (Run 1 vs
+  chấm lại 30); phần Claude/User chạy khi có file.
+- **(b) Chẩn đoán 22 từ chối nhầm** (Run 1): mỗi case, keyword mang đáp án có nằm trong 5 chunk
+  context không (`context_sources`, lấy lại context bằng retrieval local như `answer_case`, không gọi
+  sinh)? Phân loại: *retrieval miss* (không có trong context) / *có bằng chứng nhưng model từ chối*
+  (ứng viên H8 prompt tất-cả-hoặc-không) / *không rõ*. Bảng đếm theo category; không chép nội dung.
+- **Không làm:** gọi paid; sửa runtime/prompt; đọc file điểm Claude trước khi C báo xong.
+- **Đầu ra:** code + test; `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; `STATUS_B.md`; nhắn A.
 
 ## Việc của C
 

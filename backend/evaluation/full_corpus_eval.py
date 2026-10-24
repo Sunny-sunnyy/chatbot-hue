@@ -393,6 +393,13 @@ async def run_judge_luna(cases: list[dict], answer_rows: list[dict]) -> list[dic
         await generator.aclose()
 
 
+def answered_cases(cases: list[dict], answer_rows: list[dict], case_indexes: list[int] | None) -> list[dict]:
+    """Case cần chấm: `None` = mọi case đã có câu trả lời; `[]` = không case nào.
+    Case lỗi kỹ thuật (chưa có câu trả lời) bị bỏ, vì không có gì để chấm."""
+    answered = {row["case_index"] for row in answer_rows if not row["error"]}
+    return [case for case in select_cases(cases, case_indexes) if case["case_index"] in answered]
+
+
 def judge_input_rows(cases: list[dict], answer_rows: list[dict], seed: int) -> list[dict]:
     """File đầu vào cho judge Claude: không category, không run, không điểm; xáo theo seed."""
     answers = {row["case_index"]: row for row in answer_rows}
@@ -515,8 +522,10 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(summarize_answers(rows, None), ensure_ascii=False, indent=2))
     elif args.command == "judge-luna":
         answer_rows = read_jsonl(_path(args.answers))
-        judged = {row["case_index"] for row in answer_rows if not row["error"]}
-        selected = [c for c in select_cases(cases, args.cases or sorted(judged)) if c["case_index"] in judged]
+        selected = answered_cases(cases, answer_rows, args.cases)
+        if not selected:
+            print("no case to judge")
+            return 0
         rows = asyncio.run(run_judge_luna(selected, answer_rows))
         write_jsonl(_path(args.out), rows)
         print(json.dumps(summarize_answers(answer_rows, rows), ensure_ascii=False, indent=2))
@@ -536,10 +545,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"retried": len(failed), "still_error": sum(bool(r["error"]) for r in merged),
                           "retry_usage": usage_totals(retried)}, ensure_ascii=False, indent=2))
     elif args.command == "export-judge-input":
-        answer_rows = [row for row in read_jsonl(_path(args.answers)) if not row["error"]]
-        wanted = set(args.cases) if args.cases else {row["case_index"] for row in answer_rows}
-        selected = [c for c in cases if c["case_index"] in wanted]
-        rows = judge_input_rows(selected, answer_rows, args.seed)
+        answer_rows = read_jsonl(_path(args.answers))
+        rows = judge_input_rows(answered_cases(cases, answer_rows, args.cases), answer_rows, args.seed)
         write_jsonl(_path(args.out), rows)
         print(f"judge input: {len(rows)} rows")
     else:

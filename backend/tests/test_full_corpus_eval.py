@@ -3,6 +3,7 @@ import math
 import unicodedata
 
 from evaluation.full_corpus_eval import (
+    answered_cases,
     citation_error_rates,
     cost_usd,
     error_case_indexes,
@@ -116,3 +117,16 @@ def test_retry_with_no_error_rows_selects_no_case():
     assert select_cases(cases, error_case_indexes([{"case_index": 0, "error": None}])) == []
     assert select_cases(cases, None) == cases
     assert select_cases(cases, [2]) == [{"case_index": 2}]
+
+
+def test_cases_flag_without_values_selects_no_case_to_judge():
+    # m1 (A review Gate 1): `--cases` rỗng từng thành "mọi case" ở judge-luna (paid).
+    cases = [{"case_index": i} for i in range(3)]
+    answers = [
+        {"case_index": 0, "error": None},
+        {"case_index": 1, "error": "TimeoutError"},
+        {"case_index": 2, "error": None},
+    ]
+    assert answered_cases(cases, answers, []) == []
+    assert answered_cases(cases, answers, None) == [{"case_index": 0}, {"case_index": 2}]
+    assert answered_cases(cases, answers, [1, 2]) == [{"case_index": 2}]
