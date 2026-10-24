@@ -151,7 +151,7 @@ session_prompt/CURRENT_HANDOFF.md      việc đang mở của A/B/C
 session_prompt/sessions/STATUS_*.md    ngữ cảnh riêng từng session
 session_prompt/PROJECT_HISTORY.md      lịch sử (reference-only)
 session_prompt/TEMPLATE_*.md           mẫu report
-skills/{practical-project-coding,risk-gated-agent-review,propose-options}/SKILL.md
+skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment}/SKILL.md
 guides/full_corpus_rag.md              guide umbrella full-corpus
 docs/superpowers/specs/, docs/superpowers/plans/   thiết kế từng Phase
 report_agent/<YYYY-MM-DD>_<chủ_đề>/   report + review từ 2026-10-24 (README trong report_agent/)

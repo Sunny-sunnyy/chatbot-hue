@@ -99,6 +99,12 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 
 ## Việc của A
 
-- G0.4: 30–40 câu kín bằng sub-agent mới (chỉ corpus + hướng dẫn soạn, không thấy kết quả thí nghiệm);
-  kiểm máy như 7A; User duyệt mẫu; review chéo bởi B hoặc C (chỉ kiểm định dạng/đáp án, không đọc để tối ưu).
+- G0.4 **nháp xong 21:00**: sub-agent mới (không mở `evaluation/`, `meta/`, `data/`, report, inventory) viết
+  `knowledge-base-hue/evaluation/phase_8_1/sealed_authoring.jsonl` (private, gitignored): 36 câu — direct_fact 14,
+  multi_source 7, conditional 7, comparative 5, out_of_scope 3; 7 partition; không dấu 14 / văn nói 14 / lỗi gõ
+  8. `check --authoring` exit 0 (A chạy lại). Sub-agent tự đánh dấu dòng 6 (nhãn conditional?), 22 (cần suy
+  luận nhỏ về chu kỳ năm), 36 (multi_source nhưng 2 đoạn cùng file). A **không đọc nội dung** (giữ kín).
+  **Chờ review chéo** — người xong việc G0 trước (B hoặc C): đối chiếu từng câu với `sources`, ba dòng đánh dấu,
+  trùng ý với Golden 176; ghi `phase_8_1_g0_4_sealed_review.md` (không chép câu hỏi); rồi chọn ~10 câu cho
+  User duyệt mẫu. Sau đó A tạo file chính thức 4 field (bỏ `partition`/`sources`) và khóa.
 - Giao G0.3 (đoạn đúng ~40 thử + ~15 kiểm) khi C16 có file chia. Review B11/C16 sau review chéo; commit.
