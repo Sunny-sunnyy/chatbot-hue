@@ -31,7 +31,7 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Thước đo ổn định (Run 1 vs Run 2 chênh TB ≤0,011); **giới hạn:** chưa có mốc người (User bỏ chấm tay).
 - Tiền paid cả 7B + thăm dò: ~0,087 USD.
 
-Mốc kế tiếp: **Phase 8.1** (rà quyết định + thí nghiệm, không đổi chatbot) — đang brainstorm với User;
+Mốc kế tiếp: **Phase 8.1** (rà quyết định + thí nghiệm, không đổi chatbot) — spec approved 20:49 24/10, đang G0;
 input: bảng rà 56 quyết định `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md`
 (C11), giả thuyết `reports/phase_8_candidate_hypotheses_2026_10_24.md`, chẩn đoán từ chối nhầm
 (`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`), thăm dò context 10
@@ -53,7 +53,7 @@ Dọn Foods sau Phase 7 (B9) **đóng** 24/10.
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
-| 8.1 | `brainstorm` | Rà quyết định Phase 0–7 + thí nghiệm so baseline, không đổi chatbot (đợt `report_agent/2026-10-24_phase_8_1_ra_soat/`); spec chưa viết |
+| 8.1 | `in_progress` | Spec approved 20:49 24/10; G0 (sửa thước đo, khóa baseline) đang làm; không đổi chatbot (đợt `report_agent/2026-10-24_phase_8_1_ra_soat/`) |
 | 8.2 | `not_ready` | Cải tiến dựa trên số đo 8.1; thiết kế sau khi User đóng 8.1 |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
@@ -115,6 +115,8 @@ là lịch sử.
 | 2026-10-24 (tối) | Đoạn đúng cho câu khó: agent gắn, agent khác kiểm chéo, User duyệt ~10 câu; điểm câu trả lời chưa có mốc người | User |
 | 2026-10-24 (tối) | **Giữ `gpt-6-luna`**, không so model sinh ở Phase 8; tối ưu sang model nhỏ để sau khi hệ thống ổn. **Thay** amendment `2026-10-01-phase-6-openai-baseline-amendment.md` §5 và amendment 10-23 R6 ("Qwen là benchmark bắt buộc ở Phase 8") | User |
 | 2026-10-24 (tối) | Dense ở Phase 8 chỉ e5-small + Qwen3-Embedding-8B (giữ spec 7A2 §2; 8B ở 8.2). Rerank thử trên GPU GTX 1650 4 GB fp32 trong `.venv` (torch cu130 sẵn có); chatbot hiện chạy máy User, có thể deploy AWS sau (chưa chắc) ⇒ đo cả latency CPU | User |
+| 2026-10-24 20:49 | **Nguyên tắc thường trực:** được thực nghiệm, so sánh, thử — không chỉ Phase 8.1, cả khi quay lại các Phase trước; luôn thử + đánh giá + so với baseline trước khi chọn, không chọn một giải pháp rồi làm luôn. Vẫn theo quyền/tiền/ranh giới dữ liệu hiện hành | User |
+| 2026-10-24 20:49 | **Spec 8.1 approved** (`docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4) + M1 `bge-reranker-v2-m3`, M2 `AITeamVN/Vietnamese_Reranker` | User |
 | 2026-10-24 (tối) | 8.1 G4 thêm rerank listwise bằng `gpt-6-luna` (kiểu `rag_old_0`) so cùng rerank GPU; chi tiết dự án khác của User giữ private (`data/phase_8_1/external_lessons_private.md`), không đưa lên repo công khai | User |
 | 2026-10-24 (tối) | B9 đóng; thư viện không dùng giữ nguyên, chỉ gỡ khi xung đột; nghiên cứu ngoài qua ChatGPT trước với prompt deep research đầy đủ | User |
 | 2026-10-24 | Phase 8 = đợt ổn định: chunk size/gộp chunk vụn, reranker đa ngôn ngữ, truy xuất bảng giá (F2), tổng hợp đa nguồn (F1), BM25 tiếng Việt (tách từ/bigram), rà lại lựa chọn các Phase trước | User |

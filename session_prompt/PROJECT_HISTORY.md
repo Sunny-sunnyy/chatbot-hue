@@ -4,6 +4,16 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-24 (20:49) — Đóng B9; mở Phase 8.1 (spec approved)
+
+- B9 dọn Foods: C9 review `ready_for_user_confirmation`, commit `1832201`, User đóng 20:01; Qdrant còn 1
+  collection; 8 báo cáo khâu cập nhật (B10, C10, C13) — `74270ab`.
+- Phase 8 tách 8.1/8.2. C11 bảng rà 56 quyết định Phase 0–7 (2 từng so trên full-corpus, 29 chưa so);
+  nghiên cứu ChatGPT 21 câu, C14 kiểm URL; spec 8.1 qua review C15/b/c/d → User duyệt 20:49 kèm M1/M2.
+- Quyết định User: giữ `gpt-6-luna` (thay cam kết so Qwen); dense chỉ e5-small + 8B; rerank GPU fp32 +
+  rerank bằng luna; bộ chấm 120/56 + câu kín; thư viện thừa giữ nguyên; luôn thử và so sánh (thường trực).
+- Bẫy: repo `chatbot-hue` PUBLIC — nội dung dự án khác của User giữ private ở `data/phase_8_1/`.
+
 ## 2026-10-24 (17:10) — Báo cáo cho User ở `bao_cao_he_thong/`; cách làm MekongAI; dọn Foods (dở)
 
 - Báo cáo cho User gom về `bao_cao_he_thong/` (README mục lục, `LUONG_HOAT_DONG_HE_THONG.md`, 9

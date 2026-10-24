@@ -1,6 +1,6 @@
 # Phase 8.1 — Rà quyết định Phase 0–7 và thí nghiệm so với baseline
 
-**Status:** `draft v4 — chờ User duyệt` (v4: User góp ý embedding/rerank GPU/từ khóa, 20:45) · Ngày: 24/10/2026 (v1 20:20; v2/v3 sau review C15/C15b) · Người viết: A · Đợt:
+**Status:** `approved` — User duyệt 20:49 24/10/2026 (bản 4, gồm M1 + M2) · Ngày: 24/10/2026 (v1 20:20; v2/v3 sau review C15/C15b) · Người viết: A · Đợt:
 `report_agent/2026-10-24_phase_8_1_ra_soat/`
 
 ## 1. Mục tiêu
