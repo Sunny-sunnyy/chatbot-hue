@@ -6,7 +6,7 @@ strict readiness, dense/sparse retrieval treatments, and service composition.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 import math
@@ -430,7 +430,14 @@ class FullCorpusRetrievalService:
         vocabulary_index: dict[str, int],
         client: QdrantClient,
         reranker_instance: CrossEncoderReranker | None = None,
+        *,
+        candidate_pool: int = 30,
+        rrf_k: int = 60,
+        search_params: models.SearchParams | None = None,
     ) -> None:
+        # candidate_pool / rrf_k / search_params: chỉ để harness Phase 8.1 thử; mặc định = runtime.
+        # candidate_pool là số ứng viên mỗi nhánh Qdrant và số giữ lại sau RRF (runtime: 30 và 30).
+        # search_params=None giữ HNSW mặc định; models.SearchParams(exact=True) để so với tìm chính xác.
         self.candidate = candidate
         self.retrieval_treatment = retrieval_treatment
         self.reranker = reranker
@@ -439,6 +446,9 @@ class FullCorpusRetrievalService:
         self.vocabulary_index = vocabulary_index
         self.client = client
         self.reranker_instance = reranker_instance
+        self.candidate_pool = candidate_pool
+        self.rrf_k = rrf_k
+        self.search_params = search_params
 
     def search(self, query: str) -> RetrievalResult:
         if not isinstance(query, str) or not query.strip():
@@ -462,7 +472,8 @@ class FullCorpusRetrievalService:
                 collection_name=self.candidate.collection_name,
                 query=dense_vec,
                 using="dense",
-                limit=30,
+                limit=self.candidate_pool,
+                search_params=self.search_params,
                 with_payload=[
                     "search_text",
                     "source",
@@ -558,7 +569,8 @@ class FullCorpusRetrievalService:
                             values=list(sparse_q.values),
                         ),
                         using="sparse",
-                        limit=30,
+                        limit=self.candidate_pool,
+                        search_params=self.search_params,
                         with_payload=[
                             "search_text",
                             "source",
@@ -605,7 +617,7 @@ class FullCorpusRetrievalService:
 
         # 3. RRF fusion
         t_rrf_start = time.perf_counter()
-        fused = reciprocal_rank_fusion(branches, k=60, limit=30)
+        fused = reciprocal_rank_fusion(branches, k=self.rrf_k, limit=self.candidate_pool)
         counts["rrf_pre_rerank"] = len(fused)
         stages["rrf"] = [
             format_stage_entry(
@@ -700,6 +712,12 @@ class FullCorpusRetrievalService:
             self.client.close()
 
 
+def _repo_relative(path: Path) -> str:
+    """Đường dẫn tương đối gốc repo cho thông báo lỗi (không lộ đường tuyệt đối)."""
+    root = BACKEND_DIR.parent
+    return str(path.relative_to(root)) if path.is_relative_to(root) else path.name
+
+
 def build_full_corpus_retrieval_service(
     candidate_id: str,
     retrieval_treatment: RetrievalTreatment,
@@ -707,12 +725,24 @@ def build_full_corpus_retrieval_service(
     *,
     settings: dict[str, Any] | None = None,
     client: QdrantClient | None = None,
+    collection_name: str | None = None,
+    record_path: Path | None = None,
+    sparse_state_path: Path = SPARSE_STATE_PATH,
+    candidate_pool: int = 30,
+    rrf_k: int = 60,
+    search_params: models.SearchParams | None = None,
 ) -> FullCorpusRetrievalService:
-    """Build and strictly validate a canonical Full-corpus retrieval service."""
+    """Build and strictly validate a canonical Full-corpus retrieval service.
+
+    collection_name / record_path / sparse_state_path: chỉ để harness Phase 8.1 đọc biến thể index riêng;
+    mặc định = collection runtime của candidate, build record cạnh nó, sparse state chung.
+    """
     try:
         candidate = candidate_by_id(candidate_id)
     except ValueError as exc:
         raise RetrievalConfigurationError(f"Unknown candidate ID: {candidate_id}") from exc
+    if collection_name is not None:
+        candidate = replace(candidate, collection_name=collection_name)
 
     if retrieval_treatment not in ("dense_bm25_rrf", "native_hybrid_rrf"):
         raise RetrievalConfigurationError(f"Unsupported retrieval treatment: {retrieval_treatment}")
@@ -721,8 +751,9 @@ def build_full_corpus_retrieval_service(
 
     # 1. Validate matching build record and source freshness
     collection_name = candidate.collection_name
-    record_path = build_record_path(candidate)
-    rel_build_record = f"data/full_corpus_builds/{record_path.name}"
+    if record_path is None:
+        record_path = build_record_path(candidate)
+    rel_build_record = _repo_relative(record_path)
     if not record_path.is_file():
         raise ComponentNotReadyError(f"Build record does not exist: {rel_build_record}")
 
@@ -738,16 +769,16 @@ def build_full_corpus_retrieval_service(
     validate_full_corpus_build_record(record_data, candidate, current_sources)
 
     # 2. Validate shared sparse state against the build record
-    rel_sparse_state = f"data/full_corpus_builds/{SPARSE_STATE_PATH.name}"
-    if not SPARSE_STATE_PATH.is_file():
+    rel_sparse_state = _repo_relative(sparse_state_path)
+    if not sparse_state_path.is_file():
         raise ComponentNotReadyError(f"Sparse state file not found: {rel_sparse_state}")
 
-    state_sha = hashlib.sha256(SPARSE_STATE_PATH.read_bytes()).hexdigest()
+    state_sha = hashlib.sha256(sparse_state_path.read_bytes()).hexdigest()
     expected_state_sha = record_data["sparse"].get("state_sha256")
     if state_sha != expected_state_sha:
         raise ComponentNotReadyError(f"Sparse state SHA-256 mismatch: {state_sha} != {expected_state_sha}")
 
-    sparse_state = load_sparse_state(SPARSE_STATE_PATH)
+    sparse_state = load_sparse_state(sparse_state_path)
     if sparse_state.corpus_identity != record_data["corpus"].get("identity"):
         raise ComponentNotReadyError(f"Sparse state corpus identity mismatch: {sparse_state.corpus_identity}")
 
@@ -802,4 +833,7 @@ def build_full_corpus_retrieval_service(
         vocabulary_index=vocab_index,
         client=client,
         reranker_instance=reranker_instance,
+        candidate_pool=candidate_pool,
+        rrf_k=rrf_k,
+        search_params=search_params,
     )

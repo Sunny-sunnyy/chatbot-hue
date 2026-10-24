@@ -1,8 +1,11 @@
-# STATUS C — cập nhật 2026-10-24 20:48
+# STATUS C — cập nhật 2026-10-24 21:12
 
 Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
+- C18 (A giao 21:05): review B11 — xong 21:12: ready_for_user_confirmation, 2 minor; A quyết mốc native (khác 7B 6/158, không do code) và lối vào `chunks` trước G3. `phase_8_1_g0_5_review.md`.
+- C17 (A giao 21:05): review G0.4 36 câu kín qua **sub-agent mới** — C giữ mù (không đọc câu hỏi/đáp án/keyword) — đang làm.
+- C16 (A giao 20:52): G0.1 split 120/56 + G0.2 thống kê evaluator — xong 21:03, **B review đạt** (3 minor đã sửa 21:12). Đối chứng âm PASS (Run1 vs Run2 mọi metric no_difference), dương PASS (xáo top-10 → MRR/nDCG worse), retrieval mặc định giống byte, 27 test pass, 0 USD. Report `phase_8_1_g0_1_2_measure_implementation.md`.
 - C15d (A giao 20:47): gỡ tên/số đo/đường dẫn dự án khác khỏi `phase_8_1_spec_review.md` (repo public) — xong 20:48; grep -i mekong trong đợt 8.1 = 0. Kết luận review giữ nguyên.
 - C15c (A giao 20:38): kiểm nhanh spec 8.1 v4 — xong 20:40: ready_for_user_confirmation; 5 ghi chú minor n1–n5 (sửa chữ). Review §8.
 - C15b (A giao 20:27): kiểm lại spec 8.1 v2 — xong 20:28: M1, M2, m1–m10 đóng; còn r1–r3 minor (sửa chữ) → ready_for_user_confirmation sau khi A bổ sung.
@@ -16,7 +19,8 @@ Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 
 - C11 (A giao 19:25): bảng rà quyết định Phase 0–7B — xong 19:30, **A review đạt** (chưa commit — commit A chờ User): `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (56 quyết định; 3 sub-agent gom dữ kiện, C kiểm điểm then chốt §1.1). Free, không paid. Phát hiện lỗi trong báo cáo cũ của C (§6 mục 13) — chờ A giao sửa.
 
 ## Đang khai báo sửa
-- không (C15d xong)
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_4_sealed_review.md` (C17, mới); sub-agent ghi private `knowledge-base-hue/evaluation/phase_8_1/sealed_user_sample.md`, `sealed_review_notes_private.md` (mới)
+- `backend/evaluation/full_corpus_eval.py`, `backend/tests/test_full_corpus_eval.py` (C16, chờ review — giữ khai báo tới khi A commit)
 
 ## Phiên sau
 1. **Review B9 (dọn sau Phase 7)** khi A nhắn — skill `risk-gated-agent-review`; đối chiếu đích với

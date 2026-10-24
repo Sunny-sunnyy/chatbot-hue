@@ -2,11 +2,18 @@
 import math
 import unicodedata
 
+import pytest
+
 from evaluation.full_corpus_eval import (
     summarize_context_coverage,
     answer_keywords,
     classify_refusal_evidence,
     compare_scores,
+    holm_adjust,
+    make_split,
+    paired_compare,
+    question_key,
+    split_group_indexes,
     parse_user_scores,
     answered_cases,
     citation_error_rates,
@@ -59,6 +66,8 @@ def test_refusal_and_citation_rates():
     rates = refusal_rates(rows)
     assert rates["correct_refusal_rate"] == 0.5
     assert rates["false_refusal_rate"] == 0.25
+    assert rates["matrix"] == {"out_of_scope": {"refused": 1, "answered": 1},
+                               "in_scope": {"refused": 1, "answered": 3}}
     citation = citation_error_rates(rows)
     assert citation["overall"] == {"n": 6, "rate": 1 / 6}
     assert citation["out_of_scope"] == {"n": 2, "rate": 0.5}
@@ -73,6 +82,8 @@ def test_mean_by_category_is_macro_average_over_cases():
     summary = mean_by_category(rows, ("accuracy",))
     assert summary["overall"] == {"n": 3, "accuracy": 3.0}
     assert summary["a"] == {"n": 2, "accuracy": 4.0}
+    # macro: mỗi loại câu nặng như nhau, (4 + 1) / 2.
+    assert summary["macro"] == {"categories": 2, "accuracy": 2.5}
 
 
 def test_cost_uses_luna_price():
@@ -201,3 +212,66 @@ def test_context_coverage_summary_rates_per_size():
     assert summary["overall"]["all_found_rate_5"] == 0.5
     assert summary["overall"]["all_found_rate_10"] == 1.0
     assert summary["a"]["mean_prompt_tokens_10"] == 180
+
+
+def _cases(sizes: dict[str, int]) -> list[dict]:
+    cases = []
+    for category, size in sizes.items():
+        for _ in range(size):
+            cases.append({"case_index": len(cases), "category": category, "question": f"câu {len(cases)}"})
+    return cases
+
+
+def test_make_split_is_stratified_deterministic_and_keyed():
+    cases = _cases({"direct_fact": 75, "multi_source": 29, "conditional": 29,
+                    "comparative": 25, "out_of_scope": 18})
+    split = make_split(cases, 56, seed=7)
+    assert split["test_quota"] == {"comparative": 8, "conditional": 9, "direct_fact": 24,
+                                   "multi_source": 9, "out_of_scope": 6}
+    assert len(split["test"]) == 56 and len(split["dev"]) == 120
+    assert set(split["test"]).isdisjoint(split["dev"])
+    assert make_split(cases, 56, seed=7) == split
+    assert make_split(cases, 56, seed=8)["test"] != split["test"]
+    assert split_group_indexes(split, "test", cases) == split["test"]
+    changed = [dict(cases[0], question="câu khác"), *cases[1:]]
+    with pytest.raises(ValueError, match="key mismatch"):
+        split_group_indexes(split, "dev", changed)
+    assert split["keys"]["0"] == question_key("câu 0")
+
+
+def test_paired_compare_identical_runs_show_no_difference():
+    rows = [{"case_index": i, "category": "a" if i % 2 else "b", "mrr": (i % 3) / 2,
+             "ndcg": 0.5, "keyword_coverage": 50.0} for i in range(40)]
+    categories = {row["case_index"]: row["category"] for row in rows}
+    result = paired_compare(rows, [dict(r) for r in rows], categories, rounds=500)
+    overall = result["mrr"]["overall"]
+    assert overall["n"] == 40 and overall["ci95"] == [0.0, 0.0]
+    assert overall["verdict"] == "no_difference" and overall["ties"] == 40
+    assert result["mrr"]["a"]["n"] == 20
+
+
+def test_paired_compare_direction_and_lower_is_better():
+    base = [{"case_index": i, "category": "direct_fact", "mrr": 0.2, "ndcg": 0.2, "keyword_coverage": 20.0}
+            for i in range(30)]
+    better = [dict(r, mrr=0.9) for r in base]
+    categories = {i: "direct_fact" for i in range(30)}
+    assert paired_compare(base, better, categories, rounds=500)["mrr"]["overall"]["verdict"] == "better"
+    assert paired_compare(better, base, categories, rounds=500)["mrr"]["overall"]["verdict"] == "worse"
+    # Từ chối nhầm giảm (1 → 0) là tốt hơn; case lỗi kỹ thuật bị bỏ khỏi phép so.
+    answers = [{"case_index": i, "category": "direct_fact", "refusal": True, "citation_error": None,
+                "error": None} for i in range(20)]
+    fixed = [dict(r, refusal=False) for r in answers] + [{"case_index": 99, "error": "Timeout"}]
+    false_refusal = paired_compare(answers, fixed, categories | {99: "direct_fact"},
+                                   rounds=500)["false_refusal"]["overall"]
+    assert false_refusal["verdict"] == "better" and false_refusal["wins"] == 20 and false_refusal["n"] == 20
+    excluded = paired_compare(answers, fixed, categories | {99: "direct_fact"}, [0, 99], rounds=50)
+    assert excluded["excluded_cases"] == {"a": [], "b": [99]}
+    # Context-coverage: case không có keyword đáp án không sinh tỉ lệ (không chia cho 0).
+    coverage = [{"case_index": 0, "category": "direct_fact", "answer_keywords": 0, "found_5": 0}]
+    assert paired_compare(coverage, coverage, {0: "direct_fact"}, rounds=50) == {
+        "excluded_cases": {"a": [0], "b": [0]}}
+
+
+def test_holm_adjust_step_down():
+    adjusted = holm_adjust([0.01, 0.04, 0.03])
+    assert [round(p, 6) for p in adjusted] == [0.03, 0.06, 0.06]

@@ -49,7 +49,7 @@ settings + tự tạo client; top-10 `fused[:10]` là hằng; `run_retrieval_eva
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối 8.1; G0.4 câu kín; review | đang làm |
 | B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B11 (G0.5 tham số) | xong 21:07 — chờ C review (report `phase_8_1_g0_5_params_implementation.md`) |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C16 xong (21:03), chờ B review; rảnh nhận G0.4 review |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C16 B review đạt + sửa minor (21:12); C18 review B11 xong; C17 sub-agent đang chạy |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 

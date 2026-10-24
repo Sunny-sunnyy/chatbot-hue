@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 import logging
@@ -103,9 +103,20 @@ def _phase4_settings() -> dict[str, Any]:
     return settings
 
 
-def prepare_full_corpus_input() -> PreparedFullCorpus:
-    """Đọc corpus hiện tại: discover → hash source → chunk → identity → sparse state."""
+def prepare_full_corpus_input(
+    *, embedding_models: list[dict[str, Any]] | None = None,
+) -> PreparedFullCorpus:
+    """Đọc corpus hiện tại: discover → hash source → chunk → identity → sparse state.
+
+    embedding_models: danh sách tokenizer chunker kiểm giới hạn; None = `full_corpus.embedding_models`
+    trong settings.yaml (harness Phase 8.1 dùng để thử bỏ bớt tokenizer).
+    """
     settings = _phase4_settings()
+    if embedding_models is not None:
+        settings = {
+            **settings,
+            "full_corpus": {**settings["full_corpus"], "embedding_models": list(embedding_models)},
+        }
     root, relative_paths = discover_full_corpus_files(settings)
     sources = compute_corpus_state(root, relative_paths)
     chunks, errors = chunk_full_corpus(settings)
@@ -119,27 +130,38 @@ def prepare_full_corpus_input() -> PreparedFullCorpus:
     )
 
 
-def _write_or_check_sparse_state(sparse_state: SparseState) -> str:
+def _write_or_check_sparse_state(sparse_state: SparseState, sparse_state_path: Path) -> str:
     """Ghi sparse state nếu chưa có; nếu đã có thì phải byte-identical với lần build này."""
     data = serialize_sparse_state(sparse_state)
-    if SPARSE_STATE_PATH.exists():
-        if SPARSE_STATE_PATH.read_bytes() != data:
+    if sparse_state_path.exists():
+        if sparse_state_path.read_bytes() != data:
             raise ValueError(
-                f"Existing sparse state differs from current corpus: {SPARSE_STATE_PATH.name}"
+                f"Existing sparse state differs from current corpus: {sparse_state_path.name}"
             )
         return hashlib.sha256(data).hexdigest()
-    return write_sparse_state(sparse_state, SPARSE_STATE_PATH)
+    return write_sparse_state(sparse_state, sparse_state_path)
 
 
-def build_candidate(candidate_id: str) -> dict[str, Any]:
+def build_candidate(
+    candidate_id: str,
+    *,
+    collection_name: str | None = None,
+    sparse_state_path: Path = SPARSE_STATE_PATH,
+    record_path: Path | None = None,
+    embedding_models: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Build một collection mới cho candidate từ corpus hiện tại; lỗi ở bước nào cũng raise.
 
     Không ghi đè collection/record có sẵn, không retry, không resume.
+    Tham số keyword chỉ để harness Phase 8.1 build biến thể vào collection/sparse state/build record
+    riêng; mặc định = collection runtime của candidate, sparse state chung, record cạnh nó.
     """
     candidate = candidate_by_id(candidate_id)
+    if collection_name is not None:
+        candidate = replace(candidate, collection_name=collection_name)
     spec = candidate.dense_spec
-    prepared = prepare_full_corpus_input()
-    sparse_sha = _write_or_check_sparse_state(prepared.sparse_state)
+    prepared = prepare_full_corpus_input(embedding_models=embedding_models)
+    sparse_sha = _write_or_check_sparse_state(prepared.sparse_state, sparse_state_path)
     # Mẫu kiểm vector sau upsert: chunk đầu tiên của mỗi domain, theo thứ tự chunker.
     first_chunk_by_domain: dict[str, str] = {}
     for chunk in prepared.chunks:
@@ -148,7 +170,8 @@ def build_candidate(candidate_id: str) -> dict[str, Any]:
 
     settings = _phase4_settings()
     client = client_from_settings(settings)
-    record_path = build_record_path(candidate)
+    if record_path is None:
+        record_path = build_record_path(candidate)
     runner = None
     try:
         target = inspect_full_corpus_target(

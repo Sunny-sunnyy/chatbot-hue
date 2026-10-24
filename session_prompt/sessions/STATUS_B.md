@@ -1,6 +1,14 @@
-# STATUS B — cập nhật 2026-10-24 20:07 +0700
+# STATUS B — cập nhật 2026-10-24 21:08 +0700
 
 Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
+
+## Đang làm — B11 (G0.5 Phase 8.1): XONG 21:07, chờ C review
+- Report: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_5_params_implementation.md`.
+- Sửa (chưa commit): `backend/llm/generator_openai_full_corpus.py`, `backend/retrieval/full_corpus.py`,
+  `backend/ingestion/full_corpus_pipeline.py` (+97/−26). Gate: retrieval byte `cefb2d1a` PASS (evaluator HEAD,
+  tách khỏi C16), pytest 15 file 195 passed, `/health` 200. 0 USD.
+- Quan sát: mốc `native_hybrid_rrf` 7B không tái lập (6/158 câu), code HEAD cũng vậy ⇒ không do B11; báo A trước G1.
+- Đã review skill "Ranh giới theo khâu pipeline" + `run-experiment` (report §7).
 
 ## Vừa xong — B10 (A giao 19:55): A review đạt, commit+push `74270ab` (docs, free)
 - File đã sửa (chỉ 4 file này): `bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` → bản 2.
@@ -24,7 +32,7 @@ Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opu
 - Không có (B9 trong `1832201`, B10 trong `74270ab`). Log phiên 2 của B9 ở `/tmp/phase7_cleanup/` (có thể mất).
 
 ## Tiếp theo
-- Không có việc mở. Chờ A giao việc Phase 8.1 sau khi User duyệt spec.
+- Chờ C review B11. Có thể review C16 nếu A giao.
 
 ## Tiền paid hôm nay (B)
 - B9 phiên 2: 0,0013334 USD (smoke 10).

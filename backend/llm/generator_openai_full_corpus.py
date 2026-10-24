@@ -15,6 +15,7 @@ from agents import (
 )
 from agents.exceptions import AgentsException
 from openai import AsyncOpenAI, OpenAIError
+from openai.types.shared import Reasoning
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from core.schema import GenerationError
@@ -101,7 +102,11 @@ class OpenAIFullCorpusGenerator:
         timeout: int = 45,
         answer_max_output_tokens: int = 2048,
         representation_b_max_output_tokens: int = 256,
+        answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
+        reasoning_effort: str | None = None,
     ) -> None:
+        # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
+        # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning).
         self.client = client
         self.model = model
         self.timeout = timeout
@@ -114,15 +119,16 @@ class OpenAIFullCorpusGenerator:
         )
 
         # Answer agent: max_tokens=2048, include_usage=True, store=False
-        # No temperature, reasoning, verbosity, top_p or sampling knobs
+        # No temperature, verbosity, top_p or sampling knobs; reasoning only when reasoning_effort is set
         self.answer_agent = Agent(
             name="hue_full_corpus_answer_generator",
-            instructions=ANSWER_SYSTEM_INSTRUCTIONS,
+            instructions=answer_instructions,
             model=self.responses_model,
             model_settings=ModelSettings(
                 max_tokens=self.answer_max_output_tokens,
                 include_usage=True,
                 store=False,
+                reasoning=Reasoning(effort=reasoning_effort) if reasoning_effort else None,
             ),
             output_type=AnswerOutput,
         )
@@ -142,7 +148,13 @@ class OpenAIFullCorpusGenerator:
         )
 
     @classmethod
-    def from_environment(cls, settings: dict[str, Any]) -> "OpenAIFullCorpusGenerator":
+    def from_environment(
+        cls,
+        settings: dict[str, Any],
+        *,
+        answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
+        reasoning_effort: str | None = None,
+    ) -> "OpenAIFullCorpusGenerator":
         """Instantiate generator from settings and process environment fail-closed."""
         config = settings.get("full_corpus_generation", {})
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
@@ -166,6 +178,8 @@ class OpenAIFullCorpusGenerator:
             timeout=timeout,
             answer_max_output_tokens=answer_max,
             representation_b_max_output_tokens=rep_b_max,
+            answer_instructions=answer_instructions,
+            reasoning_effort=reasoning_effort,
         )
 
     async def _execute_agent(
