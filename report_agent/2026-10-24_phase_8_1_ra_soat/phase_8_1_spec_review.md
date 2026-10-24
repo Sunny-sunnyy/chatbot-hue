@@ -221,3 +221,57 @@ G0.2–G0.6, G2.4, G3, G4, §7, §9. Đối chiếu `Project_Status.md` §5 và 
 **Kết luận v2:** `ready_for_user_confirmation` sau khi A bổ sung r1–r3 (sửa chữ). Không còn
 blocker/major. C không cần kiểm lại riêng phần r1–r3. A tự xác nhận khi trình User, ghi trong
 `CURRENT_HANDOFF.md`.
+
+## 8. Kiểm nhanh spec v4 (C15c, 24/10/2026 20:40) — chỉ phần đổi
+
+**Đã đọc trong spec:** D10, D11, §3.1 (r1–r2), G0.2 (r3), G1.3, G4, §4, §7, §10.
+
+**Đã đối chiếu:**
+
+- `Project_Status.md` §5;
+- ghi chú private về dự án khác của User (`data/phase_8_1/external_lessons_private.md`, không commit) —
+  chi tiết đối chiếu nằm ở đó;
+- model card `AITeamVN/Vietnamese_Reranker` (WebFetch).
+
+**Đã chạy:** `uv run python -c "import torch…"` ra `2.13.0+cu130 True NVIDIA GeForce GTX 1650` — khớp D11.
+
+| Phần đổi | Kiểm | Kết luận |
+|---|---|---|
+| r1 tham số retrieval | §3.1 thêm `exact`/search params cho `query_points` (`full_corpus.py:461-476`), tên collection + build record + sparse state (`:723-750`) | **Đóng** |
+| r2 nơi đặt logic chia đoạn | §3.1: logic mới nằm trong harness, xử lý tiếp chunk của `chunk_full_corpus`; chunker production không đổi | **Đóng** |
+| r3 seed | G0.2 "seed cố định ghi trong report" | **Đóng** |
+| D10 (dense chỉ e5-small + 8B) | Khớp `Project_Status.md` §5 dòng 117 và spec 7A2 §2. §4 "Ngoài" có "dense model khác e5-small (D10)". §7 bỏ e5-base/Qwen3-0.6B. C11 hạng 4 sẽ thành NOT RUN có lý do — §6.3 cho phép | **Đúng** |
+| D11 (rerank GPU fp32, đo thêm CPU) | torch CUDA có thật (trên). Lý do chọn fp32 khớp ghi chú private. Ghi ở `Project_Status.md` §5 dòng 117 | **Đúng** |
+| G1.3 DBSF + "0 câu mất đoạn đúng" | Bài học "để từ khóa chọn ứng viên có thể làm mất đáp án; chỉ cho từ khóa xếp lại thì không" khớp ghi chú private. Chú ý: cách "chỉ xếp lại" đó **chính là** `dense_bm25_rrf` đang chạy, nên G1.3 đúng là phép kiểm chiều ngược lại | **Đúng** (n1) |
+| G4 từ khóa "âm tiết + cặp âm tiết + nguyên cụm mã" | Khớp ghi chú private | **Đúng** |
+| G4 rerank: chỉ xếp lại top-10, đoạn trơn vs đoạn kèm mục | Khớp ghi chú private: chấm kèm ngữ cảnh rộng hơn tốt hơn chấm đoạn rời | **Đúng** (n2, n3) |
+| §7 M1 bge | Như C14 (S20/S21); fp32 ~2,3 GB VRAM hợp lý cho 568M × 4 byte | **Đúng** |
+| §7 M2 `AITeamVN/Vietnamese_Reranker` | Card: "License: apache-2.0", "fine-tuned from the bge-reranker-v2-m3", "0.6B params", F32, max length 2304 (256 query + 2048 passage), huấn luyện ~1,1M triplet, benchmark Legal Zalo 2021 MRR@10 0,8672. Ghi chú private: chạy CPU chậm hơn GPU nhiều lần | **Đúng** (n4) |
+| §10 nguồn ngoài | Spec chỉ trỏ ghi chú private, ghi rõ là giả thuyết từ dữ liệu khác | **Đúng** |
+
+**Ghi chú minor** (không chặn; sửa chữ nếu tiện):
+
+- **n1. Tiêu chí "0 câu mất đoạn đúng khỏi top-10" (G1.3) cần nói đo trên tập câu nào.** "Đoạn đúng"
+  chỉ có ở ~55 câu. Với các câu còn lại nên dùng keyword-hit so với baseline. Nếu không ghi, tiêu chí
+  chỉ phủ ~55/158 câu.
+- **n2. Ở G4 rerank, chỉ số "mất" cần đo ở 5 đoạn đưa model, không phải top-10.** Rerank chỉ xếp lại
+  top-10 thì theo định nghĩa không làm mất đoạn khỏi top-10. Nên đổi thành "0 câu mất đoạn đúng khỏi 5
+  đoạn đưa model".
+- **n3. Mục tiêu "p95 ≤ 3 s" có thể không đạt với biến thể "đoạn kèm mục".**
+  - Số đo tốc độ GPU trong ghi chú private cho thấy chấm nhiều cặp dài vài trăm token đã mất vài giây.
+  - 10 cặp × đoạn trơn (trung vị 85 token) chắc nhanh.
+  - 10 cặp × "đoạn kèm mục" cắt tới 1024 (bge) hoặc 2048 (AITeamVN) token có thể vượt 3 s.
+
+  Đề xuất: giữ tiêu chí, nhưng đo trước 5–10 câu với độ dài thật, và ghi cắt mục ở bao nhiêu token. Có
+  một điểm cần chốt: max length của AITeamVN là 2304, không phải 1024; "cắt ở giới hạn huấn luyện của
+  model" nghĩa là hai model cắt khác nhau. Hai model sẽ thấy lượng chữ khác nhau; nên chọn cùng một
+  mức cắt (ví dụ 1024) để so công bằng.
+- **n4. §7 M2:** nay ghi được giấy phép **Apache-2.0** (đã kiểm card), thay cho "kiểm khi tải". Con số
+  VRAM ~2,3 GB nên ghi là "ước 0,6B × 4 byte" nếu không có số đo trực tiếp.
+- **n5.** Dòng Status còn ghi "draft v3". Nên ghi "draft v4".
+
+**Kết luận v4:** phần đổi đúng sự thật và nhất quán với các quyết định đã ghi; không có blocker/major.
+**`ready_for_user_confirmation`**. n1–n5 là sửa chữ, A tự áp dụng, không cần C kiểm lại.
+
+*Sửa 24/10 (C15d): repo public — đã gỡ tên dự án khác, số đo và đường dẫn của dự án đó khỏi mục này; chi
+tiết đối chiếu ở ghi chú private. Kết luận review không đổi.*

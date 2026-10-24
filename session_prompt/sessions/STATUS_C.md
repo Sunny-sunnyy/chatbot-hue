@@ -1,8 +1,10 @@
-# STATUS C — cập nhật 2026-10-24 20:28
+# STATUS C — cập nhật 2026-10-24 20:48
 
 Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
+- C15d (A giao 20:47): gỡ tên/số đo/đường dẫn dự án khác khỏi `phase_8_1_spec_review.md` (repo public) — xong 20:48; grep -i mekong trong đợt 8.1 = 0. Kết luận review giữ nguyên.
+- C15c (A giao 20:38): kiểm nhanh spec 8.1 v4 — xong 20:40: ready_for_user_confirmation; 5 ghi chú minor n1–n5 (sửa chữ). Review §8.
 - C15b (A giao 20:27): kiểm lại spec 8.1 v2 — xong 20:28: M1, M2, m1–m10 đóng; còn r1–r3 minor (sửa chữ) → ready_for_user_confirmation sau khi A bổ sung.
 - C15 (A giao 20:22): review spec 8.1 nháp của A — xong 20:25: **changes_requested** (2 major: M1 thí nghiệm cần thêm tham số vào code production/sparse state riêng; M2 xác nhận 56 câu kiểm cho metric đoạn đúng; 10 minor). `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_spec_review.md`.
 - C13 (A giao 19:55): cập nhật TIM_KIEM + KHO_DU_LIEU theo hiện trạng sau B9 (commit `1832201`) — xong 19:58, **A review đạt** (TIM_KIEM bản 4, KHO_DU_LIEU bản 3).
@@ -14,7 +16,7 @@ Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 
 - C11 (A giao 19:25): bảng rà quyết định Phase 0–7B — xong 19:30, **A review đạt** (chưa commit — commit A chờ User): `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (56 quyết định; 3 sub-agent gom dữ kiện, C kiểm điểm then chốt §1.1). Free, không paid. Phát hiện lỗi trong báo cáo cũ của C (§6 mục 13) — chờ A giao sửa.
 
 ## Đang khai báo sửa
-- không (C15b xong)
+- không (C15d xong)
 
 ## Phiên sau
 1. **Review B9 (dọn sau Phase 7)** khi A nhắn — skill `risk-gated-agent-review`; đối chiếu đích với
@@ -50,6 +52,7 @@ Paid đã dùng: **0 USD** (C chỉ chạy local/free; chấm Claude dùng quota
 - `/tmp/c_review/`: output chạy lại `summarize`/`compare` cho C5.
 
 ## Đã học / bẫy gặp
+- **Repo `chatbot-hue` là PUBLIC** (A 24/10): file tracked không chép tên, số đo, đường dẫn của dự án khác của User; chi tiết để ở ghi chú private `data/…` (không commit).
 - Chạy script import `backend.*` từ **repo root** (`sys.path` = repo root); `full_corpus_pipeline.py`
   import tuyệt đối `backend.core`. Lệnh `evaluation.*` CLI chạy từ `backend/`.
 - `knowledge-base-hue/foods/evaluation/` có cả Golden Foods cũ lẫn file authoring 7A đang dùng.

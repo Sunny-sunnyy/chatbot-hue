@@ -1,6 +1,6 @@
 # Phase 8.1 — Rà quyết định Phase 0–7 và thí nghiệm so với baseline
 
-**Status:** `draft v3 — chờ User duyệt` (C15b: `ready_for_user_confirmation` sau r1–r3) · Ngày: 24/10/2026 (v1 20:20; v2/v3 sau review C15/C15b) · Người viết: A · Đợt:
+**Status:** `draft v4 — chờ User duyệt` (v4: User góp ý embedding/rerank GPU/từ khóa, 20:45) · Ngày: 24/10/2026 (v1 20:20; v2/v3 sau review C15/C15b) · Người viết: A · Đợt:
 `report_agent/2026-10-24_phase_8_1_ra_soat/`
 
 ## 1. Mục tiêu
@@ -26,6 +26,9 @@ Golden chính thức giữ nguyên). Kết quả là một báo cáo xếp hạn
 | D7 | **Giữ `gpt-6-luna`**, không so model sinh; tối ưu sang model nhỏ để sau khi hệ thống ổn. Cam kết "so Qwen ở Phase 8" (amendment 2026-10-01 §5) hoãn theo D7 | Không biết model khác có tốt hơn không |
 | D8 | Thư viện không còn dùng giữ nguyên, chỉ gỡ khi xung đột; code luôn `uv` trong `.venv` dự án | — |
 | D9 | Nghiên cứu ngoài qua ChatGPT trước (prompt deep research đầy đủ), kiểm URL bằng WebFetch | — |
+| D10 | Dense chỉ **e5-small** (đang chạy) và **Qwen3-Embedding-8B** OpenRouter (spec 7A2 §2); 8B để 8.2. Không thử dense khác ở 8.1 | Không biết model dense khác có hơn không |
+| D12 | Thêm **rerank listwise bằng `gpt-6-luna`** (kiểu `rag_old_0/pro_implementation`: đưa danh sách đoạn, model trả thứ tự id) so cùng rerank GPU — phương án không cần GPU cho kịch bản deploy AWS | ~0,05–0,1 USD/lượt 120 câu (ước), +1–3 s/câu (ước) |
+| D11 | Rerank chạy **GPU GTX 1650 4 GB, fp32** (torch 2.13+cu130 đã có trong `.venv`, `cuda.is_available()` = True — không thêm dependency). Chatbot hiện chạy trên máy User; sau có thể deploy AWS (chưa chắc) ⇒ đo thêm latency CPU trên 5–10 câu | Rerank chỉ dùng được thật khi máy chạy có GPU hoặc đủ nhanh trên CPU |
 
 ## 3. Quyết định kỹ thuật của A (trong phạm vi, kèm lý do)
 
@@ -69,8 +72,8 @@ câu mới (private, trong `knowledge-base-hue/evaluation/phase_8_1/`); tạo/x�
 
 **Ngoài (NOT RUN trong 8.1, có lý do):** Representation B / contextual retrieval (H10, ~8.459 call ≈ 0,6 USD >
 trần); tinh chỉnh BM25 k1/b (tác động thấp, C11 3.8); MMR/giới hạn mỗi tài liệu (H12); tách câu hỏi bằng LLM
-(H13, sát Phase 9). **Ngoài phạm vi:** sửa runtime (config, loader, prompt, collection đang chạy, API/UI); sửa corpus curated; sửa
-`golden_full_corpus*.jsonl`; model sinh khác; index Qwen3-8B; gỡ dependency; Agentic RAG (Phase 9).
+(H13) và viết lại câu hỏi bằng LLM (`rag_old_0` pro) — thêm một lượt gọi model mỗi câu, sát Phase 9. **Ngoài phạm vi:** sửa runtime (config, loader, prompt, collection đang chạy, API/UI); sửa corpus curated; sửa
+`golden_full_corpus*.jsonl`; model sinh khác; dense model khác e5-small (D10); index Qwen3-8B; gỡ dependency; Agentic RAG (Phase 9).
 
 ## 5. Các bước (gate)
 
@@ -97,7 +100,12 @@ Mỗi gate: người làm → report → người kia review chéo → A đóng 
 
 1. Candidate recall dense / BM25 / hợp hai nhánh ở pool 30/100/200 (đoạn đúng + keyword).
 2. Dense HNSW vs `exact=true`: trùng top-k, latency.
-3. Hybrid độc lập (`native_hybrid_rrf`, pool 30/100) vs runtime `dense_bm25_rrf`; RRF k ∈ {2,10,30,60}.
+3. Hybrid độc lập (`native_hybrid_rrf`, pool 30/100) vs runtime `dense_bm25_rrf` (từ khóa chỉ xếp lại tập
+   dense đã chọn); RRF k ∈ {2,10,30,60}; DBSF với từ khóa 20/30%. Tiêu chí ghi trước gồm **0 câu mất đoạn
+   đúng khỏi top-10** (đo trên ~55 câu có đoạn đúng; câu còn lại dùng keyword-hit). Lý do: bài học từ một dự án
+   RAG khác của User (ghi chú private, mục 10) là cho từ khóa *chọn* ứng viên dễ kéo lên đoạn lặp từ phổ biến
+   và làm mất đáp án, còn "chỉ xếp lại" (như runtime) an toàn — trái khuyến nghị nghiên cứu ChatGPT, nên phải
+   đo, không suy.
 4. Câu hỏi dạng NFD / không dấu / kiểu dấu cũ: bản biến đổi của 120 câu, có và không có NFC ở query.
 5. Tỉ lệ cặp vượt 512 token của MiniLM (luật "bỏ rerank cả request").
 6. Nhãn tầng lỗi cho ~55 câu có đoạn đúng: có trong kho → trong pool → top-10 → 5 đoạn → model dùng → trích
@@ -125,10 +133,20 @@ lại context 5 vs 10 (2×2 nhỏ) trước khi kết luận.
 
 ### G4 — Hướng cần model/thư viện mới (chỉ dòng User duyệt ở mục 7)
 
-BM25 bigram âm tiết và tách từ `pyvi` (cả hai không cần thư viện mới — `pyvi` đã có trong `pyproject.toml`,
-dùng ở `ingestion/preview.py:21`); dense `multilingual-e5-base` (đã dùng ở Phase 3, không mới); reranker
-`bge-reranker-v2-m3` trên pool đã đủ recall; dense `Qwen3-Embedding-0.6B` trên chunker đã chốt. Đo cả latency
-CPU.
+**Từ khóa:** BM25 âm tiết + cặp âm tiết + nguyên cụm mã; tách từ `pyvi` (đã có
+trong `pyproject.toml`, dùng ở `ingestion/preview.py:21` — không thêm thư viện). Đo với cách trộn thắng ở G1.
+
+**Rerank (GPU fp32, D11):** model ở mục 7 (dòng User duyệt); **chỉ xếp lại thứ tự** top-10 đã chọn, không
+được chọn đoạn ngoài tập; hai cách chấm: **đoạn trơn** vs **đoạn kèm mục chứa nó** (cùng `heading_path`, cắt
+cùng mức cắt 1024 token cho mọi model để so công bằng) — giả thuyết: đơn vị chấm có ngữ cảnh rộng quan trọng
+hơn chọn model (ghi chú private), và đoạn của mình rất ngắn (trung vị 85 token). Tiêu chí ghi trước: 0 câu mất
+đoạn đúng khỏi **5 đoạn đưa model**; MRR@10 + đoạn đúng trong 5 đoạn đưa model tăng có CI; latency GPU p95 ≤ 3
+s/câu (ước, chưa đo — đo 5–10 câu trước; "đoạn kèm mục" có thể vượt, khi đó ghi số thật để User cân nhắc); ghi latency CPU 5–10 câu cho kịch bản
+deploy không GPU. **Rerank bằng `gpt-6-luna` (D12):** cùng 10 đoạn, structured output trả thứ tự id (đủ mọi id,
+không thêm/bớt); chạy thử 10 câu để đo token/USD/latency thật trước 120 câu; cùng tiêu chí trên, latency ghi
+riêng (gọi API). So ba nhánh trên cùng 120 câu: không rerank / GPU (M1, M2) / luna. Chỉ chạy sau khi G1 cho
+thấy đoạn đúng đã nằm trong pool (reranker không cứu đoạn ngoài
+pool).
 
 ### G5 — Tổng hợp
 
@@ -154,10 +172,11 @@ thước đo trước.
 
 | Dòng | Thứ | Để làm gì | Nặng / giấy phép | Chạy |
 |---|---|---|---|---|
-| M1 | `BAAI/bge-reranker-v2-m3` | xếp hạng lại đa ngôn ngữ thay MiniLM tiếng Anh (G4) | ~568M tham số, ~2 GB; Apache-2.0; huấn luyện max 1024 token | CPU local |
-| M2 | `Qwen/Qwen3-Embedding-0.6B` | dense thay/so e5-small (G4) | ~0,6B, ~2,4 GB khi chạy fp32 CPU; Apache-2.0; tối đa 1024 chiều | CPU local |
+| M1 | `BAAI/bge-reranker-v2-m3` | xếp hạng lại đa ngôn ngữ thay MiniLM tiếng Anh (G4) | ~568M tham số, ~2,3 GB VRAM fp32; Apache-2.0; huấn luyện max 1024 token | GPU local (fp32 — fp16 trên dòng card này có thể chậm hơn; đo lại) |
+| M2 | `AITeamVN/Vietnamese_Reranker` | reranker huấn luyện cho tiếng Việt (fine-tune từ bge-reranker-v2-m3) | ~0,6B F32 (≈2,4 GB), max length 2304; Apache-2.0 (model card, C kiểm WebFetch) | GPU local |
 
-Không cần duyệt (đã có): `pyvi` (dependency sẵn), `intfloat/multilingual-e5-base` (đã dùng Phase 3).
+Hai dòng chạy lần lượt (không cùng lúc trên 4 GB). Không cần duyệt (đã có): `pyvi`; torch CUDA trong `.venv`.
+Không thử dense khác (D10).
 
 Không có dòng nào gửi dữ liệu ra ngoài. Dòng bị gạch → hướng đó ghi "đề xuất, NOT RUN".
 
@@ -186,6 +205,8 @@ Không có dòng nào gửi dữ liệu ra ngoài. Dòng bị gạch → hướn
 
 - Bảng rà: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (C11)
 - Kiểm URL nghiên cứu: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_research_url_check.md` (C14)
+- Bài học từ dự án khác của User (private, không commit): `data/phase_8_1/external_lessons_private.md` —
+  đo trên dữ liệu khác hue_rag, chỉ dùng làm giả thuyết.
 - Nghiên cứu (private): `gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_1_decision_audit_2026_10_24.md`,
   `phase_8_rag_retrieval_2026_10_24.md`, `phase_7b_rag_evaluation_2026_10_24.md`
 - Giả thuyết: `reports/phase_8_candidate_hypotheses_2026_10_24.md`; baseline: spec 7B,
