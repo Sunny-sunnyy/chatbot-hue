@@ -1,6 +1,14 @@
-# STATUS B — cập nhật 2026-10-24 21:23 +0700
+# STATUS B — cập nhật 2026-10-24 21:56 +0700
 
 Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
+
+## Vừa xong — B15 G1 đo xong 21:55, chờ C review: `phase_8_1_g1_implementation.md` (0 USD)
+- File: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_plan.md` (chờ A duyệt trước khi đo);
+  mới `backend/experiments/phase_8_1/{__init__,g1_retrieval}.py`; output private `data/phase_8_1/g1/`.
+
+## Vừa xong — B14 (review G0.3 đoạn đúng): ready_for_user_confirmation, 8 minor (21:29)
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_3_gold_review.md`; 3 sub-agent chỉ đọc; 0 USD.
+- Báo A: corpus mâu thuẫn `travel/places/Đèo Hải Vân.md:84` (miễn phí từ 01/08/2024) vs phí 70.000 ở file vé.
 
 ## Vừa xong — B13 (A giao 21:18): phá hòa nhánh sparse native — chờ C review (report B12 §7)
 - File sắp sửa: `backend/retrieval/full_corpus.py` (nhánh sparse native), `backend/tests/test_full_corpus_retrieval.py`
@@ -45,7 +53,7 @@ Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opu
 - Không có (B9 trong `1832201`, B10 trong `74270ab`). Log phiên 2 của B9 ở `/tmp/phase7_cleanup/` (có thể mất).
 
 ## Tiếp theo
-- B14: review đoạn đúng G0.3 (A giao 21:20).
+- Chờ C review G1 + A quyết đề xuất (§6: G4 rerank pool 100, G2.1 context 10, NFC query 8.2).
 - Mốc native mới `1fbb5c17…` ở `data/phase_8_1/baseline/`.
 
 ## Tiền paid hôm nay (B)

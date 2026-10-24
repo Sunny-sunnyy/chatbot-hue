@@ -64,8 +64,8 @@ realism; B chạy G1.1–G1.5 + G1.6 4 tầng tự động. Đoạn đúng đã 
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối 8.1; G0.4 câu kín; review | đang làm |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B15 (kế hoạch G1 + harness) | xong 21:46 — chờ A duyệt kế hoạch `phase_8_1_g1_plan.md` |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C19 đạt; C20 xong (21:35): câu kín còn dòng 36 mơ hồ, chờ sửa + User duyệt mẫu |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B15 (G1) | G1 xong 21:55 — chờ C review (`phase_8_1_g1_implementation.md`) |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C21 review G1 xong (22:01): ready; chờ câu kín sửa xong để kiểm mù lần 3 |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 

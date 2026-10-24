@@ -1,10 +1,12 @@
-# STATUS C — cập nhật 2026-10-24 21:25
+# STATUS C — cập nhật 2026-10-24 22:01
 
 Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
+- C21 (21:55): review G1 (B15) — xong 22:01: ready_for_user_confirmation, 3 minor; phát hiện 22/22 từ chối nhầm thiếu đoạn đúng (ngược B4). `phase_8_1_g1_review.md`.
+- **Chờ** (21:42): (a) kiểm mù lần 3 câu kín sau khi sub-agent của A sửa dòng 36 + rà độ tự nhiên — bản v2 đã sao `/tmp/c20_sealed_v2.jsonl` (md5 `8488e61c…`) để so dòng; (b) review G1 khi B nhắn.
 - C19 (21:22, A giao): review B13 — xong 21:25: ready_for_user_confirmation, 1 minor (hòa ở biên pool). `phase_8_1_b13_review.md`.
-- C20 (A giao 21:25): review mù lần 2 câu kín (11 dòng đổi) bằng sub-agent mới khác — đang làm. A đang hỏi User về 9 câu kín trùng Golden; người sửa là sub-agent mới (A và C vẫn mù câu kín).
+- C20 (A giao 21:25): review mù lần 2 câu kín — xong 21:35: 11 dòng đổi, 25 giữ nguyên byte; 10 OK, dòng 36 vẫn mơ hồ; mẫu 16 dòng cho User. §6 `phase_8_1_g0_4_sealed_review.md`. A đang hỏi User về 9 câu kín trùng Golden; người sửa là sub-agent mới (A và C vẫn mù câu kín).
 - A commit `b8dbe95` (21:14): B11 + C16 + report/review. A quyết: mốc native G1.3 = lượt hôm nay; tham số `chunks` giao khi mở G3.
 - C18 (A giao 21:05): review B11 — xong 21:12: ready_for_user_confirmation, 2 minor; A quyết mốc native (khác 7B 6/158, không do code) và lối vào `chunks` trước G3. `phase_8_1_g0_5_review.md`.
 - C17 (A giao 21:05): review G0.4 36 câu kín qua **sub-agent mới** — C giữ mù — xong 21:17: changes_requested (9/36 trùng ý Golden, 1 mơ hồ); mẫu 17 dòng cho User ở `phase_8_1/sealed_user_sample.md` (private). Report `phase_8_1_g0_4_sealed_review.md`.
@@ -22,7 +24,7 @@ Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 
 - C11 (A giao 19:25): bảng rà quyết định Phase 0–7B — xong 19:30, **A review đạt** (chưa commit — commit A chờ User): `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (56 quyết định; 3 sub-agent gom dữ kiện, C kiểm điểm then chốt §1.1). Free, không paid. Phát hiện lỗi trong báo cáo cũ của C (§6 mục 13) — chờ A giao sửa.
 
 ## Đang khai báo sửa
-- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_4_sealed_review.md` (C20, thêm §2 lần 2); sub-agent ghi lại private `phase_8_1/sealed_user_sample.md` + notes
+- không (file chạy lại `data/phase_8_1/g1/c_*.jsonl` để lại, private)
 
 ## Phiên sau
 1. **Review B9 (dọn sau Phase 7)** khi A nhắn — skill `risk-gated-agent-review`; đối chiếu đích với

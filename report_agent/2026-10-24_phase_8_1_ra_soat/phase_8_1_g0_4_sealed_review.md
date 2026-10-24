@@ -116,3 +116,56 @@ câu và partition, nên phân bố không đổi.
 3. Khóa kín (chỉ mở cuối 8.2). C không đọc nội dung ở bước nào; muốn kiểm lại thì dùng sub-agent mới.
 
 Tiền: **0 USD** (sub-agent dùng quota Claude Code, ~185k token).
+
+## 6. Review lần 2 sau khi sửa (C20, 24/10/2026 21:25–21:34)
+
+User chọn thay cả 9 câu trùng. Một sub-agent của A sửa file. C review lần 2 bằng **một sub-agent
+`general-purpose` mới khác** (không đọc ghi chú và mẫu của lần 1 trước khi tự kết luận). **C vẫn chưa đọc
+nội dung câu.**
+
+**C tự kiểm (không xem nội dung):**
+
+- Bản trước khi sửa `/tmp/sealed_before.jsonl` có md5 `af809684…`, đúng bản đã review ở lần 1.
+- So từng dòng với bản mới (md5 `8488e61c…`): đúng **11 dòng đổi** (2, 5, 6, 10, 12, 20, 21, 23, 26, 33,
+  36); **25 dòng còn lại giống từng byte**.
+- `check --authoring`: exit 0.
+- md5 file kín không đổi sau review lần 2.
+- Hai file đầu ra private (`git check-ignore`).
+
+**Kết quả lần 2** (theo báo cáo sub-agent):
+
+- **Máy kiểm:** exit 0, 0 lỗi. Phân bố giữ nguyên: direct_fact 14 / multi_source 7 / conditional 7 /
+  comparative 5 / out_of_scope 3.
+- **11 dòng đổi: 10 OK, 1 ISSUE.**
+  - OK: 2, 5, 6, 10, 12, 20, 21, 23, 26, 33.
+  - ISSUE: **dòng 36 — `ambiguous`**. Cách hỏi vẫn khớp hai giá trị khác nhau trong cùng file nguồn. Đề
+    xuất sửa: hỏi cả hai vế từ một bảng, nêu rõ mức ngân sách. Sub-agent gợi ý thêm đổi nhãn sang
+    `direct_fact`; nếu làm thì phân bố loại câu đổi (multi_source 6 / direct_fact 15), User/A quyết.
+- **Trùng lặp:** 0 cặp trùng Golden 176; 0 cặp trùng giữa các câu kín.
+- **Dòng 20 (`out_of_scope`):** vắng thật khỏi kho (grep có/không dấu; log trong ghi chú private).
+- **Ba dòng người sửa đã lưu ý:**
+  - 36: `ambiguous` (ISSUE, như trên).
+  - 23: OK. Giá trị chỉ xuất hiện một lần trong toàn kho. Nằm ở mục chỉ đường làm khó tìm hơn, không làm
+    câu bất công.
+  - 33: OK. Hai file khớp giờ bắt đầu và số suất; chỉ một file có thêm giờ kết thúc khác 5 phút. Bot trích
+    file kia vẫn đúng, nên `source_conflict` không đáng kể. Có gợi ý chỉnh chữ đáp án (tùy chọn).
+- **Ghi chú tùy chọn:**
+  - dòng 12, 33 gắn `multi_source` nhưng trả lời được từ một file; vẫn đạt "≥2 đoạn" của spec;
+  - dòng 12, 26 có gợi ý chỉnh chữ;
+  - dòng 2, 3, 6 cùng một thực thể nhưng hỏi dữ kiện khác nhau (cụm, không trùng).
+
+**Mẫu cho User (bản 2, ghi đè bản cũ)** — `knowledge-base-hue/evaluation/phase_8_1/sealed_user_sample.md`:
+
+- cùng lượt rút seed 20261024 như lần 1: 2, 5, 12, 13, 17, 20, 24, 25, 28, 33;
+- thêm các dòng đổi chưa có trong lượt rút: 6, 10, 21, 23, 26, 36;
+- tổng **16 dòng**, ô "Đồng ý / Sửa / Bỏ";
+- 5 dòng không đổi trong mẫu (13, 17, 24, 25, 28): sub-agent chỉ đối chiếu nhanh với nguồn, vẫn khớp.
+
+Ghi chú private lần 2: `knowledge-base-hue/evaluation/phase_8_1/sealed_review_notes_private_v2.md`.
+
+**Kết luận lần 2: `changes_requested` (minor).** Chỉ còn dòng 36 mơ hồ. Sau khi sửa dòng 36 (và User
+duyệt mẫu 16 dòng), bộ kín đạt. Đề xuất: người sửa (sub-agent) sửa dòng 36 theo ghi chú v2, chạy lại
+`check --authoring`. Nếu đổi nhãn thì ghi phân bố mới. Sửa một dòng không cần review lần 3 đầy đủ; một
+sub-agent mới kiểm riêng dòng 36 là đủ.
+
+Tiền: **0 USD** (sub-agent dùng quota Claude Code, ~124k token).
