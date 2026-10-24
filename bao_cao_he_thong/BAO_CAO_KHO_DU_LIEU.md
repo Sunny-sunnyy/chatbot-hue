@@ -1,4 +1,4 @@
-# Báo cáo cho bạn: Phase 7A2 — Sửa dữ liệu và tạo lại chỉ mục
+# Báo cáo cho bạn: Phase 7A2 — Kho dữ liệu: sửa dữ liệu và tạo lại chỉ mục
 
 ```text
 Trạng thái: Đã đóng 24/10/2026 (Gate 2 đóng kèm giới hạn: chỉ mục Qwen3-8B hoãn sang Phase 8)
@@ -16,7 +16,7 @@ Người viết: C · Review: A
   Code dựng chỉ mục cũ (kiểm thử trước, migration metadata…) đã bỏ.
 - Qdrant được dọn từ 16 xuống 3 collection.
 
-Ví dụ: diện tích đầm Cầu Hai trong kho nay chỉ còn một con số thống nhất ("khoảng 104 km²").
+Ví dụ: một file từng ghi hai con số khác nhau cho cùng một diện tích, nay chỉ còn một con số thống nhất.
 
 ## 2. Hệ thống hoạt động như thế nào
 
@@ -66,7 +66,7 @@ Kiểm với code, Qdrant (GET) và `session_prompt/Project_Status.md` §4 ngày
 ## 6. Giới hạn và bước tiếp theo
 
 - **Qwen3-8B chưa có chỉ mục**; khi làm lại ở Phase 8 cần cách gọi chịu được lỗi 504/429.
-- F2 (bảng giá) và F1 (tổng hợp nhiều nguồn) vẫn còn — đã được đo kỹ ở Phase 7B.
+- F2 (bảng giá) và F1 (tổng hợp nhiều nguồn) vẫn còn — đã được đo kỹ ở Phase 7B (`BAO_CAO_DANH_GIA.md`).
 - Bộ chia đoạn vẫn kiểm cả 3 tokenizer (gồm HuyDang 256 đã bỏ) → đoạn bị giữ nhỏ; Phase 8 xử lý.
 - Notebook 03, 04, 06 còn mô tả/gọi tên cũ; notebook 04 sẽ lỗi vì tìm phiếu build của 8B (chưa có).
 

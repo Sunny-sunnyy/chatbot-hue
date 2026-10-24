@@ -1,4 +1,4 @@
-# Báo cáo cho bạn: Phase 7 và 7A — Chấm điểm thử (Foods) và bộ câu hỏi chuẩn toàn corpus
+# Báo cáo cho bạn: Phase 7 và 7A — Bộ câu hỏi Golden (và chấm điểm thử Foods)
 
 ```text
 Trạng thái: Phase 7 (Foods) đóng 24/08/2026 · Phase 7A (Golden toàn corpus) đóng 23/10/2026
@@ -62,7 +62,7 @@ Kiểm với code và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
 | 5 loại câu (gồm `out_of_scope`) | **còn dùng** | kiểm `check` hôm nay; spec `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` |
 | File soạn theo nhóm (`*/evaluation/golden_full_corpus_authoring.jsonl`) | **còn dùng** cho lệnh `check`/`merge` | `golden_full_corpus.py:113,159` |
 | 6 thước đo (MRR@10, nDCG@10, Keyword Coverage@10; Đúng/Đủ/Trúng ý 1–5), trung bình theo câu | **còn dùng** (Phase 7B) | `full_corpus_eval.py` |
-| Người chấm là `gpt-6-luna` | **đã thay** bởi Claude chính, `gpt-6-luna` phụ (Phase 7B, bạn chọn) | `report_agent/user_reports/phase_07b_danh_gia_baseline.md` |
+| Người chấm là `gpt-6-luna` | **đã thay** bởi Claude chính, `gpt-6-luna` phụ (Phase 7B, bạn chọn) | `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` |
 | Không chia đề thành phần luyện / phần giữ kín | **còn đúng theo spec 7A**; Phase 8 đang chờ bạn quyết có tách hay không | `CURRENT_HANDOFF.md` "Đang chờ User" |
 | Bộ chấm Foods Phase 7 (`eval.py`, `evaluator.py` Gradio, `test.py`) | **đã thay** bởi `full_corpus_eval.py` (Phase 7B); đường sinh câu trả lời Foods **hỏng** (gửi `temperature`, `gpt-6-luna` trả 400); nằm trong danh sách dọn | `backend/evaluation/eval.py:148`; `backend/llm/generator_openai.py:44` |
 | Golden Foods V2/V3, `tests.jsonl` | **lịch sử**, chỉ code Foods đọc | `backend/evaluation/golden_dataset.py:11–16` |

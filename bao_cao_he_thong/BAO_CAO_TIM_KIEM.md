@@ -1,4 +1,4 @@
-# Báo cáo cho bạn: Phase 5 — Tìm đoạn liên quan (truy xuất)
+# Báo cáo cho bạn: Phase 5 — Tìm kiếm (truy xuất đoạn liên quan)
 
 ```text
 Trạng thái: Đã đóng (bản Foods 12/08/2026; bản toàn corpus 14/09/2026)
@@ -50,7 +50,7 @@ mục hiện tại.
 ## 4. Cách bạn kiểm tra thêm nếu cần
 
 Không bắt buộc. Muốn xem điểm tìm đoạn từng loại câu: report Phase 7B
-`report_agent/user_reports/phase_07b_danh_gia_baseline.md`.
+`bao_cao_he_thong/BAO_CAO_DANH_GIA.md`.
 
 ## 5. Hôm nay còn đúng không
 

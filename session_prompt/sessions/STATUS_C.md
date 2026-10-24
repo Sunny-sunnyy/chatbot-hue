@@ -9,8 +9,8 @@ Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 - không
 
 ## Vừa xong
-- C8 xong (chờ A review): `report_agent/user_reports/phase_05_truy_xuat.md`, `phase_06_sinh_cau_tra_loi_api.md`,
-  `phase_07_golden.md`, `phase_07a2_sua_corpus_index.md` — mỗi file có "Hôm nay còn đúng không" (file:dòng) + "Lệch phát hiện".
+- C8 xong (chờ A review): (đã chuyển theo User sang `bao_cao_he_thong/`) `BAO_CAO_TIM_KIEM.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`,
+  `BAO_CAO_BO_CAU_HOI_GOLDEN.md`, `BAO_CAO_KHO_DU_LIEU.md` — mỗi file có "Hôm nay còn đúng không" (file:dòng) + "Lệch phát hiện".
 - C7 A đóng, commit `a595e02`.
 - C7 xong (chờ A review): report giả thuyết Phase 8 có cột nguồn [R1]–[R11] + §8 (WebFetch 5 URL: khớp, lệch nhỏ
   bge-reranker max len 8K vs card 512; thứ tự mới: đo pool/gold → context10+partial → bảng/bigram/tách câu → chunk → rerank → paid).

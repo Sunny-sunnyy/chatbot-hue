@@ -73,7 +73,7 @@ Kiểm với code và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
 
 ## 6. Giới hạn và bước tiếp theo
 
-- **F2 bảng giá** và **F1 tổng hợp nhiều nguồn** vẫn còn (xem Phase 5 và 7B).
+- **F2 bảng giá** và **F1 tổng hợp nhiều nguồn** vẫn còn (xem `BAO_CAO_TIM_KIEM.md` và `BAO_CAO_DANH_GIA.md`).
 - 22 câu từ chối nhầm: 8 do không tìm ra đoạn, 10 có một vế thiếu vế kia, 4 có đủ mà vẫn từ chối.
   Thử nhanh 10 đoạn ngữ cảnh: 10/22 câu hết từ chối (chưa chấm đúng/sai).
 - Phase 8 sẽ thử: 10 đoạn ngữ cảnh, prompt cho trả lời phần có căn cứ, tách câu hỏi hai ý.
