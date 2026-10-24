@@ -9,7 +9,7 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
 | B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B2 Phase 7B Gate 1 | chờ review A |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 chờ 7B Gate 3 | rảnh |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 Claude judge 7B Gate 3 | đang làm |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
 session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKFLOW.md` §7).
@@ -89,4 +89,4 @@ xóa (sau khi 7B đóng).
   `phase_7b_rag_evaluation_2026_10_24.md`, `phase_8_retrieval_improvements_2026_10_24.md`.
 - Quyết định Phase 8 (khi brainstorm): trả lời phần có căn cứ hay từ chối cả câu (C1 §5.1, H8).
 - Duyệt danh sách dọn C2 (xóa code/test/notebook Foods, 2 collection Foods).
-- Chấm tay ~20 case 7B khi A báo file chấm sẵn sàng.
+- Chấm tay 20 case 7B: **file sẵn sàng** `data/evaluation/phase_7b/user_scoring.md` (private; ghi `Điểm: Đúng / Đủ / Trúng ý` mỗi câu).
