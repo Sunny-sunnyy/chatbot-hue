@@ -56,21 +56,26 @@ test pass; summarize Run 1 + luna khớp report; 352 response id khác nhau; 64/
 hệt chữ giữa hai run; **0 case đổi quyết định từ chối** → 22 từ chối nhầm là hệ thống, không phải
 nhiễu. Tiền 7B tới đây ~0,082 USD.
 
-### B4 — Phase 7B Gate 4 chuẩn bị + chẩn đoán từ chối nhầm (free)
+### B4 — tổng hợp nhiễu + chẩn đoán từ chối nhầm — A đóng 2026-10-24
 
-**Trạng thái (B):** xong, chờ review A — `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md` (lệnh `compare`, `parse-user-scores`, `diagnose-refusals`; 14 test pass; free).
+`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md` (commit `9514f75`): luna chấm lại gần tất
+định (lệch ≤1 ở 100%); 22 từ chối nhầm = 8 retrieval miss, 10 một phần bằng chứng, 4 đủ bằng chứng;
+12/22 có keyword ở hạng 6–10 bị cắt khỏi context top-5.
 
-- **(a) Tổng hợp nhiễu và mức khớp** (spec 7B §4.4): thêm vào `full_corpus_eval.py` phần so hai
-  file điểm theo `case_index` (chênh trung bình có dấu, tỉ lệ trùng, tỉ lệ lệch ≤1, tỉ lệ đổi ≥2,
-  theo metric) + đọc điểm User từ `data/evaluation/phase_7b/user_scoring.md` qua
-  `user_scoring_map.json` (`Điểm: a / c / r`). Test logic thuần. Chạy được ngay cho luna (Run 1 vs
-  chấm lại 30); phần Claude/User chạy khi có file.
-- **(b) Chẩn đoán 22 từ chối nhầm** (Run 1): mỗi case, keyword mang đáp án có nằm trong 5 chunk
-  context không (`context_sources`, lấy lại context bằng retrieval local như `answer_case`, không gọi
-  sinh)? Phân loại: *retrieval miss* (không có trong context) / *có bằng chứng nhưng model từ chối*
-  (ứng viên H8 prompt tất-cả-hoặc-không) / *không rõ*. Bảng đếm theo category; không chép nội dung.
-- **Không làm:** gọi paid; sửa runtime/prompt; đọc file điểm Claude trước khi C báo xong.
-- **Đầu ra:** code + test; `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; `STATUS_B.md`; nhắn A.
+### B5 — Thăm dò H4 (context 5 → 10 chunk), **exploratory, không phải quyết định Phase 8** (paid ≤0,01 USD)
+
+- **Vì sao:** B4 cho thấy 12/22 từ chối nhầm có bằng chứng ở hạng 6–10. Cần số liệu thật cho
+  brainstorm Phase 8 (User cho phép thử nghiệm, 2026-10-24).
+- **Tiêu chí ghi trước:** (1) free, 158 case: tỉ lệ keyword mang đáp án có trong context top-5 so với
+  top-10 (cùng retrieval runtime), tổng và theo category; (2) paid, chỉ **22 case từ chối nhầm**
+  Run 1: sinh lại với `max_context_documents=10` (override trong lệnh/script, **không** sửa
+  `settings.yaml`), đếm còn bao nhiêu từ chối, số lỗi citation, token input tăng bao nhiêu.
+  Không chấm điểm; không kết luận "tốt hơn" — chỉ báo số.
+- **Không làm:** sửa runtime/prompt/settings; chạy 176 case; đọc file `claude_*`.
+- **Dừng:** tiền chạm 0,01 USD.
+- **Đầu ra:** `reports/phase_8_probe_context_top10_2026_10_24.md` (ghi rõ exploratory, n=22 là mẫu
+  chọn theo lỗi nên không suy ra tỉ lệ chung); kết quả private `data/evaluation/phase_8_probe/`;
+  code nếu thêm thì gọn, có thể là tham số `--max-context-documents` cho `generate`; nhắn A.
 
 ## Việc của C
 
