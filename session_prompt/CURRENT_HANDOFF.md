@@ -7,7 +7,7 @@ xong chuyển tóm tắt sang `PROJECT_HISTORY.md`. Đợt hiện tại: `report
 
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | A1 user report 7B + tổng quan; tổ chức report | đang làm |
+| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | A1 xong (chờ B review); chờ file MekongAI | chờ |
 | B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B8 user report Phase 0–1, 2, 3, 4 | đang làm |
 | C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C7 nghiên cứu Phase 8 → C8 user report Phase 5, 6, 7/7A, 7A2 | đang làm |
 
@@ -46,7 +46,7 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 1. **A1:** `report_agent/user_reports/phase_07b_danh_gia_baseline.md` và
    `report_agent/user_reports/LUONG_HOAT_DONG_HE_THONG.md` (hệ thống đang chạy, theo kiểu MekongAI);
-   B hoặc C review A1.
+   **Xong, chờ review** — B review A1 sau khi xong B8 (đối chiếu số với report 7B + code).
 2. Khi User gửi `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`: tối ưu
    governance/report cho hue_rag (đề xuất cho User trước khi đổi lớn).
 3. Review B8, C7, C8. Sau đó: trình User danh sách dọn C2; brainstorm Phase 8.
