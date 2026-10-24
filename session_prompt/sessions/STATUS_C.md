@@ -3,13 +3,13 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- C5 xong, chờ A: `reports/phase_7b_review_2026_10_24.md` — ready_for_user_confirmation có điều kiện
-  (phần User NOT RUN); minor m1–m3. Khi User chấm xong: kiểm lại phần User của report Gate 4.
+- Rảnh. Kế tiếp C6: kiểm lại phần User của report Gate 4 khi User chấm xong và B điền (A sẽ nhắn).
 
 ## Đang khai báo sửa
 - không
 
 ## Vừa xong
+- C5 A nhận, commit `c1f4f20`: `reports/phase_7b_review_2026_10_24.md` (ready_for_user_confirmation có điều kiện; m1–m3 → B7).
 - C3 A đóng, commit `1994ea5`.
 - C3: 3 file điểm Claude (`claude_run1`, `claude_run1_rerun30`, `claude_run2` trong `data/evaluation/phase_7b/`),
   39 sub-agent / 39 lô, 0 lỗi, `score_errors` rỗng; ~8 phút. Report
