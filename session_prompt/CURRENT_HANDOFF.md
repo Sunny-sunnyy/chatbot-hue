@@ -7,9 +7,9 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B; review C | đang làm |
+| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
 | B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B1 kiểm sức khỏe Phase trước → B2 Phase 7B Gate 1 | đang làm |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C1 rà soát Phase 8 (chờ review A) → C2 danh sách dọn | C1 chờ review |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C2 danh sách dọn sau Phase 7 | đang làm |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
 session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKFLOW.md` §7).
@@ -29,7 +29,7 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 
 ## Việc của A
 
-1. Review C1; giao C2.
+1. Review C2.
 2. Review B1, B2; chọn tập chấm lại 30 + mẫu User ~20 trước Run 1 (spec 7B §4.4).
 3. Điều phối các Gate còn lại của 7B; chuẩn bị file chấm cho User.
 
@@ -76,10 +76,12 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 
 ## Việc của C
 
-### C1 — Rà soát lựa chọn Phase 2–6 cho Phase 8 (xong, chờ review A)
+### C1 — Rà soát lựa chọn Phase 2–6 cho Phase 8 — A đóng 2026-10-24
 
-Report `reports/phase_8_candidate_hypotheses_2026_10_24.md`. Yêu cầu ChatGPT
-`gửi chatgpt/tìm thông tin/phase_8_retrieval_improvements_2026_10_24.md` chờ User gửi.
+Report `reports/phase_8_candidate_hypotheses_2026_10_24.md` (A kiểm O3, O5, O8 với code: đúng;
+không lộ Golden). Dùng làm input brainstorm Phase 8 sau baseline 7B. Câu hỏi §5.1 (trả lời
+một phần vs từ chối cả câu) là quyết định của User → đưa vào brainstorm Phase 8. Cột "Cách làm
+phổ biến" cập nhật nguồn khi có kết quả ChatGPT.
 
 ### C2 — Danh sách dọn sau Phase 7 (chỉ đọc, rủi ro thấp)
 
@@ -99,4 +101,5 @@ Report `reports/phase_8_candidate_hypotheses_2026_10_24.md`. Yêu cầu ChatGPT
 
 - Gửi ChatGPT hai file trong `gửi chatgpt/tìm thông tin/`:
   `phase_7b_rag_evaluation_2026_10_24.md`, `phase_8_retrieval_improvements_2026_10_24.md`.
+- Quyết định Phase 8 (khi brainstorm): trả lời phần có căn cứ hay từ chối cả câu (C1 §5.1, H8).
 - Chấm tay ~20 case 7B khi A báo file chấm sẵn sàng.
