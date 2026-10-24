@@ -3,6 +3,7 @@ import math
 import unicodedata
 
 from evaluation.full_corpus_eval import (
+    summarize_context_coverage,
     answer_keywords,
     classify_refusal_evidence,
     compare_scores,
@@ -186,3 +187,17 @@ def test_answer_keywords_and_refusal_evidence_classes():
     assert classify_refusal_evidence(keywords, "Mệ Kéo: món bún") == "retrieval_miss"
     assert classify_refusal_evidence(keywords, "địa chỉ BẠCH ĐẰNG") == "partial_evidence"
     assert classify_refusal_evidence(keywords, "số 20 Bạch Đằng") == "evidence_present"
+
+
+def test_context_coverage_summary_rates_per_size():
+    rows = [
+        {"category": "a", "answer_keywords": 2, "found_5": 1, "found_10": 2,
+         "prompt_tokens_5": 100, "prompt_tokens_10": 180},
+        {"category": "b", "answer_keywords": 1, "found_5": 1, "found_10": 1,
+         "prompt_tokens_5": 300, "prompt_tokens_10": 500},
+    ]
+    summary = summarize_context_coverage(rows, [5, 10])
+    assert summary["overall"]["keyword_rate_5"] == 0.75
+    assert summary["overall"]["all_found_rate_5"] == 0.5
+    assert summary["overall"]["all_found_rate_10"] == 1.0
+    assert summary["a"]["mean_prompt_tokens_10"] == 180

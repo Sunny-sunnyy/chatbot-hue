@@ -3,15 +3,16 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ A review B4; sau đó tổng hợp Gate 4 khi C (Claude) và User chấm xong.
+- Chờ A review B5; Gate 4 tổng hợp khi C (Claude) và User chấm xong.
 
 ## Đang khai báo sửa
 - `backend/evaluation/full_corpus_eval.py`, `backend/tests/test_full_corpus_eval.py`
-- `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md` (mới)
-- Private mới: `data/evaluation/phase_7b/{user_scores.jsonl,run1_false_refusal_diagnosis.jsonl}`
+- `reports/phase_8_probe_context_top10_2026_10_24.md` (mới); private `data/evaluation/phase_8_probe/`
 
 ## Vừa xong
-- B4 xong, chờ review A: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; nhiễu judge
+- B5 (probe context 10, exploratory) xong, chờ review A; 0,00495 USD. Tổng paid B ~0,087 USD.
+- B4 A đóng, commit `9514f75`.
+- B4 chi tiết: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; nhiễu judge
   luna rất thấp (30/30 lệch ≤1); 22 từ chối nhầm = 8 retrieval miss / 10 một phần / 4 đủ keyword.
 - B3 (Gate 2) A đóng, commit `28b14be`.
 - B3 chi tiết: `reports/phase_7b_gate_2_runs_implementation_2026_10_24.md`;

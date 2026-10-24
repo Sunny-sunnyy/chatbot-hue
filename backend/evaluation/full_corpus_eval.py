@@ -210,14 +210,15 @@ def build_retrieval(settings: dict, treatment: str):
     )
 
 
-def build_context_builder(settings: dict) -> FullCorpusContextBuilder:
+def build_context_builder(settings: dict, max_documents: int | None = None) -> FullCorpusContextBuilder:
+    """`max_documents` chỉ để thăm dò (Phase 8 probe); mặc định lấy đúng `settings.yaml`."""
     generation = settings["full_corpus_generation"]
     return FullCorpusContextBuilder(
         load_openai_tokenizer(),
         context_limit=generation["context_limit"],
         reserved_output_tokens=generation["reserved_output_tokens"],
         safety_margin=generation["safety_margin"],
-        max_documents=generation["max_context_documents"],
+        max_documents=max_documents or generation["max_context_documents"],
     )
 
 
@@ -300,10 +301,10 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
     return row
 
 
-async def run_generation(cases: list[dict]) -> list[dict]:
+async def run_generation(cases: list[dict], max_context_documents: int | None = None) -> list[dict]:
     settings = load_settings(validate_private_paths=False)
     service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
-    context_builder = build_context_builder(settings)
+    context_builder = build_context_builder(settings, max_context_documents)
     generator = OpenAIFullCorpusGenerator.from_environment(settings)
     semaphore = asyncio.Semaphore(CONCURRENCY)
 
@@ -588,6 +589,51 @@ def diagnose_false_refusals(cases: list[dict], answer_rows: list[dict]) -> list[
     return rows
 
 
+def context_keyword_coverage(cases: list[dict], sizes: list[int]) -> list[dict]:
+    """Với mỗi case trong phạm vi: số keyword mang đáp án nằm trong context đóng gói ở từng
+    cỡ `max_documents` (cùng retrieval runtime), kèm token input của prompt. Không gọi sinh."""
+    settings = load_settings(validate_private_paths=False)
+    service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
+    builders = {size: build_context_builder(settings, size) for size in sizes}
+    rows = []
+    try:
+        for case in cases:
+            if case["category"] == OUT_OF_SCOPE:
+                continue
+            question = case["question"].strip()
+            documents = service.search(question).documents
+            keywords = answer_keywords(case)
+            row = {"case_index": case["case_index"], "category": case["category"],
+                   "answer_keywords": len(keywords)}
+            for size, builder in builders.items():
+                packed = builder.build(question, documents)
+                context = _fold(packed.text)
+                row[f"found_{size}"] = sum(_fold(k) in context for k in keywords)
+                row[f"sources_{size}"] = len(packed.sources)
+                row[f"prompt_tokens_{size}"] = packed.input_tokens
+            rows.append(row)
+    finally:
+        service.close()
+    return rows
+
+
+def summarize_context_coverage(rows: list[dict], sizes: list[int]) -> dict:
+    """Theo category: tỉ lệ keyword đáp án có trong context (macro theo case) và tỉ lệ case có đủ."""
+    groups: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        groups["overall"].append(row)
+        groups[row["category"]].append(row)
+    summary = {}
+    for category, group in sorted(groups.items()):
+        item = {"n": len(group)}
+        for size in sizes:
+            item[f"keyword_rate_{size}"] = sum(r[f"found_{size}"] / r["answer_keywords"] for r in group) / len(group)
+            item[f"all_found_rate_{size}"] = sum(r[f"found_{size}"] == r["answer_keywords"] for r in group) / len(group)
+            item[f"mean_prompt_tokens_{size}"] = sum(r[f"prompt_tokens_{size}"] for r in group) / len(group)
+        summary[category] = item
+    return summary
+
+
 def count_by_category(rows: list[dict], field: str) -> dict:
     table: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     for row in rows:
@@ -617,6 +663,8 @@ def main(argv: list[str] | None = None) -> int:
     generate.add_argument("--golden", default="full", choices=["full", "smoke"])
     generate.add_argument("--cases", type=int, nargs="*", help="case_index cần chạy")
     generate.add_argument("--out", required=True)
+    generate.add_argument("--max-context-documents", type=int,
+                          help="chỉ để thăm dò; mặc định theo settings.yaml")
 
     judge = commands.add_parser("judge-luna", help="judge phụ gpt-6-luna (paid)")
     judge.add_argument("--answers", required=True)
@@ -644,6 +692,10 @@ def main(argv: list[str] | None = None) -> int:
     user.add_argument("--map", default="user_scoring_map.json")
     user.add_argument("--out", default="user_scores.jsonl")
 
+    coverage = commands.add_parser("context-coverage", help="keyword đáp án trong context theo cỡ (free)")
+    coverage.add_argument("--sizes", type=int, nargs="+", default=[5, 10])
+    coverage.add_argument("--out", required=True)
+
     diagnose = commands.add_parser("diagnose-refusals", help="chẩn đoán từ chối nhầm (local, free)")
     diagnose.add_argument("--answers", required=True)
     diagnose.add_argument("--out", required=True)
@@ -664,7 +716,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(summarize_retrieval(rows), ensure_ascii=False, indent=2))
     elif args.command == "generate":
         selected = select_cases(load_golden_cases(args.golden), args.cases)
-        rows = asyncio.run(run_generation(selected))
+        rows = asyncio.run(run_generation(selected, args.max_context_documents))
         write_jsonl(_path(args.out), rows)
         print(json.dumps(summarize_answers(rows, None), ensure_ascii=False, indent=2))
     elif args.command == "judge-luna":
@@ -708,6 +760,10 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         write_jsonl(_path(args.out), rows)
         print(f"user scores: {len(rows)} rows")
+    elif args.command == "context-coverage":
+        rows = context_keyword_coverage(cases, args.sizes)
+        write_jsonl(_path(args.out), rows)
+        print(json.dumps(summarize_context_coverage(rows, args.sizes), ensure_ascii=False, indent=2))
     elif args.command == "diagnose-refusals":
         rows = diagnose_false_refusals(cases, read_jsonl(_path(args.answers)))
         write_jsonl(_path(args.out), rows)

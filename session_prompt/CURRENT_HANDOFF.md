@@ -8,8 +8,8 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B2 Phase 7B Gate 1 | chờ review A |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 Claude judge 7B Gate 3 | chờ review — `reports/phase_7b_gate_3_claude_judge_implementation_2026_10_24.md` |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B6 report baseline 7B (Gate 4) | đang làm |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C4 chờ việc | rảnh |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
 session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKFLOW.md` §7).
@@ -62,22 +62,23 @@ nhiễu. Tiền 7B tới đây ~0,082 USD.
 định (lệch ≤1 ở 100%); 22 từ chối nhầm = 8 retrieval miss, 10 một phần bằng chứng, 4 đủ bằng chứng;
 12/22 có keyword ở hạng 6–10 bị cắt khỏi context top-5.
 
-### B5 — Thăm dò H4 (context 5 → 10 chunk), **exploratory, không phải quyết định Phase 8** (paid ≤0,01 USD)
+### B5 — Thăm dò context 10 chunk (exploratory) — A đóng 2026-10-24
 
-**Trạng thái (B):** xong, chờ review A — `reports/phase_8_probe_context_top10_2026_10_24.md` (0,00495 USD; 10/22 hết từ chối, chưa chấm).
+`reports/phase_8_probe_context_top10_2026_10_24.md`: keyword đáp án trong context 0,853 → 0,918 (case
+đủ keyword 78,5% → 87,3%; comparative 44% → 72%); token prompt ×1,77. 22 từ chối nhầm với context 10:
+còn 12/22 từ chối, 0 lỗi citation. Chưa chấm điểm; n=22 chọn theo lỗi. Tiền 0,005 USD. Input cho
+brainstorm Phase 8 (H4), không phải quyết định. `settings.yaml` không đổi.
 
-- **Vì sao:** B4 cho thấy 12/22 từ chối nhầm có bằng chứng ở hạng 6–10. Cần số liệu thật cho
-  brainstorm Phase 8 (User cho phép thử nghiệm, 2026-10-24).
-- **Tiêu chí ghi trước:** (1) free, 158 case: tỉ lệ keyword mang đáp án có trong context top-5 so với
-  top-10 (cùng retrieval runtime), tổng và theo category; (2) paid, chỉ **22 case từ chối nhầm**
-  Run 1: sinh lại với `max_context_documents=10` (override trong lệnh/script, **không** sửa
-  `settings.yaml`), đếm còn bao nhiêu từ chối, số lỗi citation, token input tăng bao nhiêu.
-  Không chấm điểm; không kết luận "tốt hơn" — chỉ báo số.
-- **Không làm:** sửa runtime/prompt/settings; chạy 176 case; đọc file `claude_*`.
-- **Dừng:** tiền chạm 0,01 USD.
-- **Đầu ra:** `reports/phase_8_probe_context_top10_2026_10_24.md` (ghi rõ exploratory, n=22 là mẫu
-  chọn theo lỗi nên không suy ra tỉ lệ chung); kết quả private `data/evaluation/phase_8_probe/`;
-  code nếu thêm thì gọn, có thể là tham số `--max-context-documents` cho `generate`; nhắn A.
+### B6 — Phase 7B Gate 4: report baseline tổng hợp (free)
+
+- **Làm:** theo spec 7B §4.4, §7 viết `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md`:
+  6 metric + 2 tỉ lệ từ chối + tỉ lệ lỗi citation (tổng, theo category) — điểm chính thức là
+  Claude Run 1; bảng nhiễu (Claude chấm lại 30, luna chấm lại 30, Claude Run 1 vs Run 2) và mức khớp
+  (Claude–luna 176); phân bố điểm (bao nhiêu case 5/5/5, 1/1/1); trung bình khi bỏ case từ chối
+  nhầm (để thấy phần mất điểm đến từ đâu); tiền thật toàn 7B; giới hạn (spec §7.6). Mục **khớp
+  với User**: để `NOT RUN — chờ User chấm` kèm đúng lệnh `parse-user-scores` + `compare` sẽ chạy.
+- **Không làm:** đặt ngưỡng đạt/không đạt; kết luận Phase 8.
+- **Đầu ra:** report; `STATUS_B.md`; nhắn A. Sau đó C review chéo (C5).
 
 ## Việc của C
 
@@ -102,7 +103,9 @@ A kiểm: `score_errors` rỗng cả 3 file; đọc ngẫu nhiên 6 feedback —
 kiến thức ngoài. Số tổng hợp (A chạy `compare`): Claude chấm lại 30 lệch ≤1 ở 100%; Run 1 vs Run 2
 chênh TB ≤0,011 mọi metric; Claude vs luna trùng 89–96%, lệch ≤1 ở ≥99,4%.
 
-### C4 — chờ (A giao review B5 hoặc Gate 4)
+### C5 — review chéo report Gate 4 của B (khi B báo xong)
+
+Theo skill `risk-gated-agent-review`: số trong report khớp lệnh `summarize`/`compare` chạy lại; không lộ nội dung private; đủ tiêu chí spec 7B §7 (trừ phần User). Viết `reports/phase_7b_review_2026_10_24.md`.
 
 ## Đang chờ User
 
