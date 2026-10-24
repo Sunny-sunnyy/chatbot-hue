@@ -112,6 +112,26 @@ Evidence phải tương xứng claim: đọc code/deterministic check cho pure l
 real-system run cho lợi ích integration. Không dùng số dòng, số caller hoặc
 lệnh cấm class/helper máy móc để thay việc đánh giá tác động.
 
+### Ranh giới theo khâu pipeline — dùng lại được, kiểm bằng cách dùng thật
+
+User 2026-10-24: các khâu RAG phải đóng gói được và dùng lại được, gồm loader/discovery, chunking,
+embedding/sparse, vectorstore, retrieval, rerank, context, generator và evaluator. Lý do: API, script,
+notebook và harness thí nghiệm đều gọi cùng một code production. Thí nghiệm không được dựng đường đi
+thứ hai.
+
+- **Dùng lại được** nghĩa là gọi một hàm của khâu với đầu vào và tham số rõ ràng, nhận đầu ra rõ ràng.
+  Khâu không đọc ngầm cấu hình toàn cục ở sâu bên trong và không gắn cứng đường dẫn hay tên collection.
+  Các con số quyết định chất lượng (pool, k, top-k, prompt, model setting, tokenizer) không giấu thành
+  hằng số. Dependency như Qdrant client, hàm embedding hay model client được truyền vào làm tham số.
+- **Tham số mặc định = hành vi đang chạy.** Runtime gọi không truyền gì thì phải chạy y như cũ. Thêm
+  tham số phải kèm kiểm "runtime không đổi" (retrieval giống từng byte mốc, test đạt).
+- Cấu hình được đọc **ở rìa** (entrypoint, factory dựng service của API), không đọc trong logic khâu.
+- Chỉ gọi là **"đóng gói xong"** khi khâu đã được dùng thật ở chỗ thứ hai (harness, notebook, dự án
+  khác) và ra cùng kết quả. Chưa có chỗ dùng thứ hai thì không dựng interface, plugin hay registry "để
+  sau này thay". Luật "chỉ thêm abstraction khi có bằng chứng" ở trên vẫn thắng.
+- Thấy khâu còn dính, như hằng số ẩn, đường dẫn cứng hay đọc settings sâu trong logic, mà không thuộc
+  việc đang làm thì ghi vào report. Không tự refactor ngoài phạm vi.
+
 ### Giữ thay đổi surgical
 
 - Mỗi thay đổi phải liên hệ được với requirement, root cause hoặc verification.

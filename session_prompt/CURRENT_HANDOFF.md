@@ -21,6 +21,10 @@ thử + đánh giá + so baseline trước khi chọn.
 **Repo `chatbot-hue` PUBLIC:** không commit nội dung/số đo/đường dẫn của dự án khác của User; trước khi
 nhắn A "xong", chạy `git diff | grep -i mekong` trên file mình sửa.
 
+**Skill mới (User 21:00):** `practical-project-coding` có mục "Ranh giới theo khâu pipeline — dùng lại
+được": B11 và harness 8.1 áp đúng luật này; khâu còn dính ngoài phạm vi ⇒ ghi vào report (G5 gom lại cho 8.2).
+A sửa skill ⇒ B review khi xong B11.
+
 **Thứ tự G0** (spec §5): B11 (G0.5) ‖ C16 (G0.1 + G0.2) chạy song song (file không chồng) → G0.3 đoạn đúng
 (giao sau khi có file chia) ‖ G0.4 câu kín (A, sub-agent mới) → G0.6 khóa baseline → đóng G0 → G1.
 

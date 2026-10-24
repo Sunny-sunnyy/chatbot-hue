@@ -151,7 +151,8 @@ pool).
 ### G5 — Tổng hợp
 
 Báo cáo xếp hạng: mỗi quyết định C11 → giữ / thay bằng X (chênh, CI, câu kiểm xác nhận) / chưa rõ; đề
-xuất phạm vi 8.2. Cập nhật `bao_cao_he_thong/` (4 chỗ) và `TONG_HOP.md`; User đóng 8.1.
+xuất phạm vi 8.2; **danh sách khâu còn dính** (hằng số ẩn, đường dẫn cứng, đọc settings sâu — skill
+`practical-project-coding` mục "Ranh giới theo khâu pipeline", User 24/10) để 8.2 tách gọn. Cập nhật `bao_cao_he_thong/` (4 chỗ) và `TONG_HOP.md`; User đóng 8.1.
 
 **Điều kiện dừng sớm:** nếu G1 cho thấy đoạn đúng nằm ngoài hợp hai nhánh @200 ở phần lớn câu lỗi → dừng
 tối ưu fusion/reranker, chuyển thẳng sang G3. Nếu G0.2 tự kiểm Run 1 vs Run 2 báo "khác" → dừng, sửa
