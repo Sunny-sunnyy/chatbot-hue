@@ -30,3 +30,6 @@ knowledge-base-hue/
 
 # Superpowers workflow scratch
 .superpowers/
+
+# Private: yêu cầu/kết quả nghiên cứu gửi ChatGPT
+gửi chatgpt/
