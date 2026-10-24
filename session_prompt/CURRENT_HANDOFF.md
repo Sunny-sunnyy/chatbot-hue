@@ -36,6 +36,14 @@ settings + tự tạo client; top-10 `fused[:10]` là hằng; `run_retrieval_eva
 **Thứ tự G0** (spec §5): B11 (G0.5) ‖ C16 (G0.1 + G0.2) chạy song song (file không chồng) → G0.3 đoạn đúng
 (giao sau khi có file chia) ‖ G0.4 câu kín (A, sub-agent mới) → G0.6 khóa baseline → đóng G0 → G1.
 
+**Tạm gác (User 21:25):** skill tự cải thiện và mọi việc rút từ khóa học AI FDE — User sẽ nhờ session ở dự án
+khác kiểm rồi gửi báo cáo đầy đủ; **không** đưa ý từ khóa học vào 8.1 hay skill cho tới khi có báo cáo đó. Ghi chú
+đọc khóa học (private) để nguyên ở `data/course_notes/`.
+**Câu kín:** User chọn thay cả 9 câu trùng Golden (21:25) → sub-agent mới đang sửa; sau đó C kiểm lại mù bằng
+sub-agent khác và tạo mẫu mới cho User (mẫu `sealed_user_sample.md` cũ hết hiệu lực).
+**B13** (phá hòa sparse native) xong → C19 review. Mốc native mới sha `1fbb5c17…`
+(`data/phase_8_1/baseline/retrieval_native_hybrid_rrf_b13.jsonl`).
+
 ## Câu hỏi còn mở cho User
 
 - H8 (trả lời phần có căn cứ hay từ chối cả câu): 8.1 chỉ **thử** (G2); quyết ở 8.2 trên số đo.
@@ -48,8 +56,8 @@ settings + tự tạo client; top-10 `fused[:10]` là hằng; `run_retrieval_eva
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối 8.1; G0.4 câu kín; review | đang làm |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B11 (G0.5 tham số) | xong 21:07 — chờ C review (report `phase_8_1_g0_5_params_implementation.md`) |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C16 B review đạt + sửa minor (21:12); C18 review B11 xong; C17 sub-agent đang chạy |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B13 → B14 | B13 xong 21:23 (chờ C review, report B12 §7); đang B14 |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C16 (G0.1 + G0.2) | C17 xong (21:17): câu kín changes_requested, chờ User duyệt mẫu; C16/C18 đạt |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -115,4 +123,15 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   **Chờ review chéo** — người xong việc G0 trước (B hoặc C): đối chiếu từng câu với `sources`, ba dòng đánh dấu,
   trùng ý với Golden 176; ghi `phase_8_1_g0_4_sealed_review.md` (không chép câu hỏi); rồi chọn ~10 câu cho
   User duyệt mẫu. Sau đó A tạo file chính thức 4 field (bỏ `partition`/`sources`) và khóa.
-- Giao G0.3 (đoạn đúng ~40 thử + ~15 kiểm) khi C16 có file chia. Review B11/C16 sau review chéo; commit.
+- G0.3 **nháp xong 21:20** (A qua 4 sub-agent): `data/phase_8_1/gold/gold_draft.jsonl` (private) — 55 câu
+  (40 dev + 15 test: 22 từ chối nhầm 7B + câu multi/comparative/conditional MRR thấp nhất, seed 20261024,
+  `selection.json`); mỗi câu `required_facts`, `evidence` (quote nguyên văn + offset start/end), `is_answerable`,
+  `ambiguity`, `note`. Validator `/tmp/a_81/validate_gold.py`: 55 câu, 0 lỗi (mỗi quote xuất hiện đúng 1 lần).
+  Kết quả: 55/55 `full`; 2 câu mơ hồ (53, 18); vài đáp án mẫu rộng hơn kho (46, 159, 140); multi_source mà
+  cùng file (154, 85); bẫy keyword gạch "–" vs "-" (27). Mẫu User duyệt: `data/phase_8_1/gold/user_review_sample.md`
+  (10 câu: 53, 18, 46, 140 + 6 ngẫu nhiên).
+  **B14 — review chéo G0.3** (sau B13): đọc `gold_draft.jsonl` + `batch_*.jsonl`; với mỗi câu kiểm đoạn trích đủ
+  và đúng cho mọi `required_facts`, không thiếu nguồn ở câu multi/comparative (grep keyword + đọc file liên
+  quan), nhãn `is_answerable`/`ambiguity` hợp lý; được dùng sub-agent; ghi
+  `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_3_gold_review.md` (không chép nội dung corpus/câu hỏi;
+  chỉ số câu + loại lỗi); đề xuất sửa theo case_index, không tự sửa file nháp.

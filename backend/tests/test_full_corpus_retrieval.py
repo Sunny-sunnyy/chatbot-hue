@@ -12,6 +12,7 @@ from backend.retrieval.full_corpus import (
     RerankerMode,
     reciprocal_rank_fusion,
     rank_positive_bm25,
+    order_by_score_then_point_id,
     compute_sparse_dot_product,
 )
 from backend.core.schema import FullCorpusChunk, RetrievedDocument
@@ -117,6 +118,22 @@ def test_rank_positive_bm25():
     assert rank_positive_bm25([("a", 0.0), ("b", 0.0)]) == []
     # Test tie-break ascending point_id
     assert rank_positive_bm25([("z", 1.0), ("a", 1.0)]) == ["a", "z"]
+
+
+def test_order_by_score_then_point_id_breaks_ties_by_point_id():
+    from qdrant_client import models
+
+    def point(point_id: str, score: float) -> models.ScoredPoint:
+        return models.ScoredPoint(id=point_id, version=0, score=score)
+
+    # Cùng tập điểm, hai thứ tự đến khác nhau (như Qdrant trả khác nhau theo limit) phải ra một thứ tự.
+    ids = ["00000000-0000-0000-0000-00000000000b", "00000000-0000-0000-0000-00000000000a",
+           "00000000-0000-0000-0000-00000000000c"]
+    first = [point(ids[0], 2.0), point(ids[1], 2.0), point(ids[2], 3.0)]
+    second = [point(ids[2], 3.0), point(ids[1], 2.0), point(ids[0], 2.0)]
+    expected = [ids[2], ids[1], ids[0]]
+    assert [str(p.id) for p in order_by_score_then_point_id(first)] == expected
+    assert [str(p.id) for p in order_by_score_then_point_id(second)] == expected
 
 
 def test_sparse_dot_product_matching_and_non_mutation():

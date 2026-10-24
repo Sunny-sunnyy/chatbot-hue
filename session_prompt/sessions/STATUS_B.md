@@ -1,8 +1,21 @@
-# STATUS B — cập nhật 2026-10-24 21:08 +0700
+# STATUS B — cập nhật 2026-10-24 21:23 +0700
 
 Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
 
-## Đang làm — B11 (G0.5 Phase 8.1): XONG 21:07, chờ C review
+## Vừa xong — B13 (A giao 21:18): phá hòa nhánh sparse native — chờ C review (report B12 §7)
+- File sắp sửa: `backend/retrieval/full_corpus.py` (nhánh sparse native), `backend/tests/test_full_corpus_retrieval.py`
+  (1 test), `backend/llm/generator_openai_full_corpus.py` (chỉ comment m2); report B12 §7.
+
+## Vừa xong — B12 (A giao 21:04): mốc native_hybrid_rrf (điều tra, không sửa, 0 USD)
+- Report: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_b12_native_baseline.md`.
+- HEAD 2 lượt giống byte (`3cf954e5…`). 6/158 lệch 7B: đã chứng minh do thứ tự hòa điểm nhánh sparse Qdrant
+  (6/6 khớp bằng hoán vị hòa điểm); 40/158 câu có hòa trong top-30, 24/158 đổi thứ tự theo `limit`.
+  Cái làm thứ tự đổi từ 14:39 → nay: giả thuyết (Qdrant tắt/bật). Đề xuất: mốc native mới + phá hòa sparse trước G1.
+
+## Vừa xong — Review C16: ready_for_user_confirmation, 3 minor (C đã sửa)
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_1_2_measure_review.md`.
+
+## Vừa xong — B11 (G0.5 Phase 8.1): C review ready_for_user_confirmation (2 minor), chờ A commit
 - Report: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_5_params_implementation.md`.
 - Sửa (chưa commit): `backend/llm/generator_openai_full_corpus.py`, `backend/retrieval/full_corpus.py`,
   `backend/ingestion/full_corpus_pipeline.py` (+97/−26). Gate: retrieval byte `cefb2d1a` PASS (evaluator HEAD,
@@ -32,7 +45,8 @@ Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opu
 - Không có (B9 trong `1832201`, B10 trong `74270ab`). Log phiên 2 của B9 ở `/tmp/phase7_cleanup/` (có thể mất).
 
 ## Tiếp theo
-- Chờ C review B11. Có thể review C16 nếu A giao.
+- B14: review đoạn đúng G0.3 (A giao 21:20).
+- Mốc native mới `1fbb5c17…` ở `data/phase_8_1/baseline/`.
 
 ## Tiền paid hôm nay (B)
 - B9 phiên 2: 0,0013334 USD (smoke 10).

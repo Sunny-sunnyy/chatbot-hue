@@ -183,6 +183,15 @@ def rank_positive_bm25(scored_items: Sequence[tuple[str, float]]) -> list[str]:
     return [pid for pid, _ in sorted_items]
 
 
+def order_by_score_then_point_id(points: Sequence[Any]) -> list[Any]:
+    """Sort Qdrant scored points descending by score, tie-break ascending by point_id.
+
+    Qdrant không cam kết thứ tự giữa các điểm bằng điểm (đổi theo `limit` và trạng thái nội bộ, B12);
+    phá hòa như `rank_positive_bm25` để nhánh sparse của `native_hybrid_rrf` tất định.
+    """
+    return sorted(points, key=lambda point: (-float(point.score), str(point.id)))
+
+
 def compute_sparse_dot_product(query_vec: SparseVector, doc_vec: SparseVector) -> float:
     """Compute dot product between a query sparse vector and document sparse vector."""
     if not query_vec.indices or not doc_vec.indices:
@@ -582,7 +591,7 @@ class FullCorpusRetrievalService:
                         ],
                         with_vectors=False,
                     )
-                    sparse_points = sparse_response.points
+                    sparse_points = order_by_score_then_point_id(sparse_response.points)
                 except Exception as exc:
                     raise RetrievalDependencyError("Qdrant sparse query failed") from exc
 

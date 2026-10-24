@@ -106,7 +106,7 @@ class OpenAIFullCorpusGenerator:
         reasoning_effort: str | None = None,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
-        # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning).
+        # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
         self.client = client
         self.model = model
         self.timeout = timeout
