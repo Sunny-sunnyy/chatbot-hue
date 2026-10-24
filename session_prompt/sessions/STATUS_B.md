@@ -1,81 +1,61 @@
-# STATUS B — cập nhật 2026-10-24 21:56 +0700
+# STATUS B — cập nhật 2026-10-24 22:47 +0700 (kết phiên)
 
-Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal phiên này: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 
-## Vừa xong — B15 G1 đo xong 21:55, chờ C review: `phase_8_1_g1_implementation.md` (0 USD)
-- File: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_plan.md` (chờ A duyệt trước khi đo);
-  mới `backend/experiments/phase_8_1/{__init__,g1_retrieval}.py`; output private `data/phase_8_1/g1/`.
+## Đang chờ (phiên sau) — KHÔNG chạy gì, kể cả GPU/paid, tới khi A duyệt
+- **Kế hoạch G2 + G4:** `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_g4_plan.md` (B16, tiêu chí ghi trước,
+  ước ≈ 0,14–0,23 USD trong trần 8.1 0,5 USD). Chờ A duyệt.
+- **Lệch spec cần A/User quyết:** spec 8.1 §5 G4 "chỉ xếp lại thứ tự top-10, không chọn đoạn ngoài tập" vs đầu vào
+  pool 100 (G4-B). Kế hoạch tách G4-A (theo spec) / G4-B (chỉ chạy nếu sửa spec).
+- Thứ tự đề xuất khi được duyệt: chạy lại mốc byte → G4.0 pilot latency GPU → G4-A (M1/M2 free, luna pilot 10 câu) →
+  G2.0/G2.1 → G2.2 → G2.3 → G2.4 pilot.
 
-## Vừa xong — B14 (review G0.3 đoạn đúng): ready_for_user_confirmation, 8 minor (21:29)
-- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_3_gold_review.md`; 3 sub-agent chỉ đọc; 0 USD.
-- Báo A: corpus mâu thuẫn `travel/places/Đèo Hải Vân.md:84` (miễn phí từ 01/08/2024) vs phí 70.000 ở file vé.
+## Thay đổi CHƯA COMMIT của B (lúc 22:47)
+- `backend/experiments/phase_8_1/g1_retrieval.py` — B16: đọc `golden_realism_final.jsonl`, thêm `--realism main`
+  (bỏ câu `unnatural`, câu `disputed_unnatural` tạm tính vào).
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md` — thêm §7 bảng phụ số chính.
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_g4_plan.md` — mới (untracked).
+- `session_prompt/sessions/STATUS_B.md` (file này), dòng B + mục "Việc của B" trong `CURRENT_HANDOFF.md`.
+- Không có code production nào chưa commit. `git diff --check` sạch.
 
-## Vừa xong — B13 (A giao 21:18): phá hòa nhánh sparse native — chờ C review (report B12 §7)
-- File sắp sửa: `backend/retrieval/full_corpus.py` (nhánh sparse native), `backend/tests/test_full_corpus_retrieval.py`
-  (1 test), `backend/llm/generator_openai_full_corpus.py` (chỉ comment m2); report B12 §7.
+## Vừa xong phiên 24/10 tối (đã commit bởi A trừ phần trên)
+- **B9** dọn sau Phase 7 — `1832201`, User đóng 20:01 (smoke 10: 0,0013334 USD).
+- **B10** 4 báo cáo khâu bản 2 — `74270ab`.
+- **B11** G0.5 tham số mặc định-như-cũ (generator/retrieval/build) — `b8dbe95`; review C16 (ready, 3 minor).
+- **B12** điều tra mốc `native_hybrid_rrf` không tái lập: chứng minh do thứ tự hòa điểm nhánh sparse Qdrant.
+- **B13** phá hòa sparse native `(-score, point_id)` — `0131afb`; mốc native mới `1fbb5c17…`.
+- **B14** review đoạn đúng G0.3 (55 câu, ready, 8 minor — A đã áp).
+- **B15** kế hoạch + harness + đo G1 — `8156395`: nghẽn ở xếp hạng (union@100 đủ fact 0,975 / top-10 0,55–0,60);
+  22 câu từ chối nhầm đều thiếu fact trong context; không biến thể fusion nào qua Holm; NFD tụt (NFC cứu), không dấu sập;
+  HNSW = exact; MiniLM vượt 512 = 0.
+- **B16** bảng phụ số chính + kế hoạch G2/G4 (chưa commit, xem trên).
 
-## Vừa xong — B12 (A giao 21:04): mốc native_hybrid_rrf (điều tra, không sửa, 0 USD)
-- Report: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_b12_native_baseline.md`.
-- HEAD 2 lượt giống byte (`3cf954e5…`). 6/158 lệch 7B: đã chứng minh do thứ tự hòa điểm nhánh sparse Qdrant
-  (6/6 khớp bằng hoán vị hòa điểm); 40/158 câu có hòa trong top-30, 24/158 đổi thứ tự theo `limit`.
-  Cái làm thứ tự đổi từ 14:39 → nay: giả thuyết (Qdrant tắt/bật). Đề xuất: mốc native mới + phá hòa sparse trước G1.
+## File private đang dùng (không commit)
+- `data/phase_8_1/g1/*.jsonl` — kết quả G1 từng câu (21 cấu hình + `pilot_*`).
+- `data/phase_8_1/gold/gold_draft.jsonl` (đoạn đúng, bản khóa G1, SHA-256 `bab707b9…`) + `batch_*`, `selection.json`.
+- `data/phase_8_1/baseline/retrieval_native_hybrid_rrf_b13.jsonl` (mốc native `1fbb5c17…`).
+- `data/phase_8_1/golden_realism_final.jsonl` (nhãn độ tự nhiên, số chính = bỏ `unnatural`).
+- Mốc runtime: `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` (`cefb2d1a…`).
+- Script/log tạm (có thể mất): `/tmp/b15/run_g1.sh`, `/tmp/b11/`, `/tmp/b13/`.
 
-## Vừa xong — Review C16: ready_for_user_confirmation, 3 minor (C đã sửa)
-- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_1_2_measure_review.md`.
-
-## Vừa xong — B11 (G0.5 Phase 8.1): C review ready_for_user_confirmation (2 minor), chờ A commit
-- Report: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_5_params_implementation.md`.
-- Sửa (chưa commit): `backend/llm/generator_openai_full_corpus.py`, `backend/retrieval/full_corpus.py`,
-  `backend/ingestion/full_corpus_pipeline.py` (+97/−26). Gate: retrieval byte `cefb2d1a` PASS (evaluator HEAD,
-  tách khỏi C16), pytest 15 file 195 passed, `/health` 200. 0 USD.
-- Quan sát: mốc `native_hybrid_rrf` 7B không tái lập (6/158 câu), code HEAD cũng vậy ⇒ không do B11; báo A trước G1.
-- Đã review skill "Ranh giới theo khâu pipeline" + `run-experiment` (report §7).
-
-## Vừa xong — B10 (A giao 19:55): A review đạt, commit+push `74270ab` (docs, free)
-- File đã sửa (chỉ 4 file này): `bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` → bản 2.
-- Theo `TEMPLATE_USER_REPORT.md`: dòng "Cập nhật lần cuối … bản 2", Tóm tắt, checklist 5 mức, lịch sử mới ở trên,
-  §5 kiểm với commit `1832201`, mã nội bộ + "Lệch" bản 1 (kèm trạng thái đã sửa ở B9 / còn) xuống Phụ lục.
-- Số đo cũ giữ nguyên; thêm một mục lịch sử 24/10 "gỡ code bản món ăn (B9)"; dòng trỏ file đã xóa ghi "đã gỡ ở B9".
-- Kiểm: mọi `file:dòng` trỏ file còn tồn tại đều trong độ dài file (script), đường dẫn thiếu chỉ là file đã gỡ có chủ đích; `git diff --check` sạch.
-- Không sửa `bao_cao_he_thong/README.md` (cột "cập nhật" của 4 dòng B là việc của A).
-
-## Vừa xong — B9 dọn sau Phase 7: commit `1832201`, User đóng 20:01 (C9 ready_for_user_confirmation)
-- Report: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (§0 tóm tắt, §4b phiên 2).
-- Phiên 2 (18:51–19:45): pytest 15 file 191 passed / 0 lỗi; retrieval giống từng byte mốc (sha `cefb2d1a`);
-  `/health` in-process 200 + 1 retrieval; golden check 176/10 exit 0; smoke 10 0 lỗi kỹ thuật (0,0013334 USD).
-- Đã xóa 5 file `data/full_corpus_metadata_v2_*.json` (B) và 2 collection Foods (User chạy `!` vì auto-mode
-  chặn B). Qdrant còn đúng `hue_full_corpus_7a2_e5_small_384` 8.459 point; `/health` chạy lại vẫn 200.
-- Quan sát: smoke case 81 lỗi citation (thiếu `[n]`), 7B không có; context giống hệt — giả thuyết dao động
-  model, A đưa vào bảng rà 8.1.
-- A trả lời: `backend/test.ipynb`, `backend/scripts/` giữ; phát hiện B8 xếp Phase 8.1.
-
-## File đang đổi, chưa commit (của B)
-- Không có (B9 trong `1832201`, B10 trong `74270ab`). Log phiên 2 của B9 ở `/tmp/phase7_cleanup/` (có thể mất).
-
-## Tiếp theo
-- Chờ C review G1 + A quyết đề xuất (§6: G4 rerank pool 100, G2.1 context 10, NFC query 8.2).
-- Mốc native mới `1fbb5c17…` ở `data/phase_8_1/baseline/`.
-
-## Tiền paid hôm nay (B)
-- B9 phiên 2: 0,0013334 USD (smoke 10).
-- ~0,087 USD: 7B 0,0820 (smoke 0,0028 + Gate 2 0,0792) + probe B5 0,0050. B1 có 1 request trả 400, ~0 USD. B9 phiên 1: 0.
-
-## Vừa xong hôm nay (đã commit bởi A)
-- B1 health audit, B2–B4/B6/B7 Phase 7B (evaluator, Run 1/2, chẩn đoán từ chối nhầm, baseline);
-  B5 probe context 10; B8 báo cáo khâu Phase 0–4 (`bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md`);
-  review A1 (đóng).
+## Tiền paid phiên (B)
+- 0,0013334 USD (B9 smoke 10). B11–B16: 0 USD (sub-agent dùng quota Claude Code).
 
 ## Đã học / bẫy gặp
-- Qdrant có thể tắt giữa phiên. Pytest vẫn chạy và lỗi môi trường trông như lỗi code: đọc dòng `E` trước khi kết luận.
-- pytest: rootdir là gốc repo, node id là `backend/tests/…`; không dựa vào `--deselect`, chỉ liệt kê file test.
-- Lệnh paid mới: chạy thử trước không có `--env-file` để thấy nó định gọi gì (đã cứu bug `select_cases([])`).
-- Chạy notebook trên bản tạm: `nbclient` với `resources={"metadata": {"path": "<repo>/notebooks"}}`.
-- Dùng `rm` thường, không `git rm`. `pkill -f` có thể kill chính shell; `kill $!` sau `uv run … &` không dừng server con. Kiểm health in-process bằng `create_app` + `httpx.ASGITransport`.
-- Auto-mode có thể chặn `rm`/`kill`/xóa Qdrant: dừng, nhờ User chạy bằng `!` trong terminal B.
-- User 2026-10-24: báo cáo trực tiếp với A; việc A giao = User giao.
+- Qdrant có thể tắt giữa phiên; pytest vẫn chạy và lỗi môi trường trông như lỗi code: đọc dòng `E` trước.
+- pytest: rootdir là gốc repo; chỉ liệt kê file test, không dựa vào `--deselect`.
+- Lệnh paid mới: chạy thử không `--env-file` trước để thấy nó định gọi gì.
+- Auto-mode chặn `curl -X DELETE` Qdrant / `rm` lớn: dừng, nhờ User chạy `!` trong terminal B.
+- **Hai session cùng sửa working tree:** khi gate cần so byte mà file của session khác đang dở (ví dụ evaluator), chạy
+  bản HEAD của file đó (`git show HEAD:… > /tmp/…`, chỉ đổi đường gốc) hoặc `git archive HEAD backend` vào `/tmp`
+  + symlink `data/`, `knowledge-base-hue/` (chỉ đọc). Gói `backend` không cài vào `.venv`, import theo vị trí file.
+- Script ngoài `backend/` cần `PYTHONPATH=.:..` (import `backend.*` lẫn `core.*`).
+- **Qdrant không cam kết thứ tự hòa điểm** (đổi theo `limit`, trạng thái); runtime `dense_bm25_rrf` tất định nhờ phá hòa
+  theo point_id; sau B13 native cũng vậy. Còn lại: hòa điểm vắt qua biên pool làm *tập* ứng viên phụ thuộc pool.
+- Validator citation: câu trả lời chứa câu từ chối chuẩn + `[n]` = lỗi — prompt "trả lời một phần" phải báo thiếu bằng câu khác.
+- Chạy `g1_retrieval run` với `--name` đã có sẽ ghi đè file JSONL.
 
-## Câu hỏi / thắc mắc cho A
-- Ai bật lại Qdrant cho phiên sau, và chạy bằng cách nào (B không thấy docker; không biết lệnh khởi động)?
-- `backend/test.ipynb` và `backend/scripts/` (convert huegov raw→md) không nằm trong C2. Giữ hay dọn?
-- Phát hiện ở B8 chưa có chủ: 3 cặp chunk chồng (blockquote trong list item), test còn mock/monkeypatch,
-  entrypoint dùng `logging.basicConfig`, nhánh CUDA Qwen-0.6B còn sót trong `embedding/full_corpus.py`. Xếp vào Phase 8 hay dọn riêng?
+## Câu hỏi cho A (phiên sau)
+- Duyệt `phase_8_1_g2_g4_plan.md`; quyết G4-B (sửa spec §5 G4 hay giữ top-10-only).
+- G2.3: chọn 1–2 chính sách validator citation thay thế để phát lại.
+- Mâu thuẫn corpus Hải Vân Quan (`travel/places/Đèo Hải Vân.md:84` vs file vé) — A đã báo User; chờ quyết sửa corpus.

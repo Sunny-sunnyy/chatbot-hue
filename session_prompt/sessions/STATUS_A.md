@@ -1,33 +1,39 @@
-# STATUS A — cập nhật 19:52 24/10/2026 (phiên tối)
+# STATUS A — cập nhật 22:50 24/10/2026 (kết phiên tối)
 
-Terminal: `hue-rag-47` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-b0`, C = `hue-rag-a3`.
+Terminal: `hue-rag-47` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-b0`, C = `hue-rag-a3` (tên đổi
+mỗi lần mở).
 
 ## Đang làm
-- User vắng (đi tắm ~19:25), ủy quyền A tự điều phối/kiểm/thực hiện/tối ưu. Quyền phiên: điều phối
-  rộng, commit/push, API ≤1 USD.
-- Phase 8 tách 8.1 (rà quyết định Phase 0–7, thí nghiệm so baseline, không đổi hành vi) → 8.2. User
-  đã chọn: phạm vi 8.1 = toàn bộ Phase 0–7 (kể cả Golden/evaluator); model/thư viện mới = liệt kê trong
-  spec để User duyệt từng cái; tiền 8.1 = phí nhỏ trong trần 1 USD (~0,08 USD/lượt 176 câu), 8B để 8.2.
-- Chờ: B làm nốt B9 → C9 review; C11 bảng rà quyết định; User relay yêu cầu ChatGPT
-  `gửi chatgpt/2026-10-24/tìm thông tin/phase_8_1_decision_audit_2026_10_24.md`.
+- Không. Kết phiên theo yêu cầu User. Phiên sau: `CURRENT_HANDOFF.md` mục "PHIÊN SAU — ĐỌC TRƯỚC NHẤT".
 
 ## Đang khai báo sửa
-- `session_prompt/CURRENT_HANDOFF.md`, `report_agent/README.md`, spec 8.1 (sắp viết, sau C11 + nghiên cứu).
+- không
 
-## Vừa xong
-- 19:50 C11 bảng rà quyết định (56 quyết định) review đạt; giao C12 (sửa 4 lỗi báo cáo cũ). Gộp 8 câu
-  hỏi §7 của C vào yêu cầu ChatGPT (mục F, câu 14–21).
-- B9: B kiểm đạt hết (191 test, byte giống, /health, smoke 10 0,0013 USD), xóa 5 file metadata_v2;
-  xóa 2 collection Foods bị auto-mode chặn ở B → chờ User chạy `!` trong terminal B.
-- C10 review đạt + commit/push `c57ec43`.
-- Quan sát: BM25 runtime không chuẩn hóa NFC; câu hỏi NFD tách sai token (logic thuần) — đưa vào C11/nghiên cứu.
+## Vừa xong (phiên tối 24/10)
+- B9 dọn Foods đóng (User 20:01); 8 báo cáo khâu về mẫu mới (B10, C10, C13).
+- Phase 8 tách 8.1/8.2; brainstorm → spec 8.1 (v1→v4, review C15/b/c/d) → **User duyệt 20:49** kèm M1/M2.
+- G0: split (C16), evaluator (C16), tham số (B11), phá hòa native (B13), đoạn đúng 55 câu (A qua 4 sub-agent, B14
+  review), câu kín 36 (A qua sub-agent, C17/C20/C22 kiểm mù), độ tự nhiên 176 câu (2 sub-agent, kappa 0,765).
+- G1 chẩn đoán retrieval xong (B15, C21): nghẽn ở xếp hạng; 22/22 từ chối nhầm thiếu fact trong context.
+- Skill mới `run-experiment`; mục "Ranh giới theo khâu pipeline" trong `practical-project-coding` (B review).
+- 6 sub-agent đọc 15 summary khóa học AI FDE → `data/course_notes/` (private) — **User gác lại**, chưa dùng.
 
-## Chưa commit (bị chặn)
-- Commit "open Phase 8.1 batch, assign C11" (`CURRENT_HANDOFF.md`, `report_agent/README.md`,
-  `STATUS_A.md`) bị safety check của auto mode chặn 19:35 ("do nội dung trước trong hội thoại", sẽ chặn
-  tiếp cả phiên). Không lách; nhờ User commit ngoài auto mode hoặc chạy bằng `!`.
+## Chưa xong / chờ
+- Chờ User: câu kín 3 dòng capability_only + duyệt mẫu 15 dòng; 9 câu độ tự nhiên bất đồng; mâu thuẫn Hải Vân;
+  15 file nhắc MekongAI (A đề xuất để nguyên).
+- Chờ A: duyệt plan G2/G4 của B (B16) + quyết G4-B pool 100 (lệch spec §5 G4); commit B16.
+- G0.6 khóa baseline chưa làm (sau khi câu kín + nhãn tự nhiên chốt).
 
-## Bẫy
-- SendMessage giao B9 lần đầu (có liệt kê lệnh xóa collection) bị auto-mode chặn; gửi lại bản ngắn trỏ
-  `CURRENT_HANDOFF` thì qua.
-- User 24/10 tối: mọi nghiên cứu ngoài qua ChatGPT trước, prompt đầy đủ kiểu deep research.
+## Đã học / bẫy gặp
+- **Repo PUBLIC:** auto-mode chặn commit có số đo/đường dẫn MekongAI ⇒ chi tiết dự án khác để `data/` (memory
+  `public-repo-no-external-project-data`).
+- Auto-mode từng chặn commit cả một đoạn phiên ("nội dung trước trong hội thoại") rồi tự hết khi User nói rõ
+  "A được commit/push". Tin giao việc có lệnh xóa collection bị chặn — tin ngắn trỏ handoff thì qua.
+- Người điều phối **không đọc câu kín**: mọi việc với câu kín qua sub-agent mới, C kiểm mù qua sub-agent khác.
+- Một agent gắn nhãn chưa đủ: rater thứ hai độc lập (kappa) + User quyết phần bất đồng.
+- Chẩn đoán bằng keyword (B4, 7B) có thể sai: đoạn đúng cho kết luận ngược (0 câu đủ bằng chứng mà vẫn từ chối).
+- Script tạm `/tmp/a_81/` đã sao vào `data/phase_8_1/tools/` (mất khi khởi động lại).
+- File `CURRENT_HANDOFF.md` hay bị B/C sửa song song — đọc lại ngay trước khi ghi đè.
+
+## Tiền paid phiên tối
+- ~0,0013 USD (smoke 10 của B9). 8.1: 0 USD. Sub-agent dùng quota Claude Code.

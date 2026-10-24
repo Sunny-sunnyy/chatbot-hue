@@ -4,6 +4,16 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-24 (22:50) — Phase 8.1 G0 gần xong, G1 chẩn đoán retrieval xong; kết phiên
+
+- G0: split 120/56 + evaluator so theo cặp (C16); tham số mặc định-như-cũ (B11); phá hòa sparse native (B13, nguyên
+  nhân chứng minh ở B12); đoạn đúng 55 câu (B14 review); câu kín 36 (kiểm mù 3 lượt, chờ User); độ tự nhiên 176 câu
+  (User: số chính bỏ 29 câu unnatural). Commit `b8dbe95`, `0131afb`, `8156395`.
+- G1: nghẽn ở xếp hạng (union@100 97,5% vs context-5 42–50%); 22/22 từ chối nhầm thiếu fact trong context; không
+  biến thể trộn nào qua luật; HNSW = exact; NFC phục hồi NFD; không dấu sập.
+- Skill `run-experiment` mới; mục "Ranh giới theo khâu pipeline". Khóa học AI FDE + skill tự cải thiện: User gác.
+- Chi tiết: `CURRENT_HANDOFF.md` "Phiên sau", report trong `report_agent/2026-10-24_phase_8_1_ra_soat/`.
+
 ## 2026-10-24 (20:49) — Đóng B9; mở Phase 8.1 (spec approved)
 
 - B9 dọn Foods: C9 review `ready_for_user_confirmation`, commit `1832201`, User đóng 20:01; Qdrant còn 1

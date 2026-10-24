@@ -169,3 +169,57 @@ duyệt mẫu 16 dòng), bộ kín đạt. Đề xuất: người sửa (sub-age
 sub-agent mới kiểm riêng dòng 36 là đủ.
 
 Tiền: **0 USD** (sub-agent dùng quota Claude Code, ~124k token).
+
+## 7. Review lần 3 sau sửa độ tự nhiên (C22, 24/10/2026 22:40–22:46)
+
+User đưa tiêu chí độ tự nhiên: loại câu chỉ đo năng lực tìm chi tiết lạ, kiểu Golden case_index 18 và 142.
+Sub-agent của A sửa lần 3. C review bằng **một sub-agent `general-purpose` mới thứ ba**: không đọc ghi chú
+lần 1–2 trước khi kết luận, hiệu chỉnh nhãn theo `data/phase_8_1/golden_realism.jsonl`. **C vẫn chưa đọc
+nội dung câu.**
+
+**C tự kiểm (không xem nội dung):**
+
+- So từng dòng với bản v2 (`/tmp/c20_sealed_v2.jsonl`, md5 `8488e61c…`): đúng **5 dòng đổi** (11, 18, 24,
+  31, 36); **31 dòng giống từng byte**.
+- Bản v3 md5 `0377e966…`; sub-agent không sửa file kín lẫn file nhãn `sealed_realism.jsonl`.
+- `check --authoring`: exit 0.
+- Phân bố: direct_fact 15 / multi_source 6 / conditional 7 / comparative 5 / out_of_scope 3. Dòng 36 đổi
+  nhãn multi_source → direct_fact.
+
+**Kết quả lần 3** (theo báo cáo sub-agent):
+
+- **5 dòng đổi: 5/5 OK**, không nhãn lỗi nào.
+  - Dòng 11: OK; độ tự nhiên sát biên, vẫn tính là `natural`.
+  - Dòng 18: OK; cùng mục nguồn với Golden case_index 126 nhưng hỏi dữ kiện khác, nên không trùng.
+  - Dòng 24: OK.
+  - Dòng 31: OK. Một file khác ghi mạnh hơn nguồn chính một chút; đáp án viết an toàn nên không gắn
+    `source_conflict` (ghi chú private).
+  - Dòng 36: OK. Hết mơ hồ; `direct_fact` đúng vì hai giá trị là ô của cùng một bảng trong một mục. Khác
+    dữ kiện với câu Golden và câu kín dùng cùng bảng.
+- **Độ tự nhiên cả 36 dòng** (nhãn của sub-agent): natural 33 / capability_only **3** / unnatural 0.
+  - capability_only: dòng **2, 21, 33** (không đổi ở lần 3). Mỗi dòng có đề xuất sửa trong ghi chú
+    private.
+  - Lệch với `sealed_realism.jsonl` của người sửa (ghi cả 36 là natural): đúng 3 dòng 2, 21, 33. 5 dòng
+    đổi khớp nhãn.
+  - Dòng 21 (người sửa lưu ý): `capability_only`. Dữ kiện và keyword đúng, cùng mẫu với Golden case_index
+    94/96. Đề xuất đổi cách hỏi, giữ loại `comparative`.
+- **Khác:**
+  - dòng 19 (không đổi) có nửa câu trùng một phần với Golden case_index 163. Trùng một phần, không chặn.
+  - 3 câu `out_of_scope` (7, 14, 20) grep lại vẫn vắng khỏi kho.
+- **Ghi minh bạch:** một lần grep thuật ngữ ngoài kho tình cờ in 3 dòng của ghi chú v2 (hàng dòng 20).
+  Lúc đó sub-agent đã kết luận xong và không đọc phần khác của ghi chú cũ.
+
+**Mẫu cho User (bản 3, ghi đè)** — `knowledge-base-hue/evaluation/phase_8_1/sealed_user_sample.md`:
+
+- cùng lượt rút seed 20261024 (2, 5, 12, 13, 17, 20, 24, 25, 28, 33);
+- thêm các dòng đổi 11, 18, 24, 31, 36 và các dòng capability_only 2, 21, 33;
+- bỏ trùng còn **15 dòng**: 2, 5, 11, 12, 13, 17, 18, 20, 21, 24, 25, 28, 31, 33, 36.
+
+Ghi chú private lần 3: `knowledge-base-hue/evaluation/phase_8_1/sealed_review_notes_private_v3.md`.
+
+**Kết luận lần 3:** 5 dòng đổi **đạt**. Còn **3 dòng `capability_only`** (2, 21, 33), lệch với file nhãn
+của người sửa. Theo tiêu chí User, các dòng này nên được đổi cách hỏi (đề xuất có sẵn) hoặc User giữ khi
+duyệt mẫu. Nếu sửa, chỉ cần một sub-agent mới kiểm riêng 3 dòng đó. File `sealed_realism.jsonl` cần cập
+nhật nhãn của 2, 21, 33 theo kết quả cuối.
+
+Tiền: **0 USD** (sub-agent dùng quota Claude Code, ~111k token).

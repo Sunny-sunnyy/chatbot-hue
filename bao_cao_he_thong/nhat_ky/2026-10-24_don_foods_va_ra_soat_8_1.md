@@ -1,6 +1,6 @@
 # Nhật ký 24/10/2026 (tối) — dọn phần món ăn cũ, mở Phase 8.1 rà quyết định
 
-**Cập nhật lần cuối: 19:58 24/10/2026.** Tiền paid phiên tối: 0,0013 USD (~33 đồng; chạy thử 10 câu
+**Cập nhật lần cuối: 22:50 24/10/2026 (kết phiên).** Tiền paid phiên tối: 0,0013 USD (~33 đồng; chạy thử 10 câu
 sau khi dọn). Cả ngày: ~0,09 USD (~2.300 đồng).
 
 ## Tóm tắt
@@ -44,3 +44,22 @@ thước đo trước, rồi đo lại từng lựa chọn với cách cũ làm 
 - `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_KHO_DU_LIEU.md`, `BAO_CAO_LUU_TRU_QDRANT.md`
 - `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (kỹ thuật)
 - `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md` (kiểm chéo dọn món ăn)
+
+## Cập nhật 22:50 — Phase 8.1 bắt đầu (chatbot không đổi)
+
+- **Bạn duyệt spec 8.1** (20:49) và hai model xếp hạng lại chạy GPU. Nguyên tắc mới: luôn thử, so với cách cũ
+  rồi mới chọn.
+- **Đã sửa thước đo:** chia 176 câu thành 120 câu thử / 56 câu kiểm; so theo cặp có khoảng tin cậy; gắn
+  "đoạn đúng" cho 55 câu khó; soạn 36 câu kín kiểu người dùng thật (không dấu, văn nói) — người điều phối không đọc.
+- **Câu hỏi phải tự nhiên** (bạn chỉ ra 3 câu không ai hỏi): hai agent chấm độc lập, 29 câu bị loại khỏi số chính,
+  9 câu chờ bạn quyết.
+- **Kết quả chẩn đoán tìm kiếm:** đoạn đúng gần như luôn có trong 100 ứng viên (97,5%), nhưng chỉ khoảng một nửa
+  lọt vào 5 đoạn đưa model ⇒ **chỗ yếu là xếp hạng**. Cả 22 câu bot từ chối nhầm đều do thiếu đoạn đúng trong 5
+  đoạn, không phải do prompt. Đổi cách trộn điểm chưa cải thiện chắc. Câu gõ không dấu tìm rất kém (giới hạn mới).
+- Sửa một lỗi nhỏ làm kết quả cách tìm thứ hai không lặp lại được (không ảnh hưởng chatbot).
+- Tạm gác: skill tự cải thiện và ý từ khóa học AI FDE (chờ báo cáo của bạn).
+
+**Bạn cần làm (phiên sau):** quyền phiên; câu kín (3 dòng + duyệt mẫu); 9 câu độ tự nhiên; thông tin đúng về phí
+đèo Hải Vân (kho đang ghi hai kiểu). Tiền phiên tối: ~0,0013 USD (~33 đồng).
+
+Đọc thêm: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md` (5 dòng đầu viết cho bạn).
