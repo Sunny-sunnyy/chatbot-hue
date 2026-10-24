@@ -23,9 +23,14 @@ Cần mô tả (mỗi mục: quy tắc là gì, file nào quy định, ví dụ 
    CHANGELOG_DRAFT_<X>, TONG_HOP, NGU_CANH_DOT, TIEU_CHI) — ai ghi, ghi đè hay chỉ thêm, khi nào.
 4. Trạng thái và ngữ cảnh: STATUS_<X>, NGU_CANH_DOT, WORK_CONTEXT, CURRENT_HANDOFF (nếu có) —
    khác nhau thế nào, cập nhật lúc nào, giữ ngắn ra sao; cách session mới nối tiếp việc dở.
-5. Báo cáo cho người dùng: report_agent/user_reports/ đặt tên, viết theo mẫu nào, ai viết, khi
-   nào; file LUONG_HOAT_DONG_HE_THONG.md cập nhật thế nào khi hệ thống đổi; các "báo cáo cho người
-   dùng" nằm trong folder test (vd. BAO_CAO_XU_LY_PDF.md) khác user_reports ra sao.
+5. Báo cáo cho người dùng ở bao_cao_he_thong/ (vừa chuyển về đây cùng tôi):
+   - LUONG_HOAT_DONG_HE_THONG.md: cấu trúc mục, dòng "Cập nhật lần cuối", khi nào và ai cập nhật,
+     giữ ngắn thế nào khi hệ thống đổi nhiều lần;
+   - BAO_CAO_<KHÂU>.md (vd. BAO_CAO_XU_LY_PDF.md, BAO_CAO_TIM_KIEM_PDF.md): chia theo khâu hay theo
+     loại file, cấu trúc một file, đánh số "bản" ra sao, viết lại hay ghi thêm khi khâu đổi, cách
+     ghi "đã thử và bỏ";
+   - nhat_ky/<YYYY-MM-DD>_<chủ_đề>.md: khác BAO_CAO_* thế nào, ai viết, cuối ngày hay cuối đợt;
+   - quy tắc văn phong (từ ngữ đời thường, tỉ giá USD, số đo kèm ý nghĩa, không mã nội bộ…).
 6. Nghiên cứu ngoài (gửi ChatGPT): đặt yêu cầu và kết quả ở đâu, theo ngày/đợt thế nào.
 7. Review chéo, đóng đợt, CHANGELOG, commit: quy trình ngắn.
 8. Mẫu (templates/): liệt kê và mục đích từng mẫu.

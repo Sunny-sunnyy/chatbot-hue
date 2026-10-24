@@ -144,7 +144,7 @@ skills/{practical-project-coding,risk-gated-agent-review,propose-options}/SKILL.
 guides/full_corpus_rag.md              guide umbrella full-corpus
 docs/superpowers/specs/, docs/superpowers/plans/   thiết kế từng Phase
 report_agent/<YYYY-MM-DD>_<chủ_đề>/   report + review từ 2026-10-24 (README trong report_agent/)
-report_agent/user_reports/             report cho User (viết lại theo Phase + tổng quan)
+bao_cao_he_thong/                      báo cáo cho User: luồng hệ thống, BAO_CAO_<khâu>, nhat_ky/
 reports/                               report cũ tới 2026-10-24 — lịch sử, chỉ đọc
 gửi chatgpt/<YYYY-MM-DD>/              yêu cầu + kết quả nghiên cứu ChatGPT (private)
 handoff_prompt/README.md               contract lịch sử (reference-only)

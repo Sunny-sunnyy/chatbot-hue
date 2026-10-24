@@ -3,16 +3,15 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- C7 (A giao sau khi User đóng 7B, commit `62c757d`): cập nhật cột "Cách làm phổ biến" + nguồn trong
-  `reports/phase_8_candidate_hypotheses_2026_10_24.md`. Sau đó C8 user report Phase 5, 6, 7/7A, 7A2.
-- Report mới vào `report_agent/<YYYY-MM-DD>_<chủ_đề>/`; `reports/` là lịch sử. ChatGPT: `gửi chatgpt/<ngày>/…`.
+- Chờ A review C7 (đã đóng) / C8.
 
 ## Đang khai báo sửa
-- `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C7, sửa tại chỗ)
-- `report_agent/user_reports/phase_05_truy_xuat.md`, `phase_06_sinh_cau_tra_loi_api.md`, `phase_07_golden.md`,
-  `phase_07a2_sua_corpus_index.md` (C8, mới); file này
+- không
 
 ## Vừa xong
+- C8 xong (chờ A review): `report_agent/user_reports/phase_05_truy_xuat.md`, `phase_06_sinh_cau_tra_loi_api.md`,
+  `phase_07_golden.md`, `phase_07a2_sua_corpus_index.md` — mỗi file có "Hôm nay còn đúng không" (file:dòng) + "Lệch phát hiện".
+- C7 A đóng, commit `a595e02`.
 - C7 xong (chờ A review): report giả thuyết Phase 8 có cột nguồn [R1]–[R11] + §8 (WebFetch 5 URL: khớp, lệch nhỏ
   bge-reranker max len 8K vs card 512; thứ tự mới: đo pool/gold → context10+partial → bảng/bigram/tách câu → chunk → rerank → paid).
 - C5 A nhận, commit `c1f4f20`: `reports/phase_7b_review_2026_10_24.md` (ready_for_user_confirmation có điều kiện; m1–m3 → B7).

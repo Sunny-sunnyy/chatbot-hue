@@ -90,7 +90,7 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 |---|---|---|---|
 | Implementation report | `report_agent/<YYYY-MM-DD>_<chủ_đề>/phase_<x>_<gate>_<chủ_đề>_implementation.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
 | Review | `report_agent/<YYYY-MM-DD>_<chủ_đề>/phase_<x>_<gate>_review.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
-| User report | `report_agent/user_reports/` | A (hoặc B/C khi được giao, A review) | đóng Phase hoặc khi User cần (`TEMPLATE_USER_REPORT.md`) |
+| Báo cáo cho User | `bao_cao_he_thong/` (gốc repo): `LUONG_HOAT_DONG_HE_THONG.md` (hệ thống đang chạy, cập nhật khi hành vi đổi), `BAO_CAO_<KHÂU>.md` (mỗi khâu một file, cập nhật khi khâu đổi), `nhat_ky/<YYYY-MM-DD>_<chủ_đề>.md` (tóm tắt đợt/ngày) | A (hoặc B/C khi được giao, A review) | đóng Phase, khâu đổi, hoặc cuối ngày làm việc (`TEMPLATE_USER_REPORT.md`) |
 | STATUS | `session_prompt/sessions/STATUS_<X>.md` | session X | xong một việc, trước khi kết phiên |
 
 Report không chép corpus, câu hỏi Golden, vector, payload hay secret.

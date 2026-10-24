@@ -9,7 +9,7 @@ xong chuyển tóm tắt sang `PROJECT_HISTORY.md`. Đợt hiện tại: `report
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | A1 xong (chờ B review); chờ file MekongAI | chờ |
 | B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B8 user report Phase 0–1, 2, 3, 4 | đang làm |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C7 nghiên cứu Phase 8 → C8 user report Phase 5, 6, 7/7A, 7A2 | đang làm |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C8 user report Phase 5, 6, 7/7A, 7A2 | chờ review — `report_agent/user_reports/phase_0{5,6,7,7a2}_*.md` |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
@@ -30,7 +30,22 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 - **Mục tiêu:** User đọc để hiểu hệ thống từng Phase làm gì và **hôm nay còn đúng không**. 27 user
   report cũ ở `reports/user_reports/` (lịch sử) lẫn nhiều bản Foods, khó đọc thành mạch.
-- **Nơi ghi:** `report_agent/user_reports/phase_<số>_<chủ_đề>.md` (ví dụ `phase_02_chia_doan.md`).
+- **Nơi ghi (User 2026-10-24, theo MekongAI):** `bao_cao_he_thong/` ở gốc repo, mỗi khâu một file
+  (tiêu đề ghi Phase tương ứng):
+
+| Phase | File trong `bao_cao_he_thong/` | Ai |
+|---|---|---|
+| 0–1 | `BAO_CAO_NEN_TANG.md` | B |
+| 2 | `BAO_CAO_CHIA_DOAN.md` | B |
+| 3 | `BAO_CAO_EMBEDDING_TU_KHOA.md` | B |
+| 4 | `BAO_CAO_LUU_TRU_QDRANT.md` | B |
+| 5 | `BAO_CAO_TIM_KIEM.md` | C |
+| 6 | `BAO_CAO_SINH_CAU_TRA_LOI_API.md` | C |
+| 7, 7A | `BAO_CAO_BO_CAU_HOI_GOLDEN.md` | C |
+| 7A2 | `BAO_CAO_KHO_DU_LIEU.md` | C |
+| 7B | `BAO_CAO_DANH_GIA.md` | A (xong) |
+| — | `LUONG_HOAT_DONG_HE_THONG.md` | A (xong) |
+
 - **Mẫu:** `session_prompt/TEMPLATE_USER_REPORT.md`, tiếng Việt thường, ngắn (~60–120 dòng), thêm mục
   bắt buộc **"Hôm nay còn đúng không"**: mỗi kết quả/quyết định chính → *còn dùng* / *đã thay bởi …
   (Phase nào)* / *đã bỏ*, kiểm bằng code + `Project_Status.md` hiện tại (dẫn file:dòng), không chép
@@ -44,8 +59,7 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 ## Việc của A
 
-1. **A1:** `report_agent/user_reports/phase_07b_danh_gia_baseline.md` và
-   `report_agent/user_reports/LUONG_HOAT_DONG_HE_THONG.md` (hệ thống đang chạy, theo kiểu MekongAI);
+1. **A1:** `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` và `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md`;
    **Xong, chờ review** — B review A1 sau khi xong B8 (đối chiếu số với report 7B + code).
 2. Khi User gửi `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`: tối ưu
    governance/report cho hue_rag (đề xuất cho User trước khi đổi lớn).
@@ -55,8 +69,7 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 ### B8 — User report Phase 0–1, 2, 3, 4 (theo "Việc chung")
 
-- File: `phase_01_nen_tang.md` (Phase 0–1), `phase_02_chia_doan.md`, `phase_03_embedding_sparse.md`,
-  `phase_04_qdrant_ingestion.md`.
+- File: theo bảng ở "Việc chung" (B tự chuyển 4 file đang viết từ `report_agent/user_reports/`).
 - Trước đó (nhỏ): `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md` §5 — đổi NOT RUN
   thành "User quyết bỏ chấm tay 2026-10-24; giới hạn: chưa có mốc người", tiêu chí 5 → PARTIAL (đóng).
 
@@ -71,8 +84,7 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 ### C8 — User report Phase 5, 6, 7/7A, 7A2 (theo "Việc chung")
 
-- File: `phase_05_truy_xuat.md`, `phase_06_sinh_cau_tra_loi_api.md`, `phase_07_golden.md` (Phase 7 +
-  7A), `phase_07a2_sua_corpus_index.md`.
+- File: theo bảng ở "Việc chung" (C tự chuyển 4 file đang viết từ `report_agent/user_reports/`).
 
 ## Đang chờ User
 

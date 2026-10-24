@@ -2,7 +2,7 @@
 
 **Cập nhật lần cuối: 24/10/2026** (sau Phase 7B). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
-thử và bỏ nằm trong user report từng Phase (`phase_*.md` cùng thư mục).
+thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục).
 
 Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 

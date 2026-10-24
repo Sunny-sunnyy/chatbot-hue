@@ -3,10 +3,11 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- B8: user report Phase 0–1, 2, 3, 4 → `report_agent/user_reports/` (có mục "Hôm nay còn đúng không").
+- B8: `bao_cao_he_thong/BAO_CAO_{NEN_TANG,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` xong (mv từ report_agent); `BAO_CAO_CHIA_DOAN.md` đang viết. Sau đó review A: LUONG_HOAT_DONG_HE_THONG.md, BAO_CAO_DANH_GIA.md.
+  Nháp do 4 sub-agent viết ở `/tmp/b8/`, B kiểm file:dòng các lệch chính trước khi chép vào repo.
 
 ## Đang khai báo sửa
-- `report_agent/user_reports/{phase_01_nen_tang,phase_02_chia_doan,phase_03_embedding_sparse,phase_04_qdrant_ingestion}.md` (mới)
+- `bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` (mới)
 
 ## Vừa xong
 - B8 bước nhỏ: report Gate 4 §5 → User bỏ chấm tay, tiêu chí 5 PARTIAL (đóng). Phase 7B User-closed (`62c757d`).

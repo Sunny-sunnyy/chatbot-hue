@@ -4,8 +4,8 @@ Từ 2026-10-24 (User): mỗi đợt việc có một folder `report_agent/<YYYY
 đợt, chủ đề ngắn không dấu cách). Report implementation/review của đợt nằm trong folder đó.
 Quy tắc chung: `session_prompt/WORKFLOW.md` §6. `reports/` là lịch sử tới 2026-10-24, không thêm file.
 
-- `user_reports/` — báo cáo cho User: mỗi Phase một file + `LUONG_HOAT_DONG_HE_THONG.md` (hệ thống
-  đang chạy). User report cũ: `reports/user_reports/` (lịch sử).
+- Báo cáo cho User nằm ở `bao_cao_he_thong/` (gốc repo): `LUONG_HOAT_DONG_HE_THONG.md`,
+  `BAO_CAO_<KHÂU>.md`, `nhat_ky/`. User report cũ: `reports/user_reports/` (lịch sử).
 - Nghiên cứu ChatGPT (private, không commit): `gửi chatgpt/<YYYY-MM-DD>/{tìm thông tin,kết quả nghiên cứu}/`.
 
 Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
