@@ -159,6 +159,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   trước khi build lại, nếu không build raise.
 - Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env python -m pytest tests/<file> -q`;
   không chạy test có paid call ngoài giới hạn (ví dụ `test_llm_generator_openai.py`).
+- Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Test ghi Qdrant/paid: `test_evaluation.py` (một phần), `test_ingestion_pipeline.py`, `test_retrieval_service.py`, `test_llm_generator_openai.py`, benchmark.
+- Generator/evaluator Foods cũ (`llm/generator_openai.py`) gửi `temperature` → `gpt-6-luna` trả 400; đường full-corpus không dùng tham số này.
 - OpenRouter 8B: không pin thì trộn provider (vector lệch, cos ~0,996); pin Nebius
   thì 10–30 s/batch và đã gặp 504; DeepInfra từng trả 429.
 - Notebook 06, 08a, 08b còn tên collection/model cũ đã xóa (gãy); notebook 04
