@@ -7,8 +7,8 @@ xong chuyển tóm tắt sang `PROJECT_HISTORY.md`. Đợt hiện tại: `report
 
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Chờ file MekongAI; chờ User (dọn, Phase 8) | chờ |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | — | rảnh |
+| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều chỉnh cách làm việc theo MekongAI | đang làm |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B9 dọn sau Phase 7 | đang làm |
 | C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | — | rảnh |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
@@ -68,11 +68,36 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 ## Việc của B
 
-### B8 — User report Phase 0–1, 2, 3, 4 (theo "Việc chung")
+### B9 — Dọn sau Phase 7 (User duyệt 2026-10-24: "không còn cần thiết, xoá mà hệ thống vẫn chạy bình thường thì xoá")
 
-- File: theo bảng ở "Việc chung" (B tự chuyển 4 file đang viết từ `report_agent/user_reports/`).
-- Trước đó (nhỏ): `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md` §5 — đổi NOT RUN
-  thành "User quyết bỏ chấm tay 2026-10-24; giới hạn: chưa có mốc người", tiêu chí 5 → PARTIAL (đóng).
+Mức rủi ro: cao (xóa code + 2 collection). Đích = `reports/phase_7_cleanup_inventory_2026_10_24.md`
+(C2) §2.1–2.5, §2.6 dòng `data/full_corpus_metadata_v2_*`, §2.7 `requirements.txt`; theo ràng buộc §3.
+
+- **Trước khi xóa — tiêu chí ghi trước + mốc so sánh (free):** lưu output hiện tại của
+  `full_corpus_eval retrieval --treatment dense_bm25_rrf` (đã có `retrieval_dense_bm25_rrf_1.jsonl`)
+  làm mốc; sau dọn chạy lại phải **giống từng byte**. Liệt kê lại Qdrant collections; khác
+  {2 Foods + 1 full-corpus} thì dừng.
+- **Làm (một lượt code, rồi Qdrant):**
+  1. Gỡ code/test/notebook/settings Foods theo C2 §2.2–2.5 (sửa `settings.yaml` + `settings_loader.py`
+     cùng lúc; xóa module Foods cùng fixture Foods trong `conftest.py`; giữ `vector_database.url/timeout`;
+     xóa `evaluation/{eval,evaluator,test,template,golden_dataset,retrieval_comparison,*_benchmark}.py`
+     + 2 CSV; `embedding/dense_benchmark.py`). Notebook: xóa 02, 05, 07, 08a, 08b, 08c; sửa markdown 03,
+     06; sửa notebook 04 (chỉ candidate có build record, sample id như `full_corpus_pipeline.py`) và Run
+     All trên bản tạm (Qdrant chỉ đọc), outputs rỗng trong repo. Xóa `requirements.txt`.
+  2. Sửa test chunker so với artifact 8.460 cũ (`test_full_corpus_chunker.py:984-996`) để so với số
+     hiện hành hoặc bỏ phần so artifact — không đổi chunker.
+  3. Kiểm (C2 §5) + so byte retrieval + API in-process `/health` 200 + 1 retrieval; smoke 10
+     `generate --golden smoke` (paid ≤0,005 USD) để chắc đường sinh còn chạy.
+  4. Đạt hết mới xóa 2 collection Foods (`hue_foods_e5_small_384`, `hue_foods_e5_small_384_dense`),
+     liệt kê trước/sau. Xóa `data/full_corpus_metadata_v2_*.json` (5 file, liệt kê trước).
+- **Không làm:** đụng `knowledge-base-hue/` (giữ Golden Foods V2/V3 và
+  `foods/evaluation/golden_full_corpus_authoring.jsonl`); sửa chunker (overlap để Phase 8); sửa
+  governance `session_prompt/` (A làm); `phase6_live_smoke.py`, `full_corpus_smoke.py` (C2 §4, giữ).
+- **Quyền:** Qdrant xóa đúng 2 tên trên; paid ≤0,005 USD; không commit. Bị permission chặn `rm`/xóa
+  Qdrant thì dừng, nhờ User chạy bằng `!` trong terminal B.
+- **Dừng:** byte so retrieval khác; test full-corpus fail; API không lên.
+- **Đầu ra:** `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (danh sách
+  xóa/sửa, lệnh kiểm + kết quả); `STATUS_B.md`; nhắn A → C review.
 
 ## Việc của C
 
@@ -91,7 +116,6 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
 - Gửi prompt `report_agent/2026-10-24_to_chuc_bao_cao/PROMPT_GUI_MEKONGAI.md` cho Claude ở MekongAI,
   lưu kết quả `MO_TA_CACH_LAM_VIEC_MEKONGAI.md` cùng folder.
-- Duyệt danh sách dọn C2 (`reports/phase_7_cleanup_inventory_2026_10_24.md`).
 - Quyết định Phase 8 khi brainstorm: trả lời phần có căn cứ hay từ chối cả câu (H8).
 - Quyết định Phase 8: có tách Golden thành nhóm phát triển / giữ kín không (C7 §8: tối ưu trên cả 176
   rồi báo trên chính bộ đó là đo lạc quan; spec 7A §8 từng chốt không chia).
