@@ -3,12 +3,13 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- B7: m1–m3 của C đã sửa; chờ A nhắn User chấm xong → parse-user-scores + compare, điền report Gate 4 §5.
+- B8: user report Phase 0–1, 2, 3, 4 → `report_agent/user_reports/` (có mục "Hôm nay còn đúng không").
 
 ## Đang khai báo sửa
-- `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md` (mới); script phân tích `/tmp/phase7b_b6/extra.py`
+- `report_agent/user_reports/{phase_01_nen_tang,phase_02_chia_doan,phase_03_embedding_sparse,phase_04_qdrant_ingestion}.md` (mới)
 
 ## Vừa xong
+- B8 bước nhỏ: report Gate 4 §5 → User bỏ chấm tay, tiêu chí 5 PARTIAL (đóng). Phase 7B User-closed (`62c757d`).
 - B6 C review `ready_for_user_confirmation`, A commit `c1f4f20`; B7 sửa m1–m3.
 - B6 (Gate 4) xong, chờ review chéo: baseline Claude Run 1 A/C/R 4,426/4,284/4,455; nhiễu cả
   đường ≤0,011, 0 case lệch ≥2; 121 case 5/5/5, 22 case 1/1/1 = đúng 22 từ chối nhầm.

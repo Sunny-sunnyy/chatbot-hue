@@ -3,12 +3,18 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Rảnh. Kế tiếp C6: kiểm lại phần User của report Gate 4 khi User chấm xong và B điền (A sẽ nhắn).
+- C7 (A giao sau khi User đóng 7B, commit `62c757d`): cập nhật cột "Cách làm phổ biến" + nguồn trong
+  `reports/phase_8_candidate_hypotheses_2026_10_24.md`. Sau đó C8 user report Phase 5, 6, 7/7A, 7A2.
+- Report mới vào `report_agent/<YYYY-MM-DD>_<chủ_đề>/`; `reports/` là lịch sử. ChatGPT: `gửi chatgpt/<ngày>/…`.
 
 ## Đang khai báo sửa
-- không
+- `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C7, sửa tại chỗ)
+- `report_agent/user_reports/phase_05_truy_xuat.md`, `phase_06_sinh_cau_tra_loi_api.md`, `phase_07_golden.md`,
+  `phase_07a2_sua_corpus_index.md` (C8, mới); file này
 
 ## Vừa xong
+- C7 xong (chờ A review): report giả thuyết Phase 8 có cột nguồn [R1]–[R11] + §8 (WebFetch 5 URL: khớp, lệch nhỏ
+  bge-reranker max len 8K vs card 512; thứ tự mới: đo pool/gold → context10+partial → bảng/bigram/tách câu → chunk → rerank → paid).
 - C5 A nhận, commit `c1f4f20`: `reports/phase_7b_review_2026_10_24.md` (ready_for_user_confirmation có điều kiện; m1–m3 → B7).
 - C3 A đóng, commit `1994ea5`.
 - C3: 3 file điểm Claude (`claude_run1`, `claude_run1_rerun30`, `claude_run2` trong `data/evaluation/phase_7b/`),

@@ -9,8 +9,8 @@ Report chỉ ghi số tổng hợp. Không chép câu hỏi, đáp án, câu tr�
 ## 1. Phạm vi
 
 Việc B6 trong `session_prompt/CURRENT_HANDOFF.md`: tổng hợp baseline từ dữ liệu Gate 1–3.
-Không đặt ngưỡng đạt/không đạt, không kết luận cho Phase 8. Phần so với điểm User để
-`NOT RUN` vì User chưa chấm. Không gọi paid; không đổi code.
+Không đặt ngưỡng đạt/không đạt, không kết luận cho Phase 8. Phần so với điểm User không
+chạy: User quyết bỏ chấm tay (2026-10-24). Không gọi paid; không đổi code.
 
 **Hệ thống được đo** (runtime API hiện hành, `Project_Status.md` §4):
 
@@ -148,8 +148,10 @@ Thêm về nhiễu cả đường:
 Claude–luna: luna chấm cao hơn Claude một chút ở Accuracy và Completeness (+0,06 / +0,08).
 Lệch ≥2 điểm chỉ có ở 1 case (0,6%).
 
-**Khớp với User (User–Claude, User–luna, Claude–luna trên `user_20`): NOT RUN — chờ User
-chấm.** Khi User chấm xong `user_scoring.md`, chạy từ `backend/`:
+**Khớp với User (User–Claude, User–luna, Claude–luna trên `user_20`): không chạy — User quyết
+bỏ chấm tay (2026-10-24).** Giới hạn: baseline **chưa có mốc người**. Độ tin của điểm Claude
+chỉ dựa trên việc Claude tự ổn định khi chấm lại và khớp với một judge LLM khác họ (luna).
+Nếu sau này có điểm người trong `user_scoring.md`, có thể chạy từ `backend/`:
 
 ```bash
 E="uv run python -m evaluation.full_corpus_eval"
@@ -160,9 +162,9 @@ $E compare --a user_scores.jsonl --b run1_judge_luna.jsonl --cases $U
 $E compare --a claude_run1.jsonl --b run1_judge_luna.jsonl --cases $U
 ```
 
-Theo spec §4.4: nếu Claude lệch User có hệ thống (chênh trung bình ≥1 điểm ở một metric)
-thì A báo User trước khi coi điểm Claude là chính thức. Hiện điểm Claude là chính thức
-**có điều kiện**, chờ bước này.
+Spec §4.4 có điều kiện: nếu Claude lệch User có hệ thống (chênh trung bình ≥1 điểm ở một
+metric) thì A báo User trước khi coi điểm Claude là chính thức. Vì User bỏ bước chấm tay,
+điểm Claude Run 1 là điểm chính thức của baseline, kèm giới hạn trên.
 
 ### 5.1 So retrieval phụ (Gate 1, quan sát)
 
@@ -195,9 +197,8 @@ trừ giảm giá cache, nên đây là cận trên.
 - **Golden do LLM viết** (7A). Reference answer và keyword có thể thiên về cách diễn đạt của
   corpus.
 - **Keyword là proxy** cho retrieval (substring), không phải nhãn liên quan đầy đủ.
-- **Judge là LLM.** Claude và luna khớp nhau cao, nhưng cả hai cùng là LLM. Mốc người (User
-  20 case) chưa có; xem mục 5.
-- **Mẫu User nhỏ** (20 case) và đều là câu trả lời Run 1.
+- **Judge là LLM.** Claude và luna khớp nhau cao, nhưng cả hai cùng là LLM. Không có mốc người:
+  User quyết bỏ chấm tay (2026-10-24); xem mục 5.
 - **Hiệu ứng trần:** 121/176 case đạt 5/5/5; khi đã trả lời thì điểm trung bình khoảng 4,9.
   Thang 1–5 ít chỗ để thấy cải thiện chất lượng câu trả lời. Điểm tổng bị chi phối bởi số câu
   từ chối nhầm (mỗi câu là 1/1/1). Phase 8 nên đọc cùng tỉ lệ từ chối nhầm và Completeness theo
@@ -210,5 +211,6 @@ trừ giảm giá cache, nên đây là cận trên.
 - Chạy lại toàn bộ số ở mục 4–5 bằng các lệnh ở mục 3 (free, vài giây); `extra.py` là
   script chỉ đọc ở `/tmp/phase7b_b6/`.
 - Tiêu chí spec §7: 1–4 và 6–7 có bằng chứng trong report này và các report Gate 1–3. Tiêu
-  chí 5 (User chấm xong, mức khớp với User) là **NOT RUN**.
+  chí 5 (User chấm, mức khớp với User) là **PARTIAL (đóng)**: User quyết bỏ chấm tay
+  2026-10-24. Đã có nhiễu judge và nhiễu cả đường; chưa có mốc người.
 - Không commit (B không có quyền).

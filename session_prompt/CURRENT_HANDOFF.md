@@ -49,7 +49,7 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
    **Xong, chờ review** — B review A1 sau khi xong B8 (đối chiếu số với report 7B + code).
 2. Khi User gửi `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`: tối ưu
    governance/report cho hue_rag (đề xuất cho User trước khi đổi lớn).
-3. Review B8, C7, C8. Sau đó: trình User danh sách dọn C2; brainstorm Phase 8.
+3. Review B8, C8 (C7 A đóng 2026-10-24: thứ tự ưu tiên mới §8.4, 5 URL WebFetch). Sau đó: trình User danh sách dọn C2; brainstorm Phase 8.
 
 ## Việc của B
 
@@ -80,3 +80,5 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
   lưu kết quả `MO_TA_CACH_LAM_VIEC_MEKONGAI.md` cùng folder.
 - Duyệt danh sách dọn C2 (`reports/phase_7_cleanup_inventory_2026_10_24.md`).
 - Quyết định Phase 8 khi brainstorm: trả lời phần có căn cứ hay từ chối cả câu (H8).
+- Quyết định Phase 8: có tách Golden thành nhóm phát triển / giữ kín không (C7 §8: tối ưu trên cả 176
+  rồi báo trên chính bộ đó là đo lạc quan; spec 7A §8 từng chốt không chia).
