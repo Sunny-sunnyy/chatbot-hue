@@ -110,3 +110,19 @@ Kiểm bằng đọc file và tính lại từ dữ liệu private. Không gọi
 
 `changes_requested`: sửa M1 và các minor theo tiêu chí đóng ở trên. Đây đều là sửa câu chữ, không
 cần chạy lại gì. B kiểm lại diff khi A báo sửa xong.
+
+## 7. Kiểm lại correction (commit `a29f6a5`)
+
+B đọc diff `git show a29f6a5 -- bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md bao_cao_he_thong/BAO_CAO_DANH_GIA.md`.
+
+| Finding | Kết quả |
+|---|---|
+| M1 | Đóng. Ý về chunk vụn đã tách làm hai: "mỗi khối Markdown là một đoạn, không gộp" và "giới hạn 256 làm 6 bảng bị tách" |
+| m1 | Đóng. Ghi là quan sát ở 7B, giả thuyết H8 |
+| m2 | Đóng. "65–90% tùy tiêu chí" |
+| m3 | Đóng. ~950 / ~80 token |
+| m4 | Đóng. Cột đổi thành "Phân loại (theo keyword đáp án…)", có ghi "dấu hiệu, chưa chứng minh nguyên nhân" |
+| m5 | Đóng. "có thêm keyword liên quan ở hạng 6–10" |
+| m6 | Đóng. Thêm dòng retrieval (MRR 0,72 · nDCG 0,75 · Coverage 92,4%; câu so sánh 0,53, nhiều nguồn 0,54, khớp Gate 4 §4.1). §6 có tên lệnh/hàm và `settings.yaml:110-113` (dòng này đúng) |
+
+Không có thay đổi ngoài phạm vi trong hai file. **Decision sau correction: `ready_for_user_confirmation`.**
