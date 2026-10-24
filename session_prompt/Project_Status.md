@@ -1,18 +1,53 @@
 # Project Status
 
-Last updated: `2026-10-23 +07`
+Last updated: `2026-10-24 +07`
 
 ## Project overview
 
 `hue_rag` xây dựng hệ thống RAG về văn hóa và du lịch Huế. Baseline đã có là
-Hue Foods RAG MVP. Curation/taxonomy toàn corpus đã hoàn tất; dự án đang triển
-khai Full-corpus Phase 6 trên Metadata v2. Hybrid Recommender và Agentic RAG là
-roadmap, chưa có implementation scope.
+Hue Foods RAG MVP. Curation/taxonomy toàn corpus đã hoàn tất. Full-corpus Phase
+2–6 và Phase 7A (Golden) đã User-closed; dự án đang làm **Phase 7A2 — Sửa corpus
++ tạo lại index** (Gate 1 User-closed 2026-10-24; Gate 2 đang implement; Gate 3
+chưa mở). Hybrid Recommender
+và Agentic RAG là roadmap, chưa có implementation scope.
 
 Project ưu tiên code/data flow dễ hiểu, complexity tương xứng nhu cầu và bằng
 chứng từ dữ liệu, database, model cùng API thật.
 
 ## Current active handoff snapshot
+
+**Phase 7A2 — Sửa corpus + tạo lại index (cập nhật 2026-10-24, phiên Reviewer
+Claude):** brainstorming xong; Written Spec
+`docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md`
+và Implementation Plan + Review Contract
+`docs/superpowers/plans/2026-10-23-phase-7a2-corpus-correction-reindex-implementation-plan.md`
+được User duyệt cùng ngày. Ba gate tuần tự, mỗi gate cần User closure:
+
+- **Gate 1 — sửa corpus:** User xác nhận đóng 2026-10-24 (m1 đồng bộ dòng
+  authoring giao Implementer làm cơ học). 25 mục (21 nhóm A + 4 nhóm B) trong 27
+  file; backup private `knowledge-base-hue/meta/backup_7a2_2026_10_23/`; Golden
+  chỉ sửa `reference_answer` dòng 139 (K44). Reviewer review độc lập
+  `reports/phase_7a2_gate_1_review_2026_10_23.md`: `ready_for_user_confirmation`,
+  một minor m1 (đồng bộ dòng authoring). Fresh: Golden `check` 176/10 exit 0;
+  chunker 205 file, **8.459 chunk** (trước 8.460), 0 error.
+- **Gate 2 — build 2 index + cutover runtime:** handoff `implementation` (plan
+  Task 4–8) giao Implementer 2026-10-24. `e5-small-384` local và
+  `qwen/qwen3-embedding-8b` qua OpenRouter (survey thật
+  `reports/phase_7a2_openrouter_embedding_survey_2026_10_23.md`: 4096 chiều, đã
+  normalize, batch 64/128 OK, ~92 token/chunk, một query ~10 s).
+- **Gate 3 — xóa 13 collection cũ + build record cũ:** chưa mở.
+
+Hệ quả hiện tại: corpus đã sửa nên mọi collection full-corpus cũ (4 legacy + 4
+metadata-v2) đều **stale**; runtime full-corpus (API Phase 6) sẽ từ chối khởi
+động vì freshness cho tới khi Gate 2 build index mới. API (`backend/api/app.py`)
+chỉ phục vụ full-corpus; collection Foods `hue_foods_e5_small_384` (còn "An
+Đông" ở 5 quán AEON, K11) không đứng sau API nào, chỉ còn được settings/tests/
+benchmark Foods cũ tham chiếu. Dữ liệu foods đã sửa được embed lại trong hai
+index 7a2. **User 2026-10-24:** giữ hai collection Foods qua Phase 7; sau Phase 7
+Reviewer đề xuất xóa mọi collection không còn dùng. Reviewer được commit/push
+(User 2026-10-24); Implementer Git `none`. Rủi ro Gate 2 trong `CURRENT_HANDOFF.md`.
+
+Lịch sử các phase đã đóng (giữ để tra cứu; trạng thái hiện hành ở trên):
 
 User đã xác nhận closure **Full-corpus Phase 2** ngày 2026-09-12 sau ba
 correction và independent static review. Toàn bộ W1-R1..R5, W1-C1-R1..R3 và
@@ -79,9 +114,7 @@ deviations. Sau bốn correction batches, independent Correction 4 review đạt
 `VERIFIED` đủ 33.840 points, exact production health PASS và không còn open
 non-paid finding. User đã cấp authority ngày 2026-10-01 cho đúng một bounded
 replacement invocation tối đa 5 attempted calls, nhưng yêu cầu hoãn execution
-đến phiên tiếp theo. `CURRENT_HANDOFF.md` hiện là paid execution handoff cho
-Implementer với approval fingerprint; authority chưa tiêu thụ. Cleanup/delete,
-evaluation và quyền Git vẫn chưa được cấp.
+đến phiên tiếp theo (authority này sau đó bị thay bởi `gpt-6-luna`, xem dưới).
 
 **Cập nhật 2026-10-23:** sau ba tuần tạm dừng, User quyết định đổi toàn bộ model
 OpenAI (Phase 6 generation, Foods answer, evaluation answer/judge) sang
@@ -89,8 +122,7 @@ OpenAI (Phase 6 generation, Foods answer, evaluation answer/judge) sang
 song `mekongai-template`. Paid authority `gpt-5.4-nano` ngày 2026-10-01 chưa bị
 tiêu thụ (0 calls) và đã bị thay. Cả Reviewer và Implementer hiện là Claude Opus
 5.5; quy trình giữ nguyên. Delta tại
-`docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`; task hiện
-hành trong `CURRENT_HANDOFF.md`.
+`docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`.
 
 User xác nhận closure Phase 6 ngày 2026-10-23 (Option A, PASS WITH
 LIMITATIONS): live run 5 calls `gpt-6-luna`, 4 PASS / 1 FAIL. `conditional_evidence`
@@ -102,7 +134,9 @@ brainstorming với User ngày 2026-10-23 (tham khảo `rag_old_0` + phiên âm 
 `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` và plan
 `docs/superpowers/plans/2026-10-23-phase-7a-golden-full-corpus-implementation-plan.md`
 được User duyệt; chúng supersede các bullet Golden thời Codex bên dưới (category,
-quota, review, thứ tự P7, shuffle, keyword rule, Foods V3 copy).
+quota, review, thứ tự P7, shuffle, keyword rule, Foods V3 copy). Phase 7A đã
+User-closed 2026-10-23: Golden 176 case + smoke 10, private tại
+`knowledge-base-hue/evaluation/` (review `reports/phase_7a_golden_review_2026_10_23.md`).
 
 ## System and data map
 
@@ -139,7 +173,13 @@ Production baseline hiện dùng:
 - grounded generation bằng `gpt-6-luna` (đổi 2026-10-23; trước là `gpt-5.4-nano`);
 - answer-only JSON API và startup warm-up.
 
-Active collection còn legacy sparse vector state từ các phase trước nhưng là
+Full-corpus runtime (API Phase 6): candidate `e5-small-384`, collection
+`hue_full_corpus_a_e5_small_384_metadata_v2`, profile `dense_bm25_rrf`, reranker
+`none`, generation `gpt-6-luna`. Từ Gate 1 Phase 7A2 (2026-10-23) corpus đã sửa
+nên collection này stale; Gate 2 sẽ cutover sang
+`hue_full_corpus_7a2_e5_small_384`.
+
+Foods active collection còn legacy sparse vector state từ các phase trước nhưng là
 read-only trong implementation/review thông thường. Dense-only candidate
 `hue_foods_e5_small_384_dense` tồn tại làm blue-green evidence; production chưa
 cutover.
@@ -211,11 +251,11 @@ Metadata v2 design package đã được User duyệt ngày 2026-09-29. Gate 1 v
 payload/vector equality, lineage và legacy immutability. Gate 3 / Task 6 qua một
 correction, independent review và được User xác nhận closure ngày 2026-09-30.
 Task 7 final review cũng được User xác nhận closure cùng ngày; toàn workstream
-Metadata v2 Tasks 1–7 đã đóng. Exact Phase 6 paid execution handoff ngày
-2026-10-01 hiện là authority duy nhất. Correction 4 đã independent review đạt;
+Metadata v2 Tasks 1–7 đã đóng. Phase 6 paid execution handoff ngày
+2026-10-01 (lịch sử): Correction 4 đã independent review đạt;
 User đã cấp quyền riêng cho đúng một replacement five-call invocation và hoãn
-thực thi sang phiên tiếp theo. Mọi hash/preflight phải khớp; không retry, không
-rerun và không call thứ sáu.
+thực thi sang phiên tiếp theo; authority đó đã bị thay bởi `gpt-6-luna` và Phase 6
+đã User-closed ngày 2026-10-23.
 User tiếp tục chốt workflow tuần tự: sau mỗi phase phải review/User closure và
 cập nhật detailed phase guide; trước phase kế tiếp Reviewer phải dùng evidence
 dependency để hoàn tất guide + phase spec + plan + Review Contract và xin User
@@ -241,8 +281,10 @@ chỉ ở CURRENT_HANDOFF.md; không chạy lại migration/correction đã comp
 | 5 | `approved` | User-closed 2026-09-14 sau Correction 3 final review |
 | 6 | `approved` | User-closed 2026-10-23, PASS WITH LIMITATIONS trên `gpt-6-luna` (4/5 live calls); limitation: retrieval miss bảng giá (F2), synthesis chưa chứng minh (F1) |
 | 7 | `approved` | Retrieval/answer evaluation baseline |
-| 7A | `approved` | User-closed 2026-10-23: Golden 176 case + smoke 10 (private), review `reports/phase_7a_golden_review_2026_10_23.md`. Kế tiếp: phase sửa corpus (21 mục) + tạo lại index, cần design riêng |
-| 8 | `not_ready` | Gate 0, Gate 1 và Notebooks 08a/08b/08c approved; remote-Qwen research queued riêng sau Phase 4 closure |
+| 7A | `approved` | User-closed 2026-10-23: Golden 176 case + smoke 10 (private), review `reports/phase_7a_golden_review_2026_10_23.md` |
+| 7A2 | `in_progress` | Sửa corpus + tạo lại index. Spec/plan approved 2026-10-23. Gate 1 (sửa corpus) User-closed 2026-10-24; Gate 2 (build e5-small + qwen3-8b, cutover) đang implement; Gate 3 (xóa 13 collection) chưa mở |
+| 7B | `not_ready` | Evaluator full-corpus; chờ Phase 7A2 đóng |
+| 8 | `not_ready` | Foods Notebooks 08a/08b/08c approved (lịch sử). Candidate full-corpus đã đổi thành e5-small + qwen3-embedding-8b (Phase 7A2) nên spec/plan Phase 8 phải thiết kế lại; remote-Qwen research và Qwen3-Reranker vẫn deferred |
 | 9 | `not_ready` | Agentic RAG roadmap chưa có approved scope |
 
 Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả trạng thái
@@ -293,7 +335,18 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   shuffle với fixed seed `42`; không ID/manifest/checksum. Sau khi canonical
   merge/xáo được kiểm, phải chạy full cả sáu metrics trên mọi case; smoke không
   thay full evaluation và planning target 150–200 không là quota.
-- Full-corpus benchmark dùng isolated Qdrant collection theo dense embedding
+- **Phase 7A2 (User 2026-10-23) supersede matrix 4 candidate bên dưới:** dense
+  full-corpus chỉ còn `e5-small-384` (local) và `qwen/qwen3-embedding-8b`
+  (OpenRouter, 4096 chiều, batch 64, không pin provider, mọi request gửi
+  `provider.data_collection: "deny"`, không retry/fallback/resume). Bỏ e5-base,
+  huydang, qwen-0.6B. Build thẳng schema metadata v2 vào
+  `hue_full_corpus_7a2_e5_small_384` và `hue_full_corpus_7a2_qwen3_8b_4096`;
+  build record là nguồn sự thật duy nhất, bỏ hằng số cứng corpus identity/chunk
+  count/sparse SHA/vocab và preflight Phase 4. Chunker giữ nguyên, kể cả
+  `full_corpus.embedding_models` (tokenizer e5-small/e5-base/huydang quyết định
+  ranh giới chunk). Runtime mặc định e5-small; cutover sang 8B chờ bằng chứng
+  7B/8. Chi tiết trong spec/plan 7A2.
+- (Lịch sử, bị Phase 7A2 supersede) Full-corpus benchmark dùng isolated Qdrant collection theo dense embedding
   candidate: base matrix có ba baseline collections và có thể lên sáu khi giữ
   representation A/B cho cả ba model; sáu không phải hard cap experiment. Đây là
   lựa chọn cách ly benchmark/schema/lifecycle của User,
@@ -341,24 +394,32 @@ Git và canonical artifacts giữ lifecycle history; file này chỉ mô tả tr
   mọi tài liệu được dẫn”.
 - Nhiệm vụ và next action duy nhất nằm trong `session_prompt/CURRENT_HANDOFF.md`.
 - Full-corpus thực hiện tuần tự:
-  `Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7A Golden → Phase 7B Evaluator → Phase 8 Benchmark → integrated closure`.
+  `Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7A Golden → Phase 7A2 Sửa corpus + reindex → Phase 7B Evaluator → Phase 8 Benchmark → integrated closure`.
   Mỗi phase phải có guide + spec + plan + Review Contract và User duyệt trước
   implementation; phase trước phải independent review và User closure trước.
 - Correction 2 đã loại khỏi acceptance việc chạy toàn bộ `backend/tests` và
   `test_ingestion_pipeline.py`, vì các suite đó gọi real embedder/Qdrant và mâu
   thuẫn hard boundary offline của Phase 2. Chỉ chạy exact offline checks ghi trong
   Correction 2; không dùng full-suite failure làm Phase 2 evidence.
-- Phase 6 implementation hiện được mở đúng phạm vi revised plan và handoff ngày
-  2026-10-01. Metadata v2 Tasks 1–7 đã User-closed; đúng năm GPT attempts chỉ
-  được chạy sau complete non-paid gate. P7, finalist build, replacement/cleanup,
-  Git và Agentic RAG vẫn cần exact approval riêng.
+- Phase 6 đã User-closed 2026-10-23 (4/5 live calls `gpt-6-luna`). Replacement/
+  cleanup collection chỉ theo Phase 7A2 Gate 3 đã duyệt; Git và Agentic RAG vẫn
+  cần exact approval riêng.
+- Corpus `knowledge-base-hue/` không có Git (`.gitignore`). Mọi đợt sửa corpus
+  phải backup file gốc vào `knowledge-base-hue/meta/` (thư mục bị discovery loại
+  trừ) và review bằng diff với backup.
+- User ưu tiên lựa chọn mặc định, đơn giản (ví dụ không pin provider
+  OpenRouter); Reviewer không thêm cấu hình/cơ chế khi User chưa cần.
 
 ## Safety and authorization boundaries
 
 - Active `hue_foods_e5_small_384` chỉ read-only nếu không có exact user approval.
 - Bốn canonical Full-corpus Phase 4 collections và bốn metadata-v2 targets là
-  immutable/read-only. Gate 3 đã User-closed; hiện không có authority cho
-  create/upsert, replace/delete/cleanup hoặc retrieval smoke mới.
+  immutable/read-only (và stale từ Gate 1 Phase 7A2). Chỉ được xóa ở Phase 7A2
+  Gate 3, đúng 13 tên trong spec §6.1, sau khi User đóng Gate 2. Handoff Gate 2
+  chỉ cấp tạo hai collection `hue_full_corpus_7a2_*` (và xóa bản build dở của
+  chính lần build lỗi); không có authority delete collection khác.
+- Data egress: User cho phép gửi chunk corpus và query tới OpenRouter cho
+  `qwen/qwen3-embedding-8b` trong Phase 7A2 Gate 2 (spec §2, §5.6).
 - `knowledge-base-hue/`, Qdrant storage, fixed smoke questions và detailed trace
   là local/private; tracked artifacts không được chứa corpus/query/payload dump.
 - Không expose secret hoặc đọc raw `.env` content.
@@ -441,7 +502,26 @@ reports/full_corpus_phase_5_retrieval_reranking_codex_review_2026_09_13.md
 reports/user_reports/full_corpus_phase_5_retrieval_reranking_user_report_2026_09_14.md
 ```
 
-Active Full-corpus Phase 6 implementation package:
+Active Phase 7A2 package (sửa corpus + tạo lại index):
+
+```text
+docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md
+docs/superpowers/plans/2026-10-23-phase-7a2-corpus-correction-reindex-implementation-plan.md
+reports/phase_7a2_openrouter_embedding_survey_2026_10_23.md
+reports/phase_7a2_gate_1_corpus_correction_implementation_2026_10_23.md
+reports/phase_7a2_gate_1_review_2026_10_23.md
+gửi chatgpt/kết quả nghiên cứu/TONG_HOP_REVIEWER_2026_10_23.md  # private input, untracked
+```
+
+Completed Phase 7A Golden package:
+
+```text
+docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md
+docs/superpowers/plans/2026-10-23-phase-7a-golden-full-corpus-implementation-plan.md
+reports/phase_7a_golden_review_2026_10_23.md
+```
+
+Completed Full-corpus Phase 6 package (User-closed 2026-10-23):
 
 ```text
 guides/phase_6_generation_api.md
@@ -528,8 +608,11 @@ docs/superpowers/plans/2026-08-29-restore-core-coding-behaviors-implementation-p
 
 ## Workstream và roadmap
 
-**Dữ liệu:** curation `knowledge-base-hue` đã hoàn tất và được review. Đang
-thiết kế chunking trước; user đã cung cấp ba paths reference Golden/evaluation,
+**Dữ liệu:** curation `knowledge-base-hue` đã hoàn tất và được review; Phase 7A2
+Gate 1 (2026-10-23) đã sửa 25 mục mâu thuẫn có căn cứ (danh sách trong file tổng
+hợp private). Các mâu thuẫn còn lại ngoài phạm vi ghi trong
+`reports/phase_7a2_gate_1_review_2026_10_23.md` §2 và 28 mục nhóm C chưa đủ căn
+cứ. (Lịch sử:) user đã cung cấp ba paths reference Golden/evaluation,
 đã review bản đầu với findings R1–R3 theo
 `reports/full_corpus_golden_evaluation_reference_codex_review_2026_09_09.md`.
 Correction lượt 2 đã đóng R1–R3. Khi đối chiếu câu hỏi user với canonical Foods
