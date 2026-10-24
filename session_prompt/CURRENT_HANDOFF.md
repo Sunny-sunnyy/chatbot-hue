@@ -9,7 +9,7 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
 | B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B2 Phase 7B Gate 1 | chờ review A |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 Claude judge 7B Gate 3 | đang làm |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 Claude judge 7B Gate 3 | chờ review — `reports/phase_7b_gate_3_claude_judge_implementation_2026_10_24.md` |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
 session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKFLOW.md` §7).
@@ -64,6 +64,8 @@ nhiễu. Tiền 7B tới đây ~0,082 USD.
 
 ### B5 — Thăm dò H4 (context 5 → 10 chunk), **exploratory, không phải quyết định Phase 8** (paid ≤0,01 USD)
 
+**Trạng thái (B):** xong, chờ review A — `reports/phase_8_probe_context_top10_2026_10_24.md` (0,00495 USD; 10/22 hết từ chối, chưa chấm).
+
 - **Vì sao:** B4 cho thấy 12/22 từ chối nhầm có bằng chứng ở hạng 6–10. Cần số liệu thật cho
   brainstorm Phase 8 (User cho phép thử nghiệm, 2026-10-24).
 - **Tiêu chí ghi trước:** (1) free, 158 case: tỉ lệ keyword mang đáp án có trong context top-5 so với
@@ -93,7 +95,14 @@ B2 chép metric; sửa `settings.yaml` + `settings_loader` cùng lúc; giữ
 `knowledge-base-hue/foods/evaluation/golden_full_corpus_authoring.jsonl`). A trình User trước khi
 xóa (sau khi 7B đóng).
 
-### C3 — chờ 7B Gate 3 (Claude judge, spec 7B §4.3)
+### C3 — Claude judge 7B Gate 3 — A đóng 2026-10-24
+
+`reports/phase_7b_gate_3_claude_judge_implementation_2026_10_24.md`: 39 sub-agent, 0 lỗi, không paid.
+A kiểm: `score_errors` rỗng cả 3 file; đọc ngẫu nhiên 6 feedback — bám đáp án tham chiếu, không thấy
+kiến thức ngoài. Số tổng hợp (A chạy `compare`): Claude chấm lại 30 lệch ≤1 ở 100%; Run 1 vs Run 2
+chênh TB ≤0,011 mọi metric; Claude vs luna trùng 89–96%, lệch ≤1 ở ≥99,4%.
+
+### C4 — chờ (A giao review B5 hoặc Gate 4)
 
 ## Đang chờ User
 
