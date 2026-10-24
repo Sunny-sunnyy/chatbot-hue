@@ -3,6 +3,9 @@
 Terminal: `hue-rag-47` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-b0`, C = `hue-rag-a3` (tên đổi
 mỗi lần mở).
 
+## Commit cuối phiên
+- `6c168e6` (docs kết phiên) trên `main`, đã push. Chưa commit (cố ý, chờ review): B16 — `backend/experiments/phase_8_1/g1_retrieval.py`, `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md`.
+
 ## Đang làm
 - Không. Kết phiên theo yêu cầu User. Phiên sau: `CURRENT_HANDOFF.md` mục "PHIÊN SAU — ĐỌC TRƯỚC NHẤT".
 
