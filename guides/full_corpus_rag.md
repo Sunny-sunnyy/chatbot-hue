@@ -1,8 +1,9 @@
 # Full-corpus RAG workstream
 
 ```text
-Status: Phase 2–5 and Metadata v2 Tasks 1–7 User-closed; Phase 6 implementation active
-Runtime authorization: one GPT Phase 6 handoff; Git and collection mutation unauthorized
+Status (2026-10-24): Phase 2–6, 7A, 7A2 User-closed; next Phase 7B (evaluator), then Phase 8 (stabilization)
+Current state: session_prompt/Project_Status.md — the rest of this header and the sections below the 7A2 update are history
+Phase 7A2: docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md + plan 2026-10-23-phase-7a2-…
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
 Review contract: approved — handoff_prompt/FULL_CORPUS_RAG_IMPLEMENTATION_REVIEW_CONTRACT.md
@@ -78,6 +79,37 @@ Workstream bao phủ năm domain sản phẩm:
 - `travel`, gồm `places`, `services` và `tickets`.
 
 ## Trạng thái hiện hành
+
+### Cập nhật Phase 7A2 (User-closed 2026-10-24) — ưu tiên hơn các đoạn bên dưới
+
+Mục tiêu đã duyệt: sửa 25 mục tri thức trong corpus, build lại index trên corpus
+đã sửa với hai dense candidate, cutover runtime, xóa collection cũ.
+
+Hành vi đã quan sát (evidence `reports/phase_7a2_gate_{1,2,3}_*`):
+
+- Corpus: 25 mục sửa trong 27 file; 205 file → **8.459 chunk** (trước 8.460);
+  chunker không đổi. Golden 176 + smoke 10 vẫn `check` đạt; chỉ dòng 139 sửa.
+- Build: một đường build thẳng (`python -m backend.ingestion.full_corpus_pipeline
+  build --candidate <id>`); build record (`full_corpus_build:v3`) là nguồn sự thật
+  duy nhất, không còn hằng số corpus/chunk/sparse, preflight Phase 3/4 hay
+  migration metadata v2. Sparse state chung `full_corpus_sparse_state.json`.
+- Runtime: `hue_full_corpus_7a2_e5_small_384` (8.459 point, payload 7 field),
+  `dense_bm25_rrf`, reranker `none`, `gpt-6-luna`; health 200; live smoke 4/5 như
+  Phase 6 (F2 bảng giá vẫn ngoài top-30; F1 tổng hợp đa nguồn chưa chứng minh).
+- Qwen3-Embedding-8B (OpenRouter): runner có trong code (pin Nebius,
+  `data_collection: deny`) nhưng **chưa có index** — build không pin trộn 3
+  provider (cos mẫu 0,9954 < 0,999), build pin Nebius lỗi HTTP 504. Hoãn sang
+  Phase 8.
+- Qdrant chỉ còn 3 collection: index e5 7a2 và hai collection Foods
+  (`hue_foods_e5_small_384`, `_dense`, giữ qua Phase 7). 13 collection cũ
+  (4 legacy, 4 metadata v2, 3 Foods 08a, 2 TF-IDF 08b) đã xóa.
+
+**Ghi chú cho Phase 8 (spec 7A2 §7):** candidate dense đã đổi thành e5-small +
+qwen3-embedding-8b, nên spec/plan Phase 8 phải thiết kế lại. Phase 8 là đợt ổn
+định trước Phase 9 (User 2026-10-24): build lại 8B với cách gọi chịu 504/429;
+thử chunk size/gộp chunk vụn (bỏ ràng buộc huydang 256), reranker đa ngôn ngữ,
+truy xuất bảng giá (F2), tổng hợp đa nguồn (F1), BM25 tiếng Việt (tách từ/bigram)
+và rà lại lựa chọn các Phase trước — đo trên baseline 176 case của Phase 7B.
 
 Curation và taxonomy toàn corpus đã hoàn tất. Khảo sát parser/source locator,
 khảo sát hai input Ca Huế VN/QT và khảo sát Golden/evaluation reference đầu tiên

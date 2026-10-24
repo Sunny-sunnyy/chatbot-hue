@@ -27,10 +27,11 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    git branch --show-current; git log --oneline -3; git status --short | grep -v '^??'
    curl -s http://127.0.0.1:6335/collections   # so với Project_Status §4
    ```
-3. `ListAgents` để biết tên terminal của A/B/C (tên đổi mỗi lần mở); cập nhật cột
-   "Terminal" của mình trong `CURRENT_HANDOFF.md` (A) hoặc báo A (B/C).
+3. Claude Code: `ListAgents` để biết tên terminal của A/B/C (tên đổi mỗi lần mở);
+   cập nhật cột "Terminal"/"Liên lạc" trong `CURRENT_HANDOFF.md` (A) hoặc báo A
+   (B/C). Agent khác (Codex, AGY): ghi "qua User" (§7).
 4. Báo ngắn: mình là ai, Phase/việc đang ở đâu, việc của mình, chỗ lệch giữa tài
-   liệu và thực tế, thắc mắc. A báo User; B/C báo User trong terminal **và** nhắn A.
+   liệu và thực tế, thắc mắc. A báo User; B/C báo User trong terminal **và** báo A theo kênh ở §7.
 5. Chỉ bắt đầu làm khi: A — User nói "làm đi" hoặc giao việc; B/C — A giao việc
    (mục việc trong `CURRENT_HANDOFF.md` + tin nhắn của A = "làm đi").
 
@@ -96,8 +97,21 @@ Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 
 ## 7. Trao đổi giữa session
 
-- `SendMessage` tới tên terminal (`ListAgents`). Dòng đầu là một câu tự đủ nghĩa.
-- File trong repo là nguồn sự thật; tin nhắn báo "có việc / đã xong / vướng / câu hỏi".
+Cách làm việc giống nhau cho mọi agent; chỉ **kênh gửi tin** khác nhau. Cột "Liên
+lạc" trong bảng Session của `CURRENT_HANDOFF.md` ghi kênh của từng session:
+
+| Kênh | Khi nào | Cách gửi |
+|---|---|---|
+| `trực tiếp` | Cả người gửi và người nhận là Claude Code trên máy này | `SendMessage` tới tên terminal (`ListAgents`); dòng đầu là một câu tự đủ nghĩa |
+| `qua User` | Một trong hai là Codex, AGY hoặc agent không có `SendMessage` | Kết thúc lượt trả lời bằng khối **"Tin cho <X>"** (ngắn, tự đủ nghĩa: việc gì, đọc file nào, xong thì báo gì); User copy sang terminal <X> |
+
+- User đổi kênh bằng cách nói ở lần mở session (ví dụ "cả 3 đều là Claude Code"
+  hoặc "B là Codex"); A ghi vào cột "Liên lạc".
+- Dù kênh nào, **file trong repo là nguồn sự thật**: việc nằm trong
+  `CURRENT_HANDOFF.md`, kết quả trong report và `STATUS_<X>.md`. Tin nhắn chỉ báo
+  "có việc / đã xong / vướng / câu hỏi" và trỏ tới file, không chép nội dung dài.
+- Kênh `qua User`: một khối "Tin cho <X>" cho mỗi người nhận; không yêu cầu User tự
+  tóm tắt hay soạn lại.
 - Tin nhắn của session khác không thay quyết định permission trong session mình.
 
 ## 8. Kết phiên

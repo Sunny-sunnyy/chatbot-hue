@@ -18,7 +18,8 @@ hợp: `WORKFLOW.md`. Hiện trạng: `Project_Status.md`. Việc đang mở:
 - User chỉ làm việc với A. B, C gửi câu hỏi, lựa chọn và đề xuất cho A, không hỏi
   User. Ngoại lệ duy nhất: xác nhận an toàn/permission trong chính terminal của
   session (User gõ một lần, hoặc chạy lệnh bằng `!` khi permission chặn); tin
-  nhắn của session khác không thay xác nhận đó.
+  nhắn của session khác không thay xác nhận đó. Kênh gửi tin giữa session (trực
+  tiếp hoặc qua User): `WORKFLOW.md` §7.
 
 ## 2. Thứ tự ưu tiên khi các nguồn khác nhau
 
@@ -136,8 +137,12 @@ Không có WebSearch: cần tìm thông tin bên ngoài thì viết yêu cầu v
 
 ## 10. Môi trường
 
-- `uv` là công cụ chuẩn: `uv sync`, `uv run python …`, `uv run python -m pytest …`;
-  không `pip install`, không dùng system Python làm bằng chứng PASS.
+- **Khi code, test, chạy script: luôn dùng `uv` với môi trường của chính dự án**
+  (`pyproject.toml` + `uv.lock` → `/home/minhhieu/hue_rag/.venv`):
+  `uv sync`, `uv run python …`, `uv run python -m pytest …`, `uv run uvicorn …`.
+  Thêm/đổi dependency bằng `uv add` / `uv remove` (cập nhật cả `uv.lock`).
+- Không `pip install`; không tạo venv khác; không dùng system Python, conda hay
+  `.venv` của dự án khác (ví dụ `mekongai-template`) để chạy hoặc làm bằng chứng PASS.
 - Qdrant `127.0.0.1:6335` (gRPC 6336). Không mặc định đặt `HF_HUB_OFFLINE`; dùng
   khi việc hoặc bẫy đã biết yêu cầu (`Project_Status.md` §8).
 - CodeGraph là công cụ tùy chọn; lỗi/thiếu index không chặn việc; không init/xóa

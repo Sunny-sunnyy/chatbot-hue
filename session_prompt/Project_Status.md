@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-24 +07` (A)
+Last updated: `2026-10-24 14:30 +07` (A)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -22,18 +22,22 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 
 ## 2. Phase hiện tại
 
-**Phase 7A2 — Sửa corpus + tạo lại index** (spec
+**Phase 7A2 — Sửa corpus + tạo lại index: User-closed 2026-10-24** (spec
 `docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md`,
 plan `docs/superpowers/plans/2026-10-23-phase-7a2-corpus-correction-reindex-implementation-plan.md`):
 
 - Gate 1 (sửa 25 mục corpus): User-closed 2026-10-24.
 - Gate 2 (build index + cutover): User-closed 2026-10-24 **với giới hạn** — chỉ
   index e5; index 8B hoãn sang Phase 8.
-- Gate 3 (xóa 13 collection + build record cũ): xong, review đạt
-  (`reports/phase_7a2_gate_3_review_2026_10_24.md`), chờ User đóng.
+- Gate 3 (xóa 13 collection + build record cũ): User-closed 2026-10-24
+  (`reports/phase_7a2_gate_3_review_2026_10_24.md`).
+- Đóng Phase: backup Gate 1 đã xóa; guide `guides/full_corpus_rag.md` có mục cập
+  nhật 7A2 + ghi chú Phase 8; user report
+  `reports/user_reports/phase_7a2_corpus_correction_reindex_user_report_2026_10_24.md`.
 
-Mốc kế tiếp: đóng Gate 3 → đóng Phase 7A2 (xóa backup Gate 1, cập nhật guide) →
-**Phase 7B** (evaluator, baseline 176 case trên chunker hiện hành).
+Mốc kế tiếp: **Phase 7B** (evaluator, baseline 176 case trên chunker hiện hành) —
+brainstorm với User, một tài liệu thiết kế. Song song: C rà soát lựa chọn Phase
+2–6 cho Phase 8.
 
 ## 3. Bảng Phase
 
@@ -47,8 +51,8 @@ Mốc kế tiếp: đóng Gate 3 → đóng Phase 7A2 (xóa backup Gate 1, cập
 | 6 | `approved` | Generation/API/UI trên `gpt-6-luna`, live 4/5; giới hạn F1 (đa nguồn), F2 (bảng giá ngoài top-30) |
 | 7 | `approved` | Evaluation baseline Foods (lịch sử) |
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
-| 7A2 | `in_progress` | Gate 1–2 đóng; Gate 3 xong, chờ User đóng |
-| 7B | `not_ready` | Evaluator full-corpus + baseline 176 case; chờ 7A2 đóng |
+| 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
+| 7B | `next` | Evaluator full-corpus + baseline 176 case; chờ brainstorm/thiết kế |
 | 8 | `not_ready` | Đợt ổn định trước Phase 9 (mục 5); spec/plan phải thiết kế lại |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
@@ -84,8 +88,7 @@ chỉ settings/tests/benchmark Foods cũ tham chiếu; collection Foods còn đ�
 **Corpus:** 205 file → 8.459 chunk (chunker giữ nguyên từ Phase 2: chia theo cấu
 trúc Markdown, không overlap, mỗi chunk vừa cả 3 tokenizer e5-small 512 / e5-base
 512 / huydang 256; trung vị 85 token e5). `knowledge-base-hue/` không có Git
-(`.gitignore`); backup Gate 1 `knowledge-base-hue/meta/backup_7a2_2026_10_23/`
-(27 file) xóa khi đóng Phase 7A2.
+(`.gitignore`); backup Gate 1 đã xóa khi đóng Phase 7A2.
 
 **Golden:** `knowledge-base-hue/evaluation/golden_full_corpus.jsonl` (176 case),
 `golden_full_corpus_smoke.jsonl` (10, deep-equal); schema 4 field `question`,
@@ -101,6 +104,8 @@ là lịch sử.
 | 2026-10-24 | OpenRouter 8B pin Nebius (`order:[nebius]`, `allow_fallbacks:false`) | spec 7A2 §5.2 |
 | 2026-10-24 | Giữ 2 collection Foods qua Phase 7; sau Phase 7 A đề xuất xóa mọi collection không dùng (kèm gỡ code/test/notebook Foods cũ) | User |
 | 2026-10-24 | Chunker giữ nguyên tới khi có baseline 7B | User |
+| 2026-10-24 | Code/test/script luôn chạy bằng `uv` trong `.venv` của dự án | `Session_Prompt.md` §10 |
+| 2026-10-24 | Kênh liên lạc: Claude Code ↔ Claude Code `trực tiếp` (SendMessage); có Codex/AGY thì `qua User` (khối "Tin cho <X>") | `WORKFLOW.md` §7 |
 | 2026-09 (giữ) | Phase tuần tự `7A2 → 7B → 8 → 9`; trước Phase mới: Phase trước review + User đóng, cập nhật guide bằng bằng chứng, rồi một tài liệu thiết kế User duyệt | `WORKFLOW.md` §9.4 |
 | 2026-10-24 | Phase 8 = đợt ổn định: chunk size/gộp chunk vụn, reranker đa ngôn ngữ, truy xuất bảng giá (F2), tổng hợp đa nguồn (F1), BM25 tiếng Việt (tách từ/bigram), rà lại lựa chọn các Phase trước | User |
 | 2026-10-23 | Dense full-corpus chỉ e5-small + qwen3-embedding-8b; build thẳng metadata v2; build record là nguồn sự thật; runtime mặc định e5-small, cutover 8B chờ bằng chứng 7B/8 | spec 7A2 §2 |

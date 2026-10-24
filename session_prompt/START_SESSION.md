@@ -19,9 +19,12 @@ User); B, C là session thực thi.
    Skill dự án nằm ở .claude/skills/ (Claude Code tự thấy; agent khác đọc
    skills/<tên>/SKILL.md): practical-project-coding khi sửa code/test,
    risk-gated-agent-review khi review chéo, propose-options khi đưa lựa chọn cho User.
+   Khi code/test/chạy script: luôn `uv run …` trong .venv của dự án (Session_Prompt.md §10).
 2. Kiểm nhanh, chỉ đọc, theo WORKFLOW.md mục 2.
 3. Báo ngắn: bạn là ai, Phase/việc đang ở đâu, việc của bạn, chỗ lệch giữa tài liệu
-   và thực tế, thắc mắc. Nếu <X> là B hoặc C: báo cả A bằng SendMessage.
+   và thực tế, thắc mắc. Nếu <X> là B hoặc C: báo cả A — bằng SendMessage nếu cả
+   hai là Claude Code, nếu không thì viết khối "Tin cho A" để User chuyển
+   (WORKFLOW.md §7).
    Rồi chờ: A chờ User nói "làm đi"; B/C chờ A giao việc. Trước đó không sửa file (trừ tạo
    `sessions/STATUS_<X>.md` của mình), không chạy việc nặng, không gọi API trả phí.
 ```
@@ -29,6 +32,8 @@ User); B, C là session thực thi.
 Ghi chú:
 
 - Tên terminal đổi mỗi lần mở: dùng `ListAgents`, hỏi "là B hay C" nếu chưa rõ.
+- Agent nào không phải Claude Code: User nói rõ khi mở (ví dụ "B là Codex"); các
+  session liên lạc với nó qua User (khối "Tin cho <X>").
 - Prompt mở session là chỉ thị mới nhất của User; nếu khác `CURRENT_HANDOFF.md`,
   session báo lệch.
 - Việc mới trong ngày: A ghi vào `CURRENT_HANDOFF.md` rồi nhắn session đó.

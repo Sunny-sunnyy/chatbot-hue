@@ -4,7 +4,19 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
-## 2026-10-24 — Governance v2 và Phase 7A2 Gate 1–2
+## 2026-10-24 (chiều) — Đóng Phase 7A2; bổ sung Governance v2
+
+- Gate 3 User-closed: 13 collection cũ + 9 file build record cũ đã xóa (User chạy
+  `rm`/`kill` trong terminal B vì permission của B chặn); còn 3 collection.
+  Review `reports/phase_7a2_gate_3_review_2026_10_24.md`.
+- Phase 7A2 User-closed: backup Gate 1 đã xóa; guide full-corpus có mục 7A2 + ghi
+  chú Phase 8; user report
+  `reports/user_reports/phase_7a2_corpus_correction_reindex_user_report_2026_10_24.md`.
+- Governance v2 bổ sung: kênh liên lạc `trực tiếp` (Claude Code) / `qua User`
+  (Codex, AGY); quy tắc luôn dùng `uv` + `.venv` của dự án.
+- Việc kế tiếp: Phase 7B; C rà soát lựa chọn Phase 2–6 cho Phase 8.
+
+## 2026-10-24 — Governance v2 và Phase 7A2 Gate 1–2 (sáng)
 
 - Governance v2 được User duyệt
   (`docs/superpowers/specs/2026-10-24-governance-v2-design.md`): A điều phối +

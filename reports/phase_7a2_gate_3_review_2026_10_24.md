@@ -1,6 +1,6 @@
 # Review: Phase 7A2 Gate 3 — Xóa 13 collection cũ + build record cũ
 
-Decision: ready_for_user_confirmation
+Decision: approved (User 2026-10-24)
 Người kiểm: A (Claude Opus 5.5)
 Date: 2026-10-24
 Spec: `docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md` §6 (bản sửa 2026-10-24)
