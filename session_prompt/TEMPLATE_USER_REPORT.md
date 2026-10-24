@@ -1,75 +1,50 @@
-# Báo cáo dành cho người dùng: Giai đoạn <số> - <tên dễ hiểu>
+# Mẫu báo cáo khâu cho User — `bao_cao_he_thong/BAO_CAO_<KHÂU>.md`
 
-```text
-Trạng thái: Đang chờ bạn xác nhận
-Cập nhật lúc: DD-MM-YYYY HH:MM +07
-Notebook tham khảo (nếu thuộc scope): notebooks/0<số>_<tên>.ipynb
-```
+Mỗi khâu một file **sống**: sửa tại chỗ khi khâu đổi, không tạo file mới theo ngày (chuyện theo ngày
+nằm ở `nhat_ky/`, mẫu `TEMPLATE_NHAT_KY.md`). Quy tắc chung: `WORKFLOW.md` §6. Lời thường, số kèm ý
+nghĩa, không chép corpus/Golden/secret.
 
-Báo cáo phải đơn giản, rõ ràng, dễ đọc và dễ hiểu. Chỉ dùng kết quả agent đã
-kiểm chứng; phân biệt fresh execution với reused evidence đủ điều kiện. Không
-chép technical report, mã trạng thái nội bộ, chi tiết audit,
-mã băm, cost accounting hoặc nội dung gỡ lỗi không giúp user quyết định.
+```markdown
+# Báo cáo cho bạn: <Khâu> (Phase <số>)
 
-## 1. Bạn nhận được gì
+**Cập nhật lần cuối: <HH:MM DD/MM/YYYY lấy bằng `date`> — bản <N>: <mục nào mới / đổi gì>.**
+Người viết: <X> · Review: <Y>. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-Giải thích trong một hoặc hai đoạn:
+## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
-- phase giải quyết vấn đề gì;
-- kết quả user có thể dùng hoặc quan sát;
-- một ví dụ cụ thể nếu cần.
+- Khâu này làm gì, đang chạy cách nào (công cụ / thư viện / thông số).
+- Lợi đo được (số trước ⇒ sau, bộ đo nào).
+- Giới hạn chính.
+- Chi phí / tốc độ nếu có.
+- Bạn cần quyết gì (nếu có).
 
-## 2. Hệ thống hoạt động như thế nào
+## 2. Hoạt động thế nào (bản đang chạy)
 
-Mô tả data flow bằng từ thông thường. Chỉ giữ các bước user cần để hiểu; không
-liệt kê toàn bộ kiến trúc hoặc module.
+Luồng bằng lời thường hoặc khối ```text```, kèm đường dẫn code để lần theo.
 
-## 3. Agent đã chạy và quan sát gì
+## 3. Checklist tình huống
 
-Ghi đúng fresh observed results và evidence reuse đủ điều kiện, dẫn nguồn và
-lý do reuse; không gọi reused evidence là lần chạy mới. Mỗi số liệu có ý nghĩa đi kèm.
-
-Nếu có từ ba kiểm tra trở lên, dùng bảng:
-
-| Nội dung | Kết quả quan sát | Ý nghĩa |
+| Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| <real check> | Đạt / Không đạt / Chưa chạy | <user hiểu được gì> |
+| <…> | <một trong 5 mức dưới> | <…> |
 
-Nói rõ failed, skipped hoặc partial outcome. Không dùng expected result,
-mock/fake hoặc output cũ làm fresh evidence. Docs-only ghi kiểm tra tài liệu.
+Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
+**Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
-## 4. Cách bạn kiểm tra thêm nếu cần
+## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
-User xác nhận từ tóm tắt kết quả, evidence và giới hạn; không bắt buộc chạy lại
-kỹ thuật. Nếu acceptance đã duyệt yêu cầu đánh giá trải nghiệm, chỉ rõ phần user
-cần kiểm tra. Khi notebook thuộc scope và hữu ích cho việc chạy lại, ghi:
+### <DD/MM/YYYY> — <việc>
+Tiêu chí ghi trước · cách đo · kết quả (PASS / PARTIAL / FAIL / NOT RUN) · giữ hay bỏ, vì sao · tiền.
+Phương án đã thử và bỏ ghi đủ như phương án được chọn.
 
-- đường dẫn notebook;
-- prerequisite cần thiết;
-- cách Run All từ trên xuống;
-- kết quả quan trọng cần nhìn thấy;
-- kết quả đó chứng minh điều gì;
-- notebook có dùng online hoặc paid API hay không.
+## 5. Hôm nay còn đúng không
 
-Chỉ thêm command ngoài notebook khi thật sự cần. Không yêu cầu user paste
-secret vào chat.
+| Kết quả / quyết định | Trạng thái (còn dùng / đã thay bởi … / đã bỏ) | Căn cứ (file:dòng) |
+|---|---|---|
 
-## 5. Giới hạn và bước tiếp theo
+## 6. Việc còn lại / cần quyết
 
-Nêu:
+## Phụ lục — hồ sơ kỹ thuật
 
-- điều chưa làm hoặc lỗi còn lại;
-- ảnh hưởng thực tế;
-- user cần xác nhận hay yêu cầu sửa như thế nào;
-- phase tiếp theo có đang đóng hay không.
-
-Khi chờ xác nhận, kết thúc bằng:
-
-```text
-Sau khi đọc kết quả và thực hiện phần kiểm tra user được acceptance yêu cầu (nếu có), bạn có thể phản hồi:
-- Tôi xác nhận Giai đoạn <số>.
-- Tôi muốn sửa: <nội dung cần sửa>.
+Mã nội bộ (H1, B4, Gate…), spec, report, commit chỉ ở đây.
 ```
-
-Khi User xác nhận, A cập nhật `CURRENT_HANDOFF.md`, `Project_Status.md`,
-`PROJECT_HISTORY.md` và commit/push (`WORKFLOW.md` §9).

@@ -86,19 +86,34 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 
 ## 6. Report
 
+Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`).
+
 | Loại | Nơi | Ai | Khi nào |
 |---|---|---|---|
-| Implementation report | `report_agent/<YYYY-MM-DD>_<chủ_đề>/phase_<x>_<gate>_<chủ_đề>_implementation.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
-| Review | `report_agent/<YYYY-MM-DD>_<chủ_đề>/phase_<x>_<gate>_review.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
-| Báo cáo cho User | `bao_cao_he_thong/` (gốc repo): `LUONG_HOAT_DONG_HE_THONG.md` (hệ thống đang chạy, cập nhật khi hành vi đổi), `BAO_CAO_<KHÂU>.md` (mỗi khâu một file, cập nhật khi khâu đổi), `nhat_ky/<YYYY-MM-DD>_<chủ_đề>.md` (tóm tắt đợt/ngày) | A (hoặc B/C khi được giao, A review) | đóng Phase, khâu đổi, hoặc cuối ngày làm việc (`TEMPLATE_USER_REPORT.md`) |
-| STATUS | `session_prompt/sessions/STATUS_<X>.md` | session X | xong một việc, trước khi kết phiên |
+| Implementation report | `report_agent/<đợt>/phase_<x>_<gate>_<chủ_đề>_implementation.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
+| Review | `report_agent/<đợt>/phase_<x>_<gate>_review.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
+| Tổng hợp đợt | `report_agent/<đợt>/TONG_HOP.md` | A | đóng đợt: mục tiêu, quyết định theo giờ, kết quả, giới hạn, bước tiếp |
+| Báo cáo khâu cho User | `bao_cao_he_thong/BAO_CAO_<KHÂU>.md` | A (B/C khi được giao, A review) | khâu đó đổi hành vi hoặc có thử nghiệm mới (`TEMPLATE_USER_REPORT.md`) |
+| Luồng hệ thống | `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` | A | mỗi lần hành vi hệ thống đổi (chunker, index, retrieval, prompt, model, API) |
+| Nhật ký cho User | `bao_cao_he_thong/nhat_ky/<YYYY-MM-DD>_<chủ_đề>.md` | A | đóng đợt / cuối ngày làm việc (`TEMPLATE_NHAT_KY.md`) |
+| STATUS | `session_prompt/sessions/STATUS_<X>.md` | session X | ngay sau mỗi việc + kết phiên |
 
-Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
-
-- **Nơi viết (User 2026-10-24):** mỗi đợt việc một folder `report_agent/<YYYY-MM-DD>_<chủ_đề>/`
-  (ngày mở đợt); report của đợt nằm trong đó. `reports/` là lịch sử, không thêm file mới.
+- **Đợt (`<đợt>` = `<YYYY-MM-DD>_<chủ_đề>`):** mở khi User chọn mục tiêu mới (một Phase/gate, một
+  việc dọn, một thí nghiệm); ngày là ngày mở; đợt kéo nhiều ngày giữ một folder. A thêm một dòng vào
+  bảng "Các đợt" của `report_agent/README.md`. Dữ liệu chạy (kết quả, trace) để ở `data/` hoặc `/tmp`,
+  report chỉ trỏ đường dẫn. `reports/` là lịch sử tới 2026-10-24, không thêm file.
+- **User chỉ cần đọc `bao_cao_he_thong/`** (mục lục `bao_cao_he_thong/README.md`). Mỗi thay đổi vào
+  hệ thống đang chạy ⇒ A sửa **đủ 4 chỗ**: `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md` của
+  đúng khâu (sửa cả Tóm tắt + checklist, không chỉ thêm mục cuối), `nhat_ky/` của đợt,
+  `Project_Status.md`; rồi bảng trong `bao_cao_he_thong/README.md`.
+- **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
+  số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
+  đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
+- **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước.
 - **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
   kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
+
+Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 
 ## 7. Trao đổi giữa session
 
@@ -121,9 +136,11 @@ lạc" trong bảng Session của `CURRENT_HANDOFF.md` ghi kênh của từng se
 
 ## 8. Kết phiên
 
-Mỗi session: cập nhật `STATUS_<X>.md` (đang làm, dở gì, bẫy đã gặp, câu hỏi). A:
-cập nhật `CURRENT_HANDOFF.md`, `Project_Status.md` nếu hiện trạng đổi, thêm mục
-`PROJECT_HISTORY.md`, commit/push.
+Mỗi session: cập nhật `STATUS_<X>.md` (đang làm, dở gì, bẫy đã gặp, câu hỏi, tiền paid đã dùng).
+A: `TONG_HOP.md` của đợt nếu đóng; `nhat_ky/` + bảng `bao_cao_he_thong/README.md`;
+`CURRENT_HANDOFF.md` (mục đầu ghi "Phiên sau đọc trước": việc tiếp, câu hỏi cho User; giữ ≤ ~150
+dòng); `Project_Status.md` nếu hiện trạng đổi; một mục ngắn `PROJECT_HISTORY.md` trỏ tới `TONG_HOP`;
+commit/push. Dọn worktree, file tạm, collection thử của phiên.
 
 ## 9. Việc thêm của A
 
@@ -145,4 +162,10 @@ cập nhật `CURRENT_HANDOFF.md`, `Project_Status.md` nếu hiện trạng đ�
    biết kết quả của Phase mà nó phụ thuộc; mỗi lần chỉ giao việc của một Phase.
 5. **Giữ tài liệu:** `CURRENT_HANDOFF.md` chỉ giữ việc đang mở (việc xong chuyển tóm
    tắt sang `PROJECT_HISTORY.md`); `Project_Status.md` theo quy tắc Governance v2 §6.
-6. **Git:** commit theo mốc, stage theo đường dẫn, không commit dữ liệu private; push `origin`.
+6. **Git:** commit theo mốc; stage **từng file đã review** (không `git add <thư mục>` hay `-A`); luôn
+   `git diff --cached --stat` trước khi commit; không commit dữ liệu private; push `origin`.
+7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/a_…`), không trong
+   working tree chung đang có B/C làm; việc A tự làm vẫn để B/C kiểm.
+8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)
+   ghi vào `CURRENT_HANDOFF.md` kèm ngày và **hết hạn cuối phiên**; phiên sau A hỏi lại trong báo cáo
+   mở phiên. Quyền thường trực (A commit/push; duyệt cho A = duyệt cho B/C) giữ nguyên.

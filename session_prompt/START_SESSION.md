@@ -37,3 +37,8 @@ Ghi chú:
 - Prompt mở session là chỉ thị mới nhất của User; nếu khác `CURRENT_HANDOFF.md`,
   session báo lệch.
 - Việc mới trong ngày: A ghi vào `CURRENT_HANDOFF.md` rồi nhắn session đó.
+- Đọc mục "Phiên sau đọc trước" ở đầu `CURRENT_HANDOFF.md` trước các mục khác.
+- Quyền đặc biệt của phiên trước (tự điều phối rộng, trần tiền) hết hạn khi kết phiên; A hỏi lại
+  User trong báo cáo mở phiên (`WORKFLOW.md` §9.8).
+- Báo cáo cho User nằm ở `bao_cao_he_thong/` (mục lục `README.md`); report agent ở
+  `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (`WORKFLOW.md` §6).

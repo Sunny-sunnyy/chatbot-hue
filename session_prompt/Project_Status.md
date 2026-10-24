@@ -105,6 +105,7 @@ là lịch sử.
 | 2026-10-24 | Index 8B hoãn sang Phase 8; khi build lại thiết kế cách gọi chịu 504/429 (batch, thử lại) | `reports/phase_7a2_gate_2_review_2026_10_24.md` §6 |
 | 2026-10-24 | OpenRouter 8B pin Nebius (`order:[nebius]`, `allow_fallbacks:false`) | spec 7A2 §5.2 |
 | 2026-10-24 | Giữ 2 collection Foods qua Phase 7; sau Phase 7 A đề xuất xóa mọi collection không dùng (kèm gỡ code/test/notebook Foods cũ) | User |
+| 2026-10-24 | Cách làm việc học từ MekongAI: báo cáo cho User chỉ ở `bao_cao_he_thong/` (README mục lục, `LUONG_HOAT_DONG_HE_THONG`, `BAO_CAO_<khâu>` sống + thang 5 mức, `nhat_ky/`); report agent theo đợt `report_agent/<YYYY-MM-DD>_<chủ_đề>/` + `TONG_HOP.md`; giờ bằng `date`; stage từng file + `git diff --cached --stat`; A thử trong worktree; quyền đặc biệt hết hạn cuối phiên | `WORKFLOW.md` §6, §8, §9; `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md` |
 | 2026-10-24 | Chunker giữ nguyên tới khi có baseline 7B | User |
 | 2026-10-24 | Code/test/script luôn chạy bằng `uv` trong `.venv` của dự án | `Session_Prompt.md` §10 |
 | 2026-10-24 | Kênh liên lạc: Claude Code ↔ Claude Code `trực tiếp` (SendMessage); có Codex/AGY thì `qua User` (khối "Tin cho <X>") | `WORKFLOW.md` §7 |
