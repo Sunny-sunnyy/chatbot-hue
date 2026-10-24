@@ -84,7 +84,8 @@ chỉ settings/tests/benchmark Foods cũ tham chiếu; collection Foods còn đ�
 "An Đông" ở 5 quán AEON.
 
 **Corpus:** 205 file → 8.459 chunk (chunker giữ nguyên từ Phase 2: chia theo cấu
-trúc Markdown, không overlap, mỗi chunk vừa cả 3 tokenizer e5-small 512 / e5-base
+trúc Markdown, không overlap có chủ đích (thực tế 3 cặp chunk lặp body: blockquote lồng trong list
+item, `markdown_blocks.py:233-250`, B8 2026-10-24), mỗi chunk vừa cả 3 tokenizer e5-small 512 / e5-base
 512 / huydang 256; trung vị 85 token e5). `knowledge-base-hue/` không có Git
 (`.gitignore`); backup Gate 1 đã xóa khi đóng Phase 7A2.
 
@@ -160,11 +161,16 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env python -m pytest tests/<file> -q`;
   không chạy test có paid call ngoài giới hạn (ví dụ `test_llm_generator_openai.py`).
 - Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Test ghi Qdrant/paid: `test_evaluation.py` (một phần), `test_ingestion_pipeline.py`, `test_retrieval_service.py`, `test_llm_generator_openai.py`, benchmark.
+- Test `test_full_corpus_chunker.py::test_full_corpus_determinism_and_preview_byte_equality` fail vì
+  so với artifact cũ 8.460 chunk (hiện 8.459) — lỗi thời, không phải chunker hỏng (B1/B8).
+- `embedding/dense_benchmark.py` còn trỏ collection `hue_foods_08a_*` đã xóa; vài test còn
+  mock/monkeypatch (`test_phase6_live_smoke.py`, `test_reranker_benchmark.py`, `test_markdown_chunker.py`)
+  — đích dọn (B8).
 - Generator/evaluator Foods cũ (`llm/generator_openai.py`) gửi `temperature` → `gpt-6-luna` trả 400; đường full-corpus không dùng tham số này.
 - OpenRouter 8B: không pin thì trộn provider (vector lệch, cos ~0,996); pin Nebius
   thì 10–30 s/batch và đã gặp 504; DeepInfra từng trả 429.
 - Notebook 06, 08a, 08b còn tên collection/model cũ đã xóa (gãy); notebook 04
-  chưa kiểm hành vi với 2 candidate mới; notebook 03 còn
+  sẽ lỗi (đọc build record 8B không tồn tại, `prepared.sample_chunk_ids` không có — C2/B8); notebook 03 còn
   markdown mô tả 4 model — dọn sau Phase 7.
 - Permission tự động của từng session có thể chặn `rm`/`pkill`: session đó dừng và
   nhờ User chạy bằng `!` trong terminal của nó; session khác không chạy hộ.

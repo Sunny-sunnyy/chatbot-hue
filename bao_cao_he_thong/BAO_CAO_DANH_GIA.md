@@ -36,21 +36,22 @@ Ví dụ: Phase 8 thử đưa 10 đoạn thay vì 5 vào ngữ cảnh → chạy
 | Câu so sánh (25) | 3,68 / 3,44 / 3,60 | Yếu |
 | Câu ghép nhiều nguồn (29) | **3,28 / 3,00 / 3,41** | Yếu nhất |
 | Câu ngoài kho (18) | 5 / 5 / 5 — từ chối đúng 18/18 | Không bịa |
+| Tìm đoạn (158 câu, keyword proxy @10) | MRR 0,72 · nDCG 0,75 · Keyword Coverage 92,4% | Đoạn chứa keyword đáp án thường lọt top-10; yếu ở câu so sánh (MRR 0,53) và nhiều nguồn (0,54) |
 | **Từ chối nhầm** | **22 / 158 câu** | Đây là toàn bộ 22 câu bị 1/1/1; bỏ chúng ra điểm còn 4,92 / 4,75 / 4,95 |
 | Lỗi trích dẫn (người dùng thấy lỗi) | 4 / 176 | Hiếm |
 | Chạy lại toàn bộ lần 2 | chênh trung bình ≤ 0,011 điểm | Thước đo rất ổn định |
 | Claude chấm lại 30 câu | không câu nào lệch quá 1 điểm | Người chấm ổn định |
 | Claude so với gpt-6-luna | trùng 89–96% số câu | Hai người chấm khác hãng đồng ý cao |
 
-**Vì sao từ chối nhầm** (chẩn đoán 22 câu, không tốn tiền):
+**Vì sao từ chối nhầm** (chẩn đoán 22 câu, không tốn tiền — dấu hiệu, chưa chứng minh nguyên nhân):
 
-| Nguyên nhân | Số câu |
+| Phân loại (theo keyword đáp án trong 5 đoạn ngữ cảnh) | Số câu |
 |---|---:|
 | Đoạn chứa đáp án không nằm trong 5 đoạn ngữ cảnh | 8 |
 | Có một vế, thiếu vế kia → bot từ chối cả câu | 10 |
 | Có đủ bằng chứng mà vẫn từ chối | 4 |
 
-12/22 câu có đáp án nằm ở hạng 6–10, bị cắt vì chỉ giữ 5 đoạn. Thử nhanh với 10 đoạn (0,005 USD):
+12/22 câu có thêm keyword liên quan ở hạng 6–10, bị cắt vì chỉ giữ 5 đoạn. Thử nhanh với 10 đoạn (0,005 USD):
 10/22 câu hết từ chối — chưa chấm điểm, chỉ là dấu hiệu cho Phase 8.
 
 ## 4. Chi phí
@@ -70,9 +71,10 @@ Claude Code (~1,1M token), không tốn API.
 
 | Kết quả / quyết định | Trạng thái |
 |---|---|
-| Bộ chấm `backend/evaluation/full_corpus_eval.py` + prompt judge `full_corpus_judge_prompt.md` | còn dùng (Phase 8 dùng lại) |
-| Judge chính Claude, luna phụ | còn dùng |
-| Điểm mốc trên | còn đúng tới khi Phase 8 đổi hệ thống |
+| Bộ chấm `backend/evaluation/full_corpus_eval.py` (lệnh `generate`, `summarize`, `compare`) | còn dùng (Phase 8 dùng lại) |
+| Prompt judge cố định `backend/evaluation/full_corpus_judge_prompt.md` | còn dùng |
+| Judge chính Claude, luna phụ (`full_corpus_eval.py` `run_judge_luna`) | còn dùng |
+| Điểm mốc đo trên runtime `backend/config/settings.yaml:110-113` (`e5-small-384`, `dense_bm25_rrf`, `reranker: none`) | còn đúng tới khi Phase 8 đổi hệ thống |
 
 ## 7. Bước tiếp theo
 

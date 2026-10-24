@@ -49,7 +49,8 @@ HỎI ĐÁP (mỗi câu hỏi):
 4. **Đóng gói ngữ cảnh:** lấy **5 đoạn đầu**, nguyên vẹn, đánh số [1]…[5] (thường ~900 token).
 5. **gpt-6-luna trả lời** chỉ từ 5 đoạn đó, tiếng Việt, đặt [n] sau mỗi ý. **Nếu thiếu bằng chứng**
    thì trả đúng câu: "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này."
-   — kể cả khi chỉ thiếu một phần (prompt "tất cả hoặc không", `backend/llm/full_corpus_prompt.py`).
+   (`backend/llm/full_corpus_prompt.py`). Quan sát ở Phase 7B: bot thường từ chối cả câu khi chỉ
+   có một vế (giả thuyết H8, Phase 8 thử).
 6. **Kiểm trích dẫn:** mọi [n] phải trỏ tới đoạn có thật; câu trả lời có nội dung mà không có [n], hay
    từ chối mà vẫn có [n] → API báo lỗi 500 thay vì trả câu trả lời không kiểm được.
 
@@ -59,10 +60,10 @@ HỎI ĐÁP (mỗi câu hỏi):
 |---|---|---|
 | Điểm câu trả lời (Đúng / Đủ / Trúng ý, 1–5) | 4,43 / 4,28 / 4,45 | Tốt ở câu một dữ kiện (4,87), kém ở câu ghép nhiều nguồn (3,28) và so sánh (3,68) |
 | Từ chối đúng câu ngoài kho | 18 / 18 | Không bịa khi kho không có |
-| **Từ chối nhầm** câu kho có đáp án | **22 / 158 (13,9%)** | Lỗi lớn nhất: gần như toàn bộ điểm bị mất nằm ở đây |
+| **Từ chối nhầm** câu kho có đáp án | **22 / 158 (13,9%)** | Lỗi lớn nhất: phần lớn điểm bị mất (65–90% tùy tiêu chí) nằm ở đây |
 | Lỗi trích dẫn (người dùng thấy lỗi 500) | 4 / 176 | Hiếm nhưng có |
 | Đoạn chứa đáp án lọt top-10 (keyword proxy) | 92,4% keyword | Truy xuất khá; vấn đề nằm ở 5 đoạn được đưa vào và cách prompt từ chối |
-| Chi phí một câu hỏi | ~0,00014 USD (~3,5 đồng) | ~900 token vào, ~70 token ra |
+| Chi phí một câu hỏi | ~0,00014 USD (~3,5 đồng) | ~950 token vào, ~80 token ra |
 
 Người chấm: Claude (chấm theo đáp án mẫu), đối chiếu `gpt-6-luna` (trùng 89–96%). Chưa có người chấm tay.
 
@@ -70,7 +71,8 @@ Người chấm: Claude (chấm theo đáp án mẫu), đối chiếu `gpt-6-lun
 
 - Câu cần ghép nhiều nguồn / so sánh hay bị từ chối cả câu khi chỉ có một vế (22 câu Golden).
 - Dòng bảng giá dài bị tách thành đoạn một dòng, khó tìm (ví dụ vé Đại Nội, lỗi F2 Phase 6).
-- 20% đoạn rất ngắn (≤48 token) do chunker vẫn giữ giới hạn 256 token của model HuyDang đã bỏ.
+- ~20% đoạn rất ngắn (≤48 token) vì mỗi khối Markdown là một đoạn, không gộp khối cạnh nhau.
+- Chunker còn giữ giới hạn 256 token của model HuyDang (đã bỏ), làm 6 bảng bị tách theo dòng.
 - Chưa có index Qwen3-embedding-8B (hoãn sang Phase 8).
 - Hai collection Foods cũ vẫn còn trong Qdrant, không phục vụ API nào (chờ dọn).
 

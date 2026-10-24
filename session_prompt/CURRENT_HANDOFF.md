@@ -9,7 +9,7 @@ xong chuyển tóm tắt sang `PROJECT_HISTORY.md`. Đợt hiện tại: `report
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | A1 xong (chờ B review); chờ file MekongAI | chờ |
 | B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B8 user report Phase 0–1, 2, 3, 4 | đang làm |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C8 user report Phase 5, 6, 7/7A, 7A2 | chờ review — `report_agent/user_reports/phase_0{5,6,7,7a2}_*.md` |
+| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C8 user report Phase 5, 6, 7/7A, 7A2 | chờ review — `bao_cao_he_thong/BAO_CAO_{TIM_KIEM,SINH_CAU_TRA_LOI_API,BO_CAU_HOI_GOLDEN,KHO_DU_LIEU}.md` |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
 
@@ -63,7 +63,8 @@ User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`.
    **Xong, chờ review** — B review A1 sau khi xong B8 (đối chiếu số với report 7B + code).
 2. Khi User gửi `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`: tối ưu
    governance/report cho hue_rag (đề xuất cho User trước khi đổi lớn).
-3. Review B8, C8 (C7 A đóng 2026-10-24: thứ tự ưu tiên mới §8.4, 5 URL WebFetch). Sau đó: trình User danh sách dọn C2; brainstorm Phase 8.
+3. B8, C8 A đóng 2026-10-24 (báo cáo Phase 0–7A2 trong `bao_cao_he_thong/`); C7 đóng. A1: B review
+   `changes_requested` (1 major, 6 minor câu chữ) → A đã sửa, chờ B kiểm diff. Sau đó: trình User danh sách dọn C2; brainstorm Phase 8.
 
 ## Việc của B
 

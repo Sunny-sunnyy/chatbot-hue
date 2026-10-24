@@ -3,7 +3,7 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- B8: `bao_cao_he_thong/BAO_CAO_{NEN_TANG,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` xong (mv từ report_agent); `BAO_CAO_CHIA_DOAN.md` đang viết. Sau đó review A: LUONG_HOAT_DONG_HE_THONG.md, BAO_CAO_DANH_GIA.md.
+- B8 xong: 4 file trong `bao_cao_he_thong/` (NEN_TANG, CHIA_DOAN, EMBEDDING_TU_KHOA, LUU_TRU_QDRANT). Review A xong: `report_agent/2026-10-24_to_chuc_bao_cao/bao_cao_he_thong_A1_review.md` (changes_requested: 1 major, 6 minor).
   Nháp do 4 sub-agent viết ở `/tmp/b8/`, B kiểm file:dòng các lệch chính trước khi chép vào repo.
 
 ## Đang khai báo sửa
