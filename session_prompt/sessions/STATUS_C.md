@@ -3,14 +3,19 @@
 Terminal: `hue-rag-d9` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ A review C2; sau đó chờ 7B Gate 3 (Claude judge, spec 7B §4.3).
-
+- C3: chờ A nhắn có file chấm 7B Gate 3 (Claude judge, spec 7B §4.3). Chưa chấm gì.
+- Đã chuẩn bị (ngoài repo, mất khi reboot thì viết lại): `/tmp/c_judge/batches.py`
+  (`split` lô ≤10 giữ thứ tự đã xáo, kiểm đúng 4 key đầu vào; `merge` kiểm đủ/không trùng
+  case, số nguyên 1–5, có feedback) — đã thử với input giả 2 case; `/tmp/c_judge/subagent_prompt.md`
+  (sub-agent chỉ đọc prompt judge + lô, cấm mở file khác).
+- Dự kiến: 176 case → 18 lô; lần chấm lại 30 case (file xáo seed khác) → 3 lô; lô và điểm để
+  trong `data/evaluation/phase_7b/` (private, tên con theo report Gate 1 của B).
 
 ## Đang khai báo sửa
 - không
 
 ## Vừa xong
-- C2: `reports/phase_7_cleanup_inventory_2026_10_24.md` (chỉ đọc; đồ thị import AST `/tmp/c_probe/imports.py`; gồm input B1).
+- C2 A đóng, commit `dba4881`: `reports/phase_7_cleanup_inventory_2026_10_24.md` (chỉ đọc; đồ thị import AST `/tmp/c_probe/imports.py`; gồm input B1).
 - C1 A đóng, commit `1027ec3`.
 - Report giả thuyết Phase 8: 14 giả thuyết (H1–H14), 11 quan sát đo được (O1–O11),
   thứ tự đề xuất. Probe chỉ đọc bằng `uv run` (script `/tmp/c_probe/`, không commit);

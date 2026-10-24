@@ -3,7 +3,7 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- B2 — Phase 7B Gate 1: review thiết kế xong (A đồng ý 6 mặc định); đang code.
+- Chờ A review B2 (Phase 7B Gate 1); sau đó Gate 2 (Run 1/2 + judge luna) nếu A giao.
 
 ## Đang khai báo sửa
 - `backend/evaluation/full_corpus_eval.py` (mới)
@@ -13,6 +13,8 @@ Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 - Kết quả private: `data/evaluation/phase_7b/` (file mới, không ghi đè `subsets.json`)
 
 ## Vừa xong
+- B2 xong, chờ review A: `reports/phase_7b_gate_1_evaluator_implementation_2026_10_24.md`;
+  retrieval tất định; smoke 10 sạch, 0,0028 USD; dự báo Gate 2 ~0,077 USD.
 - B1 xong, A đã đóng: `reports/phase_7b_gate_0_health_audit_2026_10_24.md` — nền
   full-corpus khớp tài liệu; test free 211/213 pass (2 fail do hằng số cũ); sự cố
   deselect (collection test tạm + 1 request OpenAI 400 ~0 USD + ghi đè CSV, đã khôi phục).
@@ -31,6 +33,8 @@ Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
   không khớp. Chỉ liệt kê file test free, không dựa vào deselect.
 - Test Foods cũ ghi đè `backend/evaluation/retrieval_results.csv` (tracked); conftest
   `ingested_collection` tạo collection tạm Qdrant.
+- `select_cases([])` từng = mọi case → retry chạy lại cả Golden; đã sửa. Lệnh paid mới:
+  thử trước không `--env-file` để thấy nó định gọi gì.
 - User 2026-10-24: báo cáo trực tiếp với A; việc A giao = User giao.
 
 ## Việc dở / câu hỏi cho A

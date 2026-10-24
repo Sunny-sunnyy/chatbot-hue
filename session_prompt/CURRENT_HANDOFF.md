@@ -8,7 +8,7 @@ việc đang mở; việc xong chuyển tóm tắt sang `PROJECT_HISTORY.md`.
 | Vai | Terminal | Agent | Liên lạc | Việc hiện tại | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | Điều phối Phase 7B | đang làm |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B2 Phase 7B Gate 1 | đang làm |
+| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B2 Phase 7B Gate 1 | chờ review A |
 | C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | C3 chờ 7B Gate 3 | rảnh |
 
 User 2026-10-24: cả ba là Claude Code nên liên lạc `trực tiếp`. Nếu User đổi một
@@ -30,7 +30,7 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 ## Việc của A
 
 1. Trình User danh sách dọn C2 (sau khi 7B đóng).
-2. Review B2. Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
+2. Review B3; khi có `judge_input_*` nhắn C chấm (C3). Tập chấm lại 30 + mẫu User 20 **đã chọn** (rời nhau, phân tầng category, đủ 7
    partition, seed 20261025): `data/evaluation/phase_7b/subsets.json` (private, `case_index` 0-based).
 3. Điều phối các Gate còn lại của 7B; chuẩn bị file chấm cho User.
 
@@ -42,21 +42,28 @@ session sang Codex/AGY thì cột "Liên lạc" của nó là `qua User` (`WORKF
 (A chạy lại `audit.py`: PASS; 2 test fail do hằng số/dữ liệu cũ — đích dọn). Sự cố deselect §5.1
 đã xử lý (CSV khôi phục; bẫy ghi §8). Nền đủ để lấy baseline 7B.
 
-### B2 — Phase 7B Gate 1 (sau B1, trung bình, paid ≤0,02 USD)
+### B2 — Phase 7B Gate 1 — A đóng 2026-10-24
 
-- **Đọc:** `full-read` `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`;
-  `targeted-read` `backend/api/app.py` (`create_app`), `backend/evaluation/eval.py`
-  (metric), `backend/llm/generator_openai_full_corpus.py`, rubric trong
-  `guides/full_corpus_rag.md`.
-- **Làm:** review thiết kế trước (gửi A finding nếu có, rồi mới code); làm Gate 1 theo spec
-  §5: module `backend/evaluation/full_corpus_eval.py`, prompt
-  `backend/evaluation/full_corpus_judge_prompt.md`, test logic thuần; retrieval eval 176
-  ×2 `dense_bm25_rrf` + 1 lần `native_hybrid_rrf`; smoke 10 (sinh + judge luna) ghi token
-  thật, dự báo tiền Gate 2.
-- **Không làm:** chạy Run 1/Run 2 (chờ A chọn tập con); sửa runtime/prompt sinh/Golden.
-- **Quyền:** paid `gpt-6-luna` ≤0,02 USD cho smoke; Qdrant chỉ đọc; không commit.
-- **Đầu ra:** `reports/phase_7b_gate_1_evaluator_implementation_2026_10_24.md`; kết quả
-  private trong `data/evaluation/phase_7b/`; `STATUS_B.md`; nhắn A.
+`reports/phase_7b_gate_1_evaluator_implementation_2026_10_24.md`. A kiểm: thứ tự `answer_case`
+khớp `api/routes/chat.py`; 10 test pass; hai file retrieval `dense_bm25_rrf` giống byte; smoke
+summarize khớp report (0,0028 USD). Finding minor m1 (sửa ở B3): `judge-luna --cases` không
+kèm giá trị → `[] or …` thành mọi case (paid); `export-judge-input` cùng mẫu (free).
+
+### B3 — Phase 7B Gate 2: Run 1 + Run 2 + judge luna (paid ≤0,6 USD; dự báo ~0,08–0,16)
+
+- **Trước khi chạy:** sửa m1 (`--cases` rỗng = không case nào, giống `select_cases`) + test hồi quy.
+- **Làm** (tên file trong `data/evaluation/phase_7b/`):
+  1. `generate --golden full --out run1_answers.jsonl`; có lỗi thì `retry generate`.
+  2. `generate --golden full --out run2_answers.jsonl`; có lỗi thì `retry`.
+  3. `judge-luna --answers run1_answers.jsonl --out run1_judge_luna.jsonl`.
+  4. `judge-luna --answers run1_answers.jsonl --cases <rerun_30 trong subsets.json> --out run1_judge_luna_rerun30.jsonl`.
+  5. `export-judge-input`: run1 đủ, seed 1 → `judge_input_run1.jsonl`; run1 `rerun_30`, seed 2 →
+     `judge_input_run1_rerun30.jsonl`; run2 đủ, seed 3 → `judge_input_run2.jsonl`.
+- **Không làm:** tổng hợp cuối (Gate 4); sửa runtime/prompt sinh/prompt judge/Golden.
+- **Dừng:** tiền cộng dồn (usage) chạm 0,6 USD; >10% case lỗi kỹ thuật sau một lần retry;
+  runtime từ chối khởi động. Báo A ngay.
+- **Đầu ra:** `reports/phase_7b_gate_2_runs_implementation_2026_10_24.md` (lệnh, số case, lỗi,
+  citation error, từ chối, usage + USD từng bước và tổng; không chép nội dung); `STATUS_B.md`; nhắn A.
 
 ## Việc của C
 
