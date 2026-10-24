@@ -4,6 +4,22 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-24 (tối) — Phase 7B: evaluator + baseline 176 case (chờ User chấm mẫu)
+
+- Brainstorm với User → spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`:
+  judge chính là Claude (session, 0 API) vì User nhạy chi phí; `gpt-6-luna` chỉ sinh + judge phụ;
+  User chấm 20 case; đo nhiễu. Sau khi User cho giá luna (0,1/0,5 USD per 1M) A thêm Run 2 đủ 176
+  và judge luna. User ủy quyền A tự điều phối, thử nghiệm, commit/push (trước khi nghỉ).
+- B1 kiểm sức khỏe Phase trước: nền khớp `Project_Status.md` §4; sự cố deselect pytest (1 paid
+  call trả 400, collection tạm tự xóa, CSV tracked bị ghi đè rồi khôi phục) → bẫy §8.
+- C1 giả thuyết Phase 8 (14 mục), C2 danh sách dọn sau Phase 7 (chưa xóa gì).
+- Gate 1–3: `backend/evaluation/full_corpus_eval.py` + prompt judge; Run 1/Run 2 176/176, 0 lỗi;
+  Claude chấm 176 + 30 + 176 (39 sub-agent). Baseline Claude Run 1: Accuracy 4,43 / Completeness
+  4,28 / Relevance 4,45; retrieval MRR 0,721 / nDCG 0,755 / Coverage 92,35; từ chối nhầm 22/158 —
+  chính là 22 case 1/1/1. Nhiễu rất thấp (Run 1 vs Run 2 chênh TB ≤0,011; Claude–luna trùng 89–96%).
+- Thăm dò Phase 8 (exploratory): context 10 chunk → 10/22 từ chối nhầm hết từ chối.
+- Tiền paid toàn ngày ~0,087 USD. Report `reports/phase_7b_*`, `reports/phase_8_*`.
+
 ## 2026-10-24 (chiều) — Đóng Phase 7A2; bổ sung Governance v2
 
 - Gate 3 User-closed: 13 collection cũ + 9 file build record cũ đã xóa (User chạy
