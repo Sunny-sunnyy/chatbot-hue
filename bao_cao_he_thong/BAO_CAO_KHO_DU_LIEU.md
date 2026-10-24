@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Kho dữ liệu — sửa dữ liệu và tạo lại chỉ mục (Phase 7A2)
 
-**Cập nhật lần cuối: 19:04 24/10/2026 — bản 2: đưa về mẫu mới (Tóm tắt đầu file, checklist 5 mức, mã
-nội bộ xuống Phụ lục); nội dung kỹ thuật và số đo giữ nguyên bản 1.**
+**Cập nhật lần cuối: 19:58 24/10/2026 — bản 3: cập nhật sau khi dọn code món ăn — đã xóa 2 collection
+món ăn (Qdrant còn 1 collection), notebook 03/04/06 đã sửa, số dòng `settings.yaml` mới.**
 Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -14,12 +14,12 @@ Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
   dữ liệu lệch thì chatbot từ chối khởi động. Trạng thái: đã đóng 24/10/2026 (kèm giới hạn: chỉ mục
   Qwen3-8B hoãn sang Phase 8).
 - **Đo được:** chỉ mục 8.459 / 8.459 đoạn, không lỗi; chatbot khởi động HTTP 200; 5 câu thật 4 đạt / 1
-  chưa đạt — giống hệt trước khi sửa. Qdrant dọn từ 16 xuống 3 collection. Kiểm lại 24/10: hiện trạng
-  đúng như lúc đóng.
+  chưa đạt — giống hệt trước khi sửa. Qdrant dọn từ 16 xuống 3 collection (7A2), rồi còn **1** sau
+  khi dọn món ăn (24/10). Kiểm lại sau dọn: chỉ mục, phiếu build và dữ liệu đúng như lúc đóng.
 - **Giới hạn chính:** Qwen3-8B chưa có chỉ mục; bộ chia đoạn vẫn kiểm cả tokenizer của model đã bỏ nên
-  đoạn bị giữ nhỏ; còn 2 collection món ăn không dùng (đang dọn).
+  đoạn bị giữ nhỏ.
 - **Chi phí:** build chỉ mục e5-small chạy trên máy, không tốn tiền API.
-- **Bạn cần quyết gì:** không có ở khâu này (xóa 2 collection món ăn bạn đã duyệt 24/10; đang làm).
+- **Bạn cần quyết gì:** không có ở khâu này.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -49,15 +49,22 @@ mở `http://localhost:6335/dashboard` để xem các collection.
 | Một lệnh build cho mọi lần sửa dữ liệu | **Đã xử lý, đóng gói** | `full_corpus_pipeline.py:232–244` |
 | Build lại sau khi sửa kho (từ điển BM25) | **Xử lý một phần** | Từ điển ghi một lần: phải xóa file cũ trước khi build, không thì build báo lỗi; `full_corpus_pipeline.py:121–131` |
 | Chỉ mục Qwen3-8B qua OpenRouter | **Đã thử, chưa áp dụng** | Lần 1 trộn 3 nhà cung cấp (vector không đồng nhất); lần 2 chỉ Nebius lỗi 504; bạn chọn hoãn sang Phase 8 |
-| Dọn collection cũ trong Qdrant | **Đã xử lý, đóng gói** | 16 → 3 collection, đúng danh sách duyệt |
-| Xóa 2 collection món ăn không dùng | **Chưa thực hiện** (lúc 19:04 24/10) | Bạn duyệt 24/10; việc dọn đang làm |
+| Dọn collection cũ trong Qdrant | **Đã xử lý, đóng gói** | 16 → 3 collection (7A2) → 1 (24/10), đúng danh sách duyệt |
+| Xóa 2 collection món ăn không dùng | **Đã xử lý, đóng gói** | Đã xóa 24/10 (liệt kê trước/sau); Qdrant chỉ còn `hue_full_corpus_7a2_e5_small_384`. Không có bản sao lưu (theo danh sách dọn) |
 | Đoạn bị giữ nhỏ vì kiểm tokenizer model đã bỏ | **Chưa thực hiện** | 6 bảng bị tách chỉ vì HuyDang 256; Phase 8 xử lý |
-| Notebook 03, 04, 06 mô tả/gọi tên cũ | **Xử lý một phần** | Việc dọn đã sửa trong working tree, chưa review/commit |
+| Notebook 03, 04 mô tả/gọi tên cũ | **Đã xử lý, đóng gói** | Đã sửa khi dọn (commit `1832201`); Run All 0 lỗi (kiểm lại ở review dọn) |
+| Notebook 06 mô tả tên cũ | **Đã xử lý** | Chỉ sửa phần chữ; chưa chạy lại vì có gọi API trả phí |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 24/10/2026 — Dọn code và collection món ăn sau Phase 7 (bản 3)
+Xóa 2 collection món ăn và 5 file dữ liệu metadata cũ; gỡ code/test/notebook món ăn. Kiểm lại sau dọn
+(C, chỉ đọc): Qdrant còn 1 collection, 8.459 điểm, cả 8.459 điểm đúng 7 trường; 205 file khớp phiếu
+build; chunker vẫn ra 8.459 đoạn; kết quả tìm kiếm giống hệt từng byte mốc 7B; chatbot `/health` 200 ·
+**PASS** · tiền: 0 (lượt sinh thử 10 câu của B ~0,0013 USD).
 
 ### 24/10/2026 — Kiểm lại hiện trạng (C, chỉ đọc)
 Kết quả: **PASS** — Qdrant 3 collection; chỉ mục 7A2 có 8.459 điểm (dense + sparse); phiếu build `v3`,
@@ -73,11 +80,11 @@ Chỉ mục Qwen3-8B qua OpenRouter: lần 1 trộn 3 nhà cung cấp → vector
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code (commit `54670a0`), Qdrant (GET) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
+Kiểm với code (commit `1832201`, sau dọn), Qdrant (GET) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
-| Chỉ mục `hue_full_corpus_7a2_e5_small_384`, 8.459 đoạn, là chỉ mục chatbot dùng | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:66–69`; `backend/config/settings.yaml:111`; Qdrant GET |
+| Chỉ mục `hue_full_corpus_7a2_e5_small_384`, 8.459 đoạn, là chỉ mục chatbot dùng | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:66–69`; `backend/config/settings.yaml:41`; Qdrant GET |
 | Phiếu build `full_corpus_build:v3` là nguồn sự thật; dữ liệu lệch thì từ chối chạy | **còn dùng** | `backend/ingestion/source_state.py:133`; `backend/retrieval/full_corpus.py:353,415` |
 | Một lệnh build `python -m backend.ingestion.full_corpus_pipeline build --candidate <id>` | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:232–244` |
 | Sparse state (từ điển BM25) chung, ghi một lần; dữ liệu đổi thì phải xóa file cũ trước khi build | **còn dùng** (bẫy đã ghi ở `Project_Status.md` §8) | `full_corpus_pipeline.py:121–131` |
@@ -85,7 +92,7 @@ Kiểm với code (commit `54670a0`), Qdrant (GET) và `session_prompt/Project_S
 | Chia đoạn giữ nguyên từ Phase 2 | **còn dùng**, tới khi Phase 8 đổi (có số liệu ủng hộ đổi) | `backend/ingestion/chunking/full_corpus_chunker.py`; [R1] |
 | Payload 7 trường (metadata v2) | **còn dùng** | `backend/retrieval/full_corpus.py` `REQUIRED_PAYLOAD_FIELDS` |
 | 13 collection cũ (4 legacy, 4 metadata v2, 3 món ăn 08a, 2 TF-IDF 08b) | **đã xóa** | Qdrant GET 24/10 |
-| Hai collection món ăn (572 điểm mỗi cái) | **còn** (lúc 19:04 24/10), không đứng sau API nào; bạn đã duyệt xóa, việc dọn đang làm | [R2] §2.1 |
+| Hai collection món ăn (572 điểm mỗi cái) | **đã xóa** 24/10 khi dọn sau Phase 7 (bạn duyệt) | [R2] §2.1; Qdrant GET sau dọn |
 | Backup Gate 1 của kho | **đã xóa** khi đóng Phase | `Project_Status.md` §4 |
 
 ## 6. Việc còn lại / cần quyết
@@ -93,8 +100,6 @@ Kiểm với code (commit `54670a0`), Qdrant (GET) và `session_prompt/Project_S
 - **Qwen3-8B chưa có chỉ mục**; khi làm lại ở Phase 8 cần cách gọi chịu được lỗi 504/429.
 - Lỗi bảng giá và tổng hợp nhiều nguồn vẫn còn — đã được đo kỹ ở Phase 7B (`BAO_CAO_DANH_GIA.md`).
 - Bộ chia đoạn vẫn kiểm cả 3 tokenizer (gồm HuyDang 256 đã bỏ) → đoạn bị giữ nhỏ; Phase 8 xử lý.
-- Notebook 03, 04, 06 và 2 collection món ăn: việc dọn sau Phase 7 đang làm; khi xong, A cập nhật các
-  dòng tương ứng ở §3 và §5.
 
 ## Phụ lục — hồ sơ kỹ thuật
 
@@ -102,11 +107,12 @@ Kiểm với code (commit `54670a0`), Qdrant (GET) và `session_prompt/Project_S
   review); 8B hoãn theo review Gate 2 (`reports/phase_7a2_gate_2_review_2026_10_24.md` §6).
 - [R1] giả thuyết Phase 8: `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C1, C7).
 - [R2] danh sách dọn sau Phase 7: `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2).
-- Bản 1 (C8, 24/10/2026, commit `4426ed0`).
+- Bản 1 (C8, 24/10/2026, commit `4426ed0`). Bản 3 (C13): sau dọn B9 (commit `1832201`); số đo ở
+  `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md` §4.
 - **Lệch phát hiện (24/10):**
   - `Project_Status.md` §4 ghi "mỗi chunk vừa cả 3 tokenizer e5-small / e5-base / huydang" — đúng với
-    code (`backend/config/settings.yaml:48–60`), nhưng e5-base và HuyDang không còn là model ứng viên
+    code (`backend/config/settings.yaml:22–34`), nhưng e5-base và HuyDang không còn là model ứng viên
     từ 7A2; ràng buộc này chỉ còn tác dụng làm đoạn nhỏ đi (6 bảng bị tách chỉ vì HuyDang). Đã báo ở C1.
-  - Notebook `04_qdrant_ingestion.ipynb` (bản commit `54670a0`) lặp qua cả 2 model trong code và gọi
-    một trường không còn tồn tại (`prepared.sample_chunk_ids`), nên sẽ lỗi khi chạy (đọc code, chưa
-    chạy). Đã ghi ở C2 §2.4; B9 đang sửa.
+  - **Đã xử lý:** notebook `04_qdrant_ingestion.ipynb` (bản commit `54670a0`) từng lặp qua cả 2 model và
+    gọi trường không tồn tại (`prepared.sample_chunk_ids`). B9 đã sửa (chỉ kiểm candidate có phiếu
+    build, lấy mẫu như `full_corpus_pipeline`); Run All 0 lỗi.

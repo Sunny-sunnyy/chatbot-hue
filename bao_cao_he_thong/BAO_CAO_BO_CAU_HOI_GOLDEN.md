@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden và chấm điểm thử món ăn (Phase 7, 7A)
 
-**Cập nhật lần cuối: 19:32 24/10/2026 — bản 3: đính chính §2 — khi gộp đề, các nhóm được nối theo
-thứ tự cố định, không xáo (bản 2 ghi nhầm "xáo cố định").**
+**Cập nhật lần cuối: 20:02 24/10/2026 — bản 4: cập nhật sau khi dọn code món ăn (bộ chấm món ăn và
+notebook 07 đã gỡ; chỗ lệch về đường dẫn đề món ăn đã xử lý).**
 Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -65,6 +65,11 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
+### 24/10/2026 — Dọn code món ăn sau Phase 7 (bản 4)
+Gỡ bộ chấm món ăn (`eval.py`, `evaluator.py`, `test.py`, `golden_dataset.py`) và notebook 07. Kiểm lại
+sau dọn: Golden 176 câu và smoke 10 câu vẫn đạt `check` · **PASS** · tiền: 0. File Golden món ăn cũ
+(private) giữ nguyên.
+
 ### 24/10/2026 — Đính chính cách gộp đề (bản 3)
 Đối chiếu lại code và spec 7A khi rà quyết định Phase 8.1: đề được nối theo thứ tự nhóm cố định, không
 xáo. Bản 2 ghi "xáo cố định" là nhầm. Không đổi số đo nào.
@@ -89,7 +94,7 @@ diện Gradio để xem từng câu · ý tưởng chấm được giữ, nhưng
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
+Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
@@ -99,9 +104,9 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 | 6 thước đo (MRR@10, nDCG@10, Keyword Coverage@10; Đúng/Đủ/Trúng ý 1–5), trung bình theo câu | **còn dùng** (Phase 7B) | `full_corpus_eval.py` |
 | Người chấm là `gpt-6-luna` | **đã thay** bởi Claude chính, `gpt-6-luna` phụ (Phase 7B, bạn chọn) | `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` |
 | Không chia đề thành phần luyện / phần giữ kín | **còn đúng theo spec 7A**; Phase 8 chờ bạn quyết | `session_prompt/CURRENT_HANDOFF.md` "Câu hỏi cho User" |
-| Bộ chấm món ăn Phase 7 (`eval.py`, `evaluator.py` Gradio, `test.py`) | **đã thay** bởi `full_corpus_eval.py` (Phase 7B); đường sinh câu trả lời món ăn **hỏng** (gửi `temperature` → lỗi 400); nằm trong danh sách dọn | `backend/evaluation/eval.py:148`; `backend/llm/generator_openai.py:44` |
-| Golden món ăn V2/V3, `tests.jsonl` | **lịch sử**, chỉ code món ăn đọc | `backend/evaluation/golden_dataset.py:11–16` |
-| Notebook `07_evaluation.ipynb` | **đã bỏ dùng** (gọi bộ chấm món ăn); đề xuất xóa | [R2] §2.4 |
+| Bộ chấm món ăn Phase 7 (`eval.py`, `evaluator.py` Gradio, `test.py`) | **đã thay** bởi `full_corpus_eval.py` (Phase 7B); code **đã gỡ** khi dọn sau Phase 7 (trước đó đường sinh món ăn hỏng: gửi `temperature` → lỗi 400) | commit `1832201` |
+| Golden món ăn V2/V3, `tests.jsonl` | **lịch sử**; file private còn, không còn code nào đọc (code món ăn đã gỡ) | commit `1832201` |
+| Notebook `07_evaluation.ipynb` | **đã xóa** khi dọn sau Phase 7 | [R2] §2.4; commit `1832201` |
 
 ## 6. Việc còn lại / cần quyết
 
@@ -118,11 +123,10 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 - [R2] danh sách dọn sau Phase 7: `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2).
 - [R3] spec 7A: `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` (`:32`, `:138`: nối theo partition, không shuffle; code `golden_full_corpus.py:110-121`).
 - Đính chính bản 3: C12, theo `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` §6 mục 13.
-- Bản 1 (C8, 24/10/2026, commit `4426ed0`).
+- Bản 1 (C8, 24/10/2026, commit `4426ed0`). Bản 4 (C13b): sau dọn B9 (commit `1832201`).
 - **Lệch phát hiện (24/10):**
-  - Bộ chấm món ăn có hai đường dẫn đề khác nhau: `settings.yaml` `evaluation.test_file` trỏ
-    `foods/evaluation/tests.jsonl` (`backend/config/settings.yaml:106`), còn mặc định trong code là
-    `test2.jsonl` (`backend/evaluation/test.py:8–10`). Không ảnh hưởng hiện tại (bộ chấm món ăn không
-    còn dùng, đang được dọn ở B9), chỉ ghi lại.
+  - **Đã xử lý (gỡ ở B9, commit `1832201`):** bộ chấm món ăn từng có hai đường dẫn đề khác nhau —
+    `settings.yaml` `evaluation.test_file` trỏ `foods/evaluation/tests.jsonl`, còn mặc định trong
+    `backend/evaluation/test.py` là `test2.jsonl`. Cả khóa `evaluation` lẫn `test.py` đã gỡ.
   - Guide `guides/full_corpus_rag.md` mục "Quyết định đã chốt" còn mô tả 7 loại câu cũ; đã có ghi chú
     "7A supersede" ở đầu mục, nên không sai, nhưng người đọc nhanh dễ nhầm.

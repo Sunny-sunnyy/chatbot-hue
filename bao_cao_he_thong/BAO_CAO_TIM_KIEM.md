@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 19:32 24/10/2026 — bản 3: đính chính checklist — reranker MiniLM chỉ được thử trên
-bản món ăn, trên toàn kho chưa đo chất lượng; câu "bàn khi brainstorm" đổi thành Phase 8.1.**
+**Cập nhật lần cuối: 19:58 24/10/2026 — bản 4: cập nhật sau khi dọn code món ăn (Qdrant còn 1 collection,
+code ba chế độ món ăn đã gỡ, số dòng `settings.yaml` mới); kết quả tìm kiếm không đổi.**
 Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -42,20 +42,24 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Tìm đoạn theo nghĩa + từ khóa cho câu hỏi thường | **Đã xử lý, đóng gói** | MRR@10 0,72 · nDCG@10 0,76 · 92% lọt top-10; chạy lại giống từng byte; `full_corpus.py:111`, `settings.yaml:112` |
+| Tìm đoạn theo nghĩa + từ khóa cho câu hỏi thường | **Đã xử lý, đóng gói** | MRR@10 0,72 · nDCG@10 0,76 · 92% lọt top-10; chạy lại giống từng byte; `full_corpus.py:111`, `settings.yaml:42` |
 | Tìm độc lập theo nghĩa và từ khóa rồi trộn (`native_hybrid_rrf`) | **Đã thử, chưa áp dụng** | MRR 0,726 vs 0,721 của cách đang chạy — chênh rất nhỏ, chưa đáng đổi |
 | Báo lỗi rõ khi Qdrant/model lỗi, không tự đổi cách | **Đã xử lý** | `backend/retrieval/full_corpus.py` |
 | Câu so sánh | **Xử lý một phần** | MRR 0,53 |
 | Câu cần nhiều nguồn | **Xử lý một phần** | MRR 0,54 |
 | Dòng trong bảng giá (ví dụ giá vé + miễn giảm Đại Nội) | **Chưa thực hiện** | Đoạn bảng giá đứng hạng ~191 theo nghĩa, ngoài top-30 theo từ khóa; Phase 8: nhóm dòng bảng |
 | Từ ghép tiếng Việt trong BM25 ("Đại Nội") | **Chưa thực hiện** | BM25 tách theo âm tiết; Phase 8 thử ghép cặp âm tiết |
-| Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | **Chỉ thử trên bản món ăn**: MiniLM làm điểm giảm. Trên toàn kho chỉ đo tốc độ, chưa đo chất lượng; `settings.yaml:113` (`reranker: none`) |
+| Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | **Chỉ thử trên bản món ăn**: MiniLM làm điểm giảm. Trên toàn kho chỉ đo tốc độ, chưa đo chất lượng; `settings.yaml:43` (`reranker: none`) |
 | Reranker tiếng Việt | **Chưa thực hiện** | Phase 8, sau khi chắc đoạn đúng đã nằm trong 30 ứng viên |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 24/10/2026 — Dọn code món ăn sau Phase 7 (bản 4)
+Gỡ code/test/notebook bản món ăn và xóa 2 collection món ăn. Kiểm lại sau dọn: kết quả tìm kiếm 158
+câu **giống hệt từng byte** so với mốc Phase 7B · **PASS** · tiền: 0. Hành vi tìm kiếm không đổi.
 
 ### 24/10/2026 — Đính chính về reranker MiniLM (bản 3)
 Khi rà quyết định Phase 8.1: bằng chứng "MiniLM làm điểm giảm" chỉ có trên bản món ăn (bộ câu và
@@ -78,16 +82,16 @@ Ba chế độ `dense_only` / `hybrid_no_rerank` / `hybrid_rerank`, chỉ kho m�
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
+Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026.
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
-| Hai cách tìm `dense_bm25_rrf`, `native_hybrid_rrf` | **còn dùng** (chatbot chạy `dense_bm25_rrf`) | `backend/retrieval/full_corpus.py:111`; `backend/config/settings.yaml:112` |
+| Hai cách tìm `dense_bm25_rrf`, `native_hybrid_rrf` | **còn dùng** (chatbot chạy `dense_bm25_rrf`) | `backend/retrieval/full_corpus.py:111`; `backend/config/settings.yaml:42` |
 | 30 ứng viên, RRF k=60, trả top-10 | **còn dùng** | `backend/retrieval/full_corpus.py:465,608,627` |
-| Reranker MiniLM (tiếng Anh) | **có code nhưng đang tắt** | `settings.yaml:113` (`reranker: none`); `backend/reranking/cross_encoder.py:13` |
-| 4 kho vector toàn kho của Phase 4–5 | **đã thay** bởi một kho `hue_full_corpus_7a2_e5_small_384` (Phase 7A2) | Qdrant còn 3 collection; `Project_Status.md` §4 |
+| Reranker MiniLM (tiếng Anh) | **có code nhưng đang tắt** | `settings.yaml:43` (`reranker: none`); `backend/reranking/cross_encoder.py:13` |
+| 4 kho vector toàn kho của Phase 4–5 | **đã thay** bởi một kho `hue_full_corpus_7a2_e5_small_384` (Phase 7A2) | Qdrant chỉ còn collection này (kiểm 24/10 sau dọn) |
 | Model e5-small, e5-base, HuyDang, Qwen3-0.6B trong ma trận thử | **đã thay** bởi e5-small + Qwen3-8B (Phase 7A2); 8B chưa có chỉ mục | `backend/embedding/full_corpus.py:41–66` |
-| Ba chế độ bản món ăn (`dense_only`/`hybrid_*`) | **không còn dùng** (API không gọi); nằm trong danh sách dọn [R2] | `backend/core/startup.py`, `backend/retrieval/service.py` |
+| Ba chế độ bản món ăn (`dense_only`/`hybrid_*`) | **đã bỏ**: code đã gỡ khi dọn sau Phase 7 | commit `1832201`; [R2] |
 | Chọn cách tìm/model thắng | **chưa làm** → Phase 8 | `Project_Status.md` §2 |
 
 ## 6. Việc còn lại / cần quyết
@@ -104,7 +108,8 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 - [R2] danh sách dọn sau Phase 7: `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2).
 - Số đo 7B: `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`; report `reports/phase_7b_*`.
 - Bản 1 (C8, 24/10/2026, commit `4426ed0`). Bản 3 (C12): đính chính theo `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` dòng 5.5 và §6 mục 13.
-- **Lệch phát hiện (24/10):** `settings.yaml` vẫn giữ khối `profiles`/`active_profile`/`retrieval`/
-  `reranking` của bản món ăn; code bản toàn kho không đọc các khối này (reranker lấy tên model mặc
-  định trong code), nhưng `load_settings` vẫn bắt buộc `active_profile` hợp lệ
-  (`backend/core/settings_loader.py:15–21`). Đã ghi trong [R2]; việc dọn B9 đang xử lý (chưa review).
+- **Lệch phát hiện (24/10) — đã xử lý:** `settings.yaml` từng giữ khối `profiles`/`active_profile`/
+  `retrieval`/`reranking` của bản món ăn mà code bản toàn kho không đọc. Việc dọn B9 (commit `1832201`,
+  C review `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md`) đã gỡ các khối này và
+  bỏ kiểm `active_profile` trong `load_settings`.
+- Bản 4 (C13): cập nhật sau B9; kiểm so byte tìm kiếm ở review B9 §4.

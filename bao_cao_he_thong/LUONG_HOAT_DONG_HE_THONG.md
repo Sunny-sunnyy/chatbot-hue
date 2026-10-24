@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 24/10/2026** (sau Phase 7B). File này mô tả hệ thống **đang chạy**. Mỗi lần
+**Cập nhật lần cuối: 19:58 24/10/2026** (sau Phase 7B và dọn code/kho món ăn cũ — chatbot chạy y như trước, kết quả tìm kiếm giống từng byte; Qdrant còn 1 kho). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
 thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục).
 
@@ -74,7 +74,6 @@ Người chấm: Claude (chấm theo đáp án mẫu), đối chiếu `gpt-6-lun
 - ~20% đoạn rất ngắn (≤48 token) vì mỗi khối Markdown là một đoạn, không gộp khối cạnh nhau.
 - Chunker còn giữ giới hạn 256 token của model HuyDang (đã bỏ), làm 6 bảng bị tách theo dòng.
 - Chưa có index Qwen3-embedding-8B (hoãn sang Phase 8).
-- Hai collection Foods cũ vẫn còn trong Qdrant, không phục vụ API nào (chờ dọn).
 
 Hướng cải thiện các giới hạn này là việc của **Phase 8** (đợt ổn định trước Agentic RAG ở Phase 9).
 

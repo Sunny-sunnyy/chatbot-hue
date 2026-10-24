@@ -67,6 +67,8 @@ mới bằng tiếng Việt ghi đúng *vì sao* (`test_full_corpus_chunker.py`,
 
   Kết luận của B (đầu vào không đổi; thiếu `[n]` là dao động của model) vẫn đúng, xem §4. Tiêu chí
   đóng: B sửa câu tả khi tiện, hoặc giữ nguyên. Không cần vòng sửa.
+  **Đã đóng:** B sửa report §4b dòng 106–107 ("không có ký hiệu nguồn `[n]` nào (7B có 1–3 ký hiệu)"); C
+  đã đọc lại.
 
 **Ngoài phạm vi B9** (ghi cho A, không đưa vào correction):
 

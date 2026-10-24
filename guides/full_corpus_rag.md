@@ -125,6 +125,7 @@ Hành vi đã quan sát (evidence `reports/phase_7a2_gate_{1,2,3}_*`):
 - Qdrant chỉ còn 3 collection: index e5 7a2 và hai collection Foods
   (`hue_foods_e5_small_384`, `_dense`, giữ qua Phase 7). 13 collection cũ
   (4 legacy, 4 metadata v2, 3 Foods 08a, 2 TF-IDF 08b) đã xóa.
+  *Cập nhật 24/10 (B9):* hai collection Foods đã xóa, code Foods cũ đã gỡ; Qdrant còn 1 collection.
 
 **Ghi chú cho Phase 8 (spec 7A2 §7):** candidate dense đã đổi thành e5-small +
 qwen3-embedding-8b, nên spec/plan Phase 8 phải thiết kế lại. Phase 8 là đợt ổn

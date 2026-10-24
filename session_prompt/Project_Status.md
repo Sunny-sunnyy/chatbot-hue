@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-24` (A, đóng Phase 7B)
+Last updated: `2026-10-24` (A, sau B9 — dọn Foods)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -31,11 +31,13 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Thước đo ổn định (Run 1 vs Run 2 chênh TB ≤0,011); **giới hạn:** chưa có mốc người (User bỏ chấm tay).
 - Tiền paid cả 7B + thăm dò: ~0,087 USD.
 
-Mốc kế tiếp: **Phase 8** (đợt ổn định) — brainstorm với User, input: giả thuyết C
-(`reports/phase_8_candidate_hypotheses_2026_10_24.md` + nghiên cứu ChatGPT), chẩn đoán từ chối nhầm
+Mốc kế tiếp: **Phase 8.1** (rà quyết định + thí nghiệm, không đổi chatbot) — đang brainstorm với User;
+input: bảng rà 56 quyết định `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md`
+(C11), giả thuyết `reports/phase_8_candidate_hypotheses_2026_10_24.md`, chẩn đoán từ chối nhầm
 (`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`), thăm dò context 10
-(`reports/phase_8_probe_context_top10_2026_10_24.md`). Song song: tổ chức lại report
-(`report_agent/`) và viết lại user report các Phase.
+(`reports/phase_8_probe_context_top10_2026_10_24.md`), nghiên cứu ChatGPT
+`gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_1_decision_audit_2026_10_24.md` (private).
+Dọn Foods sau Phase 7 (B9) **đóng** 24/10.
 
 ## 3. Bảng Phase
 
@@ -51,7 +53,8 @@ Mốc kế tiếp: **Phase 8** (đợt ổn định) — brainstorm với User, 
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
-| 8 | `next` | Đợt ổn định trước Phase 9 (mục 5); brainstorm với User trên baseline 7B |
+| 8.1 | `brainstorm` | Rà quyết định Phase 0–7 + thí nghiệm so baseline, không đổi chatbot (đợt `report_agent/2026-10-24_phase_8_1_ra_soat/`); spec chưa viết |
+| 8.2 | `not_ready` | Cải tiến dựa trên số đo 8.1; thiết kế sau khi User đóng 8.1 |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -77,11 +80,9 @@ Mốc kế tiếp: **Phase 8** (đợt ổn định) — brainstorm với User, 
 8B chưa có index.
 
 **Qdrant** `127.0.0.1:6335` (gRPC 6336; port đổi để chạy song song
-`mekongai-template`). Còn đúng 3 collection (sau Gate 3):
-`hue_full_corpus_7a2_e5_small_384`, `hue_foods_e5_small_384` (572),
-`hue_foods_e5_small_384_dense` (572). Hai collection Foods không đứng sau API nào;
-chỉ settings/tests/benchmark Foods cũ tham chiếu; collection Foods còn địa chỉ cũ
-"An Đông" ở 5 quán AEON.
+`mekongai-template`). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.459
+point). Hai collection Foods đã xóa ở B9 (24/10, User chạy); code/test/notebook Foods cũ đã gỡ
+(`1832201`).
 
 **Corpus:** 205 file → 8.459 chunk (chunker giữ nguyên từ Phase 2: chia theo cấu
 trúc Markdown, không overlap có chủ đích (thực tế 3 cặp chunk lặp body: blockquote lồng trong list
@@ -110,6 +111,8 @@ là lịch sử.
 | 2026-10-24 | Code/test/script luôn chạy bằng `uv` trong `.venv` của dự án | `Session_Prompt.md` §10 |
 | 2026-10-24 | Kênh liên lạc: Claude Code ↔ Claude Code `trực tiếp` (SendMessage); có Codex/AGY thì `qua User` (khối "Tin cho <X>") | `WORKFLOW.md` §7 |
 | 2026-09 (giữ) | Phase tuần tự `7A2 → 7B → 8 → 9`; trước Phase mới: Phase trước review + User đóng, cập nhật guide bằng bằng chứng, rồi một tài liệu thiết kế User duyệt | `WORKFLOW.md` §9.4 |
+| 2026-10-24 (tối) | Phase 8 tách **8.1** (Claude rà mọi quyết định Phase 0–7 do AGY/Codex làm; thí nghiệm, phương án cũ làm baseline; không đổi chatbot) → **8.2** (cải tiến). 8.1 rà toàn bộ gồm Golden/evaluator; model/thư viện mới liệt kê trong spec để User duyệt từng cái; paid nhỏ trong trần 1 USD/phiên; index 8B để 8.2. Bộ chấm: chia 176 thành 120 thử / 56 kiểm, thêm 30–40 câu mới kiểu người dùng thật giữ kín tới cuối 8.2 | User |
+| 2026-10-24 (tối) | B9 đóng; thư viện không dùng giữ nguyên, chỉ gỡ khi xung đột; nghiên cứu ngoài qua ChatGPT trước với prompt deep research đầy đủ | User |
 | 2026-10-24 | Phase 8 = đợt ổn định: chunk size/gộp chunk vụn, reranker đa ngôn ngữ, truy xuất bảng giá (F2), tổng hợp đa nguồn (F1), BM25 tiếng Việt (tách từ/bigram), rà lại lựa chọn các Phase trước | User |
 | 2026-10-23 | Dense full-corpus chỉ e5-small + qwen3-embedding-8b; build thẳng metadata v2; build record là nguồn sự thật; runtime mặc định e5-small, cutover 8B chờ bằng chứng 7B/8 | spec 7A2 §2 |
 | 2026-10-23 | Mọi model OpenAI (generation, evaluation answer/judge) là `gpt-6-luna` | `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md` |
@@ -162,17 +165,11 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env python -m pytest tests/<file> -q`;
   không chạy test có paid call ngoài giới hạn (ví dụ `test_llm_generator_openai.py`).
 - Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Test ghi Qdrant/paid: `test_evaluation.py` (một phần), `test_ingestion_pipeline.py`, `test_retrieval_service.py`, `test_llm_generator_openai.py`, benchmark.
-- Test `test_full_corpus_chunker.py::test_full_corpus_determinism_and_preview_byte_equality` fail vì
-  so với artifact cũ 8.460 chunk (hiện 8.459) — lỗi thời, không phải chunker hỏng (B1/B8).
-- `embedding/dense_benchmark.py` còn trỏ collection `hue_foods_08a_*` đã xóa; vài test còn
-  mock/monkeypatch (`test_phase6_live_smoke.py`, `test_reranker_benchmark.py`, `test_markdown_chunker.py`)
-  — đích dọn (B8).
-- Generator/evaluator Foods cũ (`llm/generator_openai.py`) gửi `temperature` → `gpt-6-luna` trả 400; đường full-corpus không dùng tham số này.
+- `test_phase6_live_smoke.py` còn mock/monkeypatch — rà ở Phase 8.1 (B8). Code/test Foods cũ đã gỡ ở B9
+  (`1832201`): pytest 15 file full-corpus 191 passed.
 - OpenRouter 8B: không pin thì trộn provider (vector lệch, cos ~0,996); pin Nebius
   thì 10–30 s/batch và đã gặp 504; DeepInfra từng trả 429.
-- Notebook 06, 08a, 08b còn tên collection/model cũ đã xóa (gãy); notebook 04
-  sẽ lỗi (đọc build record 8B không tồn tại, `prepared.sample_chunk_ids` không có — C2/B8); notebook 03 còn
-  markdown mô tả 4 model — dọn sau Phase 7.
+- Notebook còn lại: 03, 04, 06 (02, 05, 07, 08a–c đã xóa ở B9); 03/04 Run All đạt trên bản tạm.
 - Permission tự động của từng session có thể chặn `rm`/`pkill`: session đó dừng và
   nhờ User chạy bằng `!` trong terminal của nó; session khác không chạy hộ.
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).

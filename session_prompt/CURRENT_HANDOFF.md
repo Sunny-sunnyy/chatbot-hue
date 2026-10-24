@@ -17,6 +17,11 @@ mốc so byte `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` sha `c
   không đổi hành vi chatbot. User đóng 8.1 → A mới brainstorm + thiết kế **8.2** (cải tiến) trên số đo 8.1.
 - B9 làm nốt + C review **song song** với brainstorm 8.1.
 
+**User chốt 20:01 24/10:** **B9 đóng** (C9 `ready_for_user_confirmation`, commit `1832201`). Thư viện
+không còn dùng (gradio, polars, underthesea, bs4, sklearn, nltk, pyarrow, requests) **giữ nguyên**; chỉ gỡ
+khi gây xung đột với thư viện đang dùng. Code luôn `uv` trong `.venv` dự án. Kết quả nghiên cứu 8.1:
+`gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_1_decision_audit_2026_10_24.md` (C14 kiểm URL).
+
 **Thứ tự việc:**
 
 1. **B làm nốt B9** (mục "Việc của B", report §6 bước 1–4) → nhắn A → **C review B9** + chạy lại kiểm
@@ -52,8 +57,8 @@ mốc so byte `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` sha `c
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối; brainstorm 8.1; commit B9 sau review | đang làm |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | làm nốt B9 | C9 đạt, m1 đã sửa — chờ A commit |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C9 xong 19:54: B9 ready_for_user_confirmation (review `phase_7_cleanup_review.md`); C10–C12 đạt |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B10 báo cáo khâu của B | B9 đã commit `1832201`; B10 xong 20:01 — chờ A review |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C13b chờ review A (20:00); C9–C13 đạt |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -66,6 +71,17 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
 
 ## Việc của B
+
+### B10 — Cập nhật báo cáo khâu của B sau B9 + đưa về mẫu mới (free, docs)
+
+A giao 19:55 24/10. B9 đã commit `1832201` (C9 `ready_for_user_confirmation`). Qdrant còn 1 collection.
+- File: `bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md`.
+- Làm: (1) đưa về `session_prompt/TEMPLATE_USER_REPORT.md` như C10 (dòng "Cập nhật lần cuối … bản N",
+  Tóm tắt đầu file, checklist thang 5 mức, mã nội bộ xuống Phụ lục; không đổi số đo cũ); (2) cập nhật
+  hiện trạng sau B9: Qdrant 1 collection, code/test/notebook Foods đã gỡ (dòng nào trỏ file đã xóa thì
+  ghi "đã gỡ ở B9"), một dòng §4 lịch sử. Không chép số liệu corpus.
+- Khai báo trong `STATUS_B.md`; `git diff --check`; xong nhắn A (A review).
+
 
 ### B9 — Dọn sau Phase 7 (User duyệt 2026-10-24: "không còn cần thiết, xoá mà hệ thống vẫn chạy bình thường thì xoá")
 
@@ -99,6 +115,26 @@ Mức rủi ro: cao (xóa code + 2 collection). Đích = `reports/phase_7_cleanu
   xóa/sửa, lệnh kiểm + kết quả); `STATUS_B.md`; nhắn A → C review.
 
 ## Việc của C
+
+### C14 — Kiểm URL nghiên cứu ChatGPT 8.1 bằng WebFetch (free, chỉ đọc)
+
+A giao 20:01 24/10. File: `gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_1_decision_audit_2026_10_24.md`
+(full-read). WebFetch các nguồn mà spec 8.1 sẽ dựa vào, ít nhất: S01, S02, S04, S10 (RRF k mặc định,
+phiên bản), S11 (exact), S12/S13 (modifier IDF), S14 (số DBSF), S20/S21 (bge max_length 1024), S22
+(Qwen3-0.6B chiều, instruction), S24 (giá qwen3.5-9b), S25/S26 (luna reasoning effort, giá), S16/S17.
+Mỗi nguồn: tồn tại? khẳng định trong kết quả có đúng nguồn nói không (trích ngắn ≤1 câu)? lệch gì?
+So phiên bản Qdrant đang chạy (`curl :6335/`) với mốc phiên bản trong S10.
+Không chép nội dung private; không paid. Đầu ra:
+`report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_research_url_check.md` (bảng nguồn · tồn tại ·
+khẳng định · khớp/lệch/không kiểm được). Xong nhắn A.
+
+
+### C13 — Cập nhật báo cáo khâu của C sau B9 (free, docs)
+
+A giao 19:55 24/10. File: `bao_cao_he_thong/BAO_CAO_{TIM_KIEM,KHO_DU_LIEU}.md` (dòng nhắc "3 collection",
+"2 collection món ăn đang dọn", checklist "Xóa 2 collection món ăn" → đã xử lý). Tăng bản N, một dòng
+§4 lịch sử. Không đổi số đo khác. Khai báo `STATUS_C.md`; xong nhắn A.
+
 
 ### C9 — Review B9 + kiểm sức khỏe sau dọn (khi B nhắn "B9 xong")
 

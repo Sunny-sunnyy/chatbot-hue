@@ -1,8 +1,16 @@
-# STATUS B — cập nhật 2026-10-24 19:45 +0700
+# STATUS B — cập nhật 2026-10-24 20:01 +0700
 
 Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
 
-## Đang làm — B9 dọn sau Phase 7: XONG, chờ C review (C9), A commit
+## Đang làm — B10 (A giao 19:55): XONG 20:01, chờ A review (docs, free)
+- File đã sửa (chỉ 4 file này): `bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` → bản 2.
+- Theo `TEMPLATE_USER_REPORT.md`: dòng "Cập nhật lần cuối … bản 2", Tóm tắt, checklist 5 mức, lịch sử mới ở trên,
+  §5 kiểm với commit `1832201`, mã nội bộ + "Lệch" bản 1 (kèm trạng thái đã sửa ở B9 / còn) xuống Phụ lục.
+- Số đo cũ giữ nguyên; thêm một mục lịch sử 24/10 "gỡ code bản món ăn (B9)"; dòng trỏ file đã xóa ghi "đã gỡ ở B9".
+- Kiểm: mọi `file:dòng` trỏ file còn tồn tại đều trong độ dài file (script), đường dẫn thiếu chỉ là file đã gỡ có chủ đích; `git diff --check` sạch.
+- Không sửa `bao_cao_he_thong/README.md` (cột "cập nhật" của 4 dòng B là việc của A).
+
+## Vừa xong — B9 dọn sau Phase 7: A commit+push `1832201` (C9 ready_for_user_confirmation)
 - Report: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (§0 tóm tắt, §4b phiên 2).
 - Phiên 2 (18:51–19:45): pytest 15 file 191 passed / 0 lỗi; retrieval giống từng byte mốc (sha `cefb2d1a`);
   `/health` in-process 200 + 1 retrieval; golden check 176/10 exit 0; smoke 10 0 lỗi kỹ thuật (0,0013334 USD).
@@ -24,8 +32,7 @@ Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opu
   `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` (sha `cefb2d1a…`).
 
 ## Tiếp theo
-- C9 review: ready_for_user_confirmation, 0 blocker/major; B đã sửa minor m1 (report §4b). Chờ A commit.
-- A (19:50): không có việc mới cho B tới khi User duyệt spec Phase 8.1; B nghỉ, không mở việc khác.
+- Chờ A review B10; sửa theo finding nếu có.
 
 ## Tiền paid hôm nay (B)
 - B9 phiên 2: 0,0013334 USD (smoke 10).

@@ -1,13 +1,13 @@
 # Báo cáo hệ thống hue_rag — mục lục cho bạn
 
-**Cập nhật lần cuối: 17:05 24/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
+**Cập nhật lần cuối: 19:58 24/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
 `report_agent/`; report cũ tới 24/10 ở `reports/` (lịch sử).
 
 ## Muốn biết gì ⇒ đọc file nào
 
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 24/10/2026 |
+| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 19:58 24/10/2026 |
 | Chất lượng hiện tại, điểm mốc, chỗ yếu (Phase 7B) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 24/10/2026 |
 | Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 24/10/2026 |
 | Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 24/10/2026 |
@@ -17,7 +17,7 @@
 | Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 24/10/2026 |
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 24/10/2026 |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 24/10/2026 |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) | 24/10/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [24/10 tối](nhat_ky/2026-10-24_don_foods_va_ra_soat_8_1.md) | 19:58 24/10/2026 |
 
 ## Trạng thái ngắn
 
@@ -25,8 +25,10 @@
 |---|---|
 | Chatbot full-corpus (205 file, 8.459 đoạn, e5-small + BM25, gpt-6-luna) | Đã xử lý, đóng gói |
 | Thước đo + điểm mốc 176 câu | Đã xử lý, đóng gói (chưa có mốc người chấm) |
-| Từ chối nhầm 22/158 câu, bảng giá khó tìm, đoạn vụn | Chưa thực hiện → Phase 8 |
-| Index Qwen3-8B | Chưa thực hiện → Phase 8 |
+| Từ chối nhầm 22/158 câu, bảng giá khó tìm, đoạn vụn | Chưa thực hiện → đo ở 8.1, sửa ở 8.2 |
+| Index Qwen3-8B | Chưa thực hiện → Phase 8.2 |
+| Dọn code + 2 kho món ăn cũ | Đã xử lý (chờ bạn đóng); chatbot không đổi, Qdrant còn 1 kho |
+| Rà 56 quyết định Phase 0–7 (Phase 8.1) | Đang làm: bảng rà xong, spec chờ nghiên cứu + câu trả lời của bạn |
 
 Thang 5 mức: Đã xử lý, đóng gói · Đã xử lý · Xử lý một phần · Đã thử, chưa áp dụng · Chưa thực hiện.
 
