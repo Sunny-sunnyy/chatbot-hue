@@ -1,8 +1,8 @@
-# STATUS B — cập nhật 2026-10-24 20:01 +0700
+# STATUS B — cập nhật 2026-10-24 20:07 +0700
 
 Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
 
-## Đang làm — B10 (A giao 19:55): XONG 20:01, chờ A review (docs, free)
+## Vừa xong — B10 (A giao 19:55): A review đạt, commit+push `74270ab` (docs, free)
 - File đã sửa (chỉ 4 file này): `bao_cao_he_thong/BAO_CAO_{NEN_TANG,CHIA_DOAN,EMBEDDING_TU_KHOA,LUU_TRU_QDRANT}.md` → bản 2.
 - Theo `TEMPLATE_USER_REPORT.md`: dòng "Cập nhật lần cuối … bản 2", Tóm tắt, checklist 5 mức, lịch sử mới ở trên,
   §5 kiểm với commit `1832201`, mã nội bộ + "Lệch" bản 1 (kèm trạng thái đã sửa ở B9 / còn) xuống Phụ lục.
@@ -10,7 +10,7 @@ Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opu
 - Kiểm: mọi `file:dòng` trỏ file còn tồn tại đều trong độ dài file (script), đường dẫn thiếu chỉ là file đã gỡ có chủ đích; `git diff --check` sạch.
 - Không sửa `bao_cao_he_thong/README.md` (cột "cập nhật" của 4 dòng B là việc của A).
 
-## Vừa xong — B9 dọn sau Phase 7: A commit+push `1832201` (C9 ready_for_user_confirmation)
+## Vừa xong — B9 dọn sau Phase 7: commit `1832201`, User đóng 20:01 (C9 ready_for_user_confirmation)
 - Report: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (§0 tóm tắt, §4b phiên 2).
 - Phiên 2 (18:51–19:45): pytest 15 file 191 passed / 0 lỗi; retrieval giống từng byte mốc (sha `cefb2d1a`);
   `/health` in-process 200 + 1 retrieval; golden check 176/10 exit 0; smoke 10 0 lỗi kỹ thuật (0,0013334 USD).
@@ -21,18 +21,10 @@ Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opu
 - A trả lời: `backend/test.ipynb`, `backend/scripts/` giữ; phát hiện B8 xếp Phase 8.1.
 
 ## File đang đổi, chưa commit (của B)
-- Xóa: xem report §2 (`git status --short | grep '^ D'`).
-- Sửa: `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
-  `backend/vectorstore/{qdrant,points,upsert}.py`, `backend/scoring/bm25.py`,
-  `backend/tests/{conftest,test_bm25,test_full_corpus_chunker,test_full_corpus_qdrant_ingestion}.py`,
-  `notebooks/{03,04,06}_*.ipynb`.
-- Mới: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md`.
-- Log phiên 2: `/tmp/phase7_cleanup/` (`pytest_after2.txt`, `retrieval_after.jsonl`, `smoke_generate.jsonl`, `health_check.py`); log phiên 1 đã mất. Mốc cũ (phiên 1): (`retrieval_baseline.jsonl`, `pytest_before.txt`,
-  `pytest_after.txt`, `collections_before.json`). `/tmp` có thể mất; bản gốc mốc retrieval là
-  `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` (sha `cefb2d1a…`).
+- Không có (B9 trong `1832201`, B10 trong `74270ab`). Log phiên 2 của B9 ở `/tmp/phase7_cleanup/` (có thể mất).
 
 ## Tiếp theo
-- Chờ A review B10; sửa theo finding nếu có.
+- Không có việc mở. Chờ A giao việc Phase 8.1 sau khi User duyệt spec.
 
 ## Tiền paid hôm nay (B)
 - B9 phiên 2: 0,0013334 USD (smoke 10).

@@ -58,7 +58,7 @@ khi gây xung đột với thư viện đang dùng. Code luôn `uv` trong `.venv
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối; brainstorm 8.1; commit B9 sau review | đang làm |
 | B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B10 báo cáo khâu của B | B9 đã commit `1832201`; B10 xong 20:01 — chờ A review |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C13b chờ review A (20:00); C9–C13 đạt |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C15b xong (20:28): spec 8.1 v2 ready sau r1–r3; C9–C15 đạt |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
