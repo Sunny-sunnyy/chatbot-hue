@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 19:02 24/10/2026 (A, mở phiên tối). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc
+Cập nhật: 19:25 24/10/2026 (A; User vắng, ủy quyền A tự điều phối). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc
 đang mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/TONG_HOP.md`.
 
 ## PHIÊN TỐI 24/10 — ĐANG LÀM (đọc trước nhất)
@@ -53,7 +53,7 @@ mốc so byte `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` sha `c
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối; brainstorm 8.1; commit B9 sau review | đang làm |
 | B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | làm nốt B9 | đang làm |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (chờ B nhắn) + kiểm sức khỏe; C10 báo cáo khâu mẫu mới | C10 chờ review A (19:08); C9 chờ B |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C10 (`c57ec43`), C11, C12 đạt (A 19:55); C11/C12 chờ commit; C9 chờ B |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -121,6 +121,48 @@ Mức rủi ro: cao (xóa code + 2 collection). Đích = `reports/phase_7_cleanu
   checklist thang 5 mức, mã nội bộ xuống Phụ lục). Không đổi nội dung kỹ thuật/số đo; không chép số
   liệu corpus. Khai báo file trong `STATUS_C.md`. Xong → nhắn A (A review).
 
+### C11 — Bảng rà quyết định Phase 0–7 (đầu vào spec 8.1; chỉ đọc, free)
+
+A giao 19:25 24/10 (User ủy quyền A tự điều phối). **Ưu tiên C9 khi B nhắn**: dừng C11 ở điểm gọn,
+làm C9, rồi quay lại.
+
+- Mục tiêu: liệt kê **mọi quyết định kỹ thuật đang hiệu lực** của Phase 0–7 (do AGY/Codex làm trước
+  đây) và bằng chứng đứng sau nó, để User biết cái gì chưa thử / chưa so sánh / chỉ đo trên Foods /
+  mặc định không lý do. Phương án cũ = baseline.
+- Vùng: (0–1) format curated Markdown, data flow; (2) chunker, tokenizer, overlap, bảng; (3) dense
+  model, tiền tố, BM25/tokenize, sparse state; (4) Qdrant schema, HNSW/exact, sparse modifier/IDF,
+  payload; (5) retrieval treatment, pool 30, RRF k=60, top-10, reranker; (6) context 5 chunk, thứ tự,
+  prompt, từ chối, citation, model/tham số sinh, API/UI; (7/7A) Golden: cách soạn, cỡ, phân loại,
+  keyword, smoke; (7B) evaluator: metric, judge, thang, so sánh. Thêm vùng nếu gặp.
+- Mỗi dòng: quyết định · giá trị hiện tại (`file:dòng`) · ai/khi nào chốt (spec/report) · phương án
+  từng xem xét · **bằng chứng**: đo trên gì (full-corpus 176 / Foods 45 / probe 1 case / không đo) +
+  metric + kết quả · trạng thái (`so sánh trên full-corpus` / `chỉ đo trên Foods` / `chưa so sánh` /
+  `mặc định không lý do` / `bị ép bởi ràng buộc đã hết`) · tác động ước (cao/vừa/thấp, vì sao) ·
+  thí nghiệm đề xuất (đổi một thứ, baseline, metric, free/paid ước USD, cần model/dependency mới?).
+- Dùng lại, không làm lại: `reports/phase_8_candidate_hypotheses_2026_10_24.md` (H1–H14, O1–O11) —
+  trỏ mã H; nghiên cứu `gửi chatgpt/2026-10-24/kết quả nghiên cứu/` (2 file). Nguồn: `Project_Status.md`
+  §5, `docs/superpowers/specs/` (targeted), `PROJECT_HISTORY.md` (targeted), code, `bao_cao_he_thong/`.
+- Không: sửa code/config/corpus/Golden; paid; ghi Qdrant; chép corpus/câu Golden vào report; đề xuất
+  kiến trúc Phase 9.
+- Đầu ra: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` — bảng theo
+  vùng + mục cuối "10 chỗ đáng lo nhất" (xếp theo tác động × độ thiếu bằng chứng) + "cần nghiên cứu
+  ngoài" (câu hỏi cho ChatGPT, A gộp vào yêu cầu nghiên cứu). `STATUS_C.md`; nhắn A.
+
+**C11 xong 19:26, A review 19:50: đạt** (kiểm lại độc lập 5 điểm then chốt: loader ép tổ hợp
+`settings_loader.py:39-44`; prompt thiếu 2 luật spec Phase 6 §10; chunker bản đầu gộp 3.318 chunk;
+amendment 10-01 §5 "Qwen là benchmark bắt buộc ở Phase 8"; `exclude_files` chỉ 2 inventory travel).
+Câu hỏi §7 đã gộp vào yêu cầu ChatGPT (mục F).
+
+### C12 — Sửa 4 lỗi trong báo cáo cũ của C (C11 §6 mục 13; free, nhỏ)
+
+- `bao_cao_he_thong/BAO_CAO_BO_CAU_HOI_GOLDEN.md` §2 (gộp **không xáo**), `BAO_CAO_TIM_KIEM.md` §3
+  (MiniLM chỉ thử trên Foods), `BAO_CAO_SINH_CAU_TRA_LOI_API.md` §5 (Representation B đã gọi live 1 lần,
+  chưa có index) — tăng "bản N", ghi một dòng ở §4 lịch sử. `reports/phase_8_candidate_hypotheses_2026_10_24.md`
+  H6/O9: thêm ghi chú đính chính (Foods 08b "dense+BM25" là weighted 0,6/0,4, không phải RRF), không viết lại.
+- Câu "bàn khi brainstorm Phase 8" trong 4 báo cáo khâu → "Phase 8.1". Không đổi số đo khác.
+- Khai báo trong `STATUS_C.md`; xong nhắn A. C9 vẫn ưu tiên khi B nhắn.
+
 ## Việc của A
 
-- Brainstorm 8.1 với User → spec 8.1; commit B9 sau C9 đạt; review C10.
+- Brainstorm 8.1 với User → spec 8.1; commit B9 sau C9 đạt; C10 đã review + commit `c57ec43`.
+- Yêu cầu nghiên cứu ChatGPT cho 8.1: `gửi chatgpt/2026-10-24/tìm thông tin/phase_8_1_decision_audit_2026_10_24.md` (User relay).

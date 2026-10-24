@@ -184,3 +184,19 @@ Nguồn: kết quả nghiên cứu ChatGPT (private) `gửi chatgpt/2026-10-24/k
 **Lưu ý đo (từ R11 và 7B research):** tối ưu trực tiếp trên cả 176 câu rồi báo tăng trên chính bộ
 đó là đo lạc quan; Phase 8 nên tách nhóm phát triển / giữ kín, hoặc ghi rõ *exploratory*. Đây là
 quyết định thiết kế cho A/User.
+
+## 9. Đính chính 2026-10-24 (C12)
+
+Không viết lại các mục trên; ghi chú này sửa hai chỗ diễn đạt về bằng chứng Foods:
+
+- **H6** (cột "Căn cứ"): "Foods e5: hybrid RRF không hơn dense+BM25 cục bộ, recall@5 0,844 vs 0,863".
+  Nhánh "dense+BM25 cục bộ" của Foods 08b là **dense top-30 → BM25 chấm lại → fusion weighted min-max
+  0,6/0,4**, không phải RRF (`docs/superpowers/specs/2026-08-29-phase-8-08b-retrieval-fusion-benchmark-design.md`
+  bảng "Exact 20-setting matrix"). Vì vậy tổ hợp runtime `dense_bm25_rrf` **chưa từng được chạy trên
+  Foods**; số 0,863 không phải bằng chứng cho runtime.
+- **O9**: "−0,044 (hybrid)" là reranker MiniLM trên nhánh hybrid **weighted** của Foods
+  (`docs/superpowers/specs/2026-08-30-phase-8-08c-reranker-benchmark-design.md` `:35`), cũng không phải
+  cấu hình runtime.
+
+Nguồn phát hiện: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` dòng 5.1 và
+§6 mục 13.

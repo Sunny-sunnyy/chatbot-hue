@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden và chấm điểm thử món ăn (Phase 7, 7A)
 
-**Cập nhật lần cuối: 19:04 24/10/2026 — bản 2: đưa về mẫu mới (Tóm tắt đầu file, checklist 5 mức, mã
-nội bộ xuống Phụ lục); nội dung kỹ thuật và số đo giữ nguyên bản 1.**
+**Cập nhật lần cuối: 19:32 24/10/2026 — bản 3: đính chính §2 — khi gộp đề, các nhóm được nối theo
+thứ tự cố định, không xáo (bản 2 ghi nhầm "xáo cố định").**
 Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -27,7 +27,7 @@ Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 Phase 7A (làm đề):
 đọc file .md → viết thử 20 câu → bạn chỉnh văn phong → 6 sub-agent viết 6 nhóm còn lại
  → máy kiểm định dạng + keyword có nguyên văn trong kho → người kiểm đối chiếu từng câu với kho
- → bạn đọc mẫu → sửa → gộp thành 1 file (xáo cố định) + chọn tay 10 câu smoke
+ → bạn đọc mẫu → sửa → gộp thành 1 file (nối các nhóm theo thứ tự cố định, không xáo) + chọn tay 10 câu smoke
 
 Phase 7B (chấm, dùng đề này):
 176 câu → chatbot thật trả lời → chấm tìm đoạn (keyword) + Claude chấm câu trả lời
@@ -64,6 +64,10 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 24/10/2026 — Đính chính cách gộp đề (bản 3)
+Đối chiếu lại code và spec 7A khi rà quyết định Phase 8.1: đề được nối theo thứ tự nhóm cố định, không
+xáo. Bản 2 ghi "xáo cố định" là nhầm. Không đổi số đo nào.
 
 ### 24/10/2026 — Kiểm lại đề (C chạy `golden_full_corpus check`)
 Kết quả: **PASS** — Golden 176 câu đạt; smoke 10 câu đạt, 10/10 câu trùng khớp file chuẩn · đề vẫn
@@ -112,7 +116,8 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 
 - [R1] giả thuyết Phase 8 (bằng chứng chuẩn: §8.4 bước 0): `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C1, C7).
 - [R2] danh sách dọn sau Phase 7: `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2).
-- [R3] spec 7A: `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md`.
+- [R3] spec 7A: `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` (`:32`, `:138`: nối theo partition, không shuffle; code `golden_full_corpus.py:110-121`).
+- Đính chính bản 3: C12, theo `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` §6 mục 13.
 - Bản 1 (C8, 24/10/2026, commit `4426ed0`).
 - **Lệch phát hiện (24/10):**
   - Bộ chấm món ăn có hai đường dẫn đề khác nhau: `settings.yaml` `evaluation.test_file` trỏ

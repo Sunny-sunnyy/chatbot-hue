@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 19:04 24/10/2026 — bản 2: đưa về mẫu mới (Tóm tắt đầu file, checklist 5 mức, mã
-nội bộ xuống Phụ lục); nội dung kỹ thuật và số đo giữ nguyên bản 1.**
+**Cập nhật lần cuối: 19:32 24/10/2026 — bản 3: đính chính §5 — "Representation B" đã được gọi thử thật
+1 lần ở Phase 6, chỉ chưa có chỉ mục (bản 2 ghi "chưa từng dùng").**
 Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -65,6 +65,10 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
+### 24/10/2026 — Đính chính về "Representation B" (bản 3)
+Khi rà quyết định Phase 8.1: phần sinh ngữ cảnh B đã được gọi thử thật 1 lần ở Phase 6 (đạt); cái chưa
+có là chỉ mục dựng từ B và phép đo tìm kiếm. Bản 2 ghi "chưa từng dùng" là nhầm. Không đổi số đo nào.
+
 ### 24/10/2026 — Đo đủ 176 câu (Phase 7B, cùng code Phase 6, chỉ mục 7A2)
 Cách đo: chatbot thật trả lời, Claude chấm so với đáp án mẫu · kết quả: đo mốc (chưa đặt ngưỡng) —
 Đúng/Đủ/Trúng ý 4,43 / 4,28 / 4,45; từ chối đúng 18/18; từ chối nhầm 22/158 (8 đoạn đáp án không vào
@@ -101,7 +105,7 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 | Qdrant cổng 6335 | **còn dùng** | `settings.yaml` `vector_database.url` |
 | Qwen 3.5-9B qua OpenRouter, `gpt-5.4-nano` | **đã thay** bởi `gpt-6-luna` (quyết định 23/10) | [R3] |
 | Collection metadata v2 (8.460 đoạn) mà Phase 6 đóng trên đó | **đã thay** bởi chỉ mục 7A2 (8.459 đoạn) | `Project_Status.md` §4 |
-| "Representation B" (LLM viết thêm ngữ cảnh cho đoạn) | **có code, chưa từng dùng** | `backend/llm/full_corpus_prompt.py:37` |
+| "Representation B" (LLM viết thêm ngữ cảnh cho đoạn) | **có code; đã gọi thử thật 1 lần ở Phase 6, chưa có chỉ mục, chưa đo** | `backend/llm/full_corpus_prompt.py:37`; `backend/llm/representation_b.py` |
 | API/sinh câu trả lời bản món ăn | **đã bỏ, hỏng thật** (gửi `temperature` → lỗi 400); nằm trong danh sách dọn | `backend/llm/generator_openai.py:30,44` |
 
 ## 6. Việc còn lại / cần quyết
@@ -121,7 +125,7 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 - [R3] đổi model: `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`.
 - Chẩn đoán từ chối nhầm: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; thử 10 đoạn:
   `reports/phase_8_probe_context_top10_2026_10_24.md`.
-- Bản 1 (C8, 24/10/2026, commit `4426ed0`).
+- Bản 1 (C8, 24/10/2026, commit `4426ed0`). Bản 3 (C12): đính chính theo `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` dòng 6.10 và §6 mục 13.
 - **Lệch phát hiện (24/10):**
   - Spec umbrella `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` §1, Decision #6a
     cho phép "trả phần có căn cứ", nhưng spec Phase 6 (2026-09-14 §10) và prompt bắt từ chối cả câu.

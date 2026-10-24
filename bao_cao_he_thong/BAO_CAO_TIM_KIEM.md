@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 19:04 24/10/2026 — bản 2: đưa về mẫu mới (Tóm tắt đầu file, checklist 5 mức, mã
-nội bộ xuống Phụ lục); nội dung kỹ thuật và số đo giữ nguyên bản 1.**
+**Cập nhật lần cuối: 19:32 24/10/2026 — bản 3: đính chính checklist — reranker MiniLM chỉ được thử trên
+bản món ăn, trên toàn kho chưa đo chất lượng; câu "bàn khi brainstorm" đổi thành Phase 8.1.**
 Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -17,7 +17,7 @@ Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 - **Giới hạn chính:** yếu ở câu so sánh (MRR 0,53) và câu cần nhiều nguồn (0,54); dòng bảng giá khó
   tìm vì bảng bị tách từng dòng; BM25 tách từ theo âm tiết; chưa có reranker tiếng Việt.
 - **Chi phí / tốc độ:** không tốn tiền API (model và Qdrant chạy trên máy).
-- **Bạn cần quyết gì:** chưa có ở khâu này; các hướng sửa sẽ bàn khi brainstorm Phase 8.
+- **Bạn cần quyết gì:** chưa có ở khâu này; các hướng sửa sẽ bàn khi brainstorm Phase 8.1.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -49,13 +49,17 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Câu cần nhiều nguồn | **Xử lý một phần** | MRR 0,54 |
 | Dòng trong bảng giá (ví dụ giá vé + miễn giảm Đại Nội) | **Chưa thực hiện** | Đoạn bảng giá đứng hạng ~191 theo nghĩa, ngoài top-30 theo từ khóa; Phase 8: nhóm dòng bảng |
 | Từ ghép tiếng Việt trong BM25 ("Đại Nội") | **Chưa thực hiện** | BM25 tách theo âm tiết; Phase 8 thử ghép cặp âm tiết |
-| Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | Benchmark bản món ăn: MiniLM làm điểm giảm; `settings.yaml:113` (`reranker: none`) |
+| Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | **Chỉ thử trên bản món ăn**: MiniLM làm điểm giảm. Trên toàn kho chỉ đo tốc độ, chưa đo chất lượng; `settings.yaml:113` (`reranker: none`) |
 | Reranker tiếng Việt | **Chưa thực hiện** | Phase 8, sau khi chắc đoạn đúng đã nằm trong 30 ứng viên |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 24/10/2026 — Đính chính về reranker MiniLM (bản 3)
+Khi rà quyết định Phase 8.1: bằng chứng "MiniLM làm điểm giảm" chỉ có trên bản món ăn (bộ câu và
+chunk khác); trên toàn kho mới đo tốc độ. Bản 2 không nói rõ điều này. Không đổi số đo nào.
 
 ### 24/10/2026 — Đo chất lượng tìm đoạn trên 158 câu có trong kho (Phase 7B)
 Cách đo: đoạn chứa keyword đáp án có lọt top-10 không, trên chỉ mục hiện tại · kết quả: đo mốc (chưa
@@ -99,7 +103,7 @@ Kiểm với code (commit `54670a0`) và `session_prompt/Project_Status.md` §4 
 - [R1] giả thuyết Phase 8: `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C1, C7).
 - [R2] danh sách dọn sau Phase 7: `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2).
 - Số đo 7B: `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`; report `reports/phase_7b_*`.
-- Bản 1 (C8, 24/10/2026, commit `4426ed0`).
+- Bản 1 (C8, 24/10/2026, commit `4426ed0`). Bản 3 (C12): đính chính theo `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` dòng 5.5 và §6 mục 13.
 - **Lệch phát hiện (24/10):** `settings.yaml` vẫn giữ khối `profiles`/`active_profile`/`retrieval`/
   `reranking` của bản món ăn; code bản toàn kho không đọc các khối này (reranker lấy tên model mặc
   định trong code), nhưng `load_settings` vẫn bắt buộc `active_profile` hợp lệ
