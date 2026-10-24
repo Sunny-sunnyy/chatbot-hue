@@ -17,6 +17,8 @@ Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối (User ch
 - Yêu cầu ChatGPT 7B: `gửi chatgpt/tìm thông tin/phase_7b_rag_evaluation_2026_10_24.md`.
 
 ## Đã học / bẫy gặp
+- **2026-10-24:** `git add bao_cao_he_thong` (cả thư mục) đã commit + push bản nháp chưa review của B/C
+  (`8c57701`), gồm một số liệu corpus (sau đó C đã sửa). Luôn stage theo **từng file đã review**.
 - User rất nhạy chi phí: luôn ước USD trước (giá luna 0,1$/1M in, 0,5$/1M out); ngân sách
   session ≤1$ (tối đa 1,5$); 7B ≤0,6$.
 - User ủy quyền rộng (2026-10-24): tự điều phối, thử nghiệm, tối ưu, commit/push theo mốc.
