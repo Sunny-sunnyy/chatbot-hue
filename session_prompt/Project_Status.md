@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-24` (A, mở Phase 7B)
+Last updated: `2026-10-24` (A, đóng Phase 7B)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -22,22 +22,20 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 
 ## 2. Phase hiện tại
 
-**Phase 7A2 — Sửa corpus + tạo lại index: User-closed 2026-10-24** (spec
-`docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md`,
-plan `docs/superpowers/plans/2026-10-23-phase-7a2-corpus-correction-reindex-implementation-plan.md`):
+**Phase 7B — Evaluator full-corpus + baseline 176 case: User-closed 2026-10-24** (spec
+`docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; report
+`reports/phase_7b_*`, review `reports/phase_7b_review_2026_10_24.md`; guide mục "Cập nhật Phase 7B").
 
-- Gate 1 (sửa 25 mục corpus): User-closed 2026-10-24.
-- Gate 2 (build index + cutover): User-closed 2026-10-24 **với giới hạn** — chỉ
-  index e5; index 8B hoãn sang Phase 8.
-- Gate 3 (xóa 13 collection + build record cũ): User-closed 2026-10-24
-  (`reports/phase_7a2_gate_3_review_2026_10_24.md`).
-- Đóng Phase: backup Gate 1 đã xóa; guide `guides/full_corpus_rag.md` có mục cập
-  nhật 7A2 + ghi chú Phase 8; user report
-  `reports/user_reports/phase_7a2_corpus_correction_reindex_user_report_2026_10_24.md`.
+- Baseline (Claude judge, Run 1): Accuracy 4,43 / Completeness 4,28 / Relevance 4,45; keyword proxy
+  @10 MRR 0,721 / nDCG 0,755 / Coverage 92,35; từ chối nhầm 22/158; lỗi citation 4/176.
+- Thước đo ổn định (Run 1 vs Run 2 chênh TB ≤0,011); **giới hạn:** chưa có mốc người (User bỏ chấm tay).
+- Tiền paid cả 7B + thăm dò: ~0,087 USD.
 
-Mốc kế tiếp: **Phase 7B** (evaluator, baseline 176 case trên chunker hiện hành) —
-brainstorm với User, một tài liệu thiết kế. Song song: C rà soát lựa chọn Phase
-2–6 cho Phase 8.
+Mốc kế tiếp: **Phase 8** (đợt ổn định) — brainstorm với User, input: giả thuyết C
+(`reports/phase_8_candidate_hypotheses_2026_10_24.md` + nghiên cứu ChatGPT), chẩn đoán từ chối nhầm
+(`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`), thăm dò context 10
+(`reports/phase_8_probe_context_top10_2026_10_24.md`). Song song: tổ chức lại report
+(`report_agent/`) và viết lại user report các Phase.
 
 ## 3. Bảng Phase
 
@@ -52,8 +50,8 @@ brainstorm với User, một tài liệu thiết kế. Song song: C rà soát l�
 | 7 | `approved` | Evaluation baseline Foods (lịch sử) |
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
-| 7B | `in_progress` | Baseline 176 case xong + review chéo đạt; chờ User chấm mẫu 20 case rồi đóng |
-| 8 | `not_ready` | Đợt ổn định trước Phase 9 (mục 5); spec/plan phải thiết kế lại |
+| 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
+| 8 | `next` | Đợt ổn định trước Phase 9 (mục 5); brainstorm với User trên baseline 7B |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -145,8 +143,10 @@ session_prompt/TEMPLATE_*.md           mẫu report
 skills/{practical-project-coding,risk-gated-agent-review,propose-options}/SKILL.md
 guides/full_corpus_rag.md              guide umbrella full-corpus
 docs/superpowers/specs/, docs/superpowers/plans/   thiết kế từng Phase
-reports/phase_7a2_*                    report + review Phase 7A2
-reports/user_reports/                  report cho User
+report_agent/<YYYY-MM-DD>_<chủ_đề>/   report + review từ 2026-10-24 (README trong report_agent/)
+report_agent/user_reports/             report cho User (viết lại theo Phase + tổng quan)
+reports/                               report cũ tới 2026-10-24 — lịch sử, chỉ đọc
+gửi chatgpt/<YYYY-MM-DD>/              yêu cầu + kết quả nghiên cứu ChatGPT (private)
 handoff_prompt/README.md               contract lịch sử (reference-only)
 ```
 

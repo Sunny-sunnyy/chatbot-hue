@@ -88,12 +88,17 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 
 | Loại | Nơi | Ai | Khi nào |
 |---|---|---|---|
-| Implementation report | `reports/phase_<x>_<gate>_<chủ_đề>_implementation_<ngày>.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
-| Review | `reports/phase_<x>_<gate>_review_<ngày>.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
-| User report | `reports/user_reports/` | A | đóng Phase hoặc khi User cần (`TEMPLATE_USER_REPORT.md`) |
+| Implementation report | `report_agent/<YYYY-MM-DD>_<chủ_đề>/phase_<x>_<gate>_<chủ_đề>_implementation.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
+| Review | `report_agent/<YYYY-MM-DD>_<chủ_đề>/phase_<x>_<gate>_review.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
+| User report | `report_agent/user_reports/` | A (hoặc B/C khi được giao, A review) | đóng Phase hoặc khi User cần (`TEMPLATE_USER_REPORT.md`) |
 | STATUS | `session_prompt/sessions/STATUS_<X>.md` | session X | xong một việc, trước khi kết phiên |
 
 Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
+
+- **Nơi viết (User 2026-10-24):** mỗi đợt việc một folder `report_agent/<YYYY-MM-DD>_<chủ_đề>/`
+  (ngày mở đợt); report của đợt nằm trong đó. `reports/` là lịch sử, không thêm file mới.
+- **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
+  kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
 
 ## 7. Trao đổi giữa session
 

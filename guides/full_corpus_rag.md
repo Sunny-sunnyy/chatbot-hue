@@ -1,7 +1,7 @@
 # Full-corpus RAG workstream
 
 ```text
-Status (2026-10-24): Phase 2–6, 7A, 7A2 User-closed; next Phase 7B (evaluator), then Phase 8 (stabilization)
+Status (2026-10-24): Phase 2–6, 7A, 7A2, 7B User-closed; next Phase 8 (stabilization)
 Current state: session_prompt/Project_Status.md — the rest of this header and the sections below the 7A2 update are history
 Phase 7A2: docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md + plan 2026-10-23-phase-7a2-…
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
@@ -79,6 +79,28 @@ Workstream bao phủ năm domain sản phẩm:
 - `travel`, gồm `places`, `services` và `tickets`.
 
 ## Trạng thái hiện hành
+
+### Cập nhật Phase 7B (User-closed 2026-10-24) — evaluator + baseline
+
+Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; report
+`reports/phase_7b_gate_{0,1,2,3,4}_*`, review `reports/phase_7b_review_2026_10_24.md`.
+
+- **Evaluator:** `backend/evaluation/full_corpus_eval.py` (CLI `retrieval`, `generate`, `judge-luna`,
+  `retry`, `export-judge-input`, `compare`, `parse-user-scores`, `diagnose-refusals`,
+  `context-coverage`, `summarize`) chạy đúng đường runtime API; prompt judge cố định
+  `backend/evaluation/full_corpus_judge_prompt.md`. Kết quả chi tiết private `data/evaluation/phase_7b/`.
+- **Judge (đổi so với contract cũ):** judge chính là Claude (session Claude Code, sub-agent theo lô
+  ≤10, 0 API); `gpt-6-luna` chỉ sinh + judge phụ. Không truyền `temperature` (luna trả 400).
+- **Baseline đã quan sát** (Claude, Run 1, 176 case): Accuracy 4,43 / Completeness 4,28 /
+  Relevance 4,45; retrieval keyword proxy @10 (158 case): MRR 0,721 / nDCG 0,755 / Coverage 92,35;
+  từ chối đúng 18/18, từ chối nhầm 22/158 (= 22 case 1/1/1; multi_source 11, comparative 8); lỗi
+  citation 4/176. Bỏ 22 case từ chối nhầm: 4,92 / 4,75 / 4,95.
+- **Độ tin thước đo:** Claude chấm lại 30 lệch ≤1 ở 100%; Run 1 vs Run 2 chênh TB ≤0,011; Claude–luna
+  trùng 89–96%. **Chưa có mốc người** (User quyết bỏ chấm tay 2026-10-24) — giới hạn.
+- **Cho Phase 8** (nghiên cứu `gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_7b_rag_evaluation_2026_10_24.md`):
+  so cấu hình theo cặp trên cùng 176 case (paired bootstrap + permutation), không dùng ngưỡng cố
+  định; gọi metric retrieval là *keyword proxy*; chunker to hơn tự làm Coverage tăng. Hiệu ứng trần:
+  121/176 case đã 5/5/5.
 
 ### Cập nhật Phase 7A2 (User-closed 2026-10-24) — ưu tiên hơn các đoạn bên dưới
 

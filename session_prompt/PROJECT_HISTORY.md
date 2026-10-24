@@ -4,6 +4,15 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-24 (khuya) — Đóng Phase 7B; tổ chức lại report
+
+- User quyết bỏ chấm tay 20 case ("các câu hỏi đã ổn"), đóng 7B với Claude là judge chính; giới hạn
+  "chưa có mốc người" ghi trong guide + Project_Status. Guide `guides/full_corpus_rag.md` có mục
+  "Cập nhật Phase 7B" (baseline + bài học đo cho Phase 8 từ nghiên cứu ChatGPT).
+- User: report mới theo đợt `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (kiểu MekongAI), `reports/` thành
+  lịch sử; user report viết lại theo Phase + tổng quan ở `report_agent/user_reports/`;
+  `gửi chatgpt/<YYYY-MM-DD>/` (đã chuyển file 23–24/10). Prompt hỏi cách làm của MekongAI chờ User gửi.
+
 ## 2026-10-24 (tối) — Phase 7B: evaluator + baseline 176 case (chờ User chấm mẫu)
 
 - Brainstorm với User → spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`:

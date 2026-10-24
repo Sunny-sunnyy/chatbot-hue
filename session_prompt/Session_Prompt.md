@@ -132,8 +132,8 @@ Cần duyệt mới khi đổi provider/model, mở rộng dữ liệu, vượt 
 ghi/xóa dữ liệu đang chạy.
 
 Không có WebSearch: cần tìm thông tin bên ngoài thì viết yêu cầu vào
-`gửi chatgpt/tìm thông tin/`, User gửi ChatGPT và lưu kết quả vào
-`gửi chatgpt/kết quả nghiên cứu/`; đọc kết quả rồi WebFetch URL để đối chiếu.
+`gửi chatgpt/<YYYY-MM-DD>/tìm thông tin/` (ngày viết yêu cầu), User gửi ChatGPT và lưu kết
+quả vào `gửi chatgpt/<YYYY-MM-DD>/kết quả nghiên cứu/` cùng ngày; đọc kết quả rồi WebFetch URL để đối chiếu.
 
 ## 10. Môi trường
 
