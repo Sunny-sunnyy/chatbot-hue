@@ -1,9 +1,9 @@
-"""Tests for lexical tokenization, BM25 scoring and normalization."""
+"""Tests for lexical tokenization and BM25 scoring."""
 import math
 
 import pytest
 
-from scoring.bm25 import BM25, min_max_normalize, tokenize, validate_weights
+from scoring.bm25 import BM25, tokenize
 
 
 def test_tokenize_keeps_vietnamese_words_and_removes_punctuation():
@@ -23,21 +23,3 @@ def test_bm25_known_hue_corpus_ranking_and_fit():
     assert bm25.score("bún bò", "") == 0.0
     with pytest.raises(ValueError, match="fit"):
         BM25().score("bún bò", "bún bò huế")
-
-
-def test_min_max_normalize_properties():
-    assert min_max_normalize([3, 1, 2]) == [1.0, 0.0, 0.5]
-    assert min_max_normalize([5, 5, 5]) == [0.0, 0.0, 0.0]
-    assert min_max_normalize([]) == []
-    with pytest.raises(ValueError, match="non-finite"):
-        min_max_normalize([1.0, float("nan")])
-
-
-def test_validate_weights_contract():
-    assert validate_weights(0.6, 0.4) == (0.6, 0.4)
-    with pytest.raises(ValueError, match="non-negative"):
-        validate_weights(-0.1, 1.1)
-    with pytest.raises(ValueError, match="sum"):
-        validate_weights(0.8, 0.3)
-    with pytest.raises(ValueError, match="finite"):
-        validate_weights(float("nan"), 1.0)

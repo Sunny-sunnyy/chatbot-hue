@@ -52,8 +52,8 @@ mốc so byte `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` sha `c
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối; brainstorm 8.1; commit B9 sau review | đang làm |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | làm nốt B9 | đang làm |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C10 (`c57ec43`), C11, C12 đạt (A 19:55); C11/C12 chờ commit; C9 chờ B |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | làm nốt B9 | C9 đạt, m1 đã sửa — chờ A commit |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (khi B nhắn) | C9 xong 19:54: B9 ready_for_user_confirmation (review `phase_7_cleanup_review.md`); C10–C12 đạt |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 

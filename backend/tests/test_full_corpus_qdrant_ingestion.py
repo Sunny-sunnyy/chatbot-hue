@@ -395,9 +395,6 @@ def test_full_corpus_candidate_registry_is_exact_ordered_and_isolated() -> None:
         ("e5-small-384", "hue_full_corpus_7a2_e5_small_384", 384, "local"),
         ("qwen3-embedding-8b-4096", "hue_full_corpus_7a2_qwen3_8b_4096", 4096, "openrouter"),
     ]
-    assert not {
-        "hue_foods_e5_small_384", "hue_foods_e5_small_384_dense"
-    } & {item.collection_name for item in FULL_CORPUS_CANDIDATES}
     assert candidate_by_id("e5-small-384") is FULL_CORPUS_CANDIDATES[0]
     with pytest.raises(ValueError, match="Unknown full-corpus candidate"):
         candidate_by_id("arbitrary-model")

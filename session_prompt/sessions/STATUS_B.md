@@ -1,19 +1,16 @@
-# STATUS B — cập nhật 2026-10-24 18:55 +0700 (mở phiên mới)
+# STATUS B — cập nhật 2026-10-24 19:45 +0700
 
-Terminal: `hue-rag-b0` (A = `hue-rag-47`) · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal: `hue-rag-b0` (A = `hue-rag-47`, C = `hue-rag-a3`) · Agent: Claude Opus 5.5 · Vai: thực thi
 
-Mở phiên 18:51: Qdrant chạy lại, 3 collection đúng (572/572/8.459), mốc so byte sha `cefb2d1a` còn; `/tmp/phase7_cleanup/` đã mất. Chờ A giao làm nốt B9 §6 bước 1–4.
-
-## Đang làm — B9 dọn sau Phase 7: DỞ, dừng ở điểm an toàn
-- Report: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (§6: các bước còn lại).
-- Đã xong (working tree, **chưa commit**): xóa 42 file Foods (code/test/notebook 02,05,07,08a/b/c,
-  CSV, `requirements.txt`) và thư mục `backend/ingestion/helpers/`. Đã sửa settings, loader,
-  vectorstore, bm25, conftest, 3 test, notebook 03/04/06.
-- Kiểm đạt: import toàn backend, grep sạch, notebook 04 và 03 Run All trên bản tạm.
-- **Dừng vì Qdrant tắt** (17:10, `curl :6335` exit 7, không phải do B). Lượt pytest sau dọn:
-  176 passed, 15 lỗi, tất cả do `Connection refused`/health degraded. **NOT RUN**: so byte retrieval,
-  `/health`, golden check, smoke 10 paid.
-- **Chưa xóa** 2 collection Foods và 5 file `data/full_corpus_metadata_v2_*.json`.
+## Đang làm — B9 dọn sau Phase 7: XONG, chờ C review (C9), A commit
+- Report: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (§0 tóm tắt, §4b phiên 2).
+- Phiên 2 (18:51–19:45): pytest 15 file 191 passed / 0 lỗi; retrieval giống từng byte mốc (sha `cefb2d1a`);
+  `/health` in-process 200 + 1 retrieval; golden check 176/10 exit 0; smoke 10 0 lỗi kỹ thuật (0,0013334 USD).
+- Đã xóa 5 file `data/full_corpus_metadata_v2_*.json` (B) và 2 collection Foods (User chạy `!` vì auto-mode
+  chặn B). Qdrant còn đúng `hue_full_corpus_7a2_e5_small_384` 8.459 point; `/health` chạy lại vẫn 200.
+- Quan sát: smoke case 81 lỗi citation (thiếu `[n]`), 7B không có; context giống hệt — giả thuyết dao động
+  model, A đưa vào bảng rà 8.1.
+- A trả lời: `backend/test.ipynb`, `backend/scripts/` giữ; phát hiện B8 xếp Phase 8.1.
 
 ## File đang đổi, chưa commit (của B)
 - Xóa: xem report §2 (`git status --short | grep '^ D'`).
@@ -22,18 +19,17 @@ Mở phiên 18:51: Qdrant chạy lại, 3 collection đúng (572/572/8.459), m�
   `backend/tests/{conftest,test_bm25,test_full_corpus_chunker,test_full_corpus_qdrant_ingestion}.py`,
   `notebooks/{03,04,06}_*.ipynb`.
 - Mới: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md`.
-- Mốc so sánh: `/tmp/phase7_cleanup/` (`retrieval_baseline.jsonl`, `pytest_before.txt`,
+- Log phiên 2: `/tmp/phase7_cleanup/` (`pytest_after2.txt`, `retrieval_after.jsonl`, `smoke_generate.jsonl`, `health_check.py`); log phiên 1 đã mất. Mốc cũ (phiên 1): (`retrieval_baseline.jsonl`, `pytest_before.txt`,
   `pytest_after.txt`, `collections_before.json`). `/tmp` có thể mất; bản gốc mốc retrieval là
   `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` (sha `cefb2d1a…`).
 
-## Phiên sau làm tiếp (theo thứ tự)
-1. Bật Qdrant; `GET /collections` phải còn đúng 3 collection (Foods 572/572, full-corpus 8.459).
-2. Pytest lại 15 file (lệnh ở report §4); kỳ vọng 0 lỗi.
-3. So byte retrieval; `/health` + 1 retrieval; `golden_full_corpus check`; smoke 10 (≤0,005 USD).
-4. Đạt hết thì xóa 2 collection Foods + 5 file metadata_v2 (liệt kê trước/sau), cập nhật report, nhắn A, rồi C review.
+## Tiếp theo
+- C9 review: ready_for_user_confirmation, 0 blocker/major; B đã sửa minor m1 (report §4b). Chờ A commit.
+- A (19:50): không có việc mới cho B tới khi User duyệt spec Phase 8.1; B nghỉ, không mở việc khác.
 
 ## Tiền paid hôm nay (B)
-- ~0,087 USD: 7B 0,0820 (smoke 0,0028 + Gate 2 0,0792) + probe B5 0,0050. B1 có 1 request trả 400, ~0 USD. B9: 0.
+- B9 phiên 2: 0,0013334 USD (smoke 10).
+- ~0,087 USD: 7B 0,0820 (smoke 0,0028 + Gate 2 0,0792) + probe B5 0,0050. B1 có 1 request trả 400, ~0 USD. B9 phiên 1: 0.
 
 ## Vừa xong hôm nay (đã commit bởi A)
 - B1 health audit, B2–B4/B6/B7 Phase 7B (evaluator, Run 1/2, chẩn đoán từ chối nhầm, baseline);

@@ -1,19 +1,21 @@
-# Implementation Report: dọn sau Phase 7 (B9) — **DỞ, dừng ở điểm an toàn**
+# Implementation Report: dọn sau Phase 7 (B9)
 
-Người làm: B (Claude Opus 5.5, terminal `hue-rag-64`)
-Date: 2026-10-24 17:10 +0700 (lấy bằng `date`)
+Người làm: B (Claude Opus 5.5; phiên 1 terminal `hue-rag-64`, phiên 2 terminal `hue-rag-b0`)
+Date: phiên 1 2026-10-24 17:10 +0700; phiên 2 2026-10-24 18:51–19:15 +0700 (lấy bằng `date`)
 Việc: `session_prompt/CURRENT_HANDOFF.md` → B9; đích theo `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2)
 
-## 0. Tóm tắt trạng thái
+## 0. Tóm tắt trạng thái (cập nhật phiên 2)
 
 | Bước | Trạng thái |
 |---|---|
 | 1. Gỡ code/test/notebook/settings Foods, sửa notebook 03/04/06, xóa `requirements.txt` | **Xong**, nằm trong working tree, **chưa commit** |
 | 2. Sửa test chunker so với artifact 8.460 | **Xong** (so với build record đang chạy) |
-| 3. Kiểm (C2 §5 + so byte retrieval + `/health` + smoke 10 paid) | **PARTIAL**. Lượt pytest sau khi dọn gặp Qdrant tắt giữa chừng. Các phần cần Qdrant **NOT RUN** (mục 4) |
-| 4. Xóa 2 collection Foods + 5 file `data/full_corpus_metadata_v2_*.json` | **NOT RUN**. Chưa xóa gì ở Qdrant hay `data/`, vì bước 3 chưa đạt |
+| 3. Kiểm (C2 §5 + so byte retrieval + `/health` + smoke 10 paid) | **PASS** ở phiên 2 (mục 4b) |
+| 4a. Xóa 5 file `data/full_corpus_metadata_v2_*.json` | **Xong** (phiên 2, liệt kê trước/sau ở mục 4b) |
+| 4b. Xóa 2 collection Foods | **Xong** trước 19:43 +0700 (auto-mode chặn lệnh của B; User chạy bằng `!` trong terminal B), mục 4b |
+| 5. Chờ C review, A commit | **Chờ review** |
 
-Lý do dừng: điều kiện dừng của B9 là "test full-corpus fail; API không lên". Lúc 17:10 +0700,
+Phiên 1 dừng (giữ để lưu vết): điều kiện dừng của B9 là "test full-corpus fail; API không lên". Lúc 17:10 +0700,
 Qdrant `127.0.0.1:6335` không trả lời (`curl` exit 7, không có tiến trình nghe ở 6335/6336).
 B chỉ gọi GET tới Qdrant nên Qdrant tắt không do thao tác của B; A báo phiên đang kết thúc.
 B không tự khởi động lại Qdrant.
@@ -86,11 +88,48 @@ lịch sử), `retrieval/full_corpus_smoke.py`, `llm/phase6_live_smoke.py`, `kno
 
 `git diff --check`: sạch.
 
+## 4b. Kiểm và xóa ở phiên 2 (2026-10-24 18:51–19:15 +0700, Qdrant đã chạy lại)
+
+Log/kết quả ở `/tmp/phase7_cleanup/` (tạo lại; `/tmp` có thể mất).
+
+| Kiểm | Lệnh | Kết quả |
+|---|---|---|
+| Qdrant trước khi làm | `curl -s http://127.0.0.1:6335/collections` + đếm point | **PASS**: đúng 3 collection, Foods 572 / 572, full-corpus 8.459 (khớp mục 1) |
+| Pytest 15 file (kỳ vọng ghi trước: 0 lỗi, test chunker determinism pass) | đúng lệnh mục 4 (`-p no:cacheprovider`) | **PASS**: 191 passed, 0 failed, 0 error, 146 s. Trước dọn có 193 test (192 + 1 fail đã biết); 2 test BM25 của 2 hàm đã xóa bị bỏ theo, nên còn 191. Log `pytest_after2.txt`. Hai test `/api/chat` dùng `context_limit=2561` nên dừng ở lỗi ngân sách context trước khi gọi model (0 USD) |
+| So byte retrieval | `full_corpus_eval retrieval --treatment dense_bm25_rrf --out /tmp/phase7_cleanup/retrieval_after.jsonl` + `cmp` với `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` | **PASS**: giống từng byte, SHA-256 `cefb2d1a…826e4`, 158 dòng |
+| API in-process `/health` + 1 retrieval | `create_app(load_settings())` + lifespan + `httpx.ASGITransport` (`/tmp/phase7_cleanup/health_check.py`) | **PASS**: 200, `status: ok`, qdrant/retrieval/tokenizer/generator đều `ready`; `retrieval_service.search(...)` trả 10 document |
+| `golden_full_corpus check` | `uv run python -m evaluation.golden_full_corpus check <file>` cho official + smoke | **PASS**: exit 0 cả hai; 176 và 10 case |
+| Smoke 10 paid | chạy thử không key trước (dừng ở `OPENAI_API_KEY is missing`, không gọi mạng), rồi `full_corpus_eval generate --golden smoke --out /tmp/phase7_cleanup/smoke_generate.jsonl` | **PASS** (đường sinh chạy): 10 call, 0 lỗi kỹ thuật, `complete: true`; 9.854 token vào / 696 token ra = **0,0013334 USD** |
+| Đối chiếu smoke với 7B (`smoke_answers_1`, `run1_answers`, `run2_answers`) | so `top_chunk_ids`, `refusal`, `citation_error` theo case | `top_chunk_ids` giống hệt cả 10 case; từ chối đúng 3 case như 3 lần chạy 7B. **Khác:** case 81 lần này lỗi citation ("Grounded answer has no citation"), 7B thì không |
+| grep `full_corpus_metadata_v2_` và `hue_foods_e5_small_384` trong `backend/`, `notebooks/`, `frontend/`, `pyproject.toml` | `grep -rn` | **PASS**: 0 kết quả |
+
+**Case 81 — quan sát và nguyên nhân:** câu trả lời mới gần trùng chữ với lần chạy 7B (cùng độ dài 89 ký tự),
+nhưng không có ký hiệu nguồn `[n]` nào (7B có 1–3 ký hiệu; sửa theo m1 của C), nên `llm/citations.py` báo lỗi đúng như thiết kế. Dọn
+không đụng `llm/generator_openai_full_corpus.py`, `llm/full_corpus_prompt.py`, `llm/citations.py`,
+`api/`, `retrieval/full_corpus*.py` (`git status`), và context đưa vào model giống hệt 7B.
+- **Đã chứng minh:** đầu vào của model (retrieval/context) và code sinh/citation không đổi do dọn.
+- **Giả thuyết (chưa chứng minh):** thiếu `[n]` là dao động đầu ra của `gpt-6-luna` giữa các lượt.
+  Baseline 7B cũng có 4/176 lỗi citation. A đưa "citation không ổn định giữa các lượt" vào bảng rà Phase 8.1.
+- Không thuộc điều kiện dừng của B9 (retrieval khác byte / test full-corpus fail / API không lên).
+
+**Xóa 5 file metadata_v2** (19:14 +0700): trước khi xóa, `ls` liệt kê đúng 5 file
+`data/full_corpus_metadata_v2_{execution,minilm_smoke,reviewer_minilm_smoke,reviewer_smoke,smoke}.json`
+(7.201 / 3.801 / 3.800 / 14.656 / 14.656 byte); sau khi xóa `ls` báo không còn file nào. `data/` là private, không có trong Git.
+
+**Xóa 2 collection Foods:** auto-mode chặn lệnh `curl -X DELETE` của B (19:13). Theo luật, B dừng và
+nhờ User chạy lệnh trong terminal B bằng `!`. Kết quả ghi ở dòng dưới sau khi chạy.
+
+- Kết quả xóa collection (User chạy, B kiểm lại 19:43 +0700): `DELETE` trả `{"result":true,"status":"ok"}` cho cả
+  `hue_foods_e5_small_384` và `hue_foods_e5_small_384_dense`. Sau xóa `GET /collections` còn đúng
+  `hue_full_corpus_7a2_e5_small_384` (8.459 point, `green`); `/health` in-process chạy lại vẫn 200, mọi thành phần
+  `ready`, 1 retrieval vẫn trả document. `git diff --check` sạch.
+
 ## 5. Tiền
 
-Paid trong B9: **0 USD** (smoke 10 chưa chạy). Cả phiên, B dùng khoảng 0,087 USD (7B 0,082 + probe B5 0,005).
+Paid trong B9: **0,0013334 USD** (smoke 10, phiên 2; trần 0,005). Hai test `/api/chat` dừng trước khi gọi model.
+Phiên 1: B dùng khoảng 0,087 USD (7B 0,082 + probe B5 0,005).
 
-## 6. Phần còn dở và cách làm tiếp (phiên sau)
+## 6. Kế hoạch làm tiếp viết ở phiên 1 (đã làm hết ở phiên 2, mục 4b)
 
 1. Bật lại Qdrant ở `127.0.0.1:6335`, rồi `curl -s http://127.0.0.1:6335/collections` phải còn đúng 3
    collection như mục 1. Khác thì dừng.

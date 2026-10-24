@@ -1,4 +1,4 @@
-"""Corpus-scoped BM25 lexical scoring and min-max normalization utilities."""
+"""Corpus-scoped BM25 lexical scoring (tokenizer, k1/b dùng cho sparse state full-corpus)."""
 import math
 import re
 from collections import Counter
@@ -14,34 +14,6 @@ def tokenize(text: str) -> list[str]:
 
 K1 = 1.5
 B = 0.75
-
-
-def min_max_normalize(scores):
-    """Min-max normalize scores to [0, 1]; constant signal maps to 0.0."""
-    for score in scores:
-        if not math.isfinite(score):
-            raise ValueError("cannot normalize a non-finite score")
-    if not scores:
-        return []
-    low = min(scores)
-    high = max(scores)
-    if high == low:
-        return [0.0 for _ in scores]
-    span = high - low
-    return [(score - low) / span for score in scores]
-
-
-def validate_weights(dense_weight, bm25_weight, tolerance=1e-9):
-    """Return the weight pair or raise when finite/non-negative/sum-1 fails."""
-    if not (math.isfinite(dense_weight) and math.isfinite(bm25_weight)):
-        raise ValueError("fusion weights must be finite")
-    if dense_weight < 0.0 or bm25_weight < 0.0:
-        raise ValueError("fusion weights must be non-negative")
-    if abs((dense_weight + bm25_weight) - 1.0) > tolerance:
-        raise ValueError(
-            f"fusion weights must sum to 1.0, got {dense_weight + bm25_weight}"
-        )
-    return (dense_weight, bm25_weight)
 
 
 class BM25:

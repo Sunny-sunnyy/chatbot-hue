@@ -863,8 +863,6 @@ def test_synthetic_oversized_group_blocking(tmp_path):
     empty_cond.write_text("[]", encoding="utf-8")
 
     fake_settings = {
-        "active_profile": "dense_only",
-        "profiles": {"dense_only": {}},
         "full_corpus": {
             "knowledge_base": {
                 "root_dir": str(kb_fake),
@@ -912,8 +910,6 @@ def test_generic_condition_or_parser_error_blocks_preview(tmp_path):
     }]), encoding="utf-8")
 
     fake_settings = {
-        "active_profile": "dense_only",
-        "profiles": {"dense_only": {}},
         "full_corpus": {
             "knowledge_base": {
                 "root_dir": str(kb_fake),
@@ -980,12 +976,13 @@ def test_canonical_preview_pass():
 # --- 10. Full-Corpus Determinism, Exact Evidence Slicing, and Preview Byte Equality ---
 
 def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
-    """Verify repeated preview runs produce byte-identical JSON and chunks match canonical totals."""
-    canonical_path = BACKEND_DIR.parent / "reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json"
-    with canonical_path.open("r", encoding="utf-8") as f:
-        canonical = json.load(f)
-    expected_chunks = canonical["summary"]["total_chunks"]
-    expected_files = canonical["summary"]["total_files"]
+    """Verify repeated preview runs produce byte-identical JSON and chunks match the runtime build record."""
+    # Số đúng là số trong build record đang chạy (nguồn sự thật "index khớp corpus"),
+    # không phải artifact preview 2026-09-11 (8.460, trước khi sửa corpus ở 7A2).
+    record_path = BACKEND_DIR.parent / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
+    record_corpus = json.loads(record_path.read_text(encoding="utf-8"))["corpus"]
+    expected_chunks = record_corpus["chunk_count"]
+    expected_files = record_corpus["file_count"]
 
     root, files = discover_full_corpus_files()
     assert len(files) == expected_files
@@ -1041,7 +1038,7 @@ def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
     generate_preview(p2)
     assert p1.read_bytes() == p2.read_bytes()
 
-    # Verify generated preview totals match canonical artifact totals
+    # Verify generated preview totals match the build record totals
     preview_data = json.loads(p1.read_text(encoding="utf-8"))
     assert preview_data["summary"]["total_files"] == expected_files
     assert preview_data["summary"]["total_chunks"] == expected_chunks

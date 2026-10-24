@@ -1,15 +1,15 @@
-# STATUS C — cập nhật 2026-10-24 19:34
+# STATUS C — cập nhật 2026-10-24 19:54
 
 Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
 - C10 (A giao 19:00, User duyệt): 4 báo cáo khâu của C về `TEMPLATE_USER_REPORT.md` — xong 19:08, **A review đạt, commit `c57ec43`**. Bản 2 mỗi file: Tóm tắt đầu file, checklist 5 mức, §4 lịch sử theo ngày, mã nội bộ/spec/report xuống Phụ lục; số đo giữ nguyên (kiểm: mọi số trong diff đã có ở bản 1, trừ giờ/tỉ giá/commit và "~600 đồng" = 0,024 USD × 25.000). `git diff --check` sạch.
 - C12 (A giao): sửa 4 lỗi báo cáo cũ (C11 §6 mục 13) + "brainstorm Phase 8" → "Phase 8.1" — xong 19:33, **A review đạt** (chưa commit — commit A chờ User). 3 báo cáo khâu lên bản 3 (Golden §2 không xáo; Tìm kiếm MiniLM chỉ Foods + câu brainstorm → 8.1; Sinh §5 Representation B đã gọi 1 lần); H-report thêm §9 đính chính H6/O9. Số đo không đổi; `git diff --check` sạch.
-- C9 review B9 + kiểm sức khỏe: chờ B nhắn "B9 xong" (ưu tiên khi B nhắn).
+- C9 review B9 + kiểm sức khỏe: xong 19:54 — **ready_for_user_confirmation**, 0 blocker/major, 1 minor (m1 câu tả case 81), 3 ngoài phạm vi cho A (o1 tài liệu còn nhắc Foods, o2 dependency không dùng, o3 test.ipynb/scripts). Review `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md`. Chạy lại: pytest 191 passed; retrieval giống byte (cefb2d1a); /health 200; payload 8.459×7 field; Qdrant 1 collection; Golden check; notebook 03/04. Không paid.
 - C11 (A giao 19:25): bảng rà quyết định Phase 0–7B — xong 19:30, **A review đạt** (chưa commit — commit A chờ User): `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (56 quyết định; 3 sub-agent gom dữ kiện, C kiểm điểm then chốt §1.1). Free, không paid. Phát hiện lỗi trong báo cáo cũ của C (§6 mục 13) — chờ A giao sửa.
 
 ## Đang khai báo sửa
-- không (C11, C12 xong; file chờ A commit). C9 review B9 khi B nhắn: chỉ đọc + report review mới.
+- không (C9 xong; file review mới chờ A commit)
 
 ## Phiên sau
 1. **Review B9 (dọn sau Phase 7)** khi A nhắn — skill `risk-gated-agent-review`; đối chiếu đích với

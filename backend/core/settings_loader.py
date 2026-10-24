@@ -9,16 +9,9 @@ SETTINGS_PATH = BACKEND_DIR / "config" / "settings.yaml"
 
 
 def load_settings(validate_private_paths: bool = True):
-    """Load settings and reject an unknown active retrieval profile."""
+    """Load settings and validate the full-corpus groups fail-closed."""
     with SETTINGS_PATH.open() as file:
         settings = yaml.safe_load(file)
-    active_profile = settings.get("active_profile")
-    profiles = settings.get("profiles", {})
-    if active_profile not in profiles:
-        raise ValueError(
-            f"Unknown active_profile: {active_profile!r}. "
-            f"Valid profiles: {sorted(profiles)}"
-        )
     if "full_corpus" in settings:
         validate_full_corpus_settings(
             settings["full_corpus"], validate_private_paths=validate_private_paths
