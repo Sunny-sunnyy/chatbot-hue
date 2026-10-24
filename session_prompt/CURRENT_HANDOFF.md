@@ -1,80 +1,59 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 17:10 24/10/2026 (A, kết phiên). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc
+Cập nhật: 19:02 24/10/2026 (A, mở phiên tối). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc
 đang mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/TONG_HOP.md`.
 
-## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
+## PHIÊN TỐI 24/10 — ĐANG LÀM (đọc trước nhất)
 
-**Hệ thống lúc kết phiên 24/10:** `main` (A commit cuối ghi trong `sessions/STATUS_A.md`); chatbot
-full-corpus chạy được (`/health` 200 ở B1); Qdrant trước khi B9 xóa: 3 collection (kiểm lại bằng
-`curl -s http://127.0.0.1:6335/collections` — B9 có thể đã xóa 2 collection Foods, xem `STATUS_B.md`).
-**Working tree có thay đổi CHƯA COMMIT của B9** (xóa code/test/notebook Foods, sửa `settings.yaml`,
-`settings_loader.py`, `conftest.py`, `vectorstore/*`, `scoring/bm25.py`, test chunker): chưa review —
-**không commit, không revert** trước khi C review.
+**Hệ thống lúc mở phiên (18:51):** `main` @`54670a0`; Qdrant `:6335` chạy lại, đúng 3 collection
+(Foods 572/572, full-corpus 8.459); working tree = phần B9 dở (55 thay đổi, chưa commit, chưa review);
+mốc so byte `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` sha `cefb2d1a…` còn;
+`/tmp/phase7_cleanup/` đã mất. File untracked `báo cáo nghiên cứu github.txt` ở gốc là của User — giữ nguyên.
 
-**Qdrant `127.0.0.1:6335` ĐÃ TẮT lúc ~17:10 24/10** (không do agent): phiên sau kiểm `curl -s
-http://127.0.0.1:6335/collections` trước; tắt thì nhờ User bật lại (không tự bật/đổi môi trường). API
-không khởi động được khi Qdrant tắt.
+**User chốt 19:00 24/10:**
+- Phase 8 tách **8.1 rồi 8.2** (tên 8.1/8.2 để khỏi nhầm với model "8B"). **8.1** = Claude rà lại các
+  quyết định Phase 0–7 (trước đây do AGY/Codex làm): cái gì chưa thử, chưa so sánh, chưa tối ưu, chưa
+  làm; đề xuất phương pháp/hướng cải tiến + thực nghiệm so sánh, **giữ phương án cũ làm baseline**; 8.1
+  không đổi hành vi chatbot. User đóng 8.1 → A mới brainstorm + thiết kế **8.2** (cải tiến) trên số đo 8.1.
+- B9 làm nốt + C review **song song** với brainstorm 8.1.
 
-**B9 dừng ở điểm an toàn** (report `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md`
-§6): đã gỡ code/test/notebook Foods + sửa settings/notebook (working tree, chưa commit); import toàn
-backend, grep sạch, Run All notebook 03/04 đạt; pytest 15 lỗi đều "Connection refused" (Qdrant tắt).
-**Chưa** chạy so byte retrieval, `/health`, smoke 10; **chưa** xóa 2 collection Foods và 5 file
-`data/full_corpus_metadata_v2_*.json`. Mốc so byte: `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl`
-(bản `/tmp/phase7_cleanup/` có thể mất). Bỏ thay đổi được bằng `git restore` theo đường dẫn.
+**Thứ tự việc:**
 
-**Thứ tự việc phiên sau:**
+1. **B làm nốt B9** (mục "Việc của B", report §6 bước 1–4) → nhắn A → **C review B9** + chạy lại kiểm
+   sức khỏe toàn hệ thống (như B1 `reports/phase_7b_gate_0_health_audit_2026_10_24.md`, free) trên hệ
+   thống đã dọn. Đạt → A commit từng đường dẫn, cập nhật `Project_Status.md` §4 + `bao_cao_he_thong/`
+   (4 chỗ, `WORKFLOW.md` §6) → Phase 7 sạch.
+2. **A brainstorm 8.1 với User** (skill `propose-options`, mỗi lần một câu) → **một** spec 8.1 trong
+   `docs/superpowers/specs/`, User duyệt; mở đợt `report_agent/<ngày>_phase_8_1_<chủ_đề>/`. Input:
+   `reports/phase_8_candidate_hypotheses_2026_10_24.md` (H1–H14, §8.4), `bao_cao_he_thong/BAO_CAO_*.md`,
+   `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`, `reports/phase_8_probe_context_top10_2026_10_24.md`,
+   `gửi chatgpt/2026-10-24/kết quả nghiên cứu/`.
+3. Rảnh (free, không chồng file B9): C đưa 4 báo cáo khâu của C về `TEMPLATE_USER_REPORT.md`.
 
-1. Mở A/B/C bằng `START_SESSION.md`; A `ListAgents` cập nhật bảng Session; A **hỏi lại User quyền
-   phiên** (quyền đặc biệt 24/10 đã hết hạn — `WORKFLOW.md` §9.8): tự điều phối rộng, trần tiền
-   `gpt-6-luna`, commit/push.
-2. **B làm nốt B9 §6 bước 1–6** khi Qdrant chạy lại, rồi **C review B9** (dọn) theo `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2) + report B
-   `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` + skill
-   `risk-gated-agent-review`; chạy lại phần kiểm then chốt (so byte retrieval, test full-corpus,
-   `/health`). Đạt → A commit theo từng đường dẫn (`git diff --cached --stat`), cập nhật
-   `Project_Status.md` §4 (Qdrant còn 1 collection, code Foods đã gỡ), `bao_cao_he_thong/` (4 chỗ,
-   `WORKFLOW.md` §6). B9 dở → B làm nốt trước.
-3. **Brainstorm Phase 8 với User** (A, skill `propose-options`, mỗi lần một câu). Input:
-   - giả thuyết + thứ tự ưu tiên: `reports/phase_8_candidate_hypotheses_2026_10_24.md` §8.4;
-   - baseline 7B: `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`, `guides/full_corpus_rag.md` "Cập nhật Phase 7B";
-   - từ chối nhầm: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`;
-   - thăm dò context 10: `reports/phase_8_probe_context_top10_2026_10_24.md`;
-   - nghiên cứu: `gửi chatgpt/2026-10-24/kết quả nghiên cứu/` (2 file, private).
-   Kết quả: **một** spec Phase 8 trong `docs/superpowers/specs/`, User duyệt một lần; mở đợt
-   `report_agent/<ngày>_phase_8_<chủ_đề>/`.
-4. Việc nhỏ có thể giao song song khi rảnh (free): đưa 9 file `bao_cao_he_thong/BAO_CAO_*.md` về mẫu
-   mới (`TEMPLATE_USER_REPORT.md`: dòng "Cập nhật lần cuối … bản N", Tóm tắt đầu file, checklist thang
-   5 mức, mã nội bộ xuống Phụ lục) — B các file B viết, C các file C viết, A 2 file của A.
+## Câu hỏi cho User (đưa vào brainstorm 8.1/8.2, mỗi lần một câu)
 
-## Câu hỏi cho User (phiên sau)
-
-1. **Quyền phiên:** tiếp tục cho A tự điều phối rộng + commit/push? Trần tiền `gpt-6-luna` cho phiên?
-   (24/10: ≤1 USD, đã dùng ~0,09 USD.)
-2. **Phase 8 — H8:** khi chỉ có bằng chứng cho một phần câu hỏi, bot **trả lời phần có căn cứ (nói rõ
-   phần thiếu)** hay **từ chối cả câu** như hiện nay? (Spec umbrella §1/Decision #6a cho phép trả phần
-   có căn cứ; spec Phase 6 §10 + prompt hiện tại bắt từ chối cả câu.)
-3. **Phase 8 — Golden:** có tách 176 câu thành nhóm phát triển / nhóm giữ kín để chấm cuối không? (C7:
-   tối ưu và báo trên cùng bộ là đo lạc quan; spec 7A §8 từng chốt không chia; MekongAI dùng bộ kiểm
-   cuối "chưa ai thấy", chấm mù.)
-4. **Phase 8 — luật so sánh:** dùng paired bootstrap / permutation trên cùng 176 câu (nghiên cứu 7B
-   khuyên), không đặt ngưỡng cố định — User đồng ý?
-5. **Phase 8 — thứ tự làm:** đồng ý thứ tự C7 §8.4 (0 đo candidate recall + bằng chứng chuẩn → 1 context 10
-   + H8 → 2 bảng/BM25 bigram/tách câu hỏi → 3 gộp chunk → 4 reranker → 5 phần có phí)?
-6. Chunker có 3 cặp đoạn lặp nội dung (blockquote trong list item) — sửa cùng đợt chunker Phase 8?
-7. **Phase 8 — bằng chứng chuẩn:** gắn tay đoạn/dòng đúng cho 30–40 câu khó (để đo "đoạn đúng có
-   vào nhóm ứng viên không", C7 §8.4 bước 0)? Tốn công người (agent soạn, User duyệt mẫu).
-9. (A tự quyết, báo User) `backend/test.ipynb` và `backend/scripts/` không thuộc danh sách dọn C2 — B9
-   hỏi có cần dọn không; A xem nội dung rồi đề xuất.
+1. ~~Quyền phiên~~ — đã trả lời 19:00 (mục Quyền).
+2. **H8:** khi chỉ có bằng chứng cho một phần câu hỏi, bot **trả lời phần có căn cứ (nói rõ phần
+   thiếu)** hay **từ chối cả câu** như hiện nay? (Spec umbrella §1/Decision #6a cho phép trả phần có căn
+   cứ; spec Phase 6 §10 + prompt hiện tại bắt từ chối cả câu.)
+3. **Golden:** tách 176 câu thành nhóm phát triển / nhóm giữ kín để chấm cuối? (C7: tối ưu và báo trên
+   cùng bộ là đo lạc quan; spec 7A §8 từng chốt không chia.)
+4. **Luật so sánh:** paired bootstrap / permutation trên cùng 176 câu, không ngưỡng cố định?
+5. **Thứ tự 8.2:** quyết sau khi có số đo 8.1 (C7 §8.4 là đề xuất ban đầu).
+6. Chunker 3 cặp đoạn lặp nội dung (blockquote trong list item) — 8.1 đo, 8.2 sửa?
+7. **Bằng chứng chuẩn:** gắn tay đoạn/dòng đúng cho 30–40 câu khó (agent soạn, User duyệt mẫu)?
 8. Model/dependency mới cần duyệt khi đề xuất: reranker `bge-reranker-v2-m3`, `Qwen3-Embedding-0.6B`,
    tách từ `pyvi` (C7).
+9. (A tự quyết, báo User) `backend/test.ipynb`, `backend/scripts/` (ngoài C2); phát hiện B8 (test còn
+   mock, `logging.basicConfig`, nhánh CUDA Qwen-0.6B) — A xếp vào 8.1 phần dọn code.
 
 ## Session
 
-| Vai | Terminal (24/10) | Agent | Liên lạc | Việc phiên sau | Trạng thái kết phiên |
+| Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` | Claude Opus 5.5 | trực tiếp | hỏi quyền; commit B9 sau review; brainstorm Phase 8 | kết phiên |
-| B — thực thi | `hue-rag-64` | Claude Opus 5.5 | trực tiếp | B9 dọn sau Phase 7: **dở** — code/test/notebook đã gỡ (chưa commit); Qdrant tắt 17:10 nên chưa kiểm xong, chưa xóa collection/data | xem `STATUS_B.md` + `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` §6 |
-| C — thực thi | `hue-rag-d9` | Claude Opus 5.5 | trực tiếp | review B9; báo cáo khâu theo mẫu mới | xem `STATUS_C.md` |
+| A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối; brainstorm 8.1; commit B9 sau review | đang làm |
+| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | làm nốt B9 | đang làm |
+| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | C9 review B9 (chờ B nhắn) + kiểm sức khỏe; C10 báo cáo khâu mẫu mới | C10 chờ review A (19:08); C9 chờ B |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -82,9 +61,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 
 - **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C;
   Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report.
-- **Phiên 24/10 (đã hết hạn khi kết phiên, hỏi lại — §9.8):** A tự điều phối/thử nghiệm/tối ưu rộng;
-  ngân sách `gpt-6-luna` ≤1 USD (tối đa 1,5) — dùng ~0,09 USD; User duyệt dọn B9 (đích C2). **B9 đã
-  được duyệt trong phiên 24/10** — làm nốt phần dở ở phiên sau không cần xin lại, trong đúng đích C2.
+- **Phiên tối 24/10 (User 19:00, hết hạn khi kết phiên — §9.8):** A tự điều phối rộng; A commit/push;
+  ngân sách API trả phí ≤1 USD cho phiên. **B9 đã được duyệt 24/10** — làm nốt trong đúng đích C2.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
 
 ## Việc của B
@@ -122,8 +100,27 @@ Mức rủi ro: cao (xóa code + 2 collection). Đích = `reports/phase_7_cleanu
 
 ## Việc của C
 
-- Phiên sau: review B9 (mục "Phiên sau" bước 2). Báo cáo khâu theo mẫu mới (bước 4).
+### C9 — Review B9 + kiểm sức khỏe sau dọn (khi B nhắn "B9 xong")
+
+- Đọc: `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2) §2–§5 full-read; report B
+  `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` full-read; skill
+  `risk-gated-agent-review`.
+- Làm: cổng tối thiểu (exact diff mọi đường dẫn, đối chiếu đích C2 + ràng buộc §3, tìm ngoài phạm vi,
+  `git diff --check`); chạy lại độc lập: so byte retrieval với mốc, pytest full-corpus free (liệt kê
+  file, không `--deselect`), `/health` 200 + 1 retrieval, `golden_full_corpus check`, Qdrant liệt kê
+  (còn đúng 1 collection full-corpus 8.459 sau khi B xóa). Kiểm sức khỏe như B1 (corpus 205/8.459,
+  build record fresh, sparse state, payload 7 field) trên hệ thống đã dọn.
+- Không: sửa code B9 (finding → B sửa); paid (smoke 10 của B là đủ); commit.
+- Đầu ra: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md` (`TEMPLATE_REVIEW.md`),
+  kết luận `ready_for_user_confirmation` / `changes_requested` / `blocked`; `STATUS_C.md`; nhắn A.
+
+### C10 — 4 báo cáo khâu của C về mẫu mới (free, làm trong lúc chờ B)
+
+- File: `bao_cao_he_thong/BAO_CAO_{TIM_KIEM,SINH_CAU_TRA_LOI_API,BO_CAU_HOI_GOLDEN,KHO_DU_LIEU}.md`
+  theo `session_prompt/TEMPLATE_USER_REPORT.md` (dòng "Cập nhật lần cuối … bản N", Tóm tắt đầu file,
+  checklist thang 5 mức, mã nội bộ xuống Phụ lục). Không đổi nội dung kỹ thuật/số đo; không chép số
+  liệu corpus. Khai báo file trong `STATUS_C.md`. Xong → nhắn A (A review).
 
 ## Việc của A
 
-- Phiên sau: bước 1–3 mục "Phiên sau". Viết spec Phase 8 sau brainstorm.
+- Brainstorm 8.1 với User → spec 8.1; commit B9 sau C9 đạt; review C10.

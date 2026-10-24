@@ -1,12 +1,13 @@
-# STATUS C — cập nhật 2026-10-24 17:08
+# STATUS C — cập nhật 2026-10-24 19:08
 
-Terminal: `hue-rag-d9` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Không. Kết phiên 2026-10-24 theo yêu cầu User (qua A).
+- C10 (A giao 19:00, User duyệt): 4 báo cáo khâu của C về `TEMPLATE_USER_REPORT.md` — xong 19:08, **chờ A review**. Bản 2 mỗi file: Tóm tắt đầu file, checklist 5 mức, §4 lịch sử theo ngày, mã nội bộ/spec/report xuống Phụ lục; số đo giữ nguyên (kiểm: mọi số trong diff đã có ở bản 1, trừ giờ/tỉ giá/commit và "~600 đồng" = 0,024 USD × 25.000). `git diff --check` sạch.
+- C9 review B9 + kiểm sức khỏe: chờ B nhắn "B9 xong".
 
 ## Đang khai báo sửa
-- không
+- `bao_cao_he_thong/BAO_CAO_{TIM_KIEM,SINH_CAU_TRA_LOI_API,BO_CAU_HOI_GOLDEN,KHO_DU_LIEU}.md` (C10)
 
 ## Phiên sau
 1. **Review B9 (dọn sau Phase 7)** khi A nhắn — skill `risk-gated-agent-review`; đối chiếu đích với

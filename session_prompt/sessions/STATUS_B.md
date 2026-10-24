@@ -1,6 +1,8 @@
-# STATUS B — cập nhật 2026-10-24 17:12 +0700
+# STATUS B — cập nhật 2026-10-24 18:55 +0700 (mở phiên mới)
 
-Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal: `hue-rag-b0` (A = `hue-rag-47`) · Agent: Claude Opus 5.5 · Vai: thực thi
+
+Mở phiên 18:51: Qdrant chạy lại, 3 collection đúng (572/572/8.459), mốc so byte sha `cefb2d1a` còn; `/tmp/phase7_cleanup/` đã mất. Chờ A giao làm nốt B9 §6 bước 1–4.
 
 ## Đang làm — B9 dọn sau Phase 7: DỞ, dừng ở điểm an toàn
 - Report: `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` (§6: các bước còn lại).
