@@ -76,6 +76,8 @@ brainstorm Phase 8 (H4), không phải quyết định. `settings.yaml` không �
 
 ### B7 — Sửa 3 minor của C5 ngay; phần User khi User chấm xong (free)
 
+**Trạng thái (B):** m1–m3 đã sửa trong report Gate 4 (§3, §5, §5.1, §6); phần User chờ User chấm.
+
 - Ngay: m1 (§5.1: retrieval tất định — cái chưa biết là chênh native vs runtime có vượt biến thiên
   do mẫu 158 case không), m2 (§3 thay placeholder `<rerun_30>` bằng cách lấy từ `subsets.json`), m3
   (§6 ghi quota Claude Code ~1,1M token cho judge Claude).

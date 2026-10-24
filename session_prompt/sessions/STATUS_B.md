@@ -3,12 +3,13 @@
 Terminal: `hue-rag-64` · Agent: Claude Opus 5.5 · Vai: thực thi
 
 ## Đang làm
-- Chờ C review chéo B6 (Gate 4); khi User chấm xong: chạy parse-user-scores + 3 compare (report Gate 4 §5) rồi cập nhật report.
+- B7: m1–m3 của C đã sửa; chờ A nhắn User chấm xong → parse-user-scores + compare, điền report Gate 4 §5.
 
 ## Đang khai báo sửa
 - `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md` (mới); script phân tích `/tmp/phase7b_b6/extra.py`
 
 ## Vừa xong
+- B6 C review `ready_for_user_confirmation`, A commit `c1f4f20`; B7 sửa m1–m3.
 - B6 (Gate 4) xong, chờ review chéo: baseline Claude Run 1 A/C/R 4,426/4,284/4,455; nhiễu cả
   đường ≤0,011, 0 case lệch ≥2; 121 case 5/5/5, 22 case 1/1/1 = đúng 22 từ chối nhầm.
 - B5 A đóng, commit `f80737a`.

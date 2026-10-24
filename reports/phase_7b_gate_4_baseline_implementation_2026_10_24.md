@@ -41,11 +41,13 @@ Chạy từ `backend/`, đều free:
 
 ```bash
 E="uv run python -m evaluation.full_corpus_eval"
+# 30 case_index của tập chấm lại, lấy từ subsets.json (private)
+R=$(uv run python -c "import json;print(' '.join(map(str,json.load(open('../data/evaluation/phase_7b/subsets.json'))['rerun_30'])))")
 $E summarize --retrieval retrieval_dense_bm25_rrf_1.jsonl --answers run1_answers.jsonl --scores claude_run1.jsonl
 $E summarize --answers run2_answers.jsonl --scores claude_run2.jsonl
 $E summarize --answers run1_answers.jsonl --scores run1_judge_luna.jsonl
-$E compare --a claude_run1.jsonl      --b claude_run1_rerun30.jsonl      --cases <rerun_30>
-$E compare --a run1_judge_luna.jsonl  --b run1_judge_luna_rerun30.jsonl  --cases <rerun_30>
+$E compare --a claude_run1.jsonl      --b claude_run1_rerun30.jsonl      --cases $R
+$E compare --a run1_judge_luna.jsonl  --b run1_judge_luna_rerun30.jsonl  --cases $R
 $E compare --a claude_run1.jsonl      --b claude_run2.jsonl
 $E compare --a claude_run1.jsonl      --b run1_judge_luna.jsonl
 uv run python /tmp/phase7b_b6/extra.py     # phân bố điểm, trung bình khi bỏ từ chối nhầm (script phân tích, ngoài repo)
@@ -151,7 +153,7 @@ chấm.** Khi User chấm xong `user_scoring.md`, chạy từ `backend/`:
 
 ```bash
 E="uv run python -m evaluation.full_corpus_eval"
-U="<20 case_index của user_20 trong subsets.json>"
+U=$(uv run python -c "import json;print(' '.join(map(str,json.load(open('../data/evaluation/phase_7b/subsets.json'))['user_20'])))")
 $E parse-user-scores                       # → user_scores.jsonl; exit 1 nếu còn câu thiếu điểm
 $E compare --a user_scores.jsonl --b claude_run1.jsonl     --cases $U
 $E compare --a user_scores.jsonl --b run1_judge_luna.jsonl --cases $U
@@ -165,7 +167,9 @@ thì A báo User trước khi coi điểm Claude là chính thức. Hiện đi�
 ### 5.1 So retrieval phụ (Gate 1, quan sát)
 
 `native_hybrid_rrf`: MRR 0,726 / nDCG 0,761 / Coverage 93,41, so với runtime 0,721 / 0,755 /
-92,35. Chênh nhỏ, chạy một lần, chưa có ngưỡng nhiễu cho retrieval. Ghi lại để Phase 8 xem.
+92,35. Retrieval tất định (hai lần `dense_bm25_rrf` giống từng byte), nên nhiễu khi chạy lại
+bằng 0. Chênh giữa hai treatment nhỏ (0,005–0,011) và chưa được kiểm ý nghĩa thống kê theo
+cặp trên 158 case (biến thiên do mẫu). Ghi lại để Phase 8 xem.
 
 ## 6. Tiền thật toàn Phase 7B
 
@@ -176,8 +180,11 @@ thì A báo User trước khi coi điểm Claude là chính thức. Hiện đi�
 | Run 2 sinh | 176 | 166.713 | 14.848 | 0,02410 |
 | Judge luna Run 1 | 176 | 164.655 | 20.092 | 0,02651 |
 | Judge luna chấm lại 30 | 30 | 27.937 | 3.885 | 0,00474 |
-| Judge Claude (C, sub-agent Claude Code) | 382 lượt | — | — | 0 API |
+| Judge Claude (C, sub-agent Claude Code) | 382 lượt | — | — | 0 API (quota Claude Code ~1,1M token) |
 | **Tổng 7B** | | | | **0,08203** (giới hạn 0,6) |
+
+Judge Claude không tốn tiền API nhưng dùng quota Claude Code: 39 sub-agent × ~29k token ≈
+1,1M token (report Gate 3). Con số này giúp Phase 8 ước lượng quota khi chấm lại nhiều cấu hình.
 
 Ngoài 7B, trong cùng session: probe Phase 8 B5 tốn 0,00495 USD, và 1 request lỗi 400 ở B1
 ước tính ~0 USD. Tiền tính từ usage token với giá User đưa, chưa đối chiếu dashboard; không
