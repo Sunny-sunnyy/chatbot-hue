@@ -27,6 +27,8 @@ liên lạc trực tiếp).
 - Xác nhận User gõ ở terminal B ("việc A giao = làm đi") không thay câu trả lời User cho A.
 - 11:33: User trích nguyên văn 2 câu kín cho A (hỏi về câu không dấu) ⇒ A đã thấy 2 câu; không đề xuất biến thể nhắm vào chúng.
   Bài học cho vòng cải tiến: khi User hỏi về câu kín, nhắc User mô tả chung, không dán nguyên câu.
+- C24 (11:5x): báo cáo cuối của sub-agent kiểm câu kín liệt kê tên file nguồn đã grep ⇒ C biết chủ đề câu kín (không
+  biết câu / đáp án). Vòng cải tiến: brief giữ mù cấm cả tên file nguồn trong báo cáo cuối.
 - Lệch skill `risk-gated-agent-review` (Correction: người kiểm ghi vào mục của người làm) ↔ `WORKFLOW.md` §3.2 (cấm sửa
   mục session khác) — C báo 11:31; sửa skill ở vòng cải tiến cuối phiên.
 

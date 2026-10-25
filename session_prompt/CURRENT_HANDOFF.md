@@ -93,13 +93,14 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
 | B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 11:36 vòng sửa 1 xong — plan sha `a4adfc8eedd9`, chờ C review vòng 2 + A duyệt |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C23 review B16 + plan B17 | 11:37 C23 xong: vòng 2 ready — plan `a4adfc8eedd9` sẵn sàng để A duyệt (mọi finding đóng; G1 §7 đạt) — `phase_8_1_b16_review.md` §7; chờ A giao việc |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C24 dấu câu kín; review G4/G2 khi B nhắn | 11:48 C24 xong: 16 dòng thêm dấu, kiểm độc lập ĐẠT, check exit 0, kín v4 md5 `a095e08bd7ac`, mẫu bản 4 `ad205c839bd0` — `phase_8_1_g0_4_sealed_review.md` §8; chờ User (2/21/33, mẫu 4); C23 đóng (`b9789f4`) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
 ## Quyền
 
-- **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C; Qdrant chỉ đọc trừ
+- **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã
+  duyệt: A tự duyệt, báo sau (User 25/10 — `sentencepiece` cho M2); Qdrant chỉ đọc trừ
   đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; thư viện thừa
   giữ nguyên (chỉ gỡ khi xung đột); luôn thử + so baseline trước khi chọn (User 20:49).
 - **Phiên tối 24/10 (hết hạn — hỏi lại):** A tự điều phối rộng; API ≤1 USD (dùng ~0,0013 USD: smoke B9).

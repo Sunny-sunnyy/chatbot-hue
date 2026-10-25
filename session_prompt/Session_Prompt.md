@@ -57,7 +57,8 @@ Có link không có nghĩa phải đọc. Lịch sử, report đã đóng, `hand
 | Chạy test không gọi API trả phí | Gọi API trả phí ngoài giới hạn đã ghi |
 | Đọc Qdrant/API bằng GET | Tạo/ghi/xóa collection, xóa file dữ liệu |
 | Script phân tích không ghi dữ liệu dùng chung | Sửa curated corpus, Golden |
-| Sửa file trong vùng việc được giao | Provider/model/dataset mới, dependency mới, deploy |
+| Sửa file trong vùng việc được giao | Provider/model/dataset mới, dependency lớn / đổi kiến trúc, deploy |
+| Thư viện nhỏ, phổ biến, cần để chạy việc đã duyệt (ví dụ `sentencepiece` cho model User duyệt): A tự duyệt, ghi lý do, báo User sau (User 2026-10-25) | |
 
 Không ai tự duyệt việc của chính mình, tự hạ mức rủi ro, hay sửa spec/tiêu chí
 nghiệm thu để hợp thức hóa kết quả — kể cả A khi A tự làm (người khác kiểm).
