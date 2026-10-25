@@ -94,7 +94,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
 | B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 12:33 G4 xong — `phase_8_1_g4_implementation.md`, chờ C review; G2 chưa chạy |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C26 câu kín, C27 Golden; review G4/G2 khi B nhắn | 12:31 C26 xong: dòng 2/6/21/33 sửa, kiểm độc lập ĐẠT, check exit 0, kín v6 `631334704fdd`, 36/36 natural (`sealed_realism` `d1f7c235b83c`), mẫu bản 5 (17 dòng, 8 dòng [ĐỔI]) `4f7fe6df5cca` — §10; chờ User xem mẫu 5. C27 xong: ready, m1/m2 đóng (official `0f7dbf41b422`) — `phase_8_1_golden_fix_review.md` |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C28 kế hoạch G3; review G2 khi B nhắn | 12:50 C28 xong: `phase_8_1_g3_plan.md` sha `e089243fb612` — chờ A duyệt, B review. Xong: G4 review ready, m1/m2 đóng (report G4 `4ee6c208f192`, review §7 sau commit `ee557f9`); C26 kín v6 `631334704fdd` (chờ User xem mẫu 5); C27 Golden ready (`0f7dbf41b422`) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -220,6 +220,13 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
   (`build_candidate` nhận `chunks`, context từ `packed.sources`, ghi đè theo `--name`) — ghi file code sẽ sửa.
   Đọc: spec §5 G3, report G1 (§4–§7), `de_xuat_cho_du_an.md`, khâu dính mục dưới. Sau review G4 (ưu tiên). A duyệt kèm sha,
   B review khi B rảnh. 0 USD.
+  - **12:50 A duyệt bản sha `e089243fb612`** (A đọc hết; không phải người viết). Cách hiểu ghi kèm, không đổi file:
+    (a) "keyword không tụt quá −0,02" = cận dưới CI 95% của chênh trung bình ≥ −0,02; (b) latency CPU chỉ theo dõi — ghi có
+    tiến trình nặng khác (B judge / G2) chạy cùng lúc không; (c) trước mỗi lần xóa: liệt kê đích, chỉ tên `hue_81_g3_*`.
+- **C29 (giao 12:50) — chạy G3 theo plan `e089243fb612`** §5 bước 1–6. Code: `full_corpus_pipeline.py` (`chunks=None`) +
+  `g3_chunking.py` mới (khai báo trong STATUS_C). Qdrant chỉ `hue_81_g3_*`, ≤ 3 cùng lúc; paid chỉ §4, trần G3 0,10 USD,
+  lượt ≤ 0,05 USD, ước lại từ pilot. Không đổi chunker production / settings / runtime; không mở câu kín; không commit.
+  Dừng: mốc byte không khớp; build lỗi; bước > 20 phút; tiền vượt. Review: **B** (khi xong G2) theo plan §8; A commit.
   - **C26 câu kín:** dòng 2, 21, 33 sửa theo đề xuất v3 (`sealed_review_notes_private_v3.md`); dòng 6 bỏ quy định ngoài
     điều câu hỏi hỏi; dòng 3/19/24/29/33 giữ chi tiết phụ. Quy trình như C24/C25 (backup v5, sub-agent sửa, sub-agent khác
     kiểm, `check --authoring`), cập nhật `sealed_realism.jsonl` (2/21/33 → natural nếu người kiểm đồng ý), rồi mẫu
@@ -234,6 +241,7 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
 - **12:35 B17 G4 xong** (report G4 §4.5): không nhánh nào "tốt hơn"; M1/M2 kém (mất 1–3 câu); luna chưa rõ (MRR +0,17 CI);
   G4-B lợi do pool rộng, không do rerank. Chờ C review. **Luật tiền (A):** ước lại từ pilot 10 câu của lượt; trần lượt
   0,05 USD; tổng B17 0,25 USD. B tiếp G2 trên Golden mới (`0f7dbf41b422`).
+- **12:41 G4 ĐÓNG** (A): C review `phase_8_1_g4_review.md` ready (0 blocker/major; 2 minor chữ B sửa sau); commit `ee557f9`.
 
 ## Việc của A
 
