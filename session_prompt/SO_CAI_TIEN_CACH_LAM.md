@@ -60,6 +60,12 @@ W13). Vòng trước: W1–W10, I1–I3 được dùng trong phiên (sổ, `run-
 mọi plan; hook không chặn nhầm commit nào; brief sub-agent không còn `{{…}}`). S4 (`/tmp`) không lặp — script G0.6 để ở
 `data/phase_8_1/tools/` từ đầu.
 
+**Thử mở phiên vòng 2 (15:47, sub-agent mới đóng vai B):** nắm đúng vai, Phase, việc ("không"), luật cứng, viết lại đúng W11 /
+W12. Chỗ chưa rõ đã sửa: W11 thêm trỏ ở `run-experiment` §1 (người viết plan là B/C), ghi rõ mục từng file, người review
+được chạy lệnh chỉ đọc, A chọn người review, file `<plan>_review.md`; W12 ghi rõ áp cho mọi người chưa được giao, "tên file
+corpus", grep **nội dung corpus** (không phải mọi grep), script tạm vs dùng lại, `rm` bị chặn; handoff: B/C được review
+bản nháp spec 8.2; WORKFLOW §2 thêm lệnh đếm point. Lúc thử, governance chưa commit (đã commit `c8f08e4` ngay sau).
+
 **Kết vòng 25/10 11:05:** 11 sự cố, 11 thay đổi `đang thử`, 7 ý chờ. Không đề xuất thêm; phiên sau xem các mục `đang thử`
 có được dùng không, sự cố có lặp không.
 

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 15:28` (A, **đóng Phase 8.1**; chatbot không đổi)
+Last updated: `2026-10-25 15:48` (A, **đóng Phase 8.1** 15:27 + kết phiên; chatbot không đổi)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.

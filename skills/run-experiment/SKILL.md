@@ -11,6 +11,9 @@ Code theo `practical-project-coding` ("Ranh giới theo khâu pipeline": gọi c
 
 ## 1. Trước khi đo — ghi vào report của đợt (giờ lấy bằng `date`)
 
+Kế hoạch có mục **"Căn cứ để review"** và được một session khác review trước khi A duyệt sha (`WORKFLOW.md` §9 mục 1).
+
+
 1. **Lớp bài toán**, không phải một câu: "dòng bảng giá bị tách nên tìm không ra", không phải "câu số 81 sai".
 2. **Một thay đổi mỗi biến thể** (H1, H1b…); ghi giả định của nó và **kiểm giả định bằng máy trước khi code**
    (ví dụ đếm xem đúng là có bao nhiêu bảng bị tách vì tokenizer cũ).

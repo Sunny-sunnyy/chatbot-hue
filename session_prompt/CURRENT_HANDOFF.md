@@ -35,7 +35,8 @@ bảng từng quyết định `phase_8_1_g5_decision_table_draft.md` (bảng ch�
    `docs/superpowers/specs/` → User duyệt một lần (sha). Đầu vào: `phase_8_1_g5_synthesis.md` §4 (đã bỏ mục câu không dấu):
    bước 0 = cách dùng nhận xét của User làm kiểm chéo judge + tách khâu dính (bảng G5 §4); rồi context 10, NFC, dọn
    chunker khi build lại (+ sửa mâu thuẫn Hải Vân), pool + luna, H8 có chặn câu ngoài phạm vi, lỗi citation, index 8B.
-3. Chưa giao việc B/C trước khi spec 8.2 được duyệt (`WORKFLOW.md` §9.4). Kế hoạch thí nghiệm 8.2 theo luật mới
+3. Chưa giao việc thực thi cho B/C trước khi spec 8.2 được duyệt (`WORKFLOW.md` §9.4); A được nhờ B/C **review bản nháp spec**
+   (chỉ đọc) trước khi trình User. Kế hoạch thí nghiệm 8.2 theo luật mới
    `WORKFLOW.md` §9.1: mục "Căn cứ để review" + session khác review trước khi A duyệt sha.
 
 ## Câu hỏi cho User (phiên sau)
