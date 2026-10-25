@@ -3,7 +3,7 @@
 Terminal: `hue-rag-2c` · Agent: Claude Opus 5.5 · Vai: điều phối. Phiên này chưa mở B/C.
 
 ## Commit cuối
-- Trước phiên: `4d641db`. Commit của phiên 25/10: ghi ở đây sau khi commit.
+- Trước phiên: `4d641db`. Phiên 25/10: `2ecdef2` (cải tiến cách làm) + commit ghi số này.
 
 ## Đang làm
 - Đợt `report_agent/2026-10-25_cai_tien_cach_lam/` (cách làm, không đổi chatbot) — kế hoạch `KE_HOACH.md`.
