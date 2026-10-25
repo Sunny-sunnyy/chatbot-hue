@@ -93,7 +93,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 13:05 G2 xong (trừ G2.4 đủ) — `phase_8_1_g2_implementation.md`, chờ C review + A quyết G2.4 |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 13:2x G2 xong cả G2.4 — `phase_8_1_g2_implementation.md`; C review G2.0–2.3 ready, chờ C xem phần G2.4 |
 | C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C28 kế hoạch G3; review G2 khi B nhắn | 12:50 C28 xong: `phase_8_1_g3_plan.md` sha `e089243fb612` — chờ A duyệt, B review. Xong: G4 review ready, m1/m2 đóng (report G4 `4ee6c208f192`, review §7 sau commit `ee557f9`); C26 kín v6 `631334704fdd` (chờ User xem mẫu 5); C27 Golden ready (`0f7dbf41b422`) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
@@ -168,7 +168,9 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
 - **B 13:05: G2 xong** (report `phase_8_1_g2_implementation.md`, judge mù 456 + 102 câu trả lời, md5 Golden
   `0f7dbf41b422`): **G2.1a context 10 tốt hơn, xác nhận trên test** (Completeness dev +0,26 [+0,08;+0,48], test +0,27
   [+0,02;+0,59]; USD ×1,5/câu); G2.1b, P2, G2.3 không khác; P1 kém hơn (2 câu out_of_scope bị trả lời; từ chối nhầm 13→1);
-  G2.4 mới pilot (chưa rõ) — **chờ A quyết chạy đủ (~0,041 USD)**. Tiền B17: 0,1223 USD. `g2_generate.py` chưa commit.; G2 chưa chạy.
+  G2.4 mới pilot (chưa rõ) — **chờ A quyết chạy đủ (~0,041 USD)**. Tiền B17: 0,1223 USD. `g2_generate.py` chưa commit.
+- **B: G2.4 chạy đủ** (A duyệt): none Completeness +0,14 có CI nhưng lỗi citation 4→8 ⇒ kém hơn; low 4→9 ⇒ kém hơn;
+  high không khác. Chấm mù cùng lượt với G2.0 (`judge_g24/`). Tiền B17: **0,1653 USD**.; G2 chưa chạy.
 
 **Bước 2 — chạy (sau khi A ghi "duyệt bản sha …" ở đây, A commit B16).** Thứ tự plan §4: mốc byte → G4.0 → G4-A → G4-B
 → G2 (pilot 10 câu mỗi lượt có phí). Mỗi gate: report + C review.
@@ -177,6 +179,19 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
 - **Không làm:** đổi chatbot / settings runtime; ghi Qdrant ngoài `hue_81_*`; mở câu kín; commit.
 - **Dừng khi:** GPU không dùng được; mốc byte retrieval không khớp; lỗi provider lặp lại; tiền vượt.
 - Chưa commit (B16): `backend/experiments/phase_8_1/g1_retrieval.py` (`--realism main`), report G1 §7, file kế hoạch.
+
+### B18 — kế hoạch G4 phần từ khóa (BM25) (giao 13:17 25/10; chỉ viết plan, chưa chạy)
+
+Spec 8.1 §5 G4 dòng "Từ khóa" chưa chạy. Viết `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g4_keyword_plan.md` theo
+skill `run-experiment` (tiêu chí ghi trước, cỡ mẫu, Holm). Ứng viên (C11 dòng 3.7, 3.8, 5.3, 0.5; G1.4):
+BM25 âm tiết (hiện tại) / + cặp âm tiết / + nguyên cụm mã / tách từ `pyvi` (đã có trong `pyproject.toml`); khử dấu cả kho +
+câu hỏi (G1.4: không dấu sập 0,73→0,19); NFC câu hỏi (G1.4 đã thấy phục hồi NFD — chỉ cần xác nhận nếu rẻ); k RRF
+{10, 30, 60}; b BM25 {0,5; 1,0} (sau tokenizer). Đo với cách trộn runtime **và** pool 100 (G4: lợi do pool rộng).
+- Ưu tiên cách nhẹ nhất: nếu BM25 tính được trong bộ nhớ trên danh sách đoạn (không cần collection) thì không tạo Qdrant;
+  cần Qdrant thì `hue_81_g4k_*`, ≤ 2 cùng lúc (C đang dùng `hue_81_g3_*`), xóa sau, liệt kê trước/sau.
+- Tập: dev số chính (CPU, không giới hạn 30 câu); nhóm "không dấu" là bản biến đổi của câu dev như G1.4. Chỉ số quyết theo
+  đoạn đúng như G1/G3. Không đổi `scoring/bm25.py` / `embedding/sparse.py` production; logic biến thể ở harness mới.
+- Review plan: **C** (sau G3) — A duyệt sau C kèm sha. 0 USD. Nhắn A khi xong plan.
 
 ## Việc của C
 

@@ -1,4 +1,4 @@
-# STATUS B — cập nhật 2026-10-25 11:36 +0700
+# STATUS B — cập nhật 2026-10-25 13:05 +0700
 
 Terminal phiên này: `hue-rag-3f` (A = `hue-rag-c6`, C = `hue-rag-a1`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, nhắn A, chờ việc tiếp.
@@ -15,6 +15,9 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - **Chờ:** C review vòng 2 + A ghi "duyệt bản sha …". Không chạy GPU / paid trước đó.
 - **G4 xong 12:33** — report `phase_8_1_g4_implementation.md` (sha `6c70e903c0fa` lúc nhắn C). Kết luận: M1/M2 kém hơn
   (mất 1–3 câu); luna chưa rõ; G4-B kém hơn so runtime / không khác so mốc pool 100. Chờ C review rồi mới G2.
+- **G2 xong 13:05** — report `phase_8_1_g2_implementation.md` (sha `56b6afa4c7ce`). Context 10 tốt hơn + xác nhận test;
+  G2.1b / P2 / G2.3 không khác; P1 kém hơn (phạm sàn OOS); G2.4 đủ: none/low kém hơn (citation), high không khác.
+  Chưa commit: `g2_generate.py`, report G2.
 - Đang giữ GPU: không (đã nhả 12:33; G4 dùng 11:50–12:29).
 - **Bước 2 (A duyệt `a4adfc8eedd9` 11:40, commit `b9789f4`):** mốc byte 11:39 PASS (`cefb2d1a…`, `1fbb5c17…`). Đang
   sửa: `backend/reranking/cross_encoder.py` (kwarg `max_length=None` + property `loaded_device`; mặc định = hành vi cũ),
@@ -37,7 +40,7 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - Mốc runtime: `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` (`cefb2d1a…`); native `1fbb5c17…`.
 
 ## Tiền paid phiên (B)
-- 25/10: 0,0087972 USD (G4 luna 30 câu: 42.852 vào / 9.024 ra).
+- 25/10: 0,1653212 USD = G4 luna 0,0087972 + G2 0,1565240 (G2: 1.147.055 vào / 83.637 ra). Judge: quota Claude.
 
 ## Đã học / bẫy gặp
 - Qdrant có thể tắt giữa phiên; pytest vẫn chạy và lỗi môi trường trông như lỗi code: đọc dòng `E` trước.

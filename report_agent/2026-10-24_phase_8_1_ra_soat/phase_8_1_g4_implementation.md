@@ -116,7 +116,7 @@ trên GTX 1650 (≈ 2,8 phút một câu).
   tăng ở "đoạn đúng trong 5 đoạn"; reranker M1 thêm chủ yếu ở thứ tự (MRR@10, nDCG@10 +0,084 [+0,009; +0,165]).
 - Câu mất của G4-B là cùng câu M1 đẩy ra ở G4-A (đoạn đúng vẫn trong top-10, rơi khỏi 5 đoạn đưa model): lỗi lặp lại của M1
   trên câu đó, không phải nhiễu (tất định).
-- Latency G4-B p50 / p95 cả luồng 10,6 / 13,8 s (rerank 100 cặp trên GTX 1650) — xa mức 3 s/câu.
+- Latency G4-B p50 / p95 cả luồng 10,6 / 13,8 s (rerank hợp dense 100 ∪ sparse 100 = 112–192 đoạn/câu, trung vị 147 — C23 đếm trên dev 30 — trên GTX 1650) — xa mức 3 s/câu.
 - "Chỉ natural" (11 câu, nhãn sha `0b65d1c138d2`): đoạn đúng trong 5 đoạn 0,364 (runtime 0,455, mốc pool 100 0,364), MRR@10
   0,586 (runtime 0,345, mốc pool 100 0,374).
 - Không biến thể G4-B nào "tốt hơn" ⇒ **không chạy xác nhận test** (plan).
@@ -196,7 +196,9 @@ Kết quả: `data/phase_8_1/g4/<tên>.jsonl` + `<tên>.meta.json`; `a_luna_plai
 | `a_luna_plain_rest` | dev30_rest | top10 (pool 30) | luna | API | — | 20 | 3732 / 5175 | 32 / 49 | 3625 / 5144 | 12:19:48–12:21:20 | |
 | `b_m1_plain_p100` | dev30 | pool100 (pool 100) | m1 plain | cuda:0 | 1024 | 30 | 10637 / 13824 | 38 / 58 | 10596 / 13778 | 12:23:50–12:29:35 | |
 
-Khâu context: p50 1 ms / p95 ≤ 3 ms ở mọi lượt. Giờ chạy là `started`–`finished` của tiến trình (gồm nạp model + câu khởi
+Khâu context: p50 1 ms / p95 ≤ 3 ms ở mọi lượt. Trường `device` trong meta của hai lượt luna ghi `cuda` (giá trị mặc định
+của `--device`) nhưng **không dùng** cho luna (gọi API; bảng trên ghi "API") — G4 review m2. Đầu vào `pool100` là hợp
+dense 100 ∪ sparse 100 (112–192 đoạn/câu, trung vị 147), không phải 100 đoạn — G4 review m1. Giờ chạy là `started`–`finished` của tiến trình (gồm nạp model + câu khởi
 động). Hai lượt "đoạn kèm mục" pool 100 tốn ~5,5 phút mỗi lượt (câu khởi động + câu đo đầu).
 
 ## 8. Bàn giao cho người kiểm (C)

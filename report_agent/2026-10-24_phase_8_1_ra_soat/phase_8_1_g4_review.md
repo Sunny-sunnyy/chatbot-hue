@@ -1,6 +1,6 @@
 # Review: Phase 8.1 G4 — xếp hạng lại (B17 bước 2, phần G4)
 
-Decision: **ready_for_user_confirmation** (0 blocker, 0 major, 2 minor)
+Decision: **ready_for_user_confirmation** (0 blocker, 0 major; 2 minor đã đóng — §7)
 Người kiểm: C (Claude Opus 5.5, terminal `hue-rag-a1`)
 Date: 2026-10-25 12:39 (`date`)
 Canonical guide: spec `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` §5 G4 (gồm sửa đổi 25/10);
@@ -160,3 +160,15 @@ khớp khi tính lại, và lượt GPU chạy lại cho ra đúng kết quả. 
 - Mở rộng vùng tìm (hợp hai nhánh, ~150 đoạn) tự nó đã giúp phần lớn; reranker M1 thêm chủ yếu ở thứ tự.
 
 Tiền (C): **0 USD**. GPU: 1 lượt 10 câu, ~13 s.
+
+## 7. Đóng m1, m2 (12:42)
+
+B sửa bằng lời trong report, không chạy lại. Report sau sửa: **`4ee6c208f192`**. Tin đầu của B ghi nhầm `1e2d33bd6aff`,
+B đã đính chính. C kiểm nội dung trên bản `4ee6c208f192`.
+
+| Finding | Chỗ sửa | Trạng thái |
+|---|---|---|
+| m1 | §4.4 dòng 119 và §7 dòng 200–201: đầu vào pool 100 là hợp dense 100 ∪ sparse 100, 112–192 đoạn/câu, trung vị 147 | đóng |
+| m2 | §7 dòng 200: trường `device` của 2 lượt luna là giá trị mặc định của `--device`, không dùng (luna gọi API) | đóng |
+
+Ghi chú nhỏ, không mở lại: dòng 119 ghi số đếm là của "C23"; đúng ra là C trong review G4. Không ảnh hưởng nội dung.
