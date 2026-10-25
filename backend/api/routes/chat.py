@@ -13,7 +13,7 @@ from core.schema import (
     GenerationError,
     RetrievalDependencyError,
 )
-from llm.citations import select_cited_sources
+from llm.citations import normalize_citations, select_cited_sources
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 
@@ -131,8 +131,9 @@ async def chat(body: ChatRequest, request: Request):
     if recorder:
         recorder.record_generation_result(generated)
 
+    answer = normalize_citations(generated.text)
     try:
-        cited = select_cited_sources(generated.text, packed.sources)
+        cited = select_cited_sources(answer, packed.sources)
     except CitationIntegrityError:
         logger.error("Citation integrity failed")
         if recorder:
@@ -155,4 +156,4 @@ async def chat(body: ChatRequest, request: Request):
         )
         for source in cited
     ]
-    return ChatResponse(answer=generated.text, sources=sources)
+    return ChatResponse(answer=answer, sources=sources)

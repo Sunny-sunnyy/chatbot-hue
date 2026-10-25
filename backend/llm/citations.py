@@ -6,7 +6,14 @@ from core.schema import CitationIntegrityError
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from retrieval.full_corpus_context import PackedSource
 
-CITATION_PATTERN = re.compile(r"\[(\d+)\]")
+# Context gắn nhãn mỗi nguồn là "[Nguồn n]" nên model đôi khi trích đúng dạng đó thay vì "[n]";
+# hai dạng cùng nghĩa (C-09, rà code 25/10).
+CITATION_PATTERN = re.compile(r"\[\s*(?:nguồn\s*)?(\d+)\s*\]", re.IGNORECASE)
+
+
+def normalize_citations(answer: str) -> str:
+    """Đưa mọi citation về dạng "[n]" — dạng UI tách thành link."""
+    return CITATION_PATTERN.sub(r"[\1]", answer)
 
 
 def select_cited_sources(

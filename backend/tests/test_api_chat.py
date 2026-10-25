@@ -1,5 +1,7 @@
 """Real FastAPI lifecycle and strict full-corpus chat contract tests."""
 import importlib
+from types import SimpleNamespace
+
 from fastapi.testclient import TestClient
 
 from api.app import create_app
@@ -91,3 +93,22 @@ def test_production_app_state_has_no_last_chat_trace_after_chat(require_openai_k
     with TestClient(app) as client:
         client.post("/api/chat", json={"query": "Giá vé Đại Nội?"})
     assert not hasattr(app.state, "last_chat_trace")
+
+
+def test_chat_returns_bracket_citations_when_model_writes_nguon_label():
+    """Model viết "[Nguồn 1]" ⇒ 200, answer gửi UI chỉ còn "[1]" (C-09). Retrieval, context thật (Qdrant chỉ đọc);
+    generator thay bằng text cố định để kiểm logic của route — không gọi OpenAI, không cần key."""
+
+    class FixedAnswerGenerator:
+        async def generate_answer(self, query, context_text):
+            return SimpleNamespace(text="Thông tin giá vé có trong tài liệu [Nguồn 1].")
+
+    app = create_app(load_settings())
+    with TestClient(app) as client:
+        original = app.state.generator, app.state.generator_ready
+        app.state.generator, app.state.generator_ready = FixedAnswerGenerator(), True
+        response = client.post("/api/chat", json={"query": "Giá vé Đại Nội?"})
+        app.state.generator, app.state.generator_ready = original
+    assert response.status_code == 200
+    assert response.json()["answer"] == "Thông tin giá vé có trong tài liệu [1]."
+    assert [source["id"] for source in response.json()["sources"]] == [1]

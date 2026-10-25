@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 2026-10-25 18:55 (phiên tối; C34 + kiểm chéo B25 XONG)
+# STATUS C — cập nhật 2026-10-25 19:52 (phiên tối; C35 gói 1a XONG, chờ B review)
 
 Terminal: `hue-rag-7f` (mở 18:2x 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10 15:53 + 18:2x: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
@@ -18,7 +18,11 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
   cứu ⇒ ngược dấu (C-02); đổi sang `paired_compare` (`false_refusal`) hoặc ghi đảo dấu ⇒ sha mới.
 - **C32 rà nội dung kho — xong**, A review `ready_for_user_confirmation` (`report_agent/2026-10-25_ra_soat_noi_dung_kho/`); chờ User xác
   nhận. (A: User hỏi về code, C32 là hiểu nhầm — giữ làm hồ sơ.)
-- **Đang khai báo sửa:** không (kiểm chéo xong 18:55).
+- **C35 gói 1a (C-09 citation `[Nguồn n]`) — XONG 19:52, chờ B review.** Report `report_agent/2026-10-25_ra_soat_code/sua_1a_implementation.md`.
+  File: `backend/llm/citations.py`, `backend/api/routes/chat.py`, `backend/tests/test_citations.py`, `backend/tests/test_api_chat.py` (A duyệt
+  `chat.py` + `test_api_chat.py` 19:5x). Offline 1.600 câu: lỗi 69 → 14, 0 câu đạt hỏng / đổi nguồn; pytest 35 passed + test route; API thật 2 câu
+  0,000427 USD. Chưa commit (A). Script `data/ra_soat_code_2026-10-25/tools/sua_1a/`.
+- **Đang khai báo sửa:** 4 file trên (giữ tới khi A commit; sửa theo review của B nếu có).
 - **C chưa đọc nội dung câu kín.** Câu kín chính thức md5 `ddc59587b502`, manifest `9ea480d0d083`; mở ở mốc cuối 8.2 do User quyết.
 
 ## Câu hỏi cho A / User
@@ -52,4 +56,5 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
   "đã xong" trước khi lệnh ghi file trả kết quả; đọc tin mới trước bước đo / thay đổi; chạy GPU phải được A ghi rõ.
 
 ## Tiền
-Paid API C chạy phiên này: **0 USD**. Quota Claude Code cho sub-agent: C32 ~2,1M token (8 sub-agent); C34 3 sub-agent bị dừng giữa chừng.
+Paid API C phiên tối 25/10: **0,000427 USD** (C35, 2 lượt `gpt-6-luna`; C34 + kiểm chéo 0 USD).
+Phiên chiều 25/10: paid **0 USD**. Quota Claude Code cho sub-agent: C32 ~2,1M token (8 sub-agent); C34 3 sub-agent bị dừng giữa chừng.
