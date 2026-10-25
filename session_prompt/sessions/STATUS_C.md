@@ -1,15 +1,17 @@
-# STATUS C — cập nhật 2026-10-25 16:40 (C32 A review ready; chờ việc tiếp)
+# STATUS C — cập nhật 2026-10-25 16:56 (8.2 tạm dừng; plan E1 giữ chờ; chờ việc rà code)
 
 Terminal: `hue-rag-d6` (mở 15:50 25/10; trước là `hue-rag-a1`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10 (nhắc lại khi mở phiên 15:53): C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
 ## Đang làm / chờ
-- **C32 (A giao 16:20 25/10) — xong 16:38; A review `ready_for_user_confirmation` (`report_agent/2026-10-25_ra_soat_noi_dung_kho/ra_soat_kho_review.md`, 2 minor chỉ ghi).** 0 USD. C chờ việc tiếp từ A.
+- **C32 (A giao 16:20 25/10) — xong 16:38; A review `ready_for_user_confirmation` (`report_agent/2026-10-25_ra_soat_noi_dung_kho/ra_soat_kho_review.md`, 2 minor chỉ ghi).** 0 USD.
   - Report: `report_agent/2026-10-25_ra_soat_noi_dung_kho/ra_soat_kho_implementation.md`; danh sách private
     `data/ra_soat_kho_2026-10-25/danh_sach.md` (139 mục; tự kiểm 42/42, seed 20261025); script ở `…/tools/`.
   - 2 phát hiện cho A (report §4): mẫu Hải Vân không phải mâu thuẫn thời gian; `performing_arts/performing-arts-entities-inventory.md`
     tự ghi phải loại khỏi ingestion nhưng đang trong index.
-- **Đang khai báo sửa:** không (việc C32 đã xong; sửa theo review thì khai báo lại).
+- **C33 (A giao 16:41 25/10): viết plan E1 "trả lời một phần, vẫn từ chối câu ngoài phạm vi"** — chỉ plan, 0 USD; không đọc `data/phase_8_2/b0/`, không mở câu kín.
+  - **Xong 16:49:** plan `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_e1_plan.md` sha `f86240418ca1`; script `data/phase_8_2/e1_plan/{count_p1,sample_size}.py`; chi tiết private `p1_detail.md`. Chờ B review, A duyệt sha. **16:56: User dừng 8.2 để rà code các Phase trước; plan giữ nguyên chờ, Q1–Q3 A trả lời khi 8.2 chạy lại.**
+- **Đang khai báo sửa:** không (chờ A giao việc rà code).
 - Phiên trước (8.1): kết phiên 15:27, không có việc dở; câu kín chính thức md5 `ddc59587b502`, manifest `9ea480d0d083`.
 - **C chưa đọc nội dung câu kín.** Mọi việc câu kín qua sub-agent mới hoặc script không in nội dung. A đã thấy 3 câu do User
   trích.

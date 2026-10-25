@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 16:22` (A, **spec 8.2 duyệt** 16:21; chatbot chưa đổi)
+Last updated: `2026-10-25 16:58` (A, **8.2 tạm dừng** để rà code; chatbot chưa đổi)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -36,8 +36,8 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10). User 15:44 25/10: sẽ đọc và nhận xét, **không chấm điểm** tay.
 - Tiền 8.1: 0,1653 USD.
 
-Đang làm: **Phase 8.2** — spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` (User duyệt 16:21 25/10,
-sha `dabae90b2b60`); trần 0,5 USD. Song song: rà nội dung kho chỉ đọc (C32, đợt `report_agent/2026-10-25_ra_soat_noi_dung_kho/`).
+Đang làm: **rà code Phase 0–7** (chỉ đọc; đợt `report_agent/2026-10-25_ra_soat_code/`). **Phase 8.2 tạm dừng** (User 16:5x 25/10) —
+spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` (sha `dabae90b2b60`); B1 ở nhánh `p82-b1`.
 
 ## 3. Bảng Phase
 
@@ -54,7 +54,7 @@ sha `dabae90b2b60`); trần 0,5 USD. Song song: rà nội dung kho chỉ đọc 
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `in_progress` | Spec duyệt 16:21 25/10 (sha `dabae90b2b60`): B0 mốc người đọc cặp mù; B1 context 10 + NFC vào chatbot; B2 E1 / E2 / E3a / E3b; B3 câu kín. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` |
+| 8.2 | `paused` | Spec duyệt 16:21 25/10 (sha `dabae90b2b60`). **Tạm dừng 16:5x (User) để rà code Phase 0–7.** B1 (context 10 + NFC) xong ở nhánh `p82-b1`, chưa vào `main` ⇒ chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
