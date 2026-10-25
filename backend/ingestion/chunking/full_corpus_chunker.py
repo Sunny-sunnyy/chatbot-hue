@@ -11,34 +11,19 @@ from pathlib import Path
 import re
 from typing import Any, Callable
 
-try:
-    from backend.core.schema import EvidencePart, FullCorpusChunk, point_id_for_chunk_id
-    from backend.core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
-    from backend.ingestion.chunking.markdown_blocks import (
-        MarkdownBlock,
-        ParsedDocument,
-        TableInfo,
-        TableRowInfo,
-        parse_markdown_blocks,
-    )
-    from backend.ingestion.source_state import (
-        discover_full_corpus_files,
-        read_source_lf,
-    )
-except ModuleNotFoundError:
-    from core.schema import EvidencePart, FullCorpusChunk, point_id_for_chunk_id
-    from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
-    from ingestion.chunking.markdown_blocks import (
-        MarkdownBlock,
-        ParsedDocument,
-        TableInfo,
-        TableRowInfo,
-        parse_markdown_blocks,
-    )
-    from ingestion.source_state import (
-        discover_full_corpus_files,
-        read_source_lf,
-    )
+from core.schema import EvidencePart, FullCorpusChunk, point_id_for_chunk_id
+from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+from ingestion.chunking.markdown_blocks import (
+    MarkdownBlock,
+    ParsedDocument,
+    TableInfo,
+    TableRowInfo,
+    parse_markdown_blocks,
+)
+from ingestion.source_state import (
+    discover_full_corpus_files,
+    read_source_lf,
+)
 
 
 def extract_sentence_spans(text: str, base_offset: int = 0) -> list[tuple[int, int, str]]:
@@ -304,10 +289,7 @@ def get_default_tokenizer_checker(settings: dict[str, Any] | None = None) -> Cal
 
     Fails closed if any required tokenizer cannot be loaded offline.
     """
-    try:
-        from backend.ingestion.preview import load_tokenizers, count_tokens_for_chunk
-    except ModuleNotFoundError:
-        from ingestion.preview import load_tokenizers, count_tokens_for_chunk
+    from ingestion.preview import load_tokenizers, count_tokens_for_chunk
 
     fc_settings = get_full_corpus_settings(settings)
     models_cfg = fc_settings.get("embedding_models", [])

@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from backend.embedding.full_corpus import (
+from embedding.full_corpus import (
     DENSE_MODEL_SPECS,
     DenseModelSpec,
     parse_embeddings_response,

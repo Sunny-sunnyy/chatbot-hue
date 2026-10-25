@@ -2,13 +2,6 @@
 from contextlib import asynccontextmanager
 import logging
 from pathlib import Path
-import sys
-
-REPO_ROOT = Path(__file__).resolve().parents[2]
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-for _p in (str(REPO_ROOT), str(BACKEND_DIR)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -30,6 +23,8 @@ from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
 
 logger = logging.getLogger("api")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
 FRONTEND_DIR = REPO_ROOT / "frontend"
 
 

@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 2026-10-25 20:45 (phiên tối; gói 3 chờ B review; 3c free + danh sách ứng viên XONG)
+# STATUS C — cập nhật 2026-10-25 21:28 (phiên tối; gói 3 đã commit 47a4e32; plan đợt 3 XONG, chờ B review sau 1b)
 
 Terminal: `hue-rag-7f` (mở 18:2x 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10 15:53 + 18:2x: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
@@ -30,7 +30,8 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
 - **Gói 3a / 3b — XONG 20:37, chờ B review.** `report_agent/2026-10-25_ra_soat_code/sua_3_implementation.md`. 5 file (`evaluation/full_corpus_eval.py`
   `paired_stats`; `llm/full_corpus_prompt.py` `build_answer_input`; generator; 2 test). So cặp trên file thật giống byte; chuỗi gửi model 25 câu tự viết
   giống byte; cổng ổn định uvicorn đạt (2 câu, ~0,0004 USD ước — route không log usage). Chưa commit.
-- **Đang khai báo sửa:** 5 file trên (giữ tới khi A commit; sửa theo review của B nếu có).
+- **Đang khai báo sửa (21:4x):** `report_agent/2026-10-25_ra_soat_code/sua_1b_review.md` (review gói 1b); `/tmp/c41/` (tạm).
+- **Plan đợt 3 (gói 2 + 5 + B-12) — XONG, bản 2 21:31 sha `8bbe98640c80`:** `report_agent/2026-10-25_ra_soat_code/sua_dot3_plan.md`; chờ B review sau 1b. Chỉ plan, 0 USD.
 - **Gói 3c phần free — XONG 20:45:** `report_agent/2026-10-25_ra_soat_code/sua_3c_citation_v2.md`; file dẫn xuất `data/ra_soat_code_2026-10-25/citation_v2/`
   (14 lượt + meta sha nguồn). 69 → 14 lỗi; `none` +4 → +2 (hết vi phạm luật ≤ +2, chưa kết luận — cần test paid); `low` vẫn vi phạm; tín hiệu P2 mất;
   A/A context 10 = 0. 0 USD.

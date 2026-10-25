@@ -1,7 +1,7 @@
 """Full-corpus RAG Wave 1 preview CLI module.
 
 Execution contract:
-    uv run python -m backend.ingestion.preview --output reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json
+    cd backend && uv run python -m ingestion.preview --output ../reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json
 
 Performs deterministic discovery, Markdown parsing, condition attachment,
 source locator verification, representation A text construction, and
@@ -21,32 +21,18 @@ from typing import Any
 from pyvi import ViTokenizer
 from transformers import AutoTokenizer
 
-try:
-    from backend.core.schema import FullCorpusChunk
-    from backend.core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
-    from backend.ingestion.chunking.full_corpus_chunker import (
-        ConditionManager,
-        chunk_document,
-        chunk_full_corpus,
-    )
-    from backend.ingestion.chunking.markdown_blocks import parse_markdown_blocks
-    from backend.ingestion.source_state import (
-        discover_full_corpus_files,
-        read_source_lf,
-    )
-except ModuleNotFoundError:
-    from core.schema import FullCorpusChunk
-    from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
-    from ingestion.chunking.full_corpus_chunker import (
-        ConditionManager,
-        chunk_document,
-        chunk_full_corpus,
-    )
-    from ingestion.chunking.markdown_blocks import parse_markdown_blocks
-    from ingestion.source_state import (
-        discover_full_corpus_files,
-        read_source_lf,
-    )
+from core.schema import FullCorpusChunk
+from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+from ingestion.chunking.full_corpus_chunker import (
+    ConditionManager,
+    chunk_document,
+    chunk_full_corpus,
+)
+from ingestion.chunking.markdown_blocks import parse_markdown_blocks
+from ingestion.source_state import (
+    discover_full_corpus_files,
+    read_source_lf,
+)
 
 
 def resolve_local_model_path(model_id: str) -> Path:
@@ -312,7 +298,8 @@ def main() -> None:
         "--output",
         "-o",
         type=str,
-        default="reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json",
+        # Neo theo gốc repo: lệnh chạy từ backend/ (gói 1b) vẫn ghi đúng chỗ cũ.
+        default=str(Path(__file__).resolve().parents[2] / "reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json"),
         help="Destination path for preview artifact JSON",
     )
     args = parser.parse_args()

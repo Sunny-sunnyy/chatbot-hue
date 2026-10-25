@@ -1,9 +1,6 @@
 import math
 
-try:
-    from backend.core.schema import ComponentNotReadyError, RetrievedDocument, RetrievalDependencyError
-except ModuleNotFoundError:
-    from core.schema import ComponentNotReadyError, RetrievedDocument, RetrievalDependencyError
+from core.schema import ComponentNotReadyError, RetrievedDocument, RetrievalDependencyError
 
 WARMUP_QUERY = "món ăn Huế"
 WARMUP_DOCUMENT = "Bún bò Huế là một món ăn nổi tiếng của Huế."
@@ -91,25 +88,3 @@ class CrossEncoderReranker:
             if isinstance(exc, ComponentNotReadyError):
                 raise
             raise ComponentNotReadyError("reranker warm-up prediction failed") from exc
-
-    def rerank(self, query, documents, top_k):
-        if not documents:
-            return []
-        if top_k <= 0:
-            raise ValueError("top_k must be positive")
-        chunk_ids = [doc.metadata.get("chunk_id") for doc in documents]
-        if any(not isinstance(value, str) or not value for value in chunk_ids):
-            raise RetrievalDependencyError("reranker input document has an invalid chunk_id")
-        if len(chunk_ids) != len(set(chunk_ids)):
-            raise RetrievalDependencyError("reranker input contains duplicate chunk_id")
-        scores = self.score_documents(query, documents)
-        ranked = sorted(zip(scores, documents), key=lambda item: (-item[0], item[1].metadata["chunk_id"]))
-        return [
-            RetrievedDocument(
-                id=doc.id,
-                score=score,
-                text=doc.text,
-                metadata={**doc.metadata, "reranker_model": self._model_id, "rerank_score": score},
-            )
-            for score, doc in ranked[:top_k]
-        ]

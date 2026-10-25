@@ -86,7 +86,7 @@ Kiểm với code (commit `1832201`, sau dọn), Qdrant (GET) và `session_promp
 |---|---|---|
 | Chỉ mục `hue_full_corpus_7a2_e5_small_384`, 8.459 đoạn, là chỉ mục chatbot dùng | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:66–69`; `backend/config/settings.yaml:41`; Qdrant GET |
 | Phiếu build `full_corpus_build:v3` là nguồn sự thật; dữ liệu lệch thì từ chối chạy | **còn dùng** | `backend/ingestion/source_state.py:133`; `backend/retrieval/full_corpus.py:353,415` |
-| Một lệnh build `python -m backend.ingestion.full_corpus_pipeline build --candidate <id>` | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:232–244` |
+| Một lệnh build `cd backend && uv run python -m ingestion.full_corpus_pipeline build --candidate <id>` (từ 25/10, gói 1b: chạy từ `backend/`; lệnh cũ `python -m backend.ingestion…` từ gốc không còn chạy) | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:232–244` |
 | Sparse state (từ điển BM25) chung, ghi một lần; dữ liệu đổi thì phải xóa file cũ trước khi build | **còn dùng** (bẫy đã ghi ở `Project_Status.md` §8) | `full_corpus_pipeline.py:121–131` |
 | Hai model dense: e5-small (chạy máy) và Qwen3-Embedding-8B (OpenRouter, pin Nebius) | **còn trong code**; 8B **chưa có chỉ mục** → Phase 8 | `backend/embedding/full_corpus.py:41–66` |
 | Chia đoạn giữ nguyên từ Phase 2 | **còn dùng**, tới khi Phase 8 đổi (có số liệu ủng hộ đổi) | `backend/ingestion/chunking/full_corpus_chunker.py`; [R1] |

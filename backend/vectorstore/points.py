@@ -4,22 +4,13 @@ import math
 import numpy as np
 from qdrant_client import models
 
-try:
-    from backend.core.schema import (
-        FullCorpusChunk,
-        point_id_for_chunk_id,
-        validate_chunk_id,
-    )
-    from backend.embedding.full_corpus import validate_vector_matrix
-    from backend.embedding.sparse import SparseState, SparseVector, encode_sparse_document
-except ModuleNotFoundError:
-    from core.schema import (
-        FullCorpusChunk,
-        point_id_for_chunk_id,
-        validate_chunk_id,
-    )
-    from embedding.full_corpus import validate_vector_matrix
-    from embedding.sparse import SparseState, SparseVector, encode_sparse_document
+from core.schema import (
+    FullCorpusChunk,
+    point_id_for_chunk_id,
+    validate_chunk_id,
+)
+from embedding.full_corpus import validate_vector_matrix
+from embedding.sparse import SparseState, SparseVector, encode_sparse_document
 
 FULL_CORPUS_BATCH_SIZE = 64
 

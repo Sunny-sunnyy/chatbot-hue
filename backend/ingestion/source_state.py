@@ -13,12 +13,8 @@ from pathlib import Path
 from typing import Any
 import uuid
 
-try:
-    from backend.core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
-    from backend.embedding.sparse import SparseState
-except ModuleNotFoundError:
-    from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
-    from embedding.sparse import SparseState
+from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+from embedding.sparse import SparseState
 
 
 def normalize_lf(text: str) -> str:

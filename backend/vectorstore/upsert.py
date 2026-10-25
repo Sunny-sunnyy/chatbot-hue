@@ -6,14 +6,9 @@ from typing import Any
 import numpy as np
 from qdrant_client import QdrantClient, models
 
-try:
-    from backend.core.schema import FullCorpusChunk
-    from backend.embedding.full_corpus import validate_vector_matrix
-    from backend.vectorstore.qdrant import validate_full_corpus_collection_info
-except ModuleNotFoundError:
-    from core.schema import FullCorpusChunk
-    from embedding.full_corpus import validate_vector_matrix
-    from vectorstore.qdrant import validate_full_corpus_collection_info
+from core.schema import FullCorpusChunk
+from embedding.full_corpus import validate_vector_matrix
+from vectorstore.qdrant import validate_full_corpus_collection_info
 
 FULL_CORPUS_SCROLL_LIMIT = 1000
 FULL_CORPUS_BATCH_SIZE = 64

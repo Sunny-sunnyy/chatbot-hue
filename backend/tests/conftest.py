@@ -8,10 +8,8 @@ import copy
 from pathlib import Path
 import sys
 
+# Code import trần (`core.*`, `retrieval.*`…) tính từ backend/ (quy ước gói 1b); thêm backend/ để pytest gọi từ gốc repo cũng chạy.
 BACKEND_DIR = Path(__file__).resolve().parents[1]
-REPO_DIR = BACKEND_DIR.parent
-if str(REPO_DIR) not in sys.path:
-    sys.path.insert(0, str(REPO_DIR))
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 

@@ -39,13 +39,13 @@ from evaluation.full_corpus_eval import (  # import này cũng đưa gốc repo 
     score_retrieval,
     split_group_indexes,
 )
-from backend.core.schema import EvidencePart, FullCorpusChunk
-from backend.core.settings_loader import load_settings
-from backend.ingestion.chunking.full_corpus_chunker import build_representation_a_search_text, chunk_full_corpus
-from backend.ingestion.full_corpus_pipeline import build_candidate
-from backend.ingestion.preview import count_tokens_for_chunk, load_tokenizers
-from backend.ingestion.source_state import discover_full_corpus_files, read_source_lf
-from backend.vectorstore.qdrant import client_from_settings
+from core.schema import EvidencePart, FullCorpusChunk
+from core.settings_loader import load_settings
+from ingestion.chunking.full_corpus_chunker import build_representation_a_search_text, chunk_full_corpus
+from ingestion.full_corpus_pipeline import build_candidate
+from ingestion.preview import count_tokens_for_chunk, load_tokenizers
+from ingestion.source_state import discover_full_corpus_files, read_source_lf
+from vectorstore.qdrant import client_from_settings
 from experiments.phase_8_1.g1_retrieval import (
     GOLD_PATH,
     SPLIT_PATH,

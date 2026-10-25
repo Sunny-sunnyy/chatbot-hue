@@ -8,7 +8,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from core.schema import (
     CitationIntegrityError,
-    ComponentNotReadyError,
     ContextBudgetError,
     GenerationError,
     RetrievalDependencyError,
@@ -69,15 +68,6 @@ async def chat(body: ChatRequest, request: Request):
 
     try:
         result = await asyncio.to_thread(state.retrieval_service.search, query)
-    except (ComponentNotReadyError,):
-        logger.error("Corpus reingest required")
-        if recorder:
-            recorder.record_error("corpus_reingest_required")
-        return error_response(
-            409,
-            "corpus_reingest_required",
-            "Dữ liệu tra cứu cần được lập chỉ mục lại.",
-        )
     except (RetrievalDependencyError,):
         logger.error("Retrieval dependency error")
         if recorder:

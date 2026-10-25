@@ -11,106 +11,59 @@ import hashlib
 import json
 import math
 from pathlib import Path
-import sys
 import time
 from typing import Any, Literal
 
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-if str(BACKEND_DIR) not in sys.path:
-    sys.path.insert(0, str(BACKEND_DIR))
-
 from qdrant_client import QdrantClient, models
 
-try:
-    from backend.core.schema import (
-        ComponentNotReadyError,
-        InvalidQueryError,
-        RetrievalConfigurationError,
-        RetrievalDependencyError,
-        RetrievedDocument,
-        domain_for_source,
-        point_id_for_chunk_id,
-        validate_chunk_id,
-    )
-    from backend.core.settings_loader import load_settings
-    from backend.embedding.full_corpus import (
-        FullCorpusDenseRunner,
-        OpenRouterDenseRunner,
-        create_dense_runner,
-    )
-    from backend.embedding.sparse import (
-        SparseState,
-        SparseVector,
-        build_vocabulary_index,
-        encode_sparse_document,
-        encode_sparse_query,
-        load_sparse_state,
-    )
-    from backend.ingestion.full_corpus_pipeline import (
-        SPARSE_STATE_PATH,
-        FullCorpusCandidate,
-        build_record_path,
-        candidate_by_id,
-    )
-    from backend.ingestion.source_state import (
-        FULL_CORPUS_BUILD_SCHEMA,
-        FULL_CORPUS_PAYLOAD_SCHEMA_V2,
-        compute_corpus_state,
-        discover_full_corpus_files,
-        verify_full_corpus_record_freshness,
-    )
-    from backend.reranking.cross_encoder import CrossEncoderReranker
-    from backend.vectorstore.qdrant import (
-        client_from_settings,
-        validate_full_corpus_collection_info,
-    )
-except ModuleNotFoundError:
-    from core.schema import (
-        ComponentNotReadyError,
-        InvalidQueryError,
-        RetrievalConfigurationError,
-        RetrievalDependencyError,
-        RetrievedDocument,
-        domain_for_source,
-        point_id_for_chunk_id,
-        validate_chunk_id,
-    )
-    from core.settings_loader import load_settings
-    from embedding.full_corpus import (
-        FullCorpusDenseRunner,
-        OpenRouterDenseRunner,
-        create_dense_runner,
-    )
-    from embedding.sparse import (
-        SparseState,
-        SparseVector,
-        build_vocabulary_index,
-        encode_sparse_document,
-        encode_sparse_query,
-        load_sparse_state,
-    )
-    from ingestion.full_corpus_pipeline import (
-        SPARSE_STATE_PATH,
-        FullCorpusCandidate,
-        build_record_path,
-        candidate_by_id,
-    )
-    from ingestion.source_state import (
-        FULL_CORPUS_BUILD_SCHEMA,
-        FULL_CORPUS_PAYLOAD_SCHEMA_V2,
-        compute_corpus_state,
-        discover_full_corpus_files,
-        verify_full_corpus_record_freshness,
-    )
-    from reranking.cross_encoder import CrossEncoderReranker
-    from vectorstore.qdrant import (
-        client_from_settings,
-        validate_full_corpus_collection_info,
-    )
+from core.schema import (
+    ComponentNotReadyError,
+    InvalidQueryError,
+    RetrievalConfigurationError,
+    RetrievalDependencyError,
+    RetrievedDocument,
+    domain_for_source,
+    point_id_for_chunk_id,
+    validate_chunk_id,
+)
+from core.settings_loader import load_settings
+from embedding.full_corpus import (
+    FullCorpusDenseRunner,
+    OpenRouterDenseRunner,
+    create_dense_runner,
+)
+from embedding.sparse import (
+    SparseState,
+    SparseVector,
+    build_vocabulary_index,
+    encode_sparse_document,
+    encode_sparse_query,
+    load_sparse_state,
+)
+from ingestion.full_corpus_pipeline import (
+    SPARSE_STATE_PATH,
+    FullCorpusCandidate,
+    build_record_path,
+    candidate_by_id,
+)
+from ingestion.source_state import (
+    FULL_CORPUS_BUILD_SCHEMA,
+    FULL_CORPUS_PAYLOAD_SCHEMA_V2,
+    compute_corpus_state,
+    discover_full_corpus_files,
+    verify_full_corpus_record_freshness,
+)
+from reranking.cross_encoder import CrossEncoderReranker
+from vectorstore.qdrant import (
+    client_from_settings,
+    validate_full_corpus_collection_info,
+)
 
 RetrievalTreatment = Literal["dense_bm25_rrf", "native_hybrid_rrf"]
 RerankerMode = Literal["none", "minilm"]
 Classification = Literal["PASS", "REVIEW_REQUIRED", "FAIL"]
+
+BACKEND_DIR = Path(__file__).resolve().parents[1]
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -820,7 +773,8 @@ def build_full_corpus_retrieval_service(
         if len(warm_vec) != 1 or len(warm_vec[0]) != candidate.dense_spec.dimension:
             raise ComponentNotReadyError(f"Warm-up embedding output invalid for {candidate.candidate_id}")
     except Exception as exc:
-        raise ComponentNotReadyError(f"Dense model readiness failed for {candidate.candidate_id}") from exc
+        # Model không nạp được (thiếu HF cache, lỗi tải) là phụ thuộc chưa sẵn sàng (503), không phải index cũ (409) — C-01.
+        raise RetrievalDependencyError(f"Dense model readiness failed for {candidate.candidate_id}") from exc
 
     # 5. MiniLM reranker if requested
     reranker_instance = None
@@ -831,7 +785,7 @@ def build_full_corpus_retrieval_service(
             reranker_instance.warm_up()
         except Exception as exc:
             dense_runner.close()
-            raise ComponentNotReadyError("MiniLM reranker readiness failed") from exc
+            raise RetrievalDependencyError("MiniLM reranker readiness failed") from exc
 
     return FullCorpusRetrievalService(
         candidate=candidate,

@@ -4,8 +4,8 @@ import math
 from pathlib import Path
 import pytest
 
-from backend.core.schema import FullCorpusChunk
-from backend.embedding.sparse import (
+from core.schema import FullCorpusChunk
+from embedding.sparse import (
     SparseState,
     SparseVector,
     build_vocabulary_index,
@@ -17,7 +17,7 @@ from backend.embedding.sparse import (
     serialize_sparse_state,
     write_sparse_state,
 )
-from backend.scoring.bm25 import BM25
+from scoring.bm25 import BM25
 
 
 def make_chunk(chunk_id: str, text: str) -> FullCorpusChunk:

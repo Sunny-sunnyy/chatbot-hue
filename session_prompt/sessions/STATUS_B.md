@@ -20,6 +20,14 @@
   Quy ước (b) đã chọn (A + C). Bản 3 sửa P1, P2, m1–m4; T-C do User chạy `!` (auto mode chặn HF_HOME rỗng). Script đo `data/ra_soat_code/tools/{inventory,dup_modules}.py`. Chưa sửa code.
 - File tạm: `/tmp/b25/`, `/tmp/b25x/`, `/tmp/b26/`, `/tmp/b27/` (script B), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
 
+- **Review gói 3 (C) — XONG 20:46** ⇒ `sua_3_review.md` ready (A commit `47a4e32`).
+- **Gói 1b — XONG 21:3x, chờ review C** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_implementation.md`. 26 file (25 sửa + 1 test mới), chưa commit.
+  K1–K7 đạt: nạp đôi 0 ở 11 điểm vào + pytest; T-A / T-B / T-C đỏ ⇒ xanh (T-C User chạy `!`); 15 file test 198 passed (C-17 không tăng); T1 sha
+  giống byte; notebook 3 / 3; cổng ổn định đạt (~0,0004 USD ước). A cần sửa `chạy_môi_trường.md:10-12`, `BAO_CAO_KHO_DU_LIEU.md:89`, Project_Status §8.
+  **File đang khai báo sửa:** 26 file gói 1b (giữ tới khi A commit). Script `/tmp/b30/`.
+
+- **Review plan đợt 3 (C) — XONG 21:36** sha `8bbe98640c80` ⇒ `sua_dot3_plan_review.md`: changes_requested (M-1 `git mv` sang `meta/` đưa file vào index; m-1…m-6).
+
 ## Ý cải tiến (cho đợt tìm hướng tốt hơn sau 5 gói — giả thuyết, chưa đo)
 - Chia đoạn: bỏ ràng buộc tokenizer huydang 256 (model không chạy ở runtime) ⇒ đoạn dài hơn / ít đoạn vụn; 8.1 G3 H1 đã đo đoạn đúng không đổi —
   cần đo Completeness câu nhiều nguồn (giống lợi ích context 10).

@@ -19,50 +19,26 @@ import sys
 import time
 from typing import Any
 
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-if str(BACKEND_DIR) not in sys.path:
-    sys.path.insert(0, str(BACKEND_DIR))
-
 import numpy as np
 
-try:
-    from backend.core.schema import (
-        ComponentNotReadyError,
-        InvalidQueryError,
-        RetrievalConfigurationError,
-        RetrievalDependencyError,
-    )
-    from backend.ingestion.full_corpus_pipeline import (
-        FULL_CORPUS_CANDIDATES,
-        candidate_by_id,
-    )
-    from backend.retrieval.full_corpus import (
-        Classification,
-        FullCorpusRetrievalService,
-        RerankerMode,
-        RetrievalResult,
-        RetrievalTreatment,
-        build_full_corpus_retrieval_service,
-    )
-except ModuleNotFoundError:
-    from core.schema import (
-        ComponentNotReadyError,
-        InvalidQueryError,
-        RetrievalConfigurationError,
-        RetrievalDependencyError,
-    )
-    from ingestion.full_corpus_pipeline import (
-        FULL_CORPUS_CANDIDATES,
-        candidate_by_id,
-    )
-    from retrieval.full_corpus import (
-        Classification,
-        FullCorpusRetrievalService,
-        RerankerMode,
-        RetrievalResult,
-        RetrievalTreatment,
-        build_full_corpus_retrieval_service,
-    )
+from core.schema import (
+    ComponentNotReadyError,
+    InvalidQueryError,
+    RetrievalConfigurationError,
+    RetrievalDependencyError,
+)
+from ingestion.full_corpus_pipeline import (
+    FULL_CORPUS_CANDIDATES,
+    candidate_by_id,
+)
+from retrieval.full_corpus import (
+    Classification,
+    FullCorpusRetrievalService,
+    RerankerMode,
+    RetrievalResult,
+    RetrievalTreatment,
+    build_full_corpus_retrieval_service,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("full_corpus_smoke")

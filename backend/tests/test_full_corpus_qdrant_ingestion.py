@@ -3,8 +3,8 @@ import hashlib
 
 import pytest
 
-from backend.embedding.sparse import SparseState
-from backend.ingestion.source_state import (
+from embedding.sparse import SparseState
+from ingestion.source_state import (
     make_full_corpus_build_record,
     serialize_full_corpus_build_record,
     verify_full_corpus_record_freshness,
@@ -114,7 +114,7 @@ def test_full_corpus_record_freshness_reports_exact_changes() -> None:
 
 from qdrant_client import models
 
-from backend.vectorstore.qdrant import (
+from vectorstore.qdrant import (
     QdrantSchemaError,
     classify_full_corpus_target,
     expected_full_corpus_schema,
@@ -261,13 +261,13 @@ def test_fresh_target_classification_is_fail_closed(
 
 import numpy as np
 
-from backend.core.schema import EvidencePart, FullCorpusChunk
-from backend.embedding.sparse import build_vocabulary_index, fit_sparse_state
-from backend.vectorstore.points import (
+from core.schema import EvidencePart, FullCorpusChunk
+from embedding.sparse import build_vocabulary_index, fit_sparse_state
+from vectorstore.points import (
     build_full_corpus_point_batch,
     validate_full_corpus_point_inputs,
 )
-from backend.vectorstore.upsert import (
+from vectorstore.upsert import (
     compare_full_corpus_records,
     validate_sample_vectors,
 )
@@ -381,7 +381,7 @@ def test_record_and_sample_vector_validation_is_exact() -> None:
         )
 
 
-from backend.ingestion.full_corpus_pipeline import (
+from ingestion.full_corpus_pipeline import (
     FULL_CORPUS_CANDIDATES,
     candidate_by_id,
 )

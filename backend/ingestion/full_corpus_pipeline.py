@@ -10,15 +10,15 @@ from typing import Any
 
 import numpy as np
 
-from backend.core.schema import FullCorpusChunk, domain_for_source
-from backend.core.settings_loader import load_settings
-from backend.embedding.full_corpus import (
+from core.schema import FullCorpusChunk, domain_for_source
+from core.settings_loader import load_settings
+from embedding.full_corpus import (
     DENSE_MODEL_SPECS,
     DenseModelSpec,
     OpenRouterDenseRunner,
     create_dense_runner,
 )
-from backend.embedding.sparse import (
+from embedding.sparse import (
     SparseState,
     build_vocabulary_index,
     compute_corpus_identity,
@@ -26,25 +26,25 @@ from backend.embedding.sparse import (
     serialize_sparse_state,
     write_sparse_state,
 )
-from backend.ingestion.chunking.full_corpus_chunker import chunk_full_corpus
-from backend.ingestion.source_state import (
+from ingestion.chunking.full_corpus_chunker import chunk_full_corpus
+from ingestion.source_state import (
     compute_corpus_state,
     discover_full_corpus_files,
     make_full_corpus_build_record,
     write_final_full_corpus_build_record,
 )
-from backend.vectorstore.points import (
+from vectorstore.points import (
     FULL_CORPUS_BATCH_SIZE,
     build_full_corpus_point_batch,
     validate_full_corpus_point_inputs,
 )
-from backend.vectorstore.qdrant import (
+from vectorstore.qdrant import (
     client_from_settings,
     create_full_corpus_collection,
     inspect_full_corpus_target,
     require_fresh_full_corpus_target,
 )
-from backend.vectorstore.upsert import (
+from vectorstore.upsert import (
     upsert_full_corpus_batch,
     verify_full_corpus_collection,
 )

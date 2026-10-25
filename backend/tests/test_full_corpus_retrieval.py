@@ -5,7 +5,7 @@ import json
 import math
 import pytest
 
-from backend.retrieval.full_corpus import (
+from retrieval.full_corpus import (
     RetrievalResult,
     RetrievalTrace,
     RetrievalTreatment,
@@ -15,8 +15,8 @@ from backend.retrieval.full_corpus import (
     order_by_score_then_point_id,
     compute_sparse_dot_product,
 )
-from backend.core.schema import FullCorpusChunk, RetrievedDocument
-from backend.embedding.sparse import (
+from core.schema import FullCorpusChunk, RetrievedDocument
+from embedding.sparse import (
     SparseState,
     build_vocabulary_index,
     encode_sparse_document,
@@ -184,7 +184,7 @@ def test_sparse_dot_product_matching_and_non_mutation():
 
 
 def test_cross_encoder_primitives_contract():
-    from backend.reranking.cross_encoder import CrossEncoderReranker
+    from reranking.cross_encoder import CrossEncoderReranker
     reranker = CrossEncoderReranker()
     assert isinstance(reranker.max_length, int)
     assert reranker.max_length > 0
@@ -207,8 +207,8 @@ def test_cross_encoder_primitives_contract():
 
 
 def test_validate_point_payload_valid_and_malformed():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     source = "foods/sample.md"
     chunk_id = "foods/sample.md#0"
@@ -263,8 +263,8 @@ def test_validate_point_payload_valid_and_malformed():
 
 
 def test_validate_point_payload_nested_evidence_parts_fail_closed():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     source = "foods/sample.md"
     chunk_id = "foods/sample.md#0"
@@ -352,7 +352,7 @@ def test_validate_point_payload_nested_evidence_parts_fail_closed():
 
 
 def test_validate_selectors_rejects_unknown_and_empty():
-    from backend.retrieval.full_corpus_smoke import validate_selectors
+    from retrieval.full_corpus_smoke import validate_selectors
 
     # Valid full selectors
     c, t, r, q = validate_selectors(None, None, None, None)
@@ -380,7 +380,7 @@ def test_validate_selectors_rejects_unknown_and_empty():
 
 def test_validate_safe_output_path_and_sanitization():
     from pathlib import Path
-    from backend.retrieval.full_corpus_smoke import (
+    from retrieval.full_corpus_smoke import (
         validate_safe_output_path,
         sanitize_error_detail,
     )
@@ -412,7 +412,7 @@ def test_validate_safe_output_path_and_sanitization():
 
 def test_error_sanitization_privacy_probe_markers():
     """Verify that exception details with query, secret, config, and paths never leak into serialized record."""
-    from backend.retrieval.full_corpus_smoke import sanitize_error_detail
+    from retrieval.full_corpus_smoke import sanitize_error_detail
 
     marker_query = "PRIVATE_QUERY_PHASE5_MARKER"
     marker_secret = "sk-secret-key-phase5-test"
@@ -444,8 +444,8 @@ def test_error_sanitization_privacy_probe_markers():
 
 
 def test_v2_payload_accepts_exact_identity_and_domain():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import point_id_for_chunk_id
 
     source = "foods/sample.md"
     chunk_id = "foods/sample.md#0"
@@ -466,8 +466,8 @@ def test_v2_payload_accepts_exact_identity_and_domain():
 
 
 def test_v2_payload_rejects_legacy_five_fields():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     chunk_id = "foods/sample.md#0"
     point_id = point_id_for_chunk_id(chunk_id)
@@ -488,8 +488,8 @@ def test_v2_payload_rejects_legacy_five_fields():
 
 
 def test_v2_payload_rejects_extra_field():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     chunk_id = "foods/sample.md#0"
     point_id = point_id_for_chunk_id(chunk_id)
@@ -511,8 +511,8 @@ def test_v2_payload_rejects_extra_field():
 
 
 def test_v2_payload_rejects_point_uuid_chunk_id_mismatch():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     chunk_id = "foods/sample.md#0"
     wrong_point_id = point_id_for_chunk_id("foods/sample.md#1")
@@ -532,8 +532,8 @@ def test_v2_payload_rejects_point_uuid_chunk_id_mismatch():
 
 
 def test_v2_payload_rejects_domain_source_mismatch():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     chunk_id = "foods/sample.md#0"
     point_id = point_id_for_chunk_id(chunk_id)
@@ -553,8 +553,8 @@ def test_v2_payload_rejects_domain_source_mismatch():
 
 
 def test_v2_payload_validation_errors_never_leak_private_paths_or_text():
-    from backend.retrieval.full_corpus import validate_point_payload
-    from backend.core.schema import RetrievalDependencyError, point_id_for_chunk_id
+    from retrieval.full_corpus import validate_point_payload
+    from core.schema import RetrievalDependencyError, point_id_for_chunk_id
 
     secret_source = "foods/top_secret_recipe_source.md"
     secret_chunk = f"{secret_source}#42"
@@ -624,9 +624,9 @@ def test_v2_payload_validation_errors_never_leak_private_paths_or_text():
 
 
 def _valid_build_record_and_sources():
-    from backend.embedding.sparse import fit_sparse_state
-    from backend.ingestion.full_corpus_pipeline import candidate_by_id
-    from backend.ingestion.source_state import make_full_corpus_build_record
+    from embedding.sparse import fit_sparse_state
+    from ingestion.full_corpus_pipeline import candidate_by_id
+    from ingestion.source_state import make_full_corpus_build_record
 
     candidate = candidate_by_id("e5-small-384")
     chunk = FullCorpusChunk(
@@ -657,8 +657,8 @@ def _valid_build_record_and_sources():
 
 
 def test_build_record_rejects_wrong_schema_target_or_dense_contract():
-    from backend.retrieval.full_corpus import validate_full_corpus_build_record
-    from backend.core.schema import ComponentNotReadyError
+    from retrieval.full_corpus import validate_full_corpus_build_record
+    from core.schema import ComponentNotReadyError
 
     candidate, valid_record, sources = _valid_build_record_and_sources()
     validate_full_corpus_build_record(valid_record, candidate, sources)
@@ -691,8 +691,8 @@ def test_build_record_rejects_wrong_schema_target_or_dense_contract():
 
 
 def test_build_record_freshness_rejects_added_deleted_and_changed_source():
-    from backend.retrieval.full_corpus import validate_full_corpus_build_record
-    from backend.core.schema import ComponentNotReadyError
+    from retrieval.full_corpus import validate_full_corpus_build_record
+    from core.schema import ComponentNotReadyError
 
     candidate, record, sources = _valid_build_record_and_sources()
 
@@ -705,12 +705,12 @@ def test_build_record_freshness_rejects_added_deleted_and_changed_source():
 
 
 def test_result_uses_chunk_id_and_domain_but_rrf_ties_still_use_point_id():
-    from backend.retrieval.full_corpus import (
+    from retrieval.full_corpus import (
         build_retrieved_document,
         reciprocal_rank_fusion,
         assemble_final_documents,
     )
-    from backend.core.schema import point_id_for_chunk_id
+    from core.schema import point_id_for_chunk_id
 
     chunk_a = "travel/tickets/z.md#9"
     chunk_b = "foods/a.md#0"
@@ -767,13 +767,13 @@ def test_result_uses_chunk_id_and_domain_but_rrf_ties_still_use_point_id():
 
 
 def test_trace_contains_only_point_id_chunk_id_domain_rank_score_allowlist():
-    from backend.retrieval.full_corpus import (
+    from retrieval.full_corpus import (
         format_stage_entry,
         assemble_final_documents,
         RetrievedDocument,
         RetrievalTrace,
     )
-    from backend.core.schema import point_id_for_chunk_id
+    from core.schema import point_id_for_chunk_id
 
     chunk_id = "foods/bún_bò.md#0"
     point_id = point_id_for_chunk_id(chunk_id)

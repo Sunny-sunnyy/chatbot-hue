@@ -115,8 +115,8 @@ Hành vi đã quan sát (evidence `reports/phase_7a2_gate_{1,2,3}_*`):
 
 - Corpus: 25 mục sửa trong 27 file; 205 file → **8.459 chunk** (trước 8.460);
   chunker không đổi. Golden 176 + smoke 10 vẫn `check` đạt; chỉ dòng 139 sửa.
-- Build: một đường build thẳng (`python -m backend.ingestion.full_corpus_pipeline
-  build --candidate <id>`); build record (`full_corpus_build:v3`) là nguồn sự thật
+- Build: một đường build thẳng (lệnh lúc đó `python -m backend.ingestion.full_corpus_pipeline
+  build --candidate <id>` từ gốc; từ gói 1b: mục "Build lại index" bước 5); build record (`full_corpus_build:v3`) là nguồn sự thật
   duy nhất, không còn hằng số corpus/chunk/sparse, preflight Phase 3/4 hay
   migration metadata v2. Sparse state chung `full_corpus_sparse_state.json`.
 - Runtime: `hue_full_corpus_7a2_e5_small_384` (8.459 point, payload 7 field),
@@ -171,8 +171,8 @@ Các bước (mỗi bước có quyền trong mục việc; `Project_Status.md` 
    (b) *đích mới rồi cutover* (`WORKFLOW.md` §3.4) — gọi `build_candidate(..., collection_name=…, sparse_state_path=…, record_path=…)` từ
    Python như harness 8.1 G3 đã làm, kiểm xong mới đổi runtime; hiện runtime lấy tên collection và đường sparse state từ hằng trong code
    ⇒ cutover cần sửa code (B-06) — làm cùng lần sửa đó.
-5. **Build:** từ gốc repo, `uv run python -m backend.ingestion.full_corpus_pipeline build --candidate e5-small-384` (e5 chạy CPU, không
-   cần key; candidate 8B cần `--env-file .env` và có phí OpenRouter). *Lệnh có thể đổi sau gói sửa quy ước import (1b, B-01 / C-01).*
+5. **Build:** từ `backend/`, `cd backend && uv run python -m ingestion.full_corpus_pipeline build --candidate e5-small-384` (e5 chạy CPU,
+   không cần key; candidate 8B cần `--env-file ../.env` và có phí OpenRouter). Mọi lệnh chạy từ `backend/`, import trần (gói 1b, 2026-10-25).
 6. **Kiểm sau build:** summary JSON in ra (số đoạn, `corpus_identity`, `verification`); khởi động API ⇒ `/health` 200; T1 retrieval / Golden
    smoke 10 theo mục việc; cập nhật `Project_Status.md` §4 (số đoạn, vocabulary) và 4 chỗ `bao_cao_he_thong/` (`WORKFLOW.md` §6).
 7. **Dọn:** xóa snapshot / bản sao cũ chỉ khi User duyệt.

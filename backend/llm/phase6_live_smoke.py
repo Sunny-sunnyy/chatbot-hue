@@ -11,12 +11,6 @@ import sys
 import time
 from typing import Any
 
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-REPO_DIR = BACKEND_DIR.parent
-for _p in (str(REPO_DIR), str(BACKEND_DIR)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
-
 from httpx import ASGITransport, AsyncClient
 
 from api.app import create_app

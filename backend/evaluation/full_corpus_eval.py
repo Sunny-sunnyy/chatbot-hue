@@ -24,12 +24,6 @@ from pathlib import Path
 
 import numpy as np
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-for _p in (str(REPO_ROOT), str(BACKEND_DIR)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
-
 from agents import Agent, ModelSettings, RunConfig, Runner
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -41,6 +35,8 @@ from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 GOLDEN_DIR = REPO_ROOT / "knowledge-base-hue" / "evaluation"
 GOLDEN_FULL = GOLDEN_DIR / "golden_full_corpus.jsonl"
