@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Hook pre-commit của hue_rag — chạy cho MỌI agent (Claude Code, Codex, AGY) và cho người, vì nằm ở tầng git.
+# Vì sao: repo `chatbot-hue` là PUBLIC; lộ dữ liệu riêng / secret / chi tiết dự án khác lên lịch sử git thì không
+# lấy lại được (Session_Prompt.md §5; sổ session_prompt/SO_CAI_TIEN_CACH_LAM.md). Chặn khi:
+#   1. stage file thuộc vùng private: data/, knowledge-base-hue/, "gửi chatgpt/", .aws/, .env*;
+#   2. dòng THÊM MỚI có dạng secret (key OpenAI/OpenRouter, AWS access key, private key);
+#   3. dòng THÊM MỚI hoặc tên file nhắc tên dự án khác của User (ghi chú về dự án đó để ở data/ — Session_Prompt.md §5).
+# Bật một lần cho mỗi bản clone: git config core.hooksPath .githooks
+# Chặn nhầm: dừng, báo User; chỉ bỏ qua bằng `git commit --no-verify` khi User duyệt đúng commit đó.
+set -u
+
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACMR -z | tr '\0' '\n')
+
+private=$(printf '%s\n' "$staged" | grep -E '^(data/|knowledge-base-hue/|gửi chatgpt/|\.aws/)|(^|/)\.env($|\.)' || true)
+if [ -n "$private" ]; then
+  echo "pre-commit: CHẶN — file thuộc vùng private (không commit lên repo public):" >&2
+  printf '%s\n' "$private" | sed 's/^/  /' >&2
+  fail=1
+fi
+
+# Chỉ xét dòng thêm mới trong thân hunk (sau "@@"), để dòng tiêu đề "+++ b/…" không bị tính mà dòng nội dung bắt
+# đầu bằng "++" vẫn được kiểm (review 25/10 F1). File nhị phân không có hunk nên tự bỏ qua.
+# Mẫu viết sao cho không tự khớp chính file này.
+added=$(git diff --cached -U0 --no-color --diff-filter=ACMR -- . \
+  | awk '/^diff --git /{h=0; next} /^@@/{h=1; next} h && /^\+/' || true)
+
+secret=$(printf '%s\n' "$added" | grep -nE 'sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|BEGIN[A-Z ]*PRIVATE KEY' || true)
+if [ -n "$secret" ]; then
+  echo "pre-commit: CHẶN — dòng thêm mới có dạng secret (không in nội dung):" >&2
+  printf '%s\n' "$secret" | cut -d: -f1 | sed 's/^/  dòng diff #/' >&2
+  fail=1
+fi
+
+other=$( { printf '%s\n' "$staged" | sed 's/^/[tên file] /'; printf '%s\n' "$added"; } | grep -iE 'm[e]kong' || true)
+if [ -n "$other" ]; then
+  echo "pre-commit: CHẶN — tên file / dòng thêm mới nhắc tên dự án khác của User; chi tiết dự án đó để ở data/ (private):" >&2
+  printf '%s\n' "$other" | cut -c1-160 | sed 's/^/  /' >&2
+  fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "pre-commit: sửa rồi stage lại. Chặn nhầm thì báo User (bỏ qua chỉ khi User duyệt: git commit --no-verify)." >&2
+fi
+exit "$fail"

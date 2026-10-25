@@ -1,11 +1,11 @@
 # Prompt mở session — dùng chung cho mọi agent
 
-User copy khối dưới, thay `<X>` bằng A, B hoặc C, rồi gửi cho agent (Claude Code,
-Codex, AGY…). A là điều phối; User chỉ làm việc với A.
+User copy khối dưới, thay `<X>` bằng A, B, C (hoặc D — học cùng User), rồi gửi cho agent
+(Claude Code, Codex, AGY…). A là điều phối; User chỉ làm việc với A (D: User học trực tiếp).
 
 ```text
 Bạn là Session <X> của dự án /home/minhhieu/hue_rag. A là điều phối (làm việc với
-User); B, C là session thực thi.
+User); B, C là session thực thi; D (tùy chọn) chỉ đọc, giúp User tự học — WORKFLOW.md §10.
 
 1. Đọc toàn bộ, theo thứ tự:
    session_prompt/START_SESSION.md
@@ -19,14 +19,14 @@ User); B, C là session thực thi.
    Skill dự án nằm ở .claude/skills/ (Claude Code tự thấy; agent khác đọc
    skills/<tên>/SKILL.md): practical-project-coding khi sửa code/test,
    risk-gated-agent-review khi review chéo, propose-options khi đưa lựa chọn cho User,
-   run-experiment khi thử/so sánh phương án.
+   run-experiment khi thử/so sánh phương án, improve-workflow (A) khi kết phiên / rút kinh nghiệm.
    Khi code/test/chạy script: luôn `uv run …` trong .venv của dự án (Session_Prompt.md §10).
 2. Kiểm nhanh, chỉ đọc, theo WORKFLOW.md mục 2.
 3. Báo ngắn: bạn là ai, Phase/việc đang ở đâu, việc của bạn, chỗ lệch giữa tài liệu
    và thực tế, thắc mắc. Nếu <X> là B hoặc C: báo cả A — bằng SendMessage nếu cả
    hai là Claude Code, nếu không thì viết khối "Tin cho A" để User chuyển
    (WORKFLOW.md §7).
-   Rồi chờ: A chờ User nói "làm đi"; B/C chờ A giao việc. Trước đó không sửa file (trừ tạo
+   Rồi chờ: A chờ User nói "làm đi"; B/C chờ A giao việc; D chờ User nói muốn hiểu việc gì. Trước đó không sửa file (trừ tạo
    `sessions/STATUS_<X>.md` của mình), không chạy việc nặng, không gọi API trả phí.
 ```
 

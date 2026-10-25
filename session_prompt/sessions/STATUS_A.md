@@ -1,42 +1,29 @@
-# STATUS A — cập nhật 22:50 24/10/2026 (kết phiên tối)
+# STATUS A — cập nhật 10:11 25/10/2026
 
-Terminal: `hue-rag-47` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-b0`, C = `hue-rag-a3` (tên đổi
-mỗi lần mở).
+Terminal: `hue-rag-2c` · Agent: Claude Opus 5.5 · Vai: điều phối. Phiên này chưa mở B/C.
 
-## Commit cuối phiên
-- `6c168e6` (docs kết phiên) trên `main`, đã push. Chưa commit (cố ý, chờ review): B16 — `backend/experiments/phase_8_1/g1_retrieval.py`, `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md`.
+## Commit cuối
+- Trước phiên: `4d641db`. Commit của phiên 25/10: ghi ở đây sau khi commit.
 
 ## Đang làm
-- Không. Kết phiên theo yêu cầu User. Phiên sau: `CURRENT_HANDOFF.md` mục "PHIÊN SAU — ĐỌC TRƯỚC NHẤT".
+- Đợt `report_agent/2026-10-25_cai_tien_cach_lam/` (cách làm, không đổi chatbot) — kế hoạch `KE_HOACH.md`.
 
 ## Đang khai báo sửa
-- không
+- `skills/improve-workflow/` (mới), `skills/run-experiment/SKILL.md`, `session_prompt/SO_CAI_TIEN_CACH_LAM.md` (mới),
+  `session_prompt/{Session_Prompt,WORKFLOW,START_SESSION,CURRENT_HANDOFF,Project_Status}.md`, `AGENTS.md`, `CLAUDE.md`,
+  `.githooks/pre-commit`, `.claude/settings.json`, `.gitignore`, `report_agent/README.md`, `report_agent/2026-10-25_cai_tien_cach_lam/`.
 
-## Vừa xong (phiên tối 24/10)
-- B9 dọn Foods đóng (User 20:01); 8 báo cáo khâu về mẫu mới (B10, C10, C13).
-- Phase 8 tách 8.1/8.2; brainstorm → spec 8.1 (v1→v4, review C15/b/c/d) → **User duyệt 20:49** kèm M1/M2.
-- G0: split (C16), evaluator (C16), tham số (B11), phá hòa native (B13), đoạn đúng 55 câu (A qua 4 sub-agent, B14
-  review), câu kín 36 (A qua sub-agent, C17/C20/C22 kiểm mù), độ tự nhiên 176 câu (2 sub-agent, kappa 0,765).
-- G1 chẩn đoán retrieval xong (B15, C21): nghẽn ở xếp hạng; 22/22 từ chối nhầm thiếu fact trong context.
-- Skill mới `run-experiment`; mục "Ranh giới theo khâu pipeline" trong `practical-project-coding` (B review).
-- 6 sub-agent đọc 15 summary khóa học AI FDE → `data/course_notes/` (private) — **User gác lại**, chưa dùng.
-
-## Chưa xong / chờ
-- Chờ User: câu kín 3 dòng capability_only + duyệt mẫu 15 dòng; 9 câu độ tự nhiên bất đồng; mâu thuẫn Hải Vân;
-  15 file nhắc MekongAI (A đề xuất để nguyên).
-- Chờ A: duyệt plan G2/G4 của B (B16) + quyết G4-B pool 100 (lệch spec §5 G4); commit B16.
-- G0.6 khóa baseline chưa làm (sau khi câu kín + nhãn tự nhiên chốt).
+## Vừa xong
+- Mở phiên 09:34; bản mô tả cách làm của dự án khác (bản 2) sao sang `data/external_project_notes/`, file tracked về bản 1.
+- 5 sub-agent đọc lại 15 tóm tắt khóa AI FDE (lăng kính rộng) → `data/course_notes/v2/` (private).
 
 ## Đã học / bẫy gặp
-- **Repo PUBLIC:** auto-mode chặn commit có số đo/đường dẫn MekongAI ⇒ chi tiết dự án khác để `data/` (memory
-  `public-repo-no-external-project-data`).
-- Auto-mode từng chặn commit cả một đoạn phiên ("nội dung trước trong hội thoại") rồi tự hết khi User nói rõ
-  "A được commit/push". Tin giao việc có lệnh xóa collection bị chặn — tin ngắn trỏ handoff thì qua.
-- Người điều phối **không đọc câu kín**: mọi việc với câu kín qua sub-agent mới, C kiểm mù qua sub-agent khác.
-- Một agent gắn nhãn chưa đủ: rater thứ hai độc lập (kappa) + User quyết phần bất đồng.
-- Chẩn đoán bằng keyword (B4, 7B) có thể sai: đoạn đúng cho kết luận ngược (0 câu đủ bằng chứng mà vẫn từ chối).
-- Script tạm `/tmp/a_81/` đã sao vào `data/phase_8_1/tools/` (mất khi khởi động lại).
-- File `CURRENT_HANDOFF.md` hay bị B/C sửa song song — đọc lại ngay trước khi ghi đè.
+- Brief sub-agent gửi đi còn `{{…}}` chưa điền (đã gửi bổ sung) ⇒ đọc lại brief trước khi gửi.
+- Sub-agent tự sửa ~10 chỗ sai/cũ trong ghi chú khóa học phiên trước ⇒ A tự kiểm 2–3 khẳng định quan trọng trước khi trình User.
+- (giữ từ phiên trước) Repo PUBLIC; người điều phối không đọc câu kín; `CURRENT_HANDOFF.md` đọc lại ngay trước khi ghi đè.
 
-## Tiền paid phiên tối
-- ~0,0013 USD (smoke 10 của B9). 8.1: 0 USD. Sub-agent dùng quota Claude Code.
+## Việc dở / câu hỏi
+- Phần dự án (G4/G2, câu kín, 9 nhãn tự nhiên) để phiên sau — xem `CURRENT_HANDOFF.md`.
+
+## Tiền paid phiên này
+- 0 USD. Sub-agent dùng quota Claude Code.

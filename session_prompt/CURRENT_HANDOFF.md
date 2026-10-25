@@ -1,7 +1,16 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 22:52 24/10/2026 (A, **kết phiên tối**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang
+Cập nhật: 10:20 25/10/2026 (A — phiên sáng 25/10 chỉ bàn cách làm, xem mục ngay dưới). Phần dự án dưới đây vẫn
+là trạng thái kết phiên 22:52 24/10. Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang
 mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/`.
+
+## Phiên 25/10 sáng — cải tiến cách làm (không đổi dự án)
+
+Đợt `report_agent/2026-10-25_cai_tien_cach_lam/` (`KE_HOACH.md`, `de_xuat_cho_du_an.md`). Mới: skill `improve-workflow` +
+sổ `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; `run-experiment` nâng (sàn / mức tụt / chỉ số quyết, cỡ mẫu trước, nhiễu A/A,
+kiểm người chấm); Session D (`WORKFLOW.md` §10); `AGENTS.md` (bản chính cho mọi agent) + `CLAUDE.md`; hook
+`.githooks/pre-commit` (bật: `git config core.hooksPath .githooks`; kiểm khi mở phiên). **Khi tới G4/G2:** đọc
+`de_xuat_cho_du_an.md` mục 1–8 trước khi A duyệt plan B16. Mục "Tạm gác" cũ đã hết hiệu lực (User gửi báo cáo 25/10).
 
 ## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
 
@@ -9,7 +18,7 @@ mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/`.
 **hành vi runtime không đổi trong cả phiên** (retrieval `dense_bm25_rrf` giống byte mốc `cefb2d1a…`). Qdrant
 `:6335` (v1.18.3) còn **1** collection `hue_full_corpus_7a2_e5_small_384` (8.459). GPU GTX 1650 4 GB; `.venv` có
 torch 2.13+cu130. Repo `chatbot-hue` **PUBLIC**: không commit nội dung/số đo/đường dẫn dự án khác của User,
-corpus, câu Golden, câu kín (kiểm `git diff --cached | grep -i mekong` trước commit).
+corpus, câu Golden, câu kín (hook `.githooks/pre-commit` chặn phần máy kiểm được).
 
 **Phase 8.1** (spec `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md`, **approved** 20:49
 24/10, bản 4 + M1 `BAAI/bge-reranker-v2-m3`, M2 `AITeamVN/Vietnamese_Reranker`). Đợt
@@ -64,16 +73,11 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 7. Mẫu đoạn đúng: User đã nhận xét 3 câu (độ tự nhiên); các câu khác trong `data/phase_8_1/gold/user_review_sample.md`
    coi là đồng ý nếu User không nói thêm.
 
-## Tạm gác (User 21:25)
-
-Skill tự cải thiện + mọi ý từ khóa học AI FDE: User sẽ nhờ session ở dự án khác kiểm rồi gửi báo cáo; **không**
-đưa vào 8.1/skill trước đó. Ghi chú đọc khóa học (private): `data/course_notes/` (6 file + `A_synthesis.md`).
-
 ## Session
 
 | Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-47` | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | kết phiên 22:52; xem `STATUS_A.md` |
+| A — điều phối | `hue-rag-2c` (25/10) | Claude Opus 5.5 | trực tiếp | 25/10: cải tiến cách làm; 8.1 tiếp phiên sau | xem `STATUS_A.md` |
 | B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B17 (G4 + G2) | kết phiên 22:47 — chờ A duyệt `phase_8_1_g2_g4_plan.md` + quyết G4-B; B16 chưa commit (xem STATUS_B) |
 | C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | câu kín: 3 dòng capability_only (2, 21, 33) chờ A/User; review G2/G4 khi B nhắn | kết phiên 22:48 — C9–C22 xong, 0 USD; xem `STATUS_C.md` |
 
@@ -85,6 +89,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; thư viện thừa
   giữ nguyên (chỉ gỡ khi xung đột); luôn thử + so baseline trước khi chọn (User 20:49).
 - **Phiên tối 24/10 (hết hạn — hỏi lại):** A tự điều phối rộng; API ≤1 USD (dùng ~0,0013 USD: smoke B9).
+- **Phiên 25/10 sáng (hết hạn cuối phiên):** chỉ bàn cách làm; A tự quyết chi tiết cách làm (User "làm những gì bạn cho
+  là tốt nhất"); commit/push như thường trực; 0 USD API.
 - **Spec 8.1 §8:** Qdrant tạo/ghi/xóa chỉ `hue_81_*`; paid chỉ `gpt-6-luna`, trần 0,5 USD cả 8.1; file private mới ở
   `knowledge-base-hue/evaluation/phase_8_1/` và `data/phase_8_1/`; M1/M2 tải HF cache, GPU fp32 (một model một lúc).
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.

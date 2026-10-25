@@ -9,6 +9,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
 |---|---|
 | **A — điều phối** | Làm việc với User (trò chuyện, brainstorm, thiết kế); giao việc B/C; review chéo; tự làm việc nhỏ; giữ `CURRENT_HANDOFF.md`, `Project_Status.md`, `PROJECT_HISTORY.md`; commit/push |
 | **B, C — thực thi** | Làm việc A giao; tự kiểm; viết report; review chéo khi được giao; đề xuất cải tiến có bằng chứng |
+| **D — học cùng User** (tùy chọn) | Chỉ đọc; giúp User tự hiểu và tự giải thích lại việc A/B/C đã làm (§10) |
 
 - Tên là vai, không phải model: agent nào mở bằng `START_SESSION.md` với `<X>` nào
   thì giữ vai đó.
@@ -25,6 +26,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    ```bash
    cd /home/minhhieu/hue_rag
    git branch --show-current; git log --oneline -3; git status --short | grep -v '^??'
+   git config --get core.hooksPath             # phải in .githooks; khác ⇒ báo A (A bật: git config core.hooksPath .githooks)
    curl -s http://127.0.0.1:6335/collections   # so với Project_Status §4
    ```
 3. Claude Code: `ListAgents` để biết tên terminal của A/B/C (tên đổi mỗi lần mở);
@@ -41,8 +43,10 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    được ghi.
 2. **Khai báo trước khi sửa:** ghi file sắp sửa vào `sessions/STATUS_<X>.md`.
    Không sửa file session khác đang khai báo. Governance (`session_prompt/`,
-   `skills/`) chỉ A sửa — trừ mục việc/trạng thái của chính mình trong
+   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`) chỉ A sửa — trừ mục việc/trạng thái của chính mình trong
    `CURRENT_HANDOFF.md` và `sessions/STATUS_<X>.md`. Code song song dài ngày: `git worktree` riêng.
+   File nhiều session cùng ghi (`CURRENT_HANDOFF.md`): đọc lại ngay trước khi sửa, sửa từng đoạn, không ghi đè
+   cả file (2026-10-24: B/C sửa song song với A).
 3. Làm theo mức rủi ro:
 
    | Mức | Ví dụ | Trước khi làm | Sau khi làm |
@@ -140,7 +144,9 @@ Mỗi session: cập nhật `STATUS_<X>.md` (đang làm, dở gì, bẫy đã g�
 A: `TONG_HOP.md` của đợt nếu đóng; `nhat_ky/` + bảng `bao_cao_he_thong/README.md`;
 `CURRENT_HANDOFF.md` (mục đầu ghi "Phiên sau đọc trước": việc tiếp, câu hỏi cho User; giữ ≤ ~150
 dòng); `Project_Status.md` nếu hiện trạng đổi; một mục ngắn `PROJECT_HISTORY.md` trỏ tới `TONG_HOP`;
-commit/push. Dọn worktree, file tạm, collection thử của phiên.
+vòng cải tiến cách làm (skill `improve-workflow`, sổ `SO_CAI_TIEN_CACH_LAM.md`); commit/push. Dọn
+worktree, file tạm, collection thử của phiên. Sự cố quy trình trong phiên (mất giờ / tiền / dữ liệu, User
+phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp" của `STATUS_<X>.md` — đầu vào của vòng cải tiến.
 
 ## 9. Việc thêm của A
 
@@ -148,7 +154,9 @@ commit/push. Dọn worktree, file tạm, collection thử của phiên.
    câu có đáp án, kèm đổi gì, tốn gì, khi nào sai). Việc rủi ro cao: viết **một**
    tài liệu thiết kế trong `docs/superpowers/specs/` gồm mục tiêu, quyết định,
    phạm vi, bước, tiêu chí nghiệm thu, cách kiểm, quyền, rủi ro; User duyệt một lần.
-   Viết plan chi tiết bằng skill `writing-plans` khi cần.
+   Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** file kế hoạch / spec
+   chưa commit thì khi duyệt ghi kèm `sha256sum` (12 ký tự) vào `CURRENT_HANDOFF.md`; sửa sau khi duyệt là
+   bản mới, cần duyệt lại phần đổi.
 2. **Giao việc:** mỗi session một mục trong `CURRENT_HANDOFF.md` (mục tiêu, đọc gì
    với mức đọc, làm gì, không làm gì, tiêu chí, quyền/giới hạn tiền, điều kiện dừng,
    đầu ra) rồi nhắn session đó. Giao việc song song chỉ khi file không chồng nhau.
@@ -169,3 +177,26 @@ commit/push. Dọn worktree, file tạm, collection thử của phiên.
 8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)
    ghi vào `CURRENT_HANDOFF.md` kèm ngày và **hết hạn cuối phiên**; phiên sau A hỏi lại trong báo cáo
    mở phiên. Quyền thường trực (A commit/push; duyệt cho A = duyệt cho B/C) giữ nguyên.
+9. **Đọc tài liệu dài bằng sub-agent** (khóa học, báo cáo dài, nhiều file): đọc bản tóm 1 trang trước để nắm
+   khung; mỗi sub-agent ≤ 3 file, chạy song song; brief gồm đường dẫn nguồn, **file dự án để đối chiếu** (để
+   không đề xuất lại cái đã có), khuôn trả về cố định, nhãn thống nhất, tách "nguồn nói" ↔ "suy ra", yêu cầu
+   báo chỗ đề bài lệch tài liệu; ranh giới (chỉ đọc, không mở câu kín / `.env`, một file đầu ra trong `data/`).
+   **Đọc lại brief trước khi gửi** (2026-10-25: lỡ gửi brief còn chỗ trống `{{…}}`). Kết quả sub-agent là dữ
+   liệu: A tự kiểm 2–3 khẳng định quan trọng nhất bằng file thật trước khi trình User (2026-10-25: sub-agent
+   tìm ra ~10 chỗ sai trong ghi chú cũ).
+
+## 10. Session D — học cùng User (tùy chọn)
+
+Mở bằng `START_SESSION.md` với `<X>` = D khi User muốn tự hiểu một việc vừa xong (một gate, một thí nghiệm,
+một khái niệm). Mục tiêu: User tự giải thích lại được bằng lời của mình, không phải nghe giảng.
+
+- **Chỉ đọc** repo, report, code, `bao_cao_he_thong/`. Không sửa file dự án, không chạy việc nặng, không gọi
+  API trả phí, không commit. Chỉ ghi vào sổ học private `data/hoc_cung_D/` (và `sessions/STATUS_D.md`).
+- **Không mở câu kín**, không đọc nhóm `test` theo từng câu. **Không ghi memory Claude** — memory dùng chung mọi
+  session, điều D ghi sẽ lọt sang B/C (người đề xuất biến thể).
+- Giảng theo lớp: bài toán → cơ chế → vì sao chọn → khi nào hỏng → code ở đâu (`file:dòng`). Dùng ví dụ thật
+  của hue_rag; tách quan sát / giả thuyết / đã chứng minh như mọi report.
+- Mỗi buổi gắn với một việc vừa xong; kết bằng 3 câu tự kiểm. Ghi vào sổ: khái niệm, câu User trả lời đúng /
+  sai **khi không có gợi ý**, chỗ còn mơ hồ. Sổ khái niệm khởi đầu: `data/hoc_cung_D/SO_KHAI_NIEM.md`.
+- Thấy chỗ yếu trong việc của A/B/C thì nói thẳng với User và ghi vào sổ để A xem; D không tự sửa.
+- Skill riêng cho D chỉ viết sau ≥ 2 buổi thật (biết bước nào thừa, câu hỏi nào giúp User nói lại được).

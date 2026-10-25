@@ -99,6 +99,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-25 | Cải tiến cách làm (không đổi chatbot): vòng tự cải tiến có người duyệt (`improve-workflow` + `SO_CAI_TIEN_CACH_LAM.md`); `run-experiment` có sàn / mức tụt / chỉ số quyết, cỡ mẫu trước, nhiễu A/A, kiểm người chấm; Session D học cùng User; `AGENTS.md` bản chính cho mọi agent; hook git chặn commit dữ liệu private. **Cách làm phải dùng được gần như nhau cho Codex/AGY**: luật ở Markdown trong repo + rào ở tầng git, không chỉ ở memory / settings của Claude | User; `report_agent/2026-10-25_cai_tien_cach_lam/` |
 | 2026-10-24 | User ủy quyền A: tự điều phối B/C, tự kiểm tra, đề xuất, thử nghiệm, tối ưu và phát triển các Phase trước; commit/push theo mốc; ghi report; hệ thống phải chạy ổn định; dùng skill khi code | User (trước khi nghỉ) |
 | 2026-10-24 | Giá `gpt-6-luna`: 0,1 USD/1M input, 0,5 USD/1M output. Ngân sách session ≤1 USD (tối đa 1,5 USD), không cần dùng hết | User |
 | 2026-10-24 | Phase 7B: judge chính là Claude (session Claude Code), `gpt-6-luna` chỉ sinh + judge phụ; User chấm ~20 case; đo nhiễu (thay judge `gpt-6-luna` cũ) | `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md` |
@@ -146,6 +147,7 @@ là lịch sử.
 ## 7. Bản đồ tài liệu đang dùng
 
 ```text
+AGENTS.md                              lối vào cho mọi agent (CLAUDE.md chỉ nhập file này)
 session_prompt/START_SESSION.md        mở mọi session
 session_prompt/Session_Prompt.md       luật chung
 session_prompt/WORKFLOW.md             cách làm, việc thêm của A
@@ -153,7 +155,9 @@ session_prompt/CURRENT_HANDOFF.md      việc đang mở của A/B/C
 session_prompt/sessions/STATUS_*.md    ngữ cảnh riêng từng session
 session_prompt/PROJECT_HISTORY.md      lịch sử (reference-only)
 session_prompt/TEMPLATE_*.md           mẫu report
-skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment}/SKILL.md
+session_prompt/SO_CAI_TIEN_CACH_LAM.md sổ cải tiến cách làm (skill improve-workflow)
+skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment,improve-workflow}/SKILL.md
+.githooks/pre-commit, .claude/settings.json   rào bằng máy (hook git mọi agent; Claude Code cấm đọc .env)
 guides/full_corpus_rag.md              guide umbrella full-corpus
 docs/superpowers/specs/, docs/superpowers/plans/   thiết kế từng Phase
 report_agent/<YYYY-MM-DD>_<chủ_đề>/   report + review từ 2026-10-24 (README trong report_agent/)
@@ -181,3 +185,6 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Permission tự động của từng session có thể chặn `rm`/`pkill`: session đó dừng và
   nhờ User chạy bằng `!` trong terminal của nó; session khác không chạy hộ.
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).
+- Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
+  clone): bản clone mới phải bật một lần. Hook chặn dòng thêm mới có tên dự án khác, kể cả khi trích tên file tài liệu
+  cũ — viết "tài liệu cách làm của dự án khác" thay vì tên file. Bỏ qua (`--no-verify`) chỉ khi User duyệt đúng commit đó.
