@@ -104,12 +104,15 @@ def _phase4_settings() -> dict[str, Any]:
 
 
 def prepare_full_corpus_input(
-    *, embedding_models: list[dict[str, Any]] | None = None,
+    *,
+    embedding_models: list[dict[str, Any]] | None = None,
+    chunks: list[FullCorpusChunk] | None = None,
 ) -> PreparedFullCorpus:
     """Đọc corpus hiện tại: discover → hash source → chunk → identity → sparse state.
 
     embedding_models: danh sách tokenizer chunker kiểm giới hạn; None = `full_corpus.embedding_models`
     trong settings.yaml (harness Phase 8.1 dùng để thử bỏ bớt tokenizer).
+    chunks: danh sách đoạn đã chia sẵn (harness Phase 8.1 G3 thử cách chia khác); None = chunker production.
     """
     settings = _phase4_settings()
     if embedding_models is not None:
@@ -119,9 +122,10 @@ def prepare_full_corpus_input(
         }
     root, relative_paths = discover_full_corpus_files(settings)
     sources = compute_corpus_state(root, relative_paths)
-    chunks, errors = chunk_full_corpus(settings)
-    if errors:
-        raise ValueError(f"Fresh full-corpus chunking failed: {errors}")
+    if chunks is None:
+        chunks, errors = chunk_full_corpus(settings)
+        if errors:
+            raise ValueError(f"Fresh full-corpus chunking failed: {errors}")
     return PreparedFullCorpus(
         chunks=chunks,
         sources=sources,
@@ -149,18 +153,20 @@ def build_candidate(
     sparse_state_path: Path = SPARSE_STATE_PATH,
     record_path: Path | None = None,
     embedding_models: list[dict[str, Any]] | None = None,
+    chunks: list[FullCorpusChunk] | None = None,
 ) -> dict[str, Any]:
     """Build một collection mới cho candidate từ corpus hiện tại; lỗi ở bước nào cũng raise.
 
     Không ghi đè collection/record có sẵn, không retry, không resume.
     Tham số keyword chỉ để harness Phase 8.1 build biến thể vào collection/sparse state/build record
-    riêng; mặc định = collection runtime của candidate, sparse state chung, record cạnh nó.
+    riêng (và G3: danh sách đoạn `chunks` đã chia sẵn); mặc định = collection runtime của candidate,
+    sparse state chung, record cạnh nó, chunker production.
     """
     candidate = candidate_by_id(candidate_id)
     if collection_name is not None:
         candidate = replace(candidate, collection_name=collection_name)
     spec = candidate.dense_spec
-    prepared = prepare_full_corpus_input(embedding_models=embedding_models)
+    prepared = prepare_full_corpus_input(embedding_models=embedding_models, chunks=chunks)
     sparse_sha = _write_or_check_sparse_state(prepared.sparse_state, sparse_state_path)
     # Mẫu kiểm vector sau upsert: chunk đầu tiên của mỗi domain, theo thứ tự chunker.
     first_chunk_by_domain: dict[str, str] = {}

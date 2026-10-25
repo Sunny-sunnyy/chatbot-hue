@@ -4,6 +4,10 @@ Terminal: `hue-rag-a1` (25/10; tên đổi mỗi lần mở) · Agent: Claude Op
 User 25/10: việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
 ## Đang làm (25/10)
+- **C29 XONG 13:56** — G3 report `phase_8_1_g3_implementation.md` sha `abc9cb72d1a0`, chờ B review. Không biến thể nào tốt hơn (H1/H3/S1–S3 không khác; H2 256–512, small-to-big, tiền tố, B10 kém hơn); §4 NOT RUN; 0 USD; runtime byte cefb2d1a cuối G3; Qdrant chỉ runtime. Review B18 report XONG 14:00 — ready, 0 finding (`phase_8_1_g4_keyword_review.md`). Hàng việc trống, chờ A; G3 chờ B review.
+- **C29 (A giao 12:50) — chạy G3 theo plan `e089243fb612`.** Khai báo sửa: `backend/ingestion/full_corpus_pipeline.py` (`chunks=None`), `backend/experiments/phase_8_1/g3_chunking.py` (mới), test nhỏ trong `backend/tests/test_full_corpus_pipeline*.py` nếu cần, `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g3_implementation.md` (mới). Qdrant chỉ `hue_81_g3_*` (≤ 3). Dữ liệu `data/phase_8_1/g3/`, `data/phase_8_1/builds/`.
+- **C28 XONG 12:50** — kế hoạch G3 `phase_8_1_g3_plan.md` sha `e089243fb612`, chờ A duyệt + B review. Probe chỉ đọc ở `/tmp/c28/` (H1 −61 đoạn/14 file; 13/32 & 7/32 trần H1/H3; build ≈5 phút CPU). 0 USD.
+- **Review G4 XONG 12:42** — ready, m1/m2 đóng (report G4 `4ee6c208f192`); `phase_8_1_g4_review.md` (§7 thêm sau commit `ee557f9`). Lượt GPU kiểm lại `c_rerun_m1` 10/10 giống B; GPU đã trả.
 - **C24 (A giao 11:40) — thêm dấu mọi câu kín, C không đọc nội dung.** Bước 1 xong 11:41: backup `cp` →
   `sealed_authoring_v3_backup.jsonl` (md5 `0377e966ada5` = v3) + `sealed_user_sample_v3_backup.md` (`ab9a6cbe62da`);
   check trước sửa exit 0 (15/6/7/5/3). **XONG 11:48:** sub-agent sửa thêm dấu 16 dòng (chỉ `question`; máy C kiểm:

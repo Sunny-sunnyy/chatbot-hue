@@ -93,8 +93,8 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 13:45 B18 chạy xong — `phase_8_1_g4_keyword_implementation.md`, chờ C review; review G3 §10 đã gửi |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C28 kế hoạch G3; review G2 khi B nhắn | 12:50 C28 xong: `phase_8_1_g3_plan.md` sha `e089243fb612` — chờ A duyệt, B review. Xong: G4 review ready, m1/m2 đóng (report G4 `4ee6c208f192`, review §7 sau commit `ee557f9`); C26 kín v6 `631334704fdd` (chờ User xem mẫu 5); C27 Golden ready (`0f7dbf41b422`) |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 13:50 B19 nháp G5 xong — `phase_8_1_g5_decision_table_draft.md`, chờ C review; B18 chờ C review |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C29 G3 xong; tiếp review B18 report | 13:57 G3 xong: `phase_8_1_g3_implementation.md` `abc9cb72d1a0` — không biến thể nào tốt hơn, §4 NOT RUN, 0 USD, Qdrant chỉ runtime; chờ B review. Code chưa commit: `full_corpus_pipeline.py` (`chunks=None`), `g3_chunking.py` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -212,6 +212,21 @@ Spec 8.1 §5 G5 + §6 tiêu chí 3 ("mỗi dòng top 10 của C11 có kết lu�
   — mỗi cái: lợi đo được, rủi ro, chi phí, cần User duyệt gì;
 - danh sách "khâu còn dính" (spec G5; mục "Khâu còn dính" dưới + report G3/G4/G4K);
 - tách rõ quan sát / suy ra; không chép câu Golden / câu kín. A dùng làm nền cho G5; C review.
+- **13:49 B19 xong** (`phase_8_1_g5_decision_table_draft.md` sha `fccb2c5379af`). **A tự review** thay C (C quá tải): đọc hết, kiểm số G2.1a dev/test, G2.4, luna MRR, khử dấu native khớp report gốc — dùng làm nền G5 sau khi G3 chốt.
+- **B 13:50: nháp xong** — `phase_8_1_g5_decision_table_draft.md`; dòng dựa vào G3 ghi "chờ C" kèm kết quả tạm.
+
+### Báo cáo cho User 8.1 (giao 14:02 25/10) — `bao_cao_he_thong/` (0 USD)
+
+Runtime **không đổi** ở 8.1 ⇒ không sửa phần "đang chạy" (§1–3 của mỗi file chỉ sửa nếu sai); thêm mục **§4 "Thử nghiệm"**
+(mục mới ở trên cùng của §4) + **§5 "Hôm nay còn đúng không"** + **§6 việc còn lại / đề xuất 8.2** theo
+`session_prompt/TEMPLATE_USER_REPORT.md`; Tóm tắt §1 thêm một dòng "8.1 đã thử X, kết luận Y". Lời thường, số kèm ý nghĩa,
+mã nội bộ dồn xuống Phụ lục, ghi tiêu chí ghi trước + kết quả + giữ / bỏ + tiền; không chép Golden / câu kín / corpus. Giờ bằng `date`.
+- **C30 (C):** `BAO_CAO_DANH_GIA.md` (G0: so theo cặp, split, đoạn đúng, nhiễu judge 2/88, câu kín trạng thái),
+  `BAO_CAO_BO_CAU_HOI_GOLDEN.md` (độ tự nhiên 82/65/29, sửa 10 đáp án 25/10, câu kín đủ dấu + 4 đáp án),
+  `BAO_CAO_EMBEDDING_TU_KHOA.md` (G4K BM25 + khử dấu). Review: B.
+- **B20 (B, sau review G3):** `BAO_CAO_TIM_KIEM.md` (G1, G4 rerank + pool), `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (G2),
+  `BAO_CAO_CHIA_DOAN.md` (G3). Review: C.
+- A: `LUONG_HOAT_DONG_HE_THONG.md` (chỉ ghi "8.1 không đổi luồng"), `README.md`, `nhat_ky/`, `Project_Status.md`, G5 + `TONG_HOP.md`.
 
 ## Việc của C
 
