@@ -73,8 +73,8 @@ Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code; gộp `TONG_HOP.md` | đang làm — `STATUS_A.md` |
-| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code (làm tiếp 18:25) | xem `STATUS_B.md` |
-| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 rà code (làm tiếp 18:25) | xem `STATUS_C.md` |
+| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code — xong 18:39, chờ kiểm chéo | xem `STATUS_B.md` |
+| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 rà code — xong 18:43, chờ kiểm chéo | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -133,20 +133,28 @@ User hỏi về **code** (file, folder, guide của các Phase), không phải d
   Đầu file: **top 10** theo mức; cuối: phần **không rà được** / chưa chắc.
 - **Đầu ra:** `report_agent/2026-10-25_ra_soat_code/ra_soat_code_<B|C>.md` (tracked — repo public, không nội dung private). Xong nhắn A.
 - **Kiểm chéo:** khi cả hai xong, B kiểm top 5 của C, C kiểm top 5 của B (chạy lại bằng chứng) ⇒ A gộp `TONG_HOP.md`, trình User chọn sửa gì.
+  **18:4x (A):** B25 xong (21 finding). B bắt đầu kiểm chéo **C-09, C-02** (đã ổn định; A đã tự kiểm C-09); 3 mục còn lại của top 5 C
+  giao khi C chốt. A tự kiểm B-11 (checker token chỉ quyết tách, không ghi `errors`) và B-12 (9 selector, 5.324 ký tự) — khớp.
+  Đầu ra kiểm chéo: `report_agent/2026-10-25_ra_soat_code/kiem_cheo_<B|C>.md` (B ghi `kiem_cheo_B.md` = B kiểm C).
+  **18:5x (A):** C34 xong (18 finding). Kiểm chéo đủ: **B kiểm C-09, C-02, C-01 (phần mới), C-12, C-19**; **C kiểm B-11, B-12, B-16, B-20,
+  B-17** (B-01 = C-01 tìm độc lập ⇒ coi như đã kiểm chéo). A sửa `Project_Status.md` §8 (lệnh pytest, danh sách test paid lỗi thời — C báo).
 
 - **B — B25: rà luồng dựng index + nền** · `backend/ingestion/`, `embedding/`, `vectorstore/`, `scoring/`, `core/` (gồm
   `settings_loader.py`), `scripts/`, `backend/config/settings.yaml`, `pyproject.toml` (dependency không dùng: chỉ ghi — User giữ thư viện
   thừa), `docker-compose.yml`; test của các phần đó; notebook `03`, `04`; guide `phase_0`–`phase_4`, phần index của
   `guides/full_corpus_rag.md`, `guides/README.md`.
-  **Trạng thái 17:07 (B): DỞ** — đã rà ingestion pipeline / source_state / preview, embedding, scoring, vectorstore (qdrant, points), core,
-  settings, pyproject, docker-compose; chưa rà chunker / markdown_blocks / upsert, test, notebook, guide. 10 finding tạm, B-01 cao (module nạp hai
-  lần ⇒ API bắt sai lớp lỗi). `scripts/` không tồn tại. File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md`.
+  **Trạng thái 18:39 (B): XONG — chờ kiểm chéo.** Rà đủ phạm vi (3 sub-agent: guide 0–2 + README, guide 3–4 + index, test + notebook; B kiểm lại
+  khẳng định chính). 21 finding, top 10 chốt: **B-01 cao** (module nạp hai lần ⇒ API sai mã lỗi), **B-11 cao** (build không chặn đoạn vượt token;
+  test chặn là PASS giả; kho hôm nay 0 / 8.459 vượt), B-12 (repo public chứa nguyên văn kho ở config + test — A / User quyết), B-16–B-18 (guide
+  lệch / thiếu quy trình build lại), B-20 (test không so identity). 6 file test index: 97 passed. 0 USD. `backend/scripts/` **có** (B tìm sai chỗ;
+  C báo) ⇒ B-13. File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md`.
 - **C — C34: rà luồng trả lời + đánh giá** · `backend/retrieval/`, `reranking/`, `llm/`, `api/`, `evaluation/`, `frontend/`; test của các
   phần đó; notebook `06`; guide `phase_5`–`phase_9`, `llm_rag_reference_for_hue_rag.md`, phần trả lời của `full_corpus_rag.md`;
   `backend/experiments/phase_8_1/` chỉ hỏi "còn cần giữ / chạy lại được không".
-  - **Trạng thái (C, 17:08 25/10): DỞ** — `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md` (đầu file: đã rà / chưa rà). 8
-    finding, 2 mức vừa: C-01 runtime nạp `core.schema` hai lần ⇒ API trả sai mã lỗi khi retrieval lỗi (gốc chung với phạm vi B25);
-    C-02 `g2_generate.paired` ngược dấu với `refusal` (ảnh hưởng plan E1). 0 USD.
+  - **Trạng thái (C, 18:43 25/10): XONG — chờ kiểm chéo** — `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md` (top 10 đầu file).
+    18 finding (C-15, C-16 gộp vào mục khác): **1 cao** C-09 (validator citation chỉ bắt `[n]`, context gắn `[Nguồn n]` ⇒ 8 / 176 câu ra
+    500; A đã tự kiểm), **3 vừa** C-01 (lớp lỗi nạp hai lần — đã tái tạo index cũ ⇒ 503 thay 409), C-02, C-12 (guide 7 / 8 không có phần hiện
+    hành), còn lại thấp. Có cách đo trước–sau M1–M3 cho C-09. 3 sub-agent, C tự kiểm khẳng định chính. 0 USD. Tiếp: kiểm chéo top 5 của B.
 
 ### Phase 8.2 — TẠM DỪNG 16:5x (User)
 

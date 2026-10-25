@@ -1,3 +1,22 @@
+# STATUS B — phiên tối 2026-10-25 (mở 18:21 +0700, terminal `hue-rag-c3`; A = `hue-rag-77`, C = `hue-rag-7f`)
+
+## Trạng thái (18:40)
+- **B25 rà code luồng dựng index + nền — XONG 18:39, chờ kiểm chéo** (A "làm đi" 18:2x; 0 USD; 3 sub-agent). Nền rà `main` `1e8cf8f` (code không
+  đổi so `bc568f1`). 21 finding, top 10 chốt; B-01 cao, B-11 cao. File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md`.
+- Sub-agent: SA1 guide 0–2 + README, SA2 guide 3–4 + index `full_corpus_rag.md`, SA3 test + notebook 03/04 (97 passed) ⇒ `data/ra_soat_code/sa{1,2,3}_*.md`
+  (private). B kiểm lại 2–4 khẳng định chính mỗi cái. SA2 có gọi một scroll Qdrant (POST chỉ đọc) ngoài brief "chỉ GET".
+- Chỉ đề xuất, chưa sửa code (User 18:3x).
+- **Đang làm (18:4x): kiểm chéo C-09, C-02** của C (A "làm đi"; 3 mục top 5 còn lại A giao sau). **File khai báo sửa:**
+  `report_agent/2026-10-25_ra_soat_code/kiem_cheo_B.md` (mới), file này. Script tạm `/tmp/b25x/`.
+- File tạm: `/tmp/b25/` (script đếm đoạn vượt token, khối bị bỏ, header), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
+
+## Đã học / bẫy gặp (phiên tối 25/10)
+- 25/10 tối: B ghi "`scripts/` không tồn tại" vì chỉ tìm ở gốc repo — mục việc ghi đường dẫn tương đối ⇒ `find . -name <tên> -not -path './.venv/*'` trước khi kết luận "không có".
+- 25/10 tối: B-04 phiên chiều khẳng định "chunker đã fail-closed" khi chưa đọc chunker ⇒ không ghi khẳng định về code chưa đọc; ghi "chưa kiểm".
+- 25/10 tối: sub-agent SA2 gọi scroll Qdrant bằng POST (chỉ đọc) trong khi brief ghi "GET thì được" ⇒ brief nêu rõ "chỉ GET; POST scroll /
+  query cũng không" hoặc cho phép rõ POST chỉ đọc nếu cần.
+- 25/10 tối: B dùng `python3` hệ thống để sửa text STATUS_B (vi phạm §10 / bài học cũ) ⇒ sửa file bằng Edit, mọi Python bằng `uv run`.
+
 # STATUS B — kết phiên 2026-10-25 17:07 +0700 (User kết phiên 17:0x; B25 dừng giữa chừng)
 
 Terminal phiên này: `hue-rag-de` (A = `hue-rag-00`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi

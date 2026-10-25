@@ -181,9 +181,10 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Sửa corpus làm runtime từ chối khởi động (freshness) cho tới khi build lại index.
 - `full_corpus_sparse_state.json` chỉ ghi một lần: corpus đổi thì phải xóa file cũ
   trước khi build lại, nếu không build raise.
-- Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env python -m pytest tests/<file> -q`;
-  không chạy test có paid call ngoài giới hạn (ví dụ `test_llm_generator_openai.py`).
-- Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Test ghi Qdrant/paid: `test_evaluation.py` (một phần), `test_ingestion_pipeline.py`, `test_retrieval_service.py`, `test_llm_generator_openai.py`, benchmark.
+- Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests/<file> -q` (không nạp key). Chỉ thêm
+  `--env-file ../.env` khi việc ghi rõ cần test có key OpenAI: `test_api_chat.py`, `test_openai_full_corpus_generator.py`,
+  `test_phase6_live_smoke.py` (rà code 25/10, C-17 / C-18: không có key thì 3 test miễn phí cũng fail vì `require_openai_key`).
+- Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Danh sách test ghi Qdrant / paid cũ (4 file) đã gỡ ở B9; hiện không test nào ghi Qdrant (rà code 25/10, B25 / C34).
 - `test_phase6_live_smoke.py` còn mock/monkeypatch — rà ở Phase 8.1 (B8). Code/test Foods cũ đã gỡ ở B9
   (`1832201`): pytest 15 file full-corpus 191 passed.
 - OpenRouter 8B: không pin thì trộn provider (vector lệch, cos ~0,996); pin Nebius

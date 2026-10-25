@@ -1,27 +1,29 @@
-# STATUS C — cập nhật 2026-10-25 17:08 (kết phiên; C34 DỞ)
+# STATUS C — cập nhật 2026-10-25 18:44 (phiên tối; C34 XONG, chờ kiểm chéo)
 
-Terminal: `hue-rag-d6` (mở 15:50 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
-User 25/10 15:53: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
+Terminal: `hue-rag-7f` (mở 18:2x 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
+User 25/10 15:53 + 18:2x: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
+User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User đồng ý từng mục mới sửa.
 
-## Đang làm / dở (phiên chiều-tối 25/10)
-- **C34 rà code luồng trả lời + đánh giá — DỞ** (User kết phiên 17:0x). Report `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md`
-  (đầu file ghi đã rà / chưa rà). 8 finding: **C-01 vừa** (runtime nạp `core.schema` hai lần ⇒ API bắt hụt lỗi retrieval: 500 thay
-  503, 503 thay 409 — gốc ở `ingestion/full_corpus_pipeline.py` import kiểu `backend.*`, phạm vi B25), **C-02 vừa** (`g2_generate.paired`
-  ngược dấu với `refusal`), C-03 → C-07 thấp, C-08 đo latency tìm kiếm ổn.
-  - **Còn phải rà:** `frontend/`, `reranking/`, `llm/evidence_recorder.py`, 2 file smoke, phần còn lại evaluator, test, notebook 06,
-    guide `phase_5`–`phase_9` + `llm_rag_reference` + phần trả lời `full_corpus_rag.md`, `experiments/phase_8_1/`.
-  - 3 sub-agent (guide / test / harness) đã dừng, chưa ghi kết quả; brief dùng lại: `data/ra_soat_code_2026-10-25/tools/brief_common.md`.
-  - Sau khi xong: C kiểm chéo top 5 của B (B25).
+## Đang làm / dở (phiên tối 25/10)
+- **C34 rà code luồng trả lời + đánh giá — XONG 18:43, chờ kiểm chéo.** Report `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md`
+  (top 10 đầu file). 18 finding: **C-09 cao** (validator citation chỉ bắt `[n]`, context gắn `[Nguồn n]` ⇒ 8 / 176 câu chatbot hiện tại
+  ra 500; nguyên nhân 8.1 ghi chưa đúng; quyết định 8.1 reasoning có thể mở lại — A tự kiểm 18:3x, đúng), **vừa** C-01 (đã tái tạo index
+  cũ ⇒ 503 thay 409; sửa phải kèm tách lỗi "model không nạp"), C-02, C-12 (guide 7 / 8); còn lại thấp. C-09 có cách đo M1–M3.
+  - 3 sub-agent (S1 guide + nb06, S2 test, S3 harness + smoke) xong; C tự kiểm khẳng định chính bằng file thật. Đầu ra gốc `/tmp/c34/s*.md`.
+  - **Tiếp:** C kiểm chéo top 5 của B (B25) khi A nhắn.
 - **C33 plan E1** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_e1_plan.md` sha `f86240418ca1` — chờ B review + A trả lời Q1–Q3
   (8.2 tạm dừng). **Phải sửa khi 8.2 chạy lại:** §4 / §5 dùng `g2_generate.paired(…'refusal')` + chữ "thắng / thua" theo nghĩa câu được
   cứu ⇒ ngược dấu (C-02); đổi sang `paired_compare` (`false_refusal`) hoặc ghi đảo dấu ⇒ sha mới.
 - **C32 rà nội dung kho — xong**, A review `ready_for_user_confirmation` (`report_agent/2026-10-25_ra_soat_noi_dung_kho/`); chờ User xác
   nhận. (A: User hỏi về code, C32 là hiểu nhầm — giữ làm hồ sơ.)
-- **Đang khai báo sửa:** không.
+- **Đang khai báo sửa (18:5x):** `report_agent/2026-10-25_ra_soat_code/kiem_cheo_C.md` (mới), dòng C trong `CURRENT_HANDOFF.md`, file
+  này; `/tmp/c34x/` (tạm). Việc: kiểm chéo B-11, B-12, B-16, B-17, B-20 (A "làm đi").
 - **C chưa đọc nội dung câu kín.** Câu kín chính thức md5 `ddc59587b502`, manifest `9ea480d0d083`; mở ở mốc cuối 8.2 do User quyết.
 
 ## Câu hỏi cho A / User
-- C-01 sửa chung với B25 (ingestion là phạm vi B): ai sửa, khi nào?
+- C-01 = B-01 một finding chung; ai sửa quyết sau khi User chọn mục sửa (A 18:2x). Lệnh build chạy từ gốc repo, API từ `backend/` ⇒
+  phải chọn một quy ước import cho cả hai.
+- C-09 M2: có mở lại quyết định 8.1 reasoning `none` không (User quyết; xác nhận test ~0,007 USD, NOT RUN).
 - C32: file `performing_arts/performing-arts-entities-inventory.md` tự ghi phải loại khỏi ingestion nhưng đang trong index — loại ở lần
   build lại?
 - E1 plan Q1–Q3 (§10 plan).
@@ -29,10 +31,14 @@ User 25/10 15:53: C làm việc và báo cáo trực tiếp cho A; việc A giao
 ## File private C tạo phiên này (không commit)
 - C32: `data/ra_soat_kho_2026-10-25/` (`files.txt`, `facts_*`, `g*_*.txt`, `sub_g*.md`, `danh_sach.md`, `self_check_ids.json`, `tools/`).
 - C33: `data/phase_8_2/e1_plan/` (`count_p1.py`, `sample_size.py`, `p1_detail.md` — có câu hỏi Golden, private).
-- C34: `data/ra_soat_code_2026-10-25/tools/` (`dual_module_check.py`, `exc_identity.py`, `latency.py`, `brief_common.md`).
-- File tạm: `/tmp/c34/` (bản sao các script trên, không nội dung private) — xóa được; `rm` có thể bị chặn ⇒ nhờ User `!rm -r /tmp/c34`.
+- C34: `data/ra_soat_code_2026-10-25/tools/` (`dual_module_check.py`, `exc_identity.py`, `latency.py`, `brief_common.md`, `nguon_count.py`,
+  `cite_shapes.py`, `recheck_both.py`, `c01_probe_stale.py`, `c01_probe_bogus_reranker.py`).
+- File tạm: `/tmp/c34/` (đầu ra sub-agent S1–S3 + script tạm; chỉ số đếm, không nội dung kho) — xóa sau kiểm chéo; `rm` có thể bị chặn ⇒
+  nhờ User `!rm -r /tmp/c34`.
 
 ## Đã học / bẫy gặp
+- **Chỉ số lỗi do validator đếm: phân loại theo hình dạng output trước khi kết luận nguyên nhân** (C-09: 8.1 ghi "model quên `[n]`",
+  thực tế model viết `[Nguồn n]` theo nhãn context; đếm lại trên file có sẵn, 0 USD, đổi được một quyết định).
 - **Loại trừ theo danh sách discovery, không theo mẫu tên** (C32: brief cấm `*inventory*` làm sub-agent bỏ 1 file runtime; đính chính
   bằng vòng 2).
 - **Import hai kiểu (`backend.X` / `X`) tạo hai bản module** ⇒ `except` / `isinstance` hụt. Script C chạy từ `backend/` với `python -I`
