@@ -228,6 +228,25 @@ mã nội bộ dồn xuống Phụ lục, ghi tiêu chí ghi trước + kết qu
   `BAO_CAO_CHIA_DOAN.md` (G3). Review: C.
 - A: `LUONG_HOAT_DONG_HE_THONG.md` (chỉ ghi "8.1 không đổi luồng"), `README.md`, `nhat_ky/`, `Project_Status.md`, G5 + `TONG_HOP.md`.
 
+### C31 — chuẩn bị khóa G0.6 (giao 14:12 25/10; 0 USD; chưa khóa câu kín)
+
+Spec 8.1 §5 G0 bước 6 ("Baseline freeze") + tiêu chí §6.1, §6.4. Viết `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_6_baseline_lock.md`
+và manifest private `data/phase_8_1/baseline/g0_6_manifest.json`: commit HEAD; hash corpus (build record `corpus_identity`);
+build record + sparse state; split; gold; realism (`0b65d1c138d2`); Golden official + smoke + 7 file authoring (md5 sau sửa
+25/10); 7B Run 1 câu trả lời + điểm (ghi rõ 10 câu Golden đã đổi đáp án); mốc retrieval 176 câu runtime + native (chạy lại,
+phải giống byte `cefb2d1a…` / `1fbb5c17…`); `GET /collections`. Chuẩn bị (chưa chạy) lệnh tạo file câu kín chính thức 4
+field từ `sealed_authoring.jsonl` v6 **không đọc nội dung** (script chỉ chọn field + `check` exit 0 + md5). Chạy lệnh đó
+**chỉ khi A nhắn "User đã duyệt mẫu bản 5"**. Review: B. Đây cũng là kiểm cuối tiêu chí §6.4.
+
+### B21 — yêu cầu nghiên cứu ChatGPT: câu hỏi không dấu (giao 14:19 25/10; chỉ viết, 0 USD)
+
+Chuẩn bị cho 8.2 mục 3 (lỗ hổng lớn nhất 8.1), **không** thiết kế 8.2 (chờ User đóng 8.1). Viết một prompt deep research đầy đủ
+(`Session_Prompt.md` §9; mẫu: `gửi chatgpt/2026-10-24/tìm thông tin/*.md`) vào
+`gửi chatgpt/2026-10-25/tìm thông tin/phase_8_2_khong_dau_2026_10_25.md` (private): bối cảnh (RAG tiếng Việt, e5-small +
+BM25 âm tiết, số đo G1.4 / G4K — chỉ số, không chép Golden / corpus), câu hỏi chính xác (phục hồi dấu câu hỏi: model / thư
+viện / độ chính xác / tốc độ CPU; BM25 khử dấu song song + định tuyến; dense đa ngôn ngữ chịu không dấu; cách tạo bộ câu không
+dấu thật để đo), chuẩn bằng chứng, khuôn trả về có URL, phần đã biết. Review: C. User gửi ChatGPT khi tiện.
+
 ## Việc của C
 
 - C9–C22 xong (chi tiết `STATUS_C.md`).

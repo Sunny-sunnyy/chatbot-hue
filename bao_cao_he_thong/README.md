@@ -8,14 +8,14 @@
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
 | Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 19:58 24/10/2026 |
-| Chất lượng hiện tại, điểm mốc, chỗ yếu (Phase 7B) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 24/10/2026 |
+| Chất lượng hiện tại, điểm mốc, chỗ yếu (Phase 7B) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 14:18 25/10/2026 (+ 8.1) |
 | Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 24/10/2026 |
-| Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 24/10/2026 |
-| Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 24/10/2026 |
+| Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 14:18 25/10/2026 (+ 8.1) |
+| Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 14:18 25/10/2026 (+ 8.1) |
 | Lưu vào Qdrant (Phase 4) | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | 24/10/2026 |
-| Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 24/10/2026 |
-| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 24/10/2026 |
-| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 24/10/2026 |
+| Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 14:18 25/10/2026 (+ 8.1) |
+| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 14:18 25/10/2026 (+ 8.1) |
+| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:18 25/10/2026 (+ 8.1) |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 24/10/2026 |
 | Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [25/10 chiều — Phase 8.1 thí nghiệm](nhat_ky/2026-10-25_phase_8_1_thi_nghiem.md) | 14:06 25/10/2026 |
 
