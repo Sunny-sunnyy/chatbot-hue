@@ -93,7 +93,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 13:2x G2 xong cả G2.4 — `phase_8_1_g2_implementation.md`; C review G2.0–2.3 ready, chờ C xem phần G2.4 |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 13:22 B18 plan xong — `phase_8_1_g4_keyword_plan.md` sha `f5678965a448`, chờ C review (sau G3) + A duyệt |
 | C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C28 kế hoạch G3; review G2 khi B nhắn | 12:50 C28 xong: `phase_8_1_g3_plan.md` sha `e089243fb612` — chờ A duyệt, B review. Xong: G4 review ready, m1/m2 đóng (report G4 `4ee6c208f192`, review §7 sau commit `ee557f9`); C26 kín v6 `631334704fdd` (chờ User xem mẫu 5); C27 Golden ready (`0f7dbf41b422`) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
@@ -192,6 +192,11 @@ câu hỏi (G1.4: không dấu sập 0,73→0,19); NFC câu hỏi (G1.4 đã th�
 - Tập: dev số chính (CPU, không giới hạn 30 câu); nhóm "không dấu" là bản biến đổi của câu dev như G1.4. Chỉ số quyết theo
   đoạn đúng như G1/G3. Không đổi `scoring/bm25.py` / `embedding/sparse.py` production; logic biến thể ở harness mới.
 - Review plan: **C** (sau G3) — A duyệt sau C kèm sha. 0 USD. Nhắn A khi xong plan.
+- **13:30 A duyệt bản sha `d7e53186b364`** (C review `f5678965a448` ready, `phase_8_1_g4_keyword_plan_review.md`; bản mới thêm
+  m1/m2 + bước 0 dense `limit=30`/`limit=100` theo dữ kiện cổng). Cổng tương đương PASS (R0 108/108; N0 lệch 1/108 do hòa
+  điểm float32 Qdrant, dùng N0 trong bộ nhớ). B chạy A → E → P; 0 USD; review: C; A commit.
+- **B 13:22: plan xong** — `phase_8_1_g4_keyword_plan.md` sha `f5678965a448`. BM25 tính trong bộ nhớ (dense chạy một lần mỗi
+  dạng câu hỏi), **không tạo collection**; NFC: NOT RUN có lý do (G1.4 đã đo). Chờ C review + A duyệt.
 
 ## Việc của C
 
