@@ -33,7 +33,7 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Thước đo: so theo cặp + Holm; 120 dev / 56 test (`split.json`); đoạn đúng 55 câu; độ tự nhiên 82 / 65 / 29; Golden sửa
   10 đáp án (md5 `0f7dbf41b422`); **câu kín 36 câu khóa** (`knowledge-base-hue/evaluation/phase_8_1/sealed_official.jsonl`,
   mở ở mốc cuối 8.2 do User quyết); **G0.6 manifest** `data/phase_8_1/baseline/g0_6_manifest.json` (`9ea480d0d083`).
-- Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10).
+- Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10). User 15:44 25/10: sẽ đọc và nhận xét, **không chấm điểm** tay.
 - Tiền 8.1: 0,1653 USD.
 
 Mốc kế tiếp: **Phase 8.2** (áp dụng phương án thắng) — chưa thiết kế; phiên sau brainstorm + một spec User duyệt, từ
@@ -190,6 +190,12 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Notebook còn lại: 03, 04, 06 (02, 05, 07, 08a–c đã xóa ở B9); 03/04 Run All đạt trên bản tạm.
 - Permission tự động của từng session có thể chặn `rm`/`pkill`: session đó dừng và
   nhờ User chạy bằng `!` trong terminal của nó; session khác không chạy hộ.
+- Model "đã có trong HF cache" có thể chỉ là thư mục `refs` rỗng: kiểm `du -sh` / file `.safetensors` trước khi lập kế
+  hoạch offline (8.1 G4: M1 / M2 phải tải 2,2 GB mỗi cái; M2 cần `sentencepiece`).
+- Qdrant dense (HNSW) phụ thuộc `limit`: 30 đầu của `limit=100` ≠ `limit=30` ở 1/108 câu ⇒ tái lập runtime phải hỏi đúng
+  `limit` như production. Sparse Qdrant tính float32 ⇒ phá hòa có thể khác float64 trong bộ nhớ (G4K).
+- Model tự suy luận (luna listwise) ra ~270 token/câu, gấp ~3 ước ⇒ lượt có phí luôn pilot 10 câu, ước lại từ pilot.
+- So điểm judge giữa biến thể: chấm baseline **cùng lượt mù** (nhiễu judge-only 2/88 câu).
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).
 - Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
   clone): bản clone mới phải bật một lần. Hook chặn dòng thêm mới có tên dự án khác, kể cả khi trích tên file tài liệu

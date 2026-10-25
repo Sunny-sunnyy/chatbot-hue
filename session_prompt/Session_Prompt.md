@@ -78,6 +78,9 @@ report.
   khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được.
 - **Câu kín** (`*sealed*`): chỉ mở khi việc giao rõ cho đúng session / sub-agent đó;
   người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User quyết.
+  Giữ mù (25/10: 2 lần lộ một phần): brief sub-agent cấm ghi tên file nguồn và nội dung câu vào báo cáo cuối (chỉ
+  số dòng, số đếm, đúng / sai, md5); grep kho luôn loại `evaluation/`, `meta/`, `*sealed*`; xóa script tạm của sub-agent
+  sau mỗi việc. User hỏi về câu kín ⇒ A nhắc User mô tả chung, không dán nguyên câu.
 - Corpus không có Git: backup file gốc vào `knowledge-base-hue/meta/` trước khi
   sửa, review bằng diff với backup.
 - Curated Markdown: không YAML frontmatter, file bắt đầu bằng `#`; không ghi

@@ -1,6 +1,6 @@
 # Sổ cải tiến cách làm — harness của các session
 
-Cập nhật lần cuối: 11:05 25/10/2026 (A, kết vòng phiên 25/10). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
+Cập nhật lần cuối: 15:44 25/10/2026 (A, vòng 2 — kết phiên chiều 25/10, đóng 8.1). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
 thay đổi ở luật / skill / rào bằng máy, sinh từ sự cố có bằng chứng hoặc quyết định User; User duyệt cho thử;
 vòng sau xem giữ hay gỡ. Trạng thái: `đề xuất` → `đang thử` → `đang dùng` / `gỡ` / `bác`.
 
@@ -24,6 +24,10 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | W8 | 25/10 | S5, S6 | Đọc tài liệu dài bằng sub-agent theo khuôn; đọc lại brief; tự kiểm 2–3 khẳng định | `WORKFLOW.md` §9.9 | đang thử | lần đọc dài tới có lỗi brief không |
 | W9 | 25/10 | User chọn; S8 | Giữ gọn: memory, bỏ mục "Tạm gác" handoff, đề xuất cho dự án thành `de_xuat_cho_du_an.md`, `.aws/` vào `.gitignore` | memory; `CURRENT_HANDOFF.md`; đợt 25/10 | đang thử | phiên sau có đọc đề xuất trước khi duyệt G4/G2 không |
 | W10 | 25/10 | Ý từ một file SELF_IMPROVE.md trên GitHub (User đưa); S6, S10 | `improve-workflow`: luật viết thành việc làm được ngay; ghi "phát hiện bằng gì"; vòng nào sửa file mở phiên thì sub-agent mới thử mở phiên. **Không** làm phần tự sửa cách tự sửa | `skills/improve-workflow/SKILL.md`; cột mới ở bảng sự cố | đang thử | B/C/D không phải đọc thêm; xem bước thử mở phiên có tìm ra chỗ thiếu không |
+| W11 | 25/10 chiều | S12; User chọn cách a (15:44): người review cần đủ căn cứ nhưng không nạp ngữ cảnh người viết | Kế hoạch có tiêu chí ghi trước: mục "Căn cứ để review" (2–4 file + mục); session khác review chỉ dựa trên gói đó trước khi A duyệt sha | `WORKFLOW.md` §9.1 | đang thử | lỗi tiêu chí có còn bị phát hiện sau khi duyệt không; người review có thiếu căn cứ không |
+| W12 | 25/10 chiều | S13, S14 (không đảo ngược được) | Giữ mù câu kín: brief cấm tên file nguồn / nội dung trong báo cáo cuối; grep loại `evaluation/`, `meta/`, `*sealed*`; xóa script tạm; A nhắc User mô tả chung | `Session_Prompt.md` §5 | đang thử | còn lần lộ nào không; lặp ⇒ rào bằng máy (script grep chung) |
+| W13 | 25/10 chiều | S15 | Skill review: correction ghi ở file review + nhắn người làm (khớp `WORKFLOW.md` §3.2) | `skills/risk-gated-agent-review/SKILL.md` | đang thử | — |
+| I4 | 25/10 chiều | giữ gọn | Dời 4 bẫy kỹ thuật từ STATUS_B ra chung (HF cache `refs` rỗng; HNSW phụ thuộc `limit` + float32; model suy luận ~3× token; chấm baseline cùng lượt) | `Project_Status.md` §8 | đang thử | — |
 | I1 | 25/10 | S7 (luật chỉ ở memory Claude ⇒ agent khác không thấy) | Dời "nghiên cứu ChatGPT trước khi đề xuất, prompt đầy đủ" từ memory ra luật chung | `Session_Prompt.md` §9 | đang thử | User có phải nhắc lại không |
 | I2 | 25/10 | S3 | Dời "file nhiều session cùng ghi: đọc lại trước khi sửa, sửa từng đoạn" từ STATUS_A ra luật chung | `WORKFLOW.md` §3.2 | đang thử | có lần ghi đè nào không |
 | I3 | 25/10 | S8 | Sửa 2 memory cũ (mô tả "Reviewer/Implementer"; file tên 7A2 giữ trạng thái 8.1) | memory Claude | đang thử | — |
@@ -43,6 +47,18 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | S9 | Phép thử hook sinh key giả quá ngắn ⇒ tưởng hook lỗi | 1 (25/10, A) | chẩn đoán nhầm 1 lượt | `report_agent/2026-10-25_cai_tien_cach_lam/KE_HOACH.md` mục thử hook | chưa có — ý chờ (lỗi của công cụ / phép thử, loại trừ trước khi kết luận code hỏng) | A tự thấy khi xem lại phép thử |
 | S10 | Hook lọt dòng nội dung bắt đầu bằng `++` (cả secret) | 1 (25/10, A viết) | lỗ hổng trong rào chặn lộ dữ liệu | `review.md` F1 | đã sửa; review chéo là bước bắt | **review chéo** (12 ca tự thử của A không bắt) |
 | S11 | A dùng `python3` hệ thống (không `uv run`) cho script sửa tài liệu | 2 lần trong 1 phiên (25/10, A) | không (chỉ sửa chữ) | phiên 25/10 | đã có ở `Session_Prompt.md` §10 — không thêm luật; lặp ở phiên sau thì xem lại câu chữ §10 | A tự thấy |
+| S12 | A tự duyệt plan G3 không chờ review; viết sai "cận dưới" ở điều kiện phụ §10 | 1 (25/10 chiều, A) | B tìm 3 lỗi tiêu chí sau khi duyệt; 2 lượt sửa plan | `phase_8_1_g3_plan.md` §9, §10; STATUS_A | ⇒ W11 | **review chéo** (sau khi duyệt) |
+| S13 | Sub-agent câu kín lộ một phần: báo cáo ghi tên file nguồn (C24); grep in 1 dòng file mẫu (C26) | 2 (25/10, sub-agent của C) | C biết chủ đề câu kín | `phase_8_1_g0_4_sealed_review.md` §8, §10; STATUS_C | ⇒ W12 | C tự thấy khi đọc báo cáo |
+| S14 | User dán nguyên câu kín cho A khi hỏi | 2 (25/10) | A thấy 3 câu kín | STATUS_A | ⇒ W12 (A nhắc) | A |
+| S15 | Skill review bảo ghi correction vào mục người làm ↔ WORKFLOW §3.2 cấm | 1 (25/10, C báo) | không (C làm đúng WORKFLOW) | `risk-gated-agent-review` | ⇒ W13 | C đọc thấy lệch |
+| S16 | Heredoc `<<EOF` không quote: backtick bị chạy như lệnh; f-string gặp `{}` | 2 lỗi cùng loại (25/10, A) | 1 lượt sửa; không hại | STATUS_A | ý chờ | A thấy lỗi in ra |
+| S17 | Ghi giờ ước thay vì `date` (A 12:40↔12:20; C review B20) | 2 (25/10, A + C) | đính chính | handoff; STATUS_C | luật đã có `WORKFLOW.md` §6 — lặp nữa ⇒ rào (mẫu lệnh ghi giờ) | A / C tự thấy |
+| S18 | Báo "xong" trước khi lệnh ghi file trả kết quả (C); danh sách "chưa commit" cũ (B) | 1 + 1 (25/10) | đính chính | STATUS_B, STATUS_C | ý chờ | B / C tự thấy |
+
+**Kết vòng 2 — 15:44 25/10:** 7 sự cố mới (S12–S18), 3 thay đổi `đang thử` + 1 dời bẫy (User duyệt W11 cách a, W12; cho A sửa
+W13). Vòng trước: W1–W10, I1–I3 được dùng trong phiên (sổ, `run-experiment` có tiêu chí ghi trước + cỡ mẫu + nhiễu A/A ở
+mọi plan; hook không chặn nhầm commit nào; brief sub-agent không còn `{{…}}`). S4 (`/tmp`) không lặp — script G0.6 để ở
+`data/phase_8_1/tools/` từ đầu.
 
 **Kết vòng 25/10 11:05:** 11 sự cố, 11 thay đổi `đang thử`, 7 ý chờ. Không đề xuất thêm; phiên sau xem các mục `đang thử`
 có được dùng không, sự cố có lặp không.

@@ -157,6 +157,9 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** file kế hoạch / spec
    chưa commit thì khi duyệt ghi kèm `sha256sum` (12 ký tự) vào `CURRENT_HANDOFF.md`; sửa sau khi duyệt là
    bản mới, cần duyệt lại phần đổi.
+   **Kế hoạch có tiêu chí ghi trước** (thí nghiệm): đầu file có mục "Căn cứ để review" (2–4 file + mục); một session
+   khác người viết review chỉ dựa trên gói đó (không đọc STATUS / tin nhắn của người viết; thiếu căn cứ ⇒ finding) trước
+   khi A ghi "duyệt bản sha"; sửa sau review thì người review kiểm phần sửa (25/10: A tự duyệt plan G3, B tìm 3 lỗi sau).
 2. **Giao việc:** mỗi session một mục trong `CURRENT_HANDOFF.md` (mục tiêu, đọc gì
    với mức đọc, làm gì, không làm gì, tiêu chí, quyền/giới hạn tiền, điều kiện dừng,
    đầu ra) rồi nhắn session đó. Giao việc song song chỉ khi file không chồng nhau.

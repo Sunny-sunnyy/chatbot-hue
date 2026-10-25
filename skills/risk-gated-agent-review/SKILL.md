@@ -75,9 +75,10 @@ nào, có bằng chứng không, có tương xứng không? Không trả lời �
 
 ## Correction
 
-- Người kiểm ghi phần cần sửa vào mục việc của người làm trong
-  `CURRENT_HANDOFF.md`: finding, đường dẫn, tiêu chí đóng, kiểm tra phải chạy
-  lại, bằng chứng được dùng lại, ranh giới giữ nguyên.
+- Người kiểm ghi phần cần sửa vào **file review** (finding, đường dẫn, tiêu chí đóng,
+  kiểm tra phải chạy lại, bằng chứng được dùng lại, ranh giới giữ nguyên) rồi nhắn
+  người làm; người làm tự cập nhật mục việc của mình trong `CURRENT_HANDOFF.md`
+  (`WORKFLOW.md` §3.2: không sửa mục của session khác — C báo lệch 25/10).
 - Người làm xử lý trong một lượt: sửa, hoặc phản biện bằng bằng chứng / cách đơn
   giản hơn. Không tự đóng finding.
 - Người kiểm kiểm lại phần sửa và đường bị ảnh hưởng, dùng lại bằng chứng đủ điều

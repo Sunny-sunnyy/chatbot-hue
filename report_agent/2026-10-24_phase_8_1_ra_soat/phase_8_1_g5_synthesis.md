@@ -53,8 +53,9 @@ cùng cho mọi biến thể; (8) `hue_81_g3_h1` build trước khi A duyệt §
 
 Thứ tự theo lợi đã đo / chi phí / rủi ro. Mỗi mục vẫn qua skill `run-experiment` ở 8.2 (đo lại trên runtime mới).
 
-0. **Điều kiện trước (bước 0 của 8.2):** (a) **mốc người ~20 câu** (D6) — mục 1 và 6 chỉ có bằng chứng từ điểm judge Claude,
-   nên chỉ vào runtime **sau** khi có mốc người; (b) **tách khâu dính** (bảng G5 §4) trước khi thêm cải tiến vào code.
+0. **Điều kiện trước (bước 0 của 8.2):** (a) **mốc người** — mục 1 và 6 chỉ có bằng chứng từ điểm judge Claude. **User 15:44
+   25/10: chỉ đọc câu hỏi / câu trả lời và nhận xét, không chấm điểm** ⇒ brainstorm 8.2 chọn cách dùng nhận xét đó làm kiểm
+   chéo judge (ví dụ User nhận xét mẫu câu đổi điểm nhiều nhất); (b) **tách khâu dính** (bảng G5 §4) trước khi thêm cải tiến vào code.
 1. **Context 10 đoạn** — bằng chứng mạnh nhất; đổi một tham số settings. Rủi ro thấp.
 2. **NFC câu hỏi** — một dòng; phục hồi hoàn toàn câu NFD (G1.4).
 3. ~~Câu không dấu~~ — **User 15:15 25/10 bỏ khỏi phạm vi:** "cứ thiết kế có dấu hết, người dùng hỏi cũng viết có

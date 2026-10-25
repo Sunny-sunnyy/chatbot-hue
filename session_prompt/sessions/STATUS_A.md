@@ -1,18 +1,25 @@
-# STATUS A — cập nhật 14:25 25/10/2026 (phiên chiều — 8.1 xong thí nghiệm, chờ User)
+# STATUS A — cập nhật 15:47 25/10/2026 (KẾT PHIÊN chiều — Phase 8.1 ĐÓNG 15:27)
 
 Terminal: `hue-rag-c6` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3f`, C = `hue-rag-a1` (cả ba Claude Code,
 liên lạc trực tiếp).
 
 ## Commit cuối
-- Đầu phiên: `c3528be`. Phiên chiều: `2b0010b` … `e88036d` (xem `git log`).
+- Đầu phiên: `c3528be`. Phiên chiều: `2b0010b` … commit kết phiên (`git log -1`).
 
 ## Đang làm
-- Chờ User: (1) xem mẫu câu kín bản 5 → nhắn C "User đã duyệt mẫu bản 5" (C chạy script khóa câu kín + cập nhật manifest
-  G0.6); (2) User đóng 8.1 (đọc `phase_8_1_g5_synthesis.md` §1–§4) → TONG_HOP "ĐÓNG", brainstorm 8.2.
-- Kết phiên: vòng `improve-workflow` (đầu vào: mục "Đã học / bẫy gặp" dưới + STATUS_B/C), `PROJECT_HISTORY.md`, handoff gọn ≤ 150 dòng.
+- Không. Phiên sau: brainstorm 8.2 (`CURRENT_HANDOFF.md` "PHIÊN SAU" mục 1–3).
 
 ## Đang khai báo sửa
 - không
+
+## Vừa xong (phiên chiều 25/10)
+- Điều phối 8.1: G4, G2, G3, G4K, G5, G0.6 — mọi gate review chéo; 6 báo cáo `bao_cao_he_thong/`; User đóng 8.1 15:27.
+- Vòng cải tiến 2: W11 (WORKFLOW §9.1 "Căn cứ để review"), W12 (Session_Prompt §5 giữ mù câu kín), W13 (skill review),
+  I4 (bẫy ra Project_Status §8); sổ `SO_CAI_TIEN_CACH_LAM.md`; thử mở phiên bằng sub-agent mới (xem kết quả trong sổ).
+- Handoff rút 343 → ~100 dòng.
+
+## Tiền paid phiên này
+- 0,1653 USD (B: luna G4 + G2). A, C: 0 USD (sub-agent dùng quota).
 
 ## Quyền phiên này (User 25/10, hết hạn cuối phiên)
 - A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (8.1 vẫn trần 0,5 USD); duyệt G4-A + G4-B; GPU mỗi lượt 20–30 câu, kiểm
@@ -41,10 +48,7 @@ liên lạc trực tiếp).
   H3/H2 chưa nói phép so quyết, baseline không chấm lại cùng lượt judge). Bắt được trước khi đo biến thể. Vòng cải tiến:
   plan có tiêu chí ghi trước luôn cần một session khác (không phải người viết, không chỉ A) review trước khi A duyệt.
 - Lệch skill `risk-gated-agent-review` (Correction: người kiểm ghi vào mục của người làm) ↔ `WORKFLOW.md` §3.2 (cấm sửa
-  mục session khác) — C báo 11:31; sửa skill ở vòng cải tiến cuối phiên.
+  mục session khác) — C báo 11:31; đã sửa (W13).
 
 ## Việc dở / câu hỏi cho User
-- Câu kín 3 dòng (2, 21, 33); 9 câu độ tự nhiên bất đồng; Hải Vân; tên dự án khác trong lịch sử git.
-
-## Tiền paid phiên này
-- 0 USD.
+- `CURRENT_HANDOFF.md` "Câu hỏi cho User" (quyền phiên, phạm vi 8.2, Hải Vân, tên dự án khác, 3 câu kín A đã thấy).
