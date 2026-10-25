@@ -32,7 +32,7 @@ model lỗi tạm. Vẫn context 5, chưa NFC. Qdrant `:6335` còn **1** collect
    ⇒ `git switch main` ⇒ nhắn A.
 3. **B:** trong lúc C làm — chờ / việc chỉ đọc A giao (W17); C xong ⇒ **review toàn nhánh `dot3`** (`git log main..dot3`, từng commit; trọng tâm D1 sha
    đoạn `60591acff422ece6`, D2 T1 `cefb2d1ad609`, D3 chuỗi gửi model 25 câu, D8 `git ls-files knowledge-base-hue` rỗng; T-C nếu cần: User `!` ở terminal B).
-4. **A:** review đạt ⇒ merge fast-forward `dot3` vào `main` + push + 4 chỗ `bao_cao_he_thong/` + `Project_Status.md` ⇒ cổng ổn định trên `main` ⇒ báo
+4. **A:** review đạt ⇒ (`main` có commit docs sau khi tách `dot3`: `76ff419`→`683f38d`+, chỉ tài liệu ⇒ C `git rebase main` trên `dot3` trước khi B review) ⇒ merge fast-forward `dot3` vào `main` + push + 4 chỗ `bao_cao_he_thong/` + `Project_Status.md` ⇒ cổng ổn định trên `main` ⇒ báo
    User "5 gói xong". Khi User đã gửi ChatGPT: đọc kết quả, WebFetch URL đối chiếu ⇒ tài liệu thiết kế đợt cải tiến.
 5. Rồi mới: 8.2 (A review B1 sau rebase + chạy lại T1–T2 → B0 User đọc → merge → E1 …).
 
