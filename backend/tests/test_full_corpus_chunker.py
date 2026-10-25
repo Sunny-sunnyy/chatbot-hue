@@ -849,49 +849,27 @@ def test_acceptance_sample_chi_phi_du_lich():
 
 # --- 8. Synthetic Isolated Error and Oversized Fail-Closed Blocking ---
 
-def test_synthetic_oversized_group_blocking(tmp_path):
-    """Verify pure oversized minimal unit triggers fail-closed blocking in preview without mixing condition errors."""
-    kb_fake = tmp_path / "fake_kb"
-    test_file = kb_fake / "foods" / "huge.md"
-    test_file.parent.mkdir(parents=True, exist_ok=True)
-    # A single sentence with 2000 characters (cannot be sentence-split)
-    massive_sentence = "Một_từ_siêu_dài_" * 150 + ".\n"
-    test_file.write_text("# Tài Liệu Lớn\n\n## Mục\n\n" + massive_sentence, encoding="utf-8")
+@pytest.mark.parametrize(
+    "markdown",
+    [
+        "# Thử\n\n" + " ".join(["chữ"] * 900) + "\n",  # một câu không có dấu chấm ⇒ không tách được
+        "# Thử\n\n| A | B |\n|---|---|\n| ngắn | ngắn |\n| dài | " + " ".join(["chữ"] * 900) + " |\n",  # bảng có một dòng quá dài
+    ],
+)
+def test_chunk_document_reports_chunks_over_the_tokenizer_limit(markdown):
+    """B-11: đoạn vượt giới hạn token (e5 512 / huydang 256) phải thành lỗi của chunker ⇒ build dừng, thay vì e5 cắt im lặng.
+    Checker thật (3 tokenizer trong HF cache), văn bản tự dựng — không đọc kho."""
+    check = get_default_tokenizer_checker()
+    chunks, errors = chunk_document(parse_markdown_blocks("foods/_synthetic.md", markdown), is_fits_tokenizer_fn=check)
+    oversized = [ch.chunk_id for ch in chunks if not check(ch.search_text)]
+    assert oversized
+    assert errors == [f"Chunk exceeds tokenizer limit: {chunk_id}" for chunk_id in oversized]
 
-    # Empty conditions file to isolate oversized behavior completely
-    empty_cond = tmp_path / "empty_cond.json"
-    empty_cond.write_text("[]", encoding="utf-8")
 
-    fake_settings = {
-        "full_corpus": {
-            "knowledge_base": {
-                "root_dir": str(kb_fake),
-                "include_globs": ["foods/**/*.md"],
-                "exclude_parts": ["evaluation"],
-                "exclude_files": [],
-            },
-            "conditions_file": str(empty_cond),
-            "embedding_models": [
-                {
-                    "id": "CODE4LIFEOFFICIAL/huydang-dek21-embedding",
-                    "max_tokens": 256,
-                    "prefix": "",
-                    "word_segment": True,
-                }
-            ],
-        },
-    }
-
-    out_json = tmp_path / "synthetic_blocked_preview.json"
-    artifact, exit_code = generate_preview(out_json, settings=fake_settings)
-
-    assert exit_code == 1
-    assert artifact["status"] == "BLOCKED_OVERSIZED_GROUP"
-    assert artifact["summary"]["oversized_groups_count"] >= 1
-    assert len(artifact["oversized_groups"]) >= 1
-    # Pure oversized: no non-oversized errors
-    non_oversized = [e for e in artifact["errors"] if not e.startswith("Oversized group:")]
-    assert len(non_oversized) == 0
+def test_chunk_document_splits_long_text_at_sentences_without_errors():
+    text = " ".join(f"Câu ngắn số {i}." for i in range(400))
+    chunks, errors = chunk_document(parse_markdown_blocks("foods/_synthetic.md", "# Thử\n\n" + text + "\n"))
+    assert errors == [] and len(chunks) > 1
 
 
 def test_generic_condition_or_parser_error_blocks_preview(tmp_path):

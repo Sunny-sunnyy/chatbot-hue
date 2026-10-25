@@ -6,6 +6,7 @@ splitting for oversized blocks, and deterministic chunk ID / UUID5 generation.
 """
 from __future__ import annotations
 
+import functools
 import json
 from pathlib import Path
 import re
@@ -341,6 +342,8 @@ def chunk_document(
         condition_manager = ConditionManager()
     if is_fits_tokenizer_fn is None:
         is_fits_tokenizer_fn = get_default_tokenizer_checker()
+    # Đa số đoạn đã được kiểm đúng chuỗi này lúc phát ra; nhớ kết quả để vòng kiểm cuối (B-11) không đếm token lại lần hai.
+    is_fits_tokenizer_fn = functools.lru_cache(maxsize=None)(is_fits_tokenizer_fn)
 
     target_attachments, condition_block_indices, cond_errors = (
         condition_manager.validate_and_resolve_for_doc(doc)
@@ -547,7 +550,7 @@ def chunk_document(
                 sents = extract_sentence_spans(block.text, block.start)
 
             if not sents:
-                # Unbreakable unit: emit whole chunk so preview can detect it
+                # Unbreakable unit: emit whole chunk; the final verify loop reports it if it exceeds a tokenizer limit
                 chunk_id = f"{doc.source}#{chunk_ordinal}"
                 chunk_ordinal += 1
                 chunks.append(
@@ -613,6 +616,10 @@ def chunk_document(
     for ch in chunks:
         if not ch.search_text.strip():
             errors.append(f"Empty search_text in chunk {ch.chunk_id}")
+        # Một chỗ kiểm cho mọi nhánh phát đoạn (khối không tách câu được, câu đầu nhóm, dòng bảng, mục con): đoạn vượt giới hạn token
+        # của tokenizer nào thì build dừng — e5 sẽ cắt im lặng ở 512 (B-11).
+        if not is_fits_tokenizer_fn(ch.search_text):
+            errors.append(f"Chunk exceeds tokenizer limit: {ch.chunk_id}")
         for part in ch.evidence_parts:
             if doc.lf_text[part.start:part.end] != part.text:
                 errors.append(
