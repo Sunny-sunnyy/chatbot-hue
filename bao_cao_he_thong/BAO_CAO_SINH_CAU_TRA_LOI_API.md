@@ -1,8 +1,8 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 20:02 24/10/2026 — bản 4: cập nhật §5 sau khi dọn code món ăn (số dòng
-`settings.yaml` mới; đường sinh câu trả lời bản món ăn đã gỡ).**
-Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 14:10 25/10/2026 — bản 5: thêm kết quả thử nghiệm Phase 8.1 (10 đoạn ngữ cảnh, thứ tự đoạn, hai
+prompt, mức suy luận, chính sách trích dẫn); đính chính chẩn đoán "có đủ bằng chứng mà vẫn từ chối"; chatbot không đổi.**
+Người viết: B (bản 5; bản 1–4: C) · Review: C. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -17,8 +17,12 @@ Người viết: C · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 - **Giới hạn chính:** **từ chối nhầm 22/158** câu có trong kho — nguồn mất điểm lớn nhất; không tìm ra
   bảng giá; câu cần nhiều nguồn lúc đóng chỉ dùng 1 nguồn.
 - **Chi phí:** sinh 176 câu ~0,024 USD (~600 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
-- **Bạn cần quyết gì (Phase 8):** khi chỉ có bằng chứng cho một phần câu hỏi, bot **trả lời phần có
-  căn cứ (nói rõ phần thiếu)** hay **từ chối cả câu** như hiện nay (xem §6).
+- **Phase 8.1 đã thử (25/10, 0,157 USD):** 5 cách trả lời trên 120 câu thử, chấm mù bằng Claude. **Một cách thắng và đã
+  xác nhận trên bộ kiểm: đưa 10 đoạn thay vì 5** — điểm Đủ +0,26 (thử) / +0,27 (kiểm) trên thang 5, từ chối nhầm giảm gần
+  một nửa, tốn thêm ~50%/câu (≈ 5 đồng). Các cách khác (xếp đoạn theo tài liệu, thêm 2 luật cũ, "trả lời phần có căn cứ",
+  đổi mức suy luận, chính sách trích dẫn mới) không khác hoặc kém hơn. Chatbot **chưa đổi**.
+- **Bạn cần quyết gì (8.2):** có đưa "10 đoạn ngữ cảnh" vào chatbot không; "trả lời phần có căn cứ" có thử tiếp không
+  (8.1: hết gần sạch từ chối nhầm nhưng trả lời cả 2 câu ngoài kho) — xem §6.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -52,10 +56,14 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 | Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | 4/176 câu người dùng thấy lỗi 500; `backend/llm/citations.py:12` |
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `backend/api/app.py:147–151` |
 | Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý** | `backend/retrieval/full_corpus.py:353,415` |
-| Câu có một vế có bằng chứng, vế kia thiếu | **Xử lý một phần** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`); 10/22 câu từ chối nhầm thuộc loại này; chờ bạn quyết |
-| Đoạn chứa đáp án nằm ngoài 5 đoạn ngữ cảnh | **Xử lý một phần** | 8/22 câu từ chối nhầm; thử 10 đoạn ở dòng dưới |
-| Có đủ bằng chứng mà vẫn từ chối | **Xử lý một phần** | 4/22 câu từ chối nhầm |
-| Đưa 10 đoạn ngữ cảnh thay vì 5 | **Đã thử, chưa áp dụng** | Thử nhanh: 10/22 câu hết từ chối, chưa chấm đúng/sai; Phase 8 đo đủ |
+| Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). 8.1 thử prompt "trả lời phần có căn cứ": từ chối nhầm 13 → 1 câu (120 câu thử), nhưng **trả lời cả 2 câu ngoài kho** ⇒ phạm luật, chưa dùng |
+| Đoạn chứa đáp án nằm ngoài 5 đoạn ngữ cảnh | **Xử lý một phần** | 8.1 đo bằng đoạn đúng: **cả 22/22** câu từ chối nhầm ở 7B đều thiếu ít nhất một đoạn đúng trong 5 đoạn — gốc là khâu tìm/xếp đoạn |
+| Có đủ bằng chứng mà vẫn từ chối | **Đính chính (8.1)** | Chẩn đoán 7B (theo keyword) ghi 4/22; đo lại bằng đoạn đúng: **0 câu** |
+| Đưa 10 đoạn ngữ cảnh thay vì 5 | **Đã thử, chưa áp dụng** — **thắng, đã xác nhận** | 8.1: điểm Đủ +0,26 (120 câu thử) / +0,27 (56 câu kiểm); từ chối nhầm 13 → 7; 0 câu ngoài kho bị trả lời; lỗi trích dẫn không tăng; chờ bạn duyệt đưa vào chatbot |
+| Xếp 5 đoạn gom theo tài liệu | **Đã thử, chưa áp dụng** | 8.1: không khác |
+| Thêm 2 luật cũ của spec Phase 6 (không dùng tiêu đề làm bằng chứng; đoạn văn ngắn) | **Đã thử, chưa áp dụng** | 8.1: không khác; lỗi trích dẫn 4 → 1 (chưa đủ chắc) |
+| Mức suy luận của model (`none` / `low` / `high`) | **Đã thử, chưa áp dụng** | 8.1: `none` đầy đủ hơn chút nhưng quên ghi `[n]` gấp đôi (4 → 8); `low` 4 → 9; `high` không khác, tốn hơn 11% |
+| Chính sách trích dẫn "chỉ có một nguồn thì gán nguồn đó" | **Đã thử, chưa áp dụng** | 8.1 phát lại trên câu trả lời đã lưu: 0 câu đổi — mọi lỗi là "quên `[n]`" khi có 5 nguồn |
 | Câu tổng hợp nhiều nguồn | **Xử lý một phần** | Lúc đóng đạt nhưng chỉ dùng 1 nguồn; chưa chứng minh tổng hợp |
 | Câu hỏi giá vé + miễn giảm (bảng giá) | **Chưa thực hiện** | Không tìm ra bảng giá (xem `BAO_CAO_TIM_KIEM.md`) |
 | Tách câu hỏi hai ý | **Chưa thực hiện** | Phase 8 thử |
@@ -64,6 +72,31 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 25/10/2026 — Phase 8.1: thử 5 cách trả lời (bản 5)
+
+Chatbot không đổi; chỉ thí nghiệm. **Luật ghi trước:** chỉ số quyết là điểm **Đủ** (Completeness) do Claude chấm mù
+(không biết câu trả lời thuộc cách nào), so theo cặp từng câu, có hiệu chỉnh khi thử nhiều cách; **rào chắn:** không được trả
+lời câu ngoài kho, điểm Đúng không tụt, lỗi trích dẫn tăng tối đa 2 câu (bằng mức dao động đo được giữa hai lần chạy 7B), tiền
+mỗi câu không quá gấp đôi. Bộ: 120 câu thử (88 câu có trong kho tính số chính, bỏ câu hỏi không tự nhiên); cách "tốt hơn"
+phải xác nhận trên 56 câu kiểm. Mỗi lượt có phí chạy thử 10 câu trước.
+
+| Cách | Điểm Đủ (thử) | Rào chắn | Kết luận |
+|---|---|---|---|
+| **10 đoạn ngữ cảnh** | **+0,26** (chắc) | đạt cả 4; tiền ×1,5 | **tốt hơn**; bộ kiểm **+0,27** ⇒ **đã xác nhận** |
+| Xếp 5 đoạn gom theo tài liệu | −0,02 | đạt | không khác |
+| Prompt "trả lời phần có căn cứ" | +0,11 (chưa chắc) | **trả lời 2 câu ngoài kho** | **kém hơn** (dù từ chối nhầm 13 → 1) |
+| Prompt thêm 2 luật cũ | 0,00 | đạt; lỗi trích dẫn 4 → 1 | không khác |
+| Mức suy luận `none` | +0,14 (chắc) | **lỗi trích dẫn 4 → 8** | **kém hơn** |
+| Mức suy luận `low` / `high` | +0,02 / +0,02 | `low`: lỗi trích dẫn 4 → 9 | `low` kém hơn; `high` không khác |
+| Chính sách trích dẫn "một nguồn thì gán" | — | — | không khác (0 câu đổi khi phát lại) |
+
+Thêm: lợi của 10 đoạn nằm ở các câu mà 5 đoạn **chưa đủ** bằng chứng; câu đã đủ bằng chứng không bị hỏng (0 câu thua). Người
+chấm (Claude) chấm lại cùng câu trả lời thì chỉ 2/88 câu đổi điểm Đủ. **Tiền:** 0,157 USD (≈ 3.900 đồng) cho ≈ 1.070 câu trả
+lời `gpt-6-luna` (8 lượt × 120 câu thử + 2 lượt × 56 câu kiểm); chấm bằng Claude không tốn tiền.
+
+Đính chính: chẩn đoán 7B "4/22 câu có đủ bằng chứng mà vẫn từ chối" dựa trên keyword; đo lại bằng **đoạn đúng** (8.1) thì
+**0 câu** — mọi câu từ chối nhầm đều thiếu ít nhất một đoạn đúng trong ngữ cảnh.
 
 ### 24/10/2026 — Dọn code món ăn sau Phase 7 (bản 4)
 Gỡ đường sinh câu trả lời bản món ăn (hỏng từ trước) cùng code/test món ăn. Đường sinh câu trả lời
@@ -102,8 +135,10 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 |---|---|---|
 | API `POST /api/chat`, trả `{answer, sources}`, câu hỏi 1–500 ký tự | **còn dùng** | `backend/api/routes/chat.py:24–26,48` |
 | Model sinh `gpt-6-luna` (OpenAI) | **còn dùng** | `backend/config/settings.yaml:47` |
-| Tối đa 5 đoạn nguyên vẹn, ngân sách 16.384 token | **còn dùng**; Phase 8 sẽ thử 10 đoạn | `settings.yaml:53,56`; `backend/retrieval/full_corpus_context.py` |
-| Prompt "thiếu bằng chứng thì từ chối cả câu" | **còn dùng**; Phase 8 xem xét cho trả lời phần có căn cứ (bạn quyết) | `backend/llm/full_corpus_prompt.py:14` |
+| Tối đa 5 đoạn nguyên vẹn, ngân sách 16.384 token | **còn dùng**; 8.1 đo: 10 đoạn tốt hơn, đã xác nhận — chờ bạn duyệt đổi ở 8.2 | `settings.yaml:53,56`; `backend/retrieval/full_corpus_context.py` |
+| Prompt "thiếu bằng chứng thì từ chối cả câu" | **còn dùng**; 8.1 thử bản "trả lời phần có căn cứ": kém hơn (trả lời câu ngoài kho) | `backend/llm/full_corpus_prompt.py:14` |
+| Không gửi mức suy luận (để model tự chọn) | **còn dùng**; 8.1: `none` / `low` làm tăng lỗi trích dẫn, `high` không khác | `backend/llm/generator_openai_full_corpus.py` |
+| Chẩn đoán 7B "4/22 câu có đủ bằng chứng mà vẫn từ chối" | **đã thay** bởi số đo theo đoạn đúng của 8.1: 0/22 | `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md` G1.6 |
 | Backend kiểm trích dẫn, lỗi trả mã rõ ràng | **còn dùng** | `backend/llm/citations.py:12`; `backend/api/routes/chat.py` |
 | Trang web tối giản, bấm `[n]` tới thẻ nguồn | **còn dùng** | `frontend/`; `backend/api/app.py:147–151` |
 | Từ chối chạy khi dữ liệu lệch chỉ mục | **còn dùng** | `backend/retrieval/full_corpus.py:353,415` |
@@ -115,11 +150,15 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 
 ## 6. Việc còn lại / cần quyết
 
-- **Bạn quyết (Phase 8):** trả lời phần có căn cứ hay từ chối cả câu. Spec chung của dự án cho phép
-  "trả phần có căn cứ", nhưng spec Phase 6 và prompt hiện tại bắt từ chối cả câu; code đúng theo spec
-  Phase 6. Đây là nguồn chính của 10/22 câu từ chối nhầm.
-- Lỗi bảng giá và tổng hợp nhiều nguồn vẫn còn (xem `BAO_CAO_TIM_KIEM.md` và `BAO_CAO_DANH_GIA.md`).
-- Phase 8 sẽ thử: 10 đoạn ngữ cảnh, prompt cho trả lời phần có căn cứ, tách câu hỏi hai ý.
+Đề xuất cho Phase 8.2 (đổi chatbot cần bạn duyệt):
+- **Đưa 10 đoạn ngữ cảnh vào chatbot** — cách duy nhất ở 8.1 thắng và đã xác nhận trên bộ kiểm. Tốn thêm ~50% mỗi câu
+  (≈ 0,00007 USD); giới hạn: người chấm là Claude, chưa có bạn chấm mốc.
+- **"Trả lời phần có căn cứ"**: hết gần sạch từ chối nhầm nhưng trả lời cả câu ngoài kho. Nếu muốn thử tiếp, cần bản prompt
+  giữ được từ chối câu ngoài kho; đây cũng là đổi quy tắc của spec Phase 6 (bạn quyết).
+- **Lỗi quên ghi `[n]`** (người dùng thấy lỗi 500, 4/120 câu): chính sách trích dẫn mới không chạm tới; thêm 2 luật cũ giảm
+  4 → 1 nhưng chưa chắc — cần cách khác ở bước sinh.
+- Trước khi quyết theo điểm câu trả lời: nên có **20 câu bạn chấm tay** làm mốc.
+- Bảng giá và tổng hợp nhiều nguồn: gốc ở khâu tìm/xếp đoạn (`BAO_CAO_TIM_KIEM.md`).
 
 ## Phụ lục — hồ sơ kỹ thuật
 
@@ -130,6 +169,10 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 - [R3] đổi model: `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`.
 - Chẩn đoán từ chối nhầm: `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`; thử 10 đoạn:
   `reports/phase_8_probe_context_top10_2026_10_24.md`.
+- Bản 5 (B20, 25/10/2026): Phase 8.1 G2 — `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_implementation.md`
+  §4 (G2.1a context 10 = **tốt hơn, xác nhận test**; G2.1b, G2.2 P1/P2, G2.3, G2.4), review `phase_8_1_g2_review.md`; luật
+  ghi trước: plan `phase_8_1_g2_g4_plan.md` §2.1 (sha `a4adfc8eedd9`); đính chính từ G1.6 (`phase_8_1_g1_implementation.md`).
+  Golden md5 `0f7dbf41b422` (10 đáp án sửa 25/10).
 - Bản 1 (C8, 24/10/2026, commit `4426ed0`). Bản 3 (C12): đính chính theo `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` dòng 6.10 và §6 mục 13. Bản 4 (C13b): sau dọn B9 (commit `1832201`).
 - **Lệch phát hiện (24/10):**
   - Spec umbrella `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` §1, Decision #6a
