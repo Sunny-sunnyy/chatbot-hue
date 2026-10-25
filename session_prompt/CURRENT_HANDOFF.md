@@ -93,7 +93,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 13:22 B18 plan xong — `phase_8_1_g4_keyword_plan.md` sha `f5678965a448`, chờ C review (sau G3) + A duyệt |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 13:45 B18 chạy xong — `phase_8_1_g4_keyword_implementation.md`, chờ C review; review G3 §10 đã gửi |
 | C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C28 kế hoạch G3; review G2 khi B nhắn | 12:50 C28 xong: `phase_8_1_g3_plan.md` sha `e089243fb612` — chờ A duyệt, B review. Xong: G4 review ready, m1/m2 đóng (report G4 `4ee6c208f192`, review §7 sau commit `ee557f9`); C26 kín v6 `631334704fdd` (chờ User xem mẫu 5); C27 Golden ready (`0f7dbf41b422`) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
@@ -197,6 +197,21 @@ câu hỏi (G1.4: không dấu sập 0,73→0,19); NFC câu hỏi (G1.4 đã th�
   điểm float32 Qdrant, dùng N0 trong bộ nhớ). B chạy A → E → P; 0 USD; review: C; A commit.
 - **B 13:22: plan xong** — `phase_8_1_g4_keyword_plan.md` sha `f5678965a448`. BM25 tính trong bộ nhớ (dense chạy một lần mỗi
   dạng câu hỏi), **không tạo collection**; NFC: NOT RUN có lý do (G1.4 đã đo). Chờ C review + A duyệt.
+- **B 13:45: B18 chạy xong** (plan `d7e53186b364`, 0 USD; report `phase_8_1_g4_keyword_implementation.md`): cổng
+  tương đương PASS; không biến thể nào tốt hơn (A tách từ, E khử dấu, P k/b) ⇒ test NOT RUN. Tín hiệu: khử dấu ở native
+  cứu mạnh câu không dấu (sparse@100 0,25→0,81, MRR 0,21→0,41) nhưng mất 4 câu có dấu ⇒ 8.2: chỉ dùng khi câu không dấu.
+
+### B19 — bản nháp bảng kết luận G5 (giao 13:44 25/10; chỉ viết, 0 USD)
+
+Spec 8.1 §5 G5 + §6 tiêu chí 3 ("mỗi dòng top 10 của C11 có kết luận hoặc lý do NOT RUN"). Viết
+`report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_decision_table_draft.md`:
+- mỗi dòng của bảng rà C11 (`phase_8_1_decision_inventory.md`, ưu tiên top 10 + "ngay dưới top 10") → **giữ / thay bằng X
+  (chênh, CI, test xác nhận) / chưa rõ / NOT RUN (lý do)**, dẫn đúng report + mục (G0–G4, G4K, G3 khi C xong — G3 để
+  "chờ" tới lúc đó);
+- danh sách đề xuất 8.2 có bằng chứng (vd context 10; khử dấu khi câu không dấu; NFC; pool rộng; luna rerank tín hiệu; P1/H8)
+  — mỗi cái: lợi đo được, rủi ro, chi phí, cần User duyệt gì;
+- danh sách "khâu còn dính" (spec G5; mục "Khâu còn dính" dưới + report G3/G4/G4K);
+- tách rõ quan sát / suy ra; không chép câu Golden / câu kín. A dùng làm nền cho G5; C review.
 
 ## Việc của C
 
@@ -250,6 +265,12 @@ câu hỏi (G1.4: không dấu sập 0,73→0,19); NFC câu hỏi (G1.4 đã th�
   - **13:07 A duyệt lại bản sha `9f00c460c3e9`** (= `e089243fb612` + §9: keyword thang 0–100, ngưỡng −2,0 điểm %; H3/H2 quyết
     so với H1, Holm 1 / 4; baseline chấm lại cùng lượt judge mù) — sau review của B. `hue_81_g3_h1` build trước mốc duyệt
     (chưa đo) — chấp nhận, ghi trong report.
+  - **13:41 G3 tới giờ:** H1, H3 không khác; H2 256/384/512 kém hơn (đoạn to tìm thấy nhiều hơn nhưng ít đoạn lọt ngân sách 750);
+    small-to-big kém hơn; còn tiền tố + S1–S3. §10 G3.B10 (đoạn to dưới ngân sách context 10): B review `phase_8_1_g3_b10_review.md`
+    changes_requested; A quyết M1 = so với H1 dưới cùng B10 (Holm 2), so runtime ctx10 là điều kiện phụ; chờ sha mới.
+    **13:47 A duyệt §10 bản sha `d89a919067ba`** (đúng các điểm review của B; điều kiện phụ = cận trên CI ≥ 0 + sàn).
+  - **13:41 B18 xong chạy** (0 USD): không biến thể "tốt hơn". Khử dấu ở native: câu không dấu sparse@100 0,25→0,81, MRR +0,20
+    nhưng mất 4 câu có dấu ⇒ kém hơn theo luật; tín hiệu 8.2: chỉ khử dấu khi câu hỏi không dấu. B viết report → C review.
 - **C29 (giao 12:50) — chạy G3 theo plan `e089243fb612`** §5 bước 1–6. Code: `full_corpus_pipeline.py` (`chunks=None`) +
   `g3_chunking.py` mới (khai báo trong STATUS_C). Qdrant chỉ `hue_81_g3_*`, ≤ 3 cùng lúc; paid chỉ §4, trần G3 0,10 USD,
   lượt ≤ 0,05 USD, ước lại từ pilot. Không đổi chunker production / settings / runtime; không mở câu kín; không commit.

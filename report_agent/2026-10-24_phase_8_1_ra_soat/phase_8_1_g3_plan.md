@@ -229,3 +229,46 @@ Khâu còn dính, ghi cho G5 / 8.2 (không sửa ở G3):
    so với baseline**.
 3. **§4:** được dùng lại câu trả lời G2.0 / G2.1a làm baseline. Nhưng **điểm của baseline phải chấm lại cùng lượt judge mù**
    với câu trả lời G3 (judge dùng quota, 0 USD).
+
+## 10. G3.B10 — đoạn to dưới ngân sách cỡ context 10 (A đề xuất 25/10 sau H2; ghi trước khi đo)
+
+**Lý do:**
+- G2.1a: context 10 đoạn tốt hơn, đã xác nhận trên test.
+- G3 H2: đoạn to tìm thấy nhiều hơn (T 512 ở top-10 5/26/1), nhưng mất câu ở ngân sách 750 token.
+- Câu hỏi: **đoạn to có thắng khi ngân sách bằng mức context 10 không?**
+
+**Định nghĩa (ghi trước):**
+- **B10** = trung vị token `o200k_base` của khối bằng chứng 10 đoạn context runtime (`ctx10_chunk_ids` của `base.jsonl`, đóng gói
+  như `FullCorpusContextBuilder`), trên dev số chính trong kho (88 câu), làm tròn lên bội 50. Ghi
+  `data/phase_8_1/g3/budget10.json` **trước** khi tính biến thể nào.
+- **Context-B10** = như context-B (§1), lấy đoạn theo hạng trong top-10, dừng ở đoạn đầu tiên làm vượt B10.
+- **Phép so quyết** (A 25/10, theo review của B, `phase_8_1_g3_b10_review.md` M1): biến thể dưới B10 **vs H1 dưới cùng B10**
+  (`ctxB10` của `h1`). Chỉ đổi cách chia. **Holm 2.**
+- **Điều kiện phụ** — chỉ để được đề xuất thay G2.1a ở 8.2: so với runtime **context 10 đếm theo số đoạn** (`ctx10_gold_all`
+  của `base.jsonl`, cấu hình G2.1a) phải không vi phạm sàn (0 câu mất) và **không kém có ý nghĩa: cận trên CI 95% của chênh
+  ≥ 0** (A chốt theo ý B; chữ "cận dưới" ghi trước đó là nhầm), như §9.2. Theo dõi thêm: runtime dưới chính B10 (`ctxB10` của base).
+- **Biến thể:** `h1-h2_384`, `h1-h2_512` (dựng trên H1, như §3).
+- **Chỉ số và luật:** như §2 + §9, thay context-B bằng context-B10.
+  - quyết: `ctxB10_gold_all` của biến thể vs của H1, CI > 0 sau Holm;
+  - sàn: 0 câu mất so với H1;
+  - mức tụt: keyword coverage trong context-B10, cận dưới CI ≥ −2,0 điểm %.
+
+**Cách tính (không build lại, không Qdrant):**
+- Retrieval của các biến thể không đổi: top-10 từng câu đã lưu ở `h1-h2_384.jsonl` / `h1-h2_512.jsonl`, chạy thật ở 13:22 /
+  13:29.
+- Harness dựng lại danh sách đoạn của biến thể bằng `make_chunks`, kiểm sha khớp `variant.json` lúc build. Sau đó đóng gói lại
+  context-B10 từ top-10 đã lưu.
+- Đây là dùng lại kết quả retrieval (cùng đầu vào, tất định), chỉ khâu đóng gói context là tính mới. Lý do ghi trong report.
+- Thêm vào harness lệnh `rebudget` (đọc JSONL + budget file, ghi JSONL mới tên khác) và tùy chọn `compare --a-fields` (so
+  `ctxB10` của biến thể với `ctx10` của baseline cho điều kiện phụ). Không đổi production.
+- **Cổng tự kiểm** (review B m2), chạy trước khi tính B10:
+  - `rebudget --budget 750 --prefix ctxB` trên `base`, `h1`, `h1-h2_384`, `h1-h2_512` phải ra **giống hệt** `ctxB_chunk_ids`
+    / `ctxB_tokens` / đoạn đúng / keyword đã lưu từ lượt chạy thật;
+  - không khớp ⇒ dừng.
+
+**Nếu "tốt hơn":**
+- Xác nhận trên test bằng retrieval thật: build lại biến thể đó (record mới), `run --group test`, rồi tính B10 tương tự. Miễn phí.
+- Sau đó báo A trước khi chạy §4 (câu trả lời paid). Lượt câu trả lời §4 khi đó dùng **context-B10** (cấu hình đã thắng),
+  không dùng context 5 / 10 đếm theo số đoạn (review B m1).
+
+**Nếu không:** ghi kết luận, khép G3. §4 NOT RUN.
