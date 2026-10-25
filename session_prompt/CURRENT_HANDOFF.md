@@ -15,6 +15,7 @@ kiểm người chấm); Session D (`WORKFLOW.md` §10); `AGENTS.md` (bản chí
 ## Phiên chiều 25/10 — quyết định của User (11:20)
 
 - Quyền phiên: A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (8.1 vẫn trần 0,5 USD); commit/push như thường trực.
+- **12:27 User đi ngủ trưa:** "tiếp tục điều phối, cải thiện dự án, thực nghiệm, so sánh, phát triển" — A tự điều phối trong quyền trên; việc cần User (mẫu câu kín bản 5, khóa G0.6 nếu cần) gom lại báo khi User quay lại.
 - **Duyệt G4-A và G4-B** (pool 100) — ghi vào spec 8.1 §5 G4 ("Sửa đổi User duyệt 25/10/2026").
 - **GPU yếu: mỗi lượt chạy GPU chỉ 20–30 câu**; **trước khi chạy phải kiểm GPU thật đang dùng** (không để chạy nhầm CPU).
 - B16 mục "STATUS_B.md chưa commit" là cũ: STATUS_B/C đã commit ở `6c168e6`.
@@ -93,7 +94,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
 | B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 11:36 vòng sửa 1 xong — plan sha `a4adfc8eedd9`, chờ C review vòng 2 + A duyệt |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C24 dấu câu kín; review G4/G2 khi B nhắn | 11:48 C24 xong: 16 dòng thêm dấu, kiểm độc lập ĐẠT, check exit 0, kín v4 md5 `a095e08bd7ac`, mẫu bản 4 `ad205c839bd0` — `phase_8_1_g0_4_sealed_review.md` §8; chờ User (2/21/33, mẫu 4); C23 đóng (`b9789f4`) |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C25 đáp án câu kín; review G4/G2 khi B nhắn | 12:13 C25 xong: 4 đáp án sửa (11 theo User, 18, 26, 36; lặp, ảnh hưởng thấp), kiểm độc lập ĐẠT, check exit 0, kín v5 md5 `6d413c8d98fa` (backup v4 `a095e08bd7ac`) — `phase_8_1_g0_4_sealed_review.md` §9; chờ User: 2/21/33, dòng 6 + dữ kiện phụ (3/19/24/29/33). C24 xong (§8) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -189,6 +190,28 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
   4. Làm lại `sealed_user_sample.md` (bản 4, cùng 15 dòng) để User xem lại; `sealed_realism.jsonl` giữ nhãn.
   5. 3 dòng `capability_only` (2, 21, 33): **chờ User**; User trả lời trước bước 2 thì gộp vào cùng lượt sửa.
   - Đầu ra: thêm §8 vào `phase_8_1_g0_4_sealed_review.md` (chỉ số đếm, md5, không chép câu); nhắn A. 0 USD.
+- **C25 (giao 12:05 25/10) — sửa / rà `reference_answer` câu kín** (User duyệt mẫu bản 4: câu hỏi ổn; một đáp án lặp
+  chủ ngữ, thiếu tự nhiên). Nhận xét nguyên văn của User: `knowledge-base-hue/evaluation/phase_8_1/sealed_user_feedback_private.md`
+  (**C không đọc**; chỉ sub-agent đọc). Như C24: C `cp` backup (`sealed_authoring_v4_backup.jsonl`, md5) → sub-agent mới
+  sửa đúng dòng User nêu theo đề xuất của User **và** rà cả 36 `reference_answer` (sai / thiếu so với nguồn, mơ hồ, lặp,
+  thiếu tự nhiên), chỉ sửa chỗ rõ lỗi, ghi mức ảnh hưởng tới chấm → sub-agent mới khác kiểm so với backup + `check
+  --authoring` exit 0 → §9 trong `phase_8_1_g0_4_sealed_review.md` (số dòng, loại lỗi, md5; không chép câu) → nhắn A.
+  Chỉ sửa `reference_answer` (câu hỏi giữ bản 4). 3 dòng 2/21/33 vẫn chờ User. 0 USD.
+- A song song (12:05): sub-agent chỉ đọc rà `reference_answer` của Golden 176 cùng loại lỗi → `data/phase_8_1/golden_reference_audit.md`;
+  **không sửa Golden** — A trình User danh sách rồi mới quyết.
+- **12:20 User duyệt "sửa theo đề xuất"** (phương án 1 của A + 3 dòng kín 2/21/33): nguyên tắc — đáp án chỉ trả lời điều
+  câu hỏi hỏi; chỉ thêm điều kiện khi thiếu nó thì sai / gây hiểu lầm; chi tiết phụ đúng nguồn giữ nguyên.
+  - **Golden (A qua sub-agent; C review sau):** sửa `reference_answer` 10 câu 23, 41, 46, 92, 93, 141, 151, 157, 165, 174
+    ở file authoring → `merge` → `smoke 3 24 42 44 55 82 114 141 155 163`; 5 câu "chưa chắc" (19, 88, 115, 124, 152) giữ.
+    Backup: `knowledge-base-hue/meta/golden_backup_2026-10-25/` (official md5 `c30b56f22bd3`, smoke `fae56cd0515f`).
+    Báo cáo: `data/phase_8_1/golden_reference_fix_2026-10-25.md`. 7B Run 1 không còn so trực tiếp trên 10 câu này.
+    **Xong 12:3x** (A tự kiểm: đúng 10 dòng, chỉ `reference_answer`, `check` exit 0; official md5 `b40ca15ef5f8`, smoke
+    `d80b58c50f38`). 46/157 còn lặp cụm "trung tâm thành phố" vì keyword chứa cụm đó — giữ. **C27: C review** →
+    `phase_8_1_golden_fix_review.md`.
+  - **C26 câu kín:** dòng 2, 21, 33 sửa theo đề xuất v3 (`sealed_review_notes_private_v3.md`); dòng 6 bỏ quy định ngoài
+    điều câu hỏi hỏi; dòng 3/19/24/29/33 giữ chi tiết phụ. Quy trình như C24/C25 (backup v5, sub-agent sửa, sub-agent khác
+    kiểm, `check --authoring`), cập nhật `sealed_realism.jsonl` (2/21/33 → natural nếu người kiểm đồng ý), rồi mẫu
+    `sealed_user_sample.md` bản 5 (đánh dấu dòng đổi câu hỏi / đáp án) để User xem lần cuối → §10 report.
 
 ## Việc của A
 
