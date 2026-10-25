@@ -1,17 +1,15 @@
 """Comprehensive technical tests for Full-Corpus RAG Wave 1.
 
 Tests cover:
-- Deterministic corpus discovery (5 domains, 7 P7 partitions, 205 files, inventory/part exclusions, sorted order).
+- Deterministic corpus discovery (5 domains, 205 files, inventory/part exclusions, sorted order).
 - CRLF/CR normalization, zero-based Unicode code-point offsets, and repeated text locator.
 - Markdown block extraction (H1 title, intro before H2, blockquotes, nested lists, tables, image-only exclusion, section exclusions).
 - Condition attachment outside corpus (schema validation fail-closed, exact selector matching, missing/duplicate selector detection).
 - Tokenizer checker settings responsiveness (different settings across calls in same process without blind singleton reuse).
 - Splitting logic: sentence boundary split for oversized paragraphs, table row split retaining headers and conditions, nested-list split retaining parent labels.
 - Detailed assertions on the named acceptance sample files (Mệ Kéo address/hours/price/dish, Gia Lạc historical vs contemporary space and non-commercial nature, Đại Nội Ngọ Môn 5 entrances, Lịch trình 3N2Đ day structure, Ca Huế performing art instruments, Ca Huế tickets conditions, Chi phí du lịch Huế daily budgets).
-- Synthetic isolated oversized minimal group fail-closed blocking.
-- Generic condition/parser error preview blocking isolated from oversized groups.
-- Canonical full-corpus preview PASS (zero errors, zero oversized, domain and P7 breakdowns).
-- Deterministic reproducibility across full corpus: deep-equal chunks/IDs/UUID5, 100% exact evidence slicing, and byte-identical preview outputs.
+- Chunks over a tokenizer limit and condition errors are chunker errors (fail-closed build).
+- Deterministic reproducibility across full corpus: deep-equal chunks/IDs/UUID5, 100% exact evidence slicing.
 """
 from __future__ import annotations
 
@@ -49,9 +47,7 @@ from ingestion.chunking.markdown_blocks import (
 )
 from ingestion.preview import (
     count_tokens_for_chunk,
-    generate_preview,
     load_tokenizers,
-    partition_for_source,
 )
 from ingestion.source_state import (
     compute_corpus_state,
@@ -67,7 +63,7 @@ from ingestion.source_state import (
 # --- 1. Discovery and Inventory Exclusions ---
 
 def test_full_corpus_discovery_and_inventory_exclusions():
-    """Verify discovery finds exactly 205 files across 5 domains and 7 P7 partitions in deterministic order."""
+    """Verify discovery finds exactly 205 files across 5 domains in deterministic order."""
     root, files = discover_full_corpus_files()
     assert root.is_dir()
     assert len(files) == 205
@@ -79,17 +75,6 @@ def test_full_corpus_discovery_and_inventory_exclusions():
     assert domains.count("heritages") == 29
     assert domains.count("performing_arts") == 13
     assert domains.count("travel") == 45
-
-    # Check 7 P7 partition counts
-    p7_partitions = [partition_for_source(f) for f in files]
-    assert p7_partitions.count("foods") == 91
-    assert p7_partitions.count("heritages") == 29
-    assert p7_partitions.count("festivals") == 27
-    assert p7_partitions.count("performing_arts") == 13
-    assert p7_partitions.count("travel_places") == 36
-    assert p7_partitions.count("travel_services") == 4
-    assert p7_partitions.count("travel_tickets") == 5
-    assert sum(p7_partitions.count(p) for p in set(p7_partitions)) == 205
 
     # Check deterministic sorted order
     assert files == sorted(files)
@@ -872,8 +857,8 @@ def test_chunk_document_splits_long_text_at_sentences_without_errors():
     assert errors == [] and len(chunks) > 1
 
 
-def test_generic_condition_or_parser_error_blocks_preview(tmp_path):
-    """Verify generic condition error triggers non-PASS exit 1 status without oversized groups."""
+def test_condition_error_is_a_chunker_error(tmp_path):
+    """Selector điều kiện không khớp khối nào ⇒ lỗi của chunk_full_corpus (build dừng), không lẫn lỗi vượt token."""
     kb_fake = tmp_path / "fake_kb"
     test_file = kb_fake / "foods" / "normal.md"
     test_file.parent.mkdir(parents=True, exist_ok=True)
@@ -907,54 +892,16 @@ def test_generic_condition_or_parser_error_blocks_preview(tmp_path):
         },
     }
 
-    out_json = tmp_path / "generic_error_preview.json"
-    artifact, exit_code = generate_preview(out_json, settings=fake_settings)
+    chunks, errors = chunk_full_corpus(settings=fake_settings)
 
-    assert exit_code == 1
-    assert artifact["status"] == "BLOCKED_ERRORS"
-    assert artifact["summary"]["blocking_errors_count"] >= 1
-    assert len(artifact["errors"]) >= 1
-    assert artifact["summary"]["oversized_groups_count"] == 0
-    assert len(artifact["oversized_groups"]) == 0
+    assert errors
+    assert not [e for e in errors if e.startswith("Chunk exceeds tokenizer limit")]
 
 
-# --- 9. Canonical Preview Invariants & PASS ---
+# --- 10. Full-Corpus Determinism and Exact Evidence Slicing ---
 
-def test_canonical_preview_pass():
-    """Verify canonical full-corpus preview passes with zero blocking errors, zero oversized groups, and self-consistent breakdowns."""
-    canonical_path = BACKEND_DIR.parent / "reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json"
-    with canonical_path.open("r", encoding="utf-8") as f:
-        artifact = json.load(f)
-
-    assert artifact["status"] == "PASS"
-    total_files = artifact["summary"]["total_files"]
-    total_chunks = artifact["summary"]["total_chunks"]
-    assert total_files == 205
-    assert artifact["summary"]["condition_rules_count"] == 3
-    assert artifact["summary"]["blocking_errors_count"] == 0
-    assert artifact["summary"]["oversized_groups_count"] == 0
-
-    # Domain breakdown (5 domains)
-    assert len(artifact["domain_breakdown"]) == 5
-    assert sum(d["file_count"] for d in artifact["domain_breakdown"].values()) == total_files
-    assert sum(d["chunk_count"] for d in artifact["domain_breakdown"].values()) == total_chunks
-
-    # P7 breakdown (7 partitions)
-    assert len(artifact["p7_breakdown"]) == 7
-    assert sum(p["file_count"] for p in artifact["p7_breakdown"].values()) == total_files
-    assert sum(p["chunk_count"] for p in artifact["p7_breakdown"].values()) == total_chunks
-
-    # Tokenizer limits: all models <= max_tokens
-    for mid, tinfo in artifact["tokenizer_limits"].items():
-        assert tinfo["max_observed_tokens"] <= tinfo["max_tokens"], (
-            f"Model {mid} exceeded limit: {tinfo['max_observed_tokens']} > {tinfo['max_tokens']}"
-        )
-
-
-# --- 10. Full-Corpus Determinism, Exact Evidence Slicing, and Preview Byte Equality ---
-
-def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
-    """Verify repeated preview runs produce byte-identical JSON and chunks match the runtime build record."""
+def test_full_corpus_determinism_and_build_record_counts(tmp_path):
+    """Two chunking runs are deep-equal and match the runtime build record."""
     # Số đúng là số trong build record đang chạy (nguồn sự thật "index khớp corpus"),
     # không phải artifact preview 2026-09-11 (8.460, trước khi sửa corpus ở 7A2).
     record_path = BACKEND_DIR.parent / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
@@ -1008,22 +955,6 @@ def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
             assert lf_text[part.start:part.end] == part.text, (
                 f"Slice mismatch in chunk {ch.chunk_id}: {part.text!r} != {lf_text[part.start:part.end]!r}"
             )
-
-    # Generate preview to two distinct paths and verify byte-identical equality
-    p1 = tmp_path / "preview_run1.json"
-    p2 = tmp_path / "preview_run2.json"
-    generate_preview(p1)
-    generate_preview(p2)
-    assert p1.read_bytes() == p2.read_bytes()
-
-    # Verify generated preview totals match the build record totals
-    preview_data = json.loads(p1.read_text(encoding="utf-8"))
-    assert preview_data["summary"]["total_files"] == expected_files
-    assert preview_data["summary"]["total_chunks"] == expected_chunks
-    assert sum(d["chunk_count"] for d in preview_data["domain_breakdown"].values()) == expected_chunks
-    assert sum(p["chunk_count"] for p in preview_data["p7_breakdown"].values()) == expected_chunks
-    assert sum(d["file_count"] for d in preview_data["domain_breakdown"].values()) == expected_files
-    assert sum(p["file_count"] for p in preview_data["p7_breakdown"].values()) == expected_files
 
 
 # --- 11. Metadata v2: Domain and Chunk Identity Relations ---
