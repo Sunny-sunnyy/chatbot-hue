@@ -134,3 +134,9 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
 
 - Phiên sau: bước 1–6 mục "Phiên sau"; ghi phát hiện "22/22 từ chối nhầm thiếu fact trong context" vào bảng rà C11
   (dòng 6.4) khi viết G5.
+- **Khi duyệt B16, trả lời rõ trong mục B17** (B nêu khi thử mở phiên 25/10): (1) ai sửa plan theo
+  `de_xuat_cho_du_an.md` mục 1–5 — đề xuất: B sửa, C review, A duyệt **sau** C và ghi `sha256sum` bản duyệt (WORKFLOW
+  §9.1); mục nào bắt buộc / tùy; (2) G4 có chạy trước khi khóa G0.6 không (G4 chỉ retrieval, không dùng câu kín);
+  (3) G4-B pool 100 đổi phạm vi spec ⇒ **trình User duyệt**, không chỉ báo; (4) số chính G4/G2 tính lại khi User quyết
+  9 nhãn tự nhiên; (5) lần tải M1/M2 đầu tiên chạy không `HF_HUB_OFFLINE`, sau đó bật lại; (6) dòng "đang giữ GPU" trong
+  `STATUS_<X>.md` khi chạy GPU.

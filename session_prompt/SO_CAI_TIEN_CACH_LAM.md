@@ -4,8 +4,10 @@ Cập nhật lần cuối: 10:17 25/10/2026 (A). A ghi theo skill `skills/improv
 thay đổi ở luật / skill / rào bằng máy, sinh từ sự cố có bằng chứng hoặc quyết định User; User duyệt cho thử;
 vòng sau xem giữ hay gỡ. Trạng thái: `đề xuất` → `đang thử` → `đang dùng` / `gỡ` / `bác`.
 
-Mốc độ dài file mở phiên (`wc -l`, 25/10 10:17): START_SESSION 45 · Session_Prompt 163 · WORKFLOW 202 ·
-Project_Status 183 · CURRENT_HANDOFF 130 · AGENTS 22 — tổng 745 dòng / ~59 KB. User 25/10: không cắt nội dung còn
+Mốc độ dài file mở phiên (`wc -l`, 25/10 10:45, sau đợt cải tiến): START_SESSION 45 · Session_Prompt 167 · WORKFLOW 202 ·
+Project_Status 190 · CURRENT_HANDOFF ~143 · AGENTS 23 — khoảng 770 dòng. Thử mở phiên (sub-agent đóng vai B, 25/10
+10:4x): nắm đúng vai, việc, 6 luật cứng, vị trí hook / sổ / Session D / đề xuất; câu hỏi còn lại là quyết định dự án
+(ghi ở `CURRENT_HANDOFF.md` "Việc của A"). User 25/10: không cắt nội dung còn
 hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 
 ## Thay đổi

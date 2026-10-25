@@ -153,7 +153,7 @@ yêu cầu cũ trong `gửi chatgpt/` (User nhắc 2026-10-24).
   `uv sync`, `uv run python …`, `uv run python -m pytest …`, `uv run uvicorn …`.
   Thêm/đổi dependency bằng `uv add` / `uv remove` (cập nhật cả `uv.lock`).
 - Không `pip install`; không tạo venv khác; không dùng system Python, conda hay
-  `.venv` của dự án khác (ví dụ `mekongai-template`) để chạy hoặc làm bằng chứng PASS.
+  `.venv` của dự án khác trên máy để chạy hoặc làm bằng chứng PASS.
 - Qdrant `127.0.0.1:6335` (gRPC 6336). Không mặc định đặt `HF_HUB_OFFLINE`; dùng
   khi việc hoặc bẫy đã biết yêu cầu (`Project_Status.md` §8).
 - CodeGraph là công cụ tùy chọn; lỗi/thiếu index không chặn việc; không init/xóa
