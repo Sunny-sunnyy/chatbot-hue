@@ -30,8 +30,9 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
 - **Gói 3a / 3b — XONG 20:37, chờ B review.** `report_agent/2026-10-25_ra_soat_code/sua_3_implementation.md`. 5 file (`evaluation/full_corpus_eval.py`
   `paired_stats`; `llm/full_corpus_prompt.py` `build_answer_input`; generator; 2 test). So cặp trên file thật giống byte; chuỗi gửi model 25 câu tự viết
   giống byte; cổng ổn định uvicorn đạt (2 câu, ~0,0004 USD ước — route không log usage). Chưa commit.
-- **Đang khai báo sửa (21:4x):** `report_agent/2026-10-25_ra_soat_code/sua_1b_review.md` (review gói 1b); `/tmp/c41/` (tạm).
-- **Plan đợt 3 (gói 2 + 5 + B-12) — XONG, bản 2 21:31 sha `8bbe98640c80`:** `report_agent/2026-10-25_ra_soat_code/sua_dot3_plan.md`; chờ B review sau 1b. Chỉ plan, 0 USD.
+- **Review gói 1b — XONG 21:48:** `report_agent/2026-10-25_ra_soat_code/sua_1b_review.md` = ready (K1–K7 đạt khi chạy lại; m1 RetrievalConfigurationError ⇒ 409 không tới được; m2 REPO_ROOT).
+- **Đang khai báo sửa:** không.
+- **Plan đợt 3 (gói 2 + 5 + B-12) — bản 3 21:50 sha `7c8c660558e5`** (sửa M-1, m-1…m-6 theo review B): `report_agent/2026-10-25_ra_soat_code/sua_dot3_plan.md`; B kiểm phần sửa.
 - **Gói 3c phần free — XONG 20:45:** `report_agent/2026-10-25_ra_soat_code/sua_3c_citation_v2.md`; file dẫn xuất `data/ra_soat_code_2026-10-25/citation_v2/`
   (14 lượt + meta sha nguồn). 69 → 14 lỗi; `none` +4 → +2 (hết vi phạm luật ≤ +2, chưa kết luận — cần test paid); `low` vẫn vi phạm; tín hiệu P2 mất;
   A/A context 10 = 0. 0 USD.

@@ -24,9 +24,11 @@
 - **Gói 1b — XONG 21:3x, chờ review C** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_implementation.md`. 26 file (25 sửa + 1 test mới), chưa commit.
   K1–K7 đạt: nạp đôi 0 ở 11 điểm vào + pytest; T-A / T-B / T-C đỏ ⇒ xanh (T-C User chạy `!`); 15 file test 198 passed (C-17 không tăng); T1 sha
   giống byte; notebook 3 / 3; cổng ổn định đạt (~0,0004 USD ước). A cần sửa `chạy_môi_trường.md:10-12`, `BAO_CAO_KHO_DU_LIEU.md:89`, Project_Status §8.
-  **File đang khai báo sửa:** 26 file gói 1b (giữ tới khi A commit). Script `/tmp/b30/`.
+  A commit `1e4acd0` (+ báo cáo `b60f362`) ⇒ hết khai báo 26 file.
 
 - **Review plan đợt 3 (C) — XONG 21:36** sha `8bbe98640c80` ⇒ `sua_dot3_plan_review.md`: changes_requested (M-1 `git mv` sang `meta/` đưa file vào index; m-1…m-6).
+
+- **Đang làm (21:5x): ứng viên cải tiến khâu dựng kho** ⇒ `report_agent/2026-10-25_ra_soat_code/ung_vien_cai_tien_B.md` (mới). Chỉ đọc, 0 USD.
 
 ## Ý cải tiến (cho đợt tìm hướng tốt hơn sau 5 gói — giả thuyết, chưa đo)
 - Chia đoạn: bỏ ràng buộc tokenizer huydang 256 (model không chạy ở runtime) ⇒ đoạn dài hơn / ít đoạn vụn; 8.1 G3 H1 đã đo đoạn đúng không đổi —

@@ -170,6 +170,10 @@ G5 + spec 8.2 để không lặp cái đã đo) ⇒ A gộp, viết yêu cầu n
   Notebook Run All bản tạm 3 / 3 đạt, repo outputs rỗng. B-17 (lệnh) để sau 1b như giao. 0 USD.
 
 **Đợt 2 — ĐÓNG 21:50:** gói 1b `1e4acd0` (B làm, C review ready; T-C User `!` đỏ ⇒ xanh), gói 3 `47a4e32` (C làm, B review), gói 4 `1b9c126`; 3c phần free xong (`sua_3c_citation_v2.md`). **Đợt 3:** plan `sua_dot3_plan.md` bản 2 `8bbe98640c80` B review **changes_requested** (M-1 `git mv` vào thư mục ignore vẫn vào index) ⇒ C bản 3 ⇒ B kiểm ⇒ A duyệt.
+**Đợt 3 — A DUYỆT plan bản 3 sha `7c8c660558e5` (21:5x; B kiểm phần sửa ready).** C thực hiện trên **nhánh `dot3`** (từ `main` sau commit duyệt),
+**C được commit + push nhánh `dot3`** theo đúng 12 commit / nhóm của plan (quyền ghi rõ cho việc này; không commit `main`, không merge). Mỗi nhóm:
+cổng D của plan trước khi commit. Xong cả nhánh ⇒ B review toàn nhánh (`git log main..dot3`, từng commit) ⇒ A merge fast-forward vào `main` + 4 chỗ báo
+cáo. Trong lúc đó working tree chung ở nhánh `dot3`: B chỉ đọc; A không commit `main` cho tới khi merge.
 **(cũ) Đợt 2 — trạng thái 20:3x:** gói 4 (B26) **ĐÓNG** (C review ready + kiểm lại m1–m4; m3 B đúng — A kiểm `g3_plan:114-115`); plan 1b bản 3 sha `8b36bab7901c` — **A DUYỆT 20:4x** (C review §7 ready) ⇒ B sửa code (thứ tự: viết T-A/T-B/T-C → đỏ trên main [T-C: User `!` ở terminal B] → sửa → xanh → cổng ổn định) — bản 2 **changes_requested** (C: P1 T-A so lớp chat.py không import, P2 T-C xanh giả nếu Qdrant tắt; m1–m4) ⇒ B bản 3; A chọn quy ước **(b) import trần** (C đồng ý); plan 1b `sua_1b_plan.md` sha `aa9bbf3650d6` (bản 2, 20:2x: thêm bảng lệnh phải đổi §4 bước 5; bản 1 `97bf89fc5926`; B đề xuất quy ước (b) import trần) ⇒ **C review** ⇒ A duyệt sha; 3a / 3b (C) tạm dừng tới khi review xong.
 **Đợt 2 (A giao 20:09, song song):** B viết **plan** 1b (chưa sửa code) trong lúc C review B26; C làm 3a / 3b sau review. Gói 1b (B-01 / C-01 + C-11 + tách lỗi "model không nạp" khỏi 409) — B viết plan so 2 quy ước import (đếm file / lệnh
 phải đổi, `sys.modules`, T1 giống byte) ⇒ C review ⇒ A duyệt sha; rồi B-17. Gói 3a / 3b (C-02, C-20, C-03) — C.
