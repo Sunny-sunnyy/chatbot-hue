@@ -99,6 +99,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-25 16:5x | **Dừng 8.2, rà code Phase 0–7 trước** khi đi tiếp (User hỏi về code: file / folder / guide, không phải dữ liệu kho). B1 cất nhánh `p82-b1` | User; `report_agent/2026-10-25_ra_soat_code/` |
 | 2026-10-25 16:21 | **Spec 8.2 approved** (sha `dabae90b2b60`): hai bước không build lại index; mốc người đọc cặp mù; E1 → E2 → E3a / E3b; A tự đưa vào chatbot khi qua luật + review (E1, E3b chờ User); trần 0,5 USD | User; spec 8.2 |
 | 2026-10-25 15:27 | **User đóng Phase 8.1**; G0.6 khóa 15:22 (câu kín 36 × 4, manifest `9ea480d0d083`) | User; `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md` |
 | 2026-10-25 15:15 | **Câu hỏi không dấu: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; bỏ nghiên cứu ChatGPT về không dấu (prompt B21 không gửi). Mẫu câu kín bản 5: User duyệt | User |
@@ -196,6 +197,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   `limit` như production. Sparse Qdrant tính float32 ⇒ phá hòa có thể khác float64 trong bộ nhớ (G4K).
 - Model tự suy luận (luna listwise) ra ~270 token/câu, gấp ~3 ước ⇒ lượt có phí luôn pilot 10 câu, ước lại từ pilot.
 - So điểm judge giữa biến thể: chấm baseline **cùng lượt mù** (nhiễu judge-only 2/88 câu).
+- `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở 8.1 G2) ⇒ code xử lý / đếm / đánh số lại citation phải bắt
+  cả hai dạng (25/10 B24: file đọc cặp mù lộ bên vì chỉ bắt `[n]`).
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).
 - Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
   clone): bản clone mới phải bật một lần. Hook chặn dòng thêm mới có tên dự án khác, kể cả khi trích tên file tài liệu

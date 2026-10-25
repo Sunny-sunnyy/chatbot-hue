@@ -1,18 +1,43 @@
-# STATUS A — cập nhật 15:55 25/10/2026 (MỞ PHIÊN tối 25/10)
+# STATUS A — cập nhật 17:07 25/10/2026 (KẾT PHIÊN tối 25/10 — User dừng, phiên sau kiểm tra lại)
 
 Terminal: `hue-rag-00` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-de`, C = `hue-rag-d6` (cả ba Claude Code,
-liên lạc trực tiếp).
+liên lạc trực tiếp; tên đổi mỗi lần mở).
 
-## Phiên tối 25/10
-- Mở 15:50; kiểm nhanh khớp (`f26485b`, hook bật, Qdrant 1 collection 8.459).
-- Quyền (User 15:5x, hết hạn cuối phiên): tự điều phối B/C rộng; API ≤ 1 USD.
-- Brainstorm 8.2 xong (User chọn: PA2 hai bước; mốc người đọc cặp mù; Bước 2 cả ba, luna cuối; A tự đưa vào chatbot, E1 chờ User; trần 0,5 USD).
-- Đang làm: nháp spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` bản 1 (sha `2c8d40e3aa4c`); B22 review (giao 16:1x). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` mở. Tiền: 0 USD.
-- Đang khai báo sửa: spec 8.2, `CURRENT_HANDOFF.md`, `report_agent/README.md`, file này.
+## Commit
+- Đầu phiên: `f26485b`. Phiên: `5e6936b` (spec 8.2), `f4353e2`, `bc568f1` (dừng 8.2), + commit kết phiên (`git log -1`).
+- Nhánh `p82-b1` (`f23d396`, đã push): code B1, chưa merge.
 
+## Đang làm / dở
+- Không có việc A đang chạy. Dở của cả nhóm: **rà code** (B25, C34 dở — phần đã rà ghi đầu `report_agent/2026-10-25_ra_soat_code/ra_soat_code_<B|C>.md`).
+- A còn nợ: review B1 (`phase_8_2_b1_implementation.md` sha `bb5fea83aeb6` ở nhánh `p82-b1`); trả lời Q1–Q3 plan E1; gộp `TONG_HOP.md` rà code.
+- Thứ tự phiên sau: `CURRENT_HANDOFF.md` "PHIÊN SAU" mục 1–4; câu hỏi cho User mục 1–8.
+
+## Đang khai báo sửa
+- không
+
+## Vừa xong (phiên tối 25/10)
+- Brainstorm 8.2 (4 câu) → spec 3 vòng B review → User duyệt 16:21 (`dabae90b2b60`).
+- B0 prep (file đọc cặp mù, `data/phase_8_2/b0/`; khóa `khoa.json` chỉ A) — B24 review 2 vòng ready; đưa User.
+- Review + duyệt plan B1 (`1a5ac660bd5d`); review C32 (rà kho) ready.
+- Dừng 8.2 theo User; cất B1 sang `p82-b1`; giao B25 / C34 rà code; tài liệu kết phiên + sổ cải tiến vòng 3 (W14, W15 đề xuất).
+
+## Tiền paid phiên này
+- 0,0369 USD (B, B1). A, C: 0 USD (sub-agent dùng quota).
+
+## Quyền phiên này (User 15:5x, hết hạn cuối phiên)
+- Tự điều phối B/C rộng; API ≤ 1 USD cả phiên; trần 8.2 0,5 USD (trong spec).
+
+## Đã học / bẫy gặp (phiên tối)
 - Đã học (16:3x): `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở G2) ⇒ code xử lý citation phải bắt cả hai;
   kiểm mù bằng code phải quét rộng (mọi ngoặc vuông có số), không chỉ đúng regex mình dùng để sửa (B24 F1 bắt được).
 - Spec 8.2 duyệt 16:21 (commit `5e6936b`); B1 plan duyệt 16:27 (sha `1a5ac660bd5d`); B0 prep vòng 2 chờ B kiểm.
+
+- 16:5x User: **dừng 8.2, rà code Phase 0–7 trước**. A cất B1 sang nhánh `p82-b1` (`f23d396`), main `bc568f1`; giao B25 / C34 rà
+  code chỉ đọc. Tiền 8.2: 0,0369 USD (B1).
+- Bẫy (16:4x): A hiểu "kiểm tra lại các phase" là rà dữ liệu, User muốn rà **code** ⇒ C32 lạc đề (0 USD). Khi câu hỏi của User có
+  hai cách hiểu (dữ liệu / code / quyết định), hỏi lại một câu trước khi giao việc.
+- Bẫy (16:58): commit plan E1 của C trước khi đọc kỹ ⇒ kiểm sau bằng script so 40 ký tự với Golden: chỉ trùng câu từ chối chuẩn
+  (có trong code public) — không lộ. Luật: đọc / quét file của session khác trước khi stage.
 
 ---
 Phần dưới: trạng thái kết phiên chiều 25/10 (terminal cũ `hue-rag-c6`).

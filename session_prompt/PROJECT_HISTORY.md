@@ -4,6 +4,17 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-25 (17:0x) — Spec 8.2 duyệt; B1 xong (nhánh `p82-b1`); **8.2 tạm dừng để rà code**; kết phiên
+
+- Brainstorm 8.2 (User chọn: hai bước không build lại index; mốc người đọc cặp mù; Bước 2 E1 → E2 → E3a / E3b; A tự đưa vào
+  chatbot khi qua luật + review, E1 / E3b chờ User; trần 0,5 USD). Spec `2026-10-25-phase-8-2-apply-winners-design.md` qua B22 review
+  3 vòng (5 major, 7 minor) → User duyệt 16:21 (sha `dabae90b2b60`, commit `5e6936b`).
+- B0: file đọc cặp mù 20 câu (A), B24 review bắt lỗi lộ bên qua `[Nguồn n]` → sửa → ready; chờ User đọc. B1 (B): context 10 + NFC
+  ở `search`, T1–T5 đạt, 0,0369 USD — cất nhánh `p82-b1` (`f23d396`), chưa A review. Plan E1 (C) chờ review.
+- C32 rà nội dung kho (A hiểu nhầm câu hỏi User — User muốn rà **code**): 139 mục, private, giữ cho đợt build lại.
+- User 16:5x: **dừng 8.2, rà code Phase 0–7 trước** ⇒ B25 / C34 rà code chỉ đọc (dở lúc kết phiên). Chatbot không đổi.
+  Commit `5e6936b`, `f4353e2`, `bc568f1` + kết phiên. Chi tiết: `CURRENT_HANDOFF.md` "Phiên sau".
+
 ## 2026-10-25 (15:27) — **Đóng Phase 8.1** (User "đóng 8.1"); chatbot không đổi
 
 - Thí nghiệm có luật ghi trước + review chéo: G1 chẩn đoán, G2 sinh câu trả lời, G3 chia đoạn (12 biến thể), G4 rerank

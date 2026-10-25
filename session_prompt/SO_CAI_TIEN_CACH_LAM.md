@@ -1,6 +1,6 @@
 # Sổ cải tiến cách làm — harness của các session
 
-Cập nhật lần cuối: 15:44 25/10/2026 (A, vòng 2 — kết phiên chiều 25/10, đóng 8.1). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
+Cập nhật lần cuối: 17:07 25/10/2026 (A, vòng 3 — kết phiên tối 25/10; đề xuất chờ User duyệt phiên sau). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
 thay đổi ở luật / skill / rào bằng máy, sinh từ sự cố có bằng chứng hoặc quyết định User; User duyệt cho thử;
 vòng sau xem giữ hay gỡ. Trạng thái: `đề xuất` → `đang thử` → `đang dùng` / `gỡ` / `bác`.
 
@@ -28,6 +28,8 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | W12 | 25/10 chiều | S13, S14 (không đảo ngược được) | Giữ mù câu kín: brief cấm tên file nguồn / nội dung trong báo cáo cuối; grep loại `evaluation/`, `meta/`, `*sealed*`; xóa script tạm; A nhắc User mô tả chung | `Session_Prompt.md` §5 | đang thử | còn lần lộ nào không; lặp ⇒ rào bằng máy (script grep chung) |
 | W13 | 25/10 chiều | S15 | Skill review: correction ghi ở file review + nhắn người làm (khớp `WORKFLOW.md` §3.2) | `skills/risk-gated-agent-review/SKILL.md` | đang thử | — |
 | I4 | 25/10 chiều | giữ gọn | Dời 4 bẫy kỹ thuật từ STATUS_B ra chung (HF cache `refs` rỗng; HNSW phụ thuộc `limit` + float32; model suy luận ~3× token; chấm baseline cùng lượt) | `Project_Status.md` §8 | đang thử | — |
+| W14 | 25/10 tối | S19 | **Đề xuất:** câu User có nhiều cách hiểu (dữ liệu / code / quyết định / tài liệu) ⇒ A nhắc lại bằng một câu "ý bạn là … đúng không?" trước khi giao việc | `skills/propose-options/SKILL.md` §1 | đề xuất | User duyệt phiên sau |
+| W15 | 25/10 tối | S20 | **Đề xuất:** trước khi stage file session khác viết, A chạy quét nhanh (so 40 ký tự với Golden + `grep` đường dẫn private) — script dùng lại ở `data/tools/` | `WORKFLOW.md` §9.6 + script | đề xuất | User duyệt phiên sau; hay để hook làm? |
 | I1 | 25/10 | S7 (luật chỉ ở memory Claude ⇒ agent khác không thấy) | Dời "nghiên cứu ChatGPT trước khi đề xuất, prompt đầy đủ" từ memory ra luật chung | `Session_Prompt.md` §9 | đang thử | User có phải nhắc lại không |
 | I2 | 25/10 | S3 | Dời "file nhiều session cùng ghi: đọc lại trước khi sửa, sửa từng đoạn" từ STATUS_A ra luật chung | `WORKFLOW.md` §3.2 | đang thử | có lần ghi đè nào không |
 | I3 | 25/10 | S8 | Sửa 2 memory cũ (mô tả "Reviewer/Implementer"; file tên 7A2 giữ trạng thái 8.1) | memory Claude | đang thử | — |
@@ -54,6 +56,10 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | S16 | Heredoc `<<EOF` không quote: backtick bị chạy như lệnh; f-string gặp `{}` | 2 lỗi cùng loại (25/10, A) | 1 lượt sửa; không hại | STATUS_A | ý chờ | A thấy lỗi in ra |
 | S17 | Ghi giờ ước thay vì `date` (A 12:40↔12:20; C review B20) | 2 (25/10, A + C) | đính chính | handoff; STATUS_C | luật đã có `WORKFLOW.md` §6 — lặp nữa ⇒ rào (mẫu lệnh ghi giờ) | A / C tự thấy |
 | S18 | Báo "xong" trước khi lệnh ghi file trả kết quả (C); danh sách "chưa commit" cũ (B) | 1 + 1 (25/10) | đính chính | STATUS_B, STATUS_C | ý chờ | B / C tự thấy |
+| S19 | A hiểu "kiểm tra lại các phase trước" là rà **dữ liệu kho**; User muốn rà **code** (file, folder, guide) | 1 (25/10 tối, A) | C làm lạc đề ~20 phút (0 USD, quota ~2,1M token); User phải nói lại | handoff; STATUS_A | chưa có ⇒ W14 (đề xuất) | User |
+| S20 | A stage + commit file của session khác (plan E1 của C) trước khi đọc | 1 (25/10 tối, A) | không (quét sau: chỉ trùng câu từ chối chuẩn) — rủi ro lộ Golden trên repo public | STATUS_A | `WORKFLOW.md` §9.6 "stage từng file đã review" (luật có, A làm sai) ⇒ W15 (đề xuất) | A tự thấy sau commit |
+| S21 | Kiểm mù bằng code dùng **chính regex** đã dùng để sửa ⇒ không thấy dạng `[Nguồn n]` | 1 (25/10 tối, A) | 1 vòng review | `phase_8_2_b0_prep_review.md` F1 | chưa có — ý chờ (bẫy kỹ thuật đã ghi `Project_Status.md` §8) | **review chéo** (B quét rộng) |
+| S22 | Brief sub-agent cấm `*inventory*` theo tên ⇒ bỏ sót 1 file runtime | 1 (25/10 tối, C) | 1 vòng rà bù | `ra_soat_kho_implementation.md` §5 | ý chờ | C tự thấy |
 
 **Kết vòng 2 — 15:44 25/10:** 7 sự cố mới (S12–S18), 3 thay đổi `đang thử` + 1 dời bẫy (User duyệt W11 cách a, W12; cho A sửa
 W13). Vòng trước: W1–W10, I1–I3 được dùng trong phiên (sổ, `run-experiment` có tiêu chí ghi trước + cỡ mẫu + nhiễu A/A ở
@@ -68,6 +74,10 @@ bản nháp spec 8.2; WORKFLOW §2 thêm lệnh đếm point. Lúc thử, govern
 
 **Kết vòng 25/10 11:05:** 11 sự cố, 11 thay đổi `đang thử`, 7 ý chờ. Không đề xuất thêm; phiên sau xem các mục `đang thử`
 có được dùng không, sự cố có lặp không.
+
+**Kết vòng 3 — 17:07 25/10 (kết phiên tối, User đi gấp):** 4 sự cố mới (S19–S22), 2 đề xuất (W14, W15) **chưa áp dụng** — chờ User
+duyệt phiên sau. W11 dùng được: B review spec 8.2 chỉ dựa gói căn cứ, tìm 5 major / 7 minor trước khi User duyệt; B1 plan có
+gói căn cứ, A review. W12: không lần lộ câu kín nào trong phiên. W13: correction ghi ở file review (B22, B24) — đúng.
 
 ## Ý chờ (chưa có sự cố đủ — chưa thành luật)
 

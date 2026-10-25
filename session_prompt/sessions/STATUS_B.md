@@ -1,47 +1,36 @@
-# STATUS B — mở phiên 2026-10-25 15:51 +0700 (chờ A giao việc; phiên trước kết 15:27, Phase 8.1 User đóng)
+# STATUS B — kết phiên 2026-10-25 17:07 +0700 (User kết phiên 17:0x; B25 dừng giữa chừng)
 
-Terminal phiên này: `hue-rag-de` (A = `hue-rag-00`; C chưa rõ — có thể `hue-rag-d6`; tên đổi mỗi lần mở; phiên trước B = `hue-rag-3f`) · Agent: Claude Opus 5.5 · Vai: thực thi
-User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, nhắn A, chờ việc tiếp.
+Terminal phiên này: `hue-rag-de` (A = `hue-rag-00`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
+User (25/10, terminal B): B báo cáo trực tiếp cho A; việc A giao = User nói "làm đi".
 
-## Trạng thái
-- **B22 xong 16:12 25/10:** review nháp spec 8.2 bản 1 (`2c8d40e3aa4c`) ⇒ **changes_requested**, 4 major (M1 E3 luna đo ở top-10 / pool 30, không phải pool 100; M2 E3 gộp 2 thay đổi; M3 luật dừng 3.4 chưa định nghĩa; M4 mù X/Y lộ qua citation [6]–[10]), 5 minor. File: `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_spec_review.md` (sha `84f5e36fd5f0`). 0 USD. Vòng 2 16:17 (bản `f5fd17418c41`): 9 finding vòng 1 đóng; changes_requested — N1 major (E3a thiếu sàn OOS / mức tụt câu trả lời), m6, m7 (review §7). Vòng 3 16:20 (bản `dabae90b2b60`): N1, m6, m7 đóng ⇒ **ready_for_user_confirmation**, 0 finding mở (review §8, sha `0cbe459212b1`). B22 xong; chờ việc tiếp.
-- (Phiên trước kết 15:27; Phase 8.1 User đóng.)
-- **B23 xong 16:46 (chờ review A):** B1 context 10 + NFC — T1 byte `cefb2d1a…` 158; T2 176/176 = G2.1a; T3 OOS 0/18, lỗi 0, Completeness không khác; T4/T5 live + NFD đạt. Paid **0,0369 USD** (+ live ≈ 0,0004 ước); judge 8 sub-agent (quota). Report `phase_8_2_b1_implementation.md`. Code chưa commit (7 file backend). B24 xong (B0 prep ready vòng 2).
-- **8.2 tạm dừng (User 16:5x, A báo):** B không sửa file B1 nữa; A cất code B1 sang nhánh `p82-b1` (không merge main); A review B1 khi 8.2 chạy lại.
-- **File đang khai báo sửa: không** (chờ việc rà code từ A).
-- Đang giữ GPU: **không** (G4 dùng 11:50–12:29, đã nhả).
-- **B21 không gửi** (User 15:15: câu hỏi không dấu **ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu). File prompt
-  private giữ nguyên (sha `6eb09b4066ca`), C review ready. Đề xuất 8.2 "câu không dấu" của B (G5, báo cáo User) vì vậy không
-  còn hiệu lực; NFC câu hỏi vẫn là việc riêng.
-- G0.6 khóa câu kín: B kiểm hash 15:19 ⇒ đạt (`phase_8_1_g0_6_review.md` §7).
+## Trạng thái kết phiên
+- **File đang khai báo sửa: không.** Đang giữ GPU: không. Server uvicorn kiểm (port 8000) đã dừng.
+- **B25 rà code luồng dựng index + nền — DỞ** (dừng 17:05). File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md` (đầu file ghi
+  đã rà / chưa rà). 10 finding tạm; nổi bật **B-01 (cao)**: `core.schema` và `backend.core.schema` cùng nạp trong API ⇒ `chat.py` / `app.py`
+  bắt sai lớp lỗi (Qdrant lỗi khi hỏi ⇒ 500 thay 503; corpus đổi lúc khởi động ⇒ 503 thay 409) — *suy ra* từ code + kiểm `is`, chưa tái tạo
+  bằng lỗi thật. **Phiên sau:** rà nốt chunker / markdown_blocks / upsert, test, notebook 03 / 04, guide phase_0–4 + phần index
+  `full_corpus_rag.md` + `guides/README.md` (2 sub-agent bị dừng, chưa ra file — giao lại); chốt top 10; rồi kiểm chéo top 5 của C.
+- **8.2 tạm dừng (User 16:5x).** B1 (B23) xong, T1–T5 đạt, report `phase_8_2_b1_implementation.md` (sha `bb5fea83aeb6`) — **chờ A
+  review**; code ở nhánh `p82-b1` (A cất, chưa merge). Dữ liệu `data/phase_8_2/b1/`.
+- Review xong trong phiên: B22 spec 8.2 (3 vòng ⇒ ready; User duyệt `dabae90b2b60`); B24 B0 prep (2 vòng ⇒ ready, `doc_cap_mu.md`
+  `37b66efb3499`). B đã thấy khóa X / Y ⇒ **B không làm người tóm nhãn** B0.
+- Việc còn chờ B (theo handoff): review plan E1 của C (sha `f86240418ca1`) khi 8.2 chạy lại.
 
-## Việc phiên 25/10 (đã xong; số và kết luận ở report)
-| Việc | Kết quả | Report / commit |
+## Việc phiên chiều 25/10 (sau 15:51)
+| Việc | Kết quả | File |
 |---|---|---|
-| B17 bước 1 — sửa plan G2/G4 | duyệt `a4adfc8eedd9` (2 vòng C23) | `phase_8_1_g2_g4_plan.md` · `b9789f4` |
-| B17 G4 rerank (GPU + luna) | không nhánh nào tốt hơn; luna tín hiệu MRR +0,17 | `phase_8_1_g4_implementation.md` · `ee557f9` |
-| B17 G2 sinh câu trả lời | **context 10 tốt hơn, xác nhận test**; P1 / G2.4 none / low kém hơn; còn lại không khác | `phase_8_1_g2_implementation.md` · `266c105` |
-| B18 G4 từ khóa BM25 | không biến thể nào tốt hơn; khử dấu = tín hiệu cho câu không dấu | `phase_8_1_g4_keyword_*` · `50006da` |
-| B19 bảng G5 | bảng chính thức G5 | `phase_8_1_g5_decision_table_draft.md` |
-| B20 3 báo cáo User | TIM_KIEM / SINH_CAU_TRA_LOI_API / CHIA_DOAN, C review ready | `23e0cbf` |
-| G5 M1 theo loại câu | context 10 lợi ở nhiều nguồn / so sánh | `phase_8_1_g5_by_category.md`, `g5_by_category.py` |
-| Review (B kiểm) | G3 ready · G3 §10 · G5 (2 vòng, ready) · C30 ready · G0.6 ready | `phase_8_1_{g3,g3_b10,g5,c30_user_reports,g0_6}_review.md` |
-| B21 prompt nghiên cứu không dấu | C ready; **không gửi** (User: ngoài phạm vi) | private |
+| B22 review spec 8.2 | 3 vòng: 4 major + 5 minor ⇒ 1 major + 2 minor ⇒ ready | `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_spec_review.md` |
+| B23 B1 context 10 + NFC | plan duyệt `1a5ac660bd5d`; T1–T5 đạt; A/A context 10; nhiễu citation 12 vs 8 | `phase_8_2_b1_plan.md`, `phase_8_2_b1_implementation.md` |
+| B24 review B0 prep | F1 major (lộ mù câu 17 `[Nguồn 8]`) ⇒ sửa ⇒ ready | `phase_8_2_b0_prep_review.md` |
+| B25 rà code (dở) | 10 finding tạm | `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md` |
 
-## Thay đổi CHƯA COMMIT của B (lúc kết phiên)
-- `session_prompt/sessions/STATUS_B.md` (file này), dòng B trong `CURRENT_HANDOFF.md`, §7 của
-  `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_6_review.md` (nếu A chưa commit) — A commit.
-- Không phải của B: `báo cáo nghiên cứu github.txt` (User).
+## Tiền paid phiên chiều 25/10
+- **B1: 0,0369194 USD** (log; 291.269 token vào / 15.585 ra, 176 câu) + live `/chat` 2 câu ≈ **0,0004 USD (ước — API không ghi usage)**.
+  Judge: 8 sub-agent Claude (quota, 0 USD). Review / rà code: 0 USD. (Phiên sáng 25/10, 8.1: 0,1653212 USD — đã ghi ở các report 8.1.)
 
-## Tiền paid (B, 25/10)
-- **0,1653212 USD** = G4 luna 0,0087972 + G2 0,1565240 (G2: 1.147.055 token vào / 83.637 ra). G3 / G4K / review: 0 USD.
-  Judge + `answer_type`: 29 sub-agent dùng quota Claude Code (0 USD). Không lượt nào vượt luật tiền A chốt (≤ 1,5 × ước pilot,
-  ≤ 0,05 USD / lượt, B17 ≤ 0,25 USD).
-
-## File private B tạo (không commit)
-- `data/phase_8_1/g4/` (rerank, `subset.json` `b9b6e6123ba4`), `data/phase_8_1/g2/` (câu trả lời, meta, `judge/`, `judge_test/`,
-  `judge_g24/`), `data/phase_8_1/g4k/` (dense + BM25 trong bộ nhớ). HF cache: M1 / M2 reranker (2,2 GB mỗi cái).
-- Log tạm `/tmp/b17/` (có thể mất).
+## File tạm / private
+- `/tmp/b24/`, `/tmp/b24_out*`, `/tmp/b25/`, log uvicorn: **đã xóa** (17:06).
+- Private B tạo phiên này: `data/phase_8_2/b1/` (lượt B1, judge, check / analyze, câu NFD tự viết); `data/ra_soat_code/` (rỗng).
 
 ## Đã học / bẫy gặp
 - 25/10 B22: đọc JSON private bằng `python3 -I` thay vì `uv run python -I` (A nhắc) ⇒ mọi lệnh Python, kể cả chỉ đọc, dùng `uv run`.
@@ -66,7 +55,13 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - Khi so điểm judge giữa biến thể, chấm baseline **cùng lượt mù** với biến thể (nhiễu judge-only đo được 2/88 câu).
 - HNSW: kết quả dense phụ thuộc `limit` (30 đầu của `limit=100` ≠ `limit=30` ở 1/108 câu) ⇒ tái lập runtime phải hỏi
   đúng `limit` như production. Qdrant sparse tính float32 ⇒ phá hòa có thể khác float64 trong bộ nhớ.
+- 25/10 B24: kiểm mù bằng regex chỉ dạng `[n]` bỏ sót `[Nguồn n]` do model tự viết ⇒ quét mọi cụm ngoặc vuông có số + "nguồn <số>".
+- 25/10 B23: giờ ghi trong file phải lấy bằng `date` ngay trước khi ghi (B ghi nhầm 16:37 khi `date` là 16:32 — đã sửa).
+- 25/10 B25: `python -m` từ `backend/` + `sys.path` có cả gốc repo ⇒ module nạp hai lần (`core.*` / `backend.core.*`), lớp lỗi khác nhau;
+  khi so `isinstance` / `except` giữa module, kiểm `sys.modules`.
 
-## Câu hỏi cho phiên sau
-- Không có câu hỏi mở cho 8.1. Mâu thuẫn corpus Hải Vân Quan (giá vé) vẫn chờ User — đề xuất sửa khi build lại index ở 8.2.
-- Đề xuất 8.2 "câu không dấu" đã bỏ (User 15:15: ngoài phạm vi); NFC câu hỏi vẫn là đề xuất riêng.
+## Câu hỏi cho A / User
+- B-01 (import kép): sửa cách import cho cả `backend/` là thay đổi nhiều file — chọn một kiểu import (`core.*` hay `backend.*`) và có tái
+  tạo lỗi 503 / 409 bằng app thử (collection không tồn tại, port khác) không — A / User quyết.
+- B-03: tham số sinh câu trả lời — hằng trong code hay yaml là nguồn (loader chỉ kiểm kiểu)?
+- Mâu thuẫn corpus Hải Vân Quan vẫn chờ User (sửa khi build lại index).
