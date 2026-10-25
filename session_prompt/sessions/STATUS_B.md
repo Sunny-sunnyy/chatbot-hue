@@ -1,4 +1,4 @@
-# STATUS B — cập nhật 2026-10-25 13:05 +0700
+# STATUS B — cập nhật 2026-10-25 13:55 +0700
 
 Terminal phiên này: `hue-rag-3f` (A = `hue-rag-c6`, C = `hue-rag-a1`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, nhắn A, chờ việc tiếp.
@@ -16,20 +16,31 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - **G4 xong 12:33** — report `phase_8_1_g4_implementation.md` (sha `6c70e903c0fa` lúc nhắn C). Kết luận: M1/M2 kém hơn
   (mất 1–3 câu); luna chưa rõ; G4-B kém hơn so runtime / không khác so mốc pool 100. Chờ C review rồi mới G2.
 - **G2 xong 13:05** — report `phase_8_1_g2_implementation.md` (sha `56b6afa4c7ce`). Context 10 tốt hơn + xác nhận test;
-  G2.1b / P2 / G2.3 không khác; P1 kém hơn (phạm sàn OOS); G2.4 đủ: none/low kém hơn (citation), high không khác.
-  Chưa commit: `g2_generate.py`, report G2.
+  G2.1b / P2 / G2.3 không khác; P1 kém hơn (phạm sàn OOS); G2.4 đủ: none/low kém hơn (citation), high không khác. Đã commit `266c105`.
+- **B18 (A giao 13:17) plan xong 13:22** — `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g4_keyword_plan.md` sha
+  `f5678965a448`; chờ C review (sau G3) + A duyệt. A 13:2x cho làm trước: harness + cổng tương đương (chưa biến thể).
+  Đang sửa: `backend/experiments/phase_8_1/g4_keyword.py` (mới); dữ liệu `data/phase_8_1/g4k/`.
+  13:3x: C review ready (2 minor) → sửa, plan sha `d7e53186b364`, chờ A duyệt. Cổng tương đương PASS: R0 = G1 runtime
+  108/108; N0 lệch 1 câu (162) do Qdrant float32 phá hòa khác — tập ứng viên giống hệt.
+  **13:45 chạy xong** A/E/P (0 USD) — report `phase_8_1_g4_keyword_implementation.md`; không biến thể nào tốt hơn.
+  Review G3 §10 → `phase_8_1_g3_b10_review.md` (đã commit `0c19756`). Plan B18 đã commit `68b9db0`.
+- **B19 (A giao 13:44) nháp G5 xong 13:50** — `phase_8_1_g5_decision_table_draft.md`; A tự review (C không cần, A 13:5x). G3 §10: B review →
+  C sửa → A duyệt `d89a919067ba`.
 - Đang giữ GPU: không (đã nhả 12:33; G4 dùng 11:50–12:29).
 - **Bước 2 (A duyệt `a4adfc8eedd9` 11:40, commit `b9789f4`):** mốc byte 11:39 PASS (`cefb2d1a…`, `1fbb5c17…`). Đang
   sửa: `backend/reranking/cross_encoder.py` (kwarg `max_length=None` + property `loaded_device`; mặc định = hành vi cũ),
   `backend/experiments/phase_8_1/g4_rerank.py` (mới), report `phase_8_1_g4_implementation.md` (mới); `pyproject.toml` + `uv.lock`
   (`uv add sentencepiece` → 0.2.2, A duyệt 11:5x cho M2).
 
-## Thay đổi CHƯA COMMIT của B
-- `backend/experiments/phase_8_1/g1_retrieval.py` — B16 (`--realism main`, file nhãn cuối).
-- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md` — §7 (B16) + C23 m1/m2.
-- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_g4_plan.md` — untracked, sha `a4adfc8eedd9` (vòng sửa 1).
-- `session_prompt/sessions/STATUS_B.md` (file này); dòng B + mục B17 trong `CURRENT_HANDOFF.md`.
-- `git diff --check` sạch.
+## Thay đổi CHƯA COMMIT của B (kiểm `git status` sau commit `0c19756`)
+- `backend/experiments/phase_8_1/g4_keyword.py` — mới (B18).
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g4_keyword_implementation.md` — mới (B18), chờ C review.
+- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_decision_table_draft.md` — mới (B19), A review.
+- `session_prompt/sessions/STATUS_B.md` (file này); dòng B trong `CURRENT_HANDOFF.md`.
+- Đã commit (A): B16 + plan G2/G4 `b9789f4`; G4 + `cross_encoder.py` + sentencepiece `ee557f9`; G2 + minor G4 `266c105`;
+  plan B18 `68b9db0`; review G3 §10 `0c19756`.
+- Không phải của B (đừng commit nhầm): `full_corpus_pipeline.py`, `g3_chunking.py`, report G3, `STATUS_C.md`,
+  `phase_8_1_g4_keyword_plan_review.md` (C), `báo cáo nghiên cứu github.txt` (User).
 
 ## Đã xong trước (đã commit)
 - B9–B15 (`1832201`, `74270ab`, `b8dbe95`, `0131afb`, `8156395`); chi tiết `PROJECT_HISTORY.md` / đợt `2026-10-24_phase_8_1_ra_soat`.
@@ -55,6 +66,10 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - `g1_retrieval run` với `--name` đã có sẽ ghi đè JSONL.
 - `g1/c_runtime.jsonl` cùng tập câu với `runtime.jsonl` (dev, 108 câu) — không phải tập test; số test lấy theo `split.json`.
 - Mở phiên: chưa biết terminal nào là A ⇒ gửi cùng tin cho cả hai peer, hỏi ai là A (25/10, ổn).
+- Danh sách "chưa commit" trong STATUS / tin nhắn bị cũ khi A commit giữa chừng (25/10: báo g2_generate.py chưa commit
+  trong khi đã ở `266c105`) ⇒ trước khi liệt kê, chạy `git status --short` + `git log --oneline -3`.
+- HNSW: kết quả dense phụ thuộc `limit` (30 đầu của `limit=100` ≠ `limit=30` ở 1/108 câu) ⇒ tái lập runtime phải hỏi
+  đúng `limit` như production. Qdrant sparse tính float32 ⇒ phá hòa có thể khác float64 trong bộ nhớ.
 
 ## Câu hỏi cho A
 - Duyệt plan sha `a4adfc8eedd9`. G4-A về số học không thể "tốt hơn" trên dev 30 (tối đa 3 câu cứu) — vẫn chạy để chọn

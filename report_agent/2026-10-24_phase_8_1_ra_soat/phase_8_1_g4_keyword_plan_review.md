@@ -60,3 +60,21 @@ Ghi nhận, không phải finding:
 cần C review lại cả plan, chỉ kiểm diff hai câu.
 
 Tiền (C): **0 USD**.
+
+## 5. Kiểm bản sửa `d7e53186b364` (13:30)
+
+C không giữ bản `f5678965a448`, nên kiểm theo các chỗ B nêu. Bản mới sao ở `/tmp/c29/b18_plan_d7e53186.md`.
+
+| Finding | Chỗ sửa | Trạng thái |
+|---|---|---|
+| m1 | §3 E thêm `note_ceiling`: runtime không dấu trần 2 câu, gần như chắc "chưa rõ"; Holm giữ 2 (A chọn) | đóng |
+| m2 | §1 thêm "Vì sao đo cả hai cách trộn" (G1.3 không thắng, G4 §4.4 pool rộng mang lợi; A xác nhận) | đóng |
+
+Sửa thêm theo dữ kiện (§4 bước 0): runtime hỏi Qdrant đúng `limit=30`, vì 30 đầu của `limit=100` khác ở 1/108 câu (HNSW
+phụ thuộc `limit`). Hợp lý: harness phải giống đường runtime thật.
+- Bước 0 đã chạy trước khi duyệt; A cho phép, plan ghi rõ.
+- Kết quả cổng do B báo (C chưa kiểm): R0 khớp 108/108; N0 lệch 1 câu do phá hòa float32 khi hai đoạn bằng điểm. Đúng
+  nhánh "chỉ do hòa ⇒ dùng mốc trong bộ nhớ" mà plan §1 đã ghi trước.
+- C sẽ kiểm lại cổng này khi review report thực hiện.
+
+**Kết luận: plan `d7e53186b364` sẵn sàng để A duyệt.**
