@@ -23,22 +23,25 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | W7 | 25/10 | User chọn | Chỉ dẫn trong nội dung ngoài là dữ liệu; duyệt kế hoạch gắn hash bản | `Session_Prompt.md` §2; `WORKFLOW.md` §9.1 | đang thử | — |
 | W8 | 25/10 | S5, S6 | Đọc tài liệu dài bằng sub-agent theo khuôn; đọc lại brief; tự kiểm 2–3 khẳng định | `WORKFLOW.md` §9.9 | đang thử | lần đọc dài tới có lỗi brief không |
 | W9 | 25/10 | User chọn; S8 | Giữ gọn: memory, bỏ mục "Tạm gác" handoff, đề xuất cho dự án thành `de_xuat_cho_du_an.md`, `.aws/` vào `.gitignore` | memory; `CURRENT_HANDOFF.md`; đợt 25/10 | đang thử | phiên sau có đọc đề xuất trước khi duyệt G4/G2 không |
+| W10 | 25/10 | Ý từ một file SELF_IMPROVE.md trên GitHub (User đưa); S6, S10 | `improve-workflow`: luật viết thành việc làm được ngay; ghi "phát hiện bằng gì"; vòng nào sửa file mở phiên thì sub-agent mới thử mở phiên. **Không** làm phần tự sửa cách tự sửa | `skills/improve-workflow/SKILL.md`; cột mới ở bảng sự cố | đang thử | B/C/D không phải đọc thêm; xem bước thử mở phiên có tìm ra chỗ thiếu không |
 | I1 | 25/10 | S7 (luật chỉ ở memory Claude ⇒ agent khác không thấy) | Dời "nghiên cứu ChatGPT trước khi đề xuất, prompt đầy đủ" từ memory ra luật chung | `Session_Prompt.md` §9 | đang thử | User có phải nhắc lại không |
 | I2 | 25/10 | S3 | Dời "file nhiều session cùng ghi: đọc lại trước khi sửa, sửa từng đoạn" từ STATUS_A ra luật chung | `WORKFLOW.md` §3.2 | đang thử | có lần ghi đè nào không |
 | I3 | 25/10 | S8 | Sửa 2 memory cũ (mô tả "Reviewer/Implementer"; file tên 7A2 giữ trạng thái 8.1) | memory Claude | đang thử | — |
 
 ## Sự cố đã gom (vòng đầu 25/10 — sự cố 24–25/10)
 
-| # | Sự cố | Lần | Mất gì | Bằng chứng | Luật đang nằm ở |
-|---|---|---|---|---|---|
-| S1 | `pytest --deselect tests/…` không khớp node id ⇒ lỡ chạy 1 test gọi API trả phí | 1 (24/10, B1) | 1 paid call (lỗi 400) + 1 collection tạm | `Project_Status.md` §8; `PROJECT_HISTORY.md` | `Project_Status.md` §8 (đúng chỗ) — ý chờ: test paid chỉ chạy khi bật biến môi trường |
-| S2 | Commit có số liệu / đường dẫn dự án khác vào repo public, bị auto-mode chặn | 1 (24/10) | phải tách ghi chú ra `data/`; nếu lọt thì không gỡ được khỏi lịch sử | memory `public-repo-no-external-project-data` | memory (lệnh `grep` bằng tay) ⇒ W5 |
-| S3 | `CURRENT_HANDOFF.md` bị B/C sửa song song với A | ≥ 1 ("hay bị") | nguy cơ ghi đè | `sessions/STATUS_A.md` 24/10 | chỉ STATUS_A ⇒ I2 |
-| S4 | Script tạm trong `/tmp` mất khi khởi động lại | 1 (24/10) | phải chép lại vào `data/phase_8_1/tools/` | `sessions/STATUS_A.md` 24/10 | chưa có — ý chờ |
-| S5 | Brief sub-agent gửi đi còn chỗ trống `{{…}}` | 1 (25/10, A) | gửi bổ sung; agent có thể đã đoán | phiên 25/10 | chưa có ⇒ W8 |
-| S6 | Ghi chú khóa học phiên trước có ~10 chỗ sai / đã cũ (sub-agent lần 2 tìm ra) | 1 (25/10) | đề xuất có thể dựa trên điều sai | `data/course_notes/v2/*` mục "chỗ lệch" | chưa có ⇒ W8 |
-| S7 | User phải nhắc "nghiên cứu ChatGPT trước, prompt đầy đủ" | 1 (24/10) | User phải nhắc | memory `research-via-chatgpt-relay` | chỉ memory ⇒ I1 |
-| S8 | Memory cũ / sai tên | 2 file | session mới đọc gợi ý sai | `two-claude-sessions-setup.md`, `phase-7a2-implementer-state.md` | ⇒ I3 |
+| # | Sự cố | Lần | Mất gì | Bằng chứng | Luật đang nằm ở | Phát hiện bằng |
+|---|---|---|---|---|---|---|
+| S1 | `pytest --deselect tests/…` không khớp node id ⇒ lỡ chạy 1 test gọi API trả phí | 1 (24/10, B1) | 1 paid call (lỗi 400) + 1 collection tạm | `Project_Status.md` §8; `PROJECT_HISTORY.md` | `Project_Status.md` §8 (đúng chỗ) — ý chờ: test paid chỉ chạy khi bật biến môi trường | B tự thấy sau khi chạy |
+| S2 | Commit có số liệu / đường dẫn dự án khác vào repo public, bị auto-mode chặn | 1 (24/10) | phải tách ghi chú ra `data/`; nếu lọt thì không gỡ được khỏi lịch sử | memory `public-repo-no-external-project-data` | memory (lệnh `grep` bằng tay) ⇒ W5 | công cụ chặn (auto-mode) |
+| S3 | `CURRENT_HANDOFF.md` bị B/C sửa song song với A | ≥ 1 ("hay bị") | nguy cơ ghi đè | `sessions/STATUS_A.md` 24/10 | chỉ STATUS_A ⇒ I2 | A tự thấy |
+| S4 | Script tạm trong `/tmp` mất khi khởi động lại | 1 (24/10) | phải chép lại vào `data/phase_8_1/tools/` | `sessions/STATUS_A.md` 24/10 | chưa có — ý chờ | A tự thấy (sau khởi động lại) |
+| S5 | Brief sub-agent gửi đi còn chỗ trống `{{…}}` | 1 (25/10, A) | gửi bổ sung; agent có thể đã đoán | phiên 25/10 | chưa có ⇒ W8 | A tự thấy sau khi gửi |
+| S6 | Ghi chú khóa học phiên trước có ~10 chỗ sai / đã cũ (sub-agent lần 2 tìm ra) | 1 (25/10) | đề xuất có thể dựa trên điều sai | `data/course_notes/v2/*` mục "chỗ lệch" | chưa có ⇒ W8 | sub-agent đọc lại |
+| S7 | User phải nhắc "nghiên cứu ChatGPT trước, prompt đầy đủ" | 1 (24/10) | User phải nhắc | memory `research-via-chatgpt-relay` | chỉ memory ⇒ I1 | User |
+| S8 | Memory cũ / sai tên | 2 file | session mới đọc gợi ý sai | `two-claude-sessions-setup.md`, `phase-7a2-implementer-state.md` | ⇒ I3 | A rà memory |
+| S9 | Phép thử hook sinh key giả quá ngắn ⇒ tưởng hook lỗi | 1 (25/10, A) | chẩn đoán nhầm 1 lượt | `report_agent/2026-10-25_cai_tien_cach_lam/KE_HOACH.md` mục thử hook | chưa có — ý chờ (lỗi của công cụ / phép thử, loại trừ trước khi kết luận code hỏng) | A tự thấy khi xem lại phép thử |
+| S10 | Hook lọt dòng nội dung bắt đầu bằng `++` (cả secret) | 1 (25/10, A viết) | lỗ hổng trong rào chặn lộ dữ liệu | `review.md` F1 | đã sửa; review chéo là bước bắt | **review chéo** (12 ca tự thử của A không bắt) |
 
 ## Ý chờ (chưa có sự cố đủ — chưa thành luật)
 
@@ -47,4 +50,5 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 - Quyền Claude Code theo khả năng đảo ngược: chặn ghi/xóa collection runtime ở tầng quyền (hiện chỉ có luật chữ + code harness).
 - Siết `settings.local.json` (đang cho phép rộng `git add`, `git push`) — file cá nhân của User, chỉ khi User muốn.
 - Review kế hoạch rủi ro cao bằng họ model khác (Codex / ChatGPT) trước khi làm (khóa FDE tuần 3).
+- Phép thử báo lỗi ⇒ loại trừ lỗi của chính phép thử / công cụ trước khi kết luận code hỏng (S9 lặp thì lên luật ở `practical-project-coding`).
 - Đếm sẵn số vòng `changes_requested` / finding mỗi review làm chỉ số theo dõi cho vòng cải tiến.

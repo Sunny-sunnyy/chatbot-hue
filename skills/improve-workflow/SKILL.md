@@ -17,14 +17,16 @@ của User (ghi chú private `data/external_project_notes/`). **Harness** của 
 Đọc: mục "Đã học / bẫy gặp" của `sessions/STATUS_*.md`; review có `changes_requested` / finding lặp; lời User
 sửa agent trong phiên; memory loại `feedback`; `git log` (commit sửa commit trước); sổ (mục `đang thử`).
 Mỗi sự cố ghi: ngày, session, chuyện gì, **mất gì** (giờ / USD / dữ liệu / User phải nhắc), bằng chứng
-(file:dòng, commit), **lần thứ mấy**. Ý hay chưa có sự cố (khóa học, bài viết) ⇒ "ý chờ", chưa thành luật.
+(file:dòng, commit), **lần thứ mấy**, **phát hiện bằng gì** (tự kiểm / review chéo / User / công cụ chặn) — loại lỗi
+hay bị bắt muộn thì đề xuất bước kiểm sớm hơn. Ý hay chưa có sự cố (khóa học, bài viết) ⇒ "ý chờ", chưa thành luật.
 
 ## 2. Đề xuất — tối đa 3 mỗi vòng, nấc rẻ trước
 
 1. **Gỡ / gộp / dời**: luật trùng, hết hiệu lực, bài học nằm sai chỗ (trong STATUS / handoff / memory của
    một agent ⇒ về skill của khâu, `WORKFLOW.md` hoặc `Project_Status.md` §8 để mọi agent đọc được).
 2. **Sửa câu** của luật có sẵn mà vẫn bị làm sai.
-3. **Thêm luật** 1–3 dòng vào đúng một chỗ, kèm "vì sao" (sự cố, ngày).
+3. **Thêm luật** 1–3 dòng vào đúng một chỗ, kèm "vì sao" (sự cố, ngày); viết thành việc làm được ngay (lệnh, đường
+   dẫn, mẫu cụ thể), không viết lời khuyên chung chung.
 4. **Rào bằng máy** khi luật bằng chữ bị vi phạm ≥ 2 lần, **hoặc ngay lần đầu nếu hậu quả không đảo ngược
    được** (lộ dữ liệu lên repo public, xóa dữ liệu, mở câu kín). Ưu tiên rào mọi agent đều chịu (hook git
    `.githooks/`, kiểm trong script); quyền Claude Code (`.claude/settings.json`) là lớp thêm. Luôn giữ dòng chữ
@@ -53,6 +55,10 @@ trần tiền, code chatbot — các việc đó đi đường thường (`WORKF
 - Một luật ở hai chỗ ⇒ giữ một, chỗ kia trỏ tới.
 
 ## 5. Kết vòng
+
+Vòng nào sửa file mà `START_SESSION.md` bắt đọc: giao một sub-agent ngữ cảnh mới đóng vai B, chỉ đọc theo
+`START_SESSION.md`, báo lại vai / việc / luật cứng nó nắm được và chỗ khó hiểu — sửa chỗ thiếu trước khi kết vòng
+(2026-10-25: cách này tìm ra 6 chỗ chưa rõ).
 
 3–5 dòng lời thường cho User: sự cố nào, đã đổi gì, đã gỡ gì, phiên sau theo dõi gì. Một dòng vào
 `CURRENT_HANDOFF.md` và `TONG_HOP.md` của đợt. Commit khi được phép (`WORKFLOW.md` §9.6).
