@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 14:06 25/10/2026** (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
+**Cập nhật lần cuối: 19:59 25/10/2026** (sửa bước kiểm trích dẫn: nhận cả `[Nguồn n]`, commit `9e6d371` — gói 1a rà code). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
 thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục).
 
@@ -51,8 +51,9 @@ HỎI ĐÁP (mỗi câu hỏi):
    thì trả đúng câu: "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này."
    (`backend/llm/full_corpus_prompt.py`). Quan sát ở Phase 7B: bot thường từ chối cả câu khi chỉ
    có một vế (giả thuyết H8, Phase 8 thử).
-6. **Kiểm trích dẫn:** mọi [n] phải trỏ tới đoạn có thật; câu trả lời có nội dung mà không có [n], hay
-   từ chối mà vẫn có [n] → API báo lỗi 500 thay vì trả câu trả lời không kiểm được.
+6. **Kiểm trích dẫn:** model đôi khi chép nhãn ngữ cảnh và viết `[Nguồn n]` thay vì `[n]` — hai dạng cùng nghĩa: backend đổi hết về
+   `[n]` (để trang web gắn link) rồi mới kiểm (từ 25/10, `backend/llm/citations.py`). Mọi [n] phải trỏ tới đoạn có thật; câu trả lời
+   có nội dung mà không có [n], hay từ chối mà vẫn có [n] → API báo lỗi 500 thay vì trả câu trả lời không kiểm được.
 
 ## 4. Chất lượng đo được (Phase 7B, 176 câu hỏi Golden)
 
@@ -61,7 +62,7 @@ HỎI ĐÁP (mỗi câu hỏi):
 | Điểm câu trả lời (Đúng / Đủ / Trúng ý, 1–5) | 4,43 / 4,28 / 4,45 | Tốt ở câu một dữ kiện (4,87), kém ở câu ghép nhiều nguồn (3,28) và so sánh (3,68) |
 | Từ chối đúng câu ngoài kho | 18 / 18 | Không bịa khi kho không có |
 | **Từ chối nhầm** câu kho có đáp án | **22 / 158 (13,9%)** | Lỗi lớn nhất: phần lớn điểm bị mất (65–90% tùy tiêu chí) nằm ở đây |
-| Lỗi trích dẫn (người dùng thấy lỗi 500) | 4 / 176 | Hiếm nhưng có |
+| Lỗi trích dẫn (người dùng thấy lỗi 500) | 4 / 176 ở 7B → **0–2 / 176** sau sửa 25/10 (đếm lại trên câu trả lời đã sinh) | Trước đây mọi lỗi là do dạng `[Nguồn n]`; còn lại chỉ câu thật sự không ghi nguồn |
 | Đoạn chứa đáp án lọt top-10 (keyword proxy) | 92,4% keyword | Truy xuất khá; vấn đề nằm ở 5 đoạn được đưa vào và cách prompt từ chối |
 | Chi phí một câu hỏi | ~0,00014 USD (~3,5 đồng) | ~950 token vào, ~80 token ra |
 

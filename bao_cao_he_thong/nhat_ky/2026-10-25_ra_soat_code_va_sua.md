@@ -1,0 +1,42 @@
+# Nhật ký 25/10/2026 (đêm) — rà code xong, bắt đầu sửa
+
+**Cập nhật lần cuối: 19:59 25/10/2026.** Người viết: A. Tiền phiên: 0,000427 USD (~11 đồng).
+
+## Hôm nay làm gì
+
+- **Rà code Phase 0–7 xong** (18:55): B rà phần dựng kho tìm kiếm, C rà phần trả lời + đánh giá; mỗi bên kiểm lại 5 phát hiện nặng
+  nhất của bên kia bằng script riêng. 39 phát hiện, gom thành 5 gói ⇒ `../DE_XUAT_SUA_CODE.md`.
+- **Bạn duyệt 19:4x:** sửa cả 5 gói; gỡ code không dùng nếu không ảnh hưởng hệ thống; guide cũ thêm dòng lịch sử; đưa nội dung kho /
+  đường dẫn dự án khác ra khỏi file public từ giờ (không xóa lịch sử).
+- **A đổi một chỗ trong đề xuất của chính mình:** không đưa "10 đoạn" (B1) vào trước — spec 8.2 chỉ cho đưa vào sau khi bạn đọc cặp mù.
+  Sửa code trên bản chính trước; B1 chờ, sau này chạy lại 2 kiểm tra miễn phí.
+- **Gói 1a xong (commit `9e6d371`):** chatbot hết báo lỗi nhầm khi model ghi nguồn kiểu "[Nguồn 2]". Trên 1.600 câu đã sinh: lỗi
+  69 → 14, không câu đúng nào bị đổi. C làm, B review.
+- **Đang làm:** B sửa tài liệu (gói 4).
+
+## Trạng thái
+
+| Việc | Kết quả | Ý nghĩa |
+|---|---|---|
+| Rà code | Xong + kiểm chéo hai chiều | 2 lỗi nặng: báo lỗi nhầm "[Nguồn n]" (đã sửa), API báo sai loại lỗi (đợt 2) |
+| Gói 1a — "[Nguồn n]" | **Đã sửa, đang chạy** | Lỗi người dùng thấy: 4–8/176 → 0–2/176 câu |
+| Gói 4 — tài liệu | Đang làm (B) | Guide cũ không còn tả hệ thống đã gỡ như đang chạy |
+| Gói 1b, 3 | Chờ (đợt 2) | API báo đúng loại lỗi; sửa công cụ đo trước 8.2 |
+| Gói 2, 5 | Chờ (đợt 3) | Chốt an toàn + dọn code, cùng lần dựng lại kho |
+| Phase 8.2 | Vẫn tạm dừng | B1 ở nhánh riêng, chờ bạn đọc cặp mù |
+
+## Giải thích ngắn (để bạn tự nói lại được)
+
+Model được đưa các đoạn tài liệu có nhãn "[Nguồn 1]", "[Nguồn 2]"… và được dặn trích bằng "[1]", "[2]". Đôi khi nó chép theo nhãn.
+Bộ kiểm cũ chỉ hiểu "[1]" nên tưởng câu trả lời không có nguồn và báo lỗi. Giờ bộ kiểm hiểu cả hai dạng và đổi hết về "[1]" trước khi
+hiện lên web. Điều này cũng cho thấy một kết luận cũ của 8.1 ("model quên ghi nguồn") là sai nguyên nhân.
+
+## Bạn cần làm gì
+
+- Không cần gì ngay. A sẽ hỏi trước khi chạy thí nghiệm có phí (xem lại "suy luận none").
+- Khi tiện: đọc cặp mù `data/phase_8_2/b0/nhan_xet_user.md` (~30–45 phút) — cần trước khi đưa "10 đoạn" vào chatbot.
+
+## Đọc thêm
+
+- `../DE_XUAT_SUA_CODE.md`, `../BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 6)
+- `report_agent/2026-10-25_ra_soat_code/` (`TONG_HOP.md`, `sua_1a_implementation.md`, `sua_1a_review.md`)

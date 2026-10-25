@@ -1,8 +1,8 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 14:10 25/10/2026 — bản 5: thêm kết quả thử nghiệm Phase 8.1 (10 đoạn ngữ cảnh, thứ tự đoạn, hai
-prompt, mức suy luận, chính sách trích dẫn); đính chính chẩn đoán "có đủ bằng chứng mà vẫn từ chối"; chatbot không đổi.**
-Người viết: B (bản 5; bản 1–4: C) · Review: C. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:59 25/10/2026 — bản 6: sửa lỗi trích dẫn `[Nguồn n]` (chatbot đổi: bớt báo lỗi nhầm); đính chính
+nguyên nhân "quên ghi `[n]`" của 8.1.** Bản 5 (14:10): kết quả Phase 8.1.
+Người viết: A (bản 6), B (bản 5; bản 1–4: C) · Review: C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -13,7 +13,7 @@ Người viết: B (bản 5; bản 1–4: C) · Review: C. Tỉ giá ước: 1 U
   câu trả lời chỉ từ 5 đoạn đó → backend kiểm từng `[n]`. Trạng thái: đã đóng 23/10/2026, đạt kèm hai
   giới hạn (bảng giá, tổng hợp nhiều nguồn).
 - **Đo được (Phase 7B, 176 câu):** Đúng / Đủ / Trúng ý **4,43 / 4,28 / 4,45** (thang 1–5); khi đã trả
-  lời thì gần tối đa (~4,9). Từ chối đúng 18/18 câu ngoài kho. Lỗi trích dẫn 4/176.
+  lời thì gần tối đa (~4,9). Từ chối đúng 18/18 câu ngoài kho. Lỗi trích dẫn 4/176 lúc đo — **sau sửa 25/10 còn 0–2/176** (mục 4, bản 6).
 - **Giới hạn chính:** **từ chối nhầm 22/158** câu có trong kho — nguồn mất điểm lớn nhất; không tìm ra
   bảng giá; câu cần nhiều nguồn lúc đóng chỉ dùng 1 nguồn.
 - **Chi phí:** sinh 176 câu ~0,024 USD (~600 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
@@ -53,7 +53,7 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 |---|---|---|
 | Câu có đủ bằng chứng trong 5 đoạn → trả lời kèm `[n]` | **Đã xử lý, đóng gói** | 4,43 / 4,28 / 4,45 trên 176 câu; khi đã trả lời ~4,9 |
 | Câu ngoài kho → từ chối, không bịa | **Đã xử lý, đóng gói** | 18/18 từ chối đúng |
-| Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | 4/176 câu người dùng thấy lỗi 500; `backend/llm/citations.py:12` |
+| Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | nhận cả `[Nguồn n]`, đổi về `[n]` (25/10); lỗi 500 còn 0–2/176 (trước 4–8); `backend/llm/citations.py` |
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `backend/api/app.py:147–151` |
 | Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý** | `backend/retrieval/full_corpus.py:353,415` |
 | Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). 8.1 thử prompt "trả lời phần có căn cứ": từ chối nhầm 13 → 1 câu (120 câu thử), nhưng **trả lời cả 2 câu ngoài kho** ⇒ phạm luật, chưa dùng |
@@ -63,7 +63,7 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 | Xếp 5 đoạn gom theo tài liệu | **Đã thử, chưa áp dụng** | 8.1: không khác |
 | Thêm 2 luật cũ của spec Phase 6 (không dùng tiêu đề làm bằng chứng; đoạn văn ngắn) | **Đã thử, chưa áp dụng** | 8.1: không khác; lỗi trích dẫn 4 → 1 (chưa đủ chắc) |
 | Mức suy luận của model (`none` / `low` / `high`) | **Đã thử, chưa áp dụng** | 8.1: `none` đầy đủ hơn chút nhưng quên ghi `[n]` gấp đôi (4 → 8); `low` 4 → 9; `high` không khác, tốn hơn 11% |
-| Chính sách trích dẫn "chỉ có một nguồn thì gán nguồn đó" | **Đã thử, chưa áp dụng** | 8.1 phát lại trên câu trả lời đã lưu: 0 câu đổi — mọi lỗi là "quên `[n]`" khi có 5 nguồn |
+| Chính sách trích dẫn "chỉ có một nguồn thì gán nguồn đó" | **Đã thử, chưa áp dụng** | 8.1 phát lại trên câu trả lời đã lưu: 0 câu đổi. (Đính chính 25/10: lỗi lúc đó **không** phải "quên `[n]`" mà là dạng `[Nguồn n]` — đã sửa, mục 4 bản 6) |
 | Câu tổng hợp nhiều nguồn | **Xử lý một phần** | Lúc đóng đạt nhưng chỉ dùng 1 nguồn; chưa chứng minh tổng hợp |
 | Câu hỏi giá vé + miễn giảm (bảng giá) | **Chưa thực hiện** | Không tìm ra bảng giá (xem `BAO_CAO_TIM_KIEM.md`) |
 | Tách câu hỏi hai ý | **Chưa thực hiện** | Phase 8 thử |
@@ -72,6 +72,16 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 25/10/2026 — Sửa lỗi trích dẫn `[Nguồn n]` (bản 6, rà code gói 1a)
+- **Lỗi:** ngữ cảnh gửi model ghi nhãn mỗi đoạn là "[Nguồn n]", model đôi khi trích đúng dạng đó; bộ kiểm chỉ hiểu "[n]" ⇒ người dùng
+  nhận lỗi 500 dù câu trả lời có nguồn. Phát hiện khi rà code (C), A và B đếm lại độc lập.
+- **Sửa:** bộ kiểm nhận cả hai dạng; API đổi mọi trích dẫn về "[n]" trước khi trả trang web. Không đổi prompt, không đổi câu trả lời.
+- **Đo (tiêu chí ghi trước: câu đang đạt không được thành lỗi, không đổi nguồn):** trên 1.600 câu trả lời đã sinh (7B, 8.1, 8.2 B1) lỗi
+  **69 → 14**, 0 câu đạt bị đổi; cấu hình chatbot đang chạy 4–8 → **0–2 / 176**; 14 lỗi còn lại đều là câu thật sự không ghi nguồn.
+  2 câu hỏi thật qua API: đạt, 0,000427 USD. Test: 39 đạt (3 lỗi cũ do thiếu key, đã biết). **PASS** — C làm, B review.
+- **Hệ quả:** con số "lỗi trích dẫn" của 7B / 8.1 đếm theo cách cũ, không so trực tiếp với số mới; quyết định 8.1 bỏ "suy luận `none`"
+  (vì lỗi trích dẫn 4 → 8) có thể phải xem lại — đếm lại là 0 → 2 (giả thuyết, cần thí nghiệm; A sẽ ước tiền và hỏi bạn).
 
 ### 25/10/2026 — Phase 8.1: thử 5 cách trả lời (bản 5)
 
@@ -155,8 +165,8 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
   (≈ 0,00007 USD); giới hạn: người chấm là Claude, chưa có bạn chấm mốc.
 - **"Trả lời phần có căn cứ"**: hết gần sạch từ chối nhầm nhưng trả lời cả câu ngoài kho. Nếu muốn thử tiếp, cần bản prompt
   giữ được từ chối câu ngoài kho; đây cũng là đổi quy tắc của spec Phase 6 (bạn quyết).
-- **Lỗi quên ghi `[n]`** (người dùng thấy lỗi 500, 4/120 câu): chính sách trích dẫn mới không chạm tới; thêm 2 luật cũ giảm
-  4 → 1 nhưng chưa chắc — cần cách khác ở bước sinh.
+- ~~Lỗi quên ghi `[n]`~~ — **đã sửa 25/10** (nguyên nhân thật là dạng `[Nguồn n]`, bản 6). Còn 0–2/176 câu thật sự không ghi nguồn.
+- **Xem lại "suy luận `none`"** sau khi đếm lại lỗi trích dẫn (giả thuyết; thí nghiệm có phí nhỏ — hỏi bạn trước).
 - Trước khi quyết theo điểm câu trả lời: nên có **20 câu bạn chấm tay** làm mốc.
 - Bảng giá và tổng hợp nhiều nguồn: gốc ở khâu tìm/xếp đoạn (`BAO_CAO_TIM_KIEM.md`).
 

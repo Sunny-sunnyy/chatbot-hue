@@ -76,7 +76,7 @@ Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code; gộp `TONG_HOP.md` | đang làm — `STATUS_A.md` |
 | B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code xong 18:39; kiểm chéo top 5 C xong 18:51 (`kiem_cheo_B.md`) | xem `STATUS_B.md` |
-| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 rà code xong 18:43; kiểm chéo 5 mục B xong 18:55 (`kiem_cheo_C.md`) | xem `STATUS_C.md` |
+| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 xong 18:43; kiểm chéo B 18:55; C35 (gói 1a) **đóng** 19:59 (B review ready; commit `9e6d371`); chờ việc | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -129,14 +129,19 @@ khai báo; vượt tiền.
 
 **Đợt 1 (song song, file không chồng):**
 
-- **C — C35: gói 1a (C-09 citation `[Nguồn n]`)** · file: `backend/llm/citations.py`, `backend/tests/test_citations.py` (chỉ hai file này;
-  cần thêm ⇒ nhắn A). Làm: validator nhận `[n]` và `[Nguồn n]` (hoa / thường, khoảng trắng), text trả về đổi `[Nguồn n]` → `[n]` để UI
+- **C — C35: gói 1a (C-09 citation `[Nguồn n]`) — ĐÓNG 19:59** (B review `sua_1a_review.md` ready; commit `9e6d371`; 4 chỗ báo cáo cập nhật) · file: `backend/llm/citations.py`, `backend/tests/test_citations.py` (chỉ hai file này;
+  cần thêm ⇒ nhắn A; **19:5x A duyệt thêm `backend/api/routes/chat.py`** — `normalize_citations` dùng cho cả validator lẫn `ChatResponse.answer`, vì
+  chat.py trả nguyên văn text model). Làm: validator nhận `[n]` và `[Nguồn n]` (hoa / thường, khoảng trắng), text trả về đổi `[Nguồn n]` → `[n]` để UI
   (`frontend/app.js` chỉ tách `[n]`) giữ nguyên. **Không** đổi prompt / nhãn context (đó là thí nghiệm). Tiêu chí: (1) offline trên mọi file
   đã sinh (7B Run 1 / 2, G2.0, G2.1a, G2.4, G2.1b, B1): câu vốn đạt ⇒ 0 câu thành lỗi, tập nguồn trích không đổi; lỗi còn lại chỉ loại "không
   ngoặc số"; (2) test mới cho `[Nguồn 2]`, trộn `[1]` + `[Nguồn 2]`, fallback có `[Nguồn n]` vẫn lỗi; pytest `test_citations.py`,
   `test_full_corpus_context.py`, `test_full_corpus_eval.py` đạt; (3) API thật (`uv run --env-file`) 1–3 câu tự viết (không Golden): 200,
   `sources` khớp marker. Report ghi rõ: định nghĩa "lỗi citation" của evaluator đổi từ commit này ⇒ số cũ không so trực tiếp (tính lại ở 3c,
   ra file mới, không ghi đè G0.6). Review: B.
+  - **Trạng thái (C, 19:52): XONG — chờ B review.** `report_agent/2026-10-25_ra_soat_code/sua_1a_implementation.md`. 4 file (`citations.py`, `chat.py`,
+    `test_citations.py`, `test_api_chat.py` — A duyệt 2 file sau). (1) 1.600 câu đã sinh: lỗi citation 69 → 14, 0 câu đạt thành lỗi, 0 câu đổi tập
+    nguồn, còn lại chỉ "không ngoặc số"; (2) 35 passed + test route mới đạt không cần key; (3) API thật 2 câu tự viết: 200, sources khớp marker,
+    0,000427 USD. Chưa commit.
 - **B — B26: gói 4 (tài liệu)** · file: `guides/phase_0`–`phase_4*.md`, `guides/README.md`, `guides/phase_7*.md`, `guides/phase_8*.md`, guide
   có lệch nhỏ ở C-13, `guides/llm_rag_reference_for_hue_rag.md` (đường dẫn), `guides/full_corpus_rag.md` (mục build lại), `notebooks/06*`,
   `notebooks/04*`, `notebooks/03*` (chữ). Làm: banner lịch sử đầu guide 0–4 (trỏ `full_corpus_rag.md` + `Project_Status.md` §4) + sửa

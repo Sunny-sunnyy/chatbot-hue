@@ -199,7 +199,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   `limit` như production. Sparse Qdrant tính float32 ⇒ phá hòa có thể khác float64 trong bộ nhớ (G4K).
 - Model tự suy luận (luna listwise) ra ~270 token/câu, gấp ~3 ước ⇒ lượt có phí luôn pilot 10 câu, ước lại từ pilot.
 - So điểm judge giữa biến thể: chấm baseline **cùng lượt mù** (nhiễu judge-only 2/88 câu).
-- `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở 8.1 G2) ⇒ code xử lý / đếm / đánh số lại citation phải bắt
+- `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở 8.1 G2; runtime nhận cả hai + đổi về `[n]` từ `9e6d371`, 25/10 — số
+  "lỗi citation" trước commit này đếm theo định nghĩa cũ) ⇒ code xử lý / đếm / đánh số lại citation phải bắt
   cả hai dạng (25/10 B24: file đọc cặp mù lộ bên vì chỉ bắt `[n]`).
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).
 - Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
