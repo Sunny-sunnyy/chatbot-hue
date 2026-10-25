@@ -24,17 +24,21 @@
 | # | id | Mức | Một dòng |
 |---:|---|---|---|
 | 1 | B-01 | **cao** | Cùng một module nạp hai lần (`core.schema` và `backend.core.schema`) ⇒ API bắt sai lớp lỗi: lỗi Qdrant khi đang hỏi ra 500 thay 503; corpus đổi lúc khởi động ra 503 thay 409 |
-| 2 | B-11 | **cao** | Build không chặn đoạn vượt giới hạn token (e5 cắt im lặng ở 512); test "chặn" chỉ kiểm bản sao trong CLI preview + một file kết quả tĩnh từ 09/2026 ⇒ PASS bất kể code. Hôm nay 0 / 8.459 vượt, nhưng sắp build lại với kho sửa |
-| 3 | B-12 | vừa | Repo public chứa nguyên văn kho: `config/full_corpus_conditions.json` (5.324 ký tự) + 7 test mẫu của chunker — lệch luật dữ liệu §5 (A / User quyết) |
+| 2 | B-11 | vừa — **phải sửa trước khi build lại** | Build không chặn đoạn vượt giới hạn token (e5 cắt im lặng ở 512); test "chặn" chỉ kiểm bản sao trong CLI preview + một file kết quả tĩnh từ 09/2026 ⇒ PASS bất kể code. Hôm nay 0 / 8.459 vượt; giới hạn sát nhất là huydang 255 / 256 |
+| 3 | B-12 | vừa | Repo public chứa nguyên văn kho: `config/full_corpus_conditions.json` (5.324 ký tự), test chunker (37 chuỗi / 1.327 ký tự), 2 converter `backend/scripts/` (72 chuỗi / 3.693 ký tự) — lệch luật dữ liệu §5 (A / User quyết) |
 | 4 | B-16 | vừa | Guide phase 0–4 + `guides/README.md` tả hệ thống Foods / 4 collection / profile đã gỡ như đang chạy; không trỏ tới code chunker / index hiện hành |
 | 5 | B-20 | vừa | Test luồng index: so "khớp build record" chỉ bằng số đoạn (không so identity); ~một nửa thời gian test dành cho CLI preview lịch sử; ghim hằng số kho |
-| 6 | B-17 | vừa | Lệnh trong guide / notebook thiếu `uv run` / `--env-file`; `pytest tests/ -q` trong guide chạy cả test cần key OpenAI (có `POST /api/chat` thật) |
+| 6 | B-21 | vừa | Notebook 04 một cell làm năm việc, chép luật chọn mẫu của pipeline, đóng vai validator (trái §11) |
 | 7 | B-18 | vừa | Không có quy trình "build lại index khi kho đổi" (xóa collection + record + sparse state chung) trong guide — cần ngay cho đợt build lại |
 | 8 | B-03 | vừa | `settings_loader` ghim cứng mọi giá trị sinh câu trả lời ⇒ `settings.yaml` thành bản sao hằng số; đổi một tham số phải sửa 2–3 chỗ |
 | 9 | B-04 | vừa | `ingestion/preview.py` trộn hàm đếm token production + CLI "Wave 1 preview" lịch sử; chunker ↔ preview import vòng. **Phụ thuộc B-11** |
 | 10 | B-02 | vừa | Kiểm hợp lệ chồng lớp khi build điểm Qdrant: cùng chunk được kiểm + mã hóa sparse hai lần |
 
-Các finding còn lại: B-21 (vừa — notebook 04 một cell năm việc), B-05, B-06, B-07, B-08, B-09, B-13, B-14, B-15, B-19 (thấp), B-10 (chỉ ghi).
+Các finding còn lại: B-05, B-06, B-07, B-09, B-13, B-14, B-15, B-17, B-19 (thấp), B-10 (chỉ ghi).
+
+**Sau kiểm chéo của C** (`kiem_cheo_C.md` §6, B đồng ý cả 4): R1 B-11 cao → vừa, giữ "sửa trước khi build lại"; R2 thêm giới hạn huydang 256 vào kế
+hoạch build lại; R3 B-12 thêm 2 converter + số đếm test chunker; R4 B-17 vừa → thấp (có key cũng không có lượt paid). Gộp nhóm: marker `live`
+(B-20) = C-17. **B-08 rút** (sai — runtime đã làm nóng e5 lúc khởi động).
 
 **Gợi ý thứ tự nếu User chọn sửa** (đề xuất, không kết luận): B-11 trước mọi lần build lại index (nhỏ, chặn rủi ro thật) → B-01 (bug HTTP thật,
 chạm nhiều file) → B-18 + B-16/B-17 (tài liệu cho đợt build lại) → các mục dọn (B-02, B-04, B-14, B-15, B-20) gộp **một** lần sửa chunker / build lại,
@@ -135,7 +139,9 @@ kiểm bằng "danh sách sha đoạn toàn kho giống hệt". B-12, B-13, B-03
 - `embedding/full_corpus.py:125-186`: hai hàm kiểm vector (`validate_vectors` vòng Python, `validate_vector_matrix` numpy) cùng việc.
 - Đề xuất: gỡ khi đụng file đó; không mở việc riêng.
 
-### B-08 — câu hỏi đầu tiên chậm thêm ~1 s (thấp; giả thuyết)
+### B-08 — ~~câu hỏi đầu tiên chậm thêm ~1 s~~ — **RÚT** (B tự phát hiện khi kiểm chéo C-01, 18:4x)
+- **Sai:** runtime đã làm nóng e5 bằng một câu lúc khởi động (`retrieval/full_corpus.py:815-823`, `embed_queries(["ấm trà cung đình Huế"])`);
+  script đo của B nạp model không qua đường khởi động nên thấy câu đầu chậm. Giữ số đo dưới làm hồ sơ (nạp e5 2,45 s là thời gian khởi động).
 - Đo (`/tmp/b25/startup.py`, CPU, chỉ đọc): import ~4,4 s; discover + hash 205 file 0,02 s; nạp sparse state 0,004 s; nạp e5 2,45 s;
   **câu đầu** `embed_queries` 1,05 s, các câu sau ~15 ms; `encode_sparse_query` 0,27 ms (dựng lại bảng từ vựng mỗi câu — không đáng kể).
 - *Giả thuyết*: một câu "làm nóng" lúc khởi động bỏ được ~1 s ở câu đầu của người dùng. Cách thử: đo độ trễ `/api/chat` câu đầu có / không
@@ -152,7 +158,12 @@ kiểm bằng "danh sách sha đoạn toàn kho giống hệt". B-12, B-13, B-03
   `gradio`, `python-dotenv`, `requests`, `python-multipart`; nhóm `evaluation` `underthesea` 0. `sentencepiece` không import trực tiếp
   nhưng cần cho tokenizer M2 (8.1). `pytest`, `pytest-cov`, `jupyter`, `ipykernel` nằm ở dependency chính thay vì nhóm dev.
 
-### B-11 — luồng build không chặn đoạn vượt giới hạn token; test chặn là PASS giả (cao)
+### B-11 — luồng build không chặn đoạn vượt giới hạn token; test chặn là PASS giả (vừa — phải sửa trước khi build lại)
+- **R1 (C) — đồng ý:** hạ cao → vừa. Hôm nay 0 đoạn vượt; tác động chỉ có khi kho đổi và chỉ ở vài đoạn (dense thấy phần đầu, BM25 vẫn thấy đủ).
+  Lý do B đặt "cao" là đợt build lại sắp tới — ý đó giữ bằng điều kiện "sửa trước khi build lại", không cần mức cao.
+- **R2 (C) — đồng ý:** giới hạn sát nhất là tokenizer **huydang 256** (lớn nhất hôm nay 255 — `/tmp/b25/oversize.py`), model không chạy ở runtime.
+  Sau khi build fail-closed, một sửa kho nhỏ có thể làm build dừng vì huydang chứ không vì e5 ⇒ kế hoạch build lại phải quyết trước: tách thêm,
+  hay bỏ huydang khỏi danh sách kiểm (đổi chunker ⇒ thí nghiệm; 8.1 G3 H1 đã thử bỏ ràng buộc HuyDang: 0/32/0 ở đoạn đúng, 1 câu tụt keyword).
 - Khâu: chia đoạn → embedding. Vị trí: `full_corpus_chunker.py:402` (bảng không tách được / hàng đơn), `:423-445` (từng hàng không kiểm
   lại), `:490-512` (từng mục con không kiểm lại), `:567-580` (khối không tách câu được), `:585` (nhóm luôn nhận câu đầu dù câu đó đã vượt);
   `full_corpus_pipeline.py:126-128` chỉ dừng khi `errors` của chunker khác rỗng.
@@ -179,7 +190,11 @@ kiểm bằng "danh sách sha đoạn toàn kho giống hệt". B-12, B-13, B-03
 
 ### B-12 — file tracked chứa nguyên văn đoạn kho (vừa; ranh giới dữ liệu — A / User quyết)
 - Vị trí: `backend/config/full_corpus_conditions.json` (tracked từ `071b113`, 2026-09-12; repo `chatbot-hue` public); và
-  `backend/tests/test_full_corpus_chunker.py:549-848` — 7 test mẫu ghim câu / địa chỉ / giá / heading nguyên văn của kho (SA3-04; chưa đếm ký tự).
+  `backend/tests/test_full_corpus_chunker.py:549-848` — 7 test mẫu ghim câu / địa chỉ / giá / heading nguyên văn của kho (SA3-04).
+- **R3 (C) — đồng ý, B chưa đếm lại:** C quét mọi `.py` tracked trong `backend/` + notebook (chuỗi ≥ 20 ký tự có nguyên văn trong kho): test
+  chunker **37 chuỗi / 1.327 ký tự** (tất cả ở dòng 549–848); 2 converter `backend/scripts/` (B-13) **43 / 2.246** (culture) và **29 / 1.447**
+  (department) — chưa phân loại là bảng ánh xạ tên hay câu nội dung; không file `.py` / notebook tracked nào khác. Phương án (b)/(c) của B-13
+  (chuyển / xóa converter) cũng giảm số này.
 - Quan sát (chỉ đếm, không in): 3 rule, 6 target, 2 file kho (domain `travel`); 9 selector `exact_text` = **5.324 ký tự nguyên văn** của kho
   (dài nhất 1.050). `Session_Prompt.md` §5: `knowledge-base-hue/` private, không commit nội dung.
 - *Suy ra*: không phải bí mật (nguồn là trang công khai), nhưng lệch luật dữ liệu của dự án và hook `.githooks/pre-commit` không bắt được kiểu
@@ -252,7 +267,11 @@ kiểm bằng "danh sách sha đoạn toàn kho giống hệt". B-12, B-13, B-03
   chỉ trỏ guide hiện hành. Cách kiểm: script quét mọi đường dẫn `backend/…` / tên collection / lệnh trong guide **ngoài** đoạn có nhãn lịch sử ⇒
   0 đường dẫn không tồn tại (đếm hôm nay để có số trước).
 
-### B-17 — lệnh trong guide / notebook thiếu `uv run` / `--env-file`, hoặc chạy cả test cần key OpenAI (vừa)
+### B-17 — lệnh trong guide / notebook thiếu `uv run` / `--env-file`, hoặc chạy cả test cần key OpenAI (thấp)
+- **R4 (C) — đồng ý:** "một test `POST /api/chat` thật" dưới đây ngụ ý tốn tiền — **sai**. `test_api_chat.py:89` đặt `context_limit=2561` ⇒
+  `ContextBudgetError` ở `chat.py:91-100`, **trước** bước sinh (`:110-120`) — B đọc lại route ✔; khởi động app chỉ dựng client, không gọi mạng. Có
+  key cũng không lượt paid nào đã biết (rủi ro còn lại: `test_phase6_live_smoke.py` gọi `confirm_paid=True`, chỉ monkeypatch chặn — C-18). Hạ vừa →
+  thấp; `Project_Status.md` §8 đã được A sửa 18:4x. Lệnh build thiếu `uv run` vẫn nên sửa; `--env-file` chỉ cần cho candidate 8B.
 - `full_corpus_rag.md:114-115` lệnh build `python -m backend.ingestion.full_corpus_pipeline build --candidate <id>` (thiếu `uv run`, thiếu
   `--env-file .env` mà candidate 8B OpenRouter cần) ✔; cùng lệnh lặp ở `notebooks/03_embedding_models.ipynb` (SA2).
 - `phase_2:309` `uv run python -m pytest tests/ -q`: chạy cả `test_api_chat.py` (3 test `require_openai_key`, một test `POST /api/chat` thật
@@ -288,7 +307,7 @@ kiểm bằng "danh sách sha đoạn toàn kho giống hệt". B-12, B-13, B-03
   (SA3 ước từ một lần chunk 21,8 s).
 - **Ghim hằng số kho**: test discovery ghim 205 file + số file từng domain (`:69-106`) trong khi test determinism lấy số từ build record — hai nguồn
   cho cùng sự thật; sửa kho (C32) làm test đỏ dù code đúng; clone public không có kho ⇒ lỗi không có thông điệp rõ.
-- Marker `live` đăng ký (`conftest.py:23-28`) nhưng 0 test dùng ⇒ không tách được test paid / Qdrant bằng `-m` (lý do `Project_Status.md` §8 phải
+- Marker `live` (trùng C-17 của C — gộp một mục) đăng ký (`conftest.py:23-28`) nhưng 0 test dùng ⇒ không tách được test paid / Qdrant bằng `-m` (lý do `Project_Status.md` §8 phải
   liệt kê file).
 - Đề xuất: (1) thêm assert identity (+ sparse bytes) — nhỏ, giá trị cao; (2) bỏ phần preview theo quyết định B-04; (3) discovery so
   `set(files) == set(record sources)`; (4) gắn `@pytest.mark.live` cho test cần key / Qdrant thật **hoặc** bỏ đăng ký marker — A chọn.
@@ -309,7 +328,7 @@ kiểm bằng "danh sách sha đoạn toàn kho giống hệt". B-12, B-13, B-03
   không phá: gọi `search` với client trỏ collection không tồn tại trong một app thử ở port khác — cần A duyệt.
 - B-11: tác động "e5 cắt im lặng" là *suy ra* từ hành vi mặc định SentenceTransformer (`max_seq_length` 512), chưa đo vector của một đoạn vượt
   thật (kho hôm nay không có đoạn nào vượt).
-- B-17: `pytest tests/ -q` có tốn tiền thật hay chỉ fail khi thiếu key — **NOT RUN** (luật paid).
+- B-17: `pytest tests/ -q` với key — **NOT RUN** (luật paid); "không có lượt paid" là kết luận đọc code (C R4, B đọc lại route).
 - B-12: chưa đếm số ký tự nguyên văn kho trong test chunker; chưa quét các test khác (phạm vi C) theo cùng tiêu chí.
 - Guide: B tự kiểm lại 6 khẳng định của SA1 / SA2 (✔); các dòng còn lại trong file sub-agent là của sub-agent, chưa kiểm từng dòng.
 - Chưa rà: guide phase 5–9, `llm_rag_reference_for_hue_rag.md`, test / code luồng trả lời (phạm vi C34). Không chạy build index (cần quyền ghi

@@ -6,13 +6,18 @@
 - Sub-agent: SA1 guide 0–2 + README, SA2 guide 3–4 + index `full_corpus_rag.md`, SA3 test + notebook 03/04 (97 passed) ⇒ `data/ra_soat_code/sa{1,2,3}_*.md`
   (private). B kiểm lại 2–4 khẳng định chính mỗi cái. SA2 có gọi một scroll Qdrant (POST chỉ đọc) ngoài brief "chỉ GET".
 - Chỉ đề xuất, chưa sửa code (User 18:3x).
-- **Đang làm (18:4x): kiểm chéo C-09, C-02** của C (A "làm đi"; 3 mục top 5 còn lại A giao sau). **File khai báo sửa:**
-  `report_agent/2026-10-25_ra_soat_code/kiem_cheo_B.md` (mới), file này. Script tạm `/tmp/b25x/`.
-- File tạm: `/tmp/b25/` (script đếm đoạn vượt token, khối bị bỏ, header), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
+- **Kiểm chéo top 5 của C (C-09, C-02, C-01, C-12, C-19) — XONG 18:51** ⇒ `report_agent/2026-10-25_ra_soat_code/kiem_cheo_B.md`:
+  `ready_for_user_confirmation`, 5 / 5 đúng, mức hợp lý, 6 minor bổ sung (R-01…R-06) cho TONG_HOP. Script riêng `/tmp/b25x/`, 0 USD, không `.env`.
+  B khai xung đột lợi ích: C-09 bác nhận định trong report 8.1 G2 do B viết.
+- **B-08 rút** (sai: runtime đã làm nóng e5 lúc khởi động — thấy khi kiểm C-01) ⇒ sửa trong `ra_soat_code_B.md` (sau commit `c272644`).
+- **File đang khai báo sửa: không.** Chờ A.
+- File tạm: `/tmp/b25/`, `/tmp/b25x/` (script B), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
 
 ## Đã học / bẫy gặp (phiên tối 25/10)
 - 25/10 tối: B ghi "`scripts/` không tồn tại" vì chỉ tìm ở gốc repo — mục việc ghi đường dẫn tương đối ⇒ `find . -name <tên> -not -path './.venv/*'` trước khi kết luận "không có".
 - 25/10 tối: B-04 phiên chiều khẳng định "chunker đã fail-closed" khi chưa đọc chunker ⇒ không ghi khẳng định về code chưa đọc; ghi "chưa kiểm".
+- 25/10 tối: B-08 đo "câu đầu chậm" bằng script tự nạp model, không qua đường khởi động thật (đã có warm-up) ⇒ đo hiệu năng phải đi đúng
+  đường production (`create_app` / `build_full_corpus_retrieval_service`), không dựng lại từng bước.
 - 25/10 tối: sub-agent SA2 gọi scroll Qdrant bằng POST (chỉ đọc) trong khi brief ghi "GET thì được" ⇒ brief nêu rõ "chỉ GET; POST scroll /
   query cũng không" hoặc cho phép rõ POST chỉ đọc nếu cần.
 - 25/10 tối: B dùng `python3` hệ thống để sửa text STATUS_B (vi phạm §10 / bài học cũ) ⇒ sửa file bằng Edit, mọi Python bằng `uv run`.

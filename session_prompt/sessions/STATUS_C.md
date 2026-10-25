@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 2026-10-25 18:44 (phiên tối; C34 XONG, chờ kiểm chéo)
+# STATUS C — cập nhật 2026-10-25 18:55 (phiên tối; C34 + kiểm chéo B25 XONG)
 
 Terminal: `hue-rag-7f` (mở 18:2x 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10 15:53 + 18:2x: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
@@ -10,14 +10,15 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
   ra 500; nguyên nhân 8.1 ghi chưa đúng; quyết định 8.1 reasoning có thể mở lại — A tự kiểm 18:3x, đúng), **vừa** C-01 (đã tái tạo index
   cũ ⇒ 503 thay 409; sửa phải kèm tách lỗi "model không nạp"), C-02, C-12 (guide 7 / 8); còn lại thấp. C-09 có cách đo M1–M3.
   - 3 sub-agent (S1 guide + nb06, S2 test, S3 harness + smoke) xong; C tự kiểm khẳng định chính bằng file thật. Đầu ra gốc `/tmp/c34/s*.md`.
-  - **Tiếp:** C kiểm chéo top 5 của B (B25) khi A nhắn.
+- **Kiểm chéo 5 mục B25 (B-11, B-12, B-16, B-17, B-20) — XONG 18:55** (A "làm đi" 18:4x). `report_agent/2026-10-25_ra_soat_code/kiem_cheo_C.md`:
+  4 đúng, B-17 một phần; `ready_for_user_confirmation` + R1–R4 minor. Script riêng `/tmp/c34x/` → `data/ra_soat_code_2026-10-25/tools/kiem_cheo_C/`.
+  Không đọc STATUS_B, không chạy script của B. 0 USD.
 - **C33 plan E1** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_e1_plan.md` sha `f86240418ca1` — chờ B review + A trả lời Q1–Q3
   (8.2 tạm dừng). **Phải sửa khi 8.2 chạy lại:** §4 / §5 dùng `g2_generate.paired(…'refusal')` + chữ "thắng / thua" theo nghĩa câu được
   cứu ⇒ ngược dấu (C-02); đổi sang `paired_compare` (`false_refusal`) hoặc ghi đảo dấu ⇒ sha mới.
 - **C32 rà nội dung kho — xong**, A review `ready_for_user_confirmation` (`report_agent/2026-10-25_ra_soat_noi_dung_kho/`); chờ User xác
   nhận. (A: User hỏi về code, C32 là hiểu nhầm — giữ làm hồ sơ.)
-- **Đang khai báo sửa (18:5x):** `report_agent/2026-10-25_ra_soat_code/kiem_cheo_C.md` (mới), dòng C trong `CURRENT_HANDOFF.md`, file
-  này; `/tmp/c34x/` (tạm). Việc: kiểm chéo B-11, B-12, B-16, B-17, B-20 (A "làm đi").
+- **Đang khai báo sửa:** không (kiểm chéo xong 18:55).
 - **C chưa đọc nội dung câu kín.** Câu kín chính thức md5 `ddc59587b502`, manifest `9ea480d0d083`; mở ở mốc cuối 8.2 do User quyết.
 
 ## Câu hỏi cho A / User

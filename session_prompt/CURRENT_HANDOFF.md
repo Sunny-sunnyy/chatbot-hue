@@ -13,7 +13,9 @@ Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10
 
 **Đang ở đâu (3 mạch việc):**
 
-1. **Rà code Phase 0–7 — ĐANG LÀM, DỞ** (User 16:5x: "dừng 8.2, rà code trước khi bắt đầu phase mới"). User hỏi về **code**
+1. **Rà code Phase 0–7 — RÀ + KIỂM CHÉO XONG 18:55, chờ User chọn gói sửa** (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md` §4; tổng hợp
+   `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`). Chưa sửa code: User 18:3x "tôi đồng ý mới sửa". Đoạn dưới là bối cảnh lúc kết phiên trước.
+   (User 16:5x: "dừng 8.2, rà code trước khi bắt đầu phase mới"). User hỏi về **code**
    (file, folder, guide), **không phải dữ liệu kho**. Đợt `report_agent/2026-10-25_ra_soat_code/`. B25 (luồng dựng index + nền) và
    C34 (luồng trả lời + đánh giá) chỉ đọc, 0 USD; mỗi bên lưu phần dở trong `ra_soat_code_<B|C>.md` (đầu file ghi đã rà / chưa rà).
    Tiêu chí, khuôn finding, phạm vi: mục "Việc đang mở" dưới.
@@ -73,8 +75,8 @@ Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code; gộp `TONG_HOP.md` | đang làm — `STATUS_A.md` |
-| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code — xong 18:39, chờ kiểm chéo | xem `STATUS_B.md` |
-| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 rà code — xong 18:43, chờ kiểm chéo | xem `STATUS_C.md` |
+| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code xong 18:39; kiểm chéo top 5 C xong 18:51 (`kiem_cheo_B.md`) | xem `STATUS_B.md` |
+| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 rà code xong 18:43; kiểm chéo 5 mục B xong 18:55 (`kiem_cheo_C.md`) | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -154,7 +156,10 @@ User hỏi về **code** (file, folder, guide của các Phase), không phải d
   - **Trạng thái (C, 18:43 25/10): XONG — chờ kiểm chéo** — `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md` (top 10 đầu file).
     18 finding (C-15, C-16 gộp vào mục khác): **1 cao** C-09 (validator citation chỉ bắt `[n]`, context gắn `[Nguồn n]` ⇒ 8 / 176 câu ra
     500; A đã tự kiểm), **3 vừa** C-01 (lớp lỗi nạp hai lần — đã tái tạo index cũ ⇒ 503 thay 409), C-02, C-12 (guide 7 / 8 không có phần hiện
-    hành), còn lại thấp. Có cách đo trước–sau M1–M3 cho C-09. 3 sub-agent, C tự kiểm khẳng định chính. 0 USD. Tiếp: kiểm chéo top 5 của B.
+    hành), còn lại thấp. Có cách đo trước–sau M1–M3 cho C-09. 3 sub-agent, C tự kiểm khẳng định chính. 0 USD.
+  - **Kiểm chéo (C, 18:55): XONG** — `report_agent/2026-10-25_ra_soat_code/kiem_cheo_C.md`: B-11, B-12, B-16, B-20 đúng, B-17 một phần;
+    `ready_for_user_confirmation` + 4 ghi chú minor cho B (R1 B-11 cao → vừa; R2 giới hạn huydang 256; R3 B-12 thêm 2 converter + số test;
+    R4 B-17 có key cũng không có lượt paid — vừa → thấp). 0 USD.
 
 ### Phase 8.2 — TẠM DỪNG 16:5x (User)
 

@@ -7,7 +7,9 @@ Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Việc: User "tiếp tục điều phối review lại file, folder code từ các guide, các phase trước" ⇒ B25 / C34 làm tiếp (18:25) →
   kiểm chéo top 5 → A tự kiểm 2–3 khẳng định → `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md` → User chọn sửa gì.
 - 8.2 vẫn tạm dừng; review B1 chưa làm. Câu hỏi còn mở cho User: thứ tự sửa code ↔ B1; W14 / W15.
-- Đang khai báo sửa: `session_prompt/CURRENT_HANDOFF.md` (bảng Session, Quyền), `STATUS_A.md`; sau: `TONG_HOP.md`.
+- 18:57: rà + kiểm chéo xong; A tự kiểm C-09, B-11, B-12, B-19; viết `TONG_HOP.md` + `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`; sửa
+  `Project_Status.md` §8. Chờ User chọn gói (4 câu ở `DE_XUAT_SUA_CODE.md` §4).
+- Đang khai báo sửa: `CURRENT_HANDOFF.md`, `STATUS_A.md`, `TONG_HOP.md`, `DE_XUAT_SUA_CODE.md`, 2 README mục lục.
 - Tiền paid phiên này: 0 USD.
 
 ---
