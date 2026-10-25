@@ -1,18 +1,18 @@
-# STATUS A — cập nhật 11:22 25/10/2026 (phiên chiều 25/10 — quay lại Phase 8.1)
+# STATUS A — cập nhật 14:25 25/10/2026 (phiên chiều — 8.1 xong thí nghiệm, chờ User)
 
 Terminal: `hue-rag-c6` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3f`, C = `hue-rag-a1` (cả ba Claude Code,
 liên lạc trực tiếp).
 
 ## Commit cuối
-- Đầu phiên: `c3528be`.
+- Đầu phiên: `c3528be`. Phiên chiều: `2b0010b` … `e88036d` (xem `git log`).
 
 ## Đang làm
-- Giao B17 (B sửa plan G2/G4 theo `de_xuat_cho_du_an.md` 1–5 + giới hạn GPU của User) → C review B16 + plan → A duyệt
-  kèm sha → A commit B16 → B chạy G4.
+- Chờ User: (1) xem mẫu câu kín bản 5 → nhắn C "User đã duyệt mẫu bản 5" (C chạy script khóa câu kín + cập nhật manifest
+  G0.6); (2) User đóng 8.1 (đọc `phase_8_1_g5_synthesis.md` §1–§4) → TONG_HOP "ĐÓNG", brainstorm 8.2.
+- Kết phiên: vòng `improve-workflow` (đầu vào: mục "Đã học / bẫy gặp" dưới + STATUS_B/C), `PROJECT_HISTORY.md`, handoff gọn ≤ 150 dòng.
 
 ## Đang khai báo sửa
-- `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md`,
-  `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` (ghi sửa đổi G4 User duyệt 25/10)
+- không
 
 ## Quyền phiên này (User 25/10, hết hạn cuối phiên)
 - A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (8.1 vẫn trần 0,5 USD); duyệt G4-A + G4-B; GPU mỗi lượt 20–30 câu, kiểm
