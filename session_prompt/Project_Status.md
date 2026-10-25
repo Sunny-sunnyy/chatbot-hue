@@ -99,6 +99,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-25 15:15 | **Câu hỏi không dấu: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; bỏ nghiên cứu ChatGPT về không dấu (prompt B21 không gửi). Mẫu câu kín bản 5: User duyệt | User |
 | 2026-10-25 (chiều) | Thư viện nhỏ, phổ biến cần cho việc đã duyệt: A tự duyệt, báo User sau ("mấy việc đơn giản này thì bạn tự thêm"); thêm `sentencepiece` để nạp M2 | User; `Session_Prompt.md` §4 |
 | 2026-10-25 (chiều) | Câu kín 8.1: **thêm dấu cho mọi câu** (thay "không dấu" của spec G0.4); 9 câu độ tự nhiên bất đồng: giữ cả 9 (natural) | User 11:33, 11:40 |
 | 2026-10-25 (chiều) | 8.1 G4: duyệt G4-A (xếp lại top-10) **và G4-B** (rerank pool 100 → top-10; sửa spec §5 G4). GPU yếu ⇒ mỗi lượt GPU chỉ 20–30 câu, kiểm model thật trên GPU trước khi chạy (không chạy nhầm CPU) | User; spec 8.1 §5 G4 "Sửa đổi 25/10" |

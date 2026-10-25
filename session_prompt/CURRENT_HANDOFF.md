@@ -238,6 +238,8 @@ phải giống byte `cefb2d1a…` / `1fbb5c17…`); `GET /collections`. Chuẩn 
 field từ `sealed_authoring.jsonl` v6 **không đọc nội dung** (script chỉ chọn field + `check` exit 0 + md5). Chạy lệnh đó
 **chỉ khi A nhắn "User đã duyệt mẫu bản 5"**. Review: B. Đây cũng là kiểm cuối tiêu chí §6.4.
 
+- **15:15 User:** mẫu câu kín bản 5 "ổn rồi" ⇒ C chạy khóa (C31). **Bỏ nghiên cứu không dấu** — thiết kế giả định câu có dấu; B21 không gửi.
+
 ### B21 — yêu cầu nghiên cứu ChatGPT: câu hỏi không dấu (giao 14:19 25/10; chỉ viết, 0 USD)
 
 Chuẩn bị cho 8.2 mục 3 (lỗ hổng lớn nhất 8.1), **không** thiết kế 8.2 (chờ User đóng 8.1). Viết một prompt deep research đầy đủ

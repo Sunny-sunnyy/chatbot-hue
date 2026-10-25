@@ -57,7 +57,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Câu cần nhiều nguồn | **Xử lý một phần** | MRR 0,54 |
 | Dòng trong bảng giá (ví dụ giá vé + miễn giảm Đại Nội) | **Đã thử, chưa áp dụng** | 8.1 thử gộp dòng bảng khi chia đoạn: không khác — xem `BAO_CAO_CHIA_DOAN.md` |
 | Từ ghép tiếng Việt trong BM25 ("Đại Nội") | **Đã thử, chưa áp dụng** | 8.1 thử cặp âm tiết / tách từ `pyvi`: làm rơi đoạn đúng của 1–4 câu — xem `BAO_CAO_EMBEDDING_TU_KHOA.md` |
-| Câu hỏi gõ **không dấu** | **Chưa thực hiện** | 8.1 đo (dev số chính: 32 câu có đoạn đúng, 88 câu keyword): chỉ 1/32 câu còn đủ đoạn đúng trong 5 đoạn (có dấu: 13/32); MRR 0,72 → 0,16 |
+| Câu hỏi gõ **không dấu** | **Chưa thực hiện** — ngoài phạm vi (bạn quyết 15:15 25/10) | 8.1 đo (dev số chính: 32 câu có đoạn đúng, 88 câu keyword): chỉ 1/32 câu còn đủ đoạn đúng trong 5 đoạn (có dấu: 13/32); MRR 0,72 → 0,16 |
 | Câu hỏi dạng Unicode NFD (gõ từ một số máy) | **Chưa thực hiện** | 8.1 đo: MRR giảm 0,20; chuẩn hóa NFC phục hồi giống hệt ⇒ đề xuất 8.2 |
 | Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | **Chỉ thử trên bản món ăn**: MiniLM làm điểm giảm. Toàn kho: 0/158 câu vượt giới hạn độ dài 512; `settings.yaml:43` (`reranker: none`) |
 | Reranker đa ngôn ngữ / tiếng Việt chạy trên card đồ họa (bge-reranker-v2-m3, Vietnamese_Reranker) | **Đã thử, chưa áp dụng** | 8.1: thứ tự tốt hơn chút ít nhưng đẩy đoạn đúng của 1–3 câu ra khỏi 5 đoạn đưa model; ~1 s/câu (10 đoạn), 11–14 s/câu (~150 đoạn: hợp hai nhánh, mỗi nhánh 100) |
@@ -136,7 +136,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 ## 6. Việc còn lại / cần quyết
 
 Đề xuất cho Phase 8.2 (mỗi việc cần đo riêng; đổi chatbot cần bạn duyệt):
-- **Câu gõ không dấu:** lỗ hổng lớn nhất ở khâu này. Thử dùng bản từ khóa đã bỏ dấu **chỉ khi câu hỏi không có dấu**
+- **Câu gõ không dấu:** **Bạn quyết 15:15 25/10: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; không làm ở 8.2. Ghi chú cũ: lỗ hổng lớn nhất ở khâu này. Thử dùng bản từ khóa đã bỏ dấu **chỉ khi câu hỏi không có dấu**
   (8.1 thấy bản bỏ dấu tìm lại được nhiều, nhưng làm hại câu có dấu nếu dùng cho mọi câu) — xem `BAO_CAO_EMBEDDING_TU_KHOA.md`.
 - **Chuẩn hóa NFC câu hỏi:** sửa một dòng, phục hồi hoàn toàn câu dạng NFD.
 - **Lấy rộng 100 ứng viên:** có tín hiệu (+4 / −1 câu); thử cùng context 10 đoạn (`BAO_CAO_SINH_CAU_TRA_LOI_API.md`).

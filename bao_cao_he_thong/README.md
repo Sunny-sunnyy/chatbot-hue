@@ -29,7 +29,7 @@
 | Index Qwen3-8B | Chưa thực hiện → Phase 8.2 |
 | Dọn code + 2 kho món ăn cũ | Đã xử lý, đóng gói (bạn đóng 20:01) |
 | Rà 56 quyết định Phase 0–7 (Phase 8.1) | Xử lý một phần: mọi thí nghiệm xong + review; **chỉ "10 đoạn thay vì 5" thắng** (đề xuất 8.2); chờ bạn xem mẫu câu kín bản 5 rồi đóng 8.1 |
-| Câu hỏi gõ không dấu | Chưa thực hiện: tìm kiếm gần như hỏng (đủ đoạn đúng 13/32 → 1/32 câu) → thí nghiệm ở 8.2 |
+| Câu hỏi gõ không dấu | Chưa thực hiện — **ngoài phạm vi** (bạn quyết 15:15 25/10: người dùng gõ có dấu). Đã đo: tìm kiếm gần như hỏng (13/32 → 1/32 câu) |
 
 Thang 5 mức: Đã xử lý, đóng gói · Đã xử lý · Xử lý một phần · Đã thử, chưa áp dụng · Chưa thực hiện.
 

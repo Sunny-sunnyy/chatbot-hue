@@ -49,7 +49,7 @@ khi hỏi: vector lấy 30 đoạn gần nghĩa -> BM25 chấm lại 30 đoạn 
 | Từ khóa BM25 cho toàn kho | **Đã xử lý, đóng gói** | 5.660 từ, k1 1,5, b 0,75; build lại giống từng byte; `scoring/bm25.py:15-16` |
 | Từ ghép tiếng Việt trong BM25 | **Đã thử, chưa áp dụng** | 8.1: ghép cặp âm tiết và `pyvi` đều kém hơn (mất 1–4 câu đoạn đúng); vẫn tách theo âm tiết (`scoring/bm25.py:6`, `:9-12`) |
 | Mã số / số nguyên cụm (ví dụ biển số đường, giá) | **Đã thử, chưa áp dụng** | 8.1: không khác (0 câu đổi) |
-| Câu hỏi gõ không dấu | **Chưa thực hiện** | 8.1 đo: gần như hỏng (1/32). Bỏ dấu cả kho giúp câu không dấu nhưng hại câu có dấu ⇒ chưa dùng |
+| Câu hỏi gõ không dấu | **Chưa thực hiện** — ngoài phạm vi (bạn quyết 15:15 25/10) | 8.1 đo: gần như hỏng (1/32). Bỏ dấu cả kho giúp câu không dấu nhưng hại câu có dấu ⇒ chưa dùng |
 | Tham số BM25 (b) và trộn thứ hạng (k) | **Đã thử, chưa áp dụng** | 8.1: k 10 / 30, b 0,5 / 1,0, không cái nào tốt hơn; giữ k1 1,5, b 0,75, k 60 |
 | Chuẩn hóa Unicode câu hỏi (NFC) | **Chưa thực hiện** | 8.1 (đo ở tìm kiếm): câu dạng NFD làm MRR tụt 0,20; chuyển về NFC thì như cũ ⇒ đề xuất 8.2, một dòng code |
 | Model 8B qua OpenRouter | **Đã xử lý** (có code, chưa có chỉ mục) | pin nhà cung cấp Nebius, không cho lưu dữ liệu (`embedding/full_corpus.py:323`); build gặp 504; hoãn Phase 8 |
@@ -144,7 +144,7 @@ Kiểm với code (commit `1832201`) ngày 24/10/2026; các dòng 8.1 kiểm ng�
 - Chỉ mục 8B hoãn sang Phase 8; build lại cần cách gọi chịu được 504/429.
 - BM25 tiếng Việt (ghép cặp âm tiết, `pyvi`): **đã đo ở 8.1, không tốt hơn**. Không đề xuất lại nếu không có lý do mới.
 - **Đề xuất 8.2:**
-  - bật bản bỏ dấu **chỉ khi câu hỏi không có dấu** (phát hiện đơn giản), câu có dấu giữ như cũ; đo bằng câu không dấu thật
+  - ~~bật bản bỏ dấu chỉ khi câu hỏi không có dấu~~ — **Bạn quyết 15:15 25/10: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; không làm ở 8.2. Ghi chú cũ: (phát hiện đơn giản), câu có dấu giữ như cũ; đo bằng câu không dấu thật
     của người dùng;
   - chuẩn hóa NFC câu hỏi (một dòng).
   - Cả hai đều cần build lại / đổi code ⇒ bạn duyệt ở 8.2.

@@ -57,8 +57,8 @@ Thứ tự theo lợi đã đo / chi phí / rủi ro. Mỗi mục vẫn qua skil
    nên chỉ vào runtime **sau** khi có mốc người; (b) **tách khâu dính** (bảng G5 §4) trước khi thêm cải tiến vào code.
 1. **Context 10 đoạn** — bằng chứng mạnh nhất; đổi một tham số settings. Rủi ro thấp.
 2. **NFC câu hỏi** — một dòng; phục hồi hoàn toàn câu NFD (G1.4).
-3. **Câu không dấu** — lỗ hổng lớn nhất. Thí nghiệm riêng: chỉ mục BM25 khử dấu dùng khi câu hỏi không dấu (cần pool
-   native) + cách cho nhánh dense; cần **câu không dấu thật** (không chỉ biến đổi máy) — có thể nhờ ChatGPT nghiên cứu cách làm.
+3. ~~Câu không dấu~~ — **User 15:15 25/10 bỏ khỏi phạm vi:** "cứ thiết kế có dấu hết, người dùng hỏi cũng viết có
+   dấu"; không nghiên cứu thêm. Số đo G1.4 / G4K giữ làm hồ sơ (giới hạn đã biết của chatbot).
 4. **Dọn chunker khi build lại index** (H1 + S1–S3) — **không có lợi đo được** (không khác), lập luận bằng vệ sinh / bớt
    ràng buộc cũ; không đứng riêng — gộp vào lần build của mục 3 hoặc 8, kèm sửa mâu thuẫn kho (Hải Vân).
 5. **Pool rộng + rerank luna** — tín hiệu, đo lại cùng context 10.

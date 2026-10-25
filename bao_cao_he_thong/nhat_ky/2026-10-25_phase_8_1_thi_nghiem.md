@@ -7,7 +7,7 @@ Chiều nay ba session (A điều phối, B và C làm) chạy hết các thí n
 trước, người khác kiểm lại, rồi mới commit. Chatbot đang chạy **không đổi gì**. Kết quả: chỉ một thay đổi đủ chắc để đề
 xuất — **đưa cho model 10 đoạn thay vì 5** (câu trả lời đầy đủ hơn rõ ở cả bộ thử lẫn bộ kiểm). Các thử khác (chia đoạn to
 hơn, model xếp hạng lại, đổi cách tách từ, đổi prompt, mức suy luận) không tốt hơn hoặc làm rơi đoạn đúng của vài câu.
-Phát hiện lớn nhất cần sửa ở 8.2: người dùng **gõ không dấu** thì tìm kiếm gần như hỏng.
+Phát hiện lớn nhất: người dùng **gõ không dấu** thì tìm kiếm gần như hỏng — 15:15 bạn quyết để ngoài phạm vi (người dùng gõ có dấu).
 
 ## Bạn cần làm gì
 - Xem mẫu câu kín bản 5: `knowledge-base-hue/evaluation/phase_8_1/sealed_user_sample.md` (17 dòng, 8 dòng đánh dấu
