@@ -57,3 +57,12 @@ dùng lại, không chạy thêm.
 
 PREPARED đúng nghĩa: mọi mục khóa mốc có hash và tái lập được; chỉ còn câu kín chính thức (chờ User duyệt mẫu bản 5). Không
 có gì chặn A khóa sau bước đó.
+
+## 6. Kiểm lại phần sửa (report `14a1eb0dbe1e`, script `ce5ff542945b`)
+
+- m1: script ghi `<đích>.tmp`, `check` trên file tạm, chỉ đổi tên khi exit 0; C thử cả hai nhánh trên file không kín (đạt ⇒ ra
+  đích giống lần trước; lỗi ⇒ exit 1, chỉ còn `.tmp`, không in nội dung). Thông điệp in ra vẫn chỉ hash / số dòng / phân bố /
+  exit — **đóng**.
+- m2: report §5 ghi việc khi khóa: cập nhật `git.head` + `dirty_paths`, thêm sha script `ce5ff542945b` — **đóng**.
+
+Kết luận giữ nguyên: **ready_for_user_confirmation**, không còn finding mở.

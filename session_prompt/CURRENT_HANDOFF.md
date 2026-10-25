@@ -93,7 +93,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 13:50 B19 nháp G5 xong — `phase_8_1_g5_decision_table_draft.md`, chờ C review; B18 chờ C review |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 xong (G4 + G2, C review ready); B18 plan BM25 | 14:23 phần 8.1 của B xong; chờ User đóng 8.1 / A giao 8.2 (B21 chờ C review) — xem `STATUS_B.md` |
 | C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C29 G3 xong; tiếp review B18 report | 13:57 G3 xong: `phase_8_1_g3_implementation.md` `abc9cb72d1a0` — không biến thể nào tốt hơn, §4 NOT RUN, 0 USD, Qdrant chỉ runtime; chờ B review. Code chưa commit: `full_corpus_pipeline.py` (`chunks=None`), `g3_chunking.py` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
