@@ -93,8 +93,8 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 11:36 vòng sửa 1 xong — plan sha `a4adfc8eedd9`, chờ C review vòng 2 + A duyệt |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C25 đáp án câu kín; review G4/G2 khi B nhắn | 12:13 C25 xong: 4 đáp án sửa (11 theo User, 18, 26, 36; lặp, ảnh hưởng thấp), kiểm độc lập ĐẠT, check exit 0, kín v5 md5 `6d413c8d98fa` (backup v4 `a095e08bd7ac`) — `phase_8_1_g0_4_sealed_review.md` §9; chờ User: 2/21/33, dòng 6 + dữ kiện phụ (3/19/24/29/33). C24 xong (§8) |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 12:33 G4 xong — `phase_8_1_g4_implementation.md`, chờ C review; G2 chưa chạy |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C26 câu kín, C27 Golden; review G4/G2 khi B nhắn | 12:31 C26 xong: dòng 2/6/21/33 sửa, kiểm độc lập ĐẠT, check exit 0, kín v6 `631334704fdd`, 36/36 natural (`sealed_realism` `d1f7c235b83c`), mẫu bản 5 (17 dòng, 8 dòng [ĐỔI]) `4f7fe6df5cca` — §10; chờ User xem mẫu 5. C27 xong: ready, m1/m2 đóng (official `0f7dbf41b422`) — `phase_8_1_golden_fix_review.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -117,7 +117,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 |---|---|---|
 | `knowledge-base-hue/evaluation/phase_8_1/split.json` | 120 dev / 56 test, seed 20261024, khóa SHA câu | `e2b1788dfbbc` |
 | `data/phase_8_1/gold/gold_draft.jsonl` | đoạn đúng 55 câu (40 dev / 15 test), đã áp m1–m8 | `bab707b9ab22` |
-| `data/phase_8_1/golden_realism_final.jsonl` | độ tự nhiên 176 câu (2 rater, kappa 0,765; 29 unnatural; 9 chờ User) | `6916a29a1dee` |
+| `data/phase_8_1/golden_realism_final.jsonl` | độ tự nhiên 176 câu (2 rater, kappa 0,765; 29 unnatural; 9 bất đồng User giữ 25/10 → natural) | `0b65d1c138d2` |
 | `knowledge-base-hue/evaluation/phase_8_1/sealed_authoring.jsonl` | 36 câu kín (chưa khóa) — A/C không đọc | — |
 | `data/phase_8_1/baseline/retrieval_native_hybrid_rrf_b13.jsonl` | mốc native mới `1fbb5c17…` | — |
 | `data/phase_8_1/g1/` | kết quả G1 từng câu | — |
@@ -161,6 +161,10 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
   duyệt.
 - **A 11:40: duyệt bản sha `a4adfc8eedd9`** (C23 vòng 2 ready, `phase_8_1_b16_review.md` §7). B16 + plan + review đã commit.
   B làm bước 2. Sửa plan sau mốc này là bản mới ⇒ nhắn C + A trước khi chạy phần đổi.
+- **B 12:33: G4 xong** (report `phase_8_1_g4_implementation.md`): không nhánh nào "tốt hơn" — M1/M2 mất 1–3 câu đoạn
+  đúng; luna chưa rõ (3/27/0, MRR +0,17 có CI); G4-B M1 pool 100 mất 1 câu, không khác mốc pool 100 không rerank. Đổi:
+  `cross_encoder.py` (`max_length`, `loaded_device`), `g4_rerank.py` mới, `uv add sentencepiece` 0.2.2. Tiền 0,0088 USD.
+  Chờ C review G4; G2 chưa chạy.
 
 **Bước 2 — chạy (sau khi A ghi "duyệt bản sha …" ở đây, A commit B16).** Thứ tự plan §4: mốc byte → G4.0 → G4-A → G4-B
 → G2 (pilot 10 câu mỗi lượt có phí). Mỗi gate: report + C review.
@@ -205,13 +209,31 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
     ở file authoring → `merge` → `smoke 3 24 42 44 55 82 114 141 155 163`; 5 câu "chưa chắc" (19, 88, 115, 124, 152) giữ.
     Backup: `knowledge-base-hue/meta/golden_backup_2026-10-25/` (official md5 `c30b56f22bd3`, smoke `fae56cd0515f`).
     Báo cáo: `data/phase_8_1/golden_reference_fix_2026-10-25.md`. 7B Run 1 không còn so trực tiếp trên 10 câu này.
-    **Xong 12:3x** (A tự kiểm: đúng 10 dòng, chỉ `reference_answer`, `check` exit 0; official md5 `b40ca15ef5f8`, smoke
+    **Xong 12:3x** (A tự kiểm: đúng 10 dòng, chỉ `reference_answer`, `check` exit 0; official md5 `b40ca15ef5f8` → sau C27 m1/m2 `0f7dbf41b422`, smoke
     `d80b58c50f38`). 46/157 còn lặp cụm "trung tâm thành phố" vì keyword chứa cụm đó — giữ. **C27: C review** →
     `phase_8_1_golden_fix_review.md`.
+- **C28 (giao 12:35) — kế hoạch G3 chia đoạn** (spec 8.1 §5 G3; chỉ viết, chưa build): `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g3_plan.md`
+  theo skill `run-experiment`: tiêu chí ghi trước (sàn / mức tụt / chỉ số quyết), cỡ mẫu, thứ tự H1 → H3 → H2 → small-to-big
+  → tiền tố tiêu đề + sửa nhỏ (inventory performing_arts, code fence, 3 cặp lặp), ngân sách token context cố định, 2×2
+  context 5/10 cho biến thể thắng; collection `hue_81_*` + sparse state riêng `data/phase_8_1/builds/<biến_thể>/`, liệt
+  kê và xóa sau; thời gian build ước (CPU / GPU — GPU chỉ khi B không giữ; kiểm cuda như B17 §0); khâu dính cần tách
+  (`build_candidate` nhận `chunks`, context từ `packed.sources`, ghi đè theo `--name`) — ghi file code sẽ sửa.
+  Đọc: spec §5 G3, report G1 (§4–§7), `de_xuat_cho_du_an.md`, khâu dính mục dưới. Sau review G4 (ưu tiên). A duyệt kèm sha,
+  B review khi B rảnh. 0 USD.
   - **C26 câu kín:** dòng 2, 21, 33 sửa theo đề xuất v3 (`sealed_review_notes_private_v3.md`); dòng 6 bỏ quy định ngoài
     điều câu hỏi hỏi; dòng 3/19/24/29/33 giữ chi tiết phụ. Quy trình như C24/C25 (backup v5, sub-agent sửa, sub-agent khác
     kiểm, `check --authoring`), cập nhật `sealed_realism.jsonl` (2/21/33 → natural nếu người kiểm đồng ý), rồi mẫu
     `sealed_user_sample.md` bản 5 (đánh dấu dòng đổi câu hỏi / đáp án) để User xem lần cuối → §10 report.
+    **Xong 12:33:** kín v6 md5 `631334704fdd` (đổi 2, 6, 21, 33; check exit 0; 36/36 natural, `sealed_realism` `d1f7c235b83c`);
+    mẫu bản 5 `4f7fe6df5cca` (17 dòng, 8 dòng [ĐỔI]) — **chờ User xem lần cuối**. C27 Golden ready (m1/m2 đóng, official
+    `0f7dbf41b422`). Sau User xem mẫu ⇒ A khóa câu kín + G0.6.
+- **12:35** User: "làm xong thì tự điều phối, triển khai tiếp; không thì tự kiểm tra, rà soát lại các phase trước" — A tiếp
+  8.1 theo spec (G4 → G2 → G3 → G5); 8.2 chỉ thiết kế sau khi User đóng 8.1 (`WORKFLOW.md` §9.4).
+- **12:35 realism:** A cập nhật `golden_realism_final.jsonl` — 9 câu bất đồng → `natural` (82 / 65 / 29), sha `0b65d1c138d2`;
+  bản trước `golden_realism_final_before_user_2026-10-25.jsonl`.
+- **12:35 B17 G4 xong** (report G4 §4.5): không nhánh nào "tốt hơn"; M1/M2 kém (mất 1–3 câu); luna chưa rõ (MRR +0,17 CI);
+  G4-B lợi do pool rộng, không do rerank. Chờ C review. **Luật tiền (A):** ước lại từ pilot 10 câu của lượt; trần lượt
+  0,05 USD; tổng B17 0,25 USD. B tiếp G2 trên Golden mới (`0f7dbf41b422`).
 
 ## Việc của A
 

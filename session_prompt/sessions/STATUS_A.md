@@ -32,6 +32,11 @@ liên lạc trực tiếp).
   (`data/phase_8_1/golden_reference_audit_{1_88,89_176}.md`).
 - C24 (11:5x): báo cáo cuối của sub-agent kiểm câu kín liệt kê tên file nguồn đã grep ⇒ C biết chủ đề câu kín (không
   biết câu / đáp án). Vòng cải tiến: brief giữ mù cấm cả tên file nguồn trong báo cáo cuối.
+- C26: grep của sub-agent sửa câu kín vô tình in 1 dòng từ `sealed_user_sample*` ⇒ vòng cải tiến: brief grep corpus phải
+  loại trừ `evaluation/` (và `meta/`).
+- Golden sửa 10 câu: keyword chứa cụm lặp (46, 157) chặn sửa văn phong — keyword và đáp án dính nhau.
+- 12:35 bẫy: heredoc `<<EOF` không quote + backtick trong text ⇒ bash chạy backtick như lệnh (chỉ lỗi "not found", không
+  hại). Script sửa tài liệu: luôn `<<'EOF'` và truyền giờ qua biến môi trường / argv.
 - Lệch skill `risk-gated-agent-review` (Correction: người kiểm ghi vào mục của người làm) ↔ `WORKFLOW.md` §3.2 (cấm sửa
   mục session khác) — C báo 11:31; sửa skill ở vòng cải tiến cuối phiên.
 
