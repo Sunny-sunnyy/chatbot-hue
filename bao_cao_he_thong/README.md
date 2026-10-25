@@ -1,6 +1,6 @@
 # Báo cáo hệ thống hue_rag — mục lục cho bạn
 
-**Cập nhật lần cuối: 22:50 24/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
+**Cập nhật lần cuối: 14:06 25/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
 `report_agent/`; report cũ tới 24/10 ở `reports/` (lịch sử).
 
 ## Muốn biết gì ⇒ đọc file nào
@@ -17,7 +17,7 @@
 | Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 24/10/2026 |
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 24/10/2026 |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 24/10/2026 |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [25/10 sáng — cải tiến cách làm](nhat_ky/2026-10-25_cai_tien_cach_lam.md) | 11:05 25/10/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [25/10 chiều — Phase 8.1 thí nghiệm](nhat_ky/2026-10-25_phase_8_1_thi_nghiem.md) | 14:06 25/10/2026 |
 
 ## Trạng thái ngắn
 
@@ -28,7 +28,8 @@
 | Từ chối nhầm 22/158 câu, bảng giá khó tìm, đoạn vụn | Chưa thực hiện → đo ở 8.1, sửa ở 8.2 |
 | Index Qwen3-8B | Chưa thực hiện → Phase 8.2 |
 | Dọn code + 2 kho món ăn cũ | Đã xử lý, đóng gói (bạn đóng 20:01) |
-| Rà 56 quyết định Phase 0–7 (Phase 8.1) | Đang làm: spec duyệt 20:49; thước đo sửa xong phần lớn; chẩn đoán tìm kiếm xong (chỗ yếu là xếp hạng) |
+| Rà 56 quyết định Phase 0–7 (Phase 8.1) | Xử lý một phần: mọi thí nghiệm xong + review; **chỉ "10 đoạn thay vì 5" thắng** (đề xuất 8.2); chờ bạn xem mẫu câu kín bản 5 rồi đóng 8.1 |
+| Câu hỏi gõ không dấu | Chưa thực hiện: tìm kiếm gần như hỏng (đủ đoạn đúng 13/32 → 1/32 câu) → thí nghiệm ở 8.2 |
 
 Thang 5 mức: Đã xử lý, đóng gói · Đã xử lý · Xử lý một phần · Đã thử, chưa áp dụng · Chưa thực hiện.
 

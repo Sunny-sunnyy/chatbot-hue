@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 11:05` (A, kết phiên sáng — cải tiến cách làm; chatbot và Phase 8.1 không đổi)
+Last updated: `2026-10-25 14:06` (A, phiên chiều — Phase 8.1 xong thí nghiệm; chatbot không đổi)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -31,7 +31,7 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Thước đo ổn định (Run 1 vs Run 2 chênh TB ≤0,011); **giới hạn:** chưa có mốc người (User bỏ chấm tay).
 - Tiền paid cả 7B + thăm dò: ~0,087 USD.
 
-Mốc kế tiếp: **Phase 8.1** (rà quyết định + thí nghiệm, không đổi chatbot) — spec approved 20:49 24/10; G0 gần xong, G1 xong (22:00), tiếp G4/G2 chờ A duyệt plan B16;
+Mốc kế tiếp: **Phase 8.1** (rà quyết định + thí nghiệm, không đổi chatbot) — spec approved 20:49 24/10; **25/10 14:06: G1–G4, G4K, G3 xong + review**; chỉ context 10 thắng (xác nhận test); kết luận `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md` (chờ review); chờ User xem mẫu câu kín bản 5 → khóa G0.6 → User đóng 8.1. Tiền 8.1: 0,1653 USD;
 input: bảng rà 56 quyết định `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md`
 (C11), giả thuyết `reports/phase_8_candidate_hypotheses_2026_10_24.md`, chẩn đoán từ chối nhầm
 (`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`), thăm dò context 10
@@ -53,7 +53,7 @@ Dọn Foods sau Phase 7 (B9) **đóng** 24/10.
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
-| 8.1 | `in_progress` | Spec approved 20:49 24/10; G0 gần xong (chờ User: câu kín, 9 nhãn tự nhiên; G0.6 chưa khóa); **G1 xong**: nghẽn ở xếp hạng; không đổi chatbot (đợt `report_agent/2026-10-24_phase_8_1_ra_soat/`) |
+| 8.1 | `in_progress` | Mọi thí nghiệm xong + review (25/10 14:06): chỉ **context 10** thắng (dev +0,26, test +0,27 Completeness); giữ chunker / retrieval / BM25 / không rerank / prompt; lỗ hổng câu không dấu. Chờ: User xem mẫu câu kín bản 5, khóa G0.6, User đóng. Không đổi chatbot (đợt `report_agent/2026-10-24_phase_8_1_ra_soat/`, `TONG_HOP.md`) |
 | 8.2 | `not_ready` | Cải tiến dựa trên số đo 8.1; thiết kế sau khi User đóng 8.1 |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 

@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 19:58 24/10/2026** (sau Phase 7B và dọn code/kho món ăn cũ — chatbot chạy y như trước, kết quả tìm kiếm giống từng byte; Qdrant còn 1 kho). File này mô tả hệ thống **đang chạy**. Mỗi lần
+**Cập nhật lần cuối: 14:06 25/10/2026** (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
 thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục).
 
