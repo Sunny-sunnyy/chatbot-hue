@@ -629,23 +629,33 @@ def paired_compare(a_rows: list[dict], b_rows: list[dict], categories: dict[int,
             groups.setdefault(categories[index], []).append(index)
         result[metric] = {}
         for group, indexes in groups.items():
-            diffs = np.array([b[i][metric] - a[i][metric] for i in indexes], dtype=float)
-            if not len(diffs):
-                continue
-            sign = -1 if metric in LOWER_IS_BETTER else 1
-            stats = bootstrap_mean_diff(diffs, rounds, seed)
-            result[metric][group] = {
-                "n": len(diffs),
-                "mean_a": sum(a[i][metric] for i in indexes) / len(indexes),
-                "mean_b": sum(b[i][metric] for i in indexes) / len(indexes),
-                "mean_diff": float(diffs.mean()),
-                **stats,
-                "wins": int((sign * diffs > 0).sum()),
-                "ties": int((diffs == 0).sum()),
-                "losses": int((sign * diffs < 0).sum()),
-                "verdict": verdict(metric, stats["ci95"]),
-            }
+            if indexes:
+                result[metric][group] = paired_stats(
+                    [a[i][metric] for i in indexes], [b[i][metric] for i in indexes], metric, rounds, seed,
+                )
     return result
+
+
+def paired_stats(a_values: list[float], b_values: list[float], metric: str,
+                 rounds: int = BOOTSTRAP_ROUNDS, seed: int = BOOTSTRAP_SEED) -> dict:
+    """So theo cặp một chỉ số (phần tử thứ k của A và B là cùng một case; chênh = B − A): chênh trung bình, CI 95%, p,
+    thắng / hòa / thua và kết luận **theo chiều của chỉ số**. Chỉ số càng thấp càng tốt phải mang tên trong `LOWER_IS_BETTER`
+    (ví dụ số câu từ chối nhầm là `false_refusal`) — khi đó B thấp hơn A mới là thắng (8.1 G2 `paired` từng ngược dấu, C-02).
+    Harness nhận giá trị tự tính (không qua `row_metrics`) gọi thẳng hàm này thay vì chép lại."""
+    diffs = np.array([b - a for a, b in zip(a_values, b_values, strict=True)], dtype=float)
+    sign = -1 if metric in LOWER_IS_BETTER else 1
+    stats = bootstrap_mean_diff(diffs, rounds, seed)
+    return {
+        "n": len(diffs),
+        "mean_a": sum(a_values) / len(a_values),
+        "mean_b": sum(b_values) / len(b_values),
+        "mean_diff": float(diffs.mean()),
+        **stats,
+        "wins": int((sign * diffs > 0).sum()),
+        "ties": int((diffs == 0).sum()),
+        "losses": int((sign * diffs < 0).sum()),
+        "verdict": verdict(metric, stats["ci95"]),
+    }
 
 
 def holm_adjust(p_values: list[float]) -> list[float]:

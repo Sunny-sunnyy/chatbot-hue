@@ -12,6 +12,7 @@ from evaluation.full_corpus_eval import (
     holm_adjust,
     make_split,
     paired_compare,
+    paired_stats,
     question_key,
     split_group_indexes,
     parse_user_scores,
@@ -270,6 +271,20 @@ def test_paired_compare_direction_and_lower_is_better():
     coverage = [{"case_index": 0, "category": "direct_fact", "answer_keywords": 0, "found_5": 0}]
     assert paired_compare(coverage, coverage, {0: "direct_fact"}, rounds=50) == {
         "excluded_cases": {"a": [0], "b": [0]}}
+
+
+def test_paired_stats_counts_wins_in_the_metric_direction():
+    # Đúng input của C-02: mốc từ chối nhầm 4 / 24 câu, biến thể hết cả 4 ⇒ biến thể thắng 4 câu, kết luận "better".
+    base = [1.0] * 4 + [0.0] * 20
+    fixed = [0.0] * 24
+    stats = paired_stats(base, fixed, "false_refusal", rounds=500)
+    assert (stats["wins"], stats["ties"], stats["losses"], stats["verdict"]) == (4, 20, 0, "better")
+    assert stats["mean_diff"] == -4 / 24
+    # Chỉ số càng cao càng tốt: cùng chênh đó là thua.
+    worse = paired_stats(base, fixed, "completeness", rounds=500)
+    assert (worse["wins"], worse["losses"], worse["verdict"]) == (0, 4, "worse")
+    with pytest.raises(ValueError):
+        paired_stats([1.0, 0.0], [1.0], "false_refusal", rounds=50)
 
 
 def test_holm_adjust_step_down():

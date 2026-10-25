@@ -21,16 +21,15 @@ Không thêm dữ kiện, không trả lời người dùng và không thêm cit
 """.strip()
 
 
+def build_answer_input(query: str, context: str) -> str:
+    """Nội dung tin nhắn user gửi model trả lời — một nơi dựng duy nhất, để chuỗi đếm token context đúng là chuỗi gửi đi (C-03)."""
+    return f"Câu hỏi:\n{query.strip()}\n\nNgữ cảnh truy xuất:\n{context.strip()}"
+
+
 def build_answer_messages(query: str, context: str) -> list[dict[str, str]]:
     return [
         {"role": "system", "content": ANSWER_SYSTEM_INSTRUCTIONS},
-        {
-            "role": "user",
-            "content": (
-                "Câu hỏi:\n" + query + "\n\n"
-                "Ngữ cảnh truy xuất:\n" + context
-            ),
-        },
+        {"role": "user", "content": build_answer_input(query, context)},
     ]
 
 

@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 2026-10-25 20:16 (phiên tối; review B26 XONG; tiếp gói 3a / 3b)
+# STATUS C — cập nhật 2026-10-25 20:45 (phiên tối; gói 3 chờ B review; 3c free + danh sách ứng viên XONG)
 
 Terminal: `hue-rag-7f` (mở 18:2x 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10 15:53 + 18:2x: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
@@ -27,8 +27,14 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
 - **Review plan 1b (sha `aa9bbf3650d6`) — XONG 20:25:** `sua_1b_plan_review.md` = changes_requested (P1 T-A tham chiếu tên chat.py không có;
   P2 T-C 503 có thể xanh giả — phải kiểm nguyên nhân) + m1–m4; số đếm (a)/(b) của B khớp; đồng ý (b). T-C với HF_HOME rỗng: auto mode chặn, NOT RUN.
 - **Kiểm lại sua_4 — đóng 20:27** (m3: C sai, B đúng).
-- **Đang khai báo sửa:** không. Tiếp: gói 3a / 3b (tạm dừng 20:2x, chưa sửa file). Ghi chú 3b: `generate_answer` gửi `query.strip()` /
-  `context.strip()`, còn `build_answer_messages` dùng chuỗi thô ⇒ đổi sang hàm chung phải giữ `.strip()` để giống byte.
+- **Gói 3a / 3b — XONG 20:37, chờ B review.** `report_agent/2026-10-25_ra_soat_code/sua_3_implementation.md`. 5 file (`evaluation/full_corpus_eval.py`
+  `paired_stats`; `llm/full_corpus_prompt.py` `build_answer_input`; generator; 2 test). So cặp trên file thật giống byte; chuỗi gửi model 25 câu tự viết
+  giống byte; cổng ổn định uvicorn đạt (2 câu, ~0,0004 USD ước — route không log usage). Chưa commit.
+- **Đang khai báo sửa:** 5 file trên (giữ tới khi A commit; sửa theo review của B nếu có).
+- **Gói 3c phần free — XONG 20:45:** `report_agent/2026-10-25_ra_soat_code/sua_3c_citation_v2.md`; file dẫn xuất `data/ra_soat_code_2026-10-25/citation_v2/`
+  (14 lượt + meta sha nguồn). 69 → 14 lỗi; `none` +4 → +2 (hết vi phạm luật ≤ +2, chưa kết luận — cần test paid); `low` vẫn vi phạm; tín hiệu P2 mất;
+  A/A context 10 = 0. 0 USD.
+- **Danh sách ứng viên cải tiến — XONG 20:41:** `report_agent/2026-10-25_ra_soat_code/ung_vien_cai_tien_C.md` (12 dòng chính, 5 câu hỏi ChatGPT; 0 USD).
 - **C chưa đọc nội dung câu kín.** Câu kín chính thức md5 `ddc59587b502`, manifest `9ea480d0d083`; mở ở mốc cuối 8.2 do User quyết.
 
 ## Câu hỏi cho A / User
@@ -46,6 +52,15 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
   `cite_shapes.py`, `recheck_both.py`, `c01_probe_stale.py`, `c01_probe_bogus_reranker.py`).
 - File tạm: `/tmp/c34/` (đầu ra sub-agent S1–S3 + script tạm; chỉ số đếm, không nội dung kho) — xóa sau kiểm chéo; `rm` có thể bị chặn ⇒
   nhờ User `!rm -r /tmp/c34`.
+
+## Ý cải tiến (A xin danh sách sau 5 gói — chỉ là ý, chưa thử)
+- **Route API ghi usage (token vào / ra, latency, số nguồn) mỗi câu vào log** — hiện không đo được tiền / độ trễ trên server thật (cổng ổn định gói 3
+  phải ước). Một dòng `logger.info` sau bước sinh; không ghi nội dung câu hỏi (dữ liệu người dùng).
+- **Prompt nói "[n]" nhưng context gắn "[Nguồn n]"** (C-09): sau gói 1a validator đã chịu cả hai; thử đổi nhãn context về "[n]" hoặc sửa câu prompt —
+  thí nghiệm (đổi đầu vào model), đo lỗi "không ngoặc số" còn lại (14 / 1.600) + Completeness.
+- **14 câu "không có ngoặc số"** còn lại sau 1a: xem có phải câu một nguồn / câu liệt kê (model bỏ citation) ⇒ chính sách "một nguồn thì gán" của 8.1
+  G2.3 có thể đáng xét lại theo định nghĩa mới.
+- **Bộ đếm token context nhận instructions** khi harness đổi prompt (C-03 phần 2) — làm khi 8.2 E1 cần.
 
 ## Đã học / bẫy gặp
 - **Chỉ số lỗi do validator đếm: phân loại theo hình dạng output trước khi kết luận nguyên nhân** (C-09: 8.1 ghi "model quên `[n]`",

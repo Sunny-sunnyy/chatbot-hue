@@ -9,6 +9,7 @@ from llm.generator_openai_full_corpus import (
     OpenAIFullCorpusGenerator,
     SearchContextOutput,
 )
+from llm.full_corpus_prompt import build_answer_messages
 from llm.representation_b import build_representation_b_search_text
 
 
@@ -54,6 +55,24 @@ def test_empty_or_blank_input_rejected_before_network(require_openai_key):
     with pytest.raises((ValueError, GenerationError)):
         asyncio.run(generator.generate_search_context("   "))
     asyncio.run(generator.aclose())
+
+
+def test_answer_call_sends_exactly_the_messages_counted_for_context(monkeypatch):
+    """Chuỗi gửi model (instructions + input) phải đúng là chuỗi FullCorpusContextBuilder đếm token (C-03).
+    Không gọi mạng: key giả chỉ để dựng client, bước gọi agent được thay bằng hàm ghi lại."""
+    monkeypatch.setenv("OPENAI_API_KEY", "khong-dung-key-that")
+    generator = OpenAIFullCorpusGenerator.from_environment(load_settings())
+    sent = {}
+
+    async def record(agent, user_prompt, expected_type):
+        sent.update(instructions=agent.instructions, input=user_prompt)
+
+    generator._execute_agent = record
+    asyncio.run(generator.generate_answer("  Giá vé Đại Nội?  ", "[Nguồn 1]\nTiêu đề: Đại Nội\n"))
+    asyncio.run(generator.aclose())
+    system, user = build_answer_messages("  Giá vé Đại Nội?  ", "[Nguồn 1]\nTiêu đề: Đại Nội\n")
+    assert sent == {"instructions": system["content"], "input": user["content"]}
+    assert user["content"] == "Câu hỏi:\nGiá vé Đại Nội?\n\nNgữ cảnh truy xuất:\n[Nguồn 1]\nTiêu đề: Đại Nội"
 
 
 def test_representation_b_keeps_a_when_combined_text_is_too_long():

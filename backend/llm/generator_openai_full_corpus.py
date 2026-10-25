@@ -22,6 +22,7 @@ from core.schema import GenerationError
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     REPRESENTATION_B_SYSTEM_INSTRUCTIONS,
+    build_answer_input,
 )
 
 logger = logging.getLogger("llm.full_corpus")
@@ -249,8 +250,7 @@ class OpenAIFullCorpusGenerator:
     async def generate_answer(self, query: str, context: str) -> GeneratedText:
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        prompt = f"Câu hỏi:\n{query.strip()}\n\nNgữ cảnh truy xuất:\n{context.strip()}"
-        return await self._execute_agent(self.answer_agent, prompt, AnswerOutput)
+        return await self._execute_agent(self.answer_agent, build_answer_input(query, context), AnswerOutput)
 
     async def generate_search_context(self, search_text: str) -> GeneratedText:
         if not search_text or not search_text.strip():
