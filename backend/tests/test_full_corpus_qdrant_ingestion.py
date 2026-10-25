@@ -398,3 +398,28 @@ def test_full_corpus_candidate_registry_is_exact_ordered_and_isolated() -> None:
     assert candidate_by_id("e5-small-384") is FULL_CORPUS_CANDIDATES[0]
     with pytest.raises(ValueError, match="Unknown full-corpus candidate"):
         candidate_by_id("arbitrary-model")
+
+
+def test_build_writes_nothing_before_the_target_is_known_fresh(tmp_path: Path) -> None:
+    """C-21: build dừng ở bước kiểm đích (collection runtime đã có point) **trước** khi ghi sparse state — trước đây sparse state được
+    ghi rồi mới dừng, xóa thiếu một thứ là runtime hỏng. Chỉ đọc Qdrant (dừng trước create_collection), không nạp model dense."""
+    from core.settings_loader import load_settings
+    from ingestion.full_corpus_pipeline import build_candidate
+    from vectorstore.qdrant import QdrantSchemaError, client_from_settings
+
+    runtime = candidate_by_id("e5-small-384")
+    client = client_from_settings(load_settings())
+    try:
+        assert client.collection_exists(runtime.collection_name), "Qdrant :6335 phải chạy và có collection runtime (điều kiện trước)"
+    finally:
+        client.close()
+    sparse_state_path = tmp_path / "sparse_state.json"
+    # Đích runtime có point ⇒ bước kiểm đích dừng với blocker "target is non-empty" (QdrantSchemaError) — đúng lý do, không phải lỗi khác.
+    with pytest.raises(QdrantSchemaError, match="target is non-empty"):
+        build_candidate(
+            "e5-small-384",
+            collection_name=runtime.collection_name,
+            sparse_state_path=sparse_state_path,
+            record_path=tmp_path / "record.json",
+        )
+    assert not sparse_state_path.exists()
