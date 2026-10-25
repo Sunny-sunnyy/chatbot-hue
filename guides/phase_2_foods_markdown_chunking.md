@@ -1,5 +1,12 @@
 # Phase 2: Khám phá và chunking Foods Markdown
 
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26): tả hệ thống Foods và các gate thiết kế 08–10/2026 tại thời điểm viết.
+> Nhiều file, collection, profile, model và lệnh trong guide này **đã gỡ hoặc đã đổi** — không làm theo như hướng dẫn hiện hành.
+> Hiện hành: [`full_corpus_rag.md`](full_corpus_rag.md) (mục đầu "Trạng thái hiện hành" và "Build lại index khi corpus đổi"),
+> [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4 (runtime, dữ liệu đang chạy) và §8 (bẫy, cách chạy test).
+> Code đang chạy của khâu này: `backend/ingestion/source_state.py`, `backend/ingestion/chunking/markdown_blocks.py`,
+> `backend/ingestion/chunking/full_corpus_chunker.py`.
+
 > Full-corpus extension cập nhật 2026-09-12: Written Spec, Plan, Review Contract
 > và exact Phase 2 prompt đã được User duyệt. Phase 2 discovery/parser/chunker/
 > locator/Representation A preview đã qua ba correction, independent review và

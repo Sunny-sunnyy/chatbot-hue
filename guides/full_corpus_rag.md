@@ -1,8 +1,10 @@
 # Full-corpus RAG workstream
 
 ```text
-Status (2026-10-24): Phase 2–6, 7A, 7A2, 7B User-closed; next Phase 8 (stabilization)
-Current state: session_prompt/Project_Status.md — the rest of this header and the sections below the 7A2 update are history
+Status (2026-10-25): Phase 2–6, 7A, 7A2, 7B, 8.1 User-closed; 8.2 paused (spec 2026-10-25-phase-8-2-apply-winners-design.md);
+  code audit + fixes: report_agent/2026-10-25_ra_soat_code/ (TONG_HOP.md)
+Current state: session_prompt/Project_Status.md — the rest of this header and the sections under "Lịch sử (trước 7A2)" are history
+Rebuild index when the corpus changes: section "Build lại index khi corpus đổi" below
 Phase 7A2: docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md + plan 2026-10-23-phase-7a2-…
 Written spec: docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md
 Implementation plan: approved — docs/superpowers/plans/2026-09-11-full-corpus-rag-implementation-plan.md
@@ -86,9 +88,11 @@ Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 
 `reports/phase_7b_gate_{0,1,2,3,4}_*`, review `reports/phase_7b_review_2026_10_24.md`.
 
 - **Evaluator:** `backend/evaluation/full_corpus_eval.py` (CLI `retrieval`, `generate`, `judge-luna`,
-  `retry`, `export-judge-input`, `compare`, `parse-user-scores`, `diagnose-refusals`,
-  `context-coverage`, `summarize`) chạy đúng đường runtime API; prompt judge cố định
-  `backend/evaluation/full_corpus_judge_prompt.md`. Kết quả chi tiết private `data/evaluation/phase_7b/`.
+  `retry`, `export-judge-input`, `compare`, `split`, `parse-user-scores`, `diagnose-refusals`,
+  `context-coverage`, `summarize` — đối chiếu `--help` 2026-10-25) chạy đúng đường runtime API; prompt judge cố định
+  `backend/evaluation/full_corpus_judge_prompt.md`. Kết quả chi tiết private `data/evaluation/phase_7b/`. Câu bị lỗi citation (API trả
+  500, người dùng không thấy câu trả lời) vẫn được giữ text và chấm; đếm riêng ở chỉ số `citation_error` (định nghĩa chỉ số đổi theo gói
+  sửa C-09 — xem `report_agent/2026-10-25_ra_soat_code/`).
 - **Judge (đổi so với contract cũ):** judge chính là Claude (session Claude Code, sub-agent theo lô
   ≤10, 0 API); `gpt-6-luna` chỉ sinh + judge phụ. Không truyền `temperature` (luna trả 400).
 - **Baseline đã quan sát** (Claude, Run 1, 176 case): Accuracy 4,43 / Completeness 4,28 /
@@ -122,8 +126,7 @@ Hành vi đã quan sát (evidence `reports/phase_7a2_gate_{1,2,3}_*`):
   `data_collection: deny`) nhưng **chưa có index** — build không pin trộn 3
   provider (cos mẫu 0,9954 < 0,999), build pin Nebius lỗi HTTP 504. Hoãn sang
   Phase 8.
-- Qdrant chỉ còn 3 collection: index e5 7a2 và hai collection Foods
-  (`hue_foods_e5_small_384`, `_dense`, giữ qua Phase 7). 13 collection cũ
+- Qdrant lúc đóng 7A2 còn 3 collection: index e5 7a2 và hai collection Foods (giữ qua Phase 7). 13 collection cũ
   (4 legacy, 4 metadata v2, 3 Foods 08a, 2 TF-IDF 08b) đã xóa.
   *Cập nhật 24/10 (B9):* hai collection Foods đã xóa, code Foods cũ đã gỡ; Qdrant còn 1 collection.
 
@@ -133,6 +136,48 @@ qwen3-embedding-8b, nên spec/plan Phase 8 phải thiết kế lại. Phase 8 l�
 thử chunk size/gộp chunk vụn (bỏ ràng buộc huydang 256), reranker đa ngôn ngữ,
 truy xuất bảng giá (F2), tổng hợp đa nguồn (F1), BM25 tiếng Việt (tách từ/bigram)
 và rà lại lựa chọn các Phase trước — đo trên baseline 176 case của Phase 7B.
+
+### Build lại index khi corpus đổi (B26, 2026-10-25 — theo code tại `main` `5d3376f`)
+
+Runtime từ chối khởi động khi hash file corpus khác build record (lỗi "stale"), nên **mọi** sửa `knowledge-base-hue/` phải đi
+kèm build lại index. Đây là thao tác ghi / xóa dữ liệu đang chạy ⇒ việc rủi ro cao (`session_prompt/WORKFLOW.md` §3): spec / mục việc
+User duyệt, ghi rõ đích ghi / xóa, sao lưu trước.
+
+Code làm gì (`backend/ingestion/full_corpus_pipeline.py`):
+
+- CLI chỉ có `build --candidate <id>` (`e5-small-384` hoặc `qwen3-embedding-8b-4096`); tên collection **cố định theo candidate**
+  (`_COLLECTION_BY_CANDIDATE`): `hue_full_corpus_7a2_e5_small_384` cho e5. Runtime đọc cùng bảng tên đó.
+- Không ghi đè: ngay đầu build, bước kiểm đích (`inspect_full_corpus_target` / `require_fresh_full_corpus_target`) dừng nếu collection đích
+  **đã tồn tại** hoặc build record `data/full_corpus_builds/<collection>.json` **đã có** — trước khi nạp model hay ghi Qdrant
+  (`FileExistsError` lúc ghi record chỉ là lớp chặn cuối); sparse state chung
+  `data/full_corpus_builds/full_corpus_sparse_state.json` đã có mà khác byte ⇒ dừng ("Existing sparse state differs").
+- Mọi lỗi ở bước nào cũng raise, không retry / resume; build kiểm hash nguồn trước và sau khi encode, kiểm lại collection sau upsert
+  (số point, payload từng point, vector mẫu — đoạn đầu mỗi domain).
+
+Các bước (mỗi bước có quyền trong mục việc; `Project_Status.md` §8 có bẫy liên quan):
+
+1. **Sửa kho có sao lưu:** copy file gốc vào `knowledge-base-hue/meta/` trước khi sửa, review bằng diff (`Session_Prompt.md` §5).
+2. **Chia đoạn thử, chỉ đọc** (không ghi Qdrant): `chunk_full_corpus()` phải trả 0 lỗi; đếm token từng đoạn với 3 tokenizer trong
+   `settings.yaml` `full_corpus.embedding_models`. **Lưu ý (B-11, R2):** chunker hiện **không** báo lỗi khi một đoạn vượt giới hạn
+   (e5 cắt im lặng ở 512) — tới khi sửa B-11, tự đếm và dừng nếu có đoạn vượt. Giới hạn sát nhất là tokenizer **huydang 256** (lớn nhất
+   hôm nay 255 / 256), dù model đó không chạy ở runtime: một sửa kho nhỏ có thể vượt huydang trước e5. Quyết trước khi build: tách thêm
+   hay bỏ huydang khỏi danh sách kiểm (đổi chunker ⇒ thí nghiệm theo skill `run-experiment`; 8.1 G3 H1 đã thử bỏ ràng buộc này — chỉ kiểm e5-small 512, bỏ e5-base và huydang; H2 / H3 dựng trên chunker H1).
+3. **Sao lưu đích cũ:** Qdrant snapshot của collection đang chạy + copy build record và sparse state ra chỗ private kèm ngày.
+4. **Chọn cách thay** (A trình User):
+   (a) *tại chỗ* — xóa collection cũ + build record + sparse state rồi build lại đúng tên: đơn giản, nhưng chatbot ngừng phục vụ từ lúc
+   xóa tới khi build xong và khởi động lại API. **Trước khi chạy build, kiểm đủ cả ba đã xóa:** build ghi sparse state mới *trước* bước kiểm
+   đích, nên nếu còn collection hoặc build record thì build dừng sau khi đã thay sparse state ⇒ sparse state lệch record cũ ⇒ runtime từ chối
+   khởi động (C-21 — sửa thứ tự trong code để ở gói build lại);
+   (b) *đích mới rồi cutover* (`WORKFLOW.md` §3.4) — gọi `build_candidate(..., collection_name=…, sparse_state_path=…, record_path=…)` từ
+   Python như harness 8.1 G3 đã làm, kiểm xong mới đổi runtime; hiện runtime lấy tên collection và đường sparse state từ hằng trong code
+   ⇒ cutover cần sửa code (B-06) — làm cùng lần sửa đó.
+5. **Build:** từ gốc repo, `uv run python -m backend.ingestion.full_corpus_pipeline build --candidate e5-small-384` (e5 chạy CPU, không
+   cần key; candidate 8B cần `--env-file .env` và có phí OpenRouter). *Lệnh có thể đổi sau gói sửa quy ước import (1b, B-01 / C-01).*
+6. **Kiểm sau build:** summary JSON in ra (số đoạn, `corpus_identity`, `verification`); khởi động API ⇒ `/health` 200; T1 retrieval / Golden
+   smoke 10 theo mục việc; cập nhật `Project_Status.md` §4 (số đoạn, vocabulary) và 4 chỗ `bao_cao_he_thong/` (`WORKFLOW.md` §6).
+7. **Dọn:** xóa snapshot / bản sao cũ chỉ khi User duyệt.
+
+### Lịch sử (trước 7A2) — giữ làm hồ sơ, không phải hiện trạng
 
 Curation và taxonomy toàn corpus đã hoàn tất. Khảo sát parser/source locator,
 khảo sát hai input Ca Huế VN/QT và khảo sát Golden/evaluation reference đầu tiên
@@ -179,7 +224,7 @@ contract, Qwen handoff cũ phải dừng. User đã duyệt amendment, revised p
 Review Contract mới cùng ngày; current GPT handoff hiện active. Live calls chỉ
 được phép qua exact bounded runner sau complete non-paid gate.
 
-Artifact Phase 4 hiện hành vẫn đúng với contract lịch sử: payload năm field,
+Artifact Phase 4 lúc đó (09/2026; hiện hành: payload 7 field — `Project_Status.md` §4) đúng với contract lịch sử: payload năm field,
 domain suy từ `source`, model/hash ở cấp build. Target metadata v2 thay thế cho
 implementation tương lai có payload đúng bảy field: năm field cũ cộng
 `chunk_id` và enum `domain`. Build record v2 tách build schema/payload schema,
@@ -399,7 +444,8 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   `{id,title,heading_path,excerpts}` và phải được answer tham chiếu. Technical/
   citation-integrity failure trả typed non-2xx `{error:{code,message}}`, không
   partial success, silent fallback hoặc automatic repair/retry. Thiếu evidence
-  vẫn trả phần có căn cứ hoặc nêu thiếu thông tin.
+  vẫn trả phần có căn cứ hoặc nêu thiếu thông tin. *(Hiện hành: prompt trả đúng một câu từ chối cố định khi bằng chứng không đủ —
+  "tất cả hoặc không"; 8.1 thử P1 "trả phần có căn cứ" và giữ cách cũ — bảng G5 dòng 2b.)*
   Decision #6b chốt token-budget động nhưng reproducible: mỗi approved generator
   profile khóa `context_limit`, `reserved_output_tokens` và `safety_margin` cho
   toàn benchmark run. Mỗi request trừ actual system/query/format/citation
@@ -474,7 +520,7 @@ verification. Bốn canonical collections chỉ read-only; isolated absent
 experiment authority của Phase 5 đã kết thúc. Quality benchmark vẫn chờ exact
 Phase 8 lifecycle gate. Metadata v2 đã User-closed; context/API/static UI thuộc
 Phase 6. Handoff Qwen ngày 2026-09-30 là lịch sử; revised GPT execution package
-và current handoff ngày 2026-10-01 đã được User duyệt và đang active.
+và handoff ngày 2026-10-01 đã được User duyệt (lúc đó active; Phase 6 đã đóng, model đổi sang `gpt-6-luna` 2026-10-23).
 
 ## Thiết kế umbrella đã chốt — lịch sử quyết định
 
@@ -587,7 +633,17 @@ approval.
 
 ## Tài liệu hiện hành
 
-- Trạng thái task: `session_prompt/CURRENT_HANDOFF.md`.
+- Trạng thái task: `session_prompt/CURRENT_HANDOFF.md`; hiện trạng runtime / dữ liệu: `session_prompt/Project_Status.md` §4.
+- Corpus + index hiện hành: `docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md`; build record
+  `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (schema `full_corpus_build:v3`, private).
+- Model sinh: `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`.
+- Golden + evaluator: `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md`,
+  `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`.
+- Phase 8: `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` (closed),
+  `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` (paused).
+
+**Lịch sử (trước 10/2026) — các mục dưới không còn là contract đang dùng:**
+
 - Completed Metadata v2 Tasks 1–7 package:
   `docs/superpowers/specs/2026-09-29-full-corpus-metadata-v2-written-spec.md`
   và
@@ -595,7 +651,7 @@ approval.
   final closure tại
   `reports/full_corpus_metadata_v2_final_codex_review_2026_09_29.md` và
   `reports/user_reports/full_corpus_metadata_v2_final_user_report_2026_09_30.md`.
-- Active Full-corpus Phase 6 guide/amendment/plan/Review Contract:
+- Phase 6 guide/amendment/plan/Review Contract ngày 2026-10-01 (lúc đó "active"; model đã đổi sang `gpt-6-luna` 2026-10-23):
   `guides/phase_6_generation_api.md`,
   `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md`,
   `docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md`

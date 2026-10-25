@@ -1,6 +1,6 @@
 # STATUS B — phiên tối 2026-10-25 (mở 18:21 +0700, terminal `hue-rag-c3`; A = `hue-rag-77`, C = `hue-rag-7f`)
 
-## Trạng thái (18:40)
+## Trạng thái (20:17)
 - **B25 rà code luồng dựng index + nền — XONG 18:39, chờ kiểm chéo** (A "làm đi" 18:2x; 0 USD; 3 sub-agent). Nền rà `main` `1e8cf8f` (code không
   đổi so `bc568f1`). 21 finding, top 10 chốt; B-01 cao, B-11 cao. File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md`.
 - Sub-agent: SA1 guide 0–2 + README, SA2 guide 3–4 + index `full_corpus_rag.md`, SA3 test + notebook 03/04 (97 passed) ⇒ `data/ra_soat_code/sa{1,2,3}_*.md`
@@ -10,8 +10,22 @@
   `ready_for_user_confirmation`, 5 / 5 đúng, mức hợp lý, 6 minor bổ sung (R-01…R-06) cho TONG_HOP. Script riêng `/tmp/b25x/`, 0 USD, không `.env`.
   B khai xung đột lợi ích: C-09 bác nhận định trong report 8.1 G2 do B viết.
 - **B-08 rút** (sai: runtime đã làm nóng e5 lúc khởi động — thấy khi kiểm C-01) ⇒ sửa trong `ra_soat_code_B.md` (sau commit `c272644`).
-- **File đang khai báo sửa: không.** Chờ A.
-- File tạm: `/tmp/b25/`, `/tmp/b25x/` (script B), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
+- **Review C35 (gói 1a) — XONG 19:56** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1a_review.md`: ready, 0 blocker / major, 2 minor;
+  A đã commit `9e6d371` + `63fec4f`. Script `/tmp/b27/`.
+- **B26 gói 4 (tài liệu) — XONG 20:0x, chờ review C** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_4_implementation.md`. 16 file (13 guide +
+  3 notebook), chưa commit. Đếm ngoài vùng lịch sử 34 ⇒ 1 (roadmap dự kiến); đường dẫn home repo khác 48 ⇒ 0; notebook Run All bản tạm 3 / 3.
+  Private: `data/ra_soat_code/b19_duong_dan_ngoai.md`, `tools/{deadrefs,edit_notebooks}.py`, `b26_deadrefs_{before,after}.txt`. 0 USD.
+- **File đang khai báo sửa:** 16 file B26 (giữ khai báo tới khi review xong / A commit). Chờ A.
+- **Plan gói 1b — XONG 20:1x, chờ C review + A duyệt sha** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_plan.md` (sha `aa9bbf3650d6`).
+  Đề xuất (b) import trần, chạy từ `backend/`. Script đo `data/ra_soat_code/tools/{inventory,dup_modules}.py`. Chưa sửa code.
+- File tạm: `/tmp/b25/`, `/tmp/b25x/`, `/tmp/b26/`, `/tmp/b27/` (script B), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
+
+## Ý cải tiến (cho đợt tìm hướng tốt hơn sau 5 gói — giả thuyết, chưa đo)
+- Chia đoạn: bỏ ràng buộc tokenizer huydang 256 (model không chạy ở runtime) ⇒ đoạn dài hơn / ít đoạn vụn; 8.1 G3 H1 đã đo đoạn đúng không đổi —
+  cần đo Completeness câu nhiều nguồn (giống lợi ích context 10).
+- Khởi động API: nạp e5 2,45 s + chia lại / hash kho — đo thời gian khởi động thật để biết có cần tối ưu không (hiện chưa có số qua `create_app`).
+- Build lại index: cách *đích mới rồi cutover* cần tên collection / đường sparse state lấy từ settings thay hằng (B-06) — làm cùng đợt build lại.
+- Đánh giá: điểm judge đang chấm cả câu mà API trả 500 — tách chỉ số "trải nghiệm người dùng" (câu lỗi = 0 điểm) bên cạnh điểm judge.
 
 ## Đã học / bẫy gặp (phiên tối 25/10)
 - 25/10 tối: B ghi "`scripts/` không tồn tại" vì chỉ tìm ở gốc repo — mục việc ghi đường dẫn tương đối ⇒ `find . -name <tên> -not -path './.venv/*'` trước khi kết luận "không có".

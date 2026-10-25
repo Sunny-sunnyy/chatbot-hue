@@ -27,7 +27,14 @@ Nếu chưa đủ năm điều kiện, Phase 9 giữ `not_ready`.
 
 ## Model lifecycle đầu vào Phase 9
 
-Phase 9 không tự chọn model. Lifecycle được User duyệt ngày 2026-10-01 là:
+Phase 9 không tự chọn model.
+
+**Hiện hành (cập nhật 2026-10-25, rà code B26):** model sinh là `gpt-6-luna`
+(`docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`); judge chính là Claude, `gpt-6-luna` chỉ judge phụ (Phase 7B);
+User 2026-10-24 chọn **giữ `gpt-6-luna`, không so model sinh ở Phase 8** — so model nhỏ hơn để sau khi hệ thống ổn
+(`session_prompt/Project_Status.md` §5). Khối dưới là **lịch sử** (lifecycle 2026-10-01, đã thay).
+
+Lifecycle được User duyệt ngày 2026-10-01 (lịch sử) là:
 
 ```text
 Phase 6 GPT-5.4-nano baseline

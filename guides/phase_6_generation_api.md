@@ -1,5 +1,8 @@
 # Phase 6: Grounded answer generation và JSON API
 
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26) **trừ mục "Hiện hành" ngay dưới**: các mục sau đó tả Phase 6 Foods và các gói
+> 09–10/2026 (`gpt-5.4-nano`, file đã gỡ). Hiện trạng: `session_prompt/Project_Status.md` §4.
+
 > **Full-corpus Phase 6 — approved 2026-10-23 (PASS WITH LIMITATIONS):** model
 > đổi sang `gpt-6-luna`, Qdrant host port 6335/6336 theo
 > `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`. Live run
@@ -7,12 +10,14 @@
 > miss bảng giá vé) tại `reports/full_corpus_phase_6_gpt_6_luna_review_2026_10_23.md`.
 > Ghi chú bên dưới về `gpt-5.4-nano` là lịch sử.
 
-> **Full-corpus Phase 6 — implementation handoff active, 2026-10-01:** User đã
+> **(Lịch sử) Full-corpus Phase 6 — implementation handoff active, 2026-10-01:** User đã
 > duyệt OpenAI baseline amendment, revised Implementation Plan và Review
 > Contract. `CURRENT_HANDOFF.md` cấp đúng một scope cho Implementer; paid calls
 > chỉ được mở sau complete non-paid gate. Qwen chờ mandatory Phase 8 comparison.
 
-## Full-corpus package hiện hành
+## Hiện hành
+
+*(Full-corpus package Phase 6, `gpt-6-luna` từ 2026-10-23.)*
 
 Các artifact thiết kế hiện hành theo thứ tự ưu tiên:
 
@@ -39,7 +44,8 @@ Contract full-corpus hiện hành:
   reranker trong Phase 6 smoke;
 - context pack tối đa Top 5 nguyên chunk theo rank bằng `tiktoken/o200k_base`;
   evidence chỉ lấy từ `evidence_parts`;
-- generation dùng tool-less OpenAI Agents SDK với alias `gpt-5.4-nano`,
+- generation dùng tool-less OpenAI Agents SDK với model `gpt-6-luna` (amendment
+  `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`; trước đó `gpt-5.4-nano`),
   structured output và `Runner.max_turns=1`; không pin snapshot;
 - không cấu hình hoặc truyền reasoning, temperature, top-p, penalties hay
   verbosity; model/SDK tự dùng các giá trị mặc định;
@@ -52,6 +58,22 @@ Contract full-corpus hiện hành:
 - UI hiện tại là static HTML/CSS/JavaScript, render Markdown đã sanitize bằng
   marked và DOMPurify được pin/local; Next.js được để dành cho frontend phase
   sau và không thay đổi API contract này;
+- lỗi trả `{"error": {"code", "message"}}` (đối chiếu `backend/api/routes/chat.py`, `backend/api/app.py`, 2026-10-25):
+
+  | HTTP | `code` | Khi nào |
+  |---:|---|---|
+  | 422 | `invalid_request` | câu hỏi rỗng / quá 500 ký tự / sai dạng |
+  | 409 | `corpus_reingest_required` | index không khớp corpus (cần build lại) |
+  | 503 | `retrieval_unavailable` | tìm kiếm / Qdrant / model tìm kiếm không sẵn sàng |
+  | 502 | `generation_unavailable` | model sinh không sẵn sàng hoặc lỗi khi gọi |
+  | 500 | `context_budget_error` | không đóng gói được context trong giới hạn token |
+  | 500 | `citation_integrity_error` | câu trả lời không qua kiểm citation |
+  | 500 | `internal_error` | lỗi khác không bắt riêng |
+
+  Giới hạn đã biết (rà code 2026-10-25, `report_agent/2026-10-25_ra_soat_code/`): bảng trên là hành vi thiết kế; do module nạp hai lần,
+  hiện index cũ lúc khởi động ra 503 thay vì 409 và lỗi Qdrant lúc hỏi ra 500 thay vì 503; lỗi nạp model tìm kiếm lúc khởi động đang được
+  gắn chung lớp với "index cũ" (B-01 / C-01 — gói sửa 1b);
+- `/health` trả `{"status": "ok" | "degraded", "components": {app, qdrant, retrieval, tokenizer, generator}}` (HTTP 200 cả khi `degraded`) (`backend/api/health.py`);
 - chỉ hỗ trợ hành vi người dùng tiếng Việt; không thêm language detector;
 - không mock/fake/stub. Acceptance dùng corpus, Qdrant, tokenizer, model và API
   thật; bounded live evidence có đúng một call Representation B và bốn answer
@@ -86,7 +108,7 @@ Design approved by: User
 Current simplicity design approval date +07: 2026-08-25
 Prior functional Phase 6 and Milestone 6.1 status: approved
 Full-corpus extension status at this historical snapshot: design not started
-Superseded by: Full-corpus target hiện hành ở đầu file
+Superseded by: mục "Hiện hành" ở đầu file
 ```
 
 > **Lưu ý governance hiện hành:** Phần Phase 6 lịch sử bên dưới còn mô tả
@@ -895,4 +917,4 @@ triển khai, review và người dùng xác nhận ngày 2026-08-21. Phase 6 gi
 `approved` và đã hoàn thành về chức năng. Phase 7 cũng đã được đơn giản hóa,
 review và user xác nhận. Simplicity implementation Phase 6 cũng đã chạy thật,
 đạt Codex review vòng 2 và được user xác nhận ngày 2026-08-26. Bước tiếp theo
-được quản lý trong `guides/README.md`; Phase 8 vẫn đóng.
+được quản lý trong `guides/README.md`; Phase 8 vẫn đóng *(lịch sử; nay 8.1 đã đóng, 8.2 tạm dừng — `Project_Status.md` §2)*.

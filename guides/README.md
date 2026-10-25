@@ -1,276 +1,52 @@
-# Hướng dẫn Hue RAG
+# Hướng dẫn Hue RAG — mục lục guide
 
-> Cập nhật 2026-09-10: user đã approved khảo sát parser/source locator sau
-> correction lượt 3. [Review/closure](../reports/full_corpus_parser_locator_codex_review_2026_09_09.md)
-> là evidence thiết kế, không tự approve runtime. Chọn markdown-it-py/table
-> enabled, chưa triển khai runtime. Hai input VN/QT đúng
-> ranh giới đã đo bổ sung và user-approved: [review](../reports/full_corpus_vn_qt_token_check_codex_review_2026_09_09.md).
-> Counts input sai không dùng. Các khảo sát Golden/evaluation reference, schema
-> deep-dive và simplicity evaluation `rag_old_0` đều đã approved/completed.
-> User đã chọn Golden metric-only bốn field.
-> Survey dài `llm_rag` đã chạm correction ceiling và bị đóng băng
-> working/non-canonical. Verified Architecture Extraction thay thế đã qua hai
-> correction, independent review và User closure ngày 2026-09-11; đây là
-> approved evidence companion. Decision Queue tiền-spec đã hoàn tất qua #6e.
-> Written Spec tại
-> `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` đã được User
-> duyệt ngày 2026-09-11. Plan + Review Contract cũng đã được User duyệt. Phase 2
-> đã qua ba correction, independent review và User closure ngày 2026-09-12.
-> Phase 3–4 đã User-closed. Phase 5 Full-corpus qua ba correction đã independent
-> review đạt và được User xác nhận closure ngày 2026-09-14. Bốn canonical
-> Phase 4 collections là read-only;
-> không có quyền replace/delete/cleanup, production cutover hoặc Git write.
-> Full-corpus Phase 6 bị dừng trước implementation ngày 2026-09-29 để đánh giá
-> lại metadata xuyên Phase 2/4/5/6. Metadata v2 Tasks 1–7 đã User-closed. Scope
-> Qwen ngày 2026-09-30 đã bị supersede; ngày 2026-10-01 User duyệt OpenAI
-> baseline amendment, revised plan, Review Contract và exact GPT handoff.
-> Agentic RAG dùng profile/contract riêng.
-> Xem [bộ handoff](../handoff_prompt/README.md).
+Cập nhật 2026-10-25 (B26, rà code). Bản trước (dừng ở 2026-10-01, còn vai "Codex Reviewer" và quy trình `reports/`) xem lịch sử Git
+của file này.
 
+## Đọc gì trước
 
-## Workstream toàn corpus — Phase 6 implementation gate, cập nhật 2026-10-01
+| Cần biết | Đọc |
+|---|---|
+| Hệ thống **đang chạy** (runtime, dữ liệu, Qdrant, bẫy) | [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4, §8 |
+| Việc đang mở, ai làm gì | [`session_prompt/CURRENT_HANDOFF.md`](../session_prompt/CURRENT_HANDOFF.md) |
+| Luật chung, cách làm A / B / C | [`session_prompt/Session_Prompt.md`](../session_prompt/Session_Prompt.md), [`session_prompt/WORKFLOW.md`](../session_prompt/WORKFLOW.md) |
+| Guide hiện hành của luồng full-corpus (cập nhật 7A2 / 7B, build lại index) | [`full_corpus_rag.md`](full_corpus_rag.md) |
+| Báo cáo cho User theo từng khâu | [`bao_cao_he_thong/README.md`](../bao_cao_he_thong/README.md) |
+| Report của agent theo đợt | [`report_agent/README.md`](../report_agent/README.md); `reports/` là lịch sử tới 2026-10-24 |
 
-Written Spec, Implementation Plan và Review Contract umbrella đã được User
-duyệt; Phase 2–5 và Metadata v2 Tasks 1–7 đã User-closed, bốn metadata-v2
-collections đã được kiểm chứng. Phase 6 package ngày 2026-09-14 và Qwen delta
-ngày 2026-09-30 được giữ làm lịch sử; OpenAI amendment/plan/Review Contract và
-current handoff ngày 2026-10-01 cấp đúng một scope cho Implementer. Các trạng
-thái `approved` lịch sử trong bảng không tự mở phase/live gate khác. Guide umbrella
-[Full-corpus RAG](full_corpus_rag.md) giữ phạm vi, quyết định đã chốt và chuỗi
-duyệt; guide Phase 2–8 hiện có tiếp tục mô tả behavior Foods đã thực hiện.
+Thứ tự ưu tiên khi tài liệu khác nhau: `Session_Prompt.md` §2. Code, dữ liệu canonical và lần chạy mới cho biết hệ thống đang làm gì;
+guide lệch với chúng ⇒ báo A (sửa guide, hoặc sửa code nếu guide ghi đúng yêu cầu đã duyệt).
 
-Mỗi guide Phase 2–8 có một `full-corpus extension gate`. Sau closure của
-dependency, Reviewer cập nhật guide, soạn phase spec/plan/Review Contract và xin
-User duyệt trước khi giao Implementer. Sau implementation lại review, User
-closure và cập nhật observed result rồi mới thiết kế phase kế tiếp.
+## Các guide
 
-Terminology đã được User chốt ngày 2026-09-12: active/future work chỉ dùng
-`Phase`; không tạo một lớp phân chia song song. Tên file/report/artifact lịch sử
-đã đóng giữ nguyên để bảo toàn liên kết và audit trail.
+Guide có dòng **"Guide lịch sử"** ở đầu tả hệ thống Foods / thiết kế cũ lúc viết: file, collection, profile, model và lệnh trong đó có
+thể đã gỡ — không làm theo như hướng dẫn hiện hành. Guide có mục **"Hiện hành"** ở đầu: chỉ mục đó là hiện trạng, phần còn lại là lịch sử.
 
-Điểm bắt đầu task hiện hành là
-[`CURRENT_HANDOFF.md`](../session_prompt/CURRENT_HANDOFF.md), rồi targeted-read
-các contract metadata/payload/source-locator trong guide Phase 2, 4, 5, 6 và
-[Full-corpus RAG](full_corpus_rag.md). Phase 6
-[OpenAI amendment](../docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md),
-[revised Implementation Plan](../docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md)
-và [Review Contract](../handoff_prompt/PHASE_6_OPENAI_BASELINE_REVIEW_CONTRACT.md)
-là authority hiện hành; packages ngày 2026-09-14 và 2026-09-30 là history/base
-contract được tham chiếu khi revised plan giữ lại.
-[Full-corpus RAG](full_corpus_rag.md),
-[bản ghi quyết định](../docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md)
-và
-[ghi chú thử nghiệm lịch sử](../docs/superpowers/plans/2026-09-09-full-corpus-context-experiment-notes.md)
-là context umbrella/reference. Hai file ngày 2026-09-09 là working notes, không
-phải Phase 6 Written Spec hoặc Implementation Plan đã pause.
-User yêu cầu đối chiếu các reports có `simplicity` của phase liên quan với code
-và guides trước khi viết thiết kế. Reports là evidence theo từng lần chạy;
-quyết định mới nhất của user và source hiện tại phân định điều gì còn áp dụng.
-
-## Mục đích
-
-Mỗi phase có một guide canonical để người dùng, Implementer và Reviewer cùng
-hiểu phase tạo ra gì, phạm vi nào được phép làm và kết quả nào cần xác nhận.
-
-Guide phải rõ ràng và vừa đủ. Không biến guide thành audit log, implementation
-report hoặc danh sách edge cases phòng xa.
-
-## Nguồn sự thật
-
-Khi tài liệu khác nhau:
-
-1. Yêu cầu mới nhất đã được user xác nhận.
-2. `session_prompt/Session_Prompt.md`.
-3. Workflow đúng vai trò.
-4. Guide canonical của phase.
-5. Design và implementation plan hỗ trợ.
-6. Reports làm bằng chứng.
-7. `session_prompt/Project_Status.md` làm snapshot hiện tại.
-
-Mỗi phase có đúng một guide canonical. Design/plan không âm thầm override guide.
-Report không tạo requirement hoặc quyền mở rộng scope.
-
-## Vai trò
-
-### Người dùng
-
-- Chốt mục tiêu, phạm vi và lựa chọn quan trọng.
-- Duyệt design trước implementation.
-- Cho phép provider/model/data/run type trong guide.
-- Chạy notebook và xác nhận khi phase đó thực sự cần notebook.
-- Cấp quyền commit/push riêng khi muốn.
-
-### Implementer
-
-- Chỉ implement phase `ready` hoặc exact correction scope.
-- Xem guide là read-only.
-- Viết code đơn giản và chạy real system.
-- Chỉ tạo/cập nhật notebook khi canonical guide yêu cầu vì có giá trị học tập.
-- Viết implementation report.
-- Không tự approve, sửa guide/status, user report, commit hoặc push.
-
-### Codex Reviewer
-
-- Review độc lập source, tests, real execution và notebook nếu phase có notebook.
-- Coi over-engineering là finding và yêu cầu loại bỏ.
-- Không sửa runtime thay Implementer.
-- Viết Codex review và user report.
-- Chỉ chuyển phase sang `approved` sau user confirmation.
-- Không commit/push nếu chưa có yêu cầu riêng.
-
-Chi tiết nằm trong hai role workflows.
-
-## Vòng đời phase
-
-```text
-not_ready -> ready -> under_review -> approved
-```
-
-Nhánh ngoại lệ:
-
-- `changes_requested`: còn blocker hoặc major cần Implementer sửa;
-- `blocked`: thiếu quyền, dữ liệu, dependency hoặc external state cần thiết.
-
-Luồng:
-
-1. User và Reviewer duyệt design; Reviewer chuyển guide sang `ready`.
-2. Implementer làm đúng guide và viết report.
-3. Reviewer chuyển guide sang `under_review`, đọc source và chạy lại thật.
-4. Nếu cần sửa, dùng `changes_requested`.
-5. Nếu technical review đạt, guide vẫn `under_review`; user report ghi bằng
-   tiếng Việt rằng đang chờ user xác nhận.
-6. Sau khi user kiểm tra kết quả, và chạy notebook nếu phase có notebook,
-   Reviewer chuyển guide thành `approved` và cập nhật project status.
-
-Sau lần `changes_requested` thứ 4, dừng trước vòng sửa thứ 5 để audit lại
-guide, design, plan, acceptance và findings. Nếu thiết kế quá phức tạp hoặc quá
-khắt khe, phải thiết kế lại với user thay vì tiếp tục vá.
-
-## Trạng thái Phase 0–9
-
-| Phase | Guide | Trạng thái | Kết quả / bước kế tiếp |
+| Phase | Guide | Trạng thái Phase | Loại guide |
 |---:|---|---|---|
-| 0 | `phase_0_mvp_foundation.md` | `approved` | Simplicity review đã approved; Phase 1 cũng đã trở lại `approved` |
-| 1 | `phase_1_backend_skeleton.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
-| 2 | `phase_2_foods_markdown_chunking.md` | `approved` | Simplicity implementation đã chạy thật, review và được user xác nhận |
-| 3 | `phase_3_embedding_sparse_representation.md` | `approved` | Full-corpus implementation đã independent review và User-closed |
-| 4 | `phase_4_qdrant_ingestion.md` | `approved` | Full-corpus four-collection ingestion User-closed 2026-09-13 |
-| 5 | `phase_5_retrieval_profiles_reranking.md` | `approved` | Full-corpus implementation User-closed 2026-09-14; Foods result remains history |
-| 6 | `phase_6_generation_api.md` | `implementation_active` | OpenAI baseline package approved; exact GPT Implementer handoff active |
-| 7 | `phase_7_retrieval_answer_evaluation.md` | `approved` | Baseline và post-simplicity correction hẹp đã chạy thật, review và được user xác nhận |
-| 8 | `phase_8_benchmark_model_selection.md` | `not_ready` | Foods Notebooks 08a–08c approved; Full-corpus benchmark waits for Phase 5–7 dependencies |
-| 9 | `phase_9_agentic_rag_roadmap.md` | `not_ready` | Roadmap, chưa có implementation scope |
+| 0 | [`phase_0_mvp_foundation.md`](phase_0_mvp_foundation.md) | `approved` | lịch sử |
+| 1 | [`phase_1_backend_skeleton.md`](phase_1_backend_skeleton.md) | `approved` | lịch sử |
+| 2 | [`phase_2_foods_markdown_chunking.md`](phase_2_foods_markdown_chunking.md) | `approved` | lịch sử |
+| 3 | [`phase_3_embedding_sparse_representation.md`](phase_3_embedding_sparse_representation.md) | `approved` | lịch sử |
+| 4 | [`phase_4_qdrant_ingestion.md`](phase_4_qdrant_ingestion.md) | `approved` | lịch sử |
+| 5 | [`phase_5_retrieval_profiles_reranking.md`](phase_5_retrieval_profiles_reranking.md) | `approved` | mục "Hiện hành" + lịch sử |
+| 6 | [`phase_6_generation_api.md`](phase_6_generation_api.md) | `approved` (`gpt-6-luna`) | mục "Hiện hành" + lịch sử |
+| 7, 7A, 7A2, 7B | [`phase_7_retrieval_answer_evaluation.md`](phase_7_retrieval_answer_evaluation.md) | `approved` | mục "Hiện hành" + lịch sử Foods |
+| 8.1, 8.2 | [`phase_8_benchmark_model_selection.md`](phase_8_benchmark_model_selection.md) | 8.1 `approved`, 8.2 `paused` | mục "Hiện hành" + lịch sử Foods |
+| 9 | [`phase_9_agentic_rag_roadmap.md`](phase_9_agentic_rag_roadmap.md) | `not_ready` | roadmap |
+| — | [`full_corpus_rag.md`](full_corpus_rag.md) | — | hiện hành (phần đầu) + lịch sử quyết định |
+| — | [`llm_rag_reference_for_hue_rag.md`](llm_rag_reference_for_hue_rag.md) | — | tham khảo từ một repo khác của User |
 
-Workstream `full_corpus_rag.md` đã closure Phase 2–5 và Metadata v2 Tasks 1–7.
-Phase 6 hiện có một Implementer handoff theo revised plan ngày 2026-10-01.
-
-Milestone 6.1 thuộc Phase 6 và đã được user xác nhận.
-
-## Thứ tự thực hiện
-
-```text
-Phase 0–6 simplicity review đã approved
--> Phase 7 post-simplicity correction đã approved
--> Golden Dataset V3 Gate 0 đã approved với 45 full + 10 smoke cases
--> Phase 8 Gate 1 common contracts đã approved
--> Notebook 08a đã được triển khai, review độc lập và user xác nhận
--> MiniLM-L12/Qwen bị loại khỏi executable local catalog; historical CSV giữ lại
--> Notebook 08b đã hoàn tất 20-setting matrix, review và user xác nhận
--> không có BM25/TF-IDF finalist; production giữ nguyên
--> Notebook 08c đã hoàn tất, review và user xác nhận
--> không có MiniLM reranker finalist; production giữ nguyên
--> research + brainstorm exact curated multi-domain corpus/Golden/index design
-```
-
-Review Phase 0–6 theo dependency order để thay đổi nền tảng không làm invalid
-phase cao vừa sửa. Repo và live system là nguồn đối chiếu chính: guide,
-reports, source code, notebook nếu có và real run đủ để bắt đầu. Tài liệu ngoài do
-user cung cấp chỉ dùng khi thực sự hữu ích; nếu thiếu mà còn lựa chọn quan
-trọng, brainstorm với user trước khi duyệt design thay đổi.
-
-## Code, test và real execution
-
-Quy tắc đầy đủ nằm trong `Session_Prompt.md`:
-
-- code rõ ràng, dễ hiểu và nhỏ nhất cần thiết;
-- kỹ thuật nâng cao cần vấn đề thật và lợi ích được chạy thật chứng minh;
-- test chỉ bảo vệ hành vi thật, không chạy theo số lượng;
-- audit/xóa test theo ownership của phase trước khi chọn verification;
-- full backend suite chỉ chạy cho broad shared change hoặc final Phase 0–6 check;
-- evaluation 20 câu chỉ chạy khi thay đổi có thể ảnh hưởng chất lượng RAG;
-- không mock/fake;
-- completion evidence dùng real data, backend, Qdrant, model và API;
-- paid API trong approved guide được phép;
-- active Hue collection chỉ read-only.
-
-Reviewer phải yêu cầu loại bỏ kỹ thuật over-engineered hoặc khó hiểu hơn mức
-cần thiết.
+Trạng thái chính thức từng Phase: bảng `Project_Status.md` §3 (bảng này chỉ là lối tắt).
 
 ## Notebook
 
-Notebook chỉ tồn tại khi nó giúp con người hiểu hoặc quan sát một luồng quan
-trọng tốt hơn code và guide. Canonical guide của từng phase phải nói rõ phase
-có cần notebook hay không. Không tạo notebook để đủ số phase.
+Còn 3 notebook: `notebooks/03_embedding_models.ipynb`, `04_qdrant_ingestion.ipynb`, `06_generation_and_api.ipynb`. Luật: `Session_Prompt.md`
+§11 — mỗi cell một việc, Markdown ngắn trước code, code ngắn gọi backend, không phải validator / test suite, outputs rỗng và
+`execution_count: null` trong repo, Run All thật trên bản tạm. Phong cách mẫu là các notebook ngắn trong repo tham khảo của User (đường dẫn
+máy không ghi trong repo public).
 
-Phase 1 không cần notebook sau simplicity review. Notebook của Phase 2–8 được
-đánh giá tại review của chính phase đó.
+## Khi sửa guide
 
-Notebook được giữ phải: mỗi cell làm một việc, giải thích ngắn trước code, gọi
-hàm backend bằng code ngắn, không chứa validator/audit/test suite, có repository
-outputs rỗng và được Run All thật trên temporary copy.
-
-Phong cách bắt buộc:
-
-```text
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0/*.ipynb
-/home/minhhieu/llm_rag/tai_lieu/notebook_simple/**/*.ipynb
-```
-
-## Reports
-
-```text
-reports/phase_<id>_<short_name>_implementation_report.md
-reports/phase_<id>_<short_name>_codex_review.md
-reports/user_reports/phase_<id>_<short_name>_user_report.md
-reports/phase_<id>_<short_name>_simplicity_review.md
-```
-
-- Implementation report: sáu mục, ghi việc đã làm và observed results.
-- Codex review: sáu mục, ghi findings và independent real run.
-- User report: năm mục, dễ hiểu và hướng dẫn user kiểm tra kết quả, gồm notebook
-  khi phase có notebook.
-- Simplicity review: living record ghi Before/After, capability được giữ, phạm
-  vi ảnh hưởng, real verification, bug và cách xử lý khi review lại Phase 0–6.
-
-Reports không tạo governance mới, không che lỗi và không dùng expected/fake/old
-output làm fresh evidence.
-
-## CodeGraph
-
-CodeGraph là công cụ discovery tùy chọn. Reviewer/Implementer có thể dùng để tìm
-call flow và blast radius theo hướng dẫn chi tiết trong workflow. Missing/stale
-index không chặn task. Graph không thay source reads hoặc real verification.
-
-## Decision record
-
-Chỉ ghi decision record cho lựa chọn kiến trúc quan trọng, với ba field:
-
-```text
-Decision:
-Reason:
-Date +07:
-```
-
-Quyết định nhỏ không cần record riêng. Lịch sử chi tiết xem trong Git.
-
-## Thay đổi guide
-
-Implementer không sửa guide. Reviewer chỉ sửa guide sau:
-
-- design được user duyệt;
-- nhận implementation report để chuyển sang `under_review`;
-- technical finding cần `changes_requested` hoặc `blocked`; hoặc
-- user xác nhận để chuyển sang `approved`.
-
-Mọi thay đổi provider, model, dimension, schema, active collection, destructive
-action, phase boundary hoặc acceptance criterion phải được user duyệt.
+Guide do A giữ (hoặc session được giao); thay đổi provider, model, schema, collection đang chạy, thao tác xóa, ranh giới Phase hay tiêu chí
+nghiệm thu cần User duyệt (`Session_Prompt.md` §4). Guide không phải nhật ký: lịch sử chi tiết ở Git, `PROJECT_HISTORY.md` và report.

@@ -1,5 +1,12 @@
 # Phase 3 — Full-corpus dense embedding và sparse representation
 
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26): tả hệ thống Foods và các gate thiết kế 08–10/2026 tại thời điểm viết.
+> Nhiều file, collection, profile, model và lệnh trong guide này **đã gỡ hoặc đã đổi** — không làm theo như hướng dẫn hiện hành.
+> Hiện hành: [`full_corpus_rag.md`](full_corpus_rag.md) (mục đầu "Trạng thái hiện hành" và "Build lại index khi corpus đổi"),
+> [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4 (runtime, dữ liệu đang chạy) và §8 (bẫy, cách chạy test).
+> Code đang chạy của khâu này: `backend/embedding/full_corpus.py` (2 candidate dense: e5-small 384 đang chạy, Qwen3-8B 4096 chưa có index),
+> `backend/embedding/sparse.py`, `backend/scoring/bm25.py`.
+
 > **Canonical Phase 3 closure — 2026-09-12:** User đã xác nhận Phase 3 sau
 > implementation, hai correction và independent final review `PASS`. Fresh
 > evidence: 205 files/8.460 chunks, sparse deterministic và bốn bounded dense

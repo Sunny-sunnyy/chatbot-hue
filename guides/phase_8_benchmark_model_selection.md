@@ -1,6 +1,26 @@
 # Phase 8 — Benchmark và lựa chọn model/pipeline
 
-> **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc full-
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26) **trừ mục "Hiện hành" ngay dưới**: phần sau mục đó tả benchmark Foods (notebook 08a–08e,
+> collection, model và lifecycle 2026-10-01) — đã gỡ hoặc đã thay.
+
+## Hiện hành
+
+Cập nhật 2026-10-25. Nguồn: `session_prompt/Project_Status.md` §2, §3, §5.
+
+- Phase 8 tách hai phần (User 2026-10-24): **8.1** rà mọi quyết định Phase 0–7 bằng thí nghiệm, không đổi chatbot; **8.2** đưa phương án
+  thắng vào chatbot.
+- **8.1 — User-closed 2026-10-25:** spec `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md`; tổng hợp
+  `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`. Chỉ **context 10 đoạn** thắng; giữ chunker, cách trộn + pool 30, BM25 âm tiết,
+  không rerank, prompt, reasoning mặc định, validator.
+- **8.2 — tạm dừng** (User 2026-10-25, để rà code Phase 0–7 trước): spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`;
+  Bước 1 (context 10) nằm ở nhánh `p82-b1`, chưa vào `main` ⇒ chatbot vẫn context 5.
+- **Model sinh:** giữ `gpt-6-luna`, không so model sinh ở Phase 8 (User 2026-10-24) — thay lifecycle 2026-10-01 bên dưới (so `qwen/qwen3.5-9b`).
+- **Dense:** chỉ e5-small (đang chạy) + Qwen3-Embedding-8B (có trong code, **chưa có index**). Rerank đã thử ở 8.1 G4 trên GPU, chưa đưa vào.
+- Thước đo dùng chung: mục "Hiện hành" của [`phase_7_retrieval_answer_evaluation.md`](phase_7_retrieval_answer_evaluation.md).
+
+## Lịch sử (Foods và thiết kế trước 2026-10-23) — các mục dưới không phải hiện trạng
+
+> **(Lịch sử)** **Full-corpus extension gate — 2026-09-11:** chưa active và phụ thuộc full-
 > corpus Golden, evaluator, indexes và upstream readiness đã closure. Reviewer
 > phải cập nhật guide này và trình User duyệt Phase 8 written spec, plan cùng
 > Review Contract trước execution. Mỗi stage retrieval, reranker, representation
@@ -9,7 +29,7 @@
 
 ## Trạng thái
 
-`not_ready`
+`not_ready` *(lịch sử trước 2026-10-24 — hiện hành xem mục "Hiện hành" ở đầu)*
 
 Phase 8 tổng thể chưa có production/final-selection authorization. Chỉ mở sau khi:
 
@@ -481,8 +501,8 @@ Mỗi notebook phải:
 Phong cách trình bày bắt buộc tham khảo:
 
 ```text
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0/*.ipynb
-/home/minhhieu/llm_rag/tai_lieu/notebook_simple/**/*.ipynb
+<repo tham khảo>/tai_lieu/rag_old_0/*.ipynb
+<repo tham khảo>/tai_lieu/notebook_simple/**/*.ipynb
 ```
 
 Chỉ kế thừa cách dạy theo section, giải thích trước code, cell ngắn và output dễ

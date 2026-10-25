@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 2026-10-25 19:52 (phiên tối; C35 gói 1a XONG, chờ B review)
+# STATUS C — cập nhật 2026-10-25 20:16 (phiên tối; review B26 XONG; tiếp gói 3a / 3b)
 
 Terminal: `hue-rag-7f` (mở 18:2x 25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10 15:53 + 18:2x: C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
@@ -18,11 +18,17 @@ User 18:3x (qua A): rà code chỉ rà và đề xuất, chưa sửa gì; User �
   cứu ⇒ ngược dấu (C-02); đổi sang `paired_compare` (`false_refusal`) hoặc ghi đảo dấu ⇒ sha mới.
 - **C32 rà nội dung kho — xong**, A review `ready_for_user_confirmation` (`report_agent/2026-10-25_ra_soat_noi_dung_kho/`); chờ User xác
   nhận. (A: User hỏi về code, C32 là hiểu nhầm — giữ làm hồ sơ.)
-- **C35 gói 1a (C-09 citation `[Nguồn n]`) — XONG 19:52, chờ B review.** Report `report_agent/2026-10-25_ra_soat_code/sua_1a_implementation.md`.
+- **Review B26 (gói 4 tài liệu) — XONG 20:16.** `report_agent/2026-10-25_ra_soat_code/sua_4_review.md`: ready_for_user_confirmation; m1–m3 (3 câu
+  mục build lại) nên sửa trước commit; m4 banner guide 5 / 6 (A quyết); o1 = C-21 mới: `build_candidate` ghi sparse state trước khi kiểm đích.
+- **C35 gói 1a (C-09 citation `[Nguồn n]`) — ĐÓNG 19:59 (commit `9e6d371`).** Report `report_agent/2026-10-25_ra_soat_code/sua_1a_implementation.md`.
   File: `backend/llm/citations.py`, `backend/api/routes/chat.py`, `backend/tests/test_citations.py`, `backend/tests/test_api_chat.py` (A duyệt
   `chat.py` + `test_api_chat.py` 19:5x). Offline 1.600 câu: lỗi 69 → 14, 0 câu đạt hỏng / đổi nguồn; pytest 35 passed + test route; API thật 2 câu
   0,000427 USD. Chưa commit (A). Script `data/ra_soat_code_2026-10-25/tools/sua_1a/`.
-- **Đang khai báo sửa:** 4 file trên (giữ tới khi A commit; sửa theo review của B nếu có).
+- **Review plan 1b (sha `aa9bbf3650d6`) — XONG 20:25:** `sua_1b_plan_review.md` = changes_requested (P1 T-A tham chiếu tên chat.py không có;
+  P2 T-C 503 có thể xanh giả — phải kiểm nguyên nhân) + m1–m4; số đếm (a)/(b) của B khớp; đồng ý (b). T-C với HF_HOME rỗng: auto mode chặn, NOT RUN.
+- **Kiểm lại sua_4 — đóng 20:27** (m3: C sai, B đúng).
+- **Đang khai báo sửa:** không. Tiếp: gói 3a / 3b (tạm dừng 20:2x, chưa sửa file). Ghi chú 3b: `generate_answer` gửi `query.strip()` /
+  `context.strip()`, còn `build_answer_messages` dùng chuỗi thô ⇒ đổi sang hàm chung phải giữ `.strip()` để giống byte.
 - **C chưa đọc nội dung câu kín.** Câu kín chính thức md5 `ddc59587b502`, manifest `9ea480d0d083`; mở ở mốc cuối 8.2 do User quyết.
 
 ## Câu hỏi cho A / User

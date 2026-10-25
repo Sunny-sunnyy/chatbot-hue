@@ -1,5 +1,8 @@
 # `llm_rag` reference cho quá trình review `hue_rag`
 
+> Các câu về **trạng thái Hue** trong file này là snapshot 08–09/2026 (Foods, profile, collection, test cũ); hiện trạng Hue ở
+> [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4. Phần tả repo tham khảo giữ nguyên làm tư liệu.
+
 ## Vai trò của tài liệu
 
 Tài liệu này ghi những bài học hữu ích từ dự án `llm_rag` để dùng khi review và
@@ -24,7 +27,7 @@ dùng làm approved evidence companion.
 ```text
 handoff_prompt/LLM_RAG_VERIFIED_ARCHITECTURE_EXTRACTION_PROMPT.md
 reports/llm_rag_full_project_reference_survey_codex_review_2026_09_11.md
-reports/llm_rag_verified_architecture_extraction_2026_09_11.md  # in progress, not reviewed
+reports/llm_rag_verified_architecture_extraction_2026_09_11.md  # User-closed 2026-09-11 (full_corpus_rag.md, mục Lịch sử)
 ```
 
 Original survey prompt, bốn correction prompts và report 885 dòng là
@@ -33,17 +36,18 @@ basis.
 
 ## Đường dẫn nguồn
 
-Repository tham khảo:
+Repository tham khảo (một repo khác của User trên cùng máy; đường dẫn máy không ghi trong repo public — ghi chú private ở
+`data/ra_soat_code/b19_duong_dan_ngoai.md`). Trong guide này `<repo tham khảo>/…` là đường dẫn tương đối trong repo đó:
 
 ```text
-/home/minhhieu/llm_rag
+<repo tham khảo>
 ```
 
 Hai tài liệu mô tả toàn hệ thống dưới đây là snapshot lịch sử, `reference-only`:
 
 ```text
-/home/minhhieu/llm_rag/tai_lieu/rag_system_pipeline_deep_dive.md
-/home/minhhieu/llm_rag/tai_lieu/rag_agent_handoff_current_repo.md
+<repo tham khảo>/tai_lieu/rag_system_pipeline_deep_dive.md
+<repo tham khảo>/tai_lieu/rag_agent_handoff_current_repo.md
 ```
 
 Không full-read chúng mặc định. `rag_agent_handoff_current_repo.md` là snapshot
@@ -55,24 +59,24 @@ trạng thái hiện hành.
 Các báo cáo trạng thái đã đọc:
 
 ```text
-/home/minhhieu/llm_rag/report/Project_status.md
-/home/minhhieu/llm_rag/report/README_report.md
-/home/minhhieu/llm_rag/report/Agent_session_prompt.md
+<repo tham khảo>/report/Project_status.md
+<repo tham khảo>/report/README_report.md
+<repo tham khảo>/report/Agent_session_prompt.md
 ```
 
 Source đã đối chiếu gồm toàn bộ pipeline backend trong:
 
 ```text
-/home/minhhieu/llm_rag/backend
+<repo tham khảo>/backend
 ```
 
 Các file frontend chính cũng được đọc để hiểu API streaming end-to-end:
 
 ```text
-/home/minhhieu/llm_rag/frontend/app/layout.tsx
-/home/minhhieu/llm_rag/frontend/app/page.tsx
-/home/minhhieu/llm_rag/frontend/lib/api.ts
-/home/minhhieu/llm_rag/frontend/components/ChatInterface.tsx
+<repo tham khảo>/frontend/app/layout.tsx
+<repo tham khảo>/frontend/app/page.tsx
+<repo tham khảo>/frontend/lib/api.ts
+<repo tham khảo>/frontend/components/ChatInterface.tsx
 ```
 
 Không dùng `.env`, secret, `node_modules`, model cache, `qdrant_storage`, log,
@@ -196,10 +200,10 @@ Phần không sao chép nguyên trạng:
 Các reference chính:
 
 ```text
-/home/minhhieu/llm_rag/backend/core/settings_loader.py
-/home/minhhieu/llm_rag/backend/core/logging_setup.py
-/home/minhhieu/llm_rag/backend/core/schema.py
-/home/minhhieu/llm_rag/backend/config/settings.yaml
+<repo tham khảo>/backend/core/settings_loader.py
+<repo tham khảo>/backend/core/logging_setup.py
+<repo tham khảo>/backend/core/schema.py
+<repo tham khảo>/backend/config/settings.yaml
 ```
 
 Phần nên học:
@@ -218,9 +222,9 @@ giải quyết một failure thật còn tồn tại.
 Các reference về ý tưởng semantic chunking:
 
 ```text
-/home/minhhieu/llm_rag/backend/ingestion/pipeline.py
-/home/minhhieu/llm_rag/backend/ingestion/chunking
-/home/minhhieu/llm_rag/backend/ingestion/helpers
+<repo tham khảo>/backend/ingestion/pipeline.py
+<repo tham khảo>/backend/ingestion/chunking
+<repo tham khảo>/backend/ingestion/helpers
 ```
 
 Điều áp dụng là “chunk theo đơn vị ý nghĩa của domain”, không phải code đọc
@@ -236,10 +240,10 @@ validator cho mọi shape tưởng tượng.
 Các reference chính:
 
 ```text
-/home/minhhieu/llm_rag/backend/embedding/embedder.py
-/home/minhhieu/llm_rag/backend/embedding/batch_embed.py
-/home/minhhieu/llm_rag/backend/embedding/sparse_embedder.py
-/home/minhhieu/llm_rag/backend/llm/generator_openai.py
+<repo tham khảo>/backend/embedding/embedder.py
+<repo tham khảo>/backend/embedding/batch_embed.py
+<repo tham khảo>/backend/embedding/sparse_embedder.py
+<repo tham khảo>/backend/llm/generator_openai.py
 ```
 
 Phần nên học:
@@ -275,9 +279,9 @@ dimension, limits và pricing hiện hành; không giữ code dự phòng từ P
 Các reference chính:
 
 ```text
-/home/minhhieu/llm_rag/backend/vectorstore/qdrant.py
-/home/minhhieu/llm_rag/backend/vectorstore/hybrid_index.py
-/home/minhhieu/llm_rag/backend/vectorstore/upsert.py
+<repo tham khảo>/backend/vectorstore/qdrant.py
+<repo tham khảo>/backend/vectorstore/hybrid_index.py
+<repo tham khảo>/backend/vectorstore/upsert.py
 ```
 
 Phần nên học:
@@ -343,8 +347,8 @@ nhân collection; chỉ lưu khi có query consumer thật. BM25, reranker, fusi
 scoring không cần collection riêng. Exact names, payload, recreate/replacement,
 cleanup và cutover vẫn chưa chốt.
 
-Active Hue collection vẫn read-only. Existing tests chỉ được mutate guarded
-collection có prefix `hue_rag_live_test_`; collection candidate mới, reindex
+Active Hue collection vẫn read-only. *(Lịch sử 08–09/2026: test lúc đó chỉ được mutate guarded
+collection có prefix `hue_rag_live_test_`; nay không test nào tạo / ghi collection — `backend/tests/conftest.py`.)* collection candidate mới, reindex
 hoặc active mutation cần đúng scope được user duyệt.
 
 ### Phase 5 — Retrieval, BM25, reranking và context
@@ -352,11 +356,11 @@ hoặc active mutation cần đúng scope được user duyệt.
 Các reference chính:
 
 ```text
-/home/minhhieu/llm_rag/backend/retrieval/hybrid_retriever.py
-/home/minhhieu/llm_rag/backend/scoring/bm25.py
-/home/minhhieu/llm_rag/backend/reranking/reranker.py
-/home/minhhieu/llm_rag/backend/reranking/models/cross_encoder.py
-/home/minhhieu/llm_rag/backend/retrieval/context_builder.py
+<repo tham khảo>/backend/retrieval/hybrid_retriever.py
+<repo tham khảo>/backend/scoring/bm25.py
+<repo tham khảo>/backend/reranking/reranker.py
+<repo tham khảo>/backend/reranking/models/cross_encoder.py
+<repo tham khảo>/backend/retrieval/context_builder.py
 ```
 
 Phần nên học:
@@ -377,7 +381,8 @@ Phần cần review kỹ trong `hue_rag`:
 - context có cần serialized JSON/source-ID contract hay chỉ cần evidence blocks
   đơn giản.
 
-Ba profiles cần tiếp tục được chạy thật:
+*(Lịch sử Foods; hiện hành: một cấu hình `dense_bm25_rrf` + reranker `none` — `session_prompt/Project_Status.md` §4;
+`HybridRetriever` / `DenseRetriever` đã gỡ.)* Ba profiles lúc đó cần tiếp tục được chạy thật:
 
 ```yaml
 profiles:
@@ -406,12 +411,12 @@ tuyên bố hybrid luôn tốt hơn trước controlled comparison.
 Các reference chính:
 
 ```text
-/home/minhhieu/llm_rag/backend/llm/prompt.py
-/home/minhhieu/llm_rag/backend/llm/generator_openai.py
-/home/minhhieu/llm_rag/backend/api/app.py
-/home/minhhieu/llm_rag/backend/api/health.py
-/home/minhhieu/llm_rag/backend/api/routes/chat_openai.py
-/home/minhhieu/llm_rag/frontend/lib/api.ts
+<repo tham khảo>/backend/llm/prompt.py
+<repo tham khảo>/backend/llm/generator_openai.py
+<repo tham khảo>/backend/api/app.py
+<repo tham khảo>/backend/api/health.py
+<repo tham khảo>/backend/api/routes/chat_openai.py
+<repo tham khảo>/frontend/lib/api.ts
 ```
 
 Phần nên học:

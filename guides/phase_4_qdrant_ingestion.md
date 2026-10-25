@@ -1,5 +1,12 @@
 # Phase 4: Qdrant ingestion và deterministic points
 
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26): tả hệ thống Foods và các gate thiết kế 08–10/2026 tại thời điểm viết.
+> Nhiều file, collection, profile, model và lệnh trong guide này **đã gỡ hoặc đã đổi** — không làm theo như hướng dẫn hiện hành.
+> Hiện hành: [`full_corpus_rag.md`](full_corpus_rag.md) (mục đầu "Trạng thái hiện hành" và "Build lại index khi corpus đổi"),
+> [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4 (runtime, dữ liệu đang chạy) và §8 (bẫy, cách chạy test).
+> Code đang chạy của khâu này: `backend/ingestion/full_corpus_pipeline.py`, `backend/vectorstore/qdrant.py`, `backend/vectorstore/points.py`,
+> `backend/vectorstore/upsert.py`; Qdrant `127.0.0.1:6335`, một collection `hue_full_corpus_7a2_e5_small_384`.
+
 > **Full-corpus design gate — 2026-09-12:** Phase 3 đã User-closed. User đã duyệt
 > conceptual design, Written Spec, Implementation Plan và Review Contract Phase
 > 4. Active handoff giao Implementer thực hiện Tasks 1–6 và một read-only

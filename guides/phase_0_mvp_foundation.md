@@ -1,5 +1,11 @@
 # Phase 0 — Nền tảng Hue Foods RAG MVP
 
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26): tả hệ thống Foods và các gate thiết kế 08–10/2026 tại thời điểm viết.
+> Nhiều file, collection, profile, model và lệnh trong guide này **đã gỡ hoặc đã đổi** — không làm theo như hướng dẫn hiện hành.
+> Hiện hành: [`full_corpus_rag.md`](full_corpus_rag.md) (mục đầu "Trạng thái hiện hành" và "Build lại index khi corpus đổi"),
+> [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4 (runtime, dữ liệu đang chạy) và §8 (bẫy, cách chạy test).
+> Code đang chạy: `backend/` theo luồng full-corpus (205 file curated → 8.459 đoạn → e5-small + BM25 → Qdrant → `gpt-6-luna`).
+
 ## Trạng thái
 
 `approved`
@@ -252,8 +258,8 @@ Chỉ phase có giá trị học tập thật mới có notebook canonical. Khô
 Style references:
 
 ```text
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0/*.ipynb
-/home/minhhieu/llm_rag/tai_lieu/notebook_simple/**/*.ipynb
+<repo tham khảo>/tai_lieu/rag_old_0/*.ipynb
+<repo tham khảo>/tai_lieu/notebook_simple/**/*.ipynb
 ```
 
 ## Acceptance chung

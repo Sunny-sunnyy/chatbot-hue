@@ -1,6 +1,28 @@
 # Phase 7 — Retrieval và Answer Evaluation
 
-> **Full-corpus extension gate — 2026-09-12:** chưa active và phụ thuộc Phase 6
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26) **trừ mục "Hiện hành" ngay dưới**: phần sau mục đó tả evaluation Foods
+> (08/2026) — file, judge, model và lệnh đã gỡ hoặc đã đổi.
+
+## Hiện hành
+
+Cập nhật 2026-10-25. Nguồn: `session_prompt/Project_Status.md` §2–§5, mục "Cập nhật Phase 7B" trong [`full_corpus_rag.md`](full_corpus_rag.md).
+
+- **Golden full-corpus (Phase 7A, User-closed 2026-10-23):** 176 case + smoke 10, schema 4 field (`question`, `keywords`, `reference_answer`,
+  `category`), private trong `knowledge-base-hue/evaluation/`; spec `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md`.
+- **Evaluator (Phase 7B, User-closed 2026-10-24):** `backend/evaluation/full_corpus_eval.py` (11 lệnh con — xem `--help`), kiểm Golden
+  `backend/evaluation/golden_full_corpus.py`, prompt judge cố định `backend/evaluation/full_corpus_judge_prompt.md`; spec
+  `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`. Sinh câu trả lời đi đúng đường runtime (retrieval → context →
+  `gpt-6-luna`); không truyền `temperature` (luna trả 400).
+- **Judge:** chính là Claude (session Claude Code, sub-agent theo lô ≤ 10, 0 API); `gpt-6-luna` chỉ là judge phụ. Chưa có mốc người chấm.
+- **Phase 8.1 bổ sung thước đo:** so theo cặp + Holm; chia 120 dev / 56 test (`knowledge-base-hue/evaluation/phase_8_1/split.json`); nhãn độ tự nhiên
+  của câu hỏi; đoạn đúng cho 55 câu; câu kín khóa tới mốc cuối 8.2 (không đọc khi chưa được giao — `Session_Prompt.md` §5).
+- **Chỉ số lỗi citation:** từ gói sửa 1a (rà code 2026-10-25, C-09) validator nhận cả `[n]` lẫn `[Nguồn n]` ⇒ số lỗi citation trước và sau gói đó
+  **không so trực tiếp**; mốc cũ tính lại ra file mới, không ghi đè mốc đã khóa.
+- Baseline và số đo: `full_corpus_rag.md` mục 7B; báo cáo cho User `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`.
+
+## Lịch sử (Foods và thiết kế trước 2026-10-23) — các mục dưới không phải hiện trạng
+
+> **(Lịch sử)** **Full-corpus extension gate — 2026-09-12:** chưa active và phụ thuộc Phase 6
 > closure. Reviewer phải cập nhật guide này bằng hai package tuần tự:
 > Phase 7A Golden P7 và Phase 7B evaluator. Mỗi P7 có spec/plan/review scope riêng,
 > Implementer report, full-row Reviewer review và User closure trước P7 kế tiếp;
@@ -16,7 +38,7 @@ dùng xác nhận sau khi kiểm tra Notebook 07 ngày 2026-08-24 +07.
 hoàn tất, đạt independent technical review và được người dùng xác nhận sau khi
 chạy Notebook 07 ngày 2026-08-26 +07. Ghi chú này không mở scope sửa dataset.
 
-Guide này là nguồn canonical cho scope, trạng thái và acceptance của Phase 7.
+*(Lịch sử 08/2026)* Guide này từng là nguồn canonical cho scope, trạng thái và acceptance của Phase 7 Foods.
 
 Đặc tả hỗ trợ:
 
@@ -59,8 +81,8 @@ Phase 7 bắt đầu với `dense_only`. Sau khi baseline ổn định mới dù
 Code reference trực tiếp cho Phase 7:
 
 ```text
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0/evaluator2.py
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0/pro_implementation
+<repo tham khảo>/tai_lieu/rag_old_0/evaluator2.py
+<repo tham khảo>/tai_lieu/rag_old_0/pro_implementation
 ```
 
 Hai reference này giúp định hướng Phase 7, không phải blueprint cho Phase 0–6.
@@ -203,7 +225,7 @@ steps thực sự rõ hơn paragraph ngắn.
 
 Output schema dùng integer 1–5 với validation bounds và mô tả ngắn cho ba điểm
 cùng feedback. Judge không nhận retrieved context nên prompt/schema không được
-tuyên bố rằng nó chấm groundedness. Giữ `temperature=0` để chấm ổn định và
+tuyên bố rằng nó chấm groundedness. Giữ `temperature=0` *(lịch sử Foods; nay không truyền `temperature` — luna trả 400)* để chấm ổn định và
 `max_tokens=600` để feedback ngắn có giới hạn rõ ràng.
 
 Generator và judge vẫn dùng OpenAI Agents SDK, nhưng SDK tracing tắt mặc định
@@ -289,8 +311,8 @@ Mỗi cell làm một việc, code ngắn và gọi backend.
 Notebook style reference:
 
 ```text
-/home/minhhieu/llm_rag/tai_lieu/rag_old_0
-/home/minhhieu/llm_rag/tai_lieu/notebook_simple
+<repo tham khảo>/tai_lieu/rag_old_0
+<repo tham khảo>/tai_lieu/notebook_simple
 ```
 
 Notebook không chứa artifact discovery, audit package hoặc test suite.

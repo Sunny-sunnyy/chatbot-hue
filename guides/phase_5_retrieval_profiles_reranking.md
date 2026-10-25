@@ -1,6 +1,9 @@
 # Phase 5: Retrieval profiles và reranking
 
-> **Full-corpus package — User-approved 2026-09-13 +07:** Phase 4 đã closure;
+> **Guide lịch sử** (gắn nhãn 2026-10-25, rà code B26) **trừ mục "Hiện hành" ngay dưới**: các mục sau đó tả Phase 5 Foods và gói
+> full-corpus 09/2026 (4 collection, 3 profile, MiniLM, file đã gỡ). Hiện trạng: `session_prompt/Project_Status.md` §4.
+
+> **(Lịch sử)** **Full-corpus package — User-approved 2026-09-13 +07:** Phase 4 đã closure;
 > Phase 5 Written Spec, Implementation Plan và Review Contract đã được User
 > duyệt. Active implementation chỉ lấy từ `session_prompt/CURRENT_HANDOFF.md`.
 > [Written Spec](../docs/superpowers/specs/2026-09-13-phase-5-full-corpus-retrieval-reranking-written-spec.md)
@@ -8,7 +11,14 @@
 > là nguồn contract hiện hành. ContextBuilder đã chuyển sang Phase 6; toàn bộ
 > phần Foods bên dưới là as-built history, không phải target Full-corpus mới.
 
-## Full-corpus target hiện hành
+## Hiện hành
+
+*(Full-corpus target — Phase 5 đóng 2026-09-14; dòng cập nhật 2026-10-25 ngay dưới.)*
+
+> **Cập nhật 2026-10-25 (rà code B26):** khối dưới tả Phase 5 lúc đóng (09/2026). Runtime hiện tại: **1** collection
+> `hue_full_corpus_7a2_e5_small_384`, `dense_bm25_rrf`, reranker `none` (loader từ chối giá trị khác), Top 30 → RRF → Top 10 →
+> context 5 — `session_prompt/Project_Status.md` §4. Phần còn đúng với code: pool 30, RRF `1/(60+rank)` phá hòa theo point id,
+> BM25 chỉ chấm 30 ứng viên dense, trả Top 10.
 
 ```text
 Status: approved — User-confirmed closure 2026-09-14 +07
@@ -52,7 +62,7 @@ query, corpus excerpt hoặc payload dump. Có thể tạo absent isolated exper
 collection khi observed need yêu cầu và phải có local manifest/comparison;
 không ghi đè, replace, delete hoặc cleanup collection hiện có.
 
-Reranker hiện hành vẫn là `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+Reranker tùy chọn trong code (lúc Phase 5): `cross-encoder/ms-marco-MiniLM-L-6-v2`; runtime dùng `none` (Phase 6 và 8.1 giữ).
 `Qwen/Qwen3-Reranker-0.6B` chỉ là deferred research candidate: nếu Phase 8 cho
 thấy MiniLM không có lợi ích rõ ràng, giảm metric quan trọng hoặc không đạt
 resource/coverage contract, Reviewer mới trình User mở research/design/spec/
@@ -897,7 +907,7 @@ Revisit trigger: User-facing source UI cần thêm một field cụ thể đã �
 
 ## Bước tiếp theo
 
-Phase 5 đã hoàn thành coordinated simplicity review cùng Phase 4 và giữ
+*(Lịch sử 09/2026.)* Phase 5 đã hoàn thành coordinated simplicity review cùng Phase 4 và giữ
 `approved`. Ba canonical profiles vẫn được bảo toàn; dense-only candidate chưa
 cutover. Bước tiếp theo của simplicity campaign là Phase 6 theo
-`guides/README.md`.
+`guides/README.md`. Hiện trạng: `session_prompt/Project_Status.md` §2–§4.
