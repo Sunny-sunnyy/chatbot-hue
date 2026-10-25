@@ -3,8 +3,8 @@
 Người làm: C (Claude Opus 5.5, terminal `hue-rag-a1`) · 2026-10-25 14:17 (`date`) · Việc: C31 · Spec 8.1 §5 G0 bước 6, §6.1, §6.4.
 Review: B. Report không chép nội dung corpus / Golden / câu kín; chỉ ghi hash, số dòng, trạng thái.
 
-**Trạng thái: PREPARED.** Mọi mục khóa mốc đã ghi hash và tái lập được. Còn **một** mục chờ: file câu kín chính thức 4 field
-(chỉ tạo khi A nhắn "User đã duyệt mẫu bản 5"). Sau đó A khóa.
+**Trạng thái: READY TO LOCK** (15:17). Mọi mục đã có hash và tái lập được, gồm file câu kín chính thức (§7). A khóa.
+(Bản PREPARED 14:17: chờ câu kín.)
 
 ## 1. Đã làm
 
@@ -36,7 +36,7 @@ Review: B. Report không chép nội dung corpus / Golden / câu kín; chỉ ghi
 
 | Mục | Giá trị | Ghi chú |
 |---|---|---|
-| Commit HEAD | `8a909e0` | working tree chỉ dở tài liệu + harness thí nghiệm (danh sách trong manifest); không có file code runtime |
+| Commit HEAD | `8a909e0` (14:15) → **`276e34f`** lúc khóa (15:17) | working tree chỉ dở tài liệu + harness thí nghiệm (danh sách trong manifest); không có file code runtime |
 | Corpus | `corpus_identity` `5869d3cc2391…`, 205 file, 8.459 đoạn | từ build record runtime |
 | Build record runtime | sha256 `03829ed641f7` | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`; point_count 8.459 |
 | Sparse state | sha256 `dbd5f7bc538d` | `full_corpus_sparse_state.json` |
@@ -50,7 +50,7 @@ Review: B. Report không chép nội dung corpus / Golden / câu kín; chỉ ghi
 | 7B Run 1 điểm Claude | sha256 `c277f807ae20`, 176 dòng | `claude_run1.jsonl`. **10 câu ở trên chấm theo đáp án cũ** ⇒ không so trực tiếp |
 | Câu kín bản soạn v6 | md5 `631334704fdd` | chỉ hash, C không đọc |
 | Nhãn câu kín | md5 `d1f7c235b83c`, 36 dòng | 36/36 tự nhiên |
-| Câu kín chính thức 4 field | **chưa có** | chờ User duyệt mẫu bản 5 |
+| Câu kín chính thức 4 field | md5 **`ddc59587b502`**, sha256 `931f25e39027`, 36 dòng | tạo 15:15 sau khi User duyệt mẫu bản 5; `check` exit 0 (§7) |
 | Collection Qdrant | chỉ `hue_full_corpus_7a2_e5_small_384` | |
 
 ## 3. Mốc retrieval tái lập
@@ -93,5 +93,30 @@ Nếu User yêu cầu sửa thêm câu kín, bản soạn sẽ đổi md5 và sc
 - Câu kín chính thức chưa tạo, nên G0.6 chưa khóa.
 - Manifest ghi trạng thái working tree lúc 14:15. Nếu A commit thêm trước khi khóa thì `git.head` đổi; khi khóa nên ghi lại
   HEAD (các hash dữ liệu không phụ thuộc commit).
+
+Tiền: **0 USD**.
+
+## 7. Hoàn tất (25/10/2026 15:15–15:17, `date`)
+
+A nhắn: User duyệt mẫu bản 5 ("ổn rồi nhé"). C chạy đúng lệnh §5, đọc exit code trực tiếp.
+
+- **Kiểm trước:** md5 bản soạn = `631334704fdd` (bản đã duyệt); đích chưa tồn tại; script sha `ce5ff542945b`.
+- **Kết quả script:**
+  - src md5 `631334704fdd` → `sealed_official.jsonl` md5 **`ddc59587b502`**;
+  - 36 dòng; phân bố một dữ kiện 15 / nhiều nguồn 6 / điều kiện 7 / so sánh 5 / ngoài kho 3;
+  - `check` **exit 0**, stderr 0 dòng; không còn `.tmp`.
+- **C kiểm độc lập** (chỉ in tên field / số đếm):
+  - 36 dòng, đúng 4 field `question`, `keywords`, `reference_answer`, `category`;
+  - **cùng thứ tự và giá trị** với 4 field của bản soạn;
+  - chạy `golden_full_corpus check` riêng: exit 0, `total: 36`;
+  - `git check-ignore`: private.
+- **Mốc retrieval lúc khóa** (15:17, HEAD `276e34f`): runtime `cefb2d1a…`, native `1fbb5c17…` — **giống byte**. `GET
+  /collections`: chỉ `hue_full_corpus_7a2_e5_small_384`.
+- **Manifest cập nhật**, bản cuối sha 12 **`9ea480d0d083`** (bản giữa `82519ce9d38d` trước khi thêm dòng mốc lúc khóa):
+  - `evaluation_sets.sealed_official` (md5, sha256, dòng, field, phân bố, exit, nguồn, sha script);
+  - `git.head` `276e34f` + `dirty_paths_not_in_runtime`: chỉ file của User;
+  - `retrieval_baselines.*.rerun_at_lock_sha256`;
+  - `status` READY TO LOCK.
+- **C vẫn chưa đọc nội dung câu kín.**
 
 Tiền: **0 USD**.

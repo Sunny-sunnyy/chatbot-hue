@@ -1,20 +1,18 @@
-# STATUS C — cập nhật 2026-10-25 14:24 (nghỉ, chờ A)
+# STATUS C — cập nhật 2026-10-25 15:18
 
 Terminal: `hue-rag-a1` (25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10: việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
 ## Đang làm / chờ
-- **Nghỉ** theo A (14:24) cho tới khi A nhắn **"User đã duyệt mẫu bản 5"**. Khi đó (C31, report
-  `phase_8_1_g0_6_baseline_lock.md` §5):
-  1. chạy `data/phase_8_1/tools/make_sealed_official.py` (sha `ce5ff542945b`) với `--expect-md5 631334704fdd`;
-  2. ghi md5 / số dòng / phân bố / exit vào manifest `data/phase_8_1/baseline/g0_6_manifest.json` (`evaluation_sets.sealed_official`)
-     + report §2;
-  3. cập nhật manifest `git.head` + `dirty_paths_not_in_runtime` + sha script;
-  4. nhắn A khóa.
-
-  User sửa thêm câu kín ⇒ md5 đổi, script tự dừng ⇒ làm lại quy trình sửa / kiểm như C24–C26.
+- **C31 XONG 15:17 — G0.6 READY TO LOCK.** User duyệt mẫu bản 5 (qua A). Kết quả:
+  - câu kín chính thức `knowledge-base-hue/evaluation/phase_8_1/sealed_official.jsonl` md5 `ddc59587b502` (36 dòng, 4 field,
+    check exit 0, tạo bằng script `ce5ff542945b` từ v6 `631334704fdd`);
+  - mốc lúc khóa: runtime `cefb2d1a`, native `1fbb5c17` giống byte (HEAD `276e34f`);
+  - manifest bản cuối `9ea480d0d083`; report `phase_8_1_g0_6_baseline_lock.md` §7.
+  - Chờ B kiểm hash + A khóa.
 - **Đang khai báo sửa:** không.
-- **C chưa đọc nội dung câu kín.** Mọi việc câu kín qua sub-agent mới. A đã thấy 3 câu do User trích.
+- **C chưa đọc nội dung câu kín.** Mọi việc câu kín qua sub-agent mới hoặc script không in nội dung. A đã thấy 3 câu do User
+  trích.
 
 ## Xong hôm nay 25/10 (đều 0 USD; quota Claude cho sub-agent)
 | Việc | Kết quả | File |
