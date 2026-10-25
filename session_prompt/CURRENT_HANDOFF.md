@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 17:09 25/10/2026 (A, **KẾT PHIÊN tối 25/10** — User dừng: "session sau chúng ta sẽ kiểm tra lại"). Cách dùng:
+Cập nhật: 18:25 25/10/2026 (A, **mở phiên đêm 25/10** — User: tiếp tục rà code; B25 / C34 làm tiếp). Kết phiên trước 17:09. Cách dùng:
 `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở; lịch sử phiên ở `PROJECT_HISTORY.md` (mục 25/10 tối).
 Bản handoff đầy đủ trước khi rút gọn lần này: `git show bc568f1:session_prompt/CURRENT_HANDOFF.md`.
 
@@ -72,9 +72,9 @@ Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-00` (tối 25/10) | Claude Opus 5.5 | trực tiếp | brainstorm + spec 8.2; B0 prep; review B1 plan, C32; dừng 8.2; giao rà code | kết phiên 17:0x — `STATUS_A.md` |
-| B — thực thi | `hue-rag-de` (tối 25/10) | Claude Opus 5.5 | trực tiếp | B22 review spec; B23 B1; B24 review B0; B25 rà code (dở) | xem `STATUS_B.md`; 0,0369 USD |
-| C — thực thi | `hue-rag-d6` (tối 25/10) | Claude Opus 5.5 | trực tiếp | C32 rà kho; C33 plan E1; C34 rà code (dở) | xem `STATUS_C.md`; 0 USD |
+| A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code; gộp `TONG_HOP.md` | đang làm — `STATUS_A.md` |
+| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code (làm tiếp 18:25) | xem `STATUS_B.md` |
+| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 rà code (làm tiếp 18:25) | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -83,7 +83,11 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã
   duyệt: A tự duyệt, báo sau (User 25/10); Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report;
   code luôn `uv run` trong `.venv`; thư viện thừa giữ nguyên; luôn thử + so baseline trước khi chọn (User 24/10 20:49).
-- **Phiên tối 25/10 (User 15:5x) — HẾT HẠN, hỏi lại phiên sau:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (dùng 0,0369). Trần 8.2: 0,5 USD (trong spec).
+- **Phiên đêm 25/10 (User 18:2x) — hết hạn cuối phiên:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên. Việc chính: rà code (0 USD). Trần 8.2: 0,5 USD (trong spec; 8.2 vẫn tạm dừng).
+  **User 18:3x (rà code):** A gộp **báo cáo "nên sửa gì"** cho User; **chỉ sửa code khi User đồng ý** từng mục ("chưa cần sửa vội").
+  Khi sửa: **commit + push trước** mỗi lần sửa code; sau sửa hệ thống phải ổn định; được thử nghiệm / so sánh / đánh giá để chọn cách
+  tốt nhất ở mỗi bước (`run-experiment`), phần sửa đóng gói rõ ràng.
+- Phiên tối 25/10 (User 15:5x): hết hạn — đã dùng 0,0369 USD.
   Luật kỹ thuật giữ từ phiên trước: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - File untracked `báo cáo nghiên cứu github.txt` (gốc repo): của User, dùng cho Phase 9 — **không đụng, không commit**.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
