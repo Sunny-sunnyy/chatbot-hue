@@ -116,3 +116,19 @@ không chạy script của B (`data/ra_soat_code/tools/{inventory,dup_modules}.p
 
 **changes_requested** — B sửa P1, P2 (bắt buộc) và m1–m4 (một lượt), ra sha mới; C kiểm lại đúng các phần đổi; rồi A duyệt sha + chọn (a) / (b).
 Khuyến nghị của C về quy ước: **đồng ý (b)** — số đếm của B đúng, (b) không làm hỏng đường dẫn nào (m3), rủi ro trùng tên = 0 hôm nay.
+
+## 7. Kiểm lại bản 3 (sha `8b36bab7901c`) — C, 2026-10-25 20:35
+
+**ready_for_user_confirmation** (A duyệt sha). Chỉ kiểm phần đổi:
+- **P1 — đóng.** §4.1 T-A so `getattr(nơi_bắt, tên) is getattr(module_ném, tên)` theo bảng lớp **API thật sự bắt**: `api.app` khởi động 3 lớp
+  (`app.py:21-25, 70-84`), `api.routes.chat` `RetrievalDependencyError` + `ContextBudgetError` / `GenerationError` / `CitationIntegrityError`; bỏ
+  `InvalidQueryError` và `ComponentNotReadyError` của `chat.py`. Module ném đúng (`reranking/cross_encoder.py` ném cả `ComponentNotReadyError` /
+  `RetrievalDependencyError` — C đã đọc ở C34).
+- **P2 — đóng.** T-C file riêng `tests/test_startup_model_missing.py`; điều kiện trước Qdrant `:6335` có collection runtime (assert, không skip ⇒ Qdrant tắt
+  là đỏ có thông điệp, không xanh giả); assert lớp `core.schema.RetrievalDependencyError` + "Dense model readiness failed" + `__cause__`, rồi 503; đỏ
+  trên `main` vì đúng lý do (lớp `backend.core.schema.ComponentNotReadyError`). User chạy bằng `!` (auto mode chặn cả B lẫn C) — đúng
+  `WORKFLOW.md` §3.6.
+- **m1 — đóng** (§2 thêm g1 / g4_rerank / g5 7, g4_keyword 9; K1 11 điểm vào; K5 g5 dùng import). **m2 — đóng** (K3 cả 15 file). **m3 — đóng**
+  (`preview.py` docstring + `--output` neo gốc repo — đường ra không đổi khi chạy từ gốc, đúng khi chạy từ `backend/`). **m4 — đóng** (§6 bước 3).
+  Dòng (a) ở §4.5 đã bỏ, header ghi quy ước (b).
+- Không có điểm mới.

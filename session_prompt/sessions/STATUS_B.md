@@ -16,8 +16,8 @@
   3 notebook), chưa commit. Đếm ngoài vùng lịch sử 34 ⇒ 1 (roadmap dự kiến); đường dẫn home repo khác 48 ⇒ 0; notebook Run All bản tạm 3 / 3.
   Private: `data/ra_soat_code/b19_duong_dan_ngoai.md`, `tools/{deadrefs,edit_notebooks}.py`, `b26_deadrefs_{before,after}.txt`. 0 USD.
 - **File đang khai báo sửa:** 16 file B26 (giữ khai báo tới khi review xong / A commit). Chờ A.
-- **Plan gói 1b — XONG 20:1x, chờ C review + A duyệt sha** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_plan.md` (sha `aa9bbf3650d6`).
-  Đề xuất (b) import trần, chạy từ `backend/`. Script đo `data/ra_soat_code/tools/{inventory,dup_modules}.py`. Chưa sửa code.
+- **Plan gói 1b — XONG 20:1x, chờ C review + A duyệt sha** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_plan.md` (sha `8b36bab7901c`, bản 3).
+  Quy ước (b) đã chọn (A + C). Bản 3 sửa P1, P2, m1–m4; T-C do User chạy `!` (auto mode chặn HF_HOME rỗng). Script đo `data/ra_soat_code/tools/{inventory,dup_modules}.py`. Chưa sửa code.
 - File tạm: `/tmp/b25/`, `/tmp/b25x/`, `/tmp/b26/`, `/tmp/b27/` (script B), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
 
 ## Ý cải tiến (cho đợt tìm hướng tốt hơn sau 5 gói — giả thuyết, chưa đo)
@@ -28,6 +28,8 @@
 - Đánh giá: điểm judge đang chấm cả câu mà API trả 500 — tách chỉ số "trải nghiệm người dùng" (câu lỗi = 0 điểm) bên cạnh điểm judge.
 
 ## Đã học / bẫy gặp (phiên tối 25/10)
+- 25/10 20:3x: auto mode chặn lệnh chạy Python với `HF_HOME` trỏ thư mục rỗng (thử model không nạp) — chặn cả B lẫn C ⇒ không thử lại / đổi
+  cách; ghi lệnh vào plan để User chạy `!`, tách test đó ra file riêng để pytest của B không chạy nó.
 - 25/10 tối: B ghi "`scripts/` không tồn tại" vì chỉ tìm ở gốc repo — mục việc ghi đường dẫn tương đối ⇒ `find . -name <tên> -not -path './.venv/*'` trước khi kết luận "không có".
 - 25/10 tối: B-04 phiên chiều khẳng định "chunker đã fail-closed" khi chưa đọc chunker ⇒ không ghi khẳng định về code chưa đọc; ghi "chưa kiểm".
 - 25/10 tối: B-08 đo "câu đầu chậm" bằng script tự nạp model, không qua đường khởi động thật (đã có warm-up) ⇒ đo hiệu năng phải đi đúng

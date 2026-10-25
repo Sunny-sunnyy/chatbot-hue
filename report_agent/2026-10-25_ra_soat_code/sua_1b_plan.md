@@ -1,6 +1,8 @@
 # Plan: rà code — gói 1b (một quy ước import + tách lỗi 503 / 409) — B-01 / C-01 + C-11
 
-Người viết: B (Claude Opus 5.5, terminal `hue-rag-c3`) · 2026-10-25 20:15 +0700 (`date`) · nền `main` `63fec4f` · **chưa sửa code**
+Người viết: B (Claude Opus 5.5, terminal `hue-rag-c3`) · bản 1 20:15, bản 2 20:2x (bảng lệnh), **bản 3 20:3x** (sửa theo
+`sua_1b_plan_review.md`: P1, P2, m1–m4) · nền `main` `63fec4f` (B26 commit `1b9c126` không chạm code) · **chưa sửa code**
+**Quy ước đã chọn: (b) import trần, chạy từ `backend/`** (A 20:3x; C đồng ý trong review).
 Người review: C · duyệt: A (ghi sha vào `CURRENT_HANDOFF.md`, `WORKFLOW.md` §9.1)
 
 ## Căn cứ để review
@@ -36,7 +38,8 @@ Không thuộc gói: lệnh trong tài liệu khác ngoài các lệnh bắt bu�
 | API — `uv run uvicorn api.app:app` | `backend/` | **3** (`core`, `core.schema`, `core.settings_loader`) |
 | build — `python -m backend.ingestion.full_corpus_pipeline build` | gốc | 0 |
 | evaluator — `python -m evaluation.full_corpus_eval` | `backend/` | **3** |
-| harness 8.1 G2 / G3 — `python -m experiments.phase_8_1.g2_generate` / `g3_chunking` | `backend/` | **7** (+ `embedding.sparse`, `reranking.cross_encoder`) |
+| harness 8.1 g1 / g2 / g3 / g4_rerank / g5 — `python -m experiments.phase_8_1.<gX>` | `backend/` | **7** mỗi cái (+ `embedding.sparse`, `reranking.cross_encoder`) |
+| harness 8.1 g4_keyword | `backend/` | **9** (+ `scoring`, `scoring.bm25`) |
 | notebook 03 / 04 (gốc vào `sys.path`, import `backend.*`) | `notebooks/` | 0 |
 | notebook 06 (gốc + `backend/` vào `sys.path`, import trần) | `notebooks/` | **3** |
 | pytest — `cd backend && python -m pytest --collect-only tests/` (202 test) | `backend/` | **14** |
@@ -83,22 +86,44 @@ Cả hai đều chạy được mọi điểm vào (build, API, pytest, harness,
 6); (2) giữ nguyên 4 lệnh dùng nhiều nhất (API, pytest, evaluator, harness — đều đang chạy từ `backend/`), chỉ đổi lệnh build vốn hiếm và luôn
 cần duyệt; (3) rebase B1 nhẹ hơn. Cái giá: lệnh build đổi chỗ chạy; rủi ro trùng tên gói trần là tiềm ẩn (0 hôm nay) — ghi bẫy vào
 `Project_Status.md` §8. Chọn (a) nếu A / User muốn mọi lệnh cùng chạy từ gốc repo (đồng nhất với build và notebook) và chấp nhận đổi nhiều hơn.
-**A duyệt chọn (a) hay (b) trước khi B sửa.**
+**Đã chọn (b)** — A 20:3x, C đồng ý (`sua_1b_plan_review.md`).
 
-## 4. Thay đổi (theo (b); nếu chọn (a), cùng các bước với chiều ngược lại)
+## 4. Thay đổi (quy ước (b))
 
-1. **Test viết trước, phải đỏ trên `main`** (thêm vào `backend/tests/test_api_chat.py`, không cần key, 0 USD):
-   - **T-A danh tính lớp:** tiến trình con sạch, cwd `backend/`, `import api.app` (đúng như `uvicorn api.app:app`) ⇒ assert không tên nào nạp
-     đôi (`X` và `backend.X`) và `api.routes.chat.{ComponentNotReadyError, RetrievalDependencyError, InvalidQueryError}` **is** lớp cùng tên trong
-     `retrieval.full_corpus`. Trên `main`: đỏ (3 tên nạp đôi, `is` False).
+1. **Test viết trước, phải đỏ trên `main`** (không cần key, 0 USD; T-A, T-B thêm vào `backend/tests/test_api_chat.py`; T-C file riêng — xem dưới):
+   - **T-A danh tính lớp (sửa P1):** tiến trình con sạch, cwd `backend/`, `import api.app` (đúng như `uvicorn api.app:app`) ⇒ assert (1) không tên
+     nào nạp đôi (`X` và `backend.X`); (2) mỗi lớp **API thật sự bắt** là **cùng đối tượng** với lớp module ném ra nó (bảng lấy từ `grep "raise <Lớp>"`
+     ngoài test, 20:3x):
+
+     | Nơi bắt | Lớp | Module ném (`raise`) |
+     |---|---|---|
+     | `api.app` (khởi động, `:69-89`) | `ComponentNotReadyError`, `RetrievalConfigurationError`, `RetrievalDependencyError` | `retrieval.full_corpus` (+ `reranking.cross_encoder` cho `ComponentNotReadyError`, `RetrievalDependencyError`) |
+     | `api.routes.chat` (lúc hỏi) | `RetrievalDependencyError` | `retrieval.full_corpus`, `reranking.cross_encoder` |
+     | `api.routes.chat` | `ContextBudgetError` / `GenerationError` / `CitationIntegrityError` | `retrieval.full_corpus_context` / `llm.generator_openai_full_corpus` / `llm.citations` |
+
+     So bằng `getattr(nơi_bắt, tên) is getattr(module_ném, tên)` — chỉ tên mà **cả hai** module có thật (không nêu `InvalidQueryError`: API không bắt
+     — route tự chặn câu rỗng; không nêu `ComponentNotReadyError` của `chat.py`: gỡ ở C-11). Trên `main`: đỏ (3 tên nạp đôi; `api.app` vs
+     `retrieval.full_corpus` khác đối tượng ở cả 3 lớp khởi động).
    - **T-B kho đổi ⇒ 409:** `create_app` thật với settings đọc thật rồi **chỉ trong bộ nhớ** `exclude_parts += ["foods"]` (không sửa kho / Qdrant /
      file) ⇒ `POST /api/chat` trả **409** `corpus_reingest_required` (route trả lỗi retrieval trước bước sinh ⇒ không gọi OpenAI). Trên `main`: đỏ
      (503).
-   - **T-C (canh hồi quy) model không nạp ⇒ 503:** tiến trình con với `HF_HUB_OFFLINE=1` + `HF_HOME` trỏ thư mục rỗng trong `tmp_path` (đầu vào thật,
-     không mock) ⇒ `create_app` ⇒ `POST /api/chat` **503** `retrieval_unavailable`. Trên `main`: **xanh** (nhờ bắt hụt); sửa import mà quên bước 3
-     ⇒ đỏ (409) — test này chặn đúng bẫy C-01 (b).
+   - **T-C model không nạp ⇒ 503, kiểm cả nguyên nhân (sửa P2):** file riêng `backend/tests/test_startup_model_missing.py`; tiến trình con với
+     `HF_HUB_OFFLINE=1` + `HF_HOME` trỏ thư mục rỗng trong `tmp_path` (đầu vào thật, không mock). Điều kiện trước (assert, không skip): Qdrant
+     `:6335` trả collection runtime ⇒ các bước 1–3 của `build_full_corpus_retrieval_service` (record, sparse state, collection) qua được, nên lỗi chỉ có
+     thể đến từ bước 4. Assert: (1) gọi `build_full_corpus_retrieval_service` với settings runtime ⇒ raise **đúng** `core.schema.RetrievalDependencyError`
+     (đối tượng lớp mà `api.app` bắt), thông điệp chứa `"Dense model readiness failed"`, có `__cause__`; (2) `create_app` ⇒ `POST /api/chat` **503**
+     `retrieval_unavailable`. Qdrant tắt ⇒ điều kiện trước đỏ với thông điệp rõ (không thành xanh giả). Trên `main`: **đỏ** (lớp ném ra là
+     `backend.core.schema.ComponentNotReadyError`); sửa import mà quên bước 3 ⇒ vẫn đỏ (`ComponentNotReadyError`).
+     **Ai chạy:** auto mode chặn lệnh dùng `HF_HOME` rỗng ở cả session B lẫn C (20:2x) ⇒ B **không** chạy T-C và không tìm cách khác để chạy; **User chạy
+     bằng `!` trong terminal B** hai lần (trên `main` trước sửa — mong đỏ; sau sửa — mong xanh):
+     `! cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests/test_startup_model_missing.py -q -p no:cacheprovider`
+     (test tự đặt `HF_HOME` cho tiến trình con, không gọi mạng / OpenAI, không ghi Qdrant). B dán kết quả vào report. Các lệnh pytest của B **liệt kê
+     file, không gồm file này**.
 2. **Một quy ước import:** 13 file code + 5 test + `experiments/phase_8_1/g3_chunking.py` đổi `backend.X` ⇒ `X`; bỏ 9 khối `try / except
    ModuleNotFoundError` (giữ đúng một dòng import); bỏ chèn `sys.path` ở 5 file code (API / evaluator / harness chạy từ `backend/` đã có cwd);
+   `ingestion/preview.py`: docstring đổi lệnh thành `cd backend && uv run python -m ingestion.preview …` (m3); `--output` mặc định
+   `reports/artifacts/…` tương đối cwd ⇒ **neo theo gốc repo** (`Path(__file__).resolve().parents[2]`, `preview.py` chưa có hằng này; một dòng; đường ra không đổi khi chạy từ `backend/`) — chọn neo thay vì để
+   gói 2 vì đây là hệ quả trực tiếp của đổi chỗ chạy (B-04 quyết giữ / bỏ CLI sau);
    `conftest.py` bỏ chèn gốc repo (giữ `backend/` cho pytest gọi từ gốc); notebook 03 / 04 đổi import + chèn `backend/`, notebook 06 bỏ chèn gốc.
    Không đổi logic nào khác.
 3. **Tách lỗi model khỏi 409:** `retrieval/full_corpus.py:816-823` (nạp + warm-up e5) và `:827-834` (MiniLM) ném `RetrievalDependencyError` thay
@@ -109,26 +134,22 @@ cần duyệt; (3) rebase B1 nhẹ hơn. Cái giá: lệnh build đổi chỗ ch
 5. **Lệnh bắt buộc đổi theo quy ước** (để hệ thống chạy được ngay sau gói; đếm 20:2x, `main` + B26 chưa commit). Phần lệnh còn lại (B-17)
    làm ngay sau, cùng quy ước.
 
-   | Nếu chọn | File:dòng | Đổi |
+   | Quy ước | File:dòng | Đổi |
    |---|---|---|
    | (b) | `session_prompt/chạy_môi_trường.md:10-12` (**A sửa** — governance) | "chạy từ gốc repo" + `python -m backend.ingestion.full_corpus_pipeline` ⇒ `cd backend` + `python -m ingestion.full_corpus_pipeline` (`--env-file ../.env`) |
    | (b) | `guides/full_corpus_rag.md:174` (mục build lại, bước 5) | như trên; `:118` (mục 7A2, lịch sử) giữ, thêm "(lệnh lúc đó)" |
    | (b) | `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md:89` | như trên (A sửa — báo cáo User) |
    | (b) | `notebooks/03_embedding_models.ipynb` ô cuối | như trên |
-   | (a) | `session_prompt/chạy_môi_trường.md:6` (**A sửa**) | `uv run uvicorn api.app:app` ⇒ chạy từ gốc `uv run uvicorn backend.api.app:app` |
-   | (a) | `session_prompt/Project_Status.md:185` (**A sửa**) | `cd backend && … pytest tests/<file>` ⇒ từ gốc `… pytest backend/tests/<file>` |
-   | (a) | `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md:85`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md:47`, `BAO_CAO_BO_CAU_HOI_GOLDEN.md:49` | lệnh `uvicorn api.app` / `python -m evaluation.…` ⇒ `backend.…` từ gốc |
-   | (a) | `CURRENT_HANDOFF.md` (mục Cổng ổn định — **A sửa**), harness 8.1 / B1 trong report đang mở | `cd backend && … uvicorn api.app:app` ⇒ từ gốc |
 
 ## 5. Tiêu chí nghiệm thu (ghi trước) và cổng ổn định
 
 | # | Tiêu chí | Cách đo | Đạt khi |
 |---|---|---|---|
-| K1 | Không module nạp đôi | `dup_modules.py` (7 điểm vào, lệnh **mới**) + pytest `--collect-only` | 0 ở cả 8 |
-| K2 | Lớp lỗi cùng danh tính; 409 / 503 đúng | T-A, T-B, T-C | đỏ trên `main` (T-A, T-B) ⇒ xanh sau sửa; T-C xanh trước và sau |
-| K3 | Test các file chạm | liệt kê file: `test_api_chat.py`, `test_full_corpus_retrieval.py`, `test_full_corpus_chunker.py`, `test_full_corpus_embedding.py`, `test_full_corpus_qdrant_ingestion.py`, `test_full_corpus_sparse.py`, `test_bm25.py`, `test_citations.py`, `test_full_corpus_context.py`, `test_full_corpus_eval.py`, `test_golden_full_corpus.py`, `test_phase6_settings.py`; không `--env-file` | đạt; lỗi cũ C-17 (`require_openai_key`) ghi rõ số, không tăng |
+| K1 | Không module nạp đôi | `dup_modules.py` (11 điểm vào: API, build, evaluator, **6 harness** g1 / g2 / g3 / g4_rerank / g4_keyword / g5, notebook 03-04, 06 — lệnh **mới**) + pytest `--collect-only` | 0 ở cả 12 |
+| K2 | Lớp lỗi cùng danh tính; 409 / 503 đúng, đúng nguyên nhân | T-A, T-B (B chạy); T-C (User chạy `!`) | cả 3 đỏ trên `main` ⇒ xanh sau sửa |
+| K3 | Test — **cả 15 file** (`conftest.py` đổi ⇒ ảnh hưởng mọi test; m2) | liệt kê từng file: `test_api_chat.py`, `test_bm25.py`, `test_citations.py`, `test_full_corpus_chunker.py`, `test_full_corpus_context.py`, `test_full_corpus_embedding.py`, `test_full_corpus_eval.py`, `test_full_corpus_qdrant_ingestion.py`, `test_full_corpus_retrieval.py`, `test_full_corpus_sparse.py`, `test_golden_full_corpus.py`, `test_openai_full_corpus_generator.py`, `test_phase6_live_smoke.py`, `test_phase6_settings.py`, `test_static_ui.py`; không `--env-file`, không `--deselect`; chạy cả nhóm **và** từng file (thứ tự `sys.path`); trước sửa và sau sửa | đạt; số error do `require_openai_key` (C-17) ghi rõ, **không tăng** so với trước sửa |
 | K4 | Kết quả tìm kiếm không đổi | T1 (§2) | sha256 `cefb2d1ad609…`, 158 dòng |
-| K5 | Mọi điểm vào chạy được | build: `cd backend && uv run python -m ingestion.full_corpus_pipeline --help` + `prepare_full_corpus_input()` (chỉ đọc, 8.459 đoạn, `corpus_identity` = build record) — **không** build thật (ghi Qdrant); evaluator `--help` + T1; harness 8.1 G1–G5 `--help`; notebook 03 / 04 / 06 Run All bản tạm | chạy hết, 0 lỗi import |
+| K5 | Mọi điểm vào chạy được | build: `cd backend && uv run python -m ingestion.full_corpus_pipeline --help` + `prepare_full_corpus_input()` (chỉ đọc, 8.459 đoạn, `corpus_identity` = build record) — **không** build thật (ghi Qdrant); evaluator `--help` + T1; harness 8.1 g1 / g2 / g3 / g4_rerank / g4_keyword `--help`, g5 (không argparse) `import`; notebook 03 / 04 / 06 Run All bản tạm | chạy hết, 0 lỗi import |
 | K6 | **Cổng ổn định** (`CURRENT_HANDOFF.md`) | `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8011`: `/` 200, `/health` 5 thành phần ready, 1 câu trong kho (200, marker khớp `sources`) + 1 câu ngoài kho (từ chối) tự viết; log sạch; tắt server | như mốc sau 1a (`63fec4f`) |
 | K7 | Không đổi ngoài phạm vi | `git diff --stat`; grep logic | chỉ dòng import / `sys.path` / 2 chỗ lớp lỗi / 2 chỗ gỡ C-11 / lệnh |
 
@@ -140,15 +161,16 @@ B1 chạm `backend/retrieval/full_corpus.py` (thêm `import unicodedata` sát kh
 `backend/tests/test_full_corpus_retrieval.py` (import kiểu `backend.*` — thuộc 5 test phải đổi ở (b)), `backend/core/settings_loader.py`,
 `backend/config/settings.yaml`, `backend/tests/test_phase6_settings.py`, thêm `backend/experiments/phase_8_2/b1.py` (import trần — hợp (b)). Khi rebase:
 (1) giải xung đột khối import `retrieval/full_corpus.py` theo quy ước mới (giữ `import unicodedata`); (2) đổi import `test_full_corpus_retrieval.py`
-phần B1 thêm sang trần; (3) chạy `dup_modules.py` (0); (4) chạy lại **T1–T2 của B1** (free) — không dùng lại bằng chứng B1 cũ vì đầu vào đã đổi
-(`Session_Prompt.md` §6). Nếu chọn (a): thêm đổi import `b1.py` + lệnh chạy B1 từ gốc.
+phần B1 thêm sang trần; (3) sửa / bỏ comment `b1.py:23` ("import này cũng đưa gốc repo + `backend/` vào `sys.path`" — sai sau gói 1b; m4); (4) chạy
+`dup_modules.py` (0); (5) chạy lại **T1–T2 của B1** (free) — không dùng lại bằng chứng B1 cũ vì đầu vào đã đổi
+(`Session_Prompt.md` §6).
 
 ## 7. Quyền, tiền, rủi ro, điều kiện dừng
 
 - Sửa code rủi ro trung bình (Phase đã duyệt): A commit + push `main` **trước** khi B sửa (User 18:3x). B không commit. Review: C.
 - Tiền: chỉ K6 (2 câu `gpt-6-luna`, ước ~0,0005 USD theo lượt 1a: 0,000427 USD / 2 câu) — trong trần chung 0,05 USD; ghi token + tiền từ log.
 - Qdrant chỉ đọc; không build index; không sửa kho; T-B / T-C chỉ đổi đầu vào trong bộ nhớ / `tmp_path`.
-- Rủi ro: sót một import ⇒ `ModuleNotFoundError` ở điểm vào ít dùng (đã liệt kê đủ 7 điểm vào trong K1 / K5); test phụ thuộc thứ tự `sys.path`
+- Rủi ro: sót một import ⇒ `ModuleNotFoundError` ở điểm vào ít dùng (đã liệt kê đủ 11 điểm vào trong K1 / K5); test phụ thuộc thứ tự `sys.path`
   (conftest) — chạy từng file và cả nhóm; notebook chạy từ `notebooks/` — Run All bản tạm.
 - Dừng khi: T1 lệch; phải sửa logic ngoài §4; phải đụng file C đang khai báo; vượt tiền.
 
