@@ -1,7 +1,7 @@
 # Phase 8.1 G5 — tổng hợp kết quả rà quyết định
 
 Người viết: A (Claude Opus 5.5, terminal `hue-rag-c6`) · 14:05 25/10/2026 (`date`); bản 2 14:2x sau review B
-(`phase_8_1_g5_review.md`: M1–M2, m1–m4) · Trạng thái: **review vòng 2 ready (B, `phase_8_1_g5_review.md` §5) — chờ User đóng 8.1** · Spec `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` §5 G5, §6.
+(`phase_8_1_g5_review.md`: M1–M2, m1–m4) · Trạng thái: **review vòng 2 ready (B, `phase_8_1_g5_review.md` §5) — **User đóng 8.1 lúc 15:27 25/10**; G0.6 khóa 15:22** · Spec `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` §5 G5, §6.
 
 Bảng kết luận từng quyết định: `phase_8_1_g5_decision_table_draft.md` (B19, cập nhật G3; A review 13:5x — đối chiếu số
 G2.1a, G2.4, luna rerank, khử dấu, G3 với report gốc, khớp). File đó là **bảng chính thức của G5**; file này tóm lại,
@@ -20,7 +20,7 @@ nhất phát hiện được: **câu hỏi không dấu** làm tìm kiếm gần
 
 | # | Tiêu chí | Trạng thái | Căn cứ |
 |---|---|---|---|
-| 1 | G0 xong: tự kiểm thống kê; tham số mặc định-như-cũ (byte); baseline tái lập; split / đoạn đúng / câu kín tồn tại và được duyệt | **PARTIAL** — G0.1–G0.5 xong + review; **G0.4 câu kín chờ User xem mẫu bản 5; G0.6 khóa baseline chưa làm** | `phase_8_1_g0_*`; `phase_8_1_g0_4_sealed_review.md` §8–§10 |
+| 1 | G0 xong: tự kiểm thống kê; tham số mặc định-như-cũ (byte); baseline tái lập; split / đoạn đúng / câu kín tồn tại và được duyệt | **PASS** — G0.1–G0.5 xong + review; G0.4 User duyệt mẫu bản 5 (15:15); **G0.6 khóa 15:22** (`phase_8_1_g0_6_baseline_lock.md`, manifest `9ea480d0d083`) | `phase_8_1_g0_*`; `phase_8_1_g0_4_sealed_review.md` §8–§10 |
 | 2 | Mỗi thí nghiệm có tiêu chí ghi trước, kết quả theo cặp **(theo loại câu)**, kết luận; phương án "tốt hơn" xác nhận trên test | **PASS** — plan có sha duyệt trước khi đo (G1, G2/G4 `a4adfc8eedd9`, G3 `d89a919067ba`, G4K `d7e53186b364`); G2.1a xác nhận trên test 41 câu; **theo loại câu** bổ sung ở `phase_8_1_g5_by_category.md` (B, sha `1f630d9db100`; A chạy lại script, 51/51 dòng bảng khớp) | report G1–G4K + review; `phase_8_1_g5_by_category.md` |
 | 3 | Mỗi dòng top 10 C11 có kết luận hoặc lý do NOT RUN | **PASS** | bảng G5 §1 |
 | 4 | Runtime không đổi (retrieval 176 câu giống byte mốc); Qdrant chỉ còn collection runtime | **PASS tại 14:05** — mốc `cefb2d1a…` khớp ở cuối G3 (C29); `GET /collections` 14:05: chỉ `hue_full_corpus_7a2_e5_small_384`. Kiểm lại lần cuối khi đóng 8.1 | `phase_8_1_g3_implementation.md`; lệnh `curl` 14:05 |

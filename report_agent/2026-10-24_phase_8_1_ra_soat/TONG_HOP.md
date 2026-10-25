@@ -1,6 +1,6 @@
-# Tổng hợp đợt Phase 8.1 — rà quyết định Phase 0–7 (mở 19:00 24/10, CHƯA ĐÓNG — chờ User)
+# Tổng hợp đợt Phase 8.1 — rà quyết định Phase 0–7 (mở 19:00 24/10, **ĐÓNG 15:27 25/10** — User "đóng 8.1")
 
-Cập nhật: 14:06 25/10/2026 (A). Kết luận và tiêu chí nghiệm thu: `phase_8_1_g5_synthesis.md`; bảng từng quyết định:
+Cập nhật: 15:27 25/10/2026 (A, đóng đợt). Kết luận và tiêu chí nghiệm thu: `phase_8_1_g5_synthesis.md`; bảng từng quyết định:
 `phase_8_1_g5_decision_table_draft.md`.
 
 ## Mục tiêu
@@ -21,6 +21,9 @@ chất lượng xuống, phương án nào thắng baseline và thắng bao nhi�
 | 25/10 12:27 | User nghỉ: A tự điều phối, ghi đủ thông số |
 | 25/10 12:4x | A: luật tiền mỗi lượt = ước lại từ pilot, trần lượt 0,05 USD |
 | 25/10 13:0x–13:4x | A duyệt plan G3 (`e089243fb612` → `9f00c460c3e9` → `d89a919067ba`, sau review B), plan G4K `d7e53186b364` (sau review C) |
+| 25/10 15:15 | Mẫu câu kín bản 5: đạt; **câu không dấu ngoài phạm vi** (người dùng gõ có dấu), bỏ nghiên cứu ChatGPT |
+| 25/10 15:22 | G0.6 khóa: câu kín chính thức 36 × 4 field; manifest `9ea480d0d083` (A tự kiểm 34/34 hash) |
+| 25/10 15:27 | User đóng 8.1 |
 
 ## Kết quả
 - **Thay (đề xuất 8.2):** context 10 đoạn — Completeness dev +0,26 [+0,08; +0,48], test +0,27 [+0,02; +0,59].
@@ -29,7 +32,7 @@ chất lượng xuống, phương án nào thắng baseline và thắng bao nhi�
 - **Tín hiệu cho 8.2:** câu không dấu (13/32 → 1/32), khử dấu ở native (sparse@100 0,25 → 0,81), pool rộng, rerank luna
   (MRR +0,17), H8 (từ chối nhầm 13 → 1 nhưng phạm sàn), NFC.
 - **Thước đo:** so theo cặp + Holm; 120 dev / 56 test; đoạn đúng 55 câu; độ tự nhiên 82 / 65 / 29; Golden sửa 10 đáp án
-  (md5 `0f7dbf41b422`); câu kín 36 câu v6 (chờ User xem mẫu bản 5).
+  (md5 `0f7dbf41b422`); câu kín 36 câu khóa (`sealed_official.jsonl`, User duyệt mẫu bản 5).
 - Commit phiên 25/10 chiều: `2b0010b` … `91db3c9` (G1 §7 + plan `b9789f4`, G4 `ee557f9`, G2 `266c105`, G4K `50006da`, G3
   `91db3c9`). Mọi gate có review chéo ready.
 - **Tiền thật:** 0,1653 USD (≈ 4.100 đồng) — chỉ `gpt-6-luna`; judge và sub-agent dùng quota Claude Code.
@@ -39,5 +42,5 @@ chất lượng xuống, phương án nào thắng baseline và thắng bao nhi�
 - 10 câu Golden sửa đáp án không còn so trực tiếp với 7B Run 1. A đã thấy 3 câu kín (User trích).
 
 ## Bước tiếp
-User xem mẫu câu kín bản 5 → A khóa câu kín + G0.6 → kiểm cuối runtime / Qdrant → User đóng 8.1 → brainstorm + spec 8.2
-(`phase_8_1_g5_synthesis.md` §4).
+Phiên sau: brainstorm + một spec 8.2 (User duyệt), bắt đầu từ `phase_8_1_g5_synthesis.md` §4 — bước 0: mốc người ~20 câu +
+tách khâu dính; rồi context 10, NFC, … (mục câu không dấu đã bỏ).

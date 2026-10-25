@@ -1,6 +1,6 @@
 # Nhật ký 25/10/2026 (chiều) — Phase 8.1: thử lại các quyết định cũ
 
-**Cập nhật lần cuối: 14:06 25/10/2026.** Tiền paid trong ngày: 0,1653 USD (~4.100 đồng), chỉ `gpt-6-luna`.
+**Cập nhật lần cuối: 15:27 25/10/2026 — bạn đã đóng Phase 8.1.** Tiền paid trong ngày: 0,1653 USD (~4.100 đồng), chỉ `gpt-6-luna`.
 
 ## Tóm tắt
 Chiều nay ba session (A điều phối, B và C làm) chạy hết các thí nghiệm của Phase 8.1. Mỗi thí nghiệm có luật quyết ghi
@@ -10,9 +10,9 @@ hơn, model xếp hạng lại, đổi cách tách từ, đổi prompt, mức su
 Phát hiện lớn nhất: người dùng **gõ không dấu** thì tìm kiếm gần như hỏng — 15:15 bạn quyết để ngoài phạm vi (người dùng gõ có dấu).
 
 ## Bạn cần làm gì
-- Xem mẫu câu kín bản 5: `knowledge-base-hue/evaluation/phase_8_1/sealed_user_sample.md` (17 dòng, 8 dòng đánh dấu
-  `[ĐỔI]`). Đạt thì A khóa bộ câu kín và khóa baseline.
-- Sau đó: đóng Phase 8.1 (đọc `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md` §1–§4).
+- Không có việc gấp. Đã xong hôm nay: bạn duyệt mẫu câu kín bản 5 (15:15), A khóa bộ câu kín + baseline (15:22), bạn đóng
+  Phase 8.1 (15:27).
+- Phiên sau: brainstorm Phase 8.2 với A. Trước khi đổi chatbot, bạn chấm tay ~20 câu (mốc người).
 
 ## Trạng thái
 | Việc | Kết quả | Ý nghĩa |

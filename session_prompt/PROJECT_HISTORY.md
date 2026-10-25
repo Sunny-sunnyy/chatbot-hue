@@ -4,6 +4,14 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-25 (15:27) — **Đóng Phase 8.1** (User "đóng 8.1"); chatbot không đổi
+
+- Thí nghiệm có luật ghi trước + review chéo: G1 chẩn đoán, G2 sinh câu trả lời, G3 chia đoạn (12 biến thể), G4 rerank
+  (M1/M2 GPU, luna), G4K BM25 (tách từ, khử dấu, k/b). **Chỉ context 10 thắng** (Completeness dev +0,26, test +0,27);
+  còn lại giữ. Thước đo: so theo cặp + Holm, 120/56, đoạn đúng 55, độ tự nhiên, Golden sửa 10 đáp án, câu kín 36 khóa
+  (G0.6 manifest `9ea480d0d083`). User: câu không dấu ngoài phạm vi. Tiền 0,1653 USD. Commit `2b0010b`…`292e0fb` + kết phiên.
+  Chi tiết: `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`, `phase_8_1_g5_synthesis.md`.
+
 ## 2026-10-25 (11:05) — Đợt cải tiến cách làm (không đổi chatbot); kết phiên
 
 - Vòng tự cải tiến có người duyệt (`improve-workflow` + sổ), `run-experiment` nâng (nhiễu, cỡ mẫu, luật giữ/gỡ), Session D,

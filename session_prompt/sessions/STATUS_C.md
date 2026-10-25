@@ -1,18 +1,16 @@
-# STATUS C — cập nhật 2026-10-25 15:18
+# STATUS C — cập nhật 2026-10-25 15:27 (kết phiên; Phase 8.1 User đóng)
 
 Terminal: `hue-rag-a1` (25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
 User 25/10: việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
 ## Đang làm / chờ
-- **C31 XONG 15:17 — G0.6 READY TO LOCK.** User duyệt mẫu bản 5 (qua A). Kết quả:
-  - câu kín chính thức `knowledge-base-hue/evaluation/phase_8_1/sealed_official.jsonl` md5 `ddc59587b502` (36 dòng, 4 field,
-    check exit 0, tạo bằng script `ce5ff542945b` từ v6 `631334704fdd`);
-  - mốc lúc khóa: runtime `cefb2d1a`, native `1fbb5c17` giống byte (HEAD `276e34f`);
-  - manifest bản cuối `9ea480d0d083`; report `phase_8_1_g0_6_baseline_lock.md` §7.
-  - Chờ B kiểm hash + A khóa.
+- **Kết phiên 15:27.** User đóng Phase 8.1 (15:2x, "đóng 8.1"). G0.6 A đã khóa (commit `292e0fb`, A tự kiểm 34/34 hash).
+  - Việc cuối của C: C31 câu kín chính thức `sealed_official.jsonl` md5 `ddc59587b502`; manifest `9ea480d0d083`; B kiểm đạt.
+  - Không có việc dở.
 - **Đang khai báo sửa:** không.
 - **C chưa đọc nội dung câu kín.** Mọi việc câu kín qua sub-agent mới hoặc script không in nội dung. A đã thấy 3 câu do User
   trích.
+- **Phiên sau (8.2):** chờ A giao. Câu kín chính thức chỉ mở để chấm ở mốc cuối 8.2 do User quyết (`Session_Prompt.md` §5).
 
 ## Xong hôm nay 25/10 (đều 0 USD; quota Claude cho sub-agent)
 | Việc | Kết quả | File |
@@ -37,13 +35,12 @@ Code C viết (A đã commit): `backend/ingestion/full_corpus_pipeline.py` (`chu
 - **G4:** `data/phase_8_1/g4/c_rerun_m1.*`. **G4K:** `data/phase_8_1/g4k/c_check_bigram_native.jsonl`.
 - **G0.6:** `data/phase_8_1/baseline/g0_6_manifest.json`, `data/phase_8_1/tools/make_sealed_official.py`.
 
-## Script tạm ở /tmp (mất khi khởi động lại)
-- `/tmp/c28/` (probe kế hoạch G3);
-- `/tmp/c29/` (queue.sh, probe, mốc byte);
-- `/tmp/c31/` (mốc 176 câu, thử script trên file không kín);
-- `/tmp/c23/` (bản sao plan).
-
-Đã xóa: `/tmp/c24_*`, `/tmp/c25_*`, `/tmp/c26_*` (script sub-agent có thể chứa câu kín).
+## Script tạm ở /tmp
+- **Đã dọn hết lúc kết phiên (15:27):**
+  - `/tmp/c23`, `/tmp/c28`, `/tmp/c29`, `/tmp/c31` và các file `/tmp/c23_*` … `/tmp/c31_*`, `/tmp/c27b.txt` (một số chứa dòng
+    Golden dùng để thử);
+  - trước đó đã xóa `/tmp/c24_*`, `/tmp/c25_*`, `/tmp/c26_*` (script sub-agent).
+- Bản cần giữ đều ở `data/phase_8_1/` (private).
 
 ## Đã học / bẫy gặp
 - **Repo public:** file tracked không chép tên / số / đường dẫn dự án khác của User, câu Golden, câu kín, số liệu corpus.

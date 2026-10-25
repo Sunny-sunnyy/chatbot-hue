@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 14:06` (A, phiên chiều — Phase 8.1 xong thí nghiệm; chatbot không đổi)
+Last updated: `2026-10-25 15:28` (A, **đóng Phase 8.1**; chatbot không đổi)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -22,22 +22,23 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 
 ## 2. Phase hiện tại
 
-**Phase 7B — Evaluator full-corpus + baseline 176 case: User-closed 2026-10-24** (spec
-`docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; report
-`reports/phase_7b_*`, review `reports/phase_7b_review_2026_10_24.md`; guide mục "Cập nhật Phase 7B").
+**Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
+`docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
+`report_agent/2026-10-24_phase_8_1_ra_soat/` — `TONG_HOP.md`, kết luận `phase_8_1_g5_synthesis.md`, bảng
+`phase_8_1_g5_decision_table_draft.md`, theo loại câu `phase_8_1_g5_by_category.md`). **Chatbot không đổi.**
 
-- Baseline (Claude judge, Run 1): Accuracy 4,43 / Completeness 4,28 / Relevance 4,45; keyword proxy
-  @10 MRR 0,721 / nDCG 0,755 / Coverage 92,35; từ chối nhầm 22/158; lỗi citation 4/176.
-- Thước đo ổn định (Run 1 vs Run 2 chênh TB ≤0,011); **giới hạn:** chưa có mốc người (User bỏ chấm tay).
-- Tiền paid cả 7B + thăm dò: ~0,087 USD.
+- **Chỉ context 10 thắng** (Completeness dev +0,26 [+0,08; +0,48], test +0,27 [+0,02; +0,59]; lợi ở câu nhiều nguồn / so
+  sánh). Giữ: chunker (12 biến thể), cách trộn + pool 30, BM25 âm tiết (k1 1,5 / b 0,75), không rerank, prompt, reasoning
+  mặc định, validator. Tín hiệu: pool rộng, rerank luna (MRR +0,17), H8 (phạm sàn), NFC.
+- Thước đo: so theo cặp + Holm; 120 dev / 56 test (`split.json`); đoạn đúng 55 câu; độ tự nhiên 82 / 65 / 29; Golden sửa
+  10 đáp án (md5 `0f7dbf41b422`); **câu kín 36 câu khóa** (`knowledge-base-hue/evaluation/phase_8_1/sealed_official.jsonl`,
+  mở ở mốc cuối 8.2 do User quyết); **G0.6 manifest** `data/phase_8_1/baseline/g0_6_manifest.json` (`9ea480d0d083`).
+- Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10).
+- Tiền 8.1: 0,1653 USD.
 
-Mốc kế tiếp: **Phase 8.1** (rà quyết định + thí nghiệm, không đổi chatbot) — spec approved 20:49 24/10; **25/10 14:06: G1–G4, G4K, G3 xong + review**; chỉ context 10 thắng (xác nhận test); kết luận `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md` (chờ review); chờ User xem mẫu câu kín bản 5 → khóa G0.6 → User đóng 8.1. Tiền 8.1: 0,1653 USD;
-input: bảng rà 56 quyết định `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md`
-(C11), giả thuyết `reports/phase_8_candidate_hypotheses_2026_10_24.md`, chẩn đoán từ chối nhầm
-(`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`), thăm dò context 10
-(`reports/phase_8_probe_context_top10_2026_10_24.md`), nghiên cứu ChatGPT
-`gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_1_decision_audit_2026_10_24.md` (private).
-Dọn Foods sau Phase 7 (B9) **đóng** 24/10.
+Mốc kế tiếp: **Phase 8.2** (áp dụng phương án thắng) — chưa thiết kế; phiên sau brainstorm + một spec User duyệt, từ
+`phase_8_1_g5_synthesis.md` §4 (bước 0: mốc người ~20 câu + tách khâu dính; rồi context 10, NFC, dọn chunker khi build
+lại, pool + luna, H8, lỗi citation, index 8B).
 
 ## 3. Bảng Phase
 
@@ -53,8 +54,8 @@ Dọn Foods sau Phase 7 (B9) **đóng** 24/10.
 | 7A | `approved` | Golden full-corpus 176 case + smoke 10 (private) |
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
-| 8.1 | `in_progress` | Mọi thí nghiệm xong + review (25/10 14:06): chỉ **context 10** thắng (dev +0,26, test +0,27 Completeness); giữ chunker / retrieval / BM25 / không rerank / prompt; lỗ hổng câu không dấu. Chờ: User xem mẫu câu kín bản 5, khóa G0.6, User đóng. Không đổi chatbot (đợt `report_agent/2026-10-24_phase_8_1_ra_soat/`, `TONG_HOP.md`) |
-| 8.2 | `not_ready` | Cải tiến dựa trên số đo 8.1; thiết kế sau khi User đóng 8.1 |
+| 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
+| 8.2 | `not_ready` | Áp dụng phương án thắng 8.1; brainstorm + spec phiên sau (`phase_8_1_g5_synthesis.md` §4) |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -99,6 +100,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-25 15:27 | **User đóng Phase 8.1**; G0.6 khóa 15:22 (câu kín 36 × 4, manifest `9ea480d0d083`) | User; `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md` |
 | 2026-10-25 15:15 | **Câu hỏi không dấu: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; bỏ nghiên cứu ChatGPT về không dấu (prompt B21 không gửi). Mẫu câu kín bản 5: User duyệt | User |
 | 2026-10-25 (chiều) | Thư viện nhỏ, phổ biến cần cho việc đã duyệt: A tự duyệt, báo User sau ("mấy việc đơn giản này thì bạn tự thêm"); thêm `sentencepiece` để nạp M2 | User; `Session_Prompt.md` §4 |
 | 2026-10-25 (chiều) | Câu kín 8.1: **thêm dấu cho mọi câu** (thay "không dấu" của spec G0.4); 9 câu độ tự nhiên bất đồng: giữ cả 9 (natural) | User 11:33, 11:40 |

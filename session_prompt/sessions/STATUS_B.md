@@ -1,13 +1,16 @@
-# STATUS B — cập nhật 2026-10-25 14:23 +0700 (nghỉ, chờ A sau khi User đóng 8.1)
+# STATUS B — kết phiên 2026-10-25 15:27 +0700 (Phase 8.1 User đóng 15:2x)
 
 Terminal phiên này: `hue-rag-3f` (A = `hue-rag-c6`, C = `hue-rag-a1`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
 User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, nhắn A, chờ việc tiếp.
 
 ## Trạng thái
-- **Phần 8.1 của B đã hết** (A 14:2x). Không mở việc mới; chờ User đóng 8.1 → A brainstorm 8.2 rồi giao.
+- **Kết phiên.** Phase 8.1 **User đóng** (15:2x 25/10). B không còn việc mở. Phiên sau: chờ A brainstorm + spec 8.2 rồi giao.
+- **File đang khai báo sửa: không.**
 - Đang giữ GPU: **không** (G4 dùng 11:50–12:29, đã nhả).
-- Chờ người khác: C review prompt B21 (`gửi chatgpt/2026-10-25/tìm thông tin/phase_8_2_khong_dau_2026_10_25.md`, private,
-  C review ready, 2 minor tùy chọn đã áp — sha mới `6eb09b4066ca`); User gửi ChatGPT khi tiện, lưu kết quả vào `gửi chatgpt/2026-10-25/kết quả nghiên cứu/`.
+- **B21 không gửi** (User 15:15: câu hỏi không dấu **ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu). File prompt
+  private giữ nguyên (sha `6eb09b4066ca`), C review ready. Đề xuất 8.2 "câu không dấu" của B (G5, báo cáo User) vì vậy không
+  còn hiệu lực; NFC câu hỏi vẫn là việc riêng.
+- G0.6 khóa câu kín: B kiểm hash 15:19 ⇒ đạt (`phase_8_1_g0_6_review.md` §7).
 
 ## Việc phiên 25/10 (đã xong; số và kết luận ở report)
 | Việc | Kết quả | Report / commit |
@@ -20,11 +23,11 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 | B20 3 báo cáo User | TIM_KIEM / SINH_CAU_TRA_LOI_API / CHIA_DOAN, C review ready | `23e0cbf` |
 | G5 M1 theo loại câu | context 10 lợi ở nhiều nguồn / so sánh | `phase_8_1_g5_by_category.md`, `g5_by_category.py` |
 | Review (B kiểm) | G3 ready · G3 §10 · G5 (2 vòng, ready) · C30 ready · G0.6 ready | `phase_8_1_{g3,g3_b10,g5,c30_user_reports,g0_6}_review.md` |
-| B21 prompt nghiên cứu không dấu | chờ C review | private |
+| B21 prompt nghiên cứu không dấu | C ready; **không gửi** (User: ngoài phạm vi) | private |
 
-## Thay đổi CHƯA COMMIT của B (git status 14:23, sau `471e717`)
-- `session_prompt/sessions/STATUS_B.md` (file này).
-- `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_6_review.md` — thêm §6 (đóng m1/m2 của C31).
+## Thay đổi CHƯA COMMIT của B (lúc kết phiên)
+- `session_prompt/sessions/STATUS_B.md` (file này), dòng B trong `CURRENT_HANDOFF.md`, §7 của
+  `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g0_6_review.md` (nếu A chưa commit) — A commit.
 - Không phải của B: `báo cáo nghiên cứu github.txt` (User).
 
 ## Tiền paid (B, 25/10)
@@ -60,5 +63,6 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - HNSW: kết quả dense phụ thuộc `limit` (30 đầu của `limit=100` ≠ `limit=30` ở 1/108 câu) ⇒ tái lập runtime phải hỏi
   đúng `limit` như production. Qdrant sparse tính float32 ⇒ phá hòa có thể khác float64 trong bộ nhớ.
 
-## Câu hỏi cho A
-- Không còn câu hỏi mở cho 8.1. Mâu thuẫn corpus Hải Vân Quan — vẫn chờ User (đề xuất sửa khi build lại index ở 8.2).
+## Câu hỏi cho phiên sau
+- Không có câu hỏi mở cho 8.1. Mâu thuẫn corpus Hải Vân Quan (giá vé) vẫn chờ User — đề xuất sửa khi build lại index ở 8.2.
+- Đề xuất 8.2 "câu không dấu" đã bỏ (User 15:15: ngoài phạm vi); NFC câu hỏi vẫn là đề xuất riêng.

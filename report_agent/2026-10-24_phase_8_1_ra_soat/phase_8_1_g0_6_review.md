@@ -66,3 +66,21 @@ có gì chặn A khóa sau bước đó.
 - m2: report §5 ghi việc khi khóa: cập nhật `git.head` + `dirty_paths`, thêm sha script `ce5ff542945b` — **đóng**.
 
 Kết luận giữ nguyên: **ready_for_user_confirmation**, không còn finding mở.
+
+## 7. Kiểm lúc khóa câu kín (report `0c2e626e80f3`, manifest `9ea480d0d083`)
+
+B chỉ tính hash / đếm dòng / tên field / phân bố `category`; **không** in hay đọc nội dung câu.
+
+| Kiểm | Manifest / report | B tính | |
+|---|---|---|---|
+| `sealed_official.jsonl` md5 / sha256 | `ddc59587b502` / `931f25e39027` | `ddc59587b502` / `931f25e39027` | khớp |
+| số dòng, field, phân bố | 36; 4 field đúng thứ tự; 15 / 6 / 7 / 5 / 3 | 36; `question, keywords, reference_answer, category`; 15 / 6 / 7 / 5 / 3 | khớp |
+| nguồn v6 md5 | `631334704fdd` | `631334704fdd` | khớp (bản soạn không đổi) |
+| script tạo | `ce5ff542945b` | `ce5ff542945b` | khớp |
+| file `.tmp` còn sót | không | 0 file `.tmp` | đạt |
+| private | `knowledge-base-hue/` | `git check-ignore` ⇒ ignored | đạt |
+| mốc lúc khóa (HEAD `276e34f`) | runtime `cefb2d1a…`, native `1fbb5c17…`, `byte_identical: true` | khớp mốc đã lưu | đạt (dùng lại lần chạy 15:17 của C) |
+| `git.head` / dirty | `276e34f`; chỉ file của User | HEAD hiện `276e34f` | khớp |
+| Qdrant | chỉ runtime | `GET /collections`: chỉ `hue_full_corpus_7a2_e5_small_384` | đạt |
+
+**Kết luận: G0.6 khóa đúng — ready_for_user_confirmation**, không có finding mới.
