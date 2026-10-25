@@ -1,7 +1,17 @@
-# STATUS A — cập nhật 15:47 25/10/2026 (KẾT PHIÊN chiều — Phase 8.1 ĐÓNG 15:27)
+# STATUS A — cập nhật 15:55 25/10/2026 (MỞ PHIÊN tối 25/10)
 
-Terminal: `hue-rag-c6` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3f`, C = `hue-rag-a1` (cả ba Claude Code,
+Terminal: `hue-rag-00` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-de`, C = `hue-rag-d6` (cả ba Claude Code,
 liên lạc trực tiếp).
+
+## Phiên tối 25/10
+- Mở 15:50; kiểm nhanh khớp (`f26485b`, hook bật, Qdrant 1 collection 8.459).
+- Quyền (User 15:5x, hết hạn cuối phiên): tự điều phối B/C rộng; API ≤ 1 USD.
+- Brainstorm 8.2 xong (User chọn: PA2 hai bước; mốc người đọc cặp mù; Bước 2 cả ba, luna cuối; A tự đưa vào chatbot, E1 chờ User; trần 0,5 USD).
+- Đang làm: nháp spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` bản 1 (sha `2c8d40e3aa4c`); B22 review (giao 16:1x). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` mở. Tiền: 0 USD.
+- Đang khai báo sửa: spec 8.2, `CURRENT_HANDOFF.md`, `report_agent/README.md`, file này.
+
+---
+Phần dưới: trạng thái kết phiên chiều 25/10 (terminal cũ `hue-rag-c6`).
 
 ## Commit cuối
 - Đầu phiên: `c3528be`. Phiên chiều: `2b0010b` … commit kết phiên (`git log -1`).

@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 15:45 25/10/2026 (A, **kết phiên chiều 25/10 — Phase 8.1 ĐÓNG 15:27**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
+Cập nhật: 15:54 25/10/2026 (A, **mở phiên tối 25/10** — quyền phiên ghi ở mục "Quyền"; đang brainstorm 8.2). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
 Chỉ giữ việc đang mở; chuyện phiên 25/10 ở `PROJECT_HISTORY.md` và `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`.
 Bản handoff trước khi rút gọn: `git show 4b48e1e:session_prompt/CURRENT_HANDOFF.md`.
 
@@ -53,9 +53,9 @@ bảng từng quyết định `phase_8_1_g5_decision_table_draft.md` (bảng ch�
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1; đóng 8.1; vòng cải tiến 2 | kết phiên 15:45 — xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B16–B21 xong | kết phiên 15:27 — 8.1 đóng; 0,1653 USD |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C23–C31 xong | kết phiên 15:28 — 8.1 đóng; 0 USD |
+| A — điều phối | `hue-rag-00` (tối 25/10) | Claude Opus 5.5 | trực tiếp | brainstorm 8.2 với User | mở phiên 15:50 |
+| B — thực thi | `hue-rag-de` (tối 25/10) | Claude Opus 5.5 | trực tiếp | chờ việc (review nháp spec 8.2) | mở phiên 15:50; 0 USD |
+| C — thực thi | `hue-rag-d6` (tối 25/10) | Claude Opus 5.5 | trực tiếp | chờ việc (review nháp spec 8.2) | mở phiên 15:50; 0 USD |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -64,8 +64,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã
   duyệt: A tự duyệt, báo sau (User 25/10); Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report;
   code luôn `uv run` trong `.venv`; thư viện thừa giữ nguyên; luôn thử + so baseline trước khi chọn (User 24/10 20:49).
-- **Phiên chiều 25/10 (hết hạn — hỏi lại):** A tự điều phối B/C rộng; API ≤ 1 USD (dùng 0,1653); GPU mỗi lượt 20–30 câu, kiểm
-  GPU thật trước khi chạy (giữ làm luật kỹ thuật khi chạy GPU).
+- **Phiên tối 25/10 (User 15:5x, hết hạn cuối phiên):** A tự điều phối B/C rộng như phiên trước; API ≤ 1 USD cả phiên.
+  Luật kỹ thuật giữ từ phiên trước: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
+- File untracked `báo cáo nghiên cứu github.txt` (gốc repo): của User, dùng cho Phase 9 — **không đụng, không commit**.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
 
 ## File private quan trọng (không commit)
@@ -83,6 +84,41 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 
 ## Việc đang mở
 
-- A: không (phiên sau mục 1–3 ở trên). B: không. C: không.
+- **User chốt brainstorm 8.2 (15:5x–16:0x 25/10):** hai bước không build lại index; mốc người = đọc cặp mù; Bước 2 cả ba
+  (E1 → E2 → E3 luna có luật bỏ sớm); A tự đưa vào chatbot khi qua luật + review (E1 chờ User); trần 0,5 USD.
+- **Spec 8.2 APPROVED** — User 16:21 25/10 duyệt bản sha `dabae90b2b60`
+  (`docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`); B22 review 3 vòng ready
+  (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_spec_review.md`). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/`.
+  Tiền 8.2: trần 0,5 USD; đã dùng 0.
+- **A — B0 chuẩn bị đọc cặp mù** (spec §3.3–3.4, §5 B0): script + file private `data/phase_8_2/b0/`; 0 USD. Người kiểm: B hoặc C
+  (kiểm mù bằng code) trước khi đưa User.
+- **B — B23: Bước 1 context 10 + NFC** (spec §5 B1, §3.2, §4) · Giao 16:2x.
+  - **Trước tiên** viết plan ngắn `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_plan.md`: đầu file mục "Căn cứ để review"
+    (2–4 file); chỗ đặt NFC (một chỗ API + evaluator cùng đi qua) và lý do; file sửa; lệnh chạy; tiêu chí B1.2 chép đúng spec
+    (158 câu byte `cefb2d1a…`; 176 / 176 `top_chunk_ids`, `context_sources`, `input_tokens` = G2.1a; judge chấm lại G2.1a cùng lượt
+    mù; 0 OOS bị trả lời; live `/chat` + câu NFD); ước USD từ pilot 10 câu. Nhắn A — **A review + duyệt sha rồi mới sửa code**.
+  - **Sau khi duyệt:** sửa `backend/config/settings.yaml` (`max_context_documents: 10`), `backend/core/settings_loader.py:77`,
+    `backend/tests/test_phase6_settings.py:25`, chỗ NFC + test nhỏ; chạy theo plan. Dữ liệu chạy `data/phase_8_2/b1/`.
+  - **Quyền:** paid `gpt-6-luna` ≤ 0,06 USD cho B1 (pilot 10 trước; vượt ước pilot > 50% ⇒ dừng báo A); judge Claude sub-agent;
+    Qdrant chỉ đọc; không commit (A commit); không mở câu kín. Khai báo file trong `STATUS_B.md`.
+  - **Dừng:** một tiêu chí B1.2 lệch ⇒ dừng, tìm nguyên nhân, báo A (không sửa tiêu chí).
+  - **Đầu ra:** `phase_8_2_b1_implementation.md` (khuôn implementation), trạng thái "chờ review", nhắn A. Người kiểm: A (C đang C32).
+- **C — C32: rà nội dung kho (chỉ đọc, 0 USD)** · User duyệt 16:1x 25/10. Đợt `report_agent/2026-10-25_ra_soat_noi_dung_kho/`.
+  - **Mục tiêu:** danh sách chỗ kho **tự mâu thuẫn** (cùng thực thể, khác giá / giờ / năm / địa chỉ / số liệu giữa hai file hoặc
+    trong một file — mẫu: vé Hải Vân, `CURRENT_HANDOFF` "Câu hỏi" mục 3) và **thông tin có thể đã cũ** (giá / giờ gắn năm cũ, "hiện
+    nay", "sắp", lịch lễ hội theo năm cụ thể). Để User xem; sửa ở đợt build lại index.
+  - **Đọc:** `knowledge-base-hue/{foods,heritages,festivals,performing_arts,travel}/` (205 file runtime; danh sách theo discovery
+    `settings.yaml` `full_corpus.knowledge_base`). **Loại** `knowledge-base-hue/evaluation/`, `meta/`, mọi `*sealed*` (không
+    grep vào đó). Template `meta/*-template.md` chỉ mở nếu cần hiểu quy ước.
+  - **Làm:** C tự chọn cách (gợi ý: script `uv run python` gom câu có số / năm / giá theo thực thể → sub-agent rà theo nhóm; ≤ 8
+    sub-agent, brief đọc lại trước khi gửi, mỗi sub-agent ghi file private). Mỗi mục: `file:dòng` hai phía, loại (mâu thuẫn / có thể
+    cũ / khác), mức chắc (chắc / có thể), tách quan sát ↔ suy ra, đề xuất (User biết thì báo / tra ngoài qua ChatGPT / sửa khi build).
+    C tự kiểm lại bằng file thật ≥ 10 mục chọn ngẫu nhiên (seed ghi) + mọi mục "chắc".
+  - **Không làm:** không sửa kho, không tra web, không mở câu kín / Golden, không đổi chatbot, không gọi API trả phí.
+  - **Đầu ra:** danh sách đầy đủ **private** `data/ra_soat_kho_2026-10-25/danh_sach.md` (+ script ở `data/ra_soat_kho_2026-10-25/tools/`);
+    report tracked `report_agent/2026-10-25_ra_soat_noi_dung_kho/ra_soat_kho_implementation.md` (khuôn implementation) chỉ ghi
+    cách làm, số file đã rà theo domain, số mục theo loại / mức chắc — **không chép nội dung kho** (repo public).
+  - **Tiêu chí:** phủ đủ 205 file (bảng số file theo domain khớp discovery); mọi mục có `file:dòng` kiểm được; ghi rõ phần không
+    rà được. **Review:** A. **Dừng** khi cần web hoặc thấy lỗi dữ liệu nghiêm trọng (báo A). Khai báo file trong `STATUS_C.md`.
 - Sổ cải tiến `session_prompt/SO_CAI_TIEN_CACH_LAM.md` vòng 2 (15:44): W11 (review plan theo "Căn cứ để review"), W12 (giữ mù
   câu kín), W13 (skill review: correction ở file review), I4 (bẫy kỹ thuật ra `Project_Status.md` §8) — `đang thử`.

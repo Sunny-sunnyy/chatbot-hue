@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 15:48` (A, **đóng Phase 8.1** 15:27 + kết phiên; chatbot không đổi)
+Last updated: `2026-10-25 16:22` (A, **spec 8.2 duyệt** 16:21; chatbot chưa đổi)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -36,9 +36,8 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10). User 15:44 25/10: sẽ đọc và nhận xét, **không chấm điểm** tay.
 - Tiền 8.1: 0,1653 USD.
 
-Mốc kế tiếp: **Phase 8.2** (áp dụng phương án thắng) — chưa thiết kế; phiên sau brainstorm + một spec User duyệt, từ
-`phase_8_1_g5_synthesis.md` §4 (bước 0: mốc người ~20 câu + tách khâu dính; rồi context 10, NFC, dọn chunker khi build
-lại, pool + luna, H8, lỗi citation, index 8B).
+Đang làm: **Phase 8.2** — spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` (User duyệt 16:21 25/10,
+sha `dabae90b2b60`); trần 0,5 USD. Song song: rà nội dung kho chỉ đọc (C32, đợt `report_agent/2026-10-25_ra_soat_noi_dung_kho/`).
 
 ## 3. Bảng Phase
 
@@ -55,7 +54,7 @@ lại, pool + luna, H8, lỗi citation, index 8B).
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `not_ready` | Áp dụng phương án thắng 8.1; brainstorm + spec phiên sau (`phase_8_1_g5_synthesis.md` §4) |
+| 8.2 | `in_progress` | Spec duyệt 16:21 25/10 (sha `dabae90b2b60`): B0 mốc người đọc cặp mù; B1 context 10 + NFC vào chatbot; B2 E1 / E2 / E3a / E3b; B3 câu kín. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -100,6 +99,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-25 16:21 | **Spec 8.2 approved** (sha `dabae90b2b60`): hai bước không build lại index; mốc người đọc cặp mù; E1 → E2 → E3a / E3b; A tự đưa vào chatbot khi qua luật + review (E1, E3b chờ User); trần 0,5 USD | User; spec 8.2 |
 | 2026-10-25 15:27 | **User đóng Phase 8.1**; G0.6 khóa 15:22 (câu kín 36 × 4, manifest `9ea480d0d083`) | User; `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md` |
 | 2026-10-25 15:15 | **Câu hỏi không dấu: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; bỏ nghiên cứu ChatGPT về không dấu (prompt B21 không gửi). Mẫu câu kín bản 5: User duyệt | User |
 | 2026-10-25 (chiều) | Thư viện nhỏ, phổ biến cần cho việc đã duyệt: A tự duyệt, báo User sau ("mấy việc đơn giản này thì bạn tự thêm"); thêm `sentencepiece` để nạp M2 | User; `Session_Prompt.md` §4 |

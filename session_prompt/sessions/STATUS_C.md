@@ -1,13 +1,15 @@
-# STATUS C — cập nhật 2026-10-25 15:27 (kết phiên; Phase 8.1 User đóng)
+# STATUS C — cập nhật 2026-10-25 15:51 (mở phiên mới; chờ A giao việc 8.2)
 
-Terminal: `hue-rag-a1` (25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
-User 25/10: việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
+Terminal: `hue-rag-d6` (mở 15:50 25/10; trước là `hue-rag-a1`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi.
+User 25/10 (nhắc lại khi mở phiên 15:53): C làm việc và báo cáo trực tiếp cho A; việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
 ## Đang làm / chờ
 - **Kết phiên 15:27.** User đóng Phase 8.1 (15:2x, "đóng 8.1"). G0.6 A đã khóa (commit `292e0fb`, A tự kiểm 34/34 hash).
   - Việc cuối của C: C31 câu kín chính thức `sealed_official.jsonl` md5 `ddc59587b502`; manifest `9ea480d0d083`; B kiểm đạt.
   - Không có việc dở.
-- **Đang khai báo sửa:** không.
+- **C32 (A giao 16:20 25/10): rà nội dung kho chỉ đọc, 0 USD** — `CURRENT_HANDOFF.md` "Việc đang mở" C32.
+- **Đang khai báo sửa:** `data/ra_soat_kho_2026-10-25/` (private: `danh_sach.md`, `tools/`, file sub-agent),
+  `report_agent/2026-10-25_ra_soat_noi_dung_kho/ra_soat_kho_implementation.md`, dòng C32 trong `CURRENT_HANDOFF.md`.
 - **C chưa đọc nội dung câu kín.** Mọi việc câu kín qua sub-agent mới hoặc script không in nội dung. A đã thấy 3 câu do User
   trích.
 - **Phiên sau (8.2):** chờ A giao. Câu kín chính thức chỉ mở để chấm ở mốc cuối 8.2 do User quyết (`Session_Prompt.md` §5).

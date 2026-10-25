@@ -1,10 +1,11 @@
-# STATUS B — kết phiên 2026-10-25 15:27 +0700 (Phase 8.1 User đóng 15:2x)
+# STATUS B — mở phiên 2026-10-25 15:51 +0700 (chờ A giao việc; phiên trước kết 15:27, Phase 8.1 User đóng)
 
-Terminal phiên này: `hue-rag-3f` (A = `hue-rag-c6`, C = `hue-rag-a1`; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal phiên này: `hue-rag-de` (A = `hue-rag-00`; C chưa rõ — có thể `hue-rag-d6`; tên đổi mỗi lần mở; phiên trước B = `hue-rag-3f`) · Agent: Claude Opus 5.5 · Vai: thực thi
 User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, nhắn A, chờ việc tiếp.
 
 ## Trạng thái
-- **Kết phiên.** Phase 8.1 **User đóng** (15:2x 25/10). B không còn việc mở. Phiên sau: chờ A brainstorm + spec 8.2 rồi giao.
+- **B22 xong 16:12 25/10:** review nháp spec 8.2 bản 1 (`2c8d40e3aa4c`) ⇒ **changes_requested**, 4 major (M1 E3 luna đo ở top-10 / pool 30, không phải pool 100; M2 E3 gộp 2 thay đổi; M3 luật dừng 3.4 chưa định nghĩa; M4 mù X/Y lộ qua citation [6]–[10]), 5 minor. File: `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_spec_review.md` (sha `84f5e36fd5f0`). 0 USD. Vòng 2 16:17 (bản `f5fd17418c41`): 9 finding vòng 1 đóng; changes_requested — N1 major (E3a thiếu sàn OOS / mức tụt câu trả lời), m6, m7 (review §7). Vòng 3 16:20 (bản `dabae90b2b60`): N1, m6, m7 đóng ⇒ **ready_for_user_confirmation**, 0 finding mở (review §8, sha `0cbe459212b1`). B22 xong; chờ việc tiếp.
+- (Phiên trước kết 15:27; Phase 8.1 User đóng.)
 - **File đang khai báo sửa: không.**
 - Đang giữ GPU: **không** (G4 dùng 11:50–12:29, đã nhả).
 - **B21 không gửi** (User 15:15: câu hỏi không dấu **ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu). File prompt
@@ -41,6 +42,7 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - Log tạm `/tmp/b17/` (có thể mất).
 
 ## Đã học / bẫy gặp
+- 25/10 B22: đọc JSON private bằng `python3 -I` thay vì `uv run python -I` (A nhắc) ⇒ mọi lệnh Python, kể cả chỉ đọc, dùng `uv run`.
 - Qdrant có thể tắt giữa phiên; pytest vẫn chạy và lỗi môi trường trông như lỗi code: đọc dòng `E` trước.
 - pytest: rootdir là gốc repo; chỉ liệt kê file test, không dựa vào `--deselect`.
 - Lệnh paid mới: chạy thử không `--env-file` trước để thấy nó định gọi gì.
