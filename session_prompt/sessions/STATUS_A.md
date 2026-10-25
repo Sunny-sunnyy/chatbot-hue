@@ -45,6 +45,12 @@ liên lạc trực tiếp; tên đổi mỗi lần mở).
 ## Quyền phiên này (User 15:5x, hết hạn cuối phiên)
 - Tự điều phối B/C rộng; API ≤ 1 USD cả phiên; trần 8.2 0,5 USD (trong spec).
 
+## Đã học / bẫy gặp (phiên đêm 25/10)
+- 19:59: script quét trùng Golden / kho trước commit luôn exit 0 ⇒ `&& git commit` chạy dù có cờ (cờ là câu từ chối chuẩn, public — không lộ).
+  Đã sửa `/tmp/a_scan/overlap.py`: exit 1 khi trùng, bỏ câu từ chối chuẩn. Bài học: rào chặn trong chuỗi `&&` phải trả mã lỗi.
+- 19:4x: đề xuất của A (merge B1 trước) trái spec 8.2 (B1 sau B0) — bắt được khi đọc lại spec trước khi giao. Đề xuất có thứ tự phải đối
+  chiếu spec đã duyệt trước khi trình User.
+
 ## Đã học / bẫy gặp (phiên tối)
 - Đã học (16:3x): `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở G2) ⇒ code xử lý citation phải bắt cả hai;
   kiểm mù bằng code phải quét rộng (mọi ngoặc vuông có số), không chỉ đúng regex mình dùng để sửa (B24 F1 bắt được).

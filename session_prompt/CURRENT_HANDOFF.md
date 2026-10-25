@@ -75,7 +75,7 @@ Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code; gộp `TONG_HOP.md` | đang làm — `STATUS_A.md` |
-| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 rà code xong 18:39; kiểm chéo top 5 C xong 18:51 (`kiem_cheo_B.md`) | xem `STATUS_B.md` |
+| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B25 + kiểm chéo xong; review C35 xong 19:56; B26 (gói 4 tài liệu) xong 20:0x, chờ review C | xem `STATUS_B.md` |
 | C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C34 xong 18:43; kiểm chéo B 18:55; C35 (gói 1a) **đóng** 19:59 (B review ready; commit `9e6d371`); chờ việc | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
@@ -127,6 +127,21 @@ lần gọi API thật kiểm gói 1–5 (mỗi lần 1–3 câu, ghi token + ti
 notebook, harness, test) + test + đường thật trước / sau giống nhau. Dừng khi: đường thật đổi ngoài dự kiến; phải đụng file người kia đang
 khai báo; vượt tiền.
 
+**Cổng ổn định sau mỗi gói (User 20:0x: "sửa xong hệ thống vẫn phải hoạt động bình thường, ổn định, tối ưu, đóng gói đầy đủ"; "các phase
+trước ổn định mới tiếp phase sau"):** (1) test liệt kê file của mọi file chạm, không `--env-file`, đạt (lỗi cũ C-17 ghi rõ); (2) **chạy thật**
+`cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8011`: `/` 200, `/health` 5 thành phần ready, 1 câu trong
+kho (200, marker khớp `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết, không Golden; log không lỗi; tắt server; (3) gói chạm tìm kiếm /
+chia đoạn: T1 retrieval giống byte / sha đoạn toàn kho giống hệt; (4) 4 chỗ `bao_cao_he_thong/` nếu hành vi đổi; (5) A commit + push.
+Mốc cổng sau 1a (A 20:0x, `63fec4f`): `/` 200, health 5 / 5 ready, câu trong kho 200 [1][2][3] = sources 1–3 (5,1 s), câu ngoài kho từ chối
+(2,3 s), log sạch. **8.2 chỉ chạy lại khi 5 gói xong + cổng này đạt.**
+
+**Sau 5 gói — tìm hướng tốt hơn từng khâu (User 20:0x):** "dựa vào kiến thức, tham khảo, trao đổi với B, C xem có thể thử nghiệm, so sánh,
+đánh giá để xem có hướng nào tốt hơn, tối ưu hơn, ổn định hơn; giữ mốc hiện tại làm base; A, B, C được so sánh, thử nghiệm, rồi đưa ra kết
+luận; có thể nhờ ChatGPT nghiên cứu". Cách làm (A 20:09): B / C mỗi bên lập danh sách ứng viên theo khâu (đối chiếu 8.1 decision inventory +
+G5 + spec 8.2 để không lặp cái đã đo) ⇒ A gộp, viết yêu cầu nghiên cứu ChatGPT nếu cần (`Session_Prompt.md` §9) ⇒ **một** tài liệu thiết kế
+(tiêu chí ghi trước theo `run-experiment`, mốc = hệ thống sau 5 gói, trần tiền) ⇒ User duyệt một lần ⇒ chạy. Ghép với spec 8.2 đã duyệt
+(không viết lại phần đã duyệt).
+
 **Đợt 1 (song song, file không chồng):**
 
 - **C — C35: gói 1a (C-09 citation `[Nguồn n]`) — ĐÓNG 19:59** (B review `sua_1a_review.md` ready; commit `9e6d371`; 4 chỗ báo cáo cập nhật) · file: `backend/llm/citations.py`, `backend/tests/test_citations.py` (chỉ hai file này;
@@ -150,8 +165,11 @@ khai báo; vượt tiền.
   **Để sau 1b:** lệnh chạy API / build / pytest (B-17) — phụ thuộc quy ước import. Không sửa code. Notebook: outputs rỗng, Run All trên bản tạm.
   Tiêu chí: số đường dẫn / tên file chết ngoài đoạn có nhãn lịch sử: trước (phase_1 4, phase_2 4, phase_3 10, phase_4 5, + guide 7 / 8) ⇒ 0
   (script đếm, chạy trước / sau); 0 đường dẫn `/home/<user>/<repo khác>` trong `guides/`. Review: C.
+  **Trạng thái 20:0x (B): XONG — chờ review C.** Report `report_agent/2026-10-25_ra_soat_code/sua_4_implementation.md`. 16 file (13 guide + 3 notebook),
+  0 code. Đếm (cùng quy tắc, trước `5d3376f` ⇒ sau): ngoài vùng lịch sử 34 ⇒ 1 (`backend/agentic/` roadmap dự kiến); `/home/<user>/<repo khác>` 48 ⇒ 0.
+  Notebook Run All bản tạm 3 / 3 đạt, repo outputs rỗng. B-17 (lệnh) để sau 1b như giao. 0 USD.
 
-**Đợt 2 (sau đợt 1):** gói 1b (B-01 / C-01 + C-11 + tách lỗi "model không nạp" khỏi 409) — B viết plan so 2 quy ước import (đếm file / lệnh
+**Đợt 2 (A giao 20:09, song song):** B viết **plan** 1b (chưa sửa code) trong lúc C review B26; C làm 3a / 3b sau review. Gói 1b (B-01 / C-01 + C-11 + tách lỗi "model không nạp" khỏi 409) — B viết plan so 2 quy ước import (đếm file / lệnh
 phải đổi, `sys.modules`, T1 giống byte) ⇒ C review ⇒ A duyệt sha; rồi B-17. Gói 3a / 3b (C-02, C-20, C-03) — C.
 **Đợt 3:** gói 2 + 5 + B-12 (file conditions + chuỗi test ra chỗ private) cùng một lần sửa chunker / build; gỡ code không dùng (C-05, C-19
 Phase 5, C-10, C-06 `minilm`, C-07, C-04…) theo luật (2) của User. **3c:** sau 1a, A ước tiền ⇒ hỏi User.
