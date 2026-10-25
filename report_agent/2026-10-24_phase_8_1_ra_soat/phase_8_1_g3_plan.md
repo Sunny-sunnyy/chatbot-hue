@@ -219,3 +219,13 @@ Khâu còn dính, ghi cho G5 / 8.2 (không sửa ở G3):
   - `compare` từ JSONL;
   - một biến thể bất kỳ build lại từ đầu, kiểm sha danh sách đoạn và số đoạn giống báo cáo;
   - `drop` cuối cùng: Qdrant chỉ còn collection runtime.
+
+## 9. Phụ lục A duyệt (25/10, sau review của B; ghi trước khi đo biến thể nào)
+
+1. **Keyword coverage** dùng thang 0–100 (`score_retrieval` trả %). Ngưỡng mức tụt cho phép: **cận dưới CI 95% của chênh
+   trung bình ≥ −2,0 điểm %**. Điều này thay cách hiểu (a) A ghi khi duyệt bản `e089243fb612` (−0,02).
+2. **H3 và H2 quyết bằng phép so với H1** (base mà hai bước này dựng lên), để tách đóng góp riêng của từng bước. Holm: H3
+   trên 1, H2 trên 4. Phép so với baseline vẫn báo đầy đủ. Muốn vào danh sách đề xuất 8.2 thì cũng phải **không vi phạm sàn
+   so với baseline**.
+3. **§4:** được dùng lại câu trả lời G2.0 / G2.1a làm baseline. Nhưng **điểm của baseline phải chấm lại cùng lượt judge mù**
+   với câu trả lời G3 (judge dùng quota, 0 USD).

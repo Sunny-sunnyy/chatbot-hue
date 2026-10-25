@@ -37,6 +37,9 @@ liên lạc trực tiếp).
 - Golden sửa 10 câu: keyword chứa cụm lặp (46, 157) chặn sửa văn phong — keyword và đáp án dính nhau.
 - 12:35 bẫy: heredoc `<<EOF` không quote + backtick trong text ⇒ bash chạy backtick như lệnh (chỉ lỗi "not found", không
   hại). Script sửa tài liệu: luôn `<<'EOF'` và truyền giờ qua biến môi trường / argv.
+- 13:1x: A tự duyệt plan G3 (không chờ B review) ⇒ B review sau tìm 3 lỗi tiêu chí (ngưỡng keyword sai thang 0–100,
+  H3/H2 chưa nói phép so quyết, baseline không chấm lại cùng lượt judge). Bắt được trước khi đo biến thể. Vòng cải tiến:
+  plan có tiêu chí ghi trước luôn cần một session khác (không phải người viết, không chỉ A) review trước khi A duyệt.
 - Lệch skill `risk-gated-agent-review` (Correction: người kiểm ghi vào mục của người làm) ↔ `WORKFLOW.md` §3.2 (cấm sửa
   mục session khác) — C báo 11:31; sửa skill ở vòng cải tiến cuối phiên.
 

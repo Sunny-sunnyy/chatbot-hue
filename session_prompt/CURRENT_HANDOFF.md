@@ -93,7 +93,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 12:33 G4 xong — `phase_8_1_g4_implementation.md`, chờ C review; G2 chưa chạy |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 13:05 G2 xong (trừ G2.4 đủ) — `phase_8_1_g2_implementation.md`, chờ C review + A quyết G2.4 |
 | C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C28 kế hoạch G3; review G2 khi B nhắn | 12:50 C28 xong: `phase_8_1_g3_plan.md` sha `e089243fb612` — chờ A duyệt, B review. Xong: G4 review ready, m1/m2 đóng (report G4 `4ee6c208f192`, review §7 sau commit `ee557f9`); C26 kín v6 `631334704fdd` (chờ User xem mẫu 5); C27 Golden ready (`0f7dbf41b422`) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
@@ -164,7 +164,11 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
 - **B 12:33: G4 xong** (report `phase_8_1_g4_implementation.md`): không nhánh nào "tốt hơn" — M1/M2 mất 1–3 câu đoạn
   đúng; luna chưa rõ (3/27/0, MRR +0,17 có CI); G4-B M1 pool 100 mất 1 câu, không khác mốc pool 100 không rerank. Đổi:
   `cross_encoder.py` (`max_length`, `loaded_device`), `g4_rerank.py` mới, `uv add sentencepiece` 0.2.2. Tiền 0,0088 USD.
-  Chờ C review G4; G2 chưa chạy.
+  Chờ C review G4
+- **B 13:05: G2 xong** (report `phase_8_1_g2_implementation.md`, judge mù 456 + 102 câu trả lời, md5 Golden
+  `0f7dbf41b422`): **G2.1a context 10 tốt hơn, xác nhận trên test** (Completeness dev +0,26 [+0,08;+0,48], test +0,27
+  [+0,02;+0,59]; USD ×1,5/câu); G2.1b, P2, G2.3 không khác; P1 kém hơn (2 câu out_of_scope bị trả lời; từ chối nhầm 13→1);
+  G2.4 mới pilot (chưa rõ) — **chờ A quyết chạy đủ (~0,041 USD)**. Tiền B17: 0,1223 USD. `g2_generate.py` chưa commit.; G2 chưa chạy.
 
 **Bước 2 — chạy (sau khi A ghi "duyệt bản sha …" ở đây, A commit B16).** Thứ tự plan §4: mốc byte → G4.0 → G4-A → G4-B
 → G2 (pilot 10 câu mỗi lượt có phí). Mỗi gate: report + C review.
@@ -223,6 +227,9 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
   - **12:50 A duyệt bản sha `e089243fb612`** (A đọc hết; không phải người viết). Cách hiểu ghi kèm, không đổi file:
     (a) "keyword không tụt quá −0,02" = cận dưới CI 95% của chênh trung bình ≥ −0,02; (b) latency CPU chỉ theo dõi — ghi có
     tiến trình nặng khác (B judge / G2) chạy cùng lúc không; (c) trước mỗi lần xóa: liệt kê đích, chỉ tên `hue_81_g3_*`.
+  - **13:07 A duyệt lại bản sha `9f00c460c3e9`** (= `e089243fb612` + §9: keyword thang 0–100, ngưỡng −2,0 điểm %; H3/H2 quyết
+    so với H1, Holm 1 / 4; baseline chấm lại cùng lượt judge mù) — sau review của B. `hue_81_g3_h1` build trước mốc duyệt
+    (chưa đo) — chấp nhận, ghi trong report.
 - **C29 (giao 12:50) — chạy G3 theo plan `e089243fb612`** §5 bước 1–6. Code: `full_corpus_pipeline.py` (`chunks=None`) +
   `g3_chunking.py` mới (khai báo trong STATUS_C). Qdrant chỉ `hue_81_g3_*`, ≤ 3 cùng lúc; paid chỉ §4, trần G3 0,10 USD,
   lượt ≤ 0,05 USD, ước lại từ pilot. Không đổi chunker production / settings / runtime; không mở câu kín; không commit.
@@ -242,6 +249,10 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
   G4-B lợi do pool rộng, không do rerank. Chờ C review. **Luật tiền (A):** ước lại từ pilot 10 câu của lượt; trần lượt
   0,05 USD; tổng B17 0,25 USD. B tiếp G2 trên Golden mới (`0f7dbf41b422`).
 - **12:41 G4 ĐÓNG** (A): C review `phase_8_1_g4_review.md` ready (0 blocker/major; 2 minor chữ B sửa sau); commit `ee557f9`.
+- **13:05 B17 G2 xong** (`phase_8_1_g2_implementation.md`, chờ C review): **G2.1a context 10 = tốt hơn, xác nhận trên
+  test** (Completeness dev +0,26 [+0,08; +0,48], test +0,27 [+0,02; +0,59]; 0 OOS bị trả lời; citation không tăng; USD/câu
+  ×1,5) ⇒ đề xuất 8.2, User duyệt. G2.1b / P2 / G2.3: không khác; P1 kém hơn (2 OOS bị trả lời; từ chối nhầm 13→1, tín
+  hiệu H8). A duyệt G2.4 chạy đủ (ước 0,041 USD). Tiền B17 0,1223 USD.
 
 ## Việc của A
 
