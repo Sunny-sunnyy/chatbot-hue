@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 19:59 25/10/2026** (sửa bước kiểm trích dẫn: nhận cả `[Nguồn n]`, commit `9e6d371` — gói 1a rà code). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
+**Cập nhật lần cuối: 21:50 25/10/2026** (gói 1b rà code, `1e4acd0`: API báo đúng loại lỗi; mọi lệnh chạy từ `backend/`). 19:59: sửa bước kiểm trích dẫn nhận cả `[Nguồn n]` (`9e6d371`, gói 1a). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
 thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục).
 
@@ -86,4 +86,14 @@ HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8000
 # mở http://127.0.0.1:8000/
 ```
 
-Qdrant phải chạy ở cổng 6335. Lần đầu cần tokenizer/model e5 trong HF cache.
+Qdrant phải chạy ở cổng 6335. Lần đầu cần tokenizer/model e5 trong HF cache. **Mọi lệnh chạy từ `backend/`** (từ 25/10): API, test,
+dựng kho (`cd backend && uv run --env-file ../.env python -m ingestion.full_corpus_pipeline build --candidate e5-small-384`).
+
+**Khi có lỗi, API báo gì** (từ 25/10, gói 1b — trước đó một module bị nạp hai lần nên API bắt hụt lỗi, báo sai mã):
+
+| Tình huống | Mã | Ý nghĩa cho người vận hành |
+|---|---|---|
+| Kho / phiếu build / từ điển BM25 không khớp chỉ mục (lúc khởi động) | 409 `corpus_reingest_required` | Cần dựng lại chỉ mục (trước đây báo nhầm 503) |
+| Qdrant tắt, hoặc model tìm kiếm không nạp được (thiếu HF cache) | 503 `retrieval_unavailable` | Lỗi tạm, sửa môi trường — **không** dựng lại chỉ mục (Qdrant lỗi khi đang hỏi trước đây ra 500) |
+| Model sinh lỗi | 502 `generation_unavailable` | Lỗi phía OpenAI |
+| Câu trả lời không qua kiểm trích dẫn | 500 `citation_integrity_error` | Hiếm (0–2 / 176) |

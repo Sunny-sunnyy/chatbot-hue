@@ -182,6 +182,9 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Sửa corpus làm runtime từ chối khởi động (freshness) cho tới khi build lại index.
 - `full_corpus_sparse_state.json` chỉ ghi một lần: corpus đổi thì phải xóa file cũ
   trước khi build lại, nếu không build raise.
+- **Mọi lệnh chạy từ `backend/`, import trần** (`core.…`, `retrieval.…`; không `backend.…`) từ `1e4acd0` (rà code 1b, 25/10): API, pytest,
+  build (`python -m ingestion.full_corpus_pipeline build …`), evaluator, harness. Lệnh cũ từ gốc repo báo `ModuleNotFoundError: core`.
+  Đặt tên module mới không trùng gói đã cài (`find_spec`). API: index lệch ⇒ 409; Qdrant / model không nạp ⇒ 503.
 - Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests/<file> -q` (không nạp key). Chỉ thêm
   `--env-file ../.env` khi việc ghi rõ cần test có key OpenAI: `test_api_chat.py`, `test_openai_full_corpus_generator.py`,
   `test_phase6_live_smoke.py` (rà code 25/10, C-17 / C-18: không có key thì 3 test miễn phí cũng fail vì `require_openai_key`).

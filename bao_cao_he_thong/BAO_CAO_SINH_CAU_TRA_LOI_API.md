@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 19:59 25/10/2026 — bản 6: sửa lỗi trích dẫn `[Nguồn n]` (chatbot đổi: bớt báo lỗi nhầm); đính chính
-nguyên nhân "quên ghi `[n]`" của 8.1.** Bản 5 (14:10): kết quả Phase 8.1.
+**Cập nhật lần cuối: 21:50 25/10/2026 — bản 7: API báo đúng loại lỗi (gói 1b).** Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
+nguyên nhân "quên ghi `[n]`" của 8.1. Bản 5 (14:10): kết quả Phase 8.1.
 Người viết: A (bản 6), B (bản 5; bản 1–4: C) · Review: C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -55,7 +55,8 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 | Câu ngoài kho → từ chối, không bịa | **Đã xử lý, đóng gói** | 18/18 từ chối đúng |
 | Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | nhận cả `[Nguồn n]`, đổi về `[n]` (25/10); lỗi 500 còn 0–2/176 (trước 4–8); `backend/llm/citations.py` |
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `backend/api/app.py:147–151` |
-| Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý** | `backend/retrieval/full_corpus.py:353,415` |
+| Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý, đóng gói** | báo đúng 409 "cần lập chỉ mục lại" từ 25/10 (trước báo nhầm 503); test `test_api_chat.py` (kho đổi ⇒ 409) |
+| Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (trước: Qdrant lỗi khi hỏi ra 500; thiếu model sẽ thành 409 nếu chỉ sửa nửa vời); test `test_startup_model_missing.py` (User chạy `!`) |
 | Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). 8.1 thử prompt "trả lời phần có căn cứ": từ chối nhầm 13 → 1 câu (120 câu thử), nhưng **trả lời cả 2 câu ngoài kho** ⇒ phạm luật, chưa dùng |
 | Đoạn chứa đáp án nằm ngoài 5 đoạn ngữ cảnh | **Xử lý một phần** | 8.1 đo bằng đoạn đúng: **cả 22/22** câu từ chối nhầm ở 7B đều thiếu ít nhất một đoạn đúng trong 5 đoạn — gốc là khâu tìm/xếp đoạn |
 | Có đủ bằng chứng mà vẫn từ chối | **Đính chính (8.1)** | Chẩn đoán 7B (theo keyword) ghi 4/22; đo lại bằng đoạn đúng: **0 câu** |
@@ -72,6 +73,14 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 25/10/2026 — API báo đúng loại lỗi (bản 7, rà code gói 1b)
+- **Lỗi:** cùng một module bị nạp hai lần dưới hai tên ⇒ API không nhận ra lỗi của bước tìm kiếm: Qdrant lỗi khi hỏi ⇒ 500 thay 503; kho
+  đổi chưa dựng lại ⇒ 503 thay 409. Chatbot vẫn an toàn (không trả lời bừa), chỉ báo sai lý do.
+- **Sửa:** một cách import duy nhất (chạy mọi lệnh từ `backend/`); lỗi "model không nạp" tách khỏi "cần lập chỉ mục lại"; bỏ nhánh 409 lúc hỏi
+  không bao giờ chạy. Hai cách import được so bằng số file / lệnh phải đổi trước khi chọn (cách được chọn đổi ít hơn: 13 so với 18 file code).
+- **Đo (tiêu chí ghi trước trong plan):** module nạp đôi 3–14 ⇒ 0 ở 12 điểm chạy; 3 test mới đỏ trước / xanh sau; 15 file test 196 ⇒ 198 đạt
+  (8 lỗi còn lại cũ — test cần key); kết quả tìm kiếm giống từng byte; chạy thật đạt. **PASS** — B làm, C review. Tiền ~0,0008 USD.
 
 ### 25/10/2026 — Sửa lỗi trích dẫn `[Nguồn n]` (bản 6, rà code gói 1a)
 - **Lỗi:** ngữ cảnh gửi model ghi nhãn mỗi đoạn là "[Nguồn n]", model đôi khi trích đúng dạng đó; bộ kiểm chỉ hiểu "[n]" ⇒ người dùng
