@@ -3,6 +3,7 @@ import copy
 from dataclasses import asdict
 import json
 import math
+import unicodedata
 import pytest
 
 from retrieval.full_corpus import (
@@ -14,8 +15,9 @@ from retrieval.full_corpus import (
     rank_positive_bm25,
     order_by_score_then_point_id,
     compute_sparse_dot_product,
+    normalize_query,
 )
-from core.schema import FullCorpusChunk, RetrievedDocument
+from core.schema import FullCorpusChunk, InvalidQueryError, RetrievedDocument
 from embedding.sparse import (
     SparseState,
     build_vocabulary_index,
@@ -23,6 +25,16 @@ from embedding.sparse import (
     encode_sparse_query,
     fit_sparse_state,
 )
+
+
+def test_normalize_query_turns_nfd_into_nfc_and_rejects_blank():
+    nfc = "Huế có món bún bò không?"
+    nfd = unicodedata.normalize("NFD", nfc)
+    assert nfd != nfc
+    assert normalize_query(nfd) == nfc
+    assert normalize_query(nfc) == nfc
+    with pytest.raises(InvalidQueryError):
+        normalize_query("  ")
 
 
 def test_rrf_uses_k_60_rank_from_one_and_point_id_tie_break():

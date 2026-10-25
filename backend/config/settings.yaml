@@ -52,4 +52,4 @@ full_corpus_generation:
   context_limit: 16384
   reserved_output_tokens: 2048
   safety_margin: 512
-  max_context_documents: 5
+  max_context_documents: 10

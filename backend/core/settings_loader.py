@@ -72,7 +72,7 @@ def validate_phase6_settings(settings: dict) -> None:
         raise ValueError(f"Invalid reserved_output_tokens: {generation.get('reserved_output_tokens')!r}")
     if generation.get("safety_margin") != 512:
         raise ValueError(f"Invalid safety_margin: {generation.get('safety_margin')!r}")
-    if generation.get("max_context_documents") != 5:
+    if generation.get("max_context_documents") != 10:
         raise ValueError(f"Invalid max_context_documents: {generation.get('max_context_documents')!r}")
 
 
