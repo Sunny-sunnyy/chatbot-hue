@@ -10,14 +10,22 @@ WARMUP_DOCUMENT = "Bún bò Huế là một món ăn nổi tiếng của Huế."
 
 
 class CrossEncoderReranker:
-    def __init__(self, model_id="cross-encoder/ms-marco-MiniLM-L-6-v2", device="cpu"):
+    def __init__(self, model_id="cross-encoder/ms-marco-MiniLM-L-6-v2", device="cpu", max_length=None):
+        # max_length: chỉ để harness Phase 8.1 G4 cắt cặp (câu hỏi, đoạn) cùng mức cho mọi model;
+        # None = để sentence-transformers lấy theo tokenizer (hành vi đang chạy).
         self._model_id = model_id
         self._device = device
+        self._max_length = max_length
         self._model = None
 
     @property
     def model_id(self):
         return self._model_id
+
+    @property
+    def loaded_device(self) -> str:
+        """Thiết bị thật của model sau khi nạp (ví dụ `cuda:0`), để kiểm không chạy nhầm CPU."""
+        return str(self.load()._model.device)
 
     @property
     def max_length(self) -> int:
@@ -39,7 +47,7 @@ class CrossEncoderReranker:
             try:
                 from sentence_transformers import CrossEncoder
 
-                self._model = CrossEncoder(self._model_id, device=self._device)
+                self._model = CrossEncoder(self._model_id, device=self._device, max_length=self._max_length)
             except Exception as exc:
                 raise ComponentNotReadyError("reranker model load failed") from exc
         return self

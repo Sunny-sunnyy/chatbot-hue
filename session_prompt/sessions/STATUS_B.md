@@ -13,7 +13,13 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - **Vòng sửa 1 lúc 11:36** theo C23 (M1 tiêu chí chung G2 §2.1; M2 luật G4 theo spec: MRR@10 VÀ context5 — A quyết;
   M3 mốc native p100 không rerank; m3–m6) ⇒ sha `a4adfc8eedd9`. User giữ cả 9 câu bất đồng (số chính không đổi).
 - **Chờ:** C review vòng 2 + A ghi "duyệt bản sha …". Không chạy GPU / paid trước đó.
-- Đang giữ GPU: không.
+- **G4 xong 12:33** — report `phase_8_1_g4_implementation.md` (sha `6c70e903c0fa` lúc nhắn C). Kết luận: M1/M2 kém hơn
+  (mất 1–3 câu); luna chưa rõ; G4-B kém hơn so runtime / không khác so mốc pool 100. Chờ C review rồi mới G2.
+- Đang giữ GPU: không (đã nhả 12:33; G4 dùng 11:50–12:29).
+- **Bước 2 (A duyệt `a4adfc8eedd9` 11:40, commit `b9789f4`):** mốc byte 11:39 PASS (`cefb2d1a…`, `1fbb5c17…`). Đang
+  sửa: `backend/reranking/cross_encoder.py` (kwarg `max_length=None` + property `loaded_device`; mặc định = hành vi cũ),
+  `backend/experiments/phase_8_1/g4_rerank.py` (mới), report `phase_8_1_g4_implementation.md` (mới); `pyproject.toml` + `uv.lock`
+  (`uv add sentencepiece` → 0.2.2, A duyệt 11:5x cho M2).
 
 ## Thay đổi CHƯA COMMIT của B
 - `backend/experiments/phase_8_1/g1_retrieval.py` — B16 (`--realism main`, file nhãn cuối).
@@ -31,7 +37,7 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - Mốc runtime: `data/evaluation/phase_7b/retrieval_dense_bm25_rrf_1.jsonl` (`cefb2d1a…`); native `1fbb5c17…`.
 
 ## Tiền paid phiên (B)
-- 25/10: 0 USD.
+- 25/10: 0,0087972 USD (G4 luna 30 câu: 42.852 vào / 9.024 ra).
 
 ## Đã học / bẫy gặp
 - Qdrant có thể tắt giữa phiên; pytest vẫn chạy và lỗi môi trường trông như lỗi code: đọc dòng `E` trước.

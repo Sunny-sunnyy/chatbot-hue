@@ -4,7 +4,35 @@ Terminal: `hue-rag-a1` (25/10; tên đổi mỗi lần mở) · Agent: Claude Op
 User 25/10: việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
 ## Đang làm (25/10)
-- **C23 XONG 11:37 — vòng 2 ready**: plan `a4adfc8eedd9` sẵn sàng để A duyệt, mọi finding đóng (review §7; bản sao
+- **C24 (A giao 11:40) — thêm dấu mọi câu kín, C không đọc nội dung.** Bước 1 xong 11:41: backup `cp` →
+  `sealed_authoring_v3_backup.jsonl` (md5 `0377e966ada5` = v3) + `sealed_user_sample_v3_backup.md` (`ab9a6cbe62da`);
+  check trước sửa exit 0 (15/6/7/5/3). **XONG 11:48:** sub-agent sửa thêm dấu 16 dòng (chỉ `question`; máy C kiểm:
+  bỏ dấu = bản cũ, NFC, 20 dòng giống byte); sub-agent kiểm mới ĐẠT, 0 dòng thiếu dấu; check exit 0; kín v4
+  `a095e08bd7ac`; mẫu bản 4 `ad205c839bd0`. §8 trong `phase_8_1_g0_4_sealed_review.md`. Chờ User: 2/21/33, mẫu 4,
+  (tùy) dòng 3/19/13 gõ tắt. **Bẫy:** báo cáo sub-agent kiểm lộ tên file nguồn (chủ đề) cho C — lần sau cấm cả tên
+  file nguồn trong báo cáo cuối.
+- **C26 XONG 12:31** — kín v6 `631334704fdd` (đổi 2/6/21/33), kiểm độc lập ĐẠT, 36/36 natural (`d1f7c235b83c`), mẫu bản 5
+  `4f7fe6df5cca` (17 dòng); §10. Đã xóa /tmp/c26_*. Chờ User xem mẫu 5 → A khóa G0.6.
+- **C27 XONG** — review sửa 10 đáp án Golden: ready; m1 (92) / m2 (41) A sửa, C kiểm lại → đóng 12:30 (§7). Official
+  `0f7dbf41b422`, smoke `d80b58c50f38`; check thật exit 0; pytest 27.
+- A dặn (12:27, User ngủ trưa): report G4/G2 của B phải đủ thông số từng lượt (model + revision, device thật,
+  max_length, pool, top-k, sha tập câu, seed, latency, token/USD, lệnh, đường dẫn kết quả) — thiếu là finding.
+  Ưu tiên: G4 → C26 → C27. Thấy `pyproject.toml` + `uv.lock` đổi trong working tree (B?) — soi khi review G4.
+- **C26 (A giao, User duyệt 12:20) — áp sửa câu kín:** 2/21/33 theo đề xuất v3, dòng 6 bỏ quy định ngoài câu hỏi,
+  3/19/24/29/33 giữ. 12:21 backup `sealed_authoring_v5_backup.jsonl` (`6d413c8d98fa`), `sealed_realism_v5_backup.jsonl`
+  (`b7a679d7e6f0`), `sealed_user_sample_v4_backup.md` (`ad205c839bd0`). Sub-agent sửa mới đang chạy → kiểm (mới) cập nhật
+  realism + mẫu bản 5 → §10. Sau đó: review 10 đáp án Golden của A (C được đọc Golden).
+- **C25 (A giao 12:05) — sửa / rà `reference_answer` câu kín**, C không đọc nội dung lẫn `sealed_user_feedback_private.md`.
+  12:06 backup `cp` → `sealed_authoring_v4_backup.jsonl` (`a095e08bd7ac`). **XONG 12:13:** 4 đáp án sửa (11, 18, 26, 36;
+  chỉ `reference_answer`, keyword giữ — máy C kiểm), kiểm độc lập ĐẠT, check exit 0, kín v5 `6d413c8d98fa`; §9. Chờ User:
+  dòng 6 + dữ kiện phụ 3/19/24/29/33 (giữ hay dặn judge); mẫu bản 4 chưa có đáp án mới 11/18/36. Đã xóa /tmp script
+  sub-agent C24/C25.
+- **Review G4 thêm (A 11:50):** `backend/reranking/cross_encoder.py` là production ⇒ chứng minh mặc định giữ hành vi
+  (`max_length=None` = mặc định CrossEncoder; `loaded_device` không đổi đường runtime); chạy pytest reranker (không paid).
+- **Tiếp (A giao):** review từng gate G4/G2 khi B nhắn — đối chiếu plan `a4adfc8eedd9` (commit `b9789f4`, sha bản commit
+  khớp); kiểm log đủ 4 điều kiện GPU §0 (cuda thật / device tham số, nvidia-smi không session khác, câu thử) và mỗi lượt
+  = 1 cấu hình ≤ 30 câu, trần 60 s / 20 phút.
+- **C23 ĐÓNG (A duyệt + commit `b9789f4`) — vòng 2 ready**: plan `a4adfc8eedd9` sẵn sàng để A duyệt, mọi finding đóng (review §7; bản sao
   `/tmp/c23/plan_a4adfc8e.md`). Tiếp: chờ A giao (review G4/G2 khi B chạy). 0 USD, không GPU.
 - (vòng 1) 11:31 **changes_requested**. G1 §7: mọi số khớp, m1/m2 B đã sửa (đóng).
   Plan `43086f053db8`: M1 G2.1/G2.4 thiếu tiêu chí ghi trước; M2 luật G4 bỏ MRR@10 của spec không khai; M3 G4-B cần mốc

@@ -223,3 +223,178 @@ duyệt mẫu. Nếu sửa, chỉ cần một sub-agent mới kiểm riêng 3 d�
 nhật nhãn của 2, 21, 33 theo kết quả cuối.
 
 Tiền: **0 USD** (sub-agent dùng quota Claude Code, ~111k token).
+
+## 8. Thêm dấu cho mọi câu kín (C24, 25/10/2026 11:41–11:48)
+
+User 25/10 11:40: "thêm dấu cho mọi câu". Yêu cầu này thay chỉ dẫn "không dấu" của spec 8.1 §5 G0.4 bước 4. Theo
+`CURRENT_HANDOFF.md` mục C24, việc qua **hai sub-agent `general-purpose` mới**: một sửa, một kiểm. Hai sub-agent khác
+nhau, người kiểm không xem báo cáo của người sửa. **C vẫn chưa đọc nội dung câu.** 3 dòng `capability_only` (2, 21, 33)
+vẫn chờ User; lượt này chỉ thêm dấu.
+
+**Bước 1 — sao lưu (C, `cp`, không đọc):**
+- `sealed_authoring.jsonl` → `sealed_authoring_v3_backup.jsonl`, md5 `0377e966ada5` (= bản v3 ở §7);
+- `sealed_user_sample.md` (bản 3) → `sealed_user_sample_v3_backup.md`, md5 `ab9a6cbe62da`;
+- `check --authoring` trước khi sửa: exit 0; 36 dòng, phân bố 15 / 6 / 7 / 5 / 3.
+
+**Bước 2 — sửa (sub-agent 1):**
+- Thêm dấu cho `question` ở **16 dòng**: 1, 5, 6, 7, 8, 11, 15, 18, 22, 23, 24, 26, 28, 30, 31, 34. Trong đó 13 dòng không
+  dấu cả câu; 2 dòng thiếu dấu một từ.
+- 20 dòng vốn đủ dấu; `reference_answer` cả 36 dòng vốn đủ dấu nên không đổi.
+- Giữ nguyên những chỗ không phải chuyện dấu: gõ tắt văn nói, lỗi gõ cố ý, chữ hoa/thường.
+- Nghi ngờ nhẹ ở 2 dòng: 22 (địa danh có hai cách viết trong nguồn) và 18 (từ một âm tiết đọc được hai nghĩa).
+
+**C tự kiểm bằng máy (chỉ in số dòng và kết quả đúng/sai):**
+- So từng byte với bản sao lưu: đúng 16 dòng trên đổi; 20 dòng giống hệt.
+- Chỉ field `question` đổi. Thứ tự key và cách serialize giữ nguyên.
+- Bỏ dấu (NFD bỏ combining, đ→d) thì bản mới = bản cũ ở mọi field đổi. Chuỗi mới ở dạng NFC.
+- `check --authoring` sau khi sửa: **exit 0**, phân bố không đổi (direct_fact 15 / multi_source 6 / conditional 7 /
+  comparative 5 / out_of_scope 3). md5 file mới: **`a095e08bd7ac`**.
+
+**Bước 3 — kiểm độc lập (sub-agent 2), theo báo cáo của nó: ĐẠT.**
+- Tự tìm ra cùng 16 dòng đổi; cả 16 dòng OK: không đổi ngoài dấu, không dấu sai nghĩa, tên riêng khớp nguồn, ý không đổi.
+- Cả 36 dòng: **0 dòng** còn chữ thiếu dấu. Chữ không dấu còn lại đều vốn không dấu, viết tắt, đơn vị, số hoặc từ nước
+  ngoài. Riêng dòng 22: âm tiết không dấu là đúng theo nguồn.
+- Đồng ý cách đặt dấu ở mọi từ đa nghĩa (dòng 5, 7, 11, 18, 26, 30, 31, 34), dựa theo đáp án, keyword và nguồn.
+- **Để User biết** (không phải lỗi dấu, không đổi so với bản cũ): dòng 3 và 19 có một dạng gõ tắt bớt chữ cái; dòng 13 có
+  lỗi gõ cố ý ở phụ âm cuối. User muốn chính tả chuẩn hoàn toàn thì quyết 3 dòng này.
+- `check --authoring`: exit 0.
+
+**Bước 4 — mẫu cho User bản 4** (`sealed_user_sample.md`, md5 `ad205c839bd0`, ghi đè bản 3):
+- cùng 15 dòng: 2, 5, 11, 12, 13, 17, 18, 20, 21, 24, 25, 28, 31, 33, 36;
+- dòng đầu ghi các dòng có câu hỏi được thêm dấu: 5, 11, 18, 24, 28, 31;
+- C so với bản sao lưu: diff 14 dòng, đúng bằng 6 câu hỏi đổi cộng dòng đầu ghi chú. Phần còn lại (ô Đồng ý / Sửa / Bỏ,
+  ghi chú dòng 2, 21, 33) giữ nguyên.
+
+`sealed_realism.jsonl` không đổi (md5 `b7a679d7e6f0`). Mọi file mới / sửa đều private: `git check-ignore` xác nhận.
+
+**Ghi minh bạch:** báo cáo của sub-agent kiểm liệt kê **tên các file nguồn** đã grep. Vì vậy C biết được chủ đề (tên địa
+danh / món / lễ hội) của các câu kín, nhưng không biết câu hỏi, đáp án hay keyword. C không chép các tên đó vào file
+tracked nào. Ảnh hưởng tới độ mù: thấp, vì các chủ đề này cũng có trong Golden dev C đã dùng; nhưng C ghi lại để A/User
+biết. Lần sau, brief sub-agent cấm cả tên file nguồn trong báo cáo cuối.
+
+**Kết luận C24:** bộ kín v4 (`a095e08bd7ac`) đủ dấu, chỉ đổi dấu, máy kiểm exit 0. Còn chờ User: (1) 3 dòng
+`capability_only` 2, 21, 33; (2) duyệt mẫu bản 4; (3) tùy chọn: dòng 3, 19, 13 (gõ tắt / lỗi gõ cố ý). Sau đó A tạo
+file chính thức 4 field và khóa (G0.6).
+
+Tiền: **0 USD** (quota Claude Code: sub-agent sửa ~46k, sub-agent kiểm ~62k token).
+
+## 9. Sửa / rà đáp án tham chiếu (C25, 25/10/2026 12:06–12:13)
+
+User đã duyệt mẫu bản 4: câu hỏi ổn, nhưng một đáp án lặp chủ ngữ, thiếu tự nhiên. Nhận xét nguyên văn ở
+`sealed_user_feedback_private.md`; **C không đọc** file này. Như C24, việc qua **hai sub-agent `general-purpose` mới**,
+một sửa, một kiểm. Brief cả hai cấm ghi nội dung câu, tên thực thể **và tên file nguồn** trong báo cáo cuối (bài học §8).
+Chỉ sửa `reference_answer`; câu hỏi giữ bản 4. 3 dòng 2, 21, 33 vẫn chờ User.
+
+**Sao lưu (C, `cp`):** `sealed_authoring.jsonl` → `sealed_authoring_v4_backup.jsonl`, md5 `a095e08bd7ac` (= v4 ở §8).
+
+**Sửa (sub-agent 1)** — 4 dòng, chỉ `reference_answer`:
+
+| Dòng | Loại lỗi | Ảnh hưởng tới chấm |
+|---|---|---|
+| 11 | lặp chủ ngữ + thiếu tự nhiên (User nêu; sửa đúng theo đề xuất của User) | thấp |
+| 18 | lặp nguyên văn một cụm ở hai câu → gộp một câu | thấp |
+| 26 | lặp ý (câu cuối nhắc lại điều kiện) → bỏ câu thừa, giữ đủ điều kiện + dữ kiện | thấp |
+| 36 | lặp từ + thiếu tự nhiên → viết gọn, số liệu giữ nguyên | thấp |
+
+- Không dòng nào sai so với nguồn hoặc thiếu ý so với nguồn.
+- **Thấy nhưng không sửa (cần User quyết), vì sửa sẽ đổi phạm vi đáp án:**
+  - Dòng 6: đáp án có thêm một quy định ngoài điều câu hỏi hỏi. Ảnh hưởng **trung bình**: judge có thể trừ Completeness
+    khi câu trả lời đúng mà không nêu ý đó.
+  - Dòng 3, 19, 24, 29, 33: mỗi dòng có 1–2 dữ kiện phụ, đều đúng nguồn. Ảnh hưởng thấp–trung bình.
+  - User quyết chung một lần: giữ, hay dặn judge rằng dữ kiện phụ không bắt buộc.
+
+**C tự kiểm bằng máy (chỉ in số dòng, độ dài, đúng/sai):**
+- So từng byte với bản sao lưu: đúng 4 dòng 11, 18, 26, 36 đổi; 32 dòng giống hệt.
+- Chỉ field `reference_answer` đổi; thứ tự key, cách serialize và dạng NFC giữ nguyên.
+- Mọi keyword có trong đáp án cũ vẫn có trong đáp án mới. Cả 4 đáp án ngắn đi 15–59 ký tự.
+- `check --authoring`: **exit 0**, phân bố không đổi (15 / 6 / 7 / 5 / 3). md5 file mới: **`6d413c8d98fa`**.
+
+**Kiểm độc lập (sub-agent 2, không xem báo cáo người sửa): ĐẠT.**
+- Tự tìm ra cùng 4 dòng đổi, cả 4 OK. Dòng 11 khớp từng chữ đề xuất của User. Không mất dữ kiện cần, không thêm dữ kiện
+  ngoài nguồn, lỗi lặp đã hết.
+- 32 dòng không đổi: không thấy lỗi rõ bị bỏ sót. Mọi con số trong đáp án có nguồn đều xuất hiện nguyên văn trong nguồn;
+  ngoại lệ là một năm lấy từ câu hỏi để suy luận, suy luận đúng.
+- Dòng 17: một keyword chỉ khác chữ hoa đầu câu. Code chấm so sau `casefold` nên không ảnh hưởng.
+- Dòng 6: câu mở đầu hơi cứng, không phải lỗi rõ.
+- `check --authoring`: exit 0.
+
+**Dọn:** xóa thư mục script tạm của 4 sub-agent C24/C25 (`/tmp/c24_fix`, `/tmp/c24_check`, `/tmp/c25_fix`,
+`/tmp/c25_check`), vì có thể chứa nội dung câu kín. Còn lại trong `/tmp` chỉ là output số đếm của `check`.
+
+**Kết luận C25:** bộ kín v5 (`6d413c8d98fa`) đạt. Chờ User:
+1. 3 dòng `capability_only` 2, 21, 33;
+2. dòng 6 và nhóm dữ kiện phụ (3, 19, 24, 29, 33): giữ hay dặn judge;
+3. (tùy chọn) dòng 3, 19, 13 gõ tắt / lỗi gõ cố ý (§8).
+
+Mẫu cho User bản 4 **chưa** cập nhật đáp án mới của dòng 11, 18, 36 (trong mẫu). A quyết có cần bản 5 không. Sau đó A tạo
+file chính thức 4 field và khóa (G0.6).
+
+Tiền: **0 USD** (quota Claude Code: sub-agent sửa ~103k, sub-agent kiểm ~56k token).
+
+## 10. Áp sửa User duyệt 12:20 (C26, 25/10/2026 12:21–12:31)
+
+User 12:20 duyệt "sửa theo đề xuất". Nguyên tắc: đáp án chỉ trả lời điều câu hỏi hỏi; chỉ thêm điều kiện khi thiếu nó thì
+sai hoặc gây hiểu lầm; chi tiết phụ đúng nguồn giữ nguyên. Cụ thể:
+- dòng 2, 21, 33 (`capability_only`) sửa theo đề xuất ghi chú v3;
+- dòng 6 bỏ quy định ngoài điều câu hỏi hỏi;
+- dòng 3, 19, 24, 29, 33 giữ chi tiết phụ.
+
+Việc qua **hai sub-agent `general-purpose` mới**, một sửa, một kiểm. Brief cấm nội dung câu, tên thực thể và tên file
+nguồn trong báo cáo cuối. **C vẫn chưa đọc nội dung câu.**
+
+**Sao lưu (C, `cp`):**
+- `sealed_authoring_v5_backup.jsonl`: md5 `6d413c8d98fa` (= v5 ở §9);
+- `sealed_realism_v5_backup.jsonl`: `b7a679d7e6f0`;
+- `sealed_user_sample_v4_backup.md`: `ad205c839bd0`.
+
+**Sửa (sub-agent 1):**
+
+| Dòng | Field đổi | Ghi chú |
+|---|---|---|
+| 2 (direct_fact) | question, keywords (2 → 1), reference_answer | **Lệch đề xuất có lý do:** nguồn của dòng không có loại thông tin đề xuất nêu làm ví dụ; đổi sang nguồn khác sẽ lệch `partition` ⇒ chọn một thông tin thiết thực khác trong cùng nguồn |
+| 6 (conditional) | reference_answer | bỏ câu nêu quy định ngoài điều câu hỏi hỏi; 2 keyword giữ |
+| 21 (comparative) | question, reference_answer | theo đề xuất; thêm một điều kiện có trong nguồn (thiếu thì gây hiểu lầm) |
+| 33 (multi_source) | question, keywords (3 → 2), reference_answer, sources (2 → 3) | theo đề xuất; bỏ keyword của phần đã bỏ. **Lệch có lý do:** không đặt keyword cho phần mới vì hai nguồn ghi khác nhau, đáp án ghi cả hai |
+
+Dòng 3, 19, 24, 29 không đổi; dòng 33 giữ chi tiết phụ.
+
+**C tự kiểm bằng máy (không in nội dung):**
+- Đúng 4 dòng 2, 6, 21, 33 khác bản v5; 32 dòng giống từng byte.
+- Category không đổi. Serialize và NFC giữ nguyên.
+- `check --authoring`: **exit 0**, phân bố 15 / 6 / 7 / 5 / 3.
+- md5 bản mới: **`631334704fdd`**.
+
+**Kiểm độc lập (sub-agent 2, không xem báo cáo người sửa): ĐẠT.**
+- Dòng đổi và field đổi khớp. So với bản User xem ở mẫu bản 4, có 8 dòng đổi: 2, 6, 11, 18, 21, 26, 33, 36.
+- Dòng 2, 6, 21 OK. Dòng 33 OK, kèm 2 ghi chú mức thấp:
+  - đáp án diễn đạt một mốc thời gian mềm hơn chữ trong nguồn; phần đó không có keyword nên không ảnh hưởng chấm;
+  - nhãn `multi_source` yếu, vì một nguồn đã trả lời được cả hai ý.
+- Hai chỗ lệch đề xuất (dòng 2, 33): **chấp nhận**. Người kiểm tự grep xác nhận lý do của người sửa.
+- **Không trùng ý Golden**: dò cả 176 câu; có vài câu cùng thực thể nhưng hỏi dữ kiện khác.
+- Độ tự nhiên cuối: dòng 2, 21, 33 đều **natural**.
+- `check --authoring`: exit 0.
+
+**Nhãn độ tự nhiên** (`sealed_realism.jsonl`, sửa bởi người kiểm; md5 `d1f7c235b83c`). C so với backup: chỉ dòng 2, 21, 33
+đổi, và chỉ ở `changed` (false → true) + `reason`. Nhãn vẫn natural, vì file vốn ghi natural; chỉ người duyệt v3 chấm
+capability_only. Phân bố: **natural 36** / capability_only 0 / unnatural 0.
+
+**Mẫu cho User bản 5** (`sealed_user_sample.md`, md5 `4f7fe6df5cca`, ghi đè bản 4):
+- 17 dòng: 15 dòng của bản 4, thêm dòng 6 và 26 (đáp án đổi sau khi User xem bản 4);
+- 8 dòng đổi đánh dấu "[ĐỔI: …]", ghi rõ field đổi; dòng đầu file liệt kê đủ;
+- ghi chú cũ của dòng 2, 21, 33 thay bằng "Đã sửa theo đề xuất, User duyệt 12:20";
+- người kiểm tự thêm (ngoài brief, C chấp nhận vì giúp User xem lần cuối): mục "Lưu ý" về chỗ lệch đề xuất ở dòng 2 và
+  33, mục "Keyword (mới)" ở dòng 2 và 33.
+
+Mọi file mới / sửa đều private (`git check-ignore`).
+
+**Ghi minh bạch (theo báo cáo người sửa):** một lệnh grep trong corpus của người sửa vô tình in 1 dòng từ mỗi file trong
+3 file mẫu cho User (`sealed_user_sample*.md`, loại file bị cấm đọc). Cả 3 dòng là đề xuất sửa dòng 2, trùng nội dung ghi
+chú v3 mà người sửa được đọc. Người sửa không mở các file đó. Ảnh hưởng: không đáng kể. Bài học: grep trong corpus nên
+loại trừ `evaluation/`.
+
+**Dọn:** đã xóa `/tmp/c26_fix`, `/tmp/c26_check` (script của sub-agent, có thể chứa nội dung câu kín).
+
+**Kết luận C26:** bộ kín v6 (`631334704fdd`) đạt, 36/36 natural, `check` exit 0. Chờ: User xem mẫu bản 5 lần cuối.
+Sau đó A tạo file chính thức 4 field và khóa (G0.6).
+
+Tiền: **0 USD** (quota Claude Code: sub-agent sửa ~76k, sub-agent kiểm ~75k token).
