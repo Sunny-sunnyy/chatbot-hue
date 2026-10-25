@@ -99,6 +99,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-25 (chiều) | Câu kín 8.1: **thêm dấu cho mọi câu** (thay "không dấu" của spec G0.4); 9 câu độ tự nhiên bất đồng: giữ cả 9 (natural) | User 11:33, 11:40 |
 | 2026-10-25 (chiều) | 8.1 G4: duyệt G4-A (xếp lại top-10) **và G4-B** (rerank pool 100 → top-10; sửa spec §5 G4). GPU yếu ⇒ mỗi lượt GPU chỉ 20–30 câu, kiểm model thật trên GPU trước khi chạy (không chạy nhầm CPU) | User; spec 8.1 §5 G4 "Sửa đổi 25/10" |
 | 2026-10-25 | Cải tiến cách làm (không đổi chatbot): vòng tự cải tiến có người duyệt (`improve-workflow` + `SO_CAI_TIEN_CACH_LAM.md`); `run-experiment` có sàn / mức tụt / chỉ số quyết, cỡ mẫu trước, nhiễu A/A, kiểm người chấm; Session D học cùng User; `AGENTS.md` bản chính cho mọi agent; hook git chặn commit dữ liệu private. **Cách làm phải dùng được gần như nhau cho Codex/AGY**: luật ở Markdown trong repo + rào ở tầng git, không chỉ ở memory / settings của Claude | User; `report_agent/2026-10-25_cai_tien_cach_lam/` |
 | 2026-10-24 | User ủy quyền A: tự điều phối B/C, tự kiểm tra, đề xuất, thử nghiệm, tối ưu và phát triển các Phase trước; commit/push theo mốc; ghi report; hệ thống phải chạy ổn định; dùng skill khi code | User (trước khi nghỉ) |

@@ -176,7 +176,18 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
   G4 bản sửa đổi 25/10, `de_xuat_cho_du_an.md` mục 1–5, 8; cỡ mẫu 20–30 câu có ghi trước "có thể chưa rõ"; cách kiểm
   GPU có dừng thật khi không phải `cuda`). Đầu ra: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_b16_review.md`;
   nhắn A + B. Chỉ đọc, không chạy GPU / paid. Bắt đầu khi B nhắn plan đã sửa (trước đó có thể review phần G1 §7).
-- Sau đó: review G4/G2 khi B chạy; câu kín chờ User (luôn qua sub-agent mới, C không đọc nội dung).
+- C23 đóng 11:40 (plan duyệt `a4adfc8eedd9`, commit `b9789f4`). Tiếp: review từng gate G4/G2 khi B nhắn.
+- **C24 (giao 11:40 25/10) — thêm dấu cho mọi câu kín** (User 11:40: "thêm dấu cho mọi câu"; thay chỉ dẫn "không dấu"
+  của spec 8.1 §5 G0.4 bước 4). C **không đọc nội dung**; mọi việc qua sub-agent **mới**:
+  1. C sao bản hiện tại (`cp`, không đọc) → `knowledge-base-hue/evaluation/phase_8_1/sealed_authoring_v3_backup.jsonl`, ghi md5.
+  2. Sub-agent sửa (mới): thêm dấu tiếng Việt chuẩn cho mọi chỗ viết không dấu trong `question` (và field khác nếu cũng
+     không dấu); **không** đổi ý, cách hỏi, văn nói, độ dài, số dòng, thứ tự, field; lỗi gõ cố ý ngoài dấu giữ nguyên.
+     Trả về C chỉ số dòng đã đổi + số đếm, không chép câu.
+  3. Sub-agent kiểm (mới, khác người sửa): so với bản backup — mọi câu đủ dấu, ý không đổi, không đổi gì ngoài dấu;
+     `check --authoring` exit 0 (C đọc exit riêng, không qua pipe).
+  4. Làm lại `sealed_user_sample.md` (bản 4, cùng 15 dòng) để User xem lại; `sealed_realism.jsonl` giữ nhãn.
+  5. 3 dòng `capability_only` (2, 21, 33): **chờ User**; User trả lời trước bước 2 thì gộp vào cùng lượt sửa.
+  - Đầu ra: thêm §8 vào `phase_8_1_g0_4_sealed_review.md` (chỉ số đếm, md5, không chép câu); nhắn A. 0 USD.
 
 ## Việc của A
 

@@ -91,6 +91,8 @@ Mỗi gate: người làm → report → người kia review chéo → A đóng 
    ~10 câu. Ghi `required_facts`, `is_answerable`, `ambiguity`.
 4. 30–40 câu mới giữ kín: một sub-agent **mới** chỉ nhận corpus + hướng dẫn soạn (văn nói, không dấu, gõ
    sai nhẹ, đủ 5 loại), không thấy kết quả thí nghiệm; kiểm máy như 7A; User duyệt mẫu; khóa kín.
+   **Sửa đổi User 25/10/2026:** mọi câu kín **có dấu đầy đủ** (thay "không dấu"); điểm yếu câu không dấu vẫn đo ở G1.4
+   (bản bỏ dấu của câu dev).
 5. **Tham số mặc định-như-cũ** (mục 3.1): sau khi thêm, pytest full-corpus đạt + retrieval runtime 176 câu
    giống từng byte mốc 7B + review chéo, rồi mới sang G1.
 6. Baseline freeze: commit, hash corpus, build record, retrieval 176 câu, 176 câu trả lời 7B Run 1,
