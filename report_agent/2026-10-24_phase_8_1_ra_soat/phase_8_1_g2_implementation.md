@@ -192,6 +192,11 @@ Claude Code (29 sub-agent: dev 18, test 4, G2.4 7), 0 USD. \* giờ `finished` s
 
 ## 6. Lỗi và giới hạn
 
+- **NOT RUN — sót, ghi bổ sung 25/10 (B, khi review G5):** plan §2 G2.2 `extra_secondary` "claim không nguồn trên 32 câu có
+  đoạn đúng" **chưa đo** và bản report trước không ghi NOT RUN. Lý do: không có công cụ đếm claim trong harness; cần
+  sub-agent đọc từng câu trả lời ↔ đoạn đúng (quota, 0 USD) — để G5 / 8.2 quyết. Không ảnh hưởng kết luận (chỉ số phụ).
+- **Kết quả theo loại câu: chưa báo** (spec §6 tiêu chí 2) — tính được từ JSONL đã lưu, 0 USD; xem review G5.
+
 - Judge là Claude sub-agent (không có mốc người, như 7B). Nhiễu cả đường ước từ G2.0 vs 7B Run 1: 10/83 câu đổi
   Completeness; các kết luận "tốt hơn" dùng CI theo cặp trong cùng một lượt chấm mù.
 - Mỗi sub-agent judge chấm 40 câu (7B: 10) để giảm số agent; mọi biến thể trộn lẫn trong cùng lô nên không lệch giữa biến

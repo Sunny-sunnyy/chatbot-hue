@@ -1,7 +1,7 @@
 # Phase 8.1 G5 — bản nháp bảng kết luận quyết định (B19)
 
 Người viết: B (Claude Opus 5.5, terminal `hue-rag-3f`) · 2026-10-25 13:46 +0700 (`date`) · Việc: B19 (A giao 13:44) ·
-Trạng thái: **nháp cho A làm nền G5; A review** · cập nhật G3 sau khi C chốt · 0 USD · Spec 8.1 §5 G5, §6 tiêu chí 3 ("mỗi dòng top 10 của C11 có kết
+Trạng thái: **bảng chính thức của G5** (tên file giữ chữ "draft" để không gãy link); A review 13:5x · cập nhật G3 sau khi C chốt · 0 USD · Spec 8.1 §5 G5, §6 tiêu chí 3 ("mỗi dòng top 10 của C11 có kết
 luận hoặc lý do NOT RUN"). Không chép câu Golden, câu kín, corpus.
 
 **Cách đọc:**
