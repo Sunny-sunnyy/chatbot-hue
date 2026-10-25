@@ -42,7 +42,7 @@ from retrieval.full_corpus import build_full_corpus_retrieval_service, build_ret
 SPLIT_PATH = REPO_ROOT / "knowledge-base-hue/evaluation/phase_8_1/split.json"
 GOLD_PATH = REPO_ROOT / "data/phase_8_1/gold/gold_draft.jsonl"
 OUT_DIR = REPO_ROOT / "data/phase_8_1/g1"
-REALISM_PATH = REPO_ROOT / "data/phase_8_1/golden_realism.jsonl"
+REALISM_PATH = REPO_ROOT / "data/phase_8_1/golden_realism_final.jsonl"  # 2 agent độc lập + User (A, 21:58)
 ANSWERS_7B_PATH = REPO_ROOT / "data/evaluation/phase_7b/run1_answers.jsonl"
 PILOT_SEED = 20261024
 TOP_K = 10
@@ -222,7 +222,7 @@ def run_config(args) -> list[dict]:
 # ---------- Phân tích ----------
 
 def load_realism() -> dict[int, str]:
-    """case_index → natural / capability_only / unnatural; rỗng khi chưa có file nhãn."""
+    """case_index → natural / capability_only / unnatural / disputed_unnatural; rỗng khi chưa có file nhãn."""
     if not REALISM_PATH.is_file():
         return {}
     rows = [json.loads(line) for line in REALISM_PATH.read_text(encoding="utf-8").splitlines()]
@@ -235,6 +235,8 @@ def keep_realism(rows: list[dict], realism: str | None) -> list[dict]:
     labels = load_realism()
     if not labels:
         raise ValueError(f"realism labels not found: {REALISM_PATH}")
+    if realism == "main":  # số chính (User 21:58): bỏ câu không tự nhiên; câu đang tranh chấp tạm tính vào
+        return [r for r in rows if labels.get(r["case_index"]) != "unnatural"]
     return [r for r in rows if labels.get(r["case_index"]) == realism]
 
 
@@ -332,10 +334,10 @@ def main() -> None:
     cmp.add_argument("--a", required=True)
     cmp.add_argument("--b", required=True, nargs="+")
     cmp.add_argument("--metrics", required=True, nargs="+")
-    cmp.add_argument("--realism", choices=["natural", "capability_only", "unnatural"])
+    cmp.add_argument("--realism", choices=["main", "natural", "capability_only", "unnatural"])
     table = commands.add_parser("table", help="trung bình metric theo cấu hình (tổng + theo loại câu)")
     table.add_argument("--names", required=True, nargs="+")
-    table.add_argument("--realism", choices=["natural", "capability_only", "unnatural"])
+    table.add_argument("--realism", choices=["main", "natural", "capability_only", "unnatural"])
     ovl = commands.add_parser("overlap", help="G1.2: trùng kết quả + latency giữa hai cấu hình")
     ovl.add_argument("--a", required=True)
     ovl.add_argument("--b", required=True)

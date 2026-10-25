@@ -25,6 +25,10 @@ liên lạc trực tiếp).
 - (giữ) `git worktree list` có 4 worktree cũ của AGY dưới `~/.gemini/` — để nguyên.
 - (giữ) Repo PUBLIC; người điều phối không đọc câu kín; `CURRENT_HANDOFF.md` đọc lại trước khi sửa.
 - Xác nhận User gõ ở terminal B ("việc A giao = làm đi") không thay câu trả lời User cho A.
+- 11:33: User trích nguyên văn 2 câu kín cho A (hỏi về câu không dấu) ⇒ A đã thấy 2 câu; không đề xuất biến thể nhắm vào chúng.
+  Bài học cho vòng cải tiến: khi User hỏi về câu kín, nhắc User mô tả chung, không dán nguyên câu.
+- Lệch skill `risk-gated-agent-review` (Correction: người kiểm ghi vào mục của người làm) ↔ `WORKFLOW.md` §3.2 (cấm sửa
+  mục session khác) — C báo 11:31; sửa skill ở vòng cải tiến cuối phiên.
 
 ## Việc dở / câu hỏi cho User
 - Câu kín 3 dòng (2, 21, 33); 9 câu độ tự nhiên bất đồng; Hải Vân; tên dự án khác trong lịch sử git.

@@ -18,6 +18,13 @@ kiểm người chấm); Session D (`WORKFLOW.md` §10); `AGENTS.md` (bản chí
 - **Duyệt G4-A và G4-B** (pool 100) — ghi vào spec 8.1 §5 G4 ("Sửa đổi User duyệt 25/10/2026").
 - **GPU yếu: mỗi lượt chạy GPU chỉ 20–30 câu**; **trước khi chạy phải kiểm GPU thật đang dùng** (không để chạy nhầm CPU).
 - B16 mục "STATUS_B.md chưa commit" là cũ: STATUS_B/C đã commit ở `6c168e6`.
+- **11:33 — 9 câu độ tự nhiên bất đồng: User "ổn rồi" ⇒ giữ cả 9 (tính natural)** — bước 4 dưới xong về quyết định; cập
+  nhật `golden_realism_final.jsonl` theo nhãn cuối trước G0.6 (tập số chính không đổi vì câu bất đồng đã tạm tính vào).
+- **User đã đọc `sealed_user_sample.md`** và trích nguyên văn 2 câu kín (không dấu) cho A ⇒ A đã thấy 2 câu đó; A không
+  đề xuất biến thể nhắm vào chúng. User hỏi vì sao câu kín có câu không dấu (trả lời: spec §4 G0.4 dặn soạn "văn nói, không
+  dấu, gõ sai nhẹ"; G1.4 cho thấy không dấu làm tìm kiếm sập) — chờ User chọn giữ / đổi.
+- C23 vòng 1 (11:31): B16 code + G1 §7 đạt; plan `43086f053db8` changes_requested (3 major, chỉ sửa chữ). A quyết M2 =
+  **theo spec** (giữ MRR@10 trong decision rule G4).
 
 ## PHIÊN SAU — ĐỌC TRƯỚC NHẤT (viết 11:05 25/10; bước 1–2 đã làm ở phiên chiều)
 
@@ -85,8 +92,8 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | đang làm B17 bước 1 |
-| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C23 review B16 + plan B17 | chờ B nhắn plan đã sửa |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | 11:36 vòng sửa 1 xong — plan sha `a4adfc8eedd9`, chờ C review vòng 2 + A duyệt |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C23 review B16 + plan B17 | 11:37 C23 xong: vòng 2 ready — plan `a4adfc8eedd9` sẵn sàng để A duyệt (mọi finding đóng; G1 §7 đạt) — `phase_8_1_b16_review.md` §7; chờ A giao việc |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -146,6 +153,12 @@ B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra
 - G4 **được chạy trước khi khóa G0.6** (chỉ retrieval, không dùng câu kín); số chính tính lại khi User quyết 9 nhãn tự
   nhiên. M1/M2 đã có trong HF cache ⇒ giữ `HF_HUB_OFFLINE=1`; thiếu file mới bỏ biến đó cho lần tải đầu, ghi lại.
 - Xong bước 1: ghi `sha256sum` (12) bản đã sửa vào report, nhắn **C** (review) và A.
+- **B 11:29: bước 1 xong** — `phase_8_1_g2_g4_plan.md` sha `43086f053db8` (mục "Thay đổi so với bản nháp" đầu file);
+  kèm sửa C23 m1/m2 ở report G1 §7. Chờ C review phần 2 + A duyệt.
+- **B 11:36: vòng sửa 1 (C23 M1–M3, m3–m6; M2 theo spec như A quyết)** — plan sha `a4adfc8eedd9`. Chờ C review vòng 2 + A
+  duyệt.
+- **A 11:40: duyệt bản sha `a4adfc8eedd9`** (C23 vòng 2 ready, `phase_8_1_b16_review.md` §7). B16 + plan + review đã commit.
+  B làm bước 2. Sửa plan sau mốc này là bản mới ⇒ nhắn C + A trước khi chạy phần đổi.
 
 **Bước 2 — chạy (sau khi A ghi "duyệt bản sha …" ở đây, A commit B16).** Thứ tự plan §4: mốc byte → G4.0 → G4-A → G4-B
 → G2 (pilot 10 câu mỗi lượt có phí). Mỗi gate: report + C review.

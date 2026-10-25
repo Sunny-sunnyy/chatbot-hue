@@ -1,9 +1,19 @@
-# STATUS C — cập nhật 2026-10-24 22:48 (kết phiên)
+# STATUS C — cập nhật 2026-10-25 11:26
 
-Terminal: `hue-rag-a3` (tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
+Terminal: `hue-rag-a1` (25/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi
+User 25/10: việc A giao = "làm đi"; xong báo cáo, nhắn A, chờ việc.
 
-## Đang làm
-- **Không.** Kết phiên 24/10 theo yêu cầu User (qua A). Không có việc dở.
+## Đang làm (25/10)
+- **C23 XONG 11:37 — vòng 2 ready**: plan `a4adfc8eedd9` sẵn sàng để A duyệt, mọi finding đóng (review §7; bản sao
+  `/tmp/c23/plan_a4adfc8e.md`). Tiếp: chờ A giao (review G4/G2 khi B chạy). 0 USD, không GPU.
+- (vòng 1) 11:31 **changes_requested**. G1 §7: mọi số khớp, m1/m2 B đã sửa (đóng).
+  Plan `43086f053db8`: M1 G2.1/G2.4 thiếu tiêu chí ghi trước; M2 luật G4 bỏ MRR@10 của spec không khai; M3 G4-B cần mốc
+  "native p100 không rerank" (G1: 15/30 vs runtime 12/30); m3–m6. Chờ B sửa → C kiểm diff với `/tmp/c23/plan_43086f05.md`.
+- Khai báo sửa: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_b16_review.md` (mới), file này, dòng C trong
+  `CURRENT_HANDOFF.md`. Output tạm: `/tmp/c23_*.json`.
+- Sửa ghi chép cũ: §7 sealed review và STATUS_B đã được A commit ở `6c168e6` (mục "Chưa commit" dưới là cũ).
+
+## Kết phiên 24/10 (cũ)
 - **C chưa đọc nội dung câu kín** (`knowledge-base-hue/evaluation/phase_8_1/sealed_authoring.jsonl`):
   - mọi review câu kín (C17, C20, C22) đều do sub-agent mới làm;
   - C chỉ đọc báo cáo tóm tắt (số dòng / số đếm / nhãn), so dòng bằng md5/diff, và chạy `check --authoring`

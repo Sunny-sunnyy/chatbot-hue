@@ -138,3 +138,34 @@ Tiền: **0 USD**.
   3. **Chuẩn hóa NFC câu hỏi** → hàng đợi 8.2 (đơn giản, bằng chứng rõ). **Câu không dấu** → ghi giới hạn; nếu cần,
      một thí nghiệm riêng (khử dấu cả index + query) sau G3/G4.
   4. Cách trộn: giữ runtime; native p30 k=2 để làm ứng viên phụ khi có thêm câu có đoạn đúng (hoặc gộp vào G4 như cấu hình pool).
+
+## 7. Bảng phụ — tập số chính mới (B16, User 21:58: bỏ câu không tự nhiên)
+
+Tính lại từ JSONL đã có (không chạy lại retrieval), nhãn `data/phase_8_1/golden_realism_final.jsonl` (2 agent độc
+lập, kappa 0,765; 29 câu `unnatural` bị loại; 9 câu `disputed_unnatural` tạm tính vào). Lệnh: `g1_retrieval compare/…
+--realism main` (G1.1, G1.3, G1.4); `layers` không có `--realism` ⇒ G1.6 tính bằng cách lọc `per_case` của `layers
+--name runtime_all_minilm` theo nhãn ≠ `unnatural` (C23 m1). Dev còn 88 câu trong kho, 32 câu có đoạn đúng. **Không đổi
+kết luận đã ghi ở mục 4.** Số "natural" ở mục 3–4 (47 câu / 14 câu có đoạn đúng) tính theo nhãn rater 1 cũ
+`golden_realism.jsonl`; code nay đọc file nhãn cuối, theo đó dev natural = 40 câu (11 có đoạn đúng) — mục 4 không tính
+lại (C23 m2).
+
+| G1.1 (32 câu) | dense | sparse | hợp hai nhánh | top-10 | 5 đoạn đưa model | MRR (88) |
+|---|---:|---:|---:|---:|---:|---:|
+| runtime pool 30 | 0,750 | 0,750* | 0,750 | 0,531 | 0,406 | 0,716 |
+| native pool 30 | 0,750 | 0,688 | 0,875 | 0,594 | 0,469 | 0,724 |
+| native pool 100 | 0,906 | 0,875 | **0,969** | 0,625 | 0,500 | 0,725 |
+| native pool 200 | 0,938 | 0,969 | 0,969 | 0,625 | 0,500 | 0,724 |
+
+Điều kiện dừng sớm: 15 câu lỗi, 14 có đủ đoạn đúng trong hợp hai nhánh @200 (7 đã đủ trong pool 30 runtime) — không chạm.
+
+**G1.3** (Holm trên 10): không biến thể nào "tốt hơn" sau Holm ở `top10_gold_all` hay MRR. Trước Holm: MRR "tốt hơn"
+ở native p100 (+0,008), runtime k=2 (+0,009), runtime k=10 (+0,005), native p30 k=2 (+0,012); `top10_gold_all` lớn
+nhất ở native p100 và native p30 k=2 (+0,094, 3/29/0 — 0 câu mất). nDCG không biến thể nào tụt.
+
+**G1.4:** NFD MRR −0,200 [−0,269; −0,132] (kém hơn), NFD+NFC = gốc; bỏ dấu MRR −0,555 [−0,634; −0,475], `top10_gold_all`
+0,531 → 0,031 (kém hơn, NFC không cứu); đổi kiểu dấu: không khác.
+
+**G1.6** (42 câu có đoạn đúng thuộc tập số chính, dev + test): thiếu ở pool 11 · rơi khỏi top-10 8 · rơi khỏi 5 đoạn 6 ·
+đủ tới bước trả lời 17. Câu từ chối nhầm trong tập này: 16, tất cả thiếu fact trong context (pool 7 / top-10 4 / 5 đoạn 5).
+
+\* như mục 4: với runtime, "sparse" = đoạn BM25 > 0 trong tập dense.
