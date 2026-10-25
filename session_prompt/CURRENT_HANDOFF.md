@@ -112,6 +112,45 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 
 ## Việc đang mở
 
+### Sửa code theo `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` (User duyệt 19:4x 25/10)
+
+**User 19:4x:** (1) đồng ý 5 gói; (2) gỡ code không còn dùng **nếu gỡ không ảnh hưởng hoạt động hệ thống**; (3) guide 0–4: thêm dòng lịch
+sử; (4) public / private: theo đề xuất A — từ giờ đưa nội dung kho + đường dẫn dự án khác ra khỏi file tracked, **không** xóa lịch sử git.
+
+**Thứ tự (A 19:44, sửa đề xuất §3):** sửa trên `main`; **B1 giữ ở `p82-b1`** — spec 8.2 B1 bước 3 chỉ commit B1 sau B0 (User đọc cặp mù),
+merge trước là đổi chatbot (context 10) trước hạn. Khi chạy lại 8.2: rebase `p82-b1` + chạy lại T1–T2 (free).
+
+**Luật chung mọi gói:** A commit + push `main` **trước** khi B / C sửa code (User 18:3x); khai báo file trong `STATUS_<X>.md` trước khi sửa;
+skill `practical-project-coding`; test liệt kê file, không `--env-file` trừ khi mục ghi; bằng chứng đường thật; report
+`report_agent/2026-10-25_ra_soat_code/sua_<gói>_implementation.md`; review chéo (người kia); A commit. Paid: ≤ **0,05 USD** cộng dồn cho mọi
+lần gọi API thật kiểm gói 1–5 (mỗi lần 1–3 câu, ghi token + tiền); 3c ước riêng, hỏi User. Gỡ code: chứng minh 0 nơi gọi (grep cả CLI,
+notebook, harness, test) + test + đường thật trước / sau giống nhau. Dừng khi: đường thật đổi ngoài dự kiến; phải đụng file người kia đang
+khai báo; vượt tiền.
+
+**Đợt 1 (song song, file không chồng):**
+
+- **C — C35: gói 1a (C-09 citation `[Nguồn n]`)** · file: `backend/llm/citations.py`, `backend/tests/test_citations.py` (chỉ hai file này;
+  cần thêm ⇒ nhắn A). Làm: validator nhận `[n]` và `[Nguồn n]` (hoa / thường, khoảng trắng), text trả về đổi `[Nguồn n]` → `[n]` để UI
+  (`frontend/app.js` chỉ tách `[n]`) giữ nguyên. **Không** đổi prompt / nhãn context (đó là thí nghiệm). Tiêu chí: (1) offline trên mọi file
+  đã sinh (7B Run 1 / 2, G2.0, G2.1a, G2.4, G2.1b, B1): câu vốn đạt ⇒ 0 câu thành lỗi, tập nguồn trích không đổi; lỗi còn lại chỉ loại "không
+  ngoặc số"; (2) test mới cho `[Nguồn 2]`, trộn `[1]` + `[Nguồn 2]`, fallback có `[Nguồn n]` vẫn lỗi; pytest `test_citations.py`,
+  `test_full_corpus_context.py`, `test_full_corpus_eval.py` đạt; (3) API thật (`uv run --env-file`) 1–3 câu tự viết (không Golden): 200,
+  `sources` khớp marker. Report ghi rõ: định nghĩa "lỗi citation" của evaluator đổi từ commit này ⇒ số cũ không so trực tiếp (tính lại ở 3c,
+  ra file mới, không ghi đè G0.6). Review: B.
+- **B — B26: gói 4 (tài liệu)** · file: `guides/phase_0`–`phase_4*.md`, `guides/README.md`, `guides/phase_7*.md`, `guides/phase_8*.md`, guide
+  có lệch nhỏ ở C-13, `guides/llm_rag_reference_for_hue_rag.md` (đường dẫn), `guides/full_corpus_rag.md` (mục build lại), `notebooks/06*`,
+  `notebooks/04*`, `notebooks/03*` (chữ). Làm: banner lịch sử đầu guide 0–4 (trỏ `full_corpus_rag.md` + `Project_Status.md` §4) + sửa
+  `README.md` (B-16); khối "Hiện hành" guide 7 / 8 (C-12); dòng lệch C-13, C-14, B-21, notebook 03 (B-21); mục "Build lại index khi corpus đổi"
+  (B-18, gồm giới hạn huydang 256 — R2); thay 48 đường dẫn tuyệt đối tới repo khác bằng mô tả chung (B-19; thông tin cần giữ ⇒ `data/`).
+  **Để sau 1b:** lệnh chạy API / build / pytest (B-17) — phụ thuộc quy ước import. Không sửa code. Notebook: outputs rỗng, Run All trên bản tạm.
+  Tiêu chí: số đường dẫn / tên file chết ngoài đoạn có nhãn lịch sử: trước (phase_1 4, phase_2 4, phase_3 10, phase_4 5, + guide 7 / 8) ⇒ 0
+  (script đếm, chạy trước / sau); 0 đường dẫn `/home/<user>/<repo khác>` trong `guides/`. Review: C.
+
+**Đợt 2 (sau đợt 1):** gói 1b (B-01 / C-01 + C-11 + tách lỗi "model không nạp" khỏi 409) — B viết plan so 2 quy ước import (đếm file / lệnh
+phải đổi, `sys.modules`, T1 giống byte) ⇒ C review ⇒ A duyệt sha; rồi B-17. Gói 3a / 3b (C-02, C-20, C-03) — C.
+**Đợt 3:** gói 2 + 5 + B-12 (file conditions + chuỗi test ra chỗ private) cùng một lần sửa chunker / build; gỡ code không dùng (C-05, C-19
+Phase 5, C-10, C-06 `minilm`, C-07, C-04…) theo luật (2) của User. **3c:** sau 1a, A ước tiền ⇒ hỏi User.
+
 ### Rà code các Phase trước (User 16:5x 25/10: dừng 8.2, rà code trước khi đi tiếp)
 
 User hỏi về **code** (file, folder, guide của các Phase), không phải dữ liệu kho (C32 là A hiểu nhầm — giữ làm hồ sơ).
