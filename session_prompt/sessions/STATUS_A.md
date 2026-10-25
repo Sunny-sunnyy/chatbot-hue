@@ -4,7 +4,7 @@ Terminal: `hue-rag-00` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 liên lạc trực tiếp; tên đổi mỗi lần mở).
 
 ## Commit
-- Đầu phiên: `f26485b`. Phiên: `5e6936b` (spec 8.2), `f4353e2`, `bc568f1` (dừng 8.2), + commit kết phiên (`git log -1`).
+- Đầu phiên: `f26485b`. Phiên: `5e6936b` (spec 8.2), `f4353e2`, `bc568f1` (dừng 8.2), + `3b6b89d` (kết phiên).
 - Nhánh `p82-b1` (`f23d396`, đã push): code B1, chưa merge.
 
 ## Đang làm / dở
