@@ -43,8 +43,9 @@ bảng từng quyết định `phase_8_1_g5_decision_table_draft.md` (bảng ch�
 
 1. Quyền phiên (điều phối rộng, trần tiền ≤ 1 USD?).
 2. Phạm vi 8.2 (brainstorm): mục nào làm, thứ tự; cách dùng nhận xét của User thay chấm tay.
-3. Kho tự mâu thuẫn (B14): `travel/places/Đèo Hải Vân.md:84` (miễn phí từ 01/08/2024) vs phí 70.000 ở
-   `travel/tickets/Vé tham quan Hải Vân Quan.md` — sửa khi build lại index ở 8.2; User biết thông tin đúng thì báo.
+3. ~~Kho tự mâu thuẫn Hải Vân (B14)~~ — **sửa 16:40 (C32):** không phải mâu thuẫn thời gian; file đèo :86–88 cũng có mốc thu
+   phí mới. Rủi ro còn: chunk chứa :84 (miễn phí cũ) mà thiếu :86. Rà kho C32: **139 mục** (mâu thuẫn chắc 22, …) trong
+   `data/ra_soat_kho_2026-10-25/danh_sach.md` — đầu vào đợt build lại index (không sửa ở 8.2).
 4. Tên dự án khác còn trong 15 file đã commit + lịch sử git (repo public) — A đề xuất để nguyên; gỡ khỏi lịch sử là thao tác
    phá hủy, chỉ khi User yêu cầu.
 5. 3 câu kín A đã thấy: giữ (ghi chú khi mở) hay thay bằng câu mới (sub-agent mới) trước khi mở — quyết ở 8.2.
@@ -90,9 +91,16 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   (`docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`); B22 review 3 vòng ready
   (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_spec_review.md`). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/`.
   Tiền 8.2: trần 0,5 USD; đã dùng 0.
-- **A — B0 chuẩn bị đọc cặp mù** (spec §3.3–3.4, §5 B0): script + file private `data/phase_8_2/b0/`; 0 USD. Người kiểm: B hoặc C
-  (kiểm mù bằng code) trước khi đưa User.
-- **B — B23: Bước 1 context 10 + NFC** (spec §5 B1, §3.2, §4) · Giao 16:2x.
+- **A — B0 chuẩn bị đọc cặp mù** (spec §3.3–3.4, §5 B0): xong 16:24 — 20 câu, kiểm mù đạt; report
+  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b0_prep_implementation.md`; file private `data/phase_8_2/b0/`. B24 review 2 vòng
+  ready (`phase_8_2_b0_prep_review.md`); **đưa User 16:4x** — file ghi nhận xét `data/phase_8_2/b0/nhan_xet_user.md` (bản sao của
+  `doc_cap_mu.md` sha `37b66efb3499`). Chờ User đọc ⇒ sub-agent mới tóm nhãn ⇒ A ghép khóa ⇒ luật dừng §3.4.
+- **B — B24: review B0 prep (chỉ đọc, 0 USD)** · Theo mục 6 của report B0; đầu ra `phase_8_2_b0_prep_review.md` (không chép câu
+  hỏi / câu trả lời). Làm sau khi gửi plan B23.
+  **Trạng thái 16:29 (B):** xong — `changes_requested`: F1 major (câu 17: `[Nguồn n]` không được đánh số lại ⇒ lộ bên context 10), F2 / F3 minor.
+  **Vòng 2 16:32 (B):** F1 đóng (`doc_cap_mu.md` `37b66efb3499`) ⇒ **ready_for_user_confirmation**.
+- **B — B23: Bước 1 context 10 + NFC** (spec §5 B1, §3.2, §4) · Giao 16:2x. **Plan duyệt 16:27** (A, sha `1a5ac660bd5d`,
+  review `phase_8_2_b1_plan_review.md`: NFC đầu `search`; T5 theo cách hiểu B; minor a / b) ⇒ B sửa code + chạy.
   - **Trước tiên** viết plan ngắn `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_plan.md`: đầu file mục "Căn cứ để review"
     (2–4 file); chỗ đặt NFC (một chỗ API + evaluator cùng đi qua) và lý do; file sửa; lệnh chạy; tiêu chí B1.2 chép đúng spec
     (158 câu byte `cefb2d1a…`; 176 / 176 `top_chunk_ids`, `context_sources`, `input_tokens` = G2.1a; judge chấm lại G2.1a cùng lượt
@@ -103,7 +111,12 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
     Qdrant chỉ đọc; không commit (A commit); không mở câu kín. Khai báo file trong `STATUS_B.md`.
   - **Dừng:** một tiêu chí B1.2 lệch ⇒ dừng, tìm nguyên nhân, báo A (không sửa tiêu chí).
   - **Đầu ra:** `phase_8_2_b1_implementation.md` (khuôn implementation), trạng thái "chờ review", nhắn A. Người kiểm: A (C đang C32).
+  - **Trạng thái 16:27 (B):** plan `phase_8_2_b1_plan.md` (sha `1a5ac660bd5d`) gửi A — chờ A duyệt sha; chưa sửa code.
+- **C32 xong + A review ready 16:40** (`report_agent/2026-10-25_ra_soat_noi_dung_kho/ra_soat_kho_review.md`); chờ User xem. C: chờ việc.
 - **C — C32: rà nội dung kho (chỉ đọc, 0 USD)** · User duyệt 16:1x 25/10. Đợt `report_agent/2026-10-25_ra_soat_noi_dung_kho/`.
+  - **Trạng thái (C, 16:38 25/10): chờ review A.** 205/205 file; 139 mục; tự kiểm 42/42; report
+    `ra_soat_kho_implementation.md`; 2 phát hiện cho A ở §4 (mẫu Hải Vân không phải mâu thuẫn thời gian; file inventory
+    `performing_arts` tự ghi phải loại khỏi ingestion nhưng đang trong index).
   - **Mục tiêu:** danh sách chỗ kho **tự mâu thuẫn** (cùng thực thể, khác giá / giờ / năm / địa chỉ / số liệu giữa hai file hoặc
     trong một file — mẫu: vé Hải Vân, `CURRENT_HANDOFF` "Câu hỏi" mục 3) và **thông tin có thể đã cũ** (giá / giờ gắn năm cũ, "hiện
     nay", "sắp", lịch lễ hội theo năm cụ thể). Để User xem; sửa ở đợt build lại index.

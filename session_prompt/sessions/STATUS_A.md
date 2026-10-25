@@ -10,6 +10,10 @@ liên lạc trực tiếp).
 - Đang làm: nháp spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` bản 1 (sha `2c8d40e3aa4c`); B22 review (giao 16:1x). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` mở. Tiền: 0 USD.
 - Đang khai báo sửa: spec 8.2, `CURRENT_HANDOFF.md`, `report_agent/README.md`, file này.
 
+- Đã học (16:3x): `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở G2) ⇒ code xử lý citation phải bắt cả hai;
+  kiểm mù bằng code phải quét rộng (mọi ngoặc vuông có số), không chỉ đúng regex mình dùng để sửa (B24 F1 bắt được).
+- Spec 8.2 duyệt 16:21 (commit `5e6936b`); B1 plan duyệt 16:27 (sha `1a5ac660bd5d`); B0 prep vòng 2 chờ B kiểm.
+
 ---
 Phần dưới: trạng thái kết phiên chiều 25/10 (terminal cũ `hue-rag-c6`).
 

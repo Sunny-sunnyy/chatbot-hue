@@ -6,7 +6,8 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 ## Trạng thái
 - **B22 xong 16:12 25/10:** review nháp spec 8.2 bản 1 (`2c8d40e3aa4c`) ⇒ **changes_requested**, 4 major (M1 E3 luna đo ở top-10 / pool 30, không phải pool 100; M2 E3 gộp 2 thay đổi; M3 luật dừng 3.4 chưa định nghĩa; M4 mù X/Y lộ qua citation [6]–[10]), 5 minor. File: `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_spec_review.md` (sha `84f5e36fd5f0`). 0 USD. Vòng 2 16:17 (bản `f5fd17418c41`): 9 finding vòng 1 đóng; changes_requested — N1 major (E3a thiếu sàn OOS / mức tụt câu trả lời), m6, m7 (review §7). Vòng 3 16:20 (bản `dabae90b2b60`): N1, m6, m7 đóng ⇒ **ready_for_user_confirmation**, 0 finding mở (review §8, sha `0cbe459212b1`). B22 xong; chờ việc tiếp.
 - (Phiên trước kết 15:27; Phase 8.1 User đóng.)
-- **File đang khai báo sửa: không.**
+- **B23 (đang làm, A giao 16:2x):** Bước 1 8.2 — bước đầu chỉ viết plan. File sửa: `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_plan.md` (mới), file này, dòng B23 của `CURRENT_HANDOFF.md`. Code (sau khi A duyệt plan): `backend/config/settings.yaml`, `backend/core/settings_loader.py`, `backend/tests/test_phase6_settings.py`, `backend/retrieval/full_corpus.py`, `backend/tests/test_full_corpus_retrieval.py`, `backend/experiments/phase_8_2/b1.py` (mới); dữ liệu `data/phase_8_2/b1/`.
+- **File đang khai báo sửa:** như dòng B23.
 - Đang giữ GPU: **không** (G4 dùng 11:50–12:29, đã nhả).
 - **B21 không gửi** (User 15:15: câu hỏi không dấu **ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu). File prompt
   private giữ nguyên (sha `6eb09b4066ca`), C review ready. Đề xuất 8.2 "câu không dấu" của B (G5, báo cáo User) vì vậy không
