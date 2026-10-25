@@ -1,52 +1,74 @@
-# STATUS B — phiên tối 2026-10-25 (mở 18:21 +0700, terminal `hue-rag-c3`; A = `hue-rag-77`, C = `hue-rag-7f`)
+# STATUS B — KẾT PHIÊN tối 2026-10-25 22:28 +0700 (mở 18:21; terminal `hue-rag-c3`; A = `hue-rag-77`, C = `hue-rag-7f`)
 
-## Trạng thái (20:17)
-- **B25 rà code luồng dựng index + nền — XONG 18:39, chờ kiểm chéo** (A "làm đi" 18:2x; 0 USD; 3 sub-agent). Nền rà `main` `1e8cf8f` (code không
-  đổi so `bc568f1`). 21 finding, top 10 chốt; B-01 cao, B-11 cao. File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md`.
-- Sub-agent: SA1 guide 0–2 + README, SA2 guide 3–4 + index `full_corpus_rag.md`, SA3 test + notebook 03/04 (97 passed) ⇒ `data/ra_soat_code/sa{1,2,3}_*.md`
-  (private). B kiểm lại 2–4 khẳng định chính mỗi cái. SA2 có gọi một scroll Qdrant (POST chỉ đọc) ngoài brief "chỉ GET".
-- Chỉ đề xuất, chưa sửa code (User 18:3x).
-- **Kiểm chéo top 5 của C (C-09, C-02, C-01, C-12, C-19) — XONG 18:51** ⇒ `report_agent/2026-10-25_ra_soat_code/kiem_cheo_B.md`:
-  `ready_for_user_confirmation`, 5 / 5 đúng, mức hợp lý, 6 minor bổ sung (R-01…R-06) cho TONG_HOP. Script riêng `/tmp/b25x/`, 0 USD, không `.env`.
-  B khai xung đột lợi ích: C-09 bác nhận định trong report 8.1 G2 do B viết.
-- **B-08 rút** (sai: runtime đã làm nóng e5 lúc khởi động — thấy khi kiểm C-01) ⇒ sửa trong `ra_soat_code_B.md` (sau commit `c272644`).
-- **Review C35 (gói 1a) — XONG 19:56** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1a_review.md`: ready, 0 blocker / major, 2 minor;
-  A đã commit `9e6d371` + `63fec4f`. Script `/tmp/b27/`.
-- **B26 gói 4 (tài liệu) — XONG 20:0x, chờ review C** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_4_implementation.md`. 16 file (13 guide +
-  3 notebook), chưa commit. Đếm ngoài vùng lịch sử 34 ⇒ 1 (roadmap dự kiến); đường dẫn home repo khác 48 ⇒ 0; notebook Run All bản tạm 3 / 3.
-  Private: `data/ra_soat_code/b19_duong_dan_ngoai.md`, `tools/{deadrefs,edit_notebooks}.py`, `b26_deadrefs_{before,after}.txt`. 0 USD.
-- **File đang khai báo sửa:** 16 file B26 (giữ khai báo tới khi review xong / A commit). Chờ A.
-- **Plan gói 1b — XONG 20:1x, chờ C review + A duyệt sha** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_plan.md` (sha `8b36bab7901c`, bản 3).
-  Quy ước (b) đã chọn (A + C). Bản 3 sửa P1, P2, m1–m4; T-C do User chạy `!` (auto mode chặn HF_HOME rỗng). Script đo `data/ra_soat_code/tools/{inventory,dup_modules}.py`. Chưa sửa code.
-- File tạm: `/tmp/b25/`, `/tmp/b25x/`, `/tmp/b26/`, `/tmp/b27/` (script B), `/tmp/b25_sa{1,2,3}/` của sub-agent — xóa khi kết phiên.
+Agent: Claude Opus 5.5 · Vai: thực thi · User: B làm việc trực tiếp với A, xong báo A, chờ A giao.
 
-- **Review gói 3 (C) — XONG 20:46** ⇒ `sua_3_review.md` ready (A commit `47a4e32`).
-- **Gói 1b — XONG 21:3x, chờ review C** ⇒ `report_agent/2026-10-25_ra_soat_code/sua_1b_implementation.md`. 26 file (25 sửa + 1 test mới), chưa commit.
-  K1–K7 đạt: nạp đôi 0 ở 11 điểm vào + pytest; T-A / T-B / T-C đỏ ⇒ xanh (T-C User chạy `!`); 15 file test 198 passed (C-17 không tăng); T1 sha
-  giống byte; notebook 3 / 3; cổng ổn định đạt (~0,0004 USD ước). A cần sửa `chạy_môi_trường.md:10-12`, `BAO_CAO_KHO_DU_LIEU.md:89`, Project_Status §8.
-  A commit `1e4acd0` (+ báo cáo `b60f362`) ⇒ hết khai báo 26 file.
+## Trạng thái kết phiên
+- **File đang khai báo sửa: không.** Không giữ GPU; không server nào chạy (uvicorn port 8011 của cổng 1b đã tắt bằng SIGTERM).
+- Working tree lúc kết phiên đang ở nhánh **`dot3`** của C (C đưa về `main`); B **không** đổi nhánh, không commit. File B chưa commit:
+  `report_agent/2026-10-25_ra_soat_code/ung_vien_cai_tien_B.md` (untracked — A commit khi tiện) + file này.
+- **Phiên sau B làm đầu tiên:** review **toàn nhánh `dot3`** (đợt 3 của C, plan `sua_dot3_plan.md` bản 3 sha `7c8c660558e5`, B review ready §7) khi C báo
+  xong — theo `risk-gated-agent-review`, không đọc `STATUS_C`; trọng tâm D1 (sha đoạn toàn kho), D2 (T1 `cefb2d1ad609`), D3 (chuỗi gửi model), D8
+  (`git ls-files knowledge-base-hue` rỗng), T-C (User chạy `!`).
 
-- **Review plan đợt 3 (C) — XONG 21:36** sha `8bbe98640c80` ⇒ `sua_dot3_plan_review.md`: changes_requested (M-1 `git mv` sang `meta/` đưa file vào index; m-1…m-6).
+## Việc đã xong phiên tối (đều 0 USD trừ ghi chú)
+| Việc | Kết quả | File |
+|---|---|---|
+| B25 rà code dựng index + nền | 21 finding (B-08 rút sau); top 10; 3 sub-agent | `ra_soat_code_B.md` |
+| Kiểm chéo top 5 của C | ready; 6 minor R-01…R-06; khai xung đột lợi ích (C-09 bác report G2 của B) | `kiem_cheo_B.md` |
+| Sửa B25 theo kiểm chéo của C | R1–R4 đồng ý (B-11 vừa, B-17 thấp…) | `ra_soat_code_B.md` |
+| Review C35 gói 1a (citation `[Nguồn n]`) | ready; 1.600 câu 69 → 14, 0 câu đạt thành lỗi | `sua_1a_review.md` |
+| B26 gói 4 (tài liệu) + sửa m1–m4 (m3 phản biện đúng) | 16 file; đường dẫn chết ngoài vùng lịch sử 34 → 1; đường dẫn home repo khác 48 → 0; notebook 3 / 3 | `sua_4_implementation.md` (A commit `1b9c126`) |
+| Plan gói 1b (3 bản) | quy ước (b) import trần; C review ready; A duyệt `8b36bab7901c` | `sua_1b_plan.md` |
+| Review gói 3 (C, 3a / 3b) | ready; so cặp giống byte 5 cặp; chuỗi gửi model giống 25 / 25 | `sua_3_review.md` (A commit `47a4e32`) |
+| **Gói 1b (sửa code)** | K1–K7 đạt: nạp đôi 0 ở 11 điểm vào + pytest; T-A / T-B / T-C đỏ → xanh; 198 passed (C-17 không tăng); T1 giống byte; cổng ổn định đạt | `sua_1b_implementation.md` (A commit `1e4acd0`, báo cáo `b60f362`) |
+| Review plan đợt 3 (C) | bản 1 changes_requested (M-1 `git mv`); bản 3 ready | `sua_dot3_plan_review.md` |
+| Ứng viên cải tiến khâu dựng kho | 10 dòng; QB1–QB4 A ghép vào yêu cầu ChatGPT (câu 7–10); QB5 / #6 chờ User | `ung_vien_cai_tien_B.md` |
 
-- **Đang làm (21:5x): ứng viên cải tiến khâu dựng kho** ⇒ `report_agent/2026-10-25_ra_soat_code/ung_vien_cai_tien_B.md` (mới). Chỉ đọc, 0 USD.
+## Dở / chờ
+- Review nhánh `dot3` (khi C xong đợt 3) — việc đầu phiên sau.
+- Việc cũ còn chờ B (từ phiên chiều): review plan E1 của C khi 8.2 chạy lại (plan đổi sha theo C-02 / C-09 / `paired_stats`).
+- Rebase `p82-b1` sau 1b: theo `sua_1b_plan.md` §6 (xung đột khối import `retrieval/full_corpus.py`, import `test_full_corpus_retrieval.py`, comment
+  `b1.py:23`, chạy lại T1–T2 của B1) — khi 8.2 chạy lại; B là người làm B1.
 
-## Ý cải tiến (cho đợt tìm hướng tốt hơn sau 5 gói — giả thuyết, chưa đo)
-- Chia đoạn: bỏ ràng buộc tokenizer huydang 256 (model không chạy ở runtime) ⇒ đoạn dài hơn / ít đoạn vụn; 8.1 G3 H1 đã đo đoạn đúng không đổi —
-  cần đo Completeness câu nhiều nguồn (giống lợi ích context 10).
-- Khởi động API: nạp e5 2,45 s + chia lại / hash kho — đo thời gian khởi động thật để biết có cần tối ưu không (hiện chưa có số qua `create_app`).
-- Build lại index: cách *đích mới rồi cutover* cần tên collection / đường sparse state lấy từ settings thay hằng (B-06) — làm cùng đợt build lại.
-- Đánh giá: điểm judge đang chấm cả câu mà API trả 500 — tách chỉ số "trải nghiệm người dùng" (câu lỗi = 0 điểm) bên cạnh điểm judge.
+## Tiền paid phiên tối
+- Gói 1b cổng ổn định: 2 lượt `gpt-6-luna` ≈ **0,0004 USD (ước — route không log usage)**. Còn lại 0 USD (review / rà / tài liệu; sub-agent quota).
 
-## Đã học / bẫy gặp (phiên tối 25/10)
-- 25/10 20:3x: auto mode chặn lệnh chạy Python với `HF_HOME` trỏ thư mục rỗng (thử model không nạp) — chặn cả B lẫn C ⇒ không thử lại / đổi
-  cách; ghi lệnh vào plan để User chạy `!`, tách test đó ra file riêng để pytest của B không chạy nó.
-- 25/10 tối: B ghi "`scripts/` không tồn tại" vì chỉ tìm ở gốc repo — mục việc ghi đường dẫn tương đối ⇒ `find . -name <tên> -not -path './.venv/*'` trước khi kết luận "không có".
-- 25/10 tối: B-04 phiên chiều khẳng định "chunker đã fail-closed" khi chưa đọc chunker ⇒ không ghi khẳng định về code chưa đọc; ghi "chưa kiểm".
-- 25/10 tối: B-08 đo "câu đầu chậm" bằng script tự nạp model, không qua đường khởi động thật (đã có warm-up) ⇒ đo hiệu năng phải đi đúng
-  đường production (`create_app` / `build_full_corpus_retrieval_service`), không dựng lại từng bước.
-- 25/10 tối: sub-agent SA2 gọi scroll Qdrant bằng POST (chỉ đọc) trong khi brief ghi "GET thì được" ⇒ brief nêu rõ "chỉ GET; POST scroll /
-  query cũng không" hoặc cho phép rõ POST chỉ đọc nếu cần.
-- 25/10 tối: B dùng `python3` hệ thống để sửa text STATUS_B (vi phạm §10 / bài học cũ) ⇒ sửa file bằng Edit, mọi Python bằng `uv run`.
+## Câu hỏi cho A / User
+- #6 ứng viên (dense local `bge-m3` / `Qwen3-Embedding-0.6B`): model mới — A hỏi User trong tài liệu thiết kế (A 22:0x).
+- QB5 (tra nguồn cho 22 mâu thuẫn kho qua ChatGPT): đưa dữ liệu kho ra ngoài — User duyệt riêng, để đợt build lại (A 22:0x).
+- Route API không ghi usage token ⇒ mọi cổng ổn định chỉ ước được tiền (trùng ý C #5) — có làm ở gói sau không?
+
+## File tạm / private
+- Thư mục tạm `/tmp/b25*`…`/tmp/b31` (script B, sub-agent) **đã xóa 22:3x** — script cần dùng lại đã chép vào `data/ra_soat_code/tools/`.
+- Private dùng lại (không commit): `data/ra_soat_code/` — `sa{1,2,3}_*.md`, `b19_duong_dan_ngoai.md`, `b26_deadrefs_{before,after}.txt`,
+  `b1b_pytest_before.txt`, `b1b_tc_{before,after}.txt`, `tools/{deadrefs,edit_notebooks,inventory,dup_modules}.py`.
+
+## Ý cải tiến (giả thuyết, chưa đo — đã đưa vào `ung_vien_cai_tien_B.md` #4, #9, #7, #10)
+- Bỏ ràng buộc tokenizer huydang 256 khi build lại (đo thêm Completeness câu nhiều nguồn).
+- Đo thời gian khởi động API thật qua `create_app`.
+- Build lại không ngừng phục vụ: tên collection / sparse state từ settings (B-06) + cutover + snapshot.
+- Chỉ số "trải nghiệm người dùng": câu API trả lỗi = 0 điểm, báo cạnh điểm judge.
+
+## Đã học / bẫy gặp (phiên tối 25/10 — đầu vào vòng cải tiến)
+- **Auto mode chặn lệnh dùng `HF_HOME` rỗng** (thử "model không nạp") ở cả B lẫn C ⇒ không thử lại / đổi cách; tách test ra file riêng, ghi lệnh vào plan,
+  User chạy `!` trong terminal B (trước / sau sửa). Pytest của B liệt kê file, không gồm file đó.
+- **`git mv` sang thư mục bị gitignore vẫn đưa file vào index** (thử repo tạm) ⇒ chuyển dữ liệu private ra khỏi repo: `cp` + `git rm`, kiểm
+  `git ls-files <thư mục private>` rỗng; hook pre-commit chỉ là lưới cuối.
+- **Regex lồng `(...)+?` với backreference treo Python** (script đổi import, timeout 120 s) ⇒ dừng task, kiểm phần đã ghi (5 file đúng), viết lại bản duyệt
+  theo dòng; script sửa code hàng loạt luôn có assert "không đổi nghĩa" (thân `try` bỏ `backend.` = thân `except`) và giữ chuỗi định danh dữ liệu
+  (`"backend.scoring.bm25.tokenize:v1"`).
+- B ghi "`scripts/` không tồn tại" vì chỉ tìm ở gốc repo ⇒ `find . -name <tên> -not -path './.venv/*'` trước khi kết luận "không có".
+- Khẳng định về code chưa đọc (B-04 "chunker đã fail-closed") sai ⇒ chỉ khẳng định sau khi đọc; ghi "chưa kiểm".
+- Đo hiệu năng bằng script tự nạp model (B-08) sai vì bỏ qua warm-up thật ⇒ đo qua đường production (`create_app` / service builder).
+- Sub-agent gọi scroll Qdrant bằng POST khi brief ghi "GET thì được" ⇒ brief nêu rõ "chỉ GET" hoặc cho phép POST chỉ đọc.
+- B dùng `python3` hệ thống để sửa text (vi phạm §10) ⇒ mọi Python bằng `uv run`.
+- Test viết trước cho mã HTTP phải kiểm **nguyên nhân** (lớp + thông điệp), không chỉ mã — 503 cũng ra khi Qdrant tắt (P2 plan 1b, m-4 plan đợt 3).
+- Đếm "tham chiếu chết" phụ thuộc quy tắc vùng lịch sử ⇒ nhãn phải đọc được bằng máy (banner cố định + `## Hiện hành`), ghi quy tắc trước khi đếm "sau".
+- Báo cáo của mình bị bác (C-09 vs report G2 do B viết) ⇒ khai xung đột lợi ích trong review, quyết bằng số đo.
+
+---
+
+## (Lịch sử) Phiên chiều 25/10 — giữ làm hồ sơ; câu hỏi dưới đã xử lý trong phiên tối (B-01 ⇒ gói 1b quy ước (b))
 
 # STATUS B — kết phiên 2026-10-25 17:07 +0700 (User kết phiên 17:0x; B25 dừng giữa chừng)
 

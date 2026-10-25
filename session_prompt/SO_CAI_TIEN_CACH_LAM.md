@@ -1,6 +1,6 @@
 # Sổ cải tiến cách làm — harness của các session
 
-Cập nhật lần cuối: 17:07 25/10/2026 (A, vòng 3 — kết phiên tối 25/10; đề xuất chờ User duyệt phiên sau). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
+Cập nhật lần cuối: 22:3x 25/10/2026 (A, vòng 4 — kết phiên đêm 25/10; W14–W18 đề xuất chờ User duyệt phiên sau). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
 thay đổi ở luật / skill / rào bằng máy, sinh từ sự cố có bằng chứng hoặc quyết định User; User duyệt cho thử;
 vòng sau xem giữ hay gỡ. Trạng thái: `đề xuất` → `đang thử` → `đang dùng` / `gỡ` / `bác`.
 
@@ -30,6 +30,9 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | I4 | 25/10 chiều | giữ gọn | Dời 4 bẫy kỹ thuật từ STATUS_B ra chung (HF cache `refs` rỗng; HNSW phụ thuộc `limit` + float32; model suy luận ~3× token; chấm baseline cùng lượt) | `Project_Status.md` §8 | đang thử | — |
 | W14 | 25/10 tối | S19 | **Đề xuất:** câu User có nhiều cách hiểu (dữ liệu / code / quyết định / tài liệu) ⇒ A nhắc lại bằng một câu "ý bạn là … đúng không?" trước khi giao việc | `skills/propose-options/SKILL.md` §1 | đề xuất | User duyệt phiên sau |
 | W15 | 25/10 tối | S20 | **Đề xuất:** trước khi stage file session khác viết, A chạy quét nhanh (so 40 ký tự với Golden + `grep` đường dẫn private) — script dùng lại ở `data/tools/` | `WORKFLOW.md` §9.6 + script | đề xuất | User duyệt phiên sau; hay để hook làm? |
+| W16 | 25/10 đêm | S20, S23 | **Đề xuất (thay W15 nếu duyệt):** đưa quét trùng Golden / kho (cửa sổ 40 ký tự, bỏ câu từ chối chuẩn, **exit 1 khi trùng**) vào `.githooks/pre-commit` — chỉ chạy khi file Golden / kho có trên máy (clone public bỏ qua). Rào bằng máy cho mọi agent thay vì A nhớ chạy | `.githooks/pre-commit` + script tracked (không chứa dữ liệu) | đề xuất | User duyệt; đo thời gian hook (hiện quét ~10–30 s) |
+| W17 | 25/10 đêm | S27 | **Đề xuất:** khi một session rảnh (chờ người khác), A giao ngay việc không chồng file (viết plan, review, danh sách ứng viên, đo chỉ đọc) hoặc ghi một dòng lý do để rảnh trong `CURRENT_HANDOFF.md` | `WORKFLOW.md` §9.2 | đề xuất | User có phải hỏi "đang rảnh hả" lần nữa không |
+| W18 | 25/10 đêm | S24 | **Đề xuất:** đề xuất có **thứ tự** việc (merge trước / sửa trước…) ⇒ A đối chiếu spec / plan đã duyệt trước khi trình User (một dòng "khớp spec … §…") | `skills/propose-options/SKILL.md` | đề xuất | — |
 | I1 | 25/10 | S7 (luật chỉ ở memory Claude ⇒ agent khác không thấy) | Dời "nghiên cứu ChatGPT trước khi đề xuất, prompt đầy đủ" từ memory ra luật chung | `Session_Prompt.md` §9 | đang thử | User có phải nhắc lại không |
 | I2 | 25/10 | S3 | Dời "file nhiều session cùng ghi: đọc lại trước khi sửa, sửa từng đoạn" từ STATUS_A ra luật chung | `WORKFLOW.md` §3.2 | đang thử | có lần ghi đè nào không |
 | I3 | 25/10 | S8 | Sửa 2 memory cũ (mô tả "Reviewer/Implementer"; file tên 7A2 giữ trạng thái 8.1) | memory Claude | đang thử | — |
@@ -60,6 +63,15 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | S20 | A stage + commit file của session khác (plan E1 của C) trước khi đọc | 1 (25/10 tối, A) | không (quét sau: chỉ trùng câu từ chối chuẩn) — rủi ro lộ Golden trên repo public | STATUS_A | `WORKFLOW.md` §9.6 "stage từng file đã review" (luật có, A làm sai) ⇒ W15 (đề xuất) | A tự thấy sau commit |
 | S21 | Kiểm mù bằng code dùng **chính regex** đã dùng để sửa ⇒ không thấy dạng `[Nguồn n]` | 1 (25/10 tối, A) | 1 vòng review | `phase_8_2_b0_prep_review.md` F1 | chưa có — ý chờ (bẫy kỹ thuật đã ghi `Project_Status.md` §8) | **review chéo** (B quét rộng) |
 | S22 | Brief sub-agent cấm `*inventory*` theo tên ⇒ bỏ sót 1 file runtime | 1 (25/10 tối, C) | 1 vòng rà bù | `ra_soat_kho_implementation.md` §5 | ý chờ | C tự thấy |
+| S23 | Script quét trùng Golden / kho trước commit luôn exit 0 ⇒ `&& git commit` chạy dù có cờ (cờ là câu từ chối chuẩn, public) | 1 (25/10 đêm, A) | không lộ; suýt không chặn được | STATUS_A 19:59; commit `63fec4f` | script `/tmp/a_scan/overlap.py` đã sửa (exit 1) — tạm, chưa tracked ⇒ W16 | A đọc output sau commit |
+| S24 | A đề xuất "merge B1 trước rồi sửa code" (`DE_XUAT_SUA_CODE.md` §3) trái spec 8.2 (B1 commit sau B0) | 1 (25/10 đêm, A) | không (bắt trước khi giao) | `CURRENT_HANDOFF.md` 19:44 | ⇒ W18 | A đọc lại spec trước khi giao |
+| S25 | Plan dùng `git mv` sang thư mục bị gitignore ⇒ file vẫn vào index (nội dung kho sẽ ở lại repo public) | 1 (25/10 đêm, C plan) | không (B review bắt, thử trên repo tạm) | `sua_dot3_plan_review.md` M-1 | W11 review plan trước duyệt — **có hiệu quả** (cùng phiên: plan 1b P1 / P2 cũng bắt trước khi sửa code) | review chéo plan |
+| S26 | Auto mode chặn lệnh đặt `HF_HOME` rỗng (test thiếu model) ở cả B và C | 2 (25/10 đêm) | ~5 phút | `sua_1b_plan_review.md`; `sua_1b_implementation.md` | luật có (`WORKFLOW.md` §3.6: User `!`) — chạy đúng; tách test ra file riêng giúp User chạy gọn | B / C tự dừng |
+| S27 | C rảnh ~10 phút chờ B mà A không giao việc; User phải hỏi "C và A đang rảnh hả" | 1 (25/10 đêm) | thời gian | hội thoại A 20:5x | chưa có ⇒ W17 | **User hỏi** |
+
+**Kết vòng 4 — 22:3x 25/10 (đêm):** 5 sự cố mới (S23–S27). W11 có bằng chứng hiệu quả (2 plan bị bắt lỗi trước khi sửa code: 1b P1 / P2, đợt 3 M-1);
+W12 không có lần lộ câu kín nào phiên này; hook pre-commit không chặn nhầm. Đề xuất W16 (quét trùng vào hook, thay W15), W17 (session rảnh), W18
+(đối chiếu spec khi đề xuất thứ tự) — cùng W14, W15 chờ User duyệt phiên sau.
 
 **Kết vòng 2 — 15:44 25/10:** 7 sự cố mới (S12–S18), 3 thay đổi `đang thử` + 1 dời bẫy (User duyệt W11 cách a, W12; cho A sửa
 W13). Vòng trước: W1–W10, I1–I3 được dùng trong phiên (sổ, `run-experiment` có tiêu chí ghi trước + cỡ mẫu + nhiễu A/A ở

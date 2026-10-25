@@ -1,6 +1,6 @@
 # TONG_HOP — rà code Phase 0–7 (đợt `2026-10-25_ra_soat_code`)
 
-Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026 (`date`) · trạng thái: **rà + kiểm chéo xong; chờ User chọn gói sửa**.
+Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026, cập nhật 22:3x · trạng thái: **đang mở — gói 1a, 1b, 3, 4 xong; đợt 3 (gói 2 + 5) dở trên nhánh `dot3`**.
 Báo cáo cho User (lời thường, có câu hỏi): `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`. Chưa sửa code (User 18:3x: "tôi đồng ý mới sửa").
 
 ## Mục tiêu
@@ -52,3 +52,24 @@ lại index → gói 4 bất cứ lúc nào. Mỗi gói: commit + push trước 
 ## Bước tiếp
 
 User trả lời 4 câu ở `DE_XUAT_SUA_CODE.md` §4 ⇒ A ghi mục việc từng gói trong `CURRENT_HANDOFF.md`, giao B / C (file không chồng nhau).
+
+## Sửa code (User duyệt 19:4x 25/10: cả 5 gói)
+
+| Gói | Commit | Người làm / review | Kết quả (tiêu chí ghi trước) | Report |
+|---|---|---|---|---|
+| 1a citation `[Nguồn n]` (C-09) | `9e6d371` | C / B | 1.600 câu đã sinh: lỗi 69 → 14, 0 câu đạt bị đổi; 2 câu API thật; PASS | `sua_1a_*` |
+| 4 tài liệu | `1b9c126` | B / C | đường dẫn chết ngoài vùng lịch sử 34 → 1 (thư mục dự kiến Phase 9); đường dẫn dự án khác 48 → 0; 3 notebook Run All | `sua_4_*` |
+| 3a / 3b công cụ đo (C-02, C-20, C-03) | `47a4e32` | C / B | so cặp giống byte trên 5 cặp file thật, chiều đúng; chuỗi gửi model giống byte 25 câu | `sua_3_*` |
+| 3c (phần free) | `47a4e32` (report) | C (A kiểm 2 số) | citation v2 mọi mốc: 8.1 3c `none` +4 → +2 (hết vi phạm — chưa kết luận); A/A context 10 0 vs 0; file `data/ra_soat_code_2026-10-25/citation_v2/` | `sua_3c_citation_v2.md` |
+| 1b import / mã lỗi (B-01 = C-01, C-11) | `1e4acd0` | B / C | module nạp đôi 3–14 → 0 (12 điểm vào); T-A / T-B / T-C đỏ → xanh (T-C: User `!`); 15 file test 196 → 198 đạt; T1 giống byte | `sua_1b_plan*`, `sua_1b_*` |
+| Đợt 3: 2 + 5 + B-12 | nhánh `dot3` (dở) | C / B (review toàn nhánh) | plan bản 3 sha `7c8c660558e5` (B review: M-1 `git mv` vào thư mục ignore vẫn vào index — đã sửa) | `sua_dot3_plan*` |
+
+Cổng ổn định (User 20:0x) chạy sau mỗi gói: `/` 200, `/health` 5 / 5, 1 câu trong kho (marker = sources) + 1 câu ngoài kho (từ chối), log sạch.
+Paid cả đợt ~0,003 USD (phần lớn ước — route chưa log token; ứng viên C #5).
+
+## Chuẩn bị đợt "tìm hướng tốt hơn từng khâu" (User 20:0x)
+
+`ung_vien_cai_tien_C.md` (12 dòng, trả lời + đánh giá), `ung_vien_cai_tien_B.md` (10 dòng, dựng kho). Yêu cầu ChatGPT 10 câu:
+`gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` (private; chưa gửi). Giữ ngoài yêu cầu: QB5 (gửi danh sách mâu thuẫn kho
+ra ngoài — cần User duyệt), B #6 model dense local mới (cần User duyệt). Bước tiếp: kết quả nghiên cứu ⇒ A một tài liệu thiết kế (mốc = hệ thống
+sau 5 gói; ghép spec 8.2) ⇒ User duyệt.

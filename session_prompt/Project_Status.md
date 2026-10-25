@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 16:58` (A, **8.2 tạm dừng** để rà code; chatbot chưa đổi)
+Last updated: `2026-10-25 22:3x` (A, kết phiên đêm: rà code xong, sửa gói 1a / 1b / 3 / 4 vào `main`; đợt 3 dở ở nhánh `dot3`; 8.2 vẫn tạm dừng)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -36,8 +36,13 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 - Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10). User 15:44 25/10: sẽ đọc và nhận xét, **không chấm điểm** tay.
 - Tiền 8.1: 0,1653 USD.
 
-Đang làm: **rà code Phase 0–7** (chỉ đọc; đợt `report_agent/2026-10-25_ra_soat_code/`). **Phase 8.2 tạm dừng** (User 16:5x 25/10) —
-spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` (sha `dabae90b2b60`); B1 ở nhánh `p82-b1`.
+Đang làm: **sửa code sau rà soát Phase 0–7** (User duyệt 5 gói 19:4x 25/10; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`; đợt
+`report_agent/2026-10-25_ra_soat_code/` — `TONG_HOP.md`). Đã vào `main` + cổng ổn định: **1a** `9e6d371` (validator nhận `[Nguồn n]`),
+**4** `1b9c126` (guide / notebook), **3** `47a4e32` (công cụ so cặp, một chỗ dựng tin nhắn), **1b** `1e4acd0` (import trần, mọi lệnh từ
+`backend/`, API 409 / 503 đúng). **Đợt 3** (gói 2 chốt an toàn build + gói 5 dọn code + B-12 đưa nội dung kho ra khỏi file tracked): plan
+`sua_dot3_plan.md` sha `7c8c660558e5` duyệt; C làm trên nhánh **`dot3`** (chưa merge). **Phase 8.2 tạm dừng** (User 16:5x 25/10; spec
+`docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` sha `dabae90b2b60`; B1 ở nhánh `p82-b1`) — chạy lại khi 5 gói xong +
+cổng ổn định đạt (User 20:0x: phase trước ổn định mới sang phase sau). Sau đó: đợt tìm hướng tốt hơn từng khâu (User 20:0x).
 
 ## 3. Bảng Phase
 

@@ -1,98 +1,82 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 18:25 25/10/2026 (A, **mở phiên đêm 25/10** — User: tiếp tục rà code; B25 / C34 làm tiếp). Kết phiên trước 17:09. Cách dùng:
-`WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở; lịch sử phiên ở `PROJECT_HISTORY.md` (mục 25/10 tối).
-Bản handoff đầy đủ trước khi rút gọn lần này: `git show bc568f1:session_prompt/CURRENT_HANDOFF.md`.
+Cập nhật: 22:3x 25/10/2026 (A, **KẾT PHIÊN đêm 25/10** — User tắt máy: "session sau chúng ta sẽ tiếp tục"). Cách dùng: `WORKFLOW.md` §3, §6,
+§7, §9. Chỉ giữ việc đang mở; việc đã xong: `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`, `PROJECT_HISTORY.md` (mục 25/10 22:3x).
+Bản handoff đầy đủ trước khi rút gọn lần này (chi tiết từng mục việc đợt 1–2, rà code B25 / C34): `git show 76ff419:session_prompt/CURRENT_HANDOFF.md`.
 
 ## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
 
-**Hệ thống lúc kết phiên:** `main` (commit cuối: `git log -1`, ghi ở `sessions/STATUS_A.md`). **Chatbot không đổi** (context 5,
-không NFC) — mọi thay đổi 8.2 chưa vào `main`. Qdrant `:6335` còn **1** collection `hue_full_corpus_7a2_e5_small_384` (8.459).
-Nhánh **`p82-b1`** (`f23d396`, đã push): code Bước 1 của 8.2 (context 10 + NFC), **chưa A review, chưa merge**. Repo `chatbot-hue`
-**PUBLIC** (hook `.githooks/pre-commit`). File untracked `báo cáo nghiên cứu github.txt` ở gốc: của User cho Phase 9 — **không đụng**.
+**Hệ thống lúc kết phiên:** `main` (commit cuối `git log -1 main`). Chatbot **đã đổi** so với đầu phiên (đều đã review chéo + cổng ổn định):
+validator nhận `[Nguồn n]` (`9e6d371`); import trần — **mọi lệnh chạy từ `backend/`** (`1e4acd0`), API 409 = cần dựng lại chỉ mục, 503 = Qdrant /
+model lỗi tạm. Vẫn context 5, chưa NFC. Qdrant `:6335` còn **1** collection `hue_full_corpus_7a2_e5_small_384` (8.459). Repo `chatbot-hue`
+**PUBLIC** (hook `.githooks/pre-commit`). File untracked `báo cáo nghiên cứu github.txt` ở gốc: của User (Phase 9) — **không đụng**.
 
-**Đang ở đâu (3 mạch việc):**
+**Nhánh đang mở:**
+- **`dot3`** (C, đã push, `5e237bb`): đợt 3 sửa code — **3 / 12 commit** (C-21 `4f8c71c`, B-11 `749459d`, B-04 `5e237bb`); chưa review, chưa merge.
+- **`p82-b1`** (`f23d396`): B1 của 8.2 (context 10 + NFC) — chưa review, chưa merge; dựng trên `main` cũ ⇒ rebase theo `sua_1b_plan.md` §6.
 
-1. **Rà code Phase 0–7 — RÀ + KIỂM CHÉO XONG 18:55, chờ User chọn gói sửa** (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md` §4; tổng hợp
-   `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`). Chưa sửa code: User 18:3x "tôi đồng ý mới sửa". Đoạn dưới là bối cảnh lúc kết phiên trước.
-   (User 16:5x: "dừng 8.2, rà code trước khi bắt đầu phase mới"). User hỏi về **code**
-   (file, folder, guide), **không phải dữ liệu kho**. Đợt `report_agent/2026-10-25_ra_soat_code/`. B25 (luồng dựng index + nền) và
-   C34 (luồng trả lời + đánh giá) chỉ đọc, 0 USD; mỗi bên lưu phần dở trong `ra_soat_code_<B|C>.md` (đầu file ghi đã rà / chưa rà).
-   Tiêu chí, khuôn finding, phạm vi: mục "Việc đang mở" dưới.
-   **Phát hiện sớm (tạm, chưa kiểm chéo):** B-01 = C-01 (B và C **tìm độc lập**): API nạp `core.schema` hai lần (`core.*` và
-   `backend.*`) ⇒ bắt hụt lớp lỗi retrieval — Qdrant lỗi khi hỏi ra 500 thay 503; index cũ lúc khởi động ra 503 thay 409 (C chứng minh
-   danh tính lớp bằng script `data/ra_soat_code_2026-10-25/tools/`; tác động HTTP suy ra từ code, chưa tái tạo bằng lỗi thật). Gốc:
-   `ingestion/full_corpus_pipeline.py` import `backend.*` + `app.py` chèn gốc repo vào `sys.path`. **C-02:** `g2_generate.paired` không đổi
-   dấu cho `refusal` ⇒ thắng / thua ngược (input nhỏ chứng minh) — **plan E1 §4 / §5 phải sửa** khi 8.2 chạy lại (sha mới). Ai sửa
-   B-01 / C-01: quyết khi User chọn mục sửa (chạm cả hai phạm vi). Sub-agent của B (guide, test / notebook) và của C (3 cái) bị dừng,
-   **chưa ra kết quả** ⇒ giao lại.
-2. **Phase 8.2 — TẠM DỪNG** (spec User duyệt 16:21, sha `dabae90b2b60`, `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`):
-   - B0 (mốc người đọc cặp mù): file ready (B24 review 2 vòng) — **User đọc khi tiện**: `data/phase_8_2/b0/nhan_xet_user.md`.
-   - B1 (context 10 + NFC): **B xong, T1–T5 đạt**, 0,0369 USD; report `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_implementation.md`
-     (sha `bb5fea83aeb6`, ở nhánh `p82-b1`) — **chờ A review**. A/A context 10: Completeness đổi 5 / 176 câu (dev chính 2 / 88);
-     lỗi citation B1 12 vs G2.1a 8 (chỉ 2 câu chung) ⇒ nhiễu citation lớn (cần cho E2).
-   - E1 plan (C): `phase_8_2_e1_plan.md` sha `f86240418ca1` — **chờ B review** + **A trả lời Q1–Q3** (plan §10).
-   - E2, E3a, E3b, B3 (câu kín): chưa bắt đầu.
-3. **Rà nội dung kho (C32) — XONG**, A review ready. Là A **hiểu nhầm** câu hỏi của User (User quan tâm code); giữ làm hồ sơ cho đợt build
-   lại index: 139 mục (mâu thuẫn chắc 22 / có thể 53; có thể cũ 4 / 33; khác 5 / 22), danh sách private
-   `data/ra_soat_kho_2026-10-25/danh_sach.md`. Không làm gì thêm trừ khi User yêu cầu.
+**Ba mạch việc:**
+1. **Sửa code sau rà soát (User duyệt 19:4x cả 5 gói) — đang làm.** Xong: 1a, 1b, 3, 4 (+ 3c phần free). **Còn đợt 3** (gói 2 + 5 + B-12) trên
+   `dot3` — mục "Việc đang mở" dưới. Sau đợt 3: cổng ổn định toàn hệ thống ⇒ coi như "Phase trước ổn định".
+2. **Đợt tìm hướng tốt hơn từng khâu (User 20:0x) — chuẩn bị.** Ứng viên `ung_vien_cai_tien_{B,C}.md`; yêu cầu ChatGPT **đã viết, User chưa gửi**:
+   `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` (10 câu). Kết quả ⇒ A **một** tài liệu thiết kế (mốc = hệ thống sau 5 gói;
+   ghép spec 8.2, không viết lại phần đã duyệt) ⇒ User duyệt ⇒ chạy.
+3. **Phase 8.2 — TẠM DỪNG** (spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` sha `dabae90b2b60`). Chạy lại khi 5 gói xong +
+   cổng ổn định đạt (User 20:0x: "phase trước ổn định mới tiếp phase sau"). Điều mới ảnh hưởng 8.2: mục "Phase 8.2" dưới.
 
 **Thứ tự việc phiên sau:**
-
-1. Mở A/B/C bằng `START_SESSION.md`; A `ListAgents`; A **hỏi lại quyền phiên** (§9.8: điều phối rộng, trần tiền).
-2. **Rà code làm tiếp:** B25 / C34 tiếp từ phần dở (đọc đầu file `ra_soat_code_<B|C>.md`) → xong thì **kiểm chéo** (B kiểm top 5 của C,
-   C kiểm top 5 của B, chạy lại bằng chứng) → A tự kiểm 2–3 khẳng định chính, gộp `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`
-   → **trình User chọn sửa gì** (skill `propose-options`). Sửa code là việc rủi ro trung bình: plan + review chéo + test / đường thật.
-3. **Thứ tự giữa sửa code và B1** (hỏi User, câu 3 dưới): B1 sửa `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
-   `backend/retrieval/full_corpus.py`, `backend/tests/test_full_corpus_retrieval.py`, `backend/tests/test_phase6_settings.py`. Sửa code
-   chạm các file đó hoặc đường tìm kiếm / sinh ⇒ sau khi rebase `p82-b1` phải **chạy lại T1–T2** của B1 (free) — không dùng lại bằng
-   chứng cũ khi đầu vào đổi (`Session_Prompt.md` §6).
-4. Chạy lại 8.2 khi User nói: A review B1 → B0 (User đọc ⇒ sub-agent mới tóm nhãn — **không phải B**, B đã thấy khóa ⇒ A ghép khóa
-   ⇒ luật dừng spec §3.4) → merge `p82-b1` + 4 chỗ `bao_cao_he_thong/` → E1 (B review plan, A trả lời Q1–Q3, duyệt sha).
+1. Mở A / B / C bằng `START_SESSION.md`; A `ListAgents`, cập nhật bảng Session; A **hỏi lại quyền phiên** (§9.8); kiểm `git branch --show-current` =
+   `main`, `git log --oneline main..dot3` = 3 commit.
+2. **C:** `git switch dot3` (working tree chung — báo A trước; B chỉ đọc) ⇒ `mkdir -p /tmp/c42` (script `d9.sh` ghi tạm ở đó) ⇒ chạy lại mốc D1 / D2
+   bằng `data/ra_soat_code_2026-10-25/tools/dot3/` trước khi sửa ⇒ commit 4 … 12 theo plan ⇒ report `sua_dot3_implementation.md` (commit trên `dot3`)
+   ⇒ `git switch main` ⇒ nhắn A.
+3. **B:** trong lúc C làm — chờ / việc chỉ đọc A giao (W17); C xong ⇒ **review toàn nhánh `dot3`** (`git log main..dot3`, từng commit; trọng tâm D1 sha
+   đoạn `60591acff422ece6`, D2 T1 `cefb2d1ad609`, D3 chuỗi gửi model 25 câu, D8 `git ls-files knowledge-base-hue` rỗng; T-C nếu cần: User `!` ở terminal B).
+4. **A:** review đạt ⇒ merge fast-forward `dot3` vào `main` + push + 4 chỗ `bao_cao_he_thong/` + `Project_Status.md` ⇒ cổng ổn định trên `main` ⇒ báo
+   User "5 gói xong". Khi User đã gửi ChatGPT: đọc kết quả, WebFetch URL đối chiếu ⇒ tài liệu thiết kế đợt cải tiến.
+5. Rồi mới: 8.2 (A review B1 sau rebase + chạy lại T1–T2 → B0 User đọc → merge → E1 …).
 
 ## Câu hỏi cho User (phiên sau)
 
 1. **Quyền phiên** (điều phối rộng? trần tiền ≤ 1 USD?).
-2. **Rà code:** khi có bảng tổng hợp — sửa mục nào, theo thứ tự nào.
-3. **Thứ tự sửa code ↔ B1:** (a) A review + merge B1 trước (nhỏ, đã đạt; mọi sửa sau đo trên runtime mới) rồi sửa code; hay (b) sửa code
-   trước, rebase B1 và chạy lại T1–T2. A nghiêng (a) — B1 chỉ 5 file nhỏ, đã có bằng chứng; nhưng User đã nói dừng 8.2 nên hỏi.
-4. **Đọc cặp mù (B0):** `data/phase_8_2/b0/nhan_xet_user.md`, 20 câu, ~30–45 phút, khi tiện (cần trước khi giữ context 10 vào chatbot).
-5. Rà kho C32 (139 mục): để đợt build lại index; muốn tra ngoài 69 mục qua ChatGPT thì A viết yêu cầu.
-6. Tên dự án khác còn trong 15 file đã commit + lịch sử git (repo public) — A đề xuất để nguyên; gỡ khỏi lịch sử là phá hủy, chỉ khi User yêu cầu.
-7. 3 câu kín A đã thấy: giữ (spec 8.2 §3.7 báo cả 36 và 33 câu) — đã ghi trong spec, chỉ hỏi nếu User muốn đổi.
-8. **Sổ cải tiến vòng 3** (`session_prompt/SO_CAI_TIEN_CACH_LAM.md`): duyệt / bác **W14** (A nhắc lại ý User một câu khi câu hỏi có
-   nhiều cách hiểu — sau S19 rà kho thay vì rà code) và **W15** (quét file session khác trước khi commit — sau S20).
+2. **Gửi ChatGPT** file yêu cầu nghiên cứu trên (deep research), lưu kết quả vào `gửi chatgpt/<ngày gửi>/kết quả nghiên cứu/`.
+3. **Sổ cải tiến** (`session_prompt/SO_CAI_TIEN_CACH_LAM.md`): duyệt / bác **W14** (nhắc lại ý User khi câu hỏi nhiều nghĩa), **W16** (quét trùng
+   Golden / kho vào hook pre-commit — thay **W15**), **W17** (session rảnh ⇒ A giao việc không chồng file), **W18** (đề xuất có thứ tự ⇒ đối chiếu spec).
+4. **Đọc cặp mù (B0)** khi tiện: `data/phase_8_2/b0/nhan_xet_user.md`, 20 câu, ~30–45 phút — cần trước khi đưa context 10 vào chatbot.
+5. (Sẽ hỏi trong tài liệu thiết kế đợt cải tiến) model dense chạy máy mới (`bge-m3` / `Qwen3-Embedding-0.6B` — ngoài danh sách đã duyệt); gửi danh
+   sách mâu thuẫn kho C32 ra ChatGPT tra nguồn (đưa dữ liệu ra ngoài); xác nhận "suy luận none" trên test (~0,007 USD).
+6. Giữ từ trước (không gấp): rà kho C32 139 mục để đợt build lại index; tên dự án khác trong lịch sử git — để nguyên (gỡ lịch sử là phá hủy);
+   3 câu kín A đã thấy — đã ghi trong spec 8.2 §3.7.
 
 ## Câu hỏi A còn nợ (phiên sau A trả lời, không cần User)
 
-- Plan E1 §10: **Q1** test không đủ câu cho CI 95% — chấp nhận "xác nhận hướng" trên test (lệch `run-experiment` §4)? **Q2** chỉ E1b hay
-  thêm E1a (P1 nguyên văn; Holm cần 5 / 0)? **Q3** số A/A lấy từ report B1 (sau khi A review B1).
-- Ghi chú B (vòng 3 spec): plan E3b thêm mức tụt Completeness / lỗi citation như E3a.
-- C-02 (rà code C34): sửa `paired` cho `refusal` trước khi dùng cho E1; C sửa plan E1 ⇒ sha mới ⇒ B review.
+- Plan E1 (C, `phase_8_2_e1_plan.md` sha `f86240418ca1`) khi 8.2 chạy lại: **phải đổi** sang `paired_stats` + `false_refusal` (gói 3, C-02) và định nghĩa
+  citation mới (1a) ⇒ sha mới ⇒ B review; §10 Q1 (test không đủ câu cho CI — "xác nhận hướng"?), Q2 (E1b hay thêm E1a), Q3 (A/A lấy từ B1 sau khi
+  rebase + chạy lại).
+- E2 (spec 8.2): sau 1a, mốc G2.0 và B1 còn **0** lỗi citation (`sua_3c_citation_v2.md`) ⇒ áp luật bỏ sớm ⇒ có thể NOT RUN — A ghi khi 8.2 chạy lại.
+- Ghi chú B (vòng 3 spec 8.2): plan E3b thêm mức tụt Completeness / lỗi citation như E3a.
 
 ## Session
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code; gộp `TONG_HOP.md` | đang làm — `STATUS_A.md` |
-| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | B26 xong; review gói 3 xong 20:46; **gói 1b xong 21:32, chờ review C** (`sua_1b_implementation.md`) | xem `STATUS_B.md` |
-| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | C35 (1a) đóng 19:59; review B26 + plan 1b xong; **gói 3a / 3b xong 20:37, chờ B review** (`sua_3_implementation.md`); ứng viên cải tiến 20:41; 3c free 20:45 (`sua_3c_citation_v2.md`); plan đợt 3 bản 3 21:50 (`sua_dot3_plan.md` sha `7c8c660558e5`, B kiểm phần sửa) | xem `STATUS_C.md` |
+| A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code + sửa 5 gói; duyệt plan 1b, đợt 3; 4 chỗ báo cáo; yêu cầu ChatGPT; sổ cải tiến vòng 4 | **kết phiên 22:3x** — `STATUS_A.md` |
+| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 22:28** — xong: B25, kiểm chéo, B26, review 1a / 3, gói 1b (`1e4acd0`), review plan đợt 3 (bản 3 ready), `ung_vien_cai_tien_B.md`; **phiên sau: review nhánh `dot3`** khi C xong; ~0,0004 USD | xem `STATUS_B.md` |
+| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 22:29** — xong: C34, kiểm chéo B25, review B26 / plan 1b / gói 1b, C35 gói 1a (`9e6d371`), gói 3 (`47a4e32`), 3c free, ứng viên, plan đợt 3; **đợt 3 DỞ 3 / 12 commit trên `dot3` (`5e237bb`, đã push)** | `STATUS_C.md`; ~0,0016 USD (0,000427 đo + ước cổng) |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
 ## Quyền
 
-- **Thường trực:** A commit/push `origin main`; B/C không commit; duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã
-  duyệt: A tự duyệt, báo sau (User 25/10); Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report;
-  code luôn `uv run` trong `.venv`; thư viện thừa giữ nguyên; luôn thử + so baseline trước khi chọn (User 24/10 20:49).
-- **Phiên đêm 25/10 (User 18:2x) — hết hạn cuối phiên:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên. Việc chính: rà code (0 USD). Trần 8.2: 0,5 USD (trong spec; 8.2 vẫn tạm dừng).
-  **User 18:3x (rà code):** A gộp **báo cáo "nên sửa gì"** cho User; **chỉ sửa code khi User đồng ý** từng mục ("chưa cần sửa vội").
-  Khi sửa: **commit + push trước** mỗi lần sửa code; sau sửa hệ thống phải ổn định; được thử nghiệm / so sánh / đánh giá để chọn cách
-  tốt nhất ở mỗi bước (`run-experiment`), phần sửa đóng gói rõ ràng.
-- Phiên tối 25/10 (User 15:5x): hết hạn — đã dùng 0,0369 USD.
-  Luật kỹ thuật giữ từ phiên trước: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
-- File untracked `báo cáo nghiên cứu github.txt` (gốc repo): của User, dùng cho Phase 9 — **không đụng, không commit**.
-- Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
+- **Thường trực:** A commit/push `origin main`; B/C không commit (trừ khi việc ghi rõ — đợt 3: C commit / push **nhánh `dot3`**); duyệt cho A =
+  duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt: A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền
+  trong report; code luôn `uv run` trong `.venv`; thư viện thừa giữ nguyên; luôn thử + so baseline trước khi chọn (User 24/10 20:49).
+- **Luật User phiên đêm 25/10 (giữ cho tới khi xong việc sửa code):** báo cáo "nên sửa gì" trước, **chỉ sửa khi User đồng ý** (đã đồng ý 5 gói
+  19:4x); **commit + push trước mỗi lần sửa code**; sau sửa hệ thống phải hoạt động bình thường, ổn định, tối ưu, đóng gói đầy đủ (cổng ổn định
+  dưới); được thử nghiệm / so sánh / đánh giá để chọn cách tốt nhất; phase trước ổn định mới sang phase sau.
+- **Phiên đêm 25/10 (User 18:2x) — HẾT HẠN, hỏi lại:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (dùng ~0,003). Trần 8.2: 0,5 USD (spec;
+  đã dùng 0,0369). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
+- Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10).
 
 ## File private quan trọng (không commit)
 
@@ -102,142 +86,62 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | `data/phase_8_1/gold/gold_draft.jsonl` | đoạn đúng 55 câu (40 dev / 15 test) | `bab707b9ab22` |
 | `data/phase_8_1/golden_realism_final.jsonl` | độ tự nhiên 176 câu (82 / 65 / 29) | `0b65d1c138d2` |
 | `knowledge-base-hue/evaluation/phase_8_1/sealed_official.jsonl` | 36 câu kín chính thức — **không đọc** tới mốc cuối 8.2 | md5 `ddc59587b502` |
-| `data/phase_8_1/baseline/g0_6_manifest.json` | manifest khóa G0.6 (hash mọi file mốc) | `9ea480d0d083` |
-| `data/phase_8_1/{g1,g2,g3,g4,g4k}/` | kết quả từng câu của các gate | — |
-| `data/phase_8_1/tools/` | script dùng lại (`make_sealed_official.py`, `select_gold.py`, …) | — |
-| `data/phase_8_1/external_lessons_private.md` | bài học dự án khác của User | — |
-| `data/phase_8_2/b0/` | đọc cặp mù: `doc_cap_mu.md` (`37b66efb3499`), `nhan_xet_user.md` (User ghi), **`khoa.json` chỉ A** (`5b9240842b7b`), `tools/make_pairs.py` | — |
-| `data/phase_8_2/b1/` | kết quả chạy B1 (sinh 176 câu, judge, retrieval, nfd-check) | — |
-| `data/ra_soat_kho_2026-10-25/` | rà kho C32: `danh_sach.md` 139 mục, `sub_g*.md`, `tools/` | — |
+| `data/phase_8_1/baseline/g0_6_manifest.json` | manifest khóa G0.6 (hash mọi file mốc) — kiểm lại 22:3x: không đổi | `9ea480d0d083` |
+| `data/phase_8_1/{g1,g2,g3,g4,g4k}/`, `data/phase_8_1/tools/` | kết quả từng câu các gate; script dùng lại | — |
+| `data/phase_8_2/b0/` | đọc cặp mù: `doc_cap_mu.md` (`37b66efb3499`), `nhan_xet_user.md` (User ghi), **`khoa.json` chỉ A** (`5b9240842b7b`) | — |
+| `data/phase_8_2/b1/` | kết quả chạy B1 | — |
+| `data/ra_soat_kho_2026-10-25/` | rà kho C32: `danh_sach.md` 139 mục | — |
+| `data/ra_soat_code_2026-10-25/citation_v2/` | lỗi citation tính lại theo validator mới, 14 lượt + `summary.json` (3c) | — |
+| `data/ra_soat_code_2026-10-25/tools/` (gồm `dot3/`: D1, D4, D7, D8, D9 + mốc `t1_base.jsonl`, `3b_base.json`), `data/ra_soat_code/` | script + ghi chú rà / sửa code của C / B | — |
+| `data/tools/overlap_scan.py` | quét trùng Golden / kho (cửa sổ 40 ký tự, exit 1 khi trùng) — **chạy trước mỗi commit file người khác viết** | — |
+| `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` | yêu cầu nghiên cứu đợt cải tiến (10 câu) | — |
 
 ## Việc đang mở
 
-### Sửa code theo `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` (User duyệt 19:4x 25/10)
+### Đợt 3 sửa code — gói 2 + gói 5 + B-12 (nhánh `dot3`, C làm, B review)
 
-**User 19:4x:** (1) đồng ý 5 gói; (2) gỡ code không còn dùng **nếu gỡ không ảnh hưởng hoạt động hệ thống**; (3) guide 0–4: thêm dòng lịch
-sử; (4) public / private: theo đề xuất A — từ giờ đưa nội dung kho + đường dẫn dự án khác ra khỏi file tracked, **không** xóa lịch sử git.
+- **Plan duyệt:** `report_agent/2026-10-25_ra_soat_code/sua_dot3_plan.md` bản 3 sha **`7c8c660558e5`** (A 21:53; B review bản 2 changes_requested — M-1
+  `git mv` vào thư mục ignore vẫn vào index — bản 3 B kiểm ready). Review: `sua_dot3_plan_review.md`. A quyết: ghi vào `knowledge-base-hue/meta/` được
+  (= lựa chọn User câu 4); **không** thêm fixture `private_corpus` (§7).
+- **12 commit theo plan:** 1 C-21 ✔ · 2 B-11 ✔ · 3 B-04 ✔ · **4 B-20** (identity + sparse bytes + discovery theo record) · 5 B-12 (`cp` + `git rm`, sao lưu
+  `meta/backup_b12_<ngày>/`, sha bản gốc = bản mới; `git ls-files knowledge-base-hue` rỗng) · 6 gỡ smoke Phase 5 + nhánh `minilm` · 7 gỡ Representation B
+  (+ `make_fits_all_checker`, notebook 06, guide 6) · 8 gỡ code chết nhỏ · 9 test (C-17, C-18) · 10 dọn chunker (B-14, B-15) · 11 kiểm điểm Qdrant một
+  lần (B-02) · 12 chuyển 2 converter ra `data/tools/` (B-13). Gỡ chỉ khi 0 nơi gọi (grep cả CLI, notebook, harness, `p82-b1`) — luật User (2).
+- **Cổng D mỗi nhóm (plan §5):** D1 sha đoạn toàn kho `60591acff422ece6` giống hệt; D2 T1 retrieval `cefb2d1ad609` (158 dòng); D3 chuỗi gửi model 25
+  câu giống byte; D4 15 / 16 file test, lỗi C-17 không tăng (T-C: User `!`); D5 cổng ổn định; D6 0 nơi gọi; D7 số dòng code (trước 8.518); D8 0 chuỗi
+  kho trong file tracked. Paid ≤ 0,003 USD cả đợt (đã ~0,0004).
+- **Lệch plan đã ghi:** test C-21 assert `"target is non-empty"` (lý do dừng thật). B-11 thêm cache kiểm token mỗi tài liệu (chia toàn kho 23,8 s; không
+  cache 50,7 s). Chi tiết dở: `STATUS_C.md`.
+- **Đóng:** C report `sua_dot3_implementation.md` ⇒ B review toàn nhánh ⇒ A merge ff + 4 chỗ báo cáo (`LUONG`, `BAO_CAO_CHIA_DOAN`, `BAO_CAO_KHO_DU_LIEU`
+  / `BAO_CAO_SINH…` nếu hành vi đổi, nhật ký) + `Project_Status.md` + cổng ổn định trên `main`.
 
-**Thứ tự (A 19:44, sửa đề xuất §3):** sửa trên `main`; **B1 giữ ở `p82-b1`** — spec 8.2 B1 bước 3 chỉ commit B1 sau B0 (User đọc cặp mù),
-merge trước là đổi chatbot (context 10) trước hạn. Khi chạy lại 8.2: rebase `p82-b1` + chạy lại T1–T2 (free).
+### Luật chung khi sửa code (User 18:3x, 19:4x, 20:0x)
 
-**Luật chung mọi gói:** A commit + push `main` **trước** khi B / C sửa code (User 18:3x); khai báo file trong `STATUS_<X>.md` trước khi sửa;
-skill `practical-project-coding`; test liệt kê file, không `--env-file` trừ khi mục ghi; bằng chứng đường thật; report
-`report_agent/2026-10-25_ra_soat_code/sua_<gói>_implementation.md`; review chéo (người kia); A commit. Paid: ≤ **0,05 USD** cộng dồn cho mọi
-lần gọi API thật kiểm gói 1–5 (mỗi lần 1–3 câu, ghi token + tiền); 3c ước riêng, hỏi User. Gỡ code: chứng minh 0 nơi gọi (grep cả CLI,
-notebook, harness, test) + test + đường thật trước / sau giống nhau. Dừng khi: đường thật đổi ngoài dự kiến; phải đụng file người kia đang
-khai báo; vượt tiền.
+- A commit + push `main` **trước** khi B / C sửa code; khai báo file trong `STATUS_<X>.md` trước khi sửa; skill `practical-project-coding`; test liệt kê
+  file, không `--env-file` trừ khi mục ghi; report `sua_<gói>_implementation.md`; review chéo (người kia); plan có tiêu chí ghi trước ⇒ session khác
+  review **trước** khi A duyệt sha (§9.1). Dừng khi: đường thật đổi ngoài dự kiến; phải đụng file người kia đang khai báo; vượt tiền.
+- **Cổng ổn định sau mỗi gói:** (1) test các file chạm, lỗi cũ C-17 ghi rõ; (2) chạy thật `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env
+  uvicorn api.app:app --port 8011`: `/` 200, `/health` 5 / 5 ready, 1 câu trong kho (200, marker = `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết,
+  không Golden, body `{"query": …}`; log sạch; tắt server; (3) chạm tìm kiếm / chia đoạn: T1 giống byte, sha đoạn giống hệt; (4) 4 chỗ báo cáo nếu
+  hành vi đổi; (5) quét `data/tools/overlap_scan.py` trước commit; A commit + push.
+- Test cần key OpenAI (không chạy mặc định): `test_api_chat.py` (3 test — C-17 sẽ sửa ở commit 9), `test_openai_full_corpus_generator.py`,
+  `test_phase6_live_smoke.py`. Test thiếu model `tests/test_startup_model_missing.py`: auto mode chặn ⇒ User chạy `!` ở terminal session cần.
 
-**Cổng ổn định sau mỗi gói (User 20:0x: "sửa xong hệ thống vẫn phải hoạt động bình thường, ổn định, tối ưu, đóng gói đầy đủ"; "các phase
-trước ổn định mới tiếp phase sau"):** (1) test liệt kê file của mọi file chạm, không `--env-file`, đạt (lỗi cũ C-17 ghi rõ); (2) **chạy thật**
-`cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8011`: `/` 200, `/health` 5 thành phần ready, 1 câu trong
-kho (200, marker khớp `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết, không Golden; log không lỗi; tắt server; (3) gói chạm tìm kiếm /
-chia đoạn: T1 retrieval giống byte / sha đoạn toàn kho giống hệt; (4) 4 chỗ `bao_cao_he_thong/` nếu hành vi đổi; (5) A commit + push.
-Mốc cổng sau 1a (A 20:0x, `63fec4f`): `/` 200, health 5 / 5 ready, câu trong kho 200 [1][2][3] = sources 1–3 (5,1 s), câu ngoài kho từ chối
-(2,3 s), log sạch. **8.2 chỉ chạy lại khi 5 gói xong + cổng này đạt.**
+### Đợt tìm hướng tốt hơn từng khâu (User 20:0x) — chuẩn bị
 
-**Sau 5 gói — tìm hướng tốt hơn từng khâu (User 20:0x):** "dựa vào kiến thức, tham khảo, trao đổi với B, C xem có thể thử nghiệm, so sánh,
-đánh giá để xem có hướng nào tốt hơn, tối ưu hơn, ổn định hơn; giữ mốc hiện tại làm base; A, B, C được so sánh, thử nghiệm, rồi đưa ra kết
-luận; có thể nhờ ChatGPT nghiên cứu". Cách làm (A 20:09): B / C mỗi bên lập danh sách ứng viên theo khâu (đối chiếu 8.1 decision inventory +
-G5 + spec 8.2 để không lặp cái đã đo) ⇒ A gộp, viết yêu cầu nghiên cứu ChatGPT nếu cần (`Session_Prompt.md` §9) ⇒ **một** tài liệu thiết kế
-(tiêu chí ghi trước theo `run-experiment`, mốc = hệ thống sau 5 gói, trần tiền) ⇒ User duyệt một lần ⇒ chạy. Ghép với spec 8.2 đã duyệt
-(không viết lại phần đã duyệt).
+User: "dựa vào kiến thức, tham khảo, trao đổi với B, C xem có thể thử nghiệm, so sánh, đánh giá để xem có hướng nào tốt hơn, tối ưu hơn, ổn định
+hơn; giữ mốc hiện tại làm base; A, B, C được so sánh, thử nghiệm, rồi đưa ra kết luận; có thể nhờ ChatGPT nghiên cứu".
+- Ứng viên: C 12 dòng (trả lời / đánh giá — top: reasoning `none` xác nhận test ~0,007 USD; bỏ sớm E2; đo bám nguồn bằng code; log usage + độ trễ ở API;
+  đa dạng nguồn / MMR; tách câu so sánh), B 10 dòng (dựng kho — sửa 22 mâu thuẫn chắc rồi build lại; câu hóa hàng bảng; dòng ngữ cảnh tất định; bỏ
+  huydang; trọng số tiêu đề BM25; dense local mới — cần User; build không ngừng phục vụ…). Ước ~0,08–0,09 USD mỗi bên nếu làm phần đầu.
+- Bước: kết quả ChatGPT ⇒ A gộp ⇒ **một** tài liệu thiết kế `docs/superpowers/specs/` (tiêu chí ghi trước `run-experiment`, cỡ mẫu, trần tiền, mốc =
+  hệ thống sau 5 gói) ⇒ session khác review ⇒ User duyệt một lần.
 
-**Đợt 1 (song song, file không chồng):**
+### Phase 8.2 — TẠM DỪNG (User 16:5x 25/10)
 
-- **C — C35: gói 1a (C-09 citation `[Nguồn n]`) — ĐÓNG 19:59** (B review `sua_1a_review.md` ready; commit `9e6d371`; 4 chỗ báo cáo cập nhật) · file: `backend/llm/citations.py`, `backend/tests/test_citations.py` (chỉ hai file này;
-  cần thêm ⇒ nhắn A; **19:5x A duyệt thêm `backend/api/routes/chat.py`** — `normalize_citations` dùng cho cả validator lẫn `ChatResponse.answer`, vì
-  chat.py trả nguyên văn text model). Làm: validator nhận `[n]` và `[Nguồn n]` (hoa / thường, khoảng trắng), text trả về đổi `[Nguồn n]` → `[n]` để UI
-  (`frontend/app.js` chỉ tách `[n]`) giữ nguyên. **Không** đổi prompt / nhãn context (đó là thí nghiệm). Tiêu chí: (1) offline trên mọi file
-  đã sinh (7B Run 1 / 2, G2.0, G2.1a, G2.4, G2.1b, B1): câu vốn đạt ⇒ 0 câu thành lỗi, tập nguồn trích không đổi; lỗi còn lại chỉ loại "không
-  ngoặc số"; (2) test mới cho `[Nguồn 2]`, trộn `[1]` + `[Nguồn 2]`, fallback có `[Nguồn n]` vẫn lỗi; pytest `test_citations.py`,
-  `test_full_corpus_context.py`, `test_full_corpus_eval.py` đạt; (3) API thật (`uv run --env-file`) 1–3 câu tự viết (không Golden): 200,
-  `sources` khớp marker. Report ghi rõ: định nghĩa "lỗi citation" của evaluator đổi từ commit này ⇒ số cũ không so trực tiếp (tính lại ở 3c,
-  ra file mới, không ghi đè G0.6). Review: B.
-  - **Trạng thái (C, 19:52): XONG — chờ B review.** `report_agent/2026-10-25_ra_soat_code/sua_1a_implementation.md`. 4 file (`citations.py`, `chat.py`,
-    `test_citations.py`, `test_api_chat.py` — A duyệt 2 file sau). (1) 1.600 câu đã sinh: lỗi citation 69 → 14, 0 câu đạt thành lỗi, 0 câu đổi tập
-    nguồn, còn lại chỉ "không ngoặc số"; (2) 35 passed + test route mới đạt không cần key; (3) API thật 2 câu tự viết: 200, sources khớp marker,
-    0,000427 USD. Chưa commit.
-- **B — B26: gói 4 (tài liệu)** · file: `guides/phase_0`–`phase_4*.md`, `guides/README.md`, `guides/phase_7*.md`, `guides/phase_8*.md`, guide
-  có lệch nhỏ ở C-13, `guides/llm_rag_reference_for_hue_rag.md` (đường dẫn), `guides/full_corpus_rag.md` (mục build lại), `notebooks/06*`,
-  `notebooks/04*`, `notebooks/03*` (chữ). Làm: banner lịch sử đầu guide 0–4 (trỏ `full_corpus_rag.md` + `Project_Status.md` §4) + sửa
-  `README.md` (B-16); khối "Hiện hành" guide 7 / 8 (C-12); dòng lệch C-13, C-14, B-21, notebook 03 (B-21); mục "Build lại index khi corpus đổi"
-  (B-18, gồm giới hạn huydang 256 — R2); thay 48 đường dẫn tuyệt đối tới repo khác bằng mô tả chung (B-19; thông tin cần giữ ⇒ `data/`).
-  **Để sau 1b:** lệnh chạy API / build / pytest (B-17) — phụ thuộc quy ước import. Không sửa code. Notebook: outputs rỗng, Run All trên bản tạm.
-  Tiêu chí: số đường dẫn / tên file chết ngoài đoạn có nhãn lịch sử: trước (phase_1 4, phase_2 4, phase_3 10, phase_4 5, + guide 7 / 8) ⇒ 0
-  (script đếm, chạy trước / sau); 0 đường dẫn `/home/<user>/<repo khác>` trong `guides/`. Review: C.
-  **Trạng thái 20:0x (B): XONG — chờ review C.** Report `report_agent/2026-10-25_ra_soat_code/sua_4_implementation.md`. 16 file (13 guide + 3 notebook),
-  0 code. Đếm (cùng quy tắc, trước `5d3376f` ⇒ sau): ngoài vùng lịch sử 34 ⇒ 1 (`backend/agentic/` roadmap dự kiến); `/home/<user>/<repo khác>` 48 ⇒ 0.
-  Notebook Run All bản tạm 3 / 3 đạt, repo outputs rỗng. B-17 (lệnh) để sau 1b như giao. 0 USD.
-
-**Đợt 2 — ĐÓNG 21:50:** gói 1b `1e4acd0` (B làm, C review ready; T-C User `!` đỏ ⇒ xanh), gói 3 `47a4e32` (C làm, B review), gói 4 `1b9c126`; 3c phần free xong (`sua_3c_citation_v2.md`). **Đợt 3:** plan `sua_dot3_plan.md` bản 2 `8bbe98640c80` B review **changes_requested** (M-1 `git mv` vào thư mục ignore vẫn vào index) ⇒ C bản 3 ⇒ B kiểm ⇒ A duyệt.
-**Đợt 3 — A DUYỆT plan bản 3 sha `7c8c660558e5` (21:5x; B kiểm phần sửa ready).** C thực hiện trên **nhánh `dot3`** (từ `main` sau commit duyệt),
-**C được commit + push nhánh `dot3`** theo đúng 12 commit / nhóm của plan (quyền ghi rõ cho việc này; không commit `main`, không merge). Mỗi nhóm:
-cổng D của plan trước khi commit. Xong cả nhánh ⇒ B review toàn nhánh (`git log main..dot3`, từng commit) ⇒ A merge fast-forward vào `main` + 4 chỗ báo
-cáo. Trong lúc đó working tree chung ở nhánh `dot3`: B chỉ đọc; A không commit `main` cho tới khi merge.
-**(cũ) Đợt 2 — trạng thái 20:3x:** gói 4 (B26) **ĐÓNG** (C review ready + kiểm lại m1–m4; m3 B đúng — A kiểm `g3_plan:114-115`); plan 1b bản 3 sha `8b36bab7901c` — **A DUYỆT 20:4x** (C review §7 ready) ⇒ B sửa code (thứ tự: viết T-A/T-B/T-C → đỏ trên main [T-C: User `!` ở terminal B] → sửa → xanh → cổng ổn định) — bản 2 **changes_requested** (C: P1 T-A so lớp chat.py không import, P2 T-C xanh giả nếu Qdrant tắt; m1–m4) ⇒ B bản 3; A chọn quy ước **(b) import trần** (C đồng ý); plan 1b `sua_1b_plan.md` sha `aa9bbf3650d6` (bản 2, 20:2x: thêm bảng lệnh phải đổi §4 bước 5; bản 1 `97bf89fc5926`; B đề xuất quy ước (b) import trần) ⇒ **C review** ⇒ A duyệt sha; 3a / 3b (C) tạm dừng tới khi review xong.
-**Đợt 2 (A giao 20:09, song song):** B viết **plan** 1b (chưa sửa code) trong lúc C review B26; C làm 3a / 3b sau review. Gói 1b (B-01 / C-01 + C-11 + tách lỗi "model không nạp" khỏi 409) — B viết plan so 2 quy ước import (đếm file / lệnh
-phải đổi, `sys.modules`, T1 giống byte) ⇒ C review ⇒ A duyệt sha; rồi B-17. Gói 3a / 3b (C-02, C-20, C-03) — C.
-**Đợt 3:** gói 2 (+ **C-21**: `full_corpus_pipeline.build_candidate:170` ghi sparse state chung trước khi kiểm đích sạch `:183-187` ⇒ dời xuống sau kiểm — C 20:16) + 5 + B-12 (file conditions + chuỗi test ra chỗ private) cùng một lần sửa chunker / build; gỡ code không dùng (C-05, C-19
-Phase 5, C-10, C-06 `minilm`, C-07, C-04…) theo luật (2) của User. **3c:** sau 1a, A ước tiền ⇒ hỏi User.
-
-### Rà code các Phase trước (User 16:5x 25/10: dừng 8.2, rà code trước khi đi tiếp)
-
-User hỏi về **code** (file, folder, guide của các Phase), không phải dữ liệu kho (C32 là A hiểu nhầm — giữ làm hồ sơ).
-Đợt `report_agent/2026-10-25_ra_soat_code/`. Chỉ đọc, 0 USD. Rà trên `main` sạch (`f4353e2`; code B1 cất ở nhánh `p82-b1`).
-
-**Chung cho B25 và C34:**
-- **Tiêu chí** (skill `practical-project-coding` + `Session_Prompt.md` §7): (1) code thừa / không còn được gọi / sót Foods-Phase cũ —
-  **chứng minh bằng grep** import + lời gọi (cả gọi động, CLI, notebook, test); (2) dễ đọc, theo được data flow, phức tạp quá nhu cầu
-  (abstraction, wrapper, cấu hình, fallback, validator phòng xa); (3) hằng ẩn, đọc settings sâu, khâu dính; (4) test: bảo vệ hành vi
-  thật hay không, còn mock / stub, test thừa, test paid / ghi Qdrant nằm lẫn; (5) guide / notebook / docstring lệch code đang chạy;
-  (6) hiệu năng (khởi động, độ trễ mỗi câu) — chỉ đo khi cần cho một finding, chạy thật không paid; (7) cơ hội phát triển / so sánh —
-  ghi **giả thuyết**, cách thử (theo `run-experiment`), không kết luận.
-- **Không lặp cái đã biết:** đối chiếu `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_decision_table_draft.md` §4 (khâu dính)
-  và `phase_8_1_decision_inventory.md` §6 (lệch tài liệu–code); trùng thì ghi "đã biết (nguồn)" kèm điều mới nếu có.
-- **Được:** đọc mọi code / test / guide / notebook / `settings.yaml`; chạy test **không paid, không ghi Qdrant** (liệt kê file, không
-  `--deselect` — `Project_Status.md` §8); script đo trong `/tmp`; ≤ 3 sub-agent mỗi session (brief đọc lại trước khi gửi; tự kiểm 2–3
-  khẳng định chính của sub-agent bằng file thật). **Không:** sửa code / test / guide; gọi API trả phí; ghi Qdrant; mở câu kín; chép nội
-  dung kho / Golden vào report.
-- **Mỗi finding:** id (`B-xx` / `C-xx`), khâu, `file:dòng`, loại (1–7), mức (cao / vừa / thấp: tác động × rủi ro khi để nguyên), quan sát
-  (bằng chứng: lệnh grep / test / số đo), *suy ra* tách riêng, đề xuất sửa (nhỏ nhất đủ), cách kiểm khi sửa (đường thật), rủi ro khi sửa.
-  Đầu file: **top 10** theo mức; cuối: phần **không rà được** / chưa chắc.
-- **Đầu ra:** `report_agent/2026-10-25_ra_soat_code/ra_soat_code_<B|C>.md` (tracked — repo public, không nội dung private). Xong nhắn A.
-- **Kiểm chéo:** khi cả hai xong, B kiểm top 5 của C, C kiểm top 5 của B (chạy lại bằng chứng) ⇒ A gộp `TONG_HOP.md`, trình User chọn sửa gì.
-  **18:4x (A):** B25 xong (21 finding). B bắt đầu kiểm chéo **C-09, C-02** (đã ổn định; A đã tự kiểm C-09); 3 mục còn lại của top 5 C
-  giao khi C chốt. A tự kiểm B-11 (checker token chỉ quyết tách, không ghi `errors`) và B-12 (9 selector, 5.324 ký tự) — khớp.
-  Đầu ra kiểm chéo: `report_agent/2026-10-25_ra_soat_code/kiem_cheo_<B|C>.md` (B ghi `kiem_cheo_B.md` = B kiểm C).
-  **18:5x (A):** C34 xong (18 finding). Kiểm chéo đủ: **B kiểm C-09, C-02, C-01 (phần mới), C-12, C-19**; **C kiểm B-11, B-12, B-16, B-20,
-  B-17** (B-01 = C-01 tìm độc lập ⇒ coi như đã kiểm chéo). A sửa `Project_Status.md` §8 (lệnh pytest, danh sách test paid lỗi thời — C báo).
-
-- **B — B25: rà luồng dựng index + nền** · `backend/ingestion/`, `embedding/`, `vectorstore/`, `scoring/`, `core/` (gồm
-  `settings_loader.py`), `scripts/`, `backend/config/settings.yaml`, `pyproject.toml` (dependency không dùng: chỉ ghi — User giữ thư viện
-  thừa), `docker-compose.yml`; test của các phần đó; notebook `03`, `04`; guide `phase_0`–`phase_4`, phần index của
-  `guides/full_corpus_rag.md`, `guides/README.md`.
-  **Trạng thái 18:39 (B): XONG — chờ kiểm chéo.** Rà đủ phạm vi (3 sub-agent: guide 0–2 + README, guide 3–4 + index, test + notebook; B kiểm lại
-  khẳng định chính). 21 finding, top 10 chốt: **B-01 cao** (module nạp hai lần ⇒ API sai mã lỗi), **B-11 cao** (build không chặn đoạn vượt token;
-  test chặn là PASS giả; kho hôm nay 0 / 8.459 vượt), B-12 (repo public chứa nguyên văn kho ở config + test — A / User quyết), B-16–B-18 (guide
-  lệch / thiếu quy trình build lại), B-20 (test không so identity). 6 file test index: 97 passed. 0 USD. `backend/scripts/` **có** (B tìm sai chỗ;
-  C báo) ⇒ B-13. File `report_agent/2026-10-25_ra_soat_code/ra_soat_code_B.md`.
-- **C — C34: rà luồng trả lời + đánh giá** · `backend/retrieval/`, `reranking/`, `llm/`, `api/`, `evaluation/`, `frontend/`; test của các
-  phần đó; notebook `06`; guide `phase_5`–`phase_9`, `llm_rag_reference_for_hue_rag.md`, phần trả lời của `full_corpus_rag.md`;
-  `backend/experiments/phase_8_1/` chỉ hỏi "còn cần giữ / chạy lại được không".
-  - **Trạng thái (C, 18:43 25/10): XONG — chờ kiểm chéo** — `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md` (top 10 đầu file).
-    18 finding (C-15, C-16 gộp vào mục khác): **1 cao** C-09 (validator citation chỉ bắt `[n]`, context gắn `[Nguồn n]` ⇒ 8 / 176 câu ra
-    500; A đã tự kiểm), **3 vừa** C-01 (lớp lỗi nạp hai lần — đã tái tạo index cũ ⇒ 503 thay 409), C-02, C-12 (guide 7 / 8 không có phần hiện
-    hành), còn lại thấp. Có cách đo trước–sau M1–M3 cho C-09. 3 sub-agent, C tự kiểm khẳng định chính. 0 USD.
-  - **Kiểm chéo (C, 18:55): XONG** — `report_agent/2026-10-25_ra_soat_code/kiem_cheo_C.md`: B-11, B-12, B-16, B-20 đúng, B-17 một phần;
-    `ready_for_user_confirmation` + 4 ghi chú minor cho B (R1 B-11 cao → vừa; R2 giới hạn huydang 256; R3 B-12 thêm 2 converter + số test;
-    R4 B-17 có key cũng không có lượt paid — vừa → thấp). 0 USD.
-
-### Phase 8.2 — TẠM DỪNG 16:5x (User)
-
-- Đã xong: spec duyệt (`dabae90b2b60`); B0 file đọc cặp mù ready (User đọc khi tiện: `data/phase_8_2/b0/nhan_xet_user.md`); **B1 xong**
-  (B, T1–T5 đạt, 0,0369 USD — report `phase_8_2_b1_implementation.md` sha `bb5fea83aeb6`, **chưa A review**); code B1 ở nhánh
-  **`p82-b1`** (`f23d396`, đã push, chưa merge main). Plan E1 (C, sha `f86240418ca1`) chờ B review + A trả lời Q1–Q3 (§10 plan).
-- Chạy lại: A review B1 → (B0 xong) → merge `p82-b1` → E1. Tiền 8.2 đã dùng: **0,0369 USD** / 0,5.
-
-
-- Chi tiết từng việc 8.2 đã giao phiên tối 25/10 (B22 review spec, B23 B1, B24 review B0, C32 rà kho, C33 plan E1 — mục tiêu, đọc gì,
-  quyền, tiêu chí): `git show bc568f1:session_prompt/CURRENT_HANDOFF.md` mục "Việc đang mở".
-- Sổ cải tiến `session_prompt/SO_CAI_TIEN_CACH_LAM.md`: W11–W13, I4 `đang thử` (vòng 2); **vòng 3 (17:07): S19–S22, đề xuất W14, W15 chờ
-  User duyệt** (câu hỏi cho User mục 8).
+- Spec `dabae90b2b60`. B0 file đọc cặp mù ready (User đọc khi tiện). **B1** (B, T1–T5 đạt, 0,0369 USD; report `phase_8_2_b1_implementation.md` sha
+  `bb5fea83aeb6` trên nhánh) **chưa A review**; nhánh `p82-b1` phải **rebase** lên `main` mới (xung đột import ở `retrieval/full_corpus.py`, đổi import
+  ở `test_full_corpus_retrieval.py`, comment `b1.py:23` — `sua_1b_plan.md` §6) rồi **chạy lại T1–T2** (không dùng lại bằng chứng cũ).
+- Điều mới từ rà code: lỗi citation đếm theo định nghĩa mới ⇒ A/A context 10 = 0 vs 0 (trước 12 vs 8); E2 có thể NOT RUN; plan E1 đổi sang
+  `paired_stats` (mục "Câu hỏi A còn nợ"). Tiền 8.2: 0,0369 / 0,5 USD.
+- Chi tiết việc 8.2 phiên tối 25/10 (B22, B23, B24, C32, C33): `git show bc568f1:session_prompt/CURRENT_HANDOFF.md`.

@@ -1,23 +1,45 @@
-# STATUS A — cập nhật 18:25 25/10/2026 (phiên đêm 25/10)
+# STATUS A — cập nhật 22:3x 25/10/2026 (KẾT PHIÊN đêm 25/10 — User tắt máy; phiên sau làm tiếp)
 
-Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-c3`, C = `hue-rag-7f` (cả ba Claude Code, trực tiếp).
+Terminal: `hue-rag-77` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-c3`, C = `hue-rag-7f` (cả ba Claude Code, trực tiếp; tên đổi
+mỗi lần mở — `ListAgents`).
 
-## Phiên đêm 25/10
-- Đầu phiên: `1e8cf8f`. Quyền (User 18:2x, hết hạn cuối phiên): tự điều phối B/C rộng; API ≤ 1 USD cả phiên.
-- Việc: User "tiếp tục điều phối review lại file, folder code từ các guide, các phase trước" ⇒ B25 / C34 làm tiếp (18:25) →
-  kiểm chéo top 5 → A tự kiểm 2–3 khẳng định → `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md` → User chọn sửa gì.
-- 8.2 vẫn tạm dừng; review B1 chưa làm. Câu hỏi còn mở cho User: thứ tự sửa code ↔ B1; W14 / W15.
-- 18:57: rà + kiểm chéo xong; A tự kiểm C-09, B-11, B-12, B-19; viết `TONG_HOP.md` + `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`; sửa
-  `Project_Status.md` §8. Chờ User chọn gói (4 câu ở `DE_XUAT_SUA_CODE.md` §4).
-- 19:4x User duyệt 5 gói ⇒ đợt 1: C35 (1a) + B26 (4). A sửa thứ tự: B1 chờ B0 (spec 8.2). 19:59 đóng C35 (commit `9e6d371`), cập nhật
-  4 chỗ báo cáo + nhật ký `2026-10-25_ra_soat_code_va_sua.md`. Paid phiên: 0,000427 USD (C35).
-- 21:50: đóng 4 / 1b / 3 (`1b9c126`, `1e4acd0`, `47a4e32`) + 4 chỗ báo cáo; đợt 3 plan đang sửa (C) sau B review. Nháp yêu cầu ChatGPT:
-  `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25_NHAP.md` (chờ câu hỏi khâu dựng kho của B). Paid phiên ~0,0023 USD.
-- Đang khai báo sửa: `CURRENT_HANDOFF.md`, `STATUS_A.md`, `bao_cao_he_thong/`, `Project_Status.md`.
-- Tiền paid phiên này: ~0,0023 USD (C35 0,000427; cổng ổn định ước).
+## Commit
+- Đầu phiên: `1e8cf8f`. Phiên: `4b96e70` … `b60f362`, `76ff419` (duyệt plan đợt 3) + commit kết phiên (`git log -1 main`).
+- Nhánh **`dot3`** (C, đã push): đợt 3 dở — `git log --oneline main..dot3`. Nhánh `p82-b1` (`f23d396`): B1 8.2, chưa merge.
+
+## Đang làm / dở
+- Đợt 3 trên `dot3` (C làm; B review toàn nhánh; A merge ff + 4 chỗ báo cáo). Việc A phiên sau: xem `CURRENT_HANDOFF.md` "PHIÊN SAU".
+- A còn nợ: viết tài liệu thiết kế đợt "tìm hướng tốt hơn" khi có kết quả ChatGPT; trả lời Q1–Q3 plan E1 khi 8.2 chạy lại (plan E1 phải
+  đổi sang `paired_stats` + `false_refusal`, sha mới); review B1 khi 8.2 chạy lại (rebase lên `main` mới + chạy lại T1–T2).
+
+## Đang khai báo sửa
+- không (kết phiên)
+
+## Vừa xong (phiên đêm 25/10)
+- Rà code xong + kiểm chéo; `DE_XUAT_SUA_CODE.md` (5 gói, 4 câu) → User duyệt 19:4x. A tự kiểm C-09, B-11, B-12, B-19, 3c v2.
+- Đóng gói 1a (`9e6d371`), 4 (`1b9c126`), 3 (`47a4e32`), 1b (`1e4acd0`) — mỗi gói review chéo + cổng ổn định; 4 chỗ báo cáo (`b60f362`).
+- Duyệt plan 1b (`8b36bab7901c`) và plan đợt 3 (`7c8c660558e5`) sau review của session khác.
+- Yêu cầu ChatGPT `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` (10 câu; chưa gửi).
+- Sổ cải tiến vòng 4 (S23–S27; đề xuất W16–W18). Script quét trùng Golden / kho lưu bền: `data/tools/overlap_scan.py` (exit 1 khi trùng).
+
+## Tiền paid phiên này
+- ~0,003 USD (C35 0,000427 đo; còn lại ước từ các lần cổng ổn định ~0,0004 / lần vì route chưa log token).
+
+## Quyền phiên này (User 18:2x, hết hạn cuối phiên)
+- Tự điều phối B/C rộng; API ≤ 1 USD cả phiên. C được commit / push nhánh `dot3` (chỉ cho đợt 3).
+
+## Đã học / bẫy gặp (phiên đêm 25/10)
+- 19:59: script quét trùng trước commit luôn exit 0 ⇒ `&& git commit` chạy dù có cờ (cờ là câu từ chối chuẩn, public — không lộ). Đã sửa:
+  exit 1 khi trùng, bỏ câu từ chối chuẩn; bản bền ở `data/tools/overlap_scan.py` (`/tmp` mất khi tắt máy). ⇒ S23 / W16.
+- 19:4x: đề xuất của A (merge B1 trước) trái spec 8.2 (B1 sau B0) — bắt khi đọc lại spec trước khi giao. ⇒ S24 / W18.
+- 20:5x: C rảnh chờ B, A không giao việc; User hỏi. ⇒ S27 / W17.
+- Plan có tiêu chí ghi trước + review trước duyệt (W11) bắt được lỗi 2 lần (1b P1 / P2; đợt 3 M-1 `git mv`).
+- `POST /api/chat` nhận `{"query": …}` (không phải `question`) — 422 nếu sai tên.
+- Kiểm thật: `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8011` (chạy nền), `/`, `/health`, 2 câu tự viết; tắt
+  bằng TaskStop.
 
 ---
-Phần dưới: trạng thái kết phiên tối 25/10 (terminal `hue-rag-00`).
+Phần dưới: trạng thái kết phiên tối 25/10 (17:07) (terminal `hue-rag-00`).
 
 
 Terminal: `hue-rag-00` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-de`, C = `hue-rag-d6` (cả ba Claude Code,
@@ -46,12 +68,6 @@ liên lạc trực tiếp; tên đổi mỗi lần mở).
 
 ## Quyền phiên này (User 15:5x, hết hạn cuối phiên)
 - Tự điều phối B/C rộng; API ≤ 1 USD cả phiên; trần 8.2 0,5 USD (trong spec).
-
-## Đã học / bẫy gặp (phiên đêm 25/10)
-- 19:59: script quét trùng Golden / kho trước commit luôn exit 0 ⇒ `&& git commit` chạy dù có cờ (cờ là câu từ chối chuẩn, public — không lộ).
-  Đã sửa `/tmp/a_scan/overlap.py`: exit 1 khi trùng, bỏ câu từ chối chuẩn. Bài học: rào chặn trong chuỗi `&&` phải trả mã lỗi.
-- 19:4x: đề xuất của A (merge B1 trước) trái spec 8.2 (B1 sau B0) — bắt được khi đọc lại spec trước khi giao. Đề xuất có thứ tự phải đối
-  chiếu spec đã duyệt trước khi trình User.
 
 ## Đã học / bẫy gặp (phiên tối)
 - Đã học (16:3x): `gpt-6-luna` viết citation cả `[n]` lẫn `[Nguồn n]` (24 / 465 lần ở G2) ⇒ code xử lý citation phải bắt cả hai;

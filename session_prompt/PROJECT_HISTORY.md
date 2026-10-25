@@ -4,6 +4,18 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-25 (22:3x) — Rà code Phase 0–7 xong; sửa gói 1a, 1b, 3, 4; đợt 3 dở (nhánh `dot3`); kết phiên
+
+- Rà code (B25 dựng index + nền, C34 trả lời + đánh giá; chỉ đọc) + kiểm chéo hai chiều: 39 phát hiện → 5 gói
+  (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md`, `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`). User duyệt 19:4x cả 5 gói.
+- Đã sửa + review chéo + cổng ổn định (uvicorn thật + 2 câu): **1a** `9e6d371` validator nhận `[Nguồn n]` (lỗi citation 69 → 14 / 1.600 câu đã
+  sinh; nguyên nhân "model quên `[n]`" của 8.1 sai); **4** `1b9c126` guide 0–8 + notebook; **3** `47a4e32` `paired_stats` đúng chiều, một chỗ dựng tin
+  nhắn; 3c free: đếm lại citation mọi mốc (`sua_3c_citation_v2.md`) — lý do loại reasoning `none` ở 8.1 không còn (chờ xác nhận test);
+  **1b** `1e4acd0` một quy ước import trần, mọi lệnh chạy từ `backend/`, API 409 / 503 đúng.
+- Đợt 3 (gói 2 + 5 + B-12): plan `sua_dot3_plan.md` sha `7c8c660558e5` duyệt; C làm trên nhánh `dot3` — dở lúc kết phiên.
+- Chuẩn bị đợt "tìm hướng tốt hơn từng khâu" (User 20:0x): ứng viên `ung_vien_cai_tien_{B,C}.md`; yêu cầu ChatGPT
+  `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` (chưa gửi). Phase 8.2 vẫn tạm dừng. Paid phiên ~0,003 USD.
+
 ## 2026-10-25 (17:0x) — Spec 8.2 duyệt; B1 xong (nhánh `p82-b1`); **8.2 tạm dừng để rà code**; kết phiên
 
 - Brainstorm 8.2 (User chọn: hai bước không build lại index; mốc người đọc cặp mù; Bước 2 E1 → E2 → E3a / E3b; A tự đưa vào
