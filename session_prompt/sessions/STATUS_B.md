@@ -26,6 +26,13 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
   Review G3 §10 → `phase_8_1_g3_b10_review.md` (đã commit `0c19756`). Plan B18 đã commit `68b9db0`.
 - **B19 (A giao 13:44) nháp G5 xong 13:50** — `phase_8_1_g5_decision_table_draft.md`; A tự review (C không cần, A 13:5x). G3 §10: B review →
   C sửa → A duyệt `d89a919067ba`.
+- **Review G3 xong** — `phase_8_1_g3_review.md` (ready, 2 minor). **B20 (A giao 14:02):** đang sửa
+  `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `BAO_CAO_CHIA_DOAN.md`; sau đó review C30.
+  **B20 xong 14:15** (3 file, bản 5 / 5 / 3), chờ C review. Tiếp: review C30 (3 file của C) + review G5 của A.
+  14:2x: B20 C review ready (2 minor đã sửa, C đóng). Review G5 synthesis → `phase_8_1_g5_review.md` (changes_requested,
+  2 major); A giao M1 → `phase_8_1_g5_by_category.md` + `backend/experiments/phase_8_1/g5_by_category.py` (mới).
+  Review C30 → `phase_8_1_c30_user_reports_review.md` (ready, 4 minor). G2 report §6: thêm NOT RUN "claim không nguồn".
+  Chờ: A vòng 2 G5; C31 (khóa G0.6) khi C nhắn.
 - Đang giữ GPU: không (đã nhả 12:33; G4 dùng 11:50–12:29).
 - **Bước 2 (A duyệt `a4adfc8eedd9` 11:40, commit `b9789f4`):** mốc byte 11:39 PASS (`cefb2d1a…`, `1fbb5c17…`). Đang
   sửa: `backend/reranking/cross_encoder.py` (kwarg `max_length=None` + property `loaded_device`; mặc định = hành vi cũ),
@@ -36,6 +43,8 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - `backend/experiments/phase_8_1/g4_keyword.py` — mới (B18).
 - `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g4_keyword_implementation.md` — mới (B18), chờ C review.
 - `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_decision_table_draft.md` — mới (B19), A review.
+- B20: 3 file `bao_cao_he_thong/` (TIM_KIEM, SINH_CAU_TRA_LOI_API, CHIA_DOAN); review G3 / G5 / C30; `phase_8_1_g5_by_category.md`;
+  `backend/experiments/phase_8_1/g5_by_category.py`; sửa `phase_8_1_g2_implementation.md` §6 (NOT RUN).
 - `session_prompt/sessions/STATUS_B.md` (file này); dòng B trong `CURRENT_HANDOFF.md`.
 - Đã commit (A): B16 + plan G2/G4 `b9789f4`; G4 + `cross_encoder.py` + sentencepiece `ee557f9`; G2 + minor G4 `266c105`;
   plan B18 `68b9db0`; review G3 §10 `0c19756`.
