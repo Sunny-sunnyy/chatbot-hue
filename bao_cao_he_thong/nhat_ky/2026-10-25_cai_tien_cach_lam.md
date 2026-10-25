@@ -1,6 +1,6 @@
 # Nhật ký 25/10/2026 — cải tiến cách làm việc của các agent
 
-**Cập nhật lần cuối: 10:31 25/10/2026.** Tiền paid trong ngày: 0 USD. Chatbot không đổi gì.
+**Cập nhật lần cuối: 11:05 25/10/2026 (kết phiên).** Tiền paid trong ngày: 0 USD. Chatbot không đổi gì.
 
 ## Tóm tắt
 Phiên sáng chỉ bàn và sửa **cách các agent làm việc**, không đụng chatbot. Nguồn ý: bản mô tả cách làm của một dự
@@ -11,7 +11,7 @@ Một người kiểm độc lập (sub-agent) đã tìm ra 1 lỗi lớn ở r�
 
 ## Bạn cần làm gì
 - Không có việc bắt buộc. Khi muốn học lại một việc: mở Session D bằng `START_SESSION.md` với `<X>` = D.
-- Phiên sau (tiếp dự án): A đọc `report_agent/2026-10-25_cai_tien_cach_lam/de_xuat_cho_du_an.md` trước khi duyệt kế
+- Phiên sau: copy lại khối mới trong `session_prompt/START_SESSION.md`. Quay lại dự án: A đọc `report_agent/2026-10-25_cai_tien_cach_lam/de_xuat_cho_du_an.md` trước khi duyệt kế
   hoạch G4/G2.
 
 ## Trạng thái
@@ -23,6 +23,8 @@ Một người kiểm độc lập (sub-agent) đã tìm ra 1 lỗi lớn ở r�
 | `AGENTS.md` | Đã thêm | Codex / AGY / sub-agent đọc cùng luật như Claude |
 | Rào chặn commit | Chạy thật; thử 13 ca phải chặn, 8 ca phải qua — đúng hết | Dữ liệu riêng, secret, tên dự án khác không lọt lên repo public |
 | Đề xuất cho dự án | 19 mục cho 8.1 / 8.2 / Phase 9 / deploy | Chưa làm; quyết ở từng gate |
+| Thử mở phiên mới | Sub-agent đóng vai B chỉ đọc theo `START_SESSION` nắm đúng vai, việc, luật | Mở phiên chỉ cần gửi khối `START_SESSION` (bản mới) |
+| Ý từ một file SELF_IMPROVE.md | Lấy 3 ý nhỏ, bỏ phần agent tự sửa luật không cần duyệt | Tránh agent tự nới luật; sau đó dừng thêm luật để quan sát |
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Agent không nhớ gì giữa các phiên, nên "kinh nghiệm" phải nằm trong file mà agent nào cũng đọc. Mỗi khi có sự cố

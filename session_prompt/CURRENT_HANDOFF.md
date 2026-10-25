@@ -1,10 +1,10 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 10:20 25/10/2026 (A — phiên sáng 25/10 chỉ bàn cách làm, xem mục ngay dưới). Phần dự án dưới đây vẫn
-là trạng thái kết phiên 22:52 24/10. Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang
+Cập nhật: 11:05 25/10/2026 (A, **kết phiên sáng 25/10** — phiên chỉ bàn cách làm). Phần dự án dưới đây vẫn là trạng
+thái kết phiên 22:52 24/10; **phiên sau quay lại Phase 8.1** (User 25/10). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang
 mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/`.
 
-## Phiên 25/10 sáng — cải tiến cách làm (không đổi dự án)
+## Phiên 25/10 sáng — cải tiến cách làm (ĐÓNG, `report_agent/2026-10-25_cai_tien_cach_lam/TONG_HOP.md`)
 
 Đợt `report_agent/2026-10-25_cai_tien_cach_lam/` (`KE_HOACH.md`, `de_xuat_cho_du_an.md`). Mới: skill `improve-workflow` +
 sổ `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; `run-experiment` nâng (sàn / mức tụt / chỉ số quyết, cỡ mẫu trước, nhiễu A/A,
@@ -37,7 +37,7 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 
 **Thứ tự việc phiên sau:**
 
-1. Mở A/B/C bằng `START_SESSION.md`; A `ListAgents`; A **hỏi lại quyền phiên** (§9.8: điều phối rộng, trần
+1. User copy **khối mới** trong `START_SESSION.md` (đổi 25/10: thêm D, `improve-workflow`). Mở A/B/C bằng `START_SESSION.md`; A `ListAgents`; A **hỏi lại quyền phiên** (§9.8: điều phối rộng, trần
    tiền, commit/push).
 2. **A duyệt B16/B17:** `phase_8_1_g2_g4_plan.md` (ước 0,14–0,23 USD) + quyết **lệch spec G4**: spec §5 G4 ghi
    "rerank chỉ xếp lại top-10", nhưng G1 cho thấy 7–9 câu có đoạn đúng ngoài top-10 ⇒ B đề xuất G4-B rerank chọn

@@ -17,7 +17,7 @@
 | Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 24/10/2026 |
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 24/10/2026 |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 24/10/2026 |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [25/10 sáng — cải tiến cách làm](nhat_ky/2026-10-25_cai_tien_cach_lam.md) | 10:31 25/10/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [25/10 sáng — cải tiến cách làm](nhat_ky/2026-10-25_cai_tien_cach_lam.md) | 11:05 25/10/2026 |
 
 ## Trạng thái ngắn
 

@@ -4,6 +4,12 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-25 (11:05) — Đợt cải tiến cách làm (không đổi chatbot); kết phiên
+
+- Vòng tự cải tiến có người duyệt (`improve-workflow` + sổ), `run-experiment` nâng (nhiễu, cỡ mẫu, luật giữ/gỡ), Session D,
+  `AGENTS.md` cho mọi agent, hook git chặn commit dữ liệu private; 19 đề xuất cho 8.1/8.2/9 (chưa làm). Kiểm độc lập 2
+  vòng + thử mở phiên. Commit `2ecdef2`…`187314e`. 0 USD. Chi tiết: `report_agent/2026-10-25_cai_tien_cach_lam/TONG_HOP.md`.
+
 ## 2026-10-24 (22:50) — Phase 8.1 G0 gần xong, G1 chẩn đoán retrieval xong; kết phiên
 
 - G0: split 120/56 + evaluator so theo cặp (C16); tham số mặc định-như-cũ (B11); phá hòa sparse native (B13, nguyên

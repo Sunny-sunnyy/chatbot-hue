@@ -1,6 +1,6 @@
 # Sổ cải tiến cách làm — harness của các session
 
-Cập nhật lần cuối: 10:17 25/10/2026 (A). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
+Cập nhật lần cuối: 11:05 25/10/2026 (A, kết vòng phiên 25/10). A ghi theo skill `skills/improve-workflow/SKILL.md`. Mỗi dòng là một
 thay đổi ở luật / skill / rào bằng máy, sinh từ sự cố có bằng chứng hoặc quyết định User; User duyệt cho thử;
 vòng sau xem giữ hay gỡ. Trạng thái: `đề xuất` → `đang thử` → `đang dùng` / `gỡ` / `bác`.
 
@@ -42,6 +42,10 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 | S8 | Memory cũ / sai tên | 2 file | session mới đọc gợi ý sai | `two-claude-sessions-setup.md`, `phase-7a2-implementer-state.md` | ⇒ I3 | A rà memory |
 | S9 | Phép thử hook sinh key giả quá ngắn ⇒ tưởng hook lỗi | 1 (25/10, A) | chẩn đoán nhầm 1 lượt | `report_agent/2026-10-25_cai_tien_cach_lam/KE_HOACH.md` mục thử hook | chưa có — ý chờ (lỗi của công cụ / phép thử, loại trừ trước khi kết luận code hỏng) | A tự thấy khi xem lại phép thử |
 | S10 | Hook lọt dòng nội dung bắt đầu bằng `++` (cả secret) | 1 (25/10, A viết) | lỗ hổng trong rào chặn lộ dữ liệu | `review.md` F1 | đã sửa; review chéo là bước bắt | **review chéo** (12 ca tự thử của A không bắt) |
+| S11 | A dùng `python3` hệ thống (không `uv run`) cho script sửa tài liệu | 2 lần trong 1 phiên (25/10, A) | không (chỉ sửa chữ) | phiên 25/10 | đã có ở `Session_Prompt.md` §10 — không thêm luật; lặp ở phiên sau thì xem lại câu chữ §10 | A tự thấy |
+
+**Kết vòng 25/10 11:05:** 11 sự cố, 11 thay đổi `đang thử`, 7 ý chờ. Không đề xuất thêm; phiên sau xem các mục `đang thử`
+có được dùng không, sự cố có lặp không.
 
 ## Ý chờ (chưa có sự cố đủ — chưa thành luật)
 
