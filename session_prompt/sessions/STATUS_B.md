@@ -7,7 +7,7 @@ User (25/10, terminal B): việc A giao = User nói "làm đi"; xong báo cáo, 
 - **Phần 8.1 của B đã hết** (A 14:2x). Không mở việc mới; chờ User đóng 8.1 → A brainstorm 8.2 rồi giao.
 - Đang giữ GPU: **không** (G4 dùng 11:50–12:29, đã nhả).
 - Chờ người khác: C review prompt B21 (`gửi chatgpt/2026-10-25/tìm thông tin/phase_8_2_khong_dau_2026_10_25.md`, private,
-  sha `68ee4b03ba7f`); User gửi ChatGPT khi tiện, lưu kết quả vào `gửi chatgpt/2026-10-25/kết quả nghiên cứu/`.
+  C review ready, 2 minor tùy chọn đã áp — sha mới `6eb09b4066ca`); User gửi ChatGPT khi tiện, lưu kết quả vào `gửi chatgpt/2026-10-25/kết quả nghiên cứu/`.
 
 ## Việc phiên 25/10 (đã xong; số và kết luận ở report)
 | Việc | Kết quả | Report / commit |
