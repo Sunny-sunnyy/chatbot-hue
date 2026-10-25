@@ -148,6 +148,12 @@ riêng (gọi API). So ba nhánh trên cùng 120 câu: không rerank / GPU (M1, 
 thấy đoạn đúng đã nằm trong pool (reranker không cứu đoạn ngoài
 pool).
 
+**Sửa đổi User duyệt 25/10/2026 (sau G1):** (1) thêm **G4-B** — reranker chấm pool 100 (hợp hai nhánh native) rồi
+lấy top-10, vì G1 cho thấy 7–9 câu có đoạn đúng ngoài top-10; G4-A (chỉ xếp lại top-10) giữ như trên; guardrail
+"0 câu mất đoạn đúng khỏi 5 đoạn đưa model" áp cho cả hai. (2) GPU yếu ⇒ mỗi lượt chạy GPU chỉ **20–30 câu** (thay
+"cùng 120 câu"); các nhánh G4 so trên cùng tập câu đó; trước mỗi lượt kiểm model thật nằm trên GPU (không chạy nhầm
+CPU). Kế hoạch chi tiết: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_g4_plan.md`.
+
 ### G5 — Tổng hợp
 
 Báo cáo xếp hạng: mỗi quyết định C11 → giữ / thay bằng X (chênh, CI, câu kiểm xác nhận) / chưa rõ; đề

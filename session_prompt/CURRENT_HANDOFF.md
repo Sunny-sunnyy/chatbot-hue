@@ -1,7 +1,7 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 11:05 25/10/2026 (A, **kết phiên sáng 25/10** — phiên chỉ bàn cách làm). Phần dự án dưới đây vẫn là trạng
-thái kết phiên 22:52 24/10; **phiên sau quay lại Phase 8.1** (User 25/10). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang
+Cập nhật: 11:22 25/10/2026 (A, **phiên chiều 25/10 — quay lại Phase 8.1**; User trả lời quyền + G4, xem mục "Phiên
+chiều 25/10" ngay dưới). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang
 mở; việc xong ở `PROJECT_HISTORY.md` và `report_agent/<đợt>/`.
 
 ## Phiên 25/10 sáng — cải tiến cách làm (ĐÓNG, `report_agent/2026-10-25_cai_tien_cach_lam/TONG_HOP.md`)
@@ -12,7 +12,14 @@ kiểm người chấm); Session D (`WORKFLOW.md` §10); `AGENTS.md` (bản chí
 `.githooks/pre-commit` (bật: `git config core.hooksPath .githooks`; kiểm khi mở phiên). **Khi tới G4/G2:** đọc
 `de_xuat_cho_du_an.md` mục 1–8 trước khi A duyệt plan B16. Mục "Tạm gác" cũ đã hết hiệu lực (User gửi báo cáo 25/10).
 
-## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
+## Phiên chiều 25/10 — quyết định của User (11:20)
+
+- Quyền phiên: A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (8.1 vẫn trần 0,5 USD); commit/push như thường trực.
+- **Duyệt G4-A và G4-B** (pool 100) — ghi vào spec 8.1 §5 G4 ("Sửa đổi User duyệt 25/10/2026").
+- **GPU yếu: mỗi lượt chạy GPU chỉ 20–30 câu**; **trước khi chạy phải kiểm GPU thật đang dùng** (không để chạy nhầm CPU).
+- B16 mục "STATUS_B.md chưa commit" là cũ: STATUS_B/C đã commit ở `6c168e6`.
+
+## PHIÊN SAU — ĐỌC TRƯỚC NHẤT (viết 11:05 25/10; bước 1–2 đã làm ở phiên chiều)
 
 **Hệ thống lúc kết phiên:** `main` (commit cuối ghi trong `sessions/STATUS_A.md`); chatbot full-corpus chạy được,
 **hành vi runtime không đổi trong cả phiên** (retrieval `dense_bm25_rrf` giống byte mốc `cefb2d1a…`). Qdrant
@@ -75,11 +82,11 @@ main`), `phase_8_1_g1_implementation.md` §7, `phase_8_1_g2_g4_plan.md` (mới),
 
 ## Session
 
-| Vai | Terminal (tối 24/10) | Agent | Liên lạc | Việc | Trạng thái kết phiên |
+| Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-2c` (25/10) | Claude Opus 5.5 | trực tiếp | 25/10: cải tiến cách làm; 8.1 tiếp phiên sau | xem `STATUS_A.md` |
-| B — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | B17 (G4 + G2) | kết phiên 22:47 — chờ A duyệt `phase_8_1_g2_g4_plan.md` + quyết G4-B; B16 chưa commit (xem STATUS_B) |
-| C — thực thi | `hue-rag-a3` | Claude Opus 5.5 | trực tiếp | câu kín: 3 dòng capability_only (2, 21, 33) chờ A/User; review G2/G4 khi B nhắn | kết phiên 22:48 — C9–C22 xong, 0 USD; xem `STATUS_C.md` |
+| A — điều phối | `hue-rag-c6` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | điều phối 8.1 | xem `STATUS_A.md` |
+| B — thực thi | `hue-rag-3f` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | B17 (sửa plan → G4 → G2) | đang làm B17 bước 1 |
+| C — thực thi | `hue-rag-a1` (chiều 25/10) | Claude Opus 5.5 | trực tiếp | C23 review B16 + plan B17 | chờ B nhắn plan đã sửa |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -89,8 +96,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; thư viện thừa
   giữ nguyên (chỉ gỡ khi xung đột); luôn thử + so baseline trước khi chọn (User 20:49).
 - **Phiên tối 24/10 (hết hạn — hỏi lại):** A tự điều phối rộng; API ≤1 USD (dùng ~0,0013 USD: smoke B9).
-- **Phiên 25/10 sáng (hết hạn cuối phiên):** chỉ bàn cách làm; A tự quyết chi tiết cách làm (User "làm những gì bạn cho
-  là tốt nhất"); commit/push như thường trực; 0 USD API.
+- **Phiên chiều 25/10 (hết hạn cuối phiên):** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên; GPU mỗi lượt 20–30 câu,
+  kiểm GPU thật trước khi chạy.
 - **Spec 8.1 §8:** Qdrant tạo/ghi/xóa chỉ `hue_81_*`; paid chỉ `gpt-6-luna`, trần 0,5 USD cả 8.1; file private mới ở
   `knowledge-base-hue/evaluation/phase_8_1/` và `data/phase_8_1/`; M1/M2 tải HF cache, GPU fp32 (một model một lúc).
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra.
@@ -119,20 +126,48 @@ harness ghi đè theo `--name` (C21 m3).
 
 B11–B15 đã commit (`b8dbe95`, `0131afb`, `8156395`); B12/B14 là điều tra/review. Chi tiết: `sessions/STATUS_B.md`.
 
-### B17 — G4 + G2 theo kế hoạch B16 (CHỜ A DUYỆT ở phiên sau; không chạy gì kể cả GPU/paid trước đó)
+### B17 — G4 + G2 theo kế hoạch B16 (giao 11:22 25/10; A trả lời 6 câu của B)
 
-- Kế hoạch có tiêu chí ghi trước: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_g4_plan.md` (ước ≈ 0,14–0,23 USD).
-- Cần A/User quyết: G4-B pool 100 lệch spec 8.1 §5 G4 ("chỉ xếp lại top-10"); chính sách validator cho G2.3.
+**Bước 1 — sửa kế hoạch (chỉ sửa file `phase_8_1_g2_g4_plan.md`; chưa chạy GPU / paid).** Bản trước duyệt: sha
+`c29b547b7417` (bản nháp, chưa duyệt). Sửa:
+- **G4-B được User duyệt** (spec §5 G4 đã ghi sửa đổi): bỏ chữ "chỉ khi A/User sửa spec". G4-B không bắt buộc chờ G4-A
+  thắng: nếu G4-A chưa rõ, B tự chọn M1 hay M2 (hoặc cả hai, Holm trên 2) theo số phụ + latency, ghi lý do trước khi chạy.
+- **Giới hạn GPU của User: mỗi lượt GPU 20–30 câu.** Ghi trước cách chọn tập câu (đề xuất: ≤ 30 câu dev số chính có đoạn
+  đúng, chọn theo seed 20261024, cố định cho mọi nhánh G4 kể cả luna; pilot latency 10 câu lấy trong tập đó). Xác nhận
+  trên test: 15 câu test có đoạn đúng. Ghi trước "cỡ mẫu nhỏ ⇒ kết quả có thể **chưa rõ**" (đề xuất mục 1).
+- **Kiểm GPU trước mỗi lượt GPU** (User): `torch.cuda.is_available()`, model thật ở `cuda` (device của tham số model),
+  `nvidia-smi` thấy tiến trình + VRAM; một câu thử có thời gian cỡ GPU. Không phải `cuda` thì **dừng**, không chạy tiếp
+  trên CPU. Lượt CPU duy nhất là đo latency CPU 5 câu, ghi rõ là CPU. Dòng "đang giữ GPU" trong `STATUS_B.md`.
+- Áp `report_agent/2026-10-25_cai_tien_cach_lam/de_xuat_cho_du_an.md` mục 1–5 (bắt buộc cả 5) và mục 8 (kiểm
+  `is_refusal` trước G2.2). Mục 2: "lỗi citation không tăng" → mức tụt cho phép theo số câu, đã trừ nhiễu 7B Run 1↔2.
+- **G2.3 chính sách validator (A chọn):** phát lại validator hiện tại + **một** chính sách thay thế: câu trả lời mà
+  context chỉ có **một nguồn** (hoặc mọi câu thiếu `[n]` đều thuộc đúng một nguồn duy nhất được trích) thì gán nguồn đó
+  thay vì báo lỗi. Chỉ đo, không đổi chatbot.
+- G4 **được chạy trước khi khóa G0.6** (chỉ retrieval, không dùng câu kín); số chính tính lại khi User quyết 9 nhãn tự
+  nhiên. M1/M2 đã có trong HF cache ⇒ giữ `HF_HUB_OFFLINE=1`; thiếu file mới bỏ biến đó cho lần tải đầu, ghi lại.
+- Xong bước 1: ghi `sha256sum` (12) bản đã sửa vào report, nhắn **C** (review) và A.
+
+**Bước 2 — chạy (sau khi A ghi "duyệt bản sha …" ở đây, A commit B16).** Thứ tự plan §4: mốc byte → G4.0 → G4-A → G4-B
+→ G2 (pilot 10 câu mỗi lượt có phí). Mỗi gate: report + C review.
+
+- **Tiền:** chỉ `gpt-6-luna`, B17 ≤ 0,25 USD; lượt nào vượt ước 50% thì dừng, báo A. Ghi token + USD từ log.
+- **Không làm:** đổi chatbot / settings runtime; ghi Qdrant ngoài `hue_81_*`; mở câu kín; commit.
+- **Dừng khi:** GPU không dùng được; mốc byte retrieval không khớp; lỗi provider lặp lại; tiền vượt.
 - Chưa commit (B16): `backend/experiments/phase_8_1/g1_retrieval.py` (`--realism main`), report G1 §7, file kế hoạch.
 
 ## Việc của C
 
-- C9–C22 xong (chi tiết `STATUS_C.md`). Phiên sau: review G1 §7 + plan G2/G4 (B16); review G2/G4 khi B chạy; câu
-  kín theo bước 3 (luôn qua sub-agent mới, C không đọc nội dung).
+- C9–C22 xong (chi tiết `STATUS_C.md`).
+- **C23 (giao 11:22 25/10) — review B16 + plan B17 đã sửa** theo skill `risk-gated-agent-review`: diff
+  `g1_retrieval.py` + report G1 §7; plan `phase_8_1_g2_g4_plan.md` bản B ghi sha (đối chiếu mục B17 bước 1, spec 8.1 §5
+  G4 bản sửa đổi 25/10, `de_xuat_cho_du_an.md` mục 1–5, 8; cỡ mẫu 20–30 câu có ghi trước "có thể chưa rõ"; cách kiểm
+  GPU có dừng thật khi không phải `cuda`). Đầu ra: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_b16_review.md`;
+  nhắn A + B. Chỉ đọc, không chạy GPU / paid. Bắt đầu khi B nhắn plan đã sửa (trước đó có thể review phần G1 §7).
+- Sau đó: review G4/G2 khi B chạy; câu kín chờ User (luôn qua sub-agent mới, C không đọc nội dung).
 
 ## Việc của A
 
-- Phiên sau: bước 1–6 mục "Phiên sau"; ghi phát hiện "22/22 từ chối nhầm thiếu fact trong context" vào bảng rà C11
+- Phiên chiều 25/10: chờ C23 → duyệt plan kèm sha → commit B16; câu kín + 9 nhãn chờ User; ghi phát hiện "22/22 từ chối nhầm thiếu fact trong context" vào bảng rà C11
   (dòng 6.4) khi viết G5.
 - **Khi duyệt B16, trả lời rõ trong mục B17** (B nêu khi thử mở phiên 25/10): (1) ai sửa plan theo
   `de_xuat_cho_du_an.md` mục 1–5 — đề xuất: B sửa, C review, A duyệt **sau** C và ghi `sha256sum` bản duyệt (WORKFLOW

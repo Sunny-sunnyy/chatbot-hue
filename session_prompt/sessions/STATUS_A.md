@@ -1,34 +1,33 @@
-# STATUS A — cập nhật 11:05 25/10/2026 (kết phiên sáng)
+# STATUS A — cập nhật 11:22 25/10/2026 (phiên chiều 25/10 — quay lại Phase 8.1)
 
-Terminal: `hue-rag-2c` · Agent: Claude Opus 5.5 · Vai: điều phối. Phiên này không mở B/C (tên terminal đổi mỗi lần mở).
+Terminal: `hue-rag-c6` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3f`, C = `hue-rag-a1` (cả ba Claude Code,
+liên lạc trực tiếp).
 
 ## Commit cuối
-- Trước phiên: `4d641db`. Phiên 25/10: `2ecdef2`, `2d1255a`, `455e453`, `187314e`, `abded38` + commit STATUS này (`git log -1`).
+- Đầu phiên: `c3528be`.
 
 ## Đang làm
-- Không. Phiên sau quay lại Phase 8.1: `CURRENT_HANDOFF.md` mục "PHIÊN SAU" + "Việc của A" (6 câu khi duyệt B16).
+- Giao B17 (B sửa plan G2/G4 theo `de_xuat_cho_du_an.md` 1–5 + giới hạn GPU của User) → C review B16 + plan → A duyệt
+  kèm sha → A commit B16 → B chạy G4.
 
 ## Đang khai báo sửa
-- không
+- `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md`,
+  `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` (ghi sửa đổi G4 User duyệt 25/10)
 
-## Vừa xong (phiên 25/10 sáng — chỉ cách làm)
-- Đợt `report_agent/2026-10-25_cai_tien_cach_lam/` ĐÓNG (`TONG_HOP.md`): `improve-workflow` + sổ, `run-experiment` nâng,
-  Session D, `AGENTS.md`/`CLAUDE.md`, hook `.githooks/pre-commit`, deny `.env` cho Claude Code, 19 đề xuất cho dự án.
-- Kiểm độc lập 2 vòng (ready) + thử mở phiên bằng sub-agent đóng vai B (nắm đúng).
-- Bản mô tả cách làm của dự án khác (bản 2) để private ở `data/external_project_notes/`; file tracked giữ bản 1.
+## Quyền phiên này (User 25/10, hết hạn cuối phiên)
+- A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (8.1 vẫn trần 0,5 USD); duyệt G4-A + G4-B; GPU mỗi lượt 20–30 câu, kiểm
+  GPU thật trước khi chạy.
 
 ## Đã học / bẫy gặp
-- Brief sub-agent: đọc lại trước khi gửi (lỡ gửi còn `{{…}}`). Kết quả sub-agent: tự kiểm 2–3 khẳng định chính.
-- Phép thử có thể sai: key giả sinh quá ngắn làm tưởng hook lỗi — kiểm chính phép thử trước khi kết luận.
-- Review chéo bắt được lỗi hook mà 12 ca tự thử không bắt (S10) — không bỏ bước review cho thay đổi "nhỏ".
-- Sửa tài liệu bằng script: dùng `uv run python`, không `python3` hệ thống (S11).
-- Luật deny `.env*` chặn cả lệnh shell nhắc tới tên file đó (`ls`, `rm`) — nhờ User chạy `!` khi cần.
-- `git worktree list` có 4 worktree cũ của AGY dưới `~/.gemini/` — không phải của A, để nguyên.
+- (giữ) Brief sub-agent: đọc lại trước khi gửi; kết quả sub-agent: tự kiểm 2–3 khẳng định chính.
+- (giữ) Sửa tài liệu bằng script: `uv run python`, không `python3` hệ thống.
+- (giữ) Luật deny `.env*` chặn cả lệnh shell nhắc tới tên file đó — nhờ User chạy `!`.
+- (giữ) `git worktree list` có 4 worktree cũ của AGY dưới `~/.gemini/` — để nguyên.
 - (giữ) Repo PUBLIC; người điều phối không đọc câu kín; `CURRENT_HANDOFF.md` đọc lại trước khi sửa.
+- Xác nhận User gõ ở terminal B ("việc A giao = làm đi") không thay câu trả lời User cho A.
 
-## Việc dở / câu hỏi cho User (phiên sau)
-- Quyền phiên (điều phối rộng, trần tiền) — hỏi lại khi mở phiên.
-- Câu hỏi dự án cũ vẫn mở: `CURRENT_HANDOFF.md` "Câu hỏi cho User".
+## Việc dở / câu hỏi cho User
+- Câu kín 3 dòng (2, 21, 33); 9 câu độ tự nhiên bất đồng; Hải Vân; tên dự án khác trong lịch sử git.
 
 ## Tiền paid phiên này
-- 0 USD. Sub-agent (5 đọc khóa học, 1 review 2 vòng, 1 thử mở phiên, 1 review nhỏ) dùng quota Claude Code.
+- 0 USD.
