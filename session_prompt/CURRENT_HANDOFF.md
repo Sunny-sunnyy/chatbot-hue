@@ -1,6 +1,34 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 16:4x 26/10/2026 (A, **KẾT PHIÊN 26/10** — User: "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
+Cập nhật: 20:35 26/10/2026 (A, **mở phiên tối 26/10** — quyền phiên + việc B41 / B42 / C36 ở mục "Việc giao phiên tối 26/10"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
+
+## Việc giao phiên tối 26/10 (A 20:35)
+
+User 20:3x trả lời: câu 1 (quyền, dưới) và câu 2 (đồng ý đề xuất của A: **khâu trả lời trước**; mốc đợt cải tiến = chatbot **context 10** sau B1;
+cần B0). A đang xác nhận lại với User "đồng ý" có áp cho câu 3–7 không (W14) — chưa làm gì ở câu 3–7.
+
+Chung cho B41 / B42 / C36: chỉ đọc dữ liệu private đã có; **không mở câu kín**; nhóm `test` chỉ đếm (không đọc từng câu); report tracked không chép
+câu hỏi / đáp án / nội dung kho (chỉ chỉ số câu `case_index`, số đếm, loại lỗi); bảng chi tiết từng câu để `data/cai_tien_tung_khau_2026-10-26/`.
+File kết quả ChatGPT (`gửi chatgpt/2026-10-25/kết quả nghiên cứu/HUE_RAG_NGHIEN_CUU_CAI_TIEN_TUNG_KHAU_2026-10-26.md`) **được đọc** (private, không phải câu kín) —
+nhãn lỗi theo **§6 mục 5** của file đó: `missed evidence`, `noisy evidence`, `wrong table association`, `unsupported claim`, `incorrect citation ID`,
+`under-answer`, `over-refusal`, `format`. Khai báo file trong `STATUS_<X>.md` trước khi ghi. Script tạm để `data/cai_tien_tung_khau_2026-10-26/tools/`.
+Xong: report + STATUS + dòng của mình ở bảng Session ⇒ nhắn A. Dừng khi: phải đụng file người kia khai báo; cần gọi API; thấy dữ liệu lệch report gốc.
+
+- **B41 — B1 8.2 lên `main` mới (B, 0 USD).** Làm trong **worktree riêng** `/tmp/b_p82b1` (không `git switch` trong working tree chung — A, C đang
+  ở `main`); bẫy worktree: `Project_Status.md` §8 (`uv run --project /home/minhhieu/hue_rag …`, symlink `data/` + `knowledge-base-hue/` gỡ khi xong;
+  push từ working tree chung: `git push --force-with-lease origin p82-b1` không cần switch). Rebase `p82-b1` lên `main` mới nhất (`origin/main`), giải xung đột
+  (`sua_dot3_review.md` §6, `sua_1b_plan.md` §6), test 4 file của B1, **T1** (158 câu giống byte `cefb2d1ad609`). **T2**: nếu cần lượt sinh mới (gọi
+  `gpt-6-luna`) ⇒ **dừng, báo A ước tiền** — User duyệt bước này là 0 USD. Quyền: **B commit + `push --force-with-lease` nhánh `p82-b1`** (User 20:3x).
+  Không merge vào `main` (merge sau B0 + A review). Đầu ra: thêm mục "Rebase 26/10" vào `phase_8_2_b1_implementation.md` trên nhánh.
+- **B42 — phân loại lỗi tầng tìm (B, sau B41 hoặc xen khi chờ, 0 USD).** 40 câu dev có đoạn đúng (`data/phase_8_1/gold/gold_draft.jsonl` ∩ dev của
+  `split.json`); top-10 runtime (`data/phase_8_1/g1/runtime_k10.jsonl` hoặc file B thấy đúng — ghi rõ) + pool 30: câu nào thiếu đoạn đúng ở top-5 / top-10 /
+  pool 30, thiếu vì sao (`missed evidence` dense ngoài pool / BM25 chỉ xếp lại; một file chiếm chỗ — nối B40; hàng bảng). Đầu ra
+  `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md`.
+- **C36 — phân loại lỗi tầng trả lời (C, 0 USD).** Nguồn: lượt **`g2_context10`** (mốc đợt = context 10) — câu trả lời `data/phase_8_1/g2/g2_context10.jsonl`,
+  điểm judge `data/phase_8_1/g2/judge/` (mù: `map.json` sha `33b4c9603f20` nối item ↔ lượt, cách đọc ở `phase_8_1_g2_implementation.md` dòng ~35); so phụ
+  `g20_baseline` (context 5) để biết lỗi nào context 10 đã sửa. Phạm vi: dev chính (dev, bỏ `unnatural`, trong phạm vi — 88 câu như B1 §4). Mỗi câu
+  Completeness / Accuracy ≤ 3 hoặc từ chối: gắn nhãn §6.5 (nhiều nhãn được), ghi căn cứ ngắn. Đầu ra
+  `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md` (bảng đếm theo nhãn × loại câu; kết luận "lỗi nào chiếm tỷ trọng").
 Chỉ giữ việc đang mở; việc đã xong: `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`, `PROJECT_HISTORY.md` (mục 26/10 16:0x).
 Bản handoff đầy đủ trước khi rút gọn (chi tiết đợt 1–2, rà code B25 / C34): `git show 76ff419:session_prompt/CURRENT_HANDOFF.md`.
 
@@ -79,9 +107,9 @@ khi A giao (mục Thứ tự, bước 5). `dot3` đã merge (giữ nhánh trên 
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-b0` (26/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 16:4x** — xong: giao C đợt 3 + B40; đối chiếu ChatGPT; merge `421c302` + cổng ổn định trên `main`; gỡ 8 artifacts (User (a)); 4 chỗ báo cáo; sổ cải tiến vòng 5 | `STATUS_A.md`; ~0,0004 USD (ước) |
-| B — thực thi | `hue-rag-3e` (26/10) | Claude Opus 5.5 | trực tiếp | xong: B40, review `dot3` (ready 0 / 0 / 3 minor), kiểm phần A tự sửa (ready, 4 minor chữ — A sửa `7b662c9`); **phiên sau:** B1 8.2 (rebase `p82-b1` + chạy lại T1–T2) khi 8.2 chạy lại, review / thí nghiệm đợt cải tiến theo phạm vi User chọn | **kết phiên 16:3x** — `STATUS_B.md`; worktree đã gỡ; ~0,0004 USD (ước) |
-| C — thực thi | `hue-rag-87` (26/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 16:36** — xong: đợt 3 (12 commit + docs, merge `421c302`, report `sua_dot3_implementation.md`, B review ready); **phiên sau:** chờ A giao — thí nghiệm đợt cải tiến (phạm vi User chọn), C33 plan E1 phải sửa khi 8.2 chạy lại, C32 chờ User; ~0,0020 USD ước phiên 26/10 | xem `STATUS_C.md` |
+| A — điều phối | `hue-rag-2d` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 16:4x** — xong: giao C đợt 3 + B40; đối chiếu ChatGPT; merge `421c302` + cổng ổn định trên `main`; gỡ 8 artifacts (User (a)); 4 chỗ báo cáo; sổ cải tiến vòng 5 | `STATUS_A.md`; ~0,0004 USD (ước) |
+| B — thực thi | `hue-rag-23` (tối 26/10) | Claude Opus 5.5 | trực tiếp | xong: B40, review `dot3` (ready 0 / 0 / 3 minor), kiểm phần A tự sửa (ready, 4 minor chữ — A sửa `7b662c9`); **phiên sau:** B1 8.2 (rebase `p82-b1` + chạy lại T1–T2) khi 8.2 chạy lại, review / thí nghiệm đợt cải tiến theo phạm vi User chọn | **kết phiên 16:3x** — `STATUS_B.md`; worktree đã gỡ; ~0,0004 USD (ước) |
+| C — thực thi | `hue-rag-b5` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 16:36** — xong: đợt 3 (12 commit + docs, merge `421c302`, report `sua_dot3_implementation.md`, B review ready); **phiên sau:** chờ A giao — thí nghiệm đợt cải tiến (phạm vi User chọn), C33 plan E1 phải sửa khi 8.2 chạy lại, C32 chờ User; ~0,0020 USD ước phiên 26/10 | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -93,7 +121,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Luật User phiên đêm 25/10 (giữ cho tới khi xong việc sửa code — sửa code XONG 26/10; phiên sau hỏi User có giữ, câu 5):** báo cáo "nên sửa gì"
   trước, **chỉ sửa khi User đồng ý**; **commit + push trước mỗi lần sửa code**; sau sửa hệ thống phải hoạt động bình thường, ổn định, tối ưu, đóng gói
   đầy đủ (cổng ổn định dưới); được thử nghiệm / so sánh / đánh giá để chọn cách tốt nhất; phase trước ổn định mới sang phase sau.
-- **Phiên 26/10 (User 14:1x) — HẾT HẠN, hỏi lại:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (dùng ~0,0028 USD ước); C commit / push nhánh `dot3`
+- **Phiên tối 26/10 (User 20:3x, hết hạn cuối phiên):** A tự điều phối B/C; API ≤ 1 USD cả phiên; **B commit + `push --force-with-lease` nhánh
+  `p82-b1`** (rebase B1 lên `main` mới + chạy lại phép kiểm, 0 USD — B41).
+- **Phiên 26/10 (User 14:1x) — HẾT HẠN:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (dùng ~0,0028 USD ước); C commit / push nhánh `dot3`
   (đợt 3 — đã xong). Trần 8.2: 0,5 USD (spec; đã dùng 0,0369). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10).
 
