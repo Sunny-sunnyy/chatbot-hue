@@ -4,7 +4,8 @@
 # lấy lại được (Session_Prompt.md §5; sổ session_prompt/SO_CAI_TIEN_CACH_LAM.md). Chặn khi:
 #   1. stage file thuộc vùng private: data/, knowledge-base-hue/, "gửi chatgpt/", .aws/, .env*;
 #   2. dòng THÊM MỚI có dạng secret (key OpenAI/OpenRouter, AWS access key, private key);
-#   3. dòng THÊM MỚI hoặc tên file nhắc tên dự án khác của User (ghi chú về dự án đó để ở data/ — Session_Prompt.md §5).
+#   3. dòng THÊM MỚI hoặc tên file nhắc tên dự án khác của User (ghi chú về dự án đó để ở data/ — Session_Prompt.md §5);
+#   4. dòng THÊM MỚI trùng >= 40 ký tự với Golden / kho (`.githooks/overlap_scan.py`; chỉ khi máy có kho — clone public bỏ qua).
 # Bật một lần cho mỗi bản clone: git config core.hooksPath .githooks
 # Chặn nhầm: dừng, báo User; chỉ bỏ qua bằng `git commit --no-verify` khi User duyệt đúng commit đó.
 set -u
@@ -37,6 +38,22 @@ if [ -n "$other" ]; then
   echo "pre-commit: CHẶN — tên file / dòng thêm mới nhắc tên dự án khác của User; chi tiết dự án đó để ở data/ (private):" >&2
   printf '%s\n' "$other" | cut -c1-160 | sed 's/^/  /' >&2
   fail=1
+fi
+
+# Quét trùng chạy bằng .venv của working tree chính (git-common-dir) để commit từ worktree /tmp không làm uv tạo .venv lạ.
+# Hai lần quét tay nối "; git commit" vẫn commit dù quét báo trùng (sổ cải tiến S23, S28) ⇒ rào ở đây (W16).
+# Kho kiểm ở working tree chính: worktree /tmp thường không có symlink kho, không được lặng lẽ bỏ qua (review C 26/10 M-1).
+main_root=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
+if [ -f "$main_root/knowledge-base-hue/evaluation/golden_full_corpus.jsonl" ]; then
+  uv run --quiet --project "$main_root" python .githooks/overlap_scan.py --staged >&2
+  scan=$?
+  if [ "$scan" -eq 3 ]; then
+    echo "pre-commit: CHẶN — dòng thêm mới trùng >= 40 ký tự với Golden / kho (số dòng ở trên; nội dung không in)." >&2
+    fail=1
+  elif [ "$scan" -ne 0 ]; then
+    echo "pre-commit: CHẶN — quét trùng Golden / kho LỖI (mã $scan: thiếu uv / Python lỗi — xem dòng trên), chưa kiểm được." >&2
+    fail=1
+  fi
 fi
 
 if [ "$fail" -ne 0 ]; then

@@ -1,12 +1,13 @@
-# STATUS C — cập nhật 2026-10-26 20:48 (**phiên tối 26/10**: C36 xong, chờ A review; phần dưới mục "Phiên sau…" là trạng thái kết phiên 16:36)
+# STATUS C — cập nhật 2026-10-26 20:48 (**phiên tối 26/10**: C36 xong, A review ready (`2d56193`); chờ review luật sổ cải tiến A giao; phần dưới mục "Phiên sau…" là trạng thái kết phiên 16:36)
 
 Terminal: `hue-rag-b5` (mở tối 26/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-2d`, B = `hue-rag-23` (trực tiếp).
 User tối 26/10 (20:3x): C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên tối 26/10: theo `CURRENT_HANDOFF.md` mục "Việc giao phiên tối 26/10" (A 20:35); C không commit.
 
-**C36 — phân loại lỗi tầng trả lời: XONG 20:48, chờ A review** (A giao 20:35, 0 USD, không sub-agent). Report `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md`; private `data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/{cases,labels}.jsonl`, script `tools/c36_{table,labels}.py`; quét trùng 0; `/tmp/c36_show.py` (tạm, không dữ liệu) đã xóa.
+**C36 — phân loại lỗi tầng trả lời: XONG 20:48, A review ready 0/0/1 minor (`python3` ⇒ `uv run python`), commit `2d56193`** (A giao 20:35, 0 USD, không sub-agent). Report `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md`; private `data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/{cases,labels}.jsonl`, script `tools/c36_{table,labels}.py`; quét trùng 0; `/tmp/c36_show.py` (tạm, không dữ liệu) đã xóa.
 Kết quả: 88 câu dev chính, ctx 10 còn 10 câu bị cờ (ctx 5: 15; sửa 5, không hỏng câu nào); cả 10 `missed evidence` (5 file vắng, 5 đoạn vắng + 1 cả hai); 5 `over-refusal (partial)` = 20 / 46 điểm Completeness mất; xem phụ 12 câu điểm 4: 9 `under-answer`, 2 missed, 1 unsupported; citation sai nhẹ 1. Ý chính cho A: ~80 % điểm mất có thiếu bằng chứng ⇒ chỉ làm tầng trả lời thì trần lợi nhỏ.
 Khai báo file (đã ghi): `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md` (mới),
 `data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/` (bảng từng câu, private), `data/cai_tien_tung_khau_2026-10-26/tools/c36_*.py`, file này, dòng C ở bảng Session `CURRENT_HANDOFF.md`.
+**Review W16 + luật sổ cải tiến: vòng 1 21:01 changes_requested (0 / 1 major / 4 minor); vòng 2 21:06 ready (cả 5 finding đóng)** → `report_agent/2026-10-26_cai_tien_tung_khau/governance_w16_review.md`. M-1: worktree không symlink kho ⇒ hook im lặng bỏ qua quét (cách sửa đã thử đạt). Worktree `/tmp/c_w16` đã gỡ, file tạm đã xóa; không stage / commit gì ở working tree chung. Thấy 20:59: 5 file A stage đã về unstaged (nội dung không đổi) — đã báo A.
 Mở phiên 20:29: kiểm nhanh khớp (main `3cf8781`, hooks bật, Qdrant 1 collection 8.459). Lệch: thư mục untracked `tham khảo 26_10/` — A đang hỏi User, C không đụng.
 Phiên trước: quyền 26/10 chiều (C commit / push nhánh `dot3`, paid ≤ 0,003 USD đợt 3) đã hết hạn.
 
@@ -59,6 +60,8 @@ Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Không nhánh / w
 
 ## Đã học / bẫy gặp (đầu vào vòng cải tiến)
 
+- **26/10 tối C36: chạy script phân tích bằng `python3` hệ thống** (`c36_labels.py`, quét / xem dữ liệu) thay vì `uv run python` — lệch §10 dù script chỉ dùng thư viện chuẩn;
+  A bắt ở review (minor). Mọi lệnh Python của dự án, kể cả script tạm chỉ đọc: `uv run python …` từ gốc repo hoặc `backend/`.
 - **26/10 C4: nối lệnh quét trùng với `git commit` bằng `;` ⇒ commit chạy dù quét exit 1** (dòng bị cờ là chuỗi có sẵn, không lộ thêm — nhưng là may).
   Quét là một bước riêng: chạy, đọc kết quả, rồi mới `git add` / commit; nếu nối thì dùng `&&`.
 - **Đổi literal hàng loạt trong test: viết script AST + kiểm ngược round-trip** (thay lại ⇒ đúng file gốc từng byte) thay vì sửa tay 58 chỗ; đánh số theo

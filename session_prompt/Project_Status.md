@@ -223,3 +223,5 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
   clone): bản clone mới phải bật một lần. Hook chặn dòng thêm mới có tên dự án khác, kể cả khi trích tên file tài liệu
   cũ — viết "tài liệu cách làm của dự án khác" thay vì tên file. Bỏ qua (`--no-verify`) chỉ khi User duyệt đúng commit đó.
+  Từ 26/10 (W16) hook còn quét **dòng thêm mới** trùng ≥ 40 ký tự với Golden / kho (`.githooks/overlap_scan.py`, ~0,4 s; kho đọc từ working
+  tree chính nên commit từ worktree `/tmp` không symlink vẫn quét; báo "quét LỖI" khi thiếu `uv`). Câu kín và `_source-dumps/` không được quét.

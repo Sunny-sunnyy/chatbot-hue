@@ -21,6 +21,11 @@ hoặc quyền (`session_prompt/Session_Prompt.md` §1). Chi tiết kỹ thuật
 vi đã duyệt: A tự quyết, nói ra lý do. Không hỏi lại điều đã chốt
 (`Project_Status.md` §5).
 
+- **Câu User hiểu được nhiều cách** (dữ liệu / code / quyết định / tài liệu; "đồng ý" áp cho một hay nhiều câu): nhắc lại
+  một câu "ý bạn là … đúng không?" trước khi giao việc (25/10: hiểu "kiểm tra lại các phase" là rà dữ liệu, User muốn rà code).
+- **Đề xuất có thứ tự việc** (merge trước, sửa trước…): đối chiếu spec / plan đã duyệt trước khi trình, ghi một dòng
+  "khớp spec … §…" hoặc nói rõ là lệch (25/10: đề xuất merge B1 trước, trái spec 8.2 — B1 sau B0).
+
 ## 2. Mỗi phương án
 
 | Phần | Viết gì |

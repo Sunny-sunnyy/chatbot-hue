@@ -29,6 +29,14 @@ Xong: report + STATUS + dòng của mình ở bảng Session ⇒ nhắn A. Dừn
   `split.json`); top-10 runtime (`data/phase_8_1/g1/runtime_k10.jsonl` hoặc file B thấy đúng — ghi rõ) + pool 30: câu nào thiếu đoạn đúng ở top-5 / top-10 /
   pool 30, thiếu vì sao (`missed evidence` dense ngoài pool / BM25 chỉ xếp lại; một file chiếm chỗ — nối B40; hàng bảng). Đầu ra
   `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md`.
+- **B43 — bản nháp phần khâu tìm cho tài liệu thiết kế đợt cải tiến (B, A giao 20:57, 0 USD, không chạy thí nghiệm mới).** Vì sao: C36 + B42 cho thấy ở
+  mốc context 10 phần thiếu còn lại chỉ sửa được ở tầng tìm ⇒ A trình User lại phạm vi (khuyên thêm một thí nghiệm tầng tìm **không ghi Qdrant**).
+  Làm: liệt kê ≤ 5 biến thể không ghi Qdrant (ví dụ giới hạn đoạn mỗi file / MMR trên pool 30, trọng số gộp dense–BM25, pool dense ∪ BM25 cả kho
+  **kèm** xếp lại, rerank luna trên pool); mỗi biến thể: 8.1 đã đo gì (`file:dòng` trong `report_agent/2026-10-24_phase_8_1_ra_soat/`, không đề xuất
+  lại cái đã bác), nhóm câu B42 nó nhắm (theo cơ chế, chưa đo), tốn gì (tiền / latency CPU), rủi ro hỏng câu khác, **tiêu chí đề xuất ghi trước** theo
+  `run-experiment` (sàn, mức tụt cho phép theo luật (a) của User — Completeness ≥ −0,1, chỉ số quyết, cỡ mẫu thật dev / test), thứ tự đề xuất.
+  Chỉ đọc report + dữ liệu đã có; được tính lại từ `b42_per_case.jsonl` / G1; không gọi API, không chạy retrieval mới. Đầu ra
+  `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tim_B.md` (≤ ~120 dòng). Đây là **đầu vào** cho tài liệu thiết kế của A, không phải plan duyệt.
 - **C36 — phân loại lỗi tầng trả lời (C, 0 USD).** Nguồn: lượt **`g2_context10`** (mốc đợt = context 10) — câu trả lời `data/phase_8_1/g2/g2_context10.jsonl`,
   điểm judge `data/phase_8_1/g2/judge/` (mù: `map.json` sha `33b4c9603f20` nối item ↔ lượt, cách đọc ở `phase_8_1_g2_implementation.md` dòng ~35); so phụ
   `g20_baseline` (context 5) để biết lỗi nào context 10 đã sửa. Phạm vi: dev chính (dev, bỏ `unnatural`, trong phạm vi — 88 câu như B1 §4). Mỗi câu
@@ -113,7 +121,7 @@ khi A giao (mục Thứ tự, bước 5). `dot3` đã merge (giữ nhánh trên 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-2d` (tối 26/10) | Claude Opus 5.5 | trực tiếp | tối 26/10: giao B41 / B42 / C36; review C36 + B41 ready; ghi quyết định câu 3–7; xóa `dot3`; tiếp: sửa luật W14 / W16–W20, tài liệu thiết kế đợt cải tiến | `STATUS_A.md`; 0 USD |
-| B — thực thi | `hue-rag-23` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **B41 xong 20:5x — chờ A review:** `p82-b1` rebase lên `43cdcd6` ⇒ `811d25d` (push `--force-with-lease`); test 4 file = `main` + 1 test NFC; T1 giống byte `cefb2d1ad609`; T2 không gọi model 176 / 176 (+ đối chứng dương); T5 đạt; report §7 `phase_8_2_b1_implementation.md` trên nhánh. **B42** đang làm | `STATUS_B.md`; 0 USD |
+| B — thực thi | `hue-rag-23` (tối 26/10) | Claude Opus 5.5 | trực tiếp | B41 ready (merge sau B0); B42 ready (`a7b61bb`). **B43 xong 21:01 — chờ A:** `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tim_B.md` — ở context 10, top-10 = context nên 8.1 G1.3 / G4-B đã đo đúng chỉ số; rerank chỉ trong top-10 vô ích; đề xuất V1 pool dense 100 (chưa đo, 0 USD) → V2 native p30 k=2 xác nhận test → V3 luna pool 30 (có phí, +3–5 s); không chạy V4 cap file (17 / 22 câu đủ có file đúng > 3 chỗ), V5 (latency); **luật (a) chưa phủ thay đổi tốn thêm mà chất lượng tăng — A / User chốt** | `STATUS_B.md`; 0 USD |
 | C — thực thi | `hue-rag-b5` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **C36 xong 20:48 — chờ A review**: `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md` (88 câu dev chính, ctx 10: 10 câu bị cờ, cả 10 thiếu bằng chứng ở top-10; 5 từ chối khi có một phần fact; 9 câu điểm 4 bỏ chi tiết có sẵn); 0 USD. Còn chờ: thí nghiệm đợt cải tiến, C33 plan E1, C32 | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
@@ -147,7 +155,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | `data/ra_soat_kho_2026-10-25/` | rà kho C32: `danh_sach.md` 139 mục | — |
 | `data/ra_soat_code_2026-10-25/citation_v2/` | lỗi citation tính lại theo validator mới, 14 lượt + `summary.json` (3c) | — |
 | `data/ra_soat_code_2026-10-25/tools/` (gồm `dot3/`: D1, D4, D7, D8, D9 + mốc `t1_base.jsonl`, `3b_base.json`), `data/ra_soat_code/` | script + ghi chú rà / sửa code của C / B | — |
-| `data/tools/overlap_scan.py` | quét trùng Golden / kho (cửa sổ 40 ký tự, exit 1 khi trùng) — **chạy trước mỗi commit file người khác viết** | — |
+| `.githooks/overlap_scan.py` (tracked, không chứa dữ liệu; thay `data/tools/overlap_scan.py`) | quét trùng Golden / kho 40 ký tự — **hook pre-commit tự chạy** trên dòng thêm mới (W16); quét cả file: `uv run python .githooks/overlap_scan.py <file>` | — |
 | `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` | yêu cầu nghiên cứu đợt cải tiến (10 câu) | — |
 | `gửi chatgpt/2026-10-25/kết quả nghiên cứu/HUE_RAG_NGHIEN_CUU_CAI_TIEN_TUNG_KHAU_2026-10-26.md` | kết quả ChatGPT (C1–C6, D1–D4, ma trận ưu tiên, giao thức đo) | `601b49a025ac` |
 | `data/cai_tien_tung_khau_2026-10-26/tools/{counts,cover}.py` | script đếm của B40 (đa dạng nguồn, đoạn bảng, cỡ mẫu theo loại câu) | — |
@@ -165,7 +173,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Cổng ổn định sau mỗi gói:** (1) test các file chạm, lỗi cũ C-17 ghi rõ; (2) chạy thật `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env
   uvicorn api.app:app --port 8011`: `/` 200, `/health` 5 / 5 ready, 1 câu trong kho (200, marker = `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết,
   không Golden, body `{"query": …}`; log sạch; tắt server; (3) chạm tìm kiếm / chia đoạn: T1 giống byte, sha đoạn giống hệt; (4) 4 chỗ báo cáo nếu
-  hành vi đổi; (5) quét `data/tools/overlap_scan.py` trước commit; A commit + push.
+  hành vi đổi; (5) quét trùng Golden / kho: hook pre-commit tự chạy (`.githooks/overlap_scan.py`, W16) — quét cả file người khác viết trước khi stage: `uv run python .githooks/overlap_scan.py <file>`; A commit + push.
 - Test cần key OpenAI (không chạy mặc định): `test_api_chat.py` (C-17 đã sửa ở đợt 3: 3 test dừng trước generator chạy không key), `test_openai_full_corpus_generator.py`,
   `test_phase6_live_smoke.py`. Test thiếu model `tests/test_startup_model_missing.py`: auto mode chặn ⇒ User chạy `!` ở terminal session cần.
 

@@ -148,6 +148,8 @@ ghi/xóa dữ liệu đang chạy.
 Không có WebSearch (Claude Code chạy qua Bedrock): cần tìm thông tin bên ngoài thì viết yêu cầu vào
 `gửi chatgpt/<YYYY-MM-DD>/tìm thông tin/` (ngày viết yêu cầu), User gửi ChatGPT và lưu kết
 quả vào `gửi chatgpt/<YYYY-MM-DD>/kết quả nghiên cứu/` cùng ngày; đọc kết quả rồi WebFetch URL để đối chiếu.
+Mục "bối cảnh hệ thống" của yêu cầu ghi kèm `file:dòng` cho mỗi khẳng định về cách hệ thống chạy, hoặc nhờ B/C đối chiếu với code
+**trước khi gửi** (26/10: yêu cầu không nói BM25 chỉ chấm lại 30 đoạn dense ⇒ vài gợi ý lệch tầm).
 Nghiên cứu **trước** khi đề xuất phương án cần thông tin ngoài; mỗi yêu cầu là một prompt deep research đầy đủ
 (bối cảnh, câu hỏi chính xác, chuẩn bằng chứng, khuôn trả về có URL, phần nghiên cứu cũ đã có) — mẫu ở các
 yêu cầu cũ trong `gửi chatgpt/` (User nhắc 2026-10-24).
