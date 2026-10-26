@@ -29,7 +29,7 @@ giống hệt trên kho hôm nay (trừ B-11 / B-15 — đổi hành vi cho đ�
 | 12 | `8f0e5c4` | B-13 | 2 converter HueGov ⇒ `data/tools/huegov_converters/` (private, sha bằng nhau) rồi `git rm` |
 | — | (commit docs) | B-18 | `guides/full_corpus_rag.md` mục "Build lại index": C-21 / B-11 / B-02 / B-12 theo code mới, bỏ cảnh báo "build ghi sparse state trước bước kiểm đích" |
 
-Cả nhánh: 39 file, +290 / −2.914 dòng. Code `backend/` (trừ tests, experiments): **8.345 → 6.218** dòng; tests 4.394 → 4.182.
+12 commit code `71d2450..8f0e5c4`: 37 file, +289 / −2.711 dòng (`git diff --shortstat`; sửa số cũ theo m-1 review B). Code `backend/` (trừ tests, experiments): **8.345 → 6.218** dòng; tests 4.394 → 4.182.
 
 ## 3. Cách đã chạy thật
 
