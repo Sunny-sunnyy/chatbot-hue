@@ -18,14 +18,6 @@ import pytest
 from core.settings_loader import load_settings
 
 
-def pytest_configure(config):
-    config.addinivalue_line(
-        "markers",
-        "live: test exercising real external dependencies "
-        "(Qdrant, local E5/MiniLM, OpenAI API)",
-    )
-
-
 @pytest.fixture(scope="session")
 def live_settings():
     """Real settings loaded from disk (deep copy, safe to override)."""

@@ -225,6 +225,8 @@ async def test_run_smoke_health_failure_writes_atomic_artifact(tmp_path, monkeyp
 
         return test_app
 
+    # Không có key ⇒ nếu bản thay create_app trượt, app thật cũng không gọi được OpenAI (không có đường tới lượt trả phí).
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setattr("llm.phase6_live_smoke.create_app", mock_create_app)
     code = await run_smoke_async(cases_path, out_path, confirm_paid=True)
     assert code == 1
@@ -311,6 +313,8 @@ async def test_run_smoke_unexpected_runner_error_writes_atomic_artifact_without_
     def crashing_create_app(settings=None):
         raise RuntimeError("Unexpected simulated crash")
 
+    # Như trên: không key ⇒ không có đường tới lượt trả phí dù bản thay trượt.
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setattr("llm.phase6_live_smoke.create_app", crashing_create_app)
     code = await run_smoke_async(cases_path, out_path, confirm_paid=True)
     assert code == 1
@@ -384,11 +388,7 @@ def test_grounded_fallback_artifact_preserves_packed_excerpts_when_sources_empty
     evidence = recorder.get_evidence()
     assert evidence is not None
 
-    # Public response from API chat is empty sources on fallback
-    public_response_sources = []
     recorded_sources = evidence.sources
-
-    assert len(public_response_sources) == 0
     assert len(recorded_sources) == 1
     assert recorded_sources[0]["id"] == 3
     assert (
@@ -400,7 +400,7 @@ def test_grounded_fallback_artifact_preserves_packed_excerpts_when_sources_empty
 
 
 @pytest.mark.anyio
-async def test_asgi_route_evidence_recorder_integration_with_real_retrieval(require_openai_key):
+async def test_asgi_route_evidence_recorder_integration_with_real_retrieval():
     """P6-C3-R2: Test actual FastAPI route + ASGITransport + real retrieval/context without provider call.
 
     Verifies that ContextVar captures packed excerpts through the real ASGI route,

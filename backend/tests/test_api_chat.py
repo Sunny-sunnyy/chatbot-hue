@@ -44,7 +44,7 @@ def test_health_is_cached_and_ready_after_real_lifespan(require_openai_key):
     }
 
 
-def test_real_first_chunk_budget_error_has_no_partial_answer(require_openai_key):
+def test_real_first_chunk_budget_error_has_no_partial_answer():
     settings = load_settings()
     settings["full_corpus_generation"] = dict(settings["full_corpus_generation"])
     settings["full_corpus_generation"]["context_limit"] = 2561
@@ -85,7 +85,7 @@ def test_clean_subprocess_import_production_command():
     assert "CLEAN_IMPORT_OK" in res.stdout
 
 
-def test_production_app_state_has_no_last_chat_trace_after_chat(require_openai_key):
+def test_production_app_state_has_no_last_chat_trace_after_chat():
     settings = load_settings()
     settings["full_corpus_generation"] = dict(settings["full_corpus_generation"])
     settings["full_corpus_generation"]["context_limit"] = 2561
