@@ -63,7 +63,7 @@ Script đo (private) ở `data/ra_soat_code_2026-10-25/tools/dot3/`, cwd `backen
 | 10 | **giống** (25,2 s) | giống | — | 197 / 1 / 4 (+1 test 3 cấp) | — | — | test 3 cấp đỏ trước sửa (3 mục con ≠ 2), xanh sau |
 | 11 | — | — | — | 197 / 1 / 4 | **đạt** | 0 lỗi | **8.459 `PointStruct` giống byte** (`c7466bd83bd3`, dense `08a90dbfd7ba`) |
 | 12 | — | — | — | — | — | — | sha converter bằng nhau (`fd4dc5c4261d`, `50eb800c7b92`); D8 toàn repo 0 chuỗi |
-| **Cuối đợt** (`8f0e5c4`) | 8.459 / 0 / `60591acff422ece6` / identity True / 23,0 s | 158 / `cefb2d1ad609` | giống byte | 197 / 1 / 4 | **đạt** (5 / 5 ready, [1, 3] = sources, từ chối đúng, log 0 lỗi) | 0 lỗi | 2 test có key 2 passed; D6 0 nơi gọi; D8 0 / 0; `git diff --check main..dot3` sạch; T-C cuối đợt: xem §5 |
+| **Cuối đợt** (`8f0e5c4`) | 8.459 / 0 / `60591acff422ece6` / identity True / 23,0 s | 158 / `cefb2d1ad609` | giống byte | 197 / 1 / 4 | **đạt** (5 / 5 ready, [1, 3] = sources, từ chối đúng, log 0 lỗi) | 0 lỗi | 2 test có key 2 passed; D6 0 nơi gọi; D8 0 / 0; `git diff --check main..dot3` sạch; T-C cuối đợt (User `!`, code `210abd4`) **1 passed** 15,04 s |
 
 D4 còn lại đúng phần cần key (theo thiết kế): `test_phase6_settings.py::test_openai_api_key_exists_without_leaking` (failed) + 4 error
 `require_openai_key` (`test_health_is_cached…`, 2 test generator — đã chạy có key: passed, `test_async_client_with_lifespan…`).
@@ -75,8 +75,7 @@ D7 (code / tests): `76ff419` 8.345 / 4.394 · C1 8.347 · C2 8.354 · C3 8.109 �
 
 ## 5. Lỗi, lệch plan và giới hạn
 
-- **T-C cuối đợt:** cần User chạy `!` lần hai sau commit 12 (plan D4) — điền kết quả khi có; commit 7–12 không đụng `retrieval/full_corpus.py`
-  builder (C8 chỉ gỡ `REPO_ROOT`, C11 đụng `points.py`) nên kết quả sau C6 là bằng chứng chính.
+- **T-C:** User chạy `!` ở terminal C hai lần — sau C6 `1 passed` 14,96 s, cuối đợt (code `210abd4`) `1 passed` 15,04 s.
 - **Lệch plan (chặt hơn, A chấp nhận 14:4x):** B-12 chuyển literal ≥ **10** ký tự có nguyên văn kho **và** 7 đường file `rel` (plan: ≥ 20) — `overlap_scan`
   cờ một đường file 67 ký tự. Số đoạn trong JSON: 55.
 - **Lệch plan nhỏ khác:** C-21 assert `"target is non-empty"` (ghi 25/10); C-06 test trace riêng tư đổi `"minilm"` ⇒ `"none"` (plan chỉ ghi smoke dựng
