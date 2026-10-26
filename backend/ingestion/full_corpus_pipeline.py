@@ -206,7 +206,7 @@ def build_candidate(
         for start in range(0, len(prepared.chunks), FULL_CORPUS_BATCH_SIZE):
             stop = start + FULL_CORPUS_BATCH_SIZE
             points = build_full_corpus_point_batch(
-                prepared.chunks[start:stop], dense[start:stop], spec.dimension,
+                prepared.chunks[start:stop], dense[start:stop],
                 prepared.sparse_state, vocabulary_index,
             )
             upsert_full_corpus_batch(client, candidate.collection_name, points, QDRANT_TIMEOUT)

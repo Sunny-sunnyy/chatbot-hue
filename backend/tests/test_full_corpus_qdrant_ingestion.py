@@ -291,7 +291,7 @@ def test_full_corpus_point_batch_has_exact_vectors_payload_and_id() -> None:
     matrix = np.asarray([[1.0, 0.0]], dtype=np.float32)
     validate_full_corpus_point_inputs([chunk], matrix, 2, state, index)
     points = build_full_corpus_point_batch(
-        [chunk], matrix, 2, state, index,
+        [chunk], matrix, state, index,
     )
     assert len(points) == 1
     point = points[0]
@@ -354,7 +354,7 @@ def test_full_corpus_point_batch_rejects_more_than_64() -> None:
     state = fit_sparse_state(chunks)
     with pytest.raises(ValueError, match="64"):
         build_full_corpus_point_batch(
-            chunks, np.tile([[1.0, 0.0]], (65, 1)), 2,
+            chunks, np.tile([[1.0, 0.0]], (65, 1)),
             state, build_vocabulary_index(state),
         )
 
