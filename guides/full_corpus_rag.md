@@ -137,7 +137,7 @@ thử chunk size/gộp chunk vụn (bỏ ràng buộc huydang 256), reranker đa
 truy xuất bảng giá (F2), tổng hợp đa nguồn (F1), BM25 tiếng Việt (tách từ/bigram)
 và rà lại lựa chọn các Phase trước — đo trên baseline 176 case của Phase 7B.
 
-### Build lại index khi corpus đổi (B26, 2026-10-25 — theo code tại `main` `5d3376f`)
+### Build lại index khi corpus đổi (B26, 2026-10-25; đối chiếu lại với code sau rà code đợt 3, 2026-10-26 — B-18)
 
 Runtime từ chối khởi động khi hash file corpus khác build record (lỗi "stale"), nên **mọi** sửa `knowledge-base-hue/` phải đi
 kèm build lại index. Đây là thao tác ghi / xóa dữ liệu đang chạy ⇒ việc rủi ro cao (`session_prompt/WORKFLOW.md` §3): spec / mục việc
@@ -150,7 +150,15 @@ Code làm gì (`backend/ingestion/full_corpus_pipeline.py`):
 - Không ghi đè: ngay đầu build, bước kiểm đích (`inspect_full_corpus_target` / `require_fresh_full_corpus_target`) dừng nếu collection đích
   **đã tồn tại** hoặc build record `data/full_corpus_builds/<collection>.json` **đã có** — trước khi nạp model hay ghi Qdrant
   (`FileExistsError` lúc ghi record chỉ là lớp chặn cuối); sparse state chung
-  `data/full_corpus_builds/full_corpus_sparse_state.json` đã có mà khác byte ⇒ dừng ("Existing sparse state differs").
+  `data/full_corpus_builds/full_corpus_sparse_state.json` đã có mà khác byte ⇒ dừng ("Existing sparse state differs"). Sparse state chỉ
+  được ghi **sau** bước kiểm đích (C-21, rà code đợt 3): build dừng ở bước kiểm đích thì không thay gì trên đĩa.
+- Chunker báo lỗi khi một đoạn vượt giới hạn token của bất kỳ tokenizer nào trong `settings.yaml` `full_corpus.embedding_models`
+  ("Chunk exceeds tokenizer limit: <chunk_id>", B-11) ⇒ `prepare_full_corpus_input` raise, build dừng trước khi nạp model.
+- Đầu vào điểm Qdrant (chunk id, point id, payload 7 field, vector dense + sparse) được kiểm **một lần** cho toàn kho trước khi tạo
+  collection; từng lô 64 điểm chỉ dựng `PointStruct` (B-02).
+- File điều kiện (ghi chú gắn vào bảng, chọn bằng nguyên văn kho) nằm ở `knowledge-base-hue/meta/full_corpus_conditions.json` (private,
+  B-12; `settings.yaml` `full_corpus.conditions_file`): sửa đúng đoạn văn mà điều kiện trỏ tới thì sửa cả file này, nếu không chunker báo
+  lỗi điều kiện.
 - Mọi lỗi ở bước nào cũng raise, không retry / resume; build kiểm hash nguồn trước và sau khi encode, kiểm lại collection sau upsert
   (số point, payload từng point, vector mẫu — đoạn đầu mỗi domain).
 
@@ -158,16 +166,14 @@ Các bước (mỗi bước có quyền trong mục việc; `Project_Status.md` 
 
 1. **Sửa kho có sao lưu:** copy file gốc vào `knowledge-base-hue/meta/` trước khi sửa, review bằng diff (`Session_Prompt.md` §5).
 2. **Chia đoạn thử, chỉ đọc** (không ghi Qdrant): `chunk_full_corpus()` phải trả 0 lỗi; đếm token từng đoạn với 3 tokenizer trong
-   `settings.yaml` `full_corpus.embedding_models`. **Lưu ý (B-11, R2):** chunker hiện **không** báo lỗi khi một đoạn vượt giới hạn
-   (e5 cắt im lặng ở 512) — tới khi sửa B-11, tự đếm và dừng nếu có đoạn vượt. Giới hạn sát nhất là tokenizer **huydang 256** (lớn nhất
-   hôm nay 255 / 256), dù model đó không chạy ở runtime: một sửa kho nhỏ có thể vượt huydang trước e5. Quyết trước khi build: tách thêm
+   `settings.yaml` `full_corpus.embedding_models` — chunker tự báo đoạn vượt thành lỗi (B-11, rà code đợt 3). Giới hạn sát nhất là
+   tokenizer **huydang 256** (lớn nhất hôm nay 255 / 256), dù model đó không chạy ở runtime: một sửa kho nhỏ có thể vượt huydang trước e5. Quyết trước khi build: tách thêm
    hay bỏ huydang khỏi danh sách kiểm (đổi chunker ⇒ thí nghiệm theo skill `run-experiment`; 8.1 G3 H1 đã thử bỏ ràng buộc này — chỉ kiểm e5-small 512, bỏ e5-base và huydang; H2 / H3 dựng trên chunker H1).
 3. **Sao lưu đích cũ:** Qdrant snapshot của collection đang chạy + copy build record và sparse state ra chỗ private kèm ngày.
 4. **Chọn cách thay** (A trình User):
    (a) *tại chỗ* — xóa collection cũ + build record + sparse state rồi build lại đúng tên: đơn giản, nhưng chatbot ngừng phục vụ từ lúc
-   xóa tới khi build xong và khởi động lại API. **Trước khi chạy build, kiểm đủ cả ba đã xóa:** build ghi sparse state mới *trước* bước kiểm
-   đích, nên nếu còn collection hoặc build record thì build dừng sau khi đã thay sparse state ⇒ sparse state lệch record cũ ⇒ runtime từ chối
-   khởi động (C-21 — sửa thứ tự trong code để ở gói build lại);
+   xóa tới khi build xong và khởi động lại API. Xóa đủ cả ba: còn collection hoặc build record ⇒ build dừng ở bước kiểm đích (không ghi
+   gì); còn sparse state cũ khác byte ⇒ build dừng ("Existing sparse state differs");
    (b) *đích mới rồi cutover* (`WORKFLOW.md` §3.4) — gọi `build_candidate(..., collection_name=…, sparse_state_path=…, record_path=…)` từ
    Python như harness 8.1 G3 đã làm, kiểm xong mới đổi runtime; hiện runtime lấy tên collection và đường sparse state từ hằng trong code
    ⇒ cutover cần sửa code (B-06) — làm cùng lần sửa đó.
