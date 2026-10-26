@@ -4,6 +4,18 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-26 (22:3x) — Phase 8.2 chạy lại: Bước 2 = đợt cải tiến từng khâu (spec §10); K1 / R2 kém hơn, K3 chờ; kết phiên
+
+- User 20:3x–22:2x: quyền phiên (A điều phối, ≤ 1 USD); duyệt sổ cải tiến W14 + W18, W16, W17, W19, W20 (hook quét trùng Golden / kho / câu kín);
+  phạm vi đợt cải tiến **B** (khâu trả lời + khâu tìm, không ghi Qdrant); luật nhận (a) / (i); 3 nguyên tắc dùng chung: chất lượng cần thiết trước, hiệu
+  suất = tiền + tốc độ, đo theo mục tiêu sản phẩm cuối cùng (`Session_Prompt.md` §7; `Project_Status.md` §1 "Mục tiêu sản phẩm").
+- B41: B1 (context 10 + NFC) rebase lên `main` mới, T1 giống byte, review ready — merge sau B0. Phân loại lỗi C36 / B42 (mốc context 10): cả 10 câu kém
+  đều thiếu bằng chứng; chỗ nghẽn khâu tìm là xếp hạng.
+- Spec 8.2 §10 "Sửa đổi 26/10" (C38 2 vòng) — A duyệt `cd910c4c4169`. K1 pool 100: **kém hơn** (`p82-k1`); R2 trả lời một phần: **kém hơn**, phạm sàn OOS,
+  gác (`p82-r2`, 0,0027 USD); R3, K2, E2 NOT RUN; R4 thước số (`2c7ecfd`); K3 luna pool 30 plan duyệt `0a6370204c7d`, chạy phiên sau. Chatbot không đổi.
+- Chi tiết: `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`; nhật ký `bao_cao_he_thong/nhat_ky/2026-10-26_toi_cai_tien_tung_khau.md`. Sổ cải tiến vòng 6
+  (S33–S36, W21–W23 đề xuất).
+
 ## 2026-10-26 (16:0x) — Sửa code sau rà soát xong cả 5 gói (đợt 3 merge `421c302`)
 
 Đợt 3 (gói 2 chốt an toàn build + gói 5 dọn code + B-12): C 12 commit trên `dot3` (rebase đầu phiên), B review toàn nhánh ready (0 / 0 / 3 minor),

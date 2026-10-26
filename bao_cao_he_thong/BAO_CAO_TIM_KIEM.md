@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 6: đợt 3 rà code — gỡ nhánh MiniLM khỏi chatbot, gỡ bộ kiểm khói Phase 5; kết quả tìm 158 câu
+**Cập nhật lần cuối: 22:31 26/10/2026 — bản 7: thử nới nhóm ứng viên 30 → 100 (K1) — kém hơn; chỗ nghẽn là xếp hạng; chatbot không đổi.** Bản 6 (16:0x 26/10): đợt 3 rà code — gỡ nhánh MiniLM khỏi chatbot, gỡ bộ kiểm khói Phase 5; kết quả tìm 158 câu
 giống từng byte.** Bản 5 (14:04 25/10): kết quả Phase 8.1; chatbot không đổi.
 Người viết: B (bản 5; bản 1–4: C) · Review: C. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -49,7 +49,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 |---|---|---|
 | Tìm đoạn theo nghĩa + từ khóa cho câu hỏi thường | **Đã xử lý, đóng gói** | MRR@10 0,72 · nDCG@10 0,76 · 92% lọt top-10; chạy lại giống từng byte; `full_corpus.py:111`, `settings.yaml:42` |
 | Tìm độc lập theo nghĩa và từ khóa rồi trộn (`native_hybrid_rrf`) | **Đã thử, chưa áp dụng** | 8.1 so theo cặp trên 40 câu có đoạn đúng: không khác (+3 / −1 câu); làm mất 1–2 câu |
-| Lấy rộng 100 ứng viên (pool 100) | **Đã thử, chưa áp dụng** | 8.1: thêm 4 câu nhưng mất 1 câu đủ đoạn đúng (30 câu thử) — chưa đủ chắc; có tín hiệu |
+| Lấy rộng 100 ứng viên (pool 100) | **Đã thử, chưa áp dụng** | 8.1: thêm 4 câu nhưng mất 1 câu (30 câu thử). **26/10 (K1, giữ cách trộn hiện tại, mốc 10 đoạn):** đoạn đúng có trong nhóm ứng viên 31 → 37 / 40 câu nhưng vào 10 đoạn đầu chỉ 22 → 23; mất 1 câu ⇒ **kém hơn**. Chỗ nghẽn là **xếp hạng**, không phải tìm thấy |
 | Đổi hệ số trộn RRF k (2, 10, 30) / trộn kiểu DBSF | **Đã thử, chưa áp dụng** | 8.1: không cách nào qua luật; mức đổi MRR ≤ 0,01 |
 | Tìm gần đúng (HNSW) so với tìm chính xác | **Đã xử lý, đóng gói** | 8.1: giống hệt 108/108 câu ⇒ giữ HNSW |
 | Báo lỗi rõ khi Qdrant/model lỗi, không tự đổi cách | **Đã xử lý** | `backend/retrieval/full_corpus.py` |
@@ -61,12 +61,21 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Câu hỏi dạng Unicode NFD (gõ từ một số máy) | **Chưa thực hiện** | 8.1 đo: MRR giảm 0,20; chuẩn hóa NFC phục hồi giống hệt ⇒ đề xuất 8.2 |
 | Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | **Chỉ thử trên bản món ăn**: MiniLM làm điểm giảm. Toàn kho: 0/158 câu vượt giới hạn độ dài 512; `settings.yaml:43` (`reranker: none`) |
 | Reranker đa ngôn ngữ / tiếng Việt chạy trên card đồ họa (bge-reranker-v2-m3, Vietnamese_Reranker) | **Đã thử, chưa áp dụng** | 8.1: thứ tự tốt hơn chút ít nhưng đẩy đoạn đúng của 1–3 câu ra khỏi 5 đoạn đưa model; ~1 s/câu (10 đoạn), 11–14 s/câu (~150 đoạn: hợp hai nhánh, mỗi nhánh 100) |
-| Xếp hạng lại bằng `gpt-6-luna` | **Đã thử, chưa áp dụng** | 8.1: không mất câu nào, thứ tự tốt lên rõ (MRR +0,17), nhưng bộ thử chỉ cho cứu tối đa 3 câu ⇒ chưa rõ; +3,5 s và ≈ 0,0003 USD mỗi câu |
+| Xếp hạng lại bằng `gpt-6-luna` | **Đã thử, chưa áp dụng** | 8.1: không mất câu nào, thứ tự tốt lên rõ (MRR +0,17), nhưng bộ thử chỉ cho cứu tối đa 3 câu ⇒ chưa rõ; +3,5 s và ≈ 0,0003 USD mỗi câu. **26/10:** kế hoạch K3 — xếp lại **30** ứng viên (không chỉ 10) để chọn 10 đoạn, tối đa cứu 9 câu; đã duyệt, **chạy phiên sau** (trần 0,20 USD) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 26/10/2026 (tối) — Phân loại lỗi tìm kiếm + thử nới nhóm ứng viên (bản 7)
+
+- **Phân loại lỗi (B42, 0 USD):** 40 câu có đoạn đúng, mốc 10 đoạn: đủ đoạn đúng 22 / 40; 18 câu thiếu — gần nửa đoạn đúng **ngoài** 30 ứng viên
+  (phần lớn tìm theo từ khóa trên cả kho thấy được, nhưng hiện tìm theo từ khóa chỉ xếp lại 30 ứng viên của tìm theo nghĩa), nửa còn lại **trong** 30
+  ứng viên nhưng bị xếp ngoài 10 đầu. Câu tự nhiên không lợi từ 10 đoạn (6 / 12 ở cả hai mức).
+- **K1 — nới 30 → 100 ứng viên (0 USD):** kém hơn (thêm 2, mất 1 câu; chậm thêm ~9 ms). Cách "lấy thêm từ khóa trên cả kho" (K2) không chạy lại vì
+  8.1 đã thử và không qua luật khi so nhiều cách. Bước tiếp: **K3** cho model xếp lại 30 ứng viên (phiên sau).
+- Hồ sơ: `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md`, nhánh `p82-k1`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_review.md`.
 
 ### 25/10/2026 — Phase 8.1: tìm chỗ nghẽn và thử xếp hạng lại (bản 5)
 

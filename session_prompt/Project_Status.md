@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-26 16:4x` (A, kết phiên 26/10; §8 thêm bẫy worktree 16:3x; **sửa code sau rà soát xong cả 5 gói** — đợt 3 merge `421c302`, cổng ổn định trên `main` đạt; 8.2 vẫn tạm dừng)
+Last updated: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -53,9 +53,14 @@ sàn closed-world ở trên; B0 (người đọc cặp mù) là mốc người �
 **4** `1b9c126` (guide / notebook), **3** `47a4e32` (công cụ so cặp, một chỗ dựng tin nhắn), **1b** `1e4acd0` (import trần, mọi lệnh từ
 `backend/`, API 409 / 503 đúng), **đợt 3** = gói 2 + 5 + B-12 (merge `421c302` 26/10: đoạn vượt token luôn dừng build; test identity so nội dung +
 sparse bytes; gỡ Rep B, smoke Phase 5, nhánh `minilm`, converter; nội dung kho ra khỏi file tracked; code backend 8.345 → 6.218 dòng; B review
-ready; 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/reports_artifacts_private_2026-10-26/`, User 26/10). **Sửa code: xong 5 gói.** **Phase 8.2 tạm dừng** (User 16:5x 25/10; spec
-`docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` sha `dabae90b2b60`; B1 ở nhánh `p82-b1`) — chạy lại khi 5 gói xong +
-cổng ổn định đạt (User 20:0x: phase trước ổn định mới sang phase sau). Sau đó: đợt tìm hướng tốt hơn từng khâu (User 20:0x).
+ready; 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/reports_artifacts_private_2026-10-26/`, User 26/10). **Sửa code: xong 5 gói.** **Phase 8.2 chạy lại tối 26/10** (spec
+`docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`: bản gốc `dabae90b2b60` + **§10 "Sửa đổi 26/10"**, bản A duyệt `cd910c4c4169`).
+B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1 giống byte, review ready — **merge sau B0** (User đọc cặp mù). **Bước 2 =
+đợt cải tiến từng khâu** (User 21:1x: phạm vi B — khâu trả lời + khâu tìm, không ghi Qdrant; luật (a) / (i); A tự chọn trong luật): phân loại lỗi
+(C36 / B42: 80 % điểm mất đi kèm thiếu bằng chứng; chỗ nghẽn là xếp hạng); **K1** pool 100 kém hơn (nhánh `p82-k1`); **R2** trả lời một phần kém hơn
+(phạm sàn OOS, 0,0027 USD; gác; `p82-r2`); **R3** NOT RUN (6 câu); **R4** thước số (chỉ danh sách đọc lại, `2c7ecfd`); K2, E2 NOT RUN; **K3** luna xếp lại
+pool 30 — plan `0a6370204c7d` duyệt, chạy phiên sau (≤ 0,20 USD); R1 sau cùng. Tiền 8.2: 0,0396 / 0,5 USD. Tổng hợp:
+`report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`.
 
 ## 3. Bảng Phase
 
@@ -72,7 +77,7 @@ cổng ổn định đạt (User 20:0x: phase trước ổn định mới sang p
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `paused` | Spec duyệt 16:21 25/10 (sha `dabae90b2b60`). **Tạm dừng 16:5x (User) để rà code Phase 0–7.** B1 (context 10 + NFC) xong ở nhánh `p82-b1`, chưa vào `main` ⇒ chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` |
+| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38). B0 chờ User; B1 ready trên `p82-b1` (merge sau B0); Bước 2: K1 / R2 kém hơn, R3 / K2 / E2 NOT RUN, R4 xong, **K3 chờ chạy**, R1 sau. Chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy

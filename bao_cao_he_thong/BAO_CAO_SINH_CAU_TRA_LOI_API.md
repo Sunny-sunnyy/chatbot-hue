@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 8: đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
+**Cập nhật lần cuối: 22:31 26/10/2026 — bản 9: phân loại lỗi trả lời; thử lại "trả lời phần có căn cứ" (R2) — kém hơn, gác; "nêu đủ chi tiết" (R3) không đủ câu; chatbot không đổi.** Bản 8 (16:0x 26/10): đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
 nguyên nhân "quên ghi `[n]`" của 8.1. Bản 5 (14:10): kết quả Phase 8.1.
 Người viết: A (bản 6), B (bản 5; bản 1–4: C) · Review: C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -57,13 +57,14 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `backend/api/app.py:147–151` |
 | Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý, đóng gói** | báo đúng 409 "cần lập chỉ mục lại" từ 25/10 (trước báo nhầm 503); test `test_api_chat.py` (kho đổi ⇒ 409) |
 | Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (trước: Qdrant lỗi khi hỏi ra 500; thiếu model sẽ thành 409 nếu chỉ sửa nửa vời); test `test_startup_model_missing.py` (User chạy `!`) |
-| Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). 8.1 thử prompt "trả lời phần có căn cứ": từ chối nhầm 13 → 1 câu (120 câu thử), nhưng **trả lời cả 2 câu ngoài kho** ⇒ phạm luật, chưa dùng |
+| Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). 8.1 thử prompt "trả lời phần có căn cứ": từ chối nhầm 13 → 1 câu (120 câu thử), nhưng **trả lời cả 2 câu ngoài kho** ⇒ phạm luật, chưa dùng. **26/10 (R2, chữ prompt siết hơn, mốc 10 đoạn):** vẫn trả lời 1 / 12 câu ngoài kho cùng kiểu lỗi ⇒ dừng ngay bước đầu (0,0027 USD); **hướng này gác** tới khi có cách chặn được kiểm trước |
 | Đoạn chứa đáp án nằm ngoài 5 đoạn ngữ cảnh | **Xử lý một phần** | 8.1 đo bằng đoạn đúng: **cả 22/22** câu từ chối nhầm ở 7B đều thiếu ít nhất một đoạn đúng trong 5 đoạn — gốc là khâu tìm/xếp đoạn |
 | Có đủ bằng chứng mà vẫn từ chối | **Đính chính (8.1)** | Chẩn đoán 7B (theo keyword) ghi 4/22; đo lại bằng đoạn đúng: **0 câu** |
 | Đưa 10 đoạn ngữ cảnh thay vì 5 | **Đã thử, chưa áp dụng** — **thắng, đã xác nhận** | 8.1: điểm Đủ +0,26 (120 câu thử) / +0,27 (56 câu kiểm); từ chối nhầm 13 → 7; 0 câu ngoài kho bị trả lời; lỗi trích dẫn không tăng; chờ bạn duyệt đưa vào chatbot |
 | Xếp 5 đoạn gom theo tài liệu | **Đã thử, chưa áp dụng** | 8.1: không khác |
 | Thêm 2 luật cũ của spec Phase 6 (không dùng tiêu đề làm bằng chứng; đoạn văn ngắn) | **Đã thử, chưa áp dụng** | 8.1: không khác; lỗi trích dẫn 4 → 1 (chưa đủ chắc) |
-| Mức suy luận của model (`none` / `low` / `high`) | **Đã thử, chưa áp dụng** | 8.1: `none` đầy đủ hơn chút nhưng quên ghi `[n]` gấp đôi (4 → 8); `low` 4 → 9; `high` không khác, tốn hơn 11% |
+| Mức suy luận của model (`none` / `low` / `high`) | **Đã thử, chưa áp dụng** | 8.1: `none` đầy đủ hơn chút nhưng quên ghi `[n]` gấp đôi (4 → 8); `low` 4 → 9; `high` không khác, tốn hơn 11%. 25/10: đếm lại theo bộ kiểm citation mới, `none` chỉ 0 → 2 ⇒ lý do loại không còn. **26/10:** xếp cuối (R1) theo nguyên tắc "chất lượng trước, tối ưu sau"; chưa chạy |
+| Câu trả lời quá gọn, bỏ chi tiết có trong nguồn (giờ, năm, tên riêng…) | **Chưa thực hiện** | 26/10 phân loại lỗi: 9 / 88 câu điểm 4 vì bỏ chi tiết. Thử câu prompt "nêu đủ chi tiết" (R3) **không chạy**: ở mốc 10 đoạn chỉ 6 câu có thể đổi, dưới số câu cần để kết luận ⇒ cần thêm câu tự nhiên |
 | Chính sách trích dẫn "chỉ có một nguồn thì gán nguồn đó" | **Đã thử, chưa áp dụng** | 8.1 phát lại trên câu trả lời đã lưu: 0 câu đổi. (Đính chính 25/10: lỗi lúc đó **không** phải "quên `[n]`" mà là dạng `[Nguồn n]` — đã sửa, mục 4 bản 6) |
 | Câu tổng hợp nhiều nguồn | **Xử lý một phần** | Lúc đóng đạt nhưng chỉ dùng 1 nguồn; chưa chứng minh tổng hợp |
 | Câu hỏi giá vé + miễn giảm (bảng giá) | **Chưa thực hiện** | Không tìm ra bảng giá (xem `BAO_CAO_TIM_KIEM.md`) |
@@ -73,6 +74,16 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 26/10/2026 (tối) — Phân loại lỗi trả lời; thử lại trả lời một phần (bản 9)
+
+- **Phân loại lỗi (C36, 0 USD):** 88 câu thử chính, mốc 10 đoạn: 10 câu kém, **cả 10 thiếu thông tin trong 10 đoạn** (model không bịa, citation sai
+  rất ít). Điểm "đủ ý" mất 46: 20 do từ chối khi có một phần thông tin (5 câu), 9 do trả lời quá gọn (9 câu), 17 do thiếu thông tin hẳn.
+- **R2 — trả lời phần có căn cứ:** kém hơn, phạm sàn ngay bước đầu (1 câu ngoài kho bị trả lời), 0,0027 USD; gác.
+- **R3 — nêu đủ chi tiết:** NOT RUN (6 câu có thể đổi). **R4:** thước kiểm số liệu trong câu trả lời có trong nguồn được trích — chỉ dùng để chọn câu
+  đọc lại (ngoài mẫu đúng 0 / 5).
+- Tốc độ khâu sinh đo bằng **số token model viết ra** (thời gian chờ provider dao động ~0,8 s / câu, không phân biệt được chênh lệch nhỏ).
+- Hồ sơ: `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md`, nhánh `p82-r2`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r{3,4}_*`.
 
 ### 25/10/2026 — API báo đúng loại lỗi (bản 7, rà code gói 1b)
 - **Lỗi:** cùng một module bị nạp hai lần dưới hai tên ⇒ API không nhận ra lỗi của bước tìm kiếm: Qdrant lỗi khi hỏi ⇒ 500 thay 503; kho

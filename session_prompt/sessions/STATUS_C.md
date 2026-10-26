@@ -6,11 +6,7 @@ User tối 26/10 (20:3x): C làm việc trực tiếp với A; A giao việc = "
 
 ## Còn treo (phiên sau xử lý trước)
 
-1. **Report R2 chưa commit / nhánh `p82-r2` chưa push.** File `/tmp/c_r2/report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_implementation.md`
-   (untracked trong worktree; harness đã commit `0cbad2d`). Auto mode session C chặn lệnh commit + push ⇒ chờ User chạy `!` ở terminal C:
-   `cd /tmp/c_r2 && rm data knowledge-base-hue && git add report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_implementation.md && git commit -q -m "docs(8.2 R2): implementation report — E1b worse (floor: 1/12 out-of-scope dev answered, case 160); stopped at step 1 per plan; 0.0026861 USD" && git push -u origin p82-r2`.
-   Nếu tắt máy trước khi chạy: `/tmp` mất ⇒ report mất (nội dung đã tóm trong mục dưới + tin C gửi A) — phiên sau C viết lại từ `data/phase_8_2/r2/` nếu cần.
-   Sau khi push: gỡ worktree `git worktree remove /tmp/c_r2` (giữ nhánh).
+1. ~~Report R2 chưa commit / chưa push~~ — **xong 22:25 26/10/2026**: User chạy `!` ⇒ commit `aec9ab8`, `origin/p82-r2` = `aec9ab8`; worktree `/tmp/c_r2` đã gỡ (nhánh `p82-r2` giữ, không merge).
 2. B review report R2 (A giao) — chưa có.
 
 ## Đã làm tối 26/10 (theo thứ tự; 0 USD trừ C43)
@@ -32,7 +28,7 @@ User tối 26/10 (20:3x): C làm việc trực tiếp với A; A giao việc = "
 
 ## Phiên sau C làm gì đầu tiên
 
-Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Xử lý mục "Còn treo" (User `!` nếu chưa chạy; gỡ worktree `/tmp/c_r2`). Việc có thể tới lượt C:
+Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Mục "Còn treo" chỉ còn B review report R2. Việc có thể tới lượt C:
 1. Review report K3 (B chạy, nếu A duyệt sha) hoặc report R2 vòng B review (C sửa nếu có finding).
 2. **R1** (`none`, luật (a)) — plan chưa viết; đứng cuối thứ tự "chất lượng trước" (spec §10.3).
 3. Hướng mở đã ghi: R2 (cách mới phải được kiểm trước trên câu 160); R3 (cần bộ câu lớn hơn). C32 rà kho: chờ User.
@@ -51,12 +47,13 @@ Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Xử lý mục "C
 
 ## Câu hỏi / thắc mắc còn treo (cho A / User)
 
-- 3c: lượt xác nhận reasoning `none` trên test (~0,007 USD, context 5) — A đưa vào tài liệu thiết kế đợt cải tiến.
+- **R1 (`none`, luật (a))**: plan chưa viết; ai viết / khi nào (spec §10.3 xếp cuối nhánh trả lời). Thay ý "3c xác nhận `none` trên test" cũ.
+- **K3**: A duyệt plan `0a6370204c7d`; chạy khi User chọn giờ (B làm). Nếu cần review report K3 ⇒ C.
+- **Hướng mở** (A ghi): R2 — chỉ quay lại với cách mới đã kiểm trước trên câu 160; R3 — cần bộ câu tự nhiên lớn hơn (trần 6 câu ở mốc B1).
 - C32: `performing_arts/performing-arts-entities-inventory.md` tự ghi phải loại khỏi ingestion nhưng đang trong index — loại ở lần build lại?
-- E1 plan Q1–Q3 (§10 plan) — khi 8.2 chạy lại.
-- Nhánh `dot3` trên remote: xóa sau merge? (A quyết.)
-- Thấy khi làm đợt 3, ngoài phạm vi C (đã ghi report §5, A nhận ở m-3): guide 5 `:65` còn nhắc MiniLM của service; `guides/full_corpus_rag.md` bước 4b "cutover cần
-  sửa code (B-06)" dùng mã B-06 của B26 (khác B-06 của plan đợt 3) — dễ nhầm.
+- Ghi chú cũ (đợt 3, A nhận ở m-3): guide 5 `:65` còn nhắc MiniLM của service; `guides/full_corpus_rag.md` bước 4b "cutover cần sửa code (B-06)"
+  dùng mã B-06 của B26 (khác B-06 của plan đợt 3).
+- Đã hết (không còn hỏi): plan E1 Q1–Q3 (thay bằng plan R2, đã chạy); xóa nhánh `dot3` (User 20:4x đồng ý xóa).
 
 ## File private C tạo phiên 25/10 (không commit; phiên 26/10 ở mục "Đã xong")
 

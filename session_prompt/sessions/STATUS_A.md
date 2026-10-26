@@ -1,19 +1,31 @@
-# STATUS A — cập nhật 20:35 26/10/2026 (mở phiên tối 26/10)
+# STATUS A — cập nhật 22:30 26/10/2026 (KẾT PHIÊN TỐI 26/10 — User chọn (b): "nhiệm vụ, câu hỏi để session tiếp theo")
 
-Terminal: `hue-rag-2d` · Vai: điều phối. B = `hue-rag-23`, C = `hue-rag-b5` (cả ba Claude Code, trực tiếp).
+Terminal: `hue-rag-2d` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-23`, C = `hue-rag-b5` (cả ba Claude Code, trực tiếp; tên đổi mỗi lần mở).
 
-## Quyền phiên này (User 20:3x, hết hạn cuối phiên)
-- Tự điều phối B/C; API ≤ 1 USD cả phiên; B commit + push `--force-with-lease` nhánh `p82-b1`.
+## Commit
+- Đầu phiên: `3cf8781`. Phiên: `43cdcd6` … `087cedd` + commit kết phiên (`git log --oneline 3cf8781..main`).
+- Nhánh: `p82-b1` `811d25d` (B1 rebase, ready, merge sau B0); `p82-k1` (K1 kém hơn, hồ sơ); `p82-r2` `aec9ab8` (R2 kém hơn, hồ sơ, **chờ B review report**);
+  `dot3` còn (User chưa chạy lệnh xóa). Không còn worktree của A/B/C (`git worktree list` chỉ còn 4 worktree AGY dưới `~/.gemini/` — không đụng).
 
-## Đang làm
-- Giao B41 (rebase B1), B42 (lỗi tầng tìm), C36 (lỗi tầng trả lời) — `CURRENT_HANDOFF.md` "Việc giao phiên tối 26/10".
-- Chờ User: xác nhận "đồng ý" áp cho câu 3–7; câu 8 (`tham khảo 26_10/`); B0 khi tiện. Sau đó: tài liệu thiết kế đợt cải tiến (khâu trả lời, mốc context 10).
+## Đang làm / dở
+- Không có việc đang chạy. Phiên sau A làm: `CURRENT_HANDOFF.md` "PHIÊN SAU — ĐỌC TRƯỚC NHẤT" (thứ tự 1–7, câu hỏi User 1–7).
 
 ## Đang khai báo sửa
-- `session_prompt/CURRENT_HANDOFF.md` (mục A), `session_prompt/sessions/STATUS_A.md`.
+- không (kết phiên)
+
+## Vừa xong (phiên tối 26/10)
+- Quyền + quyết định User (câu 1–8 cũ; phạm vi B; luật (a) / (i); 3 nguyên tắc §7; mục tiêu sản phẩm §1 — chờ User trả lời 4 câu).
+- Giao + review: B41 (rebase B1), B42, C36 (phân loại lỗi), B43 / C37 (đề xuất), spec §10 (C38), plan K1 (C41) → K1 chạy (B48) → review (C42), R4 (C39 → B47),
+  plan R2 (C40 → B49) → R2 chạy (C43), plan K3 (B50 → C44, duyệt), plan R3 (B51 → C45 ⇒ NOT RUN), B44 (comment), B45 (hook câu kín).
+- Governance (B / C kiểm): hook quét trùng Golden / kho / câu kín; W14 + W18, W17, W19, W20; §7 ba nguyên tắc; sổ vòng 6 (S33–S36, W21–W23).
+- Kết phiên: `TONG_HOP.md` đợt cải tiến, nhật ký, `BAO_CAO_TIM_KIEM` bản 7, `BAO_CAO_SINH_CAU_TRA_LOI_API` bản 9, README, Project_Status, HISTORY, handoff.
+
+## Quyền phiên này (User 20:3x 26/10 — HẾT HẠN cuối phiên)
+- A tự điều phối B/C, tự đề xuất / thử / chọn trong luật (User 21:1x); API ≤ 1 USD cả phiên; B commit + push `p82-b1` / `p82-k1`; C commit + push `p82-r2`;
+  K3: B commit + push `p82-k3`, ≤ 0,20 USD (đã duyệt, **chưa chạy** — phiên sau hỏi lại quyền).
 
 ## Tiền paid phiên này
-- 0 USD.
+- A: 0 USD. Cả nhóm: **0,0027 USD** thật (C, R2 bước 1). Trần 8.2 đã dùng 0,0396 / 0,5 USD.
 
 ## Đã học / bẫy gặp (phiên tối 26/10)
 - 22:08: plan R2 đổi sha **sau** khi C báo sha cho A (C sửa ghi chú chữ của B) ⇒ A ghi duyệt sai bản (`aa808…`, file thật `b70ea…`) trong `7e60c07`; bắt
