@@ -15,12 +15,6 @@ Nếu bằng chứng không đủ, trả đúng duy nhất câu sau, không thê
 {INSUFFICIENT_ANSWER}
 """.strip()
 
-REPRESENTATION_B_SYSTEM_INSTRUCTIONS = """
-Tạo một đoạn ngữ cảnh tìm kiếm tiếng Việt cô đọng chỉ từ nội dung được cung cấp.
-Không thêm dữ kiện, không trả lời người dùng và không thêm citation.
-""".strip()
-
-
 def build_answer_input(query: str, context: str) -> str:
     """Nội dung tin nhắn user gửi model trả lời — một nơi dựng duy nhất, để chuỗi đếm token context đúng là chuỗi gửi đi (C-03)."""
     return f"Câu hỏi:\n{query.strip()}\n\nNgữ cảnh truy xuất:\n{context.strip()}"
@@ -30,11 +24,4 @@ def build_answer_messages(query: str, context: str) -> list[dict[str, str]]:
     return [
         {"role": "system", "content": ANSWER_SYSTEM_INSTRUCTIONS},
         {"role": "user", "content": build_answer_input(query, context)},
-    ]
-
-
-def build_representation_b_messages(search_text: str) -> list[dict[str, str]]:
-    return [
-        {"role": "system", "content": REPRESENTATION_B_SYSTEM_INSTRUCTIONS},
-        {"role": "user", "content": "Representation A:\n" + search_text},
     ]

@@ -1,4 +1,4 @@
-"""Bounded exactly-five-call live runner for Full-corpus Phase 6 OpenAI baseline."""
+"""Bounded exactly-four-call live runner (four answer cases through the HTTP route) for Full-corpus Phase 6."""
 import argparse
 import asyncio
 from datetime import datetime, timezone
@@ -17,7 +17,6 @@ from api.app import create_app
 from core.settings_loader import load_settings
 from llm.evidence_recorder import record_evidence
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
-from llm.representation_b import build_representation_b_search_text
 from vectorstore.qdrant import client_from_settings
 
 logger = logging.getLogger("phase6_live_smoke")
@@ -101,13 +100,6 @@ def get_git_info() -> dict:
         return {"commit": "unknown", "dirty": True}
 
 
-def make_fits_all_checker():
-    # Dùng đúng bộ tokenizer local quyết định ranh giới chunk (full_corpus.embedding_models).
-    from ingestion.chunking.full_corpus_chunker import get_default_tokenizer_checker
-
-    return get_default_tokenizer_checker()
-
-
 def get_metadata_v2_point_count(settings: dict) -> int:
     from ingestion.full_corpus_pipeline import candidate_by_id
 
@@ -167,9 +159,9 @@ def build_live_smoke_artifact(
             unverified_list.append("point_count_unverified")
 
     all_calls_pass = len(calls_record) > 0 and all(c.get("status") == "PASS" for c in calls_record)
-    exact_five_attempts = len(calls_record) == 5
+    exact_four_attempts = len(calls_record) == len(EXPECTED_CASE_IDS)
 
-    checks_dict.setdefault("exact_five_attempts", exact_five_attempts)
+    checks_dict.setdefault("exact_four_attempts", exact_four_attempts)
     checks_dict.setdefault("point_count_intact", point_count_intact)
     checks_dict.setdefault("all_calls_pass", all_calls_pass)
 
@@ -187,7 +179,6 @@ def build_live_smoke_artifact(
             "model": gen_cfg.get("model"),
             "token_encoding": gen_cfg.get("token_encoding"),
             "answer_max_output_tokens": gen_cfg.get("answer_max_output_tokens"),
-            "representation_b_max_output_tokens": gen_cfg.get("representation_b_max_output_tokens"),
             "timeout_seconds": gen_cfg.get("timeout_seconds"),
             "context_limit": gen_cfg.get("context_limit"),
             "reserved_output_tokens": gen_cfg.get("reserved_output_tokens"),
@@ -201,7 +192,7 @@ def build_live_smoke_artifact(
         })
 
     artifact = {
-        "schema_version": "phase_6_full_corpus_live_smoke:v2",
+        "schema_version": "phase_6_full_corpus_live_smoke:v3",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "git": git_info,
         "configuration": config_dict,
@@ -308,7 +299,6 @@ async def run_smoke_async(cases_path: Path, output_path: Path, confirm_paid: boo
 
     try:
         app = create_app(settings)
-        checker = make_fits_all_checker()
 
         async with app.router.lifespan_context(app):
             async with AsyncClient(
@@ -325,53 +315,9 @@ async def run_smoke_async(cases_path: Path, output_path: Path, confirm_paid: boo
                 retrieval_service = app.state.retrieval_service
 
                 # -------------------------------------------------------------
-                # Attempt 1: Representation B generation with real retrieval
+                # Attempts 1-4: Four Answer Cases
                 # -------------------------------------------------------------
-                print("\n--- Executing Attempt 1: Representation B ---")
-                rep_b_retrieval = retrieval_service.search(cases[0]["question"])
-                if not rep_b_retrieval.documents:
-                    write_atomic_artifact("FAIL", early_exit_reason="no_documents_retrieved_for_rep_b")
-                    return 1
-                rep_b_sample_text = rep_b_retrieval.documents[0].text
-
-                rep_b_call = {
-                    "call_number": 1,
-                    "call_type": "representation_b",
-                    "case_id": "representation_b",
-                    "model": generator.model,
-                    "status": "FAIL",
-                }
-                try:
-                    gen_b = await generator.generate_search_context(rep_b_sample_text)
-                    rep_b_result = build_representation_b_search_text(
-                        rep_b_sample_text,
-                        gen_b.text,
-                        fits_all_embedding_tokenizers=checker,
-                    )
-                    rep_b_call.update({
-                        "status": "PASS" if rep_b_result.search_text else "FAIL",
-                        "response_id": gen_b.response_id,
-                        "latency_ms": gen_b.latency_ms,
-                        "input_tokens": gen_b.input_tokens,
-                        "output_tokens": gen_b.output_tokens,
-                        "total_tokens": gen_b.total_tokens,
-                        "finish_reason": gen_b.finish_reason,
-                        "used_representation_b": rep_b_result.used_representation_b,
-                        "reason": rep_b_result.reason,
-                        "generated_search_context": gen_b.text,
-                    })
-                    print(f"Attempt 1 PASS: latency={gen_b.latency_ms}ms, tokens={gen_b.total_tokens}")
-                except Exception as exc:
-                    logger.error("Attempt 1 failed: %s", type(exc).__name__)
-                    rep_b_call["error_type"] = type(exc).__name__
-                    print(f"Attempt 1 FAIL: {type(exc).__name__}")
-
-                calls_record.append(rep_b_call)
-
-                # -------------------------------------------------------------
-                # Attempts 2-5: Four Answer Cases
-                # -------------------------------------------------------------
-                for idx, case_item in enumerate(cases, start=2):
+                for idx, case_item in enumerate(cases, start=1):
                     case_id = case_item["case_id"]
                     question = case_item["question"]
                     print(f"\n--- Executing Attempt {idx}: {case_id} ---")
@@ -420,10 +366,10 @@ async def run_smoke_async(cases_path: Path, output_path: Path, confirm_paid: boo
                             if case_id == "out_of_scope":
                                 if ans_text == INSUFFICIENT_ANSWER and len(sources) == 0:
                                     ans_call["status"] = "PASS"
-                                    print("Attempt 5 PASS (Exact out-of-scope fallback, zero sources)")
+                                    print(f"Attempt {idx} PASS (Exact out-of-scope fallback, zero sources)")
                                 else:
                                     ans_call["status"] = "FAIL"
-                                    print(f"Attempt 5 FAIL: answer={ans_text!r}, sources_count={len(sources)}")
+                                    print(f"Attempt {idx} FAIL: answer={ans_text!r}, sources_count={len(sources)}")
                             else:
                                 citations = [int(m) for m in CITATION_RE.findall(ans_text)]
                                 source_ids = [s["id"] for s in sources]
@@ -462,7 +408,7 @@ async def run_smoke_async(cases_path: Path, output_path: Path, confirm_paid: boo
 
     # Compute overall checks
     all_calls_pass = len(calls_record) > 0 and all(c.get("status") == "PASS" for c in calls_record)
-    exact_five_attempts = len(calls_record) == 5
+    exact_four_attempts = len(calls_record) == len(EXPECTED_CASE_IDS)
     if before_count is not None and after_count is not None:
         point_count_intact = check_point_immutability(before_count, after_count)
     else:
@@ -470,11 +416,11 @@ async def run_smoke_async(cases_path: Path, output_path: Path, confirm_paid: boo
         if "point_count_unverified" not in unverified:
             unverified.append("point_count_unverified")
 
-    checks["exact_five_attempts"] = exact_five_attempts
+    checks["exact_four_attempts"] = exact_four_attempts
     checks["point_count_intact"] = point_count_intact
     checks["all_calls_pass"] = all_calls_pass
 
-    overall_status = "PASS" if (all_calls_pass and exact_five_attempts and point_count_intact) else "FAIL"
+    overall_status = "PASS" if (all_calls_pass and exact_four_attempts and point_count_intact) else "FAIL"
     print(f"\nFinal Smoke Verification Status: {overall_status}")
 
     write_atomic_artifact(overall_status)

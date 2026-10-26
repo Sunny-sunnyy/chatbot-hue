@@ -1,4 +1,4 @@
-"""Tool-less OpenAI Agents SDK full-corpus answer and Representation B generator for Phase 6."""
+"""Tool-less OpenAI Agents SDK full-corpus answer generator for Phase 6."""
 import asyncio
 from dataclasses import dataclass
 import logging
@@ -21,7 +21,6 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from core.schema import GenerationError
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
-    REPRESENTATION_B_SYSTEM_INSTRUCTIONS,
     build_answer_input,
 )
 
@@ -31,11 +30,6 @@ logger = logging.getLogger("llm.full_corpus")
 class AnswerOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     answer: str
-
-
-class SearchContextOutput(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    search_context: str
 
 
 @dataclass(frozen=True)
@@ -58,15 +52,11 @@ def parse_structured_output(
     Fails closed on missing fields, extra fields, invalid JSON, or non-conforming types.
     """
     if isinstance(final_output, expected_type):
-        val = getattr(final_output, "answer", None) or getattr(
-            final_output, "search_context", None
-        )
+        val = getattr(final_output, "answer", None)
     elif isinstance(final_output, dict):
         try:
             parsed = expected_type.model_validate(final_output)
-            val = getattr(parsed, "answer", None) or getattr(
-                parsed, "search_context", None
-            )
+            val = getattr(parsed, "answer", None)
         except Exception as exc:
             raise GenerationError(
                 "Invalid structured output dictionary from OpenAI agent"
@@ -74,9 +64,7 @@ def parse_structured_output(
     elif isinstance(final_output, str):
         try:
             parsed = expected_type.model_validate_json(final_output)
-            val = getattr(parsed, "answer", None) or getattr(
-                parsed, "search_context", None
-            )
+            val = getattr(parsed, "answer", None)
         except Exception as exc:
             raise GenerationError(
                 "Invalid structured output JSON string from OpenAI agent"
@@ -102,7 +90,6 @@ class OpenAIFullCorpusGenerator:
         model: str,
         timeout: int = 45,
         answer_max_output_tokens: int = 2048,
-        representation_b_max_output_tokens: int = 256,
         answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
         reasoning_effort: str | None = None,
     ) -> None:
@@ -112,7 +99,6 @@ class OpenAIFullCorpusGenerator:
         self.model = model
         self.timeout = timeout
         self.answer_max_output_tokens = answer_max_output_tokens
-        self.representation_b_max_output_tokens = representation_b_max_output_tokens
 
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
         self.responses_model = OpenAIResponsesModel(
@@ -134,20 +120,6 @@ class OpenAIFullCorpusGenerator:
             output_type=AnswerOutput,
         )
 
-        # Search context agent: max_tokens=256, include_usage=True, store=False
-        # No temperature, reasoning, verbosity, top_p or sampling knobs
-        self.search_context_agent = Agent(
-            name="hue_full_corpus_search_context_generator",
-            instructions=REPRESENTATION_B_SYSTEM_INSTRUCTIONS,
-            model=self.responses_model,
-            model_settings=ModelSettings(
-                max_tokens=self.representation_b_max_output_tokens,
-                include_usage=True,
-                store=False,
-            ),
-            output_type=SearchContextOutput,
-        )
-
     @classmethod
     def from_environment(
         cls,
@@ -166,7 +138,6 @@ class OpenAIFullCorpusGenerator:
         model = config.get("model", "gpt-6-luna")
         timeout = config.get("timeout_seconds", 45)
         answer_max = config.get("answer_max_output_tokens", 2048)
-        rep_b_max = config.get("representation_b_max_output_tokens", 256)
 
         client = AsyncOpenAI(
             api_key=api_key,
@@ -178,7 +149,6 @@ class OpenAIFullCorpusGenerator:
             model=model,
             timeout=timeout,
             answer_max_output_tokens=answer_max,
-            representation_b_max_output_tokens=rep_b_max,
             answer_instructions=answer_instructions,
             reasoning_effort=reasoning_effort,
         )
@@ -251,14 +221,6 @@ class OpenAIFullCorpusGenerator:
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
         return await self._execute_agent(self.answer_agent, build_answer_input(query, context), AnswerOutput)
-
-    async def generate_search_context(self, search_text: str) -> GeneratedText:
-        if not search_text or not search_text.strip():
-            raise ValueError("Search text must not be empty or blank")
-        prompt = f"Representation A:\n{search_text.strip()}"
-        return await self._execute_agent(
-            self.search_context_agent, prompt, SearchContextOutput
-        )
 
     async def aclose(self) -> None:
         """Close AsyncOpenAI client connection."""

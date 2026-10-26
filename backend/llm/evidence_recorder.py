@@ -1,7 +1,7 @@
 """Request-scoped evidence recorder for auditing generation and grounded evidence.
 
 Provides contextvars-based isolation so that each chat request / live smoke call
-captures exact packed evidence (sources, excerpts, tokens, prompt text) and
+captures exact packed evidence (sources, excerpts, tokens) and
 generation metadata without mutating global production app state.
 """
 from __future__ import annotations
@@ -19,7 +19,6 @@ class RecordedEvidence:
     packed_sources_count: int = 0
     packed_token_count: int = 0
     sources: list[dict[str, Any]] = field(default_factory=list)
-    packed_text: str = ""
     # Generation metadata
     response_id: str | None = None
     model: str | None = None
@@ -61,7 +60,6 @@ class EvidenceRecorder:
             self.evidence = RecordedEvidence()
         self.evidence.packed_sources_count = len(getattr(packed, "sources", []))
         self.evidence.packed_token_count = getattr(packed, "input_tokens", 0)
-        self.evidence.packed_text = getattr(packed, "text", "")
         self.evidence.sources = [
             {
                 "id": source.id,
@@ -95,11 +93,6 @@ class EvidenceRecorder:
         if self.evidence is None:
             self.evidence = RecordedEvidence()
         self.evidence.status = "SUCCESS"
-
-    def record_generation_success(self, generated: Any) -> None:
-        """Record model response metadata on success."""
-        self.record_generation_result(generated)
-        self.mark_success()
 
     def record_error(self, error_type: str) -> None:
         """Record error code or failure category without wiping existing metadata."""

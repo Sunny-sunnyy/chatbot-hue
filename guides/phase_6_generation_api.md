@@ -51,8 +51,8 @@ Contract full-corpus hiện hành:
   verbosity; model/SDK tự dùng các giá trị mặc định;
 - `OPENAI_API_KEY` chỉ đọc từ process environment; client `max_retries=0`,
   timeout 45 giây, không application retry hoặc model fallback;
-- answer cap 2048, Representation B cap 256 và context profile
-  `16384/2048/512`;
+- answer cap 2048 và context profile `16384/2048/512` (Representation B — một call
+  sinh "ngữ cảnh tìm kiếm" runtime chưa từng dùng — đã gỡ ở rà code 2026-10-25, đợt 3);
 - API thành công chỉ trả `{answer,sources}` với response-local citation `[n]`;
   backend tự validate citation và dựng source từ evidence thực tế;
 - UI hiện tại là static HTML/CSS/JavaScript, render Markdown đã sanitize bằng
@@ -76,8 +76,8 @@ Contract full-corpus hiện hành:
 - `/health` trả `{"status": "ok" | "degraded", "components": {app, qdrant, retrieval, tokenizer, generator}}` (HTTP 200 cả khi `degraded`) (`backend/api/health.py`);
 - chỉ hỗ trợ hành vi người dùng tiếng Việt; không thêm language detector;
 - không mock/fake/stub. Acceptance dùng corpus, Qdrant, tokenizer, model và API
-  thật; bounded live evidence có đúng một call Representation B và bốn answer
-  calls, không tự thay case lỗi bằng call thứ sáu.
+  thật; bounded live evidence có đúng bốn answer calls qua route HTTP, không tự
+  thay case lỗi bằng call thứ năm.
 
 Review Contract hiện hành là file riêng ngày 2026-10-01. Amendment/delta plan
 mới có ưu tiên; plan 2026-09-30 chỉ áp dụng cho phần không bị override. Nội dung
