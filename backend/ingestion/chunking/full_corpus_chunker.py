@@ -125,7 +125,7 @@ class ConditionManager:
     ) -> None:
         if conditions_path is None:
             fc = get_full_corpus_settings(settings)
-            rel_cond = fc.get("conditions_file", "config/full_corpus_conditions.json")
+            rel_cond = fc.get("conditions_file", "../knowledge-base-hue/meta/full_corpus_conditions.json")
             conditions_path = (BACKEND_DIR / rel_cond).resolve()
 
         self.path = Path(conditions_path)
