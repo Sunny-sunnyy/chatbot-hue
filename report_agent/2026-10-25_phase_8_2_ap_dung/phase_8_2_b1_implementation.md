@@ -108,3 +108,46 @@ Dữ liệu: `data/phase_8_2/b1/` — `b1_{dev,test}.jsonl` (+ phần, `.meta.js
 - File B sửa (chưa commit): `backend/config/settings.yaml`, `backend/core/settings_loader.py`, `backend/retrieval/full_corpus.py`,
   `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`, `backend/experiments/phase_8_2/__init__.py`,
   `backend/experiments/phase_8_2/b1.py`, report này, `phase_8_2_b1_plan.md`.
+
+## 7. Rebase 26/10 (B41, B terminal `hue-rag-23`, 2026-10-26 20:46 +0700 `date`)
+
+Việc: `CURRENT_HANDOFF.md` mục "Việc giao phiên tối 26/10" — B41. Rebase `p82-b1` (`f23d396`, gốc `f4353e2`) lên `origin/main` `43cdcd6`
+(sau rà code 1a, 1b, 3, 4, đợt 3), trong worktree riêng `/tmp/b_p82b1`. **0 USD** (không lời gọi model nào).
+
+**Xung đột và cách giải:**
+- `backend/tests/test_full_corpus_retrieval.py` (xung đột duy nhất): giữ import trần của `main` (gói 1b) + thêm `InvalidQueryError` của B1.
+- Tự gộp, đã đọc diff với `main`: `settings.yaml`, `settings_loader.py`, `test_phase6_settings.py` (chỉ còn đổi 5 → 10; phần Rep B đợt 3 gỡ giữ
+  nguyên đã gỡ), `retrieval/full_corpus.py` (`import unicodedata` + `normalize_query` + một dòng trong `search`; không còn `minilm` / `REPO_ROOT`).
+- `experiments/phase_8_2/b1.py:23`: bỏ comment "import này cũng đưa gốc repo + backend/ vào sys.path" — sai từ gói 1b (`sua_1b_plan.md` §6 m4).
+  Cùng comment còn ở 3 file `experiments/phase_8_1/` trên `main` — ngoài phạm vi B41, ghi để A quyết.
+- Không nạp đôi module (`X` và `backend.X`): 0 với `import api.app`, `experiments.phase_8_2.b1`, `evaluation.full_corpus_eval`; code nạp từ
+  `/tmp/b_p82b1/backend`.
+
+**Kiểm (lần chạy mới, cùng Qdrant `:6335` thật, e5-small CPU, không key OpenAI):**
+
+| # | Kiểm | Kết quả | Đạt |
+|---|---|---|---|
+| — | 4 file test của B1 (`test_phase6_settings`, `test_full_corpus_retrieval`, `test_full_corpus_context`, `test_api_chat`) | nhánh **41 passed**, 1 failed + 1 error; `main` cùng 4 file: 40 passed, **cùng** 1 failed + 1 error (`test_openai_api_key_exists_without_leaking`, `test_health_is_cached_and_ready_after_real_lifespan` — cần key, C-17). +1 = test NFC của B1 | ✓ |
+| T1 | retrieval 158 câu giống byte mốc | sha256 `cefb2d1ad6094913…826e4`, 158 dòng | ✓ |
+| T2 | 176 câu: `top_chunk_ids`, `context_sources`, đầu vào model = G2.1a | xem dưới: 176 / 176 mọi trường | ✓ (cách đo đổi, xem lưu ý) |
+| T5 | `nfd-check` câu tự viết | `top10_equal` true, `packed_equal` true, 10 / 10 nguồn | ✓ |
+| T3, T4 | chấm điểm / live `/chat` | **NOT RUN** — cần gọi `gpt-6-luna`; không cần vì đầu vào model không đổi (T2) | — |
+
+**T2 không gọi model** (script private `data/phase_8_2/b1/rebase_2610/t2_offline.py`, sha `20782ad585fb`): chạy đường `answer_case` của
+evaluator (search → context builder → `generator.generate_answer`) tới ngay trước lời gọi SDK — `_execute_agent` bị thay bằng hàm bắt
+(agent, user_prompt), không request ra mạng. Ghi mỗi câu: 10 id, số nguồn đóng gói, sha chuỗi user gửi model, sha instructions, `ModelSettings`,
+sha schema đầu ra. Chạy trên cây sau rebase và cây cũ `f23d396` (worktree `/tmp/b_p82b1_old`):
+
+| So | `top_chunk_ids` | `context_sources` | chuỗi user | instructions | `ModelSettings` | schema |
+|---|---|---|---|---|---|---|
+| sau rebase ↔ G2.1a đã ghi (`g2_context10` + `t_context10`) | 176 | 176 | — | — | — | — |
+| sau rebase ↔ nhánh cũ `f23d396` | 176 | 176 | 176 | 176 | 176 | 176 |
+| đối chứng dương: sau rebase ↔ `main` (context 5) | 176 | **0** | **0** | — | — | — |
+
+Lưu ý cách đo: T2 gốc so `input_tokens` do provider trả (cần lượt sinh mới, có phí). Ở đây thay bằng: đầu vào gửi SDK giống từng byte với code
+cũ, và lượt B1 cũ đã có `input_tokens` = G2.1a 176 / 176 ⇒ suy ra lượt sinh mới sẽ cùng `input_tokens` (cùng SDK, cùng `.venv`). Đây là suy luận
+bắc cầu, không phải số provider mới; A quyết có cần lượt sinh thật không. Dữ liệu: `data/phase_8_2/b1/rebase_2610/` (`t2_{new,old,control_main_ctx5}.jsonl`,
+`t2_compare.json`, `retrieval_dense_bm25_rrf.jsonl`, `nfd_check_after_rebase.json`).
+
+Bằng chứng §4 (T3 điểm judge, A/A, tiền 0,0369 USD) vẫn dùng lại được vì đầu vào model không đổi (T2) — ghi là dùng lại. Commit rebase:
+nhánh `p82-b1`, push `--force-with-lease` (quyền User 20:3x). Chưa merge `main` (chờ B0 + A review).
