@@ -5,7 +5,7 @@
 #   1. stage file thuộc vùng private: data/, knowledge-base-hue/, "gửi chatgpt/", .aws/, .env*;
 #   2. dòng THÊM MỚI có dạng secret (key OpenAI/OpenRouter, AWS access key, private key);
 #   3. dòng THÊM MỚI hoặc tên file nhắc tên dự án khác của User (ghi chú về dự án đó để ở data/ — Session_Prompt.md §5);
-#   4. dòng THÊM MỚI trùng >= 40 ký tự với Golden / kho (`.githooks/overlap_scan.py`; chỉ khi máy có kho — clone public bỏ qua).
+#   4. dòng THÊM MỚI trùng >= 40 ký tự với Golden / kho / câu kín (`.githooks/overlap_scan.py`; chỉ khi máy có kho — clone public bỏ qua).
 # Bật một lần cho mỗi bản clone: git config core.hooksPath .githooks
 # Chặn nhầm: dừng, báo User; chỉ bỏ qua bằng `git commit --no-verify` khi User duyệt đúng commit đó.
 set -u
@@ -48,7 +48,7 @@ if [ -f "$main_root/knowledge-base-hue/evaluation/golden_full_corpus.jsonl" ]; t
   uv run --quiet --project "$main_root" python .githooks/overlap_scan.py --staged >&2
   scan=$?
   if [ "$scan" -eq 3 ]; then
-    echo "pre-commit: CHẶN — dòng thêm mới trùng >= 40 ký tự với Golden / kho (số dòng ở trên; nội dung không in)." >&2
+    echo "pre-commit: CHẶN — dòng thêm mới trùng >= 40 ký tự với Golden / kho / câu kín (số dòng + nhãn ở trên; nội dung không in)." >&2
     fail=1
   elif [ "$scan" -ne 0 ]; then
     echo "pre-commit: CHẶN — quét trùng Golden / kho LỖI (mã $scan: thiếu uv / Python lỗi — xem dòng trên), chưa kiểm được." >&2

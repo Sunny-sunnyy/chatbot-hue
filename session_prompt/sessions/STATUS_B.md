@@ -20,6 +20,11 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
 - **B44** (A giao 21:0x, 0 USD, mức thấp): bỏ comment sai "import này cũng đưa gốc repo + backend/ vào sys.path". **Khai báo (main, working tree chung):**
   `backend/experiments/phase_8_1/{g1_retrieval,g2_generate,g3_chunking,g4_rerank}.py` (4 file — A ghi 3; `g3_chunking.py` cũng có). Không commit.
   **XONG 21:0x — chờ A commit:** 4 dòng, chỉ bỏ comment; `py_compile` 4 file đạt; `git diff --check` sạch. Hết file khai báo.
+- **B45** (A giao 21:17, review hook quét câu kín, 0 USD): khai báo `report_agent/2026-10-26_cai_tien_tung_khau/hook_sealed_review.md` (mới). Script tạm `/tmp/b45_*`,
+  worktree thử `/tmp/b45_wt` — gỡ khi xong. Giữ mù: không in / đọc nội dung câu kín.
+  **XONG 21:2x — ready 0 / 0 / 2 minor** (m-1 câu kín < 40 ký tự không bị bắt: 15 / 55 câu; m-2 số báo nhầm trong comment). Worktree + `/tmp/b45_*` đã gỡ.
+  **Vòng 2 (21:25): ready, m-1 + m-2 đóng** — A thêm `short_questions()`; tracked không thêm báo nhầm; ca dương câu ngắn bắt đúng. `/tmp/b45v2` đã xóa.
+  Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
   `backend/experiments/phase_8_2/{__init__,b1}.py`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_implementation.md`.

@@ -1,4 +1,4 @@
-"""Quét chữ trùng >= 40 ký tự liên tiếp với Golden / kho tri thức (private) — chỉ in số dòng + loại nguồn, không in nội dung.
+"""Quét chữ trùng >= 40 ký tự liên tiếp với Golden / kho tri thức / câu kín (private) — chỉ in số dòng + loại nguồn, không in nội dung.
 
 Vì sao: repo PUBLIC; báo cáo chép nhầm câu Golden hay đoạn kho thì lộ vĩnh viễn trong lịch sử git. Hai lần (25/10, 26/10) quét
 tay rồi nối `; git commit` nên commit vẫn chạy dù quét báo trùng ⇒ đưa vào `.githooks/pre-commit` (sổ cải tiến W16).
@@ -50,7 +50,30 @@ def build_grams() -> dict[str, str]:
     for path in KB.rglob("*.md"):
         if not {"evaluation", "meta", "_source-dumps"} & set(path.parts):
             add(path.read_text(encoding="utf-8"), "corpus")
+    # Câu kín (User duyệt 21:1x 26/10): chỉ `question` + `reference_answer` của `*sealed*.jsonl` — như Golden. Không quét trường
+    # `sources` (đường dẫn kho) và file ghi chú `*sealed*.md` (chép luật / đường dẫn dự án): đo 26/10 chúng báo nhầm trên file tracked
+    # (`sources` 416 dòng, `.md` tới 635 dòng / file — B45), còn q/a báo 0 dòng sau khi bỏ câu từ chối chuẩn. Máy đọc, chỉ in số dòng + nhãn.
+    for path in sorted((KB / "evaluation").rglob("*sealed*.jsonl")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                row = json.loads(line)
+                add(row.get("question") or "", "sealed")
+                add(row.get("reference_answer") or "", "sealed")
     return grams
+
+
+def short_questions() -> dict[str, str]:
+    """Câu hỏi Golden / câu kín ngắn hơn cửa sổ 40 ký tự (cửa sổ không bao giờ bắt được): dò nguyên câu trong dòng (B45 m-1:
+    15 / 55 câu kín dài 21–38 ký tự; đo 26/10 báo nhầm 0 dòng tracked)."""
+    out: dict[str, str] = {}
+    sources = [(GOLDEN, "golden_q")] + [(p, "sealed") for p in sorted((KB / "evaluation").rglob("*sealed*.jsonl"))]
+    for path, tag in sources:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                q = norm(json.loads(line).get("question") or "")
+                if 15 <= len(q) < WINDOW + 4:
+                    out.setdefault(q, tag)
+    return out
 
 
 def staged_added_lines() -> list[tuple[str, list[tuple[int, str]]]]:
@@ -73,15 +96,14 @@ def staged_added_lines() -> list[tuple[str, list[tuple[int, str]]]]:
     return list(files.items())
 
 
-def hits(lines: list[tuple[int, str]], grams: dict[str, str]) -> dict[str, list[int]]:
+def hits(lines: list[tuple[int, str]], grams: dict[str, str], shorts: dict[str, str]) -> dict[str, list[int]]:
     found: dict[str, list[int]] = {}
     for n, line in lines:
         t = norm(line)
-        for i in range(0, max(0, len(t) - WINDOW + 1)):
-            tag = grams.get(t[i:i + WINDOW])
-            if tag:
-                found.setdefault(tag, []).append(n)
-                break
+        tag = next((grams[t[i:i + WINDOW]] for i in range(0, max(0, len(t) - WINDOW + 1)) if t[i:i + WINDOW] in grams), None)
+        tag = tag or next((v for q, v in shorts.items() if q in t), None)
+        if tag:
+            found.setdefault(tag, []).append(n)
     return found
 
 
@@ -93,10 +115,10 @@ def main() -> int:
         inputs = staged_added_lines()
     else:
         inputs = [(Path(f).name, list(enumerate(Path(f).read_text(encoding="utf-8").splitlines(), 1))) for f in sys.argv[1:]]
-    grams = build_grams()
+    grams, shorts = build_grams(), short_questions()
     any_hit = False
     for label, lines in inputs:
-        found = hits(lines, grams)
+        found = hits(lines, grams, shorts)
         any_hit |= bool(found)
         print(label, found or "0 trùng")
     return HIT_EXIT if any_hit else 0
