@@ -47,6 +47,9 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
   Vòng 2 (22:1x): plan R2 `aa808a85184c` ready (3 finding đóng; ghi chú chữ dòng 99). Spec 8.2 §10: B kiểm 3 lần (đo tốc độ theo khâu, R1, §7 mục tiêu sản phẩm) — đạt (`ce8b310`).
   K1 n-1 (C42) sửa trên nhánh `p82-k1` `870a5d5`.
 - **B50** (A giao 22:2x, plan K3, 0 USD tới khi duyệt): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k3_plan.md` (mới).
+  **XONG 22:1x — chờ C review.** A trả lời §7 (pool 30; trần 0,20 = 0,06 + 0,14; luật 2 lượt; quyền khi duyệt) ⇒ ghi vào plan, sha `ae2b94d35c84` (cũ `e801f2cc1deb`). C44 ready 0/0/2 ⇒ sửa m-1 (max_output_tokens 2048 + theo dõi token ra) + m-2 (p95 ≈ 5,2 s) ⇒ sha `0a6370204c7d`. Không sửa nữa.
+- **B51** (A giao 22:2x, plan R3, 0 USD): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r3_plan.md` (mới).
+  **XONG 22:1x** (sha `c613f524ea10`); A đồng ý §6. C45 changes_requested (M-1: trần thật 6 câu U còn điểm 4 ở B1 ⇒ chỉ còn đường 5/0) ⇒ **A quyết R3 NOT RUN** (run-experiment §1.6); plan + review giữ làm hồ sơ, không sửa.
   Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,

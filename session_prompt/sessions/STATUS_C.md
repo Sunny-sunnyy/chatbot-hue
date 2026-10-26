@@ -1,30 +1,41 @@
-# STATUS C — cập nhật 2026-10-26 20:48 (**phiên tối 26/10**: C36 xong, A review ready (`2d56193`); chờ review luật sổ cải tiến A giao; phần dưới mục "Phiên sau…" là trạng thái kết phiên 16:36)
+# STATUS C — cập nhật 22:22 26/10/2026 (**chuẩn bị kết phiên tối 26/10**; trạng thái kết phiên chiều 26/10 ở mục "Đã xong phiên 26/10" trở xuống)
 
 Terminal: `hue-rag-b5` (mở tối 26/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-2d`, B = `hue-rag-23` (trực tiếp).
-User tối 26/10 (20:3x): C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên tối 26/10: theo `CURRENT_HANDOFF.md` mục "Việc giao phiên tối 26/10" (A 20:35); C không commit.
+User tối 26/10 (20:3x): C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên tối 26/10 (C commit + push `p82-r2`, paid ≤ 0,06 USD cho R2)
+**hết hạn cuối phiên**.
 
-**C36 — phân loại lỗi tầng trả lời: XONG 20:48, A review ready 0/0/1 minor (`python3` ⇒ `uv run python`), commit `2d56193`** (A giao 20:35, 0 USD, không sub-agent). Report `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md`; private `data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/{cases,labels}.jsonl`, script `tools/c36_{table,labels}.py`; quét trùng 0; `/tmp/c36_show.py` (tạm, không dữ liệu) đã xóa.
-Kết quả: 88 câu dev chính, ctx 10 còn 10 câu bị cờ (ctx 5: 15; sửa 5, không hỏng câu nào); cả 10 `missed evidence` (5 file vắng, 5 đoạn vắng + 1 cả hai); 5 `over-refusal (partial)` = 20 / 46 điểm Completeness mất; xem phụ 12 câu điểm 4: 9 `under-answer`, 2 missed, 1 unsupported; citation sai nhẹ 1. Ý chính cho A: ~80 % điểm mất có thiếu bằng chứng ⇒ chỉ làm tầng trả lời thì trần lợi nhỏ.
-Khai báo file (đã ghi): `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md` (mới),
-`data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/` (bảng từng câu, private), `data/cai_tien_tung_khau_2026-10-26/tools/c36_*.py`, file này, dòng C ở bảng Session `CURRENT_HANDOFF.md`.
-**C41 review plan K1 (sha `ad71594e17e7`): XONG 21:40 26/10/2026 — changes_requested (0 / 1 major / 4 minor)** → `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_plan_review.md` (M-1: test thiếu mức tụt tầng trả lời + A/A test). **C39 R4 thước số: XONG 21:47 26/10/2026, chờ B review** — file mới `backend/experiments/phase_8_2/{__init__,r4_numbers}.py`, `backend/tests/test_r4_numbers.py` (6 passed), report `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r4_implementation.md`; kiểm thước ĐẠT (bắt 2/2, nhầm 1/3); B1 dev cờ 4 (thật 1), test cờ 1; 0 USD; không commit. K1 vòng 2 ready (ghi cuối `phase_8_2_k1_plan_review.md`). **C42 review K1: XONG 22:03 26/10/2026 — ready (K1 kém hơn xác nhận; chạy lại độc lập 108/108 giống; 1 minor chữ)** → `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_review.md`. **Plan R2 sửa theo B49: 22:06 26/10/2026, sha `ad9ef95b6ca9`, chờ B kiểm phần sửa** (tốc độ = output_tokens ≤ +20 %, latency chỉ theo dõi, bỏ lượt latency; pilot = bước 1+2; tiền 0,040). Harness `/tmp/c_r2/backend/experiments/phase_8_2/r2.py` (nhánh `p82-r2`, chưa commit) đã khớp bản sửa; import + `--help` OK; chưa chạy gì có phí.
-**C40 plan R2: XONG 21:52 26/10/2026, chờ B review** → `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_plan.md` (thay plan E1; chữ E1b giữ nguyên; trần 5, sàn 120/168, Holm {{R2,R3}} cố định ⇒ cần 5/5; ước 0,052 USD, trần 0,06; Q1 lượt latency 30 câu, Q2 quyền).
-**C38 — review spec 8.2 §10 (sha `ace705ec7142`): XONG 21:30 26/10/2026 — changes_requested (0 / 4 major / 5 minor)**; **vòng 2 21:34 (sha `7ea7ed3a1600`): ready** (cả 9 finding đóng; 3 ghi chú chữ n-1…n-3) → `report_agent/2026-10-26_cai_tien_tung_khau/spec_8_2_s10_review.md`. M-1 cỡ mẫu trái Holm (4/0 trượt Holm 2); M-2 K2 dùng lại dev đã thấy + đổi hai thứ; M-3 luật (i) không có mức tụt; M-4 'không chờ B0' bỏ biện pháp §8. R1–R4 là phần C viết — ghi rõ không tự đánh giá.
-**C37 — bản nháp khâu trả lời: XONG 21:22 26/10/2026, chờ A** → `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tra_loi_C.md` (0 USD; R1 `none` luật (a), R2 = E1b của spec 8.2 (trần 5 câu, không phải 7), R3 prompt 'nêu đủ chi tiết', R4 thước số ⊆ đoạn trích; E2 đề xuất NOT RUN; 2 câu hỏi luật: '0 USD thêm' và cách đo '≥ −0,1').
-**Review W16 + luật sổ cải tiến: vòng 1 21:01 changes_requested (0 / 1 major / 4 minor); vòng 2 21:06 ready (cả 5 finding đóng)** — A commit `018c8dc`. **21:07 26/10/2026: chờ A** (User đang chọn phạm vi đợt cải tiến + luật nhận; A viết spec rồi giao review / thí nghiệm). → `report_agent/2026-10-26_cai_tien_tung_khau/governance_w16_review.md`. M-1: worktree không symlink kho ⇒ hook im lặng bỏ qua quét (cách sửa đã thử đạt). Worktree `/tmp/c_w16` đã gỡ, file tạm đã xóa; không stage / commit gì ở working tree chung. Thấy 20:59: 5 file A stage đã về unstaged (nội dung không đổi) — đã báo A.
-Mở phiên 20:29: kiểm nhanh khớp (main `3cf8781`, hooks bật, Qdrant 1 collection 8.459). Lệch: thư mục untracked `tham khảo 26_10/` — A đang hỏi User, C không đụng.
-Phiên trước: quyền 26/10 chiều (C commit / push nhánh `dot3`, paid ≤ 0,003 USD đợt 3) đã hết hạn.
+## Còn treo (phiên sau xử lý trước)
+
+1. **Report R2 chưa commit / nhánh `p82-r2` chưa push.** File `/tmp/c_r2/report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_implementation.md`
+   (untracked trong worktree; harness đã commit `0cbad2d`). Auto mode session C chặn lệnh commit + push ⇒ chờ User chạy `!` ở terminal C:
+   `cd /tmp/c_r2 && rm data knowledge-base-hue && git add report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_implementation.md && git commit -q -m "docs(8.2 R2): implementation report — E1b worse (floor: 1/12 out-of-scope dev answered, case 160); stopped at step 1 per plan; 0.0026861 USD" && git push -u origin p82-r2`.
+   Nếu tắt máy trước khi chạy: `/tmp` mất ⇒ report mất (nội dung đã tóm trong mục dưới + tin C gửi A) — phiên sau C viết lại từ `data/phase_8_2/r2/` nếu cần.
+   Sau khi push: gỡ worktree `git worktree remove /tmp/c_r2` (giữ nhánh).
+2. B review report R2 (A giao) — chưa có.
+
+## Đã làm tối 26/10 (theo thứ tự; 0 USD trừ C43)
+
+| Việc | Kết quả | File |
+|---|---|---|
+| Mở phiên 20:29 | kiểm nhanh khớp (main `3cf8781`, hooks, Qdrant 1 × 8.459) | — |
+| **C36** phân loại lỗi tầng trả lời (ctx 10, 88 câu dev chính) | 10 câu bị cờ, **cả 10 thiếu bằng chứng**; 5 từ chối khi có một phần fact (20 / 46 điểm); 9 trả lời gọn (điểm 4). A ready (`2d56193`) | `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md` |
+| Review **W16** hook quét trùng + luật sổ cải tiến | vòng 1: 1 major (worktree không symlink ⇒ hook im lặng bỏ qua) — vòng 2 ready (`018c8dc`) | `…/governance_w16_review.md` |
+| **C37** bản nháp khâu trả lời | R1 `none`, R2 = E1b, R3 "nêu đủ chi tiết", R4 thước số; E2 NOT RUN | `…/de_xuat_khau_tra_loi_C.md` |
+| **C38** review spec 8.2 §10 | vòng 1: 4 major (Holm vs cỡ mẫu; K2 dùng lại dev đã thấy; luật (i) thiếu mức tụt; "không chờ B0") — vòng 2 ready | `…/spec_8_2_s10_review.md` |
+| **C41** review plan K1 | vòng 1: 1 major (test thiếu mức tụt) — vòng 2 ready (C tự tính A/A test khớp B) | `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_plan_review.md` |
+| **C39** R4 thước "số trong câu trả lời có trong đoạn được trích" | bắt 2 / 2 lỗi thật đã biết, nhầm 1 / 3 (trên mẫu đã thấy); ngoài mẫu 0 / 5 thật ⇒ chỉ là danh sách đọc lại. B47 ready; A commit `2c7ecfd` | `backend/experiments/phase_8_2/r4_numbers.py`, `backend/tests/test_r4_numbers.py`, `…/phase_8_2_r4_implementation.md` |
+| **C40** plan R2 (thay plan E1) | B49: 1 major (latency khâu sinh không đo được ±50 ms ⇒ đổi sang `output_tokens`); A duyệt `b70ea775efb2` (`08419c0`) | `…/phase_8_2_r2_plan.md` |
+| **C42** review report K1 | **K1 kém hơn xác nhận** (chạy lại độc lập 108 / 108 giống; mất câu 154) | `…/phase_8_2_k1_review.md` |
+| **C43** chạy R2 | **KÉM HƠN — phạm sàn bước 1**: OOS dev câu 160 bị trả lời (11 / 12), cùng dạng lỗi P1 8.1. Dừng đúng plan. **0,0026861 USD thật**. A gác hướng R2 (hướng mở) | `p82-r2` `0cbad2d` + report chưa commit (mục trên); `data/phase_8_2/r2/` |
+| **C44** review plan K3 | ready (0 / 0 / 2 minor: ghi trước `max_output_tokens` luna; số p95) | `…/phase_8_2_k3_plan_review.md` |
+| **C45** review plan R3 | changes_requested: **trần thật ở mốc B1 = 6 câu U**, không phải 9 ⇒ A: **R3 NOT RUN** (hướng mở: mở rộng bộ câu tự nhiên) | `…/phase_8_2_r3_plan_review.md` |
 
 ## Phiên sau C làm gì đầu tiên
 
-Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Không nhánh / worktree nào của C còn mở (nhánh `dot3` đã merge `--no-ff` vào `main`, `origin/dot3`
-= `2c420aa` còn trên remote — A quyết xóa hay giữ). Việc có thể tới lượt C:
-1. **Đợt tìm hướng tốt hơn từng khâu** — thí nghiệm theo phạm vi User chọn (A viết tài liệu thiết kế); ứng viên phía C: `ung_vien_cai_tien_C.md` (đứng đầu:
-   reasoning `none` xác nhận trên test ~0,007 USD; bỏ sớm E2; đo bám nguồn bằng code; log usage + độ trễ ở API; đa dạng nguồn / MMR; tách câu so sánh).
-   Theo skill `run-experiment`: tiêu chí ghi trước, mốc = hệ thống sau 5 gói (`main` `7b662c9`).
-2. **C33 plan E1** (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_e1_plan.md` sha `f86240418ca1`) khi 8.2 chạy lại: **phải sửa** — dùng `paired_stats`
-   + tên `false_refusal` (gói 3a, C-02) và số lỗi citation theo định nghĩa v2 (gói 1a / 3c) ⇒ sha mới ⇒ B review trước khi A duyệt; trả lời §10 Q1–Q3.
-3. **C32 rà kho** (`data/ra_soat_kho_2026-10-25/danh_sach.md`, 139 mục): chờ User quyết; dùng ở lần build lại index.
+Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Xử lý mục "Còn treo" (User `!` nếu chưa chạy; gỡ worktree `/tmp/c_r2`). Việc có thể tới lượt C:
+1. Review report K3 (B chạy, nếu A duyệt sha) hoặc report R2 vòng B review (C sửa nếu có finding).
+2. **R1** (`none`, luật (a)) — plan chưa viết; đứng cuối thứ tự "chất lượng trước" (spec §10.3).
+3. Hướng mở đã ghi: R2 (cách mới phải được kiểm trước trên câu 160); R3 (cần bộ câu lớn hơn). C32 rà kho: chờ User.
 
 ## Đã xong phiên 26/10
 
@@ -64,6 +75,9 @@ Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Không nhánh / w
 
 ## Đã học / bẫy gặp (đầu vào vòng cải tiến)
 
+- **26/10 tối C43: auto mode chặn lệnh ghép `rm` symlink + `git add` + `git commit` + `git push` trong worktree `/tmp`** ("không đánh giá được", sẽ chặn suốt hội thoại) ⇒ report R2 kẹt untracked trong `/tmp`. Bài học: commit file report **ngay khi viết xong, tách riêng** khỏi `push` (bẫy §8 đã có: push từ worktree bị chặn ⇒ push từ working tree chung hoặc User `!`); report của nhánh thí nghiệm có thể viết ở working tree chung `main` (như review) để không phụ thuộc `/tmp`.
+- **26/10 tối C45: giả định "câu U còn điểm 4 ở mốc mới" kiểm được 0 USD từ judge mốc nhưng plan để "kiểm sau khi chạy"** — khi đổi mốc (G2.1a → B1), đếm lại trần trên **đúng mốc** trước khi ước cỡ mẫu (9 → 6 câu).
+- **26/10 tối C40: sửa plan R2 (ghi chú chữ của B) sau khi đã báo sha cho A** ⇒ A ghi duyệt `aa808a85184c` trong commit nhưng file trên đĩa đã là `b70ea775efb2`; phải dựng lại diff để chứng minh chỉ đổi chữ. Luật A 22:1x: **đã báo sha thì không sửa plan nữa**; ghi chú chữ đến sau ⇒ gom vào lần sửa kế, hoặc báo A trước khi sửa.
 - **26/10 tối C41: báo nhầm "khối lặp" trong plan K1 vì in file bằng nhiều `sed -n '/mẫu/,$p'` nối nhau** — mẫu khớp cả dòng đầu file nên đoạn in chồng lên nhau, C tưởng file bị lặp (B chỉ ra, C rút lại). Kết luận về cấu trúc file: kiểm bằng `grep -n '^## '`, không bằng output `sed` ghép.
 - **26/10 tối C36: chạy script phân tích bằng `python3` hệ thống** (`c36_labels.py`, quét / xem dữ liệu) thay vì `uv run python` — lệch §10 dù script chỉ dùng thư viện chuẩn;
   A bắt ở review (minor). Mọi lệnh Python của dự án, kể cả script tạm chỉ đọc: `uv run python …` từ gốc repo hoặc `backend/`.
@@ -89,7 +103,7 @@ Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Không nhánh / w
 
 ## Tiền
 
-Paid API C phiên 26/10: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
+Paid API C phiên tối 26/10: **0,0026861 USD thật** (C43 R2 bước 1, usage log). Paid API C phiên 26/10 chiều: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
 2 test generator có key: 0 USD (không gọi mạng). Quota Claude Code: không dùng sub-agent.
 
 Paid API C phiên tối 25/10: **≈ 0,0016 USD** — đo: 0,000427 (C35, 2 lượt `gpt-6-luna`); ước (route không log usage): 3 lượt cổng ổn định × 2 câu × ~0,0002
