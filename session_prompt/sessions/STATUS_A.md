@@ -1,20 +1,35 @@
-# STATUS A — cập nhật 14:16 26/10/2026 (phiên 26/10)
+# STATUS A — cập nhật 16:4x 26/10/2026 (KẾT PHIÊN 26/10 — User: "nhiệm vụ, câu hỏi để session tiếp theo")
 
-Terminal: `hue-rag-b0` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3e`, C = `hue-rag-87` (cả ba Claude Code, trực tiếp).
+Terminal: `hue-rag-b0` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3e`, C = `hue-rag-87` (cả ba Claude Code, trực tiếp; tên đổi mỗi lần mở).
 
-## Đang làm
-- 16:0x: **đợt 3 xong** — merge `421c302` (`--no-ff`), cổng ổn định trên `main` đạt (D1, D2, D4, D5 A chạy lại); gỡ 8 file `reports/artifacts/`
-  (User (a)); 4 chỗ báo cáo + `Project_Status` + nhật ký + TONG_HOP + HISTORY. Commit tài liệu chờ **B kiểm** rồi push.
-- Chờ User: phạm vi đợt cải tiến; sổ cải tiến; 80 report lịch sử còn trích kho.
+## Commit
+- Đầu phiên: `af1469a`. Phiên: `71d2450` (mở phiên), `13afcf2` (B40), `0ceeda2`, merge **`421c302`** (đợt 3), `409ff62` (đóng sửa code + gỡ 8 artifacts),
+  `7b662c9` (sửa 4 minor B), + commit kết phiên (`git log -1 main`).
+
+## Đang làm / dở
+- Không có việc đang chạy. **Sửa code sau rà soát xong cả 5 gói** (đợt `2026-10-25_ra_soat_code` đóng).
+- Phiên sau A làm: `CURRENT_HANDOFF.md` "Thứ tự việc phiên sau" 1–5 + "Câu hỏi cho User" 1–8. A còn nợ: tài liệu thiết kế đợt cải tiến (khi User chọn
+  phạm vi); review B1 khi 8.2 chạy lại; trả lời Q1–Q3 plan E1.
 
 ## Đang khai báo sửa
-- `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`, `report_agent/README.md` (trên `main`; khi C đang ở `dot3` thì sửa tài liệu qua worktree `/tmp/a_docs`).
+- không (kết phiên)
 
-## Quyền phiên này (User 14:1x 26/10, hết hạn cuối phiên)
+## Vừa xong (phiên 26/10)
+- Giao C đợt 3 (rebase `dot3` đầu đợt, commit 4 … 12); giao B **B40** khi B rảnh (W17 dùng thử) — B40 tìm ra yêu cầu ChatGPT thiếu điều "BM25 chỉ chấm lại
+  30 đoạn dense".
+- Đọc kết quả ChatGPT, WebFetch 3 nguồn (ALCE 85,1 / 77,6 %; Anthropic 5,7 → 2,9 %; `gpt-6-luna` effort none / low / medium mặc định / high / xhigh / max —
+  runtime không gửi ⇒ `medium`). Trả lời User: B0 chỉ User làm được; khuyến nghị sổ cải tiến; đánh giá rà code; phân biệt 8.1 (đánh giá) ↔ rà code (dọn) ↔
+  tối ưu (chưa làm).
+- Merge `421c302` (`--no-ff`, code = bản B review); cổng ổn định trên `main` (D1 / D2 / D4 / D5 đạt); gỡ 8 file `reports/artifacts/` (User (a)); quét toàn
+  repo: 80 report lịch sử còn dòng trùng kho (câu hỏi User 4); 4 chỗ báo cáo + nhật ký + Project_Status + TONG_HOP + HISTORY; B kiểm ready.
+- Sổ cải tiến vòng 5 (S28–S32; W19, W20 đề xuất; I5 dời bẫy kỹ thuật ra `Project_Status.md` §8); memory "Phase state pointer" cập nhật.
+- Thử mở phiên bằng sub-agent mới (vai B): 9 chỗ thiếu / cũ ⇒ đã sửa trong `CURRENT_HANDOFF.md` (xem sổ, kết vòng 5).
+
+## Quyền phiên này (User 14:1x 26/10 — HẾT HẠN cuối phiên)
 - Tự điều phối B/C rộng; API ≤ 1 USD cả phiên; C commit / push nhánh `dot3` (đợt 3).
 
 ## Tiền paid phiên này
-- A: ~0,0004 USD (cổng ổn định 2 câu, ước). Cả nhóm hôm nay ~0,0028 USD (ước — route chưa log usage).
+- A: ~0,0004 USD (cổng ổn định 2 câu, ước). Cả nhóm ~0,0028 USD (ước — route chưa log usage).
 
 ## Đã học / bẫy gặp (phiên 26/10)
 - 14:3x: C đang ở `dot3` trong working tree chung ⇒ A sửa / commit tài liệu `main` qua worktree `/tmp/a_docs`. `git push` từ worktree bị auto mode

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-26 16:0x` (A: **sửa code sau rà soát xong cả 5 gói** — đợt 3 merge `421c302`, cổng ổn định trên `main` đạt; 8.2 vẫn tạm dừng)
+Last updated: `2026-10-26 16:4x` (A, kết phiên 26/10; §8 thêm bẫy worktree 16:3x; **sửa code sau rà soát xong cả 5 gói** — đợt 3 merge `421c302`, cổng ổn định trên `main` đạt; 8.2 vẫn tạm dừng)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -216,6 +216,10 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   "lỗi citation" trước commit này đếm theo định nghĩa cũ) ⇒ code xử lý / đếm / đánh số lại citation phải bắt
   cả hai dạng (25/10 B24: file đọc cặp mù lộ bên vì chỉ bắt `[n]`).
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).
+- **Worktree `/tmp/…` (26/10):** chạy Python trong worktree bằng `uv run --project /home/minhhieu/hue_rag …` (không thì `uv` tạo `.venv` lạ ở đó);
+  symlink `data/`, `knowledge-base-hue/` hiện untracked ⇒ gỡ khi xong; worktree giữ nhánh `main` thì session khác không `git switch main` được ⇒
+  gỡ (`git worktree remove`) trước khi người kia chuyển nhánh; `git push` từ worktree bị auto mode chặn ⇒ push từ working tree chung hoặc User `!`.
+- Auto mode chặn chạy notebook (`jupyter nbconvert --execute`) và test thiếu model (`HF_HOME` rỗng) ở một số session ⇒ User `!` ở terminal đó.
 - Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
   clone): bản clone mới phải bật một lần. Hook chặn dòng thêm mới có tên dự án khác, kể cả khi trích tên file tài liệu
   cũ — viết "tài liệu cách làm của dự án khác" thay vì tên file. Bỏ qua (`--no-verify`) chỉ khi User duyệt đúng commit đó.

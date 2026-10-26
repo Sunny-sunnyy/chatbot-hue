@@ -1,6 +1,6 @@
 # TONG_HOP — rà code Phase 0–7 (đợt `2026-10-25_ra_soat_code`)
 
-Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026, cập nhật 22:3x · trạng thái: **sửa code XONG cả 5 gói 16:0x 26/10** (đợt 3 merge `421c302`, cổng ổn định trên `main` đạt); đợt còn mở cho phần A tự sửa (B kiểm).
+Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026, cập nhật 22:3x · trạng thái: **ĐÓNG 16:4x 26/10** — sửa code xong cả 5 gói (đợt 3 merge `421c302`, cổng ổn định trên `main` đạt; phần A tự sửa B kiểm ready, `a_dong_dot3_review.md`).
 Báo cáo cho User (lời thường, có câu hỏi): `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`. Chưa sửa code (User 18:3x: "tôi đồng ý mới sửa").
 
 ## Mục tiêu

@@ -1,42 +1,41 @@
-# STATUS C — cập nhật 2026-10-26 15:58 (phiên 26/10: **đợt 3 XONG** trên nhánh `dot3`, B review ready_for_user_confirmation; C đã về `main`)
+# STATUS C — cập nhật 2026-10-26 16:36 (**KẾT PHIÊN 26/10**; đợt 3 xong, A merge `421c302` — sửa code 5 gói đóng)
 
 Terminal: `hue-rag-87` (mở 26/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-b0`, B = `hue-rag-3e` (trực tiếp).
-User 26/10: C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên 26/10 (User 14:1x): C commit / push nhánh `dot3` (chỉ đợt 3); paid đợt 3 ≤ 0,003 USD.
-
-## Trạng thái (26/10 15:58)
-
-- **Đợt 3 xong — chờ A merge** (`--no-ff`, giữ sha B đã review). `origin/dot3` = **`2c420aa`**: 12 commit code `3a37af4 … 8f0e5c4` + docs `210abd4` (B-18 guide
-  + report), `782ea05` (m-1 review B), `2c420aa` (T-C cuối đợt). Report: `report_agent/2026-10-25_ra_soat_code/sua_dot3_implementation.md`; review B:
-  `sua_dot3_review.md` (0 / 0 / 3 minor; m-1, m-2 C đã sửa, m-3 để A). Working tree chung đã về `main` (`0ceeda2`). Không khai báo file nào nữa.
-- Cổng cuối đợt (`8f0e5c4`): D1 8.459 / 0 / `60591acff422ece6` / identity = record; D2 `cefb2d1ad609`; D3 25 câu giống byte; D4 197 p / 1 f / 4 e (chỉ phần cần key;
-  2 test generator có key 2 passed, 0 USD); D5 đạt; D6 0; D8 0 / 0; D9 0 lỗi; B-02 8.459 `PointStruct` giống byte; T-C (User `!`) 1 passed sau C6 và cuối đợt.
-  Code `backend/` 8.345 → 6.218 dòng.
-- Script + ghi chép đợt (private): `data/ra_soat_code_2026-10-25/tools/dot3/` (`notes_26_10.md`, `b12_move_samples.py`, `b02_points.py`, `gate.py`, d1/d4/d7/d8/d9).
-  File private mới: `knowledge-base-hue/meta/{full_corpus_conditions.json, chunker_acceptance_samples.json, backup_b12_2026-10-26/}`, `data/tools/huegov_converters/`.
-  Tạm: `/tmp/c42/` (dense.npy 13 MB, points_*.jsonl 92 MB mỗi file — xóa khi B không cần chạy lại B-02).
+User 26/10: C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên 26/10 (C commit / push nhánh `dot3`, paid ≤ 0,003 USD đợt 3) **hết hạn cuối phiên**.
 
 ## Phiên sau C làm gì đầu tiên
 
-Chờ A giao việc. Còn treo từ trước: **C33 plan E1** (`phase_8_2_e1_plan.md` sha `f86240418ca1`) phải sửa khi 8.2 chạy lại (`paired_stats` + `false_refusal`,
-citation v2 ⇒ sha mới); C32 rà kho chờ User.
+Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Không nhánh / worktree nào của C còn mở (nhánh `dot3` đã merge `--no-ff` vào `main`, `origin/dot3`
+= `2c420aa` còn trên remote — A quyết xóa hay giữ). Việc có thể tới lượt C:
+1. **Đợt tìm hướng tốt hơn từng khâu** — thí nghiệm theo phạm vi User chọn (A viết tài liệu thiết kế); ứng viên phía C: `ung_vien_cai_tien_C.md` (đứng đầu:
+   reasoning `none` xác nhận trên test ~0,007 USD; bỏ sớm E2; đo bám nguồn bằng code; log usage + độ trễ ở API; đa dạng nguồn / MMR; tách câu so sánh).
+   Theo skill `run-experiment`: tiêu chí ghi trước, mốc = hệ thống sau 5 gói (`main` `7b662c9`).
+2. **C33 plan E1** (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_e1_plan.md` sha `f86240418ca1`) khi 8.2 chạy lại: **phải sửa** — dùng `paired_stats`
+   + tên `false_refusal` (gói 3a, C-02) và số lỗi citation theo định nghĩa v2 (gói 1a / 3c) ⇒ sha mới ⇒ B review trước khi A duyệt; trả lời §10 Q1–Q3.
+3. **C32 rà kho** (`data/ra_soat_kho_2026-10-25/danh_sach.md`, 139 mục): chờ User quyết; dùng ở lần build lại index.
 
-## Việc đã xong phiên tối 25/10 (chi tiết trong report; đã commit trên `main` trừ khi ghi khác)
+## Đã xong phiên 26/10
 
-- C34 rà code luồng trả lời + đánh giá (`ra_soat_code_C.md`, 18 finding); kiểm chéo B25 (`kiem_cheo_C.md`); review B26 (`sua_4_review.md`); review plan 1b
-  (`sua_1b_plan_review.md`) + review gói 1b (`sua_1b_review.md`, ready); C35 gói 1a citation `[Nguồn n]` (`9e6d371`); gói 3a / 3b `paired_stats` + `build_answer_input`
-  (`47a4e32`); 3c phần free citation v2 (`sua_3c_citation_v2.md`, `data/ra_soat_code_2026-10-25/citation_v2/`); danh sách ứng viên (`ung_vien_cai_tien_C.md`); plan đợt 3
-  (`sua_dot3_plan.md` bản 3).
-- Còn treo từ trước: **C33 plan E1** (`phase_8_2_e1_plan.md` sha `f86240418ca1`) phải sửa khi 8.2 chạy lại — dùng `paired_stats` + `false_refusal` (C-02 / gói 3a), số
-  citation theo v2 ⇒ sha mới. C32 rà kho: hồ sơ, chờ User.
+- Đợt 3 sửa code (gói 2 + gói 5 + B-12): rebase `dot3` lên `main` `71d2450`, làm commit 4–12 + docs B-18; 12 commit code `3a37af4 … 8f0e5c4` (37 file, +289 / −2.711),
+  report `report_agent/2026-10-25_ra_soat_code/sua_dot3_implementation.md`; B review `sua_dot3_review.md` ready (0 / 0 / 3 minor — m-1, m-2 C sửa, m-3 A);
+  A merge `421c302` + cổng ổn định trên `main` đạt, push `7b662c9`.
+- Kết quả: danh sách đoạn toàn kho, T1 tìm kiếm, chuỗi gửi model 25 câu, 8.459 `PointStruct` đều giống byte; code `backend/` 8.345 → 6.218 dòng; test không key
+  197 passed / 1 failed + 4 error (đúng phần cần key); `git ls-files knowledge-base-hue` rỗng, 0 chuỗi kho trong file tracked; T-C (User `!`) 1 passed hai lần.
+- Script + ghi chép (private): `data/ra_soat_code_2026-10-25/tools/dot3/` (`notes_26_10.md`, `b12_move_samples.py`, `b02_points.py`, `gate.py`, d1/d4/d7/d8/d9).
+  File private mới: `knowledge-base-hue/meta/{full_corpus_conditions.json, chunker_acceptance_samples.json (sha 3013c24fd8f4), backup_b12_2026-10-26/}`,
+  `data/tools/huegov_converters/`. Tạm `/tmp/c42/` đã xóa 16:19.
 - **C chưa đọc nội dung câu kín** (md5 `ddc59587b502`, manifest `9ea480d0d083`).
 
-## Câu hỏi cho A / User
+## Câu hỏi / thắc mắc còn treo (cho A / User)
 
-- 3c: xin lượt xác nhận reasoning `none` trên test (~0,007 USD ở context 5) — A đưa vào tài liệu thiết kế đợt cải tiến (A 20:5x).
+- 3c: lượt xác nhận reasoning `none` trên test (~0,007 USD, context 5) — A đưa vào tài liệu thiết kế đợt cải tiến.
 - C32: `performing_arts/performing-arts-entities-inventory.md` tự ghi phải loại khỏi ingestion nhưng đang trong index — loại ở lần build lại?
 - E1 plan Q1–Q3 (§10 plan) — khi 8.2 chạy lại.
+- Nhánh `dot3` trên remote: xóa sau merge? (A quyết.)
+- Thấy khi làm đợt 3, ngoài phạm vi C (đã ghi report §5, A nhận ở m-3): guide 5 `:65` còn nhắc MiniLM của service; `guides/full_corpus_rag.md` bước 4b "cutover cần
+  sửa code (B-06)" dùng mã B-06 của B26 (khác B-06 của plan đợt 3) — dễ nhầm.
 
-## File private C tạo phiên này (không commit)
+## File private C tạo phiên 25/10 (không commit; phiên 26/10 ở mục "Đã xong")
 
 - `data/ra_soat_code_2026-10-25/tools/` (`dual_module_check.py`, `exc_identity.py`, `latency.py`, `brief_common.md`, `nguon_count.py`, `cite_shapes.py`, `recheck_both.py`,
   `c01_probe_*.py`; thư mục `kiem_cheo_C/`, `review_4/`, `review_1b_plan/`, `review_1b/`, `sua_1a/`, `sua_3/`, `citation_v2/`, `dot3_plan/`); `data/ra_soat_code_2026-10-25/citation_v2/`.
@@ -77,7 +76,6 @@ citation v2 ⇒ sha mới); C32 rà kho chờ User.
 
 Paid API C phiên 26/10: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
 2 test generator có key: 0 USD (không gọi mạng). Quota Claude Code: không dùng sub-agent.
-
 
 Paid API C phiên tối 25/10: **≈ 0,0016 USD** — đo: 0,000427 (C35, 2 lượt `gpt-6-luna`); ước (route không log usage): 3 lượt cổng ổn định × 2 câu × ~0,0002
 (gói 3, review 1b, đợt 3 commit 2) ≈ 0,0012. Trần chung gói 1–5: 0,05 USD; đợt 3: ≤ 0,003 (đã dùng ~0,0004). Phiên chiều 25/10: 0 USD.

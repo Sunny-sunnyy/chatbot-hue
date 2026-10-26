@@ -1,8 +1,8 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 14:16 26/10/2026 (A, **mở phiên 26/10**: quyền phiên, giao C đợt 3, B40; kết phiên trước 22:3x 25/10). Cách dùng: `WORKFLOW.md` §3, §6,
-§7, §9. Chỉ giữ việc đang mở; việc đã xong: `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`, `PROJECT_HISTORY.md` (mục 25/10 22:3x).
-Bản handoff đầy đủ trước khi rút gọn lần này (chi tiết từng mục việc đợt 1–2, rà code B25 / C34): `git show 76ff419:session_prompt/CURRENT_HANDOFF.md`.
+Cập nhật: 16:4x 26/10/2026 (A, **KẾT PHIÊN 26/10** — User: "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
+Chỉ giữ việc đang mở; việc đã xong: `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`, `PROJECT_HISTORY.md` (mục 26/10 16:0x).
+Bản handoff đầy đủ trước khi rút gọn (chi tiết đợt 1–2, rà code B25 / C34): `git show 76ff419:session_prompt/CURRENT_HANDOFF.md`.
 
 ## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
 
@@ -15,27 +15,56 @@ reasoning mặc định (`medium`, không gửi tham số). Qdrant `:6335` còn 
 
 **Nhánh đang mở:** `p82-b1` (`f23d396`) — B1 của 8.2 (context 10 + NFC), chưa review; rebase lên `main` mới sẽ xung đột thêm (đợt 3 gỡ Rep B ở
 `settings.yaml` / `settings_loader.py` / `test_phase6_settings.py`, `minilm` + `REPO_ROOT` ở `retrieval/full_corpus.py` — `sua_dot3_review.md` §6) — B xử lý
-khi 8.2 chạy lại. `dot3` đã merge (giữ nhánh trên origin tới khi User bảo xóa).
+khi A giao (mục Thứ tự, bước 5). `dot3` đã merge (giữ nhánh trên origin tới khi User bảo xóa — câu 7). 4 nhánh / worktree AGY
+`subagent-Monuments-Reviewer-*` (dưới `~/.gemini/`, ở `c725987`): không phải của A/B/C — **giữ nguyên, không đụng**.
+
+**Mã hay gặp:** T1 = kết quả tìm 158 câu (mốc sha `cefb2d1ad609`); T1–T5 của B1 = 5 phép kiểm trong `phase_8_2_b1_implementation.md` §4 (nhánh
+`p82-b1`); D1–D9 = cổng đợt 3 (`sua_dot3_plan.md` §5); T-C = `test_startup_model_missing.py` (User `!`); B-xx / C-xx = mã phát hiện rà code
+(`ra_soat_code_{B,C}.md`); S / W / I = sự cố / thay đổi trong sổ cải tiến; E1–E3, B0, B1 = bước của spec 8.2; A/A = chạy lặp cùng cấu hình đo nhiễu.
 
 **Mạch việc:**
-1. **Đợt tìm hướng tốt hơn từng khâu** (User 20:0x 25/10) — kết quả ChatGPT có; B40 đối chiếu xong (`report_agent/2026-10-26_cai_tien_tung_khau/`).
-   Chờ User chọn phạm vi (A khuyên A: khâu trả lời trước). Thứ tự A đề xuất: B0 (User đọc cặp mù) ⇒ B1 context 10 vào chatbot ⇒ đợt cải tiến trên
-   mốc context 10 (báo cáo ChatGPT §6.1 cũng lấy mốc 10) — **lệch handoff cũ** ("mốc = sau 5 gói, context 5") ⇒ chốt với User trong tài liệu thiết kế.
-2. **Phase 8.2 — TẠM DỪNG**, nay đủ điều kiện chạy lại (5 gói xong + cổng ổn định). Điều mới: mục "Phase 8.2" dưới.
+1. **Đợt tìm hướng tốt hơn từng khâu** (User 20:0x 25/10; đợt `report_agent/2026-10-26_cai_tien_tung_khau/`) — kết quả ChatGPT có, A đối chiếu 3 nguồn
+   chính (khớp), B40 đối chiếu với code xong. **Chờ User chọn phạm vi** (câu hỏi 2). Mục "Việc đang mở" dưới.
+2. **Phase 8.2 — TẠM DỪNG**, nay đủ điều kiện chạy lại (5 gói xong + cổng ổn định). Cần B0 (User đọc cặp mù) trước khi đưa context 10 vào chatbot.
+
+**Thứ tự việc phiên sau:**
+1. Mở A / B / C bằng `START_SESSION.md`; A `ListAgents`, cập nhật bảng Session; A **hỏi lại quyền phiên** (§9.8); kiểm `git branch --show-current` =
+   `main`, `git status` sạch (trừ file untracked của User), Qdrant 1 collection 8.459.
+2. **A trình User** các câu hỏi dưới (gói gọn trong báo cáo mở phiên; mỗi câu có lựa chọn + khuyến nghị — đã nói với User 26/10):
+   câu 2 (phạm vi đợt cải tiến + thứ tự B0 ⇒ B1 ⇒ cải tiến), câu 3 (sổ cải tiến), câu 4 (80 report lịch sử), câu 5 (luật sửa code có giữ cho đợt sau).
+3. **B, C rảnh trong lúc chờ User ⇒ A giao việc chỉ đọc, 0 USD** (W17), không chồng file. Gợi ý A định sẵn: **phân loại lỗi theo câu** trên kết quả 8.1 đã có
+   (`data/phase_8_1/g2/*.jsonl` + điểm judge; loại lỗi theo báo cáo ChatGPT §6.5: thiếu bằng chứng / bằng chứng nhiễu / sai hàng bảng / nhận định không căn cứ /
+   sai số citation / trả lời thiếu / từ chối thừa) — B lo tầng tìm (đoạn đúng 55 câu, pool 30 của G1), C lo tầng trả lời; đầu ra
+   `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_{B,C}.md`. Chỉ nhóm **dev** (`split.json`; đoạn đúng: 40 câu dev trong 55); nhóm `test` chỉ đếm, không đọc từng câu; không mở câu kín.
+4. User chọn phạm vi ⇒ A viết **một** tài liệu thiết kế `docs/superpowers/specs/` (tiêu chí ghi trước theo `run-experiment`, cỡ mẫu thật từ B40, trần tiền,
+   mốc) ⇒ B hoặc C review (W11) ⇒ User duyệt một lần ⇒ giao chạy.
+5. **8.2 chạy lại** (A quyết khi User trả lời câu 1–2 — điều kiện 5 gói xong + cổng ổn định đã đạt): phần code B1 chạy **song song** với B0 (spec 8.2 mục
+   B0) — A giao B rebase `p82-b1` lên `main` + chạy lại T1–T2 (không tốn API: T1 tìm kiếm, T2 so trường đã ghi; B xác nhận khi nhận việc); mục việc ghi rõ
+   quyền **B commit + `push --force-with-lease` nhánh `p82-b1`** (cần quyền phiên). A review B1; **merge chỉ sau B0** (User đọc) + áp luật dừng B0 ⇒ chatbot
+   lên context 10 + NFC ⇒ cổng ổn định.
 
 ## Câu hỏi cho User (phiên sau)
 
-1. ~~Quyền phiên~~ — User 14:1x 26/10 (mục Quyền). ~~Gửi ChatGPT~~ — kết quả có 26/10. Lệnh gỡ 8 artifacts — User chọn (a) 26/10.
-2. **Phạm vi đợt cải tiến** (A khuyên: khâu trả lời trước — reasoning `none` / `low`, đa dạng nguồn; dựng kho / embedding mới để sau) và thứ tự
-   B0 ⇒ B1 ⇒ đợt cải tiến trên mốc context 10.
-   **80 report lịch sử** (`reports/` 70, `docs/superpowers/` 5, `handoff_prompt/` 4, `report_agent/` 1 — file đó 25/10, chỉ trùng tên file kho; còn lại 08–09/2026) còn dòng trùng kho ≥ 40 ký tự
-   (~960 dòng, nhiều chỗ là tên file / tiêu đề; 1 dòng trùng cả đáp án Golden — report 06/09, trước khi có Golden): để nguyên hay xử lý.
-3. **Sổ cải tiến** (A đề xuất 26/10: duyệt W14, W16, W17; W18 gộp vào W14; bác W15 — S23 lặp lại 26/10 ở C) (`session_prompt/SO_CAI_TIEN_CACH_LAM.md`): duyệt / bác **W14** (nhắc lại ý User khi câu hỏi nhiều nghĩa), **W16** (quét trùng
-   Golden / kho vào hook pre-commit — thay **W15**), **W17** (session rảnh ⇒ A giao việc không chồng file), **W18** (đề xuất có thứ tự ⇒ đối chiếu spec).
-4. **Đọc cặp mù (B0)** khi tiện: `data/phase_8_2/b0/nhan_xet_user.md`, 20 câu, ~30–45 phút — cần trước khi đưa context 10 vào chatbot.
-5. (Sẽ hỏi trong tài liệu thiết kế đợt cải tiến) model dense chạy máy mới (`bge-m3` / `Qwen3-Embedding-0.6B` — ngoài danh sách đã duyệt); gửi danh
-   sách mâu thuẫn kho C32 ra ChatGPT tra nguồn (đưa dữ liệu ra ngoài); xác nhận "suy luận none" trên test (~0,007 USD).
-6. Giữ từ trước (không gấp): rà kho C32 139 mục để đợt build lại index; tên dự án khác trong lịch sử git — để nguyên (gỡ lịch sử là phá hủy);
+1. **Quyền phiên** (điều phối rộng? trần tiền ≤ 1 USD?) — quyền 26/10 đã hết hạn.
+2. **Phạm vi đợt cải tiến** — A khuyên **A. khâu trả lời trước** (mức suy luận `none` / `low` — runtime đang chạy `medium` mặc định; đa dạng nguồn — 56 / 158
+   câu có cả 5 đoạn cùng một file; tách câu so sánh; kiểm citation bằng code), ~0,05–0,1 USD, không ghi Qdrant. B. thêm khâu tìm / dựng kho (BM25 trên cả kho,
+   trọng số tiêu đề, hàng bảng — cần collection thử). C. thêm model embedding mới (`bge-m3` / `Qwen3-Embedding-0.6B` — ngoài danh sách duyệt; Qwen3-8B
+   qua OpenRouter). **Kèm:** mốc của đợt = chatbot context 10 (sau B1) thay vì context 5 — **lệch handoff cũ**, A đề xuất vì đo trên context 5 rồi đổi
+   sang 10 thì phải đo lại; cần B0 (câu 6) trước.
+3. **Sổ cải tiến** (`session_prompt/SO_CAI_TIEN_CACH_LAM.md`) — A đề xuất: duyệt **W14** (nhắc lại ý User khi câu nhiều nghĩa) + gộp **W18** vào đó (đối
+   chiếu spec khi đề xuất thứ tự); duyệt **W16** (quét trùng Golden / kho trong hook pre-commit, bác W15 — sự cố `;` lặp lần 2 ngày 26/10); duyệt **W17**
+   (đã dùng thử 26/10: B40 bắt lỗi mô tả trong yêu cầu ChatGPT); mới **W19** (yêu cầu nghiên cứu ngoài: mô tả hệ thống kèm `file:dòng` / nhờ B, C đối
+   chiếu trước khi gửi), **W20** (mẫu lệnh `date` cho giờ — ghi giờ ước lần 3).
+4. **80 report lịch sử** còn dòng trùng kho ≥ 40 ký tự (`reports/` 70, `docs/superpowers/` 5, `handoff_prompt/` 4, `report_agent/` 1 — file đó 25/10, chỉ
+   trùng tên file kho; ~960 dòng, nhiều chỗ là tên file / tiêu đề; 1 dòng trùng cả đáp án Golden — report 06/09, trước khi có Golden). A khuyên **(a) để
+   nguyên** (hồ sơ lịch sử, nội dung từ trang công khai, public từ 09/2026); (b) sửa từng file; (c) chuyển cả 80 file sang `data/`.
+5. **Luật sửa code phiên 25/10** ("báo cáo nên sửa gì trước, chỉ sửa khi User đồng ý; commit + push trước mỗi lần sửa code; cổng ổn định sau mỗi gói")
+   ghi "giữ tới khi xong sửa code" — sửa code đã xong: giữ cho mọi lần sửa code về sau không? (A khuyên giữ cổng ổn định + commit trước sửa.)
+6. **Đọc cặp mù (B0)** khi tiện: `data/phase_8_2/b0/nhan_xet_user.md`, 20 câu, ~30–45 phút — chỉ User làm được (mốc người; A giữ khóa) — cần trước B1.
+7. (Sẽ hỏi trong tài liệu thiết kế) gửi danh sách mâu thuẫn kho C32 ra ChatGPT tra nguồn (đưa dữ liệu ra ngoài); xác nhận "suy luận none" trên test
+   (~0,007 USD); xóa nhánh `dot3` trên origin (đã merge — C hỏi; A khuyên xóa, không mất gì vì commit nằm trong `main`).
+8. Giữ từ trước (không gấp): route `/api/chat` chưa ghi số token / tiền (mọi số tiền cổng ổn định là ước — B, C đề xuất log usage); mâu thuẫn kho Hải Vân
+   Quan (STATUS_B); rà kho C32 139 mục để đợt build lại index; tên dự án khác trong lịch sử git — để nguyên (gỡ lịch sử là phá hủy);
    3 câu kín A đã thấy — đã ghi trong spec 8.2 §3.7.
 
 ## Câu hỏi A còn nợ (phiên sau A trả lời, không cần User)
@@ -50,9 +79,9 @@ khi 8.2 chạy lại. `dot3` đã merge (giữ nhánh trên origin tới khi Use
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-b0` (26/10) | Claude Opus 5.5 | trực tiếp | merge đợt 3 + cổng ổn định + báo cáo; trao đổi User về đợt cải tiến | đang làm |
-| B — thực thi | `hue-rag-3e` (26/10) | Claude Opus 5.5 | trực tiếp | xong: B40, review `dot3` (ready); **kiểm phần A tự sửa** (gỡ 8 artifacts + tài liệu) | đang làm |
-| C — thực thi | `hue-rag-87` (26/10) | Claude Opus 5.5 | trực tiếp | **đợt 3 xong** 15:5x: 12 / 12 commit + docs trên `dot3` (`origin/dot3` = `2c420aa`), report `sua_dot3_implementation.md`; B review ready (m-1, m-2 đã sửa); C về `main`; ~0,0024 USD ước | **chờ A merge** — `STATUS_C.md` |
+| A — điều phối | `hue-rag-b0` (26/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 16:4x** — xong: giao C đợt 3 + B40; đối chiếu ChatGPT; merge `421c302` + cổng ổn định trên `main`; gỡ 8 artifacts (User (a)); 4 chỗ báo cáo; sổ cải tiến vòng 5 | `STATUS_A.md`; ~0,0004 USD (ước) |
+| B — thực thi | `hue-rag-3e` (26/10) | Claude Opus 5.5 | trực tiếp | xong: B40, review `dot3` (ready 0 / 0 / 3 minor), kiểm phần A tự sửa (ready, 4 minor chữ — A sửa `7b662c9`); **phiên sau:** B1 8.2 (rebase `p82-b1` + chạy lại T1–T2) khi 8.2 chạy lại, review / thí nghiệm đợt cải tiến theo phạm vi User chọn | **kết phiên 16:3x** — `STATUS_B.md`; worktree đã gỡ; ~0,0004 USD (ước) |
+| C — thực thi | `hue-rag-87` (26/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 16:36** — xong: đợt 3 (12 commit + docs, merge `421c302`, report `sua_dot3_implementation.md`, B review ready); **phiên sau:** chờ A giao — thí nghiệm đợt cải tiến (phạm vi User chọn), C33 plan E1 phải sửa khi 8.2 chạy lại, C32 chờ User; ~0,0020 USD ước phiên 26/10 | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -61,11 +90,11 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Thường trực:** A commit/push `origin main`; B/C không commit (trừ khi việc ghi rõ — đợt 3: C commit / push **nhánh `dot3`**); duyệt cho A =
   duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt: A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền
   trong report; code luôn `uv run` trong `.venv`; thư viện thừa giữ nguyên; luôn thử + so baseline trước khi chọn (User 24/10 20:49).
-- **Luật User phiên đêm 25/10 (giữ cho tới khi xong việc sửa code):** báo cáo "nên sửa gì" trước, **chỉ sửa khi User đồng ý** (đã đồng ý 5 gói
-  19:4x); **commit + push trước mỗi lần sửa code**; sau sửa hệ thống phải hoạt động bình thường, ổn định, tối ưu, đóng gói đầy đủ (cổng ổn định
-  dưới); được thử nghiệm / so sánh / đánh giá để chọn cách tốt nhất; phase trước ổn định mới sang phase sau.
-- **Phiên 26/10 (User 14:1x, hết hạn cuối phiên):** A tự điều phối B/C rộng như phiên trước; API ≤ 1 USD cả phiên; C commit / push nhánh `dot3`
-  tiếp (chỉ đợt 3). Trần 8.2: 0,5 USD (spec; đã dùng 0,0369). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
+- **Luật User phiên đêm 25/10 (giữ cho tới khi xong việc sửa code — sửa code XONG 26/10; phiên sau hỏi User có giữ, câu 5):** báo cáo "nên sửa gì"
+  trước, **chỉ sửa khi User đồng ý**; **commit + push trước mỗi lần sửa code**; sau sửa hệ thống phải hoạt động bình thường, ổn định, tối ưu, đóng gói
+  đầy đủ (cổng ổn định dưới); được thử nghiệm / so sánh / đánh giá để chọn cách tốt nhất; phase trước ổn định mới sang phase sau.
+- **Phiên 26/10 (User 14:1x) — HẾT HẠN, hỏi lại:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (dùng ~0,0028 USD ước); C commit / push nhánh `dot3`
+  (đợt 3 — đã xong). Trần 8.2: 0,5 USD (spec; đã dùng 0,0369). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10).
 
 ## File private quan trọng (không commit)
@@ -85,16 +114,15 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | `data/ra_soat_code_2026-10-25/tools/` (gồm `dot3/`: D1, D4, D7, D8, D9 + mốc `t1_base.jsonl`, `3b_base.json`), `data/ra_soat_code/` | script + ghi chú rà / sửa code của C / B | — |
 | `data/tools/overlap_scan.py` | quét trùng Golden / kho (cửa sổ 40 ký tự, exit 1 khi trùng) — **chạy trước mỗi commit file người khác viết** | — |
 | `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` | yêu cầu nghiên cứu đợt cải tiến (10 câu) | — |
+| `gửi chatgpt/2026-10-25/kết quả nghiên cứu/HUE_RAG_NGHIEN_CUU_CAI_TIEN_TUNG_KHAU_2026-10-26.md` | kết quả ChatGPT (C1–C6, D1–D4, ma trận ưu tiên, giao thức đo) | `601b49a025ac` |
+| `data/cai_tien_tung_khau_2026-10-26/tools/{counts,cover}.py` | script đếm của B40 (đa dạng nguồn, đoạn bảng, cỡ mẫu theo loại câu) | — |
+| `data/reports_artifacts_private_2026-10-26/` | 8 file gỡ khỏi `reports/artifacts/` 26/10 (sha bằng bản trong git `421c302`) | — |
+| `knowledge-base-hue/meta/{full_corpus_conditions.json, chunker_acceptance_samples.json, backup_b12_2026-10-26/}` | quy tắc điều kiện chunker (runtime đọc ở đây) + 55 chuỗi mẫu test chunker + sao lưu B-12 | conditions `b84a0a637bfc` |
+| `data/tools/huegov_converters/` | 2 converter HueGov gỡ khỏi `backend/scripts/` (B-13) | — |
 
 ## Việc đang mở
 
-### Đợt 3 sửa code — XONG 16:0x 26/10
-
-C 12 commit + docs (`sua_dot3_implementation.md`), B review ready 0 / 0 / 3 minor (`sua_dot3_review.md`, sha `4ee8e5f90199`; m-1, m-2 C sửa; m-3 A sửa
-trong commit tài liệu), A merge `421c302` + cổng ổn định trên `main` đạt + 4 chỗ báo cáo + `Project_Status.md`. Phần A tự sửa (gỡ 8 file artifacts,
-tài liệu) ⇒ B kiểm. Tiền đợt ~0,0024 USD (C) + ~0,0004 (B) + ~0,0004 (A) — ước. Tạm `/tmp/c42` (~105 MB) giữ tới khi xong kiểm; xóa cần User `!`.
-
-### Luật chung khi sửa code (User 18:3x, 19:4x, 20:0x)
+### Luật chung khi sửa code (User 18:3x, 19:4x, 20:0x 25/10 — đợt 3 đã xong: `TONG_HOP.md` rà code; giữ mục này làm mẫu cổng ổn định)
 
 - A commit + push `main` **trước** khi B / C sửa code; khai báo file trong `STATUS_<X>.md` trước khi sửa; skill `practical-project-coding`; test liệt kê
   file, không `--env-file` trừ khi mục ghi; report `sua_<gói>_implementation.md`; review chéo (người kia); plan có tiêu chí ghi trước ⇒ session khác
@@ -103,27 +131,25 @@ tài liệu) ⇒ B kiểm. Tiền đợt ~0,0024 USD (C) + ~0,0004 (B) + ~0,0004
   uvicorn api.app:app --port 8011`: `/` 200, `/health` 5 / 5 ready, 1 câu trong kho (200, marker = `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết,
   không Golden, body `{"query": …}`; log sạch; tắt server; (3) chạm tìm kiếm / chia đoạn: T1 giống byte, sha đoạn giống hệt; (4) 4 chỗ báo cáo nếu
   hành vi đổi; (5) quét `data/tools/overlap_scan.py` trước commit; A commit + push.
-- Test cần key OpenAI (không chạy mặc định): `test_api_chat.py` (3 test — C-17 sẽ sửa ở commit 9), `test_openai_full_corpus_generator.py`,
+- Test cần key OpenAI (không chạy mặc định): `test_api_chat.py` (C-17 đã sửa ở đợt 3: 3 test dừng trước generator chạy không key), `test_openai_full_corpus_generator.py`,
   `test_phase6_live_smoke.py`. Test thiếu model `tests/test_startup_model_missing.py`: auto mode chặn ⇒ User chạy `!` ở terminal session cần.
 
 ### Đợt tìm hướng tốt hơn từng khâu (User 20:0x) — chuẩn bị
 
 User: "dựa vào kiến thức, tham khảo, trao đổi với B, C xem có thể thử nghiệm, so sánh, đánh giá để xem có hướng nào tốt hơn, tối ưu hơn, ổn định
 hơn; giữ mốc hiện tại làm base; A, B, C được so sánh, thử nghiệm, rồi đưa ra kết luận; có thể nhờ ChatGPT nghiên cứu".
-- Ứng viên: C 12 dòng (trả lời / đánh giá — top: reasoning `none` xác nhận test ~0,007 USD; bỏ sớm E2; đo bám nguồn bằng code; log usage + độ trễ ở API;
-  đa dạng nguồn / MMR; tách câu so sánh), B 10 dòng (dựng kho — sửa 22 mâu thuẫn chắc rồi build lại; câu hóa hàng bảng; dòng ngữ cảnh tất định; bỏ
-  huydang; trọng số tiêu đề BM25; dense local mới — cần User; build không ngừng phục vụ…). Ước ~0,08–0,09 USD mỗi bên nếu làm phần đầu.
+- Ứng viên: `report_agent/2026-10-25_ra_soat_code/ung_vien_cai_tien_{B,C}.md` (C 12 dòng trả lời / đánh giá; B 10 dòng dựng kho; ~0,08–0,09 USD mỗi bên nếu làm phần đầu).
 - **Kết quả ChatGPT đã có** (User 14:1x 26/10): `gửi chatgpt/2026-10-25/kết quả nghiên cứu/HUE_RAG_NGHIEN_CUU_CAI_TIEN_TUNG_KHAU_2026-10-26.md`
   (private, 155 dòng; 10 câu C1–C6, D1–D4 + ma trận ưu tiên + giao thức đo). A đã WebFetch đối chiếu: ALCE 85,1 % / 77,6 % (khớp, phụ lục G.5);
   Anthropic contextual 5,7 → 3,7 → 2,9 → 1,9 % (khớp); trang model `gpt-6-luna`: effort `none / low / medium (mặc định) / high / xhigh / max` — không
   có `minimal`; runtime hiện **không gửi** reasoning ⇒ đang chạy `medium`.
-- **B40 (B, chỉ đọc, A giao 14:1x 26/10):** đối chiếu kết quả ChatGPT với code + số đo thật của hệ thống: mỗi mục C1–C6, D1–D4 ghi (a) hệ thống đã có
-  / chưa có (`file:dòng`), (b) chỗ báo cáo mô tả sai hệ thống (ví dụ D3 nói "BM25 tự viết, không dùng sparse Qdrant" — kiểm), (c) mục trùng /
-  khác `ung_vien_cai_tien_{B,C}.md`, (d) dữ liệu sẵn có để đo (đoạn đúng 55 câu, nhãn loại câu…) và cỡ mẫu thật có được. Không đề xuất thiết
-  kế thí nghiệm chi tiết (A làm). Không mở câu kín; không chép nội dung kho / Golden / nguyên văn báo cáo. Đầu ra:
-  `report_agent/2026-10-26_cai_tien_tung_khau/doi_chieu_nghien_cuu_B.md`. 0 USD. Khi C báo xong đợt 3 ⇒ B dừng B40 (ghi chỗ dở) và review `dot3`.
-- Bước: kết quả ChatGPT ⇒ A gộp ⇒ **một** tài liệu thiết kế `docs/superpowers/specs/` (tiêu chí ghi trước `run-experiment`, cỡ mẫu, trần tiền, mốc =
-  hệ thống sau 5 gói) ⇒ session khác review ⇒ User duyệt một lần.
+- **B40 kết quả** (`doi_chieu_nghien_cuu_B.md`): BM25 runtime chỉ chấm lại 30 đoạn dense (`retrieval/full_corpus.py:479-491` ở `71d2450`; sau đợt 3 vòng lặp ở `:482`) — yêu cầu ChatGPT không nói ⇒
+  gợi ý D1 / D3 chỉ đổi thứ tự trong pool dense; retrieval chỉ trả `fused[:10]` (`:594` sau đợt 3) ⇒ chọn đa dạng từ pool 30 phải đổi đầu ra retrieval; 56 / 158 câu có
+  5 đoạn context cùng file, 9 câu dev thiếu file đúng khi một file chiếm ≥ 3 chỗ; đoạn bảng 144 / 8.459 (câu có đoạn đúng chạm bảng: dev 8, test 2); cỡ mẫu
+  gợi ý > dữ liệu (câu so sánh + nhiều nguồn dev 28 / test 10; claim có nhãn người 0); gợi ý fallback provider 8B ngược pin Nebius (spec 7A2 §5.2).
+  Lưu ý A: `LUONG` §3 + `BAO_CAO_TIM_KIEM` §2 **đã** ghi đúng điều BM25 — chỉ yêu cầu ChatGPT thiếu (S31 / W19).
+- Bước: User chọn phạm vi ⇒ A **một** tài liệu thiết kế `docs/superpowers/specs/` (tiêu chí ghi trước `run-experiment`, cỡ mẫu, trần tiền, mốc — đề xuất
+  context 10 sau B1, chờ User) ⇒ session khác review ⇒ User duyệt một lần.
 
 ### Phase 8.2 — TẠM DỪNG (User 16:5x 25/10)
 

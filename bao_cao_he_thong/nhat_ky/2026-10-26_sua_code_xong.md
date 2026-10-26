@@ -1,6 +1,6 @@
 # Nhật ký 26/10/2026 — sửa code xong 5 gói
 
-**Cập nhật lần cuối: 16:0x 26/10/2026.** Người viết: A. Tiền paid trong ngày: ~0,0028 USD (~70 đồng; **ước**, vì route chat chưa ghi số
+**Cập nhật lần cuối: 16:4x 26/10/2026 (kết phiên — bạn để các câu hỏi sang phiên sau).** Người viết: A. Tiền paid trong ngày: ~0,0028 USD (~70 đồng; **ước**, vì route chat chưa ghi số
 token: 7 lượt kiểm ổn định × 2 câu `gpt-6-luna`).
 
 ## Tóm tắt
@@ -18,6 +18,7 @@ token: 7 lượt kiểm ổn định × 2 câu `gpt-6-luna`).
 - Duyệt sổ cải tiến W14, W16, W17 (W18 gộp vào W14, bỏ W15).
 - 80 report lịch sử (79 file 08–09/2026 + 1 file 25/10 chỉ trùng tên file kho) còn trích một phần nội dung kho — để nguyên hay xử lý (A hỏi riêng).
 - Khi tiện: đọc cặp mù (B0, ~30–45 phút) — cần trước khi đưa "10 đoạn" vào chatbot.
+- Đầy đủ 8 câu (gồm quyền phiên, luật sửa code có giữ không, xóa nhánh `dot3`): `session_prompt/CURRENT_HANDOFF.md` mục "Câu hỏi cho User".
 
 ## Trạng thái
 
