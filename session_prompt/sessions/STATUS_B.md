@@ -1,9 +1,23 @@
-# STATUS B — KẾT PHIÊN 2026-10-26 16:3x +0700 (mở 13:50; terminal `hue-rag-3e`; A = `hue-rag-b0`, C = `hue-rag-87`)
+# STATUS B — PHIÊN TỐI 2026-10-26 (mở 20:29 +0700; terminal `hue-rag-23`; A = `hue-rag-2d`, C = `hue-rag-b5`)
 
 Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực tiếp với A; việc A giao = User nói "làm đi".
 Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 25/10, bẫy cũ chi tiết): `git show 7b662c9:session_prompt/sessions/STATUS_B.md`.
 
-## Trạng thái kết phiên
+## Phiên tối 26/10 — đang làm (A giao 20:35, `CURRENT_HANDOFF.md` mục "Việc giao phiên tối 26/10")
+- **B41** (B1 8.2 rebase lên `main`, 0 USD): worktree `/tmp/b_p82b1`, nhánh `p82-b1`. Quyền: B commit + `push --force-with-lease` nhánh `p82-b1`
+  (User 20:3x); không merge `main`. T2 cần gọi `gpt-6-luna` ⇒ dừng, báo A.
+- **B41 XONG 20:5x — chờ A review.** `p82-b1` `f23d396` ⇒ rebase `e1e16b3` + report `811d25d` (push `--force-with-lease=p82-b1:f23d396`). Xung đột duy nhất:
+  import `test_full_corpus_retrieval.py` (giữ import trần). Bỏ comment sai `b1.py:23`. Test 4 file: 41 p / 1 f / 1 e (main 40 p, cùng f / e cần key).
+  T1 sha `cefb2d1ad609` 158 dòng; T2 offline (`data/phase_8_2/b1/rebase_2610/t2_offline.py`) 176 / 176 mọi trường, đối chứng `main` ctx5 bắt khác;
+  T5 đạt; T3 / T4 NOT RUN (cần model). Worktree `/tmp/b_p82b1`, `/tmp/b_p82b1_old` đã gỡ (symlink gỡ trước). 0 USD.
+- **B42** (phân loại lỗi tầng tìm, 0 USD): đang làm (20:5x).
+- **File khai báo sửa (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
+  `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
+  `backend/experiments/phase_8_2/{__init__,b1}.py`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_implementation.md`.
+  Trên `main` (working tree chung, không commit): `session_prompt/sessions/STATUS_B.md`, dòng B trong `session_prompt/CURRENT_HANDOFF.md`,
+  `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md` (mới). Private: `data/phase_8_2/b1/rebase_2610/`, `data/cai_tien_tung_khau_2026-10-26/`.
+
+## Trạng thái kết phiên chiều 26/10 (cũ)
 - **File đang khai báo sửa: không.** Không server, không GPU. Worktree `/tmp/b_main`, `/tmp/b_dot3` **đã gỡ** (`git worktree remove`), `/tmp/b40`,
   `/tmp/b_rev` đã xóa. Các mục `/tmp/b_anh_2610*`, `/tmp/b_thu_kiem`, `/tmp/b_*.log` **không phải của phiên này** — không đụng.
 - Không commit (A commit gộp). Mọi file B viết phiên này đã ở `main` (`13afcf2`, `409ff62`, `7b662c9`).

@@ -1,7 +1,14 @@
-# STATUS C — cập nhật 2026-10-26 16:36 (**KẾT PHIÊN 26/10**; đợt 3 xong, A merge `421c302` — sửa code 5 gói đóng)
+# STATUS C — cập nhật 2026-10-26 20:48 (**phiên tối 26/10**: C36 xong, chờ A review; phần dưới mục "Phiên sau…" là trạng thái kết phiên 16:36)
 
-Terminal: `hue-rag-87` (mở 26/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-b0`, B = `hue-rag-3e` (trực tiếp).
-User 26/10: C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên 26/10 (C commit / push nhánh `dot3`, paid ≤ 0,003 USD đợt 3) **hết hạn cuối phiên**.
+Terminal: `hue-rag-b5` (mở tối 26/10; tên đổi mỗi lần mở) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-2d`, B = `hue-rag-23` (trực tiếp).
+User tối 26/10 (20:3x): C làm việc trực tiếp với A; A giao việc = "làm đi". Quyền phiên tối 26/10: theo `CURRENT_HANDOFF.md` mục "Việc giao phiên tối 26/10" (A 20:35); C không commit.
+
+**C36 — phân loại lỗi tầng trả lời: XONG 20:48, chờ A review** (A giao 20:35, 0 USD, không sub-agent). Report `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md`; private `data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/{cases,labels}.jsonl`, script `tools/c36_{table,labels}.py`; quét trùng 0; `/tmp/c36_show.py` (tạm, không dữ liệu) đã xóa.
+Kết quả: 88 câu dev chính, ctx 10 còn 10 câu bị cờ (ctx 5: 15; sửa 5, không hỏng câu nào); cả 10 `missed evidence` (5 file vắng, 5 đoạn vắng + 1 cả hai); 5 `over-refusal (partial)` = 20 / 46 điểm Completeness mất; xem phụ 12 câu điểm 4: 9 `under-answer`, 2 missed, 1 unsupported; citation sai nhẹ 1. Ý chính cho A: ~80 % điểm mất có thiếu bằng chứng ⇒ chỉ làm tầng trả lời thì trần lợi nhỏ.
+Khai báo file (đã ghi): `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_C.md` (mới),
+`data/cai_tien_tung_khau_2026-10-26/phan_loai_loi_C/` (bảng từng câu, private), `data/cai_tien_tung_khau_2026-10-26/tools/c36_*.py`, file này, dòng C ở bảng Session `CURRENT_HANDOFF.md`.
+Mở phiên 20:29: kiểm nhanh khớp (main `3cf8781`, hooks bật, Qdrant 1 collection 8.459). Lệch: thư mục untracked `tham khảo 26_10/` — A đang hỏi User, C không đụng.
+Phiên trước: quyền 26/10 chiều (C commit / push nhánh `dot3`, paid ≤ 0,003 USD đợt 3) đã hết hạn.
 
 ## Phiên sau C làm gì đầu tiên
 
