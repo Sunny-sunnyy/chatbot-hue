@@ -3,8 +3,9 @@
 Terminal: `hue-rag-b0` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3e`, C = `hue-rag-87` (cả ba Claude Code, trực tiếp).
 
 ## Đang làm
-- Giao C đợt 3 (rebase `dot3` lên `main` đầu đợt ⇒ commit 4 … 12); giao B **B40** đối chiếu kết quả ChatGPT với code (chỉ đọc).
-- Trao đổi User về kết quả ChatGPT, sổ cải tiến W14–W18, B0 ⇒ tài liệu thiết kế đợt cải tiến.
+- 16:0x: **đợt 3 xong** — merge `421c302` (`--no-ff`), cổng ổn định trên `main` đạt (D1, D2, D4, D5 A chạy lại); gỡ 8 file `reports/artifacts/`
+  (User (a)); 4 chỗ báo cáo + `Project_Status` + nhật ký + TONG_HOP + HISTORY. Commit tài liệu chờ **B kiểm** rồi push.
+- Chờ User: phạm vi đợt cải tiến; sổ cải tiến; 80 report lịch sử còn trích kho.
 
 ## Đang khai báo sửa
 - `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`, `report_agent/README.md` (trên `main`; khi C đang ở `dot3` thì sửa tài liệu qua worktree `/tmp/a_docs`).
@@ -13,12 +14,14 @@ Terminal: `hue-rag-b0` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Tự điều phối B/C rộng; API ≤ 1 USD cả phiên; C commit / push nhánh `dot3` (đợt 3).
 
 ## Tiền paid phiên này
-- 0 USD (tới 14:16).
+- A: ~0,0004 USD (cổng ổn định 2 câu, ước). Cả nhóm hôm nay ~0,0028 USD (ước — route chưa log usage).
 
 ## Đã học / bẫy gặp (phiên 26/10)
 - 14:3x: C đang ở `dot3` trong working tree chung ⇒ A sửa / commit tài liệu `main` qua worktree `/tmp/a_docs`. `git push` từ worktree bị auto mode
   chặn ⇒ User chạy `! cd /tmp/a_docs && git push origin main` (đã đẩy `13afcf2`).
 - 14:4x: C (commit B-20) nối quét trùng với commit bằng `;` ⇒ commit chạy dù scan exit 1 — **lặp S23** (A tối 25/10) ⇒ bằng chứng thêm cho W16 (rào bằng hook).
+- 16:0x: A nói với User "tài liệu mô tả sai khâu tìm" — sai: `LUONG` §3 và `BAO_CAO_TIM_KIEM` §2 đã ghi BM25 chỉ chấm lại 30 đoạn; thiếu chỉ ở yêu cầu ChatGPT. Đã đính chính.
+- 16:0x: ghi giờ "16:3x" ước trước khi chạy `date` (16:03) — lặp S17; đã sửa.
 - B40: yêu cầu ChatGPT mô tả sai khâu tìm (BM25 chỉ chấm lại 30 đoạn dense) ⇒ khi viết yêu cầu nghiên cứu, đối chiếu mô tả hệ thống với code (`file:dòng`) trước khi gửi.
 
 ---

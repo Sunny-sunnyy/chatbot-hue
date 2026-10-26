@@ -62,7 +62,8 @@ query, corpus excerpt hoặc payload dump. Có thể tạo absent isolated exper
 collection khi observed need yêu cầu và phải có local manifest/comparison;
 không ghi đè, replace, delete hoặc cleanup collection hiện có.
 
-Reranker tùy chọn trong code (lúc Phase 5): `cross-encoder/ms-marco-MiniLM-L-6-v2`; runtime dùng `none` (Phase 6 và 8.1 giữ).
+Reranker tùy chọn trong code (lúc Phase 5): `cross-encoder/ms-marco-MiniLM-L-6-v2`; runtime dùng `none` (Phase 6 và 8.1 giữ). Từ 26/10 (đợt 3
+rà code) nhánh `minilm` đã gỡ khỏi service — `reranker` chỉ nhận `none`; lớp `reranking/cross_encoder.py` còn cho harness 8.1.
 `Qwen/Qwen3-Reranker-0.6B` chỉ là deferred research candidate: nếu Phase 8 cho
 thấy MiniLM không có lợi ích rõ ràng, giảm metric quan trọng hoặc không đạt
 resource/coverage contract, Reviewer mới trình User mở research/design/spec/

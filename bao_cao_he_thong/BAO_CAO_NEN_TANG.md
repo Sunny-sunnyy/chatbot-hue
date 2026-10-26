@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Nền tảng — luật chơi và khung backend (Phase 0–1)
 
-**Cập nhật lần cuối: 19:58 24/10/2026 — bản 2: đưa về mẫu mới; cập nhật hiện trạng sau khi gỡ code
-bản món ăn (24/10): file cấu hình chỉ còn phần toàn kho, hàm đọc cấu hình không còn kiểm "profile".**
+**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 3: sau đợt 3 rà code (26/10) — gỡ bộ chạy kiểm khói Phase 5, logger `api`; bản 2 (19:58 24/10):
+đưa về mẫu mới, gỡ code bản món ăn.**
 Người viết: B · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -42,7 +42,7 @@ lỗi -> một lớp lỗi dùng chung (core/schema.py) -> API trả mã lỗi t
 | Khuôn kết quả tìm kiếm chung | **Đã xử lý, đóng gói** | `schema.py:36`; dùng ở `retrieval/full_corpus.py:327`, `:647` |
 | Lớp lỗi dùng chung, API trả lỗi rõ | **Đã xử lý, đóng gói** | `schema.py:7-32`; `api/app.py:21-24`, `:70`, `:77` |
 | API báo sức khỏe từng thành phần | **Đã xử lý, đóng gói** | `api/health.py:17-23`; 200, mọi thành phần `ready` (24/10) |
-| Ghi log chung cho mọi lệnh chạy | **Xử lý một phần** | API dùng `setup_logging()` (`api/app.py:43`); `ingestion/full_corpus_pipeline.py:242` và `retrieval/full_corpus_smoke.py:67` tự cấu hình log riêng |
+| Ghi log chung cho mọi lệnh chạy | **Xử lý một phần** | API dùng `setup_logging()` (`api/app.py:43`), từ 26/10 có logger `api` trong `logging.yaml`; lệnh dựng kho `ingestion/full_corpus_pipeline.py` còn tự cấu hình log riêng (`retrieval/full_corpus_smoke.py` đã gỡ 26/10) |
 | Test chỉ chạy trên hệ thống thật | **Xử lý một phần** | Gần hết test dùng Qdrant/model thật; `tests/test_phase6_live_smoke.py:223-228`, `:314` còn giả lập nhánh lỗi |
 | Chạy bằng `uv` trong môi trường dự án | **Đã xử lý, đóng gói** | `pyproject.toml`; `session_prompt/Session_Prompt.md` §10 |
 
@@ -113,7 +113,7 @@ Kiểm với code (commit `1832201`) ngày 24/10/2026.
      `tokenizer` (`backend/api/health.py:19-20`). Chỉ là report cũ — còn.
   2. Logging: spec Phase 1 yêu cầu mọi lệnh chạy dùng `setup_logging()`
      (`docs/superpowers/specs/2026-08-24-phase-1-backend-foundation-simplicity-design.md:86`, `:136-137`);
-     `ingestion/full_corpus_pipeline.py:242`, `retrieval/full_corpus_smoke.py:67` dùng `basicConfig` — **còn**, Phase 8.1.
+     `ingestion/full_corpus_pipeline.py` dùng `basicConfig` — **còn**; `retrieval/full_corpus_smoke.py` đã gỡ (26/10, đợt 3 rà code).
   3. Mock/fake: `test_reranker_benchmark.py`, `test_markdown_chunker.py` **đã gỡ ở B9**;
      `test_phase6_live_smoke.py:223-228`, `:314` **còn**, Phase 8.1.
   4. `conftest.py` đặt `ACTIVE_COLLECTION` = collection món ăn — **đã gỡ ở B9**.

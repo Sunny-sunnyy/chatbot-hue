@@ -4,6 +4,13 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-26 (16:0x) — Sửa code sau rà soát xong cả 5 gói (đợt 3 merge `421c302`)
+
+Đợt 3 (gói 2 chốt an toàn build + gói 5 dọn code + B-12): C 12 commit trên `dot3` (rebase đầu phiên), B review toàn nhánh ready (0 / 0 / 3 minor),
+A merge `--no-ff` + cổng ổn định trên `main` đạt (sha đoạn, T1 giống byte, pytest phần không key, server thật). Chatbot không đổi hành vi; code
+backend 8.345 → 6.218 dòng. User chọn (a): 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/`, gỡ khỏi repo. Cùng ngày: kết quả ChatGPT đợt
+cải tiến + B40 đối chiếu với code. Chi tiết: `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`; nhật ký `bao_cao_he_thong/nhat_ky/2026-10-26_sua_code_xong.md`.
+
 ## 2026-10-25 (22:3x) — Rà code Phase 0–7 xong; sửa gói 1a, 1b, 3, 4; đợt 3 dở (nhánh `dot3`); kết phiên
 
 - Rà code (B25 dựng index + nền, C34 trả lời + đánh giá; chỉ đọc) + kiểm chéo hai chiều: 39 phát hiện → 5 gói

@@ -1,6 +1,8 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 21:50 25/10/2026** (gói 1b rà code, `1e4acd0`: API báo đúng loại lỗi; mọi lệnh chạy từ `backend/`). 19:59: sửa bước kiểm trích dẫn nhận cả `[Nguồn n]` (`9e6d371`, gói 1a). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
+**Cập nhật lần cuối: 16:0x 26/10/2026** (đợt 3 rà code, merge `421c302`: dựng kho dừng khi có đoạn vượt giới hạn token ở mọi nhánh; build chỉ ghi
+từ điển BM25 sau khi kiểm đích; gỡ code không dùng — reranker MiniLM, Representation B, bộ kiểm khói Phase 5; câu trả lời / kết quả tìm **không
+đổi**, giống từng byte). Trước đó 21:50 25/10 (gói 1b rà code, `1e4acd0`: API báo đúng loại lỗi; mọi lệnh chạy từ `backend/`). 19:59: sửa bước kiểm trích dẫn nhận cả `[Nguồn n]` (`9e6d371`, gói 1a). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
 thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục).
 
@@ -37,7 +39,9 @@ HỎI ĐÁP (mỗi câu hỏi):
    (ví dụ "Bún bò Huế > Quán nổi tiếng") để tìm dễ hơn.
 2. Mỗi đoạn được tạo **vector nghĩa** (e5-small) và **vector từ khoá** (BM25), lưu cùng một điểm
    trong Qdrant kèm 7 trường: chữ để tìm, nguồn, tiêu đề, đường tiêu đề, phần trích dẫn, mã đoạn, chủ đề.
-3. Một **build record** ghi lại dấu (hash) của từng file corpus. Khi khởi động, API so dấu với kho
+3. Đoạn nào vượt giới hạn token, hay quy tắc điều kiện không khớp đúng một chỗ ⇒ **dựng kho dừng** (từ 26/10, mọi nhánh). Từ điển BM25 dùng chung
+   chỉ được ghi **sau** khi kiểm chỉ mục đích hợp lệ. Quy trình dựng lại: `guides/full_corpus_rag.md` mục "Build lại index".
+4. Một **build record** ghi lại dấu (hash) của từng file corpus. Khi khởi động, API so dấu với kho
    hiện tại; kho đã sửa mà chưa build lại thì **API từ chối chạy** (để không trả lời bằng dữ liệu cũ).
 
 ## 3. Khi người dùng hỏi
@@ -45,7 +49,8 @@ HỎI ĐÁP (mỗi câu hỏi):
 1. **Tìm 30 ứng viên** bằng vector nghĩa (câu hỏi được thêm tiền tố `query:` theo hướng dẫn của e5).
 2. **Chấm lại bằng BM25** trong chính 30 ứng viên đó, rồi **gộp hai bảng xếp hạng bằng RRF** (k = 60)
    → giữ 10 đoạn. Lưu ý: BM25 chỉ chấm lại đoạn mà vector nghĩa đã tìm thấy, không tìm thêm đoạn mới.
-3. **Không xếp lại bằng reranker** (đã thử MiniLM tiếng Anh ở bản Foods, kém hơn).
+3. **Không xếp lại bằng reranker** (đã thử MiniLM tiếng Anh ở bản Foods, kém hơn; 8.1 thử thêm 2 model đa ngôn ngữ + `gpt-6-luna`: chưa qua
+   luật). Nhánh MiniLM đã gỡ khỏi chatbot 26/10 — `reranker` chỉ còn `none`.
 4. **Đóng gói ngữ cảnh:** lấy **5 đoạn đầu**, nguyên vẹn, đánh số [1]…[5] (thường ~900 token).
 5. **gpt-6-luna trả lời** chỉ từ 5 đoạn đó, tiếng Việt, đặt [n] sau mỗi ý. **Nếu thiếu bằng chứng**
    thì trả đúng câu: "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này."

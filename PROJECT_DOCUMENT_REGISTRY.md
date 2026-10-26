@@ -225,7 +225,8 @@ Observed state ngày 2026-09-12:
 - bị loại khỏi RAG discovery/config và không phải answer corpus;
 - hai script cũ còn khai báo output vào thư mục:
   `backend/scripts/convert_huegov_department_raw_to_md.py` và
-  `backend/scripts/convert_huegov_culture_raw_to_md.py`.
+  `backend/scripts/convert_huegov_culture_raw_to_md.py`
+  (*cập nhật 26/10/2026:* hai script đã chuyển sang `data/tools/huegov_converters/` — private, chứa nguyên văn kho — và gỡ khỏi repo).
 
 Hai script trên chỉ chứng minh code có output target cũ, không chứng minh script
 đang chạy hoặc raw dumps có đóng góp vào curated corpus. Trước deletion batch,

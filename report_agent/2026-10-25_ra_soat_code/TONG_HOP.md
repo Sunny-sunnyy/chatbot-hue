@@ -1,6 +1,6 @@
 # TONG_HOP — rà code Phase 0–7 (đợt `2026-10-25_ra_soat_code`)
 
-Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026, cập nhật 22:3x · trạng thái: **đang mở — gói 1a, 1b, 3, 4 xong; đợt 3 (gói 2 + 5) dở trên nhánh `dot3`**.
+Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026, cập nhật 22:3x · trạng thái: **sửa code XONG cả 5 gói 16:0x 26/10** (đợt 3 merge `421c302`, cổng ổn định trên `main` đạt); đợt còn mở cho phần A tự sửa (B kiểm).
 Báo cáo cho User (lời thường, có câu hỏi): `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`. Chưa sửa code (User 18:3x: "tôi đồng ý mới sửa").
 
 ## Mục tiêu
@@ -62,7 +62,8 @@ User trả lời 4 câu ở `DE_XUAT_SUA_CODE.md` §4 ⇒ A ghi mục việc t�
 | 3a / 3b công cụ đo (C-02, C-20, C-03) | `47a4e32` | C / B | so cặp giống byte trên 5 cặp file thật, chiều đúng; chuỗi gửi model giống byte 25 câu | `sua_3_*` |
 | 3c (phần free) | `47a4e32` (report) | C (A kiểm 2 số) | citation v2 mọi mốc: 8.1 3c `none` +4 → +2 (hết vi phạm — chưa kết luận); A/A context 10 0 vs 0; file `data/ra_soat_code_2026-10-25/citation_v2/` | `sua_3c_citation_v2.md` |
 | 1b import / mã lỗi (B-01 = C-01, C-11) | `1e4acd0` | B / C | module nạp đôi 3–14 → 0 (12 điểm vào); T-A / T-B / T-C đỏ → xanh (T-C: User `!`); 15 file test 196 → 198 đạt; T1 giống byte | `sua_1b_plan*`, `sua_1b_*` |
-| Đợt 3: 2 + 5 + B-12 | nhánh `dot3` (dở) | C / B (review toàn nhánh) | plan bản 3 sha `7c8c660558e5` (B review: M-1 `git mv` vào thư mục ignore vẫn vào index — đã sửa) | `sua_dot3_plan*` |
+| Đợt 3: 2 + 5 + B-12 | merge `421c302` (12 commit `3a37af4`…`8f0e5c4` + docs) | C / B (review toàn nhánh, ready 0 / 0 / 3 minor) | D1 sha đoạn `60591acff422ece6` + identity; D2 T1 `cefb2d1ad609`; D3 25 câu giống byte; D4 197 p / 1 f / 4 e (phần cần key); D5 đạt; D6 0 nơi gọi; code 8.345 → 6.218 dòng; D8 0 chuỗi kho; A chạy lại D1 / D2 / D4 / D5 trên `main`: đạt | `sua_dot3_plan*`, `sua_dot3_implementation.md`, `sua_dot3_review.md` |
+| Ngoài plan (User 26/10 chọn (a)) | commit tài liệu A 26/10 | A / B kiểm | 8 file `reports/artifacts/` (5 JSON + 3 script, 485 dòng trùng kho) ⇒ `data/reports_artifacts_private_2026-10-26/` (sha bằng nhau), `git rm`; quét toàn repo: còn 80 report lịch sử có dòng trùng kho — chờ User | — |
 
 Cổng ổn định (User 20:0x) chạy sau mỗi gói: `/` 200, `/health` 5 / 5, 1 câu trong kho (marker = sources) + 1 câu ngoài kho (từ chối), log sạch.
 Paid cả đợt ~0,003 USD (phần lớn ước — route chưa log token; ứng viên C #5).

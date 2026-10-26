@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 14:04 25/10/2026 — bản 5: thêm kết quả thử nghiệm Phase 8.1 (chẩn đoán chỗ nghẽn, xếp hạng lại,
-lấy rộng 100 ứng viên); chatbot không đổi.**
+**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 6: đợt 3 rà code — gỡ nhánh MiniLM khỏi chatbot, gỡ bộ kiểm khói Phase 5; kết quả tìm 158 câu
+giống từng byte.** Bản 5 (14:04 25/10): kết quả Phase 8.1; chatbot không đổi.
 Người viết: B (bản 5; bản 1–4: C) · Review: C. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -10,7 +10,7 @@ Người viết: B (bản 5; bản 1–4: C) · Review: C. Tỉ giá ước: 1 U
   xếp theo thứ tự. Bước sinh câu trả lời chỉ đọc những đoạn này, nên tìm sai thì trả lời sai hoặc từ
   chối.
 - **Đang chạy cách nào:** e5-small (chạy trên máy) tìm 30 đoạn gần nghĩa nhất trong Qdrant → BM25
-  (khớp từ khóa) chấm lại 30 đoạn đó → trộn hai thứ hạng (RRF) → 10 đoạn. Reranker đang tắt. Trạng
+  (khớp từ khóa) chấm lại 30 đoạn đó → trộn hai thứ hạng (RRF) → 10 đoạn. Không reranker. Trạng
   thái: đã đóng (bản món ăn 12/08/2026; bản toàn kho 14/09/2026).
 - **Đo được (Phase 7B, 158 câu có trong kho):** điểm xếp hạng MRR@10 0,72, nDCG@10 0,76; 92% câu có
   đoạn chứa keyword đáp án lọt top-10. Chạy lại hai lần giống hệt từng byte.
@@ -31,7 +31,7 @@ câu hỏi
  → e5-small biến câu hỏi thành vector → lấy 30 đoạn gần nghĩa nhất trong Qdrant
  → BM25 (khớp từ khóa) chấm lại 30 đoạn đó
  → RRF trộn hai thứ hạng → 10 đoạn
- → (tùy chọn) MiniLM xếp hạng lại — đang TẮT
+ (không xếp hạng lại — nhánh MiniLM đã gỡ khỏi chatbot 26/10)
 ```
 
 - Cách đang chạy là `dense_bm25_rrf`: BM25 chỉ chấm lại **30 đoạn vector đã tìm được**.
@@ -126,7 +126,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 |---|---|---|
 | Hai cách tìm `dense_bm25_rrf`, `native_hybrid_rrf` | **còn dùng** (chatbot chạy `dense_bm25_rrf`) | `backend/retrieval/full_corpus.py:111`; `backend/config/settings.yaml:42` |
 | 30 ứng viên, RRF k=60, trả top-10 | **còn dùng** | `backend/retrieval/full_corpus.py:465,608,627` |
-| Reranker MiniLM (tiếng Anh) | **có code nhưng đang tắt** | `settings.yaml:43` (`reranker: none`); `backend/reranking/cross_encoder.py:13` |
+| Reranker MiniLM (tiếng Anh) | **đã gỡ khỏi chatbot** 26/10 (trước đó tắt) | `settings.yaml:43` (`reranker: none` — giá trị duy nhất); lớp `backend/reranking/cross_encoder.py` giữ cho bộ thử 8.1 (G1, G4) |
 | 4 kho vector toàn kho của Phase 4–5 | **đã thay** bởi một kho `hue_full_corpus_7a2_e5_small_384` (Phase 7A2) | Qdrant chỉ còn collection này (kiểm 24/10 sau dọn) |
 | Model e5-small, e5-base, HuyDang, Qwen3-0.6B trong ma trận thử | **đã thay** bởi e5-small + Qwen3-8B (Phase 7A2); 8B chưa có chỉ mục | `backend/embedding/full_corpus.py:41–66` |
 | Ba chế độ bản món ăn (`dense_only`/`hybrid_*`) | **đã bỏ**: code đã gỡ khi dọn sau Phase 7 | commit `1832201`; [R2] |

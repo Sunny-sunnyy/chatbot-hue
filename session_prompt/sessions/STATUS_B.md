@@ -3,12 +3,11 @@
 Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực tiếp với A; việc A giao = User nói "làm đi".
 
 ## Đang làm
-- **B40** (A giao 14:1x, `CURRENT_HANDOFF.md` mục "Đợt tìm hướng tốt hơn từng khâu"): đối chiếu kết quả ChatGPT C1–C6, D1–D4 với code `main`
-  `71d2450` — chỉ đọc, 0 USD. Đọc code ở worktree riêng `/tmp/b_main` (detached `71d2450`) vì C dùng working tree chung cho `dot3`.
-- Sau đó: review nhánh `dot3` khi C báo xong (worktree `/tmp/b_dot3` từ `origin/dot3` sau rebase — A đồng ý hướng).
+- Chờ A: review `dot3` xong, chờ A đọc / chép / merge.
 
 ## Đang khai báo sửa
-- không (B40 xong; 2 file trong `/tmp/b_main` chờ A chép / commit: report B40 + file này).
+- không. File chờ A chép / commit: `report_agent/2026-10-25_ra_soat_code/sua_dot3_review.md` (trong `/tmp/b_dot3`, sha `4ee8e5f90199`) và file này
+  (trong `/tmp/b_main` @ `13afcf2`).
 
 ## Vừa xong
 - 13:50 mở phiên, kiểm nhanh khớp handoff (4 worktree AGY dưới `~/.gemini/` — A: giữ nguyên).
@@ -16,10 +15,15 @@ Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực ti
   runtime BM25 chỉ chấm lại 30 đoạn của dense (`retrieval/full_corpus.py:479-491`) — yêu cầu ChatGPT không nói điều này; 56 / 158 câu có 5 đoạn
   cùng một file; đoạn bảng chỉ 144 / 8.459; cỡ mẫu báo cáo gợi ý (C1, C3, D1) lớn hơn dữ liệu có. Script đếm: `data/cai_tien_tung_khau_2026-10-26/tools/`. 0 USD.
 
+- 15:52 **Review `dot3` (`210abd4`) xong — ready_for_user_confirmation**: D1–D8 chạy mới đạt (D3 so cả với `main`); D9 notebook NOT RUN (auto mode chặn
+  `jupyter nbconvert --execute`); 3 minor (m-1 số diff report, m-2 `python3` trong `d9.sh`, m-3 tài liệu cũ cho A). Ngoài phạm vi: 5 JSON `reports/artifacts/`
+  tracked có 418 dòng trùng kho — A / User quyết. Paid: D5 2 câu ≈ 0,0004 USD (ước).
+
 ## Đã học / bẫy gặp (26/10)
 - `uv run` trong worktree `/tmp/...` tạo `.venv` mới ở đó (Python khác) ⇒ ở worktree luôn `uv run --project /home/minhhieu/hue_rag …`
   (hoặc chạy từ gốc dự án). Đã xóa `.venv` tạm.
 - Worktree cần `data/`, `knowledge-base-hue/`: symlink hiện thành untracked (gitignore có `/` cuối không khớp link) ⇒ gỡ link khi xong.
+- Auto mode chặn chạy notebook (`jupyter nbconvert --execute`) ở B ⇒ không lách; ghi NOT RUN + lệnh cho User `!`.
 
 ---
 

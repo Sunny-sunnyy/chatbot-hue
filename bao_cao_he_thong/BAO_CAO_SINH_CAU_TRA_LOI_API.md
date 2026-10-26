@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 21:50 25/10/2026 — bản 7: API báo đúng loại lỗi (gói 1b).** Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
+**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 8: đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
 nguyên nhân "quên ghi `[n]`" của 8.1. Bản 5 (14:10): kết quả Phase 8.1.
 Người viết: A (bản 6), B (bản 5; bản 1–4: C) · Review: C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -164,7 +164,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 | Qdrant cổng 6335 | **còn dùng** | `settings.yaml` `vector_database.url` |
 | Qwen 3.5-9B qua OpenRouter, `gpt-5.4-nano` | **đã thay** bởi `gpt-6-luna` (quyết định 23/10) | [R3] |
 | Collection metadata v2 (8.460 đoạn) mà Phase 6 đóng trên đó | **đã thay** bởi chỉ mục 7A2 (8.459 đoạn) | `Project_Status.md` §4 |
-| "Representation B" (LLM viết thêm ngữ cảnh cho đoạn) | **có code; đã gọi thử thật 1 lần ở Phase 6, chưa có chỉ mục, chưa đo** | `backend/llm/full_corpus_prompt.py:37`; `backend/llm/representation_b.py` |
+| "Representation B" (LLM viết thêm ngữ cảnh cho đoạn) | **đã gỡ** 26/10 (gọi thử 1 lần ở Phase 6, chưa từng có chỉ mục; bạn duyệt gỡ 19:4x 25/10) | đợt 3 rà code, commit `c6e130c`; bộ chạy kiểm khói Phase 6 còn 4 câu |
 | API/sinh câu trả lời bản món ăn | **đã gỡ** khi dọn sau Phase 7 (trước đó hỏng thật: gửi `temperature` → lỗi 400) | commit `1832201` (xóa `backend/llm/generator_openai.py`) |
 
 ## 6. Việc còn lại / cần quyết

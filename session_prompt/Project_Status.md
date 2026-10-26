@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-25 22:3x` (A, kết phiên đêm: rà code xong, sửa gói 1a / 1b / 3 / 4 vào `main`; đợt 3 dở ở nhánh `dot3`; 8.2 vẫn tạm dừng)
+Last updated: `2026-10-26 16:0x` (A: **sửa code sau rà soát xong cả 5 gói** — đợt 3 merge `421c302`, cổng ổn định trên `main` đạt; 8.2 vẫn tạm dừng)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -39,8 +39,9 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 Đang làm: **sửa code sau rà soát Phase 0–7** (User duyệt 5 gói 19:4x 25/10; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`; đợt
 `report_agent/2026-10-25_ra_soat_code/` — `TONG_HOP.md`). Đã vào `main` + cổng ổn định: **1a** `9e6d371` (validator nhận `[Nguồn n]`),
 **4** `1b9c126` (guide / notebook), **3** `47a4e32` (công cụ so cặp, một chỗ dựng tin nhắn), **1b** `1e4acd0` (import trần, mọi lệnh từ
-`backend/`, API 409 / 503 đúng). **Đợt 3** (gói 2 chốt an toàn build + gói 5 dọn code + B-12 đưa nội dung kho ra khỏi file tracked): plan
-`sua_dot3_plan.md` sha `7c8c660558e5` duyệt; C làm trên nhánh **`dot3`** (chưa merge). **Phase 8.2 tạm dừng** (User 16:5x 25/10; spec
+`backend/`, API 409 / 503 đúng), **đợt 3** = gói 2 + 5 + B-12 (merge `421c302` 26/10: đoạn vượt token luôn dừng build; test identity so nội dung +
+sparse bytes; gỡ Rep B, smoke Phase 5, nhánh `minilm`, converter; nội dung kho ra khỏi file tracked; code backend 8.345 → 6.218 dòng; B review
+ready; 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/reports_artifacts_private_2026-10-26/`, User 26/10). **Sửa code: xong 5 gói.** **Phase 8.2 tạm dừng** (User 16:5x 25/10; spec
 `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` sha `dabae90b2b60`; B1 ở nhánh `p82-b1`) — chạy lại khi 5 gói xong +
 cổng ổn định đạt (User 20:0x: phase trước ổn định mới sang phase sau). Sau đó: đợt tìm hướng tốt hơn từng khâu (User 20:0x).
 
@@ -186,7 +187,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   báo "Token indices sequence length…" là bình thường.
 - Sửa corpus làm runtime từ chối khởi động (freshness) cho tới khi build lại index.
 - `full_corpus_sparse_state.json` chỉ ghi một lần: corpus đổi thì phải xóa file cũ
-  trước khi build lại, nếu không build raise.
+  trước khi build lại, nếu không build raise. Từ 26/10 (C-21) build chỉ ghi sparse state **sau** khi kiểm đích — đích hỏng không để lại file mồ côi.
+  Quy trình: `guides/full_corpus_rag.md` mục "Build lại index".
 - **Mọi lệnh chạy từ `backend/`, import trần** (`core.…`, `retrieval.…`; không `backend.…`) từ `1e4acd0` (rà code 1b, 25/10): API, pytest,
   build (`python -m ingestion.full_corpus_pipeline build …`), evaluator, harness. Lệnh cũ từ gốc repo báo `ModuleNotFoundError: core`.
   Đặt tên module mới không trùng gói đã cài (`find_spec`). API: index lệch ⇒ 409; Qdrant / model không nạp ⇒ 503.
@@ -195,7 +197,10 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   `test_phase6_live_smoke.py` (rà code 25/10, C-17 / C-18: không có key thì 3 test miễn phí cũng fail vì `require_openai_key`).
 - Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Danh sách test ghi Qdrant / paid cũ (4 file) đã gỡ ở B9; hiện không test nào ghi Qdrant (rà code 25/10, B25 / C34).
 - `test_phase6_live_smoke.py` còn mock/monkeypatch — rà ở Phase 8.1 (B8). Code/test Foods cũ đã gỡ ở B9
-  (`1832201`): pytest 15 file full-corpus 191 passed.
+  (`1832201`). Mốc pytest sau đợt 3 (26/10, không key, 15 file trừ `test_startup_model_missing.py`): **197 passed / 1 failed / 4 error** — phần
+  failed / error đúng là test cần `OPENAI_API_KEY` (C-17); `test_startup_model_missing.py` User chạy `!` (auto mode chặn `HF_HOME` rỗng): 1 passed.
+- Test mẫu chunker đọc chuỗi kỳ vọng từ `knowledge-base-hue/meta/chunker_acceptance_samples.json` (private, B-12): clone không có kho ⇒ 7 test đó báo
+  `FileNotFoundError` có tên file (đúng thiết kế).
 - OpenRouter 8B: không pin thì trộn provider (vector lệch, cos ~0,996); pin Nebius
   thì 10–30 s/batch và đã gặp 504; DeepInfra từng trả 429.
 - Notebook còn lại: 03, 04, 06 (02, 05, 07, 08a–c đã xóa ở B9); 03/04 Run All đạt trên bản tạm.

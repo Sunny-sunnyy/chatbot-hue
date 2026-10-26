@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Chia tài liệu thành đoạn (Phase 2)
 
-**Cập nhật lần cuối: 14:14 25/10/2026 — bản 3: thêm kết quả thử nghiệm Phase 8.1 (12 cách chia đoạn khác, do C chạy);
-chatbot không đổi.**
+**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 4: đợt 3 sửa code (26/10) — đoạn quá dài nay **luôn** bị chặn khi dựng kho; test "kho khớp
+bản ghi" so cả nội dung; file quy tắc điều kiện ra khỏi repo public. 8.459 đoạn giống hệt trước khi sửa.** Bản 3 (14:14 25/10): kết quả 8.1, chatbot không đổi.
 Người viết: B (bản 3, theo report của C) · Review: C. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -12,11 +12,12 @@ Người viết: B (bản 3, theo report của C) · Review: C. Tỉ giá ước
 - **Đang chạy cách nào:** chia theo cấu trúc Markdown (tiêu đề, đoạn văn, bảng, danh sách, trích dẫn),
   không cắt theo số ký tự, không gối đầu có chủ đích. Khối quá dài thì bảng tách từng hàng (kèm dòng tiêu
   đề bảng), danh sách tách từng mục, đoạn văn tách ở ranh giới câu. Kết quả hôm nay: 8.459 đoạn, đúng
-  bằng số đoạn trong chỉ mục đang chạy.
+  bằng số đoạn trong chỉ mục đang chạy. Sau đợt 3 sửa code (26/10): **8.459 đoạn giống hệt từng byte** (sha `60591acff422ece6`).
 - **Đo được:** chạy lại ra cùng đoạn, cùng ID; mọi đoạn vừa giới hạn token của cả 3 tokenizer (dài nhất
   366/512, 366/512, 255/256). Trung vị 85 token; 1.787 đoạn dưới 50 token ("đoạn vụn").
-- **Giới hạn chính:** nhiều đoạn rất ngắn (8.1 cho thấy gộp lại **không** giúp với hạn mức hiện tại); bảng giá bị tách
-  từng hàng nên dòng giá khó tìm (gộp dòng bảng: không khác); 3 cặp đoạn lặp một phần nội dung.
+- **Giới hạn chính:** nhiều đoạn rất ngắn (8.1 cho thấy gộp lại **không** giúp với hạn mức hiện tại); bảng **dài** bị tách
+  từng hàng nên dòng giá khó tìm (gộp dòng bảng: không khác) — bảng ngắn giữ nguyên cả bảng (144 / 8.459 đoạn là bảng, đếm 26/10);
+  3 cặp đoạn lặp một phần nội dung.
 - **Chi phí / tốc độ:** không tốn tiền (chạy trên máy).
 - **Phase 8.1 đã thử (25/10, 0 USD, ~1 giờ máy):** 12 cách chia đoạn khác — gộp đoạn cùng mục tới 128 / 256 / 384 / 512
   token, gộp dòng bảng, mở rộng sau khi tìm, đổi tiền tố tiêu đề, bỏ kiểm tokenizer cũ, 3 sửa nhỏ — đo với **cùng một hạn
@@ -44,9 +45,12 @@ Người viết: B (bản 3, theo report của C) · Review: C. Tỉ giá ước
 - **ID đoạn** = `<đường dẫn file>#<số thứ tự>`; ID điểm trong Qdrant suy ra từ ID đoạn, nên chạy lại ra
   cùng ID.
 - **Giới hạn token:** mỗi đoạn phải vừa cả 3 tokenizer (e5-small 512, e5-base 512, huydang 256), đo bằng
-  tokenizer thật. Đoạn vượt, hoặc quy tắc điều kiện không khớp đúng một chỗ, thì báo lỗi.
+  tokenizer thật. Đoạn vượt (mọi nhánh — kiểm ở một vòng cuối, từ 26/10), hoặc quy tắc điều kiện không khớp đúng một chỗ,
+  thì báo lỗi và **dựng kho dừng**. Trước 26/10 có nhánh lọt kiểm (model vector sẽ âm thầm cắt cuối đoạn) — kho hôm nay chưa có
+  đoạn nào vượt nên chưa gây hại.
 - Code: `backend/ingestion/chunking/full_corpus_chunker.py`, `backend/ingestion/chunking/markdown_blocks.py`;
-  cấu hình `backend/config/settings.yaml:3-34`, `backend/config/full_corpus_conditions.json`.
+  cấu hình `backend/config/settings.yaml:3-34`, quy tắc điều kiện `knowledge-base-hue/meta/full_corpus_conditions.json` (private; ra
+  khỏi repo public 26/10 vì chứa nguyên văn kho).
 
 ## 3. Checklist tình huống
 
@@ -61,15 +65,25 @@ Người viết: B (bản 3, theo report của C) · Review: C. Tỉ giá ước
 | File danh mục nghệ thuật biểu diễn (inventory) | **Đã thử, chưa áp dụng** | vẫn được đưa vào chỉ mục (33 đoạn); 8.1 thử bỏ: không khác (an toàn) |
 | Ghi chú áp dụng cho bảng (điều kiện) | **Đã xử lý, đóng gói** | 3 quy tắc, 13 phần điều kiện ở 9 đoạn; `full_corpus_conditions.json`; `full_corpus_chunker.py:197-221` |
 | Vị trí chính xác để trích dẫn | **Đã xử lý, đóng gói** | `backend/core/schema.py:89`, `:107`; `full_corpus_chunker.py:403` |
-| Chạy lại ra cùng đoạn, cùng ID | **Đã xử lý, đóng gói** | test determinism so với build record đang chạy, đạt 24/10 (`tests/test_full_corpus_chunker.py:978-1041`) |
+| Chạy lại ra cùng đoạn, cùng ID | **Đã xử lý, đóng gói** | test determinism so với build record đang chạy: từ 26/10 so cả **dấu vân tay nội dung** và từ điển BM25 từng byte (trước chỉ so số đoạn); đạt 26/10 (`tests/test_full_corpus_chunker.py`) |
 | Đoạn vụn (dưới 50 token) | **Đã thử, chưa áp dụng** | 1.787 đoạn. 8.1 gộp đoạn cùng mục tới 128 token: không khác; tới 256 / 384 / 512: **kém hơn** (mất 4 / 6 / 6 câu đoạn đúng); mở rộng cả mục sau khi tìm: kém hơn (mất 8 câu) |
 | Tiền tố tiêu đề trong text tìm kiếm | **Đã xử lý, đóng gói** | 8.1 thử chỉ giữ tiêu đề mục gần nhất / bỏ hẳn: **kém hơn** (mất 7 / 8 câu) ⇒ giữ đầy đủ |
-| Thêm ngữ cảnh do model viết vào đoạn ("Representation B") | **Đã thử, chưa áp dụng** | chỉ gọi thử ở Phase 6; chưa vào chỉ mục |
+| Thêm ngữ cảnh do model viết vào đoạn ("Representation B") | **Đã thử, chưa áp dụng** | chỉ gọi thử ở Phase 6; chưa vào chỉ mục; **code đã gỡ 26/10** (chatbot không dùng — bạn duyệt 19:4x 25/10) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 26/10/2026 — Đợt 3 sửa code sau rà soát (bản 4; C làm, B review)
+
+Không đổi đoạn nào trên kho hôm nay; chỉ chặn chắc hơn cho lần dựng kho sau. **Tiêu chí ghi trước:** 8.459 đoạn giống hệt (sha
+`60591acff422ece6`), kết quả tìm 158 câu giống từng byte, test đạt. Thay đổi: (1) đoạn vượt giới hạn token ở **mọi** nhánh ⇒ báo lỗi,
+dừng dựng kho (trước: một nhánh lọt); (2) test "kho khớp bản ghi" so dấu vân tay nội dung + từ điển BM25 (trước: chỉ số đoạn);
+(3) gọn code chia đoạn (một hàm phát đoạn thay 7 khối lặp; mục con danh sách lấy đúng cấp trực tiếp — kho hôm nay không có danh
+sách 3 cấp nên không đổi); (4) file quy tắc điều kiện + 55 chuỗi mẫu test ra `knowledge-base-hue/meta/` (private). **Kết quả PASS**
+(C đo sau từng nhóm, B chạy lại độc lập; A kiểm lại trên `main`). Tiền: 0 ở khâu này. Report:
+`report_agent/2026-10-25_ra_soat_code/sua_dot3_implementation.md`, review `sua_dot3_review.md`.
 
 ### 25/10/2026 — Phase 8.1: thử 12 cách chia đoạn (bản 3; C chạy, B review)
 
@@ -120,20 +134,21 @@ dài giữ nguyên · **PASS**. Bản này nay đã gỡ (24/10).
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code (commit `1832201`) ngày 24/10/2026.
+Kiểm với code (commit `1832201`) ngày 24/10/2026; dòng có đánh dấu 26/10 kiểm lại sau đợt 3. Số dòng `full_corpus_chunker.py:…` ở bảng là theo
+commit cũ — đợt 3 gọn code chia đoạn nên số dòng đã lệch (hàm / hành vi không đổi).
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
 | Bộ chia đoạn toàn kho là đường build duy nhất của chỉ mục | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:29`, `:111`, `:162` |
 | Chia theo cấu trúc, tách bảng/danh sách/câu khi quá dài | **còn dùng** (User giữ nguyên tới khi có baseline 7B; baseline đã có) | `full_corpus_chunker.py:385`, `:450`, `:546` |
 | Số đoạn 8.460 | **đã thay** bởi 8.459 (Phase 7A2, sửa corpus) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.chunk_count`) |
-| 3 quy tắc điều kiện, khớp đúng một chỗ | **còn dùng** | `backend/config/full_corpus_conditions.json:3`, `:34`, `:57`; `full_corpus_chunker.py:197-221` |
+| 3 quy tắc điều kiện, khớp đúng một chỗ | **còn dùng** | `knowledge-base-hue/meta/full_corpus_conditions.json` (private, từ 26/10); `full_corpus_chunker.py` |
 | Ràng buộc 3 tokenizer (huydang 256, e5 512) | **còn dùng** trong code, dù e5-base/huydang không còn là model ứng viên; 8.1: bỏ đi không đổi kết quả (1 câu tụt keyword) | `backend/config/settings.yaml:22-34`; `full_corpus_chunker.py:333-338`; `backend/embedding/full_corpus.py:43`, `:55` |
 | "Không gộp đoạn" (1 khối = 1 đoạn) | **còn đúng ở 8.1**: 12 cách gộp / chia khác không cách nào tốt hơn | `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g3_implementation.md` §3.8 |
 | Phần bằng chứng có vị trí chính xác, ID đoạn, ID điểm suy từ ID đoạn | **còn dùng** | `backend/core/schema.py:49-51`, `:89`, `:107`; `full_corpus_chunker.py:403` |
 | Payload 5 field (spec wave 1) | **đã thay** bởi 7 field, thêm `chunk_id`, `domain` (metadata v2, 09/2026) | `backend/core/schema.py:126-136` |
 | Text để tìm kiếm (Representation A) | **còn dùng** | `full_corpus_pipeline.py:162`; `full_corpus_chunker.py:71-99` |
-| Representation B (model viết thêm ngữ cảnh) | **chưa vào build**, chỉ có ở lượt thử Phase 6 | `backend/llm/phase6_live_smoke.py:352` |
+| Representation B (model viết thêm ngữ cảnh) | **đã gỡ** 26/10 (chưa từng vào build) | đợt 3 rà code, commit `c6e130c` |
 | Bộ chia đoạn món ăn 400 ký tự | **đã bỏ** (gỡ ở B9, 24/10) | file `backend/ingestion/chunking/markdown_chunker.py` không còn |
 | File mẫu 8.460 đoạn làm mốc test | **đã thay** bởi build record đang chạy (B9); test đạt | `backend/tests/test_full_corpus_chunker.py:978-982` |
 
@@ -148,7 +163,7 @@ Kiểm với code (commit `1832201`) ngày 24/10/2026.
 
 - Report lịch sử: `reports/user_reports/phase_2_foods_markdown_chunking_user_report.md`,
   `..._simplicity_user_report.md`, `reports/user_reports/full_corpus_rag_wave_1_user_report_2026_09_12.md`;
-  file mẫu `reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json`.
+  file mẫu `full_corpus_rag_wave_1_preview_2026_09_11.json` (chuyển sang `data/reports_artifacts_private_2026-10-26/` 26/10 — chứa nguyên văn kho).
 - Tên kỹ thuật: phần bằng chứng = `evidence_parts` (`body`, `header`, `condition`); text để tìm kiếm =
   `search_text` (Representation A); ID đoạn = `chunk_id`; ID điểm = UUID5.
 - Bản 3 (B20, 25/10/2026): Phase 8.1 G3 — `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g3_implementation.md`

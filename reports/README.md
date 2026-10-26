@@ -8,6 +8,10 @@ quyền triển khai và không phải nguồn xác định task hiện hành.
 > chưa phải kết quả audit giữ/xóa cho toàn bộ `reports/`. Không suy ra rằng một
 > file được giữ vĩnh viễn chỉ vì nó đang tồn tại hoặc được nhắc ở đây.
 
+> **26/10/2026:** 8 file trong `artifacts/` chứa nguyên văn kho (5 JSON mẫu đoạn / parser / token / preview wave 1 / preflight Phase 3
+> và 3 script sinh ra chúng, ngày 09–12/09) đã chuyển sang `data/reports_artifacts_private_2026-10-26/` (private) và gỡ khỏi repo
+> public (User chọn 26/10; lịch sử git giữ nguyên). Link tới các file đó trong report cũ dưới đây là link chết có chủ đích.
+
 Audit contract và registry hợp nhất đang được xây dựng tại
 [`PROJECT_DOCUMENT_REGISTRY.md`](../PROJECT_DOCUMENT_REGISTRY.md).
 
