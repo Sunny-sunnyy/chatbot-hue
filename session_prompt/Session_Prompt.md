@@ -113,7 +113,8 @@ report.
 
 - **Chất lượng cần thiết trước, tối ưu hiệu suất sau** (User 2026-10-26, áp cho mọi phần về sau): khi chọn hướng, thử nghiệm hay xếp thứ
   tự việc, làm cho hệ thống **đạt mức chất lượng cần thiết** (đúng, có căn cứ, từ chối đúng câu ngoài kho, đủ ý) trước; tối ưu tiền / tốc độ /
-  tài nguyên sau, và tối ưu không được kéo chất lượng xuống dưới mức đó. "Mức cần thiết" ghi bằng số trước khi đo (`run-experiment`);
+  tài nguyên sau, và tối ưu không được kéo chất lượng xuống dưới mức đó. **Hiệu suất = tiền và tốc độ** (độ trễ người dùng chờ; User
+  2026-10-26): mỗi biến thể báo cả USD / câu lẫn latency p50 / p95. "Mức cần thiết" ghi bằng số trước khi đo (`run-experiment`);
   trần tiền, quyền và ranh giới dữ liệu vẫn là giới hạn cứng.
 - Code rõ, dễ đọc, theo được data flow; giải pháp nhỏ nhất đủ nhu cầu thật (không
   phải ít dòng nhất); mỗi đơn vị code có nhiệm vụ gọi tên được.

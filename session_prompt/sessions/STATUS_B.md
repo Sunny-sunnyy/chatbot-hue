@@ -30,6 +30,12 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
 - **B46 vòng 2** (A 21:4x, spec §10 sha `7ea7ed3a1600`: K2 NOT RUN): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_plan.md` (mới, thay
   `phase_8_2_k1_k2_plan.md` — B xóa file cũ, untracked, của B) + `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md` §1, §3.2 (11 hạng, bỏ fact câu 143).
   **XONG 21:35 — chờ review:** `phase_8_2_k1_plan.md` sha `ad71594e17e7` (148 dòng); file K1+K2 cũ đã xóa; B42 sửa §1 + §3.2. Hết file khai báo.
+- **B46 bước dựng (A 21:4x):** worktree `/tmp/b_k1`, nhánh `p82-k1` từ `811d25d`. **Khai báo:** `backend/experiments/phase_8_2/k1.py` (mới, trên nhánh).
+  Chưa chạy tầng tìm / lượt có phí cho tới khi A duyệt sha plan (C41 review trước). Chưa commit (quyền ghi khi A duyệt).
+  **21:42:** `k1.py` viết xong (287+ dòng, sha `eb9ebcd863c4`, compile + import đạt, chưa chạy). C41 changes_requested 0/1/4 ⇒ plan sửa vòng 2
+  sha `b8f1597f6a0f` — chờ C kiểm phần sửa, A duyệt sha.
+  C41 vòng 2 ready (21:4x). Chờ A duyệt sha + ghi quyền.
+- **B47** (A giao 21:4x, review R4 của C, 0 USD): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r4_review.md` (mới). Không sửa file của C.
   Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
