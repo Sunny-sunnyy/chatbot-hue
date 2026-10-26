@@ -70,7 +70,7 @@ experiments.phase_8_2.k1 latency --name lat_dev --runs 2                        
 
 **Tầng pool, giải thích vì sao trượt** (chỉ đọc file):
 - Pool dense đủ đoạn đúng: **31 → 37 / 40**. Cả 6 câu trong trần B42 (19, 22, 92, 97, 113, 168) đều có đủ đoạn đúng trong pool 100.
-- Nhưng chỉ 22 lên đủ top-10. Hai câu tăng một phần: 19 (`top10_gold_frac` 0,33 → 0,67). Bốn câu không đổi: 92, 97, 113, 168.
+- Nhưng chỉ 22 lên đủ top-10. Một câu tăng một phần: 19 (`top10_gold_frac` 0,33 → 0,67). Bốn câu không đổi: 92, 97, 113, 168. (Sửa theo C42 n-1.)
 - *Suy ra* (từ cơ chế, chưa đo riêng): BM25 chỉ chấm lại trong pool và RRF k 60 không đủ kéo các đoạn hạng dense 36–99 lên top-10. **Vùng ứng
   viên đã đủ; chỗ nghẽn là xếp hạng.**
 
