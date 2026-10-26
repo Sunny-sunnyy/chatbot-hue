@@ -1,4 +1,4 @@
-"""Full-corpus Markdown chunker and Representation A builder for Wave 1.
+"""Full-corpus Markdown chunker and Representation A builder.
 
 Implements semantic grouping/splitting, condition attachment outside corpus,
 source locator verification, representation A text construction, sentence-boundary
@@ -12,8 +12,8 @@ from pathlib import Path
 import re
 from typing import Any, Callable
 
-from core.schema import EvidencePart, FullCorpusChunk, point_id_for_chunk_id
-from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+from core.schema import EvidencePart, FullCorpusChunk
+from core.settings_loader import BACKEND_DIR, get_full_corpus_settings
 from ingestion.chunking.markdown_blocks import (
     MarkdownBlock,
     ParsedDocument,
@@ -351,7 +351,19 @@ def chunk_document(
     errors.extend(cond_errors)
 
     chunks: list[FullCorpusChunk] = []
-    chunk_ordinal = 0
+
+    def emit(block: MarkdownBlock, parts: list[EvidencePart], search_text: str) -> None:
+        # chunk_id = <source>#<thứ tự đoạn trong tài liệu>, đánh số theo thứ tự phát ra.
+        chunks.append(
+            FullCorpusChunk(
+                chunk_id=f"{doc.source}#{len(chunks)}",
+                source=doc.source,
+                title=doc.title,
+                heading_path=list(block.heading_path),
+                evidence_parts=parts,
+                search_text=search_text,
+            )
+        )
 
     idx = 0
     while idx < len(doc.blocks):
@@ -380,23 +392,10 @@ def chunk_document(
                 doc.title, block.heading_path, whole_parts
             )
 
-            fits_whole = True
-            if is_fits_tokenizer_fn is not None:
-                fits_whole = is_fits_tokenizer_fn(whole_search_text)
+            fits_whole = is_fits_tokenizer_fn(whole_search_text)
 
             if fits_whole or not table_info or not table_info.rows:
-                chunk_id = f"{doc.source}#{chunk_ordinal}"
-                chunk_ordinal += 1
-                chunks.append(
-                    FullCorpusChunk(
-                        chunk_id=chunk_id,
-                        source=doc.source,
-                        title=doc.title,
-                        heading_path=list(block.heading_path),
-                        evidence_parts=whole_parts,
-                        search_text=whole_search_text,
-                    )
-                )
+                emit(block, whole_parts, whole_search_text)
             else:
                 # Split table row by row
                 header_part = EvidencePart(
@@ -416,18 +415,7 @@ def chunk_document(
                     row_search_text = build_representation_a_search_text(
                         doc.title, block.heading_path, row_parts
                     )
-                    chunk_id = f"{doc.source}#{chunk_ordinal}"
-                    chunk_ordinal += 1
-                    chunks.append(
-                        FullCorpusChunk(
-                            chunk_id=chunk_id,
-                            source=doc.source,
-                            title=doc.title,
-                            heading_path=list(block.heading_path),
-                            evidence_parts=row_parts,
-                            search_text=row_search_text,
-                        )
-                    )
+                    emit(block, row_parts, row_search_text)
             idx += 1
             continue
 
@@ -444,23 +432,10 @@ def chunk_document(
                 doc.title, block.heading_path, whole_parts
             )
 
-            fits_whole = True
-            if is_fits_tokenizer_fn is not None:
-                fits_whole = is_fits_tokenizer_fn(whole_search_text)
+            fits_whole = is_fits_tokenizer_fn(whole_search_text)
 
             if fits_whole:
-                chunk_id = f"{doc.source}#{chunk_ordinal}"
-                chunk_ordinal += 1
-                chunks.append(
-                    FullCorpusChunk(
-                        chunk_id=chunk_id,
-                        source=doc.source,
-                        title=doc.title,
-                        heading_path=list(block.heading_path),
-                        evidence_parts=whole_parts,
-                        search_text=whole_search_text,
-                    )
-                )
+                emit(block, whole_parts, whole_search_text)
             else:
                 # Split nested sub-items, retaining parent label
                 first_sub = block.list_item_info.sub_items[0]
@@ -483,18 +458,7 @@ def chunk_document(
                     sub_search_text = build_representation_a_search_text(
                         doc.title, block.heading_path, sub_parts
                     )
-                    chunk_id = f"{doc.source}#{chunk_ordinal}"
-                    chunk_ordinal += 1
-                    chunks.append(
-                        FullCorpusChunk(
-                            chunk_id=chunk_id,
-                            source=doc.source,
-                            title=doc.title,
-                            heading_path=list(block.heading_path),
-                            evidence_parts=sub_parts,
-                            search_text=sub_search_text,
-                        )
-                    )
+                    emit(block, sub_parts, sub_search_text)
             idx += 1
             continue
 
@@ -510,23 +474,10 @@ def chunk_document(
             doc.title, block.heading_path, whole_parts
         )
 
-        fits_whole = True
-        if is_fits_tokenizer_fn is not None:
-            fits_whole = is_fits_tokenizer_fn(whole_search_text)
+        fits_whole = is_fits_tokenizer_fn(whole_search_text)
 
         if fits_whole:
-            chunk_id = f"{doc.source}#{chunk_ordinal}"
-            chunk_ordinal += 1
-            chunks.append(
-                FullCorpusChunk(
-                    chunk_id=chunk_id,
-                    source=doc.source,
-                    title=doc.title,
-                    heading_path=list(block.heading_path),
-                    evidence_parts=whole_parts,
-                    search_text=whole_search_text,
-                )
-            )
+            emit(block, whole_parts, whole_search_text)
         else:
             # Oversized block: split at source sentence boundaries
             label_m = None
@@ -551,18 +502,7 @@ def chunk_document(
 
             if not sents:
                 # Unbreakable unit: emit whole chunk; the final verify loop reports it if it exceeds a tokenizer limit
-                chunk_id = f"{doc.source}#{chunk_ordinal}"
-                chunk_ordinal += 1
-                chunks.append(
-                    FullCorpusChunk(
-                        chunk_id=chunk_id,
-                        source=doc.source,
-                        title=doc.title,
-                        heading_path=list(block.heading_path),
-                        evidence_parts=whole_parts,
-                        search_text=whole_search_text,
-                    )
-                )
+                emit(block, whole_parts, whole_search_text)
             else:
                 # Group sentences greedily into chunks that fit all tokenizers
                 s_idx = 0
@@ -582,7 +522,7 @@ def chunk_document(
                         cand_st = build_representation_a_search_text(
                             doc.title, block.heading_path, cand_parts
                         )
-                        if is_fits_tokenizer_fn is not None and not is_fits_tokenizer_fn(cand_st):
+                        if not is_fits_tokenizer_fn(cand_st):
                             break
                         curr_group.append(sents[next_s])
                         next_s += 1
@@ -596,18 +536,7 @@ def chunk_document(
                     )
                     parts = prefix_parts + [group_part] + trailing_conds
                     st = build_representation_a_search_text(doc.title, block.heading_path, parts)
-                    chunk_id = f"{doc.source}#{chunk_ordinal}"
-                    chunk_ordinal += 1
-                    chunks.append(
-                        FullCorpusChunk(
-                            chunk_id=chunk_id,
-                            source=doc.source,
-                            title=doc.title,
-                            heading_path=list(block.heading_path),
-                            evidence_parts=parts,
-                            search_text=st,
-                        )
-                    )
+                    emit(block, parts, st)
                     s_idx = next_s
 
         idx += 1

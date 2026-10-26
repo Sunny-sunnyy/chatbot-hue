@@ -503,6 +503,27 @@ def test_oversized_nested_list_split_preserves_parent_and_sub_items():
             assert doc.lf_text[p.start:p.end] == p.text
 
 
+def test_oversized_three_level_list_emits_each_grandchild_once():
+    """Tách danh sách 3 cấp: mỗi đoạn là một mục con trực tiếp (kèm mục cháu của nó), mục cháu không bị phát thêm lần hai (B-15)."""
+    text = (
+        "# Danh Sách\n\n"
+        "## Mục\n\n"
+        "- **Quy định chung:** Các điều khoản gồm có:\n"
+        "  - Điều một: Phải tuân thủ thời gian tham quan quy định.\n"
+        "  - Điều hai: Giữ gìn vệ sinh chung, cụ thể:\n"
+        "    - Không xả rác bừa bãi trong khuôn viên.\n"
+    )
+    doc = parse_markdown_blocks("foods/list.md", text)
+    assert len(doc.blocks) == 1
+    assert len(doc.blocks[0].list_item_info.sub_items) == 2
+
+    chunks, errors = chunk_document(doc, is_fits_tokenizer_fn=lambda t: len(t) < 200)
+    assert errors == []
+    assert len(chunks) == 2
+    grandchild = "Không xả rác bừa bãi trong khuôn viên."
+    assert sum(grandchild in p.text for ch in chunks for p in ch.evidence_parts) == 1
+
+
 def test_sentence_boundary_splitting_preserves_label_and_exact_spans():
     """Verify sentence boundary extraction and chunking of oversized items preserves label and exact source slices."""
     raw_md = (
