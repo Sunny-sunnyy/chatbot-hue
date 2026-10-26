@@ -111,6 +111,10 @@ report.
 
 ## 7. Đơn giản là mặc định; chất lượng trước tối ưu
 
+- **Đo theo mục tiêu sản phẩm cuối cùng** (User 2026-10-26, từ khóa học AI FDE): đánh giá dự án / sản phẩm bàn giao bằng thước **càng sát
+  mục tiêu cuối cùng càng tốt** (người dùng thật hỏi gì, câu trả lời "dùng được" là gì, lỗi nào tệ nhất — `Project_Status.md` §1 "Mục tiêu
+  sản phẩm"); thước đó dẫn việc chọn mô hình / biến thể. **Sau đó** mới xét tốc độ, chi phí theo **yêu cầu phi chức năng ghi bằng số**. Thước
+  đang dùng cho một thí nghiệm không đổi giữa chừng; thước mới áp từ lần đo sau.
 - **Chất lượng cần thiết trước, tối ưu hiệu suất sau** (User 2026-10-26, áp cho mọi phần về sau): khi chọn hướng, thử nghiệm hay xếp thứ
   tự việc, làm cho hệ thống **đạt mức chất lượng cần thiết** (đúng, có căn cứ, từ chối đúng câu ngoài kho, đủ ý) trước; tối ưu tiền / tốc độ /
   tài nguyên sau, và tối ưu không được kéo chất lượng xuống dưới mức đó. **Hiệu suất = tiền và tốc độ** (độ trễ người dùng chờ; User

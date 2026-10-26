@@ -178,12 +178,20 @@ Completeness), 9 câu trả lời gọn bỏ chi tiết có sẵn (9 điểm) �
   luật dừng 3.4 áp; B0 cho thấy judge lệch người ⇒ A xét lại kết luận trước khi đưa vào chatbot. Đưa vào chatbot: context 10 chỉ sau B0 (B1 §5);
   biến thể thắng chỉ sau khi context 10 đã vào.
 - **Luật (a)** (User 20:4x) — biến thể làm **rẻ / nhanh hơn**: chỉ số quyết = USD / câu hoặc latency (một trong hai, ghi trước) tốt hơn rõ
-  (≤ 0,95 × mốc USD hoặc ≤ 0,9 × mốc p50; latency: mốc và biến thể đo **cùng phiên, ≥ 2 lượt** — A/A B1 ↔ G2.1a p50 +4,6 %, p95 +17 %, C38 m-2); **mức tụt** Completeness dev chính: **chênh TB ≥ −0,1 và số câu tụt ≤
+  (≤ 0,95 × mốc USD hoặc ≤ 0,9 × mốc tốc độ — **đo theo khâu, xem dòng "Đo tốc độ theo khâu"**; latency khâu tìm: mốc và biến thể đo **cùng phiên, ≥ 2 lượt** — A/A B1 ↔ G2.1a p50 +4,6 %, p95 +17 %, C38 m-2); **mức tụt** Completeness dev chính: **chênh TB ≥ −0,1 và số câu tụt ≤
   A/A + 3** (A chốt theo C37 §1.4: cận dưới CI quá khắt với n 41–88).
 - **Luật (i)** (User 21:1x) — biến thể làm **chất lượng tăng**: chỉ số quyết vượt nhiễu (paired bootstrap CI 95 % > 0; A/A ghi trước) **và**
-  latency thêm ≤ 50 ms / câu **và** không tốn thêm tiền = **không thêm lần gọi API / dịch vụ nào, USD / câu tăng ≤ 20 %** (User 21:3x, 10.6 Q1). Biến thể vượt ngưỡng tốn (ví dụ K3 luna +3–5 s)
-  ⇒ **A trình User kèm số**, không tự nhận. Latency đo cùng phiên với mốc. **Mức tụt luật (i)** (C38 M-3): Completeness và Accuracy dev chính —
+  tốc độ không tệ hơn (khâu tìm ≤ +50 ms / câu; khâu sinh theo dòng "Đo tốc độ theo khâu") **và** không tốn thêm tiền = **không thêm lần gọi API / dịch vụ nào, USD / câu tăng ≤ 20 %** (User 21:3x, 10.6 Q1). Biến thể vượt ngưỡng tốn (ví dụ K3 luna +3–5 s)
+  ⇒ **A trình User kèm số**, không tự nhận. **Chất lượng trước** (User 22:03): biến thể chậm / tốn hơn nhưng có thể nâng chất lượng (K3) **vẫn được
+  thử** để biết trần chất lượng; thắng thì tìm cách làm nhanh / rẻ hơn trước khi trình User đưa vào chatbot. Trần độ trễ 5 s / câu (p95) = **theo dõi**
+  tới khi User đặt yêu cầu phi chức năng. Latency đo cùng phiên với mốc. **Mức tụt luật (i)** (C38 M-3): Completeness và Accuracy dev chính —
   số câu tụt ≤ A/A + 3; từ chối nhầm trong phạm vi tăng ≤ A/A + 1 câu; lỗi citation (validator v2) tăng ≤ 2 câu.
+- **Đo tốc độ theo khâu** (A 22:2x, B49 M-1): khâu tìm (chạy trên máy, tất định) — latency trung bình chênh theo câu ≤ +50 ms, mốc và biến
+  thể xen kẽ cùng phiên. Khâu sinh (R*) — latency một lần gọi dao động mạnh (B1 ↔ G2.1a cùng đầu vào: SD chênh theo câu ≈ 808 ms ⇒ 30 câu chỉ
+  phân giải ±289 ms; ±50 ms cần ~1.000 lần gọi) ⇒ "tốc độ" đo bằng **`output_tokens` / câu** (0 USD thêm; gồm cả token suy luận — 8.1 G2.4: `none` 54 so với `medium` 79; A/A B1 ↔ G2.1a
+  dev 120: TB 77,0 / 77,0, SD chênh theo câu 28 token ⇒ ±6,6 % — B, 22:3x): mức tụt
+  ≤ +20 % (khớp USD), "nhanh hơn rõ" (luật (a)) ≤ 0,9 × mốc; latency p50 / p95 chỉ theo dõi, kèm CI. User nói "hiệu suất = tiền + tốc độ": cả
+  hai vẫn báo trong mọi report.
 - **Sàn chung:** 0 / 18 câu out_of_scope bị trả lời (dev + test); khâu tìm: 0 câu mất đoạn đúng khỏi context so với mốc; khâu trả lời: 120, 168 (từ
   chối đúng — context không có fact) vẫn từ chối; 0 câu lỗi kỹ thuật / 500.
 - **Họ Holm:** chỉ biến thể luật (i) (có p-value); R1 (luật a) không vào họ. Nhánh tìm {K1, K3 nếu chạy}, nhánh trả lời {R2, R3}; Holm trên
@@ -199,7 +207,8 @@ Completeness), 9 câu trả lời gọn bỏ chi tiết có sẵn (9 điểm) �
 | tìm | ~~K2~~ | native p30 k = 2 — **NOT RUN** (C38 M-2): là biến thể tốt nhất trong 10 của G1.3 và đã trượt Holm-10; chọn lại trên cùng dev là chọn vì may; còn đổi hai thứ (ứng viên native + `rrf_k` 60 → 2, `retrieval/full_corpus.py:393`; native p30 k 60 mất 2 câu) | — | dev 4 / 36 / 0 [+0,025; +0,200], p 0,026 | — | 0 |
 | tìm | K3 | rerank luna listwise pool 30 → top-10 (= E3b, N = 30) — chỉ khi K1 không đủ | trình User | luna top-10 MRR +0,17 (không đổi tập 10) | 9 câu | ≈ 0,0005 USD / câu + 3–5 s (ước; pilot 10 câu trước) |
 | trả lời | **R4** | thước "số trong câu trả lời có trong đoạn được trích" (theo dõi, không chặn) | thước | C36 thử tay 2 / 5 đúng | — | 0 |
-| trả lời | **R1** | `reasoning_effort="none"` (runtime hiện không gửi ⇒ `medium`) | (a), chỉ số quyết = **USD / câu** (tất định theo token; latency chỉ theo dõi — đo latency làm chỉ số quyết cần thêm lượt mốc cùng phiên ~0,07–0,1 USD, C38 n-3) | ctx 5: Completeness +0,136, USD 0,91×, p50 0,92×; lý do loại (citation) hết với validator v2 | — | ≈ 0,034 |
+| trả lời | **R1** | `reasoning_effort="none"` (runtime hiện không gửi ⇒ `medium`) | (a), chỉ số quyết (User 22:03): **USD / câu ≤ 0,95 × mốc HOẶC `output_tokens` / câu ≤ 0,9 × mốc**, mặt còn lại không tệ hơn mốc (= ước lượng điểm ≤ 1,00 × mốc trên dev 120 — USD / câu phân giải ±1,2 %, `output_tokens` ±6,6 %; token vào
+  chiếm ~80 % USD ⇒ R1 giảm USD tối đa ~19 % — B 22:3x; 0 USD thêm — 10.2 "Đo tốc độ theo khâu") | ctx 5: Completeness +0,136, USD 0,91×, p50 0,92×; lý do loại (citation) hết với validator v2 | — | ≈ 0,034 |
 | trả lời | **R2** | trả lời phần có căn cứ (= **E1** / E1b; plan E1 sửa: mốc `811d25d`, `paired_stats` / `false_refusal`, citation v2, trần 5 câu) | (i) + **User duyệt hợp đồng** (D4) | P1 ctx 5 phạm sàn 2 câu | 5 câu | ≈ 0,04 |
 | trả lời | **R3** | câu prompt "nêu đủ chi tiết có trong bằng chứng" | (i) | chưa | 9 câu (+1 mỗi câu) | ≈ 0,036 |
 | — | E2 | sửa lỗi thiếu `[n]` | — | validator v2: mốc 0 lỗi | 0 | **NOT RUN** (luật bỏ sớm) |

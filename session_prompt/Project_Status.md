@@ -20,6 +20,18 @@ curated Markdown (205 file) -> chunker (8.459 chunk) -> e5-small dense + BM25 sp
 Làm việc theo mô hình A/B/C (Governance v2, User duyệt 2026-10-24): A điều phối
 và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5.5.
 
+### Mục tiêu sản phẩm (thước "đo theo mục tiêu cuối" — `Session_Prompt.md` §7)
+
+**Đã chốt (từ quyết định cũ):** trả lời **closed-world** từ kho, có citation `[n]` tới nguồn; câu ngoài kho ⇒ từ chối đúng câu chuẩn
+(sàn: 0 câu ngoài kho bị trả lời); không bịa; người dùng gõ **có dấu** (câu không dấu ngoài phạm vi, User 25/10); câu đánh giá phải là câu
+**người dùng thật hỏi** — số chính bỏ câu không tự nhiên (User 24/10 21:40). Thứ tự: chất lượng cần thiết trước, rồi tốc độ / tiền (User 26/10).
+Đang chạy trên máy User (CPU), có thể deploy AWS sau (chưa chắc).
+
+**Chờ User (A hỏi 26/10 tối):** (1) người dùng chính là ai (du khách / người dân / dự án học); (2) câu trả lời "dùng được" là gì (ví dụ đủ để
+quyết đi / ăn ở đâu); (3) lỗi nào tệ nhất (sai giá / giờ, bịa, từ chối câu trả lời được); (4) yêu cầu phi chức năng bằng số: chờ tối đa (A tạm
+theo dõi p95 ≤ 5 s), tiền tối đa / câu, chạy ở đâu. Chưa có ⇒ thước tạm = Completeness / Accuracy (judge Claude) trên câu tự nhiên + năng lực,
+sàn closed-world ở trên; B0 (người đọc cặp mù) là mốc người đầu tiên.
+
 ## 2. Phase hiện tại
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec

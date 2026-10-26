@@ -42,6 +42,8 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
   **XONG 21:58 — chờ C review.** K1 = **kém hơn**: mất câu 154 (sàn); `top10_gold_all` 2/37/1 CI [−0,05; +0,10]; pool đủ 31 → 37/40 nhưng top-10 chỉ 22 → 23
   (chỗ nghẽn = xếp hạng). Latency +8,9 ms TB (p50 33 → 43, p95 76 → 82). Test / lượt sinh NOT RUN (plan §6.2). **0 USD.** Nhánh `p82-k1` `a7710ed` đã push;
   worktree `/tmp/b_k1` đã gỡ. Tiếp: B49 (review plan R2 của C).
+- **B49** (A giao 21:5x, review plan R2 của C, 0 USD): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_plan_review.md` (mới).
+  **XONG 22:0x — changes_requested 0/1/2** (M-1 latency sinh ±50 ms không phân xử được với 30 câu: SD chênh 808 ms ⇒ ±289 ms; m-1 pilot OOS; m-2 chữ ký `paired_stats`). Bản kiểm `61a6aa78c6b8`.
   Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
