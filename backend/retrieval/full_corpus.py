@@ -64,8 +64,6 @@ Classification = Literal["PASS", "REVIEW_REQUIRED", "FAIL"]
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
 
 @dataclass(frozen=True)
 class RetrievalTrace:

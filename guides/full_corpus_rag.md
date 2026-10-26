@@ -88,8 +88,8 @@ Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 
 `reports/phase_7b_gate_{0,1,2,3,4}_*`, review `reports/phase_7b_review_2026_10_24.md`.
 
 - **Evaluator:** `backend/evaluation/full_corpus_eval.py` (CLI `retrieval`, `generate`, `judge-luna`,
-  `retry`, `export-judge-input`, `compare`, `split`, `parse-user-scores`, `diagnose-refusals`,
-  `context-coverage`, `summarize` — đối chiếu `--help` 2026-10-25) chạy đúng đường runtime API; prompt judge cố định
+  `retry`, `export-judge-input`, `compare`, `split`, `diagnose-refusals`,
+  `context-coverage`, `summarize` — đối chiếu `--help` 2026-10-26; `parse-user-scores` gỡ ở rà code đợt 3 vì User không chấm điểm tay) chạy đúng đường runtime API; prompt judge cố định
   `backend/evaluation/full_corpus_judge_prompt.md`. Kết quả chi tiết private `data/evaluation/phase_7b/`. Câu bị lỗi citation (API trả
   500, người dùng không thấy câu trả lời) vẫn được giữ text và chấm; đếm riêng ở chỉ số `citation_error` (định nghĩa chỉ số đổi theo gói
   sửa C-09 — xem `report_agent/2026-10-25_ra_soat_code/`).

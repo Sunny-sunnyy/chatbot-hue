@@ -38,13 +38,6 @@ class FullCorpusContextBuilder:
         self._max_documents = max_documents
 
     def _token_count(self, query: str, context: str) -> int:
-        if hasattr(self._tokenizer, "apply_chat_template"):
-            token_ids = self._tokenizer.apply_chat_template(
-                build_answer_messages(query, context),
-                tokenize=True,
-                add_generation_prompt=True,
-            )
-            return len(token_ids)
         messages = build_answer_messages(query, context)
         num_tokens = 3
         for message in messages:

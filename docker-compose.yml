@@ -1,4 +1,4 @@
-# Local Qdrant server for Hue Foods RAG MVP.
+# Local Qdrant server for the hue_rag chatbot (Hue culture / tourism RAG).
 # Pinned digest resolves to qdrant/qdrant v1.18.3; storage is local and ignored.
 services:
   qdrant:

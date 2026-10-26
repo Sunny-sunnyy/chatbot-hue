@@ -70,9 +70,9 @@ Contract full-corpus hiện hành:
   | 500 | `citation_integrity_error` | câu trả lời không qua kiểm citation |
   | 500 | `internal_error` | lỗi khác không bắt riêng |
 
-  Giới hạn đã biết (rà code 2026-10-25, `report_agent/2026-10-25_ra_soat_code/`): bảng trên là hành vi thiết kế; do module nạp hai lần,
-  hiện index cũ lúc khởi động ra 503 thay vì 409 và lỗi Qdrant lúc hỏi ra 500 thay vì 503; lỗi nạp model tìm kiếm lúc khởi động đang được
-  gắn chung lớp với "index cũ" (B-01 / C-01 — gói sửa 1b);
+  Bảng trên là hành vi hiện hành từ gói sửa 1b (`1e4acd0`, rà code 2026-10-25, `report_agent/2026-10-25_ra_soat_code/`): trước đó do
+  module nạp hai lần, index cũ lúc khởi động ra 503 thay vì 409, lỗi Qdrant lúc hỏi ra 500 thay vì 503, và lỗi nạp model tìm kiếm bị gắn
+  chung lớp với "index cũ" (B-01 / C-01);
 - `/health` trả `{"status": "ok" | "degraded", "components": {app, qdrant, retrieval, tokenizer, generator}}` (HTTP 200 cả khi `degraded`) (`backend/api/health.py`);
 - chỉ hỗ trợ hành vi người dùng tiếng Việt; không thêm language detector;
 - không mock/fake/stub. Acceptance dùng corpus, Qdrant, tokenizer, model và API

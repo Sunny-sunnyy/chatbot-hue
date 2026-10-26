@@ -58,7 +58,6 @@ from ingestion.source_state import (
     discover_full_corpus_files,
     normalize_lf,
     read_source_lf,
-    verify_build_record_freshness,
 )
 
 

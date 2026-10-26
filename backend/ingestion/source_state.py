@@ -92,40 +92,6 @@ def compute_corpus_state(
     return state
 
 
-def verify_build_record_freshness(
-    current_state: dict[str, str],
-    build_record: dict[str, Any],
-) -> tuple[bool, list[str]]:
-    """Verify that current corpus state matches the recorded build state.
-
-    Returns (is_fresh, list_of_discrepancies).
-    """
-    recorded_sources = build_record.get("sources", {})
-    if not isinstance(recorded_sources, dict):
-        return False, ["Build record missing valid sources dictionary"]
-
-    discrepancies = []
-    current_keys = set(current_state.keys())
-    recorded_keys = set(recorded_sources.keys())
-
-    added = current_keys - recorded_keys
-    if added:
-        discrepancies.append(f"Added files: {sorted(added)}")
-
-    deleted = recorded_keys - current_keys
-    if deleted:
-        discrepancies.append(f"Deleted files: {sorted(deleted)}")
-
-    for common_key in sorted(current_keys & recorded_keys):
-        if current_state[common_key] != recorded_sources[common_key]:
-            discrepancies.append(
-                f"Content changed: {common_key} "
-                f"(current={current_state[common_key][:8]} vs recorded={recorded_sources[common_key][:8]})"
-            )
-
-    return len(discrepancies) == 0, discrepancies
-
-
 FULL_CORPUS_BUILD_SCHEMA = "full_corpus_build:v3"
 FULL_CORPUS_PAYLOAD_SCHEMA_V2 = "full_corpus_qdrant_payload:v2"
 
