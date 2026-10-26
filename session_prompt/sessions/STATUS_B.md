@@ -36,6 +36,12 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
   sha `b8f1597f6a0f` — chờ C kiểm phần sửa, A duyệt sha.
   C41 vòng 2 ready (21:4x). Chờ A duyệt sha + ghi quyền.
 - **B47** (A giao 21:4x, review R4 của C, 0 USD): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r4_review.md` (mới). Không sửa file của C.
+  **XONG 21:52 — ready 0/0/2 minor** (context dựng lại khớp sha T2 từng byte 352 / 352; m-1 kiểm thước trên mẫu thiết kế; m-2 nhãn 137 / 172).
+- **B48 = chạy K1** (A duyệt plan `b8f1597f6a0f`, commit `2c0520c`): quyền B commit + push `p82-k1`; paid ≤ 0,04 USD; judge sub-agent. Worktree `/tmp/b_k1`.
+  **Khai báo:** nhánh `p82-k1`: `backend/experiments/phase_8_2/k1.py`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_implementation.md`; private `data/phase_8_2/k1/`.
+  **XONG 21:58 — chờ C review.** K1 = **kém hơn**: mất câu 154 (sàn); `top10_gold_all` 2/37/1 CI [−0,05; +0,10]; pool đủ 31 → 37/40 nhưng top-10 chỉ 22 → 23
+  (chỗ nghẽn = xếp hạng). Latency +8,9 ms TB (p50 33 → 43, p95 76 → 82). Test / lượt sinh NOT RUN (plan §6.2). **0 USD.** Nhánh `p82-k1` `a7710ed` đã push;
+  worktree `/tmp/b_k1` đã gỡ. Tiếp: B49 (review plan R2 của C).
   Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,

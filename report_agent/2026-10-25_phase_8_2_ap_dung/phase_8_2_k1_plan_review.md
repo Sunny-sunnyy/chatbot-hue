@@ -115,5 +115,6 @@ Decision (vòng 2): **ready_for_user_confirmation** (0 blocker / 0 major; 1 ghi 
 Phần B tự thêm (§3 / §5 khớp `k1.py` trên nhánh `p82-k1`, gồm `check-base`, `latency --runs 2`, `.answers.jsonl`, tính lại citation v2 cho cả
 hai lượt): thuộc phạm vi harness, không đổi tiêu chí. C **không đọc** `k1.py` (ngoài căn cứ, chưa commit). Người review report K1 sẽ đọc code.
 
-**Ghi chú chữ (không chặn):** cuối file, khối "## 7. A đã trả lời …" bị **lặp lại** sau bảng "Sửa sau review C41", và tiêu đề "## 8. Đầu ra"
-đứng trơ ở dòng cuối. Có vẻ do dán đè. Nên xóa khối lặp trước khi A ghi sha; nội dung hai khối giống nhau nên không đổi nghĩa.
+**Ghi chú chữ: rút lại.** Vòng đầu C ghi "khối §7 bị lặp". Kiểm lại thì **sai**: `grep "^## "` cho §7 (dòng 147) → §8 (161) → "Sửa sau review
+C41" (174), không có khối lặp. Khối "lặp" là do lệnh `sed` của C in chồng: mẫu `/Sửa sau review C41/` khớp cả dòng 5 ở đầu file nên in từ
+đầu. B đã chỉ ra. Plan sha `b8f1597f6a0f` không cần sửa gì.
