@@ -1,17 +1,15 @@
 """Comprehensive technical tests for Full-Corpus RAG Wave 1.
 
 Tests cover:
-- Deterministic corpus discovery (5 domains, 7 P7 partitions, 205 files, inventory/part exclusions, sorted order).
+- Deterministic corpus discovery (5 domains, 205 files, inventory/part exclusions, sorted order).
 - CRLF/CR normalization, zero-based Unicode code-point offsets, and repeated text locator.
 - Markdown block extraction (H1 title, intro before H2, blockquotes, nested lists, tables, image-only exclusion, section exclusions).
 - Condition attachment outside corpus (schema validation fail-closed, exact selector matching, missing/duplicate selector detection).
 - Tokenizer checker settings responsiveness (different settings across calls in same process without blind singleton reuse).
 - Splitting logic: sentence boundary split for oversized paragraphs, table row split retaining headers and conditions, nested-list split retaining parent labels.
 - Detailed assertions on the named acceptance sample files (Mệ Kéo address/hours/price/dish, Gia Lạc historical vs contemporary space and non-commercial nature, Đại Nội Ngọ Môn 5 entrances, Lịch trình 3N2Đ day structure, Ca Huế performing art instruments, Ca Huế tickets conditions, Chi phí du lịch Huế daily budgets).
-- Synthetic isolated oversized minimal group fail-closed blocking.
-- Generic condition/parser error preview blocking isolated from oversized groups.
-- Canonical full-corpus preview PASS (zero errors, zero oversized, domain and P7 breakdowns).
-- Deterministic reproducibility across full corpus: deep-equal chunks/IDs/UUID5, 100% exact evidence slicing, and byte-identical preview outputs.
+- Chunks over a tokenizer limit and condition errors are chunker errors (fail-closed build).
+- Deterministic reproducibility across full corpus: deep-equal chunks/IDs/UUID5, 100% exact evidence slicing.
 """
 from __future__ import annotations
 
@@ -31,6 +29,7 @@ from core.schema import (
     validate_chunk_id,
 )
 from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+from embedding.sparse import compute_corpus_identity, fit_sparse_state, serialize_sparse_state
 from ingestion.chunking.full_corpus_chunker import (
     ConditionManager,
     build_representation_a_search_text,
@@ -40,6 +39,7 @@ from ingestion.chunking.full_corpus_chunker import (
     get_default_tokenizer_checker,
     match_block_selector,
 )
+from ingestion.full_corpus_pipeline import SPARSE_STATE_PATH
 from ingestion.chunking.markdown_blocks import (
     TableRowInfo,
     TableInfo,
@@ -49,9 +49,7 @@ from ingestion.chunking.markdown_blocks import (
 )
 from ingestion.preview import (
     count_tokens_for_chunk,
-    generate_preview,
     load_tokenizers,
-    partition_for_source,
 )
 from ingestion.source_state import (
     compute_corpus_state,
@@ -60,36 +58,34 @@ from ingestion.source_state import (
     discover_full_corpus_files,
     normalize_lf,
     read_source_lf,
-    verify_build_record_freshness,
 )
+
+
+# Build record đang chạy là nguồn sự thật "index khớp corpus": test so với record,
+# không ghim số file / số đoạn (kho đổi + build lại thì test tự theo record mới).
+RUNTIME_BUILD_RECORD_PATH = BACKEND_DIR.parent / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
+
+
+def _runtime_record_corpus() -> dict:
+    return json.loads(RUNTIME_BUILD_RECORD_PATH.read_text(encoding="utf-8"))["corpus"]
+
+
+# Repo public: chuỗi kỳ vọng nguyên văn kho (và đường file) của các test mẫu nằm ở file private trong meta/
+# (cạnh kho), test chỉ giữ logic. Nạp lười để thiếu file chỉ làm hỏng test mẫu, kèm tên file.
+ACCEPTANCE_SAMPLES_PATH = BACKEND_DIR.parent / "knowledge-base-hue/meta/chunker_acceptance_samples.json"
+
+
+def _acceptance_samples(name: str) -> list[str]:
+    return json.loads(ACCEPTANCE_SAMPLES_PATH.read_text(encoding="utf-8"))[name]
 
 
 # --- 1. Discovery and Inventory Exclusions ---
 
 def test_full_corpus_discovery_and_inventory_exclusions():
-    """Verify discovery finds exactly 205 files across 5 domains and 7 P7 partitions in deterministic order."""
+    """Discovery finds exactly the source files of the runtime build record, in deterministic order."""
     root, files = discover_full_corpus_files()
     assert root.is_dir()
-    assert len(files) == 205
-
-    # Check 5 domain counts
-    domains = [f.split("/")[0] for f in files]
-    assert domains.count("festivals") == 27
-    assert domains.count("foods") == 91
-    assert domains.count("heritages") == 29
-    assert domains.count("performing_arts") == 13
-    assert domains.count("travel") == 45
-
-    # Check 7 P7 partition counts
-    p7_partitions = [partition_for_source(f) for f in files]
-    assert p7_partitions.count("foods") == 91
-    assert p7_partitions.count("heritages") == 29
-    assert p7_partitions.count("festivals") == 27
-    assert p7_partitions.count("performing_arts") == 13
-    assert p7_partitions.count("travel_places") == 36
-    assert p7_partitions.count("travel_services") == 4
-    assert p7_partitions.count("travel_tickets") == 5
-    assert sum(p7_partitions.count(p) for p in set(p7_partitions)) == 205
+    assert set(files) == set(_runtime_record_corpus()["sources"])
 
     # Check deterministic sorted order
     assert files == sorted(files)
@@ -507,6 +503,27 @@ def test_oversized_nested_list_split_preserves_parent_and_sub_items():
             assert doc.lf_text[p.start:p.end] == p.text
 
 
+def test_oversized_three_level_list_emits_each_grandchild_once():
+    """Tách danh sách 3 cấp: mỗi đoạn là một mục con trực tiếp (kèm mục cháu của nó), mục cháu không bị phát thêm lần hai (B-15)."""
+    text = (
+        "# Danh Sách\n\n"
+        "## Mục\n\n"
+        "- **Quy định chung:** Các điều khoản gồm có:\n"
+        "  - Điều một: Phải tuân thủ thời gian tham quan quy định.\n"
+        "  - Điều hai: Giữ gìn vệ sinh chung, cụ thể:\n"
+        "    - Không xả rác bừa bãi trong khuôn viên.\n"
+    )
+    doc = parse_markdown_blocks("foods/list.md", text)
+    assert len(doc.blocks) == 1
+    assert len(doc.blocks[0].list_item_info.sub_items) == 2
+
+    chunks, errors = chunk_document(doc, is_fits_tokenizer_fn=lambda t: len(t) < 200)
+    assert errors == []
+    assert len(chunks) == 2
+    grandchild = "Không xả rác bừa bãi trong khuôn viên."
+    assert sum(grandchild in p.text for ch in chunks for p in ch.evidence_parts) == 1
+
+
 def test_sentence_boundary_splitting_preserves_label_and_exact_spans():
     """Verify sentence boundary extraction and chunking of oversized items preserves label and exact source slices."""
     raw_md = (
@@ -548,18 +565,19 @@ def test_sentence_boundary_splitting_preserves_label_and_exact_spans():
 
 def test_acceptance_sample_me_keo():
     """Verify Bún bò Mệ Kéo is chunked with exact address, opening hours, price, and dish description."""
+    S = _acceptance_samples("me_keo")
     root, _ = discover_full_corpus_files()
-    rel = "foods/restaurants/quan bun bo me keo.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
     assert len(chunks) > 0
 
     # 1. Address chunk under Thông tin
-    addr_chunks = [ch for ch in chunks if ch.heading_path == ["Thông tin"] and "Số 20 đường Bạch Đằng" in ch.search_text]
+    addr_chunks = [ch for ch in chunks if ch.heading_path == ["Thông tin"] and S[1] in ch.search_text]
     assert len(addr_chunks) == 1
     ch_addr = addr_chunks[0]
-    assert any("Số 20 đường Bạch Đằng, phường Phú Cát" in p.text for p in ch_addr.evidence_parts)
+    assert any(S[2] in p.text for p in ch_addr.evidence_parts)
     for p in ch_addr.evidence_parts:
         assert doc.lf_text[p.start:p.end] == p.text
 
@@ -567,44 +585,44 @@ def test_acceptance_sample_me_keo():
     price_chunks = [ch for ch in chunks if ch.heading_path == ["Thông tin"] and "Mức giá" in ch.search_text]
     assert len(price_chunks) == 1
     ch_price = price_chunks[0]
-    assert any("25.000 VNĐ – 50.000 VNĐ/tô" in p.text for p in ch_price.evidence_parts)
+    assert any(S[3] in p.text for p in ch_price.evidence_parts)
     for p in ch_price.evidence_parts:
         assert doc.lf_text[p.start:p.end] == p.text
 
     # 3. Hours chunk under Thông tin
-    hours_chunks = [ch for ch in chunks if ch.heading_path == ["Thông tin"] and "Giờ hoạt động" in ch.search_text]
+    hours_chunks = [ch for ch in chunks if ch.heading_path == ["Thông tin"] and S[4] in ch.search_text]
     assert len(hours_chunks) == 1
     ch_hours = hours_chunks[0]
-    assert any("6:00 sáng – 10:00 sáng" in p.text for p in ch_hours.evidence_parts)
+    assert any(S[5] in p.text for p in ch_hours.evidence_parts)
     for p in ch_hours.evidence_parts:
         assert doc.lf_text[p.start:p.end] == p.text
 
     # 4. Exact chunk for dish characteristic without beef
     no_beef_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Món ăn / trải nghiệm"]
-        and any("không có thịt bò" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[6]]
+        and any(S[7] in p.text for p in ch.evidence_parts)
     ]
     assert len(no_beef_chunks) == 1
     ch_no_beef = no_beef_chunks[0]
-    assert "Bún Mệ Kéo, được mô tả là tô bún bò Huế đặc biệt không có thịt bò" in ch_no_beef.search_text
+    assert S[8] in ch_no_beef.search_text
     assert len(ch_no_beef.evidence_parts) == 1
     p_no_beef = ch_no_beef.evidence_parts[0]
-    assert p_no_beef.text == "- Bún Mệ Kéo, được mô tả là tô bún bò Huế đặc biệt không có thịt bò."
+    assert p_no_beef.text == S[9]
     assert doc.lf_text[p_no_beef.start:p_no_beef.end] == p_no_beef.text
 
     # 5. Exact chunk for dish ingredients
     ingr_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Món ăn / trải nghiệm"]
-        and any("thịt ba chỉ, chả cua, huyết heo" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[6]]
+        and any(S[10] in p.text for p in ch.evidence_parts)
     ]
     assert len(ingr_chunks) == 1
     ch_ingr = ingr_chunks[0]
-    assert "thịt ba chỉ, chả cua, huyết heo" in ch_ingr.search_text
+    assert S[10] in ch_ingr.search_text
     assert len(ch_ingr.evidence_parts) == 1
     p_ingr = ch_ingr.evidence_parts[0]
-    assert p_ingr.text == "- Thành phần được nhắc trong mô tả gốc gồm thịt ba chỉ, chả cua, huyết heo, nước dùng thơm mùi ruốc sả và rau sống."
+    assert p_ingr.text == S[11]
     assert doc.lf_text[p_ingr.start:p_ingr.end] == p_ingr.text
 
     # Assert no-beef and ingredients are strictly separate chunks
@@ -613,8 +631,9 @@ def test_acceptance_sample_me_keo():
 
 def test_acceptance_sample_gia_lac():
     """Verify Hội xuân Gia Lạc preserves distinct historical vs contemporary revival spaces and non-commercial nature."""
+    S = _acceptance_samples("gia_lac")
     root, _ = discover_full_corpus_files()
-    rel = "festivals/festival/Hội xuân Gia Lạc.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
@@ -623,12 +642,12 @@ def test_acceptance_sample_gia_lac():
     # 1. Exact historical space chunk under Không gian tổ chức
     hist_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Không gian tổ chức"]
-        and any("Không gian lịch sử" in p.text and "ngã ba làng Nam Phổ" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[1]]
+        and any(S[2] in p.text and S[3] in p.text for p in ch.evidence_parts)
     ]
     assert len(hist_chunks) == 1
     ch_hist = hist_chunks[0]
-    assert "ngã ba làng Nam Phổ" in ch_hist.search_text
+    assert S[3] in ch_hist.search_text
     assert len(ch_hist.evidence_parts) == 1
     p_hist = ch_hist.evidence_parts[0]
     assert doc.lf_text[p_hist.start:p_hist.end] == p_hist.text
@@ -636,13 +655,13 @@ def test_acceptance_sample_gia_lac():
     # 2. Exact contemporary revival space chunk under Không gian tổ chức
     contemp_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Không gian tổ chức"]
-        and any("Không gian tái hiện đương đại" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[1]]
+        and any(S[4] in p.text for p in ch.evidence_parts)
     ]
     assert len(contemp_chunks) == 1
     ch_contemp = contemp_chunks[0]
-    assert "ngã ba Chợ Mai" in ch_contemp.search_text
-    assert "Nguyễn Đình Tứ" in ch_contemp.search_text
+    assert S[5] in ch_contemp.search_text
+    assert S[6] in ch_contemp.search_text
     assert len(ch_contemp.evidence_parts) == 1
     p_contemp = ch_contemp.evidence_parts[0]
     assert doc.lf_text[p_contemp.start:p_contemp.end] == p_contemp.text
@@ -653,12 +672,12 @@ def test_acceptance_sample_gia_lac():
     # 3. Exact non-commercial nature chunk under Thông tin chung
     non_comm_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Thông tin chung"]
-        and any("không mang tính thương mại đơn thuần" in p.text and "cầu may" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[7]]
+        and any(S[8] in p.text and "cầu may" in p.text for p in ch.evidence_parts)
     ]
     assert len(non_comm_chunks) == 1
     ch_non_comm = non_comm_chunks[0]
-    assert "không mang tính thương mại đơn thuần" in ch_non_comm.search_text
+    assert S[8] in ch_non_comm.search_text
     assert "cầu may" in ch_non_comm.search_text
     assert len(ch_non_comm.evidence_parts) == 1
     p_non_comm = ch_non_comm.evidence_parts[0]
@@ -667,8 +686,9 @@ def test_acceptance_sample_gia_lac():
 
 def test_acceptance_sample_dai_noi():
     """Verify Đại Nội Huế preserves Ngọ Môn structure, 5 entrances relationship, and exact evidence parts."""
+    S = _acceptance_samples("dai_noi")
     root, _ = discover_full_corpus_files()
-    rel = "heritages/heritage/Đại Nội Huế.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
@@ -678,15 +698,15 @@ def test_acceptance_sample_dai_noi():
     entrance_chunks = [
         ch for ch in chunks
         if "Ngọ Môn" in ch.heading_path
-        and any("Cấu trúc phần đài nền" in p.text for p in ch.evidence_parts)
+        and any(S[1] in p.text for p in ch.evidence_parts)
     ]
     assert len(entrance_chunks) == 1
     ch = entrance_chunks[0]
 
     # Verify all 5 entrance relationships are in this chunk's evidence parts
     assert any("Lối giữa" in p.text and "hoàng đế" in p.text for p in ch.evidence_parts)
-    assert any("Tả Giáp môn" in p.text and "Hữu Giáp môn" in p.text and "quan văn" in p.text for p in ch.evidence_parts)
-    assert any("Tả Dịch môn" in p.text and "Hữu Dịch môn" in p.text and "binh lính" in p.text for p in ch.evidence_parts)
+    assert any(S[2] in p.text and S[3] in p.text and "quan văn" in p.text for p in ch.evidence_parts)
+    assert any(S[4] in p.text and S[5] in p.text and "binh lính" in p.text for p in ch.evidence_parts)
 
     for p in ch.evidence_parts:
         assert doc.lf_text[p.start:p.end] == p.text
@@ -694,8 +714,9 @@ def test_acceptance_sample_dai_noi():
 
 def test_acceptance_sample_lich_trinh_3n2d():
     """Verify Lịch trình du lịch Huế 3 ngày 2 đêm retains distinct day structures and timeline activities."""
+    S = _acceptance_samples("lich_trinh_3n2d")
     root, _ = discover_full_corpus_files()
-    rel = "travel/services/Lịch trình du lịch Huế 3 ngày 2 đêm.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
@@ -704,7 +725,7 @@ def test_acceptance_sample_lich_trinh_3n2d():
     # Day 1 morning chunks: Đại Nội
     d1_morning = [
         ch for ch in chunks
-        if ch.heading_path == ["Ngày 1: Phú Xuân–Thuận Hóa và hai bờ sông Hương", "Buổi đầu: Đại Nội hoặc cụm bảo tàng"]
+        if ch.heading_path == [S[1], S[2]]
     ]
     assert len(d1_morning) == 2
     assert any("Đại Nội" in ch.search_text for ch in d1_morning)
@@ -712,27 +733,27 @@ def test_acceptance_sample_lich_trinh_3n2d():
     # Day 1 evening chunk: Ca Huế vs Nhã nhạc distinction
     d1_evening = [
         ch for ch in chunks
-        if ch.heading_path == ["Ngày 1: Phú Xuân–Thuận Hóa và hai bờ sông Hương", "Buổi tối: Hoạt động linh hoạt"]
+        if ch.heading_path == [S[1], S[3]]
     ]
     assert len(d1_evening) == 1
     assert "Ca Huế" in d1_evening[0].search_text
-    assert "nhạc cung đình là loại hình khác" in d1_evening[0].search_text
+    assert S[4] in d1_evening[0].search_text
 
     # Day 2 morning chunk: Kim Long & Chùa Thiên Mụ
     d2_morning = [
         ch for ch in chunks
-        if ch.heading_path == ["Ngày 2: Kim Long–Thủy Xuân", "Buổi đầu: Kim Long"]
+        if ch.heading_path == [S[5], S[6]]
     ]
     assert len(d2_morning) == 1
-    assert "Chùa Thiên Mụ" in d2_morning[0].search_text
+    assert S[7] in d2_morning[0].search_text
 
     # Day 3 departure chunk: Thanh Thủy
     d3_morning = [
         ch for ch in chunks
-        if ch.heading_path == ["Ngày 3: Một nhánh nhẹ và rời Huế", "Phương án mặc định: Thanh Thủy"]
+        if ch.heading_path == [S[8], S[9]]
     ]
     assert len(d3_morning) == 1
-    assert "Thanh Thủy" in d3_morning[0].search_text
+    assert S[10] in d3_morning[0].search_text
 
     for ch in chunks:
         for p in ch.evidence_parts:
@@ -741,25 +762,26 @@ def test_acceptance_sample_lich_trinh_3n2d():
 
 def test_acceptance_sample_ca_hue_performing_art():
     """Verify Ca Huế trên sông Hương (performing art) preserves classical instruments and ensemble structure."""
+    S = _acceptance_samples("ca_hue_performing_art")
     root, _ = discover_full_corpus_files()
-    rel = "performing_arts/arts/Ca Huế trên sông Hương.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
     assert len(chunks) > 0
-    assert doc.title == "Ca Huế trên sông Hương"
+    assert doc.title == S[1]
 
     # Locate classical orchestra instruments chunk
     orch_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Dàn nhạc, nhạc cụ và hệ thống bài bản tiêu biểu", "Cơ cấu dàn nhạc dân tộc"]
-        and any("Dàn ngũ tuyệt cổ điển" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[2], S[3]]
+        and any(S[4] in p.text for p in ch.evidence_parts)
     ]
     assert len(orch_chunks) == 1
     ch_orch = orch_chunks[0]
 
     # Verify all classical instruments
-    assert any("đàn nguyệt" in p.text for p in ch_orch.evidence_parts)
+    assert any(S[5] in p.text for p in ch_orch.evidence_parts)
     assert any("đàn tỳ bà" in p.text for p in ch_orch.evidence_parts)
     assert any("đàn nhị" in p.text for p in ch_orch.evidence_parts)
     assert any("đàn tranh" in p.text for p in ch_orch.evidence_parts)
@@ -769,8 +791,8 @@ def test_acceptance_sample_ca_hue_performing_art():
     # Locate percussion instruments chunk
     perc_chunks = [
         ch for ch in chunks
-        if ch.heading_path == ["Dàn nhạc, nhạc cụ và hệ thống bài bản tiêu biểu", "Cơ cấu dàn nhạc dân tộc"]
-        and any("Nhạc cụ điểm nhịp" in p.text for p in ch.evidence_parts)
+        if ch.heading_path == [S[2], S[3]]
+        and any(S[6] in p.text for p in ch.evidence_parts)
     ]
     assert len(perc_chunks) == 1
     ch_perc = perc_chunks[0]
@@ -784,8 +806,9 @@ def test_acceptance_sample_ca_hue_performing_art():
 
 def test_acceptance_sample_ca_hue_tickets_and_conditions():
     """Verify Ca Huế tickets attaches lead and exclusions conditions correctly to Table A and Table B."""
+    S = _acceptance_samples("ca_hue_tickets_and_conditions")
     root, _ = discover_full_corpus_files()
-    rel = "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
@@ -793,7 +816,7 @@ def test_acceptance_sample_ca_hue_tickets_and_conditions():
     # Look for Table A row chunks
     table_a_chunks = [
         ch for ch in chunks
-        if "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)" in ch.heading_path
+        if S[1] in ch.heading_path
         and any(p.role == "header" for p in ch.evidence_parts)
     ]
     assert len(table_a_chunks) == 4  # 4 rows in Table A
@@ -802,37 +825,38 @@ def test_acceptance_sample_ca_hue_tickets_and_conditions():
     for ch in table_a_chunks:
         cond_roles = [p for p in ch.evidence_parts if p.role == "condition"]
         assert len(cond_roles) == 2
-        assert "Dưới đây là mức giá khảo sát" in cond_roles[0].text
-        assert "Không bao gồm:" in cond_roles[1].text
+        assert S[2] in cond_roles[0].text
+        assert S[3] in cond_roles[1].text
         for p in ch.evidence_parts:
             assert doc.lf_text[p.start:p.end] == p.text
 
     # Look for Table B chunks (charter boat) - should only have lead condition, NOT exclusions condition
     table_b_chunks = [
         ch for ch in chunks
-        if "B. Thuê trọn gói nguyên thuyền rồng biểu diễn Ca Huế riêng (Bao chuyến)" in ch.heading_path
+        if S[4] in ch.heading_path
         and any(p.role == "header" for p in ch.evidence_parts)
     ]
     assert len(table_b_chunks) >= 1
     for ch in table_b_chunks:
         cond_roles = [p for p in ch.evidence_parts if p.role == "condition"]
         assert len(cond_roles) == 1
-        assert "Dưới đây là mức giá khảo sát" in cond_roles[0].text
-        assert not any("Không bao gồm:" in p.text for p in cond_roles)
+        assert S[2] in cond_roles[0].text
+        assert not any(S[3] in p.text for p in cond_roles)
 
 
 def test_acceptance_sample_chi_phi_du_lich():
     """Verify Chi phí du lịch Huế attaches intro condition to the 3 daily budget tables."""
+    S = _acceptance_samples("chi_phi_du_lich")
     root, _ = discover_full_corpus_files()
-    rel = "travel/services/Chi phí du lịch Huế.md"
+    rel = S[0]
     doc = parse_markdown_blocks(rel, read_source_lf(root / rel))
     chunks, errors = chunk_document(doc)
     assert len(errors) == 0
 
     target_sections = [
-        "Dự toán một ngày tại Huế",
-        "Dự toán hai ngày một đêm tại Huế",
-        "Dự toán ba ngày hai đêm tại Huế",
+        S[1],
+        S[2],
+        S[3],
     ]
     for sec in target_sections:
         sec_chunks = [ch for ch in chunks if sec in ch.heading_path]
@@ -842,60 +866,38 @@ def test_acceptance_sample_chi_phi_du_lich():
         for ch in table_chunks:
             conds = [p for p in ch.evidence_parts if p.role == "condition"]
             assert len(conds) >= 1
-            assert "Ngân sách du lịch Huế phụ thuộc" in conds[0].text
+            assert S[4] in conds[0].text
             for p in ch.evidence_parts:
                 assert doc.lf_text[p.start:p.end] == p.text
 
 
 # --- 8. Synthetic Isolated Error and Oversized Fail-Closed Blocking ---
 
-def test_synthetic_oversized_group_blocking(tmp_path):
-    """Verify pure oversized minimal unit triggers fail-closed blocking in preview without mixing condition errors."""
-    kb_fake = tmp_path / "fake_kb"
-    test_file = kb_fake / "foods" / "huge.md"
-    test_file.parent.mkdir(parents=True, exist_ok=True)
-    # A single sentence with 2000 characters (cannot be sentence-split)
-    massive_sentence = "Một_từ_siêu_dài_" * 150 + ".\n"
-    test_file.write_text("# Tài Liệu Lớn\n\n## Mục\n\n" + massive_sentence, encoding="utf-8")
-
-    # Empty conditions file to isolate oversized behavior completely
-    empty_cond = tmp_path / "empty_cond.json"
-    empty_cond.write_text("[]", encoding="utf-8")
-
-    fake_settings = {
-        "full_corpus": {
-            "knowledge_base": {
-                "root_dir": str(kb_fake),
-                "include_globs": ["foods/**/*.md"],
-                "exclude_parts": ["evaluation"],
-                "exclude_files": [],
-            },
-            "conditions_file": str(empty_cond),
-            "embedding_models": [
-                {
-                    "id": "CODE4LIFEOFFICIAL/huydang-dek21-embedding",
-                    "max_tokens": 256,
-                    "prefix": "",
-                    "word_segment": True,
-                }
-            ],
-        },
-    }
-
-    out_json = tmp_path / "synthetic_blocked_preview.json"
-    artifact, exit_code = generate_preview(out_json, settings=fake_settings)
-
-    assert exit_code == 1
-    assert artifact["status"] == "BLOCKED_OVERSIZED_GROUP"
-    assert artifact["summary"]["oversized_groups_count"] >= 1
-    assert len(artifact["oversized_groups"]) >= 1
-    # Pure oversized: no non-oversized errors
-    non_oversized = [e for e in artifact["errors"] if not e.startswith("Oversized group:")]
-    assert len(non_oversized) == 0
+@pytest.mark.parametrize(
+    "markdown",
+    [
+        "# Thử\n\n" + " ".join(["chữ"] * 900) + "\n",  # một câu không có dấu chấm ⇒ không tách được
+        "# Thử\n\n| A | B |\n|---|---|\n| ngắn | ngắn |\n| dài | " + " ".join(["chữ"] * 900) + " |\n",  # bảng có một dòng quá dài
+    ],
+)
+def test_chunk_document_reports_chunks_over_the_tokenizer_limit(markdown):
+    """B-11: đoạn vượt giới hạn token (e5 512 / huydang 256) phải thành lỗi của chunker ⇒ build dừng, thay vì e5 cắt im lặng.
+    Checker thật (3 tokenizer trong HF cache), văn bản tự dựng — không đọc kho."""
+    check = get_default_tokenizer_checker()
+    chunks, errors = chunk_document(parse_markdown_blocks("foods/_synthetic.md", markdown), is_fits_tokenizer_fn=check)
+    oversized = [ch.chunk_id for ch in chunks if not check(ch.search_text)]
+    assert oversized
+    assert errors == [f"Chunk exceeds tokenizer limit: {chunk_id}" for chunk_id in oversized]
 
 
-def test_generic_condition_or_parser_error_blocks_preview(tmp_path):
-    """Verify generic condition error triggers non-PASS exit 1 status without oversized groups."""
+def test_chunk_document_splits_long_text_at_sentences_without_errors():
+    text = " ".join(f"Câu ngắn số {i}." for i in range(400))
+    chunks, errors = chunk_document(parse_markdown_blocks("foods/_synthetic.md", "# Thử\n\n" + text + "\n"))
+    assert errors == [] and len(chunks) > 1
+
+
+def test_condition_error_is_a_chunker_error(tmp_path):
+    """Selector điều kiện không khớp khối nào ⇒ lỗi của chunk_full_corpus (build dừng), không lẫn lỗi vượt token."""
     kb_fake = tmp_path / "fake_kb"
     test_file = kb_fake / "foods" / "normal.md"
     test_file.parent.mkdir(parents=True, exist_ok=True)
@@ -929,58 +931,17 @@ def test_generic_condition_or_parser_error_blocks_preview(tmp_path):
         },
     }
 
-    out_json = tmp_path / "generic_error_preview.json"
-    artifact, exit_code = generate_preview(out_json, settings=fake_settings)
+    chunks, errors = chunk_full_corpus(settings=fake_settings)
 
-    assert exit_code == 1
-    assert artifact["status"] == "BLOCKED_ERRORS"
-    assert artifact["summary"]["blocking_errors_count"] >= 1
-    assert len(artifact["errors"]) >= 1
-    assert artifact["summary"]["oversized_groups_count"] == 0
-    assert len(artifact["oversized_groups"]) == 0
+    assert errors
+    assert not [e for e in errors if e.startswith("Chunk exceeds tokenizer limit")]
 
 
-# --- 9. Canonical Preview Invariants & PASS ---
+# --- 10. Full-Corpus Determinism and Exact Evidence Slicing ---
 
-def test_canonical_preview_pass():
-    """Verify canonical full-corpus preview passes with zero blocking errors, zero oversized groups, and self-consistent breakdowns."""
-    canonical_path = BACKEND_DIR.parent / "reports/artifacts/full_corpus_rag_wave_1_preview_2026_09_11.json"
-    with canonical_path.open("r", encoding="utf-8") as f:
-        artifact = json.load(f)
-
-    assert artifact["status"] == "PASS"
-    total_files = artifact["summary"]["total_files"]
-    total_chunks = artifact["summary"]["total_chunks"]
-    assert total_files == 205
-    assert artifact["summary"]["condition_rules_count"] == 3
-    assert artifact["summary"]["blocking_errors_count"] == 0
-    assert artifact["summary"]["oversized_groups_count"] == 0
-
-    # Domain breakdown (5 domains)
-    assert len(artifact["domain_breakdown"]) == 5
-    assert sum(d["file_count"] for d in artifact["domain_breakdown"].values()) == total_files
-    assert sum(d["chunk_count"] for d in artifact["domain_breakdown"].values()) == total_chunks
-
-    # P7 breakdown (7 partitions)
-    assert len(artifact["p7_breakdown"]) == 7
-    assert sum(p["file_count"] for p in artifact["p7_breakdown"].values()) == total_files
-    assert sum(p["chunk_count"] for p in artifact["p7_breakdown"].values()) == total_chunks
-
-    # Tokenizer limits: all models <= max_tokens
-    for mid, tinfo in artifact["tokenizer_limits"].items():
-        assert tinfo["max_observed_tokens"] <= tinfo["max_tokens"], (
-            f"Model {mid} exceeded limit: {tinfo['max_observed_tokens']} > {tinfo['max_tokens']}"
-        )
-
-
-# --- 10. Full-Corpus Determinism, Exact Evidence Slicing, and Preview Byte Equality ---
-
-def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
-    """Verify repeated preview runs produce byte-identical JSON and chunks match the runtime build record."""
-    # Số đúng là số trong build record đang chạy (nguồn sự thật "index khớp corpus"),
-    # không phải artifact preview 2026-09-11 (8.460, trước khi sửa corpus ở 7A2).
-    record_path = BACKEND_DIR.parent / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
-    record_corpus = json.loads(record_path.read_text(encoding="utf-8"))["corpus"]
+def test_full_corpus_determinism_and_build_record_counts(tmp_path):
+    """Two chunking runs are deep-equal and match the runtime build record and sparse state."""
+    record_corpus = _runtime_record_corpus()
     expected_chunks = record_corpus["chunk_count"]
     expected_files = record_corpus["file_count"]
 
@@ -995,6 +956,11 @@ def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
     chunks_run2, errors2 = chunk_full_corpus()
     assert len(errors2) == 0
     assert len(chunks_run2) == expected_chunks
+
+    # Cùng số đoạn chưa đủ: danh tính đoạn (chunk_id + search_text) phải đúng bản đã index,
+    # và sparse state tính lại phải giống từng byte file runtime đang nạp (chỉ đọc file).
+    assert compute_corpus_identity(chunks_run1) == record_corpus["identity"]
+    assert serialize_sparse_state(fit_sparse_state(chunks_run1)) == SPARSE_STATE_PATH.read_bytes()
 
     # Deep equality across all chunks between both runs
     seen_chunk_ids = set()
@@ -1030,22 +996,6 @@ def test_full_corpus_determinism_and_preview_byte_equality(tmp_path):
             assert lf_text[part.start:part.end] == part.text, (
                 f"Slice mismatch in chunk {ch.chunk_id}: {part.text!r} != {lf_text[part.start:part.end]!r}"
             )
-
-    # Generate preview to two distinct paths and verify byte-identical equality
-    p1 = tmp_path / "preview_run1.json"
-    p2 = tmp_path / "preview_run2.json"
-    generate_preview(p1)
-    generate_preview(p2)
-    assert p1.read_bytes() == p2.read_bytes()
-
-    # Verify generated preview totals match the build record totals
-    preview_data = json.loads(p1.read_text(encoding="utf-8"))
-    assert preview_data["summary"]["total_files"] == expected_files
-    assert preview_data["summary"]["total_chunks"] == expected_chunks
-    assert sum(d["chunk_count"] for d in preview_data["domain_breakdown"].values()) == expected_chunks
-    assert sum(p["chunk_count"] for p in preview_data["p7_breakdown"].values()) == expected_chunks
-    assert sum(d["file_count"] for d in preview_data["domain_breakdown"].values()) == expected_files
-    assert sum(p["file_count"] for p in preview_data["p7_breakdown"].values()) == expected_files
 
 
 # --- 11. Metadata v2: Domain and Chunk Identity Relations ---

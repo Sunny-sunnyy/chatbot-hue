@@ -64,8 +64,6 @@ def validate_phase6_settings(settings: dict) -> None:
         raise ValueError(f"Invalid token_encoding: {generation.get('token_encoding')!r}")
     if generation.get("answer_max_output_tokens") != 2048:
         raise ValueError(f"Invalid answer_max_output_tokens: {generation.get('answer_max_output_tokens')!r}")
-    if generation.get("representation_b_max_output_tokens") != 256:
-        raise ValueError(f"Invalid representation_b_max_output_tokens: {generation.get('representation_b_max_output_tokens')!r}")
     if generation.get("timeout_seconds") != 45:
         raise ValueError(f"Invalid timeout_seconds: {generation.get('timeout_seconds')!r}")
     if generation.get("context_limit") != 16384:

@@ -16,7 +16,6 @@ import hashlib
 import json
 import math
 import random
-import re
 import sys
 import unicodedata
 from collections import defaultdict
@@ -682,34 +681,6 @@ def compare_variants(a_rows: list[dict], variants: dict[str, list[dict]], catego
     return result
 
 
-def parse_user_scores(markdown: str, question_to_case: dict[str, int]) -> tuple[list[dict], list[str]]:
-    """Đọc dòng `Điểm: a / c / r` (và `Ghi chú:`) dưới mỗi `## Câu N` của file chấm User."""
-    rows, errors = [], []
-    sections = re.split(r"^## Câu (\d+)[ \t]*$", markdown, flags=re.MULTILINE)
-    # re.split với một group: [phần đầu, số câu, nội dung, số câu, nội dung, ...]
-    for number, body in zip(sections[1::2], sections[2::2]):
-        if number not in question_to_case:
-            errors.append(f"Câu {number}: không có trong map")
-            continue
-        score_lines = re.findall(r"^Điểm:[ \t]*(.*?)[ \t]*$", body, flags=re.MULTILINE)
-        if len(score_lines) != 1:
-            errors.append(f"Câu {number}: cần đúng một dòng `Điểm:`, thấy {len(score_lines)}")
-            continue
-        parts = [part.strip() for part in score_lines[0].split("/")]
-        if len(parts) != 3 or not all(part in {"1", "2", "3", "4", "5"} for part in parts):
-            errors.append(f"Câu {number}: điểm chưa đủ hoặc không hợp lệ: {score_lines[0]!r}")
-            continue
-        notes = re.findall(r"^Ghi chú:[ \t]*(.*?)[ \t]*$", body, flags=re.MULTILINE)
-        rows.append({
-            "case_index": question_to_case[number],
-            **dict(zip(ANSWER_METRICS, (int(part) for part in parts))),
-            "feedback": notes[0] if notes else "",
-        })
-    missing = sorted(set(question_to_case) - set(sections[1::2]), key=int)
-    errors += [f"Câu {number}: không thấy trong file" for number in missing]
-    return rows, errors
-
-
 # ---------- Chẩn đoán từ chối nhầm ----------
 
 def answer_keywords(case: dict) -> list[str]:
@@ -874,11 +845,6 @@ def main(argv: list[str] | None = None) -> int:
     split.add_argument("--seed", type=int, required=True)
     split.add_argument("--out", required=True)
 
-    user = commands.add_parser("parse-user-scores", help="đọc điểm User từ user_scoring.md")
-    user.add_argument("--sheet", default="user_scoring.md")
-    user.add_argument("--map", default="user_scoring_map.json")
-    user.add_argument("--out", default="user_scores.jsonl")
-
     coverage = commands.add_parser("context-coverage", help="keyword đáp án trong context theo cỡ (free)")
     coverage.add_argument("--sizes", type=int, nargs="+", default=[5, 10])
     coverage.add_argument("--out", required=True)
@@ -963,15 +929,6 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"dev": len(result["dev"]), "test": len(result["test"]),
                           "test_quota": result["test_quota"], "smoke": result["smoke"]},
                          ensure_ascii=False, indent=2))
-    elif args.command == "parse-user-scores":
-        mapping = json.loads(_path(args.map).read_text(encoding="utf-8"))["question_number_to_case_index"]
-        rows, errors = parse_user_scores(_path(args.sheet).read_text(encoding="utf-8"), mapping)
-        for error in errors:
-            print(error)
-        if errors:
-            return 1
-        write_jsonl(_path(args.out), rows)
-        print(f"user scores: {len(rows)} rows")
     elif args.command == "context-coverage":
         rows = context_keyword_coverage(cases, args.sizes)
         write_jsonl(_path(args.out), rows)

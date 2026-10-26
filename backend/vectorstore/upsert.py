@@ -8,10 +8,10 @@ from qdrant_client import QdrantClient, models
 
 from core.schema import FullCorpusChunk
 from embedding.full_corpus import validate_vector_matrix
+from vectorstore.points import FULL_CORPUS_BATCH_SIZE
 from vectorstore.qdrant import validate_full_corpus_collection_info
 
 FULL_CORPUS_SCROLL_LIMIT = 1000
-FULL_CORPUS_BATCH_SIZE = 64
 
 
 def upsert_full_corpus_batch(

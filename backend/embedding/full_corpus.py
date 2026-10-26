@@ -31,8 +31,8 @@ class DenseModelSpec:
     dimension: int
     max_tokens: int
     input_contract: Literal["e5", "qwen3"]
-    device: Literal["cpu", "cuda"] | None
-    dtype: Literal["float32", "float16"] | None
+    device: Literal["cpu"] | None
+    dtype: Literal["float32"] | None
     batch_size: int
     provider: Literal["local", "openrouter"]
 
@@ -150,7 +150,7 @@ def validate_vectors(
             norm_sq += v * v
 
         norm = math.sqrt(norm_sq)
-        # Kiểm tra chuẩn L2 xấp xỉ 1.0 (cho phép sai số float16 trong ngưỡng 1e-3)
+        # Kiểm tra chuẩn L2 xấp xỉ 1.0 (cho phép sai số làm tròn trong ngưỡng 1e-3)
         if not math.isclose(norm, 1.0, rel_tol=1e-3, abs_tol=1e-3):
             raise ValueError(f"Vector L2 norm is {norm:.4f}, expected unit vector (~1.0)")
         validated.append(vec)
@@ -195,28 +195,15 @@ class FullCorpusDenseRunner:
         self._model: SentenceTransformer | None = None
 
     def load(self) -> None:
-        """Tải mô hình vào đúng device và dtype theo spec đã duyệt; không dùng device_map tự động."""
+        """Tải mô hình trên CPU float32 (spec local duy nhất là CPU); không dùng device_map tự động."""
         if self._model is not None:
             return
-
-        model_kwargs: dict[str, Any] = {}
-        if self.spec.device == "cuda":
-            if not torch.cuda.is_available():
-                raise RuntimeError(
-                    f"CUDA is required for model {self.spec.key} but torch.cuda.is_available() is False"
-                )
-            model_kwargs["torch_dtype"] = torch.float16
-            model_kwargs["attn_implementation"] = "eager"
-            device = "cuda"
-        else:
-            model_kwargs["torch_dtype"] = torch.float32
-            device = "cpu"
 
         # Tải SentenceTransformer trực tiếp từ đường dẫn snapshot đã xác thực revision
         self._model = SentenceTransformer(
             str(self.snapshot_path),
-            device=device,
-            model_kwargs=model_kwargs,
+            device="cpu",
+            model_kwargs={"torch_dtype": torch.float32},
         )
 
         # Xác thực kích thước vector output khớp với spec
@@ -237,10 +224,9 @@ class FullCorpusDenseRunner:
                 raise ValueError(
                     f"Parameter device mismatch for {self.spec.key}: actual {param_device_type} != expected {self.spec.device}"
                 )
-            expected_torch_dtype = torch.float16 if self.spec.dtype == "float16" else torch.float32
-            if first_param.dtype != expected_torch_dtype:
+            if first_param.dtype != torch.float32:
                 raise ValueError(
-                    f"Parameter dtype mismatch for {self.spec.key}: actual {first_param.dtype} != expected {expected_torch_dtype}"
+                    f"Parameter dtype mismatch for {self.spec.key}: actual {first_param.dtype} != expected {torch.float32}"
                 )
 
     def embed_documents_matrix(self, texts: Sequence[str]) -> np.ndarray:

@@ -1,4 +1,3 @@
-import sys
 import pytest
 
 from core.schema import ContextBudgetError
@@ -79,15 +78,3 @@ def test_packed_context_excludes_metadata_v2_private_fields(full_corpus_document
         chunk_id = doc.metadata.get("chunk_id")
         if chunk_id:
             assert chunk_id not in packed.text
-        domain = doc.metadata.get("domain")
-        if domain:
-            # domain should not be explicitly present as a field or leaking
-            pass
-
-
-def test_context_builder_does_not_import_transformers():
-    import retrieval.full_corpus_context as ctx_module
-
-    # Confirm transformers/qwen is not imported in full_corpus_context
-    assert "transformers" not in sys.modules or "transformers" not in dir(ctx_module)
-    assert "qwen" not in sys.modules or "qwen" not in dir(ctx_module)

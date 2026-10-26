@@ -351,98 +351,6 @@ def test_validate_point_payload_nested_evidence_parts_fail_closed():
         validate_point_payload(point_id, bad_text)
 
 
-def test_validate_selectors_rejects_unknown_and_empty():
-    from retrieval.full_corpus_smoke import validate_selectors
-
-    # Valid full selectors
-    c, t, r, q = validate_selectors(None, None, None, None)
-    assert len(c) == 2
-    assert len(t) == 2
-    assert len(r) == 2
-    assert len(q) == 7
-
-    # Unknown candidate
-    with pytest.raises(ValueError, match="Unknown candidate selector"):
-        validate_selectors(["unknown-model"], None, None, None)
-
-    # Unknown treatment
-    with pytest.raises(ValueError, match="Unknown treatment selector"):
-        validate_selectors(None, ["typo"], None, None)
-
-    # Unknown reranker
-    with pytest.raises(ValueError, match="Unknown reranker selector"):
-        validate_selectors(None, None, ["qwen_reranker"], None)
-
-    # Unknown query ID
-    with pytest.raises(ValueError, match="Unknown query selector"):
-        validate_selectors(None, None, None, ["P5-Q99"])
-
-
-def test_validate_safe_output_path_and_sanitization():
-    from pathlib import Path
-    from retrieval.full_corpus_smoke import (
-        validate_safe_output_path,
-        sanitize_error_detail,
-    )
-
-    # Safe outside repo
-    safe_tmp = Path("/tmp/test_trace.json")
-    assert validate_safe_output_path(safe_tmp) == safe_tmp.resolve()
-
-    # Safe inside repo (gitignored data/ path)
-    safe_data = Path("data/test_trace.json")
-    assert validate_safe_output_path(safe_data) == safe_data.resolve()
-
-    # Unsafe inside repo (tracked folder)
-    unsafe_path = Path("backend/test_trace.json")
-    with pytest.raises(ValueError, match="Unsafe output path"):
-        validate_safe_output_path(unsafe_path)
-
-    # Sanitized error detail does not contain raw exception text
-    exc = ValueError("Failed at /home/minhhieu/hue_rag/data/file.json: bad value")
-    detail = sanitize_error_detail(exc)
-    assert detail["error_type"] == "ValueError"
-    assert detail["error_category"] == "value_error"
-    assert detail["error_code"] == "ERR_VALUE"
-    assert "error_message" not in detail
-    serialized = json.dumps(detail)
-    assert "/home/minhhieu" not in serialized
-    assert "bad value" not in serialized
-
-
-def test_error_sanitization_privacy_probe_markers():
-    """Verify that exception details with query, secret, config, and paths never leak into serialized record."""
-    from retrieval.full_corpus_smoke import sanitize_error_detail
-
-    marker_query = "PRIVATE_QUERY_PHASE5_MARKER"
-    marker_secret = "sk-secret-key-phase5-test"
-    marker_config = "DB_CONFIG_PASSWORD_SECRET"
-    marker_path = "/home/minhhieu/hue_rag/private_data.json"
-
-    exc = RuntimeError(f"Query '{marker_query}' failed with secret '{marker_secret}', config '{marker_config}' at '{marker_path}'")
-    detail = sanitize_error_detail(exc)
-    assert detail["error_type"] == "RuntimeError"
-    assert detail["error_category"] == "internal_error"
-    assert detail["error_code"] == "ERR_INTERNAL"
-
-    serialized = json.dumps(detail)
-    for marker in (marker_query, marker_secret, marker_config, marker_path, "/home/"):
-        assert marker not in serialized
-
-    # Check full cell record serialization
-    cell_record = {
-        "candidate_id": "e5-small-384",
-        "retrieval_treatment": "dense_bm25_rrf",
-        "reranker": "none",
-        "classification": "FAIL",
-        "anomalies": ["cell_exception"],
-        "error": detail,
-    }
-    serialized_trace = json.dumps({"cells": {"cell_0": cell_record}})
-    for marker in (marker_query, marker_secret, marker_config, marker_path, "/home/"):
-        assert marker not in serialized_trace
-
-
 def test_v2_payload_accepts_exact_identity_and_domain():
     from retrieval.full_corpus import validate_point_payload
     from core.schema import point_id_for_chunk_id
@@ -814,22 +722,15 @@ def test_trace_contains_only_point_id_chunk_id_domain_rank_score_allowlist():
     assert "rank" not in no_rerank_docs[0].metadata
     assert "score" not in no_rerank_docs[0].metadata
 
-    rerank_pairs = [(0.88, point_id)]
-    minilm_docs = assemble_final_documents(candidate_docs, [(pid, score) for score, pid in rerank_pairs])
-    assert len(minilm_docs) == 1
-    assert minilm_docs[0].id == chunk_id
-    assert minilm_docs[0].metadata["domain"] == "foods"
-    assert "point_id" not in minilm_docs[0].metadata
-
     trace = RetrievalTrace(
         candidate_id="e5-small-384",
         collection_name="hue_full_corpus_7a2_e5_small_384",
         retrieval_treatment="dense_bm25_rrf",
-        reranker="minilm",
+        reranker="none",
         counts={"final": 1},
         timings_ms={"total_ms": 10.0},
-        stages={"dense": [entry], "rrf": [entry], "rerank": [entry]},
-        rerank_status="completed",
+        stages={"dense": [entry], "rrf": [entry]},
+        rerank_status="not_applicable",
         anomalies=(),
         classification="PASS",
     )

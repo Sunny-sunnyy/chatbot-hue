@@ -17,7 +17,6 @@ def test_phase6_settings_are_exact():
         "api_key_env": "OPENAI_API_KEY",
         "token_encoding": "o200k_base",
         "answer_max_output_tokens": 2048,
-        "representation_b_max_output_tokens": 256,
         "timeout_seconds": 45,
         "context_limit": 16384,
         "reserved_output_tokens": 2048,

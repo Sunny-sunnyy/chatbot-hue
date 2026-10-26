@@ -15,7 +15,6 @@ from evaluation.full_corpus_eval import (
     paired_stats,
     question_key,
     split_group_indexes,
-    parse_user_scores,
     answered_cases,
     citation_error_rates,
     cost_usd,
@@ -166,29 +165,6 @@ def test_compare_scores_signed_diff_and_agreement_rates():
     assert math.isclose(acc["diff_ge_2_rate"], 1 / 3)
     assert math.isclose(result["completeness"]["within_1_rate"], 1.0)
     assert compare_scores(first, second, [0, 3, 9])["missing_in_b"] == [3, 9]
-
-
-def test_parse_user_scores_reads_score_lines_and_reports_unscored():
-    sheet = """# Chấm tay
-
-Ghi điểm vào dòng `Điểm:` theo thứ tự, ví dụ `Điểm: 5 / 4 / 5`.
-
-## Câu 1
-
-> Bot: Điểm: 1 / 1 / 1 nằm trong câu trả lời, không phải dòng chấm.
-
-Điểm: 5 / 4 / 3
-Ghi chú: thiếu giờ mở cửa
-
-## Câu 2
-
-Điểm: _ / _ / _
-"""
-    rows, errors = parse_user_scores(sheet, {"1": 17, "2": 40, "3": 99})
-    assert rows == [{"case_index": 17, "accuracy": 5, "completeness": 4, "relevance": 3,
-                     "feedback": "thiếu giờ mở cửa"}]
-    assert errors == ["Câu 2: điểm chưa đủ hoặc không hợp lệ: '_ / _ / _'",
-                      "Câu 3: không thấy trong file"]
 
 
 def test_answer_keywords_and_refusal_evidence_classes():

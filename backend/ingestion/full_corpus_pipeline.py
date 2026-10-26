@@ -167,7 +167,6 @@ def build_candidate(
         candidate = replace(candidate, collection_name=collection_name)
     spec = candidate.dense_spec
     prepared = prepare_full_corpus_input(embedding_models=embedding_models, chunks=chunks)
-    sparse_sha = _write_or_check_sparse_state(prepared.sparse_state, sparse_state_path)
     # Mẫu kiểm vector sau upsert: chunk đầu tiên của mỗi domain, theo thứ tự chunker.
     first_chunk_by_domain: dict[str, str] = {}
     for chunk in prepared.chunks:
@@ -185,6 +184,9 @@ def build_candidate(
         )
         if require_fresh_full_corpus_target(target) != "absent":
             raise ValueError(f"Target collection already exists: {candidate.collection_name}")
+        # Ghi sparse state chung chỉ sau khi biết đích sạch: ghi trước rồi mới dừng sẽ làm sparse state lệch build record cũ
+        # và runtime từ chối khởi động (C-21).
+        sparse_sha = _write_or_check_sparse_state(prepared.sparse_state, sparse_state_path)
 
         runner = create_dense_runner(spec)
         runner.load()
@@ -204,7 +206,7 @@ def build_candidate(
         for start in range(0, len(prepared.chunks), FULL_CORPUS_BATCH_SIZE):
             stop = start + FULL_CORPUS_BATCH_SIZE
             points = build_full_corpus_point_batch(
-                prepared.chunks[start:stop], dense[start:stop], spec.dimension,
+                prepared.chunks[start:stop], dense[start:stop],
                 prepared.sparse_state, vocabulary_index,
             )
             upsert_full_corpus_batch(client, candidate.collection_name, points, QDRANT_TIMEOUT)

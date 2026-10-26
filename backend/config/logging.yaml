@@ -20,6 +20,11 @@ handlers:
     filename: logs/application.log
 
 loggers:
+  api:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+
   ingestion:
     level: INFO
     handlers: [console, file]

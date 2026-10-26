@@ -123,8 +123,6 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
     blocks: list[MarkdownBlock] = []
 
     list_depth = 0
-    in_table = False
-    in_blockquote = False
 
     # First pass: find title (H1)
     for i, t in enumerate(tokens):
@@ -176,7 +174,6 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
 
         # Table handling
         if t.type == "table_open":
-            in_table = True
             table_map = t.map
             idx += 1
             # Find thead and rows inside this table
@@ -195,7 +192,6 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
                     row_maps.append(cur_t.map)
                 idx += 1
 
-            in_table = False
             if table_map:
                 s, e = get_block_span(table_map[0], table_map[1], lines, offsets)
                 tbl_text = lf_text[s:e]
@@ -231,11 +227,9 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
 
         # Blockquote handling
         if t.type == "blockquote_open":
-            in_blockquote = True
             bq_map = t.map
             while idx < len(tokens) and tokens[idx].type != "blockquote_close":
                 idx += 1
-            in_blockquote = False
             if bq_map:
                 s, e = get_block_span(bq_map[0], bq_map[1], lines, offsets)
                 blocks.append(
@@ -253,7 +247,7 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
         # List item handling at top-level of list (list_depth == 1)
         if list_depth == 1 and t.type == "list_item_open" and t.map:
             item_map = t.map
-            # Collect any sub-items within this list item
+            # Collect the direct sub-items of this list item (deeper items stay inside their parent sub-item's span — B-15)
             sub_item_maps: list[tuple[int, int]] = []
             nest_open = 1
             item_idx = idx + 1
@@ -263,7 +257,7 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
                     pass
                 elif sub_t.type == "list_item_open":
                     nest_open += 1
-                    if nest_open > 1 and sub_t.map:
+                    if nest_open == 2 and sub_t.map:
                         sub_item_maps.append(sub_t.map)
                 elif sub_t.type == "list_item_close":
                     nest_open -= 1
@@ -313,7 +307,7 @@ def parse_markdown_blocks(source: str, lf_text: str) -> ParsedDocument:
             continue
 
         # Standalone paragraph handling
-        if list_depth == 0 and not in_table and not in_blockquote:
+        if list_depth == 0:
             if t.type == "paragraph_open" and t.map:
                 s, e = get_block_span(t.map[0], t.map[1], lines, offsets)
                 p_text = lf_text[s:e]
