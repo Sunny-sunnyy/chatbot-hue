@@ -105,6 +105,8 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-26 21:31 | **Nguyên tắc: "ưu tiên đạt chất lượng cần thiết trước, sau đó mới tối ưu hiệu suất"** — biến thể nâng chất lượng chạy / chọn trước biến thể tối ưu tiền / tốc độ | User; spec 8.2 §10.3 |
+| 2026-10-26 21:1x–21:31 | **Đợt cải tiến = spec 8.2 §10** (phạm vi B: khâu trả lời + thí nghiệm khâu tìm, không ghi Qdrant). Luật nhận: (a) chất lượng giữ (Completeness TB ≥ −0,1, câu tụt ≤ A/A + 3) + rẻ / nhanh hơn rõ; (i) chất lượng tăng vượt nhiễu + latency ≤ +50 ms + không thêm lần gọi API, USD / câu ≤ +20 %; tốn hơn ⇒ trình User. A tự đề xuất / thử / chọn trong luật. Hook quét cả câu kín | User; spec 8.2 §10 |
 | 2026-10-25 19:4x | **Sửa code theo rà soát: đồng ý 5 gói** (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md`); gỡ code không dùng nếu không ảnh hưởng hệ thống; guide 0–4 thêm dòng lịch sử; nội dung kho + đường dẫn dự án khác ra khỏi file tracked từ giờ, không xóa lịch sử git. Sửa trên `main`; B1 chờ B0 như spec 8.2 | User; `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md` |
 | 2026-10-25 16:5x | **Dừng 8.2, rà code Phase 0–7 trước** khi đi tiếp (User hỏi về code: file / folder / guide, không phải dữ liệu kho). B1 cất nhánh `p82-b1` | User; `report_agent/2026-10-25_ra_soat_code/` |
 | 2026-10-25 16:21 | **Spec 8.2 approved** (sha `dabae90b2b60`): hai bước không build lại index; mốc người đọc cặp mù; E1 → E2 → E3a / E3b; A tự đưa vào chatbot khi qua luật + review (E1, E3b chờ User); trần 0,5 USD | User; spec 8.2 |

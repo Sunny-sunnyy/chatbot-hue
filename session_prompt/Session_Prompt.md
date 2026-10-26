@@ -109,8 +109,12 @@ report.
   không đổi; ghi rõ là dùng lại và lý do.
 - Thí nghiệm: ghi tiêu chí **trước** khi chạy; kết quả âm cũng giữ.
 
-## 7. Đơn giản là mặc định
+## 7. Đơn giản là mặc định; chất lượng trước tối ưu
 
+- **Chất lượng cần thiết trước, tối ưu hiệu suất sau** (User 2026-10-26, áp cho mọi phần về sau): khi chọn hướng, thử nghiệm hay xếp thứ
+  tự việc, làm cho hệ thống **đạt mức chất lượng cần thiết** (đúng, có căn cứ, từ chối đúng câu ngoài kho, đủ ý) trước; tối ưu tiền / tốc độ /
+  tài nguyên sau, và tối ưu không được kéo chất lượng xuống dưới mức đó. "Mức cần thiết" ghi bằng số trước khi đo (`run-experiment`);
+  trần tiền, quyền và ranh giới dữ liệu vẫn là giới hạn cứng.
 - Code rõ, dễ đọc, theo được data flow; giải pháp nhỏ nhất đủ nhu cầu thật (không
   phải ít dòng nhất); mỗi đơn vị code có nhiệm vụ gọi tên được.
 - Không thêm abstraction, wrapper, validator, state machine, cấu hình, retry,

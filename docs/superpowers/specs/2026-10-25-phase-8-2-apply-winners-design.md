@@ -152,3 +152,89 @@ Chatbot cuối 8.2 chạy 36 câu kín (`knowledge-base-hue/evaluation/phase_8_1
 - 8.1: `report_agent/2026-10-24_phase_8_1_ra_soat/` (`TONG_HOP.md`, `phase_8_1_g5_synthesis.md`, `phase_8_1_g5_decision_table_draft.md`,
   `phase_8_1_g2_implementation.md`, `phase_8_1_g4_implementation.md`, `phase_8_1_g5_by_category.md`).
 - Spec 8.1: `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md`. Hợp đồng trả lời: spec Phase 6 full-corpus §10.
+
+## 10. Sửa đổi 26/10 — Bước 2 mở rộng thành "đợt cải tiến từng khâu" (A, terminal `hue-rag-2d`)
+
+Bản gốc §1–§9 (sha `dabae90b2b60`, User duyệt 16:21 25/10) giữ nguyên, trừ chỗ mục này ghi "thay". Mục này **chỉ đổi Bước 2** (B2); B0, B1,
+B3 như cũ. Đợt báo cáo: `report_agent/2026-10-26_cai_tien_tung_khau/`.
+
+**Căn cứ để review (mục 10):** (1) mục này; (2) `phan_loai_loi_C.md` §1, §3 và `phan_loai_loi_B.md` §1, §3.2 (lỗi theo tầng ở context 10);
+(3) `de_xuat_khau_tim_B.md` §3–§5 và `de_xuat_khau_tra_loi_C.md` §1, §3–§5 (biến thể, số 8.1 đã đo, cỡ mẫu); (4) `skills/run-experiment/SKILL.md`
+§1, §3, §4.
+
+### 10.1 Vì sao đổi
+
+User 20:0x 25/10 mở "đợt tìm hướng tốt hơn từng khâu"; 21:1x 26/10 chọn **phạm vi B: khâu trả lời + thí nghiệm khâu tìm, không ghi Qdrant**,
+và cho A tự đề xuất / thử / so sánh / chọn trong luật dưới. Phân loại lỗi trên mốc context 10 (C36, B42; A tính lại số chính — review cùng đợt):
+88 câu dev chính còn 10 câu bị cờ, **cả 10 thiếu bằng chứng trong 10 đoạn**; 18 / 40 câu có đoạn đúng còn thiếu, chia gần đôi "ngoài pool
+30" (11 fact) và "trong pool nhưng ngoài top-10" (12 fact). Phần riêng khâu trả lời: 5 câu từ chối khi context có một phần fact (20 điểm
+Completeness), 9 câu trả lời gọn bỏ chi tiết có sẵn (9 điểm) — trần ≈ +0,33 Completeness. ⇒ thí nghiệm **cả hai khâu**, mỗi khâu một nhánh.
+
+### 10.2 Mốc và luật nhận (thay dòng "chỉ số quyết" ở bảng B2 cho các biến thể mới)
+
+- **Mốc duy nhất:** chatbot context 10 + NFC = nhánh `p82-b1` `811d25d` (B41; T1 `cefb2d1ad609`); câu trả lời mốc `data/phase_8_2/b1/b1_{dev,test}.jsonl`.
+  **Mọi biến thể so với mốc này** (User 20:4x: không so nối tiếp). Cấu hình ghép các biến thể thắng = một lượt xác nhận riêng, cũng so với mốc.
+  Thí nghiệm chạy bằng harness trên mốc, **trước B0** — **thay §8 dòng 1 và D1 cho mục 10**: mọi kết luận dựa judge là **tạm** tới khi B0 xong và
+  luật dừng 3.4 áp; B0 cho thấy judge lệch người ⇒ A xét lại kết luận trước khi đưa vào chatbot. Đưa vào chatbot: context 10 chỉ sau B0 (B1 §5);
+  biến thể thắng chỉ sau khi context 10 đã vào.
+- **Luật (a)** (User 20:4x) — biến thể làm **rẻ / nhanh hơn**: chỉ số quyết = USD / câu hoặc latency (một trong hai, ghi trước) tốt hơn rõ
+  (≤ 0,95 × mốc USD hoặc ≤ 0,9 × mốc p50; latency: mốc và biến thể đo **cùng phiên, ≥ 2 lượt** — A/A B1 ↔ G2.1a p50 +4,6 %, p95 +17 %, C38 m-2); **mức tụt** Completeness dev chính: **chênh TB ≥ −0,1 và số câu tụt ≤
+  A/A + 3** (A chốt theo C37 §1.4: cận dưới CI quá khắt với n 41–88).
+- **Luật (i)** (User 21:1x) — biến thể làm **chất lượng tăng**: chỉ số quyết vượt nhiễu (paired bootstrap CI 95 % > 0; A/A ghi trước) **và**
+  latency thêm ≤ 50 ms / câu **và** không tốn thêm tiền = **không thêm lần gọi API / dịch vụ nào, USD / câu tăng ≤ 20 %** (User 21:3x, 10.6 Q1). Biến thể vượt ngưỡng tốn (ví dụ K3 luna +3–5 s)
+  ⇒ **A trình User kèm số**, không tự nhận. Latency đo cùng phiên với mốc. **Mức tụt luật (i)** (C38 M-3): Completeness và Accuracy dev chính —
+  số câu tụt ≤ A/A + 3; từ chối nhầm trong phạm vi tăng ≤ A/A + 1 câu; lỗi citation (validator v2) tăng ≤ 2 câu.
+- **Sàn chung:** 0 / 18 câu out_of_scope bị trả lời (dev + test); khâu tìm: 0 câu mất đoạn đúng khỏi context so với mốc; khâu trả lời: 120, 168 (từ
+  chối đúng — context không có fact) vẫn từ chối; 0 câu lỗi kỹ thuật / 500.
+- **Họ Holm:** chỉ biến thể luật (i) (có p-value); R1 (luật a) không vào họ. Nhánh tìm {K1, K3 nếu chạy}, nhánh trả lời {R2, R3}; Holm trên
+  biến thể chạy thật của nhánh.
+- **Test (41 câu chính / 15 câu có đoạn đúng)** quá nhỏ để thấy "tốt hơn" ⇒ xác nhận trên test = **"không làm hỏng"** (sàn + mức tụt như luật
+  tương ứng). Lệch `run-experiment` §4 ⇒ **chờ User** (10.6 Q2); câu kín (B3) là phép kiểm cuối.
+
+### 10.3 Biến thể và thứ tự
+
+| Nhánh | # | Đổi một thứ | Luật | 8.1 đã đo | Trần dev | Ước tiền |
+|---|---|---|---|---|---|---|
+| tìm | **K1** | pool dense 30 → 100, giữ cách runtime (BM25 xếp lại trong pool, RRF k 60) — **thay E3a** | (i) | chưa (thử khô 5 câu) | 6 câu | 0 (tầng tìm); lượt sinh khi qua tầng tìm ≈ 0,036 |
+| tìm | ~~K2~~ | native p30 k = 2 — **NOT RUN** (C38 M-2): là biến thể tốt nhất trong 10 của G1.3 và đã trượt Holm-10; chọn lại trên cùng dev là chọn vì may; còn đổi hai thứ (ứng viên native + `rrf_k` 60 → 2, `retrieval/full_corpus.py:393`; native p30 k 60 mất 2 câu) | — | dev 4 / 36 / 0 [+0,025; +0,200], p 0,026 | — | 0 |
+| tìm | K3 | rerank luna listwise pool 30 → top-10 (= E3b, N = 30) — chỉ khi K1 không đủ | trình User | luna top-10 MRR +0,17 (không đổi tập 10) | 9 câu | ≈ 0,0005 USD / câu + 3–5 s (ước; pilot 10 câu trước) |
+| trả lời | **R4** | thước "số trong câu trả lời có trong đoạn được trích" (theo dõi, không chặn) | thước | C36 thử tay 2 / 5 đúng | — | 0 |
+| trả lời | **R1** | `reasoning_effort="none"` (runtime hiện không gửi ⇒ `medium`) | (a), chỉ số quyết = **USD / câu** (tất định theo token; latency chỉ theo dõi — đo latency làm chỉ số quyết cần thêm lượt mốc cùng phiên ~0,07–0,1 USD, C38 n-3) | ctx 5: Completeness +0,136, USD 0,91×, p50 0,92×; lý do loại (citation) hết với validator v2 | — | ≈ 0,034 |
+| trả lời | **R2** | trả lời phần có căn cứ (= **E1** / E1b; plan E1 sửa: mốc `811d25d`, `paired_stats` / `false_refusal`, citation v2, trần 5 câu) | (i) + **User duyệt hợp đồng** (D4) | P1 ctx 5 phạm sàn 2 câu | 5 câu | ≈ 0,04 |
+| trả lời | **R3** | câu prompt "nêu đủ chi tiết có trong bằng chứng" | (i) | chưa | 9 câu (+1 mỗi câu) | ≈ 0,036 |
+| — | E2 | sửa lỗi thiếu `[n]` | — | validator v2: mốc 0 lỗi | 0 | **NOT RUN** (luật bỏ sớm) |
+
+- **Thứ tự:** hai nhánh **song song** (file không chồng: khâu tìm = harness retrieval, khâu trả lời = prompt / settings harness) —
+  **thay D3 cho Bước 2** (C38 m-5): khâu tìm K1 → (K3 nếu cần); khâu trả lời R4 → R2 → R3 → R1. **Nguyên tắc User 21:3x: "ưu tiên đạt chất lượng cần thiết trước, sau đó mới tối ưu hiệu
+  suất"** ⇒ biến thể nâng chất lượng (luật (i)) chạy trước biến thể tối ưu tiền / tốc độ (luật (a), R1); R1 so cùng mốc, đo sau cùng. Không chạy: giới hạn đoạn / file (B43 V4 — 17 / 22 câu đang đủ có file đúng chiếm > 3 chỗ), G4-B M1
+  (10–14 s / câu GPU), `low` / `high`, xếp theo tài liệu, streaming, tách câu hỏi (để đợt sau).
+- **Ghép:** sau hai nhánh, các biến thể nhận được ghép thành một cấu hình, chạy một lượt dev + test so mốc (luật của biến thể chặt nhất); hỏng ⇒ giữ
+  từng cái riêng theo thứ tự lợi lớn hơn.
+- Mỗi biến thể: **plan có "Căn cứ để review" + YAML** (khuôn B43 §4 / C37 §4) ⇒ session **khác người viết** review ⇒ A ghi "duyệt bản sha" ⇒ chạy
+  ⇒ report ⇒ review chéo ⇒ kết luận tốt hơn / không đổi / kém hơn / chưa rõ / NOT RUN. **Cỡ mẫu ghi trước** (`bootstrap_mean_diff`, seed 20261024,
+  mỗi câu ±1; C38 M-1): 4 thắng / 0 thua cho p 0,026 (40 câu) / 0,031 (88 câu) ⇒ trượt ngưỡng đầu Holm họ 2 (0,025); 5 / 0 cho 0,008 / 0,013 ⇒ qua.
+  ⇒ K1 cần **≥ 5 / 0** trên 40 câu (trần 6); R3 **≥ 5 / 0** trên 88 (trần 9); R2 **5 / 5** câu trần ⇒ **"chưa rõ" rất có thể** — kết quả hợp lệ.
+
+### 10.4 Quyền, tiền, dừng
+
+- Tiền: trần 8.2 **0,5 USD** giữ (đã dùng 0,0369); ước cả mục 10 không K3 ≈ 0,19 USD (K1 lượt sinh 0,036, R1–R3 0,11, ghép 0,04 ⇒ ≈ 0,19), K3 thêm ≈ 0,1.
+  Trong trần 1 USD / phiên (User 20:3x). Pilot 10 câu trước mỗi lượt có phí; vượt ước pilot > 50 % ⇒ dừng báo A.
+- Không ghi Qdrant, không build index, không sửa corpus / Golden / split / đoạn đúng / câu kín. File private ở `data/phase_8_2/` (`k*`, `r*`).
+- Đưa vào chatbot (thay D4 cho mục 10): A tự đưa biến thể qua luật (a) / (i) + review chéo (User 21:1x); **R2 và mọi biến thể "tốn hơn" chờ User**.
+  Mỗi lần vào chatbot: cổng ổn định (CURRENT_HANDOFF "Cổng ổn định") + 4 chỗ `bao_cao_he_thong/`.
+
+### 10.5 Rủi ro thêm
+
+| Rủi ro | Giảm |
+|---|---|
+| Thử nhiều biến thể trên cùng dev ⇒ chọn nhầm vì may | Holm theo nhánh; test xác nhận "không làm hỏng"; câu kín B3 cuối |
+| R1 `none` làm câu trả lời ngắn ⇒ under-answer tăng | Theo dõi 9 câu U của C36 + R4; mức tụt luật (a) |
+| K1 BM25 chấm thêm 70 đoạn đẩy đoạn đúng của câu đang đủ ra ngoài | Sàn 0 câu mất đoạn đúng khỏi context |
+| Nhãn lỗi C36 do một agent gắn | Chỉ dùng chọn biến thể / tính trần. Đoạn đúng 8.1 (agent gắn, agent khác kiểm, User duyệt ~10 câu) **là** chỉ số quyết khâu tìm như 8.1 — report ghi giới hạn (C38 m-1) |
+
+### 10.6 Câu chờ User
+
+- **Q1 — đã trả lời (User 21:31):** "không tốn thêm tiền" của luật (i) = **không thêm lần gọi API / dịch vụ nào, USD / câu tăng ≤ 20 %**
+  (≈ +0,00004 USD / câu). Kèm nguyên tắc "chất lượng cần thiết trước, tối ưu hiệu suất sau" (thứ tự 10.3).
+- **Q2 (C38 m-3):** xác nhận trên test (41 câu chính / 15 câu có đoạn đúng) = **"không làm hỏng"** (sàn + mức tụt), không đòi "tốt hơn" vượt
+  nhiễu — vì test quá nhỏ (3 / 0 vẫn CI [0; +0,171]). (A khuyên) đồng ý; khác: đòi test cũng "tốt hơn" ⇒ gần như mọi biến thể thành "chưa rõ".

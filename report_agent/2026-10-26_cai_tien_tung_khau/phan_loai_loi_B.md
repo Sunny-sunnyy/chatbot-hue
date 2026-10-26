@@ -12,7 +12,7 @@ Người làm: B (Claude Opus 5.5, terminal `hue-rag-23`) · Date: 2026-10-26 20
   được sửa.
 - **18 câu vẫn thiếu ở context 10** (24 fact). Lỗi chia hai nửa gần bằng nhau:
   - **Đoạn đúng không vào pool 30 của dense** (`missed evidence`, 11 fact, 8 câu). 7 / 11 fact được **BM25 trên cả kho** xếp hạng ≤ 30,
-    trong khi runtime chỉ cho BM25 xếp lại 30 đoạn của dense (B40). Có 2 fact dense không tìm thấy kể cả trong 300 đoạn.
+    trong khi runtime chỉ cho BM25 xếp lại 30 đoạn của dense (B40). Có 1 fact (câu 120) mà dense không tìm thấy kể cả trong 300 đoạn.
   - **Đoạn đúng đã trong pool 30 nhưng RRF xếp ngoài top-10** (12 fact, 11 câu). Trong đó 5 fact dense đã xếp ≤ 10, nhưng gộp với BM25 đẩy
     chúng ra ngoài. 7 fact dense xếp 11–30 và RRF không kéo lên.
   - Còn 1 fact là **giới hạn của thước đo**: đoạn đúng là một dòng tiêu đề, và tiêu đề không nằm trong `evidence_parts`.
@@ -76,8 +76,10 @@ Người làm: B (Claude Opus 5.5, terminal `hue-rag-23`) · Date: 2026-10-26 20
 | **cờ** hàng bảng thiếu (câu) | 2 | 0 |
 
 Một câu có thể mang nhiều nguyên nhân. Hạng của 11 fact ngoài pool:
-- dense: 36, 36, 39, 48, 49, 51, 55, 68, 99, 163, và 2 fact > 300;
-- BM25 cả kho: 2, 3, 4, 9, 15, 30, 30, 63, 67, 70, 114, và 1 fact > 300.
+- dense: 36, 36, 39, 48, 49, 51, 55, 68, 99, 163, và 1 fact > 300 (câu 120);
+- BM25 cả kho: 2, 3, 4, 9, 15, 30, 30, 63, 67, 70, 114.
+
+(Sửa 26/10 21:4x theo C38: bản đầu liệt kê 12 hạng vì tính cả fact "thước đo" của câu 143, fact không khớp đoạn nào.)
 
 ### 3.3 Theo loại câu và độ tự nhiên (câu đủ / tổng)
 

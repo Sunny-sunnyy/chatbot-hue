@@ -5,7 +5,9 @@ description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery 
 
 # Thí nghiệm có kỷ luật — hue_rag (A, B, C)
 
-User (2026-10-24): **luôn thử, đánh giá, so với baseline rồi mới chọn**, kể cả khi quay lại Phase trước. Luật
+User (2026-10-24): **luôn thử, đánh giá, so với baseline rồi mới chọn**, kể cả khi quay lại Phase trước. User (2026-10-26):
+**chất lượng cần thiết trước, tối ưu hiệu suất sau** (`Session_Prompt.md` §7) — biến thể nâng chất lượng chạy / chọn trước biến thể
+chỉ làm rẻ / nhanh hơn; biến thể tối ưu luôn có mức tụt chất lượng ghi trước. Luật
 gốc thắng skill này: `session_prompt/Session_Prompt.md` §5 (dữ liệu, câu kín), §6, §8; `WORKFLOW.md` §3.5, §5.
 Code theo `practical-project-coding` ("Ranh giới theo khâu pipeline": gọi code production qua tham số).
 

@@ -38,6 +38,19 @@ Xong: report + STATUS + dòng của mình ở bảng Session ⇒ nhắn A. Dừn
   `split.json`); top-10 runtime (`data/phase_8_1/g1/runtime_k10.jsonl` hoặc file B thấy đúng — ghi rõ) + pool 30: câu nào thiếu đoạn đúng ở top-5 / top-10 /
   pool 30, thiếu vì sao (`missed evidence` dense ngoài pool / BM25 chỉ xếp lại; một file chiếm chỗ — nối B40; hàng bảng). Đầu ra
   `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md`.
+- **Spec 8.2 §10 "Sửa đổi 26/10" — A duyệt bản sha `09e8f3932ede` (21:36)** sau review C38 2 vòng ready (`spec_8_2_s10_review.md`); User duyệt
+  phạm vi + luật (i) + Q1 (21:1x–21:3x) và cho A tự chọn trong luật. **Q2** (test = "không làm hỏng") chờ User — không chặn K1 / R4 (chỉ ảnh hưởng
+  bước xác nhận test). Nguyên tắc User 21:3x "chất lượng cần thiết trước, tối ưu hiệu suất sau" ghi `Session_Prompt.md` §7 + `run-experiment` (C kiểm).
+- **C41 (trước C39) — review plan K1** (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_plan.md`, B, sha `ad71594e17e7`) chỉ dựa trên mục
+  "Căn cứ để review" của plan (WORKFLOW §9.1); đầu ra `phase_8_2_k1_plan_review.md`. A trả lời §7 của plan: (1) sàn 120 / 168 chỉ của khâu trả lời — với
+  K1 chỉ theo dõi; (2) ngưỡng 5 / 0 cố định; (3) quyền B commit + push `p82-k1`, paid ≤ 0,04 USD, judge sub-agent — ghi khi A duyệt sha.
+- **C39 — R4 thước "số trong câu trả lời có trong đoạn được trích" (C, A giao 21:36, 0 USD).** Spec §10.3 dòng R4. File mới
+  `backend/experiments/phase_8_2/r4_numbers.py` (working tree chung, không đụng production / file B khai báo); hàm thuần đọc câu trả lời + nguồn được trích
+  đã lưu; bỏ số có trong câu hỏi; chuẩn hóa khoảng số / dạng viết (C37 §3). **Kiểm thước trước** trên 5 ca C36 đã biết (2 lỗi thật, 3 báo nhầm) — ghi
+  trước tiêu chí: bắt 2 / 2, báo nhầm ≤ 1 / 3. Rồi chạy trên mốc B1 (`data/phase_8_2/b1/b1_{dev,test}.jsonl`) + G2.1a: đếm câu bị cờ (chỉ số câu). Test
+  nhỏ cho logic thuần (practical-project-coding). Report `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r4_implementation.md`; B review. Không commit.
+- **C40 (sau C39) — sửa plan E1 thành plan R2** theo C37 §3 / spec §10 (mốc `811d25d`, `paired_stats` / `false_refusal`, citation v2, trần 5, sàn 120 / 168,
+  luật (i) + mức tụt §10.2, cỡ mẫu 5 / 5) ⇒ sha mới ⇒ B review ⇒ A duyệt. Chưa chạy lượt có phí.
 - **B43 — bản nháp phần khâu tìm cho tài liệu thiết kế đợt cải tiến (B, A giao 20:57, 0 USD, không chạy thí nghiệm mới).** Vì sao: C36 + B42 cho thấy ở
   mốc context 10 phần thiếu còn lại chỉ sửa được ở tầng tìm ⇒ A trình User lại phạm vi (khuyên thêm một thí nghiệm tầng tìm **không ghi Qdrant**).
   Làm: liệt kê ≤ 5 biến thể không ghi Qdrant (ví dụ giới hạn đoạn mỗi file / MMR trên pool 30, trọng số gộp dense–BM25, pool dense ∪ BM25 cả kho
@@ -137,7 +150,7 @@ khi A giao (mục Thứ tự, bước 5). `dot3` đã merge (giữ nhánh trên 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-2d` (tối 26/10) | Claude Opus 5.5 | trực tiếp | tối 26/10: giao B41 / B42 / C36; review C36 + B41 ready; ghi quyết định câu 3–7; xóa `dot3`; tiếp: sửa luật W14 / W16–W20, tài liệu thiết kế đợt cải tiến | `STATUS_A.md`; 0 USD |
-| B — thực thi | `hue-rag-23` (tối 26/10) | Claude Opus 5.5 | trực tiếp | B41 ready (merge sau B0); B42 ready (`a7b61bb`). **B43 xong 21:01 — chờ A:** `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tim_B.md` — ở context 10, top-10 = context nên 8.1 G1.3 / G4-B đã đo đúng chỉ số; rerank chỉ trong top-10 vô ích; đề xuất V1 pool dense 100 (chưa đo, 0 USD) → V2 native p30 k=2 xác nhận test → V3 luna pool 30 (có phí, +3–5 s); không chạy V4 cap file (17 / 22 câu đủ có file đúng > 3 chỗ), V5 (latency); **luật (a) chưa phủ thay đổi tốn thêm mà chất lượng tăng — A / User chốt** · **B44** xong (4 file, chờ A commit) · **B45 review hook câu kín: ready; vòng 2 m-1 / m-2 đóng** (`hook_sealed_review.md`) | `STATUS_B.md`; 0 USD |
+| B — thực thi | `hue-rag-23` (tối 26/10) | Claude Opus 5.5 | trực tiếp | B41 ready (merge sau B0); B42 ready (`a7b61bb`). **B43 xong 21:01 — chờ A:** `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tim_B.md` — ở context 10, top-10 = context nên 8.1 G1.3 / G4-B đã đo đúng chỉ số; rerank chỉ trong top-10 vô ích; đề xuất V1 pool dense 100 (chưa đo, 0 USD) → V2 native p30 k=2 xác nhận test → V3 luna pool 30 (có phí, +3–5 s); không chạy V4 cap file (17 / 22 câu đủ có file đúng > 3 chỗ), V5 (latency); **luật (a) chưa phủ thay đổi tốn thêm mà chất lượng tăng — A / User chốt** · **B44** xong (4 file, chờ A commit) · **B45 review hook câu kín: ready; vòng 2 m-1 / m-2 đóng** (`hook_sealed_review.md`) · **B46 plan K1 xong — chờ review** (`phase_8_2_k1_plan.md` sha `ad71594e17e7`; K2 NOT RUN theo spec `7ea7ed3a1600`) | `STATUS_B.md`; 0 USD |
 | C — thực thi | `hue-rag-b5` (tối 26/10) | Claude Opus 5.5 | trực tiếp | C36 ready (`2d56193`); review W16 ready (`018c8dc`). **C37 xong 21:22 26/10/2026 — chờ A:** `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tra_loi_C.md` (R1 `none` luật (a), R2 = E1b, R3 'nêu đủ chi tiết', R4 thước; E2 NOT RUN); 0 USD | xem `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.

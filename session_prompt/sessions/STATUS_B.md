@@ -24,6 +24,12 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
   worktree thử `/tmp/b45_wt` — gỡ khi xong. Giữ mù: không in / đọc nội dung câu kín.
   **XONG 21:2x — ready 0 / 0 / 2 minor** (m-1 câu kín < 40 ký tự không bị bắt: 15 / 55 câu; m-2 số báo nhầm trong comment). Worktree + `/tmp/b45_*` đã gỡ.
   **Vòng 2 (21:25): ready, m-1 + m-2 đóng** — A thêm `short_questions()`; tracked không thêm báo nhầm; ca dương câu ngắn bắt đúng. `/tmp/b45v2` đã xóa.
+- **B46** (A giao 21:3x, 0 USD, chỉ viết): plan K1 + K2 theo spec 8.2 §10 (working tree sha `ace705ec7142`, C đang review). **Khai báo:**
+  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_k2_plan.md` (mới). Không chạy gì, không commit.
+  **XONG 21:3x — chờ review** (sha `63337aca1b10`, 138 dòng). Hết file khai báo.
+- **B46 vòng 2** (A 21:4x, spec §10 sha `7ea7ed3a1600`: K2 NOT RUN): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_plan.md` (mới, thay
+  `phase_8_2_k1_k2_plan.md` — B xóa file cũ, untracked, của B) + `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md` §1, §3.2 (11 hạng, bỏ fact câu 143).
+  **XONG 21:35 — chờ review:** `phase_8_2_k1_plan.md` sha `ad71594e17e7` (148 dòng); file K1+K2 cũ đã xóa; B42 sửa §1 + §3.2. Hết file khai báo.
   Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
