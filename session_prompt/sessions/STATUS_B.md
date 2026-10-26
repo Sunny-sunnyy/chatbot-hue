@@ -3,11 +3,10 @@
 Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực tiếp với A; việc A giao = User nói "làm đi".
 
 ## Đang làm
-- Chờ A: review `dot3` xong, chờ A đọc / chép / merge.
+- Chờ A giao việc.
 
 ## Đang khai báo sửa
-- không. File chờ A chép / commit: `report_agent/2026-10-25_ra_soat_code/sua_dot3_review.md` (trong `/tmp/b_dot3`, sha `4ee8e5f90199`) và file này
-  (trong `/tmp/b_main` @ `13afcf2`).
+- không. File chờ A chép / commit: `report_agent/2026-10-25_ra_soat_code/a_dong_dot3_review.md` và file này (trong `/tmp/b_main` @ `409ff62`).
 
 ## Vừa xong
 - 13:50 mở phiên, kiểm nhanh khớp handoff (4 worktree AGY dưới `~/.gemini/` — A: giữ nguyên).
@@ -18,6 +17,9 @@ Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực ti
 - 15:52 **Review `dot3` (`210abd4`) xong — ready_for_user_confirmation**: D1–D8 chạy mới đạt (D3 so cả với `main`); D9 notebook NOT RUN (auto mode chặn
   `jupyter nbconvert --execute`); 3 minor (m-1 số diff report, m-2 `python3` trong `d9.sh`, m-3 tài liệu cũ cho A). Ngoài phạm vi: 5 JSON `reports/artifacts/`
   tracked có 418 dòng trùng kho — A / User quyết. Paid: D5 2 câu ≈ 0,0004 USD (ước).
+
+- 16:16 **Review phần A tự sửa** (`409ff62` + merge `421c302`) — ready, 4 minor chữ (n-1 lý do B-15 trong `BAO_CAO_CHIA_DOAN`, n-2 `app.py:43`→`:38`,
+  n-3 guide phase 3 còn trỏ JSON đã gỡ, n-4 "80 report" có 1 report 8.1 chỉ trùng tên file). 8 / 8 bản sao private giống byte; merge không đổi code. 0 USD.
 
 ## Đã học / bẫy gặp (26/10)
 - `uv run` trong worktree `/tmp/...` tạo `.venv` mới ở đó (Python khác) ⇒ ở worktree luôn `uv run --project /home/minhhieu/hue_rag …`

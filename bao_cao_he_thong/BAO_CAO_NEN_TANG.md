@@ -42,7 +42,7 @@ lỗi -> một lớp lỗi dùng chung (core/schema.py) -> API trả mã lỗi t
 | Khuôn kết quả tìm kiếm chung | **Đã xử lý, đóng gói** | `schema.py:36`; dùng ở `retrieval/full_corpus.py:327`, `:647` |
 | Lớp lỗi dùng chung, API trả lỗi rõ | **Đã xử lý, đóng gói** | `schema.py:7-32`; `api/app.py:21-24`, `:70`, `:77` |
 | API báo sức khỏe từng thành phần | **Đã xử lý, đóng gói** | `api/health.py:17-23`; 200, mọi thành phần `ready` (24/10) |
-| Ghi log chung cho mọi lệnh chạy | **Xử lý một phần** | API dùng `setup_logging()` (`api/app.py:43`), từ 26/10 có logger `api` trong `logging.yaml`; lệnh dựng kho `ingestion/full_corpus_pipeline.py` còn tự cấu hình log riêng (`retrieval/full_corpus_smoke.py` đã gỡ 26/10) |
+| Ghi log chung cho mọi lệnh chạy | **Xử lý một phần** | API dùng `setup_logging()` (`api/app.py:38`), từ 26/10 có logger `api` trong `logging.yaml`; lệnh dựng kho `ingestion/full_corpus_pipeline.py` còn tự cấu hình log riêng (`retrieval/full_corpus_smoke.py` đã gỡ 26/10) |
 | Test chỉ chạy trên hệ thống thật | **Xử lý một phần** | Gần hết test dùng Qdrant/model thật; `tests/test_phase6_live_smoke.py:223-228`, `:314` còn giả lập nhánh lỗi |
 | Chạy bằng `uv` trong môi trường dự án | **Đã xử lý, đóng gói** | `pyproject.toml`; `session_prompt/Session_Prompt.md` §10 |
 
@@ -80,7 +80,7 @@ Kiểm với code (commit `1832201`) ngày 24/10/2026.
 | 10 gói `api, core, embedding, evaluation, ingestion, llm, reranking, retrieval, scoring, vectorstore` | **còn dùng** | `ls backend/*/__init__.py` |
 | `settings.yaml` tập trung + `load_settings()` | **còn dùng**; nay kiểm nhóm kho tri thức + runtime + sinh câu trả lời | `backend/core/settings_loader.py:11-21` |
 | 3 profile tìm kiếm, đang dùng `dense_only` | **đã bỏ** (gỡ ở B9, 24/10); thay bởi nhóm runtime `dense_bm25_rrf` từ Phase 6 | `backend/config/settings.yaml:40-43` |
-| `setup_logging()` + `logging.yaml` | **còn dùng** ở API; 2 lệnh toàn kho chưa theo (mục 3) | `backend/core/logging_setup.py:13`; `backend/api/app.py:43` |
+| `setup_logging()` + `logging.yaml` | **còn dùng** ở API; 2 lệnh toàn kho chưa theo (mục 3) | `backend/core/logging_setup.py:13`; `backend/api/app.py:38` |
 | `/health` kiểm `qdrant/retrieval/generator` | **đã thay** bởi bản Phase 6: thêm `tokenizer`, giá trị `ready`/`not_ready` | `backend/api/health.py:17-23` |
 | `RetrievedDocument(id, score, text, metadata)` | **còn dùng** cả ở đường toàn kho | `backend/core/schema.py:36`; `backend/retrieval/full_corpus.py:327` |
 | Lớp lỗi dùng chung trong `core/schema.py` | **còn dùng** | `backend/core/schema.py:7-32` |

@@ -80,8 +80,8 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 Không đổi đoạn nào trên kho hôm nay; chỉ chặn chắc hơn cho lần dựng kho sau. **Tiêu chí ghi trước:** 8.459 đoạn giống hệt (sha
 `60591acff422ece6`), kết quả tìm 158 câu giống từng byte, test đạt. Thay đổi: (1) đoạn vượt giới hạn token ở **mọi** nhánh ⇒ báo lỗi,
 dừng dựng kho (trước: một nhánh lọt); (2) test "kho khớp bản ghi" so dấu vân tay nội dung + từ điển BM25 (trước: chỉ số đoạn);
-(3) gọn code chia đoạn (một hàm phát đoạn thay 7 khối lặp; mục con danh sách lấy đúng cấp trực tiếp — kho hôm nay không có danh
-sách 3 cấp nên không đổi); (4) file quy tắc điều kiện + 55 chuỗi mẫu test ra `knowledge-base-hue/meta/` (private). **Kết quả PASS**
+(3) gọn code chia đoạn (một hàm phát đoạn thay 7 khối lặp; mục con danh sách lấy đúng cấp trực tiếp — kho có 1 khối lồng 3 cấp
+nhưng khối đó không phải tách nên không đổi); (4) file quy tắc điều kiện + 55 chuỗi mẫu test ra `knowledge-base-hue/meta/` (private). **Kết quả PASS**
 (C đo sau từng nhóm, B chạy lại độc lập; A kiểm lại trên `main`). Tiền: 0 ở khâu này. Report:
 `report_agent/2026-10-25_ra_soat_code/sua_dot3_implementation.md`, review `sua_dot3_review.md`.
 

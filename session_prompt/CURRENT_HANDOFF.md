@@ -28,7 +28,7 @@ khi 8.2 chạy lại. `dot3` đã merge (giữ nhánh trên origin tới khi Use
 1. ~~Quyền phiên~~ — User 14:1x 26/10 (mục Quyền). ~~Gửi ChatGPT~~ — kết quả có 26/10. Lệnh gỡ 8 artifacts — User chọn (a) 26/10.
 2. **Phạm vi đợt cải tiến** (A khuyên: khâu trả lời trước — reasoning `none` / `low`, đa dạng nguồn; dựng kho / embedding mới để sau) và thứ tự
    B0 ⇒ B1 ⇒ đợt cải tiến trên mốc context 10.
-   **80 report lịch sử** (`reports/` 70, `docs/superpowers/` 5, `handoff_prompt/` 4, `report_agent/` 1; 08–09/2026) còn dòng trùng kho ≥ 40 ký tự
+   **80 report lịch sử** (`reports/` 70, `docs/superpowers/` 5, `handoff_prompt/` 4, `report_agent/` 1 — file đó 25/10, chỉ trùng tên file kho; còn lại 08–09/2026) còn dòng trùng kho ≥ 40 ký tự
    (~960 dòng, nhiều chỗ là tên file / tiêu đề; 1 dòng trùng cả đáp án Golden — report 06/09, trước khi có Golden): để nguyên hay xử lý.
 3. **Sổ cải tiến** (A đề xuất 26/10: duyệt W14, W16, W17; W18 gộp vào W14; bác W15 — S23 lặp lại 26/10 ở C) (`session_prompt/SO_CAI_TIEN_CACH_LAM.md`): duyệt / bác **W14** (nhắc lại ý User khi câu hỏi nhiều nghĩa), **W16** (quét trùng
    Golden / kho vào hook pre-commit — thay **W15**), **W17** (session rảnh ⇒ A giao việc không chồng file), **W18** (đề xuất có thứ tự ⇒ đối chiếu spec).

@@ -16,7 +16,7 @@ token: 7 lượt kiểm ổn định × 2 câu `gpt-6-luna`).
 
 - Chọn phạm vi đợt cải tiến (A khuyên: chỉ khâu trả lời trước — mức suy luận, đa dạng nguồn).
 - Duyệt sổ cải tiến W14, W16, W17 (W18 gộp vào W14, bỏ W15).
-- 80 report lịch sử (08–09/2026) còn trích một phần nội dung kho — để nguyên hay xử lý (A hỏi riêng).
+- 80 report lịch sử (79 file 08–09/2026 + 1 file 25/10 chỉ trùng tên file kho) còn trích một phần nội dung kho — để nguyên hay xử lý (A hỏi riêng).
 - Khi tiện: đọc cặp mù (B0, ~30–45 phút) — cần trước khi đưa "10 đoạn" vào chatbot.
 
 ## Trạng thái

@@ -121,7 +121,8 @@ Versioned summary evidence:
 reports/artifacts/full_corpus_phase_3_embedding_sparse_preflight_2026_09_12.json
 ```
 
-JSON không chứa dense vectors, corpus text, secrets hoặc absolute cache path.
+JSON không chứa dense vectors, secrets hoặc absolute cache path. *Cập nhật 26/10/2026:* quét lại thấy 5 dòng trùng nguyên văn kho ⇒ file đã
+chuyển sang `data/reports_artifacts_private_2026-10-26/` (private) và gỡ khỏi repo.
 `notebooks/03_embedding_models.ipynb` gọi backend Phase 3 trên bounded sample;
 canonical outputs rỗng/execution counts null, Run All chỉ trên copy `/tmp`.
 
