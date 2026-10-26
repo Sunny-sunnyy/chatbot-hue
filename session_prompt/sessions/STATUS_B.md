@@ -1,4 +1,30 @@
-# STATUS B — KẾT PHIÊN tối 2026-10-25 22:28 +0700 (mở 18:21; terminal `hue-rag-c3`; A = `hue-rag-77`, C = `hue-rag-7f`)
+# STATUS B — phiên 2026-10-26 (mở 13:50; terminal `hue-rag-3e`; A = `hue-rag-b0`, C = `hue-rag-87`)
+
+Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực tiếp với A; việc A giao = User nói "làm đi".
+
+## Đang làm
+- **B40** (A giao 14:1x, `CURRENT_HANDOFF.md` mục "Đợt tìm hướng tốt hơn từng khâu"): đối chiếu kết quả ChatGPT C1–C6, D1–D4 với code `main`
+  `71d2450` — chỉ đọc, 0 USD. Đọc code ở worktree riêng `/tmp/b_main` (detached `71d2450`) vì C dùng working tree chung cho `dot3`.
+- Sau đó: review nhánh `dot3` khi C báo xong (worktree `/tmp/b_dot3` từ `origin/dot3` sau rebase — A đồng ý hướng).
+
+## Đang khai báo sửa
+- không (B40 xong; 2 file trong `/tmp/b_main` chờ A chép / commit: report B40 + file này).
+
+## Vừa xong
+- 13:50 mở phiên, kiểm nhanh khớp handoff (4 worktree AGY dưới `~/.gemini/` — A: giữ nguyên).
+- 14:28 **B40 xong — chờ A**: `report_agent/2026-10-26_cai_tien_tung_khau/doi_chieu_nghien_cuu_B.md` (trong `/tmp/b_main`; quét trùng 0). Nổi bật:
+  runtime BM25 chỉ chấm lại 30 đoạn của dense (`retrieval/full_corpus.py:479-491`) — yêu cầu ChatGPT không nói điều này; 56 / 158 câu có 5 đoạn
+  cùng một file; đoạn bảng chỉ 144 / 8.459; cỡ mẫu báo cáo gợi ý (C1, C3, D1) lớn hơn dữ liệu có. Script đếm: `data/cai_tien_tung_khau_2026-10-26/tools/`. 0 USD.
+
+## Đã học / bẫy gặp (26/10)
+- `uv run` trong worktree `/tmp/...` tạo `.venv` mới ở đó (Python khác) ⇒ ở worktree luôn `uv run --project /home/minhhieu/hue_rag …`
+  (hoặc chạy từ gốc dự án). Đã xóa `.venv` tạm.
+- Worktree cần `data/`, `knowledge-base-hue/`: symlink hiện thành untracked (gitignore có `/` cuối không khớp link) ⇒ gỡ link khi xong.
+
+---
+
+## (Lịch sử) Phiên tối 25/10
+
 
 Agent: Claude Opus 5.5 · Vai: thực thi · User: B làm việc trực tiếp với A, xong báo A, chờ A giao.
 
