@@ -29,6 +29,7 @@ from core.schema import (
     validate_chunk_id,
 )
 from core.settings_loader import BACKEND_DIR, get_full_corpus_settings, load_settings
+from embedding.sparse import compute_corpus_identity, fit_sparse_state, serialize_sparse_state
 from ingestion.chunking.full_corpus_chunker import (
     ConditionManager,
     build_representation_a_search_text,
@@ -38,6 +39,7 @@ from ingestion.chunking.full_corpus_chunker import (
     get_default_tokenizer_checker,
     match_block_selector,
 )
+from ingestion.full_corpus_pipeline import SPARSE_STATE_PATH
 from ingestion.chunking.markdown_blocks import (
     TableRowInfo,
     TableInfo,
@@ -60,21 +62,22 @@ from ingestion.source_state import (
 )
 
 
+# Build record đang chạy là nguồn sự thật "index khớp corpus": test so với record,
+# không ghim số file / số đoạn (kho đổi + build lại thì test tự theo record mới).
+RUNTIME_BUILD_RECORD_PATH = BACKEND_DIR.parent / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
+
+
+def _runtime_record_corpus() -> dict:
+    return json.loads(RUNTIME_BUILD_RECORD_PATH.read_text(encoding="utf-8"))["corpus"]
+
+
 # --- 1. Discovery and Inventory Exclusions ---
 
 def test_full_corpus_discovery_and_inventory_exclusions():
-    """Verify discovery finds exactly 205 files across 5 domains in deterministic order."""
+    """Discovery finds exactly the source files of the runtime build record, in deterministic order."""
     root, files = discover_full_corpus_files()
     assert root.is_dir()
-    assert len(files) == 205
-
-    # Check 5 domain counts
-    domains = [f.split("/")[0] for f in files]
-    assert domains.count("festivals") == 27
-    assert domains.count("foods") == 91
-    assert domains.count("heritages") == 29
-    assert domains.count("performing_arts") == 13
-    assert domains.count("travel") == 45
+    assert set(files) == set(_runtime_record_corpus()["sources"])
 
     # Check deterministic sorted order
     assert files == sorted(files)
@@ -901,11 +904,8 @@ def test_condition_error_is_a_chunker_error(tmp_path):
 # --- 10. Full-Corpus Determinism and Exact Evidence Slicing ---
 
 def test_full_corpus_determinism_and_build_record_counts(tmp_path):
-    """Two chunking runs are deep-equal and match the runtime build record."""
-    # Số đúng là số trong build record đang chạy (nguồn sự thật "index khớp corpus"),
-    # không phải artifact preview 2026-09-11 (8.460, trước khi sửa corpus ở 7A2).
-    record_path = BACKEND_DIR.parent / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
-    record_corpus = json.loads(record_path.read_text(encoding="utf-8"))["corpus"]
+    """Two chunking runs are deep-equal and match the runtime build record and sparse state."""
+    record_corpus = _runtime_record_corpus()
     expected_chunks = record_corpus["chunk_count"]
     expected_files = record_corpus["file_count"]
 
@@ -920,6 +920,11 @@ def test_full_corpus_determinism_and_build_record_counts(tmp_path):
     chunks_run2, errors2 = chunk_full_corpus()
     assert len(errors2) == 0
     assert len(chunks_run2) == expected_chunks
+
+    # Cùng số đoạn chưa đủ: danh tính đoạn (chunk_id + search_text) phải đúng bản đã index,
+    # và sparse state tính lại phải giống từng byte file runtime đang nạp (chỉ đọc file).
+    assert compute_corpus_identity(chunks_run1) == record_corpus["identity"]
+    assert serialize_sparse_state(fit_sparse_state(chunks_run1)) == SPARSE_STATE_PATH.read_bytes()
 
     # Deep equality across all chunks between both runs
     seen_chunk_ids = set()
