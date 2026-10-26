@@ -16,7 +16,10 @@ Terminal: `hue-rag-b0` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - 0 USD (tới 14:16).
 
 ## Đã học / bẫy gặp (phiên 26/10)
-- (chưa có)
+- 14:3x: C đang ở `dot3` trong working tree chung ⇒ A sửa / commit tài liệu `main` qua worktree `/tmp/a_docs`. `git push` từ worktree bị auto mode
+  chặn ⇒ User chạy `! cd /tmp/a_docs && git push origin main` (đã đẩy `13afcf2`).
+- 14:4x: C (commit B-20) nối quét trùng với commit bằng `;` ⇒ commit chạy dù scan exit 1 — **lặp S23** (A tối 25/10) ⇒ bằng chứng thêm cho W16 (rào bằng hook).
+- B40: yêu cầu ChatGPT mô tả sai khâu tìm (BM25 chỉ chấm lại 30 đoạn dense) ⇒ khi viết yêu cầu nghiên cứu, đối chiếu mô tả hệ thống với code (`file:dòng`) trước khi gửi.
 
 ---
 Phần dưới: trạng thái kết phiên đêm 25/10.
