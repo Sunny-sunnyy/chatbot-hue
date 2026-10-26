@@ -13,8 +13,14 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
 - **B41 review: ready** (A, `phase_8_2_b1_rebase_review.md`, `2d56193`); T2 có phí: A quyết không chạy — bằng chứng model ở cổng ổn định khi merge (sau B0).
 - **B42 XONG 20:54 — chờ review.** Report `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md` (untracked, A commit). Script + kết quả private
   `data/cai_tien_tung_khau_2026-10-26/tools/b42_{retrieval_errors,summary}.py`, `b42_{per_case.jsonl,summary.json}`. Kiểm chéo G1 `runtime.jsonl` 40 / 40.
-  0 USD. **File đang khai báo sửa: không** (hết B41 + B42).
-- **File khai báo sửa (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
+  0 USD. B42 review ready 0/0/0 (A, `a7b61bb`).
+- **B43 XONG 21:01 — chờ A** (A giao 20:57; khai báo: chỉ `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tim_B.md` mới). Bản nháp khâu tìm cho spec
+  đợt cải tiến: V1 pool dense 100 / V2 native p30 k=2 (xác nhận test) / V3 luna pool 30; không chạy V4 cap file, V5 G4-B. 0 USD, không chạy tìm kiếm mới.
+  **File đang khai báo sửa: không.**
+- **B44** (A giao 21:0x, 0 USD, mức thấp): bỏ comment sai "import này cũng đưa gốc repo + backend/ vào sys.path". **Khai báo (main, working tree chung):**
+  `backend/experiments/phase_8_1/{g1_retrieval,g2_generate,g3_chunking,g4_rerank}.py` (4 file — A ghi 3; `g3_chunking.py` cũng có). Không commit.
+  **XONG 21:0x — chờ A commit:** 4 dòng, chỉ bỏ comment; `py_compile` 4 file đạt; `git diff --check` sạch. Hết file khai báo.
+- (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
   `backend/experiments/phase_8_2/{__init__,b1}.py`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_implementation.md`.
   Trên `main` (working tree chung, không commit): `session_prompt/sessions/STATUS_B.md`, dòng B trong `session_prompt/CURRENT_HANDOFF.md`,

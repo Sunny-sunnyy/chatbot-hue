@@ -27,7 +27,7 @@ import torch
 from openai import OpenAI, OpenAIError
 from pydantic import BaseModel, ConfigDict
 
-from evaluation.full_corpus_eval import (  # import này cũng đưa gốc repo + backend/ vào sys.path
+from evaluation.full_corpus_eval import (
     REPO_ROOT,
     build_context_builder,
     cost_usd,

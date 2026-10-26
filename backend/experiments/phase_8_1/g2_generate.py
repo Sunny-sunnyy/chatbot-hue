@@ -23,7 +23,7 @@ from pathlib import Path
 
 import numpy as np
 
-from evaluation.full_corpus_eval import (  # import này cũng đưa gốc repo + backend/ vào sys.path
+from evaluation.full_corpus_eval import (
     BOOTSTRAP_ROUNDS,
     BOOTSTRAP_SEED,
     CONCURRENCY,
