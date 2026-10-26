@@ -10,7 +10,10 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
   import `test_full_corpus_retrieval.py` (giữ import trần). Bỏ comment sai `b1.py:23`. Test 4 file: 41 p / 1 f / 1 e (main 40 p, cùng f / e cần key).
   T1 sha `cefb2d1ad609` 158 dòng; T2 offline (`data/phase_8_2/b1/rebase_2610/t2_offline.py`) 176 / 176 mọi trường, đối chứng `main` ctx5 bắt khác;
   T5 đạt; T3 / T4 NOT RUN (cần model). Worktree `/tmp/b_p82b1`, `/tmp/b_p82b1_old` đã gỡ (symlink gỡ trước). 0 USD.
-- **B42** (phân loại lỗi tầng tìm, 0 USD): đang làm (20:5x).
+- **B41 review: ready** (A, `phase_8_2_b1_rebase_review.md`, `2d56193`); T2 có phí: A quyết không chạy — bằng chứng model ở cổng ổn định khi merge (sau B0).
+- **B42 XONG 20:54 — chờ review.** Report `report_agent/2026-10-26_cai_tien_tung_khau/phan_loai_loi_B.md` (untracked, A commit). Script + kết quả private
+  `data/cai_tien_tung_khau_2026-10-26/tools/b42_{retrieval_errors,summary}.py`, `b42_{per_case.jsonl,summary.json}`. Kiểm chéo G1 `runtime.jsonl` 40 / 40.
+  0 USD. **File đang khai báo sửa: không** (hết B41 + B42).
 - **File khai báo sửa (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,
   `backend/experiments/phase_8_2/{__init__,b1}.py`, `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_implementation.md`.
@@ -48,6 +51,10 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
 - D5 cổng ổn định khi review `dot3`: 2 câu `gpt-6-luna` ≈ **0,0004 USD (ước — route không ghi usage)**. Còn lại 0 USD (B40, review, kiểm A).
 
 ## Đã học / bẫy gặp
+- 26/10 tối: script đặt ngoài `backend/` (ở `data/…`) chạy bằng `python <file>` không có `backend/` trên `sys.path` ⇒ `ModuleNotFoundError: core`; thêm
+  `PYTHONPATH=.` (từ `backend/`). Với worktree cũ trước gói 1b: `PYTHONPATH=$PWD:<gốc worktree>`.
+- 26/10 tối: đoạn đúng 8.1 có trích dẫn là dòng tiêu đề `#` — chunker không đưa tiêu đề vào `evidence_parts` ⇒ `chunk_hits_quote` không bao giờ khớp
+  (1 fact dev, câu 143). Nhãn "thước đo" chỉ khi fact khớp 0 đoạn (lần đầu B gắn theo dấu `#` ⇒ sai câu 67; đã sửa trước khi viết report).
 - 26/10: `uv run` trong worktree `/tmp/...` tạo `.venv` mới ở đó (Python 3.14) ⇒ ở worktree luôn `uv run --project /home/minhhieu/hue_rag …`; kiểm
   `__file__` module để chắc code nạp từ worktree.
 - 26/10: worktree cần `data/`, `knowledge-base-hue/` ⇒ symlink hiện thành **untracked** (gitignore có `/` cuối không khớp link) ⇒ gỡ link khi xong,
