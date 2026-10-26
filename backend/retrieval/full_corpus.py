@@ -53,14 +53,13 @@ from ingestion.source_state import (
     discover_full_corpus_files,
     verify_full_corpus_record_freshness,
 )
-from reranking.cross_encoder import CrossEncoderReranker
 from vectorstore.qdrant import (
     client_from_settings,
     validate_full_corpus_collection_info,
 )
 
 RetrievalTreatment = Literal["dense_bm25_rrf", "native_hybrid_rrf"]
-RerankerMode = Literal["none", "minilm"]
+RerankerMode = Literal["none"]
 Classification = Literal["PASS", "REVIEW_REQUIRED", "FAIL"]
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -380,7 +379,7 @@ def validate_full_corpus_build_record(
 
 
 class FullCorpusRetrievalService:
-    """Canonical Full-corpus retrieval service executing treatments and reranking."""
+    """Canonical Full-corpus retrieval service: dense + BM25 -> RRF -> top 10, no reranking."""
 
     def __init__(
         self,
@@ -391,7 +390,6 @@ class FullCorpusRetrievalService:
         sparse_state: SparseState,
         vocabulary_index: dict[str, int],
         client: QdrantClient,
-        reranker_instance: CrossEncoderReranker | None = None,
         *,
         candidate_pool: int = 30,
         rrf_k: int = 60,
@@ -407,7 +405,6 @@ class FullCorpusRetrievalService:
         self.sparse_state = sparse_state
         self.vocabulary_index = vocabulary_index
         self.client = client
-        self.reranker_instance = reranker_instance
         self.candidate_pool = candidate_pool
         self.rrf_k = rrf_k
         self.search_params = search_params
@@ -593,59 +590,10 @@ class FullCorpusRetrievalService:
         t_rrf_end = time.perf_counter()
         timings["rrf_ms"] = round((t_rrf_end - t_rrf_start) * 1000.0, 3)
 
-        # 4. Reranker mode
-        documents: list[RetrievedDocument] = []
-        if self.reranker == "none":
-            rerank_status = "not_applicable"
-            timings["rerank_ms"] = 0.0
-            documents = assemble_final_documents(candidate_docs, fused[:10])
-        elif self.reranker == "minilm":
-            if self.reranker_instance is None:
-                raise ComponentNotReadyError("MiniLM reranker instance is not initialized")
-            t_rerank_start = time.perf_counter()
-            # Check for overlength pairs
-            overlength = False
-            for pid, _ in fused:
-                st = candidate_docs[pid].payload["search_text"]
-                tok_len = self.reranker_instance.input_token_count(query, st)
-                if tok_len > self.reranker_instance.max_length:
-                    overlength = True
-                    break
-
-            if overlength:
-                rerank_status = "skipped_overlength"
-                timings["rerank_ms"] = round((time.perf_counter() - t_rerank_start) * 1000.0, 3)
-                documents = assemble_final_documents(candidate_docs, fused[:10])
-            else:
-                candidate_docs_for_rerank = [
-                    RetrievedDocument(
-                        id=pid,
-                        score=float(score),
-                        text=candidate_docs[pid].payload["search_text"],
-                        metadata={},
-                    )
-                    for pid, score in fused
-                ]
-                rerank_scores = self.reranker_instance.score_documents(query, candidate_docs_for_rerank)
-                ranked_pairs = sorted(
-                    zip(rerank_scores, candidate_docs_for_rerank),
-                    key=lambda item: (-item[0], item[1].id),
-                )
-                stages["rerank"] = [
-                    format_stage_entry(
-                        point_id=doc.id,
-                        payload=candidate_docs[doc.id].payload,
-                        rank=rank,
-                        score=score,
-                    )
-                    for rank, (score, doc) in enumerate(ranked_pairs, start=1)
-                ]
-                final_pairs = [(doc.id, score) for score, doc in ranked_pairs[:10]]
-                documents = assemble_final_documents(candidate_docs, final_pairs)
-                rerank_status = "completed"
-                timings["rerank_ms"] = round((time.perf_counter() - t_rerank_start) * 1000.0, 3)
-        else:
-            raise RetrievalConfigurationError(f"Unknown reranker mode: {self.reranker}")
+        # 4. Không rerank: giữ thứ tự RRF, lấy 10 đầu (rerank thử ở harness 8.1 G4, ngoài service).
+        rerank_status = "not_applicable"
+        timings["rerank_ms"] = 0.0
+        documents = assemble_final_documents(candidate_docs, fused[:10])
 
         counts["final"] = len(documents)
         t_total_end = time.perf_counter()
@@ -708,7 +656,7 @@ def build_full_corpus_retrieval_service(
 
     if retrieval_treatment not in ("dense_bm25_rrf", "native_hybrid_rrf"):
         raise RetrievalConfigurationError(f"Unsupported retrieval treatment: {retrieval_treatment}")
-    if reranker not in ("none", "minilm"):
+    if reranker != "none":
         raise RetrievalConfigurationError(f"Unsupported reranker mode: {reranker}")
 
     # 1. Validate matching build record and source freshness
@@ -776,17 +724,6 @@ def build_full_corpus_retrieval_service(
         # Model không nạp được (thiếu HF cache, lỗi tải) là phụ thuộc chưa sẵn sàng (503), không phải index cũ (409) — C-01.
         raise RetrievalDependencyError(f"Dense model readiness failed for {candidate.candidate_id}") from exc
 
-    # 5. MiniLM reranker if requested
-    reranker_instance = None
-    if reranker == "minilm":
-        try:
-            reranker_instance = CrossEncoderReranker()
-            reranker_instance.load()
-            reranker_instance.warm_up()
-        except Exception as exc:
-            dense_runner.close()
-            raise RetrievalDependencyError("MiniLM reranker readiness failed") from exc
-
     return FullCorpusRetrievalService(
         candidate=candidate,
         retrieval_treatment=retrieval_treatment,
@@ -795,7 +732,6 @@ def build_full_corpus_retrieval_service(
         sparse_state=sparse_state,
         vocabulary_index=vocab_index,
         client=client,
-        reranker_instance=reranker_instance,
         candidate_pool=candidate_pool,
         rrf_k=rrf_k,
         search_params=search_params,
