@@ -47,6 +47,11 @@ Xong: report + STATUS + dòng của mình ở bảng Session ⇒ nhắn A. Dừn
 - **C41 (trước C39) — review plan K1** (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k1_plan.md`, B, sha `ad71594e17e7`) chỉ dựa trên mục
   "Căn cứ để review" của plan (WORKFLOW §9.1); đầu ra `phase_8_2_k1_plan_review.md`. A trả lời §7 của plan: (1) sàn 120 / 168 chỉ của khâu trả lời — với
   K1 chỉ theo dõi; (2) ngưỡng 5 / 0 cố định; (3) quyền B commit + push `p82-k1`, paid ≤ 0,04 USD, judge sub-agent — ghi khi A duyệt sha.
+- **C43 — chạy R2 (C, A duyệt plan `phase_8_2_r2_plan.md` bản sha `aa808a85184c` lúc 22:08)** sau B49 2 vòng ready (`phase_8_2_r2_plan_review.md`; ghi chú
+  chữ dòng 99 "tất định" không đổi tiêu chí — để nguyên, không đổi sha). Spec hiện hành `cd910c4c4169`. Quyền: **C commit + push nhánh `p82-r2`**
+  (worktree `/tmp/c_r2`, từ `811d25d`); **paid ≤ 0,06 USD** (`gpt-6-luna`, pilot trước); judge Claude sub-agent. Không merge `main`. Thắng ⇒ **trình User**
+  (đổi hợp đồng trả lời, D4) kèm ~10 câu mẫu. Report `phase_8_2_r2_implementation.md` ⇒ B review.
+- **K1 (B48) xong: kém hơn** (phạm sàn câu 154; 2 / 37 / 1) — C42 ready. Báo cáo trên nhánh `p82-k1`.
 - **B48 — chạy K1 (B, A duyệt plan `phase_8_2_k1_plan.md` bản sha `b8f1597f6a0f` lúc 21:50)** sau C41 2 vòng ready (`phase_8_2_k1_plan_review.md`).
   Quyền: **B commit + push nhánh `p82-k1`** (worktree `/tmp/b_k1`, từ `811d25d`); **paid ≤ 0,04 USD** (`gpt-6-luna`, chỉ lượt sinh khi qua tầng tìm, pilot
   10 câu trước); judge Claude sub-agent (quota). Không merge `main`, không ghi Qdrant. Report `phase_8_2_k1_implementation.md` ⇒ C review.
