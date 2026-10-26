@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 22:3x 25/10/2026 (A, **KẾT PHIÊN đêm 25/10** — User tắt máy: "session sau chúng ta sẽ tiếp tục"). Cách dùng: `WORKFLOW.md` §3, §6,
+Cập nhật: 14:16 26/10/2026 (A, **mở phiên 26/10**: quyền phiên, giao C đợt 3, B40; kết phiên trước 22:3x 25/10). Cách dùng: `WORKFLOW.md` §3, §6,
 §7, §9. Chỉ giữ việc đang mở; việc đã xong: `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`, `PROJECT_HISTORY.md` (mục 25/10 22:3x).
 Bản handoff đầy đủ trước khi rút gọn lần này (chi tiết từng mục việc đợt 1–2, rà code B25 / C34): `git show 76ff419:session_prompt/CURRENT_HANDOFF.md`.
 
@@ -60,9 +60,9 @@ model lỗi tạm. Vẫn context 5, chưa NFC. Qdrant `:6335` còn **1** collect
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-77` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | điều phối rà code + sửa 5 gói; duyệt plan 1b, đợt 3; 4 chỗ báo cáo; yêu cầu ChatGPT; sổ cải tiến vòng 4 | **kết phiên 22:3x** — `STATUS_A.md` |
-| B — thực thi | `hue-rag-c3` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 22:28** — xong: B25, kiểm chéo, B26, review 1a / 3, gói 1b (`1e4acd0`), review plan đợt 3 (bản 3 ready), `ung_vien_cai_tien_B.md`; **phiên sau: review nhánh `dot3`** khi C xong; ~0,0004 USD | xem `STATUS_B.md` |
-| C — thực thi | `hue-rag-7f` (đêm 25/10) | Claude Opus 5.5 | trực tiếp | **kết phiên 22:29** — xong: C34, kiểm chéo B25, review B26 / plan 1b / gói 1b, C35 gói 1a (`9e6d371`), gói 3 (`47a4e32`), 3c free, ứng viên, plan đợt 3; **đợt 3 DỞ 3 / 12 commit trên `dot3` (`5e237bb`, đã push)** | `STATUS_C.md`; ~0,0016 USD (0,000427 đo + ước cổng) |
+| A — điều phối | `hue-rag-b0` (26/10) | Claude Opus 5.5 | trực tiếp | điều phối đợt 3; trao đổi User kết quả ChatGPT ⇒ tài liệu thiết kế đợt cải tiến | đang làm |
+| B — thực thi | `hue-rag-3e` (26/10) | Claude Opus 5.5 | trực tiếp | **B40** đối chiếu kết quả ChatGPT với code (chỉ đọc) ⇒ sau đó review nhánh `dot3` khi C xong | đang làm |
+| C — thực thi | `hue-rag-87` (26/10) | Claude Opus 5.5 | trực tiếp | **đợt 3**: rebase `dot3` lên `main` ⇒ commit 4 … 12 | đang làm |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -74,8 +74,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Luật User phiên đêm 25/10 (giữ cho tới khi xong việc sửa code):** báo cáo "nên sửa gì" trước, **chỉ sửa khi User đồng ý** (đã đồng ý 5 gói
   19:4x); **commit + push trước mỗi lần sửa code**; sau sửa hệ thống phải hoạt động bình thường, ổn định, tối ưu, đóng gói đầy đủ (cổng ổn định
   dưới); được thử nghiệm / so sánh / đánh giá để chọn cách tốt nhất; phase trước ổn định mới sang phase sau.
-- **Phiên đêm 25/10 (User 18:2x) — HẾT HẠN, hỏi lại:** A tự điều phối B/C rộng; API ≤ 1 USD cả phiên (dùng ~0,003). Trần 8.2: 0,5 USD (spec;
-  đã dùng 0,0369). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
+- **Phiên 26/10 (User 14:1x, hết hạn cuối phiên):** A tự điều phối B/C rộng như phiên trước; API ≤ 1 USD cả phiên; C commit / push nhánh `dot3`
+  tiếp (chỉ đợt 3). Trần 8.2: 0,5 USD (spec; đã dùng 0,0369). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10).
 
 ## File private quan trọng (không commit)
@@ -112,6 +112,11 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   kho trong file tracked. Paid ≤ 0,003 USD cả đợt (đã ~0,0004).
 - **Lệch plan đã ghi:** test C-21 assert `"target is non-empty"` (lý do dừng thật). B-11 thêm cache kiểm token mỗi tài liệu (chia toàn kho 23,8 s; không
   cache 50,7 s). Chi tiết dở: `STATUS_C.md`.
+- **Phiên 26/10 (A giao 14:1x):** C `git switch dot3` (working tree chung; B, A không sửa file trong working tree lúc này — A chỉ sửa tài liệu
+  `session_prompt/`, `report_agent/` trên `main` qua worktree `/tmp/a_docs` nếu cần) ⇒ **rebase `dot3` lên `main` ngay đầu** (main..dot3 chỉ thêm
+  docs) + `git push --force-with-lease origin dot3` ⇒ `mkdir -p /tmp/c42` ⇒ chạy lại mốc D1 / D2 ⇒ commit 4 … 12 ⇒ report ⇒ `git switch main` ⇒
+  nhắn A. Paid ≤ 0,003 USD cả đợt. B review trong **worktree riêng chỉ đọc** `/tmp/b_dot3` từ `origin/dot3` (symlink `data/`, `knowledge-base-hue/`,
+  `.venv` nếu cần chạy), không phụ thuộc nhánh đang checkout.
 - **Đóng:** C report `sua_dot3_implementation.md` ⇒ B review toàn nhánh ⇒ A merge ff + 4 chỗ báo cáo (`LUONG`, `BAO_CAO_CHIA_DOAN`, `BAO_CAO_KHO_DU_LIEU`
   / `BAO_CAO_SINH…` nếu hành vi đổi, nhật ký) + `Project_Status.md` + cổng ổn định trên `main`.
 
@@ -134,6 +139,15 @@ hơn; giữ mốc hiện tại làm base; A, B, C được so sánh, thử nghi�
 - Ứng viên: C 12 dòng (trả lời / đánh giá — top: reasoning `none` xác nhận test ~0,007 USD; bỏ sớm E2; đo bám nguồn bằng code; log usage + độ trễ ở API;
   đa dạng nguồn / MMR; tách câu so sánh), B 10 dòng (dựng kho — sửa 22 mâu thuẫn chắc rồi build lại; câu hóa hàng bảng; dòng ngữ cảnh tất định; bỏ
   huydang; trọng số tiêu đề BM25; dense local mới — cần User; build không ngừng phục vụ…). Ước ~0,08–0,09 USD mỗi bên nếu làm phần đầu.
+- **Kết quả ChatGPT đã có** (User 14:1x 26/10): `gửi chatgpt/2026-10-25/kết quả nghiên cứu/HUE_RAG_NGHIEN_CUU_CAI_TIEN_TUNG_KHAU_2026-10-26.md`
+  (private, 155 dòng; 10 câu C1–C6, D1–D4 + ma trận ưu tiên + giao thức đo). A đã WebFetch đối chiếu: ALCE 85,1 % / 77,6 % (khớp, phụ lục G.5);
+  Anthropic contextual 5,7 → 3,7 → 2,9 → 1,9 % (khớp); trang model `gpt-6-luna`: effort `none / low / medium (mặc định) / high / xhigh / max` — không
+  có `minimal`; runtime hiện **không gửi** reasoning ⇒ đang chạy `medium`.
+- **B40 (B, chỉ đọc, A giao 14:1x 26/10):** đối chiếu kết quả ChatGPT với code + số đo thật của hệ thống: mỗi mục C1–C6, D1–D4 ghi (a) hệ thống đã có
+  / chưa có (`file:dòng`), (b) chỗ báo cáo mô tả sai hệ thống (ví dụ D3 nói "BM25 tự viết, không dùng sparse Qdrant" — kiểm), (c) mục trùng /
+  khác `ung_vien_cai_tien_{B,C}.md`, (d) dữ liệu sẵn có để đo (đoạn đúng 55 câu, nhãn loại câu…) và cỡ mẫu thật có được. Không đề xuất thiết
+  kế thí nghiệm chi tiết (A làm). Không mở câu kín; không chép nội dung kho / Golden / nguyên văn báo cáo. Đầu ra:
+  `report_agent/2026-10-26_cai_tien_tung_khau/doi_chieu_nghien_cuu_B.md`. 0 USD. Khi C báo xong đợt 3 ⇒ B dừng B40 (ghi chỗ dở) và review `dot3`.
 - Bước: kết quả ChatGPT ⇒ A gộp ⇒ **một** tài liệu thiết kế `docs/superpowers/specs/` (tiêu chí ghi trước `run-experiment`, cỡ mẫu, trần tiền, mốc =
   hệ thống sau 5 gói) ⇒ session khác review ⇒ User duyệt một lần.
 
