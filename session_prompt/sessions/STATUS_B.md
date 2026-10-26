@@ -44,6 +44,9 @@ Bản đầy đủ trước khi rút gọn (lịch sử phiên chiều + tối 2
   worktree `/tmp/b_k1` đã gỡ. Tiếp: B49 (review plan R2 của C).
 - **B49** (A giao 21:5x, review plan R2 của C, 0 USD): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_plan_review.md` (mới).
   **XONG 22:0x — changes_requested 0/1/2** (M-1 latency sinh ±50 ms không phân xử được với 30 câu: SD chênh 808 ms ⇒ ±289 ms; m-1 pilot OOS; m-2 chữ ký `paired_stats`). Bản kiểm `61a6aa78c6b8`.
+  Vòng 2 (22:1x): plan R2 `aa808a85184c` ready (3 finding đóng; ghi chú chữ dòng 99). Spec 8.2 §10: B kiểm 3 lần (đo tốc độ theo khâu, R1, §7 mục tiêu sản phẩm) — đạt (`ce8b310`).
+  K1 n-1 (C42) sửa trên nhánh `p82-k1` `870a5d5`.
+- **B50** (A giao 22:2x, plan K3, 0 USD tới khi duyệt): **khai báo** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k3_plan.md` (mới).
   Hết file khai báo.
 - (Đã xong, giữ làm hồ sơ) **File khai báo sửa B41 / B42 (20:37):** trên nhánh `p82-b1` (worktree): `backend/config/settings.yaml`, `backend/core/settings_loader.py`,
   `backend/retrieval/full_corpus.py`, `backend/tests/test_phase6_settings.py`, `backend/tests/test_full_corpus_retrieval.py`,

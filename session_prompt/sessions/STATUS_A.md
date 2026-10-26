@@ -15,6 +15,14 @@ Terminal: `hue-rag-2d` · Vai: điều phối. B = `hue-rag-23`, C = `hue-rag-b5
 ## Tiền paid phiên này
 - 0 USD.
 
+## Đã học / bẫy gặp (phiên tối 26/10)
+- 22:08: plan R2 đổi sha **sau** khi C báo sha cho A (C sửa ghi chú chữ của B) ⇒ A ghi duyệt sai bản (`aa808…`, file thật `b70ea…`) trong `7e60c07`; bắt
+  khi `sha256sum` trước commit cho thấy lệch. ⇒ vòng cải tiến: A luôn tính sha **từ file** ngay lúc ghi duyệt (không chép sha từ tin nhắn); người viết
+  không sửa plan sau khi báo sha.
+- 20:5x: auto mode chặn `git push origin --delete dot3` ⇒ chờ User `!`.
+- 20:5x: lệnh ghép `git add … && commit && push --delete` bị chặn cả khối ⇒ chưa stage gì; tách lệnh xóa nhánh ra riêng.
+- Quét câu kín: file ghi chú `*sealed*.md` + trường `sources` báo nhầm hàng trăm dòng ⇒ chỉ quét q / a (đo trước khi bật).
+
 ---
 Phần dưới: trạng thái kết phiên 26/10 (16:4x).
 
