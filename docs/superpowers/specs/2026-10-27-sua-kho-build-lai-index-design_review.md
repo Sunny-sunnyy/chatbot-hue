@@ -82,3 +82,41 @@ Spec do A viết; Q1–Q5 §4 User đã chốt — review **không** bàn lại 
 ## 5. Decision và bước tiếp theo
 
 `changes_requested`: A sửa thành bản mới (M-1, M-2 bắt buộc; minor nên gộp), báo sha ⇒ C kiểm phần sửa ⇒ User duyệt sha.
+
+## Vòng 2 — kiểm phần sửa (bản 2, sha `cad3d25cffef`, commit `3d53370`)
+
+Decision vòng 2: **ready_for_user_confirmation** (0 blocker / 0 major / 3 minor mới — không chặn; A sửa thì là bản mới, C kiểm lại phần đó)
+Date: 15:28 27/10/2026 (`date`). C tính lại sha từ file: `cad3d25cffef`. Đọc `git diff fa192f8 3d53370` của spec (chỉ phần sửa + đường bị ảnh hưởng). Overlap scan spec bản 2: 0 trùng.
+
+| Finding vòng 1 | Bản 2 | Kết quả |
+|---|---|---|
+| M-1 gold offset | Bước 5 gold v4 (tìm lại nguyên văn, đúng 1 lần, từ chối ghi đè; 3 trích dẫn bị chồng ⇒ đề xuất + session khác kiểm + User duyệt; `GOLD_PATH` ⇒ v4; v3 giữ); §6 "Gold v4: 0 trích dẫn mất"; §7 quyền; §8 rủi ro; bước 12 (8B) đo theo v4 | **đóng** |
+| M-2 bộ "trước" | Bước 0: sinh 176 câu trên chatbot cuối 8.2 + index hiện tại **trước khi đụng kho**, plan đo ghi trước + review trước bước 0; bước 9: hai bộ chấm cùng lượt mù, **cùng Golden đã sửa**, câu chạm fact báo riêng; §6 A/A = 2 | **đóng** (luật cụ thể cho câu chạm fact để plan đo ghi trước — chấp nhận) |
+| m-1 mẫu chunker | Bước 4 + §6 "test mẫu chunker đạt" + §7 quyền sửa file mẫu | **đóng** |
+| m-2 xóa đủ ba | Bước 6 | **đóng** |
+| m-3 ngừng phục vụ | Bước 1: từ bước 2 khởi động lại bị từ chối, làm 2–6 liền | **đóng** (bảng §8 vẫn ghi "Chatbot ngừng khi build" — xem n-3) |
+| m-4 quyền / dừng / tiền | §7 đủ thao tác ghi; mục "Dừng + khôi phục"; hai lượt ≈ 0,074 USD, trần 0,15 (không A/A mới) | **đóng** (khôi phục thiếu một phần — n-2) |
+| m-5 T1 | Bước 7: ghi sha mới, thay chỗ tracked trỏ `cefb2d1ad609`, plan B3 giữ (đã chạy trước) | **đóng** |
+
+### n-1 (minor) — nguồn của "A/A = 2" ghi chưa đúng
+
+- §6 ghi "A/A = 2 (cận trên đã dùng ở plan B3, cùng cấu hình context 10)". Số 2 của plan B3 là quy về **33 câu**, ghép nhiễu context 5 (7B Run 1 ↔ 2) với context 10. Phép so ở đây
+  là context 10 ↔ context 10 trên **176 câu**: nguồn đúng là A/A B1 ↔ G2.1a 176 câu (`phase_8_2_b1_implementation.md` §4 trên `p82-b1`): câu tụt Completeness **1**, Accuracy **2**
+  (câu đổi điểm 5 / 5). Con số 2 vẫn đứng được (= cận trên của hai chỉ số) — chỉ cần sửa câu dẫn nguồn (và ghi rõ đếm trên 176 hay trên tập số chính).
+
+### n-2 (minor) — "khôi phục" chưa hoàn lại các thay đổi ngoài kho / Qdrant
+
+- Mục "Dừng + khôi phục" chỉ nêu file kho từ `meta/` + snapshot + build record + sparse state. Nếu dừng sau bước 3–5 còn phải hoàn lại `settings.yaml` (`exclude_files` — nếu không,
+  discovery ra 204 file trong khi build record khôi phục ghi 205 ⇒ runtime từ chối), file mẫu chunker (bước 4) và `GOLD_PATH` (bước 5).
+- **Tiêu chí đóng:** thêm ba mục đó vào danh sách khôi phục (code: `git checkout` đúng file / revert commit; mẫu chunker: từ backup `meta/`).
+
+### n-3 (minor) — bước 5 có User duyệt nằm trong cửa sổ "làm 2–6 liền"
+
+- Bước 1 yêu cầu bước 2–6 làm liền (khởi động lại bị từ chối), nhưng bước 5 cần User duyệt 3 trích dẫn mới ⇒ có thể kéo dài thời gian không khởi động lại được. Build (bước 6)
+  không phụ thuộc nhãn đoạn đúng.
+- **Tiêu chí đóng:** cho phép bước 5 (phần User duyệt) làm sau bước 6 — chỉ cần xong trước mọi lần đo tầng tìm theo nhãn; hoặc ghi rõ User duyệt ngay trong phiên. Sửa dòng §8
+  "Chatbot ngừng khi build" thành "không khởi động lại được từ bước 2 tới hết bước 6".
+
+## Vòng 2 — kết luận
+
+Hai major và năm minor vòng 1 đều đóng. Ba minor mới không đổi quy trình chính; A có thể sửa trước khi trình User (bản mới, C kiểm phần sửa) hoặc trình bản 2 kèm ghi chú.
