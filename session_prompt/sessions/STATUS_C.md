@@ -26,6 +26,7 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **C50 xong 09:20 27/10/2026:** review plan K3b (sha `4f92e478cb65`) ready (0/0/4 minor) — `phase_8_2_k3b_plan_review.md`. **A duyệt plan R1 bản 2 `8e76e77e0448` (`78a5f05`)**; quyền C: commit + push `p82-r1`, ≤ 0,05 USD, judge sub-agent. Tiếp: chạy R1.
 **R1 chạy 09:25 27/10/2026: KÉM HƠN — phạm sàn ở pilot** (câu 168, từ chối đúng ở B1, bị trả lời vòng: thông tin cùng chủ đề có `[n]` + câu không citation "nguồn không nêu…" — cùng dạng R2 câu 160). OOS 12 / 12 từ chối; 0 API 500 (172, 173 có `[n]`). Dừng theo plan §3 bước 2. **0,0049030 USD thật.** `origin/p82-r1` `63a472f` (harness `d2646e6` + report). Worktree `/tmp/c_r1` đã gỡ (symlink + worktree). Dữ liệu `data/phase_8_2/r1/`. Chờ B review report + harness.
 **C51 (A giao 09:26 27/10/2026) — khai báo file:** private `data/cai_tien_tung_khau_2026-10-26/c51/`; report `report_agent/2026-10-26_cai_tien_tung_khau/c51_kiem_sau_sinh_kha_thi.md` (mới, working tree chung). 0 USD, chỉ đọc lượt đã ghi; dev đọc tay, test chỉ đếm tổng.
+**K3b bản 2 vòng 2 ready** (`57dad7150322`, mục Vòng 2 trong review). **C51 xong 09:31 27/10/2026:** L2 bắt 160 + 168 (trên mẫu đã chỉnh), 0 cờ ở B1 dev / test; mẫu 10 cờ khác: 7 / 10 là nội dung có ích ⇒ dùng được làm rào cho R1 (về đúng hợp đồng từ chối), không cho R2. Report untracked, quét trùng 0.
 
 ## Còn treo (phiên sau xử lý trước)
 

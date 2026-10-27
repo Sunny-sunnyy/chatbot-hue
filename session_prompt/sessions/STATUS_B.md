@@ -20,7 +20,16 @@
   `/tmp/b_k3b` (nhánh `p82-k3b` cục bộ từ `80e7329`, không upstream, **chưa commit**): `k3b.py` (sha `255d48174723`) + `tests/test_k3b_contract.py`
   (4 passed). Bước 0 miễn phí đã chạy: `data/phase_8_2/k3b/base_dev.jsonl`, M2' 40/40 khớp K3, 0 trường lệch. 0 USD.
   **File khai báo sửa:** `k3b.py`, `test_k3b_contract.py` (worktree), plan K3b (working tree chung).
-- **File khai báo khác: không.** Không server, không GPU, không lượt nào đang chạy.
+- **B58b review R1 xong (09:32 27/10/2026):** ready (0 / 0 / 1 minor: `uncited_sentences` không tách câu khi `[n]` sau dấu chấm ⇒ đếm 0 ở 168 / R2 160).
+  File `phase_8_2_r1_review.md` sha `f55c572f9b6f` (A commit). Script `/tmp/b58/` đã xóa.
+- **B59 K3b (đang, dừng chờ A từ 09:3x):** plan duyệt `57dad7150322` (`765f45a`); harness `7c0467d` trên `p82-k3b` (chưa push). M1 ✓, M2' ✓. Pilot n:
+  0 lỗi, 0 sai hợp đồng, 0,0035036 USD, rerank p50 1,76 / p95 2,09 s. **L1 rest n: luna viết chữ sau JSON ⇒ SDK ném pydantic ValidationError ⇒
+  lỗi kỹ thuật (plan §2 loại 1) ⇒ nhánh n kém hơn; harness chỉ bắt OpenAIError + ghi file ở cuối ⇒ mất dòng + usage của lượt** (ước ~21 lần ≈ 0,0074,
+  ≤ 0,0105 USD). Đề xuất A: sửa bắt lỗi + ghi từng dòng rồi chạy nhánh m. Worktree `/tmp/b_k3b` còn (+ symlink).
+- **File khai báo sửa:** `k3b.py` (worktree, chờ A). Tiền paid phiên 27/10: 0,0251129 (K3) + 0,0035036 (pilot n) + ≈ 0,0074 ước (≤ 0,0105) ⇒ **≤ 0,0391 USD**.
+- **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả
+  ở cuối lượt ⇒ một exception làm mất usage đã trả tiền. Bài học: harness gọi API trả phí ghi từng dòng ngay (append) và bắt mọi lỗi của một lần gọi
+  thành dòng lỗi; `responses.parse` có thể ném `pydantic.ValidationError` (chữ thừa sau JSON) ở `reasoning none`. Không server, không GPU, không lượt nào đang chạy.
 - **Worktree của B: không còn.** Đã gỡ `/tmp/b_p82b1`, `/tmp/b_p82b1_old`, `/tmp/b45_wt`, `/tmp/b_k1` (gỡ symlink trước). File tạm `/tmp/b45*`,
   `/tmp/b47`, `/tmp/k3_before.md` đã xóa.
 - Các mục `/tmp/b_*` còn trên máy **không phải của B phiên này**: `b_vong1..4`, `b_moc*`, `b_promo*`, `b_ghep`, `b_b1_final`, `b_low_final`, `b_p5`,
