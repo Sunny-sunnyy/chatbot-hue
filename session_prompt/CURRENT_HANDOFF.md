@@ -82,7 +82,7 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-51` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | điều phối B71 / C62; review C62; brainstorm tính năng mới với User (chỉ bàn); kế hoạch mốc cuối 8.2 | `STATUS_A.md` |
-| B — thực thi | `hue-rag-2d` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **B71** rebase B1 (dưới) — **chờ review C** (`p82-b1` `c3d5607` trên `576f84e`, đã push; report `phase_8_2_b1_rebase2_implementation.md` trên nhánh) | `STATUS_B.md` |
+| B — thực thi | `hue-rag-2d` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | B71 xong (C ready); B72 plan B3 duyệt `27e75be5ed44`; C64 review ready; **B73 xong** (`data/sua_kho_2026-10-27/README.md`) — rảnh, chờ việc | `STATUS_B.md` |
 | C — thực thi | `hue-rag-86` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **C62** sửa guide / report cũ (dưới) ⇒ review B71 | `STATUS_C.md` |
 
 Phiên trước (27/10 sáng, kết 13:30): A `hue-rag-5f`, B `hue-rag-31`, C `hue-rag-5b` — B53–B70 / C46–C61 xong; tiền ≈ 0,197 USD.
@@ -202,6 +202,23 @@ lẫn hai thay đổi). Chặn chính: B0 (User). Index Qwen3-8B (tồn từ 7A2
 - Được dùng sub-agent (≤ 3 file / sub-agent, grep loại `evaluation/`, `meta/`, `*sealed*`). **Dừng + báo A:** mục nào đòi chọn một phía khi nguồn trong kho ngang nhau.
 - **Xong:** nhắn A (số mục theo nhóm, đường dẫn). A viết spec đợt sửa kho từ đó.
 
+- **B73 XONG (14:31):** 41 sửa (diff) / 12 chuyển nhóm / 16 câu User / 78 tra ngoài / inventory 33 đoạn (`data/sua_kho_2026-10-27/README.md`); sự cố s7 (Golden Foods
+  cũ) ⇒ edit đánh dấu `[s7-golden]`. A kiểm: kho không đổi (0 file mới từ 14:14), 41 diff. Spec nháp `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`.
+
+### B74 — kiểm độc lập đề xuất nhãn 3 câu test (C64 mục 3) + soạn diff tên hành chính sót (giao 14:33; 0 USD)
+
+1. Kiểm `data/phase_8_2/gold_fix_proposal_2710/proposal_test_c64.jsonl` theo cách C61 kiểm C56 (quote = văn bản file tại offset; chunk trúng; hiệu ứng); ghi
+   `report_agent/2026-10-26_cai_tien_tung_khau/c64_de_xuat_nhan_test_review.md`. **Không sửa `gold_v2.jsonl`.**
+2. Phần "phát hiện ngoài mục" B73 (~15 tên hành chính cũ, cấp chưa thống nhất): soạn diff cùng cách (`data/sua_kho_2026-10-27/diffs_them/`), chỉ căn cứ trong kho;
+   grep **chỉ** bằng `grep_kb.sh` (bẫy s7). Không sửa kho.
+
+### C66 — review đề xuất sửa kho B73 (giao 14:33; 0 USD; không sửa kho)
+
+- `data/sua_kho_2026-10-27/de_xuat_sua.md` + `diffs/` (41): mỗi diff đối chiếu file kho thật — căn cứ có trong kho, sửa đúng phạm vi mục, luật curated `Session_Prompt.md` §5.
+  Ưu tiên: edit `[s7-golden]` (đặc biệt loại căn cứ ngoài ghi chú :39-44 và loại suy 2 bước), 4 chỗ "edit vượt dòng". **Không đọc `evaluation/`, Golden, câu kín**;
+  grep loại `evaluation/`, `meta/`, `*sealed*`. Ghi `data/sua_kho_2026-10-27/review_c66.md` (giữ / bỏ / sửa từng mục) + report tracked ngắn (chỉ số đếm)
+  `report_agent/2026-10-25_ra_soat_noi_dung_kho/sua_kho_de_xuat_review.md`.
+
 ### C64 — review plan B3 + nợ nhỏ (giao 14:15 27/10/2026; 0 USD trừ cổng ổn định ≈ 0,0005)
 
 1. **Review plan B3** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md` (sha `9d60b16b63da`) theo WORKFLOW §9.1: **chỉ dựa trên mục "Căn cứ để review"**
@@ -211,6 +228,14 @@ lẫn hai thay đổi). Chặn chính: B0 (User). Index Qwen3-8B (tồn từ 7A2
    **Mục 2 XONG (14:25):** A review đạt (diff 3 dòng, thử ngược đỏ, cổng 2 câu ≈ 0,000379 USD; guide 6 sửa theo); commit. B70 m-1 ⇒ bẫy `Project_Status.md` §8.
 3. Đề xuất nhãn đoạn đúng cho 3 câu test C56 (95, 130, 138) theo cách C56 (`c56_de_xuat_sua_nhan.md`) ⇒ file đề xuất private trong `data/phase_8_2/gold_fix_proposal_2710/`;
    **không sửa `gold_v2.jsonl`** (User duyệt). Report tracked mô tả mức loại câu.
+
+- **C64 XONG** (mục 1–3). Mục 3: đề xuất nhãn 3 câu test (`data/phase_8_2/gold_fix_proposal_2710/proposal_test_c64.jsonl`; report `c64_de_xuat_nhan_test.md`;
+  test B1 7 ⇒ 9, K3b-m 10 ⇒ 11 / 15; kết luận đã đóng không đổi) ⇒ **B kiểm độc lập** (sau B73) ⇒ A trình User áp vào `gold_v2` (bản v3).
+
+### C65 — kiểm câu 138 B1 test: `citation_error` "no citation" dù có `[Nguồn n]` (giao 14:31; 0 USD, chỉ đọc)
+
+- Lượt B1 chạy với validator nào (so `9e6d371`); chuỗi trả lời đã lưu qua validator `main` hiện tại (offline) có lỗi không (lỗi ⇒ production trả 500 ⇒ ảnh hưởng B3);
+  đếm dòng giống vậy trong `b1_{dev,test}.jsonl`. Report `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md` (mức loại câu).
 
 ### C63 — căn cứ cho brainstorm tính năng mới (giao 14:0x 27/10; 0 USD, chỉ đọc; review B71 ưu tiên hơn)
 

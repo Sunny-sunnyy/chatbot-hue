@@ -1,12 +1,14 @@
-# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 14:2x 27/10/2026)
+# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 14:31 27/10/2026)
 
 Terminal: `hue-rag-2d` (A = `hue-rag-51`, C = `hue-rag-86`) · Agent: Claude Opus 5.5 · Vai: thực thi; User 27/10 chiều: việc A giao = "làm đi".
 
 ## Đang làm (phiên 27/10 chiều)
-- **B73 — soạn đợt sửa kho** (A giao 14:15; 0 USD; A cần biết mục chưa xong trước 16:15): chỉ đọc kho; đầu ra `data/sua_kho_2026-10-27/` (private);
-  7 sub-agent đọc lại 52 mục "sửa khi build" (K091 B tự làm cùng việc inventory). Không sửa `knowledge-base-hue/`, không build, không ghi Qdrant.
-- **B72 — plan B3 chờ review** (A giao 14:1x; xong 14:11): `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md` bản 1, sha `9d60b16b63da`
-  (chưa commit). **Không mở câu kín** — chỉ metadata manifest (36 dòng, md5, 4 field, phân bố loại). 0 USD.
+- **B73 — soạn đợt sửa kho: XONG** (A giao 14:15; xong 14:31 27/10/2026; 0 USD; quota ≈ 0,68 triệu token cho 7 sub-agent): `data/sua_kho_2026-10-27/` (README).
+  53 mục "sửa khi build" ⇒ **41 sửa** (41 diff, bad 0 / conflicts 0) + 12 chuyển nhóm (9 tra ngoài, 3 không cần sửa; 8 flag_A); 16 câu hỏi User; tra ngoài
+  69 + 9 = 78 (7 loại) + nháp ChatGPT (chưa gửi); inventory: 33 đoạn, 205 → 204 file. Kho không đổi (find -newermt = 0), Qdrant 8.459.
+- **B72 — plan B3 A DUYỆT bản 2** sha `27e75be5ed44` (C review vòng 2 ready 0/0/1; commit `962c386`). Bản 1 `9d60b16b63da` ⇒ C changes_requested 0/2/4 ⇒ sửa
+  theo quyết định A (M-1 câu 500 citation chấm 1; M-2 B khớp số dòng từ `sealed_user_feedback_private.md`). **Không sửa plan nữa.** B3 chạy khi: B0 xong + B1 merge +
+  User quyết mở câu kín; người chạy B. **Không mở câu kín** — chỉ metadata manifest (36 dòng, md5, 4 field, phân bố loại). 0 USD.
 - **B71 — C review ready 0/0/2** (`phase_8_2_b1_rebase2_review.md`) (A giao 13:50; xong 13:59): `p82-b1` rebase lên `main` `576f84e`, không xung đột ⇒ `2fa6f16`, `4653013` + report `c3d5607`;
   `git push --force-with-lease=p82-b1:811d25d` ⇒ `origin/p82-b1` = `c3d5607`. Không merge.
   Kết quả: file B1 giống byte nhánh cũ; 6 file test 50 passed (main 49, +1 NFC; cùng 1 failed + 1 error cần key); T1 giống byte `cefb2d1ad609` (158); T5 10 / 10;
@@ -15,11 +17,16 @@ Terminal: `hue-rag-2d` (A = `hue-rag-51`, C = `hue-rag-86`) · Agent: Claude Opu
 - Tiền phiên chiều: **≈ 0,000325 USD** (token log 2 câu cổng).
 
 ## Đang khai báo sửa (phiên 27/10 chiều)
-- B73: chỉ file mới trong `data/sua_kho_2026-10-27/` (private). Ngoài ra **không** (worktree `/tmp/b71_b1` đã gỡ, `/tmp/b71_*` đã xóa, server tắt).
+- **Không** (worktree `/tmp/b71_b1` đã gỡ, `/tmp/b71_*` đã xóa, server tắt).
 
 ## Đã học / bẫy gặp (phiên 27/10 chiều)
 - Log của worktree ghi ở `/tmp/<wt>/backend/logs/application.log` và pytest `test_api_chat.py` cũng ghi `chat_metrics` vào đó ⇒ đếm "dòng mới" phải lấy mốc
   ngay trước khi gửi câu (B71: mốc 5 do pytest, không phải 0).
+- **Sự cố B73 (báo A, phát hiện khi sub-agent s7 trả báo cáo; ghi 14:30 27/10/2026):** sub-agent s7 (foods) chạy `grep -rn` trên cả `knowledge-base-hue/foods/` ⇒ đọc
+  nhầm `foods/evaluation/` (Golden Foods cũ: `tests.jsonl`, `test2.jsonl`, `golden_v2*`, `golden_v3*`; không phải câu kín), thấy vài đáp án mẫu có tên phường.
+  **Nguyên nhân:** brief B cấm đọc `evaluation/` và đưa `grep_kb.sh` (chỉ quét 205 file runtime) nhưng **không cấm grep -r thẳng vào kho** — luật bằng lời, không
+  có rào. **Cách tránh:** brief sub-agent động vào kho ghi "chỉ grep bằng `grep_kb.sh`; cấm `grep -r` / `rg` / Glob trên `knowledge-base-hue/`"; cân nhắc
+  rào bằng máy (A — vòng cải tiến). A quyết (tin nhận trước 14:30): không làm thêm với sub-agent; mọi edit s7 đánh dấu `[s7-golden]`, review chỉ theo căn cứ trong kho.
 - C B71 m-1: script cổng nên **chép các dòng `chat_metrics` mới vào `data/`** trước khi gỡ worktree (gỡ worktree xóa luôn log ⇒ mất bằng chứng log).
 
 ---

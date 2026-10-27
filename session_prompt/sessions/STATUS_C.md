@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 14:30 27/10/2026 (C64 xong — chờ A)
+# STATUS C — cập nhật 14:31 27/10/2026 (đang C65)
 
 Terminal: `hue-rag-86` (phiên mới 13:40 27/10; trước `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi. B = `hue-rag-2d` (B tự báo), A = `hue-rag-51` (A xác nhận) — trực tiếp.
 User 13:45 27/10/2026 (phiên mới, nhắc lại 08:41 27/10): C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
@@ -6,7 +6,8 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang làm
 
-- **Không** — C64 xong 14:30 27/10/2026, chờ A. Mục tiêu tiếp: A giao.
+- **C65** (A giao 14:31, 0 USD, chỉ đọc): câu 138 b1_test có `citation_error` dù viết `[Nguồn n]` — validator nào, validator hiện tại có lỗi không, đếm dòng giống vậy. Đầu ra `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md`.
+- C64 xong 14:30 27/10/2026, chờ A. Mục tiêu tiếp: A giao.
 - C64 (A giao 14:15): (1) review plan B3 — vòng 1 `9d60b16b63da` changes_requested 0/2/4; vòng 2 `27e75be5ed44` **ready 0/0/1** (m-5 giờ dòng 3), file
   `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan_review.md` (chưa commit); (2) `dense_ms` làm tròn — A review + commit `dfbcca5`; report
   `c64_dense_ms_implementation.md`, review B `c64_dense_ms_review.md`; ≈ 0,000379 USD; (3) nhãn 3 câu test: 95 không đổi, 130 thêm 1 khoảng, 138 gắn thêm trích dẫn 2, 3 —
@@ -17,7 +18,7 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang khai báo sửa
 
-- Không (C64 xong; file mới chờ A commit: `phase_8_2_b3_plan_review.md`, `c64_de_xuat_nhan_test.md`).
+- C65 (từ 14:31 27/10/2026): `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md` (mới); script tạm `/tmp/c65_*.py`.
 
 ## Nhánh của C
 
