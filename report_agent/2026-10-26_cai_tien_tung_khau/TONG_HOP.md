@@ -1,6 +1,6 @@
-# TỔNG HỢP đợt "tìm hướng tốt hơn từng khâu" (đang mở) — tới hết phiên tối 26/10/2026
+# TỔNG HỢP đợt "tìm hướng tốt hơn từng khâu" — **ĐÓNG 27/10/2026** (User chọn (1): chốt đợt, chatbot không đổi)
 
-Người viết: A (terminal `hue-rag-2d`) · cập nhật 22:31 26/10/2026 (`date`) · Đợt mở 20:0x 25/10 (User). Từ 21:3x 26/10 đợt này **là Bước 2 của
+Người viết: A (`hue-rag-2d` 26/10, `hue-rag-5f` 27/10) · cập nhật 11:16 27/10/2026 (`date`; bản trước 22:31 26/10/2026) · Đợt mở 20:0x 25/10 (User). Từ 21:3x 26/10 đợt này **là Bước 2 của
 Phase 8.2** (spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` §10, bản A duyệt `cd910c4c4169`). Report từng việc ở thư mục
 này (phân loại lỗi, đề xuất, review) và ở `report_agent/2026-10-25_phase_8_2_ap_dung/` (plan / implementation / review K1, K3, R2, R3, R4).
 
@@ -24,6 +24,13 @@ chọn **phạm vi B: khâu trả lời + thí nghiệm khâu tìm, không ghi Q
 | 22:0x | User | Nguyên tắc **"đo theo mục tiêu sản phẩm cuối cùng"** (khóa AI FDE) ⇒ §7; chất lượng trước ⇒ K3 vẫn thử dù chậm; R1 nhận khi USD ≤ 0,95× **hoặc** token ra ≤ 0,9× |
 | 22:1x | A | Tốc độ khâu sinh đo bằng `output_tokens` (latency provider SD ~0,8 s / câu không phân giải ±50 ms); gác R2 sau khi phạm sàn; R3 NOT RUN (trần 6 câu) |
 | 22:2x | User | Kết phiên (b); K3 để phiên sau |
+| 27/10 08:47 | User | Quyền phiên như tối 26/10 (K3 ≤ 0,20 USD; API ≤ 1 USD); duyệt W21–W23, Q2 §10.6 (test = "không làm hỏng"); mục tiêu sản phẩm: **đồ án tốt nghiệp, xem như sản phẩm kinh doanh thật; người dùng = User, du khách, người dân**; yêu cầu phi chức năng chưa rõ ⇒ "so sánh, đánh giá, chỗ nào tối ưu được thì tối ưu" |
+| 27/10 08:5x | A | Đề xuất thứ tự lỗi nặng → nhẹ: nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm (chờ nghiên cứu ChatGPT để chốt); viết yêu cầu nghiên cứu mục tiêu sản phẩm (C47 đối chiếu code: 1 sai, 2 hiểu lầm, 4 thiếu — W19 có tác dụng) |
+| 27/10 09:0x–09:3x | A | Đóng R2 (B53), K3 (C49), R1 (B58) — cả ba kém hơn; gác R1 + luật kiểm sau sinh (C51) |
+| 27/10 09:1x–09:5x | A | K3b: tách nhánh n (`none`) / m; nới sàn "hoán vị" thành mức tụt có trần (ghi trước); dời trần con n → m (tổng 0,10 giữ) |
+| 27/10 10:1x | A | Sàn "câu 120 phải từ chối" (A thêm, không kiểm nhãn) làm dừng lượt answer K3b-m bản 2 dù câu trả lời đúng đáp án ⇒ trình User |
+| 27/10 10:2x | User | Chọn (1): lượt mới, 120 về "theo dõi" như K3 plan gốc (ghi "đổi sau khi thấy số"); không sửa nhãn |
+| 27/10 11:0x | User | Sau K3b-m (kém hơn theo luật T3): chọn (1) **chốt đợt**, sang B0 + merge context 10 + tính năng mới |
 
 ## 3. Kết quả
 
@@ -39,35 +46,44 @@ chọn **phạm vi B: khâu trả lời + thí nghiệm khâu tìm, không ghi Q
 |---|---|---|---|---|
 | K1 | pool dense 30 → 100 | **kém hơn** — phạm sàn (câu 154 mất đoạn đúng); 2 / 37 / 1; latency +8,9 ms. Pool đủ đoạn đúng 31 → 37 nhưng top-10 chỉ 22 → 23 ⇒ **chỗ nghẽn là xếp hạng** | 0 | nhánh `p82-k1` `a7710ed`; `phase_8_2_k1_review.md` (C42 ready) |
 | K2 | native p30 k = 2 | **NOT RUN** — đã trượt Holm-10 ở 8.1 G1.3; chọn lại trên cùng dev là chọn vì may | 0 | spec §10.3 |
-| K3 | luna xếp lại pool 30 → top-10 | **plan duyệt, chưa chạy** (phiên sau) | — | `phase_8_2_k3_plan.md` sha `0a6370204c7d` (C44 ready) |
+| K3 | luna xếp lại pool 30 → top-10 | **kém hơn** — phạm sàn lỗi đầu ra 1 / 40 (thứ tự thiếu một đoạn); theo dõi 39 câu: 9 thắng / 0 thua; rerank p50 5,6 / p95 8,6 s | 0,0251 | `p82-k3` `80e7329`; `phase_8_2_k3_review.md` (C49 ready) |
+| K3b-n | luna chọn 10 / 30, `none` | **kém hơn** — lỗi kỹ thuật (chữ thừa sau JSON dù structured output strict); pilot 9 / 10 như m, rerank p95 2,1 s | ≈ 0,012 (0,0035 log + ước ≈ 0,0087 — token vào thật của 30 câu l1_rest, ~21 lần; cận trên ≈ 0,018 = đủ 30 lần + 1 lần lỗi ra tối đa 2048 token; cận tuyệt đối 0,048) | `p82-k3b` `806e8ad`; `phase_8_2_k3b_review.md` (C52 ready) |
+| K3b-m | luna chọn 10 / 30, suy luận mặc định | **tầng tìm tốt hơn (tạm** — nhãn agent, test một lượt, chưa B0**)** (đoạn đúng trong context 22 → 31 / 40, 9 / 0 ổn định 2 lượt, CI [+0,10; +0,35]; test 7 → 10, 0 mất); **khâu trả lời kém hơn theo luật** (T3: 5 câu Completeness tụt > 4; test NOT RUN). Chỉ báo: Completeness +0,216 [+0,023; +0,443], Accuracy +0,250, Relevance +0,227; từ chối nhầm 7 → 2 / 88; sàn OOS / 500 đạt. Giá: e2e p50 6,5 / p95 9,1 s (gọi đồng thời 4; mốc chỉ latency sinh 1,8 / 3,3 s, đo 26/10 — khác phiên), ≈ 3,8× USD / câu | 0,0557 (tầng tìm) + 0,0749 (trả lời) | `p82-k3b` `a6f609c`; `phase_8_2_k3b_m_answer_review.md` (C54 ready) |
 | R4 | thước "số trong câu trả lời có trong nguồn được trích" | xong — **chỉ là danh sách đọc lại** (ngoài mẫu đúng 0 / 5) | 0 | `2c7ecfd`; `phase_8_2_r4_review.md` (B47 ready) |
-| R2 | trả lời phần có căn cứ (E1b) | **kém hơn** — phạm sàn bước 1 (1 / 12 câu ngoài kho bị trả lời, cùng dạng P1 8.1); **hướng gác** | 0,0027 USD (log) | `origin/p82-r2` `aec9ab8`; **chờ B review** |
+| R2 | trả lời phần có căn cứ (E1b) | **kém hơn** — phạm sàn bước 1 (1 / 12 câu ngoài kho bị trả lời, cùng dạng P1 8.1); **hướng gác** | 0,0027 USD (log) | `origin/p82-r2` `aec9ab8`; `phase_8_2_r2_review.md` (B53 ready) |
 | R3 | prompt "nêu đủ chi tiết" | **NOT RUN** — chỉ 6 câu có thể đổi, dưới cỡ mẫu tính trước | 0 | `phase_8_2_r3_plan.md` + `_review.md` (giữ hồ sơ) |
-| R1 | `reasoning_effort = none` | chưa làm (xếp cuối theo "chất lượng trước") | — | spec §10.3 |
+| R1 | `reasoning_effort = none` | **kém hơn** — dừng ở pilot: câu 168 "trả lời vòng" (một câu có `[n]` cùng chủ đề + "nguồn không nêu…" không citation); theo dõi: token ra ~0,72×, USD ~0,95× | 0,0049 | `p82-r1` `63a472f`; `phase_8_2_r1_review.md` (B58 ready) |
 | E2 | sửa thiếu `[n]` | **NOT RUN** — validator v2: mốc 0 lỗi | 0 | spec §10.3 |
 
 **Cách làm / rào bằng máy (governance, review chéo):** hook pre-commit quét dòng thêm mới trùng Golden / kho / câu kín (`.githooks/overlap_scan.py`,
 W16 + câu kín; C 2 vòng, B 2 vòng); luật W14 + W18, W17, W19, W20; luật chung §7 thêm 3 nguyên tắc User (chất lượng trước; hiệu suất = tiền + tốc độ;
 đo theo mục tiêu sản phẩm cuối); `Project_Status.md` §1 "Mục tiêu sản phẩm" (đã chốt + câu chờ User).
 
+**Đo hiện trạng (0 USD):** C48 — mốc B1 dev 68 câu có số: **0 câu sai số** thấy được (4 cờ = phép tính đúng); C51 — luật kiểm sau sinh bắt 160 / 168
+(sau khi chỉnh trên chính 2 câu đó), 0 cờ ở chatbot hiện tại, không tách được "lạc đề" với "một phần có ích" ⇒ gác; B61 — nhãn đoạn đúng chỉ đánh dấu
+một chỗ / thông tin, kho diễn đạt lại ở chỗ khác ⇒ thước tầng tìm đếm thiếu ít (1 / 55 lặp nguyên văn; kết luận tầng tìm không đổi theo cả cách đếm loose).
+
 **Chatbot không đổi** (vẫn context 5, chưa NFC, reasoning `medium` mặc định). Qdrant 1 collection 8.459, không ghi.
 
 ## 4. Tiền
 
-Phiên tối 26/10: **0,0027 USD** thật (R2, usage log). Trần 8.2: 0,5 USD — đã dùng 0,0369 + 0,0027 = **0,0396 USD**. K3 trần 0,20 USD (đã duyệt).
+Phiên tối 26/10: **0,0027 USD** thật (R2). Phiên 27/10: **≈ 0,173 USD** (K3 0,0251 + R1 0,0049 + K3b log 0,0592 + ước ≈ 0,0087 + K3b-m answer 0,0749; cận trên ≈ 0,178).
+Trần 8.2: 0,5 USD — đã dùng **≈ 0,212 USD** (cận trên ≈ 0,218). Trần phiên 1 USD.
 
 ## 5. Giới hạn
 
 - Bộ thử nhỏ (40 câu có đoạn đúng, 88 câu dev chính) ⇒ nhiều "chưa rõ" / NOT RUN là kết quả hợp lệ; đoạn đúng do agent gắn (User duyệt ~10 câu).
 - Kết luận dựa judge Claude là **tạm** tới khi có B0 (User đọc cặp mù).
-- Mục tiêu sản phẩm + yêu cầu phi chức năng chưa có số ⇒ thước tạm = Completeness / Accuracy (judge) + sàn closed-world.
+- Mục tiêu sản phẩm đã có (User 27/10) nhưng yêu cầu phi chức năng chưa có số ⇒ thước tạm = Completeness / Accuracy (judge) + sàn closed-world; yêu cầu
+  nghiên cứu ChatGPT (thời gian chờ, tiền / câu, mức nặng lỗi) chưa gửi.
+- Luật T3 "đếm câu tụt ≤ A/A + 3" (A/A của mốc) phạt nặng biến thể đổi context ở gần mọi câu (K3b-m: TB tăng có CI > 0 nhưng 5 câu tụt) — câu hỏi luật
+  nhận cho loại biến thể này **để cho lần sau** (C54), không áp ngược.
+- 3 kết luận "kém hơn" hôm 27/10 do lỗi kỹ thuật / sàn (K3, K3b-n, R1) — kết quả hợp lệ; 1 dừng do sàn A đặt sai (K3b-m answer bản 2), đã chạy lại theo User.
 
-## 6. Bước tiếp (phiên sau)
+## 6. Bước tiếp
 
-1. A hỏi lại quyền phiên; **B review report R2** trước (B53, 0 USD), rồi **B chạy K3** (B54: plan `0a6370204c7d`; nhánh `p82-k3`; ≤ 0,20 USD, con tầng tìm 0,08 /
-   lượt sinh 0,12); C review K3, viết plan R1.
-2. Report R2 (`git show origin/p82-r2:report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_implementation.md`).
-3. Theo kết quả K3: thắng ⇒ tìm cách nhanh / rẻ hơn rồi trình User (thêm một lần gọi API / câu); thua ⇒ ghép / kết luận đợt.
-4. R1 (`none`) sau cùng — plan mới, luật (a).
-5. User: mục tiêu sản phẩm (4 câu `Project_Status.md` §1), Q2 (test = "không làm hỏng"), B0.
-6. Hướng mở đợt sau: mở rộng bộ câu tự nhiên (R3, B42: câu tự nhiên không lợi từ context 10); R2 chỉ khi có cách chặn dạng lỗi câu 160 được kiểm trước.
+1. **B0** — User đọc cặp mù (`data/phase_8_2/b0/nhan_xet_user.md`, 20 câu, ~30–45 phút). Chặn merge B1.
+2. Sau B0: merge B1 (context 10 + NFC, nhánh `p82-b1`; B63 thử rebase lên `main` 27/10) + luật dừng B0 + cổng ổn định ⇒ chatbot lên context 10.
+3. Phase 8.2 còn: mốc cuối (câu kín, User quyết mở) ⇒ đóng 8.2 ⇒ tính năng mới (User 27/10: "xong sớm thì mới bổ sung được tính năng mới").
+4. Hướng mở (hồ sơ, không làm khi chưa có quyết định mới): K3b-m / K3c (bản nhanh `none` chịu chữ thừa) khi có luật nhận cho biến thể đổi context +
+   yêu cầu thời gian chờ có số; streaming từng câu đã kiểm (nghiên cứu 26/10 C5); mở rộng bộ câu tự nhiên; sửa nhãn đoạn đúng "một chỗ / thông tin".

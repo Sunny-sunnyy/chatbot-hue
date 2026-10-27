@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `08:47 27/10/2026` (A, mở phiên 27/10: User trả lời mục tiêu sản phẩm §1; W22 vào §8). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
+Last updated: `11:18 27/10/2026` (A, 27/10: **đợt cải tiến từng khâu đóng** — User chọn chốt đợt; chatbot không đổi; bước tiếp B0 ⇒ merge B1). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -58,8 +58,9 @@ ready; 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/reports_art
 B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1 giống byte, review ready — **merge sau B0** (User đọc cặp mù). **Bước 2 =
 đợt cải tiến từng khâu** (User 21:1x: phạm vi B — khâu trả lời + khâu tìm, không ghi Qdrant; luật (a) / (i); A tự chọn trong luật): phân loại lỗi
 (C36 / B42: 80 % điểm mất đi kèm thiếu bằng chứng; chỗ nghẽn là xếp hạng); **K1** pool 100 kém hơn (nhánh `p82-k1`); **R2** trả lời một phần kém hơn
-(phạm sàn OOS, 0,0027 USD; gác; `p82-r2`); **R3** NOT RUN (6 câu); **R4** thước số (chỉ danh sách đọc lại, `2c7ecfd`); K2, E2 NOT RUN; **K3** luna xếp lại
-pool 30 — plan `0a6370204c7d` duyệt, chạy phiên sau (≤ 0,20 USD); R1 sau cùng. Tiền 8.2: 0,0396 / 0,5 USD. Tổng hợp:
+(phạm sàn OOS, 0,0027 USD; gác; `p82-r2`); **R3** NOT RUN (6 câu); **R4** thước số (chỉ danh sách đọc lại, `2c7ecfd`); K2, E2 NOT RUN; **27/10:** K3, R1, K3b-n kém hơn;
+**K3b-m** (luna chọn 10 / 30) tầng tìm tốt hơn (tạm) (22 → 31 / 40) nhưng khâu trả lời kém hơn theo luật (5 câu tụt > 4; e2e p50 6,5 / p95 9,1 s khi gọi đồng thời 4, 3,8× tiền) ⇒ **User 27/10 chọn chốt đợt**
+(đợt đóng). Tiền 8.2: ≈ 0,212 / 0,5 USD. Bước tiếp: **B0** ⇒ merge B1 + cổng ổn định ⇒ đóng 8.2 ⇒ tính năng mới. Tổng hợp:
 `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`.
 
 ## 3. Bảng Phase
@@ -77,7 +78,7 @@ pool 30 — plan `0a6370204c7d` duyệt, chạy phiên sau (≤ 0,20 USD); R1 sa
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38). B0 chờ User; B1 ready trên `p82-b1` (merge sau B0); Bước 2: K1 / R2 kém hơn, R3 / K2 / E2 NOT RUN, R4 xong, **K3 chờ chạy**, R1 sau. Chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
+| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38). B0 chờ User; B1 ready trên `p82-b1` (merge sau B0); Bước 2 (đợt cải tiến) **đóng 27/10**: K1 / K3 / K3b-n / R1 / R2 kém hơn, K3b-m tầng tìm tốt hơn (tạm) nhưng trả lời kém hơn theo luật, R3 / K2 / E2 NOT RUN, R4 xong. Chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -214,6 +215,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - Pytest chạy từ `backend/`: `cd backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests/<file> -q` (không nạp key). Chỉ thêm
   `--env-file ../.env` khi việc ghi rõ cần test có key OpenAI: `test_api_chat.py`, `test_openai_full_corpus_generator.py`,
   `test_phase6_live_smoke.py` (rà code 25/10, C-17 / C-18: không có key thì 3 test miễn phí cũng fail vì `require_openai_key`).
+  Thêm: `test_phase6_settings.py::test_openai_api_key_exists_without_leaking` cũng đòi key (fail khi không key — B63 27/10, giống trên `main`).
 - Pytest lấy **gốc repo** làm rootdir: node id là `backend/tests/<file>::<test>`; `--deselect tests/…` không khớp và không bỏ được test (B1 2026-10-24: lỡ chạy 1 paid call trả 400 + một collection tạm tự xóa). Bỏ test ghi/paid bằng cách liệt kê file cần chạy, không dựa vào `--deselect`. Danh sách test ghi Qdrant / paid cũ (4 file) đã gỡ ở B9; hiện không test nào ghi Qdrant (rà code 25/10, B25 / C34).
 - `test_phase6_live_smoke.py` còn mock/monkeypatch — rà ở Phase 8.1 (B8). Code/test Foods cũ đã gỡ ở B9
   (`1832201`). Mốc pytest sau đợt 3 (26/10, không key, 15 file trừ `test_startup_model_missing.py`): **197 passed / 1 failed / 4 error** — phần

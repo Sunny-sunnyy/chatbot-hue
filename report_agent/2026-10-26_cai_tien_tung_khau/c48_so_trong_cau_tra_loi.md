@@ -7,7 +7,7 @@ hỏi, câu trả lời hay nội dung kho — chỉ `case_index` và số đế
 ## Cho bạn (3 dòng)
 
 - Trong 99 câu dev chatbot trả lời (68 câu có con số: giá, giờ, năm, khoảng cách), **không tìm thấy câu nào nói sai một con số** so với đoạn nó trích.
-- Máy bắt cờ 4 câu, nhưng đọc lại thì **cả 4 là phép tính đúng** (hiệu hai giá, hiệu hai giờ) — con số đó không có nguyên văn trong nguồn nên máy
+- Máy bắt cờ 4 câu, nhưng đọc lại thì **cả 4 là phép tính đúng** (hiệu của hai số có trong nguồn) — con số đó không có nguyên văn trong nguồn nên máy
   nghi. Đọc thêm 10 câu không bị cờ (chọn ngẫu nhiên): 10 / 10 đúng số, đúng đối tượng.
 - Nghĩa là ở mốc hiện tại, "nói chắc sai về số" **hiếm** (0 câu thấy được trên 68). Giới hạn: chỉ đo số, chỉ dev; lỗi sai chữ (tên, sự kiện) chưa đo.
 
@@ -44,9 +44,8 @@ có số mà một câu dùng ít nguồn hơn cả câu trả lời (model đ�
 
 Ghi chép private `data/cai_tien_tung_khau_2026-10-26/c48/doc_tay.md`.
 
-- **6 / 6 số bị cờ là báo nhầm**, cùng một dạng: model **tự tính đúng** hiệu hai số có trong nguồn được trích (hiệu hai giá: 30, 172; hiệu hai mốc giờ:
-  137; ba hiệu của hai khoảng giá: 155). Nhóm "có ở đoạn không được trích" của 137 / 155 / 172 cũng là nhầm: số kết quả phép tính **tình cờ** có ở một
-  đoạn khác (một khoảng cách, một mức tiết kiệm combo) ⇒ với số tự tính, cách xếp nhóm của máy không đáng tin.
+- **6 / 6 số bị cờ là báo nhầm**, cùng một dạng: model **tự tính đúng** hiệu hai số có trong nguồn được trích (câu 30, 137, 155, 172). Nhóm "có ở đoạn không
+  được trích" của 137 / 155 / 172 cũng là nhầm: số kết quả phép tính **tình cờ** trùng một con số khác ở một đoạn khác ⇒ với số tự tính, cách xếp nhóm của máy không đáng tin.
 - **Mẫu không bị cờ** (seed 20261024, 10 / 64 câu có số: 1, 9, 25, 38, 44, 80, 101, 124, 128, 156): đọc từng số với đoạn được trích — **10 / 10 đúng số và
   đúng đối tượng** (không có dạng "số có trong nguồn nhưng gắn nhầm món / ngày / nơi").
 - Báo nhầm 6 / 6 trên đủ các cờ (không chỉ ~10 mẫu như A dự tính: chỉ có 6 cờ).

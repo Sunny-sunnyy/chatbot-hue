@@ -100,9 +100,9 @@ Thử cho model sinh câu trả lời (`gpt-6-luna`) đọc 30 đoạn và chọ
 - **Phát hiện về thước đo:** câu 120 được bản luna trả lời **đúng như đáp án**, trong khi nhãn nói "context không có thông tin". Lý do: nhãn chỉ đánh dấu
   một chỗ cho mỗi thông tin, còn kho viết lại cùng thông tin ở chỗ khác. Quét lại 55 câu: ảnh hưởng nhỏ, kết luận bước tìm không đổi (§3). Bạn đã
   chọn đưa câu 120 về "chỉ theo dõi" trong lần đo câu trả lời (27/10). Lần đo trước đó dừng vì câu này; kết luận lần đó giữ nguyên.
-- **Tiền thật:** 0,159 USD theo log + ≈ 0,0074 USD ước (một lượt mất số liệu do lỗi code thí nghiệm, đã sửa) ⇒ **≈ 0,167 USD (≈ 4.200 đồng)**.
+- **Tiền thật:** 0,159 USD theo log + ≈ 0,0087 USD ước (một lượt mất số liệu do lỗi code thí nghiệm, đã sửa; cận trên ≈ 0,014) ⇒ **≈ 0,168 USD (≈ 4.200 đồng)**.
   - xếp đủ 30: 0,0251;
-  - hai bản "chỉ trả 10 số": 0,0592 + ≈ 0,0074 ước;
+  - hai bản "chỉ trả 10 số": 0,0592 + ≈ 0,0087 ước;
   - đo câu trả lời: 0,0749.
 
 ### 26/10/2026 (tối) — Phân loại lỗi tìm kiếm + thử nới nhóm ứng viên (bản 7)

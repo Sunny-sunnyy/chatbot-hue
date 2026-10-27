@@ -35,6 +35,10 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **Phụ lục bản 3 vòng 3 ready 10:33 27/10/2026** (`2a3b22b38ab6`): 120 về theo dõi; C xác nhận độc lập (a) context K3b-m của 120 có 2 / 2 fact, (b) B1 0. Pilot bản 2 dừng vì sàn 120 — sàn đó từ gợi ý m-2 của C.
 **Bẫy / học (C, 27/10):** (1) nhãn đoạn đúng chỉ đánh dấu MỘT chỗ cho mỗi fact ⇒ `*_gold_frac` 0 không có nghĩa context không có fact; trước khi đề xuất sàn "context 0 fact" phải đọc nội dung (m-2 C53 ⇒ pilot bản 2 dừng oan). (2) Script dựng lại context chạy từ working tree `main` (context 5) phải truyền `max_documents=10` cho mốc B1 / K3b — suýt kết luận sai trên 5 đoạn.
 **C54 xong 10:51 27/10/2026:** review K3b-m answer (`a6f609c`) ready (0/0/2 minor) — kém hơn đúng luật (T3 5 > 4: 26, 66, 93, 112, 134); sàn + T4/T5/T7 đạt; chỉ báo TB tăng CI > 0; tiền 0,0749297 khớp; e2e p50 6,5 s / p95 9,1 s. m-1: 66 nhiều khả năng nhiễu judge. C khuyên không chạy A/A biến thể (giá trị thấp), trình User câu hỏi luật nhận. Script `data/phase_8_2/k3b/answer/tools/c54_{check,read}.py`.
+**C55 (A giao 11:16 27/10/2026) — khai báo file:** `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 10; working tree chung, chưa commit, A review). User chọn chốt đợt cải tiến ⇒ B0 ⇒ merge context 10.
+**C55 xong 11:19 27/10/2026:** bản 10 viết xong (Tóm tắt, checklist 4 dòng sửa + 3 dòng mới, §4 mục 27/10, §5 3 dòng, §6 viết lại, phụ lục); quét trùng 0; chờ A review.
+**A 11:21 27/10/2026:** BAO_CAO_SINH bản 10 review tốt; A sửa câu 168 tả quá cụ thể. **Đợt đóng; C chờ B0 của User** (không có việc).
+**Bẫy / học (A nhắc, 27/10):** report tracked (repo public) tả câu dev ở **mức loại câu**, không nêu chủ đề cụ thể (tên nơi, món, loại giá…) cạnh `case_index`. C rà lại file mình viết hôm nay 11:21 27/10/2026: sửa 2 chỗ (C48 §3 dạng phép tính theo câu; review phụ lục K3b-m vòng 3 tên fact của câu 120) — untracked diff, A commit.
 
 ## Còn treo (phiên sau xử lý trước)
 

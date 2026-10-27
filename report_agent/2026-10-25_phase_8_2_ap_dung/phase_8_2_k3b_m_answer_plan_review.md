@@ -128,9 +128,9 @@ sai mà bản 3 sửa. Bài học ghi vào `STATUS_C.md`: nhãn đoạn đúng c
 **Xác nhận độc lập (A yêu cầu; C đọc câu dev 120, đáp án tham chiếu và 10 đoạn context trong terminal, chưa đọc `gold_scan/` của B lúc kiểm):** dựng lại context bằng
 context builder production với **10** đoạn (`max_documents=10`, như `811d25d`) từ `top_chunk_ids` đã lưu.
 - **(a) Context K3b-m của 120 CÓ fact:** ở L1 (`m_l1.merged`), L2 (`m_l2`) và lượt pilot bản 2 (`answer/dev_pilot.jsonl`, `top_chunk_ids` = L1), hai đoạn của cùng một
-  file kho chứa đủ **2 / 2** fact của đáp án tham chiếu — một đoạn nêu tên gọi khác, một đoạn nêu độ cao, cả hai diễn đạt lại ngoài khoảng đã nhãn. Câu trả lời pilot trích
+  file kho chứa đủ **2 / 2** fact của đáp án tham chiếu — mỗi đoạn nêu một fact, cả hai diễn đạt lại ngoài khoảng đã nhãn. Câu trả lời pilot trích
   đúng hai đoạn đó và khớp đáp án tham chiếu.
-- **(b) Context B1 của 120 KHÔNG có fact:** 10 đoạn B1 thuộc các file khác; quét tên núi, tên dân gian và con số độ cao: **0** lần xuất hiện. Từ chối ở B1 là đúng.
+- **(b) Context B1 của 120 KHÔNG có fact:** 10 đoạn B1 thuộc các file khác; quét các từ khóa và con số của đáp án tham chiếu: **0** lần xuất hiện. Từ chối ở B1 là đúng.
 - Sau đó C đọc `gold_scan/summary.json` (B63): mức loose cho 120 = 0 / 2 ở B1, 2 / 2 ở L1, L2 — khớp (a), (b). Cùng file cho thấy quét lại nhãn **không đổi kết luận tầng
   tìm** của K3b-m: thắng 9 / thua 0 ở mức exact, CI [+0,10; +0,35] ở cả ba mức.
 

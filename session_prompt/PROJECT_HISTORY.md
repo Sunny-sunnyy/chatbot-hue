@@ -4,6 +4,17 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-27 (11:18) — Đợt cải tiến từng khâu ĐÓNG (User chọn chốt đợt); chatbot không đổi
+
+- User 08:47: quyền phiên như tối 26/10; duyệt W21–W23, Q2 spec §10.6; mục tiêu sản phẩm = đồ án tốt nghiệp xem như sản phẩm thật, người dùng = User / du
+  khách / người dân. A đề xuất thứ tự lỗi nặng → nhẹ (chờ nghiên cứu ChatGPT `gửi chatgpt/2026-10-27/`, chưa gửi).
+- Đóng: R2 (B53), K3 (lỗi đầu ra 1 / 40), R1 (câu 168 trả lời vòng), K3b-n (chữ thừa sau JSON) — kém hơn. K3b-m: tầng tìm tốt hơn (tạm) (22 → 31 / 40, 9 / 0 ổn
+  định), khâu trả lời kém hơn theo luật T3 (5 câu tụt > 4; TB tăng có CI > 0; từ chối nhầm 7 → 2; e2e p50 6,5 / p95 9,1 s khi gọi đồng thời 4, mốc sinh khác phiên; 3,8× USD). Lượt answer bản 2
+  dừng vì sàn câu 120 A đặt trên tiền đề nhãn chưa kiểm ⇒ User chọn chạy lại với 120 "theo dõi". Đo hiện trạng C48 (0 / 68 sai số), C51 (kiểm sau sinh: gác),
+  B61 (nhãn đoạn đúng một chỗ / thông tin).
+- Tiền phiên ≈ 0,173 USD (cận trên ≈ 0,178); 8.2 ≈ 0,212 / 0,5. Chi tiết: `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`; nhật ký
+  `bao_cao_he_thong/nhat_ky/2026-10-27_chot_dot_cai_tien.md`. Bước tiếp: B0 ⇒ merge B1 (context 10 + NFC) ⇒ đóng 8.2 ⇒ tính năng mới.
+
 ## 2026-10-26 (22:3x) — Phase 8.2 chạy lại: Bước 2 = đợt cải tiến từng khâu (spec §10); K1 / R2 kém hơn, K3 chờ; kết phiên
 
 - User 20:3x–22:2x: quyền phiên (A điều phối, ≤ 1 USD); duyệt sổ cải tiến W14 + W18, W16, W17, W19, W20 (hook quét trùng Golden / kho / câu kín);
