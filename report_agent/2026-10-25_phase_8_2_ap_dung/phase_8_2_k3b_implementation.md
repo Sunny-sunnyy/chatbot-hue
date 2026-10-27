@@ -6,9 +6,9 @@ Plan A duyệt: `phase_8_2_k3b_plan.md` bản 2 sha **`57dad7150322`** (commit `
 Code: nhánh `p82-k3b` = `80e7329` (`p82-k3`, A chấp nhận gốc này thay `811d25d`) + `7c0467d` (harness + test) + `f4d3225` (sửa bắt lỗi + ghi từng dòng).
 **Tiền:**
 - log: **0,0592176 USD** (nhánh m 0,055714 + pilot n 0,0035036);
-- ước: **+ ≈ 0,0074 USD** (lượt n bị mất usage, cận trên 0,0105).
+- ước: **+ ≈ 0,0087 USD** (lượt n bị mất usage, cận trên ≈ 0,0142; sửa 27/10 — §4.2).
 
-⇒ **≈ 0,067 USD (≤ 0,070)** / trần 0,10.
+⇒ **≈ 0,068 USD (≤ 0,074)** / trần 0,10.
 
 Trạng thái: **chờ review** (C).
 
@@ -30,7 +30,7 @@ Trạng thái: **chờ review** (C).
    - **chưa đo câu trả lời cuối cùng** (lượt sinh + chấm điểm), vì việc đó cần trần tiền riêng.
 
    Bạn sẽ được hỏi có chấp nhận mức chờ / tiền này không, sau khi đo câu trả lời.
-5. Có một sự cố do code thí nghiệm của mình: khi bản nhanh lỗi, mình mất số token của một lượt. Tiền lượt đó là **ước** (khoảng 0,0074 USD). Mình
+5. Có một sự cố do code thí nghiệm của mình: khi bản nhanh lỗi, mình mất số token của một lượt. Tiền lượt đó là **ước** (khoảng 0,0087 USD). Mình
    đã sửa code để không mất số liệu nữa.
 
 ## 1. Phạm vi
@@ -149,9 +149,13 @@ API nhận `reasoning none` qua `responses.parse` (giả định G2 ✓).
 - `luna_top10` chỉ bắt `OpenAIError`, nên exception làm cả lượt dừng.
 - Harness chỉ ghi file ở cuối lượt, nên **mất mọi dòng của lượt này**: không có câu nào được ghi, không có usage, không biết lỗi ở câu nào.
 - **Tiền lượt này là ƯỚC, không phải số log.**
-  - Cách ước: process chạy 09:30:04 → crash 09:30:53, tức 49 s. Trừ ~10 s khởi động (như pilot), chia ~1,85 s / lần (pilot: TB `total_ms` 1.788 ms)
-    ⇒ **≈ 21 lần × 0,000350 ≈ 0,0074 USD**.
-  - Cận trên: đủ 30 lần ⇒ **0,0105 USD**.
+  - Số lần gọi ước theo thời gian: process chạy 09:30:04 → crash 09:30:53, tức 49 s. Trừ ~10 s khởi động (như pilot), chia ~1,85 s / lần (pilot: TB
+    `total_ms` 1.788 ms) ⇒ **≈ 21 lần**.
+  - **Sửa 27/10:** bản đầu report nhân với giá / lần của pilot (0,000350; token vào TB 3.339) ⇒ 0,0074, cận trên 0,0105. Hai số này **thấp**, vì 30 câu
+    của lượt này có đoạn dài hơn. Token vào thật của **đúng 30 câu đó** có ở `m_l1_rest.jsonl`: cùng câu, cùng 30 đoạn, cùng prompt; pilot n và m có token
+    vào giống hệt, 33.386 = 33.386. Tổng 127.368, TB 4.246 / lần.
+  - Ước (21 lần đầu theo thứ tự `gold_cases('rest')`, ra 33 token / lần) ⇒ **≈ 0,0087 USD**.
+  - Cận trên (đủ 30 lần, một lần lỗi ra tối đa 2048 token) ⇒ **≈ 0,0142 USD**.
 - Sửa ở `f4d3225` (§2). A ghi sự cố vào sổ cải tiến.
 
 ### 4.3 Nhánh m — tầng tìm tốt hơn (tạm)

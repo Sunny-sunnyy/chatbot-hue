@@ -24,7 +24,7 @@ Trạng thái: **chờ review** (C).
    - bốn câu trước bị từ chối nay trả lời đúng và đủ: 48, 67, 167 (5 / 5) và 120;
    - không câu nào trả lời "vòng vo" kiểu "nguồn không nêu…".
 3. Nhưng có **5 câu bị chấm thấp hơn 1–2 điểm** về đủ ý, mà luật ghi trước chỉ cho phép tối đa 4 câu. Vì vậy kết luận theo luật là
-   **"kém hơn"**, và mình **dừng, không chạy nhóm kiểm**. Ba trong 5 câu này có context gần như giống hiện tại (7–9 / 10 đoạn trùng), nên một phần có
+   **"kém hơn"**, và mình **dừng, không chạy nhóm kiểm**. Bốn trong 5 câu này có context gần như giống hiện tại (7–9 / 10 đoạn trùng; câu còn lại 5 / 10), nên một phần có
    thể là dao động khi model viết lại. Đây là suy ra, chưa đo.
 4. Giá đo thật: mỗi câu chờ khoảng **6,5 giây** (có lúc 9 giây), tiền mỗi câu gấp **3,8 lần**. Tiền lượt này: 0,075 USD (≈ 1.900 đồng).
 
