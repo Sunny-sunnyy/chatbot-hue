@@ -179,6 +179,32 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   harness ghi từng dòng ngay (W23); trần tiền + pilot. Chỉ đọc metadata câu kín (số dòng, md5 `ddc59587b502`), **không đọc nội dung**.
 - **Không làm:** chạy; commit (A commit sau review). **Xong:** nhắn A + báo sha ⇒ A giao session khác review trước khi duyệt sha.
 
+### Phần tồn Phase cũ (User 14:15 27/10/2026: "xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo")
+
+A chọn: nhóm 1 (nợ nhỏ, 0 USD) làm xong phiên này; nhóm 3 (sửa kho + build lại index) **soạn sẵn** phiên này, **áp ngay sau đóng 8.2** (sửa kho trước B3 làm mốc cuối
+lẫn hai thay đổi). Chặn chính: B0 (User). Index Qwen3-8B (tồn từ 7A2, spec 8.2 để ngoài): quyết cùng đợt sửa kho.
+
+### B73 — soạn đợt sửa kho (giao 14:15 27/10/2026; 0 USD; **không sửa `knowledge-base-hue/`**, không build, không ghi Qdrant)
+
+- **Đầu vào:** `report_agent/2026-10-25_ra_soat_noi_dung_kho/` (C32 implementation + review: 97 / 139 mục chỉ có tự kiểm sub-agent ⇒ đọc lại từng mục trước khi đề
+  xuất sửa); `data/ra_soat_kho_2026-10-25/danh_sach.md`; luật curated `Session_Prompt.md` §5; `knowledge-base-hue/meta/foods-template.md`; `backend/config/settings.yaml`
+  `exclude_files` (file inventory `performing_arts` tự ghi phải loại).
+- **Đầu ra (private, `data/sua_kho_2026-10-27/`):** (1) `de_xuat_sua.md` + một bản sửa dạng diff cho mỗi mục "sửa khi build lại" (53) sau khi đọc lại — mục không chắc
+  thì chuyển nhóm, không đoán; (2) `cau_hoi_user.md`: 16 mục "User biết thì báo" bằng lời thường, mỗi câu có đáp án gợi ý từ kho; (3) `tra_ngoai.md`: 69 mục cần tra
+  ngoài — đếm theo loại + nháp yêu cầu ChatGPT (gửi đi = đưa dữ liệu ra ngoài ⇒ User quyết); (4) đề xuất thêm file inventory `performing_arts` vào `exclude_files`
+  (đếm chunk bị gỡ, `heading_path` / file nào khác còn trỏ tới nó). Report tracked (nếu có) chỉ số đếm, không nội dung kho.
+- Được dùng sub-agent (≤ 3 file / sub-agent, grep loại `evaluation/`, `meta/`, `*sealed*`). **Dừng + báo A:** mục nào đòi chọn một phía khi nguồn trong kho ngang nhau.
+- **Xong:** nhắn A (số mục theo nhóm, đường dẫn). A viết spec đợt sửa kho từ đó.
+
+### C64 — review plan B3 + nợ nhỏ (giao 14:15 27/10/2026; 0 USD trừ cổng ổn định ≈ 0,0005)
+
+1. **Review plan B3** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md` (sha `9d60b16b63da`) theo WORKFLOW §9.1: **chỉ dựa trên mục "Căn cứ để review"**
+   (không đọc STATUS_B / tin của B); không mở câu kín. Ghi `phase_8_2_b3_plan_review.md`. Ưu tiên trước.
+2. `dense_ms` làm tròn 1 chữ số như các trường `*_ms` (B70 m-2) — sửa nhỏ `api/routes/chat.py` + test ghim; khai báo file; cổng ổn định; báo A (B review). B70 m-1
+   (test danh sách trường chưa đi qua generator): **không viết code** — đóng bằng ghi bẫy (cổng ổn định đã kiểm), A ghi.
+3. Đề xuất nhãn đoạn đúng cho 3 câu test C56 (95, 130, 138) theo cách C56 (`c56_de_xuat_sua_nhan.md`) ⇒ file đề xuất private trong `data/phase_8_2/gold_fix_proposal_2710/`;
+   **không sửa `gold_v2.jsonl`** (User duyệt). Report tracked mô tả mức loại câu.
+
 ### C63 — căn cứ cho brainstorm tính năng mới (giao 14:0x 27/10; 0 USD, chỉ đọc; review B71 ưu tiên hơn)
 
 - User 27/10 chiều: ưu tiên **hội thoại nhiều lượt + streaming**; gợi ý / lịch trình ⇒ Phase 9; deploy khi ổn định; bảo vệ ~tháng 1/2027, xong càng sớm càng tốt.
