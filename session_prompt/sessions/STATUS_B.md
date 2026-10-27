@@ -51,17 +51,15 @@
   Report `phase_8_2_k3b_m_answer_implementation.md` trên `origin/p82-k3b` `a6f609c` (đã push). Worktree `/tmp/b_k3b` đã gỡ. ⇒ chờ C review.
 - **B66 xong (10:49 27/10/2026; A gọi B62):** `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` bản 8 (working tree chung, chưa commit): dòng cập nhật, Tóm tắt, checklist
   (luna + dòng mới "thước đoạn đúng"), §4 mục 27/10, §5, §6, Phụ lục. Chatbot ghi "chưa đưa vào". ⇒ A review + commit.
-- **Còn nợ (sửa ở commit tiếp trên `p82-k3b`, chờ A đồng ý):** (a) report K3b §4.2: ước lượt n mất usage 0,0074 → ≈ 0,0087, cận trên 0,0105 → ≈ 0,0142; (b) report K3b-m answer dòng 27 ghi "Ba trong 5 câu" có 7–9 / 10 đoạn trùng — đúng là **4 / 5**
-  (9, 8, 7, 7; câu 93 là 5 / 10). A đã sửa ở `BAO_CAO_TIM_KIEM.md` (`2936165`). Bài học: số đếm trong lời thường phải đếm lại từ bảng, không gõ tay.
+- ~~Còn nợ~~ đã trả ở `4c85195` (B69). Bài học: số đếm trong lời thường phải đếm lại từ bảng; tiền ước phải dùng token thật của đúng các câu bị ảnh hưởng.
 - **B67 xong (11:19 27/10/2026; A gọi B63):** thử rebase `p82-b1` `811d25d` lên `main` `e952fa3` (nhánh tạm, không push): **không xung đột**. range-diff: nội dung
   B1 giữ nguyên (chỉ bớt `phase_8_2/__init__.py` rỗng, đã có trên main). Pytest không key: 6 file (retrieval, phase6_settings, context, eval, citations,
   r4) **68 passed / 1 failed** — failed = `test_openai_api_key_exists_without_leaking` cần key, **trên main cũng failed y hệt** (đối chứng); test này
   chưa có trong danh sách "cần key" của Project_Status §8. **T1 giống từng byte** `cefb2d1ad609`. Nhánh tạm + worktree `/tmp/b_b1chk` đã xóa; `p82-b1` vẫn `811d25d`.
 - **B68 xong (11:22 27/10/2026; A gọi B64):** review tài liệu đóng đợt của A (tin nhắn, không file): changes_requested — F1 cận trên tiền sai ở 4 chỗ
   (TONG_HOP:50/70/71, HISTORY:15, nhật ký:4; đúng ≈ 0,014 / 0,175 / 0,214 / +0,003); F2 thiếu "gọi đồng thời 4"; F3 thiếu "(tạm)"; F4 chỉ báo. Số khác khớp.
-- **B69 (đang làm, từ 11:27 27/10/2026):** trả nợ trên `p82-k3b` (A đồng ý): report K3b §4.2 (ước 0,0087 / cận trên 0,0142) + report K3b-m answer "Ba trong 5" → 4.
-  **File khai báo sửa:** 2 report trên nhánh, worktree `/tmp/b_k3b`.
-- **File đang khai báo sửa: không** (ngoài B69). Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
+- **B69 xong (11:29 27/10/2026):** trả nợ trên `p82-k3b` `4c85195` (đã push): report K3b §4.2 ước ≈ 0,0087 / cận trên ≈ 0,0142 (tổng K3b ≈ 0,068 ≤ 0,074); report K3b-m answer "Bốn trong 5". Worktree gỡ.
+- **File đang khai báo sửa: không.** Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
   + ước lượt n mất usage **≈ 0,0087 (cận trên ≈ 0,0142)** — tính lại 27/10 từ token vào thật của đúng 30 câu (`m_l1_rest`; số cũ 0,0074 / 0,0105 lấy
   giá / lần của pilot nên thấp) ⇒ **≈ 0,168 (≤ 0,174) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả
