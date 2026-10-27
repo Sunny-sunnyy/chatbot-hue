@@ -22,6 +22,10 @@ A duyệt hiện hành **`cd910c4c4169`**). Bước 2 = **đợt cải tiến t�
 - Tiền 8.2: **0,0696 / 0,5 USD** (B1 0,0369 + R2 0,0027 + K3 0,0251 + R1 0,0049 — 27/10).
 - **Dạng lỗi chung R1 / R2 / P1 8.1** (câu 160, 168): trả lời vòng (một câu có `[n]` cùng chủ đề) + một câu "nguồn không nêu…" không citation ⇒ validator nhận. Hướng mở
   (A cân nhắc, chưa giao): kiểm bằng code sau sinh cho dạng này, kiểm trước trên 160 / 168 — có thể mở lại R1 / R2.
+  **C51 (09:32 27/10/2026, `c51_kiem_sau_sinh_kha_thi.md`):** luật L2 bắt 160 + 168 (sau khi chỉnh trên chính 2 câu đó ⇒ nguy cơ khớp quá mẫu), 0 cờ ở chatbot hiện tại;
+  không tách được "lạc đề" với "một phần có ích" ⇒ không dùng cho R2. **A quyết: gác** R1 + L2 — lợi R1 nhỏ (USD ~0,95×, token ra ~0,72×), thêm một luật hình
+  thức khớp từ 2 câu + đổi hợp đồng Phase 6; không thêm L2 vào chatbot hiện tại (0 cờ = chưa có vấn đề quan sát được, `Session_Prompt.md` §7). Mở lại khi cần
+  bớt latency khâu sinh (ví dụ ghép với K3b).
 
 **Luật nhận của đợt (spec §10.2, User):** (a) chất lượng giữ (Completeness TB ≥ −0,1 **và** số câu tụt ≤ A/A + 3) + rẻ / nhanh hơn rõ; (i) chất lượng tăng
 vượt nhiễu (CI 95 % > 0, Holm theo nhánh, cỡ mẫu ≥ 5 / 0) + khâu tìm ≤ +50 ms / khâu sinh `output_tokens` ≤ +20 % + không thêm lần gọi API, USD / câu
