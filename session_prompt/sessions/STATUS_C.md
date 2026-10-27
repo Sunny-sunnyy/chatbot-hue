@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 15:09 27/10/2026 (B75 review xong — chờ A)
+# STATUS C — cập nhật 15:25 27/10/2026 (C68 xong — chờ A)
 
 Terminal: `hue-rag-86` (phiên mới 13:40 27/10; trước `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi. B = `hue-rag-2d` (B tự báo), A = `hue-rag-51` (A xác nhận) — trực tiếp.
 User 13:45 27/10/2026 (phiên mới, nhắc lại 08:41 27/10): C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
@@ -6,6 +6,7 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang làm
 
+- **C68 xong 15:25 27/10/2026** (0 USD): review spec sửa kho `725bbe15d044` changes_requested 0/2/5 — M-1 gold v3 offset lệch (24 câu, 66 trích dẫn lệch, 3 bị chồng); M-2 mốc "trước" chưa định nghĩa + phải có trước khi xóa index tại chỗ + cùng Golden; minor: mẫu chunker (2 edit chạm), xóa đủ ba đích, ngừng phục vụ từ bước 2, quyền §7, T1 mới. File `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design_review.md` (chưa commit).
 - **Review B75 xong 15:09 27/10/2026** (0 USD): gold v3 ready 0/0/2 (m-1 B1 context dựng lại từ top_chunk_ids — C đếm bằng context_chunk_ids lưu, cùng số; m-2 thiếu g4_rerank / g3_chunking / k3·k3b trong danh sách ảnh hưởng). File `report_agent/2026-10-26_cai_tien_tung_khau/gold_v3_review.md` (chưa commit).
 - **C67 xong 15:04 27/10/2026** (0 USD): `diffs_them/` 11 / 11 giữ, đồng ý 5 chỗ không soạn, 1 minor (đường dẫn README); áp 111 + 14 edit: 0 lỗi, T11 sau K118 OK; quét lại: 0 chỗ sót mới. Ghi `review_c66.md` mục "diffs_them" + report tracked §6. Tiếp: review B75 (gold v3) khi B báo.
 - **C66 xong 14:41 27/10/2026** (0 USD): review đề xuất sửa kho B73 — 41 mục: giữ 37, sửa 3 (K011 :61 sai chiều; K048 mất thông tin NQ 175/2024 + Nam Đông; K049 bỏ cụm), có điều kiện 1 (K091), bỏ 0; s7-golden 9/9 giữ. Áp 111 edit lần lượt trong bộ nhớ: 0 lỗi. Private `data/sua_kho_2026-10-27/review_c66.md` (+ `review_c66_tools/`); tracked `report_agent/2026-10-25_ra_soat_noi_dung_kho/sua_kho_de_xuat_review.md` (chưa commit). **Vòng 2 14:44 27/10/2026:** B sửa 3 mục (sha K011 `6f70073af8f9`, K048 `2c29933aa125`, K049 `403e51ae7407`) ⇒ đóng; kết luận ready, giữ 40 + có điều kiện 1. `diffs_them/` chưa review.

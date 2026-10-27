@@ -1,8 +1,10 @@
-# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 15:06 27/10/2026)
+# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 15:25 27/10/2026)
 
 Terminal: `hue-rag-2d` (A = `hue-rag-51`, C = `hue-rag-86`) · Agent: Claude Opus 5.5 · Vai: thực thi; User 27/10 chiều: việc A giao = "làm đi".
 
 ## Đang làm (phiên 27/10 chiều)
+- **B76 — XONG** (15:25 27/10/2026; 0 USD): yêu cầu ChatGPT tra 78 mục `gửi chatgpt/2026-10-27/tìm thông tin/tra_ngoai_kho_2026_10_27.md` (private; chỉ câu ngắn ≤ 261 ký tự + tên file;
+  bối cảnh có file:dòng; phần đã biết 23/10; khuôn bảng có URL). Script `data/sua_kho_2026-10-27/tools/make_chatgpt_request.py`. **User tự gửi.**
 - **B75 — gold v3: chờ review C** (xong 15:06 27/10/2026; 0 USD): `gold_v3.jsonl` `3b1117cf59e9` (130 +1 khoảng; 138 fact so sánh chỉ [3]); v2 `2f5a347a71ff` / v1 `bab707b9ab22` không đổi;
   `GOLD_PATH` → v3, `test_gold_coverage.py` 3 passed (+1 test, thử ngược bắt đúng); test B1 7→9, K3b-m 10→11; dev không đổi. Report `gold_v3_implementation.md`. Chưa commit.
 - **B73 sau review C66** (14:44 27/10/2026): C vòng 1 giữ 37 / sửa 3 / K091 có điều kiện ⇒ B sửa K011, K048, K049 ⇒ C vòng 2 **ready** (giữ 40, K091 có điều kiện). `diffs_them/` (B74) **chưa ai review**.
@@ -23,7 +25,7 @@ Terminal: `hue-rag-2d` (A = `hue-rag-51`, C = `hue-rag-86`) · Agent: Claude Opu
 - Tiền phiên chiều: **≈ 0,000325 USD** (token log 2 câu cổng).
 
 ## Đang khai báo sửa (phiên 27/10 chiều)
-- **B75 (gold v3, A giao 15:0x; xong, chờ review — vẫn khai báo tới khi A commit):** `backend/experiments/phase_8_1/g1_retrieval.py` (GOLD_PATH), `backend/tests/test_gold_coverage.py` (working tree chung, `main`);
+- (đã commit `fa192f8`, hết khai báo) B75: `backend/experiments/phase_8_1/g1_retrieval.py` (GOLD_PATH), `backend/tests/test_gold_coverage.py` (working tree chung, `main`);
   file mới `data/phase_8_1/tools/build_gold_v3.py`, `data/phase_8_1/gold/gold_v3.jsonl`, `gold_v3_CHANGES.md`, report `report_agent/2026-10-26_cai_tien_tung_khau/gold_v3_implementation.md`.
 - **Không** (worktree `/tmp/b71_b1` đã gỡ, `/tmp/b71_*` đã xóa, server tắt).
 

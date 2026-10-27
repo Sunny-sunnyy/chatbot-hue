@@ -1,6 +1,6 @@
 # Đợt sửa kho + build lại index — tài liệu thiết kế (NHÁP, chờ User duyệt)
 
-Người viết: A · Ngày: 27/10/2026 · Trạng thái: **chờ review (session khác) rồi User duyệt sha** — số mục từ B73 (xong 14:31 27/10; `data/sua_kho_2026-10-27/README.md`, private).
+Người viết: A · Ngày: 27/10/2026 · Trạng thái: **bản 2 sau review C68 — C kiểm phần sửa rồi User duyệt sha** — số mục từ B73 (xong 14:31 27/10; `data/sua_kho_2026-10-27/README.md`, private).
 Lý do mở: User 27/10 chiều — "xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo".
 File tracked này **không chép nội dung kho**: chỉ quy trình, số đếm, đường dẫn private.
 
@@ -64,36 +64,58 @@ Phân tích từng câu lúc trình (giữ làm hồ sơ):
 
 ## 5. Các bước (mỗi bước người làm ↔ người kiểm khác nhau)
 
+Bản 2 (sửa theo review C68 `..._design_review.md`: M-1 nhãn đoạn đúng lệch offset, M-2 bộ "trước", m-1 … m-5).
+
+0. **Bộ câu trả lời "trước" (trước khi đụng kho):** trên chatbot cuối 8.2 (sau merge B1), index hiện tại, chạy 176 câu Golden qua đường evaluator
+   ⇒ lưu `data/sua_kho_2026-10-27/eval_truoc/` (≈ 0,037 USD). Ghi T1 hiện tại (`cefb2d1ad609`) làm mốc tìm "trước". Plan đo (tiêu chí ghi trước,
+   `run-experiment`) viết + review **trước** bước này.
 1. **Sao lưu** file sẽ sửa vào `knowledge-base-hue/meta/` (kèm ngày). Snapshot Qdrant collection đang chạy; copy build record + sparse state ra
-   `data/sua_kho_2026-10-27/backup/`.
-2. **Áp sửa** (B) theo diff đã duyệt; luật curated `Session_Prompt.md` §5. **Review** (C): diff với backup, từng mục khớp đề xuất; nhóm đánh
-   dấu riêng đối chiếu căn cứ trong kho.
-3. **Thêm file danh mục vào `exclude_files`** (`backend/config/settings.yaml`); test discovery liên quan.
+   `data/sua_kho_2026-10-27/backup/`. Từ bước 2 tới khi build xong: API đang chạy vẫn phục vụ, nhưng **khởi động lại sẽ bị từ chối** (hash kho ≠ build
+   record) ⇒ làm bước 2–6 liền một lần.
+2. **Áp sửa** (B) bằng thay chuỗi từ `edits/*.jsonl` + `diffs_them/` theo thứ tự đã kiểm (không `git apply`); luật curated `Session_Prompt.md` §5.
+   **Review** (C): diff với backup, từng mục khớp đề xuất; nhóm đánh dấu riêng đối chiếu căn cứ trong kho. K091 không áp (file danh mục bị loại).
+3. **Thêm file danh mục vào `exclude_files`** (`backend/config/settings.yaml`) + test discovery (`test_full_corpus_discovery_and_inventory_exclusions`) + sửa
+   docstring ghi số file.
 4. **Chia đoạn thử, chỉ đọc:** `chunk_full_corpus()` 0 lỗi; token từng đoạn với 3 tokenizer (`guides/full_corpus_rag.md` "Build lại index"
-   bước 2 — giới hạn sát nhất huydang 256). Vượt ⇒ dừng, báo A.
-5. **Build lại tại chỗ** (Q3 (a)) theo guide bước 4a–6; xóa sparse state cũ trước (bẫy `Project_Status.md` §8).
-6. **Kiểm sau build:** summary build; `/health` 5 / 5; cổng ổn định 2 câu; **T1 mới** (158 câu) làm mốc tìm mới — so T1 cũ theo câu: câu nào
-   đổi đoạn, có giải thích bằng file đã sửa không; Golden sửa (Q5) rồi **chạy 176 câu** + judge mù cùng lượt so trước ↔ sau theo loại câu.
-7. **Báo cáo:** 4 chỗ `bao_cao_he_thong/`, `Project_Status.md` §4 (số đoạn, vocabulary), guide `full_corpus_rag.md`.
-8. **Dọn:** snapshot / bản sao cũ chỉ xóa khi User duyệt.
-9. **Sau đợt (Q4):** plan thí nghiệm Qwen3-8B (collection riêng, tầng tìm trước) theo `run-experiment`; session khác review trước khi A duyệt sha.
+   bước 2 — giới hạn sát nhất huydang 256); **test mẫu chunker** (`knowledge-base-hue/meta/chunker_acceptance_samples.json` nhắc 3 file bị sửa, 2 edit chạm)
+   ⇒ cập nhật file mẫu theo đoạn mới, người kiểm xem diff. Vượt token / điều kiện chunker lỗi ⇒ dừng, báo A.
+5. **Nhãn đoạn đúng v4:** gold v3 lưu offset ký tự ⇒ sửa kho làm lệch (C68 đếm: 24 câu có trích dẫn trong file bị sửa; 66 trích dẫn lệch offset; 3 trích
+   dẫn bị edit chồng). `data/phase_8_1/tools/build_gold_v4.py` (chỉ đọc, từ chối ghi đè): tìm lại từng trích dẫn **nguyên văn** trong file đã sửa, đúng 1 lần;
+   3 trích dẫn bị chồng ⇒ đề xuất trích dẫn mới, session khác kiểm, **User duyệt**; `GOLD_PATH` ⇒ v4. v3 giữ nguyên.
+6. **Build lại tại chỗ** (Q3 (a)) theo guide bước 4a: xóa **đủ ba** đích — collection, build record, sparse state — rồi build (`guide` bước 5).
+7. **Kiểm sau build:** summary build; `/health` 5 / 5; cổng ổn định 2 câu; **T1 mới** (158 câu) ⇒ ghi sha mới làm mốc tìm, thay mọi chỗ tracked đang trỏ
+   `cefb2d1ad609` (handoff, `Project_Status`, guide; plan B3 đã chạy trước nên giữ); so T1 cũ theo câu: câu đổi đoạn có giải thích bằng file đã sửa không.
+8. **Golden (Q5):** quét câu Golden chạm fact / file đã sửa ⇒ đề xuất sửa `reference_answer` / `keywords` ⇒ User duyệt.
+9. **Đo "sau":** 176 câu trên index mới (≈ 0,037 USD); judge Claude chấm **cùng lượt mù** bộ "trước" (bước 0) và "sau", **cùng Golden đã sửa**; câu chạm fact
+   đã sửa báo riêng.
+10. **Báo cáo:** 4 chỗ `bao_cao_he_thong/`, `Project_Status.md` §4 (số file, số đoạn, vocabulary), guide `full_corpus_rag.md`.
+11. **Dọn:** snapshot / bản sao cũ chỉ xóa khi User duyệt.
+12. **Sau đợt (Q4):** plan thí nghiệm Qwen3-8B (collection riêng, tầng tìm theo gold v4 trước) theo `run-experiment`; session khác review trước khi A duyệt sha.
 
 16 câu hỏi User (`cau_hoi_user.md`): mục nào User chưa trả lời lúc áp thì để nguyên, chuyển đợt 2 — không chặn đợt 1.
+
+**Dừng + khôi phục:** chunk lỗi / vượt token không sửa được, build lỗi, `/health` không 5 / 5, sàn §6 vỡ ⇒ dừng; khôi phục = chép lại file từ backup `meta/`
++ khôi phục snapshot Qdrant + build record + sparse state từ `backup/`, rồi khởi động API, cổng ổn định.
 
 ## 6. Tiêu chí nghiệm thu
 
 - Mọi mục đợt 1 có trạng thái: đã sửa / bỏ (lý do) / chuyển đợt 2; diff review đạt.
-- Chunk 0 lỗi; index khớp build record; runtime khởi động; cổng ổn định đạt.
+- Chunk 0 lỗi; test mẫu chunker đạt; index khớp build record; runtime khởi động; cổng ổn định đạt.
+- Gold v4: 0 trích dẫn mất (hoặc mỗi trích dẫn đổi có User duyệt); T1 mới có sha ghi lại.
 - Sàn closed-world: 0 câu ngoài kho bị trả lời; 0 lỗi kỹ thuật / 500 mới.
-- Chất lượng "không làm hỏng" so trước ↔ sau trên 176 câu (số chính = câu tự nhiên + năng lực): Completeness / Accuracy TB ≥ −0,1; số câu tụt
-  ≤ A/A + 3 — mỗi câu tụt có giải thích (fact đã sửa / tìm đổi đoạn).
+- Chất lượng "không làm hỏng" so trước ↔ sau trên 176 câu (số chính = câu tự nhiên + năng lực), chấm cùng lượt: Completeness / Accuracy TB ≥ −0,1;
+  số câu tụt ≤ A/A + 3 với **A/A = 2** (cận trên đã dùng ở plan B3, cùng cấu hình context 10 — ghi lại trong plan đo; không chạy A/A mới) — mỗi câu tụt có
+  giải thích (fact đã sửa / tìm đổi đoạn).
 - Tiền thật từ log.
 
 ## 7. Quyền và giới hạn
 
-- Sửa curated corpus (User duyệt spec này); Qdrant xóa + tạo lại **đúng một** collection runtime; snapshot trước.
-- Paid: `gpt-6-luna` cho đo 176 câu (ước ≈ 0,04 USD, trần đợt 0,10 USD); judge Claude sub-agent. Không OpenRouter (Q4).
-- Không đổi chunker / model / prompt; không sửa câu kín.
+- Sửa curated corpus theo diff đã review (User duyệt spec này); sửa `knowledge-base-hue/meta/chunker_acceptance_samples.json` (bước 4) và ghi backup vào `meta/`.
+- Sửa `backend/config/settings.yaml` (`exclude_files`) + test discovery + `GOLD_PATH`; tạo `gold_v4.jsonl` (v1 / v2 / v3 không đổi).
+- Sửa Golden (`reference_answer` / `keywords`) và 3 trích dẫn gold mới: **từng mục User duyệt** (bước 5, 8).
+- Qdrant: snapshot, rồi xóa + tạo lại **đúng một** collection runtime; xóa + ghi lại build record + sparse state của nó.
+- Paid: `gpt-6-luna` hai lượt 176 câu (≈ 0,074 USD), **trần đợt 0,15 USD**; judge Claude sub-agent. Không OpenRouter (8B là thí nghiệm riêng sau, Q4).
+- Không đổi chunker / model / prompt; không sửa câu kín. Chạy sau khi đóng 8.2.
 
 ## 8. Rủi ro
 
@@ -103,4 +125,5 @@ Phân tích từng câu lúc trình (giữ làm hồ sơ):
 | Bản sửa "chiều theo" Golden (sự cố s7) | đánh dấu riêng, đối chiếu căn cứ trong kho |
 | Đoạn vượt token sau sửa | bước 4 chạy trước, dừng nếu vượt |
 | Golden lệch kho ⇒ điểm giả | Q5: sửa Golden trước khi đo, User duyệt |
+| Nhãn đoạn đúng lệch offset ⇒ số tầng tìm sai | bước 5 gold v4, tìm lại nguyên văn |
 | Chatbot ngừng khi build | snapshot; làm lúc User không dùng; đo thời gian |
