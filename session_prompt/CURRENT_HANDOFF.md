@@ -181,6 +181,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   "chưa đủ") — §10.2 viết cho biến thể Bước 2 vs mốc B1, B3 so đầu ↔ cuối trên đường production. M-2 — A không đọc câu kín / file ghi câu; **người chạy (B)** đọc
   `sealed_user_feedback_private.md`, khớp số dòng ⇒ `data/phase_8_2/b3/a_seen_lines.json`; không đủ 3 ⇒ chỉ báo S36 + ghi chú. Không nhánh main ctx 5, không A/A câu kín.
   B sửa bản 2 ⇒ C kiểm phần sửa ⇒ A duyệt sha.
+- **A DUYỆT bản 2 sha `27e75be5ed44` (14:26 27/10/2026)** sau C kiểm vòng 2 `ready_for_user_confirmation` 0 / 0 / 1 (m-5 giờ dòng 3 cũ — để nguyên, sửa = bản mới). A chấp nhận có ý thức
+  hệ quả C nêu: n ≈ 33 ⇒ **một câu 500 citation mới** ở chatbot cuối gần như đủ "làm hỏng" (đúng ý: người dùng thấy lỗi); câu 500 ở chatbot đầu (validator v1) là phần
+  thắng của citation v2 — plan đã ghi "cuối − đầu" đo gộp. **Chạy B3 khi:** B0 xong + B1 merge + User quyết mở câu kín. Người chạy: B.
 
 ### Phần tồn Phase cũ (User 14:15 27/10/2026: "xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo")
 

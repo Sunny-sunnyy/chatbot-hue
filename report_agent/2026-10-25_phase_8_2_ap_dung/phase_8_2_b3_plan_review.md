@@ -100,3 +100,32 @@ Không chạy harness (plan chưa có code; `b3.py` chưa tồn tại). Chỉ l�
 `changes_requested`: B sửa M-1, M-2 (và các minor nếu muốn) thành **bản 2**, báo sha mới; C kiểm phần sửa (chỉ các mục trên + đường bị ảnh hưởng) trước khi A
 duyệt sha. Câu hỏi §8 của plan (người chạy, nhánh thứ ba, A/A câu kín) là việc của A — C không có ý kiến chặn; với §8.3, nếu A giữ "không A/A" thì m-2 càng nên
 ghi rõ.
+
+## Vòng 2 — kiểm phần sửa (bản 2, sha `27e75be5ed44`)
+
+Decision vòng 2: **ready_for_user_confirmation** (0 blocker / 0 major / 1 minor) — A duyệt sha `27e75be5ed44` được.
+Date: 14:25 27/10/2026 (`date`). Cách làm giữ như vòng 1: chỉ gói "Căn cứ để review" + quyết định A ghi ở `CURRENT_HANDOFF.md` mục B72 (14:20); không đọc STATUS_B / tin
+của B về nội dung plan; không mở câu kín. C tính lại sha từ file: `27e75be5ed44`. Ngoài gói chỉ mở `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md:92-95`
+(plan mới trích để làm nguồn cho độ tự nhiên).
+
+| Finding vòng 1 | Bản 2 | Kết quả |
+|---|---|---|
+| M-1 luật 500 citation | Theo quyết định A (khác tiêu chí đóng gốc của C, A có quyền chọn): câu 500 citation chấm Completeness = Accuracy = 1 ở **cả hai nhánh**, gộp vào TB + số câu tụt; số 500 chỉ theo dõi (dòng 125–128, 140–144); sàn = OOS 0 + lỗi kỹ thuật 0 sau **một** lần chạy lại đúng câu (124, 145–146); lý do không theo "Sàn chung" ghi rõ (143–144); kết luận "2 sàn + 3 mức tụt" khớp YAML (151). Không còn hai dòng đếm cùng lỗi. | **đóng** |
+| M-2 số dòng câu A đã thấy | Người chạy B (được mở câu kín) khớp từ `sealed_user_feedback_private.md`, lệnh `match-seen` chỉ in số dòng + số khớp; A không đọc câu kín lẫn file ghi câu (42–47); không đủ 3 ⇒ chỉ S36 + ghi chú, kết luận theo S36 (47, 108). A không phải mở gì. | **đóng** |
+| m-1 tin trả lời judge | Brief ghi "chỉ đường dẫn file điểm + số item" (55–56). | **đóng** |
+| m-2 nhiễu A/A | A/A = 2 (context 5: 16/176 × 33 ≈ 3,0 hai chiều ⇒ 1,5 tụt; context 10: ≈ 0,19 — C tính lại khớp), mức tụt = A/A + 3 = 5 theo spec §10.2 (125–126, 165–166). | **đóng** |
+| m-3 import 1b, sàn không áp | Dòng 33–34 (preflight in `__file__`), 147–148. | **đóng** |
+| m-4 độ tự nhiên | Nguồn spec 8.1 G0.4 (C mở: dòng 92–95 đúng nói văn nói + User duyệt mẫu + có dấu đầy đủ); `preflight` đếm nhãn ≠ natural, chỉ in số đếm; > 0 ⇒ báo thêm tập bỏ câu không tự nhiên, kết luận vẫn S33 (111–114). | **đóng** |
+| Ghi chú §10.6 Q2 | Dòng 154. | **đóng** |
+
+### m-5 (mới, minor) — dòng đầu bản 2 vẫn ghi giờ bản 1
+
+- **Vị trí:** dòng 3 `Date: 2026-10-27 14:10 +0700 (`date`) · Bản 2` — 14:10 là giờ bản 1 (A quyết M-1 / M-2 lúc 14:20, sau đó mới có bản 2).
+- **Tác động:** không đổi tiêu chí; chỉ sai mốc giờ ghi (luật `WORKFLOW.md` §6 giờ bằng `date`). **Không cần sửa trước khi duyệt sha** — sửa thì là bản mới.
+  Ghi đúng giờ bản 2 trong report B3 hoặc lần sửa sau.
+
+### Hệ quả cần A biết (không phải finding)
+
+Với n ≈ 30 câu trong phạm vi, **một** câu 500 citation mới ở nhánh cuối mà nhánh đầu chấm 5 = −4 điểm ⇒ TB ≈ −0,13 < −0,1 ⇒ "làm hỏng" chỉ từ dòng TB. Tức theo
+quyết định M-1, thực tế mỗi câu 500 mới (trên câu nhánh đầu làm tốt) gần như là một sàn. Ngược lại, câu 500 ở nhánh đầu (bộ kiểm v1 chỉ nhận `[n]`) tính là thắng
+cho nhánh cuối — đúng là "đo trên đường production lúc đó" như §1 ghi, nhưng phần thắng đó đến từ citation v2, không phải context 10 + NFC.
