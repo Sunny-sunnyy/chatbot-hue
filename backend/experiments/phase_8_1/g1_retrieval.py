@@ -42,8 +42,9 @@ from retrieval.full_corpus import build_full_corpus_retrieval_service, build_ret
 
 SPLIT_PATH = REPO_ROOT / "knowledge-base-hue/evaluation/phase_8_1/split.json"
 KB_ROOT = REPO_ROOT / "knowledge-base-hue"
-# Nhãn đoạn đúng bản 2 (User duyệt 27/10, C56): bản 1 `gold_draft.jsonl` (sha bab707b9ab22) giữ nguyên vì manifest G0.6 khóa nó.
-GOLD_PATH = REPO_ROOT / "data/phase_8_1/gold/gold_v2.jsonl"
+# Nhãn đoạn đúng bản 3 (User duyệt 27/10: v2 + 2 câu test C64 / B74). Bản 1 `gold_draft.jsonl` (sha bab707b9ab22) giữ nguyên vì manifest G0.6
+# khóa nó; bản 2 `gold_v2.jsonl` (sha 2f5a347a71ff) giữ nguyên để tái lập số đo trước bản 3.
+GOLD_PATH = REPO_ROOT / "data/phase_8_1/gold/gold_v3.jsonl"
 OUT_DIR = REPO_ROOT / "data/phase_8_1/g1"
 REALISM_PATH = REPO_ROOT / "data/phase_8_1/golden_realism_final.jsonl"  # 2 agent độc lập + User (A, 21:58)
 ANSWERS_7B_PATH = REPO_ROOT / "data/evaluation/phase_7b/run1_answers.jsonl"

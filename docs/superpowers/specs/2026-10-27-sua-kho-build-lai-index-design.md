@@ -1,6 +1,6 @@
 # Đợt sửa kho + build lại index — tài liệu thiết kế (NHÁP, chờ User duyệt)
 
-Người viết: A · Ngày: 27/10/2026 · Trạng thái: **nháp chờ User duyệt** — số mục từ B73 (xong 14:31 27/10; `data/sua_kho_2026-10-27/README.md`, private).
+Người viết: A · Ngày: 27/10/2026 · Trạng thái: **chờ review (session khác) rồi User duyệt sha** — số mục từ B73 (xong 14:31 27/10; `data/sua_kho_2026-10-27/README.md`, private).
 Lý do mở: User 27/10 chiều — "xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo".
 File tracked này **không chép nội dung kho**: chỉ quy trình, số đếm, đường dẫn private.
 
@@ -27,13 +27,27 @@ quả lẫn hai thay đổi. Chuẩn bị (B73) làm trước, 0 USD, không đ�
 | Cần tra ngoài (`tra_ngoai.md`, 7 loại: hành chính, quán ăn, khoảng cách, lịch sử, dự án, lịch lễ hội, giao thông / vé; + nháp yêu cầu ChatGPT) | 69 + 9 = 78 | **đợt 2** (Q2) |
 | File danh mục `performing_arts` ⇒ `exclude_files` (205 ⇒ 204 file, 8.459 ⇒ 8.426 đoạn; vào context B1 ở 3 / 176 câu; nhãn gold_v2 trỏ tới: 0) | 1 file, 33 đoạn | đợt này |
 
-Phát hiện thêm khi soạn (ngoài 139 mục): ~15 chỗ tên đơn vị hành chính cũ còn sót, cấp hành chính ghi chưa thống nhất ⇒ đề xuất gộp vào đợt 1
-(B soạn diff cùng cách, C review) — Q1.
+Phát hiện thêm khi soạn (ngoài 139 mục): tên đơn vị hành chính cũ còn sót ⇒ B74 soạn **11 diff / 14 edit** (`diffs_them/`, căn cứ duy nhất: ghi chú
+sắp xếp đơn vị trong kho; 5 chỗ không soạn có lý do) — C67 review; cấp hành chính ghi chưa thống nhất để chung với mục cùng loại.
+
+**Review đề xuất (C66, 27/10):** vòng 1 `changes_requested` (3 mục: một edit đổi câu đúng thành sai, hai edit bỏ mất thông tin ngoài phạm vi) ⇒ B sửa ⇒ vòng 2
+`ready_for_user_confirmation`: 40 giữ + 1 giữ có điều kiện (chỉ áp nếu **không** loại file danh mục — mục đó sửa chính file danh mục); 9 / 9 edit nhóm đánh dấu
+giữ (đủ căn cứ trong kho); áp thử toàn bộ edit trong bộ nhớ 0 lỗi, 0 chồng chéo. Áp thật bằng thay chuỗi từ `edits/*.jsonl` (file `.diff` chỉ để xem).
 
 Sự cố khi soạn (B73, 27/10): một sub-agent nhóm món ăn grep cả thư mục và đọc nhầm Golden Foods cũ (không phải câu kín). Các bản sửa của
 nhóm đó **đánh dấu riêng**; người review đối chiếu từng bản chỉ với căn cứ trong kho, bản nào không đứng được thì bỏ.
 
-## 4. Quyết định cần User (mỗi câu một khuyến nghị)
+## 4. Quyết định của User (15:21 27/10/2026)
+
+| Câu | User chọn |
+|---|---|
+| Q1 phạm vi đợt 1 | 41 mục (40 + K091 có điều kiện ⇒ **không áp** vì file danh mục bị loại) + 11 diff tên đơn vị sót + loại file danh mục + 16 câu User trả lời; tra ngoài ⇒ đợt 2 |
+| Q2 tra ngoài | đồng ý, chỉ câu ngắn (không gửi cả file) |
+| Q3 cách thay index | **tại chỗ** (snapshot trước) |
+| Q4 Qwen3-8B | **thí nghiệm sau đợt sửa kho** — chưa từng đo (7A2 hoãn vì 504 / 429; 8.2 để ngoài vì không build lại index). Collection riêng, đo tầng tìm trước, plan riêng có review; chatbot không đổi tới khi có số. A đã rút khuyến nghị "đóng" (lý do vận hành, không có số chất lượng — trái nguyên tắc "thử + so baseline") |
+| Q5 Golden lệch kho | đồng ý: quét + User duyệt sửa Golden trước khi đo lại |
+
+Phân tích từng câu lúc trình (giữ làm hồ sơ):
 
 - **Q1 — phạm vi đợt 1.** A khuyên: mục có căn cứ trong kho + file danh mục + mục User trả lời; phần tra ngoài để đợt 2. Sai khi: phần lớn lỗi
   User gặp nằm ở nhóm tra ngoài.
@@ -42,7 +56,7 @@ nhóm đó **đánh dấu riêng**; người review đối chiếu từng bản 
 - **Q3 — cách thay index.** (a) tại chỗ: xóa collection + build record + sparse state rồi build lại đúng tên — chatbot ngừng trong lúc build
   (e5 CPU, thời gian đo khi chạy); (b) đích mới rồi cutover — cần sửa code runtime đọc tên đích từ cấu hình. A khuyên **(a)**: chatbot chạy
   trên máy User, ngừng ngắn chấp nhận được; (b) là code mới chưa có nhu cầu (deploy). Có snapshot trước khi xóa.
-- **Q4 — index Qwen3-8B** (tồn từ 7A2, spec 8.2 để ngoài). A khuyên **đóng: không làm trong đồ án** — mỗi câu hỏi phải gửi ra OpenRouter để
+- **Q4 — index Qwen3-8B** (tồn từ 7A2, spec 8.2 để ngoài). A khuyên lúc đầu (đã rút) **đóng: không làm trong đồ án** — mỗi câu hỏi phải gửi ra OpenRouter để
   nhúng (thêm độ trễ mạng, đã gặp 504 / 429, câu hỏi người dùng ra bên thứ ba), trong khi p95 đã vượt mức theo dõi. Đảo khi: sau đợt sửa kho,
   tầng tìm vẫn là chỗ mất điểm chính và cách chạy trên máy đã thử hết.
 - **Q5 — Golden lệch kho sau sửa.** Sửa một fact có thể làm `reference_answer` / `keywords` Golden lệch kho. A khuyên: quét Golden tìm câu chạm
@@ -62,6 +76,9 @@ nhóm đó **đánh dấu riêng**; người review đối chiếu từng bản 
    đổi đoạn, có giải thích bằng file đã sửa không; Golden sửa (Q5) rồi **chạy 176 câu** + judge mù cùng lượt so trước ↔ sau theo loại câu.
 7. **Báo cáo:** 4 chỗ `bao_cao_he_thong/`, `Project_Status.md` §4 (số đoạn, vocabulary), guide `full_corpus_rag.md`.
 8. **Dọn:** snapshot / bản sao cũ chỉ xóa khi User duyệt.
+9. **Sau đợt (Q4):** plan thí nghiệm Qwen3-8B (collection riêng, tầng tìm trước) theo `run-experiment`; session khác review trước khi A duyệt sha.
+
+16 câu hỏi User (`cau_hoi_user.md`): mục nào User chưa trả lời lúc áp thì để nguyên, chuyển đợt 2 — không chặn đợt 1.
 
 ## 6. Tiêu chí nghiệm thu
 

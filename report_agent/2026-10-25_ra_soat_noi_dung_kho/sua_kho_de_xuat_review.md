@@ -38,3 +38,9 @@ B sửa 3 mục theo tiêu chí đóng trong file private ⇒ C kiểm phần s�
 
 B sửa đúng 3 mục theo tiêu chí đóng (viết lại câu chỉ hướng một nghĩa; giữ lại hai thông tin bị mất; giữ lại cụm bị bỏ). C kiểm sha diff mới, đọc lại từng chuỗi, chạy lại áp
 toàn bộ 111 edit lần lượt: 0 lỗi. Cả 3 mục **đóng**. Thư mục `diffs_them/` (B thêm sau) không thuộc phạm vi review này.
+
+## 6. Phần thêm tên phường cũ còn sót (C67, 15:04 27/10/2026)
+
+11 diff thêm (14 edit) của B: **giữ 11 / 11**, sửa 0, bỏ 0; đồng ý 5 chỗ B không soạn (thiếu căn cứ trong kho hoặc là địa chỉ cũ / tên nghề, không phải địa chỉ hiện hành).
+Áp chung 111 + 14 edit lần lượt (trong bộ nhớ, đúng thứ tự): 0 lỗi. Quét lại sau khi áp: 14 chỗ còn tên cũ — 12 chỗ thuộc các mục đã chuyển "tra ngoài", 2 chỗ đã ghi mốc
+trước sắp xếp; không có chỗ sót mới. 1 minor: một đường dẫn ghi sai thư mục trong ghi chú của B (không ảnh hưởng diff).
