@@ -2,7 +2,7 @@
 # Tìm trong NỘI DUNG kho tri thức mà không lọt vào bộ đánh giá / câu kín / ghi chép meta / bản thô.
 # Vì sao: 25/10 và 27/10 grep -r thẳng vào knowledge-base-hue/ đọc lọt evaluation/ (câu kín, Golden Foods cũ) và meta/
 # (sổ cải tiến W27, Session_Prompt.md §5 "giữ mù"). Brief sub-agent: tìm trong kho CHỈ qua script này.
-# Dùng: scripts/grep_kb.sh [--dir <thư mục con của kho>] [cờ: -l -L -n -c -i -w -x -o -v -F -E -H -h -A<n> -B<n> -C<n> -m<n> --include=…] <mẫu>
+# Dùng: scripts/grep_kb.sh [--dir <thư mục con của kho>] [cờ: -l -L -n -c -i -w -x -o -v -F -E -H -h -A<n> -B<n> -C<n> -m<n>] <mẫu>
 #   ví dụ: scripts/grep_kb.sh --dir foods -n "Phú Xuân"
 # Luôn quét trong kho (đích kiểm bằng realpath), loại evaluation/, meta/, _source-dumps/, *sealed*.
 set -euo pipefail
@@ -22,7 +22,7 @@ fi
 pattern="${@: -1}"
 for arg in "${@:1:$#-1}"; do
   case "$arg" in
-    -l|-L|-n|-c|-i|-w|-x|-o|-v|-F|-E|-H|-h|-A[0-9]*|-B[0-9]*|-C[0-9]*|-m[0-9]*|--include=*) ;;
+    -l|-L|-n|-c|-i|-w|-x|-o|-v|-F|-E|-H|-h|-A[0-9]*|-B[0-9]*|-C[0-9]*|-m[0-9]*) ;;
     *) echo "grep_kb: cờ không nằm trong danh sách trắng (thư mục con: --dir): $arg" >&2; exit 2 ;;
   esac
 done
