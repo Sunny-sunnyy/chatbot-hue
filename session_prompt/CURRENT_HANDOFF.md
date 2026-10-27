@@ -53,7 +53,8 @@ sau**; **hiệu suất = tiền + tốc độ**; **đo theo mục tiêu sản ph
 - Vòng cải tiến 7: W24–W26 đề xuất (`SO_CAI_TIEN_CACH_LAM.md`) — chờ User.
 - **C58 xong** (`c58_latency_theo_khau.md`, B67 ready sau sửa nhãn; 0,0075 USD): gọi model ≈ 98 % thời gian chờ — đã chứng minh khoảng dư ở bước sinh, không ở
   HTTP / tìm / ngữ cảnh / citation; giải thích được bằng token ra (≈ 11,5 ms / token, r 0,97), chưa can thiệp. Không có chỗ thừa ở đường API.
-- **C59 plan** log token + thời gian theo khâu mỗi câu ở `/api/chat` (`c59_log_token_plan.md` sha `3cafe700ccec`; đổi code main ⇒ **User duyệt**) — B68 review.
+- **C59 plan** log token + thời gian theo khâu mỗi câu ở `/api/chat`: bản 2 **`7f1456a1ae55`** (B68 vòng 1 changes_requested ⇒ vòng 2 **ready** 12:19 27/10/2026; m-4, m-5 ghi khi code);
+  đổi code main ⇒ **chờ User duyệt** (đề xuất: C code, B review, cổng ổn định, ≈ 0,0003 USD).
 
 ## Câu hỏi cho User (phiên sau — gói trong báo cáo mở phiên, mỗi câu có khuyến nghị)
 

@@ -46,6 +46,7 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **C58 (A giao 11:53 27/10/2026) — khai báo:** worktree `/tmp/c_lat` (detached `main`, chỉ thêm đo thời gian tạm, không commit, gỡ khi xong); private `data/phase_8_2/latency_2710/c58/`; report `report_agent/2026-10-26_cai_tien_tung_khau/c58_latency_theo_khau.md`. Paid ≤ 0,01 USD; cổng 8014.
 **C58 xong 12:00 27/10/2026:** gọi model chiếm ≈ 98 % thời gian (tìm ~40 ms, ngữ cảnh ~2 ms, HTTP ~2 ms); khoảng dư 1,5 s = bộ câu khác (câu tự viết ra ~1,8× token ⇒ +1,1 s; cùng câu dev API ≈ harness). Không có chỗ thừa để cắt; đề xuất nhỏ: log token + thời gian theo khâu ở /api/chat. **0,0074884 USD thật.** Worktree `/tmp/c_lat` đã gỡ, server 8014 đã tắt.
 **12:06 27/10/2026:** C58 sửa nhãn theo B67 (token ra = "giải thích được, chưa can thiệp"; 0,2 s = giả thuyết; "token do generator trả về") — sha `d76fb10e0c5a`. **C59 plan log token xong** — `report_agent/2026-10-26_cai_tien_tung_khau/c59_log_token_plan.md` sha `3cafe700ccec`, chờ B review; chưa sửa code.
+**12:14 27/10/2026:** C59 plan bản 2 (sửa B68 M-1, M-2 theo A: một điểm ghi try/except/finally, `_answer` giữ thân cũ; m-1..m-3) — sha `7f1456a1ae55`; chờ B kiểm phần sửa. **Đã báo sha ⇒ không sửa nữa.**
 
 ## Còn treo (phiên sau xử lý trước)
 

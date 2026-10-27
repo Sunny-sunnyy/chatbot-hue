@@ -1,7 +1,7 @@
 # Plan C59: `/api/chat` ghi một dòng log số đo (token, thời gian theo khâu) cho mỗi câu — không ghi nội dung
 
 Người viết: C (Claude Opus 5.5, `hue-rag-5b`) · 12:03 27/10/2026 +0700 (`date`) · Việc: C59 (A giao). Theo skill
-`practical-project-coding`. Trạng thái: **bản nháp chờ B review**, rồi A trình User duyệt (đổi code `main`). **Chưa sửa code; 0 USD lúc viết.**
+`practical-project-coding`. Trạng thái: **bản 2** (12:13 27/10/2026, sửa theo review B68 + lựa chọn của A cho M-2; bản 1 `3cafe700ccec`) — chờ B kiểm phần sửa, rồi A trình User duyệt (đổi code `main`). **Chưa sửa code; 0 USD lúc viết.**
 
 ## Căn cứ để review
 
@@ -28,22 +28,50 @@ Người review được chạy lệnh chỉ đọc (đọc code, `git grep`, ch
 - Đọc usage (dòng ~196–200): thêm `reasoning_tokens = getattr(getattr(usage, "output_tokens_details", None), "reasoning_tokens", None)` và truyền vào `GeneratedText`
   (dòng 209). Không đổi `input_tokens` / `output_tokens` (output đã **gồm** token suy luận; trường mới chỉ tách phần đó ra).
 
-### 2.2 `backend/api/routes/chat.py`
+### 2.2 `backend/api/routes/chat.py` — một điểm ghi duy nhất (bản 2, A chọn theo B68 M-2)
 
-- Đầu hàm `chat` (dòng 49): `t0 = time.perf_counter()`; dict `metrics` các trường ở §3.
-- Ghi mốc thời gian quanh 4 bước đã có, **không đổi thứ tự hay lời gọi**: `retrieval_service.search` (dòng 70), `context_builder.build` (dòng 82), `generate_answer`
-  (dòng 110), `normalize_citations` + `select_cited_sources` (dòng 124–126). Lấy thêm `result.trace.timings_ms["dense_ms"]` (nhúng câu hỏi e5 + Qdrant — số đã có sẵn).
-- Một hàm nhỏ trong file: `def _logged(response, metrics, outcome, t0)` — điền `outcome`, `status_code`, `total_ms`, gọi `logger.info("chat_metrics %s", json.dumps(metrics))`
-  rồi trả `response`. **Không** ghi 422 do `RequestValidationError` (`api/app.py:149-160`, route không chạy — không có token / thời gian để ghi; handler đó đã log `Invalid API request`). **Mọi** `return` của `chat` (9 chỗ — dòng 51, 59, 75, 86, 98, 103, 115, 131, 149: 422 sau `strip` (gần như không tới được, vì `ChatRequest` đã `str_strip_whitespace` + `min_length=1`), retrieval chưa sẵn sàng, lỗi retrieval 503, ngân sách context 500, không có nguồn ⇒ từ chối không gọi
-  model, generator chưa sẵn sàng 502, lỗi sinh 502, lỗi citation 500, thành công 200) đổi thành `return _logged(<response cũ>, metrics, "<mã>", t0)`. Lý do chọn cách
-  này thay vì `try/finally` bọc cả hàm: diff nhỏ từng dòng, không thụt lề lại toàn hàm, mỗi nhánh vẫn đọc thẳng.
+- **Thân hàm hiện tại giữ nguyên, đổi tên:** `async def chat(body, request)` (dòng 47–149) ⇒ `async def _answer(body, request, metrics)`, bỏ `@router.post` khỏi nó. Bên trong chỉ
+  **thêm** các dòng điền `metrics` quanh 4 bước đã có, không đổi thứ tự hay lời gọi: `retrieval_service.search` (dòng 70) ⇒ `search_ms`, `dense_ms` (= `result.trace.timings_ms["dense_ms"]`,
+  số đã có sẵn); `context_builder.build` (dòng 82) ⇒ `context_ms`, `n_context_sources`; `generate_answer` (dòng 110) ⇒ `generation_ms` (đặt cả khi `GenerationError` ném ra, để
+  phân biệt "gọi rồi lỗi" với "chưa sẵn sàng"), `model`, token; `normalize_citations` + `select_cited_sources` (dòng 124–126) ⇒ `citation_ms`, `n_cited_sources`. Các `return` cũ
+  (9 chỗ) **không sửa**.
+- **Hàm mới `chat` mỏng** mang `@router.post("/api/chat", response_model=ChatResponse)`:
+
+  ```python
+  async def chat(body: ChatRequest, request: Request):
+      t0 = time.perf_counter()
+      metrics = dict.fromkeys(METRIC_FIELDS)          # danh sách trắng §3, mặc định None
+      try:
+          response = await _answer(body, request, metrics)
+          if isinstance(response, JSONResponse):      # mọi lỗi route đều qua error_response(...)
+              metrics["outcome"] = json.loads(response.body)["error"]["code"]
+              metrics["status_code"] = response.status_code
+          else:                                       # ChatResponse 200
+              metrics["outcome"] = "success" if metrics["generation_ms"] is not None else "refusal_no_sources"
+              metrics["status_code"] = 200
+              metrics["refusal"] = response.answer.strip() == INSUFFICIENT_ANSWER
+          if metrics["outcome"] == "generation_unavailable" and metrics["generation_ms"] is not None:
+              metrics["outcome"] = "generation_failed"  # cùng mã response 502, nhưng đã gọi model rồi lỗi (recorder cũng tách hai trường hợp)
+          return response
+      except Exception:
+          metrics["outcome"], metrics["status_code"] = "internal_error", 500   # đi tiếp tới handler chung app.py:161–172
+          raise
+      finally:
+          metrics["total_ms"] = round((time.perf_counter() - t0) * 1000, 1)
+          logger.info("chat_metrics %s", json.dumps(metrics))
+  ```
+
+- **Vì sao một điểm ghi** (B68 M-2): ghi được cả 500 `internal_error` (exception lạ đi qua `app.py:161–172`, không qua `return` nào); `return` mới sau này không thể sót; test ở
+  điểm ghi duy nhất bảo vệ mọi nhánh. `outcome` lấy từ `error.code` — chính các chuỗi cố định ở `error_response` — nên 409 `corpus_reingest_required` (`app.py:67–68`) được ghi đúng
+  (B68 M-1), không gắn cứng. `raise` giữ nguyên hành vi handler chung; phản hồi API không đổi.
+- **Không** ghi 422 do `RequestValidationError` (`api/app.py:149–160`, route không chạy — không có token / thời gian để ghi; handler đó đã log `Invalid API request`).
 - Không dùng `EvidenceRecorder` (`llm/evidence_recorder.py`): recorder đó lưu **nguyên văn đoạn trích** (`sources[].excerpts`) và chỉ bật trong smoke test.
 
 ## 3. Ghi trường nào — danh sách trắng (whitelist)
 
 | Trường | Kiểu | Ghi chú |
 |---|---|---|
-| `outcome` | chuỗi cố định | `success` / `refusal_no_sources` / `invalid_request` / `retrieval_unavailable` / `context_budget_error` / `generation_unavailable` / `citation_integrity_error` |
+| `outcome` | chuỗi cố định do code đặt | `success`, `refusal_no_sources`, hoặc đúng `error.code` route trả: `invalid_request`, `retrieval_unavailable`, `corpus_reingest_required` (409), `context_budget_error`, `generation_unavailable`, `generation_failed` (tách từ 502), `citation_integrity_error`, `internal_error` (500 qua handler chung) |
 | `status_code` | số | mã HTTP trả về |
 | `refusal` | bool / null | câu trả lời 200 có đúng là câu từ chối chuẩn không (`answer.strip() == INSUFFICIENT_ANSWER`); null khi không có câu trả lời |
 | `model` | chuỗi | `generated.model` (`gpt-6-luna`) |
@@ -59,13 +87,18 @@ chuỗi `outcome` cố định — không ghi `str(exc)` (thông điệp lỗi c
 
 ## 4. Test bảo vệ hành vi
 
-- **Mới, không cần key (1 test, `backend/tests/test_api_chat.py`):** `TestClient(create_app(load_settings()))` **không** chạy lifespan (như `test_invalid_requests_use_typed_vietnamese_envelope`) ⇒
-  `retrieval_ready` False ⇒ route trả 503 `retrieval_unavailable` mà không gọi Qdrant / model. Gửi `query` hợp lệ chứa một chuỗi đánh dấu; dùng `caplog` bắt logger `chat`: đúng
-  **một** dòng `chat_metrics`, JSON parse được, `outcome == "retrieval_unavailable"`, `status_code == 503`, và **chuỗi đánh dấu không xuất hiện** trong bất kỳ dòng log nào. Bẫy: test khác chạy lifespan sẽ gọi `setup_logging()` ⇒ logger `chat` có `propagate: no` (`logging.yaml`) ⇒ `caplog` (gắn ở root)
-  không thấy gì; test gắn thẳng `caplog.handler` vào `logging.getLogger("chat")` (gỡ khi xong) để không phụ thuộc thứ tự test. Bảo
-  vệ hai điều quan trọng nhất: luôn ghi đúng một dòng, và không lọt nội dung câu hỏi.
-- **Không viết test riêng cho đường thành công** (cần model thật): kiểm bằng cổng ổn định §5 trên server thật.
-- Chạy lại file test chạm tới: `test_api_chat.py` (phần không key), `test_openai_full_corpus_generator.py` (bộ test cần key — chỉ chạy khi việc cho phép, theo `Project_Status.md` §8),
+Cả hai test gắn thẳng `caplog.handler` vào `logging.getLogger("chat")` (gỡ khi xong): test chạy lifespan sẽ gọi `setup_logging()` ⇒ logger `chat` có `propagate: no`
+(`logging.yaml`) ⇒ `caplog` gắn ở root không thấy gì.
+
+- **Mở rộng test có sẵn, không cần key** — `test_real_first_chunk_budget_error_has_no_partial_answer` (`test_api_chat.py:47`, B68 m-1): chạy lifespan thật (Qdrant, e5), câu hỏi
+  đi qua `search` + `context_builder` rồi trả 500 `context_budget_error` trước khi gọi model. Thêm kiểm: đúng **một** dòng `chat_metrics` mới; JSON parse được; `outcome ==
+  "context_budget_error"`, `status_code == 500`, `search_ms` / `dense_ms` là số, token là `None`; **câu hỏi đã gửi không xuất hiện** trong bất kỳ dòng log nào của logger `chat`;
+  và `set(keys) == METRIC_FIELDS` (B68 m-2: ai thêm trường mới, ví dụ `query`, thì test đỏ — phải sửa danh sách trắng có chủ đích).
+- **Mới, không cần key** — `TestClient(create_app(load_settings()))` **không** chạy lifespan ⇒ 503 `retrieval_unavailable`: đúng một dòng, `outcome` đúng mã. Kiểm nhanh điểm ghi ở
+  nhánh lỗi sớm nhất (không gọi Qdrant / model).
+- **Không viết test riêng cho đường thành công** (cần model thật; không mock — `Session_Prompt.md` §6): kiểm bằng cổng ổn định §5 trên server thật. Đường 500 `internal_error` không có
+  cách tạo thật mà không dựng lỗi giả (`Session_Prompt.md` §8) ⇒ kiểm bằng đọc code (nhánh `except` + `finally`), ghi rõ "không chạy".
+- Chạy lại file test chạm tới: `test_api_chat.py` (phần không key), `test_openai_full_corpus_generator.py` (bộ cần key — chỉ chạy khi việc cho phép, theo `Project_Status.md` §8),
   `test_phase6_live_smoke.py` (dựng `GeneratedText` — trường mới có mặc định nên không vỡ). Lỗi cũ C-17 (thiếu key) ghi rõ.
 
 ## 5. Cổng ổn định (theo `CURRENT_HANDOFF.md`)
@@ -74,9 +107,10 @@ chuỗi `outcome` cố định — không ghi `str(exc)` (thông điệp lỗi c
 2. Server thật từ `backend/`: `HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8014` (8011 đang bị tiến trình khác chiếm): `/` 200, `/health` 5 / 5 ready,
    1 câu trong kho (200, có `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết, không Golden. Kiểm:
    - phản hồi JSON **giống khuôn cũ** (`answer`, `sources`), không thêm trường;
-   - log có đúng **2** dòng `chat_metrics`, mỗi dòng có đủ trường §3; câu trong kho có `output_tokens` > 0 và `reasoning_tokens` là số (hoặc null nếu provider không trả — ghi lại);
+   - log có đúng **2** dòng `chat_metrics` **mới** (B68 m-3: `application.log` ghi nối — đếm số dòng trước / sau, hoặc lọc theo mốc giờ khởi động), mỗi dòng có đủ trường §3; câu trong kho có `output_tokens` > 0 và `reasoning_tokens` là số (hoặc null nếu provider không trả — ghi lại);
    - `grep` hai câu hỏi đã gửi trong `application.log` ⇒ **0** lần xuất hiện;
-   - tổng `input_tokens` / `output_tokens` khớp với số đo được bằng `cost_usd` (tiền thật cổng ≈ 0,0003 USD).
+   - tổng `input_tokens` / `output_tokens` khớp với số đo được bằng `cost_usd` (tiền thật cổng ≈ 0,0003 USD);
+   - `total_ms` so với thời gian client đo: chênh vài ms (C58: ~2 ms) ⇒ đo đúng chỗ.
 3. Không chạm tìm kiếm / chia đoạn ⇒ không cần T1 (ghi lý do).
 4. Hành vi người dùng không đổi ⇒ chỉ ghi một dòng ở `LUONG_HOAT_DONG_HE_THONG.md` / `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (A quyết).
 5. Hook pre-commit quét trùng; A commit + push.
@@ -94,3 +128,15 @@ chuỗi `outcome` cố định — không ghi `str(exc)` (thông điệp lỗi c
 ## 7. Ngoài phạm vi (không làm)
 
 Tính USD trong log; xoay vòng log; dashboard / DB; ghi trace retrieval chi tiết; đổi `EvidenceRecorder`; đổi phản hồi API; streaming.
+
+## Sửa sau review B68 (12:13 27/10/2026 +0700, `date`)
+
+| Finding | Sửa |
+|---|---|
+| M-1 `outcome` gắn cứng sai ở 409 | `outcome` lấy từ `error.code` của chính phản hồi (§2.2); bảng §3 liệt kê đủ mã, gồm `corpus_reingest_required` và `internal_error`; tách `generation_failed` khỏi `generation_unavailable` bằng `generation_ms` đã đặt |
+| M-2 một điểm ghi | A chọn (a): hàm `chat` mỏng `try / except (internal_error, raise) / finally (log)`, thân cũ thành `_answer` (9 `return` không sửa) |
+| m-1 test không lọt nội dung ở nhánh nông | mở rộng `test_real_first_chunk_budget_error_has_no_partial_answer` (câu hỏi đi qua tìm + ngữ cảnh, không cần key) |
+| m-2 khóa danh sách trắng | `set(keys) == METRIC_FIELDS` trong test |
+| m-3 đếm dòng mới | cổng §5 đếm dòng `chat_metrics` mới; so `total_ms` với client |
+
+Không đổi: danh sách trắng (chỉ thêm giá trị `outcome`), chỉ ghi token không ghi USD (B68 đồng ý), nơi ghi (logger `chat` sẵn có), rủi ro §6, ngoài phạm vi §7.

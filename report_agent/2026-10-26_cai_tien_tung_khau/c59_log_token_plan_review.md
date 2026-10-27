@@ -110,3 +110,50 @@ Theo: `practical-project-coding`, `risk-gated-agent-review`. Chỉ dựa trên m
 ## 5. Decision
 
 **changes_requested.** C sửa M-1, M-2 (chọn (a) hoặc (b) kèm lý do), m-1–m-3, rồi báo sha mới ⇒ B kiểm phần sửa ⇒ A trình User.
+
+## Vòng 2 — kiểm phần sửa (B, 2026-10-27, plan bản 2 sha `7f1456a1ae55`)
+
+Decision: **ready_for_user_confirmation** (0 blocker / 0 major; 2 minor mới, không mở vòng sửa riêng)
+Bản kiểm: `7f1456a1ae55`, tính từ file. Bản 1 `3cafe700ccec` khớp `git show 5191c20:`. Cách kiểm: `git diff 5191c20` (toàn bộ thay đổi), đối chiếu từng tiêu
+chí đóng với code `chat.py` / `app.py` ở `main`.
+
+| Finding | Tiêu chí đóng | Bản 2 | |
+|---|---|---|---|
+| M-1 | `outcome` = mã thật route trả; có `corpus_reingest_required`; tách `generation_failed` | `outcome = json.loads(response.body)["error"]["code"]` cho mọi `JSONResponse`. Mọi lỗi route đều qua `error_response(...)` (B đếm: 9 `return` = 7 `return error_response(...)` ở `chat.py:51, 59, 75, 86, 103, 115, 131` + 2 `return ChatResponse` ở `:98, :149`), nên 409 `app.py:67–68` được ghi đúng. Bảng §3 đủ mã. `generation_failed` tách bằng `generation_ms` (xem (b)) | ✓ đóng |
+| M-2 | một điểm ghi có `finally`, hoặc ghi rõ chấp nhận | (a) — `chat` mỏng + `_answer`; 9 `return` không sửa | ✓ đóng (xem (a)) |
+| m-1 | kiểm lọt nội dung ở test đi sâu | mở rộng `test_real_first_chunk_budget_error_has_no_partial_answer` (lifespan thật, qua search + context, 500 trước model): đúng một dòng mới, đúng `outcome`, câu hỏi không có trong log `chat` | ✓ đóng |
+| m-2 | khóa tập khóa | `set(keys) == METRIC_FIELDS` | ✓ đóng |
+| m-3 | đếm dòng mới | cổng §5 đếm dòng mới (trước / sau hoặc mốc giờ) + so `total_ms` với client | ✓ đóng |
+
+**(a) `chat` mỏng có giữ nguyên hành vi trả về và handler 500 chung không — có.**
+- `try` lấy `response` rồi `return response`. `finally` chạy trước khi giá trị trả ra, và không đổi `response`.
+- Exception từ `_answer` đi vào `except Exception`, gán `internal_error` / 500, rồi `raise` nguyên exception. `finally` ghi log, rồi exception đi tiếp tới
+  `exception_handler(Exception)` ở `app.py:161–172` như hiện nay (cùng 500, cùng thông điệp).
+- `RequestValidationError` vẫn xảy ra trước khi gọi route, nên đúng như plan: không có dòng.
+- `chat` giữ tham số `body: ChatRequest, request: Request` và `@router.post(..., response_model=ChatResponse)`. `ChatResponse` trả từ `_answer` vẫn được
+  FastAPI kiểm như cũ; `JSONResponse` đi thẳng. ⇒ Phản hồi API không đổi.
+- **m-4 (minor, ghi khi code):** đoạn suy `outcome` nằm **trong** `try`. Nếu chính nó ném lỗi, ví dụ đọc `response.body` sai kiểu, thì một phản hồi đúng sẽ
+  thành 500 `internal_error`. Tương tự, `json.dumps(metrics)` trong `finally` mà ném lỗi thì sẽ thay giá trị trả về. Rủi ro thực tế thấp: `body` là
+  bytes JSON do chính `error_response` tạo, và mọi giá trị là int / float / str / bool / None. Nhưng nguyên tắc là **log không được đổi phản hồi**.
+  - Cách giữ đơn giản: chỉ đặt giá trị kiểu thường vào `metrics` (`round(...)` ra float, token là int).
+  - Kiểm ở cổng §5: phản hồi 200 thật vẫn đúng khuôn. Đường thành công là nơi duy nhất test không key không chạm.
+  - Không cần thêm `try` bọc phòng xa.
+- Ghi chú (không phải finding): `asyncio.CancelledError` (client ngắt) là `BaseException`, không vào `except Exception`. `finally` vẫn ghi một dòng với
+  `outcome` = null — chấp nhận được và thật hơn là đoán.
+
+**(b) Phân biệt `success` / `refusal_no_sources` / `generation_failed` bằng `generation_ms` — đúng hôm nay, nhưng dựa vào suy diễn ⇒ m-5 (minor).**
+- Đúng theo code hiện tại:
+  - `refusal_no_sources` là nhánh `chat.py:95–98`, trả trước khi gọi model, nên `generation_ms` = None.
+  - `success` là `ChatResponse` sau `generate_answer`, nên `generation_ms` có số. Câu từ chối do model viết vẫn là `success` + `refusal: true`, đúng ý §3.
+  - `generation_failed` là 502 sau khi đã gọi `generate_answer`: plan đặt `generation_ms` cả khi `GenerationError`. Còn `generation_unavailable` là 502
+    ở `chat.py:100–107`, trước khi gọi, nên `generation_ms` = None.
+- Dễ vỡ ở chỗ: nhãn được **suy** từ việc một trường thời gian có được đặt hay không. Sau này ai đổi chỗ đo `generation_ms` (ví dụ đặt sớm hơn, hoặc đặt cả ở
+  nhánh "chưa sẵn sàng") thì nhãn sai mà không test nào đỏ: hai test không key đều không đi qua ba nhánh này.
+- Cách trực tiếp hơn, cùng cỡ: trong `_answer`, gán thẳng `metrics["outcome"] = "refusal_no_sources"` ngay trước `return` ở dòng 98, và
+  `metrics["outcome"] = "generation_failed"` trong `except GenerationError` (dòng 111). Đây là thêm dòng, **không sửa `return`**. Wrapper chỉ điền `outcome`
+  từ `error.code` / `"success"` khi chưa có. Nhãn đặt đúng tại nhánh, nên đọc là thấy, không phải suy.
+- Không chặn. C chọn khi code; nếu giữ cách suy thì thêm một dòng comment nói `generation_ms` là căn cứ phân loại.
+
+**Ngoài phạm vi:** không có. Phần thêm `total_ms` so với client là từ gợi ý của B68 m-3. Danh sách trắng chỉ thêm giá trị `outcome`, không thêm trường.
+
+⇒ Plan bản 2 đủ để A trình User duyệt (sha `7f1456a1ae55`). m-4 / m-5 ghi lại cho lúc code và review code.
