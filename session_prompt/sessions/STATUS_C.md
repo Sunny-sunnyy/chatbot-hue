@@ -32,6 +32,8 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **C53 xong 10:10 27/10/2026:** review phụ lục K3b-m (`84d4aaf0ad04`) changes_requested (0/1/3) — M-1: `chat.py:125-135` trả 500 cho MỌI lỗi citation ⇒ T6 "+2" mâu thuẫn T2 sàn 0 / spec §10.2 (lỗi định nghĩa này cũng có trong plan R1 bản 2 của C — R1 đã dừng, không ảnh hưởng). File `phase_8_2_k3b_m_answer_plan_review.md`.
 **Bẫy / học:** định nghĩa sàn "500" phải đối chiếu đúng nhánh trả lỗi trong `chat.py`, không suy từ tên lỗi validator (plan R1 C46 và B55 đều bỏ sót).
 **Phụ lục K3b-m bản 2 vòng 2 ready 10:15 27/10/2026** (`92a8a7eb4177`); m-4 mới: regex W2 tách rời ". [1]" (43/99 câu B1) — sửa trong harness.
+**Phụ lục bản 3 vòng 3 ready 10:33 27/10/2026** (`2a3b22b38ab6`): 120 về theo dõi; C xác nhận độc lập (a) context K3b-m của 120 có 2 / 2 fact, (b) B1 0. Pilot bản 2 dừng vì sàn 120 — sàn đó từ gợi ý m-2 của C.
+**Bẫy / học (C, 27/10):** (1) nhãn đoạn đúng chỉ đánh dấu MỘT chỗ cho mỗi fact ⇒ `*_gold_frac` 0 không có nghĩa context không có fact; trước khi đề xuất sàn "context 0 fact" phải đọc nội dung (m-2 C53 ⇒ pilot bản 2 dừng oan). (2) Script dựng lại context chạy từ working tree `main` (context 5) phải truyền `max_documents=10` cho mốc B1 / K3b — suýt kết luận sai trên 5 đoạn.
 
 ## Còn treo (phiên sau xử lý trước)
 

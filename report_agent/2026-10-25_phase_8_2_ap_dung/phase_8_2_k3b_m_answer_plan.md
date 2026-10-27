@@ -1,7 +1,8 @@
 # Plan (phụ lục K3b): lượt sinh + judge cho K3b-m — đo khâu trả lời trước khi trình User
 
-Người viết: B (Claude Opus 5.5, `hue-rag-31`) · 2026-10-27 10:03 +0700 (`date`) · Việc: B60 (A gọi "B59", giao 10:0x 27/10). Trạng thái: **bản 2** (sửa theo
-review C53 + quyết định A, 10:11 27/10/2026; bản 1 `84d4aaf0ad04`) — chờ C kiểm phần sửa, rồi A ghi "duyệt bản sha" (`WORKFLOW.md` §9.1). **Chưa gọi API; 0 USD.**
+Người viết: B (Claude Opus 5.5, `hue-rag-31`) · 2026-10-27 10:03 +0700 (`date`) · Việc: B60 (A gọi "B59", giao 10:0x 27/10). Trạng thái: **bản 3** (10:27 27/10/2026; chỉ đổi T8, xem
+"Đổi sau khi thấy số — nói thẳng"; bản 2 `92a8a7eb4177` đã chạy pilot và dừng; bản 1 `84d4aaf0ad04`) — chờ C kiểm phần sửa, rồi A ghi "duyệt bản sha"
+(`WORKFLOW.md` §9.1).
 
 Plan không chép câu hỏi, đáp án, câu trả lời hay đoạn kho. Repo public: chỉ có `case_index` và số đếm.
 
@@ -50,9 +51,9 @@ context builder đều là production ở `811d25d`.
 | T5 | dòng 91 | từ chối nhầm trong phạm vi: dev chính **≤ +1**, test chính **≤ +1** | mức tụt |
 | T6 | dòng 92 | lỗi citation v2 (tính lại cả hai lượt), 176 câu — **bản 2: theo dõi theo dạng** (`citations.py:25` từ chối kèm citation / `:29` không citation / `:33` id lạ) | theo dõi |
 | T7 | dòng 98 | `output_tokens` sinh / câu: **≤ +20 %** | mức tụt |
-| T8 | dòng 85 | **120 vẫn từ chối** (bản 2, A chọn theo C53 m-2): **sàn**. **168**: theo dõi | sàn (120) / theo dõi (168) |
+| T8 | dòng 85 | 120 / 168 — **bản 3: theo dõi** (về như K3 plan gốc; bản 2 đặt 120 là sàn — xem "Đổi sau khi thấy số") | theo dõi |
 
-**Luật giữ** (K3 plan §4 bước 3): đạt T1, T2, sàn 120 (T8) và mọi mức tụt T3–T5, T7 trên **dev chính và test chính** ⇒ K3b-m **"chất lượng tốt hơn (tạm)"** (tầng tìm
+**Luật giữ** (K3 plan §4 bước 3): đạt T1, T2 và mọi mức tụt T3–T5, T7 trên **dev chính và test chính** ⇒ K3b-m **"chất lượng tốt hơn (tạm)"** (tầng tìm
 qua + khâu trả lời không hỏng). Kết luận cuối luôn là **trình User kèm số giá** (spec §10.2). Dựa judge nên **tạm tới B0**.
 
 **Chỗ phụ lục khác K3 plan §4 — nói thẳng (bản 2, A duyệt cùng sha):**
@@ -65,8 +66,7 @@ qua + khâu trả lời không hỏng). Kết luận cuối luôn là **trình U
   - ⇒ T6 thành **theo dõi theo dạng**, để biết vì sao nếu T2 phạm.
 
   Mốc B1: 0 lỗi v2 (dev + test), nên sàn 0 có nghĩa. Cùng hiểu lầm có ở R1 bản 2 / B55 M-1 (4). R1 đã dừng vì sàn khác, nên kết luận không đổi.
-- **120 thành sàn "vẫn từ chối"** (A chọn theo C53 m-2): context K3b-m của 120 vẫn 0 fact (L1, L2), giống lý do spec §10.2. R1 / R2 đã vấp đúng dạng
-  "trả lời vòng" ở loại câu này. 168 giữ theo dõi, vì K3b-m đưa 1 / 2 fact vào top-10.
+- **120 / 168 (T8): theo dõi** (bản 3; bản 2 đặt 120 là sàn). Lý do ở mục "Đổi sau khi thấy số — nói thẳng".
 
 **Nhiễu A/A judge — đếm trên đúng mốc B1** (W23; B tính lại 27/10 trong B55, khớp C46; lượt mù `data/phase_8_2/b1/judge/` chấm B1 ↔ G2.1a):
 - dev chính: Completeness 1 / 86 / 1, Accuracy 1 / 86 / 1, từ chối đổi 0;
@@ -126,11 +126,11 @@ Ngưỡng T3 / T4 = max(thắng, thua) + 3, đúng số K3 plan ghi.
   - không gắn `answer_type` (từ chối đếm bằng máy).
 - Lệnh: `run`, `merge`, `check` (sàn, tất định phát lại, citation, hợp đồng), `export-judge`, `check-judge`, `analyze` (T3–T7, W1–W2).
 
-**Bước:**
+**Bước** (bản 3: **chạy lại từ đầu, tên lượt mới tiền tố `v3_`**; không dùng 9 câu pilot của bản 2 — `dev_pilot.jsonl` giữ làm hồ sơ; harness từ chối ghi đè):
 1. **Pilot 10 câu dev** (seed 20261024, như `g2_generate.select('pilot')`: rút trong 120 câu dev, có thể gồm OOS):
    - đo USD / câu đầu–cuối thật, `e2e_ms`;
    - kiểm T1 / T2 sớm.
-2. Dev còn lại 110 ⇒ gộp `answer_dev.jsonl` 120 câu ⇒ `check` (T1, T2, sàn 120, T6 theo dõi, phát lại 40 / 40, hợp đồng).
+2. Dev còn lại 110 ⇒ gộp `answer_dev.jsonl` 120 câu ⇒ `check` (T1, T2, T6 theo dõi, phát lại 40 / 40, hợp đồng).
 3. Judge mù dev (K3b-m dev + B1 dev) ⇒ `analyze` dev (T3, T4, T5, T7, W1, W2). Dev hỏng bất kỳ dòng nào ⇒ dừng, **kém hơn**.
 4. Chỉ khi dev đạt: test (pilot 10 ⇒ 46 còn lại) ⇒ `check` ⇒ judge mù test (K3b-m + B1 test) ⇒ `analyze` test.
 5. W3 (R4) trên dev + test từ working tree `main`.
@@ -154,7 +154,7 @@ Ngưỡng T3 / T4 = max(thắng, thua) + 3, đúng số K3 plan ghi.
 | **Cộng** | 121 | 176 | **≈ 0,107** |
 | Dừng sau dev (bước 3 trượt) | 80 | 120 | ≈ 0,071 |
 
-**Trần đề xuất: 0,13 USD** (ước + ~20 %; A chốt). Pilot vượt ước > 50 % ⇒ dừng, báo A. Trần 8.2 (0,5): trước phụ lục đã dùng ≈ 0,137:
+**Trần: 0,13 USD** (A chốt) cho cả phụ lục, **tính cả 0,0047854 USD đã dùng ở pilot bản 2** ⇒ còn ≈ 0,125 cho lượt bản 3 (ước 0,107). Pilot vượt ước > 50 % ⇒ dừng, báo A. Trần 8.2 (0,5): trước phụ lục đã dùng ≈ 0,137:
 - B1 + R2 0,0396;
 - K3 0,0251;
 - R1 0,0049;
@@ -174,7 +174,6 @@ Thêm 0,13 ⇒ ≈ 0,27. Judge: quota Claude Code, 0 USD.
 2. Pilot: USD / câu > 1,5 × ước, hoặc tiền dự kiến vượt trần ⇒ dừng, báo A.
 3. Lỗi kỹ thuật ≥ 1 (sinh hoặc rerank, gồm 500 / parse) ⇒ phạm T2 ⇒ **kém hơn**, dừng. Không gọi lại. **429 / timeout cũng là lỗi kỹ thuật** (C53 m-3;
    gọi đồng thời 4, `max_retries=0`): dừng, ghi nguyên văn, **không chạy lại cả lượt khi chưa có A**.
-3b. Câu 120 bị trả lời ⇒ phạm sàn T8 ⇒ **kém hơn**, dừng.
 4. OOS bị trả lời ≥ 1 ⇒ phạm T1 ⇒ **kém hơn**, dừng.
 5. Sai hợp đồng rerank > 4 trong lượt ⇒ **kém hơn**, dừng.
 6. Không ghi Qdrant, không sửa corpus / Golden / split / đoạn đúng, không mở câu kín, không đọc câu test theo từng câu. Câu trả lời test chỉ đi qua
@@ -218,3 +217,29 @@ A đã chốt (tin A 10:2x, trước bản 2):
 | A chốt §8 | ghi vào §8 |
 
 Không đổi: T1, T3, T4, T5 (ngưỡng), T7, mốc B1, A/A, cách phát lại (L1 / `m_test`), trần 0,13, 176 câu, judge cùng lượt mù.
+
+## Đổi sau khi thấy số — nói thẳng (bản 3, 10:27 27/10/2026 +0700, `date`)
+
+Bản 3 đổi đúng **một** chỗ: T8 "120 vẫn từ chối" từ **sàn** về **theo dõi**, như K3 plan gốc (dòng 85). Bốn ý:
+
+1. **Sàn này do A thêm ở bản 2** (theo C53 m-2), dựa trên tiền đề "context K3b-m của câu 120 có 0 fact". Tiền đề đó lấy từ nhãn đoạn đúng (`top10_gold_frac`
+   0 ở L1, L2) và **chưa được kiểm** bằng nội dung kho trước khi đặt sàn (A nhận đây là lỗi gốc).
+2. **Lượt bản 2 dừng ở pilot** (10:16:36–10:16:52, `data/phase_8_2/k3b/answer/dev_pilot.jsonl`, 9 câu, 0,0047854 USD log), vì câu 120 được trả lời.
+   **Kết luận của lượt đó giữ nguyên: phạm sàn T8 theo luật bản 2.** Bản 3 không viết lại kết luận đó.
+3. **Bằng chứng để đổi lấy từ nội dung kho, không từ điểm số** (không có judge nào được chạy):
+   - B kiểm tay: câu trả lời 120 khớp đáp án tham chiếu. Cả hai fact (tên gọi khác, độ cao) có trong context K3b-m, ở hai chunk khác của cùng file,
+     diễn đạt lại.
+   - Quét B61 (`data/phase_8_2/k3b/gold_scan/`): nhãn chỉ đánh dấu một chỗ cho mỗi fact. Mức loose bắt được 120 ở K3b-m (2 / 2 fact) và không bắt
+     được ở mốc B1 (0 / 2).
+   - ⇒ Tiền đề của sàn sai vì nhãn thiếu, không vì model bịa.
+4. **User duyệt** phương án (1) "đưa 120 về theo dõi". A báo, B nhận tin lúc **10:27:20 27/10/2026** (`date` của B; giờ User nói do A ghi).
+
+Không đổi gì khác:
+- T1–T7 (gồm T2 = `error` hoặc `citation_error`, sàn 0);
+- mức tụt;
+- mốc B1, A/A, cách phát lại;
+- 176 câu;
+- trần 0,13 USD (đã dùng 0,0048);
+- judge cùng lượt mù.
+
+168 vẫn theo dõi như bản 2. Harness: bỏ điều kiện dừng ở câu 120 (`MUST_REFUSE`). Commit riêng sau khi A duyệt sha bản 3.

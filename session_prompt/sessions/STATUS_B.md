@@ -45,7 +45,9 @@
   chỉ câu 17 có quote lặp (file khác), không đổi số nào. Lặp gần (heuristic, có báo nhầm): B1 22 → 24, K3b-m 31 → 33 / 34; vẫn 9 thắng / 0 thua,
   test 0 mất. 120 ở B1: context không có fact ⇒ B1 từ chối đúng với context; lỗi là xếp hạng (fact ở pool 30), không phải khâu sinh.
   Tiền pilot answer K3b-m (log): **0,0047854 USD**.
-- **File đang khai báo sửa: không.** Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
+- **B64 (10:29 27/10/2026):** phụ lục **bản 3** sha `2a3b22b38ab6` (User chọn (1): T8 120 về theo dõi; mục "Đổi sau khi thấy số — nói thẳng"; B nhận tin 10:27:20).
+  Harness sửa sẵn ở worktree (bỏ dừng ở 120; 7 test passed), **chưa commit** — commit riêng sau khi A duyệt sha. Lượt mới tiền tố `v3_`.
+  **File khai báo sửa:** plan phụ lục (working tree chung), `k3b_answer.py` (worktree). Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
   (≤ 0,0105, lượt n mất usage) ⇒ **≈ 0,092 (≤ 0,095) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả
   ở cuối lượt ⇒ một exception làm mất usage đã trả tiền. Bài học: harness gọi API trả phí ghi từng dòng ngay (append) và bắt mọi lỗi của một lần gọi

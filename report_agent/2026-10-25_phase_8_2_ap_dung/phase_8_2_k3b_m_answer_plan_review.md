@@ -119,3 +119,32 @@ mù, các bước chạy. §8 ghi đúng bốn chốt của A.
   harness mà không cần bản plan mới (W2 không vào luật), nhưng ghi trong report.
 
 **Decision vòng 2: ready_for_user_confirmation** — A có thể ghi "duyệt bản sha `92a8a7eb4177`"; m-4 sửa trong harness trước khi chạy.
+
+## Vòng 3 — kiểm phần sửa (bản 3 sha `2a3b22b38ab6`, C tính từ file; 10:32 27/10/2026 +0700, `date`)
+
+**Trước hết, phần của C:** sàn "120 vẫn từ chối" ở bản 2 là gợi ý **m-2 của chính C** (vòng 1). C dựa trên `top10_gold_frac` 0 ở L1, L2 mà không đọc kho — cùng tiền đề
+sai mà bản 3 sửa. Bài học ghi vào `STATUS_C.md`: nhãn đoạn đúng chỉ đánh dấu một chỗ cho mỗi fact; "context có 0 fact" phải kiểm bằng nội dung trước khi đặt sàn.
+
+**Xác nhận độc lập (A yêu cầu; C đọc câu dev 120, đáp án tham chiếu và 10 đoạn context trong terminal, chưa đọc `gold_scan/` của B lúc kiểm):** dựng lại context bằng
+context builder production với **10** đoạn (`max_documents=10`, như `811d25d`) từ `top_chunk_ids` đã lưu.
+- **(a) Context K3b-m của 120 CÓ fact:** ở L1 (`m_l1.merged`), L2 (`m_l2`) và lượt pilot bản 2 (`answer/dev_pilot.jsonl`, `top_chunk_ids` = L1), hai đoạn của cùng một
+  file kho chứa đủ **2 / 2** fact của đáp án tham chiếu — một đoạn nêu tên gọi khác, một đoạn nêu độ cao, cả hai diễn đạt lại ngoài khoảng đã nhãn. Câu trả lời pilot trích
+  đúng hai đoạn đó và khớp đáp án tham chiếu.
+- **(b) Context B1 của 120 KHÔNG có fact:** 10 đoạn B1 thuộc các file khác; quét tên núi, tên dân gian và con số độ cao: **0** lần xuất hiện. Từ chối ở B1 là đúng.
+- Sau đó C đọc `gold_scan/summary.json` (B63): mức loose cho 120 = 0 / 2 ở B1, 2 / 2 ở L1, L2 — khớp (a), (b). Cùng file cho thấy quét lại nhãn **không đổi kết luận tầng
+  tìm** của K3b-m: thắng 9 / thua 0 ở mức exact, CI [+0,10; +0,35] ở cả ba mức.
+
+**Diff bản 2 → bản 3** (`git diff HEAD`; bản 2 ở `c313d29`): chỉ đổi T8 (120 sàn → theo dõi; 168 theo dõi như cũ) và các chỗ kéo theo — luật giữ bỏ "sàn 120"; đoạn "nói
+thẳng" của bản 2 thay bằng con trỏ; bước 2 `check` bỏ "sàn 120"; dừng **3b** bị xóa; thêm chạy lại từ đầu với tiền tố `v3_` (pilot bản 2 giữ làm hồ sơ, harness từ chối ghi đè);
+dòng trần ghi rõ **0,13 tính cả 0,0047854 đã dùng** (còn ≈ 0,125, ước 0,107). **Không đổi:** T1–T7 (T2 = `error` hoặc `citation_error`, sàn 0), ngưỡng mức tụt, mốc B1, A/A,
+phát lại 55 / 55, 176 câu, judge cùng lượt mù, các điều kiện dừng khác.
+
+**Mục "Đổi sau khi thấy số — nói thẳng" đủ 4 ý:** (1) sàn do A thêm ở bản 2, tiền đề chưa kiểm bằng kho; (2) lượt bản 2 dừng ở pilot, kết luận "phạm sàn T8 theo luật bản 2"
+**giữ nguyên**, không viết lại; (3) bằng chứng đổi lấy từ nội dung kho (đọc tay + quét B63), không từ điểm số, chưa chạy judge; (4) User duyệt, giờ ghi theo `date` của B.
+Đây là đổi tiêu chí sau khi thấy một kết quả — được phép vì nói thẳng, lý do là sửa một tiền đề sai về dữ liệu (không phải nới để biến thể qua), có User duyệt, và lượt mới
+chạy lại từ đầu.
+
+**Ghi chú nhỏ (không chặn):** sau bản 3 không còn sàn nào ở 120 / 168; dạng "trả lời vòng" (R1 / R2) ở câu context thật sự không có fact vẫn chỉ được W2 theo dõi. Nếu muốn sàn
+cho dạng đó, phải đặt trên câu mà context **đã kiểm bằng nội dung** là 0 fact — việc của biến thể sau, không cần cho bản 3.
+
+**Decision vòng 3: ready_for_user_confirmation** — A có thể ghi "duyệt bản sha `2a3b22b38ab6`". m-4 (regex W2, vòng 2) vẫn cần sửa trong harness trước khi chạy.
