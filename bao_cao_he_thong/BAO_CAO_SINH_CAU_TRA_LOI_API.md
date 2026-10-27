@@ -1,6 +1,7 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 11:17 27/10/2026 — bản 10: chốt đợt cải tiến từng khâu — thử "trả lời ngay, không suy luận" (kém hơn: trả lời vòng một câu lẽ ra phải từ chối); đo câu trả lời khi "luna chọn 10 đoạn" (kém hơn theo luật dù trung bình tăng); đo lỗi sai số liệu (0 / 68 câu thấy được); thử luật kiểm sau sinh (gác); **chatbot không đổi**, bước tiếp là bạn đọc cặp mù rồi đưa 10 đoạn vào chatbot.** Bản 9 (22:31 26/10): phân loại lỗi trả lời; thử lại "trả lời phần có căn cứ" (R2) — kém hơn, gác; "nêu đủ chi tiết" (R3) không đủ câu; chatbot không đổi.** Bản 8 (16:0x 26/10): đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
+**Cập nhật lần cuối: 13:27 27/10/2026 — bản 11: API ghi một dòng số đo cho mỗi câu hỏi (token, thời gian từng khâu; không ghi nội dung); đo thời gian chờ thật qua API:
+trung vị ~3,3 s, câu chậm ~5,7–6,2 s, gần hết là thời gian model viết; câu trả lời không đổi.** Bản 10 (11:17 27/10/2026): chốt đợt cải tiến từng khâu — thử "trả lời ngay, không suy luận" (kém hơn: trả lời vòng một câu lẽ ra phải từ chối); đo câu trả lời khi "luna chọn 10 đoạn" (kém hơn theo luật dù trung bình tăng); đo lỗi sai số liệu (0 / 68 câu thấy được); thử luật kiểm sau sinh (gác); **chatbot không đổi**, bước tiếp là bạn đọc cặp mù rồi đưa 10 đoạn vào chatbot.** Bản 9 (22:31 26/10): phân loại lỗi trả lời; thử lại "trả lời phần có căn cứ" (R2) — kém hơn, gác; "nêu đủ chi tiết" (R3) không đủ câu; chatbot không đổi.** Bản 8 (16:0x 26/10): đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
 nguyên nhân "quên ghi `[n]`" của 8.1. Bản 5 (14:10): kết quả Phase 8.1.
 Người viết: C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Review: A (bản 10), C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -17,6 +18,8 @@ Người viết: C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Revie
 - **Giới hạn chính:** **từ chối nhầm 22/158** câu có trong kho — nguồn mất điểm lớn nhất; không tìm ra
   bảng giá; câu cần nhiều nguồn lúc đóng chỉ dùng 1 nguồn.
 - **Chi phí:** sinh 176 câu ~0,024 USD (~600 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
+- **Thời gian chờ thật qua API (27/10):** trung vị ~3,3 s, câu chậm ~5,7–6,2 s (đã vượt mức theo dõi 5 s); ~98 % là thời gian model viết.
+  Từ 27/10 API ghi **một dòng số đo mỗi câu** (token, thời gian từng khâu; không ghi nội dung) ⇒ tiền / thời gian đọc từ log.
 - **Phase 8.1 đã thử (25/10, 0,157 USD):** 5 cách trả lời trên 120 câu thử, chấm mù bằng Claude. **Một cách thắng và đã
   xác nhận trên bộ kiểm: đưa 10 đoạn thay vì 5** — điểm Đủ +0,26 (thử) / +0,27 (kiểm) trên thang 5, từ chối nhầm giảm gần
   một nửa, tốn thêm ~50%/câu (≈ 5 đồng). Các cách khác không khác hoặc kém hơn.
@@ -82,6 +85,17 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 27/10/2026 (chiều) — Đo thời gian chờ thật + API ghi số đo (bản 11)
+
+- **Thời gian chờ thật qua API** (22 câu tự viết, không lấy từ bộ chấm; B65 / C57): bản đang chạy (5 đoạn) trung vị **3,3 s**, câu chậm (p95) **5,7 s**
+  khi hỏi lần lượt, 3,6 / 6,2 s khi 4 câu cùng lúc — **đã vượt mức theo dõi 5 s**. Bản 10 đoạn (chờ bạn đọc cặp mù) **không chậm hơn** (chênh nằm trong dao
+  động). 0 lỗi, 2 / 2 câu ngoài kho từ chối đúng. ≈ 0,016 USD (ước).
+- **Thời gian nằm ở đâu** (C58 / B67): gọi model ≈ **98 %**; tìm đoạn ~40 ms, dựng ngữ cảnh ~2 ms, kiểm trích dẫn ~0 — *đã chứng minh* phần dư không ở đường API.
+  Thời gian viết đi theo số token model viết ra (~1,2 s + 11,5 ms / token, tương quan 0,97 — *giải thích được, chưa thử đổi*). Muốn nhanh hơn: bớt chữ model viết
+  (cần thí nghiệm — bản "không suy luận" đã phạm sàn) hoặc hiện chữ dần (streaming, phải đổi cách kiểm trích dẫn). 0,0075 USD.
+- **API ghi số đo mỗi câu** (bạn duyệt 27/10; C60 code, B70 review, merge `5100b90`; cổng ổn định trên `main`: câu trong kho 200 có 2 nguồn, câu ngoài kho từ chối,
+  khuôn phản hồi không đổi, mỗi câu đúng một dòng log, câu hỏi không có trong log). Từ nay tiền / thời gian mỗi câu đọc được từ log, không phải ước.
 
 ### 27/10/2026 — Chốt đợt cải tiến từng khâu (bản 10)
 

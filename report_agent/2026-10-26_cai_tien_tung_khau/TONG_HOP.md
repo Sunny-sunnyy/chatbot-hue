@@ -87,3 +87,17 @@ Trần 8.2: 0,5 USD — đã dùng **≈ 0,212 USD** (cận trên ≈ 0,218). Tr
 3. Phase 8.2 còn: mốc cuối (câu kín, User quyết mở) ⇒ đóng 8.2 ⇒ tính năng mới (User 27/10: "xong sớm thì mới bổ sung được tính năng mới").
 4. Hướng mở (hồ sơ, không làm khi chưa có quyết định mới): K3b-m / K3c (bản nhanh `none` chịu chữ thừa) khi có luật nhận cho biến thể đổi context +
    yêu cầu thời gian chờ có số; streaming từng câu đã kiểm (nghiên cứu 26/10 C5); mở rộng bộ câu tự nhiên; sửa nhãn đoạn đúng "một chỗ / thông tin".
+
+## 7. Sau khi đóng đợt (27/10 chiều, User: "tiếp tục … so sánh, đánh giá"; cập nhật 13:30 27/10/2026)
+
+Không đổi câu trả lời của chatbot; mỗi việc có review chéo.
+
+| Việc | Kết quả | Tiền | Report |
+|---|---|---|---|
+| B65 latency đầu–cuối qua API (22 câu tự viết) | context 5 p50 3,3 / p95 5,7 s tuần tự (3,6 / 6,2 đồng thời 4) — **vượt mức theo dõi 5 s**; context 10 không chậm hơn; K3b-m thêm chọn đoạn ≈ 4,6–5 s p50 (đo trong lượt) | ≈ 0,016 (ước) | `b65_latency_dau_cuoi.md` (C57) |
+| C58 latency theo khâu | gọi model ≈ 98 % — đã chứng minh phần dư không ở HTTP / tìm / ngữ cảnh / citation; giải thích được bằng token ra (≈ 11,5 ms / token, r 0,97), chưa can thiệp | 0,0075 | `c58_latency_theo_khau.md` (B67) |
+| C56 → B69 nhãn đoạn đúng v2 | `gold_v2.jsonl` (+3 khoảng câu 120, 156) + luật dòng tiêu đề (143); `gold_draft` giữ (G0.6); B1 dev 22 → 24, K3b-m 31 → 33, 9 / 0 giữ — **User duyệt 13:05**, merge `a819789` | 0 | `c56_de_xuat_sua_nhan.md`, `gold_v2_review.md` (C61) |
+| C59 → C60 log `chat_metrics` mỗi câu | một dòng / lần gọi (token, ms từng khâu, không nội dung) — **User duyệt 13:05**, merge `5100b90`; cổng ổn định trên `main` đạt | 0,0003 + A ≈ 0,0005 | `c59_log_token_{plan,implementation,review}.md` (B68, B70) |
+| Sổ cải tiến vòng 7 | S37–S40; W24–W26 User duyệt 13:05, áp `run-experiment` §1.3 / §2 / §3.8 + `Session_Prompt.md` §5; sub-agent ngữ cảnh mới kiểm (2 major sửa `20c6209`) | 0 | `SO_CAI_TIEN_CACH_LAM.md` |
+
+Tiền phiên 27/10 cả nhóm ≈ **0,197 USD** (log 0,172 + ước 0,025). Bước tiếp: `CURRENT_HANDOFF.md` "Thứ tự việc phiên sau".

@@ -1,25 +1,29 @@
-# STATUS A — cập nhật 08:53 27/10/2026 (PHIÊN 27/10)
+# STATUS A — cập nhật 13:30 27/10/2026 (KẾT PHIÊN 27/10 — User khởi động lại A / B / C để reset context)
 
-Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-31`, C = `hue-rag-5b` (cả ba Claude Code, trực tiếp).
+Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-31`, C = `hue-rag-5b` (tên đổi mỗi lần mở — `ListAgents`).
 
 ## Commit
-- Đầu phiên: `c81e45e`. Phiên: `e6c9241` (mở phiên: quyền, W21–W23, mục tiêu sản phẩm, giao việc).
+- Đầu phiên: `c81e45e`. Cuối: commit kết phiên (`git log --oneline c81e45e..main`). Merge trong phiên: `5100b90` (log `chat_metrics`), `a819789` (nhãn v2).
+- Nhánh: `p82-b1` `811d25d` (chờ B0); hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`, `p82-r2`; đã merge, chờ User xóa: `c59-log`, `gold-v2`.
+  `git worktree list`: chỉ còn 4 worktree AGY dưới `~/.gemini/` — không đụng.
 
 ## Đang làm / dở
-- B53 (review R2) → B54 (K3, ≤ 0,20 USD) đang chạy ở B; C46 (plan R1) ở C.
-- Yêu cầu ChatGPT `gửi chatgpt/2026-10-27/tìm thông tin/muc_tieu_san_pham_2026_10_27.md` (thời gian chờ, tiền / câu, mức nặng lỗi, giá / giờ cũ,
-  đánh giá "dùng được") — chờ User gửi.
-- Đề xuất với User (chưa chốt): thứ tự lỗi nặng → nhẹ: nói chắc sai / bịa (gồm giá / giờ sai so kho) > trả lời câu ngoài kho > thiếu ý / nguồn >
-  từ chối nhầm; áp làm sàn từ lần đo sau khi có kết quả nghiên cứu. Streaming: đã nghiên cứu 26/10 (C5, khuyên hoãn) — đưa vào danh sách tính năng.
+- Không có việc đang chạy, không việc dở. Phiên sau A làm: `CURRENT_HANDOFF.md` "PHIÊN SAU" (thứ tự 1–5, câu hỏi User 1–9, việc A còn nợ).
 
 ## Đang khai báo sửa
-- `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/sessions/STATUS_A.md` (đoạn của A).
+- không (kết phiên)
 
-## Quyền phiên này (User 08:47 27/10, hết hạn cuối phiên)
-- Như tối 26/10: A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD cả phiên; B commit + push `p82-k3`, K3 ≤ 0,20 USD.
+## Vừa xong (phiên 27/10)
+- Quyền + mục tiêu sản phẩm (User 08:47); W21–W23 áp; giao + review B53–B70 / C46–C61; đóng R2, K3, R1, K3b-n, K3b-m (kém hơn / gác); User chọn chốt đợt (11:0x).
+- Sau đóng đợt: B65 latency API, C58 latency theo khâu, C56 / B69 nhãn v2, C59 / C60 log — User duyệt 13:05; merge + cổng ổn định trên `main` 13:25 (đạt).
+- Sổ vòng 7 (S37–S40; W24–W26 áp, sub-agent kiểm 2 major ⇒ sửa `20c6209`); memory "Phase state pointer" cập nhật; tài liệu kết phiên (handoff viết lại, TONG_HOP §7,
+  nhật ký, `BAO_CAO_SINH` bản 11, `LUONG`, `Project_Status` §4 / §8, HISTORY).
+
+## Quyền phiên này (User 08:47 27/10 — HẾT HẠN cuối phiên)
+- A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C commit + push nhánh riêng theo việc.
 
 ## Tiền paid phiên này
-- A: 0 USD.
+- A: ≈ 0,0005 USD (cổng ổn định 3 câu, ước theo token log). Cả nhóm ≈ 0,197 USD (log 0,172 + ước 0,025).
 
 ## Đã học / bẫy gặp (phiên 27/10)
 - 10:20 27/10/2026: **A** đưa câu 120 lên sàn "vẫn từ chối" theo tiền đề "context 0 fact" (C36 / C53 m-2) mà không kiểm nhãn đoạn đúng ⇒ sàn sai làm dừng K3b-m answer ở pilot,
@@ -32,6 +36,9 @@ Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
   trước khi gửi: **W19 có tác dụng** (bằng chứng cho vòng cải tiến: giữ W19; cân nhắc mẫu đoạn mô tả hệ thống dùng lại).
 - 08:5x: A nói "API không stream" dựa trên grep hẹp (`api/`, `generation/`) — đúng, nhưng User nhớ "có lựa chọn streaming": đó là phương án trong nghiên cứu
   26/10 (C5), chưa làm. Khi User nhớ khác, trỏ đúng nguồn (spec `:217`, nghiên cứu C5).
+- 13:2x: `curl -w time_total` cho số nhỏ hơn `total_ms` server (vô lý) — đo lại bằng Python `perf_counter`: client 1.912,6 ≥ server 1.903,6 ms ⇒ đo client bằng
+  `perf_counter`, không dựa `curl -w` (đã ghi vào cổng ổn định trong handoff).
+- 13:2x: cổng 8015 bị tiến trình dự án khác chiếm ⇒ uvicorn khởi động xong rồi dừng, exit 3, log không ghi lỗi bind ⇒ kiểm `ss -ltnp` trước khi chọn cổng.
 
 ---
 Phần dưới: trạng thái kết phiên tối 26/10.

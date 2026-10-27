@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `11:18 27/10/2026` (A, 27/10: **đợt cải tiến từng khâu đóng** — User chọn chốt đợt; chatbot không đổi; bước tiếp B0 ⇒ merge B1). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
+Last updated: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -95,6 +95,9 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1
 - sparse state chung `data/full_corpus_builds/full_corpus_sparse_state.json`
   (vocabulary 5.660);
 - retrieval `dense_bm25_rrf`, reranker `none`, context tối đa 5 whole chunk;
+- **log số đo** (từ 27/10, `5100b90`): mỗi lần gọi `/api/chat` ghi một dòng `chat_metrics` (logger `chat`, `backend/logs/application.log`, gitignore):
+  outcome, mã HTTP, từ chối, model, token vào / ra / suy luận, số nguồn, ms tìm / dense / ngữ cảnh / sinh / citation / tổng — không ghi nội dung, không ghi USD;
+  latency thật 27/10 (B65): p50 3,3 s / p95 5,7 s tuần tự;
 - generation `gpt-6-luna` (OpenAI); config `backend/config/settings.yaml`
   (`full_corpus_runtime`, `full_corpus_generation`).
 

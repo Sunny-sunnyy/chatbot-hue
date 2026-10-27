@@ -4,6 +4,13 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-27 (13:30) — Kết phiên 27/10: API ghi số đo mỗi câu; nhãn đoạn đúng v2; latency thật; sổ vòng 7
+
+- Sau khi đóng đợt: B65 latency API thật (context 5 p50 3,3 / p95 5,7 s — vượt mức theo dõi 5 s; context 10 không chậm hơn); C58 gọi model ≈ 98 % thời gian chờ.
+- User duyệt 13:05: log `chat_metrics` (C59 plan → C60 code → B70 review → merge `5100b90`, cổng ổn định trên `main` đạt); nhãn v2 `gold_v2.jsonl` + luật dòng
+  tiêu đề (C56 → B69 → C61 → merge `a819789`; `gold_draft` giữ — G0.6); W24–W26 áp (sub-agent kiểm, sửa `20c6209`).
+- Tiền phiên ≈ 0,197 USD; 8.2 ≈ 0,212 / 0,5. Bước tiếp: B0 ⇒ merge B1 ⇒ đóng 8.2 ⇒ tính năng mới. Chi tiết `TONG_HOP.md` §7; handoff "PHIÊN SAU".
+
 ## 2026-10-27 (11:18) — Đợt cải tiến từng khâu ĐÓNG (User chọn chốt đợt); chatbot không đổi
 
 - User 08:47: quyền phiên như tối 26/10; duyệt W21–W23, Q2 spec §10.6; mục tiêu sản phẩm = đồ án tốt nghiệp xem như sản phẩm thật, người dùng = User / du

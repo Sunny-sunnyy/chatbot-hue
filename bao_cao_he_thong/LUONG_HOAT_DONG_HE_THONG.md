@@ -1,6 +1,7 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 16:0x 26/10/2026** (đợt 3 rà code, merge `421c302`: dựng kho dừng khi có đoạn vượt giới hạn token ở mọi nhánh; build chỉ ghi
+**Cập nhật lần cuối: 13:27 27/10/2026** (API ghi **một dòng `chat_metrics`** cho mỗi câu hỏi: token vào / ra / suy luận, số nguồn, thời gian từng khâu — không ghi câu hỏi,
+câu trả lời hay nội dung kho; merge `5100b90`; câu trả lời **không đổi**). Trước đó 16:0x 26/10/2026 (đợt 3 rà code, merge `421c302`: dựng kho dừng khi có đoạn vượt giới hạn token ở mọi nhánh; build chỉ ghi
 từ điển BM25 sau khi kiểm đích; gỡ code không dùng — reranker MiniLM, Representation B, bộ kiểm khói Phase 5; câu trả lời / kết quả tìm **không
 đổi**, giống từng byte). Trước đó 21:50 25/10 (gói 1b rà code, `1e4acd0`: API báo đúng loại lỗi; mọi lệnh chạy từ `backend/`). 19:59: sửa bước kiểm trích dẫn nhận cả `[Nguồn n]` (`9e6d371`, gói 1a). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
 hành vi đổi (chunker, index, retrieval, prompt, model), file này được cập nhật theo. Những gì đã
@@ -59,6 +60,10 @@ HỎI ĐÁP (mỗi câu hỏi):
 6. **Kiểm trích dẫn:** model đôi khi chép nhãn ngữ cảnh và viết `[Nguồn n]` thay vì `[n]` — hai dạng cùng nghĩa: backend đổi hết về
    `[n]` (để trang web gắn link) rồi mới kiểm (từ 25/10, `backend/llm/citations.py`). Mọi [n] phải trỏ tới đoạn có thật; câu trả lời
    có nội dung mà không có [n], hay từ chối mà vẫn có [n] → API báo lỗi 500 thay vì trả câu trả lời không kiểm được.
+7. **Ghi số đo (từ 27/10, `backend/api/routes/chat.py`):** mỗi lần gọi `/api/chat` — kể cả lỗi 409 / 503 / 500 — ghi đúng **một dòng** `chat_metrics`
+   vào log `chat` (màn hình + `backend/logs/application.log`, không commit): kết quả, mã HTTP, có từ chối không, model, token vào / ra / suy luận,
+   số nguồn đưa vào / được trích, thời gian tìm / dựng ngữ cảnh / sinh / kiểm trích dẫn / tổng (ms). **Không** ghi câu hỏi, câu trả lời, nguồn,
+   tiền (tiền tính sau từ token theo bảng giá). Thêm < 1 ms mỗi câu.
 
 ## 4. Chất lượng đo được (Phase 7B, 176 câu hỏi Golden)
 

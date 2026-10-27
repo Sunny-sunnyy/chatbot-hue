@@ -1,6 +1,6 @@
 # Nhật ký 27/10/2026 (sáng) — chốt đợt cải tiến từng khâu: bốn thí nghiệm, một hướng có tín hiệu thật
 
-**Cập nhật lần cuối: 11:17 27/10/2026.** Tiền paid sáng nay: ≈ 0,173 USD (~4.300 đồng). Phần lớn đo từ log; 0,0087 USD là ước, vì một lượt mất số
+**Cập nhật lần cuối: 13:30 27/10/2026.** Tiền paid sáng nay: ≈ 0,173 USD (~4.300 đồng). Phần lớn đo từ log; 0,0087 USD là ước, vì một lượt mất số
 liệu (cận trên ≈ 0,0055 USD thêm).
 
 ## Tóm tắt
@@ -49,3 +49,15 @@ mở lại khi có con số thời gian chờ chấp nhận được.
 - `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` (bản 8 — các thử nghiệm xếp lại đoạn)
 - `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 10 — R1, khâu trả lời của K3b-m)
 - `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md` (kỹ thuật, đã đóng)
+
+## Buổi chiều (sau khi chốt đợt) — đo thời gian chờ thật, thêm số đo vào API
+
+- **Thời gian chờ thật** (22 câu tự viết, qua API): chatbot đang chạy trung vị **3,3 giây**, câu chậm **5,7–6,2 giây** — chậm hơn A ước trước đó. Gần hết (≈ 98 %)
+  là thời gian model viết câu trả lời; câu trả lời càng dài càng chậm (~11,5 mili giây mỗi token). Bản 10 đoạn **không chậm hơn**.
+- **Bạn duyệt 3 việc (13:05):**
+  - API **ghi số đo cho mỗi câu** (token, thời gian từng bước; không ghi nội dung) — đã vào chatbot, kiểm thật đạt; câu trả lời không đổi.
+  - **Sửa nhãn đoạn đúng** thành bản v2 (thêm 3 chỗ + đếm cả tiêu đề mục); bản cũ giữ nguyên.
+  - 3 cải tiến cách làm W24–W26.
+- Tiền cả ngày ≈ **0,197 USD** (~4.900 đồng).
+- **Phiên sau:** bạn khởi động lại A / B / C; A hỏi lại quyền phiên; việc chính là **B0** rồi đưa 10 đoạn vào chatbot, sau đó đóng 8.2 và bàn tính năng mới.
+  Danh sách câu hỏi cho bạn: `session_prompt/CURRENT_HANDOFF.md` "Câu hỏi cho User".
