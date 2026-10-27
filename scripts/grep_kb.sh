@@ -12,6 +12,8 @@ if [ "${1:-}" = "--dir" ]; then
   [ $# -ge 2 ] || { echo "grep_kb: --dir cần tên thư mục con" >&2; exit 2; }
   target="$(realpath -e -- "$KB/$2")"
   case "$target/" in "$KB"/*) ;; *) echo "grep_kb: đích ngoài kho: $2" >&2; exit 2 ;; esac
+  [ -d "$target" ] || { echo "grep_kb: --dir phải là thư mục: $2" >&2; exit 2; }
+  case "$target/" in */evaluation/*|*/meta/*|*/_source-dumps/*|*sealed*) echo "grep_kb: --dir trỏ vào vùng bị loại: $2" >&2; exit 2 ;; esac
   shift 2
 fi
 [ $# -ge 1 ] || { echo "grep_kb: thiếu mẫu tìm" >&2; exit 2; }
