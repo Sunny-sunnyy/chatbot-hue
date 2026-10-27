@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 15:28 27/10/2026 (A, **kết phiên 27/10 chiều** — User đóng phiên ~16:40). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Cập nhật: 15:43 27/10/2026 (A, **kết phiên 27/10 chiều**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Chi tiết phiên chiều: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`; nhật ký User `bao_cao_he_thong/nhat_ky/2026-10-27_chieu_phan_ton.md`. Bản handoff
 trước khi viết lại (có từng mục B71–B76 / C62–C68): `git show 3d53370:session_prompt/CURRENT_HANDOFF.md`.
 
@@ -19,7 +19,7 @@ trước khi viết lại (có từng mục B71–B76 / C62–C68): `git show 3d
 2. **B0** (User đọc `data/phase_8_2/b0/doc_cap_mu.md`, ghi `nhan_xet_user.md`) ⇒ A mở `khoa.json` (chỉ A; **B đã thấy khóa — không tóm nhãn**), sub-agent mới
    tóm nhãn, áp luật dừng spec 8.2 §3 mục 4 ⇒ không dừng: **merge `p82-b1` `c3d5607`** (đã rebase lên `576f84e`, C review ready
    `phase_8_2_b1_rebase2_review.md`; `main` sau đó chỉ thêm tài liệu + `dense_ms` + gold v3 — kiểm lại không xung đột, T1, cổng context 10) ⇒ sửa context 5 ⇒ 10 ở
-   guide 6 "Hiện hành", guide 8, `Project_Status` + 4 chỗ báo cáo.
+   guide 6 "Hiện hành", guide 8, `Project_Status` + đủ 5 chỗ (`WORKFLOW.md` §6).
 3. **B3 mốc cuối** (User quyết mở câu kín): plan duyệt sha `27e75be5ed44` (`phase_8_2_b3_plan.md`); người chạy **B**; report tách riêng số câu 500 kiểu "validator v1
    không nhận `[Nguồn n]`" mỗi bên (C65). ⇒ `TONG_HOP` 8.2 ⇒ User đóng 8.2.
 4. **Đợt sửa kho + build lại index** (phần tồn cuối): spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` — **User DUYỆT sha
@@ -64,6 +64,7 @@ sản phẩm kinh doanh thật; người dùng = User, du khách, người dân.
 | C — thực thi | `hue-rag-86` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | C62–C68 xong (C68 3 vòng ⇒ spec ready) | `STATUS_C.md`; ≈ 0,000832 USD |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
+**B / C lúc mở phiên sau:** chưa có mục việc — rảnh vì mọi việc 0 USD còn lại chờ B0 / User (WORKFLOW §9.2); A giao việc mới (nếu có) sau khi hỏi quyền.
 
 ## Quyền
 
@@ -102,7 +103,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Cổng ổn định sau mỗi gói:** (1) test các file chạm (lỗi thiếu key ghi rõ); (2) chạy thật `cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn
   api.app:app --port <cổng trống>`: `/` 200, `/health` 5 / 5, 1 câu trong kho (200, `sources`) + 1 câu ngoài kho (từ chối) — câu tự viết, body `{"query": …}`;
   **đếm dòng `chat_metrics` mới = số câu**, grep câu hỏi trong log = 0; đo client bằng Python `perf_counter`; tắt server (TaskStop); (3) chạm tìm kiếm / chia
-  đoạn: T1 giống byte; (4) 4 chỗ báo cáo nếu hành vi đổi; (5) hook quét trùng tự chạy; A commit + push.
+  đoạn: T1 giống byte; (4) đủ 5 chỗ (`WORKFLOW.md` §6) nếu hành vi đổi; (5) hook quét trùng tự chạy; A commit + push.
 - Test cần key OpenAI (không chạy mặc định): `test_api_chat.py::test_health_is_cached_and_ready_after_real_lifespan` (+ các test `require_openai_key`),
   `test_openai_full_corpus_generator.py`, `test_phase6_live_smoke.py`, `test_phase6_settings.py::test_openai_api_key_exists_without_leaking`. Test thiếu model: User `!`.
 - Sub-agent đọc kho: grep **chỉ** qua script đã loại `evaluation/`, `meta/`, `*sealed*` (`scripts/grep_kb.sh`, W27) — bẫy s7 27/10.

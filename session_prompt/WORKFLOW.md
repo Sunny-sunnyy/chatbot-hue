@@ -108,7 +108,7 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
   bảng "Các đợt" của `report_agent/README.md`. Dữ liệu chạy (kết quả, trace) để ở `data/` hoặc `/tmp`,
   report chỉ trỏ đường dẫn. `reports/` là lịch sử tới 2026-10-24, không thêm file.
 - **User chỉ cần đọc `bao_cao_he_thong/`** (mục lục `bao_cao_he_thong/README.md`). Mỗi thay đổi vào
-  hệ thống đang chạy ⇒ A sửa **đủ 4 chỗ**: `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md` của
+  hệ thống đang chạy ⇒ A sửa **đủ 5 chỗ**: `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md` của
   đúng khâu (sửa cả Tóm tắt + checklist, không chỉ thêm mục cuối), `nhat_ky/` của đợt,
   `Project_Status.md`, **và** mục "Hiện hành" của guide khâu đó (`guides/phase_<n>_*.md`, `guides/full_corpus_rag.md`); rồi bảng trong
   `bao_cao_he_thong/README.md` (27/10: guide 8 ghi "8.2 tạm dừng" 1 ngày, guide 6 thiếu log mới sau merge — W29).

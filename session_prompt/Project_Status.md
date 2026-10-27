@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `15:23 27/10/2026` (A, **phiên 27/10 chiều**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
+Last updated: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -60,12 +60,12 @@ rồi hội thoại nhiều lượt — chỉ mới bàn). Đoạn dưới là l
 sparse bytes; gỡ Rep B, smoke Phase 5, nhánh `minilm`, converter; nội dung kho ra khỏi file tracked; code backend 8.345 → 6.218 dòng; B review
 ready; 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/reports_artifacts_private_2026-10-26/`, User 26/10). **Sửa code: xong 5 gói.** **Phase 8.2 chạy lại tối 26/10** (spec
 `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`: bản gốc `dabae90b2b60` + **§10 "Sửa đổi 26/10"**, bản A duyệt `cd910c4c4169`).
-B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1 giống byte, review ready — **merge sau B0** (User đọc cặp mù). **Bước 2 =
+B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27/10 chiều rebase lại ⇒ `c3d5607`), T1 giống byte, review ready — **merge sau B0** (User đọc cặp mù). **Bước 2 =
 đợt cải tiến từng khâu** (User 21:1x: phạm vi B — khâu trả lời + khâu tìm, không ghi Qdrant; luật (a) / (i); A tự chọn trong luật): phân loại lỗi
 (C36 / B42: 80 % điểm mất đi kèm thiếu bằng chứng; chỗ nghẽn là xếp hạng); **K1** pool 100 kém hơn (nhánh `p82-k1`); **R2** trả lời một phần kém hơn
 (phạm sàn OOS, 0,0027 USD; gác; `p82-r2`); **R3** NOT RUN (6 câu); **R4** thước số (chỉ danh sách đọc lại, `2c7ecfd`); K2, E2 NOT RUN; **27/10:** K3, R1, K3b-n kém hơn;
 **K3b-m** (luna chọn 10 / 30) tầng tìm tốt hơn (tạm) (22 → 31 / 40 theo nhãn v1; v2: 24 → 33) nhưng khâu trả lời kém hơn theo luật (5 câu tụt > 4; e2e p50 6,5 / p95 9,1 s khi gọi đồng thời 4, 3,8× tiền) ⇒ **User 27/10 chọn chốt đợt**
-(đợt đóng). Tiền 8.2: ≈ 0,212 / 0,5 USD. Bước tiếp: **B0** ⇒ merge B1 + cổng ổn định ⇒ đóng 8.2 ⇒ tính năng mới. Tổng hợp:
+(đợt đóng). Tiền 8.2: ≈ 0,212 / 0,5 USD. Bước tiếp: xem dòng "Bây giờ" đầu mục này. Tổng hợp:
 `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`.
 
 ## 3. Bảng Phase
@@ -264,7 +264,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - `validate_gold.py` từ 27/10 (C62) dừng nếu `gold_draft.jsonl` đã có.
 - `data/phase_8_1/tools/validate_gold.py` **không nhận đầu vào**: đọc `gold_batch_*` rồi **ghi đè** `data/phase_8_1/gold/gold_draft.jsonl` (file manifest G0.6
   khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v3.jsonl` từ 27/10 chiều** (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
-  mặc định của `backend/experiments/phase_8_1/g1_retrieval.py` đổi sang v2 + luật tiêu đề mục ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**; so với số cũ thì chạy lại
+  mặc định của `backend/experiments/phase_8_1/g1_retrieval.py`: v2 + luật tiêu đề mục từ 27/10 sáng, **v3 từ `fa192f8`** ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**, ghi kèm bản nhãn; so với số cũ thì chạy lại
   mốc bằng cùng thước (B1 dev: v1 22 / v2 24).
 - Auto mode chặn **cả khối** khi lệnh ghép có thao tác rủi ro (`push --delete`, `rm`, push nhánh từ worktree) ⇒ tách thao tác rủi ro ra lệnh
   riêng; commit report ngay ở working tree chung, push riêng (26/10 tối, A và C).
