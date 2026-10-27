@@ -6,7 +6,7 @@ Bản phiên tối 26/10: `git show c81e45e:session_prompt/sessions/STATUS_B.md`
 
 ## Trạng thái hiện tại (cập nhật 13:1x 27/10/2026)
 
-- **Việc dở: không.** B69 xong, chờ C review. **File đang khai báo sửa: không.**
+- **Việc dở: không.** B70 xong 13:20 27/10/2026 (review C60 = ready, file `c59_log_token_review.md` sha `86d2bce6423c`, A commit); B69 chờ C review. **File đang khai báo sửa: không.**
 - Không worktree `/tmp/b_*` nào của B, không server, không lượt paid đang chạy. Các `/tmp/b_*` khác trên máy (`b_vong1..4`, `b_moc*`, …) không phải
   của B phiên này, B không đụng.
 - **Nhánh của B** (đều = origin, **không merge**):
@@ -39,6 +39,7 @@ Bản phiên tối 26/10: `git show c81e45e:session_prompt/sessions/STATUS_B.md`
 | B67 | review C58 (latency theo khâu) | số khớp; sửa nhãn "đã chứng minh" ⇒ C sửa | tin nhắn |
 | B68 | review plan C59 (log token) + vòng 2 | changes_requested (M-1 409, M-2 một điểm ghi) ⇒ bản 2 ready | `c59_log_token_plan_review.md` (`2ddd65d`) |
 | B69 | gold v2 + đếm tiêu đề mục | `gold_v2.jsonl` `2f5a347a71ff` (gold_draft `bab707b9ab22` giữ); B1 22→24, K3b-m 31→33, 9/0 giữ | `gold-v2` `b972b55`, `gold_v2_implementation.md` ⇒ **C review** |
+| B70 | review C60 (log token `/api/chat`, `c59-log` `cc70124`) | ready 0/0/2 minor; test 32/4 = mốc 31/4 + 1; log thật 15 trường, không nội dung; thử ngược whitelist đỏ khi đặt đúng chỗ | `c59_log_token_review.md` |
 
 ## Phiên sau B làm gì đầu tiên
 
