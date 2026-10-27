@@ -43,6 +43,9 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **C56 xong 11:37 27/10/2026 +0700:** 120 thêm 2 khoảng, 156 thêm 1 (khác B61), 143 không thêm — đếm thiếu do tiêu đề mục (đổi hàm đếm, A/User quyết); test 95/130/138 chưa quyết. Áp đề xuất: B1 22→23, K3b-m 31→32, thắng vẫn 9 / thua 0. gold_draft không đổi (`bab707b9ab22`).
 **A 11:38 27/10/2026:** C56 commit `7a4e86c`. **Việc kế của C: review report B65 (latency đầu–cuối)** — 4 điểm: câu hỏi không lấy từ Golden (quét overlap), điều kiện đo hai bản giống nhau, p50 / p95 tính lại được, tiền đúng. Đang chờ B65. B sẽ kiểm đề xuất nhãn C56 sau B65.
 **C57 xong 11:49 27/10/2026** (trả lời bằng tin nhắn): B65 đạt mọi điểm đo (câu hỏi 0 trùng, điều kiện giống, p50/p95 khớp, tiền ghi ước); cần sửa câu "K3b-m thêm ≈ 3 s" ⇒ cùng câu + cùng harness là ≈ +4,6–4,7 s p50 (chọn đoạn 4,6 s), qua API ước ≈ 8 s p50. Minor: chatbot hiện tại qua API p95 5,7–6,2 s > mức theo dõi 5 s.
+**C58 (A giao 11:53 27/10/2026) — khai báo:** worktree `/tmp/c_lat` (detached `main`, chỉ thêm đo thời gian tạm, không commit, gỡ khi xong); private `data/phase_8_2/latency_2710/c58/`; report `report_agent/2026-10-26_cai_tien_tung_khau/c58_latency_theo_khau.md`. Paid ≤ 0,01 USD; cổng 8014.
+**C58 xong 12:00 27/10/2026:** gọi model chiếm ≈ 98 % thời gian (tìm ~40 ms, ngữ cảnh ~2 ms, HTTP ~2 ms); khoảng dư 1,5 s = bộ câu khác (câu tự viết ra ~1,8× token ⇒ +1,1 s; cùng câu dev API ≈ harness). Không có chỗ thừa để cắt; đề xuất nhỏ: log token + thời gian theo khâu ở /api/chat. **0,0074884 USD thật.** Worktree `/tmp/c_lat` đã gỡ, server 8014 đã tắt.
+**12:06 27/10/2026:** C58 sửa nhãn theo B67 (token ra = "giải thích được, chưa can thiệp"; 0,2 s = giả thuyết; "token do generator trả về") — sha `d76fb10e0c5a`. **C59 plan log token xong** — `report_agent/2026-10-26_cai_tien_tung_khau/c59_log_token_plan.md` sha `3cafe700ccec`, chờ B review; chưa sửa code.
 
 ## Còn treo (phiên sau xử lý trước)
 
@@ -140,7 +143,7 @@ Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Mục "Còn treo"
 
 ## Tiền
 
-Paid API C phiên 27/10: **0,0049030 USD thật** (R1 pilot, usage log). Paid API C phiên tối 26/10: **0,0026861 USD thật** (C43 R2 bước 1, usage log). Paid API C phiên 26/10 chiều: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
+Paid API C phiên 27/10: **0,0123914 USD thật** (R1 pilot 0,0049030 + C58 0,0074884, usage log). Paid API C phiên tối 26/10: **0,0026861 USD thật** (C43 R2 bước 1, usage log). Paid API C phiên 26/10 chiều: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
 2 test generator có key: 0 USD (không gọi mạng). Quota Claude Code: không dùng sub-agent.
 
 Paid API C phiên tối 25/10: **≈ 0,0016 USD** — đo: 0,000427 (C35, 2 lượt `gpt-6-luna`); ước (route không log usage): 3 lượt cổng ổn định × 2 câu × ~0,0002
