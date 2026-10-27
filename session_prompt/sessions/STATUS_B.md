@@ -30,7 +30,9 @@
   **n kém hơn** (lỗi kỹ thuật: chữ thừa sau JSON strict, reasoning none); **m tầng tìm tốt hơn (tạm)**: dev 9 / 0 ổn định L1 + L2, p Holm ≈ 0,
   test 3 / 0, sai hợp đồng 0 / 95; giá rerank p50 5,0 / p95 7,0 s, ≈ 3,9× USD / câu; lượt sinh NOT RUN (cần trần riêng ≈ 0,11). Trần con m
   A dời lên 0,065 (B nhận 09:51:39). Worktree `/tmp/b_k3b` + symlink đã gỡ. ⇒ chờ C review.
-- **File đang khai báo sửa: không.** Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
+- **B60 (đang làm, từ 10:03 27/10/2026; A gọi B59):** phụ lục plan lượt sinh + judge K3b-m, 0 USD. **File khai báo sửa:**
+  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k3b_m_answer_plan.md` (mới, working tree chung).
+- **File khai báo khác: không.** Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
   (≤ 0,0105, lượt n mất usage) ⇒ **≈ 0,092 (≤ 0,095) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả
   ở cuối lượt ⇒ một exception làm mất usage đã trả tiền. Bài học: harness gọi API trả phí ghi từng dòng ngay (append) và bắt mọi lỗi của một lần gọi
