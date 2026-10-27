@@ -45,8 +45,11 @@ sau**; **hiệu suất = tiền + tốc độ**; **đo theo mục tiêu sản ph
 
 **Trong lúc User đi ăn (11:38 27/10/2026, User: "tiếp tục chỉnh sửa, điều phối, phát triển, cải thiện, so sánh, đánh giá"):** A giao việc 0 / ít tiền, không đổi chatbot:
 - **C56 xong** (`report_agent/2026-10-26_cai_tien_tung_khau/c56_de_xuat_sua_nhan.md`; nháp private `data/phase_8_2/gold_fix_proposal_2710/`): đề xuất thêm 3 khoảng nhãn
-  (120: 2, 156: 1); 143 là lỗi **cách đếm** (bỏ qua tiêu đề mục), không phải nhãn; 3 câu test chưa quyết. Áp vào file nhãn: người khác kiểm + User duyệt.
-- **B65** đo latency đầu–cuối thật (main context 5 vs `p82-b1` context 10; tuần tự + đồng thời 4; câu tự viết; ≤ 0,02 USD) — đang chạy.
+  (120: 2, 156: 1); 143 là lỗi **cách đếm** (bỏ qua tiêu đề mục), không phải nhãn; 3 câu test chưa quyết. **B66 kiểm 11:48 27/10/2026: đồng ý cả ba** (3 khoảng đúng nguyên văn, mỗi khoảng 1 chunk; 156 không phải báo nhầm — B sửa nhận định B61;
+  143 = lỗi cách đếm, nghiêng sửa hàm đếm tính `heading_path` cho lần đo sau) ⇒ **chờ User duyệt** áp 3 khoảng + đổi hàm đếm.
+- **B65 xong** (`b65_latency_dau_cuoi.md`): e2e thật p50 / p95 — main context 5: 3,3 / 5,7 s tuần tự, 3,6 / 6,2 s đồng thời 4; B1 context 10: 3,1 / 6,0 s, 3,4 / 6,4 s;
+  chênh cặp không thấy khác; 0 lỗi, OOS 2 / 2; ≈ 0,016 USD (ước, API không trả usage). C57 review ready sau sửa (11:52 27/10/2026): K3b-m thêm chọn đoạn ≈ 4,6–5 s p50
+  (đo trực tiếp) ⇒ ước ≈ 8 s p50 qua API (suy ra); **bản đang chạy p95 qua API 5,7–6,2 s — đã vượt mức theo dõi 5 s** (khâu sinh chiếm phần lớn).
 - Vòng cải tiến 7: W24–W26 đề xuất (`SO_CAI_TIEN_CACH_LAM.md`) — chờ User.
 
 ## Câu hỏi cho User (phiên sau — gói trong báo cáo mở phiên, mỗi câu có khuyến nghị)

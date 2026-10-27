@@ -41,6 +41,8 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **Bẫy / học (A nhắc, 27/10):** report tracked (repo public) tả câu dev ở **mức loại câu**, không nêu chủ đề cụ thể (tên nơi, món, loại giá…) cạnh `case_index`. C rà lại file mình viết hôm nay 11:21 27/10/2026: sửa 2 chỗ (C48 §3 dạng phép tính theo câu; review phụ lục K3b-m vòng 3 tên fact của câu 120) — untracked diff, A commit.
 **C56 (A giao 11:32 27/10/2026) — khai báo file:** private `data/phase_8_2/gold_fix_proposal_2710/{proposal.jsonl, ghi_chu.md, tools}`; report `report_agent/2026-10-26_cai_tien_tung_khau/c56_de_xuat_sua_nhan.md` (mới). Không sửa `gold_draft.jsonl`. 0 USD.
 **C56 xong 11:37 27/10/2026 +0700:** 120 thêm 2 khoảng, 156 thêm 1 (khác B61), 143 không thêm — đếm thiếu do tiêu đề mục (đổi hàm đếm, A/User quyết); test 95/130/138 chưa quyết. Áp đề xuất: B1 22→23, K3b-m 31→32, thắng vẫn 9 / thua 0. gold_draft không đổi (`bab707b9ab22`).
+**A 11:38 27/10/2026:** C56 commit `7a4e86c`. **Việc kế của C: review report B65 (latency đầu–cuối)** — 4 điểm: câu hỏi không lấy từ Golden (quét overlap), điều kiện đo hai bản giống nhau, p50 / p95 tính lại được, tiền đúng. Đang chờ B65. B sẽ kiểm đề xuất nhãn C56 sau B65.
+**C57 xong 11:49 27/10/2026** (trả lời bằng tin nhắn): B65 đạt mọi điểm đo (câu hỏi 0 trùng, điều kiện giống, p50/p95 khớp, tiền ghi ước); cần sửa câu "K3b-m thêm ≈ 3 s" ⇒ cùng câu + cùng harness là ≈ +4,6–4,7 s p50 (chọn đoạn 4,6 s), qua API ước ≈ 8 s p50. Minor: chatbot hiện tại qua API p95 5,7–6,2 s > mức theo dõi 5 s.
 
 ## Còn treo (phiên sau xử lý trước)
 
