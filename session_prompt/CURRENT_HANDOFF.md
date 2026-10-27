@@ -219,6 +219,22 @@ lẫn hai thay đổi). Chặn chính: B0 (User). Index Qwen3-8B (tồn từ 7A2
   grep loại `evaluation/`, `meta/`, `*sealed*`. Ghi `data/sua_kho_2026-10-27/review_c66.md` (giữ / bỏ / sửa từng mục) + report tracked ngắn (chỉ số đếm)
   `report_agent/2026-10-25_ra_soat_noi_dung_kho/sua_kho_de_xuat_review.md`.
 
+- **B74 XONG:** (1) review nhãn 3 câu test `ready` 0 / 0 / 1 ⇒ **User 15:01 đồng ý áp ⇒ gold v3** (B75); (2) 11 diff / 14 edit tên phường còn sót (`diffs_them/`) ⇒ C67 review.
+- **C66 XONG:** vòng 1 `changes_requested` (K011, K048, K049) ⇒ B sửa ⇒ vòng 2 `ready_for_user_confirmation`: 41 mục giữ 40 + K091 có điều kiện (chỉ áp nếu không loại file
+  inventory); 9 / 9 edit `[s7-golden]` giữ (căn cứ trong kho); áp thử 111 edit trong bộ nhớ 0 lỗi. **Áp bằng thay chuỗi từ `edits/*.jsonl`, không `git apply`.**
+
+### B75 — tạo gold v3 = v2 + 3 câu test (User 15:01 đồng ý; 0 USD)
+
+- `data/phase_8_1/tools/build_gold_v3.py` (cùng cách `build_gold_v2.py`: chỉ đọc kho, từ chối ghi đè) ⇒ `data/phase_8_1/gold/gold_v3.jsonl` + `gold_v3_CHANGES.md`; câu 138
+  theo m-1 (fact so sánh chỉ gắn trích dẫn nói thẳng ý so sánh). **`gold_v2.jsonl` / `gold_draft.jsonl` không đổi** (sha trước / sau).
+- `GOLD_PATH` mặc định `backend/experiments/phase_8_1/g1_retrieval.py:46` ⇒ v3; `tests/test_gold_coverage.py`; đếm lại test B1 / K3b-m (kỳ vọng 9 / 11 trên 15). Sửa trên
+  `main` working tree chung (khai báo file); không commit (A commit) ⇒ C kiểm.
+
+### C67 — review 11 diff tên phường (`data/sua_kho_2026-10-27/diffs_them/`, B74 mục 2) (giao 15:01; 0 USD)
+
+- Như C66: căn cứ trong kho (ghi chú :39-44), phạm vi, 5 chỗ không soạn có lý do; áp thử cùng 111 edit B73 (thứ tự T11 sau K118). Ghi vào `review_c66.md` mục "diffs_them".
+  Xong ⇒ kiểm B75.
+
 ### C64 — review plan B3 + nợ nhỏ (giao 14:15 27/10/2026; 0 USD trừ cổng ổn định ≈ 0,0005)
 
 1. **Review plan B3** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md` (sha `9d60b16b63da`) theo WORKFLOW §9.1: **chỉ dựa trên mục "Căn cứ để review"**

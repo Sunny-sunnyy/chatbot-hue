@@ -1,8 +1,12 @@
-# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 14:31 27/10/2026)
+# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 14:44 27/10/2026)
 
 Terminal: `hue-rag-2d` (A = `hue-rag-51`, C = `hue-rag-86`) · Agent: Claude Opus 5.5 · Vai: thực thi; User 27/10 chiều: việc A giao = "làm đi".
 
 ## Đang làm (phiên 27/10 chiều)
+- **B73 sau review C66** (14:44 27/10/2026): C vòng 1 giữ 37 / sửa 3 / K091 có điều kiện ⇒ B sửa K011, K048, K049 ⇒ C vòng 2 **ready** (giữ 40, K091 có điều kiện). `diffs_them/` (B74) **chưa ai review**.
+- **B74 — XONG** (A giao 14:33; xong 14:41 27/10/2026; 0 USD): (1) review đề xuất nhãn 3 câu test C64 ⇒ ready 0/0/1
+  (`report_agent/2026-10-26_cai_tien_tung_khau/c64_de_xuat_nhan_test_review.md`; hàm đếm riêng `data/phase_8_2/gold_fix_proposal_2710/b74/`; gold_v2 `2f5a347a71ff` không đổi);
+  (2) 11 diff tên phường sót (14 edit, dựng sau 41 edit B73, bad 0) `data/sua_kho_2026-10-27/diffs_them/` (README: 5 chỗ không soạn + lý do). Kho không đổi.
 - **B73 — soạn đợt sửa kho: XONG** (A giao 14:15; xong 14:31 27/10/2026; 0 USD; quota ≈ 0,68 triệu token cho 7 sub-agent): `data/sua_kho_2026-10-27/` (README).
   53 mục "sửa khi build" ⇒ **41 sửa** (41 diff, bad 0 / conflicts 0) + 12 chuyển nhóm (9 tra ngoài, 3 không cần sửa; 8 flag_A); 16 câu hỏi User; tra ngoài
   69 + 9 = 78 (7 loại) + nháp ChatGPT (chưa gửi); inventory: 33 đoạn, 205 → 204 file. Kho không đổi (find -newermt = 0), Qdrant 8.459.

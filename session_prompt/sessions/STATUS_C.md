@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 14:31 27/10/2026 (đang C65)
+# STATUS C — cập nhật 14:44 27/10/2026 (C66 vòng 2 xong — chờ A)
 
 Terminal: `hue-rag-86` (phiên mới 13:40 27/10; trước `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi. B = `hue-rag-2d` (B tự báo), A = `hue-rag-51` (A xác nhận) — trực tiếp.
 User 13:45 27/10/2026 (phiên mới, nhắc lại 08:41 27/10): C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
@@ -6,7 +6,8 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang làm
 
-- **C65** (A giao 14:31, 0 USD, chỉ đọc): câu 138 b1_test có `citation_error` dù viết `[Nguồn n]` — validator nào, validator hiện tại có lỗi không, đếm dòng giống vậy. Đầu ra `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md`.
+- **C66 xong 14:41 27/10/2026** (0 USD): review đề xuất sửa kho B73 — 41 mục: giữ 37, sửa 3 (K011 :61 sai chiều; K048 mất thông tin NQ 175/2024 + Nam Đông; K049 bỏ cụm), có điều kiện 1 (K091), bỏ 0; s7-golden 9/9 giữ. Áp 111 edit lần lượt trong bộ nhớ: 0 lỗi. Private `data/sua_kho_2026-10-27/review_c66.md` (+ `review_c66_tools/`); tracked `report_agent/2026-10-25_ra_soat_noi_dung_kho/sua_kho_de_xuat_review.md` (chưa commit). **Vòng 2 14:44 27/10/2026:** B sửa 3 mục (sha K011 `6f70073af8f9`, K048 `2c29933aa125`, K049 `403e51ae7407`) ⇒ đóng; kết luận ready, giữ 40 + có điều kiện 1. `diffs_them/` chưa review.
+- **C65 xong 14:34 27/10/2026** (0 USD): lượt B1 25/10 16:35 chạy validator v1 (trước `9e6d371` 19:58; tái lập 176 / 176); validator hiện tại: 12 / 176 câu lỗi cũ (6 dev, 6 test, gồm 138) đều **qua**, 0 câu đổi ngược ⇒ production hôm nay không 500. Report `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md` (chưa commit); private `data/phase_8_2/b1/c65/`.
 - C64 xong 14:30 27/10/2026, chờ A. Mục tiêu tiếp: A giao.
 - C64 (A giao 14:15): (1) review plan B3 — vòng 1 `9d60b16b63da` changes_requested 0/2/4; vòng 2 `27e75be5ed44` **ready 0/0/1** (m-5 giờ dòng 3), file
   `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan_review.md` (chưa commit); (2) `dense_ms` làm tròn — A review + commit `dfbcca5`; report
@@ -18,7 +19,7 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang khai báo sửa
 
-- C65 (từ 14:31 27/10/2026): `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md` (mới); script tạm `/tmp/c65_*.py`.
+- Không (C66 xong; chờ A commit `sua_kho_de_xuat_review.md`, `c65_citation_138_check.md`).
 
 ## Nhánh của C
 
@@ -60,6 +61,8 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
   MiniLM; `guides/full_corpus_rag.md` bước 4b dùng mã B-06 khác nghĩa.
 
 ## Đã học / bẫy gặp (đầu vào vòng cải tiến)
+
+- **C66 27/10:** lọc `grep -v "^./meta"` sai mẫu (đường dẫn in ra không có `./`) ⇒ in vài dòng `knowledge-base-hue/meta/`. Luôn dùng `--exclude-dir=evaluation --exclude-dir=meta --exclude-dir=_source-dumps` (thư mục `foods/evaluation/` nằm sâu — `--exclude-dir` bắt mọi cấp).
 
 - **27/10 chiều:** C62 ghi guide 6 "dense_ms giữ 3 chữ số" rồi chính C64 sửa code làm câu đó sai — A bắt khi commit `dfbcca5`. Sửa code thì grep guide / report vừa viết về đúng trường đó. Lại gõ tay giờ "14:31" vào report C64 (thực tế 14:23) — đã sửa; luôn `date` trước khi ghi.
 
