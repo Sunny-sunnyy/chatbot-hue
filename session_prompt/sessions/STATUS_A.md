@@ -1,3 +1,33 @@
+# STATUS A — cập nhật 08:53 27/10/2026 (PHIÊN 27/10)
+
+Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-31`, C = `hue-rag-5b` (cả ba Claude Code, trực tiếp).
+
+## Commit
+- Đầu phiên: `c81e45e`. Phiên: `e6c9241` (mở phiên: quyền, W21–W23, mục tiêu sản phẩm, giao việc).
+
+## Đang làm / dở
+- B53 (review R2) → B54 (K3, ≤ 0,20 USD) đang chạy ở B; C46 (plan R1) ở C.
+- Yêu cầu ChatGPT `gửi chatgpt/2026-10-27/tìm thông tin/muc_tieu_san_pham_2026_10_27.md` (thời gian chờ, tiền / câu, mức nặng lỗi, giá / giờ cũ,
+  đánh giá "dùng được") — chờ User gửi.
+- Đề xuất với User (chưa chốt): thứ tự lỗi nặng → nhẹ: nói chắc sai / bịa (gồm giá / giờ sai so kho) > trả lời câu ngoài kho > thiếu ý / nguồn >
+  từ chối nhầm; áp làm sàn từ lần đo sau khi có kết quả nghiên cứu. Streaming: đã nghiên cứu 26/10 (C5, khuyên hoãn) — đưa vào danh sách tính năng.
+
+## Đang khai báo sửa
+- `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/sessions/STATUS_A.md` (đoạn của A).
+
+## Quyền phiên này (User 08:47 27/10, hết hạn cuối phiên)
+- Như tối 26/10: A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD cả phiên; B commit + push `p82-k3`, K3 ≤ 0,20 USD.
+
+## Tiền paid phiên này
+- A: 0 USD.
+
+## Đã học / bẫy gặp (phiên 27/10)
+- 08:5x: A nói "API không stream" dựa trên grep hẹp (`api/`, `generation/`) — đúng, nhưng User nhớ "có lựa chọn streaming": đó là phương án trong nghiên cứu
+  26/10 (C5), chưa làm. Khi User nhớ khác, trỏ đúng nguồn (spec `:217`, nghiên cứu C5).
+
+---
+Phần dưới: trạng thái kết phiên tối 26/10.
+
 # STATUS A — cập nhật 22:30 26/10/2026 (KẾT PHIÊN TỐI 26/10 — User chọn (b): "nhiệm vụ, câu hỏi để session tiếp theo")
 
 Terminal: `hue-rag-2d` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-23`, C = `hue-rag-b5` (cả ba Claude Code, trực tiếp; tên đổi mỗi lần mở).
