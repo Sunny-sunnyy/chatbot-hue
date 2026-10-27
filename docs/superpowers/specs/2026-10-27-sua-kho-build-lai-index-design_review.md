@@ -137,3 +137,8 @@ Decision vòng 3: **ready_for_user_confirmation** (0 / 0 / 1 chữ — không c�
   kiểm lại nếu chỉ đổi số bước này).
 
 **Kết luận chung C68:** 3 vòng; bản `bc8ddfd80694` sẵn để A trình User duyệt sha.
+
+## Duyệt (A ghi 16:47 27/10/2026)
+
+User duyệt spec bản 3 **sha `937cf8969810`** (commit `27342fe`) lúc 15:3x 27/10/2026. Dòng đầu spec còn chữ "nháp / chờ User duyệt" — **để nguyên** để
+giữ đúng bản đã duyệt (sửa chữ ⇒ sha đổi ⇒ phải duyệt lại); trạng thái duyệt ghi ở đây, `CURRENT_HANDOFF.md` và `Project_Status.md` §5.

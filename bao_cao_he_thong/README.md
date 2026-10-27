@@ -16,7 +16,7 @@
 | Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 10:49 27/10/2026 (bản 8: K3, K3b — model chọn 10 / 30 đoạn) |
 | Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 13:30 27/10/2026 (bản 11: API ghi số đo mỗi câu; thời gian chờ thật) |
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:18 25/10/2026 (+ 8.1) |
-| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 24/10/2026 |
+| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt sửa kho đã duyệt, chưa áp) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 16:45 27/10/2026 (bản 4) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 19:4x 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 18:56 25/10/2026 |
 | Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [27/10 chiều — dọn phần tồn Phase cũ, soạn sẵn đợt sửa kho](nhat_ky/2026-10-27_chieu_phan_ton.md); trước: [27/10 sáng — chốt đợt cải tiến](nhat_ky/2026-10-27_chot_dot_cai_tien.md) | 15:28 27/10/2026 |
 

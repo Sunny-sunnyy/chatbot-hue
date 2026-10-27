@@ -55,11 +55,19 @@ Mã việc = mã A giao (B71…B76). Phiên sáng 27/10 (B53–B70): `git show 4
   server; report public tả câu ở mức loại câu; worktree `uv run --project …` + gỡ symlink, push từ working tree chung; pytest liệt kê file; pilot 10 câu;
   **B đã thấy khóa X / Y của B0 ⇒ B không làm người tóm nhãn B0.**
 
-## Việc dở / câu hỏi còn treo
+## Việc dở / câu hỏi còn treo (khớp `CURRENT_HANDOFF.md` "Mục việc phiên sau", rà 16:46 27/10/2026)
 - Việc dở của B: **không**.
-- Chờ User (qua A):
-  1. **B0** — vẫn chặn merge `p82-b1` (đã sẵn trên `main` `576f84e`; main đã đi tiếp ⇒ trước merge kiểm lại rebase / cổng).
-  2. **B3** chạy khi: B0 xong + B1 merge + User quyết mở câu kín; người chạy **B** theo plan `27e75be5ed44`.
-  3. Kết quả ChatGPT 78 mục (B76) ⇒ lưu `gửi chatgpt/2026-10-27/kết quả nghiên cứu/` ⇒ đối chiếu (WebFetch URL) trước khi sửa kho.
-  4. 16 câu hỏi kho `data/sua_kho_2026-10-27/cau_hoi_user.md`; loại file inventory `performing_arts` (câu 16).
-- Cho A: (5) brief sub-agent động vào kho: rào grep (sự cố s7) — vòng cải tiến; (6) K3b-m vẫn gác (gold v3 không đổi kết luận đã đóng).
+- **Việc chờ của B phiên sau** (A giao sau khi User cấp quyền):
+  1. **Khi chờ B0:** viết plan đo "trước ↔ sau" đợt sửa kho (spec `937cf8969810` §5 bước 0 + §6; khuôn `run-experiment` §1 + "Căn cứ để review"; harness
+     ghi từng dòng; A/A = 2 nguồn B1 ↔ G2.1a) ⇒ C review ⇒ A duyệt sha. **Chưa chạy** (bộ "trước" chạy trên chatbot sau merge B1).
+  2. **Review plan C** đo "thời gian tới chữ đầu tiên" (streaming, ~10 câu, ≈ 0,002 USD khi chạy) ⇒ A duyệt sha.
+  3. **Sau B0:** nếu `main` xung đột với `p82-b1` `c3d5607` thì B rebase lại (A merge; cổng ổn định context 10).
+  4. **B3 — người chạy B** theo plan `27e75be5ed44` khi User quyết mở câu kín: khớp 3 câu A đã thấy từ `sealed_user_feedback_private.md` ⇒ `a_seen_lines.json`
+     (không đủ 3 ⇒ chỉ S36); report tách riêng số câu 500 kiểu "validator v1 không nhận `[Nguồn n]`" mỗi bên (C65); C kiểm (giữ mù).
+  5. **Đợt sửa kho (sau đóng 8.2):** B chạy bước 0 (bộ "trước" 176 câu) + bước 1–6 (sao lưu, **áp sửa §5 bước 2** bằng thay chuỗi từ `edits/*.jsonl` rồi
+     `diffs_them/` — K091 không áp; loại file danh mục; chia đoạn thử; build lại tại chỗ; kiểm sau build) — làm liền bước 2–6; C review diff + kiểm chunk / build.
+     Trần 0,15 USD. Trích dẫn kho: tìm **chỉ** bằng `scripts/grep_kb.sh`.
+- Chờ User (qua A): B0; quyết mở câu kín (B3); 16 câu `data/sua_kho_2026-10-27/cau_hoi_user.md` (chưa trả lời ⇒ đợt 2); gửi ChatGPT 78 mục (B76) — kết quả
+  ⇒ `gửi chatgpt/2026-10-27/kết quả nghiên cứu/` ⇒ WebFetch đối chiếu URL trước khi áp (đợt 2).
+- Ghi chú cho A: dòng đầu spec sửa kho vẫn ghi "NHÁP, chờ User duyệt" dù User đã duyệt sha `937cf8969810` (sửa chữ = sha mới ⇒ ghi trạng thái duyệt ở
+  handoff là đủ, hoặc A quyết). K3b-m vẫn gác (gold v3 không đổi kết luận đã đóng).
