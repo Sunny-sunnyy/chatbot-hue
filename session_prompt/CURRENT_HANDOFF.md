@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 22:31 26/10/2026 (A, **KẾT PHIÊN TỐI 26/10** — User chọn (b): "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
+Cập nhật: 08:47 27/10/2026 (A, **MỞ PHIÊN 27/10** — User duyệt quyền phiên, W21–W23, Q2 §10.6; trả lời mục tiêu sản phẩm; A giao B53 / B54 / C46). Trước: 22:31 26/10/2026 (A, **KẾT PHIÊN TỐI 26/10** — User chọn (b): "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9.
 Chỉ giữ việc đang mở. Chi tiết phiên tối 26/10 (quyết định theo giờ, kết quả, tiền): `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`;
 nhật ký cho User `bao_cao_he_thong/nhat_ky/2026-10-26_toi_cai_tien_tung_khau.md`. Bản handoff trước khi viết lại: `git show 087cedd:session_prompt/CURRENT_HANDOFF.md`.
 
@@ -64,9 +64,9 @@ sau**; **hiệu suất = tiền + tốc độ**; **đo theo mục tiêu sản ph
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-2d` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **KẾT PHIÊN 22:31** — xong: quyền + quyết định User; giao + review B41–B52 / C36–C45; spec 8.2 §10 duyệt; hook câu kín; 3 nguyên tắc §7; sổ vòng 6; tài liệu kết phiên | `STATUS_A.md`; 0 USD |
-| B — thực thi | `hue-rag-23` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **KẾT PHIÊN 22:2x** — xong: B41 B1 rebase (`p82-b1` `811d25d`, ready, merge sau B0); B42 lỗi tầng tìm; B43 nháp khâu tìm; B44 comment; B45 review hook câu kín; B46 plan K1; B47 review R4; **B48 K1 kém hơn** (`p82-k1` `870a5d5`); B49 review plan R2; kiểm spec §10; B50 plan K3 (A duyệt `0a6370204c7d`); B51 plan R3 (NOT RUN). **Phiên sau:** chạy K3 khi A giao + ghi lại quyền (nhánh `p82-k3`, ≤ 0,20 USD) | `STATUS_B.md`; **0 USD**; không worktree / file khai báo |
-| C — thực thi | `hue-rag-b5` (tối 26/10) | Claude Opus 5.5 | trực tiếp | **chuẩn bị kết phiên 22:22 26/10/2026** — xong C36–C45 (C36 phân loại lỗi; review W16; C37; C38 review spec §10; C41 / C42 K1; C39 R4 `2c7ecfd`; C40 plan R2; **C43 R2 kém hơn** (OOS 160, 0,0026861 USD); C44 K3 plan ready; C45 R3 ⇒ NOT RUN). report R2 `aec9ab8` trên `origin/p82-r2` (User `!`); worktree đã gỡ; chờ B review R2 | `STATUS_C.md`; 0,0027 USD thật |
+| A — điều phối | `hue-rag-5f` (27/10) | Claude Opus 5.5 | trực tiếp | mở phiên 08:47 27/10/2026: quyền User có; giao B53 → B54, C46 (plan R1); bàn mục tiêu sản phẩm với User | `STATUS_A.md` |
+| B — thực thi | `hue-rag-31` (27/10) | Claude Opus 5.5 | trực tiếp | **B53** review R2 → **B54** chạy K3 (`p82-k3`, ≤ 0,20 USD) | `STATUS_B.md` |
+| C — thực thi | `hue-rag-5b` (27/10) | Claude Opus 5.5 | trực tiếp | **C46** plan R1 (working tree chung, 0 USD) → review K3 khi B xong; sửa report R2 nếu B53 có finding | `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -76,7 +76,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   việc đã duyệt: A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`;
   luôn thử + so baseline trước khi chọn (User 24/10 20:49); commit trước sửa code + cổng ổn định sau mỗi gói (User 20:4x 26/10, câu 5); "báo trước, chờ
   User đồng ý" chỉ áp ngoài phạm vi đã duyệt.
-- **Phiên tối 26/10 (User 20:3x, 21:1x) — HẾT HẠN, hỏi lại:** A tự điều phối B/C + tự đề xuất / thử / chọn trong luật; API ≤ 1 USD cả phiên (dùng 0,0027);
+- **Phiên 27/10 (User 08:47 27/10/2026, hết hạn cuối phiên):** như tối 26/10 — A tự điều phối B/C + tự thử / chọn trong luật nhận của đợt; API ≤ 1 USD cả phiên;
+  **B commit + push `p82-k3`, K3 ≤ 0,20 USD** (con: tìm 0,08 / sinh 0,12). Q2 spec §10.6: xác nhận trên test = "không làm hỏng" (User đồng ý).
+- Phiên tối 26/10 (User 20:3x, 21:1x) — đã hết hạn: A tự điều phối B/C + tự đề xuất / thử / chọn trong luật; API ≤ 1 USD cả phiên (dùng 0,0027);
   B commit + push `p82-b1`, `p82-k1`, `p82-k3` (K3 ≤ 0,20 USD — chưa dùng); C commit + push `p82-r2` (R2 ≤ 0,06 USD).
 - Trần 8.2: 0,5 USD (spec D5). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10; luna xếp 10 đoạn ~0,00029 / lần).
@@ -134,6 +136,10 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   pilot 10 câu trước, vượt ước pilot > 50 % ⇒ dừng báo A. Không làm: merge `main`, ghi Qdrant, sửa plan, đổi tiêu chí. Dừng: theo plan §6 + khi phải đụng file
   người khác khai báo. Lưu ý: rerank luna ước +4–8 s / câu ⇒ p95 gần chắc vượt mức theo dõi 5 s (không phải sàn — ghi số, A trình User). Đầu ra: report
   `phase_8_2_k3_implementation.md` trên nhánh (B commit + push `p82-k3`) ⇒ C review.
+- **C46 — plan R1 (`none`, luật (a); 0 USD).** File `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r1_plan.md` ở working tree chung (không commit);
+  mốc so = B1 `811d25d`; đầu file mục "Căn cứ để review" (WORKFLOW §9.1); tiêu chí theo spec §10.2 (a) + §10 R1 (USD ≤ 0,95× **hoặc** `output_tokens`
+  ≤ 0,9×, mặt còn lại không tệ hơn) + sàn OOS; cỡ mẫu + nhiễu A/A ghi trước (W23: đếm trên đúng mốc). Không chạy paid. Xong ⇒ báo sha ⇒ B review khi rảnh
+  (sau B53, xen lúc chờ luna). Sau đó C review report K3.
 - Ước tổng 8.2 (A, để so trần 0,5): đã dùng 0,0396 + K3 0,20 + R1 ~0,034 + ghép ~0,04 + dự phòng pilot ⇒ **≈ 0,31–0,35 USD** (con số "0,41" trong plan K3 §7 tính cả
   R2 0,06 + R3 0,04 trước khi hai việc đó dừng / NOT RUN).
 

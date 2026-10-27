@@ -158,7 +158,8 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    phạm vi, bước, tiêu chí nghiệm thu, cách kiểm, quyền, rủi ro; User duyệt một lần.
    Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** file kế hoạch / spec
    chưa commit thì khi duyệt ghi kèm `sha256sum` (12 ký tự) vào `CURRENT_HANDOFF.md`; sửa sau khi duyệt là
-   bản mới, cần duyệt lại phần đổi.
+   bản mới, cần duyệt lại phần đổi. A tính sha **từ file** (`sha256sum <file> | cut -c1-12`) ngay lúc ghi duyệt, không
+   chép sha từ tin nhắn; người viết không sửa plan sau khi báo sha — cần sửa thì báo sha mới (26/10: duyệt nhầm bản R2).
    **Kế hoạch có tiêu chí ghi trước** (thí nghiệm; người viết thường là B/C): đầu file có mục "Căn cứ để review" — 2–4
    file, mỗi file ghi mục cần đọc. A chọn một session khác người viết review chỉ dựa trên gói đó (được chạy lệnh chỉ đọc /
    tính lại từ dữ liệu; không đọc STATUS / tin nhắn của người viết; thiếu căn cứ ⇒ finding), ghi `<plan>_review.md` (§6),

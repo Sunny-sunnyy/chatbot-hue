@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
+Last updated: `08:47 27/10/2026` (A, mở phiên 27/10: User trả lời mục tiêu sản phẩm §1; W22 vào §8). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -27,10 +27,10 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 **người dùng thật hỏi** — số chính bỏ câu không tự nhiên (User 24/10 21:40). Thứ tự: chất lượng cần thiết trước, rồi tốc độ / tiền (User 26/10).
 Đang chạy trên máy User (CPU), có thể deploy AWS sau (chưa chắc).
 
-**Chờ User (A hỏi 26/10 tối):** (1) người dùng chính là ai (du khách / người dân / dự án học); (2) câu trả lời "dùng được" là gì (ví dụ đủ để
-quyết đi / ăn ở đâu); (3) lỗi nào tệ nhất (sai giá / giờ, bịa, từ chối câu trả lời được); (4) yêu cầu phi chức năng bằng số: chờ tối đa (A tạm
-theo dõi p95 ≤ 5 s), tiền tối đa / câu, chạy ở đâu. Chưa có ⇒ thước tạm = Completeness / Accuracy (judge Claude) trên câu tự nhiên + năng lực,
-sàn closed-world ở trên; B0 (người đọc cặp mù) là mốc người đầu tiên.
+**User trả lời (08:47 27/10/2026):** đây là **đồ án tốt nghiệp** đem đi trình bày, xem như **sản phẩm kinh doanh thật**; người dùng = User, **du khách,
+người dân**. Lỗi tệ nhất: User hỏi ý A (A đề xuất thứ tự, chờ User chốt). Yêu cầu phi chức năng (chờ tối đa, tiền / câu, chạy ở đâu): User chưa
+rõ ⇒ **so sánh, đánh giá, nhận xét; chỗ nào tối ưu được thì tối ưu** — A tạm theo dõi p95 ≤ 5 s, mỗi biến thể báo USD / câu + latency p50 / p95.
+Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhiên + năng lực, sàn closed-world ở trên; B0 (người đọc cặp mù) là mốc người đầu tiên.
 
 ## 2. Phase hiện tại
 
@@ -239,6 +239,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   symlink `data/`, `knowledge-base-hue/` hiện untracked ⇒ gỡ khi xong; worktree giữ nhánh `main` thì session khác không `git switch main` được ⇒
   gỡ (`git worktree remove`) trước khi người kia chuyển nhánh; `git push` từ worktree bị auto mode chặn ⇒ push từ working tree chung hoặc User `!`.
 - Auto mode chặn chạy notebook (`jupyter nbconvert --execute`) và test thiếu model (`HF_HOME` rỗng) ở một số session ⇒ User `!` ở terminal đó.
+- Auto mode chặn **cả khối** khi lệnh ghép có thao tác rủi ro (`push --delete`, `rm`, push nhánh từ worktree) ⇒ tách thao tác rủi ro ra lệnh
+  riêng; commit report ngay ở working tree chung, push riêng (26/10 tối, A và C).
 - Hook `.githooks/pre-commit` chỉ chạy khi `git config core.hooksPath` = `.githooks` (cấu hình cục bộ, không đi theo
   clone): bản clone mới phải bật một lần. Hook chặn dòng thêm mới có tên dự án khác, kể cả khi trích tên file tài liệu
   cũ — viết "tài liệu cách làm của dự án khác" thay vì tên file. Bỏ qua (`--no-verify`) chỉ khi User duyệt đúng commit đó.

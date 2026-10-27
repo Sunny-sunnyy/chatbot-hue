@@ -33,7 +33,8 @@ Kế hoạch có mục **"Căn cứ để review"** và được một session k
 6. **Cỡ mẫu trước khi chạy:** đếm số câu thật sự có thể đổi kết quả (ví dụ câu có đoạn đúng ngoài top-5) và
    số câu phải thắng để CI 95% > 0 (kể cả Holm khi nhiều biến thể). Không đủ câu ⇒ ghi trước "kết quả có thể
    chỉ là chưa rõ", mở rộng bộ hoặc đổi câu hỏi thí nghiệm, đừng chạy rồi mới thấy (2026-10-25: G4 chỉ có
-   khoảng 6–8 câu có thể đổi).
+   khoảng 6–8 câu có thể đổi). Đếm **trên đúng mốc của thí nghiệm**, không dùng số của mốc / tầng khác (26/10: R3
+   9 → 6 câu trên mốc B1).
 
 ```yaml
 experiment_id: <gate>_<tên ngắn>
@@ -88,6 +89,8 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 6. **Judge:** Claude (sub-agent), ghi model id; baseline và biến thể chấm **cùng model judge**; đổi judge thì
    chấm lại baseline.
 7. Lỗi provider, mạng hay GPU là kết quả quan sát được. Ghi lại, không che bằng fallback.
+8. Harness ghi kết quả **từ chối ghi đè** file đã có (`raise SystemExit('exists')`) — đặt nhầm tên lượt không được đè
+   mốc cũ (26/10: hai harness thiếu chặn).
 
 ## 4. Kết luận
 
