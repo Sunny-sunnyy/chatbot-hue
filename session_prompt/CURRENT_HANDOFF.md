@@ -161,7 +161,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | # | Plan (`report_agent/2026-10-25_phase_8_2_ap_dung/`) | sha duyệt | Trạng thái | Việc phiên sau |
 |---|---|---|---|---|
 | K1 | `phase_8_2_k1_plan.md` | `b8f1597f6a0f` | **kém hơn** (câu 154 mất đoạn đúng; 2 / 37 / 1); `p82-k1`; C42 ready | — (hồ sơ) |
-| K3 | `phase_8_2_k3_plan.md` | `0a6370204c7d` | **DỪNG 09:05 27/10/2026 — kém hơn (phạm sàn: lỗi đầu ra luna 1 / 40, câu 173, thứ tự thiếu 1 đoạn)**; pilot rerank p50 5,7 s / p95 8,2 s; 0,0251 USD | B report trên `p82-k3` ⇒ C review |
+| K3 | `phase_8_2_k3_plan.md` | `0a6370204c7d` | **DỪNG 09:05 27/10/2026 — kém hơn (phạm sàn: lỗi đầu ra luna 1 / 40, câu 173, thứ tự thiếu 1 đoạn)**; pilot rerank p50 5,7 s / p95 8,2 s; 0,0251 USD | **đóng 09:13 27/10/2026** — C49 review ready (`phase_8_2_k3_review.md`, 0 / 0 / 3 minor); hồ sơ `p82-k3` `80e7329`; số theo dõi 9 thắng / 0 thua trên 39 (câu 173 không đo được), một lượt, dev đã thấy |
 | R2 | `phase_8_2_r2_plan.md` | `b70ea775efb2` | **kém hơn — đóng** (OOS câu 160); `p82-r2` `aec9ab8`; 0,0027 USD; B53 review ready (`phase_8_2_r2_review.md` `11368435edbd`); A đóng 27/10: m-1 giữ (mô tả chung, 0 trùng); m-2 ghi hồ sơ: câu 115 (P1 phạm dạng không `[n]`) R2 từ chối nhưng B1 cũng từ chối ⇒ chưa tách được tác dụng E1b | — (hồ sơ) |
 | R3 | `phase_8_2_r3_plan.md` | — | **NOT RUN** (C45: trần 6 câu) | — (hồ sơ) |
 | R4 | (implementation `phase_8_2_r4_implementation.md`) | — | xong `2c7ecfd`; B47 ready | dùng làm chỉ số theo dõi |
