@@ -49,6 +49,8 @@
   **K3b-m answer = kém hơn theo luật: T3 Completeness thua 5 > 4** (26, 66, 93, 134 −1; 112 −2); test NOT RUN. Sàn đạt hết; chỉ báo: Completeness
   +0,22 [+0,02; +0,44], Accuracy +0,25, từ chối nhầm 7 → 2; C51 0 / 0; 168 / 120 trả lời đúng, không "vòng". e2e p50 6,5 / p95 9,1 s (đồng thời 4), 3,8× USD.
   Report `phase_8_2_k3b_m_answer_implementation.md` trên `origin/p82-k3b` `a6f609c` (đã push). Worktree `/tmp/b_k3b` đã gỡ. ⇒ chờ C review.
+- **B66 xong (10:49 27/10/2026; A gọi B62):** `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` bản 8 (working tree chung, chưa commit): dòng cập nhật, Tóm tắt, checklist
+  (luna + dòng mới "thước đoạn đúng"), §4 mục 27/10, §5, §6, Phụ lục. Chatbot ghi "chưa đưa vào". ⇒ A review + commit.
 - **File đang khai báo sửa: không.** Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
   + ước ≈ 0,0074 (≤ 0,0105, lượt n mất usage) ⇒ **≈ 0,167 (≤ 0,170) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả
