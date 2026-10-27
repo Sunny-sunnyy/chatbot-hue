@@ -167,6 +167,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Trạng thái (13:59 27/10/2026, A): XONG** — A review đạt (đối chiếu 3 chỗ `file:dòng` guide 6 với code; `gold_draft` vẫn `bab707b9ab22`), commit. Trước: 13:57 C chờ review — 5 file tracked (chưa commit) + `validate_gold.py` private (diff `data/phase_8_1/tools/validate_gold_c62.diff`); chi tiết `STATUS_C.md`.
 - Không ai: chạy thí nghiệm mới, mở câu kín, chạy `validate_gold.py`.
 
+- **B71 review (C, 14:04): `ready_for_user_confirmation`** 0 / 0 / 2 minor — `phase_8_2_b1_rebase2_review.md`. **Khi merge sau B0** (m-2): sửa context 5 ⇒ 10 ở guide 6
+  "Hiện hành" (~dòng 45), guide 8 (~dòng 18), `Project_Status.md` (~dòng 17, 100) + 4 chỗ báo cáo. m-1: log cổng giữ ở `data/phase_8_2/b1/rebase_2710/c_review/`.
+
 ### B72 — plan mốc cuối 8.2 (B3, câu kín) (giao 14:1x 27/10; 0 USD; chỉ viết plan, **không mở câu kín**)
 
 - **Mục tiêu:** plan B3 sẵn sàng để khi User quyết mở câu kín (sau B0 + merge B1) chạy ngay. Spec 8.2 §5 "B3", §3 mục 7 (báo 36 + 33 câu), §6 mục 4, §7 (≈ 0,015 USD).
