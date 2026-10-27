@@ -1,4 +1,4 @@
-# STATUS A — cập nhật 15:41 27/10/2026 (KẾT PHIÊN 27/10 chiều — User đóng ~16:40)
+# STATUS A — cập nhật 16:51 27/10/2026 (KẾT PHIÊN 27/10 chiều)
 
 Terminal: `hue-rag-51` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-2d`, C = `hue-rag-86` (cả ba Claude Code, trực tiếp).
 
@@ -16,6 +16,9 @@ Terminal: `hue-rag-51` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Duyệt plan B3 `27e75be5ed44` (M-1 / M-2 do A quyết); spec sửa kho viết + 3 vòng C ⇒ User duyệt `937cf8969810`; gold v3 (User duyệt).
 - Bàn tính năng (PA3): streaming trước, rồi hội thoại nhiều lượt; C63 căn cứ.
 - Vòng cải tiến 8: S41–S44, W27–W29 áp (`scripts/grep_kb.sh`); handoff viết lại 280 ⇒ ~113 dòng; tài liệu kết phiên.
+- Sau yêu cầu "cập nhật đầy đủ" của User (16:3x): `grep_kb.sh` qua 4 vòng B thử phá (bản cuối `77ac6ec`); B77 `BAO_CAO_KHO_DU_LIEU` bản 4; C69 `BAO_CAO_DANH_GIA`
+  bản 3 + guide 7 "Hiện hành" (A đối chiếu 2 sửa với code); handoff thêm "Mục việc phiên sau" từng session + câu hỏi lưu câu hỏi người dùng (hội thoại nhiều lượt).
+- Ghi chú C (STATUS_C, chưa xử lý): spec 8.2 §3 mục 2 dẫn số dòng NFC cũ (`:91, :132`) — lịch sử, không đổi hành vi; K076 / K077 "quận", K002, K117 — đợt sửa kho.
 
 ## Quyền phiên này (User 13:46 27/10: "cấp lại như phiên 27/10" — HẾT HẠN cuối phiên)
 - A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C commit + push nhánh riêng theo việc (B71: force-push `p82-b1`).

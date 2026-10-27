@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 15:51 27/10/2026 (KẾT PHIÊN 27/10 chiều — không việc dở)
+# STATUS C — cập nhật 16:49 27/10/2026 (KẾT PHIÊN 27/10 chiều — C69 xong, không việc dở)
 
 Terminal: `hue-rag-86` (27/10 chiều; tên đổi mỗi lần mở — dùng `ListAgents`) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-51`, B = `hue-rag-2d` (trực tiếp).
 User 13:45 27/10: C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 chiều hết hạn cuối phiên.**
@@ -6,6 +6,7 @@ STATUS phiên sáng 27/10 (bảng C46–C61, bẫy cũ đầy đủ): `git show 
 
 ## Đang làm / đang khai báo sửa
 
+- **C69 xong 16:49 27/10/2026** (0 USD, chỉ tài liệu, chưa commit — A review): `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` bản 3; `guides/phase_7_retrieval_answer_evaluation.md` "Hiện hành" (sửa 2 chỗ sai: 10 lệnh con, NFC không áp khi nạp Golden); STATUS_C khớp handoff mới. Không còn khai báo sửa.
 - **Không.** Không worktree, server, file `/tmp` nào của C còn lại (`/tmp/c_b71` đã gỡ; script tạm C65 / C67 đã xóa hoặc chuyển vào `data/`).
 
 ## Nhánh của C
@@ -27,22 +28,31 @@ STATUS phiên sáng 27/10 (bảng C46–C61, bẫy cũ đầy đủ): `git show 
 | C67 | review `diffs_them` (11 diff) | 11 / 11 giữ, 5 chỗ không soạn đồng ý; áp chung 111 + 14 edit 0 lỗi; 0 chỗ sót mới | `review_c66.md` mục diffs_them; report §6 (`fa192f8`) |
 | review B75 | gold v3 | ready 0/0/2; C tự đếm bằng `context_chunk_ids` lưu: B1 test 7 → 9, K3b-m 10 → 11 | `gold_v3_review.md` (`fa192f8`) |
 | C68 | review spec sửa kho + build lại index (3 vòng) | v1 `725bbe15d044` changes_requested 0/2/5 (**gold v3 lệch offset: 24 câu / 66 trích dẫn / 3 bị chồng**; bộ "trước" chưa định nghĩa) ⇒ v2 0/0/3 ⇒ v3 ready; User duyệt `937cf8969810` | `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design_review.md` |
+| C69 | tài liệu đủ ngữ cảnh cho phiên sau (sau kết phiên) | `BAO_CAO_DANH_GIA.md` bản 3 (3 bản nhãn, luật tiêu đề, B3, C65, thước đợt sửa kho, B0 chưa làm); guide 7 "Hiện hành" tới 27/10 (W29) | chưa commit (A) |
 
-## Việc dở / câu hỏi còn treo (cho A, hoặc User qua A)
+## Việc dở / câu hỏi còn treo / việc phiên sau (khớp `CURRENT_HANDOFF.md` cập nhật 15:43 27/10)
 
-- **Không có việc dở.** Phiên sau: mở theo `START_SESSION.md`, báo A, chờ A giao việc.
-- C65 (chưa kiểm): các thí nghiệm 8.2 lấy `citation_error` **đã lưu** của mốc B1 (validator v1) để so với lượt sau 25/10 tối (v2) ⇒ mốc bị tính thừa tới 12 lỗi; G2.1a (8 lỗi) chưa đếm lại bằng v2.
-- B3 (khi chạy): nhánh đầu `f26485b` dùng validator v1 ⇒ report B3 nên tách riêng số câu 500 kiểu `[Nguồn n]` mỗi nhánh (phần thắng đó đến từ citation v2).
-- Sửa kho: K076 / K077 giữ "quận Thuận Hóa" trong khi kho ghi không còn cấp huyện (gắn K004 tra ngoài); K002 câu "ít mưa dầm" còn treo (câu hỏi User 1 của B); K117 giữ nguyên lịch sử
-  "Đông Ba / Phú Hòa" của một địa chỉ trong Thành Nội (lời gốc kho, không thêm khẳng định mới).
-- C63: câu thiết kế mở cho hai tính năng (phạm vi nhiều lượt có tách khỏi router web không; lưu câu hỏi người dùng; kiểu streaming A / B / C / D) — A trình User.
-- Giữ từ trước: `FileHandler` log không xoay vòng (~400 byte / câu) — xem lại khi deploy.
+- **Không có việc dở.** Phiên sau: mở theo `START_SESSION.md` ⇒ kiểm nhanh ⇒ báo A ⇒ **chờ** (quyền phiên hết hạn; A hỏi lại User trước khi giao).
+- **Việc A dự định giao C** (`CURRENT_HANDOFF.md` "Mục việc phiên sau"):
+  1. Khi chờ B0: **viết plan đo "thời gian tới chữ đầu tiên"** cho streaming (~10 câu tự viết; `Runner.run_streamed` hoặc stream SDK OpenAI; đo cả thời gian suy luận;
+     ≈ 0,002 USD khi chạy; căn cứ `data/tinh_nang_moi_2026-10-27/c63_can_cu.md` §1–§4) ⇒ B review ⇒ A duyệt sha; **chạy sau merge B1** (context 10).
+  2. Review plan đo "trước ↔ sau" đợt sửa kho do B viết (spec `937cf8969810` §5 bước 0 + §6; A/A = 2 nguồn B1 ↔ G2.1a).
+  3. Sau B0: kiểm merge `p82-b1` (A merge, hoặc B rebase lại nếu xung đột): T1, cổng context 10, 5 chỗ báo cáo.
+  4. B3: kiểm report câu kín của B **giữ mù** (không đọc nội dung; chạy lại `check` / `check-judge` / `analyze`; md5, sha T1, grep report).
+  5. Đợt sửa kho: review diff áp sửa (bước 2, đối chiếu backup + `edits/*.jsonl` + `diffs_them/`, nhóm đánh dấu chỉ với căn cứ trong kho), kiểm chunk / build (bước 4–6).
+- **Câu hỏi còn treo (đã có trong `CURRENT_HANDOFF.md`, A / User xử lý):** C65 — G2.1a (8 câu) chưa đếm lại bằng validator hiện tại; số "lỗi citation" Bước 2 so mốc B1
+  lệch có lợi cho biến thể (A suy ra kết luận không đảo); hội thoại nhiều lượt có lưu câu hỏi người dùng không (câu hỏi User 7); 16 câu kho cho User; 2 yêu cầu ChatGPT
+  chưa gửi; `FileHandler` không xoay vòng.
+- **C ghi thêm (chưa có trong handoff):** đợt sửa kho — K076 / K077 giữ "quận Thuận Hóa" (gắn K004 tra ngoài), K002 câu "ít mưa dầm" (câu hỏi User 1 của B73), K117 giữ lịch
+  sử "Đông Ba / Phú Hòa" của một địa chỉ trong Thành Nội (lời gốc kho); spec 8.2 §3 mục 2 dẫn NFC evaluator ở `full_corpus_eval.py:91, :132` — số dòng cũ (C69: NFC nay ở
+  `:86` khóa câu, `:127` so keyword; câu hỏi gửi nguyên văn).
 
 ## Đã học / bẫy gặp (phiên 27/10 chiều — đầu vào vòng cải tiến)
 
 - **Grep lọt `meta/` (C66, trong khoảng 14:34–14:41):** lọc bằng `grep -v "^./meta"` sai mẫu (đường dẫn in ra không có `./`) ⇒ in vài dòng `knowledge-base-hue/meta/` (ghi chép nghiên
   cứu; không phải `evaluation/`, Golden, câu kín). **Từ nay tìm trong kho chỉ bằng `scripts/grep_kb.sh [--dir <thư mục con>] …`** (loại `evaluation/`, `meta/`, `_source-dumps/`, `*sealed*`;
   đích kiểm bằng realpath). Lọc kết quả sau khi grep không thay được việc loại thư mục trước khi grep.
+- **C69 (nhận 16:44):** tin A tới lúc 16:44 với hạn 16:30 — báo A ngay rồi làm (A: đủ quan trọng hơn hạn). Viết Python trong heredoc có nháy mà vẫn thêm dấu gạch chéo ngược trước backtick như trong bash ⇒ 184 dấu gạch chéo ngược thừa trong báo cáo (đã gỡ) — đếm bằng `grep -c` sau khi ghi; guide cũ có 2 khẳng định sai (11 lệnh con, NFC khi nạp Golden) — đối chiếu code trước khi chép lại câu cũ.
 - **Gõ tay giờ (C64.2, 14:23):** ghi "14:31" vào report trong khi `date` là 14:23 — đã sửa. Luôn `T=$(date …)` rồi truyền vào script ghi file.
 - **Viết guide rồi chính mình sửa code làm guide sai (C62 → C64.2, A bắt 14:25):** guide 6 ghi "`dense_ms` giữ 3 chữ số", C64 làm tròn ⇒ câu sai. Sửa code thì grep guide / report vừa
   viết về đúng trường đó.

@@ -1,6 +1,6 @@
 # Nhật ký 27/10/2026 (chiều) — dọn phần tồn của các Phase cũ, soạn sẵn đợt sửa kho
 
-**Cập nhật lần cuối: 15:41 27/10/2026.** Tiền paid chiều nay: ≈ 0,0012 USD (~30 đồng), đo từ log (3 lần chạy thử server, mỗi lần 2 câu).
+**Cập nhật lần cuối: 16:50 27/10/2026.** Tiền paid chiều nay: ≈ 0,0012 USD (~30 đồng), đo từ log (3 lần chạy thử server, mỗi lần 2 câu).
 
 ## Tóm tắt
 
@@ -19,6 +19,7 @@
 - Khi rảnh: trả lời 16 câu về kho (`data/sua_kho_2026-10-27/cau_hoi_user.md`, mỗi câu có gợi ý).
 - Khi tiện: gửi 2 yêu cầu ChatGPT trong `gửi chatgpt/2026-10-27/tìm thông tin/` (`tra_ngoai_kho_2026_10_27.md`, `muc_tieu_san_pham_2026_10_27.md`), lưu kết quả
   vào `gửi chatgpt/2026-10-27/kết quả nghiên cứu/`.
+- Khi bàn tính năng hội thoại nhiều lượt: bạn quyết có cho **lưu câu hỏi người dùng** không (hiện chatbot cố ý không ghi câu hỏi vào log).
 - (Khi tiện) xóa 2 nhánh đã merge: `! git push origin --delete c59-log gold-v2 && git branch -d c59-log gold-v2`.
 
 ## Trạng thái
@@ -45,6 +46,8 @@ Một lần A khuyên sai: A định "đóng hẳn" Qwen3-8B vì lý do vận h�
 mốc trước khi chọn").
 
 ## Đọc thêm
+
+- `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md` (bản 4 — đợt sửa kho) và `BAO_CAO_DANH_GIA.md` (bản 3 — thước đo, nhãn v3, mốc cuối)
 
 - `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` (kỹ thuật)
 - `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` (đợt sửa kho)

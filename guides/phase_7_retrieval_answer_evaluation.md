@@ -5,20 +5,44 @@
 
 ## Hiện hành
 
-Cập nhật 2026-10-25. Nguồn: `session_prompt/Project_Status.md` §2–§5, mục "Cập nhật Phase 7B" trong [`full_corpus_rag.md`](full_corpus_rag.md).
+Cập nhật 2026-10-27 (C69, theo W29 — guide "Hiện hành" cập nhật cùng lúc hành vi / thước đổi; trước: 2026-10-25). Nguồn chung: `session_prompt/Project_Status.md`
+§2–§5, §8; `session_prompt/CURRENT_HANDOFF.md` "Phiên sau — đọc trước nhất"; báo cáo cho User `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (bản 3).
 
-- **Golden full-corpus (Phase 7A, User-closed 2026-10-23):** 176 case + smoke 10, schema 4 field (`question`, `keywords`, `reference_answer`,
-  `category`), private trong `knowledge-base-hue/evaluation/`; spec `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md`.
-- **Evaluator (Phase 7B, User-closed 2026-10-24):** `backend/evaluation/full_corpus_eval.py` (11 lệnh con — xem `--help`), kiểm Golden
-  `backend/evaluation/golden_full_corpus.py`, prompt judge cố định `backend/evaluation/full_corpus_judge_prompt.md`; spec
-  `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`. Sinh câu trả lời đi đúng đường runtime (retrieval → context →
-  `gpt-6-luna`); không truyền `temperature` (luna trả 400).
-- **Judge:** chính là Claude (session Claude Code, sub-agent theo lô ≤ 10, 0 API); `gpt-6-luna` chỉ là judge phụ. Chưa có mốc người chấm.
-- **Phase 8.1 bổ sung thước đo:** so theo cặp + Holm; chia 120 dev / 56 test (`knowledge-base-hue/evaluation/phase_8_1/split.json`); nhãn độ tự nhiên
-  của câu hỏi; đoạn đúng cho 55 câu; câu kín khóa tới mốc cuối 8.2 (không đọc khi chưa được giao — `Session_Prompt.md` §5).
-- **Chỉ số lỗi citation:** từ gói sửa 1a (rà code 2026-10-25, C-09) validator nhận cả `[n]` lẫn `[Nguồn n]` ⇒ số lỗi citation trước và sau gói đó
-  **không so trực tiếp**; mốc cũ tính lại ra file mới, không ghi đè mốc đã khóa.
-- Baseline và số đo: `full_corpus_rag.md` mục 7B; báo cáo cho User `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`.
+- **Golden full-corpus (Phase 7A, User-closed 2026-10-23):** 176 case + smoke 10, schema 4 field (`question`, `keywords`, `reference_answer`, `category`), private
+  `knowledge-base-hue/evaluation/`; md5 `0f7dbf41b422` sau khi sửa 10 đáp án 2026-10-25 (`Project_Status.md` §2 dòng 8.1). Spec
+  `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md`.
+- **Evaluator (Phase 7B, User-closed 2026-10-24):** `backend/evaluation/full_corpus_eval.py` — **10** lệnh con (`retrieval`, `generate`, `judge-luna`, `retry`,
+  `export-judge-input`, `compare`, `split`, `context-coverage`, `diagnose-refusals`, `summarize`; `add_parser` trong file, đối chiếu 2026-10-27); đồng thời 4
+  (`CONCURRENCY` `:50`). Sinh câu trả lời đi đúng thứ tự `api/routes/chat.py` (`answer_case` `:322`: tìm → đóng gói → `gpt-6-luna` → kiểm citation; câu lỗi citation
+  vẫn giữ chữ để chấm, ghi `citation_error`). Câu hỏi gửi đi **nguyên văn** (chỉ `strip`, `answer_case` `:338`); NFC chỉ dùng cho khóa câu `question_key` (`:86`) và so keyword (`_fold` `:127`). Prompt judge cố định `backend/evaluation/full_corpus_judge_prompt.md`.
+  Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`.
+- **Judge:** Claude (session Claude Code / sub-agent mới theo lô), chấm **mù**, mốc và biến thể **cùng một lượt** (`Project_Status.md` §8 "So điểm judge giữa biến
+  thể"); `gpt-6-luna` chỉ là judge phụ. **Chưa có mốc người:** B0 (User đọc 20 cặp mù, ghi nhận xét, không chấm điểm) **chưa làm** (`CURRENT_HANDOFF.md` thứ tự việc
+  bước 2; spec 8.2 §3 mục 3–4 luật dừng).
+- **So hai cấu hình:** theo cặp từng câu — `paired_stats` (`full_corpus_eval.py:634`), bootstrap `:590`, 10.000 vòng (`:55`), Holm khi nhiều biến thể; 120 dev /
+  56 test (`knowledge-base-hue/evaluation/phase_8_1/split.json`, sha `e2b1788dfbbc`); nhãn độ tự nhiên (`data/phase_8_1/golden_realism_final.jsonl`, 82 / 65 / 29 — số
+  chính bỏ câu không tự nhiên). Test 56 câu chỉ dùng "không làm hỏng" (User 2026-10-27 08:47, spec 8.2 §10.6 Q2).
+- **Luật nhận ghi trước** (skill `run-experiment` §1; spec 8.2 §10.2): sàn (0 câu ngoài kho bị trả lời, 0 lỗi kỹ thuật) · mức tụt (TB ≥ −0,1 và số câu tụt ≤ A/A + 3) ·
+  chỉ số quyết vượt nhiễu. **Nhiễu A/A context 10, 176 câu** (B1 ↔ G2.1a, `phase_8_2_b1_implementation.md` §4 trên `p82-b1`): Completeness tụt 1, Accuracy tụt 2.
+- **Nhãn đoạn đúng — ba bản, mọi số `*_gold_*` ghi kèm bản** (`CURRENT_HANDOFF.md` "Thước đo"):
+  - v1 `data/phase_8_1/gold/gold_draft.jsonl` (`bab707b9ab22`, G0.6 khóa — không sửa; `data/phase_8_1/tools/validate_gold.py` tự dừng nếu file đã có, C62);
+  - v2 `gold_v2.jsonl` (`2f5a347a71ff`, User duyệt 2026-10-27 13:05, merge `a819789`): v1 + 3 khoảng kho nói lại cùng ý + **luật trúng dòng tiêu đề**;
+  - **v3** `gold_v3.jsonl` (`3b1117cf59e9`, **mặc định từ `fa192f8`**): v2 + 2 câu test (`report_agent/2026-10-26_cai_tien_tung_khau/gold_v3_review.md`).
+  - Luật đếm: `backend/experiments/phase_8_1/g1_retrieval.py` — `GOLD_PATH` `:47`; trích dẫn là dòng tiêu đề Markdown trúng đoạn mang tiêu đề đó trong
+    `heading_path` (`quote_is_chunk_heading` `:76`, `chunk_hits_quote` `:82`); một fact phủ khi **một** trích dẫn bất kỳ trúng, `all` cần mọi fact (`gold_coverage`
+    `:93`; test `backend/tests/test_gold_coverage.py`). Mọi harness import `g1_retrieval.GOLD_PATH` (g2, g3, g4, harness 8.2 trên nhánh hồ sơ) ⇒ chạy lại sau
+    `fa192f8` đếm theo v3.
+  - Số mốc (context, chatbot 10 đoạn B1): dev 40 câu v1 22 / v2 24 / v3 24; test 15 câu v2 7 / v3 9.
+- **Chỉ số lỗi citation:** từ gói 1a (`9e6d371`, 2026-10-25 19:58) validator nhận cả `[n]` lẫn `[Nguồn n]` ⇒ số trước / sau gói đó **không so trực tiếp**. Lượt B1 (sinh
+  2026-10-25 16:35–16:38) chấm bằng validator **cũ**: 12 / 176 lỗi "no citation" đều qua validator hiện tại (C65,
+  `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md`). Mốc cuối câu kín tách riêng số câu 500 kiểu này mỗi bên.
+- **Câu kín** (36 câu, md5 `ddc59587b502`, khóa G0.6 2026-10-25 15:22, manifest `9ea480d0d083`): không đọc khi chưa được giao (`Session_Prompt.md` §5). Plan chạy mốc
+  cuối duyệt sha `27e75be5ed44` (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md`): người chạy B, câu 500 vì citation = điểm 1 cả hai bên, tập
+  quyết 33 câu.
+- **Sau đợt sửa kho** (spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt `937cf8969810`; chạy sau khi đóng 8.2): bộ "trước" 176 câu
+  trước khi đụng kho (§5 bước 0); T1 mới thay `cefb2d1ad609` (bước 6); **gold v4** dựng sau build vì offset lệch (bước 7); Golden sửa từng mục User duyệt (bước 8);
+  "sau" chấm cùng lượt + cùng Golden (bước 9); tiêu chí §6 (A/A = 2).
+- Baseline 7B và số đo cũ: [`full_corpus_rag.md`](full_corpus_rag.md) mục "Cập nhật Phase 7B".
 
 ## Lịch sử (Foods và thiết kế trước 2026-10-23) — các mục dưới không phải hiện trạng
 
