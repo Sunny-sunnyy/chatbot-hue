@@ -29,6 +29,8 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **K3b bản 2 vòng 2 ready** (`57dad7150322`, mục Vòng 2 trong review). **C51 xong 09:31 27/10/2026:** L2 bắt 160 + 168 (trên mẫu đã chỉnh), 0 cờ ở B1 dev / test; mẫu 10 cờ khác: 7 / 10 là nội dung có ích ⇒ dùng được làm rào cho R1 (về đúng hợp đồng từ chối), không cho R2. Report untracked, quét trùng 0.
 **A 09:33 27/10/2026:** C51 commit `8dad0cd`; A gác hướng R1 + L2 (lợi nhỏ, luật khớp từ 2 câu lỗi, đổi hợp đồng Phase 6). **R1 đóng: kém hơn** (B58 ready, `d665a5b`). K3b-n kém hơn (lỗi kỹ thuật: luna viết thêm chữ sau JSON); B sửa harness rồi chạy K3b-m. **Việc kế của C: review report K3b (n + m) + commit sửa harness.** Đang rảnh có lý do; không tự mở việc mới.
 **C52 xong 10:05 27/10/2026:** review report K3b (`origin/p82-k3b` `806e8ad`) ready (0/0/3 minor) — n kém hơn, m tầng tìm tốt hơn (tạm): 9/0 dev ổn định, 3/0 test, 0/95 sai hợp đồng — C tính lại `context_gold_all` từ payload: khớp; tiền log 0,0592176 khớp; m-1 cận trên ước n không chặt (≈0,044). Script `data/phase_8_2/k3b/tools/c52_check.py`. File `phase_8_2_k3b_review.md` (untracked).
+**C53 xong 10:10 27/10/2026:** review phụ lục K3b-m (`84d4aaf0ad04`) changes_requested (0/1/3) — M-1: `chat.py:125-135` trả 500 cho MỌI lỗi citation ⇒ T6 "+2" mâu thuẫn T2 sàn 0 / spec §10.2 (lỗi định nghĩa này cũng có trong plan R1 bản 2 của C — R1 đã dừng, không ảnh hưởng). File `phase_8_2_k3b_m_answer_plan_review.md`.
+**Bẫy / học:** định nghĩa sàn "500" phải đối chiếu đúng nhánh trả lỗi trong `chat.py`, không suy từ tên lỗi validator (plan R1 C46 và B55 đều bỏ sót).
 
 ## Còn treo (phiên sau xử lý trước)
 

@@ -22,6 +22,8 @@ Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - A: 0 USD.
 
 ## Đã học / bẫy gặp (phiên 27/10)
+- 10:07 27/10/2026: tiêu chí "lỗi citation v2 +2" chồng với sàn "API 500 = 0" (production `chat.py` trả 500 cho **mọi** `CitationIntegrityError`) — có từ K3 plan §4, lặp ở R1 bản 2,
+  phụ lục K3b; review 3 vòng không bắt, B tự bắt khi đối chiếu code. ⇒ vòng cải tiến: plan tiêu chí sàn / mức tụt phải trỏ `file:dòng` hành vi production nó đo.
 - 09:33 27/10/2026: harness K3b chỉ ghi file ở cuối + chỉ bắt `OpenAIError` ⇒ một `ValidationError` của SDK làm mất toàn bộ dòng + usage lượt l1_rest (tiền phải ước từ thời gian).
   ⇒ vòng cải tiến: `run-experiment` §3 "harness ghi từng dòng ngay (append), lỗi bất kỳ vẫn giữ usage đã trả" (cùng họ W23).
 - 09:0x: yêu cầu ChatGPT của A **lặp lỗi S31** (không ghi BM25 chỉ chấm lại 30 đoạn dense) + ghi sai "SD 0,8 s" (là SD chênh giữa hai lượt) ⇒ C47 bắt
