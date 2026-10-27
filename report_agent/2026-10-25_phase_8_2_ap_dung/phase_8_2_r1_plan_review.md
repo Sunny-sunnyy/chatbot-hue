@@ -105,3 +105,35 @@ Chỉ dựa trên mục "Căn cứ để review" của plan (WORKFLOW §9.1). Kh
 - **changes_requested:** C sửa M-1 (G8 + "Ghi trước"; nên thêm 172 / 173 vào pilot), m-1, m-2, m-3, rồi báo sha mới. B kiểm lại phần sửa.
 - Tiêu chí còn lại (sàn, chỉ số quyết, mức tụt, tiền ≤ 0,05 USD, dừng, trình User khi đưa vào chatbot §5) đúng spec §10.2–§10.4 và đủ để A
   duyệt sau khi sửa.
+
+## Vòng 2 — kiểm phần sửa (B57, 2026-10-27 09:17 +0700, `date`)
+
+Decision: **ready_for_user_confirmation** (0 blocker / 0 major / 0 minor mới) — mọi finding vòng 1 đóng
+Bản kiểm: plan **bản 2 sha `8e76e77e0448`** (tính từ file lúc đọc và lúc ghi). Bản 1 = `0a702b4ac1e4`, khớp `git show 4e0f3ec:` (bản A đã commit).
+Cách kiểm: `git diff` working tree so `4e0f3ec` (toàn bộ thay đổi của bản 2), đối chiếu mục "Sửa sau review B55" với từng tiêu chí đóng; tính lại
+bằng máy chỗ bản 2 thêm khẳng định mới. 0 USD.
+
+| Finding | Tiêu chí đóng (vòng 1) | Bản 2 | |
+|---|---|---|---|
+| M-1 | (1) sửa G8; (2) "Ghi trước" thêm rủi ro sàn API 500; (3) nên đưa 172 / 173 vào pilot; (4) mức tụt citation chỉ đếm lỗi khác "no citation" | (1) G8 ghi 172, 173 = "no citation" ⇒ phạm sàn ở context 5. (2) §2 "Ghi trước" thêm đoạn sàn API 500, 2 / 120. (3) Bước 2 thêm 172 (173 đã có trong 9 câu U) và dừng khi câu có nội dung mà không citation. Pilot 12 câu trong phạm vi, tổng 24; phần còn lại 96 (B tính: 120 − 12 OOS − 12 = 96 ✓). (4) Dòng mức tụt đổi thành "lỗi citation v2 KHÁC 'no citation'", áp cho cả mốc và R1 | ✓ đóng |
+| m-1 | trỏ §3 (120 / 168) và §5 (9 câu U) | đúng như vậy | ✓ đóng |
+| m-2 | ghi 6 / 9 còn điểm 4 ở B1 | G7 + dòng theo dõi: 6 câu có thể tăng (38, 51, 65, 66, 141, 173), 28 / 41 / 93 chỉ có thể tụt — khớp số B55 | ✓ đóng |
+| m-3 | ghi rõ cách đếm "từ chối mới" | dev chính / test chính: đếm `refusal` B1 false → R1 true; `paired_stats` chỉ theo dõi | ✓ đóng |
+
+**Khẳng định mới, B kiểm bằng máy:**
+- "172, 173 ở B1 trả lời có citation": `b1_dev.jsonl` cả hai `refusal` false, `citation_error` null; validator v2 tính lại không lỗi ✓.
+  Vì vậy câu nào phạm sàn ở R1 thì đó là lỗi mới, không phải lỗi sẵn có ở mốc.
+
+**Ngoài phạm vi sửa:** không có.
+- Chỉ số quyết, luật USD ≤ 0,95 **hoặc** `output_tokens` ≤ 0,9 và "mặt còn lại ≤ 1,00", các sàn, mức tụt Completeness / Accuracy, trần 0,05 USD,
+  Holm, điều kiện dừng: **giữ nguyên** từng chữ (diff không chạm).
+- Thay đổi khác trong diff:
+  - dòng trạng thái đầu file (bản 2; bỏ "chưa code");
+  - ước tiền khi dừng ở bước 2 (≈ 0,005; tổng không đổi);
+  - mục "A đã trả lời" ghi lại câu trả lời của A cho Q1–Q3.
+
+  Không cái nào đổi tiêu chí.
+- Ghi chú (không phải finding): plan nói harness `r1.py` đã sửa theo bản 2 ở `/tmp/c_r1`, chưa commit. B chưa xem harness. Phần đó review cùng
+  report sau khi chạy (plan §3 bước 7).
+
+⇒ Plan R1 bản 2 đủ để A ghi "duyệt bản sha `8e76e77e0448`".

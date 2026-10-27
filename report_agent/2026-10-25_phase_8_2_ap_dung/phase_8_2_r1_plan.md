@@ -1,7 +1,7 @@
 # Plan: Phase 8.2 §10 — R1, mức suy luận `none` cho lượt sinh, trên mốc context 10
 
-Người viết: C (Claude Opus 5.5, `hue-rag-5b`) · 2026-10-27 08:52 +0700 (`date`) · Việc: C46. Trạng thái: **bản nháp chờ B review**, rồi A ghi
-"duyệt bản sha" (`WORKFLOW.md` §9.1). **Chưa code, chưa gọi API; 0 USD lúc viết.**
+Người viết: C (Claude Opus 5.5, `hue-rag-5b`) · 2026-10-27 08:52 +0700 (`date`) · Việc: C46. Trạng thái: **bản 2** (sửa theo review B55, 09:14 27/10/2026; bản 1 `0a702b4ac1e4`) — chờ B kiểm phần sửa,
+rồi A ghi "duyệt bản sha" (`WORKFLOW.md` §9.1). **Chưa gọi API; 0 USD.**
 
 Plan không chép câu hỏi, đáp án hay câu trả lời. Repo public: chỉ có `case_index` và số đếm.
 
@@ -12,7 +12,7 @@ Plan không chép câu hỏi, đáp án hay câu trả lời. Repo public: chỉ
 2. `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g2_implementation.md` **§4.5** (G2.4: `none` ở context 5 — Completeness, từ chối nhầm, citation,
    token ra, USD).
 3. `report_agent/2026-10-26_cai_tien_tung_khau/de_xuat_khau_tra_loi_C.md` **§1.4, §3 dòng R1, §4** (đề xuất R1 của C37, cách đo mức tụt luật (a)) và
-   `phan_loai_loi_C.md` **§3** (9 câu `under-answer`; 120 / 168 từ chối đúng).
+   `phan_loai_loi_C.md` **§3** (120 / 168 từ chối đúng) và **§5** (9 câu `under-answer`, B55 m-1).
 4. `skills/run-experiment/SKILL.md` §1, §3, §4.
 
 Người review được chạy lệnh chỉ đọc và tính lại từ `data/phase_8_2/b1/` (câu trả lời + `judge/`) và `data/phase_8_1/g2/` (`g20_baseline`, `g24_none`).
@@ -36,8 +36,8 @@ mà **chất lượng giữ** không (luật (a); "chất lượng cần thiết
 | G4. Ngưỡng `output_tokens` ≤ 0,9× | ≤ 69,3 token / câu | *ước* 0,69× ⇒ **dễ qua** nếu tỉ lệ context 5 giữ |
 | G5. Nhiễu của hai chỉ số quyết | A/A B1 ↔ G2.1a dev 120 (cùng cấu hình, hai ngày) | USD: SD chênh theo câu 1,41e-5 ⇒ **±1,24 %**; `output_tokens`: SD 28,3 ⇒ **±6,6 %** (1,96 × SE / TB). TB hai lượt bằng nhau (76,96 / 76,96) |
 | G6. Rủi ro sàn: `none` từ chối ít hơn | G2.4 context 5: từ chối nhầm 13 → 4, OOS bị trả lời 0 | ở mốc B1 dev chính còn 7 câu từ chối (48, 67, 68, 113, 120, 167, 168); **120, 168 là từ chối đúng** (context không có fact, C36) ⇒ sàn |
-| G7. Rủi ro trả lời gọn hơn | G2.4: token ra −31 %; C36: 9 câu `under-answer` ở mốc (28, 38, 41, 51, 65, 66, 93, 141, 173) | theo dõi riêng 9 câu này + mức tụt Completeness |
-| G8. Citation | G2.4: lỗi citation 4 → 8 theo định nghĩa cũ; validator v2: 0 → 2 (`sua_3c_citation_v2.md`) | mốc B1 v2: **0** lỗi (dev + test); mức tụt ≤ +2 câu |
+| G7. Rủi ro trả lời gọn hơn | G2.4: token ra −31 %; C36: 9 câu `under-answer` (28, 38, 41, 51, 65, 66, 93, 141, 173, gắn trên G2.1a) | ở mốc B1 (judge `b1/judge/`) chỉ **6 / 9 còn Completeness 4** (38, 51, 65, 66, 141, 173 — có thể tăng); 28, 41, 93 đã 5 (chỉ có thể tụt) (B55 m-2). Theo dõi riêng + mức tụt Completeness |
+| G8. Citation | G2.4: lỗi citation 4 → 8 theo định nghĩa cũ; validator v2: 0 → 2 (`sua_3c_citation_v2.md`) | **cả 2 lỗi v2 (dev 172, 173) là "Grounded answer has no citation" ⇒ API trả 500 = phạm sàn ở context 5** (B55 M-1; C37 ghi "lý do loại đã hết" là sai). Mốc B1 v2: **0** lỗi (dev + test); 172, 173 ở B1 trả lời có citation. ⇒ 172, 173 vào pilot (§3 bước 2) |
 
 ## 2. Tiêu chí ghi trước
 
@@ -63,14 +63,14 @@ metrics:
   # mức tụt — Completeness theo spec §10.2 luật (a); các dòng còn lại C thêm (chặt hơn spec, mượn từ mức tụt luật (i)) — A chốt khi duyệt
   - {name: Completeness dev chính, set: 88, role: tolerance, max: "chênh TB ≥ −0,1 VÀ số câu tụt ≤ A/A + 3 = 4"}
   - {name: Accuracy dev chính, set: 88, role: tolerance, max: "số câu tụt ≤ A/A + 3 = 4"}                       # C thêm
-  - {name: từ chối nhầm dev chính (false_refusal), fn: "paired_stats(b1, r1, 'false_refusal')", role: tolerance, max: "số câu từ chối mới ≤ A/A + 1 = 1"}   # C thêm
-  - {name: lỗi citation v2, fn: "g2_generate.citation_error(answer, context_sources, single_source_policy=False) cho CẢ mốc và R1", set: 176, role: tolerance, max: "tăng ≤ 2 câu"}   # C thêm
+  - {name: từ chối nhầm dev chính, def: "đếm câu dev chính có refusal B1 = false và R1 = true (120 / 168 đã là sàn riêng)", role: tolerance, max: "≤ A/A + 1 = 1"}   # C thêm; paired_stats(…, 'false_refusal') chỉ theo dõi (B55 m-3)
+  - {name: lỗi citation v2 KHÁC "no citation", fn: "g2_generate.citation_error(answer, context_sources, single_source_policy=False) cho CẢ mốc và R1, bỏ lỗi 'Grounded answer has no citation' (đã là sàn API 500)", set: 176, role: tolerance, max: "tăng ≤ 2 câu"}   # C thêm; B55 M-1 (4)
   - {name: Completeness test chính, set: 41, role: tolerance, max: "chênh TB ≥ −0,1 VÀ số câu tụt ≤ A/A + 3 = 6"}
   - {name: Accuracy test chính, set: 41, role: tolerance, max: "số câu tụt ≤ A/A + 3 = 5"}
-  - {name: từ chối nhầm test chính, role: tolerance, max: "số câu từ chối mới ≤ 1"}
+  - {name: từ chối nhầm test chính, def: "đếm câu test chính có refusal B1 = false và R1 = true", role: tolerance, max: "≤ 1"}
   # theo dõi
   - {name: Completeness / Accuracy / Relevance chênh TB + CI + theo loại câu, set: dev chính, test chính, role: watch}
-  - {name: 9 câu under-answer C36 (28, 38, 41, 51, 65, 66, 93, 141, 173), def: "số câu Completeness tụt / tăng", role: watch}
+  - {name: 9 câu under-answer C36, def: "số câu Completeness tăng trong 6 câu còn điểm 4 ở B1 (38, 51, 65, 66, 141, 173); số câu tụt trong cả 9", role: watch}
   - {name: câu đổi từ chối -> trả lời (dev + test), def: "liệt kê case_index; câu trả lời có câu không citation kiểu 'nguồn không có…' (đếm máy như R2)", role: watch}
   - {name: R4 số không có trong đoạn được trích, fn: "experiments.phase_8_2.r4_numbers (main 2c7ecfd) trên r1_dev / r1_test", role: watch}
   - {name: latency sinh p50 / p95 (latency_ms của lượt sinh), def: "R1 so B1, kèm CI chênh theo câu; B1 đo ngày 26/10 ⇒ khác phiên", role: watch}
@@ -90,6 +90,8 @@ lượng giữ ⇒ "không đổi". Phạm sàn hoặc vượt mức tụt ⇒ "
   `output_tokens` ±6,6 %, ngưỡng 0,9× cách nhiễu ~1,5 lần. Ngưỡng là ước lượng điểm (spec); CI chỉ báo.
 - **Ghi trước:** USD ≤ 0,95× **sát ngưỡng** (ước 0,94×, G3) — có thể chỉ qua nhờ nhánh `output_tokens`; nếu `output_tokens` cũng > 0,9× ⇒ "không đổi".
   Sàn 120 / 168 **có thể vỡ** (G6) ⇒ "kém hơn" là kết quả hợp lệ.
+  **Sàn API 500 (câu có nội dung mà không citation) có thể vỡ — rủi ro có bằng chứng mạnh nhất:** 8.1 context 5, `none` phạm ở **2 / 120** câu dev
+  (172, 173; G8). Cả hai vào pilot (bước 2) để dừng sớm nếu lặp lại.
 - Test (56 câu) chỉ kiểm "không làm hỏng"; tiền / token trên test chỉ theo dõi (A/A test: `output_tokens` 113,4 vs 84,1, ±22 %).
 - **Holm:** R1 không vào họ (spec §10.2).
 
@@ -102,9 +104,10 @@ Khung giống `r2.py` (`origin/p82-r2`): tập câu, `generate` qua `full_corpus
 `r1.py` (~150 dòng), không import từ nhánh đã gác. Từ chối ghi đè mọi file kết quả (`raise SystemExit('exists')`, `run-experiment` §3.8).
 
 1. **Sàn trước: 12 câu OOS dev.** ≥ 1 câu bị trả lời ⇒ **kém hơn (phạm sàn)**, dừng.
-2. **Pilot trong phạm vi: 120, 168 + 9 câu under-answer** (11 câu). 120 hoặc 168 bị trả lời ⇒ **kém hơn (phạm sàn)**, dừng. 9 câu U chỉ để xem sớm
-   (không dừng). **Pilot tiền = bước 1 + 2 (23 câu)**; ước lại phần còn lại theo USD / câu của 11 câu trong phạm vi. Lượt đủ > 1,5 × ước ⇒ dừng, báo A.
-3. Phần dev còn lại (97 câu) ⇒ gộp `r1_dev.jsonl` 120 câu. **Kiểm tất định:** `top_chunk_ids`, `context_sources`, `input_tokens` = B1 ở 120 / 120 (G1).
+2. **Pilot trong phạm vi: 120, 168, 172 + 9 câu under-answer (gồm 173)** (12 câu). 120 hoặc 168 bị trả lời, hoặc 172 / 173 (hay câu nào khác) có nội dung
+   mà không citation (API 500) ⇒ **kém hơn (phạm sàn)**, dừng. 9 câu U chỉ để xem sớm (không dừng). **Pilot tiền = bước 1 + 2 (24 câu)**; ước lại phần còn
+   lại theo USD / câu của 12 câu trong phạm vi. Lượt đủ > 1,5 × ước ⇒ dừng, báo A.
+3. Phần dev còn lại (96 câu) ⇒ gộp `r1_dev.jsonl` 120 câu. **Kiểm tất định:** `top_chunk_ids`, `context_sources`, `input_tokens` = B1 ở 120 / 120 (G1).
    Lệch ⇒ dừng, tìm nguyên nhân. Tính chỉ số quyết (dev 120) bằng script, in bảng.
 4. **Judge cùng lượt mù:** câu trả lời R1 dev + **B1 dev chấm lại** trong cùng lô, id mờ; câu giống hệt chữ trong cùng câu hỏi chấm một lần.
    Sub-agent judge Claude mới (ghi model id) chỉ Read `full_corpus_judge_prompt.md` + lô. Không gắn `answer_type` (từ chối đếm bằng máy).
@@ -117,7 +120,7 @@ Khung giống `r2.py` (`origin/p82-r2`): tập câu, `generate` qua `full_corpus
 - *Ước* (B1 thật: 0,000204 USD / câu dev, 0,000221 / câu test; token ra *ước* 0,69×): ≈ 0,000192 / câu dev, ≈ 0,000204 / câu test.
   - dev 120 ≈ 0,023;
   - test 56 ≈ 0,011;
-  - **tổng ≈ 0,034 USD** (khớp spec §10.3 "≈ 0,034"). Dừng ở bước 1 ⇒ ≈ 0,002.
+  - **tổng ≈ 0,034 USD** (khớp spec §10.3 "≈ 0,034"). Dừng ở bước 1 ⇒ ≈ 0,002; dừng ở bước 2 ⇒ ≈ 0,005 (172, 173 chỉ đổi thứ tự chạy, tổng không đổi).
 - **Trần R1 đề xuất: 0,05 USD** (A chốt). Pilot vượt ước > 50 % ⇒ dừng, báo A. Trong trần 8.2 0,5 USD (đã dùng 0,0396; K3 giữ 0,20).
 - **Dừng thêm:** lỗi kỹ thuật > 0 ⇒ tìm nguyên nhân, không fallback; kiểm tất định bước 3 lệch ⇒ dừng; đổi mức khác (`low`) = biến thể mới, plan mới
   (spec §10.3 "không chạy `low` / `high`").
@@ -142,3 +145,19 @@ Khung giống `r2.py` (`origin/p82-r2`): tập câu, `generate` qua `full_corpus
 - **Q3 — thời điểm:** spec §10.3 xếp R1 sau cùng nhánh trả lời ("chất lượng trước"); R2 đã dừng, R3 NOT RUN ⇒ R1 chạy được ngay sau khi duyệt, song
   song với K3 (file không chồng: `r1.py` / `data/phase_8_2/r1/` so với `k3`). C đề nghị chạy sau khi B54 xong pilot K3 để hai lượt paid không chồng
   trần cùng lúc — A chọn.
+
+**A đã trả lời (tin A 27/10, nhận sau khi C báo sha bản 1):** Q1 giữ mức tụt chặt hơn (B55 đánh giá: hợp lý); Q2 quyền có **sau khi B kiểm phần sửa + A ghi duyệt
+sha**: C commit + push `p82-r1` (không merge), worktree `/tmp/c_r1`, ≤ 0,05 USD, sub-agent judge; Q3 chạy sau pilot K3 (K3 đã dừng 09:03 27/10), report ghi giờ
+chạy. §5: R1 qua cũng trình User.
+
+## Sửa sau review B55 (09:14 27/10/2026 +0700, `date`)
+
+| Finding | Sửa |
+|---|---|
+| M-1 2 lỗi v2 của `none` ở 8.1 (172, 173) là "no citation" = sàn API 500 | G8 sửa; §2 "Ghi trước" thêm rủi ro sàn API 500 (2 / 120 ở 8.1); **172, 173 vào pilot** (A chọn tiêu chí đóng (3)); mức tụt citation v2 chỉ đếm lỗi khác "no citation" |
+| m-1 căn cứ trỏ sai mục | "§3 (120 / 168) và §5 (9 câu U)" |
+| m-2 9 câu U đếm trên G2.1a | G7 + dòng theo dõi: 6 / 9 còn điểm 4 ở B1 (có thể tăng), 28 / 41 / 93 đã 5 (chỉ có thể tụt); C kiểm lại trên `b1/judge/`: khớp B |
+| m-3 hàm và ngưỡng từ chối nhầm khác loại | đếm câu `refusal` B1 false → R1 true (dev chính / test chính); `paired_stats` chỉ theo dõi |
+
+Tiêu chí quyết, sàn khác, trần tiền không đổi. Harness `r1.py` (worktree `/tmp/c_r1`, chưa commit) sửa theo: tập `early` thêm 172; `check` tách lỗi citation
+v2 "no citation" khỏi phần mức tụt; `analyze` đếm từ chối mới theo định nghĩa m-3 và tách 6 / 3 câu U.

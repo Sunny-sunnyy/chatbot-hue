@@ -21,6 +21,8 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **C48 (A giao 09:01 27/10/2026) — khai báo file:** private `data/cai_tien_tung_khau_2026-10-26/c48/` (script + kết quả theo câu); report `report_agent/2026-10-26_cai_tien_tung_khau/c48_so_trong_cau_tra_loi.md` (mới, working tree chung, không commit). 0 USD, chỉ B1 dev, không test từng câu / câu kín.
 **C48 xong 09:10 27/10/2026:** 4 / 68 câu có số bị cờ (= R4), đọc tay 6 / 6 cờ là phép tính đúng; mẫu 10 câu không cờ 10 / 10 đúng ⇒ 0 lỗi số thấy được. Report untracked, quét trùng 0.
 **B55 = changes_requested (0/1/3)** — sửa plan R1 sau C49. **C49 (A giao 09:10 27/10/2026, ưu tiên):** review report K3 (`origin/p82-k3` `80e7329`) ⇒ `phase_8_2_k3_review.md` working tree chung.
+**C49 xong 09:13 27/10/2026:** ready_for_user_confirmation (0/0/3 minor) — K3 kém hơn đúng luật; tiền 0,0251129 khớp; 9 / 0 trên 39 tính lại khớp. Script `data/phase_8_2/k3/tools/c49_check.py`. Tiếp: sửa plan R1 theo B55.
+**Plan R1 bản 2 xong 09:16 27/10/2026: sha `8e76e77e0448`** (bản 1 `0a702b4ac1e4`; sửa M-1, m-1..m-3 B55: 172 / 173 vào pilot, sàn API 500 ghi trước, citation v2 tụt chỉ đếm lỗi khác "no citation", U 6 / 9 ở B1, từ chối mới đếm câu). Harness `r1.py` sửa khớp (early 12 câu). Chờ B kiểm phần sửa ⇒ A duyệt. **Đã báo sha ⇒ không sửa plan nữa.**
 
 ## Còn treo (phiên sau xử lý trước)
 

@@ -164,8 +164,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | K3 | `phase_8_2_k3_plan.md` | `0a6370204c7d` | **DỪNG 09:05 27/10/2026 — kém hơn (phạm sàn: lỗi đầu ra luna 1 / 40, câu 173, thứ tự thiếu 1 đoạn)**; pilot rerank p50 5,7 s / p95 8,2 s; 0,0251 USD | **đóng 09:13 27/10/2026** — C49 review ready (`phase_8_2_k3_review.md`, 0 / 0 / 3 minor); hồ sơ `p82-k3` `80e7329`; số theo dõi 9 thắng / 0 thua trên 39 (câu 173 không đo được), một lượt, dev đã thấy |
 | R2 | `phase_8_2_r2_plan.md` | `b70ea775efb2` | **kém hơn — đóng** (OOS câu 160); `p82-r2` `aec9ab8`; 0,0027 USD; B53 review ready (`phase_8_2_r2_review.md` `11368435edbd`); A đóng 27/10: m-1 giữ (mô tả chung, 0 trùng); m-2 ghi hồ sơ: câu 115 (P1 phạm dạng không `[n]`) R2 từ chối nhưng B1 cũng từ chối ⇒ chưa tách được tác dụng E1b | — (hồ sơ) |
 | R3 | `phase_8_2_r3_plan.md` | — | **NOT RUN** (C45: trần 6 câu) | — (hồ sơ) |
+| K3b | `phase_8_2_k3b_plan.md` | chờ (bản 1 `4f92e478cb65`, A tính từ file 09:17 27/10/2026) | plan xong (B56): nhánh K3b-n (10 số + `none`) trước, K3b-m sau nếu cần; trần đề xuất 0,10 USD | **C50** review ⇒ A duyệt ⇒ B chạy (`p82-k3b`) |
 | R4 | (implementation `phase_8_2_r4_implementation.md`) | — | xong `2c7ecfd`; B47 ready | dùng làm chỉ số theo dõi |
-| R1 | `phase_8_2_r1_plan.md` | chờ — bản 1 `0a702b4ac1e4` **changes_requested** (B55 09:06 27/10/2026: M-1 `none` 8.1 có 2 câu "no citation" ⇒ API 500 = phạm sàn; 3 minor; review `6caabf5a41a1`) | C sửa ⇒ bản mới ⇒ B kiểm phần sửa ⇒ A duyệt sha | C chạy (pilot gồm 172, 173 trước) |
+| R1 | `phase_8_2_r1_plan.md` | **`8e76e77e0448`** (A duyệt 09:18 27/10/2026, sha tính từ file; bản 1 `0a702b4ac1e4` changes_requested) | duyệt; B55 vòng 1 + B57 vòng 2 ready (`phase_8_2_r1_plan_review.md`) | **C chạy** sau C50 (`p82-r1`, ≤ 0,05 USD; pilot gồm 172, 173) ⇒ B review report + harness |
 | K2, E2 | — | — | NOT RUN (spec §10.3) | — |
 
 Đầu vào: `report_agent/2026-10-26_cai_tien_tung_khau/` (`phan_loai_loi_{B,C}.md`, `de_xuat_khau_{tim_B,tra_loi_C}.md`, review). Nhánh thí nghiệm **không merge**

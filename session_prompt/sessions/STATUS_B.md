@@ -11,6 +11,11 @@
   (`ff93703` harness, `80e7329` report) **đã push**; worktree `/tmp/b_k3` + symlink đã gỡ. Dữ liệu `data/phase_8_2/k3/` (+ `tools/k3_watch.py`). ⇒ chờ C review.
 - **B55 xong (09:04):** review plan R1 = changes_requested (0 / 1 / 3), file `phase_8_2_r1_plan_review.md` (A commit `4e0f3ec`). Chờ C sửa ⇒ B kiểm phần sửa.
   Script tạm `/tmp/b55/` đã xóa.
+- **B56 xong (09:16 27/10/2026):** plan K3b `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k3b_plan.md` sha **`4f92e478cb65`** (working tree chung, 0 USD).
+  Hai nhánh K3b-n (10 số + reasoning none, chạy trước) / K3b-m (10 số, mặc định; bỏ nếu n đạt 9/0 + luật giữ); hợp đồng đầu ra tất định + trần
+  sai hợp đồng ≤ 4/95, bù RRF ≤ 2/95; quyết `context_gold_all`, Holm họ 4; trần đề xuất 0,10 USD. ⇒ chờ C review.
+- **B57 xong (09:18 27/10/2026):** kiểm phần sửa plan R1 bản 2 (sha `8e76e77e0448`) ⇒ **ready** (M-1, m-1..m-3 đóng; không đổi tiêu chí / sàn / trần). Mục "Vòng 2"
+  thêm vào `phase_8_2_r1_plan_review.md` (sha `fc971d9237c6`, A commit).
 - **File đang khai báo sửa: không.** Tiền paid phiên 27/10: **0,0251129 USD** (K3, 40 lần gọi luna).
 - Đã học (27/10): luna listwise 30 đoạn có thể bỏ sót 1 id dù `status: completed` (8.1 với 10 đoạn: 0 / 30) ⇒ plan rerank listwise sau này ghi trước
   cách xử lý danh sách sai; lỗi cụ thể của biến thể cũ (citation v2 ở 8.1) phải tra **dạng lỗi**, không chỉ số đếm (B55 M-1).
