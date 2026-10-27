@@ -22,6 +22,8 @@ Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - A: 0 USD.
 
 ## Đã học / bẫy gặp (phiên 27/10)
+- 10:20 27/10/2026: **A** đưa câu 120 lên sàn "vẫn từ chối" theo tiền đề "context 0 fact" (C36 / C53 m-2) mà không kiểm nhãn đoạn đúng ⇒ sàn sai làm dừng K3b-m answer ở pilot,
+  dù câu trả lời đúng đáp án. ⇒ vòng cải tiến: sàn dựa trên nhãn phải kiểm nhãn trước (đọc đoạn / quét lặp nguyên văn) khi đưa câu cụ thể lên sàn.
 - 10:07 27/10/2026: tiêu chí "lỗi citation v2 +2" chồng với sàn "API 500 = 0" (production `chat.py` trả 500 cho **mọi** `CitationIntegrityError`) — có từ K3 plan §4, lặp ở R1 bản 2,
   phụ lục K3b; review 3 vòng không bắt, B tự bắt khi đối chiếu code. ⇒ vòng cải tiến: plan tiêu chí sàn / mức tụt phải trỏ `file:dòng` hành vi production nó đo.
 - 09:33 27/10/2026: harness K3b chỉ ghi file ở cuối + chỉ bắt `OpenAIError` ⇒ một `ValidationError` của SDK làm mất toàn bộ dòng + usage lượt l1_rest (tiền phải ước từ thời gian).

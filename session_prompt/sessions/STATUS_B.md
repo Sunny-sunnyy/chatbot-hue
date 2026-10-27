@@ -37,7 +37,15 @@
   timeout; W2 regex bản 1 nuốt `[n]` — B bắt khi kiểm harness, đã sửa). Chờ C kiểm phần sửa ⇒ A duyệt. Harness `k3b_answer.py` (sha `c92d572af51e`)
   + `tests/test_k3b_answer_text.py` ở `/tmp/b_k3b`, **chưa commit**; kiểm 0 USD: phát lại 55 / 55 khớp top-10, 0 sai hợp đồng; pilot 3 phát lại / 7
   gọi mới; 6 test passed. **File khai báo sửa:** `k3b_answer.py`, `test_k3b_answer_text.py` (worktree), plan phụ lục (working tree chung).
-- **File khai báo khác: không.** Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
+- **B62 (10:19 27/10/2026):** A duyệt phụ lục bản 2 `92a8a7eb4177` (`c313d29`); harness `9ff6ebb` (m-4 sửa, 7 test passed; chưa push). Pilot dev 10:
+  **dừng ở sàn T8: câu 120 bị trả lời** ⇒ theo luật: K3b-m kém hơn. Nhưng câu trả lời khớp đáp án tham chiếu và cả hai fact có trong context
+  (chunk #11, #7); nhãn đoạn đúng chỉ đánh dấu lần xuất hiện đầu ⇒ giả định "120 có 0 fact" sai. Đã báo A, chờ quyết. Tiền pilot 0,0047854 USD.
+  Tiền B phiên: log 0,0891159 + ước ≈ 0,0074 (≤ 0,0105) ⇒ **≈ 0,0965 (≤ 0,0996) USD**.
+- **B63 xong (10:23 27/10/2026; A gọi B61):** quét nhãn đoạn đúng 55 câu (`data/phase_8_2/k3b/gold_scan/`: `scan.py`, `per_case.jsonl`, `summary.json`). Nguyên văn:
+  chỉ câu 17 có quote lặp (file khác), không đổi số nào. Lặp gần (heuristic, có báo nhầm): B1 22 → 24, K3b-m 31 → 33 / 34; vẫn 9 thắng / 0 thua,
+  test 0 mất. 120 ở B1: context không có fact ⇒ B1 từ chối đúng với context; lỗi là xếp hạng (fact ở pool 30), không phải khâu sinh.
+  Tiền pilot answer K3b-m (log): **0,0047854 USD**.
+- **File đang khai báo sửa: không.** Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
   (≤ 0,0105, lượt n mất usage) ⇒ **≈ 0,092 (≤ 0,095) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả
   ở cuối lượt ⇒ một exception làm mất usage đã trả tiền. Bài học: harness gọi API trả phí ghi từng dòng ngay (append) và bắt mọi lỗi của một lần gọi

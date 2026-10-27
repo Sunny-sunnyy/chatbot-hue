@@ -31,6 +31,7 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **C52 xong 10:05 27/10/2026:** review report K3b (`origin/p82-k3b` `806e8ad`) ready (0/0/3 minor) — n kém hơn, m tầng tìm tốt hơn (tạm): 9/0 dev ổn định, 3/0 test, 0/95 sai hợp đồng — C tính lại `context_gold_all` từ payload: khớp; tiền log 0,0592176 khớp; m-1 cận trên ước n không chặt (≈0,044). Script `data/phase_8_2/k3b/tools/c52_check.py`. File `phase_8_2_k3b_review.md` (untracked).
 **C53 xong 10:10 27/10/2026:** review phụ lục K3b-m (`84d4aaf0ad04`) changes_requested (0/1/3) — M-1: `chat.py:125-135` trả 500 cho MỌI lỗi citation ⇒ T6 "+2" mâu thuẫn T2 sàn 0 / spec §10.2 (lỗi định nghĩa này cũng có trong plan R1 bản 2 của C — R1 đã dừng, không ảnh hưởng). File `phase_8_2_k3b_m_answer_plan_review.md`.
 **Bẫy / học:** định nghĩa sàn "500" phải đối chiếu đúng nhánh trả lỗi trong `chat.py`, không suy từ tên lỗi validator (plan R1 C46 và B55 đều bỏ sót).
+**Phụ lục K3b-m bản 2 vòng 2 ready 10:15 27/10/2026** (`92a8a7eb4177`); m-4 mới: regex W2 tách rời ". [1]" (43/99 câu B1) — sửa trong harness.
 
 ## Còn treo (phiên sau xử lý trước)
 
