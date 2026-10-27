@@ -1,11 +1,31 @@
 """Real FastAPI lifecycle and strict full-corpus chat contract tests."""
 import importlib
+import json
+import logging
+from contextlib import contextmanager
 from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
 from api.app import create_app
+from api.routes.chat import METRIC_FIELDS
 from core.settings_loader import load_settings
+
+
+@contextmanager
+def chat_log_records(caplog):
+    """Gắn thẳng handler của caplog vào logger `chat`: sau `setup_logging()` (lifespan) logger này có `propagate: no` nên caplog ở root không thấy."""
+    chat_logger = logging.getLogger("chat")
+    chat_logger.addHandler(caplog.handler)
+    try:
+        yield caplog.records
+    finally:
+        chat_logger.removeHandler(caplog.handler)
+
+
+def metric_lines(records) -> list[dict]:
+    return [json.loads(r.getMessage().removeprefix("chat_metrics ")) for r in records
+            if r.name == "chat" and r.getMessage().startswith("chat_metrics ")]
 
 
 def test_import_has_no_external_side_effect():
@@ -44,13 +64,16 @@ def test_health_is_cached_and_ready_after_real_lifespan(require_openai_key):
     }
 
 
-def test_real_first_chunk_budget_error_has_no_partial_answer():
+def test_real_first_chunk_budget_error_has_no_partial_answer(caplog):
     settings = load_settings()
     settings["full_corpus_generation"] = dict(settings["full_corpus_generation"])
     settings["full_corpus_generation"]["context_limit"] = 2561
     app = create_app(settings)
-    with TestClient(app) as client:
-        response = client.post("/api/chat", json={"query": "Giá vé Đại Nội?"})
+    query = "Giá vé Đại Nội?"
+    with TestClient(app) as client, chat_log_records(caplog) as records:
+        response = client.post("/api/chat", json={"query": query})
+        chat_messages = [r.getMessage() for r in records if r.name == "chat"]
+        lines = metric_lines(records)
     assert response.status_code == 500
     assert response.json() == {
         "error": {
@@ -60,6 +83,23 @@ def test_real_first_chunk_budget_error_has_no_partial_answer():
     }
     assert "answer" not in response.text
     assert "sources" not in response.text
+    # Câu hỏi đã đi qua tìm kiếm + dựng context: log số đo có đúng một dòng, đúng danh sách trắng, không lọt câu hỏi (plan C59 §4).
+    assert len(lines) == 1
+    assert set(lines[0]) == set(METRIC_FIELDS)
+    assert lines[0]["outcome"] == "context_budget_error" and lines[0]["status_code"] == 500
+    assert isinstance(lines[0]["search_ms"], float) and isinstance(lines[0]["dense_ms"], float)
+    assert lines[0]["input_tokens"] is None and lines[0]["output_tokens"] is None
+    assert not any(query in message for message in chat_messages)
+
+
+def test_chat_metrics_logged_when_retrieval_not_ready(caplog):
+    app = create_app(load_settings())  # không chạy lifespan ⇒ retrieval chưa sẵn sàng ⇒ 503, không gọi Qdrant / model
+    with chat_log_records(caplog) as records:
+        response = TestClient(app).post("/api/chat", json={"query": "Huế có gì?"})
+        lines = metric_lines(records)
+    assert response.status_code == 503
+    assert len(lines) == 1
+    assert lines[0]["outcome"] == "retrieval_unavailable" and lines[0]["status_code"] == 503
 
 
 def test_clean_subprocess_import_production_command():

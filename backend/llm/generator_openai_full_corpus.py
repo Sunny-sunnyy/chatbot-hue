@@ -42,6 +42,8 @@ class GeneratedText:
     total_tokens: int | None
     latency_ms: int
     finish_reason: str | None = None
+    # phần token suy luận nằm trong output_tokens (usage.output_tokens_details); để log số đo /api/chat
+    reasoning_tokens: int | None = None
 
 
 def parse_structured_output(
@@ -189,6 +191,7 @@ class OpenAIFullCorpusGenerator:
         input_tokens = None
         output_tokens = None
         total_tokens = None
+        reasoning_tokens = None
         finish_reason = None
         if hasattr(result, "raw_responses") and result.raw_responses:
             last_resp = result.raw_responses[-1]
@@ -198,6 +201,7 @@ class OpenAIFullCorpusGenerator:
                 input_tokens = getattr(usage, "input_tokens", None)
                 output_tokens = getattr(usage, "output_tokens", None)
                 total_tokens = getattr(usage, "total_tokens", None)
+                reasoning_tokens = getattr(getattr(usage, "output_tokens_details", None), "reasoning_tokens", None)
             choices = getattr(last_resp, "choices", None)
             if choices and len(choices) > 0:
                 finish_reason = getattr(choices[0], "finish_reason", None)
@@ -215,6 +219,7 @@ class OpenAIFullCorpusGenerator:
             total_tokens=total_tokens,
             latency_ms=latency_ms,
             finish_reason=finish_reason,
+            reasoning_tokens=reasoning_tokens,
         )
 
     async def generate_answer(self, query: str, context: str) -> GeneratedText:

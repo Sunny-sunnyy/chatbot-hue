@@ -1,6 +1,8 @@
 """Single-turn full-corpus retrieval, context building, grounded answer generation and citations."""
 import asyncio
+import json
 import logging
+import time
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -18,6 +20,17 @@ from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 
 logger = logging.getLogger("chat")
 router = APIRouter()
+
+# Một dòng `chat_metrics` mỗi lần gọi (plan C59): chỉ số đếm, mã cố định và thời gian — KHÔNG ghi câu hỏi, câu trả lời, nội dung nguồn,
+# chunk_id, response_id hay thông điệp lỗi. Test khóa đúng tập trường này (thêm trường phải sửa danh sách có chủ đích).
+METRIC_FIELDS = (
+    "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens",
+    "n_context_sources", "n_cited_sources", "search_ms", "dense_ms", "context_ms", "generation_ms", "citation_ms", "total_ms",
+)
+
+
+def _elapsed_ms(started: float) -> float:
+    return round((time.perf_counter() - started) * 1000, 1)
 
 
 class ChatRequest(BaseModel):
@@ -46,6 +59,31 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 
 @router.post("/api/chat", response_model=ChatResponse)
 async def chat(body: ChatRequest, request: Request):
+    """Điểm ghi số đo duy nhất: mọi nhánh của `_answer`, kể cả exception đi tới handler 500 chung (`api/app.py`), đều có đúng một dòng log.
+    Phần suy `outcome` chỉ đọc giá trị kiểu thường; log không được đổi phản hồi."""
+    started = time.perf_counter()
+    metrics = dict.fromkeys(METRIC_FIELDS)
+    try:
+        response = await _answer(body, request, metrics)
+        if isinstance(response, JSONResponse):  # mọi lỗi của route đều qua error_response(...)
+            metrics["status_code"] = response.status_code
+            if metrics["outcome"] is None:
+                metrics["outcome"] = json.loads(response.body)["error"]["code"]
+        else:
+            metrics["status_code"] = 200
+            metrics["refusal"] = response.answer.strip() == INSUFFICIENT_ANSWER
+            if metrics["outcome"] is None:
+                metrics["outcome"] = "success"
+        return response
+    except Exception:
+        metrics["outcome"], metrics["status_code"] = "internal_error", 500
+        raise
+    finally:
+        metrics["total_ms"] = _elapsed_ms(started)
+        logger.info("chat_metrics %s", json.dumps(metrics))
+
+
+async def _answer(body: ChatRequest, request: Request, metrics: dict):
     query = body.query.strip()
     if not query:
         return error_response(422, "invalid_request", "Yêu cầu không hợp lệ.")
@@ -67,7 +105,10 @@ async def chat(body: ChatRequest, request: Request):
         )
 
     try:
+        started = time.perf_counter()
         result = await asyncio.to_thread(state.retrieval_service.search, query)
+        metrics["search_ms"] = _elapsed_ms(started)
+        metrics["dense_ms"] = result.trace.timings_ms.get("dense_ms")
     except (RetrievalDependencyError,):
         logger.error("Retrieval dependency error")
         if recorder:
@@ -79,7 +120,10 @@ async def chat(body: ChatRequest, request: Request):
         )
 
     try:
+        started = time.perf_counter()
         packed = state.context_builder.build(query, result.documents)
+        metrics["context_ms"] = _elapsed_ms(started)
+        metrics["n_context_sources"] = len(packed.sources)
     except ContextBudgetError:
         if recorder:
             recorder.record_error("context_budget_error")
@@ -95,6 +139,7 @@ async def chat(body: ChatRequest, request: Request):
     if not packed.sources:
         if recorder:
             recorder.record_fallback()
+        metrics["outcome"] = "refusal_no_sources"  # từ chối trước khi gọi model
         return ChatResponse(answer=INSUFFICIENT_ANSWER, sources=[])
 
     if not getattr(state, "generator_ready", False):
@@ -106,9 +151,12 @@ async def chat(body: ChatRequest, request: Request):
             "Không thể tạo câu trả lời vào lúc này.",
         )
 
+    started = time.perf_counter()
     try:
         generated = await state.generator.generate_answer(query, packed.text)
     except GenerationError:
+        metrics["generation_ms"] = _elapsed_ms(started)
+        metrics["outcome"] = "generation_failed"  # cùng mã 502 với "chưa sẵn sàng", nhưng đã gọi model rồi lỗi
         logger.error("Answer generation failed")
         if recorder:
             recorder.record_error("generation_failed")
@@ -118,12 +166,18 @@ async def chat(body: ChatRequest, request: Request):
             "Không thể tạo câu trả lời vào lúc này.",
         )
 
+    metrics["generation_ms"] = _elapsed_ms(started)
+    # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
+    metrics.update({field: getattr(generated, field, None) for field in ("model", "input_tokens", "output_tokens", "reasoning_tokens")})
     if recorder:
         recorder.record_generation_result(generated)
 
+    started = time.perf_counter()
     answer = normalize_citations(generated.text)
     try:
         cited = select_cited_sources(answer, packed.sources)
+        metrics["citation_ms"] = _elapsed_ms(started)
+        metrics["n_cited_sources"] = len(cited)
     except CitationIntegrityError:
         logger.error("Citation integrity failed")
         if recorder:
