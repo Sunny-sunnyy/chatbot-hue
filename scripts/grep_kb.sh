@@ -2,7 +2,7 @@
 # Tìm trong NỘI DUNG kho tri thức mà không lọt vào bộ đánh giá / câu kín / ghi chép meta / bản thô.
 # Vì sao: 25/10 và 27/10 grep -r thẳng vào knowledge-base-hue/ đọc lọt evaluation/ (câu kín, Golden Foods cũ) và meta/
 # (sổ cải tiến W27, Session_Prompt.md §5 "giữ mù"). Brief sub-agent: tìm trong kho CHỈ qua script này.
-# Dùng: scripts/grep_kb.sh [--dir <thư mục con của kho>] [cờ grep, giá trị viết liền…] <mẫu>
+# Dùng: scripts/grep_kb.sh [--dir <thư mục con của kho>] [cờ: -l -L -n -c -i -w -x -o -v -F -E -H -h -A<n> -B<n> -C<n> -m<n> --include=…] <mẫu>
 #   ví dụ: scripts/grep_kb.sh --dir foods -n "Phú Xuân"
 # Luôn quét trong kho (đích kiểm bằng realpath), loại evaluation/, meta/, _source-dumps/, *sealed*.
 set -euo pipefail
@@ -15,8 +15,13 @@ if [ "${1:-}" = "--dir" ]; then
   shift 2
 fi
 [ $# -ge 1 ] || { echo "grep_kb: thiếu mẫu tìm" >&2; exit 2; }
-# Mẫu là tham số cuối; mọi tham số trước nó phải là cờ (bắt đầu bằng "-", giá trị viết liền: -A2, --max-count=5) — không nhận đường dẫn thừa.
+# Mẫu là tham số cuối; trước nó chỉ nhận cờ trong DANH SÁCH TRẮNG (mỗi cờ một tham số, số viết liền: -A2) — không đường dẫn, không -e / -f
+# (biến mẫu thành file). Mẫu luôn truyền bằng -e, đích luôn là kho.
+pattern="${@: -1}"
 for arg in "${@:1:$#-1}"; do
-  case "$arg" in -*) ;; *) echo "grep_kb: chỉ nhận cờ trước mẫu (thư mục con: --dir): $arg" >&2; exit 2 ;; esac
+  case "$arg" in
+    -l|-L|-n|-c|-i|-w|-x|-o|-v|-F|-E|-H|-h|-A[0-9]*|-B[0-9]*|-C[0-9]*|-m[0-9]*|--include=*) ;;
+    *) echo "grep_kb: cờ không nằm trong danh sách trắng (thư mục con: --dir): $arg" >&2; exit 2 ;;
+  esac
 done
-exec grep -r --exclude-dir=evaluation --exclude-dir=meta --exclude-dir=_source-dumps --exclude='*sealed*' "$@" -- "$target"
+exec grep -r --exclude-dir=evaluation --exclude-dir=meta --exclude-dir=_source-dumps --exclude='*sealed*' "${@:1:$#-1}" -e "$pattern" -- "$target"
