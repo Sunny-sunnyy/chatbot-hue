@@ -1,7 +1,7 @@
 # Plan (phụ lục K3b): lượt sinh + judge cho K3b-m — đo khâu trả lời trước khi trình User
 
-Người viết: B (Claude Opus 5.5, `hue-rag-31`) · 2026-10-27 10:03 +0700 (`date`) · Việc: B60 (A gọi "B59", giao 10:0x 27/10). Trạng thái: **bản nộp chờ
-review** (A giao C sau C52), rồi A ghi "duyệt bản sha" (`WORKFLOW.md` §9.1). **Chưa code, chưa gọi API; 0 USD lúc viết.**
+Người viết: B (Claude Opus 5.5, `hue-rag-31`) · 2026-10-27 10:03 +0700 (`date`) · Việc: B60 (A gọi "B59", giao 10:0x 27/10). Trạng thái: **bản 2** (sửa theo
+review C53 + quyết định A, 10:11 27/10/2026; bản 1 `84d4aaf0ad04`) — chờ C kiểm phần sửa, rồi A ghi "duyệt bản sha" (`WORKFLOW.md` §9.1). **Chưa gọi API; 0 USD.**
 
 Plan không chép câu hỏi, đáp án, câu trả lời hay đoạn kho. Repo public: chỉ có `case_index` và số đếm.
 
@@ -18,7 +18,8 @@ Plan không chép câu hỏi, đáp án, câu trả lời hay đoạn kho. Repo 
    - tiêu chí tầng tìm đã qua;
    - giá đo thật.
 3. `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` **§10.2** (bản `cd910c4c4169`): sàn chung, luật (i), "tốn hơn ⇒ trình User",
-   test = "không làm hỏng" (Q2 §10.6 User đồng ý 27/10).
+   test = "không làm hỏng" (Q2 §10.6 User đồng ý 27/10). Kèm code `backend/api/routes/chat.py:124-135` và `backend/llm/citations.py:25,29,33`
+   (`811d25d`): khi nào API trả 500.
 4. `skills/run-experiment/SKILL.md` **§1.6, §3.1, §3.5, §3.6, §3.8** (đếm trên đúng mốc, A/A, phát lại đầu ra model, judge cùng lượt, từ chối ghi đè).
 
 Người review được chạy lệnh chỉ đọc và tính lại từ:
@@ -43,21 +44,29 @@ context builder đều là production ở `811d25d`.
 | # | K3 plan | Tiêu chí | Vai |
 |---|---|---|---|
 | T1 | dòng 87 | out_of_scope bị trả lời, 18 câu (dev 12 + test 6) = **0** | sàn |
-| T2 | dòng 88 | lỗi kỹ thuật / 500, 176 câu = **0** | sàn |
+| T2 | dòng 88 | lỗi kỹ thuật / 500, 176 câu = **0**. Bằng máy: `row["error"] is not None` **hoặc** `row["citation_error"] is not None` (bản 2, C53 M-1) | sàn |
 | T3 | dòng 89 | số câu Completeness tụt: dev chính 88 **≤ 4**, test chính 41 **≤ 6** (A/A + 3) | mức tụt |
 | T4 | dòng 90 | số câu Accuracy tụt: dev chính **≤ 4**, test chính **≤ 5** | mức tụt |
 | T5 | dòng 91 | từ chối nhầm trong phạm vi: dev chính **≤ +1**, test chính **≤ +1** | mức tụt |
-| T6 | dòng 92 | lỗi citation v2 (tính lại cả hai lượt), 176 câu: **≤ +2** | mức tụt |
+| T6 | dòng 92 | lỗi citation v2 (tính lại cả hai lượt), 176 câu — **bản 2: theo dõi theo dạng** (`citations.py:25` từ chối kèm citation / `:29` không citation / `:33` id lạ) | theo dõi |
 | T7 | dòng 98 | `output_tokens` sinh / câu: **≤ +20 %** | mức tụt |
-| T8 | dòng 85 | 120 / 168 | theo dõi (như K1, A 21:4x 26/10: biến thể khâu tìm có thể đưa fact vào context — K3b-m đưa 1 / 2 fact của 168 vào top-10) |
+| T8 | dòng 85 | **120 vẫn từ chối** (bản 2, A chọn theo C53 m-2): **sàn**. **168**: theo dõi | sàn (120) / theo dõi (168) |
 
-**Luật giữ** (K3 plan §4 bước 3): đạt T1, T2 và mọi mức tụt T3–T7 trên **dev chính và test chính** ⇒ K3b-m **"chất lượng tốt hơn (tạm)"** (tầng tìm
+**Luật giữ** (K3 plan §4 bước 3): đạt T1, T2, sàn 120 (T8) và mọi mức tụt T3–T5, T7 trên **dev chính và test chính** ⇒ K3b-m **"chất lượng tốt hơn (tạm)"** (tầng tìm
 qua + khâu trả lời không hỏng). Kết luận cuối luôn là **trình User kèm số giá** (spec §10.2). Dựa judge nên **tạm tới B0**.
 
-**Hai chỗ phụ lục ghi rõ cách đếm. Đây không phải đổi tiêu chí; dùng cùng định nghĩa reviewer đã chấp nhận ở R1 bản 2 (B55 m-3, M-1 (4)):**
-- T5 "từ chối nhầm +1" = số câu chính có `refusal` B1 = false và K3b-m = true. `paired_stats(…, 'false_refusal')` chỉ để theo dõi.
-- T6: câu có nội dung mà không citation (`Grounded answer has no citation`) đã thuộc T2 (API 500, sàn 0). Vì vậy T6 đếm lỗi v2 **khác** dạng đó,
-  để hai dòng không chồng nhau.
+**Chỗ phụ lục khác K3 plan §4 — nói thẳng (bản 2, A duyệt cùng sha):**
+- **T5 — chỉ ghi rõ cách đếm:** "từ chối nhầm +1" = số câu chính có `refusal` B1 = false và K3b-m = true (như R1 bản 2, B55 m-3).
+  `paired_stats(…, 'false_refusal')` chỉ để theo dõi.
+- **T2 / T6 — sửa cho khớp spec §10.2** (C53 M-1; B tự báo 10:1x). `api/routes/chat.py:124-135` trả **500 cho mọi** `CitationIntegrityError`. Hàm này ném ở
+  `citations.py:25` (câu từ chối kèm citation), `:29` (không citation) và `:33` (id citation lạ). Hệ quả:
+  - mọi lỗi citation v2 đều là một câu người dùng nhận 500, nên thuộc T2 (sàn 0, như sàn chung spec "0 câu lỗi kỹ thuật / 500");
+  - K3 plan dòng 88 (sàn 0) và dòng 92 (+2) chồng nhau; đọc dòng 92 theo nghĩa "cho phép 2 câu 500" là trái spec, mà spec đứng trên plan;
+  - ⇒ T6 thành **theo dõi theo dạng**, để biết vì sao nếu T2 phạm.
+
+  Mốc B1: 0 lỗi v2 (dev + test), nên sàn 0 có nghĩa. Cùng hiểu lầm có ở R1 bản 2 / B55 M-1 (4). R1 đã dừng vì sàn khác, nên kết luận không đổi.
+- **120 thành sàn "vẫn từ chối"** (A chọn theo C53 m-2): context K3b-m của 120 vẫn 0 fact (L1, L2), giống lý do spec §10.2. R1 / R2 đã vấp đúng dạng
+  "trả lời vòng" ở loại câu này. 168 giữ theo dõi, vì K3b-m đưa 1 / 2 fact vào top-10.
 
 **Nhiễu A/A judge — đếm trên đúng mốc B1** (W23; B tính lại 27/10 trong B55, khớp C46; lượt mù `data/phase_8_2/b1/judge/` chấm B1 ↔ G2.1a):
 - dev chính: Completeness 1 / 86 / 1, Accuracy 1 / 86 / 1, từ chối đổi 0;
@@ -73,10 +82,17 @@ Ngưỡng T3 / T4 = max(thắng, thua) + 3, đúng số K3 plan ghi.
     38 (C4), 48 (từ chối, C1), 67 (từ chối, C1), 70 (C3), 159 (C3), 167 (từ chối, C1).
   - 3 câu test thắng: 20, 130 không tự nhiên; 95 đã 5 / 5. Vậy chỗ tăng trên test chính = **0**.
 
-  ⇒ **Ghi trước:** "Completeness tăng vượt nhiễu" trên dev chính chỉ có trần 6 câu (CI > 0 cần ≈ 5 / 0 với n 88, C38 M-1). Lợi có thể không thấy được
+  ⇒ **Ghi trước:** 6 câu này là câu **có lý do biết trước để tăng** (đoạn đúng mới vào context). Câu khác cũng có thể đổi theo cả hai chiều: luna đổi
+  tập top-10 ở mọi câu có đoạn đúng, và 18 câu dev chính đang < 5 ở B1 (C53 m-1). "Completeness tăng vượt nhiễu" khó thấy với n 88 (CI > 0 cần
+  ≈ 5 / 0, C38 M-1). Lợi có thể không thấy được
   dù có thật. Kết quả đó **không** làm K3b-m "kém hơn" (luật giữ chỉ đòi không hỏng).
-- W2 — câu đổi từ chối ↔ trả lời (`case_index`). Đếm câu trả lời có câu không citation kiểu "nguồn không có…" bằng regex tách câu **cho phép `[n]`
-  đứng sau dấu chấm** (bài học B58 m-1): `(?<=[.!?])(?:\[(?:Nguồn )?\d+\])*\s+`. Lý do: dạng "trả lời vòng" đã chặn R2 / R1.
+- W2 — câu đổi từ chối ↔ trả lời (`case_index`). Đếm câu trả lời có câu không citation kiểu "nguồn không có…". Lý do: dạng "trả lời vòng" đã chặn
+  R2 / R1.
+  - Cách tách câu: ở khoảng trắng sau dấu kết câu, **giữ các `[n]` đứng ngay sau dấu chấm ở câu trước** — `re.split(r"([.!?](?:\[(?:Nguồn )?\d+\])*)\s+")`
+    rồi ghép phần đuôi vào câu trước (bài học B58 m-1).
+  - Bản 1 ghi regex lookbehind; regex đó **nuốt `[n]`** vào phần ngăn cách, nên câu có trích bị đếm thành không trích. B bắt được khi kiểm harness
+    0 USD.
+  - Kiểm bằng chuỗi tự viết + câu trả lời thật R1 168 / R2 160: 1 câu không trích mỗi câu, đúng như B đọc.
 - W3 — R4 (`experiments.phase_8_2.r4_numbers`, bản trên `main`) trên câu trả lời K3b-m: số không có trong đoạn được trích.
 - W4 — giá (§4).
 
@@ -114,7 +130,7 @@ Ngưỡng T3 / T4 = max(thắng, thua) + 3, đúng số K3 plan ghi.
 1. **Pilot 10 câu dev** (seed 20261024, như `g2_generate.select('pilot')`: rút trong 120 câu dev, có thể gồm OOS):
    - đo USD / câu đầu–cuối thật, `e2e_ms`;
    - kiểm T1 / T2 sớm.
-2. Dev còn lại 110 ⇒ gộp `answer_dev.jsonl` 120 câu ⇒ `check` (T1, T2, T6, phát lại 40 / 40, hợp đồng).
+2. Dev còn lại 110 ⇒ gộp `answer_dev.jsonl` 120 câu ⇒ `check` (T1, T2, sàn 120, T6 theo dõi, phát lại 40 / 40, hợp đồng).
 3. Judge mù dev (K3b-m dev + B1 dev) ⇒ `analyze` dev (T3, T4, T5, T7, W1, W2). Dev hỏng bất kỳ dòng nào ⇒ dừng, **kém hơn**.
 4. Chỉ khi dev đạt: test (pilot 10 ⇒ 46 còn lại) ⇒ `check` ⇒ judge mù test (K3b-m + B1 test) ⇒ `analyze` test.
 5. W3 (R4) trên dev + test từ working tree `main`.
@@ -156,7 +172,9 @@ Thêm 0,13 ⇒ ≈ 0,27. Judge: quota Claude Code, 0 USD.
 
 1. Phát lại lệch (`top_chunk_ids` ≠ file gốc) ⇒ dừng.
 2. Pilot: USD / câu > 1,5 × ước, hoặc tiền dự kiến vượt trần ⇒ dừng, báo A.
-3. Lỗi kỹ thuật ≥ 1 (sinh hoặc rerank, gồm 500 / parse) ⇒ phạm T2 ⇒ **kém hơn**, dừng. Không gọi lại.
+3. Lỗi kỹ thuật ≥ 1 (sinh hoặc rerank, gồm 500 / parse) ⇒ phạm T2 ⇒ **kém hơn**, dừng. Không gọi lại. **429 / timeout cũng là lỗi kỹ thuật** (C53 m-3;
+   gọi đồng thời 4, `max_retries=0`): dừng, ghi nguyên văn, **không chạy lại cả lượt khi chưa có A**.
+3b. Câu 120 bị trả lời ⇒ phạm sàn T8 ⇒ **kém hơn**, dừng.
 4. OOS bị trả lời ≥ 1 ⇒ phạm T1 ⇒ **kém hơn**, dừng.
 5. Sai hợp đồng rerank > 4 trong lượt ⇒ **kém hơn**, dừng.
 6. Không ghi Qdrant, không sửa corpus / Golden / split / đoạn đúng, không mở câu kín, không đọc câu test theo từng câu. Câu trả lời test chỉ đi qua
@@ -182,8 +200,21 @@ Dữ liệu `data/phase_8_2/k3b/answer/`.
 
 ## 8. Câu hỏi cho A
 
-1. Trần **0,13 USD** cho phụ lục.
-2. Giữ **176 câu** (B khuyên), hay bỏ 29 câu không tự nhiên (tiết kiệm ≈ 0,023, đổi tập T2 / T6)?
-3. Muốn W1 ("Completeness tăng") thành **điều kiện** trước khi trình User không? Nếu có thì phải ghi trước ngưỡng, và trần chỉ 6 câu. B khuyên giữ
-   theo dõi, trình User cả hai: lợi tầng tìm (đã chắc) + khâu trả lời (không hỏng / có tăng hay không).
-4. Quyền: commit + push `p82-k3b` (đã có), paid `gpt-6-luna` trong trần mục 1, sub-agent judge Claude.
+A đã chốt (tin A 10:2x, trước bản 2):
+1. Trần **0,13 USD**.
+2. Giữ **176 câu**.
+3. W1 **chỉ theo dõi**.
+4. Quyền: B commit + push `p82-k3b` (không merge), paid `gpt-6-luna` trong trần mục 1, sub-agent judge Claude.
+
+## Sửa sau review C53 (10:11 27/10/2026 +0700, `date`)
+
+| Finding / quyết định A | Sửa |
+|---|---|
+| M-1 T2 / T6 chồng nhau (API 500 cho mọi `CitationIntegrityError`) | T2 = `error` **hoặc** `citation_error` ≠ null, sàn 0, kèm `chat.py:124-135`, `citations.py:25,29,33` (căn cứ mục 3); T6 thành theo dõi theo dạng; đoạn "Chỗ phụ lục khác K3 plan — nói thẳng" ghi lý do |
+| m-1 "trần 6 câu" | W1: "6 câu có lý do biết trước để tăng; câu khác cũng có thể đổi theo cả hai chiều (18 câu dev chính < 5 ở B1)" |
+| m-2 120 thành sàn (A chọn) | T8: 120 = sàn "vẫn từ chối"; 168 theo dõi; luật giữ + dừng 3b |
+| m-3 429 / timeout | §5.3: lỗi kỹ thuật, dừng, ghi nguyên văn, không chạy lại khi chưa có A |
+| B tự thấy khi kiểm harness 0 USD | W2: regex bản 1 nuốt `[n]` ⇒ thay bằng cách tách giữ `[n]`, đã kiểm trên chuỗi tự viết + câu R1 168 / R2 160 |
+| A chốt §8 | ghi vào §8 |
+
+Không đổi: T1, T3, T4, T5 (ngưỡng), T7, mốc B1, A/A, cách phát lại (L1 / `m_test`), trần 0,13, 176 câu, judge cùng lượt mù.

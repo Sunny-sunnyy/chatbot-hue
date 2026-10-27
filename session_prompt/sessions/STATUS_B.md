@@ -33,9 +33,10 @@
 - **B60 xong (10:05 27/10/2026; A gọi B59):** phụ lục plan `phase_8_2_k3b_m_answer_plan.md` sha **`84d4aaf0ad04`** (working tree chung, 0 USD). Tiêu chí
   = K3 plan §4 dòng 85–92, 98 nguyên văn; phát lại thứ tự L1 / test cho 55 câu, gọi mới 121; ghi từng dòng; ước ≈ 0,107, trần đề xuất 0,13;
   W1 ghi trước trần lợi câu trả lời = 6 câu dev chính. ⇒ chờ review (C sau C52).
-- **B61 (đang làm, từ 10:07 27/10/2026):** viết sẵn harness `k3b_answer.py` + kiểm 0 USD (không gọi luna / sinh) chờ duyệt phụ lục. Worktree `/tmp/b_k3b`
-  (nhánh `p82-k3b` `806e8ad`). **File khai báo sửa:** `backend/experiments/phase_8_2/k3b_answer.py` (mới, worktree). Tự báo lỗi T2/T6 của phụ lục
-  cho A + C (API 500 cho mọi CitationIntegrityError) — sửa ở bản 2.
+- **B61 (10:13 27/10/2026):** phụ lục plan **bản 2** sha `92a8a7eb4177` (C53 M-1 T2 = error hoặc citation_error, T6 theo dõi; m-1; m-2 120 thành sàn; m-3 429 /
+  timeout; W2 regex bản 1 nuốt `[n]` — B bắt khi kiểm harness, đã sửa). Chờ C kiểm phần sửa ⇒ A duyệt. Harness `k3b_answer.py` (sha `c92d572af51e`)
+  + `tests/test_k3b_answer_text.py` ở `/tmp/b_k3b`, **chưa commit**; kiểm 0 USD: phát lại 55 / 55 khớp top-10, 0 sai hợp đồng; pilot 3 phát lại / 7
+  gọi mới; 6 test passed. **File khai báo sửa:** `k3b_answer.py`, `test_k3b_answer_text.py` (worktree), plan phụ lục (working tree chung).
 - **File khai báo khác: không.** Tiền paid phiên 27/10: log 0,0251129 (K3) + 0,0592176 (K3b) = **0,0843305 USD**, + ước ≈ 0,0074
   (≤ 0,0105, lượt n mất usage) ⇒ **≈ 0,092 (≤ 0,095) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả

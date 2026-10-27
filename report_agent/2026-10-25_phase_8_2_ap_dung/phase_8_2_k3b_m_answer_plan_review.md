@@ -91,3 +91,31 @@ mốc: C dựng lại bằng context builder production trên 55 câu phát lạ
 
 **changes_requested** — B sửa M-1 (định nghĩa T2 = mọi câu production trả 500 / 502, sàn 0; T6 theo dõi), cân nhắc m-1..m-3, báo sha bản 2; C kiểm phần sửa. Các điểm
 còn lại (T1, T3–T5, T7, phát lại + kiểm 55 / 55, cỡ mẫu, trần 0,13, giữ 176 câu, W1 theo dõi) đủ để A duyệt sau khi sửa.
+
+## Vòng 2 — kiểm phần sửa (bản 2 sha `92a8a7eb4177`, C tính từ file; 10:14 27/10/2026 +0700, `date`)
+
+Cách kiểm: `git diff HEAD -- phase_8_2_k3b_m_answer_plan.md` (bản 1 `84d4aaf0ad04` ở `fbd72af` → bản 2); thử regex W2 mới trên chuỗi tự viết và trên `b1_dev.jsonl`
+(`uv run python` inline từ `backend/`, 0 USD). Quét trùng review: 0.
+
+| Finding | Đóng? | Ghi chú |
+|---|---|---|
+| M-1 | **đóng** | T2 = `error` **hoặc** `citation_error` ≠ null, sàn 0, kèm `chat.py:124-135`, `citations.py:25,29,33` (thêm vào căn cứ mục 3); T6 → theo dõi theo dạng; luật giữ bỏ T6 khỏi mức tụt (T3–T5, T7); đoạn "nói thẳng" ghi lý do + cùng hiểu lầm ở R1 bản 2 |
+| m-1 | **đóng** | W1: "6 câu có lý do biết trước; câu khác đổi được cả hai chiều (18 câu < 5)" |
+| m-2 | **đóng** | A chọn: 120 = sàn "vẫn từ chối" (T8, luật giữ, dừng 3b); 168 theo dõi |
+| m-3 | **đóng** | §5.3: 429 / timeout = lỗi kỹ thuật, dừng, ghi nguyên văn, không chạy lại khi chưa có A |
+
+**Ngoài phạm vi — không đổi** (đối chiếu diff): T1, T3, T4, T5 (ngưỡng + cách đếm), T7, mốc B1, A/A, cách phát lại (L1 / `m_test`, kiểm 55 / 55), trần 0,13, 176 câu, judge cùng lượt
+mù, các bước chạy. §8 ghi đúng bốn chốt của A.
+
+### m-4 (mới, minor) — cách tách câu W2 bản 2 vẫn tách rời `[n]` khi có khoảng trắng trước nó (". [1]")
+
+- **Bằng chứng (C thử):** regex `([.!?](?:\[(?:Nguồn )?\d+\])*)\s+` giữ được `.[2] Câu sau` (đúng như B kiểm trên 168 / 160), nhưng với `… được nêu. [1]` (dấu cách trước
+  `[1]`, cuối dòng) thì `[1]` thành mẩu riêng và câu trước bị đếm là **không citation**. Trên `b1_dev`, **43 / 99** câu trả lời có mẩu chỉ-citation bị tách như vậy. Regex
+  cũng chỉ nhận `[Nguồn n]` viết hoa, không có khoảng trắng trong ngoặc — khác `CITATION_PATTERN` của production (không phân biệt hoa thường, cho phép khoảng trắng).
+- **Tác động:** W2 chỉ theo dõi ⇒ không đổi luật giữ; nhưng có thể đếm nhầm "câu không citation kiểu nguồn không có…" ở các câu kết bằng ". [n]" nếu câu đó có cụm phủ định
+  (C51 gặp đúng dạng này ở B1 câu 25).
+- **Tiêu chí đóng:** cho phép khoảng trắng trước / trong citation và gắn mẩu chỉ-citation vào câu trước, ví dụ `([.!?](?:\s*\[\s*(?:nguồn\s*)?\d+\s*\])*)(?:\s+|$)` với
+  `re.IGNORECASE`, hoặc dùng lại hàm tách câu đã kiểm của C51 (`data/cai_tien_tung_khau_2026-10-26/c51/c51_scan.py` `sentences`); kiểm lại trên B1 câu 25. Sửa được ở
+  harness mà không cần bản plan mới (W2 không vào luật), nhưng ghi trong report.
+
+**Decision vòng 2: ready_for_user_confirmation** — A có thể ghi "duyệt bản sha `92a8a7eb4177`"; m-4 sửa trong harness trước khi chạy.
