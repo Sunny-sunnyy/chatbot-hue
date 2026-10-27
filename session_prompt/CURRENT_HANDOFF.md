@@ -237,6 +237,11 @@ lẫn hai thay đổi). Chặn chính: B0 (User). Index Qwen3-8B (tồn từ 7A2
 - Lượt B1 chạy với validator nào (so `9e6d371`); chuỗi trả lời đã lưu qua validator `main` hiện tại (offline) có lỗi không (lỗi ⇒ production trả 500 ⇒ ảnh hưởng B3);
   đếm dòng giống vậy trong `b1_{dev,test}.jsonl`. Report `report_agent/2026-10-25_phase_8_2_ap_dung/c65_citation_138_check.md` (mức loại câu).
 
+- **C65 XONG:** lượt B1 (25/10 16:35) chạy **trước** `9e6d371` ⇒ validator v1 (đã chứng minh: chạy lại v1 khớp 176 / 176); 12 / 176 câu "no citation" với `[Nguồn n]` đều
+  **qua** validator `main` ⇒ production hôm nay **không** trả 500 các câu này. Hệ quả: (1) report B3 tách riêng số câu 500 kiểu "v1 không nhận `[Nguồn n]`" mỗi bên
+  (báo cáo, không đổi tiêu chí plan đã duyệt); (2) số "lỗi citation B1 = 12" là theo v1 (v2: 0) — thí nghiệm Bước 2 so với `citation_error` đã lưu của mốc bị lệch
+  **có lợi cho biến thể** ⇒ kết luận "kém hơn" không đảo (A suy ra; chưa đếm lại từng report — để khi mở lại hồ sơ). G2.1a (8 câu) chưa đếm lại.
+
 ### C63 — căn cứ cho brainstorm tính năng mới (giao 14:0x 27/10; 0 USD, chỉ đọc; review B71 ưu tiên hơn)
 
 - User 27/10 chiều: ưu tiên **hội thoại nhiều lượt + streaming**; gợi ý / lịch trình ⇒ Phase 9; deploy khi ổn định; bảo vệ ~tháng 1/2027, xong càng sớm càng tốt.
