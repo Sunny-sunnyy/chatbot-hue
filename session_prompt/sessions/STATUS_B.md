@@ -51,6 +51,8 @@
   Report `phase_8_2_k3b_m_answer_implementation.md` trên `origin/p82-k3b` `a6f609c` (đã push). Worktree `/tmp/b_k3b` đã gỡ. ⇒ chờ C review.
 - **B66 xong (10:49 27/10/2026; A gọi B62):** `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` bản 8 (working tree chung, chưa commit): dòng cập nhật, Tóm tắt, checklist
   (luna + dòng mới "thước đoạn đúng"), §4 mục 27/10, §5, §6, Phụ lục. Chatbot ghi "chưa đưa vào". ⇒ A review + commit.
+- **Còn nợ (sửa ở commit tiếp trên `p82-k3b`):** report K3b-m answer dòng 27 ghi "Ba trong 5 câu" có 7–9 / 10 đoạn trùng — đúng là **4 / 5**
+  (9, 8, 7, 7; câu 93 là 5 / 10). A đã sửa ở `BAO_CAO_TIM_KIEM.md` (`2936165`). Bài học: số đếm trong lời thường phải đếm lại từ bảng, không gõ tay.
 - **File đang khai báo sửa: không.** Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
   + ước ≈ 0,0074 (≤ 0,0105, lượt n mất usage) ⇒ **≈ 0,167 (≤ 0,170) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả

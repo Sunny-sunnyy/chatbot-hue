@@ -34,6 +34,7 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **Phụ lục K3b-m bản 2 vòng 2 ready 10:15 27/10/2026** (`92a8a7eb4177`); m-4 mới: regex W2 tách rời ". [1]" (43/99 câu B1) — sửa trong harness.
 **Phụ lục bản 3 vòng 3 ready 10:33 27/10/2026** (`2a3b22b38ab6`): 120 về theo dõi; C xác nhận độc lập (a) context K3b-m của 120 có 2 / 2 fact, (b) B1 0. Pilot bản 2 dừng vì sàn 120 — sàn đó từ gợi ý m-2 của C.
 **Bẫy / học (C, 27/10):** (1) nhãn đoạn đúng chỉ đánh dấu MỘT chỗ cho mỗi fact ⇒ `*_gold_frac` 0 không có nghĩa context không có fact; trước khi đề xuất sàn "context 0 fact" phải đọc nội dung (m-2 C53 ⇒ pilot bản 2 dừng oan). (2) Script dựng lại context chạy từ working tree `main` (context 5) phải truyền `max_documents=10` cho mốc B1 / K3b — suýt kết luận sai trên 5 đoạn.
+**C54 xong 10:51 27/10/2026:** review K3b-m answer (`a6f609c`) ready (0/0/2 minor) — kém hơn đúng luật (T3 5 > 4: 26, 66, 93, 112, 134); sàn + T4/T5/T7 đạt; chỉ báo TB tăng CI > 0; tiền 0,0749297 khớp; e2e p50 6,5 s / p95 9,1 s. m-1: 66 nhiều khả năng nhiễu judge. C khuyên không chạy A/A biến thể (giá trị thấp), trình User câu hỏi luật nhận. Script `data/phase_8_2/k3b/answer/tools/c54_{check,read}.py`.
 
 ## Còn treo (phiên sau xử lý trước)
 
