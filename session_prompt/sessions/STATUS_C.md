@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 14:15 27/10/2026 (đang C64)
+# STATUS C — cập nhật 14:30 27/10/2026 (C64 xong — chờ A)
 
 Terminal: `hue-rag-86` (phiên mới 13:40 27/10; trước `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi. B = `hue-rag-2d` (B tự báo), A = `hue-rag-51` (A xác nhận) — trực tiếp.
 User 13:45 27/10/2026 (phiên mới, nhắc lại 08:41 27/10): C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
@@ -6,17 +6,18 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang làm
 
-- **C64** (A giao 14:15 27/10, `CURRENT_HANDOFF.md` → C64; 0 USD trừ cổng ≈ 0,0005; A cần biết mục chưa xong trước 16:15):
-  1. review plan B3 (sha `9d60b16b63da`, chỉ dựa "Căn cứ để review"; không đọc STATUS_B / tin B; không mở câu kín) — đang làm;
-  2. `dense_ms` làm tròn 1 chữ số + test ghim + cổng ổn định (B review);
-  3. đề xuất nhãn 3 câu test 95, 130, 138 (cách C56) — private, không sửa `gold_v2.jsonl`.
-- Xong trước trong phiên: C62 (`719417e`), review B71 (ready 0/0/2, `4a10ff6`), C63 (`data/tinh_nang_moi_2026-10-27/c63_can_cu.md`). Tiền phiên ≈ 0,000453 USD (log).
+- **Không** — C64 xong 14:30 27/10/2026, chờ A. Mục tiêu tiếp: A giao.
+- C64 (A giao 14:15): (1) review plan B3 — vòng 1 `9d60b16b63da` changes_requested 0/2/4; vòng 2 `27e75be5ed44` **ready 0/0/1** (m-5 giờ dòng 3), file
+  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan_review.md` (chưa commit); (2) `dense_ms` làm tròn — A review + commit `dfbcca5`; report
+  `c64_dense_ms_implementation.md`, review B `c64_dense_ms_review.md`; ≈ 0,000379 USD; (3) nhãn 3 câu test: 95 không đổi, 130 thêm 1 khoảng, 138 gắn thêm trích dẫn 2, 3 —
+  `data/phase_8_2/gold_fix_proposal_2710/{proposal_test_c64.jsonl, effect_test_c64.json, ghi_chu_c64.md}`, report tracked `report_agent/2026-10-26_cai_tien_tung_khau/c64_de_xuat_nhan_test.md`
+  (chưa commit); B1 test 7 → 9, K3b-m test 10 → 11; `gold_v2` vẫn `2f5a347a71ff`.
+- Xong trước trong phiên: C62 (`719417e`), review B71 (`4a10ff6`), C63 (`data/tinh_nang_moi_2026-10-27/c63_can_cu.md`).
+- **Tiền phiên (log):** B71 review 0,000453 + C64 cổng 0,000379 = **≈ 0,000832 USD**.
 
-## Đang khai báo sửa (C64, từ 14:15 27/10/2026)
+## Đang khai báo sửa
 
-- `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan_review.md` (mới).
-- `backend/api/routes/chat.py`, `backend/tests/test_api_chat.py` (mục 2 — làm sau review B3).
-- `data/phase_8_2/gold_fix_proposal_2710/` (file mới cho 95 / 130 / 138; mục 3).
+- Không (C64 xong; file mới chờ A commit: `phase_8_2_b3_plan_review.md`, `c64_de_xuat_nhan_test.md`).
 
 ## Nhánh của C
 
@@ -58,6 +59,8 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
   MiniLM; `guides/full_corpus_rag.md` bước 4b dùng mã B-06 khác nghĩa.
 
 ## Đã học / bẫy gặp (đầu vào vòng cải tiến)
+
+- **27/10 chiều:** C62 ghi guide 6 "dense_ms giữ 3 chữ số" rồi chính C64 sửa code làm câu đó sai — A bắt khi commit `dfbcca5`. Sửa code thì grep guide / report vừa viết về đúng trường đó. Lại gõ tay giờ "14:31" vào report C64 (thực tế 14:23) — đã sửa; luôn `date` trước khi ghi.
 
 - **Sàn "API 500" phải đối chiếu đúng nhánh trả lỗi trong `chat.py`:** **mọi** `CitationIntegrityError` là 500 (`chat.py:127-135`), không riêng "no citation" — plan R1 của C
   và B55 đều bỏ sót (C53 M-1).
