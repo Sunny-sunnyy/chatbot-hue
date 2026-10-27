@@ -59,7 +59,10 @@
 - **B68 xong (11:22 27/10/2026; A gọi B64):** review tài liệu đóng đợt của A (tin nhắn, không file): changes_requested — F1 cận trên tiền sai ở 4 chỗ
   (TONG_HOP:50/70/71, HISTORY:15, nhật ký:4; đúng ≈ 0,014 / 0,175 / 0,214 / +0,003); F2 thiếu "gọi đồng thời 4"; F3 thiếu "(tạm)"; F4 chỉ báo. Số khác khớp.
 - **B69 xong (11:29 27/10/2026):** trả nợ trên `p82-k3b` `4c85195` (đã push): report K3b §4.2 ước ≈ 0,0087 / cận trên ≈ 0,0142 (tổng K3b ≈ 0,068 ≤ 0,074); report K3b-m answer "Bốn trong 5". Worktree gỡ.
-- **File đang khai báo sửa: không.** Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
+- **B70 (đang làm, từ 11:32 27/10/2026; A gọi B65):** đo latency đầu–cuối qua API thật, main (context 5, :8011) + `p82-b1` (worktree `/tmp/b_lat`, :8012); 22 câu
+  tự viết, tuần tự + đồng thời 4; paid ≤ 0,02 USD. **File khai báo sửa:** `data/phase_8_2/latency_2710/` (mới, private),
+  `report_agent/2026-10-26_cai_tien_tung_khau/b65_latency_dau_cuoi.md` (mới).
+- **File đang khai báo sửa: không** (ngoài B70). Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
   + ước lượt n mất usage **≈ 0,0087 (cận trên ≈ 0,0142)** — tính lại 27/10 từ token vào thật của đúng 30 câu (`m_l1_rest`; số cũ 0,0074 / 0,0105 lấy
   giá / lần của pilot nên thấp) ⇒ **≈ 0,168 (≤ 0,174) USD**.
 - **Sự cố (27/10, cho vòng cải tiến):** harness paid chỉ bắt lỗi của provider (`OpenAIError`), không bắt lỗi parse của SDK; và chỉ ghi kết quả

@@ -43,6 +43,12 @@ sau**; **hiệu suất = tiền + tốc độ**; **đo theo mục tiêu sản ph
 5. Hồ sơ hướng mở (không làm khi chưa có quyết định): K3b-m / K3c khi có luật nhận cho biến thể đổi context + thời gian chờ có số; streaming từng câu đã kiểm;
    sửa nhãn đoạn đúng "một chỗ / thông tin"; mở rộng bộ câu tự nhiên.
 
+**Trong lúc User đi ăn (11:38 27/10/2026, User: "tiếp tục chỉnh sửa, điều phối, phát triển, cải thiện, so sánh, đánh giá"):** A giao việc 0 / ít tiền, không đổi chatbot:
+- **C56 xong** (`report_agent/2026-10-26_cai_tien_tung_khau/c56_de_xuat_sua_nhan.md`; nháp private `data/phase_8_2/gold_fix_proposal_2710/`): đề xuất thêm 3 khoảng nhãn
+  (120: 2, 156: 1); 143 là lỗi **cách đếm** (bỏ qua tiêu đề mục), không phải nhãn; 3 câu test chưa quyết. Áp vào file nhãn: người khác kiểm + User duyệt.
+- **B65** đo latency đầu–cuối thật (main context 5 vs `p82-b1` context 10; tuần tự + đồng thời 4; câu tự viết; ≤ 0,02 USD) — đang chạy.
+- Vòng cải tiến 7: W24–W26 đề xuất (`SO_CAI_TIEN_CACH_LAM.md`) — chờ User.
+
 ## Câu hỏi cho User (phiên sau — gói trong báo cáo mở phiên, mỗi câu có khuyến nghị)
 
 1. **Quyền phiên** (như bước 2 trên). A khuyên: giữ như tối 26/10 + K3 ≤ 0,20 USD.
