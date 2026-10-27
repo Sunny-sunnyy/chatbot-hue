@@ -84,7 +84,7 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-51` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | điều phối B71 / C62; review C62; brainstorm tính năng mới với User (chỉ bàn); kế hoạch mốc cuối 8.2 | `STATUS_A.md` |
-| B — thực thi | `hue-rag-2d` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **B71** rebase B1 (dưới) | `STATUS_B.md` |
+| B — thực thi | `hue-rag-2d` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **B71** rebase B1 (dưới) — **chờ review C** (`p82-b1` `c3d5607` trên `576f84e`, đã push; report `phase_8_2_b1_rebase2_implementation.md` trên nhánh) | `STATUS_B.md` |
 | C — thực thi | `hue-rag-86` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **C62** sửa guide / report cũ (dưới) ⇒ review B71 | `STATUS_C.md` |
 
 Phiên trước (27/10 sáng, kết 13:30): A `hue-rag-5f`, B `hue-rag-31`, C `hue-rag-5b` — B53–B70 / C46–C61 xong; tiền ≈ 0,197 USD.
@@ -166,6 +166,22 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Không làm:** sửa code backend; sửa governance; chọn một phía khi guide ↔ code mâu thuẫn (báo A). **Xong:** nhắn A (danh sách file + diff stat); rồi review B71.
 - **Trạng thái (13:59 27/10/2026, A): XONG** — A review đạt (đối chiếu 3 chỗ `file:dòng` guide 6 với code; `gold_draft` vẫn `bab707b9ab22`), commit. Trước: 13:57 C chờ review — 5 file tracked (chưa commit) + `validate_gold.py` private (diff `data/phase_8_1/tools/validate_gold_c62.diff`); chi tiết `STATUS_C.md`.
 - Không ai: chạy thí nghiệm mới, mở câu kín, chạy `validate_gold.py`.
+
+### B72 — plan mốc cuối 8.2 (B3, câu kín) (giao 14:1x 27/10; 0 USD; chỉ viết plan, **không mở câu kín**)
+
+- **Mục tiêu:** plan B3 sẵn sàng để khi User quyết mở câu kín (sau B0 + merge B1) chạy ngay. Spec 8.2 §5 "B3", §3 mục 7 (báo 36 + 33 câu), §6 mục 4, §7 (≈ 0,015 USD).
+- **Viết** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md` theo `run-experiment` §1 (tiêu chí ghi **trước**: so chatbot cuối 8.2 vs chatbot đầu 8.2
+  `f26485b`; chỉ số; sàn closed-world; thế nào là "làm hỏng"; judge Claude chấm mù cùng lượt), có mục "Căn cứ để review" (WORKFLOW §9.1). Ghi rõ: ai mở câu kín
+  (một session / sub-agent được giao, không phải A); A đưa 3 số dòng câu A đã thấy cho người chạy (riêng, private); báo cáo giữ mù theo `Session_Prompt.md` §5;
+  harness ghi từng dòng ngay (W23); trần tiền + pilot. Chỉ đọc metadata câu kín (số dòng, md5 `ddc59587b502`), **không đọc nội dung**.
+- **Không làm:** chạy; commit (A commit sau review). **Xong:** nhắn A + báo sha ⇒ A giao session khác review trước khi duyệt sha.
+
+### C63 — căn cứ cho brainstorm tính năng mới (giao 14:0x 27/10; 0 USD, chỉ đọc; review B71 ưu tiên hơn)
+
+- User 27/10 chiều: ưu tiên **hội thoại nhiều lượt + streaming**; gợi ý / lịch trình ⇒ Phase 9; deploy khi ổn định; bảo vệ ~tháng 1/2027, xong càng sớm càng tốt.
+- Đọc: `guides/phase_9_agentic_rag_roadmap.md` mục memory / conversation / multi-turn (~dòng 179–335); kết quả ChatGPT 26/10 phần streaming (C5); code `api/routes/chat.py`,
+  `llm/generator_openai_full_corpus.py`, UI gọi `/api/chat`. Đầu ra `data/tinh_nang_moi_2026-10-27/c63_can_cu.md` (≤ 120 dòng: hiện trạng `file:dòng`; đã chốt + nguồn,
+  chỗ đã cũ; câu thiết kế mở; rủi ro + cách đo; tách nguồn nói / suy ra). Không sửa file tracked.
 
 ### Hồ sơ thí nghiệm 8.2 (đã đóng — chỉ tra cứu)
 

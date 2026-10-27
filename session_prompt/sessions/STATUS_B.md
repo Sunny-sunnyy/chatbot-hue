@@ -1,4 +1,25 @@
-# STATUS B — KẾT PHIÊN 2026-10-27 13:25 (mở 08:4x)
+# STATUS B — phiên 27/10 chiều (mở 13:4x; cập nhật 13:52 27/10/2026)
+
+Terminal: `hue-rag-2d` (A = `hue-rag-51`, C = `hue-rag-86`) · Agent: Claude Opus 5.5 · Vai: thực thi; User 27/10 chiều: việc A giao = "làm đi".
+
+## Đang làm (phiên 27/10 chiều)
+- **B71 — chờ review C** (A giao 13:50; xong 13:59): `p82-b1` rebase lên `main` `576f84e`, không xung đột ⇒ `2fa6f16`, `4653013` + report `c3d5607`;
+  `git push --force-with-lease=p82-b1:811d25d` ⇒ `origin/p82-b1` = `c3d5607`. Không merge.
+  Kết quả: file B1 giống byte nhánh cũ; 6 file test 50 passed (main 49, +1 NFC; cùng 1 failed + 1 error cần key); T1 giống byte `cefb2d1ad609` (158); T5 10 / 10;
+  cổng 8013: `/` 200, `/health` 5 / 5, câu trong kho 200 + `[n]` + `n_context_sources` 10, câu ngoài kho từ chối, `chat_metrics` +2, grep câu hỏi = 0.
+  Report `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_rebase2_implementation.md` (trên nhánh). Dữ liệu `data/phase_8_2/b1/rebase_2710/`.
+- Tiền phiên chiều: **≈ 0,000325 USD** (token log 2 câu cổng).
+
+## Đang khai báo sửa (phiên 27/10 chiều)
+- **Không** (worktree `/tmp/b71_b1` đã gỡ, `/tmp/b71_*` đã xóa, server tắt).
+
+## Đã học / bẫy gặp (phiên 27/10 chiều)
+- Log của worktree ghi ở `/tmp/<wt>/backend/logs/application.log` và pytest `test_api_chat.py` cũng ghi `chat_metrics` vào đó ⇒ đếm "dòng mới" phải lấy mốc
+  ngay trước khi gửi câu (B71: mốc 5 do pytest, không phải 0).
+
+---
+
+# (Phiên trước) KẾT PHIÊN 2026-10-27 13:25 (mở 08:4x)
 
 Terminal: `hue-rag-31` (A = `hue-rag-5f`, C = `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi; việc A giao = User nói "làm đi".
 Mã việc là **mã A giao** (B53…B70). Phiên tối 26/10: `git show c81e45e:session_prompt/sessions/STATUS_B.md`.
