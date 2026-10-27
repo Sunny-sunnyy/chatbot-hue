@@ -46,6 +46,10 @@ Mã việc = mã A giao (B71…B76). Phiên sáng 27/10 (B53–B70): `git show 4
   Gỡ worktree xóa luôn log ⇒ **chép dòng `chat_metrics` vào `data/` trước khi gỡ** (C B71 m-1).
 - Test `gold_coverage`: trích dẫn "không trúng" cùng file rơi vào nhánh đọc file tiêu đề (`source_text`) ⇒ test tự viết dùng file khác để không đọc đĩa.
 - Bản chạy cũ `b1_*.jsonl` không có `context_chunk_ids` ⇒ dựng lại từ `top_chunk_ids[:context_sources]`; ghi rõ trong report (C B75 m-1).
+- **Thử phá rào `scripts/grep_kb.sh` (W27, 4 vòng, ghi 15:59 27/10/2026):** B tìm 4 lối thoát lần lượt (mẫu trùng tên thư mục con; đường dẫn thừa; `-e` / `--regexp=` biến mẫu
+  thành file; `--dir <file>` trong `evaluation/` / `meta/`) + 1 minor (`--include` thắng `--exclude='*sealed*'` theo luật GNU "cái sau thắng") ⇒ A sửa tới `77ac6ec`.
+  **Bẫy:** shell tương tác có hàm `grep` gọi **ugrep** (không truyền vào script / shell con) ⇒ thử hành vi của script phải gọi `/usr/bin/grep` (GNU 3.11),
+  không gọi `grep` trực tiếp (B lỡ một lần, chạy lại). Thử phá chỉ in đường dẫn / số đếm (`-l`, `-c`), không in nội dung.
 - Từ trước (giữ): harness ghi từng dòng, bắt mọi lỗi lần gọi; từ chối ghi đè; tiền ước dùng token thật; không trừ hai số đo khác cách; in đúng phần tử làm cờ bật;
   API 500 cho mọi `CitationIntegrityError`; thử ngược test đặt lỗi ở nhánh thật chạy qua; `validate_gold.py` ghi đè `gold_draft`; `ss -ltn` trước khi chạy
   server; report public tả câu ở mức loại câu; worktree `uv run --project …` + gỡ symlink, push từ working tree chung; pytest liệt kê file; pilot 10 câu;
