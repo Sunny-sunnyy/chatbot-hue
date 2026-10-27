@@ -19,7 +19,7 @@ A duyệt hiện hành **`cd910c4c4169`**). Bước 2 = **đợt cải tiến t�
 - **Kết quả Bước 2 tới giờ** (mốc B1 `811d25d`): K1 pool 100 **kém hơn** (`p82-k1`, C42 ready); K2 / E2 / R3 **NOT RUN** (lý do ở spec §10.3, `phase_8_2_r3_plan_review.md`);
   R4 thước số **xong** (`2c7ecfd`, chỉ danh sách đọc lại); R2 trả lời một phần **kém hơn — phạm sàn OOS, hướng gác** (`origin/p82-r2` `aec9ab8`, **chờ B review**);
   **K3 plan duyệt `0a6370204c7d`, chưa chạy**; R1 (`none`) chưa có plan, chạy sau cùng (luật (a), "chất lượng trước").
-- Tiền 8.2: **0,0396 / 0,5 USD** (B1 0,0369 + R2 0,0027).
+- Tiền 8.2: **0,0647 / 0,5 USD** (B1 0,0369 + R2 0,0027 + K3 0,0251 — 27/10).
 
 **Luật nhận của đợt (spec §10.2, User):** (a) chất lượng giữ (Completeness TB ≥ −0,1 **và** số câu tụt ≤ A/A + 3) + rẻ / nhanh hơn rõ; (i) chất lượng tăng
 vượt nhiễu (CI 95 % > 0, Holm theo nhánh, cỡ mẫu ≥ 5 / 0) + khâu tìm ≤ +50 ms / khâu sinh `output_tokens` ≤ +20 % + không thêm lần gọi API, USD / câu
@@ -49,7 +49,7 @@ sau**; **hiệu suất = tiền + tốc độ**; **đo theo mục tiêu sản ph
 4. **Sổ cải tiến vòng 6:** W21 (sha duyệt tính từ file), W22 (bẫy lệnh ghép bị auto mode chặn), W23 (trần đếm trên đúng mốc + harness chặn ghi đè) — A
    khuyên duyệt cả ba (mỗi cái 2 lần trong phiên tối 26/10).
 5. **B0** khi tiện (chỉ User làm được).
-6. **Xóa nhánh `dot3`** (đã nằm trong `main`, auto mode chặn A): `! git push origin --delete dot3 && git branch -d dot3`.
+6. ~~Xóa nhánh `dot3`~~ — **xong 08:54 27/10/2026** (User `!`: xóa cả local `2c420aa` lẫn `origin`).
 7. Giữ từ trước (không gấp): `/api/chat` chưa log token / tiền; mâu thuẫn kho Hải Vân Quan (STATUS_B); rà kho C32 139 mục (gửi ChatGPT tra nguồn = đưa
    dữ liệu ra ngoài — hỏi khi tới); tên dự án khác trong lịch sử git — để nguyên; 3 câu kín A đã thấy (spec 8.2 §3.7); hướng mở: viết thêm câu tự nhiên
    cho bộ đo (R3 thiếu câu; B42: câu tự nhiên không lợi từ context 10).
@@ -78,6 +78,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   User đồng ý" chỉ áp ngoài phạm vi đã duyệt.
 - **Phiên 27/10 (User 08:47 27/10/2026, hết hạn cuối phiên):** như tối 26/10 — A tự điều phối B/C + tự thử / chọn trong luật nhận của đợt; API ≤ 1 USD cả phiên;
   **B commit + push `p82-k3`, K3 ≤ 0,20 USD** (con: tìm 0,08 / sinh 0,12). Q2 spec §10.6: xác nhận trên test = "không làm hỏng" (User đồng ý).
+  A giao (08:55 27/10/2026, trong quyền tự điều phối + trần 1 USD): **C commit + push `p82-r1`** (không merge), worktree `/tmp/c_r1`, R1 ≤ 0,05 USD, judge sub-agent — chỉ sau khi
+  plan R1 qua B review và A ghi duyệt sha.
 - Phiên tối 26/10 (User 20:3x, 21:1x) — đã hết hạn: A tự điều phối B/C + tự đề xuất / thử / chọn trong luật; API ≤ 1 USD cả phiên (dùng 0,0027);
   B commit + push `p82-b1`, `p82-k1`, `p82-k3` (K3 ≤ 0,20 USD — chưa dùng); C commit + push `p82-r2` (R2 ≤ 0,06 USD).
 - Trần 8.2: 0,5 USD (spec D5). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
@@ -140,17 +142,26 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   mốc so = B1 `811d25d`; đầu file mục "Căn cứ để review" (WORKFLOW §9.1); tiêu chí theo spec §10.2 (a) + §10 R1 (USD ≤ 0,95× **hoặc** `output_tokens`
   ≤ 0,9×, mặt còn lại không tệ hơn) + sàn OOS; cỡ mẫu + nhiễu A/A ghi trước (W23: đếm trên đúng mốc). Không chạy paid. Xong ⇒ báo sha ⇒ B review khi rảnh
   (sau B53, xen lúc chờ luna). Sau đó C review report K3.
+- **B55 — review plan R1 (0 USD).** Chỉ dựa trên mục "Căn cứ để review" của plan (sha `0a702b4ac1e4`; WORKFLOW §9.1: không đọc STATUS_C / tin của C),
+  được chạy lệnh chỉ đọc / tính lại mốc. Làm xen lúc chờ luna của K3. Đầu ra `phase_8_2_r1_plan_review.md` ở working tree chung (A commit). A trả lời Q1–Q3
+  của plan: Q1 giữ mức tụt chặt hơn (Accuracy, từ chối nhầm, citation — sát "lỗi tệ nhất" A đề xuất 27/10), B đánh giá có hợp lý không; Q2 quyền như dòng
+  trên; Q3 chạy sau pilot K3. Đưa R1 vào chatbot phải sửa `settings_loader.py` + hợp đồng Phase 6 ⇒ **trình User** dù luật (a) cho A tự đưa.
+- **C47 xong** (đối chiếu yêu cầu ChatGPT 27/10 với code: 1 sai, 2 hiểu lầm, 4 thiếu — A đã sửa). Harness R1 viết sẵn ở `/tmp/c_r1` (`p82-r1` cục bộ,
+  chưa commit, 0 USD), chờ B55.
+- **C48 — đo hiện trạng "số trong câu trả lời có nằm trong đoạn được trích không" (0 USD, dữ liệu B1 dev đã có).** Đo tần suất lỗi "nói chắc sai" (A đề
+  xuất là lỗi tệ nhất). Đầu ra private `data/cai_tien_tung_khau_2026-10-26/c48/` + report ngắn `report_agent/2026-10-26_cai_tien_tung_khau/c48_so_trong_cau_tra_loi.md`
+  (chỉ số đếm). Không phải biến thể ⇒ không cần plan. K3 xong ⇒ C ưu tiên review K3.
 - Ước tổng 8.2 (A, để so trần 0,5): đã dùng 0,0396 + K3 0,20 + R1 ~0,034 + ghép ~0,04 + dự phòng pilot ⇒ **≈ 0,31–0,35 USD** (con số "0,41" trong plan K3 §7 tính cả
   R2 0,06 + R3 0,04 trước khi hai việc đó dừng / NOT RUN).
 
 | # | Plan (`report_agent/2026-10-25_phase_8_2_ap_dung/`) | sha duyệt | Trạng thái | Việc phiên sau |
 |---|---|---|---|---|
 | K1 | `phase_8_2_k1_plan.md` | `b8f1597f6a0f` | **kém hơn** (câu 154 mất đoạn đúng; 2 / 37 / 1); `p82-k1`; C42 ready | — (hồ sơ) |
-| K3 | `phase_8_2_k3_plan.md` | `0a6370204c7d` | duyệt, **chưa chạy**; C44 ready | **B chạy** (quyền mới) ⇒ C review |
+| K3 | `phase_8_2_k3_plan.md` | `0a6370204c7d` | **DỪNG 09:05 27/10/2026 — kém hơn (phạm sàn: lỗi đầu ra luna 1 / 40, câu 173, thứ tự thiếu 1 đoạn)**; pilot rerank p50 5,7 s / p95 8,2 s; 0,0251 USD | B report trên `p82-k3` ⇒ C review |
 | R2 | `phase_8_2_r2_plan.md` | `b70ea775efb2` | **kém hơn — đóng** (OOS câu 160); `p82-r2` `aec9ab8`; 0,0027 USD; B53 review ready (`phase_8_2_r2_review.md` `11368435edbd`); A đóng 27/10: m-1 giữ (mô tả chung, 0 trùng); m-2 ghi hồ sơ: câu 115 (P1 phạm dạng không `[n]`) R2 từ chối nhưng B1 cũng từ chối ⇒ chưa tách được tác dụng E1b | — (hồ sơ) |
 | R3 | `phase_8_2_r3_plan.md` | — | **NOT RUN** (C45: trần 6 câu) | — (hồ sơ) |
 | R4 | (implementation `phase_8_2_r4_implementation.md`) | — | xong `2c7ecfd`; B47 ready | dùng làm chỉ số theo dõi |
-| R1 | chưa có | — | chưa làm | C viết plan, B review |
+| R1 | `phase_8_2_r1_plan.md` | chờ — bản 1 `0a702b4ac1e4` **changes_requested** (B55 09:06 27/10/2026: M-1 `none` 8.1 có 2 câu "no citation" ⇒ API 500 = phạm sàn; 3 minor; review `6caabf5a41a1`) | C sửa ⇒ bản mới ⇒ B kiểm phần sửa ⇒ A duyệt sha | C chạy (pilot gồm 172, 173 trước) |
 | K2, E2 | — | — | NOT RUN (spec §10.3) | — |
 
 Đầu vào: `report_agent/2026-10-26_cai_tien_tung_khau/` (`phan_loai_loi_{B,C}.md`, `de_xuat_khau_{tim_B,tra_loi_C}.md`, review). Nhánh thí nghiệm **không merge**

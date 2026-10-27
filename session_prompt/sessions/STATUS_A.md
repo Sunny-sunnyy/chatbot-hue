@@ -22,6 +22,8 @@ Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - A: 0 USD.
 
 ## Đã học / bẫy gặp (phiên 27/10)
+- 09:0x: yêu cầu ChatGPT của A **lặp lỗi S31** (không ghi BM25 chỉ chấm lại 30 đoạn dense) + ghi sai "SD 0,8 s" (là SD chênh giữa hai lượt) ⇒ C47 bắt
+  trước khi gửi: **W19 có tác dụng** (bằng chứng cho vòng cải tiến: giữ W19; cân nhắc mẫu đoạn mô tả hệ thống dùng lại).
 - 08:5x: A nói "API không stream" dựa trên grep hẹp (`api/`, `generation/`) — đúng, nhưng User nhớ "có lựa chọn streaming": đó là phương án trong nghiên cứu
   26/10 (C5), chưa làm. Khi User nhớ khác, trỏ đúng nguồn (spec `:217`, nghiên cứu C5).
 

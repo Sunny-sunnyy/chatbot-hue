@@ -13,6 +13,12 @@ Kiểm nhanh khớp: `main` `c81e45e`, sạch (2 mục untracked của User), ho
 A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **chỉ bắt đầu khi A nhắn "làm đi"**; R1 so mốc B1 `811d25d`; file `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r1_plan.md` ở working tree chung, đầu file có mục "Căn cứ để review" (WORKFLOW §9.1).
 
 **C46 (A giao 'làm đi', 08:52 27/10/2026) — khai báo file:** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r1_plan.md` (mới, working tree chung, không commit); private `data/phase_8_2/r1_plan/` (script tính số mốc). 0 USD.
+**C46 xong 08:54 27/10/2026: plan R1 sha `0a702b4ac1e4` (tính từ file) — chờ B review ⇒ A duyệt sha.** 0 USD; quét trùng 0. Plan hỏi A 3 câu (§6: mức tụt C thêm; quyền `p82-r1` + ≤ 0,05 USD; thời điểm chạy so với K3). **Đã báo sha ⇒ không sửa plan nữa** (luật A 22:1x 26/10). R2: B53 ready, A đóng kém hơn (`8010fda`).
+**A trả lời 08:55 27/10/2026:** sha khớp; B55 = B review plan R1. Q1 giữ mức tụt chặt hơn; Q2 quyền có **sau khi B review + A ghi duyệt sha**: C commit + push `p82-r1` (không merge), worktree `/tmp/c_r1`, ≤ 0,05 USD, judge sub-agent; Q3 chạy sau pilot K3, report ghi giờ chạy (chồng thời gian với K3); §5 R1 qua cũng trình User. Trong lúc chờ: sẵn sàng review K3.
+**C47 xong 08:57 27/10/2026** (đối chiếu yêu cầu ChatGPT mục tiêu sản phẩm; chỉ đọc; kết quả trong tin gửi A, không ghi file tracked).
+**Khai báo 08:57 27/10/2026 (A cho phép sau C47):** worktree `/tmp/c_r1`, nhánh cục bộ `p82-r1` từ `811d25d`; file mới `backend/experiments/phase_8_2/r1.py` (trên nhánh). 0 USD, chưa commit / push, không chạy lệnh có phí.
+**Harness R1 viết xong 09:00 27/10/2026** (`/tmp/c_r1/backend/experiments/phase_8_2/r1.py`, untracked trên `p82-r1`): kiểm 0 USD — import, tập câu 12 + 11 + 97 = dev 120, 10 + 46 = test 56, `ratio(B1, B1)` = 1, quét trùng 0. Chưa chạy lệnh có phí. Chờ B55 + A duyệt sha. Worktree giữ tới khi xong R1 (symlink `data`, `knowledge-base-hue` gỡ trước commit).
+**C48 (A giao 09:01 27/10/2026) — khai báo file:** private `data/cai_tien_tung_khau_2026-10-26/c48/` (script + kết quả theo câu); report `report_agent/2026-10-26_cai_tien_tung_khau/c48_so_trong_cau_tra_loi.md` (mới, working tree chung, không commit). 0 USD, chỉ B1 dev, không test từng câu / câu kín.
 
 ## Còn treo (phiên sau xử lý trước)
 
