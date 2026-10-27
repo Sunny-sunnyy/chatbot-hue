@@ -34,18 +34,20 @@ Không có blocker hoặc major.
 
 - **Vị trí:** report §3 dòng 64: `python /tmp/b75_recount.py`. Trong khi đó đã có `data/phase_8_1/tools/recount_gold_v2.py` (sha `aad629632518`).
 - **Tiêu chí đóng:** đổi đường dẫn trong report sang script đã lưu (hoặc ghi rõ hai cái là một).
+- **Đã sửa 27/10 (C62):** report §3 trỏ `data/phase_8_1/tools/recount_gold_v2.py`.
 
 ### m-3 — lệnh dựng v2 trong report chạy bằng `python3` hệ thống
 
 - **Vị trí:** report §3: `python3 data/phase_8_1/tools/build_gold_v2.py`. Lệch `Session_Prompt.md` §10 (mọi lệnh Python của dự án qua `uv run`, kể cả script chỉ đọc — bẫy C36 26/10).
 - **Tác động:** không đổi kết quả (C kiểm v2 độc lập ở mục 4).
 - **Tiêu chí đóng:** ghi lệnh `uv run python …` cho lần sau; không cần chạy lại.
+- **Đã sửa 27/10 (C62):** report §3 ghi `uv run python data/phase_8_1/tools/build_gold_v2.py`.
 
 ## 3. Cách người kiểm chạy lại thật
 
 0 USD, chỉ đọc. Từ `backend/` working tree chính:
 - `uv run python` inline so `gold_v2.jsonl` với `gold_draft.jsonl` và `proposal.jsonl` (không có trường `proposal`) theo từng câu.
-- `/tmp/c61_recount.py` (`PYTHONPATH=. HF_HUB_OFFLINE=1 uv run python …`) — **hàm đếm C tự viết**, không dùng `recount_gold_v2.py` của B: lấy payload Qdrant (`g1.load_payloads`, đọc),
+- `/tmp/c61_recount.py` (`PYTHONPATH=. HF_HUB_OFFLINE=1 uv run python …`; bản giữ lại: `data/phase_8_1/tools/c61_recount_check.py` — sửa 27/10, C62) — **hàm đếm C tự viết**, không dùng `recount_gold_v2.py` của B: lấy payload Qdrant (`g1.load_payloads`, đọc),
   đếm "đủ đoạn đúng" cho 4 cách: v1 thân đoạn / v1 + tiêu đề / v2 thân đoạn / v2 + tiêu đề, trên context và top-10 của 5 lượt; kiểm chuỗi `quote` = văn bản file tại `[start, end)`.
 - Worktree tạm `/tmp/c61_wt` (detached `origin/gold-v2`, đã gỡ): `pytest tests/test_gold_coverage.py`; gọi chính `g1.gold_coverage` + `load_gold(GOLD_PATH)` của nhánh trên 5 lượt.
 - `sha256sum` hai file nhãn trước / sau.

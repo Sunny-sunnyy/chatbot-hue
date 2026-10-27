@@ -1,17 +1,26 @@
-# STATUS C — cập nhật 2026-10-27 13:26 (KẾT PHIÊN 27/10 — User khởi động lại A / B / C, phiên sau làm tiếp)
+# STATUS C — cập nhật 13:57 27/10/2026 (C62 xong, chờ A review; sau đó review B71)
 
-Terminal: `hue-rag-5b` (27/10; tên đổi mỗi lần mở — dùng `ListAgents`) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-5f`, B = `hue-rag-31` (trực tiếp).
-User 08:41 27/10: C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
+Terminal: `hue-rag-86` (phiên mới 13:40 27/10; trước `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi. B = `hue-rag-2d` (B tự báo), A = `hue-rag-51` (A xác nhận) — trực tiếp.
+User 13:45 27/10/2026 (phiên mới, nhắc lại 08:41 27/10): C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
 STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show c81e45e:session_prompt/sessions/STATUS_C.md`.
 
 ## Đang làm
 
-- **Không.** Mọi việc A giao phiên này đã xong và đã review (C46–C61).
+- **C62** (A giao 13:50 27/10, `CURRENT_HANDOFF.md` "Việc đang mở" → C62): sửa guide / report cũ cho khớp hiện trạng 27/10; 0 USD; không commit (A review diff). **Xong 13:57 27/10/2026, chờ A review.** Sau đó review B71.
+  1. guide 8 "Hiện hành": 8.2 đang chạy, Bước 2 đóng 27/10, B1 chờ B0, chatbot context 5.
+  2. guide 6 "Hiện hành": dòng `chat_metrics` kèm `file:dòng` (gồm: 422 do FastAPI trả trước route **không** có dòng log — đúng plan C59). `full_corpus_rag.md` không có mục API / log ⇒ không thêm.
+  3. `full_corpus_rag.md` bước 4b: "B-06" ⇒ lời + `file:dòng` (hằng tên collection / sparse state; API không truyền).
+  4. `gold_v2_{implementation,review}.md`: lệnh `uv run python`, script đã lưu, ghi "(sửa 27/10, C62)".
+  5. `validate_gold.py`: cảnh báo đầu file + `SystemExit` nếu `gold_draft.jsonl` đã có (không chạy; sha `eae810477b63` → `0f55b2a62dc0`; `gold_draft` vẫn `bab707b9ab22`).
+  6. guide 5 `:65` đã ghi MiniLM gỡ 26/10 — khớp code (`retrieval/full_corpus.py:657`, `core/settings_loader.py:36`).
+  Kiểm: `git diff --check` sạch; quét trùng 5 file 0 trùng.
 
-## Đang khai báo sửa
+## Đang khai báo sửa (C62, từ 13:52 27/10/2026)
 
-- **Không.** Không có worktree, server hay file `/tmp` nào của C còn lại (đã gỡ `/tmp/c_r1`, `/tmp/c_lat`, `/tmp/c_c59`, `/tmp/c61_wt`; xóa script tạm `/tmp/c4*`–`/tmp/c61*`,
-  `/tmp/c46mod`; bản giữ lại nằm trong `data/`). Các `/tmp/c_b*`, `/tmp/c_ui*`, `/tmp/c_kc`… **không phải của phiên này** — không đụng. 4 worktree trong `~/.gemini/…` là của AGY.
+- `guides/phase_8_benchmark_model_selection.md`, `guides/phase_6_generation_api.md`, `guides/full_corpus_rag.md`
+- `report_agent/2026-10-26_cai_tien_tung_khau/gold_v2_implementation.md`, `report_agent/2026-10-26_cai_tien_tung_khau/gold_v2_review.md`
+- `data/phase_8_1/tools/validate_gold.py` (private; không chạy)
+- Chỉ đọc: `guides/phase_5_retrieval_profiles_reranking.md`, code `backend/`.
 
 ## Nhánh của C
 

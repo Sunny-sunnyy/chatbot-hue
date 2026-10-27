@@ -5,15 +5,21 @@
 
 ## Hiện hành
 
-Cập nhật 2026-10-25. Nguồn: `session_prompt/Project_Status.md` §2, §3, §5.
+Cập nhật 2026-10-27 (C62; trước: 2026-10-25). Nguồn: `session_prompt/Project_Status.md` §2, §3, §5.
 
 - Phase 8 tách hai phần (User 2026-10-24): **8.1** rà mọi quyết định Phase 0–7 bằng thí nghiệm, không đổi chatbot; **8.2** đưa phương án
   thắng vào chatbot.
 - **8.1 — User-closed 2026-10-25:** spec `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md`; tổng hợp
   `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`. Chỉ **context 10 đoạn** thắng; giữ chunker, cách trộn + pool 30, BM25 âm tiết,
   không rerank, prompt, reasoning mặc định, validator.
-- **8.2 — tạm dừng** (User 2026-10-25, để rà code Phase 0–7 trước): spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`;
-  Bước 1 (context 10) nằm ở nhánh `p82-b1`, chưa vào `main` ⇒ chatbot vẫn context 5.
+- **8.2 — đang chạy** (dừng 2026-10-25 để rà code Phase 0–7, chạy lại tối 2026-10-26): spec
+  `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` (bản A duyệt `cd910c4c4169`, gồm §10 "Sửa đổi 26/10").
+  - Bước 1 (context 10 + NFC) nằm ở nhánh `p82-b1`, chưa vào `main`; chỉ merge sau **B0** (User đọc cặp câu trả lời mù — chưa làm) ⇒ chatbot vẫn
+    context 5.
+  - Bước 2 = đợt cải tiến từng khâu (khâu tìm + khâu trả lời, không ghi Qdrant), **đóng 2026-10-27** (User chọn "chốt đợt"): không biến thể nào vào
+    chatbot. K1, K3, K3b-n, R1, R2 kém hơn; K3b-m (luna chọn 10 / 30 đoạn) tầng tìm tốt hơn (tạm) nhưng khâu trả lời kém hơn theo luật ⇒ gác làm hồ
+    sơ; R3, K2, E2 NOT RUN. Tổng hợp `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`.
+  - Bước tiếp: B0 ⇒ merge B1 ⇒ mốc cuối (câu kín) ⇒ đóng 8.2.
 - **Model sinh:** giữ `gpt-6-luna`, không so model sinh ở Phase 8 (User 2026-10-24) — thay lifecycle 2026-10-01 bên dưới (so `qwen/qwen3.5-9b`).
 - **Dense:** chỉ e5-small (đang chạy) + Qwen3-Embedding-8B (có trong code, **chưa có index**). Rerank đã thử ở 8.1 G4 trên GPU, chưa đưa vào.
 - Thước đo dùng chung: mục "Hiện hành" của [`phase_7_retrieval_answer_evaluation.md`](phase_7_retrieval_answer_evaluation.md).

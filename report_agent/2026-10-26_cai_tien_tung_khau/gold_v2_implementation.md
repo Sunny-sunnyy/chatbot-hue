@@ -58,11 +58,15 @@ Report public tả câu ở mức loại câu (W26), không nêu chủ đề hay
 ## 3. Cách đã chạy thật (0 USD)
 
 ```bash
-python3 data/phase_8_1/tools/build_gold_v2.py           # dựng + kiểm v2 (chỉ đọc kho), từ chối ghi đè
-cd /tmp/b_gold/backend
+uv run python data/phase_8_1/tools/build_gold_v2.py     # dựng + kiểm v2 (chỉ đọc kho), từ chối ghi đè
+cd /tmp/b_gold/backend                                    # worktree tạm nhánh gold-v2 (đã gỡ; nay nhánh đã vào main ⇒ chạy từ backend/)
 HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python -m pytest tests/test_gold_coverage.py -q
-PYTHONPATH=. HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python /tmp/b75_recount.py    # tính lại (Qdrant :6335 chỉ đọc)
+PYTHONPATH=. HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python /home/minhhieu/hue_rag/data/phase_8_1/tools/recount_gold_v2.py    # tính lại (Qdrant :6335 chỉ đọc)
 ```
+
+*(Sửa 27/10, C62 — review C61 m-2 / m-3: lần chạy thật dùng `python3` hệ thống cho `build_gold_v2.py` và bản tạm `/tmp/b75_recount.py`; hai lệnh
+trên là lệnh đúng cho lần sau — `uv run` và script đã lưu `data/phase_8_1/tools/recount_gold_v2.py` (sha `aad629632518`). Không chạy lại; `gold_v2.jsonl`
+đã có nên `build_gold_v2.py` sẽ từ chối chạy.)*
 
 **`validate_gold.py` không chạy:** script này không nhận đầu vào, đọc `gold_batch_*.jsonl` rồi **ghi đè `gold_draft.jsonl`**, tức file đang khóa.
 `build_gold_v2.py` kiểm v2 bằng đúng luật của nó, ở chế độ chỉ đọc:

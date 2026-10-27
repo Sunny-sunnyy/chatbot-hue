@@ -176,7 +176,11 @@ Các bước (mỗi bước có quyền trong mục việc; `Project_Status.md` 
    gì); còn sparse state cũ khác byte ⇒ build dừng ("Existing sparse state differs");
    (b) *đích mới rồi cutover* (`WORKFLOW.md` §3.4) — gọi `build_candidate(..., collection_name=…, sparse_state_path=…, record_path=…)` từ
    Python như harness 8.1 G3 đã làm, kiểm xong mới đổi runtime; hiện runtime lấy tên collection và đường sparse state từ hằng trong code
-   ⇒ cutover cần sửa code (B-06) — làm cùng lần sửa đó.
+   (`_COLLECTION_BY_CANDIDATE`, `SPARSE_STATE_PATH` ở `backend/ingestion/full_corpus_pipeline.py:55, 66-69`; API gọi
+   `build_full_corpus_retrieval_service` không truyền `collection_name` / `sparse_state_path` — `backend/api/app.py:57-62`)
+   ⇒ cutover cần sửa code để runtime đọc tên đích từ cấu hình (ý "build lại không ngừng phục vụ",
+   `report_agent/2026-10-25_ra_soat_code/ung_vien_cai_tien_B.md` mục 7 — trước ghi tắt "B-06", trùng mã với việc gom `FULL_CORPUS_BATCH_SIZE`
+   đã làm ở đợt 3; sửa chữ 27/10, C62) — làm cùng lần sửa đó.
 5. **Build:** từ `backend/`, `cd backend && uv run python -m ingestion.full_corpus_pipeline build --candidate e5-small-384` (e5 chạy CPU,
    không cần key; candidate 8B cần `--env-file ../.env` và có phí OpenRouter). Mọi lệnh chạy từ `backend/`, import trần (gói 1b, 2026-10-25).
 6. **Kiểm sau build:** summary JSON in ra (số đoạn, `corpus_identity`, `verification`); khởi động API ⇒ `/health` 200; T1 retrieval / Golden

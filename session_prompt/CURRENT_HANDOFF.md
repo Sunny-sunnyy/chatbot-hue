@@ -77,9 +77,6 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 - B70 m-1: test khóa danh sách trắng `chat_metrics` chỉ phủ trường gán **trước** điểm lỗi ngân sách context ⇒ trường lạ thêm ở phần sinh / citation chỉ cổng ổn
   định bắt (ghi bẫy hoặc thêm test đi qua generator khi có key); m-2 `dense_ms` chưa làm tròn 1 chữ số (vô hại).
 - Log `FileHandler` không xoay vòng (~400 byte / câu) — xem lại khi deploy.
-- `guides/phase_5_retrieval_profiles_reranking.md:65` còn nhắc MiniLM (lịch sử — xem có cần ghi "đã gỡ 26/10"); `guides/full_corpus_rag.md` bước 4b dùng mã B-06 khác nghĩa (C ghi).
-- `validate_gold.py` không nhận đầu vào / ghi đè `gold_draft` — thêm tham số vào / ra hoặc cảnh báo đầu file (B69 đề xuất).
-- Một số report trên nhánh `gold-v2` (đã merge) trỏ `/tmp/b75_recount.py` (đã xóa; bản giữ ở `data/phase_8_1/tools/recount_gold_v2.py`) và lệnh `python3` (C61 m-2 / m-3).
 - Sổ cải tiến: theo dõi W24–W26 (`đang thử` từ 27/10); `CURRENT_HANDOFF` nên ≤ ~150 dòng.
 
 ## Session
@@ -167,6 +164,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   5. `data/phase_8_1/tools/validate_gold.py` (private): cảnh báo đầu file + dừng nếu `gold_draft.jsonl` đã có (không ghi đè file G0.6 khóa) — không chạy script.
   6. Xác nhận `guides/phase_5_retrieval_profiles_reranking.md:65` đã ghi MiniLM gỡ 26/10 (A thấy đã có) ⇒ A gỡ mục khỏi "Câu hỏi A còn nợ".
 - **Không làm:** sửa code backend; sửa governance; chọn một phía khi guide ↔ code mâu thuẫn (báo A). **Xong:** nhắn A (danh sách file + diff stat); rồi review B71.
+- **Trạng thái (13:59 27/10/2026, A): XONG** — A review đạt (đối chiếu 3 chỗ `file:dòng` guide 6 với code; `gold_draft` vẫn `bab707b9ab22`), commit. Trước: 13:57 C chờ review — 5 file tracked (chưa commit) + `validate_gold.py` private (diff `data/phase_8_1/tools/validate_gold_c62.diff`); chi tiết `STATUS_C.md`.
 - Không ai: chạy thí nghiệm mới, mở câu kín, chạy `validate_gold.py`.
 
 ### Hồ sơ thí nghiệm 8.2 (đã đóng — chỉ tra cứu)

@@ -74,6 +74,24 @@ Contract full-corpus hiện hành:
   module nạp hai lần, index cũ lúc khởi động ra 503 thay vì 409, lỗi Qdrant lúc hỏi ra 500 thay vì 503, và lỗi nạp model tìm kiếm bị gắn
   chung lớp với "index cũ" (B-01 / C-01);
 - `/health` trả `{"status": "ok" | "degraded", "components": {app, qdrant, retrieval, tokenizer, generator}}` (HTTP 200 cả khi `degraded`) (`backend/api/health.py`);
+- **log số đo mỗi câu** (từ 2026-10-27, merge `5100b90`, plan C59; đối chiếu code 27/10, C62): mỗi lần route `/api/chat` chạy ghi **đúng một dòng**
+  `chat_metrics {json}` mức INFO vào logger `chat`, trong khối `finally` nên mọi nhánh — kể cả exception đi tới handler 500 — đều có một dòng
+  (`backend/api/routes/chat.py:61-83`). Ngoại lệ có chủ ý (plan C59): yêu cầu sai dạng / rỗng / quá 500 ký tự bị FastAPI trả 422 **trước** khi
+  route chạy ⇒ không có dòng `chat_metrics`, chỉ có dòng `Invalid API request` của logger `api` (`backend/api/app.py:147-150`). Logger
+  `chat` ra console và `backend/logs/application.log` (`backend/config/logging.yaml:68-71`; handler `file` là `logging.FileHandler`, không xoay
+  vòng, `:16-20`; đường file đặt ở `backend/core/logging_setup.py:13-19`; `logs/` nằm trong `.gitignore`).
+  - Trường cố định `METRIC_FIELDS` (`chat.py:26-29`): `outcome`, `status_code`, `refusal`, `model`, `input_tokens`, `output_tokens`,
+    `reasoning_tokens` (nằm trong `output_tokens`, lấy từ `usage.output_tokens_details` — `backend/llm/generator_openai_full_corpus.py:204`),
+    `n_context_sources`, `n_cited_sources`, `search_ms`, `dense_ms` (lấy từ trace tìm kiếm, `chat.py:111`), `context_ms`, `generation_ms`,
+    `citation_ms`, `total_ms`. Bước chưa chạy tới thì trường là `null`. Các trường `*_ms` làm tròn 1 chữ số (`chat.py:32-33`), riêng `dense_ms`
+    giữ 3 chữ số như trace (`backend/retrieval/full_corpus.py:449`). Không có trường USD — tính từ token × giá.
+  - `outcome`: `success`; `refusal_no_sources` (không có nguồn ⇒ trả câu từ chối chuẩn, không gọi model, `chat.py:142`); `generation_failed`
+    (đã gọi model rồi lỗi, HTTP 502, `chat.py:159`); `internal_error` (exception, 500, `chat.py:78-80`); lỗi khác lấy đúng `code` của phản hồi lỗi
+    ở bảng trên (`chat.py:68-71`). `refusal` (chỉ khi HTTP 200) = câu trả lời đúng bằng câu từ chối chuẩn (`chat.py:74`).
+  - **Không ghi** câu hỏi, câu trả lời, nội dung nguồn, `chunk_id`, `response_id` hay thông điệp lỗi (`chat.py:24-25`); test
+    `backend/tests/test_api_chat.py::test_real_first_chunk_budget_error_has_no_partial_answer` khóa đúng tập trường và kiểm log không chứa câu hỏi.
+    Các log khác của route chỉ là câu lỗi cố định, không kèm câu hỏi (`chat.py:113, 160, 182`). Mục "Backend logging contract" (lịch sử, bên dưới)
+    cho phép log nguyên văn câu hỏi — runtime hiện **không** làm vậy;
 - chỉ hỗ trợ hành vi người dùng tiếng Việt; không thêm language detector;
 - không mock/fake/stub. Acceptance dùng corpus, Qdrant, tokenizer, model và API
   thật; bounded live evidence có đúng bốn answer calls qua route HTTP, không tự
