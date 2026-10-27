@@ -24,7 +24,7 @@ trước khi viết lại (có từng mục B71–B76 / C62–C68): `git show 3d
    không nhận `[Nguồn n]`" mỗi bên (C65). ⇒ `TONG_HOP` 8.2 ⇒ User đóng 8.2.
 4. **Đợt sửa kho + build lại index** (phần tồn cuối): spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` — **User DUYỆT sha
    `937cf8969810` (15:39 27/10/2026)** sau C68 3 vòng (`..._design_review.md`); trần 0,15 USD. Chạy theo §5 **sau khi đóng 8.2**: bước 0 (bộ "trước" 176 câu + plan đo
-   có review) **trước** khi đụng kho; bước 2–6 làm liền; gold v4 + Golden sửa từng mục User duyệt. Dữ liệu private `data/sua_kho_2026-10-27/` (README mục lục).
+   có review) **trước** khi đụng kho; bước 2–6 làm liền; gold v4 + Golden sửa từng mục User duyệt; kết quả ChatGPT 78 mục: WebFetch đối chiếu URL trước khi áp (đợt 2). Dữ liệu private `data/sua_kho_2026-10-27/` (README mục lục).
 5. **Thí nghiệm Qwen3-8B** (User 15:1x: đo, không bỏ) sau đợt sửa kho — collection riêng, tầng tìm theo gold v4 trước; plan `run-experiment` + review.
 6. **Tính năng mới** (chỉ mới bàn): streaming trước (A chọn — User "làm gì cũng được"), rồi hội thoại nhiều lượt. Căn cứ C63 `data/tinh_nang_moi_2026-10-27/c63_can_cu.md`:
    quyết định cũ "không streaming khi chưa có nhu cầu thật" (25/08, 11/09); streaming không rút phần suy luận + ~1,2 s ⇒ **đo "thời gian tới chữ đầu tiên" trước**

@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
-# Tìm trong NỘI DUNG kho tri thức mà không lọt vào bộ đánh giá / câu kín / ghi chép meta.
+# Tìm trong NỘI DUNG kho tri thức mà không lọt vào bộ đánh giá / câu kín / ghi chép meta / bản thô.
 # Vì sao: 25/10 và 27/10 grep -r thẳng vào knowledge-base-hue/ đọc lọt evaluation/ (câu kín, Golden Foods cũ) và meta/
 # (sổ cải tiến W27, Session_Prompt.md §5 "giữ mù"). Brief sub-agent: tìm trong kho CHỈ qua script này.
-# Dùng: scripts/grep_kb.sh [cờ grep…] <mẫu> [thư mục con của kho, mặc định cả kho]
-#   ví dụ: scripts/grep_kb.sh -n "Phú Xuân" foods
+# Dùng: scripts/grep_kb.sh [--dir <thư mục con của kho>] [cờ grep…] <mẫu>
+#   ví dụ: scripts/grep_kb.sh --dir foods -n "Phú Xuân"
+# Luôn quét trong kho (đích kiểm bằng realpath), loại evaluation/, meta/, _source-dumps/, *sealed*.
 set -euo pipefail
 KB="$(cd "$(dirname "$0")/.." && pwd)/knowledge-base-hue"
-args=("$@")
 target="$KB"
-if [ ${#args[@]} -ge 2 ] && [ -d "$KB/${args[-1]}" ]; then
-  target="$KB/${args[-1]}"
-  unset 'args[-1]'
+if [ "${1:-}" = "--dir" ]; then
+  [ $# -ge 2 ] || { echo "grep_kb: --dir cần tên thư mục con" >&2; exit 2; }
+  target="$(realpath -e -- "$KB/$2")"
+  case "$target/" in "$KB"/*) ;; *) echo "grep_kb: đích ngoài kho: $2" >&2; exit 2 ;; esac
+  shift 2
 fi
-exec grep -r --exclude-dir=evaluation --exclude-dir=meta --exclude='*sealed*' "${args[@]}" "$target"
+[ $# -ge 1 ] || { echo "grep_kb: thiếu mẫu tìm" >&2; exit 2; }
+exec grep -r --exclude-dir=evaluation --exclude-dir=meta --exclude-dir=_source-dumps --exclude='*sealed*' "$@" -- "$target"
