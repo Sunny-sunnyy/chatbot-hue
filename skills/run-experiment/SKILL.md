@@ -26,7 +26,7 @@ Kế hoạch có mục **"Căn cứ để review"** và được một session k
      latency p95, USD/câu tính đầu–cuối gồm cả rerank + sinh);
    - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết).
    Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
-   một hành vi production thì trỏ `file:dòng` hành vi đó (ví dụ API 500: `api/routes/chat.py` bắt **mọi**
+   một hành vi production thì trỏ `file:dòng` hành vi đó (ví dụ API 500: `backend/api/routes/chat.py:127-135` bắt **mọi**
    `CitationIntegrityError`), và kiểm hai dòng tiêu chí không đếm cùng một lỗi (27/10: mức tụt citation chồng sàn 500
    qua 3 plan). Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.
@@ -46,7 +46,7 @@ unchanged: [corpus, chunker, embedding, retrieval, prompt, model, judge]   # tr�
 data: {split: knowledge-base-hue/evaluation/phase_8_1/split.json, group: dev, n: null}   # dev chọn, test xác nhận
 metrics:   # mỗi dòng: tên, hàm tính, chiều tốt, vai trò, ngưỡng, nhiễu (nguồn số)
   - {name: <đoạn đúng trong 5 đoạn>, fn: <module.hàm>, better: up, role: decide, noise: 0 (tất định)}
-  - {name: <out_of_scope từ chối đúng>, better: up, role: floor, floor: <18/18>}
+  - {name: <out_of_scope từ chối đúng>, better: up, role: floor, floor: <18/18>, src: <file:dòng hành vi production nếu có>}
   - {name: <lỗi citation>, better: down, role: tolerance, max_worse: <+k câu>, noise: <từ A/A>}
   - {name: <latency p95 CPU>, better: down, role: watch}
 result: {paired_delta: null, ci95: null, wins_ties_losses: null}
@@ -61,7 +61,8 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 - Có **đoạn đúng** (vị trí trong file nguồn) thì đo theo đoạn đúng; keyword chỉ là metric phụ, vì đoạn to tự
   làm keyword coverage tăng. So các cách chia đoạn với **cùng ngân sách token context**.
 - Nhãn đoạn đúng có thể chỉ đánh dấu **một chỗ** cho mỗi thông tin (kho nói lại ở chỗ khác) ⇒ `*_gold_frac` = 0 không có
-  nghĩa context không có thông tin. Đưa **câu cụ thể** lên sàn ⇒ đọc nội dung đoạn trước (27/10: sàn câu 120 dừng oan một lượt).
+  nghĩa context không có thông tin. Đưa **câu cụ thể** lên sàn ⇒ đọc trước các đoạn có thông tin của câu đó, trong context và trong kho (27/10: sàn câu 120
+  dừng oan một lượt).
 - Thử nhanh/pilot: ≤ 20 câu chọn bằng máy, seed ghi trước; chạy đủ nhóm khi đáng. Số pilot không gộp vào số
   của cả bộ.
 - **Kiểm người chấm** trước khi chấm hàng loạt bằng judge / rubric / model id mới (kể cả khi Claude Code tự
@@ -95,7 +96,9 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 7. Lỗi provider, mạng hay GPU là kết quả quan sát được. Ghi lại, không che bằng fallback.
 8. Harness ghi kết quả **từ chối ghi đè** file đã có (`raise SystemExit('exists')`) — đặt nhầm tên lượt không được đè
    mốc cũ (26/10: hai harness thiếu chặn). Harness **ghi từng dòng ngay** (append) và luôn ghi meta kể cả khi lỗi; mỗi lần
-   gọi trả phí bắt mọi lỗi của lần đó thành dòng lỗi kèm usage. Tiền phải ước thì dùng token thật của **đúng** các câu bị ảnh
+   gọi trả phí bắt mọi lỗi của lần đó thành dòng lỗi kèm usage — SDK có thể ném lỗi khi parse (ví dụ `responses.parse`) ⇒ gọi bản
+   không parse (`responses.create`), ghi usage trước rồi tự parse; không lấy được thì ghi `usage: null`. Bắt lỗi xong thì theo điều kiện dừng của
+   plan, không retry / fallback. Tiền phải ước thì dùng token thật của **đúng** các câu bị ảnh
    hưởng, ghi cả cận trên (27/10: một exception làm mất usage cả lượt; ước theo pilot bị thấp).
 
 ## 4. Kết luận
