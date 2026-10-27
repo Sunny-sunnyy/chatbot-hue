@@ -75,7 +75,9 @@ report.
   `gửi chatgpt/` là private: không commit, report tracked không chép nội dung,
   câu hỏi Golden, vector hay payload. Repo GitHub là **public**: số liệu, đường dẫn,
   sự cố của dự án khác của User chỉ ghi ở `data/` (file tracked chỉ nói "một dự án
-  khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được.
+  khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được. Report tracked tả câu dev / test ở **mức loại
+  câu** (so sánh, giá, nhiều nguồn…), không nêu chủ đề cụ thể (tên nơi, món, loại giá, tên thông tin) cạnh `case_index` —
+  hook chỉ bắt chép nguyên văn ≥ 40 ký tự (27/10: ≥ 4 lần).
 - **Câu kín** (`*sealed*`): chỉ mở khi việc giao rõ cho đúng session / sub-agent đó;
   người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User quyết.
   Giữ mù (25/10: 2 lần lộ một phần) — áp cho mọi session / sub-agent chưa được giao mở câu kín: báo cáo về việc câu kín

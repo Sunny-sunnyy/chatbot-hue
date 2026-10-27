@@ -50,7 +50,9 @@ sau**; **hiệu suất = tiền + tốc độ**; **đo theo mục tiêu sản ph
 - **B65 xong** (`b65_latency_dau_cuoi.md`): e2e thật p50 / p95 — main context 5: 3,3 / 5,7 s tuần tự, 3,6 / 6,2 s đồng thời 4; B1 context 10: 3,1 / 6,0 s, 3,4 / 6,4 s;
   chênh cặp không thấy khác; 0 lỗi, OOS 2 / 2; ≈ 0,016 USD (ước, API không trả usage). C57 review ready sau sửa (11:52 27/10/2026): K3b-m thêm chọn đoạn ≈ 4,6–5 s p50
   (đo trực tiếp) ⇒ ước ≈ 8 s p50 qua API (suy ra); **bản đang chạy p95 qua API 5,7–6,2 s — đã vượt mức theo dõi 5 s** (khâu sinh chiếm phần lớn).
-- Vòng cải tiến 7: W24–W26 đề xuất (`SO_CAI_TIEN_CACH_LAM.md`) — chờ User.
+- **User duyệt 13:05 27/10/2026:** C59 (log token + thời gian) ⇒ **C60** code nhánh `c59-log` (C commit + push nhánh) ⇒ B review ⇒ A merge + cổng ổn định; nhãn C56 + đếm
+  tiêu đề mục ⇒ **B69** `gold_v2.jsonl` (không ghi đè `gold_draft` — G0.6 khóa sha) + `g1_retrieval.py` nhánh `gold-v2` (B commit + push nhánh) ⇒ C review;
+  W24–W26 ⇒ A áp (`run-experiment` §1.3, §2, §3.8; `Session_Prompt.md` §5) ⇒ người khác kiểm.
 - **C58 xong** (`c58_latency_theo_khau.md`, B67 ready sau sửa nhãn; 0,0075 USD): gọi model ≈ 98 % thời gian chờ — đã chứng minh khoảng dư ở bước sinh, không ở
   HTTP / tìm / ngữ cảnh / citation; giải thích được bằng token ra (≈ 11,5 ms / token, r 0,97), chưa can thiệp. Không có chỗ thừa ở đường API.
 - **C59 plan** log token + thời gian theo khâu mỗi câu ở `/api/chat`: bản 2 **`7f1456a1ae55`** (B68 vòng 1 changes_requested ⇒ vòng 2 **ready** 12:19 27/10/2026; m-4, m-5 ghi khi code);

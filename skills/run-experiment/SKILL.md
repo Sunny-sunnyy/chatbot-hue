@@ -25,8 +25,10 @@ Kế hoạch có mục **"Căn cứ để review"** và được một session k
    - **mức tụt cho phép** của từng chỉ số còn lại, ghi bằng **số câu** khi bộ nhỏ (lỗi citation, từ chối nhầm,
      latency p95, USD/câu tính đầu–cuối gồm cả rerank + sinh);
    - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết).
-   Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Không đổi
-   tiêu chí sau khi thấy số.
+   Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
+   một hành vi production thì trỏ `file:dòng` hành vi đó (ví dụ API 500: `api/routes/chat.py` bắt **mọi**
+   `CitationIntegrityError`), và kiểm hai dòng tiêu chí không đếm cùng một lỗi (27/10: mức tụt citation chồng sàn 500
+   qua 3 plan). Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.
 5. **Trần:** tiền API ghi trong việc (ước USD trước, User nhạy chi phí), thời gian, một việc nặng GPU một lúc
    (GTX 1650 4 GB: một model rerank/embedding một lúc).
@@ -58,6 +60,8 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 - Nhóm đã dùng để quyết thì từ đó chỉ là bộ hồi quy. Ghi rõ trong report bộ nào **đã thấy**, bộ nào **kín**.
 - Có **đoạn đúng** (vị trí trong file nguồn) thì đo theo đoạn đúng; keyword chỉ là metric phụ, vì đoạn to tự
   làm keyword coverage tăng. So các cách chia đoạn với **cùng ngân sách token context**.
+- Nhãn đoạn đúng có thể chỉ đánh dấu **một chỗ** cho mỗi thông tin (kho nói lại ở chỗ khác) ⇒ `*_gold_frac` = 0 không có
+  nghĩa context không có thông tin. Đưa **câu cụ thể** lên sàn ⇒ đọc nội dung đoạn trước (27/10: sàn câu 120 dừng oan một lượt).
 - Thử nhanh/pilot: ≤ 20 câu chọn bằng máy, seed ghi trước; chạy đủ nhóm khi đáng. Số pilot không gộp vào số
   của cả bộ.
 - **Kiểm người chấm** trước khi chấm hàng loạt bằng judge / rubric / model id mới (kể cả khi Claude Code tự
@@ -90,7 +94,9 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
    chấm lại baseline.
 7. Lỗi provider, mạng hay GPU là kết quả quan sát được. Ghi lại, không che bằng fallback.
 8. Harness ghi kết quả **từ chối ghi đè** file đã có (`raise SystemExit('exists')`) — đặt nhầm tên lượt không được đè
-   mốc cũ (26/10: hai harness thiếu chặn).
+   mốc cũ (26/10: hai harness thiếu chặn). Harness **ghi từng dòng ngay** (append) và luôn ghi meta kể cả khi lỗi; mỗi lần
+   gọi trả phí bắt mọi lỗi của lần đó thành dòng lỗi kèm usage. Tiền phải ước thì dùng token thật của **đúng** các câu bị ảnh
+   hưởng, ghi cả cận trên (27/10: một exception làm mất usage cả lượt; ước theo pilot bị thấp).
 
 ## 4. Kết luận
 

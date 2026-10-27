@@ -73,6 +73,11 @@
 - **B73 xong (12:11 27/10/2026; A gọi B68):** review plan C59 = changes_requested (0/2/3): M-1 outcome gắn cứng sai ở 409 `corpus_reingest_required`; M-2 lỗi 500 `internal_error` không có dòng + 9 chỗ dễ sót ⇒ đề xuất một điểm ghi `finally`; m-1 test lọt nội dung ở nhánh nông; m-2 khóa whitelist; m-3 đếm dòng mới. B1 không xung đột. File `c59_log_token_plan_review.md` (A commit).
 - **B74 xong (12:18 27/10/2026):** kiểm plan C59 bản 2 (`7f1456a1ae55`) — mục "Vòng 2" trong `c59_log_token_plan_review.md` (sha `fc46ee323932`): **ready**; M-1, M-2,
   m-1..m-3 đóng; (a) wrapper giữ hành vi + handler 500; m-4 đoạn suy outcome trong `try` không được đổi phản hồi; m-5 gán outcome tại nhánh thay vì suy từ generation_ms.
+- **Trạng thái 12:20 27/10/2026: B rảnh có lý do** — mọi việc A giao đã xong (A commit tới `2ddd65d`); chờ User ~13:00 (duyệt C59, nhãn C56, W24–W26, B0).
+  Không worktree `/tmp/b_*` nào của B, không server, không lượt paid đang chạy.
+- **B75 (đang làm, từ 13:05 27/10/2026; A gọi B69):** nhãn gold v2 + hàm đếm tính tiêu đề mục, 0 USD. Nhánh `gold-v2` từ `main` `2ddd65d`, worktree `/tmp/b_gold`.
+  **File khai báo sửa:** `data/phase_8_1/gold/gold_v2.jsonl`, `gold_v2_CHANGES.md` (mới, private); `backend/experiments/phase_8_1/g1_retrieval.py`; test mới
+  `backend/tests/test_gold_coverage.py`; report `report_agent/2026-10-26_cai_tien_tung_khau/gold_v2_implementation.md` (trên nhánh). Không đụng `api/`, `llm/`.
 - **File đang khai báo sửa: không.** Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
   + ước lượt n mất usage **≈ 0,0087 (cận trên ≈ 0,0142)** — tính lại 27/10 từ token vào thật của đúng 30 câu (`m_l1_rest`; số cũ 0,0074 / 0,0105 lấy
   giá / lần của pilot nên thấp) ⇒ ≈ 0,168 (≤ 0,174) USD; + B65 ≈ 0,0155 (ước) ⇒ **≈ 0,184 (≤ 0,190) USD**.
