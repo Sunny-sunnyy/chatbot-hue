@@ -46,7 +46,9 @@ sản phẩm kinh doanh thật; người dùng = User, du khách, người dân.
    `muc_tieu_san_pham_2026_10_27.md` (thời gian chờ tối đa, tiền / câu, thứ tự lỗi). Kết quả ⇒ `gửi chatgpt/2026-10-27/kết quả nghiên cứu/`.
 5. **Thứ tự lỗi nặng → nhẹ** (trên) — đồng ý? ⇒ "nói chắc sai" thành sàn cho các lần đo sau.
 6. **Xóa nhánh đã merge** (auto mode chặn A): `! git push origin --delete c59-log gold-v2 && git branch -d c59-log gold-v2`.
-7. (Không gấp) Hướng K3b-m (hồ sơ — mở lại khi muốn luật nhận riêng cho biến thể đổi context); usage OpenAI 27/10 09:30–09:31, 11:38–11:44 (thay số ước);
+7. **Hội thoại nhiều lượt — lưu câu hỏi người dùng?** Hướng 25/08 (server giữ hội thoại) trái chính sách hiện tại "log không ghi câu hỏi" (`chat.py:24-25`).
+   Hỏi khi bàn spec tính năng; A sẽ đưa phương án (lưu trong bộ nhớ phiên, không ghi đĩa / lưu có hạn / chỉ phía trình duyệt).
+8. (Không gấp) Hướng K3b-m (hồ sơ — mở lại khi muốn luật nhận riêng cho biến thể đổi context); usage OpenAI 27/10 09:30–09:31, 11:38–11:44 (thay số ước);
    tên dự án khác trong lịch sử git — để nguyên.
 
 ## Câu hỏi A còn nợ (phiên sau A xử lý, không cần User)
@@ -64,7 +66,8 @@ sản phẩm kinh doanh thật; người dùng = User, du khách, người dân.
 | C — thực thi | `hue-rag-86` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | C62–C68 xong (C68 3 vòng ⇒ spec ready) | `STATUS_C.md`; ≈ 0,000832 USD |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
-**B / C lúc mở phiên sau:** chưa có mục việc — rảnh vì mọi việc 0 USD còn lại chờ B0 / User (WORKFLOW §9.2); A giao việc mới (nếu có) sau khi hỏi quyền.
+**B / C lúc mở phiên sau:** chưa có mục việc đang chạy. Mở phiên ⇒ kiểm nhanh ⇒ báo A ⇒ chờ. Việc A dự định giao (sau khi User cấp quyền) ở mục
+"Mục việc phiên sau" cuối file.
 
 ## Quyền
 
@@ -112,3 +115,15 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
 `p82-r2`. Phiên 27/10 chiều: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` §3.
+
+### Mục việc phiên sau (A giao sau khi User cấp quyền; mọi việc dưới là 0 USD trừ khi ghi)
+
+- **Khi chờ B0 (song song, không chồng file):**
+  - **B:** viết plan đo "trước ↔ sau" đợt sửa kho (spec `937cf8969810` §5 bước 0 + §6; khuôn `run-experiment` §1, mục "Căn cứ để review"; harness ghi từng dòng; A/A = 2
+    nguồn B1 ↔ G2.1a) ⇒ C review ⇒ A duyệt sha. Chưa chạy (bộ "trước" chạy trên chatbot sau merge B1).
+  - **C:** viết plan đo "thời gian tới chữ đầu tiên" cho streaming (~10 câu tự viết, `Runner.run_streamed` hoặc stream SDK OpenAI, đo cả thời gian suy luận; ≈ 0,002 USD
+    khi chạy; căn cứ `data/tinh_nang_moi_2026-10-27/c63_can_cu.md`) ⇒ B review ⇒ A duyệt sha; chạy sau merge B1 (context 10).
+- **Sau B0:** A tóm nhãn (sub-agent mới) + luật dừng ⇒ A merge `p82-b1` (hoặc B rebase lại nếu `main` xung đột) ⇒ cổng ổn định ⇒ 5 chỗ báo cáo; C kiểm.
+- **B3:** B chạy theo plan `27e75be5ed44` khi User quyết mở câu kín; C kiểm report (giữ mù); A viết `TONG_HOP` 8.2 ⇒ User đóng 8.2.
+- **Đợt sửa kho:** B chạy bước 0 + áp sửa (bước 1–6), C review diff + kiểm chunk / build; bước 7–9 theo spec. Trần 0,15 USD.
+- **A:** brainstorm spec tính năng (streaming trước) với User sau khi có số "chữ đầu tiên"; đọc kết quả ChatGPT khi User gửi (WebFetch đối chiếu URL).
