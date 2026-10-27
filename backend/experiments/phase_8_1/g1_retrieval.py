@@ -16,6 +16,7 @@ import random
 import re
 import statistics
 import unicodedata
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -40,7 +41,9 @@ from reranking.cross_encoder import CrossEncoderReranker
 from retrieval.full_corpus import build_full_corpus_retrieval_service, build_retrieved_document
 
 SPLIT_PATH = REPO_ROOT / "knowledge-base-hue/evaluation/phase_8_1/split.json"
-GOLD_PATH = REPO_ROOT / "data/phase_8_1/gold/gold_draft.jsonl"
+KB_ROOT = REPO_ROOT / "knowledge-base-hue"
+# Nhãn đoạn đúng bản 2 (User duyệt 27/10, C56): bản 1 `gold_draft.jsonl` (sha bab707b9ab22) giữ nguyên vì manifest G0.6 khóa nó.
+GOLD_PATH = REPO_ROOT / "data/phase_8_1/gold/gold_v2.jsonl"
 OUT_DIR = REPO_ROOT / "data/phase_8_1/g1"
 REALISM_PATH = REPO_ROOT / "data/phase_8_1/golden_realism_final.jsonl"  # 2 agent độc lập + User (A, 21:58)
 ANSWERS_7B_PATH = REPO_ROOT / "data/evaluation/phase_7b/run1_answers.jsonl"
@@ -63,12 +66,27 @@ def load_gold(path: Path) -> dict[int, list[list[tuple[str, int, int]]]]:
     return gold
 
 
+@lru_cache(maxsize=None)
+def source_text(source: str) -> str:
+    """Văn bản file kho theo đúng cách nhãn tính offset (`data/phase_8_1/tools/validate_gold.py`: CRLF → LF)."""
+    return (KB_ROOT / source).read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
+
+
+def quote_is_chunk_heading(payload: dict, quote_text: str) -> bool:
+    """Trích dẫn là một dòng tiêu đề Markdown mà chunk mang trong `heading_path`: model thấy tiêu đề đó trong context dù
+    `evidence_parts` chỉ là thân đoạn (ca 143; User duyệt đếm tiêu đề mục 27/10)."""
+    return quote_text.startswith("#") and quote_text.lstrip("#").strip() in payload["heading_path"]
+
+
 def chunk_hits_quote(payload: dict, quote: tuple[str, int, int]) -> bool:
-    """Chunk trúng trích dẫn: cùng file và một evidence_part giao khoảng [start, end) của trích dẫn."""
+    """Chunk trúng trích dẫn: cùng file và (một evidence_part giao khoảng [start, end) của trích dẫn, hoặc trích dẫn là dòng tiêu đề
+    nằm trong heading_path của chunk)."""
     source, start, end = quote
-    return payload["source"] == source and any(
-        part["start"] < end and start < part["end"] for part in payload["evidence_parts"]
-    )
+    if payload["source"] != source:
+        return False
+    if any(part["start"] < end and start < part["end"] for part in payload["evidence_parts"]):
+        return True
+    return quote_is_chunk_heading(payload, source_text(source)[start:end])
 
 
 def gold_coverage(facts: list[list[tuple[str, int, int]]], payloads: list[dict]) -> dict:
