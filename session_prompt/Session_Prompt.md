@@ -82,7 +82,8 @@ report.
   người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User quyết.
   Giữ mù (25/10: 2 lần lộ một phần) — áp cho mọi session / sub-agent chưa được giao mở câu kín: báo cáo về việc câu kín
   không ghi tên file corpus mà câu dựa vào, không ghi nội dung câu (chỉ số dòng, số đếm, đúng / sai, md5); khi grep
-  **nội dung corpus** trong việc câu kín, loại `evaluation/`, `meta/`, `*sealed*`; script tạm của việc câu kín để `/tmp`
+  **nội dung corpus** (mọi việc, không chỉ câu kín) dùng `scripts/grep_kb.sh` (luôn loại `evaluation/`, `meta/`, `*sealed*`; 25/10 + 27/10: grep thẳng lọt
+  câu kín / Golden — W27); script tạm của việc câu kín để `/tmp`
   và xóa khi xong (script dùng lại để `data/<đợt>/tools/`; `rm` bị chặn ⇒ nhờ User `!`). User hỏi về câu kín ⇒ A nhắc
   User mô tả chung, không dán nguyên câu.
 - Corpus không có Git: backup file gốc vào `knowledge-base-hue/meta/` trước khi

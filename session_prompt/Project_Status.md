@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
+Last updated: `15:23 27/10/2026` (A, **phiên 27/10 chiều**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -34,8 +34,10 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (27/10 kết phiên): Phase 8.2 đang chạy** — Bước 2 (đợt cải tiến) **đóng**; chờ **B0** (User) ⇒ merge B1 (context 10 + NFC) ⇒ mốc cuối (câu kín)
-⇒ đóng 8.2 ⇒ tính năng mới. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
+**Bây giờ (27/10 chiều): Phase 8.2 đang chạy** — Bước 2 (đợt cải tiến) **đóng**; chờ **B0** (User) ⇒ merge B1 (`p82-b1` `c3d5607`, rebase lên `main` 27/10
+chiều, C review ready) ⇒ mốc cuối B3 (plan duyệt sha `27e75be5ed44`, người chạy B) ⇒ đóng 8.2 ⇒ **đợt sửa kho + build lại index** (phần tồn cuối; spec
+`docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt sha `937cf8969810`) ⇒ thí nghiệm Qwen3-8B ⇒ tính năng mới (streaming trước,
+rồi hội thoại nhiều lượt — chỉ mới bàn). Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
 `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
@@ -81,7 +83,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38). B0 chờ User; B1 ready trên `p82-b1` (merge sau B0); Bước 2 (đợt cải tiến) **đóng 27/10**: K1 / K3 / K3b-n / R1 / R2 kém hơn, K3b-m tầng tìm tốt hơn (tạm) nhưng trả lời kém hơn theo luật, R3 / K2 / E2 NOT RUN, R4 xong. Chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
+| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38). B0 chờ User; B1 ready trên `p82-b1` `c3d5607` (rebase 27/10 chiều, merge sau B0); plan B3 duyệt `27e75be5ed44`; Bước 2 (đợt cải tiến) **đóng 27/10**: K1 / K3 / K3b-n / R1 / R2 kém hơn, K3b-m tầng tìm tốt hơn (tạm) nhưng trả lời kém hơn theo luật, R3 / K2 / E2 NOT RUN, R4 xong. Chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -98,7 +100,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1
 - sparse state chung `data/full_corpus_builds/full_corpus_sparse_state.json`
   (vocabulary 5.660);
 - retrieval `dense_bm25_rrf`, reranker `none`, context tối đa 5 whole chunk;
-- **log số đo** (từ 27/10, `5100b90`): mỗi lần gọi `/api/chat` ghi một dòng `chat_metrics` (logger `chat`, `backend/logs/application.log`, gitignore):
+- **log số đo** (từ 27/10, `5100b90`; `dense_ms` làm tròn 1 chữ số từ `dfbcca5`): mỗi lần gọi `/api/chat` ghi một dòng `chat_metrics` (logger `chat`, `backend/logs/application.log`, gitignore):
   outcome, mã HTTP, từ chối, model, token vào / ra / suy luận, số nguồn, ms tìm / dense / ngữ cảnh / sinh / citation / tổng — không ghi nội dung, không ghi USD;
   latency thật 27/10 (B65): p50 3,3 s / p95 5,7 s tuần tự;
 - generation `gpt-6-luna` (OpenAI); config `backend/config/settings.yaml`
@@ -129,6 +131,11 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-27 15:3x | **Spec đợt sửa kho DUYỆT** sha `937cf8969810` (C68 3 vòng ready; chạy sau đóng 8.2; trần 0,15 USD). Vòng cải tiến 8: W27–W29 cho thử. User nhắc lại: "cứ thoải mái thử nghiệm, so sánh, đánh giá, nhận xét, ghi lại báo cáo, rồi chọn phương án phù hợp với dự án" (giữ nguyên tắc 24/10 20:49; quyền / tiền / dữ liệu vẫn theo luật) | User |
+| 2026-10-27 15:0x–15:2x | **Đợt sửa kho** (sau đóng 8.2): Q1 41 mục + tên đơn vị sót + loại file danh mục `performing_arts` + 16 câu User; Q2 tra ngoài qua ChatGPT chỉ câu ngắn; Q3 build lại tại chỗ; Q4 **Qwen3-8B = thí nghiệm sau sửa kho** (chưa từng đo); Q5 quét + sửa Golden lệch kho trước khi đo lại | User; spec sửa kho §4 |
+| 2026-10-27 15:01 | **Gold v3** (v2 + 2 câu test sửa nhãn, C64 / B74 / B75 / C) là nhãn mặc định (`fa192f8`); v2, v1 giữ | User |
+| 2026-10-27 14:15 | "Xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo" | User |
+| 2026-10-27 13:46–14:04 | Quyền phiên như 27/10 sáng; PA3 (chuẩn bị B1 + dọn nợ + **bàn** tính năng mới trước khi đóng 8.2, lệch WORKFLOW §9.4); tính năng ưu tiên: streaming, hội thoại nhiều lượt; gợi ý / lịch trình ⇒ Phase 9; deploy khi ổn định; bảo vệ ~tháng 1/2027 | User |
 | 2026-10-27 13:05 | User duyệt: `/api/chat` ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 + đếm dòng tiêu đề (merge `a819789`, `gold_draft` giữ); W24–W26 | User; `TONG_HOP.md` §7 |
 | 2026-10-27 11:0x | **Chốt đợt cải tiến từng khâu** (User chọn (1)): chatbot không đổi; K3b-m gác làm hồ sơ; bước tiếp B0 ⇒ B1 ⇒ đóng 8.2 ⇒ tính năng mới | User; `TONG_HOP.md` |
 | 2026-10-27 10:2x | Lượt answer K3b-m: câu 120 về "theo dõi" (sàn A đặt trên tiền đề nhãn chưa kiểm), chạy lại từ đầu, không sửa nhãn lúc đó | User |
@@ -202,6 +209,7 @@ session_prompt/TEMPLATE_*.md           mẫu report
 session_prompt/SO_CAI_TIEN_CACH_LAM.md sổ cải tiến cách làm (skill improve-workflow)
 skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment,improve-workflow}/SKILL.md
 .githooks/pre-commit, .claude/settings.json   rào bằng máy (hook git mọi agent; Claude Code cấm đọc .env)
+scripts/grep_kb.sh                     tìm trong nội dung kho, luôn loại evaluation/ meta/ *sealed* (W27)
 guides/full_corpus_rag.md              guide umbrella full-corpus
 docs/superpowers/specs/, docs/superpowers/plans/   thiết kế từng Phase
 report_agent/<YYYY-MM-DD>_<chủ_đề>/   report + review từ 2026-10-24 (README trong report_agent/)
@@ -255,7 +263,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   trường mới thêm ở phần sinh / citation chỉ cổng ổn định (đọc dòng log thật) bắt được; test đi qua generator cần key (B70 m-1, đóng bằng ghi bẫy 27/10).
 - `validate_gold.py` từ 27/10 (C62) dừng nếu `gold_draft.jsonl` đã có.
 - `data/phase_8_1/tools/validate_gold.py` **không nhận đầu vào**: đọc `gold_batch_*` rồi **ghi đè** `data/phase_8_1/gold/gold_draft.jsonl` (file manifest G0.6
-  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo từ 27/10: `gold_v2.jsonl` (B69) — `GOLD_PATH`
+  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v3.jsonl` từ 27/10 chiều** (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
   mặc định của `backend/experiments/phase_8_1/g1_retrieval.py` đổi sang v2 + luật tiêu đề mục ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**; so với số cũ thì chạy lại
   mốc bằng cùng thước (B1 dev: v1 22 / v2 24).
 - Auto mode chặn **cả khối** khi lệnh ghép có thao tác rủi ro (`push --delete`, `rm`, push nhánh từ worktree) ⇒ tách thao tác rủi ro ra lệnh

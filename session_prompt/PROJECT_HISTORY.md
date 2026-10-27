@@ -4,6 +4,15 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-27 (15:28) — Phiên chiều: phần tồn Phase cũ (chuẩn bị xong), B1 sẵn merge, plan B3 duyệt, gold v3, spec sửa kho
+
+- User: quyền như 27/10 sáng; PA3 (chuẩn bị + bàn tính năng); "xong phần tồn càng sớm càng tốt" (14:15). B0 vẫn chưa làm.
+- B71 rebase `p82-b1` ⇒ `c3d5607` (C ready); plan B3 duyệt `27e75be5ed44`; C62 guide / report cũ; `dense_ms` làm tròn (`dfbcca5`); C65: lỗi citation 12 câu B1
+  là của validator v1, production không ảnh hưởng; gold v3 mặc định (`fa192f8`, User duyệt).
+- Đợt sửa kho soạn + kiểm (B73 / B74 / C66 / C67): 41 + 11 diff, 16 câu User, 78 tra ngoài (yêu cầu ChatGPT B76), loại file danh mục; spec
+  `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` (User chốt Q1–Q5; Qwen3-8B ⇒ thí nghiệm sau). Tiền ≈ 0,0012 USD.
+- Tổng hợp `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`.
+
 ## 2026-10-27 (13:30) — Kết phiên 27/10: API ghi số đo mỗi câu; nhãn đoạn đúng v2; latency thật; sổ vòng 7
 
 - Sau khi đóng đợt: B65 latency API thật (context 5 p50 3,3 / p95 5,7 s — vượt mức theo dõi 5 s; context 10 không chậm hơn); C58 gọi model ≈ 98 % thời gian chờ.

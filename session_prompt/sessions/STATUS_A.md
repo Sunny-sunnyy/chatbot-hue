@@ -1,26 +1,35 @@
-# STATUS A — cập nhật 13:51 27/10/2026 (mở phiên 27/10 chiều)
+# STATUS A — cập nhật 15:41 27/10/2026 (KẾT PHIÊN 27/10 chiều — User đóng ~16:40)
 
 Terminal: `hue-rag-51` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-2d`, C = `hue-rag-86` (cả ba Claude Code, trực tiếp).
 
 ## Commit
-- Đầu phiên: `473f61e`.
+- Đầu phiên: `473f61e`. Cuối: `git log --oneline 473f61e..main` (mở phiên `576f84e` … kết phiên). Không merge nhánh nào; `p82-b1` force-push `c3d5607` (B).
 
 ## Đang làm / dở
-- Giao B71 (rebase B1, worktree `/tmp/b71_b1`), C62 (sửa guide / report cũ) — `CURRENT_HANDOFF.md` "Việc đang mở". A: review C62; brainstorm tính năng mới với User
-  (PA3 — chỉ bàn); kế hoạch mốc cuối 8.2 (câu kín — A không đọc nội dung).
+- Không việc đang chạy. Phiên sau: `CURRENT_HANDOFF.md` "PHIÊN SAU" (thứ tự 1–6, câu hỏi User 1–7).
 
 ## Đang khai báo sửa
-- `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/sessions/STATUS_A.md`
+- không (kết phiên)
+
+## Vừa xong (phiên 27/10 chiều)
+- Giao + review B71–B76 / C62–C68 (bảng `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` §3); tự review C62, C64 mục 2.
+- Duyệt plan B3 `27e75be5ed44` (M-1 / M-2 do A quyết); spec sửa kho viết + 3 vòng C ⇒ User duyệt `937cf8969810`; gold v3 (User duyệt).
+- Bàn tính năng (PA3): streaming trước, rồi hội thoại nhiều lượt; C63 căn cứ.
+- Vòng cải tiến 8: S41–S44, W27–W29 áp (`scripts/grep_kb.sh`); handoff viết lại 280 ⇒ ~113 dòng; tài liệu kết phiên.
 
 ## Quyền phiên này (User 13:46 27/10: "cấp lại như phiên 27/10" — HẾT HẠN cuối phiên)
 - A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C commit + push nhánh riêng theo việc (B71: force-push `p82-b1`).
 
 ## Tiền paid phiên này
-- A: 0 USD.
+- A: 0 USD. Cả nhóm ≈ 0,0012 USD (B 0,000325; C 0,000832).
 
 ## Đã học / bẫy gặp (phiên 27/10 chiều)
-- Mục nợ "guide phase 5:65 còn nhắc MiniLM" trong handoff đã cũ — dòng đó đã ghi gỡ 26/10 (C62 xác nhận).
-- Guide phase 8 mục "Hiện hành" còn ghi "8.2 tạm dừng"; guide phase 6 chưa có `chat_metrics` ⇒ đóng gate / merge chưa cập nhật guide (WORKFLOW §9.4) — đầu vào vòng cải tiến.
+- 14:5x: A tự review C64 mục 2 thay B nhưng chỉ báo C ⇒ B review trùng (S41) ⇒ đổi người review thì báo cả người cũ.
+- 15:1x: A khuyên "đóng hẳn Qwen3-8B" vì lý do vận hành, chưa từng đo ⇒ User hỏi lại; rút khuyến nghị (S43 ⇒ W28).
+- 14:2x: A viết brief B72 "A ghi 3 số dòng câu A đã thấy" — làm không được mà vẫn giữ mù (C bắt M-2) ⇒ việc dính câu kín: người được mở câu kín làm phần khớp.
+- 15:2x: spec sửa kho bản 1 thiếu bước nhãn đoạn đúng lệch offset + bộ "trước" — C68 bắt (review spec của A **có ích**, giữ cách làm).
+- Mục nợ "guide 5 nhắc MiniLM" trong handoff đã cũ; guide 8 / 6 lệch hiện trạng (S44 ⇒ W29).
+- Nói giờ trong tin cho User "14:5x" khi thực tế ~14:25 (giờ ước, lặp họ S17 — ngoài file); dùng `date` cả khi báo trong chat.
 
 ---
 Phần dưới: trạng thái kết phiên 27/10 sáng.

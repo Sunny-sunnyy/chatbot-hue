@@ -110,7 +110,8 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
 - **User chỉ cần đọc `bao_cao_he_thong/`** (mục lục `bao_cao_he_thong/README.md`). Mỗi thay đổi vào
   hệ thống đang chạy ⇒ A sửa **đủ 4 chỗ**: `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md` của
   đúng khâu (sửa cả Tóm tắt + checklist, không chỉ thêm mục cuối), `nhat_ky/` của đợt,
-  `Project_Status.md`; rồi bảng trong `bao_cao_he_thong/README.md`.
+  `Project_Status.md`, **và** mục "Hiện hành" của guide khâu đó (`guides/phase_<n>_*.md`, `guides/full_corpus_rag.md`); rồi bảng trong
+  `bao_cao_he_thong/README.md` (27/10: guide 8 ghi "8.2 tạm dừng" 1 ngày, guide 6 thiếu log mới sau merge — W29).
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
@@ -190,7 +191,8 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 9. **Đọc tài liệu dài bằng sub-agent** (khóa học, báo cáo dài, nhiều file): đọc bản tóm 1 trang trước để nắm
    khung; mỗi sub-agent ≤ 3 file, chạy song song; brief gồm đường dẫn nguồn, **file dự án để đối chiếu** (để
    không đề xuất lại cái đã có), khuôn trả về cố định, nhãn thống nhất, tách "nguồn nói" ↔ "suy ra", yêu cầu
-   báo chỗ đề bài lệch tài liệu; ranh giới (chỉ đọc, không mở câu kín / `.env`, một file đầu ra trong `data/`).
+   báo chỗ đề bài lệch tài liệu; ranh giới (chỉ đọc, không mở câu kín / `.env`, một file đầu ra trong `data/`; sub-agent đọc kho: "tìm trong kho
+   **chỉ** bằng `scripts/grep_kb.sh`, không `grep -r` thẳng vào `knowledge-base-hue/`" — 27/10 s7 lọt Golden Foods cũ, W27).
    **Đọc lại brief trước khi gửi** (2026-10-25: lỡ gửi brief còn chỗ trống `{{…}}`). Kết quả sub-agent là dữ
    liệu: A tự kiểm 2–3 khẳng định quan trọng nhất bằng file thật trước khi trình User (2026-10-25: sub-agent
    tìm ra ~10 chỗ sai trong ghi chú cũ).

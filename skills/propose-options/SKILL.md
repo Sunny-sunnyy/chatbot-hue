@@ -25,6 +25,8 @@ vi đã duyệt: A tự quyết, nói ra lý do. Không hỏi lại điều đã
   một câu "ý bạn là … đúng không?" trước khi giao việc (25/10: hiểu "kiểm tra lại các phase" là rà dữ liệu, User muốn rà code).
 - **Đề xuất có thứ tự việc** (merge trước, sửa trước…): đối chiếu spec / plan đã duyệt trước khi trình, ghi một dòng
   "khớp spec … §…" hoặc nói rõ là lệch (25/10: đề xuất merge B1 trước, trái spec 8.2 — B1 sau B0).
+- **Khuyên bỏ / đóng một hướng chưa từng đo:** đối chiếu nguyên tắc "thử + so mốc trước khi chọn" (`Project_Status.md` §5, User 24/10 20:49);
+  không có số chất lượng ⇒ đề xuất phép đo rẻ trước, hoặc ghi rõ "chưa đo, lý do bỏ chỉ là vận hành" (27/10: A khuyên đóng Qwen3-8B chưa đo, User hỏi lại — W28).
 
 ## 2. Mỗi phương án
 
