@@ -6,11 +6,14 @@
 - **B53 xong (08:52 27/10/2026):** review R2 = **ready_for_user_confirmation** (0 / 0 / 2 minor) — file `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_r2_review.md`
   (sha `11368435edbd`, working tree chung, chờ A commit). Mọi số report R2 khớp tính lại; m-1 mục "Cho bạn" mô tả câu hỏi cụ thể hơn §4; m-2 thiếu dòng câu 115.
   Worktree `/tmp/b53_r2` + script `/tmp/b53/` đã gỡ.
-- **B54 (đang làm, từ 08:55 27/10/2026):** chạy K3, plan sha `0a6370204c7d` (kiểm 08:5x). Nhánh `p82-k3` từ `811d25d`, worktree `/tmp/b_k3` (+ symlink
-  `data/`, `knowledge-base-hue/` — gỡ khi xong). **File khai báo sửa:** `backend/experiments/phase_8_2/k3.py` (mới, trên nhánh),
-  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_k3_implementation.md` (trên nhánh), dữ liệu `data/phase_8_2/k3/`. Trần (handoff, A chốt):
-  0,20 USD = tìm 0,08 + sinh 0,12 (plan §5 ghi 0,06 / 0,14 — handoff thắng).
-- Tiền paid phiên 27/10: 0 USD.
+- **B54 xong (09:09 27/10/2026) — K3 kém hơn (phạm sàn):** lỗi đầu ra luna 1 / 40 (câu dev 173: 29 / 30 số, thiếu đoạn 5) ⇒ dừng ở L1 theo plan §6.3; NOT RUN L2 / test / sinh.
+  Theo dõi (không kết luận) 39 câu hợp lệ: thắng 9 / 9 câu trần, mất 0; rerank p50 5,6 s / p95 8,6 s; ≈ 4× USD / câu. Nhánh `p82-k3`
+  (`ff93703` harness, `80e7329` report) **đã push**; worktree `/tmp/b_k3` + symlink đã gỡ. Dữ liệu `data/phase_8_2/k3/` (+ `tools/k3_watch.py`). ⇒ chờ C review.
+- **B55 xong (09:04):** review plan R1 = changes_requested (0 / 1 / 3), file `phase_8_2_r1_plan_review.md` (A commit `4e0f3ec`). Chờ C sửa ⇒ B kiểm phần sửa.
+  Script tạm `/tmp/b55/` đã xóa.
+- **File đang khai báo sửa: không.** Tiền paid phiên 27/10: **0,0251129 USD** (K3, 40 lần gọi luna).
+- Đã học (27/10): luna listwise 30 đoạn có thể bỏ sót 1 id dù `status: completed` (8.1 với 10 đoạn: 0 / 30) ⇒ plan rerank listwise sau này ghi trước
+  cách xử lý danh sách sai; lỗi cụ thể của biến thể cũ (citation v2 ở 8.1) phải tra **dạng lỗi**, không chỉ số đếm (B55 M-1).
 
 ---
 

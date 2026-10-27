@@ -151,6 +151,10 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **C48 — đo hiện trạng "số trong câu trả lời có nằm trong đoạn được trích không" (0 USD, dữ liệu B1 dev đã có).** Đo tần suất lỗi "nói chắc sai" (A đề
   xuất là lỗi tệ nhất). Đầu ra private `data/cai_tien_tung_khau_2026-10-26/c48/` + report ngắn `report_agent/2026-10-26_cai_tien_tung_khau/c48_so_trong_cau_tra_loi.md`
   (chỉ số đếm). Không phải biến thể ⇒ không cần plan. K3 xong ⇒ C ưu tiên review K3.
+  **Xong 09:11 27/10/2026:** B1 dev 68 câu có số ⇒ 0 câu sai số thấy được (4 cờ = 6 / 6 phép tính đúng; mẫu 10 / 10 đúng); G2.1a từng có 2 lỗi thật ⇒ dao động giữa lượt.
+- **K3 report** `origin/p82-k3` `80e7329` (B): lỗi luna 1 / 40, CI [0,06 %; 13,2 %]; theo dõi 39 câu: top10 gold 21 → 30, MRR 0,44 → 0,71; rerank p95 8,6 s; USD / câu
+  đầu–cuối ≈ 4×. **C49** review. **B56** plan K3b (pool 30 → luna trả 10 số; cân nhắc `none` cho lần rerank; luật tất định cho đầu ra sai, ghi trước) — 0 USD,
+  chạy chỉ sau review + A duyệt; vào chatbot chậm / tốn hơn ⇒ trình User.
 - Ước tổng 8.2 (A, để so trần 0,5): đã dùng 0,0396 + K3 0,20 + R1 ~0,034 + ghép ~0,04 + dự phòng pilot ⇒ **≈ 0,31–0,35 USD** (con số "0,41" trong plan K3 §7 tính cả
   R2 0,06 + R3 0,04 trước khi hai việc đó dừng / NOT RUN).
 

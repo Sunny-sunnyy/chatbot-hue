@@ -19,6 +19,8 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **Khai báo 08:57 27/10/2026 (A cho phép sau C47):** worktree `/tmp/c_r1`, nhánh cục bộ `p82-r1` từ `811d25d`; file mới `backend/experiments/phase_8_2/r1.py` (trên nhánh). 0 USD, chưa commit / push, không chạy lệnh có phí.
 **Harness R1 viết xong 09:00 27/10/2026** (`/tmp/c_r1/backend/experiments/phase_8_2/r1.py`, untracked trên `p82-r1`): kiểm 0 USD — import, tập câu 12 + 11 + 97 = dev 120, 10 + 46 = test 56, `ratio(B1, B1)` = 1, quét trùng 0. Chưa chạy lệnh có phí. Chờ B55 + A duyệt sha. Worktree giữ tới khi xong R1 (symlink `data`, `knowledge-base-hue` gỡ trước commit).
 **C48 (A giao 09:01 27/10/2026) — khai báo file:** private `data/cai_tien_tung_khau_2026-10-26/c48/` (script + kết quả theo câu); report `report_agent/2026-10-26_cai_tien_tung_khau/c48_so_trong_cau_tra_loi.md` (mới, working tree chung, không commit). 0 USD, chỉ B1 dev, không test từng câu / câu kín.
+**C48 xong 09:10 27/10/2026:** 4 / 68 câu có số bị cờ (= R4), đọc tay 6 / 6 cờ là phép tính đúng; mẫu 10 câu không cờ 10 / 10 đúng ⇒ 0 lỗi số thấy được. Report untracked, quét trùng 0.
+**B55 = changes_requested (0/1/3)** — sửa plan R1 sau C49. **C49 (A giao 09:10 27/10/2026, ưu tiên):** review report K3 (`origin/p82-k3` `80e7329`) ⇒ `phase_8_2_k3_review.md` working tree chung.
 
 ## Còn treo (phiên sau xử lý trước)
 
