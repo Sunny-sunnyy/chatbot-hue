@@ -19,7 +19,9 @@ A duyệt hiện hành **`cd910c4c4169`**). Bước 2 = **đợt cải tiến t�
 - **Kết quả Bước 2 tới giờ** (mốc B1 `811d25d`): K1 pool 100 **kém hơn** (`p82-k1`, C42 ready); K2 / E2 / R3 **NOT RUN** (lý do ở spec §10.3, `phase_8_2_r3_plan_review.md`);
   R4 thước số **xong** (`2c7ecfd`, chỉ danh sách đọc lại); R2 trả lời một phần **kém hơn — phạm sàn OOS, hướng gác** (`origin/p82-r2` `aec9ab8`, **chờ B review**);
   **K3 plan duyệt `0a6370204c7d`, chưa chạy**; R1 (`none`) chưa có plan, chạy sau cùng (luật (a), "chất lượng trước").
-- Tiền 8.2: **0,0647 / 0,5 USD** (B1 0,0369 + R2 0,0027 + K3 0,0251 — 27/10).
+- Tiền 8.2: **0,0696 / 0,5 USD** (B1 0,0369 + R2 0,0027 + K3 0,0251 + R1 0,0049 — 27/10).
+- **Dạng lỗi chung R1 / R2 / P1 8.1** (câu 160, 168): trả lời vòng (một câu có `[n]` cùng chủ đề) + một câu "nguồn không nêu…" không citation ⇒ validator nhận. Hướng mở
+  (A cân nhắc, chưa giao): kiểm bằng code sau sinh cho dạng này, kiểm trước trên 160 / 168 — có thể mở lại R1 / R2.
 
 **Luật nhận của đợt (spec §10.2, User):** (a) chất lượng giữ (Completeness TB ≥ −0,1 **và** số câu tụt ≤ A/A + 3) + rẻ / nhanh hơn rõ; (i) chất lượng tăng
 vượt nhiễu (CI 95 % > 0, Holm theo nhánh, cỡ mẫu ≥ 5 / 0) + khâu tìm ≤ +50 ms / khâu sinh `output_tokens` ≤ +20 % + không thêm lần gọi API, USD / câu
@@ -164,9 +166,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | K3 | `phase_8_2_k3_plan.md` | `0a6370204c7d` | **DỪNG 09:05 27/10/2026 — kém hơn (phạm sàn: lỗi đầu ra luna 1 / 40, câu 173, thứ tự thiếu 1 đoạn)**; pilot rerank p50 5,7 s / p95 8,2 s; 0,0251 USD | **đóng 09:13 27/10/2026** — C49 review ready (`phase_8_2_k3_review.md`, 0 / 0 / 3 minor); hồ sơ `p82-k3` `80e7329`; số theo dõi 9 thắng / 0 thua trên 39 (câu 173 không đo được), một lượt, dev đã thấy |
 | R2 | `phase_8_2_r2_plan.md` | `b70ea775efb2` | **kém hơn — đóng** (OOS câu 160); `p82-r2` `aec9ab8`; 0,0027 USD; B53 review ready (`phase_8_2_r2_review.md` `11368435edbd`); A đóng 27/10: m-1 giữ (mô tả chung, 0 trùng); m-2 ghi hồ sơ: câu 115 (P1 phạm dạng không `[n]`) R2 từ chối nhưng B1 cũng từ chối ⇒ chưa tách được tác dụng E1b | — (hồ sơ) |
 | R3 | `phase_8_2_r3_plan.md` | — | **NOT RUN** (C45: trần 6 câu) | — (hồ sơ) |
-| K3b | `phase_8_2_k3b_plan.md` | chờ (bản 1 `4f92e478cb65`, A tính từ file 09:17 27/10/2026) | plan xong (B56): nhánh K3b-n (10 số + `none`) trước, K3b-m sau nếu cần; trần đề xuất 0,10 USD | **C50** review ⇒ A duyệt ⇒ B chạy (`p82-k3b`) |
+| K3b | `phase_8_2_k3b_plan.md` | **`57dad7150322`** (A duyệt 09:27 27/10/2026, sha tính từ file; bản 1 `4f92e478cb65`) | duyệt; C50 vòng 1 + 2 ready; A quyết: nới sàn hoán vị ⇒ mức tụt ≤ 4 lần (sai hợp đồng ⇒ nguyên top-10 RRF), lỗi kỹ thuật sàn 0; nhánh m chỉ khi n kém hơn / chưa rõ; trần 0,10 USD; nhánh `p82-k3b` từ `80e7329` | **B chạy** K3b-n (pilot 10 trước) ⇒ C review |
 | R4 | (implementation `phase_8_2_r4_implementation.md`) | — | xong `2c7ecfd`; B47 ready | dùng làm chỉ số theo dõi |
-| R1 | `phase_8_2_r1_plan.md` | **`8e76e77e0448`** (A duyệt 09:18 27/10/2026, sha tính từ file; bản 1 `0a702b4ac1e4` changes_requested) | duyệt; B55 vòng 1 + B57 vòng 2 ready (`phase_8_2_r1_plan_review.md`) | **C chạy** sau C50 (`p82-r1`, ≤ 0,05 USD; pilot gồm 172, 173) ⇒ B review report + harness |
+| R1 | `phase_8_2_r1_plan.md` | **`8e76e77e0448`** (A duyệt 09:18 27/10/2026, sha tính từ file; bản 1 `0a702b4ac1e4` changes_requested) | **DỪNG ở pilot 09:25 27/10/2026 — kém hơn (phạm sàn: câu 168 bị trả lời vòng + câu "nguồn không nêu…" không citation; cùng dạng R2 / 160)**; 172 / 173 có `[n]`; 0,0049 USD; `origin/p82-r1` `63a472f` | **B58** review report + harness |
 | K2, E2 | — | — | NOT RUN (spec §10.3) | — |
 
 Đầu vào: `report_agent/2026-10-26_cai_tien_tung_khau/` (`phan_loai_loi_{B,C}.md`, `de_xuat_khau_{tim_B,tra_loi_C}.md`, review). Nhánh thí nghiệm **không merge**

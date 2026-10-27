@@ -23,6 +23,9 @@ A trả lời: plan R1 viết song song K3 (không chờ kết quả K3), **ch�
 **B55 = changes_requested (0/1/3)** — sửa plan R1 sau C49. **C49 (A giao 09:10 27/10/2026, ưu tiên):** review report K3 (`origin/p82-k3` `80e7329`) ⇒ `phase_8_2_k3_review.md` working tree chung.
 **C49 xong 09:13 27/10/2026:** ready_for_user_confirmation (0/0/3 minor) — K3 kém hơn đúng luật; tiền 0,0251129 khớp; 9 / 0 trên 39 tính lại khớp. Script `data/phase_8_2/k3/tools/c49_check.py`. Tiếp: sửa plan R1 theo B55.
 **Plan R1 bản 2 xong 09:16 27/10/2026: sha `8e76e77e0448`** (bản 1 `0a702b4ac1e4`; sửa M-1, m-1..m-3 B55: 172 / 173 vào pilot, sàn API 500 ghi trước, citation v2 tụt chỉ đếm lỗi khác "no citation", U 6 / 9 ở B1, từ chối mới đếm câu). Harness `r1.py` sửa khớp (early 12 câu). Chờ B kiểm phần sửa ⇒ A duyệt. **Đã báo sha ⇒ không sửa plan nữa.**
+**C50 xong 09:20 27/10/2026:** review plan K3b (sha `4f92e478cb65`) ready (0/0/4 minor) — `phase_8_2_k3b_plan_review.md`. **A duyệt plan R1 bản 2 `8e76e77e0448` (`78a5f05`)**; quyền C: commit + push `p82-r1`, ≤ 0,05 USD, judge sub-agent. Tiếp: chạy R1.
+**R1 chạy 09:25 27/10/2026: KÉM HƠN — phạm sàn ở pilot** (câu 168, từ chối đúng ở B1, bị trả lời vòng: thông tin cùng chủ đề có `[n]` + câu không citation "nguồn không nêu…" — cùng dạng R2 câu 160). OOS 12 / 12 từ chối; 0 API 500 (172, 173 có `[n]`). Dừng theo plan §3 bước 2. **0,0049030 USD thật.** `origin/p82-r1` `63a472f` (harness `d2646e6` + report). Worktree `/tmp/c_r1` đã gỡ (symlink + worktree). Dữ liệu `data/phase_8_2/r1/`. Chờ B review report + harness.
+**C51 (A giao 09:26 27/10/2026) — khai báo file:** private `data/cai_tien_tung_khau_2026-10-26/c51/`; report `report_agent/2026-10-26_cai_tien_tung_khau/c51_kiem_sau_sinh_kha_thi.md` (mới, working tree chung). 0 USD, chỉ đọc lượt đã ghi; dev đọc tay, test chỉ đếm tổng.
 
 ## Còn treo (phiên sau xử lý trước)
 
@@ -120,7 +123,7 @@ Mở theo `START_SESSION.md`, báo A, **chờ A giao việc**. Mục "Còn treo"
 
 ## Tiền
 
-Paid API C phiên tối 26/10: **0,0026861 USD thật** (C43 R2 bước 1, usage log). Paid API C phiên 26/10 chiều: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
+Paid API C phiên 27/10: **0,0049030 USD thật** (R1 pilot, usage log). Paid API C phiên tối 26/10: **0,0026861 USD thật** (C43 R2 bước 1, usage log). Paid API C phiên 26/10 chiều: **≈ 0,0020 USD ước** — 5 lượt cổng ổn định D5 × 2 câu `gpt-6-luna` (~0,0002 / câu; route không ghi usage). Cả đợt 3 ≈ 0,0024 (trần 0,003).
 2 test generator có key: 0 USD (không gọi mạng). Quota Claude Code: không dùng sub-agent.
 
 Paid API C phiên tối 25/10: **≈ 0,0016 USD** — đo: 0,000427 (C35, 2 lượt `gpt-6-luna`); ước (route không log usage): 3 lượt cổng ổn định × 2 câu × ~0,0002

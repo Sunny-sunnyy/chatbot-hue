@@ -16,22 +16,11 @@
   sai hợp đồng ≤ 4/95, bù RRF ≤ 2/95; quyết `context_gold_all`, Holm họ 4; trần đề xuất 0,10 USD. ⇒ chờ C review.
 - **B57 xong (09:18 27/10/2026):** kiểm phần sửa plan R1 bản 2 (sha `8e76e77e0448`) ⇒ **ready** (M-1, m-1..m-3 đóng; không đổi tiêu chí / sàn / trần). Mục "Vòng 2"
   thêm vào `phase_8_2_r1_plan_review.md` (sha `fc971d9237c6`, A commit).
-- **File đang khai báo sửa: không.** Tiền paid phiên 27/10: **0,0251129 USD** (K3, 40 lần gọi luna).
-- Đã học (27/10): luna listwise 30 đoạn có thể bỏ sót 1 id dù `status: completed` (8.1 với 10 đoạn: 0 / 30) ⇒ plan rerank listwise sau này ghi trước
-  cách xử lý danh sách sai; lỗi cụ thể của biến thể cũ (citation v2 ở 8.1) phải tra **dạng lỗi**, không chỉ số đếm (B55 M-1).
-
----
-
-# (phiên trước) STATUS B — KẾT PHIÊN TỐI 2026-10-26 22:2x +0700 (mở 20:29; terminal `hue-rag-23`; A = `hue-rag-2d`, C = `hue-rag-b5`)
-
-Agent: Claude Opus 5.5 · Vai: thực thi · User 26/10: B làm việc trực tiếp với A; việc A giao = User nói "làm đi".
-Bản đầy đủ trước khi rút gọn:
-- phiên tối 26/10, từng bước B41–B51: `git show 087cedd:session_prompt/sessions/STATUS_B.md`;
-- phiên chiều 26/10 + 25/10: `git show 7b662c9:session_prompt/sessions/STATUS_B.md`.
-
-## Trạng thái kết phiên
-
-- **File đang khai báo sửa: không.** Không server, không GPU, không lượt nào đang chạy.
+- **B58 (09:25 27/10/2026):** plan K3b **bản 2** sha `57dad7150322` (sửa C50 m-1..m-4 + 2 quyết định A; chờ C kiểm phần sửa ⇒ A duyệt). Harness
+  `/tmp/b_k3b` (nhánh `p82-k3b` cục bộ từ `80e7329`, không upstream, **chưa commit**): `k3b.py` (sha `255d48174723`) + `tests/test_k3b_contract.py`
+  (4 passed). Bước 0 miễn phí đã chạy: `data/phase_8_2/k3b/base_dev.jsonl`, M2' 40/40 khớp K3, 0 trường lệch. 0 USD.
+  **File khai báo sửa:** `k3b.py`, `test_k3b_contract.py` (worktree), plan K3b (working tree chung).
+- **File khai báo khác: không.** Không server, không GPU, không lượt nào đang chạy.
 - **Worktree của B: không còn.** Đã gỡ `/tmp/b_p82b1`, `/tmp/b_p82b1_old`, `/tmp/b45_wt`, `/tmp/b_k1` (gỡ symlink trước). File tạm `/tmp/b45*`,
   `/tmp/b47`, `/tmp/k3_before.md` đã xóa.
 - Các mục `/tmp/b_*` còn trên máy **không phải của B phiên này**: `b_vong1..4`, `b_moc*`, `b_promo*`, `b_ghep`, `b_b1_final`, `b_low_final`, `b_p5`,

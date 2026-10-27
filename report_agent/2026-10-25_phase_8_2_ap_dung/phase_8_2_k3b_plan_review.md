@@ -108,3 +108,23 @@ Không có blocker hoặc major.
 **ready_for_user_confirmation** — A có thể duyệt sha sau khi B sửa (hoặc A chấp nhận để nguyên) 4 minor; sửa ⇒ sha mới, C kiểm phần sửa. Khi duyệt, C đề nghị A
 ghi rõ hai quyết định: (1) **nới sàn K3 "không phải hoán vị" thành mức tụt có trần** ở K3b (m-1); (2) **luật chạy nhánh m** — như plan hay chỉ khi K3b-n kém hơn /
 chưa rõ (m-4, Q1 của plan). Trần 0,10 USD và chỉ số quyết `context_gold_all` (Q2, Q4): C không thấy vấn đề.
+
+## Vòng 2 — kiểm phần sửa (bản 2 sha `57dad7150322`, C tính từ file; 09:26 27/10/2026 +0700, `date`)
+
+Cách kiểm: `git diff HEAD -- phase_8_2_k3b_plan.md` (bản 1 `4f92e478cb65` ở `ee658bf` → bản 2 trên đĩa); `grep` tìm chỗ còn sót của bản 1 (`n_filled`, `2 / 95`,
+`bước (d)`, `5 %`, `9 / 0 ổn định`): chỉ còn trong bảng "Sửa sau review C50" (đúng, là ghi chép). Quét trùng: 0.
+
+| Finding | Đóng? | Ghi chú |
+|---|---|---|
+| m-1 | **đóng** | Tiêu đề §2 "có đếm, có trần"; đoạn "Đổi so với K3 — nói thẳng": sàn "không phải hoán vị" ⇒ mức tụt có trần, lý do, kết luận K3 giữ "kém hơn", lỗi kỹ thuật vẫn sàn 0 |
+| m-2 | **đóng** | Chọn "sai hợp đồng ⇒ nguyên top-10 RRF": một điều kiện, tác hại chặn đúng bằng mốc, câu đó không thể thắng / thua — đúng tiêu chí "nêu phương án và lý do"; bỏ (a)–(d) và trần riêng của bước bù cho khớp |
+| m-3 | **đóng** | "≤ 4 lần, số đếm tuyệt đối cộng dồn trong nhánh, bất kể n" thống nhất ở §2, YAML §4, §6.2 |
+| m-4 | **đóng** | §1: nhánh m chỉ chạy khi n kém hơn / chưa rõ (A chốt); ước latency m ≈ 5,6 s, n ≈ 2,1 s ghi là *suy ra*; §5 bảng tiền và §8 Q1 sửa khớp |
+
+**Ngoài phạm vi sửa — không đổi** (đối chiếu diff): chữ prompt rerank, chỉ số quyết `context_gold_all` + luật thắng / thua hai lượt, Holm họ cố định 4, sàn mất đoạn
+đúng + sàn lỗi kỹ thuật, trần 0,10 USD (con 0,045 / 0,055), các điều kiện dừng khác, ước tiền. Không có finding mới.
+
+**Ghi chú (không phải finding):** với m-2, dạng đầu ra của K3 (≥ 29 số hợp lệ) nếu lặp lại ở K3b sẽ thành "sai hợp đồng ⇒ RRF" (bản 1 thì cắt về 10 số luna). Prompt
+K3b đòi đúng 10 số nên dạng này khó xảy ra; nếu xảy ra nhiều thì trần ≤ 4 bắt — đúng ý "hợp đồng không được thành cơ chế chính". G4 bản 2 đã ghi đúng là loại 3.
+
+**Decision vòng 2: ready_for_user_confirmation** — A có thể ghi "duyệt bản sha `57dad7150322`".
