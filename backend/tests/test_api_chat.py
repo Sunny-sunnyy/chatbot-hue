@@ -88,6 +88,7 @@ def test_real_first_chunk_budget_error_has_no_partial_answer(caplog):
     assert set(lines[0]) == set(METRIC_FIELDS)
     assert lines[0]["outcome"] == "context_budget_error" and lines[0]["status_code"] == 500
     assert isinstance(lines[0]["search_ms"], float) and isinstance(lines[0]["dense_ms"], float)
+    assert lines[0]["dense_ms"] == round(lines[0]["dense_ms"], 1)  # làm tròn 1 chữ số như các trường *_ms (B70 m-2)
     assert lines[0]["input_tokens"] is None and lines[0]["output_tokens"] is None
     assert not any(query in message for message in chat_messages)
 

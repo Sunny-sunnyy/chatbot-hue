@@ -108,7 +108,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
         started = time.perf_counter()
         result = await asyncio.to_thread(state.retrieval_service.search, query)
         metrics["search_ms"] = _elapsed_ms(started)
-        metrics["dense_ms"] = result.trace.timings_ms.get("dense_ms")
+        dense_ms = result.trace.timings_ms.get("dense_ms")  # trace giữ 3 chữ số; log làm tròn 1 chữ số như các trường *_ms khác
+        metrics["dense_ms"] = None if dense_ms is None else round(dense_ms, 1)
     except (RetrievalDependencyError,):
         logger.error("Retrieval dependency error")
         if recorder:

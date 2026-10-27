@@ -74,8 +74,6 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 
 ## Câu hỏi A còn nợ (phiên sau A trả lời / xử lý, không cần User)
 
-- B70 m-1: test khóa danh sách trắng `chat_metrics` chỉ phủ trường gán **trước** điểm lỗi ngân sách context ⇒ trường lạ thêm ở phần sinh / citation chỉ cổng ổn
-  định bắt (ghi bẫy hoặc thêm test đi qua generator khi có key); m-2 `dense_ms` chưa làm tròn 1 chữ số (vô hại).
 - Log `FileHandler` không xoay vòng (~400 byte / câu) — xem lại khi deploy.
 - Sổ cải tiến: theo dõi W24–W26 (`đang thử` từ 27/10); `CURRENT_HANDOFF` nên ≤ ~150 dòng.
 
@@ -178,6 +176,11 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   (một session / sub-agent được giao, không phải A); A đưa 3 số dòng câu A đã thấy cho người chạy (riêng, private); báo cáo giữ mù theo `Session_Prompt.md` §5;
   harness ghi từng dòng ngay (W23); trần tiền + pilot. Chỉ đọc metadata câu kín (số dòng, md5 `ddc59587b502`), **không đọc nội dung**.
 - **Không làm:** chạy; commit (A commit sau review). **Xong:** nhắn A + báo sha ⇒ A giao session khác review trước khi duyệt sha.
+- **Bản 1** `9d60b16b63da` ⇒ C review (C64) `changes_requested` 0 / 2 / 4. **A quyết (14:20):** M-1 — bỏ luật riêng "500 +1": câu 500 vì citation = câu hỏng (Completeness /
+  Accuracy 1) ở cả hai bên, tính vào số câu tụt + TB, số 500 báo riêng; sàn = 0 câu ngoài kho bị trả lời + 0 lỗi kỹ thuật mạng / provider (chạy lại câu đó 1 lần, còn lỗi ⇒
+  "chưa đủ") — §10.2 viết cho biến thể Bước 2 vs mốc B1, B3 so đầu ↔ cuối trên đường production. M-2 — A không đọc câu kín / file ghi câu; **người chạy (B)** đọc
+  `sealed_user_feedback_private.md`, khớp số dòng ⇒ `data/phase_8_2/b3/a_seen_lines.json`; không đủ 3 ⇒ chỉ báo S36 + ghi chú. Không nhánh main ctx 5, không A/A câu kín.
+  B sửa bản 2 ⇒ C kiểm phần sửa ⇒ A duyệt sha.
 
 ### Phần tồn Phase cũ (User 14:15 27/10/2026: "xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo")
 
@@ -202,6 +205,7 @@ lẫn hai thay đổi). Chặn chính: B0 (User). Index Qwen3-8B (tồn từ 7A2
    (không đọc STATUS_B / tin của B); không mở câu kín. Ghi `phase_8_2_b3_plan_review.md`. Ưu tiên trước.
 2. `dense_ms` làm tròn 1 chữ số như các trường `*_ms` (B70 m-2) — sửa nhỏ `api/routes/chat.py` + test ghim; khai báo file; cổng ổn định; báo A (B review). B70 m-1
    (test danh sách trường chưa đi qua generator): **không viết code** — đóng bằng ghi bẫy (cổng ổn định đã kiểm), A ghi.
+   **Mục 2 XONG (14:25):** A review đạt (diff 3 dòng, thử ngược đỏ, cổng 2 câu ≈ 0,000379 USD; guide 6 sửa theo); commit. B70 m-1 ⇒ bẫy `Project_Status.md` §8.
 3. Đề xuất nhãn đoạn đúng cho 3 câu test C56 (95, 130, 138) theo cách C56 (`c56_de_xuat_sua_nhan.md`) ⇒ file đề xuất private trong `data/phase_8_2/gold_fix_proposal_2710/`;
    **không sửa `gold_v2.jsonl`** (User duyệt). Report tracked mô tả mức loại câu.
 

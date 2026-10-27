@@ -1,4 +1,4 @@
-# STATUS C — cập nhật 14:00 27/10/2026 (C62 vào main `719417e`; đang C63; sau đó review B71)
+# STATUS C — cập nhật 14:15 27/10/2026 (đang C64)
 
 Terminal: `hue-rag-86` (phiên mới 13:40 27/10; trước `hue-rag-5b`) · Agent: Claude Opus 5.5 · Vai: thực thi. B = `hue-rag-2d` (B tự báo), A = `hue-rag-51` (A xác nhận) — trực tiếp.
 User 13:45 27/10/2026 (phiên mới, nhắc lại 08:41 27/10): C làm việc trực tiếp với A, báo cáo cho A; việc A giao = "làm đi". **Quyền phiên 27/10 hết hạn** (C commit + push `p82-r1`, `c59-log`; paid trong trần từng việc).
@@ -6,13 +6,17 @@ STATUS trước phiên này (bảng việc 26/10, file private 25/10): `git show
 
 ## Đang làm
 
-- **C63** (A giao 14:00 27/10, 0 USD, chỉ đọc): tóm căn cứ hội thoại nhiều lượt + streaming để A bàn với User (chỉ bàn, chưa thiết kế). B71 báo xong ⇒ review B71 trước.
-- C62 xong — A review đạt, commit `719417e` (đã push).
+- **C64** (A giao 14:15 27/10, `CURRENT_HANDOFF.md` → C64; 0 USD trừ cổng ≈ 0,0005; A cần biết mục chưa xong trước 16:15):
+  1. review plan B3 (sha `9d60b16b63da`, chỉ dựa "Căn cứ để review"; không đọc STATUS_B / tin B; không mở câu kín) — đang làm;
+  2. `dense_ms` làm tròn 1 chữ số + test ghim + cổng ổn định (B review);
+  3. đề xuất nhãn 3 câu test 95, 130, 138 (cách C56) — private, không sửa `gold_v2.jsonl`.
+- Xong trước trong phiên: C62 (`719417e`), review B71 (ready 0/0/2, `4a10ff6`), C63 (`data/tinh_nang_moi_2026-10-27/c63_can_cu.md`). Tiền phiên ≈ 0,000453 USD (log).
 
-## Đang khai báo sửa (C63, từ 14:00 27/10/2026)
+## Đang khai báo sửa (C64, từ 14:15 27/10/2026)
 
-- `data/tinh_nang_moi_2026-10-27/c63_can_cu.md` (private, mới). Không sửa file tracked.
-- **Review B71** (ưu tiên, từ 14:04 27/10/2026; C63 tạm dừng): `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_rebase2_review.md` (mới, không commit — A commit); bằng chứng private `data/phase_8_2/b1/rebase_2710/c_review/`.
+- `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan_review.md` (mới).
+- `backend/api/routes/chat.py`, `backend/tests/test_api_chat.py` (mục 2 — làm sau review B3).
+- `data/phase_8_2/gold_fix_proposal_2710/` (file mới cho 95 / 130 / 138; mục 3).
 
 ## Nhánh của C
 

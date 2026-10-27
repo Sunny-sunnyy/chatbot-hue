@@ -251,6 +251,9 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   symlink `data/`, `knowledge-base-hue/` hiện untracked ⇒ gỡ khi xong; worktree giữ nhánh `main` thì session khác không `git switch main` được ⇒
   gỡ (`git worktree remove`) trước khi người kia chuyển nhánh; `git push` từ worktree bị auto mode chặn ⇒ push từ working tree chung hoặc User `!`.
 - Auto mode chặn chạy notebook (`jupyter nbconvert --execute`) và test thiếu model (`HF_HOME` rỗng) ở một số session ⇒ User `!` ở terminal đó.
+- Test khóa tập trường `chat_metrics` (`test_api_chat.py::test_real_first_chunk_budget_error_has_no_partial_answer`) dừng ở lỗi ngân sách context, **trước** generator ⇒
+  trường mới thêm ở phần sinh / citation chỉ cổng ổn định (đọc dòng log thật) bắt được; test đi qua generator cần key (B70 m-1, đóng bằng ghi bẫy 27/10).
+- `validate_gold.py` từ 27/10 (C62) dừng nếu `gold_draft.jsonl` đã có.
 - `data/phase_8_1/tools/validate_gold.py` **không nhận đầu vào**: đọc `gold_batch_*` rồi **ghi đè** `data/phase_8_1/gold/gold_draft.jsonl` (file manifest G0.6
   khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo từ 27/10: `gold_v2.jsonl` (B69) — `GOLD_PATH`
   mặc định của `backend/experiments/phase_8_1/g1_retrieval.py` đổi sang v2 + luật tiêu đề mục ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**; so với số cũ thì chạy lại

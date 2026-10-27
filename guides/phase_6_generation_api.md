@@ -82,9 +82,9 @@ Contract full-corpus hiện hành:
   vòng, `:16-20`; đường file đặt ở `backend/core/logging_setup.py:13-19`; `logs/` nằm trong `.gitignore`).
   - Trường cố định `METRIC_FIELDS` (`chat.py:26-29`): `outcome`, `status_code`, `refusal`, `model`, `input_tokens`, `output_tokens`,
     `reasoning_tokens` (nằm trong `output_tokens`, lấy từ `usage.output_tokens_details` — `backend/llm/generator_openai_full_corpus.py:204`),
-    `n_context_sources`, `n_cited_sources`, `search_ms`, `dense_ms` (lấy từ trace tìm kiếm, `chat.py:111`), `context_ms`, `generation_ms`,
-    `citation_ms`, `total_ms`. Bước chưa chạy tới thì trường là `null`. Các trường `*_ms` làm tròn 1 chữ số (`chat.py:32-33`), riêng `dense_ms`
-    giữ 3 chữ số như trace (`backend/retrieval/full_corpus.py:449`). Không có trường USD — tính từ token × giá.
+    `n_context_sources`, `n_cited_sources`, `search_ms`, `dense_ms` (lấy từ trace tìm kiếm, `chat.py:111-112`), `context_ms`, `generation_ms`,
+    `citation_ms`, `total_ms`. Bước chưa chạy tới thì trường là `null`. Các trường `*_ms` làm tròn 1 chữ số (`chat.py:32-33`); `dense_ms` cũng làm
+    tròn 1 chữ số khi ghi log (từ 27/10, C64; trace vẫn giữ 3 chữ số — `backend/retrieval/full_corpus.py:449`). Không có trường USD — tính từ token × giá.
   - `outcome`: `success`; `refusal_no_sources` (không có nguồn ⇒ trả câu từ chối chuẩn, không gọi model, `chat.py:142`); `generation_failed`
     (đã gọi model rồi lỗi, HTTP 502, `chat.py:159`); `internal_error` (exception, 500, `chat.py:78-80`); lỗi khác lấy đúng `code` của phản hồi lỗi
     ở bảng trên (`chat.py:68-71`). `refusal` (chỉ khi HTTP 200) = câu trả lời đúng bằng câu từ chối chuẩn (`chat.py:74`).
