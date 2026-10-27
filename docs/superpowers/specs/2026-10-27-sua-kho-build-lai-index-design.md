@@ -1,6 +1,6 @@
 # Đợt sửa kho + build lại index — tài liệu thiết kế (NHÁP, chờ User duyệt)
 
-Người viết: A · Ngày: 27/10/2026 · Trạng thái: **bản 3 sau review C68 vòng 2 (n-1 … n-3) — C kiểm phần sửa rồi User duyệt sha** — số mục từ B73 (xong 14:31 27/10; `data/sua_kho_2026-10-27/README.md`, private).
+Người viết: A · Ngày: 27/10/2026 · Trạng thái: **bản 3 — C68 vòng 3 `ready_for_user_confirmation`; chờ User duyệt sha** — số mục từ B73 (xong 14:31 27/10; `data/sua_kho_2026-10-27/README.md`, private).
 Lý do mở: User 27/10 chiều — "xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo".
 File tracked này **không chép nội dung kho**: chỉ quy trình, số đếm, đường dẫn private.
 
@@ -128,5 +128,5 @@ rồi khởi động API, cổng ổn định (thiếu `settings.yaml` ⇒ disco
 | Bản sửa "chiều theo" Golden (sự cố s7) | đánh dấu riêng, đối chiếu căn cứ trong kho |
 | Đoạn vượt token sau sửa | bước 4 chạy trước, dừng nếu vượt |
 | Golden lệch kho ⇒ điểm giả | Q5: sửa Golden trước khi đo, User duyệt |
-| Nhãn đoạn đúng lệch offset ⇒ số tầng tìm sai | bước 5 gold v4, tìm lại nguyên văn |
+| Nhãn đoạn đúng lệch offset ⇒ số tầng tìm sai | bước 7 gold v4, tìm lại nguyên văn |
 | Chatbot không khởi động lại được từ bước 2 tới hết bước 6 | làm liền một lần, lúc User không dùng; snapshot + khôi phục; đo thời gian |

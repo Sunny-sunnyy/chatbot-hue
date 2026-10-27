@@ -120,3 +120,20 @@ Date: 15:28 27/10/2026 (`date`). C tính lại sha từ file: `cad3d25cffef`. Đ
 ## Vòng 2 — kết luận
 
 Hai major và năm minor vòng 1 đều đóng. Ba minor mới không đổi quy trình chính; A có thể sửa trước khi trình User (bản mới, C kiểm phần sửa) hoặc trình bản 2 kèm ghi chú.
+
+## Vòng 3 — kiểm phần sửa (bản 3, sha `bc8ddfd80694`, commit `d1d6b96`)
+
+Decision vòng 3: **ready_for_user_confirmation** (0 / 0 / 1 chữ — không cần vòng sửa riêng). Date: 15:30 27/10/2026 (`date`). C tính lại sha từ file: `bc8ddfd80694`. Đọc
+`git diff 3d53370 d1d6b96` của spec. Overlap scan: 0 trùng.
+
+| Finding vòng 2 | Bản 3 | Kết quả |
+|---|---|---|
+| n-1 nguồn A/A | §6: "B1 ↔ G2.1a, context 10 ↔ context 10 trên 176 câu — câu tụt Completeness 1, Accuracy 2; lấy số lớn" — khớp `phase_8_2_b1_implementation.md` §4 (`p82-b1`) | **đóng** |
+| n-2 khôi phục | "Dừng + khôi phục" thêm `settings.yaml` (`exclude_files`), file mẫu chunker, `GOLD_PATH` (git / backup) + lý do 204 ≠ 205 | **đóng** |
+| n-3 User duyệt trong cửa sổ | gold v4 thành bước 7 (sau build; "build không cần gold"; số `*_gold_*` chỉ tính sau bước này); bước 2–6 là sửa kho + exclude + chunk thử + build + kiểm sau build; bước 1 ghi "7–9 làm sau"; §8 dòng ngừng phục vụ sửa đúng; §7 "bước 7, 8" | **đóng** |
+
+- Thứ tự mới vẫn đúng phụ thuộc: bước 6 (T1 mới) chỉ dùng kết quả tìm, không cần nhãn; bước 9 (đo "sau") chấm theo Golden (bước 8), không theo nhãn đoạn đúng; bước 12 (8B) đo theo v4.
+- **Chữ còn sót (không chặn):** bảng §8 dòng "Nhãn đoạn đúng lệch offset ⇒ số tầng tìm sai" vẫn ghi "**bước 5** gold v4" — nay là bước 7. Sửa khi tiện (đổi chữ là bản mới; C không cần
+  kiểm lại nếu chỉ đổi số bước này).
+
+**Kết luận chung C68:** 3 vòng; bản `bc8ddfd80694` sẵn để A trình User duyệt sha.
