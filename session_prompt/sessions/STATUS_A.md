@@ -3,7 +3,7 @@
 Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-31`, C = `hue-rag-5b` (tên đổi mỗi lần mở — `ListAgents`).
 
 ## Commit
-- Đầu phiên: `c81e45e`. Cuối: commit kết phiên (`git log --oneline c81e45e..main`). Merge trong phiên: `5100b90` (log `chat_metrics`), `a819789` (nhãn v2).
+- Đầu phiên: `c81e45e`. Cuối: `fb1eade` (tài liệu kết phiên) + commit sửa sau thử mở phiên (`git log --oneline c81e45e..main`). Merge trong phiên: `5100b90` (log `chat_metrics`), `a819789` (nhãn v2).
 - Nhánh: `p82-b1` `811d25d` (chờ B0); hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`, `p82-r2`; đã merge, chờ User xóa: `c59-log`, `gold-v2`.
   `git worktree list`: chỉ còn 4 worktree AGY dưới `~/.gemini/` — không đụng.
 

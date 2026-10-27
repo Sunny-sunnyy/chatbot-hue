@@ -34,6 +34,9 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
+**Bây giờ (27/10 kết phiên): Phase 8.2 đang chạy** — Bước 2 (đợt cải tiến) **đóng**; chờ **B0** (User) ⇒ merge B1 (context 10 + NFC) ⇒ mốc cuối (câu kín)
+⇒ đóng 8.2 ⇒ tính năng mới. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
+
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
 `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
 `report_agent/2026-10-24_phase_8_1_ra_soat/` — `TONG_HOP.md`, kết luận `phase_8_1_g5_synthesis.md`, bảng
@@ -48,7 +51,7 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 - Giới hạn: bộ thử nhỏ; judge Claude, **chưa có mốc người**; câu không dấu **ngoài phạm vi** (User 25/10). User 15:44 25/10: sẽ đọc và nhận xét, **không chấm điểm** tay.
 - Tiền 8.1: 0,1653 USD.
 
-Đang làm: **sửa code sau rà soát Phase 0–7** (User duyệt 5 gói 19:4x 25/10; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`; đợt
+Đã xong (25–26/10): **sửa code sau rà soát Phase 0–7** (User duyệt 5 gói 19:4x 25/10; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`; đợt
 `report_agent/2026-10-25_ra_soat_code/` — `TONG_HOP.md`). Đã vào `main` + cổng ổn định: **1a** `9e6d371` (validator nhận `[Nguồn n]`),
 **4** `1b9c126` (guide / notebook), **3** `47a4e32` (công cụ so cặp, một chỗ dựng tin nhắn), **1b** `1e4acd0` (import trần, mọi lệnh từ
 `backend/`, API 409 / 503 đúng), **đợt 3** = gói 2 + 5 + B-12 (merge `421c302` 26/10: đoạn vượt token luôn dừng build; test identity so nội dung +
@@ -59,7 +62,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d`, T1
 đợt cải tiến từng khâu** (User 21:1x: phạm vi B — khâu trả lời + khâu tìm, không ghi Qdrant; luật (a) / (i); A tự chọn trong luật): phân loại lỗi
 (C36 / B42: 80 % điểm mất đi kèm thiếu bằng chứng; chỗ nghẽn là xếp hạng); **K1** pool 100 kém hơn (nhánh `p82-k1`); **R2** trả lời một phần kém hơn
 (phạm sàn OOS, 0,0027 USD; gác; `p82-r2`); **R3** NOT RUN (6 câu); **R4** thước số (chỉ danh sách đọc lại, `2c7ecfd`); K2, E2 NOT RUN; **27/10:** K3, R1, K3b-n kém hơn;
-**K3b-m** (luna chọn 10 / 30) tầng tìm tốt hơn (tạm) (22 → 31 / 40) nhưng khâu trả lời kém hơn theo luật (5 câu tụt > 4; e2e p50 6,5 / p95 9,1 s khi gọi đồng thời 4, 3,8× tiền) ⇒ **User 27/10 chọn chốt đợt**
+**K3b-m** (luna chọn 10 / 30) tầng tìm tốt hơn (tạm) (22 → 31 / 40 theo nhãn v1; v2: 24 → 33) nhưng khâu trả lời kém hơn theo luật (5 câu tụt > 4; e2e p50 6,5 / p95 9,1 s khi gọi đồng thời 4, 3,8× tiền) ⇒ **User 27/10 chọn chốt đợt**
 (đợt đóng). Tiền 8.2: ≈ 0,212 / 0,5 USD. Bước tiếp: **B0** ⇒ merge B1 + cổng ổn định ⇒ đóng 8.2 ⇒ tính năng mới. Tổng hợp:
 `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`.
 
@@ -126,6 +129,10 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-27 13:05 | User duyệt: `/api/chat` ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 + đếm dòng tiêu đề (merge `a819789`, `gold_draft` giữ); W24–W26 | User; `TONG_HOP.md` §7 |
+| 2026-10-27 11:0x | **Chốt đợt cải tiến từng khâu** (User chọn (1)): chatbot không đổi; K3b-m gác làm hồ sơ; bước tiếp B0 ⇒ B1 ⇒ đóng 8.2 ⇒ tính năng mới | User; `TONG_HOP.md` |
+| 2026-10-27 10:2x | Lượt answer K3b-m: câu 120 về "theo dõi" (sàn A đặt trên tiền đề nhãn chưa kiểm), chạy lại từ đầu, không sửa nhãn lúc đó | User |
+| 2026-10-27 08:47 | **Mục tiêu sản phẩm:** đồ án tốt nghiệp, xem như sản phẩm kinh doanh thật; người dùng = User, du khách, người dân; yêu cầu phi chức năng chưa có số ⇒ so sánh, tối ưu chỗ được. Q2 spec §10.6: test = "không làm hỏng" | User |
 | 2026-10-26 21:31 | **Nguyên tắc: "ưu tiên đạt chất lượng cần thiết trước, sau đó mới tối ưu hiệu suất"** — biến thể nâng chất lượng chạy / chọn trước biến thể tối ưu tiền / tốc độ | User; spec 8.2 §10.3 |
 | 2026-10-26 21:1x–21:31 | **Đợt cải tiến = spec 8.2 §10** (phạm vi B: khâu trả lời + thí nghiệm khâu tìm, không ghi Qdrant). Luật nhận: (a) chất lượng giữ (Completeness TB ≥ −0,1, câu tụt ≤ A/A + 3) + rẻ / nhanh hơn rõ; (i) chất lượng tăng vượt nhiễu + latency ≤ +50 ms + không thêm lần gọi API, USD / câu ≤ +20 %; tốn hơn ⇒ trình User. A tự đề xuất / thử / chọn trong luật. Hook quét cả câu kín | User; spec 8.2 §10 |
 | 2026-10-25 19:4x | **Sửa code theo rà soát: đồng ý 5 gói** (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md`); gỡ code không dùng nếu không ảnh hưởng hệ thống; guide 0–4 thêm dòng lịch sử; nội dung kho + đường dẫn dự án khác ra khỏi file tracked từ giờ, không xóa lịch sử git. Sửa trên `main`; B1 chờ B0 như spec 8.2 | User; `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md` |

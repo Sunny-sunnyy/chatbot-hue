@@ -17,14 +17,16 @@ theo giờ, §3 kết quả, §7 việc sau khi đóng đợt); nhật ký User 
   Mọi số `*_gold_*` trước 27/10 là v1 (B1 dev: v1 22 / v2 24). **Không chạy `data/phase_8_1/tools/validate_gold.py`** (ghi đè `gold_draft`).
 - Qdrant `:6335` **1** collection `hue_full_corpus_7a2_e5_small_384` (8.459). Repo `chatbot-hue` **PUBLIC**. Untracked ở gốc **của User, không đụng**:
   `báo cáo nghiên cứu github.txt`, `tham khảo 26_10/`. Hook pre-commit quét trùng Golden / kho / câu kín (`.githooks/overlap_scan.py`).
-- Cổng 8011 và 8015 trên máy đang bị tiến trình **của dự án khác** chiếm (27/10) ⇒ server thử dùng cổng khác (8013, 8014, 8019 đã dùng được).
+- Cổng: 27/10 cổng 8011 và 8015 bị tiến trình **của dự án khác** chiếm (có thể đổi) ⇒ trước khi chạy server: `ss -ltnp | grep ':80'`, chọn cổng trống (8013, 8014,
+  8019 đã dùng được). Cổng bị chiếm ⇒ uvicorn khởi động xong rồi dừng, exit 3, log không ghi lỗi bind.
 
 **Phase 8.2** (spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`, bản A duyệt `cd910c4c4169`):
 - **Bước 2 (đợt cải tiến từng khâu) ĐÓNG 27/10** — User chọn (1) "chốt đợt": K1, K3, K3b-n, R1, R2 kém hơn; **K3b-m** (luna chọn 10 / 30 đoạn) tầng tìm tốt hơn
   (tạm) — đoạn đúng trong context 22 → 31 / 40 (v1), 9 thắng / 0 thua ổn định 2 lượt — nhưng khâu trả lời **kém hơn theo luật** T3 (5 câu Completeness tụt > 4;
   chỉ báo: Completeness +0,216, Accuracy +0,250, từ chối nhầm 7 → 2 / 88), chọn đoạn thêm ≈ 4,6–5 s p50, ≈ 3,8× USD ⇒ **gác làm hồ sơ**. R3, K2, E2 NOT RUN.
 - **B0** (User đọc cặp mù, `data/phase_8_2/b0/nhan_xet_user.md`, 20 câu, ~30–45 phút): **chưa làm** — việc duy nhất chặn merge B1.
-- **B1** (context 10 + NFC): `p82-b1` `811d25d`; B63 27/10: rebase lên `main` `e952fa3` không xung đột, 68 passed / 1 failed (thiếu key), T1 giống byte. Latency thật
+- **B1** (context 10 + NFC): `p82-b1` vẫn là `811d25d` (gốc `43cdcd6`). B63 27/10 **chỉ thử** rebase lên `main` `e952fa3` trên nhánh tạm (đã xóa, không push): không xung
+  đột, 68 passed / 1 failed (thiếu key), T1 giống byte. Latency thật
   qua API (B65): context 10 **không chậm hơn** context 5. Sau B0: rebase lên `main` mới (gồm log + gold v2) ⇒ cổng ổn định ⇒ merge ⇒ 4 chỗ báo cáo.
 - Tiền 8.2: **≈ 0,212 / 0,5 USD** (cận trên ≈ 0,218). Phiên 27/10 cả nhóm ≈ **0,197 USD** (log 0,172 + ước 0,025: K3b-n mất usage ≈ 0,0087, B65 ≈ 0,0155, cổng A ≈ 0,0005).
 
@@ -43,15 +45,20 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 **Thứ tự việc phiên sau:**
 1. Mở A / B / C bằng `START_SESSION.md`; A `ListAgents`, cập nhật bảng Session; kiểm `main` sạch (trừ 2 mục untracked của User), Qdrant 1 × 8.459.
 2. **A hỏi lại quyền phiên** (quyền 27/10 hết hạn): điều phối + tự thử / chọn trong luật? trần ≤ 1 USD? (User có thể nói "quyền như phiên 27/10").
-3. **B0** khi User làm ⇒ A chấm theo luật dừng B0 (spec 8.2) ⇒ B rebase B1 lên `main` mới + cổng ổn định ⇒ A merge ⇒ chatbot context 10 + NFC ⇒ 4 chỗ báo cáo.
-4. Mốc cuối 8.2: câu kín (36 câu, User quyết mở) ⇒ đóng 8.2 ⇒ **tính năng mới** (User 27/10: "xong sớm thì mới bổ sung được tính năng mới") — brainstorm với User
+3. **B0** khi User làm (file đọc `data/phase_8_2/b0/doc_cap_mu.md`, User ghi `nhan_xet_user.md`) ⇒ A mở `khoa.json` (chỉ A), tóm nhãn + áp **luật dừng spec 8.2
+   §3 mục 4 (dòng 44–)** ⇒ không dừng: B rebase `p82-b1` lên `main` mới (gồm log + gold v2) + cổng ổn định + push nhánh (**cần quyền**) ⇒ C review ⇒ A merge ⇒
+   chatbot context 10 + NFC ⇒ 4 chỗ báo cáo.
+4. Mốc cuối 8.2: câu kín (36 câu; User quyết lúc mở; A **không** đọc nội dung — giao một session / sub-agent riêng chạy + chấm, báo số đếm, theo `Session_Prompt.md`
+   §5 "giữ mù") ⇒ đóng 8.2 ⇒ **tính năng mới** (User 27/10: "xong sớm thì mới bổ sung được tính năng mới") — brainstorm với User
    theo `propose-options`, một tài liệu thiết kế (WORKFLOW §9.1). Ứng viên A ghi nhận (chưa bàn): streaming từng câu đã kiểm (nghiên cứu 26/10 C5), hội thoại
    nhiều lượt, Phase 9 (agentic / recommender — `báo cáo nghiên cứu github.txt` của User), deploy.
-5. Trong lúc chờ User: B / C chỉ làm việc 0 USD không đổi chatbot (ví dụ đọc kết quả ChatGPT khi User gửi; danh sách "Câu hỏi A còn nợ").
+5. Trong lúc chờ User: B / C chỉ làm việc 0 USD không đổi chatbot, **do A giao** (giao việc là vai thường trực của A, WORKFLOW §1; quyền hết hạn là quyền
+   *tự quyết thử nghiệm / tiền / push*). Mục việc cụ thể: dưới "Mục việc phiên sau".
 
 ## Câu hỏi cho User (phiên sau — gói trong báo cáo mở phiên, mỗi câu có khuyến nghị)
 
-1. **Quyền phiên** (bước 2 trên). A khuyên: như 27/10 (điều phối + tự thử trong luật; ≤ 1 USD; B / C commit + push nhánh riêng khi việc ghi rõ).
+1. **Quyền phiên** (bước 2 trên). A khuyên: như 27/10 (điều phối + tự thử trong luật; ≤ 1 USD; B / C commit + push nhánh riêng khi việc ghi rõ — gồm **B rebase
+   + force-push `p82-b1`** sau B0, vì rebase đổi lịch sử nhánh).
 2. **B0** — khi tiện (chỉ User làm được); sau đó chatbot lên context 10.
 3. **Nghiên cứu ChatGPT** `gửi chatgpt/2026-10-27/tìm thông tin/muc_tieu_san_pham_2026_10_27.md` (C47 đã đối chiếu code, A sửa) — chưa gửi; kết quả lưu
    `gửi chatgpt/2026-10-27/kết quả nghiên cứu/`. Cần để chốt yêu cầu phi chức năng (chờ tối đa, tiền / câu) và thứ tự lỗi.
@@ -70,7 +77,7 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 - B70 m-1: test khóa danh sách trắng `chat_metrics` chỉ phủ trường gán **trước** điểm lỗi ngân sách context ⇒ trường lạ thêm ở phần sinh / citation chỉ cổng ổn
   định bắt (ghi bẫy hoặc thêm test đi qua generator khi có key); m-2 `dense_ms` chưa làm tròn 1 chữ số (vô hại).
 - Log `FileHandler` không xoay vòng (~400 byte / câu) — xem lại khi deploy.
-- Guide 5 `:65` còn nhắc MiniLM; `guides/full_corpus_rag.md` bước 4b dùng mã B-06 khác nghĩa (C ghi).
+- `guides/phase_5_retrieval_profiles_reranking.md:65` còn nhắc MiniLM (lịch sử — xem có cần ghi "đã gỡ 26/10"); `guides/full_corpus_rag.md` bước 4b dùng mã B-06 khác nghĩa (C ghi).
 - `validate_gold.py` không nhận đầu vào / ghi đè `gold_draft` — thêm tham số vào / ra hoặc cảnh báo đầu file (B69 đề xuất).
 - Một số report trên nhánh `gold-v2` (đã merge) trỏ `/tmp/b75_recount.py` (đã xóa; bản giữ ở `data/phase_8_1/tools/recount_gold_v2.py`) và lệnh `python3` (C61 m-2 / m-3).
 - Sổ cải tiến: theo dõi W24–W26 (`đang thử` từ 27/10); `CURRENT_HANDOFF` nên ≤ ~150 dòng.
@@ -105,7 +112,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 | `data/phase_8_1/golden_realism_final.jsonl` | độ tự nhiên 176 câu (82 / 65 / 29) | `0b65d1c138d2` |
 | `knowledge-base-hue/evaluation/phase_8_1/sealed_official.jsonl` | 36 câu kín — **không đọc** tới mốc cuối 8.2 | md5 `ddc59587b502` |
 | `data/phase_8_1/baseline/g0_6_manifest.json` | manifest khóa G0.6 | `9ea480d0d083` |
-| `data/phase_8_2/b0/` | đọc cặp mù: `doc_cap_mu.md`, `nhan_xet_user.md` (User ghi — **chưa ghi**), **`khoa.json` chỉ A** (`5b9240842b7b`) | — |
+| `data/phase_8_2/b0/` | đọc cặp mù: `doc_cap_mu.md`, `nhan_xet_user.md` (User ghi — **chưa ghi**), **`khoa.json` chỉ A** (`5b9240842b7b`), `mau.json` (mẫu 20 câu), `tools/` | — |
 | `data/phase_8_2/{b1,k1,k3,k3b,r1,r2,r4}/` | kết quả từng thí nghiệm (harness từ chối ghi đè); `k3b/gold_scan/` B61; `k3b/answer/` K3b-m answer | — |
 | `data/phase_8_2/latency_2710/` | B65: 22 câu tự viết (`questions.jsonl` `bac5c91db005`), kết quả, `c58/` (C58 + diff đo tạm) | — |
 | `data/phase_8_2/gold_fix_proposal_2710/` | đề xuất nhãn C56 (đã áp thành gold v2) | — |
@@ -130,6 +137,14 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - Test cần key OpenAI (không chạy mặc định): `test_api_chat.py::test_health_is_cached_and_ready_after_real_lifespan` (+ các test `require_openai_key`),
   `test_openai_full_corpus_generator.py`, `test_phase6_live_smoke.py`, `test_phase6_settings.py::test_openai_api_key_exists_without_leaking`. Test thiếu model
   `tests/test_startup_model_missing.py`: User `!`.
+
+### Mục việc phiên sau (A giao khi mở phiên; trước khi User cấp lại quyền: chỉ việc 0 USD, không push)
+
+- **B:** mở phiên, kiểm nhanh, báo A, chờ. Khi B0 xong + có quyền: rebase `p82-b1` lên `main`, chạy pytest file chạm + T1 (giống byte `cefb2d1ad609`) + cổng ổn
+  định (context 10), report `phase_8_2_b1_rebase2_implementation.md`, push nhánh ⇒ C review. Không merge `main`.
+- **C:** mở phiên, kiểm nhanh, báo A, chờ. Khi B xong rebase B1: review theo `risk-gated-agent-review`. Việc 0 USD A có thể giao trước: đọc / đối chiếu kết quả
+  ChatGPT nếu User đã gửi (W19); sửa chữ nhỏ trong "Câu hỏi A còn nợ" khi A giao rõ.
+- Không ai: chạy thí nghiệm mới, gọi API trả phí, mở câu kín, chạy `validate_gold.py` khi chưa có việc ghi rõ.
 
 ### Hồ sơ thí nghiệm 8.2 (đã đóng — chỉ tra cứu)
 
