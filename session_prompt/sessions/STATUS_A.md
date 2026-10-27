@@ -1,3 +1,30 @@
+# STATUS A — cập nhật 13:51 27/10/2026 (mở phiên 27/10 chiều)
+
+Terminal: `hue-rag-51` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-2d`, C = `hue-rag-86` (cả ba Claude Code, trực tiếp).
+
+## Commit
+- Đầu phiên: `473f61e`.
+
+## Đang làm / dở
+- Giao B71 (rebase B1, worktree `/tmp/b71_b1`), C62 (sửa guide / report cũ) — `CURRENT_HANDOFF.md` "Việc đang mở". A: review C62; brainstorm tính năng mới với User
+  (PA3 — chỉ bàn); kế hoạch mốc cuối 8.2 (câu kín — A không đọc nội dung).
+
+## Đang khai báo sửa
+- `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/sessions/STATUS_A.md`
+
+## Quyền phiên này (User 13:46 27/10: "cấp lại như phiên 27/10" — HẾT HẠN cuối phiên)
+- A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C commit + push nhánh riêng theo việc (B71: force-push `p82-b1`).
+
+## Tiền paid phiên này
+- A: 0 USD.
+
+## Đã học / bẫy gặp (phiên 27/10 chiều)
+- Mục nợ "guide phase 5:65 còn nhắc MiniLM" trong handoff đã cũ — dòng đó đã ghi gỡ 26/10 (C62 xác nhận).
+- Guide phase 8 mục "Hiện hành" còn ghi "8.2 tạm dừng"; guide phase 6 chưa có `chat_metrics` ⇒ đóng gate / merge chưa cập nhật guide (WORKFLOW §9.4) — đầu vào vòng cải tiến.
+
+---
+Phần dưới: trạng thái kết phiên 27/10 sáng.
+
 # STATUS A — cập nhật 13:30 27/10/2026 (KẾT PHIÊN 27/10 — User khởi động lại A / B / C để reset context)
 
 Terminal: `hue-rag-5f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-31`, C = `hue-rag-5b` (tên đổi mỗi lần mở — `ListAgents`).

@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 13:30 27/10/2026 (A, **KẾT PHIÊN 27/10** — User: "các nhiệm vụ, câu hỏi … thực hiện ở session tiếp theo"; User sẽ khởi động lại A / B / C để reset context).
+Cập nhật: 13:50 27/10/2026 (A, **mở phiên 27/10 chiều**: quyền cấp lại như 27/10; B0 chưa; giao B71 / C62 — mục "Việc đang mở"). Trước: 13:30 27/10 (kết phiên sáng).
 Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Chi tiết phiên 27/10: `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md` (§2 quyết định
 theo giờ, §3 kết quả, §7 việc sau khi đóng đợt); nhật ký User `bao_cao_he_thong/nhat_ky/2026-10-27_chot_dot_cai_tien.md`. Bản handoff trước khi viết lại:
 `git show a819789:session_prompt/CURRENT_HANDOFF.md` (có bảng chi tiết từng thí nghiệm K1–K3b, R1–R4).
@@ -86,9 +86,11 @@ B53–B70, C46–C61 — STATUS_B / STATUS_C dùng đúng mã này).
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-5f` (27/10) | Claude Opus 5.5 | trực tiếp | **KẾT PHIÊN** — giao + review B53–B70 / C46–C61; đóng đợt cải tiến; merge log + gold v2; sổ vòng 7 (W24–W26 áp) | `STATUS_A.md`; ≈ 0,0005 USD |
-| B — thực thi | `hue-rag-31` (27/10) | Claude Opus 5.5 | trực tiếp | **KẾT PHIÊN** — B53–B70 xong, không việc dở, không file khai báo | `STATUS_B.md`; log 0,1593 + ước ≈ 0,024 USD |
-| C — thực thi | `hue-rag-5b` (27/10) | Claude Opus 5.5 | trực tiếp | **KẾT PHIÊN** — C46–C61 xong, không việc dở, không file khai báo | `STATUS_C.md`; log 0,0127 USD |
+| A — điều phối | `hue-rag-51` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | điều phối B71 / C62; review C62; brainstorm tính năng mới với User (chỉ bàn); kế hoạch mốc cuối 8.2 | `STATUS_A.md` |
+| B — thực thi | `hue-rag-2d` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **B71** rebase B1 (dưới) | `STATUS_B.md` |
+| C — thực thi | `hue-rag-86` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | **C62** sửa guide / report cũ (dưới) ⇒ review B71 | `STATUS_C.md` |
+
+Phiên trước (27/10 sáng, kết 13:30): A `hue-rag-5f`, B `hue-rag-31`, C `hue-rag-5b` — B53–B70 / C46–C61 xong; tiền ≈ 0,197 USD.
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 
@@ -97,8 +99,10 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Thường trực:** A commit/push `origin main`; B/C không commit trừ khi việc ghi rõ (nhánh riêng); duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt:
   A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; luôn thử + so baseline
   trước khi chọn (User 24/10 20:49); commit trước sửa code + cổng ổn định sau mỗi gói (User 26/10); "báo trước, chờ User đồng ý" chỉ áp ngoài phạm vi đã duyệt.
-- **Phiên 27/10 — HẾT HẠN, hỏi lại:** A tự điều phối B/C + tự thử / chọn trong luật; API ≤ 1 USD cả phiên (dùng ≈ 0,197); B commit + push `p82-k3`, `p82-k3b`, `gold-v2`;
-  C commit + push `p82-r1`, `c59-log`.
+- **Phiên 27/10 chiều (User 13:46 27/10: "cấp lại như phiên 27/10") — hết hạn cuối phiên:** A tự điều phối B/C + tự thử / chọn trong luật; API ≤ 1 USD cả phiên;
+  B / C commit + push nhánh riêng theo việc — B71: B commit + **force-push `p82-b1`** (`--force-with-lease`). User chọn PA3 (13:4x): chuẩn bị B1 + dọn nợ + A **bàn**
+  tính năng mới với User trước khi đóng 8.2 (chỉ bàn, không viết spec / giao làm — lệch `WORKFLOW.md` §9.4 do User duyệt). B0: User chưa rảnh.
+- Phiên 27/10 sáng (hết hạn): API dùng ≈ 0,197 USD; B push `p82-k3`, `p82-k3b`, `gold-v2`; C push `p82-r1`, `c59-log`.
 - Trần 8.2: 0,5 USD (spec D5). Luật kỹ thuật giữ: GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10; luna chọn 10 / 30 đoạn ~0,0006 / lần).
 
@@ -138,13 +142,32 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   `test_openai_full_corpus_generator.py`, `test_phase6_live_smoke.py`, `test_phase6_settings.py::test_openai_api_key_exists_without_leaking`. Test thiếu model
   `tests/test_startup_model_missing.py`: User `!`.
 
-### Mục việc phiên sau (A giao khi mở phiên; trước khi User cấp lại quyền: chỉ việc 0 USD, không push)
+### B71 — rebase B1 lên `main` trước B0 (giao 13:50 27/10; mức trung bình; khớp spec 8.2 §5: merge vẫn **sau** B0)
 
-- **B:** mở phiên, kiểm nhanh, báo A, chờ. Khi B0 xong + có quyền: rebase `p82-b1` lên `main`, chạy pytest file chạm + T1 (giống byte `cefb2d1ad609`) + cổng ổn
-  định (context 10), report `phase_8_2_b1_rebase2_implementation.md`, push nhánh ⇒ C review. Không merge `main`.
-- **C:** mở phiên, kiểm nhanh, báo A, chờ. Khi B xong rebase B1: review theo `risk-gated-agent-review`. Việc 0 USD A có thể giao trước: đọc / đối chiếu kết quả
-  ChatGPT nếu User đã gửi (W19); sửa chữ nhỏ trong "Câu hỏi A còn nợ" khi A giao rõ.
-- Không ai: chạy thí nghiệm mới, gọi API trả phí, mở câu kín, chạy `validate_gold.py` khi chưa có việc ghi rõ.
+- **Mục tiêu:** `p82-b1` (context 10 + NFC) nằm trên `main` `473f61e` (gồm log `chat_metrics` + gold v2), đã kiểm, để sau B0 A chỉ còn tóm nhãn + merge.
+- **Đọc:** full-read `phase_8_2_b1_implementation.md` (trên `p82-b1`) + `phase_8_2_b1_rebase_review.md`; targeted spec 8.2 §4 (phạm vi B1); mục "Luật chung khi sửa code" ở trên.
+- **Làm:** worktree riêng `/tmp/b71_b1` (C sửa tài liệu trên `main` trong working tree chung — bẫy worktree `Project_Status.md` §8); rebase; pytest các file chạm
+  (không key); **T1 giống byte** `cefb2d1ad609`; **cổng ổn định context 10** (2 câu tự viết; đếm `chat_metrics` = 2; xem log có ghi số nguồn ≤ 10); report
+  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_rebase2_implementation.md` commit trên nhánh; `git push --force-with-lease origin p82-b1` (từ working
+  tree chung nếu worktree bị chặn). Gỡ worktree khi xong.
+- **Không làm:** merge `main`; đổi hành vi ngoài B1; chạy thí nghiệm; mở `khoa.json` / câu kín.
+- **Tiền:** ≤ 0,005 USD (cổng 2 câu ≈ 0,0005). **Dừng + báo A:** xung đột ngoài file B1; T1 khác byte; test hỏng ngoài nhóm cần key; latency / log lạ.
+- **Xong:** nhắn A + C (C review theo `risk-gated-agent-review`).
+
+### C62 — sửa guide / report cũ cho khớp hiện trạng 27/10 (giao 13:50 27/10; mức thấp–trung bình; 0 USD)
+
+- **Làm** (trong working tree chung, nhánh `main`; **không commit** — A review diff rồi commit; khai báo file trong `STATUS_C.md` trước):
+  1. `guides/phase_8_benchmark_model_selection.md` mục "Hiện hành": còn ghi "8.2 — tạm dừng" ⇒ cập nhật theo `Project_Status.md` §2 (8.2 chạy lại 26/10, đợt cải
+     tiến đóng 27/10, B0 chờ, B1 trên nhánh, chatbot context 5).
+  2. `guides/phase_6_generation_api.md` (+ `guides/full_corpus_rag.md` nếu có mục API / log): thêm dòng log `chat_metrics` (merge `5100b90`) — mỗi khẳng định kèm
+     `file:dòng` code đã đối chiếu.
+  3. `guides/full_corpus_rag.md:179` mã "B-06" (trùng nghĩa với mã việc khác) ⇒ ghi rõ nghĩa bằng lời.
+  4. `report_agent/2026-10-26_cai_tien_tung_khau/gold_v2_{implementation,review}.md`: `/tmp/b75_recount.py` ⇒ `data/phase_8_1/tools/recount_gold_v2.py`; `python3` ⇒
+     `uv run python` (C61 m-2 / m-3) — ghi "(sửa 27/10, C62)".
+  5. `data/phase_8_1/tools/validate_gold.py` (private): cảnh báo đầu file + dừng nếu `gold_draft.jsonl` đã có (không ghi đè file G0.6 khóa) — không chạy script.
+  6. Xác nhận `guides/phase_5_retrieval_profiles_reranking.md:65` đã ghi MiniLM gỡ 26/10 (A thấy đã có) ⇒ A gỡ mục khỏi "Câu hỏi A còn nợ".
+- **Không làm:** sửa code backend; sửa governance; chọn một phía khi guide ↔ code mâu thuẫn (báo A). **Xong:** nhắn A (danh sách file + diff stat); rồi review B71.
+- Không ai: chạy thí nghiệm mới, mở câu kín, chạy `validate_gold.py`.
 
 ### Hồ sơ thí nghiệm 8.2 (đã đóng — chỉ tra cứu)
 
