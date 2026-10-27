@@ -70,6 +70,7 @@
   chỉ thân). Script tạm đã xóa. Bài học: khi in "bằng chứng" cho một cờ, in đúng phần tử làm cờ bật, không in phần tử gần giống.
 - **B72 xong (12:05 27/10/2026; A gọi B67):** review C58 (tin nhắn, 0 USD): đo tạm không đổi hành vi; bảng theo khâu khớp từng ô; tiền 0,0074884 khớp. Sửa nhãn:
   "do token ra" là giải thích mạnh (r trong bộ 0,98 / 0,93; biến bộ câu +24 ms) nhưng chưa can thiệp ⇒ không gọi "chứng minh"; "dao động theo ngày" = giả thuyết.
+- **B73 xong (12:11 27/10/2026; A gọi B68):** review plan C59 = changes_requested (0/2/3): M-1 outcome gắn cứng sai ở 409 `corpus_reingest_required`; M-2 lỗi 500 `internal_error` không có dòng + 9 chỗ dễ sót ⇒ đề xuất một điểm ghi `finally`; m-1 test lọt nội dung ở nhánh nông; m-2 khóa whitelist; m-3 đếm dòng mới. B1 không xung đột. File `c59_log_token_plan_review.md` (A commit).
 - **File đang khai báo sửa: không.** Tiền paid phiên 27/10 (log): K3 0,0251129 + K3b 0,0592176 + phụ lục 0,0749297 = **0,1592602 USD**,
   + ước lượt n mất usage **≈ 0,0087 (cận trên ≈ 0,0142)** — tính lại 27/10 từ token vào thật của đúng 30 câu (`m_l1_rest`; số cũ 0,0074 / 0,0105 lấy
   giá / lần của pilot nên thấp) ⇒ ≈ 0,168 (≤ 0,174) USD; + B65 ≈ 0,0155 (ước) ⇒ **≈ 0,184 (≤ 0,190) USD**.
