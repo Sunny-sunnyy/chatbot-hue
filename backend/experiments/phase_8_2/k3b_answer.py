@@ -56,7 +56,7 @@ SPLIT_PATH = REPO_ROOT / "knowledge-base-hue/evaluation/phase_8_1/split.json"
 REPLAY_FILES = (K3B_DIR / "m_l1.merged.jsonl", K3B_DIR / "m_test.jsonl")  # plan §3: L1 cho dev, ghi trước
 RUNS = {"k3b": [OUT_DIR / "answer_dev.jsonl", OUT_DIR / "answer_test.jsonl"], "b1": [B1_DIR / "b1_dev.jsonl", B1_DIR / "b1_test.jsonl"]}
 SEED = 20261024
-MUST_REFUSE = 120  # plan bản 2 T8 (A chọn theo C53 m-2): context K3b-m vẫn 0 fact ⇒ sàn "vẫn từ chối"; 168 chỉ theo dõi
+WATCH_CASES = (120, 168)  # plan bản 3 T8: theo dõi (bản 2 đặt 120 là sàn trên tiền đề nhãn thiếu — xem plan "Đổi sau khi thấy số")
 WON = {"dev": (17, 38, 48, 67, 70, 85, 156, 159, 167), "test": (20, 95, 130)}  # thắng ở tầng tìm (report K3b §4.3)
 # Plan §2 W2: tách câu ở khoảng trắng / cuối chuỗi sau dấu kết câu, GIỮ các `[n]` theo sau dấu kết câu (có thể cách một dấu cách:
 # "….[2] Nguồn …", "…. [1]") ở câu trước (B58 m-1, C53 vòng 2 m-4); dấu chấm trong số ("1.100.000") không có khoảng trắng theo sau nên
@@ -155,8 +155,6 @@ async def run(cases_name: str, name: str) -> dict:
                 stop["reason"] = f"T2 floor at case {case['case_index']}: {row['error'] or row['citation_error']}"[:500]
             elif row["category"] == OUT_OF_SCOPE and not row["refusal"]:
                 stop["reason"] = f"T1 floor: out_of_scope case {case['case_index']} answered"
-            elif case["case_index"] == MUST_REFUSE and not row["refusal"]:
-                stop["reason"] = f"T8 floor: case {MUST_REFUSE} answered"
             elif violations > MAX_VIOLATIONS:
                 stop["reason"] = f"contract violations {violations} > {MAX_VIOLATIONS}"
 
@@ -186,7 +184,7 @@ def run_rows(run_name: str) -> dict[int, dict]:
 
 
 def check() -> dict:
-    """Sàn T1 / T2 / T8 (120), T6 theo dạng (theo dõi), phát lại = file gốc, hợp đồng, tiền."""
+    """Sàn T1 / T2, T6 theo dạng + T8 120 / 168 (theo dõi), phát lại = file gốc, hợp đồng, tiền."""
     k3b, b1, replay = run_rows("k3b"), run_rows("b1"), replay_rows()
     replayed = [i for i in k3b if k3b[i].get("replayed")]
     contracts = [r["contract"] for r in k3b.values() if "contract" in r and not r.get("replayed")]
@@ -196,7 +194,7 @@ def check() -> dict:
         "cases": len(k3b),
         "T1_oos_answered": sorted(i for i in k3b if k3b[i]["category"] == OUT_OF_SCOPE and not k3b[i]["refusal"]),
         "T2_api_500": sorted(i for i in k3b if api_500(k3b[i])),
-        "T8_120_answered": MUST_REFUSE in k3b and not k3b[MUST_REFUSE]["refusal"],
+        "T8_watch_refusal": {i: k3b[i]["refusal"] for i in WATCH_CASES if i in k3b},
         "T6_citation_v2_by_kind": {run_name: {i: citation_error(r["answer"], r["context_sources"], single_source_policy=False) for i, r in rows.items()
                                               if i in v2(rows)}
                                    for run_name, rows in (("k3b", k3b), ("b1", {i: b1[i] for i in k3b}))},
@@ -259,7 +257,7 @@ def analyze(group: str) -> dict:
     out["W2_refusal_to_answer"] = [{"case_index": i, "uncited_sentences": uncited_sentences(k3b[i]["answer"])}
                                    for i in ids if b1[i]["refusal"] and not k3b[i]["refusal"]]
     out["W2_answer_to_refusal"] = sorted(i for i in ids if k3b[i]["refusal"] and not b1[i]["refusal"])
-    out["W2_watch_120_168"] = {i: {"refusal": [b1[i]["refusal"], k3b[i]["refusal"]]} for i in (120, 168) if i in k3b}
+    out["T8_watch_120_168"] = {i: {"refusal": [b1[i]["refusal"], k3b[i]["refusal"]]} for i in WATCH_CASES if i in k3b}
     fresh = [k3b[i]["e2e_ms"] for i in ids if not k3b[i].get("replayed")]
     rng = np.random.default_rng(SEED)
     pct = lambda xs, q: [float(np.percentile(xs, q)),
