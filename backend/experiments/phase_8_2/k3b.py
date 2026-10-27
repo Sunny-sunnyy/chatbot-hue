@@ -21,7 +21,7 @@ import time
 
 import numpy as np
 from openai import OpenAI, OpenAIError
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from core.settings_loader import load_settings
 from evaluation.full_corpus_eval import (
@@ -61,7 +61,9 @@ class LunaTop10(BaseModel):
 
 
 def luna_top10(client: OpenAI, model: str, max_output_tokens: int, query: str, docs: list, effort: str | None) -> dict:
-    """Một lần gọi rerank. Chỉ trả `error` cho lỗi kỹ thuật (plan §2 loại 1); danh sách trả về giữ nguyên để `apply_contract` xử lý."""
+    """Một lần gọi rerank. Chỉ trả `error` cho lỗi kỹ thuật (plan §2 loại 1); danh sách trả về giữ nguyên để `apply_contract` xử lý.
+    `responses.parse` gửi json_schema strict; khi model vẫn viết chữ thừa sau JSON, SDK ném `pydantic.ValidationError` thay vì trả
+    `output_parsed` None (K3b-n 27/10) ⇒ cùng loại "parse hỏng" của plan §2 loại 1. Lúc đó SDK không trả `usage` ⇒ ghi `usage_unknown`."""
     passages = "\n\n".join(f"[{n}] {d.text}" for n, d in enumerate(docs, 1))
     reasoning = {"reasoning": {"effort": effort}} if effort else {}
     try:
@@ -70,6 +72,8 @@ def luna_top10(client: OpenAI, model: str, max_output_tokens: int, query: str, d
             max_output_tokens=max_output_tokens, input=f"Câu hỏi: {query}\n\nCác đoạn:\n{passages}", **reasoning)
     except OpenAIError as exc:
         return {"error": f"api: {type(exc).__name__}: {exc}"[:500]}
+    except ValidationError as exc:
+        return {"error": f"parse: ValidationError: {exc}"[:500], "usage_unknown": True}
     usage = response.usage
     out = {"input_tokens": usage.input_tokens, "output_tokens": usage.output_tokens,
            "usd": cost_usd(usage.input_tokens, usage.output_tokens), "raw": response.output_text, "status": response.status}
@@ -128,7 +132,14 @@ def retrieval(name: str, cases_name: str, arm: str) -> dict:
         luna = OpenAI(api_key=os.environ[generation["api_key_env"]], timeout=generation["timeout_seconds"], max_retries=0)
         meta.update(model_id=generation["model"], max_output_tokens=generation["answer_max_output_tokens"], reasoning_effort=EFFORT[arm])
         violations = sum(r["contract"]["contract_violation"] for r in arm_rows(arm) if "contract" in r)
+    stream = out.open("x", encoding="utf-8")  # ghi từng dòng ngay sau mỗi câu: exception giữa lượt không làm mất usage đã trả tiền
     rows = []
+
+    def keep(row: dict) -> None:
+        rows.append(row)
+        stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+        stream.flush()
+
     try:
         payloads = g1_retrieval.load_payloads(service.client, service.candidate.collection_name)
         payload_by_chunk = {p["chunk_id"]: p for p in payloads.values()}
@@ -146,7 +157,7 @@ def retrieval(name: str, cases_name: str, arm: str) -> dict:
                 row["luna"] = luna_top10(luna, meta["model_id"], meta["max_output_tokens"], query, pool_docs, EFFORT[arm])
                 row["rerank_ms"] = (time.perf_counter() - t1) * 1000
                 if "error" in row["luna"]:
-                    rows.append(row)
+                    keep(row)
                     meta["stopped"] = f"technical error at case {case['case_index']}: {row['luna']['error']}"
                     break
                 picked, row["contract"] = apply_contract(row["luna"]["order"])
@@ -161,28 +172,32 @@ def retrieval(name: str, cases_name: str, arm: str) -> dict:
             for layer, ids in layers.items():
                 coverage = g1_retrieval.gold_coverage(gold[case["case_index"]], [payload_by_chunk[i] for i in ids])
                 row[f"{layer}_gold_all"], row[f"{layer}_gold_frac"] = coverage["all"], coverage["frac"]
-            rows.append(row)
+            keep(row)
             if luna is not None and violations > MAX_VIOLATIONS:
                 meta["stopped"] = f"contract tolerance exceeded for arm {arm}: {violations} violations > {MAX_VIOLATIONS} (plan §6.2)"
                 break
+    except BaseException as exc:  # ghi lại rồi ném tiếp: meta phải có dù lượt dừng vì lỗi không lường trước
+        meta["crashed"] = f"{type(exc).__name__}: {exc}"[:500]
+        raise
     finally:
         service.close()
-    meta["finished"] = time.strftime("%Y-%m-%d %H:%M:%S %z")
-    meta["n"] = len(rows)
-    if luna is not None:
-        calls = [r["luna"] for r in rows]
-        contracts = [r["contract"] for r in rows if "contract" in r]
-        meta["technical_errors"] = sum("error" in c for c in calls)
-        meta["contract_violations"] = sum(c["contract_violation"] for c in contracts)
-        meta["violation_cases"] = [r["case_index"] for r in rows if r.get("contract", {}).get("contract_violation")]
-        meta["arm_cumulative_violations"] = violations
-        meta["usage"] = {k: sum(c.get(k, 0) for c in calls) for k in ("input_tokens", "output_tokens", "usd")}
-        meta["usd_per_call"] = meta["usage"]["usd"] / len(calls) if calls else None
-        meta["output_tokens_max"] = max((c.get("output_tokens", 0) for c in calls), default=0)
-        ms = [r["rerank_ms"] for r in rows]
-        meta["rerank_ms_p50_p95"] = [float(np.percentile(ms, 50)), float(np.percentile(ms, 95))] if ms else None
-    write_jsonl(out, rows)
-    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        stream.close()
+        meta["finished"] = time.strftime("%Y-%m-%d %H:%M:%S %z")
+        meta["n"] = len(rows)
+        if luna is not None:
+            calls = [r["luna"] for r in rows]
+            contracts = [r["contract"] for r in rows if "contract" in r]
+            meta["technical_errors"] = sum("error" in c for c in calls)
+            meta["usage_unknown_calls"] = sum(bool(c.get("usage_unknown")) for c in calls)
+            meta["contract_violations"] = sum(c["contract_violation"] for c in contracts)
+            meta["violation_cases"] = [r["case_index"] for r in rows if r.get("contract", {}).get("contract_violation")]
+            meta["arm_cumulative_violations"] = violations
+            meta["usage"] = {k: sum(c.get(k, 0) for c in calls) for k in ("input_tokens", "output_tokens", "usd")}
+            meta["usd_per_call"] = meta["usage"]["usd"] / len(calls) if calls else None
+            meta["output_tokens_max"] = max((c.get("output_tokens", 0) for c in calls), default=0)
+            ms = [r["rerank_ms"] for r in rows]
+            meta["rerank_ms_p50_p95"] = [float(np.percentile(ms, 50)), float(np.percentile(ms, 95))] if ms else None
+        meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return meta
 
 
