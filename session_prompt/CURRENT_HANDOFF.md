@@ -197,6 +197,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **B82 xong + C76 ready 0 / 0 / 1** (`sua_kho_b7_8_review.md`). **User 11:39 28/10/2026: duyệt 2 trích dẫn mới câu 27 + "0 câu Golden cần sửa".**
   ⇒ **B83:** `build_gold_v4.py --approved` ⇒ `gold_v4.jsonl` (v3 giữ); đổi `GOLD_PATH` ⇒ v4 (working tree, không commit — C kiểm, A commit); viết phần "sau" của
   `truoc_sau.py` (C đọc diff cả file); **bước 9** đo "sau" theo plan `41485782b39e` (≈ 0,037 USD, trần đợt 0,15) ⇒ report `sua_kho_b9_implementation.md` ⇒ C kiểm.
+  - **Trạng thái (B, 12:02 28/10/2026):** bước 9 xong — **không làm hỏng** (F1–F4 0; T1 / T2 / T3 trong mức); 0,036454 USD; chờ C.
 
 ### C77 — bản phương án cho spec streaming (C; A giao 11:39 28/10/2026)
 
@@ -232,6 +233,20 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   **sau** đợt 1; K017 chỉ phần có nguồn; K139 chỉ tên Bộ), mỗi edit kèm URL + ngày kiểm; (2) danh sách quyết định User: K071, K084, K069, phát hiện K017 "2.400 tỷ", câu 5
   Golden (B82), 16 câu `cau_hoi_user.md` còn mở — mỗi mục có gợi ý; (3) `README.md`.
 - **Không làm:** sửa kho / Golden, gọi API. 0 USD. Tìm trong kho **chỉ** `scripts/grep_kb.sh`. **Xong:** nhắn A; B review khi rảnh.
+
+- **Đợt sửa kho đợt 1: bước 0–10 xong** (12:18): bước 9 C80 ready; báo cáo `BAO_CAO_KHO_DU_LIEU` bản 5, `BAO_CAO_DANH_GIA` bản 4, `LUONG`, guide `full_corpus_rag`
+  "Hiện hành 28/10", README, nhật ký. **Chờ User:** đóng đợt; bước 11 xóa sao lưu (`knowledge-base-hue/meta/backup_sua_kho_2026-10-28/`, `data/sua_kho_2026-10-27/backup/`).
+
+### B87 — plan đo hai lỗi nặng nhất chưa có thước (B viết, C review; A giao 12:18 28/10/2026)
+
+- **Mục tiêu:** thứ tự lỗi User chốt 28/10 có 2 mức nặng nhất chưa đo được: **sai cảnh báo an toàn / điều kiện vào khu vực** và **bịa thêm** (chi tiết không có trong context)
+  (`BAO_CAO_DANH_GIA.md` bản 4 §6). Plan cách đo rẻ, lặp lại được.
+- **Đọc:** `BAO_CAO_DANH_GIA.md` §1, §6; judge prompt hiện tại (`judge_prompt.md`, đường dẫn trong plan B78); `data/muc_tieu_san_pham_2026-10-28/doi_chieu_nghien_cuu.md` (đo từng loại lỗi);
+  skill `run-experiment` (kiểm người chấm, cỡ mẫu).
+- **Làm:** plan `report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_plan.md`: định nghĩa đo được (ví dụ: câu trả lời có mệnh đề không có trong context đưa model — judge đọc **context**
+  thay vì đáp án mẫu; câu chạm loại thông tin an toàn / điều kiện); bộ câu (dùng câu trả lời đã có của bộ "trước" / "sau" — 0 USD gọi model); kiểm người chấm (2 judge độc lập,
+  đồng thuận; mẫu nhỏ User đọc khi rảnh); có dùng làm sàn cho lần đo sau không; "Căn cứ để review".
+- **Không làm:** đổi judge đang dùng, chạy đo. 0 USD. **Xong:** sha cho A + C.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
