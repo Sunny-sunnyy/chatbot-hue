@@ -59,3 +59,46 @@ Paid (`gpt-6-luna`, token trong log): B71 cổng ≈ 0,000325; C review B71 ≈ 
 4. **Qwen3-8B** thí nghiệm (plan riêng). 5. **Tính năng mới:** đo "thời gian tới chữ đầu tiên" ⇒ spec streaming; rồi hội thoại nhiều lượt.
 
 Đợt này **đóng** khi đợt sửa kho áp xong + đo "sau" đạt (phần áp có thể ghi tiếp vào folder này).
+
+## 7. Phiên 28/10 (A `hue-rag-bf`, B `hue-rag-ac`, C `hue-rag-32`) — cập nhật 12:20 28/10/2026
+
+### 7.1 Quyết định theo giờ
+
+| Giờ | Ai | Quyết định |
+|---|---|---|
+| 09:2x | User | Quyền phiên (≤ 1 USD, A tự điều phối, B / C push nhánh riêng); thứ tự lỗi đồng ý; **PA3** — B0 không chặn (spec 8.2 §11) |
+| 09:5x | User | Chạy B3; yêu cầu phi chức năng p50 ≤ 3 s / p95 ≤ 5 s / ≤ 0,0005 USD; thêm mức lỗi "sai cảnh báo an toàn" trên cùng |
+| 09:5x | A | Duyệt plan B78 v2 `41485782b39e` (bước 0 chạy trước B3; giữ spec §5 "dừng + khôi phục"), plan C70 v2 `9683641b6c38` (giữ D10) |
+| 10:23 | User | **Đóng Phase 8.2** (`report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`) |
+| 10:3x | A | C73 vượt ước pilot 70 % ⇒ cho chạy (≈ 0,012 ≤ trần 0,03) |
+| 11:0x | User | Chạy `!` xóa 3 đích (collection, build record, sparse state) trong terminal B |
+| 11:2x | User | Duyệt 2 trích dẫn gold v4 + "0 câu Golden cần sửa"; đi nghỉ — "tiếp tục điều phối, thử nghiệm, … đóng gói" |
+| 12:2x | A | Duyệt plan C78 v2 `52555da95828` (Qwen3-8B; chạy chờ User) |
+
+### 7.2 Kết quả
+
+| Việc | Kết quả | Bằng chứng |
+|---|---|---|
+| B78 đo trước ↔ sau (plan) | duyệt sau C72 + vòng sửa | `sua_kho_do_truoc_sau_plan.md`, `_review.md` |
+| C70 / C73 thời gian tới chữ đầu tiên | **streaming rút chờ rõ**: chữ hiện sớm hơn trung vị 1,92 s [1,61; 4,31]; chữ đầu p50 2,44 / p95 4,80 s (8 câu); kiểu "chỉ câu có `[n]`" 1,01 s (chưa chắc); 0,0103 USD; nhánh hồ sơ `c70-ttft` | `streaming_ttft_*` |
+| Sửa kho bước 1–6 (B81) | 123 edit / 65 file / 51 mục; 204 file / 8.426 đoạn; build `574b5d02088b`; T1 `23c58c47635d` (40 / 158 đổi top-10, giải thích được) | `sua_kho_b1_6_*` (C75 ready) |
+| Bước 7–8 (B82) | gold v4 (2 trích dẫn User duyệt); 0 câu Golden cần sửa | `sua_kho_b7_8_*` (C76 ready) |
+| Bước 9 (B83) | **không làm hỏng**: F1–F4 = 0; T1 4 tụt (≤ 5), TB −0,008; T2 TB 0; T3 12 ⇒ 13; p95 lượt "sau" không đại diện (phía mạng / provider) | `sua_kho_b9_*`, `sua_kho_b83_code_review.md` (C80 ready) |
+| Bước 10 | `BAO_CAO_KHO_DU_LIEU` bản 5, `BAO_CAO_DANH_GIA` bản 4, `LUONG`, guide, README, nhật ký | commit `87c38fd` … `f420155` |
+| C77 streaming | yêu cầu ChatGPT `c573949ac59a` (B đối chiếu code) chờ User gửi; bản nháp 4 phương án | `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming.md` |
+| C78 Qwen3-8B | plan duyệt; chạy chờ User | `qwen3_8b_plan*.md` |
+| C79 đợt 2 | 96 edit / 34 file soạn sẵn; D1–D7 + 15 câu chờ User | `data/sua_kho_2026-10-27/dot2/` |
+
+### 7.3 Tiền phiên 28/10 (từ log / report)
+
+Cổng merge B1 0,000423; B3 0,0138; bộ "trước" 0,0361; C73 0,0103; cổng sau build 0,000449; bộ "sau" 0,0365 ⇒ **≈ 0,0976 USD** / trần phiên 1 USD. Đợt sửa kho ≈ 0,073 / 0,15.
+
+### 7.4 Giới hạn
+
+- Đợt sửa kho đợt 1 làm kho đúng hơn nhưng không nâng điểm (Golden không đổi); 2 lỗi nặng nhất (sai cảnh báo an toàn, bịa thêm) chưa có thước (B87 viết plan).
+- Đoạn dài nhất sát trần tokenizer huydang (255 / 256).
+- 11:50–11:56 có việc nặng CPU / Qdrant của C chạy song song lượt đo "sau" (lỗi điều phối A; phần trên máy không tăng).
+
+### 7.5 Chờ User
+
+Đóng đợt sửa kho đợt 1; bước 11 xóa sao lưu; gửi ChatGPT yêu cầu streaming; duyệt chạy Qwen3-8B; đợt 2 (D1–D7, 15 câu); B0 khi rảnh; spec streaming (sau nghiên cứu).
