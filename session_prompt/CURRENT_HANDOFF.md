@@ -177,6 +177,19 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   (**không commit** — A commit sau khi C kiểm). 0 USD trừ cổng ổn định (≤ 0,001 USD). Bước 7–9 chưa làm.
 - **Dừng + khôi phục** đúng spec §5. Mọi bước báo A ở cuối bước 6 (hoặc khi dừng).
 - **Đầu ra:** `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_b1_6_implementation.md` ⇒ **C75** = C kiểm (diff với backup từng mục, chunk / token, build, T1 mới, cổng).
+- **Trạng thái (B, 11:10 28/10/2026):** bước 1–6 xong — report trên (chưa commit); T1 mới `23c58c47635d`; build record `574b5d02088b`; chatbot khởi động lại được. **Chờ C75.**
+
+- **B81 xong bước 1–6** (B, report `sua_kho_b1_6_implementation.md`): 204 file / 8.426 đoạn; build record `574b5d02088b`; vocab 5.631; **T1 mới `23c58c47635d`** (40 / 158 câu đổi
+  top-10); cổng 8016 đạt; code 3 file trên working tree chờ C75. A giao **C75** 11:11.
+
+### B82 — đợt sửa kho bước 7–8: gold v4 + quét Golden lệch kho (B; A giao 11:11 28/10/2026)
+
+- **Căn cứ:** spec sửa kho §5 bước 7, 8 + §6 (full-read); `data/phase_8_1/gold/gold_v3.jsonl` + `gold_v3_CHANGES.md`; `data/sua_kho_2026-10-27/applied_edits.jsonl`.
+- **Làm:** (7) `data/phase_8_1/tools/build_gold_v4.py` (chỉ đọc, từ chối ghi đè) ⇒ `gold_v4.jsonl` mới: tìm lại từng trích dẫn nguyên văn trong file đã sửa, đúng 1 lần; trích dẫn
+  bị edit chồng ⇒ **đề xuất** trích dẫn mới (không tự chọn). (8) Quét Golden 176 câu chạm fact / file đã sửa ⇒ **đề xuất** sửa `reference_answer` / `keywords` (file đề xuất
+  private `data/sua_kho_2026-10-27/golden_de_xuat.md`). Ghi kèm: câu q02 kiểu "giờ mở cửa" của bộ C73 bị từ chối cả 3 ô (C) — xem có chạm mục sửa không (chỉ ghi).
+- **Không làm:** sửa Golden, đổi `GOLD_PATH`, mở câu kín, gọi API. 0 USD. Tìm trong kho chỉ qua `scripts/grep_kb.sh` hoặc đọc file theo đường dẫn edit.
+- **Xong:** report `sua_kho_b7_8_implementation.md` ⇒ C kiểm ⇒ A trình User duyệt từng mục. Nếu C75 tìm lỗi phải khôi phục ⇒ dừng B82.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
