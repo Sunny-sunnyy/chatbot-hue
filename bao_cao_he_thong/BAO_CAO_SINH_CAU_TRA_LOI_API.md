@@ -16,9 +16,9 @@ Người viết: A (bản 12, qua sub-agent), C (bản 10), A (bản 6), B (bả
   giới hạn (bảng giá, tổng hợp nhiều nguồn); 10 đoạn vào chatbot 28/10 (Phase 8.2 B1, `510e1a8`).
 - **Đo được (Phase 7B, 176 câu, bản 5 đoạn):** Đúng / Đủ / Trúng ý **4,43 / 4,28 / 4,45** (thang 1–5); khi đã trả
   lời thì gần tối đa (~4,9). Từ chối đúng 18/18 câu ngoài kho. Lỗi trích dẫn 4/176 lúc đo — **sau sửa 25/10 còn 0–2/176** (mục 4, bản 6).
-- **Giới hạn chính:** **từ chối nhầm 22/158** câu có trong kho — nguồn mất điểm lớn nhất; không tìm ra
+- **Giới hạn chính:** **từ chối nhầm** câu có trong kho — nguồn mất điểm lớn nhất (22/158 ở 5 đoạn, Phase 7B; **12/158 ở 10 đoạn**, B1); không tìm ra
   bảng giá; câu cần nhiều nguồn lúc đóng chỉ dùng 1 nguồn.
-- **Chi phí:** sinh 176 câu ~0,024 USD (~600 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
+- **Chi phí:** sinh 176 câu ~0,024 USD ở 5 đoạn; **0,0369 USD ở 10 đoạn** (B1, ~920 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
 - **Thời gian chờ thật qua API (27/10, bản 5 đoạn):** trung vị ~3,3 s, câu chậm ~5,7–6,2 s (đã vượt mức theo dõi 5 s); ~98 % là thời gian model viết.
   Bản 10 đoạn chưa đo trung vị / câu chậm trên chatbot thật (2 câu thử 28/10: 5,1 s và 2,5 s) — sẽ đo ở bộ "trước" của đợt sửa kho.
   Từ 27/10 API ghi **một dòng số đo mỗi câu** (token, thời gian từng khâu; không ghi nội dung) ⇒ tiền / thời gian đọc từ log.

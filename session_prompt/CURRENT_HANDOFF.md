@@ -126,6 +126,12 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Trạng thái (B, 09:37 28/10/2026):** plan bản 1 xong, sha `7b79c3971bc7` (chưa commit) — **chờ C review**. 3 câu hỏi cho A ở plan §8 (có mặc định).
 - A 09:4x: **C72** = C review plan này **sau C71** (§9.1: chỉ dựa "Căn cứ để review", không đọc STATUS_B / tin của B) ⇒ `sua_kho_do_truoc_sau_plan_review.md`; A trả lời
   §8 lúc duyệt sha. Chưa chạy bộ "trước" tới khi A ghi "duyệt bản sha".
+- **C72 ready 0 / 0 / 6** (`sua_kho_do_truoc_sau_plan_review.md`, bản `7b79c3971bc7`). **A quyết (10:0x 28/10):** B viết bản 2 đóng m-1 … m-6, C kiểm phần sửa, rồi A duyệt sha.
+  - **m-4 / §8 câu 3:** cho chạy bước 0 (bộ "trước") **trước B3 / trước khi đóng 8.2** (lệch thứ tự spec sửa kho §2, A duyệt): bước 0 chỉ đọc kho + gọi model,
+    tính vào trần đợt 0,15 USD; điều kiện: không chạy cùng lúc B3 / lượt trả phí khác; kiểm "còn hiệu lực" trước bước 1 như plan.
+  - **m-5 / §8 câu 1:** **giữ spec §5** "sàn vỡ ⇒ dừng + khôi phục" (không đổi spec). Thêm: F4 vỡ ⇒ sinh lại đúng câu đó một lần ở bên `sau` (file riêng, giữ
+    cả hai) làm bằng chứng; sau khôi phục A trình User kèm bằng chứng để quyết áp lại hay không.
+  - §8 câu 2: đồng ý (ghi giới hạn "bịa thêm") + dòng watch m-1.
 
 ### C70 — plan đo "thời gian tới chữ đầu tiên" (C viết, B review; 28/10)
 

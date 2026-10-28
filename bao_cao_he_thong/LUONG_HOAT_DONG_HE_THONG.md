@@ -80,7 +80,7 @@ HỎI ĐÁP (mỗi câu hỏi):
 | **Từ chối nhầm** câu kho có đáp án | **22 / 158 (13,9%)** | Lỗi lớn nhất: phần lớn điểm bị mất (65–90% tùy tiêu chí) nằm ở đây |
 | Lỗi trích dẫn (người dùng thấy lỗi 500) | 4 / 176 ở 7B → **0–2 / 176** sau sửa 25/10 (đếm lại trên câu trả lời đã sinh) | Trước đây mọi lỗi là do dạng `[Nguồn n]`; còn lại chỉ câu thật sự không ghi nguồn |
 | Đoạn chứa đáp án lọt top-10 (keyword proxy) | 92,4% keyword | Truy xuất khá; vấn đề nằm ở 5 đoạn được đưa vào (lúc đo) và cách prompt từ chối |
-| Chi phí một câu hỏi (đo ở 5 đoạn) | ~0,00014 USD (~3,5 đồng) | ~950 token vào, ~80 token ra. Ở 10 đoạn đọc vào nhiều hơn ⇒ tiền mỗi câu tăng (8.1 ước ~+50 %); chưa đo lại trên bộ lớn |
+| Chi phí một câu hỏi (đo ở 5 đoạn) | ~0,00014 USD (~3,5 đồng) | ~950 token vào, ~80 token ra. Ở 10 đoạn (B1, 176 câu): ~0,00021 USD / câu, TB 1.655 token vào |
 
 Người chấm: Claude (chấm theo đáp án mẫu), đối chiếu `gpt-6-luna` (trùng 89–96%). Chưa có người chấm tay.
 
