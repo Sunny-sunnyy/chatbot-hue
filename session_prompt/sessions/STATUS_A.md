@@ -17,17 +17,17 @@ Terminal: `hue-rag-bf` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
   C79 / C82 đợt 2 soạn sẵn; B87 / B89 thước lỗi nặng (C81 / C83). Vòng cải tiến 9 (W30, W31, I6 — User duyệt, C kiểm 0 / 0 / 2).
 - Sub-agent A: đọc 2 kết quả ChatGPT (`data/muc_tieu_san_pham_2026-10-28/`, `data/sua_kho_2026-10-27/ket_qua_chatgpt_78_doi_chieu.md`); sửa 5 chỗ báo cáo — A đọc diff, sửa thêm.
 
-## Quyền phiên này (User 09:2x 28/10 — HẾT HẠN cuối phiên)
-- A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C push nhánh riêng. User đi nghỉ 11:40: tiếp tục trong luật, việc rủi ro cao để "chờ User".
+## Quyền phiên này (User cấp sáng 28/10, ghi ở commit `94eb683` — HẾT HẠN cuối phiên)
+- A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C push nhánh riêng. User đi nghỉ (ghi ở `748c1e3` 11:40 28/10/2026): tiếp tục trong luật, việc rủi ro cao để "chờ User".
 
 ## Tiền paid phiên này
 - A ≈ 0,0004 USD (cổng merge). Cả nhóm ≈ 0,106 USD (B ≈ 0,0948; C 0,0103).
 
 ## Đã học / bẫy gặp (phiên 28/10)
-- 09:4x: A ghi "A quyết (10:0x 28/10)" — giờ ước (B bắt) ⇒ S45 ⇒ W30 (hook cảnh báo). Mọi giờ ghi file lấy từ `date` trong cùng lệnh.
-- 09:3x: commit `d922bf7` lẫn dòng trạng thái C ghi vào handoff (đúng nội dung) — xem `git diff <file>` ngay trước `git add` file nhiều người ghi.
-- 11:4x–11:5x: A giao C78 (việc nặng Qdrant) lúc B đang đo latency ⇒ S46 ⇒ W31.
-- 13:1x: viết lại handoff bị chặn 2 lần vì B sửa dòng của B giữa chừng ⇒ trước khi viết lại cả file, nhắn B / C "đừng sửa handoff" **trước**, rồi Read ngay trước Write.
+- (sáng 28/10, B bắt lúc 09:48 theo `date` của B): A ghi giờ ước vào handoff mục B78 ⇒ S45 ⇒ W30 (hook cảnh báo). Mọi giờ ghi file lấy từ `date` trong cùng lệnh.
+- (commit `d922bf7`, 09:30 28/10/2026): commit lẫn dòng trạng thái C ghi vào handoff (đúng nội dung) — xem `git diff <file>` ngay trước `git add` file nhiều người ghi.
+- (C78 giao ở `dd8b937` 11:46 28/10/2026; C chạy việc nặng 11:50–11:56): A giao C78 (việc nặng Qdrant) lúc B đang đo latency ⇒ S46 ⇒ W31.
+- (kết phiên 28/10): viết lại handoff bị chặn 2 lần vì B sửa dòng của B giữa chừng ⇒ trước khi viết lại cả file, nhắn B / C "đừng sửa handoff" **trước**, rồi Read ngay trước Write.
 - Sửa dòng cũ chứa tên dự án khác (`Project_Status.md` §4) ⇒ dòng thành "thêm mới" ⇒ hook chặn ⇒ viết lại thành "một dự án khác của User" khi sửa.
 - `uv run --env-file` chạy nền: đường dẫn tuyệt đối (đã dời ra `Project_Status.md` §8, I6).
 
