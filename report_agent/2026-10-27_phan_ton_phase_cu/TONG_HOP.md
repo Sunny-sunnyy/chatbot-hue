@@ -99,6 +99,12 @@ Cổng merge B1 0,000423; B3 0,0138; bộ "trước" 0,0361; C73 0,0103; cổng 
 - Đoạn dài nhất sát trần tokenizer huydang (255 / 256).
 - 11:50–11:56 có việc nặng CPU / Qdrant của C chạy song song lượt đo "sau" (lỗi điều phối A; phần trên máy không tăng).
 
+### 7.4b Cập nhật 13:26 28/10/2026 (kết phiên)
+
+- **User đóng đợt sửa kho đợt 1** (giữ sao lưu); Qwen3-8B + đợt 2 ⇒ phiên sau; cho thử W30 / W31 / I6.
+- B89 thước lỗi nặng: nhận (C83 ready 2 vòng) — Golden 145 câu: bịa thêm 1, nói ngược nguồn 0, P0_sai 0 / 65; bộ 32 câu an toàn (0,0079 USD): P0_sai 2 / 27 (nói sai về nguồn), ngoài kho 0 / 4.
+- Đợt 2 bản 3 `9b5105b35e8b` (104 edit / 33 file), B88 vòng 3 ready. Tiền phiên ≈ **0,106 USD**.
+
 ### 7.5 Chờ User
 
 Đóng đợt sửa kho đợt 1; bước 11 xóa sao lưu; gửi ChatGPT yêu cầu streaming; duyệt chạy Qwen3-8B; đợt 2 (D1–D7, 15 câu); B0 khi rảnh; spec streaming (sau nghiên cứu).

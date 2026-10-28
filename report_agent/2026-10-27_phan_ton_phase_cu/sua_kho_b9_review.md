@@ -102,3 +102,8 @@ Thêm (script inline, chỉ đọc, in ra terminal):
 **ready_for_user_confirmation.** Đợt sửa kho bước 9 đạt "không làm hỏng" (spec §6). B sửa câu W5 theo m-1. A trình User đóng đợt sửa kho, kèm hai giới hạn:
 - judge Claude, chưa có mốc người;
 - latency lượt "sau" không đại diện.
+
+## 7. Kiểm phần sửa (12:13 28/10/2026)
+
+m-1 **đóng**: report B83 nay ghi W5 "phía mạng / provider (không tách được)", "p95 lượt sau không đại diện", ms / token ×2,9 ở khúc cuối, và việc C chạy song song
+11:50–11:56 (phần trên máy không tăng). Kết luận giữ **ready_for_user_confirmation**.

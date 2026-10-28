@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
+Last updated: `13:26 28/10/2026` (A, **kết phiên 28/10**: 8.2 đóng; đợt sửa kho đợt 1 đóng; phiên sau: đợt 2 ⇒ 8B ⇒ streaming). Trước: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -34,10 +34,10 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (28/10, 10:23): Phase 8.2 ĐÓNG** (User; tổng hợp `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`): chatbot **context 10 + NFC** (`510e1a8`);
-B3 câu kín (S36, 33 câu trong kho): Completeness +0,818 [+0,394; +1,333], Accuracy +0,697, 0 câu tụt; ngoài kho 0 / 3 bị trả lời; **chưa có mốc người** (B0 làm sau, trước bảo vệ). Tiếp: **đợt sửa kho + build lại index** (spec `937cf8969810`; bộ "trước" B78 đang chạy, plan
-`41485782b39e`) ⇒ đo thời gian tới chữ đầu tiên (C73, plan `9683641b6c38`) ⇒ thí nghiệm Qwen3-8B ⇒ tính năng mới (streaming trước). Tốc độ chưa đạt yêu cầu User
-chốt 28/10 (p50 ≤ 3 s, p95 ≤ 5 s). Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
+**Bây giờ (kết phiên 28/10, 13:26):** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
+Phiên sau (thứ tự): **áp đợt 2 sửa kho** (soạn sẵn `dot2.jsonl` `9b5105b35e8b`, 104 edit / 33 file) ⇒ **thí nghiệm Qwen3-8B** (plan `52555da95828`; chạy cần User duyệt gửi kho ra
+OpenRouter + collection thử) ⇒ **spec streaming** (chờ kết quả ChatGPT; đo: chữ hiện sớm hơn ~1,9 s) ⇒ hội thoại nhiều lượt. Thước "lỗi nặng" (bịa thêm / sai điều kiện an toàn) đã
+có (`report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_*`). Chi tiết: `CURRENT_HANDOFF.md`. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
 `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
@@ -133,6 +133,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-28 13:26 | **Kết phiên 28/10:** User **đóng đợt sửa kho đợt 1, giữ sao lưu**; **đợt 2 áp phần sẵn sàng ở phiên sau** (việc đầu tiên); **Qwen3-8B chạy phiên sau**; cho thử W30 (hook cảnh báo giờ ước), W31 (đang đo latency ⇒ cấm việc nặng song song), I6 | User |
 | 2026-10-28 10:23 | **User đóng Phase 8.2** (TONG_HOP; giới hạn chưa có mốc người, tốc độ chưa đạt) | User |
 | 2026-10-28 09:59 | **Yêu cầu phi chức năng chốt** (nghiên cứu ChatGPT 28/10, A kiểm 7 nguồn): cả câu (chưa stream) **p50 ≤ 3 s, p95 ≤ 5 s** (p99 ≤ 10 s theo dõi), USD / câu TB **≤ 0,0005**; có streaming ⇒ đề xuất đổi thước sang "chữ đầu tiên". **Thứ tự lỗi** thêm mức trên cùng: **sai cảnh báo an toàn / điều kiện vào khu vực** > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. **B3 chạy ngay** (mở câu kín cho người chạy B) | User |
 | 2026-10-28 09:2x | **PA3: B0 không chặn B1 / đóng 8.2** (spec 8.2 §11, `5255f3274707`): merge B1 (context 10 + NFC) theo judge Claude, B0 làm sau (trước bảo vệ), luật dừng kích hoạt ⇒ A trình giữ 10 / về 5. **Thứ tự lỗi đồng ý:** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. Quyền phiên 28/10: ≤ 1 USD, A tự điều phối, B / C push nhánh riêng | User |

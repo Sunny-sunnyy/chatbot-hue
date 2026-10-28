@@ -4,6 +4,14 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-28 (13:26) — Đợt sửa kho đợt 1 đóng; đo streaming; thước lỗi nặng; kết phiên
+
+- Sửa kho đợt 1 (spec `937cf8969810`): 123 edit / 65 file / 51 mục; loại file danh mục ⇒ 204 file / 8.426 đoạn; index build lại (`574b5d02088b`, T1 `23c58c47635d`); gold v4; Golden 0 sửa;
+  176 câu "trước ↔ sau": không làm hỏng (C75 / C76 / C80 ready). User đóng đợt, giữ sao lưu. ≈ 0,073 / 0,15 USD.
+- Streaming đo (C73): chữ hiện sớm hơn trung vị 1,92 s; chữ đầu p50 2,44 / p95 4,80 s. Plan Qwen3-8B duyệt (chạy phiên sau). Đợt 2 sửa kho soạn sẵn (104 edit).
+- Thước lỗi nặng (B89): bịa thêm 1 / 145, P0_sai 0 / 65 (Golden); bộ 32 câu an toàn tự viết. Vòng cải tiến 9: W30, W31, I6 (User duyệt).
+- Tổng hợp: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` §7. Tiền phiên ≈ 0,106 USD.
+
 ## 2026-10-28 (10:23) — **Đóng Phase 8.2** (User); chatbot context 10 + NFC
 
 - User chọn PA3 (B0 không chặn, spec 8.2 §11 `5255f3274707`); merge B1 `510e1a8` (C71 ready); 5 chỗ báo cáo (B79 ready).

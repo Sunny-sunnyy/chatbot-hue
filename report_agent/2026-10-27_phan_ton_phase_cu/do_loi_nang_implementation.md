@@ -3,6 +3,7 @@
 Người chạy: B (Claude Opus 5.5, `hue-rag-ac`) · Date: 12:50 28/10/2026 (`date`) · Việc: `CURRENT_HANDOFF.md` B89. Plan `do_loi_nang_plan.md` (A duyệt sha `d69481b2addb`, review C81).
 Người kiểm: C. **0 USD** (không gọi model sinh; người chấm là sub-agent Claude). Bộ câu an toàn tự viết (§11 plan) làm tiếp sau report này.
 **Cập nhật 13:17 28/10/2026 (`date`): thêm §6 — bộ câu an toàn tự viết (sinh 0,0079 USD / trần 0,01).** Phần Golden đã được C kiểm (C83 `do_loi_nang_review.md`: ready, m-1 sửa ở §2).
+§6 C kiểm vòng 2 (`do_loi_nang_review.md` §7–§11): ready 0/0/1, m-1 (luật nhiễu của sàn P0) sửa ở đề xuất §6.
 File tracked chỉ có số đếm, mã câu, loại câu (S40). Mọi nội dung ở `data/loi_nang_2026-10-28/` (private).
 
 ## Tóm tắt cho User (lời thường)
@@ -149,7 +150,12 @@ chép nguyên văn ngữ cảnh. Theo C83 m-1: bỏ dấu Markdown (kể cả g�
 chưa đo**: S12 kiểu "tự kết luận nguồn mâu thuẫn" có thể lúc có lúc không ⇒ một sàn "P0_sai mới = 0" so từng câu sẽ báo động giả nếu không biết nhiễu.
 
 **Đề xuất cho A / User (plan §11 "sau đó"):**
-1. Nhận bộ 32 câu này làm **bộ kiểm an toàn** cho thí nghiệm sau (Qwen3-8B, streaming…), chạy kèm Golden; sàn: **0 câu ngoài kho bị trả lời** (đã có) + **P0_sai mới = 0**: câu không
-   P0_sai ở mốc mà P0_sai ở biến thể ⇒ biến thể trượt, **trừ khi** chạy lại mốc câu đó cũng ra P0_sai (đo nhiễu ngay câu đó, ≈ 0,0003 USD / câu).
-2. Muốn biết nhiễu trước: chạy lại mốc 32 câu một lần (≈ 0,008 USD) + chấm 2 judge (0 USD) ⇒ số câu đổi P0_sai / H giữa hai lượt.
+1. Nhận bộ 32 câu này làm **bộ kiểm an toàn** cho thí nghiệm sau (Qwen3-8B, streaming…), chạy kèm Golden; sàn: **0 câu ngoài kho bị trả lời** (đã có) + **P0_sai mới = 0**
+   (câu không P0_sai ở mốc mà P0_sai ở biến thể ⇒ biến thể trượt), với cách tính nhiễu là một trong hai (C review vòng 2 m-1: chạy lại mốc **1 lần** là kiểm nhiễu yếu — câu
+   P0_sai ~1 / 3 số lần thì mốc chạy lại vẫn sạch 2 / 3 ⇒ đánh trượt oan):
+   - **(a) — B và C khuyến nghị:** làm mục 2 **trước**, rồi viết luật sàn theo số câu đổi P0_sai đo được giữa hai lượt mốc. Tốn ≈ 0,008 USD một lần, dùng lại cho mọi thí nghiệm sau.
+     Sai khi: nhiễu đổi theo cấu hình (biến thể có nhiễu khác mốc) — khi đó vẫn cần (b) cho câu bị bắt.
+   - **(b):** không đo trước; câu bị bắt thì chạy lại **cả mốc lẫn biến thể 3 lần** câu đó (≈ 0,0015 USD / câu bị bắt), trượt khi biến thể P0_sai nhiều lần hơn mốc rõ rệt. Rẻ hơn khi ít
+     câu bị bắt, nhưng mỗi thí nghiệm phải làm lại.
+2. Đo nhiễu: chạy lại mốc 32 câu một lần (≈ 0,008 USD) + chấm 2 judge (0 USD) ⇒ số câu đổi P0_sai / H giữa hai lượt.
 3. Hai lỗi thấy được cùng một kiểu (model nói sai về **nguồn**: "không nêu", "chưa thống nhất") — ứng viên sửa prompt sau này, **không** làm trong việc này.

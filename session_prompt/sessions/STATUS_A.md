@@ -1,24 +1,35 @@
-# STATUS A — mở phiên 08:44 28/10/2026
+# STATUS A — cập nhật 13:26 28/10/2026 (KẾT PHIÊN 28/10 — User đóng A / B / C để reset context)
 
-Terminal: `hue-rag-bf` · Agent: Claude Opus 5.5 · Vai: điều phối. Peer lúc mở: `hue-rag-ac`, `hue-rag-32` (chưa rõ ai B / C).
-Đầu phiên: `dccdb74`. Chờ User "làm đi" + cấp quyền phiên (quyền 27/10 chiều đã hết hạn).
+Terminal: `hue-rag-bf` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-ac`, C = `hue-rag-32` (cả ba Claude Code, trực tiếp; tên đổi mỗi lần mở).
+
+## Commit
+- Đầu phiên: `dccdb74`. Cuối: `git log --oneline dccdb74..main` (merge B1 `510e1a8`; sửa kho `6b59788`; GOLD_PATH v4 `e08a126`; governance `25f23ae`; kết phiên).
+
+## Đang làm / dở
+- Không việc đang chạy. Phiên sau: `CURRENT_HANDOFF.md` "PHIÊN SAU" (thứ tự 1–6, câu hỏi User 1–9, việc A còn nợ — gồm W30 m-1 / m-2 của C).
 
 ## Đang khai báo sửa
-- không
+- không (kết phiên)
 
-## Vừa xong (tới 10:00 28/10/2026)
-- User: quyền phiên; PA3 (B0 không chặn, spec 8.2 §11); merge B1 `510e1a8` (C71 ready) + 5 chỗ báo cáo (B79 ready, A sửa 5 minor); NFR chốt; B3 chạy.
-- Duyệt plan B78 v2 `41485782b39e`, C70 v2 `9683641b6c38`. Giao B80 (B3), C73 (harness TTFT). Thứ tự lượt trả phí: B3 ⇒ bộ "trước" ⇒ C73.
-- Sub-agent: đọc 2 kết quả ChatGPT (`data/muc_tieu_san_pham_2026-10-28/doi_chieu_nghien_cuu.md`, `data/sua_kho_2026-10-27/ket_qua_chatgpt_78_doi_chieu.md`); A kiểm 3 khẳng định.
-- Tiền: A ≈ 0,000423 USD (cổng merge).
+## Vừa xong (phiên 28/10)
+- User: quyền phiên; PA3 (spec 8.2 §11); merge B1 `510e1a8` (C71) + 5 chỗ báo cáo (B79); B3 (B80 / C74) ⇒ **User đóng 8.2**; yêu cầu tốc độ / tiền + thứ tự lỗi chốt.
+- Đợt sửa kho đợt 1 bước 0–10 (B78 / B81–B86, C72 / C75 / C76 / C80) ⇒ **User đóng đợt, giữ sao lưu**. C73 đo streaming; C77 yêu cầu ChatGPT + nháp phương án; C78 plan 8B (duyệt);
+  C79 / C82 đợt 2 soạn sẵn; B87 / B89 thước lỗi nặng (C81 / C83). Vòng cải tiến 9 (W30, W31, I6 — User duyệt, C kiểm 0 / 0 / 2).
+- Sub-agent A: đọc 2 kết quả ChatGPT (`data/muc_tieu_san_pham_2026-10-28/`, `data/sua_kho_2026-10-27/ket_qua_chatgpt_78_doi_chieu.md`); sửa 5 chỗ báo cáo — A đọc diff, sửa thêm.
+
+## Quyền phiên này (User 09:2x 28/10 — HẾT HẠN cuối phiên)
+- A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD; B / C push nhánh riêng. User đi nghỉ 11:40: tiếp tục trong luật, việc rủi ro cao để "chờ User".
+
+## Tiền paid phiên này
+- A ≈ 0,0004 USD (cổng merge). Cả nhóm ≈ 0,106 USD (B ≈ 0,0948; C 0,0103).
 
 ## Đã học / bẫy gặp (phiên 28/10)
-- 09:4x: A ghi "A quyết (10:0x 28/10)" vào handoff — giờ ước, `date` lúc đó ~09:47 (B bắt) ⇒ lặp S17. Sửa trong handoff. Mọi giờ ghi file lấy từ `date` trong cùng lệnh.
-- 09:3x: commit `d922bf7` lẫn dòng trạng thái C ghi vào handoff giữa lúc A sửa (đúng nội dung, hợp lệ) — đọc lại `git diff <file>` ngay trước `git add` file nhiều người ghi.
-- 09:3x: `uv run --env-file ../.env` chạy nền báo không thấy file ⇒ dùng đường dẫn tuyệt đối.
-- 11:4x–11:5x: A giao C78 (quét Qdrant / payload, đo mốc tầng tìm) **lúc B đang chạy lượt có đo thời gian** (bộ "sau"); luật A đặt chỉ cấm "lượt trả phí chồng nhau",
-  không cấm việc nặng CPU / Qdrant ⇒ C tự khai chạy chồng 11:50–11:56. Phần trên máy của B không tăng (ít khả năng là nguyên nhân p95). ⇒ vòng cải tiến: khi có lượt đo latency,
-  cấm cả việc nặng máy / Qdrant ở session khác (A ghi rõ trong mục giao).
+- 09:4x: A ghi "A quyết (10:0x 28/10)" — giờ ước (B bắt) ⇒ S45 ⇒ W30 (hook cảnh báo). Mọi giờ ghi file lấy từ `date` trong cùng lệnh.
+- 09:3x: commit `d922bf7` lẫn dòng trạng thái C ghi vào handoff (đúng nội dung) — xem `git diff <file>` ngay trước `git add` file nhiều người ghi.
+- 11:4x–11:5x: A giao C78 (việc nặng Qdrant) lúc B đang đo latency ⇒ S46 ⇒ W31.
+- 13:1x: viết lại handoff bị chặn 2 lần vì B sửa dòng của B giữa chừng ⇒ trước khi viết lại cả file, nhắn B / C "đừng sửa handoff" **trước**, rồi Read ngay trước Write.
+- Sửa dòng cũ chứa tên dự án khác (`Project_Status.md` §4) ⇒ dòng thành "thêm mới" ⇒ hook chặn ⇒ viết lại thành "một dự án khác của User" khi sửa.
+- `uv run --env-file` chạy nền: đường dẫn tuyệt đối (đã dời ra `Project_Status.md` §8, I6).
 
 ---
 Phần dưới: trạng thái kết phiên 27/10 chiều.
