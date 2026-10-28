@@ -73,6 +73,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; luôn thử + so baseline
   trước khi chọn (User 24/10 20:49); commit trước sửa code + cổng ổn định sau mỗi gói (User 26/10); "báo trước, chờ User đồng ý" chỉ áp ngoài phạm vi đã duyệt.
 - **Phiên 28/10 (User 09:2x) — HẾT HẠN cuối phiên:** A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD cả phiên; B / C commit + push nhánh riêng theo việc.
+  **User 11:40 28/10/2026 đi nghỉ:** "tiếp tục điều phối, thử nghiệm, so sánh, đánh giá, tối ưu, phát triển, đóng gói" — A làm trong luật + quyền phiên; **không** tự duyệt việc rủi ro
+  cao cần User (spec mới — streaming; đóng đợt sửa kho; tạo collection mới cho 8B) ⇒ chuẩn bị đến mức "chờ User", gom câu hỏi.
   User 28/10: B0 chưa rảnh làm; **đồng ý thứ tự lỗi** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm; User tự xóa `c59-log`, `gold-v2`.
 - Trần 8.2: 0,5 USD (dùng ≈ 0,213). Trần đợt sửa kho (khi spec duyệt): 0,15 USD. GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10).
