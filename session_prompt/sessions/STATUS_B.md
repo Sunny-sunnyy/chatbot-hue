@@ -8,8 +8,7 @@ Bản giữa phiên 28/10 (từng dòng việc + khai báo sửa B78–B89): `gi
 - **B89 — xong, C kiểm đạt cả hai phần:** report `report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_implementation.md` (untracked, A commit; sha **`5553e480abfc`**).
   Golden: C83 ready 0/0/1 (m-1 sửa §2). Bộ an toàn §6: C review vòng 2 (`do_loi_nang_review.md` §7–§11, `8333d9c62753`) ready 0/0/1 — m-1 (chạy lại mốc 1 lần là kiểm nhiễu yếu)
   sửa ở đề xuất §6: (a) đo A/A 32 câu trước ≈ 0,008 USD (B + C khuyến nghị) / (b) chạy lại mốc + biến thể 3 lần câu bị bắt — **chờ A / User chọn**. Không còn việc dở.
-- Không lượt paid, server, worktree nào của B đang chạy. File tạm của B (xóa được sau khi C xong §6): `/tmp/b89_an_toan_v1/` (đối chứng + lô bản bỏ, không judge đọc),
-  `/tmp/b89_questions_{a7882789c772,3a541c30d47e}.jsonl` (bộ câu bản 1, 2 để C diff), `/tmp/b89_q.txt`, `/tmp/b89_trap.txt`. Worktree `.gemini/...` trong `git worktree list` **không phải của B**.
+- Không lượt paid, server, worktree nào của B đang chạy. File tạm `/tmp/b89_*` của B: **User đã xóa** (28/10, sau khi C kiểm xong). Worktree `.gemini/...` trong `git worktree list` **không phải của B**.
 
 ## Việc B phiên sau (A giao; User quyết 28/10: đóng đợt 1 GIỮ sao lưu; đợt 2 áp phần sẵn sàng **đầu tiên**; Qwen3-8B chạy phiên sau)
 
