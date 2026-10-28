@@ -1,4 +1,4 @@
-# TỔNG HỢP Phase 8.2 — áp dụng phương án thắng 8.1 (chờ User đóng)
+# TỔNG HỢP Phase 8.2 — áp dụng phương án thắng 8.1 — **User ĐÓNG 10:23 28/10/2026**
 
 Người viết: A (`hue-rag-bf`) · 10:21 28/10/2026 (`date`) · Đợt mở 16:05 25/10. Spec `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`: bản gốc
 `dabae90b2b60` (User duyệt 16:21 25/10) + §10 sửa đổi 26/10 (`cd910c4c4169`) + §11 sửa đổi 28/10 (`5255f3274707`, User chọn PA3). Bước 2 (đợt cải tiến từng khâu) có

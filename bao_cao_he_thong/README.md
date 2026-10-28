@@ -30,7 +30,7 @@
 | Index Qwen3-8B | Chưa thực hiện → thí nghiệm sau đợt sửa kho (User 27/10) |
 | Dọn code + 2 kho món ăn cũ | Đã xử lý, đóng gói (bạn đóng 20:01) |
 | Rà 56 quyết định Phase 0–7 (Phase 8.1) | Đã xử lý, đóng gói (bạn đóng 15:27 25/10): **chỉ "10 đoạn thay vì 5" thắng** → đã áp dụng 28/10 (Phase 8.2) |
-| Phase 8.2 (áp dụng phương án thắng) | Xử lý một phần — thiết kế duyệt 16:21 25/10 + **sửa đổi 26/10 (§10: đợt cải tiến từng khâu, phạm vi B)**; **"10 đoạn + NFC" đã vào chatbot 28/10** (merge `510e1a8`; bạn chọn PA3 — đọc cặp mù B0 làm sau, **chưa có mốc người**); đợt cải tiến từng khâu đóng 27/10 (không cách nào khác vào chatbot); còn mốc cuối (câu kín) rồi đóng 8.2 |
+| Phase 8.2 (áp dụng phương án thắng) | **Đã xử lý, đóng gói** (bạn đóng 10:23 28/10): **10 đoạn + NFC** vào chatbot (`510e1a8`); phép kiểm cuối 36 câu kín: đủ ý +0,82, đúng +0,70, 0 câu kém đi, câu ngoài kho vẫn từ chối 3 / 3; **chưa có mốc người** (bạn đọc cặp mù sau); tốc độ chưa đạt mức bạn chốt |
 | Rà code các Phase trước | **Đã xử lý, đóng gói** — 5 gói sửa xong 26/10 (1a, 1b, 3, 4 ngày 25/10; đợt 3 = gói 2 + 5 ngày 26/10); mỗi gói review chéo + cổng ổn định; code backend 8.345 → 6.218 dòng |
 | Câu hỏi gõ không dấu | Chưa thực hiện — **ngoài phạm vi** (bạn quyết 15:15 25/10: người dùng gõ có dấu). Đã đo: tìm kiếm gần như hỏng (13/32 → 1/32 câu) |
 

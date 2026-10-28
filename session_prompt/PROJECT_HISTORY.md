@@ -4,6 +4,13 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-28 (10:23) — **Đóng Phase 8.2** (User); chatbot context 10 + NFC
+
+- User chọn PA3 (B0 không chặn, spec 8.2 §11 `5255f3274707`); merge B1 `510e1a8` (C71 ready); 5 chỗ báo cáo (B79 ready).
+- B3 câu kín (S36, 33 câu trong kho): Completeness +0,818 [+0,394; +1,333], Accuracy +0,697, 0 câu tụt; ngoài kho 0 / 3 bị trả lời; lỗi kỹ thuật 0; từ chối nhầm 4 ⇒ 2; câu 500 4 ⇒ 0 (C74 ready, tái lập byte). Tiền 8.2 ≈ 0,227 / 0,5 USD.
+- User chốt yêu cầu phi chức năng (p50 ≤ 3 s, p95 ≤ 5 s, ≤ 0,0005 USD / câu) và thứ tự lỗi (sai cảnh báo an toàn > nói chắc sai > ngoài kho > thiếu ý > từ chối nhầm).
+- Tổng hợp: `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`.
+
 ## 2026-10-27 (15:28) — Phiên chiều: phần tồn Phase cũ (chuẩn bị xong), B1 sẵn merge, plan B3 duyệt, gold v3, spec sửa kho
 
 - User: quyền như 27/10 sáng; PA3 (chuẩn bị + bàn tính năng); "xong phần tồn càng sớm càng tốt" (14:15). B0 vẫn chưa làm.

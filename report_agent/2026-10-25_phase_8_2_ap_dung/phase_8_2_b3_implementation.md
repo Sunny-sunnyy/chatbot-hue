@@ -107,7 +107,8 @@ Qdrant `:6335` thật (chỉ đọc), e5-small CPU, `gpt-6-luna` thật. Thứ t
 
 ⇒ **Kết luận theo plan: "không làm hỏng"**, kèm **"tốt hơn trên câu kín"** (watch CI > 0).
 
-**Số phụ để đọc kết luận (watch, không thuộc tiêu chí; cùng điểm judge):**
+**Số phụ để đọc kết luận (watch, không thuộc tiêu chí; cùng điểm judge)** — in bằng `data/phase_8_2/b3/tools/b3_watch.py` (sha `c166c22b6a19`; lưu sau review C74 m-1,
+chạy lại khớp; C74 cũng tính lại độc lập khớp):
 - Theo điểm judge **thô** (không gán 1 cho câu 500): Completeness +0,364 [+0,091; +0,727], 8 / 24 / 1; Accuracy +0,242 [+0,030; +0,545], 4 / 29 / 0. Judge chấm chữ của 4 câu 500
   bên đầu là (4, 4), (5, 5), (5, 5), (5, 5) (Accuracy, Completeness) — tức nội dung đúng nhưng người dùng thấy lỗi.
 - **Bỏ 4 câu 500** (29 câu trong phạm vi, không câu nào 500 ở cả hai nhánh): Completeness +0,448 [+0,138; +0,828], 8 / 21 / 0; Accuracy +0,276 [+0,034; +0,621], 4 / 25 / 0.

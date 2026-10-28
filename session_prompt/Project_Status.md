@@ -34,12 +34,10 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (28/10 sáng): Phase 8.2 đang chạy** — Bước 2 (đợt cải tiến) **đóng**; User chọn PA3 (09:29, spec 8.2 §11): B0 **không chặn**, thành mốc người
-làm sau (trước bảo vệ). **B1 đã merge** `510e1a8` (09:34; `p82-b1` `c3d5607`): chatbot **context 10 + NFC** — chọn bằng judge Claude, **chưa có mốc người**;
-C71 review merge **ready** (0 / 0 / 0) ⇒ mốc cuối B3 (plan duyệt sha `27e75be5ed44`, người chạy B) ⇒ đóng 8.2 ⇒ **đợt sửa kho + build lại index** (phần tồn cuối; spec
-`docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt sha `937cf8969810`) ⇒ thí nghiệm Qwen3-8B ⇒ tính năng mới (streaming trước,
-rồi hội thoại nhiều lượt — chỉ mới bàn). Song song (0 USD, chỉ plan, chờ review): B78 đo "trước ↔ sau" đợt sửa kho, C70 đo thời gian tới chữ đầu tiên.
-Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
+**Bây giờ (28/10, 10:23): Phase 8.2 ĐÓNG** (User; tổng hợp `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`): chatbot **context 10 + NFC** (`510e1a8`);
+B3 câu kín (S36, 33 câu trong kho): Completeness +0,818 [+0,394; +1,333], Accuracy +0,697, 0 câu tụt; ngoài kho 0 / 3 bị trả lời; **chưa có mốc người** (B0 làm sau, trước bảo vệ). Tiếp: **đợt sửa kho + build lại index** (spec `937cf8969810`; bộ "trước" B78 đang chạy, plan
+`41485782b39e`) ⇒ đo thời gian tới chữ đầu tiên (C73, plan `9683641b6c38`) ⇒ thí nghiệm Qwen3-8B ⇒ tính năng mới (streaming trước). Tốc độ chưa đạt yêu cầu User
+chốt 28/10 (p50 ≤ 3 s, p95 ≤ 5 s). Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
 `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
@@ -85,7 +83,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38) + §11 sửa đổi 28/10 (PA3: B0 không chặn B1 / đóng 8.2). **B1 merge `510e1a8` 28/10** (context 10 + NFC; 51 test, T1 giống byte, T5, cổng sống đạt; ≈ 0,000423 USD; C71 review ready); B0 = mốc người làm sau; plan B3 duyệt `27e75be5ed44`; Bước 2 (đợt cải tiến) **đóng 27/10**: K1 / K3 / K3b-n / R1 / R2 kém hơn, K3b-m tầng tìm tốt hơn (tạm) nhưng trả lời kém hơn theo luật, R3 / K2 / E2 NOT RUN, R4 xong. **Chatbot context 10** (chưa có mốc người). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
+| 8.2 | `approved` | **User-closed 10:23 28/10/2026**: context 10 + NFC vào chatbot (`510e1a8`); B3 câu kín (S36, 33 câu trong kho): Completeness +0,818 [+0,394; +1,333], Accuracy +0,697, 0 câu tụt; ngoài kho 0 / 3 bị trả lời; Bước 2 đợt cải tiến: không biến thể nào vào; B0 dời (spec §11, mốc người làm sau). ≈ 0,227 / 0,5 USD. `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -135,6 +133,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-28 10:23 | **User đóng Phase 8.2** (TONG_HOP; giới hạn chưa có mốc người, tốc độ chưa đạt) | User |
 | 2026-10-28 09:59 | **Yêu cầu phi chức năng chốt** (nghiên cứu ChatGPT 28/10, A kiểm 7 nguồn): cả câu (chưa stream) **p50 ≤ 3 s, p95 ≤ 5 s** (p99 ≤ 10 s theo dõi), USD / câu TB **≤ 0,0005**; có streaming ⇒ đề xuất đổi thước sang "chữ đầu tiên". **Thứ tự lỗi** thêm mức trên cùng: **sai cảnh báo an toàn / điều kiện vào khu vực** > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. **B3 chạy ngay** (mở câu kín cho người chạy B) | User |
 | 2026-10-28 09:2x | **PA3: B0 không chặn B1 / đóng 8.2** (spec 8.2 §11, `5255f3274707`): merge B1 (context 10 + NFC) theo judge Claude, B0 làm sau (trước bảo vệ), luật dừng kích hoạt ⇒ A trình giữ 10 / về 5. **Thứ tự lỗi đồng ý:** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. Quyền phiên 28/10: ≤ 1 USD, A tự điều phối, B / C push nhánh riêng | User |
 | 2026-10-27 15:3x | **Spec đợt sửa kho DUYỆT** sha `937cf8969810` (C68 3 vòng ready; chạy sau đóng 8.2; trần 0,15 USD). Vòng cải tiến 8: W27–W29 cho thử. User nhắc lại: "cứ thoải mái thử nghiệm, so sánh, đánh giá, nhận xét, ghi lại báo cáo, rồi chọn phương án phù hợp với dự án" (giữ nguyên tắc 24/10 20:49; quyền / tiền / dữ liệu vẫn theo luật) | User |

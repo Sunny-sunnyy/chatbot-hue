@@ -14,15 +14,12 @@ trước khi viết lại (có từng mục B71–B76 / C62–C68): `git show 3d
 - Qdrant `:6335` 1 collection `hue_full_corpus_7a2_e5_small_384` (8.459). Repo **PUBLIC**. Untracked ở gốc **của User, không đụng**: `báo cáo nghiên cứu
   github.txt`, `tham khảo 26_10/`. Cổng: kiểm `ss -ltnp | grep ':80'` trước khi chạy server (27/10 chiều 8010, 8015, 8020, 8023, 8030 bị chiếm; 8013, 8016 dùng được).
 
-**Thứ tự việc (chặn chính: B0 — chỉ User làm):**
-1. Mở A / B / C; A `ListAgents`, cập nhật bảng Session; **hỏi lại quyền phiên** (quyền 27/10 chiều hết hạn).
-2. **User 28/10 chọn PA3 — B0 không chặn nữa** (spec 8.2 §11, bản `5255f3274707`): **merge `p82-b1` `c3d5607` ngay** (không chờ B0); B0 thành mốc người làm
-   sau (trước bảo vệ; khi làm: User đọc `data/phase_8_2/b0/doc_cap_mu.md`, ghi `nhan_xet_user.md` ⇒ A mở `khoa.json` (chỉ A; **B đã thấy khóa — không tóm nhãn**),
-   sub-agent mới tóm nhãn, luật dừng §3 mục 4 ⇒ dừng / chưa rõ: A trình User giữ 10 / quay về 5). Merge `p82-b1` (đã rebase lên `576f84e`, C review ready
-   `phase_8_2_b1_rebase2_review.md`; `main` sau đó chỉ thêm tài liệu + `dense_ms` + gold v3 — kiểm lại không xung đột, T1, cổng context 10) ⇒ sửa context 5 ⇒ 10 ở
-   guide 6 "Hiện hành", guide 8, `Project_Status` + đủ 5 chỗ (`WORKFLOW.md` §6).
-3. **B3 mốc cuối** (User quyết mở câu kín): plan duyệt sha `27e75be5ed44` (`phase_8_2_b3_plan.md`); người chạy **B**; report tách riêng số câu 500 kiểu "validator v1
-   không nhận `[Nguồn n]`" mỗi bên (C65). ⇒ `TONG_HOP` 8.2 ⇒ User đóng 8.2.
+**Thứ tự việc (cập nhật 10:24 28/10/2026):**
+1. ✓ Mở phiên 28/10 (quyền: ≤ 1 USD, A tự điều phối, B / C push nhánh riêng).
+2. ✓ **Phase 8.2 ĐÓNG** (User 10:24 28/10; `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`): PA3 (spec §11) ⇒ merge B1 `510e1a8` (context 10 + NFC) ⇒ B3 câu kín tốt hơn,
+   0 câu tụt. **B0 còn nợ** (mốc người, trước bảo vệ): User đọc `data/phase_8_2/b0/doc_cap_mu.md`, ghi `nhan_xet_user.md` ⇒ A mở `khoa.json` (chỉ A; **B đã thấy khóa — không
+   tóm nhãn**), sub-agent mới tóm nhãn, luật dừng spec 8.2 §3 mục 4 ⇒ dừng / chưa rõ: A trình User giữ 10 / quay về 5.
+3. (gộp vào 2)
 4. **Đợt sửa kho + build lại index** (phần tồn cuối): spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` — **User DUYỆT sha
    `937cf8969810` (15:39 27/10/2026)** sau C68 3 vòng (`..._design_review.md`); trần 0,15 USD. Chạy theo §5 **sau khi đóng 8.2**: bước 0 (bộ "trước" 176 câu + plan đo
    có review) **trước** khi đụng kho; bước 2–6 làm liền; gold v4 + Golden sửa từng mục User duyệt; kết quả ChatGPT 78 mục: WebFetch đối chiếu URL trước khi áp (đợt 2). Dữ liệu private `data/sua_kho_2026-10-27/` (README mục lục).
@@ -165,6 +162,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   không nhận `[Nguồn n]`" mỗi bên (C65). Trần theo plan; ≈ 0,02 USD.
 - **Không làm:** chạy cùng lúc bộ "trước" B78 / C73. Report tracked giữ mù (số đếm, số dòng, đúng / sai; không nội dung câu, không tên file nguồn).
 - **Xong:** report `phase_8_2_b3_implementation.md` ⇒ nhắn A + C; **C74** = C review giữ mù ⇒ A viết `TONG_HOP` 8.2 ⇒ User đóng 8.2.
+- **Trạng thái (B, 10:15 28/10/2026):** chạy xong, report `phase_8_2_b3_implementation.md` (chưa commit) — **chờ C74**. S36 (match-seen 1 / 3): không làm hỏng + tốt hơn; ≈ 0,0138 USD.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
