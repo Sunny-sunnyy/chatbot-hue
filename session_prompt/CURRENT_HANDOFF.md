@@ -61,9 +61,9 @@ sản phẩm kinh doanh thật; người dùng = User, du khách, người dân.
 
 | Vai | Terminal | Agent | Liên lạc | Việc | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-51` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | giao + review B71–B76 / C62–C68; spec sửa kho; đổi khuyến nghị 8B | `STATUS_A.md`; 0 USD |
-| B — thực thi | `hue-rag-2d` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | B71–B76 xong | `STATUS_B.md`; ≈ 0,000325 USD |
-| C — thực thi | `hue-rag-86` (27/10 chiều) | Claude Opus 5.5 | trực tiếp | C62–C68 xong (C68 3 vòng ⇒ spec ready) | `STATUS_C.md`; ≈ 0,000832 USD |
+| A — điều phối | `hue-rag-bf` (28/10) | Claude Opus 5.5 | trực tiếp | điều phối; đọc kết quả ChatGPT 27/10 (2 file) | `STATUS_A.md` |
+| B — thực thi | `hue-rag-ac` (28/10) | Claude Opus 5.5 | trực tiếp | B78 (plan đo trước ↔ sau sửa kho) | `STATUS_B.md` |
+| C — thực thi | `hue-rag-32` (28/10) | Claude Opus 5.5 | trực tiếp | C70 (plan đo thời gian tới chữ đầu tiên) | `STATUS_C.md` |
 
 Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code ⇒ liên lạc `trực tiếp`.
 **B / C lúc mở phiên sau:** chưa có mục việc đang chạy. Mở phiên ⇒ kiểm nhanh ⇒ báo A ⇒ chờ. Việc A dự định giao (sau khi User cấp quyền) ở mục
@@ -74,7 +74,8 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Thường trực:** A commit/push `origin main`; B/C không commit trừ khi việc ghi rõ (nhánh riêng); duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt:
   A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; luôn thử + so baseline
   trước khi chọn (User 24/10 20:49); commit trước sửa code + cổng ổn định sau mỗi gói (User 26/10); "báo trước, chờ User đồng ý" chỉ áp ngoài phạm vi đã duyệt.
-- **Phiên 27/10 chiều (User 13:46) — HẾT HẠN cuối phiên, hỏi lại:** A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD (dùng ≈ 0,0012); B force-push `p82-b1`.
+- **Phiên 28/10 (User 09:2x) — HẾT HẠN cuối phiên:** A tự điều phối + tự thử / chọn trong luật; API ≤ 1 USD cả phiên; B / C commit + push nhánh riêng theo việc.
+  User 28/10: B0 chưa rảnh làm; **đồng ý thứ tự lỗi** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm; User tự xóa `c59-log`, `gold-v2`.
 - Trần 8.2: 0,5 USD (dùng ≈ 0,213). Trần đợt sửa kho (khi spec duyệt): 0,15 USD. GPU mỗi lượt 20–30 câu, kiểm GPU thật trước khi chạy.
 - Giá `gpt-6-luna`: 0,1 USD / 1M token vào, 0,5 USD / 1M token ra (~0,000133 USD / câu context 5; ~0,000204 context 10).
 
@@ -110,6 +111,27 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - Test cần key OpenAI (không chạy mặc định): `test_api_chat.py::test_health_is_cached_and_ready_after_real_lifespan` (+ các test `require_openai_key`),
   `test_openai_full_corpus_generator.py`, `test_phase6_live_smoke.py`, `test_phase6_settings.py::test_openai_api_key_exists_without_leaking`. Test thiếu model: User `!`.
 - Sub-agent đọc kho: grep **chỉ** qua script đã loại `evaluation/`, `meta/`, `*sealed*` (`scripts/grep_kb.sh`, W27) — bẫy s7 27/10.
+
+### B78 — plan đo "trước ↔ sau" đợt sửa kho (B viết, C review; 28/10)
+
+- **Mục tiêu:** plan cho spec sửa kho `937cf8969810` §5 bước 0 + bước 9 + §6, có tiêu chí ghi trước, để A duyệt sha **trước** khi chạy bộ "trước".
+- **Đọc:** spec sửa kho (full-read) + `..._design_review.md` (targeted: finding còn mở); skill `run-experiment` §1; spec 8.2 §10 (luật nhận, targeted).
+- **Làm:** `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_do_truoc_sau_plan.md` (hoặc đợt mới nếu A mở — A báo): mục "Căn cứ để review" (2–4 file, mục cần đọc); sàn
+  (0 câu ngoài kho bị trả lời; thêm **"nói chắc sai"** theo thứ tự lỗi User đồng ý 28/10 — B đề xuất cách đếm); mức tụt; chỉ số quyết; A/A = 2 (B1 ↔ G2.1a);
+  harness ghi từng dòng (append), lỗi bất kỳ vẫn giữ usage; tiền ước; ghi rõ bộ "trước" chạy trên chatbot nào (spec: sau merge B1 — B0 chưa có ngày, ghi điều này
+  như giả định, không tự đổi). Mỗi tiêu chí sàn trỏ `file:dòng` hành vi production nó đo.
+- **Không làm:** chạy đo, gọi API, đụng kho / Qdrant / Golden, mở câu kín. 0 USD.
+- **Xong:** báo sha (12) cho A + C; C review theo §9.1 (chỉ dựa gói căn cứ) ⇒ `<plan>_review.md`.
+
+### C70 — plan đo "thời gian tới chữ đầu tiên" (C viết, B review; 28/10)
+
+- **Mục tiêu:** biết streaming rút được bao nhiêu giây người dùng chờ, trước khi bàn spec streaming.
+- **Đọc:** `data/tinh_nang_moi_2026-10-27/c63_can_cu.md`; code sinh câu trả lời (`backend/generation/`, `backend/api/`) theo nhu cầu; skill `run-experiment`.
+- **Làm:** plan `report_agent/2026-10-27_phan_ton_phase_cu/streaming_ttft_plan.md`: ~10 câu **tự viết** (không lấy Golden / câu kín); đo thời gian tới chữ đầu tiên,
+  tới hết câu, token suy luận; đường chính `Runner.run_streamed` (đường production sẽ dùng), stream SDK OpenAI trực tiếp chỉ làm mốc nếu rẻ; context 5 hiện tại
+  **và** context 10 (B1) nếu không tốn thêm nhiều — ghi lý do; p50 / p95; tiền ước (≈ 0,002 USD); "Căn cứ để review".
+- **Không làm:** chạy đo, sửa code `backend/`. 0 USD.
+- **Xong:** báo sha cho A + B; B review ⇒ `<plan>_review.md`.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
