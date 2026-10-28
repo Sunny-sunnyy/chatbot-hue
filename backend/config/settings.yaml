@@ -18,6 +18,7 @@ full_corpus:
     exclude_files:
       - travel/services/services-research-and-entities-inventory.md
       - travel/tickets/tickets-research-and-entities-inventory.md
+      - performing_arts/performing-arts-entities-inventory.md
   conditions_file: ../knowledge-base-hue/meta/full_corpus_conditions.json
   embedding_models:
     - id: intfloat/multilingual-e5-small

@@ -13,7 +13,7 @@ curated `knowledge-base-hue/` (5 domain: `foods`, `heritages`, `festivals`,
 xứng nhu cầu và bằng chứng từ dữ liệu, Qdrant, model, API thật.
 
 ```text
-curated Markdown (205 file) -> chunker (8.459 chunk) -> e5-small dense + BM25 sparse
+curated Markdown (204 file, từ 28/10 sửa kho) -> chunker (8.426 chunk) -> e5-small dense + BM25 sparse
 -> Qdrant -> query NFC -> retrieval dense_bm25_rrf (top-10 whole chunk vào context) -> gpt-6-luna -> API/UI có citation
 ```
 
@@ -91,14 +91,14 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 **Full-corpus runtime (API `backend/api/app.py`):**
 
 - candidate `e5-small-384` (`intfloat/multilingual-e5-small`, local CPU, 384 chiều);
-- collection `hue_full_corpus_7a2_e5_small_384`, 8.459 point, payload 7 field
+- collection `hue_full_corpus_7a2_e5_small_384`, 8.426 point (build lại 28/10, đợt sửa kho; build record `574b5d02088b`), payload 7 field
   (`search_text`, `source`, `title`, `heading_path`, `evidence_parts`,
   `chunk_id`, `domain`), dense + sparse;
 - build record `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`
   (schema `full_corpus_build:v3`) là nguồn sự thật duy nhất "index khớp corpus";
   runtime từ chối khởi động nếu hash file corpus khác record;
 - sparse state chung `data/full_corpus_builds/full_corpus_sparse_state.json`
-  (vocabulary 5.660);
+  (vocabulary 5.631; sparse state `1bae9e0f3c49`); mốc tìm T1 (158 câu) **`23c58c47635d`** từ 28/10 (trước `cefb2d1ad609`);
 - query chuẩn hóa NFC trước khi tìm (`backend/retrieval/full_corpus.py` `normalize_query`, từ 28/10 `510e1a8`);
 - retrieval `dense_bm25_rrf`, reranker `none`, context tối đa **10** whole chunk (`settings.yaml` `max_context_documents: 10`, từ 28/10 `510e1a8`; trước 5);
   chọn bằng judge Claude 8.1, **chưa có mốc người** (B0 dời, spec 8.2 §11);
@@ -114,11 +114,11 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 8B chưa có index.
 
 **Qdrant** `127.0.0.1:6335` (gRPC 6336; port đổi để chạy song song
-`mekongai-template`). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.459
+một dự án khác của User). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.426
 point). Hai collection Foods đã xóa ở B9 (24/10, User chạy); code/test/notebook Foods cũ đã gỡ
 (`1832201`).
 
-**Corpus:** 205 file → 8.459 chunk (chunker giữ nguyên từ Phase 2: chia theo cấu
+**Corpus:** 204 file → 8.426 chunk (28/10: đợt sửa kho 123 sửa / 65 file, loại file danh mục `performing_arts`; chunker giữ nguyên từ Phase 2: chia theo cấu
 trúc Markdown, không overlap có chủ đích (thực tế 3 cặp chunk lặp body: blockquote lồng trong list
 item, `markdown_blocks.py:233-250`, B8 2026-10-24), mỗi chunk vừa cả 3 tokenizer e5-small 512 / e5-base
 512 / huydang 256; trung vị 85 token e5). `knowledge-base-hue/` không có Git

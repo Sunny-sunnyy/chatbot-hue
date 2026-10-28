@@ -40,7 +40,7 @@ Cập nhật 2026-10-27 (C69, theo W29 — guide "Hiện hành" cập nhật cù
   cuối duyệt sha `27e75be5ed44` (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md`): người chạy B, câu 500 vì citation = điểm 1 cả hai bên, tập
   quyết 33 câu.
 - **Sau đợt sửa kho** (spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt `937cf8969810`; chạy sau khi đóng 8.2): bộ "trước" 176 câu
-  trước khi đụng kho (§5 bước 0); T1 mới thay `cefb2d1ad609` (bước 6); **gold v4** dựng sau build vì offset lệch (bước 7); Golden sửa từng mục User duyệt (bước 8);
+  trước khi đụng kho (§5 bước 0); T1 mới **`23c58c47635d`** thay `cefb2d1ad609` (bước 6, 28/10 — 204 file / 8.426 đoạn); **gold v4** dựng sau build vì offset lệch (bước 7); Golden sửa từng mục User duyệt (bước 8);
   "sau" chấm cùng lượt + cùng Golden (bước 9); tiêu chí §6 (A/A = 2).
 - Baseline 7B và số đo cũ: [`full_corpus_rag.md`](full_corpus_rag.md) mục "Cập nhật Phase 7B".
 

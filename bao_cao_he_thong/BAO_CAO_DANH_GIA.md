@@ -220,7 +220,7 @@ Kiểm ngày 27/10/2026 với `main` và các report 8.2 / đợt sửa kho.
 | Prompt chấm cố định | **còn dùng** (không chấm trích dẫn) | `backend/evaluation/full_corpus_judge_prompt.md` |
 | Người chấm Claude, mù, cùng lượt | **còn dùng** | spec 8.2 §7; plan B3 §4 |
 | Mốc chatbot (5 đoạn, `e5-small-384`, `dense_bm25_rrf`, không rerank) | **còn đúng** cho chatbot đang chạy; 10 đoạn ở nhánh B1, chờ B0 | `backend/config/settings.yaml`; `CURRENT_HANDOFF.md` |
-| Mốc tìm T1 `cefb2d1ad609` | **còn dùng** tới đợt sửa kho (đổi sau build) | spec sửa kho §5 bước 6 |
+| Mốc tìm T1 `cefb2d1ad609` | **đã thay** 28/10 bằng **`23c58c47635d`** (index build lại sau sửa kho; 40 / 158 câu đổi top-10) | spec sửa kho §5 bước 6; `sua_kho_b1_6_implementation.md` |
 | Nhãn đoạn đúng | **bản 3 mặc định** (`fa192f8`); bản 1, 2 chỉ để tái lập số cũ; **bản 4 sau sửa kho** | `g1_retrieval.py:47` |
 | Số "lỗi trích dẫn" của lượt 10 đoạn 25/10 | **đã thay**: theo bộ kiểm hiện tại 0 / 12 câu đó lỗi | `c65_citation_138_check.md` |
 | Điểm 7B Run 1 làm mốc | **lịch sử**; 10 câu Golden sửa đáp án 25/10 không so trực tiếp | `phase_8_1_golden_fix_review.md` |

@@ -32,7 +32,7 @@ trước khi viết lại (có từng mục B71–B76 / C62–C68): `git show 3d
 **Mục tiêu sản phẩm:** đồ án tốt nghiệp (bảo vệ ~**tháng 1/2027**, User: xong càng sớm càng tốt — để học dự án, tìm lỗ hổng, tối ưu, hướng mới, deploy), xem như
 sản phẩm kinh doanh thật; người dùng = User, du khách, người dân. Thứ tự lỗi A đề xuất (chưa chốt): nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
 
-**Mã hay gặp:** B0 / B1 / B3 = bước spec 8.2; T1 = kết quả tìm 158 câu (mốc `cefb2d1ad609` — đổi sau sửa kho); A/A = hai lượt cùng cấu hình; K / R = biến thể
+**Mã hay gặp:** B0 / B1 / B3 = bước spec 8.2; T1 = kết quả tìm 158 câu (mốc **`23c58c47635d`** từ 28/10 sau sửa kho; trước `cefb2d1ad609`); A/A = hai lượt cùng cấu hình; K / R = biến thể
 đợt cải tiến (đóng); Kxxx = mục rà kho C32; S / W = sự cố / đề xuất sổ cải tiến; Bxx / Cxx = việc A giao (27/10 chiều: B71–B76, C62–C68).
 
 ## Câu hỏi cho User (phiên sau — gói trong báo cáo mở phiên, mỗi câu có khuyến nghị)
@@ -190,6 +190,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   private `data/sua_kho_2026-10-27/golden_de_xuat.md`). Ghi kèm: câu q02 kiểu "giờ mở cửa" của bộ C73 bị từ chối cả 3 ô (C) — xem có chạm mục sửa không (chỉ ghi).
 - **Không làm:** sửa Golden, đổi `GOLD_PATH`, mở câu kín, gọi API. 0 USD. Tìm trong kho chỉ qua `scripts/grep_kb.sh` hoặc đọc file theo đường dẫn edit.
 - **Xong:** report `sua_kho_b7_8_implementation.md` ⇒ C kiểm ⇒ A trình User duyệt từng mục. Nếu C75 tìm lỗi phải khôi phục ⇒ dừng B82.
+- **Trạng thái (B, 11:19 28/10/2026):** xong — gold v4 nháp (2 trích dẫn câu 27 chờ User), Golden 0 câu cần sửa; chờ C kiểm.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 

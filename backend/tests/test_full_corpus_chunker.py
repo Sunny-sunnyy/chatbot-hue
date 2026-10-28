@@ -1,7 +1,7 @@
 """Comprehensive technical tests for Full-Corpus RAG Wave 1.
 
 Tests cover:
-- Deterministic corpus discovery (5 domains, 205 files, inventory/part exclusions, sorted order).
+- Deterministic corpus discovery (5 domains, 204 files, inventory/part exclusions, sorted order).
 - CRLF/CR normalization, zero-based Unicode code-point offsets, and repeated text locator.
 - Markdown block extraction (H1 title, intro before H2, blockquotes, nested lists, tables, image-only exclusion, section exclusions).
 - Condition attachment outside corpus (schema validation fail-closed, exact selector matching, missing/duplicate selector detection).
@@ -93,6 +93,7 @@ def test_full_corpus_discovery_and_inventory_exclusions():
     # Check exact inventory exclusions
     assert "travel/services/services-research-and-entities-inventory.md" not in files
     assert "travel/tickets/tickets-research-and-entities-inventory.md" not in files
+    assert "performing_arts/performing-arts-entities-inventory.md" not in files
 
     # Check exclude_parts
     for f in files:

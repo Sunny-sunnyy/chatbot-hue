@@ -564,7 +564,7 @@ def chunk_full_corpus(
     is_fits_tokenizer_fn: Callable[[str], bool] | None = None,
     condition_manager: ConditionManager | None = None,
 ) -> tuple[list[FullCorpusChunk], list[str]]:
-    """Discover, parse and chunk the complete full corpus (all 205 files).
+    """Discover, parse and chunk the complete full corpus (all 204 files).
 
     Validates condition rules across the entire corpus fail-closed.
     Returns:
