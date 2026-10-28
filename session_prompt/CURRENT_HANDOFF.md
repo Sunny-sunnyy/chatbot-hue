@@ -257,6 +257,10 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   thước qua §4; **trần 0,01 USD**. Người chạy B (judge sub-agent), C đọc ≥ 10 câu âm trước khi chấm + kiểm report.
 - **C82** đợt 2 bản 2 `edits/dot2.jsonl` `63e8787181cb` (95 edit / 33 file; K004 thêm 2 URL cổng Chính phủ; K134 ⇒ D2 tra ngoài) — B kiểm phần sửa.
 
+- **Đợt 2 bản 3** `edits/dot2.jsonl` `9b5105b35e8b` (104 edit / 33 file; C sửa mẫu K004 phân biệt hoa thường — sót 9 dòng) — B88 vòng 3 ready 0 / 0 / 0 (12:48). **Áp chờ User**
+  (D1–D7 + 15 câu `quyet_dinh_user.md`; K017 đọc lại nguồn bằng trình duyệt trước khi áp; áp xong phải build lại + đo trước ↔ sau như đợt 1).
+- **C rảnh** (12:48): chờ report B89 để review (**C83**). Không giao việc nặng máy / Qdrant trong lúc B chấm (W31 đề xuất).
+
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
