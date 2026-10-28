@@ -29,7 +29,7 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 
 **User trả lời (08:47 27/10/2026):** đây là **đồ án tốt nghiệp** đem đi trình bày, xem như **sản phẩm kinh doanh thật**; người dùng = User, **du khách,
 người dân**. Lỗi tệ nhất: User hỏi ý A (A đề xuất thứ tự, chờ User chốt). Yêu cầu phi chức năng (chờ tối đa, tiền / câu, chạy ở đâu): User chưa
-rõ ⇒ **so sánh, đánh giá, nhận xét; chỗ nào tối ưu được thì tối ưu** — A tạm theo dõi p95 ≤ 5 s, mỗi biến thể báo USD / câu + latency p50 / p95.
+rõ ⇒ **so sánh, đánh giá, nhận xét; chỗ nào tối ưu được thì tối ưu** — A tạm theo dõi p95 ≤ 5 s, mỗi biến thể báo USD / câu + latency p50 / p95. **User chốt 28/10:** p50 ≤ 3 s, p95 ≤ 5 s cả câu; ≤ 0,0005 USD / câu; thứ tự lỗi: sai cảnh báo an toàn > nói chắc sai > ngoài kho > thiếu ý > từ chối nhầm (§5).
 Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhiên + năng lực, sàn closed-world ở trên; B0 (người đọc cặp mù) là mốc người đầu tiên.
 
 ## 2. Phase hiện tại
@@ -135,6 +135,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-28 09:59 | **Yêu cầu phi chức năng chốt** (nghiên cứu ChatGPT 28/10, A kiểm 7 nguồn): cả câu (chưa stream) **p50 ≤ 3 s, p95 ≤ 5 s** (p99 ≤ 10 s theo dõi), USD / câu TB **≤ 0,0005**; có streaming ⇒ đề xuất đổi thước sang "chữ đầu tiên". **Thứ tự lỗi** thêm mức trên cùng: **sai cảnh báo an toàn / điều kiện vào khu vực** > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. **B3 chạy ngay** (mở câu kín cho người chạy B) | User |
 | 2026-10-28 09:2x | **PA3: B0 không chặn B1 / đóng 8.2** (spec 8.2 §11, `5255f3274707`): merge B1 (context 10 + NFC) theo judge Claude, B0 làm sau (trước bảo vệ), luật dừng kích hoạt ⇒ A trình giữ 10 / về 5. **Thứ tự lỗi đồng ý:** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. Quyền phiên 28/10: ≤ 1 USD, A tự điều phối, B / C push nhánh riêng | User |
 | 2026-10-27 15:3x | **Spec đợt sửa kho DUYỆT** sha `937cf8969810` (C68 3 vòng ready; chạy sau đóng 8.2; trần 0,15 USD). Vòng cải tiến 8: W27–W29 cho thử. User nhắc lại: "cứ thoải mái thử nghiệm, so sánh, đánh giá, nhận xét, ghi lại báo cáo, rồi chọn phương án phù hợp với dự án" (giữ nguyên tắc 24/10 20:49; quyền / tiền / dữ liệu vẫn theo luật) | User |
 | 2026-10-27 15:0x–15:2x | **Đợt sửa kho** (sau đóng 8.2): Q1 41 mục + tên đơn vị sót + loại file danh mục `performing_arts` + 16 câu User; Q2 tra ngoài qua ChatGPT chỉ câu ngắn; Q3 build lại tại chỗ; Q4 **Qwen3-8B = thí nghiệm sau sửa kho** (chưa từng đo); Q5 quét + sửa Golden lệch kho trước khi đo lại | User; spec sửa kho §4 |

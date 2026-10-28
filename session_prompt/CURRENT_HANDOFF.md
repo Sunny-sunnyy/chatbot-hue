@@ -126,12 +126,14 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Trạng thái (B, 09:37 28/10/2026):** plan bản 1 xong, sha `7b79c3971bc7` (chưa commit) — **chờ C review**. 3 câu hỏi cho A ở plan §8 (có mặc định).
 - A 09:4x: **C72** = C review plan này **sau C71** (§9.1: chỉ dựa "Căn cứ để review", không đọc STATUS_B / tin của B) ⇒ `sua_kho_do_truoc_sau_plan_review.md`; A trả lời
   §8 lúc duyệt sha. Chưa chạy bộ "trước" tới khi A ghi "duyệt bản sha".
-- **C72 ready 0 / 0 / 6** (`sua_kho_do_truoc_sau_plan_review.md`, bản `7b79c3971bc7`). **A quyết (10:0x 28/10):** B viết bản 2 đóng m-1 … m-6, C kiểm phần sửa, rồi A duyệt sha.
+- **C72 ready 0 / 0 / 6** (`sua_kho_do_truoc_sau_plan_review.md`, bản `7b79c3971bc7`). **A quyết (09:4x 28/10 — trước ghi nhầm giờ ước "10:0x", B bắt):** B viết bản 2 đóng m-1 … m-6, C kiểm phần sửa, rồi A duyệt sha.
   - **m-4 / §8 câu 3:** cho chạy bước 0 (bộ "trước") **trước B3 / trước khi đóng 8.2** (lệch thứ tự spec sửa kho §2, A duyệt): bước 0 chỉ đọc kho + gọi model,
     tính vào trần đợt 0,15 USD; điều kiện: không chạy cùng lúc B3 / lượt trả phí khác; kiểm "còn hiệu lực" trước bước 1 như plan.
   - **m-5 / §8 câu 1:** **giữ spec §5** "sàn vỡ ⇒ dừng + khôi phục" (không đổi spec). Thêm: F4 vỡ ⇒ sinh lại đúng câu đó một lần ở bên `sau` (file riêng, giữ
     cả hai) làm bằng chứng; sau khôi phục A trình User kèm bằng chứng để quyết áp lại hay không.
   - §8 câu 2: đồng ý (ghi giới hạn "bịa thêm") + dòng watch m-1.
+- **Trạng thái (B, 09:50 28/10/2026):** bản 2 xong, sha `41485782b39e` (chưa commit; đóng m-1 … m-6, ghi 3 quyết định A ở §8, bảng sửa §9) — **chờ C kiểm phần sửa**.
+- **A DUYỆT bản sha `41485782b39e` (09:59 28/10/2026)** — sha tính từ file; C kiểm phần sửa ready 6 / 6 (review §7). Người chạy B, **sau B80 (B3)** (không chạy cùng lúc lượt trả phí khác).
 
 ### C70 — plan đo "thời gian tới chữ đầu tiên" (C viết, B review; 28/10)
 
@@ -144,6 +146,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Xong:** báo sha cho A + B; B review ⇒ `<plan>_review.md`.
 - **Trạng thái (09:30 28/10/2026, C):** plan viết xong, **chờ B review** — sha `1e792df347fd`; bộ câu private `data/streaming_ttft_2026-10-28/questions.jsonl` `107620cb30f1`. Ước khi chạy ≈ 0,016 USD (lệch ≈ 0,002 của handoff — plan §8, §10 có bản gọn ≈ 0,007).
 - A 09:3x: B review khi xong B78 (bản đủ / gọn, D5); A chọn lúc duyệt sha.
+- **A DUYỆT bản sha `9683641b6c38` (09:59 28/10/2026)** — sha tính từ file; B kiểm vòng 2 ready 0 / 0 / 1 (n-1 xử lý trong harness). §10: **giữ D10** (+0,002 USD; B, C cùng khuyên).
+  ⇒ **C73:** C viết harness trên nhánh `c70-ttft` (commit + push nhánh), B review code; **chạy sau khi B xong B80 + bộ "trước" B78** (đo latency — không chạy chồng
+  lượt trả phí khác). Trần 0,03 USD.
 
 ### C71 — kiểm merge B1 vào `main` (C; 28/10)
 
@@ -152,6 +157,14 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   thấy cần); kiểm các khẳng định bảng §2 bằng file / log thật (`data/phase_8_2/b1/merge_2810/`, dòng `chat_metrics` cuối của `backend/logs/application.log`).
   Không chạy server lại trừ khi thấy bằng chứng thiếu (≤ 0,001 USD nếu chạy).
 - **Đầu ra:** `phase_8_2_b1_merge_review.md`; nhắn A. A sửa 5 chỗ báo cáo song song; xong A nhờ C kiểm phần mô tả hành vi.
+
+### B80 — mốc cuối B3 (B chạy; C kiểm giữ mù; 28/10)
+
+- **User 09:59 28/10/2026: "Chạy B3 ngay"** (mở 36 câu kín cho người chạy B). Plan duyệt `27e75be5ed44` (`report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b3_plan.md`, full-read).
+- Chatbot "cuối 8.2" = `main` `510e1a8` trở đi (context 10 + NFC; `backend/` không đổi từ đó); "đầu 8.2" = context 5 như plan. Report tách riêng số câu 500 kiểu "validator v1
+  không nhận `[Nguồn n]`" mỗi bên (C65). Trần theo plan; ≈ 0,02 USD.
+- **Không làm:** chạy cùng lúc bộ "trước" B78 / C73. Report tracked giữ mù (số đếm, số dòng, đúng / sai; không nội dung câu, không tên file nguồn).
+- **Xong:** report `phase_8_2_b3_implementation.md` ⇒ nhắn A + C; **C74** = C review giữ mù ⇒ A viết `TONG_HOP` 8.2 ⇒ User đóng 8.2.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 

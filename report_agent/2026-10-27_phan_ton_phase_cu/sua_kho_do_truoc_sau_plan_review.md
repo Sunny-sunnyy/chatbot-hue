@@ -1,6 +1,6 @@
 # Review: plan đo "trước ↔ sau" đợt sửa kho (B78)
 
-Decision: **ready_for_user_confirmation** (0 blocker / 0 major / 6 minor) — bản sha `7b79c3971bc7`
+Decision: **ready_for_user_confirmation** — bản 1 `7b79c3971bc7`: 0 / 0 / 6; **bản 2 `41485782b39e` (09:51 28/10/2026): 6 / 6 minor đóng, 0 finding mới** (§7)
 Người kiểm: C (Claude Opus 5.5, terminal `hue-rag-32`) · việc C72
 Date: 09:45 28/10/2026 (`date`)
 Canonical guide: spec sửa kho `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` (sha file `937cf8969810`, User duyệt) §2, §5, §6, §7;
@@ -128,3 +128,23 @@ Phần còn mở là cách xử lý khi sàn vỡ và chỗ sót của F2 — đ
 - m-5: "A trình User trước khi khôi phục" thay cho khôi phục ngay khi sàn vỡ.
 
 A cũng chọn có lấy dòng watch m-1 không. C khuyên lấy: 0 USD, chỉ thêm việc đọc vài câu, và đúng loại lỗi User xếp nặng nhất.
+
+## 7. Kiểm phần sửa — bản 2 (sha `41485782b39e`, 09:51 28/10/2026)
+
+Phạm vi: chỉ các chỗ bản 2 ghi ở §9 của plan, cộng với quyết định của A ở `CURRENT_HANDOFF.md` mục B78 (A 10:0x 28/10). sha tính từ file khớp tin của B.
+Không chạy lại script: số nền không đổi giữa hai bản (`b78_*.py` cùng sha, các bảng §3 / §4 giữ nguyên chữ).
+
+| Finding | Tiêu chí đóng | Bản 2 | Đóng |
+|---|---|---|---|
+| m-1 | dòng watch "Acc 5 ⇒ 4 mới" do C đọc; "mới" theo điểm rejudge cả hai item; luật Golden sót ghi trước | YAML W8 + §7 (C đọc, ghi "sai fact" / "khác cách diễn đạt"); F2 "Tính là mới" theo `rejudge` cả hai item; luật "Golden sót" (chỉ câu chạm, C đọc, không tính F2, chuyển Golden đợt 2, A trình User) | ✓ |
+| m-2 | sửa câu "không chồng"; ghi trước cách tính T1 / T2 khi vỡ sàn; F1 ↔ `citation_error` | F1 thêm `citation_error == null` (câu đó thuộc F4); tách "giữa các sàn không chồng" và "sàn ↔ mức tụt có chồng"; T1 / T2 tính đủ, không tính lại | ✓ |
+| m-3 | luật `new` rỗng; kiểm đoạn thiếu evidence ở index "sau" | §3 (c): `new` rỗng ⇒ chỉ (b); `preflight` đếm đoạn thiếu evidence cả hai bên, ≠ 0 ⇒ dừng; §5 mục 4 | ✓ |
+| m-4 | A ghi duyệt lệch thứ tự; không chạy cùng lượt trả phí khác | Handoff B78: A duyệt chạy bước 0 trước B3 / trước khi đóng 8.2; plan §1, §5 mục 1, §8 câu 3 có điều kiện "không chạy cùng lúc B3 / lượt trả phí khác" | ✓ |
+| m-5 | A ghi quyết định cho bước khôi phục | A **giữ spec §5** (dừng + khôi phục) + `rerun-f4` một lần làm bằng chứng trước khi khôi phục, rồi trình User. Plan §2 (lệnh `rerun-f4`: file riêng, từ chối ghi đè, không thay dòng gốc, không đổi F4), §4, §6 tiền, §8 câu 1. Khớp handoff | ✓ |
+| m-6 | bỏ `--env-file` khỏi lệnh T1 | §5 mục 1: lệnh T1 không có `.env`; chỉ `run` / `rerun-f4` nạp | ✓ |
+
+Đường bị ảnh hưởng, kiểm thêm:
+- Một câu ngoài kho có `citation_error` ở **cả hai** bên nay không thuộc F1 hay F4. Đúng ý "mới" của spec §6: người dùng gặp 500 ở cả trước lẫn sau, không do đổi kho. Không phải finding.
+- `rerun-f4` chỉ chạy sau `check` bên `sau`, trước khi khôi phục. Index mới còn nên chạy được; tiền nằm trong trần §6. Kết luận F4 không đổi theo kết quả chạy lại.
+
+Kết luận bản 2: **ready_for_user_confirmation**. A duyệt sha `41485782b39e`.
