@@ -116,7 +116,8 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
 - **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào
-  script sửa tài liệu; không gõ giờ tay, không ghi `HH:Mx` trước khi chạy `date` (25–26/10: ghi giờ ước 3 lần).
+  script sửa tài liệu; không gõ giờ tay, không ghi `HH:Mx` trước khi chạy `date` (25–26/10: ghi giờ ước 3 lần; 28/10: ~7 lần ⇒ hook
+  `.githooks/pre-commit` in cảnh báo khi dòng thêm mới có dạng đó — W30). Giờ quyết định của User (tin nhắn không có dấu giờ): ghi giờ A ghi nhận bằng `date`.
 - **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
   kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
 
@@ -171,6 +172,8 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    **Session rảnh** (chờ người khác): A giao ngay việc không chồng file (viết plan, review, danh sách ứng viên, đo chỉ đọc)
    hoặc ghi một dòng lý do để rảnh trong `CURRENT_HANDOFF.md` (25/10: User phải hỏi "đang rảnh hả"; 26/10: B rảnh được giao
    đối chiếu, bắt lỗi mô tả trong yêu cầu ChatGPT).
+   **Có lượt đo tốc độ / latency đang chạy** ⇒ session khác không chạy lượt trả phí, việc nặng CPU, quét / build Qdrant cùng lúc; A ghi điều này trong mục
+   giao của mọi session đang làm (28/10: việc nặng của C chạy chồng lượt đo "sau" của B ⇒ p95 lượt đó không dùng được — W31).
 3. **Chi tiết kỹ thuật trong phạm vi:** A tự quyết, ghi lý do; chỉ hỏi User về phạm
    vi, dữ liệu, tiền, xóa, hoặc khi bằng chứng đi ngược quyết định trước.
 4. **Đóng việc:** review chéo đạt → trình User (tóm tắt kết quả, bằng chứng, giới

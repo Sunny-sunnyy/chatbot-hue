@@ -263,6 +263,9 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
 - **Worktree `/tmp/…` (26/10):** chạy Python trong worktree bằng `uv run --project /home/minhhieu/hue_rag …` (không thì `uv` tạo `.venv` lạ ở đó);
   symlink `data/`, `knowledge-base-hue/` hiện untracked ⇒ gỡ khi xong; worktree giữ nhánh `main` thì session khác không `git switch main` được ⇒
   gỡ (`git worktree remove`) trước khi người kia chuyển nhánh; `git push` từ worktree bị auto mode chặn ⇒ push từ working tree chung hoặc User `!`.
+- `uv run --env-file ../.env …` chạy nền (`run_in_background`) có thể báo không thấy file ⇒ dùng **đường dẫn tuyệt đối** `--env-file /home/minhhieu/hue_rag/.env` (28/10, I6).
+- `backend/logs/application.log` dùng chung cho **pytest và server** (`test_api_chat.py` cũng ghi `chat_metrics`) ⇒ đếm dòng `chat_metrics` mới: lấy mốc **ngay trước** khi gửi câu,
+  không chạy pytest xen giữa; gỡ worktree xóa luôn log của nó ⇒ chép dòng cần giữ vào `data/` trước (27–28/10, I6).
 - Auto mode chặn chạy notebook (`jupyter nbconvert --execute`) và test thiếu model (`HF_HOME` rỗng) ở một số session ⇒ User `!` ở terminal đó.
 - Test khóa tập trường `chat_metrics` (`test_api_chat.py::test_real_first_chunk_budget_error_has_no_partial_answer`) dừng ở lỗi ngân sách context, **trước** generator ⇒
   trường mới thêm ở phần sinh / citation chỉ cổng ổn định (đọc dòng log thật) bắt được; test đi qua generator cần key (B70 m-1, đóng bằng ghi bẫy 27/10).
