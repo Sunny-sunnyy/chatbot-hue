@@ -16,6 +16,9 @@ Terminal: `hue-rag-bf` · Agent: Claude Opus 5.5 · Vai: điều phối. Peer l�
 - 09:4x: A ghi "A quyết (10:0x 28/10)" vào handoff — giờ ước, `date` lúc đó ~09:47 (B bắt) ⇒ lặp S17. Sửa trong handoff. Mọi giờ ghi file lấy từ `date` trong cùng lệnh.
 - 09:3x: commit `d922bf7` lẫn dòng trạng thái C ghi vào handoff giữa lúc A sửa (đúng nội dung, hợp lệ) — đọc lại `git diff <file>` ngay trước `git add` file nhiều người ghi.
 - 09:3x: `uv run --env-file ../.env` chạy nền báo không thấy file ⇒ dùng đường dẫn tuyệt đối.
+- 11:4x–11:5x: A giao C78 (quét Qdrant / payload, đo mốc tầng tìm) **lúc B đang chạy lượt có đo thời gian** (bộ "sau"); luật A đặt chỉ cấm "lượt trả phí chồng nhau",
+  không cấm việc nặng CPU / Qdrant ⇒ C tự khai chạy chồng 11:50–11:56. Phần trên máy của B không tăng (ít khả năng là nguyên nhân p95). ⇒ vòng cải tiến: khi có lượt đo latency,
+  cấm cả việc nặng máy / Qdrant ở session khác (A ghi rõ trong mục giao).
 
 ---
 Phần dưới: trạng thái kết phiên 27/10 chiều.

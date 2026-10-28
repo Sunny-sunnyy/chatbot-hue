@@ -1,28 +1,32 @@
-# Báo cáo cho bạn: Kho dữ liệu — sửa dữ liệu và tạo lại chỉ mục (Phase 7A2 → đợt sửa kho 27/10)
+# Báo cáo cho bạn: Kho dữ liệu — sửa dữ liệu và tạo lại chỉ mục (Phase 7A2 → đợt sửa kho 27–28/10)
 
-**Cập nhật lần cuối: 16:45 27/10/2026 — bản 4: thêm lượt rà kho 25/10 (139 mục), đợt sửa kho đã soạn và kiểm 27/10 (chưa áp), tài liệu thiết kế
-đợt sửa kho bạn đã duyệt, Qwen3-8B thành thí nghiệm sau đợt sửa, script tìm trong kho an toàn. Kho và chỉ mục đang chạy chưa đổi.**
-Người viết: B (bản 4; bản 1–3: C) · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 12:09 28/10/2026 — bản 5: đợt sửa kho đợt 1 đã áp vào kho và chỉ mục đã dựng lại (28/10): 123 chỗ sửa trong 65 file, bỏ file danh mục
+khỏi chỉ mục (204 file, 8.426 đoạn); đo "trước ↔ sau" trên 176 câu: không làm hỏng (C kiểm đạt); nhãn đoạn đúng bản 4; Golden không cần sửa.**
+Người viết: B (bản 4, 5; bản 1–3: C) · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
 - **Khâu này làm gì:** giữ kho tri thức Huế đúng và đảm bảo chỉ mục chatbot dùng luôn khớp kho.
-- **Đang chạy cách nào (chưa đổi từ 24/10):** chatbot dùng chỉ mục `hue_full_corpus_7a2_e5_small_384` (205 file, 8.459 đoạn), dựng bằng một lệnh build;
-  "phiếu build" ghi dấu vân tay từng file, kho lệch thì chatbot từ chối khởi động. Kho hiện tại = kho sau 25 chỗ sửa của Phase 7A2.
-- **Mới (25–27/10):**
-  - Một lượt rà toàn kho (25/10) tìm **139 chỗ** hai nơi trong kho ghi khác nhau hoặc thông tin có thể đã cũ — nhóm lớn nhất là địa chỉ còn dùng tên phường /
-    quận cũ sau đợt sắp xếp đơn vị hành chính 01/07/2025.
-  - Ngày 27/10 đã **soạn và kiểm xong** đợt sửa (chưa áp vào kho): 41 bản sửa có căn cứ ngay trong kho + 11 bản sửa tên phường cũ còn sót; 12 mục đọc lại
-    thấy không đủ căn cứ nên chuyển nhóm; 16 câu hỏi cho bạn; 78 mục cần tra ngoài (đã soạn yêu cầu ChatGPT, chỉ gửi câu ngắn); đề xuất loại khỏi chỉ mục
-    một file "danh mục biên soạn" không phải nội dung trả lời (33 đoạn).
-  - **Bạn đã duyệt** tài liệu thiết kế đợt sửa kho (15:39 27/10): làm **sau khi đóng Phase 8.2**, thay chỉ mục tại chỗ có sao lưu, trần **0,15 USD**
-    (≈ 3.750 đồng).
-  - Qwen3-8B (model tìm thứ hai, chưa từng đo) chuyển thành **thí nghiệm sau đợt sửa kho**, không bỏ.
-- **Giới hạn chính:** chưa sửa gì trong kho, chatbot vẫn có thể trả lời theo chỗ kho mâu thuẫn. 78 mục cần nguồn ngoài (đợt 2). Kho đúng tới mức nào chỉ
-  biết sau khi đo lại 176 câu "trước ↔ sau".
-- **Chi phí:** soạn đợt sửa 0 USD (đọc trên máy + Claude). Áp đợt sửa ước ≈ 0,074 USD (hai lượt 176 câu), trần 0,15 USD.
-- **Bạn cần quyết gì:** trả lời 16 câu trong `data/sua_kho_2026-10-27/cau_hoi_user.md` (câu nào chưa trả lời thì để đợt 2); gửi yêu cầu ChatGPT 78 mục khi
-  tiện (`gửi chatgpt/2026-10-27/tìm thông tin/tra_ngoai_kho_2026_10_27.md`).
+- **Đang chạy cách nào (từ 28/10):** chatbot dùng chỉ mục `hue_full_corpus_7a2_e5_small_384` dựng lại trên kho đã sửa — **204 file, 8.426 đoạn** (trước:
+  205 / 8.459). "Phiếu build" ghi dấu vân tay từng file, kho lệch thì chatbot từ chối khởi động. File "danh mục biên soạn" của nghệ thuật biểu diễn (ghi chú
+  cho người soạn, không phải nội dung trả lời) **không còn** trong chỉ mục.
+- **Mới (28/10):**
+  - **Đã sửa kho đợt 1:** **123 chỗ thay chữ** trong **65 file**, thuộc **51 mục** đã review (40 mục rà kho có căn cứ ngay trong kho + 11 chỗ tên phường cũ
+    còn sót). Phần lớn là địa chỉ ghi tên phường mới, giữ tên cũ trong ngoặc (sau đợt sắp xếp đơn vị hành chính 01/07/2025); còn lại là vài con số mâu thuẫn
+    giữa hai chỗ trong kho (mùa, khoảng cách, hạn vé, mốc năm…). Một mục (sửa chính file danh mục) không áp vì file đó đã bị bỏ.
+  - **Đã dựng lại chỉ mục tại chỗ** có sao lưu đủ để quay lại (bản gốc 65 file, phiếu build, từ điển từ khóa, ảnh chụp Qdrant 51 MB). Chatbot chạy lại bình
+    thường: kiểm sức khỏe 5 / 5, câu thử trong kho trả lời kèm nguồn, câu ngoài kho từ chối đúng.
+  - **Đo chất lượng "trước ↔ sau"** (176 câu, chấm mù cùng lượt; C kiểm lại ra giống hệt): **không làm hỏng** — không câu ngoài kho nào bị trả lời, không lỗi,
+    không lỗi trích dẫn, không câu "nói chắc sai" mới; điểm đủ ý / đúng gần như y hệt (4 câu tụt, 4 câu tăng); từ chối nhầm 12 → 13 (đúng mức cho phép).
+  - **Nhãn "đoạn đúng" bản 4:** 172 / 174 trích dẫn tìm lại được nguyên văn; 2 trích dẫn đổi chữ — **bạn đã duyệt**. **Golden:** quét 59 câu có thể chạm phần
+    sửa ⇒ **0 câu cần sửa** (bạn đã duyệt).
+- **Giới hạn chính:** đợt này làm kho **đúng hơn** nhưng **không làm điểm tăng** — đáp án Golden không đổi và phần lớn chỗ sửa chỉ thêm tên mới, nên thước đo
+  không nhạy với loại sửa này. Còn **đợt 2**: 78 mục cần nguồn ngoài + 16 câu chỉ người địa phương biết (chưa trả lời). Kho còn thiếu vài thông tin hay được
+  hỏi (ví dụ giờ mở cửa một điểm tham quan lớn).
+- **Chi phí:** cả đợt 1 ≈ **0,073 USD** (≈ 1.800 đồng) / trần 0,15 USD — hai lượt 176 câu (0,036 + 0,036) + 2 câu thử (0,0004); soạn, sửa, dựng chỉ mục 0 USD.
+- **Bạn cần quyết gì:** (1) **xóa bản sao lưu** của đợt 1 khi bạn thấy yên tâm (bước 11; giữ thì tốn ~51 MB + vài MB); (2) đợt 2: trả lời 16 câu trong
+  `data/sua_kho_2026-10-27/cau_hoi_user.md`, gửi yêu cầu ChatGPT 78 mục (`gửi chatgpt/2026-10-27/tìm thông tin/tra_ngoai_kho_2026_10_27.md`); (3) thí nghiệm
+  Qwen3-8B cần bạn duyệt gửi toàn bộ kho ra OpenRouter + tạo một collection thử (plan đang sửa theo review).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -48,17 +52,20 @@ mở `http://localhost:6335/dashboard` để xem các collection.
 |---|---|---|
 | Sửa mâu thuẫn có căn cứ trong kho (Phase 7A2) | **Đã xử lý, đóng gói** | 25 chỗ / 27 file; Golden sửa 1 đáp án; Golden 176 + smoke 10 đạt sau khi sửa |
 | Rà toàn kho tìm mâu thuẫn / thông tin cũ (25/10) | **Đã xử lý** | 139 mục / 205 file (8 sub-agent + C tự kiểm 42 mục: 42 / 42 trích đúng); danh sách private |
-| Sửa 139 mục — phần có căn cứ trong kho (đợt 1) | **Xử lý một phần** (đã soạn + review, **chưa áp**) | 41 bản sửa (C review: 40 giữ + 1 có điều kiện ⇒ không áp) + 11 bản tên phường sót (C review đạt); áp sau khi đóng 8.2 |
+| Sửa 139 mục — phần có căn cứ trong kho (đợt 1) | **Đã xử lý, đóng gói** (28/10; đang chạy, đã kiểm) | **123 chỗ / 65 file / 51 mục** (40 mục rà kho + 11 tên phường sót; 1 mục không áp vì file danh mục bị bỏ); áp bằng máy, chuỗi cũ khớp đúng 1 lần; C kiểm diff với bản sao lưu từng mục (C75 đạt) |
 | Mục không đủ căn cứ trong kho | **Xử lý một phần** | 12 mục đọc lại ⇒ 9 sang tra ngoài (8 vì hai nguồn trong kho ngang nhau), 3 "không cần sửa" |
-| Mục chỉ người địa phương biết | **Chưa thực hiện** (chờ bạn) | 16 câu hỏi lời thường, mỗi câu có gợi ý; câu chưa trả lời ⇒ đợt 2 |
+| Mục chỉ người địa phương biết | **Chưa thực hiện** (chờ bạn, đợt 2) | 16 câu hỏi lời thường, mỗi câu có gợi ý; chưa câu nào được trả lời lúc áp đợt 1 ⇒ để nguyên, sang đợt 2 |
 | Mục cần tra nguồn ngoài | **Chưa thực hiện** (đợt 2) | 78 mục, 7 loại; yêu cầu ChatGPT đã soạn (chỉ câu ngắn), bạn tự gửi; kết quả phải đối chiếu link trước khi sửa |
-| Loại file "danh mục biên soạn" nghệ thuật biểu diễn khỏi chỉ mục | **Xử lý một phần** (bạn duyệt, chưa áp) | 33 đoạn; 205 → 204 file, 8.459 → 8.426 đoạn; đo 8.1 bỏ 33 đoạn này: không khác; vào context ở 3 / 176 câu |
+| Loại file "danh mục biên soạn" nghệ thuật biểu diễn khỏi chỉ mục | **Đã xử lý, đóng gói** (28/10) | 33 đoạn; **205 → 204 file, 8.459 → 8.426 đoạn**; thêm vào `exclude_files` (`backend/config/settings.yaml`) + test kiểm file bị loại |
+| Đo chất lượng "trước ↔ sau" đợt sửa kho (176 câu) | **Đã xử lý, đóng gói** (28/10; C kiểm đạt) | không làm hỏng: 0 câu ngoài kho bị trả lời, 0 lỗi, 0 lỗi trích dẫn, 0 "nói chắc sai" mới; đủ ý −0,008 / đúng 0,000 trên 129 câu chính (4 / 1 câu tụt, mức cho phép 5); từ chối nhầm 12 → 13; không thấy "tốt hơn" ở 31 câu chạm phần sửa |
+| Nhãn "đoạn đúng" sau khi kho đổi (bản 4) | **Đã xử lý, đóng gói** (28/10) | 174 trích dẫn: 172 tìm lại nguyên văn (42 chỉ dời vị trí), 2 đổi chữ ⇒ bạn duyệt trích dẫn mới; bản 1–3 giữ nguyên; code đo dùng bản 4 |
+| Câu Golden lệch kho sau khi sửa | **Đã xử lý** (28/10) | quét 59 câu có thể chạm phần sửa (theo chữ + theo vị trí) ⇒ 3 agent đọc + B kiểm lại + C quét độc lập 176 câu ⇒ **0 câu cần sửa** (bạn duyệt); 1 câu ghi sang đợt 2 |
 | Tìm trong kho mà không lọt bộ đánh giá / câu kín | **Đã xử lý, đóng gói** | `scripts/grep_kb.sh`: danh sách cờ trắng, chỉ quét trong kho, loại thư mục đánh giá / meta / bản thô / tên chứa sealed; B thử phá 4 vòng ⇒ đạt |
-| Qwen3-8B | **Chưa thực hiện** (thí nghiệm sau đợt sửa kho) | bạn chọn "đo, không bỏ" (15:21 27/10); collection riêng, đo tầng tìm trước |
-| Chỉ mục e5-small trên dữ liệu đã sửa | **Đã xử lý, đóng gói** | 8.459 / 8.459 đoạn (dense + sparse); HTTP 200; kiểm lại 24/10 |
-| Phiếu build: dữ liệu lệch → từ chối khởi động | **Đã xử lý, đóng gói** | Phiếu `v3`, `complete`, 205 file (kiểm 24/10); `source_state.py:133`; `full_corpus.py:353,415` |
+| Qwen3-8B | **Chưa thực hiện** (plan đã viết, đang sửa theo review) | bạn chọn "đo, không bỏ" (15:21 27/10); collection riêng, đo tầng tìm trước; chạy cần bạn duyệt gửi kho ra OpenRouter + collection thử |
+| Chỉ mục e5-small trên dữ liệu đã sửa | **Đã xử lý, đóng gói** (dựng lại 28/10) | **8.426 / 8.426** đoạn (dense + sparse), kiểm từng payload + vector mẫu; `/health` 5 / 5; kết quả tìm 158 câu: 118 giống hệt, 40 đổi danh sách 10 đoạn (26 chỉ đổi thứ tự) — đều giải thích được bằng file đã sửa / từ điển từ khóa mới |
+| Phiếu build: dữ liệu lệch → từ chối khởi động | **Đã xử lý, đóng gói** | Phiếu `v3`, `complete`, **204 file** (dựng 28/10); `source_state.py:133`; `full_corpus.py:353,415` |
 | Một lệnh build cho mọi lần sửa dữ liệu | **Đã xử lý, đóng gói** | `full_corpus_pipeline.py:232–244` |
-| Build lại sau khi sửa kho (từ điển BM25) | **Xử lý một phần** | Từ điển ghi một lần: phải xóa file cũ trước khi build, không thì build báo lỗi; `full_corpus_pipeline.py:121–131` |
+| Build lại sau khi sửa kho (từ điển BM25) | **Đã xử lý** (làm thật 28/10) | Xóa đủ ba đích (collection + phiếu build + từ điển) rồi build, ~5,5 phút; từ điển 5.660 → 5.631 từ. Lệnh xóa bị chặn ở terminal agent ⇒ bạn chạy bằng `!`. `full_corpus_pipeline.py:121–131` |
 | Chỉ mục Qwen3-8B qua OpenRouter (7A2) | **Đã thử, chưa áp dụng** | Lần 1 trộn 3 nhà cung cấp (vector không đồng nhất); lần 2 chỉ Nebius lỗi 504; hoãn ⇒ 27/10: thí nghiệm sau đợt sửa kho (dòng trên) |
 | Dọn collection cũ trong Qdrant | **Đã xử lý, đóng gói** | 16 → 3 collection (7A2) → 1 (24/10), đúng danh sách duyệt |
 | Xóa 2 collection món ăn không dùng | **Đã xử lý, đóng gói** | Đã xóa 24/10 (liệt kê trước/sau); Qdrant chỉ còn `hue_full_corpus_7a2_e5_small_384`. Không có bản sao lưu (theo danh sách dọn) |
@@ -70,6 +77,21 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 28/10/2026 — Áp đợt sửa kho đợt 1 + dựng lại chỉ mục + đo "trước ↔ sau" (bản 5)
+- **Đo "trước" (trước khi đụng kho):** 176 câu trên chatbot đang chạy (10 đoạn ngữ cảnh) — 0 lỗi, 0 câu ngoài kho bị trả lời; 0,036 USD. Trước khi sửa kiểm lại
+  "còn hiệu lực" (code chạy, kết quả tìm, phiếu build không đổi).
+- **Sao lưu:** 65 file kho + file mẫu chia đoạn vào thư mục sao lưu trong kho; phiếu build, từ điển từ khóa và ảnh chụp Qdrant (tải về, khớp checksum).
+- **Áp sửa:** 123 chỗ thay chữ, 65 file, 51 mục (bằng máy, theo đúng thứ tự đã kiểm; giữ nguyên xuống dòng). Loại file danh mục khỏi chỉ mục; sửa 1 chuỗi mẫu
+  của test chia đoạn theo đúng chỗ sửa. Chia đoạn thử: 204 file, 8.426 đoạn, 0 lỗi; đoạn dài nhất vẫn trong giới hạn tokenizer (sát nhất 255 / 256).
+- **Dựng lại tại chỗ:** liệt kê đúng 3 đích trước khi xóa (bạn chạy lệnh xóa vì terminal agent bị chặn) ⇒ build ~5,5 phút ⇒ kiểm 8.426 / 8.426 điểm; test chia
+  đoạn 44 / 44; chatbot chạy lại đạt (2 câu thử, 0,0004 USD). C kiểm từng bước (C75): đạt; C còn tách bằng thí nghiệm 4 câu đổi thứ tự kết quả tìm (1 câu do từ
+  điển từ khóa mới, 3 câu do đoạn của file đã sửa nằm trong 30 ứng viên).
+- **Nhãn đoạn đúng bản 4 + Golden:** như checklist (bạn duyệt 2 trích dẫn mới và "0 câu Golden cần sửa").
+- **Đo "sau" + chấm mù cùng lượt** (303 câu trả lời khác nhau, 7 người chấm Claude): **không làm hỏng** (C kiểm đạt). Thời gian chờ của lượt "sau" có câu chậm
+  9,8 s (trước 4,9 s) — chậm ở phía mạng / nhà cung cấp trong vài phút cuối lượt (không tách được hai bên; cùng lúc có một việc nặng khác chạy trên máy), phần tìm
+  kiếm trên máy không đổi ⇒ số câu chậm của lượt này **không đại diện**.
+- **Kết quả:** PASS (C kiểm từng bước: C75, C76, C80) · kho + chỉ mục **đã đổi** · tiền đợt 1 ≈ 0,073 USD.
 
 ### 27/10/2026 — Soạn và kiểm đợt sửa kho (bản 4; chưa áp vào kho)
 - **Cách làm:** 7 sub-agent đọc lại dòng gốc của 52 mục "sửa khi build" (B làm 1 mục), chỉ dựa vào căn cứ trong kho; mục không chắc thì chuyển nhóm, không
@@ -107,11 +129,11 @@ Chỉ mục Qwen3-8B qua OpenRouter: lần 1 trộn 3 nhà cung cấp → vector
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code (commit `1832201`, sau dọn), Qdrant (GET) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026. Hai dòng cuối thêm 27/10/2026 (bản 4).
+Kiểm với code (commit `1832201`, sau dọn), Qdrant (GET) và `session_prompt/Project_Status.md` §4 ngày 24/10/2026. Hai dòng cuối thêm 27/10/2026 (bản 4); bản 5 (28/10) sửa các dòng số file / đoạn.
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
-| Chỉ mục `hue_full_corpus_7a2_e5_small_384`, 8.459 đoạn, là chỉ mục chatbot dùng | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:66–69`; `backend/config/settings.yaml:41`; Qdrant GET |
+| Chỉ mục `hue_full_corpus_7a2_e5_small_384` là chỉ mục chatbot dùng (8.459 đoạn tới 27/10; **8.426** từ 28/10, dựng lại tại chỗ) | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:66–69`; `backend/config/settings.yaml:41`; Qdrant GET |
 | Phiếu build `full_corpus_build:v3` là nguồn sự thật; dữ liệu lệch thì từ chối chạy | **còn dùng** | `backend/ingestion/source_state.py:133`; `backend/retrieval/full_corpus.py:353,415` |
 | Một lệnh build `cd backend && uv run python -m ingestion.full_corpus_pipeline build --candidate <id>` (từ 25/10, gói 1b: chạy từ `backend/`; lệnh cũ `python -m backend.ingestion…` từ gốc không còn chạy) | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:232–244` |
 | Sparse state (từ điển BM25) chung, ghi một lần; dữ liệu đổi thì phải xóa file cũ trước khi build | **còn dùng** (bẫy đã ghi ở `Project_Status.md` §8) | `full_corpus_pipeline.py:121–131` |
@@ -121,28 +143,25 @@ Kiểm với code (commit `1832201`, sau dọn), Qdrant (GET) và `session_promp
 | 13 collection cũ (4 legacy, 4 metadata v2, 3 món ăn 08a, 2 TF-IDF 08b) | **đã xóa** | Qdrant GET 24/10 |
 | Hai collection món ăn (572 điểm mỗi cái) | **đã xóa** 24/10 khi dọn sau Phase 7 (bạn duyệt) | [R2] §2.1; Qdrant GET sau dọn |
 | Backup Gate 1 của kho | **đã xóa** khi đóng Phase | `Project_Status.md` §4 |
-| 205 file / 8.459 đoạn trong chỉ mục | **còn dùng** tới đợt sửa kho (sau đó 204 / 8.426 nếu loại file danh mục) | build record `corpus.file_count`; Qdrant đếm 33 đoạn của file danh mục (27/10) |
+| 205 file / 8.459 đoạn trong chỉ mục | **đã thay** 28/10 bởi **204 file / 8.426 đoạn** (đợt sửa kho, loại file danh mục) | build record mới `corpus.file_count` 204; Qdrant 8.426 điểm |
 | Hai model dense, 8B "Phase 8 xử lý" | **đã thay** bởi: 8B = thí nghiệm sau đợt sửa kho (bạn chọn 15:21 27/10) | spec đợt sửa kho §4 Q4 |
 
 ## 6. Việc còn lại / cần quyết
 
-- **Đợt sửa kho (đã duyệt, chạy sau khi đóng Phase 8.2):** thứ tự các bước, ai làm / ai kiểm:
-  0. đo bộ câu trả lời "trước" (176 câu, ≈ 0,037 USD) trên chatbot cuối 8.2, plan đo có review trước;
-  1. sao lưu file kho sẽ sửa, snapshot Qdrant, bản sao phiếu build + từ điển BM25;
-  2. áp bản sửa (B) ⇒ C kiểm diff với bản sao lưu; 3. loại file danh mục khỏi chỉ mục + sửa test; 4. chia đoạn thử (không vượt giới hạn token, test mẫu);
-  5. build lại tại chỗ (xóa đủ collection + phiếu build + từ điển rồi build); 6. kiểm sau build (`/health`, 2 câu thật, kết quả tìm mới làm mốc mới).
-  Bước 2–6 làm liền một lần (giữa chừng chatbot khởi động lại sẽ bị từ chối). Sau đó: 7. nhãn đoạn đúng bản 4 (tìm lại trích dẫn sau khi kho đổi; trích
-  dẫn đổi thì bạn duyệt); 8. sửa câu Golden lệch kho (bạn duyệt từng câu); 9. đo "sau" (≈ 0,037 USD), chấm cùng lượt với "trước"; 10. báo cáo; 11. xóa bản
-  sao lưu khi bạn duyệt; 12. plan thí nghiệm Qwen3-8B.
-  **Khôi phục khi hỏng:** chép lại file kho từ bản sao lưu, hoàn lại cấu hình + file mẫu + bản nhãn, khôi phục snapshot Qdrant + phiếu build + từ điển, khởi
-  động lại và kiểm. **Tiêu chí:** 0 câu ngoài kho bị trả lời, 0 lỗi mới; điểm "đủ ý" / "đúng" trung bình không tụt quá 0,1 và số câu tụt ≤ 5 (mỗi câu tụt
-  có giải thích).
-- **16 câu hỏi cho bạn** và **78 mục tra ngoài** (đợt 2) — như mục 1.
+- **Đợt sửa kho đợt 1 — còn 2 bước:**
+  - **bước 11 — xóa bản sao lưu khi bạn duyệt** (ảnh chụp Qdrant ~51 MB, bản gốc 65 file, phiếu build + từ điển cũ); giữ thì quay lại kho cũ được bất cứ lúc nào;
+  - bước 12 — thí nghiệm Qwen3-8B: plan đã viết, đang sửa theo review; chạy cần bạn duyệt **gửi toàn bộ kho ra OpenRouter** + **một collection thử**.
+- **Đợt 2 (chưa bắt đầu):** 78 mục cần nguồn ngoài (yêu cầu ChatGPT đã soạn, bạn gửi khi tiện; kết quả phải đối chiếu link trước khi sửa); 16 câu chỉ người địa
+  phương biết; 1 câu Golden cùng kho còn một tên cũ (sửa kho + Golden cùng lúc); kho thiếu giờ mở cửa của một điểm tham quan lớn (cần nguồn ngoài).
 - Bộ chia đoạn vẫn kiểm cả 3 tokenizer (gồm HuyDang 256 đã bỏ) → đoạn bị giữ nhỏ; chưa có số ủng hộ đổi (8.1: bỏ ràng buộc này "không khác").
 - Lỗi bảng giá và tổng hợp nhiều nguồn: xem `BAO_CAO_DANH_GIA.md`, `BAO_CAO_TIM_KIEM.md`.
 
 ## Phụ lục — hồ sơ kỹ thuật
 
+- **Bản 5 (B85, 28/10):** report `report_agent/2026-10-27_phan_ton_phase_cu/` — `sua_kho_do_truoc_sau_plan.md` (A duyệt `41485782b39e`, review C72),
+  `sua_kho_b1_6_implementation.md` (B81, review C75), `sua_kho_b7_8_implementation.md` (B82, review C76), `sua_kho_b9_implementation.md` (B83, review C80 ready);
+  code `6b59788` (loại file danh mục, chỉ mục dựng lại: phiếu build `574b5d02088b`, kết quả tìm mốc mới `23c58c47635d`), `e08a126` (nhãn đoạn đúng bản 4
+  `927bae1bf201`); dữ liệu private `data/sua_kho_2026-10-27/` (`applied_edits.jsonl`, `eval_truoc/`, `eval_sau/`, `judge/`, `backup/`).
 - **Bản 4 (B77, 27/10):** spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` (bạn duyệt sha `937cf8969810`, 15:39 27/10; review C68 3 vòng);
   rà kho C32 `report_agent/2026-10-25_ra_soat_noi_dung_kho/`; soạn đợt sửa B73 / B74, review C66 / C67 (private `data/sua_kho_2026-10-27/`, mục lục `README.md`);
   yêu cầu ChatGPT B76; script `scripts/grep_kb.sh` (W27, commit cuối `77ac6ec`); sự cố S42 (`session_prompt/SO_CAI_TIEN_CACH_LAM.md`). Mã: Kxxx = mục rà kho C32.
