@@ -208,6 +208,20 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   chừng, log `chat_metrics`; danh sách quyết định User cần chọn (theo thứ tự phụ thuộc); câu hỏi kỹ thuật A tự quyết.
 - **Không làm:** sửa code, gọi API. 0 USD. Kèm kiểm diff GOLD_PATH của B83 khi B báo.
 
+- **C77 xong** (11:46): yêu cầu ChatGPT `gửi chatgpt/2026-10-28/tìm thông tin/streaming_rag_citation_2026_10_28.md` (`b01cadcf1ef2`, B đối chiếu code trước khi
+  User gửi); bản NHÁP phương án `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming.md` (`274bf12a650a`; PA0–PA3, chỗ ⏳ chờ nghiên cứu; quyết định User D0–D5).
+
+### C78 — plan thí nghiệm Qwen3-Embedding-8B (C viết, B review; A giao 11:46 28/10/2026)
+
+- **Căn cứ:** spec sửa kho §4 Q4 + §5 bước 12; `backend/embedding/full_corpus.py` (candidate `qwen3-embedding-8b-4096`, pin Nebius, `data_collection: deny`, batch 64);
+  `Project_Status.md` §8 bẫy OpenRouter (504 / 429, vector lệch khi không pin); skill `run-experiment`; nhãn **gold v4** (B83 tạo).
+- **Làm:** plan `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_plan.md`: mục "Căn cứ để review"; đổi **một** thứ (dense e5-small ⇒ 8B, BM25 / pool / context giữ); **collection
+  riêng** (tên, payload như runtime; không đụng collection đang chạy); tầng tìm theo gold v4 trước (chỉ số quyết, sàn 0 câu mất đoạn đúng, luật dừng sớm), khâu trả lời chỉ khi
+  tầng tìm qua; tiền ước (nhúng 8.426 đoạn + 176 câu hỏi; ghi giá OpenRouter từ trang giá — WebFetch — kèm ngày); latency query qua mạng (mỗi câu hỏi phải gọi OpenRouter)
+  so yêu cầu User p95 ≤ 5 s; cách chịu 504 / 429 (thử lại có giới hạn, ghi từng batch); điều kiện dừng; dọn collection khi xong (User duyệt xóa).
+- **Không làm:** gọi OpenRouter, tạo collection. 0 USD. **Chạy cần User duyệt** (tạo collection mới + gửi kho ra OpenRouter) — A trình khi User về.
+- **Xong:** báo sha cho A + B; B review sau khi xong bước 9.
+
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
