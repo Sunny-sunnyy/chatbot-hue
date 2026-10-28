@@ -131,6 +131,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-28 09:2x | **PA3: B0 không chặn B1 / đóng 8.2** (spec 8.2 §11, `5255f3274707`): merge B1 (context 10 + NFC) theo judge Claude, B0 làm sau (trước bảo vệ), luật dừng kích hoạt ⇒ A trình giữ 10 / về 5. **Thứ tự lỗi đồng ý:** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. Quyền phiên 28/10: ≤ 1 USD, A tự điều phối, B / C push nhánh riêng | User |
 | 2026-10-27 15:3x | **Spec đợt sửa kho DUYỆT** sha `937cf8969810` (C68 3 vòng ready; chạy sau đóng 8.2; trần 0,15 USD). Vòng cải tiến 8: W27–W29 cho thử. User nhắc lại: "cứ thoải mái thử nghiệm, so sánh, đánh giá, nhận xét, ghi lại báo cáo, rồi chọn phương án phù hợp với dự án" (giữ nguyên tắc 24/10 20:49; quyền / tiền / dữ liệu vẫn theo luật) | User |
 | 2026-10-27 15:0x–15:2x | **Đợt sửa kho** (sau đóng 8.2): Q1 41 mục + tên đơn vị sót + loại file danh mục `performing_arts` + 16 câu User; Q2 tra ngoài qua ChatGPT chỉ câu ngắn; Q3 build lại tại chỗ; Q4 **Qwen3-8B = thí nghiệm sau sửa kho** (chưa từng đo); Q5 quét + sửa Golden lệch kho trước khi đo lại | User; spec sửa kho §4 |
 | 2026-10-27 15:01 | **Gold v3** (v2 + 2 câu test sửa nhãn, C64 / B74 / B75 / C) là nhãn mặc định (`fa192f8`); v2, v1 giữ | User |

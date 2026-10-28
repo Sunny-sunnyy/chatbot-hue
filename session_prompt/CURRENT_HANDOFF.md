@@ -16,8 +16,9 @@ trước khi viết lại (có từng mục B71–B76 / C62–C68): `git show 3d
 
 **Thứ tự việc (chặn chính: B0 — chỉ User làm):**
 1. Mở A / B / C; A `ListAgents`, cập nhật bảng Session; **hỏi lại quyền phiên** (quyền 27/10 chiều hết hạn).
-2. **B0** (User đọc `data/phase_8_2/b0/doc_cap_mu.md`, ghi `nhan_xet_user.md`) ⇒ A mở `khoa.json` (chỉ A; **B đã thấy khóa — không tóm nhãn**), sub-agent mới
-   tóm nhãn, áp luật dừng spec 8.2 §3 mục 4 ⇒ không dừng: **merge `p82-b1` `c3d5607`** (đã rebase lên `576f84e`, C review ready
+2. **User 28/10 chọn PA3 — B0 không chặn nữa** (spec 8.2 §11, bản `5255f3274707`): **merge `p82-b1` `c3d5607` ngay** (không chờ B0); B0 thành mốc người làm
+   sau (trước bảo vệ; khi làm: User đọc `data/phase_8_2/b0/doc_cap_mu.md`, ghi `nhan_xet_user.md` ⇒ A mở `khoa.json` (chỉ A; **B đã thấy khóa — không tóm nhãn**),
+   sub-agent mới tóm nhãn, luật dừng §3 mục 4 ⇒ dừng / chưa rõ: A trình User giữ 10 / quay về 5). Merge `p82-b1` (đã rebase lên `576f84e`, C review ready
    `phase_8_2_b1_rebase2_review.md`; `main` sau đó chỉ thêm tài liệu + `dense_ms` + gold v3 — kiểm lại không xung đột, T1, cổng context 10) ⇒ sửa context 5 ⇒ 10 ở
    guide 6 "Hiện hành", guide 8, `Project_Status` + đủ 5 chỗ (`WORKFLOW.md` §6).
 3. **B3 mốc cuối** (User quyết mở câu kín): plan duyệt sha `27e75be5ed44` (`phase_8_2_b3_plan.md`); người chạy **B**; report tách riêng số câu 500 kiểu "validator v1
@@ -132,6 +133,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   **và** context 10 (B1) nếu không tốn thêm nhiều — ghi lý do; p50 / p95; tiền ước (≈ 0,002 USD); "Căn cứ để review".
 - **Không làm:** chạy đo, sửa code `backend/`. 0 USD.
 - **Xong:** báo sha cho A + B; B review ⇒ `<plan>_review.md`.
+- **Trạng thái (09:30 28/10/2026, C):** plan viết xong, **chờ B review** — sha `1e792df347fd`; bộ câu private `data/streaming_ttft_2026-10-28/questions.jsonl` `107620cb30f1`. Ước khi chạy ≈ 0,016 USD (lệch ≈ 0,002 của handoff — plan §8, §10 có bản gọn ≈ 0,007).
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 

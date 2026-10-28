@@ -247,3 +247,18 @@ Completeness), 9 câu trả lời gọn bỏ chi tiết có sẵn (9 điểm) �
   (≈ +0,00004 USD / câu). Kèm nguyên tắc "chất lượng cần thiết trước, tối ưu hiệu suất sau" (thứ tự 10.3).
 - **Q2 (C38 m-3):** xác nhận trên test (41 câu chính / 15 câu có đoạn đúng) = **"không làm hỏng"** (sàn + mức tụt), không đòi "tốt hơn" vượt
   nhiễu — vì test quá nhỏ (3 / 0 vẫn CI [0; +0,171]). (A khuyên) đồng ý; khác: đòi test cũng "tốt hơn" ⇒ gần như mọi biến thể thành "chưa rõ".
+
+## 11. Sửa đổi 28/10 — B0 không chặn B1 / đóng 8.2 (A, terminal `hue-rag-bf`, User chọn 09:29 28/10/2026)
+
+Bản §1–§10 (sha `cd910c4c4169`) giữ nguyên, trừ chỗ mục này ghi "thay". Lý do: User 28/10 chưa rảnh làm B0 (20 câu, ~30–45 phút) và muốn xong phần
+tồn sớm (User 27/10 14:15); B0 đang chặn chuỗi B1 ⇒ B3 ⇒ đóng 8.2 ⇒ đợt sửa kho ⇒ Qwen3-8B. User chọn PA3 (A trình 3 phương án: chờ B0 / B0 rút 10 câu /
+gộp B1 trước).
+
+- **Thay B1 §5 mục 3 và câu "context 10 chỉ sau B0" ở 10.2:** B1 đạt tiêu chí B1.2 + review chéo ⇒ A merge vào chatbot, **không chờ B0**. Căn cứ: judge
+  Claude 8.1 (Completeness dev +0,26 [+0,08; +0,48], test +0,27 [+0,02; +0,59]); đổi ngược được bằng một cấu hình (context 10 ⇒ 5).
+- **Thay §6 tiêu chí 1:** B0 **không** là điều kiện đóng 8.2. B0 thành **mốc người làm sau** (khi User rảnh, trước buổi bảo vệ), cùng file
+  `data/phase_8_2/b0/` (câu trả lời G2 đã sinh — không phụ thuộc kho), cùng luật dừng §3 mục 4. Luật dừng kích hoạt (User ngược judge nhiều hơn cùng
+  chiều, ≥ 5 cặp quyết) hoặc "chưa rõ" ⇒ A trình User: giữ context 10 / quay về 5, và xét lại các kết luận dựa judge (8.2 Bước 2, đợt sửa kho).
+- **Giới hạn ghi trong mọi báo cáo tới khi B0 xong:** chatbot context 10 chọn bằng judge Claude, **chưa có mốc người**; context 10 tăng USD / câu
+  (~0,000133 ⇒ ~0,000204) và token vào ⇒ theo dõi latency p95 (mốc 5,7 s context 5, B65) — đo lại ở bộ "trước" của đợt sửa kho.
+- B3, đợt sửa kho, Qwen3-8B giữ thứ tự như cũ, nay không chờ B0.
