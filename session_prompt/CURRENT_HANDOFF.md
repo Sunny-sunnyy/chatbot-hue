@@ -131,6 +131,7 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   - §8 câu 2: đồng ý (ghi giới hạn "bịa thêm") + dòng watch m-1.
 - **Trạng thái (B, 09:50 28/10/2026):** bản 2 xong, sha `41485782b39e` (chưa commit; đóng m-1 … m-6, ghi 3 quyết định A ở §8, bảng sửa §9) — **chờ C kiểm phần sửa**.
 - **A DUYỆT bản sha `41485782b39e` (09:59 28/10/2026)** — sha tính từ file; C kiểm phần sửa ready 6 / 6 (review §7). Người chạy B, **sau B80 (B3)** (không chạy cùng lúc lượt trả phí khác).
+- **Bước 0 (B, 10:28 28/10/2026):** bộ "trước" xong — `data/sua_kho_2026-10-27/eval_truoc/` (README); 0 lỗi, F1 / F4 = 0, 0,0361 USD. C73 được chạy.
 
 ### C70 — plan đo "thời gian tới chữ đầu tiên" (C viết, B review; 28/10)
 
@@ -163,6 +164,19 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Không làm:** chạy cùng lúc bộ "trước" B78 / C73. Report tracked giữ mù (số đếm, số dòng, đúng / sai; không nội dung câu, không tên file nguồn).
 - **Xong:** report `phase_8_2_b3_implementation.md` ⇒ nhắn A + C; **C74** = C review giữ mù ⇒ A viết `TONG_HOP` 8.2 ⇒ User đóng 8.2.
 - **Trạng thái (B, 10:15 28/10/2026):** chạy xong, report `phase_8_2_b3_implementation.md` (chưa commit) — **chờ C74**. S36 (match-seen 1 / 3): không làm hỏng + tốt hơn; ≈ 0,0138 USD.
+
+### B81 — đợt sửa kho bước 1–6 (B làm, C kiểm; A giao 10:29 28/10/2026)
+
+- **Căn cứ:** spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` (User duyệt `937cf8969810`) §5 bước 1–6 + "Dừng + khôi phục" (full-read); plan đo
+  `sua_kho_do_truoc_sau_plan.md` (`41485782b39e`) phần kiểm "còn hiệu lực"; `guides/full_corpus_rag.md` "Build lại index"; `data/sua_kho_2026-10-27/README.md`.
+- **Bước 0 xong** (B, 10:29): `data/sua_kho_2026-10-27/eval_truoc/` — 176 câu, lỗi 0, ngoài kho bị trả lời 0 / 18, 500 = 0, từ chối nhầm 12 / 158; 0,0361 USD; harness p50 2,2 s / p95 4,9 s.
+- **Khi bắt đầu:** **chỉ sau khi C báo xong C73** (C73 dùng index hiện tại). Bước 1 trước: kiểm "còn hiệu lực" + sao lưu (kho ⇒ `meta/` kèm ngày; snapshot Qdrant; build record +
+  sparse state ⇒ `data/sua_kho_2026-10-27/backup/`). Bước 2–6 **làm liền**. 16 câu User chưa trả lời ⇒ để nguyên, đợt 2 (spec). K091 không áp.
+- **Quyền:** sửa kho theo `edits/` + `diffs_them/` đã review; xóa + build lại collection `hue_full_corpus_7a2_e5_small_384`, build record, sparse state (đích đúng như spec,
+  liệt kê trước khi xóa — khác thì dừng); sửa `backend/config/settings.yaml` (`exclude_files`) + test discovery + docstring + file mẫu chunker trên working tree chung
+  (**không commit** — A commit sau khi C kiểm). 0 USD trừ cổng ổn định (≤ 0,001 USD). Bước 7–9 chưa làm.
+- **Dừng + khôi phục** đúng spec §5. Mọi bước báo A ở cuối bước 6 (hoặc khi dừng).
+- **Đầu ra:** `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_b1_6_implementation.md` ⇒ **C75** = C kiểm (diff với backup từng mục, chunk / token, build, T1 mới, cổng).
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
