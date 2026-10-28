@@ -1,6 +1,6 @@
 # Review: plan B87 — đo "bịa thêm" và "sai cảnh báo an toàn / điều kiện vào khu vực"
 
-Decision: **changes_requested** (0 blocker / 1 major / 4 minor) — bản sha `41065f985c85`
+Decision: bản 1 `41065f985c85` **changes_requested** (0 / 1 / 4) ⇒ **bản 2 `d69481b2addb` (12:35 28/10/2026): ready_for_user_confirmation** — M-1 + 4 minor đóng, 1 ghi chú mới không chặn (§8)
 Người kiểm: C (Claude Opus 5.5, terminal `hue-rag-32`) · việc C81
 Date: 12:28 28/10/2026 (`date`)
 Chỉ dựa gói "Căn cứ để review" (`WORKFLOW.md` §9.1). Không đọc STATUS_B / tin của B ngoài tin báo sha.
@@ -128,3 +128,23 @@ HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run python ../data/loi_nang_2026-10-28/tools
 ## 7. Decision và bước tiếp theo
 
 **changes_requested.** B sửa M-1 (bắt buộc); minor nên gộp vào cùng bản. B báo sha mới ⇒ C kiểm phần sửa ⇒ A duyệt sha. Hai câu §10 của B: ý kiến C ở §2 (4).
+
+## 8. Kiểm phần sửa — bản 2 (sha `d69481b2addb`, 12:35 28/10/2026)
+
+Phạm vi: các chỗ bản 2 ghi ở §12 của plan, cộng §10, §11 (quyết định A). sha tính từ file khớp tin của B.
+
+| Finding | Tiêu chí đóng | Bản 2 | Đóng |
+|---|---|---|---|
+| M-1 | luật ý suy ra; kiểm chéo số bằng code trên 145 câu; câu âm giống thật ≥ 10, ngưỡng ≤ 1 / 10; kappa là điều kiện cần | §3 bước 2 (cộng / trừ / so sánh / gộp nguồn / đổi đơn vị ⇒ `có`); §3 dòng "kiểm chéo số" + §4 `kiểm_chéo_số ≤ 5 %` + bảng ngược; §4 `negative_real` ≥ 10 (code thấy mọi số + **C đọc xác nhận trước khi chấm**), `báo_nhầm_thật ≤ 1 / 10`; `đồng_thuận.note` ghi điều kiện cần; số tạm tới mẫu người | ✓ |
+| m-1 | bản gốc / bản chèn không chung agent, kiểm bằng máy | §4 `separation`, `tách_lô = 0` trong accept; §6 bước 4 | ✓ |
+| m-2 | P0 chèn ≥ 10, ngưỡng ≥ 9 / 10; sàn P0 chỉ sau bộ câu an toàn | §4, §5, §7 | ✓ |
+| m-3 | kappa kèm đồng ý thô + tỉ lệ H mỗi judge | §4 `đồng_thuận.note` (kèm luật xem bất đồng trước khi coi trượt) | ✓ |
+| m-4 | theo dõi trích nhầm nguồn | §3 bảng chỉ số | ✓ |
+| §10, §11 | — | A quyết: judge thứ 3, báo đa số + "một trong hai", P0 dùng "một trong hai"; bộ câu an toàn 20–30 câu + 3–5 câu ngoài kho, chạy sau khi thước qua §4, ≈ 0,006 USD, trần 0,01; B viết câu, C kiểm câu trước khi sinh | ✓ (khớp ý kiến C §2 (4)) |
+
+**Ghi chú mới (n-1, không chặn):** cổng `kiểm_chéo_số` đếm "judge gắn `không có` mà code **thấy** số trong ngữ cảnh" là báo nhầm. Nhưng số có trong ngữ cảnh chưa chắc cùng nghĩa: cùng
+mức giá có thể là của mục khác, cùng năm có thể của sự kiện khác. Khi đó judge đúng, code trùng ngẫu nhiên ⇒ cổng có thể trượt oan.
+- Gợi ý: nếu cổng trượt, người kiểm (C) đọc các ứng viên, chia "judge sai" / "trùng số ngẫu nhiên", rồi tính lại tỉ lệ chỉ trên "judge sai" **trước khi** sửa rubric. Ghi luật này
+  vào `accept` khi viết harness — không cần bản plan mới.
+
+Kết luận bản 2: **ready_for_user_confirmation** — A duyệt sha `d69481b2addb`. Trước khi B chấm, C đọc xác nhận ≥ 10 câu âm giống thật (§6 bước 3 của plan).

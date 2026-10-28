@@ -253,6 +253,10 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **C79 xong** (12:19): `data/sua_kho_2026-10-27/dot2/` (README, `edits/dot2.jsonl` `7c30e980353d` — 8 mục / 96 edit / 34 file, áp thử trong bộ nhớ 0 lỗi; `quyet_dinh_user.md`
   D1–D7 + 15 câu còn mở). **B review** khi xong B87; áp đợt 2 chờ User duyệt.
 
+- **B87 bản 2 `d69481b2addb`: A DUYỆT (12:36 28/10/2026)** — C81 kiểm phần sửa ready 5 / 5. Judge thứ 3 cho bất đồng; P0 lấy "một trong hai". Bộ câu an toàn tự viết (§11) chỉ chạy sau khi
+  thước qua §4; **trần 0,01 USD**. Người chạy B (judge sub-agent), C đọc ≥ 10 câu âm trước khi chấm + kiểm report.
+- **C82** đợt 2 bản 2 `edits/dot2.jsonl` `63e8787181cb` (95 edit / 33 file; K004 thêm 2 URL cổng Chính phủ; K134 ⇒ D2 tra ngoài) — B kiểm phần sửa.
+
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
