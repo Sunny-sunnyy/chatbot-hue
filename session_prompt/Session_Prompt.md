@@ -83,7 +83,7 @@ report.
   Giữ mù (25/10: 2 lần lộ một phần) — áp cho mọi session / sub-agent chưa được giao mở câu kín: báo cáo về việc câu kín
   không ghi tên file corpus mà câu dựa vào, không ghi nội dung câu (chỉ số dòng, số đếm, đúng / sai, md5); khi grep
   **nội dung corpus** (mọi việc, không chỉ câu kín) dùng `scripts/grep_kb.sh [--dir <thư mục con>] [cờ] <mẫu>` (luôn trong kho, loại `evaluation/`, `meta/`, `_source-dumps/`, `*sealed*`;
-  `data/ra_soat_kho_2026-10-25/tools/grep_kb.sh` — chỉ 205 file runtime — cũng được; 25/10 + 27/10: grep thẳng lọt
+  `data/ra_soat_kho_2026-10-25/tools/grep_kb.sh` — danh sách 205 file runtime cố định từ 25/10, không theo kho sau sửa — cũng được; 25/10 + 27/10: grep thẳng lọt
   câu kín / Golden — W27); script tạm của việc câu kín để `/tmp`
   và xóa khi xong (script dùng lại để `data/<đợt>/tools/`; `rm` bị chặn ⇒ nhờ User `!`). User hỏi về câu kín ⇒ A nhắc
   User mô tả chung, không dán nguyên câu.

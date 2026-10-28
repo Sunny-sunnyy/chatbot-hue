@@ -104,7 +104,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
   chọn bằng judge Claude 8.1, **chưa có mốc người** (B0 dời, spec 8.2 §11);
 - **log số đo** (từ 27/10, `5100b90`; `dense_ms` làm tròn 1 chữ số từ `dfbcca5`): mỗi lần gọi `/api/chat` ghi một dòng `chat_metrics` (logger `chat`, `backend/logs/application.log`, gitignore):
   outcome, mã HTTP, từ chối, model, token vào / ra / suy luận, số nguồn, ms tìm / dense / ngữ cảnh / sinh / citation / tổng — không ghi nội dung, không ghi USD;
-  latency thật 27/10 (B65, context 5): p50 3,3 s / p95 5,7 s tuần tự; context 10 chưa đo p50 / p95 (cổng 2 câu 28/10: 5,1 s / 2,5 s) — đo ở bộ "trước" đợt sửa kho;
+  latency thật 27/10 (B65, context 5): p50 3,3 s / p95 5,7 s tuần tự; context 10 (bộ "trước" B78, 176 câu, đo trong harness — chưa tính HTTP): p50 2,2 s / p95 4,9 s; lượt "sau" p95 9,8 s **không đại diện** (phía mạng / provider);
 - generation `gpt-6-luna` (OpenAI); config `backend/config/settings.yaml`
   (`full_corpus_runtime`, `full_corpus_generation`).
 
@@ -139,7 +139,7 @@ là lịch sử.
 | 2026-10-28 09:2x | **PA3: B0 không chặn B1 / đóng 8.2** (spec 8.2 §11, `5255f3274707`): merge B1 (context 10 + NFC) theo judge Claude, B0 làm sau (trước bảo vệ), luật dừng kích hoạt ⇒ A trình giữ 10 / về 5. **Thứ tự lỗi đồng ý:** nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. Quyền phiên 28/10: ≤ 1 USD, A tự điều phối, B / C push nhánh riêng | User |
 | 2026-10-27 15:3x | **Spec đợt sửa kho DUYỆT** sha `937cf8969810` (C68 3 vòng ready; chạy sau đóng 8.2; trần 0,15 USD). Vòng cải tiến 8: W27–W29 cho thử. User nhắc lại: "cứ thoải mái thử nghiệm, so sánh, đánh giá, nhận xét, ghi lại báo cáo, rồi chọn phương án phù hợp với dự án" (giữ nguyên tắc 24/10 20:49; quyền / tiền / dữ liệu vẫn theo luật) | User |
 | 2026-10-27 15:0x–15:2x | **Đợt sửa kho** (sau đóng 8.2): Q1 41 mục + tên đơn vị sót + loại file danh mục `performing_arts` + 16 câu User; Q2 tra ngoài qua ChatGPT chỉ câu ngắn; Q3 build lại tại chỗ; Q4 **Qwen3-8B = thí nghiệm sau sửa kho** (chưa từng đo); Q5 quét + sửa Golden lệch kho trước khi đo lại | User; spec sửa kho §4 |
-| 2026-10-27 15:01 | **Gold v3** (v2 + 2 câu test sửa nhãn, C64 / B74 / B75 / C) là nhãn mặc định (`fa192f8`); v2, v1 giữ | User |
+| 2026-10-27 15:01 | **Gold v3** (v2 + 2 câu test sửa nhãn, C64 / B74 / B75 / C) là nhãn mặc định (`fa192f8`); v2, v1 giữ — **thay bởi gold v4 từ 28/10** (`e08a126`, User duyệt 2 trích dẫn) | User |
 | 2026-10-27 14:15 | "Xong phần tồn càng sớm càng tốt, xong phần tồn mới yên tâm đi tiếp các phase tiếp theo" | User |
 | 2026-10-27 13:46–14:04 | Quyền phiên như 27/10 sáng; PA3 (chuẩn bị B1 + dọn nợ + **bàn** tính năng mới trước khi đóng 8.2, lệch WORKFLOW §9.4); tính năng ưu tiên: streaming, hội thoại nhiều lượt; gợi ý / lịch trình ⇒ Phase 9; deploy khi ổn định; bảo vệ ~tháng 1/2027 | User |
 | 2026-10-27 13:05 | User duyệt: `/api/chat` ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 + đếm dòng tiêu đề (merge `a819789`, `gold_draft` giữ); W24–W26 | User; `TONG_HOP.md` §7 |
@@ -272,8 +272,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   trường mới thêm ở phần sinh / citation chỉ cổng ổn định (đọc dòng log thật) bắt được; test đi qua generator cần key (B70 m-1, đóng bằng ghi bẫy 27/10).
 - `validate_gold.py` từ 27/10 (C62) dừng nếu `gold_draft.jsonl` đã có.
 - `data/phase_8_1/tools/validate_gold.py` **không nhận đầu vào**: đọc `gold_batch_*` rồi **ghi đè** `data/phase_8_1/gold/gold_draft.jsonl` (file manifest G0.6
-  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v3.jsonl` từ 27/10 chiều** (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
-  mặc định của `backend/experiments/phase_8_1/g1_retrieval.py`: v2 + luật tiêu đề mục từ 27/10 sáng, **v3 từ `fa192f8`** ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**, ghi kèm bản nhãn; so với số cũ thì chạy lại
+  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v4.jsonl` từ 28/10** (`927bae1bf201`, kho sau sửa đợt 1; trước đó `gold_v3.jsonl` từ 27/10 chiều (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
+  mặc định của `backend/experiments/phase_8_1/g1_retrieval.py`: v2 + luật tiêu đề mục từ 27/10 sáng, **v3 từ `fa192f8`**, **v4 từ `e08a126`**) ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**, ghi kèm bản nhãn; so với số cũ thì chạy lại
   mốc bằng cùng thước (B1 dev: v1 22 / v2 24).
 - Auto mode chặn **cả khối** khi lệnh ghép có thao tác rủi ro (`push --delete`, `rm`, push nhánh từ worktree) ⇒ tách thao tác rủi ro ra lệnh
   riêng; commit report ngay ở working tree chung, push riêng (26/10 tối, A và C).

@@ -24,7 +24,13 @@ Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`
    bước 1–10 (sao lưu ⇒ áp ⇒ chia đoạn thử ⇒ User `!` xóa 3 đích ở terminal B ⇒ build ⇒ T1 mới ⇒ gold v5 nếu offset lệch ⇒ quét Golden ⇒ đo "sau" ⇒ báo cáo).
    Bộ "trước": **dùng lại bộ "sau" đợt 1** (`data/sua_kho_2026-10-27/eval_sau/`) **được** nếu qua 4 kiểm "còn hiệu lực" (B đề xuất, `STATUS_B.md`): diff `backend/` từ lượt đó,
    build record `574b5d02088b` + sparse không đổi, T1 giống byte `23c58c47635d`, model / context như meta — và vẫn chấm hai bên **cùng lượt mù**; C review, A duyệt. Trần đợt 2:
-   A đề xuất **0,10 USD** (hỏi User). **K017** đọc lại nguồn bằng trình duyệt trước khi áp. D1–D7 + 15 câu (`dot2/quyet_dinh_user.md`) chưa trả lời ⇒ để nguyên.
+   A đề xuất **0,10 USD** (hỏi User). D1–D7 + 15 câu (`dot2/quyet_dinh_user.md`) chưa trả lời ⇒ để nguyên.
+   **Bổ sung sau thử mở phiên (13:32 28/10/2026):** (a) bước áp dụng spec §5 bước **1, 2, 4–10** (bước 3 `exclude_files` chỉ của đợt 1); (b) `data/sua_kho_2026-10-27/tools/apply_edits.py`
+   đọc / ghi cứng `edits/` + `diffs_them/` ⇒ `applied_edits.jsonl` (đã có, script dừng), `truoc_sau.py:269` cũng đọc cứng ⇒ **B thêm tham số** đầu vào / đầu ra (đợt 2 ghi
+   `dot2/applied_edits_dot2.jsonl`), giữ hành vi cũ mặc định — C kiểm diff; (c) **B viết phụ lục plan đo** cho đợt 2 (dựa plan B78 `41485782b39e`: bộ "trước" = "sau" đợt 1 + 4 kiểm;
+   **2 edit đổi tiêu đề mục** (`dot2/README.md`) ⇒ `heading_path` / `chunk_id` có thể đổi ⇒ ghi trước tiêu chí cho câu đổi đoạn vì đổi tiêu đề; trần) ⇒ C review ⇒ A duyệt sha
+   **trước** khi đụng kho; (d) **K017**: B / C không đọc được nguồn bằng trình duyệt ⇒ **User** mở nguồn (đường dẫn trong `dot2/README.md`) xác nhận, hoặc **rút K017** khỏi đợt
+   2 (mặc định nếu User chưa xem); (e) trần: spec §7 0,15 USD cho cả đợt sửa kho đã dùng 0,073 ⇒ A hỏi User trần riêng cho đợt 2 (khuyên 0,10).
 3. **Thí nghiệm Qwen3-Embedding-8B** (User: "để session sau chạy"): plan duyệt **`52555da95828`** (`report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_plan.md`; B84 review
    ready vòng 2). **Cần User duyệt đầu phiên:** gửi toàn bộ kho + câu hỏi đánh giá ra OpenRouter (pin Nebius, `data_collection: deny`), tạo collection `hue_c78_qwen3_8b_4096`, xóa khi
    xong; trần 0,10 USD. Chạy **sau đợt 2** (kho cuối). C viết harness (`dense_runner` cho `build_candidate`, thử lại 429 / 5xx ≤ 3 + Retry-After, cache batch), B review code.
