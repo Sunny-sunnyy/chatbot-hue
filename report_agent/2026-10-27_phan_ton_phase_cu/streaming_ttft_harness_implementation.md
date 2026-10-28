@@ -1,6 +1,6 @@
 # Implementation Report: C73 — harness đo "thời gian tới chữ đầu tiên" (chưa chạy)
 
-Người làm: C (Claude Opus 5.5, `hue-rag-32`) · Date: 10:07 28/10/2026 (`date`) · Trạng thái: **chờ B review code**.
+Người làm: C (Claude Opus 5.5, `hue-rag-32`) · Date: 10:07 28/10/2026 (`date`) · Trạng thái: B review `9ff45d1` ready 0/0/2 ⇒ **sửa m-1, m-2 ở `1f70095` (10:24 28/10/2026) — chờ B kiểm phần sửa**.
 Việc: C73 (`CURRENT_HANDOFF.md` dưới mục C70, A giao 28/10). Plan: `streaming_ttft_plan.md` bản 2, **A duyệt sha `9683641b6c38`**; §10: giữ D10.
 Nhánh **`c70-ttft`** commit `9ff45d1` (đã push; gốc `main` `249d270`); worktree `/tmp/c_ttft`. **0 USD** — chưa chạy pilot hay lượt thật: A báo khi được chạy
 (sau B80 / B3 và bộ "trước" B78 — không chạy chồng lượt trả phí khác).
@@ -64,3 +64,13 @@ Cả hai test chỉ đúng khi định nghĩa mốc ở plan §3 được giữ.
   - `valid` khớp `chat.py`;
   - `summarize` đúng định nghĩa plan §7 (dòng nào vào `gain_visible`: S10, trong kho, không lỗi, `valid`, không từ chối).
 - Tiền: 0 USD.
+
+## 5. Sửa theo review B (`streaming_ttft_harness_review.md`, ready 0 / 0 / 2) — commit `1f70095`, 10:24 28/10/2026
+
+- **m-2** (so `INSUFFICIENT_ANSWER` / `[Nguồn n]` trên chuỗi JSON thô hỏng khi provider thoát `\uXXXX`): sửa tận gốc thay vì chỉ kiểm ở pilot. `timeline` gọi
+  `decode_partial_string` để giải mã thân chuỗi JSON đang stream (dừng ở `"` đóng chưa thoát; bỏ chuỗi thoát còn dở ở cuối mảnh — số lẻ `\`, có thể kèm `u` + < 4 hex)
+  rồi mới xét chữ đầu, câu có citation, câu từ chối. `SENTENCE_END` nay chạy trên chữ đã giải mã (`[.!?]` + khoảng trắng, hoặc `\n`); "hết chuỗi" = chuỗi đã đóng.
+- **m-1:** `summarize` thêm `decide.n_in_kb_answered` và `decide.extension_rule_triggered` (CI chứa 500 hoặc 1.500 ms, hoặc < 6 câu trong kho có trả lời — plan §5).
+- **Test:** 7 passed (thêm 2: câu từ chối thoát `\u`, cắt giữa chuỗi thoát; `\n` thoát kết câu có `[Nguồn n]` thoát).
+- **Thử ngược:** thay `decode_partial_string` bằng tách chuỗi thô ⇒ 2 test mới **đỏ**; mutant cũ (`SENTENCE_END = [.!?]`) vẫn **đỏ**.
+- `ttft.py` sha nay `7e992e229fc5`. 0 USD.
