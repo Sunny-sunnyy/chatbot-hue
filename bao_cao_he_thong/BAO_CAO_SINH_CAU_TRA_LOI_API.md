@@ -1,28 +1,30 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 13:27 27/10/2026 — bản 11: API ghi một dòng số đo cho mỗi câu hỏi (token, thời gian từng khâu; không ghi nội dung); đo thời gian chờ thật qua API:
-trung vị ~3,3 s, câu chậm ~5,7–6,2 s, gần hết là thời gian model viết; câu trả lời không đổi.** Bản 10 (11:17 27/10/2026): chốt đợt cải tiến từng khâu — thử "trả lời ngay, không suy luận" (kém hơn: trả lời vòng một câu lẽ ra phải từ chối); đo câu trả lời khi "luna chọn 10 đoạn" (kém hơn theo luật dù trung bình tăng); đo lỗi sai số liệu (0 / 68 câu thấy được); thử luật kiểm sau sinh (gác); **chatbot không đổi**, bước tiếp là bạn đọc cặp mù rồi đưa 10 đoạn vào chatbot.** Bản 9 (22:31 26/10): phân loại lỗi trả lời; thử lại "trả lời phần có căn cứ" (R2) — kém hơn, gác; "nêu đủ chi tiết" (R3) không đủ câu; chatbot không đổi.** Bản 8 (16:0x 26/10): đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
+**Cập nhật lần cuối: 09:38 28/10/2026 — bản 12: chatbot đưa tối đa 10 đoạn vào ngữ cảnh (trước 5) + chuẩn hóa chữ câu hỏi (NFC), merge `510e1a8`; bạn chọn
+(PA3, 28/10) không chờ đọc cặp mù — chọn bằng judge Claude, chưa có mốc người.** Bản 11 (13:27 27/10/2026): API ghi một dòng số đo cho mỗi câu hỏi (token, thời gian từng khâu; không ghi nội dung); đo thời gian chờ thật qua API:
+trung vị ~3,3 s, câu chậm ~5,7–6,2 s, gần hết là thời gian model viết; câu trả lời không đổi. Bản 10 (11:17 27/10/2026): chốt đợt cải tiến từng khâu — thử "trả lời ngay, không suy luận" (kém hơn: trả lời vòng một câu lẽ ra phải từ chối); đo câu trả lời khi "luna chọn 10 đoạn" (kém hơn theo luật dù trung bình tăng); đo lỗi sai số liệu (0 / 68 câu thấy được); thử luật kiểm sau sinh (gác); **chatbot không đổi**, bước tiếp là bạn đọc cặp mù rồi đưa 10 đoạn vào chatbot.** Bản 9 (22:31 26/10): phân loại lỗi trả lời; thử lại "trả lời phần có căn cứ" (R2) — kém hơn, gác; "nêu đủ chi tiết" (R3) không đủ câu; chatbot không đổi.** Bản 8 (16:0x 26/10): đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
 nguyên nhân "quên ghi `[n]`" của 8.1. Bản 5 (14:10): kết quả Phase 8.1.
-Người viết: C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Review: A (bản 10), C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+Người viết: A (bản 12, qua sub-agent), C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Review: A (bản 10), C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
 - **Khâu này làm gì:** chatbot Huế **trả lời câu hỏi trên toàn bộ kho dữ liệu** (món ăn, di tích, lễ
   hội, nghệ thuật, du lịch) qua một API và một trang web đơn giản. Mỗi câu trả lời có trích dẫn `[1]`,
   `[2]`… trỏ tới đoạn nguồn thật; không tìm thấy thông tin thì nói không đủ thông tin, không bịa.
-- **Đang chạy cách nào:** lấy tối đa 5 đoạn nguyên vẹn từ bước tìm kiếm → `gpt-6-luna` (OpenAI) viết
-  câu trả lời chỉ từ 5 đoạn đó → backend kiểm từng `[n]`. Trạng thái: đã đóng 23/10/2026, đạt kèm hai
-  giới hạn (bảng giá, tổng hợp nhiều nguồn).
-- **Đo được (Phase 7B, 176 câu):** Đúng / Đủ / Trúng ý **4,43 / 4,28 / 4,45** (thang 1–5); khi đã trả
+- **Đang chạy cách nào:** lấy tối đa **10 đoạn** nguyên vẹn từ bước tìm kiếm (từ 28/10; trước 5) → `gpt-6-luna` (OpenAI) viết
+  câu trả lời chỉ từ các đoạn đó → backend kiểm từng `[n]`. Trạng thái: Phase 6 đóng 23/10/2026, đạt kèm hai
+  giới hạn (bảng giá, tổng hợp nhiều nguồn); 10 đoạn vào chatbot 28/10 (Phase 8.2 B1, `510e1a8`).
+- **Đo được (Phase 7B, 176 câu, bản 5 đoạn):** Đúng / Đủ / Trúng ý **4,43 / 4,28 / 4,45** (thang 1–5); khi đã trả
   lời thì gần tối đa (~4,9). Từ chối đúng 18/18 câu ngoài kho. Lỗi trích dẫn 4/176 lúc đo — **sau sửa 25/10 còn 0–2/176** (mục 4, bản 6).
 - **Giới hạn chính:** **từ chối nhầm 22/158** câu có trong kho — nguồn mất điểm lớn nhất; không tìm ra
   bảng giá; câu cần nhiều nguồn lúc đóng chỉ dùng 1 nguồn.
 - **Chi phí:** sinh 176 câu ~0,024 USD (~600 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
-- **Thời gian chờ thật qua API (27/10):** trung vị ~3,3 s, câu chậm ~5,7–6,2 s (đã vượt mức theo dõi 5 s); ~98 % là thời gian model viết.
+- **Thời gian chờ thật qua API (27/10, bản 5 đoạn):** trung vị ~3,3 s, câu chậm ~5,7–6,2 s (đã vượt mức theo dõi 5 s); ~98 % là thời gian model viết.
+  Bản 10 đoạn chưa đo trung vị / câu chậm trên chatbot thật (2 câu thử 28/10: 5,1 s và 2,5 s) — sẽ đo ở bộ "trước" của đợt sửa kho.
   Từ 27/10 API ghi **một dòng số đo mỗi câu** (token, thời gian từng khâu; không ghi nội dung) ⇒ tiền / thời gian đọc từ log.
 - **Phase 8.1 đã thử (25/10, 0,157 USD):** 5 cách trả lời trên 120 câu thử, chấm mù bằng Claude. **Một cách thắng và đã
   xác nhận trên bộ kiểm: đưa 10 đoạn thay vì 5** — điểm Đủ +0,26 (thử) / +0,27 (kiểm) trên thang 5, từ chối nhầm giảm gần
-  một nửa, tốn thêm ~50%/câu (≈ 5 đồng). Các cách khác không khác hoặc kém hơn.
+  một nửa, tốn thêm ~50%/câu (≈ 5 đồng). Các cách khác không khác hoặc kém hơn. **Đã đưa vào chatbot 28/10.**
 - **Đợt cải tiến từng khâu (26–27/10, trên mốc 10 đoạn) — đã chốt, không nhận thêm cách nào:**
   - "Trả lời phần có căn cứ" và "trả lời ngay, không suy luận" đều **kém hơn** vì cùng một lỗi: với câu lẽ ra phải từ chối, model nêu một thông
     tin có thật nhưng không phải điều được hỏi, rồi thêm câu "nguồn không nêu…". Lợi của bản "không suy luận" cũng nhỏ: tiền mỗi câu chỉ giảm 3–6 %.
@@ -30,14 +32,16 @@ Người viết: C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Revie
     nhưng **5 câu bị chấm thấp hơn**, quá 4 câu cho phép ⇒ **kém hơn theo luật**. Giá: chờ ~6,5 s (có lúc 9 s), tiền ×3,8.
   - **Sai số liệu** (giá, giờ, năm…): ở bản 10 đoạn, **0 / 68** câu trả lời có số bị thấy sai.
   - Tiền cả đợt Phase 8.2 tới giờ ≈ **0,21 USD** (≈ 5.300 đồng) / trần 0,5.
-- **Bạn cần làm:** chatbot **đang chạy vẫn là 5 đoạn**. Bước tiếp (bạn chọn 27/10): **bạn đọc cặp mù** (20 câu, ~30–45 phút) ⇒ đưa **10 đoạn + chuẩn hóa chữ câu hỏi** vào chatbot.
+- **Bạn cần làm:** không có việc gấp. Chatbot **đang chạy 10 đoạn + chuẩn hóa chữ câu hỏi** từ 28/10 (bạn chọn PA3: không chờ đọc cặp mù). **Giới hạn:**
+  chọn bằng judge Claude, **chưa có mốc người**; tiền mỗi câu tăng (đọc vào nhiều hơn). Khi rảnh, trước buổi bảo vệ: **bạn đọc cặp mù** (20 câu, ~30–45 phút) —
+  nếu bạn thấy ngược judge nhiều (luật dừng spec 8.2 §11) thì A trình bạn chọn giữ 10 đoạn hay quay về 5 (đổi một dòng cấu hình).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
 trang web / POST /api/chat {"query": "..."}
- → tìm 10 đoạn (Phase 5) → lấy tối đa 5 đoạn nguyên vẹn, vừa ngân sách token
- → gpt-6-luna viết câu trả lời, chỉ dùng 5 đoạn đó, đặt [n] sau mỗi ý
+ → chuẩn hóa chữ câu hỏi (NFC) → tìm 10 đoạn (Phase 5) → lấy tối đa 10 đoạn nguyên vẹn, vừa ngân sách token
+ → gpt-6-luna viết câu trả lời, chỉ dùng các đoạn đó, đặt [n] sau mỗi ý
  → backend kiểm từng [n] có trỏ đúng nguồn đã đưa không
  → trả {answer, sources} — hoặc lỗi có mã rõ ràng (vd. 500 nếu trích dẫn hỏng)
 ```
@@ -47,7 +51,7 @@ trang web / POST /api/chat {"query": "..."}
 - Câu hỏi 1–500 ký tự (sau khi bỏ khoảng trắng đầu/cuối).
 - Ví dụ: hỏi về đồi Vọng Cảnh → câu trả lời có `[1]`; bấm `[1]` trên trang web sẽ cuộn tới thẻ nguồn
   ghi tiêu đề, mục và đoạn trích nguyên văn.
-- Code: `backend/api/routes/chat.py` (API), `backend/retrieval/full_corpus_context.py` (chọn 5 đoạn),
+- Code: `backend/api/routes/chat.py` (API), `backend/retrieval/full_corpus_context.py` (chọn tối đa 10 đoạn; số đoạn ở `backend/config/settings.yaml` `max_context_documents`),
   `backend/llm/full_corpus_prompt.py` (prompt), `backend/llm/generator_openai_full_corpus.py` (gọi
   model), `backend/llm/citations.py` (kiểm trích dẫn), `frontend/` (trang web).
 
@@ -59,16 +63,16 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Câu có đủ bằng chứng trong 5 đoạn → trả lời kèm `[n]` | **Đã xử lý, đóng gói** | 4,43 / 4,28 / 4,45 trên 176 câu; khi đã trả lời ~4,9 |
+| Câu có đủ bằng chứng trong các đoạn ngữ cảnh → trả lời kèm `[n]` | **Đã xử lý, đóng gói** | 4,43 / 4,28 / 4,45 trên 176 câu (7B, đo ở 5 đoạn); khi đã trả lời ~4,9 |
 | Câu ngoài kho → từ chối, không bịa | **Đã xử lý, đóng gói** | 18/18 từ chối đúng |
 | Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | nhận cả `[Nguồn n]`, đổi về `[n]` (25/10); lỗi 500 còn 0–2/176 (trước 4–8); `backend/llm/citations.py` |
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `backend/api/app.py:147–151` |
 | Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý, đóng gói** | báo đúng 409 "cần lập chỉ mục lại" từ 25/10 (trước báo nhầm 503); test `test_api_chat.py` (kho đổi ⇒ 409) |
 | Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (trước: Qdrant lỗi khi hỏi ra 500; thiếu model sẽ thành 409 nếu chỉ sửa nửa vời); test `test_startup_model_missing.py` (User chạy `!`) |
 | Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | Prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). 8.1 thử prompt "trả lời phần có căn cứ": từ chối nhầm 13 → 1 câu (120 câu thử), nhưng **trả lời cả 2 câu ngoài kho** ⇒ phạm luật, chưa dùng. **26/10 (R2, chữ prompt siết hơn, mốc 10 đoạn):** vẫn trả lời 1 / 12 câu ngoài kho cùng kiểu lỗi ⇒ dừng ngay bước đầu (0,0027 USD); **hướng này gác**. **27/10:** luật kiểm bằng code sau khi sinh **không tách được** câu lạc đề với câu trả lời một phần có ích ⇒ không mở lại được hướng này |
-| Đoạn chứa đáp án nằm ngoài 5 đoạn ngữ cảnh | **Xử lý một phần** | 8.1 đo bằng đoạn đúng: **cả 22/22** câu từ chối nhầm ở 7B đều thiếu ít nhất một đoạn đúng trong 5 đoạn — gốc là khâu tìm/xếp đoạn |
+| Đoạn chứa đáp án nằm ngoài các đoạn ngữ cảnh | **Xử lý một phần** | 8.1 đo bằng đoạn đúng: **cả 22/22** câu từ chối nhầm ở 7B đều thiếu ít nhất một đoạn đúng trong 5 đoạn — gốc là khâu tìm/xếp đoạn. 28/10 nới lên 10 đoạn (dòng dưới); đoạn đúng xếp ngoài 10 đoạn đầu vẫn còn (`BAO_CAO_TIM_KIEM.md`) |
 | Có đủ bằng chứng mà vẫn từ chối | **Đính chính (8.1)** | Chẩn đoán 7B (theo keyword) ghi 4/22; đo lại bằng đoạn đúng: **0 câu** |
-| Đưa 10 đoạn ngữ cảnh thay vì 5 | **Đã thử, chưa áp dụng** — **thắng, đã xác nhận** | 8.1: điểm Đủ +0,26 (120 câu thử) / +0,27 (56 câu kiểm); từ chối nhầm 13 → 7; 0 câu ngoài kho bị trả lời; lỗi trích dẫn không tăng. Code sẵn (kèm chuẩn hóa chữ câu hỏi); **chờ bạn đọc cặp mù** rồi đưa vào chatbot (bạn chọn 27/10) |
+| Đưa 10 đoạn ngữ cảnh thay vì 5 | **Đã xử lý, đóng gói** (28/10; đang chạy, đã kiểm) — chưa có mốc người | 8.1: điểm Đủ +0,26 (120 câu thử) / +0,27 (56 câu kiểm); từ chối nhầm 13 → 7; 0 câu ngoài kho bị trả lời; lỗi trích dẫn không tăng. Merge `510e1a8` (kèm chuẩn hóa chữ câu hỏi): 51 test đạt, kết quả tìm 158 câu giống từng byte, chạy thật 2 câu đạt. **Giới hạn:** chọn bằng judge Claude, **chưa có mốc người** (bạn đọc cặp mù sau, PA3 28/10); tiền mỗi câu tăng; thời gian chờ ở 10 đoạn chưa đo trung vị / câu chậm. Đổi ngược được: `settings.yaml` `max_context_documents` 10 ⇒ 5 |
 | Xếp 5 đoạn gom theo tài liệu | **Đã thử, chưa áp dụng** | 8.1: không khác |
 | Thêm 2 luật cũ của spec Phase 6 (không dùng tiêu đề làm bằng chứng; đoạn văn ngắn) | **Đã thử, chưa áp dụng** | 8.1: không khác; lỗi trích dẫn 4 → 1 (chưa đủ chắc) |
 | Mức suy luận của model (`none` / `low` / `high`) | **Đã thử, chưa áp dụng** | 8.1 (5 đoạn): `none` đầy đủ hơn chút; `low` / `high` không khác hoặc kém. **27/10, `none` trên mốc 10 đoạn:** **kém hơn** — câu 168 lẽ ra phải từ chối (kho không có thông tin) bị trả lời vòng; dừng ở 24 câu đầu, 0,0049 USD. Lợi đo được nhỏ: token model viết ra ~0,72×, tiền mỗi câu chỉ ~0,94–0,97× (tiền chủ yếu ở phần đọc vào). Muốn dùng còn phải đổi quy ước Phase 6 "không truyền mức suy luận" |
@@ -85,6 +89,15 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 28/10/2026 — Đưa 10 đoạn + chuẩn hóa chữ câu hỏi vào chatbot (bản 12)
+
+- **Vì sao bây giờ:** bạn chưa rảnh đọc cặp mù và muốn xong phần tồn sớm; việc đọc cặp mù đang chặn cả chuỗi (mốc cuối 8.2 ⇒ sửa kho ⇒ Qwen3-8B). Bạn chọn
+  **PA3** (09:29 28/10, spec 8.2 §11): đưa vào theo judge Claude, đọc cặp mù làm sau. Cái giá: tới khi bạn đọc, kết quả này **chưa có mốc người**.
+- **Đã kiểm trên `main` `510e1a8`:** 51 test đạt (2 test còn lại cần key — đúng như trước); kết quả tìm 158 câu giống từng byte mốc cũ; câu dạng NFD cho
+  đúng 10 đoạn và đúng ngữ cảnh như câu NFC; chạy thật 2 câu tự viết: câu trong kho 200, 10 đoạn đưa vào, 6 nguồn được trích (5,1 s); câu ngoài kho từ
+  chối đúng (2,5 s); log mỗi câu một dòng, không chứa câu hỏi. Tiền ≈ **0,000423 USD**.
+- **Còn chờ:** đo trung vị / câu chậm ở 10 đoạn trong bộ "trước" của đợt sửa kho.
 
 ### 27/10/2026 (chiều) — Đo thời gian chờ thật + API ghi số đo (bản 11)
 
@@ -213,7 +226,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 |---|---|---|
 | API `POST /api/chat`, trả `{answer, sources}`, câu hỏi 1–500 ký tự | **còn dùng** | `backend/api/routes/chat.py:24–26,48` |
 | Model sinh `gpt-6-luna` (OpenAI) | **còn dùng** | `backend/config/settings.yaml:47` |
-| Tối đa 5 đoạn nguyên vẹn, ngân sách 16.384 token | **còn dùng**; 8.1 đo: 10 đoạn tốt hơn, đã xác nhận — đưa vào sau khi bạn đọc cặp mù (27/10) | `settings.yaml:53,56`; `backend/retrieval/full_corpus_context.py` |
+| Tối đa 5 đoạn nguyên vẹn, ngân sách 16.384 token | **đã thay** 28/10 bởi **tối đa 10 đoạn** (cùng ngân sách 16.384 token; merge `510e1a8`, PA3 — chưa có mốc người) | `settings.yaml:52,55`; `backend/retrieval/full_corpus_context.py` |
 | Prompt "thiếu bằng chứng thì từ chối cả câu" | **còn dùng**; 8.1 và 26/10 thử bản "trả lời phần có căn cứ": kém hơn (trả lời câu ngoài kho); luật kiểm sau sinh 27/10 không cứu được hướng này | `backend/llm/full_corpus_prompt.py:14` |
 | Không gửi mức suy luận (để model tự chọn) | **còn dùng**; 27/10 thử `none` trên mốc 10 đoạn: kém hơn (trả lời vòng câu 168), lợi tiền nhỏ (~3–6 %) | `backend/llm/generator_openai_full_corpus.py` |
 | Chẩn đoán 7B "4/22 câu có đủ bằng chứng mà vẫn từ chối" | **đã thay** bởi số đo theo đoạn đúng của 8.1: 0/22 | `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md` G1.6 |
@@ -228,15 +241,17 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 
 ## 6. Việc còn lại / cần quyết
 
-- **Bạn đọc cặp mù** (20 câu, ~30–45 phút) ⇒ nếu không có dấu hiệu người chấm lệch bạn: đưa **10 đoạn + chuẩn hóa chữ câu hỏi** vào chatbot, chạy cổng
-  ổn định, cập nhật báo cáo này (bản 11).
+- **10 đoạn + chuẩn hóa chữ câu hỏi đã vào chatbot 28/10** (bản 12). Còn: **bạn đọc cặp mù** (20 câu, ~30–45 phút, khi rảnh, trước buổi bảo vệ) — làm mốc
+  người; nếu bạn ngược judge nhiều (luật dừng spec 8.2 §11) ⇒ A trình giữ 10 / quay về 5. Đo trung vị / câu chậm ở 10 đoạn trong bộ "trước" của đợt sửa kho.
 - Hướng đã thử và gác (chỉ mở lại khi có ý mới đã kiểm trước): "trả lời phần có căn cứ"; "trả lời ngay, không suy luận"; luật kiểm sau sinh; "luna chọn 10
   đoạn" (tốn ×3,8 và chờ ~6,5 s, khâu trả lời kém hơn theo luật).
 - Còn mở, không gấp: câu trả lời quá gọn (cần thêm câu hỏi tự nhiên để đo được); bảng giá và tổng hợp nhiều nguồn (gốc ở khâu tìm, `BAO_CAO_TIM_KIEM.md`);
-  sai về chữ (tên, sự kiện) chưa có cách đo rẻ; API chưa ghi token / tiền mỗi câu.
+  sai về chữ (tên, sự kiện) chưa có cách đo rẻ; API ghi token mỗi câu từ 27/10 (`chat_metrics`), chưa ghi USD.
 
 ## Phụ lục — hồ sơ kỹ thuật
 
+- **Bản 12 (28/10/2026):** spec 8.2 §11 (PA3, commit `d922bf7`); merge `510e1a8` = nhánh `p82-b1` `c3d5607`; report
+  `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_merge_implementation.md` (C71 review ready `phase_8_2_b1_merge_review.md`); dữ liệu `data/phase_8_2/b1/merge_2810/` (private).
 - **Bản 10 (C55, 27/10/2026):** spec 8.2 §10 (`docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`, bản `cd910c4c4169`); mốc B1 nhánh `p82-b1`
   `811d25d`. Report trong `report_agent/2026-10-25_phase_8_2_ap_dung/`:
   - **R1** (biến thể mức suy luận của đợt cải tiến — khác tài liệu tham chiếu [R1] bên dưới) `reasoning_effort="none"`: plan `phase_8_2_r1_plan.md` (sha `8e76e77e0448`), report trên nhánh `p82-r1` `63a472f`, review B58 (A đóng `d665a5b`);

@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0). Trước: `2026-10-26 22:31` (A, kết phiên tối 26/10: **8.2 chạy lại — Bước 2 = đợt cải tiến từng khâu, spec §10**; K1 / R2 kém hơn, R3 NOT RUN, K3 duyệt chờ chạy; chatbot không đổi; 3 nguyên tắc User mới ở `Session_Prompt.md` §7; §1 "Mục tiêu sản phẩm")
+Last updated: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -14,7 +14,7 @@ xứng nhu cầu và bằng chứng từ dữ liệu, Qdrant, model, API thật.
 
 ```text
 curated Markdown (205 file) -> chunker (8.459 chunk) -> e5-small dense + BM25 sparse
--> Qdrant -> retrieval dense_bm25_rrf (top-5 whole chunk) -> gpt-6-luna -> API/UI có citation
+-> Qdrant -> query NFC -> retrieval dense_bm25_rrf (top-10 whole chunk vào context) -> gpt-6-luna -> API/UI có citation
 ```
 
 Làm việc theo mô hình A/B/C (Governance v2, User duyệt 2026-10-24): A điều phối
@@ -34,10 +34,12 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (27/10 chiều): Phase 8.2 đang chạy** — Bước 2 (đợt cải tiến) **đóng**; chờ **B0** (User) ⇒ merge B1 (`p82-b1` `c3d5607`, rebase lên `main` 27/10
-chiều, C review ready) ⇒ mốc cuối B3 (plan duyệt sha `27e75be5ed44`, người chạy B) ⇒ đóng 8.2 ⇒ **đợt sửa kho + build lại index** (phần tồn cuối; spec
+**Bây giờ (28/10 sáng): Phase 8.2 đang chạy** — Bước 2 (đợt cải tiến) **đóng**; User chọn PA3 (09:29, spec 8.2 §11): B0 **không chặn**, thành mốc người
+làm sau (trước bảo vệ). **B1 đã merge** `510e1a8` (09:34; `p82-b1` `c3d5607`): chatbot **context 10 + NFC** — chọn bằng judge Claude, **chưa có mốc người**;
+C71 review merge **ready** (0 / 0 / 0) ⇒ mốc cuối B3 (plan duyệt sha `27e75be5ed44`, người chạy B) ⇒ đóng 8.2 ⇒ **đợt sửa kho + build lại index** (phần tồn cuối; spec
 `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt sha `937cf8969810`) ⇒ thí nghiệm Qwen3-8B ⇒ tính năng mới (streaming trước,
-rồi hội thoại nhiều lượt — chỉ mới bàn). Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
+rồi hội thoại nhiều lượt — chỉ mới bàn). Song song (0 USD, chỉ plan, chờ review): B78 đo "trước ↔ sau" đợt sửa kho, C70 đo thời gian tới chữ đầu tiên.
+Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
 `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
@@ -60,7 +62,7 @@ rồi hội thoại nhiều lượt — chỉ mới bàn). Đoạn dưới là l
 sparse bytes; gỡ Rep B, smoke Phase 5, nhánh `minilm`, converter; nội dung kho ra khỏi file tracked; code backend 8.345 → 6.218 dòng; B review
 ready; 8 file `reports/artifacts/` chứa nguyên văn kho ⇒ `data/reports_artifacts_private_2026-10-26/`, User 26/10). **Sửa code: xong 5 gói.** **Phase 8.2 chạy lại tối 26/10** (spec
 `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md`: bản gốc `dabae90b2b60` + **§10 "Sửa đổi 26/10"**, bản A duyệt `cd910c4c4169`).
-B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27/10 chiều rebase lại ⇒ `c3d5607`), T1 giống byte, review ready — **merge sau B0** (User đọc cặp mù). **Bước 2 =
+B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27/10 chiều rebase lại ⇒ `c3d5607`), T1 giống byte, review ready — **merge 28/10 `510e1a8`** (PA3, không chờ B0). **Bước 2 =
 đợt cải tiến từng khâu** (User 21:1x: phạm vi B — khâu trả lời + khâu tìm, không ghi Qdrant; luật (a) / (i); A tự chọn trong luật): phân loại lỗi
 (C36 / B42: 80 % điểm mất đi kèm thiếu bằng chứng; chỗ nghẽn là xếp hạng); **K1** pool 100 kém hơn (nhánh `p82-k1`); **R2** trả lời một phần kém hơn
 (phạm sàn OOS, 0,0027 USD; gác; `p82-r2`); **R3** NOT RUN (6 câu); **R4** thước số (chỉ danh sách đọc lại, `2c7ecfd`); K2, E2 NOT RUN; **27/10:** K3, R1, K3b-n kém hơn;
@@ -83,7 +85,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 | 7A2 | `approved` | User-closed 2026-10-24; giới hạn: index 8B hoãn sang Phase 8 |
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
-| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38). B0 chờ User; B1 ready trên `p82-b1` `c3d5607` (rebase 27/10 chiều, merge sau B0); plan B3 duyệt `27e75be5ed44`; Bước 2 (đợt cải tiến) **đóng 27/10**: K1 / K3 / K3b-n / R1 / R2 kém hơn, K3b-m tầng tìm tốt hơn (tạm) nhưng trả lời kém hơn theo luật, R3 / K2 / E2 NOT RUN, R4 xong. Chatbot vẫn context 5. Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
+| 8.2 | `in_progress` | Spec 16:21 25/10 (`dabae90b2b60`) + §10 sửa đổi 26/10 (`cd910c4c4169`, A duyệt sau C38) + §11 sửa đổi 28/10 (PA3: B0 không chặn B1 / đóng 8.2). **B1 merge `510e1a8` 28/10** (context 10 + NFC; 51 test, T1 giống byte, T5, cổng sống đạt; ≈ 0,000423 USD; chờ C71 review); B0 = mốc người làm sau; plan B3 duyệt `27e75be5ed44`; Bước 2 (đợt cải tiến) **đóng 27/10**: K1 / K3 / K3b-n / R1 / R2 kém hơn, K3b-m tầng tìm tốt hơn (tạm) nhưng trả lời kém hơn theo luật, R3 / K2 / E2 NOT RUN, R4 xong. **Chatbot context 10** (chưa có mốc người). Đợt `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/` |
 | 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
 
 ## 4. Runtime và dữ liệu đang chạy
@@ -99,10 +101,12 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
   runtime từ chối khởi động nếu hash file corpus khác record;
 - sparse state chung `data/full_corpus_builds/full_corpus_sparse_state.json`
   (vocabulary 5.660);
-- retrieval `dense_bm25_rrf`, reranker `none`, context tối đa 5 whole chunk;
+- query chuẩn hóa NFC trước khi tìm (`backend/retrieval/full_corpus.py` `normalize_query`, từ 28/10 `510e1a8`);
+- retrieval `dense_bm25_rrf`, reranker `none`, context tối đa **10** whole chunk (`settings.yaml` `max_context_documents: 10`, từ 28/10 `510e1a8`; trước 5);
+  chọn bằng judge Claude 8.1, **chưa có mốc người** (B0 dời, spec 8.2 §11);
 - **log số đo** (từ 27/10, `5100b90`; `dense_ms` làm tròn 1 chữ số từ `dfbcca5`): mỗi lần gọi `/api/chat` ghi một dòng `chat_metrics` (logger `chat`, `backend/logs/application.log`, gitignore):
   outcome, mã HTTP, từ chối, model, token vào / ra / suy luận, số nguồn, ms tìm / dense / ngữ cảnh / sinh / citation / tổng — không ghi nội dung, không ghi USD;
-  latency thật 27/10 (B65): p50 3,3 s / p95 5,7 s tuần tự;
+  latency thật 27/10 (B65, context 5): p50 3,3 s / p95 5,7 s tuần tự; context 10 chưa đo p50 / p95 (cổng 2 câu 28/10: 5,1 s / 2,5 s) — đo ở bộ "trước" đợt sửa kho;
 - generation `gpt-6-luna` (OpenAI); config `backend/config/settings.yaml`
   (`full_corpus_runtime`, `full_corpus_generation`).
 

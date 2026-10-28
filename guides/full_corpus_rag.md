@@ -1,7 +1,8 @@
 # Full-corpus RAG workstream
 
 ```text
-Status (2026-10-25): Phase 2–6, 7A, 7A2, 7B, 8.1 User-closed; 8.2 paused (spec 2026-10-25-phase-8-2-apply-winners-design.md);
+Status (2026-10-28): Phase 2–6, 7A, 7A2, 7B, 8.1 User-closed; 8.2 in progress (spec 2026-10-25-phase-8-2-apply-winners-design.md);
+  runtime context 10 + query NFC since 2026-10-28 (merge 510e1a8; judge-selected, no human check yet — spec 8.2 §11);
   code audit + fixes: report_agent/2026-10-25_ra_soat_code/ (TONG_HOP.md)
 Current state: session_prompt/Project_Status.md — the rest of this header and the sections under "Lịch sử (trước 7A2)" are history
 Rebuild index when the corpus changes: section "Build lại index khi corpus đổi" below
@@ -459,7 +460,7 @@ knowledge-base-hue/travel/tickets/evaluation/golden_full_corpus_authoring.jsonl
   Decision #6b chốt token-budget động nhưng reproducible: mỗi approved generator
   profile khóa `context_limit`, `reserved_output_tokens` và `safety_margin` cho
   toàn benchmark run. Mỗi request trừ actual system/query/format/citation
-  overhead rồi pack nguyên chunk theo final rank, tối đa 5; dừng khi chunk kế
+  overhead rồi pack nguyên chunk theo final rank, tối đa 5 *(Hiện hành 28/10: tối đa 10 — Phase 8.2 B1, `510e1a8`)*; dừng khi chunk kế
   tiếp không vừa, không skip/truncate/summarize. Đổi model/profile mới được đổi
   budget; report phải ghi exact values. Chunk hạng đầu không vừa là typed
   configuration/input error.

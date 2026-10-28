@@ -1,6 +1,8 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 13:27 27/10/2026** (API ghi **một dòng `chat_metrics`** cho mỗi câu hỏi: token vào / ra / suy luận, số nguồn, thời gian từng khâu — không ghi câu hỏi,
+**Cập nhật lần cuối: 09:38 28/10/2026** (Phase 8.2 B1 vào chatbot, merge `510e1a8`: **ngữ cảnh tối đa 10 đoạn** thay vì 5; câu hỏi được **chuẩn hóa
+Unicode NFC** trước khi tìm — câu gõ dạng NFD nay tìm giống hệt câu NFC; kết quả tìm 158 câu giống từng byte mốc cũ; chọn bằng judge Claude, **chưa có mốc
+người** — bạn đọc cặp mù sau, spec 8.2 §11). Trước đó 13:27 27/10/2026 (API ghi **một dòng `chat_metrics`** cho mỗi câu hỏi: token vào / ra / suy luận, số nguồn, thời gian từng khâu — không ghi câu hỏi,
 câu trả lời hay nội dung kho; merge `5100b90`; câu trả lời **không đổi**). Trước đó 16:0x 26/10/2026 (đợt 3 rà code, merge `421c302`: dựng kho dừng khi có đoạn vượt giới hạn token ở mọi nhánh; build chỉ ghi
 từ điển BM25 sau khi kiểm đích; gỡ code không dùng — reranker MiniLM, Representation B, bộ kiểm khói Phase 5; câu trả lời / kết quả tìm **không
 đổi**, giống từng byte). Trước đó 21:50 25/10 (gói 1b rà code, `1e4acd0`: API báo đúng loại lỗi; mọi lệnh chạy từ `backend/`). 19:59: sửa bước kiểm trích dẫn nhận cả `[Nguồn n]` (`9e6d371`, gói 1a). Trước đó 14:06 25/10 (Phase 8.1 chỉ thí nghiệm — luồng chatbot **không đổi**, kết quả tìm kiếm giống từng byte mốc cũ, Qdrant còn 1 kho; đề xuất đổi ở 8.2: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`. Trước đó: 19:58 24/10 sau Phase 7B và dọn code/kho món ăn cũ). File này mô tả hệ thống **đang chạy**. Mỗi lần
@@ -17,7 +19,7 @@ Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 CHUẨN BỊ (chạy một lần khi kho đổi):
   205 file Markdown → chia đoạn (8.459 đoạn) → vector nghĩa e5-small + từ khoá BM25 → lưu Qdrant
 HỎI ĐÁP (mỗi câu hỏi):
-  giao diện web → API /api/chat → tìm 10 đoạn → giữ 5 đoạn làm ngữ cảnh → gpt-6-luna trả lời
+  giao diện web → API /api/chat → chuẩn hóa NFC câu hỏi → tìm 10 đoạn → giữ tối đa 10 đoạn làm ngữ cảnh → gpt-6-luna trả lời
   → kiểm trích dẫn [n] → trả câu trả lời + nguồn
 ```
 
@@ -47,13 +49,17 @@ HỎI ĐÁP (mỗi câu hỏi):
 
 ## 3. Khi người dùng hỏi
 
+0. **Chuẩn hóa câu hỏi (từ 28/10):** câu hỏi rỗng bị từ chối; câu còn lại đổi về dạng Unicode **NFC** (kho và chỉ mục đều ở dạng NFC; câu gõ dạng NFD — dấu tách
+   rời, có ở một số máy — trước đây làm tìm kiếm tụt, 8.1 đo MRR −0,20). Câu đã NFC giữ nguyên từng byte (`backend/retrieval/full_corpus.py` `normalize_query`).
 1. **Tìm 30 ứng viên** bằng vector nghĩa (câu hỏi được thêm tiền tố `query:` theo hướng dẫn của e5).
 2. **Chấm lại bằng BM25** trong chính 30 ứng viên đó, rồi **gộp hai bảng xếp hạng bằng RRF** (k = 60)
    → giữ 10 đoạn. Lưu ý: BM25 chỉ chấm lại đoạn mà vector nghĩa đã tìm thấy, không tìm thêm đoạn mới.
 3. **Không xếp lại bằng reranker** (đã thử MiniLM tiếng Anh ở bản Foods, kém hơn; 8.1 thử thêm 2 model đa ngôn ngữ + `gpt-6-luna`: chưa qua
    luật). Nhánh MiniLM đã gỡ khỏi chatbot 26/10 — `reranker` chỉ còn `none`.
-4. **Đóng gói ngữ cảnh:** lấy **5 đoạn đầu**, nguyên vẹn, đánh số [1]…[5] (thường ~900 token).
-5. **gpt-6-luna trả lời** chỉ từ 5 đoạn đó, tiếng Việt, đặt [n] sau mỗi ý. **Nếu thiếu bằng chứng**
+4. **Đóng gói ngữ cảnh (từ 28/10, Phase 8.2 B1):** lấy tối đa **10 đoạn đầu**, nguyên vẹn, đánh số [1]…[10], trong ngân sách 16.384 token
+   (`backend/config/settings.yaml` `max_context_documents: 10`; trước đó 5 đoạn, thường ~900 token). Đọc vào nhiều hơn trước: câu thử 28/10 trong kho
+   1.282 token vào (cả prompt + câu hỏi).
+5. **gpt-6-luna trả lời** chỉ từ các đoạn đó, tiếng Việt, đặt [n] sau mỗi ý. **Nếu thiếu bằng chứng**
    thì trả đúng câu: "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này."
    (`backend/llm/full_corpus_prompt.py`). Quan sát ở Phase 7B: bot thường từ chối cả câu khi chỉ
    có một vế (giả thuyết H8, Phase 8 thử).
@@ -73,10 +79,14 @@ HỎI ĐÁP (mỗi câu hỏi):
 | Từ chối đúng câu ngoài kho | 18 / 18 | Không bịa khi kho không có |
 | **Từ chối nhầm** câu kho có đáp án | **22 / 158 (13,9%)** | Lỗi lớn nhất: phần lớn điểm bị mất (65–90% tùy tiêu chí) nằm ở đây |
 | Lỗi trích dẫn (người dùng thấy lỗi 500) | 4 / 176 ở 7B → **0–2 / 176** sau sửa 25/10 (đếm lại trên câu trả lời đã sinh) | Trước đây mọi lỗi là do dạng `[Nguồn n]`; còn lại chỉ câu thật sự không ghi nguồn |
-| Đoạn chứa đáp án lọt top-10 (keyword proxy) | 92,4% keyword | Truy xuất khá; vấn đề nằm ở 5 đoạn được đưa vào và cách prompt từ chối |
-| Chi phí một câu hỏi | ~0,00014 USD (~3,5 đồng) | ~950 token vào, ~80 token ra |
+| Đoạn chứa đáp án lọt top-10 (keyword proxy) | 92,4% keyword | Truy xuất khá; vấn đề nằm ở 5 đoạn được đưa vào (lúc đo) và cách prompt từ chối |
+| Chi phí một câu hỏi (đo ở 5 đoạn) | ~0,00014 USD (~3,5 đồng) | ~950 token vào, ~80 token ra. Ở 10 đoạn đọc vào nhiều hơn ⇒ tiền mỗi câu tăng (8.1 ước ~+50 %); chưa đo lại trên bộ lớn |
 
 Người chấm: Claude (chấm theo đáp án mẫu), đối chiếu `gpt-6-luna` (trùng 89–96%). Chưa có người chấm tay.
+
+Bảng trên đo ở bản 5 đoạn. Bản 10 đoạn đang chạy được chọn ở Phase 8.1 (judge Claude): điểm Đủ +0,26 [+0,08; +0,48] trên bộ thử, +0,27 [+0,02; +0,59] trên
+bộ kiểm, lợi chủ yếu ở câu nhiều nguồn / so sánh. **Chưa có mốc người** (bạn đọc cặp mù sau, trước buổi bảo vệ). Thời gian chờ: ở 5 đoạn trung vị 3,3 s / câu
+chậm 5,7 s (27/10); ở 10 đoạn chưa đo trung vị / câu chậm (2 câu thử 28/10: 5,1 s và 2,5 s) — sẽ đo ở bộ "trước" của đợt sửa kho.
 
 ## 5. Giới hạn đã biết
 

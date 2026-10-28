@@ -1,17 +1,18 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 10:49 27/10/2026 — bản 8: cho `gpt-6-luna` chọn 10 đoạn trong 30 ứng viên (K3, K3b) — bước tìm tốt lên rõ, nhưng theo luật
-chưa nhận (lỗi kỹ thuật ở hai bản; bản còn lại làm 5 câu trả lời bị chấm thấp hơn); phát hiện nhãn "đoạn đúng" đếm thiếu; chatbot không đổi.** Bản 7
+**Cập nhật lần cuối: 09:38 28/10/2026 — bản 9: câu hỏi được chuẩn hóa Unicode NFC trước khi tìm (merge `510e1a8`, cùng đợt đưa 10 đoạn vào ngữ cảnh) —
+câu gõ dạng NFD nay tìm giống hệt câu NFC; cách tìm không đổi, kết quả tìm 158 câu giống từng byte mốc cũ.** Bản 8 (10:49 27/10/2026): cho `gpt-6-luna` chọn 10 đoạn trong 30 ứng viên (K3, K3b) — bước tìm tốt lên rõ, nhưng theo luật
+chưa nhận (lỗi kỹ thuật ở hai bản; bản còn lại làm 5 câu trả lời bị chấm thấp hơn); phát hiện nhãn "đoạn đúng" đếm thiếu; chatbot không đổi. Bản 7
 (22:31 26/10): thử nới nhóm ứng viên 30 → 100 (K1) — kém hơn; chỗ nghẽn là xếp hạng. Bản 6 (16:0x 26/10): đợt 3 rà code — gỡ nhánh MiniLM khỏi chatbot, gỡ bộ kiểm khói Phase 5; kết quả tìm 158 câu
 giống từng byte.** Bản 5 (14:04 25/10): kết quả Phase 8.1; chatbot không đổi.
-Người viết: B (bản 5, 8; bản 1–4: C) · Review: C (bản 8: A review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+Người viết: A (bản 9, qua sub-agent), B (bản 5, 8; bản 1–4: C) · Review: C (bản 8: A review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
 - **Khâu này làm gì:** nhận câu hỏi, trả về 10 đoạn trong kho tri thức có khả năng chứa câu trả lời,
   xếp theo thứ tự. Bước sinh câu trả lời chỉ đọc những đoạn này, nên tìm sai thì trả lời sai hoặc từ
   chối.
-- **Đang chạy cách nào:** e5-small (chạy trên máy) tìm 30 đoạn gần nghĩa nhất trong Qdrant → BM25
+- **Đang chạy cách nào:** câu hỏi đổi về dạng Unicode NFC (từ 28/10) → e5-small (chạy trên máy) tìm 30 đoạn gần nghĩa nhất trong Qdrant → BM25
   (khớp từ khóa) chấm lại 30 đoạn đó → trộn hai thứ hạng (RRF) → 10 đoạn. Không reranker. Trạng
   thái: đã đóng (bản món ăn 12/08/2026; bản toàn kho 14/09/2026).
 - **Đo được (Phase 7B, 158 câu có trong kho):** điểm xếp hạng MRR@10 0,72, nDCG@10 0,76; 92% câu có
@@ -35,12 +36,13 @@ Người viết: B (bản 5, 8; bản 1–4: C) · Review: C (bản 8: A review)
   - (1) Với cách "luna chọn 10 đoạn": dừng; hay đo thêm độ dao động của chính nó (≈ 0,025 USD) để biết 5 câu tụt có phải nhiễu không; hay đặt luật nhận
     khác cho trường hợp "tốt lên chung nhưng vài câu tụt". Đổi luật là quyết định của bạn.
   - (2) Mức chờ thêm ~5 giây / câu có chấp nhận được không.
-  - Chuẩn hóa NFC câu hỏi đã nằm trong bản context 10 chờ đưa vào chatbot sau khi bạn đọc cặp mù (B0).
+  - Chuẩn hóa NFC câu hỏi **đã vào chatbot 28/10** cùng bản 10 đoạn (bạn chọn PA3: không chờ đọc cặp mù) — không cần bạn làm gì ở phần này.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
 câu hỏi
+ → chuẩn hóa Unicode NFC (từ 28/10; câu đã NFC giữ nguyên từng byte)
  → e5-small biến câu hỏi thành vector → lấy 30 đoạn gần nghĩa nhất trong Qdrant
  → BM25 (khớp từ khóa) chấm lại 30 đoạn đó
  → RRF trộn hai thứ hạng → 10 đoạn
@@ -71,7 +73,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Dòng trong bảng giá (ví dụ giá vé + miễn giảm Đại Nội) | **Đã thử, chưa áp dụng** | 8.1 thử gộp dòng bảng khi chia đoạn: không khác — xem `BAO_CAO_CHIA_DOAN.md` |
 | Từ ghép tiếng Việt trong BM25 ("Đại Nội") | **Đã thử, chưa áp dụng** | 8.1 thử cặp âm tiết / tách từ `pyvi`: làm rơi đoạn đúng của 1–4 câu — xem `BAO_CAO_EMBEDDING_TU_KHOA.md` |
 | Câu hỏi gõ **không dấu** | **Chưa thực hiện** — ngoài phạm vi (bạn quyết 15:15 25/10) | 8.1 đo (dev số chính: 32 câu có đoạn đúng, 88 câu keyword): chỉ 1/32 câu còn đủ đoạn đúng trong 5 đoạn (có dấu: 13/32); MRR 0,72 → 0,16 |
-| Câu hỏi dạng Unicode NFD (gõ từ một số máy) | **Chưa thực hiện** | 8.1 đo: MRR giảm 0,20; chuẩn hóa NFC phục hồi giống hệt ⇒ đề xuất 8.2 |
+| Câu hỏi dạng Unicode NFD (gõ từ một số máy) | **Đã xử lý, đóng gói** (28/10; đang chạy, đã kiểm) | 8.1 đo: MRR giảm 0,20; chuẩn hóa NFC phục hồi giống hệt. Merge `510e1a8` (`backend/retrieval/full_corpus.py` `normalize_query`): câu NFD đã lưu cho đúng 10 đoạn và đúng ngữ cảnh như câu NFC; kết quả tìm 158 câu giống từng byte mốc cũ |
 | Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | **Chỉ thử trên bản món ăn**: MiniLM làm điểm giảm. Toàn kho: 0/158 câu vượt giới hạn độ dài 512; `settings.yaml:43` (`reranker: none`) |
 | Reranker đa ngôn ngữ / tiếng Việt chạy trên card đồ họa (bge-reranker-v2-m3, Vietnamese_Reranker) | **Đã thử, chưa áp dụng** | 8.1: thứ tự tốt hơn chút ít nhưng đẩy đoạn đúng của 1–3 câu ra khỏi 5 đoạn đưa model; ~1 s/câu (10 đoạn), 11–14 s/câu (~150 đoạn: hợp hai nhánh, mỗi nhánh 100) |
 | Xếp hạng lại bằng `gpt-6-luna` | **Đã thử, chưa áp dụng** | 8.1 (10 ứng viên): 0 câu mất, MRR +0,17, nhưng chỉ cứu được tối đa 3 câu ⇒ chưa rõ. **27/10 (chọn 10 trong 30 ứng viên):** bản xếp đủ 30 — dừng (1 / 40 lần trả danh sách thiếu); bản "chỉ trả 10 số, không suy nghĩ" — nhanh (~1,8 s) nhưng dừng (viết thêm chữ sau kết quả); bản "chỉ trả 10 số, suy nghĩ bình thường" — **bước tìm tốt hơn** (22 → 31 / 40, 0 câu mất, ổn định 2 lượt; kiểm 7 → 10 / 15), **câu trả lời theo luật kém hơn** (5 câu tụt điểm đủ ý > 4; chung +0,22) ⇒ chưa đưa vào; +5,0 s p50 / +7,0 s p95 tìm, ≈ 3,8× tiền mỗi câu |
@@ -81,6 +83,12 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 28/10/2026 — Chuẩn hóa NFC câu hỏi vào chatbot (bản 9)
+
+Đi cùng việc đưa 10 đoạn vào ngữ cảnh (Phase 8.2 B1, merge `510e1a8`; bạn chọn PA3 — không chờ đọc cặp mù). Ở khâu này chỉ thêm một bước: câu hỏi đổi về
+dạng NFC trước khi tìm. Kiểm trên `main`: kết quả tìm 158 câu **giống từng byte** mốc cũ (câu đã NFC không đổi); câu dạng NFD đã lưu cho đúng 10 đoạn như
+câu NFC. 0 USD ở khâu này (tìm chạy trên máy).
 
 ### 27/10/2026 — Cho `gpt-6-luna` chọn 10 đoạn trong 30 ứng viên (bản 8)
 
@@ -172,6 +180,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 |---|---|---|
 | Hai cách tìm `dense_bm25_rrf`, `native_hybrid_rrf` | **còn dùng** (chatbot chạy `dense_bm25_rrf`) | `backend/retrieval/full_corpus.py:111`; `backend/config/settings.yaml:42` |
 | 30 ứng viên, RRF k=60, trả top-10 | **còn dùng** | `backend/retrieval/full_corpus.py:465,608,627` |
+| Chuẩn hóa NFC câu hỏi trước khi tìm | **còn dùng** (từ 28/10, merge `510e1a8`) | `backend/retrieval/full_corpus.py:97–102,420` |
 | Reranker MiniLM (tiếng Anh) | **đã gỡ khỏi chatbot** 26/10 (trước đó tắt) | `settings.yaml:43` (`reranker: none` — giá trị duy nhất); lớp `backend/reranking/cross_encoder.py` giữ cho bộ thử 8.1 (G1, G4) |
 | 4 kho vector toàn kho của Phase 4–5 | **đã thay** bởi một kho `hue_full_corpus_7a2_e5_small_384` (Phase 7A2) | Qdrant chỉ còn collection này (kiểm 24/10 sau dọn) |
 | Model e5-small, e5-base, HuyDang, Qwen3-0.6B trong ma trận thử | **đã thay** bởi e5-small + Qwen3-8B (Phase 7A2); 8B chưa có chỉ mục | `backend/embedding/full_corpus.py:41–66` |
@@ -185,7 +194,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 Đề xuất cho Phase 8.2 (mỗi việc cần đo riêng; đổi chatbot cần bạn duyệt):
 - **Câu gõ không dấu:** **Bạn quyết 15:15 25/10: ngoài phạm vi** — thiết kế giả định người dùng gõ có dấu; không làm ở 8.2. Ghi chú cũ: lỗ hổng lớn nhất ở khâu này. Thử dùng bản từ khóa đã bỏ dấu **chỉ khi câu hỏi không có dấu**
   (8.1 thấy bản bỏ dấu tìm lại được nhiều, nhưng làm hại câu có dấu nếu dùng cho mọi câu) — xem `BAO_CAO_EMBEDDING_TU_KHOA.md`.
-- **Chuẩn hóa NFC câu hỏi:** sửa một dòng, phục hồi hoàn toàn câu dạng NFD.
+- **Chuẩn hóa NFC câu hỏi:** **đã làm 28/10** (merge `510e1a8`) — phục hồi hoàn toàn câu dạng NFD.
 - **Lấy rộng 100 ứng viên:** có tín hiệu (+4 / −1 câu); thử cùng context 10 đoạn (`BAO_CAO_SINH_CAU_TRA_LOI_API.md`).
 - **`gpt-6-luna` chọn 10 trong 30 ứng viên (27/10, chưa đưa vào):** bước tìm tốt rõ (22 → 31 / 40), câu trả lời chung tốt lên nhưng 5 câu tụt ⇒ theo luật
   chưa nhận. Bạn quyết: dừng / đo độ dao động của chính bản này (≈ 0,025 USD) / đặt luật nhận khác. Nếu sau này nhận, cần tìm cách nhanh hơn
