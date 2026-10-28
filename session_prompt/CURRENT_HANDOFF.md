@@ -134,6 +134,15 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Không làm:** chạy đo, sửa code `backend/`. 0 USD.
 - **Xong:** báo sha cho A + B; B review ⇒ `<plan>_review.md`.
 - **Trạng thái (09:30 28/10/2026, C):** plan viết xong, **chờ B review** — sha `1e792df347fd`; bộ câu private `data/streaming_ttft_2026-10-28/questions.jsonl` `107620cb30f1`. Ước khi chạy ≈ 0,016 USD (lệch ≈ 0,002 của handoff — plan §8, §10 có bản gọn ≈ 0,007).
+- A 09:3x: B review khi xong B78 (bản đủ / gọn, D5); A chọn lúc duyệt sha.
+
+### C71 — kiểm merge B1 vào `main` (C; 28/10)
+
+- **Đọc:** `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b1_merge_implementation.md` (full-read); spec 8.2 §11; `git show 510e1a8`.
+- **Làm:** cổng tối thiểu `risk-gated-agent-review` (merge không sửa tay: `git diff c3d5607 510e1a8 -- backend/` chỉ là phần `main` thêm; T1 free chạy lại nếu
+  thấy cần); kiểm các khẳng định bảng §2 bằng file / log thật (`data/phase_8_2/b1/merge_2810/`, dòng `chat_metrics` cuối của `backend/logs/application.log`).
+  Không chạy server lại trừ khi thấy bằng chứng thiếu (≤ 0,001 USD nếu chạy).
+- **Đầu ra:** `phase_8_2_b1_merge_review.md`; nhắn A. A sửa 5 chỗ báo cáo song song; xong A nhờ C kiểm phần mô tả hành vi.
 
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
