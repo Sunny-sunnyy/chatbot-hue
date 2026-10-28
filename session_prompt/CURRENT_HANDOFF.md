@@ -192,6 +192,20 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Xong:** report `sua_kho_b7_8_implementation.md` ⇒ C kiểm ⇒ A trình User duyệt từng mục. Nếu C75 tìm lỗi phải khôi phục ⇒ dừng B82.
 - **Trạng thái (B, 11:19 28/10/2026):** xong — gold v4 nháp (2 trích dẫn câu 27 chờ User), Golden 0 câu cần sửa; chờ C kiểm.
 
+- **B82 xong + C76 ready 0 / 0 / 1** (`sua_kho_b7_8_review.md`). **User 11:39 28/10/2026: duyệt 2 trích dẫn mới câu 27 + "0 câu Golden cần sửa".**
+  ⇒ **B83:** `build_gold_v4.py --approved` ⇒ `gold_v4.jsonl` (v3 giữ); đổi `GOLD_PATH` ⇒ v4 (working tree, không commit — C kiểm, A commit); viết phần "sau" của
+  `truoc_sau.py` (C đọc diff cả file); **bước 9** đo "sau" theo plan `41485782b39e` (≈ 0,037 USD, trần đợt 0,15) ⇒ report `sua_kho_b9_implementation.md` ⇒ C kiểm.
+
+### C77 — bản phương án cho spec streaming (C; A giao 11:39 28/10/2026)
+
+- **Mục tiêu:** A brainstorm spec streaming với User (sau đợt sửa kho) — C soạn trước các phương án để A trình, không phải spec.
+- **Đọc:** `data/tinh_nang_moi_2026-10-27/c63_can_cu.md`; `streaming_ttft_implementation.md` + review; skill `propose-options`; code `backend/api/`, `backend/generation/`, UI
+  (`frontend/` hoặc nơi phục vụ `/`) theo nhu cầu.
+- **Làm:** `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming.md` (private): 2–4 phương án (ví dụ hiện chữ ngay / chỉ hiện câu đã có `[n]` / giữ như cũ), mỗi phương án
+  theo `propose-options` §2 (đổi gì ở API / UI / validator citation, tốn gì, khi nào sai, mất gì); điểm khó: validator chạy trên câu trả lời đủ, từ chối chuẩn, lỗi 500 giữa
+  chừng, log `chat_metrics`; danh sách quyết định User cần chọn (theo thứ tự phụ thuộc); câu hỏi kỹ thuật A tự quyết.
+- **Không làm:** sửa code, gọi API. 0 USD. Kèm kiểm diff GOLD_PATH của B83 khi B báo.
+
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
