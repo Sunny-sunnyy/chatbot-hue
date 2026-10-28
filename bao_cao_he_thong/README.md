@@ -8,7 +8,7 @@
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
 | Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 09:38 28/10/2026 (ngữ cảnh 10 đoạn + chuẩn hóa NFC câu hỏi, merge `510e1a8`) |
-| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 16:47 27/10/2026 (bản 3) |
+| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 12:14 28/10/2026 (bản 4: nhãn bản 4, thước trước ↔ sau sửa kho, câu kín, yêu cầu tốc độ / tiền) |
 | Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 16:0x 26/10/2026 (đợt 3) |
 | Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 16:0x 26/10/2026 (đợt 3, bản 4) |
 | Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 14:18 25/10/2026 (+ 8.1) |
