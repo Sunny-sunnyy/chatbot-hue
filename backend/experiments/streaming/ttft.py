@@ -47,9 +47,11 @@ BOOTSTRAP_ROUNDS = 10_000
 
 # Luồng chữ của đầu ra có cấu trúc là JSON `{"answer":"…`: chữ người dùng thấy bắt đầu sau tiền tố này (plan §3).
 ANSWER_PREFIX = re.compile(r'^\s*\{\s*"answer"\s*:\s*"')
-# Kết câu trong chuỗi JSON thô: dấu câu rồi khoảng trắng / `\n` thoát / hết chuỗi, hoặc xuống dòng thoát, hoặc dấu `"` đóng chuỗi.
-# Ước kiểu B (plan §3): không xử lý `TP.` — `1.000` không khớp vì sau dấu chấm là chữ số.
-SENTENCE_END = re.compile(r'[.!?](?=\s|\\n|")|\\n|(?<!\\)"')
+# Kết câu trên chữ đã giải mã: dấu câu rồi khoảng trắng, hoặc xuống dòng (hết chuỗi xét riêng). Ước kiểu B (plan §3): không xử lý `TP.`;
+# `1.000` không khớp vì sau dấu chấm là chữ số.
+SENTENCE_END = re.compile(r"[.!?](?=\s)|\n")
+# Thoát JSON còn dở ở cuối mảnh: một số lẻ dấu `\` (tùy chọn kèm `u` + < 4 chữ số hex).
+PARTIAL_ESCAPE = re.compile(r"(\\+)(u[0-9a-fA-F]{0,3})?$")
 
 
 # ---------- Mốc thời gian từ sự kiện (logic thuần, có test) ----------
@@ -73,19 +75,40 @@ def timeline(events: list[dict]) -> dict:
         prefix = ANSWER_PREFIX.match(text)
         if prefix is None:
             continue
-        answer = text[prefix.end():]
+        answer, closed = decode_partial_string(text[prefix.end():])
         if marks["t_first_visible"] is None and answer:
             marks["t_first_visible"] = event["ms"]
-        if marks["t_first_cited_sentence"] is None and _has_cited_sentence(answer):
+        if marks["t_first_cited_sentence"] is None and _has_cited_sentence(answer, closed):
             marks["t_first_cited_sentence"] = event["ms"]
         if marks["t_refusal_complete"] is None and answer.startswith(INSUFFICIENT_ANSWER):
             marks["t_refusal_complete"] = event["ms"]
     return marks
 
 
-def _has_cited_sentence(answer: str) -> bool:
+def decode_partial_string(raw: str) -> tuple[str, bool]:
+    """Phần thân chuỗi JSON đang stream ⇒ (chữ đã giải mã, chuỗi đã đóng chưa). Giải mã để so chữ có dấu / `[Nguồn n]` đúng cả khi provider
+    thoát thành `\\uXXXX` (review B m-2); bỏ phần thoát còn dở ở cuối mảnh."""
+    escaped, end = False, None
+    for index, char in enumerate(raw):
+        if escaped:
+            escaped = False
+        elif char == "\\":
+            escaped = True
+        elif char == '"':
+            end = index
+            break
+    body = raw if end is None else raw[:end]
+    partial = PARTIAL_ESCAPE.search(body)
+    if end is None and partial and len(partial.group(1)) % 2 == 1:
+        body = body[: partial.start(1) + len(partial.group(1)) - 1]
+    return json.loads(f'"{body}"'), end is not None
+
+
+def _has_cited_sentence(answer: str, closed: bool) -> bool:
     citation = CITATION_PATTERN.search(answer)
-    return citation is not None and SENTENCE_END.search(answer, citation.end()) is not None
+    if citation is None:
+        return False
+    return SENTENCE_END.search(answer, citation.end()) is not None or closed
 
 
 # ---------- Ghi sự kiện ----------
@@ -338,9 +361,12 @@ def summarize(names: list[str]) -> dict:
             sdk_first.append(r["t_first_event"] - d["t_first_event"])
             sdk_tail.append((r["t_done"] - r["t_last_event"]) - (d["t_done"] - d["t_last_event"]))
     gv = median_ci(gain_visible)
+    # plan §5 luật mở rộng ghi trước: CI chứa ngưỡng 500 / 1.500 ms, hoặc < 6 câu trong kho có trả lời ⇒ đề xuất lượt thêm (A duyệt) — review B m-1
+    extension = gv is None or len(s_main) < 6 or any(gv["ci95"][0] <= limit <= gv["ci95"][1] for limit in (500, 1500))
     return {
         "runs": names,
-        "decide": {"gain_visible_ms": gv, "band": band(gv), "gain_cited_ms": (gc := median_ci(gain_cited)), "band_cited": band(gc)},
+        "decide": {"gain_visible_ms": gv, "band": band(gv), "gain_cited_ms": (gc := median_ci(gain_cited)), "band_cited": band(gc),
+                   "n_in_kb_answered": len(s_main), "extension_rule_triggered": extension},
         "prediction_check": None if gv is None else ("recheck_marks" if not 300 <= gv["median"] <= 3000 else "within"),
         "watch": {
             "stream_overhead_ms": (so := median_ci(overhead)),

@@ -53,5 +53,20 @@ def test_refusal_complete_only_when_whole_standard_refusal_arrived():
     assert marks["t_first_cited_sentence"] is None
 
 
+def test_unicode_escapes_and_split_escape_are_decoded():
+    # provider có thể thoát chữ có dấu thành \uXXXX; một mảnh có thể cắt giữa chuỗi thoát (review B m-2)
+    escaped = INSUFFICIENT_ANSWER.encode("ascii", "backslashreplace").decode().replace("\\x", "\\u00")
+    cut = escaped.index("\\u") + 3  # cắt giữa "\uXXXX"
+    events = [delta(1.0, '{"answer":"' + escaped[:cut]), delta(2.0, escaped[cut:]), delta(3.0, '"}')]
+    marks = timeline(events)
+    assert marks["t_first_visible"] == 1.0
+    assert marks["t_refusal_complete"] == 2.0
+
+
+def test_escaped_newline_ends_cited_sentence():
+    events = [delta(1.0, '{"answer":"Ch\\u00f9a c\\u1ed5 [Ngu\\u1ed3n'), delta(2.0, " 1]"), delta(3.0, "\\n- Ý")]
+    assert timeline(events)["t_first_cited_sentence"] == 3.0
+
+
 def test_no_events_gives_no_marks():
     assert set(timeline([]).values()) == {None}
