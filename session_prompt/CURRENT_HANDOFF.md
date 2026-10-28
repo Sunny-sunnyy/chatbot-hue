@@ -222,6 +222,17 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
 - **Không làm:** gọi OpenRouter, tạo collection. 0 USD. **Chạy cần User duyệt** (tạo collection mới + gửi kho ra OpenRouter) — A trình khi User về.
 - **Xong:** báo sha cho A + B; B review sau khi xong bước 9.
 
+- **C78 xong** (11:58): plan `qwen3_8b_plan.md` `e04d67e0f034` — B review sau bước 9; câu §10 A trả lời lúc duyệt; **chạy cần User** (gửi kho ra OpenRouter, collection mới).
+
+### C79 — chuẩn bị đợt 2 sửa kho (C; A giao 11:58 28/10/2026; chỉ soạn, không sửa kho)
+
+- **Căn cứ:** `data/sua_kho_2026-10-27/ket_qua_chatgpt_78_doi_chieu.md` (sub-agent A, 15 URL kiểm), `tra_ngoai.md`, `cau_hoi_user.md`, `applied_edits.jsonl` (đợt 1 đã áp), spec sửa kho
+  §5 (cách soạn edit), luật curated `Session_Prompt.md` §5.
+- **Làm:** `data/sua_kho_2026-10-27/dot2/`: (1) edit dạng `edits/*.jsonl` cho 12 mục "đủ căn cứ" (K004 từng dòng riêng — không đổi "quận X" ⇒ "phường X"; K122 / K124 trên kho
+  **sau** đợt 1; K017 chỉ phần có nguồn; K139 chỉ tên Bộ), mỗi edit kèm URL + ngày kiểm; (2) danh sách quyết định User: K071, K084, K069, phát hiện K017 "2.400 tỷ", câu 5
+  Golden (B82), 16 câu `cau_hoi_user.md` còn mở — mỗi mục có gợi ý; (3) `README.md`.
+- **Không làm:** sửa kho / Golden, gọi API. 0 USD. Tìm trong kho **chỉ** `scripts/grep_kb.sh`. **Xong:** nhắn A; B review khi rảnh.
+
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
