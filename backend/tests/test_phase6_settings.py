@@ -21,7 +21,7 @@ def test_phase6_settings_are_exact():
         "context_limit": 16384,
         "reserved_output_tokens": 2048,
         "safety_margin": 512,
-        "max_context_documents": 5,
+        "max_context_documents": 10,
     }
     forbidden_keys = {
         "temperature",

@@ -12,6 +12,7 @@ import json
 import math
 from pathlib import Path
 import time
+import unicodedata
 from typing import Any, Literal
 
 from qdrant_client import QdrantClient, models
@@ -91,6 +92,14 @@ class RetrievalResult:
 
     documents: list[RetrievedDocument]
     trace: RetrievalTrace
+
+
+def normalize_query(query: str) -> str:
+    """Kiểm câu hỏi rỗng rồi chuẩn hóa NFC: kho và chỉ mục ở dạng NFC, câu NFD (tổ hợp dấu tách rời) làm hỏng cả dense
+    lẫn BM25 (8.1 G1.4: MRR −0,204). Câu đã NFC giữ nguyên từng byte."""
+    if not isinstance(query, str) or not query.strip():
+        raise InvalidQueryError("Query must be non-empty and non-whitespace string")
+    return unicodedata.normalize("NFC", query)
 
 
 def reciprocal_rank_fusion(
@@ -408,8 +417,7 @@ class FullCorpusRetrievalService:
         self.search_params = search_params
 
     def search(self, query: str) -> RetrievalResult:
-        if not isinstance(query, str) or not query.strip():
-            raise InvalidQueryError("Query must be non-empty and non-whitespace string")
+        query = normalize_query(query)
 
         t0 = time.perf_counter()
         timings: dict[str, float] = {}
