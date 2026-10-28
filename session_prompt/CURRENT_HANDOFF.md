@@ -123,6 +123,9 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   như giả định, không tự đổi). Mỗi tiêu chí sàn trỏ `file:dòng` hành vi production nó đo.
 - **Không làm:** chạy đo, gọi API, đụng kho / Qdrant / Golden, mở câu kín. 0 USD.
 - **Xong:** báo sha (12) cho A + C; C review theo §9.1 (chỉ dựa gói căn cứ) ⇒ `<plan>_review.md`.
+- **Trạng thái (B, 09:37 28/10/2026):** plan bản 1 xong, sha `7b79c3971bc7` (chưa commit) — **chờ C review**. 3 câu hỏi cho A ở plan §8 (có mặc định).
+- A 09:4x: **C72** = C review plan này **sau C71** (§9.1: chỉ dựa "Căn cứ để review", không đọc STATUS_B / tin của B) ⇒ `sua_kho_do_truoc_sau_plan_review.md`; A trả lời
+  §8 lúc duyệt sha. Chưa chạy bộ "trước" tới khi A ghi "duyệt bản sha".
 
 ### C70 — plan đo "thời gian tới chữ đầu tiên" (C viết, B review; 28/10)
 
