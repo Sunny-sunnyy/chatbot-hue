@@ -5,6 +5,15 @@ Plan **chỉ viết**: 0 USD; C không gọi OpenRouter, không tạo collection
 **Chạy cần User duyệt** hai việc: (1) gửi toàn bộ 8.426 đoạn kho (private) ra OpenRouter → Nebius; (2) tạo một collection Qdrant mới. A trình khi User về.
 Nhãn: **[N]** nguồn / code nói (`file:dòng`) · **[Đo]** số đo của dự án · **[S]** C suy ra, chưa đo.
 
+**Bản 2** (12:12 28/10/2026) sửa theo review B (`qwen3_8b_plan_review.md`, bản 1 `e04d67e0f034`, changes_requested 0 / 1 / 4):
+- **M-1:** bỏ `latency_gate` tự đặt; theo luật (i) spec 8.2 §10.2, 8B luôn thêm 1 lần gọi API ⇒ mọi kết quả "tốt hơn" đều **A trình User kèm số**; báo `dense_ms` so +50 ms và p95 cả
+  câu ước so 5 s (§3, §7).
+- **m-1:** tập quyết = **dev 40**; số chính 32 là phụ (§3, §7).
+- **m-2:** ghi id / ms từng request nhúng câu hỏi; giới hạn cache và nhiễu phía index (§3, §9).
+- **m-3:** 429 chờ max(lịch, `Retry-After`); timeout 180 s (§4).
+- **m-4:** điều kiện chạy lại sau lỗi (§4).
+- Cỡ mẫu: dùng số B tính bằng bootstrap (§3).
+
 ## Căn cứ để review
 
 | File | Mục cần đọc | Để kiểm gì |
@@ -39,23 +48,28 @@ giá nào về tiền và độ trễ?
 
 - Nhãn: **gold v4** (`data/phase_8_1/gold/gold_v4.jsonl` `927bae1bf201`; `GOLD_PATH` trỏ v4 sau B83). 55 câu có nhãn: dev 40 / test 15 (`split.json`).
 - **Chọn trên dev, xác nhận trên test** (`run-experiment` §2). Số chính = bỏ nhãn `unnatural` (dev 32 / test 10).
-- **Chỉ số quyết** (tầng tìm, tất định với e5): số câu dev có **mọi fact** được context phủ (`context5_gold_all` của g1 — tên cũ; giá trị là context thật, 10 đoạn). So theo cặp
-  8B − e5 trên cùng câu: thắng / hòa / thua + CI 95 % bootstrap (`bootstrap_mean_diff`, 10.000 vòng, seed `20261024`).
+- **Chỉ số quyết** (tầng tìm, tất định với e5): số câu **dev 40** (cả 40 câu có nhãn — nhãn đoạn đúng không phụ thuộc độ tự nhiên, n lớn hơn) có **mọi fact** được context
+  phủ (`context5_gold_all` của g1 — tên cũ; giá trị là context thật, 10 đoạn). So theo cặp 8B − e5 trên cùng câu: thắng / hòa / thua + CI 95 % bootstrap (`bootstrap_mean_diff`,
+  10.000 vòng, seed `20261024`). Số chính dev 32 (bỏ `unnatural`) báo **phụ**, không quyết.
 - **Sàn** (spec 8.2 §10.2 "khâu tìm: 0 câu mất đoạn đúng khỏi context so với mốc"): 0 câu dev có `context_gold_all` = 1 ở e5 mà = 0 ở 8B.
 - **Theo dõi:**
   - `pool_dense_gold_all` (30 ứng viên dense) và `top10_gold_all`;
   - `*_gold_frac`; MRR / keyword (`score_retrieval`);
   - số câu đổi top-10;
-  - độ trễ nhúng câu hỏi `dense_ms` p50 / p95 (8B gọi mạng mỗi câu) so với e5;
+  - độ trễ nhúng câu hỏi `dense_ms` p50 / p95 (8B gọi mạng mỗi câu) và **chênh theo câu 8B − e5** so với **+50 ms** (luật (i) spec 8.2 §10.2);
+  - **p95 cả câu ước** = p95 mốc cả câu hôm nay (4,9 s — bộ "trước" B78, 176 câu tuần tự) + chênh p95 `dense_ms`, so với yêu cầu User **5 s** (đo thật cả câu ở bước 6 nếu chạy);
   - tỉ lệ lỗi gọi câu hỏi (HTTP ≠ 200 / timeout);
   - `providers_seen` (phải chỉ có Nebius).
 - **Nhiễu A/A:**
   - e5: tất định (T1 giống byte qua nhiều lần chạy) ⇒ nhiễu 0;
   - 8B: nhúng 176 câu hỏi **hai lần** (cùng index) ⇒ đếm câu đổi top-10 và đổi `context_gold_all` giữa hai lượt, cos trung bình / nhỏ nhất giữa hai vector cùng câu. Ghi **trước**
-    khi so với e5.
+    khi so với e5. Mỗi request ghi `id` (nếu có trong response) + ms + provider: nếu lượt 2 nhanh bất thường so với lượt 1 **và** vector giống byte ⇒ ghi "có thể trả từ cache",
+    A/A này là **cận dưới** của nhiễu.
+  - Chỉ đo nhiễu **phía câu hỏi** trên một index; nhiễu **phía index** (build lại cho vector đoạn khác) không đo — chỉ có pilot cos 20 đoạn (§6 bước 3) làm bằng chứng một phần.
 - **Cỡ mẫu** [Đo + S]:
   - dev: 16 câu có thể đổi theo hướng tốt (context thiếu), 24 câu có thể tụt (sàn);
-  - "CI 95 % > 0" với 40 câu cặp nhị phân cần khoảng ≥ 5–6 câu thắng ròng, 0 thua [S, theo bảng spec 8.2 §10.3: 4 thắng / 0 thua ⇒ p 0,026 trên 40];
+  - "CI 95 % > 0" trên 40 cặp nhị phân (B tính bằng `bootstrap_mean_diff`, review C78 §2): **4 thắng / 0 thua**, **7 / 1**, hoặc **≥ 9 / 2**; 3 / 0 và 5 / 1 thì CI chạm 0;
+  - trần thắng: 7 câu thiếu ngay ở pool dense (8B sửa trực tiếp được) + 9 câu đủ ở pool nhưng thiếu ở context (8B chỉ tác động gián tiếp qua RRF);
   - 7 câu thiếu từ pool dense là phần 8B có thể sửa trực tiếp ⇒ **"chưa rõ" là kết quả hợp lệ** (ghi trước);
   - test 15 câu chỉ để "không làm hỏng" (sàn + không tụt quá A/A).
 
@@ -67,11 +81,15 @@ Theo `practical-project-coding` "ranh giới theo khâu": tham số mặc địn
    thử lại** (`full_corpus.py:310`) và build không resume. 7A2 gặp 504 khi pin Nebius ([N] `Project_Status.md` §8), mà quyết định 24/10 yêu cầu "thiết kế cách gọi chịu
    504 / 429 (batch, thử lại)". Harness truyền vào một runner bọc (chỉ trong `backend/experiments/`):
    - **cache từng batch** ra `data/qwen3_8b_2026-10-28/emb/batch_NNN.npy` (đã có thì đọc lại, không gọi lại — chạy lại sau lỗi không trả tiền hai lần);
-   - **thử lại có giới hạn:** chỉ với HTTP 429 / 5xx / timeout, tối đa 3 lần, chờ 10 / 30 / 90 s; mỗi lần thử ghi một dòng log (batch, mã HTTP, ms, provider) vào `emb/attempts.jsonl`;
-     hết 3 lần ⇒ raise (build dừng, cache giữ);
-   - không đổi input / batch 64 / pin provider.
+   - **thử lại có giới hạn:** chỉ với HTTP 429 / 5xx / timeout, tối đa 3 lần, chờ 10 / 30 / 90 s — với 429 có header `Retry-After` thì chờ **max(lịch, `Retry-After`)**; mỗi lần thử
+     ghi một dòng log (batch, mã HTTP, ms, provider) vào `emb/attempts.jsonl`; hết 3 lần ⇒ raise (build dừng, cache giữ);
+   - không đổi input / batch 64 / pin provider / timeout 180 s của runner (`full_corpus.py:323-326`).
+   - **Vì sao chạy lại sau lỗi được** (đọc `full_corpus_pipeline.py:149-260`): kiểm đích (chưa có collection / record) ⇒ ghi sparse state ⇒ nhúng toàn kho ⇒ **chỉ sau đó** mới tạo
+     collection + upsert ⇒ record. Lỗi lúc nhúng ⇒ chưa có collection; sparse state đã ghi giống byte nên lần chạy lại qua `_write_or_check_sparse_state`; vector đã có trong
+     cache không gọi lại. Lỗi **sau** khi đã tạo collection (upsert / kiểm sau upsert) ⇒ phải xóa collection thử (**User duyệt**) rồi mới chạy lại.
 2. **`g1_retrieval run`** thêm `--candidate`, `--collection`, `--record`, `--sparse-state` (mặc định = runtime e5). Truyền thẳng vào `build_full_corpus_retrieval_service`
-   (đã nhận sẵn `:644-646`). Câu hỏi 8B **không** thử lại: lỗi ⇒ dòng lỗi, chạy lại đúng câu đó một lần (đo đúng tỉ lệ lỗi mà runtime sẽ gặp).
+   (đã nhận sẵn `:644-646`). Câu hỏi 8B **không** thử lại: lỗi ⇒ dòng lỗi, chạy lại đúng câu đó một lần (đo đúng tỉ lệ lỗi mà runtime sẽ gặp). Một câu hỏi treo có thể tới
+   180 s (timeout runner) ⇒ đếm là "timeout" trong tỉ lệ lỗi gọi.
 3. Không sửa runtime API, `settings.yaml`, `OpenRouterDenseRunner`.
 
 ## 5. Mốc đã đo (để biết còn chỗ cải thiện) — [Đo] C, 11:5x 28/10, in-memory, không ghi file
@@ -119,12 +137,13 @@ experiment_id: c78_qwen3_8b_dense
 baseline: "main HEAD lúc chạy; index runtime e5 sau sửa kho (T1 23c58c47635d); gold v4 927bae1bf201"
 changed_variable: "dense model e5-small-384 → qwen3-embedding-8b-4096 (OpenRouter, pin Nebius)"
 unchanged: [kho 204 file / 8.426 đoạn, chunker, BM25 + sparse state, pool 30, RRF k 60, context 10, prompt, gpt-6-luna, validator, judge]
-data: {split: knowledge-base-hue/evaluation/phase_8_1/split.json, decide: dev (40 có nhãn; số chính 32), confirm: test (15; 10)}
+data: {split: knowledge-base-hue/evaluation/phase_8_1/split.json, decide: "dev 40 (mọi câu có nhãn)", secondary: "dev số chính 32", confirm: "test 15 (số chính 10)"}
 metrics:
-  - {name: context_gold_all (dev), fn: "g1 context5_gold_all, cặp 8B − e5", better: up, role: decide, rule: "thắng ròng, CI 95 % > 0, vượt A/A 8B"}
+  - {name: context_gold_all (dev 40), fn: "g1 context5_gold_all, cặp 8B − e5", better: up, role: decide, rule: "thắng ròng, CI 95 % > 0, vượt A/A 8B"}
   - {name: mất đoạn đúng khỏi context (dev + test), fn: "e5 = 1, 8B = 0", role: floor, floor: 0, src: "spec 8.2 §10.2 sàn khâu tìm"}
   - {name: pool_dense_gold_all, top10_gold_all, gold_frac, MRR, keyword, role: watch}
-  - {name: dense_ms p50 / p95 (176 câu hỏi), role: watch, note: "e5 ~40 ms; 8B gọi mạng — báo so với p95 ≤ 5 s cả câu của User"}
+  - {name: dense_ms p50 / p95 (176 câu hỏi) + chênh theo câu 8B − e5, role: watch, note: "so +50 ms (luật (i) spec 8.2 §10.2)"}
+  - {name: p95 cả câu ước, fn: "4,9 s (mốc bộ trước B78) + chênh p95 dense_ms", role: watch, note: "so 5 s (User 28/10); đo thật ở bước 6 nếu chạy"}
   - {name: lỗi gọi câu hỏi, fn: "HTTP ≠ 200 / timeout trên 176 × 2 lượt", role: watch, report_if: "> 0"}
   - {name: A/A 8B, fn: "câu đổi top-10 / đổi context_gold_all giữa 2 lượt nhúng câu hỏi; cos min", role: noise}
   - {name: USD (nhúng kho + câu hỏi), role: watch}
@@ -132,7 +151,7 @@ interpretation:
   better: "CI > 0, 0 câu mất, test không tụt quá A/A + 0 câu ⇒ 'tầng tìm tốt hơn' ⇒ đề xuất bước 6 (khâu trả lời) — A duyệt riêng"
   same: "CI chứa 0 ⇒ 'không khác' — dừng ở tầng tìm, ghi hồ sơ, không chạy khâu trả lời"
   worse: "vi phạm sàn hoặc thua ròng ⇒ 'kém hơn' — dừng"
-  latency_gate: "dù tốt hơn: nếu dense_ms p95 của 8B > 1.000 ms hoặc lỗi gọi > 1 % ⇒ ghi 'tốt hơn nhưng vướng vận hành' — A trình User (mỗi câu hỏi phải gọi mạng)"
+  rule_i: "8B luôn thêm 1 lần gọi API / câu (vi phạm điều kiện 'không thêm lần gọi API' của luật (i) spec 8.2 §10.2) ⇒ mọi kết quả 'tốt hơn' đều A TRÌNH USER KÈM SỐ, không tự nhận: chênh dense_ms so +50 ms, p95 cả câu ước so 5 s, tỉ lệ lỗi gọi, USD / câu, và chính sách dữ liệu (mọi câu hỏi gửi ra ngoài)"
 result: null
 conclusion: null
 ```
@@ -184,5 +203,6 @@ conclusion: null
 
 1. Đồng ý thêm `dense_runner` vào `build_candidate` (mặc định giữ nguyên) để chịu 504 / 429 + cache batch, hay giữ code và chấp nhận build có thể hỏng giữa chừng (chạy lại từ
    đầu, trả tiền lại)? C khuyên thêm: tiền nhỏ, nhưng 7A2 đã hỏng đúng chỗ này.
-2. Ngưỡng `latency_gate` (p95 nhúng câu hỏi 1.000 ms, lỗi 1 %) — A chỉnh nếu muốn.
-3. Người viết harness: C; B review code + kết quả.
+2. Người viết harness: C; B review code + kết quả.
+
+(Bản 1 câu 2 "ngưỡng `latency_gate`" bỏ — thay bằng luật (i) spec 8.2, M-1 review B.)

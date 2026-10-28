@@ -248,6 +248,11 @@ Tên terminal đổi mỗi lần mở: dùng `ListAgents`. Cả ba Claude Code �
   đồng thuận; mẫu nhỏ User đọc khi rảnh); có dùng làm sàn cho lần đo sau không; "Căn cứ để review".
 - **Không làm:** đổi judge đang dùng, chạy đo. 0 USD. **Xong:** sha cho A + C.
 
+- **C78 bản 2 `52555da95828`: A DUYỆT plan (12:19 28/10/2026)** — B review vòng 2 ready 0 / 0 / 0; M-1: 8B tốt hơn ở tầng tìm ⇒ trình User kèm latency (không ngưỡng riêng). **Chạy chờ User**
+  (gửi kho + câu hỏi ra OpenRouter, collection `hue_c78_qwen3_8b_4096`, xóa khi xong). Trần 0,10 USD.
+- **C79 xong** (12:19): `data/sua_kho_2026-10-27/dot2/` (README, `edits/dot2.jsonl` `7c30e980353d` — 8 mục / 96 edit / 34 file, áp thử trong bộ nhớ 0 lỗi; `quyet_dinh_user.md`
+  D1–D7 + 15 câu còn mở). **B review** khi xong B87; áp đợt 2 chờ User duyệt.
+
 ### Hồ sơ đã đóng (chỉ tra cứu)
 
 Thí nghiệm 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/` + `2026-10-26_cai_tien_tung_khau/`; nhánh hồ sơ không merge `p82-k1`, `p82-k3`, `p82-k3b`, `p82-r1`,
