@@ -110,6 +110,8 @@ hiệu lực; chỉ dời lịch sử ra khi dài thêm đáng kể.
 nặng song song), **I6** (dời 2 bẫy ra `Project_Status.md` §8) — **User duyệt cả ba 13:20 28/10/2026** ⇒ `đang thử` (A áp; C kiểm governance). Theo dõi: **W27** dùng (mọi brief sub-agent đọc kho dùng `grep_kb.sh`, 0 lọt) ⇒ đề xuất
 `đang dùng`; **W29** dùng (guide 6 / 8 / full_corpus "Hiện hành" sửa cùng lượt, B79 kiểm) ⇒ đề xuất `đang dùng`; **W26** vẫn lọt 1 lần (S47) nhưng review bắt ⇒ giữ `đang thử`;
 W28 chưa có dịp dùng. `wc -l` START_SESSION / Session_Prompt / WORKFLOW / Project_Status / CURRENT_HANDOFF: 45,188,214,281,275 (**handoff vượt ~150** ⇒ kết phiên viết lại).
+**Kết vòng 9 — 13:32 28/10/2026:** thử mở phiên bằng sub-agent mới (vai B): nắm đúng vai / hệ thống / việc đầu tiên / 10 luật cứng; tìm 6 chỗ thiếu (script áp đợt 1 đọc
+cứng file; số bước đợt 2; K017 ai đọc nguồn; Project_Status còn gold v3 + latency cũ; mã chưa giải nghĩa) ⇒ đã sửa `7ca43d5` + bảng mã trong handoff.
 
 **Kết vòng 8 — 15:39 27/10/2026 (kết phiên 27/10 chiều):** 4 sự cố mới (S41–S44); User cho thử **W27** (script grep kho), **W28** (không khuyên bỏ hướng chưa đo),
 **W29** (guide "Hiện hành" là chỗ thứ 5). Theo dõi vòng 7: **W24** dùng (plan B3 trỏ hành vi production — C vẫn bắt chồng luật 500 ở vòng 1, nên giữ `đang thử`);

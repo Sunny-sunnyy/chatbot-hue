@@ -47,6 +47,8 @@ Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`
 
 **Mã hay gặp:** T1 = kết quả tìm 158 câu; A/A = hai lượt cùng cấu hình; F1–F4 / T1–T3 / W1–W8 = sàn / mức tụt / watch của plan đo trước ↔ sau (`sua_kho_do_truoc_sau_plan.md`);
 H / P0_sai / P0_thiếu = chỉ số thước lỗi nặng (`do_loi_nang_plan.md`); Kxxx = mục kho; D1–D7 = quyết định đợt 2; S / W / I = sổ cải tiến; Bxx / Cxx = việc A giao (28/10: B78–B89, C70–C83).
+M-n / m-n = finding major / minor của review; G0.6 = khóa bộ đo 8.1 (manifest); S36 = 36 câu kín (B3); K3b-m = biến thể "luna chọn 10 / 30" (gác); PA0–PA3 = phương án
+streaming (bản nháp C77); Q1–Q5 = câu hỏi spec sửa kho §4; luật (a) / (i) = luật nhận biến thể spec 8.2 §10.2; NQ / QH / BRIDGE2 = ký hiệu nguồn trong `dot2/README.md`.
 
 ## Câu hỏi cho User (báo cáo mở phiên sau — mỗi câu có khuyến nghị)
 
