@@ -58,7 +58,7 @@ streaming (bản nháp C77); Q1–Q5 = câu hỏi spec sửa kho §4; luật (a)
 4. **Gửi ChatGPT** yêu cầu streaming (`c573949ac59a`).
 5. **Thước lỗi nặng:** nhận 32 câu an toàn; đo nhiễu một lượt mốc (≈ 0,008 USD) rồi mới đặt sàn P0_sai — A khuyên đồng ý.
 6. **Đợt 2:** D1–D7 + 15 câu `data/sua_kho_2026-10-27/dot2/quyet_dinh_user.md` (mỗi mục có gợi ý; D2 ngày miễn vé: tra ngoài trước).
-7. **Xóa nhánh đã merge** (auto mode chặn A): `! git push origin --delete c59-log gold-v2 p82-b1 && git branch -d c59-log gold-v2 p82-b1`. Nhánh hồ sơ giữ: `p82-k1`, `p82-k3`,
+7. ✓ **Đã xóa** `c59-log`, `gold-v2`, `p82-b1` (User chạy `!` kết phiên 28/10, local + origin). Nhánh hồ sơ giữ: `p82-k1`, `p82-k3`,
    `p82-k3b`, `p82-r1`, `p82-r2`, `c70-ttft`.
 8. (Khi bàn spec hội thoại nhiều lượt) **lưu câu hỏi người dùng?** — hướng 25/08 trái chính sách "log không ghi câu hỏi" (`chat.py:24-25`).
 9. (Khi rảnh) B0; 20 câu mẫu lỗi nặng; xóa sao lưu đợt 1 sau khi đợt 2 xong.
