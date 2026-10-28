@@ -16,7 +16,7 @@
 | Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 09:38 28/10/2026 (bản 9: chuẩn hóa NFC câu hỏi vào chatbot) |
 | Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 09:38 28/10/2026 (bản 12: chatbot đưa 10 đoạn vào ngữ cảnh — chưa có mốc người) |
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:18 25/10/2026 (+ 8.1) |
-| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt sửa kho đã duyệt, chưa áp) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 16:45 27/10/2026 (bản 4) |
+| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt sửa kho đợt 1 **đã áp** 28/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 12:09 28/10/2026 (bản 5: 123 sửa / 65 file, 204 file / 8.426 đoạn, không làm hỏng) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 19:4x 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 18:56 25/10/2026 |
 | Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [28/10 — đưa 10 đoạn vào chatbot, không chờ đọc cặp mù](nhat_ky/2026-10-28_dua_context_10.md); trước: [27/10 chiều — dọn phần tồn Phase cũ, soạn sẵn đợt sửa kho](nhat_ky/2026-10-27_chieu_phan_ton.md) | 09:40 28/10/2026 |
 
@@ -24,7 +24,7 @@
 
 | Phần | Trạng thái |
 |---|---|
-| Chatbot full-corpus (205 file, 8.459 đoạn, e5-small + BM25, gpt-6-luna) | Đã xử lý, đóng gói |
+| Chatbot full-corpus (204 file, 8.426 đoạn từ 28/10 sau sửa kho; e5-small + BM25, gpt-6-luna, 10 đoạn ngữ cảnh) | Đã xử lý, đóng gói |
 | Thước đo + điểm mốc 176 câu | Đã xử lý, đóng gói (chưa có mốc người chấm) |
 | Từ chối nhầm 22/158 câu, bảng giá khó tìm, đoạn vụn | 8.1 đo; 8.2: 10 đoạn ngữ cảnh đã vào chatbot 28/10 (đỡ câu thiếu bằng chứng); phần còn lại chưa xử lý |
 | Index Qwen3-8B | Chưa thực hiện → thí nghiệm sau đợt sửa kho (User 27/10) |

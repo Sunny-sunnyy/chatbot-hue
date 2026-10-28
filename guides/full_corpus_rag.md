@@ -107,7 +107,16 @@ Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 
   định; gọi metric retrieval là *keyword proxy*; chunker to hơn tự làm Coverage tăng. Hiệu ứng trần:
   121/176 case đã 5/5/5.
 
-### Cập nhật Phase 7A2 (User-closed 2026-10-24) — ưu tiên hơn các đoạn bên dưới
+### Hiện hành 28/10/2026 — đợt sửa kho đợt 1 (ưu tiên hơn các đoạn bên dưới)
+
+- Corpus: 123 chỗ sửa / 65 file / 51 mục (spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt `937cf8969810`); thêm
+  `performing_arts/performing-arts-entities-inventory.md` vào `exclude_files` ⇒ **204 file → 8.426 chunk**; chunker không đổi; token lớn nhất huydang 255 / 256 (sát trần),
+  e5 366 / 512.
+- Index build lại tại chỗ (guide "Build lại index" bước 4a–5): `hue_full_corpus_7a2_e5_small_384` 8.426 point; build record `574b5d02088b`; sparse state `1bae9e0f3c49`,
+  vocabulary 5.631; T1 (158 câu) `23c58c47635d`. Đo "trước ↔ sau" 176 câu: không làm hỏng (`report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_b9_*`).
+- Runtime: context 10 + query NFC (Phase 8.2, `510e1a8`); nhãn đoạn đúng mặc định gold v4 (`e08a126`).
+
+### Cập nhật Phase 7A2 (User-closed 2026-10-24) — lịch sử
 
 Mục tiêu đã duyệt: sửa 25 mục tri thức trong corpus, build lại index trên corpus
 đã sửa với hai dense candidate, cutover runtime, xóa collection cũ.

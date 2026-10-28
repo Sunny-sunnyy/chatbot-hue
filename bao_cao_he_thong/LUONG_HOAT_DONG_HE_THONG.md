@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 09:38 28/10/2026** (Phase 8.2 B1 vào chatbot, merge `510e1a8`: **ngữ cảnh tối đa 10 đoạn** thay vì 5; câu hỏi được **chuẩn hóa
+**Cập nhật lần cuối: 12:14 28/10/2026** (đợt sửa kho đợt 1: **123 chỗ sửa / 65 file**, bỏ file danh mục nghệ thuật biểu diễn khỏi chỉ mục ⇒ **204 file, 8.426 đoạn**, từ khóa 5.631; chỉ mục dựng lại; đo 176 câu "trước ↔ sau": **không làm hỏng** — `BAO_CAO_KHO_DU_LIEU.md` bản 5). Trước đó 09:38 28/10/2026 (Phase 8.2 B1 vào chatbot, merge `510e1a8`: **ngữ cảnh tối đa 10 đoạn** thay vì 5; câu hỏi được **chuẩn hóa
 Unicode NFC** trước khi tìm — câu gõ dạng NFD nay tìm giống hệt câu NFC; kết quả tìm 158 câu giống từng byte mốc cũ; chọn bằng judge Claude, **chưa có mốc
 người** — bạn đọc cặp mù sau, spec 8.2 §11). Trước đó 13:27 27/10/2026 (API ghi **một dòng `chat_metrics`** cho mỗi câu hỏi: token vào / ra / suy luận, số nguồn, thời gian từng khâu — không ghi câu hỏi,
 câu trả lời hay nội dung kho; merge `5100b90`; câu trả lời **không đổi**). Trước đó 16:0x 26/10/2026 (đợt 3 rà code, merge `421c302`: dựng kho dừng khi có đoạn vượt giới hạn token ở mọi nhánh; build chỉ ghi
@@ -17,7 +17,7 @@ Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ```text
 CHUẨN BỊ (chạy một lần khi kho đổi):
-  205 file Markdown → chia đoạn (8.459 đoạn) → vector nghĩa e5-small + từ khoá BM25 → lưu Qdrant
+  204 file Markdown → chia đoạn (8.426 đoạn) → vector nghĩa e5-small + từ khoá BM25 → lưu Qdrant
 HỎI ĐÁP (mỗi câu hỏi):
   giao diện web → API /api/chat → chuẩn hóa NFC câu hỏi → tìm 10 đoạn → giữ tối đa 10 đoạn làm ngữ cảnh → gpt-6-luna trả lời
   → kiểm trích dẫn [n] → trả câu trả lời + nguồn
@@ -25,10 +25,10 @@ HỎI ĐÁP (mỗi câu hỏi):
 
 | Thành phần | Dùng gì | Code |
 |---|---|---|
-| Kho tri thức | 205 file Markdown tiếng Việt, 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch | `knowledge-base-hue/` (private) |
+| Kho tri thức | 204 file Markdown tiếng Việt (vào chỉ mục; từ 28/10 sau sửa kho), 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch | `knowledge-base-hue/` (private) |
 | Chia đoạn | Theo cấu trúc Markdown (tiêu đề, đoạn, bảng), không chồng lấn | `backend/ingestion/chunking/full_corpus_chunker.py` |
 | Vector nghĩa | `intfloat/multilingual-e5-small`, 384 chiều, chạy trên máy (CPU), miễn phí | `backend/embedding/full_corpus.py` |
-| Từ khoá | BM25 tự viết, tách theo âm tiết, 5.660 từ | `backend/scoring/bm25.py` |
+| Từ khoá | BM25 tự viết, tách theo âm tiết, 5.631 từ (28/10; trước 5.660) | `backend/scoring/bm25.py` |
 | Cơ sở dữ liệu vector | Qdrant `127.0.0.1:6335`, collection `hue_full_corpus_7a2_e5_small_384` | `backend/vectorstore/` |
 | Tìm kiếm | `dense_bm25_rrf` (mục 3) | `backend/retrieval/full_corpus.py` |
 | Trả lời | `gpt-6-luna` (OpenAI), giá 0,1 USD / 1M token vào, 0,5 USD / 1M token ra | `backend/llm/generator_openai_full_corpus.py` |
@@ -37,7 +37,7 @@ HỎI ĐÁP (mỗi câu hỏi):
 
 ## 2. Chuẩn bị kho (khi corpus đổi)
 
-1. Đọc 205 file Markdown, mỗi file chia theo cấu trúc: mỗi đoạn văn / mục danh sách / bảng là một
+1. Đọc 204 file Markdown (3 file danh mục biên soạn bị loại), mỗi file chia theo cấu trúc: mỗi đoạn văn / mục danh sách / bảng là một
    đoạn; bảng quá dài thì mỗi dòng một đoạn kèm hàng tiêu đề. Đoạn mang theo tên file và đường tiêu đề
    (ví dụ "Bún bò Huế > Quán nổi tiếng") để tìm dễ hơn.
 2. Mỗi đoạn được tạo **vector nghĩa** (e5-small) và **vector từ khoá** (BM25), lưu cùng một điểm
