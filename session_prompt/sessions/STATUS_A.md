@@ -6,6 +6,17 @@ Terminal: `hue-rag-bf` · Agent: Claude Opus 5.5 · Vai: điều phối. Peer l�
 ## Đang khai báo sửa
 - không
 
+## Vừa xong (tới 10:00 28/10/2026)
+- User: quyền phiên; PA3 (B0 không chặn, spec 8.2 §11); merge B1 `510e1a8` (C71 ready) + 5 chỗ báo cáo (B79 ready, A sửa 5 minor); NFR chốt; B3 chạy.
+- Duyệt plan B78 v2 `41485782b39e`, C70 v2 `9683641b6c38`. Giao B80 (B3), C73 (harness TTFT). Thứ tự lượt trả phí: B3 ⇒ bộ "trước" ⇒ C73.
+- Sub-agent: đọc 2 kết quả ChatGPT (`data/muc_tieu_san_pham_2026-10-28/doi_chieu_nghien_cuu.md`, `data/sua_kho_2026-10-27/ket_qua_chatgpt_78_doi_chieu.md`); A kiểm 3 khẳng định.
+- Tiền: A ≈ 0,000423 USD (cổng merge).
+
+## Đã học / bẫy gặp (phiên 28/10)
+- 09:4x: A ghi "A quyết (10:0x 28/10)" vào handoff — giờ ước, `date` lúc đó ~09:47 (B bắt) ⇒ lặp S17. Sửa trong handoff. Mọi giờ ghi file lấy từ `date` trong cùng lệnh.
+- 09:3x: commit `d922bf7` lẫn dòng trạng thái C ghi vào handoff giữa lúc A sửa (đúng nội dung, hợp lệ) — đọc lại `git diff <file>` ngay trước `git add` file nhiều người ghi.
+- 09:3x: `uv run --env-file ../.env` chạy nền báo không thấy file ⇒ dùng đường dẫn tuyệt đối.
+
 ---
 Phần dưới: trạng thái kết phiên 27/10 chiều.
 
