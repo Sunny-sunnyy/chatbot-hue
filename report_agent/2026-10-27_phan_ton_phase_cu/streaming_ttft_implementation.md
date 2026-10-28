@@ -1,6 +1,6 @@
 # Implementation Report: C73 — đo "thời gian tới chữ đầu tiên" khi stream (kết quả)
 
-Người làm: C (Claude Opus 5.5, `hue-rag-32`) · Date: 10:34 28/10/2026 (`date`) · Trạng thái: **chờ review** (B).
+Người làm: C (Claude Opus 5.5, `hue-rag-32`) · Date: 10:34 28/10/2026 (`date`) · Trạng thái: B review ready 0 / 0 / 1 (`streaming_ttft_review.md`) ⇒ m-1 sửa 11:00 28/10/2026.
 Plan: `streaming_ttft_plan.md` bản 2, **A duyệt sha `9683641b6c38`** (giữ D10). Code: nhánh `c70-ttft` `1f70095` (B review ready, vòng 2 0 / 0 / 0).
 Chạy: worktree `/tmp/c_ttft` (symlink `data/`, `knowledge-base-hue/`), `main` khi chạy = `249d270` + 2 commit harness; backend production không đổi; context 10.
 Chạy sau bộ "trước" B78, không chồng lượt trả phí nào (A cho chạy).
@@ -11,7 +11,8 @@ Chạy sau bộ "trước" B78, không chồng lượt trả phí nào (A cho ch
    chatbot.
 2. **Kết quả:** với câu trong kho, chữ đầu tiên hiện ra sớm hơn lúc câu trả lời xong khoảng **1,9 giây** (trung vị trên 7 câu, khoảng tin cậy 1,6–4,3 giây) ⇒ đạt dải
    **"rõ"** đã ghi trước (≥ 1,5 s). Tính từ lúc bấm gửi, người dùng thấy chữ đầu sau khoảng **2,4 s** (trung vị; câu chậm ≈ 4,8 s). Nếu đợi toàn bộ như hôm nay thì
-   trung vị **≈ 4,6 s** (câu chậm ≈ 7,6 s).
+   trung vị **≈ 4,6 s** (câu chậm ≈ 7,6 s) — số này là của 8 câu C viết, phần lớn cần trả lời dài. Trên 176 câu Golden (bộ "trước" B78, cùng context 10), đợi toàn bộ chỉ
+   **≈ 2,2 s / 4,9 s** ⇒ chờ lâu hay không tùy loại câu; streaming lợi nhiều nhất ở câu trả lời dài (sửa theo review B m-1).
 3. **Nếu chỉ cho hiện câu nào đã có nguồn `[n]`** (an toàn hơn, không lộ chữ chưa kiểm), phần lợi còn khoảng **1,0 giây**. Đây là dải "vừa", nhưng khoảng tin cậy
    rất rộng (0,1–3,0 giây) nên chưa chắc.
 4. Đường streaming **không làm câu trả lời xong chậm hơn**, và thư viện Agents đang dùng gần như không thêm trễ (≈ 0,08 s lúc bắt đầu, ≈ 0 ở cuối). Cả 30 lần gọi đều
@@ -86,7 +87,10 @@ Tìm + context trung vị 53,8 + 4,4 ms (so với giây thì không đáng kể)
 
 **So với yêu cầu phi chức năng User 28/10** (p50 ≤ 3 s / p95 ≤ 5 s / ≤ 0,0005 USD mỗi câu — theo `CURRENT_HANDOFF.md` commit `249d270`; [S] ước trên 8 câu, p95 của 8 giá trị
 ≈ giá trị lớn nhất):
-- Hôm nay, đợi đủ câu: p50 4,6 s / p95 7,6 s ⇒ **không đạt** cả hai.
+- Hôm nay, đợi đủ câu — **tùy loại câu**:
+  - 8 câu C (phần lớn trả lời dài; S10 token ra trung vị 232,5): p50 4,6 s / p95 7,6 s ⇒ **không đạt** cả hai;
+  - 176 câu Golden (bộ "trước" B78, harness tuần tự, không HTTP, cùng context 10): p50 2,2 s / p95 4,9 s ⇒ **đạt** (theo `CURRENT_HANDOFF.md` mục B81, không phải số của C).
+  ⇒ Không nói "hôm nay không đạt" chung chung; câu hỏi cần trả lời dài (kể, so sánh, liệt kê) mới vượt mức (review B m-1).
 - Stream, tính tới chữ đầu tiên: p50 2,4 s / p95 4,8 s ⇒ **đạt** cả hai.
 - Tiền mỗi câu ≈ 0,00029 USD ⇒ đạt.
 
