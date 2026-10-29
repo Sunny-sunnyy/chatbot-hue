@@ -1,3 +1,30 @@
+# STATUS A — cập nhật 19:52 29/10/2026 (PHIÊN 29/10 đang chạy; User kết phiên ~22:00–22:10)
+
+Terminal: `hue-rag-f7` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-a7`, C = `hue-rag-ef` (cả ba Claude Code, trực tiếp).
+
+## Commit
+- Đầu phiên: `5af038d`.
+
+## Đang làm / dở
+- Giao B90 (chuẩn bị đợt 2), C84 (A/A thước lỗi nặng), C85 (review B90), C86 (harness 8B) — `CURRENT_HANDOFF.md` "PHIÊN 29/10".
+
+## Đang khai báo sửa
+- `session_prompt/CURRENT_HANDOFF.md` (mục PHIÊN 29/10, bảng Session, Quyền), `session_prompt/sessions/STATUS_A.md`.
+
+## Quyền phiên này (User, trước 19:52 29/10/2026 — HẾT HẠN cuối phiên)
+- Như 28/10 (≤ 1 USD; B / C push nhánh riêng); đợt 2 ≤ 0,10 USD; Qwen3-8B duyệt (≤ 0,10 USD, gửi ra OpenRouter + collection thử).
+
+## Tiền paid phiên này
+- A: 0 USD (curl GET 1 trang web công khai — không phí).
+
+## Đã học / bẫy gặp (phiên 29/10)
+- Auto mode báo "model temporarily unavailable" 3 lần ⇒ Bash bị chặn tạm; sửa file bằng Edit thay script.
+- User đặt luật nội dung kho: "không chắc ⇒ bỏ hoặc sửa thành câu chắc chắn" — A đọc lại nguồn K017 và thấy edit 2 còn 1 con số sai chủ thể + 1 chi tiết không nguồn (`data/sua_kho_2026-10-27/dot2/a_k017_2026-10-29.md`) — bộ "sẵn áp" qua 2 vòng review vẫn còn chỗ "không chắc" ⇒ luật User đáng giữ.
+- Repo public: chi tiết nội dung kho (số liệu, tên kết cấu) để ở `data/`, file tracked chỉ trỏ đường dẫn — A suýt commit vào handoff, tự bắt trước commit.
+
+---
+Phần dưới: trạng thái kết phiên 28/10.
+
 # STATUS A — cập nhật 13:26 28/10/2026 (KẾT PHIÊN 28/10 — User đóng A / B / C để reset context)
 
 Terminal: `hue-rag-bf` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-ac`, C = `hue-rag-32` (cả ba Claude Code, trực tiếp; tên đổi mỗi lần mở).

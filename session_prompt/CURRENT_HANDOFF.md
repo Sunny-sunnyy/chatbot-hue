@@ -1,8 +1,39 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 13:21 28/10/2026 (A, **kết phiên 28/10** — User đóng A / B / C để reset context). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Cập nhật: 19:52 29/10/2026 (A, **phiên 29/10 đang chạy** — quyết định User + giao B90 / C84–C86). Trước: 13:21 28/10/2026 (kết phiên 28/10). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` §7; 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`; nhật ký User
 `bao_cao_he_thong/nhat_ky/2026-10-28_dua_context_10.md`. Bản handoff trước khi viết lại (có từng mục B78–B89 / C70–C83): `git show 25f23ae:session_prompt/CURRENT_HANDOFF.md`.
+
+## PHIÊN 29/10 — ĐANG CHẠY (mở 19:13, User kết phiên ~22:00–22:10 29/10/2026)
+
+**User quyết (6 câu mở phiên, A ghi nhận trước 19:52 29/10/2026 theo `date`; "làm đi" 19:52):**
+1. Quyền phiên **như 28/10** (A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD cả phiên; B / C commit + push nhánh riêng theo việc).
+2. Trần đợt 2 sửa kho **0,10 USD**.
+3. **Luật nội dung kho (User): "những câu nào bạn không chắc chắn có thể bỏ hoặc sửa lại câu khác mà bạn chắc chắn"** ⇒ một chỗ sửa chỉ vào đợt 2 khi có nguồn đọc được
+   nguyên văn **và** một session khác đọc lại khớp; không thì sửa thành câu nguồn nói đúng, hoặc bỏ. Áp cho K017 và cho D1–D7 + 15 câu (`dot2/quyet_dinh_user.md`) — User
+   không trả lời từng mục nữa. **K017:** A tự đọc nguồn BRIDGE2 (curl có cookie, 29/10): 2 ý của edit đúng nguyên văn; edit 2 còn 1 con số gắn sai chủ thể + 1 chi tiết
+   không nguồn nào nói ⇒ edit 1 giữ; edit 2 viết lại theo nguồn ⇒ D3 xong theo luật này. Chi tiết + nguyên văn: `data/sua_kho_2026-10-27/dot2/a_k017_2026-10-29.md` (private).
+4. **Qwen3-8B duyệt**: gửi kho + câu hỏi đánh giá ra OpenRouter (pin Nebius, `data_collection: deny`), tạo `hue_c78_qwen3_8b_4096`, xóa khi xong, trần 0,10 USD; chạy **sau đợt 2**.
+5. User gửi ChatGPT yêu cầu streaming (`c573949ac59a`) tối 29/10; kết quả vào `gửi chatgpt/2026-10-28/kết quả nghiên cứu/`.
+6. Thước lỗi nặng: **nhận 32 câu an toàn làm bộ kiểm bắt buộc** cho thay đổi sau; **đo nhiễu A/A trước** khi đặt sàn P0_sai. A dời lượt A/A lên **trước** khi sửa kho
+   (để có mốc + sàn cho chính đợt 2; không có lượt đo latency nào chạy) — đã báo User.
+
+**Giờ:** B / C xong phần chuẩn bị + review ~21:30; **áp đợt 2 vào kho chỉ khi B ước (theo thời gian đợt 1) làm trọn bước 1–8 trước 21:40** — không để kho / index sửa dở qua
+kết phiên; không kịp ⇒ áp ở phiên sau. 21:45: B / C cập nhật `STATUS_<X>.md` + dòng mình ở đây; A kết phiên.
+
+**B90 (B) — chuẩn bị đợt 2, không đụng kho / Qdrant, 0 USD.** Đọc: handoff mục "PHIÊN SAU" 2 (b)–(e) dưới; `data/sua_kho_2026-10-27/dot2/README.md`, `quyet_dinh_user.md`,
+`review_b88.md` (full); plan B78 `sua_kho_do_truoc_sau_plan.md` (`41485782b39e`, targeted). Làm: (a) tham số đầu vào / đầu ra cho `data/sua_kho_2026-10-27/tools/apply_edits.py`
+và `truoc_sau.py` (mặc định giữ hành vi cũ) — C kiểm diff; (b) `dot2.jsonl` bản mới theo luật User mục 3 (K017 edit 2 theo `a_k017_2026-10-29.md`; D1–D7 + 15 câu: mỗi mục
+sửa theo nguồn đọc được hoặc bỏ, ghi bảng mục ⇒ quyết định ⇒ trích nguồn / lý do; bản cũ giữ như `edits_v3_9b5105b35e8b`), báo sha mới; (c) phụ lục plan đo đợt 2 (mục "Căn
+cứ để review" đầu file): bộ "trước" = "sau" đợt 1 + 4 kiểm, **bộ 32 câu an toàn trước ↔ sau** (sàn theo nhiễu C84), câu đổi đoạn vì 2 edit đổi tiêu đề mục, trần 0,10 USD.
+Không làm: áp kho, xóa / ghi Qdrant, gọi API trả phí. Xong ⇒ báo A + C (sha file b + c).
+
+**C84 (C) — đo nhiễu A/A thước lỗi nặng, ≈ 0,008 USD (trần 0,02), chạy ngay.** Đọc: `report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_review.md` m-1 (cách (a)),
+`do_loi_nang_implementation.md` §6 (targeted). Làm: chạy lại mốc 32 câu an toàn (`data/loi_nang_2026-10-28/an_toan/questions.jsonl` `9fa81b0fcec4`) một lượt trên chatbot hiện tại,
+cùng cấu hình B89 + 2 judge như B89; so với lượt B89 ⇒ số câu đổi P0_sai / H giữa hai lượt; đề xuất sàn (vd "P0_sai mới ≤ nhiễu"). Đầu ra `data/loi_nang_2026-10-28/an_toan/aa_2026-10-29/`
++ report ngắn `report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_aa_implementation.md`; B kiểm khi rảnh. Không làm: đổi câu / rubric; lượt khác song song.
+**C85** (sau B90): review (a) diff tham số, (b) `dot2.jsonl` bản mới — **đọc lại độc lập** nguồn của mọi mục đổi / thêm (người thứ hai của luật mục 3), (c) phụ lục plan ⇒
+`<plan>_review.md`; A duyệt sha sau review. **C86** (khi rảnh): harness Qwen3-8B theo plan `52555da95828` (nhánh riêng, chưa chạy; B review code).
 
 ## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
 
@@ -76,9 +107,9 @@ streaming (bản nháp C77); Q1–Q5 = câu hỏi spec sửa kho §4; luật (a)
 
 | Vai | Terminal | Agent | Liên lạc | Việc phiên 28/10 | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-bf` (28/10) | Claude Opus 5.5 | trực tiếp | điều phối; merge B1; 5 chỗ báo cáo; TONG_HOP 8.2; vòng cải tiến 9 | `STATUS_A.md`; ≈ 0,0004 USD |
-| B — thực thi | `hue-rag-ac` (28/10, kết phiên 13:20) | Claude Opus 5.5 | trực tiếp | B78–B89 xong (plan + chạy đo, B3, sửa kho bước 0–10, thước lỗi nặng — C kiểm đạt) | `STATUS_B.md`; ≈ 0,0948 USD |
-| C — thực thi | `hue-rag-32` (28/10) | Claude Opus 5.5 | trực tiếp | C70–C83 (streaming đo + nháp, review, plan 8B, đợt 2) | `STATUS_C.md`; ≈ 0,0103 USD |
+| A — điều phối | **`hue-rag-f7` (29/10)**; 28/10 `hue-rag-bf` | Claude Opus 5.5 | trực tiếp | 29/10: điều phối; 28/10: merge B1; 5 chỗ báo cáo; TONG_HOP 8.2; vòng cải tiến 9 | `STATUS_A.md`; 28/10 ≈ 0,0004 USD |
+| B — thực thi | **`hue-rag-a7` (29/10)**; 28/10 `hue-rag-ac` | Claude Opus 5.5 | trực tiếp | 29/10: B90; 28/10: B78–B89 xong | `STATUS_B.md`; 28/10 ≈ 0,0948 USD |
+| C — thực thi | **`hue-rag-ef` (29/10)**; 28/10 `hue-rag-32` | Claude Opus 5.5 | trực tiếp | 29/10: C84 → C85 → C86; 28/10: C70–C83 | `STATUS_C.md`; 28/10 ≈ 0,0103 USD |
 
 Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `trực tiếp`. **B / C lúc mở phiên sau:** không có việc đang chạy; mở phiên ⇒ kiểm nhanh ⇒ báo A ⇒ chờ.
 Việc A dự định giao: **B** áp đợt 2 (bước 1–10, như B81–B83), **C** review từng bước (như C75 / C76 / C80) + harness Qwen3-8B; A tổng hợp + báo cáo.
@@ -88,6 +119,8 @@ Việc A dự định giao: **B** áp đợt 2 (bước 1–10, như B81–B83),
 - **Thường trực:** A commit/push `origin main`; B/C không commit trừ khi việc ghi rõ (nhánh riêng); duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt: A tự
   duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; luôn thử + so baseline trước khi chọn
   (User 24/10 20:49); commit trước sửa code + cổng ổn định sau mỗi gói (User 26/10).
+- **Phiên 29/10 (User, trước 19:52 29/10/2026; hết hạn cuối phiên):** như 28/10 — A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD; B / C commit + push nhánh riêng theo việc;
+  đợt 2 ≤ 0,10 USD; Qwen3-8B ≤ 0,10 USD (gửi ra OpenRouter + collection thử duyệt); C84 ≤ 0,02 USD.
 - **Phiên 28/10 — HẾT HẠN** (A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD; B / C push nhánh riêng). Tiền phiên 28/10 ≈ **0,106 USD** (cổng merge 0,0004; B3 0,0138; bộ "trước"
   0,0361; C73 0,0103; cổng sau build 0,0004; bộ "sau" 0,0365; B89 bộ an toàn 0,0079).
 - Trần đợt sửa kho đợt 1 0,15 USD (dùng ≈ 0,073; **đóng** User 28/10, giữ sao lưu). Giá `gpt-6-luna`: 0,1 USD / 1M vào, 0,5 USD / 1M ra (~0,00021 USD / câu context 10).
