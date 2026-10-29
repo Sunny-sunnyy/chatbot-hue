@@ -18,7 +18,7 @@
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:18 25/10/2026 (+ 8.1) |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt sửa kho đợt 1 **đã áp** 28/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 12:09 28/10/2026 (bản 5: 123 sửa / 65 file, 204 file / 8.426 đoạn, không làm hỏng) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 19:4x 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 18:56 25/10/2026 |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [28/10 — 10 đoạn vào chatbot, đóng 8.2, sửa kho đợt 1, đo streaming, thước lỗi nặng](nhat_ky/2026-10-28_dua_context_10.md); trước: [27/10 chiều — dọn phần tồn Phase cũ, soạn sẵn đợt sửa kho](nhat_ky/2026-10-27_chieu_phan_ton.md) | 09:40 28/10/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [29/10 — chuẩn bị đợt 2 sửa kho, đo nhiễu thước lỗi nặng](nhat_ky/2026-10-29_chuan_bi_dot_2.md); trước: [28/10 — 10 đoạn vào chatbot, đóng 8.2, sửa kho đợt 1, đo streaming, thước lỗi nặng](nhat_ky/2026-10-28_dua_context_10.md) | 21:36 29/10/2026 |
 
 ## Trạng thái ngắn
 

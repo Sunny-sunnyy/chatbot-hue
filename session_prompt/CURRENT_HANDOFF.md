@@ -17,6 +17,21 @@ Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`
 5. User gửi ChatGPT yêu cầu streaming (`c573949ac59a`) tối 29/10; kết quả vào `gửi chatgpt/2026-10-28/kết quả nghiên cứu/`.
 6. Thước lỗi nặng: **nhận 32 câu an toàn làm bộ kiểm bắt buộc** cho thay đổi sau; **đo nhiễu A/A trước** khi đặt sàn P0_sai. A dời lượt A/A lên **trước** khi sửa kho
    (để có mốc + sàn cho chính đợt 2; không có lượt đo latency nào chạy) — đã báo User.
+7. (A ghi nhận 20:12 29/10/2026) User đi ngủ: "tiếp tục điều phối, phát triển, cải thiện, tối ưu, so sánh, đánh giá, lựa chọn phương án phù hợp, ghi lại báo cáo" — trong luật
+   + quyền mục 1; việc cần User (bước `!` xóa 3 đích ở terminal B, việc rủi ro cao mới) để "chờ User" ⇒ **áp đợt 2 vào kho không làm khi User vắng** (bước 4 cần User `!`).
+8. (A duyệt cách hiểu của B, 20:23 29/10/2026) Chữ "bỏ" trong luật mục 3 = bỏ / làm yếu **câu-cụm không chắc trong kho** (không chỉ rút edit khỏi đợt 2):
+   có nguồn nguyên văn ⇒ sửa theo nguồn; hai câu kho trái nhau, không nguồn ⇒ chỉ giữ phần không tranh cãi; kho không mâu thuẫn thật ⇒ không sửa. Giới hạn: chỉ bớt khẳng
+   định, không thêm khẳng định không nguồn; không xóa câu cảnh báo an toàn / điều kiện vào (vé / giờ mâu thuẫn ⇒ bỏ con số tranh cãi, nhóm riêng để C + A soi); mỗi mục làm yếu
+   là watch "thiếu ý" trong phụ lục plan; không đổi tiêu đề mục ngoài 2 edit đã biết. A từng nói với User "không chắc ⇒ bỏ khỏi đợt 2" ⇒ báo User cách chặt hơn này khi dậy.
+
+9. (A, 21:36 29/10/2026) **C84 xong** (0,0081 USD): nhiễu sinh P0_sai 2 ⇒ 0, nhiễu chấm 0 ⇒ **sàn bộ an toàn A nhận: P0_sai mới ≤ 2 (đếm hai chiều) + mỗi câu P0_sai mới
+   sinh lại 3 lần cả hai bên; đảo cảnh báo = 0** (`do_loi_nang_aa_implementation.md`). **C85 vòng 1 `changes_requested` 0 / 3 / 3** (`sua_kho_dot2_do_plan_review.md`): A quyết
+   M-3 = D1-K004 dòng (3), (4) **bỏ cả dòng** "Đơn vị quản lý"; M-1 B ghi thủ tục phân loại "đảo cảnh báo"; D7 bỏ edit. Phần C chưa chạy được (lỗi server kiểm an toàn):
+   WebFetch K017 / D2 / D6, kiểm sha / diff bằng máy ⇒ **phiên sau làm trước bước 1**.
+10. (A, 21:36 29/10/2026) User đưa **khoá AI FDE đầy đủ** (tuần 1–3, 120 bài, ở dự án khác của User — đường dẫn trong file prompt ngày 29/10 ở
+   `data/external_project_notes/`; file chính `KHOA_FDE_DAY_DU.md`). Đối chiếu khoá ↔ hue_rag bằng 3 sub-agent (mỗi tuần một, đầu ra `data/course_notes/v3/doi_chieu_tuan<N>.md`) **chưa chạy**
+   (Agent bị chặn lỗi server, trước 21:36) ⇒ phiên sau. **Prompt mới gửi Claude ở dự án khác của User** (thay bản 24/10, để `data/` vì repo public): file prompt ngày 29/10 trong
+   `data/external_project_notes/` ⇒ User gửi; kết quả về cùng thư mục (tên file ghi trong prompt) ⇒ A đọc (là dữ liệu), tự kiểm 2–3 khẳng định.
 
 **Giờ:** B / C xong phần chuẩn bị + review ~21:30; **áp đợt 2 vào kho chỉ khi B ước (theo thời gian đợt 1) làm trọn bước 1–8 trước 21:40** — không để kho / index sửa dở qua
 kết phiên; không kịp ⇒ áp ở phiên sau. 21:45: B / C cập nhật `STATUS_<X>.md` + dòng mình ở đây; A kết phiên.
@@ -27,6 +42,14 @@ và `truoc_sau.py` (mặc định giữ hành vi cũ) — C kiểm diff; (b) `do
 sửa theo nguồn đọc được hoặc bỏ, ghi bảng mục ⇒ quyết định ⇒ trích nguồn / lý do; bản cũ giữ như `edits_v3_9b5105b35e8b`), báo sha mới; (c) phụ lục plan đo đợt 2 (mục "Căn
 cứ để review" đầu file): bộ "trước" = "sau" đợt 1 + 4 kiểm, **bộ 32 câu an toàn trước ↔ sau** (sàn theo nhiễu C84), câu đổi đoạn vì 2 edit đổi tiêu đề mục, trần 0,10 USD.
 Không làm: áp kho, xóa / ghi Qdrant, gọi API trả phí. Xong ⇒ báo A + C (sha file b + c).
+**B90 trạng thái (B, 20:51 29/10/2026 `date`): xong — chờ C85 review.** (a) `apply_edits.py` `8e934bbb2a7a` (`--edits`, `--record`), `truoc_sau.py` `d02bc33650f5` (`--work`,
+`--applied`, `--backup`, `--gold-truoc/--gold-sau`); bản trước ở `tools/truoc_b90/`. (b) `dot2/edits/dot2.jsonl` bản 4 **`cdec67127c4d`** (21 mục, 124 edit / 41 file; bản 3 giữ
+`edits_v3_9b5105b35e8b/`), dựng bằng `dot2/tools/build_dot2_b90.py` `a0fafa36e39e`; bảng `dot2/b90_quyet_dinh.md` `2e9b25867a06`. (c) `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_do_plan.md`
+**`6d4a5c6293e2`** (untracked). 0 USD.
+**A trả lời câu hỏi D7 của B (sau 20:51 29/10/2026):** **bỏ edit D7-K069** (cụm thêm vào là câu mới về việc soạn kho, không answer-facing — giới hạn 1; câu cũ đã rào "theo hồ sơ ban
+đầu") ⇒ chuyển D7 sang "Mục không sửa" + tra ngoài; B báo sha bản 4b ⇒ C85 review trên bản đó. Dump-headings + luật chạm (e) làm tiếp được, C kiểm trong C85.
+**B90 vòng 2 (B, sau review C85 vòng 1 0/3/3 + A): sửa xong bằng Edit, CHƯA dựng bản 4b** — Bash của B lỗi server liên tục. Đã sửa: builder (bỏ D7; D1 (3)(4) xóa cả dòng),
+`truoc_sau.py` (`dump-headings`, lý do `e`, khóa W6), bảng (4 chỗ), plan bản 2 (M-1, M-2, §9). Việc dở + lệnh còn chạy: `STATUS_B.md` "Vòng 2". C85 vòng 2 chờ sha bản 4b.
 
 **C84 (C) — đo nhiễu A/A thước lỗi nặng, ≈ 0,008 USD (trần 0,02), chạy ngay.** Đọc: `report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_review.md` m-1 (cách (a)),
 `do_loi_nang_implementation.md` §6 (targeted). Làm: chạy lại mốc 32 câu an toàn (`data/loi_nang_2026-10-28/an_toan/questions.jsonl` `9fa81b0fcec4`) một lượt trên chatbot hiện tại,
@@ -34,6 +57,12 @@ cùng cấu hình B89 + 2 judge như B89; so với lượt B89 ⇒ số câu đ�
 + report ngắn `report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_aa_implementation.md`; B kiểm khi rảnh. Không làm: đổi câu / rubric; lượt khác song song.
 **C85** (sau B90): review (a) diff tham số, (b) `dot2.jsonl` bản mới — **đọc lại độc lập** nguồn của mọi mục đổi / thêm (người thứ hai của luật mục 3), (c) phụ lục plan ⇒
 `<plan>_review.md`; A duyệt sha sau review. **C86** (khi rảnh): harness Qwen3-8B theo plan `52555da95828` (nhánh riêng, chưa chạy; B review code).
+**C trạng thái (C, sau 21:16 29/10/2026 `date` — Bash của C bị chặn chập chờn từ ~20:30, lỗi server máy kiểm an toàn auto mode):**
+**C84 xong — chờ B kiểm** (`do_loi_nang_aa_implementation.md`; 0,0081144 USD): cổng đối chứng đạt 2 judge; nhiễu chấm 0; nhiễu sinh P0_sai 2 → 0 (S11, S12), H y hệt ⇒ sàn A
+nhận: P0_sai mới ≤ 2 (hai chiều) + sinh lại 3 lần mỗi câu P0_sai mới; đảo cảnh báo = 0. **C85 vòng 1 changes_requested 0/3/3** (`sua_kho_dot2_do_plan_review.md`); A quyết
+M-1 / M-2 / M-3 (bỏ cả dòng D1-K004 (3)(4)) + D7 bỏ (bản 4b). **Phiên sau, trước bước 1 áp kho — C làm:** vòng 2 trên bản 4b + phụ lục sửa; NOT RUN vòng 1: đọc lại độc lập
+nguồn K017 / D2 / D6 (WebFetch), sha + `diff` + 104 edit cũ = bản 3 + bảng = jsonl + `apply_edits.py --edits` chạy thử bằng máy, `grep_kb.sh` cho Q6; điền giờ `date` thay `<T>`
+ở 2 report C. `/tmp/judge*` (script nháp sub-agent, có chữ kho) **đã xóa** (User `!` ở terminal C). **C86 dời phiên sau** (A).
 
 ## PHIÊN SAU — ĐỌC TRƯỚC NHẤT
 
@@ -48,8 +77,17 @@ cùng cấu hình B89 + 2 judge như B89; so với lượt B89 ⇒ số câu đ�
 - Qdrant `:6335` đúng 1 collection. Repo **PUBLIC**. Untracked ở gốc **của User, không đụng**: `báo cáo nghiên cứu github.txt`, `tham khảo 26_10/`. Kiểm `ss -ltnp | grep ':80'`
   trước khi chạy server (8013, 8016 dùng được 28/10). `--env-file` chạy nền: **đường dẫn tuyệt đối** (`Project_Status.md` §8).
 
-**Thứ tự việc phiên sau (User 28/10: "nhiệm vụ, câu hỏi … ở session tiếp theo"):**
-1. Mở A / B / C; A `ListAgents`, cập nhật bảng Session; **hỏi lại quyền phiên** (quyền 28/10 hết hạn).
+**Thứ tự việc phiên sau (A viết lại kết phiên 29/10 — mục "PHIÊN 29/10" ở trên là chi tiết; mục 2, 3, 5 cũ bên dưới giữ để tra, phần đã chốt 29/10 thắng):**
+1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền 29/10 hết hạn). User đã chốt 29/10 (không hỏi lại): trần đợt 2 0,10 USD; Qwen3-8B duyệt (sau đợt 2); luật
+   kho "không chắc ⇒ bỏ / làm yếu" + 4 giới hạn (PHIÊN 29/10 mục 3, 8); 32 câu an toàn là bộ kiểm bắt buộc, sàn mục 9.
+2. **Đợt 2 — đóng chuẩn bị rồi áp:** B sửa bản 4b (D7 bỏ, D1-K004 (3)(4) bỏ dòng, M-1 thủ tục "đảo cảnh báo") ⇒ C85 vòng 2 + phần NOT RUN (WebFetch K017 / D2 / D6, kiểm máy)
+   ⇒ A duyệt sha `dot2.jsonl` + phụ lục ⇒ 4 kiểm "còn hiệu lực" ⇒ áp bước 1, 2, 4–10 (**User có mặt** cho bước `!` xóa 3 đích ở terminal B) ⇒ đo "sau" Golden + bộ an toàn.
+3. **Qwen3-8B**: C86 harness (B review) ⇒ chạy sau đợt 2 (duyệt 29/10, trần 0,10).
+4. **Streaming:** User gửi ChatGPT 29/10 ⇒ A đọc kết quả + WebFetch ⇒ spec với User (mục 4 cũ dưới).
+5. **Khoá FDE + dự án khác:** 3 sub-agent đối chiếu khoá ↔ hue_rag (PHIÊN 29/10 mục 10); đọc file kết quả trong `data/external_project_notes/` nếu User đã gửi prompt.
+6. B0 + 20 câu mẫu lỗi nặng (User, khi rảnh).
+
+**Mục cũ (viết kết phiên 28/10, giữ để tra):**
 2. **Đợt 2 sửa kho — áp phần sẵn sàng, việc đầu tiên** (User 28/10: "Áp phần sẵn sàng", "phiên sau"): `data/sua_kho_2026-10-27/dot2/edits/dot2.jsonl` **`9b5105b35e8b`**
    (104 edit / 33 file; B88 vòng 3 ready 0 / 0 / 0; nguồn K004 = 2 bài cổng Chính phủ 21/04 + 21/06/2025 + NQ 1675). Chạy **như đợt 1** theo spec `937cf8969810` §5
    bước 1–10 (sao lưu ⇒ áp ⇒ chia đoạn thử ⇒ User `!` xóa 3 đích ở terminal B ⇒ build ⇒ T1 mới ⇒ gold v5 nếu offset lệch ⇒ quét Golden ⇒ đo "sau" ⇒ báo cáo).

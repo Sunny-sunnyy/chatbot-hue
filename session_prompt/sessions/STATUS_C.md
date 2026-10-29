@@ -1,3 +1,36 @@
+# STATUS C — KẾT PHIÊN 29/10 (cập nhật sau 21:16 29/10/2026 `date`; Bash bị chặn lúc ghi nên chưa lấy được giờ mới)
+
+Terminal `hue-rag-ef` · A = `hue-rag-f7`, B = `hue-rag-a7` (trực tiếp). Quyền phiên như 28/10 (User, qua A) — **hết hạn cuối phiên**. Việc: C84 → C85 → C86 (`CURRENT_HANDOFF.md` mục "PHIÊN 29/10").
+
+## Phiên 29/10
+
+| Mã | Việc | Kết quả | File |
+|---|---|---|---|
+| C84 | đo nhiễu A/A thước lỗi nặng (32 câu an toàn) | **xong, chờ B kiểm.** Lượt 2 32 / 32, 0 lỗi, ngữ cảnh giống từng chữ lượt 1; chấm mù trộn 2 lượt + 15 đối chứng, 2 judge (8 sub-agent). Cổng đối chứng đạt; nhiễu chấm 0; P0_sai 2 → 0 (S11, S12), 0 câu mới; H y hệt. Sàn A nhận: P0_sai mới ≤ 2 (hai chiều) + sinh lại 3 lần; đảo cảnh báo = 0 | `report_agent/…/do_loi_nang_aa_implementation.md`; `data/loi_nang_2026-10-28/tools/an_toan_aa.py`; `data/loi_nang_2026-10-28/an_toan/aa_2026-10-29/` |
+| C85 | review B90 (tham số, `dot2.jsonl` bản 4, phụ lục plan) | **vòng 1 changes_requested 0/3/3**; A quyết M-1 / M-2 / M-3 (bỏ dòng D1-K004 (3)(4)) + bỏ D7 (bản 4b) | `report_agent/…/sua_kho_dot2_do_plan_review.md` |
+| C86 | harness Qwen3-8B | **dời phiên sau** (A) | — |
+
+**Tiền paid phiên 29/10 (C): 0,0081144 USD** (C84 lượt sinh). Judge: quota Claude (~0,8 M token), 0 USD.
+
+**Dở — phiên sau làm TRƯỚC bước 1 áp kho đợt 2:**
+1. C85 vòng 2 trên `dot2.jsonl` bản 4b (B báo sha) + phụ lục sửa M-1 / M-2.
+2. NOT RUN vòng 1: đọc lại độc lập nguồn K017 / D2 / D6 bằng WebFetch (URL trong `dot2/b90_quyet_dinh.md` §1); `sha256sum` 5 file đầu vào; `diff` 2 script với `tools/truoc_b90/`;
+   104 edit cũ = bản 3 (trừ K017 edit 2); bảng = jsonl; `apply_edits.py --edits` chạy thử; `scripts/grep_kb.sh` cho Q6.
+3. Điền giờ `date` thay chữ `<T>` ở dòng "Date" của `do_loi_nang_aa_implementation.md` và `sua_kho_dot2_do_plan_review.md`.
+4. ✓ **Đã xóa** `/tmp/judge_a0/`, `/tmp/judge_a2/`, `/tmp/judge_a1_1/`, `/tmp/judge1_a1_1_mine/`, `/tmp/judge_a2_1/` (script nháp của sub-agent judge, có chữ kho) — User chạy `!` ở terminal C tối 29/10.
+5. C86 harness Qwen3-8B.
+
+**Bẫy gặp phiên 29/10 (đầu vào vòng cải tiến):**
+- **Máy kiểm an toàn của auto mode lỗi server ~20:30–21:30** ⇒ Bash / WebFetch / SendMessage / Agent bị chặn chập chờn (Read / Write / Edit vẫn chạy). Cách đi tiếp được: làm phần
+  chỉ cần đọc file (review diff bằng Read hai bản), ghi report với chỗ trống `<T>` và mục NOT RUN rõ ràng, thử lại công cụ giữa các bước; không gõ giờ ước.
+- Sub-agent judge cũng bị chặn Bash ⇒ 2 / 8 lô viết file nhãn bằng Write, chưa tự kiểm JSON ⇒ `check` của người giao bắt buộc trước khi dùng số (lượt này 71 / 71, 0 lỗi).
+- Sub-agent để script nháp có chữ kho ở `/tmp` dù brief không yêu cầu ⇒ brief judge lần sau: "không tạo file ngoài file nhãn; cần script thì viết vào `/tmp/<tên lô>/` và xóa khi xong".
+- **Đếm nhiễu A/A một chiều là sai** khi hai lượt cùng cấu hình (hoán đổi được): C viết finding M-2 theo một chiều trước khi có số, có số rồi phải sửa lại thành hai chiều.
+
+- Sửa dòng cũ: hai review ở §1 phiên 28/10 dưới đây **đã commit** (`979537d`).
+
+---
+
 # STATUS C — KẾT PHIÊN 28/10 (cập nhật 13:26 28/10/2026)
 
 Terminal phiên 28/10: `hue-rag-32` (tên đổi mỗi lần mở — dùng `ListAgents`) · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-bf`, B = `hue-rag-ac` (trực tiếp).
