@@ -206,3 +206,25 @@ conclusion: null
 2. Người viết harness: C; B review code + kết quả.
 
 (Bản 1 câu 2 "ngưỡng `latency_gate`" bỏ — thay bằng luật (i) spec 8.2, M-1 review B.)
+
+## Sửa đổi 30/10
+
+Người viết: B (`hue-rag-24`), 11:28 30/10/2026 (`date`); bản A duyệt trước đó `52555da95828`. Quyết định A 11:3x 30/10/2026 (B92). **Không sửa các mục trên; không đổi tiêu
+chí §7.** C review phần này ⇒ A duyệt sha mới; phải xong **trước** mọi lượt có phí của 8B.
+
+1. **Mốc e5 chính thức = mốc trên kho sau đợt 2.** Bảng §5 là số trên kho đợt 1 (B tính lại 30/10 trên kho đợt 1 bằng `g1_retrieval.run_config` mặc định: dev 40 câu có nhãn,
+   context đủ 24, top-10 24, pool dense 33, thiếu ở pool dense 7 — khớp §5). 8B chạy sau đợt 2 (kho đổi; có thể có nhãn v5) ⇒ §6 bước 2 thay bằng: trên kho đợt 2, với nhãn
+   `GOLD_PATH` lúc chạy, chạy mốc e5 `--group dev` và `--group test` **hai lần** (tên thứ hai thêm `_rerun`); hai lần phải giống từng dòng trừ `dense_ms` (e5 tất định). Điều kiện
+   này **thay** "mốc e5 lệch bảng §5" ở §6 bước 2 và §8. Ghi bảng như §5 cho mốc mới vào report trước pilot.
+2. **Cỡ mẫu tính lại trước pilot** (ghi vào report, trước lượt có phí đầu tiên): n dev có nhãn; số câu context thiếu (trần thắng); trong đó số câu thiếu ngay ở pool dense; số
+   câu có thể tụt (context đủ). Nếu n ≠ 40 ⇒ tính lại các cặp thắng / thua nhỏ nhất cho "CI 95 % > 0" bằng `bootstrap_mean_diff` (10.000 vòng, seed `20261024`) như cách ở §3.
+   Nếu số câu context thiếu < số thắng nhỏ nhất cần (khi 0 thua) ⇒ thí nghiệm không thể ra "tốt hơn" ở cỡ mẫu này ⇒ dừng, báo A (A trình User có chạy hay không).
+3. **Cùng một file nhãn** cho mốc e5 và 8B (sha ghi trong report). Nhãn đổi giữa chừng ⇒ chạy lại mốc e5.
+4. **Code:** harness `backend/experiments/phase_8_2/qwen3_8b.py`, nhánh `b92-qwen3-harness` — B viết, C review (đổi người so với §10.2, A 30/10). Lệch §4.2 A duyệt:
+   `build_full_corpus_retrieval_service(..., dense_runner=None)` để lấy vector câu hỏi (A/A §3) + log từng request. Provider kiểm bằng hằng `OPENROUTER_EXPECTED_PROVIDER`
+   (giá trị thật `"Nebius"`; §6 bước 4 viết `"nebius"`). Report `qwen3_8b_harness_implementation.md`.
+5. Không đổi: chỉ số quyết, sàn, theo dõi (§3), YAML (§7), tiền / trần / các điều kiện dừng khác (§8).
+6. **Đường lỗi câu hỏi** (review C88 M-1, A quyết 11:3x 30/10/2026; thêm 11:33 30/10/2026): thay §4.2 "không thử lại; lỗi ⇒ dòng lỗi" — runner tự thử lại **1 lần** (chờ 10 s,
+   hoặc `Retry-After`); câu lỗi cả hai lần ⇒ lượt dừng ⇒ **chạy lại cả lượt** (tên mới). `dense_ms` p50 / p95 báo **hai cách**: mọi câu (gồm câu thử lại — sát trải nghiệm thật) và
+   chỉ câu gọi đúng một lần, kèm số câu thử lại và số dòng log ≠ 200 (`qwen3_8b latency --name …`, cũng in trong `retrieve`). Luật dừng §8 "lỗi gọi câu hỏi > 5 % một lượt"
+   thay bằng **"câu phải thử lại > 5 % một lượt ⇒ dừng, báo A"**.

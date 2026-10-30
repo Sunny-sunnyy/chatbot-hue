@@ -194,8 +194,8 @@ là lịch sử.
 - `knowledge-base-hue/`, `data/`, Qdrant storage, Golden, trace chi tiết và
   `gửi chatgpt/` là private: không commit, không chép nội dung vào report tracked.
 - Sửa corpus: backup vào `knowledge-base-hue/meta/` trước, review bằng diff.
-- Data egress: chỉ gửi chunk/query tới OpenRouter cho `qwen/qwen3-embedding-8b`
-  trong việc đã duyệt; mọi request `data_collection: deny`.
+- Data egress: runtime gửi câu hỏi + ngữ cảnh (tối đa 10 đoạn kho) tới OpenAI (`gpt-6-luna`) mỗi lần sinh câu trả lời; chunk/query tới OpenRouter
+  chỉ cho `qwen/qwen3-embedding-8b` trong việc đã duyệt, mọi request `data_collection: deny` (sửa 30/10: dòng cũ thiếu OpenAI — sub-agent đối chiếu khoá FDE tuần 3).
 - Không đọc/in/log `.env` hay secret; dùng `uv run --env-file .env`.
 - Provider/model/dataset mới, paid run ngoài giới hạn đã ghi, deploy, xóa dữ
   liệu: cần User duyệt qua A.

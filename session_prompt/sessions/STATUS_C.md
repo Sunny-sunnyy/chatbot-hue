@@ -1,3 +1,43 @@
+# STATUS C — PHIÊN 30/10 (mở 10:31 30/10/2026 `date`; cập nhật 12:00 30/10/2026)
+
+Terminal `hue-rag-0e` · A = `hue-rag-0f` (suy ra: B tự báo là `hue-rag-24`), B = `hue-rag-24` (trực tiếp). Quyền phiên 29/10 **hết hạn**; chờ A giao việc.
+Kiểm nhanh 10:31 30/10/2026: `main` `d8401d1`, không thay đổi tracked, hook `.githooks`, Qdrant 1 collection 8.426 point — khớp handoff.
+Lệch: `dot2.jsonl` vẫn bản 4 `cdec67127c4d` (bản 4b của B chưa dựng); 3 report untracked (C84, plan B, review C85); 4 worktree AGY (`~/.gemini/…`, commit `c725987`) handoff không nhắc — không đụng; `tham khảo 26_10/` không còn.
+User (10:41 30/10/2026 ghi nhận, terminal C): C làm việc trực tiếp với A, báo cáo cho A; **việc A giao = User nói "làm đi"**. Chờ A giao.
+**C87 (A giao 10:57 30/10, = "làm đi")** — nhận 11:02 30/10/2026. Khai báo sửa: `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_do_plan_review.md`, `…/do_loi_nang_aa_implementation.md` (dòng Date),
+`data/sua_kho_2026-10-27/dot2/c87_doc_lai_nguon_2026-10-30.md` (mới, private); file tạm `/tmp/c87_src/`, `/tmp/c87_tools/` (HTML nguồn web, không chữ kho) — xóa khi xong. Dòng C trong `CURRENT_HANDOFF.md`.
+**C87 xong 11:09 30/10/2026:** C85 vòng 2 `changes_requested` 0/1/1 (M-4 thứ tự `dump-headings` bước 1; m-4 lý do K017); 4b `c0b5876ea510` đạt; nguồn K017 / D2 / D6 khớp; `<T>` điền; C84 m-2 sửa. `/tmp/c87_*` đã xóa. 0 USD. Chờ B sửa M-4 ⇒ C kiểm phần sửa; rồi kiểm từng bước áp; C86 sau.
+Bẫy 30/10: trang nguồn D2 trả gzip dù không xin (curl không `--compressed`) ⇒ tách chữ ra rỗng; luôn `file` / `gunzip` trước khi kết luận "trang không có".
+A (11:09 30/10/2026 ghi nhận): duyệt 4b `c0b5876ea510`; B sửa M-4 + m-4 ⇒ C kiểm vòng 3 (chỉ phần sửa). Harness Qwen3-8B nay là **B92** (B viết, nhánh `b92-qwen3-harness`) — C review khi B báo bản cuối (thay C86). C rảnh tới lúc đó.
+**C85 vòng 3 11:12 30/10/2026: ready 0/0/0** (plan `5f30ac7eac16`, bảng `92e5b3caf6f1`). Tiếp: kiểm từng bước khi B áp đợt 2; review code B92 khi B báo.
+A (11:16 30/10/2026 ghi nhận): duyệt plan `5f30ac7eac16` + bảng `92e5b3caf6f1`; **B93** áp đợt 2 bước 1–6 + bộ "sau" + 32 câu an toàn. C kiểm khi B báo: diff backup (sau bước 2), chia đoạn thử, build record / T1, quét Golden. **W31: đang ghi kho / Qdrant + đo ⇒ C không việc nặng / trả phí.** B92 review sau đo "sau".
+Kiểm B93 bước 1 (11:24 30/10/2026): khai báo file mới `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_b1_review.md`.
+**C88 (A giao, 11:26 30/10/2026 nhận):** review code B92 (nhánh `b92-qwen3-harness` `8545650`). Khai báo: file mới `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_harness_review.md`; worktree đọc riêng `/tmp/c88_wt` (gỡ khi xong). Không gọi OpenRouter / tạo collection; không việc nặng khi B ở bước 2–6.
+**C88 xong 11:31 30/10/2026:** code `changes_requested` 0/1/1, plan sửa đổi ready. Worktree `/tmp/c88_wt` đã gỡ. Chờ B sửa M-1 ⇒ C kiểm lại; chờ B93 bước 2.
+A (11:32 30/10/2026 ghi nhận): duyệt plan `70ee5d44c260`; M-1 theo cách 1 + p50/p95 báo **cả hai** (mọi câu / chỉ câu gọi một lần) + số câu thử lại; luật dừng mới "câu phải thử lại > 5 % ⇒ dừng"; m-1 B sửa. ⇒ C kiểm phần sửa khi B báo commit + sha plan; T1 sau rebase kho đợt 2.
+**C88 vòng 2 11:35 30/10/2026: ready 0/0/0** (code `fb0b82c`, plan `9f3d616e2a59`). Worktree `/tmp/c88b_wt` đã gỡ. Chờ B93 bước 2; T1 B92 sau rebase.
+**C89 (A giao, 11:45 30/10/2026 nhận):** (a) đếm lỗi citation mọi lượt đo; (b) nháp streaming v2. Khai báo: file mới `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming_v2.md`, `data/tinh_nang_moi_2026-10-27/c89_dem_loi_citation.md` (+ script `data/tinh_nang_moi_2026-10-27/tools/c89_count.py`). 0 USD, không sửa code.
+**C89 xong 11:50 30/10/2026:** (a) `c89_dem_loi_citation.md` — cấu hình đang chạy 0 / 489 lần sinh (0 / 841 kể cả chấm lại v2), cận trên ≈ 0,6 %; lỗi còn lại chỉ dạng "không có [n]"; (b) `c77_phuong_an_streaming_v2.md` (v1 giữ `274bf12a650a`). 0 USD.
+**C90 (A giao, 11:51 30/10/2026 nhận):** nháp bảng giới hạn đã biết Phase 0–8. Khai báo: file mới `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md`. Chỉ đọc, 0 USD.
+**C90 xong 11:54 30/10/2026:** `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` — 33 giới hạn (chất lượng 11, PCN 5, chia đoạn / index 6, đo 6, vận hành 5). 0 USD.
+**C91 (A giao, 11:55 30/10/2026 nhận):** nháp phương án hội thoại nhiều lượt. Khai báo: file mới `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md`. 0 USD.
+**C91 xong 11:58 30/10/2026:** `c91_phuong_an_nhieu_luot.md` (`1c0313aafd25`) — PA0–PA3, C nghiêng PA1 (trình duyệt giữ, server không lưu, luật chữ, ≤ 3 đoạn `[11]`–`[13]`), đo cặp PA1 ↔ PA2; D0–D7. Tiếp: sửa 3 minor C89 (B review `c89_review.md`).
+**C89 minor sửa 11:59 30/10/2026:** m-1 / m-2 / m-3 (B `c89_review.md`); sha c89 `575f128f1c86`, nháp v2 `b19f8454e22b`. Bẫy: "chỉ một dạng lỗi" là nói quá — phải tách *quan sát* với *code cho phép*. Chờ A / B93 bước 2.
+
+**Tóm tắt lúc 12:00 30/10/2026:** xong C87 (C85 vòng 2–3 ready), kiểm B93 bước 1 ready, C88 (B92 vòng 2 ready, plan sửa đổi ready), C89 (+ 3 minor), C90, C91. Tiền paid C phiên 30/10: **0 USD**.
+**Đang chờ:** A nhắn B "chạy bước 2" (User về ~13:00) ⇒ C kiểm từng bước đợt 2: diff với backup sau bước 2 (`knowledge-base-hue/meta/backup_sua_kho_dot2_2026-10-30/`), `dump-headings --arm truoc` có chạy trước bước 5, chia đoạn thử (cột huydang ≤ 256), build record / T1 mới, quét Golden. Sau đợt 2: T1 nhánh B92 sau rebase. Không việc nặng trước đó.
+**File C tạo phiên này (private, không commit):** `data/sua_kho_2026-10-27/dot2/c87_doc_lai_nguon_2026-10-30.md`; `data/tinh_nang_moi_2026-10-27/{c89_dem_loi_citation.md, c77_phuong_an_streaming_v2.md, c91_phuong_an_nhieu_luot.md, tools/c89_count.py}`; `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md`. **Tracked (untracked, A commit):** `report_agent/2026-10-27_phan_ton_phase_cu/{sua_kho_dot2_do_plan_review.md, do_loi_nang_aa_implementation.md, sua_kho_dot2_b1_review.md, qwen3_8b_harness_review.md}`.
+**Bẫy 30/10:** curl trang nguồn có thể trả gzip / cần cookie JS ⇒ kiểm `file`, đọc HTML gốc trước khi kết luận "không có"; đừng nói "chỉ một dạng lỗi" khi mới chỉ *quan sát* một dạng.
+
+**C90 bản 2 12:02 30/10/2026:** sửa theo B `gioi_han_da_biet_review.md` (M-1 + m-1…m-4 + gợi ý) ⇒ 36 dòng, sha `6113fce7b3fe`; B kiểm phần sửa. Bẫy: đừng dẫn số dòng `CURRENT_HANDOFF.md` (đổi hằng ngày) — dẫn tên mục.
+**C90 vòng 2 (12:04 30/10/2026): B ready 0/0/0** (bản 2 `6113fce7b3fe`, `gioi_han_da_biet_review.md` §5). Chờ đợt 2 bước 2.
+**C92 (A giao, 12:09 30/10/2026 nhận):** review plan B96 "không biết ngày hôm nay". Khai báo: file mới `data/ngay_hien_tai_2026-10-30/plan_nhap_review.md`. Chỉ đọc, 0 USD.
+**C92 xong 12:13 30/10/2026:** review plan B96 `ccaf9b426197` ⇒ `changes_requested` 0/1/4 (`data/ngay_hien_tai_2026-10-30/plan_nhap_review.md`). Chờ B sửa ⇒ C kiểm phần sửa.
+**C92 vòng 2 12:17 30/10/2026: ready 0/0/0** (plan B96 bản 2 `fd63d9192ef6`).
+Việc dở chờ giao (từ phiên 29/10, dưới): C85 vòng 2 + phần NOT RUN; điền `<T>` 2 report; C86 harness Qwen3-8B. Handoff: A mới hỏi User xác nhận mục tiêu mới ⇒ thứ tự có thể đổi.
+
+---
+
 # STATUS C — KẾT PHIÊN 29/10 (cập nhật sau 21:16 29/10/2026 `date`; Bash bị chặn lúc ghi nên chưa lấy được giờ mới)
 
 Terminal `hue-rag-ef` · A = `hue-rag-f7`, B = `hue-rag-a7` (trực tiếp). Quyền phiên như 28/10 (User, qua A) — **hết hạn cuối phiên**. Việc: C84 → C85 → C86 (`CURRENT_HANDOFF.md` mục "PHIÊN 29/10").

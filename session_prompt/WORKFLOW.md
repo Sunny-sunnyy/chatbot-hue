@@ -186,6 +186,8 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    tắt sang `PROJECT_HISTORY.md`); `Project_Status.md` theo quy tắc Governance v2 §6.
 6. **Git:** commit theo mốc; stage **từng file đã review** (không `git add <thư mục>` hay `-A`); luôn
    `git diff --cached --stat` trước khi commit; không commit dữ liệu private; push `origin`.
+   **Nhánh xong việc** (đã merge, hoặc chỉ còn là hồ sơ phương án bị bỏ): A **đề xuất xóa** trong báo cáo đóng đợt / kết phiên kèm danh sách nhánh + còn gì
+   chỉ nằm trên nhánh; nhánh hồ sơ ⇒ gắn tag `hoso/<tên>` trước khi xóa để không mất report / code (User 30/10). Xóa chỉ khi User duyệt (User `!`).
 7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/a_…`), không trong
    working tree chung đang có B/C làm; việc A tự làm vẫn để B/C kiểm.
 8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)

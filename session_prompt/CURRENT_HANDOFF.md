@@ -19,10 +19,80 @@ Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`
   `SHA_4B` / `SHA_TS` / `COUNT_4B` / `FILES_4B` ở plan + bảng ⇒ báo A + C (sha plan, bảng, jsonl, 2 script). Không đụng kho / Qdrant, 0 USD. Sau đó: kiểm C84 (`do_loi_nang_aa_implementation.md`) khi rảnh.
 - **C87 (C)** — ngay: phần NOT RUN vòng 1 không cần 4b (WebFetch đọc lại độc lập nguồn K017 / D2 / D6; điền giờ `date` thay `<T>` ở 2 report C); khi B báo sha 4b: **C85 vòng 2** (bản 4b +
   plan bản 2 + phần kiểm máy: sha, `diff` với `tools/truoc_b90/`, 104 edit cũ = bản 3, bảng = jsonl, `apply_edits.py --edits` thử, `grep_kb.sh` cho Q6) ⇒ `<plan>_review.md`. 0 USD.
+  **C87 trạng thái (C, 11:09 30/10/2026 `date`): vòng 2 xong — `changes_requested` 0 / 1 / 1** (`sua_kho_dot2_do_plan_review.md` §0, §5, sha `a87f05bf4516`). Bản 4b `c0b5876ea510` **đạt** (3 nguồn đọc lại khớp — `dot2/c87_doc_lai_nguon_2026-10-30.md`; kiểm máy đạt) ⇒ A duyệt sha được. **M-4:** plan §6 bước 1 chạy `dump-headings --arm truoc` khi `applied_edits_dot2.jsonl` chưa có ⇒ dừng (tái tạo) ⇒ dời sang sau bước 2, trước bước 5; m-4 câu lý do K017 trong bảng. `<T>` 2 report đã điền; C84 m-2 (B) đã sửa. 0 USD.
+  **C85 vòng 3 (C, 11:12 30/10/2026 `date`): `ready_for_user_confirmation` 0 / 0 / 0** — M-4, m-4 đóng (review §6, sha `7b861cdd6491`) ⇒ A duyệt plan `5f30ac7eac16` + bảng `92e5b3caf6f1` được.
+  **C88 (C, 11:31 30/10/2026 `date`):** code B92 tới `400ccdc` **`changes_requested` 0 / 1 / 1** (M-1 câu hỏi tự thử lại + dừng cả lượt khi lỗi hai lần, lệch §4.2 chưa khai, `dense_ms` gồm 10 s chờ; m-1 log trước parse); plan "Sửa đổi 30/10" `70ee5d44c260` **ready** (chỉ thêm). `qwen3_8b_harness_review.md`.
+  **C88 vòng 2 (C, 11:35 30/10/2026):** code B92 `fb0b82c` **ready 0 / 0 / 0**; plan `9f3d616e2a59` ready (review §7).
 - Sau C85 ready + A duyệt sha: B áp đợt 2 (spec `937cf8969810` §5 bước 1, 2, 4–10; **User có mặt** cho `!` xóa 3 đích ở terminal B), C kiểm từng bước; trần 0,10 USD.
   Rồi C86 harness Qwen3-8B (B review), chạy sau khi đợt 2 áp xong (trần 0,10 USD). Có lượt đo latency ⇒ không việc nặng song song (W31).
+- **(A, 11:05 30/10/2026)** B báo (tin nhắn; ghi STATUS bị auto mode chặn ở terminal B): B91 xong 11:01 — `dot2.jsonl` bản 4b `c0b5876ea510` (20 mục, 123 edit / 40 file), plan
+  `26e974dc56ff`, bảng `42b89bd818f4` ⇒ C85 vòng 2. B kiểm C84 xong 11:04: `do_loi_nang_aa_review.md` **ready 0 / 0 / 2** (m-1 `<T>`, m-2 §6 câu "/tmp/judge* C xóa" cũ ⇒ C sửa trong C87).
+  **Watch đợt 2 (B, ngoài phạm vi C84):** rubric lỗi nặng chưa bắt kiểu "đem cảnh báo của nơi khác áp cho nơi được hỏi" (thuộc mức nặng nhất) ⇒ người đọc bộ an toàn đợt 2 soi
+  riêng; không đổi rubric giữa chừng.
+- **B92 (B, A giao 11:05 30/10/2026; đổi người so plan §10.2 vì B rảnh, C bận C85)** — viết harness Qwen3-8B theo plan `52555da95828` §4 trong worktree riêng
+  `/tmp/b92_qwen3` nhánh `b92-qwen3-harness` (từ `main` `e70007b`); **C review code**. 0 USD: không gọi OpenRouter, không tạo collection, không build. Tới lúc áp đợt 2 ⇒ B dừng
+  B92, làm đợt 2 trước.
+- **(A, 11:09 30/10/2026)** C87 xong: C85 vòng 2 `changes_requested` 0 / 1 / 1 (review `a87f05bf4516` §0, §5); đọc lại độc lập K017 / D2 / D6 khớp nguyên văn; kiểm máy đạt.
+  **A DUYỆT `dot2.jsonl` bản 4b `c0b5876ea510`** (sha tính từ file). Còn: B sửa M-4 (plan §6: `dump-headings --arm truoc` dời sau bước 2, trước bước 5) + m-4 (câu lý do K017 trong
+  bảng) ⇒ C vòng 3 phần sửa ⇒ A duyệt sha plan ⇒ áp.
+- **(A, 11:15 30/10/2026)** C85 vòng 3 **ready 0 / 0 / 0** (review `7b861cdd6491`). **A DUYỆT plan đo đợt 2 bản 3 `5f30ac7eac16` + bảng `92e5b3caf6f1`** (sha tính từ file;
+  `dot2.jsonl` `c0b5876ea510`). **B93 (B):** dừng B92, áp đợt 2 theo plan §6 bước 1–6 liền một lần (User đang có mặt; bước 5 User `!` ở terminal B), rồi bộ "sau" + bộ an
+  toàn; C kiểm từng bước; trần 0,10 USD. Không có lượt đo latency nào khác chạy song song (W31). B92 làm tiếp sau đo "sau". Comment cũ trong builder (`f2049a793093`) để nguyên.
+  **(A, 11:23 30/10/2026)** User đi ăn ⇒ B làm bước 1 rồi **dừng trước bước 2** (A nhắn "chạy bước 2" khi User về). Bước 1 xong (B): 4 kiểm đạt (diff `backend/` 0 dòng; record
+  `574b5d02088b`, sparse `1bae9e0f3c49`, 8.426 point; T1 `23c58c47635d`; model / context = meta); `dot2/eval_truoc/` = bộ "sau" đợt 1 giống byte; sao lưu kho
+  `meta/backup_sua_kho_dot2_2026-10-30/` 40 file + `dot2/backup/` (record, sparse, snapshot Qdrant); sinh lại mốc S11 / S12 × 3 (`an_toan_run.py` mới — C kiểm diff),
+  0,0017 USD. C kiểm phần chuẩn bị (chỉ đọc). Lệnh bước 5 cho User ở terminal B: B liệt kê 3 đích ngay trước.
+  C kiểm bước 1: **ready 0 / 0 / 0** (`sua_kho_dot2_b1_review.md` `869c0232e4f3`; `an_toan_run.py` `7f84db74bec6` vòng sinh giống `an_toan_aa`) ⇒ bước 2 chờ User về.
+- **(A, 11:26 30/10/2026)** B92 xong: nhánh `b92-qwen3-harness` `8545650` (push), report `qwen3_8b_harness_implementation.md`; T1 giống byte, 70 test pass (không key), 0 USD.
+  A duyệt: (1) lệch plan §4.2 — thêm `dense_runner=None` vào `build_full_corpus_retrieval_service` (mặc định không đổi); (2) mốc e5 chạy lại trên kho sau đợt 2 + tính lại cỡ mẫu
+  ⇒ B ghi "Sửa đổi 30/10" cuối plan **trước** khi chạy 8B, C review, A duyệt sha mới; tiêu chí §7 giữ. **C88 (C):** review code B92 (đọc ngay; chạy test / T1 khi không có build / đo).
+  **(A, 11:31 30/10/2026)** C88: code `changes_requested` 0 / 1 / 1 (`qwen3_8b_harness_review.md` `d63ec6a72cc8`); plan "Sửa đổi 30/10" ready ⇒ **A duyệt plan `70ee5d44c260`**.
+  M-1 (code thử lại câu hỏi 1 lần sau 10 s, plan nói không): giữ code + ghi lệch; plan thêm: lỗi 2 lần ⇒ chạy lại cả lượt; p50 / p95 báo cả "mọi câu" lẫn "chỉ câu gọi một lần" + số
+  câu thử lại; luật dừng "câu phải thử lại > 5 %" thay "lỗi > 5 %". m-1 ghi log trước parse JSON. B sửa ⇒ C kiểm phần sửa ⇒ A duyệt sha plan mới.
+  **(A, 11:36 30/10/2026)** C88 vòng 2 **ready 0 / 0 / 0** (review `aff3201406c4` §7): code `fb0b82c`, report `34b346a665f5` ⇒ **A duyệt plan Qwen3-8B `9f3d616e2a59`**.
+  Còn trước lượt có phí (sau đợt 2): rebase lên `main` mới, T1 lại, mốc e5 + tính lại cỡ mẫu (plan "Sửa đổi 30/10" mục 1–2).
 - **A** — sub-agent đọc khoá FDE + AI Coding (`data/course_notes/tu_…_2026-10-29/`) đối chiếu với luật / skill hiện có ⇒ `data/course_notes/v3/`; gộp với file cập nhật dự án kia
-  ⇒ ≤ 3 đề xuất cải tiến cách làm cho User duyệt.
+  ⇒ ≤ 3 đề xuất cải tiến cách làm cho User duyệt. **Xong 11:19** (`data/course_notes/v3/TONG_HOP_A_2026-10-30.md`: Đ1–Đ3 chờ User; đã sửa 3 chỗ chữ sai).
+- **(A, 11:44 30/10/2026) User đi tới ~13:00** ("tiếp tục làm") ⇒ đợt 2 bước 2–6 chờ User về. Việc chỉ đọc / phân tích, 0 USD, không build / đo latency:
+  - **C89 (C):** (a) đếm tần suất lỗi citation (`citation_integrity` ⇒ API 500) trên mọi lượt đo đã có (B78 "trước" / "sau" đợt 1, 8.1 / 8.2, `chat_metrics` log) — số lượt, mẫu số, bản
+    validator; (b) bản nháp streaming **v2** `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming_v2.md` (v1 giữ): thêm log `chat_metrics` ở `finally` (`chat.py:81-83`) sai khi stream,
+    sự kiện có loại, người dùng thấy gì khi citation hỏng (dùng số (a)), lỗi giữa stream, bài học dự án kia (`TONG_HOP_A_2026-10-30.md` §3). Không viết spec, không sửa code.
+  - **C89 trạng thái (C, 11:50 30/10/2026): xong** — (a) `data/tinh_nang_moi_2026-10-27/c89_dem_loi_citation.md`; (b) `…/c77_phuong_an_streaming_v2.md`. 0 USD.
+  - **C90 (C, 11:54 30/10/2026): xong** — nháp `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (33 dòng giới hạn, mức theo thứ tự lỗi User). 0 USD.
+  - **C91 (C, 11:58 30/10/2026): xong** — nháp `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` (`1c0313aafd25`). 0 USD.
+  - **B94 (B):** đọc report RAG của dự án kia (chỉ đọc, ngoài repo hue_rag): `BAO_CAO_CAU_HOI_NOI_TIEP.md`, `BAO_CAO_TOI_UU_CHI_PHI_TOC_DO_BAO_MAT.md` (prompt cache), phần
+    streaming nếu có ⇒ `data/external_project_notes/doc_rag_du_an_kia_2026-10-30.md`: số, cách đo, giới hạn, áp được gì cho hue_rag; + đếm token phần prompt cố định của hue_rag
+    (`backend/llm/full_corpus_prompt.py`) xem có qua ngưỡng prompt cache ~1.024 token không. Không ghi tên / số dự án kia vào file tracked.
+  - **(A, 11:50 30/10/2026) Xong:** **B94** (`data/external_project_notes/doc_rag_du_an_kia_2026-10-30.md`): phần prompt cố định ≈ 152–193 token (o200k_base) ≪ 1.024 ⇒ không ăn
+    prompt cache, nâng lên chỉ ~−2 % tiền ⇒ không làm; câu nối tiếp: cách dự án kia dùng được làm mốc (thiếu lịch sử theo phiên — câu hỏi 8); tạo vector câu hỏi qua mạng ở dự án kia
+    1,2–2,8 s / câu ⇒ **Qwen3-8B gần như chắc trượt điều kiện tốc độ** (luật (i) +50 ms) dù tầng tìm có thể tốt hơn — báo User trước. **C89**: lỗi citation cấu hình hiện tại
+    **0 / 489** lần sinh (cận trên 95 % ≈ 0,6 %; context 5 cũ 2 / 528) — `c89_dem_loi_citation.md` `ef0d860d99aa`; nháp streaming v2 `c77_phuong_an_streaming_v2.md` `95b3e76cc713`
+    (log ở `finally` của generator; sự kiện status / delta / sources / error / done; citation hỏng ⇒ rút lại + báo lỗi; lỗi giữa stream ⇒ giữ chữ + báo). B kiểm C89 khi rảnh.
+  - **B95 (B):** 2 câu × 2 lần gọi `gpt-6-luna` in đủ `usage` (gồm `input_tokens_details`) — kiểm `cost_usd` có thiếu phần giá ghi đệm không (B94 điểm 2); trần 0,002 USD.
+    **Xong 11:53 (0,0008 USD):** API trả `input_tokens_details.cache_write_tokens` = vào − 3 ở 4 / 4 lần, `cached_tokens` = 0 kể cả lần gọi lặp ngay ⇒ mỗi câu **ghi đệm gần hết
+    phần vào mà không bao giờ đọc lại**; generator chỉ đọc vào / ra / suy luận (`generator_openai_full_corpus.py:199-204`). API không trả giá ⇒ **câu hỏi User: xem billing** giá
+    ghi đệm; nếu 1,25× ⇒ `cost_usd` thiếu ≈ 20 % / câu (~0,00021 ⇒ ~0,00025, vẫn dưới trần) và có thể tối ưu (tắt ghi đệm nếu API cho). Chưa sửa code. B kiểm C89 (`c89_review.md`).
+  - **C90 (C):** nháp bảng **giới hạn đã biết** Phase 0–8 (cho đóng gói): gom từ `Project_Status.md`, `LUONG_HOAT_DONG_HE_THONG.md` §5, `TONG_HOP` các đợt, finding "chấp nhận không
+    sửa" ⇒ `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (mỗi dòng: giới hạn, khâu, bằng chứng `file:dòng`, mức nặng theo thứ tự lỗi User, có số đo chưa). Chỉ đọc, 0 USD.
+    **Xong 11:55** (`fdf1f19f974a`, 33 dòng: chất lượng 11, tốc độ / tiền / tính năng 5, chia đoạn / index 6, thước đo 6, vận hành 5). Lệch: `LUONG_HOAT_DONG_HE_THONG.md`:89
+    "context 10 chưa đo" + §5 dòng cuối "việc của Phase 8" cũ ⇒ A sửa cùng 5 chỗ sau đợt 2.
+  - **C91 (C):** nháp phương án hội thoại nhiều lượt `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` (như C77: 2–4 phương án + danh sách quyết định D cho User;
+    đầu vào B94, `chat.py`, câu hỏi 8). Chỉ đọc + nháp, 0 USD.
+    **Xong 11:58** (`1c0313aafd25`): PA0 một lượt · **PA1 (C nghiêng)** trình duyệt gửi `{query, chunk_ids ≤ 3}` lượt trước, server không lưu gì (câu hỏi 8 không phải mở), tự lấy
+    đoạn từ Qdrant (không nhận chữ từ client) ⇒ closed-world giữ; luật chữ nhận câu nối tiếp; đoạn cũ số [11]–[13] · PA2 = PA1 + ghép câu trước khi tìm (chọn bằng đo cặp) ·
+    PA3 server lưu + LLM viết lại (+~1,8 s, C không nghiêng). Đo: ~30–40 cặp tự viết, 5 loại (gồm ngoài kho sàn 0, cảnh báo 0 đảo), bắt nhầm câu đủ ý ≤ 2 / 208; ≈ 0,03 USD. D0–D7 §4.
+    B kiểm C89 xong ready 0 / 0 / 3 (`c89_review.md`; C sửa minor ⇒ `c89` `575f128f1c86`, nháp streaming v2 `b19f8454e22b`); B đang kiểm C90.
+    **C rảnh (lý do):** chờ đợt 2 bước 2–6 (User ~13:00) để kiểm từng bước; không giao thêm việc để C sẵn sàng ngay.
+  - **(A, 12:01 30/10/2026)** B kiểm C90: `changes_requested` 0 / 1 / 4 (`data/dong_goi_2026-10-30/gioi_han_da_biet_review.md`) ⇒ C sửa (việc nhẹ). **M-1 (B) mới:** model **không
+    biết ngày hôm nay** (`full_corpus_prompt.py:18-20` chỉ câu hỏi + ngữ cảnh) ⇒ câu theo ngày tương đối có thể nói chắc sai giờ / ngày (mức M1, chưa đo); API không giới hạn lượt /
+    không đăng nhập (rủi ro tiền khi deploy). **Việc ứng viên "ngày trong prompt":** đo hành vi hiện tại bằng ~10–15 câu tự viết + nhóm giờ / miễn giảm bộ an toàn ⇒ có lỗi thì
+    plan thí nghiệm (đổi prompt, một thứ); xếp sau đợt 2; **hỏi User thứ tự so với Qwen3-8B** (M1 ⇒ chất lượng trước).
+    C90 bản 2 `6113fce7b3fe` (36 dòng) — B vòng 2 **ready 0 / 0 / 0**. **B96 (B, 12:04):** nháp plan đo "ngày hôm nay" `data/ngay_hien_tai_2026-10-30/plan_nhap.md` (12–15 câu tự viết,
+    tiêu chí ghi trước, phương án sửa chưa chọn); 0 USD, không gọi API; chạy sau đợt 2 + A duyệt.
+    **(A, 12:14)** B96 xong (`ccaf9b426197`, 15 câu, nhãn L1 / L2 / L3 / R / OK, n_L1L2 ≥ 1 ⇒ viết plan sửa). **C92** review `changes_requested` 0 / 1 / 4 (`plan_nhap_review.md`
+    `6571401affbf`): M-1 L1 "ngầm dùng ngày" chưa gắn được bằng quy tắc ⇒ thêm `expected_type` + 2 phiếu kiểm (judge 6 / 6). A quyết m-3: trần **0,01 USD** + pilot 3 câu.
+    P1–P3 (đổi prompt) + P2b (thư viện lịch âm) **cần User duyệt**. B sửa ⇒ C kiểm phần sửa.
+    **(A, 12:17)** C92 vòng 2 **ready 0 / 0 / 0** (review `19c5bd692fa3` §6) ⇒ **A duyệt plan đo "ngày hôm nay" bản 2 `fd63d9192ef6`** (sha tính từ file); chạy sau đợt 2, trần 0,01 USD.
 
 ## PHIÊN 29/10 — ĐÃ ĐÓNG (mở 19:13, User kết phiên ~22:00–22:10 29/10/2026)
 

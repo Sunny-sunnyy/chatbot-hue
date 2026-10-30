@@ -26,7 +26,7 @@ Kế hoạch có mục **"Căn cứ để review"** và được một session k
      latency p95, USD/câu tính đầu–cuối gồm cả rerank + sinh);
    - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết).
    Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
-   một hành vi production thì trỏ `file:dòng` hành vi đó (ví dụ API 500: `backend/api/routes/chat.py:127-135` bắt **mọi**
+   một hành vi production thì trỏ `file:dòng` hành vi đó (ví dụ API 500: `backend/api/routes/chat.py:182-190` (30/10) bắt **mọi**
    `CitationIntegrityError`), và kiểm hai dòng tiêu chí không đếm cùng một lỗi (27/10: mức tụt citation chồng sàn 500
    qua 3 plan). Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.

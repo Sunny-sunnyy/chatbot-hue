@@ -1,3 +1,25 @@
+# STATUS A — cập nhật 11:46 30/10/2026 (PHIÊN 30/10 đang chạy)
+
+Terminal: `hue-rag-0f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-24`, C = `hue-rag-0e` (cả ba Claude Code, trực tiếp).
+
+## Đang làm / dở
+- Điều phối theo `CURRENT_HANDOFF.md` "PHIÊN 30/10": đợt 2 áp kho chờ User về (~13:00); C89 (citation + nháp streaming v2), B94 (đọc RAG dự án kia) đang chạy.
+- Chờ User: duyệt Đ1–Đ3 (`data/course_notes/v3/TONG_HOP_A_2026-10-30.md`); `!` xoá 6 nhánh hồ sơ (tag `hoso/*` đã push); commit tài liệu đã stage (14 file, auto mode chặn A commit).
+
+## Đang khai báo sửa
+- `session_prompt/CURRENT_HANDOFF.md` (mục PHIÊN 30/10), `STATUS_A.md`; đã sửa: `WORKFLOW.md` §9.6 (luật xoá nhánh), `Project_Status.md` §6 (egress OpenAI), `skills/run-experiment/SKILL.md:29` (dòng code) — chờ B/C kiểm.
+
+## Tiền paid
+- A 0 USD. Nhóm: B 0,0017045 USD (sinh lại mốc S11 / S12 × 3).
+
+## Đã học / bẫy gặp (phiên 30/10)
+- Commit của A bị auto mode chặn 2 lần (lần 2 lý do: luật chung của User "commit / push luôn hỏi trước" — luật dự án cho A quyền thường trực nhưng bộ kiểm theo luật chung) ⇒ A stage từng file + đưa User lệnh `!`; không lách.
+- B nhờ A ghi hộ trạng thái khi lệnh ghi của B bị chặn ⇒ A không ghi hộ STATUS_B (chuyển quyền), chỉ ghi tóm tắt vào handoff (việc của A).
+- Sub-agent đối chiếu phát hiện 3 chỗ tài liệu sai hiện trạng (dòng code trong skill, egress thiếu OpenAI, số latency cũ trong `LUONG`) — họ S44; đề xuất grep số cũ khi đóng gói.
+
+---
+Phần dưới: kết phiên 29/10.
+
 # STATUS A — cập nhật 21:36 29/10/2026 (KẾT PHIÊN 29/10)
 
 Terminal: `hue-rag-f7` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-a7`, C = `hue-rag-ef` (cả ba Claude Code, trực tiếp).
