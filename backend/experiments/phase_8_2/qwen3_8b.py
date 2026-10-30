@@ -30,6 +30,7 @@ import numpy as np
 from core.settings_loader import load_settings
 from embedding.full_corpus import (
     OPENROUTER_EMBEDDINGS_URL,
+    OPENROUTER_EXPECTED_PROVIDER,
     OPENROUTER_PROVIDER_ROUTING,
     OpenRouterDenseRunner,
     parse_embeddings_response,
@@ -258,7 +259,7 @@ def build() -> dict:
     summary = build_candidate(CANDIDATE, collection_name=COLLECTION, sparse_state_path=SPARSE_STATE, record_path=RECORD,
                               dense_runner=runner)
     summary["checks"] = {
-        "providers_only_nebius": summary["providers_seen"] == ["Nebius"],
+        "providers_only_nebius": summary["providers_seen"] == [OPENROUTER_EXPECTED_PROVIDER],
         "sparse_state_same_bytes_as_runtime": SPARSE_STATE.read_bytes() == SPARSE_STATE_PATH.read_bytes(),
     }
     _write_new(OUT_DIR / "build_summary.json", json.dumps(summary, ensure_ascii=False, indent=1) + "\n")
