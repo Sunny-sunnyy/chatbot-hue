@@ -116,17 +116,17 @@ Cổng merge B1 0,000423; B3 0,0138; bộ "trước" 0,0361; C73 0,0103; cổng 
 | Giờ | Ai | Quyết định |
 |---|---|---|
 | 10:30–10:57 | User | Bối cảnh đồ án (file cập nhật dự án kia §0) đúng 5 ý; **PA2 giữ thứ tự cũ** (A khuyên dời Qwen3-8B); đọc khoá + cách làm dự án kia rồi áp dụng; làm xong Phase 8, đóng gói rồi mới Phase 9; quyền như 29/10 |
-| 11:0x | User | Gắn tag `hoso/*` cho 6 nhánh hồ sơ rồi xoá nhánh (tag đã push; lệnh xoá User chạy `!`) |
+| 10:57–11:09 | User | Gắn tag `hoso/*` cho 6 nhánh hồ sơ rồi xoá nhánh (tag đã push; lệnh xoá User chạy `!`) |
 | 11:15 | A | Duyệt `dot2.jsonl` bản 4b `c0b5876ea510`, plan đo đợt 2 bản 3 `5f30ac7eac16` (C85 vòng 3 ready) |
 | 11:26–11:36 | A | B92 harness Qwen3-8B: lệch §4.2 (`dense_runner` ở factory) duyệt; mốc e5 đo lại trên kho đợt 2; M-1 giữ code + p50 / p95 hai cách + dừng khi > 5 % câu thử lại; plan `9f3d616e2a59` |
 | 13:00 | User | Có mặt ⇒ chạy bước 2–6 đợt 2; `!` xoá 3 đích ở terminal B |
-| 13:1x | A | Luật chạm "f" (D1 xoá dòng ⇒ `chunk_id` dồn ở 2 file), ghi trước khi thấy số "sau" |
+| sau 13:17 | A | Luật chạm "f" (D1 xoá dòng ⇒ `chunk_id` dồn ở 2 file), ghi trước khi thấy số "sau" |
 | 13:39–13:43 | User | Duyệt gold v5 (câu 172); Golden câu 5 = bỏ cụm tên phường cũ, câu 127 = thêm "khoảng"; A duyệt plan đợt 2 `2adef0d4e5fc` |
-| 14:3x | User | Đo "ngày hôm nay" trước Qwen3-8B |
+| 14:17–14:39 | User | Đo "ngày hôm nay" trước Qwen3-8B |
 | 14:39 | User | **Đóng đợt 2 sửa kho, giữ sao lưu cả hai đợt** |
 | 14:44 | User | Câu theo ngày tương đối ("tối nay", "tuần này") là việc của trợ lý (Phase 9), không vá ở Phase 8 |
 | 14:53 | A | Duyệt plan Qwen3-8B `d6d6c7d51584` (mốc e5 kho đợt 2 + cỡ mẫu, C review ready) |
-| 15:0x | User | Cho thử W32, I7, W33 (sổ cải tiến vòng 10) |
+| 14:53–15:03 | User | Cho thử W32, I7, W33 (sổ cải tiến vòng 10) |
 
 ### 8.2 Kết quả
 
