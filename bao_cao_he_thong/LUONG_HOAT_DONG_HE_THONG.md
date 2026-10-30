@@ -1,6 +1,8 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 12:14 28/10/2026** (đợt sửa kho đợt 1: **123 chỗ sửa / 65 file**, bỏ file danh mục nghệ thuật biểu diễn khỏi chỉ mục ⇒ **204 file, 8.426 đoạn**, từ khóa 5.631; chỉ mục dựng lại; đo 176 câu "trước ↔ sau": **không làm hỏng** — `BAO_CAO_KHO_DU_LIEU.md` bản 5). Trước đó 09:38 28/10/2026 (Phase 8.2 B1 vào chatbot, merge `510e1a8`: **ngữ cảnh tối đa 10 đoạn** thay vì 5; câu hỏi được **chuẩn hóa
+**Cập nhật lần cuối: 14:19 30/10/2026** (đợt sửa kho **đợt 2**: **123 chỗ sửa / 40 file** — bỏ cấp "quận" và tên phường cũ, sửa câu theo nguồn đọc được, làm yếu câu không chắc chắn ⇒
+**204 file, 8.424 đoạn** (−2: hai dòng bị xóa), từ khóa 5.631; chỉ mục dựng lại; đo 176 câu Golden + 32 câu an toàn "trước ↔ sau": **không làm hỏng**, 0 câu nói sai điều kiện mới —
+`BAO_CAO_KHO_DU_LIEU.md` bản 6; cách chạy chatbot **không đổi**). Trước đó 12:14 28/10/2026 (đợt sửa kho đợt 1: **123 chỗ sửa / 65 file**, bỏ file danh mục nghệ thuật biểu diễn khỏi chỉ mục ⇒ **204 file, 8.426 đoạn**, từ khóa 5.631; chỉ mục dựng lại; đo 176 câu "trước ↔ sau": **không làm hỏng** — `BAO_CAO_KHO_DU_LIEU.md` bản 5). Trước đó 09:38 28/10/2026 (Phase 8.2 B1 vào chatbot, merge `510e1a8`: **ngữ cảnh tối đa 10 đoạn** thay vì 5; câu hỏi được **chuẩn hóa
 Unicode NFC** trước khi tìm — câu gõ dạng NFD nay tìm giống hệt câu NFC; kết quả tìm 158 câu giống từng byte mốc cũ; chọn bằng judge Claude, **chưa có mốc
 người** — bạn đọc cặp mù sau, spec 8.2 §11). Trước đó 13:27 27/10/2026 (API ghi **một dòng `chat_metrics`** cho mỗi câu hỏi: token vào / ra / suy luận, số nguồn, thời gian từng khâu — không ghi câu hỏi,
 câu trả lời hay nội dung kho; merge `5100b90`; câu trả lời **không đổi**). Trước đó 16:0x 26/10/2026 (đợt 3 rà code, merge `421c302`: dựng kho dừng khi có đoạn vượt giới hạn token ở mọi nhánh; build chỉ ghi
@@ -17,7 +19,7 @@ Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ```text
 CHUẨN BỊ (chạy một lần khi kho đổi):
-  204 file Markdown → chia đoạn (8.426 đoạn) → vector nghĩa e5-small + từ khoá BM25 → lưu Qdrant
+  204 file Markdown → chia đoạn (8.424 đoạn) → vector nghĩa e5-small + từ khoá BM25 → lưu Qdrant
 HỎI ĐÁP (mỗi câu hỏi):
   giao diện web → API /api/chat → chuẩn hóa NFC câu hỏi → tìm 10 đoạn → giữ tối đa 10 đoạn làm ngữ cảnh → gpt-6-luna trả lời
   → kiểm trích dẫn [n] → trả câu trả lời + nguồn
@@ -25,10 +27,10 @@ HỎI ĐÁP (mỗi câu hỏi):
 
 | Thành phần | Dùng gì | Code |
 |---|---|---|
-| Kho tri thức | 204 file Markdown tiếng Việt (vào chỉ mục; từ 28/10 sau sửa kho), 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch | `knowledge-base-hue/` (private) |
+| Kho tri thức | 204 file Markdown tiếng Việt (vào chỉ mục; đã sửa đợt 1 28/10 + đợt 2 30/10), 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch | `knowledge-base-hue/` (private) |
 | Chia đoạn | Theo cấu trúc Markdown (tiêu đề, đoạn, bảng), không chồng lấn | `backend/ingestion/chunking/full_corpus_chunker.py` |
 | Vector nghĩa | `intfloat/multilingual-e5-small`, 384 chiều, chạy trên máy (CPU), miễn phí | `backend/embedding/full_corpus.py` |
-| Từ khoá | BM25 tự viết, tách theo âm tiết, 5.631 từ (28/10; trước 5.660) | `backend/scoring/bm25.py` |
+| Từ khoá | BM25 tự viết, tách theo âm tiết, 5.631 từ (28/10, giữ nguyên sau đợt 2 30/10; trước 5.660) | `backend/scoring/bm25.py` |
 | Cơ sở dữ liệu vector | Qdrant `127.0.0.1:6335`, collection `hue_full_corpus_7a2_e5_small_384` | `backend/vectorstore/` |
 | Tìm kiếm | `dense_bm25_rrf` (mục 3) | `backend/retrieval/full_corpus.py` |
 | Trả lời | `gpt-6-luna` (OpenAI), giá 0,1 USD / 1M token vào, 0,5 USD / 1M token ra | `backend/llm/generator_openai_full_corpus.py` |
@@ -86,7 +88,8 @@ Người chấm: Claude (chấm theo đáp án mẫu), đối chiếu `gpt-6-lun
 
 Bảng trên đo ở bản 5 đoạn. Bản 10 đoạn đang chạy được chọn ở Phase 8.1 (judge Claude): điểm Đủ +0,26 [+0,08; +0,48] trên bộ thử, +0,27 [+0,02; +0,59] trên
 bộ kiểm, lợi chủ yếu ở câu nhiều nguồn / so sánh. **Chưa có mốc người** (bạn đọc cặp mù sau, trước buổi bảo vệ). Thời gian chờ: ở 5 đoạn trung vị 3,3 s / câu
-chậm 5,7 s (27/10); ở 10 đoạn chưa đo trung vị / câu chậm (2 câu thử 28/10: 5,1 s và 2,5 s) — sẽ đo ở bộ "trước" của đợt sửa kho.
+chậm 5,7 s (27/10); ở 10 đoạn (176 câu Golden, hỏi lần lượt, đo trong công cụ đo — chưa tính đường mạng tới trang web): trung vị **2,2 s** / câu chậm (p95) **4,9 s**
+(bộ "trước" đợt sửa kho 28/10; bộ "sau" đợt 2 30/10: 2,19 / 4,90 s) — trong trần bạn chốt 3 / 5 s.
 
 ## 5. Giới hạn đã biết
 
@@ -94,9 +97,10 @@ chậm 5,7 s (27/10); ở 10 đoạn chưa đo trung vị / câu chậm (2 câu 
 - Dòng bảng giá dài bị tách thành đoạn một dòng, khó tìm (ví dụ vé Đại Nội, lỗi F2 Phase 6).
 - ~20% đoạn rất ngắn (≤48 token) vì mỗi khối Markdown là một đoạn, không gộp khối cạnh nhau.
 - Chunker còn giữ giới hạn 256 token của model HuyDang (đã bỏ), làm 6 bảng bị tách theo dòng.
-- Chưa có index Qwen3-embedding-8B (hoãn sang Phase 8).
+- Chưa có index Qwen3-embedding-8B (thí nghiệm sau đợt 2 sửa kho; kế hoạch + công cụ đã sẵn, chưa chạy).
 
-Hướng cải thiện các giới hạn này là việc của **Phase 8** (đợt ổn định trước Agentic RAG ở Phase 9).
+Phase 8 đã đóng (28/10). Hướng xử lý các giới hạn này nằm ở các việc sau Phase 8: thí nghiệm Qwen3-8B, streaming, đóng gói Phase 1–8 (bảng "giới hạn đã biết" đầy đủ
+đang soạn) rồi mới tới Phase 9.
 
 ## 6. Chạy thử
 

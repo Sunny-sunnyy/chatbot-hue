@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `13:26 28/10/2026` (A, **kết phiên 28/10**: 8.2 đóng; đợt sửa kho đợt 1 đóng; phiên sau: đợt 2 ⇒ 8B ⇒ streaming). Trước: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
+Last updated: `13:53 30/10/2026` (A, phiên 30/10: đợt 2 sửa kho áp xong bước 2–8 — record / T1 / Golden md5 / gold v5 mới; đo "sau" đang chạy). Trước: `13:26 28/10/2026` (A, **kết phiên 28/10**: 8.2 đóng; đợt sửa kho đợt 1 đóng; phiên sau: đợt 2 ⇒ 8B ⇒ streaming). Trước: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -13,7 +13,7 @@ curated `knowledge-base-hue/` (5 domain: `foods`, `heritages`, `festivals`,
 xứng nhu cầu và bằng chứng từ dữ liệu, Qdrant, model, API thật.
 
 ```text
-curated Markdown (204 file, từ 28/10 sửa kho) -> chunker (8.426 chunk) -> e5-small dense + BM25 sparse
+curated Markdown (204 file, sửa kho đợt 1 28/10 + đợt 2 30/10) -> chunker (8.424 chunk) -> e5-small dense + BM25 sparse
 -> Qdrant -> query NFC -> retrieval dense_bm25_rrf (top-10 whole chunk vào context) -> gpt-6-luna -> API/UI có citation
 ```
 
@@ -34,7 +34,7 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (kết phiên 28/10, 13:26):** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
+**Bây giờ (14:39 30/10/2026):** đợt 2 sửa kho **đóng** (User, giữ sao lưu): 204 file / 8.424 đoạn, không làm hỏng; đang đo "ngày hôm nay" ⇒ Qwen3-8B ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói. Trước — **kết phiên 28/10, 13:26:** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
 Phiên sau (thứ tự): **áp đợt 2 sửa kho** (soạn sẵn `dot2.jsonl` `9b5105b35e8b`, 104 edit / 33 file) ⇒ **thí nghiệm Qwen3-8B** (plan `52555da95828`; chạy cần User duyệt gửi kho ra
 OpenRouter + collection thử) ⇒ **spec streaming** (chờ kết quả ChatGPT; đo: chữ hiện sớm hơn ~1,9 s) ⇒ hội thoại nhiều lượt. Thước "lỗi nặng" (bịa thêm / sai điều kiện an toàn) đã
 có (`report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_*`). Chi tiết: `CURRENT_HANDOFF.md`. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
@@ -91,14 +91,14 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 **Full-corpus runtime (API `backend/api/app.py`):**
 
 - candidate `e5-small-384` (`intfloat/multilingual-e5-small`, local CPU, 384 chiều);
-- collection `hue_full_corpus_7a2_e5_small_384`, 8.426 point (build lại 28/10, đợt sửa kho; build record `574b5d02088b`), payload 7 field
+- collection `hue_full_corpus_7a2_e5_small_384`, 8.424 point (build lại 30/10, đợt 2 sửa kho; build record `51fb1ec63cbc`; trước 28/10 `574b5d02088b`), payload 7 field
   (`search_text`, `source`, `title`, `heading_path`, `evidence_parts`,
   `chunk_id`, `domain`), dense + sparse;
 - build record `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`
   (schema `full_corpus_build:v3`) là nguồn sự thật duy nhất "index khớp corpus";
   runtime từ chối khởi động nếu hash file corpus khác record;
 - sparse state chung `data/full_corpus_builds/full_corpus_sparse_state.json`
-  (vocabulary 5.631; sparse state `1bae9e0f3c49`); mốc tìm T1 (158 câu) **`23c58c47635d`** từ 28/10 (trước `cefb2d1ad609`);
+  (vocabulary 5.631; sparse state `c8134c49a648` từ 30/10, trước `1bae9e0f3c49`); mốc tìm T1 (158 câu) **`4d5bbe9e0edc`** từ 30/10 (28/10 `23c58c47635d`, trước nữa `cefb2d1ad609`);
 - query chuẩn hóa NFC trước khi tìm (`backend/retrieval/full_corpus.py` `normalize_query`, từ 28/10 `510e1a8`);
 - retrieval `dense_bm25_rrf`, reranker `none`, context tối đa **10** whole chunk (`settings.yaml` `max_context_documents: 10`, từ 28/10 `510e1a8`; trước 5);
   chọn bằng judge Claude 8.1, **chưa có mốc người** (B0 dời, spec 8.2 §11);
@@ -114,11 +114,11 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 8B chưa có index.
 
 **Qdrant** `127.0.0.1:6335` (gRPC 6336; port đổi để chạy song song
-một dự án khác của User). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.426
+một dự án khác của User). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.424
 point). Hai collection Foods đã xóa ở B9 (24/10, User chạy); code/test/notebook Foods cũ đã gỡ
 (`1832201`).
 
-**Corpus:** 204 file → 8.426 chunk (28/10: đợt sửa kho 123 sửa / 65 file, loại file danh mục `performing_arts`; chunker giữ nguyên từ Phase 2: chia theo cấu
+**Corpus:** 204 file → 8.424 chunk (28/10: đợt sửa kho 123 sửa / 65 file, loại file danh mục `performing_arts`; 30/10 đợt 2: 123 sửa / 40 file, 2 dòng xoá ⇒ −2 đoạn, chunk_id `file#số` dồn ở 2 file; chunker giữ nguyên từ Phase 2: chia theo cấu
 trúc Markdown, không overlap có chủ đích (thực tế 3 cặp chunk lặp body: blockquote lồng trong list
 item, `markdown_blocks.py:233-250`, B8 2026-10-24), mỗi chunk vừa cả 3 tokenizer e5-small 512 / e5-base
 512 / huydang 256; trung vị 85 token e5). `knowledge-base-hue/` không có Git
@@ -126,13 +126,14 @@ item, `markdown_blocks.py:233-250`, B8 2026-10-24), mỗi chunk vừa cả 3 tok
 
 **Golden:** `knowledge-base-hue/evaluation/golden_full_corpus.jsonl` (176 case),
 `golden_full_corpus_smoke.jsonl` (10, deep-equal); schema 4 field `question`,
-`keywords`, `reference_answer`, `category`; private. Foods Golden V3 (45 + 10)
+`keywords`, `reference_answer`, `category`; private; md5 **`6331e88fb171`** từ 30/10 (đợt 2: User sửa đáp án mẫu câu 5, 127; trước `0f7dbf41b422`). Foods Golden V3 (45 + 10)
 là lịch sử.
 
 ## 5. Quyết định đang hiệu lực
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-30 14:39 | **User đóng đợt 2 sửa kho, giữ sao lưu cả hai đợt** (không làm hỏng: Golden 176 + bộ an toàn 32, 0 sai điều kiện mới, ≈ 0,047 USD); gold v5 + Golden câu 5 / 127 (User duyệt 13:39–13:43); thứ tự sau đợt 2: **đo "ngày hôm nay" trước Qwen3-8B**; giữ thứ tự cũ (PA2) ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9; bối cảnh đồ án 5 ý đúng; quyền phiên như 29/10 | User |
 | 2026-10-28 13:26 | **Kết phiên 28/10:** User **đóng đợt sửa kho đợt 1, giữ sao lưu**; **đợt 2 áp phần sẵn sàng ở phiên sau** (việc đầu tiên); **Qwen3-8B chạy phiên sau**; cho thử W30 (hook cảnh báo giờ ước), W31 (đang đo latency ⇒ cấm việc nặng song song), I6 | User |
 | 2026-10-28 10:23 | **User đóng Phase 8.2** (TONG_HOP; giới hạn chưa có mốc người, tốc độ chưa đạt) | User |
 | 2026-10-28 09:59 | **Yêu cầu phi chức năng chốt** (nghiên cứu ChatGPT 28/10, A kiểm 7 nguồn): cả câu (chưa stream) **p50 ≤ 3 s, p95 ≤ 5 s** (p99 ≤ 10 s theo dõi), USD / câu TB **≤ 0,0005**; có streaming ⇒ đề xuất đổi thước sang "chữ đầu tiên". **Thứ tự lỗi** thêm mức trên cùng: **sai cảnh báo an toàn / điều kiện vào khu vực** > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm. **B3 chạy ngay** (mở câu kín cho người chạy B) | User |
@@ -272,7 +273,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   trường mới thêm ở phần sinh / citation chỉ cổng ổn định (đọc dòng log thật) bắt được; test đi qua generator cần key (B70 m-1, đóng bằng ghi bẫy 27/10).
 - `validate_gold.py` từ 27/10 (C62) dừng nếu `gold_draft.jsonl` đã có.
 - `data/phase_8_1/tools/validate_gold.py` **không nhận đầu vào**: đọc `gold_batch_*` rồi **ghi đè** `data/phase_8_1/gold/gold_draft.jsonl` (file manifest G0.6
-  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v4.jsonl` từ 28/10** (`927bae1bf201`, kho sau sửa đợt 1; trước đó `gold_v3.jsonl` từ 27/10 chiều (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
+  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v5.jsonl` từ 30/10** (`33d16fd6b8f4`, kho sau đợt 2, User duyệt 1 trích dẫn; `GOLD_PATH` code chưa đổi — A đổi sau đo "sau"); trước đó `gold_v4.jsonl` từ 28/10 (`927bae1bf201`, kho sau sửa đợt 1; trước đó `gold_v3.jsonl` từ 27/10 chiều (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
   mặc định của `backend/experiments/phase_8_1/g1_retrieval.py`: v2 + luật tiêu đề mục từ 27/10 sáng, **v3 từ `fa192f8`**, **v4 từ `e08a126`**) ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**, ghi kèm bản nhãn; so với số cũ thì chạy lại
   mốc bằng cùng thước (B1 dev: v1 22 / v2 24).
 - Auto mode chặn **cả khối** khi lệnh ghép có thao tác rủi ro (`push --delete`, `rm`, push nhánh từ worktree) ⇒ tách thao tác rủi ro ra lệnh

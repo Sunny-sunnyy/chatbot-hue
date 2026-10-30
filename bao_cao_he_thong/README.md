@@ -1,24 +1,24 @@
 # Báo cáo hệ thống hue_rag — mục lục cho bạn
 
-**Cập nhật lần cuối: 09:40 28/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
+**Cập nhật lần cuối: 14:19 30/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
 `report_agent/`; report cũ tới 24/10 ở `reports/` (lịch sử).
 
 ## Muốn biết gì ⇒ đọc file nào
 
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 09:38 28/10/2026 (ngữ cảnh 10 đoạn + chuẩn hóa NFC câu hỏi, merge `510e1a8`) |
-| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 12:14 28/10/2026 (bản 4: nhãn bản 4, thước trước ↔ sau sửa kho, câu kín, yêu cầu tốc độ / tiền) |
+| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 14:19 30/10/2026 (đợt 2 sửa kho: 204 file / 8.424 đoạn; thời gian chờ ở 10 đoạn; cách chạy không đổi) |
+| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho 1–2) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 14:32 30/10/2026 (bản 5: nhãn bản 5, đợt 2 không làm hỏng, bộ 32 câu an toàn + thước lỗi nặng, Golden sửa 2 đáp án) |
 | Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 16:0x 26/10/2026 (đợt 3) |
 | Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 16:0x 26/10/2026 (đợt 3, bản 4) |
 | Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 14:18 25/10/2026 (+ 8.1) |
 | Lưu vào Qdrant (Phase 4) | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | 24/10/2026 |
 | Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 09:38 28/10/2026 (bản 9: chuẩn hóa NFC câu hỏi vào chatbot) |
 | Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 09:38 28/10/2026 (bản 12: chatbot đưa 10 đoạn vào ngữ cảnh — chưa có mốc người) |
-| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:18 25/10/2026 (+ 8.1) |
-| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt sửa kho đợt 1 **đã áp** 28/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 12:09 28/10/2026 (bản 5: 123 sửa / 65 file, 204 file / 8.426 đoạn, không làm hỏng) |
+| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:28 30/10/2026 (bản 6: 2 đáp án sửa sau đợt 2, md5 mới; câu kín đã dùng; nhãn bản 5) |
+| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 14:19 30/10/2026 (bản 6: đợt 2 123 sửa / 40 file, 204 file / 8.424 đoạn, không làm hỏng, 0 câu sai điều kiện mới) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 19:4x 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 18:56 25/10/2026 |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [29/10 — chuẩn bị đợt 2 sửa kho, đo nhiễu thước lỗi nặng](nhat_ky/2026-10-29_chuan_bi_dot_2.md); trước: [28/10 — 10 đoạn vào chatbot, đóng 8.2, sửa kho đợt 1, đo streaming, thước lỗi nặng](nhat_ky/2026-10-28_dua_context_10.md) | 21:36 29/10/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [30/10 — áp đợt 2 sửa kho, chuẩn bị Qwen3-8B, đọc khoá học](nhat_ky/2026-10-30_ap_dot_2_sua_kho.md); trước: [29/10 — chuẩn bị đợt 2 sửa kho, đo nhiễu thước lỗi nặng](nhat_ky/2026-10-29_chuan_bi_dot_2.md) | 14:17 30/10/2026 |
 
 ## Trạng thái ngắn
 

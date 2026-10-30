@@ -107,7 +107,19 @@ Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 
   định; gọi metric retrieval là *keyword proxy*; chunker to hơn tự làm Coverage tăng. Hiệu ứng trần:
   121/176 case đã 5/5/5.
 
-### Hiện hành 28/10/2026 — đợt sửa kho đợt 1 (ưu tiên hơn các đoạn bên dưới)
+### Hiện hành 30/10/2026 — đợt sửa kho đợt 2 (ưu tiên hơn các đoạn bên dưới)
+
+- Corpus: 123 chỗ sửa / 40 file / 20 mục (`data/sua_kho_2026-10-27/dot2/edits/dot2.jsonl` bản 4b `c0b5876ea510`; plan đo `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_do_plan.md`
+  bản 3 + §10, A duyệt `2adef0d4e5fc`) ⇒ **204 file → 8.424 chunk** (2 edit xóa nguyên dòng, mỗi dòng là một chunk); chunker không đổi; token lớn nhất huydang 255 / 256,
+  e5 366 / 512. **Bẫy:** `chunk_id` = `<file>#<số thứ tự>` ⇒ xóa / thêm chunk giữa file làm mọi chunk sau đó đổi nội dung dưới cùng id — so trước ↔ sau theo id ở file đó
+  không còn đúng (đợt 2: lý do chạm "f" trong `truoc_sau.py`).
+- Index build lại tại chỗ (bước 4a–5 dưới, User `!` xóa 3 đích): `hue_full_corpus_7a2_e5_small_384` **8.424** point; build record **`51fb1ec63cbc`**; sparse state
+  **`c8134c49a648`**, vocabulary 5.631; T1 (158 câu) **`4d5bbe9e0edc`** (25 câu đổi top-10). Đo "trước ↔ sau" 176 câu Golden + 32 câu an toàn: không làm hỏng
+  (`report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_implementation.md`).
+- Runtime: context 10 + query NFC (Phase 8.2, `510e1a8`) — không đổi. Nhãn đoạn đúng **gold v5** `33d16fd6b8f4` (`GOLD_PATH` đổi 30/10); Golden md5 **`6331e88fb171`** (2 đáp án
+  sửa theo User; trước `0f7dbf41b422`).
+
+### Đợt sửa kho đợt 1 — 28/10/2026 (lịch sử; số đã thay ở mục trên)
 
 - Corpus: 123 chỗ sửa / 65 file / 51 mục (spec `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`, User duyệt `937cf8969810`); thêm
   `performing_arts/performing-arts-entities-inventory.md` vào `exclude_files` ⇒ **204 file → 8.426 chunk**; chunker không đổi; token lớn nhất huydang 255 / 256 (sát trần),

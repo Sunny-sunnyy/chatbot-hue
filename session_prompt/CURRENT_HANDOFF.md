@@ -13,6 +13,15 @@ Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`
    (ổn định) ⇒ mới brainstorm Phase 9. User thêm: "đọc về khoá học AI FDE và cách làm việc ở dự án kia, rồi áp dụng vào chúng ta" ⇒ qua `improve-workflow` (≤ 3 đề xuất / vòng,
    User duyệt). "Đóng gói" A tạm hiểu = code + tài liệu Phase 0–8 gọn, chạy lại được, danh sách giới hạn, mốc commit — **hỏi lại User khi tới bước đó**.
 3. Quyền phiên **như 29/10** (mục Quyền dưới).
+4. (A ghi nhận 13:39–13:43 30/10/2026) **Đợt 2:** User có mặt ⇒ bước 2–6 chạy (xong 13:31: record `51fb1ec63cbc`, sparse `c8134c49a648`, 8.424 đoạn, T1 `4d5bbe9e0edc`); User
+   **duyệt gold v5** (câu 172: áp phép thay của edit đè trích dẫn; `gold_v5.jsonl` `33d16fd6b8f4`); **Golden câu 5 = bỏ cụm tên phường cũ, câu 127 = thêm "khoảng"**. A duyệt plan đo
+   đợt 2 bản `2adef0d4e5fc` (thêm §10 luật chạm "f": D1 xoá dòng ⇒ chunk_id `file#số` dồn ở 2 file). Bước 9 đo "sau" đang chạy.
+5. (A ghi nhận 14:39 30/10/2026) **User ĐÓNG đợt 2 sửa kho, giữ sao lưu cả hai đợt.** Kết quả (`sua_kho_dot2_implementation.md` `2e40e5902d36`; C review cuối ready 0 / 0 / 0):
+   Golden F1–F4 = 0, Completeness 4 / 122 / 3, Accuracy 1 / 127 / 1, từ chối nhầm 13 ⇒ 12, p50 2,19 / p95 4,90 s; bộ an toàn P0_sai mới 0, đảo cảnh báo 0; ≈ 0,047 USD. 5 chỗ báo cáo
+   + Golden + Đánh giá (B97, A review). **Thứ tự sau đợt 2 (User):** đo "ngày hôm nay" **trước** Qwen3-8B.
+6. (A, 14:39) **C93 đo "ngày hôm nay" xong** (`ngay_hien_tai_implementation.md` `1603cc52aaf4`, 0,0037 USD): **n_L1L2 = 0 / 12**, bộ an toàn 0 / 11 ⇒ chatbot **không** tự giả định
+   ngày ⇒ không sửa prompt (luật ghi trước). Phát hiện: **6 / 14 câu trong kho theo ngày tương đối bị từ chối** (4 câu ngữ cảnh có lịch đúng) — mức M5 (từ chối nhầm); câu cùng ý
+   không ngày / ngày rõ thì trả lời đúng ⇒ ứng viên thí nghiệm P3 ("không giả định ngày, nêu lịch theo kho") — cần plan riêng + User. B kiểm C93; B chuẩn bị Qwen3-8B (rebase, T1, mốc e5).
 
 **Giao việc (A, 10:57 30/10/2026):**
 - **B91 (B)** — dựng bản 4b đợt 2 theo `STATUS_B.md` "Vòng 2": chép bản 4 ⇒ builder ⇒ `apply_edits.py --edits` chạy thử trong bộ nhớ ⇒ `py_compile truoc_sau.py` ⇒ sha ⇒ điền

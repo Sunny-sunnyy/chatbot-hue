@@ -15,6 +15,7 @@ Terminal: `hue-rag-0f` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 ## Đã học / bẫy gặp (phiên 30/10)
 - Commit của A bị auto mode chặn 2 lần (lần 2 lý do: luật chung của User "commit / push luôn hỏi trước" — luật dự án cho A quyền thường trực nhưng bộ kiểm theo luật chung) ⇒ A stage từng file + đưa User lệnh `!`; không lách.
 - B nhờ A ghi hộ trạng thái khi lệnh ghi của B bị chặn ⇒ A không ghi hộ STATUS_B (chuyển quyền), chỉ ghi tóm tắt vào handoff (việc của A).
+- (tin giao B92, A nhận ra lúc hook commit `751b352` cảnh báo 7 dòng) A viết giờ ước "11:3x" trong **tin nhắn** giao việc ⇒ B chép vào plan + report Qwen3-8B (lặp họ S17 / S30 / S45; W30 chỉ bắt ở file, không bắt tin nhắn) ⇒ chạy `date` cả trước khi nhắn B/C câu có giờ.
 - Sub-agent đối chiếu phát hiện 3 chỗ tài liệu sai hiện trạng (dòng code trong skill, egress thiếu OpenAI, số latency cũ trong `LUONG`) — họ S44; đề xuất grep số cũ khi đóng gói.
 
 ---

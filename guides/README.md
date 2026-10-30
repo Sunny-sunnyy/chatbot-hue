@@ -32,7 +32,7 @@ thể đã gỡ — không làm theo như hướng dẫn hiện hành. Guide có
 | 5 | [`phase_5_retrieval_profiles_reranking.md`](phase_5_retrieval_profiles_reranking.md) | `approved` | mục "Hiện hành" + lịch sử |
 | 6 | [`phase_6_generation_api.md`](phase_6_generation_api.md) | `approved` (`gpt-6-luna`) | mục "Hiện hành" + lịch sử |
 | 7, 7A, 7A2, 7B | [`phase_7_retrieval_answer_evaluation.md`](phase_7_retrieval_answer_evaluation.md) | `approved` | mục "Hiện hành" + lịch sử Foods |
-| 8.1, 8.2 | [`phase_8_benchmark_model_selection.md`](phase_8_benchmark_model_selection.md) | 8.1 `approved`, 8.2 `paused` | mục "Hiện hành" + lịch sử Foods |
+| 8.1, 8.2 | [`phase_8_benchmark_model_selection.md`](phase_8_benchmark_model_selection.md) | 8.1 `approved`, 8.2 `approved` (User đóng 28/10) | mục "Hiện hành" + lịch sử Foods |
 | 9 | [`phase_9_agentic_rag_roadmap.md`](phase_9_agentic_rag_roadmap.md) | `not_ready` | roadmap |
 | — | [`full_corpus_rag.md`](full_corpus_rag.md) | — | hiện hành (phần đầu) + lịch sử quyết định |
 | — | [`llm_rag_reference_for_hue_rag.md`](llm_rag_reference_for_hue_rag.md) | — | tham khảo từ một repo khác của User |

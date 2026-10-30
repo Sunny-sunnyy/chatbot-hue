@@ -1,8 +1,8 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden và chấm điểm thử món ăn (Phase 7, 7A, 8.1)
 
-**Cập nhật lần cuối: 14:04 25/10/2026 — bản 5: thêm Phase 8.1 (chia nhóm thử / kiểm, đoạn đúng, nhãn độ tự nhiên, sửa
-10 đáp án, bộ câu kín); sửa các dòng ở §1 và §3 đã cũ.**
-Người viết: C · Review: A (bản 1–4), B (bản 5). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 14:28 30/10/2026 — bản 6: sau đợt 2 sửa kho, bạn sửa 2 đáp án tham chiếu (bỏ một tên phường cũ; thêm "khoảng" trước một số nhà) ⇒ Golden
+md5 mới `6331e88fb171`; đợt 1 (28/10) quét lại: 0 câu cần sửa; nhãn đoạn đúng bản 5; sửa các dòng câu kín đã cũ.** Trước đó 14:04 25/10/2026 — bản 5 (Phase 8.1).
+Người viết: C (bản 1–5), B (bản 6) · Review: A (bản 1–4, 6), B (bản 5). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -21,11 +21,16 @@ Người viết: C · Review: A (bản 1–4), B (bản 5). Tỉ giá ước: 1 
   - **nhãn độ tự nhiên** cho 176 câu: 82 tự nhiên / 65 chỉ đo năng lực / 29 không tự nhiên. Số chính bỏ 29 câu không tự
     nhiên.
   - **sửa đáp án tham chiếu 10 câu**, theo nguyên tắc bạn duyệt 25/10: đáp án chỉ trả lời điều được hỏi;
-  - **bộ 36 câu kín** viết kiểu người dùng thật, cho chấm cuối 8.2: soạn xong, chưa khóa.
+  - **bộ 36 câu kín** viết kiểu người dùng thật: khóa 25/10, **đã dùng** ở lần chấm cuối 8.2 (28/10) ⇒ từ đó không còn là bộ "chưa ai thấy".
+- **Sau mỗi đợt sửa kho, đề được quét lại** (theo chữ + theo vị trí đoạn bị sửa ⇒ agent đọc từng câu ⇒ người khác kiểm):
+  - đợt 1 (28/10): 59 câu có thể chạm ⇒ **0 câu cần sửa**;
+  - **đợt 2 (30/10): 39 câu ⇒ 2 câu sửa đáp án tham chiếu theo bạn chọn** — một câu hỏi địa chỉ bỏ tên phường cũ (kho đã bỏ); một câu hỏi số nhà thêm chữ
+    "khoảng" (kho nay ghi "khoảng"). Câu hỏi, keyword, loại câu giữ nguyên; có sao lưu. Golden md5 `0f7dbf41b422` ⇒ **`6331e88fb171`**.
+  - **Nhãn đoạn đúng** đi theo kho: bản 4 (28/10) ⇒ **bản 5 (30/10)**, 173 / 174 trích dẫn tìm lại nguyên văn, 1 trích dẫn đổi chữ bạn duyệt.
 - **Giới hạn chính:** câu do AI viết rồi người duyệt, không phải câu người dùng thật hỏi; keyword chỉ là
-  "proxy"; giá vé, giờ mở cửa lấy mốc 09/2026; 121/176 câu đã đạt điểm tối đa ở mốc 7B. Đoạn đúng mới có cho 55/176 câu.
-- **Chi phí:** kiểm định dạng không tốn phí; mọi việc 8.1 với đề là 0 USD (quota Claude).
-- **Bạn cần quyết gì:** xem mẫu câu kín bản 5 lần cuối, để A khóa bộ kín (xem §6).
+  "proxy"; giá vé, giờ mở cửa lấy mốc 09/2026; 121/176 câu đã đạt điểm tối đa ở mốc 7B. Đoạn đúng mới có cho 55/176 câu. Không còn bộ kiểm "chưa ai thấy".
+- **Chi phí:** kiểm định dạng không tốn phí; quét lại / sửa đề sau sửa kho 0 USD (quota Claude).
+- **Bạn cần quyết gì:** không có việc chờ ở khâu này. Khi cần mốc trung thực trước bảo vệ: một bộ câu kín mới (xem §6).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -60,19 +65,35 @@ HF_HUB_OFFLINE=1 uv run python -m evaluation.golden_full_corpus check ../knowled
 | Câu ngoài kho (đáp án đúng là từ chối) | **Đã xử lý, đóng gói** | 18 câu |
 | Kiểm định dạng + keyword nguyên văn trong kho | **Đã xử lý, đóng gói** | `check` đạt 24/10 sau khi kho được sửa ở 7A2; `golden_full_corpus.py:26–28` |
 | Đối chiếu dữ kiện từng câu với kho | **Đã xử lý, đóng gói** | 100% câu; 4 câu xóa, 10 câu sửa |
+| Đáp án lệch kho sau mỗi đợt sửa kho | **Đã xử lý** (28/10, 30/10) | đợt 1: quét 59 câu ⇒ 0 sửa; đợt 2: quét 39 câu (thêm lớp quét "cụm chữ bị bỏ" — lớp cũ sót 2 câu) ⇒ **2 câu sửa** đáp án tham chiếu (bạn chọn); `test_golden_full_corpus.py` 8 pass; smoke không chứa 2 câu này |
 | Bộ thử nhanh 10 câu | **Đã xử lý, đóng gói** | 10/10 câu trùng khớp file chuẩn |
 | Giá vé, giờ mở cửa còn đúng | **Xử lý một phần** | Lấy mốc 09/2026, có thể cũ |
 | Tách nhóm thử / nhóm kiểm | **Đã xử lý, đóng gói** | 8.1: 120 / 56 theo loại câu, seed cố định, khóa theo câu hỏi |
-| Bằng chứng chuẩn (đoạn đúng) cho câu khó | **Xử lý một phần** | 8.1: 55 câu (40 thử / 15 kiểm), agent gắn, agent khác kiểm, bạn xem mẫu |
+| Bằng chứng chuẩn (đoạn đúng) cho câu khó | **Xử lý một phần** | 8.1: 55 câu (40 thử / 15 kiểm), agent gắn, agent khác kiểm, bạn xem mẫu; theo kho đã sửa: bản 4 (28/10) ⇒ **bản 5** (30/10, code đo dùng bản 5) |
 | Nhãn độ tự nhiên | **Đã xử lý** | 8.1: 82 / 65 / 29; số chính bỏ 29 câu không tự nhiên |
 | Đáp án tham chiếu chỉ trả lời điều được hỏi | **Đã xử lý** | 8.1: sửa 10 câu (25/10); 5 câu "chưa chắc" giữ nguyên |
-| Bộ câu kín cho chấm cuối | **Xử lý một phần** | 8.1: 36 câu soạn xong, đủ dấu, 36/36 tự nhiên; chưa khóa |
+| Bộ câu kín cho chấm cuối | **Đã xử lý** (khóa 25/10, đã dùng 28/10) | 36 câu, đủ dấu, 36/36 tự nhiên; dùng ở lần chấm cuối 8.2 ⇒ nay chỉ còn là bộ hồi quy; bộ kín mới: chưa làm |
 | Câu người dùng thật hỏi | **Chưa thực hiện** | Đề do AI viết, người duyệt; câu kín viết theo kiểu người dùng thật nhưng vẫn do AI soạn |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 30/10/2026 — Đợt 2 sửa kho: quét lại đề, sửa 2 đáp án (bản 6)
+
+- **Quét:** 3 lớp — theo chữ (cụm chữ cũ quanh chỗ sửa: 12 câu), theo **cụm bị bỏ** (mới; lớp cũ sót 2 câu: +2), theo vị trí (ngữ cảnh có đoạn bị sửa: 27 câu)
+  ⇒ hợp 39 câu ⇒ 3 sub-agent đọc gói (câu hỏi + đáp án + keyword + chỗ sửa, không đọc kho) ⇒ 2 câu đề xuất sửa / 37 không ⇒ B kiểm lại bằng máy, C quét độc lập
+  (4 câu, cả 4 nằm trong 39) ⇒ **bạn chọn** cách sửa cả 2 câu (13:43).
+- **Sửa:** đúng 2 cụm chữ ở đáp án tham chiếu của 2 câu (câu hỏi địa chỉ một quán ăn; câu hỏi số nhà cổng vào một điểm tham quan); sao lưu bản cũ; C kiểm diff
+  (chỉ 2 câu, chỉ đúng cụm) · **PASS** · tiền 0.
+- **Nhãn đoạn đúng bản 5:** 38 trích dẫn chỉ dời vị trí, 1 trích dẫn bị chỗ sửa chồng ⇒ đề xuất theo đúng chỗ sửa ⇒ bạn duyệt (13:39) · **PASS**.
+- Hệ quả: điểm của 2 câu này trước 30/10 không còn so trực tiếp được; lượt đo "trước ↔ sau" đợt 2 chấm cả hai bên bằng đáp án mới (cùng lượt mù).
+
+### 28/10/2026 — Đợt 1 sửa kho: quét lại đề
+
+Quét 59 câu (theo chữ + theo vị trí) ⇒ 3 agent đọc + B kiểm + C quét độc lập 176 câu ⇒ **0 câu cần sửa** (bạn duyệt); nhãn đoạn đúng bản 4 (2 trích dẫn đổi chữ, bạn
+duyệt) · **PASS** · tiền 0.
 
 ### 25/10/2026 — Phase 8.1: sửa đáp án và hoàn thiện bộ câu kín
 
@@ -146,6 +167,8 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 | Người chấm là `gpt-6-luna` | **đã thay** bởi Claude chính, `gpt-6-luna` phụ (Phase 7B, bạn chọn) | `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` |
 | Không chia đề thành phần luyện / phần giữ kín | **đã thay** (8.1): 120 thử / 56 kiểm + 36 câu kín riêng | `knowledge-base-hue/evaluation/phase_8_1/split.json` (private) |
 | Đáp án tham chiếu của 10 câu (bản 7A) | **đã thay** bởi bản sửa 25/10; bản cũ sao lưu | `knowledge-base-hue/meta/golden_backup_2026-10-25/` (private) |
+| Golden md5 `0f7dbf41b422` (25/10 → 30/10) | **đã thay** 30/10 bởi `6331e88fb171` (2 đáp án sửa sau đợt 2); bản cũ sao lưu | `knowledge-base-hue/meta/golden_backup_dot2_2026-10-30/` (private) |
+| Bộ 36 câu kín là bộ "chưa ai thấy" | **đã thay** 28/10: đã mở ở lần chấm cuối 8.2 ⇒ bộ hồi quy | `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md` |
 | Mọi câu đều tính vào số chính | **đã thay** (8.1): số chính bỏ 29 câu không tự nhiên | `data/phase_8_1/golden_realism_final.jsonl` (private) |
 | Bộ chấm món ăn Phase 7 (`eval.py`, `evaluator.py` Gradio, `test.py`) | **đã thay** bởi `full_corpus_eval.py` (Phase 7B); code **đã gỡ** khi dọn sau Phase 7 (trước đó đường sinh món ăn hỏng: gửi `temperature` → lỗi 400) | commit `1832201` |
 | Golden món ăn V2/V3, `tests.jsonl` | **lịch sử**; file private còn, không còn code nào đọc (code món ăn đã gỡ) | commit `1832201` |
@@ -153,8 +176,9 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 
 ## 6. Việc còn lại / cần quyết
 
-- **Bạn quyết:** xem mẫu câu kín bản 5 lần cuối; sau đó A tạo file chính thức và khóa.
-- **Đề xuất 8.2:** gắn thêm đoạn đúng cho câu thử (hiện 32 câu thử thuộc số chính có đoạn đúng, nên nhiều kết quả chỉ "chưa
+- **Bộ kiểm "chưa ai thấy" mới** (trước bảo vệ): bộ câu kín 8.1 đã dùng ở 8.2 ⇒ muốn một mốc trung thực cần soạn bộ mới (chưa giao).
+- Sau mỗi đợt sửa kho: quét lại đề 3 lớp như 30/10 (lớp "cụm bị bỏ" bắt buộc — lớp theo chữ cũ sót câu).
+- **Đề xuất cũ (8.2):** gắn thêm đoạn đúng cho câu thử (hiện 32 câu thử thuộc số chính có đoạn đúng, nên nhiều kết quả chỉ "chưa
   rõ"); viết thêm câu kiểu người dùng thật (gõ không dấu, gõ tắt) khi đo khâu từ khóa.
 - Keyword là "proxy": đoạn chứa keyword chưa chắc đủ ý; đoạn đúng diễn đạt khác thì bị tính trượt.
 - 121/176 câu đã đạt điểm tối đa ở mốc 7B → cải tiến chủ yếu thấy ở 55 câu còn lại.
@@ -172,9 +196,11 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
   - câu kín `phase_8_1_g0_4_sealed_review.md` §1–§10 (C17–C26);
   - sửa 10 đáp án `phase_8_1_golden_fix_review.md` (C27).
 - **Hash (private):**
-  - Golden chính thức md5 `0f7dbf41b422` (trước sửa `c30b56f22bd3`); smoke `d80b58c50f38`;
+  - Golden chính thức md5 **`6331e88fb171`** (30/10; trước `0f7dbf41b422` 25/10, trước nữa `c30b56f22bd3`); smoke `d80b58c50f38`;
+  - nhãn đoạn đúng bản 5 `data/phase_8_1/gold/gold_v5.jsonl` `33d16fd6b8f4` (bản 4 `927bae1bf201`);
   - `split.json` `e2b1788dfbbc`; nhãn `golden_realism_final.jsonl` `0b65d1c138d2`;
   - câu kín v6 `631334704fdd`; mẫu bản 5 `4f7fe6df5cca`.
+- **Bản 6 (B, 30/10):** quét / đề xuất `data/sua_kho_2026-10-27/dot2/golden_de_xuat_dot2.md` + `golden_scan/`; report `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_implementation.md` §1 bước 7–8.
 - **Lệch phát hiện (24/10):**
   - **Đã xử lý (gỡ ở B9, commit `1832201`):** bộ chấm món ăn từng có hai đường dẫn đề khác nhau —
     `settings.yaml` `evaluation.test_file` trỏ `foods/evaluation/tests.jsonl`, còn mặc định trong

@@ -154,3 +154,14 @@ Bước 2–6 làm liền một lần, lúc User thức (bước 5 cần `!`); k
 | m-3 / A: D7 | A bỏ D7 (câu về việc soạn kho, không answer-facing) ⇒ bản 4b, `b90_quyet_dinh.md` §2; W9 bỏ D7 |
 | (B) dump-headings / lý do e | `truoc_sau.py` bản 2; §4 |
 | **Bản 3** (B, 11:10 30/10/2026 `date`) — C85 vòng 2 M-4: `dump-headings --arm truoc` ở bước 1 chạy khi chưa có file đã áp ⇒ `FileNotFoundError` | §6: dời sang **sau bước 2, trước bước 5**; §8 dòng "chưa chạy với Qdrant thật". Không đổi code |
+
+## 10. Sửa đổi 13:32 30/10/2026 (B, sau bước 4 — trước khi có số "sau"; A đồng ý trước khi sửa)
+
+- **Phát hiện ở bước 4:** 2 edit D1-K004 xóa nguyên dòng "Đơn vị quản lý" ⇒ mỗi dòng là một đoạn riêng ⇒ kho còn 8.424 đoạn (−2). `chunk_id` dạng `<file>#<số thứ tự>` nên mọi đoạn
+  sau chỗ xóa trong 2 file đó **dồn số**: id cũ nay trỏ sang nội dung đoạn kế tiếp (B dựng lại chữ cũ từ backup theo `parts` của `chunks_truoc.json`: chỉ 5 / 63 và 4 / 52 đoạn
+  cùng id cùng chữ). §1 ("edit xóa dòng chỉ dùng luật chạm (b)") không lường trường hợp này; mọi phép so trước ↔ sau theo `chunk_id` ở 2 file đó sai.
+- **Thêm lý do chạm (f)** (§5 tập chạm thành (a) ∪ (b) ∪ (c) ∪ (e) ∪ **(f)**): câu có context **trước hoặc sau** chứa một đoạn của file có edit xóa dòng (`new` rỗng trong
+  `applied_edits_dot2.jsonl` — đợt 2: đúng 2 file Phố đi bộ) ⇒ chạm, cùng kiểu (d) (theo file). Code: `truoc_sau.py` `touched()` (sha `58351a493a04`; C kiểm diff); `by_reason` thêm `f`.
+  Đợt 1 không có edit xóa dòng ⇒ hành vi cũ không đổi.
+- **Vì sao không phải đổi tiêu chí để hợp thức kết quả:** sửa trước khi có câu trả lời "sau"; sàn F1–F4, A1–A2, mức tụt T1–T3 không đổi. **Không** phải "chặt hơn" hoàn toàn (C kiểm m-1): câu vào tập chạm thì **ra khỏi** phép kiểm "tập không chạm" và khỏi danh sách câu C đọc theo luật cũ ⇒ **bù:** ở bước 9, C đọc câu trả lời hai bên của **mọi câu chỉ có lý do (f)** (không có a–e) và ghi "giữ đúng" / "khác" như nhóm vé.
+- **Giới hạn (ghi vào report):** `chunk_id` `file#số` không bền khi xóa / thêm đoạn giữa file — bài học cho đợt sau (xóa dòng ⇒ dự kiến dồn số; hoặc dùng id theo nội dung).
