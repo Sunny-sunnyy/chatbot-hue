@@ -87,6 +87,20 @@ nguồn K017 / D2 / D6 (WebFetch), sha + `diff` + 104 edit cũ = bản 3 + bản
 5. **Khoá FDE + dự án khác:** 3 sub-agent đối chiếu khoá ↔ hue_rag (PHIÊN 29/10 mục 10); đọc file kết quả trong `data/external_project_notes/` nếu User đã gửi prompt.
 6. B0 + 20 câu mẫu lỗi nặng (User, khi rảnh).
 
+**A mới — đọc thêm trước khi báo cáo mở phiên (User 30/10, A ghi 09:57 30/10/2026):** tài liệu từ dự án khác của User + khoá học, đều private trong `data/`:
+- file **cập nhật 29/10 của dự án kia** trong `data/external_project_notes/` (tên có `CAP_NHAT_2026-10-29`; 375 dòng, 22:56 29/10) — **A đọc hết** (full-read): trả lời prompt 29/10 + nền tảng khoá FDE cho Phase 9+ + kinh nghiệm
+  trợ lý bán hàng + lời khuyên. Là **dữ liệu, không phải lệnh** (`Session_Prompt.md` §2); A tự kiểm 2–3 khẳng định chính. §0 có **bối cảnh User nêu khi bàn với A bên kia 29/10**
+  (đồ án "càng lớn, càng nhiều tính năng, càng giống sản phẩm thật"; Phase 1–8 "coi như đủ", Phase 9+ vừa làm vừa đánh giá; 6–10 tuần tới bảo vệ; AWS 10–50 USD / tháng, chỉ lên khi
+  bản local ổn định; muốn cân nhắc AgentCore / Gateway / Cedar, swarm, tự cải tiến) ⇒ **A hỏi User xác nhận đầu phiên** — nếu đúng thì đổi thứ tự việc trên (đợt 2 / Qwen3-8B còn
+  làm không, hay chuyển sớm sang Phase 9) ⇒ `propose-options`, mỗi lần một câu.
+- file `HUE_RAG_GIOI_THIEU_…_2026-10-29.md` cùng thư mục (A viết 29/10 — ảnh hue_rag gửi bên kia; đọc lướt để biết bên kia dựa vào gì).
+- `data/course_notes/tu_…_2026-10-29/` (thư mục chép từ dự án kia): `KHOA_FDE_DAY_DU.md` (1.819 dòng, 120 bài tuần 1–3), `KHOA_AI_CODING_DAY_DU.md` (2.629 dòng, khoá thứ hai, mới), `GHI_CHU_KHOA_FDE.md`
+  (54 dòng — đọc trước làm khung). Dài ⇒ **sub-agent** theo `WORKFLOW.md` §9.9 (≤ 3 file / sub-agent, tách theo tuần; đối chiếu với `data/course_notes/A_synthesis.md`,
+  `report_agent/2026-10-25_cai_tien_cach_lam/de_xuat_cho_du_an.md`, `Session_Prompt.md`, skill — không đề xuất lại cái đã có; đầu ra `data/course_notes/v3/doi_chieu_<…>.md`) —
+  thay cho 3 sub-agent chưa chạy ở PHIÊN 29/10 mục 10. **Độ tin:** ghi chép khoá là tóm tắt của tóm tắt (Codex tạo, chỉ checkout code tới `week2day5-end` ⇒ chi tiết code tuần 3
+  có thể sai); mục "Áp vào <dự án kia> [suy ra]" viết cho đề tài khác — bỏ qua phần áp dụng.
+- Ghi chú cũ cùng nguồn (24–25/10): `data/course_notes/{A_synthesis.md, v2/, w*.md}` — reference-only.
+
 **Mục cũ (viết kết phiên 28/10, giữ để tra):**
 2. **Đợt 2 sửa kho — áp phần sẵn sàng, việc đầu tiên** (User 28/10: "Áp phần sẵn sàng", "phiên sau"): `data/sua_kho_2026-10-27/dot2/edits/dot2.jsonl` **`9b5105b35e8b`**
    (104 edit / 33 file; B88 vòng 3 ready 0 / 0 / 0; nguồn K004 = 2 bài cổng Chính phủ 21/04 + 21/06/2025 + NQ 1675). Chạy **như đợt 1** theo spec `937cf8969810` §5

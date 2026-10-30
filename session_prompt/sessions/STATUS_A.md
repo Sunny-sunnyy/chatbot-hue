@@ -10,6 +10,9 @@ Terminal: `hue-rag-f7` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
   `CURRENT_HANDOFF.md` "PHIÊN 29/10" mục 9–10 + "Thứ tự việc phiên sau".
 - A tự ghi nhận xét độc lập về bảng B90 trước khi đọc review C: `data/sua_kho_2026-10-27/dot2/a_nhan_xet_b90_2026-10-29.md` — phiên sau so với C85 (C bắt M-3 mà A không bắt;
   A ghi Q3-K035 lý do lệch edit — C chưa nêu).
+- **Bổ sung 09:57 30/10/2026 (User trước khi đóng phiên):** A mới đọc thêm tài liệu dự án khác + khoá học — danh sách, cách đọc, độ tin và câu cần hỏi User ở `CURRENT_HANDOFF.md`
+  ngay dưới "Thứ tự việc phiên sau" (mục "A mới — đọc thêm"). Điểm nóng: User nêu với A bên kia (29/10) mục tiêu đồ án lớn hơn + "Phase 1–8 coi như đủ" ⇒ có thể đổi thứ tự
+  việc (đợt 2 / Qwen3-8B vs Phase 9) — A hỏi User xác nhận trước khi giao việc. Commit kết phiên: `25b6e13`.
 
 ## Đang khai báo sửa
 - không (kết phiên)
