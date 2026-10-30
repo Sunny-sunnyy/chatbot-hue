@@ -141,12 +141,20 @@ class LoggedOpenRouterRunner(OpenRouterDenseRunner):
             self.load()
         for attempt in range(self.retries + 1):
             status, response, ms = self._post(texts)
-            body = response.json() if status == 200 else {}
+            body, error = {}, None
+            if status == 200:
+                try:  # body 200 hỏng vẫn phải có dòng log trước khi dừng (review C m-1)
+                    body = response.json()
+                except ValueError:
+                    error = "HTTP 200 with non-JSON body: " + response.text[:300]
+            else:
+                error = "timeout" if response is None else response.text[:300]
             self._log({"label": self.label, "attempt": attempt, "n": len(texts), "status": status, "ms": ms,
                        "provider": body.get("provider"), "id": body.get("id"),
                        "prompt_tokens": (body.get("usage") or {}).get("prompt_tokens"),
-                       "error": None if status == 200 else ("timeout" if response is None else response.text[:300]),
-                       "at": time.strftime("%Y-%m-%d %H:%M:%S %z")})
+                       "error": error, "at": time.strftime("%Y-%m-%d %H:%M:%S %z")})
+            if status == 200 and error is not None:
+                raise RuntimeError(f"OpenRouter {self.label}: {error[:80]}")
             if status == 200:
                 matrix, provider = parse_embeddings_response(body, len(texts), self.spec.dimension)
                 self.providers_seen.add(provider)
@@ -285,7 +293,41 @@ def retrieve(group: str, name: str) -> dict:
             "not_200": sum(r["status"] != 200 for r in runner.attempts),
             "providers_seen": sorted(runner.providers_seen),
             "usd": round(sum(r["prompt_tokens"] or 0 for r in runner.attempts) * USD_PER_TOKEN, 7),
-            "summary": g1.summarize(rows)}
+            "latency": query_latency(name), "summary": g1.summarize(rows)}
+
+
+def split_calls(log: list[dict]) -> list[list[dict]]:
+    """Gom dòng log theo lần gọi: mỗi lần gọi bắt đầu bằng `attempt` 0, các lần thử lại nối sau."""
+    calls: list[list[dict]] = []
+    for row in log:
+        if row["attempt"] == 0:
+            calls.append([])
+        calls[-1].append(row)
+    return calls
+
+
+def query_latency(name: str) -> dict:
+    """`dense_ms` p50 / p95 theo hai cách + số câu phải thử lại (plan "Sửa đổi 30/10" mục 6, A quyết M-1 review C88).
+
+    Log `queries_<name>.jsonl` theo thứ tự gọi: mỗi lần gọi bắt đầu bằng dòng `attempt` 0; lần gọi đầu là câu warm-up của factory, sau đó đúng một lần gọi
+    cho mỗi dòng g1 theo thứ tự chạy. Câu thử lại có `dense_ms` gồm cả thời gian chờ ⇒ báo cả "mọi câu" (sát trải nghiệm thật) lẫn "chỉ câu gọi một lần".
+    """
+    log = [json.loads(line) for line in (OUT_DIR / f"queries_{name}.jsonl").read_text(encoding="utf-8").splitlines()]
+    calls = split_calls(log)
+    rows = g1._read(name)
+    if len(calls) != len(rows) + 1:
+        raise ValueError(f"{name}: {len(calls)} calls in log != {len(rows)} rows + 1 warm-up")
+    single = [r["dense_ms"] for r, c in zip(rows, calls[1:]) if len(c) == 1]
+    every = [r["dense_ms"] for r in rows]
+    retried = len(rows) - len(single)
+    pct = lambda xs, q: float(np.percentile(xs, q)) if xs else None
+    return {
+        "rows": len(rows), "retried": retried, "retried_rate": round(retried / len(rows), 4),
+        "stop_retried_over_5pct": retried / len(rows) > 0.05,
+        "dense_ms_all": {"p50": pct(every, 50), "p95": pct(every, 95)},
+        "dense_ms_single_call": {"n": len(single), "p50": pct(single, 50), "p95": pct(single, 95)},
+        "log_lines": len(log), "log_not_200": sum(r["status"] != 200 for r in log),
+    }
 
 
 def aa(name_a: str, name_b: str) -> dict:
@@ -329,9 +371,13 @@ def main() -> None:
     cmp = commands.add_parser("aa")
     cmp.add_argument("--a", required=True)
     cmp.add_argument("--b", required=True)
+    lat = commands.add_parser("latency", help="dense_ms p50 / p95 hai cách + câu thử lại (free, đọc log)")
+    lat.add_argument("--name", required=True)
     args = parser.parse_args()
     if args.command == "retrieve":
         res = retrieve(args.group, args.name)
+    elif args.command == "latency":
+        res = query_latency(args.name)
     elif args.command == "aa":
         res = aa(args.a, args.b)
     else:

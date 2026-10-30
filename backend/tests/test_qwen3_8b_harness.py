@@ -2,7 +2,12 @@
 import numpy as np
 import pytest
 
-from experiments.phase_8_2.qwen3_8b import load_cached_batch, retry_wait, save_cached_batch
+from experiments.phase_8_2.qwen3_8b import load_cached_batch, retry_wait, save_cached_batch, split_calls
+
+
+def test_split_calls_groups_retries_with_their_call():
+    log = [{"attempt": 0, "status": 200}, {"attempt": 0, "status": 504}, {"attempt": 1, "status": 200}, {"attempt": 0, "status": 200}]
+    assert [[r["status"] for r in c] for c in split_calls(log)] == [[200], [504, 200], [200]]
 
 
 def test_retry_wait_only_for_429_5xx_and_timeout():
