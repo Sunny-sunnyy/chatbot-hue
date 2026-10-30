@@ -4,6 +4,12 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-30 (15:05) — Đợt 2 sửa kho đóng (không làm hỏng); đo "ngày hôm nay"; Qwen3-8B chạy; sổ vòng 10
+
+- User giữ thứ tự cũ (PA2): đợt 2 ⇒ Qwen3-8B ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9. Đợt 2: 123 sửa / 40 file, 8.424 đoạn; trước ↔ sau không làm hỏng; User đóng,
+  giữ sao lưu. "Ngày hôm nay": 0 lỗi giả định ngày; từ chối nhầm câu theo ngày tương đối ⇒ Phase 9. Golden md5 `6331e88fb171`, gold v5. Nhánh hồ sơ ⇒ tag `hoso/*`.
+- Tổng hợp: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` §8.
+
 ## 2026-10-28 (13:26) — Đợt sửa kho đợt 1 đóng; đo streaming; thước lỗi nặng; kết phiên
 
 - Sửa kho đợt 1 (spec `937cf8969810`): 123 edit / 65 file / 51 mục; loại file danh mục ⇒ 204 file / 8.426 đoạn; index build lại (`574b5d02088b`, T1 `23c58c47635d`); gold v4; Golden 0 sửa;

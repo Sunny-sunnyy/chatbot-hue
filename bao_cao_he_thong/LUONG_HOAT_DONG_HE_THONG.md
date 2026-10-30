@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 14:19 30/10/2026** (đợt sửa kho **đợt 2**: **123 chỗ sửa / 40 file** — bỏ cấp "quận" và tên phường cũ, sửa câu theo nguồn đọc được, làm yếu câu không chắc chắn ⇒
+**Cập nhật lần cuối: 15:59 30/10/2026** (§5: thí nghiệm Qwen3-8B đã chạy — kém hơn, không chọn; chatbot **không đổi**). Trước đó 14:19 30/10/2026 (đợt sửa kho **đợt 2**: **123 chỗ sửa / 40 file** — bỏ cấp "quận" và tên phường cũ, sửa câu theo nguồn đọc được, làm yếu câu không chắc chắn ⇒
 **204 file, 8.424 đoạn** (−2: hai dòng bị xóa), từ khóa 5.631; chỉ mục dựng lại; đo 176 câu Golden + 32 câu an toàn "trước ↔ sau": **không làm hỏng**, 0 câu nói sai điều kiện mới —
 `BAO_CAO_KHO_DU_LIEU.md` bản 6; cách chạy chatbot **không đổi**). Trước đó 12:14 28/10/2026 (đợt sửa kho đợt 1: **123 chỗ sửa / 65 file**, bỏ file danh mục nghệ thuật biểu diễn khỏi chỉ mục ⇒ **204 file, 8.426 đoạn**, từ khóa 5.631; chỉ mục dựng lại; đo 176 câu "trước ↔ sau": **không làm hỏng** — `BAO_CAO_KHO_DU_LIEU.md` bản 5). Trước đó 09:38 28/10/2026 (Phase 8.2 B1 vào chatbot, merge `510e1a8`: **ngữ cảnh tối đa 10 đoạn** thay vì 5; câu hỏi được **chuẩn hóa
 Unicode NFC** trước khi tìm — câu gõ dạng NFD nay tìm giống hệt câu NFC; kết quả tìm 158 câu giống từng byte mốc cũ; chọn bằng judge Claude, **chưa có mốc
@@ -97,9 +97,10 @@ chậm 5,7 s (27/10); ở 10 đoạn (176 câu Golden, hỏi lần lượt, đo 
 - Dòng bảng giá dài bị tách thành đoạn một dòng, khó tìm (ví dụ vé Đại Nội, lỗi F2 Phase 6).
 - ~20% đoạn rất ngắn (≤48 token) vì mỗi khối Markdown là một đoạn, không gộp khối cạnh nhau.
 - Chunker còn giữ giới hạn 256 token của model HuyDang (đã bỏ), làm 6 bảng bị tách theo dòng.
-- Chưa có index Qwen3-embedding-8B (thí nghiệm sau đợt 2 sửa kho; kế hoạch + công cụ đã sẵn, chưa chạy).
+- Model vector lớn Qwen3-Embedding-8B: **đã thử 30/10, không chọn** — 3 / 40 câu thử mất đoạn đúng (luật: 0 câu), chỉ 2 câu được thêm; bước biến câu hỏi thành
+  vector chậm từ 0,02 s lên ~2,2 s (cả câu ước ~11 s, trần 5 s); tiền 0,0089 USD; chỉ mục thử đã xóa (`BAO_CAO_EMBEDDING_TU_KHOA.md` bản 4). Chatbot giữ e5-small.
 
-Phase 8 đã đóng (28/10). Hướng xử lý các giới hạn này nằm ở các việc sau Phase 8: thí nghiệm Qwen3-8B, streaming, đóng gói Phase 1–8 (bảng "giới hạn đã biết" đầy đủ
+Phase 8 đã đóng (28/10). Hướng xử lý các giới hạn này nằm ở các việc sau Phase 8: thí nghiệm Qwen3-8B (xong 30/10, không chọn), streaming, đóng gói Phase 1–8 (bảng "giới hạn đã biết" đầy đủ
 đang soạn) rồi mới tới Phase 9.
 
 ## 6. Chạy thử

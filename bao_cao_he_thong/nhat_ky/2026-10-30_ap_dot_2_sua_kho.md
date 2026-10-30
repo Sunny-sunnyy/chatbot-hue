@@ -1,33 +1,33 @@
-# Nhật ký 30/10/2026 — áp đợt 2 sửa kho, chuẩn bị Qwen3-8B, đọc khoá học
+# Nhật ký 30/10/2026 — áp đợt 2 sửa kho, Qwen3-8B kém hơn, đo ngày hôm nay, đọc khoá học
 
-**Cập nhật lần cuối: 14:17 30/10/2026.** Tiền paid trong ngày: ≈ 0,048 USD (~1.200 đồng) — đợt 2 ≈ 0,047 (trần 0,10), kiểm giá phần vào ≈ 0,0008.
+**Cập nhật lần cuối: 16:12 30/10/2026 (kết phiên).** Tiền paid trong ngày: ≈ 0,061 USD (~1.500 đồng) — đợt 2 ≈ 0,047 (trần 0,10), Qwen3-8B ≈ 0,0089, đo ngày ≈ 0,0037, kiểm giá ≈ 0,0008 (tính theo giá phẳng; thật cao hơn ~20 % phần vào vì ghi đệm).
 
 ## Tóm tắt
 - Mở phiên 10:30. Bạn xác nhận bối cảnh đồ án (càng giống sản phẩm thật càng tốt; 6–10 tuần tới bảo vệ) và **giữ thứ tự cũ**: đợt 2 sửa kho ⇒ Qwen3-8B ⇒ streaming ⇒ hội
   thoại nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ mới bàn Phase 9.
 - **Đợt 2 sửa kho đã vào chatbot** (13:31): 123 chỗ sửa trong 40 file; kho còn 204 file / 8.424 đoạn (−2 đoạn vì bỏ 2 dòng "Đơn vị quản lý"). Đo lại trước ↔ sau trên 176 câu
   Golden + 32 câu an toàn: **không làm hỏng** — 0 câu ngoài kho bị trả lời, 0 câu mới "nói sai", 0 câu đảo cảnh báo, điểm đủ ý gần như không đổi, từ chối nhầm 13 ⇒ 12.
-  Đợt 2 chờ C đọc xong danh sách câu cần xem tay rồi bạn đóng.
-- Code thí nghiệm Qwen3-8B viết xong và qua kiểm 2 vòng; **chưa chạy** (chạy sau đợt 2).
-- 7 sub-agent đọc khoá AI FDE, khoá AI Coding và cách làm của dự án kia ⇒ 3 đề xuất cải tiến cách làm chờ bạn duyệt.
-- Phát hiện mới: chatbot **không biết hôm nay là ngày nào** (câu "hôm nay có mở cửa không" có thể bị trả lời chắc mà sai — lỗi mức nặng nhất); mỗi lần gọi model đều ghi
-  bộ đệm mà không đọc lại (tiền / câu có thể đang ghi thiếu ~20 %).
+  C đọc tay 8 câu: 0 lỗi nội dung kho. **Bạn đóng đợt 2 lúc 14:39, giữ sao lưu cả hai đợt.**
+- **Qwen3-8B (model tạo vector lớn, gọi qua mạng) kém hơn e5-small ⇒ giữ e5-small:** làm mất đoạn đúng ở 3 / 40 câu thử + 3 câu kiểm, không câu nào được lợi rõ; tạo vector câu hỏi
+  mất ~2,2 s thay vì 0,02 s. Đã xoá chỉ mục thử và bộ đệm (bạn: chỉ cần ghi kết quả).
+- 7 sub-agent đọc khoá AI FDE, khoá AI Coding và cách làm của dự án kia ⇒ 3 đề xuất cải tiến cách làm; bạn cho thử cả 3 (ca dò kiểm theo cách khác; dời lịch sử file mở phiên; Codex review spec streaming một lần).
+- Đo "ngày hôm nay": chatbot **không** tự đoán ngày rồi nói sai (0 / 12 + 0 / 11), nhưng từ chối nhầm 6 / 14 câu "tối nay / tuần này" ⇒ bạn quyết để trợ lý Phase 9. Giá ghi bộ
+  đệm (bạn dán bảng giá): tiền / câu thật ≈ 0,00025 USD, vẫn dưới trần.
 
 ## Bạn cần làm gì
-- Đóng đợt 2 (sau khi C đọc xong) — A trình.
-- Chọn: đo "ngày hôm nay" trước hay Qwen3-8B trước.
-- Xem billing OpenAI: `gpt-6-luna` tính giá phần "cache write" thế nào.
-- Duyệt 3 đề xuất cách làm (Đ1–Đ3); 2 lệnh `!` xoá 6 nhánh hồ sơ cũ (tag `hoso/*` đã có).
+- Đã xong trong ngày: đóng đợt 2; chọn thứ tự; giá ghi đệm; 3 đề xuất cách làm (cho thử cả 3); xoá 6 nhánh cũ.
+- Kết phiên: chạy các lệnh `!` A đưa (xoá bộ đệm 8B, tag + xoá nhánh Qwen, commit / push).
+- Phiên sau: kết quả ChatGPT về streaming đã có chưa.
 
 ## Trạng thái
 | Việc | Kết quả | Ý nghĩa |
 |---|---|---|
 | Đợt 2 sửa kho | áp xong; trước ↔ sau **không làm hỏng** | kho đúng nguồn hơn (vé / giờ / tên đơn vị), chatbot giữ chất lượng |
 | Golden | bạn sửa đáp án mẫu 2 câu theo kho mới; nhãn đoạn đúng bản 5 (bạn duyệt 1 trích dẫn) | thước đo khớp kho mới |
-| Qwen3-8B | code + plan duyệt, chưa chạy | dự đoán: khó qua điều kiện tốc độ (tạo vector câu hỏi qua mạng ~1–3 s) |
-| Ngày hôm nay | plan đo duyệt (15 câu tự viết, trần 0,01 USD), chưa chạy | nếu có lỗi ⇒ thí nghiệm thêm ngày vào prompt (bạn duyệt) |
+| Qwen3-8B | **kém hơn**, không chọn (0,0089 USD) | giữ e5-small; đúng dự đoán về tốc độ, thêm: chất lượng tìm cũng không hơn |
+| Ngày hôm nay | 0 câu nói sai; 6 / 14 từ chối nhầm | an toàn ở mức 1; trả lời theo ngày là việc của trợ lý (Phase 9) |
 | Streaming / nhiều lượt | nháp phương án có; lỗi trích dẫn ở cấu hình hiện tại 0 / 489 | rút lại + báo lỗi khi trích dẫn hỏng là đủ; nhiều lượt: trình duyệt giữ lịch sử |
-| Giới hạn đã biết | bảng 36 dòng (nháp, B kiểm) | dùng khi đóng gói Phase 1–8 |
+| Giới hạn đã biết | bảng 37 dòng (nháp, B kiểm đạt) | dùng khi đóng gói Phase 1–8 |
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Kho có câu mâu thuẫn hoặc thiếu nguồn; đợt 2 chỉ giữ điều có nguồn đọc được và người thứ hai đọc lại khớp, còn lại bớt khẳng định. Sửa kho có thể làm chatbot tìm khác đi,

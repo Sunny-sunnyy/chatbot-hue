@@ -1,4 +1,51 @@
-# STATUS C — PHIÊN 30/10 (mở 10:31 30/10/2026 `date`; cập nhật 12:00 30/10/2026)
+# STATUS C — KẾT PHIÊN 30/10 (cập nhật 16:13 30/10/2026 `date`)
+
+Terminal `hue-rag-0e` · A = `hue-rag-0f`, B = `hue-rag-24` (trực tiếp). Quyền phiên 30/10 (như 29/10) **hết hạn cuối phiên**. Ghi chú kết phiên cho A: `data/ket_phien_2026-10-30/c_ghi_chu.md` (`562aac7cb984`).
+
+## 1. Việc phiên 30/10 (đều xong, review chéo đạt)
+
+| Mã | Việc | Kết quả | File |
+|---|---|---|---|
+| C87 / C85 v2–v3 | đọc lại nguồn K017 / D2 / D6 + kiểm máy bản 4b + plan đợt 2 | ready (M-4 thứ tự `dump-headings` tìm bằng chạy thật) | `sua_kho_dot2_do_plan_review.md` |
+| kiểm B93 | đợt 2 bước 1–9 + luật "f" + gold v5 + Golden 2 câu | ready; analyze / touched / T1 tính lại giống byte | `sua_kho_dot2_b1_review.md`, `sua_kho_dot2_b2_6_review.md` |
+| C88 | review harness Qwen3-8B (3 vòng) | ready | `qwen3_8b_harness_review.md` |
+| C89 | đếm lỗi citation + nháp streaming v2 | 0 / 489 lần sinh; B review 3 minor đã sửa | `data/tinh_nang_moi_2026-10-27/c89_dem_loi_citation.md`, `c77_phuong_an_streaming_v2.md` |
+| C90 | bảng giới hạn đã biết | bản 3 (+ sửa dòng 37 theo User) `8211d5d6eb7f`, B ready | `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` |
+| C91 | nháp hội thoại nhiều lượt | PA0–PA3, nghiêng PA1 | `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` |
+| C92 | review plan B96 (ngày hôm nay) | 2 vòng ready | `data/ngay_hien_tai_2026-10-30/plan_nhap_review.md` |
+| C93 | chạy plan B96 | 0 / 12 + 0 / 11 câu đoán ngày; 6 / 14 câu ngày tương đối bị từ chối ⇒ User: Phase 9; B ready, A đóng | `ngay_hien_tai_implementation.md`, `data/ngay_hien_tai_2026-10-30/` |
+| C94 | đưa C93 + C89 vào báo cáo User | A review đạt | `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 13), `BAO_CAO_DANH_GIA.md`, `README.md` |
+| C95 | review kết quả Qwen3-8B | ready 0/0/0 — "kém hơn" đứng (3 câu mất là thật) | `qwen3_8b_review.md` |
+
+**Tiền paid C phiên 30/10: 0,0037029 USD** (C93: pilot 0,0010797 + chính 0,0026232). Judge / sub-agent: quota Claude, 0 USD.
+
+## 2. Dở / phiên sau
+
+- **C96 xong 16:20 30/10/2026:** governance vòng 10 ready 0/0/4 (`governance_vong10_review.md` `dfe8c47aed4c`): archive nguyên văn; m-1 con trỏ B0, m-2 `emb/` còn 138 MB dù TONG_HOP ghi đã xoá, m-3 câu tả phạm vi archive (= `bfb0b41`), m-4 quyền thường trực chờ User.
+
+- **C96 (A giao 16:15 30/10/2026):** kiểm diff governance vòng 10, chỉ đọc. Khai báo file mới `report_agent/2026-10-27_phan_ton_phase_cu/governance_vong10_review.md`.
+
+- **Không việc dở của C.** Không worktree / server / nhánh của C còn chạy; `/tmp/c87_*`, `/tmp/c88*`, `/tmp/c9*` đã xóa. Còn `/tmp/an_toan_run_before_c93.py` (bản sao script trước C93, không chữ
+  kho) — xóa được.
+- File tracked C viết **chưa commit** (A commit; phần còn lại đã vào `bfb0b41`): `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_harness_review.md` (sửa §8), `qwen3_8b_review.md` (mới); `bao_cao_he_thong/` C94 nếu A chưa commit; `session_prompt/sessions/STATUS_C.md`.
+- Có thể A nhờ kiểm diff governance phiên này (W32, WORKFLOW §9.6, I7).
+- Chờ User: xóa bộ đệm `data/qwen3_8b_2026-10-28/emb/` (133 MB); xóa sao lưu đợt 1 / 2.
+
+## 3. Bẫy gặp phiên 30/10 (đầu vào vòng cải tiến — chi tiết + 3 đề xuất trong `c_ghi_chu.md`)
+
+1. **Gõ sha từ trí nhớ** trong tin cho A (lần 2) — sửa ngay. Luật: chỉ dán sha vừa in trong cùng lượt.
+2. **Nói quá dữ liệu** ("chỉ còn một dạng lỗi" — thật: chỉ *quan sát* một dạng).
+3. **Đoán hành vi code không đọc nhánh** (log khi stream) — đọc nhánh trước khi viết [GT].
+4. **Dẫn số dòng `CURRENT_HANDOFF.md`** — dẫn tên mục.
+5. **Bảng giới hạn chỉ gom từ tài liệu cũ** ⇒ thiếu giới hạn người dùng thấy (ngày hiện tại).
+6. curl trang nguồn có thể trả gzip / cần cookie JS ⇒ `file` / đọc HTML gốc trước khi kết luận "không có".
+7. `python -I` bỏ `PYTHONPATH` ⇒ script tạm import `backend` thì chạy không `-I` (script đặt trong thư mục riêng `/tmp/…`).
+8. Làm tốt (giữ): chạy thử lệnh của plan ở trạng thái thật (M-4); tính lại bằng **cách khác người làm** (W32: quét Golden theo cụm, kiểm câu mất theo đoạn).
+
+---
+
+## Nhật ký phiên 30/10 (theo thời điểm, giữ để tra)
+
 
 Terminal `hue-rag-0e` · A = `hue-rag-0f` (suy ra: B tự báo là `hue-rag-24`), B = `hue-rag-24` (trực tiếp). Quyền phiên 29/10 **hết hạn**; chờ A giao việc.
 Kiểm nhanh 10:31 30/10/2026: `main` `d8401d1`, không thay đổi tracked, hook `.githooks`, Qdrant 1 collection 8.426 point — khớp handoff.
@@ -45,6 +92,16 @@ A (11:32 30/10/2026 ghi nhận): duyệt plan `70ee5d44c260`; M-1 theo cách 1 +
 **C93 tiến độ 14:30 30/10/2026:** questions.jsonl `705bd08c144f`, kho_excerpts.json `9c42998ace72` (qua grep_kb), judge_brief.md; harness `d509d90a8ef8` chờ B kiểm diff + B viết 6 phiếu. expected_type 11 câu an toàn §4 = unconditional cả 11 (ghi trước, chỉ theo câu hỏi — không câu nào phụ thuộc hôm nay; C đã từng đọc trả lời S10, S12 ở C92/bước 9).
 **C93 14:35 30/10/2026:** pilot 3 câu 0,0010797 USD (ngày chạy thứ Sáu 30/10 14:31 — chỉ ở meta); main 12 câu 0,0026232 ⇒ **0,0037029 / 0,01**. Lô judge: round0 6 phiếu, round1 26 mục (15 thật + 11 an toàn); 2 judge sub-agent đang chấm round0.
 **C93 xong 14:39 30/10/2026:** n_L1L2 = 0 / 12 + 0 / 11 an toàn ⇒ không sửa; R11 từ chối đúng; judge 6/6 cả hai, bất đồng 0/26. **Phát hiện:** 6 / 14 câu trong kho bị từ chối, cả 6 là câu ngày tương đối; 4 câu (R3, R6, R7, R8) lịch có ngay trong ngữ cảnh ⇒ M5, báo A. Tiền **0,0037029 USD**. Report `ngay_hien_tai_implementation.md` `1603cc52aaf4`; `ket_qua.json` `6b01b2cf7e3d`. B kiểm.
+**14:43 30/10/2026:** C93 A đóng (B ready `e074f53b25fc`). Bảng giới hạn bản 3 `ba4c12c6880a` (dòng 10, 11, 34 + dòng 37 mới). Chờ B: chuẩn bị Qwen3-8B (rebase, T1, mốc e5, cỡ mẫu) ⇒ C review.
+**14:45 30/10/2026:** main `bfb0b41`. B rebase Qwen3-8B + đo mốc e5 + cỡ mẫu + sửa plan ⇒ C review (plan sha, số mốc, T1). W31: C không việc nặng trong lúc B đo.
+**14:52 30/10/2026:** review chuẩn bị Qwen3-8B ready 0/0/0 (plan `d6d6c7d51584`, nhánh `01bf0c2`, T1 `4d5bbe9e0edc` chạy lại trong worktree riêng đã gỡ; mốc e5 + bootstrap khớp) — review `c60ba477e0ab`. Chờ A duyệt ⇒ B pilot.
+
+**TÓM TẮT 14:54 30/10/2026 (đọc trước):** Xong + ready: C87 (C85 v2–v3), kiểm B93 bước 1–9 (`sua_kho_dot2_b2_6_review.md`), C88 (B92, 3 vòng), C89, C90 (bảng giới hạn bản 3 `8211d5d6eb7f`), C91, C92, C93 (A đóng). Tiền paid C phiên này: **0,0037029 USD** (C93). Ghi chú kết phiên cho A: `data/ket_phien_2026-10-30/c_ghi_chu.md` (`562aac7cb984`) — 3 đề xuất Đ-C1…Đ-C3. **Đang:** B chạy Qwen3-8B (W31 — C không CPU / Qdrant / paid). **Dở / phiên sau:** review kết quả Qwen3-8B khi B xong. Không worktree / file tạm của C còn lại (`/tmp/c9*` đã xóa; `/tmp/an_toan_run_before_c93.py` — bản sao script, không chữ kho, giữ cho B so diff).
+
+**C94 (A giao 15:07 30/10/2026):** khai báo sửa `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`, `bao_cao_he_thong/README.md` (chỉ chữ; A review).
+**C94 xong 15:09 30/10/2026:** 3 file `bao_cao_he_thong/` (+32 / −7 so HEAD; chỉ chữ, quét trùng 0) ⇒ A review.
+**C95 (A giao 15:56 30/10/2026):** review kết quả Qwen3-8B. Khai báo file mới `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_review.md`; script tạm `/tmp/c97/` (xóa khi xong). 0 USD.
+**C95 xong 15:59 30/10/2026:** review Qwen3-8B ready 0/0/1 (`qwen3_8b_review.md` `f648cdd287cd`) — "kém hơn" đứng; 3 câu mất là thật (kiểm theo đoạn); m-1 giải thích p95 test. `/tmp/c97` xóa. 0 USD.
 Việc dở chờ giao (từ phiên 29/10, dưới): C85 vòng 2 + phần NOT RUN; điền `<T>` 2 report; C86 harness Qwen3-8B. Handoff: A mới hỏi User xác nhận mục tiêu mới ⇒ thứ tự có thể đổi.
 
 ---

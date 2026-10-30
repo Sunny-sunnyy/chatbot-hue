@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2)
 
-**Cập nhật lần cuối: 14:32 30/10/2026 — bản 5: nhãn "đoạn đúng" bản 5 (sau đợt 2 sửa kho) là mặc định; Golden sửa 2 đáp án (md5 `6331e88fb171`); thước
+**Cập nhật lần cuối: 15:59 30/10/2026 — bản 5 (bổ sung 30/10: C93 — câu hỏi theo ngày tương đối đã đo, §6; 15:59 — §6 ghi Qwen3-8B đã thử, kém hơn). Bản 5 lúc 14:32 30/10/2026: nhãn "đoạn đúng" bản 5 (sau đợt 2 sửa kho) là mặc định; Golden sửa 2 đáp án (md5 `6331e88fb171`); thước
 "trước ↔ sau" đợt 2 (thêm bộ 32 câu an toàn bắt buộc, luật "chạm theo file") và kết quả: không làm hỏng, 0 câu nói sai điều kiện mới; thước "lỗi nặng" đã có.**
 Trước đó 12:14 28/10/2026 — bản 4 (nhãn bản 4, đợt 1, câu kín). Người viết: A (bản 1, 24/10), C (bản 2, 25/10; bản 3, 27/10), B (bản 4, 28/10; bản 5, 30/10) ·
 Review: B (bản 2), A (bản 3–5). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
@@ -293,8 +293,11 @@ Kiểm ngày 28/10/2026 với `main` và các report 8.2 / đợt sửa kho; 3 d
 - **Bạn:** B0 (đọc 20 cặp mù, ghi nhận xét) khi tiện, trước buổi bảo vệ — mốc người đầu tiên; luật dừng (spec 8.2 §11) kích hoạt ⇒ A trình giữ 10 đoạn / về 5 và xét lại
   các kết luận dựa người chấm Claude.
 - **Hai lỗi nặng nhất bạn chốt:** đã có thước (lỗi nặng) + bộ 32 câu an toàn bắt buộc; còn thiếu **người đọc** (20 câu mẫu `data/loi_nang_2026-10-28/human_sample.md`
-  khi bạn rảnh) và câu an toàn **người dùng thật** viết. Một lỗi ứng viên đang đo: chatbot không biết hôm nay là ngày nào (câu hỏi "tối nay", "tuần này").
-- **Bộ câu mới:** nhóm kiểm và câu kín đã dùng ⇒ phép kiểm cuối của thay đổi lớn sau (ví dụ Qwen3-8B, streaming) cần câu mới chưa ai nhìn.
+  khi bạn rảnh) và câu an toàn **người dùng thật** viết. Lỗi ứng viên "chatbot không biết hôm nay là ngày nào" **đã đo (30/10, C93)**: 0 câu đoán ngày rồi nói sai
+  (0 / 12 câu tự viết + 0 / 11 câu an toàn; với cỡ mẫu này chỉ nói được tần suất dưới ~25 %); nhưng 6 / 14 câu "tối nay / tuần này" có trong kho bị **từ chối nhầm** (4 câu có lịch ngay
+  trong đoạn model đọc) ⇒ bạn quyết 14:44 30/10: để trợ lý Phase 9 (công cụ ngày), bộ câu này làm mốc (`BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 13).
+- **Bộ câu mới:** nhóm kiểm và câu kín đã dùng ⇒ phép kiểm cuối của thay đổi lớn sau (ví dụ Qwen3-8B, streaming) cần câu mới chưa ai nhìn. (Qwen3-8B đã thử 30/10 ở tầng tìm, **kém hơn** trên nhóm thử — không tới bước kiểm cuối, nên không tốn câu mới;
+  `BAO_CAO_EMBEDDING_TU_KHOA.md` bản 4.)
 - **Còn mở (A xử lý):** đếm lại "lỗi trích dẫn" lượt 10 đoạn của 8.1 bằng bộ kiểm hiện tại; mọi report mới ghi kèm bản nhãn khi nêu số đoạn đúng.
 - **Đề xuất cũ còn giữ:** gắn thêm đoạn đúng cho câu thử để tăng cỡ mẫu (40 câu làm nhiều kết quả "chưa rõ").
 

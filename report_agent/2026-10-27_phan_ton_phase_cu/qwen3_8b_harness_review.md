@@ -87,3 +87,20 @@ không tạo collection.
 
 **Kết luận vòng 2:** code B92 `fb0b82c` **`ready_for_user_confirmation`** 0 / 0 / 0; plan `9f3d616e2a59` ready. Còn lại trước lượt có phí: T1 chạy lại sau rebase lên kho đợt 2
 (§5), mốc e5 + cỡ mẫu theo "Sửa đổi 30/10" mục 1–2.
+
+## 8. Vòng 3 — phần chuẩn bị chạy (C, 14:52 30/10/2026 `date`): `ready_for_user_confirmation` 0 / 0 / 0
+
+Đầu vào (sha C tính từ file): plan `qwen3_8b_plan.md` **`d6d6c7d51584`** (bản A duyệt `9f3d616e2a59` = `git show HEAD`); nhánh `b92-qwen3-harness` đỉnh `01bf0c2` trên `main` `bfb0b41`.
+
+- **Plan:** `diff` với `HEAD` = đúng 2 chỗ "11:3x" ⇒ "11:26 30/10/2026" (khớp dòng A ghi trong `CURRENT_HANDOFF.md` "(A, 11:26 30/10/2026) B92 xong") + thêm "Sửa đổi 30/10" mục 7 (5 dòng);
+  không đổi mục nào khác, không đổi §7 ✓.
+- **Rebase:** `git range-diff e70007b..fb0b82c bfb0b41..b92-qwen3-harness`: 3 / 3 commit "=" (patch giống hệt); diff của diff chỉ khác dòng `index` ⇒ nhánh mang đúng code đã review vòng 2 ✓.
+  `GOLD_PATH` trên nhánh = **gold v5** (từ `main` `bfb0b41`) ✓.
+- **T1 trên nhánh** (worktree riêng `/tmp/c96_wt`, symlink kho / data, đã gỡ): **`4d5bbe9e0edc`** = T1 `main` sau đợt 2 (C kiểm ở B93 bước 6) ⇒ đường mặc định không đổi ✓.
+- **Mốc e5** (`data/phase_8_1/g1/c78_e5_{dev,test}{,_rerun}.jsonl`): dev 108 / test 50 dòng; hai lần **giống từng dòng** trừ `dense_ms` và `config` (tên lượt) ⇒ tất định ✓. C đếm lại từ file:
+  dev 40 câu có nhãn — context đủ **24**, top-10 **24**, pool dense **33**, thiếu ở context **16**, thiếu ngay ở pool dense **7**; dev số chính 32 — 19 / 19 / 26 / 13 / 6; test 15 — 9 / 9 / 11 / 6 / 4;
+  test số chính 10 — 7 / 7 / 8 / 3 / 2 — **khớp mục 7** ✓.
+- **Cỡ mẫu:** `bootstrap_mean_diff` (10.000 vòng, seed `20261024`) trên 40 cặp nhị phân, C tìm số thắng nhỏ nhất cho cận dưới CI > 0: **4 / 0, 7 / 1, 9 / 2, 11 / 3** (với số thắng ít hơn 1,
+  cận dưới = 0 ⇒ `verdict` "no_difference") — **khớp** ✓. Trần thắng 16 ≥ 4 ⇒ có thể ra "tốt hơn"; sàn: 24 câu có thể tụt ✓.
+
+**Kết luận vòng 3:** plan `d6d6c7d51584` + nhánh `01bf0c2` sẵn cho pilot có phí (A duyệt sha). Nhắc từ plan: pilot ước > 1,5 × ⇒ dừng; câu phải thử lại > 5 % ⇒ dừng.

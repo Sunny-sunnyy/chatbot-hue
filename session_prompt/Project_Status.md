@@ -34,10 +34,9 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (14:39 30/10/2026):** đợt 2 sửa kho **đóng** (User, giữ sao lưu): 204 file / 8.424 đoạn, không làm hỏng; đang đo "ngày hôm nay" ⇒ Qwen3-8B ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói. Trước — **kết phiên 28/10, 13:26:** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
-Phiên sau (thứ tự): **áp đợt 2 sửa kho** (soạn sẵn `dot2.jsonl` `9b5105b35e8b`, 104 edit / 33 file) ⇒ **thí nghiệm Qwen3-8B** (plan `52555da95828`; chạy cần User duyệt gửi kho ra
-OpenRouter + collection thử) ⇒ **spec streaming** (chờ kết quả ChatGPT; đo: chữ hiện sớm hơn ~1,9 s) ⇒ hội thoại nhiều lượt. Thước "lỗi nặng" (bịa thêm / sai điều kiện an toàn) đã
-có (`report_agent/2026-10-27_phan_ton_phase_cu/do_loi_nang_*`). Chi tiết: `CURRENT_HANDOFF.md`. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
+**Bây giờ (16:12 30/10/2026, kết phiên 30/10):** đợt 2 sửa kho **đóng** (User, giữ sao lưu): 204 file / 8.424 đoạn, không làm hỏng; "ngày hôm nay" 0 nói sai (từ chối nhầm ⇒ Phase 9); **Qwen3-8B kém hơn, giữ e5-small**. Phiên sau: streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9. Trước — **kết phiên 28/10, 13:26:** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
+Phiên sau (thứ tự, User 30/10): **spec streaming** (chờ kết quả ChatGPT; nháp v2; Codex review một lần — W33) ⇒ hội thoại nhiều lượt (nháp C91) ⇒ **đóng gói
+Phase 1–8** (bảng giới hạn, báo cáo so sánh phương án, sửa `cost_usd`) ⇒ Phase 9. Chi tiết: `CURRENT_HANDOFF.md`. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
 `docs/superpowers/specs/2026-10-24-phase-8-1-decision-audit-design.md` bản 4 + sửa đổi 25/10; đợt
@@ -111,7 +110,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 **Candidate dense trong code** (`backend/embedding/full_corpus.py`):
 `e5-small-384` (local) và `qwen3-embedding-8b-4096` (OpenRouter
 `qwen/qwen3-embedding-8b`, pin Nebius, `data_collection: deny`, batch 64) —
-8B chưa có index.
+8B đã thử 30/10: kém hơn, không chọn, index thử đã xoá.
 
 **Qdrant** `127.0.0.1:6335` (gRPC 6336; port đổi để chạy song song
 một dự án khác của User). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.424
@@ -133,6 +132,8 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-30 16:12 | **Qwen3-8B kém hơn ⇒ giữ e5-small** (sàn 0 câu mất đoạn đúng vỡ 3 / 40 dev + 3 test; vector câu hỏi 2,2 s qua mạng); collection thử xoá; User: không giữ bộ đệm, chỉ ghi kết quả; code giữ bằng tag `hoso/b92-qwen3-harness`, không merge | User; `qwen3_8b_implementation.md` |
+| 2026-10-30 15:07 | **Giá `gpt-6-luna` đủ (User dán bảng giá, ngữ cảnh < 272k token):** vào 0,10 · ra 0,50 · đọc đệm 0,01 · **ghi đệm 30 phút 0,125** · ghi đệm 12 giờ 0,25 USD / 1M. B95: mỗi câu `cache_write_tokens` ≈ toàn bộ phần vào, `cached_tokens` = 0 ⇒ `cost_usd` (giá phẳng 0,10) **ghi thiếu ≈ 20 % / câu** (~0,00021 ⇒ ~0,00025, vẫn dưới trần 0,0005); mọi số USD cũ đếm theo giá phẳng. Sửa công thức + log `cache_write_tokens`: việc đóng gói | User; B95 |
 | 2026-10-30 14:39 | **User đóng đợt 2 sửa kho, giữ sao lưu cả hai đợt** (không làm hỏng: Golden 176 + bộ an toàn 32, 0 sai điều kiện mới, ≈ 0,047 USD); gold v5 + Golden câu 5 / 127 (User duyệt 13:39–13:43); thứ tự sau đợt 2: **đo "ngày hôm nay" trước Qwen3-8B**; giữ thứ tự cũ (PA2) ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9; bối cảnh đồ án 5 ý đúng; quyền phiên như 29/10 | User |
 | 2026-10-28 13:26 | **Kết phiên 28/10:** User **đóng đợt sửa kho đợt 1, giữ sao lưu**; **đợt 2 áp phần sẵn sàng ở phiên sau** (việc đầu tiên); **Qwen3-8B chạy phiên sau**; cho thử W30 (hook cảnh báo giờ ước), W31 (đang đo latency ⇒ cấm việc nặng song song), I6 | User |
 | 2026-10-28 10:23 | **User đóng Phase 8.2** (TONG_HOP; giới hạn chưa có mốc người, tốc độ chưa đạt) | User |
@@ -273,7 +274,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   trường mới thêm ở phần sinh / citation chỉ cổng ổn định (đọc dòng log thật) bắt được; test đi qua generator cần key (B70 m-1, đóng bằng ghi bẫy 27/10).
 - `validate_gold.py` từ 27/10 (C62) dừng nếu `gold_draft.jsonl` đã có.
 - `data/phase_8_1/tools/validate_gold.py` **không nhận đầu vào**: đọc `gold_batch_*` rồi **ghi đè** `data/phase_8_1/gold/gold_draft.jsonl` (file manifest G0.6
-  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v5.jsonl` từ 30/10** (`33d16fd6b8f4`, kho sau đợt 2, User duyệt 1 trích dẫn; `GOLD_PATH` code chưa đổi — A đổi sau đo "sau"); trước đó `gold_v4.jsonl` từ 28/10 (`927bae1bf201`, kho sau sửa đợt 1; trước đó `gold_v3.jsonl` từ 27/10 chiều (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
+  khóa sha `bab707b9ab22`) ⇒ không chạy lại; kiểm nhãn v2 bằng `data/phase_8_1/tools/build_gold_v2.py` (chỉ đọc). Nhãn dùng cho đo: **`gold_v5.jsonl` từ 30/10** (`33d16fd6b8f4`, kho sau đợt 2, User duyệt 1 trích dẫn; `GOLD_PATH` trỏ v5 từ `bfb0b41`); trước đó `gold_v4.jsonl` từ 28/10 (`927bae1bf201`, kho sau sửa đợt 1; trước đó `gold_v3.jsonl` từ 27/10 chiều (`3b1117cf59e9`, B75; trước đó `gold_v2.jsonl` B69) — `GOLD_PATH`
   mặc định của `backend/experiments/phase_8_1/g1_retrieval.py`: v2 + luật tiêu đề mục từ 27/10 sáng, **v3 từ `fa192f8`**, **v4 từ `e08a126`**) ⇒ **mọi số `*_gold_*` trước 27/10 tính bằng v1**, ghi kèm bản nhãn; so với số cũ thì chạy lại
   mốc bằng cùng thước (B1 dev: v1 22 / v2 24).
 - Auto mode chặn **cả khối** khi lệnh ghép có thao tác rủi ro (`push --delete`, `rm`, push nhánh từ worktree) ⇒ tách thao tác rủi ro ra lệnh

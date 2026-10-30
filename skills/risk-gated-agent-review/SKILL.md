@@ -54,6 +54,9 @@ người làm.
 | Dữ liệu đang chạy/xóa | Quyền, đích chính xác, trạng thái trước/sau |
 | Bảo mật/API công khai | Ranh giới bị ảnh hưởng, hành vi quan sát được |
 
+Thay đổi code / script / dữ liệu: người kiểm tự viết ≥ 1 ca dò nhắm đúng chỗ đổi bằng cách **khác** cách người làm đã kiểm (regex khác, đầu vào biên, thử
+phá rào; sửa một lỗi ⇒ `git grep` cùng mẫu ở chỗ khác), và ghi 1 câu bất biến (hành vi phải giữ nguyên) rồi kiểm nó (S10, S21, S38, W27; User cho thử 30/10).
+
 ### Câu hỏi về độ đơn giản
 
 Code này phục vụ hành vi thật nào? Có cách trực tiếp hơn mà vẫn đủ không? Người

@@ -108,3 +108,53 @@ Cổng merge B1 0,000423; B3 0,0138; bộ "trước" 0,0361; C73 0,0103; cổng 
 ### 7.5 Chờ User
 
 Đóng đợt sửa kho đợt 1; bước 11 xóa sao lưu; gửi ChatGPT yêu cầu streaming; duyệt chạy Qwen3-8B; đợt 2 (D1–D7, 15 câu); B0 khi rảnh; spec streaming (sau nghiên cứu).
+
+## 8. Phiên 30/10 (A `hue-rag-0f`, B `hue-rag-24`, C `hue-rag-0e`) — cập nhật 15:05 30/10/2026
+
+### 8.1 Quyết định (giờ A ghi nhận bằng `date`)
+
+| Giờ | Ai | Quyết định |
+|---|---|---|
+| 10:30–10:57 | User | Bối cảnh đồ án (file cập nhật dự án kia §0) đúng 5 ý; **PA2 giữ thứ tự cũ** (A khuyên dời Qwen3-8B); đọc khoá + cách làm dự án kia rồi áp dụng; làm xong Phase 8, đóng gói rồi mới Phase 9; quyền như 29/10 |
+| 11:0x | User | Gắn tag `hoso/*` cho 6 nhánh hồ sơ rồi xoá nhánh (tag đã push; lệnh xoá User chạy `!`) |
+| 11:15 | A | Duyệt `dot2.jsonl` bản 4b `c0b5876ea510`, plan đo đợt 2 bản 3 `5f30ac7eac16` (C85 vòng 3 ready) |
+| 11:26–11:36 | A | B92 harness Qwen3-8B: lệch §4.2 (`dense_runner` ở factory) duyệt; mốc e5 đo lại trên kho đợt 2; M-1 giữ code + p50 / p95 hai cách + dừng khi > 5 % câu thử lại; plan `9f3d616e2a59` |
+| 13:00 | User | Có mặt ⇒ chạy bước 2–6 đợt 2; `!` xoá 3 đích ở terminal B |
+| 13:1x | A | Luật chạm "f" (D1 xoá dòng ⇒ `chunk_id` dồn ở 2 file), ghi trước khi thấy số "sau" |
+| 13:39–13:43 | User | Duyệt gold v5 (câu 172); Golden câu 5 = bỏ cụm tên phường cũ, câu 127 = thêm "khoảng"; A duyệt plan đợt 2 `2adef0d4e5fc` |
+| 14:3x | User | Đo "ngày hôm nay" trước Qwen3-8B |
+| 14:39 | User | **Đóng đợt 2 sửa kho, giữ sao lưu cả hai đợt** |
+| 14:44 | User | Câu theo ngày tương đối ("tối nay", "tuần này") là việc của trợ lý (Phase 9), không vá ở Phase 8 |
+| 14:53 | A | Duyệt plan Qwen3-8B `d6d6c7d51584` (mốc e5 kho đợt 2 + cỡ mẫu, C review ready) |
+| 15:0x | User | Cho thử W32, I7, W33 (sổ cải tiến vòng 10) |
+
+### 8.2 Kết quả
+
+- **Đợt 2 sửa kho (B90–B93, C85, C87):** 123 sửa / 40 file; 204 file / 8.424 đoạn; record `51fb1ec63cbc`, sparse `c8134c49a648`, T1 `4d5bbe9e0edc` (25 / 158 câu đổi, 24 chạm file
+  sửa). Trước ↔ sau (`sua_kho_dot2_implementation.md` `2e40e5902d36`): Golden F1–F4 = 0; Completeness 4 / 122 / 3 (+0,008 [−0,031; +0,047]); Accuracy 1 / 127 / 1; từ chối
+  nhầm 13 ⇒ 12; p50 2,19 / p95 4,90 s; bộ an toàn P0_sai mới 0, đảo cảnh báo 0, ngoài kho 0 / 4. C đọc 8 câu: 0 lỗi nội dung kho; 1 câu thiếu lời nhắc thời tiết do thứ hạng đổi (watch).
+  Golden md5 `6331e88fb171`; gold v5 `33d16fd6b8f4`; `GOLD_PATH` ⇒ v5 (`bfb0b41`).
+- **Đo "ngày hôm nay" (B96 plan, C92 review, C93 chạy, B kiểm):** n_L1L2 = 0 / 12, bộ an toàn 0 / 11 ⇒ không sửa prompt; 6 / 14 câu theo ngày tương đối bị từ chối (4 câu ngữ
+  cảnh có lịch) ⇒ giới hạn Phase 1–8, xử lý ở Phase 9 (User 14:44).
+- **Qwen3-8B (B92, C88):** harness + plan duyệt; pilot đạt (Nebius, cos ≥ 0,9999, ~0,007 USD ước cả kho); nhúng kho đang chạy (~60 phút) — kết quả ghi §8.5.
+- **Đọc thêm (0 USD):** 7 sub-agent đối chiếu khoá FDE / AI Coding / cách làm dự án kia (`data/course_notes/v3/`); B94 RAG dự án kia (prompt cố định ~152–193 token ≪ 1.024 ⇒ không
+  ăn prompt cache); B95 `cache_write_tokens` ≈ toàn bộ phần vào mỗi lần, `cached_tokens` = 0 ⇒ `cost_usd` có thể thiếu ~20 % nếu ghi đệm tính 1,25× (chờ User xem billing);
+  C89 lỗi citation cấu hình hiện tại 0 / 489; nháp streaming v2 + nháp nhiều lượt (C91, PA1 trình duyệt giữ lịch sử); bảng giới hạn Phase 0–8 (C90, 37 dòng, B ready).
+- **Cách làm:** sổ vòng 10 — W32 (ca dò khác cách + câu bất biến), I7 (dời lịch sử file mở phiên), W33 (Codex review spec streaming một lần); S49–S54. Sửa chữ: `run-experiment`
+  dòng code, `Project_Status` §6 egress OpenAI, `WORKFLOW` §9.6 xoá nhánh. Nhánh hồ sơ ⇒ tag `hoso/*`.
+
+### 8.3 Tiền
+
+Đợt 2 ≈ 0,047 USD (trần 0,10); B95 0,0008; C93 0,0037; Qwen3-8B pilot 0,0001 (+ nhúng kho, §8.5). Judge / sub-agent: quota Claude, 0 USD.
+
+### 8.4 Giới hạn
+
+Người chấm là Claude, chưa có mốc người (B0); bộ "trước" đợt 2 là câu trả lời 28/10 (trôi theo ngày không tách được); `chunk_id` dạng `file#số` không bền khi xoá dòng giữa file;
+tiền / câu có thể ghi thiếu (chờ billing); câu theo ngày tương đối bị từ chối.
+
+### 8.5 Qwen3-8B — kết quả (16:12 30/10/2026)
+
+**Kém hơn ⇒ không vào chatbot, giữ e5-small** (`qwen3_8b_implementation.md` `2d9588d91962`; C95 ready 0 / 0 / 0, `qwen3_8b_review.md`). Build 14:57–15:28 (~31 phút; 133 lần
+gọi, 0 lỗi, chỉ Nebius), 0,0089 USD. Chỉ số quyết (context đủ fact, dev 40): 0,600 ⇒ 0,575 [−0,125; +0,075], 2 / 35 / 3; **sàn "0 câu mất đoạn đúng" vỡ** (dev mất 3, ổn định qua
+A/A; test mất 3; C kiểm mức đoạn: mất thật, không do nhãn). Tạo vector câu hỏi e5 21–28 ms ⇒ 8B p50 2,2 s / p95 6,5 s (luật +50 ms; p95 cả câu ước ~11 s > trần 5 s). Collection
+thử đã xoá; bộ đệm `emb/` xoá theo User ("kém hơn thì chỉ cần ghi lại kết quả"; lệnh `!` User chạy lúc kết phiên); code giữ làm hồ sơ (tag `hoso/b92-qwen3-harness`), không merge.

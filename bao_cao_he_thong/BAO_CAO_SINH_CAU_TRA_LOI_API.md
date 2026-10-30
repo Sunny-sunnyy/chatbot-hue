@@ -1,10 +1,10 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6)
 
-**Cập nhật lần cuối: 09:38 28/10/2026 — bản 12: chatbot đưa tối đa 10 đoạn vào ngữ cảnh (trước 5) + chuẩn hóa chữ câu hỏi (NFC), merge `510e1a8`; bạn chọn
+**Cập nhật lần cuối: 15:08 30/10/2026 — bản 13: đo hai việc trên chatbot đang chạy, chatbot **không đổi**: (1) câu hỏi theo ngày tương đối ("tối nay", "tuần này") — **0 câu đoán ngày rồi nói sai**, nhưng **6 / 14 câu bị từ chối** dù kho có lịch ⇒ bạn quyết (14:44 30/10) để cho trợ lý ở Phase 9; (2) lỗi trích dẫn ở cấu hình đang chạy **0 / 489 lần sinh** ⇒ căn cứ cho thiết kế streaming. Không tốn thêm tiền ngoài 0,0037 USD của lượt đo (1).** Bản 12 (09:38 28/10/2026): chatbot đưa tối đa 10 đoạn vào ngữ cảnh (trước 5) + chuẩn hóa chữ câu hỏi (NFC), merge `510e1a8`; bạn chọn
 (PA3, 28/10) không chờ đọc cặp mù — chọn bằng judge Claude, chưa có mốc người.** Bản 11 (13:27 27/10/2026): API ghi một dòng số đo cho mỗi câu hỏi (token, thời gian từng khâu; không ghi nội dung); đo thời gian chờ thật qua API:
 trung vị ~3,3 s, câu chậm ~5,7–6,2 s, gần hết là thời gian model viết; câu trả lời không đổi. Bản 10 (11:17 27/10/2026): chốt đợt cải tiến từng khâu — thử "trả lời ngay, không suy luận" (kém hơn: trả lời vòng một câu lẽ ra phải từ chối); đo câu trả lời khi "luna chọn 10 đoạn" (kém hơn theo luật dù trung bình tăng); đo lỗi sai số liệu (0 / 68 câu thấy được); thử luật kiểm sau sinh (gác); **chatbot không đổi**, bước tiếp là bạn đọc cặp mù rồi đưa 10 đoạn vào chatbot.** Bản 9 (22:31 26/10): phân loại lỗi trả lời; thử lại "trả lời phần có căn cứ" (R2) — kém hơn, gác; "nêu đủ chi tiết" (R3) không đủ câu; chatbot không đổi.** Bản 8 (16:0x 26/10): đợt 3 rà code — gỡ "Representation B"; chuỗi gửi model giống từng byte (25 câu).** Bản 7 (21:50 25/10): API báo đúng loại lỗi (gói 1b). Bản 6 (19:59): sửa lỗi trích dẫn `[Nguồn n]`; đính chính
 nguyên nhân "quên ghi `[n]`" của 8.1. Bản 5 (14:10): kết quả Phase 8.1.
-Người viết: A (bản 12, qua sub-agent), C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Review: A (bản 10), C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+Người viết: C (bản 13), A (bản 12, qua sub-agent), C (bản 10), A (bản 6), B (bản 5; bản 1–4: C) · Review: A (bản 10), C (bản 6: sửa code C làm, B review). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -15,12 +15,13 @@ Người viết: A (bản 12, qua sub-agent), C (bản 10), A (bản 6), B (bả
   câu trả lời chỉ từ các đoạn đó → backend kiểm từng `[n]`. Trạng thái: Phase 6 đóng 23/10/2026, đạt kèm hai
   giới hạn (bảng giá, tổng hợp nhiều nguồn); 10 đoạn vào chatbot 28/10 (Phase 8.2 B1, `510e1a8`).
 - **Đo được (Phase 7B, 176 câu, bản 5 đoạn):** Đúng / Đủ / Trúng ý **4,43 / 4,28 / 4,45** (thang 1–5); khi đã trả
-  lời thì gần tối đa (~4,9). Từ chối đúng 18/18 câu ngoài kho. Lỗi trích dẫn 4/176 lúc đo — **sau sửa 25/10 còn 0–2/176** (mục 4, bản 6).
+  lời thì gần tối đa (~4,9). Từ chối đúng 18/18 câu ngoài kho. Lỗi trích dẫn 4/176 lúc đo — **sau sửa 25/10 còn 0–2/176** (mục 4, bản 6). **Đếm lại mọi lượt đo đã có (30/10):**
+  bản đang chạy (10 đoạn) **0 lỗi / 489 lần sinh** (ước cao nhất ~0,6 %); lỗi còn thấy được chỉ một dạng — câu trả lời không gắn `[n]` nào (mục 4, bản 13).
 - **Giới hạn chính:** **từ chối nhầm** câu có trong kho — nguồn mất điểm lớn nhất (22/158 ở 5 đoạn, Phase 7B; **12/158 ở 10 đoạn**, B1); không tìm ra
   bảng giá; câu cần nhiều nguồn lúc đóng chỉ dùng 1 nguồn.
 - **Chi phí:** sinh 176 câu ~0,024 USD ở 5 đoạn; **0,0369 USD ở 10 đoạn** (B1, ~920 đồng). Mỗi câu hỏi trên web có phí rất nhỏ.
 - **Thời gian chờ thật qua API (27/10, bản 5 đoạn):** trung vị ~3,3 s, câu chậm ~5,7–6,2 s (đã vượt mức theo dõi 5 s); ~98 % là thời gian model viết.
-  Bản 10 đoạn chưa đo trung vị / câu chậm trên chatbot thật (2 câu thử 28/10: 5,1 s và 2,5 s) — sẽ đo ở bộ "trước" của đợt sửa kho.
+  Bản 10 đoạn (176 câu, đo trong bộ chạy thử, chưa tính phần mạng của API): trung vị **2,2 s**, câu chậm **4,9 s** (28/10 và lại 30/10 sau đợt 2 sửa kho); câu cần trả lời dài ~4,6 / 7,6 s (28/10, 8 câu tự viết).
   Từ 27/10 API ghi **một dòng số đo mỗi câu** (token, thời gian từng khâu; không ghi nội dung) ⇒ tiền / thời gian đọc từ log.
 - **Phase 8.1 đã thử (25/10, 0,157 USD):** 5 cách trả lời trên 120 câu thử, chấm mù bằng Claude. **Một cách thắng và đã
   xác nhận trên bộ kiểm: đưa 10 đoạn thay vì 5** — điểm Đủ +0,26 (thử) / +0,27 (kiểm) trên thang 5, từ chối nhầm giảm gần
@@ -32,6 +33,10 @@ Người viết: A (bản 12, qua sub-agent), C (bản 10), A (bản 6), B (bả
     nhưng **5 câu bị chấm thấp hơn**, quá 4 câu cho phép ⇒ **kém hơn theo luật**. Giá: chờ ~6,5 s (có lúc 9 s), tiền ×3,8.
   - **Sai số liệu** (giá, giờ, năm…): ở bản 10 đoạn, **0 / 68** câu trả lời có số bị thấy sai.
   - Tiền cả đợt Phase 8.2 tới giờ ≈ **0,21 USD** (≈ 5.300 đồng) / trần 0,5.
+- **Câu hỏi theo ngày tương đối (30/10):** chatbot không được báo hôm nay là ngày nào. Trên 15 câu tự viết (12 câu tính kết quả) + 11 câu cũ của bộ câu an toàn: **0 câu tự đoán ngày rồi nói chắc**
+  (không có lỗi nặng). Nhưng **6 / 14 câu có trong kho bị từ chối**, cả 6 là câu "tối nay / tuần này / tháng sau…"; 4 câu trong đó có lịch đúng ngay trong đoạn model đọc — cùng thông tin,
+  hỏi không kèm ngày thì trả lời đúng. Mức lỗi: **từ chối nhầm** (nhẹ nhất). **Bạn quyết (14:44 30/10):** đây là việc của trợ lý (biết hôm nay là ngày nào) ⇒ làm ở **Phase 9**
+  bằng công cụ ngày; bộ câu này làm mốc; Phase 8 không sửa prompt.
 - **Bạn cần làm:** không có việc gấp. Chatbot **đang chạy 10 đoạn + chuẩn hóa chữ câu hỏi** từ 28/10 (bạn chọn PA3: không chờ đọc cặp mù). **Giới hạn:**
   chọn bằng judge Claude, **chưa có mốc người**; tiền mỗi câu tăng (đọc vào nhiều hơn). Khi rảnh, trước buổi bảo vệ: **bạn đọc cặp mù** (20 câu, ~30–45 phút) —
   nếu bạn thấy ngược judge nhiều (luật dừng spec 8.2 §11) thì A trình bạn chọn giữ 10 đoạn hay quay về 5 (đổi một dòng cấu hình).
@@ -65,7 +70,7 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 |---|---|---|
 | Câu có đủ bằng chứng trong các đoạn ngữ cảnh → trả lời kèm `[n]` | **Đã xử lý, đóng gói** | 4,43 / 4,28 / 4,45 trên 176 câu (7B, đo ở 5 đoạn); khi đã trả lời ~4,9 |
 | Câu ngoài kho → từ chối, không bịa | **Đã xử lý, đóng gói** | 18/18 từ chối đúng |
-| Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | nhận cả `[Nguồn n]`, đổi về `[n]` (25/10); lỗi 500 còn 0–2/176 (trước 4–8); `backend/llm/citations.py` |
+| Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | nhận cả `[Nguồn n]`, đổi về `[n]` (25/10); lỗi 500 còn 0–2/176 (trước 4–8); **30/10 đếm lại mọi lượt: bản đang chạy 0 / 489 lần sinh** (3 dạng lỗi trong code, chỉ thấy dạng "không có `[n]`"); `backend/llm/citations.py` |
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `backend/api/app.py:147–151` |
 | Dữ liệu lệch chỉ mục → từ chối khởi động | **Đã xử lý, đóng gói** | báo đúng 409 "cần lập chỉ mục lại" từ 25/10 (trước báo nhầm 503); test `test_api_chat.py` (kho đổi ⇒ 409) |
 | Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (trước: Qdrant lỗi khi hỏi ra 500; thiếu model sẽ thành 409 nếu chỉ sửa nửa vời); test `test_startup_model_missing.py` (User chạy `!`) |
@@ -84,11 +89,26 @@ Tự hỏi chatbot (không bắt buộc): bật Qdrant (`docker compose up -d`),
 | Câu tổng hợp nhiều nguồn | **Xử lý một phần** | Lúc đóng đạt nhưng chỉ dùng 1 nguồn; chưa chứng minh tổng hợp |
 | Câu hỏi giá vé + miễn giảm (bảng giá) | **Chưa thực hiện** | Không tìm ra bảng giá (xem `BAO_CAO_TIM_KIEM.md`) |
 | Tách câu hỏi hai ý | **Chưa thực hiện** | Phase 8 thử |
+| Câu hỏi theo ngày tương đối ("tối nay", "ngày mai", "tháng sau") | **Xử lý một phần** (an toàn; chưa trả lời được) — để Phase 9 | 30/10, 15 câu tự viết + 11 câu bộ an toàn: **0** câu đoán ngày / tính sai lịch; **6 / 14** câu trong kho bị từ chối (4 câu có lịch trong ngữ cảnh). Prompt không có ngày hiện tại (`backend/llm/full_corpus_prompt.py:7-20`). Bạn quyết 14:44 30/10: làm ở Phase 9 bằng công cụ ngày cho trợ lý |
+| Hiện chữ dần (streaming), hội thoại nhiều lượt | **Chưa thực hiện** (có bản nháp phương án, chưa phải spec) | streaming: chữ đầu hiện sớm hơn ~1,9 s (28/10); lỗi trích dẫn 0 / 489 ⇒ trường hợp "đã hiện chữ rồi phải rút lại" rất hiếm. Nháp (private): `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming_v2.md`, `c91_phuong_an_nhieu_luot.md` |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 30/10/2026 — Câu hỏi theo ngày tương đối; đếm lại lỗi trích dẫn (bản 13)
+
+- **Câu hỏi theo ngày (C93, plan B96, 0,0037 USD):** 15 câu tự viết theo kho (hỏi "tối nay / ngày mai / tháng sau…", hỏi ngày dương lịch rõ, hỏi không ngày), cộng 11 câu giờ / miễn giảm
+  của bộ câu an toàn. Hai người chấm Claude độc lập, phải đúng 6 / 6 phiếu kiểm trước (đều đúng), **không** được biết ngày chạy.
+  - **Không có lỗi nặng:** 0 câu tự giả định hôm nay rồi nói chắc, 0 câu tính sai thứ / âm lịch; câu ngoài kho ("hôm nay là ngày mấy âm lịch") từ chối đúng; hai người chấm đồng ý 26 / 26.
+  - **Lỗi thấy được — từ chối nhầm:** 6 / 14 câu có trong kho bị từ chối, cả 6 là câu theo ngày tương đối; 4 câu có lịch ngay trong ngữ cảnh (2 câu còn lại do bước tìm). Câu hỏi
+    cùng thông tin nhưng không kèm "tối nay" thì được trả lời đúng ⇒ [suy ra] model coi "không biết hôm nay" là thiếu bằng chứng.
+  - **Quyết định (bạn, 14:44 30/10):** an toàn ở mức hiện tại (chỉ từ chối, không nói sai); hiểu "tối nay" là việc của trợ lý ⇒ Phase 9 (công cụ ngày); không sửa prompt ở Phase 8.
+  - Hồ sơ: `report_agent/2026-10-27_phan_ton_phase_cu/ngay_hien_tai_implementation.md` (B kiểm ready).
+- **Đếm lại lỗi trích dẫn (C89, 0 USD):** mọi lượt đo đã lưu (83 file). Bản đang chạy: **0 / 489 lần sinh** (0 / 841 nếu tính cả câu trả lời cũ chấm lại bằng bộ kiểm hiện tại); bản 5 đoạn cũ:
+  2 / 528. Mọi lỗi còn lại đều là câu trả lời **không gắn `[n]` nào** — chỉ biết được khi câu đã viết xong. Ý nghĩa cho streaming: nếu hiện chữ trước rồi kiểm sau, trường hợp phải
+  rút lại chữ đã hiện ước dưới ~0,6 %. Bản nháp phương án streaming (bản 2) và hội thoại nhiều lượt: private, chưa phải spec (dòng cuối checklist).
 
 ### 28/10/2026 — Đưa 10 đoạn + chuẩn hóa chữ câu hỏi vào chatbot (bản 12)
 
@@ -245,6 +265,8 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
   người; nếu bạn ngược judge nhiều (luật dừng spec 8.2 §11) ⇒ A trình giữ 10 / quay về 5. Đo trung vị / câu chậm ở 10 đoạn trong bộ "trước" của đợt sửa kho.
 - Hướng đã thử và gác (chỉ mở lại khi có ý mới đã kiểm trước): "trả lời phần có căn cứ"; "trả lời ngay, không suy luận"; luật kiểm sau sinh; "luna chọn 10
   đoạn" (tốn ×3,8 và chờ ~6,5 s, khâu trả lời kém hơn theo luật).
+- **Phase 9 (bạn quyết 14:44 30/10):** công cụ "hôm nay là ngày nào" cho trợ lý; bộ 15 câu theo ngày (30/10) làm mốc.
+- **Streaming / hội thoại nhiều lượt:** đã có bản nháp phương án (private); spec làm cùng bạn khi tới lượt (streaming trước).
 - Còn mở, không gấp: câu trả lời quá gọn (cần thêm câu hỏi tự nhiên để đo được); bảng giá và tổng hợp nhiều nguồn (gốc ở khâu tìm, `BAO_CAO_TIM_KIEM.md`);
   sai về chữ (tên, sự kiện) chưa có cách đo rẻ; API ghi token mỗi câu từ 27/10 (`chat_metrics`), chưa ghi USD.
 
