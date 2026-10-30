@@ -154,6 +154,7 @@ def build_candidate(
     record_path: Path | None = None,
     embedding_models: list[dict[str, Any]] | None = None,
     chunks: list[FullCorpusChunk] | None = None,
+    dense_runner: OpenRouterDenseRunner | None = None,
 ) -> dict[str, Any]:
     """Build một collection mới cho candidate từ corpus hiện tại; lỗi ở bước nào cũng raise.
 
@@ -161,11 +162,14 @@ def build_candidate(
     Tham số keyword chỉ để harness Phase 8.1 build biến thể vào collection/sparse state/build record
     riêng (và G3: danh sách đoạn `chunks` đã chia sẵn); mặc định = collection runtime của candidate,
     sparse state chung, record cạnh nó, chunker production.
+    dense_runner: harness Qwen3-8B (B92) truyền runner bọc có thử lại + cache batch; None = `create_dense_runner(spec)`.
     """
     candidate = candidate_by_id(candidate_id)
     if collection_name is not None:
         candidate = replace(candidate, collection_name=collection_name)
     spec = candidate.dense_spec
+    if dense_runner is not None and dense_runner.spec != spec:
+        raise ValueError(f"dense_runner spec {dense_runner.spec.key} != candidate spec {spec.key}")
     prepared = prepare_full_corpus_input(embedding_models=embedding_models, chunks=chunks)
     # Mẫu kiểm vector sau upsert: chunk đầu tiên của mỗi domain, theo thứ tự chunker.
     first_chunk_by_domain: dict[str, str] = {}
@@ -188,7 +192,7 @@ def build_candidate(
         # và runtime từ chối khởi động (C-21).
         sparse_sha = _write_or_check_sparse_state(prepared.sparse_state, sparse_state_path)
 
-        runner = create_dense_runner(spec)
+        runner = dense_runner if dense_runner is not None else create_dense_runner(spec)
         runner.load()
         dense = runner.embed_documents_matrix([chunk.search_text for chunk in prepared.chunks])
 

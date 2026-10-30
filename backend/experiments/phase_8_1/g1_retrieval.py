@@ -37,6 +37,7 @@ from evaluation.full_corpus_eval import (
 )
 from core.settings_loader import load_settings
 from embedding.sparse import encode_sparse_query
+from ingestion.full_corpus_pipeline import SPARSE_STATE_PATH
 from reranking.cross_encoder import CrossEncoderReranker
 from retrieval.full_corpus import build_full_corpus_retrieval_service, build_retrieved_document
 
@@ -178,12 +179,16 @@ def sparse_boundary_tie(service, query: str, pool: int) -> bool:
     return len(points) == pool + 1 and points[pool - 1].score == points[pool].score
 
 
-def run_config(args) -> list[dict]:
+def run_config(args, dense_runner=None) -> list[dict]:
+    """dense_runner: harness Qwen3-8B truyền runner ghi log (B92); None = runner production của candidate."""
     settings = load_settings(validate_private_paths=False)
     treatment = "native_hybrid_rrf" if args.fusion == "dbsf" else args.treatment
     service = build_full_corpus_retrieval_service(
-        "e5-small-384", treatment, settings=settings, candidate_pool=args.pool, rrf_k=args.rrf_k,
+        args.candidate, treatment, settings=settings, candidate_pool=args.pool, rrf_k=args.rrf_k,
         search_params=models.SearchParams(exact=True) if args.exact else None,
+        collection_name=args.collection, record_path=Path(args.record) if args.record else None,
+        sparse_state_path=Path(args.sparse_state) if args.sparse_state else SPARSE_STATE_PATH,
+        dense_runner=dense_runner,
     )
     context_builder = build_context_builder(settings)
     minilm = CrossEncoderReranker() if args.minilm else None
@@ -334,7 +339,8 @@ def _read(name: str) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
+    """Tách riêng để harness Qwen3-8B (B92) dựng `run` với đúng mặc định của g1."""
     parser = argparse.ArgumentParser(description="Phase 8.1 G1 retrieval diagnostics (read-only, free)")
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run")
@@ -350,6 +356,11 @@ def main() -> None:
     run.add_argument("--query-form", default="orig", choices=["orig", "nfd", "noaccent", "tone_swap"])
     run.add_argument("--nfc", action="store_true")
     run.add_argument("--minilm", action="store_true", help="đếm cặp vượt max_length MiniLM (G1.5)")
+    # Index biến thể (plan Qwen3-8B §4.2); mặc định = index runtime e5
+    run.add_argument("--candidate", default="e5-small-384")
+    run.add_argument("--collection", help="collection riêng; mặc định = collection runtime của candidate")
+    run.add_argument("--record", help="build record (đường dẫn từ backend/); mặc định = record cạnh collection")
+    run.add_argument("--sparse-state", help="sparse state (đường dẫn từ backend/); mặc định = sparse state chung")
     cmp = commands.add_parser("compare")
     cmp.add_argument("--a", required=True)
     cmp.add_argument("--b", required=True, nargs="+")
@@ -363,7 +374,11 @@ def main() -> None:
     ovl.add_argument("--b", required=True)
     lay = commands.add_parser("layers", help="G1.6: tầng lỗi đầu tiên của câu có đoạn đúng")
     lay.add_argument("--name", required=True)
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
 
     if args.command == "run":
         rows = run_config(args)

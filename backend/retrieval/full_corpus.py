@@ -647,11 +647,14 @@ def build_full_corpus_retrieval_service(
     candidate_pool: int = 30,
     rrf_k: int = 60,
     search_params: models.SearchParams | None = None,
+    dense_runner: FullCorpusDenseRunner | OpenRouterDenseRunner | None = None,
 ) -> FullCorpusRetrievalService:
     """Build and strictly validate a canonical Full-corpus retrieval service.
 
     collection_name / record_path / sparse_state_path: chỉ để harness Phase 8.1 đọc biến thể index riêng;
     mặc định = collection runtime của candidate, build record cạnh nó, sparse state chung.
+    dense_runner: harness Qwen3-8B (B92) truyền runner ghi log từng request + giữ vector câu hỏi (đo A/A);
+    None = `create_dense_runner(candidate.dense_spec)`.
     """
     try:
         candidate = candidate_by_id(candidate_id)
@@ -659,6 +662,10 @@ def build_full_corpus_retrieval_service(
         raise RetrievalConfigurationError(f"Unknown candidate ID: {candidate_id}") from exc
     if collection_name is not None:
         candidate = replace(candidate, collection_name=collection_name)
+    if dense_runner is not None and dense_runner.spec != candidate.dense_spec:
+        raise RetrievalConfigurationError(
+            f"dense_runner spec {dense_runner.spec.key} != candidate spec {candidate.dense_spec.key}"
+        )
 
     if retrieval_treatment not in ("dense_bm25_rrf", "native_hybrid_rrf"):
         raise RetrievalConfigurationError(f"Unsupported retrieval treatment: {retrieval_treatment}")
@@ -721,7 +728,8 @@ def build_full_corpus_retrieval_service(
 
     # 4. Load dense runner (local model or OpenRouter) and warm up with one query
     try:
-        dense_runner = create_dense_runner(candidate.dense_spec)
+        if dense_runner is None:
+            dense_runner = create_dense_runner(candidate.dense_spec)
         dense_runner.load()
         warm_vec = dense_runner.embed_queries(["ấm trà cung đình Huế"])
         if len(warm_vec) != 1 or len(warm_vec[0]) != candidate.dense_spec.dimension:
