@@ -1,10 +1,30 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 19:52 29/10/2026 (A, **phiên 29/10 đang chạy** — quyết định User + giao B90 / C84–C86). Trước: 13:21 28/10/2026 (kết phiên 28/10). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Cập nhật: 10:57 30/10/2026 (A, **phiên 30/10** — quyết định User + giao B91 / C87). Trước: 19:52 29/10/2026 (phiên 29/10). Trước: 13:21 28/10/2026 (kết phiên 28/10). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` §7; 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`; nhật ký User
 `bao_cao_he_thong/nhat_ky/2026-10-28_dua_context_10.md`. Bản handoff trước khi viết lại (có từng mục B78–B89 / C70–C83): `git show 25f23ae:session_prompt/CURRENT_HANDOFF.md`.
 
-## PHIÊN 29/10 — ĐANG CHẠY (mở 19:13, User kết phiên ~22:00–22:10 29/10/2026)
+## PHIÊN 30/10 — ĐANG CHẠY (A mở 10:30 30/10/2026; "làm đi" 10:57 30/10/2026 theo `date`)
+
+**User quyết (A ghi nhận 10:30–10:57 30/10/2026):**
+1. Bối cảnh đồ án (file cập nhật dự án kia §0) **đúng cả 5 ý**: đồ án càng lớn / càng giống sản phẩm thật càng tốt; Phase 1–8 thí nghiệm coi như đủ, Phase 9+ vừa làm vừa đánh giá;
+   6–10 tuần tới bảo vệ, không toàn thời gian; AWS 10–50 USD / tháng, chỉ lên khi local ổn; cân nhắc AgentCore / Cedar / swarm / tự cải tiến.
+2. **Thứ tự: PA2 — giữ thứ tự cũ** (A khuyên PA1 "dời Qwen3-8B", User chọn PA2): đợt 2 sửa kho ⇒ Qwen3-8B ⇒ streaming ⇒ hội thoại nhiều lượt ⇒ **đóng gói Phase 1–8**
+   (ổn định) ⇒ mới brainstorm Phase 9. User thêm: "đọc về khoá học AI FDE và cách làm việc ở dự án kia, rồi áp dụng vào chúng ta" ⇒ qua `improve-workflow` (≤ 3 đề xuất / vòng,
+   User duyệt). "Đóng gói" A tạm hiểu = code + tài liệu Phase 0–8 gọn, chạy lại được, danh sách giới hạn, mốc commit — **hỏi lại User khi tới bước đó**.
+3. Quyền phiên **như 29/10** (mục Quyền dưới).
+
+**Giao việc (A, 10:57 30/10/2026):**
+- **B91 (B)** — dựng bản 4b đợt 2 theo `STATUS_B.md` "Vòng 2": chép bản 4 ⇒ builder ⇒ `apply_edits.py --edits` chạy thử trong bộ nhớ ⇒ `py_compile truoc_sau.py` ⇒ sha ⇒ điền
+  `SHA_4B` / `SHA_TS` / `COUNT_4B` / `FILES_4B` ở plan + bảng ⇒ báo A + C (sha plan, bảng, jsonl, 2 script). Không đụng kho / Qdrant, 0 USD. Sau đó: kiểm C84 (`do_loi_nang_aa_implementation.md`) khi rảnh.
+- **C87 (C)** — ngay: phần NOT RUN vòng 1 không cần 4b (WebFetch đọc lại độc lập nguồn K017 / D2 / D6; điền giờ `date` thay `<T>` ở 2 report C); khi B báo sha 4b: **C85 vòng 2** (bản 4b +
+  plan bản 2 + phần kiểm máy: sha, `diff` với `tools/truoc_b90/`, 104 edit cũ = bản 3, bảng = jsonl, `apply_edits.py --edits` thử, `grep_kb.sh` cho Q6) ⇒ `<plan>_review.md`. 0 USD.
+- Sau C85 ready + A duyệt sha: B áp đợt 2 (spec `937cf8969810` §5 bước 1, 2, 4–10; **User có mặt** cho `!` xóa 3 đích ở terminal B), C kiểm từng bước; trần 0,10 USD.
+  Rồi C86 harness Qwen3-8B (B review), chạy sau khi đợt 2 áp xong (trần 0,10 USD). Có lượt đo latency ⇒ không việc nặng song song (W31).
+- **A** — sub-agent đọc khoá FDE + AI Coding (`data/course_notes/tu_…_2026-10-29/`) đối chiếu với luật / skill hiện có ⇒ `data/course_notes/v3/`; gộp với file cập nhật dự án kia
+  ⇒ ≤ 3 đề xuất cải tiến cách làm cho User duyệt.
+
+## PHIÊN 29/10 — ĐÃ ĐÓNG (mở 19:13, User kết phiên ~22:00–22:10 29/10/2026)
 
 **User quyết (6 câu mở phiên, A ghi nhận trước 19:52 29/10/2026 theo `date`; "làm đi" 19:52):**
 1. Quyền phiên **như 28/10** (A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD cả phiên; B / C commit + push nhánh riêng theo việc).
@@ -159,9 +179,9 @@ streaming (bản nháp C77); Q1–Q5 = câu hỏi spec sửa kho §4; luật (a)
 
 | Vai | Terminal | Agent | Liên lạc | Việc phiên 28/10 | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | **`hue-rag-f7` (29/10)**; 28/10 `hue-rag-bf` | Claude Opus 5.5 | trực tiếp | 29/10: điều phối; 28/10: merge B1; 5 chỗ báo cáo; TONG_HOP 8.2; vòng cải tiến 9 | `STATUS_A.md`; 28/10 ≈ 0,0004 USD |
-| B — thực thi | **`hue-rag-a7` (29/10)**; 28/10 `hue-rag-ac` | Claude Opus 5.5 | trực tiếp | 29/10: B90; 28/10: B78–B89 xong | `STATUS_B.md`; 28/10 ≈ 0,0948 USD |
-| C — thực thi | **`hue-rag-ef` (29/10)**; 28/10 `hue-rag-32` | Claude Opus 5.5 | trực tiếp | 29/10: C84 → C85 → C86; 28/10: C70–C83 | `STATUS_C.md`; 28/10 ≈ 0,0103 USD |
+| A — điều phối | **`hue-rag-0f` (30/10)**; 29/10 `hue-rag-f7` | Claude Opus 5.5 | trực tiếp | 29/10: điều phối; 28/10: merge B1; 5 chỗ báo cáo; TONG_HOP 8.2; vòng cải tiến 9 | `STATUS_A.md`; 28/10 ≈ 0,0004 USD |
+| B — thực thi | **`hue-rag-24` (30/10)**; 29/10 `hue-rag-a7` | Claude Opus 5.5 | trực tiếp | 29/10: B90; 28/10: B78–B89 xong | `STATUS_B.md`; 28/10 ≈ 0,0948 USD |
+| C — thực thi | **`hue-rag-0e` (30/10)**; 29/10 `hue-rag-ef` | Claude Opus 5.5 | trực tiếp | 29/10: C84 → C85 → C86; 28/10: C70–C83 | `STATUS_C.md`; 28/10 ≈ 0,0103 USD |
 
 Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `trực tiếp`. **B / C lúc mở phiên sau:** không có việc đang chạy; mở phiên ⇒ kiểm nhanh ⇒ báo A ⇒ chờ.
 Việc A dự định giao: **B** áp đợt 2 (bước 1–10, như B81–B83), **C** review từng bước (như C75 / C76 / C80) + harness Qwen3-8B; A tổng hợp + báo cáo.
@@ -171,7 +191,9 @@ Việc A dự định giao: **B** áp đợt 2 (bước 1–10, như B81–B83),
 - **Thường trực:** A commit/push `origin main`; B/C không commit trừ khi việc ghi rõ (nhánh riêng); duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt: A tự
   duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage token + tiền trong report; code luôn `uv run` trong `.venv`; luôn thử + so baseline trước khi chọn
   (User 24/10 20:49); commit trước sửa code + cổng ổn định sau mỗi gói (User 26/10).
-- **Phiên 29/10 (User, trước 19:52 29/10/2026; hết hạn cuối phiên):** như 28/10 — A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD; B / C commit + push nhánh riêng theo việc;
+- **Phiên 30/10 (User, 10:57 30/10/2026; hết hạn cuối phiên):** như 29/10 — A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD cả phiên; B / C commit + push nhánh riêng theo việc;
+  đợt 2 ≤ 0,10 USD; Qwen3-8B ≤ 0,10 USD (gửi ra OpenRouter + collection thử `hue_c78_qwen3_8b_4096`, xóa khi xong) — chốt 29/10, giữ.
+- **Phiên 29/10 — HẾT HẠN** (User, trước 19:52 29/10/2026): như 28/10 — A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD; B / C commit + push nhánh riêng theo việc;
   đợt 2 ≤ 0,10 USD; Qwen3-8B ≤ 0,10 USD (gửi ra OpenRouter + collection thử duyệt); C84 ≤ 0,02 USD.
 - **Phiên 28/10 — HẾT HẠN** (A tự điều phối + tự thử / chọn trong luật; ≤ 1 USD; B / C push nhánh riêng). Tiền phiên 28/10 ≈ **0,106 USD** (cổng merge 0,0004; B3 0,0138; bộ "trước"
   0,0361; C73 0,0103; cổng sau build 0,0004; bộ "sau" 0,0365; B89 bộ an toàn 0,0079).
