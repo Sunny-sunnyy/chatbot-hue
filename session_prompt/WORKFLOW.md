@@ -153,8 +153,8 @@ lạc" trong bảng Session của `CURRENT_HANDOFF.md` ghi kênh của từng se
 
 Mỗi session: cập nhật `STATUS_<X>.md` (đang làm, dở gì, bẫy đã gặp, câu hỏi, tiền paid đã dùng).
 A: `TONG_HOP.md` của đợt nếu đóng; `nhat_ky/` + bảng `bao_cao_he_thong/README.md`;
-`CURRENT_HANDOFF.md` (mục đầu ghi "Phiên sau đọc trước": việc tiếp, câu hỏi cho User; giữ ≤ ~150
-dòng); `Project_Status.md` nếu hiện trạng đổi; một mục ngắn `PROJECT_HISTORY.md` trỏ tới `TONG_HOP`;
+`CURRENT_HANDOFF.md` (mục đầu ghi "Phiên sau đọc trước": việc tiếp, câu hỏi cho User; **không giới hạn số
+dòng cố định** — User 31/10: ngày nhiều việc thì dài; chỉ dời khối **đã đóng** / lịch sử sang `archive/`, giữ đủ mọi việc còn mở); `Project_Status.md` nếu hiện trạng đổi; một mục ngắn `PROJECT_HISTORY.md` trỏ tới `TONG_HOP`;
 vòng cải tiến cách làm (skill `improve-workflow`, sổ `SO_CAI_TIEN_CACH_LAM.md`); commit/push. Dọn
 worktree, file tạm, collection thử của phiên. Sự cố quy trình trong phiên (mất giờ / tiền / dữ liệu, User
 phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp" của `STATUS_<X>.md` — đầu vào của vòng cải tiến.

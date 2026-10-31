@@ -1,6 +1,6 @@
 # Nhật ký 31/10/2026 (chiều) — áp khung AI FDE vào cách làm; sửa báo cáo bị cũ
 
-**Cập nhật lần cuối: 17:00 31/10/2026.** Tiền paid trong buổi: 0 USD (~0 đồng).
+**Cập nhật lần cuối: 17:40 31/10/2026.** Tiền paid trong buổi: 0 USD (~0 đồng).
 
 ## Tóm tắt
 - Chiều nay **chỉ làm cách làm việc (AI FDE)**, chatbot **không đổi**.
@@ -9,8 +9,16 @@
 - A gửi lại góp ý cho khung (lỗi hook, một con số sai, một mâu thuẫn trong mẫu). Khung đã lên **v2** phía dự án kia.
 - **Bạn phát hiện báo cáo trong thư mục này bị cũ:** 4 báo cáo khâu còn ghi số trước khi sửa kho (205 file / 8.459 đoạn thay vì 204 / 8.424). A đã sửa cả 4.
 
+## Thêm sau 17:00 (theo yêu cầu của bạn)
+- **Rà lại cả 11 báo cáo** trong thư mục này cho đúng hiện trạng, **xoá phần không còn đúng** (khoảng 1.700 dòng xoá / 1.180 dòng thêm): số hiện hành,
+  ~40 số dòng code lệch, các câu "bạn cần quyết" đã quyết; phương án đã thử giữ gọn kèm link. 2 người kiểm độc lập (một bên bắt 2 lỗi lớn, đã sửa).
+- **Luật mới:** mọi thay đổi / thử nghiệm chạm hệ thống, kể cả không áp dụng, phải cập nhật báo cáo ở đây **ngay trong đợt**.
+- **Phát hiện:** chạy lại kiểm Golden sau 2 đợt sửa kho ⇒ **1 câu** có từ khoá không còn nguyên văn trong kho — chờ bạn duyệt sửa (phiên sau).
+- **Bàn xong khung báo cáo so sánh** (5 câu): một file, hai phần (theo khâu + theo Phase), đầy đủ số đo, nhãn độ tin; trước đó đo cuối + thử có giới hạn.
+  Gom phần đã đóng: **dời sang phiên sau** (bạn quyết 17:39).
+
 ## Bạn cần làm gì
-- Không bắt buộc. Phiên sau A hỏi lại 3 đề xuất cách làm còn chờ từ sáng nay (W35, I8, W36), và một đề xuất mới cho lỗi "suýt đưa chi tiết dự án khác lên repo public" (S60).
+- Phiên sau: duyệt sửa 1 câu Golden lệch kho; chọn có mở B / C cho việc gom báo cáo so sánh không. A cũng hỏi lại 3 đề xuất cách làm còn chờ từ sáng nay (W35, I8, W36), và một đề xuất mới cho lỗi "suýt đưa chi tiết dự án khác lên repo public" (S60).
 - Phiên sau quay lại dự án: spec streaming (câu Q1 + duyệt) ⇒ code.
 
 ## Trạng thái

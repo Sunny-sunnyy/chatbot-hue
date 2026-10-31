@@ -8,7 +8,8 @@ không cấp quyền và không tạo việc phải làm.
 
 - Chatbot không đổi; 0 USD. Đối chiếu khung (khung cá nhân của User) + khoá ver4 (3 agent con): bản 30/10 vẫn đúng hướng, 4 chỗ xem lại. Áp: W37 hook giờ ước Claude Code,
   W38 xét mọi mục đang thử, W39 `teach-and-quiz`, W40 phần nhỏ skill mẫu, W41 2 skill agent; vòng 12: 40 ⇒ 7 mục đang thử. Phase 9 mở bằng nghiên cứu rộng (User).
-  User phát hiện 4 `BAO_CAO_*` còn số trước sửa kho (S61) ⇒ sửa. Commit `f34cb7f` … kết phiên. Tổng hợp: `report_agent/2026-10-31_khung_fde/TONG_HOP.md`.
+  User phát hiện 4 `BAO_CAO_*` còn số trước sửa kho (S61) ⇒ sửa. Sau đó: rà lại cả 11 báo cáo (xoá phần không còn đúng, `4492239`); luật báo cáo luôn mới nhất;
+  Golden 1 câu lệch kho (chờ User); chốt khung báo cáo so sánh Phase 1–8 (gom dời phiên sau). Commit `f34cb7f` … kết phiên. Tổng hợp: `report_agent/2026-10-31_khung_fde/TONG_HOP.md`.
 
 ## 2026-10-31 (12:42) — Spec streaming (D1–D3 User chốt, chờ Q1 + duyệt sha); tra web bằng Codex; cấm agent gọi AGY
 

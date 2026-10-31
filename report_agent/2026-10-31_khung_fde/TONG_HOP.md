@@ -34,6 +34,12 @@ Một dự án khác của User dựng một **khung chung** (khung cá nhân c�
 của A, không lộ ra ngoài vì bắt trước commit: chi tiết sự cố dự án khác trong chú thích hook (M-1) và trong ví dụ skill agent — **S60** (2 lần); skill D lệch `WORKFLOW.md` §10 về ghi câu sai.
 Hook git `.githooks/pre-commit` cũng chặn đúng 1 lần (tên dự án khác trong dòng STATUS_A).
 
+## Sau kết phiên (User yêu cầu thêm, tới 17:40 31/10/2026)
+- Rà lại cả 11 `BAO_CAO_*` / `LUONG` / `DE_XUAT` bằng 5 agent con + 2 người kiểm (vòng 1 phần 2: 2 major — câu Golden lệch kho chưa vào Tóm tắt / checklist; vòng 2 ready) — `4492239`.
+- Luật `WORKFLOW.md` §6 "báo cáo luôn đúng thông tin mới nhất" + `run-experiment` §5; memory `reports-always-current`.
+- Kiểm Golden chạy lại: 176 đọc được, 1 lỗi "keyword not verbatim in corpus" (dòng 128) — chờ User.
+- Brainstorm báo cáo so sánh (5 câu, AskUserQuestion từ câu 2 — S62 câu 1 A viết chữ, User nhắc): quyết định ở `CURRENT_HANDOFF.md` mục 4; gom dời phiên sau.
+
 ## Giới hạn
 - Bằng chứng vòng xét 12 phần lớn là "được dùng, không thấy lặp" — quan sát, không phải chứng minh; người chấm đầu là A (người đề xuất luật), có kiểm độc lập.
 - W37 chỉ chạy cho Claude Code và chỉ trong 4 thư mục tài liệu; Codex / AGY dựa hook git W30 + dòng chữ; `data/` ngoài phạm vi (A gõ 1 giờ ước vào ghi chú `data/`, tự sửa).

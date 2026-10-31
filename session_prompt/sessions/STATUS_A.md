@@ -25,6 +25,8 @@ Terminal: `hue-rag-1a` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Đã học (đầu vào vòng sau): **S60** đưa chi tiết sự cố dự án khác vào file tracked dù bỏ tên (2 lần, review bắt) ⇒ W42 đề xuất; **S61** 4 báo cáo khâu không cập nhật sau sửa kho ≥ 3 ngày, User phát hiện ⇒ W43 đề xuất;
   gõ giờ "17:00" vào nhật ký trước khi chạy `date` (trùng may; dạng giờ đủ phút hook không bắt) — luôn `date` trước.
 
+- Sau 17:00: rà 11 báo cáo (`4492239`), luật báo cáo luôn mới nhất, Golden lệch 1 câu, brainstorm báo cáo so sánh 5 câu (dời gom sang phiên sau). **S62:** câu brainstorm 1 viết chữ thay hộp chọn — User nhắc. Kết phiên 17:40 31/10/2026.
+
 ## Tiền paid
 - 0 USD (A, B, C). Codex / AGY theo gói tài khoản User.
 
