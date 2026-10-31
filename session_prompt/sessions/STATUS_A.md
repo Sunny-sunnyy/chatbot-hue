@@ -17,7 +17,8 @@ Terminal: `hue-rag-1a` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
   `SO_CAI_TIEN_CACH_LAM.md` (W37–W39), `CURRENT_HANDOFF.md` (mục Streaming / đóng gói), `data/course_notes/v3/TONG_HOP_A_2026-10-30.md` (1 dòng trỏ đính chính).
   Căn cứ: `data/external_project_notes/HUE_RAG_DOI_CHIEU_KHUNG_FDE_2026-10-31.md` mục a, c, d. **Xong** — sub-agent ngữ cảnh mới review 2 vòng (vòng 1 changes_requested
   M-1 chi tiết dự án khác trong chú thích hook, M-2 skill D lệch §10; vòng 2 ready); commit cùng tài liệu kết phiên sáng (User cho commit + push 15:59).
-  Phiên chiều chỉ làm AI FDE (User). Bản gửi lại dự án kia (đề xuất cho khung): trong `data/external_project_notes/` (file 31/10; User chuyển).
+  Phiên chiều chỉ làm AI FDE (User). **Vòng 12 (W38, lần dùng đầu):** xét 40 mục `đang thử` ⇒ còn 7; sub-agent kiểm độc lập sửa 6 chỗ; I3 lên nấc (memory
+  `phase-7a2-implementer-state` viết lại thành con trỏ — memory không giữ trạng thái việc); S59 mới; User để A quyết ("theo bạn nên làm gì", giữa 16:02 và 16:23 — tin không có dấu giờ). Hook W37 bắt đúng 1 giờ ước A gõ ở dòng này (đã sửa). Bản gửi lại dự án kia (đề xuất cho khung): trong `data/external_project_notes/` (file 31/10; User chuyển).
 
 ## Tiền paid
 - 0 USD (A, B, C). Codex / AGY theo gói tài khoản User.
