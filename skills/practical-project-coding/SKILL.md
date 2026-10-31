@@ -58,6 +58,8 @@ xin đổi requirement hay xin duyệt lại từng focused fix.
 - Nêu assumption hoặc điểm chưa rõ chỉ khi chúng có thể thay đổi kết quả.
 - Xác định success criteria có thể quan sát và cách verification phù hợp.
 - Tìm production path hoặc module đang dùng trước khi tạo đường đi thứ hai.
+- Đổi hàm / module dùng chung (ví dụ gom lõi trả lời dùng chung cho route API và bộ đánh giá) ⇒ `git grep` mọi nơi gọi
+  **trước khi sửa**; verification phải gồm mọi bên gọi (theo khung_fde v1, W40).
 - Chọn giải pháp nhỏ nhất đáp ứng đầy đủ requirement, không phải giải pháp có ít
   dòng nhất.
 
@@ -205,5 +207,8 @@ Trước khi bàn giao, đọc exact diff và kiểm tra:
 - observed result không bị trộn với expected hoặc prior result.
 
 Bàn giao ngắn: thay đổi gì, đã chạy gì, kết quả quan sát, phần failed/skipped/
-partial/not verified và giới hạn còn lại. Không áp report format hoặc checklist
+partial/not verified và giới hạn còn lại. Kết bằng một dòng **"Giải thích ngắn"**
+bằng lời thường (làm gì, vì sao, ảnh hưởng gì tới người dùng / hệ thống) để User
+tự trả lời được "vì sao làm thế này" (theo khung_fde v1, W40; thí nghiệm: 3–5 dòng
+của `run-experiment` §5 thay dòng này). Không áp report format hoặc checklist
 mới nếu project đã có workflow riêng.

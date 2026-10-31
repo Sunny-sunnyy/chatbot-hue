@@ -65,6 +65,24 @@ Thêm phương án "không làm / giữ như cũ" khi đó là lựa chọn th�
   cho User duyệt một lần (`session_prompt/WORKFLOW.md` §9). Không tự chuyển sang
   làm khi User chưa duyệt.
 
+## 4b. Đề xuất dựng thứ mới — khám phá 5 dòng trước (theo khung_fde v1, W40; khoá AI FDE W2D1·46, W3D1·85–86)
+
+Đề xuất dựng tính năng / Phase / agent / công cụ mới (Phase 9, giao diện mới…) ⇒ viết trước 5 dòng; thiếu dòng nào thì nói là
+thiếu và chưa đề xuất dựng: (1) **vấn đề + đo bằng gì** ("để …, đo bằng …"; "cần agent cho X" là giải pháp, chưa phải vấn đề);
+(2) **ba ô**: đo được không · có dữ liệu / cách đánh giá chưa · giá trị là rẻ hơn, nhanh hơn hay làm khác đi; (3) **mốc đơn giản
+nhất** cách mới phải hơn (pipeline đang chạy — `Project_Status.md`); (4) **tiêu chí thành công bằng số**, ghi lúc mở (đổi khâu
+chatbot ⇒ mốc và tiêu chí theo `run-experiment`); (5) **phương án B** nếu thử dưới ngưỡng. 5 dòng vào mục mục tiêu / tiêu chí
+nghiệm thu của **một** spec (§4, `WORKFLOW.md` §9.1), không thành tài liệu riêng. Trước khi viết spec: thử nhỏ trên dữ liệu thật
+(đếm, xem mẫu, một lời gọi — không trả phí hoặc trong trần đã duyệt, `Session_Prompt.md` §9) và báo phát hiện. Không áp cho
+sửa lỗi nhỏ đã rõ nguyên nhân.
+
+## 4c. Việc lớn — giúp User tự nói lại được (theo khung_fde v1, W40)
+
+Mở hướng mới, đổi kiến trúc, đóng Phase ⇒ cuối đề xuất thêm vài ý để User **nói được** bằng lời thường: hiểu vấn đề thế này (và
+cái chưa chắc) → đã xem những hướng nào, vì sao chọn hướng này → định làm gì, kiểm bằng cách nào → cần xác nhận điểm nào. Lý do:
+User được đánh giá ở chỗ tự giải thích lại được việc agent làm (đồ án tốt nghiệp; User 31/10). Muốn luyện ⇒ gợi ý buổi
+Session D (`teach-and-quiz`).
+
 ## 5. Cách nói
 
 Rõ, đơn giản, trúng trọng tâm. **Đủ quan trọng hơn ngắn.** Không dùng nhãn
