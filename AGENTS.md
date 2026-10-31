@@ -7,7 +7,7 @@ chỉ trỏ đường và nêu luật cứng; luật đầy đủ ở `session_p
   `session_prompt/Session_Prompt.md`; cách làm A/B/C/D: `session_prompt/WORKFLOW.md`.
 - **Skill** là file Markdown thường ở `skills/<tên>/SKILL.md` (Claude Code thấy qua `.claude/skills/`; agent
   khác mở file khi việc cần): `practical-project-coding`, `run-experiment`, `risk-gated-agent-review`,
-  `propose-options`, `improve-workflow`, `teach-and-quiz` (D).
+  `propose-options`, `improve-workflow`, `teach-and-quiz` (D), `agent-design-review` + `agent-security-review` (agent, từ Phase 9).
 - **Sub-agent** chỉ biết những gì được brief: kế thừa đúng phạm vi và quyền của việc giao; báo chỗ đề bài lệch
   tài liệu; không tự mở rộng.
 

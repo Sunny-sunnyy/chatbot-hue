@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 12:36 31/10/2026 (A, **kết phiên 31/10** — User: "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Cập nhật: 16:46 31/10/2026 (A, phiên chiều 31/10 — chỉ AI FDE; mục "PHIÊN SAU" viết lại lúc kết phiên chiều). Trước: 12:36 31/10/2026 (A, **kết phiên 31/10** — User: "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định theo giờ, mọi trạng thái review) dời **nguyên văn** sang `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`
 (I7); phiên 28–30/10: `archive/CURRENT_HANDOFF_LICH_SU_2026-10-28_30.md`. Tổng hợp đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md` (mở),
 `report_agent/2026-10-31_tra_web_codex/TONG_HOP.md` (đóng); nhật ký User `bao_cao_he_thong/nhat_ky/2026-10-31_spec_streaming_tra_web_codex.md`.
@@ -13,6 +13,7 @@ Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định t
 - Thước: gold v5 (`33d16fd6b8f4`); Golden md5 `6331e88fb171`; bộ an toàn 32 câu; bộ ngày tương đối 15 câu. Số 30/10: p50 2,19 / p95 4,90 s cả câu (harness); từ chối nhầm 12 / 158;
   lỗi citation 0 / 489; ≈ 0,00025 USD / câu (`cost_usd` ghi thiếu ~20 % — việc đóng gói).
 - Qdrant chạy bằng **Docker Desktop** (Windows): lúc mở phiên 31/10 tắt ⇒ User bật rồi `docker compose up -d qdrant`. Mở phiên mà `curl :6335` không trả lời ⇒ báo User, không tự bật.
+- **Mới chiều 31/10 (`f34cb7f`, `32d4b68`, `0d69376` + commit kết phiên):** áp khung_fde (khung cá nhân của User) — W37 hook giờ ước `.claude/hooks/` (báo lúc ghi), W38 mỗi vòng xét mọi mục đang thử (vòng 12: 40 ⇒ 7), W39 skill `teach-and-quiz` cho D, W40 (`propose-options` §4b khám phá 5 dòng, §4c; `practical-project-coding` `git grep` + "Giải thích ngắn"), W41 skill `agent-design-review` + `agent-security-review` (Phase 9; security một lần lúc đóng gói).
 - **Mới 31/10 (`1a9dca4`):** tra web bằng `scripts/tra_web_codex.sh` (§9 `Session_Prompt.md`); **cấm gọi `agy` từ agent** (AGENTS.md luật 7, `.claude/settings.json` chặn).
 
 **Thứ tự việc phiên sau (User 30/10 PA2, giữ nguyên 31/10):**
@@ -23,9 +24,11 @@ Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định t
    (cùng sửa `chat.py` + `app.js` ⇒ làm tuần tự — spec streaming §2 D0).
 4. **Đóng gói Phase 1–8** (A hỏi lại nghĩa "đóng gói" khi tới): bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (`8211d5d6eb7f`) ⇒ `LUONG` §5; báo cáo
    "đã thử / chọn / bỏ"; sửa `cost_usd` + log `cache_write_tokens`; lệnh kiểm sạch; bộ kín mới trước bảo vệ; tắt ghi đệm nếu API cho (tra Codex trước).
-   Thêm 31/10 chiều: bảng giới hạn gom từ mục giới hạn của từng spec; review cả nhánh / cả backend bằng sub-agent ngữ cảnh mới; bộ kín mới so SHA256 với mọi file thử cũ;
+   Thêm 31/10 chiều: **nhìn lại Phase 1–8 theo khung khoá AI FDE** (chương "đánh giá" đồ án — User 31/10 đồng ý làm ở bước này, sau streaming + nhiều lượt
+   vì số đổi): mỗi Phase một hàng — vấn đề đo được · mốc · tiêu chí ghi trước · kết quả so tiêu chí · lỗi nặng · phương án đã bỏ · tiền / tốc độ · chỗ hở (khung:
+   ghi chú private trong `data/external_project_notes/`, Phần VIII; số lấy từ các `TONG_HOP.md`); bảng giới hạn gom từ mục giới hạn của từng spec; review cả nhánh / cả backend bằng sub-agent ngữ cảnh mới; bộ kín mới so SHA256 với mọi file thử cũ;
    rà `agent-security-review` (khung_fde, mục 1, 2, 5, 7, 8) ⇒ "giả định an toàn"; hạn mức tín dụng phía nhà cung cấp cho key đang dùng (chưa kiểm OpenAI có không).
-5. **Sau Phase 8:** bàn **giao diện mới** (React / Next…) **gộp áp nội dung AI FDE** — User 31/10: chờ bản AI FDE đang được chỉnh ở dự án khác. A sơ bộ nghiêng React + Vite build
+5. **Sau Phase 8:** bàn **giao diện mới** (React / Next…) **gộp áp nội dung AI FDE** — User 31/10: chờ bản AI FDE — nay đã có khung_fde v1.2 (31/10 chiều; khung cá nhân của User). A sơ bộ nghiêng React + Vite build
    tĩnh, FastAPI phục vụ (một server) — chưa nghiên cứu, chưa chốt. Rồi brainstorm Phase 9 (`data/course_notes/v3/TONG_HOP_A_2026-10-30.md` §3).
 6. Khi rảnh (User): **B0** (mốc người) — `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b0_prep_implementation.md` (B đã thấy khóa — không tóm nhãn); 20 câu mẫu lỗi nặng.
 

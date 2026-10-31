@@ -44,7 +44,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    được ghi.
 2. **Khai báo trước khi sửa:** ghi file sắp sửa vào `sessions/STATUS_<X>.md`.
    Không sửa file session khác đang khai báo. Governance (`session_prompt/`,
-   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`) chỉ A sửa — trừ mục việc/trạng thái của chính mình trong
+   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) chỉ A sửa — trừ mục việc/trạng thái của chính mình trong
    `CURRENT_HANDOFF.md` và `sessions/STATUS_<X>.md`. Code song song dài ngày: `git worktree` riêng.
    File nhiều session cùng ghi (`CURRENT_HANDOFF.md`): đọc lại ngay trước khi sửa, sửa từng đoạn, không ghi đè
    cả file (2026-10-24: B/C sửa song song với A).
@@ -117,7 +117,8 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
 - **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào
   script sửa tài liệu; không gõ giờ tay, không ghi `HH:Mx` trước khi chạy `date` (25–26/10: ghi giờ ước 3 lần; 28/10: ~7 lần ⇒ hook
-  `.githooks/pre-commit` in cảnh báo khi dòng thêm mới có dạng đó — W30). Giờ quyết định của User (tin nhắn không có dấu giờ): ghi giờ A ghi nhận bằng `date`.
+  `.githooks/pre-commit` in cảnh báo khi dòng thêm mới có dạng đó — W30; từ 31/10 hook Claude Code `.claude/hooks/` báo ngay lúc ghi vào `report_agent/`,
+  `session_prompt/`, `bao_cao_he_thong/`, `docs/` — W37; hook báo ⇒ chạy `date` sửa ngay, trích dẫn sự cố cũ thì bỏ qua). Giờ quyết định của User (tin nhắn không có dấu giờ): ghi giờ A ghi nhận bằng `date`.
 - **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
   kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
 
@@ -213,7 +214,7 @@ một khái niệm). Mục tiêu: User tự giải thích lại được bằng 
   session, điều D ghi sẽ lọt sang B/C (người đề xuất biến thể).
 - Giảng theo lớp: bài toán → cơ chế → vì sao chọn → khi nào hỏng → code ở đâu (`file:dòng`). Dùng ví dụ thật
   của hue_rag; tách quan sát / giả thuyết / đã chứng minh như mọi report.
-- Mỗi buổi gắn với một việc vừa xong; kết bằng 3 câu tự kiểm. Ghi vào sổ: khái niệm, câu User trả lời đúng /
+- Mỗi buổi gắn với một việc vừa xong; kết bằng 3 câu tự kiểm (theo khung 5 nhóm câu tự kiểm của `teach-and-quiz`). Ghi vào sổ: khái niệm, câu User trả lời đúng /
   sai **khi không có gợi ý**, chỗ còn mơ hồ. Sổ khái niệm khởi đầu: `data/hoc_cung_D/SO_KHAI_NIEM.md`.
 - Thấy chỗ yếu trong việc của A/B/C thì nói thẳng với User và ghi vào sổ để A xem; D không tự sửa.
 - D báo **User** (không báo A, không sửa `CURRENT_HANDOFF.md`); việc để giảng do User chọn lúc mở D (handoff không có mục cho D).

@@ -8,7 +8,7 @@ description: Session A (điều phối) của hue_rag — dùng lúc kết phiê
 Nguồn ý: khóa AI FDE (agent sai thì sửa vào harness, không chỉ sửa một lần; bên đề xuất không tự quyết —
 người duyệt cho **thử**, bằng chứng quyết **giữ / gỡ**, mỗi vòng ít thay đổi) và cách làm của một dự án khác
 của User (ghi chú private `data/external_project_notes/`). **Harness** của hue_rag = `AGENTS.md`, `session_prompt/`,
-`skills/`, memory của agent, `.githooks/`, `.claude/settings.json`. Luật gốc (`session_prompt/Session_Prompt.md`,
+`skills/`, memory của agent, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`. Luật gốc (`session_prompt/Session_Prompt.md`,
 `WORKFLOW.md`) thắng skill này; governance chỉ A sửa, User duyệt qua skill này. Sổ:
 `session_prompt/SO_CAI_TIEN_CACH_LAM.md`.
 
@@ -29,7 +29,7 @@ hay bị bắt muộn thì đề xuất bước kiểm sớm hơn. Ý hay chưa 
    dẫn, mẫu cụ thể), không viết lời khuyên chung chung.
 4. **Rào bằng máy** khi luật bằng chữ bị vi phạm ≥ 2 lần, **hoặc ngay lần đầu nếu hậu quả không đảo ngược
    được** (lộ dữ liệu lên repo public, xóa dữ liệu, mở câu kín). Ưu tiên rào mọi agent đều chịu (hook git
-   `.githooks/`, kiểm trong script); quyền Claude Code (`.claude/settings.json`) là lớp thêm. Luôn giữ dòng chữ
+   `.githooks/`, kiểm trong script); quyền + hook Claude Code (`.claude/settings.json`, `.claude/hooks/` — W37) là lớp thêm. Luôn giữ dòng chữ
    tương ứng cho agent không chịu rào đó.
 
 Mỗi đề xuất viết theo `propose-options` (lời thường): sự cố + lần; sửa ở đâu (file, mục, nguyên văn dòng

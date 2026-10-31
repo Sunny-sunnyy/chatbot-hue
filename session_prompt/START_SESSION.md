@@ -19,7 +19,7 @@ User); B, C là session thực thi; D (tùy chọn) chỉ đọc, giúp User t�
    Skill dự án nằm ở .claude/skills/ (Claude Code tự thấy; agent khác đọc
    skills/<tên>/SKILL.md): practical-project-coding khi sửa code/test,
    risk-gated-agent-review khi review chéo, propose-options khi đưa lựa chọn cho User,
-   run-experiment khi thử/so sánh phương án, improve-workflow (A) khi kết phiên / rút kinh nghiệm, teach-and-quiz (D) khi giảng + hỏi lại.
+   run-experiment khi thử/so sánh phương án, improve-workflow (A) khi kết phiên / rút kinh nghiệm, teach-and-quiz (D) khi giảng + hỏi lại; agent-design-review / agent-security-review khi thiết kế / rà agent có công cụ (Phase 9).
    Khi code/test/chạy script: luôn `uv run …` trong .venv của dự án (Session_Prompt.md §10).
 2. Kiểm nhanh, chỉ đọc, theo WORKFLOW.md mục 2.
 3. Báo ngắn: bạn là ai, Phase/việc đang ở đâu, việc của bạn, chỗ lệch giữa tài liệu

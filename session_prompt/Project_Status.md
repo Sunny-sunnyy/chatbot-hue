@@ -132,6 +132,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-31 15:51–16:43 | **Phiên chiều 31/10 chỉ làm AI FDE** (chưa làm tiếp dự án). Áp khung_fde (khung cá nhân của User): W37 hook giờ ước, W38 xét mọi mục đang thử, W39 `teach-and-quiz` cho D, W40 phần nhỏ từ skill mẫu, W41 chép sẵn `agent-design-review` + `agent-security-review` cho Phase 9; vòng cải tiến 12 (40 ⇒ 7 mục đang thử). **Nhìn lại Phase 1–8 theo khung khoá** làm ở bước đóng gói (sau streaming + nhiều lượt). A được commit + push phiên này | User; `SO_CAI_TIEN_CACH_LAM.md` W37–W41 |
 | 2026-10-31 11:26–11:48 | **Streaming:** D1 = **PA1** (chữ hiện ngay khi model viết + tiến độ thật; kiểm citation cuối như hôm nay); D2 = **(a)** sàn p50 ≤ 3 s / p95 ≤ 5 s đổi sang "tới chữ trả lời đầu tiên hiện trên trình duyệt" (Playwright), tới đủ câu chỉ theo dõi; D3 = bộ kiểm cuối hỏng ⇒ **rút lại**, lỗi / đứt giữa chừng ⇒ **xóa hết** (lời báo + "Thử lại"). Phạm vi: API + sửa tối thiểu `frontend/`; **giao diện mới bàn sau Phase 8** gộp AI FDE (10:23) | User; spec `2026-10-31-streaming-design.md` §2 |
 | 2026-10-31 11:21–11:44 | **Tra web bằng Codex CLI** (`scripts/tra_web_codex.sh`, thêm ngày hôm nay + đòi thông tin mới nhất): câu tra nhanh mọi session tự chạy; nghiên cứu lớn: Codex **và** ChatGPT web (thử 31/10: Codex ngang ChatGPT 2 / 3 bài). **Không bao giờ gọi `agy` từ agent** (điều khoản Google; `.claude/settings.json` chặn; User tự dùng được). A tự chạy commit / push sau khi hỏi; chỉ đưa `!` khi bị chặn | User; `report_agent/2026-10-31_tra_web_codex/TONG_HOP.md` |
 | 2026-10-30 16:12 | **Qwen3-8B kém hơn ⇒ giữ e5-small** (sàn 0 câu mất đoạn đúng vỡ 3 / 40 dev + 3 test; vector câu hỏi 2,2 s qua mạng); collection thử xoá; User: không giữ bộ đệm, chỉ ghi kết quả; code giữ bằng tag `hoso/b92-qwen3-harness`, không merge | User; `qwen3_8b_implementation.md` |
@@ -217,8 +218,10 @@ session_prompt/sessions/STATUS_*.md    ngữ cảnh riêng từng session
 session_prompt/PROJECT_HISTORY.md      lịch sử (reference-only)
 session_prompt/TEMPLATE_*.md           mẫu report
 session_prompt/SO_CAI_TIEN_CACH_LAM.md sổ cải tiến cách làm (skill improve-workflow)
-skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment,improve-workflow}/SKILL.md
-.githooks/pre-commit, .claude/settings.json   rào bằng máy (hook git mọi agent; Claude Code cấm đọc .env)
+skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment,improve-workflow,teach-and-quiz,agent-design-review,agent-security-review}/SKILL.md
+                                       (3 skill cuối theo khung_fde — khung cá nhân của User, private, ngoài repo; 2 skill agent dùng từ Phase 9)
+.githooks/pre-commit, .claude/settings.json   rào bằng máy (hook git mọi agent; Claude Code cấm đọc .env, cấm `agy`)
+.claude/hooks/                         hook Claude Code cảnh báo giờ ước lúc ghi (W37; `bash .claude/hooks/thu_hook.sh` ⇒ ĐÚNG n / n)
 scripts/grep_kb.sh                     tìm trong nội dung kho, luôn loại evaluation/ meta/ *sealed* (W27)
 scripts/tra_web_codex.sh               tra web bằng Codex CLI (chỉ thông tin công khai; kết quả data/tra_cuu_cli/) — §9
 guides/full_corpus_rag.md              guide umbrella full-corpus
