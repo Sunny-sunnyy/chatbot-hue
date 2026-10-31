@@ -83,7 +83,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 | 7B | `approved` | User-closed 2026-10-24: evaluator + baseline 176 (Claude judge); giới hạn: chưa có mốc người |
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
 | 8.2 | `approved` | **User-closed 10:23 28/10/2026**: context 10 + NFC vào chatbot (`510e1a8`); B3 câu kín (S36, 33 câu trong kho): Completeness +0,818 [+0,394; +1,333], Accuracy +0,697, 0 câu tụt; ngoài kho 0 / 3 bị trả lời; Bước 2 đợt cải tiến: không biến thể nào vào; B0 dời (spec §11, mốc người làm sau). ≈ 0,227 / 0,5 USD. `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md` |
-| 9 | `not_ready` | Agentic RAG / Hybrid Recommender — roadmap, chưa có scope |
+| 9 | `not_ready` | Chưa có scope. **User 31/10:** mở bằng **nghiên cứu rộng trước** (chủ đề / đề tài, dự án, paper, ứng dụng đang dùng thật cho du lịch / văn hoá) rồi thử nghiệm — **không khoá trước** vào agentic RAG hay gợi ý lịch trình (đó chỉ là ứng viên). Phase 1–8 = "RAG mức 1" (hỏi đáp đúng, đủ, có nguồn) |
 
 ## 4. Runtime và dữ liệu đang chạy
 
@@ -132,6 +132,7 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-31 (A ghi nhận 16:48 31/10/2026) | **Phase 9 mở bằng nghiên cứu rộng** (đề tài, dự án, paper, ứng dụng thực tế; cách đã làm ở một dự án khác của User: nghiên cứu ⇒ thử nghiệm trước), không chỉ gợi ý lịch trình; ứng viên cũ (agentic RAG, gợi ý / lịch trình — 27/10) giữ làm ứng viên. Phase 1–8 = RAG mức 1 | User |
 | 2026-10-31 15:51–16:43 | **Phiên chiều 31/10 chỉ làm AI FDE** (chưa làm tiếp dự án). Áp khung_fde (khung cá nhân của User): W37 hook giờ ước, W38 xét mọi mục đang thử, W39 `teach-and-quiz` cho D, W40 phần nhỏ từ skill mẫu, W41 chép sẵn `agent-design-review` + `agent-security-review` cho Phase 9; vòng cải tiến 12 (40 ⇒ 7 mục đang thử). **Nhìn lại Phase 1–8 theo khung khoá** làm ở bước đóng gói (sau streaming + nhiều lượt). A được commit + push phiên này | User; `SO_CAI_TIEN_CACH_LAM.md` W37–W41 |
 | 2026-10-31 11:26–11:48 | **Streaming:** D1 = **PA1** (chữ hiện ngay khi model viết + tiến độ thật; kiểm citation cuối như hôm nay); D2 = **(a)** sàn p50 ≤ 3 s / p95 ≤ 5 s đổi sang "tới chữ trả lời đầu tiên hiện trên trình duyệt" (Playwright), tới đủ câu chỉ theo dõi; D3 = bộ kiểm cuối hỏng ⇒ **rút lại**, lỗi / đứt giữa chừng ⇒ **xóa hết** (lời báo + "Thử lại"). Phạm vi: API + sửa tối thiểu `frontend/`; **giao diện mới bàn sau Phase 8** gộp AI FDE (10:23) | User; spec `2026-10-31-streaming-design.md` §2 |
 | 2026-10-31 11:21–11:44 | **Tra web bằng Codex CLI** (`scripts/tra_web_codex.sh`, thêm ngày hôm nay + đòi thông tin mới nhất): câu tra nhanh mọi session tự chạy; nghiên cứu lớn: Codex **và** ChatGPT web (thử 31/10: Codex ngang ChatGPT 2 / 3 bài). **Không bao giờ gọi `agy` từ agent** (điều khoản Google; `.claude/settings.json` chặn; User tự dùng được). A tự chạy commit / push sau khi hỏi; chỉ đưa `!` khi bị chặn | User; `report_agent/2026-10-31_tra_web_codex/TONG_HOP.md` |

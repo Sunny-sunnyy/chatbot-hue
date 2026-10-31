@@ -29,7 +29,9 @@ Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định t
    ghi chú private trong `data/external_project_notes/`, Phần VIII; số lấy từ các `TONG_HOP.md`); bảng giới hạn gom từ mục giới hạn của từng spec; review cả nhánh / cả backend bằng sub-agent ngữ cảnh mới; bộ kín mới so SHA256 với mọi file thử cũ;
    rà `agent-security-review` (khung_fde, mục 1, 2, 5, 7, 8) ⇒ "giả định an toàn"; hạn mức tín dụng phía nhà cung cấp cho key đang dùng (chưa kiểm OpenAI có không).
 5. **Sau Phase 8:** bàn **giao diện mới** (React / Next…) **gộp áp nội dung AI FDE** — User 31/10: chờ bản AI FDE — nay đã có khung_fde v1.2 (31/10 chiều; khung cá nhân của User). A sơ bộ nghiêng React + Vite build
-   tĩnh, FastAPI phục vụ (một server) — chưa nghiên cứu, chưa chốt. Rồi brainstorm Phase 9 (`data/course_notes/v3/TONG_HOP_A_2026-10-30.md` §3).
+   tĩnh, FastAPI phục vụ (một server) — chưa nghiên cứu, chưa chốt. Rồi **Phase 9 — mở bằng nghiên cứu rộng** (User 31/10): chủ đề / đề tài, dự án, paper, ứng dụng đang dùng thật (du lịch / văn hoá / di sản), công việc thật của
+   du khách / người dân — **trước** khi chọn hướng; không khoá vào gợi ý lịch trình. Cách: Codex `scripts/tra_web_codex.sh` + ChatGPT web (§9), mỗi hướng ứng viên
+   viết 5 dòng khám phá (`propose-options` §4b) + `agent-design-review`. Ý cũ: `data/course_notes/v3/TONG_HOP_A_2026-10-30.md` §3.
 6. Khi rảnh (User): **B0** (mốc người) — `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b0_prep_implementation.md` (B đã thấy khóa — không tóm nhãn); 20 câu mẫu lỗi nặng.
 
 **Mục tiêu sản phẩm:** đồ án tốt nghiệp (bảo vệ ~1/2027), càng giống sản phẩm thật càng tốt; người dùng = User, du khách, người dân; AWS 10–50 USD / tháng chỉ khi local ổn.
