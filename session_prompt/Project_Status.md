@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `13:53 30/10/2026` (A, phiên 30/10: đợt 2 sửa kho áp xong bước 2–8 — record / T1 / Golden md5 / gold v5 mới; đo "sau" đang chạy). Trước: `13:26 28/10/2026` (A, **kết phiên 28/10**: 8.2 đóng; đợt sửa kho đợt 1 đóng; phiên sau: đợt 2 ⇒ 8B ⇒ streaming). Trước: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
+Last updated: `12:42 31/10/2026` (A, **kết phiên 31/10**: chatbot không đổi; spec streaming bản 4 `cf1ae9ef6c2c` review đạt — User chốt D1 PA1 / D2 (a) / D3 xóa khi lỗi, còn Q1 mục tiêu chữ đầu tiên + duyệt sha; tra web bằng `scripts/tra_web_codex.sh`; cấm agent gọi `agy`). Trước: `13:53 30/10/2026` (A, phiên 30/10: đợt 2 sửa kho áp xong bước 2–8 — record / T1 / Golden md5 / gold v5 mới; đo "sau" đang chạy). Trước: `13:26 28/10/2026` (A, **kết phiên 28/10**: 8.2 đóng; đợt sửa kho đợt 1 đóng; phiên sau: đợt 2 ⇒ 8B ⇒ streaming). Trước: `09:40 28/10/2026` (A, **phiên 28/10**: User chọn PA3 — B0 không chặn (spec 8.2 §11); **merge B1 `510e1a8`: chatbot context 10 + NFC**, C71 review ready; B78 / C70 plan chờ review). Trước: `15:43 27/10/2026` (A, **phiên 27/10 chiều, kết phiên**: phần tồn Phase cũ — B1 rebase sẵn `c3d5607`; plan B3 duyệt `27e75be5ed44`; gold v3 mặc định; `dense_ms` làm tròn; đợt sửa kho soạn xong, spec duyệt `937cf8969810`; Qwen3-8B ⇒ thí nghiệm sau sửa kho; vòng cải tiến 8). Trước: `13:30 27/10/2026` (A, **kết phiên 27/10**: đợt cải tiến đóng; API ghi `chat_metrics` mỗi câu (merge `5100b90`); nhãn đoạn đúng v2 (merge `a819789`); bước tiếp B0)
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -29,13 +29,13 @@ và làm việc với User; B, C thực thi; review chéo; cả ba Claude Opus 5
 
 **User trả lời (08:47 27/10/2026):** đây là **đồ án tốt nghiệp** đem đi trình bày, xem như **sản phẩm kinh doanh thật**; người dùng = User, **du khách,
 người dân**. Lỗi tệ nhất: User hỏi ý A (A đề xuất thứ tự, chờ User chốt). Yêu cầu phi chức năng (chờ tối đa, tiền / câu, chạy ở đâu): User chưa
-rõ ⇒ **so sánh, đánh giá, nhận xét; chỗ nào tối ưu được thì tối ưu** — A tạm theo dõi p95 ≤ 5 s, mỗi biến thể báo USD / câu + latency p50 / p95. **User chốt 28/10:** p50 ≤ 3 s, p95 ≤ 5 s cả câu; ≤ 0,0005 USD / câu; thứ tự lỗi: sai cảnh báo an toàn > nói chắc sai > ngoài kho > thiếu ý > từ chối nhầm (§5).
+rõ ⇒ **so sánh, đánh giá, nhận xét; chỗ nào tối ưu được thì tối ưu** — A tạm theo dõi p95 ≤ 5 s, mỗi biến thể báo USD / câu + latency p50 / p95. **User chốt 28/10:** p50 ≤ 3 s, p95 ≤ 5 s cả câu (**31/10 D2:** khi streaming chạy, sàn này áp cho "tới chữ trả lời đầu tiên trên trình duyệt"; tới lúc đó vẫn áp cả câu); ≤ 0,0005 USD / câu; thứ tự lỗi: sai cảnh báo an toàn > nói chắc sai > ngoài kho > thiếu ý > từ chối nhầm (§5).
 Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhiên + năng lực, sàn closed-world ở trên; B0 (người đọc cặp mù) là mốc người đầu tiên.
 
 ## 2. Phase hiện tại
 
-**Bây giờ (16:12 30/10/2026, kết phiên 30/10):** đợt 2 sửa kho **đóng** (User, giữ sao lưu): 204 file / 8.424 đoạn, không làm hỏng; "ngày hôm nay" 0 nói sai (từ chối nhầm ⇒ Phase 9); **Qwen3-8B kém hơn, giữ e5-small**. Phiên sau: streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9. Trước — **kết phiên 28/10, 13:26:** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
-Phiên sau (thứ tự, User 30/10): **spec streaming** (chờ kết quả ChatGPT; nháp v2; Codex review một lần — W33) ⇒ hội thoại nhiều lượt (nháp C91) ⇒ **đóng gói
+**Bây giờ (12:42 31/10/2026, kết phiên 31/10):** chatbot không đổi. **Spec streaming** `docs/superpowers/specs/2026-10-31-streaming-design.md` bản 4 `cf1ae9ef6c2c` (B105 + Codex review W33 đạt): User chốt D1 = PA1 (chữ hiện ngay + tiến độ, kiểm citation cuối), D2 = (a) (sàn p50 ≤ 3 / p95 ≤ 5 s tới chữ trả lời đầu tiên trên trình duyệt), D3 = rút / xóa khi lỗi; còn Q1 (mục tiêu chữ đầu tiên) + User duyệt sha ⇒ code S1–S4. Giao diện mới sau Phase 8 (gộp AI FDE). Tra web: `scripts/tra_web_codex.sh` (`Session_Prompt.md` §9); không gọi `agy`. Chi tiết: `CURRENT_HANDOFF.md`; `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`. Trước — **16:12 30/10/2026, kết phiên 30/10:** đợt 2 sửa kho **đóng** (User, giữ sao lưu): 204 file / 8.424 đoạn, không làm hỏng; "ngày hôm nay" 0 nói sai (từ chối nhầm ⇒ Phase 9); **Qwen3-8B kém hơn, giữ e5-small**. Phiên sau: streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9. Trước — **kết phiên 28/10, 13:26:** Phase 8.2 **đóng**; **đợt sửa kho đợt 1 đóng** (User; giữ sao lưu): 204 file / 8.426 đoạn, "trước ↔ sau" không làm hỏng.
+Phiên sau (thứ tự, User 30/10, giữ 31/10): **spec streaming** (bản 4 review đạt; còn Q1 + User duyệt sha ⇒ code) ⇒ hội thoại nhiều lượt (nháp C91) ⇒ **đóng gói
 Phase 1–8** (bảng giới hạn, báo cáo so sánh phương án, sửa `cost_usd`) ⇒ Phase 9. Chi tiết: `CURRENT_HANDOFF.md`. Đoạn dưới là lịch sử 8.1 + rà code (đã xong), rồi 8.2.
 
 **Phase 8.1 — rà quyết định Phase 0–7 bằng thí nghiệm: User-closed 15:27 25/10/2026** (spec
@@ -132,6 +132,8 @@ là lịch sử.
 
 | Ngày | Quyết định | Nguồn |
 |---|---|---|
+| 2026-10-31 11:26–11:48 | **Streaming:** D1 = **PA1** (chữ hiện ngay khi model viết + tiến độ thật; kiểm citation cuối như hôm nay); D2 = **(a)** sàn p50 ≤ 3 s / p95 ≤ 5 s đổi sang "tới chữ trả lời đầu tiên hiện trên trình duyệt" (Playwright), tới đủ câu chỉ theo dõi; D3 = bộ kiểm cuối hỏng ⇒ **rút lại**, lỗi / đứt giữa chừng ⇒ **xóa hết** (lời báo + "Thử lại"). Phạm vi: API + sửa tối thiểu `frontend/`; **giao diện mới bàn sau Phase 8** gộp AI FDE (10:23) | User; spec `2026-10-31-streaming-design.md` §2 |
+| 2026-10-31 11:21–11:44 | **Tra web bằng Codex CLI** (`scripts/tra_web_codex.sh`, thêm ngày hôm nay + đòi thông tin mới nhất): câu tra nhanh mọi session tự chạy; nghiên cứu lớn: Codex **và** ChatGPT web (thử 31/10: Codex ngang ChatGPT 2 / 3 bài). **Không bao giờ gọi `agy` từ agent** (điều khoản Google; `.claude/settings.json` chặn; User tự dùng được). A tự chạy commit / push sau khi hỏi; chỉ đưa `!` khi bị chặn | User; `report_agent/2026-10-31_tra_web_codex/TONG_HOP.md` |
 | 2026-10-30 16:12 | **Qwen3-8B kém hơn ⇒ giữ e5-small** (sàn 0 câu mất đoạn đúng vỡ 3 / 40 dev + 3 test; vector câu hỏi 2,2 s qua mạng); collection thử xoá; User: không giữ bộ đệm, chỉ ghi kết quả; code giữ bằng tag `hoso/b92-qwen3-harness`, không merge | User; `qwen3_8b_implementation.md` |
 | 2026-10-30 15:07 | **Giá `gpt-6-luna` đủ (User dán bảng giá, ngữ cảnh < 272k token):** vào 0,10 · ra 0,50 · đọc đệm 0,01 · **ghi đệm 30 phút 0,125** · ghi đệm 12 giờ 0,25 USD / 1M. B95: mỗi câu `cache_write_tokens` ≈ toàn bộ phần vào, `cached_tokens` = 0 ⇒ `cost_usd` (giá phẳng 0,10) **ghi thiếu ≈ 20 % / câu** (~0,00021 ⇒ ~0,00025, vẫn dưới trần 0,0005); mọi số USD cũ đếm theo giá phẳng. Sửa công thức + log `cache_write_tokens`: việc đóng gói | User; B95 |
 | 2026-10-30 14:39 | **User đóng đợt 2 sửa kho, giữ sao lưu cả hai đợt** (không làm hỏng: Golden 176 + bộ an toàn 32, 0 sai điều kiện mới, ≈ 0,047 USD); gold v5 + Golden câu 5 / 127 (User duyệt 13:39–13:43); thứ tự sau đợt 2: **đo "ngày hôm nay" trước Qwen3-8B**; giữ thứ tự cũ (PA2) ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9; bối cảnh đồ án 5 ý đúng; quyền phiên như 29/10 | User |
@@ -218,6 +220,7 @@ session_prompt/SO_CAI_TIEN_CACH_LAM.md sổ cải tiến cách làm (skill impro
 skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment,improve-workflow}/SKILL.md
 .githooks/pre-commit, .claude/settings.json   rào bằng máy (hook git mọi agent; Claude Code cấm đọc .env)
 scripts/grep_kb.sh                     tìm trong nội dung kho, luôn loại evaluation/ meta/ *sealed* (W27)
+scripts/tra_web_codex.sh               tra web bằng Codex CLI (chỉ thông tin công khai; kết quả data/tra_cuu_cli/) — §9
 guides/full_corpus_rag.md              guide umbrella full-corpus
 docs/superpowers/specs/, docs/superpowers/plans/   thiết kế từng Phase
 report_agent/<YYYY-MM-DD>_<chủ_đề>/   report + review từ 2026-10-24 (README trong report_agent/)
@@ -285,3 +288,8 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   Từ 26/10 (W16) hook còn quét **dòng thêm mới** trùng ≥ 40 ký tự với Golden / kho (`.githooks/overlap_scan.py`, ~0,4 s; kho đọc từ working
   tree chính nên commit từ worktree `/tmp` không symlink vẫn quét; báo "quét LỖI" khi thiếu `uv`). Câu kín: từ 26/10 tối (User duyệt) quét `question` + `reference_answer` của `*sealed*.jsonl` (nhãn
   `sealed`; không quét `sources` và ghi chú `*sealed*.md` vì báo nhầm). `_source-dumps/` không quét.
+- **Codex CLI (31/10):** `--search` phải đứng **trước** `exec`; model mặc định trong `~/.codex/config.toml` (`gpt-6.1-sol`) không dùng được với tài khoản ChatGPT ⇒ `-m gpt-6-luna`;
+  `-s read-only` **không** chặn đọc file ngoài thư mục làm việc ⇒ chỉ gửi thông tin công khai, xem `command_execution` trong `--json`. `url_da_mo.txt` thường ít hơn nhiều so với URL trong báo cáo (31/10: 1 / 15) ⇒ URL còn lại là tự khai, kiểm kỹ.
+- **Qdrant chạy bằng Docker Desktop (Windows):** WSL không có lệnh `docker` khi Docker Desktop tắt (31/10 mở phiên) ⇒ User bật rồi `docker compose up -d qdrant`.
+- `rm` / `cp` với đường dẫn ghép từ biến (`$X/*`) bị tầng an toàn Claude Code chặn ⇒ `"${X:?}"/…` hoặc đường dẫn tuyệt đối (31/10, A + B).
+- **WebSearch không dùng được** dù có trong danh sách công cụ hoãn của Claude Code: 31/10 A thử ⇒ `API Error: 400 tool type 'web_search_20250305' is not supported for this model` (Bedrock) ⇒ tra web bằng `scripts/tra_web_codex.sh`.

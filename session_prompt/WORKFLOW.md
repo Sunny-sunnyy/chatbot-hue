@@ -216,4 +216,6 @@ một khái niệm). Mục tiêu: User tự giải thích lại được bằng 
 - Mỗi buổi gắn với một việc vừa xong; kết bằng 3 câu tự kiểm. Ghi vào sổ: khái niệm, câu User trả lời đúng /
   sai **khi không có gợi ý**, chỗ còn mơ hồ. Sổ khái niệm khởi đầu: `data/hoc_cung_D/SO_KHAI_NIEM.md`.
 - Thấy chỗ yếu trong việc của A/B/C thì nói thẳng với User và ghi vào sổ để A xem; D không tự sửa.
-- Skill riêng cho D chỉ viết sau ≥ 2 buổi thật (biết bước nào thừa, câu hỏi nào giúp User nói lại được).
+- D báo **User** (không báo A, không sửa `CURRENT_HANDOFF.md`); việc để giảng do User chọn lúc mở D (handoff không có mục cho D).
+- Skill của D: `teach-and-quiz` (theo khung_fde v1, W39 — User duyệt 31/10; thay luật cũ "chỉ viết skill D sau ≥ 2 buổi thật", vì luật đó
+  chờ chính buổi chưa diễn ra: 25–31/10 D 0 buổi). Sau 2 buổi thật: xét giữ / sửa (bước nào thừa, câu hỏi nào giúp User nói lại được).

@@ -42,8 +42,11 @@ trần tiền, code chatbot — các việc đó đi đường thường (`WORKF
 
 - User duyệt từng đề xuất; duyệt = **cho thử**, chưa phải "đúng". Áp xong ghi sổ `đang thử`, ngày, file đổi,
   theo dõi gì. Thay đổi governance do A làm vẫn cần người khác kiểm (B/C hoặc sub-agent ngữ cảnh mới).
-- Vòng sau xem từng mục `đang thử`: không lặp và luật được dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc; qua 2 phiên
-  làm việc thật không ai cần hoặc gây vướng ⇒ đề xuất `gỡ`.
+- **Mỗi vòng, trước khi thêm đề xuất mới,** xét lại **mọi** mục `đang thử` (không chỉ mục mới): không lặp và luật được
+  dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc; qua 2 phiên làm việc thật không ai cần, gây vướng, hoặc **đang chặn việc đáng làm**
+  ⇒ đề xuất `gỡ`; chưa có dịp dùng ⇒ giữ, ghi lý do. Ghi kết quả xét **thêm vào trước** ghi chú cũ ở cột "Xem lại", không
+  ghi đè (W38, theo khung_fde v1 — 31/10: 39 mục `đang thử`, W1–W13 chưa vòng nào xét; khoá AI FDE W2D5·83: luật tự viết có
+  thể tự trói tay).
 - Bằng chứng ở đây chỉ là quan sát (sự cố lặp hay không). Nói thẳng với User; không viết "đã chứng minh".
 
 ## 4. Giữ harness gọn và đúng (mỗi vòng)

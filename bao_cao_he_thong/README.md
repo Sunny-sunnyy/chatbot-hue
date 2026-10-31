@@ -18,7 +18,7 @@
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:28 30/10/2026 (bản 6: 2 đáp án sửa sau đợt 2, md5 mới; câu kín đã dùng; nhãn bản 5) |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 14:19 30/10/2026 (bản 6: đợt 2 123 sửa / 40 file, 204 file / 8.424 đoạn, không làm hỏng, 0 câu sai điều kiện mới) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 19:4x 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 18:56 25/10/2026 |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [30/10 — áp đợt 2 sửa kho, Qwen3-8B kém hơn, đo ngày hôm nay, đọc khoá học](nhat_ky/2026-10-30_ap_dot_2_sua_kho.md); trước: [29/10 — chuẩn bị đợt 2 sửa kho, đo nhiễu thước lỗi nặng](nhat_ky/2026-10-29_chuan_bi_dot_2.md) | 16:12 30/10/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [31/10 — spec streaming (D1–D3 chốt), tra web bằng Codex, cấm Claude gọi AGY](nhat_ky/2026-10-31_spec_streaming_tra_web_codex.md); trước: [30/10 — áp đợt 2 sửa kho, Qwen3-8B kém hơn, đo ngày hôm nay](nhat_ky/2026-10-30_ap_dot_2_sua_kho.md) | 12:42 31/10/2026 |
 
 ## Trạng thái ngắn
 

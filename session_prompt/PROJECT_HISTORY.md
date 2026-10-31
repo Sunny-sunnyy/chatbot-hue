@@ -4,6 +4,13 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-31 (12:42) — Spec streaming (D1–D3 User chốt, chờ Q1 + duyệt sha); tra web bằng Codex; cấm agent gọi AGY
+
+- Chatbot không đổi. Streaming: kết quả ChatGPT kiểm nguồn (B99), đối chiếu code (C97), nháp v3 (C98), spec (C100) bản 4 `cf1ae9ef6c2c` — review B105 + Codex một lần (W33, 2 minor mới).
+  User chốt D1 = PA1, D2 = sàn tới chữ đầu tiên trên trình duyệt, D3 = rút / xóa khi lỗi; giao diện mới sau Phase 8. Tổng hợp: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.
+- Tra web: thử Codex / AGY 3 bài × 2 (C99 chấm) ⇒ `scripts/tra_web_codex.sh` + §9 + chặn `agy` (điều khoản Google) — `1a9dca4`; `report_agent/2026-10-31_tra_web_codex/TONG_HOP.md`.
+- 0 USD paid. Handoff phiên 31/10 dời nguyên văn: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`.
+
 ## 2026-10-30 (15:05) — Đợt 2 sửa kho đóng (không làm hỏng); đo "ngày hôm nay"; Qwen3-8B chạy; sổ vòng 10
 
 - User giữ thứ tự cũ (PA2): đợt 2 ⇒ Qwen3-8B ⇒ streaming ⇒ nhiều lượt ⇒ đóng gói Phase 1–8 ⇒ Phase 9. Đợt 2: 123 sửa / 40 file, 8.424 đoạn; trước ↔ sau không làm hỏng; User đóng,
