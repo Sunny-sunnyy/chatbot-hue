@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Nền tảng — luật chơi và khung backend (Phase 0–1)
 
-**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 3: sau đợt 3 rà code (26/10) — gỡ bộ chạy kiểm khói Phase 5, logger `api`; bản 2 (19:58 24/10):
+**Cập nhật lần cuối: 16:59 31/10/2026 — bản 4: chỉ sửa số file kho (204 từ 28/10); nền tảng không đổi.** Bản 3 (26/10/2026): sau đợt 3 rà code (26/10) — gỡ bộ chạy kiểm khói Phase 5, logger `api`; bản 2 (19:58 24/10):
 đưa về mẫu mới, gỡ code bản món ăn.**
 Người viết: B · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -9,7 +9,7 @@ Người viết: B · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 - **Khâu này làm gì:** đặt luật chơi cho cả dự án ("đơn giản là mặc định"; không dùng dữ liệu giả làm
   bằng chứng) và dựng khung `backend/`: 10 gói Python, một file cấu hình, một hàm đọc cấu hình có kiểm
   lỗi, một cấu hình ghi log chung, một khuôn chung cho kết quả tìm kiếm. Đã đóng tháng 8/2026.
-- **Đang chạy cách nào:** khung này vẫn là nền của chatbot toàn kho (205 file). File cấu hình
+- **Đang chạy cách nào:** khung này vẫn là nền của chatbot toàn kho (204 file từ 28/10). File cấu hình
   `settings.yaml` nay chỉ còn 4 nhóm: kho tri thức, địa chỉ Qdrant, runtime (model tìm kiếm, cách tìm),
   sinh câu trả lời. Hàm đọc cấu hình kiểm đúng các nhóm này. Phần cấu hình và code của bản món ăn cũ đã
   gỡ ngày 24/10.

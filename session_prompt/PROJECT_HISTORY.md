@@ -4,6 +4,12 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-10-31 (17:00) — Phiên chiều: áp khung AI FDE vào cách làm (W37–W41, vòng cải tiến 12); sửa 4 báo cáo khâu bị cũ
+
+- Chatbot không đổi; 0 USD. Đối chiếu khung (khung cá nhân của User) + khoá ver4 (3 agent con): bản 30/10 vẫn đúng hướng, 4 chỗ xem lại. Áp: W37 hook giờ ước Claude Code,
+  W38 xét mọi mục đang thử, W39 `teach-and-quiz`, W40 phần nhỏ skill mẫu, W41 2 skill agent; vòng 12: 40 ⇒ 7 mục đang thử. Phase 9 mở bằng nghiên cứu rộng (User).
+  User phát hiện 4 `BAO_CAO_*` còn số trước sửa kho (S61) ⇒ sửa. Commit `f34cb7f` … kết phiên. Tổng hợp: `report_agent/2026-10-31_khung_fde/TONG_HOP.md`.
+
 ## 2026-10-31 (12:42) — Spec streaming (D1–D3 User chốt, chờ Q1 + duyệt sha); tra web bằng Codex; cấm agent gọi AGY
 
 - Chatbot không đổi. Streaming: kết quả ChatGPT kiểm nguồn (B99), đối chiếu code (C97), nháp v3 (C98), spec (C100) bản 4 `cf1ae9ef6c2c` — review B105 + Codex một lần (W33, 2 minor mới).

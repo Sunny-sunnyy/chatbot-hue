@@ -20,6 +20,11 @@ Terminal: `hue-rag-1a` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
   Phiên chiều chỉ làm AI FDE (User). **Vòng 12 (W38, lần dùng đầu):** xét 40 mục `đang thử` ⇒ còn 7; sub-agent kiểm độc lập sửa 6 chỗ; I3 lên nấc (memory
   `phase-7a2-implementer-state` viết lại thành con trỏ — memory không giữ trạng thái việc); S59 mới; User để A quyết ("theo bạn nên làm gì", giữa 16:02 và 16:23 — tin không có dấu giờ). Hook W37 bắt đúng 1 giờ ước A gõ ở dòng này (đã sửa). Bản gửi lại dự án kia (đề xuất cho khung): trong `data/external_project_notes/` (file 31/10; User chuyển).
 
+## Kết phiên chiều 31/10 (17:00 `date`)
+- Xong: đối chiếu khung AI FDE; W37–W41; vòng cải tiến 12; Phase 9 = nghiên cứu rộng trước; sửa 4 `BAO_CAO_*` bị cũ + mục lục + nhật ký chiều; TONG_HOP `report_agent/2026-10-31_khung_fde/`.
+- Đã học (đầu vào vòng sau): **S60** đưa chi tiết sự cố dự án khác vào file tracked dù bỏ tên (2 lần, review bắt) ⇒ W42 đề xuất; **S61** 4 báo cáo khâu không cập nhật sau sửa kho ≥ 3 ngày, User phát hiện ⇒ W43 đề xuất;
+  gõ giờ "17:00" vào nhật ký trước khi chạy `date` (trùng may; dạng giờ đủ phút hook không bắt) — luôn `date` trước.
+
 ## Tiền paid
 - 0 USD (A, B, C). Codex / AGY theo gói tài khoản User.
 

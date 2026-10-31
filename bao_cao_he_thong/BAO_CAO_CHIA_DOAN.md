@@ -1,36 +1,38 @@
 # Báo cáo cho bạn: Chia tài liệu thành đoạn (Phase 2)
 
-**Cập nhật lần cuối: 16:0x 26/10/2026 — bản 4: đợt 3 sửa code (26/10) — đoạn quá dài nay **luôn** bị chặn khi dựng kho; test "kho khớp
+**Cập nhật lần cuối: 16:58 31/10/2026 — bản 5: kho sửa hai đợt (28/10: 204 file, 8.426 đoạn; 30/10: **8.424 đoạn**) — bộ chia đoạn **không đổi**, chỉ
+số đoạn đổi theo kho; xoá dòng giữa file làm ID đoạn dồn số ở 2 file (đợt 2).** Bản 4 (26/10/2026): đợt 3 sửa code (26/10) — đoạn quá dài nay **luôn** bị chặn khi dựng kho; test "kho khớp
 bản ghi" so cả nội dung; file quy tắc điều kiện ra khỏi repo public. 8.459 đoạn giống hệt trước khi sửa.** Bản 3 (14:14 25/10): kết quả 8.1, chatbot không đổi.
 Người viết: B (bản 3, theo report của C) · Review: C. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
 - **Khâu này làm gì:** chatbot không tìm trên cả file dài mà trên các đoạn nhỏ, mỗi đoạn một ý. Khâu
-  này chia 205 file Markdown thành đoạn và ghi chính xác vị trí từng phần trong file gốc, để câu trả lời
+  này chia 204 file Markdown (từ 28/10; trước 205) thành đoạn và ghi chính xác vị trí từng phần trong file gốc, để câu trả lời
   trích dẫn được đúng chỗ. Đã đóng (bản toàn kho 12/09/2026).
 - **Đang chạy cách nào:** chia theo cấu trúc Markdown (tiêu đề, đoạn văn, bảng, danh sách, trích dẫn),
   không cắt theo số ký tự, không gối đầu có chủ đích. Khối quá dài thì bảng tách từng hàng (kèm dòng tiêu
-  đề bảng), danh sách tách từng mục, đoạn văn tách ở ranh giới câu. Kết quả hôm nay: 8.459 đoạn, đúng
-  bằng số đoạn trong chỉ mục đang chạy. Sau đợt 3 sửa code (26/10): **8.459 đoạn giống hệt từng byte** (sha `60591acff422ece6`).
+  đề bảng), danh sách tách từng mục, đoạn văn tách ở ranh giới câu. Kết quả hôm nay (kho sau sửa đợt 2, 30/10): **8.424 đoạn**, đúng
+  bằng số đoạn trong chỉ mục đang chạy (28/10 sau đợt 1: 8.426; trước sửa kho: 8.459). Sau đợt 3 sửa code (26/10): **8.459 đoạn giống hệt từng byte** (sha `60591acff422ece6`).
 - **Đo được:** chạy lại ra cùng đoạn, cùng ID; mọi đoạn vừa giới hạn token của cả 3 tokenizer (dài nhất
-  366/512, 366/512, 255/256). Trung vị 85 token; 1.787 đoạn dưới 50 token ("đoạn vụn").
+  366/512, 366/512, 255/256). Trung vị 85 token; 1.787 đoạn dưới 50 token ("đoạn vụn") — số đo 26/10 trên kho cũ (8.459 đoạn), chưa đo lại sau sửa kho.
 - **Giới hạn chính:** nhiều đoạn rất ngắn (8.1 cho thấy gộp lại **không** giúp với hạn mức hiện tại); bảng **dài** bị tách
   từng hàng nên dòng giá khó tìm (gộp dòng bảng: không khác) — bảng ngắn giữ nguyên cả bảng (144 / 8.459 đoạn là bảng, đếm 26/10);
-  3 cặp đoạn lặp một phần nội dung.
+  3 cặp đoạn lặp một phần nội dung. Xoá / thêm dòng giữa file làm ID đoạn dạng `file#số` dồn số (gặp ở đợt 2, 2 file) ⇒ so trước ↔ sau
+  phải theo nội dung, không theo ID.
 - **Chi phí / tốc độ:** không tốn tiền (chạy trên máy).
 - **Phase 8.1 đã thử (25/10, 0 USD, ~1 giờ máy):** 12 cách chia đoạn khác — gộp đoạn cùng mục tới 128 / 256 / 384 / 512
   token, gộp dòng bảng, mở rộng sau khi tìm, đổi tiền tố tiêu đề, bỏ kiểm tokenizer cũ, 3 sửa nhỏ — đo với **cùng một hạn
   mức chữ** đưa model. **Kết luận: giữ cách chia hiện tại.** Đoạn to tìm thấy nhiều hơn nhưng chiếm chỗ, nên ít đoạn lọt
   phần đưa model và 4–8 câu bị mất đoạn đúng — đúng cả khi nâng hạn mức lên cỡ "10 đoạn". Ba sửa nhỏ và bỏ kiểm tokenizer
   cũ an toàn (không đổi đoạn đúng; bỏ tokenizer cũ có 1 câu tụt keyword vượt mức cho phép).
-- **Bạn cần quyết gì (8.2):** khi build lại chỉ mục, có gộp kèm 3 sửa nhỏ + bỏ kiểm tokenizer cũ không (không đổi đoạn đúng nhưng
-  không làm tốt lên; §6).
+- **Đã quyết:** build lại 28/10 và 30/10 giữ nguyên bộ chia đoạn (không gộp 3 sửa nhỏ). **Bạn cần quyết gì:** không. (Câu cũ 8.2: khi build lại chỉ mục, có gộp kèm 3 sửa nhỏ + bỏ kiểm tokenizer cũ không (không đổi đoạn đúng nhưng
+  không làm tốt lên; §6).)
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-205 file Markdown -> đọc theo cấu trúc (tiêu đề, đoạn văn, bảng, danh sách, trích dẫn)
+204 file Markdown -> đọc theo cấu trúc (tiêu đề, đoạn văn, bảng, danh sách, trích dẫn)
 -> mỗi khối thành một đoạn nếu vừa giới hạn token
 -> khối quá dài: bảng tách từng hàng (kèm dòng tiêu đề bảng), danh sách tách từng mục con,
    đoạn văn tách ở ranh giới câu
@@ -56,7 +58,7 @@ Người viết: B (bản 3, theo report của C) · Review: C. Tỉ giá ước
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Đoạn văn, tiêu đề thường | **Đã xử lý, đóng gói** | 8.459 đoạn, 0 lỗi; chỉ mục đang chạy dùng đúng các đoạn này |
+| Đoạn văn, tiêu đề thường | **Đã xử lý, đóng gói** | 8.424 đoạn (30/10; trước sửa kho 8.459), 0 lỗi; chỉ mục đang chạy dùng đúng các đoạn này |
 | Đoạn văn quá dài | **Đã xử lý, đóng gói** | tách ở ranh giới câu; `full_corpus_chunker.py:546` |
 | Bảng (bảng giá, lịch) | **Xử lý một phần** | bảng dài tách từng hàng kèm dòng tiêu đề (`full_corpus_chunker.py:385`); dòng giá đứng riêng nên khó tìm — xem `BAO_CAO_TIM_KIEM.md`. 8.1 thử gộp các dòng liền nhau của cùng bảng (≤ 256 token): **không khác** |
 | Danh sách dài | **Đã xử lý, đóng gói** | tách từng mục con; `full_corpus_chunker.py:450` |

@@ -1,6 +1,7 @@
 # Báo cáo cho bạn: Lưu đoạn vào Qdrant (Phase 4)
 
-**Cập nhật lần cuối: 19:58 24/10/2026 — bản 2: đưa về mẫu mới; sau dọn 24/10: Qdrant còn đúng 1
+**Cập nhật lần cuối: 16:58 31/10/2026 — bản 3: chỉ mục build lại tại chỗ hai lần sau sửa kho (28/10 sau đợt 1: 8.426 điểm; 30/10 sau đợt 2: **8.424 điểm**,
+phiếu build `51fb1ec63cbc`); thử Qwen3-8B (30/10) tạo một collection thử rồi xoá; Qdrant chạy trong Docker Desktop.** Bản 2 (19:58 24/10/2026): đưa về mẫu mới; sau dọn 24/10: Qdrant còn đúng 1
 collection (2 collection bản món ăn đã xóa), code nạp bản món ăn đã gỡ, notebook 04 sửa và chạy được.**
 Người viết: B · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -10,18 +11,21 @@ Người viết: B · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
   chatbot tìm được, và giữ một "phiếu build" ghi index được tạo từ đúng bản corpus nào. Đã đóng (Phase 4,
   09/2026; build lại ở Phase 7A2).
 - **Đang chạy cách nào:** Qdrant ở máy (`127.0.0.1:6335`) có **đúng 1 collection**
-  `hue_full_corpus_7a2_e5_small_384`: 8.459 điểm, mỗi điểm có vector nghĩa (384 số) + từ khóa + 7 trường
+  `hue_full_corpus_7a2_e5_small_384`: **8.424 điểm** (từ 30/10; trước sửa kho 8.459), mỗi điểm có vector nghĩa (384 số) + từ khóa + 7 trường
   thông tin. Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
 - **Đo được:** số điểm, thông tin và 5 vector mẫu khớp phiếu build (7A2, 24/10); sau dọn 24/10 collection
-  vẫn 8.459 điểm, trạng thái bình thường, kết quả tìm kiếm giống từng byte.
-- **Giới hạn chính:** model 8B chưa có collection; sửa corpus thì phải build lại mới chạy được.
+  vẫn 8.459 điểm, trạng thái bình thường, kết quả tìm kiếm giống từng byte. Sau mỗi lần build lại (28/10, 30/10): phiếu build mới, khớp số
+  điểm; A kiểm 31/10: 8.424 điểm.
+- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 2 lần, mỗi lần vài phút trên máy). Qdrant chạy trong Docker Desktop
+  (Windows): tắt Docker Desktop thì chatbot không tìm được (gặp 31/10). Qwen3-8B đã thử bằng collection riêng (30/10) — kém hơn, đã xoá
+  (`BAO_CAO_EMBEDDING_TU_KHOA.md`).
 - **Chi phí / tốc độ:** không tốn tiền (Qdrant chạy trên máy).
 - **Bạn cần quyết gì:** không.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-205 file Markdown -> chia đoạn -> 8.459 đoạn
+204 file Markdown -> chia đoạn -> 8.424 đoạn (từ 30/10)
   -> vector nghĩa (e5-small, 384 số) + từ khóa (BM25)
   -> mỗi đoạn một điểm: ID suy từ ID đoạn, 7 trường thông tin
   -> ghi từng lô 64 điểm vào collection mới
@@ -40,7 +44,7 @@ Người viết: B · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.459 điểm, 5 vector mẫu khớp (7A2); chatbot đang dùng |
+| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.424 điểm (build lại 30/10, phiếu `51fb1ec63cbc`); lần đầu 7A2 8.459 điểm, 5 vector mẫu khớp; chatbot đang dùng |
 | Phiếu build ghi index khớp corpus nào | **Đã xử lý, đóng gói** | `source_state.py:133`, `:157-187` |
 | Chatbot từ chối chạy khi corpus đổi mà chưa build lại | **Đã xử lý, đóng gói** | `retrieval/full_corpus.py:415-417`, `:736-738` |
 | Kiểm cấu trúc collection và số điểm khi khởi động | **Đã xử lý, đóng gói** | `retrieval/full_corpus.py:763-773`; `vectorstore/qdrant.py:75-79` |

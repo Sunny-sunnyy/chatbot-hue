@@ -1,6 +1,7 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 09:38 28/10/2026 — bản 9: câu hỏi được chuẩn hóa Unicode NFC trước khi tìm (merge `510e1a8`, cùng đợt đưa 10 đoạn vào ngữ cảnh) —
+**Cập nhật lần cuối: 16:58 31/10/2026 — bản 10: kho sửa hai đợt (28/10, 30/10) ⇒ chỉ mục build lại, **cách tìm không đổi**; mốc kết quả tìm 158 câu mới
+`4d5bbe9e0edc` (30/10; 28/10 `23c58c47635d`); nhãn đoạn đúng gold v5; thử Qwen3-8B thay e5-small (30/10): **kém hơn** ⇒ giữ e5-small.** Bản 9 (09:38 28/10/2026): câu hỏi được chuẩn hóa Unicode NFC trước khi tìm (merge `510e1a8`, cùng đợt đưa 10 đoạn vào ngữ cảnh) —
 câu gõ dạng NFD nay tìm giống hệt câu NFC; cách tìm không đổi, kết quả tìm 158 câu giống từng byte mốc cũ.** Bản 8 (10:49 27/10/2026): cho `gpt-6-luna` chọn 10 đoạn trong 30 ứng viên (K3, K3b) — bước tìm tốt lên rõ, nhưng theo luật
 chưa nhận (lỗi kỹ thuật ở hai bản; bản còn lại làm 5 câu trả lời bị chấm thấp hơn); phát hiện nhãn "đoạn đúng" đếm thiếu; chatbot không đổi. Bản 7
 (22:31 26/10): thử nới nhóm ứng viên 30 → 100 (K1) — kém hơn; chỗ nghẽn là xếp hạng. Bản 6 (16:0x 26/10): đợt 3 rà code — gỡ nhánh MiniLM khỏi chatbot, gỡ bộ kiểm khói Phase 5; kết quả tìm 158 câu
@@ -16,11 +17,14 @@ Người viết: A (bản 9, qua sub-agent), B (bản 5, 8; bản 1–4: C) · R
   (khớp từ khóa) chấm lại 30 đoạn đó → trộn hai thứ hạng (RRF) → 10 đoạn. Không reranker. Trạng
   thái: đã đóng (bản món ăn 12/08/2026; bản toàn kho 14/09/2026).
 - **Đo được (Phase 7B, 158 câu có trong kho):** điểm xếp hạng MRR@10 0,72, nDCG@10 0,76; 92% câu có
-  đoạn chứa keyword đáp án lọt top-10. Chạy lại hai lần giống hệt từng byte.
+  đoạn chứa keyword đáp án lọt top-10. Chạy lại hai lần giống hệt từng byte. (Đo trên kho trước sửa; sau sửa kho đợt 1 + 2 đo "không làm
+  hỏng": Golden 176 + bộ an toàn 32 câu, 0 sai điều kiện mới — `BAO_CAO_KHO_DU_LIEU.md`.)
 - **Giới hạn chính:** yếu ở câu so sánh (MRR 0,53) và câu cần nhiều nguồn (0,54). Đoạn đúng hay bị xếp ngoài 10 đoạn đầu:
   ở 40 câu thử, 31 câu có đủ đoạn đúng trong 30 ứng viên, nhưng chỉ 22 câu lọt 10 đoạn đầu. Câu gõ không dấu gần như không tìm được
   (ngoài phạm vi). Chưa có cách xếp hạng lại nào được nhận.
 - **Chi phí / tốc độ:** không tốn tiền API (model và Qdrant chạy trên máy).
+- **Thử 30/10 — Qwen3-Embedding-8B thay e5-small:** kém hơn (3 / 40 câu dev + 3 câu nhóm kiểm mất đoạn đúng — vỡ sàn; tạo vector câu hỏi
+  2,2 s qua mạng) ⇒ giữ e5-small; chỉ mục thử đã xoá (`BAO_CAO_EMBEDDING_TU_KHOA.md`).
 - **Phase 8.1 đã thử (25/10, 0,0088 USD):** đo xem đoạn đúng rơi ở đâu, thử 10 cách trộn kết quả, 5 cách xếp hạng lại
   (2 model chạy trên card đồ họa, `gpt-6-luna`) và lấy rộng 100 ứng viên. **Kết luận: giữ cách đang chạy** — không cách
   nào qua được luật ghi trước. Phát hiện chính: **đoạn đúng phần lớn đã có trong nhóm ứng viên, nhưng bị xếp xuống
@@ -183,7 +187,7 @@ Kiểm với code (commit `1832201`, sau dọn) và `session_prompt/Project_Stat
 | Chuẩn hóa NFC câu hỏi trước khi tìm | **còn dùng** (từ 28/10, merge `510e1a8`) | `backend/retrieval/full_corpus.py:97–102,420` |
 | Reranker MiniLM (tiếng Anh) | **đã gỡ khỏi chatbot** 26/10 (trước đó tắt) | `settings.yaml:43` (`reranker: none` — giá trị duy nhất); lớp `backend/reranking/cross_encoder.py` giữ cho bộ thử 8.1 (G1, G4) |
 | 4 kho vector toàn kho của Phase 4–5 | **đã thay** bởi một kho `hue_full_corpus_7a2_e5_small_384` (Phase 7A2) | Qdrant chỉ còn collection này (kiểm 24/10 sau dọn) |
-| Model e5-small, e5-base, HuyDang, Qwen3-0.6B trong ma trận thử | **đã thay** bởi e5-small + Qwen3-8B (Phase 7A2); 8B chưa có chỉ mục | `backend/embedding/full_corpus.py:41–66` |
+| Model e5-small, e5-base, HuyDang, Qwen3-0.6B trong ma trận thử | **đã thay** bởi e5-small + Qwen3-8B (Phase 7A2); 8B đã thử 30/10 — kém hơn, không chọn, chỉ mục thử đã xoá | `backend/embedding/full_corpus.py:41–66` |
 | Ba chế độ bản món ăn (`dense_only`/`hybrid_*`) | **đã bỏ**: code đã gỡ khi dọn sau Phase 7 | commit `1832201`; [R2] |
 | Chọn cách tìm/model thắng | **đã đo ở 8.1: giữ cách đang chạy** (không cách trộn / xếp hạng lại nào qua luật) | `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md`, `phase_8_1_g4_implementation.md` |
 | "BM25 chỉ chấm lại 30 đoạn vector" là cách tốt | **còn đúng ở 8.1** — nhưng chỉ vì các cách khác chưa chắc hơn; đoạn đúng hay bị xếp thấp | như trên |

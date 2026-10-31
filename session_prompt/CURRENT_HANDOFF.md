@@ -72,13 +72,17 @@ streaming trước). **"PA2" của thứ tự việc 30/10** = giữ thứ tự 
 2. **Q1 — mục tiêu "chữ đầu tiên"** (điền `TBD` spec): **PA1 (A khuyên)** sàn giữ 3 s / 5 s (D2 đã chốt) + **mục tiêu báo cáo** 1,5 s / 3 s; đo xong đạt dễ ⇒ A đề xuất nâng sàn.
    PA2: đổi sàn ngay 1,5 s / 3 s — có thể trượt vì phần suy luận của model ⇒ phải giảm suy luận (rủi ro chất lượng). (Đã trình 31/10 nhiều lần, User chưa chọn — để phiên sau.)
 3. **Duyệt spec streaming** (sau Q1): A đưa sha bản cuối tính từ file.
-4. **Sổ cải tiến vòng 11** (đề xuất chờ duyệt, `SO_CAI_TIEN_CACH_LAM.md`): **W35** (kiểm điều khoản dùng tự động trước khi agent gọi công cụ / tài khoản bên ngoài mới), **I8**
+4. **Sổ cải tiến — đề xuất chờ duyệt** (`SO_CAI_TIEN_CACH_LAM.md`): **W42** (hook git cảnh báo dòng có "dự án khác" — S60) và **W43** (script + bước kết phiên
+   kiểm báo cáo khâu khớp hiện trạng — S61, User 31/10 nhắc) từ chiều 31/10; vòng 11: **W35** (kiểm điều khoản dùng tự động trước khi agent gọi công cụ / tài khoản bên ngoài mới), **I8**
    (dời luật "A tự chạy lệnh, chỉ đưa `!` khi bị chặn" vào `WORKFLOW.md` §9.6), **W36** (khẳng định về hành vi thư viện / định dạng log / rào script ⇒ chạy probe nhỏ thật trước khi bàn giao); và **W33** đã chạy ⇒ A đề xuất giữ làm tuỳ chọn (Codex review song song review Claude cho spec / plan lớn).
 5. (Khi bàn spec nhiều lượt) lưu câu hỏi người dùng? (PA1 C91 không lưu.) (Khi rảnh) B0; 20 câu mẫu lỗi nặng; xoá sao lưu đợt 1 + 2 khi đóng gói.
 6. (Không gấp) File untracked `báo cáo nghiên cứu github.txt` (gốc repo, 82 KB, 01/10 — khảo sát đồ án gợi ý địa điểm / lịch trình): giữ ngoài git, hay dời vào `data/`?
    4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`, commit `c725987` 05/09): giữ hay gỡ (User `!`)?
 
 ## Câu hỏi A còn nợ (không cần User)
+
+- Khung AI FDE (khung cá nhân của User, ngoài repo) đã lên v2 phía dự án kia: mở phiên đọc `CHANGELOG.md` của khung; mục nào đổi mà hue_rag cần ⇒ đối chiếu lại (vòng cải tiến).
+  W39 hạn 07/11 (0 buổi D ⇒ đề xuất gỡ W4 + W39); theo dõi W37 báo đúng / nhầm; I3 memory.
 
 - Sổ: theo dõi W32 (31/10 có tác dụng: B103 M-1, B105 M-1 đều từ ca dò khác cách), I7, W30 (hook bắt 2 giờ ước 31/10), W31; W33 đã chạy — kết luận ở sổ.
 - Ý chờ từ B106 §3: cho Codex review đọc mã nguồn thư viện / `.venv` chỉ đọc (đổi phạm vi — cần User nếu muốn).
