@@ -145,7 +145,7 @@ Giả định A (chờ User xác nhận khi bàn spec): spec streaming chỉ đ�
 - **Đầu ra:** `data/tinh_nang_moi_2026-10-27/b100_review_c97.md` (finding blocker / major / minor + kết luận `ready_for_user_confirmation` / `changes_requested`). Xong ⇒ STATUS_B + nhắn A.
 - **Trạng thái (A ghi 10:41):** `changes_requested` (`d7f57991904e`: M-1 SSE + lỗi trước yield đầu ⇒ 200 thân rỗng — probe thật; 6 minor). B nhắn C; C sửa ⇒ B kiểm phần đổi ⇒ báo A.
 
-### A — thử tra web bằng Codex CLI / AGY CLI (User duyệt 10:3x 31/10 PA1; 0 USD — gói tài khoản)
+### A — thử tra web bằng Codex CLI / AGY CLI (User duyệt 31/10 PA1, A ghi nhận 10:41; 0 USD — gói tài khoản)
 - Tiêu chí ghi trước: `data/tra_cuu_cli_2026-10-31/tieu_chi.md` (10:39). 6 lượt chạy song song từ 10:41: {Codex `gpt-6-luna`, AGY `gemini-3.8-flash-high`} × {Y1 streaming, Y2 thước đo,
   Y3 Claude gọi CLI}; mỗi lượt thư mục trống `/tmp/tra_cuu_cli/`, kết quả `data/tra_cuu_cli_2026-10-31/ket_qua/`. Y3 cũng gửi ChatGPT (User): `gửi chatgpt/2026-10-31/tìm thông tin/claude_goi_codex_agy_tra_web_2026_10_31.md` (`b51687978f9f`).
 - Người chấm (A chạy ⇒ không tự chấm): **B (B101)** — đổi từ C lúc 10:46 vì C viết nháp v3 (C98).
@@ -189,7 +189,7 @@ chi tiết cuối `data/tra_cuu_cli_2026-10-31/tieu_chi.md`). Kết quả ChatGP
 - **Đầu ra:** `data/tra_cuu_cli_2026-10-31/c99_cham.md`. Xong ⇒ STATUS_C + nhắn A.
 - **Trạng thái (C, 11:08 31/10/2026):** xong, chờ A — `c99_cham.md` `514ea908654b`.
 
-### A — tra web bằng Codex vào cách làm (User duyệt 11:1x 31/10: "đồng ý làm script", nhớ ghi mốc thời gian để lấy thông tin mới nhất)
+### A — tra web bằng Codex vào cách làm (User duyệt 31/10, A ghi nhận 11:21: "đồng ý làm script", nhớ ghi mốc thời gian để lấy thông tin mới nhất)
 - C99 chấm xong (`c99_cham.md` `514ea908654b`; A tự kiểm 2 ý: arXiv 2404.06183 = bài vật lý ✓, weaveai.dev 404 ✓): Codex đạt "tra nhanh" Y1, Y2 (Y3 trượt chỉ vì 403 trang thật);
   thay ChatGPT: ngang 2 / 3, kém rõ Y1; AGY kém rõ cả 3. Luật lần sau: 403 trang thật đếm riêng + kiểm tiêu đề trang (áp từ lần đo sau).
 - A làm (governance — chưa commit): `scripts/tra_web_codex.sh` (`b1216941a659`; thêm ngày hôm nay + đòi thông tin mới nhất; thử thật 11:20: 28 s, 10 lượt tìm, 0 lệnh shell, đáp án khớp
