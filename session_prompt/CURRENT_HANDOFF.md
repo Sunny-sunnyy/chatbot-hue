@@ -24,6 +24,19 @@ Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định t
    (cùng sửa `chat.py` + `app.js` ⇒ làm tuần tự — spec streaming §2 D0).
 4. **Đóng gói Phase 1–8** (A hỏi lại nghĩa "đóng gói" khi tới): bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (`8211d5d6eb7f`) ⇒ `LUONG` §5; báo cáo
    "đã thử / chọn / bỏ"; sửa `cost_usd` + log `cache_write_tokens`; lệnh kiểm sạch; bộ kín mới trước bảo vệ; tắt ghi đệm nếu API cho (tra Codex trước).
+   **User chọn 17:13 31/10/2026 (PA3): báo cáo tổng "so sánh phương án + nhìn lại Phase 1–8" làm ở bước này, một file** — yêu cầu: **dài, rõ, đầy đủ, chi tiết, có số đo +
+   kết quả đánh giá**: mỗi Phase / khâu đã so những thành phần / cách / phương pháp nào cho vấn đề nào, thí nghiệm bằng phương pháp gì, kết quả, chọn gì, vì sao — làm
+   cơ sở viết báo cáo đồ án; nguồn: mọi báo cáo cũ (`reports/`, `report_agent/`, `bao_cao_he_thong/`, guide, spec). Đang brainstorm cấu trúc với User (31/10 chiều). **Câu 1 (17:20 31/10/2026): (c) hai phần trong một file** — Phần 1 theo khâu (chính, đủ số đo), Phần 2 theo Phase
+   (nhìn lại theo khung khoá, chỉ trỏ về Phần 1), bảng chỉ mục chéo Phase × khâu.
+   **Câu 2 (17:25 31/10/2026):** người đọc = User + session Claude (A/B/C/D) + ChatGPT giúp User viết báo cáo — **không phải hội đồng** ⇒ file tự đọc được (giải nghĩa mã / thuật ngữ
+   trong file); mỗi lần so sánh ghi **đầy đủ nhất**: vấn đề · ngày + Phase · mọi phương án (mô hình / phương pháp / chiến lược / tham số / phiên bản) kể cả mốc · cách đo (bộ câu,
+   n, người chấm, thước) · tiêu chí ghi trước · kết quả số + so sánh (CI, thắng / hoà / thua, theo loại câu) · tiền + tốc độ · quyết định + lý do · giới hạn · bằng chứng
+   (report, commit, sha dữ liệu).
+   **Câu 3 (17:30 31/10/2026):** mỗi kết quả gắn **nhãn độ tin** + lý do: [đã rà lại ở 8.1] · [đo trên kho / cấu hình cũ] · [chưa kiểm lại — Phase 0–7] · [một lần chạy, có / chưa đo nhiễu] ·
+   [đã xác nhận trên nhóm kiểm]. User hỏi thêm: xong Phase 8 có cần đo lại / thử thêm không ⇒ **User chọn 17:32 31/10/2026: đo cuối + thử có giới hạn** — (1) một lượt đo cuối trên bản chốt, cùng
+   một commit: Golden 176 + bộ an toàn 32 + bộ 15 câu theo ngày + tốc độ trên trình duyệt + **bộ kín mới** + mốc người B0 (User đọc 20 cặp mù); (2) thử thêm chỉ cho 2–3 lỗi
+   đã biết (từ chối nhầm 12 / 158, câu so sánh / nhiều nguồn, bảng giá khó tìm), mỗi lỗi nghiên cứu ngoài trước rồi `run-experiment`, có trần thời gian + tiền.
+   Còn bàn: câu 4 (file đặt ở đâu), câu 5 (gom dần từ giờ hay đợi đóng gói).
    Thêm 31/10 chiều: **nhìn lại Phase 1–8 theo khung khoá AI FDE** (chương "đánh giá" đồ án — User 31/10 đồng ý làm ở bước này, sau streaming + nhiều lượt
    vì số đổi): mỗi Phase một hàng — vấn đề đo được · mốc · tiêu chí ghi trước · kết quả so tiêu chí · lỗi nặng · phương án đã bỏ · tiền / tốc độ · chỗ hở (khung:
    ghi chú private trong `data/external_project_notes/`, Phần VIII; số lấy từ các `TONG_HOP.md`); bảng giới hạn gom từ mục giới hạn của từng spec; review cả nhánh / cả backend bằng sub-agent ngữ cảnh mới; bộ kín mới so SHA256 với mọi file thử cũ;
@@ -75,6 +88,8 @@ streaming trước). **"PA2" của thứ tự việc 30/10** = giữ thứ tự 
 4. **Sổ cải tiến — đề xuất chờ duyệt** (`SO_CAI_TIEN_CACH_LAM.md`): **W42** (hook git cảnh báo dòng có "dự án khác" — S60) và **W43** (script + bước kết phiên
    kiểm báo cáo khâu khớp hiện trạng — S61, User 31/10 nhắc) từ chiều 31/10; vòng 11: **W35** (kiểm điều khoản dùng tự động trước khi agent gọi công cụ / tài khoản bên ngoài mới), **I8**
    (dời luật "A tự chạy lệnh, chỉ đưa `!` khi bị chặn" vào `WORKFLOW.md` §9.6), **W36** (khẳng định về hành vi thư viện / định dạng log / rào script ⇒ chạy probe nhỏ thật trước khi bàn giao); và **W33** đã chạy ⇒ A đề xuất giữ làm tuỳ chọn (Codex review song song review Claude cho spec / plan lớn).
+4b. **Golden lệch kho 1 câu** (A chạy `golden_full_corpus check` 17:17 31/10/2026: 176 đọc được, 1 lỗi "keyword not verbatim in corpus" ở dòng 128 — không in nội dung): duyệt sửa
+   keyword / đáp án mẫu theo kho mới? (Golden md5 sẽ đổi ⇒ ghi lại mốc.)
 5. (Khi bàn spec nhiều lượt) lưu câu hỏi người dùng? (PA1 C91 không lưu.) (Khi rảnh) B0; 20 câu mẫu lỗi nặng; xoá sao lưu đợt 1 + 2 khi đóng gói.
 6. (Không gấp) File untracked `báo cáo nghiên cứu github.txt` (gốc repo, 82 KB, 01/10 — khảo sát đồ án gợi ý địa điểm / lịch trình): giữ ngoài git, hay dời vào `data/`?
    4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`, commit `c725987` 05/09): giữ hay gỡ (User `!`)?

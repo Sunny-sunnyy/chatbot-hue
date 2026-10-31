@@ -115,6 +115,12 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
+- **Báo cáo cho User luôn đúng thông tin mới nhất** (User 31/10/2026 — User chỉ đọc `bao_cao_he_thong/`): (1) **mọi** thay đổi hoặc thử nghiệm
+  chạm hệ thống — kể cả thử rồi **không áp dụng**, sửa kho, build lại chỉ mục, đổi thước đo — ⇒ cập nhật `BAO_CAO_<KHÂU>.md` của mọi khâu bị chạm
+  (cả Tóm tắt, sơ đồ bản đang chạy, checklist) + bảng `README.md` **ngay trong đợt đó**, không đợi kết phiên; (2) chỗ **không còn đúng** thì **xoá**
+  hoặc viết lại — không để số / trạng thái cũ đứng như hiện tại; phương án đã thử và bỏ giữ gọn 1–3 dòng (thử gì, kết quả, vì sao bỏ, link
+  `report_agent/`) — chi tiết từng bước để ở `report_agent/` và git; (3) viết đủ, chính xác, dễ hiểu: số nào cũng có nguồn, không chắc ⇒ ghi
+  "chưa đo" (31/10: 4 báo cáo khâu còn số trước sửa kho ≥ 3 ngày — S61).
 - **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào
   script sửa tài liệu; không gõ giờ tay, không ghi `HH:Mx` trước khi chạy `date` (25–26/10: ghi giờ ước 3 lần; 28/10: ~7 lần ⇒ hook
   `.githooks/pre-commit` in cảnh báo khi dòng thêm mới có dạng đó — W30; từ 31/10 hook Claude Code `.claude/hooks/` báo ngay lúc ghi vào `report_agent/`,

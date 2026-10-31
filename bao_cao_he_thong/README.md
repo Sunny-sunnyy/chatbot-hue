@@ -1,23 +1,23 @@
 # Báo cáo hệ thống hue_rag — mục lục cho bạn
 
-**Cập nhật lần cuối: 17:00 31/10/2026.** Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
+**Cập nhật lần cuối: 17:18 31/10/2026.** (31/10 chiều: rà lại cả 11 báo cáo cho đúng hiện trạng, xoá phần không còn đúng — bạn yêu cầu.) Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
 `report_agent/`; report cũ tới 24/10 ở `reports/` (lịch sử).
 
 ## Muốn biết gì ⇒ đọc file nào
 
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 15:59 30/10/2026 (§5: Qwen3-8B đã thử, không chọn); 14:19 30/10/2026 (đợt 2 sửa kho: 204 file / 8.424 đoạn; thời gian chờ ở 10 đoạn; cách chạy không đổi) |
-| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho 1–2) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 15:59 30/10/2026 (bản 5 + bổ sung C93 câu hỏi theo ngày + dòng Qwen3-8B; bản 5: nhãn bản 5, đợt 2 không làm hỏng, bộ 32 câu an toàn + thước lỗi nặng, Golden sửa 2 đáp án) |
-| Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 17:00 31/10/2026 (bản 4: chỉ sửa số file kho 204) |
-| Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 17:00 31/10/2026 (bản 5: kho sửa hai đợt ⇒ 204 file / 8.424 đoạn; bộ chia đoạn không đổi) |
-| Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 15:59 30/10/2026 (bản 4: **thử Qwen3-Embedding-8B — kém hơn, không chọn** (3 câu mất đoạn đúng, chậm ~100 lần ở bước này, 0,0089 USD); NFC đã vào chatbot; 8.424 đoạn / 5.631 từ khóa) |
-| Lưu vào Qdrant (Phase 4) | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | 17:00 31/10/2026 (bản 3: build lại 28/10 + 30/10 ⇒ 8.424 điểm; Qwen3-8B collection thử đã xoá; Docker Desktop) |
-| Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 17:00 31/10/2026 (bản 10: kho sửa ⇒ mốc kết quả tìm mới; Qwen3-8B kém hơn, giữ e5-small; cách tìm không đổi) |
-| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 15:09 30/10/2026 (bản 13: câu hỏi theo ngày — 0 câu đoán ngày sai, 6 / 14 bị từ chối ⇒ Phase 9; lỗi trích dẫn 0 / 489 lần sinh; chatbot không đổi) |
-| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 14:28 30/10/2026 (bản 6: 2 đáp án sửa sau đợt 2, md5 mới; câu kín đã dùng; nhãn bản 5) |
-| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 14:19 30/10/2026 (bản 6: đợt 2 123 sửa / 40 file, 204 file / 8.424 đoạn, không làm hỏng, 0 câu sai điều kiện mới) |
-| Rà code: nên sửa gì (bạn duyệt 5 gói 19:4x 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 18:56 25/10/2026 |
+| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 17:10 31/10/2026 (bản 14: rà lại cả file — số hiện hành 204 file / 8.424 đoạn, 12 / 158 từ chối nhầm, 2,19 / 4,90 s, ≈ 0,00025 USD / câu; khối "đã thử, không đưa vào"; bật Docker Desktop) |
+| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho 1–2) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 17:12 31/10/2026 (bản 6: rà lại — thước đang dùng gold v5, Golden, bộ an toàn 32 câu, bộ 15 câu theo ngày; thước streaming chưa code) |
+| Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 17:12 31/10/2026 (bản 5: rà lại — 11 gói Python, mốc test 197 đạt 26/10, số dòng code đúng lại) |
+| Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 17:10 31/10/2026 (bản 6: rà lại — 204 file / 8.424 đoạn, bộ chia đoạn không đổi; file danh mục đã loại 28/10; thống kê token đo trên kho cũ) |
+| Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 17:10 31/10/2026 (bản 5: rà lại — e5-small + BM25, từ vựng 5.631; Qwen3-8B kém hơn, không chọn) |
+| Lưu vào Qdrant (Phase 4) | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | 17:13 31/10/2026 (bản 4: rà lại — 8.424 điểm, build lại 28/10 + 30/10; collection thử Qwen3-8B đã xoá; Docker Desktop) |
+| Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 17:14 31/10/2026 (bản 11: rà lại — số đo trên kho hiện tại 24 / 40, MRR 0,731; các cách đã thử và bỏ; cách tìm không đổi) |
+| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 17:10 31/10/2026 (bản 14: rà lại — số 30/10, streaming "đang thiết kế"; số cấu hình cũ ghi rõ là cũ) |
+| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 17:18 31/10/2026 (bản 7: rà lại; **chạy lại kiểm Golden sau 2 đợt sửa kho: 1 câu có keyword không còn nguyên văn trong kho — chờ bạn duyệt sửa**) |
+| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 17:14 31/10/2026 (bản 7: rà lại — 2 đợt sửa kho đóng, giữ sao lưu; 204 file / 8.424 đoạn) |
+| Rà code: nên sửa gì (bạn duyệt 5 gói 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 17:11 31/10/2026 (bản 3: viết lại thành "5 gói đã xong", kèm commit) |
 | Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [31/10 chiều — áp khung AI FDE vào cách làm; sửa 4 báo cáo bị cũ](nhat_ky/2026-10-31_khung_fde_va_cap_nhat_bao_cao.md); trước: [31/10 sáng — spec streaming (D1–D3 chốt), tra web bằng Codex, cấm Claude gọi AGY](nhat_ky/2026-10-31_spec_streaming_tra_web_codex.md) | 17:00 31/10/2026 |
 
 ## Trạng thái ngắn

@@ -117,6 +117,7 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 
 - Phương án không dùng vẫn ghi đủ số đo, điều kiện, chi phí, latency; mục chưa đo ghi `NOT RUN` + lý do.
   Ghi vào report của đợt (`report_agent/<đợt>/`) và `BAO_CAO_<KHÂU>.md` (checklist thang 5 mức: "Đã thử,
-  chưa áp dụng"), để không đề xuất lại mà không có lý do mới.
+  chưa áp dụng"), để không đề xuất lại mà không có lý do mới. Cập nhật `BAO_CAO_<KHÂU>.md` + bảng `bao_cao_he_thong/README.md`
+  **ngay trong đợt**, kể cả khi không áp dụng; chỗ cũ không còn đúng thì xoá (`WORKFLOW.md` §6, User 31/10).
 - Kết mỗi thí nghiệm bằng **3–5 dòng lời thường cho User**: thử gì, vì sao, kết quả (số kèm ý nghĩa), quyết
   định, giới hạn. Report tracked theo `Session_Prompt.md` §5 (repo public).
