@@ -1,3 +1,24 @@
+# STATUS C — PHIÊN 31/10 (mở 09:44 31/10/2026 `date`)
+
+Terminal `hue-rag-69` · A = `hue-rag-1a` (A xác nhận 09:45 31/10/2026), B = `hue-rag-3b` (trực tiếp). Quyền phiên 30/10 **hết hạn**; chờ A giao việc.
+Kiểm nhanh 09:44 31/10/2026: `main` `e39d9c7`, không thay đổi tracked, hook `.githooks`; **Qdrant `:6335` không trả lời** (curl mã 000, kết nối bị từ chối; lệnh `docker` không có trong WSL). Tag `hoso/b92-qwen3-harness` có, nhánh `b92-qwen3-harness` đã xoá, `data/qwen3_8b_2026-10-28/emb` đã xoá — lệnh kết phiên 30/10 User đã chạy. Kết quả ChatGPT streaming chưa có (`gửi chatgpt/2026-10-28/kết quả nghiên cứu/` không tồn tại). Untracked: `báo cáo nghiên cứu github.txt` (ngày file 01/10, handoff không nhắc; C chưa mở). 4 worktree AGY (`~/.gemini/…`, `c725987`) như 30/10 — không đụng. `/tmp/an_toan_run_before_c93.py` đã không còn.
+A (09:45 31/10/2026 ghi nhận): chưa có việc, A chờ User trả lời quyền phiên ⇒ C chờ, không việc nặng / paid.
+User (10:02 31/10/2026 ghi nhận, terminal C): C làm việc trực tiếp với A; **việc A giao = User nói "làm đi"**. Chờ A giao.
+**C97 (A giao, 10:24 31/10/2026 nhận, = "làm đi"):** đối chiếu kết quả ChatGPT streaming với code + nháp v2. Khai báo: file mới `data/tinh_nang_moi_2026-10-27/c97_doi_chieu_code_streaming.md`. Chỉ đọc, 0 USD.
+**C97 xong 10:31 31/10/2026:** `data/tinh_nang_moi_2026-10-27/c97_doi_chieu_code_streaming.md` (`d4c1f35d8d2d`) — 5 điều A cần biết, đối chiếu §2–§5 / §7 / §9, kiểm SDK, 14 mục nháp v2 cần sửa. Nháp v2 không sửa (`b19f8454e22b`). 0 USD.
+A (10:32 31/10/2026 ghi nhận): nhận C97; B review chéo (B100). Câu ép `incomplete` bằng max_tokens nhỏ: A quyết khi soạn spec (nghiêng không phải lỗi giả). C rảnh — chờ B100 + A soạn spec; trả lời finding của B nếu có. Không việc nặng / paid.
+**C97 bản 2 10:42 31/10/2026:** sửa theo B100 (`d7f57991904e`, 1 major / 6 minor) ⇒ `4baf321f76a3`; mục 2a mới (lỗi trước luồng: 3 cách; (b) thử bằng `data/tinh_nang_moi_2026-10-27/tools/c97_probe_sse_plain.py` `5a54a0262733`, 0 USD). Chờ B kiểm phần đổi. Bẫy: đề xuất kỹ thuật ghép hai lớp (generator SSE + JSONResponse lỗi) mà không thử ⇒ M-1; số bằng chứng đếm cả ô không đi đường đang nói (31 thay 12).
+**C97 bản 3 10:46 31/10/2026:** B100 vòng 2 ready (`b0b49be37fc4`); áp n-1 + n-2 (2 câu) ⇒ `702cc7ed8af4`. Xong, chờ A đóng.
+**C98 (A giao, 10:47 31/10/2026 nhận, = "làm đi"):** nháp streaming v3. Khai báo: file mới `data/tinh_nang_moi_2026-10-27/c98_phuong_an_streaming_v3.md`. 0 USD, không code.
+**C98 xong 10:50 31/10/2026:** `data/tinh_nang_moi_2026-10-27/c98_phuong_an_streaming_v3.md` (`d77f36ca05b0`, 239 dòng): D1 đầu (PA0 / PA3 / PA1 / PA2 + lỗi tệ nhất), D2, D3, D5; D0 / D4 / nút Dừng / E không hỏi (lý do); lỗi trước luồng (b) + lý do; sự kiện; test đã lọc; giới hạn; bảng áp 14 mục C97. Đổi nghiêng D3 (b) giữ ⇒ xóa (an toàn). v2 không đổi. 0 USD.
+**C99 (A giao, 10:52 31/10/2026 nhận, = "làm đi"):** chấm 6 bản tra web Codex / AGY theo `data/tra_cuu_cli_2026-10-31/tieu_chi.md`. Khai báo: file mới `data/tra_cuu_cli_2026-10-31/c99_cham.md` (+ `c99_*` phụ trong cùng thư mục); script tạm `/tmp/c99/` (xóa khi xong). Chỉ đọc, 0 USD.
+**C98 bản 2 11:00 31/10/2026:** sửa theo B102 (`c3e5344d27ca`, 1 major / 4 minor) + A quyết M-1 ⇒ `fa4e1f6be017`. Chờ B kiểm phần đổi. Bẫy: hứa test giao diện cho ca không tạo được bằng đường thật (M-1).
+**C98 bản 3 11:02 31/10/2026:** B102 vòng 2 ready (`c59b412d702f`); áp n-1…n-3 ⇒ `3b6a9ba09149`. Xong, chờ A trình User.
+**C99 xong 11:08 31/10/2026:** `data/tra_cuu_cli_2026-10-31/c99_cham.md` (`514ea908654b`) + 7 file sub-agent `c99_{codex,agy}_Y{1,2,3}.md`, `c99_chatgpt_Y3.md`, `c99_chon_khang_dinh.md` (`95fd1cb965dd`), `c99_http.json`, `c99_url_loi.json`, `c99_agy_tool_count.py`. Theo luật: Codex tra nhanh đạt Y1, Y2 (Y3 trượt chữ vì 403 OpenAI), thay ChatGPT chỉ Y2; AGY kém rõ cả 3. AGY đọc file máy: không kiểm được (auto mode chặn đọc ~/.gemini). /tmp/c99 đã xóa. 0 USD. Bẫy: gọi curl song song 8 luồng ⇒ GitHub 429, Wayback 429 ⇒ gọi tuần tự, chậm.
+A (11:22 31/10/2026 ghi nhận): nhận C99 (tự kiểm 2 ý ✓); User duyệt dùng Codex tra web (A viết `scripts/tra_web_codex.sh`, B review B103). C rảnh — chờ User chọn D1 streaming rồi viết spec. Không việc nặng / paid.
+
+---
+
 # STATUS C — KẾT PHIÊN 30/10 (cập nhật 16:13 30/10/2026 `date`)
 
 Terminal `hue-rag-0e` · A = `hue-rag-0f`, B = `hue-rag-24` (trực tiếp). Quyền phiên 30/10 (như 29/10) **hết hạn cuối phiên**. Ghi chú kết phiên cho A: `data/ket_phien_2026-10-30/c_ghi_chu.md` (`562aac7cb984`).
