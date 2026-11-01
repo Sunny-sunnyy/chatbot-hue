@@ -58,3 +58,5 @@ Như §1 và bảng M-1. Câu bất biến kiểm: "commit sạch (kể cả ch�
 ## 6. Decision và bước tiếp theo
 
 `changes_requested` chỉ vì **M-1** (sửa một dòng `-z`, chạy lại 3 ca). m-1 / m-2 tùy A, không mở vòng. Sửa xong ⇒ B kiểm đúng 3 ca M-1.
+
+## Vòng 2 (12:50 01/11/2026 `date`, B) — kiểm `89c988e`: **ready**. M-1 đóng: repo tạm với hook mới (`-z`) ⇒ `data/x.md`, `gửi chatgpt/ghi chú.md`, `data/ghi chú.md`, `knowledge-base-hue/…/Đồi.md` đều **chặn**; `docs/ghi chú sạch.md` qua (repo tạm đã xoá). m-1: tắt thêm browser_use / browser_use_external / computer_use / apps / plugins / multi_agent, giữ `code_mode_host` có lý do; `unified_exec` ghi giới hạn (lớp 2 + 3); lượt 3 của A: tìm web 3, shell 0, không cảnh báo cờ. m-2: dòng skills trả lại (`tra_web_codex.sh:13-14`). Không mở vòng.
