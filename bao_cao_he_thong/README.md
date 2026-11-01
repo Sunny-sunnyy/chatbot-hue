@@ -19,7 +19,7 @@
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 11:04 01/11/2026 (bản 8: 1 câu keyword lệch kho chỉ ở hoa / thường — chấm không sai; **bạn giữ nguyên**) |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 11:04 01/11/2026 (câu Golden lệch: giữ nguyên) · 17:14 31/10/2026 (bản 7: rà lại — 2 đợt sửa kho đóng, giữ sao lưu; 204 file / 8.424 đoạn) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 17:11 31/10/2026 (bản 3: viết lại thành "5 gói đã xong", kèm commit) |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [01/11 — streaming vào chatbot, báo cáo so sánh, chuẩn bị đóng Phase 8](nhat_ky/2026-11-01_streaming_va_dong_goi.md); trước: [31/10 chiều — áp khung AI FDE; rà lại cả 11 báo cáo; khung báo cáo so sánh](nhat_ky/2026-10-31_khung_fde_va_cap_nhat_bao_cao.md); trước: [31/10 sáng — spec streaming (D1–D3 chốt), tra web bằng Codex, cấm Claude gọi AGY](nhat_ky/2026-10-31_spec_streaming_tra_web_codex.md) | 12:52 01/11/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [01/11 — streaming vào chatbot, lượt đo cuối Phase 1–8 (mọi sàn đạt), báo cáo so sánh](nhat_ky/2026-11-01_streaming_va_dong_goi.md); trước: [31/10 chiều — áp khung AI FDE; rà lại cả 11 báo cáo; khung báo cáo so sánh](nhat_ky/2026-10-31_khung_fde_va_cap_nhat_bao_cao.md); trước: [31/10 sáng — spec streaming (D1–D3 chốt), tra web bằng Codex, cấm Claude gọi AGY](nhat_ky/2026-10-31_spec_streaming_tra_web_codex.md) | 12:52 01/11/2026 |
 
 ## Trạng thái ngắn
 
