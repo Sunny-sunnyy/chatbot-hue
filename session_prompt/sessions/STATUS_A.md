@@ -11,6 +11,7 @@ Terminal: `hue-rag-1a` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - User (terminal B, 10:19): việc A giao B = "làm đi" cho B. Tiếp: chờ "làm đi" của A.
 
 ## Đã học / bẫy gặp (phiên 01/11)
+- **S64 (User nhắc, 12:40 01/11/2026): over-engineer streaming.** Spec 4 bản + 3 vòng review + Codex (31/10), rồi S1–S3 review riêng từng bước + 25 ca dò XSS / CSP trên giao diện JS thuần **sắp bị thay**; lợi đo được chỉ ~0,44 s (S4). Gốc: áp quy trình rủi ro cao cho mọi việc, không hỏi "phần này sống bao lâu" + "lợi thật bao nhiêu, đo rẻ trước được không". ⇒ đề xuất vòng cải tiến: 2 dòng đó trước mỗi việc; phần sắp thay ⇒ mức tối thiểu + một lần review. Áp ngay: streaming dừng sau review cả nhánh (chỉ sửa blocker / major), runbook đo cuối chỉ sửa major.
 - **S63 (A, 11:34 01/11/2026):** gõ giờ "11:56" vào `b108_cost_usd_review.md` (kèm chữ "`date`") mà không chạy `date` — giờ thật ~11:31; hook W37 không bắt vì dạng giờ đủ phút; phát hiện khi chạy `date` cho file khác. Sửa ngay. ⇒ đầu vào vòng cải tiến (W37 chỉ bắt `HH:Mx`; giờ đủ phút gõ tay vẫn lọt — 31/10 S62 cũng vậy).
 
 ## Phiên sau đọc trước

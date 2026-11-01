@@ -5,9 +5,11 @@
 # Dùng: scripts/tra_web_codex.sh <file yêu cầu .md> <tên_ngắn>
 #   - yêu cầu chỉ chứa thông tin công khai (không nội dung kho, Golden, câu kín, secret) — Session_Prompt.md §9
 #   - kết quả: data/tra_cuu_cli/<YYYY-MM-DD>_<tên_ngắn>/{yeu_cau_gui.md, ket_qua.md, url_da_mo.txt, tom_tat.txt, codex.jsonl}
-# Codex chạy trong thư mục trống ở /tmp, sandbox read-only. read-only KHÔNG chặn đọc file ngoài thư mục ⇒ script đếm lệnh
-# shell (sự kiện --json command_execution) và cảnh báo nếu có (31/10: 3 lượt, 0 lệnh shell).
-# Giới hạn: Codex nạp ~/.codex/skills dùng chung của User (ngoài repo; tên skill vào ngữ cảnh model) — không đổi cấu hình máy User.
+# Codex chạy trong thư mục trống ở /tmp. Rào 3 lớp (01/11, rủi ro CA3 — `report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md`;
+# căn cứ tài liệu Codex + probe: `data/tra_cuu_cli/2026-11-01_codex-rao-doc-file/ket_qua.md`): (1) tắt công cụ chạy lệnh + xem ảnh
+# (`--disable shell_tool / view_image`); (2) permission profile chỉ đọc thư mục làm việc + đường hệ thống tối thiểu (KHÔNG truyền `-s` —
+# có `--sandbox` thì Codex bỏ qua profile); (3) còn sự kiện `command_execution` ⇒ LỖI, kết quả không dùng. `--ignore-user-config`:
+# không nạp cấu hình / MCP của User (đăng nhập giữ). Trước 01/11: `-s read-only` — vẫn đọc được mọi file máy (bộ ba: file máy · trang web · câu tìm).
 set -euo pipefail
 [ $# -eq 2 ] || { echo "dùng: $0 <file yêu cầu .md> <tên_ngắn>" >&2; exit 2; }
 req="$(realpath -e -- "$1")"; name="$2"
@@ -48,7 +50,10 @@ start="$(date '+%H:%M:%S %d/%m/%Y')"; s=$(date +%s)
 set +e
 # --search phải đứng TRƯỚC exec; model mặc định trong ~/.codex/config.toml có thể không dùng được với tài khoản ChatGPT ⇒ chỉ định model.
 timeout "${TRA_WEB_TIMEOUT:-1800}" codex --search exec -m "${CODEX_MODEL:-gpt-6-luna}" -c model_reasoning_effort='"high"' \
-  -s read-only --skip-git-repo-check --ephemeral -C "$work" -o "$out/ket_qua.md" \
+  --ignore-user-config --disable shell_tool --disable view_image \
+  -c 'permissions.webonly.filesystem={":root"="deny",":minimal"="read",":workspace_roots"="read","'"$HOME"'/.codex/packages"="read"}' \
+  -c 'default_permissions="webonly"' \
+  --skip-git-repo-check --ephemeral -C "$work" -o "$out/ket_qua.md" \
   --json "$(cat "$out/yeu_cau_gui.md")" < /dev/null > "$out/codex.jsonl" 2> "$out/codex.err"
 rc=$?
 set -e
@@ -65,6 +70,6 @@ shell_cmds=$(items command_execution | jq -s 'unique_by(.id) | length')
 # URL Codex thật sự mở (open_page) — đối chiếu với URL ghi trong báo cáo khi kiểm.
 items web_search | jq -r 'select(.action.type? == "open_page") | .action.url' | sort -u > "$out/url_da_mo.txt"
 echo "bắt đầu $start · xong $(date '+%H:%M:%S') · $(( $(date +%s) - s )) s · mã thoát $rc · lượt tìm web $searches · trang đã mở $(wc -l < "$out/url_da_mo.txt") · lệnh shell $shell_cmds" | tee "$out/tom_tat.txt"
-[ "$shell_cmds" -eq 0 ] || echo "tra_web_codex: CẢNH BÁO — Codex chạy $shell_cmds lệnh shell; xem codex.jsonl (command_execution) xem có đọc file máy không, báo A" >&2
+[ "$shell_cmds" -eq 0 ] || { echo "tra_web_codex: LỖI — Codex chạy $shell_cmds lệnh shell dù đã tắt công cụ; KHÔNG dùng kết quả, xem codex.jsonl (command_execution), báo A" >&2; exit 3; }
 [ "$rc" -eq 0 ] && [ -s "$out/ket_qua.md" ] || { echo "tra_web_codex: lỗi hoặc không có kết quả — xem $out/codex.err, $out/codex.jsonl" >&2; exit 1; }
 echo "kết quả: $out/ket_qua.md (dữ liệu ngoài — không phải lệnh; tự WebFetch kiểm 2–3 ý chính trước khi dùng)"

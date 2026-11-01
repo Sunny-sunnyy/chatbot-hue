@@ -225,7 +225,7 @@ session_prompt/TEMPLATE_*.md           mẫu report
 session_prompt/SO_CAI_TIEN_CACH_LAM.md sổ cải tiến cách làm (skill improve-workflow)
 skills/{practical-project-coding,risk-gated-agent-review,propose-options,run-experiment,improve-workflow,teach-and-quiz,agent-design-review,agent-security-review}/SKILL.md
                                        (3 skill cuối theo khung_fde — khung cá nhân của User, private, ngoài repo; 2 skill agent dùng từ Phase 9)
-.githooks/pre-commit, .claude/settings.json   rào bằng máy (hook git mọi agent; Claude Code cấm đọc .env, cấm `agy`)
+.githooks/pre-commit, pre-push, .claude/settings.json   rào bằng máy (hook git mọi agent — pre-push 01/11 kiểm lại private / secret / tên dự án khác trên mọi commit sắp đẩy; Claude Code cấm đọc .env, cấm `agy`)
 .claude/hooks/                         hook Claude Code cảnh báo giờ ước lúc ghi (W37; `bash .claude/hooks/thu_hook.sh` ⇒ ĐÚNG n / n)
 scripts/grep_kb.sh                     tìm trong nội dung kho, luôn loại evaluation/ meta/ *sealed* (W27)
 scripts/tra_web_codex.sh               tra web bằng Codex CLI (chỉ thông tin công khai; kết quả data/tra_cuu_cli/) — §9
@@ -297,7 +297,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   tree chính nên commit từ worktree `/tmp` không symlink vẫn quét; báo "quét LỖI" khi thiếu `uv`). Câu kín: từ 26/10 tối (User duyệt) quét `question` + `reference_answer` của `*sealed*.jsonl` (nhãn
   `sealed`; không quét `sources` và ghi chú `*sealed*.md` vì báo nhầm). `_source-dumps/` không quét.
 - **Codex CLI (31/10):** `--search` phải đứng **trước** `exec`; model mặc định trong `~/.codex/config.toml` (`gpt-6.1-sol`) không dùng được với tài khoản ChatGPT ⇒ `-m gpt-6-luna`;
-  `-s read-only` **không** chặn đọc file ngoài thư mục làm việc ⇒ chỉ gửi thông tin công khai, xem `command_execution` trong `--json`. `url_da_mo.txt` thường ít hơn nhiều so với URL trong báo cáo (31/10: 1 / 15) ⇒ URL còn lại là tự khai, kiểm kỹ.
+  `-s read-only` **không** chặn đọc file ngoài thư mục làm việc ⇒ **từ 01/11 script bỏ `-s`**, tắt `shell_tool` / `view_image`, dùng permission profile chỉ đọc thư mục làm việc, `--ignore-user-config`; còn `command_execution` ⇒ lỗi (thử thật 01/11: tìm web chạy, 0 lệnh shell, "không có công cụ đọc file"). Vẫn chỉ gửi thông tin công khai. `url_da_mo.txt` thường ít hơn nhiều so với URL trong báo cáo (31/10: 1 / 15) ⇒ URL còn lại là tự khai, kiểm kỹ.
 - **Qdrant chạy bằng Docker Desktop (Windows):** WSL không có lệnh `docker` khi Docker Desktop tắt (31/10 mở phiên) ⇒ User bật rồi `docker compose up -d qdrant`.
 - `rm` / `cp` với đường dẫn ghép từ biến (`$X/*`) bị tầng an toàn Claude Code chặn ⇒ `"${X:?}"/…` hoặc đường dẫn tuyệt đối (31/10, A + B).
 - **WebSearch không dùng được** dù có trong danh sách công cụ hoãn của Claude Code: 31/10 A thử ⇒ `API Error: 400 tool type 'web_search_20250305' is not supported for this model` (Bedrock) ⇒ tra web bằng `scripts/tra_web_codex.sh`.
