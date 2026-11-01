@@ -1,13 +1,43 @@
+# STATUS C — KẾT PHIÊN CHIỀU 01/11 (15:27 01/11/2026 `date`)
+
+| Mã | Việc | Kết quả (sha 12) |
+|---|---|---|
+| C115 | cập nhật báo cáo User theo B0 + Phase 8 đóng (mức tối thiểu) | 10 file; A review đạt, commit + push `ea56d85` |
+| C116 | nghiên cứu Phase 9 mạch 3 (paper) + mạch 4 (repo) | `data/nghien_cuu_phase_9_2026-11-01/c_mach4.md` `54223a58d888`; A nhận |
+| C116b | kiểm số mạch 3 + toàn văn 2601.07711 | `c_mach3.md` `55af275315b3`; A nhận (B review trước khi A đưa vào báo cáo sơ bộ) |
+
+- **Tiền paid C phiên chiều: 0 USD** (Codex dùng tài khoản ChatGPT; WebFetch / API arXiv / API GitHub công khai).
+- **Không còn job nền / server / worktree / file tạm của C** (đã kiểm 15:27: không `/tmp/c1*`, `/tmp/tra_web_codex.*`; worktree chỉ `main` + 4 worktree AGY cũ không phải của C). Chưa commit — A commit lúc kết phiên.
+- **Bẫy phiên chiều (đầu vào vòng cải tiến):**
+  1. **Codex nông:** cả hai lượt chỉ ~130 s, 14 lượt tìm (yêu cầu ≥ 20), mạch 3 **mở 0 trang** — nhưng báo cáo Codex tự ghi "> 20 lượt tìm, đã mở trang gốc". ⇒ luôn đọc `tom_tat.txt` + `url_da_mo.txt`
+     trước khi tin phần mở đầu; coi mọi URL ngoài `url_da_mo.txt` là tự khai; kiểm tồn tại hàng loạt bằng API (arXiv / GitHub) rồi WebFetch ý quan trọng.
+  2. **Codex tả sai bộ đo / số:** 2601.07711 — Codex ghi "ReAct trên MuSiQue / MultiHop-RAG", thật là NQ / FiQA / CQADupStack / FEVER, agent PocketFlow; DeepNote số khác tóm tắt;
+     CORAL "8.000 hội thoại + rút gọn lịch sử" không có trên trang; repo ViRE sai chủ. ⇒ tên bài đúng ≠ nội dung đúng; số dùng cho quyết định phải đọc toàn văn.
+  3. Làm tốt (giữ): lấy số sao / ngày / license bằng GitHub API thay vì tin Codex (Codex không đọc được ngày ở 13 / 15 repo); chỉ grep tên repo từ file untracked của User, không đọc nội dung.
+
 # STATUS C — MỞ PHIÊN MỚI (13:51 01/11/2026 `date`)
 
 - Terminal C: `hue-rag-b0`. A = `hue-rag-c0`, B = `hue-rag-7a` (A xác nhận) — kênh trực tiếp. A: chưa có việc cho C, chờ; A đang hỏi User quyền phiên ⇒ B0 ⇒ đóng Phase 8.
 - **User (13:59 01/11/2026, ghi bằng `date`):** C làm việc trực tiếp với A; việc A giao = User nói "làm đi". Chờ A giao việc.
 
+## C116 — nghiên cứu Phase 9 mạch 3 (paper) + mạch 4 (repo GitHub) (A giao, bắt đầu 15:13 01/11/2026; User "làm đi" qua A)
+- `scripts/tra_web_codex.sh` mỗi mạch 1 lượt, tuần tự; WebFetch kiểm 3 ý / mạch; chỉ thông tin công khai; 0 USD API. Dừng 16:20 01/11/2026.
+- Từ `báo cáo nghiên cứu github.txt` chỉ lấy 8 tên repo (grep `github.com/…`, không đọc nội dung).
+- **File sẽ ghi (khai báo):** `data/nghien_cuu_phase_9_2026-11-01/yeu_cau/c_mach3.md`, `.../yeu_cau/c_mach4.md`, `.../c_mach3.md`, `.../c_mach4.md`; `data/tra_cuu_cli/2026-11-01_p9-mach3-paper/`, `.../2026-11-01_p9-mach4-repo/` (script ghi); và file này.
+- **XONG (15:21 01/11/2026) — chờ A.** `c_mach3.md` `5dd16a4eb3a4` (13 dòng phát hiện), `c_mach4.md` `54223a58d888` (16 repo); yêu cầu `c_mach3` `627926637d73`, `c_mach4` `833e54ba6af6`.
+  Codex: mạch 3 128 s / 14 tìm / **0 trang mở**; mạch 4 132 s / 14 tìm / 4 trang mở; 0 lệnh shell cả hai. C kiểm: 13 / 13 mã arXiv đúng tên (API arXiv); 16 repo sao / ngày / license qua GitHub API;
+  WebFetch 6 ý (mạch 3: TravelPlanner, EACL 2026 + ViRE README, 2601.07711; mạch 4: README NamSyntax, KhaiBoiPho, trip-advisor-agent). Lỗi Codex bắt được: repo ViRE sai (`dbqui1706` ⇒ `longstnguyen/ViRE`),
+  link OpenReview bị chặn (bài có ở arXiv), TravelPlanner chữ "GPT-4-Turbo final pass" ⇒ tóm tắt ghi "GPT-4 success rate". 0 USD API.
+- **C116b (A giao, xong 15:26 01/11/2026):** WebFetch kiểm số dòng 1–6 của `c_mach3.md` + toàn văn 2601.07711 ⇒ `c_mach3.md` `55af275315b3` (80 dòng; 5 chỗ "⚠ sửa"; mục mới
+  "Số của 2601.07711"). Khai báo file: chỉ `c_mach3.md` + file này. 0 USD.
+- Bẫy: Codex tự ghi "đã mở trang gốc / > 20 lượt tìm" dù `url_da_mo.txt` 0 dòng và chỉ 14 lượt ⇒ luôn đọc `tom_tat.txt` + `url_da_mo.txt` trước khi tin phần mở đầu báo cáo.
+
 ## C115 — cập nhật báo cáo User theo B0 + Phase 8 đóng, mức tối thiểu (A giao, bắt đầu 14:29 01/11/2026)
 - Căn cứ: `data/phase_8_2/b0/ket_qua_b0_2026-11-01.md` (private, không chép câu hỏi). 0 USD, không commit (A commit). Không sửa `session_prompt/` (trừ file này), code, data.
 - **File sẽ ghi (khai báo):** `bao_cao_he_thong/{README.md, LUONG_HOAT_DONG_HE_THONG.md, BAO_CAO_DANH_GIA.md, BAO_CAO_SINH_CAU_TRA_LOI_API.md, BAO_CAO_SO_SANH_PHUONG_AN.md}`,
   `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md`, `guides/{phase_6_generation_api.md, phase_7_retrieval_answer_evaluation.md, phase_8_benchmark_model_selection.md, full_corpus_rag.md}`; và file này.
-- **XONG (14:34 01/11/2026) — chờ A review + commit.** 10 file (+73 / −44 dòng phần của C); `git diff --check` sạch; overlap_scan 0 trùng cả 10 file; 0 USD; `/tmp/c115` đã xoá.
+- **ĐÓNG (14:35 01/11/2026):** A review đạt, giữ cả 3 chỗ C thêm; commit + push `ea56d85` (C kiểm: commit có, working tree sạch). Chưa có việc mới — chờ A.
+- XONG (14:34 01/11/2026) — chờ A review + commit. 10 file (+73 / −44 dòng phần của C); `git diff --check` sạch; overlap_scan 0 trùng cả 10 file; 0 USD; `/tmp/c115` đã xoá.
   Dòng lịch sử (PA3 28/10, 8.2 "mốc người dời", khối S15 / K3b-m / E13 "chưa mốc người" lúc đo) giữ nguyên. Thêm ngoài chữ gợi ý: LUONG dòng "bộ kín mới nằm trong kế hoạch" (cũ) ⇒ "đã dùng";
   README dòng 8.2 "tốc độ chưa đạt" ⇒ "khi đó chưa đạt (01/11 có streaming: đạt)"; LUONG "Việc kế tiếp" thêm mục giao diện mới (trước không có).
 - Kiểm nhanh (chỉ đọc): `main` `565da60`, không file tracked nào sửa; untracked chỉ `báo cáo nghiên cứu github.txt` (không phải của C); hooksPath `.githooks`;

@@ -170,8 +170,8 @@ không gọi `agy` lồng từ bên trong. Đọc kết quả: `url_da_mo.txt` =
 tự khai, kiểm kỹ hơn.
 
 **Nghiên cứu lớn qua ChatGPT web** (Claude Code chạy qua Bedrock, không có WebSearch): viết yêu cầu vào
-`gửi chatgpt/<YYYY-MM-DD>/tìm thông tin/` (ngày viết yêu cầu), User gửi ChatGPT và lưu kết
-quả vào `gửi chatgpt/<YYYY-MM-DD>/kết quả nghiên cứu/` cùng ngày; đọc kết quả rồi WebFetch URL để đối chiếu.
+`gửi chatgpt/<YYYY-MM-DD>/tìm thông tin/` (ngày viết yêu cầu) **và tạo luôn thư mục rỗng**
+`gửi chatgpt/<YYYY-MM-DD>/kết quả nghiên cứu/` (không tạo file — User tự đưa file `.md` kết quả vào; User 01/11/2026); User gửi ChatGPT, lưu kết quả vào đó; đọc kết quả rồi WebFetch URL để đối chiếu.
 Mục "bối cảnh hệ thống" của yêu cầu ghi kèm `file:dòng` cho mỗi khẳng định về cách hệ thống chạy, hoặc nhờ B/C đối chiếu với code
 **trước khi gửi** (26/10: yêu cầu không nói BM25 chỉ chấm lại 30 đoạn dense ⇒ vài gợi ý lệch tầm).
 Nghiên cứu **trước** khi đề xuất phương án cần thông tin ngoài; mỗi yêu cầu là một prompt deep research đầy đủ

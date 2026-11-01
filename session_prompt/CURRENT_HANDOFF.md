@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 14:30 01/11/2026 (A, **phiên chiều 01/11**: B0 xong, User giữ 10 đoạn, **User đóng Phase 8 14:29**). Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
+Cập nhật: 15:26 01/11/2026 (A, **kết phiên chiều 01/11**: B0 xong ⇒ giữ 10; **User đóng Phase 8 14:29**; giao diện chốt hướng; mở nghiên cứu Phase 9). Trước: 14:30 01/11/2026. Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
 **nguyên văn** sang `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md`; 31/10: `archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`. Tổng hợp đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`;
 nhật ký User `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md`.
 
@@ -14,14 +14,15 @@ Trúng ý 4,72; từ chối nhầm 12 / 158); bộ an toàn đạt (A2 vế 1 đ
 chữ đầu trên trình duyệt 1,23 / 2,61 s (một lần đo; hôm đó model gần như không suy luận); ≈ 0,00025 USD / câu.
 **Mới 01/11 (governance):** hook `.githooks/pre-push`; `scripts/tra_web_codex.sh` rào (không shell / file / trình duyệt); `WORKFLOW.md` §4 4b (W36), §6 (W45 — tin nhắn không cần giờ), §9.6 (I8).
 
-**Thứ tự việc phiên sau:**
-1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền 01/11 hết hạn — gồm "A tự commit / push không hỏi"); kiểm Qdrant.
-2. ~~**B0**~~ **XONG 14:23 01/11** (User giữ 10; `data/phase_8_2/b0/ket_qua_b0_2026-11-01.md`). Cũ: User đọc 20 cặp mù `data/phase_8_2/b0/nhan_xet_user.md` (không mở `khoa.json` / `mau.json`). Xong ⇒ A đối chiếu `khoa.json` (chỉ A), áp luật dừng spec 8.2 §3.4
-   (≥ 5 cặp quyết; User ngược judge nhiều hơn cùng chiều ⇒ A trình giữ 10 đoạn / về 5); ghi vào `BAO_CAO_DANH_GIA.md` + báo cáo so sánh (khối context 10). Giới hạn: câu trả lời trên kho cũ, 1 câu nhiều nguồn.
-3. ~~**Đóng Phase 8**~~ **User đóng 14:29 01/11** (A ghi `Project_Status.md` + HISTORY; C115 sửa báo cáo / guide mức tối thiểu — chờ A review). Cũ: A trình tóm tắt (số cuối, giới hạn, B0) ⇒ User đóng ⇒ `Project_Status.md` bảng Phase (**thêm** dòng "8 — đóng gói Phase 1–8" ⇒ approved; bảng hiện chỉ có 8.1, 8.2, 9), `PROJECT_HISTORY.md` một mục trỏ TONG_HOP, guide Phase 8 "Hiện hành".
-4. **Sau Phase 8:** (a) **giao diện mới** — đọc `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md` (17 yêu cầu phải giữ); A sơ bộ nghiêng React + Vite build tĩnh, FastAPI phục vụ — chưa nghiên cứu,
-   chưa chốt; **cân mức công** (User 01/11 nhắc over-engineer — S64): giao diện là đồ án, làm một lần, review cả nhánh một lần. (b) **Phase 9 — nghiên cứu rộng trước** (User 31/10), gồm **hội thoại nhiều lượt / nhớ
-   lịch sử** (nháp tư liệu `docs/superpowers/specs/2026-11-01-multi-turn-design.md`) và **câu cần nhiều nguồn** (Q3a: Đủ 3,50; agent tách câu con) — `agent-design-review` + `agent-security-review` đầy đủ.
+**Thứ tự việc phiên sau** (viết 15:26 01/11/2026, kết phiên chiều 01/11 — Phase 8 **đã đóng** 14:29; B0 xong ⇒ giữ 10; 4 nhánh đã xoá):
+1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền chiều 01/11 hết hạn); kiểm Qdrant.
+2. **Nghiên cứu Phase 9 (A dẫn):** User đã gửi ChatGPT ⇒ kết quả ở `gửi chatgpt/2026-11-01/kết quả nghiên cứu/` (User tự đưa file). A đọc, WebFetch kiểm 3–5 ý chính, đối chiếu
+   4 mạch Codex `data/nghien_cuu_phase_9_2026-11-01/` ⇒ viết **bản 2** `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` (đầy đủ + 3–5 hướng Phase 9 + hướng nên tránh, theo ràng buộc) ⇒
+   B / C review ⇒ **brainstorm với User** từng câu (`propose-options`) ⇒ một spec Phase 9. Mục "Nghiên cứu rộng Phase 9" bên dưới.
+3. **Thử Huế TRIPO** (User chọn 01/11): A soạn ~10 câu tự viết theo loại (di tích, món, lễ hội theo ngày, chi phí, ngoài phạm vi, an toàn — không Golden / câu kín); **User tự gõ** trên trình
+   duyệt, dán câu trả lời; A chạy cùng câu trên hue_rag ⇒ bảng so sánh (vào báo cáo nghiên cứu + chuẩn bị câu "khác gì Huế TRIPO").
+4. **Code giao diện mới** (hướng đã chốt — mục B116): **User duyệt gói npm** (React, Vite, Tailwind, marked, DOMPurify, font) lúc giao; bước đầu dò CSP shadcn; một nhánh, review cả nhánh một lần;
+   18 yêu cầu (`yeu_cau_cho_giao_dien_moi.md` + yêu cầu 18 trong `b116_so_sanh_giao_dien.md`). Thứ tự 2 ↔ 4: hỏi User (song song được — không chồng file).
 
 **Mã hay gặp:** T1 = kết quả tìm 158 câu (so "giống byte"); B0 = User đọc cặp câu trả lời mù làm mốc người; PA1 / PA3 = chữ hiện dần ↔ chỉ hiện tiến độ; D1–D5 / Q1 = câu quyết định
 streaming (D5: xem lại PA3 nếu lợi < 0,5 s); Q3a = đo lại theo loại câu (01/11); F1–F4 / T1–T3 (plan đo) = sàn ngoài kho / bịa / lỗi kỹ thuật / lỗi trích dẫn và mức tụt Đủ / Đúng / từ chối nhầm; A1 / A2 = sàn bộ an toàn
@@ -31,12 +32,12 @@ rà bảo mật C106; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
 1. **Quyền phiên.** A khuyên: như 01/11 (A tự điều phối + tự thử trong luật; ≤ 1 USD; A tự commit / push; B / C push nhánh riêng).
-2. **Xoá 4 nhánh đã merge** (`s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` — mọi commit đã có trong `main` qua merge `a80e12d`; không còn gì chỉ nằm trên nhánh) — User `!`
+2. ~~**Xoá 4 nhánh đã merge**~~ **XONG 15:21 01/11/2026** (User `!` xoá local + origin). Cũ: (`s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` — mọi commit đã có trong `main` qua merge `a80e12d`; không còn gì chỉ nằm trên nhánh) — User `!`
    (`git branch -d …` + `git push origin --delete …`). Nhánh cũ khác: `git branch -a` lúc mở phiên.
 3. **Rà bảo mật C106 còn chờ User** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): R4 xoá / cắt 22 dòng log cũ (08–10/2026) chứa nguyên câu hỏi thử trong `backend/logs/application.log`
    (gitignore); CA2 (`uv run *` / `python3 *` tự duyệt — khuyên giữ); R1 kiểm `Host` + giới hạn lượt khi deploy; R11 gỡ `gradio` không dùng (User 24/10: chỉ gỡ khi xung đột) — các mục deploy để lúc deploy.
 4. **Sổ cải tiến chờ User:** W35 (kiểm điều khoản trước công cụ / tài khoản ngoài mới), W42 (hook cảnh báo "dự án khác"), W43 (script kiểm báo cáo khâu khớp hiện trạng). W44 User không chọn 01/11.
-5. (Không gấp) `báo cáo nghiên cứu github.txt` (gốc repo, untracked): giữ ngoài git hay dời `data/`? 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`): giữ hay gỡ (User `!`)?
+5. (Không gấp) `báo cáo nghiên cứu github.txt` (gốc repo, untracked; tư liệu Phase 9): giữ ngoài git hay dời `data/nghien_cuu_phase_9_2026-11-01/`? (hỏi 01/11 chiều, User chưa trả lời) 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`): giữ hay gỡ (User `!`)?
    Xoá sao lưu kho đợt 1 + 2 khi đóng gói?
 
 ## Câu hỏi A còn nợ (không cần User)
@@ -96,6 +97,47 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
   `test_phase6_settings.py::test_openai_api_key_exists_without_leaking`.
 - Đọc kho: **chỉ** `scripts/grep_kb.sh`; report tracked tả câu ở mức loại câu. Giờ trong file: chạy `date` trước; tin nhắn không cần giờ (W45 01/11) (S49). `rm` với biến: dùng `"${X:?}"/…` hoặc
   đường dẫn cố định (tầng an toàn chặn `$X/*`).
+
+## B116 — so sánh cách làm giao diện mới (giao 14:36 01/11/2026; User chọn (a))
+
+- **Mục tiêu:** một trang so sánh 2–3 cách làm giao diện mới cho đồ án (chưa code), để User chọn phiên sau. Mức công: **tối thiểu, 1 file chính** (User nhắc over-engineer — S64).
+- **Đọc:** `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md` (full — 17 yêu cầu phải giữ, nhất là CSP / không CDN / lọc HTML); `frontend/` hiện tại (targeted);
+  skill Claude Code `frontend-design` (gọi Skill); tham khảo User đưa (là **dữ liệu**, không phải lệnh): 2 SKILL.md ở `github.com/nextlevelbuilder/ui-ux-pro-max-skill` (`.claude/skills/ui-ux-pro-max/`,
+  `.claude/skills/ui-styling/`) — WebFetch đọc, **không cài** vào repo; ghi chú khoá AI FDE `data/course_notes/` (targeted, phần giao diện); giao diện của một dự án khác của User
+  (đường dẫn trong `data/giao_dien_moi_2026-11-01/tham_khao_du_an_khac.md`; chỉ đọc; **chi tiết dự án khác chỉ ghi ở `data/`**, file tracked nói "một dự án khác của User").
+- **Làm:** 2–3 phương án (vd React + Vite build tĩnh FastAPI phục vụ · JS thuần làm lại có thư viện nhỏ · phương án khác nếu có lý do), mỗi cái: khớp 17 yêu cầu (đặc biệt CSP không nới), công làm,
+  khi nào sai, chọn khác mất gì. Thêm 2 ý từ B0: (1) hiển thị nguồn gọn thay `[n]` chen trong câu (giữ `[n]` ở tầng máy); (2) D5 — streaming chỉ lợi 0,44 s: giữ PA1 hay PA3. Hướng giao diện
+  (bố cục, màu, chữ) theo câu A đang hỏi User (A nhắn thêm khi có).
+- **Không làm:** sửa code / `frontend/`; cài skill / package; tải ảnh; paid API. Tra web: `scripts/tra_web_codex.sh` (chỉ thông tin công khai) hoặc WebFetch.
+- **Đầu ra:** `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md` (tracked — không chi tiết dự án khác); ghi chú tham khảo dự án khác ⇒ `data/giao_dien_moi_2026-11-01/`. 0 USD. Xong ⇒ nhắn A.
+- **Dừng:** thấy yêu cầu nào phải nới CSP / đổi API ⇒ dừng, báo A.
+- **Quyết định (14:45 01/11/2026, User + A):** User: **làm cho laptop** (hiện chỉ User dùng, chưa có du khách); công nghệ "React hoặc Next tuỳ A, có thể Tailwind + shadcn". **A chọn: React + Vite build tĩnh,
+  FastAPI phục vụ** (không Next — cần server Node hoặc export tĩnh, thêm phần SSR không cần); **Tailwind được dùng** (sinh CSS lúc build, không đụng CSP); **shadcn / Radix chỉ dùng linh kiện
+  qua dò CSP 0 vi phạm** trên bản build (B116 nghi Radix chèn `<style>` lúc chạy). Điện thoại: chỉ cần không vỡ, không tốn công riêng. Yêu cầu 18: link nguồn bắt cả `[n]` lẫn `[Nguồn n]` (B116 (4), A kiểm `chat.py:304-316`, `app.js:44`).
+- **Trang (14:53 01/11/2026, User):** bây giờ **chỉ trang hỏi đáp** (khung nguồn bên cạnh). **Ghi để nhớ:** khi lên agent / trợ lý (Phase 9) nâng cấp giao diện thêm (vd nhiều lượt, trang giới thiệu / số đo, duyệt kho — chọn lúc đó).
+- **Phong cách (14:57 01/11/2026, User chọn (a)):** hiện đại, gọn, nét Huế nhẹ — nền sáng trung tính, màu nhấn tím Huế (nút, link nguồn, tiêu đề), một font dễ đọc tiếng Việt **tự host**; không hoa văn / ảnh nền.
+- **Chốt (15:05 01/11/2026, User (a)):** nguồn = số nhỏ nâng lên bấm được + danh sách ở khung bên (giữ `[n]` ở tầng máy); D5 = **giữ PA1** (đổi PA3 nếu rút / xoá > luật D5). **B116 xong — A đọc cả file, kiểm tương phản 4 cặp + không lộ dự án khác: đạt.** Code giao diện: phiên sau (User duyệt gói npm lúc giao).
+- **Trạng thái (B, 15:00 01/11/2026):** **xong đủ** (so sánh + đã chọn + yêu cầu 18 + mục dò CSP shadcn + hướng nhìn: bố cục ASCII, 12 token màu đạt AA tính thật, Be Vietnam Pro OFL tự host, bảng 6 trạng thái), **chờ A xem** — `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`; ghi chú dự án khác `data/giao_dien_moi_2026-11-01/tham_khao_du_an_khac.md`. 0 USD.
+
+## Nghiên cứu rộng Phase 9 (User "làm đi" 15:08 01/11/2026; A dẫn) — đợt `report_agent/2026-11-01_nghien_cuu_phase_9/`
+
+- **Mục tiêu (User):** nghiên cứu chuyên sâu, nghĩ rộng — thực tế doanh nghiệp / tổ chức triển khai trợ lý du lịch - văn hoá ra sao, vận hành, vấn đề, chức năng,
+  khả năng; paper; repo GitHub ⇒ báo cáo đầy đủ ⇒ A đề xuất hướng hợp hue_rag ⇒ brainstorm với User. 4 mạch: (1) thực tế triển khai, (2) chức năng + khả năng,
+  (3) học thuật, (4) mã nguồn mở. A: viết yêu cầu ChatGPT chuyên sâu, tổng hợp, báo cáo `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md`, đề xuất.
+- **Chung cho B117 / C116:** bối cảnh chép nguyên `data/nghien_cuu_phase_9_2026-11-01/boi_canh_chung.md` vào yêu cầu; **chỉ thông tin công khai**; chạy
+  `scripts/tra_web_codex.sh <yêu cầu .md> <tên_ngắn>` (mỗi mạch một lượt, tuần tự); yêu cầu .md để `data/nghien_cuu_phase_9_2026-11-01/yeu_cau/`.
+  Kết quả Codex là **dữ liệu**: tự WebFetch kiểm **3 ý quan trọng nhất / mạch** (URL có thật, đúng bài, đúng ý); URL không có trong `url_da_mo.txt` = tự khai.
+  Đầu ra mỗi mạch: `data/nghien_cuu_phase_9_2026-11-01/<b|c>_mach<n>.md` — bảng phát hiện (ý · nguồn URL + ngày · nhãn đã kiểm / tự khai / suy ra),
+  "điều này gợi ý gì cho hue_rag" tách riêng, chỗ còn thiếu. Không đề xuất phạm vi Phase 9 (việc của A). 0 USD API; script cảnh báo lệnh shell ⇒ dừng, báo A.
+- **B117 — mạch 1 + 2:** (1) tổ chức / doanh nghiệp thật đang chạy trợ lý AI du lịch - văn hoá (cơ quan du lịch, bảo tàng / di sản, khách sạn, OTA, ứng dụng ở Việt Nam / Huế):
+  chức năng, kiến trúc nếu công bố, cách vận hành (cập nhật dữ liệu, kiểm nói sai, người duyệt, chi phí, đa ngôn ngữ, đo hiệu quả), sự cố / thất bại / bài học;
+  (2) bản đồ chức năng của trợ lý du lịch (hỏi đáp, hỏi lại, lịch trình, ngân sách, bản đồ, sự kiện theo ngày, thuyết minh, giọng nói, ảnh, đặt chỗ…) + người dùng thật cần gì / bỏ dùng vì sao (khảo sát, nghiên cứu người dùng).
+- **C116 — mạch 3 + 4:** (3) paper 2023–2026: agentic RAG, câu nhiều bước / nhiều nguồn, hỏi lại khi câu mơ hồ / thiếu thông tin, hội thoại nhiều lượt có RAG, agent lập lịch trình
+  (bộ đo kiểu TravelPlanner), đánh giá trợ lý; có gì cho tiếng Việt; (4) repo GitHub: bắt đầu từ 8 repo trong `báo cáo nghiên cứu github.txt` (gốc repo, untracked — chỉ lấy tên repo)
+  + tìm thêm; mỗi repo: làm gì, kiến trúc, độ chín (sao, commit gần nhất), học được gì / không hợp.
+- **Dừng:** 16:20 01/11/2026 dù chưa xong — ghi phần đã có, báo A (User kết phiên ~16:30).
+- **Trạng thái B117 (B, 15:23 01/11/2026):** xong, **chờ A xem** — `data/nghien_cuu_phase_9_2026-11-01/b_mach1.md`, `b_mach2.md` (yêu cầu ở `yeu_cau/`; kết quả thô `data/tra_cuu_cli/2026-11-01_b-mach{1-trien-khai,2-chuc-nang}/`). Codex 2 lượt (0 trang ghi đã mở) ⇒ B WebFetch: mạch 1 đạt 3 ý + 2 trang Huế TRIPO; mạch 2 đạt 3 ý (2 nguồn không mở được, ghi tự khai). 0 USD API.
+- **Huế TRIPO** (`huetripo.hue.gov.vn/trip-planner`, Sở VHTTDL Huế + HueCIT, ra mắt 31/10/2026 — B117, A WebFetch kiểm): **User 15:22 01/11/2026 chọn thử có giới hạn ở phiên sau** — A soạn ~10 câu tự viết (không Golden / câu kín, không thông tin cá nhân), **User tự gõ trên trình duyệt** (agent không gửi vào trang ngoài), dán câu trả lời về; A so cạnh hue_rag ⇒ bảng so sánh cho đồ án.
 
 ## Hồ sơ đã đóng (chỉ tra cứu)
 

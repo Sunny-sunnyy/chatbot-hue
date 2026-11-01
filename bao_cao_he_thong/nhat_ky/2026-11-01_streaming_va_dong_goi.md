@@ -33,6 +33,12 @@
 - B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
 - **Phase 8 bạn đóng 14:29 01/11/2026.**
 - **Từ nhận xét B0 (đề xuất A, chờ bạn):** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9); `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn ở giao diện mới (vẫn giữ `[n]` ở tầng kiểm).
+- **Xoá 4 nhánh đã merge** (bạn chạy `!`, máy + GitHub); chỉ còn `main`.
+- **Giao diện mới — đã chốt hướng, chưa code:** React + Vite + Tailwind, FastAPI phục vụ; làm cho laptop; chỉ trang hỏi đáp (khung nguồn bên cạnh); hiện đại, nét Huế nhẹ (tím Huế,
+  font Be Vietnam Pro tự lưu); số nguồn nhỏ bấm được; giữ chữ hiện dần. Khi lên trợ lý (Phase 9) nâng cấp thêm. So sánh + hướng nhìn: `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`.
+- **Mở nghiên cứu rộng Phase 9:** 4 mạch (thực tế, chức năng, paper, repo) tra bằng Codex + kiểm tay; yêu cầu chuyên sâu đã gửi ChatGPT. Phát hiện lớn: **Huế TRIPO** — trợ lý AI lịch trình
+  của Sở VHTTDL Huế ra mắt 31/10/2026 ⇒ phiên sau bạn gõ thử ~10 câu để so. Bản sơ bộ: [BAO_CAO_NGHIEN_CUU_PHASE_9.md](../BAO_CAO_NGHIEN_CUU_PHASE_9.md).
+- Tiền phiên chiều: 0 USD API.
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Trước đây trang web chờ model viết xong cả câu (qua API p95 ~6 s, chưa đạt 5 s). Nay server gửi từng mảnh chữ ngay khi model viết, nhưng chỉ bật link nguồn sau khi kiểm trích
