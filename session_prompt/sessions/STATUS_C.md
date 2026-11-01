@@ -1,6 +1,22 @@
-# STATUS C — KẾT PHIÊN 31/10 (cập nhật 12:36 31/10/2026 `date`)
+# STATUS C — MỞ PHIÊN 01/11 (cập nhật 10:17 01/11/2026 `date`)
 
-Terminal `hue-rag-69` · A = `hue-rag-1a`, B = `hue-rag-3b` (trực tiếp). Quyền phiên 31/10 (như 30/10, User 10:10) **hết hạn cuối phiên**. User (10:02): việc A giao = "làm đi".
+## 0. Mở phiên 01/11
+- Terminal C: `hue-rag-6a` · A = `hue-rag-27` (theo `STATUS_A.md` 10:16) · B = `hue-rag-da` (A xác nhận). Kênh: trực tiếp. Quyền phiên 01/11: như 31/10, ≤ 1 USD (A báo).
+- Kiểm nhanh (chỉ đọc): `main` `a794a7e`; chỉ `STATUS_A.md` sửa (của A) + untracked `báo cáo nghiên cứu github.txt` (không phải của C); hooksPath `.githooks`; Qdrant 1 collection 8.424 point;
+  spec streaming đã commit (`f34cb7f`), sha `cf1ae9ef6c2c`, còn `TBD` dòng 46 + 166.
+- Việc của C theo handoff: **rảnh có lý do** tới khi spec duyệt (C là người viết spec, không tự kiểm); sau duyệt A giao code S1 cho một session. Có thể nhận việc 1b (gom báo cáo so sánh) nếu A giao.
+- Chưa sửa file nào ngoài file này. Đang chờ A.
+- **User (10:20 01/11/2026, ghi bằng `date`):** việc A giao = "làm đi"; làm xong báo thẳng A; rồi chờ A giao tiếp.
+- **A (10:20 01/11/2026):** xác nhận vai; C vẫn rảnh có lý do; việc 1b có thể giao C sau — chờ tin A.
+
+## 1. Việc đang làm 01/11 — C101 = việc 1b (A giao 10:29 01/11/2026; User: việc A giao = "làm đi")
+- Gom báo cáo so sánh phần đã đóng (Phase 0 → 8.2, sửa kho 1 + 2, Qwen3-8B, lỗi nặng / ngày hôm nay). 0 USD. Mục việc: `CURRENT_HANDOFF.md` "C — việc 1b".
+- **File sẽ ghi (khai báo):** `data/so_sanh_phuong_an/` — `nhap_theo_khau.md`, `nhap_theo_phase.md`, `cho_mau_thuan.md`, `brief_agent_con.md`, `BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md`, nháp agent con `agent_*.md`; và file này.
+  Không sửa `bao_cao_he_thong/`, guide, spec, governance.
+
+## KẾT PHIÊN 31/10 (cập nhật 12:36 31/10/2026 `date`)
+
+Terminal 31/10 `hue-rag-69` · A = `hue-rag-1a`, B = `hue-rag-3b` (trực tiếp). Quyền phiên 31/10 (như 30/10, User 10:10) **hết hạn cuối phiên**. User (10:02): việc A giao = "làm đi".
 
 ## 1. Việc phiên 31/10 (đều xong, review chéo đạt trừ ghi chú ở §2)
 
@@ -9,7 +25,7 @@ Terminal `hue-rag-69` · A = `hue-rag-1a`, B = `hue-rag-3b` (trực tiếp). Quy
 | C97 | đối chiếu kết quả ChatGPT streaming với code + nháp v2 | B100 2 vòng ready (`b0b49be37fc4`); bản 3 | `data/tinh_nang_moi_2026-10-27/c97_doi_chieu_code_streaming.md` `702cc7ed8af4`; probe `tools/c97_probe_sse_plain.py` `5a54a0262733` |
 | C98 | nháp phương án streaming v3 (D1 đầu, propose-options) | B102 2 vòng ready (`c59b412d702f`); bản 3 ⇒ User chốt D1 = PA1, D2 = (a), D3 = phương án 1 | `data/tinh_nang_moi_2026-10-27/c98_phuong_an_streaming_v3.md` `3b6a9ba09149` |
 | C99 | chấm 6 bản tra web Codex / AGY theo `tieu_chi.md` | A nhận (tự kiểm 2 ý); Codex tra nhanh đạt Y1, Y2 (Y3 trượt chữ vì 403 OpenAI), thay ChatGPT chỉ Y2; AGY kém rõ cả 3 | `data/tra_cuu_cli_2026-10-31/c99_cham.md` `514ea908654b` + 7 file sub-agent `c99_*.md`, `c99_chon_khang_dinh.md` `95fd1cb965dd`, `c99_http.json`, `c99_url_loi.json`, `c99_agy_tool_count.py` `8d835315e71d` |
-| C100 | spec streaming (tracked, **untracked chưa commit** — A commit) | B105 2 vòng ready; Codex review một lần (B106, 2 minor) ⇒ **bản 4** | `docs/superpowers/specs/2026-10-31-streaming-design.md` **`cf1ae9ef6c2c`** |
+| C100 | spec streaming (đã commit `f34cb7f` — ghi 01/11) | B105 2 vòng ready; Codex review một lần (B106, 2 minor) ⇒ **bản 4** | `docs/superpowers/specs/2026-10-31-streaming-design.md` **`cf1ae9ef6c2c`** |
 
 **Tiền paid C phiên 31/10: 0 USD** (chỉ đọc, WebFetch, curl trang công khai; 7 sub-agent C99 dùng quota Claude).
 

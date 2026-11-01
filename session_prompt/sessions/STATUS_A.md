@@ -2,6 +2,14 @@
 
 Terminal: `hue-rag-1a` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-3b`, C = `hue-rag-69` (cả ba Claude Code, trực tiếp). Quyền phiên 31/10 **hết hạn**.
 
+## MỞ PHIÊN 01/11 (10:16 01/11/2026 `date`)
+- Terminal A: `hue-rag-27`. Hai phiên khác đang mở: `hue-rag-da`, `hue-rag-6a` — chưa rõ ai B / ai C (chờ báo).
+- Kiểm nhanh: `main` `a794a7e`, sạch (chỉ untracked `báo cáo nghiên cứu github.txt`); hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec streaming đã commit, sha `cf1ae9ef6c2c`, còn 2 chỗ `TBD` (dòng 46, 166).
+- B = `hue-rag-da`, C = `hue-rag-6a` (cả hai tự báo; trực tiếp). Cả hai báo lệch: handoff dòng 62 + 101 cũ (spec đã commit `f34cb7f`) ⇒ sửa khi được làm.
+- **Quyền phiên 01/11 (User, A ghi nhận 10:20 01/11/2026):** như 31/10 — A tự điều phối + tự thử trong luật; ≤ 1 USD; B / C push nhánh riêng theo việc; commit `main` hỏi trước. Hết hạn cuối phiên.
+- **Q1 (User, A ghi nhận 10:23 01/11/2026):** PA1 — sàn giữ p50 ≤ 3 s / p95 ≤ 5 s tới chữ trả lời đầu tiên trên trình duyệt; **mục tiêu báo cáo** p50 ≤ 1,5 s / p95 ≤ 3 s (không chặn nghiệm thu); đo dễ đạt ⇒ A đề xuất nâng sàn.
+- User (terminal B, 10:19): việc A giao B = "làm đi" cho B. Tiếp: chờ "làm đi" của A.
+
 ## Phiên sau đọc trước
 - `CURRENT_HANDOFF.md` "PHIÊN SAU" (viết lại 12:36–12:42; phiên 31/10 nguyên văn ở `archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`).
 - Việc đầu: hỏi quyền ⇒ hỏi **Q1** (mục tiêu chữ đầu tiên; A khuyên sàn 3 / 5 s + mục tiêu báo cáo 1,5 / 3 s) ⇒ điền `TBD` spec (dòng ~46 §2 + §6 C1) ⇒ B kiểm phần đổi ⇒

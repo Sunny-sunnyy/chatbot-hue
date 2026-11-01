@@ -127,3 +127,63 @@ Ngoài các chỗ khai báo, B không thấy chỗ đổi nào khác (đọc l�
 
 `ready_for_user_confirmation` cho phần đã có (phần `TBD` "mức chuẩn ngành chữ đầu tiên" review vòng sau). Bước tiếp theo W33: Codex review một lần theo gói
 `data/tinh_nang_moi_2026-10-27/b104_codex_review_spec.md`, trên **đúng** bản `e243371b57eb` (hoặc bản sau khi A điền `TBD` — sha mới thì B kiểm phần đổi trước) ⇒ User duyệt sha.
+
+---
+
+# Vòng 3 — kiểm phần đổi spec bản 5 (`0b2679cfccd6`) sau Q1
+
+Decision: **ready_for_user_confirmation** (0 blocker / 0 major; 1 minor nên sửa trước khi trình sha; 3 ghi chú) · Người kiểm: B · Date: 10:30 01/11/2026 (`date`)
+
+Căn cứ: `git diff` spec HEAD (`cf1ae9ef6c2c`) ↔ working tree (B tự tính `sha256sum` ⇒ `0b2679cfccd6`); câu trả lời Q1 theo tin A 01/11 (B không trực tiếp thấy User chốt);
+nguồn tra Codex `data/tra_cuu_cli/2026-10-31_ttft-chuan-nganh/ket_qua.md`; số C73 trong nháp v3 `data/tinh_nang_moi_2026-10-27/c98_phuong_an_streaming_v3.md:211`.
+
+## R3.1 Phần đổi — đúng khai báo
+
+`git diff` có đúng 4 khối: dòng "Bản 5" (đầu file), hàng Q1 bảng §2, đoạn "Mức chuẩn ngành" §2, ô ngưỡng C1 §6. Không đổi chỗ khác. `git diff --check` sạch; `overlap_scan.py` ⇒ **0 trùng**.
+
+| Kiểm | Kết quả |
+|---|---|
+| Số Q1 giống nhau ở 3 chỗ (hàng §2, đoạn §2, C1) và giống tin A | ✓ sàn p50 ≤ 3 / p95 ≤ 5 s; mục tiêu báo cáo p50 ≤ 1,5 / p95 ≤ 3 s, không chặn nghiệm thu |
+| Không còn `TBD` trong spec (trừ dòng "Bản 5" nhắc lịch sử) | ✓ (`git grep TBD`) |
+| "Không có chuẩn ngành" | ✓ `ket_qua.md` dòng 5 |
+| Nielsen ~1 s | ✓ dòng 6, 23 (0,1 / 1 / 10 s — giao diện, không phải SLO chatbot; spec ghi "ngưỡng", đúng mức) |
+| Nghiên cứu 2 / 9 / 20 s | ✓ dòng 16, 33 — **nhưng cách tóm lệch nghĩa, xem m-1** |
+| Token đầu API công khai "vài trăm ms – ~1,1 s" | ✓ dòng 45–47, 52 (OpenAI p50 1.097 ms) |
+| C73 trung vị 81 token suy luận | ✓ `c98_phuong_an_streaming_v3.md:211` (0 / 81 / 308, 35 lần) |
+| Luật trượt §5 dòng 159 ("C1 hoặc C2 trượt ⇒ dừng") chỉ theo sàn | ✓ khớp: ô C1 ghi rõ mục tiêu "không chặn" |
+| §8 tiền | ✓ không cần đổi (cỡ mẫu C1 / C2 không đổi; trần việc 0,02 USD giữ) |
+| §9 rủi ro, §10 giới hạn, C3 / D5 (lợi < 0,5 s) | ✓ không nhắc sàn / TBD theo cách mâu thuẫn |
+
+## R3.2 Finding
+
+- **m-1 (minor, nên sửa trước khi trình User sha):** §2 đoạn "Mức chuẩn ngành" ghi "nghiên cứu người dùng 2 / 9 / 20 s, **2 s đã bị chấm kém**". Nguồn (`ket_qua.md` dòng 33,
+  arXiv 2604.06183) nói: ở mức 2 s người dùng chấm câu trả lời **kém "có suy nghĩ" và kém hữu ích hơn một số mức chờ lâu hơn**; nghiên cứu **không chứng minh** nên chờ lâu hơn.
+  Viết "2 s bị chấm kém" dễ đọc thành "2 s còn quá chậm" ⇒ ngược chiều, và có thể bị dùng làm lý do ép sàn chặt hơn. Tác động: User đọc spec để duyệt hiểu sai căn cứ của Q1
+  (kết luận Q1 không đổi). Tiêu chí đóng: viết lại đúng ý nguồn, ví dụ "ở 2 s người dùng chấm câu trả lời kém 'có suy nghĩ' hơn một số mức chờ lâu hơn — nghiên cứu không kết luận
+  nên chờ lâu". Sửa xong ⇒ sha mới, B kiểm đúng dòng đó (không mở vòng mới).
+- **n-1 (ghi chú):** dòng 3 "Trạng thái: **bản 2** — … chờ B kiểm phần đổi ⇒ Codex review ⇒ User duyệt sha" đã lỗi thời từ bản 3 (không phải chỗ đổi của bản 5). User đọc dòng
+  đầu khi duyệt ⇒ nên đổi thành "bản 5 — chờ User duyệt sha". A quyết.
+- **n-2 (ghi chú):** C2 (câu từ chối) ghi "cùng sàn", không nói mục tiêu báo cáo 1,5 / 3 s có áp không. Đọc theo Q1 ("chữ **trả lời** đầu tiên") thì không áp — câu từ chối ≈ tới đủ
+  câu. Thêm mấy chữ "mục tiêu báo cáo chỉ cho C1" nếu muốn khỏi hỏi lại lúc đo.
+- **n-3 (ghi chú):** hàng Q1 (01/11) nằm giữa D2 (31/10 11:44) và D3 (11:48) — lệch thứ tự thời gian, chấp nhận được vì đặt cạnh D2 mà nó bổ sung.
+
+## R3.3 Decision
+
+`ready_for_user_confirmation` cho bản 5 `0b2679cfccd6`, **với điều kiện** A sửa m-1 (một câu) trước khi trình User; sửa m-1 / n-1 / n-2 ⇒ sha mới ⇒ B kiểm đúng các dòng đó rồi
+A trình User duyệt sha tính từ file. Không chạy Codex lần 2 (A quyết). 0 USD.
+
+## R3.4 Kiểm phần sửa — bản 5 sửa (`efdd1c05097d`)
+
+Decision: **ready_for_user_confirmation** (m-1, n-1, n-2 đóng; n-3 giữ theo A) · Người kiểm: B · Date: 10:32 01/11/2026 (`date`)
+
+B tự tính `sha256sum` ⇒ `efdd1c05097d`. `git diff` với HEAD: 6 dòng thêm / 5 bỏ — đúng 4 khối của bản 5 trước + dòng 3 (n-1) + ô C2 (n-2); không đổi chỗ khác.
+`git diff --check` sạch; `overlap_scan.py` ⇒ 0 trùng.
+
+| Finding | Chỗ sửa | Đóng? |
+|---|---|---|
+| m-1 | §2 dòng 47: "ở 2 s người dùng chấm câu trả lời kém 'có suy nghĩ' / kém hữu ích hơn một số mức chờ lâu hơn — cảm nhận chịu ảnh hưởng của kỳ vọng 'suy nghĩ', **không** chứng minh 2 s là chậm hay nên cố tình chờ" | ✓ khớp `ket_qua.md:33`; phần còn lại của đoạn (Nielsen, sàn giữ, mục tiêu báo cáo, lý do không đổi sàn) giữ nguyên |
+| n-1 | dòng 3: "bản 5 — B Vòng 3 ready (1 minor); A sửa m-1, n-1, n-2 ⇒ B kiểm phần sửa ⇒ User duyệt sha"; lịch sử bản 2 giữ phía sau | ✓ (sau khi duyệt chỉ còn lỗi thời ở chữ "B kiểm phần sửa" — A cập nhật lúc commit nếu muốn) |
+| n-2 | C2: "mục tiêu báo cáo 1,5 / 3 s của Q1 **chỉ áp C1**, không áp nhóm này — A 01/11" | ✓ không mâu thuẫn luật trượt §5 (chỉ theo sàn) |
+| n-3 | giữ | — (A quyết) |
+
+Kết luận: spec bản `efdd1c05097d` sẵn sàng để A trình User duyệt sha tính từ file. 0 USD.

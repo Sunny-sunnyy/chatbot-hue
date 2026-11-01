@@ -1,11 +1,14 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 16:46 31/10/2026 (A, phiên chiều 31/10 — chỉ AI FDE; mục "PHIÊN SAU" viết lại lúc kết phiên chiều). Trước: 12:36 31/10/2026 (A, **kết phiên 31/10** — User: "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Cập nhật: 10:28 01/11/2026 (A, **mở phiên 01/11** — quyền phiên, Q1 chốt, spec bản 5, giao C việc 1b, B Vòng 3). Trước: 16:46 31/10/2026 (A, phiên chiều 31/10 — chỉ AI FDE; mục "PHIÊN SAU" viết lại lúc kết phiên chiều). Trước: 12:36 31/10/2026 (A, **kết phiên 31/10** — User: "các nhiệm vụ, câu hỏi để session tiếp theo"). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định theo giờ, mọi trạng thái review) dời **nguyên văn** sang `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`
 (I7); phiên 28–30/10: `archive/CURRENT_HANDOFF_LICH_SU_2026-10-28_30.md`. Tổng hợp đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md` (mở),
 `report_agent/2026-10-31_tra_web_codex/TONG_HOP.md` (đóng); nhật ký User `bao_cao_he_thong/nhat_ky/2026-10-31_spec_streaming_tra_web_codex.md`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (đọc trước nhất)
+
+**Phiên 01/11 (mở 10:16, A ghi 10:28 01/11/2026):** quyền phiên = như 31/10 (mục "Quyền"); **Q1 chốt** (sàn giữ 3 / 5 s + mục tiêu báo cáo 1,5 / 3 s) ⇒ spec bản 5 ⇒ B Vòng 3 ready ⇒
+**User duyệt spec `00fb57ee01b2` (10:42 01/11/2026)** ⇒ B code S1, C review. **B0 hôm nay** (User chọn — A hướng dẫn). **C làm việc 1b** (mục "C — việc 1b" dưới). User (terminal B, 10:19): việc A giao B = "làm đi".
 
 **Hệ thống (`main`; chatbot KHÔNG đổi trong phiên 31/10 — chỉ tài liệu + governance):**
 - Chatbot: context 10 + query NFC, reasoning mặc định, không rerank, validator v2; `/api/chat` ghi `chat_metrics` mỗi câu; giao diện trang đơn giản `frontend/` (JS thuần, một lượt,
@@ -59,11 +62,11 @@ streaming trước). **"PA2" của thứ tự việc 30/10** = giữ thứ tự 
 - **A tự quyết (kỹ thuật trong phạm vi):** D5 = xem lại khi > 1 % câu bị xóa / tuần (hoặc ≥ 3 lần / ≥ 100 câu); không nút "Dừng" bản này; lỗi trước luồng = cách (b); ép
   `response.incomplete` bằng `answer_max_output_tokens` nhỏ **không** phải lỗi giả (trần ≤ 0,001 USD); không chỗ nối chỉ dùng khi test (D3 (a) giao diện + luồng đứt = giới hạn); không
   test dựng 503 "chưa sẵn sàng" (giới hạn); câu từ chối dùng cùng sàn 3 / 5 s, đo tới lúc biết chắc là từ chối, báo riêng (C2); xem lại PA3 nếu lợi đo trên trình duyệt < 0,5 s.
-- **Spec:** `docs/superpowers/specs/2026-10-31-streaming-design.md` bản 4 **`cf1ae9ef6c2c`** (202+ dòng; quét trùng 0; commit kết phiên nếu User đồng ý — xem mục "A còn nợ"). Review: B105 vòng 1 changes_requested
+- **Spec:** `docs/superpowers/specs/2026-10-31-streaming-design.md` bản 4 **`cf1ae9ef6c2c`** (202+ dòng; quét trùng 0; đã commit `f34cb7f`); **bản 5 `0b2679cfccd6`** ⇒ sửa m-1 / n-1 / n-2 (B Vòng 3 + R3.4 ready) ⇒ **User DUYỆT bản sha `00fb57ee01b2` (A ghi nhận 10:42 01/11/2026, sha tính từ file)**; commit cùng `b105_review.md`. Review: B105 vòng 1 changes_requested
   (M-1 hủy khi ngắt: ghi log trước mọi `await` + `CancelScope(shield=True)` + `move_on_after`) ⇒ vòng 2 ready (`report_agent/2026-10-31_streaming_spec/b105_review.md` `96bcc907886b`);
   **Codex review một lần (W33) xong** trên bản 3 `cd44744ea3d7` — 2 finding đúng, mới, hạ minor (bắt riêng `CancelledError`; 422 trước handler không có dòng log) ⇒ C sửa ⇒ bản 4,
   B kiểm phần đổi ready (`b106_codex_review.md` `cab2ca485750` mục 5). Kết quả thô Codex (private): `data/tinh_nang_moi_2026-10-27/2026-10-31-streaming-design_review_codex/`.
-- **Còn mở:** `TBD` ở spec dòng ~46 (§2) và §6 C1 = **câu Q1 cho User** (dưới). Căn cứ: Codex tra `data/tra_cuu_cli/2026-10-31_ttft-chuan-nganh/ket_qua.md` — **không có chuẩn ngành**;
+- **Q1 đã chốt (User, A ghi nhận 10:28 01/11/2026):** PA1 — sàn giữ p50 ≤ 3 / p95 ≤ 5 s tới chữ đầu trên trình duyệt + **mục tiêu báo cáo** p50 ≤ 1,5 / p95 ≤ 3 s (không chặn); đã điền spec bản 5 (§2 + §6 C1). Căn cứ cũ: Căn cứ: Codex tra `data/tra_cuu_cli/2026-10-31_ttft-chuan-nganh/ket_qua.md` — **không có chuẩn ngành**;
   Nielsen 1 s; API công khai p50 vài trăm ms – ~1,1 s; Codex **suy ra** mục tiêu p50 ≤ 1,5 s / p95 ≤ 3 s. A WebFetch kiểm 2 ý (arXiv 2604.06183: 2 / 9 / 20 s, 2 s bị chấm "kém chu đáo" ✓;
   llmlatency.dev đo token đầu API từ Đức ✓). Lưu ý: `gpt-6-luna` suy luận mặc định (trung vị 81 token suy luận, C73) ⇒ chữ trả lời đầu ra muộn hơn token đầu; chưa đo trên trình duyệt.
 - Căn cứ nền: nháp v3 bản 3 `data/tinh_nang_moi_2026-10-27/c98_phuong_an_streaming_v3.md` (`3b6a9ba09149`); C97 bản 3 `c97_doi_chieu_code_streaming.md` (`702cc7ed8af4`); B99
@@ -92,35 +95,52 @@ streaming trước). **"PA2" của thứ tự việc 30/10** = giữ thứ tự 
 
 ## Câu hỏi A còn nợ (không cần User)
 
-- Khung AI FDE (khung cá nhân của User, ngoài repo) đã lên v2 phía dự án kia: mở phiên đọc `CHANGELOG.md` của khung; mục nào đổi mà hue_rag cần ⇒ đối chiếu lại (vòng cải tiến).
+- Khung AI FDE (khung cá nhân của User, ngoài repo): A đọc `CHANGELOG.md` 10:29 01/11/2026 — khung lên v2.2; v2 / v2.1 chủ yếu là phần **lấy từ hue_rag** (skill review, các mục run-experiment / propose-options / improve-workflow), v2.2 chỉ ẩn tên ⇒ **không có gì mới cần đối chiếu**; 4.10 / 7.1 (v1.2) đã có ở hue_rag (lỗi kỹ thuật ⇒ lượt incomplete, spec 7A; ghi giới hạn khi đóng spec — a6).
   W39 hạn 07/11 (0 buổi D ⇒ đề xuất gỡ W4 + W39); theo dõi W37 báo đúng / nhầm; I3 memory.
 
 - Sổ: theo dõi W32 (31/10 có tác dụng: B103 M-1, B105 M-1 đều từ ca dò khác cách), I7, W30 (hook bắt 2 giờ ước 31/10), W31; W33 đã chạy — kết luận ở sổ.
 - Ý chờ từ B106 §3: cho Codex review đọc mã nguồn thư viện / `.venv` chỉ đọc (đổi phạm vi — cần User nếu muốn).
 - Lần chấm tra web sau (C99 nêu): đếm riêng "403 trang thật" + kiểm tiêu đề trang mỗi URL (6 khẳng định không bắt link trỏ sai bài). Ca 503 / 502 route stream: A đã quyết = giới hạn.
-- Spec + `report_agent/2026-10-31_streaming_spec/`: A xin User commit lúc kết phiên 31/10 — mở phiên kiểm `git log --oneline -3` / `git status`; còn untracked ⇒ A commit sau khi hỏi (bản nháp chờ duyệt; duyệt vẫn gắn sha tính từ file).
 - Thử mở phiên vai B (sub-agent, 31/10 kết phiên): tài liệu đủ; đã sửa 7 chỗ (tên mục, mã chưa giải nghĩa, việc soạn sẵn cho B, dòng cũ Project_Status §2, sàn cả câu ↔ D2,
   luật hỏi commit, WebSearch thử ⇒ lỗi 400). Lưu ý: phiên Claude mở **trước** `1a9dca4` nạp `AGENTS.md` cũ (thiếu luật 7) — phiên mới thì đủ.
 - Log `FileHandler` không xoay vòng — xem lại khi deploy. C65: G2.1a chưa đếm lại bằng validator hiện tại.
 
 ## Session
 
-| Vai | Terminal (31/10) | Agent | Liên lạc | Phiên 31/10 | Trạng thái kết phiên |
+| Vai | Terminal (01/11) | Agent | Liên lạc | Phiên 31/10 | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-1a` (chiều 31/10: `hue-rag-d5`) | Claude Opus 5.5 | trực tiếp | điều phối; thử 6 lượt Codex / AGY; script tra web + chặn `agy` + §9; 3 câu User streaming; tra Codex TTFT | `STATUS_A.md`; 0 USD |
-| B — thực thi | `hue-rag-3b` | Claude Opus 5.5 | trực tiếp | B99 kiểm nguồn, B100 review C97, B101 mốc Y2, B102 review v3, B103 review governance, B104 gói Codex, B105 review spec, B106 chạy Codex review | `STATUS_B.md`; 0 USD |
-| C — thực thi | `hue-rag-69` | Claude Opus 5.5 | trực tiếp | C97 đối chiếu code, C98 nháp v3, C99 chấm 6 bản tra web, C100 spec streaming (4 bản) | `STATUS_C.md`; 0 USD |
+| A — điều phối | `hue-rag-27` | Claude Opus 5.5 | trực tiếp | điều phối; thử 6 lượt Codex / AGY; script tra web + chặn `agy` + §9; 3 câu User streaming; tra Codex TTFT | `STATUS_A.md`; 0 USD |
+| B — thực thi | `hue-rag-da` | Claude Opus 5.5 | trực tiếp | B99 kiểm nguồn, B100 review C97, B101 mốc Y2, B102 review v3, B103 review governance, B104 gói Codex, B105 review spec, B106 chạy Codex review | `STATUS_B.md`; 0 USD |
+| C — thực thi | `hue-rag-6a` | Claude Opus 5.5 | trực tiếp | C97 đối chiếu code, C98 nháp v3, C99 chấm 6 bản tra web, C100 spec streaming (4 bản) | `STATUS_C.md`; 0 USD |
 
 Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `trực tiếp`. **B / C lúc mở phiên sau:** không có việc đang chạy; mở phiên ⇒ kiểm nhanh ⇒ báo A ⇒ chờ.
 
 **Việc soạn sẵn (A giao bằng tin nhắn khi tới bước):**
-- **B — kiểm phần đổi spec sau Q1:** căn cứ: `git diff` (hoặc `diff`) spec bản mới ↔ `cf1ae9ef6c2c` + câu trả lời Q1 User (A ghi vào mục Streaming); chỉ kiểm chỗ `TBD` §2 + §6 C1 và mọi
+- **B — kiểm phần đổi spec sau Q1 (GIAO 01/11, bản 5 `0b2679cfccd6`):** căn cứ: `git diff` (hoặc `diff`) spec bản mới ↔ `cf1ae9ef6c2c` + câu trả lời Q1 User (A ghi vào mục Streaming); chỉ kiểm chỗ `TBD` §2 + §6 C1 và mọi
   chỗ nhắc tới nó; không đổi chỗ khác; không chạy Codex. Đầu ra: mục "Vòng 3" cuối `report_agent/2026-10-31_streaming_spec/b105_review.md` + sha bản kiểm. 0 USD.
-- **C — rảnh có lý do** cho tới khi spec duyệt (người viết spec không tự kiểm); sau duyệt A giao code S1 cho một session, session kia review.
+- **C — việc 1b (GIAO 10:28 01/11/2026; User chọn "giao C ngay"):** gom báo cáo so sánh **phần đã đóng** (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng / ngày hôm nay).
+  - Mục tiêu: nháp đủ để A ghép `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` theo khung mục 4 "Báo cáo tổng so sánh" (đọc full mục 4 trên). Phần **theo khâu** là chính (đủ số đo);
+    phần **theo Phase** chỉ bảng một hàng / Phase trỏ về phần khâu + chỉ mục chéo; "nhìn lại theo khung khoá AI FDE" để bước đóng gói (không làm ở 1b). Streaming / nhiều lượt chưa có ⇒ để chỗ trống ghi "chưa làm".
+  - Đọc (targeted): `bao_cao_he_thong/BAO_CAO_*.md` (9 khâu) + `LUONG_HOAT_DONG_HE_THONG.md`; `report_agent/*/TONG_HOP.md` + report gốc khi cần số; `reports/` (Phase 0–7, lịch sử); `docs/superpowers/specs/`;
+    `guides/`; `Project_Status.md` §5; bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (để không lặp, trỏ chéo).
+  - Làm: dùng agent con theo nhóm khâu (gợi ý ~5, chạy song song; mỗi agent đọc file dài ≤ 3 cái — `WORKFLOW.md` §9.9: brief có khuôn trả về cố định, tách "nguồn nói" ↔ "suy ra",
+    báo chỗ tài liệu mâu thuẫn nhau). Mỗi so sánh: vấn đề · ngày / Phase · mọi phương án + mốc · cách đo · tiêu chí ghi trước · kết quả số (CI, thắng / hoà / thua) · tiền + tốc độ ·
+    quyết định + lý do · giới hạn · bằng chứng (report, commit, sha) · **nhãn độ tin** (5 nhãn ở mục 4). Số nào cũng có nguồn; không chắc ⇒ "chưa đo" / "chưa kiểm".
+    C tự kiểm 2–3 số quan trọng mỗi nhóm bằng file thật trước khi gộp.
+  - Không làm: không sửa `bao_cao_he_thong/`, guide, spec, governance (A ghép + sửa); không chạy đo / API trả phí; không mở câu kín, `split.json` theo từng câu, `.env`; tìm trong kho **chỉ**
+    `scripts/grep_kb.sh` (thường không cần đọc kho). Agent con kế thừa đúng các ranh giới này (ghi vào brief).
+  - Đầu ra: `data/so_sanh_phuong_an/` (private): `nhap_theo_khau.md`, `nhap_theo_phase.md`, `cho_mau_thuan.md` (số / kết luận lệch giữa các tài liệu, kèm `file:dòng`), `brief_agent_con.md`;
+    **bản đề xuất public** `data/so_sanh_phuong_an/BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md` — mức loại câu (`Session_Prompt.md` §5: không chủ đề cụ thể cạnh `case_index`, không chi tiết dự án
+    khác, không nguyên văn kho / Golden). Báo A kèm sha các file. STATUS_C khai báo.
+  - Tiền: 0 USD. Dừng + báo A khi: thấy tài liệu mâu thuẫn làm đổi một quyết định đã chốt; khối lượng vượt ~3 giờ; cần mở thứ ngoài danh sách đọc.
+  - Sau: A ghép + B (hoặc agent con ngữ cảnh mới) kiểm độc lập; A commit sau khi hỏi User.
 
 ## Quyền
 
-- **Phiên chiều 31/10 (User, A ghi nhận 15:59 31/10/2026):** phiên này **chỉ làm AI FDE** (khung `khung_fde/`, đối chiếu, harness); **chưa làm tiếp dự án**
+- **Phiên 01/11 (User chọn "như 31/10", A ghi nhận 10:28 01/11/2026):** A tự điều phối B / C + tự thử trong luật; paid ≤ 1 USD cả phiên (A, B, C); B / C push nhánh riêng khi việc ghi rõ;
+  commit `main`: A hỏi User trước. User nói ở terminal B (10:19): việc A giao B = "làm đi". **Hết hạn cuối phiên 01/11.**
+  **User 10:30 01/11** (A ghi 10:32 01/11/2026): "tiếp tục điều phối, phát triển, cải thiện, tối ưu, so sánh đánh giá, viết báo cáo"; đóng phiên **~16:20**; hỏi "hôm nay xong Phase 8 được không" — **chỉ hỏi, không yêu cầu làm nhanh rồi bỏ sót**.
+- **Phiên chiều 31/10 — HẾT HẠN (User, A ghi nhận 15:59 31/10/2026):** phiên này **chỉ làm AI FDE** (khung `khung_fde/`, đối chiếu, harness); **chưa làm tiếp dự án**
   (spec streaming Q1 / duyệt sha, code S1… để phiên sau). A được commit + push. Không cấp trần tiền paid (việc AI FDE 0 USD). Hết hạn cuối phiên.
 - **Thường trực:** A commit / push — **hỏi User trước** (luật chung của User `~/.claude/CLAUDE.md`, thắng "quyền thường trực" ở `Session_Prompt.md` §4), rồi **A tự chạy**; chỉ khi lệnh bị chặn / lỗi mới đưa User lệnh `!` (User 31/10 11:44; S50 đóng — 31/10 commit `1a9dca4`, `16f482a`
   A tự chạy được); B/C không commit trừ khi việc ghi rõ (nhánh riêng); duyệt cho A = duyệt cho B/C; thư viện nhỏ cần cho việc đã duyệt: A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích
