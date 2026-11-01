@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 15:26 01/11/2026 (A, **kết phiên chiều 01/11**: B0 xong ⇒ giữ 10; **User đóng Phase 8 14:29**; giao diện chốt hướng; mở nghiên cứu Phase 9). Trước: 14:30 01/11/2026. Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
+Cập nhật: 16:32 01/11/2026 (A, **kết phiên chiều 01/11**: B0 xong ⇒ giữ 10; **User đóng Phase 8 14:29**; giao diện chốt hướng; mở nghiên cứu Phase 9). Trước: 14:30 01/11/2026. Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
 **nguyên văn** sang `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md`; 31/10: `archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`. Tổng hợp đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`;
 nhật ký User `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md`.
 
@@ -47,7 +47,7 @@ rà bảo mật C106; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc 
 
 ## Session
 
-| Vai | Terminal (01/11 chiều) | Agent | Liên lạc | Phiên 01/11 | Trạng thái kết phiên |
+| Vai | Terminal (01/11 chiều — kết phiên 16:32 01/11/2026) | Agent | Liên lạc | Phiên 01/11 | Trạng thái kết phiên |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-c0` | Claude Opus 5.5 | trực tiếp | điều phối; review S1, B108; merge streaming; 5 chỗ báo cáo; CA1 / CA3; vòng cải tiến 13 | `STATUS_A.md` |
 | B — thực thi | `hue-rag-7a` | Claude Opus 5.5 | trực tiếp | S1–S4, B107, B108, review plan / runbook / governance, đo §6–§8 | `STATUS_B.md`; ≈ 0,055 USD |

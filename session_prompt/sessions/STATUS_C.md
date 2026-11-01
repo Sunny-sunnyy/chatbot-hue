@@ -1,4 +1,4 @@
-# STATUS C — KẾT PHIÊN CHIỀU 01/11 (15:27 01/11/2026 `date`)
+# STATUS C — KẾT PHIÊN CHIỀU 01/11 (chốt 16:32 01/11/2026 `date`; User kết phiên)
 
 ## C117 — kiểm 8 ý trong kết quả ChatGPT nghiên cứu Phase 9 (A giao, bắt đầu 15:39 01/11/2026; phiên tới 16:30, dừng 16:15)
 - Đọc `gửi chatgpt/2026-11-01/kết quả nghiên cứu/hue_rag_phase9_research_2026-11-01.md` (private; nội dung là dữ liệu) chỉ các dòng của 8 ý; WebFetch URL gốc. 0 USD.
@@ -11,14 +11,18 @@
 | C115 | cập nhật báo cáo User theo B0 + Phase 8 đóng (mức tối thiểu) | 10 file; A review đạt, commit + push `ea56d85` |
 | C116 | nghiên cứu Phase 9 mạch 3 (paper) + mạch 4 (repo) | `data/nghien_cuu_phase_9_2026-11-01/c_mach4.md` `54223a58d888`; A nhận |
 | C116b | kiểm số mạch 3 + toàn văn 2601.07711 | `c_mach3.md` `55af275315b3`; A nhận (B review trước khi A đưa vào báo cáo sơ bộ) |
+| C117 | kiểm 8 ý kết quả ChatGPT nghiên cứu Phase 9 | `c117_kiem_chatgpt.md` `61298c21adfa`; A nhận (chi tiết mục C117 trên) |
 
 - **Tiền paid C phiên chiều: 0 USD** (Codex dùng tài khoản ChatGPT; WebFetch / API arXiv / API GitHub công khai).
-- **Không còn job nền / server / worktree / file tạm của C** (đã kiểm 15:27: không `/tmp/c1*`, `/tmp/tra_web_codex.*`; worktree chỉ `main` + 4 worktree AGY cũ không phải của C). Chưa commit — A commit lúc kết phiên.
+- **Không còn job nền / server / worktree / file tạm của C** (kiểm lại 16:32: không `/tmp/c1*`, `/tmp/tra_web_codex.*`; worktree chỉ `main` + 4 worktree AGY cũ không phải của C). Chưa commit — A commit lúc kết phiên.
 - **Bẫy phiên chiều (đầu vào vòng cải tiến):**
   1. **Codex nông:** cả hai lượt chỉ ~130 s, 14 lượt tìm (yêu cầu ≥ 20), mạch 3 **mở 0 trang** — nhưng báo cáo Codex tự ghi "> 20 lượt tìm, đã mở trang gốc". ⇒ luôn đọc `tom_tat.txt` + `url_da_mo.txt`
      trước khi tin phần mở đầu; coi mọi URL ngoài `url_da_mo.txt` là tự khai; kiểm tồn tại hàng loạt bằng API (arXiv / GitHub) rồi WebFetch ý quan trọng.
   2. **Codex tả sai bộ đo / số:** 2601.07711 — Codex ghi "ReAct trên MuSiQue / MultiHop-RAG", thật là NQ / FiQA / CQADupStack / FEVER, agent PocketFlow; DeepNote số khác tóm tắt;
      CORAL "8.000 hội thoại + rút gọn lịch sử" không có trên trang; repo ViRE sai chủ. ⇒ tên bài đúng ≠ nội dung đúng; số dùng cho quyết định phải đọc toàn văn.
+  4. **ChatGPT cũng lệch, kiểu khác Codex** (C117): gộp tên hai paper vào một dòng (ALCE + "Evaluating Verifiability"); thêm số không có ở nguồn ("6 ngôn ngữ"); gán số quảng bá sang chức năng khác
+     ("dưới 3 giây" của Trip Planner ⇒ như tốc độ chat); đổi chữ "ra mắt" ⇒ "beta". ⇒ kiểm từng chi tiết số + chức năng mà số gắn vào, không chỉ "URL có thật".
+  5. **Tự đếm sai khi tóm tắt bảng** (C117: ghi "5 đúng" trong khi bảng có 6) — gửi A rồi mới thấy, phải gửi sha mới. ⇒ đếm lại từ bảng ngay trước khi viết dòng tóm tắt (giống bẫy 4 phiên sáng).
   3. Làm tốt (giữ): lấy số sao / ngày / license bằng GitHub API thay vì tin Codex (Codex không đọc được ngày ở 13 / 15 repo); chỉ grep tên repo từ file untracked của User, không đọc nội dung.
 
 # STATUS C — MỞ PHIÊN MỚI (13:51 01/11/2026 `date`)
