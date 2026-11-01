@@ -145,7 +145,13 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
     Dừng + báo A khi: T1 lệch; một khác biệt §4.8 buộc phải đổi; cần đổi spec. Xong ⇒ "chờ review", nhắn A (C review, W32 ca dò khác cách).
 - **B — kiểm phần đổi spec sau Q1 (GIAO 01/11, bản 5 `0b2679cfccd6`):** căn cứ: `git diff` (hoặc `diff`) spec bản mới ↔ `cf1ae9ef6c2c` + câu trả lời Q1 User (A ghi vào mục Streaming); chỉ kiểm chỗ `TBD` §2 + §6 C1 và mọi
   chỗ nhắc tới nó; không đổi chỗ khác; không chạy Codex. Đầu ra: mục "Vòng 3" cuối `report_agent/2026-10-31_streaming_spec/b105_review.md` + sha bản kiểm. 0 USD.
-- **C — C103 kế hoạch lượt đo cuối Phase 1–8 (GIAO 11:12 01/11/2026):** 0 USD, chỉ tài liệu. Nháp `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` — kế hoạch có **tiêu chí ghi trước**
+- **Báo cáo so sánh (1b) ĐÃ GHÉP 11:29 01/11/2026:** `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` bản 3 (từ nháp C `f1722077fc48` + 3 sửa nhỏ của A); review R1 / R2 vòng 2 ready (`data/so_sanh_phuong_an/review_r*.md`). Phần streaming + đo cuối thêm khi làm.
+- **C — C105 bảng giới hạn đã biết bản 4 + nháp `LUONG` §5 (GIAO 11:27 01/11/2026):** 0 USD, chỉ tài liệu. (1) Cập nhật `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (bản 3 `8211d5d6eb7f`, C viết) theo
+  hiện trạng 01/11: kho sau đợt 2, Qwen3-8B, streaming spec §10 giới hạn (S1–S2 đã làm), nhiều lượt dời Phase 9, tốc độ qua API (p95 6,0 s chưa đạt), Golden 127 giữ nguyên, `cost_usd` (B108 đang sửa) —
+  dòng không còn đúng thì sửa / xoá; mỗi dòng có nguồn `file:dòng`. (2) Nháp mục "Giới hạn đã biết" cho `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` §5 (lời thường cho User, mức loại câu, mức nặng
+  M1–M5 / PCN / ĐO / VH giải nghĩa) vào `data/dong_goi_2026-10-30/luong_muc5_de_xuat.md` — **không sửa `LUONG`** (A ghép). Đối chiếu bản public báo cáo so sánh (§6 "Giới hạn chung") để không mâu thuẫn.
+  Xong ⇒ báo A sha; review: agent con ngữ cảnh mới (A giao).
+- **C — C103 kế hoạch lượt đo cuối Phase 1–8 (bản 2 `ba70843a4652`, B review; GIAO 11:12 01/11/2026):** 0 USD, chỉ tài liệu. Nháp `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` — kế hoạch có **tiêu chí ghi trước**
   (`WORKFLOW.md` §9.1: đầu file "Căn cứ để review" 2–4 file). Nội dung (theo `CURRENT_HANDOFF.md` mục 4 "Đóng gói" + `Project_Status.md` §1 mục tiêu / thứ tự lỗi / yêu cầu phi chức năng): đo gì
   (Golden 176 + an toàn 32 + 15 câu theo ngày + tốc độ trên trình duyệt + **bộ kín mới** + kết quả B0), **cùng một commit** (sau khi streaming + nhiều lượt vào `main`), thước + sàn + mức tụt cho phép mỗi bộ,
   cỡ mẫu, ước tiền / giờ (từ log thật), thứ tự chạy (W31: không việc nặng song song lúc đo tốc độ), **bộ kín mới**: ai viết / ai kiểm / ai không được đọc (giữ mù — người đề xuất biến thể, A), mức loại câu, so SHA256
@@ -179,6 +185,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
 
 - **Phiên 01/11 (User chọn "như 31/10", A ghi nhận 10:28 01/11/2026):** A tự điều phối B / C + tự thử trong luật; paid ≤ 1 USD cả phiên (A, B, C); B / C push nhánh riêng khi việc ghi rõ;
   commit `main`: A hỏi User trước. User nói ở terminal B (10:19): việc A giao B = "làm đi". **Hết hạn cuối phiên 01/11.**
+  **User 11:26 01/11/2026: A tự commit + push không cần hỏi** (phiên 01/11; hết hạn cuối phiên — vẫn stage từng file đã review, hook chạy, không commit dữ liệu private).
   **User 10:30 01/11** (A ghi 10:32 01/11/2026): "tiếp tục điều phối, phát triển, cải thiện, tối ưu, so sánh đánh giá, viết báo cáo"; đóng phiên **~16:20**; hỏi "hôm nay xong Phase 8 được không" — **chỉ hỏi, không yêu cầu làm nhanh rồi bỏ sót**.
 - **Phiên chiều 31/10 — HẾT HẠN (User, A ghi nhận 15:59 31/10/2026):** phiên này **chỉ làm AI FDE** (khung `khung_fde/`, đối chiếu, harness); **chưa làm tiếp dự án**
   (spec streaming Q1 / duyệt sha, code S1… để phiên sau). A được commit + push. Không cấp trần tiền paid (việc AI FDE 0 USD). Hết hạn cuối phiên.
