@@ -1,6 +1,6 @@
 # Implementation Report: lượt đo cuối Phase 1–8 — phần không phải bộ kín (C111, gộp phần B)
 
-Người làm: C (Claude Opus 5.5, terminal `hue-rag-6a`) — §0–§5, §9; B — §6–§7 (`do_cuoi_b_an_toan_ngay.md`) · Date: 13:13 01/11/2026 (`date`)
+Người làm: C (Claude Opus 5.5, terminal `hue-rag-6a`) — §0–§5, §9; B — §6–§7 (`do_cuoi_b_an_toan_ngay.md`) · Date: 13:13 01/11/2026 (`date`); sửa theo review `do_cuoi_review.md` (M-1, M-2, m-1, m-3…m-5) 13:33 01/11/2026
 Plan duyệt `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` **`ae8d42d520d4`**; runbook private `data/do_cuoi_2026-11-01/runbook.md` **`bdd883bb367c`** (B review vòng 2 ready). Bộ kín mới (§8)
 do B chạy (chỉ in số đếm) — §4 gộp tóm tắt từ `do_cuoi_b_bo_kin.md`. Câu tả ở mức loại câu; không chép câu hỏi / câu trả lời / ngữ cảnh. Kết quả chi tiết: private `data/do_cuoi_2026-11-01/`.
 
@@ -11,8 +11,8 @@ Chụp lại chatbot cuối Phase 8 (đã có streaming + tính tiền giá đ�
 
 ## 2. Thay đổi chính
 
-Không đổi code / dữ liệu dùng chung. Một sửa trong harness private **trước mọi lần gọi có phí** (12:53 01/11/2026, A đồng ý): `do_cuoi.py run` chốt "cùng một commit" theo **HEAD** nên dừng ngay khi A commit tài liệu
-(`d50e679`, chỉ docs) ⇒ đổi chốt thành **code** (`backend/`, `frontend/`, `pyproject.toml`, `uv.lock`) phải giống commit đo `89c988e`, khác thì dừng; meta ghi cả HEAD lúc chạy lẫn `commit_do`. Đây là thay đổi
+Không đổi code / dữ liệu dùng chung. Một sửa trong harness private **trước mọi lần gọi có phí của `do_cuoi.py`** (12:53 01/11/2026, A đồng ý; lượt 22 câu B65 bằng `latency_cuoi.py` chạy lúc 12:51, trước sửa, khi HEAD vẫn là `89c988e`): `do_cuoi.py run` chốt "cùng một commit" theo **HEAD** nên dừng ngay khi A commit tài liệu
+(`d50e679`, chỉ docs) ⇒ đổi chốt thành **code** (`backend/`, `frontend/`, `pyproject.toml`, `uv.lock`) phải giống commit đo `89c988e`, khác thì dừng; meta ghi cả HEAD lúc chạy lẫn `commit_do`. Giới hạn của chốt (review m-4): so hai **commit**, không so cây làm việc, không kiểm lại build record / sparse / Qdrant mỗi lượt (meta chỉ ghi sha build record); lúc review `git status` các đường code rỗng, meta 3 lượt Golden ghi HEAD `19801e0` / `commit_do` `89c988e`. Đây là thay đổi
 harness **sau** review vòng 2 của B — người kiểm xem (`tools/do_cuoi.py` `run`).
 
 ## 3. Cách đã chạy thật
@@ -43,9 +43,9 @@ harness **sau** review vòng 2 của B — người kiểm xem (`tools/do_cuoi.p
 | A/A (luật Q2: chỉ dùng khi 4–6 câu tụt) | — | không sát ngưỡng ⇒ không áp; "sau" ↔ A/A: Đủ 0 / 128 / 1, Đúng 1 / 128 / 0 | |
 | **Kết luận** | | **không làm hỏng** | |
 
-Theo dõi: điểm trung bình số chính bên "sau" Đúng **4,713** · Đủ **4,581** · Trúng ý **4,721** (mốc 30/10: 4,705 / 4,566 / 4,721; A/A 4,721 / 4,574 / 4,698). Đủ ý theo loại câu (bên "sau"): một dữ kiện 4,91 ·
+Theo dõi: điểm trung bình số chính bên "sau" Đúng **4,713** · Đủ **4,581** · Trúng ý **4,721** (mốc 30/10: 4,705 / 4,566 / 4,721; A/A 4,721 / 4,574 / 4,698); cả 176 câu bên "sau": 4,688 / 4,585 / 4,693. T1 giống byte ⇒ số tầng tìm (MRR, đoạn đúng v5) = mốc 30/10, không in lại (review m-5). Đủ ý theo loại câu (bên "sau"): một dữ kiện 4,91 ·
 có điều kiện 4,68 · so sánh 4,35 · **nhiều nguồn 3,50** (yếu nhất — User đã để Phase 9). Tiền / câu (giá đủ): sau TB **0,000247** · p95 0,000339 · lớn nhất 0,000436 USD (A/A 0,000248) ⇒ **đạt** trần 0,0005.
-Thời gian sinh trong harness (theo dõi, không HTTP): sau p50 1,76 / p95 3,42 s · A/A 1,89 / 4,06 s · mốc 30/10 2,19 / 4,90 s.
+Thời gian sinh trong harness (theo dõi, không HTTP): sau p50 1,76 / p95 3,42 s · A/A 1,89 / 4,06 s · mốc 30/10 2,19 / 4,90 s. Lưu ý tốc độ (review M-2): một lần đo (01/11); hôm đo model gần như không suy luận trước khi viết (token suy luận trung vị 0 — 28/10: 81; `s4_do_d2_implementation.md` §4) ⇒ có thể nhanh hơn ngày thường; chênh với 27/10 / 30/10 chủ yếu do phía nhà cung cấp, không phải do code (cùng đường tìm, T1 giống byte).
 
 **22 câu B65 qua `/api/chat` (cả câu, không stream — theo dõi)** (`b65/seq.meta.json` `267e2cd3fd43`)
 
@@ -56,15 +56,18 @@ Thời gian sinh trong harness (theo dõi, không HTTP): sau p50 1,76 / p95 3,42
 | Lỗi · dòng `chat_metrics` mới | 0 / 22 · 23 = 22 + 1 khởi động | |
 | Câu ngoài kho từ chối đúng · câu trong kho bị từ chối | 2 / 2 · 2 / 20 | |
 
-**Tốc độ trên trình duyệt (S4, dùng lại — `s4_do_d2_implementation.md`)**: tới chữ trả lời đầu tiên p50 **1.228** / p95 **2.612** ms (n = 38) ⇒ đạt sàn 3 / 5 s **và** mục tiêu báo cáo 1,5 / 3 s.
+Lưu ý tốc độ (review M-2): một lần đo (01/11); hôm đo model gần như không suy luận trước khi viết (token suy luận trung vị 0 — 28/10: 81; `s4_do_d2_implementation.md` §4) ⇒ có thể nhanh hơn ngày thường; chênh với 27/10 / 30/10 chủ yếu do phía nhà cung cấp, không phải do code (cùng đường tìm, T1 giống byte).
+
+**Tốc độ trên trình duyệt (S4, dùng lại — `s4_do_d2_implementation.md`)**: tới chữ trả lời đầu tiên p50 **1.228** / p95 **2.612** ms (n = 38) ⇒ đạt sàn 3 / 5 s **rộng**; mục tiêu báo cáo 1,5 / 3 s đạt **sát** (dư 0,27 / 0,39 s). Một lần đo, cùng lưu ý suy luận ≈ 0 ở trên.
 
 **Bộ an toàn 32 + câu theo ngày (B — `do_cuoi_b_an_toan_ngay.md` §4):** A1 0 / 4 câu ngoài kho bị trả lời · A2 vế 1 **2** câu sai điều kiện mới (đúng ngưỡng ≤ 2; cả hai là 2 câu từng dao động ở A/A 29/10, sinh lại
-3 lần: bản mới và bản mốc `751b352` đều sai 1 / 3 ⇒ dao động ngang mốc) · A2 vế 2 **0** đảo cảnh báo (cả hai loại "nói sai về nguồn") · câu theo ngày: **0** câu đoán ngày rồi nói sai / 12, từ chối nhầm 5 câu
+3 lần: bản mới và bản mốc `751b352` đều sai 1 / 3 ⇒ không thấy kém đi so với mốc — 3 lần mỗi bên chỉ phát hiện được khác biệt lớn) · A2 vế 2 **0** đảo cảnh báo (cả hai loại "nói sai về nguồn") · câu theo ngày: **0** câu đoán ngày rồi nói sai / 12, từ chối nhầm 5 câu
 trong kho (mốc 6 / 14). Cổng judge đạt (10 / 10, 0 / 5, tách lô 0; phiếu kiểm 6 / 6).
 
 **Bộ kín mới §8 (B — `do_cuoi_b_bo_kin.md` §4; gộp 13:21 01/11/2026, C chỉ đọc số đếm, không mở `kin/`):** 40 câu chưa ai thiết kế hệ thống thấy (34 trong kho + 6 ngoài kho), một lượt: sàn **đạt** —
-0 / 6 câu ngoài kho bị trả lời, 0 / 40 lỗi kỹ thuật, 0 / 30 sai điều kiện, 0 bịa thêm (cổng judge 10 / 10 · 0 / 5). Điểm TB thấp hơn Golden số chính: Đủ **4,18** [3,74; 4,59] ↔ 4,58, Đúng 4,38 ↔ 4,71;
-từ chối nhầm **4 / 34** ↔ 12 / 158 — cả 4 ở loại nhiều nguồn / so sánh; chỉ câu được trả lời Đủ 4,60 ≈ Golden ⇒ số dev **hơi lạc quan**, CI chạm số Golden (chưa rõ về thống kê).
+0 / 6 câu ngoài kho bị trả lời, 0 / 40 lỗi kỹ thuật, 0 / 30 sai điều kiện / đảo cảnh báo (cổng judge 10 / 10 · 0 / 5). Báo (không phải sàn): 0 / 30 bịa thêm. Điểm TB thấp hơn Golden số chính: Đủ **4,18** [3,74; 4,59] ↔ 4,58, Đúng 4,38 ↔ 4,71.
+Khoảng cách đến từ **cả hai** (review M-1): (1) từ chối nhầm **4 / 34** ↔ 12 / 158 — cả 4 ở loại nhiều nguồn / so sánh; (2) câu **được trả lời** cũng kém đủ ý hơn — cùng thước "chỉ câu được trả lời": bộ kín Đủ 4,60 (30 câu) ↔ Golden **4,82** (121 câu, C tính lại từ điểm đã chấm) ⇒ **−0,22**; câu một dữ kiện bộ kín 4,42 (12 câu, 0 từ chối nhầm) ↔ Golden 4,91 ⇒ −0,5.
+⇒ số trên Golden **lạc quan** so với câu chưa ai thấy (không chỉ ở chỗ yếu đã biết); n nhỏ, CI của toàn bộ chạm số Golden, phần "chỉ câu được trả lời" chưa có CI.
 
 **Tiền lượt đo cuối (giá đủ, `tools/tien_cuoi.py`)**: Golden sau 0,0434 + A/A 0,0436 · B65 0,0070 · an toàn 0,0095 + sinh lại 0,0021 + mốc 0,0022 · ngày 0,0043 ⇒ **0,1122 USD**; + S4 đã tiêu 0,0158 ⇒
 **0,1280**; + bộ kín §8 0,0112 (B) ⇒ **0,1392 / trần 0,20** USD. Judge / sub-agent: quota Claude.
@@ -87,4 +90,4 @@ từ chối nhầm **4 / 34** ↔ 12 / 158 — cả 4 ở loại nhiều nguồn
 
 **Giải thích ngắn:** mình chạy lại toàn bộ bộ câu chuẩn trên chatbot cuối Phase 8 (đã có hiện chữ dần và tính tiền đúng giá) rồi cho người chấm mù chấm cùng lúc với kết quả ngày 30/10 và một lượt chạy lặp cùng
 ngày. Không có câu ngoài kho nào bị trả lời, không lỗi, không câu nào "nói chắc sai" mới; chỉ 2 / 129 câu bị chấm kém đi, trong mức cho phép ⇒ không làm hỏng. Hỏi qua web: chữ đầu hiện sau ~1,2 s (95 % câu dưới
-2,6 s); cả câu qua API trung vị 2,3 s; mỗi câu ~0,00025 USD (~6 đồng). Câu cần ghép nhiều nguồn vẫn yếu nhất — để Phase 9.
+2,6 s); cả câu qua API trung vị 2,3 s — một lần đo, hôm đó model gần như không "suy nghĩ" trước khi viết nên có thể nhanh hơn ngày thường; mỗi câu ~0,00025 USD (~6 đồng). Câu cần ghép nhiều nguồn vẫn yếu nhất — để Phase 9. Trên 40 câu mới chưa ai thấy: an toàn vẫn đạt, nhưng điểm thấp hơn bộ cũ (cả vì từ chối nhầm lẫn vì câu trả lời kém đủ ý hơn) ⇒ số trên bộ cũ hơi lạc quan.
