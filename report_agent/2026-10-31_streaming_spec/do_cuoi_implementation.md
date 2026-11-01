@@ -66,7 +66,7 @@ trong kho (mốc 6 / 14). Cổng judge đạt (10 / 10, 0 / 5, tách lô 0; phi�
 
 **Bộ kín mới §8 (B — `do_cuoi_b_bo_kin.md` §4; gộp 13:21 01/11/2026, C chỉ đọc số đếm, không mở `kin/`):** 40 câu chưa ai thiết kế hệ thống thấy (34 trong kho + 6 ngoài kho), một lượt: sàn **đạt** —
 0 / 6 câu ngoài kho bị trả lời, 0 / 40 lỗi kỹ thuật, 0 / 30 sai điều kiện / đảo cảnh báo (cổng judge 10 / 10 · 0 / 5). Báo (không phải sàn): 0 / 30 bịa thêm. Điểm TB thấp hơn Golden số chính: Đủ **4,18** [3,74; 4,59] ↔ 4,58, Đúng 4,38 ↔ 4,71.
-Khoảng cách đến từ **cả hai** (review M-1): (1) từ chối nhầm **4 / 34** ↔ 12 / 158 — cả 4 ở loại nhiều nguồn / so sánh; (2) câu **được trả lời** cũng kém đủ ý hơn — cùng thước "chỉ câu được trả lời": bộ kín Đủ 4,60 (30 câu) ↔ Golden **4,82** (121 câu, C tính lại từ điểm đã chấm) ⇒ **−0,22**; câu một dữ kiện bộ kín 4,42 (12 câu, 0 từ chối nhầm) ↔ Golden 4,91 ⇒ −0,5.
+Khoảng cách đến từ **cả hai** (review M-1): (1) từ chối nhầm **4 / 34** ↔ 12 / 158 — cả 4 ở loại nhiều nguồn / so sánh; (2) câu **được trả lời** cũng kém đủ ý hơn — cùng thước "chỉ câu được trả lời": bộ kín Đủ 4,60 (30 câu) ↔ Golden **4,82** (121 câu, C tính lại từ điểm đã chấm) ⇒ **−0,22**; câu một dữ kiện bộ kín 4,42 (12 câu, 0 từ chối nhầm) ↔ Golden 4,91 cả câu / **4,97** chỉ câu được trả lời ⇒ −0,5 / −0,55 (số của B, `do_cuoi_b_bo_kin.md`).
 ⇒ số trên Golden **lạc quan** so với câu chưa ai thấy (không chỉ ở chỗ yếu đã biết); n nhỏ, CI của toàn bộ chạm số Golden, phần "chỉ câu được trả lời" chưa có CI.
 
 **Tiền lượt đo cuối (giá đủ, `tools/tien_cuoi.py`)**: Golden sau 0,0434 + A/A 0,0436 · B65 0,0070 · an toàn 0,0095 + sinh lại 0,0021 + mốc 0,0022 · ngày 0,0043 ⇒ **0,1122 USD**; + S4 đã tiêu 0,0158 ⇒

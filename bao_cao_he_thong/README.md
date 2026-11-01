@@ -7,7 +7,7 @@
 
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 12:51 01/11/2026 (bản 16: streaming chạy; việc kế = đo cuối) · 11:33 01/11/2026 (bản 15: giới hạn đã biết theo mức nặng; streaming đang code; nhiều lượt ⇒ Phase 9) · 17:10 31/10/2026 (bản 14: rà lại cả file — số hiện hành 204 file / 8.424 đoạn, 12 / 158 từ chối nhầm, 2,19 / 4,90 s, ≈ 0,00025 USD / câu; khối "đã thử, không đưa vào"; bật Docker Desktop) |
+| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 12:51 01/11/2026 (bản 17: streaming chạy; lượt đo cuối xong — mọi sàn đạt) · 11:33 01/11/2026 (bản 15: giới hạn đã biết theo mức nặng; streaming đang code; nhiều lượt ⇒ Phase 9) · 17:10 31/10/2026 (bản 14: rà lại cả file — số hiện hành 204 file / 8.424 đoạn, 12 / 158 từ chối nhầm, 2,19 / 4,90 s, ≈ 0,00025 USD / câu; khối "đã thử, không đưa vào"; bật Docker Desktop) |
 | **So sánh mọi phương án đã thử / chọn / bỏ** (Phase 0 → 8.2, sửa kho, Qwen3-8B) — theo khâu + theo Phase | [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md) | 11:29 01/11/2026 (bản 3: mới; 62 khối, có số đo + nhãn độ tin; 2 lượt kiểm độc lập đạt; phần streaming / đo cuối thêm sau) |
 | Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho 1–2) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 12:03 01/11/2026 (đo lại theo loại câu) · 11:34 01/11/2026 (câu Golden lệch: điểm không lệch, giữ nguyên) · 17:12 31/10/2026 (bản 6: rà lại — thước đang dùng gold v5, Golden, bộ an toàn 32 câu, bộ 15 câu theo ngày; thước streaming chưa code) |
 | Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 17:12 31/10/2026 (bản 5: rà lại — 11 gói Python, mốc test 197 đạt 26/10, số dòng code đúng lại) |
@@ -34,7 +34,7 @@
 | Phase 8.2 (áp dụng phương án thắng) | **Đã xử lý, đóng gói** (bạn đóng 10:23 28/10): **10 đoạn + NFC** vào chatbot (`510e1a8`); phép kiểm cuối 36 câu kín: đủ ý +0,82, đúng +0,70, 0 câu kém đi, câu ngoài kho vẫn từ chối 3 / 3; **chưa có mốc người** (bạn đọc cặp mù sau); tốc độ chưa đạt mức bạn chốt |
 | Rà code các Phase trước | **Đã xử lý, đóng gói** — 5 gói sửa xong 26/10 (1a, 1b, 3, 4 ngày 25/10; đợt 3 = gói 2 + 5 ngày 26/10); mỗi gói review chéo + cổng ổn định; code backend 8.345 → 6.218 dòng |
 | Câu hỏi theo ngày tương đối ("tối nay", "tuần này") | Xử lý một phần — an toàn (0 câu đoán ngày sai, đo 30/10); 6 / 14 câu bị từ chối nhầm ⇒ **để Phase 9** (bạn quyết 14:44 30/10) |
-| Hiện chữ dần (streaming) | Chưa thực hiện — đang thiết kế: spec bản 4 review đạt, bạn chốt D1–D3 (31/10); còn câu Q1 + bạn duyệt bản ⇒ mới code |
+| Hiện chữ dần (streaming) | **Đã xử lý, đóng gói** 01/11 (merge `a80e12d`) — chữ đầu trên trình duyệt 1,23 / 2,61 s; giao diện JS thuần sẽ làm lại sau Phase 8 |
 | Phase 9 | Chưa thực hiện — **mở bằng nghiên cứu rộng** (đề tài, dự án, paper, ứng dụng thật), bạn chốt 31/10; Phase 1–8 = "RAG mức 1" |
 | Cách làm việc của các agent (luật, skill, hook) | 31/10 chiều áp khung AI FDE: hook giờ ước, xét lại luật đang thử (40 ⇒ 7), skill D + 2 skill agent — xem nhật ký 31/10 chiều |
 | Câu hỏi gõ không dấu | Chưa thực hiện — **ngoài phạm vi** (bạn quyết 15:15 25/10: người dùng gõ có dấu). Đã đo: tìm kiếm gần như hỏng (13/32 → 1/32 câu) |

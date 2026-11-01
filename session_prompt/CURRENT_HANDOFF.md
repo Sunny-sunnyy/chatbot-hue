@@ -18,10 +18,15 @@ chữ đầu trên trình duyệt 1,23 / 2,61 s (một lần đo; hôm đó mode
 1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền 01/11 hết hạn — gồm "A tự commit / push không hỏi"); kiểm Qdrant.
 2. **B0** (chỉ User làm được, ~30–45 phút): User đọc 20 cặp mù `data/phase_8_2/b0/nhan_xet_user.md` (không mở `khoa.json` / `mau.json`). Xong ⇒ A đối chiếu `khoa.json` (chỉ A), áp luật dừng spec 8.2 §3.4
    (≥ 5 cặp quyết; User ngược judge nhiều hơn cùng chiều ⇒ A trình giữ 10 đoạn / về 5); ghi vào `BAO_CAO_DANH_GIA.md` + báo cáo so sánh (khối context 10). Giới hạn: câu trả lời trên kho cũ, 1 câu nhiều nguồn.
-3. **Đóng Phase 8 (User):** A trình tóm tắt (số cuối, giới hạn, B0) ⇒ User đóng ⇒ `Project_Status.md` bảng Phase (8 / "đóng gói 1–8" ⇒ approved), `PROJECT_HISTORY.md` một mục trỏ TONG_HOP, guide Phase 8 "Hiện hành".
+3. **Đóng Phase 8 (User):** A trình tóm tắt (số cuối, giới hạn, B0) ⇒ User đóng ⇒ `Project_Status.md` bảng Phase (**thêm** dòng "8 — đóng gói Phase 1–8" ⇒ approved; bảng hiện chỉ có 8.1, 8.2, 9), `PROJECT_HISTORY.md` một mục trỏ TONG_HOP, guide Phase 8 "Hiện hành".
 4. **Sau Phase 8:** (a) **giao diện mới** — đọc `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md` (17 yêu cầu phải giữ); A sơ bộ nghiêng React + Vite build tĩnh, FastAPI phục vụ — chưa nghiên cứu,
    chưa chốt; **cân mức công** (User 01/11 nhắc over-engineer — S64): giao diện là đồ án, làm một lần, review cả nhánh một lần. (b) **Phase 9 — nghiên cứu rộng trước** (User 31/10), gồm **hội thoại nhiều lượt / nhớ
    lịch sử** (nháp tư liệu `docs/superpowers/specs/2026-11-01-multi-turn-design.md`) và **câu cần nhiều nguồn** (Q3a: Đủ 3,50; agent tách câu con) — `agent-design-review` + `agent-security-review` đầy đủ.
+
+**Mã hay gặp:** T1 = kết quả tìm 158 câu (so "giống byte"); B0 = User đọc cặp câu trả lời mù làm mốc người; PA1 / PA3 = chữ hiện dần ↔ chỉ hiện tiến độ; D1–D5 / Q1 = câu quyết định
+streaming (D5: xem lại PA3 nếu lợi < 0,5 s); Q3a = đo lại theo loại câu (01/11); F1–F4 / T1–T3 (plan đo) = sàn ngoài kho / bịa / lỗi kỹ thuật / lỗi trích dẫn và mức tụt Đủ / Đúng / từ chối nhầm; A1 / A2 = sàn bộ an toàn
+(ngoài kho bị trả lời / nói sai điều kiện mới); `delta_matches_final` = cờ log "chữ ghép từ luồng = chữ cuối"; S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.md`; CA / R = rủi ro trong
+rà bảo mật C106; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc A giao B / C.
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 

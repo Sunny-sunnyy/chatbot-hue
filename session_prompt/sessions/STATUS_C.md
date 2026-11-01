@@ -18,9 +18,14 @@ Terminal `hue-rag-6a` · A = `hue-rag-27` · B = `hue-rag-da` (trực tiếp). U
 | C110 | yêu cầu cho giao diện mới | `c11d0a66ea32` (38 dòng) |
 | C111 | **chạy** lượt đo cuối (§0–§5; B §6–§8) | Golden **không làm hỏng**; report `do_cuoi_implementation.md` `ac361fba4eea` (gộp B §6–§8) |
 | C112 | nháp phần thêm cho 2 báo cáo User | `them_01_11.md` `f27bcad1d79c`, `danh_gia_them_01_11.md` `339c7e22ea23` (đã điền bộ kín) |
+| C113 | sửa theo review một lần `do_cuoi_review.md` (M-1 khoảng cách bộ kín không chỉ do từ chối nhầm; M-2 lưu ý tốc độ một lần đo / suy luận ≈ 0; m-1, m-3…m-5) — 13:34 01/11/2026 | report `2ccf5f7be5f5`, `them_01_11.md` `8eb394f44543`, `danh_gia_them_01_11.md` `0aed6fa52416` |
 
 **Tiền paid của C phiên 01/11 (giá đủ):** §4 B65 0,0070 + Golden sau 0,0434 + A/A 0,0436 + review S3 ≈ 0,0005 ⇒ **≈ 0,0945 USD**. Cả lượt đo cuối (C + B + S4): **0,139 / 0,20 USD**.
 Sub-agent dùng quota Claude: C101 (6), C112 0, C111 judge Golden (6).
+
+## Việc đang làm — C114 ghép 2 nháp vào báo cáo User (A giao 13:35 01/11/2026; A duyệt diff + commit)
+- **File sẽ ghi (khai báo):** `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md`, `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`; và file này. Chờ B sửa `do_cuoi_b_bo_kin.md` trước.
+- **Xong 13:42 01/11/2026, chưa commit (A duyệt):** SO_SANH `12e918ddffd6`, DANH_GIA `51e6ba68c0d8`; overlap_scan 0 trùng cả hai; `git diff --check` sạch. Nháp private chỉnh theo B `5713a4ef8190` (một dữ kiện ↔ 4,97; Đúng câu được trả lời 4,83 ↔ 4,96; trộn ≈ 4,20).
 
 ## Bẫy gặp phiên 01/11 (đầu vào vòng cải tiến)
 

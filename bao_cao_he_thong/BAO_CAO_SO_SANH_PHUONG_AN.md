@@ -1,10 +1,10 @@
-# Báo cáo so sánh phương án — phần đã đóng (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng, câu theo ngày)
+# Báo cáo so sánh phương án — phần đã đóng (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng, câu theo ngày, đóng gói Phase 1–8)
 
-**Cập nhật lần cuối: 11:29 01/11/2026 — bản 3: A ghép vào `bao_cao_he_thong/` sau 2 lượt review độc lập vòng 2 đều đạt; sửa 3 chỗ nhỏ còn lại.** Bản 2: 11:23 01/11/2026 (sửa theo review vòng 1). Bản 1: 11:02 01/11/2026.
-Người viết: agent con (việc gom so sánh phương án, 01/11/2026); review: 2 agent con ngữ cảnh mới (dòng 1–626 và 627 – hết), vòng 1 cả hai changes_requested ⇒ sửa ở bản 2 ⇒ vòng 2 cả hai **đạt** (01/11). Phần mới (streaming, lượt đo cuối) sẽ thêm khi làm xong.
+**Cập nhật lần cuối: 13:41 01/11/2026 — bản 4: thêm phần đóng gói Phase 1–8 (S18 streaming, S19 lõi chung, S20 giá đủ, T3-10 đo lại theo loại câu, E13 lượt đo cuối; dòng #63–#67; Phần B; §5; §6).** Bản 3: 11:29 01/11/2026 — A ghép vào `bao_cao_he_thong/` sau 2 lượt review độc lập vòng 2 đều đạt; sửa 3 chỗ nhỏ còn lại.** Bản 2: 11:23 01/11/2026 (sửa theo review vòng 1). Bản 1: 11:02 01/11/2026.
+Người viết: agent con (việc gom so sánh phương án, 01/11/2026); review: 2 agent con ngữ cảnh mới (dòng 1–626 và 627 – hết), vòng 1 cả hai changes_requested ⇒ sửa ở bản 2 ⇒ vòng 2 cả hai **đạt** (01/11). Bản 4 (đóng gói): C viết nháp 5 khối từ các report gốc (R31), số bộ kín đối chiếu bản B đã sửa theo review; A duyệt.
 Nguồn: 68 thẻ so sánh gom theo khâu. Đã đối chiếu với file gốc: 15 số khi gom + 100 khẳng định ở hai lượt review (số lệch đã sửa); các số còn lại chưa kiểm lại.
-Phạm vi: mọi so sánh **đã đóng** từ Phase 0 tới hết Phase 8.2, hai đợt sửa kho, thử Qwen3-8B, thước lỗi nặng, đo câu theo ngày tương đối.
-**Chưa làm** (không có trong báo cáo này): hiện chữ dần (streaming); Phase 9. Hội thoại nhiều lượt **dời sang Phase 9** (User 11:20 01/11/2026 — nghiên cứu cùng phần trợ lý / agent).
+Phạm vi: mọi so sánh **đã đóng** từ Phase 0 tới hết Phase 8.2, hai đợt sửa kho, thử Qwen3-8B, thước lỗi nặng, đo câu theo ngày tương đối, đóng gói Phase 1–8 (streaming, giá đủ, lượt đo cuối).
+**Chưa làm** (không có trong báo cáo này): Phase 9. Hội thoại nhiều lượt **dời sang Phase 9** (User 11:20 01/11/2026 — nghiên cứu cùng phần trợ lý / agent).
 
 ---
 
@@ -70,18 +70,21 @@ Tìm        dense_bm25_rrf: pool 30 đoạn vector, BM25 chấm lại, trộn RR
 Sinh       gpt-6-luna; đưa 10 đoạn (từ 28/10), ngân sách 16.384 token; mức suy luận
            mặc định (không gửi); thiếu một vế ⇒ từ chối cả câu;
            bộ kiểm trích dẫn nhận [n] và [Nguồn n], lỗi ⇒ 500                        [S1, S2, S4, S7, S8]
-Số hiện hành
-  từ chối nhầm 12 / 158 câu                                                          [S2: TH82:28]
+API        /api/chat (cả câu) + /api/chat/stream (chữ hiện dần, từ 01/11); một lõi chung  [S18, S19]
+Số hiện hành (lượt đo cuối 01/11, E13; số tìm = mốc 30/10 vì T1 giống byte)
+  từ chối nhầm 12 / 158 câu; điểm TB Đúng / Đủ / Trúng ý 4,71 / 4,58 / 4,72         [E13]
   đoạn đúng (nhãn v5): dev 24 / 40 trong 10 đoạn, 33 / 40 trong 30 ứng viên; test 9 / 15;
   MRR 0,731 / 0,700                                                                  [BTK:15-17]
-  tốc độ — hai thước khác nhau, ghi cả hai:
-    trong harness (176 câu Golden, không HTTP, 30/10): p50 / p95 2,19 / 4,90 s       [R27/sua_kho_dot2_implementation.md:65]
-    qua API thật (22 câu tự viết, kho cũ, 27/10): 10 đoạn p50 / p95 3.068 / 6.039 ms
-      tuần tự; 3.410 / 6.432 ms khi 4 câu đồng thời                                 [R26/b65_latency_dau_cuoi.md:46-49]
-  tiền ≈ 0,00025 USD / câu (giá đủ, gồm ghi đệm)                                     [S14]
+  tốc độ — ba thước khác nhau, ghi cả ba (01/11, một lần đo, suy luận ≈ 0 hôm đo):
+    tới chữ đầu tiên trên trình duyệt (38 câu): p50 / p95 1.228 / 2.612 ms          [S18]
+    cả câu qua API thật (22 câu tự viết, tuần tự): 2.340 / 3.800 ms                 [E13]
+    trong harness (176 câu Golden, không HTTP): 1,76 / 3,42 s                        [E13]
+    (trước: harness 30/10 2,19 / 4,90 s; API 27/10 3.068 / 6.039 ms tuần tự,
+      3.410 / 6.432 ms khi 4 câu đồng thời — S13)
+  tiền ≈ 0,00025 USD / câu (giá đủ, công cụ tính đúng từ 01/11)                     [S14, S20]
 ```
 
-Yêu cầu tốc độ User chốt 28/10: p50 ≤ 3 s, p95 ≤ 5 s cả câu. Thước harness "đạt sát"; thước qua API (22 câu tự viết, kho cũ, 27/10) chưa đạt cả p50 (3,07 s) lẫn p95 (6,0 s). Khi có streaming, sàn sẽ áp cho "tới chữ đầu tiên trên trình duyệt" (User 31/10).
+Yêu cầu tốc độ User chốt 28/10: p50 ≤ 3 s, p95 ≤ 5 s. Trước streaming đo cả câu: thước harness "đạt sát"; thước qua API (22 câu tự viết, kho cũ, 27/10) chưa đạt cả p50 (3,07 s) lẫn p95 (6,0 s). Từ khi có streaming (01/11) sàn áp cho "tới chữ đầu tiên trên trình duyệt" (User 31/10): **đạt** rộng, mục tiêu 1,5 / 3 s đạt sát (S18).
 
 Viết tắt đường dẫn bằng chứng (BKD, BTK, TH82, R26/…): xem Phụ lục A. Mã nội bộ (G1, K3b-m, B65…): Phụ lục B.
 
@@ -155,6 +158,11 @@ Viết tắt đường dẫn bằng chứng (BKD, BTK, TH82, R26/…): xem Phụ
 | 60 | Đánh giá | E9 | Thước bịa thêm / sai điều kiện | Judge tách ý so ngữ cảnh | Thước nhận; H 1 / 145 | `[một lần chạy]` |
 | 61 | Đánh giá | E10 | Sàn bộ 32 câu an toàn | A/A trước + sinh lại 3 lần | Sàn: mới ≤ 2, đảo cảnh báo 0 | `[một lần chạy]` |
 | 62 | Nền tảng | E12 | Rà code: gỡ / giữ công cụ cũ, nội dung kho trong repo | Gỡ phần không dùng; chuyển nội dung kho ra private từ giờ | Code 8.345 ⇒ 6.218 dòng, hành vi giống byte | `[một lần chạy]` |
+| 63 | API / tốc độ | S18 | Streaming: hiện chữ ngay hay chỉ tiến độ | PA1 hiện chữ ngay; giữ sàn 3 / 5 s | Chữ đầu p50 1,23 / p95 2,61 s (một lần đo) — đạt sàn rộng, mục tiêu đạt sát; lợi so đủ câu 0,44 s (chạm luật xem lại, User giữ PA1) | `[một lần chạy]` |
+| 64 | API | S19 | Một lõi trả lời chung cho route + bộ đánh giá | Lõi chung | T1 giống byte; 5 khác biệt giữ nguyên | `[một lần chạy]` |
+| 65 | Tiền | S20 | Giá phẳng hay giá đủ | Giá đủ từ 01/11 | Ví dụ thật +20 %; lượt cuối 0,000247 USD / câu | `[một lần chạy]` |
+| 66 | Tìm kiếm | T3-10 | Lỗi đã biết còn lớn không (kho hiện tại) | Nhiều nguồn ⇒ Phase 9; không thử thêm | Nhiều nguồn Đủ 3,50 (8 câu yếu thiếu bằng chứng); bảng giá không còn lớn | `[một lần chạy]` |
+| 67 | Đánh giá | E13 | Lượt đo cuối Phase 1–8 | (đo, không chọn) | Không làm hỏng: tụt 2 / 2 câu, 0 lỗi nặng mới; an toàn đúng ngưỡng; bộ kín: sàn đạt, điểm thấp hơn 0,3–0,4 (từ chối nhầm ở câu nhiều nguồn / so sánh **và** câu trả lời kém đủ ý hơn) | `[một lần chạy]` `[xác nhận nhóm kiểm]` (sàn) |
 
 ### 2.2. Điều rút ra (chỉ từ các khối dưới)
 
@@ -167,7 +175,8 @@ Viết tắt đường dẫn bằng chứng (BKD, BTK, TH82, R26/…): xem Phụ
 - **Hai đợt sửa kho "không làm hỏng" chatbot nhưng không cho thấy "tốt hơn"** — thước không nhạy với loại sửa này (K5, K6).
 - **Model sinh chưa từng được so có chấm điểm** (chỉ thử khói 5 lần gọi, S1); model vector toàn kho chỉ có một phép so có chấm: Qwen3-8B, kém hơn e5-small (N2-08, N2-09).
 - **Judge Claude ổn định** (nhiễu chỉ chấm 2 / 88 câu) và khớp luna 0,892–0,960, **nhưng chưa có mốc người** — mọi kết luận về câu trả lời là tạm (E1, E3, E7).
-- **Tốc độ:** ≈ 97–98 % thời gian là lúc model viết; thước harness (p95 4,90 s) và thước qua API (p95 6,0 s) cho hai con số khác nhau, cần ghi cả hai (S13); đo trước streaming: hiện chữ ngay rút thời gian tới chữ đầu ≈ 1,9 s (S16, `[một lần chạy]`).
+- **Tốc độ:** ≈ 97–98 % thời gian là lúc model viết; thước harness (p95 4,90 s) và thước qua API (p95 6,0 s) cho hai con số khác nhau, cần ghi cả hai (S13); đo trước streaming: hiện chữ ngay rút thời gian tới chữ đầu ≈ 1,9 s (S16, `[một lần chạy]`); sau khi làm, lợi đo trên trình duyệt (đủ câu − chữ đầu, 38 câu dev ngắn, suy luận ≈ 0) chỉ ≈ 0,44 s — thước khác S16; User vẫn giữ hiện chữ ngay (S18).
+- **Lượt đo cuối Phase 1–8 không làm hỏng** so với mốc 30/10 (E13); nhưng bộ kín mới 40 câu cho điểm thấp hơn Golden 0,3–0,4, cả ở câu được trả lời ⇒ **số Golden lạc quan**; câu cần ghép nhiều nguồn yếu nhất ⇒ Phase 9 (T3-10).
 
 ---
 
@@ -783,6 +792,19 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 - **Bằng chứng:** G4:86-96, :133-156; R82/phase_8_2_k3_plan.md (sha `0a6370204c7d`), phase_8_2_k3_review.md, phase_8_2_k3b_plan.md bản 2 (`57dad7150322`), phase_8_2_k3b_review.md, phase_8_2_k3b_m_answer_plan.md bản 3 (`2a3b22b38ab6`), phase_8_2_k3b_m_answer_review.md; tag `hoso/p82-k3`, `hoso/p82-k3b` (BTK:150-153); commit `a6f609c` (trong tag `hoso/p82-k3b`); TH26:43-56, :79-89; BTK:65, :85-90, :129; BSA:66, :105-106.
 - **Nhãn:** `[kho, cấu hình cũ]` `[một lần chạy]` `[xác nhận nhóm kiểm]` — chỉ cho tầng tìm K3b-m (15 câu, một lượt); tầng trả lời test NOT RUN.
 
+#### T3-10 — Lỗi đã biết trên kho hiện tại: câu nhiều nguồn / so sánh / bảng giá còn lớn không (Q3a)
+- **Vấn đề:** trước lượt đo cuối, có nên "thử thêm có giới hạn" cho 3 lỗi đã biết không (plan đo cuối §4).
+- **Ngày / Phase:** 01/11/2026 (Q3a, User chọn đo lại trước — 0 USD).
+- **Phương án + mốc:** đo lại theo loại câu trên kho hiện tại (bộ "sau" đợt 2, 30/10) ⇒ chọn lỗi đáng thử / để lại.
+- **Cách đo:** tầng tìm (MRR, keyword @10, đoạn đúng v5) + điểm judge đã chấm, theo loại câu; số chính 129 câu (R31/q3a_theo_loai_cau_implementation.md:31-46).
+- **Tiêu chí ghi trước:** lỗi "còn lớn" khi (a) Đủ thấp hơn câu một dữ kiện ≥ 0,3 **và** (b) ≥ 5 câu Đủ ≤ 3 kèm thiếu bằng chứng; bảng giá: keyword lọt top-10 thấp hơn ≥ 15 điểm % hoặc Đủ thấp hơn ≥ 0,3 (R31/q3a_theo_loai_cau_implementation.md:50-54).
+- **Kết quả số:** nhiều nguồn: Đủ **3,50** ↔ 4,92 (một dữ kiện), MRR 0,510, **8** câu Đủ ≤ 3 — cả 8 thiếu bằng chứng ở tầng tìm ⇒ **còn lớn**; so sánh: Đủ 4,35 (−0,57), chỉ 2 câu yếu ⇒ theo luật không phải hướng tìm; bảng giá: 8 câu, keyword lọt 80 % ↔ 90,3 %, Đủ 4,50 ↔ 4,53 ⇒ **không còn lớn** (R31/q3a_theo_loai_cau_implementation.md:33-54). MRR so sánh / nhiều nguồn gần như không đổi so với 24/10 (R31/q3a_theo_loai_cau_implementation.md:39).
+- **Tiền + tốc độ:** 0 USD.
+- **Quyết định + lý do:** User để **câu nhiều nguồn sang Phase 9** (không mở thí nghiệm ở Phase 8); không "thử thêm" nào trước đo cuối (PS:138).
+- **Giới hạn:** 18 câu nhiều nguồn, 20 câu so sánh, 8 câu bảng ⇒ cỡ mẫu nhỏ; đoạn đúng chỉ có cho một phần câu.
+- **Bằng chứng:** R31/q3a_theo_loai_cau_implementation.md.
+- **Nhãn:** `[một lần chạy]`.
+
 ### A6. Sinh câu trả lời, prompt, ngữ cảnh
 
 #### S1 — Chọn model sinh câu trả lời
@@ -999,6 +1021,45 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 - **Bằng chứng:** R27/streaming_ttft_implementation.md; tag `hoso/c70-ttft` `1f70095`.
 - **Nhãn:** `[một lần chạy]`.
 
+#### S18 — Streaming: hiện chữ ngay (PA1) hay chỉ hiện tiến độ rồi cả câu (PA3); sàn tốc độ đo ở đâu
+- **Vấn đề:** chờ cả câu vượt yêu cầu tốc độ ở câu trả lời dài (S13, S16); chọn cách hiện chữ và thước tốc độ cho bản có streaming.
+- **Ngày / Phase:** 31/10 – 01/11/2026 (đóng gói Phase 1–8).
+- **Phương án + mốc:** mốc = chờ đủ câu (route JSON). PA1 = chữ hiện ngay khi model viết + tiến độ thật, kiểm trích dẫn lúc cuối; PA3 = chỉ hiện tiến độ, câu trả lời hiện một lần (nháp v3 private); PA0 / PA2 bỏ ở nháp.
+- **Cách đo:** S4 — trình duyệt thật (Playwright, Chromium), server thật, 38 câu dev có trả lời + 21 câu từ chối; tới chữ trả lời đầu tiên được vẽ (C1), câu từ chối (C2), đủ câu (C3), chữ stream = chữ cuối (C5), tiền (C6) (R31/s4_do_d2_implementation.md:39-49).
+- **Tiêu chí ghi trước:** D2 — sàn p50 ≤ 3 s / p95 ≤ 5 s cho "tới chữ đầu tiên trên trình duyệt" (SPEC:32); Q1 — thêm mục tiêu báo cáo 1,5 / 3 s, không chặn (SPEC:33); D5 — lợi "đủ câu − chữ đầu" < 0,5 s ⇒ A xem lại PA3 (SPEC:36).
+- **Kết quả số:** C1 p50 **1.228** / p95 **2.612** ms (n = 38) ⇒ đạt sàn rộng; mục tiêu đạt **sát** (dư 0,27 / 0,39 s); C2 1.476 / 2.930 ms ⇒ đạt; C3 đủ câu 1.725 / 3.807 ms; lợi "đủ câu − chữ đầu" trung vị **441 ms** [371; 535] ⇒ **chạm luật D5**; C5 0 / 59 lệch; C6 TB 0,000247 USD (R31/s4_do_d2_implementation.md:39-49).
+- **Tiền + tốc độ:** S4 0,015802 USD (64 lần gọi, giá đủ) (R31/s4_do_d2_implementation.md:59).
+- **Quyết định + lý do:** D1 = PA1 (User 31/10 11:26, SPEC:31); sau S4 User **giữ PA1 và giữ sàn 3 / 5 s** (không nâng — dư nhỏ, hôm đo model gần như không suy luận trước khi viết) (BSA:22; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md:7`). D3 = lỗi cuối ⇒ rút lại, lỗi giữa chừng ⇒ xoá + "Thử lại" (SPEC:34).
+- **Giới hạn:** một lần đo trên máy cá nhân `127.0.0.1`, không điện thoại / mạng yếu; n = 38 ⇒ p95 gần câu chậm thứ hai; lợi nhỏ vì câu dev ngắn và suy luận ≈ 0 hôm đo (token suy luận trung vị 0 ↔ 81 ở S16) (R31/s4_do_d2_implementation.md:54-56, :63-65); CI của lợi chứa 500 ms.
+- **Bằng chứng:** SPEC §2, §6; R31/s4_do_d2_implementation.md; merge `a80e12d` (`streaming-final`); review cả nhánh R31/streaming_final_branch_review.md (ready, 0 major).
+- **Nhãn:** `[một lần chạy]`.
+
+#### S19 — Lõi trả lời chung cho route API và bộ đánh giá (streaming S1)
+- **Vấn đề:** route `/api/chat` và hàm của bộ đánh giá (`answer_case`) có hai bản cùng luồng "tìm → ngữ cảnh → sinh → kiểm" (SPEC §3) ⇒ thêm route stream sẽ thành ba bản, dễ lệch nhau.
+- **Ngày / Phase:** 01/11/2026 (S1).
+- **Phương án + mốc:** mốc = hai bản riêng; S1 = một lõi chung (`backend/llm/grounded_answer.py`) mà mỗi nơi gọi tự giữ cách xử lý riêng (5 khác biệt SPEC §4.8: chuẩn hoá `[Nguồn n]`, giữ chữ khi trích dẫn hỏng, mã lỗi, recorder, log id).
+- **Cách đo:** T1 158 câu trước ↔ sau (so byte); test file chạm; cổng ổn định; `answer_case` vài câu nhánh ↔ `main` (R31/s1_loi_chung_implementation.md:27, :41-42).
+- **Tiêu chí ghi trước:** SPEC §5 hàng S1 — T1 **giống byte**, 5 khác biệt còn nguyên, cổng ổn định đạt.
+- **Kết quả số:** T1 giống byte `4d5bbe9e0edc`; 5 khác biệt còn nguyên; review ready 0 major (R31/s1_loi_chung_review.md:3, :49-50).
+- **Tiền + tốc độ:** ≈ 0,0007 USD (cổng ổn định 2 câu) (R31/s1_loi_chung_review.md:49).
+- **Quyết định + lý do:** giữ lõi chung (A, theo spec) — S2 / S3 xây trên đó; đường tìm không đổi nên chất lượng không đổi (T1).
+- **Giới hạn:** "không đổi hành vi" kiểm bằng T1 + test + vài câu; không chạy lại 176 câu có judge riêng cho S1 (lượt đo cuối E13 bao phủ).
+- **Bằng chứng:** R31/s1_loi_chung_implementation.md; R31/s1_loi_chung_review.md; commit `9c83003`.
+- **Nhãn:** `[một lần chạy]`.
+
+#### S20 — Tính tiền / câu: giá phẳng hay giá đủ (ghi đệm, đọc đệm)
+- **Vấn đề:** `cost_usd` tính giá phẳng 0,10 USD / 1M vào, trong khi nhà cung cấp tính ghi đệm 0,125 / đọc đệm 0,01 USD / 1M ⇒ mọi số tiền cũ ghi thiếu (S14).
+- **Ngày / Phase:** 01/11/2026 (B108, đóng gói).
+- **Phương án + mốc:** mốc = giá phẳng; B108 = giá đủ từ token thật (`cache_write_tokens`, `cached_tokens` ghi vào dòng kết quả + `chat_metrics`).
+- **Cách đo:** test giá từng loại token + một lần gọi thật tính tay (R31/b108_cost_usd_implementation.md:24; R31/b108_cost_usd_review.md:25, :34, :39).
+- **Tiêu chí ghi trước:** dòng cũ thiếu trường đệm ⇒ tính đúng như giá phẳng; dòng mới ⇒ khớp tính tay (R31/b108_cost_usd_review.md:34).
+- **Kết quả số:** ví dụ thật 1.916 vào (1.913 ghi đệm) / 85 ra: phẳng 0,0002341 ⇒ đủ **0,000281925** (+20 %) (R31/b108_cost_usd_implementation.md:24); lượt đo cuối: TB **0,000247** USD / câu (E13).
+- **Tiền + tốc độ:** 0 USD (test) + lần gọi thật trong cổng.
+- **Quyết định + lý do:** dùng giá đủ từ 01/11 (A, theo giá User dán 30/10 — PS §5 dòng 2026-10-30 15:07); số USD cũ **không sửa lại**, ghi chú "giá phẳng" (R31/b108_cost_usd_implementation.md:55).
+- **Giới hạn:** chưa đối chiếu hoá đơn thật của nhà cung cấp.
+- **Bằng chứng:** R31/b108_cost_usd_implementation.md; R31/b108_cost_usd_review.md (ready); commit `bbbdbf9` (gộp ở `6a0c842`).
+- **Nhãn:** `[một lần chạy]`.
+
 ### A8. Đánh giá (thước đo, bộ đo) + nền tảng
 
 #### E1 — Người chấm chính: Claude hay `gpt-6-luna`
@@ -1191,6 +1252,24 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 - **Nhãn:** `[một lần chạy]`.
 - **Suy ra:** "chọn như A nghiêng" ở mục công cụ cũ ghép từ `DE_XUAT_SUA_CODE.md:32` (gỡ Representation B, smoke Phase 5, giữ smoke Phase 6 còn 4 câu) với bản đề xuất — nguồn không có một dòng "User chọn (a)…" riêng cho câu hỏi này.
 
+
+#### E13 — Lượt đo cuối Phase 1–8: bản cuối có "làm hỏng" so với mốc 30/10 không
+- **Vấn đề:** sau streaming + giá đủ, chatbot có giữ chất lượng không; số tuyệt đối cuối của "RAG mức 1".
+- **Ngày / Phase:** 01/11/2026 (đóng gói; commit đo `89c988e`, code = `6a0c842`).
+- **Phương án + mốc:** mốc = bộ "sau" đợt 2 sửa kho (30/10, `751b352`); bản cuối "sau"; lượt lặp cùng ngày A/A (User Q2).
+- **Cách đo:** Golden 176 (ba bên trong một lượt chấm mù, 6 judge Claude mới; số chính 129); bộ an toàn 32 (2 judge, thước lỗi nặng); 15 câu theo ngày (2 judge); 22 câu qua `/api/chat`; S4 dùng lại (R31/do_cuoi_implementation.md §3).
+- **Tiêu chí ghi trước:** plan `ae8d42d520d4` §3 — F1–F4 = 0; T1 / T2 tụt ≤ 5 câu và TB ≥ −0,1; T3 ≤ mốc + 1; A1 = 0; A2 P0_sai mới ≤ 2, đảo cảnh báo 0; câu theo ngày 0 "đoán ngày rồi nói sai"; ≤ 0,0005 USD / câu.
+- **Kết quả số:** Golden: F1–F4 = 0; T1 tụt **2**, TB **+0,016** [−0,023; +0,054]; T2 tụt **2**, TB **+0,008** [−0,023; +0,039]; T3 12 = 12; A/A không sát ngưỡng ⇒ **không làm hỏng**. Điểm TB số chính: Đúng 4,713 · Đủ 4,581 · Trúng ý 4,721.
+  An toàn: A1 0 / 4; A2 vế 1 **2** (đúng ngưỡng; sinh lại 3 lần: bản mới và bản mốc đều sai 1 / 3 ⇒ không thấy kém đi so với mốc — 3 lần mỗi bên chỉ phát hiện khác biệt lớn); 0 đảo cảnh báo. Câu theo ngày: 0 / 12 đoán ngày sai; từ chối nhầm 5 câu trong kho (mốc 6 / 14).
+  Qua API (22 câu): p50 2.340 / p95 3.800 ms (mốc 27/10: 3.068 / 6.039) — một lần đo (01/11); hôm đo model gần như không suy luận trước khi viết (token suy luận trung vị 0 — 28/10: 81) ⇒ có thể nhanh hơn ngày thường; chênh với 27/10 / 30/10 chủ yếu do phía nhà cung cấp, không phải do code (cùng đường tìm, T1 giống byte); sàn 3 / 5 s đạt rộng, mục tiêu 1,5 / 3 s đạt sát (dư 0,27 / 0,39 s). Tiền TB **0,000247** USD / câu (R31/do_cuoi_implementation.md §4; R31/do_cuoi_b_an_toan_ngay.md §4).
+- **Tiền + tốc độ:** §4–§7 **0,1122** USD + S4 0,0158 + bộ kín 0,0112 ⇒ **0,139 / trần 0,20** (R31/do_cuoi_b_bo_kin.md §4).
+- **Quyết định + lý do:** không làm hỏng ⇒ dùng số này làm số cuối Phase 1–8.
+- **Giới hạn:** judge Claude, chưa mốc người; "không làm hỏng" chỉ bắt được tụt lan rộng; A2 vế 1 chạm đúng ngưỡng; Golden / an toàn đo đường không stream (dựa C5 của S4); mốc khác ngày (A/A cùng ngày cho nhiễu rất nhỏ).
+  Bộ kín mới (40 câu chưa ai thiết kế hệ thống thấy; 34 trong kho + 6 ngoài kho; một lượt, mở một lần): sàn **đạt** — 0 / 6 câu ngoài kho bị trả lời, 0 / 40 lỗi kỹ thuật, 0 / 30 sai điều kiện / đảo cảnh báo; báo (không phải sàn): 0 bịa thêm;
+  điểm TB **thấp hơn** Golden số chính: Đủ **4,18** [3,74; 4,59] ↔ 4,58 (−0,40), Đúng 4,38 ↔ 4,71. Khoảng cách đến từ **cả hai**: từ chối nhầm **4 / 34** (12 %) ↔ 12 / 158 (8 %) — cả 4 ở loại nhiều nguồn / so sánh; **và** câu được trả lời kém đủ ý hơn — cùng thước "chỉ câu được trả lời": Đủ 4,60 [4,40; 4,80] (30 câu) ↔ Golden **4,82** (121 câu) ⇒ **−0,22**, Đúng 4,83 ↔ 4,96 (−0,13); rõ nhất ở câu một dữ kiện: 4,42 (12 câu, 0 từ chối nhầm, Đúng 5,00) ↔ Golden câu được trả lời 4,97 (≈ −0,55) — trả lời đúng nhưng thiếu ý. Không do thành phần bộ kín: trộn lại theo tỉ lệ loại câu của Golden ⇒ Đủ ≈ 4,20 (R31/do_cuoi_b_bo_kin.md §4; R31/do_cuoi_review.md M-1).
+- **Bằng chứng:** R31/do_cuoi_implementation.md; R31/do_cuoi_b_an_toan_ngay.md; R31/do_cuoi_b_bo_kin.md; plan `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` (`ae8d42d520d4`); kết quả private `data/do_cuoi_2026-11-01/` (private).
+- **Nhãn:** `[một lần chạy]`; sàn an toàn `[xác nhận nhóm kiểm]` (bộ kín mới); chất lượng: bộ kín cho thấy số Golden **lạc quan** (−0,3 đến −0,4 toàn bộ, −0,22 ở câu được trả lời, ≈ −0,55 ở câu một dữ kiện; n nhỏ, CI toàn bộ chạm số Golden).
+
 ---
 
 ## 4. Phần B — theo Phase
@@ -1222,7 +1301,7 @@ Mã khối: K = kho + Golden · N2 = chia đoạn / vector / Qdrant · T3 = tìm
 | Phần tồn: câu theo ngày | 30/10 | 15 câu (12 câu quyết) | S17 = E11 | — | ⇒ Phase 9 |
 | Phần tồn: Qwen3-8B | 30/10 | thử thay e5-small | N2-09 | — | đo trên kho hiện tại, `[xác nhận nhóm kiểm]` |
 | Rà code 5 gói | 25–26/10 | sửa code sau 8.1 | — | E12 | phần lớn là sửa lỗi, không phải so phương án (trừ R1 ở S7) |
-| Streaming | 31/10 → | spec bản 5 User duyệt 01/11 (`74a6082`); đang code 4 bước S1–S4 trên nhánh `s1-loi-chung` (xem `BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 6 cho trạng thái mới nhất) | **chưa làm** | — | ghi khi làm |
+| Đóng gói Phase 1–8 (streaming, giá đủ, đo cuối) | 31/10 – 01/11 | streaming vào chatbot (`a80e12d`); `cost_usd` giá đủ; đo lại theo loại câu; lượt đo cuối | S18 (S4), T3-10 (Q3a), E13 (đo cuối) | S19 (lõi chung — kiểm bằng T1), S20 (giá đủ — kiểm bằng test + tính tay) | `[một lần chạy]`; bộ kín: sàn đạt, số Golden lạc quan (cả câu được trả lời); chưa mốc người |
 | Hội thoại nhiều lượt | dời Phase 9 (User 11:20 01/11) | nháp thiết kế giữ làm tư liệu | **không làm ở Phase 1–8** | — | — |
 | 9 | chưa mở | nghiên cứu rộng trước | **chưa làm** | — | — |
 
@@ -1277,28 +1356,29 @@ Mã khối: K = kho + Golden · N2 = chia đoạn / vector / Qdrant · T3 = tìm
 | E8 | 7B ⇒ 8.2 B3 |
 | E9, E10 | phần tồn 27–30/10 |
 | E12 | rà code 25–26/10 |
+| S18, S19, S20 | đóng gói Phase 1–8 (streaming S1–S4, B108 giá đủ) |
+| T3-10 | đóng gói (Q3a đo lại theo loại câu) |
+| E13 | đóng gói (lượt đo cuối) |
 
 ---
 
 ## 6. Giới hạn chung
 
-- **Gần như chưa có so sánh nào đo lại trên kho hiện tại** (204 file / 8.424 đoạn, nhãn v5, 10 đoạn ngữ cảnh) — chỉ có Qwen3-8B (N2-09) và hai đợt "trước ↔ sau" sửa kho (K5, K6). Mọi kết luận 8.1 và bước 2 của 8.2 là `[kho, cấu hình cũ]`
+- **Gần như chưa có so sánh nào đo lại trên kho hiện tại** (204 file / 8.424 đoạn, nhãn v5, 10 đoạn ngữ cảnh) — chỉ có Qwen3-8B (N2-09), hai đợt "trước ↔ sau" sửa kho (K5, K6), streaming (S18) và lượt đo cuối (E13, đo, không chọn). Mọi kết luận 8.1 và bước 2 của 8.2 là `[kho, cấu hình cũ]`
   (kho 8.459 đoạn, nhãn v1, nhiều phép đo lúc đưa 5 đoạn). Thống kê đoạn (trung vị token, đoạn vụn…) cũng là số kho cũ.
 - **Chưa có mốc người** (E7): mọi kết luận về câu trả lời dựa judge Claude — ổn định với chính nó và khớp luna (E1, E3), nhưng chưa biết có lệch người không. Kể cả lựa chọn 10 đoạn đang chạy.
 - **Bộ đo nhỏ:** 32–40 câu dev có nhãn đoạn đúng, 15 câu test; chỉ 55 / 176 câu có nhãn này. Nhiều "không khác" / "chưa rõ" nghĩa là chưa chứng minh được, không phải đã chứng minh bằng nhau; phần lớn "kém hơn" ở khâu tìm là do sàn "0 câu mất", không phải CI.
-- **Không còn bộ kiểm chưa ai thấy:** nhóm kiểm 56 câu và 36 câu kín đều đã dùng (E4, S15); phép kiểm cuối sau này cần bộ mới. Golden và bộ an toàn do AI viết rồi người duyệt — mức đại diện câu người dùng thật chưa đo (K9, E10).
+- **Không còn bộ kiểm chưa ai thấy:** nhóm kiểm 56 câu, 36 câu kín (E4, S15) và bộ kín mới 40 câu (E13, 01/11) đều đã dùng; bộ mới cho thấy số Golden **lạc quan** (điểm thấp hơn 0,3–0,4, cả ở câu được trả lời) ⇒ lần kiểm tổng quát sau cần bộ mới nữa. Golden và bộ an toàn do AI viết rồi người duyệt — mức đại diện câu người dùng thật chưa đo (K9, E10).
 - **Model sinh chưa từng được so có chấm điểm** (chỉ thử khói 5 lần gọi, S1); model vector toàn kho chỉ có một phép so có chấm (Qwen3-8B, N2-09); reranker MiniLM chỉ có bằng chứng trên bản món ăn (T3-07).
 - **Phase 0–1 và Phase 5 không có phép so phương án đo được** (chỉ dựng khung / code / latency); nhiều lựa chọn Phase 0–7 là "mặc định không lý do", chọn bằng thiết kế (K1, K2, N2-16, S12).
 - **Không phải phép đo nào cũng có tiêu chí ghi trước:** các phép đo hiện trạng (tốc độ qua API B65, số trong câu trả lời C48, luật kiểm sau sinh C51, kiểm sổ tiền B95) không có — báo cáo User từng ghi "mọi thí nghiệm có luật ghi trước" là nói quá (đã sửa 01/11).
-- **Số tiền và tốc độ cần đọc kèm thước:** mọi USD cũ tính theo giá phẳng (thiếu ≈ 20 %, S14); tốc độ có hai thước (harness ↔ qua API) cho p95 khác nhau (S13); p95 harness dao động 4,9 ↔ 9,8 s giữa các lượt cùng code (khác kho; nguồn cho là do mạng / nhà cung cấp).
+- **Số tiền và tốc độ cần đọc kèm thước:** mọi USD trước 01/11 tính theo giá phẳng (thiếu ≈ 20 %, S14; từ 01/11 giá đủ — S20); tốc độ có hai thước (harness ↔ qua API) cho p95 khác nhau (S13); p95 harness dao động 4,9 ↔ 9,8 s giữa các lượt cùng code (khác kho; nguồn cho là do mạng / nhà cung cấp).
 
-**Chưa làm** (không có so sánh nào trong báo cáo này):
-- Hiện chữ dần (streaming): spec bản 5 User duyệt 01/11 (sha `00fb57ee01b2`, commit `74a6082`); đang code 4 bước S1–S4 trên nhánh `s1-loi-chung` (trạng thái mới nhất: `BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 6); thước "tới chữ đầu tiên trên trình duyệt" chưa đo.
+**Chưa làm** (không có so sánh nào trong báo cáo này; streaming và lượt đo cuối đã làm — S18–S20, E13):
 - Hội thoại nhiều lượt: **dời sang Phase 9** (User 11:20 01/11/2026); nháp thiết kế giữ làm tư liệu.
-- Phép đo cuối trên bản hiện tại + bộ câu kín mới (chưa có bộ).
 - Mốc người B0 (đọc cặp mù 5 ↔ 10 đoạn) — dời theo PA3 (E7).
 - Phase 9: chưa mở (mở bằng nghiên cứu rộng trước).
-- Còn mở trong các khối: R3 "nêu đủ chi tiết" (S6, cần thêm câu), chỉ bật bỏ dấu khi câu không dấu (N2-13 = T3-06), dọn ràng buộc 3 tokenizer (N2-05), sửa công thức tiền (S14 — đã sửa trên nhánh streaming 01/11, review đạt, vào `main` cùng streaming). (Câu Golden lệch kho K12: User giữ nguyên 01/11 — đã đóng.)
+- Còn mở trong các khối: R3 "nêu đủ chi tiết" (S6, cần thêm câu), chỉ bật bỏ dấu khi câu không dấu (N2-13 = T3-06), dọn ràng buộc 3 tokenizer (N2-05), câu nhiều nguồn (T3-10 ⇒ Phase 9). (Công thức tiền S14 đã sửa — S20.) (Câu Golden lệch kho K12: User giữ nguyên 01/11 — đã đóng.)
 
 ---
 
@@ -1336,6 +1416,8 @@ Số sau dấu hai chấm là số dòng trong file đó (vd `BKD:54`). Mọi fi
 | TH27 | `R27/TONG_HOP.md` |
 | impl / plan / aa (trong khối N2-09, S16, S17 = E11, E9, E10) | file `…_implementation.md` / `…_plan.md` / `do_loi_nang_aa_implementation.md` cùng tên việc trong `R27/` |
 | THRC | `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md` |
+| R31/ | `report_agent/2026-10-31_streaming_spec/` (streaming, giá đủ, Q3a, lượt đo cuối) |
+| SPEC | `docs/superpowers/specs/2026-10-31-streaming-design.md` (bản 5 `00fb57ee01b2`) |
 | spec 7A | `docs/superpowers/specs/2026-10-23-phase-7a-golden-full-corpus-design.md` |
 | spec 7A2 | `docs/superpowers/specs/2026-10-23-phase-7a2-corpus-correction-reindex-design.md` |
 | spec 7B | `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md` |

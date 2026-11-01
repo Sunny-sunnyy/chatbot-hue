@@ -1,9 +1,9 @@
-# Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2)
+# Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2, lượt đo cuối Phase 1–8)
 
-**Cập nhật lần cuối: 12:03 01/11/2026 — thêm đo lại theo loại câu 01/11 (chỉ câu nhiều nguồn còn lỗi lớn ⇒ Phase 9).** Trước: 11:34 01/11/2026 — câu Golden lệch kho: điểm không lệch, bạn giữ nguyên.** Trước: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 13:39 01/11/2026 — thêm lượt đo cuối Phase 1–8 (01/11: không làm hỏng; bộ kín mới: an toàn đạt, số Golden lạc quan); §1, §3, §5, §6 theo hiện trạng.** Trước: 12:03 01/11/2026 — thêm đo lại theo loại câu 01/11 (chỉ câu nhiều nguồn còn lỗi lớn ⇒ Phase 9). Trước: 11:34 01/11/2026 — câu Golden lệch kho: điểm không lệch, bạn giữ nguyên.** Trước: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-## 1. Tóm tắt (đúng hiện trạng 31/10/2026)
+## 1. Tóm tắt (đúng hiện trạng 01/11/2026)
 
 - **Khâu này làm gì:** chấm chatbot tự động, lặp lại được: mọi thay đổi so với một **điểm mốc** trên cùng bộ câu, theo luật ghi **trước** khi chạy,
   rồi mới quyết giữ hay bỏ.
@@ -23,26 +23,34 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
 - **Thước "đạt" (bạn chốt 28/10):**
   - **Thứ tự lỗi** nặng → nhẹ: sai cảnh báo an toàn / điều kiện vào khu vực > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
   - **Sàn bộ an toàn** (theo nhiễu đo 29/10): câu sai điều kiện **mới** ≤ 2, mỗi câu mới sinh lại 3 lần; **đảo cảnh báo = 0**; 0 câu ngoài kho bị trả lời.
-  - **Tốc độ / tiền:** trung vị ≤ 3 s, p95 ≤ 5 s, ≤ 0,0005 USD / câu. Hôm nay đo cho **cả câu**; khi streaming chạy, sàn thời gian đo tới **chữ trả lời đầu tiên
-    hiện trên trình duyệt** (bạn chốt 31/10).
-- **Số của chatbot đang chạy** (10 đoạn, kho sửa hai đợt, 30/10):
-  - Golden 176: từ chối nhầm **12 / 158**; 0 câu ngoài kho bị trả lời; 0 lỗi trích dẫn; trung vị **2,19 s** / p95 **4,90 s** (đo trong công cụ, chưa tính mạng tới web);
-    **≈ 0,00025 USD / câu** theo giá đủ (công cụ ghi ~0,00021 — thiếu ≈ 20 %, mục 3).
-  - Bộ 32 câu an toàn: **0** câu sai điều kiện, 0 bịa thêm, 0 / 4 câu ngoài kho bị trả lời.
+  - **Tốc độ / tiền:** trung vị ≤ 3 s, p95 ≤ 5 s, ≤ 0,0005 USD / câu. Từ khi có streaming (01/11), sàn thời gian đo tới **chữ trả lời đầu tiên
+    hiện trên trình duyệt** (bạn chốt 31/10); mục tiêu báo cáo 1,5 / 3 s (không chặn).
+- **Số của chatbot đang chạy** (lượt đo cuối Phase 1–8, 01/11 — bản đã có streaming + tính tiền giá đủ; 10 đoạn, kho sửa hai đợt; mục 4):
+  - Golden 176: từ chối nhầm **12 / 158**; 0 câu ngoài kho bị trả lời; 0 lỗi trích dẫn; 0 câu "nói chắc sai" mới. Điểm trung bình (số chính 129 câu)
+    Đúng **4,71** · Đủ **4,58** · Trúng ý **4,72**; yếu nhất là câu cần ghép **nhiều nguồn** (Đủ 3,50 ⇒ Phase 9).
+  - Tốc độ: tới **chữ trả lời đầu tiên** trên trình duyệt p50 **1,23 s** / p95 **2,61 s** (38 câu) ⇒ đạt sàn 3 / 5 s rộng, mục tiêu 1,5 / 3 s đạt sát;
+    cả câu qua API (không stream) p50 2,34 / p95 3,80 s (22 câu tự viết). Một lần đo; hôm đó model gần như không suy luận trước khi viết ⇒ có thể nhanh hơn ngày thường.
+  - Tiền **≈ 0,00025 USD / câu** (~6 đồng) theo giá đủ — công cụ đo tính giá đủ từ 01/11.
+  - Bộ 32 câu an toàn: **0** đảo cảnh báo, 0 / 4 câu ngoài kho bị trả lời; câu sai điều kiện **mới 2** (cả hai "nói sai về nguồn") — **đúng ngưỡng** ≤ 2, và bản
+    chatbot cũ sinh lại cũng sai y như vậy (1 / 3 mỗi bên).
+  - **Bộ kín mới 40 câu (01/11, chưa ai thiết kế hệ thống thấy):** an toàn đạt (0 / 6 câu ngoài kho bị trả lời, 0 sai điều kiện); điểm **thấp hơn Golden**
+    (Đủ 4,18 ↔ 4,58), cả ở câu được trả lời (4,60 ↔ 4,82) ⇒ số trên Golden **lạc quan** so với câu chưa ai thấy.
   - Đoạn đúng: nhóm thử **24 / 40** câu có đủ mọi đoạn đúng trong ngữ cảnh; cả 55 câu **33 / 55**, tỉ lệ ý có trong ngữ cảnh **0,76** (nhãn bản 5).
   - **Câu kín (28/10):** chatbot cuối 8.2 so với đầu 8.2 trên 33 câu trong kho: **Đủ +0,82**, **Đúng +0,70**, 0 câu tụt.
-  - Nhiễu "hai lượt cùng cấu hình" (A/A) ở 10 đoạn, 176 câu: Đủ tụt 1 câu, Đúng tụt 2 câu — nhiễu nền cho luật "không làm hỏng".
-  - Điểm Đúng / Đủ / Trúng ý trung bình tuyệt đối chỉ có ở mốc 7B (5 đoạn, 24/10): **4,43 / 4,28 / 4,45**; các lượt sau báo chênh theo cặp.
+  - Nhiễu "hai lượt cùng cấu hình" (A/A) ở 10 đoạn, 176 câu: Đủ tụt 1 câu, Đúng tụt 2 câu (01/11: 1 câu đổi mỗi thước) — nhiễu nền cho luật "không làm hỏng".
+  - Mốc 7B (5 đoạn, 24/10) để so lịch sử: Đúng / Đủ / Trúng ý **4,43 / 4,28 / 4,45** (đáp án Golden đã sửa sau đó ⇒ không so trực tiếp).
 - **Giới hạn chính:**
   - **1 câu Golden** có keyword khác kho chỉ ở chữ hoa / thường (phát hiện 31/10) — lệnh kiểm báo lỗi, nhưng phép chấm không phân biệt hoa / thường nên **điểm không lệch**; bạn chọn giữ nguyên (01/11);
   - **chưa có mốc người** — bạn đọc 20 cặp câu trả lời mù để sau (trước buổi bảo vệ); mọi kết luận dựa điểm Claude là tạm;
   - chỉ 40 câu thử / 15 câu kiểm có nhãn đoạn đúng ⇒ nhiều kết quả tầng tìm chỉ "chưa rõ";
-  - nhóm kiểm 56 câu và 36 câu kín **đều đã dùng** ⇒ phép kiểm cuối sau cần bộ câu mới chưa ai nhìn;
+  - nhóm kiểm 56 câu, 36 câu kín (28/10) và **bộ kín mới 40 câu (01/11)** đều **đã dùng** — bộ mới cho sàn an toàn đạt nhưng điểm thấp hơn Golden 0,3–0,4,
+    cả ở câu được trả lời ⇒ số Golden lạc quan ⇒ lần kiểm tổng quát sau cần bộ mới;
   - đáp án mẫu không nhạy với sửa kho kiểu "thêm tên mới / bỏ chi tiết không chắc" ⇒ hai đợt sửa kho không làm điểm tăng dù kho đúng hơn;
   - thước lỗi nặng và bộ an toàn do agent viết + Claude chấm, chưa có người đọc; bộ an toàn chỉ 28 câu trong kho ⇒ 0 lỗi vẫn chỉ nói được tỉ lệ sai điều kiện dưới ~12 %.
-- **Chi phí đã tiêu cho đánh giá** (theo giá phẳng, thực tế cao hơn ≈ 20 %): 7B ~0,087 USD; 8.1 ~0,165; 8.2 ≈ 0,227 / trần 0,5; sửa kho đợt 1 ≈ 0,073, đợt 2 ≈ 0,047.
+- **Chi phí đã tiêu cho đánh giá** (trước 01/11 theo giá phẳng, thực tế cao hơn ≈ 20 %): 7B ~0,087 USD; 8.1 ~0,165; 8.2 ≈ 0,227 / trần 0,5; sửa kho đợt 1 ≈ 0,073, đợt 2 ≈ 0,047;
+  lượt đo cuối 01/11 (giá đủ) **0,139 / trần 0,20**.
   Chấm bằng Claude dùng quota Claude Code (không USD).
-- **Bạn cần quyết:** không có việc gấp. Khi tiện: đọc cặp mù (~30–45 phút) làm mốc người đầu tiên.
+- **Bạn cần quyết:** không có việc gấp. Trước khi đóng Phase 8: đọc cặp mù (~30–45 phút) làm mốc người đầu tiên.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -62,8 +70,8 @@ Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng 
 - **Nhãn đoạn đúng:** một ý "có trong ngữ cảnh" khi **một** trích dẫn bất kỳ của ý trúng đoạn (giao vị trí, hoặc nhãn là dòng tiêu đề nằm trong đường tiêu đề
   của đoạn); câu "đủ đoạn đúng" khi **mọi** ý đều có. Kho đổi ⇒ dựng lại vị trí nhãn (bản mới), bạn duyệt trích dẫn đổi chữ; bản cũ giữ để tái lập số cũ.
 - Code:
-  - bộ chấm `backend/evaluation/full_corpus_eval.py` (lệnh `retrieval` / `generate` / `export-judge-input` / `compare` / `split` `:802–843`; `answer_case` :322,
-    `is_refusal` :162, `cost_usd` :167, `bootstrap_mean_diff` :590, `paired_stats` :634, 10.000 vòng :55);
+  - bộ chấm `backend/evaluation/full_corpus_eval.py` (lệnh `retrieval` / `generate` / `export-judge-input` / `compare` / `split` `:816–870`; `answer_case` :330,
+    `is_refusal` :164, `cost_usd` :169 + `row_cost_usd` :176 (giá đủ), `bootstrap_mean_diff` :604, `paired_stats` :648, 10.000 vòng :57);
   - prompt chấm `backend/evaluation/full_corpus_judge_prompt.md`;
   - nhãn: `backend/experiments/phase_8_1/g1_retrieval.py` (`GOLD_PATH` :48 = bản 5, `quote_is_chunk_heading` :77, `chunk_hits_quote` :83, `gold_coverage` :94);
     test `backend/tests/test_gold_coverage.py`;
@@ -75,13 +83,13 @@ Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng 
 |---|---|---|
 | Chấm tìm đoạn bằng từ khóa (MRR, nDCG, Keyword Coverage @10) | **Đã xử lý, đóng gói** | mốc 7B; `full_corpus_eval.py` lệnh `retrieval` |
 | Chấm câu trả lời bằng Claude (Đúng / Đủ / Trúng ý), mù, cùng lượt | **Đã xử lý, đóng gói** | nhiễu riêng người chấm: Đủ đổi 2 / 88 câu |
-| Từ chối đúng / từ chối nhầm, lỗi trích dẫn | **Đã xử lý, đóng gói** | `is_refusal` `full_corpus_eval.py:162`; lỗi trích dẫn đếm theo bộ kiểm hiện tại (từ 25/10) |
-| So theo cặp + CI + Holm; đối chứng âm / dương | **Đã xử lý, đóng gói** | `paired_stats` `full_corpus_eval.py:634`; đối chứng 8.1 đạt (mục 4) |
+| Từ chối đúng / từ chối nhầm, lỗi trích dẫn | **Đã xử lý, đóng gói** | `is_refusal` `full_corpus_eval.py:164`; lỗi trích dẫn đếm theo bộ kiểm hiện tại (từ 25/10) |
+| So theo cặp + CI + Holm; đối chứng âm / dương | **Đã xử lý, đóng gói** | `paired_stats` `full_corpus_eval.py:648`; đối chứng 8.1 đạt (mục 4) |
 | Nhóm thử 120 / nhóm kiểm 56 | **Đã xử lý, đóng gói** | `split.json` seed cố định; nhóm kiểm **đã dùng** |
 | Nhiễu A/A ở 10 đoạn | **Đã xử lý** | 176 câu: Đủ tụt 1, Đúng tụt 2 |
 | Đoạn đúng cho câu khó | **Xử lý một phần** | 55 / 176 câu (40 thử / 15 kiểm); **bản 5**; câu khác chỉ có từ khóa; `g1_retrieval.py:77–94` + test |
 | Nhãn độ tự nhiên (bỏ câu người thật ít hỏi) | **Đã xử lý** | 82 tự nhiên / 65 chỉ đo năng lực / 29 bỏ |
-| Bộ câu kín cho chấm cuối 8.2 | **Đã xử lý, đóng gói** (chạy 28/10) | 36 câu; tốt hơn, không làm hỏng (mục 4); **đã dùng** ⇒ cần bộ mới trước bảo vệ |
+| Bộ câu kín cho chấm cuối 8.2 | **Đã xử lý, đóng gói** (chạy 28/10) | 36 câu; tốt hơn, không làm hỏng (mục 4); **đã dùng** ⇒ bộ kín mới 40 câu dùng ở lượt đo cuối 01/11 (cũng **đã dùng**) |
 | Mốc người (bạn đọc cặp mù) | **Chưa thực hiện** (dời — trước buổi bảo vệ) | 20 cặp đã chuẩn bị (`data/phase_8_2/b0/`); không chặn việc nào (bạn chọn 28/10) |
 | Câu lỗi trích dẫn tính là hỏng (điểm 1) | **Đã xử lý** | dùng ở câu kín và hai đợt sửa kho; chưa vào bộ chấm chung `full_corpus_eval` |
 | Thước "trước ↔ sau" khi sửa kho | **Đã xử lý, đóng gói** | sàn ngoài kho / lỗi / 500 mới / nói chắc sai mới + mức tụt + câu chạm báo riêng + bộ an toàn + luật "chạm theo file"; hai đợt **không làm hỏng** (mục 4) |
@@ -89,8 +97,9 @@ Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng 
 | Bộ câu an toàn | **Đã xử lý** (bắt buộc từ 29/10) | 32 câu, agent viết; đợt 2: cả 2 người chấm bắt 10 / 10 câu chèn sai |
 | Kiểm số trong câu trả lời phải có trong nguồn | **Đã thử, chưa áp dụng** | 27/10: 68 câu có số, 0 lỗi thấy được ⇒ chưa cần kiểm bằng code; chỉ dùng chọn câu đọc lại |
 | Câu hỏi theo ngày tương đối | **Đã xử lý** (đo, 30/10) | 15 câu: 0 câu đoán ngày rồi nói sai; 6 / 14 câu trong kho bị từ chối nhầm ⇒ Phase 9 |
-| Tốc độ / tiền theo yêu cầu bạn chốt | **Xử lý một phần** | Golden 176 (tuần tự, trong công cụ): 2,19 / 4,90 s ⇒ đạt sát; câu trả lời dài (8 câu tự viết, 28/10) 4,6 / 7,6 s ⇒ chưa đạt; chưa đo qua trình duyệt. Tiền: giá đủ ≈ 0,00025 USD / câu ⇒ đạt; `cost_usd` (`full_corpus_eval.py:167`) tính giá phẳng ⇒ ghi thiếu ≈ 20 %, sửa ở đóng gói |
-| Thời gian "tới chữ đầu tiên" trên trình duyệt (streaming) | **Chưa thực hiện** — đang thiết kế | spec streaming: đo bằng trình duyệt tự động trên 40 câu thử tự nhiên, câu từ chối báo riêng; chưa code |
+| Tốc độ / tiền theo yêu cầu bạn chốt | **Đã xử lý** (01/11) | tới chữ đầu trên trình duyệt 1,23 / 2,61 s ⇒ đạt sàn 3 / 5 s + mục tiêu 1,5 / 3 s (sát); cả câu qua API 2,34 / 3,80 s (theo dõi); một lần đo. Tiền ≈ 0,00025 USD / câu ⇒ đạt; `cost_usd` tính giá đủ (`full_corpus_eval.py:169`, `row_cost_usd` :176) |
+| Thời gian "tới chữ đầu tiên" trên trình duyệt (streaming) | **Đã xử lý, đóng gói** (01/11, merge `a80e12d`; đo S4) | trình duyệt tự động trên 38 câu thử có trả lời + 21 câu từ chối báo riêng; chữ stream = chữ cuối 0 / 59 lệch; `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md` |
+| Lượt đo cuối Phase 1–8 | **Đã xử lý** (01/11) | không làm hỏng (Golden + bộ an toàn + câu theo ngày); bộ kín mới: sàn đạt, số Golden lạc quan (mục 4) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
@@ -98,6 +107,66 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 ## 4. Thử nghiệm và lịch sử (mới ở trên)
 
 Mỗi mục: thước / phép đo gì · kết quả · giữ / bỏ · hồ sơ.
+
+### 01/11/2026 — Lượt đo cuối Phase 1–8: không làm hỏng
+
+Viết tắt trong mục này: R31 = `report_agent/2026-10-31_streaming_spec/`; DC = `R31/do_cuoi_implementation.md`; DB = `R31/do_cuoi_b_an_toan_ngay.md`;
+S4 = `R31/s4_do_d2_implementation.md`; TLC = private `data/do_cuoi_2026-11-01/golden/theo_loai_cau.json` (`485304553865`, tính từ chính lượt chấm mù).
+
+- **Đo gì:** chatbot cuối Phase 8 (đã có hiện chữ dần + tính tiền đúng giá) trên **một bản code** (`89c988e`), không chọn biến thể. So với mốc 30/10 (sau đợt 2 sửa kho), chấm **mù cùng một lượt** cả mốc,
+  bản cuối và **một lượt lặp cùng ngày** (để biết độ dao động) — 6 người chấm Claude mới. Luật "đạt" ghi trước trong kế hoạch (plan `ae8d42d520d4` §3) (DC §1, §3).
+- **Golden 176 câu** (số chính 129 câu trong kho, bỏ câu người thật ít hỏi) — DC §4:
+
+  | Thước (ghi trước) | Ngưỡng | Kết quả |
+  |---|---|---|
+  | Câu ngoài kho bị trả lời | 0 / 18 | **0** |
+  | Lỗi kỹ thuật · lỗi trích dẫn mới · "nói chắc sai" mới | 0 · 0 · 0 | **0 · 0 · 0** |
+  | Đủ ý: số câu kém đi · chênh TB | ≤ 5 · ≥ −0,1 | **2** · **+0,016** [−0,023; +0,054] |
+  | Đúng: số câu kém đi · chênh TB | ≤ 5 · ≥ −0,1 | **2** · **+0,008** [−0,023; +0,039] |
+  | Từ chối nhầm câu có trong kho | ≤ mốc + 1 (12) | **12 / 158** |
+  | Lượt lặp cùng ngày (độ dao động) | chỉ dùng khi sát ngưỡng | không sát ngưỡng; bản cuối ↔ lượt lặp chỉ 1 câu đổi điểm mỗi thước |
+
+  Điểm trung bình (thang 1–5) — bản cuối: **Đúng 4,71 · Đủ 4,58 · Trúng ý 4,72** (mốc 30/10: 4,71 / 4,57 / 4,72) (DC §4). Theo loại câu (bản cuối, TLC):
+
+  | Loại câu | n | Đúng | Đủ | Trúng ý |
+  |---|---:|---:|---:|---:|
+  | Một dữ kiện | 66 | 4,92 | 4,91 | 4,91 |
+  | Có điều kiện | 25 | 4,96 | 4,68 | 4,96 |
+  | So sánh | 20 | 4,55 | 4,35 | 4,55 |
+  | **Nhiều nguồn** | 18 | 3,78 | **3,50** | 3,89 |
+
+  ⇒ câu cần ghép nhiều nguồn vẫn yếu nhất (đoạn chứa đáp án hay bị xếp ngoài 10 đoạn) — bạn để Phase 9 (đo lại 01/11 mục dưới).
+- **Bộ 32 câu an toàn** (DB §4): 0 / 4 câu ngoài kho bị trả lời; **0** câu đảo cảnh báo / điều kiện vào; câu sai điều kiện **mới** **2** — đúng ngưỡng cho phép (≤ 2): cả hai là "nói sai về nguồn", và
+  khi sinh lại 3 lần thì **bản chatbot cũ cũng sai 1 / 3 y như bản mới** ⇒ không thấy kém đi so với bản cũ (3 lần mỗi bên chỉ phát hiện được khác biệt lớn). Bịa thêm mới 2 câu — chính 2 câu đó (chỉ theo dõi, mức ≤ 2). Người chấm qua cổng đối chứng (10 / 10 câu chèn sai bị bắt, 0 / 5 báo nhầm).
+- **15 câu theo ngày tương đối** (DB §4): **0** câu đoán ngày rồi nói sai; từ chối nhầm 5 câu trong kho (30/10: 6) — vẫn để Phase 9.
+- **Tốc độ — 3 thước** (không trộn):
+
+  | Thước | Bộ câu | p50 | p95 | Nguồn |
+  |---|---|---:|---:|---|
+  | Tới **chữ trả lời đầu tiên** trên trình duyệt (sàn của bạn 3 / 5 s; mục tiêu 1,5 / 3 s) | 38 câu | **1,23 s** | **2,61 s** | S4:39–40 — đạt sàn rộng; mục tiêu đạt sát (dư 0,27 / 0,39 s) |
+  | Cả câu qua API (`/api/chat`, không stream; theo dõi) | 22 câu tự viết | 2,34 s | 3,80 s | DC §4 (27/10: 3,07 / 6,04 s) |
+  | Thời gian sinh trong công cụ đo (không qua mạng tới web; theo dõi) | 176 câu | 1,76 s | 3,42 s | DC §4 (30/10: 2,19 / 4,90 s) |
+
+  Lưu ý: một lần đo (01/11); hôm đo model gần như không suy luận trước khi viết (token suy luận trung vị 0 — 28/10: 81) ⇒ có thể nhanh hơn ngày thường; chênh với 27/10 / 30/10 chủ yếu do phía nhà cung cấp, không phải do code (cùng đường tìm, T1 giống byte); sàn 3 / 5 s đạt rộng, mục tiêu 1,5 / 3 s đạt sát (dư 0,27 / 0,39 s).
+
+- **Tiền:** ≈ **0,00025 USD / câu** (~6 đồng; TB 0,000247, p95 0,000339) theo giá đủ ⇒ đạt trần 0,0005. Cả lượt đo 0,112 USD + đo trình duyệt 0,016 + bộ kín 0,011 ⇒ **0,139 / trần 0,20** (DC §4; `R31/do_cuoi_b_bo_kin.md` §4).
+- **Bộ câu kín mới (40 câu chưa ai thiết kế hệ thống thấy — mở một lần)** (`R31/do_cuoi_b_bo_kin.md` §4): an toàn **đạt** — 0 / 6 câu ngoài kho bị trả lời, 0 lỗi kỹ thuật, 0 câu sai điều kiện
+  (và 0 bịa thêm — số báo, không phải sàn). Chất lượng **thấp hơn Golden**: Đủ ý **4,18** (Golden 4,58), Đúng 4,38 (4,71). Lý do là **cả hai**: từ chối nhầm **4 / 34** câu (12 %; Golden 8 %) — cả 4 ở câu nhiều
+  nguồn / so sánh; **và** câu được trả lời cũng kém đủ ý hơn — chỉ tính câu được trả lời: Đủ ý 4,60 ↔ Golden 4,82 (−0,22), Đúng 4,83 ↔ 4,96; rõ nhất ở câu một dữ kiện: 4,42 ↔ 4,97 dù không câu nào bị từ chối và Đúng 5,00 — tức trả lời đúng nhưng thiếu ý. Không phải do bộ kín có nhiều câu khó hơn: tính lại theo tỉ lệ loại câu của Golden vẫn ≈ 4,20. Mẫu nhỏ (34 câu) ⇒ chưa chắc về
+  thống kê, nhưng hướng rõ: **số trên bộ cũ lạc quan** so với câu thật chưa ai thấy (`R31/do_cuoi_review.md` M-1). Bộ do agent viết (bạn chọn) ⇒ có thể vẫn dễ hơn câu thật.
+- **Giới hạn:** người chấm là Claude, **chưa có mốc người** (bạn đọc 20 cặp mù trước bảo vệ); "không làm hỏng" chỉ phát hiện được tụt lan rộng, không phát hiện tụt nhỏ ở một loại câu; bộ an toàn chạm
+  đúng ngưỡng (thêm một câu là vỡ sàn); Golden / bộ an toàn đo đường không stream — chữ stream được kiểm bằng nhau với chữ cuối ở lượt đo trình duyệt (0 / 59 lệch, S4:48); đo tốc độ một lần trên máy cá nhân.
+  Hồ sơ: `R31/do_cuoi_implementation.md`, `R31/do_cuoi_b_an_toan_ngay.md`.
+
+### 01/11/2026 — Đo lại theo loại câu trên kho hiện tại (0 USD)
+Dùng lại câu trả lời đã chấm 30/10 (bộ "sau" đợt 2, 10 đoạn), số chính (bỏ câu không tự nhiên), tiêu chí ghi trước khi tính.
+
+| Loại câu | n | Đủ ý TB | Đúng TB | MRR | Câu Đủ ≤ 3 (thiếu bằng chứng ở bước tìm) | Từ chối nhầm |
+|---|---:|---:|---:|---:|---:|---:|
+| Một dữ kiện | 66 | 4,92 | 4,94 | 0,80 | 1 (1) | 1 |
+| Nhiều nguồn | 18 | **3,50** | 3,78 | 0,51 | **8 (8)** | 5 |
+
+So sánh: Đủ ý 4,35, chỉ 2 câu yếu; bảng giá: không còn lỗi lớn. **Bạn chọn 01/11: câu nhiều nguồn để Phase 9** (không mở thí nghiệm ở Phase 8). Chi tiết: `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.
 
 ### 30/10/2026 — "trước ↔ sau" đợt 2 sửa kho: không làm hỏng
 - Bộ "trước" = bộ "sau" của đợt 1 (dùng lại, không tốn tiền); bộ "sau" chạy mới; Golden sửa 2 đáp án mẫu (bạn chọn), chấm cả hai bên bằng đáp án mới trong một lượt mù.
@@ -149,16 +218,6 @@ Mỗi mục: thước / phép đo gì · kết quả · giữ / bỏ · hồ sơ
 Phát hiện đổi chẩn đoán cũ: đo bằng đoạn đúng, **22 / 22 câu từ chối nhầm** của 7B đều thiếu dữ kiện trong 5 đoạn đưa model (chẩn đoán theo từ khóa trước đó ghi 4 / 22
 câu "đủ mà vẫn từ chối" — sai). 0 USD. `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`.
 
-### 01/11/2026 — Đo lại theo loại câu trên kho hiện tại (0 USD)
-Dùng lại câu trả lời đã chấm 30/10 (bộ "sau" đợt 2, 10 đoạn), số chính (bỏ câu không tự nhiên), tiêu chí ghi trước khi tính.
-
-| Loại câu | n | Đủ ý TB | Đúng TB | MRR | Câu Đủ ≤ 3 (thiếu bằng chứng ở bước tìm) | Từ chối nhầm |
-|---|---:|---:|---:|---:|---:|---:|
-| Một dữ kiện | 66 | 4,92 | 4,94 | 0,80 | 1 (1) | 1 |
-| Nhiều nguồn | 18 | **3,50** | 3,78 | 0,51 | **8 (8)** | 5 |
-
-So sánh: Đủ ý 4,35, chỉ 2 câu yếu; bảng giá: không còn lỗi lớn. **Bạn chọn 01/11: câu nhiều nguồn để Phase 9** (không mở thí nghiệm ở Phase 8). Chi tiết: `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.
-
 ### 24/10/2026 — Phase 7B: bộ chấm và điểm mốc 176 câu
 Người chấm chính là Claude (bạn chọn, để tiết kiệm), `gpt-6-luna` chấm phụ để so. Mốc **5 đoạn** — nay là lịch sử, chatbot đã chuyển 10 đoạn.
 
@@ -176,19 +235,19 @@ Giới hạn còn đúng: Golden do LLM viết, người duyệt; chỉ số tì
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026 và `session_prompt/Project_Status.md` §4, `CURRENT_HANDOFF.md`.
+Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 01/11/2026 theo lượt đo cuối (commit đo `89c988e`, code chưa đổi tới `d8a32c0`) và `session_prompt/Project_Status.md` §4.
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
-| Bộ chấm `full_corpus_eval.py`, so theo cặp | **còn dùng** | `backend/evaluation/full_corpus_eval.py:634,802–843` |
+| Bộ chấm `full_corpus_eval.py`, so theo cặp | **còn dùng** | `backend/evaluation/full_corpus_eval.py:648,816–870` |
 | Prompt chấm cố định (không chấm trích dẫn) | **còn dùng** | `backend/evaluation/full_corpus_judge_prompt.md` |
 | Người chấm Claude, mù, cùng lượt | **còn dùng** | spec 8.2 §7 |
-| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 204 file / 8.424 đoạn, bộ "sau" đợt 2 (30/10) | `backend/config/settings.yaml:56`; `sua_kho_dot2_implementation.md` |
+| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 204 file / 8.424 đoạn; số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
 | Mốc kết quả tìm 158 câu | **còn dùng**: `4d5bbe9e0edc` (30/10) | `Project_Status.md` §4 |
 | Nhãn đoạn đúng | **bản 5 mặc định** (30/10); bản 1–4 chỉ để tái lập số cũ | `backend/experiments/phase_8_1/g1_retrieval.py:48` |
 | Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
 | Bộ 32 câu an toàn, thước lỗi nặng | **còn dùng**, bắt buộc | `do_loi_nang_implementation.md`; `sua_kho_dot2_implementation.md` |
-| `cost_usd` của công cụ đo | **ghi thiếu ≈ 20 %** — sửa ở đóng gói | `full_corpus_eval.py:167`; `Project_Status.md` §5 (30/10 15:07) |
+| `cost_usd` của công cụ đo | **đã sửa** (01/11): giá đủ (ghi đệm / đọc đệm); số USD cũ giữ, ghi "giá phẳng" | `full_corpus_eval.py:169,176`; `Project_Status.md` §5 (30/10 15:07) |
 | Điểm 7B làm mốc | **lịch sử** (5 đoạn; 10 đáp án Golden sửa 25/10, 2 đáp án sửa 30/10 ⇒ không so trực tiếp) | `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md` |
 | Chẩn đoán từ chối nhầm theo từ khóa | **đã thay** (8.1): 22 / 22 thiếu dữ kiện trong ngữ cảnh | report G1 8.1 |
 | "Chấm tay khoảng 20 câu" | **đã thay** bởi đọc cặp mù: bạn đọc và nhận xét 20 cặp, không chấm điểm (bạn chọn 25/10) | spec 8.2 §3 mục 3–4 |
@@ -197,9 +256,8 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026 và `session_prompt/P
 
 - **Bạn, khi tiện (trước buổi bảo vệ):** đọc 20 cặp câu trả lời mù — mốc người đầu tiên; nếu bạn ngược người chấm Claude ở nhiều cặp ⇒ A trình giữ 10 đoạn / về 5 và xét lại
   các kết luận dựa người chấm Claude. Thêm: 20 câu mẫu lỗi nặng để bạn đọc (`data/loi_nang_2026-10-28/human_sample.md`).
-- **Streaming (đang thiết kế):** thước mới "tới chữ trả lời đầu tiên trên trình duyệt" — sàn 3 / 5 s đã chốt; còn một câu về mục tiêu báo cáo kèm theo + bạn duyệt spec.
-  `docs/superpowers/specs/2026-10-31-streaming-design.md`.
-- **Đóng gói Phase 1–8:** sửa `cost_usd` theo giá đủ; **bộ câu kín mới** cho phép kiểm cuối (nhóm kiểm và câu kín đã dùng); câu an toàn do **người dùng thật** viết nếu có.
+- **Đã xong ở đóng gói (01/11):** streaming + thước "tới chữ đầu tiên trên trình duyệt"; `cost_usd` giá đủ; lượt đo cuối + bộ kín mới (mục 4).
+- **Sau Phase 8 / Phase 9:** câu nhiều nguồn (yếu nhất); câu theo ngày tương đối; bộ câu kín **mới nữa** cho lần kiểm tổng quát sau (bộ 01/11 đã dùng); câu an toàn do **người dùng thật** viết nếu có.
 - **Còn mở (A xử lý):** đếm lại "lỗi trích dẫn" lượt 10 đoạn của 8.1 (8 câu) bằng bộ kiểm hiện tại; mọi report mới ghi kèm bản nhãn khi nêu số đoạn đúng.
 - **Đề xuất còn giữ:** gắn thêm đoạn đúng cho câu thử để tăng cỡ mẫu (40 câu làm nhiều kết quả "chưa rõ").
 
@@ -212,7 +270,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026 và `session_prompt/P
   đối = C93 (plan B96); giá đủ = B95. Mã trong report đợt 1–2: F1–F4 = sàn, T1–T3 = mức tụt (khác "T1" mốc kết quả tìm 158 câu), W1–W9 = theo dõi.
 - **Spec:** 7B `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 8.1 `2026-10-24-phase-8-1-decision-audit-design.md`; 8.2
   `2026-10-25-phase-8-2-apply-winners-design.md` (bản A duyệt `cd910c4c4169`; §3 mục 3–4 B0, §10.2 luật nhận, §11 luật dừng); sửa kho
-  `2026-10-27-sua-kho-build-lai-index-design.md` (`937cf8969810`); streaming `2026-10-31-streaming-design.md` (bản 4 `cf1ae9ef6c2c`, §6 C1 thước chữ đầu tiên).
+  `2026-10-27-sua-kho-build-lai-index-design.md` (`937cf8969810`); streaming `2026-10-31-streaming-design.md` (bản 5 `00fb57ee01b2`, §6 C1 thước chữ đầu tiên); lượt đo cuối plan `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` (`ae8d42d520d4`).
 - **8.1 G0** (`report_agent/2026-10-24_phase_8_1_ra_soat/`): `phase_8_1_g0_1_2_measure_implementation.md`; đoạn đúng `phase_8_1_g0_3_gold_review.md`; câu kín
   `phase_8_1_g0_4_sealed_review.md`; nhiễu người chấm `phase_8_1_g2_implementation.md` §4.5; theo loại câu `phase_8_1_g5_by_category.md`.
 - **File private (không commit):** `split.json` `e2b1788dfbbc`; nhãn `data/phase_8_1/gold/`: bản 1 `gold_draft.jsonl` `bab707b9ab22`, bản 2 `2f5a347a71ff`, bản 3
