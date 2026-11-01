@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2)
 
-**Cập nhật lần cuối: 11:34 01/11/2026 — câu Golden lệch kho: điểm không lệch, bạn giữ nguyên.** Trước: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 12:03 01/11/2026 — thêm đo lại theo loại câu 01/11 (chỉ câu nhiều nguồn còn lỗi lớn ⇒ Phase 9).** Trước: 11:34 01/11/2026 — câu Golden lệch kho: điểm không lệch, bạn giữ nguyên.** Trước: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 31/10/2026)
@@ -148,6 +148,16 @@ Mỗi mục: thước / phép đo gì · kết quả · giữ / bỏ · hồ sơ
 
 Phát hiện đổi chẩn đoán cũ: đo bằng đoạn đúng, **22 / 22 câu từ chối nhầm** của 7B đều thiếu dữ kiện trong 5 đoạn đưa model (chẩn đoán theo từ khóa trước đó ghi 4 / 22
 câu "đủ mà vẫn từ chối" — sai). 0 USD. `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`.
+
+### 01/11/2026 — Đo lại theo loại câu trên kho hiện tại (0 USD)
+Dùng lại câu trả lời đã chấm 30/10 (bộ "sau" đợt 2, 10 đoạn), số chính (bỏ câu không tự nhiên), tiêu chí ghi trước khi tính.
+
+| Loại câu | n | Đủ ý TB | Đúng TB | MRR | Câu Đủ ≤ 3 (thiếu bằng chứng ở bước tìm) | Từ chối nhầm |
+|---|---:|---:|---:|---:|---:|---:|
+| Một dữ kiện | 66 | 4,92 | 4,94 | 0,80 | 1 (1) | 1 |
+| Nhiều nguồn | 18 | **3,50** | 3,78 | 0,51 | **8 (8)** | 5 |
+
+So sánh: Đủ ý 4,35, chỉ 2 câu yếu; bảng giá: không còn lỗi lớn. **Bạn chọn 01/11: câu nhiều nguồn để Phase 9** (không mở thí nghiệm ở Phase 8). Chi tiết: `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.
 
 ### 24/10/2026 — Phase 7B: bộ chấm và điểm mốc 176 câu
 Người chấm chính là Claude (bạn chọn, để tiết kiệm), `gpt-6-luna` chấm phụ để so. Mốc **5 đoạn** — nay là lịch sử, chatbot đã chuyển 10 đoạn.
