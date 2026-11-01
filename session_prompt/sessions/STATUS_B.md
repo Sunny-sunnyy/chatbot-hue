@@ -1,4 +1,4 @@
-# STATUS B — cập nhật 13:21 01/11/2026 (gần kết phiên 01/11)
+# STATUS B — cập nhật 13:37 01/11/2026 (kết phiên 01/11)
 
 Terminal 01/11: `hue-rag-da` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-27`, C = `hue-rag-6a` (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B.
@@ -28,7 +28,9 @@ Quyền phiên 01/11 (hết hạn cuối phiên): như 31/10, paid ≤ 1 USD; Us
 | Review runbook đo cuối C108 (2 vòng) | ready sau sửa `$G` / NameError / bỏ retry | `c108_runbook_review.md` |
 | Review governance A CA1 + CA3 (2 vòng) | M-1 pre-push lọt tên có dấu ⇒ A thêm `-z` ⇒ ready | `a_governance_ca1_ca3_review.md` |
 | **Đo cuối §6 + §7** (bộ an toàn, câu theo ngày) | qua mọi sàn; A2 vế 1 = 2 ≤ 2 (đúng ngưỡng), sinh lại ngang mốc 751b352 | `do_cuoi_b_an_toan_ngay.md` |
-| **Đo cuối §8** bộ kín mới (40 câu, chỉ số đếm) | qua mọi sàn; Đủ ý −0,40 so với Golden, gần hết do 4 từ chối nhầm | `do_cuoi_b_bo_kin.md` (A commit `85f8e46`) |
+| **Đo cuối §8** bộ kín mới (40 câu, chỉ số đếm) | qua mọi sàn; Đủ ý −0,40 so với Golden, do **cả** 4 từ chối nhầm **lẫn** câu trả lời kém đủ ý (cùng cách: −0,22; một dữ kiện 4,42 ↔ 4,97) | `do_cuoi_b_bo_kin.md` (A commit `85f8e46`) |
+| Sửa theo `do_cuoi_review.md` (M-1, m-2, m-3 bộ kín + m-1 an toàn) | A nhận đạt; trỏ bằng chứng sang `archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md` | `do_cuoi_b_bo_kin.md` `d8d9258a9ce7` (A commit), `do_cuoi_b_an_toan_ngay.md` `cac60f04137e` |
+| Kiểm lại sổ cải tiến sau A khôi phục | 0 mục mất; S63–S67 thiếu 2 / 7 cột | báo A |
 
 ## Tiền paid (B, 01/11, giá đủ; ca ngắt / hết token không có usage ⇒ cận trên)
 S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối §6–§8 0,0293 ⇒ **≈ 0,055 USD**. Không gọi `agy`; Codex không chạy (dùng lượt của A).

@@ -77,4 +77,5 @@ Judge / sub-agent: quota Claude (0 USD).
 - Ca dò khác cách gợi ý: đếm P0_sai theo **từng** judge (không "một trong hai") xem A2 vế 1 có đổi; đối chiếu `bao_A` bằng tay từ `per_case` của lượt sinh lại.
 
 **Giải thích ngắn:** mình chạy lại bộ 32 câu an toàn và 15 câu theo ngày trên chatbot cuối Phase 8 (đã có streaming) rồi cho người chấm mù chấm. Không câu ngoài kho nào bị trả lời, không câu nào đảo
-cảnh báo hay đoán sai ngày. Có 2 câu nói sai về nguồn — đúng ngưỡng cho phép; sinh lại 3 lần thì bản chatbot cũ cũng sai y như vậy, nên đó là dao động của model chứ không phải hệ thống kém đi.
+cảnh báo hay đoán sai ngày. Có 2 câu nói sai về nguồn — đúng ngưỡng cho phép; sinh lại 3 lần thì bản chatbot cũ cũng sai y như vậy, nên không thấy kém đi so với mốc (3 lần mỗi bên chỉ phát hiện được khác biệt lớn).
+(Sửa câu này 13:35 01/11/2026 theo `do_cuoi_review.md` m-1.)

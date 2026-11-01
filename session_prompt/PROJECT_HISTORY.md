@@ -4,6 +4,13 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-11-01 (13:37) — Streaming vào chatbot; lượt đo cuối Phase 1–8 (mọi sàn đạt); báo cáo so sánh phương án; rà bảo mật đóng gói
+
+- Streaming (spec `00fb57ee01b2`, S1–S4, review cả nhánh) merge `a80e12d`: chữ đầu trên trình duyệt 1,23 / 2,61 s. Lượt đo cuối (plan `ae8d42d520d4`): Golden không làm hỏng; an toàn, ngày, bộ kín mới
+  40 câu đạt sàn; bộ kín cho thấy số dev lạc quan (Đủ 4,18 ↔ 4,58). Hội thoại nhiều lượt + câu nhiều nguồn ⇒ Phase 9 (User). Báo cáo `BAO_CAO_SO_SANH_PHUONG_AN.md`; `LUONG` §5 giới hạn theo mức nặng;
+  `cost_usd` giá đủ; CA1 pre-push + CA3 rào Codex; vòng cải tiến 13 (W36, W45, I8). User hỏi over-engineer ⇒ A: có (S64). ≈ 0,15 USD. Còn: B0 ⇒ User đóng Phase 8.
+  Tổng hợp: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.
+
 ## 2026-10-31 (17:00) — Phiên chiều: áp khung AI FDE vào cách làm (W37–W41, vòng cải tiến 12); sửa 4 báo cáo khâu bị cũ
 
 - Chatbot không đổi; 0 USD. Đối chiếu khung (khung cá nhân của User) + khoá ver4 (3 agent con): bản 30/10 vẫn đúng hướng, 4 chỗ xem lại. Áp: W37 hook giờ ước Claude Code,
