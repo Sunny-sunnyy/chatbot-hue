@@ -34,6 +34,17 @@ FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-sr
                 "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
 
 
+class FrontendStaticFiles(StaticFiles):
+    """`/static/…` như `StaticFiles`, nhưng trang HTML (vd `/static/index.html` — cùng app chạy được ở đó) cũng mang CSP như `/` (review C107 M-1).
+    Không dùng middleware HTTP chung: middleware kiểu `BaseHTTPMiddleware` bọc cả luồng SSE của `/api/chat/stream`."""
+
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        if response.media_type == "text/html":
+            response.headers["Content-Security-Policy"] = FRONTEND_CSP
+        return response
+
+
 def create_app(settings=None):
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -145,7 +156,7 @@ def create_app(settings=None):
     app.include_router(chat_router)
 
     if FRONTEND_DIR.is_dir():
-        app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+        app.mount("/static", FrontendStaticFiles(directory=FRONTEND_DIR), name="static")
 
         @app.get("/", include_in_schema=False)
         async def frontend_index():

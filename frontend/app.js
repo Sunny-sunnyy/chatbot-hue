@@ -71,12 +71,13 @@ function wireCitations() {
 const INTERRUPTED_MESSAGE = "Kết nối bị gián đoạn. Vui lòng thử lại.";
 let renderFrame = 0;
 
-// Câu trả lời là Markdown do model viết: ngoài chặn script (mặc định DOMPurify), không để trang TỰ tải gì từ máy khác khi hiện chữ —
-// bỏ thẻ ảnh / media, thuộc tính `style` (CSS `url(…)` cũng tải được), chỉ giữ HTML (bỏ SVG / MathML). Link vẫn giữ: chỉ mở khi người dùng bấm.
+// Câu trả lời là Markdown do model viết: ngoài chặn script, không để trang TỰ tải gì từ máy khác khi hiện chữ (ảnh, `background`, CSS `url(…)`,
+// `<input type=image>`, form…). Dùng DANH SÁCH CHO PHÉP — đúng các thẻ / thuộc tính Markdown thường tạo ra — thay vì danh sách cấm (review C107 M-1:
+// danh sách cấm sót `background`, `input`). Không có thuộc tính nào chứa URL ngoài `href` của link: link chỉ mở khi người dùng bấm.
 const SANITIZE_OPTIONS = {
-  USE_PROFILES: {html: true},
-  FORBID_TAGS: ["img", "picture", "source", "video", "audio", "track", "iframe", "object", "embed"],
-  FORBID_ATTR: ["style", "srcset"],
+  ALLOWED_TAGS: ["p", "br", "hr", "strong", "em", "del", "code", "pre", "blockquote", "ul", "ol", "li",
+                 "h1", "h2", "h3", "h4", "h5", "h6", "a", "table", "thead", "tbody", "tr", "th", "td"],
+  ALLOWED_ATTR: ["href", "title", "align", "start"],
 };
 
 // Chữ hiện dần: render lại CẢ buffer theo khung hình (không theo từng mảnh, không `innerHTML +=`), luôn qua DOMPurify (spec streaming §4.7).
