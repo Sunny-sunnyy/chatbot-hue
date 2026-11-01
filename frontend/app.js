@@ -68,10 +68,89 @@ function wireCitations() {
   }
 }
 
-function renderResponse(payload) {
-  answer.innerHTML = DOMPurify.sanitize(marked.parse(payload.answer));
-  renderSources(payload.sources);
-  wireCitations();
+const INTERRUPTED_MESSAGE = "Kết nối bị gián đoạn. Vui lòng thử lại.";
+let renderFrame = 0;
+
+// Chữ hiện dần: render lại CẢ buffer theo khung hình (không theo từng mảnh, không `innerHTML +=`), luôn qua DOMPurify (spec streaming §4.7).
+function renderAnswer(text) {
+  answer.innerHTML = DOMPurify.sanitize(marked.parse(text));
+}
+
+function scheduleRender(stream) {
+  if (renderFrame) return;
+  renderFrame = requestAnimationFrame(() => {
+    renderFrame = 0;
+    renderAnswer(stream.text);
+  });
+}
+
+function clearAnswer() {
+  cancelAnimationFrame(renderFrame);
+  renderFrame = 0;
+  answer.replaceChildren();
+  sources.replaceChildren();
+}
+
+// Tách luồng SSE thành sự kiện. Một lần `read()` có thể chứa nửa sự kiện hoặc nhiều sự kiện ⇒ giữ phần dở tới lần sau; bỏ dòng chú thích `:`.
+function createSseParser(onEvent) {
+  let pendingText = "";
+  return chunk => {
+    pendingText += chunk;
+    let end;
+    while ((end = pendingText.indexOf("\n\n")) !== -1) {
+      const block = pendingText.slice(0, end);
+      pendingText = pendingText.slice(end + 2);
+      let name = "message";
+      const data = [];
+      for (const line of block.split("\n")) {
+        if (!line || line.startsWith(":")) continue;
+        if (line.startsWith("event:")) name = line.slice(6).trim();
+        else if (line.startsWith("data:")) data.push(line.slice(5).replace(/^ /, ""));
+      }
+      if (data.length) onEvent(name, JSON.parse(data.join("\n")));
+    }
+  };
+}
+
+function handleEvent(stream, name, data) {
+  if (name === "status") {
+    status.textContent = data.stage === "generating" ? "Đang viết câu trả lời…" : "Đã tìm thông tin, đang chuẩn bị câu trả lời…";
+  } else if (name === "delta") {
+    if (data.seq <= stream.lastSeq) return;  // chỉ nối mảnh mới
+    stream.lastSeq = data.seq;
+    stream.text += data.text;
+    scheduleRender(stream);
+  } else if (name === "sources") {
+    // Chữ đã qua bộ kiểm trích dẫn: vẽ bản cuối rồi mới bật link [n].
+    cancelAnimationFrame(renderFrame);
+    renderFrame = 0;
+    renderAnswer(stream.text);
+    renderSources(data);
+    wireCitations();
+  } else if (name === "error") {
+    // D3: kiểm cuối hỏng (rút lại) hoặc lỗi / đứt giữa chừng (xóa hết) — cả hai xóa chữ đã hiện, hiện lời báo + "Thử lại".
+    throw new Error(data.message || INTERRUPTED_MESSAGE);
+  } else if (name === "done") {
+    stream.done = true;
+  }
+}
+
+async function readAnswerStream(response) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const stream = {text: "", lastSeq: 0, done: false};
+  const feed = createSseParser((name, data) => handleEvent(stream, name, data));
+  try {
+    while (!stream.done) {
+      const {value, done} = await reader.read();
+      if (done) break;
+      feed(decoder.decode(value, {stream: true}));
+    }
+  } catch (error) {
+    reader.cancel().catch(() => {});
+    throw error;
+  }
+  if (!stream.done) throw new Error(INTERRUPTED_MESSAGE);  // luồng đứt không có `done` ⇒ xử lý như lỗi
 }
 
 async function ask(value) {
@@ -80,19 +159,21 @@ async function ask(value) {
   if (!lastQuery) return;
   setLoading(true);
   retry.hidden = true;
-  answer.replaceChildren();
-  sources.replaceChildren();
+  clearAnswer();
   try {
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/api/chat/stream", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({query: lastQuery}),
     });
-    const payload = await response.json();
-    if (!response.ok) throw new Error(payload.error?.message || "Đã xảy ra lỗi.");
-    renderResponse(payload);
+    if (!response.ok) {  // lỗi trước khi mở luồng: JSON như /api/chat
+      const payload = await response.json();
+      throw new Error(payload.error?.message || "Đã xảy ra lỗi.");
+    }
+    await readAnswerStream(response);
     status.textContent = "";
   } catch (error) {
+    clearAnswer();
     status.textContent = error.message;
     retry.hidden = false;
   } finally {
