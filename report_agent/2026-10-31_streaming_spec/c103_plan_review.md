@@ -80,3 +80,31 @@ Như §1 "Đạt" và bằng chứng trong từng finding. Không có số nào 
 
 `changes_requested` — C sửa M-1 + m-1…m-6 trong một lượt (n-1…n-3 tùy), báo sha mới; B kiểm **phần sửa** (dùng lại các kiểm §1 "Đạt" nếu các dòng đó không đổi). Sau đó A điền các `TBD`
 theo câu trả lời Q1–Q4 của User ⇒ B (hoặc người review) kiểm phần điền ⇒ A ghi "duyệt bản sha" (tính từ file).
+
+---
+
+# Vòng 2 — kiểm phần sửa bản 3 (`4d653544fb73`)
+
+Decision: **ready_for_user_confirmation** cho phần đã có (M-1, m-1…m-6, n-1…n-3 đóng; 2 ghi chú nhỏ, không mở vòng) — còn `TBD` chờ User Q1–Q4 §11 · Người kiểm: B · Date: 11:38 01/11/2026 (`date`)
+
+B tự tính `sha256sum` ⇒ `4d653544fb73` (235 dòng). Plan untracked ⇒ không có diff máy với bản 2; B đọc lại bảng §12 + mọi mục §12 trỏ tới (§2, §3.1, §3.2, §3.4, §3.7, §5, §6, §10, §11)
+và chỗ bị ảnh hưởng. Cùng ranh giới vòng 1 (chỉ gói căn cứ + lệnh chỉ đọc; không đọc `STATUS_C.md` / tin của C; 0 USD).
+
+| Finding | Chỗ sửa | Kiểm | Đóng? |
+|---|---|---|---|
+| M-1 | §3.2 A2 vế 1: mốc sinh lại 3 lần trên **`751b352`** (worktree riêng, `uv run --project`, cùng Qdrant / build record `51fb1ec63cbc` / sparse `c8134c49a648`, kiểm T1 giống byte `4d5bbe9e0edc` trước, gỡ worktree); "sau" trên commit §2; chỉ câu P0_sai mới | đúng commit trong `sau_all.meta.json` (vòng 1); luật ghi trước, không còn chỗ chọn sau | ✓ |
+| m-1 | §3.4: bỏ dòng "`total_ms` trên lượt Golden"; thay 22 câu B65 qua `/api/chat`, so `b65_latency_dau_cuoi.md:48`; §5 bước 5; §6 +0,0055 | dòng 48 = "B1 (context 10 + NFC), tuần tự" p50 **3.068** / p95 **6.039** ms ✓ — đúng cấu hình 10 đoạn | ✓ |
+| m-2 | §3.1 "Đo đường nào" + §10 | ghi rõ Golden qua `answer_case` (`Runner.run`), route stream suy từ lõi chung + C5 | ✓ |
+| m-3 | §3.2 quy ước một phía 95 % ⇒ "~10 %", ghi BAO_CAO dùng hai phía | khớp §3.7 (0 / 6 < ~39 %) và §10 (0 / 28 < ~10 %) — cùng một quy ước | ✓ |
+| m-4 | §6 dòng giá đủ ≈ 0,098 / 0,142; trần đề xuất 0,20; §11 Q4 | B cộng lại: phẳng 0,0763 + 0,0055 = 0,0818 / có A/A 0,1183; × 1,2 = 0,098 / 0,142 ✓; 0,20 / 0,142 = +41 % ✓; "0,15 chỉ dư ≈ 6 %" = 0,15 / 0,142 ✓ | ✓ |
+| m-5 | §3.1 `sau_all.jsonl` `45487ea1d88a` + meta; §3.2 `answers_r1.jsonl` `ad24c8a8e53f` | B tính lại: `ad24c8a8e53f` ✓ | ✓ |
+| m-6 | §3.7 rào đọc kho (ngoài `evaluation/`, `meta/`, `_source-dumps/`; `grep_kb.sh`); "4 loại trong kho + `out_of_scope`"; 4 câu điều kiện gắn `conditional` | 30 + 6 + 4 = 40 ✓; sàn "mọi câu `conditional`" nay gồm 4 câu thêm | ✓ |
+| n-1 | §11 Q2 PA1: giữ N_AA = 2; A/A cùng ngày chỉ khi sát ngưỡng (4–5 câu tụt hoặc vượt 1) | luật ghi trước, không đổi thước sau khi thấy số | ✓ |
+| n-2 | §3.4 thêm điều kiện build record / sparse / Qdrant | ✓ | ✓ |
+| n-3 | §2 dẫn `CURRENT_HANDOFF.md:89` + `BAO_CAO_BO_CAU_HOI_GOLDEN.md` (bản 8, 11:04 01/11) | cả hai ghi "User 11:04 01/11: giữ nguyên" ✓ | ✓ |
+
+**Ghi chú (không mở vòng):**
+- n-4: §3.4 / §6 "22 câu tự viết của B65" chưa ghi đường dẫn + sha bộ câu — có ở `b65_latency_dau_cuoi.md:25`: `data/phase_8_2/latency_2710/questions.jsonl` (`bac5c91db005`). Thêm khi điền `TBD` (cùng kiểu m-5). Bộ này có trường `question` trong `data/` ⇒ tự nằm trong phép so SHA256 §3.7.
+- n-5: dòng "giá đủ (+20 %)" §6 nhân 1,2 cả hai dòng đã tính bằng 0,00025 USD / câu (tốc độ trình duyệt, bộ kín, 22 câu B65) — số 0,00025 vốn là **giá đủ** (`BAO_CAO_DANH_GIA.md` §1) ⇒ ước hơi dư (≈ +0,006 USD), theo chiều an toàn; không cần sửa.
+
+Bước tiếp: A điền `TBD` theo câu trả lời Q1–Q4 của User ⇒ người review kiểm đúng phần điền ⇒ A ghi "duyệt bản sha" (tính từ file).
