@@ -93,3 +93,11 @@ Thời gian (một lần chạy, không phải lượt đo D2 — chỉ để bi
 **Giải thích ngắn:** thêm đường hỏi thứ hai `/api/chat/stream` gửi chữ trả lời từng mảnh ngay khi model viết, thay vì chờ cả câu; trước khi mở luồng nó kiểm lỗi bằng đúng đoạn code của
 đường cũ, cuối luồng vẫn kiểm trích dẫn như cũ và chỉ gửi nguồn khi đạt. Người dùng ngắt giữa chừng thì server dừng model và vẫn ghi đúng một dòng số đo. Đường cũ `/api/chat` không đổi;
 giao diện chưa dùng đường mới (việc S3).
+
+## 7. Sửa sau review (S2 review m-1 — 11:42 01/11/2026, `date`)
+
+- Lỗi (reviewer tìm, `s2_stream_route_review.md` m-1): provider thoát ASCII ⇒ ký tự ngoài BMP (emoji) thành cặp `\uD83D\uDE00`; mảnh cắt giữa hai nửa ⇒ `decode_partial_string` phát nửa đầu
+  đứng lẻ ⇒ `sse_event` ném `UnicodeEncodeError` ⇒ luồng lỗi. Tái tạo bằng ca dò của reviewer (`/tmp/a_s2_probe/p1_extractor.py`, 16.000 lần cắt): **2** cặp (câu, định dạng) lỗi trên `830df0e`.
+- Sửa (`backend/llm/answer_stream.py` `decode_partial_string`): chuỗi JSON chưa đóng mà ký tự cuối là nửa đầu cặp (U+D800–U+DBFF) ⇒ giữ lại tới mảnh sau. +1 test logic thuần
+  (`test_emoji_escaped_as_surrogate_pair_cut_between_halves_is_held_then_sent_whole`: cắt đúng giữa cặp, phát đủ emoji ở mảnh sau, mọi mảnh mã hóa SSE được).
+- Kiểm: `pytest tests/test_chat_stream.py` 15 passed; ca dò reviewer chạy lại **0** cặp lỗi / 16.000 lần. Commit **`887cbc5`** (nhánh `s1-loi-chung`, đã push). Không đổi đường tìm ⇒ T1 không chạy lại. 0 USD.

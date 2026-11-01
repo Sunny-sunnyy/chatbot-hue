@@ -9,7 +9,9 @@
 # căn cứ tài liệu Codex + probe: `data/tra_cuu_cli/2026-11-01_codex-rao-doc-file/ket_qua.md`): (1) tắt công cụ chạy lệnh + xem ảnh
 # (`--disable shell_tool / view_image`); (2) permission profile chỉ đọc thư mục làm việc + đường hệ thống tối thiểu (KHÔNG truyền `-s` —
 # có `--sandbox` thì Codex bỏ qua profile); (3) còn sự kiện `command_execution` ⇒ LỖI, kết quả không dùng. `--ignore-user-config`:
-# không nạp cấu hình / MCP của User (đăng nhập giữ). Trước 01/11: `-s read-only` — vẫn đọc được mọi file máy (bộ ba: file máy · trang web · câu tìm).
+# không nạp cấu hình / MCP của User (đăng nhập giữ); tắt thêm trình duyệt / computer use / app / plugin / agent con (review B 01/11 m-1).
+# Không tắt `code_mode_host`: tắt thì mất luôn công cụ tìm web (thử 01/11). Giới hạn: `unified_exec` không tắt được (tài liệu: opt-out bị bỏ qua) — lớp 2 + 3 lo; Codex vẫn quét ~/.codex/skills dùng chung (tên skill vào
+# ngữ cảnh model; ngoài repo). Trước 01/11: `-s read-only` — vẫn đọc được mọi file máy (bộ ba: file máy · trang web · câu tìm).
 set -euo pipefail
 [ $# -eq 2 ] || { echo "dùng: $0 <file yêu cầu .md> <tên_ngắn>" >&2; exit 2; }
 req="$(realpath -e -- "$1")"; name="$2"
@@ -50,7 +52,8 @@ start="$(date '+%H:%M:%S %d/%m/%Y')"; s=$(date +%s)
 set +e
 # --search phải đứng TRƯỚC exec; model mặc định trong ~/.codex/config.toml có thể không dùng được với tài khoản ChatGPT ⇒ chỉ định model.
 timeout "${TRA_WEB_TIMEOUT:-1800}" codex --search exec -m "${CODEX_MODEL:-gpt-6-luna}" -c model_reasoning_effort='"high"' \
-  --ignore-user-config --disable shell_tool --disable view_image \
+  --ignore-user-config --disable shell_tool --disable view_image --disable browser_use --disable browser_use_external \
+  --disable computer_use --disable apps --disable plugins --disable multi_agent \
   -c 'permissions.webonly.filesystem={":root"="deny",":minimal"="read",":workspace_roots"="read","'"$HOME"'/.codex/packages"="read"}' \
   -c 'default_permissions="webonly"' \
   --skip-git-repo-check --ephemeral -C "$work" -o "$out/ket_qua.md" \

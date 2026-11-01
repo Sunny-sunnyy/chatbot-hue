@@ -15,7 +15,8 @@ while read -r _local_ref local_sha _remote_ref remote_sha; do
     range=$(git rev-list "$remote_sha..$local_sha")
   fi
   for c in $range; do
-    files=$(git diff-tree --no-commit-id --name-only -r --diff-filter=ACMR "$c")
+    # -z: tên có dấu (`gửi chatgpt/`, file kho) không bị git in trong ngoặc kép + bát phân (review B 01/11 M-1; pre-commit cũng dùng -z)
+    files=$(git diff-tree -z --no-commit-id --name-only -r --diff-filter=ACMR "$c" | tr '\0' '\n')
     added=$(git show --format= -U0 --no-color --diff-filter=ACMR "$c" | awk '/^diff --git /{h=0; next} /^@@/{h=1; next} h && /^\+/')
     short=$(git rev-parse --short "$c")
     if printf '%s\n' "$files" | grep -qE '^(data/|knowledge-base-hue/|gửi chatgpt/|\.aws/)|(^|/)\.env($|\.)'; then

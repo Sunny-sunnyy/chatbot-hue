@@ -27,6 +27,9 @@
 ## 3. Việc đang làm 01/11 — C103 nháp kế hoạch lượt đo cuối Phase 1–8 (A giao 11:13 01/11/2026; User: việc A giao = "làm đi")
 - 0 USD, chỉ tài liệu; không chạy đo, không viết câu kín, không mở `*sealed*`. Ưu tiên thấp hơn việc điền spec nhiều lượt khi A nhắn.
 - **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` (mới, untracked); và file này.
+- 11:34 01/11/2026: B review bản 2 changes_requested (1 major / 6 minor, `report_agent/2026-10-31_streaming_spec/c103_plan_review.md`) ⇒ C sửa ⇒ bản 3.
+- **11:36 01/11/2026: bản 3 `4d653544fb73`** (235 dòng, §12 "Sửa theo review", quét trùng 0) ⇒ chờ B kiểm phần sửa. B vòng 2 ready (11:38).
+- **11:48 01/11/2026: bản 4 `ae8d42d520d4`** — điền `TBD` theo User Q1–Q4 (A báo) + n-4 (bộ B65 `bac5c91db005`); §13. Chờ B kiểm phần điền ⇒ A duyệt sha ⇒ **mới** chạy bước Q3a (đo lại L2 / L3, 0 USD).
 - **XONG (11:17 01/11/2026) — bản 1 `6a859a039109`** (215 dòng, quét trùng 0, 7 `TBD` chờ Q1–Q4 User). C viết plan ⇒ C không đọc bộ kín mới, không review plan. Chờ A.
 
 ## 4. Việc đang làm 01/11 — C104 sửa bản public báo cáo so sánh theo 2 review (A giao 11:20 01/11/2026; User: việc A giao = "làm đi")
@@ -34,6 +37,40 @@
 - **File sẽ ghi (khai báo):** `data/so_sanh_phuong_an/BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md` (sửa), `data/so_sanh_phuong_an/cho_mau_thuan.md` (thêm mục cuối); và file này.
 - **XONG (11:25 01/11/2026):** bản public bản 2 `f1722077fc48` (64 dòng đổi; quét trùng 0); `cho_mau_thuan.md` `51f222d2d489` §4 "Sửa theo review" (đã sửa / không sửa + lý do).
 - **Thêm (A, User 11:20):** nhiều lượt dời Phase 9 ⇒ plan C103 **bản 2 `ba70843a4652`** (bỏ điều kiện / bộ đo nhiều lượt, §3.6 bỏ; Golden lệch kho = User giữ nguyên). Spec C102 thành tư liệu Phase 9 (A đánh dấu).
+
+## 5. Việc đang làm 01/11 — C105 bảng giới hạn bản 4 + nháp LUONG §5 (A giao 11:27 01/11/2026; User: việc A giao = "làm đi")
+- 0 USD, chỉ tài liệu. Không sửa `LUONG` / `bao_cao_he_thong/`.
+- **File sẽ ghi (khai báo):** `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (bản 4), `data/dong_goi_2026-10-30/luong_muc5_de_xuat.md` (mới); và file này.
+- **XONG (11:31 01/11/2026):** bảng giới hạn bản 4 `f1a7c4cad145` (bản 3 giữ ở `gioi_han_da_biet_nhap_ban3_8211d5d6eb7f.md`); nháp LUONG §5 `5f6ac0987017`. Quét trùng 0.
+
+## 6. Việc đang làm 01/11 — C106 rà bảo mật đóng gói (A giao 11:33, bắt đầu 11:36 01/11/2026; User: việc A giao = "làm đi")
+- 0 USD, chỉ đọc (main + `830df0e` + `bbbdbf9` bằng `git show`), không server / API / `.env`.
+- **File sẽ ghi (khai báo):** `report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` (mới); và file này.
+- **XONG (11:40 01/11/2026) — `2ef499b91a59`**: 0 blocker; 11 rủi ro (R1 major khi deploy; R2 ảnh / link ngoài, R4 log cũ có 22 câu hỏi thử, R9 `.env` 644, R10 deny Bash .env …); đoạn "giả định an toàn" §3.
+- Bẫy (vòng cải tiến): (1) đếm loại thông điệp log bằng `cut -c1-22` làm terminal hiện 1–2 chữ đầu câu hỏi thử cũ ⇒ lần sau cắt trước phần chữ người dùng; (2) tin nhắn C103 bản 3 gửi A ghi giờ "11:40" gõ tay (S49) — sha + STATUS đúng giờ `date`. Lặp lại lần 2: tin C108 ghi "12:2x" (S49) ⇒ lần sau chạy `date` ngay trước khi soạn tin.
+
+## 7. Việc đang làm 01/11 — C107 review S3 giao diện streaming (A giao, bắt đầu 11:52 01/11/2026; User: việc A giao = "làm đi")
+- Nhánh `s3-giao-dien` `9374212` + `fc10873` trên `887cbc5`. Trần ≤ 0,002 USD; server cổng 8795, worktree riêng `/tmp/c_s3` (gỡ khi xong).
+- **File sẽ ghi (khai báo):** `report_agent/2026-10-31_streaming_spec/s3_giao_dien_review.md` (mới); script dò tạm `/tmp/c_s3_probe/` (xoá khi xong); và file này.
+- **XONG (11:59 01/11/2026) — `d5c144357d65`: changes_requested** (M-1 DOMPurify lọt `background` / `input type=image` + `/static/index.html` không CSP; m-1…m-3). ≈ 0,0005 USD (2 lần gọi). Server 8795 tắt, worktree `/tmp/c_s3` + `/tmp/c_s3_probe` đã gỡ; bằng chứng private `data/streaming_s1_2026-11-01/s3_review_c107/`.
+- **Vòng 2 (12:09 01/11/2026) — `716ba4d` ready** (review file sha `f89d9d8ac25b`); 0 USD; worktree + server đã gỡ.
+- **C106 bản 2 (12:12 01/11/2026) — `94ae4e98b673`**: sửa theo `c106_bao_mat_review.md` (M-1: §1b bộ ba coding agent CA1–CA5; m-1…m-6), bảng §6. Chờ reviewer kiểm phần sửa.
+
+## 8. Việc đang làm 01/11 — C108 runbook lượt đo cuối (A giao, bắt đầu 12:13 01/11/2026; User: việc A giao = "làm đi")
+- 0 USD; **không** chạy lượt có phí, **không** chạy server (S4 sắp đo — W31). Không đụng `so_trung_sha.py`; không đọc bộ kín.
+- **File sẽ ghi (khai báo):** `data/do_cuoi_2026-11-01/runbook.md`, `data/do_cuoi_2026-11-01/tools/*` (trừ `so_trung_sha.py`); và file này.
+- **XONG (12:25 01/11/2026):** `runbook.md` `48e084451940`; tools `do_cuoi.py` `2ba9593d7a32`, `an_toan_cuoi.py` `3fa3dd9c5d27`, `ngay_cuoi.py` `e2c5768da93d`, `latency_cuoi.py` `a5894f7f8e92`, `tien_cuoi.py` `6cefac38fd00`. Chỉ `py_compile` (W31: chưa chạy lệnh 0 USD nào cần Qdrant / import backend). 0 USD.
+- **Bản 2 (12:42 01/11/2026 `date`)** theo review B `c108_runbook_review.md` (M-1 hàm bash, M-2 `qs`, M-3 bỏ retry — A quyết theo plan; m-1…m-5, n-1): `runbook.md` `bdd883bb367c`, `do_cuoi.py` `8045d4fa1572`, `an_toan_cuoi.py` `3c26897afae1`, `ngay_cuoi.py` `dc56bf0016bb` (`latency_cuoi.py`, `tien_cuoi.py` không đổi). Chạy thử 0 USD trên bản sao `/tmp/c108t` (đã xoá).
+- 12:47 01/11/2026: B vòng 2 **ready** (`c108_runbook_review.md` "Vòng 2") — runbook C108 đóng phần review.
+
+## 9. Việc đang làm 01/11 — C109 tra tài liệu Codex cho CA3 (A giao, bắt đầu 12:31 01/11/2026; User chọn "tra tài liệu Codex trước")
+- 0 USD; WebFetch tài liệu chính thức + `codex --help` / `codex exec --help` (không chạy exec); không dùng `scripts/tra_web_codex.sh`.
+- **File sẽ ghi (khai báo):** `data/tra_cuu_cli/2026-11-01_codex-rao-doc-file/ket_qua.md`; và file này.
+- **XONG (12:37 01/11/2026) — `3e005afb04e0`**: profile chặn đọc (`:root` deny) + `--disable shell_tool` có trong tài liệu chính thức; `-s read-only` làm profile bị bỏ qua; probe `codex sandbox` 0 USD xác nhận. Đề xuất 4 dòng sửa script (chưa sửa).
+
+## 10. Việc đang làm 01/11 — C110 yêu cầu cho giao diện mới (A giao, bắt đầu 12:43 01/11/2026; "làm đi")
+- 0 USD, ≤ 40 dòng. **File sẽ ghi:** `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md`; và file này.
+- **XONG (12:44 01/11/2026 `date`) — `c11d0a66ea32`** (38 dòng, 17 yêu cầu + mục kiểm). Bẫy lần 3: dòng đầu file gõ giờ ước → sửa bằng `date` trước khi báo.
 
 ## KẾT PHIÊN 31/10 (cập nhật 12:36 31/10/2026 `date`)
 
