@@ -1,17 +1,16 @@
-# STATUS B — cập nhật 16:16 01/11/2026 (kết phiên chiều 01/11: B116–B120 xong; B rảnh)
+# STATUS B — cập nhật 16:17 01/11/2026 (KẾT PHIÊN chiều 01/11: B116–B120 xong, A đã commit `4a24de7`)
 
 Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-c0`, C = `hue-rag-b0` (phiên sáng: B `hue-rag-da`, A `hue-rag-27`, C `hue-rag-6a`) (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B.
 Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền khác (trần tiền…) theo mục việc A ghi trong `CURRENT_HANDOFF.md` (A đang hỏi lại User).
 
 ## Đang làm / dở
-- **B119** xong 15:55 01/11/2026, chờ A xem (`tripo/b119_kham_pha.md`). Server 8797 đã tắt, script `/tmp/b119_tools` đã xoá, không job nền. Tiền ≈ 0,0040 USD.
-- **Không** (kết phiên chiều 15:24 01/11/2026). Không job nền, không server, không worktree, không nhánh mới của B. Codex: 2 lượt `tra_web_codex.sh` đã xong.
+- **Không** (kết phiên 16:17 01/11/2026). Không job nền, không server (8797 đã tắt), không worktree, không nhánh mới; script tạm `/tmp/b119_tools` đã xoá.
+- Phiên chiều: B116 (giao diện), B117 (tra cứu mạch 1–2), B118 (review bản 1, 2 vòng), B119 (thử Huế TRIPO), B120 (review bản 2) — A nhận hết; báo cáo + review A commit tới `4a24de7`.
 - Phiên sáng: nhánh **giữ** chờ User xoá: `s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` (đã vào `main` ở `a80e12d`).
 
 ## Đang khai báo sửa
-- (xong) B119 (từ 15:39 01/11/2026): `data/nghien_cuu_phase_9_2026-11-01/tripo/` (ảnh, kết quả thô, `b119_kham_pha.md`); script tạm `/tmp/b119_tools/`; dòng trạng thái B119 trong `CURRENT_HANDOFF.md`
-- không (file của B116 / B117 đã xong; chưa commit — A commit `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`; file `data/` là private)
+- không
 
 ## Phiên 01/11 đã xong
 | Việc | Kết quả | File / commit |
