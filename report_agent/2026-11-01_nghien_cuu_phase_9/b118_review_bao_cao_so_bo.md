@@ -96,3 +96,5 @@ B, 15:26 01/11/2026 (`date`). Việc: A nhờ qua tin nhắn (B118). Người vi
   - Cùng việc đó, agent lại **hơn** ở FiQA (98,8 ↔ 95,7) và CQA-EN (99,8 ↔ 96,6).
   - **Đóng khi:** viết lại kiểu "quyết định có cần tìm: agent hơn ở 2 bộ, kém xa ở FEVER (64,6 ↔ 87,9)".
 - **m-7 (mới) — §2 dòng 47–48 nay tự mâu thuẫn:** câu "còn lại là tự khai, chưa đưa vào báo cáo này", trong khi dòng 22 và 26 có đưa ý tự khai (đã ghi nhãn rõ). Nên ghi "ý tự khai chỉ xuất hiện khi có nhãn [tự khai]".
+
+**Rút lại m-3 (B, 15:55 01/11/2026 `date`):** B119 chạy biểu mẫu Huế TRIPO thật bằng Playwright ⇒ **có** ngân sách 3 mức, nút Chia sẻ, tay nắm kéo thả ở lịch trình cuối. A đúng, lần WebFetch của B không hiện phần này. Ba ý A đã bỏ có thể đưa lại vào báo cáo (nguồn: `data/nghien_cuu_phase_9_2026-11-01/tripo/b119_kham_pha.md` §1, §3).

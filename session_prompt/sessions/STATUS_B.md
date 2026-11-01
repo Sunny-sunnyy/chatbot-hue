@@ -1,14 +1,16 @@
-# STATUS B — cập nhật 15:29 01/11/2026 (phiên chiều 01/11: B116 + B117 + B118 (2 vòng) xong; B rảnh)
+# STATUS B — cập nhật 16:16 01/11/2026 (kết phiên chiều 01/11: B116–B120 xong; B rảnh)
 
 Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-c0`, C = `hue-rag-b0` (phiên sáng: B `hue-rag-da`, A `hue-rag-27`, C `hue-rag-6a`) (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B.
 Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền khác (trần tiền…) theo mục việc A ghi trong `CURRENT_HANDOFF.md` (A đang hỏi lại User).
 
 ## Đang làm / dở
+- **B119** xong 15:55 01/11/2026, chờ A xem (`tripo/b119_kham_pha.md`). Server 8797 đã tắt, script `/tmp/b119_tools` đã xoá, không job nền. Tiền ≈ 0,0040 USD.
 - **Không** (kết phiên chiều 15:24 01/11/2026). Không job nền, không server, không worktree, không nhánh mới của B. Codex: 2 lượt `tra_web_codex.sh` đã xong.
 - Phiên sáng: nhánh **giữ** chờ User xoá: `s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` (đã vào `main` ở `a80e12d`).
 
 ## Đang khai báo sửa
+- (xong) B119 (từ 15:39 01/11/2026): `data/nghien_cuu_phase_9_2026-11-01/tripo/` (ảnh, kết quả thô, `b119_kham_pha.md`); script tạm `/tmp/b119_tools/`; dòng trạng thái B119 trong `CURRENT_HANDOFF.md`
 - không (file của B116 / B117 đã xong; chưa commit — A commit `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`; file `data/` là private)
 
 ## Phiên 01/11 đã xong
@@ -34,9 +36,11 @@ Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng
 | **B116** so sánh cách làm giao diện mới (tư liệu) | đã chọn React + Vite build tĩnh, FastAPI phục vụ, Tailwind, shadcn chỉ sau dò CSP; yêu cầu 18 (`[Nguồn n]` thành link); bước dò CSP; hướng nhìn (ASCII, 12 token AA tính thật, Be Vietnam Pro OFL tự host, 6 trạng thái). Còn chờ User: cách hiện nguồn, D5 | `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`; `data/giao_dien_moi_2026-11-01/` |
 | **B117** tra cứu Phase 9 mạch 1 + 2 | Codex 2 lượt + B WebFetch: Huế TRIPO (31/10/2026), cổng an toàn Royal Armouries, Air Canada; Expedia trust gap, Agoda VN, Musa Guide; A kiểm lại 2 ý khớp; sửa phạm vi 8 % (Mỹ + Anh) | `data/nghien_cuu_phase_9_2026-11-01/b_mach1.md`, `b_mach2.md` |
 | **B118** review bản sơ bộ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` (A viết) | `changes_requested`: 0 blocker · 3 major (2 ý tự khai dưới nhãn C kiểm; "đúng cách hue_rag" nói quá) · 5 minor; overlap_scan 0 trùng. **Vòng 2 (15:29 01/11/2026): ready** — 3 major đóng; còn m-2 / m-3 một phần + m-6 (FEVER gọi sai "kiểm dữ kiện") + m-7, không chặn | `report_agent/2026-11-01_nghien_cuu_phase_9/b118_review_bao_cao_so_bo.md` |
+| **B119** khám phá Huế TRIPO (Playwright) + 10 câu so hue_rag | TRIPO: biểu mẫu → hỏi thêm bằng nút → 3 phương án → lịch trình có giờ / chi phí / bản đồ / thuyết minh / PDF; nhớ hội thoại; trả giờ / giá. Yếu: câu trang phục Đại Nội trái hue_rag (chưa kiểm ai đúng), an toàn / chi phí tự sinh không nguồn, lịch quá giờ đóng cửa, 14–36 s. hue_rag: từ chối câu 2 + 7 (câu 2 có thể từ chối nhầm) | `data/nghien_cuu_phase_9_2026-11-01/tripo/b119_kham_pha.md` |
+| **B120** review bản 2 `BAO_CAO_NGHIEN_CUU_PHASE_9.md` | lần 1 blocked (bản 2 chưa lưu); lần 2 **ready**: 0 blocker / 0 major, 2 minor (câu 4 "đúng" ⇒ "khớp"; thiếu lưu ý bản dịch Luật AI); overlap_scan 0 trùng | `report_agent/2026-11-01_nghien_cuu_phase_9/b120_review_ban_2.md` |
 
 ## Tiền paid (B, 01/11, giá đủ; ca ngắt / hết token không có usage ⇒ cận trên)
-S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối §6–§8 0,0293 ⇒ **≈ 0,055 USD**. Không gọi `agy`; Codex không chạy (dùng lượt của A). **Phiên chiều 01/11: 0 USD API** (2 lượt Codex qua tài khoản ChatGPT, WebFetch).
+S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối §6–§8 0,0293 ⇒ **≈ 0,055 USD**. Không gọi `agy`; Codex không chạy (dùng lượt của A). **Phiên chiều 01/11: ≈ 0,0040 USD** (B119 hue_rag 11 lượt; còn lại 0 USD API) (2 lượt Codex qua tài khoản ChatGPT, WebFetch).
 
 ## Câu hỏi / thắc mắc cho A
 1. S4: lợi "đủ câu − chữ đầu" 441 ms < 500 ⇒ D5 xem lại PA3 hay giữ PA1; nâng sàn (đạt mục tiêu 1,5 / 3 s)?
@@ -44,6 +48,7 @@ S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối �
 3. 4 worktree AGY cũ `~/.gemini/antigravity-cli/…` (commit `c725987`) vẫn còn — User quyết.
 
 ## Bẫy đã gặp — đọc trước khi làm
+- (01/11 chiều) WebFetch trang có JS (Huế TRIPO) **sót phần động** (ngân sách, chia sẻ) ⇒ B ghi "không thấy" sai; nhận xét về giao diện trang ngoài ⇒ dùng Playwright thật trước khi khẳng định "không có".
 - (01/11 chiều) `tra_web_codex.sh` lượt nghiên cứu: Codex chạy chỉ 100–170 s, `url_da_mo.txt` rỗng dù báo cáo tự nói "đã mở trang gốc" ⇒ coi mọi URL là tự khai, tự WebFetch; vài trang (VietnamPlus, Wiley) WebFetch hết giờ / 403 / 502 ⇒ ghi tự khai, chọn ý dự phòng.
 - (01/11 chiều) Đọc `.npmrc` của dự án khác bị auto mode chặn (có thể chứa token) ⇒ không đọc file cấu hình gói của dự án khác.
 - (01/11) Chuỗi `G="VAR=… cmd"` rồi `$G` **không chạy** trong bash (gán biến chỉ nhận khi viết thẳng) ⇒ dùng hàm bash có `env`, gọi thẳng; hàm đưa vào `bash -c` không thấy biến ngoài.

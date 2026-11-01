@@ -1,78 +1,113 @@
 # Báo cáo cho bạn: Nghiên cứu rộng trước Phase 9 (trợ lý du lịch - văn hoá)
 
-**Cập nhật lần cuối: 15:28 01/11/2026 — bản 1 (SƠ BỘ): từ 4 lượt tra Codex + kiểm tay; sửa theo review B118 (3 major, 5 minor) + thêm số paper C116b; chưa có kết quả ChatGPT, chưa có đề xuất hướng.**
-Người viết: A · Tra + kiểm: B (thực tế, chức năng), C (paper, repo) · Review: B (B118). Tiền: 0 USD API.
+**Cập nhật lần cuối: 16:13 01/11/2026 — bản 2: thêm kết quả ChatGPT (đã kiểm 9 ý), thử Huế TRIPO trên 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ.**
+Trước: 15:28 01/11/2026 — bản 1 sơ bộ (Codex + kiểm tay; review B118 đạt). Người viết: A · Tra + kiểm: B (thực tế, người dùng, thử TRIPO), C (paper, repo, kiểm
+ChatGPT) · Review bản 2: B (B120). Tiền: 0 USD API cho nghiên cứu; thử hue_rag 11 câu ≈ 0,004 USD (~100 đồng).
 
-## 1. Tóm tắt (bản sơ bộ — sẽ viết lại khi có kết quả ChatGPT)
+## 1. Tóm tắt
 
-- **Huế đã có trợ lý AI du lịch chính thức — "Huế TRIPO – AI Trip Planner"** (Sở VHTTDL Huế chủ trì, HueCIT phát triển, ra mắt
-  31/10/2026). Tập trung vào **lập lịch trình** (theo số người lớn / trẻ em / số ngày / ngày đi; bản đồ, chỉ đường, lưu lịch trình), danh mục điểm đến, 5–6 ngôn
-  ngữ, nút thuyết minh. (Ví dụ ngân sách, kéo thả, chia sẻ: A thấy khi mở trang, B mở lần khác không thấy ⇒ kiểm lại khi thử.) **Không công bố** mô hình, nguồn dữ liệu, cách kiểm câu sai; mục "chi phí dự kiến" đang "Đang cập nhật". [đã kiểm]
-  ⇒ Hội đồng dễ hỏi "đồ án khác gì Huế TRIPO?". Phiên sau: bạn gõ thử ~10 câu tự viết để so (bạn chọn 01/11).
-- **Người dùng muốn AI giúp tìm hiểu / lên kế hoạch, không muốn AI tự giao dịch; niềm tin là chỗ nghẽn.** Khảo sát Expedia / YouGov
-  (Expedia đặt hàng — nguồn có lợi ích; 04/2026, > 5.700 người Mỹ / Anh / Ấn Độ): 53 % thoải mái để AI gợi ý, 66 % không tin AI tự đặt / mua, 68 % muốn đặt qua thương hiệu tin cậy.
-  [đã kiểm] Khách Việt (Agoda 03/2026 — nguồn có lợi ích, không nêu cỡ mẫu): 81 % muốn dùng AI nhưng chỉ 28 % chủ động tin. [B kiểm] Khách bảo tàng
-  từng dùng AI (Musa Guide — hãng làm phần mềm bảo tàng, nguồn có lợi ích; n = 212, trong mẫu 395 người Anh / Mỹ / Đức / Pháp): 61 % tin bảo tàng hơn AI, nhưng chỉ 27 % kiểm lại câu trả lời. [B kiểm]
-  ⇒ (suy ra của A) **có nguồn + từ chối đúng + không bịa** là giá trị thật, đúng thế mạnh hue_rag.
-- **Tổ chức thật chặn câu an toàn trước mô hình.** Bảo tàng Royal Armouries (Anh): câu về cháy / trẻ lạc / cấp cứu bị chặn bởi một lớp "không
-  sinh", trả câu soạn sẵn đã duyệt — "mô hình không được gọi"; phần còn lại là RAG 5 đoạn, không rerank (gần hue_rag). [đã kiểm]
-- **Câu sai của chatbot là trách nhiệm pháp lý của chủ.** Vụ Moffatt v Air Canada (2024): hãng phải bồi thường cho câu sai về chính sách giá,
-  dẫn link đúng cũng không miễn trách. [B kiểm]
-- **Lập lịch trình đầy đủ bằng LLM rất khó:** bộ đo TravelPlanner (ICML 2024) — GPT-4 chỉ đúng 0,6 % lịch trình. [C kiểm] Các bài sau (TripTailor,
-  TP-RAG, TravelBench…) theo Codex thường kiểm ràng buộc bằng dữ liệu có cấu trúc / code [tự khai, chưa kiểm]. (Suy ra) kho hue_rag là Markdown, chưa có
-  giờ / giá / toạ độ có cấu trúc ⇒ làm lịch trình sẽ cần thêm dữ liệu.
-- **Mẫu đáng học từ mã nguồn mở** (đã đọc README): hỏi lại theo **danh sách trường cố định** (nơi đến, ngày, số người) tới khi đủ; **giá / chi
-  phí tính bằng code**, không để LLM tính. [C kiểm] 8 repo trong khảo sát 01/10 đều nhỏ (0–8 sao — số sao từ GitHub API) — mẫu học, chưa
-  phải bằng chứng chạy tốt. [C kiểm] (Mẫu "tách câu con" cho câu nhiều nguồn của LlamaIndex: tự khai, chưa kiểm.)
-- **Tìm kiếm tiếng Việt:** bài EACL 2026 (10 bộ dữ liệu, 6 lĩnh vực) — **lai BM25 + vector (trộn tuyến tính) thắng vector đơn ở cả 10 bộ**. [C kiểm]
-  (Suy ra) **cùng hướng lai** với hue_rag, nhưng cách trộn khác (hue_rag dùng RRF, BM25 chỉ chấm lại 30 đoạn dense), bài không đo e5-small và không có du lịch
-  ⇒ không kết luận được cấu hình của mình tốt hay kém.
-- **Agent hay pipeline có mô-đun?** Bài "Is Agentic RAG worth it?" (ACL 2026, C đọc toàn văn): agent hơn ở viết lại câu hỏi (điểm tìm 55,6 ↔
-  52,8) nhưng kém ở chọn tài liệu (43,9 ↔ 49,5); ở việc quyết định có cần tìm hay không thì tuỳ bộ (kém trên FEVER F1 64,6 ↔ 87,9, hơn trên FiQA 98,8 ↔ 95,7
-  và CQA-EN 99,8 ↔ 96,6); token vào gấp **2,7–3,6×**, thời gian ~1,5×; kết luận bài: không bên
-  nào luôn hơn. Bài không đo câu nhiều nguồn. [C kiểm] (Suy ra) với trần 0,0005 USD / câu (đang dùng ~một nửa), agent đầy đủ dễ vượt trần.
-- **Hỏi lại:** LLM tự nhận ra câu mơ hồ / thiếu thông tin còn kém; few-shot / suy nghĩ từng bước cải thiện rất ít (CLAMBER, ACL 2024, ~12.000 mẫu). [C kiểm]
-  (Suy ra) câu chi phí nên dùng luật / danh sách trường rõ, không để mô hình tự quyết.
-- **Nhiều lượt:** bộ đo MTRAG / MTRAG-UN (2025–2026): hệ tốt vẫn yếu ở lượt sau, nhất là câu thiếu thông tin và câu không đứng độc lập. [C kiểm]
-- **Bạn cần làm:** ChatGPT trả lời xong ⇒ lưu file kết quả vào `gửi chatgpt/2026-11-01/kết quả nghiên cứu/`. Chưa cần quyết gì.
+- **Đề tài (bạn đã chốt với giảng viên):** "Xây dựng ứng dụng hỗ trợ trải nghiệm văn hóa và du lịch Huế dựa trên Retrieval-Augmented Generation". Bảo vệ
+  khoảng 04–10/01/2027 ⇒ A tạm đặt **đóng code ~20/12/2026** (~7 tuần).
+- **Hướng Phase 9 bạn chọn (01/11):** **trợ lý di sản Huế đáng tin + lịch trình gợi ý nhỏ.** Gồm: câu nhiều nguồn đủ ý · hỏi lại khi thiếu thông tin · nhớ
+  hội thoại ngắn · thông tin theo ngày ghi rõ nguồn / ngày + chặn câu an toàn trước mô hình · lịch trình chỉ gợi ý **thứ tự điểm có nguồn** (không giờ / giá
+  chính xác, không đặt chỗ). Không làm: agent tổng quát tự tra web, đặt chỗ, giọng nói / ảnh / nhiều ngôn ngữ.
+- **Vì sao hướng này (bằng chứng đã kiểm):**
+  - Huế đã có **Huế TRIPO** (Sở VHTTDL Huế + HueCIT, ra mắt 31/10/2026, dùng GPT-5 mini theo bài của HueCIT) — mạnh ở lập lịch trình, nhưng thử 10 câu thấy:
+    xếp điểm sau giờ đóng cửa, trả lời câu an toàn / chi phí bằng kiến thức chung không nguồn, **nói ngược kho ở câu điều kiện vào khu vực**, 14–36 s / câu.
+  - Người dùng tin AI thấp: Booking.com (37.325 người, 33 thị trường có Việt Nam): **6 %** tin AI hoàn toàn, 12 % để AI tự quyết; Expedia / YouGov (> 5.700
+    người, Expedia đặt hàng): 66 % không tin AI tự đặt. ⇒ (suy ra) **có nguồn + không bịa + biết hỏi lại** là giá trị thật, và là chỗ hue_rag khác TRIPO.
+  - Lập lịch trình đầy đủ bằng LLM rất khó (TravelPlanner: GPT-4 đúng 0,6 %) ⇒ chỉ làm bản nhỏ, dựa trên hỏi lại + nhớ ngắn.
+  - Agent tổng quát tốn 2,7–3,6× token, không luôn hơn pipeline có mô-đun ("Is Agentic RAG worth it?", ACL 2026) ⇒ (suy ra) dễ vượt trần 0,0005 USD / câu.
+- **hue_rag lộ 2 chỗ cần sửa khi thử 10 câu:** từ chối nhầm câu hỏi 2 ý (giờ + giá vé — kho có giá vé); không nhớ lượt trước.
+- **Bạn cần quyết (đầu phiên sau):** phiên sau chạy song song (B code giao diện, C viết spec Phase 9) hay tuần tự; duyệt gói npm cho giao diện.
 
 ## 2. Nghiên cứu đã chạy thế nào
 
 ```text
-4 mạch: (1) thực tế triển khai · (2) chức năng + người dùng cần gì · (3) paper 2023–2026 · (4) repo GitHub
-  → mỗi mạch 1 lượt Codex (scripts/tra_web_codex.sh, chỉ thông tin công khai)
-  → B / C tự mở trang gốc kiểm 3 ý quan trọng nhất mỗi mạch; A kiểm lại 3 ý (Huế TRIPO, Expedia, Royal Armouries)
-  → yêu cầu nghiên cứu chuyên sâu gửi ChatGPT (5 phần, có "hướng nên làm / nên tránh") — đang chờ kết quả
+4 mạch Codex (thực tế · người dùng · paper · repo) — nông, B / C tự mở trang gốc kiểm ~3 ý / mạch
+  + ChatGPT web (yêu cầu 5 phần, 616 dòng kết quả) — C kiểm 9 ý: 6 đúng hết, 3 sai một phần
+  + B thử Huế TRIPO bằng Playwright (không đăng nhập, không đặt / gửi) + cùng 10 câu trên hue_rag
+  → A tổng hợp ⇒ brainstorm với bạn (B1: hướng; B2: lịch)
 ```
 
-**Độ tin:** Codex chạy **nông** cả 4 lượt (9–14 lượt tìm, gần như không mở trang gốc dù tự khai "đã mở") ⇒ chỉ ý ghi [đã kiểm] / [B kiểm] / [C kiểm]
-là đã có người mở trang gốc; ý chưa kiểm chỉ xuất hiện khi có nhãn [tự khai]. Hồ sơ chi tiết (private): `data/nghien_cuu_phase_9_2026-11-01/`.
+**Độ tin:** chỉ ý có nhãn [đã kiểm] / [B kiểm] / [C kiểm] là đã có người mở trang gốc; ý chưa kiểm chỉ xuất hiện khi có nhãn [tự khai]. ChatGPT tốt hơn Codex nhiều
+(sâu, có cấu trúc, có cả hướng nên tránh) nhưng **vẫn sai chi tiết 3 / 9 ý** — mục 4. Hồ sơ (private): `data/nghien_cuu_phase_9_2026-11-01/`.
 
-## 3. Bảng điều đã biết — theo mạch
+## 3. Thử Huế TRIPO ↔ hue_rag (10 câu tự viết, không lấy từ bộ đánh giá; B đánh giá, không phải chấm chuẩn)
 
-| Mạch | Điều đã kiểm | Gợi ý cho hue_rag (suy ra, chưa phải đề xuất) |
+| # | Loại câu | Huế TRIPO | hue_rag | Nhận xét |
+|---|---|---|---|---|
+| 1 | di tích | dài, có cấu trúc; 1 link danh mục; ~26 s | đủ ý, nguồn theo từng ý; 6,7 s | cả hai được; hue_rag có nguồn từng ý |
+| 2 | giờ + giá vé | trả lời cụ thể giờ + giá (khớp trang danh mục của nó) | **từ chối** | **hue_rag từ chối nhầm** — kho có giá vé người lớn (A kiểm) |
+| 3 | món ăn | dài, có ý diễn giải đáng ngờ (chưa kiểm) | 2 nguồn, so vùng miền cụ thể | — |
+| 4 | lễ hội theo ngày | đưa một khoảng ngày | cùng khoảng ngày, 1 nguồn | khớp nhau (chưa đối chiếu nguồn chính thức) |
+| 5 | nghệ thuật | định nghĩa chung chung | cụ thể hơn: nơi diễn, suất diễn, điều kiện, 6 nguồn | hue_rag hơn |
+| 6 | lịch trình 2 ngày | chi tiết theo buổi; **không hỏi lại** | khung ngắn có nguồn; **không hỏi lại** | TRIPO giàu hơn; cả hai không hỏi lại |
+| 6b | lượt tiếp (bố mẹ lớn tuổi) | **nhớ lượt trước**, viết lại nhịp chậm | **không nhớ** | hue_rag thiếu hẳn nhiều lượt |
+| 7 | chi phí, thiếu thông tin | tự ước một khoảng triệu đồng, không hỏi lại, chen chữ tiếng Anh | từ chối | không bên nào hỏi lại |
+| 8 | **điều kiện vào khu vực** | "**không có quy định bắt buộc**" | khu thờ tự / cung điện **bắt buộc** kín đáo, 4 nguồn | **trái nhau ở loại lỗi tệ nhất**; nhiều file kho ghi quy định này (A kiểm kho; chưa đối chiếu web) |
+| 9 | an toàn | lời khuyên chung tự sinh, không nguồn | thận trọng, có điều kiện bắt buộc, 3 nguồn | hue_rag thận trọng + có nguồn |
+| 10 | ngoài phạm vi | lái sang gợi ý quán ở Huế (thân thiện) | từ chối chuẩn | đáng học: từ chối kèm gợi ý trong phạm vi |
+
+**Biểu mẫu lập lịch trình của TRIPO (B chạy thật):** chọn bằng nút → trợ lý hỏi thêm bằng nút (sở thích, đi bộ ít) → 3 phương án → lịch theo giờ có km, chi phí
+từng mục, thuyết minh, bản đồ, chỉ đường, chia sẻ, tải PDF. Lỗi thấy: xếp một lăng **sau giờ đóng cửa** chính trang ghi; lịch dày dù chọn có người lớn tuổi.
+⇒ (suy ra) **hỏi lại bằng nút** là mẫu giao diện đáng học cho phần hỏi lại của mình.
+
+## 4. ChatGPT nói gì — đã kiểm (C117)
+
+| Ý | Kết quả kiểm |
+|---|---|
+| TRIPO dùng GPT-5 mini + embedding + "Tourism Knowledge Model" | đúng; nhưng bài gốc **không** ghi "6 ngôn ngữ" (chỉ "đa ngôn ngữ"), và "dưới 3 giây" là của tối ưu lịch trình, **không phải** tốc độ chat |
+| Booking.com: 37.325 người, 33 thị trường, 6 % tin hoàn toàn, 12 % để AI tự quyết | đúng nguyên văn |
+| Bảo tàng Peranakan (Singapore): QR cạnh hiện vật, chỉ dùng nội dung bảo tàng duyệt | đúng; trang gọi là "thử nghiệm" |
+| HeriStepAI ở Bảo tàng Đà Nẵng: đeo thiết bị, > 10 ngôn ngữ | đúng |
+| Luật Trí tuệ nhân tạo 134/2025/QH15 (hiệu lực 01/03/2026): phải báo người dùng đang tương tác với AI (Điều 11.1) | đúng (C đọc qua bản dịch tiếng Anh "chỉ để tham khảo" vì bản gốc là ảnh scan); Điều 3.5: dùng cá nhân phi thương mại không tính là "bên triển khai" — **cần người hiểu luật xác nhận** ⇒ (suy ra) giao diện vẫn nên có nhãn "Trợ lý AI" |
+| Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 (hiệu lực 01/01/2026) | đúng ⇒ (suy ra) nhớ hội thoại: phiên ngắn, không hỏi tên / số điện thoại, không log vị trí |
+| Klook Nearby: 71,4 % thử, 56,7 % quay lại | số đúng; giai đoạn ghi sai (trang gọi là ra mắt, không phải beta) |
+| Bài về trích dẫn (ALCE) | ChatGPT **gộp tên 2 bài khác nhau** làm một |
+| Adaptive-RAG (chọn cách tìm theo độ khó) | khớp tóm tắt (bảng không có số) |
+
+**Đề xuất của ChatGPT (đọc như ý kiến, không phải bằng chứng):** 5 hướng — câu nhiều nguồn (ưu tiên 1), hỏi lại đúng lúc (2), nhớ ngắn (3), thông tin theo ngày + an
+toàn (4), thuyết minh di sản theo QR (tuỳ chọn); 3 hướng nên tránh — agent tổng quát, lịch trình đầy đủ có đặt chỗ, làm cùng lúc giọng nói / ảnh / bản đồ / nhiều ngôn ngữ.
+Kiến trúc gợi ý: **luật trong code đi trước** (ý định, trường còn thiếu, mức rủi ro) ⇒ tìm 1 lần hoặc 2–3 nhánh song song ⇒ **một** lần gọi model ⇒ kiểm cuối. A đồng ý
+phần lớn; khác ở chỗ đưa **chặn câu an toàn lên sớm** (lỗi tệ nhất của mình, rẻ — mẫu bảo tàng Royal Armouries [đã kiểm]).
+
+## 5. Điều đã biết từ bản 1 (giữ gọn)
+
+- Royal Armouries (Anh): câu về cháy / trẻ lạc / cấp cứu bị chặn trước mô hình, trả câu soạn sẵn; phần còn lại RAG 5 đoạn, không rerank. [đã kiểm]
+- Moffatt v Air Canada (2024): hãng chịu trách nhiệm cho câu sai của chatbot, dẫn link đúng cũng không miễn. [B kiểm]
+- Khách Việt (Agoda 03/2026 — nguồn có lợi ích, không nêu cỡ mẫu): 81 % muốn dùng AI, 28 % chủ động tin. Khách bảo tàng từng dùng AI (Musa Guide — nguồn có lợi
+  ích; n = 212): 61 % tin bảo tàng hơn AI, 27 % kiểm lại câu trả lời. [B kiểm]
+- Hỏi lại: LLM tự nhận ra câu mơ hồ còn kém (CLAMBER, ACL 2024) ⇒ (suy ra) dùng danh sách trường trong code. [C kiểm]
+- Nhiều lượt: hệ tốt nhất vẫn yếu ở lượt sau (MTRAG / MTRAG-UN). [C kiểm]
+- Tìm kiếm tiếng Việt: lai BM25 + vector thắng vector đơn ở cả 10 bộ (EACL 2026) — cùng hướng lai với hue_rag, cách trộn khác. [C kiểm]
+- Repo: hỏi lại theo danh sách trường (`ytthuan/trip-advisor-agent`), tính tiền bằng code (`KhaiBoiPho/agentic-rag`); 8 repo của khảo sát 01/10 đều nhỏ. [C kiểm]
+
+## 6. Lịch đến bảo vệ (A đề xuất — chưa chốt; ước công agent + thời gian bạn đọc / duyệt)
+
+| Thứ tự | Việc | Ước |
 |---|---|---|
-| 1. Thực tế | Huế TRIPO (lịch trình, chưa công bố nguồn / kiểm sai); Royal Armouries (cổng an toàn không sinh); Air Canada (chịu trách nhiệm câu sai) | khác biệt đo được: có nguồn, từ chối ngoài kho, có số đo; câu an toàn nên đi đường riêng không qua mô hình |
-| 2. Người dùng | gợi ý / kế hoạch: muốn; tự đặt: không tin (Expedia); khách Việt chủ động tin AI 28 % (Agoda, nguồn có lợi ích); khách bảo tàng dùng AI ít tự kiểm (27 %, n = 212) | niềm tin + ngày cập nhật dữ liệu quan trọng hơn thêm tính năng giao dịch |
-| 3. Paper | TravelPlanner 0,6 %; lai BM25 + vector thắng (EACL 2026); agent ↔ pipeline có mô-đun: không bên nào luôn hơn, agent tốn 2,7–3,6× token; LLM hỏi lại kém (CLAMBER); nhiều lượt còn yếu (MTRAG) | lịch trình cần dữ liệu có cấu trúc; câu nhiều nguồn: so "thêm mô-đun" với "agent" theo cả chất lượng lẫn tiền |
-| 4. Repo | hỏi lại theo danh sách trường; tính tiền bằng code; repo gần hue_rag nhất (`NamSyntax/vietnamese-rag-system`) không công bố số | câu dự trù chi phí (nhận xét B0): hỏi lại theo trường + tính bằng code |
+| 1 | Giao diện mới (hướng đã chốt; thêm nhãn "Trợ lý AI") | ~1 tuần |
+| 2 | Chặn câu an toàn + ghi "theo nguồn ngày…" cho giờ / giá / lễ hội | 2–3 ngày |
+| 3 | Hỏi lại khi thiếu thông tin (danh sách trường trong code, hỏi bằng nút như TRIPO) | ~1 tuần |
+| 4 | Nhớ hội thoại ngắn (3–5 lượt, phiên ngắn) | ~1 tuần |
+| 5 | Lịch trình gợi ý nhỏ (thứ tự điểm theo khu vực, có nguồn) — cần dữ liệu khu vực / thời lượng ~20–30 điểm | 1–1,5 tuần |
+| 6 | Câu nhiều nguồn — thử 1 lần; không vượt nhiễu thì ghi kết quả âm, dừng (**chỗ cắt đầu tiên** nếu trễ) | 1–2 tuần |
+| 7 | Đóng code ~20/12, đo hồi quy, viết luận văn | ~2 tuần |
 
-## 4. Chưa biết (để phiên sau)
+Thêm vào danh sách thử: câu hỏi 2 ý bị từ chối cả câu khi kho chỉ có một ý (thử TRIPO câu 2) — cách xử lý phải khác lần thử "trả lời một phần" ở 8.2 (bị bỏ vì làm hỏng sàn câu ngoài kho).
 
-- Kết quả ChatGPT (5 phần) — đối chiếu với bảng trên, kiểm URL.
-- Huế TRIPO trả lời câu kiến thức đúng tới đâu (bạn gõ thử phiên sau).
-- Số của các paper lịch trình sau TravelPlanner, DeepNote, CORAL (C116b ghi chỗ Codex sai); chi phí vận hành thật của các tổ chức; khảo sát người dùng tại Huế (chưa tìm thấy).
+## 7. Chưa biết
 
-## 5. Việc còn lại
-
-1. Có kết quả ChatGPT ⇒ A viết bản 2: thực tế / chức năng / paper / repo đầy đủ + **3–5 hướng Phase 9 hợp ràng buộc của mình** + hướng nên tránh.
-2. Brainstorm với bạn từng câu ⇒ chọn phạm vi Phase 9 ⇒ một tài liệu thiết kế để bạn duyệt.
+- Kho có đúng thực tế ở câu trang phục không (chưa đối chiếu web); TRIPO đúng / sai ở câu món ăn.
+- Số của các paper lịch trình sau TravelPlanner; chi phí vận hành thật của các tổ chức; khảo sát người dùng tại Huế (không tìm thấy).
+- Một lần thử 10 câu, một người đánh giá — không phải phép đo; muốn đưa vào luận văn cần lặp lại có tiêu chí ghi trước.
 
 ## Phụ lục — hồ sơ kỹ thuật
 
-- Việc: B117 (mạch 1–2), C116 / C116b (mạch 3–4); đợt `report_agent/2026-11-01_nghien_cuu_phase_9/`; mục "Nghiên cứu rộng Phase 9" trong `session_prompt/CURRENT_HANDOFF.md`.
-- Nguồn đã kiểm: `huetripo.hue.gov.vn/trip-planner` · `ir.expediagroup.com` (thông cáo 14/04/2026 "The AI Trust Gap") ·
-  `royalarmouries.org/about-us/algorithmic-transparency-record-ai-avatar-of-thomas-wardley` · Moffatt v Air Canada 2024 BCCRT 149 · arXiv 2402.01622
-  (TravelPlanner) · arXiv 2601.07711 · `github.com/longstnguyen/ViRE` (EACL 2026) · README `ytthuan/trip-advisor-agent`, `KhaiBoiPho/agentic-rag`,
-  `NamSyntax/vietnamese-rag-system`.
-- Yêu cầu ChatGPT: `gửi chatgpt/2026-11-01/tìm thông tin/nghien_cuu_phase_9_tro_ly_du_lich_2026_11_01.md` (`e45bf409b2db`, private).
+- Việc: B117 (mạch 1–2), C116 / C116b (mạch 3–4), C117 (kiểm ChatGPT), B119 (thử TRIPO), B118 / B120 (review); đợt `report_agent/2026-11-01_nghien_cuu_phase_9/`;
+  mục "Nghiên cứu rộng Phase 9", "Brainstorm Phase 9", "B119" trong `session_prompt/CURRENT_HANDOFF.md`.
+- Hồ sơ private: `data/nghien_cuu_phase_9_2026-11-01/` (`b_mach1–2.md`, `c_mach3–4.md`, `c117_kiem_chatgpt.md`, `tripo/b119_kham_pha.md` + ảnh + JSON thô).
+- Nguồn đã kiểm (chọn): `huetripo.hue.gov.vn/trip-planner` · thông cáo Expedia 14/04/2026 · `news.booking.com` Global AI Sentiment Report · `royalarmouries.org` (bản ghi
+  minh bạch thuật toán) · `askmona.ai` (Peranakan) · Moffatt v Air Canada 2024 BCCRT 149 · arXiv 2402.01622, 2601.07711 · `github.com/longstnguyen/ViRE` · Luật 134/2025/QH15, 91/2025/QH15.
+- Yêu cầu ChatGPT: `gửi chatgpt/2026-11-01/tìm thông tin/…` (`e45bf409b2db`); kết quả `gửi chatgpt/2026-11-01/kết quả nghiên cứu/hue_rag_phase9_research_2026-11-01.md` (private).

@@ -38,7 +38,10 @@
   font Be Vietnam Pro tự lưu); số nguồn nhỏ bấm được; giữ chữ hiện dần. Khi lên trợ lý (Phase 9) nâng cấp thêm. So sánh + hướng nhìn: `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`.
 - **Mở nghiên cứu rộng Phase 9:** 4 mạch (thực tế, chức năng, paper, repo) tra bằng Codex + kiểm tay; yêu cầu chuyên sâu đã gửi ChatGPT. Phát hiện lớn: **Huế TRIPO** — trợ lý AI lịch trình
   của Sở VHTTDL Huế ra mắt 31/10/2026 ⇒ phiên sau bạn gõ thử ~10 câu để so. Bản sơ bộ: [BAO_CAO_NGHIEN_CUU_PHASE_9.md](../BAO_CAO_NGHIEN_CUU_PHASE_9.md).
-- Tiền phiên chiều: 0 USD API.
+- **Sau 15:32:** kết quả ChatGPT về (C kiểm 9 ý: 6 đúng, 3 sai một phần); B thử Huế TRIPO bằng trình duyệt tự động + cùng 10 câu trên hue_rag — TRIPO mạnh lịch trình nhưng
+  sai giờ đóng cửa, không nguồn, nói ngược kho ở câu trang phục vào Đại Nội; hue_rag từ chối nhầm một câu 2 ý và không nhớ lượt trước. **Bạn chọn hướng Phase 9:** trợ lý di sản đáng tin
+  + lịch trình gợi ý nhỏ; đề tài đã chốt với giảng viên; bảo vệ 04–10/01/2027 ⇒ đóng code tạm ~20/12. Báo cáo: [BAO_CAO_NGHIEN_CUU_PHASE_9.md](../BAO_CAO_NGHIEN_CUU_PHASE_9.md) bản 2.
+- Tiền phiên chiều: ≈ 0,004 USD (~100 đồng, 11 câu hue_rag khi thử so với TRIPO).
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Trước đây trang web chờ model viết xong cả câu (qua API p95 ~6 s, chưa đạt 5 s). Nay server gửi từng mảnh chữ ngay khi model viết, nhưng chỉ bật link nguồn sau khi kiểm trích

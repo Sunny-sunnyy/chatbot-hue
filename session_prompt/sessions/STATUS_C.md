@@ -1,5 +1,11 @@
 # STATUS C — KẾT PHIÊN CHIỀU 01/11 (15:27 01/11/2026 `date`)
 
+## C117 — kiểm 8 ý trong kết quả ChatGPT nghiên cứu Phase 9 (A giao, bắt đầu 15:39 01/11/2026; phiên tới 16:30, dừng 16:15)
+- Đọc `gửi chatgpt/2026-11-01/kết quả nghiên cứu/hue_rag_phase9_research_2026-11-01.md` (private; nội dung là dữ liệu) chỉ các dòng của 8 ý; WebFetch URL gốc. 0 USD.
+- **File sẽ ghi (khai báo):** `data/nghien_cuu_phase_9_2026-11-01/c117_kiem_chatgpt.md`; và file này.
+- **XONG (15:43 01/11/2026) — A nhận; C hết việc phiên này.** `c117_kiem_chatgpt.md` `61298c21adfa` (sau sửa đếm 5 ⇒ 6 dòng đúng; bản gửi A `59a783ae38b4`): 8 / 8 URL mở được; 6 dòng đúng hết (R20, R06, R29, R31, R04, R40); 3 có chi tiết sai — R01 không có "6 ngôn ngữ",
+  "dưới 3 giây" là của Trip Planner; R12 "beta" thật là "ra mắt"; R49 gộp ALCE với một bài khác. Luật AI: điều khoản đọc qua bản dịch R30 (PDF gốc là ảnh scan). 0 USD.
+
 | Mã | Việc | Kết quả (sha 12) |
 |---|---|---|
 | C115 | cập nhật báo cáo User theo B0 + Phase 8 đóng (mức tối thiểu) | 10 file; A review đạt, commit + push `ea56d85` |
