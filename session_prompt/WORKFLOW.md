@@ -70,6 +70,9 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
 2. Chạy kiểm tra theo việc; `git diff --check`.
 3. Bỏ scope creep, code/test dư, abstraction phòng xa (skill `practical-project-coding`).
 4. Ghi trung thực failed/skipped/partial/not verified.
+4b. Khẳng định về **hành vi thư viện / định dạng log / rào bằng script** ⇒ chạy một probe nhỏ thật (input nhỏ, 0 USD) trước khi bàn giao, ghi nhãn [Chạy] /
+   [Code, chưa chạy]; **script / runbook có lượt trả phí** ⇒ chạy thử mọi lệnh 0 USD (trên bản sao thư mục kết quả) trước khi bàn giao review
+   (W36 — 31/10 S58: 3 major một phiên; 01/11: runbook đo cuối bản 1 có lệnh không chạy được, chỉ `py_compile`, B bắt).
 5. Viết report (mục 6), cập nhật trạng thái mục việc của mình trong
    `CURRENT_HANDOFF.md` thành "chờ review", cập nhật `STATUS_<X>.md`, nhắn A.
 
@@ -124,7 +127,8 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
 - **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào
   script sửa tài liệu; không gõ giờ tay, không ghi `HH:Mx` trước khi chạy `date` (25–26/10: ghi giờ ước 3 lần; 28/10: ~7 lần ⇒ hook
   `.githooks/pre-commit` in cảnh báo khi dòng thêm mới có dạng đó — W30; từ 31/10 hook Claude Code `.claude/hooks/` báo ngay lúc ghi vào `report_agent/`,
-  `session_prompt/`, `bao_cao_he_thong/`, `docs/` — W37; hook báo ⇒ chạy `date` sửa ngay, trích dẫn sự cố cũ thì bỏ qua). Giờ quyết định của User (tin nhắn không có dấu giờ): ghi giờ A ghi nhận bằng `date`.
+  `session_prompt/`, `bao_cao_he_thong/`, `docs/` — W37; hook báo ⇒ chạy `date` sửa ngay, trích dẫn sự cố cũ thì bỏ qua). Giờ quyết định của User (tin nhắn không có dấu giờ): ghi giờ A ghi nhận bằng `date`. **Tin nhắn giữa session không cần ghi giờ** (W45, User 01/11 — 01/11 lọt 4 giờ gõ tay
+  trong tin nhắn, hook không bắt được tin nhắn); có ghi thì cũng lấy bằng `date`.
 - **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
   kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
 
@@ -191,7 +195,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    biết kết quả của Phase mà nó phụ thuộc; mỗi lần chỉ giao việc của một Phase.
 5. **Giữ tài liệu:** `CURRENT_HANDOFF.md` chỉ giữ việc đang mở (việc xong chuyển tóm
    tắt sang `PROJECT_HISTORY.md`); `Project_Status.md` theo quy tắc Governance v2 §6.
-6. **Git:** commit theo mốc; stage **từng file đã review** (không `git add <thư mục>` hay `-A`); luôn
+6. **Git:** sau khi User đồng ý commit / push / lệnh khác: A **tự chạy**; chỉ khi bị chặn / lỗi mới đưa User lệnh `!` kèm lý do (I8; User 31/10 11:44). Commit theo mốc; stage **từng file đã review** (không `git add <thư mục>` hay `-A`); luôn
    `git diff --cached --stat` trước khi commit; không commit dữ liệu private; push `origin`.
    **Nhánh xong việc** (đã merge, hoặc chỉ còn là hồ sơ phương án bị bỏ): A **đề xuất xóa** trong báo cáo đóng đợt / kết phiên kèm danh sách nhánh + còn gì
    chỉ nằm trên nhánh; nhánh hồ sơ ⇒ gắn tag `hoso/<tên>` trước khi xóa để không mất report / code (User 30/10). Xóa chỉ khi User duyệt (User `!`).

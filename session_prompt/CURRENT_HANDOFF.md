@@ -248,7 +248,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
 - **Có lượt đo latency ⇒ session khác không chạy lượt trả phí / việc nặng CPU / Qdrant** (W31).
 - Test cần key: `test_api_chat.py::test_health_is_cached_and_ready_after_real_lifespan`, `test_openai_full_corpus_generator.py`, `test_phase6_live_smoke.py`,
   `test_phase6_settings.py::test_openai_api_key_exists_without_leaking`.
-- Đọc kho: **chỉ** `scripts/grep_kb.sh`; report tracked tả câu ở mức loại câu. Giờ trong file **và trong tin nhắn**: chạy `date` trước (S49). `rm` với biến: dùng `"${X:?}"/…` hoặc
+- Đọc kho: **chỉ** `scripts/grep_kb.sh`; report tracked tả câu ở mức loại câu. Giờ trong file: chạy `date` trước; tin nhắn không cần giờ (W45 01/11) (S49). `rm` với biến: dùng `"${X:?}"/…` hoặc
   đường dẫn cố định (tầng an toàn chặn `$X/*`).
 
 ## Hồ sơ đã đóng (chỉ tra cứu)
