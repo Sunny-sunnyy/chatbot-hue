@@ -1,5 +1,4 @@
 """Single-turn full-corpus retrieval, context building, grounded answer generation and citations."""
-import asyncio
 import json
 import logging
 import time
@@ -9,14 +8,15 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from core.schema import (
-    CitationIntegrityError,
     ContextBudgetError,
     GenerationError,
+    GeneratorNotReadyError,
     RetrievalDependencyError,
 )
-from llm.citations import normalize_citations, select_cited_sources
+from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
+from llm.grounded_answer import AnswerTrace, answer_query, elapsed_ms
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -27,10 +27,6 @@ METRIC_FIELDS = (
     "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens",
     "n_context_sources", "n_cited_sources", "search_ms", "dense_ms", "context_ms", "generation_ms", "citation_ms", "total_ms",
 )
-
-
-def _elapsed_ms(started: float) -> float:
-    return round((time.perf_counter() - started) * 1000, 1)
 
 
 class ChatRequest(BaseModel):
@@ -79,7 +75,7 @@ async def chat(body: ChatRequest, request: Request):
         metrics["outcome"], metrics["status_code"] = "internal_error", 500
         raise
     finally:
-        metrics["total_ms"] = _elapsed_ms(started)
+        metrics["total_ms"] = elapsed_ms(started)
         logger.info("chat_metrics %s", json.dumps(metrics))
 
 
@@ -104,13 +100,11 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             ),
         )
 
+    trace = AnswerTrace()
+    generator = state.generator if getattr(state, "generator_ready", False) else None
     try:
-        started = time.perf_counter()
-        result = await asyncio.to_thread(state.retrieval_service.search, query)
-        metrics["search_ms"] = _elapsed_ms(started)
-        dense_ms = result.trace.timings_ms.get("dense_ms")  # trace giữ 3 chữ số; log làm tròn 1 chữ số như các trường *_ms khác
-        metrics["dense_ms"] = None if dense_ms is None else round(dense_ms, 1)
-    except (RetrievalDependencyError,):
+        await answer_query(query, state.retrieval_service, state.context_builder, generator, trace, recorder)
+    except RetrievalDependencyError:
         logger.error("Retrieval dependency error")
         if recorder:
             recorder.record_error("retrieval_unavailable")
@@ -119,12 +113,6 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             "retrieval_unavailable",
             "Hệ thống tra cứu tạm thời không khả dụng.",
         )
-
-    try:
-        started = time.perf_counter()
-        packed = state.context_builder.build(query, result.documents)
-        metrics["context_ms"] = _elapsed_ms(started)
-        metrics["n_context_sources"] = len(packed.sources)
     except ContextBudgetError:
         if recorder:
             recorder.record_error("context_budget_error")
@@ -133,17 +121,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             "context_budget_error",
             "Không thể đóng gói ngữ cảnh trong giới hạn cho phép.",
         )
-
-    if recorder:
-        recorder.record_packed_context(packed)
-
-    if not packed.sources:
-        if recorder:
-            recorder.record_fallback()
-        metrics["outcome"] = "refusal_no_sources"  # từ chối trước khi gọi model
-        return ChatResponse(answer=INSUFFICIENT_ANSWER, sources=[])
-
-    if not getattr(state, "generator_ready", False):
+    except GeneratorNotReadyError:
         if recorder:
             recorder.record_error("generation_unavailable")
         return error_response(
@@ -151,12 +129,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             "generation_unavailable",
             "Không thể tạo câu trả lời vào lúc này.",
         )
-
-    started = time.perf_counter()
-    try:
-        generated = await state.generator.generate_answer(query, packed.text)
     except GenerationError:
-        metrics["generation_ms"] = _elapsed_ms(started)
         metrics["outcome"] = "generation_failed"  # cùng mã 502 với "chưa sẵn sàng", nhưng đã gọi model rồi lỗi
         logger.error("Answer generation failed")
         if recorder:
@@ -166,20 +139,14 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             "generation_unavailable",
             "Không thể tạo câu trả lời vào lúc này.",
         )
+    finally:
+        _copy_trace_metrics(trace, metrics)  # cả khi lỗi: bước nào đã chạy thì có số đo của bước đó
 
-    metrics["generation_ms"] = _elapsed_ms(started)
-    # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
-    metrics.update({field: getattr(generated, field, None) for field in ("model", "input_tokens", "output_tokens", "reasoning_tokens")})
-    if recorder:
-        recorder.record_generation_result(generated)
+    if trace.generated is None:
+        metrics["outcome"] = "refusal_no_sources"  # từ chối trước khi gọi model
+        return ChatResponse(answer=INSUFFICIENT_ANSWER, sources=[])
 
-    started = time.perf_counter()
-    answer = normalize_citations(generated.text)
-    try:
-        cited = select_cited_sources(answer, packed.sources)
-        metrics["citation_ms"] = _elapsed_ms(started)
-        metrics["n_cited_sources"] = len(cited)
-    except CitationIntegrityError:
+    if trace.citation_error is not None:
         logger.error("Citation integrity failed")
         if recorder:
             recorder.record_error("citation_integrity_failed")
@@ -192,6 +159,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     if recorder:
         recorder.mark_success()
 
+    answer = normalize_citations(trace.answer)
     sources = [
         SourceResponse(
             id=source.id,
@@ -199,6 +167,18 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             heading_path=list(source.heading_path),
             excerpts=list(source.excerpts),
         )
-        for source in cited
+        for source in trace.cited
     ]
     return ChatResponse(answer=answer, sources=sources)
+
+
+def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
+    metrics.update(
+        search_ms=trace.search_ms, dense_ms=trace.dense_ms, context_ms=trace.context_ms,
+        n_context_sources=None if trace.packed is None else len(trace.packed.sources),
+        generation_ms=trace.generation_ms, citation_ms=trace.citation_ms,
+        n_cited_sources=None if trace.cited is None else len(trace.cited),
+    )
+    if trace.generated is not None:
+        # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
+        metrics.update({field: getattr(trace.generated, field, None) for field in ("model", "input_tokens", "output_tokens", "reasoning_tokens")})

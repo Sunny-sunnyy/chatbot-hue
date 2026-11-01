@@ -26,11 +26,10 @@ import numpy as np
 from agents import Agent, ModelSettings, RunConfig, Runner
 from pydantic import BaseModel, ConfigDict, Field
 
-from core.schema import CitationIntegrityError
 from core.settings_loader import load_settings
-from llm.citations import select_cited_sources
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+from llm.grounded_answer import AnswerTrace, answer_query
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -320,7 +319,7 @@ def run_retrieval_eval(cases: list[dict], treatment: str, shuffle_seed: int | No
 # ---------- Sinh câu trả lời (paid) ----------
 
 async def answer_case(case: dict, service, context_builder, generator) -> dict:
-    """Một case theo đúng thứ tự `api/routes/chat.py`: retrieval → context → sinh → citation."""
+    """Một case qua lõi chung với `api/routes/chat.py` (`llm.grounded_answer.answer_query`): retrieval → context → sinh → citation."""
     row = {
         "case_index": case["case_index"],
         "category": case["category"],
@@ -336,31 +335,29 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
         "error": None,
     }
     question = case["question"].strip()
+    trace = AnswerTrace()
     try:
-        result = await asyncio.to_thread(service.search, question)
-        row["top_chunk_ids"] = [doc.id for doc in result.documents[:RETRIEVAL_K]]
-        packed = context_builder.build(question, result.documents)
-        row["context_sources"] = len(packed.sources)
-        if not packed.sources:
-            answer = INSUFFICIENT_ANSWER  # API trả fallback, không gọi model.
-        else:
-            generated = await generator.generate_answer(question, packed.text)
-            answer = generated.text
-            row.update(
-                input_tokens=generated.input_tokens,
-                output_tokens=generated.output_tokens,
-                latency_ms=generated.latency_ms,
-                response_id=generated.response_id,
-            )
-            try:
-                select_cited_sources(answer, packed.sources)
-            except CitationIntegrityError as exc:
-                # API trả 500 ở đây; vẫn giữ text để chấm (A chốt 2026-10-24).
-                row["citation_error"] = str(exc)
-        row["answer"] = answer
-        row["refusal"] = is_refusal(answer)
+        await answer_query(question, service, context_builder, generator, trace)  # không truyền recorder (spec streaming §4.8)
+        # Chữ gốc, chưa chuẩn hóa `[Nguồn n]` (judge chấm đúng chữ model viết). Citation hỏng: API trả 500; ở đây vẫn giữ text để chấm
+        # (A chốt 2026-10-24). Không có nguồn ⇒ chữ là câu từ chối chuẩn, không gọi model (như API).
+        row["answer"] = trace.answer
+        row["refusal"] = is_refusal(trace.answer)
+        if trace.citation_error is not None:
+            row["citation_error"] = str(trace.citation_error)
     except Exception as exc:  # lỗi kỹ thuật của case: ghi nguyên, run thành incomplete
         row["error"] = describe_error(exc)
+    # Bước nào đã chạy thì ghi, cả ở dòng lỗi (như trước khi gom lõi chung).
+    if trace.documents is not None:
+        row["top_chunk_ids"] = [doc.id for doc in trace.documents[:RETRIEVAL_K]]
+    if trace.packed is not None:
+        row["context_sources"] = len(trace.packed.sources)
+    if trace.generated is not None:
+        row.update(
+            input_tokens=trace.generated.input_tokens,
+            output_tokens=trace.generated.output_tokens,
+            latency_ms=trace.generated.latency_ms,
+            response_id=trace.generated.response_id,
+        )
     return row
 
 
