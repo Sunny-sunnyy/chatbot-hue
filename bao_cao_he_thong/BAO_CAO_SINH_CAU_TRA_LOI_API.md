@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6, cải tiến ở Phase 8)
 
-**Cập nhật lần cuối: 17:10 31/10/2026 — bản 14: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 14) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 31/10/2026)
@@ -10,7 +10,7 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
 - **Đang chạy cách nào:** chuẩn hóa chữ câu hỏi (NFC — gộp dấu tiếng Việt về một dạng) → tìm đoạn → lấy tối đa **10 đoạn** nguyên vẹn vừa
   ngân sách 16.384 token → `gpt-6-luna` (OpenAI, để mức suy luận mặc định) viết câu trả lời chỉ từ các đoạn đó → backend kiểm từng `[n]` →
   trả câu trả lời + nguồn. Mỗi lần hỏi, API ghi **một dòng số đo** (token, thời gian từng khâu; không ghi nội dung câu hỏi / trả lời, không ghi USD).
-  Trang web: JS thuần, một lượt hỏi – đáp, **chữ chưa hiện dần** (streaming đang thiết kế, mục 6).
+  Trang web: JS thuần, một lượt hỏi – đáp, **chữ chưa hiện dần** (streaming: spec đã duyệt 01/11, đang code — mục 6).
 - **Đo được trên bản đang chạy** (10 đoạn, kho đã sửa hai đợt; 176 câu Golden; 30/10):
   - từ chối nhầm câu có trong kho **12 / 158**; **0** câu ngoài kho bị trả lời; câu sai điều kiện (giờ, vé, cảnh báo) trên bộ 32 câu an toàn: **0**;
   - lỗi trích dẫn (người dùng nhận lỗi 500): **0 / 489** lần sinh, đếm trên mọi lượt đo đã lưu;
@@ -18,12 +18,12 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
   - thời gian chờ cả câu: trung vị **2,19 s**, câu chậm (p95) **4,90 s** — đo trong bộ chạy thử, chưa tính đường mạng tới trình duyệt;
   - tiền: **≈ 0,00025 USD / câu** theo bảng giá đủ (bạn dán 30/10); công cụ đo `cost_usd` ghi ~0,00021 vì còn tính giá phẳng ⇒ **thiếu ≈ 20 %**.
   - Điểm Đúng / Đủ / Trúng ý trung bình tuyệt đối chỉ có ở mốc cũ 7B (5 đoạn, 24/10): **4,43 / 4,28 / 4,45**; các lượt đo sau báo chênh theo cặp, không báo lại điểm tuyệt đối.
-- **So với yêu cầu bạn chốt 28/10** (trung vị ≤ 3 s, p95 ≤ 5 s cả câu, ≤ 0,0005 USD / câu): Golden **đạt sát** (p95 4,90 s); câu cần trả lời dài **chưa đạt**
+- **So với yêu cầu bạn chốt 28/10** (trung vị ≤ 3 s, p95 ≤ 5 s cả câu, ≤ 0,0005 USD / câu): Golden **đạt sát** khi đo trong bộ chạy thử (p95 4,90 s, chưa tính HTTP); **đo qua API** (22 câu tự viết, 10 đoạn, kho cũ, 27/10): trung vị 3,1 s / p95 **6,0 s** tuần tự ⇒ **chưa đạt** p95; câu cần trả lời dài **chưa đạt**
   (8 câu tự viết, 28/10: trung vị 4,6 s / p95 7,6 s); tiền **đạt**. Gần hết thời gian chờ là lúc model viết (~98 %).
 - **Giới hạn chính:** từ chối nhầm vẫn là chỗ mất điểm lớn nhất (gốc ở khâu tìm: đoạn có đáp án không vào 10 đoạn); câu hỏi theo ngày tương đối
   ("tối nay", "tuần này") bị từ chối dù kho có lịch (6 / 14 câu) — an toàn nhưng chưa trả lời được ⇒ Phase 9; bảng giá và câu tổng hợp nhiều nguồn còn yếu;
   10 đoạn được chọn bằng người chấm Claude, **chưa có mốc người**.
-- **Bạn cần quyết (phiên sau, A hỏi):** một câu về mục tiêu "tới chữ đầu tiên" của streaming, rồi duyệt spec streaming (mục 6).
+- **Bạn cần quyết:** không có việc gấp ở khâu này (01/11: bạn đã chốt mục tiêu "tới chữ đầu tiên" và duyệt spec streaming).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -69,15 +69,15 @@ Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose 
 | Câu hỏi giá vé + miễn giảm (bảng giá) | **Đã thử, chưa áp dụng** | không tìm ra dòng bảng giá; 8.1 thử gộp dòng bảng khi chia đoạn: không khác (`BAO_CAO_TIM_KIEM.md`); chưa đo lại riêng ở 10 đoạn |
 | Tách câu hỏi hai ý | **Chưa thực hiện** | Phase 8 không làm; giả thuyết xếp "cân nhắc cho Phase 9" (`reports/phase_8_candidate_hypotheses_2026_10_24.md:68`) |
 | Câu hỏi theo ngày tương đối ("tối nay", "tháng sau") | **Xử lý một phần** (an toàn; chưa trả lời được) — Phase 9 | 30/10: 0 câu đoán ngày rồi nói sai; 6 / 14 câu có trong kho bị từ chối (4 câu có lịch ngay trong đoạn model đọc). Prompt không có ngày hôm nay (`full_corpus_prompt.py:7–16`) |
-| Hiện chữ dần (streaming) | **Chưa thực hiện** — đang thiết kế | spec bản 4 review đạt; bạn chốt 3 câu (31/10); còn 1 câu + duyệt spec ⇒ mới code (mục 6) |
-| Hội thoại nhiều lượt | **Chưa thực hiện** | có nháp phương án (private); làm spec **sau** streaming (cùng sửa API + trang web) |
+| Hiện chữ dần (streaming) | **Đang làm** — bước 1 / 4 xong (chưa vào bản chạy) | bạn duyệt spec 01/11 (`00fb57ee01b2`); bước 1 gom lõi chung: review đạt, hành vi không đổi; bước 2–4 (luồng chữ, giao diện, đo) đang làm (mục 6) |
+| Hội thoại nhiều lượt | **Dời sang Phase 9** (bạn chọn 01/11) | nghiên cứu cùng phần trợ lý / agent; nháp spec 01/11 làm tư liệu |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (mới ở trên)
 
-Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Mọi thí nghiệm có luật ghi trước khi chạy và người khác kiểm lại.
+Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Thí nghiệm chọn / bỏ phương án có luật ghi trước khi chạy và người khác kiểm lại; các lượt **đo hiện trạng** (tốc độ, giá, token) chỉ đo — không có luật giữ / bỏ ghi trước.
 
 ### 30/10/2026
 - **Câu hỏi theo ngày tương đối** (15 câu tự viết + 11 câu bộ an toàn, 2 người chấm Claude không biết ngày chạy; 0,0037 USD): 0 câu tự đoán ngày rồi nói chắc,
@@ -163,11 +163,11 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 
 ## 6. Việc còn lại / cần quyết
 
-- **Streaming — đang thiết kế, chưa code.** Bạn đã chốt (31/10): chữ hiện ngay khi model viết + báo tiến độ, kiểm trích dẫn ở cuối như hôm nay; sàn trung vị ≤ 3 s /
+- **Streaming — spec duyệt 01/11 (`00fb57ee01b2`), đang code.** Bạn đã chốt (31/10): chữ hiện ngay khi model viết + báo tiến độ, kiểm trích dẫn ở cuối như hôm nay; sàn trung vị ≤ 3 s /
   p95 ≤ 5 s đổi sang "tới chữ trả lời đầu tiên hiện trên trình duyệt" (tới lúc streaming chạy, sàn vẫn áp cho cả câu); kiểm cuối hỏng ⇒ rút lại chữ đã hiện, lỗi / đứt
-  giữa chừng ⇒ xoá hết, kèm lời báo + nút "Thử lại". **Còn:** một câu về mục tiêu báo cáo cho "chữ đầu tiên" (A khuyên giữ sàn 3 / 5 s, báo thêm mục tiêu 1,5 / 3 s) +
-  bạn duyệt spec ⇒ code. Spec: `docs/superpowers/specs/2026-10-31-streaming-design.md`; đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.
-- **Hội thoại nhiều lượt:** spec sau streaming (nháp: trình duyệt giữ lịch sử, server không lưu).
+  giữa chừng ⇒ xoá hết, kèm lời báo + nút "Thử lại". **01/11:** bạn chọn giữ sàn 3 / 5 s + mục tiêu báo cáo 1,5 / 3 s (không chặn), duyệt spec. **Bước 1 / 4** (gom một lõi chung cho API và bộ đánh giá —
+  chuẩn bị cho luồng chữ) xong trên nhánh riêng: kết quả tìm giống từng byte, API trả lời / báo lỗi như cũ; review đạt; **chưa vào bản chạy** (vào cùng lúc sau bước 4). Bước 2 (luồng chữ) đang làm. Spec: `docs/superpowers/specs/2026-10-31-streaming-design.md`; đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.
+- **Hội thoại nhiều lượt:** **dời sang Phase 9** (phần trợ lý / agent — bạn chọn 11:20 01/11/2026); nháp spec giữ làm tư liệu, không làm ở Phase 1–8.
 - **Đóng gói Phase 1–8:** sửa `cost_usd` theo giá đủ + ghi số token ghi đệm; bảng giới hạn đã biết; bộ câu kín mới trước buổi bảo vệ.
 - **Khi bạn rảnh:** đọc cặp mù (20 cặp, ~30–45 phút) làm mốc người cho 10 đoạn; nếu bạn ngược người chấm Claude nhiều ⇒ A trình giữ 10 hay về 5.
 - **Phase 9:** công cụ "hôm nay là ngày nào" cho câu theo ngày tương đối; tách câu hỏi hai ý là ứng viên.

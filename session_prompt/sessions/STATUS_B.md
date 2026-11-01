@@ -14,11 +14,15 @@ Terminal 31/10: `hue-rag-3b` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `
 - Đã sửa: `STATUS_B.md`, `b105_review.md` (Vòng 3 + R3.4). Việc soạn sẵn kế: code S1 trên nhánh riêng **khi User duyệt spec + A giao mục việc**.
 
 ## Đang làm / dở
-- **Không.** Không job nền, không worktree của B, không server.
-- Chờ (không phải việc đang chạy): phần `TBD` "mức chuẩn ngành chữ đầu tiên" của spec streaming — A điền ⇒ B kiểm **phần đổi** (không chạy Codex lần 2, A quyết).
+- **S1 streaming — gom lõi chung** (A giao 10:43 01/11/2026, spec duyệt `00fb57ee01b2`, `main` `74a6082`): nhánh `s1-loi-chung`, worktree `/tmp/b_s1`; bắt đầu 10:46 01/11/2026.
+  **Xong 10:56 01/11/2026 — chờ review (C):** commit `9c83003` (push), report `s1_loi_chung_implementation.md` (`71121b481abd`); ≈ 0,0018 USD paid. Worktree `/tmp/b_s1` giữ tới khi review xong.
+- **B107 xong 11:00 01/11/2026** (đề xuất sửa 1 câu Golden lệch kho, 0 USD): `data/golden_sua_2026-11-01/b107_de_xuat.md` (`16ebb5224c98`); Golden không sửa; `/tmp/b107` đã xoá.
+- **S2 xong 11:19 01/11/2026 — chờ review:** `830df0e` (push), report `s2_stream_route_implementation.md`; ≈ 0,0041 USD (cận trên). Khai báo file S2: `chat.py`, `answer_stream.py` (mới), `generator_openai_full_corpus.py`, `grounded_answer.py`, `test_chat_stream.py` (mới), `pyproject.toml`, `uv.lock`; tools `data/streaming_s1_2026-11-01/tools/`.
 
 ## Đang khai báo sửa
-- không
+- (nhánh `s1-loi-chung`, worktree `/tmp/b_s1`) `backend/llm/grounded_answer.py` (mới), `backend/api/routes/chat.py`, `backend/evaluation/full_corpus_eval.py` (`answer_case`),
+  `backend/core/schema.py` (thêm một lớp lỗi), `backend/tests/test_api_chat.py`, test mới cho lõi nếu cần.
+- (working tree chung) `report_agent/2026-10-31_streaming_spec/s1_loi_chung_implementation.md` (mới); dữ liệu chạy ở `data/streaming_s1_2026-11-01/` (private).
 
 ## Phiên 31/10 đã xong (sha 12 ký tự, tính lúc kết phiên)
 | Việc | Kết quả | File (sha) |

@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 17:14 31/10/2026 — bản 11: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
+**Cập nhật lần cuối: 11:07 01/11/2026 — sửa lý do gác "chọn đoạn bằng luna" (luật số câu tụt 27/10; sàn tốc độ có sau). Bản 11 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
 Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -62,7 +62,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Câu hỏi dạng Unicode NFD (gõ từ một số máy) | **Đã xử lý, đóng gói** (28/10) | 8.1 đo: NFD làm MRR giảm 0,20; chuẩn hóa NFC phục hồi giống hệt. Câu NFD đã lưu cho đúng 10 đoạn như câu NFC. `full_corpus.py:97–102`, `:420` |
 | Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | Chỉ thử trên bản món ăn: điểm giảm. `settings.yaml:44` (`reranker: none`); lớp `backend/reranking/cross_encoder.py` chỉ còn cho bộ thử 8.1 |
 | Reranker đa ngôn ngữ / tiếng Việt chạy trên card đồ họa (bge-reranker-v2-m3, Vietnamese_Reranker) | **Đã thử, chưa áp dụng** | 8.1 (lúc đưa 5 đoạn): thứ tự tốt hơn chút ít nhưng đẩy đoạn đúng của 1–3 câu ra khỏi 5 đoạn đưa model; ~1 s / câu (10 đoạn), 11–14 s / câu (~150 đoạn) |
-| Xếp hạng lại / chọn đoạn bằng `gpt-6-luna` | **Đã thử, chưa áp dụng** | 8.1 (10 ứng viên): 0 câu mất, MRR +0,17, nhưng chỉ cứu được tối đa 3 câu ⇒ chưa rõ. 27/10 (chọn 10 trong 30): bản tốt nhất bước tìm 22 → 31 / 40, nhưng 5 câu trả lời tụt điểm (> 4 cho phép), cả câu p50 6,5 / p95 9,1 s (vượt sàn 3 / 5 s bạn chốt 28/10), ≈ 3,8× tiền ⇒ gác làm hồ sơ (bạn chốt đợt 27/10) |
+| Xếp hạng lại / chọn đoạn bằng `gpt-6-luna` | **Đã thử, chưa áp dụng** | 8.1 (10 ứng viên): 0 câu mất, MRR +0,17, nhưng chỉ cứu được tối đa 3 câu ⇒ chưa rõ. 27/10 (chọn 10 trong 30): bản tốt nhất bước tìm 22 → 31 / 40, nhưng 5 câu trả lời tụt điểm (> 4 cho phép) ⇒ kém hơn theo luật ghi trước; kèm cả câu p50 6,5 / p95 9,1 s, ≈ 3,8× tiền ⇒ gác làm hồ sơ (bạn chốt đợt 27/10; sàn tốc độ 3 / 5 s chốt sau đó, 28/10, cũng không đạt) |
 | Đổi model vector sang Qwen3-Embedding-8B | **Đã thử, chưa áp dụng** | 30/10: dev 24 → 23 / 40 câu đủ đoạn đúng; 3 câu dev + 3 câu kiểm mất đoạn đúng (vỡ sàn "0 câu mất"); vector câu hỏi p50 2,2 s qua mạng (e5: 21 ms) ⇒ giữ e5-small; chỉ mục thử đã xoá — `BAO_CAO_EMBEDDING_TU_KHOA.md` |
 | Thước "đoạn đúng" (nhãn vị trí đáp án) | **Xử lý một phần** | Mỗi thông tin chỉ đánh dấu một chỗ; kho viết lại cùng thông tin ở chỗ khác thì thước đếm thiếu. Quét 55 câu (27/10): ảnh hưởng nhỏ, kết luận bước tìm không đổi. Bản 2 (bạn duyệt 27/10) thêm chỗ cho 2 câu; đang dùng bản 5 (30/10, theo kho sau đợt 2) |
 

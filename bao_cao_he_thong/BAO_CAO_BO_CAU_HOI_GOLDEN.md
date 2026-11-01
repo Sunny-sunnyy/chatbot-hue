@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden (Phase 7A, 8.1, sửa kho đợt 1–2)
 
-**Cập nhật lần cuối: 17:19 31/10/2026 — bản 7: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10); chạy lại kiểm Golden sau 2 đợt sửa kho: 1 câu lệch kho.**
+**Cập nhật lần cuối: 11:04 01/11/2026 — bản 8: câu Golden lệch kho đã rõ nguyên nhân (chỉ lệnh kiểm phân biệt hoa / thường, chấm không sai); bạn chọn giữ nguyên.** Bản 7: 17:19 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 7) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
@@ -20,11 +20,11 @@ Các bản trước: xem `git log` file này. Người viết: agent con của A
   **không còn bộ kiểm "chưa ai thấy"**.
 - **Sau mỗi đợt sửa kho, đề được quét lại** xem đáp án còn khớp kho không: đợt 1 (28/10) 0 câu cần sửa; đợt 2 (30/10) sửa đáp án tham chiếu
   của 2 câu theo bạn chọn. Chạy lại kiểm định dạng 31/10 vẫn bắt thêm **1 câu** có keyword không còn nguyên văn trong kho mà
-  3 lớp quét sót — chờ bạn duyệt sửa (§6).
+  3 lớp quét sót. Nguyên nhân (01/11): kho đổi một chữ hoa thành thường; lệnh kiểm phân biệt hoa / thường, còn phép chấm thì không ⇒ **không số chấm nào sai**; bạn chọn **giữ nguyên** (lệnh kiểm sẽ báo 1 lỗi đã biết).
 - **Giới hạn chính:** câu do AI viết rồi người duyệt, không phải câu người dùng thật hỏi; keyword chỉ là thước gần đúng ("proxy"); giá vé, giờ
   mở cửa lấy mốc 09/2026; đoạn đúng mới có cho 55 / 176 câu; 121 / 176 câu đã đạt điểm tối đa ở mốc 7B (cải tiến chủ yếu thấy ở số còn lại).
 - **Chi phí:** kiểm định dạng và quét lại đề 0 USD.
-- **Bạn cần quyết gì:** duyệt sửa **1 câu Golden lệch kho** (keyword / đáp án mẫu theo kho mới; §6). Trước buổi bảo vệ cần một bộ câu kín mới (đã ghi vào bước đóng gói Phase 1–8, §6).
+- **Bạn cần quyết gì:** không có việc gấp. Trước buổi bảo vệ cần một bộ câu kín mới (đã ghi vào bước đóng gói Phase 1–8, §6).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -61,9 +61,9 @@ HF_HUB_OFFLINE=1 uv run python -m evaluation.golden_full_corpus check ../knowled
 | Câu có điều kiện | **Đã xử lý, đóng gói** | 29 câu |
 | Câu so sánh | **Đã xử lý, đóng gói** | 25 câu |
 | Câu ngoài kho (đáp án đúng là từ chối) | **Đã xử lý, đóng gói** | 18 câu |
-| Kiểm định dạng + keyword nguyên văn trong kho | **Xử lý một phần** | `golden_full_corpus.py:24` (4 phần), `:80–82` (keyword nguyên văn); test 8 / 8 đạt (31/10). **Chạy lại `check` trên Golden 17:17 31/10/2026** (A, sau 2 đợt sửa kho): 176 câu đọc được, **1 lỗi** — 1 câu có một keyword không còn nguyên văn trong kho (kho đổi chữ ở đoạn nguồn); chấm keyword của câu đó lệch, phần còn lại không đổi. Sửa Golden cần bạn duyệt |
-| Đối chiếu dữ kiện từng câu với kho | **Đã xử lý, đóng gói** | 100 % câu (23/10); 4 câu xoá, 10 câu sửa |
-| Đáp án lệch kho sau mỗi đợt sửa kho | **Xử lý một phần** | đợt 1: 59 câu bị chạm ⇒ 0 sửa; đợt 2: 39 câu ⇒ 2 câu sửa đáp án (bạn chọn); bộ thử nhanh không chứa 2 câu này; **31/10 chạy lại `check`: 1 câu còn keyword không khớp kho — chờ bạn duyệt** |
+| Kiểm định dạng + keyword nguyên văn trong kho | **Xử lý một phần** | `golden_full_corpus.py:24` (4 phần), `:80–82` (keyword nguyên văn); test 8 / 8 đạt (31/10). **Chạy lại `check` trên Golden 17:17 31/10/2026** (A, sau 2 đợt sửa kho): 176 câu đọc được, **1 lỗi** — 1 câu có một keyword không còn nguyên văn trong kho (kho đổi chữ ở đoạn nguồn); nguyên nhân (B107, 01/11): kho đổi chữ hoa ⇒ thường, lệnh `check` so **có** phân biệt hoa / thường còn mọi phép chấm so **không** phân biệt (`full_corpus_eval.py:126-133`) ⇒ **không số chấm nào sai**, chỉ `check` báo lỗi. **Bạn chọn giữ nguyên (11:04 01/11/2026)** — lỗi đã biết, Golden md5 vẫn `6331e88fb171` |
+| Đối chiếu dữ kiện từng câu với kho | **Đã xử lý, đóng gói** | 100 % câu (23/10); 4 câu xoá, **11** câu sửa (bảng GATE R report gốc; bản cũ ghi nhầm 10) |
+| Đáp án lệch kho sau mỗi đợt sửa kho | **Xử lý một phần** | đợt 1: 59 câu bị chạm ⇒ 0 sửa; đợt 2: 39 câu ⇒ 2 câu sửa đáp án (bạn chọn); bộ thử nhanh không chứa 2 câu này; **31/10 chạy lại `check`: 1 câu còn keyword không khớp kho** — chỉ khác hoa / thường, chấm không sai; bạn giữ nguyên (11:04 01/11/2026) |
 | Bộ thử nhanh 10 câu | **Đã xử lý, đóng gói** | 10 / 10 câu trùng khớp file chuẩn |
 | Giá vé, giờ mở cửa còn đúng | **Xử lý một phần** | lấy mốc 09/2026, có thể cũ |
 | Tách nhóm thử / nhóm kiểm | **Đã xử lý, đóng gói** | 120 / 56, chia theo loại câu, cách chia cố định |
@@ -91,7 +91,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 - **24/10 — Phase 8.1:** chia 120 thử / 56 kiểm; gắn đoạn đúng cho 55 câu khó (agent gắn, agent khác kiểm 55 / 55, bạn xem mẫu); nhãn độ tự nhiên
   (2 agent gắn độc lập, đồng ý cao — kappa 0,765; 9 câu bất đồng bạn giữ là tự nhiên). PASS · 0 USD.
 - **24/10 — dùng thật ở 7B và dọn code cũ:** 176 câu chạy đủ, chấm hai lần chênh ≤ 0,011; gỡ bộ chấm món ăn của Phase 7, đề vẫn đạt `check`.
-- **23/10 — đóng Phase 7A:** 176 câu đủ 5 loại; 100 % kiểm với file nguồn, 4 câu xoá, 10 câu sửa; phát hiện 53 mục mâu thuẫn trong kho gốc
+- **23/10 — đóng Phase 7A:** 176 câu đủ 5 loại; 100 % kiểm với file nguồn, 4 câu xoá, 11 câu sửa; phát hiện 53 mục mâu thuẫn trong kho gốc
   (21 mục đủ căn cứ sửa ⇒ dẫn tới Phase 7A2 sửa kho).
 - **24/08 — Phase 7 (lịch sử):** chấm thử bộ món ăn 104 câu (tìm đoạn MRR 0,83; Đúng / Đủ / Trúng ý 4,37 / 4,02 / 4,19); không so trực tiếp với số
   toàn kho; code chấm đó đã thay ở 7B.
@@ -117,7 +117,7 @@ Kiểm 31/10/2026 với code (commit `1985a81`) và `session_prompt/Project_Stat
 ## 6. Việc còn lại / cần quyết
 
 - **Bộ câu kín mới** trước buổi bảo vệ (để có một mốc trung thực): đã ghi vào bước đóng gói Phase 1–8; chưa làm.
-- **Sửa 1 câu Golden có keyword không còn nguyên văn trong kho** (phát hiện 17:17 31/10/2026 khi chạy lại `check` sau 2 đợt sửa kho): cần bạn duyệt sửa keyword / đáp án mẫu theo kho mới (như 30/10 đã sửa 2 đáp án); 0 USD.
+- **Lỗi đã biết của lệnh `check`:** 1 câu có keyword khác kho chỉ ở chữ hoa / thường (phát hiện 17:17 31/10/2026; nguyên nhân B107 01/11) — bạn chọn giữ nguyên (11:04 01/11/2026); chấm điểm không bị ảnh hưởng.
 - Sau mỗi đợt sửa kho sau này: quét lại đề đủ 3 lớp như 30/10 (lớp "cụm chữ bị bỏ" bắt buộc) **và** chạy `golden_full_corpus check` (miễn phí,
   vài giây) — 31/10 lệnh này bắt 1 câu mà 3 lớp quét sót.
 - Đề xuất chưa làm: gắn thêm đoạn đúng cho câu nhóm thử (hiện ít câu thuộc số chính có đoạn đúng, nên nhiều kết quả tầng tìm chỉ "chưa rõ").

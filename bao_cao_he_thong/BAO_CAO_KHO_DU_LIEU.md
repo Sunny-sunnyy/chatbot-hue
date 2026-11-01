@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Kho dữ liệu — sửa dữ liệu và tạo lại chỉ mục (Phase 7A2 → sửa kho đợt 1, 2)
 
-**Cập nhật lần cuối: 17:14 31/10/2026 — bản 7: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
+**Cập nhật lần cuối: 11:04 01/11/2026 — câu Golden lệch kho: bạn giữ nguyên. Bản 7 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
 Người viết: B (bản 4–6; bản 1–3: C), A (bản 7, qua sub-agent) · Review: A (bản 1–6); bản 7 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -56,7 +56,7 @@ Tự kiểm (không bắt buộc): hỏi chatbot một câu về một thông ti
 | Đo "trước ↔ sau" đợt 2 (176 câu Golden + 32 câu an toàn) | **Đã xử lý, đóng gói** (30/10; bạn đóng) | Không làm hỏng; đủ ý +0,008 / đúng 0,000 trên 129 câu chính (4 tăng / 3 tụt đủ ý, 1 tụt đúng; mức cho phép 5); từ chối nhầm 13 → 12; bộ an toàn 0 câu sai điều kiện mới, 0 đảo cảnh báo; câu bị làm yếu: 0 câu mất điểm đủ ý. C đọc tay 8 câu: 0 lỗi nội dung kho; 1 câu thiếu một lời nhắc vì thứ hạng đoạn đổi (theo dõi) |
 | Mã đoạn bền khi xóa dòng giữa file | **Chưa thực hiện** (phát hiện 30/10) | Mã "file#số" dồn số ở 2 file khi xóa 1 dòng ⇒ đợt 2 đo bù bằng luật "chạm theo file"; đợt sau: ghi trước, hoặc đổi mã theo nội dung (đổi chunker ⇒ cần thí nghiệm) |
 | Nhãn "đoạn đúng" theo kho mới | **Đã xử lý, đóng gói** | Bản 5 đang dùng (30/10): 173 / 174 trích dẫn tìm lại nguyên văn (38 dời vị trí), 1 đổi chữ ⇒ bạn duyệt. Bản 4 (28/10): 172 / 174, 2 đổi chữ ⇒ bạn duyệt. Bản cũ giữ nguyên |
-| Câu Golden lệch kho sau khi sửa | **Xử lý một phần** (31/10: kiểm Golden bắt thêm 1 câu lệch, chờ bạn duyệt) | Đợt 1: quét 59 câu ⇒ 0 câu cần sửa (bạn duyệt). Đợt 2: quét 39 câu (theo chữ + theo cụm bị bỏ + theo vị trí; 3 agent đọc, B kiểm, C quét độc lập) ⇒ **2 câu sửa đáp án mẫu** theo bạn chọn (bỏ tên phường cũ; thêm "khoảng" trước một con số), có sao lưu |
+| Câu Golden lệch kho sau khi sửa | **Xử lý một phần** (31/10: kiểm Golden bắt thêm 1 câu lệch — chỉ khác hoa / thường, chấm không sai; bạn giữ nguyên 01/11) | Đợt 1: quét 59 câu ⇒ 0 câu cần sửa (bạn duyệt). Đợt 2: quét 39 câu (theo chữ + theo cụm bị bỏ + theo vị trí; 3 agent đọc, B kiểm, C quét độc lập) ⇒ **2 câu sửa đáp án mẫu** theo bạn chọn (bỏ tên phường cũ; thêm "khoảng" trước một con số), có sao lưu |
 | Tìm trong kho mà không lọt bộ đánh giá / câu kín | **Đã xử lý, đóng gói** | `scripts/grep_kb.sh`: danh sách cờ trắng, chỉ quét trong kho, loại thư mục đánh giá / meta / bản thô / tên chứa sealed; B thử phá 4 vòng ⇒ đạt |
 | Chỉ mục e5-small trên dữ liệu đã sửa | **Đã xử lý, đóng gói** (dựng lại 30/10) | **8.424 / 8.424** đoạn (dense + sparse), kiểm từng payload + vector mẫu; `/health` 5 / 5; kết quả tìm 158 câu: 133 giống hệt, 25 đổi danh sách 10 đoạn (11 chỉ đổi thứ tự; 24 có đoạn của file đã sửa). Đợt 1 (28/10): 8.426, 40 câu đổi |
 | Phiếu build: dữ liệu lệch → từ chối khởi động | **Đã xử lý, đóng gói** | Phiếu `full_corpus_build:v3`, `complete`, 204 file / 8.424 đoạn (dựng 30/10); `source_state.py:95`, `:179`; `retrieval/full_corpus.py:383–385` |
@@ -123,7 +123,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), phiế
 
 ## 6. Việc còn lại / cần quyết
 
-- Duyệt sửa **1 câu Golden lệch kho** (xem `BAO_CAO_BO_CAU_HOI_GOLDEN.md` §6). Sau mỗi đợt sửa kho sau này: chạy thêm `golden_full_corpus check`.
+- Sau mỗi đợt sửa kho sau này: chạy thêm `golden_full_corpus check` (1 lỗi hoa / thường đã biết — `BAO_CAO_BO_CAU_HOI_GOLDEN.md` §6).
 
 - **Sao lưu đợt 1 + đợt 2:** đang giữ theo bạn chọn (mỗi đợt: ảnh chụp Qdrant ~51 MB, bản gốc file kho, phiếu build + từ điển cũ); giữ thì quay lại được bất cứ
   lúc nào. Muốn xóa thì báo — không gấp.

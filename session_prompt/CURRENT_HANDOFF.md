@@ -26,8 +26,7 @@ Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định t
    `guides/` ⇒ nháp `data/so_sanh_phuong_an/` ⇒ A ghép bản public ⇒ 1–2 agent con ngữ cảnh mới kiểm ⇒ commit (~1–2 giờ, 0 USD). Hỏi User: mở B / C cho việc này không.
 2. **Spec streaming — còn 1 câu User + duyệt sha** (chi tiết mục "Streaming" dưới): A hỏi **câu Q1** (mục tiêu chữ đầu tiên) ⇒ A điền `TBD` ở spec §2 + §6 C1 ⇒ B kiểm phần
    đổi (không chạy Codex lần 2) ⇒ A trình User duyệt **bản sha tính từ file** ⇒ A commit spec + review ⇒ giao code S1 (gom lõi chung) trước.
-3. **Hội thoại nhiều lượt:** nháp `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` (`1c0313aafd25`; PA1 trình duyệt giữ lịch sử, server không lưu) ⇒ spec **sau** streaming
-   (cùng sửa `chat.py` + `app.js` ⇒ làm tuần tự — spec streaming §2 D0).
+3. ~~Hội thoại nhiều lượt~~ — **DỜI SANG PHASE 9** (User 11:20 01/11/2026: "nghiên cứu về vấn đề lịch sử cuộc trò chuyện, tiếp tục trò chuyện với người dùng ở vấn đề trợ lý / agent, không cần làm ở các phase này"). Tư liệu: nháp spec C102 `docs/superpowers/specs/2026-11-01-multi-turn-design.md` (`45d159e09636`, Q1 User nghiêng PA1 trình duyệt giữ lịch sử — chỉ là ý, Phase 9 nghiên cứu lại) + C91.
 4. **Đóng gói Phase 1–8** (A hỏi lại nghĩa "đóng gói" khi tới): bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (`8211d5d6eb7f`) ⇒ `LUONG` §5; báo cáo
    "đã thử / chọn / bỏ"; sửa `cost_usd` + log `cache_write_tokens`; lệnh kiểm sạch; bộ kín mới trước bảo vệ; tắt ghi đệm nếu API cho (tra Codex trước).
    **Báo cáo tổng so sánh + nhìn lại Phase 1–8 (User chốt 17:13–17:39 31/10, brainstorm 5 câu):** một file `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` (public,
@@ -87,8 +86,7 @@ streaming trước). **"PA2" của thứ tự việc 30/10** = giữ thứ tự 
 4. **Sổ cải tiến — đề xuất chờ duyệt** (`SO_CAI_TIEN_CACH_LAM.md`): **W42** (hook git cảnh báo dòng có "dự án khác" — S60) và **W43** (script + bước kết phiên
    kiểm báo cáo khâu khớp hiện trạng — S61, User 31/10 nhắc) từ chiều 31/10; vòng 11: **W35** (kiểm điều khoản dùng tự động trước khi agent gọi công cụ / tài khoản bên ngoài mới), **I8**
    (dời luật "A tự chạy lệnh, chỉ đưa `!` khi bị chặn" vào `WORKFLOW.md` §9.6), **W36** (khẳng định về hành vi thư viện / định dạng log / rào script ⇒ chạy probe nhỏ thật trước khi bàn giao); và **W33** đã chạy ⇒ A đề xuất giữ làm tuỳ chọn (Codex review song song review Claude cho spec / plan lớn).
-4b. **Golden lệch kho 1 câu** (A chạy `golden_full_corpus check` 17:17 31/10/2026: 176 đọc được, 1 lỗi "keyword not verbatim in corpus" ở dòng 128 — không in nội dung): duyệt sửa
-   keyword / đáp án mẫu theo kho mới? (Golden md5 sẽ đổi ⇒ ghi lại mốc.)
+4b. ~~Golden lệch kho 1 câu~~ — **User 11:04 01/11/2026: giữ nguyên** (B107 `data/golden_sua_2026-11-01/b107_de_xuat.md`: chỉ `check` báo lỗi hoa / thường, chấm không sai).
 5. (Khi bàn spec nhiều lượt) lưu câu hỏi người dùng? (PA1 C91 không lưu.) (Khi rảnh) B0; 20 câu mẫu lỗi nặng; xoá sao lưu đợt 1 + 2 khi đóng gói.
 6. (Không gấp) File untracked `báo cáo nghiên cứu github.txt` (gốc repo, 82 KB, 01/10 — khảo sát đồ án gợi ý địa điểm / lịch trình): giữ ngoài git, hay dời vào `data/`?
    4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`, commit `c725987` 05/09): giữ hay gỡ (User `!`)?
@@ -116,9 +114,51 @@ streaming trước). **"PA2" của thứ tự việc 30/10** = giữ thứ tự 
 Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `trực tiếp`. **B / C lúc mở phiên sau:** không có việc đang chạy; mở phiên ⇒ kiểm nhanh ⇒ báo A ⇒ chờ.
 
 **Việc soạn sẵn (A giao bằng tin nhắn khi tới bước):**
+- **Trạng thái 11:22 01/11/2026:** S2 xong (B, `830df0e`, report `s2_stream_route_implementation.md`) ⇒ **review bằng agent con ngữ cảnh mới** (A giao; có thể chạy server cổng 8791 trong `/tmp/b_s1`, ≤ 0,002 USD) ⇒
+  A tự kiểm 2–3 khẳng định. **B108** (B): sửa `cost_usd` giá đủ + token đệm, nhánh `dg-cost-usd` từ `830df0e`, worktree mới. **C:** sửa báo cáo so sánh theo review R1 / R2 (`data/so_sanh_phuong_an/review_r*.md`)
+  ⇒ cập nhật plan C103 bỏ nhiều lượt ⇒ B review plan. B0: User đang đọc.
+- **S1 review XONG (A, 11:01 01/11/2026):** `report_agent/2026-10-31_streaming_spec/s1_loi_chung_review.md` — **ready**, 0 blocker / 0 major, 2 minor không chặn (m-1 một `try` ⇒ S2 `git grep raise` lại; m-2 nghĩa `citation_ms` ⇒ ghi BAO_CAO khi merge). Ca dò A 200.000 chuỗi: kiểm citation chữ gốc = sau chuẩn hóa. S1 đóng bước; **không merge `main`** tới hết S4 (a1).
+- **B — S2 streaming (GIAO 11:01 01/11/2026, sau khi xong B107):**
+  - **Trạng thái (11:19 01/11/2026, B): chờ review** — nhánh `s1-loi-chung` `830df0e` (push); 82 test; T1 `4d5bbe9e0edc`; C4 cả hai route; C5 5 / 5; ngắt 2 thời điểm; pilot `incomplete` cả hai ca; ≈ 0,0041 USD (cận trên). Report `s2_stream_route_implementation.md`. A xét: trường log thêm `delta_matches_final`. generator stream + bộ bóc chữ JSON từng phần + chuẩn hóa `[Nguồn n]` từng phần + route `POST /api/chat/stream` (SSE) + log `chat_metrics`,
+  **trên cùng nhánh `s1-loi-chung`** (nối sau `9c83003`; đổi tên nhánh nếu muốn, ghi report). Đọc (full): spec §4.1–§4.6, §4.8, §5 hàng S2, §6 C4 / C5 / C7, §7 (logic thuần + đường thật phần server), §8, §10;
+  review S1 (m-1). Kiểm: test logic §7 (không stub model); cổng ổn định **cả hai route**; pilot `incomplete` (chọn trần `answer_max_output_tokens`, ghi cả ca hết token trước / sau chữ đầu);
+  ngắt thật 2 thời điểm bằng curl (một dòng log, `outcome = client_disconnected`); C5 trên ≥ 5 câu (chữ ghép từ `delta` = chữ cuối đã chuẩn hóa); T1 giống byte. **Không** giao diện (S3), không đo
+  tốc độ D2 (S4). Tiền ≤ 0,005 USD (pilot ≤ 0,001 + cổng ổn định + C5; ghi usage + tiền). Dependency `fastapi>=0.135` (A tự duyệt, spec §8). Đầu ra `s2_stream_route_implementation.md`, push nhánh.
+  Dừng + báo A: thư viện không cho stream JSON như C97 đã probe; cần đổi spec; vượt tiền.
+- **B — B107 đề xuất sửa câu Golden lệch kho (GIAO 10:57 01/11/2026):** chạy `cd backend && HF_HUB_OFFLINE=1 uv run python -m evaluation.golden_full_corpus check ../knowledge-base-hue/evaluation/golden_full_corpus.jsonl`
+  ⇒ câu lỗi (dòng 128); tìm đoạn kho mới tương ứng **chỉ** bằng `scripts/grep_kb.sh`, đối chiếu sao lưu đợt 1 / 2 trong `knowledge-base-hue/meta/` để biết kho đổi chữ gì. Viết đề xuất (keyword mới nguyên văn
+  trong kho; đáp án mẫu có cần đổi không; ảnh hưởng: md5 Golden, gold v5, số chấm cũ) vào `data/golden_sua_2026-11-01/b107_de_xuat.md` (private, được chép nội dung câu). **Không sửa Golden** (User duyệt
+  trước). Report tracked nếu có: mức loại câu. 0 USD. Xong nhắn A.
+  - **Trạng thái (11:00 01/11/2026, B): xong — chờ A trình User.** Nguyên nhân: đợt 2 đổi `Số 102` ⇒ `số 102` trong kho; `check` so nguyên văn phân biệt hoa / thường (chấm thì không). B khuyên PA1: keyword đổi `S` ⇒ `s`, đáp án mẫu giữ; md5 ⇒ `2d761710af31`; số chấm / gold v5 / T1 không đổi. `data/golden_sua_2026-11-01/b107_de_xuat.md` (`16ebb5224c98`). Golden chưa sửa.
+- **B — S1 streaming: gom lõi chung (GIAO 10:43 01/11/2026; spec duyệt `00fb57ee01b2`, commit `74a6082`):**
+  - **Trạng thái (10:56 01/11/2026, B): chờ review (C)** — nhánh `s1-loi-chung` `9c83003` (đã push); T1 giống byte `4d5bbe9e0edc`; test file chạm đạt; cổng ổn định C4 đạt; `answer_case` 3 câu dev nhánh ↔ `main` cùng luật; ≈ 0,0018 USD. Report `report_agent/2026-10-31_streaming_spec/s1_loi_chung_implementation.md`.
+  - Mục tiêu: một lõi chung "tìm → dựng ngữ cảnh → sinh → kiểm citation" mà `POST /api/chat` (`backend/api/routes/chat.py`) và `answer_case` (`backend/evaluation/full_corpus_eval.py:322`) cùng gọi;
+    **chưa** có stream, **hành vi không đổi**. Đọc (full): spec §4.1, §4.8 (5 khác biệt phải giữ), §5 hàng S1, §6 C4–C5, §7, §8; `chat.py`, `full_corpus_eval.py` (đoạn `answer_case` + chỗ gọi).
+  - Làm: nhánh `s1-loi-chung` từ `main` `74a6082` (worktree riêng nếu tiện — bẫy worktree `Project_Status.md` §8); `git grep` mọi nơi gọi hàm sắp đổi **trước** khi sửa; skill `practical-project-coding`;
+    khai báo file ở STATUS_B. Tên / chỗ đặt hàm B chọn, ghi trong report. Không thêm abstraction phòng xa cho S2 (chỉ thứ S1 cần + thứ spec §4.8 ghi).
+  - Kiểm (spec §5 S1): T1 158 câu **giống byte** `4d5bbe9e0edc` (cách chạy như các lần trước — `guides/full_corpus_rag.md`); test file chạm; cổng ổn định §6 C4 trên `/api/chat` (1 câu trong kho + 1 ngoài kho tự viết,
+    `chat_metrics` mới = số câu, grep câu hỏi trong log = 0, tắt server); `answer_case` chạy 2–3 câu dev (không câu kín / nhóm test) ⇒ trường ra cùng luật như hôm nay; 5 khác biệt §4.8 còn nguyên
+    (đọc diff + test logic: lỗi `answer_case` vẫn ra `row["error"]`); `test_phase6_live_smoke.py` cần key ⇒ chạy được thì chạy, không thì ghi **NOT RUN**. `git diff --check`; hook tự chạy.
+  - Không làm: route stream, giao diện (S2–S3); sửa `cost_usd` (việc đóng gói, sau S1 merge — cùng file); đổi prompt / model / settings; ghi Qdrant.
+  - Tiền: ≤ 0,005 USD (cổng ổn định + 2–3 câu `answer_case`; ghi usage token + tiền). Vượt ⇒ dừng báo A.
+  - Đầu ra: `report_agent/2026-10-31_streaming_spec/s1_loi_chung_implementation.md` (`TEMPLATE_IMPLEMENTATION_REPORT.md`) + nhánh push `origin` (được phép, nhánh riêng); không commit `main`.
+    Dừng + báo A khi: T1 lệch; một khác biệt §4.8 buộc phải đổi; cần đổi spec. Xong ⇒ "chờ review", nhắn A (C review, W32 ca dò khác cách).
 - **B — kiểm phần đổi spec sau Q1 (GIAO 01/11, bản 5 `0b2679cfccd6`):** căn cứ: `git diff` (hoặc `diff`) spec bản mới ↔ `cf1ae9ef6c2c` + câu trả lời Q1 User (A ghi vào mục Streaming); chỉ kiểm chỗ `TBD` §2 + §6 C1 và mọi
   chỗ nhắc tới nó; không đổi chỗ khác; không chạy Codex. Đầu ra: mục "Vòng 3" cuối `report_agent/2026-10-31_streaming_spec/b105_review.md` + sha bản kiểm. 0 USD.
-- **C — việc 1b (GIAO 10:28 01/11/2026; User chọn "giao C ngay"):** gom báo cáo so sánh **phần đã đóng** (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng / ngày hôm nay).
+- **C — C103 kế hoạch lượt đo cuối Phase 1–8 (GIAO 11:12 01/11/2026):** 0 USD, chỉ tài liệu. Nháp `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` — kế hoạch có **tiêu chí ghi trước**
+  (`WORKFLOW.md` §9.1: đầu file "Căn cứ để review" 2–4 file). Nội dung (theo `CURRENT_HANDOFF.md` mục 4 "Đóng gói" + `Project_Status.md` §1 mục tiêu / thứ tự lỗi / yêu cầu phi chức năng): đo gì
+  (Golden 176 + an toàn 32 + 15 câu theo ngày + tốc độ trên trình duyệt + **bộ kín mới** + kết quả B0), **cùng một commit** (sau khi streaming + nhiều lượt vào `main`), thước + sàn + mức tụt cho phép mỗi bộ,
+  cỡ mẫu, ước tiền / giờ (từ log thật), thứ tự chạy (W31: không việc nặng song song lúc đo tốc độ), **bộ kín mới**: ai viết / ai kiểm / ai không được đọc (giữ mù — người đề xuất biến thể, A), mức loại câu, so SHA256
+  với mọi file thử cũ; "thử thêm có giới hạn" chỉ cho 3 lỗi đã biết (từ chối nhầm 12 / 158, câu so sánh / nhiều nguồn, bảng giá) — mỗi cái: nghiên cứu ngoài trước, luật giữ / bỏ. Chỗ cần User chọn ⇒ `TBD`
+  + khối "Câu hỏi cho User" (`propose-options`). Đọc thêm: skill `run-experiment`; bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md`; số hiện trạng từ `bao_cao_he_thong/` (đã sửa 01/11).
+  Không: chạy đo, viết câu kín, mở `*sealed*`, gọi API. Xong ⇒ báo A sha.
+- **C — C102 nháp spec hội thoại nhiều lượt (XONG 11:11, bản 1 `45d159e09636`; **dời Phase 9** — User 11:20 01/11/2026, không hỏi Q2–Q4, không review; GIAO 11:05 01/11/2026):** C101 (1b) xong 11:04 — A ghép + cho kiểm. Việc mới, 0 USD, **chỉ tài liệu** (không code):
+  nháp `docs/superpowers/specs/2026-11-01-multi-turn-design.md` theo khuôn spec streaming (mục tiêu, quyết định, phạm vi, thiết kế, bước, tiêu chí bằng số, cách kiểm, quyền / tiền, rủi ro,
+  giới hạn, "Căn cứ để review"). Gốc: nháp C91 `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` (PA1 trình duyệt giữ lịch sử, server không lưu) + **code thật sau S1**
+  (`backend/llm/grounded_answer.py` trên nhánh `s1-loi-chung` `9c83003` — đọc nhánh, không sửa) + spec streaming đã duyệt (route stream sẽ có). Chỗ cần User chọn ⇒ để `TBD` + một khối
+  "Câu hỏi cho User" (mỗi câu 2–3 phương án, hệ quả, khi nào sai, khuyên gì — skill `propose-options`); mọi khẳng định về code kèm `file:dòng`. Câu dùng làm ví dụ: tự viết, mức loại câu.
+  Không làm: code; sửa spec streaming / handoff mục khác; tra web (nếu cần nguồn ngoài ⇒ ghi câu cần tra, A quyết). Xong ⇒ báo A sha; A trình User từng câu rồi cho session khác review.
+- **C — việc 1b (XONG 11:04, C101; GIAO 10:28 01/11/2026; User chọn "giao C ngay"):** gom báo cáo so sánh **phần đã đóng** (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng / ngày hôm nay).
   - Mục tiêu: nháp đủ để A ghép `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` theo khung mục 4 "Báo cáo tổng so sánh" (đọc full mục 4 trên). Phần **theo khâu** là chính (đủ số đo);
     phần **theo Phase** chỉ bảng một hàng / Phase trỏ về phần khâu + chỉ mục chéo; "nhìn lại theo khung khoá AI FDE" để bước đóng gói (không làm ở 1b). Streaming / nhiều lượt chưa có ⇒ để chỗ trống ghi "chưa làm".
   - Đọc (targeted): `bao_cao_he_thong/BAO_CAO_*.md` (9 khâu) + `LUONG_HOAT_DONG_HE_THONG.md`; `report_agent/*/TONG_HOP.md` + report gốc khi cần số; `reports/` (Phase 0–7, lịch sử); `docs/superpowers/specs/`;

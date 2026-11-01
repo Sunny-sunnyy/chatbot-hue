@@ -13,6 +13,27 @@
 - Gom báo cáo so sánh phần đã đóng (Phase 0 → 8.2, sửa kho 1 + 2, Qwen3-8B, lỗi nặng / ngày hôm nay). 0 USD. Mục việc: `CURRENT_HANDOFF.md` "C — việc 1b".
 - **File sẽ ghi (khai báo):** `data/so_sanh_phuong_an/` — `nhap_theo_khau.md`, `nhap_theo_phase.md`, `cho_mau_thuan.md`, `brief_agent_con.md`, `BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md`, nháp agent con `agent_*.md`; và file này.
   Không sửa `bao_cao_he_thong/`, guide, spec, governance.
+- Tiến độ (10:44 01/11/2026): 5 agent con xong (68 thẻ: K 14 · N2 16 · T3 9 · S 17 · E 12; 29 dòng mâu thuẫn, 0 dòng đổi quyết định đã chốt); C kiểm 15 / 15 số khớp;
+  đã ghi `nhap_theo_khau.md`, `cho_mau_thuan.md`, `nhap_theo_phase.md`; agent con thứ 6 đang viết bản đề xuất public. 0 USD.
+- **XONG (11:04 01/11/2026) — chờ A ghép + review.** File (sha 12): `BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md` `24a7177d6319` (1.444 dòng, 62 khối, quét trùng 0, không số thứ tự câu / chủ đề cụ thể / tên dự án khác — C quét);
+  `nhap_theo_khau.md` `424c3752c4d2`; `nhap_theo_phase.md` `3fb778b18316`; `cho_mau_thuan.md` `f5e6bd74e8a1`; `brief_agent_con.md` `68cdbfb24154`; 5 file `agent_*.md` (hồ sơ). 6 agent con, 0 USD.
+
+## 2. Việc đang làm 01/11 — C102 nháp spec hội thoại nhiều lượt (A giao 11:05 01/11/2026; User: việc A giao = "làm đi")
+- 0 USD, chỉ tài liệu. Mục việc: `CURRENT_HANDOFF.md` "C — C102". Đọc nhánh `s1-loi-chung` `9c83003` bằng `git show` (không checkout — B đang S2).
+- **File sẽ ghi (khai báo):** `docs/superpowers/specs/2026-11-01-multi-turn-design.md` (mới, untracked); và file này.
+- **XONG (11:11 01/11/2026) — bản 1 `45d159e09636`** (247 dòng, quét trùng 0, 13 chỗ `TBD` chờ Q1–Q4 User). Thử nhỏ 0 USD: luật chữ C91 bắt nhầm 0 / 176 Golden + 2 / 32 bộ an toàn (chỉ in số; script `/tmp/c102` đã xóa).
+  Lệch tài liệu: handoff nói "spec streaming §2 D0" — spec streaming không có dòng D0 (ghi trong spec mới §2). Chờ A.
+
+## 3. Việc đang làm 01/11 — C103 nháp kế hoạch lượt đo cuối Phase 1–8 (A giao 11:13 01/11/2026; User: việc A giao = "làm đi")
+- 0 USD, chỉ tài liệu; không chạy đo, không viết câu kín, không mở `*sealed*`. Ưu tiên thấp hơn việc điền spec nhiều lượt khi A nhắn.
+- **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` (mới, untracked); và file này.
+- **XONG (11:17 01/11/2026) — bản 1 `6a859a039109`** (215 dòng, quét trùng 0, 7 `TBD` chờ Q1–Q4 User). C viết plan ⇒ C không đọc bộ kín mới, không review plan. Chờ A.
+
+## 4. Việc đang làm 01/11 — C104 sửa bản public báo cáo so sánh theo 2 review (A giao 11:20 01/11/2026; User: việc A giao = "làm đi")
+- 0 USD. Review: `data/so_sanh_phuong_an/review_r1_dong_1_626.md`, `review_r2_dong_627_1444.md`.
+- **File sẽ ghi (khai báo):** `data/so_sanh_phuong_an/BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md` (sửa), `data/so_sanh_phuong_an/cho_mau_thuan.md` (thêm mục cuối); và file này.
+- **XONG (11:25 01/11/2026):** bản public bản 2 `f1722077fc48` (64 dòng đổi; quét trùng 0); `cho_mau_thuan.md` `51f222d2d489` §4 "Sửa theo review" (đã sửa / không sửa + lý do).
+- **Thêm (A, User 11:20):** nhiều lượt dời Phase 9 ⇒ plan C103 **bản 2 `ba70843a4652`** (bỏ điều kiện / bộ đo nhiều lượt, §3.6 bỏ; Golden lệch kho = User giữ nguyên). Spec C102 thành tư liệu Phase 9 (A đánh dấu).
 
 ## KẾT PHIÊN 31/10 (cập nhật 12:36 31/10/2026 `date`)
 

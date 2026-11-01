@@ -105,13 +105,12 @@ vì điểm Đủ ý tăng +0,26 [+0,08; +0,48] trên bộ thử, +0,27 [+0,02; 
 - Bộ chia đoạn còn giữ giới hạn 256 token của model HuyDang (không chạy ở chatbot; `settings.yaml:32-35`), làm 6 bảng bị tách theo dòng (đếm trên kho cũ, chưa đo lại).
 - Trả lời một lần khi xong cả câu; chưa nhớ hội thoại nhiều lượt.
 
-**Việc kế tiếp (thứ tự bạn chốt 30/10, giữ 31/10):**
-1. **Hiện chữ dần (streaming):** bản thiết kế bản 4 đã được kiểm đạt; bạn đã chốt cách hiện chữ (chữ hiện ngay + tiến độ, kiểm trích dẫn ở
-   cuối), thước tốc độ (p50 ≤ 3 s / p95 ≤ 5 s tính tới **chữ trả lời đầu tiên** hiện trên trình duyệt), và khi lỗi thì rút / xoá câu trả lời.
-   Còn **1 câu bạn trả lời** (mục tiêu thời gian tới chữ đầu tiên) + bạn duyệt bản thiết kế ⇒ mới viết code.
-2. Hội thoại nhiều lượt (mới có bản nháp phương án).
-3. Đóng gói Phase 1–8: bảng giới hạn đầy đủ, báo cáo so sánh phương án, sửa công thức tính tiền.
-4. Phase 9: mở bằng nghiên cứu rộng (đề tài, dự án, paper, ứng dụng thật cho du lịch / văn hoá) rồi mới thử nghiệm.
+**Việc kế tiếp (thứ tự bạn chốt 30/10; 01/11: hội thoại nhiều lượt dời sang Phase 9):**
+1. **Hiện chữ dần (streaming):** bạn duyệt bản thiết kế 01/11 (chữ hiện ngay + tiến độ, kiểm trích dẫn ở cuối; sàn p50 ≤ 3 s / p95 ≤ 5 s tới **chữ trả lời
+   đầu tiên** trên trình duyệt + mục tiêu báo cáo 1,5 / 3 s; lỗi thì rút / xoá câu trả lời). Đang code trên nhánh riêng: bước 1 (lõi chung) đạt review, bước 2 (luồng chữ)
+   chờ review, bước 3 (giao diện) và 4 (đo) chưa làm. **Bản đang chạy chưa đổi.**
+2. Đóng gói Phase 1–8: lượt đo cuối (kế hoạch nháp 01/11), bảng giới hạn đầy đủ, báo cáo so sánh phương án (nháp 01/11, đang sửa theo kiểm độc lập), sửa công thức tính tiền.
+3. Phase 9: mở bằng nghiên cứu rộng (đề tài, dự án, paper, ứng dụng thật cho du lịch / văn hoá) rồi mới thử nghiệm; **gồm cả hội thoại nhiều lượt / nhớ lịch sử** (phần trợ lý / agent).
 
 ## 6. Chạy thử
 
