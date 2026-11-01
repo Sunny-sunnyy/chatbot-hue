@@ -2,7 +2,7 @@
 
 Người làm: C (Claude Opus 5.5, terminal `hue-rag-6a`) — §0–§5, §9; B — §6–§7 (`do_cuoi_b_an_toan_ngay.md`) · Date: 13:13 01/11/2026 (`date`)
 Plan duyệt `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` **`ae8d42d520d4`**; runbook private `data/do_cuoi_2026-11-01/runbook.md` **`bdd883bb367c`** (B review vòng 2 ready). Bộ kín mới (§8)
-**không** thuộc report này (B chạy, chỉ in số đếm). Câu tả ở mức loại câu; không chép câu hỏi / câu trả lời / ngữ cảnh. Kết quả chi tiết: private `data/do_cuoi_2026-11-01/`.
+do B chạy (chỉ in số đếm) — §4 gộp tóm tắt từ `do_cuoi_b_bo_kin.md`. Câu tả ở mức loại câu; không chép câu hỏi / câu trả lời / ngữ cảnh. Kết quả chi tiết: private `data/do_cuoi_2026-11-01/`.
 
 ## 1. Phạm vi
 
@@ -62,8 +62,12 @@ Thời gian sinh trong harness (theo dõi, không HTTP): sau p50 1,76 / p95 3,42
 3 lần: bản mới và bản mốc `751b352` đều sai 1 / 3 ⇒ dao động ngang mốc) · A2 vế 2 **0** đảo cảnh báo (cả hai loại "nói sai về nguồn") · câu theo ngày: **0** câu đoán ngày rồi nói sai / 12, từ chối nhầm 5 câu
 trong kho (mốc 6 / 14). Cổng judge đạt (10 / 10, 0 / 5, tách lô 0; phiếu kiểm 6 / 6).
 
+**Bộ kín mới §8 (B — `do_cuoi_b_bo_kin.md` §4; gộp 13:21 01/11/2026, C chỉ đọc số đếm, không mở `kin/`):** 40 câu chưa ai thiết kế hệ thống thấy (34 trong kho + 6 ngoài kho), một lượt: sàn **đạt** —
+0 / 6 câu ngoài kho bị trả lời, 0 / 40 lỗi kỹ thuật, 0 / 30 sai điều kiện, 0 bịa thêm (cổng judge 10 / 10 · 0 / 5). Điểm TB thấp hơn Golden số chính: Đủ **4,18** [3,74; 4,59] ↔ 4,58, Đúng 4,38 ↔ 4,71;
+từ chối nhầm **4 / 34** ↔ 12 / 158 — cả 4 ở loại nhiều nguồn / so sánh; chỉ câu được trả lời Đủ 4,60 ≈ Golden ⇒ số dev **hơi lạc quan**, CI chạm số Golden (chưa rõ về thống kê).
+
 **Tiền lượt đo cuối (giá đủ, `tools/tien_cuoi.py`)**: Golden sau 0,0434 + A/A 0,0436 · B65 0,0070 · an toàn 0,0095 + sinh lại 0,0021 + mốc 0,0022 · ngày 0,0043 ⇒ **0,1122 USD**; + S4 đã tiêu 0,0158 ⇒
-**0,1280 / trần 0,20** (chưa gồm bộ kín §8 — trần riêng 0,015). Judge / sub-agent: quota Claude.
+**0,1280**; + bộ kín §8 0,0112 (B) ⇒ **0,1392 / trần 0,20** USD. Judge / sub-agent: quota Claude.
 
 ## 5. Lỗi và giới hạn
 

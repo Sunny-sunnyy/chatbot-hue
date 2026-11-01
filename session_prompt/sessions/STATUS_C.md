@@ -1,4 +1,43 @@
-# STATUS C — MỞ PHIÊN 01/11 (cập nhật 10:17 01/11/2026 `date`)
+# STATUS C — PHIÊN 01/11 (tóm tắt cho kết phiên, cập nhật 13:22 01/11/2026 `date`)
+
+Terminal `hue-rag-6a` · A = `hue-rag-27` · B = `hue-rag-da` (trực tiếp). User (10:20): việc A giao = "làm đi". Quyền phiên 01/11: như 31/10 (≤ 1 USD). Hết hạn cuối phiên.
+
+## Tóm tắt phiên 01/11 (mọi việc đã xong; chi tiết từng việc ở các mục 1–12 dưới)
+
+| Mã | Việc | Kết quả (sha 12) |
+|---|---|---|
+| C101 | gom báo cáo so sánh phần đã đóng (6 agent con) | bản public → A ghép + commit (`03c09d0`); nháp private `data/so_sanh_phuong_an/` |
+| C102 | nháp spec hội thoại nhiều lượt | `45d159e09636` — **dời Phase 9** (User 11:20), giữ làm tư liệu |
+| C103 | plan lượt đo cuối có tiêu chí ghi trước | bản 4 `ae8d42d520d4` — **User duyệt** (3 vòng B) |
+| C104 | sửa báo cáo so sánh theo 2 review | bản 2 `f1722077fc48` (+ `cho_mau_thuan.md` §4) |
+| C105 | bảng giới hạn bản 4 + nháp LUONG §5 | `f1a7c4cad145` / `5f6ac0987017` → A ghép (`ce37bb1`) |
+| C106 | rà bảo mật đóng gói (agent-security-review) | bản 2 `94ae4e98b673` — CA1 / CA3 major ⇒ A sửa (`547ac4a`) |
+| C107 | review S3 giao diện streaming | vòng 1 changes_requested (M-1 lọc HTML + `/static` không CSP) ⇒ vòng 2 `716ba4d` ready |
+| C108 | runbook đo cuối + 5 script | bản 2 `bdd883bb367c` — B vòng 2 ready |
+| C109 | tra tài liệu Codex (CA3) | `3e005afb04e0` — profile chặn đọc + tắt `shell_tool`; `-s read-only` làm profile bị bỏ qua |
+| C110 | yêu cầu cho giao diện mới | `c11d0a66ea32` (38 dòng) |
+| C111 | **chạy** lượt đo cuối (§0–§5; B §6–§8) | Golden **không làm hỏng**; report `do_cuoi_implementation.md` `ac361fba4eea` (gộp B §6–§8) |
+| C112 | nháp phần thêm cho 2 báo cáo User | `them_01_11.md` `f27bcad1d79c`, `danh_gia_them_01_11.md` `339c7e22ea23` (đã điền bộ kín) |
+
+**Tiền paid của C phiên 01/11 (giá đủ):** §4 B65 0,0070 + Golden sau 0,0434 + A/A 0,0436 + review S3 ≈ 0,0005 ⇒ **≈ 0,0945 USD**. Cả lượt đo cuối (C + B + S4): **0,139 / 0,20 USD**.
+Sub-agent dùng quota Claude: C101 (6), C112 0, C111 judge Golden (6).
+
+## Bẫy gặp phiên 01/11 (đầu vào vòng cải tiến)
+
+1. **Gõ giờ ước 3 lần** (S49): tin C103 bản 3 "11:40", tin C108 "12:2x", dòng đầu file C110 "12:46" (giờ tương lai). Hook bắt lần ghi file; tin nhắn không có hook ⇒ luôn `date` ngay trước khi soạn tin.
+2. **Chốt "cùng một commit" theo HEAD** (`do_cuoi.py run`) dừng lượt đo khi A commit tài liệu ⇒ đổi sang so **code** (A đồng ý, ghi report). Bài học: điều kiện "cùng commit" của plan nên nói rõ là cùng bản code.
+3. **Lệnh in tên loại thông điệp log** (`cut -c1-22`) làm terminal hiện 1–2 chữ đầu câu hỏi thử cũ (C106) ⇒ cắt trước phần chữ người dùng.
+4. **Đếm sai bảng GATE R** (C104: dòng FIX cuối nằm ngoài khoảng dòng đếm) — review + A đúng; luôn in hết bảng trước khi kết luận số.
+5. **Runbook bản 1 có lỗi không chạy được** (biến chứa `VAR=…`, biến chưa định nghĩa, retry trái plan) — chỉ `py_compile`, chưa chạy thử vì W31 ⇒ B bắt. Bài học: chạy thử lệnh 0 USD trên bản sao (`DO_CUOI_DIR`) trước khi bàn giao.
+6. **`bash -c` không mang biến shell** khi thử hàm (C108) — thử hàm trong cùng shell.
+7. Làm tốt (giữ): ca dò khác cách ở review S3 tìm được lỗi thật (`background`, `/static/index.html`); probe `codex sandbox` 0 USD xác nhận tài liệu trước khi đề xuất.
+
+## Dở / phiên sau
+
+- Không có việc dở của C. Chờ: agent con review một lần cả lượt đo + 2 nháp (A giao) ⇒ A ghép `BAO_CAO_SO_SANH_PHUONG_AN.md` / `BAO_CAO_DANH_GIA.md`.
+- Không server / worktree / file tạm của C còn chạy (đã kiểm `/tmp`; `/tmp/c_s3`, `/tmp/c108t`, `/tmp/c109.*`, `/tmp/c102` đã xoá).
+
+## MỞ PHIÊN 01/11 (cập nhật 10:17 01/11/2026 `date`)
 
 ## 0. Mở phiên 01/11
 - Terminal C: `hue-rag-6a` · A = `hue-rag-27` (theo `STATUS_A.md` 10:16) · B = `hue-rag-da` (A xác nhận). Kênh: trực tiếp. Quyền phiên 01/11: như 31/10, ≤ 1 USD (A báo).
@@ -71,6 +110,16 @@
 ## 10. Việc đang làm 01/11 — C110 yêu cầu cho giao diện mới (A giao, bắt đầu 12:43 01/11/2026; "làm đi")
 - 0 USD, ≤ 40 dòng. **File sẽ ghi:** `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md`; và file này.
 - **XONG (12:44 01/11/2026 `date`) — `c11d0a66ea32`** (38 dòng, 17 yêu cầu + mục kiểm). Bẫy lần 3: dòng đầu file gõ giờ ước → sửa bằng `date` trước khi báo.
+
+## 11. Việc đang làm 01/11 — C111 CHẠY lượt đo cuối (phần không phải bộ kín) (A giao, bắt đầu 12:49 01/11/2026; "làm đi")
+- Theo `data/do_cuoi_2026-11-01/runbook.md` bản 2 (`bdd883bb367c`, B ready) + plan `ae8d42d520d4`. **Có phí** — trần cả lượt 0,20 USD; lỗi kỹ thuật ⇒ dừng báo A. Không chạy §8 bộ kín.
+- Tiến độ (12:55 01/11/2026): §0 C2 = `89c988e` (diff code vs `6a0c842` rỗng ⇒ dùng lại S4 + cổng ổn định của B); §1 preflight qua, T1 `4d5bbe9e0edc`, import-truoc; §4 B65 xong (p50 2,34 / p95 3,80 s client, 0,0070 USD); harness: chốt "cùng commit" đổi sang so code (A đồng ý — ghi report); §5 pilot 10 câu 0,0016 USD; `sau_rest` 166 câu chạy nền. §6 / §7 do **B** chạy (A chia việc).
+- **XONG (13:14 01/11/2026):** Golden **không làm hỏng** (`golden/analyze.json` `13fccf9bab68`); report `do_cuoi_implementation.md` `a609fb324e89` (gộp B §6/§7). Tiền §4–§7 0,1122 + S4 0,0158 = 0,128 / 0,20 USD (chưa gồm bộ kín). Server tắt; 6 judge xong; `/tmp` sạch.
+- **File sẽ ghi:** `data/do_cuoi_2026-11-01/{golden,an_toan,ngay,b65}/…` (private); `report_agent/2026-10-31_streaming_spec/do_cuoi_implementation.md`; và file này.
+
+## 12. Việc đang làm 01/11 — C112 nháp phần thêm cho báo cáo so sánh + báo cáo đánh giá (A giao, bắt đầu 13:15 01/11/2026; "làm đi")
+- 0 USD. **File sẽ ghi:** `data/so_sanh_phuong_an/them_01_11.md`, `data/so_sanh_phuong_an/danh_gia_them_01_11.md`; và file này. Không sửa `bao_cao_he_thong/`.
+- **XONG (13:19 01/11/2026):** `them_01_11.md` `9cb70d378281` (5 khối S18–S20, T3-10, E13 + 5 dòng 2.1 + hàng Phần B); `danh_gia_them_01_11.md` `5a1e5e85098a`; thêm private `golden/theo_loai_cau.json` `485304553865` (chỉ đọc điểm đã chấm). Bộ kín: chỗ trống <chờ B>.
 
 ## KẾT PHIÊN 31/10 (cập nhật 12:36 31/10/2026 `date`)
 
