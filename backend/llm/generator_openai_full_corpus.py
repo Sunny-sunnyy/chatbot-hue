@@ -11,6 +11,7 @@ from agents import (
     ModelSettings,
     OpenAIResponsesModel,
     RunConfig,
+    RunResultStreaming,
     Runner,
 )
 from agents.exceptions import AgentsException
@@ -80,6 +81,14 @@ def parse_structured_output(
         raise GenerationError("OpenAI generation returned empty structured content")
 
     return str(val).strip()
+
+
+def _run_config() -> RunConfig:
+    # Cùng một cấu hình cho lần gọi thường và lần gọi stream: hai đường gọi model phải giống nhau (spec streaming §4.3 bước 1).
+    return RunConfig(
+        tracing_disabled=True,
+        trace_include_sensitive_data=False,
+    )
 
 
 class OpenAIFullCorpusGenerator:
@@ -159,17 +168,13 @@ class OpenAIFullCorpusGenerator:
         self, agent: Agent, user_prompt: str, expected_type: type[BaseModel]
     ) -> GeneratedText:
         started = time.monotonic()
-        run_cfg = RunConfig(
-            tracing_disabled=True,
-            trace_include_sensitive_data=False,
-        )
         try:
             result = await asyncio.wait_for(
                 Runner.run(
                     agent,
                     input=user_prompt,
                     max_turns=1,
-                    run_config=run_cfg,
+                    run_config=_run_config(),
                 ),
                 timeout=self.timeout,
             )
@@ -185,7 +190,10 @@ class OpenAIFullCorpusGenerator:
         # Extract structured output strictly - fail closed
         final_output = getattr(result, "final_output", None)
         text = parse_structured_output(final_output, expected_type)
+        return self._generated_text(result, text, started)
 
+    def _generated_text(self, result: Any, text: str, started: float) -> GeneratedText:
+        """Usage + metadata của một lượt đã xong (`Runner.run` hoặc `Runner.run_streamed` đọc hết) ⇒ `GeneratedText`."""
         # Extract usage and response metadata
         response_id = None
         input_tokens = None
@@ -226,6 +234,24 @@ class OpenAIFullCorpusGenerator:
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
         return await self._execute_agent(self.answer_agent, build_answer_input(query, context), AnswerOutput)
+
+    def start_answer_stream(self, query: str, context: str) -> RunResultStreaming:
+        """Cùng agent + cùng tham số lần gọi như `generate_answer`, nhưng stream (spec streaming §4.3 bước 1). Trả ngay; model chạy
+        trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`."""
+        if not query or not query.strip():
+            raise ValueError("Query must not be empty or blank")
+        return Runner.run_streamed(
+            self.answer_agent,
+            input=build_answer_input(query, context),
+            max_turns=1,
+            run_config=_run_config(),
+        )
+
+    def finish_answer_stream(self, result: RunResultStreaming, started: float) -> GeneratedText:
+        """Sau khi `stream_events()` đã đọc hết: chữ cuối kiểm chặt như `generate_answer` (`parse_structured_output`) + usage.
+        `started` lấy bằng `time.monotonic()` trước `start_answer_stream`."""
+        text = parse_structured_output(getattr(result, "final_output", None), AnswerOutput)
+        return self._generated_text(result, text, started)
 
     async def aclose(self) -> None:
         """Close AsyncOpenAI client connection."""
