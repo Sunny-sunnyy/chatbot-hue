@@ -18,6 +18,8 @@ from evaluation.full_corpus_eval import (
     answered_cases,
     citation_error_rates,
     cost_usd,
+    row_cost_usd,
+    usage_totals,
     error_case_indexes,
     is_refusal,
     judge_input_rows,
@@ -87,9 +89,27 @@ def test_mean_by_category_is_macro_average_over_cases():
 
 
 def test_cost_uses_luna_price():
-    # 1M input = 0,1 USD; 1M output = 0,5 USD.
+    # 1M input = 0,1 USD; 1M output = 0,5 USD; không truyền phần đệm ⇒ giá phẳng như các số cũ.
     assert math.isclose(cost_usd(1_000_000, 0), 0.1)
     assert math.isclose(cost_usd(2_000, 1_000), 0.0007)
+
+
+def test_cost_prices_cache_write_and_cached_input_separately():
+    # Giá User 30/10: ghi đệm 0,125 · đọc đệm 0,01 USD / 1M; phần đệm nằm trong input_tokens.
+    assert math.isclose(cost_usd(1_000_000, 0, cache_write_tokens=1_000_000), 0.125)
+    assert math.isclose(cost_usd(1_000_000, 0, cached_tokens=1_000_000), 0.01)
+    # Lần gọi thật B95 (câu 1, lần 1): vào 1.916 (ghi đệm 1.913), ra 85 ⇒ giá phẳng 0,0002341, giá đủ 0,000281925 (+20 %).
+    assert math.isclose(cost_usd(1_916, 85), 0.0002341)
+    assert math.isclose(cost_usd(1_916, 85, cache_write_tokens=1_913), 0.000281925)
+
+
+def test_usage_totals_and_row_cost_count_cache_tokens_and_keep_old_rows_flat():
+    new_row = {"input_tokens": 1_916, "output_tokens": 85, "cache_write_tokens": 1_913, "cached_tokens": 0}
+    old_row = {"input_tokens": 1_916, "output_tokens": 85}  # dòng trước khi có trường đệm
+    assert math.isclose(row_cost_usd(new_row), 0.000281925) and math.isclose(row_cost_usd(old_row), 0.0002341)
+    totals = usage_totals([new_row, old_row, {"input_tokens": None, "output_tokens": None, "error": "x"}])
+    assert totals["calls"] == 2 and totals["cache_write_tokens"] == 1_913 and totals["cached_tokens"] == 0
+    assert math.isclose(totals["cost_usd"], 0.000281925 + 0.0002341)
 
 
 def test_validate_score_rows_rejects_bad_scores():

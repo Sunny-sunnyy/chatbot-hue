@@ -35,7 +35,7 @@ router = APIRouter()
 # Một dòng `chat_metrics` mỗi lần gọi vào handler (plan C59): chỉ số đếm, mã cố định và thời gian — KHÔNG ghi câu hỏi, câu trả lời,
 # nội dung nguồn, chunk_id, response_id hay thông điệp lỗi. Test khóa đúng tập trường này (thêm trường phải sửa danh sách có chủ đích).
 METRIC_FIELDS = (
-    "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens",
+    "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens", "cache_write_tokens", "cached_tokens",
     "n_context_sources", "n_cited_sources", "search_ms", "dense_ms", "context_ms", "generation_ms", "citation_ms", "total_ms",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
@@ -214,7 +214,8 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
     )
     if trace.generated is not None:
         # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
-        metrics.update({field: getattr(trace.generated, field, None) for field in ("model", "input_tokens", "output_tokens", "reasoning_tokens")})
+        metrics.update({field: getattr(trace.generated, field, None)
+                        for field in ("model", "input_tokens", "output_tokens", "reasoning_tokens", "cache_write_tokens", "cached_tokens")})
 
 
 # ---------- Route stream ----------

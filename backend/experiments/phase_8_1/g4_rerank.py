@@ -37,6 +37,7 @@ from evaluation.full_corpus_eval import (
 )
 from core.schema import RetrievedDocument
 from core.settings_loader import load_settings
+from llm.generator_openai_full_corpus import input_cache_tokens
 from experiments.phase_8_1.g1_retrieval import (
     GOLD_PATH,
     SPLIT_PATH,
@@ -82,8 +83,10 @@ def luna_rank(client: OpenAI, model: str, max_output_tokens: int, query: str, do
     except OpenAIError as exc:
         return {"error": f"api: {type(exc).__name__}: {exc}"[:500]}
     usage = response.usage
+    cached_tokens, cache_write_tokens = input_cache_tokens(usage)
     out = {"input_tokens": usage.input_tokens, "output_tokens": usage.output_tokens,
-           "usd": cost_usd(usage.input_tokens, usage.output_tokens), "raw": response.output_text,
+           "usd": cost_usd(usage.input_tokens, usage.output_tokens, cache_write_tokens or 0, cached_tokens or 0),
+           "raw": response.output_text,
            "status": response.status}
     parsed = response.output_parsed
     if response.status != "completed" or parsed is None:
