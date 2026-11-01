@@ -1,14 +1,14 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này.
 
 File này mô tả hệ thống **đang chạy**. Mỗi lần hành vi đổi (chia đoạn, chỉ mục, cách tìm, prompt, model), file này được cập nhật theo.
 Những gì đã thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-**Tóm tắt hôm nay (31/10):** Phase 8 (8.1, 8.2) đã đóng 28/10; chatbot không đổi từ 30/10 — kho 204 file / 8.424 đoạn; tìm bằng vector nghĩa e5-small + từ khoá BM25;
-đưa tối đa 10 đoạn vào ngữ cảnh; `gpt-6-luna` trả lời có trích dẫn. Việc kế tiếp: **hiện chữ dần (streaming)** — mới là bản thiết kế,
-**chưa có code** (mục 5).
+**Tóm tắt hôm nay (01/11):** kho 204 file / 8.424 đoạn; tìm bằng vector nghĩa e5-small + từ khoá BM25; đưa tối đa 10 đoạn vào ngữ cảnh; `gpt-6-luna`
+trả lời có trích dẫn. **Mới 01/11: chữ hiện dần (streaming)** — trang web hiện câu trả lời ngay khi model viết; đo trên trình duyệt: chữ đầu tiên
+trung vị **1,23 s**, câu chậm (p95) **2,61 s** ⇒ đạt sàn 3 / 5 s và cả mục tiêu 1,5 / 3 s. Việc kế tiếp: lượt đo cuối Phase 1–8 (đang chạy) ⇒ đóng Phase 8 (mục 5).
 
 ---
 
@@ -66,7 +66,14 @@ HỎI ĐÁP (mỗi câu hỏi):
 7. **Ghi số đo:** mỗi lần gọi `/api/chat` — kể cả lỗi 409 / 503 / 500 — ghi đúng **một dòng** `chat_metrics` vào log `chat` (màn hình +
    `backend/logs/application.log`, không commit; `backend/api/routes/chat.py:24-83`): kết quả, mã HTTP, có từ chối không, model, token vào /
    ra / suy luận, số nguồn đưa vào / được trích, thời gian tìm / dựng ngữ cảnh / sinh / kiểm trích dẫn / tổng (ms). **Không** ghi câu hỏi,
-   câu trả lời, nguồn, tiền (tiền tính sau từ token theo bảng giá). Thêm < 1 ms mỗi câu.
+   câu trả lời, nguồn, tiền (tiền tính sau từ token theo bảng giá). Thêm < 1 ms mỗi câu. Từ 01/11 ghi thêm token **ghi đệm / đọc đệm** (để tính đúng giá),
+   và ở đường stream: thời gian tới sự kiện / chữ đầu tiên, có ngắt giữa chừng không.
+8. **Chữ hiện dần (từ 01/11, `POST /api/chat/stream`, trang web dùng đường này):** bước 0–5 như trên; lỗi trước khi model viết vẫn trả JSON như `/api/chat`.
+   Khi model viết, server gửi từng mảnh chữ (sự kiện `status` → `delta` … → `sources` → `done`); **bước 6 (kiểm trích dẫn) chạy lúc cuối** — qua thì mới gửi
+   nguồn và bật link [n]; **hỏng thì trang web rút lại chữ đã hiện**, lỗi / đứt giữa chừng thì **xoá hết** — cả hai hiện lời báo + nút "Thử lại" (bạn chọn 31/10).
+   Người dùng rời trang ⇒ server dừng model, vẫn ghi một dòng log. Trang web chỉ hiện các thẻ Markdown thường (danh sách cho phép) và có chính sách bảo mật
+   trang (CSP) — không tự tải ảnh / tài nguyên từ máy khác. `/api/chat` (một lần, JSON) vẫn giữ; API và bộ đánh giá dùng **chung một lõi**
+   (`backend/llm/grounded_answer.py`) nên đo và chạy đi đúng một đường.
 
 ## 4. Chất lượng, tốc độ, tiền đo được
 
@@ -122,17 +129,19 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 
 **Tốc độ, tiền, tính năng**
 
-- **Chờ cả câu (chưa streaming):** đo trong công cụ (176 câu, không qua mạng tới web) p50 **2,19 s** / p95 **4,90 s** — sát trần; **qua API thật** (22 câu tự viết, 27/10, kho cũ) p50 **3,07 s** /
-  p95 **6,04 s** ⇒ **chưa đạt**; câu trả lời dài chưa đạt rõ (4,6 / 7,6 s). Hướng: **streaming** (đang code; sàn chuyển sang "tới chữ trả lời đầu tiên trên trình duyệt", mục tiêu báo cáo 1,5 / 3 s).
-- **Tiền:** ≈ **0,00025 USD / câu** theo giá đủ ⇒ đạt trần 0,0005; công cụ đo còn tính giá phẳng nên ghi thiếu ≈ 20 % — đang sửa.
+- **Tốc độ (từ 01/11 đo "tới chữ trả lời đầu tiên trên trình duyệt", streaming):** 38 câu có trả lời: trung vị **1,23 s** / p95 **2,61 s** / chậm nhất 4,74 s ⇒ **đạt** sàn 3 / 5 s và mục tiêu
+  1,5 / 3 s; câu từ chối (21 câu) 1,48 / 2,93 s ⇒ đạt; tới đủ câu 1,73 / 3,81 s. Lợi "thấy chữ sớm hơn chờ đủ câu" chỉ ~**0,44 s** (câu thử ngắn, hôm đó model gần như không suy luận trước) —
+  bạn chọn giữ cách hiện chữ dần (01/11). Một lần đo, 38 câu ⇒ p95 gần như là câu chậm thứ hai. Trước streaming (cả câu, qua API, 27/10): p50 3,07 / p95 6,04 s — chưa đạt.
+- **Tiền:** ≈ **0,00025 USD / câu** theo giá đủ (lượt đo 01/11: TB 0,000247, lớn nhất 0,000339) ⇒ đạt trần 0,0005; công cụ đo **đã tính theo giá đủ** từ 01/11 (trước đó ghi thiếu ≈ 20 %).
 - **Một lượt hỏi–đáp**, chưa nhớ câu trước ⇒ hội thoại nhiều lượt **dời sang Phase 9** (bạn quyết 11:20 01/11/2026).
 - **Một nhà cung cấp sinh** (`gpt-6-luna`), không dự phòng: lỗi hoặc quá 45 s ⇒ báo lỗi, không tự đổi model.
 - **Chưa đưa ra ngoài:** chạy máy cá nhân; API chưa giới hạn số lượt hỏi, chưa đăng nhập, chưa đặt hạn mức tiền phía nhà cung cấp ⇒ là điều kiện trước khi deploy.
 
-**Khi bật streaming (đã thiết kế, đang code — chưa chạy ở chatbot)**
+**Streaming (chạy từ 01/11)**
 
 - Trong vài giây người dùng thấy chữ **chưa qua bộ kiểm**; nếu bộ kiểm cuối hỏng thì chữ bị rút lại, lỗi giữa chừng thì xoá hết + nút "Thử lại" (bạn chọn 31/10). Lỗi kiểm cuối hôm nay 0 / 489 lần ⇒ hiếm;
-  sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật.
+  sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật (chỉ phát lại luồng). Giao diện JS thuần hiện tại sẽ được làm lại sau
+  Phase 8 — yêu cầu phải giữ: `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md`.
 
 **Thước đo (giới hạn của bằng chứng)**
 
@@ -151,12 +160,11 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 
 Chi tiết từng dòng (số đo, nguồn, hướng xử lý) và mọi phương án đã thử: báo cáo khâu (`BAO_CAO_*.md`) và [`BAO_CAO_SO_SANH_PHUONG_AN.md`](BAO_CAO_SO_SANH_PHUONG_AN.md).
 
-**Việc kế tiếp (thứ tự bạn chốt 30/10; 01/11: hội thoại nhiều lượt dời sang Phase 9):**
-1. **Hiện chữ dần (streaming):** bạn duyệt bản thiết kế 01/11 (chữ hiện ngay + tiến độ, kiểm trích dẫn ở cuối; sàn p50 ≤ 3 s / p95 ≤ 5 s tới **chữ trả lời
-   đầu tiên** trên trình duyệt + mục tiêu báo cáo 1,5 / 3 s; lỗi thì rút / xoá câu trả lời). Đang code trên nhánh riêng: bước 1 (lõi chung) đạt review, bước 2 (luồng chữ)
-   chờ review, bước 3 (giao diện) và 4 (đo) chưa làm. **Bản đang chạy chưa đổi.**
-2. Đóng gói Phase 1–8: lượt đo cuối (kế hoạch nháp 01/11), bảng giới hạn đầy đủ, báo cáo so sánh phương án (nháp 01/11, đang sửa theo kiểm độc lập), sửa công thức tính tiền.
-3. Phase 9: mở bằng nghiên cứu rộng (đề tài, dự án, paper, ứng dụng thật cho du lịch / văn hoá) rồi mới thử nghiệm; **gồm cả hội thoại nhiều lượt / nhớ lịch sử** (phần trợ lý / agent).
+**Việc kế tiếp (thứ tự bạn chốt 30/10; 01/11: hội thoại nhiều lượt + câu nhiều nguồn dời sang Phase 9):**
+1. ~~Hiện chữ dần (streaming)~~ — **xong, chạy từ 01/11** (merge `a80e12d`).
+2. **Đóng gói Phase 1–8:** lượt đo cuối cùng một commit (Golden 176 + lượt lặp cùng ngày, bộ an toàn 32, câu theo ngày, 22 câu qua API, **bộ kín mới 40 câu**) — đang chạy 01/11; mốc người B0 (bạn
+   đọc 20 cặp); báo cáo so sánh phương án (đã đăng 01/11, thêm phần mới khi xong); bảng giới hạn (mục này).
+3. Phase 9: mở bằng nghiên cứu rộng rồi mới thử nghiệm; gồm **hội thoại nhiều lượt / nhớ lịch sử** và **câu cần nhiều nguồn** (agent tách câu con).
 
 ## 6. Chạy thử
 
@@ -191,5 +199,5 @@ Code: `backend/api/app.py:65-85` (409 / 503 lúc khởi động), `backend/api/r
   bảng giá ngoài top-30 (Phase 6).
 - Phiếu build `51fb1ec63cbc` (30/10), từ điển BM25 `c8134c49a648`; ghi `chat_metrics` từ `5100b90` (27/10); kiểm trích dẫn nhận `[Nguồn n]`
   từ `9e6d371` (25/10); API báo đúng mã lỗi từ `1e4acd0` (25/10).
-- Spec streaming: `docs/superpowers/specs/2026-10-31-streaming-design.md` bản 4 `cf1ae9ef6c2c`; tổng hợp
+- Spec streaming: `docs/superpowers/specs/2026-10-31-streaming-design.md` bản 5 `00fb57ee01b2` (User duyệt 01/11); code vào `main` merge `a80e12d` (01/11); tổng hợp
   `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.

@@ -14,7 +14,7 @@ xứng nhu cầu và bằng chứng từ dữ liệu, Qdrant, model, API thật.
 
 ```text
 curated Markdown (204 file, sửa kho đợt 1 28/10 + đợt 2 30/10) -> chunker (8.424 chunk) -> e5-small dense + BM25 sparse
--> Qdrant -> query NFC -> retrieval dense_bm25_rrf (top-10 whole chunk vào context) -> gpt-6-luna -> API/UI có citation
+-> Qdrant -> query NFC -> retrieval dense_bm25_rrf (top-10 whole chunk vào context) -> gpt-6-luna -> API/UI có citation (stream SSE từ 01/11, `a80e12d`)
 ```
 
 Làm việc theo mô hình A/B/C (Governance v2, User duyệt 2026-10-24): A điều phối
@@ -104,6 +104,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 - **log số đo** (từ 27/10, `5100b90`; `dense_ms` làm tròn 1 chữ số từ `dfbcca5`): mỗi lần gọi `/api/chat` ghi một dòng `chat_metrics` (logger `chat`, `backend/logs/application.log`, gitignore):
   outcome, mã HTTP, từ chối, model, token vào / ra / suy luận, số nguồn, ms tìm / dense / ngữ cảnh / sinh / citation / tổng — không ghi nội dung, không ghi USD;
   latency thật 27/10 (B65, context 5): p50 3,3 s / p95 5,7 s tuần tự; context 10 (bộ "trước" B78, 176 câu, đo trong harness — chưa tính HTTP): p50 2,2 s / p95 4,9 s; lượt "sau" p95 9,8 s **không đại diện** (phía mạng / provider);
+- **streaming (01/11, merge `a80e12d`):** `POST /api/chat/stream` (SSE) + giao diện chữ hiện dần; `/api/chat` giữ; lõi chung `backend/llm/grounded_answer.py`; tới chữ đầu trên trình duyệt p50 1,23 / p95 2,61 s (38 câu, S4); `cost_usd` giá đủ + log token đệm;
 - generation `gpt-6-luna` (OpenAI); config `backend/config/settings.yaml`
   (`full_corpus_runtime`, `full_corpus_generation`).
 

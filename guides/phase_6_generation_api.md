@@ -19,6 +19,8 @@
 
 *(Full-corpus package Phase 6, `gpt-6-luna` từ 2026-10-23.)*
 
+**Hiện hành 01/11 (A, 12:51 01/11/2026):** thêm `POST /api/chat/stream` (SSE — `status` / `delta` / `sources` / `error{after_text}` / `done`; kiểm trích dẫn lúc cuối; ngắt ⇒ huỷ model, một dòng log) và giao diện chữ hiện dần; route JSON `/api/chat` giữ nguyên hành vi. API và bộ đánh giá dùng chung lõi `backend/llm/grounded_answer.py` (`answer_query` / `prepare_answer`). Trang web: DOMPurify danh sách cho phép + CSP cho mọi trang HTML. `cost_usd` theo giá đủ (ghi / đọc đệm). Spec `docs/superpowers/specs/2026-10-31-streaming-design.md` (`00fb57ee01b2`); merge `a80e12d`; số đo `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md`. Các mục dưới về UI một lượt là lịch sử.
+
 Các artifact thiết kế hiện hành theo thứ tự ưu tiên:
 
 ```text
