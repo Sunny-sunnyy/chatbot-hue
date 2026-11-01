@@ -146,6 +146,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
 - **B — kiểm phần đổi spec sau Q1 (GIAO 01/11, bản 5 `0b2679cfccd6`):** căn cứ: `git diff` (hoặc `diff`) spec bản mới ↔ `cf1ae9ef6c2c` + câu trả lời Q1 User (A ghi vào mục Streaming); chỉ kiểm chỗ `TBD` §2 + §6 C1 và mọi
   chỗ nhắc tới nó; không đổi chỗ khác; không chạy Codex. Đầu ra: mục "Vòng 3" cuối `report_agent/2026-10-31_streaming_spec/b105_review.md` + sha bản kiểm. 0 USD.
 - **Báo cáo so sánh (1b) ĐÃ GHÉP 11:29 01/11/2026:** `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` bản 3 (từ nháp C `f1722077fc48` + 3 sửa nhỏ của A); review R1 / R2 vòng 2 ready (`data/so_sanh_phuong_an/review_r*.md`). Phần streaming + đo cuối thêm khi làm.
+- **C105 XONG + ĐÃ GHÉP 11:33 01/11/2026:** bảng giới hạn bản 4 `f1a7c4cad145` (private); khối giới hạn ⇒ `LUONG` §5 bản 15 (A kiểm 3 số với nguồn). **B108 review ready** (A, `b108_cost_usd_review.md`).
 - **C — C105 bảng giới hạn đã biết bản 4 + nháp `LUONG` §5 (GIAO 11:27 01/11/2026):** 0 USD, chỉ tài liệu. (1) Cập nhật `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (bản 3 `8211d5d6eb7f`, C viết) theo
   hiện trạng 01/11: kho sau đợt 2, Qwen3-8B, streaming spec §10 giới hạn (S1–S2 đã làm), nhiều lượt dời Phase 9, tốc độ qua API (p95 6,0 s chưa đạt), Golden 127 giữ nguyên, `cost_usd` (B108 đang sửa) —
   dòng không còn đúng thì sửa / xoá; mỗi dòng có nguồn `file:dòng`. (2) Nháp mục "Giới hạn đã biết" cho `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` §5 (lời thường cho User, mức loại câu, mức nặng

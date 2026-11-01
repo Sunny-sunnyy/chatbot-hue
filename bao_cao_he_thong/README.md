@@ -7,7 +7,7 @@
 
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 17:10 31/10/2026 (bản 14: rà lại cả file — số hiện hành 204 file / 8.424 đoạn, 12 / 158 từ chối nhầm, 2,19 / 4,90 s, ≈ 0,00025 USD / câu; khối "đã thử, không đưa vào"; bật Docker Desktop) |
+| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 11:33 01/11/2026 (bản 15: giới hạn đã biết theo mức nặng; streaming đang code; nhiều lượt ⇒ Phase 9) · 17:10 31/10/2026 (bản 14: rà lại cả file — số hiện hành 204 file / 8.424 đoạn, 12 / 158 từ chối nhầm, 2,19 / 4,90 s, ≈ 0,00025 USD / câu; khối "đã thử, không đưa vào"; bật Docker Desktop) |
 | **So sánh mọi phương án đã thử / chọn / bỏ** (Phase 0 → 8.2, sửa kho, Qwen3-8B) — theo khâu + theo Phase | [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md) | 11:29 01/11/2026 (bản 3: mới; 62 khối, có số đo + nhãn độ tin; 2 lượt kiểm độc lập đạt; phần streaming / đo cuối thêm sau) |
 | Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho 1–2) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 17:12 31/10/2026 (bản 6: rà lại — thước đang dùng gold v5, Golden, bộ an toàn 32 câu, bộ 15 câu theo ngày; thước streaming chưa code) |
 | Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 17:12 31/10/2026 (bản 5: rà lại — 11 gói Python, mốc test 197 đạt 26/10, số dòng code đúng lại) |

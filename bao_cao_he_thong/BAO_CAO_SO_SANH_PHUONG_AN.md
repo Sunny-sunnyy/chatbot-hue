@@ -1298,7 +1298,7 @@ Mã khối: K = kho + Golden · N2 = chia đoạn / vector / Qdrant · T3 = tìm
 - Phép đo cuối trên bản hiện tại + bộ câu kín mới (chưa có bộ).
 - Mốc người B0 (đọc cặp mù 5 ↔ 10 đoạn) — dời theo PA3 (E7).
 - Phase 9: chưa mở (mở bằng nghiên cứu rộng trước).
-- Còn mở trong các khối: R3 "nêu đủ chi tiết" (S6, cần thêm câu), chỉ bật bỏ dấu khi câu không dấu (N2-13 = T3-06), dọn ràng buộc 3 tokenizer (N2-05), sửa công thức tiền (S14), 1 câu Golden lệch kho chờ User (K12).
+- Còn mở trong các khối: R3 "nêu đủ chi tiết" (S6, cần thêm câu), chỉ bật bỏ dấu khi câu không dấu (N2-13 = T3-06), dọn ràng buộc 3 tokenizer (N2-05), sửa công thức tiền (S14 — đã sửa trên nhánh streaming 01/11, review đạt, vào `main` cùng streaming). (Câu Golden lệch kho K12: User giữ nguyên 01/11 — đã đóng.)
 
 ---
 

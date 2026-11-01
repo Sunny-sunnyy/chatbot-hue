@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 17:10 31/10/2026 — bản 14: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này.
 
 File này mô tả hệ thống **đang chạy**. Mỗi lần hành vi đổi (chia đoạn, chỉ mục, cách tìm, prompt, model), file này được cập nhật theo.
@@ -97,13 +97,59 @@ vì điểm Đủ ý tăng +0,26 [+0,08; +0,48] trên bộ thử, +0,27 [+0,02; 
 
 ## 5. Giới hạn đã biết và việc kế tiếp
 
-- Câu cần ghép nhiều nguồn / so sánh hay bị từ chối cả câu khi kho chỉ có một vế.
-- Câu hỏi theo ngày tương đối ("hôm nay", "tuần này"…): không nói sai, nhưng 6 / 14 câu thử bị từ chối nhầm ⇒ để Phase 9.
-- Dòng bảng giá dài bị tách thành đoạn một dòng, khó tìm (ví dụ vé Đại Nội).
-- ~20 % đoạn rất ngắn (≤ 48 token; đếm trên kho cũ, chưa đo lại) vì mỗi khối Markdown là một đoạn, không gộp khối cạnh nhau (Phase 8.1 thử 12 cách chia khác, không
-  cách nào thắng — `BAO_CAO_CHIA_DOAN.md`).
-- Bộ chia đoạn còn giữ giới hạn 256 token của model HuyDang (không chạy ở chatbot; `settings.yaml:32-35`), làm 6 bảng bị tách theo dòng (đếm trên kho cũ, chưa đo lại).
-- Trả lời một lần khi xong cả câu; chưa nhớ hội thoại nhiều lượt.
+Xếp theo **mức nặng bạn chốt 28/10**: **M1** sai cảnh báo an toàn / điều kiện vào khu vực > **M2** nói chắc sai / bịa > **M3** trả lời câu ngoài kho > **M4** thiếu ý > **M5** từ chối nhầm.
+Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 s, p95 ≤ 5 s, ≤ 0,0005 USD / câu), **thước đo** (giới hạn của bằng chứng — không phải lỗi người dùng thấy, nhưng làm kết luận yếu đi),
+**vận hành** (chạy / bảo trì).
+
+**Chất lượng câu trả lời (người dùng thấy)**
+
+- **M1 — có thể nói sai điều kiện / cảnh báo** (vé, giờ, quy định vào khu vực): bộ 32 câu an toàn hiện **0** câu sai mới, 0 câu đảo cảnh báo (30/10); trước đó 2 câu từng nói sai *về nguồn*
+  ("nguồn không nêu…") rồi lần sinh lại không sai ⇒ "lúc có lúc không". Bộ này do AI viết, chỉ 28 câu trong kho ⇒ "0 lỗi" chỉ nói được tỉ lệ sai dưới ~12 %.
+- **M1 — kho có dữ kiện theo thời điểm** (giá, giờ mở cửa, lịch, tên đơn vị hành chính) có thể đã cũ; hai đợt sửa kho đã sửa 246 chỗ và **không làm hỏng** chatbot, nhưng vẫn còn mục chờ tra ngoài /
+  chờ người địa phương.
+- **M1 / M5 — model không biết hôm nay là ngày nào:** câu "tối nay còn mở không?", "tuần sau có…?" — đo 30/10: **0** câu đoán ngày rồi nói sai, nhưng 6 / 14 câu bị **từ chối nhầm** dù ngữ cảnh có lịch ⇒
+  để **Phase 9** (công cụ ngày cho trợ lý).
+- **M2 — đôi khi thêm chi tiết không có trong nguồn** (thường là nhận xét chung ở câu nhiều nguồn): 1 / 145 câu (Claude chấm, chưa có người đọc). **Bộ kiểm trích dẫn chỉ kiểm định dạng** (`[n]` có, số nguồn
+  có thật), không kiểm câu chữ có đúng với nguồn được trích ⇒ "có trích dẫn" nghĩa là *có nguồn*, chưa phải *đã kiểm nghĩa*.
+- **M3 — câu ngoài kho:** 0 câu bị trả lời trên mọi bộ đã đo (25 câu ngoài kho) — mẫu nhỏ, cận trên ~12 %.
+- **M4 / M5 — câu so sánh / cần nhiều nguồn** điểm thấp hơn rõ, hay bị từ chối cả câu khi chỉ tìm được một vế; đưa 10 đoạn (28/10) đã cải thiện chủ yếu ở loại này, số theo loại câu trên kho hiện tại
+  **chưa đo lại**.
+- **M5 — từ chối câu mà kho có đáp án:** **12 / 158** câu (30/10) — lỗi lớn nhất về số; nguyên nhân chính là **xếp hạng**: đoạn chứa đáp án có trong 30 ứng viên nhưng bị xếp ngoài 10 đoạn đưa model
+  (9 / 40 câu thử). Các cách đã thử (lấy 100 ứng viên, xếp lại bằng model, model vector lớn Qwen3-8B, cho trả lời một phần) đều **không qua luật** ⇒ giữ cách hiện tại.
+- **M4 / M5 — dòng bảng giá dài** bị tách thành đoạn một dòng ⇒ khó tìm đúng dòng giá; chưa có số riêng ở cấu hình hiện tại.
+- **M4 — ~20 % đoạn rất ngắn** (mỗi khối Markdown là một đoạn; đếm trên kho cũ): đã thử 12 cách chia khác, không cách nào tốt hơn ⇒ giữ.
+- **Câu gõ không dấu:** ngoài phạm vi (bạn quyết 25/10 — người dùng gõ có dấu); đo được: tìm kiếm gần như hỏng (13 ⇒ 1 / 32 câu đủ đoạn đúng).
+
+**Tốc độ, tiền, tính năng**
+
+- **Chờ cả câu (chưa streaming):** đo trong công cụ (176 câu, không qua mạng tới web) p50 **2,19 s** / p95 **4,90 s** — sát trần; **qua API thật** (22 câu tự viết, 27/10, kho cũ) p50 **3,07 s** /
+  p95 **6,04 s** ⇒ **chưa đạt**; câu trả lời dài chưa đạt rõ (4,6 / 7,6 s). Hướng: **streaming** (đang code; sàn chuyển sang "tới chữ trả lời đầu tiên trên trình duyệt", mục tiêu báo cáo 1,5 / 3 s).
+- **Tiền:** ≈ **0,00025 USD / câu** theo giá đủ ⇒ đạt trần 0,0005; công cụ đo còn tính giá phẳng nên ghi thiếu ≈ 20 % — đang sửa.
+- **Một lượt hỏi–đáp**, chưa nhớ câu trước ⇒ hội thoại nhiều lượt **dời sang Phase 9** (bạn quyết 11:20 01/11/2026).
+- **Một nhà cung cấp sinh** (`gpt-6-luna`), không dự phòng: lỗi hoặc quá 45 s ⇒ báo lỗi, không tự đổi model.
+- **Chưa đưa ra ngoài:** chạy máy cá nhân; API chưa giới hạn số lượt hỏi, chưa đăng nhập, chưa đặt hạn mức tiền phía nhà cung cấp ⇒ là điều kiện trước khi deploy.
+
+**Khi bật streaming (đã thiết kế, đang code — chưa chạy ở chatbot)**
+
+- Trong vài giây người dùng thấy chữ **chưa qua bộ kiểm**; nếu bộ kiểm cuối hỏng thì chữ bị rút lại, lỗi giữa chừng thì xoá hết + nút "Thử lại" (bạn chọn 31/10). Lỗi kiểm cuối hôm nay 0 / 489 lần ⇒ hiếm;
+  sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật.
+
+**Thước đo (giới hạn của bằng chứng)**
+
+- **Chưa có mốc người:** mọi điểm chất lượng do Claude chấm (khớp `gpt-6-luna` 89–96 %); lựa chọn 10 đoạn đang chạy cũng dựa người chấm Claude — bạn đọc 20 cặp mù trước buổi bảo vệ.
+- **Không còn bộ câu chưa ai thấy:** nhóm kiểm 56 câu và 36 câu kín đã dùng ⇒ số hiện tại có thể lạc quan hơn câu thật; **bộ kín mới** nằm trong kế hoạch lượt đo cuối (nháp 01/11).
+- **Bộ đo nhỏ:** chỉ 55 / 176 câu có nhãn "đoạn đúng" ⇒ nhiều thí nghiệm ra "chưa rõ" — nghĩa là *chưa chứng minh được*, không phải *đã chứng minh bằng nhau*.
+- **Gần như chưa có so sánh nào đo lại trên kho hiện tại:** phần lớn kết luận "giữ" của Phase 8 đo trên kho / cấu hình cũ. **Model sinh chưa từng được so có chấm điểm** (giữ `gpt-6-luna` theo quyết định
+  của bạn 24/10).
+- Không lưu câu hỏi người dùng ⇒ mọi số đo trên câu tự viết / Golden, chưa có câu hỏi thật.
+- Lệnh kiểm Golden báo **1 lỗi đã biết** (1 câu khác kho chỉ ở chữ hoa / thường — không làm sai điểm; bạn chọn giữ nguyên 01/11).
+
+**Vận hành**
+
+- Log một file, không xoay vòng; log dùng chung cho test và server. Bộ test không có key OpenAI vẫn báo vài lỗi "bình thường" ⇒ chưa có một lệnh kiểm sạch. Kho không có Git (sửa bằng sao lưu tay + so
+  khác). Mã đoạn dạng `<file>#<số>` dồn số khi thêm / xoá đoạn giữa file. Bộ chia đoạn còn giới hạn 256 token của một model đã bỏ.
+
+Chi tiết từng dòng (số đo, nguồn, hướng xử lý) và mọi phương án đã thử: báo cáo khâu (`BAO_CAO_*.md`) và [`BAO_CAO_SO_SANH_PHUONG_AN.md`](BAO_CAO_SO_SANH_PHUONG_AN.md).
 
 **Việc kế tiếp (thứ tự bạn chốt 30/10; 01/11: hội thoại nhiều lượt dời sang Phase 9):**
 1. **Hiện chữ dần (streaming):** bạn duyệt bản thiết kế 01/11 (chữ hiện ngay + tiến độ, kiểm trích dẫn ở cuối; sàn p50 ≤ 3 s / p95 ≤ 5 s tới **chữ trả lời
