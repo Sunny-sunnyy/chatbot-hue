@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2)
 
-**Cập nhật lần cuối: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 11:34 01/11/2026 — câu Golden lệch kho: điểm không lệch, bạn giữ nguyên.** Trước: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 31/10/2026)
@@ -34,7 +34,7 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
   - Nhiễu "hai lượt cùng cấu hình" (A/A) ở 10 đoạn, 176 câu: Đủ tụt 1 câu, Đúng tụt 2 câu — nhiễu nền cho luật "không làm hỏng".
   - Điểm Đúng / Đủ / Trúng ý trung bình tuyệt đối chỉ có ở mốc 7B (5 đoạn, 24/10): **4,43 / 4,28 / 4,45**; các lượt sau báo chênh theo cặp.
 - **Giới hạn chính:**
-  - **1 câu Golden** còn keyword không khớp kho sau 2 đợt sửa kho (phát hiện 31/10, chờ bạn duyệt) ⇒ điểm keyword của câu đó lệch tới khi sửa;
+  - **1 câu Golden** có keyword khác kho chỉ ở chữ hoa / thường (phát hiện 31/10) — lệnh kiểm báo lỗi, nhưng phép chấm không phân biệt hoa / thường nên **điểm không lệch**; bạn chọn giữ nguyên (01/11);
   - **chưa có mốc người** — bạn đọc 20 cặp câu trả lời mù để sau (trước buổi bảo vệ); mọi kết luận dựa điểm Claude là tạm;
   - chỉ 40 câu thử / 15 câu kiểm có nhãn đoạn đúng ⇒ nhiều kết quả tầng tìm chỉ "chưa rõ";
   - nhóm kiểm 56 câu và 36 câu kín **đều đã dùng** ⇒ phép kiểm cuối sau cần bộ câu mới chưa ai nhìn;

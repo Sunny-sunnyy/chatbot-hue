@@ -10,6 +10,9 @@ Terminal: `hue-rag-1a` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - **Q1 (User, A ghi nhận 10:23 01/11/2026):** PA1 — sàn giữ p50 ≤ 3 s / p95 ≤ 5 s tới chữ trả lời đầu tiên trên trình duyệt; **mục tiêu báo cáo** p50 ≤ 1,5 s / p95 ≤ 3 s (không chặn nghiệm thu); đo dễ đạt ⇒ A đề xuất nâng sàn.
 - User (terminal B, 10:19): việc A giao B = "làm đi" cho B. Tiếp: chờ "làm đi" của A.
 
+## Đã học / bẫy gặp (phiên 01/11)
+- **S63 (A, 11:34 01/11/2026):** gõ giờ "11:56" vào `b108_cost_usd_review.md` (kèm chữ "`date`") mà không chạy `date` — giờ thật ~11:31; hook W37 không bắt vì dạng giờ đủ phút; phát hiện khi chạy `date` cho file khác. Sửa ngay. ⇒ đầu vào vòng cải tiến (W37 chỉ bắt `HH:Mx`; giờ đủ phút gõ tay vẫn lọt — 31/10 S62 cũng vậy).
+
 ## Phiên sau đọc trước
 - `CURRENT_HANDOFF.md` "PHIÊN SAU" (viết lại 12:36–12:42; phiên 31/10 nguyên văn ở `archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`).
 - Việc đầu: hỏi quyền ⇒ hỏi **Q1** (mục tiêu chữ đầu tiên; A khuyên sàn 3 / 5 s + mục tiêu báo cáo 1,5 / 3 s) ⇒ điền `TBD` spec (dòng ~46 §2 + §6 C1) ⇒ B kiểm phần đổi ⇒

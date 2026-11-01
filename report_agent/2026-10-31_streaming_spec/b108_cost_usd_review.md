@@ -2,7 +2,7 @@
 
 Decision: **ready_for_user_confirmation** (0 blocker / 0 major / 1 minor không chặn)
 Người kiểm: A (Claude Opus 5.5)
-Date: 11:56 01/11/2026 (`date`)
+Date: trước 11:33 01/11/2026 (giờ commit `ce37bb1`; sửa lúc 11:34 01/11/2026 — bản đầu gõ tay "11:56" không chạy `date`)
 Căn cứ: giá `gpt-6-luna` User 30/10 (`Project_Status.md` §5 dòng 2026-10-30 15:07); B95 (ghi đệm ≈ toàn bộ phần vào, đọc đệm 0)
 Implementation report: `report_agent/2026-10-31_streaming_spec/b108_cost_usd_implementation.md` (`42ab49f710f4`)
 
