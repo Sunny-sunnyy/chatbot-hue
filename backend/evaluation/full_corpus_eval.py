@@ -26,11 +26,10 @@ import numpy as np
 from agents import Agent, ModelSettings, RunConfig, Runner
 from pydantic import BaseModel, ConfigDict, Field
 
-from core.schema import CitationIntegrityError
 from core.settings_loader import load_settings
-from llm.citations import select_cited_sources
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
-from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator, input_cache_tokens
+from llm.grounded_answer import AnswerTrace, answer_query
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -43,8 +42,11 @@ GOLDEN_SMOKE = GOLDEN_DIR / "golden_full_corpus_smoke.jsonl"
 RESULTS_DIR = REPO_ROOT / "data" / "evaluation" / "phase_7b"
 JUDGE_PROMPT_PATH = Path(__file__).resolve().parent / "full_corpus_judge_prompt.md"
 
-# Giá gpt-6-luna (User 2026-10-24), USD cho 1M token.
+# Giá gpt-6-luna (User 2026-10-30, ngữ cảnh < 272k token), USD cho 1M token. Phần vào chia ba: đọc lại từ đệm, ghi vào đệm (đệm 30 phút),
+# còn lại giá thường. B95 (30/10): mỗi lần gọi ghi đệm gần hết phần vào, đọc đệm 0 ⇒ giá phẳng cũ ghi thiếu ~20 % / câu.
 PRICE_INPUT_PER_M = 0.1
+PRICE_CACHED_INPUT_PER_M = 0.01
+PRICE_CACHE_WRITE_PER_M = 0.125
 PRICE_OUTPUT_PER_M = 0.5
 RETRIEVAL_K = 10
 CONCURRENCY = 4
@@ -164,8 +166,16 @@ def is_refusal(answer: str) -> bool:
     return answer.strip() == INSUFFICIENT_ANSWER
 
 
-def cost_usd(input_tokens: int, output_tokens: int) -> float:
-    return (input_tokens * PRICE_INPUT_PER_M + output_tokens * PRICE_OUTPUT_PER_M) / 1_000_000
+def cost_usd(input_tokens: int, output_tokens: int, cache_write_tokens: int = 0, cached_tokens: int = 0) -> float:
+    """`input_tokens` đã gồm phần ghi đệm / đọc đệm (cách OpenAI đếm). Không truyền phần đệm (dòng cũ chưa ghi) ⇒ giá phẳng như trước."""
+    regular_input = input_tokens - cache_write_tokens - cached_tokens
+    return (regular_input * PRICE_INPUT_PER_M + cache_write_tokens * PRICE_CACHE_WRITE_PER_M
+            + cached_tokens * PRICE_CACHED_INPUT_PER_M + output_tokens * PRICE_OUTPUT_PER_M) / 1_000_000
+
+
+def row_cost_usd(row: dict) -> float:
+    """Tiền một dòng kết quả (sinh / judge); trường thiếu hoặc None tính 0."""
+    return cost_usd(*(row.get(field) or 0 for field in ("input_tokens", "output_tokens", "cache_write_tokens", "cached_tokens")))
 
 
 def mean_by_category(rows: list[dict], fields: tuple[str, ...]) -> dict:
@@ -221,14 +231,12 @@ def citation_error_rates(rows: list[dict]) -> dict:
 
 
 def usage_totals(rows: list[dict]) -> dict:
-    input_tokens = sum(row.get("input_tokens") or 0 for row in rows)
-    output_tokens = sum(row.get("output_tokens") or 0 for row in rows)
-    calls = sum(1 for row in rows if row.get("input_tokens") is not None)
+    totals = {field: sum(row.get(field) or 0 for row in rows)
+              for field in ("input_tokens", "output_tokens", "cache_write_tokens", "cached_tokens")}
     return {
-        "calls": calls,
-        "input_tokens": input_tokens,
-        "output_tokens": output_tokens,
-        "cost_usd": cost_usd(input_tokens, output_tokens),
+        "calls": sum(1 for row in rows if row.get("input_tokens") is not None),
+        **totals,
+        "cost_usd": cost_usd(**totals),
     }
 
 
@@ -320,7 +328,7 @@ def run_retrieval_eval(cases: list[dict], treatment: str, shuffle_seed: int | No
 # ---------- Sinh câu trả lời (paid) ----------
 
 async def answer_case(case: dict, service, context_builder, generator) -> dict:
-    """Một case theo đúng thứ tự `api/routes/chat.py`: retrieval → context → sinh → citation."""
+    """Một case qua lõi chung với `api/routes/chat.py` (`llm.grounded_answer.answer_query`): retrieval → context → sinh → citation."""
     row = {
         "case_index": case["case_index"],
         "category": case["category"],
@@ -331,36 +339,38 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
         "top_chunk_ids": None,
         "input_tokens": None,
         "output_tokens": None,
+        "cache_write_tokens": None,
+        "cached_tokens": None,
         "latency_ms": None,
         "response_id": None,
         "error": None,
     }
     question = case["question"].strip()
+    trace = AnswerTrace()
     try:
-        result = await asyncio.to_thread(service.search, question)
-        row["top_chunk_ids"] = [doc.id for doc in result.documents[:RETRIEVAL_K]]
-        packed = context_builder.build(question, result.documents)
-        row["context_sources"] = len(packed.sources)
-        if not packed.sources:
-            answer = INSUFFICIENT_ANSWER  # API trả fallback, không gọi model.
-        else:
-            generated = await generator.generate_answer(question, packed.text)
-            answer = generated.text
-            row.update(
-                input_tokens=generated.input_tokens,
-                output_tokens=generated.output_tokens,
-                latency_ms=generated.latency_ms,
-                response_id=generated.response_id,
-            )
-            try:
-                select_cited_sources(answer, packed.sources)
-            except CitationIntegrityError as exc:
-                # API trả 500 ở đây; vẫn giữ text để chấm (A chốt 2026-10-24).
-                row["citation_error"] = str(exc)
-        row["answer"] = answer
-        row["refusal"] = is_refusal(answer)
+        await answer_query(question, service, context_builder, generator, trace)  # không truyền recorder (spec streaming §4.8)
+        # Chữ gốc, chưa chuẩn hóa `[Nguồn n]` (judge chấm đúng chữ model viết). Citation hỏng: API trả 500; ở đây vẫn giữ text để chấm
+        # (A chốt 2026-10-24). Không có nguồn ⇒ chữ là câu từ chối chuẩn, không gọi model (như API).
+        row["answer"] = trace.answer
+        row["refusal"] = is_refusal(trace.answer)
+        if trace.citation_error is not None:
+            row["citation_error"] = str(trace.citation_error)
     except Exception as exc:  # lỗi kỹ thuật của case: ghi nguyên, run thành incomplete
         row["error"] = describe_error(exc)
+    # Bước nào đã chạy thì ghi, cả ở dòng lỗi (như trước khi gom lõi chung).
+    if trace.documents is not None:
+        row["top_chunk_ids"] = [doc.id for doc in trace.documents[:RETRIEVAL_K]]
+    if trace.packed is not None:
+        row["context_sources"] = len(trace.packed.sources)
+    if trace.generated is not None:
+        row.update(
+            input_tokens=trace.generated.input_tokens,
+            output_tokens=trace.generated.output_tokens,
+            cache_write_tokens=trace.generated.cache_write_tokens,
+            cached_tokens=trace.generated.cached_tokens,
+            latency_ms=trace.generated.latency_ms,
+            response_id=trace.generated.response_id,
+        )
     return row
 
 
@@ -410,6 +420,8 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
         "feedback": None,
         "input_tokens": None,
         "output_tokens": None,
+        "cache_write_tokens": None,
+        "cached_tokens": None,
         "error": None,
     }
     message = build_judge_message(case["question"], case["reference_answer"], answer_row["answer"])
@@ -422,7 +434,9 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
         )
         usage = result.raw_responses[-1].usage if result.raw_responses else None
         if usage is not None:
-            row.update(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens)
+            cached_tokens, cache_write_tokens = input_cache_tokens(usage)
+            row.update(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens,
+                       cache_write_tokens=cache_write_tokens, cached_tokens=cached_tokens)
         scores = result.final_output
         if not isinstance(scores, JudgeScores):
             scores = JudgeScores.model_validate_json(str(scores))

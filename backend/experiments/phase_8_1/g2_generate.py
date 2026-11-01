@@ -34,7 +34,7 @@ from evaluation.full_corpus_eval import (
     bootstrap_mean_diff,
     build_context_builder,
     build_retrieval,
-    cost_usd,
+    row_cost_usd,
     holm_adjust,
     is_refusal,
     load_golden_cases,
@@ -147,7 +147,7 @@ async def run_variant(variant: str, cases: list[dict]) -> list[dict]:
         await generator.aclose()
     for row in rows:
         row["variant"] = variant
-        row["usd"] = cost_usd(row["input_tokens"] or 0, row["output_tokens"] or 0)
+        row["usd"] = row_cost_usd(row)
     return rows
 
 
@@ -155,8 +155,8 @@ def usage(rows: list[dict]) -> dict:
     called = [r for r in rows if r["input_tokens"] is not None]
     total_in, total_out = sum(r["input_tokens"] for r in called), sum(r["output_tokens"] for r in called)
     return {"n": len(rows), "called": len(called), "errors": sum(bool(r["error"]) for r in rows),
-            "input_tokens": total_in, "output_tokens": total_out, "usd": cost_usd(total_in, total_out),
-            "usd_per_case": cost_usd(total_in, total_out) / len(rows) if rows else 0.0,
+            "input_tokens": total_in, "output_tokens": total_out, "usd": sum(row_cost_usd(r) for r in called),
+            "usd_per_case": sum(row_cost_usd(r) for r in called) / len(rows) if rows else 0.0,
             "output_tokens_mean": total_out / len(called) if called else 0.0}
 
 

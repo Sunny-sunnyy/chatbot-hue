@@ -30,7 +30,7 @@ from evaluation.full_corpus_eval import (
     bootstrap_mean_diff,
     build_context_builder,
     build_retrieval,
-    cost_usd,
+    row_cost_usd,
     load_golden_cases,
     run_generation,
     validate_score_rows,
@@ -182,7 +182,7 @@ def main() -> None:
         started = time.strftime("%Y-%m-%d %H:%M:%S %z")
         rows = asyncio.run(run_generation(select(args.cases)))
         for row in rows:
-            row["usd"] = cost_usd(row["input_tokens"] or 0, row["output_tokens"] or 0)
+            row["usd"] = row_cost_usd(row)
         write_jsonl(out, rows)
         settings = load_settings(validate_private_paths=False)
         meta = {"name": args.name, "cases": args.cases, "started": started,

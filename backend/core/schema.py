@@ -24,6 +24,10 @@ class GenerationError(RuntimeError):
     """Raised when answer generation cannot return a valid answer."""
 
 
+class GeneratorNotReadyError(RuntimeError):
+    """Raised when context has sources but no generator is ready (the model was never called)."""
+
+
 class ContextBudgetError(RuntimeError):
     """Raised when the highest-ranked evidence block cannot fit the input budget."""
 

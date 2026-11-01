@@ -166,7 +166,7 @@ def test_api_catches_the_same_error_classes_that_retrieval_raises():
     probe = """
 import json, sys
 import api.app, api.routes.chat
-import llm.citations, llm.generator_openai_full_corpus, reranking.cross_encoder, retrieval.full_corpus, retrieval.full_corpus_context
+import llm.citations, llm.generator_openai_full_corpus, llm.grounded_answer, reranking.cross_encoder, retrieval.full_corpus, retrieval.full_corpus_context
 pairs = [
     ("api.app", name, raiser) for name in ("ComponentNotReadyError", "RetrievalConfigurationError", "RetrievalDependencyError")
     for raiser in ("retrieval.full_corpus", "reranking.cross_encoder")
@@ -175,7 +175,9 @@ pairs = [
     ("api.routes.chat", "RetrievalDependencyError", "reranking.cross_encoder"),
     ("api.routes.chat", "ContextBudgetError", "retrieval.full_corpus_context"),
     ("api.routes.chat", "GenerationError", "llm.generator_openai_full_corpus"),
-    ("api.routes.chat", "CitationIntegrityError", "llm.citations"),
+    ("api.routes.chat", "GeneratorNotReadyError", "llm.grounded_answer"),
+    # từ S1 streaming lõi chung bắt lỗi citation thay route (route đọc `trace.citation_error`)
+    ("llm.grounded_answer", "CitationIntegrityError", "llm.citations"),
 ]
 mismatched = [f"{c}.{n} vs {r}" for c, n, r in pairs
               if hasattr(sys.modules[r], n) and getattr(sys.modules[c], n) is not getattr(sys.modules[r], n)]
