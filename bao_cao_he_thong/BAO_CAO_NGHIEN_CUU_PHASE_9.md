@@ -19,7 +19,7 @@ ChatGPT) · Review bản 2: B (B120). Tiền: 0 USD API cho nghiên cứu; thử
   - Lập lịch trình đầy đủ bằng LLM rất khó (TravelPlanner: GPT-4 đúng 0,6 %) ⇒ chỉ làm bản nhỏ, dựa trên hỏi lại + nhớ ngắn.
   - Agent tổng quát tốn 2,7–3,6× token, không luôn hơn pipeline có mô-đun ("Is Agentic RAG worth it?", ACL 2026) ⇒ (suy ra) dễ vượt trần 0,0005 USD / câu.
 - **hue_rag lộ 2 chỗ cần sửa khi thử 10 câu:** từ chối nhầm câu hỏi 2 ý (giờ + giá vé — kho có giá vé); không nhớ lượt trước.
-- **Bạn cần quyết (đầu phiên sau):** phiên sau chạy song song (B code giao diện, C viết spec Phase 9) hay tuần tự; duyệt gói npm cho giao diện.
+- **Bạn đã chọn (01/11):** phiên sau chạy **song song** — B code giao diện, C viết một spec Phase 9 để bạn duyệt. **Đầu phiên sau bạn cần:** duyệt gói npm cho giao diện.
 
 ## 2. Nghiên cứu đã chạy thế nào
 

@@ -17,8 +17,8 @@ chữ đầu trên trình duyệt 1,23 / 2,61 s (một lần đo; hôm đó mode
 **Thứ tự việc phiên sau** (viết 15:26 01/11/2026, kết phiên chiều 01/11 — Phase 8 **đã đóng** 14:29; B0 xong ⇒ giữ 10; 4 nhánh đã xoá):
 1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền chiều 01/11 hết hạn); kiểm Qdrant.
 2. **Nghiên cứu Phase 9 — XONG bản 2** (16:15 01/11/2026): ChatGPT đã về + C117 kiểm 9 ý; thử Huế TRIPO xong (B119); báo cáo `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 2 (B120 review).
-   Brainstorm đã chốt B1 = (b) + lịch (mục "Brainstorm Phase 9"). **Đầu phiên sau hỏi User B3:** song song (B code giao diện, C viết **một spec Phase 9** — an toàn + hỏi lại + nhớ ngắn +
-   lịch trình nhỏ + thử câu nhiều nguồn, tiêu chí ghi trước — để User duyệt) hay tuần tự. User "làm đi" (sau câu hỏi B3, trước 16:13) chỉ cho bản 2 + kết phiên. Nghiên cứu thêm: User nói "muốn nghiên cứu thêm cứ nói".
+   Brainstorm đã chốt B1 = (b) + lịch (mục "Brainstorm Phase 9"). **B3 = (a) song song (User 16:28 01/11/2026):** song song (B code giao diện, C viết **một spec Phase 9** — an toàn + hỏi lại + nhớ ngắn +
+   lịch trình nhỏ + thử câu nhiều nguồn, tiêu chí ghi trước — để User duyệt) — đầu phiên sau giao ngay. User "làm đi" (sau câu hỏi B3, trước 16:13) chỉ cho bản 2 + kết phiên. Nghiên cứu thêm: User nói "muốn nghiên cứu thêm cứ nói".
 3. ~~Thử Huế TRIPO~~ — xong (B119; lặp lại có tiêu chí ghi trước nếu đưa vào luận văn).
 4. **Code giao diện mới** (hướng đã chốt — mục B116): **User duyệt gói npm** (React, Vite, Tailwind, marked, DOMPurify, font) lúc giao; bước đầu dò CSP shadcn; một nhánh, review cả nhánh một lần;
    18 yêu cầu (`yeu_cau_cho_giao_dien_moi.md` + yêu cầu 18 trong `b116_so_sanh_giao_dien.md`). Thứ tự 2 ↔ 4: hỏi User (song song được — không chồng file).
@@ -36,7 +36,7 @@ rà bảo mật C106; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc 
 3. **Rà bảo mật C106 còn chờ User** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): R4 xoá / cắt 22 dòng log cũ (08–10/2026) chứa nguyên câu hỏi thử trong `backend/logs/application.log`
    (gitignore); CA2 (`uv run *` / `python3 *` tự duyệt — khuyên giữ); R1 kiểm `Host` + giới hạn lượt khi deploy; R11 gỡ `gradio` không dùng (User 24/10: chỉ gỡ khi xung đột) — các mục deploy để lúc deploy.
 4. **Sổ cải tiến chờ User:** W35 (kiểm điều khoản trước công cụ / tài khoản ngoài mới), W42 (hook cảnh báo "dự án khác"), W43 (script kiểm báo cáo khâu khớp hiện trạng). W44 User không chọn 01/11.
-5. (Không gấp) `báo cáo nghiên cứu github.txt` (gốc repo, untracked; tư liệu Phase 9): giữ ngoài git hay dời `data/nghien_cuu_phase_9_2026-11-01/`? (hỏi 01/11 chiều, User chưa trả lời) 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`): giữ hay gỡ (User `!`)?
+5. ~~`báo cáo nghiên cứu github.txt`~~ **dời vào `data/nghien_cuu_phase_9_2026-11-01/`** (User 16:28 01/11/2026). Còn (không gấp): 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`): giữ hay gỡ (User `!`)?
    Xoá sao lưu kho đợt 1 + 2 khi đóng gói?
 
 ## Câu hỏi A còn nợ (không cần User)
@@ -132,7 +132,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
   chức năng, kiến trúc nếu công bố, cách vận hành (cập nhật dữ liệu, kiểm nói sai, người duyệt, chi phí, đa ngôn ngữ, đo hiệu quả), sự cố / thất bại / bài học;
   (2) bản đồ chức năng của trợ lý du lịch (hỏi đáp, hỏi lại, lịch trình, ngân sách, bản đồ, sự kiện theo ngày, thuyết minh, giọng nói, ảnh, đặt chỗ…) + người dùng thật cần gì / bỏ dùng vì sao (khảo sát, nghiên cứu người dùng).
 - **C116 — mạch 3 + 4:** (3) paper 2023–2026: agentic RAG, câu nhiều bước / nhiều nguồn, hỏi lại khi câu mơ hồ / thiếu thông tin, hội thoại nhiều lượt có RAG, agent lập lịch trình
-  (bộ đo kiểu TravelPlanner), đánh giá trợ lý; có gì cho tiếng Việt; (4) repo GitHub: bắt đầu từ 8 repo trong `báo cáo nghiên cứu github.txt` (gốc repo, untracked — chỉ lấy tên repo)
+  (bộ đo kiểu TravelPlanner), đánh giá trợ lý; có gì cho tiếng Việt; (4) repo GitHub: bắt đầu từ 8 repo trong `báo cáo nghiên cứu github.txt` (nay ở `data/nghien_cuu_phase_9_2026-11-01/` — chỉ lấy tên repo)
   + tìm thêm; mỗi repo: làm gì, kiến trúc, độ chín (sao, commit gần nhất), học được gì / không hợp.
 - **Dừng:** 16:20 01/11/2026 dù chưa xong — ghi phần đã có, báo A (User kết phiên ~16:30).
 - **Trạng thái B117 (B, 15:23 01/11/2026):** xong, **chờ A xem** — `data/nghien_cuu_phase_9_2026-11-01/b_mach1.md`, `b_mach2.md` (yêu cầu ở `yeu_cau/`; kết quả thô `data/tra_cuu_cli/2026-11-01_b-mach{1-trien-khai,2-chuc-nang}/`). Codex 2 lượt (0 trang ghi đã mở) ⇒ B WebFetch: mạch 1 đạt 3 ý + 2 trang Huế TRIPO; mạch 2 đạt 3 ý (2 nguồn không mở được, ghi tự khai). 0 USD API.
