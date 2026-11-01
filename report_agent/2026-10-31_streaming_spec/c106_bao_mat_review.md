@@ -145,3 +145,30 @@ Không có `blocker`. Có **1 `major`**, 6 `minor`.
 4. Sau khi đạt: A trình User các đề xuất cần User quyết (R4, R9, R10 / M-1, R11, cách chặn ở R2).
 
 Người kiểm không sửa thay phần việc đang kiểm. A commit/push sau khi đóng.
+
+# Vòng 2 — kiểm bản 2 của báo cáo (agent con ngữ cảnh mới do A giao, 12:14 01/11/2026 `date`)
+
+Decision: **ready_for_user_confirmation** — M-1, m-1…m-6 đóng; không có finding mới.
+Báo cáo kiểm: `c106_bao_mat_dong_goi.md` bản 2, sha256 12 ký tự đầu `94ae4e98b673` (tự tính, khớp A gửi). Phạm vi code thêm: `s3-giao-dien` `716ba4d`.
+
+| Finding | Kiểm lại (đã mở thật) | Kết quả |
+|---|---|---|
+| M-1 | §1b mới đủ ba vế + CA1–CA5 có mức, phương án cho User kèm hệ quả. Dòng luật `.claude/settings.local.json` khớp: `:12` `git add *`, `:14` `git push *`, `:25` `docker compose *`, `:74` `uv run *`, `:77` `echo *`, `:81` `WebFetch(domain:github.com)`, `:93` `python3 *` (chỉ lọc tên luật, không chép đường dẫn ngoài dự án). CA3 dẫn `tra_web_codex.sh:8, :19, :50-51, :60-64, :68` — khớp. CA5 mô tả đúng quan sát vòng 1 và ghi "cơ chế chưa xác định". CA1 / CA3 `major`, CA2 / CA4 / CA5 `minor` — hợp lý; CA3 ghi rõ là suy luận, chưa thử | đóng |
+| m-1 | đầu file: `887cbc5` + câu delta; `bbbdbf9` dựng trên `830df0e`; thêm `716ba4d` | đóng |
+| m-2 | `830df0e:chat.py:35-36`, `generator…:145`, `chat.py:47-48`, `tra_web_codex.sh:60-64 / :68` — đúng | đóng |
+| m-3 | R2 viết lại theo S3. Đã kiểm `716ba4d`: `frontend/app.js:77` `SANITIZE_OPTIONS` (25 thẻ Markdown, thuộc tính chỉ `href` / `title` / `align` / `start`); `:85` mọi lần vẽ lại đều qua `DOMPurify.sanitize(…, SANITIZE_OPTIONS)`, `innerHTML` chỉ dùng ở đó; `backend/api/app.py:33` CSP có `img-src 'self'`, `form-action 'self'`, `object-src 'none'`; `:37` `FrontendStaticFiles` gắn CSP cho trang HTML dưới `/static`, `:163` cho `/`. `form-action 'self'` đủ vì `form` không còn trong danh sách cho phép. Số "0 request ra ngoài, 25 ca" là bằng chứng của `s3_giao_dien_review.md` Vòng 2 (ready) — người kiểm không chạy lại trình duyệt | đóng |
+| m-4 | §3 + R7: "khi chạy đúng lệnh trong tài liệu"; "OpenAI vẫn có thể giữ dữ liệu… chưa kiểm". `LUONG_HOAT_DONG_HE_THONG.md:168` (working tree / `main`) đúng là lệnh không có `--host` | đóng |
+| m-5 | R1 + §3 + §4: DNS rebinding (ghi suy luận), kiểm `Host` vào điều kiện, câu CORS / 422 sửa đúng | đóng |
+| m-6 | §1 (c) + R7: telemetry Qdrant (chưa kiểm), HF hub — không mang chữ người dùng | đóng |
+| ghi chú R9, R11 | R9 nêu `chmod` không chặn tiến trình cùng user; R11 ghi cả hai cách đếm | đóng |
+
+**Chỗ sửa có tạo lỗi mới không:**
+- `file:dòng` mới đều khớp (bảng trên).
+- Không nói quá: §3 ý "trang không tự tải gì" có điều kiện "khi giao diện streaming vào chatbot". Trên `main` hôm nay giao diện cũ (`frontend/app.js:72`) vẫn chưa rào cho tới khi merge S3; R2 và §5 ghi "chờ merge" — đủ.
+- §1b (a) có nhắc loại khoá trong `.env`: tên nhà cung cấp lấy từ code (`.githooks/pre-commit`, `backend/…` có `OPENROUTER`), không lộ giá trị.
+
+**Riêng tư (public):** `uv run python .githooks/overlap_scan.py …c106_bao_mat_dong_goi.md` ⇒ `0 trùng`; tên dự án khác / user khác 0; mẫu secret 0; giờ ước 0; `git diff --no-index --check` không cảnh báo.
+
+**Giới hạn:** không chạy lại trình duyệt / server (R2 dùng lại bằng chứng review S3: cùng commit `716ba4d`, đầu vào không đổi); quyền `.env` vẫn không tự kiểm được (R9, như vòng 1). Hai giới hạn này không đổi kết luận.
+
+**Bước tiếp:** A trình User các quyết định: CA1 (push tự duyệt — C khuyên bỏ khỏi `allow`), CA3 (Codex web), CA2, CA4, CA5, R1 kiểm `Host`, R4, R7, R9, R11; R2 đóng theo khi merge S3.
