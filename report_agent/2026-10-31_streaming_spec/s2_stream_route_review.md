@@ -123,3 +123,12 @@ ra ≤ 400. Theo giá User 30/10 (vào tính giá ghi đệm 0,125 · ra 0,50 US
 - Việc rủi ro cao (luồng trả lời cho người dùng) ⇒ A trình User kết quả + giới hạn trên; S3 (giao diện) chỉ mở khi User / A đồng ý. Lưu ý cho S4: `first_text_ms` server ~4,1 s ở một câu
   trong kho (một lần chạy) — sát sàn C1.
 - A commit / push file review này sau khi xử lý; người kiểm không commit.
+
+
+---
+
+## Kiểm phần sửa m-1 (A, 11:45 01/11/2026)
+
+B sửa ở `887cbc5` (`answer_stream.py` +4 dòng: chuỗi chưa đóng mà ký tự cuối là nửa đầu cặp surrogate ⇒ giữ tới mảnh sau; +1 test). A chạy lại **ca dò của reviewer** trên bản xuất `git archive 887cbc5`
+(`/tmp/a_s2_probe/p1_extractor.py`, `p1b_surrogate.py`): **0 / 16.000** lần cắt lỗi (trước sửa: 784 / 800 ở ca emoji); ca cắt giữa cặp: chữ ghép = chữ cuối, mọi mảnh qua `sse_event`. **m-1 đóng.**
+m-2: A quyết giữ trường `delta_matches_final` (ghi spec §4.6 khi đóng spec). Kết luận S2: **ready**, A đóng bước S2.
