@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6, cải tiến ở Phase 8)
 
-**Cập nhật lần cuối: 12:51 01/11/2026 — bản 16: streaming vào chatbot; tốc độ tới chữ đầu tiên đạt; công thức tiền giá đủ.** Trước: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 14:33 01/11/2026 — bản 17: B0 (bạn giữ 10 đoạn), Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 12:51 01/11/2026 — bản 16: streaming vào chatbot; tốc độ tới chữ đầu tiên đạt; công thức tiền giá đủ.** Trước: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 14) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 31/10/2026)
@@ -23,7 +23,7 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
   Trước streaming (cả câu qua API, 27/10): 3,1 / 6,0 s — chưa đạt.
 - **Giới hạn chính:** từ chối nhầm vẫn là chỗ mất điểm lớn nhất (gốc ở khâu tìm: đoạn có đáp án không vào 10 đoạn); câu hỏi theo ngày tương đối
   ("tối nay", "tuần này") bị từ chối dù kho có lịch (6 / 14 câu) — an toàn nhưng chưa trả lời được ⇒ Phase 9; bảng giá và câu tổng hợp nhiều nguồn còn yếu;
-  10 đoạn được chọn bằng người chấm Claude, **chưa có mốc người**.
+  10 đoạn được chọn bằng người chấm Claude; mốc người B0 (01/11) chỉ tham khảo — phần lớn cặp như nhau, 3 cặp bản 5 đoạn từ chối nhầm còn bản 10 trả lời được ⇒ bạn giữ 10.
 - **Bạn cần quyết:** không có việc gấp ở khâu này.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
@@ -58,7 +58,7 @@ Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose 
 | Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `api/app.py:141–146` |
 | Kho lệch chỉ mục → từ chối khởi động | **Đã xử lý, đóng gói** | API báo 409 "cần lập chỉ mục lại"; `retrieval/full_corpus.py:383–385`; test `test_api_chat.py` |
 | Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (`chat.py:96–119`); test `test_startup_model_missing.py` (bạn chạy `!`) |
-| Đưa 10 đoạn thay vì 5 + chuẩn hóa NFC | **Đã xử lý, đóng gói** (từ 28/10) — chưa có mốc người | 8.1: Đủ +0,26 (thử) / +0,27 (kiểm); câu kín +0,82; trung vị / p95 2,19 / 4,90 s. Đổi ngược về 5: sửa `settings.yaml:56` **và** chốt kiểm ở `core/settings_loader.py:75` (đang ép đúng 10) |
+| Đưa 10 đoạn thay vì 5 + chuẩn hóa NFC | **Đã xử lý, đóng gói** (từ 28/10) — B0 01/11: bạn giữ 10 (tham khảo) | 8.1: Đủ +0,26 (thử) / +0,27 (kiểm); câu kín +0,82; trung vị / p95 2,19 / 4,90 s. Đổi ngược về 5: sửa `settings.yaml:56` **và** chốt kiểm ở `core/settings_loader.py:75` (đang ép đúng 10) |
 | Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | prompt bắt từ chối cả câu (`full_corpus_prompt.py:14`). Hai lần thử "trả lời phần có căn cứ" đều trả lời câu ngoài kho ⇒ gác; luật kiểm sau sinh không cứu được (mục 4) |
 | Đoạn chứa đáp án nằm ngoài các đoạn đưa model | **Xử lý một phần** | mọi câu từ chối nhầm đo ở 8.1 đều thiếu ít nhất một đoạn đúng — gốc ở khâu tìm; 10 đoạn giảm gần một nửa; phần còn lại: `BAO_CAO_TIM_KIEM.md` |
 | Mức suy luận của model | **Đã thử, chưa áp dụng** | giữ mặc định (không gửi tham số: `generator_openai_full_corpus.py:98–99,120`); `none` kém hơn (trả lời vòng câu lẽ ra từ chối), lợi tiền chỉ 3–6 % (mục 4) |
@@ -152,7 +152,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 |---|---|---|
 | API `POST /api/chat`, trả `{answer, sources}`, câu hỏi 1–500 ký tự | **còn dùng** | `backend/api/routes/chat.py:36–38,48–50,60` |
 | Model sinh `gpt-6-luna`, không gửi mức suy luận | **còn dùng** | `settings.yaml:48`; `generator_openai_full_corpus.py:98–99,120` |
-| Tối đa 10 đoạn, ngân sách 16.384 token (thay 5 đoạn từ 28/10) | **còn dùng** — chưa có mốc người | `settings.yaml:53,56`; `core/settings_loader.py:69–76` |
+| Tối đa 10 đoạn, ngân sách 16.384 token (thay 5 đoạn từ 28/10) | **còn dùng** — B0 01/11: bạn giữ 10 | `settings.yaml:53,56`; `core/settings_loader.py:69–76` |
 | Chuẩn hóa NFC câu hỏi trước khi tìm | **còn dùng** (từ 28/10) | `backend/retrieval/full_corpus.py:97–102` |
 | Prompt "thiếu bằng chứng thì từ chối cả câu" | **còn dùng** | `full_corpus_prompt.py:14` |
 | Kiểm trích dẫn nhận cả `[n]` và `[Nguồn n]` | **còn dùng** (từ 25/10) | `citations.py:11–16`; `chat.py:177–188` |
@@ -169,8 +169,8 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
   hiện lời lỗi trình duyệt khi đứt mạng; route stream ghi bản ghi bằng chứng nửa chừng; rút lại / luồng đứt chỉ kiểm bằng phát lại. Yêu cầu cho giao diện mới:
   `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md`; review cả nhánh `streaming_final_branch_review.md`; đo `s4_do_d2_implementation.md`.
 - **Hội thoại nhiều lượt:** **dời sang Phase 9** (phần trợ lý / agent — bạn chọn 11:20 01/11/2026); nháp spec giữ làm tư liệu, không làm ở Phase 1–8.
-- **Đóng gói Phase 1–8:** lượt đo cuối (gồm bộ kín mới 40 câu) đang chạy 01/11; B0 (mốc người).
-- **Khi bạn rảnh:** đọc cặp mù (20 cặp, ~30–45 phút) làm mốc người cho 10 đoạn; nếu bạn ngược người chấm Claude nhiều ⇒ A trình giữ 10 hay về 5.
+- **Đóng gói Phase 1–8 — xong:** lượt đo cuối mọi sàn đạt; B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). **Phase 8 bạn đóng 14:29 01/11/2026.**
+- **Từ nhận xét B0 (đề xuất A, chờ bạn):** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9); `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn ở giao diện mới (vẫn giữ `[n]` ở tầng kiểm).
 - **Phase 9:** công cụ "hôm nay là ngày nào" cho câu theo ngày tương đối; tách câu hỏi hai ý là ứng viên.
 - **Còn mở, không gấp:** câu trả lời quá gọn (cần thêm câu tự nhiên để đo); bảng giá và câu nhiều nguồn (gốc ở khâu tìm); sai về chữ (tên, sự kiện) chưa có cách đo rẻ.
 - Hướng đã gác (chỉ mở lại khi có ý mới đã kiểm trước): trả lời phần có căn cứ; trả lời không suy luận; luật kiểm sau sinh; model chọn 10 / 30 đoạn.

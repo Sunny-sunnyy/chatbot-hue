@@ -5,7 +5,7 @@
 
 ## Hiện hành
 
-Cập nhật 2026-10-27 (C69, theo W29 — guide "Hiện hành" cập nhật cùng lúc hành vi / thước đổi; trước: 2026-10-25). Nguồn chung: `session_prompt/Project_Status.md`
+Cập nhật 2026-11-01 (C115: dòng Judge — B0); trước 2026-10-27 (C69, theo W29 — guide "Hiện hành" cập nhật cùng lúc hành vi / thước đổi; trước: 2026-10-25). Nguồn chung: `session_prompt/Project_Status.md`
 §2–§5, §8; `session_prompt/CURRENT_HANDOFF.md` "Phiên sau — đọc trước nhất"; báo cáo cho User `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (bản 3).
 
 - **Golden full-corpus (Phase 7A, User-closed 2026-10-23):** 176 case + smoke 10, schema 4 field (`question`, `keywords`, `reference_answer`, `category`), private
@@ -17,8 +17,8 @@ Cập nhật 2026-10-27 (C69, theo W29 — guide "Hiện hành" cập nhật cù
   vẫn giữ chữ để chấm, ghi `citation_error`). Câu hỏi gửi đi **nguyên văn** (chỉ `strip`, `answer_case` `:338`); NFC chỉ dùng cho khóa câu `question_key` (`:86`) và so keyword (`_fold` `:127`). Prompt judge cố định `backend/evaluation/full_corpus_judge_prompt.md`.
   Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`.
 - **Judge:** Claude (session Claude Code / sub-agent mới theo lô), chấm **mù**, mốc và biến thể **cùng một lượt** (`Project_Status.md` §8 "So điểm judge giữa biến
-  thể"); `gpt-6-luna` chỉ là judge phụ. **Chưa có mốc người:** B0 (User đọc 20 cặp mù, ghi nhận xét, không chấm điểm) **chưa làm** (`CURRENT_HANDOFF.md` thứ tự việc
-  bước 2; spec 8.2 §3 mục 3–4 luật dừng).
+  thể"); `gpt-6-luna` chỉ là judge phụ. **Mốc người:** B0 (01/11): User đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng spec 8.2 §3.4 "chưa rõ" (0 cặp quyết) ⇒ User chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
+  Kết quả private `data/phase_8_2/b0/ket_qua_b0_2026-11-01.md`; luật dừng spec 8.2 §3 mục 3–4.
 - **So hai cấu hình:** theo cặp từng câu — `paired_stats` (`full_corpus_eval.py:634`), bootstrap `:590`, 10.000 vòng (`:55`), Holm khi nhiều biến thể; 120 dev /
   56 test (`knowledge-base-hue/evaluation/phase_8_1/split.json`, sha `e2b1788dfbbc`); nhãn độ tự nhiên (`data/phase_8_1/golden_realism_final.jsonl`, 82 / 65 / 29 — số
   chính bỏ câu không tự nhiên). Test 56 câu chỉ dùng "không làm hỏng" (User 2026-10-27 08:47, spec 8.2 §10.6 Q2).

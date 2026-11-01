@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
+Cập nhật: 14:30 01/11/2026 (A, **phiên chiều 01/11**: B0 xong, User giữ 10 đoạn, **User đóng Phase 8 14:29**). Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
 **nguyên văn** sang `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md`; 31/10: `archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`. Tổng hợp đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`;
 nhật ký User `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md`.
 
@@ -16,9 +16,9 @@ chữ đầu trên trình duyệt 1,23 / 2,61 s (một lần đo; hôm đó mode
 
 **Thứ tự việc phiên sau:**
 1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền 01/11 hết hạn — gồm "A tự commit / push không hỏi"); kiểm Qdrant.
-2. **B0** (chỉ User làm được, ~30–45 phút): User đọc 20 cặp mù `data/phase_8_2/b0/nhan_xet_user.md` (không mở `khoa.json` / `mau.json`). Xong ⇒ A đối chiếu `khoa.json` (chỉ A), áp luật dừng spec 8.2 §3.4
+2. ~~**B0**~~ **XONG 14:23 01/11** (User giữ 10; `data/phase_8_2/b0/ket_qua_b0_2026-11-01.md`). Cũ: User đọc 20 cặp mù `data/phase_8_2/b0/nhan_xet_user.md` (không mở `khoa.json` / `mau.json`). Xong ⇒ A đối chiếu `khoa.json` (chỉ A), áp luật dừng spec 8.2 §3.4
    (≥ 5 cặp quyết; User ngược judge nhiều hơn cùng chiều ⇒ A trình giữ 10 đoạn / về 5); ghi vào `BAO_CAO_DANH_GIA.md` + báo cáo so sánh (khối context 10). Giới hạn: câu trả lời trên kho cũ, 1 câu nhiều nguồn.
-3. **Đóng Phase 8 (User):** A trình tóm tắt (số cuối, giới hạn, B0) ⇒ User đóng ⇒ `Project_Status.md` bảng Phase (**thêm** dòng "8 — đóng gói Phase 1–8" ⇒ approved; bảng hiện chỉ có 8.1, 8.2, 9), `PROJECT_HISTORY.md` một mục trỏ TONG_HOP, guide Phase 8 "Hiện hành".
+3. ~~**Đóng Phase 8**~~ **User đóng 14:29 01/11** (A ghi `Project_Status.md` + HISTORY; C115 sửa báo cáo / guide mức tối thiểu — chờ A review). Cũ: A trình tóm tắt (số cuối, giới hạn, B0) ⇒ User đóng ⇒ `Project_Status.md` bảng Phase (**thêm** dòng "8 — đóng gói Phase 1–8" ⇒ approved; bảng hiện chỉ có 8.1, 8.2, 9), `PROJECT_HISTORY.md` một mục trỏ TONG_HOP, guide Phase 8 "Hiện hành".
 4. **Sau Phase 8:** (a) **giao diện mới** — đọc `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md` (17 yêu cầu phải giữ); A sơ bộ nghiêng React + Vite build tĩnh, FastAPI phục vụ — chưa nghiên cứu,
    chưa chốt; **cân mức công** (User 01/11 nhắc over-engineer — S64): giao diện là đồ án, làm một lần, review cả nhánh một lần. (b) **Phase 9 — nghiên cứu rộng trước** (User 31/10), gồm **hội thoại nhiều lượt / nhớ
    lịch sử** (nháp tư liệu `docs/superpowers/specs/2026-11-01-multi-turn-design.md`) và **câu cần nhiều nguồn** (Q3a: Đủ 3,50; agent tách câu con) — `agent-design-review` + `agent-security-review` đầy đủ.
@@ -47,17 +47,18 @@ rà bảo mật C106; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc 
 
 ## Session
 
-| Vai | Terminal (01/11) | Agent | Liên lạc | Phiên 01/11 | Trạng thái kết phiên |
+| Vai | Terminal (01/11 chiều) | Agent | Liên lạc | Phiên 01/11 | Trạng thái kết phiên |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-27` | Claude Opus 5.5 | trực tiếp | điều phối; review S1, B108; merge streaming; 5 chỗ báo cáo; CA1 / CA3; vòng cải tiến 13 | `STATUS_A.md` |
-| B — thực thi | `hue-rag-da` | Claude Opus 5.5 | trực tiếp | S1–S4, B107, B108, review plan / runbook / governance, đo §6–§8 | `STATUS_B.md`; ≈ 0,055 USD |
-| C — thực thi | `hue-rag-6a` | Claude Opus 5.5 | trực tiếp | báo cáo so sánh, nháp nhiều lượt, plan + runbook đo cuối, bảo mật C106, review S3, đo §1–§5 | `STATUS_C.md`; ≈ 0,095 USD |
+| A — điều phối | `hue-rag-c0` | Claude Opus 5.5 | trực tiếp | điều phối; review S1, B108; merge streaming; 5 chỗ báo cáo; CA1 / CA3; vòng cải tiến 13 | `STATUS_A.md` |
+| B — thực thi | `hue-rag-7a` | Claude Opus 5.5 | trực tiếp | S1–S4, B107, B108, review plan / runbook / governance, đo §6–§8 | `STATUS_B.md`; ≈ 0,055 USD |
+| C — thực thi | `hue-rag-b0` | Claude Opus 5.5 | trực tiếp | báo cáo so sánh, nháp nhiều lượt, plan + runbook đo cuối, bảo mật C106, review S3, đo §1–§5 | `STATUS_C.md`; ≈ 0,095 USD |
 
 Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau: không việc đang chạy ⇒ kiểm nhanh ⇒ báo A ⇒ chờ.
 
 ## Quyền
 
-- **Phiên 01/11 — HẾT HẠN cuối phiên** (như 31/10 + A tự commit / push không hỏi; ≤ 1 USD). Tiền phiên 01/11 ≈ **0,15 USD** paid (B ≈ 0,055 · C ≈ 0,095 · agent con A ≈ 0,001).
+- **Phiên 01/11 chiều (User, A ghi nhận 14:00 01/11/2026; mở 13:51, kết ~16:30):** như phiên sáng 01/11 — A tự điều phối B / C + tự thử trong luật; ≤ 1 USD; A tự commit / push không hỏi từng lần; B / C push nhánh riêng. Hết hạn cuối phiên.
+- **Phiên 01/11 sáng — HẾT HẠN cuối phiên** (như 31/10 + A tự commit / push không hỏi; ≤ 1 USD). Tiền phiên 01/11 ≈ **0,15 USD** paid (B ≈ 0,055 · C ≈ 0,095 · agent con A ≈ 0,001).
 - **Thường trực:** A commit / push — **hỏi User trước** (luật chung của User), rồi A tự chạy; chỉ khi bị chặn / lỗi mới đưa `!` (I8, `WORKFLOW.md` §9.6); B / C không commit trừ khi việc ghi rõ; duyệt cho A =
   duyệt cho B / C; thư viện nhỏ cần cho việc đã duyệt: A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage + tiền; code luôn `uv run`.
 - **Tra web:** `scripts/tra_web_codex.sh` (đã rào 01/11 — chỉ thông tin công khai); **không bao giờ gọi `agy`**.

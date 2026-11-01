@@ -47,7 +47,7 @@ Contract full-corpus hiện hành:
 - context pack tối đa Top 10 nguyên chunk theo rank (Phase 6 đóng ở Top 5) bằng `tiktoken/o200k_base`;
   evidence chỉ lấy từ `evidence_parts`; **Hiện hành 28/10: tối đa 10 nguyên chunk** (Phase 8.2 B1, merge `510e1a8`;
   `backend/config/settings.yaml` `max_context_documents: 10`, loader chỉ nhận 10 — `backend/core/settings_loader.py:75`; cùng ngân sách 16384) — chọn bằng
-  judge Claude 8.1, chưa có mốc người (spec 8.2 §11); query được chuẩn hóa NFC trước khi tìm (`backend/retrieval/full_corpus.py` `normalize_query`);
+  judge Claude 8.1; B0 01/11 (mốc người tham khảo) ⇒ User giữ 10 (spec 8.2 §11, guide Phase 7 "Hiện hành"); query được chuẩn hóa NFC trước khi tìm (`backend/retrieval/full_corpus.py` `normalize_query`);
 - generation dùng tool-less OpenAI Agents SDK với model `gpt-6-luna` (amendment
   `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`; trước đó `gpt-5.4-nano`),
   structured output và `Runner.max_turns=1`; không pin snapshot;

@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 13:42 01/11/2026 — bản 17: lượt đo cuối xong (mọi sàn đạt).** Trước: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 14:33 01/11/2026 — bản 18: B0 xong, Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 13:42 01/11/2026 — bản 17: lượt đo cuối xong (mọi sàn đạt). Trước: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này.
 
 File này mô tả hệ thống **đang chạy**. Mỗi lần hành vi đổi (chia đoạn, chỉ mục, cách tìm, prompt, model), file này được cập nhật theo.
@@ -8,7 +8,7 @@ Những gì đã thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.m
 
 **Tóm tắt hôm nay (01/11):** kho 204 file / 8.424 đoạn; tìm bằng vector nghĩa e5-small + từ khoá BM25; đưa tối đa 10 đoạn vào ngữ cảnh; `gpt-6-luna`
 trả lời có trích dẫn. **Mới 01/11: chữ hiện dần (streaming)** — trang web hiện câu trả lời ngay khi model viết; đo trên trình duyệt: chữ đầu tiên
-trung vị **1,23 s**, câu chậm (p95) **2,61 s** ⇒ đạt sàn 3 / 5 s và cả mục tiêu 1,5 / 3 s. Việc kế tiếp: lượt đo cuối Phase 1–8 (đang chạy) ⇒ đóng Phase 8 (mục 5).
+trung vị **1,23 s**, câu chậm (p95) **2,61 s** ⇒ đạt sàn 3 / 5 s và cả mục tiêu 1,5 / 3 s. Lượt đo cuối Phase 1–8 xong (mọi sàn đạt), B0 xong; **Phase 8 bạn đóng 14:29 01/11/2026**. Việc kế tiếp: giao diện mới ⇒ Phase 9 (mục 5).
 
 ---
 
@@ -86,7 +86,7 @@ HỎI ĐÁP (mỗi câu hỏi):
 | Thời gian chờ (176 câu, hỏi lần lượt, đo trong công cụ đo — **chưa** tính đường mạng tới trang web) | trung vị **2,19 s**, câu chậm (p95) **4,90 s** — trong trần bạn chốt 3 / 5 s; câu trả lời dài (bộ tự viết) trung vị 4,6 s ⇒ chưa đạt | như trên; `BAO_CAO_DANH_GIA.md` |
 | Tiền một câu | ~0,00021 USD (~5 đồng) tính theo giá phẳng 0,10 USD / 1M token vào, 0,50 USD / 1M token ra; nhà cung cấp còn tính phần "ghi đệm" 0,125 USD / 1M nên số thật cao hơn ~20 % (≈ 0,00025 USD / câu), vẫn dưới trần 0,0005. Sửa công thức tính tiền: việc đóng gói Phase 1–8 | `session_prompt/Project_Status.md` §5 (30/10) |
 
-Người chấm: Claude (chấm theo đáp án mẫu). **Chưa có mốc người** — bạn đọc cặp mù sau, trước buổi bảo vệ.
+Người chấm: Claude (chấm theo đáp án mẫu). Mốc người: B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
 
 **Mốc cũ để so (Phase 7B, bản 5 đoạn, 176 câu Golden):** Đúng / Đủ / Trúng ý 4,43 / 4,28 / 4,45 (tốt ở câu một dữ kiện 4,87, kém ở câu
 ghép nhiều nguồn 3,28 và so sánh 3,68); từ chối đúng 18 / 18 câu ngoài kho; từ chối nhầm 22 / 158 câu kho có đáp án; đoạn chứa đáp án lọt
@@ -145,8 +145,8 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 
 **Thước đo (giới hạn của bằng chứng)**
 
-- **Chưa có mốc người:** mọi điểm chất lượng do Claude chấm (khớp `gpt-6-luna` 89–96 %); lựa chọn 10 đoạn đang chạy cũng dựa người chấm Claude — bạn đọc 20 cặp mù trước buổi bảo vệ.
-- **Không còn bộ câu chưa ai thấy:** nhóm kiểm 56 câu và 36 câu kín đã dùng ⇒ số hiện tại có thể lạc quan hơn câu thật; **bộ kín mới** nằm trong kế hoạch lượt đo cuối (nháp 01/11).
+- **Mốc người chỉ tham khảo:** mọi điểm chất lượng do Claude chấm (khớp `gpt-6-luna` 89–96 %). B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
+- **Không còn bộ câu chưa ai thấy:** nhóm kiểm 56 câu và 36 câu kín đã dùng ⇒ số hiện tại có thể lạc quan hơn câu thật; **bộ kín mới** 40 câu cũng đã dùng ở lượt đo cuối 01/11 ⇒ lần kiểm sau cần bộ mới nữa.
 - **Bộ đo nhỏ:** chỉ 55 / 176 câu có nhãn "đoạn đúng" ⇒ nhiều thí nghiệm ra "chưa rõ" — nghĩa là *chưa chứng minh được*, không phải *đã chứng minh bằng nhau*.
 - **Gần như chưa có so sánh nào đo lại trên kho hiện tại:** phần lớn kết luận "giữ" của Phase 8 đo trên kho / cấu hình cũ. **Model sinh chưa từng được so có chấm điểm** (giữ `gpt-6-luna` theo quyết định
   của bạn 24/10).
@@ -162,9 +162,9 @@ Chi tiết từng dòng (số đo, nguồn, hướng xử lý) và mọi phươn
 
 **Việc kế tiếp (thứ tự bạn chốt 30/10; 01/11: hội thoại nhiều lượt + câu nhiều nguồn dời sang Phase 9):**
 1. ~~Hiện chữ dần (streaming)~~ — **xong, chạy từ 01/11** (merge `a80e12d`).
-2. **Đóng gói Phase 1–8:** lượt đo cuối cùng một commit (Golden 176 + lượt lặp cùng ngày, bộ an toàn 32, câu theo ngày, 22 câu qua API, **bộ kín mới 40 câu**) — **xong 01/11, mọi sàn đạt** (`report_agent/2026-10-31_streaming_spec/do_cuoi_implementation.md`; bộ kín cho thấy số dev lạc quan: Đủ 4,18 ↔ 4,58); mốc người B0 (bạn
-   đọc 20 cặp); báo cáo so sánh phương án (đã đăng 01/11, thêm phần mới khi xong); bảng giới hạn (mục này).
-3. Phase 9: mở bằng nghiên cứu rộng rồi mới thử nghiệm; gồm **hội thoại nhiều lượt / nhớ lịch sử** và **câu cần nhiều nguồn** (agent tách câu con).
+2. **Đóng gói Phase 1–8 — xong, Phase 8 bạn đóng 14:29 01/11/2026:** lượt đo cuối cùng một commit (Golden 176 + lượt lặp cùng ngày, bộ an toàn 32, câu theo ngày, 22 câu qua API, **bộ kín mới 40 câu**) — **xong 01/11, mọi sàn đạt** (`report_agent/2026-10-31_streaming_spec/do_cuoi_implementation.md`; bộ kín cho thấy số dev lạc quan: Đủ 4,18 ↔ 4,58); B0 xong 01/11 (bạn giữ 10 đoạn); báo cáo so sánh phương án (đã đăng 01/11, thêm phần mới khi xong); bảng giới hạn (mục này).
+3. Giao diện mới (yêu cầu phải giữ ở mục 5). Từ nhận xét B0 (đề xuất A, chờ bạn): `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn.
+4. Phase 9: mở bằng nghiên cứu rộng rồi mới thử nghiệm; gồm **hội thoại nhiều lượt / nhớ lịch sử** và **câu cần nhiều nguồn** (agent tách câu con). Từ nhận xét B0 (đề xuất A, chờ bạn): câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng.
 
 ## 6. Chạy thử
 

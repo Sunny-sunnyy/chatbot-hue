@@ -1,3 +1,20 @@
+# STATUS C — MỞ PHIÊN MỚI (13:51 01/11/2026 `date`)
+
+- Terminal C: `hue-rag-b0`. A = `hue-rag-c0`, B = `hue-rag-7a` (A xác nhận) — kênh trực tiếp. A: chưa có việc cho C, chờ; A đang hỏi User quyền phiên ⇒ B0 ⇒ đóng Phase 8.
+- **User (13:59 01/11/2026, ghi bằng `date`):** C làm việc trực tiếp với A; việc A giao = User nói "làm đi". Chờ A giao việc.
+
+## C115 — cập nhật báo cáo User theo B0 + Phase 8 đóng, mức tối thiểu (A giao, bắt đầu 14:29 01/11/2026)
+- Căn cứ: `data/phase_8_2/b0/ket_qua_b0_2026-11-01.md` (private, không chép câu hỏi). 0 USD, không commit (A commit). Không sửa `session_prompt/` (trừ file này), code, data.
+- **File sẽ ghi (khai báo):** `bao_cao_he_thong/{README.md, LUONG_HOAT_DONG_HE_THONG.md, BAO_CAO_DANH_GIA.md, BAO_CAO_SINH_CAU_TRA_LOI_API.md, BAO_CAO_SO_SANH_PHUONG_AN.md}`,
+  `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md`, `guides/{phase_6_generation_api.md, phase_7_retrieval_answer_evaluation.md, phase_8_benchmark_model_selection.md, full_corpus_rag.md}`; và file này.
+- **XONG (14:34 01/11/2026) — chờ A review + commit.** 10 file (+73 / −44 dòng phần của C); `git diff --check` sạch; overlap_scan 0 trùng cả 10 file; 0 USD; `/tmp/c115` đã xoá.
+  Dòng lịch sử (PA3 28/10, 8.2 "mốc người dời", khối S15 / K3b-m / E13 "chưa mốc người" lúc đo) giữ nguyên. Thêm ngoài chữ gợi ý: LUONG dòng "bộ kín mới nằm trong kế hoạch" (cũ) ⇒ "đã dùng";
+  README dòng 8.2 "tốc độ chưa đạt" ⇒ "khi đó chưa đạt (01/11 có streaming: đạt)"; LUONG "Việc kế tiếp" thêm mục giao diện mới (trước không có).
+- Kiểm nhanh (chỉ đọc): `main` `565da60`, không file tracked nào sửa; untracked chỉ `báo cáo nghiên cứu github.txt` (không phải của C); hooksPath `.githooks`;
+  Qdrant 1 collection, 8.424 point (khớp `Project_Status.md` §4). C114 đã commit (`f75f92d`; sha SO_SANH `12e918ddffd6`, DANH_GIA `51e6ba68c0d8` khớp).
+- Nhánh cục bộ + remote còn 4 nhánh đã merge (`s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final`) + 4 worktree AGY cũ — đúng như câu hỏi 2 / 5 cho User trong handoff.
+- Việc của C theo handoff: không có việc mở; chờ A giao. Quyền phiên 01/11 đã hết hạn ⇒ chờ A báo quyền phiên mới.
+
 # STATUS C — PHIÊN 01/11 (tóm tắt cho kết phiên, cập nhật 13:22 01/11/2026 `date`)
 
 Terminal `hue-rag-6a` · A = `hue-rag-27` · B = `hue-rag-da` (trực tiếp). User (10:20): việc A giao = "làm đi". Quyền phiên 01/11: như 31/10 (≤ 1 USD). Hết hạn cuối phiên.
@@ -39,7 +56,7 @@ Sub-agent dùng quota Claude: C101 (6), C112 0, C111 judge Golden (6).
 
 ## Dở / phiên sau
 
-- Không có việc dở của C. Chờ: agent con review một lần cả lượt đo + 2 nháp (A giao) ⇒ A ghép `BAO_CAO_SO_SANH_PHUONG_AN.md` / `BAO_CAO_DANH_GIA.md`.
+- Không có việc dở của C. C114 (ghép 2 nháp vào `BAO_CAO_SO_SANH_PHUONG_AN.md` / `BAO_CAO_DANH_GIA.md`) đã được A commit `f75f92d` (sha khớp — kiểm lúc mở phiên mới).
 - Không server / worktree / file tạm của C còn chạy (đã kiểm `/tmp`; `/tmp/c_s3`, `/tmp/c108t`, `/tmp/c109.*`, `/tmp/c102` đã xoá).
 
 ## MỞ PHIÊN 01/11 (cập nhật 10:17 01/11/2026 `date`)

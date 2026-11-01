@@ -1,8 +1,8 @@
-# STATUS B — cập nhật 13:37 01/11/2026 (kết phiên 01/11)
+# STATUS B — cập nhật 13:59 01/11/2026 (phiên chiều 01/11: mở phiên, chờ A giao việc)
 
-Terminal 01/11: `hue-rag-da` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-27`, C = `hue-rag-6a` (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
+Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-c0`, C = `hue-rag-b0` (phiên sáng: B `hue-rag-da`, A `hue-rag-27`, C `hue-rag-6a`) (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B.
-Quyền phiên 01/11 (hết hạn cuối phiên): như 31/10, paid ≤ 1 USD; User nói ở terminal B (10:19): việc A giao = "làm đi", xong báo thẳng A.
+Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền khác (trần tiền…) theo mục việc A ghi trong `CURRENT_HANDOFF.md` (A đang hỏi lại User).
 
 ## Đang làm / dở
 - **Không.** Không job nền, không server (8765 / 8766 / 8792 / 8793 / 8794 / 8796 đã tắt), không worktree của B (`/tmp/b_s1`, `b_s3`, `b_cost`, `b_final`, `do_cuoi_moc`

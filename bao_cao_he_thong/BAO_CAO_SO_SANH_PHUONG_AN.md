@@ -1,6 +1,6 @@
 # Báo cáo so sánh phương án — phần đã đóng (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng, câu theo ngày, đóng gói Phase 1–8)
 
-**Cập nhật lần cuối: 13:41 01/11/2026 — bản 4: thêm phần đóng gói Phase 1–8 (S18 streaming, S19 lõi chung, S20 giá đủ, T3-10 đo lại theo loại câu, E13 lượt đo cuối; dòng #63–#67; Phần B; §5; §6).** Bản 3: 11:29 01/11/2026 — A ghép vào `bao_cao_he_thong/` sau 2 lượt review độc lập vòng 2 đều đạt; sửa 3 chỗ nhỏ còn lại.** Bản 2: 11:23 01/11/2026 (sửa theo review vòng 1). Bản 1: 11:02 01/11/2026.
+**Cập nhật lần cuối: 14:33 01/11/2026 — bản 5: B0 (E7, S2, dòng #57, Phần B, §6, mã B0); Phase 8 bạn đóng 14:29 01/11/2026.** Bản 4: 13:41 01/11/2026 — thêm phần đóng gói Phase 1–8 (S18 streaming, S19 lõi chung, S20 giá đủ, T3-10 đo lại theo loại câu, E13 lượt đo cuối; dòng #63–#67; Phần B; §5; §6).** Bản 3: 11:29 01/11/2026 — A ghép vào `bao_cao_he_thong/` sau 2 lượt review độc lập vòng 2 đều đạt; sửa 3 chỗ nhỏ còn lại.** Bản 2: 11:23 01/11/2026 (sửa theo review vòng 1). Bản 1: 11:02 01/11/2026.
 Người viết: agent con (việc gom so sánh phương án, 01/11/2026); review: 2 agent con ngữ cảnh mới (dòng 1–626 và 627 – hết), vòng 1 cả hai changes_requested ⇒ sửa ở bản 2 ⇒ vòng 2 cả hai **đạt** (01/11). Bản 4 (đóng gói): C viết nháp 5 khối từ các report gốc (R31), số bộ kín đối chiếu bản B đã sửa theo review; A duyệt.
 Nguồn: 68 thẻ so sánh gom theo khâu. Đã đối chiếu với file gốc: 15 số khi gom + 100 khẳng định ở hai lượt review (số lệch đã sửa); các số còn lại chưa kiểm lại.
 Phạm vi: mọi so sánh **đã đóng** từ Phase 0 tới hết Phase 8.2, hai đợt sửa kho, thử Qwen3-8B, thước lỗi nặng, đo câu theo ngày tương đối, đóng gói Phase 1–8 (streaming, giá đủ, lượt đo cuối).
@@ -31,7 +31,7 @@ Tài liệu gốc dùng chữ "tốt hơn / không khác / kém hơn / chưa rõ
 
 ### 1.3. Các thước đo
 
-- **Đủ (Completeness), Đúng (Accuracy), Trúng ý (Relevance):** điểm 1–5 cho câu trả lời, do một LLM chấm ("judge") so với đáp án tham chiếu. Judge chính là Claude (xem E1); **chưa có mốc người chấm** (E7).
+- **Đủ (Completeness), Đúng (Accuracy), Trúng ý (Relevance):** điểm 1–5 cho câu trả lời, do một LLM chấm ("judge") so với đáp án tham chiếu. Judge chính là Claude (xem E1); mốc người B0 (01/11) chỉ tham khảo (E7).
 - **Đoạn đúng:** đoạn trong kho chứa đáp án, do agent gắn nhãn vị trí (agent khác kiểm, User xem mẫu). "**Đủ đoạn đúng**" = mọi ý của câu đều có ít nhất một đoạn đúng trong tầng đang xét
   (pool ứng viên → 10 đoạn đầu → các đoạn đưa model). Nhãn đã qua 5 bản (v1 → v5); số nào cũng phải đi kèm bản nhãn. Chỉ 55 / 176 câu có nhãn này (40 dev + 15 test).
 - **Pool:** tập ứng viên lấy ra trước khi trộn / xếp (mặc định 30 đoạn gần nghĩa nhất theo vector).
@@ -152,7 +152,7 @@ Viết tắt đường dẫn bằng chứng (BKD, BTK, TH82, R26/…): xem Phụ
 | 54 | Đánh giá | E4 | Tách dev / test / câu kín | 120 / 56 + 36 câu kín | Cả hai bộ nay đã dùng | `[rà lại 8.1]` `[xác nhận nhóm kiểm]` |
 | 55 | Đánh giá | K14 = E5 | Thước tầng tìm: keyword hay đoạn đúng | Thêm đoạn đúng (55 câu), keyword phụ | Đổi chẩn đoán từ chối nhầm (4 / 22 ⇒ 0 / 22) | `[rà lại 8.1]` `[kho, cấu hình cũ]` |
 | 56 | Đánh giá | K13 = E6 | Số chính tính trên tập nào | Bỏ 29 câu không tự nhiên | Kappa 0,765; kết luận G1 không đổi | `[rà lại 8.1]` |
-| 57 | Đánh giá | E7 | Mốc người chấm | Để sau (PA3) | NOT RUN | `[một lần chạy]` (chưa chạy) |
+| 57 | Đánh giá | E7 | Mốc người chấm | Đọc cặp mù (B0, 01/11) | Chưa rõ (0 cặp quyết; 3 cặp bản 5 đoạn từ chối nhầm) ⇒ giữ 10 | `[một lần chạy]` `[kho, cấu hình cũ]` |
 | 58 | Đánh giá | E8 | Câu lỗi 500 chấm thế nào | Điểm 1 | 3 cách tính đều "tốt hơn" | `[xác nhận nhóm kiểm]` `[một lần chạy]` |
 | 59 | Đánh giá | S15 | Phép kiểm cuối 8.2 trên câu kín | (đóng 8.2) | "Không làm hỏng" và tốt hơn | `[xác nhận nhóm kiểm]` `[một lần chạy]` `[kho, cấu hình cũ]` |
 | 60 | Đánh giá | E9 | Thước bịa thêm / sai điều kiện | Judge tách ý so ngữ cảnh | Thước nhận; H 1 / 145 | `[một lần chạy]` |
@@ -174,7 +174,7 @@ Viết tắt đường dẫn bằng chứng (BKD, BTK, TH82, R26/…): xem Phụ
 - **Thước đo đã đổi kết luận một lần:** chẩn đoán từ chối nhầm theo keyword (4 / 22 câu "có đủ keyword mà vẫn từ chối") bị đảo khi dùng nhãn đoạn đúng (0 / 22) — gốc ở khâu tìm, không ở prompt (K14 = E5, T3-01).
 - **Hai đợt sửa kho "không làm hỏng" chatbot nhưng không cho thấy "tốt hơn"** — thước không nhạy với loại sửa này (K5, K6).
 - **Model sinh chưa từng được so có chấm điểm** (chỉ thử khói 5 lần gọi, S1); model vector toàn kho chỉ có một phép so có chấm: Qwen3-8B, kém hơn e5-small (N2-08, N2-09).
-- **Judge Claude ổn định** (nhiễu chỉ chấm 2 / 88 câu) và khớp luna 0,892–0,960, **nhưng chưa có mốc người** — mọi kết luận về câu trả lời là tạm (E1, E3, E7).
+- **Judge Claude ổn định** (nhiễu chỉ chấm 2 / 88 câu) và khớp luna 0,892–0,960, **nhưng mốc người (B0, 01/11) chỉ tham khảo** — mọi kết luận về câu trả lời vẫn dựa judge Claude (E1, E3, E7).
 - **Tốc độ:** ≈ 97–98 % thời gian là lúc model viết; thước harness (p95 4,90 s) và thước qua API (p95 6,0 s) cho hai con số khác nhau, cần ghi cả hai (S13); đo trước streaming: hiện chữ ngay rút thời gian tới chữ đầu ≈ 1,9 s (S16, `[một lần chạy]`); sau khi làm, lợi đo trên trình duyệt (đủ câu − chữ đầu, 38 câu dev ngắn, suy luận ≈ 0) chỉ ≈ 0,44 s — thước khác S16; User vẫn giữ hiện chữ ngay (S18).
 - **Lượt đo cuối Phase 1–8 không làm hỏng** so với mốc 30/10 (E13); nhưng bộ kín mới 40 câu cho điểm thấp hơn Golden 0,3–0,4, cả ở câu được trả lời ⇒ **số Golden lạc quan**; câu cần ghép nhiều nguồn yếu nhất ⇒ Phase 9 (T3-10).
 
@@ -830,8 +830,8 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 - **Kết quả số:** thăm dò: 12 / 22 còn từ chối (10 hết), token vào ×1,73 (probe:64-68). Dev: Đủ **+0,261** [+0,080; +0,477], 9 / 77 / 2, p Holm 0,007; Đúng +0,273 [+0,091; +0,500]; từ chối nhầm 13 → 7; lỗi trích dẫn 4 → 4 (G2:62); nhóm đã đủ đoạn đúng 0 / 13 / 0 (không làm hỏng) (G2:66).
   Test: Đủ **+0,268** [+0,024; +0,585], 6 / 34 / 1 (G2:108) ⇒ **thắng (tốt hơn)**. Sau khi vào chatbot (B1, 176 câu): từ chối nhầm 22 / 158 ⇒ 12 / 158 (TH82:28); câu tự nhiên không lợi từ 10 đoạn (6 / 12 cả hai mức, TH26:41).
 - **Tiền + tốc độ:** USD / câu 0,000204 (1,53×) dev, 0,000207 (1,49×) test, giá phẳng (G2:62, :108); B1 ≈ 0,00021 USD / câu (TH82:28). Latency qua API (22 câu tự viết, 27/10): 10 đoạn TB +130 ms so 5 đoạn, CI [−318; +565] (R26/b65_latency_dau_cuoi.md:52).
-- **Quyết định + lý do:** User 28/10 chọn PA3 — đưa vào theo judge Claude, không chờ mốc người (TH82:19-20); A merge `510e1a8`.
-- **Giới hạn:** chưa có mốc người (TH82:27, :45); judge có thể đoán bên qua trích dẫn `[6]`–`[10]` (TH82:47-48); số 8.1 và B3 đo trên kho trước sửa đợt 1 / 2; B1 / B3 gộp 3 thay đổi (10 đoạn, NFC, bộ kiểm trích dẫn v2) — không tách (TH82:47).
+- **Quyết định + lý do:** User 28/10 chọn PA3 — đưa vào theo judge Claude, không chờ mốc người (TH82:19-20); A merge `510e1a8`. B0 01/11 ⇒ User giữ 10 (E7).
+- **Giới hạn:** mốc người B0 (01/11) chỉ tham khảo (E7); judge có thể đoán bên qua trích dẫn `[6]`–`[10]` (TH82:47-48); số 8.1 và B3 đo trên kho trước sửa đợt 1 / 2; B1 / B3 gộp 3 thay đổi (10 đoạn, NFC, bộ kiểm trích dẫn v2) — không tách (TH82:47).
   Muốn về 5 phải sửa cả `settings.yaml:56` và chốt kiểm `core/settings_loader.py:75` (BSA:59).
 - **Bằng chứng:** G2:58-68, :104-113; G5:23; TH82:28, :30; R82/phase_8_2_b1_merge_implementation.md; commit `510e1a8`.
 - **Nhãn:** `[rà lại 8.1]` `[xác nhận nhóm kiểm]` `[kho, cấu hình cũ]`.
@@ -1077,7 +1077,7 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
   - Kết luận: Claude chính — **chọn**; luna phụ — **giữ để so** (chỉ đo độ khớp, không thắng / thua); User chấm — **NOT RUN**.
 - **Tiền + tốc độ:** Claude 0 USD (quota Claude Code); luna chấm Run 1 0,02651 USD + chấm lại 30 câu 0,00474 USD (`reports/phase_7b_review_2026_10_24.md:82`). Tốc độ chấm: chưa đo.
 - **Quyết định + lý do:** User (D3, 24/10) chọn Claude "tiết kiệm; khác họ với model sinh" (spec 7B:26); A thêm luna phụ sau khi biết giá (:28). 8.1 giữ Claude.
-- **Giới hạn:** chưa có mốc người ⇒ độ tin chỉ dựa "Claude tự ổn định + khớp một LLM khác họ" (gate 4 7B:152-154); model judge "kế thừa" theo session, không ghim tên bản cố định; nhiễu đo trên một cặp lượt.
+- **Giới hạn:** chưa có mốc người chặt (B0 01/11 chỉ tham khảo — E7) ⇒ độ tin chủ yếu dựa "Claude tự ổn định + khớp một LLM khác họ" (gate 4 7B:152-154); model judge "kế thừa" theo session, không ghim tên bản cố định; nhiễu đo trên một cặp lượt.
 - **Bằng chứng:** spec 7B:24-34; gate 4 7B:122-167; review 7B:79, :82, :93; G5:56; BDG:162.
 - **Nhãn:** `[rà lại 8.1]` (dòng 7B.3) `[một lần chạy]` (một cặp lượt nhiễu, 30 câu chấm lại).
 
@@ -1161,19 +1161,19 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 
 #### E7 — Mốc người: chấm điểm tay, đọc cặp mù hay để sau
 - **Vấn đề:** mọi kết luận về câu trả lời (gồm chọn 10 đoạn) dựa người chấm Claude; cần ít nhất một mốc người để biết judge có lệch người không.
-- **Ngày / Phase:** 7B D2 (24/10) → 8.2 D2 (25/10) → 8.2 §11 (28/10).
+- **Ngày / Phase:** 7B D2 (24/10) → 8.2 D2 (25/10) → 8.2 §11 (28/10) → B0 làm 01/11.
 - **Phương án + mốc:**
   - 7B D2: User chấm điểm ~20 câu (spec 7B:25) — User **bỏ** 24/10 (gate 4 7B:151-152);
   - 8.2 D2: **đọc cặp mù** 15–20 câu, mỗi câu 2 trả lời X / Y (5 so 10 đoạn), nhận xét tự do, không chấm điểm (spec 8.2:26) — **chọn** 25/10;
   - 28/10 khi việc này (B0) chặn chuỗi việc: PA1 chờ B0 / PA2 B0 rút 10 câu / **PA3 gộp B1 trước, B0 làm sau** (spec 8.2:253-255) — **chọn PA3**.
 - **Cách đo:** 20 cặp đã chuẩn bị (`data/phase_8_2/b0/` (private)); luật dừng: User ngược judge nhiều hơn cùng chiều, ≥ 5 cặp quyết ⇒ A trình giữ 10 / về 5 (spec 8.2:259-261).
 - **Tiêu chí ghi trước:** luật dừng spec 8.2 §3 mục 4 (spec 8.2:44, :142); spec 7B §4.4 ngưỡng chênh TB ≥ 1 điểm (gate 4 7B:165-166).
-- **Kết quả số:** **NOT RUN** — chưa có mốc người (BDG:85, :38).
+- **Kết quả số:** B0 01/11, 20 cặp: phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được (judge cũng chấm 10 hơn ở cả 3); User không chọn bên theo cặp ⇒ 0 cặp quyết ⇒ luật dừng "chưa rõ" (`data/phase_8_2/b0/ket_qua_b0_2026-11-01.md` (private)).
 - **Tiền + tốc độ:** 0 USD; ~30–45 phút công User (spec 8.2:26, :253).
-- **Quyết định + lý do:** User 24/10 bỏ chấm tay; User 25/10 chọn đọc cặp mù, không chấm điểm (PS:52); User 09:29 28/10 chọn PA3 vì chưa rảnh và muốn xong phần tồn sớm; căn cứ: 10 đoạn có lợi theo judge, đổi ngược được bằng một cấu hình (spec 8.2:253-258).
-- **Giới hạn:** mọi kết luận dựa điểm Claude là **tạm**; chatbot 10 đoạn được chọn bằng judge Claude, chưa có mốc người (spec 8.2:262).
+- **Quyết định + lý do:** User 24/10 bỏ chấm tay; User 25/10 chọn đọc cặp mù, không chấm điểm (PS:52); User 09:29 28/10 chọn PA3 vì chưa rảnh và muốn xong phần tồn sớm; căn cứ: 10 đoạn có lợi theo judge, đổi ngược được bằng một cấu hình (spec 8.2:253-258). Sau B0: User chọn giữ 10 (14:23 01/11/2026).
+- **Giới hạn:** B0 là mốc tham khảo, không phải phép đo chặt — câu trả lời sinh trên kho cũ (trước 2 đợt sửa kho), User không chọn bên theo cặp; kết luận vẫn dựa judge Claude.
 - **Bằng chứng:** spec 7B:25; gate 4 7B:151-167; spec 8.2:26, :251-264; PS:52, :146; BDG:38, :85, :184, :188.
-- **Nhãn:** `[một lần chạy]` (chưa chạy lần nào) — không có nhãn nào khác áp được.
+- **Nhãn:** `[một lần chạy]` `[kho, cấu hình cũ]`.
 
 #### E8 — Câu bị lỗi trích dẫn (API trả 500) chấm thế nào khi so
 - **Vấn đề:** 7B đưa chữ của câu lỗi trích dẫn cho judge ⇒ 4 câu người dùng thấy lỗi 500 vẫn được chấm 5 / 4,75 / 5 (INV:44) ⇒ điểm không phản ánh người dùng thấy gì.
@@ -1301,7 +1301,7 @@ Mã khối: K = kho + Golden · N2 = chia đoạn / vector / Qdrant · T3 = tìm
 | Phần tồn: câu theo ngày | 30/10 | 15 câu (12 câu quyết) | S17 = E11 | — | ⇒ Phase 9 |
 | Phần tồn: Qwen3-8B | 30/10 | thử thay e5-small | N2-09 | — | đo trên kho hiện tại, `[xác nhận nhóm kiểm]` |
 | Rà code 5 gói | 25–26/10 | sửa code sau 8.1 | — | E12 | phần lớn là sửa lỗi, không phải so phương án (trừ R1 ở S7) |
-| Đóng gói Phase 1–8 (streaming, giá đủ, đo cuối) | 31/10 – 01/11 | streaming vào chatbot (`a80e12d`); `cost_usd` giá đủ; đo lại theo loại câu; lượt đo cuối | S18 (S4), T3-10 (Q3a), E13 (đo cuối) | S19 (lõi chung — kiểm bằng T1), S20 (giá đủ — kiểm bằng test + tính tay) | `[một lần chạy]`; bộ kín: sàn đạt, số Golden lạc quan (cả câu được trả lời); chưa mốc người |
+| Đóng gói Phase 1–8 (streaming, giá đủ, đo cuối) | 31/10 – 01/11 | streaming vào chatbot (`a80e12d`); `cost_usd` giá đủ; đo lại theo loại câu; lượt đo cuối | S18 (S4), T3-10 (Q3a), E13 (đo cuối) | S19 (lõi chung — kiểm bằng T1), S20 (giá đủ — kiểm bằng test + tính tay) | `[một lần chạy]`; bộ kín: sàn đạt, số Golden lạc quan (cả câu được trả lời); B0 tham khảo (E7); **Phase 8 User đóng 14:29 01/11/2026** |
 | Hội thoại nhiều lượt | dời Phase 9 (User 11:20 01/11) | nháp thiết kế giữ làm tư liệu | **không làm ở Phase 1–8** | — | — |
 | 9 | chưa mở | nghiên cứu rộng trước | **chưa làm** | — | — |
 
@@ -1366,7 +1366,7 @@ Mã khối: K = kho + Golden · N2 = chia đoạn / vector / Qdrant · T3 = tìm
 
 - **Gần như chưa có so sánh nào đo lại trên kho hiện tại** (204 file / 8.424 đoạn, nhãn v5, 10 đoạn ngữ cảnh) — chỉ có Qwen3-8B (N2-09), hai đợt "trước ↔ sau" sửa kho (K5, K6), streaming (S18) và lượt đo cuối (E13, đo, không chọn). Mọi kết luận 8.1 và bước 2 của 8.2 là `[kho, cấu hình cũ]`
   (kho 8.459 đoạn, nhãn v1, nhiều phép đo lúc đưa 5 đoạn). Thống kê đoạn (trung vị token, đoạn vụn…) cũng là số kho cũ.
-- **Chưa có mốc người** (E7): mọi kết luận về câu trả lời dựa judge Claude — ổn định với chính nó và khớp luna (E1, E3), nhưng chưa biết có lệch người không. Kể cả lựa chọn 10 đoạn đang chạy.
+- **Mốc người chỉ tham khảo** (E7): mọi kết luận về câu trả lời dựa judge Claude — ổn định với chính nó và khớp luna (E1, E3); B0 (01/11) không có cặp nào User ngược judge (0 cặp quyết; 3 cặp cùng chiều 10 đoạn), nhưng trên kho cũ và không chọn bên theo cặp.
 - **Bộ đo nhỏ:** 32–40 câu dev có nhãn đoạn đúng, 15 câu test; chỉ 55 / 176 câu có nhãn này. Nhiều "không khác" / "chưa rõ" nghĩa là chưa chứng minh được, không phải đã chứng minh bằng nhau; phần lớn "kém hơn" ở khâu tìm là do sàn "0 câu mất", không phải CI.
 - **Không còn bộ kiểm chưa ai thấy:** nhóm kiểm 56 câu, 36 câu kín (E4, S15) và bộ kín mới 40 câu (E13, 01/11) đều đã dùng; bộ mới cho thấy số Golden **lạc quan** (điểm thấp hơn 0,3–0,4, cả ở câu được trả lời) ⇒ lần kiểm tổng quát sau cần bộ mới nữa. Golden và bộ an toàn do AI viết rồi người duyệt — mức đại diện câu người dùng thật chưa đo (K9, E10).
 - **Model sinh chưa từng được so có chấm điểm** (chỉ thử khói 5 lần gọi, S1); model vector toàn kho chỉ có một phép so có chấm (Qwen3-8B, N2-09); reranker MiniLM chỉ có bằng chứng trên bản món ăn (T3-07).
@@ -1374,9 +1374,9 @@ Mã khối: K = kho + Golden · N2 = chia đoạn / vector / Qdrant · T3 = tìm
 - **Không phải phép đo nào cũng có tiêu chí ghi trước:** các phép đo hiện trạng (tốc độ qua API B65, số trong câu trả lời C48, luật kiểm sau sinh C51, kiểm sổ tiền B95) không có — báo cáo User từng ghi "mọi thí nghiệm có luật ghi trước" là nói quá (đã sửa 01/11).
 - **Số tiền và tốc độ cần đọc kèm thước:** mọi USD trước 01/11 tính theo giá phẳng (thiếu ≈ 20 %, S14; từ 01/11 giá đủ — S20); tốc độ có hai thước (harness ↔ qua API) cho p95 khác nhau (S13); p95 harness dao động 4,9 ↔ 9,8 s giữa các lượt cùng code (khác kho; nguồn cho là do mạng / nhà cung cấp).
 
-**Chưa làm** (không có so sánh nào trong báo cáo này; streaming và lượt đo cuối đã làm — S18–S20, E13):
+**Chưa làm** (không có so sánh nào trong báo cáo này; streaming, lượt đo cuối và B0 đã làm — S18–S20, E13, E7):
 - Hội thoại nhiều lượt: **dời sang Phase 9** (User 11:20 01/11/2026); nháp thiết kế giữ làm tư liệu.
-- Mốc người B0 (đọc cặp mù 5 ↔ 10 đoạn) — dời theo PA3 (E7).
+- Từ nhận xét B0 (đề xuất A, chờ User): câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9); `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn ở giao diện mới.
 - Phase 9: chưa mở (mở bằng nghiên cứu rộng trước).
 - Còn mở trong các khối: R3 "nêu đủ chi tiết" (S6, cần thêm câu), chỉ bật bỏ dấu khi câu không dấu (N2-13 = T3-06), dọn ràng buộc 3 tokenizer (N2-05), câu nhiều nguồn (T3-10 ⇒ Phase 9). (Công thức tiền S14 đã sửa — S20.) (Câu Golden lệch kho K12: User giữ nguyên 01/11 — đã đóng.)
 
@@ -1451,7 +1451,7 @@ Chú ý trùng tên: biến thể "S1 / S2 / S3" của G3 (N2-06) **khác** kh�
 | G4 / G4-A / G4-B / G4K | 8.1 rerank: xếp lại top-10 / chấm pool 100 / phần từ khoá BM25 (tách từ, k1 / b, bỏ dấu). |
 | G5 | Bảng kết luận 8.1 (giữ / thay / chưa rõ / NOT RUN cho từng quyết định cũ). |
 | P1 / P2 | 8.1: prompt "trả lời phần có căn cứ" / thêm 2 luật cũ của spec Phase 6. |
-| B0 | 8.2: mốc người — User đọc cặp mù 5 ↔ 10 đoạn (chưa làm). |
+| B0 | 8.2: mốc người — User đọc cặp mù 5 ↔ 10 đoạn (làm 01/11 — E7). |
 | B1 | 8.2: gộp 10 đoạn + NFC + bộ kiểm trích dẫn v2 vào chatbot (merge `510e1a8`, 28/10). Cũng là mốc của bước 2. |
 | B3 | 8.2: phép kiểm cuối trên 36 câu kín (28/10). |
 | B5 | 24/10: thăm dò sinh lại 22 câu từ chối nhầm với 10 đoạn. |

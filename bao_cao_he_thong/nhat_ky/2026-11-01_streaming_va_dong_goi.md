@@ -1,6 +1,6 @@
 # Nhật ký 01/11/2026 — streaming vào chatbot, chuẩn bị đóng Phase 8
 
-**Cập nhật lần cuối: 12:52 01/11/2026 (kết phiên).** Tiền paid cả ngày: ≈ **0,15 USD** (~3.800 đồng; streaming ≈ 0,027 + lượt đo cuối ≈ 0,139 — một phần trùng ở S4) / trần phiên 1 USD.
+**Cập nhật lần cuối: 14:33 01/11/2026 (phiên chiều: B0, đóng Phase 8).** Trước: 12:52 01/11/2026 (kết phiên sáng). Tiền paid cả ngày: ≈ **0,15 USD** (~3.800 đồng; streaming ≈ 0,027 + lượt đo cuối ≈ 0,139 — một phần trùng ở S4) / trần phiên 1 USD.
 
 ## Tóm tắt
 - **Chữ hiện dần (streaming) đã chạy trong chatbot** (merge `a80e12d`): trên trình duyệt, chữ trả lời đầu tiên hiện sau trung vị **1,23 s**, câu chậm (p95) **2,61 s** —
@@ -15,7 +15,7 @@
   không suy luận ⇒ có thể nhanh hơn ngày thường); báo cáo đã sửa.
 
 ## Bạn cần làm gì
-- **B0:** đọc 20 cặp câu trả lời mù `data/phase_8_2/b0/nhan_xet_user.md` (không mở `khoa.json`) — mốc người cho người chấm Claude; xong thì bạn đóng Phase 8.
+- ~~B0~~ — xong (phiên chiều, mục dưới).
 - Phiên sau trả lời vài câu nhỏ (A hỏi từng câu): quyền phiên, xoá 4 nhánh đã merge, mấy mục bảo mật chờ quyết.
 
 ## Trạng thái
@@ -28,6 +28,11 @@
 | Câu Golden lệch kho | giữ nguyên (bạn chọn) | chỉ khác hoa / thường, điểm không sai |
 | Hội thoại nhiều lượt | dời Phase 9 (bạn chọn) | nghiên cứu cùng phần trợ lý / agent |
 | Lượt đo cuối | mọi sàn đạt; bộ kín: số dev lạc quan | số cuối Phase 8 cho đồ án |
+
+## Phiên chiều (B0, đóng Phase 8)
+- B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
+- **Phase 8 bạn đóng 14:29 01/11/2026.**
+- **Từ nhận xét B0 (đề xuất A, chờ bạn):** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9); `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn ở giao diện mới (vẫn giữ `[n]` ở tầng kiểm).
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Trước đây trang web chờ model viết xong cả câu (qua API p95 ~6 s, chưa đạt 5 s). Nay server gửi từng mảnh chữ ngay khi model viết, nhưng chỉ bật link nguồn sau khi kiểm trích

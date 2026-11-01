@@ -101,7 +101,7 @@ Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 
   từ chối đúng 18/18, từ chối nhầm 22/158 (= 22 case 1/1/1; multi_source 11, comparative 8); lỗi
   citation 4/176. Bỏ 22 case từ chối nhầm: 4,92 / 4,75 / 4,95.
 - **Độ tin thước đo:** Claude chấm lại 30 lệch ≤1 ở 100%; Run 1 vs Run 2 chênh TB ≤0,011; Claude–luna
-  trùng 89–96%. **Chưa có mốc người** (User quyết bỏ chấm tay 2026-10-24) — giới hạn.
+  trùng 89–96%. **Chưa có mốc người** lúc 7B (User quyết bỏ chấm tay 2026-10-24); mốc người tham khảo B0 01/11 — guide Phase 7 "Hiện hành".
 - **Cho Phase 8** (nghiên cứu `gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_7b_rag_evaluation_2026_10_24.md`):
   so cấu hình theo cặp trên cùng 176 case (paired bootstrap + permutation), không dùng ngưỡng cố
   định; gọi metric retrieval là *keyword proxy*; chunker to hơn tự làm Coverage tăng. Hiệu ứng trần:
@@ -118,6 +118,7 @@ Spec `docs/superpowers/specs/2026-10-24-phase-7b-evaluator-baseline-design.md`; 
   (`report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_implementation.md`).
 - Runtime: context 10 + query NFC (Phase 8.2, `510e1a8`) — không đổi. Nhãn đoạn đúng **gold v5** `33d16fd6b8f4` (`GOLD_PATH` đổi 30/10); Golden md5 **`6331e88fb171`** (2 đáp án
   sửa theo User; trước `0f7dbf41b422`).
+- 01/11: streaming (`a80e12d`); B0 (01/11): User đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng spec 8.2 §3.4 "chưa rõ" (0 cặp quyết) ⇒ User chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). **Phase 8 User đóng 14:29 01/11/2026.**
 
 ### Đợt sửa kho đợt 1 — 28/10/2026 (lịch sử; số đã thay ở mục trên)
 

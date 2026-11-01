@@ -4,6 +4,13 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-11-01 (14:29) — **Đóng Phase 8** (User); B0 mốc người ⇒ giữ 10 đoạn
+
+- B0: User đọc 20 cặp mù (5 ↔ 10 đoạn), nhận xét chung — phần lớn như nhau; đối chiếu khoá: 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng
+  spec 8.2 §3.4 "chưa rõ" (0 cặp quyết) ⇒ User giữ 10. Bước sub-agent gắn nhãn từng cặp không làm (không có nhận xét theo cặp).
+- User đóng Phase 8 (8.1 + 8.2 + đóng gói: streaming, đo cuối, báo cáo so sánh, B0). Tổng hợp: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.
+- Tiếp: giao diện mới ⇒ Phase 9 (nghiên cứu rộng; nhiều lượt; câu nhiều nguồn; câu cần hỏi lại người dùng).
+
 ## 2026-11-01 (13:37) — Streaming vào chatbot; lượt đo cuối Phase 1–8 (mọi sàn đạt); báo cáo so sánh phương án; rà bảo mật đóng gói
 
 - Streaming (spec `00fb57ee01b2`, S1–S4, review cả nhánh) merge `a80e12d`: chữ đầu trên trình duyệt 1,23 / 2,61 s. Lượt đo cuối (plan `ae8d42d520d4`): Golden không làm hỏng; an toàn, ngày, bộ kín mới
