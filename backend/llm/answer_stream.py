@@ -32,7 +32,11 @@ def decode_partial_string(raw: str) -> tuple[str, bool]:
     partial = PARTIAL_ESCAPE.search(body)
     if end is None and partial and len(partial.group(1)) % 2 == 1:
         body = body[: partial.start(1) + len(partial.group(1)) - 1]
-    return json.loads(f'"{body}"'), end is not None
+    text = json.loads(f'"{body}"')
+    if end is None and text and "\ud800" <= text[-1] <= "\udbff":
+        # Ký tự ngoài BMP (emoji…) thoát thành cặp `\uD83D\uDE00`; mảnh cắt giữa cặp ⇒ nửa đầu đứng lẻ (không mã hóa UTF-8 được) ⇒ chờ nửa sau.
+        text = text[:-1]
+    return text, end is not None
 
 
 def displayable_prefix(answer: str, closed: bool) -> str:

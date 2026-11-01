@@ -55,6 +55,17 @@ def test_escaped_quote_and_newline_split_across_pieces():
     assert "".join(outputs) == 'Tên "Huế" mở cửa\n- Ý'
 
 
+def test_emoji_escaped_as_surrogate_pair_cut_between_halves_is_held_then_sent_whole():
+    # Review S2 m-1 (A 01/11): provider thoát ASCII ⇒ "😀" = "\\ud83d\\ude00"; mảnh cắt giữa hai nửa không được phát nửa đầu đứng lẻ
+    # (sse_event sẽ ném UnicodeEncodeError ⇒ luồng lỗi).
+    raw = json.dumps({"answer": "BMP 😀 rồi [1]."})
+    cut = raw.index("\\ude")
+    outputs, _ = feed_all([raw[:cut], raw[cut:]])
+    assert outputs[0] == "BMP " and "".join(outputs) == "BMP 😀 rồi [1]."
+    for text in outputs:
+        sse_event("delta", {"seq": 1, "text": text})  # mã hóa UTF-8 được
+
+
 def test_decode_partial_string_reports_closed_string():
     assert decode_partial_string('Ch\\u00f9a"}') == ("Chùa", True)
     assert decode_partial_string("Ch\\u00f") == ("Ch", False)
