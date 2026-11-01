@@ -45,6 +45,18 @@ class GeneratedText:
     finish_reason: str | None = None
     # phần token suy luận nằm trong output_tokens (usage.output_tokens_details); để log số đo /api/chat
     reasoning_tokens: int | None = None
+    # phần của input_tokens đọc lại từ đệm / ghi vào đệm (usage.input_tokens_details) — giá khác nhau (User 30/10, B95)
+    cached_tokens: int | None = None
+    cache_write_tokens: int | None = None
+
+
+def input_cache_tokens(usage: Any) -> tuple[int | None, int | None]:
+    """(cached_tokens, cache_write_tokens) của một usage OpenAI / Agents SDK; không có `input_tokens_details` ⇒ (None, None).
+    Lưu ý: Agents SDK điền 0 khi provider không gửi trường (`agents/usage.py`), nên 0 ở đây có thể là "không gửi"."""
+    details = getattr(usage, "input_tokens_details", None)
+    if details is None:
+        return None, None
+    return getattr(details, "cached_tokens", None), getattr(details, "cache_write_tokens", None)
 
 
 def parse_structured_output(
@@ -200,6 +212,7 @@ class OpenAIFullCorpusGenerator:
         output_tokens = None
         total_tokens = None
         reasoning_tokens = None
+        cached_tokens = cache_write_tokens = None
         finish_reason = None
         if hasattr(result, "raw_responses") and result.raw_responses:
             last_resp = result.raw_responses[-1]
@@ -210,6 +223,7 @@ class OpenAIFullCorpusGenerator:
                 output_tokens = getattr(usage, "output_tokens", None)
                 total_tokens = getattr(usage, "total_tokens", None)
                 reasoning_tokens = getattr(getattr(usage, "output_tokens_details", None), "reasoning_tokens", None)
+                cached_tokens, cache_write_tokens = input_cache_tokens(usage)
             choices = getattr(last_resp, "choices", None)
             if choices and len(choices) > 0:
                 finish_reason = getattr(choices[0], "finish_reason", None)
@@ -228,6 +242,8 @@ class OpenAIFullCorpusGenerator:
             latency_ms=latency_ms,
             finish_reason=finish_reason,
             reasoning_tokens=reasoning_tokens,
+            cached_tokens=cached_tokens,
+            cache_write_tokens=cache_write_tokens,
         )
 
     async def generate_answer(self, query: str, context: str) -> GeneratedText:
