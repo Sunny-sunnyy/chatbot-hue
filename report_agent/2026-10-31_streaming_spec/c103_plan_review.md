@@ -108,3 +108,28 @@ và chỗ bị ảnh hưởng. Cùng ranh giới vòng 1 (chỉ gói căn cứ +
 - n-5: dòng "giá đủ (+20 %)" §6 nhân 1,2 cả hai dòng đã tính bằng 0,00025 USD / câu (tốc độ trình duyệt, bộ kín, 22 câu B65) — số 0,00025 vốn là **giá đủ** (`BAO_CAO_DANH_GIA.md` §1) ⇒ ước hơi dư (≈ +0,006 USD), theo chiều an toàn; không cần sửa.
 
 Bước tiếp: A điền `TBD` theo câu trả lời Q1–Q4 của User ⇒ người review kiểm đúng phần điền ⇒ A ghi "duyệt bản sha" (tính từ file).
+
+---
+
+# Vòng 3 — kiểm phần điền `TBD` bản 4 (`ae8d42d520d4`)
+
+Decision: **ready_for_user_confirmation** (phần điền khớp 4 câu User + n-4; 1 ghi chú chữ, không mở vòng) · Người kiểm: B · Date: 11:52 01/11/2026 (`date`)
+
+B tự tính `sha256sum` ⇒ `ae8d42d520d4` (241 dòng). Căn cứ: §13 (danh sách chỗ đổi so với bản 3 `4d653544fb73`) + câu trả lời User theo tin A 01/11 (Q1 chỉ agent 40 câu, User đọc mẫu 10, không
+tự viết · Q2 thêm A/A cùng ngày · Q3 đo lại L2 / L3 trước · Q4 trần 0,20 USD) — B không trực tiếp thấy User trả lời. Chỉ kiểm các chỗ §13 kê + chỗ bị ảnh hưởng. 0 USD.
+
+| Chỗ đổi | Khớp? |
+|---|---|
+| Đầu file: trạng thái bản 4 + dòng "Quyết định User" Q1–Q4 | ✓ đúng 4 câu |
+| §3.1 "Trôi phía nhà cung cấp" (Q2 = PA1): thêm A/A cùng ngày trên commit §2, luật §11 Q2 PA1 (N_AA = 2; A/A chỉ để tách trôi khi sát ngưỡng) | ✓ không đổi thước đã ghi trước |
+| §3.4 + §6 bộ 22 câu B65: `data/phase_8_2/latency_2710/questions.jsonl` `bac5c91db005`, 22 dòng (n-4) | ✓ đúng `b65_latency_dau_cuoi.md:25, :98` |
+| §3.7 "Cỡ + thành phần", "Ai viết" (Q1 = PA1): 40 câu agent, bỏ "một phần câu do User viết" (`grep` chỉ còn ở §13); "User duyệt mẫu ~10 câu" giữ (§3.7 dòng 95, §5 bước 1) | ✓ |
+| §4 phạm vi (Q3 = PA1): bước Q3a đo lại L2 / L3 theo loại câu, 0 USD, chỉ dùng câu trả lời + kết quả tìm đã có của bộ "sau" đợt 2, **sau** khi A duyệt sha; rồi A trình User chọn lỗi; mỗi lỗi một plan riêng | ✓ không dùng bộ kín để chọn (§4 cuối) |
+| §6 trần (Q4): 0,20 USD; §11 Q4 "User chốt 0,20" | ✓ — ước giá đủ có A/A 0,142 (vòng 2 đã cộng lại) ⇒ dư ≈ 41 % |
+| §9 dòng "Bộ kín do agent viết" | ✓ ghi giới hạn vào report + báo cáo so sánh |
+| §11 ghi lựa chọn cạnh Q1–Q3 (+ Q4) | ✓ |
+
+**Ghi chú (không mở vòng):** n-6 — §5 bước 6 "(+ A/A **nếu Q2 chọn**)" và §6 dòng "+ A/A Golden (**nếu Q2**)" còn chữ điều kiện cũ; User đã chọn PA1 ⇒ nên viết "(+ A/A — Q2 = PA1)" để người chạy
+không đọc thành tùy chọn. Không đổi số / thước.
+
+Bước tiếp: A ghi "duyệt bản sha `ae8d42d520d4`" (tính từ file); nếu C sửa n-6 thì sha mới — chỉ 2 dòng chữ, B kiểm lại được trong 1 phút.
