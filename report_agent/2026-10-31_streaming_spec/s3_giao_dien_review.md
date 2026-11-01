@@ -87,3 +87,31 @@ Ghi chú: ở bản phát lại, chữ không kịp hiện (`max` 0) vì cả th
 ## 6. Decision và bước tiếp theo
 
 `changes_requested` — B sửa M-1 (m-1 tùy theo cách sửa); C kiểm phần sửa bằng cách chạy lại ca dò 1 trên cả hai đường dẫn (0 USD) + test. m-2, m-3 không mở vòng.
+
+# Vòng 2 — kiểm phần sửa `716ba4d` (C, 12:08 01/11/2026 `date`)
+
+Decision: **ready_for_user_confirmation** (M-1 đóng; m-1 đổi theo cách sửa — đóng; m-2, m-3 giữ như vòng 1, không mở vòng) · 0 USD (server chạy **không** nạp key — không thể gọi model).
+
+- Cổng: `git diff --stat fc10873 716ba4d` = 3 file (`backend/api/app.py`, `backend/tests/test_static_ui.py`, `frontend/app.js`), khớp tin B; `git diff --check` sạch; worktree riêng `/tmp/c_s3` tại `716ba4d`
+  (đã gỡ); `pytest tests/test_static_ui.py tests/test_chat_stream.py -q` ⇒ **17 passed**.
+- Đọc diff: `SANITIZE_OPTIONS` thành **danh sách cho phép** (`ALLOWED_TAGS` 25 thẻ Markdown thường, `ALLOWED_ATTR` `href`, `title`, `align`, `start` — không thuộc tính nào khác chứa URL);
+  `FrontendStaticFiles` gắn cùng `FRONTEND_CSP` cho phản hồi `text/html` dưới `/static` (không middleware HTTP chung — đúng lý do: không bọc luồng SSE); test khoá `/static/index.html` có CSP = `/`,
+  `/static/app.js` không, tùy chọn là allowlist không chứa `img` / `input` / `form` / `style` / `background` / `src`.
+- Server thật (cổng 8795): `curl -sI /static/index.html` ⇒ có `content-security-policy`; `/static/app.js` ⇒ không (0).
+- **Chạy lại ca dò 1 của C** (bản mở rộng `probe_v2.py`: 16 ca vòng 1 + 9 ca mới — `javascript:` href, `<img onerror>`, danh sách việc `- [x]`, khối code có ngôn ngữ, danh sách số bắt đầu từ 3, bảng căn lề,
+  `video poster`, `button formaction`, `area href`) trên **cả** `/` và `/static/index.html`:
+  | | `/` | `/static/index.html` |
+  |---|---|---|
+  | request ra máy khác (tổng mọi ca) | **0** | **0** |
+  | thuộc tính tải được còn lại (`background`, `src`, `ping`, `srcset`, `style`, href ngoài lạ) | 0 | 0 |
+  | cờ XSS `window.__xss` | không đặt | không đặt |
+  | `<form>` còn | không | không |
+  | bất biến Markdown (đậm, 2 `<li>`, bảng, link `https://`) | giữ | giữ |
+  | danh sách số `start="3"` · bảng `align` · code `<pre><code>` | giữ · giữ · giữ | như `/` |
+  Còn `<table>` ở 2 ca `background` nhưng **không** còn thuộc tính `background` ⇒ không tải. Mỗi trang có 1 thông báo CSP — **không** phải request ra ngoài (0 request); khả năng là thẻ / thuộc tính `style`
+  trong chữ thử lúc DOMPurify phân tích (B đã ghi hiện tượng này, report §7) — chưa xác định từng dòng.
+- Parser SSE: 268 / 268 vị trí cắt, từng ký tự, UTF-8 cắt giữa byte — vẫn đạt.
+- Ghi chú (không phải finding): danh sách việc Markdown `- [x]` mất ô đánh dấu (thẻ `input` không nằm trong allowlist) — đúng chủ ý chặn `input`; câu trả lời của chatbot hiếm khi dùng; khối code mất
+  `class="language-…"` (không ảnh hưởng hiển thị hiện tại — trang không tô màu code).
+- Bằng chứng private: `data/streaming_s1_2026-11-01/s3_review_c107/probe_v2.py`, `probe_v2_716ba4d.json`. Không chạy lại phần phát lại luồng (ca dò 3) — `716ba4d` không đổi `readAnswerStream` /
+  `handleEvent` / `createSseParser` (diff chỉ đổi `SANITIZE_OPTIONS`) ⇒ dùng lại kết quả vòng 1.
