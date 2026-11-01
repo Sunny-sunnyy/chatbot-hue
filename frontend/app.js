@@ -71,9 +71,17 @@ function wireCitations() {
 const INTERRUPTED_MESSAGE = "Kết nối bị gián đoạn. Vui lòng thử lại.";
 let renderFrame = 0;
 
+// Câu trả lời là Markdown do model viết: ngoài chặn script (mặc định DOMPurify), không để trang TỰ tải gì từ máy khác khi hiện chữ —
+// bỏ thẻ ảnh / media, thuộc tính `style` (CSS `url(…)` cũng tải được), chỉ giữ HTML (bỏ SVG / MathML). Link vẫn giữ: chỉ mở khi người dùng bấm.
+const SANITIZE_OPTIONS = {
+  USE_PROFILES: {html: true},
+  FORBID_TAGS: ["img", "picture", "source", "video", "audio", "track", "iframe", "object", "embed"],
+  FORBID_ATTR: ["style", "srcset"],
+};
+
 // Chữ hiện dần: render lại CẢ buffer theo khung hình (không theo từng mảnh, không `innerHTML +=`), luôn qua DOMPurify (spec streaming §4.7).
 function renderAnswer(text) {
-  answer.innerHTML = DOMPurify.sanitize(marked.parse(text));
+  answer.innerHTML = DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS);
 }
 
 function scheduleRender(stream) {

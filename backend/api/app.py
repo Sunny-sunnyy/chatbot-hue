@@ -28,6 +28,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_DIR = REPO_ROOT / "frontend"
 
 
+# Trang chỉ nạp script / CSS từ chính server (`/static/…`, không script nội dòng, thư viện vendor không dùng `eval`) ⇒ chặn mọi tải từ máy khác,
+# kể cả khi chữ Markdown do model viết lọt qua DOMPurify (rà bảo mật C106 R2, S3 streaming).
+FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; "
+                "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
+
+
 def create_app(settings=None):
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -143,7 +149,7 @@ def create_app(settings=None):
 
         @app.get("/", include_in_schema=False)
         async def frontend_index():
-            return FileResponse(FRONTEND_DIR / "index.html")
+            return FileResponse(FRONTEND_DIR / "index.html", headers={"Content-Security-Policy": FRONTEND_CSP})
 
     @app.exception_handler(RequestValidationError)
     async def validation_handler(request: Request, error: RequestValidationError):
