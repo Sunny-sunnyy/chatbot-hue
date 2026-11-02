@@ -37,7 +37,7 @@
 | Rà code các Phase trước | **Đã xử lý, đóng gói** — 5 gói sửa xong 26/10 (1a, 1b, 3, 4 ngày 25/10; đợt 3 = gói 2 + 5 ngày 26/10); mỗi gói review chéo + cổng ổn định; code backend 8.345 → 6.218 dòng |
 | Câu hỏi theo ngày tương đối ("tối nay", "tuần này") | Xử lý một phần — an toàn (0 câu đoán ngày sai, đo 30/10); 6 / 14 câu bị từ chối nhầm ⇒ **để Phase 9** (bạn quyết 14:44 30/10) |
 | Hiện chữ dần (streaming) | **Đã xử lý, đóng gói** 01/11 (merge `a80e12d`) — chữ đầu trên trình duyệt 1,23 / 2,61 s; giao diện JS thuần sẽ làm lại sau Phase 8 |
-| Phase 9 | Chưa thực hiện — **mở bằng nghiên cứu rộng** (đề tài, dự án, paper, ứng dụng thật), bạn chốt 31/10; Phase 1–8 = "RAG mức 1" |
+| Phase 9 | Chưa thực hiện — nghiên cứu xong (bản 2, 01/11); **hướng bạn chọn 01/11:** trợ lý di sản đáng tin + lịch trình gợi ý nhỏ; spec đang viết (02/11), chờ bạn duyệt; Phase 1–8 = "RAG mức 1" |
 | Cách làm việc của các agent (luật, skill, hook) | 31/10 chiều áp khung AI FDE: hook giờ ước, xét lại luật đang thử (40 ⇒ 7), skill D + 2 skill agent — xem nhật ký 31/10 chiều |
 | Câu hỏi gõ không dấu | Chưa thực hiện — **ngoài phạm vi** (bạn quyết 15:15 25/10: người dùng gõ có dấu). Đã đo: tìm kiếm gần như hỏng (13/32 → 1/32 câu) |
 
