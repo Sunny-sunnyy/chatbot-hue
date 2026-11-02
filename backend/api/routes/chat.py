@@ -23,11 +23,10 @@ from core.schema import (
     GeneratorNotReadyError,
     RetrievalDependencyError,
 )
-from llm.answer_stream import AnswerTextStream
 from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
-from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
-from llm.assistant import AnswerTrace, answer_query, check_citations, elapsed_ms, prepare_answer, record_llm_calls, turn_usd
+from llm.full_corpus_prompt import REFUSAL_ANSWERS
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, elapsed_ms, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -39,15 +38,17 @@ METRIC_FIELDS = (
     "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens", "cache_write_tokens", "cached_tokens",
     "n_context_sources", "n_cited_sources", "search_ms", "dense_ms", "context_ms", "generation_ms", "citation_ms", "total_ms",
     "route", "usd", "n_llm_calls", "llm_calls", "tools",
+    # B1: định tuyến lỗi ⇒ đường cũ; câu khẩn cấp do luật / định tuyến bắt; ngày đã đưa model (chỉ ngày, không giờ)
+    "route_error", "emergency_by", "today",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
 STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delta_matches_final")
 
-# Ngắt giữa chừng: sau `result.cancel()` đọc nốt sự kiện tối đa chừng này giây (spec §4.5 bước 3) để luồng hỏng không treo server.
-STREAM_DRAIN_SECONDS = 0.5
 GENERATION_FAILURE_MESSAGE = "Không thể tạo câu trả lời vào lúc này."
 INTERNAL_ERROR_MESSAGE = "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau."  # giống handler 500 chung (`api/app.py`)
+RETRIEVAL_UNAVAILABLE_MESSAGE = "Hệ thống tra cứu tạm thời không khả dụng."
+CONTEXT_BUDGET_MESSAGE = "Không thể đóng gói ngữ cảnh trong giới hạn cho phép."
 
 
 class ChatRequest(BaseModel):
@@ -65,6 +66,7 @@ class SourceResponse(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     sources: list[SourceResponse]
+    notice: str | None = None  # B1 H4c: dòng "có thể đã thay đổi" (D8)
 
 
 def error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -99,7 +101,7 @@ def _set_outcome(response, metrics: dict) -> None:
             metrics["outcome"] = json.loads(response.body)["error"]["code"]
     else:
         metrics["status_code"] = 200
-        metrics["refusal"] = response.answer.strip() == INSUFFICIENT_ANSWER
+        metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
         if metrics["outcome"] is None:
             metrics["outcome"] = "success"
 
@@ -117,15 +119,15 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
 
     trace = AnswerTrace()
     try:
-        await answer_query(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, recorder)
+        await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder)
     except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
         return _error_response_for(exc, recorder, metrics)
     finally:
         _copy_trace_metrics(trace, metrics)  # cả khi lỗi: bước nào đã chạy thì có số đo của bước đó
 
-    if trace.generated is None:
-        metrics["outcome"] = "refusal_no_sources"  # từ chối trước khi gọi model
-        return ChatResponse(answer=INSUFFICIENT_ANSWER, sources=[])
+    if trace.fixed_outcome is not None:
+        metrics["outcome"] = trace.fixed_outcome  # câu cố định / từ chối trước model: không qua kiểm citation
+        return ChatResponse(answer=trace.answer, sources=[])
 
     if trace.citation_error is not None:
         logger.error("Citation integrity failed")
@@ -140,13 +142,17 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     if recorder:
         recorder.mark_success()
 
-    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited))
+    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice)
 
 
 # ---------- Phần trước model, chung cho hai route ----------
 
 def _ready_generator(state):
     return state.generator if getattr(state, "generator_ready", False) else None
+
+
+def _flags(state) -> AssistantFlags:
+    return getattr(state, "assistant_flags", None) or AssistantFlags()
 
 
 def _retrieval_not_ready(state, recorder) -> JSONResponse | None:
@@ -171,19 +177,11 @@ def _error_response_for(exc: Exception, recorder, metrics: dict) -> JSONResponse
         logger.error("Retrieval dependency error")
         if recorder:
             recorder.record_error("retrieval_unavailable")
-        return error_response(
-            503,
-            "retrieval_unavailable",
-            "Hệ thống tra cứu tạm thời không khả dụng.",
-        )
+        return error_response(503, "retrieval_unavailable", RETRIEVAL_UNAVAILABLE_MESSAGE)
     if isinstance(exc, ContextBudgetError):
         if recorder:
             recorder.record_error("context_budget_error")
-        return error_response(
-            500,
-            "context_budget_error",
-            "Không thể đóng gói ngữ cảnh trong giới hạn cho phép.",
-        )
+        return error_response(500, "context_budget_error", CONTEXT_BUDGET_MESSAGE)
     if isinstance(exc, GeneratorNotReadyError):
         if recorder:
             recorder.record_error("generation_unavailable")
@@ -214,6 +212,8 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         generation_ms=trace.generation_ms, citation_ms=trace.citation_ms,
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
+        route_error=trace.route_error, emergency_by=trace.emergency_by,
+        today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
     )
     if trace.generated is not None:
         # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
@@ -225,8 +225,9 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
 
 @router.post("/api/chat/stream")
 async def chat_stream(body: ChatRequest, request: Request):
-    """Lỗi trước luồng (cách (b), spec §4.2): JSON mã + thân như `/api/chat`, dòng log ghi ở đây. Qua hết ⇒ mở luồng SSE; từ lúc đó
-    `_answer_events` tự ghi dòng log ở `finally` của nó (`finally` ở đây chạy trước khi luồng chạy) ⇒ vẫn đúng một dòng mỗi lần gọi."""
+    """Lỗi trước luồng: chỉ còn "chưa sẵn sàng" (tìm kho / generator) ⇒ JSON mã + thân như `/api/chat`, dòng log ghi ở đây. Qua hết ⇒ mở
+    luồng SSE; định tuyến + tìm kho chạy **trong** luồng (Phase 9 B1 D6 — đổi cố ý: lỗi Qdrant giữa lượt ⇒ sự kiện `error` mang đúng câu 503 cũ).
+    `_answer_events` tự ghi dòng log ở `finally` của nó ⇒ vẫn đúng một dòng mỗi lần gọi."""
     started = time.perf_counter()
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream_opened = False
@@ -243,19 +244,16 @@ async def chat_stream(body: ChatRequest, request: Request):
             _set_outcome(response, metrics)
             return response
 
-        trace = AnswerTrace()
         generator = _ready_generator(state)
-        try:
-            await prepare_answer(query, state.retrieval_service, state.context_builder, generator, trace, recorder)
-        except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError) as exc:
-            response = _error_response_for(exc, recorder, metrics)
+        if generator is None:
+            response = _error_response_for(GeneratorNotReadyError("generator is not ready"), recorder, metrics)
             _set_outcome(response, metrics)
             return response
-        finally:
-            _copy_trace_metrics(trace, metrics)
 
+        trace = AnswerTrace()
+        turn = answer_turn_stream(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
         response = StreamingResponse(
-            _answer_events(query, generator, trace, metrics, started),
+            _answer_events(turn, trace, metrics, started),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -299,109 +297,70 @@ class StreamEvents:
     def done(self) -> bytes:
         return sse_event("done", {"outcome": self.metrics["outcome"]})
 
-    def refusal_without_model(self) -> list[bytes]:
-        """Ngữ cảnh không có nguồn: không gọi model, vẫn đi luồng như câu thường (spec §4.1)."""
-        self.metrics["outcome"], self.metrics["refusal"] = "refusal_no_sources", True
-        return [self.delta(INSUFFICIENT_ANSWER), sse_event("sources", []), self.done()]
+    def fixed(self, trace: AnswerTrace) -> list[bytes]:
+        """Câu cố định (khẩn cấp, ngoài phạm vi, từ chối khi ngữ cảnh không có nguồn) — chữ đã ra một `delta`; không kiểm citation."""
+        self.metrics["outcome"] = trace.fixed_outcome
+        self.metrics["refusal"] = trace.answer.strip() in REFUSAL_ANSWERS
+        self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
+        return [sse_event("sources", []), self.done()]
 
     def finish(self, trace: AnswerTrace) -> list[bytes]:
-        """Sau `check_citations(trace)`: qua ⇒ `sources` (chỉ nguồn được trích); hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
+        """Sau kiểm citation: qua ⇒ `sources` (chỉ nguồn được trích) [+ `notice` H4c]; hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
         final = normalize_citations(trace.answer)
-        self.metrics["refusal"] = final == INSUFFICIENT_ANSWER
+        self.metrics["refusal"] = final.strip() in REFUSAL_ANSWERS
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")
             self.metrics["outcome"] = "retracted"
-            event = sse_event("error", {"code": "citation_integrity_error",
-                                        "message": "Câu trả lời không đáp ứng yêu cầu trích dẫn.", "after_text": bool(self.shown)})
+            events = [sse_event("error", {"code": "citation_integrity_error",
+                                          "message": "Câu trả lời không đáp ứng yêu cầu trích dẫn.", "after_text": bool(self.shown)})]
         else:
             self.metrics["outcome"] = "success"
-            event = sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited)])
-        return [event, self.done()]
+            events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited)])]
+            if trace.notice is not None:
+                events.append(sse_event("notice", {"text": trace.notice}))
+        return events + [self.done()]
 
     def failure(self, exc: Exception) -> list[bytes]:
-        """Lỗi sau khi luồng đã mở ⇒ `error` + `done`; đã hiện chữ thì giao diện xóa hết (D3 (b))."""
-        generation_failure = isinstance(exc, (TimeoutError, AgentsException, OpenAIError, GenerationError))
+        """Lỗi sau khi luồng đã mở ⇒ `error` + `done`; đã hiện chữ thì giao diện xóa hết (D3 (b)). Lỗi tìm kho / ngữ cảnh giữa lượt (B1 D6)
+        mang đúng mã + câu như JSON trước luồng hôm nay (`_error_response_for`)."""
         logger.error("Answer stream failed: %s", type(exc).__name__)  # chỉ tên lớp lỗi, không thông điệp (có thể chứa nội dung)
+        if isinstance(exc, RetrievalDependencyError):
+            code, message = "retrieval_unavailable", RETRIEVAL_UNAVAILABLE_MESSAGE
+        elif isinstance(exc, ContextBudgetError):
+            code, message = "context_budget_error", CONTEXT_BUDGET_MESSAGE
+        elif isinstance(exc, (TimeoutError, AgentsException, OpenAIError, GenerationError, GeneratorNotReadyError)):
+            code, message = "generation_unavailable", GENERATION_FAILURE_MESSAGE
+        else:
+            code, message = "internal_error", INTERNAL_ERROR_MESSAGE
         if self.shown:
             self.metrics["outcome"] = "stream_error_after_text"
         else:
-            self.metrics["outcome"] = "generation_failed" if generation_failure else "internal_error"
-        code, message = (("generation_unavailable", GENERATION_FAILURE_MESSAGE) if generation_failure
-                         else ("internal_error", INTERNAL_ERROR_MESSAGE))
+            self.metrics["outcome"] = {"generation_unavailable": "generation_failed"}.get(code, code)
         return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
 
 
-async def _answer_events(query: str, generator, trace: AnswerTrace, metrics: dict, started: float):
-    """Chuỗi sự kiện của một lượt đã qua phần trước model: `status … delta … sources | error … done` (spec §4.1, §4.4).
-
-    Tự bắt mọi `Exception` rồi phát `error` + `done` (lỗi thoát ra ⇒ uvicorn đứt kết nối giữa chừng, không có `done`). Người dùng ngắt
-    ⇒ không gửi gì thêm, raise lại. Dòng log ghi ở `finally` **trước mọi `await`** (spec §4.5, §4.6)."""
+async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float):
+    """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
+    (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
+    Dòng log ghi ở `finally` **trước mọi `await`** (spec §4.5, §4.6); rồi đóng lõi trong vùng che để lõi tự huỷ + đọc nốt lần gọi model."""
     metrics["status_code"] = 200
     stream = StreamEvents(metrics, started)
-    result = call_log = None
-    # Mình tự dừng đọc luồng model (ngắt / hết giờ) ⇒ phải hủy + đọc nốt. Không dựa vào `result.is_complete`: SDK tự `cancel()` (đặt
-    # `is_complete`) khi lần chờ sự kiện bị hủy (`agents/result.py` `stream_events`), nhưng vẫn dặn đọc nốt sau khi hủy.
-    stopped_early = False
     try:
-        yield stream.status({"stage": "searched", "n_sources": len(trace.packed.sources)})
-        if not trace.packed.sources:
-            for event in stream.refusal_without_model():
-                yield event
-            return
-
-        yield stream.status({"stage": "generating"})
-        generation_started = time.perf_counter()
-        generator_started = time.monotonic()
-        result, call_log = generator.start_answer_stream(query, trace.packed.text)
-        extractor = AnswerTextStream()
-        events = result.stream_events()
-        # Hạn giờ bọc **cả** vòng đọc (spec §4.3 bước 1): hạn chung, mỗi lần chờ sự kiện chỉ được chờ phần còn lại.
-        deadline = asyncio.get_running_loop().time() + generator.timeout
-        try:
-            while True:
-                try:
-                    async with asyncio.timeout_at(deadline):
-                        event = await anext(events)
-                except StopAsyncIteration:
-                    break
-                except TimeoutError:
-                    stopped_early = True
-                    raise
-                if event.type == "raw_response_event" and event.data.type == "response.output_text.delta":
-                    text = extractor.feed(event.data.delta)
-                    if text:
-                        yield stream.delta(text)
-        finally:
-            trace.generation_ms = elapsed_ms(generation_started)
-
-        trace.generated = generator.finish_answer_stream(result, call_log, generator_started)
-        trace.answer = trace.generated.text
-        check_citations(trace)
-        for event in stream.finish(trace):
+        async for kind, data in turn:
+            yield stream.status(data) if kind == "status" else stream.delta(data)
+        for event in (stream.fixed(trace) if trace.fixed_outcome is not None else stream.finish(trace)):
             yield event
     except (asyncio.CancelledError, GeneratorExit):
         # Ngắt khi đang chờ model ⇒ CancelledError; ngắt đúng lúc đang đứng ở `yield` ⇒ Starlette bỏ dở, generator bị đóng ⇒ GeneratorExit.
         metrics["outcome"] = "client_disconnected"  # token để None: lần hủy không có usage (spec §4.5)
-        stopped_early = True
         raise
     except Exception as exc:
         for event in stream.failure(exc):
             yield event
     finally:
-        # (1) ghi log trước mọi `await`: khi người dùng ngắt, anyio hủy lại ở mọi `await` sau đó (B105, spec §4.5).
-        if call_log is not None:  # cả khi ngắt / lỗi: chỉ có mục của lần gọi đã xong
-            record_llm_calls(trace, call_log.calls)
         _copy_trace_metrics(trace, metrics)
         metrics["total_ms"] = elapsed_ms(started)
         logger.info("chat_metrics %s", json.dumps(metrics))
-        if result is not None and stopped_early:
-            # (2) dừng lần gọi model; (3) đọc nốt bằng iterator mới, trong vùng che có hạn giờ.
-            result.cancel()
-            drain_started = time.perf_counter()
-            with anyio.CancelScope(shield=True):
-                with anyio.move_on_after(STREAM_DRAIN_SECONDS) as drain_scope:
-                    async for _ in result.stream_events():
-                        pass
-            logger.info("chat_stream_drain %s", json.dumps({"finished": not drain_scope.cancelled_caught,
-                                                             "ms": elapsed_ms(drain_started)}))
+        with anyio.CancelScope(shield=True):
+            await turn.aclose()  # lõi đang dừng ở `yield` (ngắt lúc gửi) ⇒ chạy `finally` của lõi: huỷ lần gọi model + đọc nốt

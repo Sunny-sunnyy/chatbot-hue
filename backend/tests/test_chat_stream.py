@@ -157,9 +157,31 @@ def test_model_refusal_streams_with_empty_sources():
 
 
 def test_refusal_without_model_still_goes_through_stream():
+    """B1: lõi phát chữ từ chối thành một `delta`; route kết bằng `sources` rỗng + `done` mang outcome của câu cố định."""
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
-    events = parse_sse(StreamEvents(metrics, time.perf_counter()).refusal_without_model())
+    stream = StreamEvents(metrics, time.perf_counter())
+    trace = AnswerTrace(answer=INSUFFICIENT_ANSWER, cited=(), fixed_outcome="refusal_no_sources")
+    events = parse_sse([stream.delta(trace.answer), *stream.fixed(trace)])
     assert events == [("delta", {"seq": 1, "text": INSUFFICIENT_ANSWER}), ("sources", []), ("done", {"outcome": "refusal_no_sources"})]
+    assert metrics["refusal"] is True and metrics["delta_matches_final"] is True
+
+
+def test_retrieval_error_inside_stream_keeps_old_503_message():
+    """B1 D6 (đổi cố ý): lỗi Qdrant giữa luồng ⇒ sự kiện `error` mang đúng mã + câu của JSON 503 trước B1 (review C129 m-3)."""
+    from core.schema import RetrievalDependencyError
+
+    metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
+    events = parse_sse(StreamEvents(metrics, time.perf_counter()).failure(RetrievalDependencyError("x")))
+    assert events[0] == ("error", {"code": "retrieval_unavailable", "message": "Hệ thống tra cứu tạm thời không khả dụng.", "after_text": False})
+    assert events[1][0] == "done" and metrics["outcome"] == "retrieval_unavailable"
+
+
+def test_notice_event_follows_sources_when_set():
+    stream, chunks, trace = stream_with_text("Mở cửa từ 7 giờ [1].")
+    assert "notice" not in [name for name, _ in parse_sse(chunks)]  # không đặt notice ⇒ không có sự kiện
+    trace.notice = "dòng thử"
+    names = [name for name, _ in parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).finish(trace))]
+    assert names == ["sources", "notice", "done"]
 
 
 def test_any_error_after_stream_opened_ends_with_error_then_done():

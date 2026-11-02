@@ -52,7 +52,7 @@ def test_answer_call_sends_exactly_the_messages_counted_for_context(monkeypatch)
     generator = OpenAIFullCorpusGenerator.from_environment(load_settings())
     sent = {}
 
-    async def record(agent, user_prompt, expected_type):
+    async def record(agent, user_prompt, expected_type, call_log=None):
         sent.update(instructions=agent.instructions, input=user_prompt)
 
     generator._execute_agent = record

@@ -141,7 +141,7 @@ def test_chat_returns_bracket_citations_when_model_writes_nguon_label():
     generator thay bằng text cố định để kiểm logic của route — không gọi OpenAI, không cần key."""
 
     class FixedAnswerGenerator:
-        async def generate_answer(self, query, context_text):
+        async def generate_answer(self, query, context_text, **kwargs):  # B1: lõi truyền thêm `call_log` (+ `today`)
             return SimpleNamespace(text="Thông tin giá vé có trong tài liệu [Nguồn 1].")
 
     app = create_app(load_settings())

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import logging
 import os
 import time
-from typing import Any
+from typing import Any, Literal
 
 from agents import (
     Agent,
@@ -24,6 +24,8 @@ from core.schema import GenerationError
 from llm.pricing import cost_usd
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
+    CHAT_INSTRUCTIONS,
+    ROUTER_INSTRUCTIONS,
     build_answer_input,
 )
 
@@ -33,6 +35,15 @@ logger = logging.getLogger("llm.full_corpus")
 class AnswerOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     answer: str
+
+
+class RouteOutput(BaseModel):
+    """Đầu ra định tuyến (Phase 9 B1 D3): đúng một trong 4 tuyến, strict."""
+    model_config = ConfigDict(extra="forbid")
+    route: Literal["tro_chuyen", "tro_ly_hue", "ngoai_pham_vi", "khan_cap"]
+
+
+ROUTER_MAX_OUTPUT_TOKENS = 512  # gồm cả token suy luận của model
 
 
 @dataclass(frozen=True)
@@ -153,6 +164,7 @@ class OpenAIFullCorpusGenerator:
         answer_max_output_tokens: int = 2048,
         answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
         reasoning_effort: str | None = None,
+        router_timeout: float = 10,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
@@ -160,6 +172,7 @@ class OpenAIFullCorpusGenerator:
         self.model = model
         self.timeout = timeout
         self.answer_max_output_tokens = answer_max_output_tokens
+        self.router_timeout = router_timeout
 
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
         self.responses_model = OpenAIResponsesModel(
@@ -178,6 +191,21 @@ class OpenAIFullCorpusGenerator:
                 store=False,
                 reasoning=Reasoning(effort=reasoning_effort) if reasoning_effort else None,
             ),
+            output_type=AnswerOutput,
+        )
+        # Phase 9 B1: định tuyến (D3) — không công cụ, không stream, không lịch sử; trò chuyện (D4) — không ngữ cảnh kho, đầu ra {answer}.
+        self.router_agent = Agent(
+            name="hue_router",
+            instructions=ROUTER_INSTRUCTIONS,
+            model=self.responses_model,
+            model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False),
+            output_type=RouteOutput,
+        )
+        self.chat_agent = Agent(
+            name="hue_chat",
+            instructions=CHAT_INSTRUCTIONS,
+            model=self.responses_model,
+            model_settings=ModelSettings(max_tokens=self.answer_max_output_tokens, include_usage=True, store=False),
             output_type=AnswerOutput,
         )
 
@@ -212,15 +240,14 @@ class OpenAIFullCorpusGenerator:
             answer_max_output_tokens=answer_max,
             answer_instructions=answer_instructions,
             reasoning_effort=reasoning_effort,
+            router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
         )
 
-    async def _execute_agent(
-        self, agent: Agent, user_prompt: str, expected_type: type[BaseModel]
-    ) -> GeneratedText:
-        started = time.monotonic()
-        call_log = CallLog()
+    async def _run(self, agent: Agent, user_prompt: str, call_log: "CallLog", timeout: float):
+        """Một `Runner.run` không stream; lỗi ⇒ `GenerationError`. `call_log` do nơi gọi tạo ⇒ lần gọi đã xong vẫn còn mục khi lượt lỗi sau phản hồi
+        (review C128 m-1)."""
         try:
-            result = await asyncio.wait_for(
+            return await asyncio.wait_for(
                 Runner.run(
                     agent,
                     input=user_prompt,
@@ -228,16 +255,37 @@ class OpenAIFullCorpusGenerator:
                     run_config=_run_config(),
                     hooks=call_log,
                 ),
-                timeout=self.timeout,
+                timeout=timeout,
             )
         except asyncio.TimeoutError as exc:
-            raise GenerationError(
-                f"OpenAI generation timed out after {self.timeout}s"
-            ) from exc
+            raise GenerationError(f"OpenAI generation timed out after {timeout}s") from exc
         except (AgentsException, OpenAIError) as exc:
             raise GenerationError("OpenAI generation failed") from exc
         except Exception as exc:
             raise GenerationError("OpenAI generation encountered unexpected failure") from exc
+
+    async def route(self, query: str, call_log: "CallLog") -> str:
+        """Định tuyến (B1 D3): tuyến model chọn. Lỗi / hết giờ (`router_timeout`) / đầu ra hỏng ⇒ `GenerationError` (lõi đổi thành `tro_ly_hue`)."""
+        result = await self._run(self.router_agent, query.strip(), call_log, self.router_timeout)
+        output = getattr(result, "final_output", None)
+        try:
+            return (output if isinstance(output, RouteOutput) else RouteOutput.model_validate(output)).route
+        except Exception as exc:
+            raise GenerationError("Invalid router output") from exc
+
+    async def generate_chat(self, query: str, call_log: "CallLog | None" = None) -> GeneratedText:
+        """Trò chuyện (B1 D4): lời dặn riêng, không ngữ cảnh kho."""
+        return await self._execute_agent(self.chat_agent, query.strip(), AnswerOutput, call_log)
+
+    def start_chat_stream(self, query: str) -> tuple[RunResultStreaming, "CallLog"]:
+        return self._start_stream(self.chat_agent, query.strip())
+
+    async def _execute_agent(
+        self, agent: Agent, user_prompt: str, expected_type: type[BaseModel], call_log: "CallLog | None" = None
+    ) -> GeneratedText:
+        started = time.monotonic()
+        call_log = call_log if call_log is not None else CallLog()
+        result = await self._run(agent, user_prompt, call_log, self.timeout)
 
         # Extract structured output strictly - fail closed
         final_output = getattr(result, "final_output", None)
@@ -287,26 +335,23 @@ class OpenAIFullCorpusGenerator:
             llm_calls=tuple(call_log.calls),
         )
 
-    async def generate_answer(self, query: str, context: str) -> GeneratedText:
+    async def generate_answer(self, query: str, context: str, today: str | None = None, call_log: "CallLog | None" = None) -> GeneratedText:
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return await self._execute_agent(self.answer_agent, build_answer_input(query, context), AnswerOutput)
+        return await self._execute_agent(self.answer_agent, build_answer_input(query, context, today), AnswerOutput, call_log)
 
-    def start_answer_stream(self, query: str, context: str) -> tuple[RunResultStreaming, CallLog]:
+    def _start_stream(self, agent: Agent, user_prompt: str) -> tuple[RunResultStreaming, "CallLog"]:
+        call_log = CallLog()
+        result = Runner.run_streamed(agent, input=user_prompt, max_turns=1, run_config=_run_config(), hooks=call_log)
+        return result, call_log
+
+    def start_answer_stream(self, query: str, context: str, today: str | None = None) -> tuple[RunResultStreaming, CallLog]:
         """Cùng agent + cùng tham số lần gọi như `generate_answer`, nhưng stream (spec streaming §4.3 bước 1). Trả ngay; model chạy
         trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`.
         `CallLog` của lượt trả kèm: nơi gọi đọc `calls` cả khi lượt bị ngắt / lỗi (chỉ có mục của lần gọi đã xong)."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        call_log = CallLog()
-        result = Runner.run_streamed(
-            self.answer_agent,
-            input=build_answer_input(query, context),
-            max_turns=1,
-            run_config=_run_config(),
-            hooks=call_log,
-        )
-        return result, call_log
+        return self._start_stream(self.answer_agent, build_answer_input(query, context, today))
 
     def finish_answer_stream(self, result: RunResultStreaming, call_log: CallLog, started: float) -> GeneratedText:
         """Sau khi `stream_events()` đã đọc hết: chữ cuối kiểm chặt như `generate_answer` (`parse_structured_output`) + usage.
