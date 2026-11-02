@@ -5,6 +5,8 @@ Terminal: `hue-rag-7e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - **Quyền phiên 02/11 (User chọn, A ghi nhận 09:48 02/11/2026):** như 01/11 — A tự điều phối + tự thử trong luật; ≤ 1 USD; A tự commit / push không hỏi từng lần; B / C push nhánh riêng. Hết hạn cuối phiên.
 - **Gói npm (User chọn, A ghi nhận 09:53 02/11/2026):** lõi (react, react-dom, vite, @vitejs/plugin-react, tailwindcss, @tailwindcss/vite, marked, dompurify, @fontsource/be-vietnam-pro) + shadcn / Radix chỉ linh kiện dò CSP 0 vi phạm.
 - Giao: B121 (code giao diện mới), C118 (spec Phase 9) — `CURRENT_HANDOFF.md`.
+- B121 dò CSP ⇒ 0 Radix (A đồng ý); C119 review cả nhánh đạt; m-1 sửa; **merge `ed8e6e8`** + build + test trên `main`; 5 chỗ báo cáo + `chạy_môi_trường.md` (A sửa thêm: `guides/phase_6_generation_api.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `LUONG_HOAT_DONG_HE_THONG.md`, `nhat_ky/2026-11-02_…`, `session_prompt/chạy_môi_trường.md`).
+- C118: review sub-agent ngữ cảnh mới 3 vòng (v1 4M/8m ⇒ v2 1M/4m ⇒ v3 N2′); A tự quyết Q1 (H1 bậc 1 tuần đầu). Bẫy A: sửa nhầm tên `q3a` ⇒ `Q3a` vì đọc lướt `ls` (review bắt) — kiểm tên file bằng `test -f`, không đọc bằng mắt.
 - Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md` (§2 dòng "Bây giờ", §3 dòng Phase 9), `bao_cao_he_thong/README.md` (dòng Phase 9), `sessions/STATUS_A.md`.
 
 # (cũ) STATUS A — KẾT PHIÊN CHIỀU 01/11 (cập nhật 16:32 01/11/2026 `date`)

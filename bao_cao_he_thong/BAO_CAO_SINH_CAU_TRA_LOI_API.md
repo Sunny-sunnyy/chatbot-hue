@@ -1,16 +1,16 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6, cải tiến ở Phase 8)
 
-**Cập nhật lần cuối: 14:33 01/11/2026 — bản 17: B0 (bạn giữ 10 đoạn), Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 12:51 01/11/2026 — bản 16: streaming vào chatbot; tốc độ tới chữ đầu tiên đạt; công thức tiền giá đủ.** Trước: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 10:35 02/11/2026 — bản 18: giao diện web làm lại (React + Vite + Tailwind, merge `ed8e6e8`; review cả nhánh đạt).** Trước: 14:33 01/11/2026 — bản 17: B0 (bạn giữ 10 đoạn), Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 12:51 01/11/2026 — bản 16: streaming vào chatbot; tốc độ tới chữ đầu tiên đạt; công thức tiền giá đủ.** Trước: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 14) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-## 1. Tóm tắt (đúng hiện trạng 31/10/2026)
+## 1. Tóm tắt (đúng hiện trạng 02/11/2026)
 
 - **Khâu này làm gì:** chatbot Huế trả lời câu hỏi trên toàn bộ kho (món ăn, di tích, lễ hội, nghệ thuật, du lịch) qua một API và một trang
   web đơn giản. Mỗi ý có trích dẫn `[1]`, `[2]`… trỏ tới đoạn nguồn thật; thiếu thông tin thì trả đúng một câu từ chối cố định, không bịa.
 - **Đang chạy cách nào:** chuẩn hóa chữ câu hỏi (NFC — gộp dấu tiếng Việt về một dạng) → tìm đoạn → lấy tối đa **10 đoạn** nguyên vẹn vừa
   ngân sách 16.384 token → `gpt-6-luna` (OpenAI, để mức suy luận mặc định) viết câu trả lời chỉ từ các đoạn đó → backend kiểm từng `[n]` →
   trả câu trả lời + nguồn. Mỗi lần hỏi, API ghi **một dòng số đo** (token, thời gian từng khâu; không ghi nội dung câu hỏi / trả lời, không ghi USD).
-  Trang web: JS thuần, một lượt hỏi – đáp, **chữ hiện dần (streaming) từ 01/11** qua `POST /api/chat/stream`: kiểm trích dẫn ở cuối, hỏng thì rút lại, lỗi / đứt thì xoá + "Thử lại"; `/api/chat` (JSON một lần) vẫn giữ.
+  Trang web: **làm lại 02/11** (merge `ed8e6e8`) bằng React + Vite + Tailwind, chỉ trang hỏi đáp + khung nguồn bên cạnh; nguồn hiện bằng số nhỏ bấm được (tầng máy vẫn `[n]`); nhãn "Trợ lý AI… có thể sai"; lỗi luôn báo bằng tiếng Việt; máy chạy cần build một lần `cd frontend && npm ci && npm run build`. Một lượt hỏi – đáp, **chữ hiện dần (streaming) từ 01/11** qua `POST /api/chat/stream`: kiểm trích dẫn ở cuối, hỏng thì rút lại, lỗi / đứt thì xoá + "Thử lại"; `/api/chat` (JSON một lần) vẫn giữ.
 - **Đo được trên bản đang chạy** (10 đoạn, kho đã sửa hai đợt; 176 câu Golden; 30/10):
   - từ chối nhầm câu có trong kho **12 / 158**; **0** câu ngoài kho bị trả lời; câu sai điều kiện (giờ, vé, cảnh báo) trên bộ 32 câu an toàn: **0**;
   - lỗi trích dẫn (người dùng nhận lỗi 500): **0 / 489** lần sinh, đếm trên mọi lượt đo đã lưu;
@@ -43,7 +43,7 @@ Stream: lỗi trước khi model viết = JSON như trên; sau đó sự kiện 
 - Code: `backend/api/routes/chat.py` (API; kiểm câu hỏi `:36–38`, route `:60`, kiểm trích dẫn `:177–188`), `backend/retrieval/full_corpus_context.py`
   (chọn đoạn theo ngân sách), `backend/config/settings.yaml:48` (model), `:53` (ngân sách), `:56` (`max_context_documents: 10`),
   `backend/llm/full_corpus_prompt.py:7–16` (prompt), `backend/llm/generator_openai_full_corpus.py` (gọi model), `backend/llm/citations.py:11` (mẫu bắt
-  `[n]` và `[Nguồn n]`), `frontend/` (trang web, phục vụ ở `backend/api/app.py:141–146`).
+  `[n]` và `[Nguồn n]`), `frontend/src/` (trang web React; bản build `frontend/dist/` phục vụ ở `backend/api/app.py:159–166`).
 
 Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose up -d qdrant`; từ `backend/` chạy
 `HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8000`; mở `http://localhost:8000`. Mỗi câu hỏi gọi `gpt-6-luna` (phí rất nhỏ).
@@ -55,7 +55,7 @@ Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose 
 | Câu có đủ bằng chứng → trả lời kèm `[n]` | **Đã xử lý, đóng gói** | mốc 7B (5 đoạn) 4,43 / 4,28 / 4,45; câu kín 28/10 (10 đoạn) Đủ +0,82, Đúng +0,70 so với 5 đoạn |
 | Câu ngoài kho → từ chối, không bịa | **Đã xử lý, đóng gói** | 30/10: 0 câu ngoài kho bị trả lời (Golden; bộ an toàn 0 / 4); câu từ chối cố định `full_corpus_prompt.py:3–5,14–15` |
 | Kiểm `[n]` trỏ đúng nguồn, lỗi thì trả mã rõ ràng | **Đã xử lý, đóng gói** | nhận cả `[Nguồn n]`, đổi về `[n]` (từ 25/10); bản đang chạy 0 / 489 lần sinh lỗi; dạng lỗi còn thấy ở bản cũ chỉ là "không gắn `[n]` nào"; `citations.py:11`, `chat.py:177–188` |
-| Trang web bấm `[n]` tới thẻ nguồn | **Đã xử lý, đóng gói** | `frontend/`; `api/app.py:141–146` |
+| Trang web bấm số nguồn tới thẻ nguồn | **Đã xử lý, đóng gói** (giao diện mới 02/11) | số chỉ thành link sau khi nguồn về; bắt cả `[n]` lẫn `[Nguồn n]`; `frontend/src/markdown.js`, `App.jsx`; `api/app.py:159–166` |
 | Kho lệch chỉ mục → từ chối khởi động | **Đã xử lý, đóng gói** | API báo 409 "cần lập chỉ mục lại"; `retrieval/full_corpus.py:383–385`; test `test_api_chat.py` |
 | Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (`chat.py:96–119`); test `test_startup_model_missing.py` (bạn chạy `!`) |
 | Đưa 10 đoạn thay vì 5 + chuẩn hóa NFC | **Đã xử lý, đóng gói** (từ 28/10) — B0 01/11: bạn giữ 10 (tham khảo) | 8.1: Đủ +0,26 (thử) / +0,27 (kiểm); câu kín +0,82; trung vị / p95 2,19 / 4,90 s. Đổi ngược về 5: sửa `settings.yaml:56` **và** chốt kiểm ở `core/settings_loader.py:75` (đang ép đúng 10) |
@@ -73,6 +73,7 @@ Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose 
 | Câu hỏi theo ngày tương đối ("tối nay", "tháng sau") | **Xử lý một phần** (an toàn; chưa trả lời được) — Phase 9 | 30/10: 0 câu đoán ngày rồi nói sai; 6 / 14 câu có trong kho bị từ chối (4 câu có lịch ngay trong đoạn model đọc). Prompt không có ngày hôm nay (`full_corpus_prompt.py:7–16`) |
 | Hiện chữ dần (streaming) | **Đã xử lý, đóng gói** (01/11, merge `a80e12d`) — 4 bước + review cả nhánh đạt; S4 đạt sàn + mục tiêu | trước: bước 1 / 4 (01/11 sáng) — bạn duyệt spec 01/11 (`00fb57ee01b2`); bước 1 gom lõi chung: review đạt, hành vi không đổi; bước 2–4 (luồng chữ, giao diện, đo) đang làm (mục 6) |
 | Hội thoại nhiều lượt | **Dời sang Phase 9** (bạn chọn 01/11) | nghiên cứu cùng phần trợ lý / agent; nháp spec 01/11 làm tư liệu |
+| Giao diện web mới (React + Vite + Tailwind) | **Đã xử lý, đóng gói** (02/11, merge `ed8e6e8`) | 19 yêu cầu (17 của streaming + nguồn số nhỏ + nhãn AI); CSP không nới, 0 gói Radix / shadcn (2 / 5 linh kiện vi phạm CSP khi dò); B tự kiểm + C review độc lập (build lại từ lockfile, server thật, ca dò khác cách): đạt; `report_agent/2026-11-02_giao_dien_moi_code/` |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
@@ -165,12 +166,12 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 
 ## 6. Việc còn lại / cần quyết
 
-- **Streaming — xong, chạy từ 01/11** (spec `00fb57ee01b2`, merge `a80e12d`). Giới hạn ghi lại (không sửa ở Phase 8, giao diện sẽ làm lại): một vài lỗi hiếm ngoài SDK chưa huỷ lần gọi model; giao diện
-  hiện lời lỗi trình duyệt khi đứt mạng; route stream ghi bản ghi bằng chứng nửa chừng; rút lại / luồng đứt chỉ kiểm bằng phát lại. Yêu cầu cho giao diện mới:
+- **Streaming — xong, chạy từ 01/11** (spec `00fb57ee01b2`, merge `a80e12d`). Giới hạn ghi lại (không sửa ở Phase 8, giao diện sẽ làm lại): một vài lỗi hiếm ngoài SDK chưa huỷ lần gọi model; route stream ghi bản ghi bằng chứng nửa chừng; rút lại / luồng đứt chỉ kiểm bằng phát lại. Yêu cầu cho giao diện mới:
   `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md`; review cả nhánh `streaming_final_branch_review.md`; đo `s4_do_d2_implementation.md`.
 - **Hội thoại nhiều lượt:** **dời sang Phase 9** (phần trợ lý / agent — bạn chọn 11:20 01/11/2026); nháp spec giữ làm tư liệu, không làm ở Phase 1–8.
 - **Đóng gói Phase 1–8 — xong:** lượt đo cuối mọi sàn đạt; B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). **Phase 8 bạn đóng 14:29 01/11/2026.**
-- **Từ nhận xét B0 (đề xuất A, chờ bạn):** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9); `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn ở giao diện mới (vẫn giữ `[n]` ở tầng kiểm).
+- **Từ nhận xét B0:** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9 — spec đang viết); `[n]` chen trong câu khó đọc ⇒ **xong ở giao diện mới 02/11** (số nhỏ bấm được, vẫn giữ `[n]` ở tầng kiểm).
+- **Giao diện mới — giới hạn:** chỉ làm cho laptop (điện thoại không vỡ, chưa tối ưu); hộp thoại cho Phase 9 phải tự viết (Radix Dialog vi phạm CSP); ca "rút lại" / luồng đứt giữa chừng vẫn kiểm bằng luồng tự dựng.
 - **Phase 9:** công cụ "hôm nay là ngày nào" cho câu theo ngày tương đối; tách câu hỏi hai ý là ứng viên.
 - **Còn mở, không gấp:** câu trả lời quá gọn (cần thêm câu tự nhiên để đo); bảng giá và câu nhiều nguồn (gốc ở khâu tìm); sai về chữ (tên, sự kiện) chưa có cách đo rẻ.
 - Hướng đã gác (chỉ mở lại khi có ý mới đã kiểm trước): trả lời phần có căn cứ; trả lời không suy luận; luật kiểm sau sinh; model chọn 10 / 30 đoạn.

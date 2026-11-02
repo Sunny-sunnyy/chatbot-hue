@@ -1,11 +1,12 @@
-# STATUS B — cập nhật 16:17 01/11/2026 (KẾT PHIÊN chiều 01/11: B116–B120 xong, A đã commit `4a24de7`)
+# STATUS B — cập nhật 10:35 02/11/2026 (phiên 02/11: B121 đã merge `ed8e6e8`, đã dọn; B rảnh)
 
+**Phiên 02/11:** terminal B `hue-rag-d6`, A `hue-rag-7e`, C `hue-rag-29` (cả ba Claude Code, trực tiếp). User nói ở terminal B (09:49 02/11/2026, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền phiên (A báo, User 09:47): như 01/11 — ≤ 1 USD, B / C push nhánh riêng.
 Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-c0`, C = `hue-rag-b0` (phiên sáng: B `hue-rag-da`, A `hue-rag-27`, C `hue-rag-6a`) (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B.
 Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền khác (trần tiền…) theo mục việc A ghi trong `CURRENT_HANDOFF.md` (A đang hỏi lại User).
 
 ## Đang làm / dở
-- **Không** (kết phiên 16:17 01/11/2026). Không job nền, không server (8797 đã tắt), không worktree, không nhánh mới; script tạm `/tmp/b119_tools` đã xoá.
+- **B121 xong + đã merge** (A merge `ed8e6e8` gồm m-1 `deaa605`). Đã dọn (10:35 02/11/2026): `unlink` 2 symlink, `git worktree remove /tmp/b_giao_dien` (không `--force`); xoá `/tmp/b_csp_probe`, `/tmp/b_csp_tools`, `/tmp/b121_tools` (bản giữ: `data/giao_dien_moi_2026-11-01/do_csp/`, `b121/`). Nhánh `giao-dien-moi` **giữ** (A đề xuất User xoá lúc kết phiên). Không server / tiến trình nào chạy. **B rảnh — chờ A giao việc.**
 - Phiên chiều: B116 (giao diện), B117 (tra cứu mạch 1–2), B118 (review bản 1, 2 vòng), B119 (thử Huế TRIPO), B120 (review bản 2) — A nhận hết; báo cáo + review A commit tới `4a24de7`.
 - Phiên sáng: nhánh **giữ** chờ User xoá: `s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` (đã vào `main` ở `a80e12d`).
 
@@ -38,15 +39,20 @@ Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng
 | **B119** khám phá Huế TRIPO (Playwright) + 10 câu so hue_rag | TRIPO: biểu mẫu → hỏi thêm bằng nút → 3 phương án → lịch trình có giờ / chi phí / bản đồ / thuyết minh / PDF; nhớ hội thoại; trả giờ / giá. Yếu: câu trang phục Đại Nội trái hue_rag (chưa kiểm ai đúng), an toàn / chi phí tự sinh không nguồn, lịch quá giờ đóng cửa, 14–36 s. hue_rag: từ chối câu 2 + 7 (câu 2 có thể từ chối nhầm) | `data/nghien_cuu_phase_9_2026-11-01/tripo/b119_kham_pha.md` |
 | **B120** review bản 2 `BAO_CAO_NGHIEN_CUU_PHASE_9.md` | lần 1 blocked (bản 2 chưa lưu); lần 2 **ready**: 0 blocker / 0 major, 2 minor (câu 4 "đúng" ⇒ "khớp"; thiếu lưu ý bản dịch Luật AI); overlap_scan 0 trùng | `report_agent/2026-11-01_nghien_cuu_phase_9/b120_review_ban_2.md` |
 
+## Tiền paid (B, 02/11): B121 < 0,002 USD (4 câu có token ≈ 0,00094 + 2 câu rời trang không có số token).
+
 ## Tiền paid (B, 01/11, giá đủ; ca ngắt / hết token không có usage ⇒ cận trên)
 S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối §6–§8 0,0293 ⇒ **≈ 0,055 USD**. Không gọi `agy`; Codex không chạy (dùng lượt của A). **Phiên chiều 01/11: ≈ 0,0040 USD** (B119 hue_rag 11 lượt; còn lại 0 USD API) (2 lượt Codex qua tài khoản ChatGPT, WebFetch).
 
 ## Câu hỏi / thắc mắc cho A
 1. S4: lợi "đủ câu − chữ đầu" 441 ms < 500 ⇒ D5 xem lại PA3 hay giữ PA1; nâng sàn (đạt mục tiêu 1,5 / 3 s)?
-2. 4 nhánh của B còn trên `origin` (đã merge) ⇒ xoá khi User duyệt (tag `hoso/…` nếu cần).
+2. ~~4 nhánh của B còn trên `origin`~~ — đã xoá 15:21 01/11/2026 (User `!`).
 3. 4 worktree AGY cũ `~/.gemini/antigravity-cli/…` (commit `c725987`) vẫn còn — User quyết.
 
 ## Bẫy đã gặp — đọc trước khi làm
+- (02/11) Playwright `page.route` gọi handler với 1 hoặc 2 tham số tuỳ chữ ký ⇒ lambda `(r, s=spec)` nhận `request` vào `s`; dùng hàm một tham số. Script tự bật server con ⇒ bọc `try/finally` tắt server (lần lỗi đầu để sót uvicorn 8813, đã `kill` đúng PID).
+- (02/11) Dò CSP nhiều linh kiện **chung một trang** ⇒ vi phạm của một cái (ScrollArea chèn `<style>` lúc hiện) làm mọi ca trông như vi phạm ⇒ mỗi linh kiện một trang. `curl -I` (HEAD) vào `/` trả 405 nên không thấy header CSP ⇒ kiểm bằng GET (`curl -s -D - -o /dev/null`).
+- (02/11) DOMPurify phân tích chữ có `<style>` bằng `DOMParser` ⇒ trình duyệt báo 1 vi phạm CSP dù thẻ bị lọc (CSP chặn lúc phân tích) — không phải lỗi giao diện; bản cũ cũng vậy.
 - (01/11 chiều) WebFetch trang có JS (Huế TRIPO) **sót phần động** (ngân sách, chia sẻ) ⇒ B ghi "không thấy" sai; nhận xét về giao diện trang ngoài ⇒ dùng Playwright thật trước khi khẳng định "không có".
 - (01/11 chiều) `tra_web_codex.sh` lượt nghiên cứu: Codex chạy chỉ 100–170 s, `url_da_mo.txt` rỗng dù báo cáo tự nói "đã mở trang gốc" ⇒ coi mọi URL là tự khai, tự WebFetch; vài trang (VietnamPlus, Wiley) WebFetch hết giờ / 403 / 502 ⇒ ghi tự khai, chọn ý dự phòng.
 - (01/11 chiều) Đọc `.npmrc` của dự án khác bị auto mode chặn (có thể chứa token) ⇒ không đọc file cấu hình gói của dự án khác.

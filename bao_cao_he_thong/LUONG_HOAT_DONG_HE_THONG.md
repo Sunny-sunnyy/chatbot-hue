@@ -1,6 +1,6 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 14:33 01/11/2026 — bản 18: B0 xong, Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 13:42 01/11/2026 — bản 17: lượt đo cuối xong (mọi sàn đạt). Trước: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 10:35 02/11/2026 — bản 19: giao diện web làm lại (React + Vite + Tailwind, merge `ed8e6e8`); API, tìm kiếm, model không đổi.** Trước: 14:33 01/11/2026 — bản 18: B0 xong, Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 13:42 01/11/2026 — bản 17: lượt đo cuối xong (mọi sàn đạt). Trước: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này.
 
 File này mô tả hệ thống **đang chạy**. Mỗi lần hành vi đổi (chia đoạn, chỉ mục, cách tìm, prompt, model), file này được cập nhật theo.
@@ -31,7 +31,7 @@ HỎI ĐÁP (mỗi câu hỏi):
 | Cơ sở dữ liệu vector | Qdrant `127.0.0.1:6335`, chạy trong Docker Desktop (Windows); collection `hue_full_corpus_7a2_e5_small_384`, 8.424 điểm | `backend/vectorstore/`, `docker-compose.yml` |
 | Tìm kiếm | `dense_bm25_rrf` (mục 3) | `backend/retrieval/full_corpus.py` |
 | Trả lời | `gpt-6-luna` (OpenAI) | `backend/llm/generator_openai_full_corpus.py` |
-| API + giao diện | FastAPI (`/api/chat`, `/health`), trang web tĩnh | `backend/api/`, `frontend/` |
+| API + giao diện | FastAPI (`/api/chat`, `/api/chat/stream`, `/health`); trang web React + Vite + Tailwind (từ 02/11) — FastAPI phục vụ bản build tĩnh `frontend/dist/` (build một lần: `cd frontend && npm ci && npm run build`; thiếu bản build ⇒ API vẫn chạy, log cảnh báo) | `backend/api/`, `frontend/src/` |
 | Cấu hình | `backend/config/settings.yaml` (`full_corpus_runtime`, `full_corpus_generation`) | |
 
 ## 2. Chuẩn bị kho (khi corpus đổi)
@@ -140,8 +140,8 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 **Streaming (chạy từ 01/11)**
 
 - Trong vài giây người dùng thấy chữ **chưa qua bộ kiểm**; nếu bộ kiểm cuối hỏng thì chữ bị rút lại, lỗi giữa chừng thì xoá hết + nút "Thử lại" (bạn chọn 31/10). Lỗi kiểm cuối hôm nay 0 / 489 lần ⇒ hiếm;
-  sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật (chỉ phát lại luồng). Giao diện JS thuần hiện tại sẽ được làm lại sau
-  Phase 8 — yêu cầu phải giữ: `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md`.
+  sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật (chỉ phát lại luồng). Giao diện **làm lại 02/11** (merge `ed8e6e8`)
+  giữ đủ 17 yêu cầu đó + nguồn hiện bằng số nhỏ bấm được + nhãn "Trợ lý AI… có thể sai"; lỗi mạng / server lạ báo bằng tiếng Việt (`report_agent/2026-11-02_giao_dien_moi_code/`).
 
 **Thước đo (giới hạn của bằng chứng)**
 

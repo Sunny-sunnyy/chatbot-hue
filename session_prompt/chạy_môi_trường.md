@@ -7,6 +7,12 @@ HF_HUB_OFFLINE=1 uv run python -m pytest tests/<file> -q
 HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8000
 ```
 
+Giao diện web (từ 02/11 — React + Vite; bản build không commit): build một lần trước khi chạy API, và sau mỗi lần sửa `frontend/src/` hoặc kéo code mới:
+
+```bash
+cd frontend && npm ci && npm run build   # Node v24; .npmrc tắt script cài đặt của gói
+```
+
 Chạy module (ví dụ build index full-corpus — **ghi Qdrant**, chỉ chạy khi việc cho phép; chạy từ `backend/`):
 
 ```bash

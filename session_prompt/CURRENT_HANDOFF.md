@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 09:53 02/11/2026 (A, **mở phiên 02/11**: quyền như 01/11; User duyệt gói npm; giao B121 giao diện mới + C118 spec Phase 9 song song). Trước: 16:32 01/11/2026 (A, **kết phiên chiều 01/11**: B0 xong ⇒ giữ 10; **User đóng Phase 8 14:29**; giao diện chốt hướng; mở nghiên cứu Phase 9). Trước: 14:30 01/11/2026. Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
+Cập nhật: 10:36 02/11/2026 (A, **giao diện mới vào `main`** `ed8e6e8`; C118 review vòng 3). Trước: 09:53 02/11/2026 (A, **mở phiên 02/11**: quyền như 01/11; User duyệt gói npm; giao B121 giao diện mới + C118 spec Phase 9 song song). Trước: 16:32 01/11/2026 (A, **kết phiên chiều 01/11**: B0 xong ⇒ giữ 10; **User đóng Phase 8 14:29**; giao diện chốt hướng; mở nghiên cứu Phase 9). Trước: 14:30 01/11/2026. Trước: 13:36 01/11/2026 (A, **kết phiên 01/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 01/11 (mọi mục việc B / C, quyết định theo giờ, trạng thái review) dời
 **nguyên văn** sang `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md`; 31/10: `archive/CURRENT_HANDOFF_LICH_SU_2026-10-31.md`. Tổng hợp đợt: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`;
 nhật ký User `bao_cao_he_thong/nhat_ky/2026-11-01_streaming_va_dong_goi.md`.
 
@@ -107,7 +107,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 - **Đọc:** `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md` (full — quyết định, bố cục, 12 token màu, font, 6 trạng thái, mục dò CSP);
   `report_agent/2026-10-31_streaming_spec/yeu_cau_cho_giao_dien_moi.md` (full — 17 yêu cầu); `frontend/` + `backend/api/app.py` (phục vụ tĩnh + CSP, dòng ~28–40, ~155–170) + `backend/api/chat.py` (luồng SSE) + `backend/tests/test_static_ui.py` (targeted).
 - **Làm:**
-  1. Nhánh `giao-dien-moi` từ `main` `9c86a98`, trong **worktree riêng** `/tmp/b_giao_dien` (C viết tài liệu trên working tree chung; bẫy worktree `Project_Status.md` §8: `uv run --project /home/minhhieu/hue_rag`, gỡ symlink khi xong, push từ working tree chung).
+  1. Nhánh `giao-dien-moi` từ `main` `411bbc5`, trong **worktree riêng** `/tmp/b_giao_dien` (C viết tài liệu trên working tree chung; bẫy worktree `Project_Status.md` §8: `uv run --project /home/minhhieu/hue_rag`, gỡ symlink khi xong, push từ working tree chung).
   2. **Bước đầu: dò CSP** shadcn / Radix (mục "Bước đầu khi code" B116) trên bản build với CSP thật của `app.py`; ghi linh kiện nào đạt / vi phạm.
   3. Code trang: 17 yêu cầu + **18** (link nguồn bắt cả `[n]` lẫn `[Nguồn n]`; nguồn = số nhỏ nâng lên bấm được + danh sách khung bên, giữ `[n]` ở tầng máy) + **19** (nhãn "Trợ lý AI, câu trả lời dựa trên kho, có thể sai" — Luật AI 134/2025 Đ.11.1, C117); streaming giữ **PA1**.
   4. FastAPI phục vụ bản build (giữ đường `/static`, CSP mọi trang HTML **không nới**). `node_modules/`, bản build: **không commit** (gitignore) trừ khi B có lý do rõ — báo A; lockfile commit; khoá phiên bản. Lệnh build ghi vào guide.
@@ -116,7 +116,21 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 - **Không làm:** đổi API / thân SSE; nới CSP / thêm nonce; CDN / Google Fonts; gói ngoài danh sách đã duyệt (hỏi A); trang khác ngoài hỏi đáp; tối ưu hiệu năng phòng xa.
 - **Tiền:** chỉ cổng ổn định + Playwright, trần **0,02 USD**. **Dừng:** phải nới CSP / đổi API ⇒ dừng, báo A.
 - **Đầu ra:** nhánh `giao-dien-moi` (push origin); `report_agent/2026-11-02_giao_dien_moi_code/b121_giao_dien_implementation.md` (kết quả dò CSP, khớp 19 yêu cầu từng dòng [Chạy] / [Code, chưa chạy], ảnh chụp Playwright để `data/giao_dien_moi_2026-11-01/`). Review **một lần cả nhánh** (A chọn người khi B xong). A merge + 5 chỗ báo cáo.
-- **Trạng thái:** giao 09:53 02/11/2026.
+- **Trạng thái:** giao 09:53 02/11/2026. **Dò CSP xong** (B báo, A ghi 10:00 02/11/2026): mốc React + Tailwind 0 vi phạm; Radix Collapsible / Tooltip / Popover 0; Dialog 1 + ScrollArea 1 (chèn `<style>` lúc chạy); 0 request ra ngoài; bundle 0 `eval`. **Xong, chờ review cả nhánh (B, 10:19 02/11/2026):** `giao-dien-moi` `11a0f3a` (đã push); report `report_agent/2026-11-02_giao_dien_moi_code/b121_giao_dien_implementation.md` (trên nhánh). 0 gói Radix; server thật + Playwright: 0 vi phạm CSP luồng thường, 0 request ra ngoài, link chỉ bật sau `sources`, `client_disconnected` khi rời trang; 19 yêu cầu từng dòng [Chạy] / [Tự dựng]; < 0,002 USD. A cần: thêm `cd frontend && npm ci && npm run build` vào `session_prompt/chạy_môi_trường.md` (governance).
+  **A đồng ý: 0 gói Radix / shadcn** (thẻ HTML gốc + Tailwind; ít gói hơn danh sách duyệt); `.npmrc` `ignore-scripts` + `save-exact` + `before=2026-10-19` commit vào repo. Phase 9 cần hộp thoại ⇒ tự viết.
+  **ĐÓNG (10:36 02/11/2026, A):** m-1 B sửa `deaa605` (A đọc diff: đạt); **merge `ed8e6e8` vào `main`**; A build trên `main` + `test_static_ui.py` 3 passed + `/health` 5 / 5, `/` 200 (0 câu hỏi, 0 USD); 5 chỗ báo cáo + `chạy_môi_trường.md` + bẫy §8 (m-2). Worktree B đã gỡ. Nhánh `giao-dien-moi` giữ — A đề xuất xoá lúc kết phiên (User `!`). **B rảnh: chờ spec Phase 9 duyệt** (phần đầu Phase 9 cần spec).
+
+## C119 — review cả nhánh `giao-dien-moi` (B121) (giao 10:19 02/11/2026)
+
+- **Mục tiêu:** review **một lần cả nhánh** `origin/giao-dien-moi` `11a0f3a` (19 file, +2.236 / −523) theo skill `risk-gated-agent-review`; kết luận `ready_for_user_confirmation` / `changes_requested`.
+- **Đọc:** report `report_agent/2026-11-02_giao_dien_moi_code/b121_giao_dien_implementation.md` (trên nhánh — mục "Căn cứ để review" là chỉ mục, không tự chứng minh PASS); exact diff `git diff main...origin/giao-dien-moi`;
+  `yeu_cau_cho_giao_dien_moi.md` (17 yêu cầu) + B116 (yêu cầu 18) + mục B121 (yêu cầu 19, gói duyệt, `.npmrc`). Không đọc `STATUS_B.md`.
+- **Kiểm theo rủi ro:** CSP không nới (`app.py`), lọc HTML đúng allowlist 25 thẻ / 4 thuộc tính, không CDN, gói đúng danh sách + lockfile + `.npmrc`; `node_modules/` / bản build không lọt commit; link nguồn `[n]` / `[Nguồn n]`; luồng lỗi / đứt xoá hết;
+  độ phức tạp tương xứng (một trang hỏi đáp). Chạy lại phần rủi ro cần: build từ lockfile sạch (`npm ci` trong worktree / bản sao của C, **không** dùng `/tmp/b_giao_dien`), test file chạm, cổng ổn định 1 câu trong kho + 1 ngoài kho, Playwright 0 vi phạm CSP — ca dò khác cách B (W32).
+- **Không làm:** sửa code của B (finding ⇒ B sửa); paid ngoài cổng ổn định; Golden / câu kín. **Tiền:** trần 0,01 USD.
+- **Đầu ra:** `report_agent/2026-11-02_giao_dien_moi_code/b121_review.md` (`TEMPLATE_REVIEW.md`) + nhắn A. Spec C118 vòng 2 về ⇒ C xen sửa được (không chồng file).
+- **Trạng thái:** giao 10:19 02/11/2026. **Review xong (C, 10:27 02/11/2026): ready_for_user_confirmation** — 0 blocker / 0 major / 2 minor (m-1 lỗi mạng / 502 / JSON hỏng hiện chữ kỹ thuật tiếng Anh — có từ bản cũ; m-2 việc A lúc merge: báo cáo User trỏ `app.py:141–146`, `chạy_môi_trường.md`, bẫy test cần build). `b121_review.md` (untracked). ≈ 0,0006 USD; server 8823 tắt; worktree `/tmp/c119` gỡ.
+  **ĐÓNG (10:36 02/11/2026, A):** m-1 sửa + merge `ed8e6e8`; m-2 A làm.
 
 ## C118 — spec Phase 9 (giao 09:53 02/11/2026; User chốt hướng 16:01–16:28 01/11/2026; mức cao ⇒ một spec, User duyệt một lần)
 
@@ -125,7 +139,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
   Không: agent tổng quát, đặt chỗ, giọng nói / ảnh / nhiều ngôn ngữ. Đóng code tạm ~20/12/2026; bảo vệ 04–10/01/2027.
 - **Đọc:** `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` (full); mục "Brainstorm Phase 9" ở dưới (full); `Project_Status.md` §1 "Mục tiêu sản phẩm" + thứ tự lỗi (targeted);
   `data/nghien_cuu_phase_9_2026-11-01/tripo/b119_kham_pha.md` + `c117_kiem_chatgpt.md` (targeted — câu từ chối nhầm 2 ý, câu theo ngày); `docs/superpowers/specs/2026-11-01-multi-turn-design.md` + `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md`
-  (tư liệu H3 — chỉ là ý cũ, xét lại); `report_agent/2026-10-31_streaming_spec/Q3a_theo_loai_cau_implementation.md` (câu nhiều nguồn); skill `agent-design-review`, `agent-security-review`, `run-experiment`, `propose-options`; code (targeted, ghi `file:dòng` cho mọi khẳng định về hệ thống).
+  (tư liệu H3 — chỉ là ý cũ, xét lại); `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md` (câu nhiều nguồn); skill `agent-design-review`, `agent-security-review`, `run-experiment`, `propose-options`; code (targeted, ghi `file:dòng` cho mọi khẳng định về hệ thống).
 - **Làm:** spec `docs/superpowers/specs/2026-11-02-phase-9-design.md`, gồm: mục tiêu + phạm vi + không làm; **thứ tự + mốc ngày** tới 20/12 (A đề xuất: H4 ⇒ H2 ⇒ H3 ⇒ lịch trình ⇒ H1 — C được đề xuất khác kèm lý do);
   mỗi phần: vấn đề quan sát được (số, nguồn), cách làm **nhỏ nhất** (code ↔ model chia việc; có cần "agent" không — theo `agent-design-review`), bộ đo + cỡ mẫu + ai viết câu (mới, tự nhiên; phần kín nếu cần),
   **tiêu chí ghi trước** (sàn không phạm: 0 ngoài kho bị trả lời, bộ an toàn, Golden không làm hỏng; chỉ số quyết; mức tụt cho phép; luật cắt khi trễ), tiền ước; rủi ro bảo mật mỗi phần (`agent-security-review`: chữ người dùng là dữ liệu, lịch sử hội thoại, egress);
@@ -134,7 +148,9 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 - **Không làm:** code; mở câu kín / đọc nhóm `test` theo từng câu; grep thẳng kho (chỉ `scripts/grep_kb.sh`); paid API; sửa file ngoài spec + `STATUS_C.md` + mục C118 này. Tra web khi cần: `scripts/tra_web_codex.sh` (chỉ thông tin công khai).
 - **Tiền:** 0 USD. **Dừng:** thấy hướng đã chốt mâu thuẫn bằng chứng (vd một phần không khả thi trước 20/12) ⇒ ghi vào spec + nhắn A, không tự đổi phạm vi.
 - **Đầu ra:** spec bản 1 + `sha256sum | cut -c1-12` báo A. Review: A chọn session khác chỉ dựa trên "Căn cứ để review" ⇒ User duyệt sha.
-- **Trạng thái:** giao 09:53 02/11/2026.
+- **Trạng thái:** giao 09:53 02/11/2026. **Bản 1 xong (C, 10:02 02/11/2026) — chờ review:** `docs/superpowers/specs/2026-11-02-phase-9-design.md` `e5be02400646` (351 dòng; quét trùng 0; 0 USD). Lệch đề xuất A: H1 bậc 1 (tầng tìm, 0 USD) lên tuần 1 — Q1; H4b chỉ làm sau phép thử 10 câu — Q2; H3 mang đoạn 1 lượt + 3 câu hỏi — Q4. **Bản 2 (C, 10:18 02/11/2026) — sửa theo review vòng 1 (4 major + 8 minor đều sửa, 0 phản biện), chờ người review kiểm phần sửa:** `d819918c2f2e` (557 dòng; quét trùng 0); thêm H4c (năm nguồn trên thẻ nguồn), H1b (câu hai ý thiếu một ý); câu hỏi Q1–Q8. **Bản 3 (C, 10:32 02/11/2026) — sửa theo review vòng 2 (N1 major + N2–N5 đều sửa, 0 phản biện), chờ kiểm phần sửa:** `7c67656f0ff8` (507 dòng); H1b thành bước 0; câu hỏi User 5 (Q1 cũ = A quyết). **Bản 4 (C, 10:38 02/11/2026) — sửa N2′ vòng 3 (§5.3 + Q2): `589bec308f41`**; H4c đếm lại 13 / 69 file đích có mục Nguồn dữ liệu ⇒ khuyên dòng cố định "có thể đã thay đổi" thay năm nguồn.
+  **Review vòng 1 (A ghi 10:12 02/11/2026):** `changes_requested` — 0 blocker / 4 major / 8 minor (`docs/superpowers/specs/2026-11-02-phase-9-design_review.md`, sub-agent ngữ cảnh mới của A, chỉ dựa trên Căn cứ). A kiểm M1, M2 đúng (phạm vi ⇒ thành câu hỏi User). C sửa ⇒ người review kiểm phần sửa.
+  **Review vòng 2 (A ghi 10:23 02/11/2026):** bản 2 `d819918c2f2e` — 12/12 finding vòng 1 đóng; còn N1 major (H1b chưa có lỗi quan sát ⇒ thành bước 0 như H4b) + N2–N5 minor. **A quyết (kỹ thuật trong phạm vi, §9.3):** Q1 — H1 bậc 1 chạy tuần đầu song song (0 USD, tất định); bỏ Q7; Q8 thành dòng mặc định trong lời duyệt ⇒ câu hỏi User ≤ 5.
 
 ## B116 — so sánh cách làm giao diện mới (giao 14:36 01/11/2026; User chọn (a))
 

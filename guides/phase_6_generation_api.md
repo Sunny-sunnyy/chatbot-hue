@@ -21,7 +21,7 @@
 
 **Hiện hành 01/11 (A, 12:51 01/11/2026):** thêm `POST /api/chat/stream` (SSE — `status` / `delta` / `sources` / `error{after_text}` / `done`; kiểm trích dẫn lúc cuối; ngắt ⇒ huỷ model, một dòng log) và giao diện chữ hiện dần; route JSON `/api/chat` giữ nguyên hành vi. API và bộ đánh giá dùng chung lõi `backend/llm/grounded_answer.py` (`answer_query` / `prepare_answer`). Trang web: DOMPurify danh sách cho phép + CSP cho mọi trang HTML. `cost_usd` theo giá đủ (ghi / đọc đệm). Spec `docs/superpowers/specs/2026-10-31-streaming-design.md` (`00fb57ee01b2`); merge `a80e12d`; số đo `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md`. Các mục dưới về UI một lượt là lịch sử.
 
-**Hiện hành 02/11 — giao diện mới (B121, nhánh `giao-dien-moi`, B 10:15 02/11/2026; chờ review + merge):** `frontend/` là dự án React + Vite + Tailwind (nguồn `frontend/src/`), FastAPI phục vụ **bản build**
+**Hiện hành 02/11 — giao diện mới (B121; review C119 đạt; **merge `ed8e6e8`**, A 10:36 02/11/2026):** `frontend/` là dự án React + Vite + Tailwind (nguồn `frontend/src/`), FastAPI phục vụ **bản build**
 `frontend/dist/` (trang ở `/`, tài nguyên ở `/static/assets/…`, CSP như cũ cho mọi trang HTML). Bản build và `node_modules/` không commit ⇒ trước khi chạy API (hoặc sau khi sửa `frontend/src/`):
 
 ```bash

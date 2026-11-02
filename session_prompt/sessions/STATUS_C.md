@@ -1,3 +1,45 @@
+# STATUS C — PHIÊN 02/11
+
+## C119 — review cả nhánh `giao-dien-moi` `11a0f3a` (B121) (A giao 10:19 02/11/2026; việc A giao = User "làm đi")
+- Skill `risk-gated-agent-review`; không đọc `STATUS_B.md`; build lại từ lockfile sạch trong worktree riêng `/tmp/c119` (không dùng `/tmp/b_giao_dien`); server tạm cổng trống; trần 0,01 USD.
+- **File sẽ ghi (khai báo):** `report_agent/2026-11-02_giao_dien_moi_code/b121_review.md` (mới, working tree chung); worktree `/tmp/c119` + script dò `/tmp/c119_probe/` (gỡ khi xong); bằng chứng private `data/giao_dien_moi_2026-11-01/c119_review/`; dòng trạng thái C119 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (10:27 02/11/2026): ready_for_user_confirmation**, 0 blocker / 0 major / 2 minor — `b121_review.md` `efb54611679f`. npm ci + build sạch (86 gói, 0 ngoài registry); pytest 12 passed + 1 error (cần khoá, đã biết);
+  server thật 8823: 2 câu, 2 dòng `chat_metrics`, grep câu = 0, CSP giống từng chữ; Playwright của C: 0 link trước `sources` (18 lần thăm), payload lạ (javascript: / data: / mXSS svg-math / base / form…) ⇒ 0 script, 0 request ngoài, thẻ ⊆ danh sách.
+  m-1: lỗi mạng / 502 HTML / JSON hỏng hiện chữ kỹ thuật tiếng Anh (có từ bản cũ). ≈ 0,0006 USD. Server tắt; worktree + `/tmp/c119_probe` gỡ; bằng chứng `data/giao_dien_moi_2026-11-01/c119_review/`.
+
+## C118 — spec Phase 9 bản 1 (A giao 09:53 02/11/2026, commit `411bbc5`; việc A giao = User "làm đi")
+- 0 USD; không code, không mở câu kín / nhóm `test` theo câu; đọc kho chỉ `scripts/grep_kb.sh`.
+- **File sẽ ghi (khai báo):** `docs/superpowers/specs/2026-11-02-phase-9-design.md` (mới); mục C118 (dòng trạng thái) trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG bản 1 (10:02 02/11/2026) — chờ review:** spec `e5be02400646` (351 dòng, untracked). Quét: overlap_scan 0 trùng; 0 tên dự án khác / giờ ước / secret; không `TBD`. 0 USD.
+  Thử nhỏ 0 USD (chỉ in số): luật từ chỉ thời gian khớp 1 / 176 Golden, 2 / 32 bộ an toàn; kho (`grep_kb.sh`, đếm thô): `travel/places` 36 file — 24 tọa độ / 25 giờ / 16 thời lượng; 37 file "âm lịch"; 30 file "giá vé".
+  Lệch đề xuất A (ghi lý do trong spec): H1 bậc 1 (tầng tìm) lên tuần 1 (Q1); H4b chỉ làm sau bước 0 thử 10 câu — chưa có lỗi quan sát (Q2); H3 = 3 câu hỏi + đoạn 1 lượt thay "3–5 lượt" (Q4).
+  C viết spec ⇒ C không review spec này.
+- A nhận (sha tính lại khớp), đang review bằng sub-agent ngữ cảnh mới. **C giữ nguyên file tới khi có review.** C rảnh chờ A; không việc nặng / paid (B đang code, có thể chạy Playwright).
+- **Review vòng 1 (A, sub-agent): changes_requested** 0 blocker / 4 major / 8 minor — `docs/superpowers/specs/2026-11-02-phase-9-design_review.md`.
+- **Bản 2 (10:18 02/11/2026) — `d819918c2f2e`** (557 dòng; quét trùng 0; 0 tên dự án khác / giờ ước / TBD; 0 USD): sửa hết 12 finding, 0 phản biện; mục "Trả lời review vòng 1" cuối file.
+  Chính: H4c năm nguồn trên thẻ nguồn (M1) + Q2 thêm (c) câu điều kiện; H1b câu hai ý thiếu một ý (M2); §4 mốc chung `main` đầu Phase 9, cộng dồn, sinh lại 3 lần cho P0_sai (M3), tập quyết / kín không ngược chiều (M4);
+  bước 0 dấu vân tay chuỗi gửi model (m4); lịch + 5 luật cắt theo thứ Hai (m5); Q1–Q8.
+  Đếm thêm 0 USD: câu thử TRIPO 2 — tên di tích cùng dòng giá 36 dòng / 11 file, cùng dòng giờ 11 dòng / 6 file; nguồn có năm 130 / 143 file, ngày đủ chỉ 2 / 6 file tickets; Golden nhiều nguồn dev 20 / test 9, so sánh 17 / 8.
+- **Review vòng 2: changes_requested** (12/12 vòng 1 đóng; N1 major H1b phòng xa + N2–N5 minor). **Bản 3 (10:32 02/11/2026) — `7c67656f0ff8`** (507 dòng; quét trùng 0): sửa hết, 0 phản biện; bảng "Trả lời review" vòng 1 + 2.
+  H1b ⇒ bước 0 (< 3 câu ⇒ không làm); S-G thêm sàn F1–F4; H4a rồi H4c lần lượt; câu hỏi User 5 (Q1 cũ thành "A quyết"); trần 0,30 thành dòng mặc định.
+  Bẫy mới: số "130 / 143" bản 2 đếm qua ống `grep -A15 | sed` bị lỗi (sed cắt nhầm vì không có số dòng) — đếm lại bằng script trên danh sách file: 111 / 123 / 143. ⇒ Đếm theo file: lấy danh sách bằng `grep_kb.sh -l` rồi mới xử lý từng file; kiểm tổng ≤ mẫu số trước khi ghi.
+- **Review vòng 3: changes_requested** (N1, N3–N5 đóng; N2′ major: H4c đếm `^## Nguồn` gộp cả "Nguồn gốc", đếm cả kho). **Bản 4 (10:38 02/11/2026) — `589bec308f41`** (531 dòng; quét trùng 0):
+  đếm lại `^## Nguồn dữ liệu` trên 3 thư mục đích = 13 / 69 (19 %), khớp review + A; ngưỡng ghi trước < 50 % ⇒ không hiện năm ⇒ C đổi khuyến nghị Q2 sang dòng cố định "có thể đã thay đổi" (code theo thư mục nguồn).
+  Sửa kéo theo cùng nghĩa ở §1 / §2 / §3 / §9 (đã khai trong bảng trả lời). Vòng 4 là lượt cuối theo skill.
+  Bẫy: (1) mẫu `^## Nguồn` khớp cả mục lịch sử "Nguồn gốc" — mẫu đếm phải đúng **tên mục**, và đếm trên **đúng tập đích** của tính năng, không cả kho; (2) sửa văn bản bằng `python3` hệ thống (không `uv run`) — lần sau dùng Edit.
+- **Bẫy (vòng cải tiến):** bản 1 (1) đổi nghĩa 2 ý trong hướng User (H4 "ghi nguồn ngày", "câu an toàn") mà không khai thành chỗ lệch; (2) bỏ lặng một mục "thêm vào danh sách thử" của báo cáo; (3) đếm "chỉ in số" không ghi mẫu ⇒ người khác không lặp lại được.
+  ⇒ Khi viết spec từ một hướng đã chốt: liệt kê **từng ý** của nguồn hướng (báo cáo §1 + §6 từng dòng) và đánh dấu mỗi ý: trong / ngoài / hiểu thế nào — trước khi viết phần thiết kế; mọi số đếm ghi mẫu ngay cạnh.
+
+# STATUS C — MỞ PHIÊN 02/11 (09:47 02/11/2026 `date`)
+
+- Terminal C: `hue-rag-29`. B = `hue-rag-d6` (B tự báo) ⇒ A = `hue-rag-7e` (B xác nhận). Kênh: trực tiếp.
+- Kiểm nhanh (chỉ đọc): `main` `9c86a98`, working tree sạch, không untracked; hooksPath `.githooks`; Qdrant 1 collection, 8.424 point (khớp `Project_Status.md` §4);
+  nhánh chỉ `main` + 4 nhánh worktree AGY cũ (đúng câu hỏi 5 cho User trong handoff).
+- Việc dự kiến của C (handoff "Thứ tự việc phiên sau" mục 2, B3 = (a)): viết **một spec Phase 9** (an toàn + hỏi lại + nhớ ngắn + lịch trình nhỏ + thử câu nhiều nguồn, tiêu chí ghi trước) để User duyệt —
+  **chưa có mục việc C riêng** trong handoff ⇒ chờ A giao. Chưa sửa file nào ngoài file này.
+- **A báo quyền phiên 02/11 (User 09:47 02/11/2026):** như 01/11 — A tự điều phối, ≤ 1 USD, B / C push nhánh riêng. A giao mục việc spec Phase 9 sau khi xong câu hỏi gói npm cho B.
+- **User (09:49 02/11/2026, ghi bằng `date`):** C làm việc trực tiếp với A; việc A giao = User nói "làm đi". Chờ A giao việc.
+
 # STATUS C — KẾT PHIÊN CHIỀU 01/11 (chốt 16:32 01/11/2026 `date`; User kết phiên)
 
 ## C117 — kiểm 8 ý trong kết quả ChatGPT nghiên cứu Phase 9 (A giao, bắt đầu 15:39 01/11/2026; phiên tới 16:30, dừng 16:15)
