@@ -1,16 +1,18 @@
-# STATUS B — cập nhật 15:12 02/11/2026 (KẾT PHIÊN 02/11: B121–B124 xong; spec Phase 9 bản 9 User duyệt `169c2dd5f86a` — việc tiếp của B: B0, đọc mục "Phiên sau: B0")
+# STATUS B — cập nhật 19:08 02/11/2026 (PLAN B0 BẢN 2 `c126e7432c82` chờ C kiểm phần sửa; B126 số khẩn cấp xong — A nhận đạt)
 
-Terminal phiên 02/11: `hue-rag-d6` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-7e`, C = `hue-rag-29` (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
+Terminal phiên tối 02/11: `hue-rag-e7` (A = `hue-rag-24`, C = `hue-rag-cc`); phiên sáng: `hue-rag-d6` (A `hue-rag-7e`, C `hue-rag-29`) · Agent: Claude Opus 5.5 · Vai: thực thi (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B. Tên terminal đổi mỗi lần mở ⇒ `ListAgents`.
 Phiên 02/11: User nói ở terminal B (09:49 02/11/2026, giờ B ghi bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền phiên (≤ 1 USD, B / C push nhánh riêng) **hết hạn cuối phiên**.
 
 ## Đang làm / dở
-- **Không** (kết phiên 14:49 02/11/2026). Không job nền, không server, không worktree; file tạm `/tmp` của B121–B123 đã xoá.
-- Nhánh `giao-dien-moi` (đã merge `ed8e6e8`) còn trên máy + `origin` — A đề xuất User xoá (User `!`).
-- **Việc tiếp (phiên sau):** bậc **B0** của spec Phase 9 bản 9 (User duyệt, sha `169c2dd5f86a`) — chờ A giao mục việc trong `CURRENT_HANDOFF.md`; xem mục "Phiên sau: B0" dưới.
+- **Phiên tối 02/11** (mở 18:27): User nói ở terminal B (18:30 02/11/2026): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền phiên như 02/11 (A báo: ≤ 1 USD, B / C push nhánh riêng) — hết hạn cuối phiên (22:00).
+- **B125 — viết plan B0** (A giao 18:33 02/11/2026; mục việc `CURRENT_HANDOFF.md` "Việc đang mở — phiên tối 02/11"): chỉ plan, chưa code, 0 USD. Đầu ra `docs/superpowers/plans/2026-11-02-phase-9-b0-plan.md`.
+  **Xong 18:40 02/11/2026:** bản 1 sha `592a519bdd91` — chờ C review (C124); B không sửa plan sau khi báo sha. **Bản 2 19:08 02/11/2026** sha `c126e7432c82`: sửa theo review C124 (`…_plan_review.md` `b4f8be175140`) — M-1 chuẩn hoá T-2 ghi trước (Omit, `prompt_cache_key`, header stream; HEAD 2 lần trước), m-1 T-3 cây AST, m-2 `huggingface_hub`, m-3 3 chỗ test, m-4 T-1 script riêng. Chờ C kiểm phần sửa. Quyết định chính D1–D7 (đổi tên lõi, `tim_kho` hàm thường, ranh giới mạng theo cây `api.app`, sổ nguồn tối thiểu, `CallLog` mỗi lượt, vòng stream ở lại `chat.py`, tuyến `tro_ly_hue`); tiêu chí T-1…T-9; ước 0,003 / trần 0,01 USD.
+- **B126 — kiểm số khẩn cấp VN** (A giao 19:00 02/11/2026, trong lúc chờ C124): tra web `scripts/tra_web_codex.sh` + WebFetch 1–2 nguồn chính thức; 0 USD, không sửa code. Đầu ra `data/phase_9/so_khan_cap.md`. **Xong 19:05 02/11/2026:** 113 / 114 / 115 / 112 [Mở] nguồn chính thức (Luật 55/2024 Điều 6 số 114; Luật Viễn thông Điều 25 miễn phí; QĐ 2023/QĐ-TTg số 112; Kế hoạch 642 gộp về 113 tới 2027, chưa vận hành); Codex mở 0 trang ⇒ B tự WebFetch + `pdftotext`.
+- Nhánh `giao-dien-moi` đã xoá (User `!` 15:15 02/11, `a17a596`). Không job nền, không server, không worktree.
 
 ## Đang khai báo sửa
-- không
+- không (plan bản 2 xong)
 
 ## Phiên 02/11 đã xong
 | Việc | Kết quả | File / commit |

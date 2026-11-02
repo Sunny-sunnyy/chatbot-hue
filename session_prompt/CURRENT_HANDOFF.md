@@ -40,13 +40,53 @@ clone / worktree mới hoặc sửa `frontend/src/` ⇒ `cd frontend && npm ci &
 **Mã hay gặp:** B0–B7 = bậc Phase 9 (spec §5); P1–P5 = câu User đã chọn 14:42 02/11 (spec §10); V0–V3 = phương án câu tìm kho (B2a); [w n] = trích dẫn web; T1 = kết quả tìm 158 câu (so "giống byte");
 S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.md`; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc A giao B / C.
 
+## Việc đang mở — phiên tối 02/11 (User "làm đi" theo kế hoạch tuần, A ghi nhận 18:32 02/11/2026)
+
+Đợt: `report_agent/2026-11-02_phase_9_code/` (report từng việc). Dữ liệu chạy: `data/phase_9/<việc>/` (private). Spec: bản 9 sha `169c2dd5f86a` — đọc §3–§5, §7–§8 (full-read §5 phần bậc mình làm).
+Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_rag_roadmap.md` (đã thay — chỉ reference), `…_design_review.md`, `…_design_review_v6.md`. Không có lượt đo latency trong phiên này (W31 không chặn).
+
+### B125 — viết plan B0 (B, `hue-rag-e7`) — **bản 2 19:08 02/11/2026 (sửa theo review C124 M-1, m-1…m-4), sha `c126e7432c82` — chờ C kiểm phần sửa**; bản 1 `592a519bdd91`; 0 USD
+- **Mục tiêu:** plan B0 theo spec §5 B0 + "Kế hoạch chi tiết tuần" ở trên (gồm 3 câu B hỏi / A trả lời và 2 rủi ro B / C ghi). Chỉ viết plan, **chưa code**.
+- **Đọc:** spec §3, §4, §5 B0, §7, §8 (full); `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md`; `backend/llm/grounded_answer.py`, `backend/retrieval/full_corpus.py` (targeted).
+- **Đầu ra:** `docs/superpowers/plans/2026-11-02-phase-9-b0-plan.md`, đầu file có mục **"Căn cứ để review"** (2–4 file, mục cần đọc); tiêu chí ghi trước: S-T1 giống byte, `answer_case` qua lõi chung = chuỗi gửi model giống byte + T1 giống byte, test danh sách module được import client mạng, không công cụ nhận URL, log đủ trường (USD + ms mỗi lần gọi / câu / tuyến), grep câu hỏi / mã phiên trong log = 0; không để hai lõi.
+- **Không làm:** sửa code / test, gọi API trả phí (plan 0 USD; ước tiền lượt kiểm B0 ≈ 0,003 USD ghi trong plan), mở bộ đo kín của C.
+- **Xong ⇒** báo A sha plan (tính từ file); A giao C review (C124). Người viết không sửa plan sau khi báo sha.
+
+### C122 — bước 0 khẩn cấp (C, `hue-rag-cc`) — **XONG 18:38 02/11/2026, chờ User đọc** (report `c122_khan_cap_buoc0.md` `60b0c14b9e72`; bản cho User `data/phase_9/khan_cap_buoc0/doc_cho_user.md` `b4aca2f4770c`; 10 / 10 câu từ chối chuẩn, 0 nguồn; 0,0025 USD)
+- **Mục tiêu:** spec §5 B0 "Bước 0 khẩn cấp": ~10 câu khẩn cấp **tự viết** (cháy, trẻ lạc, đuối nước, cấp cứu, ngộ độc…; người dùng thật gõ, có dấu) qua chatbot hôm nay ⇒ **User đọc** 10 câu trả lời.
+- **Cách chạy:** server tạm cổng trống (`cd backend && HF_HUB_OFFLINE=1 uv run --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port <cổng>`), gọi `/api/chat`; tắt bằng TaskStop (không `pkill -f`). Trần **0,01 USD** (ước 0,003); ghi token + USD từ log.
+- **Đầu ra:** câu + trả lời ở `data/phase_9/khan_cap_buoc0/` (private); bản để User đọc dạng dễ đọc trong cùng thư mục; report ngắn `report_agent/2026-11-02_phase_9_code/c122_khan_cap_buoc0.md` (mức loại câu, không chép câu trả lời). Không tự kết luận "cần / không cần" — User đọc rồi quyết.
+- Câu này dùng lại làm bộ khẩn cấp "đã thấy" của B1.
+
+### C123 — viết bộ đo B1 + mẫu Golden ~30 câu (C) — **XONG 18:44 02/11/2026; phần kín khẩn cấp (C125) xong 19:07** (report `c123_bo_do_b1.md` `8293d7acf873`; mục lục `data/phase_9/bo_do_b1/README.md` `e34248dd5749`; `khan_cap_sealed.jsonl` `15a41db0c741` 8 + 8 câu; 0 USD)
+- **Mục tiêu:** spec §4 + §5 B1: bộ tuyến (~40 đã thấy + phần kín; có 5 ca lái tuyến), bộ ngày (dùng lại 15 câu `data/do_cuoi_2026-11-01/ngay/`; 12 câu quyết), bộ khẩn cấp (10 câu C122 + phần kín); mẫu Golden ~30 câu từ cả 176 (6 / loại × 5 loại, seed ghi trước, chỉ hồi quy).
+- **Đầu ra:** `data/phase_9/bo_do_b1/` (phần kín tên `*sealed*`; **B không mở**); report `report_agent/2026-11-02_phase_9_code/c123_bo_do_b1.md` (số đếm, md5, cách chọn — không nội dung câu). 0 USD.
+- Ưu tiên: khi B báo plan B0 xong ⇒ C dừng C123, làm C124 trước.
+
+### Quyết định khẩn cấp (User, A ghi nhận 19:00 02/11/2026)
+- User đọc kết quả C122 qua tóm tắt của A ⇒ **"chỉ từ chối" câu khẩn cấp = LỖI, sửa gọn ở B1**: luật code nhận câu khẩn cấp ⇒ câu soạn sẵn cố định (113 công an · 114 cứu hoả / cứu nạn · 115 cấp cứu), không sơ cứu, không vào model.
+  Số phải kiểm nguồn công khai (B126). Sàn spec §5 B1 giữ: 0 câu khẩn cấp vào model; 0 câu thường bị chặn.
+- Bộ khẩn cấp có **phần kín** (A quyết, lệch spec §4 "10 / —"): luật do B viết sau khi thấy 10 câu ⇒ cần câu chưa thấy để bắt luật khớp riêng; C viết ~8 câu khẩn cấp kín + ~8 câu thường dễ nhận nhầm, B không mở.
+
+### B126 — kiểm số khẩn cấp Việt Nam (B) — **XONG** (0 USD; `data/phase_9/so_khan_cap.md`; Codex mở 0 trang ⇒ B WebFetch / pdftotext từng nguồn; A WebFetch kiểm lại 2 nguồn 19:06 02/11/2026: Học viện PCCC 30/09/2026 — 113 / 114 / 115 khớp; Báo Chính phủ 15/09/2025 — 112 khớp, miễn cước)
+- **A quyết câu soạn sẵn B1 (19:06 02/11/2026, chi tiết trong phạm vi):** nêu **113** công an · **114** cháy, cứu nạn · **115** cấp cứu · **112** thiên tai / lũ lụt (Huế hay lũ; nguồn chính thức, miễn cước). Không nêu số địa phương, không "đã gộp về 113", không hứa gọi khi không SIM.
+- **Trước bảo vệ / deploy:** kiểm lại — Bộ Công an Kế hoạch 642 (07/08/2026) gộp 113 / 114 / 115 về 113, giai đoạn 1 tới 2027 (B126).
+
+**Plan B0 DUYỆT — bản 2 sha `c126e7432c82`** (A duyệt 19:20 02/11/2026, sha tính từ file; review C124 vòng 2 ready `…_plan_review.md` `afa3ed23cc68`). ⇒ **B127 code B0** trong worktree nhánh `p9-b0` theo plan; trần B0 0,01 USD; xong ⇒ report `report_agent/2026-11-02_phase_9_code/b127_b0_implementation.md` ⇒ C review cả nhánh ⇒ cổng ổn định ⇒ A merge.
+**User 19:20 02/11/2026: "làm đi, đừng hỏi tôi"** ⇒ A tự quyết trong quyền phiên (≤ 1 USD, A commit / push), chỉ báo kết quả; việc luật bắt User `!` (xoá dữ liệu / nhánh) vẫn đưa lệnh.
+**C126 xong** (`c126_uoc_loi_cache.md` `9bd3b71716aa`): khoá cố định lợi ≈ 0 (tiền tố chung ≈ 148 token < ngưỡng 1.024); tắt ghi đệm −13,3 % / câu. **A quyết:** không làm bây giờ (đã dưới sàn tiền, chất lượng trước) ⇒ danh sách "tối ưu tiền sau khi ổn"; plan B3 (nhớ hội thoại) xét khoá theo phiên.
+(cũ) **B rảnh có lý do:** chờ C124 (~20–30 phút); việc kế của B = sửa plan theo review ⇒ code B0 — giao việc khác dễ chồng file / lộ bộ đo B1.
+
+### C124 — review plan B0 (C) — **Vòng 2 19:10 02/11/2026: ready_for_user_confirmation trên bản 2 `c126e7432c82`** (5 / 5 finding đóng; review `afa3ed23cc68`). Vòng 1 19:05: changes_requested (1 major M-1 T-2 chuỗi gửi model không ổn định trên HEAD + 4 minor; review `…_b0-plan_review.md` `b4f8be175140`; C chỉ kiểm lại phần sửa) (giao 19:00 02/11/2026; bản sha `592a519bdd91`; chú ý D3 ranh giới mạng, D6 vòng stream ở `chat.py` ↔ spec §3, giờ ước "18:3x" trong plan = minor). Sau đó: phần kín bộ khẩn cấp (C125).
+- Chỉ dựa "Căn cứ để review" trong plan (không đọc STATUS / tin nhắn của B); `risk-gated-agent-review`; ghi `docs/superpowers/plans/2026-11-02-phase-9-b0-plan_review.md`. Đạt ⇒ A duyệt sha (tính từ file).
+
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
 1. **Quyền phiên.** A khuyên: như 02/11 (A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push; B / C push nhánh riêng).
 2. ~~**Xoá nhánh `giao-dien-moi`**~~ **XONG 15:15 02/11/2026** (User `!` xoá local + origin). Cũ: (local + origin): đã merge `ed8e6e8`; `git log main..giao-dien-moi` rỗng (A kiểm 14:52 02/11/2026) — User `!`
    (`git branch -d giao-dien-moi` + `git push origin --delete giao-dien-moi`).
-3. **Rà bảo mật C106 còn chờ User** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): R4 cắt 22 dòng log cũ chứa nguyên câu hỏi thử; các mục deploy để lúc deploy.
-4. **Sổ cải tiến chờ User:** W35 (kiểm điều khoản trước công cụ / tài khoản ngoài mới — 02/11 đã làm thực tế với Serper), W42, W43.
+3. **Rà bảo mật C106** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): **R4 User chọn cắt** 22 dòng log cũ "Received question" (A ghi nhận 18:35 02/11/2026; A đếm lại 22) — khi **không server nào chạy** (sau C122), sao lưu rồi User `!`; các mục deploy để lúc deploy.
+4. **Sổ cải tiến:** W35 **User không chọn** (18:38 02/11/2026: over-engineer — đồ án, chỉ tra cứu web). W42, W43: A **không hỏi lẻ** nữa (User muốn tiến Phase 9, ít nghi thức) — xét gộp ở vòng cải tiến kết phiên, mặc định đề xuất bỏ trừ khi có sự cố mới.
 5. Không gấp: 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`) giữ hay gỡ (User `!`)? Xoá sao lưu kho đợt 1 + 2?
 
 ## Câu hỏi A còn nợ (không cần User)
@@ -62,22 +102,27 @@ S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.
   - **Rủi ro B ghi cho plan B0:** đã có lõi chung `backend/llm/grounded_answer.py` ⇒ `assistant.py` bọc / thay, **không để hai lõi**; S-T1 qua `tim_kho` so danh sách chunk bên trong, không so chữ đã định dạng.
   - **Ghi cho plan B0 (rủi ro C thấy trước):** tiêu chí "`answer_case` ra đúng câu trả lời đường RAG 1–8" phải đo bằng **chuỗi gửi model giống byte + T1 giống byte**, không so chữ trả lời (model không tất định).
 
+- **C126 (C, đang làm, 0 USD):** ước lợi thí nghiệm cache key bằng số từ log + tra tài liệu OpenAI ⇒ `report_agent/2026-11-02_phase_9_code/c126_uoc_loi_cache.md`; ưu tiên kiểm plan B0 bản mới nếu B báo.
+- **Ứng viên tối ưu tiền (giả thuyết, C124 phát hiện, A kiểm 19:07 02/11/2026):** SDK 0.19.4 gán `prompt_cache_key` = `agents-sdk:run:<ngẫu nhiên>` mỗi `Runner.run` (`agents/run_internal/prompt_cache_key.py:124-129`); 40 dòng `chat_metrics` gần nhất `cached_tokens` = 0, `cache_write_tokens` ≈ 1.872 / câu ⇒ mỗi câu trả giá ghi đệm (0,125 / 1M, đắt hơn vào thường 0,10) mà không đọc lại. Phần chung giữa các câu chỉ là lời dặn (10 đoạn kho khác nhau mỗi câu) ⇒ lợi có thể nhỏ. Làm **thí nghiệm riêng sau B0** (`run-experiment`: key cố định ↔ hiện tại, đo USD / câu + chữ đầu), không trong B0.
 - Bảng sổ cải tiến: S41–S44 thiếu 1 cột từ trước. W39 hạn 07/11 (0 buổi D ⇒ đề xuất gỡ W4 + W39).
 - Log `FileHandler` không xoay vòng — xem lại khi deploy. Hạn mức tín dụng phía OpenAI cho key — chưa kiểm. Hạn mức trả trước phía Serper — đặt khi tới B6.
 
 ## Session
 
-| Vai | Terminal (02/11 — kết phiên 14:52) | Agent | Liên lạc | Phiên 02/11 | Trạng thái kết phiên |
+| Vai | Terminal (phiên tối 02/11, mở 18:27) | Agent | Liên lạc | Phiên tối 02/11 | Trạng thái |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-7e` | Claude Opus 5.5 | trực tiếp | điều phối; merge giao diện; 3 sub-agent khoá FDE; yêu cầu ChatGPT; review spec bằng sub-agent; vòng cải tiến 14 | `STATUS_A.md` |
-| B — thực thi | `hue-rag-d6` | Claude Opus 5.5 | trực tiếp | B121 giao diện, B122 tra web, B123 dò SDK, B124 review governance | `STATUS_B.md`; ≈ 0,002 USD |
-| C — thực thi | `hue-rag-29` | Claude Opus 5.5 | trực tiếp | C118 / C120 spec Phase 9 (bản 1–9), C119 review giao diện, C121 thử SDK 0.24 | `STATUS_C.md`; ≈ 0,0006 USD |
+| A — điều phối | `hue-rag-24` | Claude Opus 5.5 | trực tiếp | điều phối | `STATUS_A.md` |
+| B — thực thi | `hue-rag-e7` | Claude Opus 5.5 | trực tiếp | B125 plan B0 | `STATUS_B.md` |
+| C — thực thi | `hue-rag-cc` | Claude Opus 5.5 | trực tiếp | C122 khẩn cấp ⇒ C123 bộ đo B1; C124 review plan B0 | `STATUS_C.md` |
+
+Phiên sáng / chiều 02/11 (terminal cũ `hue-rag-7e` / `-d6` / `-29`): B121–B124, C118–C121 — `archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`.
 
 Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau: không việc đang chạy ⇒ kiểm nhanh ⇒ báo A ⇒ chờ.
 
 ## Quyền
 
-- **Phiên 02/11 — HẾT HẠN cuối phiên** (User, A ghi nhận 09:48 02/11/2026): như 01/11 — A tự điều phối + tự thử; ≤ 1 USD; A tự commit / push; B / C push nhánh riêng. Tiền phiên 02/11 ≈ **0,003 USD** paid
+- **Phiên tối 02/11 — hết hạn cuối phiên** (User chọn "như 02/11", A ghi nhận 18:32 02/11/2026): A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push (hỏi User trước theo luật chung); B / C push nhánh riêng. **Kết phiên 22:00 02/11/2026** (User, nói lúc 18:32) — A bắt đầu kết phiên ~21:30; B / C ghi STATUS + report dở trước ~21:40.
+- (cũ) **Phiên 02/11 — HẾT HẠN cuối phiên** (User, A ghi nhận 09:48 02/11/2026): như 01/11 — A tự điều phối + tự thử; ≤ 1 USD; A tự commit / push; B / C push nhánh riêng. Tiền phiên 02/11 ≈ **0,003 USD** paid
   (B ≈ 0,002 · C ≈ 0,0006 · A 0; sub-agent + judge dùng quota Claude).
 - **Phase 9 (spec duyệt, không hết hạn theo phiên):** trần **2,0 USD** cả Phase; Serper dùng luôn (User chấp nhận rủi ro điều khoản — spec §2, §7); gói npm giao diện như đã duyệt 02/11.
 - **Thường trực:** A commit / push — **hỏi User trước** (luật chung của User), rồi A tự chạy; chỉ khi bị chặn / lỗi mới đưa `!` (I8, `WORKFLOW.md` §9.6); B / C không commit trừ khi việc ghi rõ; duyệt cho A =

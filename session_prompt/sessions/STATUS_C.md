@@ -1,3 +1,59 @@
+# STATUS C — MỞ PHIÊN TỐI 02/11 (18:28 02/11/2026 `date`)
+
+- Terminal C: `hue-rag-cc`. B = `hue-rag-e7` (B tự báo) ⇒ A = `hue-rag-24` (suy ra, chờ A xác nhận). Kênh: trực tiếp. Đã gửi báo cáo mở phiên cho cả hai.
+- Kiểm nhanh (chỉ đọc): `main` `a17a596`, working tree sạch, không untracked; hooksPath `.githooks`; Qdrant 1 collection, 8.424 point (khớp `Project_Status.md` §4);
+  `frontend/dist/` có sẵn; worktree chỉ `main` + 4 worktree AGY cũ; nhánh local chỉ `main` + 4 nhánh AGY (đã xoá `giao-dien-moi` — khớp handoff).
+- Việc của C: chưa giao (handoff chỉ có đề xuất: review plan B0, bước 0 khẩn cấp, viết bộ đo B1). Chưa sửa file nào ngoài file này. Chờ A.
+- **User (18:30 02/11/2026, ghi bằng `date`):** C làm việc trực tiếp với A; việc A giao = User nói "làm đi". Chờ A giao việc.
+- **A xác nhận** A = `hue-rag-24`; quyền phiên tối 02/11 (User cấp lại): như 02/11 sáng — A tự điều phối, ≤ 1 USD / phiên, B / C push nhánh riêng; hết hạn cuối phiên.
+  Việc dự kiến của C: bước 0 khẩn cấp, bộ đo B1 + mẫu Golden 30 câu, review plan B0 — chờ A ghi mục việc trong handoff rồi nhắn.
+
+## C122 — bước 0 khẩn cấp (A giao 18:33 02/11/2026; tin A = "làm đi")
+- ~10 câu khẩn cấp tự viết qua `/api/chat` của chatbot hiện tại, server tạm cổng trống, tắt bằng TaskStop. Trần 0,01 USD (ước 0,003). Không tự kết luận cần / không cần — User đọc.
+- **File sẽ ghi (khai báo):** `data/phase_9/khan_cap_buoc0/` (câu, trả lời thô, bản dễ đọc cho User, số token / USD, script gọi); `report_agent/2026-11-02_phase_9_code/c122_khan_cap_buoc0.md` (mới);
+  dòng trạng thái C122 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (18:38 02/11/2026) — chờ User đọc (A trình).** Report `c122_khan_cap_buoc0.md` `60b0c14b9e72` (quét trùng 0; không tên nơi); `cau_hoi.jsonl` `32deefcca1b8`, `tra_loi.jsonl` `b534222ed1af`,
+  `doc_cho_user.md` `b4aca2f4770c`, `tools/chay_khan_cap.py` `f17fcff7e290`. Server 8841: /health 5 / 5, / 200; 10 HTTP 200; 10 dòng `chat_metrics` mới; câu lọt log 0; tắt bằng TaskStop.
+  **Quan sát:** 10 / 10 câu từ chối chuẩn, 0 nguồn, không nhắc số khẩn cấp. Kho (đếm thô): "cấp cứu" 1 file, "115" 1, "114" / "113" 0. **Tiền 0,0025169 USD.** C không kết luận cần / không cần.
+- Tiếp: C123 (bộ đo B1 + mẫu Golden 30 câu), 0 USD.
+
+## C123 — bộ đo B1 + mẫu Golden ~30 câu (A giao cùng tin C122; bắt đầu 18:39 02/11/2026)
+- 0 USD. Không code B1; phần kín tên `*sealed*`, B không mở; đọc kho chỉ `scripts/grep_kb.sh`. Report chỉ số đếm / md5 / cách chọn.
+- **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b1/` (luật gán nhãn, bộ tuyến đã thấy + `*sealed*`, ca lái tuyến, bộ ngày mới đã thấy + `*sealed*`, chỉ dẫn bộ ngày cũ + bộ khẩn cấp, mẫu Golden, mẫu 10 câu cho User, script chọn mẫu);
+  `report_agent/2026-11-02_phase_9_code/c123_bo_do_b1.md` (mới); dòng trạng thái C123 trong `CURRENT_HANDOFF.md`; và file này.
+- **Ghi trước (18:39 02/11/2026) — mẫu Golden:** Golden md5 `6331e88fb171`; `random.Random(20261102)`; với từng loại theo thứ tự `direct_fact, multi_source, conditional, comparative, out_of_scope`:
+  `rng.sample(sorted(case_index của loại đó), 6)` (dùng chung một `rng` theo thứ tự trên) ⇒ 30 `case_index`, sắp tăng dần. Không lọc theo độ tự nhiên (spec §4 không ghi); không chọn lại.
+- **Tiến độ (18:41 02/11/2026):** xong — mẫu Golden `mau_golden_30.json` `d6ed2bd16936` (danh sách md5 `66c389f25270`; script `7908bb8048dd`); luật gán nhãn `luat_gan_nhan_tuyen.md` `fca8d706e9e9` (ghi trước câu);
+  bộ tuyến đã thấy `tuyen_da_thay.jsonl` `4cbc52a660c8` (40: Huế 20 / trò chuyện 8 / ngoài 8 / khẩn cấp 4), kín `tuyen_sealed.jsonl` `83f274b9bbec` (20: 10 / 4 / 4 / 2), ca lái tuyến `lai_tuyen.jsonl` `d318535624bf` (5).
+  **Còn:** bộ ngày (chỉ dẫn 15 cũ + 10 mới 3 / 7 cần đáp án từ kho), chỉ dẫn bộ khẩn cấp (10 câu C122), mẫu 10 câu cho User, report. Bộ khẩn cấp phần kín: spec §4 ghi "10 / —" ↔ handoff "+ phần kín" — hỏi A.
+  B125 plan B0 xong (handoff) ⇒ chờ A nhắn để dừng C123, làm C124.
+- **XONG (18:44 02/11/2026) trừ phần kín bộ khẩn cấp:** report `c123_bo_do_b1.md` `463e3ad577da` (quét trùng 0); `README.md` `b293d53e4119`; ngày mới đã thấy `ngay_moi_da_thay.jsonl` `4d398d290f2c` (3), kín `ngay_moi_sealed.jsonl` `8ad6e0058122` (7);
+  `mau_cho_user.md` `1e8772e0732a`. Bộ ngày cũ 15 câu md5 `722d7c92ae9e`, bộ khẩn cấp = `khan_cap_buoc0/cau_hoi.jsonl` md5 `b0b0c444d489`. 0 USD. Hỏi A: phần kín khẩn cấp (spec "10 / —" ↔ handoff "+ kín").
+- **A trả lời:** User chốt "chỉ từ chối = lỗi, sửa gọn" ⇒ B1 có luật code khẩn cấp ⇒ **cần phần kín**: sau C124, C viết ~8 câu khẩn cấp kín + ~8 câu thường dễ nhầm (`khan_cap_sealed.jsonl`), B không mở, 0 USD.
+
+## C124 — review plan B0 (A giao 19:00 02/11/2026; tin A = "làm đi")
+- Plan `docs/superpowers/plans/2026-11-02-phase-9-b0-plan.md` sha `592a519bdd91` (C tính lại từ file — khớp). Chỉ dựa "Căn cứ để review"; không đọc `STATUS_B` / tin B. A lưu ý: D3 cây import `api.app`; D6 vòng stream ở `chat.py` ↔ spec §3; hook báo giờ ước trong plan ⇒ minor.
+- **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-02-phase-9-b0-plan_review.md` (mới); script dò tạm `/tmp/c124_*` (xoá khi xong); dòng trạng thái C124 trong `CURRENT_HANDOFF.md`; và file này.
+  Thêm: bản sao 2 script dò để chạy lại `data/phase_9/c124_review/{d3.py b7baec658959, t2.py 41d7d7bf030d}` (private).
+- **XONG (19:05 02/11/2026): changes_requested** — review `b4f8be175140` (quét trùng 0). **M-1:** T-2 không đo được: kwargs có `openai.Omit` (json.dumps lỗi), `prompt_cache_key` = `agents-sdk:run:<ngẫu nhiên>` mới mỗi lần
+  `Runner.run` ⇒ 4 lần 4 sha; thường ↔ stream khác thêm `extra_headers`. m-1 T-3 dựa `sys.modules` bỏ sót import lười (hôm nay chỉ `ingestion.preview`, không mạng ⇒ 0 lọt); m-2 thiếu `huggingface_hub`;
+  m-3 `test_api_chat.py:169,178,180`; m-4 T-1 sửa hàm đo dùng chung. Giờ ước: không còn trong bản này. D6: không lệch ở B0, nhắc plan B1. Ngoài phạm vi (giả thuyết): khoá đệm mỗi lần chạy ⇒ `cached_tokens` = 0. 0 USD; `/tmp/c124_probe` đã xoá.
+- Tiếp: C125 phần kín bộ khẩn cấp (~8 câu khẩn cấp + ~8 câu thường dễ nhầm), 0 USD.
+
+## C125 — phần kín bộ khẩn cấp (A giao trong tin C124; User chốt "chỉ từ chối = lỗi, sửa gọn")
+- **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b1/khan_cap_sealed.jsonl` (mới; B không mở); dòng bộ khẩn cấp trong `data/phase_9/bo_do_b1/README.md`; thêm mục ngắn trong `report_agent/2026-11-02_phase_9_code/c123_bo_do_b1.md`; dòng trạng thái trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (19:07 02/11/2026):** `khan_cap_sealed.jsonl` `15a41db0c741` (16: 8 khẩn cấp loại / cách gõ khác + 8 câu thường dễ nhầm); README `e34248dd5749`; report C123 `8293d7acf873` (§5b; sửa §1 / §2 / §5 cho đúng mới nhất; quét trùng 0). 0 USD.
+- C hết việc được giao; chờ B sửa plan B0 (M-1) ⇒ C kiểm phần sửa. A nhận C125: đạt.
+
+## C126 — ước lợi thí nghiệm `prompt_cache_key` (A giao 19:08 02/11/2026; tin A = "làm đi")
+- 0 USD, chỉ đọc + phân tích, không sửa code. B báo plan B0 bản mới ⇒ dừng C126, kiểm phần sửa trước. Dừng trước 21:40.
+- **File sẽ ghi (khai báo):** `report_agent/2026-11-02_phase_9_code/c126_uoc_loi_cache.md` (mới); số liệu + script phân tích private `data/phase_9/c126_cache/`; đầu ra tra web `data/tra_cuu_cli/2026-11-02_c126-prompt-cache/` (script ghi);
+  yêu cầu tra web `data/phase_9/c126_cache/yeu_cau_tra_web.md`; dòng trạng thái trong `CURRENT_HANDOFF.md`; và file này.
+- Tiến độ: bước 1 xong (`phan_tich_log.py` + `.json`: 44 dòng có trường đệm; vào p50 1.671; ghi đệm ≈ 95 % phần vào; đọc đệm 0 / 44; USD / câu TB 0,000307; phần ghi đệm đắt thêm ≈ 13 %); tra web Codex chạy xong (chưa đọc).
+- **Tạm dừng cho C124 vòng 2 (A nhắn):** plan B0 bản 2 `c126e7432c82` ⇒ **ready_for_user_confirmation** (19:10; mục "Vòng 2" trong review, file `afa3ed23cc68`; probe `data/phase_9/c124_review/norm_v2.py` `00c23079fe53`: chuẩn hoá ổn định qua 2 tiến trình). Quay lại C126.
+- **C126 XONG (19:13 02/11/2026):** report `c126_uoc_loi_cache.md` `9bd3b71716aa` (quét trùng 0); `phan_tich_log.py` `2878c262926e`, `.json` `c18a53a33db4`. Kết: khoá cố định ⇒ lợi ≈ 0 (lời dặn ≈ 148 token < 1.024, câu hỏi đứng đầu tin nhắn người dùng);
+  lợi thật = tắt ghi đệm (`prompt_cache_options` explicit) −13,3 % / câu (−0,000041 USD); khuyên không mở thí nghiệm bây giờ, xét khoá theo phiên ở plan B3. WebFetch trang prompt-caching OpenAI kiểm 5 ý. 0 USD. Handoff chưa có mục C126 ⇒ C không tự tạo, báo A.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 15:11 02/11/2026 `date`)
 
 **Trạng thái lúc kết phiên 02/11:** C không còn việc dở. Spec Phase 9 **bản 9 `169c2dd5f86a` User duyệt** (commit `dfacbe8`). Mọi việc dưới đây là **đề xuất của A** (handoff "Kế hoạch chi tiết tuần 02–08/11") —
