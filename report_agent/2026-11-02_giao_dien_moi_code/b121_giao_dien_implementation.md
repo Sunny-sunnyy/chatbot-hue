@@ -116,3 +116,18 @@ Tiền: lượt 1 ≈ 0,00047 + lượt 2 ≈ 0,00047 USD (tính từ token tron
 - Không có lệch phạm vi ngoài "0 gói Radix" (A đồng ý). Guide Phase 6 do việc giao ghi rõ. 5 chỗ báo cáo + merge: A.
 
 **Giải thích ngắn:** trang hỏi đáp được viết lại bằng React để Phase 9 thêm màn hình / nhiều lượt dễ hơn. Người dùng thấy chữ hiện dần như cũ, số nguồn gọn hơn (số nhỏ tím, bấm vào thì nguồn bên cạnh sáng lên), có nhãn "Trợ lý AI … có thể sai". Rời trang thì server dừng model ngay. Rào an toàn (lọc HTML + CSP) giữ nguyên; thư viện linh kiện Radix bị bỏ vì hai linh kiện của nó phạm CSP.
+
+## 7. Sửa sau review C119 (B, 10:32 02/11/2026)
+**m-1** (lỗi không do server viết hiện chữ kỹ thuật tiếng Anh của trình duyệt): `frontend/src/stream.js` — mọi lỗi ném ra (trừ `AbortError`) là `StreamError` mang lời tiếng Việt.
+Lời của server giữ nguyên (JSON lỗi trước luồng, sự kiện `error`). Còn lại thay bằng câu cố định:
+- `fetch` hỏng ⇒ "Không kết nối được máy chủ. Vui lòng thử lại."
+- thân lỗi không phải JSON ⇒ "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau." (cùng lời `internal_error` của server)
+- đọc luồng hỏng / `data:` không phải JSON ⇒ `INTERRUPTED_MESSAGE`
+
+`App.jsx` không đổi.
+
+Kiểm (0 USD — server API chạy **không nạp `.env`**, không thể gọi model; `data/giao_dien_moi_2026-11-01/b121/m1/`):
+- [Chạy] câu > 500 ký tự ⇒ "Yêu cầu không hợp lệ." (lời server giữ).
+- [Chạy] trang đã nạp, rồi **tắt server thật** ⇒ "Không kết nối được máy chủ…" + "Thử lại"; bấm "Thử lại" ⇒ cùng lời.
+- [Tự dựng] 3 ca của C119: mạng hỏng ⇒ "Không kết nối được máy chủ…"; 502 thân HTML ⇒ "Đã xảy ra lỗi trong hệ thống…"; `data:` hỏng ⇒ "Kết nối bị gián đoạn…". Sự kiện `error` sau chữ ⇒ lời server. Mọi ca: xoá hết chữ, có "Thử lại".
+- Không hồi quy: `ui_replay.py` chạy lại (trích dẫn, 26 ca lọc HTML, 4 ca luồng đứt) — như mục 4.3; parser 268 / 268 + 283 / 283; `test_static_ui.py` 3 passed.
