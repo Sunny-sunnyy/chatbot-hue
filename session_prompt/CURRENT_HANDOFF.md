@@ -113,7 +113,7 @@ Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_r
 1. **Quyền phiên.** A khuyên: như 02/11 (A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push; B / C push nhánh riêng).
 2. ~~**Xoá nhánh `giao-dien-moi`**~~ **XONG 15:15 02/11/2026** (User `!` xoá local + origin). Cũ: (local + origin): đã merge `ed8e6e8`; `git log main..giao-dien-moi` rỗng (A kiểm 14:52 02/11/2026) — User `!`
    (`git branch -d giao-dien-moi` + `git push origin --delete giao-dien-moi`).
-3. **Rà bảo mật C106** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): **R4 User chọn cắt** 22 dòng log cũ "Received question" (A ghi nhận 18:35 02/11/2026; A đếm lại 22) — khi **không server nào chạy** (sau C122), sao lưu rồi User `!`; các mục deploy để lúc deploy.
+3. **Rà bảo mật C106** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): **R4 XONG 21:29 02/11/2026** (User `!`: sao lưu `/tmp/application_log_truoc_cat.log`, cắt; còn 0 dòng "Received question", dòng `chat_metrics` giữ nguyên). Cũ: User chọn cắt 22 dòng log cũ "Received question" (A ghi nhận 18:35 02/11/2026; A đếm lại 22) — khi **không server nào chạy** (sau C122), sao lưu rồi User `!`; các mục deploy để lúc deploy.
 4. **Sổ cải tiến:** W35 **User không chọn** (18:38 02/11/2026: over-engineer — đồ án, chỉ tra cứu web). W42, W43: A **không hỏi lẻ** nữa (User muốn tiến Phase 9, ít nghi thức) — xét gộp ở vòng cải tiến kết phiên, mặc định đề xuất bỏ trừ khi có sự cố mới.
 5. Không gấp: 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`) giữ hay gỡ (User `!`)? Xoá sao lưu kho đợt 1 + 2?
 
