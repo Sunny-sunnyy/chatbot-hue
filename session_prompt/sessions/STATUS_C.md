@@ -1,3 +1,42 @@
+# STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 15:11 02/11/2026 `date`)
+
+**Trạng thái lúc kết phiên 02/11:** C không còn việc dở. Spec Phase 9 **bản 9 `169c2dd5f86a` User duyệt** (commit `dfacbe8`). Mọi việc dưới đây là **đề xuất của A** (handoff "Kế hoạch chi tiết tuần 02–08/11") —
+**chưa giao**, chờ A nhắn ở phiên sau. Mở phiên: làm theo `START_SESSION.md`, rồi `ListAgents`, báo A.
+
+**Việc tiếp của C (A đề xuất) + file đọc trước:**
+1. **Review plan B0 của B** — skill `risk-gated-agent-review`; **chỉ dựa "Căn cứ để review"** của plan, không đọc `STATUS_B` / tin nhắn B.
+   - Đọc: spec bản 9 §3 (lõi chung, sổ nguồn, log, nhớ), §4 (S-T1 mới, hồi quy), §5 B0; `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md` (hooks USD, delta khi có công cụ);
+     `backend/llm/grounded_answer.py`, `backend/llm/generator_openai_full_corpus.py:96-104, 183-190, 254-274`, `backend/api/routes/chat.py:35-53, 355-400`, `backend/retrieval/full_corpus.py:419`, `backend/evaluation/full_corpus_eval.py:169, 330`.
+   - Kiểm chính (thấy trước): xem dưới "Rủi ro thấy trước".
+2. **Bước 0 khẩn cấp** — ~10 câu khẩn cấp **tự viết** (cháy, trẻ lạc, đuối nước, cấp cứu, ngã / say nắng…; không thông tin cá nhân) qua `/api/chat` của chatbot **hôm nay**, server tạm cổng trống, ≈ 0,003 USD.
+   - Ra file private (đề xuất `data/phase_9/b0_khan_cap/`) để **User đọc** 10 câu trả lời; C không tự chấm thay User.
+   - B đang đo latency ⇒ chờ (W31). Cổng ổn định: đếm `chat_metrics` mới = số câu; grep câu hỏi trong log = 0; tắt server.
+3. **Viết bộ đo B1** (C không code B1) — spec §4 bảng "Bộ đo", §5 B1:
+   - **bộ tuyến** 60 câu (40 đã thấy / 20 kín) + **5 ca lái tuyến**; nhãn tuyến `tro_chuyen` / `tro_ly_hue` / `ngoai_pham_vi` / `khan_cap`;
+   - **bộ ngày:** dùng lại 15 câu `data/do_cuoi_2026-11-01/ngay/` (12 câu quyết) + 10 mới (3 đã thấy / 7 kín);
+   - **bộ khẩn cấp** 10 câu (đã thấy; có thể chính là 10 câu bước 0);
+   - **mẫu Golden cố định ~30 câu** cho hồi quy rút gọn B3–B6: seed ghi trước, chia đều 5 loại câu, khoá ở B0; lưu danh sách chỉ số + md5, không chép câu vào file tracked.
+   - Phần kín: file `*sealed*` riêng; **B không mở**; A không đọc nội dung. Đọc kho chỉ bằng `scripts/grep_kb.sh`.
+   - Đọc trước: spec §4 (nhãn S-OOS mới, bộ đo, "chỉnh trên đã thấy, khoá trước khi mở kín"), §5 B1 (bảng cờ từng phần); `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` §3.3 (bộ 15 câu ngày); `Session_Prompt.md` §5 (câu kín).
+
+**Rủi ro thấy trước (khi review plan B0 / viết bộ đo):**
+- Tiêu chí B0 "`answer_case` qua lõi chung ra **đúng câu trả lời** đường RAG 1–8": model sinh không tất định ⇒ plan phải định nghĩa bằng thứ so được — **chuỗi gửi model giống byte** + T1 giống byte, không phải chữ câu trả lời giống nhau.
+- Log USD bằng `RunHooks` ở **cả** đường stream lẫn không stream; lần huỷ (`client_disconnected`) không có usage ⇒ USD `None` chứ không 0; dòng log không được chứa mã phiên / chữ.
+- Lõi chung `assistant.py` dùng cho 3 nơi gọi ⇒ dễ đổi hành vi `/api/chat` hiện có (mã HTTP lỗi, chuẩn hoá `[Nguồn n]`) — so với `grounded_answer.py` docstring "khác biệt" giữa route ↔ bộ đánh giá.
+- Test ranh giới "chỉ một module gọi mạng ngoài": B0 chưa có web ⇒ test nên khoá ngay (không module nào ngoài generator gọi mạng).
+- Bộ tuyến: câu "lẫn lộn" (vừa chào vừa hỏi thông tin Huế) phải gán nhãn `tro_ly_hue` (sàn B1 "0 câu Huế cần thông tin sang trò chuyện") — ghi luật gán nhãn **trước** khi viết câu.
+- Bộ ngày: đáp án đúng đổi theo ngày chạy ⇒ ghi kèm "ngày chạy" cho mỗi lượt; câu âm lịch cần nguồn lịch Việt Nam công khai.
+- Mẫu Golden 30 câu: 5 loại Golden = `direct_fact` 75 · `multi_source` 29 · `conditional` 29 · `comparative` 25 · `out_of_scope` 18 ⇒ 6 câu / loại.
+
+**Câu hỏi cho A (hỏi lúc giao việc):**
+1. **Phân công người code B1–B3** — người viết bộ đo phải khác người code. C viết bộ B1; nếu C sẽ code B2 / B3 thì bộ nhớ (B3) và bộ hỏi lại (B4) cần người khác viết.
+2. **Mẫu Golden 30 câu** lấy từ cả 176 hay chỉ nhóm dev (`split.json`)? C đề xuất cả 176, chia đều 5 loại (mẫu chỉ là hồi quy, không dùng để chọn biến thể).
+3. Bước 0 khẩn cấp: 10 câu này có được dùng lại làm "bộ khẩn cấp đã thấy" của B1 không (C đề xuất có — đỡ viết thêm)?
+
+**Bẫy đã gặp 02/11 (đọc lại trước khi viết spec / plan / bộ đo):** 6 điểm ở khối "Kết phiên 02/11" ngay dưới — đổi nghĩa ý hướng đã chốt không khai · đếm sai mẫu (ống `grep -A | sed`; `## Nguồn` khớp "Nguồn gốc"; đếm cả kho thay vì tập đích) ·
+luật kết luận ghi trước luôn thoả · cổng dựa ý định model · spec phình mỗi vòng sửa (cắt trước khi thêm) · sửa chữ bằng `python3` hệ thống (dùng Edit / `uv run`). Thêm luật mới của sổ cải tiến: **W46** (brief Phase n kèm mọi tài liệu cũ cùng Phase),
+**W47** (mốc kiểm việc > 30 phút), **W48** (trước khi đề xuất cơ chế an toàn / bộ đo thêm: "đã quan sát chưa · ai dùng · bao giờ deploy" — User nhắc làm quá tay 3 lần / 2 ngày).
+
 # STATUS C — KẾT PHIÊN 02/11 (chốt 14:48 02/11/2026 `date`; A báo kết phiên)
 
 Terminal C `hue-rag-29` · A = `hue-rag-7e` · B = `hue-rag-d6` (trực tiếp). Quyền phiên 02/11 (User 09:47): như 01/11 — hết hạn cuối phiên.

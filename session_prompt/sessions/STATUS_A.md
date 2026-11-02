@@ -3,6 +3,14 @@
 - **Xong:** giao diện mới vào `main` `ed8e6e8` (B121 + C119); Phase 9 đổi hướng agent (User) ⇒ nghiên cứu (3 sub-agent khoá FDE, ChatGPT, B122, B123, C121) ⇒ **spec bản 9 duyệt `169c2dd5f86a`**; vòng cải tiến 14 (W46–W48 cho thử, B124 review); 5 chỗ báo cáo + nhật ký; handoff viết lại (cũ ở `archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`).
 - **Tiền phiên:** ≈ 0,003 USD (B ≈ 0,002 · C ≈ 0,0006 · A 0). Quyền phiên hết hạn.
 - **Phiên sau:** `CURRENT_HANDOFF.md` "PHIÊN SAU" — hỏi quyền ⇒ giao B0 (spec §5). Câu User: xoá nhánh `giao-dien-moi`, C106, W35 / W42 / W43, worktree AGY.
+- **Phiên sau — việc của A theo thứ tự** (ghi 15:10 02/11/2026, User: "để các nhiệm vụ, câu hỏi ở session tiếp theo"):
+  1. Đọc `CURRENT_HANDOFF.md` "PHIÊN SAU" + "Kế hoạch chi tiết tuần 02–08/11"; `ListAgents`; kiểm Qdrant + `frontend/dist/`.
+  2. Hỏi User **mỗi lần một câu**: (a) quyền phiên; (b) xoá nhánh `giao-dien-moi` (User `!`); (c) C106 R4 cắt 22 dòng log cũ; (d) W35 / W42 / W43; (e) 4 worktree AGY + sao lưu kho đợt 1 + 2.
+  3. Giao **B0** cho B (plan ⇒ C review plan ⇒ A duyệt sha tính từ file) + giao C **bước 0 khẩn cấp** (10 câu tự viết ⇒ User đọc) và **viết bộ đo B1** (phần kín B không mở). Đặt `notify_when_idle` cho mọi việc (W47);
+     brief kèm spec bản 9 §3–§5 + tài liệu cũ Phase 9 (W46 — `find guides docs/superpowers/specs docs/superpowers/plans -maxdepth 1 -iname "*phase[-_]9[-_.]*"`).
+  4. Theo dõi luật mới cho thử: W46, W47, W48 (sổ cải tiến); W39 hạn 07/11 (0 buổi D ⇒ đề xuất gỡ W4 + W39).
+  5. Khi B0 merge: 5 chỗ báo cáo (`WORKFLOW.md` §6) — `LUONG_HOAT_DONG_HE_THONG.md` (thêm lõi `assistant.py`), `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, nhật ký, `Project_Status.md` §4, guide Phase 6 "Hiện hành" (hoặc tạo `guides/phase_9_*` hiện hành — roadmap cũ do Codex viết đã lỗi thời phần "không agent").
+- **A còn nợ (không cần User):** bảng sổ S41–S44 thiếu 1 cột; log `FileHandler` không xoay vòng (deploy); hạn mức OpenAI / Serper (đặt khi tới B6); `guides/phase_9_agentic_rag_roadmap.md` đã có dòng đầu "đã thay bởi spec bản 9" (02/11).
 - **Bẫy A phiên này** (đầu vào vòng 14, đã ghi sổ S74–S77): bỏ sót roadmap Phase 9 cũ; không đặt mốc kiểm ⇒ B đứng ~2 giờ, C rảnh; làm quá tay lần 3; đọc nhầm tên file / bản SDK; giờ ước 2 lần (hook bắt).
 
 # (cũ) STATUS A — PHIÊN 02/11 (mở 09:46 02/11/2026 `date`)

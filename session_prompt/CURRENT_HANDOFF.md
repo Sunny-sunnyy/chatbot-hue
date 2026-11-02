@@ -23,6 +23,20 @@ clone / worktree mới hoặc sửa `frontend/src/` ⇒ `cd frontend && npm ci &
 2. **Giao B0** (spec §5): người viết plan B0 + người review khác người viết; A duyệt sha (tính từ file). Việc song song không chồng file (vd C soạn bộ câu tuyến / chuỗi hỏi tiếp cho B1–B3 theo spec §4; phần kín do người không code giữ).
 3. Đặt mốc kiểm mọi việc > 30 phút (W47); brief việc Phase 9 kèm mọi tài liệu cũ cùng Phase (W46); trước khi đề xuất cơ chế an toàn / bộ đo thêm: "đã quan sát chưa · ai dùng · bao giờ deploy" (W48).
 
+**Kế hoạch chi tiết tuần 02–08/11 (A soạn 15:09 02/11/2026; theo spec §5, §6 — phiên sau giao, chưa ai làm):**
+- **B0 — nền (≈ 0,003 USD), người làm đề xuất: B** (đã dò SDK ở B123, code giao diện B121):
+  bọc RAG 1–8 thành công cụ `tim_kho` (gọi `retrieval_service.search`, `backend/retrieval/full_corpus.py:419`; top-k + collection do code điền); lõi chung `backend/llm/assistant.py` cho route stream + `/api/chat` + `answer_case`;
+  sổ nguồn (kho `[n]` / web `[w n]`); log USD + ms mỗi lần gọi model (`RunHooks.on_llm_start/end` — `b123_sdk_probe.md`), mỗi câu, mỗi tuyến.
+  **Tiêu chí B0 (spec §5):** S-T1 mới giống byte; `answer_case` qua lõi chung ra đúng câu trả lời đường RAG 1–8; test ranh giới (chỉ một module gọi mạng ngoài; không công cụ nào nhận URL); log đủ trường;
+  grep chữ câu hỏi / mã phiên trong log = 0. Quy trình: B viết plan B0 ⇒ **C review plan** (chỉ dựa "Căn cứ để review") ⇒ A duyệt sha ⇒ nhánh `p9-b0` (worktree) ⇒ review cả nhánh ⇒ cổng ổn định ⇒ A merge.
+- **Bước 0 khẩn cấp (User chọn Q1 (a) của spec bản 5, A ghi nhận 11:03 02/11/2026):** ~10 câu khẩn cấp **tự viết** (cháy, trẻ lạc, đuối nước, cấp cứu…) qua chatbot hôm nay (≈ 0,003 USD) ⇒ **User đọc** 10 câu trả lời ⇒ có lỗi ⇒ luật code + câu soạn sẵn ở B1;
+  không ⇒ ghi "không cần". Người soạn câu + chạy: C (song song B0, không chồng file — chỉ gọi `/api/chat` qua server tạm cổng riêng; nếu B đang đo latency thì chờ, W31).
+- **Viết bộ đo cho B1 (song song, người viết: C — không phải người code B1):** bộ tuyến (~40 đã thấy + phần kín; có 5 ca lái tuyến), bộ ngày (dùng lại 15 câu `data/do_cuoi_2026-11-01/ngay/`; 12 câu quyết), bộ khẩn cấp;
+  mẫu Golden cố định ~30 câu cho B3–B6 (seed ghi trước, khoá ở B0 — spec §4). Phần kín: B (người code) **không mở**.
+- **Mốc tuần:** B0 đạt trước 09/11 ⇒ tuần 09–15/11 làm B1. Luật cắt đầu tiên **16/11** (B1 chưa đóng ⇒ B2 chỉ làm B2a). A kiểm luật cắt mỗi thứ Hai (spec §6).
+- **Chú ý khi viết plan các bậc** (minor còn lại từ review spec, sửa trong plan): m17 nếu B2a giữ V2 thuần thì A/A đường có công cụ chạy ngay ở B2a; lượt `hoi_lai` + `StopAtTools` có `final_output` khác `AnswerOutput`
+  (`backend/llm/generator_openai_full_corpus.py:269`) ⇒ cần nhánh riêng; cổng web chỉ mở khi `outcome` thường; danh sách "trước khi deploy" ở spec §7 (soát chữ web, điều khoản Serper, lưu phiên, R1 C106).
+
 **Mã hay gặp:** B0–B7 = bậc Phase 9 (spec §5); P1–P5 = câu User đã chọn 14:42 02/11 (spec §10); V0–V3 = phương án câu tìm kho (B2a); [w n] = trích dẫn web; T1 = kết quả tìm 158 câu (so "giống byte");
 S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.md`; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc A giao B / C.
 
@@ -36,6 +50,17 @@ S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.
 5. Không gấp: 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`, nhánh `subagent-Monuments-Reviewer-*`) giữ hay gỡ (User `!`)? Xoá sao lưu kho đợt 1 + 2?
 
 ## Câu hỏi A còn nợ (không cần User)
+
+- **Câu C hỏi A (C, kết phiên 02/11; A trả lời sẵn 15:12 02/11/2026 — kỹ thuật trong phạm vi):**
+  1. Phân công người code B1–B3 ⇒ **A quyết lúc giao**, giữ luật "người viết bộ đo ≠ người code bậc đó" (vd B code B0–B2, C viết bộ tuyến / ngày / nhớ; nếu C code B3 thì B viết bộ nhớ).
+  2. Mẫu Golden ~30 câu ⇒ **đồng ý: lấy từ cả 176**, 6 câu / loại × 5 loại, seed ghi trước (chỉ hồi quy, không dùng chọn biến thể).
+  3. 10 câu bước 0 khẩn cấp ⇒ **đồng ý dùng lại làm bộ khẩn cấp "đã thấy" của B1** (phần kín viết thêm riêng).
+- **Câu B hỏi A (B, kết phiên 02/11; A trả lời sẵn — kỹ thuật trong phạm vi):**
+  1. B0 giữ đường RAG 1–8 y nguyên qua lõi mới (code gọi `tim_kho`, sinh 1 lần, `max_turns=1`); vòng công cụ do model gọi để B2b (hoặc B2a nếu đo V2) ⇒ **đúng ý spec** (§5 B1: `tro_ly_hue` = đường RAG 1–8, chưa công cụ).
+  2. "Chỉ một module gọi mạng ngoài" ⇒ **mỗi nhà cung cấp một module** (OpenAI: generator hiện có; Serper: module mới ở B6) + test kiểm **danh sách module cho phép** import client mạng (`openai`, `httpx`, `requests`…); ghi rõ câu này trong plan B0.
+  3. Chọn + khoá mẫu Golden ~30 câu ở B0 ⇒ **C** (người không code), seed ghi trước.
+  - **Rủi ro B ghi cho plan B0:** đã có lõi chung `backend/llm/grounded_answer.py` ⇒ `assistant.py` bọc / thay, **không để hai lõi**; S-T1 qua `tim_kho` so danh sách chunk bên trong, không so chữ đã định dạng.
+  - **Ghi cho plan B0 (rủi ro C thấy trước):** tiêu chí "`answer_case` ra đúng câu trả lời đường RAG 1–8" phải đo bằng **chuỗi gửi model giống byte + T1 giống byte**, không so chữ trả lời (model không tất định).
 
 - Bảng sổ cải tiến: S41–S44 thiếu 1 cột từ trước. W39 hạn 07/11 (0 buổi D ⇒ đề xuất gỡ W4 + W39).
 - Log `FileHandler` không xoay vòng — xem lại khi deploy. Hạn mức tín dụng phía OpenAI cho key — chưa kiểm. Hạn mức trả trước phía Serper — đặt khi tới B6.

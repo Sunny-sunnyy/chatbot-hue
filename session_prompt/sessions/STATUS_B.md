@@ -1,4 +1,4 @@
-# STATUS B — cập nhật 14:49 02/11/2026 (KẾT PHIÊN 02/11: B121–B123 xong; spec Phase 9 bản 9 User duyệt — việc tiếp của B: bậc B0 phiên sau)
+# STATUS B — cập nhật 15:12 02/11/2026 (KẾT PHIÊN 02/11: B121–B124 xong; spec Phase 9 bản 9 User duyệt `169c2dd5f86a` — việc tiếp của B: B0, đọc mục "Phiên sau: B0")
 
 Terminal phiên 02/11: `hue-rag-d6` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-7e`, C = `hue-rag-29` (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B. Tên terminal đổi mỗi lần mở ⇒ `ListAgents`.
@@ -7,7 +7,7 @@ Phiên 02/11: User nói ở terminal B (09:49 02/11/2026, giờ B ghi bằng `da
 ## Đang làm / dở
 - **Không** (kết phiên 14:49 02/11/2026). Không job nền, không server, không worktree; file tạm `/tmp` của B121–B123 đã xoá.
 - Nhánh `giao-dien-moi` (đã merge `ed8e6e8`) còn trên máy + `origin` — A đề xuất User xoá (User `!`).
-- **Việc tiếp (phiên sau):** bậc **B0** của spec Phase 9 bản 9 (User duyệt, sha `169c2dd5f86a`) — chờ A giao mục việc trong `CURRENT_HANDOFF.md`.
+- **Việc tiếp (phiên sau):** bậc **B0** của spec Phase 9 bản 9 (User duyệt, sha `169c2dd5f86a`) — chờ A giao mục việc trong `CURRENT_HANDOFF.md`; xem mục "Phiên sau: B0" dưới.
 
 ## Đang khai báo sửa
 - không
@@ -17,16 +17,48 @@ Phiên 02/11: User nói ở terminal B (09:49 02/11/2026, giờ B ghi bằng `da
 |---|---|---|
 | **B121** giao diện mới (React + Vite + Tailwind, FastAPI phục vụ `frontend/dist/`) | dò CSP: Radix Collapsible / Tooltip / Popover đạt, Dialog / ScrollArea vi phạm ⇒ 0 gói Radix; 19 yêu cầu [Chạy] / [Tự dựng]; review C119 ready (0 / 0 / 2 minor); m-1 (lời lỗi tiếng Việt) sửa `deaa605`; **A merge `ed8e6e8`** | `report_agent/2026-11-02_giao_dien_moi_code/b121_giao_dien_implementation.md`; `data/giao_dien_moi_2026-11-01/do_csp/`, `b121/` |
 | **B122** tra web agent Phase 9 (3 lượt Codex + WebFetch 3 × 3 ý) | Serper: điều khoản 29/05/2024 không nói rõ dùng cho người dùng cuối / hiển thị / lưu ⇒ chưa qua W35; 0,001 USD / lượt; SDK mới nhất 0.24.0, ≥ 0.21 đòi `openai>=3`; đo agent: pass^k, chọn công cụ; injection: quyền hẹp, spotlighting | `data/nghien_cuu_phase_9_2026-11-01/agent/b122_tra_web.md`; `data/tra_cuu_cli/2026-11-02_b122-*` |
-| **B123** dò Agents SDK 0.19.4 (probe công cụ giả) | cả 3 việc làm được trên 0.19.4: hook `on_llm_start/end` + `response.usage` (USD + ms mỗi lần gọi); lượt gọi công cụ không có `output_text.delta` ⇒ lọc theo mục `message`; `output_type` strict `route` trước `answer` (phải sửa `ANSWER_PREFIX`); `tool_choice="required"` tự reset. A kiểm 2 ý: đạt | `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md`, `b123/` |
+| **B123** dò Agents SDK 0.19.4 (probe công cụ giả) | cả 3 việc làm được trên 0.19.4: hook `on_llm_start/end` + `response.usage` (USD + ms mỗi lần gọi); lượt gọi công cụ không có `output_text.delta` ⇒ lọc theo mục `message`; `output_type` strict `route` trước `answer` (chỉ khi đổi kiểu có `route` mới phải sửa `ANSWER_PREFIX` — spec bản 9 **giữ `{answer}`** ⇒ không đổi); `tool_choice="required"` tự reset (spec: xét, không dùng). A kiểm 2 ý: đạt | `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md`, `b123/` |
+| **B124** review governance vòng cải tiến 14 (A sửa) | vòng 1 changes_requested: M-1 lệnh tìm tài liệu cũ W46 (`grep 'phase_?n'`) sót tên gạch ngang (n=9 ra 1 / 4) ⇒ đề xuất `find … -iname "*phase[-_]n[-_.]*"`; m-1 W48 làm rõ "phòng xa"; vòng 2 ready | tin nhắn A (không file review); A commit `dfacbe8` |
 
 ## Tiền paid (B, 02/11, giá đủ)
-B121 ≤ 0,0015 (4 câu có token ≈ 0,00094 + 2 câu rời trang không có số token — cận trên) · B122 0 (Codex qua tài khoản ChatGPT) · B123 0,00023 ⇒ **≈ 0,002 USD**. Không gọi `agy`, không gọi Serper.
+B121 ≤ 0,0015 (4 câu có token ≈ 0,00094 + 2 câu rời trang không có số token — cận trên) · B122 0 (Codex qua tài khoản ChatGPT) · B123 0,00023 · B124 0 ⇒ **≈ 0,002 USD**. Không gọi `agy`, không gọi Serper.
 
 ## Câu hỏi / thắc mắc cho A
 1. 4 worktree AGY cũ `~/.gemini/antigravity-cli/…` (commit `c725987`) vẫn còn — User quyết.
-2. Sự cố pgrep (bẫy đầu tiên dưới) — đầu vào vòng cải tiến: đề xuất luật "việc dài luôn `run_in_background`; không im lặng quá ~15 phút khi chờ".
+2. ~~Sự cố pgrep — đầu vào vòng cải tiến~~ — A đã đưa vào vòng 14 (S75, W47 + bẫy `Project_Status.md` §8; `dfacbe8`).
+3. Câu hỏi B0: mục "Phiên sau: B0" dưới.
+
+## Phiên sau: B0 — nền (spec §5; kế hoạch tuần ở `CURRENT_HANDOFF.md` "Kế hoạch chi tiết tuần 02–08/11")
+**Quy trình A đề xuất:** B viết **plan B0** (đầu file "Căn cứ để review" 2–4 file) ⇒ **C review plan** ⇒ A duyệt sha ⇒ code nhánh `p9-b0` trong worktree ⇒ review cả nhánh ⇒ cổng ổn định ⇒ A merge. Ước ≈ 0,003 USD. B0 đạt trước 09/11.
+**Việc B0:** bọc RAG 1–8 thành công cụ `tim_kho` (gọi `retrieval_service.search`, `backend/retrieval/full_corpus.py:419`; top-k + collection do code điền, model chỉ đưa `cau_tim`); lõi chung `backend/llm/assistant.py` cho route stream + `/api/chat` + `answer_case`; sổ nguồn (kho `[n]` / web `[w n]`); log USD + ms mỗi lần gọi model, mỗi câu, mỗi tuyến (`chat_metrics` + dòng kết quả bộ đánh giá — không nơi thứ ba).
+**Tiêu chí:** S-T1 mới giống byte `4d5bbe9e0edc`; `answer_case` qua lõi chung ra đúng câu trả lời đường RAG 1–8; test ranh giới (chỉ một module gọi mạng ngoài; không công cụ nào nhận URL); log đủ trường; grep chữ câu hỏi / mã phiên trong log = 0.
+
+**Đọc trước (theo thứ tự):**
+1. `docs/superpowers/specs/2026-11-02-phase-9-design.md` (sha `169c2dd5f86a` — kiểm `sha256sum` trước) §3 Kiến trúc (lõi chung, chia việc code ↔ model, trần, streaming, nhớ, log + vết), §4 (S-T1, mẫu Golden ~30 câu khoá ở B0), §5 B0; §7 bảo mật, §8 quyền / tiền khi plan.
+2. `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md` — hook `on_llm_start/end` + `response.usage` (mẫu mã §1), thứ tự sự kiện stream có công cụ (§2), `output_type` (§3); script `b123/sdk_probe.py`.
+3. `data/nghien_cuu_phase_9_2026-11-01/agent/c121_sdk_024.md` — vì sao giữ 0.19.4; `agents.testing` (test vòng công cụ không gọi API) chỉ có từ 0.21.
+4. Mã sẽ chạm (targeted): `backend/llm/grounded_answer.py` (lõi chung hiện tại: `prepare_answer` :44, `check_citations` :73, `answer_query` :84); `backend/api/routes/chat.py` (gọi lõi :118, :246; `chat_metrics` :35-40; stream :355-400); `backend/evaluation/full_corpus_eval.py` (`answer_case` :330, `cost_usd` :169; T1 = lệnh `evaluation.full_corpus_eval retrieval`); `backend/llm/generator_openai_full_corpus.py` (`_run_config` :96-104, `max_turns=1`, ép `AnswerOutput` :269).
+5. Skill: `practical-project-coding` (W40: `git grep` mọi nơi gọi lõi chung **trước khi sửa**); `agent-design-review` + `agent-security-review` khi viết plan (Phase 9).
+
+**Rủi ro / thắc mắc B thấy trước cho B0 [Suy ra — chưa chạy]:**
+- **Lõi chung thứ hai:** hôm nay đã có lõi chung `grounded_answer.py` (3 bên gọi). Thêm `assistant.py` dễ thành hai đường song song. Plan phải chọn rõ: `assistant.py` **bọc** / thay `answer_query` + `prepare_answer`, và gỡ đường cũ khi 3 bên đã chuyển — không để hai lõi.
+- **"Ra đúng câu trả lời đường RAG 1–8"** không so bằng chữ trả lời được (model sinh không xác định). Đề xuất trong plan: so **chuỗi gửi model giống byte** (lời dặn + input đã dựng + `ModelSettings`) và kết quả tìm giống T1 — 0 USD; chỉ vài câu thật để xem đường chạy.
+- **S-T1 qua `tim_kho`:** T1 hôm nay chấm trên `RetrievalResult` (lệnh `retrieval` của bộ đánh giá), còn `tim_kho` trả chữ cho model ⇒ plan ghi rõ so cái gì (danh sách chunk + thứ tự từ bên trong `tim_kho`, không so chữ đã định dạng) và chạy lại mốc T1 bằng HEAD trước khi sửa.
+- **B0 có bật vòng gọi công cụ chưa?** Tiêu chí "đúng câu trả lời đường RAG 1–8" gợi ý B0 giữ hành vi y nguyên (code gọi `tim_kho` rồi sinh 1 lần, `max_turns=1`), vòng công cụ do model gọi là B2b. Hỏi A (dưới).
+- **Log mỗi lần gọi model qua hook:** `on_llm_start` / `on_llm_end` cùng một biến giờ chỉ đúng khi gọi tuần tự (B123 §1); stream: `on_llm_end` tới sau khi luồng của lần gọi đó xong ⇒ đọc hết `stream_events()` rồi mới ghi dòng log; đường huỷ (`client_disconnected`) có thể không có usage — giữ cách ghi hiện có.
+- **Test ranh giới "chỉ một module gọi mạng ngoài":** cần định nghĩa — OpenAI (generator) là mạng ngoài; Qdrant là `127.0.0.1`; Serper (B6) sẽ thêm. Hỏi A.
+- **Mẫu Golden ~30 câu khoá ở B0:** người chọn không nên là người code (B) — hỏi A (kế hoạch tuần ghi C viết bộ đo). B **không mở** phần kín của bộ đo.
+- Worktree `p9-b0`: nhớ bẫy worktree (symlink `data/` + `knowledge-base-hue/`, `uv run --project /home/minhhieu/hue_rag`, `npm ci && npm run build` nếu chạy `test_static_ui.py`, push từ working tree chung, `unlink` rồi `git worktree remove`).
+
+**Câu hỏi cho A (trước / trong plan B0):**
+1. B0 giữ đường RAG 1–8 y nguyên (code gọi `tim_kho`, sinh 1 lần) và để vòng công cụ do model gọi sang B2b — đúng ý spec không?
+2. "Chỉ một module gọi mạng ngoài" tính những gì (OpenAI; Serper sau này) — một module cho cả hai, hay mỗi nhà cung cấp một module và test kiểm không module khác import client mạng?
+3. Ai chọn + khoá mẫu Golden ~30 câu (seed ghi trước) ở B0 — C?
 
 ## Bẫy đã gặp — đọc trước khi làm
+- (02/11) Mẹo dò tiến trình không tự khớp: `pgrep -f "[u]vicorn …"` (ký tự đầu trong ngoặc) — B124 [Chạy]: mẫu thường khớp thêm chính shell đang dò, mẫu ngoặc thì không. Tắt server tạm: TaskStop / PID đã ghi, không `pkill -f`.
+- (02/11) Tool chặn `sleep` dài trong lệnh thường ⇒ tiến trình mẫu / chờ dùng `run_in_background`; script phân tích dùng mã `backend/` từ `/tmp`: chạy từ `backend/` với `PYTHONPATH=.`.
+- (02/11) SDK 0.19.4: lượt gọi công cụ không phát `output_text.delta`; `on_llm_end` có cả khi stream; prompt < ~1.024 token ⇒ token đệm 0 (B123).
 - **(02/11, sự cố — mất ~2 giờ)** Chờ một tiến trình bằng `until ! pgrep -f "<mẫu>"` ⇒ `pgrep -f` khớp **chính dòng lệnh của vòng chờ** (chứa mẫu) ⇒ không bao giờ dừng, B ngồi chờ thông báo không tới, A phải hỏi. Gốc: chạy lượt Codex bằng `&` trong lệnh Bash (không có thông báo xong) thay vì `run_in_background`. Cách đúng: mỗi việc dài chạy bằng `run_in_background` (có thông báo); nếu phải chờ PID thì `while kill -0 <PID>`; và đặt mốc tự kiểm (không im lặng quá ~15 phút khi chờ).
 - (02/11) Playwright `page.route` gọi handler với 1 hoặc 2 tham số tuỳ chữ ký ⇒ lambda `(r, s=spec)` nhận `request` vào `s`; dùng hàm một tham số. Script tự bật server con ⇒ bọc `try/finally` tắt server (lần lỗi đầu để sót uvicorn 8813, đã `kill` đúng PID).
 - (02/11) Dò CSP nhiều linh kiện **chung một trang** ⇒ vi phạm của một cái (ScrollArea chèn `<style>` lúc hiện) làm mọi ca trông như vi phạm ⇒ mỗi linh kiện một trang. `curl -I` (HEAD) vào `/` trả 405 nên không thấy header CSP ⇒ kiểm bằng GET (`curl -s -D - -o /dev/null`).

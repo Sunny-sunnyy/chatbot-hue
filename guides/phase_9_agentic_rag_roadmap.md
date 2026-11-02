@@ -1,5 +1,9 @@
 # Phase 9: Roadmap thiết kế Agentic RAG sau MVP
 
+> **Lịch sử — đã thay (15:10 02/11/2026, A):** hướng hiện hành của Phase 9 là spec `docs/superpowers/specs/2026-11-02-phase-9-design.md` **bản 9, User duyệt sha `169c2dd5f86a`** (02/11/2026): trợ lý
+> **agent dưới chính sách** (OpenAI Agents SDK). File này (Codex viết, User duyệt hướng 08–10/2026) chỉ là tư liệu: ý rule router / câu tìm đứng một mình / RAG trước + cổng đủ bằng chứng / nguồn gốc web
+> đã đưa vào spec; phần "bộ điều khiển Python cố định, chưa dùng agent" và SerpAPI / Weather API **không còn hiệu lực**.
+
 ## Mục tiêu và giá trị cho người dùng
 
 Phase 9 mô tả các câu hỏi thiết kế cần giải quyết trước khi thêm Agentic RAG cho văn hóa và du lịch Huế. File giúp người dùng hiểu agent có thể cải thiện loại câu hỏi nào, đồng thời ngăn orchestration phức tạp khi MVP chưa ổn định.
