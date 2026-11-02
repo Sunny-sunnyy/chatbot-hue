@@ -73,7 +73,11 @@ HỎI ĐÁP (mỗi câu hỏi):
    nguồn và bật link [n]; **hỏng thì trang web rút lại chữ đã hiện**, lỗi / đứt giữa chừng thì **xoá hết** — cả hai hiện lời báo + nút "Thử lại" (bạn chọn 31/10).
    Người dùng rời trang ⇒ server dừng model, vẫn ghi một dòng log. Trang web chỉ hiện các thẻ Markdown thường (danh sách cho phép) và có chính sách bảo mật
    trang (CSP) — không tự tải ảnh / tài nguyên từ máy khác. `/api/chat` (một lần, JSON) vẫn giữ; API và bộ đánh giá dùng **chung một lõi**
-   (`backend/llm/grounded_answer.py`) nên đo và chạy đi đúng một đường.
+   (`backend/llm/assistant.py` — đổi tên từ `grounded_answer.py` ở Phase 9 B0, merge `1c10111` 19:48 02/11/2026) nên đo và chạy đi đúng một đường.
+9. **Phase 9 B0 — nền cho trợ lý agent (merge `1c10111`, 19:48 02/11/2026; người dùng thấy không đổi):** bước "tìm + dựng ngữ cảnh" được gói thành công cụ
+   `tim_kho` (code gọi, chưa để model tự gọi); có "sổ nguồn" để sau này ghép nguồn kho với nguồn web. Mỗi câu hỏi, dòng log `chat_metrics` ghi thêm **tuyến**
+   (hiện luôn là `tro_ly_hue` — trợ lý Huế), **tiền USD của câu**, số lần gọi model và từng lần gọi (loại đầu ra, ms, USD, 5 loại token), công cụ đã chạy + ms.
+   Chứng minh "không đổi": kết quả tìm 158 câu giống từng byte mốc T1 `4d5bbe9e0edc`; chuỗi gửi OpenAI giống từng byte bản cũ trên 176 + 20 câu (B127, review C128).
 
 ## 4. Chất lượng, tốc độ, tiền đo được
 

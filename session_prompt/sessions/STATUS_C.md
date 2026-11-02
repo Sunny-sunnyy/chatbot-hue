@@ -53,6 +53,35 @@
 - **Tạm dừng cho C124 vòng 2 (A nhắn):** plan B0 bản 2 `c126e7432c82` ⇒ **ready_for_user_confirmation** (19:10; mục "Vòng 2" trong review, file `afa3ed23cc68`; probe `data/phase_9/c124_review/norm_v2.py` `00c23079fe53`: chuẩn hoá ổn định qua 2 tiến trình). Quay lại C126.
 - **C126 XONG (19:13 02/11/2026):** report `c126_uoc_loi_cache.md` `9bd3b71716aa` (quét trùng 0); `phan_tich_log.py` `2878c262926e`, `.json` `c18a53a33db4`. Kết: khoá cố định ⇒ lợi ≈ 0 (lời dặn ≈ 148 token < 1.024, câu hỏi đứng đầu tin nhắn người dùng);
   lợi thật = tắt ghi đệm (`prompt_cache_options` explicit) −13,3 % / câu (−0,000041 USD); khuyên không mở thí nghiệm bây giờ, xét khoá theo phiên ở plan B3. WebFetch trang prompt-caching OpenAI kiểm 5 ý. 0 USD. Handoff chưa có mục C126 ⇒ C không tự tạo, báo A.
+- A nhận C124 vòng 2 + C126 (đạt; C126 theo khuyên: không làm bây giờ). Plan B0 duyệt; B code B127 nhánh `p9-b0` ⇒ C review cả nhánh khi B xong.
+
+## C127 — câu soạn sẵn cho câu khẩn cấp B1 (A giao 19:20 02/11/2026; tin A = "làm đi")
+- 0 USD, chỉ viết. Căn cứ `data/phase_9/so_khan_cap.md` (B126, A đã kiểm). 2 bản (chung / câu đầu theo loại), mỗi bản ≤ 5 dòng, có dòng tiếng Anh; không sơ cứu, không số địa phương, không hứa "không SIM".
+- **File sẽ ghi (khai báo):** `data/phase_9/cau_khan_cap_soan_san.md` (mới); và file này.
+- **XONG (19:20 02/11/2026):** `cau_khan_cap_soan_san.md` `e25f6c6b0126` — Bản 1 chung (5 dòng; C khuyên), Bản 2 câu đầu theo 4 loại + 4 dòng chung; được / mất mỗi bản. Chờ A chọn; rồi chờ review B127.
+- **A chọn Bản 1** (ghi handoff); Bản 2 để sau nếu cần.
+
+## C128 — review cả nhánh `p9-b0` (A giao 19:36 02/11/2026; tin A = "làm đi")
+- Commit `215a77f` (cha `18e8f42`). Căn cứ: plan bản 2 `c126e7432c82`, report `b127_b0_implementation.md`, diff `18e8f42..215a77f`. Worktree B `/tmp/b_p9b0`: đọc + chạy, không sửa. Trần 0,005 USD.
+- **File sẽ ghi (khai báo):** `report_agent/2026-11-02_phase_9_code/b127_review.md` (mới); worktree riêng chỉ đọc `/tmp/c128` (detached `215a77f`, gỡ khi xong) + script dò `/tmp/c128_probe/` (xoá khi xong);
+  bằng chứng private `data/phase_9/c128_review/`; dòng trạng thái C128 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (19:43 02/11/2026): ready_for_user_confirmation** — review `b127_review.md` `18829b0e9c12` (quét trùng 0). T-7 0 dòng; T-1 chạy lại 2 cách `4d5bbe9e0edc`; T-2 ca dò byte HTTP (`http_body.py` `2fb997a106b5`) HEAD ×2 = nhánh (`316172f7648e`);
+  ngắt giữa stream thật (cổng 8842, cắt sau 23 delta) ⇒ `client_disconnected`, `usd` None, `llm_calls` [], drain xong; grep câu = 0; T-8 35 / 3 error (cần key). m-1 minor. Tiền ≈ 0,0007 USD. Worktree `/tmp/c128*` gỡ, `/tmp/c128_probe` xoá, server tắt (TaskStop).
+- Kế: C129 review plan B1 (A sẽ nhắn). A nhận C128: đạt; merge `p9-b0`; m-1 dời sang B1.
+
+## C129 — review plan B1 bản 1 (A giao 19:44 02/11/2026; tin A = "làm đi")
+- Plan `docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md` sha `0bc74ed957e7` (C tính lại — khớp). Chỉ dựa "Căn cứ để review"; không đọc `STATUS_B` / tin B. D7 + trần 0,25 USD A đã quyết (chỉ báo nếu D7 hỏng thước đo).
+  Xem kỹ: luật khẩn cấp ↔ sàn "0 câu thường bị chặn"; khoá luật trước khi mở kín; D6 lỗi Qdrant ⇒ SSE error có phá giao diện không; P6 "4 cờ tắt ⇒ giống byte B0"; thêm m-1 C128.
+- C là người viết bộ đo B1 (C123 / C125) ⇒ khi review **không** đưa nội dung câu kín vào file review (chỉ số đếm / loại).
+- **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-02-phase-9-b1-plan_review.md` (mới); script dò tạm `/tmp/c129_*` (xoá khi xong); dòng trạng thái C129 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (19:47 02/11/2026): changes_requested** — review `aa344a4cf5cb` (quét trùng 0; không nêu câu bộ đo). M-1 Golden OOS 7 / 18 câu nhắc "Huế" (đếm thô) bị loại khỏi sàn 1 / coi là `ngoai_pham_vi` (C đề nghị gán nhãn 18 câu, 0 USD);
+  M-2 P3 "sót câu kín ⇒ tắt luật" làm tệ hơn — tách sàn chặn nhầm ↔ độ phủ (A quyết); M-3 P6 chỉ so chuỗi gửi model, D6 đổi hợp đồng lỗi SSE kể cả khi tắt cờ (A quyết). m-1 C128 m-1; m-2 khoá bằng file; m-3 `message` lỗi + nhãn `routing`; m-4 D7 mép ngân sách token; m-5 D4 `[n]` ⇒ 500. 0 USD; không tạo file `/tmp`.
+- A quyết: M-1 đồng ý; M-2 tách hai sàn (độ phủ kín chỉ báo số, không tắt / không sửa luật theo kín); M-3 (b) đổi cố ý, giữ câu 503 cũ; m-5 bỏ kiểm. B sửa ⇒ bản 2.
+
+## C130 — gán nhãn tuyến 18 câu Golden `out_of_scope` (A giao 19:48 02/11/2026; tin A = "làm đi")
+- **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b1/golden_oos_nhan.jsonl` (mới); dòng trong `data/phase_9/bo_do_b1/README.md`; và file này.
+- **XONG (19:49 02/11/2026):** `golden_oos_nhan.jsonl` md5 `7cf3b6fa67b9` / sha `8cc943b2a880` — 7 `tro_ly_hue` (5 hỏi tại Huế kho không có + 2 đi lại từ / tới Huế) + 11 `ngoai_pham_vi` (`chap_nhan` `tro_ly_hue`); chỉ `case_index` + nhãn + lý do chung. README `2c0aced78d61`. 0 USD.
+- Kế: kiểm phần sửa plan B1 bản 2 khi B báo. C nghỉ chờ B127 ⇒ review cả nhánh `p9-b0` (chỉ dựa plan bản 2 `c126e7432c82` + report B127 + diff).
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 15:11 02/11/2026 `date`)
 

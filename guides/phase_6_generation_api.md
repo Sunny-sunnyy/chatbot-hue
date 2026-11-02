@@ -21,6 +21,8 @@
 
 **Hiện hành 01/11 (A, 12:51 01/11/2026):** thêm `POST /api/chat/stream` (SSE — `status` / `delta` / `sources` / `error{after_text}` / `done`; kiểm trích dẫn lúc cuối; ngắt ⇒ huỷ model, một dòng log) và giao diện chữ hiện dần; route JSON `/api/chat` giữ nguyên hành vi. API và bộ đánh giá dùng chung lõi `backend/llm/grounded_answer.py` (`answer_query` / `prepare_answer`). Trang web: DOMPurify danh sách cho phép + CSP cho mọi trang HTML. `cost_usd` theo giá đủ (ghi / đọc đệm). Spec `docs/superpowers/specs/2026-10-31-streaming-design.md` (`00fb57ee01b2`); merge `a80e12d`; số đo `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md`. Các mục dưới về UI một lượt là lịch sử.
 
+**Hiện hành 02/11 tối — Phase 9 B0 (B127; review C128 đạt; merge `1c10111`, A 19:48 02/11/2026):** lõi chung đổi tên `backend/llm/grounded_answer.py` ⇒ `backend/llm/assistant.py` (một lõi); `tim_kho` = tìm + dựng ngữ cảnh (code gọi); `backend/llm/pricing.py` giữ `cost_usd`; `CallLog(RunHooks)` ghi mỗi lần gọi model; `chat_metrics` thêm `route` / `usd` / `n_llm_calls` / `llm_calls` / `tools`; test ranh giới `tests/test_assistant_boundary.py` (chỉ module cho phép được import client mạng). Hành vi trả lời không đổi. Spec `docs/superpowers/specs/2026-11-02-phase-9-design.md`, plan `docs/superpowers/plans/2026-11-02-phase-9-b0-plan.md`.
+
 **Hiện hành 02/11 — giao diện mới (B121; review C119 đạt; **merge `ed8e6e8`**, A 10:36 02/11/2026):** `frontend/` là dự án React + Vite + Tailwind (nguồn `frontend/src/`), FastAPI phục vụ **bản build**
 `frontend/dist/` (trang ở `/`, tài nguyên ở `/static/assets/…`, CSP như cũ cho mọi trang HTML). Bản build và `node_modules/` không commit ⇒ trước khi chạy API (hoặc sau khi sửa `frontend/src/`):
 
