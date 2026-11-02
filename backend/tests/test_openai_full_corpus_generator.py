@@ -114,3 +114,32 @@ def test_parse_structured_output_rejects_malformed_and_extra_fields():
     for invalid_val in (None, 123, [1, 2, 3], True):
         with pytest.raises(GenerationError, match="Invalid or missing structured final_output"):
             parse_structured_output(invalid_val, AnswerOutput)
+
+
+def test_call_log_records_each_llm_call_with_full_price():
+    """`CallLog` (plan Phase 9 B0 D5): một mục mỗi lần SDK gọi `on_llm_end`, USD theo giá đủ (`llm.pricing`). Logic thuần — `response`
+    dựng tay đúng các thuộc tính hook đọc (`output[].type`, `usage`); đường SDK thật kiểm ở lượt chạy B0 (T-5 b), không phải ở đây."""
+    from types import SimpleNamespace
+
+    from llm.generator_openai_full_corpus import CallLog
+
+    usage = SimpleNamespace(
+        input_tokens=1000, output_tokens=100,
+        input_tokens_details=SimpleNamespace(cached_tokens=200, cache_write_tokens=700),
+        output_tokens_details=SimpleNamespace(reasoning_tokens=0),
+    )
+    log = CallLog()
+
+    async def one_call():
+        await log.on_llm_start(None, None, None, [])
+        await log.on_llm_end(None, None, SimpleNamespace(output=[SimpleNamespace(type="message")], usage=usage))
+
+    asyncio.run(one_call())
+    asyncio.run(one_call())
+    assert len(log.calls) == 2
+    call = log.calls[0]
+    assert set(call) == {"kind", "ms", "usd", "input_tokens", "output_tokens", "reasoning_tokens", "cached_tokens", "cache_write_tokens"}
+    assert call["kind"] == ["message"] and call["ms"] >= 0
+    # 100 thường × 0,10 + 700 ghi đệm × 0,125 + 200 đọc đệm × 0,01 + 100 ra × 0,50 (USD / 1M)
+    assert call["usd"] == pytest.approx(149.5e-6, abs=1e-12)
+    assert (call["cached_tokens"], call["cache_write_tokens"], call["reasoning_tokens"]) == (200, 700, 0)

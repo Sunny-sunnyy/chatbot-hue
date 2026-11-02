@@ -1,6 +1,6 @@
 """Single-turn full-corpus retrieval, context building, grounded answer generation and citations.
 
-Hai route cùng một lõi (`llm.grounded_answer`): `POST /api/chat` trả cả câu một lần (JSON); `POST /api/chat/stream` hiện chữ dần
+Hai route cùng một lõi (`llm.assistant`): `POST /api/chat` trả cả câu một lần (JSON); `POST /api/chat/stream` hiện chữ dần
 bằng sự kiện SSE (spec streaming `docs/superpowers/specs/2026-10-31-streaming-design.md` §4). Lỗi **trước** model của hai route đi
 cùng một đoạn code (`_retrieval_not_ready`, `_error_response_for`) nên mã HTTP + thân giống nhau.
 """
@@ -27,16 +27,18 @@ from llm.answer_stream import AnswerTextStream
 from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
-from llm.grounded_answer import AnswerTrace, answer_query, check_citations, elapsed_ms, prepare_answer
+from llm.assistant import AnswerTrace, answer_query, check_citations, elapsed_ms, prepare_answer, record_llm_calls, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
 
 # Một dòng `chat_metrics` mỗi lần gọi vào handler (plan C59): chỉ số đếm, mã cố định và thời gian — KHÔNG ghi câu hỏi, câu trả lời,
 # nội dung nguồn, chunk_id, response_id hay thông điệp lỗi. Test khóa đúng tập trường này (thêm trường phải sửa danh sách có chủ đích).
+# Phase 9 B0 (spec §3 "Log + vết"): tuyến, USD cả câu, số lần + từng lần gọi model (tuyến, loại đầu ra, ms, USD, token), công cụ đã chạy (tên, ms).
 METRIC_FIELDS = (
     "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens", "cache_write_tokens", "cached_tokens",
     "n_context_sources", "n_cited_sources", "search_ms", "dense_ms", "context_ms", "generation_ms", "citation_ms", "total_ms",
+    "route", "usd", "n_llm_calls", "llm_calls", "tools",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -211,6 +213,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         n_context_sources=None if trace.packed is None else len(trace.packed.sources),
         generation_ms=trace.generation_ms, citation_ms=trace.citation_ms,
         n_cited_sources=None if trace.cited is None else len(trace.cited),
+        route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
     )
     if trace.generated is not None:
         # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
@@ -336,7 +339,7 @@ async def _answer_events(query: str, generator, trace: AnswerTrace, metrics: dic
     ⇒ không gửi gì thêm, raise lại. Dòng log ghi ở `finally` **trước mọi `await`** (spec §4.5, §4.6)."""
     metrics["status_code"] = 200
     stream = StreamEvents(metrics, started)
-    result = None
+    result = call_log = None
     # Mình tự dừng đọc luồng model (ngắt / hết giờ) ⇒ phải hủy + đọc nốt. Không dựa vào `result.is_complete`: SDK tự `cancel()` (đặt
     # `is_complete`) khi lần chờ sự kiện bị hủy (`agents/result.py` `stream_events`), nhưng vẫn dặn đọc nốt sau khi hủy.
     stopped_early = False
@@ -350,7 +353,7 @@ async def _answer_events(query: str, generator, trace: AnswerTrace, metrics: dic
         yield stream.status({"stage": "generating"})
         generation_started = time.perf_counter()
         generator_started = time.monotonic()
-        result = generator.start_answer_stream(query, trace.packed.text)
+        result, call_log = generator.start_answer_stream(query, trace.packed.text)
         extractor = AnswerTextStream()
         events = result.stream_events()
         # Hạn giờ bọc **cả** vòng đọc (spec §4.3 bước 1): hạn chung, mỗi lần chờ sự kiện chỉ được chờ phần còn lại.
@@ -372,7 +375,7 @@ async def _answer_events(query: str, generator, trace: AnswerTrace, metrics: dic
         finally:
             trace.generation_ms = elapsed_ms(generation_started)
 
-        trace.generated = generator.finish_answer_stream(result, generator_started)
+        trace.generated = generator.finish_answer_stream(result, call_log, generator_started)
         trace.answer = trace.generated.text
         check_citations(trace)
         for event in stream.finish(trace):
@@ -387,6 +390,8 @@ async def _answer_events(query: str, generator, trace: AnswerTrace, metrics: dic
             yield event
     finally:
         # (1) ghi log trước mọi `await`: khi người dùng ngắt, anyio hủy lại ở mọi `await` sau đó (B105, spec §4.5).
+        if call_log is not None:  # cả khi ngắt / lỗi: chỉ có mục của lần gọi đã xong
+            record_llm_calls(trace, call_log.calls)
         _copy_trace_metrics(trace, metrics)
         metrics["total_ms"] = elapsed_ms(started)
         logger.info("chat_metrics %s", json.dumps(metrics))
