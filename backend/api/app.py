@@ -25,10 +25,11 @@ from retrieval.full_corpus_context import FullCorpusContextBuilder
 logger = logging.getLogger("api")
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-FRONTEND_DIR = REPO_ROOT / "frontend"
+# Bản build của giao diện React (`cd frontend && npm ci && npm run build`); không commit. Thiếu ⇒ API vẫn chạy, chỉ không có trang web.
+FRONTEND_DIR = REPO_ROOT / "frontend" / "dist"
 
 
-# Trang chỉ nạp script / CSS từ chính server (`/static/…`, không script nội dòng, thư viện vendor không dùng `eval`) ⇒ chặn mọi tải từ máy khác,
+# Trang chỉ nạp script / CSS từ chính server (`/static/…`, không script nội dòng, bản build không dùng `eval`) ⇒ chặn mọi tải từ máy khác,
 # kể cả khi chữ Markdown do model viết lọt qua DOMPurify (rà bảo mật C106 R2, S3 streaming).
 FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; "
                 "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
@@ -155,7 +156,9 @@ def create_app(settings=None):
     app.include_router(health_router)
     app.include_router(chat_router)
 
-    if FRONTEND_DIR.is_dir():
+    if not FRONTEND_DIR.is_dir():
+        logger.warning("Frontend build not found at frontend/dist — run `npm ci && npm run build` in frontend/")
+    else:
         app.mount("/static", FrontendStaticFiles(directory=FRONTEND_DIR), name="static")
 
         @app.get("/", include_in_schema=False)

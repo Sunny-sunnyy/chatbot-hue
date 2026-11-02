@@ -29,6 +29,10 @@ knowledge-base-hue/
 .DS_Store
 .vscode/
 
+# Giao diện: gói npm + bản build sinh lại bằng `npm ci && npm run build`
+frontend/node_modules/
+frontend/dist/
+
 # Superpowers workflow scratch
 .superpowers/
 
