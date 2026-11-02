@@ -5,7 +5,7 @@
 - **Phiên sau:** `CURRENT_HANDOFF.md` "PHIÊN SAU" — hỏi quyền ⇒ giao B0 (spec §5). Câu User: xoá nhánh `giao-dien-moi`, C106, W35 / W42 / W43, worktree AGY.
 - **Phiên sau — việc của A theo thứ tự** (ghi 15:10 02/11/2026, User: "để các nhiệm vụ, câu hỏi ở session tiếp theo"):
   1. Đọc `CURRENT_HANDOFF.md` "PHIÊN SAU" + "Kế hoạch chi tiết tuần 02–08/11"; `ListAgents`; kiểm Qdrant + `frontend/dist/`.
-  2. Hỏi User **mỗi lần một câu**: (a) quyền phiên; (b) xoá nhánh `giao-dien-moi` (User `!`); (c) C106 R4 cắt 22 dòng log cũ; (d) W35 / W42 / W43; (e) 4 worktree AGY + sao lưu kho đợt 1 + 2.
+  2. Hỏi User **mỗi lần một câu**: (a) quyền phiên; (b) ~~xoá nhánh `giao-dien-moi`~~ xong 15:15 02/11/2026; (c) C106 R4 cắt 22 dòng log cũ; (d) W35 / W42 / W43; (e) 4 worktree AGY + sao lưu kho đợt 1 + 2.
   3. Giao **B0** cho B (plan ⇒ C review plan ⇒ A duyệt sha tính từ file) + giao C **bước 0 khẩn cấp** (10 câu tự viết ⇒ User đọc) và **viết bộ đo B1** (phần kín B không mở). Đặt `notify_when_idle` cho mọi việc (W47);
      brief kèm spec bản 9 §3–§5 + tài liệu cũ Phase 9 (W46 — `find guides docs/superpowers/specs docs/superpowers/plans -maxdepth 1 -iname "*phase[-_]9[-_.]*"`).
   4. Theo dõi luật mới cho thử: W46, W47, W48 (sổ cải tiến); W39 hạn 07/11 (0 buổi D ⇒ đề xuất gỡ W4 + W39).

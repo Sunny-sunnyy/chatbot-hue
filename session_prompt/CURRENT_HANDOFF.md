@@ -43,7 +43,7 @@ S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
 1. **Quyền phiên.** A khuyên: như 02/11 (A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push; B / C push nhánh riêng).
-2. **Xoá nhánh `giao-dien-moi`** (local + origin): đã merge `ed8e6e8`; `git log main..giao-dien-moi` rỗng (A kiểm 14:52 02/11/2026) — User `!`
+2. ~~**Xoá nhánh `giao-dien-moi`**~~ **XONG 15:15 02/11/2026** (User `!` xoá local + origin). Cũ: (local + origin): đã merge `ed8e6e8`; `git log main..giao-dien-moi` rỗng (A kiểm 14:52 02/11/2026) — User `!`
    (`git branch -d giao-dien-moi` + `git push origin --delete giao-dien-moi`).
 3. **Rà bảo mật C106 còn chờ User** (`report_agent/2026-10-31_streaming_spec/c106_bao_mat_dong_goi.md` bản 2): R4 cắt 22 dòng log cũ chứa nguyên câu hỏi thử; các mục deploy để lúc deploy.
 4. **Sổ cải tiến chờ User:** W35 (kiểm điều khoản trước công cụ / tài khoản ngoài mới — 02/11 đã làm thực tế với Serper), W42, W43.
