@@ -1,3 +1,34 @@
+# STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
+
+**Trạng thái:** C không còn việc dở. Không còn server, worktree hay file tạm của C (`/tmp/c128*`, `/tmp/c131`, `/tmp/c132*`, `/tmp/c124*` đều đã gỡ). C không commit; A commit.
+
+**Việc tiếp của C (chờ A giao ở phiên sau):**
+1. **Review cuối nhánh `p9-b1`**, chỉ diff `7e190d7..<commit cuối của B>`: P2 (ngày, harness + kết quả), P5 (hồi quy 208 + judge), sửa m-1 / m-2 của vòng sớm (`report_agent/2026-11-02_phase_9_code/b129_review.md`).
+   - Viết thành mục mới trong cùng file. Phần đã khoá `7e190d7` đã review (0 major), không review lại.
+   - **Cổng ổn định có ca ngắt thật:** uvicorn của nhánh, cổng trống, `curl -m` cắt giữa chữ ⇒ `client_disconnected` + `chat_stream_drain` + không treo. Theo m-2, tốn ≈ 0,0003 USD. Tắt server bằng TaskStop.
+   - Lặp lại ca dò byte HTTP: `data/phase_9/c132_review/p6_http.py` (P6, 4 cờ tắt = B0) trên commit cuối.
+2. **P2 kín (7 câu ngày `ngay_moi_sealed.jsonl`)**: chạy khi B có harness và đã ghi dòng "Khoá". Kiểm sha trước, chỉ gửi số đếm.
+3. Việc B1 khác A giao (vd bộ đo B3 nhớ: C viết nếu C không code B3).
+
+**Kết quả chính tối 02/11 (để A / User dùng):**
+- **Bước 0 khẩn cấp:** 10 / 10 câu ⇒ câu từ chối chuẩn. User chốt "chỉ từ chối = lỗi", chọn câu soạn sẵn Bản 1.
+- **Phần kín B1:**
+  - định tuyến kín 20 / 20; sàn 1 = 0; sàn 2 0 / 5;
+  - luật khẩn cấp kín bắt **0 / 8** và chặn nhầm **2 / 8** ⇒ A tắt `emergency_rule`; câu khẩn cấp đi qua định tuyến (10 / 10 về `khan_cap`).
+- **Đệm prompt:** khoá đệm cố định lợi ≈ 0; tắt ghi đệm lợi −13 % / câu ⇒ để sau. Plan B3 xét khoá đệm theo phiên.
+
+**Tiền paid của C tối 02/11:** C122 0,0025169 + C128 ≈ 0,0007 (0,000479 đọc từ log + 1 lần ngắt không có usage, ước ≈ 0,00024) + C131 0,002384 ⇒ **≈ 0,0056 USD**.
+C123–C127, C129, C130, C132 không tốn tiền. Sub-agent (quota Claude): 2 judge sàn 2 ở C131.
+
+**Bẫy / bài học tối 02/11 (đầu vào vòng cải tiến):**
+1. **Gõ giờ ước một lần.** Dòng đầu `b129_review.md` ghi "20:36" trước khi chạy `date` (giờ thật 20:34). Đã sửa trước khi báo A. ⇒ Chạy `date` **trước** khi viết dòng đầu file review, không phải sau.
+2. **Đếm sai rồi phải sửa một lần.** Review C124 ghi "13 / 26 khoá `Omit`", thật là 14 ở đường thường và 13 ở stream. C tự thấy khi đọc lại và sửa trước khi báo. ⇒ Số đếm lấy thẳng từ output, không đọc lướt.
+3. **Hook giờ ước báo nhầm khi chữ chỉ là trích dẫn.** Hook báo giờ ước ở handoff và STATUS, nhưng đó là chữ trích (mẫu giờ có chữ x) của A hoặc của C. ⇒ Viết "dạng giờ ước", không chép mẫu, để hook khỏi báo lại.
+4. **Làm tốt (giữ):**
+   - Ca dò byte HTTP ở `httpx.AsyncClient.send` (khác cách bắt kwargs của B) dùng được cho P6 / T-2 ở mọi bậc, 0 USD, không gọi mạng.
+   - Phần kín bắt đúng chỗ luật mẫu chữ khớp quá sát phần đã thấy (14 / 14 đã thấy ↔ 0 / 8 kín).
+   - Tách sàn "chặn nhầm" khỏi "độ phủ" trước khi chạy kín (M-2 C129) nên kết quả âm không làm tắt nhầm phần đang có lợi.
+
 # STATUS C — MỞ PHIÊN TỐI 02/11 (18:28 02/11/2026 `date`)
 
 - Terminal C: `hue-rag-cc`. B = `hue-rag-e7` (B tự báo) ⇒ A = `hue-rag-24` (suy ra, chờ A xác nhận). Kênh: trực tiếp. Đã gửi báo cáo mở phiên cho cả hai.
@@ -83,7 +114,26 @@
 - **XONG (19:49 02/11/2026):** `golden_oos_nhan.jsonl` md5 `7cf3b6fa67b9` / sha `8cc943b2a880` — 7 `tro_ly_hue` (5 hỏi tại Huế kho không có + 2 đi lại từ / tới Huế) + 11 `ngoai_pham_vi` (`chap_nhan` `tro_ly_hue`); chỉ `case_index` + nhãn + lý do chung. README `2c0aced78d61`. 0 USD.
 - Kế: kiểm phần sửa plan B1 bản 2 khi B báo.
 - **C129 vòng 2 (19:53 02/11/2026): ready_for_user_confirmation** trên bản 2 `0c9e137b56af` (C tính lại sha — khớp); 8 / 8 finding đóng; câu 503 khớp từng chữ `main` `chat.py:163,177`; review `d00e0d9508c1`.
-  Ghi chú cho lúc chạy kín: 2 câu `khan_cap` trong `tuyen_sealed` bị luật bắt trước định tuyến ⇒ báo tách "luật bắt / định tuyến bắt". C nghỉ chờ B127 ⇒ review cả nhánh `p9-b0` (chỉ dựa plan bản 2 `c126e7432c82` + report B127 + diff).
+  Ghi chú cho lúc chạy kín: 2 câu `khan_cap` trong `tuyen_sealed` bị luật bắt trước định tuyến ⇒ báo tách "luật bắt / định tuyến bắt".
+- A duyệt plan B1 `0c9e137b56af` (`main` `a406bea`); B code B129 nhánh `p9-b1`. **C rảnh có lý do** (A ghi handoff): chờ dòng "Khoá" của B ⇒ A nhắn ⇒ C chạy phần kín (kiểm sha trước); B xong ⇒ C review cả nhánh. ~21:30 A nhắn kết phiên; ghi STATUS trước 21:40.
+
+## C131 — chạy phần kín P1 (tuyến) + P3 (khẩn cấp) trên `p9-b1` `7e190d7` (A giao 20:24 02/11/2026; tin A = "làm đi")
+- Trần 0,02 USD. Kiểm sha 4 file khoá + 2 công cụ trước; lệch ⇒ dừng. Worktree riêng `/tmp/c131` (detached `7e190d7`, gỡ khi xong); không dùng worktree B. B chạy P2 song song (có phí) ⇒ latency lượt này chỉ theo dõi, ghi "chạy chồng" (W31).
+- **File sẽ ghi (khai báo):** `report_agent/2026-11-02_phase_9_code/c131_kin_b1.md` (mới; chỉ số đếm); kết quả private `data/phase_9/c131_kin/`; dòng trạng thái trong `CURRENT_HANDOFF.md`; và file này.
+- Tiến độ (20:27): sha 6 / 6 khớp. P3 kín: luật bắt **0 / 8** khẩn cấp + 0 / 2 câu khẩn cấp bộ tuyến kín; **chặn nhầm 2 / 8** câu thường kín (0 / 18 câu thường bộ tuyến kín); đã thấy kiểm lại 14 / 14, 0 / 249.
+  P1 kín: định tuyến đúng **20 / 20** + 8 / 8 câu khẩn cấp luật sót ⇒ `khan_cap`; sàn 1 phạm 0; lỗi định tuyến 0; 0,002384 USD. Sàn 2: 2 judge sub-agent đang chấm (brief `san2_brief.md` `91f0cb07d7d4`, 5 thật + 2 phiếu kiểm).
+- **XONG (20:28 02/11/2026):** report `c131_kin_b1.md` `53a3ce1fe6a6` (quét trùng 0; chỉ số). Sàn 2: 0 / 5 lọt, 2 judge đúng 2 / 2 phiếu kiểm, 0 bất đồng. P3 (a) không đạt ⇒ theo luật tắt `emergency_rule`; định tuyến bắt 10 / 10 câu khẩn cấp kín.
+  Tiền C131 0,002384 USD (+ 2 sub-agent quota Claude). Worktree `/tmp/c131` gỡ. Bằng chứng private `data/phase_9/c131_kin/`. P2 kín NOT RUN (chưa có harness).
+- A quyết: tắt `emergency_rule`; câu khẩn cấp qua định tuyến ⇒ Bản 1; không sửa luật theo kín.
+
+## C132 — review sớm phần đã khoá `p9-b1` `7e190d7` (diff `a406bea..7e190d7`; A giao 20:29 02/11/2026; tin A = "làm đi")
+- 0 USD; chỉ đọc + chạy test + ca dò byte httpx cho P6. Không review P2 (B đang làm).
+- **File sẽ ghi (khai báo):** `report_agent/2026-11-02_phase_9_code/b129_review.md` (mới, mục "Vòng sớm 7e190d7"); worktree `/tmp/c132` (`7e190d7`) + `/tmp/c132_main` (`a406bea`) gỡ khi xong; script `/tmp/c132_probe/` (xoá khi xong);
+  bằng chứng private `data/phase_9/c132_review/`; dòng trạng thái trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (20:34 02/11/2026):** `b129_review.md` `865445ba1461` mục "Vòng sớm 7e190d7" — 0 blocker / 0 major / 2 minor. P6 ca dò byte HTTP (`p6_http.py`): `a406bea` ×2 = `7e190d7` (`190a6999c43b`, 10 câu × 2 đường, stream nhánh qua `answer_turn_stream`);
+  pytest 48 passed / 3 error (cần key). m-1: route log trước `turn.aclose()` ⇒ ngắt lúc route đang `yield` có thể mất mục `llm_calls` [Code]; m-2: ngắt thật qua lõi mới chưa chạy ⇒ cổng cuối (~0,0003 USD).
+  Worktree `/tmp/c132*` gỡ; `/tmp/c132_probe` xoá. Lỗi nhỏ của C: dòng đầu review ghi giờ ước 20:36 trước khi chạy `date` (thật 20:34) — đã sửa trước khi báo.
+- **Phiên sau (C):** review cuối nhánh `p9-b1` chỉ diff `7e190d7..<cuối>` (P2 ngày, P5 hồi quy, sửa m-1 / m-2) + cổng ổn định (có ca ngắt thật). C nghỉ chờ B127 ⇒ review cả nhánh `p9-b0` (chỉ dựa plan bản 2 `c126e7432c82` + report B127 + diff).
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 15:11 02/11/2026 `date`)
 

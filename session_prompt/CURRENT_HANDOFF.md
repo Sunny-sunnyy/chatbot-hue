@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 14:52 02/11/2026 (A, **kết phiên 02/11**: giao diện mới vào `main` `ed8e6e8`; Phase 9 đổi hướng agent; **spec Phase 9 bản 9 User duyệt sha `169c2dd5f86a`**; vòng cải tiến 14).
+Cập nhật: 20:47 02/11/2026 (A, **kết phiên tối 02/11**: B0 merge `1c10111`; B1 đo xong trên `p9-b1`, chưa merge). Trước: 14:52 02/11/2026 (A, **kết phiên 02/11**: giao diện mới vào `main` `ed8e6e8`; Phase 9 đổi hướng agent; **spec Phase 9 bản 9 User duyệt sha `169c2dd5f86a`**; vòng cải tiến 14).
 Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 02/11 (mọi mục việc B121–B124 / C118–C121, quyết định theo giờ, trạng thái review) dời **nguyên văn** sang
 `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`; 01/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-02_giao_dien_moi_va_spec_phase_9.md`.
 
@@ -18,6 +18,16 @@ clone / worktree mới hoặc sửa `frontend/src/` ⇒ `cd frontend && npm ci &
   nhánh riêng ⇒ review cả nhánh + cổng ổn định ⇒ A merge.
 - **Chất lượng trước** — sàn tiền / tốc độ chỉ theo dõi; **bắt buộc log USD + ms** mỗi lần gọi LLM / Serper / câu / tuyến. Trần Phase **2,0 USD**, mỗi phiên ≤ 1 USD. Đóng code ~20/12/2026.
 
+**KẾT PHIÊN TỐI 02/11 (20:47 02/11/2026) — phiên sau làm theo thứ tự:**
+1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền tối 02/11 hết hạn; User tối 02/11: "làm đi, đừng hỏi tôi" ⇒ đề xuất một câu duy nhất: quyền như 02/11 + A tự quyết trong kế hoạch); kiểm Qdrant.
+2. **B1 hoàn tất (B):** nhánh `p9-b1` `7e190d7`, worktree `/tmp/b_p9b1` (có `dist/`; mất sau khởi động lại máy ⇒ tạo lại). Việc: (a) kiểm 0 USD lần gọi trả lời giống byte B0 trên **32 câu bộ an toàn** ⇒ giống thì dùng lại S-AT 01/11;
+   (b) sửa m-1 C132 (`aclose` lõi trước khi ghi log) ; (c) đổi mặc định cờ `router` + `may_have_changed_notice` = true (`emergency_rule`, `today_line` giữ false); (d) cổng ổn định có 1 ca ngắt thật `curl -m`;
+   cập nhật `b129_b1_implementation.md`. ⇒ **C review delta `7e190d7..<cuối>`** (`b129_review.md`) ⇒ A merge ⇒ 5 chỗ báo cáo (LUONG, BAO_CAO_SINH — mục 4 đã có dòng B1 tối 02/11, Project_Status, guide 6, nhật ký).
+3. Sau merge B1 ⇒ **B2** (spec §5: B2a thí nghiệm câu tìm kho, B2b vòng công cụ `tim_kho`): người viết plan B2 ≠ người viết bộ đo. Mốc tuần: B1 đóng trước 16/11 (luật cắt spec §6).
+4. Theo dõi khi B7: tốc độ (định tuyến thêm ~1,7 s / câu); tắt ghi đệm prompt (−13,3 % tiền, C126); khoá cache theo phiên ở B3.
+5. User `!` (không gấp): xoá nhánh `p9-b0` đã merge — `git branch -d p9-b0 && git push origin --delete p9-b0`; cắt 22 dòng log cũ (lệnh trong chat tối 02/11: sao lưu `/tmp` ⇒ `sed -i '/Received question/d'`) — nếu chưa chạy.
+
+(cũ — kế hoạch tuần soạn 15:09 02/11, phần B0 / bước 0 / bộ đo B1 **đã xong** tối 02/11:)
 **Thứ tự việc phiên sau:**
 1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền 02/11 hết hạn); kiểm Qdrant; `cd frontend && npm ci && npm run build` nếu chưa có `dist/`.
 2. **Giao B0** (spec §5): người viết plan B0 + người review khác người viết; A duyệt sha (tính từ file). Việc song song không chồng file (vd C soạn bộ câu tuyến / chuỗi hỏi tiếp cho B1–B3 theo spec §4; phần kín do người không code giữ).
@@ -78,6 +88,14 @@ Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_r
   **B127 xong 19:36 02/11/2026 — chờ review (C):** nhánh `p9-b0` commit `215a77f` (đã push), worktree `/tmp/b_p9b0`; T-1…T-9 PASS (T1 `4d5bbe9e0edc`; chuỗi gửi model = HEAD 176 / 176 + 20 / 20); ≈ 0,0020 USD; report `b127_b0_implementation.md`.
   **B128 plan B1 bản 1 19:41 02/11/2026:** `docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md` sha `0bc74ed957e7` — chờ review (người khác B); 0 USD. **Bản 2 19:51 02/11/2026** sha `0c9e137b56af` (sửa theo C129) — chờ C kiểm phần sửa.
 **B127 xong (19:37 02/11/2026 A ghi nhận):** nhánh `p9-b0` `215a77f` (push, chưa merge); T-1…T-9 PASS theo report `b127_b0_implementation.md`; ≈ 0,0020 USD; A kiểm `git grep grounded_answer` = 0. ⇒ **C128 review cả nhánh — XONG 19:43 02/11/2026: ready_for_user_confirmation** (0 blocker / 0 major / 1 minor m-1 `/api/chat` bỏ `llm_calls` khi lượt lỗi sau khi model đã trả lời; `b127_review.md` `18829b0e9c12`; T-1 chạy lại `4d5bbe9e0edc`, T-2 ca dò byte HTTP giống hệt HEAD ×2 / nhánh, ngắt giữa stream chạy thật đúng plan; ≈ 0,0007 USD).
+**B129 khoá (20:24 02/11/2026 A ghi nhận):** nhánh `p9-b1` `7e190d7` (push); đã thấy: P6 PASS (4 cờ tắt = B0, 176 + 20), P3 luật bắt 14 / 14, chặn nhầm 0 / 249, P1 r2 253 / 253 (r1 phạm sàn 1 ở 1 câu ⇒ chỉnh lời dặn định tuyến 1 vòng trên phần đã thấy), sàn 2 0 / 8; ≈ 0,041 USD. Chưa chạy: P2 (B đang làm), P5 hồi quy 208 + judge (phiên sau). ⇒ **C131 chạy phần kín P1 + P3 — XONG 20:28 02/11/2026** (`c131_kin_b1.md` `53a3ce1fe6a6`; khoá 6 / 6 khớp): **P1 kín 20 / 20, sàn 1 = 0, sàn 2 0 / 5**; **P3 kín: luật bắt 0 / 8 (+ 0 / 2), chặn nhầm 2 / 8 câu thường ⇒ (a) không đạt ⇒ theo luật ghi trước tắt `emergency_rule`**; định tuyến bắt 10 / 10 câu khẩn cấp kín; 0,002384 USD.
+  **B129 kết phiên (20:34 02/11/2026, B ghi): PARTIAL — chờ judge P5.** P2 đã thấy không đạt (từ chối nhầm 5,0 ⇒ 4,5; vòng chỉnh 1 cũng 4,5) ⇒ `today_line` tắt; cổng ổn định 4 tuyến × 2 đường + Playwright đạt; P5 sinh xong (S-OOS 18 / 18, từ chối nhầm 12 / 158 = mốc, 0 lỗi) — **judge Đủ / Đúng + S-AT NOT RUN**. Tiền B1 ≈ 0,140 USD (B) + 0,0024 (C). Report `b129_b1_implementation.md`; lệnh chạy tiếp ở `STATUS_B.md`.
+- **C131 phần kín (20:29 02/11/2026):** P1 kín 20 / 20 đúng tuyến, sàn 1 = 0, sàn 2 0 / 5; **P3 kín: luật bắt 0 / 8 khẩn cấp, chặn nhầm 2 / 8 câu thường** (luật khớp quá sát phần đã thấy) ⇒ theo luật ghi trước **tắt `emergency_rule`** (A quyết 20:29 02/11/2026); định tuyến bắt 10 / 10 câu khẩn cấp kín ⇒ vẫn trả Bản 1 (chuỗi soạn sẵn), thêm 1 lần gọi định tuyến. Sàn spec "0 câu khẩn cấp vào model" **không đạt nguyên văn**; ý an toàn (model không viết lời khuyên khẩn cấp) giữ qua định tuyến — báo User. Không sửa luật theo câu kín. 0,0024 USD.
+- **Cờ B1 (B đề xuất, A đồng ý 20:30 02/11/2026, theo luật ghi trước):** `router` BẬT (253 / 253 + kín 20 / 20); `may_have_changed_notice` (H4c) BẬT; `emergency_rule` TẮT (kín: bắt 0 / 8, chặn nhầm 2 / 8); `today_line` TẮT (P2 đã thấy: từ chối nhầm TB 5,0 ⇒ 4,5, cần giảm ≥ 3 — kết quả âm, gốc ở tầng tìm / model như C93). Nhánh hiện để cả 4 cờ mặc định `false` ⇒ **trước merge phiên sau: đổi mặc định `router` + `may_have_changed_notice` = true** (sau khi judge P5 đạt). P5 sinh 208 câu đang chạy (≈ 0,07 USD); **judge P5 NOT RUN** ⇒ phiên sau; **B1 chưa merge**. Tiền B1 ≈ 0,073 + P5.
+- **C132 (C) XONG 20:34 02/11/2026, 0 USD:** review sớm phần đã khoá `a406bea..7e190d7` ⇒ `b129_review.md` `865445ba1461` "Vòng sớm": **0 blocker / 0 major / 2 minor** (m-1 route ghi log trước `aclose()` lõi ⇒ ca ngắt lúc gửi có thể mất `llm_calls`; m-2 đường ngắt qua lõi mới chưa chạy thật ⇒ cổng cuối). P6 ca dò byte HTTP: `main` ×2 = nhánh (`190a6999c43b`); pytest 48 / 3 error (cần key). Review cuối chỉ xem `7e190d7..` (P2, P5).
+- **Phiên sau B sửa (A):** m-1 C132 (`aclose` lõi trước khi ghi log) + m-2 (cổng cuối có 1 ca ngắt thật `curl -m`). **B130 (B, đang làm, 0 USD):** judge P5 nếu chạy tiếp được từ chỗ dừng; dừng 21:35. **C rảnh có lý do:** việc còn lại B1 là của B; review cuối cần nhánh xong.
+- **B130 XONG (20:45 02/11/2026):** judge P5 Golden 311 / 311 điểm; sàn F1–F4 đạt; Đúng đạt; từ chối nhầm 12 = 12; Đủ TB −0,023 [−0,070; +0,023] nhưng **6 câu tụt > ngưỡng 5**. Lần gọi trả lời giống byte B0 176 / 176 ⇒ **A chọn dùng lại theo spec §4 dòng 158** (nhiễu sinh lại cùng đầu vào; ghi trung thực). S-AT: phiên sau B kiểm giống byte trên 32 câu an toàn (0 USD) ⇒ giống thì dùng lại S-AT 01/11; không sinh A/A. Tiền B1 tổng ≈ 0,142 USD.
+- **Theo dõi tốc độ (A, cần báo User):** định tuyến thêm p50 1,7 s / p95 2,7 s mỗi câu; chữ đầu tuyến trợ lý 4,9 s ở cổng (1 câu) — trước B1 p50 1,23 / p95 2,61 s ⇒ có thể vượt sàn cũ p95 ≤ 5 s tới chữ đầu. Spec Phase 9: tốc độ chỉ theo dõi (chất lượng trước). Ứng viên tối ưu sau: chạy định tuyến song song với tìm kho / model định tuyến nhỏ hơn — đo ở B7 hoặc thí nghiệm riêng.
 **Plan B1 DUYỆT — bản 2 sha `0c9e137b56af`** (A 19:54 02/11/2026, sha tính từ file; C129 vòng 2 ready, review `…b1-plan_review.md` `d00e0d9508c1`). ⇒ **B129 code B1** trong worktree nhánh `p9-b1` từ `main` mới; trần B1 0,25 USD (dừng > 0,21); 21:40 chưa xong ⇒ commit WIP lên nhánh + STATUS_B. Phần kín: C chạy sau khi B ghi dòng "Khoá" (sha) vào report.
 **C rảnh có lý do (19:54 02/11/2026):** chờ B129 (review cả nhánh + chạy phần kín) — việc khác dễ chồng file B1.
 **B0 MERGE 19:49 02/11/2026: `main` `1c10111`** (A; C128 ready `b127_review.md` `18829b0e9c12`; code `main` = nhánh — dùng lại bằng chứng cổng của B127 / C128; A chạy lại trên `main`: pytest có key **222 / 222 pass**). 5 chỗ báo cáo xong (LUONG mục 9, BAO_CAO_SINH bản 19, Project_Status §2 / §4, guide 6 "Hiện hành", nhật ký `2026-11-02_toi_phase_9_b0.md`) + mục lục. Nhánh `p9-b0` còn (origin + local) ⇒ đề xuất xoá lúc kết phiên.
@@ -121,9 +139,9 @@ Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_r
 
 | Vai | Terminal (phiên tối 02/11, mở 18:27) | Agent | Liên lạc | Phiên tối 02/11 | Trạng thái |
 |---|---|---|---|---|---|
-| A — điều phối | `hue-rag-24` | Claude Opus 5.5 | trực tiếp | điều phối | `STATUS_A.md` |
-| B — thực thi | `hue-rag-e7` | Claude Opus 5.5 | trực tiếp | B125 plan B0 | `STATUS_B.md` |
-| C — thực thi | `hue-rag-cc` | Claude Opus 5.5 | trực tiếp | C122 khẩn cấp ⇒ C123 bộ đo B1; C124 review plan B0 | `STATUS_C.md` |
+| A — điều phối | `hue-rag-24` | Claude Opus 5.5 | trực tiếp | điều phối; merge B0; 5 chỗ báo cáo; vòng cải tiến 15 | `STATUS_A.md`; 0 USD |
+| B — thực thi | `hue-rag-e7` | Claude Opus 5.5 | trực tiếp | B125 plan B0, B126 số khẩn cấp, B127 code B0, B128 plan B1, B129 code B1 (PARTIAL), B130 judge P5 | `STATUS_B.md`; ≈ 0,142 USD |
+| C — thực thi | `hue-rag-cc` | Claude Opus 5.5 | trực tiếp | C122 khẩn cấp, C123 / C125 bộ đo B1, C124 / C129 review plan, C126 cache, C127 câu soạn sẵn, C128 review B0, C130 nhãn, C131 phần kín, C132 review sớm B1 | `STATUS_C.md`; ≈ 0,0055 USD |
 
 Phiên sáng / chiều 02/11 (terminal cũ `hue-rag-7e` / `-d6` / `-29`): B121–B124, C118–C121 — `archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`.
 
@@ -131,7 +149,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 ## Quyền
 
-- **Phiên tối 02/11 — hết hạn cuối phiên** (User chọn "như 02/11", A ghi nhận 18:32 02/11/2026): A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push (hỏi User trước theo luật chung); B / C push nhánh riêng. **Kết phiên 22:00 02/11/2026** (User, nói lúc 18:32) — A bắt đầu kết phiên ~21:30; B / C ghi STATUS + report dở trước ~21:40.
+- **Phiên tối 02/11 — HẾT HẠN (kết phiên 20:47 02/11/2026)** (User chọn "như 02/11", A ghi nhận 18:32 02/11/2026): A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push (hỏi User trước theo luật chung); B / C push nhánh riêng. **Kết phiên 22:00 02/11/2026** (User, nói lúc 18:32) — A bắt đầu kết phiên ~21:30; B / C ghi STATUS + report dở trước ~21:40.
 - (cũ) **Phiên 02/11 — HẾT HẠN cuối phiên** (User, A ghi nhận 09:48 02/11/2026): như 01/11 — A tự điều phối + tự thử; ≤ 1 USD; A tự commit / push; B / C push nhánh riêng. Tiền phiên 02/11 ≈ **0,003 USD** paid
   (B ≈ 0,002 · C ≈ 0,0006 · A 0; sub-agent + judge dùng quota Claude).
 - **Phase 9 (spec duyệt, không hết hạn theo phiên):** trần **2,0 USD** cả Phase; Serper dùng luôn (User chấp nhận rủi ro điều khoản — spec §2, §7); gói npm giao diện như đã duyệt 02/11.

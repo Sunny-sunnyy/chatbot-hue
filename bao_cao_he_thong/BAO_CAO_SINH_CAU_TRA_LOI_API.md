@@ -82,6 +82,15 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Thí nghiệm chọn / bỏ phương án có luật ghi trước khi chạy và người khác kiểm lại; các lượt **đo hiện trạng** (tốc độ, giá, token) chỉ đo — không có luật giữ / bỏ ghi trước.
 
+### 02/11/2026 tối — Phase 9 (B0 vào chatbot; B1 đo xong phần lớn, **chưa vào chatbot**)
+- **B0** (merge `1c10111`): một lõi `assistant.py`, `tim_kho`, log USD + ms mỗi lần gọi model · câu trả lời không đổi (giống byte) · **giữ** · `report_agent/2026-11-02_phase_9_code/b127_*`.
+- **Câu khẩn cấp, chatbot hiện tại** (10 câu tự viết, 0,0025 USD): 10 / 10 chỉ từ chối, không chỉ số gọi · **bạn: lỗi** ⇒ B1 trả câu soạn sẵn 113 / 114 / 115 / 112 (số kiểm nguồn chính thức) · `c122_khan_cap_buoc0.md`.
+- **B1, nhánh `p9-b1`** (luật ghi trước, phần kín do C giữ; ≈ 0,142 USD): **định tuyến** 4 tuyến đúng 253 / 253 đã thấy + 20 / 20 kín ⇒ **bật**; dòng nhắc "có thể đã thay đổi" (vé / nơi / lễ hội) ⇒ **bật**;
+  **luật từ khoá khẩn cấp**: đã thấy 14 / 14, kín **0 / 8 + chặn nhầm 2 / 8** ⇒ **bỏ** (câu khẩn cấp vẫn ra câu soạn sẵn nhờ định tuyến bắt 10 / 10 kín; thêm 1 lần gọi phân loại);
+  **dòng ngày hôm nay**: từ chối nhầm 5,0 ⇒ 4,5 (cần giảm ≥ 3) ⇒ **bỏ** (gốc ở tầng tìm / model, như 30/10). Hồi quy 176 câu: sàn đạt, từ chối nhầm 12 = 12; Đủ 6 câu tụt (ngưỡng 5) nhưng lần gọi trả lời giống byte
+  bản cũ ⇒ coi là nhiễu, dùng lại số cũ (spec §4). **Tốc độ:** định tuyến thêm ~1,7 s (p95 2,7 s) mỗi câu ⇒ chữ đầu có thể vượt 5 s — chỉ theo dõi (chất lượng trước). Merge phiên sau.
+  `b129_b1_implementation.md`, `b129_review.md`, `c131_kin_b1.md`.
+
 ### 30/10/2026
 - **Câu hỏi theo ngày tương đối** (15 câu tự viết + 11 câu bộ an toàn, 2 người chấm Claude không biết ngày chạy; 0,0037 USD): 0 câu tự đoán ngày rồi nói chắc,
   0 câu tính sai thứ / âm lịch; nhưng 6 / 14 câu có trong kho bị từ chối, cùng thông tin hỏi không kèm ngày thì trả lời đúng. **Bạn quyết (14:44):** không sửa prompt ở
@@ -173,7 +182,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 - **Đóng gói Phase 1–8 — xong:** lượt đo cuối mọi sàn đạt; B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). **Phase 8 bạn đóng 14:29 01/11/2026.**
 - **Từ nhận xét B0:** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9 — spec đang viết); `[n]` chen trong câu khó đọc ⇒ **xong ở giao diện mới 02/11** (số nhỏ bấm được, vẫn giữ `[n]` ở tầng kiểm).
 - **Giao diện mới — giới hạn:** chỉ làm cho laptop (điện thoại không vỡ, chưa tối ưu); hộp thoại cho Phase 9 phải tự viết (Radix Dialog vi phạm CSP); ca "rút lại" / luồng đứt giữa chừng vẫn kiểm bằng luồng tự dựng.
-- **Phase 9:** công cụ "hôm nay là ngày nào" cho câu theo ngày tương đối; tách câu hỏi hai ý là ứng viên.
+- **Phase 9:** B0 xong; **B1 chờ merge** (phiên sau: kiểm 32 câu an toàn giống byte, sửa 2 lỗi nhỏ log khi ngắt, review phần cuối, cổng ổn định); dòng ngày hôm nay thử ở B1 **không đạt**; tách câu hỏi hai ý là ứng viên; tắt ghi đệm prompt (−13 % tiền / câu) để sau.
 - **Còn mở, không gấp:** câu trả lời quá gọn (cần thêm câu tự nhiên để đo); bảng giá và câu nhiều nguồn (gốc ở khâu tìm); sai về chữ (tên, sự kiện) chưa có cách đo rẻ.
 - Hướng đã gác (chỉ mở lại khi có ý mới đã kiểm trước): trả lời phần có căn cứ; trả lời không suy luận; luật kiểm sau sinh; model chọn 10 / 30 đoạn.
 
