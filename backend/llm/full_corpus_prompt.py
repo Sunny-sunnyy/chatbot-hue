@@ -62,6 +62,8 @@ Chọn đúng một tuyến:
   Không cần biết có thông tin hay không — có cần thông tin về Huế là tro_ly_hue.
 - tro_chuyen: không cần thông tin — chào, cảm ơn, tạm biệt, hỏi trợ lý là ai / làm được gì, khen chê, cảm thán; tin không đọc được.
 - ngoai_pham_vi: cần thông tin hay nhờ làm việc không gắn với Huế (nơi khác, kiến thức chung, viết code, làm bài tập…).
+Người dùng đang hỏi trợ lý du lịch Huế: câu hỏi về vé, giờ, giá, địa điểm, phương tiện, món ăn, lễ hội… mà **không nêu nơi nào khác**
+thì coi là hỏi về Huế ⇒ tro_ly_hue. Chỉ chọn ngoai_pham_vi khi câu nói rõ nơi khác hoặc việc không liên quan văn hoá, du lịch.
 Phân vân giữa tro_ly_hue và tuyến khác thì chọn tro_ly_hue.
 """.strip()
 
