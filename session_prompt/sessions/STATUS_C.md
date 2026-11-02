@@ -81,7 +81,9 @@
 ## C130 — gán nhãn tuyến 18 câu Golden `out_of_scope` (A giao 19:48 02/11/2026; tin A = "làm đi")
 - **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b1/golden_oos_nhan.jsonl` (mới); dòng trong `data/phase_9/bo_do_b1/README.md`; và file này.
 - **XONG (19:49 02/11/2026):** `golden_oos_nhan.jsonl` md5 `7cf3b6fa67b9` / sha `8cc943b2a880` — 7 `tro_ly_hue` (5 hỏi tại Huế kho không có + 2 đi lại từ / tới Huế) + 11 `ngoai_pham_vi` (`chap_nhan` `tro_ly_hue`); chỉ `case_index` + nhãn + lý do chung. README `2c0aced78d61`. 0 USD.
-- Kế: kiểm phần sửa plan B1 bản 2 khi B báo. C nghỉ chờ B127 ⇒ review cả nhánh `p9-b0` (chỉ dựa plan bản 2 `c126e7432c82` + report B127 + diff).
+- Kế: kiểm phần sửa plan B1 bản 2 khi B báo.
+- **C129 vòng 2 (19:53 02/11/2026): ready_for_user_confirmation** trên bản 2 `0c9e137b56af` (C tính lại sha — khớp); 8 / 8 finding đóng; câu 503 khớp từng chữ `main` `chat.py:163,177`; review `d00e0d9508c1`.
+  Ghi chú cho lúc chạy kín: 2 câu `khan_cap` trong `tuyen_sealed` bị luật bắt trước định tuyến ⇒ báo tách "luật bắt / định tuyến bắt". C nghỉ chờ B127 ⇒ review cả nhánh `p9-b0` (chỉ dựa plan bản 2 `c126e7432c82` + report B127 + diff).
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 15:11 02/11/2026 `date`)
 
