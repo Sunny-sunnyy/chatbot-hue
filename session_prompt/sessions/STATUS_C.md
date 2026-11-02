@@ -1,5 +1,9 @@
 # STATUS C — PHIÊN 02/11
 
+## C120 — viết lại spec Phase 9 theo hướng agent, bản 6 (A giao; việc A giao = User "làm đi")
+- Cùng file `docs/superpowers/specs/2026-11-02-phase-9-design.md`; **chờ tin A "đã commit" bản 5** (`03cb538cf00c`) rồi mới sửa. 0 USD; ≤ ~450 dòng; Căn cứ đầu, ≤ 5 câu hỏi User cuối.
+- **File sẽ ghi (khai báo):** spec trên; dòng trạng thái C120 trong `CURRENT_HANDOFF.md`; và file này. Đọc (dữ liệu): `data/nghien_cuu_phase_9_2026-11-01/agent/a_sa{1,2,3}.md`, kết quả ChatGPT 02/11, `guides/phase_9_agentic_rag_roadmap.md`, B122.
+
 ## C119 — review cả nhánh `giao-dien-moi` `11a0f3a` (B121) (A giao 10:19 02/11/2026; việc A giao = User "làm đi")
 - Skill `risk-gated-agent-review`; không đọc `STATUS_B.md`; build lại từ lockfile sạch trong worktree riêng `/tmp/c119` (không dùng `/tmp/b_giao_dien`); server tạm cổng trống; trần 0,01 USD.
 - **File sẽ ghi (khai báo):** `report_agent/2026-11-02_giao_dien_moi_code/b121_review.md` (mới, working tree chung); worktree `/tmp/c119` + script dò `/tmp/c119_probe/` (gỡ khi xong); bằng chứng private `data/giao_dien_moi_2026-11-01/c119_review/`; dòng trạng thái C119 trong `CURRENT_HANDOFF.md`; và file này.
@@ -27,6 +31,10 @@
   đếm lại `^## Nguồn dữ liệu` trên 3 thư mục đích = 13 / 69 (19 %), khớp review + A; ngưỡng ghi trước < 50 % ⇒ không hiện năm ⇒ C đổi khuyến nghị Q2 sang dòng cố định "có thể đã thay đổi" (code theo thư mục nguồn).
   Sửa kéo theo cùng nghĩa ở §1 / §2 / §3 / §9 (đã khai trong bảng trả lời). Vòng 4 là lượt cuối theo skill.
   Bẫy: (1) mẫu `^## Nguồn` khớp cả mục lịch sử "Nguồn gốc" — mẫu đếm phải đúng **tên mục**, và đếm trên **đúng tập đích** của tính năng, không cả kho; (2) sửa văn bản bằng `python3` hệ thống (không `uv run`) — lần sau dùng Edit.
+- **Vòng 4: ready_for_user_confirmation** (bản 4 `589bec308f41`). User chọn Q1–Q5 (qua A). **Bản 5 (11:04 02/11/2026) — `03cb538cf00c`** (539 dòng; quét trùng 0): chỉ ghi lựa chọn vào §2 (5 dòng quyết định), §5.4 (chi phí: (a) mặc định chưa khoá + bước chọn lại ~nửa ngày: tra web + User đọc mẫu 2 cách), §5.5 (nhãn), §6 (ô H2 +nửa ngày), §10 (đánh dấu). Chờ User duyệt sha.
+- **A TẠM GIỮ bản 5** (sha tính lại khớp): User hỏi lại hướng lõi — muốn trợ lý có công cụ + tự chủ (vd kho không có ⇒ tự tra web, User có Serper). A đang bàn với User; có thể sửa §1 "không cần agent" + thêm phần agent có công cụ. **C không sửa spec, chờ A nhắn.**
+- **Kết quả (A báo):** Phase 9 đổi hướng = **agent có công cụ cho mọi câu** (model tự gọi: tìm kho / ngày hôm nay / tra web Serper khi kho không có…; RAG 1–8 thành công cụ); giữ OpenAI Agents SDK; Q1–Q5 vẫn dùng; bản 5 tạm giữ.
+  A + B122 + ChatGPT nghiên cứu trước (~1–2 giờ) ⇒ A nhắn C viết lại spec. **C rảnh tới lúc đó** (lý do: mục "Phase 9 đổi hướng" trong `CURRENT_HANDOFF.md`); không sửa spec, không việc nặng / paid.
 - **Bẫy (vòng cải tiến):** bản 1 (1) đổi nghĩa 2 ý trong hướng User (H4 "ghi nguồn ngày", "câu an toàn") mà không khai thành chỗ lệch; (2) bỏ lặng một mục "thêm vào danh sách thử" của báo cáo; (3) đếm "chỉ in số" không ghi mẫu ⇒ người khác không lặp lại được.
   ⇒ Khi viết spec từ một hướng đã chốt: liệt kê **từng ý** của nguồn hướng (báo cáo §1 + §6 từng dòng) và đánh dấu mỗi ý: trong / ngoài / hiểu thế nào — trước khi viết phần thiết kế; mọi số đếm ghi mẫu ngay cạnh.
 

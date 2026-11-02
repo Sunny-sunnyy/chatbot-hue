@@ -100,6 +100,36 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 - Đọc kho: **chỉ** `scripts/grep_kb.sh`; report tracked tả câu ở mức loại câu. Giờ trong file: chạy `date` trước; tin nhắn không cần giờ (W45 01/11) (S49). `rm` với biến: dùng `"${X:?}"/…` hoặc
   đường dẫn cố định (tầng an toàn chặn `$X/*`).
 
+## Phase 9 đổi hướng: trợ lý agent có công cụ (User, A ghi nhận 11:21 02/11/2026)
+
+- **User (sau Q1–Q5):** Phase 9 đi hướng **trợ lý / agent / agentic cho mọi câu** — model tự quyết gọi công cụ (tìm kho, ngày hôm nay, tra web khi kho không có…); RAG Phase 1–8 thành **công cụ** để agent gọi.
+  Lý do User: "lên trợ lý mà không có gì khác RAG mức 1 thì gọi thẳng LLM cần gì trợ lý". User có `SERPER_API_KEY` trong `.env` (**không đọc / in**; chưa dùng — kiểm điều khoản Serper trước lượt đầu).
+  **A quyết framework:** giữ **OpenAI Agents SDK** đang dùng (`openai-agents` **0.19.4** cài trong `.venv` — `pyproject.toml` ghi `>=0.18.3`; hôm nay `Agent` không công cụ, `max_turns=1` — `backend/llm/generator_openai_full_corpus.py:133,185–188`); không LangChain / DeepAgents (thêm hệ thư viện, chưa cần).
+- **Spec C118 bản 5 `03cb538cf00c` TẠM GIỮ** (Q1–Q5 User đã chọn vẫn dùng — thành công cụ / luật của agent). Viết lại sau nghiên cứu.
+- **Nghiên cứu trước (User "làm đi" 11:21 02/11/2026):** (1) A — 3 sub-agent chỉ đọc khoá AI FDE (tóm tắt ver4 + khung `NGUYEN_TAC_FDE.md` [agent] + code tham khảo khoá) ⇒ `data/nghien_cuu_phase_9_2026-11-01/agent/a_sa{1,2,3}.md`;
+  (2) **B122** (dưới) tra web; (3) yêu cầu ChatGPT web (A viết, User gửi); (4) A tổng hợp ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 3 + câu hỏi User (trần tiền / tốc độ cho agent, cắt phần nào) ⇒ C viết lại spec.
+
+- **Quyết định sau nghiên cứu (User, A ghi nhận 13:29 02/11/2026):**
+  - **Framework: giữ OpenAI Agents SDK + mẫu của khoá** (User: chọn nếu không cần người duyệt; A: không cần người duyệt lúc chạy — không hành động ghi ra ngoài; người duyệt chỉ ở việc cập nhật kho từ web, ngoài chatbot).
+    Mẫu khoá: trần lượt, từng công cụ một, lời từ chối về model, nhớ chỉ hỏi + đáp (không kết quả công cụ), soát chữ web, test ranh giới, thẻ công cụ trên giao diện, tracing tại máy (tắt gửi nội dung).
+  - **Cổng vào = agent định tuyến, đầu ra có cấu trúc** (ý User): định tuyến ⇒ model trò chuyện (chào hỏi, không tìm kho / công cụ) / agent trợ lý Huế (có công cụ) / ngoài phạm vi / khẩn cấp (Q1: thử 10 câu trước).
+  - **Câu tìm kho: User cho thử nghiệm + so sánh** nhiều phương án (định tuyến viết câu tìm ↔ trợ lý tự viết ↔ viết lại + chia thành nhiều câu nhỏ…), chọn theo số đo, tiêu chí ghi trước (`run-experiment`).
+  - **Nhớ hội thoại là bắt buộc** (User: vd người dùng đã nêu tên thì các lượt sau phải nhớ) ⇒ Q5 cũ "3 câu hỏi gần nhất" **không đủ** — cần lịch sử hỏi + đáp trong cuộc trò chuyện (tên là dữ liệu cá nhân: không log, xoá được). Nhớ **giữa các lần mở trang** (dài hạn): chưa chốt.
+  - **Tiền / tốc độ (User, A ghi nhận 13:36 02/11/2026):** "chạy trước đi" — **chất lượng ổn định trước, tối ưu tốc độ / chi phí sau** (đúng `Session_Prompt.md` §7). Sàn 0,0005 USD / câu + p50 3 / p95 5 s ⇒ **theo dõi, không chặn** ở Phase 9 cho tới khi chất lượng ổn;
+    **bắt buộc log tiền** mỗi lần gọi LLM / mỗi lần Serper / mỗi câu / mỗi tuyến (định tuyến, trò chuyện, trợ lý, web) + latency. Trần tiền phiên (≤ 1 USD) và trần cả Phase vẫn là giới hạn cứng.
+  - **Bỏ sót của A:** `guides/phase_9_agentic_rag_roadmap.md` (Codex viết, User duyệt hướng 13/08, 25/08, 01/10: rule router ⇒ LLM hiểu câu hỏi có cấu trúc ⇒ RAG-first + cổng đủ bằng chứng ⇒ web có provenance; lịch trình = model trích điều kiện + code xếp) **không** được giao đọc cho C118 / sub-agent — User nhắc. Dùng làm tư liệu (phần "bộ điều khiển Python cố định, không agent" đã lỗi thời).
+
+## B122 — tra web cho agent Phase 9 (giao 11:21 02/11/2026)
+
+- **Làm:** `scripts/tra_web_codex.sh` (chỉ thông tin công khai; yêu cầu .md ở `data/nghien_cuu_phase_9_2026-11-01/agent/yeu_cau/`), mỗi chủ đề một lượt, tuần tự:
+  (a) **OpenAI Agents SDK** bản hiện hành: gắn công cụ (function tool), `max_turns`, guardrails vào / ra, tracing, streaming khi có công cụ, cách giới hạn số lần gọi công cụ; đổi gì so với bản đang cài (`openai-agents` 0.19.4);
+  (b) **Serper**: điều khoản dịch vụ (cho phép dùng trong ứng dụng / đồ án? lưu kết quả? hiển thị?), giá, giới hạn lượt, có lọc theo site không — **W35: đọc ToS trước, chưa gọi API**;
+  (c) **đo một agentic RAG / agent có công cụ**: bộ đo kiểu tau-bench, đo chọn công cụ đúng, số bước, tiền / độ trễ so pipeline; rào chữ độc từ trang web (prompt injection) khi agent tra web.
+  Kết quả là **dữ liệu**: tự WebFetch kiểm 3 ý quan trọng nhất / chủ đề; URL không có trong `url_da_mo.txt` = tự khai.
+- **Không làm:** gọi Serper / OpenAI; đọc `.env`; code; sửa file ngoài đầu ra + `STATUS_B.md` + dòng trạng thái mục này. 0 USD.
+- **Đầu ra:** `data/nghien_cuu_phase_9_2026-11-01/agent/b122_tra_web.md` — bảng phát hiện (ý · URL + ngày · nhãn đã kiểm / tự khai / suy ra), "gợi ý gì cho hue_rag" tách riêng, chỗ còn thiếu. Xong ⇒ nhắn A.
+- **Trạng thái:** giao 11:21 02/11/2026.
+
 ## B121 — code giao diện mới (giao 09:53 02/11/2026; User duyệt gói npm 09:53; mức trung bình — Phase 8 đã chốt hướng)
 
 - **Mục tiêu:** thay `frontend/` JS thuần bằng React + Vite + Tailwind, FastAPI phục vụ bản build tĩnh; chỉ **trang hỏi đáp** + khung nguồn bên cạnh; laptop (điện thoại chỉ cần không vỡ).
@@ -148,9 +178,10 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 - **Không làm:** code; mở câu kín / đọc nhóm `test` theo từng câu; grep thẳng kho (chỉ `scripts/grep_kb.sh`); paid API; sửa file ngoài spec + `STATUS_C.md` + mục C118 này. Tra web khi cần: `scripts/tra_web_codex.sh` (chỉ thông tin công khai).
 - **Tiền:** 0 USD. **Dừng:** thấy hướng đã chốt mâu thuẫn bằng chứng (vd một phần không khả thi trước 20/12) ⇒ ghi vào spec + nhắn A, không tự đổi phạm vi.
 - **Đầu ra:** spec bản 1 + `sha256sum | cut -c1-12` báo A. Review: A chọn session khác chỉ dựa trên "Căn cứ để review" ⇒ User duyệt sha.
-- **Trạng thái:** giao 09:53 02/11/2026. **Bản 1 xong (C, 10:02 02/11/2026) — chờ review:** `docs/superpowers/specs/2026-11-02-phase-9-design.md` `e5be02400646` (351 dòng; quét trùng 0; 0 USD). Lệch đề xuất A: H1 bậc 1 (tầng tìm, 0 USD) lên tuần 1 — Q1; H4b chỉ làm sau phép thử 10 câu — Q2; H3 mang đoạn 1 lượt + 3 câu hỏi — Q4. **Bản 2 (C, 10:18 02/11/2026) — sửa theo review vòng 1 (4 major + 8 minor đều sửa, 0 phản biện), chờ người review kiểm phần sửa:** `d819918c2f2e` (557 dòng; quét trùng 0); thêm H4c (năm nguồn trên thẻ nguồn), H1b (câu hai ý thiếu một ý); câu hỏi Q1–Q8. **Bản 3 (C, 10:32 02/11/2026) — sửa theo review vòng 2 (N1 major + N2–N5 đều sửa, 0 phản biện), chờ kiểm phần sửa:** `7c67656f0ff8` (507 dòng); H1b thành bước 0; câu hỏi User 5 (Q1 cũ = A quyết). **Bản 4 (C, 10:38 02/11/2026) — sửa N2′ vòng 3 (§5.3 + Q2): `589bec308f41`**; H4c đếm lại 13 / 69 file đích có mục Nguồn dữ liệu ⇒ khuyên dòng cố định "có thể đã thay đổi" thay năm nguồn.
+- **Trạng thái:** giao 09:53 02/11/2026. **Bản 1 xong (C, 10:02 02/11/2026) — chờ review:** `docs/superpowers/specs/2026-11-02-phase-9-design.md` `e5be02400646` (351 dòng; quét trùng 0; 0 USD). Lệch đề xuất A: H1 bậc 1 (tầng tìm, 0 USD) lên tuần 1 — Q1; H4b chỉ làm sau phép thử 10 câu — Q2; H3 mang đoạn 1 lượt + 3 câu hỏi — Q4. **Bản 2 (C, 10:18 02/11/2026) — sửa theo review vòng 1 (4 major + 8 minor đều sửa, 0 phản biện), chờ người review kiểm phần sửa:** `d819918c2f2e` (557 dòng; quét trùng 0); thêm H4c (năm nguồn trên thẻ nguồn), H1b (câu hai ý thiếu một ý); câu hỏi Q1–Q8. **Bản 3 (C, 10:32 02/11/2026) — sửa theo review vòng 2 (N1 major + N2–N5 đều sửa, 0 phản biện), chờ kiểm phần sửa:** `7c67656f0ff8` (507 dòng); H1b thành bước 0; câu hỏi User 5 (Q1 cũ = A quyết). **Bản 4 (C, 10:38 02/11/2026) — sửa N2′ vòng 3 (§5.3 + Q2): `589bec308f41`**; H4c đếm lại 13 / 69 file đích có mục Nguồn dữ liệu ⇒ khuyên dòng cố định "có thể đã thay đổi" thay năm nguồn. **Bản 5 (C, 11:04 02/11/2026) — ghi lựa chọn User Q1–Q5 (vòng 4 ready): `03cb538cf00c`**, chờ User duyệt sha.
   **Review vòng 1 (A ghi 10:12 02/11/2026):** `changes_requested` — 0 blocker / 4 major / 8 minor (`docs/superpowers/specs/2026-11-02-phase-9-design_review.md`, sub-agent ngữ cảnh mới của A, chỉ dựa trên Căn cứ). A kiểm M1, M2 đúng (phạm vi ⇒ thành câu hỏi User). C sửa ⇒ người review kiểm phần sửa.
   **Review vòng 2 (A ghi 10:23 02/11/2026):** bản 2 `d819918c2f2e` — 12/12 finding vòng 1 đóng; còn N1 major (H1b chưa có lỗi quan sát ⇒ thành bước 0 như H4b) + N2–N5 minor. **A quyết (kỹ thuật trong phạm vi, §9.3):** Q1 — H1 bậc 1 chạy tuần đầu song song (0 USD, tất định); bỏ Q7; Q8 thành dòng mặc định trong lời duyệt ⇒ câu hỏi User ≤ 5.
+  **Vòng 3 ⇒ bản 4 `589bec308f41`; vòng 4: `ready_for_user_confirmation`** (sub-agent; N2′ đóng, 13/69 file có "Nguồn dữ liệu"). **User trả lời Q1–Q5 (A ghi nhận 11:03 02/11/2026):** Q1 (a) câu khẩn cấp, thử 10 câu trước rồi mới quyết · Q2 (a) một dòng cố định khi nguồn thuộc vé / điểm đến / lễ hội · Q3 (a) đếm trước (≥ 3 câu mới làm) · **Q4 PA1 mặc định (chỉ liệt kê giá có nguồn) + khi tới phần hỏi lại (tuần 16/11) làm bước nhỏ: tra web cách trợ lý du lịch trình bày chi phí (0 USD) + User đọc vài câu mẫu 2 cách ⇒ User chọn lại** (User hỏi có cần nghiên cứu thêm không — A khuyên chưa khoá cứng) · Q5 (a) 3 câu hỏi gần nhất + đoạn 1 lượt. ⇒ C ghi vào spec ⇒ sha mới ⇒ User duyệt sha.
 
 ## B116 — so sánh cách làm giao diện mới (giao 14:36 01/11/2026; User chọn (a))
 

@@ -1,4 +1,4 @@
-# STATUS B — cập nhật 10:35 02/11/2026 (phiên 02/11: B121 đã merge `ed8e6e8`, đã dọn; B rảnh)
+# STATUS B — cập nhật 11:22 02/11/2026 (phiên 02/11: đang làm B122 tra web agent Phase 9)
 
 **Phiên 02/11:** terminal B `hue-rag-d6`, A `hue-rag-7e`, C `hue-rag-29` (cả ba Claude Code, trực tiếp). User nói ở terminal B (09:49 02/11/2026, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền phiên (A báo, User 09:47): như 01/11 — ≤ 1 USD, B / C push nhánh riêng.
 Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-c0`, C = `hue-rag-b0` (phiên sáng: B `hue-rag-da`, A `hue-rag-27`, C `hue-rag-6a`) (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
@@ -6,12 +6,13 @@ Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: th
 Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền khác (trần tiền…) theo mục việc A ghi trong `CURRENT_HANDOFF.md` (A đang hỏi lại User).
 
 ## Đang làm / dở
+- **B122** (A giao 11:21 02/11/2026): tra web 3 chủ đề (Agents SDK · Serper ToS · đo agent + prompt injection) qua `scripts/tra_web_codex.sh`, tuần tự; WebFetch kiểm 3 ý / chủ đề; 0 USD.
 - **B121 xong + đã merge** (A merge `ed8e6e8` gồm m-1 `deaa605`). Đã dọn (10:35 02/11/2026): `unlink` 2 symlink, `git worktree remove /tmp/b_giao_dien` (không `--force`); xoá `/tmp/b_csp_probe`, `/tmp/b_csp_tools`, `/tmp/b121_tools` (bản giữ: `data/giao_dien_moi_2026-11-01/do_csp/`, `b121/`). Nhánh `giao-dien-moi` **giữ** (A đề xuất User xoá lúc kết phiên). Không server / tiến trình nào chạy. **B rảnh — chờ A giao việc.**
 - Phiên chiều: B116 (giao diện), B117 (tra cứu mạch 1–2), B118 (review bản 1, 2 vòng), B119 (thử Huế TRIPO), B120 (review bản 2) — A nhận hết; báo cáo + review A commit tới `4a24de7`.
 - Phiên sáng: nhánh **giữ** chờ User xoá: `s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` (đã vào `main` ở `a80e12d`).
 
 ## Đang khai báo sửa
-- không
+- (B122) `data/nghien_cuu_phase_9_2026-11-01/agent/yeu_cau/b122_{a,b,c}_*.md`, `data/nghien_cuu_phase_9_2026-11-01/agent/b122_tra_web.md`, dòng trạng thái B122 trong `CURRENT_HANDOFF.md`
 
 ## Phiên 01/11 đã xong
 | Việc | Kết quả | File / commit |
