@@ -1,8 +1,20 @@
 # Báo cáo cho bạn: Nghiên cứu rộng trước Phase 9 (trợ lý du lịch - văn hoá)
 
-**Cập nhật lần cuối: 16:13 01/11/2026 — bản 2: thêm kết quả ChatGPT (đã kiểm 9 ý), thử Huế TRIPO trên 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ.**
+**Cập nhật lần cuối: 14:55 02/11/2026 — bản 3: hướng đổi thành trợ lý agent có công cụ (nghiên cứu thêm 02/11, spec duyệt) — xem mục 0 ngay dưới.** Trước: 16:13 01/11/2026 — bản 2: thêm kết quả ChatGPT (đã kiểm 9 ý), thử Huế TRIPO trên 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ.**
 Trước: 15:28 01/11/2026 — bản 1 sơ bộ (Codex + kiểm tay; review B118 đạt). Người viết: A · Tra + kiểm: B (thực tế, người dùng, thử TRIPO), C (paper, repo, kiểm
 ChatGPT) · Review bản 2: B (B120). Tiền: 0 USD API cho nghiên cứu; thử hue_rag 11 câu ≈ 0,004 USD (~100 đồng).
+
+## 0. Cập nhật 02/11 — hướng đổi thành trợ lý agent có công cụ (đọc mục này trước; mục 1–7 là bản 01/11)
+
+- **Bạn đổi hướng (02/11):** "lên trợ lý mà không có gì khác RAG mức 1 thì gọi thẳng LLM cần gì trợ lý" ⇒ Phase 9 là **trợ lý agent có công cụ**. Ý "không agent tổng quát tự tra web" ở mục 1 **không còn đúng**.
+- **Nghiên cứu thêm 02/11** (0 USD API): 3 sub-agent đọc khoá AI FDE (kiến trúc agent, bảo mật + bài capstone, chi phí / trạng thái), ChatGPT deep research (agent có công cụ trong sản phẩm thật,
+  OpenAI Agents SDK, tra web an toàn, đo agent, chi phí), B tra web (SDK, điều khoản Serper, đo agent) + dò SDK thật (≈ 0,0002 USD), C thử nâng SDK. A tự mở trang gốc kiểm: SDK mới nhất 0.24.0 (15/10/2026);
+  `max_turns` đếm số lần gọi model; điều khoản Serper (29/05/2024) tự nhận dịch vụ "business-to-business", không nói rõ được hiển thị cho người dùng cuối.
+- **Mọi nguồn cùng khuyên:** **agent dưới chính sách** — việc luôn phải xảy ra (ngày hôm nay, lần tìm kho đầu, giới hạn) để code làm; model chỉ tự quyết phần cần phán đoán (khoá: "luồng cố định thì một lần gọi
+  đúng ngang agent mà rẻ hơn"; ChatGPT: "không thả agent ReAct tự do cho bản đầu"). Ước (chưa đo): câu về Huế ~2 lượt gọi ≈ 0,0004 USD; câu tra web thêm ~0,001 USD tiền Serper.
+- **Bạn chọn (02/11, spec bản 9 duyệt `169c2dd5f86a`):** agent định tuyến có đầu ra có cấu trúc ⇒ trò chuyện / trợ lý Huế (công cụ: tìm thêm kho, hỏi lại, lịch trình) / ngoài phạm vi / khẩn cấp; code giữ ngày,
+  tra web Serper khi kho từ chối (mục "Từ web" có nhãn chưa kiểm), lần tìm đầu là thí nghiệm; nhớ hỏi + đáp trong cuộc trò chuyện; OpenAI Agents SDK 0.19.4; chất lượng trước, ghi tiền mỗi lần gọi; trần 2,0 USD.
+- **Chi tiết:** `docs/superpowers/specs/2026-11-02-phase-9-design.md` (§2 quyết định, §5 tám bậc, §10 bảng bạn đã chọn); tư liệu private `data/nghien_cuu_phase_9_2026-11-01/agent/`.
 
 ## 1. Tóm tắt
 

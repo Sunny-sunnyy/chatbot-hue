@@ -1,4 +1,11 @@
-# STATUS A — PHIÊN 02/11 (mở 09:46 02/11/2026 `date`)
+# STATUS A — KẾT PHIÊN 02/11 (14:57 02/11/2026 `date`)
+
+- **Xong:** giao diện mới vào `main` `ed8e6e8` (B121 + C119); Phase 9 đổi hướng agent (User) ⇒ nghiên cứu (3 sub-agent khoá FDE, ChatGPT, B122, B123, C121) ⇒ **spec bản 9 duyệt `169c2dd5f86a`**; vòng cải tiến 14 (W46–W48 cho thử, B124 review); 5 chỗ báo cáo + nhật ký; handoff viết lại (cũ ở `archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`).
+- **Tiền phiên:** ≈ 0,003 USD (B ≈ 0,002 · C ≈ 0,0006 · A 0). Quyền phiên hết hạn.
+- **Phiên sau:** `CURRENT_HANDOFF.md` "PHIÊN SAU" — hỏi quyền ⇒ giao B0 (spec §5). Câu User: xoá nhánh `giao-dien-moi`, C106, W35 / W42 / W43, worktree AGY.
+- **Bẫy A phiên này** (đầu vào vòng 14, đã ghi sổ S74–S77): bỏ sót roadmap Phase 9 cũ; không đặt mốc kiểm ⇒ B đứng ~2 giờ, C rảnh; làm quá tay lần 3; đọc nhầm tên file / bản SDK; giờ ước 2 lần (hook bắt).
+
+# (cũ) STATUS A — PHIÊN 02/11 (mở 09:46 02/11/2026 `date`)
 
 Terminal: `hue-rag-7e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-d6`, C = `hue-rag-29` (cả ba Claude Code, trực tiếp; B / C tự báo).
 - Kiểm nhanh: `main` `9c86a98` sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; 4 worktree AGY cũ còn; Node v24.19 / npm 11.17.
@@ -8,6 +15,8 @@ Terminal: `hue-rag-7e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - B121 dò CSP ⇒ 0 Radix (A đồng ý); C119 review cả nhánh đạt; m-1 sửa; **merge `ed8e6e8`** + build + test trên `main`; 5 chỗ báo cáo + `chạy_môi_trường.md` (A sửa thêm: `guides/phase_6_generation_api.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `LUONG_HOAT_DONG_HE_THONG.md`, `nhat_ky/2026-11-02_…`, `session_prompt/chạy_môi_trường.md`).
 - **Phase 9 đổi hướng (User, A ghi nhận từ sau 11:03 tới 13:36 02/11/2026 `date`):** agent có công cụ, giữ OpenAI Agents SDK, agent định tuyến có cấu trúc, câu tìm kho = thí nghiệm, nhớ hỏi + đáp bắt buộc, chất lượng trước (tiền / tốc độ chỉ theo dõi, log USD mỗi lần gọi). Nghiên cứu: 3 sub-agent khoá FDE (`data/nghien_cuu_phase_9_2026-11-01/agent/a_sa{1,2,3}.md`), ChatGPT (`gửi chatgpt/2026-11-02/`), B122 (đang chạy). C120 viết lại spec (bản 6). Spec bản 5 `03cb538cf00c` commit làm hồ sơ.
 - **Bẫy A (02/11):** bỏ sót `guides/phase_9_agentic_rag_roadmap.md` khi brief C118 + sub-agent (User nhắc) — brief việc thiết kế Phase phải `ls guides/ docs/superpowers/specs/` tìm tài liệu cũ cùng Phase; ghi sai bản SDK 0.18.3 (đọc `pyproject` thay vì `uv.lock`) — sub-agent bắt.
+- **Bẫy A (02/11, User hỏi "tại sao B, C không làm gì" 13:46):** B122 kẹt ~2 giờ sau khi Codex xong 11:32 (terminal B ở trạng thái `shell` — nghi chờ permission) mà A không kiểm; C rảnh chờ review không được giao việc (trái `WORKFLOW.md` §9.2). ⇒ giao việc nghiên cứu ⇒ đặt mốc kiểm (`notify_when_idle` hoặc kiểm file đầu ra sau ~30 phút); session chờ review ⇒ giao việc không chồng file ngay.
+- **Bẫy A (02/11, User nhắc 14:42 02/11/2026: "bạn over-engineer quá không vậy"):** A đưa câu hỏi về bộ kết quả web xấu cố định (+ model soát, đo hai chiều) cho đồ án một người dùng chạy local — cùng gốc S64 / S68 (áp mức rủi ro cao cho phần chưa có lỗi quan sát). ⇒ đầu vào vòng cải tiến: trước khi đưa User một cơ chế an toàn, hỏi "lỗi này đã quan sát chưa, ai dùng, khi nào deploy".
 - C118: review sub-agent ngữ cảnh mới 3 vòng (v1 4M/8m ⇒ v2 1M/4m ⇒ v3 N2′); A tự quyết Q1 (H1 bậc 1 tuần đầu). Bẫy A: sửa nhầm tên `q3a` ⇒ `Q3a` vì đọc lướt `ls` (review bắt) — kiểm tên file bằng `test -f`, không đọc bằng mắt.
 - Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md` (§2 dòng "Bây giờ", §3 dòng Phase 9), `bao_cao_he_thong/README.md` (dòng Phase 9), `sessions/STATUS_A.md`.
 

@@ -27,6 +27,9 @@ vi đã duyệt: A tự quyết, nói ra lý do. Không hỏi lại điều đã
   "khớp spec … §…" hoặc nói rõ là lệch (25/10: đề xuất merge B1 trước, trái spec 8.2 — B1 sau B0).
 - **Khuyên bỏ / đóng một hướng chưa từng đo:** đối chiếu nguyên tắc "thử + so mốc trước khi chọn" (`Project_Status.md` §5, User 24/10 20:49);
   không có số chất lượng ⇒ đề xuất phép đo rẻ trước, hoặc ghi rõ "chưa đo, lý do bỏ chỉ là vận hành" (27/10: A khuyên đóng Qwen3-8B chưa đo, User hỏi lại — W28).
+- **Đề xuất thêm cơ chế phòng xa (rào bảo mật mới, bộ đo mới, lượt review thêm) — không áp cho sàn an toàn / ngoài kho đã có:** ghi trước một dòng "lỗi này đã quan sát chưa · ai dùng thật · bao giờ deploy". Chưa quan sát + một người dùng
+  + chưa deploy ⇒ ghi vào mục "trước khi deploy" của spec, **không hỏi User, không đưa vào Phase** — trừ hậu quả không đảo ngược (lộ dữ liệu lên repo public, xoá dữ liệu, mở câu kín)
+  (01–02/11: User nhắc làm quá tay 3 lần — S64, S68, S76 bộ web xấu cố định; W48).
 
 ## 2. Mỗi phương án
 

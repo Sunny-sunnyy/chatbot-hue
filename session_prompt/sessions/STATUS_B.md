@@ -1,56 +1,33 @@
-# STATUS B — cập nhật 11:22 02/11/2026 (phiên 02/11: đang làm B122 tra web agent Phase 9)
+# STATUS B — cập nhật 14:49 02/11/2026 (KẾT PHIÊN 02/11: B121–B123 xong; spec Phase 9 bản 9 User duyệt — việc tiếp của B: bậc B0 phiên sau)
 
-**Phiên 02/11:** terminal B `hue-rag-d6`, A `hue-rag-7e`, C `hue-rag-29` (cả ba Claude Code, trực tiếp). User nói ở terminal B (09:49 02/11/2026, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền phiên (A báo, User 09:47): như 01/11 — ≤ 1 USD, B / C push nhánh riêng.
-Terminal phiên chiều 01/11: `hue-rag-7a` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-c0`, C = `hue-rag-b0` (phiên sáng: B `hue-rag-da`, A `hue-rag-27`, C `hue-rag-6a`) (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
-**Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B.
-Phiên chiều 01/11: User nói ở terminal B (13:59, giờ B ghi nhận bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền khác (trần tiền…) theo mục việc A ghi trong `CURRENT_HANDOFF.md` (A đang hỏi lại User).
+Terminal phiên 02/11: `hue-rag-d6` · Agent: Claude Opus 5.5 · Vai: thực thi. A = `hue-rag-7e`, C = `hue-rag-29` (cả ba Claude Code, trực tiếp). Mã việc = mã A giao.
+**Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B. Tên terminal đổi mỗi lần mở ⇒ `ListAgents`.
+Phiên 02/11: User nói ở terminal B (09:49 02/11/2026, giờ B ghi bằng `date`): B làm việc trực tiếp với A; việc A giao = "làm đi". Quyền phiên (≤ 1 USD, B / C push nhánh riêng) **hết hạn cuối phiên**.
 
 ## Đang làm / dở
-- **B122** (A giao 11:21 02/11/2026): tra web 3 chủ đề (Agents SDK · Serper ToS · đo agent + prompt injection) qua `scripts/tra_web_codex.sh`, tuần tự; WebFetch kiểm 3 ý / chủ đề; 0 USD.
-- **B121 xong + đã merge** (A merge `ed8e6e8` gồm m-1 `deaa605`). Đã dọn (10:35 02/11/2026): `unlink` 2 symlink, `git worktree remove /tmp/b_giao_dien` (không `--force`); xoá `/tmp/b_csp_probe`, `/tmp/b_csp_tools`, `/tmp/b121_tools` (bản giữ: `data/giao_dien_moi_2026-11-01/do_csp/`, `b121/`). Nhánh `giao-dien-moi` **giữ** (A đề xuất User xoá lúc kết phiên). Không server / tiến trình nào chạy. **B rảnh — chờ A giao việc.**
-- Phiên chiều: B116 (giao diện), B117 (tra cứu mạch 1–2), B118 (review bản 1, 2 vòng), B119 (thử Huế TRIPO), B120 (review bản 2) — A nhận hết; báo cáo + review A commit tới `4a24de7`.
-- Phiên sáng: nhánh **giữ** chờ User xoá: `s1-loi-chung`, `s3-giao-dien`, `dg-cost-usd`, `streaming-final` (đã vào `main` ở `a80e12d`).
+- **Không** (kết phiên 14:49 02/11/2026). Không job nền, không server, không worktree; file tạm `/tmp` của B121–B123 đã xoá.
+- Nhánh `giao-dien-moi` (đã merge `ed8e6e8`) còn trên máy + `origin` — A đề xuất User xoá (User `!`).
+- **Việc tiếp (phiên sau):** bậc **B0** của spec Phase 9 bản 9 (User duyệt, sha `169c2dd5f86a`) — chờ A giao mục việc trong `CURRENT_HANDOFF.md`.
 
 ## Đang khai báo sửa
-- (B122) `data/nghien_cuu_phase_9_2026-11-01/agent/yeu_cau/b122_{a,b,c}_*.md`, `data/nghien_cuu_phase_9_2026-11-01/agent/b122_tra_web.md`, dòng trạng thái B122 trong `CURRENT_HANDOFF.md`
+- không
 
-## Phiên 01/11 đã xong
+## Phiên 02/11 đã xong
 | Việc | Kết quả | File / commit |
 |---|---|---|
-| Review spec streaming vòng 3 + R3.4 | ready (sau Q1 User) | `report_agent/2026-10-31_streaming_spec/b105_review.md` |
-| **S1** gom lõi chung (route JSON + `answer_case`) | T1 giống byte; review A ready | nhánh `s1-loi-chung` `9c83003`; `s1_loi_chung_implementation.md` |
-| B107 đề xuất sửa câu Golden lệch kho | User giữ nguyên (chỉ `check` phân biệt hoa / thường) | `data/golden_sua_2026-11-01/b107_de_xuat.md` |
-| **S2** route `/api/chat/stream` (SSE) + sửa m-1 nửa surrogate emoji | review ready; S2 đóng | `830df0e`, `887cbc5`; `s2_stream_route_implementation.md` |
-| **B108** `cost_usd` giá đủ + token đệm trong log | SDK trả `cache_write_tokens` = vào − 3 cả hai đường | `dg-cost-usd` `bbbdbf9`; `b108_cost_usd_implementation.md` |
-| Review plan đo cuối C103 (3 vòng) | ready ⇒ A duyệt `ae8d42d520d4` | `c103_plan_review.md` |
-| **S3** giao diện đọc luồng + R2 (DOMPurify danh sách cho phép, CSP `/` + `/static`) | review C ready | `9374212`, `fc10873`, `716ba4d`; `s3_giao_dien_implementation.md` |
-| Q3a L2 / L3 theo loại câu | chỉ câu nhiều nguồn còn lớn ⇒ User dời Phase 9 | `q3a_theo_loai_cau_implementation.md`; `data/q3a_2026-11-01/` |
-| Nhánh gộp `streaming-final` | gộp sạch, 88 test, T1 giống byte | `6a0c842` (A merge `a80e12d`) |
-| **S4** đo D2 trên trình duyệt | chữ đầu p50 1,23 / p95 2,61 s (đạt sàn + mục tiêu); lợi 441 ms < 500 ⇒ A xem PA3 | `s4_do_d2_implementation.md`; `data/s4_2026-11-01/` |
-| Review runbook đo cuối C108 (2 vòng) | ready sau sửa `$G` / NameError / bỏ retry | `c108_runbook_review.md` |
-| Review governance A CA1 + CA3 (2 vòng) | M-1 pre-push lọt tên có dấu ⇒ A thêm `-z` ⇒ ready | `a_governance_ca1_ca3_review.md` |
-| **Đo cuối §6 + §7** (bộ an toàn, câu theo ngày) | qua mọi sàn; A2 vế 1 = 2 ≤ 2 (đúng ngưỡng), sinh lại ngang mốc 751b352 | `do_cuoi_b_an_toan_ngay.md` |
-| **Đo cuối §8** bộ kín mới (40 câu, chỉ số đếm) | qua mọi sàn; Đủ ý −0,40 so với Golden, do **cả** 4 từ chối nhầm **lẫn** câu trả lời kém đủ ý (cùng cách: −0,22; một dữ kiện 4,42 ↔ 4,97) | `do_cuoi_b_bo_kin.md` (A commit `85f8e46`) |
-| Sửa theo `do_cuoi_review.md` (M-1, m-2, m-3 bộ kín + m-1 an toàn) | A nhận đạt; trỏ bằng chứng sang `archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md` | `do_cuoi_b_bo_kin.md` `d8d9258a9ce7` (A commit), `do_cuoi_b_an_toan_ngay.md` `cac60f04137e` |
-| Kiểm lại sổ cải tiến sau A khôi phục | 0 mục mất; S63–S67 thiếu 2 / 7 cột | báo A |
-| **Phiên chiều 01/11** | | |
-| **B116** so sánh cách làm giao diện mới (tư liệu) | đã chọn React + Vite build tĩnh, FastAPI phục vụ, Tailwind, shadcn chỉ sau dò CSP; yêu cầu 18 (`[Nguồn n]` thành link); bước dò CSP; hướng nhìn (ASCII, 12 token AA tính thật, Be Vietnam Pro OFL tự host, 6 trạng thái). Còn chờ User: cách hiện nguồn, D5 | `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`; `data/giao_dien_moi_2026-11-01/` |
-| **B117** tra cứu Phase 9 mạch 1 + 2 | Codex 2 lượt + B WebFetch: Huế TRIPO (31/10/2026), cổng an toàn Royal Armouries, Air Canada; Expedia trust gap, Agoda VN, Musa Guide; A kiểm lại 2 ý khớp; sửa phạm vi 8 % (Mỹ + Anh) | `data/nghien_cuu_phase_9_2026-11-01/b_mach1.md`, `b_mach2.md` |
-| **B118** review bản sơ bộ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` (A viết) | `changes_requested`: 0 blocker · 3 major (2 ý tự khai dưới nhãn C kiểm; "đúng cách hue_rag" nói quá) · 5 minor; overlap_scan 0 trùng. **Vòng 2 (15:29 01/11/2026): ready** — 3 major đóng; còn m-2 / m-3 một phần + m-6 (FEVER gọi sai "kiểm dữ kiện") + m-7, không chặn | `report_agent/2026-11-01_nghien_cuu_phase_9/b118_review_bao_cao_so_bo.md` |
-| **B119** khám phá Huế TRIPO (Playwright) + 10 câu so hue_rag | TRIPO: biểu mẫu → hỏi thêm bằng nút → 3 phương án → lịch trình có giờ / chi phí / bản đồ / thuyết minh / PDF; nhớ hội thoại; trả giờ / giá. Yếu: câu trang phục Đại Nội trái hue_rag (chưa kiểm ai đúng), an toàn / chi phí tự sinh không nguồn, lịch quá giờ đóng cửa, 14–36 s. hue_rag: từ chối câu 2 + 7 (câu 2 có thể từ chối nhầm) | `data/nghien_cuu_phase_9_2026-11-01/tripo/b119_kham_pha.md` |
-| **B120** review bản 2 `BAO_CAO_NGHIEN_CUU_PHASE_9.md` | lần 1 blocked (bản 2 chưa lưu); lần 2 **ready**: 0 blocker / 0 major, 2 minor (câu 4 "đúng" ⇒ "khớp"; thiếu lưu ý bản dịch Luật AI); overlap_scan 0 trùng | `report_agent/2026-11-01_nghien_cuu_phase_9/b120_review_ban_2.md` |
+| **B121** giao diện mới (React + Vite + Tailwind, FastAPI phục vụ `frontend/dist/`) | dò CSP: Radix Collapsible / Tooltip / Popover đạt, Dialog / ScrollArea vi phạm ⇒ 0 gói Radix; 19 yêu cầu [Chạy] / [Tự dựng]; review C119 ready (0 / 0 / 2 minor); m-1 (lời lỗi tiếng Việt) sửa `deaa605`; **A merge `ed8e6e8`** | `report_agent/2026-11-02_giao_dien_moi_code/b121_giao_dien_implementation.md`; `data/giao_dien_moi_2026-11-01/do_csp/`, `b121/` |
+| **B122** tra web agent Phase 9 (3 lượt Codex + WebFetch 3 × 3 ý) | Serper: điều khoản 29/05/2024 không nói rõ dùng cho người dùng cuối / hiển thị / lưu ⇒ chưa qua W35; 0,001 USD / lượt; SDK mới nhất 0.24.0, ≥ 0.21 đòi `openai>=3`; đo agent: pass^k, chọn công cụ; injection: quyền hẹp, spotlighting | `data/nghien_cuu_phase_9_2026-11-01/agent/b122_tra_web.md`; `data/tra_cuu_cli/2026-11-02_b122-*` |
+| **B123** dò Agents SDK 0.19.4 (probe công cụ giả) | cả 3 việc làm được trên 0.19.4: hook `on_llm_start/end` + `response.usage` (USD + ms mỗi lần gọi); lượt gọi công cụ không có `output_text.delta` ⇒ lọc theo mục `message`; `output_type` strict `route` trước `answer` (phải sửa `ANSWER_PREFIX`); `tool_choice="required"` tự reset. A kiểm 2 ý: đạt | `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md`, `b123/` |
 
-## Tiền paid (B, 02/11): B121 < 0,002 USD (4 câu có token ≈ 0,00094 + 2 câu rời trang không có số token).
-
-## Tiền paid (B, 01/11, giá đủ; ca ngắt / hết token không có usage ⇒ cận trên)
-S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối §6–§8 0,0293 ⇒ **≈ 0,055 USD**. Không gọi `agy`; Codex không chạy (dùng lượt của A). **Phiên chiều 01/11: ≈ 0,0040 USD** (B119 hue_rag 11 lượt; còn lại 0 USD API) (2 lượt Codex qua tài khoản ChatGPT, WebFetch).
+## Tiền paid (B, 02/11, giá đủ)
+B121 ≤ 0,0015 (4 câu có token ≈ 0,00094 + 2 câu rời trang không có số token — cận trên) · B122 0 (Codex qua tài khoản ChatGPT) · B123 0,00023 ⇒ **≈ 0,002 USD**. Không gọi `agy`, không gọi Serper.
 
 ## Câu hỏi / thắc mắc cho A
-1. S4: lợi "đủ câu − chữ đầu" 441 ms < 500 ⇒ D5 xem lại PA3 hay giữ PA1; nâng sàn (đạt mục tiêu 1,5 / 3 s)?
-2. ~~4 nhánh của B còn trên `origin`~~ — đã xoá 15:21 01/11/2026 (User `!`).
-3. 4 worktree AGY cũ `~/.gemini/antigravity-cli/…` (commit `c725987`) vẫn còn — User quyết.
+1. 4 worktree AGY cũ `~/.gemini/antigravity-cli/…` (commit `c725987`) vẫn còn — User quyết.
+2. Sự cố pgrep (bẫy đầu tiên dưới) — đầu vào vòng cải tiến: đề xuất luật "việc dài luôn `run_in_background`; không im lặng quá ~15 phút khi chờ".
 
 ## Bẫy đã gặp — đọc trước khi làm
+- **(02/11, sự cố — mất ~2 giờ)** Chờ một tiến trình bằng `until ! pgrep -f "<mẫu>"` ⇒ `pgrep -f` khớp **chính dòng lệnh của vòng chờ** (chứa mẫu) ⇒ không bao giờ dừng, B ngồi chờ thông báo không tới, A phải hỏi. Gốc: chạy lượt Codex bằng `&` trong lệnh Bash (không có thông báo xong) thay vì `run_in_background`. Cách đúng: mỗi việc dài chạy bằng `run_in_background` (có thông báo); nếu phải chờ PID thì `while kill -0 <PID>`; và đặt mốc tự kiểm (không im lặng quá ~15 phút khi chờ).
 - (02/11) Playwright `page.route` gọi handler với 1 hoặc 2 tham số tuỳ chữ ký ⇒ lambda `(r, s=spec)` nhận `request` vào `s`; dùng hàm một tham số. Script tự bật server con ⇒ bọc `try/finally` tắt server (lần lỗi đầu để sót uvicorn 8813, đã `kill` đúng PID).
 - (02/11) Dò CSP nhiều linh kiện **chung một trang** ⇒ vi phạm của một cái (ScrollArea chèn `<style>` lúc hiện) làm mọi ca trông như vi phạm ⇒ mỗi linh kiện một trang. `curl -I` (HEAD) vào `/` trả 405 nên không thấy header CSP ⇒ kiểm bằng GET (`curl -s -D - -o /dev/null`).
 - (02/11) DOMPurify phân tích chữ có `<style>` bằng `DOMParser` ⇒ trình duyệt báo 1 vi phạm CSP dù thẻ bị lọc (CSP chặn lúc phân tích) — không phải lỗi giao diện; bản cũ cũng vậy.
@@ -71,4 +48,5 @@ S1 0,0018 · S2 0,0041 · B108 0,0007 · S3 ~0,0033 · S4 0,0158 · đo cuối �
 - Worktree có symlink `data/` ⇒ `unlink` từng link rồi `git worktree remove` (không `--force`, không `rm -r`).
 
 ## Lịch sử
+- Phiên 01/11 (S1–S4, B107–B120): `git show 9c86a98:session_prompt/sessions/STATUS_B.md`.
 - Phiên 31/10 (B99–B106): `git show f34cb7f:session_prompt/sessions/STATUS_B.md`. Phiên 30/10: `session_prompt/archive/STATUS_B_LICH_SU_2026-10-30.md`; 29/10: `…_2026-10-29.md`.

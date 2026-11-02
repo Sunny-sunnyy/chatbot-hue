@@ -1,8 +1,55 @@
-# STATUS C — PHIÊN 02/11
+# STATUS C — KẾT PHIÊN 02/11 (chốt 14:48 02/11/2026 `date`; A báo kết phiên)
+
+Terminal C `hue-rag-29` · A = `hue-rag-7e` · B = `hue-rag-d6` (trực tiếp). Quyền phiên 02/11 (User 09:47): như 01/11 — hết hạn cuối phiên.
+
+| Mã | Việc | Kết quả (sha 12) |
+|---|---|---|
+| C118 | spec Phase 9 hướng "luồng cố định" bản 1–5 (4 vòng review) | bản 5 `03cb538cf00c` — thay bởi hướng agent; hồ sơ commit `077e3cb` |
+| C119 | review cả nhánh giao diện mới B121 | `b121_review.md` `efb54611679f` ready (2 minor); A merge `ed8e6e8` |
+| C120 | spec Phase 9 hướng agent bản 6–9 (3 vòng review + 2 lượt ghi lựa chọn) | **bản 9 `169c2dd5f86a` — User DUYỆT** (A ghi handoff) |
+| C121 | thử nâng openai-agents 0.19.4 ⇒ 0.24.0 | `c121_sdk_024.md` `3bc2c212cc69`; A quyết giữ 0.19.4 |
+
+- **Tiền paid C phiên 02/11: ≈ 0,0006 USD** (C119 cổng ổn định 2 câu thật; C118 / C120 / C121 0 USD). Judge / review: không dùng sub-agent.
+- **Không còn job nền / server / worktree / file tạm của C** (kiểm 14:48: worktree chỉ `main` + 4 worktree AGY cũ không phải của C; không `/tmp/c1*`, `/tmp/c_*`; không cổng 88xx). Không commit — A commit.
+- **Việc tiếp (phiên sau):** B0 nền Phase 9 theo spec bản 9 §5 (A giao người làm + người review); C chờ A giao.
+
+**Bẫy phiên 02/11 (đầu vào vòng cải tiến):**
+1. **Đổi nghĩa ý của hướng đã chốt mà không khai** (bản 1: "ghi nguồn ngày", "câu an toàn"; bỏ lặng mục "thêm vào danh sách thử") ⇒ review M1 / M2. Luật tự đặt: trước khi thiết kế, liệt kê **từng ý** của nguồn hướng, đánh dấu trong / ngoài / hiểu thế nào.
+2. **Đếm sai mẫu** hai lần: ống `grep -A15 | sed` cắt nhầm vì không có số dòng (130 / 143 sai); mẫu `^## Nguồn` khớp cả "Nguồn gốc" và đếm cả kho thay vì thư mục đích (N2′). ⇒ lấy danh sách file bằng `grep_kb.sh -l` rồi xử lý từng file; mẫu đúng **tên mục**; đếm trên **đúng tập** tính năng dùng; kiểm tổng ≤ mẫu số.
+3. **Luật kết luận ghi trước luôn thoả** (B7 "hoặc ≥ 3 việc mới mà mốc 0 / n") ⇒ review M1. Khi ghi kết luận: tự hỏi "có kết quả nào làm luật này ra âm không".
+4. **Cổng dựa vào ý định model** (tra web khi "trợ lý định từ chối") ⇒ M2. Cổng phải là điều code thấy được.
+5. **Spec phình rồi phải cắt** (351 ⇒ 557; 383 ⇒ 447 ⇒ 450): mỗi vòng sửa thêm luật. ⇒ khi sửa finding, thử cắt trước (bản 7: bỏ `tra_web` khỏi vòng công cụ giải 3 finding cùng lúc).
+6. **Sửa chữ bằng `python3` hệ thống** (không `uv run`) một lần ⇒ dùng Edit.
+7. Làm tốt (giữ): ca dò khác cách ở C119 (thăm DOM 50 ms, payload mXSS / URI lạ); C121 dò API + dựng generator thật với khoá giả, không gọi mạng; báo lệch luật (venv tạm) ngay trong file kết quả.
+
+# STATUS C — PHIÊN 02/11 (nhật ký chi tiết)
+
+## C121 — thử nâng OpenAI Agents SDK 0.19.4 ⇒ 0.24.0 (A giao 13:47 02/11/2026; việc A giao = User "làm đi")
+- 0 USD, không gọi OpenAI / Serper. Worktree `/tmp/c_sdk024` (detached `077e3cb`, symlink `data/` + `knowledge-base-hue/`); bản nâng dùng **venv riêng của worktree** `/tmp/c_sdk024/.venv` (`UV_PROJECT_ENVIRONMENT`) — không đụng `.venv` / `pyproject.toml` / `uv.lock` chung.
+- **File sẽ ghi (khai báo):** `data/nghien_cuu_phase_9_2026-11-01/agent/c121_sdk_024.md` (+ log test thô cùng thư mục `c121/`); worktree trên (gỡ khi xong); dòng trạng thái C121 trong `CURRENT_HANDOFF.md`; và file này.
+- **TẠM DỪNG (A: ưu tiên sửa spec bản 6; giữ worktree).** Đã có: mốc 0.19.4 (venv chung) 68 passed + 1 failed + 3 error (đều cần khoá) — `c121/truoc_0194.txt`; nâng trong worktree: openai-agents 0.24.0, **openai 2.53.0 ⇒ 3.42.1**, + httpx2 / httpcore2 2.16.0, − distro, pyjwt + urllib3 lên nhẹ; cùng 8 file test ⇒ **68 passed + cùng 4 lỗi cần khoá** — `c121/sau_0240.txt`.
+  Còn: đọc release notes 0.20–0.24 (WebFetch), import + dựng generator không gọi mạng, ca stream `raw_response_event` / `response.output_text.delta` (`chat.py:368`), viết `c121_sdk_024.md`, gỡ worktree.
+- **XONG (14:02 02/11/2026) — `c121_sdk_024.md` `3bc2c212cc69`.** Release notes qua GitHub API (10 bản): chạm repo chỉ 0.21 `openai>=3` + HTTPX2; 0.20 đổi model mặc định ngầm (repo truyền rõ ⇒ không chạm). Dò API + dựng generator thật (khoá giả, không mạng) giống nhau ở 2 bản.
+  **Khuyên giữ 0.19.4 ở B0**, nâng thành bước riêng (cổng ổn định thật ≈ 0,001 USD) khi bậc cần `agents.testing` / sửa stream + guardrail. NOT RUN: đường mạng thật openai 3. Worktree + venv tạm + script `/tmp` đã gỡ; `.venv` chung vẫn 0.19.4. 0 USD.
+  Lệch luật đã ghi trong file: venv tạm (Session_Prompt §10 "không tạo venv khác") — chỉ để thử bản nâng không đụng venv chung.
+- **A đóng C121:** giữ openai-agents 0.19.4 cho Phase 9 (A ghi handoff); venv tạm do brief A, không tính lỗi C. C chờ review vòng 2 bản 7.
 
 ## C120 — viết lại spec Phase 9 theo hướng agent, bản 6 (A giao; việc A giao = User "làm đi")
 - Cùng file `docs/superpowers/specs/2026-11-02-phase-9-design.md`; **chờ tin A "đã commit" bản 5** (`03cb538cf00c`) rồi mới sửa. 0 USD; ≤ ~450 dòng; Căn cứ đầu, ≤ 5 câu hỏi User cuối.
 - **File sẽ ghi (khai báo):** spec trên; dòng trạng thái C120 trong `CURRENT_HANDOFF.md`; và file này. Đọc (dữ liệu): `data/nghien_cuu_phase_9_2026-11-01/agent/a_sa{1,2,3}.md`, kết quả ChatGPT 02/11, `guides/phase_9_agentic_rag_roadmap.md`, B122.
+- A báo "đã commit" bản 5 (`077e3cb`). **XONG bản 6 (13:41 02/11/2026) — `fbb2853aa90c`** (383 dòng; quét trùng 0; 0 USD). Handoff **chưa có mục C120** ⇒ C không tự tạo mục, báo A.
+  Kiến trúc: luật khẩn cấp (nếu bước 0 cần) ⇒ định tuyến có cấu trúc (4 tuyến) ⇒ trợ lý có công cụ (`tim_kho` · `hoi_lai` · `lich_trinh` · `tra_web`); ngày do code đưa vào; sổ nguồn; trần trong code; log USD + ms mỗi lần gọi / câu / tuyến.
+  8 bậc B0–B7 (mỗi công cụ một bậc); B2 = thí nghiệm câu tìm V0–V3 hai tầng; B3 nhớ = server RAM theo phiên (hỏi + đáp, không kết quả công cụ); B6 web = 6 rào + đo hai chiều; B7 so RAG cũ ↔ agent (không cắt).
+  S-OOS: chỉ-kho giữ cũ; có web ⇒ "0 câu không có bằng chứng hợp lệ bị trả lời khẳng định". Tiền ước ≈ 0,8 USD. Câu hỏi User 4: nhớ dài hạn · cách hiện web · giới hạn tên miền · trần Phase. B122 chưa xong ⇒ Serper / SDK 0.24 "chốt lúc tới bậc".
+- **Review v6 vòng 1: changes_requested** (0 blocker / 10 major / 9 minor — `…_review_v6.md`). **Bản 7 (13:57 02/11/2026) — `37e306ef40f7`** (447 dòng; quét trùng 0): sửa hết, 0 phản biện.
+  Chính: `tra_web` không là công cụ model — cổng code sau câu trả lời kho (câu từ chối chuẩn), truy vấn do code dựng từ câu hỏi lượt này, lần gọi web riêng không lịch sử; mục web cắt khỏi nhớ; B2 tách B2a (V0=B1 / V1 / V3) + B2b (vòng `tim_kho` = V2, A/A ở đây);
+  B1 bảng cờ từng phần; B7 hai kết luận ghi trước; lõi chung `assistant.py` + streaming; tiền ≈ 1,2 USD (gồm hồi quy mỗi bậc); câu hỏi User P1–P4 (P4 khuyên 1,8 USD).
+- **Review bản 7 vòng 2: changes_requested** (19 finding vòng 1 đóng; M11–M13 + m10–m16). **Bản 8 (14:17 02/11/2026) — `82127aabcb5b`** (450 dòng; quét trùng 0):
+  M13 theo User chọn 14:12 (code giữ 3 chỗ: ngày, web khi kho từ chối, lần tìm đầu = thí nghiệm có V2 thuần ở B2a) + 4 hệ quả web ở §2; M11 B7 sinh lại RAG 1–8 cùng tuần; M12 vòng công cụ là hạ tầng; m10 điền B123 + nhánh riêng `hoi_lai` (`generator…:269`);
+  thêm P5 vì B122: điều khoản Serper chưa đủ theo W35. m16 chỉ cắt được một phần (447 ⇒ 450 dòng — thêm phần User chọn + P5), đã khai trong bảng.
+- **Review vòng 3 trên bản 8: ready_for_user_confirmation.** User chọn P1–P5 (A ghi 14:42). **Bản 9 (14:45 02/11/2026) — `169c2dd5f86a`** (415 dòng; quét trùng 0): chỉ ghi lựa chọn + A quyết hồi quy + m17 / m18.
+  P1–P4 (a), trần 2,0 USD; P5 dùng Serper luôn (lệch có lý do + giả định an toàn); bỏ bộ web độc / model soát / đo hai chiều ⇒ B6 còn rào code + đo trên Serper thật; hồi quy đủ ở B1 / B2 / B7, B3–B6 rút gọn (32 an toàn + 30 mẫu Golden) ⇒ tiền ≈ 1,1 USD; §10 thành bảng "User đã chọn". Chờ User duyệt sha.
+- A nhận bản 6 (sha khớp), thêm mục C120 vào handoff, review bằng sub-agent (file review_v6). **C giữ nguyên file tới khi có review.** A hỏi User câu "web cố định ↔ không mock" cùng Q1–Q4; "chốt lúc tới bậc" cho Serper / SDK 0.24: A đồng ý.
 
 ## C119 — review cả nhánh `giao-dien-moi` `11a0f3a` (B121) (A giao 10:19 02/11/2026; việc A giao = User "làm đi")
 - Skill `risk-gated-agent-review`; không đọc `STATUS_B.md`; build lại từ lockfile sạch trong worktree riêng `/tmp/c119` (không dùng `/tmp/b_giao_dien`); server tạm cổng trống; trần 0,01 USD.

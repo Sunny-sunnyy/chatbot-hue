@@ -986,3 +986,9 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - `reports/tickets_codex_review_2026_09_08.md`;
 - `reports/tickets_codex_rereview_2026_09_08.md`;
 - `session_prompt/CURRENT_HANDOFF.md`.
+
+## 2026-11-02 — giao diện mới vào `main`; Phase 9 spec duyệt (A, 14:57 02/11/2026)
+
+- Giao diện React + Vite + Tailwind merge `ed8e6e8` (B121, review C119) — `report_agent/2026-11-02_giao_dien_moi_code/TONG_HOP.md`.
+- Phase 9 đổi hướng thành **trợ lý agent có công cụ** (User); nghiên cứu khoá AI FDE + ChatGPT + Serper / SDK; spec `docs/superpowers/specs/2026-11-02-phase-9-design.md` **bản 9 duyệt `169c2dd5f86a`**
+  (bản 5 hướng cũ ở `077e3cb`; review `…_review.md` 4 vòng bản 1–5, `…_review_v6.md` 3 vòng bản 6–9). Giữ OpenAI Agents SDK 0.19.4. Vòng cải tiến 14: W46–W48. Lịch sử handoff nguyên văn: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`.

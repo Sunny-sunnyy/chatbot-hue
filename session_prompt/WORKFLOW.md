@@ -183,6 +183,10 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    **Session rảnh** (chờ người khác): A giao ngay việc không chồng file (viết plan, review, danh sách ứng viên, đo chỉ đọc)
    hoặc ghi một dòng lý do để rảnh trong `CURRENT_HANDOFF.md` (25/10: User phải hỏi "đang rảnh hả"; 26/10: B rảnh được giao
    đối chiếu, bắt lỗi mô tả trong yêu cầu ChatGPT).
+   **Việc giao chạy > 30 phút** (nghiên cứu, đo, code) ⇒ A đặt mốc kiểm ngay lúc giao: Claude Code `SendMessage` kèm `notify_when_idle: true`; agent khác: xem file đầu ra sau ~30 phút
+   (02/11: B đứng ~2 giờ vì vòng chờ `pgrep -f` tự khớp chính nó, C rảnh không việc — User phát hiện; S75, W47).
+   **Giao việc thiết kế / spec / nghiên cứu cho Phase n** (cả brief sub-agent) ⇒ trước khi giao chạy `find guides docs/superpowers/specs docs/superpowers/plans -maxdepth 1 -iname "*phase[-_]n[-_.]*"` (thay n; B124 kiểm n=9 ra đủ 4 file)
+   và đưa mọi tài liệu cũ cùng Phase vào mục "Đọc" (02/11: bỏ sót `guides/phase_9_agentic_rag_roadmap.md` — hướng User duyệt 08–10/2026; S74, W46).
    **Có lượt đo tốc độ / latency đang chạy** ⇒ session khác không chạy lượt trả phí, việc nặng CPU, quét / build Qdrant cùng lúc; A ghi điều này trong mục
    giao của mọi session đang làm (28/10: việc nặng của C chạy chồng lượt đo "sau" của B ⇒ p95 lượt đó không dùng được — W31).
 3. **Chi tiết kỹ thuật trong phạm vi:** A tự quyết, ghi lý do; chỉ hỏi User về phạm
