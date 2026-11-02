@@ -25,7 +25,7 @@ clone / worktree mới hoặc sửa `frontend/src/` ⇒ `cd frontend && npm ci &
    cập nhật `b129_b1_implementation.md`. ⇒ **C review delta `7e190d7..<cuối>`** (`b129_review.md`) ⇒ A merge ⇒ 5 chỗ báo cáo (LUONG, BAO_CAO_SINH — mục 4 đã có dòng B1 tối 02/11, Project_Status, guide 6, nhật ký).
 3. Sau merge B1 ⇒ **B2** (spec §5: B2a thí nghiệm câu tìm kho, B2b vòng công cụ `tim_kho`): người viết plan B2 ≠ người viết bộ đo. Mốc tuần: B1 đóng trước 16/11 (luật cắt spec §6).
 4. Theo dõi khi B7: tốc độ (định tuyến thêm ~1,7 s / câu); tắt ghi đệm prompt (−13,3 % tiền, C126); khoá cache theo phiên ở B3.
-5. User `!` (không gấp): xoá nhánh `p9-b0` đã merge — `git branch -d p9-b0 && git push origin --delete p9-b0`; cắt 22 dòng log cũ (lệnh trong chat tối 02/11: sao lưu `/tmp` ⇒ `sed -i '/Received question/d'`) — nếu chưa chạy.
+5. ~~Xoá nhánh `p9-b0`~~ **XONG 21:28 02/11/2026** (User `!`, local + origin). User `!` (không gấp): cắt 22 dòng log cũ (lệnh trong chat tối 02/11: sao lưu `/tmp` ⇒ `sed -i '/Received question/d'`) — nếu chưa chạy.
 
 (cũ — kế hoạch tuần soạn 15:09 02/11, phần B0 / bước 0 / bộ đo B1 **đã xong** tối 02/11:)
 **Thứ tự việc phiên sau:**
