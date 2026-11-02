@@ -50,7 +50,7 @@ B121 ≤ 0,0015 (4 câu có token ≈ 0,00094 + 2 câu rời trang không có s�
 - **Mẫu Golden ~30 câu khoá ở B0:** người chọn không nên là người code (B) — hỏi A (kế hoạch tuần ghi C viết bộ đo). B **không mở** phần kín của bộ đo.
 - Worktree `p9-b0`: nhớ bẫy worktree (symlink `data/` + `knowledge-base-hue/`, `uv run --project /home/minhhieu/hue_rag`, `npm ci && npm run build` nếu chạy `test_static_ui.py`, push từ working tree chung, `unlink` rồi `git worktree remove`).
 
-**Câu hỏi cho A (trước / trong plan B0):**
+**Câu hỏi cho A (trước / trong plan B0) — A ĐÃ TRẢ LỜI** (`CURRENT_HANDOFF.md` "Câu B hỏi A"): (1) đúng — B0 giữ đường RAG 1–8 qua lõi mới, vòng công cụ ở B2b (hoặc B2a nếu đo V2); (2) mỗi nhà cung cấp một module + test danh sách module được import client mạng — ghi rõ trong plan B0; (3) C chọn + khoá mẫu Golden 30 câu.
 1. B0 giữ đường RAG 1–8 y nguyên (code gọi `tim_kho`, sinh 1 lần) và để vòng công cụ do model gọi sang B2b — đúng ý spec không?
 2. "Chỉ một module gọi mạng ngoài" tính những gì (OpenAI; Serper sau này) — một module cho cả hai, hay mỗi nhà cung cấp một module và test kiểm không module khác import client mạng?
 3. Ai chọn + khoá mẫu Golden ~30 câu (seed ghi trước) ở B0 — C?
