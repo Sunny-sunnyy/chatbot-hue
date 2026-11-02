@@ -29,7 +29,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from core.settings_loader import load_settings
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator, input_cache_tokens
-from llm.grounded_answer import AnswerTrace, answer_query
+from llm.assistant import AnswerTrace, answer_query, turn_usd
+from llm.pricing import cost_usd  # giá dời sang `llm.pricing` (Phase 9 B0); `from evaluation.full_corpus_eval import cost_usd` cũ vẫn chạy
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -42,12 +43,6 @@ GOLDEN_SMOKE = GOLDEN_DIR / "golden_full_corpus_smoke.jsonl"
 RESULTS_DIR = REPO_ROOT / "data" / "evaluation" / "phase_7b"
 JUDGE_PROMPT_PATH = Path(__file__).resolve().parent / "full_corpus_judge_prompt.md"
 
-# Giá gpt-6-luna (User 2026-10-30, ngữ cảnh < 272k token), USD cho 1M token. Phần vào chia ba: đọc lại từ đệm, ghi vào đệm (đệm 30 phút),
-# còn lại giá thường. B95 (30/10): mỗi lần gọi ghi đệm gần hết phần vào, đọc đệm 0 ⇒ giá phẳng cũ ghi thiếu ~20 % / câu.
-PRICE_INPUT_PER_M = 0.1
-PRICE_CACHED_INPUT_PER_M = 0.01
-PRICE_CACHE_WRITE_PER_M = 0.125
-PRICE_OUTPUT_PER_M = 0.5
 RETRIEVAL_K = 10
 CONCURRENCY = 4
 JUDGE_MAX_OUTPUT_TOKENS = 1024
@@ -164,13 +159,6 @@ def score_retrieval(keywords: list[str], texts: list[str], k: int = RETRIEVAL_K)
 def is_refusal(answer: str) -> bool:
     # Cùng điều kiện nhánh fallback của `llm/citations.py`.
     return answer.strip() == INSUFFICIENT_ANSWER
-
-
-def cost_usd(input_tokens: int, output_tokens: int, cache_write_tokens: int = 0, cached_tokens: int = 0) -> float:
-    """`input_tokens` đã gồm phần ghi đệm / đọc đệm (cách OpenAI đếm). Không truyền phần đệm (dòng cũ chưa ghi) ⇒ giá phẳng như trước."""
-    regular_input = input_tokens - cache_write_tokens - cached_tokens
-    return (regular_input * PRICE_INPUT_PER_M + cache_write_tokens * PRICE_CACHE_WRITE_PER_M
-            + cached_tokens * PRICE_CACHED_INPUT_PER_M + output_tokens * PRICE_OUTPUT_PER_M) / 1_000_000
 
 
 def row_cost_usd(row: dict) -> float:
@@ -328,7 +316,7 @@ def run_retrieval_eval(cases: list[dict], treatment: str, shuffle_seed: int | No
 # ---------- Sinh câu trả lời (paid) ----------
 
 async def answer_case(case: dict, service, context_builder, generator) -> dict:
-    """Một case qua lõi chung với `api/routes/chat.py` (`llm.grounded_answer.answer_query`): retrieval → context → sinh → citation."""
+    """Một case qua lõi chung với `api/routes/chat.py` (`llm.assistant.answer_query`): retrieval → context → sinh → citation."""
     row = {
         "case_index": case["case_index"],
         "category": case["category"],
@@ -343,6 +331,10 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
         "cached_tokens": None,
         "latency_ms": None,
         "response_id": None,
+        "route": None,
+        "usd": None,
+        "llm_calls": None,
+        "tools": None,
         "error": None,
     }
     question = case["question"].strip()
@@ -362,6 +354,8 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
         row["top_chunk_ids"] = [doc.id for doc in trace.documents[:RETRIEVAL_K]]
     if trace.packed is not None:
         row["context_sources"] = len(trace.packed.sources)
+    # log Phase 9 (spec §3 "Log + vết"): cùng các trường như `chat_metrics`
+    row.update(route=trace.route, usd=turn_usd(trace), llm_calls=trace.llm_calls, tools=trace.tools)
     if trace.generated is not None:
         row.update(
             input_tokens=trace.generated.input_tokens,

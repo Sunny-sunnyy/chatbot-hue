@@ -13,7 +13,7 @@ from core.schema import GenerationError
 from llm.answer_stream import AnswerTextStream, decode_partial_string, displayable_prefix
 from llm.citations import normalize_citations
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
-from llm.grounded_answer import AnswerTrace, check_citations
+from llm.assistant import AnswerTrace, check_citations
 from retrieval.full_corpus_context import PackedContext, PackedSource
 
 
@@ -106,7 +106,8 @@ def stream_with_text(answer: str) -> tuple[StreamEvents, list[bytes], AnswerTrac
     """Đi như `_answer_events`: status ⇒ các delta bóc từ JSON ⇒ kiểm citation chữ cuối ⇒ sự kiện kết."""
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream = StreamEvents(metrics, time.perf_counter())
-    trace = AnswerTrace(packed=packed_two_sources(), answer=answer)
+    packed = packed_two_sources()
+    trace = AnswerTrace(packed=packed, so_nguon=list(packed.sources), answer=answer)  # như `tim_kho` ghi sổ nguồn
     chunks = [stream.status({"stage": "searched", "n_sources": 2}), stream.status({"stage": "generating"})]
     extractor = AnswerTextStream()
     raw = json.dumps({"answer": answer}, ensure_ascii=False)

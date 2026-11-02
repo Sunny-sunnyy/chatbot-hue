@@ -1,4 +1,4 @@
-"""Lõi chung `llm.grounded_answer` qua `answer_case` của bộ đánh giá — đường thật (Qdrant chỉ đọc, e5 + tokenizer local), không gọi model.
+"""Lõi chung `llm.assistant` qua `answer_case` của bộ đánh giá — đường thật (Qdrant chỉ đọc, e5 + tokenizer local), không gọi model.
 
 Bảo vệ spec streaming §4.8 khác biệt 3: lỗi kỹ thuật của một case thành `row["error"]` (lượt chấm incomplete), không ném ra
 ngoài; các bước đã chạy trước lỗi vẫn ghi vào dòng như trước khi gom lõi chung.

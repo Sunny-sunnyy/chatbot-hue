@@ -11,6 +11,7 @@ from agents import (
     ModelSettings,
     OpenAIResponsesModel,
     RunConfig,
+    RunHooks,
     RunResultStreaming,
     Runner,
 )
@@ -20,6 +21,7 @@ from openai.types.shared import Reasoning
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from core.schema import GenerationError
+from llm.pricing import cost_usd
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     build_answer_input,
@@ -48,6 +50,8 @@ class GeneratedText:
     # phần của input_tokens đọc lại từ đệm / ghi vào đệm (usage.input_tokens_details) — giá khác nhau (User 30/10, B95)
     cached_tokens: int | None = None
     cache_write_tokens: int | None = None
+    # mỗi lần gọi model trong lượt (`CallLog.calls`): token, ms, USD — log Phase 9 (plan B0 D5)
+    llm_calls: tuple[dict, ...] = ()
 
 
 def input_cache_tokens(usage: Any) -> tuple[int | None, int | None]:
@@ -93,6 +97,40 @@ def parse_structured_output(
         raise GenerationError("OpenAI generation returned empty structured content")
 
     return str(val).strip()
+
+
+class CallLog(RunHooks):
+    """Ghi một mục cho **mỗi** lần gọi model của một lượt `Runner.run` / `Runner.run_streamed` (B123 §1: SDK gọi `on_llm_end` sau mỗi lần
+    gọi, kể cả khi stream; `response.usage` là của riêng lần đó). Mỗi lượt một đối tượng mới — bộ đánh giá chạy song song.
+    Một `_started` đủ vì một agent gọi model tuần tự. Hook không đổi thân yêu cầu gửi model (plan B0 T-2 kiểm bằng máy)."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+        self._started: float | None = None
+
+    async def on_llm_start(self, context, agent, system_prompt, input_items) -> None:
+        self._started = time.monotonic()
+
+    async def on_llm_end(self, context, agent, response) -> None:
+        ms = None if self._started is None else round((time.monotonic() - self._started) * 1000, 1)
+        self.calls.append(call_entry(response, ms))
+
+
+def call_entry(response: Any, ms: float | None) -> dict:
+    """Một mục log từ `ModelResponse` của một lần gọi: loại đầu ra, ms, USD giá đủ (`llm.pricing.cost_usd`), token."""
+    usage = response.usage
+    cached, cache_write = input_cache_tokens(usage)
+    reasoning = getattr(getattr(usage, "output_tokens_details", None), "reasoning_tokens", None)
+    return {
+        "kind": [getattr(item, "type", None) for item in response.output],
+        "ms": ms,
+        "usd": cost_usd(usage.input_tokens, usage.output_tokens, cache_write or 0, cached or 0),
+        "input_tokens": usage.input_tokens,
+        "output_tokens": usage.output_tokens,
+        "reasoning_tokens": reasoning,
+        "cached_tokens": cached,
+        "cache_write_tokens": cache_write,
+    }
 
 
 def _run_config() -> RunConfig:
@@ -180,6 +218,7 @@ class OpenAIFullCorpusGenerator:
         self, agent: Agent, user_prompt: str, expected_type: type[BaseModel]
     ) -> GeneratedText:
         started = time.monotonic()
+        call_log = CallLog()
         try:
             result = await asyncio.wait_for(
                 Runner.run(
@@ -187,6 +226,7 @@ class OpenAIFullCorpusGenerator:
                     input=user_prompt,
                     max_turns=1,
                     run_config=_run_config(),
+                    hooks=call_log,
                 ),
                 timeout=self.timeout,
             )
@@ -202,9 +242,9 @@ class OpenAIFullCorpusGenerator:
         # Extract structured output strictly - fail closed
         final_output = getattr(result, "final_output", None)
         text = parse_structured_output(final_output, expected_type)
-        return self._generated_text(result, text, started)
+        return self._generated_text(result, text, started, call_log)
 
-    def _generated_text(self, result: Any, text: str, started: float) -> GeneratedText:
+    def _generated_text(self, result: Any, text: str, started: float, call_log: CallLog) -> GeneratedText:
         """Usage + metadata của một lượt đã xong (`Runner.run` hoặc `Runner.run_streamed` đọc hết) ⇒ `GeneratedText`."""
         # Extract usage and response metadata
         response_id = None
@@ -244,6 +284,7 @@ class OpenAIFullCorpusGenerator:
             reasoning_tokens=reasoning_tokens,
             cached_tokens=cached_tokens,
             cache_write_tokens=cache_write_tokens,
+            llm_calls=tuple(call_log.calls),
         )
 
     async def generate_answer(self, query: str, context: str) -> GeneratedText:
@@ -251,23 +292,27 @@ class OpenAIFullCorpusGenerator:
             raise ValueError("Query must not be empty or blank")
         return await self._execute_agent(self.answer_agent, build_answer_input(query, context), AnswerOutput)
 
-    def start_answer_stream(self, query: str, context: str) -> RunResultStreaming:
+    def start_answer_stream(self, query: str, context: str) -> tuple[RunResultStreaming, CallLog]:
         """Cùng agent + cùng tham số lần gọi như `generate_answer`, nhưng stream (spec streaming §4.3 bước 1). Trả ngay; model chạy
-        trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`."""
+        trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`.
+        `CallLog` của lượt trả kèm: nơi gọi đọc `calls` cả khi lượt bị ngắt / lỗi (chỉ có mục của lần gọi đã xong)."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return Runner.run_streamed(
+        call_log = CallLog()
+        result = Runner.run_streamed(
             self.answer_agent,
             input=build_answer_input(query, context),
             max_turns=1,
             run_config=_run_config(),
+            hooks=call_log,
         )
+        return result, call_log
 
-    def finish_answer_stream(self, result: RunResultStreaming, started: float) -> GeneratedText:
+    def finish_answer_stream(self, result: RunResultStreaming, call_log: CallLog, started: float) -> GeneratedText:
         """Sau khi `stream_events()` đã đọc hết: chữ cuối kiểm chặt như `generate_answer` (`parse_structured_output`) + usage.
         `started` lấy bằng `time.monotonic()` trước `start_answer_stream`."""
         text = parse_structured_output(getattr(result, "final_output", None), AnswerOutput)
-        return self._generated_text(result, text, started)
+        return self._generated_text(result, text, started, call_log)
 
     async def aclose(self) -> None:
         """Close AsyncOpenAI client connection."""
