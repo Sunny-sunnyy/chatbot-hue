@@ -999,3 +999,10 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - B3 nhớ hội thoại trên `p9-b3` `46008ed`: D6 bản hẹp giữ (vòng 2); chuỗi đã thấy hỏi tiếp +0,65; còn phần kín + giao diện Bản 1 (User chọn) + review.
 - User: README repo (không nhắc agent / lộ trình); file báo cáo tiến độ cho giáo viên (gửi ChatGPT); thời tiết ⇒ quyết ở plan B5; chi phí Cách A. Vòng cải tiến 16: W49 hook giờ tương lai, W50, W51.
 - Tiền phiên ≈ 0,514 USD; Phase 9 ≈ 0,66 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03.md`, `report_agent/2026-11-02_phase_9_code/`.
+
+## 2026-11-03 tối — B3 + B3b (nhớ hội thoại bật), B142 (👍 / 👎, gợi ý), B143 (sửa an toàn khẩn cấp) vào `main`; nghiên cứu sản phẩm thật (A, 20:57 03/11/2026)
+
+- B3 merge `a3dabba` (câu dặn hẹp D6 + giao diện nhiều lượt Bản 1), nhớ tắt vì phần kín: 1 / 2 lượt ngoài kho trả lời bằng đoạn đối tượng khác (K-N2 — kiểm có ngữ cảnh bác giả thuyết "lỗi nhãn"). User chọn sửa trên bộ mới ⇒ B3b: vòng 1 Q4 không đạt ⇒ đường âm ghi trước "chỉ nhớ câu hỏi" đạt; bộ mới C 6 / 6 từ chối đúng ⇒ bật, merge `9e2ecd9`.
+- B142 merge `6817897` (👍 / 👎 chỉ lưu đánh giá; 3 nút gợi ý dưới câu ngoài phạm vi — User chọn từ nghiên cứu sản phẩm thật). B143 merge `e3cdb96`: lỗ hổng định tuyến khẩn cấp "vừa bị giật đồ, báo công an" (có từ B1; C phát hiện nhờ luật dừng của plan tốc độ) — sửa một dòng định nghĩa `khan_cap`, mọi sàn đạt.
+- Nghiên cứu: 15 trợ lý thế giới (Codex; A kiểm 3 nguồn) + Huế TRIPO vòng 2 (agent con, Playwright) ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 4. Phân tích tốc độ C150 (định tuyến ≈ 46 % chữ đầu). Plan B4 bản 2 duyệt `42fa62d2425f`; plan B5 nháp; plan tốc độ bản 4 chờ review. User: thời tiết = B5b; B6 web chỉ cho câu về Huế.
+- Vòng cải tiến 17: S86–S90; W52 / W54 / I9 đề xuất chờ User; W50 ⇒ `đang dùng`. Tiền phiên tối ≈ 0,28 USD; Phase 9 ≈ 0,94 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03_toi.md`.

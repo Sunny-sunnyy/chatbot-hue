@@ -1,10 +1,12 @@
-# STATUS A — PHIÊN TỐI 03/11 (mở 17:56; ghi 18:02 03/11/2026 `date`)
+# STATUS A — KẾT PHIÊN TỐI 03/11 (20:58 03/11/2026 `date`; mở 17:56)
 
 Terminal: `hue-rag-9e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-32`, C = `hue-rag-40` (cả ba Claude Code, trực tiếp; B / C tự báo).
 - Kiểm nhanh 17:58: `main` `115d5de`; 3 file docs chưa commit (sửa sau kết phiên trưa); hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 `169c2dd5f86a` khớp; `frontend/dist/` có; `/tmp/b_p9b3` mất (prunable); RAM trống ~12 GB.
 - **Quyền phiên (User chọn "như trưa 03/11", A ghi nhận 18:02 03/11/2026):** A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD; B / C push nhánh riêng. Hết hạn cuối phiên.
 - Giao: B137 (tạo lại worktree + bước 8 giao diện Bản 1, chỉ `frontend/`), C146 (phần kín B3, worktree riêng `/tmp/c_p9b3` `46008ed`) — `CURRENT_HANDOFF.md` "Phiên tối 03/11".
-- Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`.
+- **Kết phiên tối (20:58 03/11/2026):** merge B3 `a3dabba`, B3b `9e2ecd9` (nhớ bật), B142 `6817897`, B143 `e3cdb96` — cổng `main` sau mỗi merge + 5 chỗ báo cáo mỗi lần; plan B4 bản 2 duyệt `42fa62d2425f`; plan tốc độ bản 3 duyệt `984d67829a34` (bản 4 `395c79bbe168` chờ review); nghiên cứu sản phẩm thật ⇒ báo cáo nghiên cứu bản 4; vòng cải tiến 17 (W52 / W54 / I9 đề xuất chờ User; W50 ⇒ `đang dùng`); handoff viết lại (tối nguyên văn ⇒ `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03_toi.md`); PROJECT_HISTORY. Tiền phiên ≈ 0,28 USD (B ≈ 0,21 · C ≈ 0,067 · A ≈ 0,005). Quyền phiên hết hạn.
+- **Phiên sau A:** `CURRENT_HANDOFF.md` "PHIÊN SAU" — hỏi quyền ⇒ hỏi W52 / W54 / I9, chữ câu khẩn cấp, xoá 4 nhánh đã merge ⇒ B4 (B tiếp `p9-b4`) ⇒ B review plan tốc độ bản 4 ⇒ C chạy ⇒ chốt plan B5.
+- Nhánh còn: `main`, `p9-b4` (B, đang code), `p9-toc-do-1` (C, chưa push); đã merge, chờ User xoá: `p9-b3`, `p9-b3b`, `p9-phan-hoi`, `p9-khan-cap`.
 - Diễn biến tối: C146 kín (K-N2 trích sai ⇒ cờ nhớ tắt) ⇒ User chọn B3b ⇒ merge B3 `a3dabba` + 5 chỗ báo cáo `9b97ce0` ⇒ B138 vòng 1 Q4 không đạt ⇒ (a) chỉ nhớ câu hỏi đạt `57f0e0b` ⇒ C chạy bộ mới. Nghiên cứu sản phẩm thật (Codex + agent con TRIPO v2) ⇒ báo cáo nghiên cứu bản 4. C149 nháp plan B5, C150 phân tích tốc độ, C151 plan tốc độ #1.
 - **Bẫy A (tối 03/11, đầu vào vòng cải tiến):** (1) khi A viết lại dòng việc của C trong handoff, hậu tố "XONG … sha" C ghi ở dòng cũ bị giữ sang dòng mới ⇒ sha sai, 2 lần (C phát hiện, C sửa) ⇒ tách trạng thái ra dòng riêng; (2) một giờ ước dạng HH:Mx trong handoff — hook bắt, sửa ngay; (3) gửi câu cổng với trường `question` thay vì `query` (422) — đọc schema trước khi gửi.
   (4) **B / C đứng chờ ~55 phút (khoảng 19:37–20:31)**: A mở hộp hỏi User (câu thời tiết) trong khi User đã đi nghỉ — hộp hỏi chặn A, 4 tin của B / C (kc08 an toàn, B142 xong, plan B4 bản 2) nằm chờ ⇒ khi User có thể vắng: trả lời / giao B, C **trước**, rồi mới mở hộp hỏi User; câu không gấp để vào handoff.

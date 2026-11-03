@@ -1,3 +1,25 @@
+# STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:55 03/11/2026 `date`, kết phiên tối 03/11)
+
+**Trạng thái:** C không còn việc đang chạy, không server / tiến trình nền. Worktree của C: **`/tmp/c_toc_do`** (nhánh `p9-toc-do-1`, commit `4c6adc6` — cờ `router_reasoning_effort` + test, **chưa push**; tạo từ `main` `9e2ecd9` ⇒ phiên sau rebase lên `main` mới, `e3cdb96` có B143). Không thư mục tạm khác (`/tmp/c146`, `/tmp/c148`, `/tmp/c152`, `/tmp/c_p9b3*`, `/tmp/c_phanhoi` đã xoá / gỡ).
+Terminal phiên tối 03/11: C `hue-rag-40`, A `hue-rag-9e`, B `hue-rag-32` (đổi mỗi lần mở — `ListAgents`). C không commit `main`; A commit.
+
+**Việc dở cho phiên sau (C):**
+1. **Thí nghiệm tốc độ #1** — plan **bản 4** `docs/superpowers/plans/2026-11-03-phase-9-toc-do-dinh-tuyen-plan.md` sha **`395c79bbe168`** (chỉ đổi §2 mốc + §4 tiền sau B143; bản 3 `984d67829a34` A duyệt). Chờ: **B review phần đổi bản 4** ⇒ A duyệt sha ⇒ C chạy theo thứ tự §4: rebase `p9-toc-do-1` lên `main` (`ROUTER_INSTRUCTIONS` phải là `164bd4a254e9`) ⇒ mốc 123 × 2 ⇒ biến `none` 123 × 2 ⇒ (K / S1 / N đạt) ⇒ mốc + biến Golden ⇒ chữ đầu ABBA (chỉ khi B không chạy server / Playwright / lượt có phí — hỏi B). Trần 0,085 / dừng 0,08. Harness: `data/phase_9/toc_do/thi_nghiem_1/tools/chay_tuyen.py` (có `router_sha`), chấm `cham.py` (đã sửa sàn N theo `chap_nhan`; **phải sửa phần mốc** cho bản 4: mốc = 2 lượt mới, không r2 B1), probe dùng lại (`probe.txt`). Chữ đầu: chưa có script ABBA — viết trước khi chạy (lưu `cached_tokens` + `reasoning_tokens` cả hai lần gọi).
+2. **B4:** C đã chuẩn bị `data/phase_9/bo_do_b4/chon_da_thay.json` `060d62a56e97` + `can_hoi_lai.json` `ef9179c8f266` (0 / 122). Khi B chạy xong đã thấy ⇒ **C chạy + chấm phần kín B4** (10 câu `cau_sealed.jsonl`, B không mở) + review nhánh B4.
+3. **B5:** plan nháp `42afc1c7bc64` chờ chốt sau B4 (A gom 3 câu hỏi User); phiếu chấm nháp `data/phase_9/lich_trinh/phieu_cham_user_nhap.md` `965f9a2bb867`.
+
+**Việc xong tối 03/11:** C146 kín B3 · C147 review sớm 2 B3 · C148 bộ B3b · C149 nháp plan B5 · C150 phân tích chữ đầu · C151 plan tốc độ (bản 1→3) · C152 chạy bộ B3b (S1 / S2 đạt ⇒ nhớ bật) · C153 phiếu chấm B5 nháp · C154 review B3b (ready) · C155 review plan B4 (2 vòng, ready) · C156 thí nghiệm tốc độ (DỪNG đúng luật: mốc lọt câu khẩn cấp kc08 ⇒ B143) · C157 review B142 (ready) · C158 chuẩn bị B4 · C159 review B143 (ready) · plan tốc độ bản 4.
+
+**Tiền paid của C tối 03/11:** C146 0,033185 (kín 0,032185 + K-N2 0,001065) · C152 0,020337 · C156 0,013908 ⇒ **≈ 0,067 USD**. Judge / sub-agent: quota Claude.
+
+**Bẫy / bài học tối 03/11 (đầu vào vòng cải tiến):**
+1. **Khuyến nghị dựa trên grep kho, chưa xem ngữ cảnh thật** (K-N2): C khuyên "nhãn bộ đo sai" vì kho có dòng đúng; chạy lại có ngữ cảnh mới thấy bot trích nguồn của đối tượng khác ⇒ đã đính chính. ⇒ Kết luận về bám nguồn phải kiểm **trên ngữ cảnh model thật nhận**, harness cần lưu ngữ cảnh.
+2. **Kiểm log qua handler tự gắn ⇒ "0 dòng" vô nghĩa** (lần 2, sau 03/11 sáng): app dựng handler riêng. ⇒ Luôn đọc `application.log` sau mốc dòng.
+3. **Gõ tay giờ bản cũ** khi viết bản mới của plan (hook bắt) ⇒ lấy giờ từ STATUS hoặc bỏ giờ, chỉ giữ sha.
+4. **Dòng sàn viết thiếu ngữ nghĩa nhãn** (sàn N quên `chap_nhan`) ⇒ khi viết sàn trên bộ có `chap_nhan`, luôn viết "∉ `nhan` ∪ `chap_nhan`".
+5. **Hậu tố trạng thái bị giữ khi A viết lại dòng việc** trong handoff (2 lần) ⇒ A đã tách trạng thái C ra dòng riêng.
+6. **Làm tốt (giữ):** dừng đúng luật ghi trước khi mốc tự phạm sàn (C156) ⇒ phát hiện lỗ hổng an toàn thật; tính lại số của người khác bằng script của mình (C154, C159); ca dò khác cách người làm bắt được chỗ người làm không thử (cổng "ngoài kho" thực là "ngoài phạm vi").
+
 # STATUS C — MỞ PHIÊN CHIỀU 03/11 (17:59 03/11/2026 `date`)
 
 - Terminal C: `hue-rag-40`. B = `hue-rag-32` (B tự báo) ⇒ A = `hue-rag-9e` (A xác nhận). Kênh: trực tiếp.
