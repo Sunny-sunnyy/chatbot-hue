@@ -72,6 +72,7 @@ class ChatResponse(BaseModel):
     answer: str
     sources: list[SourceResponse]
     notice: str | None = None  # B1 H4c: dòng "có thể đã thay đổi" (D8)
+    turn_id: str | None = None  # B142: mã lượt cho 👍 / 👎 (`api/feedback.py`)
 
 
 def error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -102,6 +103,12 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
     """Ghi lượt đã xong vào cuộc (D2): chỉ lượt có câu trả lời cuối — lỗi / ngắt / rút lại không ghi."""
     if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and trace.answer:
         request.app.state.conversations.append(conversation_id, query, trace.answer)
+
+
+def _new_turn_id(request: Request, trace: AnswerTrace, outcome: str | None) -> str | None:
+    """B142: mã lượt ngẫu nhiên cho lượt có câu trả lời cuối (đánh giá 👍 / 👎) — không liên quan mã cuộc trò chuyện."""
+    turns = getattr(request.app.state, "feedback_turns", None)
+    return None if turns is None else turns.add(trace.route, outcome, 0 if trace.cited is None else len(trace.cited))
 
 
 def _set_cookie(response, conversation_id: str | None) -> None:
@@ -176,7 +183,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     if trace.fixed_outcome is not None:
         metrics["outcome"] = trace.fixed_outcome  # câu cố định / từ chối trước model: không qua kiểm citation
         _remember(request, conversation_id, query, trace, trace.fixed_outcome)
-        return ChatResponse(answer=trace.answer, sources=[]), conversation_id
+        return ChatResponse(answer=trace.answer, sources=[], turn_id=_new_turn_id(request, trace, trace.fixed_outcome)), conversation_id
 
     if trace.citation_error is not None:
         logger.error("Citation integrity failed")
@@ -192,7 +199,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
         recorder.mark_success()
 
     _remember(request, conversation_id, query, trace, "success")
-    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice), conversation_id
+    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice,
+                        turn_id=_new_turn_id(request, trace, "success")), conversation_id
 
 
 # ---------- Phần trước model, chung cho hai route ----------
@@ -308,7 +316,7 @@ async def chat_stream(body: ChatRequest, request: Request):
             _remember(request, conversation_id, query, trace, metrics["outcome"])
 
         response = StreamingResponse(
-            _answer_events(turn, trace, metrics, started, remember),
+            _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"])),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -332,9 +340,10 @@ class StreamEvents:
     """Dựng sự kiện SSE của một lượt stream và điền `outcome` / mốc thời gian vào `metrics` (spec §4.4, §4.6). Không gọi model ⇒ test
     được bằng chữ có sẵn; `_answer_events` chỉ nối nó với luồng model."""
 
-    def __init__(self, metrics: dict, started: float) -> None:
+    def __init__(self, metrics: dict, started: float, new_turn_id=None) -> None:
         self.metrics = metrics
         self.started = started
+        self.new_turn_id = new_turn_id  # B142: cấp mã lượt (đánh giá 👍 / 👎) ở `done` của lượt có câu trả lời cuối; None ⇒ `done` như cũ
         self.seq = 0
         self.shown: list[str] = []  # các mảnh chữ đã gửi
 
@@ -350,15 +359,18 @@ class StreamEvents:
         self.seq += 1
         return sse_event("delta", {"seq": self.seq, "text": text})
 
-    def done(self) -> bytes:
-        return sse_event("done", {"outcome": self.metrics["outcome"]})
+    def done(self, answered: bool = False) -> bytes:
+        data = {"outcome": self.metrics["outcome"]}
+        if answered and self.new_turn_id is not None:
+            data["turn_id"] = self.new_turn_id()
+        return sse_event("done", data)
 
     def fixed(self, trace: AnswerTrace) -> list[bytes]:
         """Câu cố định (khẩn cấp, ngoài phạm vi, từ chối khi ngữ cảnh không có nguồn) — chữ đã ra một `delta`; không kiểm citation."""
         self.metrics["outcome"] = trace.fixed_outcome
         self.metrics["refusal"] = trace.answer.strip() in REFUSAL_ANSWERS
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
-        return [sse_event("sources", []), self.done()]
+        return [sse_event("sources", []), self.done(answered=True)]
 
     def finish(self, trace: AnswerTrace) -> list[bytes]:
         """Sau kiểm citation: qua ⇒ `sources` (chỉ nguồn được trích) [+ `notice` H4c]; hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
@@ -375,7 +387,7 @@ class StreamEvents:
             events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited)])]
             if trace.notice is not None:
                 events.append(sse_event("notice", {"text": trace.notice}))
-        return events + [self.done()]
+        return events + [self.done(answered=trace.citation_error is None)]
 
     def failure(self, exc: Exception) -> list[bytes]:
         """Lỗi sau khi luồng đã mở ⇒ `error` + `done`; đã hiện chữ thì giao diện xóa hết (D3 (b)). Lỗi tìm kho / ngữ cảnh giữa lượt (B1 D6)
@@ -396,13 +408,13 @@ class StreamEvents:
         return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
 
 
-async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None):
+async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
     trước dòng log, nên ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ nguyên (C132 m-1)."""
     metrics["status_code"] = 200
-    stream = StreamEvents(metrics, started)
+    stream = StreamEvents(metrics, started, new_turn_id)
     try:
         async for kind, data in turn:
             yield stream.status(data) if kind == "status" else stream.delta(data)
