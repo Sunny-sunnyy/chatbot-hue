@@ -78,7 +78,8 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 - **Thử 3 cách** (khoá trước khi đo; mỗi cách 2 lượt × 61 câu, 0 lỗi): **V1** model viết lại câu tìm ⇒ thêm 0 / 12; **V3** viết lại + tách ≤ 3 câu nhỏ, trộn RRF ⇒ thêm 1 / 12 (cần 3), lượt 1 mất đoạn đúng 1 câu;
   **V2** trợ lý tự quyết có tìm không + tự viết câu ⇒ thêm 0 / 12 (26 ↔ 28 câu đủ keyword giữa hai lượt — câu tìm model viết dao động; +3 thấy ở vòng chỉnh trên 9 câu dev **không lặp lại** ⇒ vòng chỉnh đã dò theo nhiễu).
 - **Kết luận:** **giữ câu gốc** (V0) — kết quả âm. Tiền tầng tìm ≈ 0,069 USD (cả pilot + chỉnh). Đếm thêm (C, 0 USD): **0 / 38** câu có một vế mà kho không có keyword nào ⇒ thiếu bằng chứng là do **xếp hạng**, không do kho thiếu.
-- Hồ sơ: `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md`, `c133_bo_do_b2.md`; plan `docs/superpowers/plans/2026-11-03-phase-9-b2-plan.md`. Bước tiếp B2b (trợ lý được tìm thêm ≤ 2 lần) đang đo.
+- Hồ sơ: `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md`, `c133_bo_do_b2.md`; plan `docs/superpowers/plans/2026-11-03-phase-9-b2-plan.md`.
+- **B2b — trợ lý tự gọi tìm thêm ≤ 2 lần (vào chatbot, merge `00d670e`):** câu tìm đầu vẫn là câu gốc; model tự viết câu tìm cho các lần sau. Câu nhiều nguồn đủ ý **+1,17**, từ chối nhầm 12 ⇒ 4–6 — chi tiết `BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 4. Đây là cách đầu tiên làm câu nhiều nguồn tốt lên rõ: không đổi xếp hạng, mà cho thêm lượt tìm.
 
 ### 30/10/2026 — Kho sửa đợt 2, chỉ mục dựng lại; thử Qwen3-Embedding-8B
 - **Kho sửa đợt 2:** cách tìm không đổi; kết quả tìm 158 câu có 25 câu đổi danh sách 10 đoạn (11 chỉ đổi thứ tự; 24 có đoạn của file đã sửa). Đo lại mốc
@@ -140,7 +141,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), build 
 ## 6. Việc còn lại / cần quyết
 
 - **Không có việc cần bạn quyết** ở khâu này.
-- **Chỗ yếu còn mở:** 9 / 40 câu thử có đoạn đúng trong ứng viên nhưng bị xếp ngoài 10 đầu; câu so sánh / nhiều nguồn. Các hướng đã thử đều không qua luật — kể cả model viết lại câu tìm (B2a 03/11). Đang đo: trợ lý được tìm thêm ≤ 2 lần (B2b).
+- **Chỗ yếu còn mở:** 9 / 40 câu thử có đoạn đúng trong ứng viên nhưng bị xếp ngoài 10 đầu; câu so sánh / nhiều nguồn. Các hướng đã thử đều không qua luật — kể cả model viết lại câu tìm (B2a 03/11). **B2b (03/11): cho trợ lý tìm thêm ≤ 2 lần — có lợi rõ ở câu nhiều nguồn, đã vào chatbot.**
   Hướng để ngỏ (hồ sơ, chưa lên lịch): bản "luna chọn đoạn" nhanh hơn, chỉ khi có luật nhận mới cho loại thay đổi này và vừa sàn tốc độ; sửa nhãn đoạn đúng
   để đếm cả chỗ kho viết lại cùng thông tin.
 - **Đo lại theo loại câu 01/11** (0 USD, câu trả lời đã chấm 30/10, tiêu chí ghi trước): chỉ **câu nhiều nguồn** còn lỗi lớn ⇒ để Phase 9; dòng bảng giá dài: keyword lọt top-10 80 % ↔ 90 % câu khác, Đủ ý 4,50 ↔ 4,53 ⇒ **không còn là lỗi lớn**. `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.
