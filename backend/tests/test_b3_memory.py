@@ -4,6 +4,7 @@ Kho cuộc trò chuyện + cookie + lịch sử đi vào model + đếm token. M
 (như `test_b2_tool_loop.py`); tìm kho là Qdrant thật (chỉ đọc). Không phải bằng chứng model thật nhớ đúng — phần đó ở lượt đo có phí.
 """
 import asyncio
+import copy
 import json
 from types import SimpleNamespace
 
@@ -13,6 +14,7 @@ from fastapi.testclient import TestClient
 from api.app import create_app
 from api.conversations import ConversationStore, stored_answer
 from api.routes.chat import METRIC_FIELDS
+from core.settings_loader import load_settings
 from core.schema import GenerationError
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream
 from llm.full_corpus_prompt import ASSISTANT_HISTORY_NOTE, INSUFFICIENT_ANSWER, ROUTER_HISTORY_NOTE
@@ -211,7 +213,9 @@ def test_api_error_turn_still_sets_cookie_and_is_not_remembered():
 
 
 def test_api_without_memory_flag_sets_no_cookie():
-    app = create_app()
+    settings = copy.deepcopy(load_settings())  # cờ nhớ TẮT tường minh — `settings.yaml` bật từ B3b (B141)
+    settings["assistant"]["nho_hoi_thoai"] = False
+    app = create_app(settings)
     with TestClient(app) as client:
         gen = MemoryGenerator()
         original = app.state.generator, app.state.generator_ready
