@@ -185,6 +185,8 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    đối chiếu, bắt lỗi mô tả trong yêu cầu ChatGPT).
    **Việc giao chạy > 30 phút** (nghiên cứu, đo, code) ⇒ A đặt mốc kiểm ngay lúc giao: Claude Code `SendMessage` kèm `notify_when_idle: true`; agent khác: xem file đầu ra sau ~30 phút
    (02/11: B đứng ~2 giờ vì vòng chờ `pgrep -f` tự khớp chính nó, C rảnh không việc — User phát hiện; S75, W47).
+   **Giao việc kế cho session đang làm việc khác** ⇒ tin ghi "làm ngay sau việc hiện tại, không kết lượt ở giữa", gửi kèm `notify_when_idle: true`; nhận thông báo session đó dừng lượt ⇒ A kiểm
+   file đầu ra của việc kế đã có chưa, chưa có ⇒ nhắn lại ngay (03/11: C 2 lần báo "bắt đầu" việc kế rồi kết lượt không làm, `notify_when_idle` bắt — S81, W50).
    **Giao việc thiết kế / spec / nghiên cứu cho Phase n** (cả brief sub-agent) ⇒ trước khi giao chạy `find guides docs/superpowers/specs docs/superpowers/plans -maxdepth 1 -iname "*phase[-_]n[-_.]*"` (thay n; B124 kiểm n=9 ra đủ 4 file)
    và đưa mọi tài liệu cũ cùng Phase vào mục "Đọc" (02/11: bỏ sót `guides/phase_9_agentic_rag_roadmap.md` — hướng User duyệt 08–10/2026; S74, W46).
    **Có lượt đo tốc độ / latency đang chạy** ⇒ session khác không chạy lượt trả phí, việc nặng CPU, quét / build Qdrant cùng lúc; A ghi điều này trong mục

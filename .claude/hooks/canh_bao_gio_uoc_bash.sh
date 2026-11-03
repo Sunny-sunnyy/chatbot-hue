@@ -10,6 +10,7 @@
 # chỉ xét `.md`; lệnh vừa sửa vừa `git add` ⇒ không thấy (so với index); dòng mới bắt đầu bằng `+` bị bỏ qua — hook git W30 bắt lúc commit.
 WATCH_DIRS=(report_agent session_prompt bao_cao_he_thong docs)
 
+gio_tl="$(cd "$(dirname "$0")/../.." && pwd)/.githooks/gio_tuong_lai.sh"   # W49 — tính trước khi cd
 root="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 cd "$root" 2>/dev/null || exit 0
 pat='(^|[^0-9])[0-2][0-9]:[0-5]x($|[^0-9A-Za-z])'   # chung với .githooks/pre-commit (W30)
@@ -22,7 +23,13 @@ hits=$(find "${WATCH_DIRS[@]}" -name '*.md' -not -path '*/archive/*' -mmin -2 2>
   else
     awk -v f="$f" '{print f "\t" $0}' "$f"
   fi
-done | grep -E "$pat")
+done)
+# W49 (03/11): thêm dòng có giờ hôm nay ở tương lai (gõ tay) — gọi script dùng chung (.githooks/pre-commit) MỘT lần cho cả khối
+# (review vòng 16: gọi từng dòng ⇒ file 3.000 dòng mất 24 s > timeout 10 s). Giới hạn: giờ hẹn / dự kiến trong tương lai cũng bị báo (chỉ cảnh báo).
+today=$(date +%d/%m/%Y)
+future=$(printf '%s\n' "$hits" | cut -f2- | bash "$gio_tl")
+fre=""; [ -n "$future" ] && fre="($(echo $future | sed 's/ /|/g')) ${today}"
+hits=$(printf '%s\n' "$hits" | grep -E "${pat}${fre:+|$fre}")
 [ -z "$hits" ] && exit 0
 
 new=""
@@ -30,7 +37,7 @@ while IFS= read -r line; do
   key=$(printf '%s' "$line" | md5sum | cut -c1-16)
   grep -q "$key" "$seen" && continue
   echo "$key" >> "$seen"
-  f=${line%%$'\t'*}; g=$(printf '%s' "${line#*$'\t'}" | grep -oP '(?<![0-9])[0-2][0-9]:[0-5]x(?![0-9A-Za-z])' | sort -u | tr '\n' ' ')
+  f=${line%%$'\t'*}; g=$(printf '%s' "${line#*$'\t'}" | grep -oP '(?<![0-9])[0-2][0-9]:[0-5]x(?![0-9A-Za-z])' | sort -u | tr '\n' ' ')${fre:+$(printf '%s' "${line#*$'\t'}" | grep -oE "$fre" | cut -d' ' -f1 | sort -u | tr '\n' ' ')}
   new="$new$f: $g; "
 done <<< "$hits"
 [ -z "$new" ] && exit 0

@@ -63,6 +63,11 @@ if [ -n "$approx" ]; then
   echo "pre-commit: CẢNH BÁO (không chặn) — dòng thêm mới có giờ ước dạng HH:Mx; ghi giờ bằng \`date\` (WORKFLOW.md §6):" >&2
   printf '%s\n' "$approx" | cut -c1-160 | sed 's/^/  dòng diff #/' >&2
 fi
+# W49 (03/11): giờ "HH:MM <hôm nay>" muộn hơn lúc commit ⇒ gõ tay (giờ tương lai không thể lấy từ `date`) ⇒ cảnh báo, không chặn.
+future=$(printf '%s\n' "$added" | bash "$(dirname "$0")/gio_tuong_lai.sh")
+if [ -n "$future" ]; then
+  echo "pre-commit: CẢNH BÁO (không chặn) — dòng thêm mới có giờ hôm nay ở TƯƠNG LAI: $future— giờ gõ tay; sửa bằng \`date\` (WORKFLOW.md §6)." >&2
+fi
 
 if [ "$fail" -ne 0 ]; then
   echo "pre-commit: sửa rồi stage lại. Chặn nhầm thì báo User (bỏ qua chỉ khi User duyệt: git commit --no-verify)." >&2

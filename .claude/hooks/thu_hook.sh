@@ -21,6 +21,11 @@ check "giờ ước khi dời lịch sử archive/"  qua "$(gw "/repo/session_pr
 check "giờ ước trong chữ nghiêng _…_"      bắt "$(gw "/repo/$d/a.md" 'xong _15:4x_')"
 check "giờ ước dính chữ (lúc15:4x)"        bắt "$(gw "/repo/$d/a.md" 'xong lúc15:4x')"
 check "không phải giờ (v1:2x, 112:3x)"      qua "$(gw "/repo/$d/a.md" 'v1:2x 112:3x 12:3xy')"
+# W49 (03/11): giờ hôm nay ở tương lai (gõ tay) ⇒ bắt; giờ đã qua / ngày khác ⇒ qua. Ca sát nửa đêm có thể sai ⇒ bỏ qua khi chạy 23:50–00:10.
+tl="$(date -d '+10 min' +%H:%M) $(date +%d/%m/%Y)"; qk="$(date -d '-10 min' +%H:%M) $(date +%d/%m/%Y)"
+check "giờ hôm nay ở tương lai"           bắt "$(gw "/repo/$d/a.md" "ghi lúc $tl")"
+check "giờ hôm nay đã qua"                qua "$(gw "/repo/$d/a.md" "mốc $qk")"
+check "giờ tương lai ngày khác"           qua "$(gw "/repo/$d/a.md" 'mốc 23:59 01/01/2020')"
 
 # --- canh_bao_gio_uoc_bash.sh (PostToolUse Bash) — repo git tạm
 t=$(mktemp -d); d2=$(sed -n 's/^WATCH_DIRS=(\([^ )]*\).*/\1/p' canh_bao_gio_uoc_bash.sh)
@@ -29,6 +34,8 @@ gb() { CLAUDE_PROJECT_DIR="$t" bash canh_bao_gio_uoc_bash.sh < /dev/null; }
 printf 'cũ 10:1x\nmới 11:00\n' > "$t/$d2/cu.md";  check "dòng mới giờ thật, dòng cũ có giờ ước" qua "$(gb)"
 printf 'mới 16:2x\n' > "$t/$d2/moi.md";          check "file mới có giờ ước"                  bắt "$(gb)"
 check "báo lại lần hai cùng chỗ"                  qua "$(gb)"
+printf 'mới %s\n' "$tl" > "$t/$d2/tl.md";       check "file mới có giờ tương lai (W49)"       bắt "$(gb)"
+printf 'mới %s\n' "$qk" > "$t/$d2/qk.md";       check "file mới có giờ đã qua (W49)"          qua "$(gb)"
 mkdir -p "$t/$d2/archive"; printf 'cũ 09:5x\n' > "$t/$d2/archive/ls.md"; check "file mới trong archive/"  qua "$(gb)"
 rm -rf "$t" "/tmp/claude_gio_uoc_bash_$(id -u)_$(basename "$t").seen"
 

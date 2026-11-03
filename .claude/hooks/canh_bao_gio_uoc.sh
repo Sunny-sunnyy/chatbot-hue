@@ -24,6 +24,9 @@ done
 text=$(echo "$input" | jq -r '(.tool_input.new_string // "") + "\n" + (.tool_input.content // "")')
 # Báo hay không: mẫu -E chung với pre-commit; in danh sách: -P lookaround để hai giờ sát nhau ("10:3x,11:4x") không mất giờ sau.
 found=$(echo "$text" | grep -E '(^|[^0-9])[0-2][0-9]:[0-5]x($|[^0-9A-Za-z])' | grep -oP '(?<![0-9])[0-2][0-9]:[0-5]x(?![0-9A-Za-z])' | sort -u | tr '\n' ' ')
+# W49 (03/11): giờ hôm nay ở tương lai = gõ tay; script dùng chung với .githooks/pre-commit.
+future=$(echo "$text" | bash "$(cd "$(dirname "$0")/../.." && pwd)/.githooks/gio_tuong_lai.sh")
+[ -n "$future" ] && found="${found}(giờ ở tương lai: ${future}) "
 [ -z "$found" ] && exit 0
 
 jq -n --arg f "$file" --arg g "$found" '{hookSpecificOutput: {hookEventName: "PostToolUse",

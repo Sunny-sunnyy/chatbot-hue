@@ -86,6 +86,11 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Thí nghiệm chọn / bỏ phương án có luật ghi trước khi chạy và người khác kiểm lại; các lượt **đo hiện trạng** (tốc độ, giá, token) chỉ đo — không có luật giữ / bỏ ghi trước.
 
+### 03/11/2026 chiều — Phase 9 B3 (nhớ hội thoại) đang thử trên nhánh `p9-b3` — **chưa vào chatbot**
+- **Câu dặn mới chống "thêm lời khuyên chung"** (sửa lỗi an toàn của B2): bản 1 "chỉ nêu điều có trong bằng chứng…" sửa được lỗi nhưng **trượt** sàn từ chối nhầm (4 ⇒ 7) + đọc chữ thấy mở "Có." rồi nói ngược, bỏ lời khuyên có nguồn ⇒ **bản hẹp** (chỉ chặn lời khuyên / lưu ý an toàn không có nguồn, giữ lời khuyên có nguồn) **đạt cả 5 luật**: từ chối nhầm 4, Đủ / Đúng không tụt, 0 câu sai điều kiện, câu an toàn của B2 hết lỗi ⇒ **giữ** (≈ 0,19 USD cả hai vòng).
+- **Nhớ hội thoại** (đo 25 chuỗi đã thấy): nhớ tên 6 / 6; câu hỏi tiếp có nhớ ↔ gửi câu gõ không lịch sử: đủ ý **+0,65** [+0,15; +1,25]; 0 câu ngoài kho bị trả lời; đổi chủ đề 0 câu tụt. Còn: phần kín, cổng ổn định, giao diện nhiều lượt (Bản 1 bạn chọn) ⇒ mới bật.
+  `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md`.
+
 ### 03/11/2026 trưa — Phase 9 B2 vào chatbot (merge `00d670e`)
 - **B2a — model viết lại câu tìm đầu** (3 cách, 2 lượt × 61 câu, ≈ 0,069 USD): không cách nào qua luật ⇒ **không giữ**, tìm bằng câu gốc (`BAO_CAO_TIM_KIEM.md` mục 4).
 - **B2b — trợ lý tự gọi `tim_kho` thêm ≤ 2 lần** (luật ghi trước; nhiễu đo bằng 2 lượt của chính đường công cụ): đủ ý câu nhiều nguồn +1,17, Golden không tụt quá nhiễu, 0 câu ngoài kho bị trả lời ⇒ **giữ**;

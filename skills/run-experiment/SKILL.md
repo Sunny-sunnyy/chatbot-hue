@@ -109,6 +109,9 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
   cho phép (đã trừ nhiễu); (3) ít nhất một chỉ số quyết tốt lên **vượt nhiễu và CI 95% > 0**. Câu chỉ đổi ở
   một lượt không tính. Đây là ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
   dù luật nói giữ.
+- **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
+  · câu ngoài kho bị trả lời — người quyết phải thấy đủ trước khi chọn (03/11: báo B2b thiếu số "thiếu cảnh báo", User quyết giữ khi chưa thấy;
+  C bắt ở review plan sau — S84, W51).
 - "Tốt hơn" chỉ đề xuất vào chatbot khi **đã xác nhận trên nhóm kiểm**; đưa vào runtime là việc riêng, User duyệt.
 - **3 vòng sửa cùng một biến thể không đạt ⇒ dừng**, ghi giới hạn, báo A/User; không vá cơ chế bảo vệ cơ chế.
   Hết trần tiền / thời gian ⇒ dừng, báo A.

@@ -992,3 +992,10 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - Giao diện React + Vite + Tailwind merge `ed8e6e8` (B121, review C119) — `report_agent/2026-11-02_giao_dien_moi_code/TONG_HOP.md`.
 - Phase 9 đổi hướng thành **trợ lý agent có công cụ** (User); nghiên cứu khoá AI FDE + ChatGPT + Serper / SDK; spec `docs/superpowers/specs/2026-11-02-phase-9-design.md` **bản 9 duyệt `169c2dd5f86a`**
   (bản 5 hướng cũ ở `077e3cb`; review `…_review.md` 4 vòng bản 1–5, `…_review_v6.md` 3 vòng bản 6–9). Giữ OpenAI Agents SDK 0.19.4. Vòng cải tiến 14: W46–W48. Lịch sử handoff nguyên văn: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`.
+
+## 2026-11-03 — Phase 9 B1 + B2 vào `main`; B3 trên nhánh; README; báo cáo giáo viên (A, 13:26 03/11/2026)
+
+- B1 (định tuyến + dòng nhắc) merge `f01c032`; B2 (B2a viết lại câu tìm âm ⇒ V0; B2b trợ lý tìm thêm ≤ 2 lần, câu nhiều nguồn Đủ +1,17) merge `00d670e`; 1 P0_sai mới (S20) User giữ + sửa ở B3.
+- B3 nhớ hội thoại trên `p9-b3` `46008ed`: D6 bản hẹp giữ (vòng 2); chuỗi đã thấy hỏi tiếp +0,65; còn phần kín + giao diện Bản 1 (User chọn) + review.
+- User: README repo (không nhắc agent / lộ trình); file báo cáo tiến độ cho giáo viên (gửi ChatGPT); thời tiết ⇒ quyết ở plan B5; chi phí Cách A. Vòng cải tiến 16: W49 hook giờ tương lai, W50, W51.
+- Tiền phiên ≈ 0,514 USD; Phase 9 ≈ 0,66 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03.md`, `report_agent/2026-11-02_phase_9_code/`.

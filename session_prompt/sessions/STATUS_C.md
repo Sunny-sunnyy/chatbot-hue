@@ -1,3 +1,32 @@
+# STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
+
+**Trạng thái:** C không còn việc đang chạy, không server / tiến trình nền, không thư mục tạm (`/tmp/c13*`, `/tmp/c14*` đã xoá). C không commit; A commit.
+Terminal phiên 03/11: C `hue-rag-d8`, A `hue-rag-5e`, B `hue-rag-52` (đổi mỗi lần mở — `ListAgents`).
+
+**Việc dở cho phiên sau (C):**
+1. **Phần kín B3** — khi B ghi dòng "Khoá" (sha lời dặn + `settings.yaml` + commit) vào report B136: C **chạy và chấm** 15 chuỗi `data/phase_9/bo_do_b3/chuoi_sealed.jsonl` bằng harness `chuoi` của B ở đúng commit khoá (`--khong-in-chu`), judge = sub-agent do C gửi (cùng prompt / thủ tục phần đã thấy; thước an toàn 2 judge cho `hoi_tiep_dieu_kien`). Gửi B / A **chỉ số đếm + sha** (Q3 nhớ tên, Q4 hỏi tiếp — bên so = câu gõ thật không lịch sử (D11 (a)), Q5 sàn, Q6 đổi chủ đề). Plan B3 bản 2 `cd099ec0a00e`.
+2. **Review cuối `p9-b3`** `e69c293..<cuối>` vào `b136_review.md` (vòng sớm `8caaa610ab0f`: 2 minor m-1 test kiểm tên rỗng, m-2 lượt lỗi không gửi cookie) + bằng chứng có phí (Q2 208 + S20 × 3 + `P0_thieu`, Q8 token thật − builder mọi lượt, Q3–Q7, Q10 cổng).
+3. Chờ User: chọn 1 / 3 bản mẫu giao diện (`data/giao_dien_v2/mau/`), cách trình bày chi phí A / B (`data/phase_9/bo_do_b4/chi_phi_hai_cach.md`), đọc mẫu B3 / B4, duyệt bảng điểm B5 nháp (`data/phase_9/lich_trinh/diem_cho_user.md`, 3 câu cần quyết).
+
+**Việc xong 03/11 (C133–C145):**
+- C133 bộ đo B2 (`data/phase_9/b2/`, `cham --nhom dev`, ca dương / âm tổng hợp) · C134 review cuối B1 (ready) · C135 review plan B2 (3 vòng, ready bản 3) · C136 bộ đo B3 (40 chuỗi + 3 web, mẫu cho User) ·
+  C137 review sớm B2 · C138 câu hai ý (0 / 38 ⇒ không cần) · C139 tra API thời tiết (khuyên Open-Meteo) · C140 3 bản mẫu giao diện · C141 review cuối B2 (ready) · C142 review plan B3 (2 vòng, ready bản 2; README B3 theo D11 (a)) ·
+  C143 bộ đo B4 + 2 cách chi phí + mẫu 10 câu · C144 nháp bảng điểm B5 (28 điểm) · C145 review sớm B3 (0B / 0M / 2m).
+
+**Tiền paid của C 03/11:** ≈ **0,0006 USD** (C134: 3 câu thật trên server nhánh B1 — `usd` log 0,000575 + 2 lần trả lời bị huỷ không có usage). Mọi việc khác 0 USD; sub-agent / judge: không dùng.
+
+**Report / file tracked của C chưa commit (A commit):**
+- `report_agent/2026-11-02_phase_9_code/b136_review.md` (mới, `8caaa610ab0f`).
+- `session_prompt/sessions/STATUS_C.md` (file này) + các dòng C trong `session_prompt/CURRENT_HANDOFF.md`.
+(Các file tracked khác của C hôm nay — `b129_review.md`, `b134_review.md`, `c133_bo_do_b2.md`, `c136_bo_do_b3.md`, `c143_bo_do_b4.md`, `…b2-plan_review.md`, `…b3-plan_review.md` — git status sạch ⇒ A đã commit; A kiểm sha mới nhất khi commit.)
+
+**Bẫy / bài học 03/11 (đầu vào vòng cải tiến):**
+1. **Báo "bắt đầu" rồi kết lượt mà không làm — 2 lần.** C135 (sau C134 nhắn "C bắt đầu C135" rồi dừng; A phải nhắc "C đang idle") và C142 (nhắn "C bắt đầu C142" rồi dừng; A nhắc lại). ⇒ Khi đã nhận việc và nói "bắt đầu", **làm ngay trong cùng lượt** (ít nhất bước đầu: khai báo STATUS + đọc file), không kết lượt bằng một câu báo.
+2. **Gõ tay / đoán giờ — 3 lần, đều sửa trước khi báo:** đầu mục vòng 2 C135 ghi 09:42 (thật 09:38); dòng XONG C140 ghi 11:31 (thật 11:21); đầu mục C136 ghi giờ A giao bằng đoán (09:40, handoff 09:39). ⇒ Giờ trong file **chỉ** lấy từ `T=$(date …)` ở **cùng lệnh** ghi; giờ của người khác lấy từ file của họ.
+3. **Bắt log sai chỗ:** handler gốc chỉ thấy 1 bản ghi (app có handler riêng) ⇒ "0 tên trong log" lúc đầu yếu; kiểm lại bằng `application.log` + toàn bộ đầu ra. ⇒ Kiểm log ở đúng nơi app ghi.
+4. **Codex `tra_web_codex.sh` mở 0 trang ở cả 2 lần tra (C139, C143)** dù báo cáo nói "đã mở" ⇒ mọi ý là tự khai; WebFetch kiểm bắt 2 ý sai (OpenWeather). ⇒ Luôn đọc `url_da_mo.txt` / dòng "trang đã mở" trước khi tin.
+5. **Làm tốt (giữ):** script kiểm bộ đo bắt được lỗi nhãn của chính C (B4: 2 lỗi); ca dương / âm tổng hợp cho nhánh "qua cổng"; tính lại số Q8 / hằng số token từ dữ liệu thô thay vì tin report.
+
 # STATUS C — MỞ PHIÊN 03/11 (08:38 03/11/2026 `date`)
 
 - Terminal C: `hue-rag-d8`. B = `hue-rag-52` (B tự báo) ⇒ A = `hue-rag-5e` (suy ra, chờ A xác nhận). Kênh: trực tiếp. Đã báo A + trả lời B.
@@ -80,6 +109,11 @@
 - 0 USD; đọc kho **chỉ** `scripts/grep_kb.sh`; không tự đặt số khi kho không có (thời lượng / giờ ⇒ null).
 - **File sẽ ghi:** `data/phase_9/lich_trinh/diem.json`, `diem_cho_user.md`, `tools/` (script dựng nếu cần); dòng STATUS này.
 - **XONG nháp (12:04 03/11/2026):** `diem.json` `335786dafb97` (28 điểm, 8 cụm; thời lượng 4 / 28, giờ / trạng thái 10 / 28 — chỉ khi kho ghi), `diem_cho_user.md` `f87c81699a32` (3 câu cần User quyết), `tools/trich.py` `19dfdc52e199`. Tự kiểm lại bằng kho: tách cụm "lăng xa" (Minh Mạng 12–14, Gia Long 16–20 km), bỏ nhãn chụp ảnh không có căn cứ. Khung 07h00–17h30 Quần thể **chưa gán** từng điểm. 0 USD. Chưa trình User.
+
+## C145 — review sớm `p9-b3` `e69c293` (A giao; bắt đầu 12:13 03/11/2026; 0 USD nhẹ — B đang chạy Q2 có phí)
+- Đối chiếu plan B3 bản 2 `cd099ec0a00e`. **File sẽ ghi:** `report_agent/2026-11-02_phase_9_code/b136_review.md` (mới, "Vòng sớm"); ca dò `/tmp/c145/` ⇒ `data/phase_9/c145_review/`; dòng STATUS này.
+- **XONG (12:20 03/11/2026):** `b136_review.md` `8caaa610ab0f` "Vòng sớm": 0B / 0M / 2m (m-1 test B kiểm tên rỗng; m-2 lượt `/api/chat` lỗi không gửi cookie ⇒ cuộc mồ côi, bị chặn bởi trần + TTL). Q1 độc lập: bỏ D6 ⇒ 42 / 42 = main; log 0 tên / 0 mã / 0 câu hỏi; TTL + trần dọn đúng; lịch sử không chứa ngữ cảnh / lượt lỗi; hằng số đệm ước lại 159 + 35,9 / mục (khớp B). Test 53 / 53. 0 USD.
+  Bẫy: bắt log bằng handler gốc chỉ thấy 1 bản ghi (app có handler riêng) ⇒ kiểm lại bằng file log + toàn bộ đầu ra. ⇒ kiểm log qua đúng nơi app ghi.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 
