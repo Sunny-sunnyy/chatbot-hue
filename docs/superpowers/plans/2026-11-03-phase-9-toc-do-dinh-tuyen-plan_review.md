@@ -63,3 +63,16 @@ Cách review: chỉ dựa trên gói "Căn cứ để review" của plan + lện
 ## 6. Decision và bước tiếp theo
 
 **changes_requested** — C sửa M-1, M-2 (và các minor nếu muốn) thành bản 2, báo sha mới; B kiểm phần sửa. Sau đó A duyệt sha. Không chặn việc khác (plan chưa chạy, 0 USD).
+
+## Vòng 2 — kiểm phần sửa (bản 2 sha `3c5f1bbd3407`, B, 19:21 03/11/2026)
+
+Decision: **ready_for_user_confirmation** (0 blocker · 0 major · 1 minor mới) — A duyệt sha sau khi xét m-5.
+
+| Finding | Kiểm | Kết luận |
+|---|---|---|
+| M-1 | §2: mốc chỉ r2 (`fb4e1aa7f8fe`) + mốc mới cùng ngày; 77 câu có trong r2 ⇒ r2 + 1 lượt mới, 46 câu ⇒ 2 lượt mới ⇒ mỗi câu rủi ro 2 lượt mốc cùng lời dặn; R / N dùng max hai lượt + N_AA cùng lời dặn; Golden ≤ r2 + 1 (không N_AA) | **đóng**. Ghi nhận (không finding): với 77 câu, hai lượt mốc khác ngày (r2 02/11 ↔ lượt mới) ⇒ N_AA gồm cả trôi phía model theo ngày — chỉ làm ngưỡng R rộng hơn một chút, không đổi chiều |
+| M-2 | ABBA ghi trước (lượt 1 lẻ mốc trước / chẵn biến trước, lượt 2 ngược lại); `cached_tokens` + `reasoning_tokens` cả lần định tuyến lẫn lần trả lời; Q báo kèm trên cặp không đọc đệm | **đóng** |
+| m-1 … m-4 | dừng khi mốc phạm K / S1; lý do K lệch luật gán nhãn cũ; CI của trung vị, AT theo tập tuyến mốc, "nhận" = không lỗi + `reasoning_tokens` < 20; lý do bỏ sàn 2; sha căn cứ sửa đúng (README `2c0aced78d61`, luật `fca8d706e9e9`) | **đóng** |
+
+**m-5 (minor, mới ở bản 2) — ước tiền vượt mức dừng của chính plan.** §4: ước ≈ 0,060, "dừng khi > 0,057". Tính lại bằng giá thật pilot B1 (0,000067 / lần định tuyến, b129 §4): probe 0,0003 + mốc 169 × 0,000067 ≈ 0,0113 + biến 422 × 0,000067 ≈ 0,0283 + chữ đầu 40 × 0,00045 ≈ 0,018 ⇒ **≈ 0,058 > 0,057** ⇒ lượt chạy đủ kế hoạch sẽ chạm mức dừng ở phần cuối (Golden hoặc chữ đầu, tuỳ thứ tự — plan chưa ghi thứ tự).
+**Đóng:** ghi thứ tự chạy (đề xuất: probe ⇒ mốc ⇒ biến 123 ⇒ chữ đầu ⇒ Golden cuối, vì Golden chỉ là mức tụt phụ) **và** một trong hai: A nới trần / mức dừng (vd 0,065 / 0,062), hoặc bớt (vd Golden biến chỉ chạy câu `out_of_scope` + mẫu 30). Sửa chữ, không cần review lại cả plan.

@@ -15,6 +15,7 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 5. Commit report + C review nhánh `10ec9a2..<cuối>` ⇒ A merge.
 
 ## Đang khai báo sửa
+- **B142 (A giao): nút 👍/👎 + gợi ý ở câu ngoài phạm vi** — worktree `/tmp/b_phanhoi` (nhánh `p9-phan-hoi` từ `main` `9e2ecd9`): `backend/api/feedback.py` (mới), `backend/api/app.py`, `backend/api/routes/chat.py`, `backend/tests/test_feedback.py` (mới), `frontend/src/App.jsx`, `frontend/src/stream.js`, `frontend/src/index.css`. Report `report_agent/2026-11-02_phase_9_code/b142_phan_hoi_implementation.md`. Worktree B3b đã gỡ.
 - **B138 (B3b, A giao): một câu vào `ASSISTANT_HISTORY_NOTE`** — worktree `/tmp/b_p9b3b` (nhánh `p9-b3b` từ `main` `a3dabba`): `backend/llm/full_corpus_prompt.py`, (test) `backend/tests/test_b3_memory.py`. Không mở `data/phase_9/bo_do_b3b/`. Dữ liệu: `data/phase_9/b3b/` (private). Worktree cũ `/tmp/b_p9b3` đã gỡ.
 - **B137 (A giao 18:04 03/11/2026 ghi nhận): bước 8 giao diện Bản 1** — worktree `/tmp/b_p9b3` (`p9-b3`, tạo lại): `frontend/src/App.jsx`, `frontend/src/index.css`, `frontend/src/stream.js`, `frontend/src/markdown.js`, `frontend/index.html`, (nếu cần) `backend/tests/test_static_ui.py`. Không sửa backend / lời dặn / `settings.yaml`. Ảnh + script Playwright: `data/phase_9/b3/giao_dien/` (private).
 - nhánh `p9-b3` (`/tmp/b_p9b3`): `backend/api/conversations.py` (mới), `backend/api/app.py`, `backend/api/routes/chat.py`, `backend/llm/assistant.py`, `backend/llm/generator_openai_full_corpus.py`, `backend/llm/full_corpus_prompt.py`, `backend/retrieval/full_corpus_context.py`, `backend/evaluation/full_corpus_eval.py`, `backend/config/settings.yaml`, `backend/tests/test_b3_memory.py` (mới), `backend/tests/test_b2_tool_loop.py`; (bước 8) `frontend/`.
@@ -28,6 +29,8 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 - C147 review dải `10ec9a2..b156f92`: **ready_for_user_confirmation** (merge với cờ nhớ tắt; m-3 đóng 18:27 03/11/2026, report `1c4459e8d80d`). B chờ A merge / User chọn hướng B3b.
 
 - **B138 (B3b PA1): `p9-b3b` `1ed7b34` (đã push)** — câu dặn lịch sử sha `64e347d5df58`; đã thấy: Q3 6/6, Q5 0/0, Q6 0, Q8 14 đạt; **Q4 20 lượt +0,50 [−0,15; +1,20] KHÔNG đạt** (B3: +0,65 [+0,15; +1,25]); ca dò tự viết 9 chuỗi không tái hiện lỗi. Report `report_agent/2026-11-02_phase_9_code/b138_b3b_implementation.md` (18:45 03/11/2026, chưa commit). Tiền B138 ≈ 0,089 ⇒ B3 ≈ 0,385 / 0,50. A chọn (a) ⇒ **`57f0e0b` (`nho_cau_tra_loi: false`) đạt mọi luật đã thấy** (18:55 03/11/2026): Q4 +0,80 [+0,25; +1,50], Q3 6/6, Q5 0/0, Q6 0. Tiền B138 ≈ 0,149 ⇒ B3 ≈ 0,445 / trần cứng 0,50. C152 bộ mới S1 0/6, S2 0/19 ↔ 5/19 ⇒ A quyết bật ⇒ **B141 `7a76ba2` nhớ bật** + cổng nhỏ đạt (19:13 03/11/2026, 0,0028). Chờ C review `a3dabba..7a76ba2` ⇒ A merge. B139 review plan tốc độ xong (`fd8d824aeaa6`, changes_requested 0/2/4); B140 nháp plan B4 bản 1 (`a6d4140690d9`).
+
+- **B142 xong:** `p9-phan-hoi` `6f45f58` (push) — 👍/👎 + gợi ý câu ngoài phạm vi; Playwright thật đạt (lỗi mạng thật = tắt server); report `b142_phan_hoi_implementation.md`; ≈ 0,0022 USD. C review **ready 0/0/0** (`b142_review.md` `a89673b6e282`). Plan B4 bản 2 `42fa62d2425f`: C vòng 2 **ready** (`8517a548a565`; Lệch Q6 chờ A). (19:43 03/11/2026) Chờ A: merge B142, duyệt sha plan B4 + quyết Lệch Q6 / Q-a / Q-b.
 
 ## Phiên 03/11 đã xong
 | Việc | Kết quả |
