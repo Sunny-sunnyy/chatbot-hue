@@ -1,5 +1,48 @@
 # Review: Phase 9 B3 (nhánh `p9-b3`, B136)
 
+## B3b `a3dabba..7a76ba2` (nhánh `p9-b3b`, B138 + B141 — C154 · 19:18 03/11/2026 `date`)
+
+Người kiểm: C (Claude Opus 5.5) — viết bộ đo B3 + B3b, chạy phần kín B3 (C146) và bộ mới B3b (C152); không code. Đối chiếu plan B3 bản 2 `cd099ec0a00e` §4 (Q1–Q8, "Kết quả âm") + luật A cho B3b (README bộ B3b `58dd7910eeb9` §3) + report
+`b138_b3b_implementation.md` `eb5ad5e14906` §1, §3, §5, §5c. `risk-gated-agent-review`. 0 USD. Worktree riêng `/tmp/c_p9b3b` (detach `7a76ba2`, gỡ khi xong). Ca dò private `data/phase_9/c154_review/`.
+
+### 1. Cổng tối thiểu
+
+| Cổng | Kết quả |
+|---|---|
+| Git | `origin/p9-b3b` = `7a76ba2`; 3 commit trên `a3dabba` (`1ed7b34` câu dặn · `57f0e0b` chỉ nhớ câu hỏi · `7a76ba2` bật nhớ) |
+| Đường dẫn đổi | `backend/llm/full_corpus_prompt.py` (+1 câu trong `ASSISTANT_HISTORY_NOTE`), `backend/config/settings.yaml` (2 cờ), `backend/tests/test_b3_memory.py` (test không-cookie tắt cờ tường minh) — khớp report §1 |
+| `git diff --check` | sạch |
+| sha | `ASSISTANT_HISTORY_NOTE` `64e347d5df58`, `ANSWER_SYSTEM_INSTRUCTIONS` `81d3040cf53f`, `ROUTER_HISTORY_NOTE` `62f8197730ad` (C tính từ code ở `57f0e0b`); `settings.yaml` `7a76ba2` `31a7c369485e` — khớp |
+| Ngoài phạm vi | không |
+
+### 2. Kiểm theo rủi ro
+
+| Điểm | Cách kiểm (C) | Kết quả |
+|---|---|---|
+| **Đi đúng đường ghi trước, không "chạy lại tìm lần đạt"** | thư mục dữ liệu: `data/phase_9/b3b/sau/` (câu dặn, 1 lượt) và `sau_a/` (chỉ nhớ câu hỏi, 1 lượt); plan B3 §4 "Kết quả âm: Q3 / Q4 không đạt ⇒ `nho_cau_tra_loi: false` ⇒ đo lại Q3–Q6 trên đã thấy (1 lượt)" | lượt 1 Q4 không đạt ⇒ (a) đúng đường ghi trước, mỗi cấu hình **một** lượt. **Đạt** |
+| **Q4 (a) — số quyết** | **tính lại từ điểm thô** `sau_a/judge/scores_*.jsonl` bằng script C (khác script B; chạy trên bộ đã thấy B3 cho ra đúng số B3 trước đó) | +0,80, CI 95 % [+0,25; +1,50], 6 / 14 / 0 — **khớp** report §5 |
+| Bộ mới (S1 / S2) | C chạy (C152), B không mở | S1 0 / 6, S2 nho 0 / 19 ↔ doc_lap 5 / 19 — khớp §5c |
+| **Chỉ nhớ câu hỏi — đường code** | đọc `conversations.py:77` (lưu câu trả lời rỗng khi `keep_answers` tắt), `with_history` (bỏ tin assistant rỗng), `app.py:124` (API dựng kho với `keep_answers=flags.nho_cau_tra_loi`); **ca dò khác cách** `do_mac_dinh.py`: app **mặc định** (đọc `settings.yaml` nhánh), generator giả, 2 lượt qua cookie | kho có, `keep_answers` False; lượt 1 lịch sử `()` và chuỗi gửi như B2 (bất biến Q1); lượt 2 nhận đúng câu hỏi lượt 1, câu trả lời rỗng; chuỗi tin = `[user, user]` (không tin trợ lý rỗng). **Đạt** |
+| Bật cờ (`7a76ba2`) | đọc diff; tìm test khác dùng app mặc định (`create_app()` không tham số): chỉ `test_b3_memory.py` | test "không cookie" giờ tắt cờ tường minh — đúng; không test khác lệ thuộc mặc định cũ |
+| Test | `test_b3_memory` `test_b2_tool_loop` `test_api_chat` `test_static_ui` `test_phase6_settings` ở `7a76ba2` (có `--env-file`, bản build mới) | **41 / 41** |
+| **Cổng B141** | đọc file thô `cong_b141/*.h`, `exit.txt`, `ui.json` + log server `/tmp/b_p9b3b` sau `log_mark.txt` | cookie `HttpOnly; Max-Age=1800; Path=/api; SameSite=strict`; chuỗi c1–c3 cùng một mã, "cuộc mới" ⇒ mã mới dùng lại ở c4; curl exit 0 cả 5; **8 dòng log = 8 lượt**, `n_history_turns` 0-1-2 · 0 · 0 · 0-1-0; mã cuộc trong log **0**. Khớp §5c |
+
+Bất biến đã kiểm: lượt không lịch sử gửi model đúng chuỗi như trước (Q1); nhớ tắt ⇒ không cookie (test B + vòng sớm 2).
+
+### 3. Findings
+
+**0 blocker · 0 major · 1 minor.**
+
+- **m-4 — câu "ngoài kho" của cổng thực ra là câu ngoài phạm vi.** Log dòng thứ 5 của cổng: tuyến `ngoai_pham_vi`, `outcome` `out_of_scope` (câu cố định của code), trong khi report §5c ghi "câu ngoài kho … ⇒ câu từ chối chuẩn". Đường **từ chối của kho khi nhớ bật** không được cổng chạm (đã có bằng chứng qua harness cùng lõi: C152 6 / 6 lượt thiếu từ chối chuẩn; Q5 đã thấy 0 / 0). Tác động: thấp. Đóng khi report ghi đúng "ngoài phạm vi"; không cần chạy lại.
+
+Ghi nhận (không phải finding — giới hạn đã ghi ở report §5c): ca dò tự viết không tái hiện K-N2; bộ mới chưa có ca "bác tiền đề bằng đúng nguồn"; không nhớ câu trả lời ⇒ câu "ý thứ hai bạn vừa nói…" chưa hỗ trợ.
+
+### 4. Kết luận
+
+**ready_for_user_confirmation** — dải `a3dabba..7a76ba2` (nhớ **bật**, chỉ nhớ câu hỏi) đủ để A merge; m-4 sửa chữ report (không chặn).
+
+**Kiểm m-4 (19:19 03/11/2026 `date`):** report B138 `05714acd9fc9` §5c ghi đúng "câu ngoài phạm vi … tuyến `ngoai_pham_vi`, câu cố định (outcome `out_of_scope`)"; chữ cũ "câu ngoài kho đơn lẻ" không còn. **m-4 đóng.**
+
 ## Vòng sớm 2 `10ec9a2..b156f92` (C147 · 18:24 03/11/2026 `date`)
 
 Người kiểm: C (Claude Opus 5.5) — viết bộ đo B3, chạy + chấm phần kín (C146), không code B3. Đối chiếu plan B3 **bản 2 `cd099ec0a00e`** (D1, D2, D8, D9 (b) (c), §4 Q10) + report

@@ -5,6 +5,8 @@ Terminal: `hue-rag-9e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - **Quyền phiên (User chọn "như trưa 03/11", A ghi nhận 18:02 03/11/2026):** A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD; B / C push nhánh riêng. Hết hạn cuối phiên.
 - Giao: B137 (tạo lại worktree + bước 8 giao diện Bản 1, chỉ `frontend/`), C146 (phần kín B3, worktree riêng `/tmp/c_p9b3` `46008ed`) — `CURRENT_HANDOFF.md` "Phiên tối 03/11".
 - Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`.
+- Diễn biến tối: C146 kín (K-N2 trích sai ⇒ cờ nhớ tắt) ⇒ User chọn B3b ⇒ merge B3 `a3dabba` + 5 chỗ báo cáo `9b97ce0` ⇒ B138 vòng 1 Q4 không đạt ⇒ (a) chỉ nhớ câu hỏi đạt `57f0e0b` ⇒ C chạy bộ mới. Nghiên cứu sản phẩm thật (Codex + agent con TRIPO v2) ⇒ báo cáo nghiên cứu bản 4. C149 nháp plan B5, C150 phân tích tốc độ, C151 plan tốc độ #1.
+- **Bẫy A (tối 03/11, đầu vào vòng cải tiến):** (1) khi A viết lại dòng việc của C trong handoff, hậu tố "XONG … sha" C ghi ở dòng cũ bị giữ sang dòng mới ⇒ sha sai, 2 lần (C phát hiện, C sửa) ⇒ tách trạng thái ra dòng riêng; (2) một giờ ước dạng HH:Mx trong handoff — hook bắt, sửa ngay; (3) gửi câu cổng với trường `question` thay vì `query` (422) — đọc schema trước khi gửi.
 
 # (cũ) STATUS A — KẾT PHIÊN 03/11 (13:26 03/11/2026 `date`; mở 08:36)
 
