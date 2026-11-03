@@ -39,9 +39,10 @@ function reducedMotion() {
 
 // Một lượt: { key, question, phase (routing / searching / searched / generating / done / error), text, sources (null = chưa có sự kiện
 // `sources`; [] = không nguồn), numbers (số hiển thị 1..k — D9 (c)), nSources, notice, outcome (từ `done`), error }.
-function newTurn(key, question) {
+function newTurn(key, question, truong = null, summary = "") {
   // lượt mới bắt đầu ở "đang hiểu câu hỏi": việc đầu tiên của server là định tuyến (B1) — thứ tự nhãn như D9 (b), không "đang tìm" trước
-  return { key, question, phase: "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null, turnId: null, error: "" };
+  return { key, question, phase: "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null, turnId: null, error: "",
+           clarify: null, truong, summary };  // B4: thẻ hỏi lại (sự kiện `clarify`); lượt ghép mang `truong` + tóm tắt lựa chọn
 }
 
 export default function App() {
@@ -84,7 +85,7 @@ export default function App() {
     frameRef.current = 0;
   }
 
-  async function ask(value, retryKey = null) {
+  async function ask(value, retryKey = null, truong = null, summary = "") {
     const query = value.trim();
     if (!query || pending || resetting) return;
     abortRef.current?.abort();
@@ -96,12 +97,13 @@ export default function App() {
     const key = ++keyRef.current;
     const update = patch => setTurns(all => all.map(turn => (turn.key === key ? { ...turn, ...patch } : turn)));
     // "Thử lại" thay lượt lỗi (server không nhớ lượt lỗi — plan B3 D2) bằng lượt mới cùng câu hỏi.
-    setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query)]);
+    setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary)]);
     setSelected({ turn: key, source: null });
     setResetError("");
     try {
       await streamAnswer(query, {
         signal: controller.signal,
+        truong,
         onEvent(name, data) {
           if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
@@ -123,6 +125,8 @@ export default function App() {
             update({ text: bufferRef.current, sources: data, numbers: displayNumbers(bufferRef.current, data) });
           } else if (name === "notice") {
             update({ notice: data.text });
+          } else if (name === "clarify") {
+            update({ clarify: data });  // B4 D8: thẻ hỏi lại — code dựng nút từ danh sách trường
           } else if (name === "done") {
             update({ outcome: data.outcome, turnId: data.turn_id ?? null });  // B142: mã lượt chỉ có ở lượt có câu trả lời cuối
           }
@@ -204,7 +208,7 @@ export default function App() {
                     turnRef={index === turns.length - 1 ? lastTurnRef : null}
                     activeSource={selected.turn === turn.key ? selected.source : null}
                     onCite={source => setSelected({ turn: turn.key, source })}
-                    onRetry={() => ask(turn.question, turn.key)}
+                    onRetry={() => ask(turn.question, turn.key, turn.truong, turn.summary)}
                     onAsk={ask}
                   />
                 ))}
@@ -295,7 +299,7 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
 
   return (
     <article className="turn" ref={turnRef} data-turn={turn.key}>
-      <h2 className="ask">{turn.question}</h2>
+      <h2 className="ask">{turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
       {pending && !turn.text && (
         <div className="searching" role="status">
           <svg className="wave" viewBox="0 0 46 24" aria-hidden="true"><path d="M2 12c6-8 10 8 16 0s10 8 16 0 8-6 10-2" /></svg>
@@ -329,6 +333,7 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
           )}
         </div>
       )}
+      {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
       {turn.phase === "done" && turn.outcome === "out_of_scope" && (
         <div className="suggest" aria-label="Câu gợi ý">
           <p className="text-sm text-muted">Bạn có thể hỏi, ví dụ:</p>
@@ -377,6 +382,37 @@ function Feedback({ turnId }) {
   );
 }
 
+// B4 D10: thẻ hỏi lại — mỗi trường một nhóm nút (chọn một), "Gửi" bật khi đủ trường bắt buộc, "Trả lời luôn" gửi `truong: {}`.
+// Server ghép câu gốc + nhãn của code thành câu đủ ý (không cần nhớ hội thoại); trang chỉ gửi giá trị trong danh sách server đưa.
+function ClarifyCard({ clarify, onAsk }) {
+  const [chosen, setChosen] = useState({});
+  const ready = clarify.bat_buoc.every(ten => chosen[ten]);
+  const summary = clarify.truong.filter(t => chosen[t.ten]).map(t => t.lua_chon.find(c => c.gia_tri === chosen[t.ten]).nhan).join(" · ");
+  return (
+    <div className="clarify bubble">
+      <p className="mb-2">Để gợi ý sát hơn, bạn chọn thêm:</p>
+      {clarify.truong.map(t => (
+        <fieldset key={t.ten} className="mb-2">
+          <legend className="text-sm font-semibold text-accent-deep">{t.nhan}{clarify.bat_buoc.includes(t.ten) ? "" : " (không bắt buộc)"}</legend>
+          <div className="flex flex-wrap gap-2 pt-1">
+            {t.lua_chon.map(c => (
+              <button key={c.gia_tri} type="button" aria-pressed={chosen[t.ten] === c.gia_tri}
+                      onClick={() => setChosen(old => ({ ...old, [t.ten]: old[t.ten] === c.gia_tri ? undefined : c.gia_tri }))}>
+                {c.nhan}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ))}
+      <div className="flex flex-wrap gap-2 pt-2">
+        <button type="button" className="send" disabled={!ready}
+                onClick={() => onAsk(clarify.cau_goc, null, Object.fromEntries(Object.entries(chosen).filter(([, v]) => v)), summary)}>Gửi</button>
+        <button type="button" className="retry" onClick={() => onAsk(clarify.cau_goc, null, {}, "trả lời luôn")}>Trả lời luôn</button>
+      </div>
+    </div>
+  );
+}
+
 // Ngón cái vẽ bằng SVG (không dùng emoji: máy thiếu font emoji thì nút trống — thấy ở ảnh Playwright B142); xuống = lật dọc.
 function Thumb({ down = false }) {
   return (
@@ -399,7 +435,8 @@ function SourcePanel({ turn, activeSource, several }) {
       <h2 id="sources-title" className="text-[17px] font-semibold text-accent-deep">Nguồn</h2>
       {several && <p className="mb-1 truncate text-sm text-muted">cho câu: {turn.question}</p>}
       {turn.phase === "error" && <p className="text-muted">Câu này chưa có câu trả lời.</p>}
-      {turn.phase !== "error" && sources === null && <p className="text-muted">Nguồn hiện khi câu trả lời kiểm xong.</p>}
+      {turn.clarify && <p className="text-muted">Chọn thêm thông tin ở câu hỏi để trợ lý trả lời sát hơn.</p>}
+      {turn.phase !== "error" && !turn.clarify && sources === null && <p className="text-muted">Nguồn hiện khi câu trả lời kiểm xong.</p>}
       {sources?.length === 0 && <p className="text-muted">Câu trả lời này không dùng nguồn từ kho.</p>}
       {sources?.length > 0 && (
         <>
