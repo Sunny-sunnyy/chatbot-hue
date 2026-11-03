@@ -343,7 +343,8 @@ class StreamEvents:
 async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
-    Dòng log ghi ở `finally` **trước mọi `await`** (spec §4.5, §4.6); rồi đóng lõi trong vùng che để lõi tự huỷ + đọc nốt lần gọi model."""
+    `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
+    trước dòng log, nên ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ nguyên (C132 m-1)."""
     metrics["status_code"] = 200
     stream = StreamEvents(metrics, started)
     try:
@@ -359,8 +360,10 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
         for event in stream.failure(exc):
             yield event
     finally:
-        _copy_trace_metrics(trace, metrics)
-        metrics["total_ms"] = elapsed_ms(started)
-        logger.info("chat_metrics %s", json.dumps(metrics))
-        with anyio.CancelScope(shield=True):
-            await turn.aclose()  # lõi đang dừng ở `yield` (ngắt lúc gửi) ⇒ chạy `finally` của lõi: huỷ lần gọi model + đọc nốt
+        metrics["total_ms"] = elapsed_ms(started)  # như B0: thời gian người dùng thấy, chưa tính đọc nốt
+        try:
+            with anyio.CancelScope(shield=True):  # vùng che: anyio không huỷ lại lần chờ này khi người dùng ngắt (B105)
+                await turn.aclose()  # lõi dừng ở `yield` (ngắt lúc gửi) ⇒ `finally` của lõi ghi `llm_calls`, huỷ lần gọi model + đọc nốt
+        finally:
+            _copy_trace_metrics(trace, metrics)  # sau `aclose` để có `llm_calls` lõi vừa ghi (C132 m-1)
+            logger.info("chat_metrics %s", json.dumps(metrics))

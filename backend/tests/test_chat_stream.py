@@ -4,11 +4,12 @@ Bảo vệ: (1) bóc chữ từ JSON `{"answer": "…"}` đang stream đúng c�
 đã tới, chữ đã gửi không bao giờ phải sửa, ghép lại = chữ cuối đã chuẩn hóa (C5); (3) thứ tự `status … delta … sources | error … done`,
 `seq` tăng; (4) định dạng SSE. Đây không phải bằng chứng cho provider / mạng (đường thật ở report S2).
 """
+import asyncio
 import json
 import random
 import time
 
-from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents, sse_event
+from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents, _answer_events, sse_event
 from core.schema import GenerationError
 from llm.answer_stream import AnswerTextStream, decode_partial_string, displayable_prefix
 from llm.citations import normalize_citations
@@ -201,6 +202,29 @@ def test_any_error_after_stream_opened_ends_with_error_then_done():
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     unexpected = parse_sse(StreamEvents(metrics, time.perf_counter()).failure(KeyError("x")))
     assert unexpected[0][1]["code"] == "internal_error" and metrics["outcome"] == "internal_error"
+
+
+def test_disconnect_while_route_sends_text_still_logs_calls_the_core_records_on_close():
+    """C132 m-1: người dùng ngắt đúng lúc route đang ở `yield` (gửi mảnh chữ) ⇒ route phải đóng lõi trước khi chép số đo vào dòng log,
+    vì lõi chỉ ghi `llm_calls` ở `finally` của nó. Lõi ở đây là generator chữ có sẵn (không model)."""
+    async def core(trace: AnswerTrace):
+        try:
+            yield "delta", "Mở cửa"
+            yield "delta", " từ 7 giờ"
+        finally:
+            trace.llm_calls.append({"route": "tro_ly_hue", "usd": 0.0001})  # như `record_llm_calls` ở `finally` của lõi
+
+    async def run() -> dict:
+        metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
+        trace = AnswerTrace()
+        events = _answer_events(core(trace), trace, metrics, time.perf_counter())
+        await anext(events)  # route đứng ở `yield` của mảnh chữ đầu
+        await events.aclose()  # Starlette đóng generator khi người dùng ngắt ⇒ GeneratorExit tại `yield`
+        return metrics
+
+    metrics = asyncio.run(run())
+    assert metrics["outcome"] == "client_disconnected"
+    assert metrics["n_llm_calls"] == 1 and metrics["usd"] == 0.0001
 
 
 def test_sse_format_keeps_vietnamese_and_puts_multiline_text_on_one_data_line():

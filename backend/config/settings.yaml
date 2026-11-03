@@ -57,8 +57,8 @@ full_corpus_generation:
 
 # Phase 9 B1 (plan docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md D9): mỗi phần một cờ, gỡ độc lập; tắt cả 4 ⇒ chuỗi gửi model như B0.
 assistant:
-  emergency_rule: false          # luật code nhận câu khẩn cấp ⇒ câu soạn sẵn, không gọi model (D1, D2)
-  router: false                  # định tuyến 4 tuyến bằng model (D3); tắt ⇒ mọi câu tro_ly_hue
-  today_line: false              # dòng ngày hôm nay đầu tin nhắn gửi model trả lời (D7)
-  may_have_changed_notice: false # dòng H4c dưới câu trả lời có nguồn vé / điểm đến / lễ hội (D8)
+  emergency_rule: false          # TẮT (B1 P3 kín: bắt 0 / 8, chặn nhầm 2 / 8). Luật code nhận câu khẩn cấp ⇒ câu soạn sẵn, không gọi model (D1, D2)
+  router: true                   # BẬT (B1 P1). Định tuyến 4 tuyến bằng model (D3); tắt ⇒ mọi câu tro_ly_hue
+  today_line: false              # TẮT (B1 P2: từ chối nhầm không giảm). Dòng ngày hôm nay đầu tin nhắn gửi model trả lời (D7)
+  may_have_changed_notice: true  # BẬT (B1). Dòng H4c dưới câu trả lời có nguồn vé / điểm đến / lễ hội (D8)
   router_timeout_seconds: 10
