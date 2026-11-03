@@ -49,6 +49,10 @@ clone / worktree mới hoặc sửa `frontend/src/` ⇒ `cd frontend && npm ci &
 
 **Đọc khi viết plan B5 (lịch trình) — ghi 09:57 03/11/2026:** `data/nghien_cuu_phase_9_2026-11-01/báo cáo nghiên cứu github.txt` (757 dòng, 3 báo cáo khảo sát ~01/10: repo gợi ý khách sạn / địa điểm + lịch trình, khuyến nghị "lịch trình cơ bản theo luật + tổng hợp thông tin"). Tới nay chỉ dùng **8 tên repo** (C116 ⇒ `c_mach4.md`), **chưa đọc nội dung** ⇒ người viết plan B5 đọc §4 "Khuyến nghị" của cả 3 báo cáo + đối chiếu spec §5 B5. User 03/11: làm xong việc hiện tại ổn định rồi mới mở rộng nghiên cứu (A đồng ý).
 
+**Công cụ dự báo thời tiết Huế (User đề xuất, User chọn 10:52 03/11/2026):** tra cứu trước (0 USD, C139) ⇒ **quyết lúc viết plan B5** (gộp vào lịch trình hoặc bậc nhỏ sau B5). Nguyên tắc A nêu, User đã thấy: code gọi API, model chỉ diễn đạt kèm nguồn + giờ cập nhật, không tự dự báo; lũ / bão vẫn trỏ cơ quan chính thức / 112; kiểm điều khoản dùng thương mại. Không chen vào B2 / B3.
+
+**Giao diện "đẹp, sinh động" (User 11:09 03/11/2026, đổi hướng so với 01/11 "gọn, nét Huế nhẹ"):** C140 dựng 3 trang mẫu tĩnh (`data/giao_dien_v2/mau/`) theo skill frontend-design + tham khảo baoyu-design / ui-ux-pro-max / ui-styling (dữ liệu) ⇒ User chọn ⇒ **code cùng phần giao diện nhiều lượt của B3** (không làm hai lần). Giữ CSP, ảnh có giấy phép, tắt chuyển động khi giảm chuyển động.
+
 **Mã hay gặp:** B0–B7 = bậc Phase 9 (spec §5); P1–P5 = câu User đã chọn 14:42 02/11 (spec §10); V0–V3 = phương án câu tìm kho (B2a); [w n] = trích dẫn web; T1 = kết quả tìm 158 câu (so "giống byte");
 S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.md`; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc A giao B / C.
 
@@ -84,9 +88,13 @@ cổng cuối B1 đo chữ đầu 10 câu thật trên đường stream (≈ 0,0
 ### C136 — bộ đo B3 nhớ hội thoại (C) — giao 09:39 03/11/2026; 0 USD; dừng khi B báo bản 3 — **XONG 09:49 03/11/2026** (report `c136_bo_do_b3.md`; mục lục `data/phase_9/bo_do_b3/README.md` `2c094e287c65`; 25 đã thấy / 15 kín `*sealed*` / 3 web; nhớ tên 10; đáp án mẫu = câu Golden cùng nghĩa; `kiem_bo.py` OK; mẫu 10 chuỗi cho User `mau_cho_user.md` `dadb44ffcc6c`; 0 USD)
 - Spec §4 + §5 B3: 40 chuỗi (25 / 15 kín) + 3 chuỗi cho B6; B code B3 ⇒ B không mở phần kín. `data/phase_9/bo_do_b3/`, report `c136_bo_do_b3.md`.
 
-### B134 — code B2 (B) + C137 review sớm (C)
+### B134 — code B2 (B) + C137 review sớm (C) — **XONG 11:29 03/11/2026, chờ C review `74c5d68..1f2a57c`** (B; B2a giữ V0, B2b `tim_them` bật — User giữ; ≈ 0,255 USD; report `b134_b2_implementation.md`)
 - **B134 mốc 1** `456df18` (push `p9-b2`, 0 USD): D1–D10 + m-6; Q1 T1 giống byte; Q7 228 / 228 yêu cầu giống byte HEAD (v0 + tim_them tắt); test 70 / 70 + 10 mới. Lệch D2: bỏ "cắt 3 câu" V3 (schema strict chặn trước ⇒ router_failed ⇒ câu gốc). Pilot tầng tìm 10 câu dev × V1 / V3 / V2 ≈ 0,004 USD đang chạy.
 - **C137 vòng sớm** (`b134_review.md` `3e05245866e1`): 0 blocker / 0 major / 2 minor — m-1 gather không bắt lỗi từng câu; m-2 V3 > 3 câu mất tuyến (kể cả khẩn cấp) ⇒ A: rủi ro an toàn, báo số route_error ở pilot / Q3 / Q5, > 0 ⇒ quay về cắt 3 câu. Review cuối: `456df18..<cuối>` + bằng chứng có phí.
+
+- **B2a âm ⇒ giữ V0** (Q2: V1 +0, V3 +1, V2 +0 / 12; khoá `e0ca48c`). **C138:** câu hai ý 0 / 38 ⇒ không cần.
+- **B2b ĐẠT (Q8):** Đủ 18 câu nhiều nguồn **+1,17** [+0,44; +2,00] (6 / 12 / 0), test không ngược; N_AA đường công cụ 5 / 5 ⇒ ngưỡng 8; Golden Đủ / Đúng TB +0,22; F1–F4 0; từ chối nhầm 12 ⇒ 4 / 6; S-AT: **1 P0_sai mới thật** (S20, thêm lời khuyên chung không có trong nguồn — không đảo cảnh báo; 2 / 3 ↔ 0 / 3) ⇒ dùng 1 / 2 suất cả Phase. Tiền B2 0,2478 / 0,45.
+- **User quyết 11:16 03/11/2026 (hộp chọn): GIỮ `tim_them`; sửa ở B3** — plan B3 thêm dòng lời dặn "chỉ nêu điều có trong nguồn, không thêm lời khuyên chung" + kiểm lại S20 trong lượt an toàn B3. Theo dõi: router đưa S20 sang `khan_cap` 1 / 3 lần sinh lại. ⇒ B: mặc định `tim_them` true ⇒ Q7 ⇒ cổng Q9 ⇒ C review nhánh ⇒ A merge.
 
 ### C134 — review delta `p9-b1` (C) — **giao 09:00 03/11/2026** (delta `7e190d7..dcd1519`; trước ca dương tổng hợp C133) — **XONG 09:09 03/11/2026: ready_for_user_confirmation** (`b129_review.md` `4730a847d853` "Vòng cuối": 0 blocker / 0 major / 1 minor m-3 `generate` không `--flags` nay có định tuyến ⇒ ghi guide 6 / LUONG lúc merge; m-1 / m-2 vòng sớm đóng; 32 / 32 an toàn giống byte (HTTP, định tuyến thành công); P6 `190a6999c43b` = `main`; ngắt thật trước + giữa chữ đạt; ≈ 0,0006 USD)
 - `7e190d7..<cuối>` vào `b129_review.md` theo `risk-gated-agent-review`; chạy lại ca dò byte HTTP P6 + 1 ca ngắt thật; ≈ 0,0005 USD. Đạt ⇒ A merge ⇒ 5 chỗ báo cáo. P2 kín bỏ (`today_line` tắt).

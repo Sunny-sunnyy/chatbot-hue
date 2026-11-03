@@ -50,6 +50,19 @@
 - 0 USD; tìm kho chỉ `scripts/grep_kb.sh`. **File sẽ ghi:** `data/phase_9/b2/cau_hai_y.md` (không cần script riêng — lệnh shell ghi trong file); mục mới trong `report_agent/2026-11-02_phase_9_code/c133_bo_do_b2.md`; dòng STATUS này.
 - **XONG (10:39 03/11/2026):** keyword 0 file 0 / 90 ⇒ câu hai ý thiếu vế 0 / 38 (0 / 18 nhiều nguồn) ⇒ **"không cần"**. `cau_hai_y.md` + report c133 §5c. 0 USD. Tiếp: chờ review cuối B2.
 
+## C139 — tra cứu API thời tiết cho trợ lý (A giao; bắt đầu 10:53 03/11/2026; ưu tiên thấp hơn review cuối B2)
+- 0 USD; chỉ thông tin công khai; `scripts/tra_web_codex.sh` + WebFetch kiểm; không gọi API thời tiết, không đăng ký.
+- **File sẽ ghi:** `data/phase_9/thoi_tiet/` (yêu cầu `yeu_cau.md`, `nghien_cuu.md`); kết quả tra ở `data/tra_cuu_cli/<ngày>_c139-thoi-tiet/`; dòng STATUS này.
+- **XONG 10:58 03/11/2026:** `nghien_cuu.md` `b156a0667ee2`. Codex mở 0 trang ⇒ C WebFetch 9 trang (Tomorrow.io 403). Codex sai 2 ý OpenWeather (giá vượt 0,0012 GBP; 3.0 không ghi bỏ). Đề xuất: Open-Meteo (không khoá, phi thương mại = app không quảng cáo / thuê bao, CC BY 4.0, xác suất mưa giờ / ngày, chỉ mã ⇒ code dựng câu VN), dự phòng Visual Crossing (thương mại được, hạn mức theo IP không công bố). NCHMF không API ⇒ chỉ trỏ tới cho lũ / bão. 0 USD.
+
+## C140 — 3 bản mẫu giao diện tĩnh (A giao; bắt đầu 11:10 03/11/2026; review cuối B2 ưu tiên hơn)
+- 0 USD; nguồn ngoài đọc làm dữ liệu (không cài / chạy). **File sẽ ghi:** `data/giao_dien_v2/mau/{1,2,3}.html` + `README.md`; dòng STATUS này.
+- **XONG 11:21 03/11/2026:** `data/giao_dien_v2/mau/{1,2,3}.html` (`2952d57f3a92` / `f18a7544171d` / `4d2838318144`) + README `0553e6ed5c8f`. Kiểm: 0 request ngoài, không tràn ngang (1280 + 390), chữ ≥ 4,5 : 1, giảm chuyển động tắt hết (bắt + sửa 1 lỗi CSS bản 1). Bẫy: khung nguồn hiện khi chưa có nguồn — thấy qua ảnh chụp, đã sửa. 0 USD.
+  Bẫy lần 3 trong phiên: gõ giờ "XONG" trước khi chạy `date` (ghi 11:31, thật 11:21) — đã sửa. ⇒ với dòng XONG: chạy `T=$(date …)` trong **cùng** lệnh ghi, không gõ giờ tay.
+
+## C141 — review cuối `p9-b2` `74c5d68..1f2a57c` (A giao; bắt đầu 11:29 03/11/2026; trần ≈ 0,002 USD)
+- **File sẽ ghi:** mục "Vòng cuối" trong `report_agent/2026-11-02_phase_9_code/b134_review.md`; ca dò `data/phase_9/c141_review/` (tạm ở `/tmp/c141/`, xoá khi xong); dòng STATUS này.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 
 **Trạng thái:** C không còn việc dở. Không còn server, worktree hay file tạm của C (`/tmp/c128*`, `/tmp/c131`, `/tmp/c132*`, `/tmp/c124*` đều đã gỡ). C không commit; A commit.
