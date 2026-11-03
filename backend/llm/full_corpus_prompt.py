@@ -97,8 +97,11 @@ Chỉ đặt citation [n] trỏ tới nguồn có trong ngữ cảnh hoặc tron
 # ---------- Phase 9 B3 (plan `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` D3) — chỉ thêm khi lượt có lịch sử ----------
 
 ROUTER_HISTORY_NOTE = "Các tin nhắn trước là ngữ cảnh của cuộc trò chuyện; chỉ chọn tuyến cho tin nhắn cuối cùng."
+# B3b (B138, PA1): sàn Q5 kín phạm — lượt hỏi tiếp về điều kho không có, model mượn đoạn của đối tượng khác thay vì từ chối ⇒ câu thứ hai.
 ASSISTANT_HISTORY_NOTE = (
-    "Câu hỏi tiếp nói \"đó / này / còn … thì sao\" thì câu tìm tim_kho phải nêu đúng tên đối tượng lấy từ các lượt trước."
+    "Câu hỏi tiếp nói \"đó / này / còn … thì sao\" thì câu tìm tim_kho phải nêu đúng tên đối tượng lấy từ các lượt trước.\n"
+    "Lịch sử chỉ để hiểu câu hỏi nói về đối tượng nào: mỗi nhận định phải lấy từ Bằng chứng nói đúng về đối tượng được nhận định, không gán "
+    "thông tin của đối tượng khác cho đối tượng đang được hỏi; Bằng chứng không nói điều được hỏi về đối tượng đó thì trả câu không đủ thông tin."
 )
 
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.
