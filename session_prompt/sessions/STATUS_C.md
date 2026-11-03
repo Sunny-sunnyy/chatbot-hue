@@ -36,6 +36,12 @@
 
 ## C149 — nháp plan B5 lịch trình (A giao, tin A = "làm đi"; bắt đầu 18:39 03/11/2026; B báo commit B3b ⇒ dừng, chạy bộ B3b trước)
 - **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` (mới); dòng C trong `CURRENT_HANDOFF.md`; và file này. 0 USD; chỉ đọc.
+- **Nháp XONG (18:45 03/11/2026):** plan B5 bản nháp 1 `42afc1c7bc64` (143 dòng, quét trùng 0 — lần đầu 2 dòng trùng kho: tên file vé đầy đủ + danh sách điểm theo thứ tự bảng giá ⇒ viết lại bằng mô tả / id bảng). D1–D10 + bảng cụm kề + thời tiết hai cách (đề xuất bậc nhỏ B5b sau B5); Q1–Q6; trần đề xuất 0,10. 0 USD. Chờ B review (sau B3b).
+
+- A nhận nháp B5: giữ nháp tới khi plan B4 duyệt; A gom 3 câu hỏi User.
+
+## C150 — phân tích tốc độ chữ đầu (A giao, "làm đi"; bắt đầu 18:45 03/11/2026; B báo commit B3b ⇒ dừng)
+- 0 USD, chỉ đọc dữ liệu đo đã có. **File sẽ ghi:** `data/phase_9/toc_do/c150_phan_tich.md` (+ script đọc `data/phase_9/toc_do/tools/`); dòng C trong handoff; file này.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
 

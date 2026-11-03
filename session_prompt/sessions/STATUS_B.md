@@ -27,6 +27,8 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 - **Q10 cổng: xong 18:21 03/11/2026, đạt** (report §4c; `data/phase_9/b3/q10/`, nhớ bật qua `app_nho.py` — không sửa `settings.yaml`); câu gợi ý lễ hội đổi `b156f92` (A quyết). Tiền Q10 0,0047. K-N2 chạy lại có ngữ cảnh ⇒ trích dẫn trỏ sai ⇒ **sàn Q5 phạm ⇒ cờ nhớ KHÔNG bật** (A báo 18:23 03/11/2026; report §5b). A trình User hướng (A khuyên B3b trên bộ chuỗi mới C viết). B chờ: không sửa settings / lời dặn; chỉ đọc chỗ lời dặn nhớ để chuẩn bị phương án. Report + STATUS chưa commit (A commit).
 - C147 review dải `10ec9a2..b156f92`: **ready_for_user_confirmation** (merge với cờ nhớ tắt; m-3 đóng 18:27 03/11/2026, report `1c4459e8d80d`). B chờ A merge / User chọn hướng B3b.
 
+- **B138 (B3b PA1): `p9-b3b` `1ed7b34` (đã push)** — câu dặn lịch sử sha `64e347d5df58`; đã thấy: Q3 6/6, Q5 0/0, Q6 0, Q8 14 đạt; **Q4 20 lượt +0,50 [−0,15; +1,20] KHÔNG đạt** (B3: +0,65 [+0,15; +1,25]); ca dò tự viết 9 chuỗi không tái hiện lỗi. Report `report_agent/2026-11-02_phase_9_code/b138_b3b_implementation.md` (18:45 03/11/2026, chưa commit). Tiền B138 ≈ 0,089 ⇒ B3 ≈ 0,385 / 0,50. **Chờ A quyết** (a) thử `nho_cau_tra_loi: false` / (b) chuyển C bộ mới / (c) gỡ.
+
 ## Phiên 03/11 đã xong
 | Việc | Kết quả |
 |---|---|

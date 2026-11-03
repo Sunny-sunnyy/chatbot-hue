@@ -28,7 +28,8 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
-1. **Quyền phiên** (xem mục trên).
+1. ~~Quyền phiên~~ — User chọn "như trưa 03/11" (phiên tối).
+1b. **Khi User quay lại (phiên tối), hỏi mỗi lần một câu:** (a) tính năng mới từ nghiên cứu sản phẩm thật — nút 👍 / 👎 "báo sai" mỗi câu; câu ngoài phạm vi kèm 1–2 gợi ý (`BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00); (b) tối ưu tốc độ chữ đầu sớm (sau B3b) — chờ C150 phân tích; (c) plan B5 nháp (C149 `42afc1c7bc64`): trần 0,10 USD, bảng cụm kề + 2 cột `toi` / `luu_y`, thời tiết gộp B5 hay bậc nhỏ B5b sau (C đề xuất B5b).
 2. Khi rảnh: đọc 10 câu mẫu B4 `data/phase_9/bo_do_b4/mau_cho_user.md` — câu nào không giống người thật hỏi ⇒ báo A.
 3. Không gấp: 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`) giữ hay gỡ; xoá sao lưu kho đợt 1 + 2?
 4. File báo cáo tiến độ cho giáo viên (`gửi chatgpt/2026-11-03/báo cáo tiến độ giáo viên/TONG_HOP_TIEN_DO_DO_AN_03_11_2026_CHO_CHATGPT.md`, cập nhật tới B2) — User gửi ChatGPT; không nhắc coding agent (User 03/11); không link repo.
@@ -57,7 +58,9 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
 - **B3 merge `a3dabba`** (A 18:38; cổng trên `main` đạt; 5 chỗ báo cáo `9b97ce0`). Nhánh `p9-b3` đã merge ⇒ đề xuất xoá lúc kết phiên.
 - **B138 (B):** nhánh `p9-b3b` từ `main`, sửa `ASSISTANT_HISTORY_NOTE` (PA1), đo đã thấy 25 (Q3 6/6, Q4 CI > 0, Q5 0/0, Q6 tụt ≤ 1, Q1 giống byte) ⇒ commit ⇒ báo C.
 - **C148 xong:** bộ mới `data/phase_9/bo_do_b3b/` (12 chuỗi / 25 lượt; `chuoi_moi.jsonl` md5 `0f2360466366`, README `cc1b1a707a52`); luật S1 (0 lượt nho trả lời bằng nguồn sai đối tượng), S2 (từ chối nhầm nho ≤ doc_lap + 1); nhãn e (suy luận từ đoạn đúng đối tượng) theo dõi — suy luận không được đoạn đỡ ⇒ tính PHẠM (A). C chạy ở commit B3b.
-- **C149 (C, trong lúc chờ):** nháp plan B5 `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` (B review sau B3b).
+- **B138 vòng 1** (`p9-b3b` `1ed7b34`, `ASSISTANT_HISTORY_NOTE` `64e347d5df58`): đã thấy Q3 6/6, Q5 0/0, Q6 tụt 0, Q1 giống byte — **Q4 không đạt** +0,50 [−0,15; +1,20] (B3: +0,65 [+0,15; +1,25]); ca dò 9 chuỗi không tái hiện K-N2. A 18:46 03/11/2026: **(a) đường âm ghi trước** — `nho_cau_tra_loi: false` + câu dặn mới, một lần; trần cứng B3 0,50 (cho vượt mức dừng 0,47). Đạt ⇒ C chạy bộ mới; không ⇒ cờ tắt, B3b âm, trình User. Tiền B3 ≈ 0,385.
+- **C149 xong:** nháp plan B5 `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` sha `42afc1c7bc64` — **nháp**, chốt sau khi plan B4 duyệt (B5 dùng 4 trường của B4); B review sau B3b.
+- **C150 (C, trong lúc chờ):** phân tích tốc độ chữ đầu từ dữ liệu đo đã có (0 USD) ⇒ `data/phase_9/toc_do/c150_phan_tich.md`. **C: nháp XONG 18:45 03/11/2026, sha `42afc1c7bc64`.**
 - **Nghiên cứu sản phẩm thật (User yêu cầu trong phiên tối, tin không có dấu giờ):** Codex `data/tra_cuu_cli/2026-11-03_tinh-nang-the-gioi/` (8 lượt tìm, 0 trang mở ⇒ A WebFetch kiểm 3 nguồn: Tokyo EDO, HelloBC, Beach.com — đúng); agent con A thử TRIPO vòng 2 ⇒ `data/nghien_cuu_tinh_nang_2026-11-03/tripo_v2/` (đang chạy).
 - Không có lượt đo latency trong lúc này (W31 không chặn). B báo A trước khi đo latency ở Q10.
 
