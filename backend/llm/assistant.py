@@ -21,11 +21,13 @@ import logging
 
 import anyio
 
-from core.schema import CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievedDocument
+from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
+                         RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
 from llm.emergency import EMERGENCY_ANSWER, is_emergency
-from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, today_line
+from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT,
+                                   build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from retrieval.full_corpus_context import PackedContext, PackedSource
 
@@ -38,21 +40,39 @@ ROUTE_NGOAI_PHAM_VI = "ngoai_pham_vi"
 ROUTE_KHAN_CAP = "khan_cap"
 # H4c (B1 D8): nguồn trích thuộc vé / điểm đến / lễ hội ⇒ dòng "có thể đã thay đổi".
 NOTICE_SOURCE_PREFIXES = ("travel/tickets/", "travel/places/", "festivals/")
+MODEL_SEARCH_LIMIT = 2  # B2 D5: số lần MODEL gọi `tim_kho` được tìm thật (lần tìm đầu của code không tính); lần 3 ⇒ TOOL_LIMIT_TEXT
+SEARCH_VARIANTS = ("v0", "v1", "v2", "v3")  # B2a: lần tìm đầu (plan D1)
 STREAM_DRAIN_SECONDS = 0.5  # ngắt giữa chừng: sau `result.cancel()` đọc nốt tối đa chừng này giây (spec streaming §4.5 bước 3)
 
 
 @dataclass(frozen=True)
 class AssistantFlags:
-    """Cờ từng phần B1 (plan D9, `settings.yaml` khối `assistant:`); tắt cả 4 ⇒ chuỗi gửi model như B0."""
+    """Cờ từng phần B1 (plan D9, `settings.yaml` khối `assistant:`); tắt cả 4 ⇒ chuỗi gửi model như B0.
+    B2 (plan B2 D1): `lan_tim_dau` — v0 câu gốc · v1 / v3 câu tìm do định tuyến viết (cần `router`) · v2 trợ lý tự gọi `tim_kho`;
+    `tim_them` — sau lần tìm đầu của code, trợ lý được gọi `tim_kho` thêm (B2b). `v0` + `tim_them` tắt ⇒ chuỗi gửi model như B1."""
     emergency_rule: bool = False
     router: bool = False
     today_line: bool = False
     may_have_changed_notice: bool = False
+    lan_tim_dau: str = "v0"
+    tim_them: bool = False
+
+    def __post_init__(self) -> None:
+        if self.lan_tim_dau not in SEARCH_VARIANTS:
+            raise ValueError(f"assistant.lan_tim_dau must be one of {SEARCH_VARIANTS}")
+        if self.lan_tim_dau in ("v1", "v3") and not self.router:
+            raise ValueError("assistant.lan_tim_dau v1 / v3 needs assistant.router: true (search text is written by the router)")
 
     @classmethod
     def from_settings(cls, settings: dict) -> "AssistantFlags":
         config = settings.get("assistant") or {}
-        return cls(**{name: bool(config.get(name, False)) for name in cls.__dataclass_fields__})
+        values = {name: bool(config.get(name, False)) for name in cls.__dataclass_fields__ if name != "lan_tim_dau"}
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")))
+
+    @property
+    def uses_tools(self) -> bool:
+        """Tuyến `tro_ly_hue` đi vòng công cụ (trợ lý có `tim_kho`) thay vì sinh một lần."""
+        return self.lan_tim_dau == "v2" or self.tim_them
 
 
 def elapsed_ms(started: float) -> float:
@@ -88,27 +108,94 @@ class AnswerTrace:
     routing_ms: float | None = None
     today: str | None = None  # dòng ngày đã gửi model (D7) — log chỉ ghi phần ngày
     notice: str | None = None  # dòng H4c (D8)
+    # B2: câu tìm định tuyến viết (V1 / V3) — chỉ trong RAM, KHÔNG log (chữ người dùng); số câu + cờ rỗng thì log được
+    cau_tim: list[str] | None = None
+    cau_tim_rong: bool = False
+    model_searches: int = 0  # số lần model gọi `tim_kho` (D5 trần)
+    model_queries: list[str] = field(default_factory=list)  # câu tìm model viết khi gọi `tim_kho` — KHÔNG log
+    context_parts: list[str] = field(default_factory=list)  # chữ ngữ cảnh mỗi lần tìm — đếm ngân sách chung (D5)
+    seen_ids: list[str] = field(default_factory=list)  # chunk_id đã vào ngữ cảnh — lần tìm sau bỏ trùng (D5)
+    tool_error: Exception | None = None  # lỗi tìm / ngữ cảnh trong công cụ: SDK có thể bọc lại ⇒ lõi ném lại đúng lỗi gốc
 
 
-async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: AnswerTrace, today: str | None = None) -> None:
-    """Công cụ tìm kho: tìm `cau_tim` → dựng ngữ cảnh, ghi vào `trace` + sổ nguồn. Tham số vị trí là phần model sẽ thấy khi B2 cho model gọi
-    (chỉ `cau_tim`); top-k, collection, pool, giới hạn token nằm trong `retrieval_service` / `context_builder` do code dựng (plan B0 D2).
+async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
+                            today: str | None = None, instructions: str | None = None, by: str = "code") -> PackedContext:
+    """Một lần tìm của lượt: tìm `queries` (1 câu ⇒ `search`; nhiều ⇒ `search_many`, B2 V3) → dựng ngữ cảnh → nối sổ nguồn.
+    Ngân sách token đếm bằng `cau_hoi` (câu thật gửi model — B2 D3) + ngữ cảnh các lần trước (`trace.context_parts`) + `instructions` của
+    đường trợ lý (B2 D5); lần sau đánh số tiếp, bỏ đoạn đã có. Lần đầu điền `trace.documents` / `trace.packed` (như B1); thời gian cộng dồn.
     Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `ContextBudgetError` (ngữ cảnh)."""
     tool_started = time.perf_counter()
+    first = trace.packed is None
+    packed = None
     try:
         started = time.perf_counter()
-        result = await asyncio.to_thread(retrieval_service.search, cau_tim)
-        trace.search_ms = elapsed_ms(started)
+        if len(queries) == 1:
+            result = await asyncio.to_thread(retrieval_service.search, queries[0])
+        else:
+            result = await asyncio.to_thread(retrieval_service.search_many, queries)
+        search_ms = elapsed_ms(started)
         dense_ms = result.trace.timings_ms.get("dense_ms")  # trace giữ 3 chữ số; làm tròn 1 chữ số như các trường *_ms khác
-        trace.dense_ms = None if dense_ms is None else round(dense_ms, 1)
-        trace.documents = result.documents
+        dense_ms = None if dense_ms is None else round(dense_ms, 1)
+        if first:  # ghi ngay (như B1): ngữ cảnh lỗi sau đó thì nơi gọi vẫn đọc được số đo + kết quả tìm
+            trace.documents, trace.search_ms, trace.dense_ms = result.documents, search_ms, dense_ms
+        else:
+            trace.search_ms = round((trace.search_ms or 0) + search_ms, 1)
+            trace.dense_ms = None if dense_ms is None else round((trace.dense_ms or 0) + dense_ms, 1)
 
         started = time.perf_counter()
-        trace.packed = context_builder.build(cau_tim, result.documents, today=today)  # dòng ngày tính vào ngân sách token (D7)
-        trace.context_ms = elapsed_ms(started)
-        trace.so_nguon.extend(trace.packed.sources)
+        packed = context_builder.build(cau_hoi, result.documents, today=today, first_id=len(trace.so_nguon) + 1,
+                                       prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids),
+                                       instructions=instructions)
+        context_ms = elapsed_ms(started)
+        if first:
+            trace.packed, trace.context_ms = packed, context_ms
+        else:
+            trace.context_ms = round((trace.context_ms or 0) + context_ms, 1)
+        trace.so_nguon.extend(packed.sources)
+        trace.context_parts.append(packed.text)
+        trace.seen_ids.extend(packed.document_ids)
+        return packed
     finally:
-        trace.tools.append({"name": "tim_kho", "ms": elapsed_ms(tool_started)})
+        entry = {"name": "tim_kho", "ms": elapsed_ms(tool_started)}
+        if not first or by == "model" or len(queries) > 1:  # B2: thêm số đo cho lần tìm thêm / do model / nhiều câu; lần tìm đầu một câu giữ như B1
+            entry.update(by=by, n_queries=len(queries), n_new=None if packed is None else len(packed.sources))
+        trace.tools.append(entry)
+
+
+async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: AnswerTrace, today: str | None = None,
+                  cau_hoi: str | None = None) -> None:
+    """Công cụ tìm kho: tìm `cau_tim` → dựng ngữ cảnh, ghi vào `trace` + sổ nguồn. Tham số vị trí là phần model thấy (chỉ `cau_tim`);
+    top-k, collection, pool, giới hạn token nằm trong `retrieval_service` / `context_builder` do code dựng (plan B0 D2). `cau_hoi` (B2 D3):
+    câu thật gửi model để đếm ngân sách — None ⇒ chính `cau_tim` (B0 / B1)."""
+    await search_into_trace([cau_tim], cau_hoi=cau_tim if cau_hoi is None else cau_hoi, retrieval_service=retrieval_service,
+                            context_builder=context_builder, trace=trace, today=today)
+
+
+def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str):
+    """Hàm `tim_kho` của **một lượt** cho trợ lý có công cụ (B2 D5): generator bọc thành công cụ SDK (lõi không import SDK — T-3).
+    Model chỉ thấy `cau_tim`; trần `MODEL_SEARCH_LIMIT` đếm ở đây; lần vượt ⇒ chữ "đã hết lượt", không tìm. Lỗi tìm / ngữ cảnh: ghi
+    `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model)."""
+
+    async def tim_kho(cau_tim: str) -> str:
+        """Tìm thêm Bằng chứng trong kho tri thức Huế bằng một câu tìm đứng một mình; trả các nguồn mới, đánh số tiếp theo.
+
+        Args:
+            cau_tim: câu tìm đứng một mình cho phần thông tin còn thiếu.
+        """
+        trace.model_searches += 1
+        trace.model_queries.append(cau_tim)  # chỉ RAM / file private của harness — không log (chữ do model viết từ câu người dùng)
+        if trace.model_searches > MODEL_SEARCH_LIMIT:
+            trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "het_luot": True})
+            return TOOL_LIMIT_TEXT
+        try:
+            packed = await search_into_trace([cau_tim], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder,
+                                             trace=trace, today=today, instructions=instructions, by="model")
+        except (RetrievalDependencyError, ContextBudgetError) as exc:
+            trace.tool_error = exc
+            raise
+        return packed.text or TOOL_NO_NEW_TEXT
+
+    return tim_kho
 
 
 # Mọi công cụ của trợ lý, một chỗ (test ranh giới khoá tên + tham số; B2 bọc `function_tool` từ đây).
@@ -129,13 +216,15 @@ def turn_usd(trace: AnswerTrace) -> float | None:
 
 
 async def prepare_answer(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder=None,
-                         today: str | None = None) -> None:
-    """Phần trước model của tuyến `tro_ly_hue`: `tim_kho` bằng câu gốc → ngữ cảnh.
+                         today: str | None = None, instructions: str | None = None) -> None:
+    """Phần trước model của tuyến `tro_ly_hue`: lần tìm đầu của code → ngữ cảnh. Câu tìm = câu gốc (V0) hoặc câu định tuyến viết
+    (`trace.cau_tim`, B2 V1 / V3); ngân sách luôn đếm bằng câu gốc (B2 D3). `instructions`: lời dặn trợ lý khi lượt đi vòng công cụ (B2b).
     Ngữ cảnh không có nguồn ⇒ `trace.answer` = câu từ chối chuẩn (không gọi model). Còn lại cần model: `generator=None` nghĩa là
     chưa sẵn sàng ⇒ `GeneratorNotReadyError`. `recorder` chỉ route truyền (spec §4.8 khác biệt 4).
 
     Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `ContextBudgetError` (ngữ cảnh), `GeneratorNotReadyError`."""
-    await tim_kho(query, retrieval_service=retrieval_service, context_builder=context_builder, trace=trace, today=today)
+    await search_into_trace(trace.cau_tim or [query], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder,
+                            trace=trace, today=today, instructions=instructions)
     if recorder:
         recorder.record_packed_context(trace.packed)
 
@@ -167,27 +256,59 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
         trace.notice = MAY_HAVE_CHANGED_NOTICE
 
 
+async def _before_model(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder, today: str | None,
+                        flags: AssistantFlags) -> str | None:
+    """Phần trước lần gọi model của tuyến `tro_ly_hue`. Trả tin nhắn user cho trợ lý có công cụ (None = đường sinh một lần như B1).
+    V2: không tìm trước (chỉ cần generator). Còn lại: `prepare_answer` (có thể đặt câu từ chối khi ngữ cảnh rỗng ⇒ `fixed_outcome`)."""
+    if flags.lan_tim_dau == "v2":
+        if generator is None:
+            raise GeneratorNotReadyError("generator is not ready")
+        return build_assistant_input(query, None, today)
+    instructions = generator.assistant_instructions if (flags.tim_them and generator is not None) else None
+    await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
+    return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
+
+
+def _finish_generated(trace: AnswerTrace) -> None:
+    """Sau lần sinh: chạm `max_turns` (cờ generator, B2 D5) ⇒ câu từ chối cố định `max_turns`; còn lại ⇒ kiểm citation trên sổ nguồn."""
+    if getattr(trace.generated, "hit_max_turns", False):  # getattr: generator thay thế trong test chỉ có `text` (như route, B68 m-4)
+        _set_fixed(trace, INSUFFICIENT_ANSWER, "max_turns")
+        return
+    trace.answer = trace.generated.text
+    check_citations(trace)
+
+
 async def answer_query(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder=None,
-                       today: str | None = None) -> None:
-    """Tuyến `tro_ly_hue` không stream: `prepare_answer` → sinh → `check_citations`, điền `trace`.
-    Lỗi đi ra nguyên kiểu như `prepare_answer`, thêm `GenerationError` (sinh)."""
-    await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today)
-    if not trace.packed.sources:
+                       today: str | None = None, flags: AssistantFlags | None = None) -> None:
+    """Tuyến `tro_ly_hue` không stream: lần tìm đầu (theo `flags.lan_tim_dau`) → sinh một lần, hoặc trợ lý có công cụ (`flags.uses_tools`)
+    → `check_citations`, điền `trace`. Lỗi đi ra nguyên kiểu như `prepare_answer`, thêm `GenerationError` (sinh); lỗi tìm trong công cụ
+    ra đúng lỗi gốc."""
+    flags = flags or AssistantFlags()
+    tool_prompt = await _before_model(query, retrieval_service, context_builder, generator, trace, recorder, today, flags)
+    if trace.fixed_outcome is not None:
         return
 
     started = time.perf_counter()
     call_log = CallLog()
     try:
-        # `today` chỉ truyền khi có: generator thay thế trong test route chỉ nhận (query, context)
-        kwargs = {"call_log": call_log} if today is None else {"call_log": call_log, "today": today}
-        trace.generated = await generator.generate_answer(query, trace.packed.text, **kwargs)
+        if flags.uses_tools:
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, generator.assistant_instructions)
+            try:
+                trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log)
+            except GenerationError:
+                if trace.tool_error is not None:
+                    raise trace.tool_error from None
+                raise
+        else:
+            # `today` chỉ truyền khi có: generator thay thế trong test route chỉ nhận (query, context)
+            kwargs = {"call_log": call_log} if today is None else {"call_log": call_log, "today": today}
+            trace.generated = await generator.generate_answer(query, trace.packed.text, **kwargs)
     finally:
         trace.generation_ms = elapsed_ms(started)  # có cả khi model lỗi (route log `generation_failed` kèm thời gian)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)  # cả khi lượt lỗi sau phản hồi (review C128 m-1)
     if recorder:
         recorder.record_generation_result(trace.generated)
-    trace.answer = trace.generated.text
-    check_citations(trace)
+    _finish_generated(trace)
 
 
 # ---------- Một lượt có định tuyến (Phase 9 B1, plan D1, D6) ----------
@@ -206,7 +327,12 @@ async def _pick_route(query: str, generator, trace: AnswerTrace, flags: Assistan
         started = time.perf_counter()
         call_log = CallLog()
         try:
-            trace.route = await generator.route(query, call_log)
+            if flags.lan_tim_dau in ("v1", "v3"):  # B2 D2: định tuyến viết luôn câu tìm (cùng một lần gọi)
+                trace.route, queries = await generator.route_search(query, call_log, flags.lan_tim_dau)
+                trace.cau_tim = [q.strip() for q in queries if q.strip()] or None
+                trace.cau_tim_rong = trace.cau_tim is None  # rỗng ⇒ tìm bằng câu gốc, đếm được
+            else:
+                trace.route = await generator.route(query, call_log)
         except GenerationError:
             trace.route, trace.route_error = ROUTE_TRO_LY_HUE, "router_failed"  # lỗi ⇒ đường cũ (D3)
         finally:
@@ -240,7 +366,7 @@ async def answer_turn(query: str, retrieval_service, context_builder, generator,
             record_llm_calls(trace, call_log.calls, ROUTE_TRO_CHUYEN)
         trace.answer, trace.cited = trace.generated.text, ()  # trò chuyện không có sổ nguồn, không kiểm citation (D4)
         return
-    await answer_query(query, retrieval_service, context_builder, generator, trace, recorder, _today(flags, trace))
+    await answer_query(query, retrieval_service, context_builder, generator, trace, recorder, _today(flags, trace), flags)
     set_notice(trace, flags)
 
 
@@ -249,7 +375,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     """Cùng thứ tự `answer_turn` nhưng phát sự kiện: `("status", dict)` / `("delta", str)`. Kết thúc ⇒ `trace` đủ để route dựng `sources` /
     `error` / `notice` / `done`. Hạn giờ model bọc cả vòng đọc (spec streaming §4.3); tự dừng đọc (hết giờ / ngắt) ⇒ `cancel()` + đọc nốt
     trong vùng che (spec §4.5). Lỗi đi ra nguyên kiểu (route đổi thành sự kiện `error`)."""
-    result = call_log = None
+    result = call_log = tool_state = None
     call_route = None
     stopped_early = False
     try:
@@ -264,14 +390,20 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             call_route = ROUTE_TRO_CHUYEN
             result, call_log = generator.start_chat_stream(query)
         else:
-            await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, _today(flags, trace))
-            yield "status", {"stage": "searched", "n_sources": len(trace.packed.sources)}
+            today = _today(flags, trace)
+            tool_prompt = await _before_model(query, retrieval_service, context_builder, generator, trace, recorder, today, flags)
+            if trace.packed is not None:  # V2 không tìm trước (B2 D5): `searching` / `searched` đến từ lần gọi công cụ
+                yield "status", {"stage": "searched", "n_sources": len(trace.packed.sources)}
             if trace.fixed_outcome is not None:  # ngữ cảnh không có nguồn ⇒ từ chối, không gọi model
                 yield "delta", trace.answer
                 return
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_LY_HUE
-            result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today)
+            if flags.uses_tools:
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, generator.assistant_instructions)
+                result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn)
+            else:
+                result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today)
 
         started, generator_started = time.perf_counter(), time.monotonic()
         extractor = AnswerTextStream()
@@ -288,15 +420,25 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                     text = extractor.feed(event.data.delta)
                     if text:
                         yield "delta", text
+                elif event.type == "run_item_stream_event" and event.name == "tool_called":  # thẻ công cụ (B2 D7): lượt gọi không có chữ
+                    yield "status", {"stage": "searching"}
+                elif event.type == "run_item_stream_event" and event.name == "tool_output":
+                    yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
+        except Exception:
+            if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)
+                raise trace.tool_error from None
+            raise
         finally:
             trace.generation_ms = elapsed_ms(started)
 
-        trace.generated = generator.finish_answer_stream(result, call_log, generator_started)
-        trace.answer = trace.generated.text
+        trace.generated = generator.finish_answer_stream(result, call_log, generator_started, tool_state)
         if call_route == ROUTE_TRO_CHUYEN:
-            trace.cited = ()
+            trace.answer, trace.cited = trace.generated.text, ()
         else:
-            check_citations(trace)
+            _finish_generated(trace)
+            if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
+                yield "delta", trace.answer
+                return
             set_notice(trace, flags)
     except (asyncio.CancelledError, GeneratorExit, TimeoutError):
         stopped_early = True

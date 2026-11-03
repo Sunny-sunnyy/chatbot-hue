@@ -62,3 +62,5 @@ assistant:
   today_line: false              # TẮT (B1 P2: từ chối nhầm không giảm). Dòng ngày hôm nay đầu tin nhắn gửi model trả lời (D7)
   may_have_changed_notice: true  # BẬT (B1). Dòng H4c dưới câu trả lời có nguồn vé / điểm đến / lễ hội (D8)
   router_timeout_seconds: 10
+  lan_tim_dau: v0                # B2 (plan D1): v0 câu gốc · v1 / v3 câu tìm do định tuyến viết · v2 trợ lý tự gọi tim_kho
+  tim_them: true                 # BẬT (B2b Q8: 18 câu nhiều nguồn +1,17 [+0,44; +2,00]; User giữ 03/11). Sau lần tìm đầu, trợ lý được gọi tim_kho thêm ≤ 2 lần

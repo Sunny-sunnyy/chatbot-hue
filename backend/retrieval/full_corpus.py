@@ -621,6 +621,21 @@ class FullCorpusRetrievalService:
         )
         return RetrievalResult(documents=documents, trace=trace)
 
+    def search_many(self, queries: Sequence[str]) -> RetrievalResult:
+        """Phase 9 B2 V3 (plan D4): tìm từng câu nhỏ bằng `search` rồi trộn RRF lần hai (cùng `rrf_k`, giữ `candidate_pool`) — thứ hạng chung,
+        không ưu tiên câu đầu, tất định. Một câu ⇒ đúng `search` (giống byte). Trace = trace câu đầu, thời gian cộng của mọi câu."""
+        if len(queries) == 1:
+            return self.search(queries[0])
+        results = [self.search(query) for query in queries]
+        by_id: dict[str, RetrievedDocument] = {}
+        for result in results:
+            for document in result.documents:
+                by_id.setdefault(document.id, document)
+        fused = reciprocal_rank_fusion([[d.id for d in r.documents] for r in results], k=self.rrf_k, limit=self.candidate_pool)
+        timings = {key: sum(r.trace.timings_ms.get(key, 0.0) for r in results) for key in results[0].trace.timings_ms}
+        trace = replace(results[0].trace, timings_ms=timings, counts={**results[0].trace.counts, "n_queries": len(queries)})
+        return RetrievalResult(documents=[by_id[pid] for pid, _ in fused], trace=trace)
+
     def close(self) -> None:
         if self.dense_runner is not None:
             self.dense_runner.close()

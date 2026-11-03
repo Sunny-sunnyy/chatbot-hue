@@ -12,11 +12,13 @@ private, ghi JSONL vào `data/evaluation/phase_7b/`. `case_index` là chỉ số
 
 import argparse
 import asyncio
+import dataclasses
 import hashlib
 import json
 import math
 import random
 import sys
+import time
 import unicodedata
 from collections import defaultdict
 from pathlib import Path
@@ -27,9 +29,11 @@ from agents import Agent, ModelSettings, RunConfig, Runner
 from pydantic import BaseModel, ConfigDict, Field
 
 from core.settings_loader import load_settings
-from llm.full_corpus_prompt import REFUSAL_ANSWERS
-from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator, input_cache_tokens
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, turn_usd
+from llm.full_corpus_prompt import REFUSAL_ANSWERS, build_assistant_input
+from llm.generator_openai_full_corpus import CallLog, OpenAIFullCorpusGenerator, input_cache_tokens
+from llm.assistant import (SEARCH_VARIANTS, AnswerTrace, AssistantFlags, answer_turn, search_into_trace, tim_kho, tool_for_turn,
+                           turn_usd)
+from core.schema import GenerationError
 from llm.pricing import cost_usd  # giá dời sang `llm.pricing` (Phase 9 B0); `from evaluation.full_corpus_eval import cost_usd` cũ vẫn chạy
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
@@ -340,6 +344,9 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
         "usd": None,
         "llm_calls": None,
         "tools": None,
+        "routing_ms": None,
+        "fixed_outcome": None,
+        "cau_tim_rong": None,
         "error": None,
     }
     question = case["question"].strip()
@@ -361,7 +368,8 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
         row["context_sources"] = len(trace.packed.sources)
     # log Phase 9 (spec §3 "Log + vết"): cùng các trường như `chat_metrics`
     row.update(route=trace.route, usd=turn_usd(trace), llm_calls=trace.llm_calls, tools=trace.tools,
-               route_error=trace.route_error, emergency_by=trace.emergency_by, notice=trace.notice, today=trace.today)
+               route_error=trace.route_error, emergency_by=trace.emergency_by, notice=trace.notice, today=trace.today,
+               routing_ms=trace.routing_ms, fixed_outcome=trace.fixed_outcome, cau_tim_rong=trace.cau_tim_rong)
     if trace.generated is not None:
         row.update(
             input_tokens=trace.generated.input_tokens,
@@ -374,12 +382,19 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
     return row
 
 
-async def run_generation(cases: list[dict], max_context_documents: int | None = None, flags_on: list[str] | None = None) -> list[dict]:
-    """`flags_on`: tên cờ B1 bật cho lượt đo này (ghi đè `settings.yaml`); None ⇒ theo `settings.yaml`."""
+BOOL_FLAGS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name != "lan_tim_dau")
+
+
+async def run_generation(cases: list[dict], max_context_documents: int | None = None, flags_on: list[str] | None = None,
+                         lan_tim_dau: str | None = None) -> list[dict]:
+    """`flags_on`: tên cờ bật / tắt cho lượt đo này (ghi đè `settings.yaml`); None ⇒ theo `settings.yaml`.
+    `lan_tim_dau` (B2): biến lần tìm đầu cho lượt này; None ⇒ theo `settings.yaml` (hoặc v0 khi `flags_on` được truyền)."""
     settings = load_settings(validate_private_paths=False)
     flags = AssistantFlags.from_settings(settings)
     if flags_on is not None:
-        flags = AssistantFlags(**{name: name in flags_on for name in AssistantFlags.__dataclass_fields__})
+        flags = AssistantFlags(**{name: name in flags_on for name in BOOL_FLAGS}, lan_tim_dau=lan_tim_dau or "v0")
+    elif lan_tim_dau is not None:
+        flags = dataclasses.replace(flags, lan_tim_dau=lan_tim_dau)
     service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
     context_builder = build_context_builder(settings, max_context_documents)
     generator = OpenAIFullCorpusGenerator.from_environment(settings)
@@ -394,6 +409,70 @@ async def run_generation(cases: list[dict], max_context_documents: int | None = 
     finally:
         service.close()
         await generator.aclose()
+
+
+async def run_search_layer(cases: list[dict], variant: str) -> tuple[list[dict], list[dict]]:
+    """Tầng tìm B2a (plan B2 D2, D6; hợp đồng bộ đo C133 `data/phase_9/b2/README.md` §4): mỗi câu top-10 đúng như lần tìm đầu đưa vào
+    ngữ cảnh. V0 câu gốc · V1 / V3 câu tìm định tuyến viết, **tìm bất kể tuyến** (review C135 M-2) · V2 trợ lý chạy tới lần gọi `tim_kho`
+    đầu (không gọi ⇒ `goi_tim_kho: false`). Trả (dòng hợp đồng, dòng chi tiết private: tuyến, câu tìm, USD, ms)."""
+    settings = load_settings(validate_private_paths=False)
+    service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
+    context_builder = build_context_builder(settings)
+    generator = None if variant == "v0" else OpenAIFullCorpusGenerator.from_environment(settings)
+    semaphore = asyncio.Semaphore(CONCURRENCY)
+
+    async def one(case: dict) -> tuple[dict | None, dict]:
+        question = case["question"].strip()
+        trace, call_log = AnswerTrace(), CallLog()
+        detail = {"case_index": case["case_index"], "route": None, "route_error": None, "qua_3_cau": False, "cau_tim": None,
+                  "cau_tim_rong": False, "error": None}
+        started = time.perf_counter()
+        try:
+            await _search_one(question, trace, call_log, detail)
+        except Exception as exc:  # review C137 m-1: một câu lỗi không làm mất cả lượt — ghi lỗi, câu đó chạy lại riêng
+            detail["error"] = describe_error(exc)
+        detail.update(usd=sum(c["usd"] for c in call_log.calls), n_llm_calls=len(call_log.calls), ms=elapsed_ms_since(started),
+                      llm_ms=[c["ms"] for c in call_log.calls])
+        if detail["error"] is not None:
+            return None, detail
+        row = {"case_index": case["case_index"],
+               "top_chunk_ids": [doc.id for doc in (trace.documents or [])[:RETRIEVAL_K]]}
+        if variant == "v2":
+            row["goi_tim_kho"] = trace.documents is not None
+        return row, detail
+
+    async def _search_one(question: str, trace: AnswerTrace, call_log: CallLog, detail: dict) -> None:
+        async with semaphore:
+            if variant == "v0":
+                await tim_kho(question, retrieval_service=service, context_builder=context_builder, trace=trace)
+            elif variant in ("v1", "v3"):
+                try:
+                    detail["route"], queries = await generator.route_search(question, call_log, variant)
+                except GenerationError as exc:
+                    detail["route_error"], queries = "router_failed", []
+                    # review C137 m-2: V3 trả > 3 câu ⇒ SDK chặn theo `maxItems` ⇒ mất cả tuyến; đếm riêng (> 0 ⇒ quay về cắt 3 câu trong code)
+                    detail["qua_3_cau"] = "at most 3 items" in repr(exc.__cause__) or "too_long" in repr(exc.__cause__)
+                kept = [q.strip() for q in queries if q.strip()]
+                detail["cau_tim_rong"] = not kept and detail["route_error"] is None
+                queries = kept or [question]
+                detail["cau_tim"] = queries
+                await search_into_trace(queries, cau_hoi=question, retrieval_service=service, context_builder=context_builder, trace=trace)
+            else:
+                tool_fn = tool_for_turn(question, service, context_builder, trace, None, generator.assistant_instructions)
+                await generator.first_tool_search(build_assistant_input(question, None), tool_fn, call_log)
+                detail["cau_tim"] = trace.model_queries
+
+    try:
+        pairs = await asyncio.gather(*(one(case) for case in cases))
+    finally:
+        service.close()
+        if generator is not None:
+            await generator.aclose()
+    return [p[0] for p in pairs if p[0] is not None], [p[1] for p in pairs]
+
+
+def elapsed_ms_since(started: float) -> float:
+    return round((time.perf_counter() - started) * 1000, 1)
 
 
 # ---------- Judge (prompt dùng chung cho Claude và luna) ----------
@@ -833,8 +912,14 @@ def main(argv: list[str] | None = None) -> int:
     generate.add_argument("--out", required=True)
     generate.add_argument("--max-context-documents", type=int,
                           help="chỉ để thăm dò; mặc định theo settings.yaml")
-    generate.add_argument("--flags", nargs="*", choices=list(AssistantFlags.__dataclass_fields__),
-                          help="cờ B1 bật cho lượt này (không truyền ⇒ theo settings.yaml; truyền rỗng ⇒ tắt cả)")
+    generate.add_argument("--flags", nargs="*", choices=list(BOOL_FLAGS),
+                          help="cờ bật cho lượt này (không truyền ⇒ theo settings.yaml; truyền rỗng ⇒ tắt cả)")
+    generate.add_argument("--lan-tim-dau", choices=list(SEARCH_VARIANTS), help="B2: biến lần tìm đầu (không truyền ⇒ theo settings.yaml)")
+
+    search_layer = commands.add_parser("tang_tim", help="B2a tầng tìm: top-10 lần tìm đầu theo biến (v0 0 đồng; v1 / v3 / v2 paid)")
+    search_layer.add_argument("bien", choices=list(SEARCH_VARIANTS))
+    search_layer.add_argument("--cases-file", required=True, help="JSON danh sách case_index (61 câu, hoặc 43 câu dev cho vòng chỉnh)")
+    search_layer.add_argument("--out", required=True, help="JSONL hợp đồng C133; chi tiết private ghi <out>.chi_tiet.jsonl")
 
     judge = commands.add_parser("judge-luna", help="judge phụ gpt-6-luna (paid)")
     judge.add_argument("--answers", required=True)
@@ -891,9 +976,24 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(summarize_retrieval(rows), ensure_ascii=False, indent=2))
     elif args.command == "generate":
         selected = select_cases(load_golden_cases(args.golden), args.cases)
-        rows = asyncio.run(run_generation(selected, args.max_context_documents, args.flags))
+        rows = asyncio.run(run_generation(selected, args.max_context_documents, args.flags, args.lan_tim_dau))
         write_jsonl(_path(args.out), rows)
         print(json.dumps(summarize_answers(rows, None), ensure_ascii=False, indent=2))
+    elif args.command == "tang_tim":
+        wanted = json.loads(Path(args.cases_file).read_text(encoding="utf-8"))
+        selected = select_cases(load_golden_cases("full"), wanted)
+        rows, details = asyncio.run(run_search_layer(selected, args.bien))
+        write_jsonl(_path(args.out), rows)
+        write_jsonl(_path(args.out + ".chi_tiet.jsonl"), details)
+        usd = sum(d["usd"] for d in details)
+        failed = [d["case_index"] for d in details if d["error"] is not None]
+        if failed:  # file lượt thiếu các câu này ⇒ bộ chấm C133 dừng; chạy lại riêng: --cases-file <out>.loi.json, rồi nối file
+            Path(_path(args.out + ".loi.json")).write_text(json.dumps(failed), encoding="utf-8")
+        print(json.dumps({"bien": args.bien, "n": len(rows), "loi": len(failed), "usd": round(usd, 6),
+                          "qua_3_cau": sum(d["qua_3_cau"] for d in details),
+                          "khac_tro_ly_hue": sum(d["route"] not in (None, "tro_ly_hue") for d in details),
+                          "route_error": sum(d["route_error"] is not None for d in details),
+                          "goi_tim_kho": sum(r.get("goi_tim_kho", True) for r in rows)}, ensure_ascii=False))
     elif args.command == "judge-luna":
         answer_rows = read_jsonl(_path(args.answers))
         selected = answered_cases(cases, answer_rows, args.cases)

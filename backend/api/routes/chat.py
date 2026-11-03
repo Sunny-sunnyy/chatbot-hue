@@ -40,6 +40,8 @@ METRIC_FIELDS = (
     "route", "usd", "n_llm_calls", "llm_calls", "tools",
     # B1: định tuyến lỗi ⇒ đường cũ; câu khẩn cấp do luật / định tuyến bắt; ngày đã đưa model (chỉ ngày, không giờ)
     "route_error", "emergency_by", "today",
+    # B2 D9: ms của lần gọi định tuyến (đã có trong `llm_calls`, tách riêng để theo dõi tốc độ theo tuyến)
+    "routing_ms",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -212,7 +214,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         generation_ms=trace.generation_ms, citation_ms=trace.citation_ms,
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
-        route_error=trace.route_error, emergency_by=trace.emergency_by,
+        route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms,
         today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
     )
     if trace.generated is not None:

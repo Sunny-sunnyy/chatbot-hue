@@ -147,6 +147,11 @@ def test_chat_returns_bracket_citations_when_model_writes_nguon_label():
         async def generate_answer(self, query, context_text, **kwargs):  # B1: lõi truyền thêm `call_log` (+ `today`)
             return SimpleNamespace(text="Thông tin giá vé có trong tài liệu [Nguồn 1].")
 
+        assistant_instructions = ""  # B2: `tim_them` bật mặc định ⇒ lõi đi đường trợ lý có công cụ (đếm ngân sách bằng lời dặn này)
+
+        async def generate_with_tools(self, prompt, tool_fn, call_log):
+            return SimpleNamespace(text="Thông tin giá vé có trong tài liệu [Nguồn 1].")
+
     app = create_app(load_settings())
     with TestClient(app) as client:
         original = app.state.generator, app.state.generator_ready
