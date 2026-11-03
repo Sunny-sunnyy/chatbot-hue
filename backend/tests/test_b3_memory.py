@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from api.app import create_app
 from api.conversations import ConversationStore, stored_answer
 from api.routes.chat import METRIC_FIELDS
+from core.schema import GenerationError
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream
 from llm.full_corpus_prompt import ASSISTANT_HISTORY_NOTE, INSUFFICIENT_ANSWER, ROUTER_HISTORY_NOTE
 from llm.generator_openai_full_corpus import with_history
@@ -175,7 +176,7 @@ def test_api_cookie_carries_history_and_new_conversation_clears_it(caplog):
         original = app.state.generator, app.state.generator_ready
         app.state.generator, app.state.generator_ready = gen, True
         with chat_log_records(caplog) as records:
-            first = client.post("/api/chat", json={"query": "Đại Nội mở cửa mấy giờ?"})
+            first = client.post("/api/chat", json={"query": "Mình tên là Lan, Đại Nội mở cửa mấy giờ?"})
             cookie = first.headers["set-cookie"]
             second = client.post("/api/chat", json={"query": "Còn hôm thứ Hai thì sao?"})
             client.post("/api/conversation/new")
@@ -185,10 +186,28 @@ def test_api_cookie_carries_history_and_new_conversation_clears_it(caplog):
         app.state.generator, app.state.generator_ready = original
     assert first.status_code == second.status_code == third.status_code == 200
     assert "HttpOnly" in cookie and "SameSite=strict" in cookie and "Path=/api" in cookie and "Secure" not in cookie
-    assert gen.seen[0] == () and gen.seen[1] == (("Đại Nội mở cửa mấy giờ?", "Mở cửa từ 7 giờ."),) and gen.seen[2] == ()
+    assert gen.seen[0] == () and gen.seen[1] == (("Mình tên là Lan, Đại Nội mở cửa mấy giờ?", "Mở cửa từ 7 giờ."),) and gen.seen[2] == ()
     conversation_id = cookie.split(";")[0].split("=", 1)[1]
     assert [m["n_history_turns"] for m in metrics] == [0, 1, 0] and set(metrics[0]) == set(METRIC_FIELDS)
     assert metrics[1]["history_tokens"] > 0 and all(conversation_id not in m and "Lan" not in m for m in messages)
+
+
+class FailingGenerator(MemoryGenerator):
+    async def generate_with_tools(self, prompt, tool_fn, call_log, history=()):
+        raise GenerationError("x")
+
+
+def test_api_error_turn_still_sets_cookie_and_is_not_remembered():
+    """Review C145 m-2: lượt lỗi vẫn gửi cookie (không cuộc mồ côi) và không ghi vào lịch sử."""
+    app = create_app()
+    with TestClient(app) as client:
+        app.state.conversations = ConversationStore(lambda t: len(t.split()))
+        original = app.state.generator, app.state.generator_ready
+        app.state.generator, app.state.generator_ready = FailingGenerator(), True
+        response = client.post("/api/chat", json={"query": "Đại Nội mở cửa mấy giờ?"})
+        app.state.generator, app.state.generator_ready = original
+        conversation_id = response.headers["set-cookie"].split(";")[0].split("=", 1)[1]
+        assert response.status_code == 502 and app.state.conversations.history(conversation_id) == ()
 
 
 def test_api_without_memory_flag_sets_no_cookie():

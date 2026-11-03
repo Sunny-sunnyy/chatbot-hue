@@ -129,8 +129,8 @@ async def chat(body: ChatRequest, request: Request, response: Response):
     try:
         result, conversation_id = await _answer(body, request, metrics)
         _set_outcome(result, metrics)
-        if not isinstance(result, JSONResponse):  # trả lời thường: cookie đi theo phản hồi mặc định
-            _set_cookie(response, conversation_id)
+        # cookie đi theo cả phản hồi lỗi (review C145 m-2): lượt đầu lỗi không để lại cuộc mồ côi, đồng nhất với đường stream
+        _set_cookie(result if isinstance(result, JSONResponse) else response, conversation_id)
         return result
     except Exception:
         metrics["outcome"], metrics["status_code"] = "internal_error", 500
