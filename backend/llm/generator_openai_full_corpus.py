@@ -212,6 +212,7 @@ class OpenAIFullCorpusGenerator:
         answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
         reasoning_effort: str | None = None,
         router_timeout: float = 10,
+        router_reasoning_effort: str | None = None,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
@@ -245,7 +246,10 @@ class OpenAIFullCorpusGenerator:
             name="hue_router",
             instructions=ROUTER_INSTRUCTIONS,
             model=self.responses_model,
-            model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False),
+            # Thí nghiệm tốc độ #1 (plan docs/superpowers/plans/2026-11-03-phase-9-toc-do-dinh-tuyen-plan.md — bản A duyệt ghi ở CURRENT_HANDOFF): None = không gửi `reasoning` (như B1);
+            # bản sao có lịch sử / viết câu tìm (`clone`) kế thừa cùng cấu hình.
+            model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False,
+                                         reasoning=Reasoning(effort=router_reasoning_effort) if router_reasoning_effort else None),
             output_type=RouteOutput,
         )
         self.chat_agent = Agent(
@@ -305,6 +309,7 @@ class OpenAIFullCorpusGenerator:
             answer_instructions=answer_instructions,
             reasoning_effort=reasoning_effort,
             router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
+            router_reasoning_effort=settings.get("assistant", {}).get("router_reasoning_effort"),
         )
 
     async def _run(self, agent: Agent, user_prompt: "str | list[dict]", call_log: "CallLog", timeout: float, *, max_turns: int = 1,
