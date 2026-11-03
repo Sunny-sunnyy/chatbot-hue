@@ -1,13 +1,14 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6, cải tiến ở Phase 8)
 
-**Cập nhật lần cuối: 19:48 02/11/2026 — bản 19: Phase 9 B0 vào chatbot (merge `1c10111`): một lõi `backend/llm/assistant.py`, công cụ `tim_kho`, log ghi thêm tuyến + USD mỗi câu và mỗi lần gọi model; câu trả lời người dùng thấy không đổi (chuỗi gửi model giống từng byte).** Trước: 10:35 02/11/2026 — bản 18: giao diện web làm lại (React + Vite + Tailwind, merge `ed8e6e8`; review cả nhánh đạt).** Trước: 14:33 01/11/2026 — bản 17: B0 (bạn giữ 10 đoạn), Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 12:51 01/11/2026 — bản 16: streaming vào chatbot; tốc độ tới chữ đầu tiên đạt; công thức tiền giá đủ.** Trước: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 09:17 03/11/2026 — bản 20: Phase 9 B1 vào chatbot (merge `f01c032`): model phân loại câu hỏi trước (trò chuyện / hỏi về Huế / ngoài phạm vi / khẩn cấp), câu khẩn cấp ra câu soạn sẵn có số 113 / 114 / 115 / 112, dòng nhắc "thông tin có thể đã thay đổi"; chữ đầu tiên chậm hơn ~2 s.** Trước: 19:48 02/11/2026 — bản 19: Phase 9 B0 vào chatbot (merge `1c10111`): một lõi `backend/llm/assistant.py`, công cụ `tim_kho`, log ghi thêm tuyến + USD mỗi câu và mỗi lần gọi model; câu trả lời người dùng thấy không đổi (chuỗi gửi model giống từng byte).** Trước: 10:35 02/11/2026 — bản 18: giao diện web làm lại (React + Vite + Tailwind, merge `ed8e6e8`; review cả nhánh đạt).** Trước: 14:33 01/11/2026 — bản 17: B0 (bạn giữ 10 đoạn), Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 12:51 01/11/2026 — bản 16: streaming vào chatbot; tốc độ tới chữ đầu tiên đạt; công thức tiền giá đủ.** Trước: 11:07 01/11/2026 — bản 15: streaming đã duyệt spec, bước 1 / 4 (gom lõi chung) xong trên nhánh; sửa số tốc độ qua API (chưa đạt p95 5 s); sửa câu "mọi thí nghiệm có luật ghi trước".** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 14) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-## 1. Tóm tắt (đúng hiện trạng 02/11/2026)
+## 1. Tóm tắt (đúng hiện trạng 03/11/2026)
 
 - **Khâu này làm gì:** chatbot Huế trả lời câu hỏi trên toàn bộ kho (món ăn, di tích, lễ hội, nghệ thuật, du lịch) qua một API và một trang
   web đơn giản. Mỗi ý có trích dẫn `[1]`, `[2]`… trỏ tới đoạn nguồn thật; thiếu thông tin thì trả đúng một câu từ chối cố định, không bịa.
-- **Đang chạy cách nào:** chuẩn hóa chữ câu hỏi (NFC — gộp dấu tiếng Việt về một dạng) → tìm đoạn → lấy tối đa **10 đoạn** nguyên vẹn vừa
+- **Đang chạy cách nào:** chuẩn hóa chữ câu hỏi (NFC — gộp dấu tiếng Việt về một dạng) → **từ 03/11 (B1):** `gpt-6-luna` phân loại câu hỏi (một lần gọi ngắn ~1,5 s): chào hỏi ⇒ đáp ngắn không tìm kho;
+  ngoài phạm vi ⇒ câu soạn sẵn; khẩn cấp ⇒ câu soạn sẵn 5 dòng (113 công an · 114 cháy, cứu nạn · 115 cấp cứu · 112 thiên tai — model không viết lời khuyên); hỏi về Huế ⇒ tìm đoạn → lấy tối đa **10 đoạn** nguyên vẹn vừa
   ngân sách 16.384 token → `gpt-6-luna` (OpenAI, để mức suy luận mặc định) viết câu trả lời chỉ từ các đoạn đó → backend kiểm từng `[n]` →
   trả câu trả lời + nguồn. Mỗi lần hỏi, API ghi **một dòng số đo** (token, thời gian từng khâu, **tiền USD của câu và của từng lần gọi model, tuyến, công cụ đã chạy** — từ Phase 9 B0; không ghi nội dung câu hỏi / trả lời).
   Trang web: **làm lại 02/11** (merge `ed8e6e8`) bằng React + Vite + Tailwind, chỉ trang hỏi đáp + khung nguồn bên cạnh; nguồn hiện bằng số nhỏ bấm được (tầng máy vẫn `[n]`); nhãn "Trợ lý AI… có thể sai"; lỗi luôn báo bằng tiếng Việt; máy chạy cần build một lần `cd frontend && npm ci && npm run build`. Một lượt hỏi – đáp, **chữ hiện dần (streaming) từ 01/11** qua `POST /api/chat/stream`: kiểm trích dẫn ở cuối, hỏng thì rút lại, lỗi / đứt thì xoá + "Thử lại"; `/api/chat` (JSON một lần) vẫn giữ.
@@ -15,16 +16,17 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
   - từ chối nhầm câu có trong kho **12 / 158**; **0** câu ngoài kho bị trả lời; câu sai điều kiện (giờ, vé, cảnh báo) trên bộ 32 câu an toàn: **0**;
   - lỗi trích dẫn (người dùng nhận lỗi 500): **0 / 489** lần sinh, đếm trên mọi lượt đo đã lưu;
   - so với chatbot đầu Phase 8.2 (5 đoạn) trên 33 câu kín: điểm Đủ **+0,82**, Đúng **+0,70** (thang 1–5), 0 câu tụt (28/10);
-  - **tới chữ trả lời đầu tiên trên trình duyệt (01/11, 38 câu, streaming):** trung vị **1,23 s**, p95 **2,61 s** (chậm nhất 4,74 s); câu từ chối 1,48 / 2,93 s; tới đủ câu 1,73 / 3,81 s;
+  - **tới chữ trả lời đầu tiên, sau B1 (03/11, 10 câu tự viết, đường stream):** cả 10 trung vị **3,05 s** / p95 **5,64 s**; câu về Huế **3,57 / 6,57 s**; trò chuyện 2,63 / 2,82 s; ngoài phạm vi 1,82 / 1,93 s; khẩn cấp 1,63 s — mẫu nhỏ;
+    trước B1 (01/11, 38 câu, trình duyệt): 1,23 / 2,61 s; phần thêm là lần gọi phân loại (~1,5 s, chủ yếu chờ mạng / OpenAI — model chỉ suy luận ~14 token);
   - tiền: **≈ 0,00025 USD / câu** theo giá đủ (lượt đo 01/11: TB 0,000247); công cụ đo **tính giá đủ từ 01/11** (trước ghi thiếu ≈ 20 %, số USD cũ trong báo cáo đếm giá phẳng).
   - Điểm Đúng / Đủ / Trúng ý trung bình tuyệt đối chỉ có ở mốc cũ 7B (5 đoạn, 24/10): **4,43 / 4,28 / 4,45**; các lượt đo sau báo chênh theo cặp, không báo lại điểm tuyệt đối.
-- **So với yêu cầu** (bạn chốt 28/10, đổi thước 31/10 D2: sàn trung vị ≤ 3 s / p95 ≤ 5 s **tới chữ trả lời đầu tiên trên trình duyệt**; ≤ 0,0005 USD / câu): **đạt** cả sàn lẫn mục tiêu báo cáo 1,5 / 3 s
-  (01/11; một lần đo, 38 câu); tiền **đạt**. Bạn chọn giữ sàn 3 / 5 s (không nâng — mức dư nhỏ, hôm đo model gần như không suy luận trước) và giữ cách hiện chữ dần dù lợi chỉ ~0,44 s.
+- **So với yêu cầu** (bạn chốt 28/10, đổi thước 31/10 D2: sàn trung vị ≤ 3 s / p95 ≤ 5 s **tới chữ trả lời đầu tiên trên trình duyệt**; ≤ 0,0005 USD / câu): **từ B1 (03/11) vượt sàn** ở câu về Huế (3,57 / 6,57 s) —
+  spec Phase 9 để tốc độ **chỉ theo dõi** (chất lượng trước), bạn để mặc định 03/11: merge, xét tối ưu sau B2; trước B1 (01/11): đạt cả sàn lẫn mục tiêu 1,5 / 3 s; tiền **đạt** (định tuyến thêm ~0,000075 USD / câu). Bạn chọn giữ sàn 3 / 5 s (không nâng — mức dư nhỏ, hôm đo model gần như không suy luận trước) và giữ cách hiện chữ dần dù lợi chỉ ~0,44 s.
   Trước streaming (cả câu qua API, 27/10): 3,1 / 6,0 s — chưa đạt.
 - **Giới hạn chính:** từ chối nhầm vẫn là chỗ mất điểm lớn nhất (gốc ở khâu tìm: đoạn có đáp án không vào 10 đoạn); câu hỏi theo ngày tương đối
   ("tối nay", "tuần này") bị từ chối dù kho có lịch (6 / 14 câu) — an toàn nhưng chưa trả lời được ⇒ Phase 9; bảng giá và câu tổng hợp nhiều nguồn còn yếu;
   10 đoạn được chọn bằng người chấm Claude; mốc người B0 (01/11) chỉ tham khảo — phần lớn cặp như nhau, 3 cặp bản 5 đoạn từ chối nhầm còn bản 10 trả lời được ⇒ bạn giữ 10.
-- **Bạn cần quyết:** không có việc gấp ở khâu này.
+- **Bạn cần quyết:** không có việc gấp; tốc độ chữ đầu sẽ đưa lại khi B2 xong (mục 6).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -82,13 +84,18 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Thí nghiệm chọn / bỏ phương án có luật ghi trước khi chạy và người khác kiểm lại; các lượt **đo hiện trạng** (tốc độ, giá, token) chỉ đo — không có luật giữ / bỏ ghi trước.
 
-### 02/11/2026 tối — Phase 9 (B0 vào chatbot; B1 đo xong phần lớn, **chưa vào chatbot**)
+### 03/11/2026 — Phase 9 B1 vào chatbot (merge `f01c032`)
+- **B131 hoàn tất + review C134** (`ready`, 0 blocker / 0 major): bộ an toàn 32 câu — lần gọi trả lời giống từng byte bản trước ⇒ dùng lại kết quả 01/11; sửa log khi người dùng ngắt giữa chừng (đóng lõi trước rồi mới ghi, +1 test); bật mặc định định tuyến + dòng nhắc;
+  cổng ổn định 2 ca ngắt thật; chữ đầu 10 câu (mục 1). 0,0029 + 0,0006 USD · **giữ** · `b129_b1_implementation.md` §4b, `b129_review.md` "Vòng cuối".
+- Lưu ý đo (C134 m-3): `evaluation generate` không truyền `--flags` nay chạy theo `settings.yaml` (có định tuyến) ⇒ muốn đo đường RAG 1–8 thuần phải truyền `--flags` rỗng.
+
+### 02/11/2026 tối — Phase 9 (B0 vào chatbot; B1 đo xong phần lớn — vào chatbot 03/11)
 - **B0** (merge `1c10111`): một lõi `assistant.py`, `tim_kho`, log USD + ms mỗi lần gọi model · câu trả lời không đổi (giống byte) · **giữ** · `report_agent/2026-11-02_phase_9_code/b127_*`.
 - **Câu khẩn cấp, chatbot hiện tại** (10 câu tự viết, 0,0025 USD): 10 / 10 chỉ từ chối, không chỉ số gọi · **bạn: lỗi** ⇒ B1 trả câu soạn sẵn 113 / 114 / 115 / 112 (số kiểm nguồn chính thức) · `c122_khan_cap_buoc0.md`.
 - **B1, nhánh `p9-b1`** (luật ghi trước, phần kín do C giữ; ≈ 0,142 USD): **định tuyến** 4 tuyến đúng 253 / 253 đã thấy + 20 / 20 kín ⇒ **bật**; dòng nhắc "có thể đã thay đổi" (vé / nơi / lễ hội) ⇒ **bật**;
   **luật từ khoá khẩn cấp**: đã thấy 14 / 14, kín **0 / 8 + chặn nhầm 2 / 8** ⇒ **bỏ** (câu khẩn cấp vẫn ra câu soạn sẵn nhờ định tuyến bắt 10 / 10 kín; thêm 1 lần gọi phân loại);
   **dòng ngày hôm nay**: từ chối nhầm 5,0 ⇒ 4,5 (cần giảm ≥ 3) ⇒ **bỏ** (gốc ở tầng tìm / model, như 30/10). Hồi quy 176 câu: sàn đạt, từ chối nhầm 12 = 12; Đủ 6 câu tụt (ngưỡng 5) nhưng lần gọi trả lời giống byte
-  bản cũ ⇒ coi là nhiễu, dùng lại số cũ (spec §4). **Tốc độ:** định tuyến thêm ~1,7 s (p95 2,7 s) mỗi câu ⇒ chữ đầu có thể vượt 5 s — chỉ theo dõi (chất lượng trước). Merge phiên sau.
+  bản cũ ⇒ coi là nhiễu, dùng lại số cũ (spec §4). **Tốc độ:** định tuyến thêm ~1,7 s (p95 2,7 s) mỗi câu ⇒ chữ đầu có thể vượt 5 s — chỉ theo dõi (chất lượng trước). Merge 03/11.
   `b129_b1_implementation.md`, `b129_review.md`, `c131_kin_b1.md`.
 
 ### 30/10/2026
@@ -167,7 +174,8 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 | Prompt "thiếu bằng chứng thì từ chối cả câu" | **còn dùng** | `full_corpus_prompt.py:14` |
 | Kiểm trích dẫn nhận cả `[n]` và `[Nguồn n]` | **còn dùng** (từ 25/10) | `citations.py:11–16`; `chat.py:177–188` |
 | Ghi `chat_metrics` mỗi câu, không ghi nội dung | **còn dùng** (từ 27/10); **từ B0 02/11 ghi thêm** `route`, `usd`, `n_llm_calls`, `llm_calls`, `tools` (trước đó không ghi USD) | `chat.py:38–45,216`; `generator_openai_full_corpus.py` `CallLog` |
-| Câu bị ngắt giữa stream, hoặc `/api/chat` lỗi sau khi model đã trả lời: `usd` ghi rỗng (có tốn tiền thật) | **giới hạn đã biết** (C128 m-1) — sửa ở B1 | `b127_review.md` |
+| Câu bị ngắt giữa stream, hoặc `/api/chat` lỗi sau khi model đã trả lời: `usd` ghi rỗng (có tốn tiền thật) | **sửa ở B1** (03/11): log ghi sau khi đóng lõi, có `llm_calls`; lần gọi bị huỷ giữa chừng vẫn không có usage ⇒ `usd` lượt đó hơi thấp hơn thật | `b127_review.md`, `b129_review.md` |
+| Định tuyến 4 tuyến trước khi trả lời; dòng nhắc "có thể đã thay đổi" | **còn dùng** (từ 03/11, merge `f01c032`); luật từ khoá khẩn cấp + dòng ngày hôm nay: code giữ, **tắt** | `backend/llm/assistant.py` `_pick_route`; `settings.yaml` khối `assistant:` |
 | Từ chối khởi động khi kho lệch chỉ mục | **còn dùng** | `retrieval/full_corpus.py:383–385` |
 | Chỉ mục đang dùng | **còn dùng**: `hue_full_corpus_7a2_e5_small_384`, 8.424 đoạn (dựng lại 30/10), Qdrant cổng 6335 | `Project_Status.md` §4; `settings.yaml:38` |
 | `cost_usd` của công cụ đo | **Đã sửa 01/11** — giá đủ (ghi đệm 0,125 · đọc đệm 0,01 · thường 0,10 · ra 0,50 USD / 1M); `chat_metrics` ghi token đệm | `backend/evaluation/full_corpus_eval.py` `cost_usd`; review `b108_cost_usd_review.md` |
@@ -182,7 +190,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 - **Đóng gói Phase 1–8 — xong:** lượt đo cuối mọi sàn đạt; B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). **Phase 8 bạn đóng 14:29 01/11/2026.**
 - **Từ nhận xét B0:** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9 — spec đang viết); `[n]` chen trong câu khó đọc ⇒ **xong ở giao diện mới 02/11** (số nhỏ bấm được, vẫn giữ `[n]` ở tầng kiểm).
 - **Giao diện mới — giới hạn:** chỉ làm cho laptop (điện thoại không vỡ, chưa tối ưu); hộp thoại cho Phase 9 phải tự viết (Radix Dialog vi phạm CSP); ca "rút lại" / luồng đứt giữa chừng vẫn kiểm bằng luồng tự dựng.
-- **Phase 9:** B0 xong; **B1 chờ merge** (phiên sau: kiểm 32 câu an toàn giống byte, sửa 2 lỗi nhỏ log khi ngắt, review phần cuối, cổng ổn định); dòng ngày hôm nay thử ở B1 **không đạt**; tách câu hỏi hai ý là ứng viên; tắt ghi đệm prompt (−13 % tiền / câu) để sau.
+- **Phase 9:** B0, **B1 xong** (merge `f01c032` 03/11); **B2** (viết câu tìm kho cho câu nhiều nguồn / so sánh) plan đang review; tốc độ chữ đầu xét sau B2; dòng ngày hôm nay thử ở B1 **không đạt**; tách câu hỏi hai ý là ứng viên; tắt ghi đệm prompt (−13 % tiền / câu) để sau.
 - **Còn mở, không gấp:** câu trả lời quá gọn (cần thêm câu tự nhiên để đo); bảng giá và câu nhiều nguồn (gốc ở khâu tìm); sai về chữ (tên, sự kiện) chưa có cách đo rẻ.
 - Hướng đã gác (chỉ mở lại khi có ý mới đã kiểm trước): trả lời phần có căn cứ; trả lời không suy luận; luật kiểm sau sinh; model chọn 10 / 30 đoạn.
 
