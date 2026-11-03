@@ -29,7 +29,7 @@ export function createSseParser(onEvent) {
   };
 }
 
-// `onEvent` nhận `status` / `delta` / `sources`. Mọi lỗi khác ⇒ ném `StreamError` mang lời tiếng Việt cho người dùng: lời của server (JSON lỗi
+// `onEvent` nhận `status` / `delta` / `sources` / `notice` (B1 H4c). Mọi lỗi khác ⇒ ném `StreamError` mang lời tiếng Việt cho người dùng: lời của server (JSON lỗi
 // trước luồng, sự kiện `error`) giữ nguyên; mạng / thân lỗi không phải JSON / luồng hỏng hoặc đứt ⇒ câu cố định.
 // `signal` (AbortController) huỷ `fetch` ⇒ server thấy ngắt kết nối, dừng model (yêu cầu 17); khi đó hàm ném `AbortError`.
 export async function streamAnswer(query, { signal, onEvent }) {

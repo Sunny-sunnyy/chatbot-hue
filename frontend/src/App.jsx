@@ -4,11 +4,12 @@ import { streamAnswer } from "./stream.js";
 
 const STATUS_TEXT = {
   searching: "Đang tìm thông tin…",
+  routing: "Đang hiểu câu hỏi…",  // Phase 9 B1: lần gọi định tuyến (chữ cho người dùng — A chọn khi review)
   searched: "Đã tìm thông tin, đang chuẩn bị câu trả lời…",
   generating: "Đang viết câu trả lời…",
 };
 
-// phase: idle (chưa hỏi) · searching / searched / generating (đang chờ — khoá ô hỏi, yêu cầu 12) · done · error
+// phase: idle (chưa hỏi) · searching / routing / searched / generating (đang chờ — khoá ô hỏi, yêu cầu 12) · done · error
 export default function App() {
   const [phase, setPhase] = useState("idle");
   const [question, setQuestion] = useState("");
@@ -16,12 +17,13 @@ export default function App() {
   const [text, setText] = useState("");
   const [sources, setSources] = useState(null);  // null = chưa có sự kiện `sources`; [] = từ chối (kho không có nguồn)
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");  // B1 H4c: dòng "có thể đã thay đổi" (sự kiện `notice`)
   const [activeSource, setActiveSource] = useState(null);
   const bufferRef = useRef("");
   const lastSeqRef = useRef(0);
   const frameRef = useRef(0);
   const abortRef = useRef(null);
-  const pending = phase === "searching" || phase === "searched" || phase === "generating";
+  const pending = phase === "searching" || phase === "routing" || phase === "searched" || phase === "generating";
 
   // Rời trang / đóng tab ⇒ huỷ `fetch` để server dừng model (yêu cầu 17).
   useEffect(() => {
@@ -40,6 +42,7 @@ export default function App() {
     lastSeqRef.current = 0;
     setText("");
     setSources(null);
+    setNotice("");
     setActiveSource(null);
   }
 
@@ -58,7 +61,8 @@ export default function App() {
         signal: controller.signal,
         onEvent(name, data) {
           if (name === "status") {
-            setPhase(data.stage === "generating" ? "generating" : "searched");
+            // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" như trước (B1: thêm `routing`, review C129 m-3)
+            setPhase(data.stage in STATUS_TEXT ? data.stage : "searched");
           } else if (name === "delta") {
             // Chữ hiện dần: gom mảnh vào buffer, vẽ lại CẢ buffer tối đa một lần mỗi khung hình (yêu cầu 8); chỉ nối mảnh có `seq` mới (yêu cầu 4).
             if (data.seq <= lastSeqRef.current) return;
@@ -76,6 +80,8 @@ export default function App() {
             frameRef.current = 0;
             setText(bufferRef.current);
             setSources(data);
+          } else if (name === "notice") {
+            setNotice(data.text);
           }
         },
       });
@@ -156,6 +162,7 @@ export default function App() {
                 dangerouslySetInnerHTML={{ __html: answerHtml }}
               />
             )}
+            {phase !== "error" && notice && <p className="mt-2 text-sm text-muted">{notice}</p>}
             {phase === "error" && (
               <div className="rounded-md bg-error-soft p-4" role="alert">
                 <p className="text-error">{error}</p>

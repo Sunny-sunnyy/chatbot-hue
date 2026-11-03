@@ -12,6 +12,7 @@ class PackedSource:
     title: str
     heading_path: tuple[str, ...]
     excerpts: tuple[str, ...]
+    source: str = ""  # đường dẫn file của đoạn (payload `source`) — chỉ code dùng (H4c, Phase 9 B1 D8); không vào chữ ngữ cảnh
 
 
 @dataclass(frozen=True)
@@ -37,8 +38,8 @@ class FullCorpusContextBuilder:
         self._margin = safety_margin
         self._max_documents = max_documents
 
-    def _token_count(self, query: str, context: str) -> int:
-        messages = build_answer_messages(query, context)
+    def _token_count(self, query: str, context: str, today: str | None = None) -> int:
+        messages = build_answer_messages(query, context, today)
         num_tokens = 3
         for message in messages:
             num_tokens += 3
@@ -65,6 +66,7 @@ class FullCorpusContextBuilder:
             title=str(metadata.get("title") or ""),
             heading_path=tuple(str(item) for item in heading),
             excerpts=excerpts,
+            source=str(metadata.get("source") or ""),
         )
 
     @staticmethod
@@ -79,11 +81,12 @@ class FullCorpusContextBuilder:
         )
 
     def build(
-        self, query: str, documents: Sequence[RetrievedDocument]
+        self, query: str, documents: Sequence[RetrievedDocument], today: str | None = None
     ) -> PackedContext:
+        """`today`: dòng ngày sẽ đứng đầu tin nhắn gửi model (B1 D7) — đếm cùng một chuỗi với chuỗi gửi đi."""
         blocks: list[str] = []
         sources: list[PackedSource] = []
-        input_tokens = self._token_count(query, "")
+        input_tokens = self._token_count(query, "", today)
         for document in documents:
             if len(sources) >= self._max_documents:
                 break
@@ -91,7 +94,7 @@ class FullCorpusContextBuilder:
             if source is None:
                 continue
             candidate_text = "\n\n".join([*blocks, self._block(source)])
-            candidate_tokens = self._token_count(query, candidate_text)
+            candidate_tokens = self._token_count(query, candidate_text, today)
             fits = candidate_tokens + self._reserved + self._margin <= self._context_limit
             if not fits:
                 if not sources:

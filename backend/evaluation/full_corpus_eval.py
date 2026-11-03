@@ -27,9 +27,9 @@ from agents import Agent, ModelSettings, RunConfig, Runner
 from pydantic import BaseModel, ConfigDict, Field
 
 from core.settings_loader import load_settings
-from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
+from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator, input_cache_tokens
-from llm.assistant import AnswerTrace, answer_query, turn_usd
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, turn_usd
 from llm.pricing import cost_usd  # giá dời sang `llm.pricing` (Phase 9 B0); `from evaluation.full_corpus_eval import cost_usd` cũ vẫn chạy
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
@@ -158,7 +158,7 @@ def score_retrieval(keywords: list[str], texts: list[str], k: int = RETRIEVAL_K)
 
 def is_refusal(answer: str) -> bool:
     # Cùng điều kiện nhánh fallback của `llm/citations.py`.
-    return answer.strip() == INSUFFICIENT_ANSWER
+    return answer.strip() in REFUSAL_ANSWERS  # câu kho từ chối hoặc câu ngoài phạm vi (B1 D5)
 
 
 def row_cost_usd(row: dict) -> float:
@@ -315,8 +315,9 @@ def run_retrieval_eval(cases: list[dict], treatment: str, shuffle_seed: int | No
 
 # ---------- Sinh câu trả lời (paid) ----------
 
-async def answer_case(case: dict, service, context_builder, generator) -> dict:
-    """Một case qua lõi chung với `api/routes/chat.py` (`llm.assistant.answer_query`): retrieval → context → sinh → citation."""
+async def answer_case(case: dict, service, context_builder, generator, flags: AssistantFlags | None = None) -> dict:
+    """Một case qua lõi chung với `api/routes/chat.py` (`llm.assistant.answer_turn`): luật khẩn cấp / định tuyến → tìm → ngữ cảnh → sinh → citation.
+    `flags` None ⇒ tắt cả (như B0)."""
     row = {
         "case_index": case["case_index"],
         "category": case["category"],
@@ -331,6 +332,10 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
         "cached_tokens": None,
         "latency_ms": None,
         "response_id": None,
+        "route_error": None,
+        "emergency_by": None,
+        "notice": None,
+        "today": None,
         "route": None,
         "usd": None,
         "llm_calls": None,
@@ -340,7 +345,7 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
     question = case["question"].strip()
     trace = AnswerTrace()
     try:
-        await answer_query(question, service, context_builder, generator, trace)  # không truyền recorder (spec streaming §4.8)
+        await answer_turn(question, service, context_builder, generator, trace, flags or AssistantFlags())  # không truyền recorder (spec streaming §4.8)
         # Chữ gốc, chưa chuẩn hóa `[Nguồn n]` (judge chấm đúng chữ model viết). Citation hỏng: API trả 500; ở đây vẫn giữ text để chấm
         # (A chốt 2026-10-24). Không có nguồn ⇒ chữ là câu từ chối chuẩn, không gọi model (như API).
         row["answer"] = trace.answer
@@ -355,7 +360,8 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
     if trace.packed is not None:
         row["context_sources"] = len(trace.packed.sources)
     # log Phase 9 (spec §3 "Log + vết"): cùng các trường như `chat_metrics`
-    row.update(route=trace.route, usd=turn_usd(trace), llm_calls=trace.llm_calls, tools=trace.tools)
+    row.update(route=trace.route, usd=turn_usd(trace), llm_calls=trace.llm_calls, tools=trace.tools,
+               route_error=trace.route_error, emergency_by=trace.emergency_by, notice=trace.notice, today=trace.today)
     if trace.generated is not None:
         row.update(
             input_tokens=trace.generated.input_tokens,
@@ -368,8 +374,12 @@ async def answer_case(case: dict, service, context_builder, generator) -> dict:
     return row
 
 
-async def run_generation(cases: list[dict], max_context_documents: int | None = None) -> list[dict]:
+async def run_generation(cases: list[dict], max_context_documents: int | None = None, flags_on: list[str] | None = None) -> list[dict]:
+    """`flags_on`: tên cờ B1 bật cho lượt đo này (ghi đè `settings.yaml`); None ⇒ theo `settings.yaml`."""
     settings = load_settings(validate_private_paths=False)
+    flags = AssistantFlags.from_settings(settings)
+    if flags_on is not None:
+        flags = AssistantFlags(**{name: name in flags_on for name in AssistantFlags.__dataclass_fields__})
     service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
     context_builder = build_context_builder(settings, max_context_documents)
     generator = OpenAIFullCorpusGenerator.from_environment(settings)
@@ -377,7 +387,7 @@ async def run_generation(cases: list[dict], max_context_documents: int | None = 
 
     async def one(case: dict) -> dict:
         async with semaphore:
-            return await answer_case(case, service, context_builder, generator)
+            return await answer_case(case, service, context_builder, generator, flags)
 
     try:
         return list(await asyncio.gather(*(one(case) for case in cases)))
@@ -823,6 +833,8 @@ def main(argv: list[str] | None = None) -> int:
     generate.add_argument("--out", required=True)
     generate.add_argument("--max-context-documents", type=int,
                           help="chỉ để thăm dò; mặc định theo settings.yaml")
+    generate.add_argument("--flags", nargs="*", choices=list(AssistantFlags.__dataclass_fields__),
+                          help="cờ B1 bật cho lượt này (không truyền ⇒ theo settings.yaml; truyền rỗng ⇒ tắt cả)")
 
     judge = commands.add_parser("judge-luna", help="judge phụ gpt-6-luna (paid)")
     judge.add_argument("--answers", required=True)
@@ -879,7 +891,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(summarize_retrieval(rows), ensure_ascii=False, indent=2))
     elif args.command == "generate":
         selected = select_cases(load_golden_cases(args.golden), args.cases)
-        rows = asyncio.run(run_generation(selected, args.max_context_documents))
+        rows = asyncio.run(run_generation(selected, args.max_context_documents, args.flags))
         write_jsonl(_path(args.out), rows)
         print(json.dumps(summarize_answers(rows, None), ensure_ascii=False, indent=2))
     elif args.command == "judge-luna":

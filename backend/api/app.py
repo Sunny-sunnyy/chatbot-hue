@@ -18,6 +18,7 @@ from core.schema import (
 )
 from core.settings_loader import load_settings
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+from llm.assistant import AssistantFlags
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -55,6 +56,7 @@ def create_app(settings=None):
 
         setup_logging()
         logger.info("Starting Hue Full-Corpus RAG API")
+        app.state.assistant_flags = AssistantFlags.from_settings(settings)  # Phase 9 B1 D9
 
         app.state.retrieval_ready = False
         app.state.retrieval_service = None
