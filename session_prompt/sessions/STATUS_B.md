@@ -3,6 +3,7 @@
 Terminal phiên 03/11: `hue-rag-52` (A = `hue-rag-5e`, C = `hue-rag-d8`) · Agent: Claude Opus 5.5 · Vai: thực thi. Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B. Tên terminal đổi mỗi lần mở ⇒ `ListAgents`.
 Quyền phiên (User qua A: việc A giao = "làm đi", B push nhánh riêng) **hết hạn cuối phiên** — hỏi lại phiên sau.
+**Phiên chiều 03/11 (mở 18:02 03/11/2026):** terminal B `hue-rag-32`; peer `hue-rag-40`, `hue-rag-9e` (chưa rõ ai là A). User: B làm trực tiếp với A, việc A giao = "làm đi". Worktree `/tmp/b_p9b3` mất (prunable) ⇒ tạo lại khi được giao.
 
 ## PHIÊN SAU — B3 (B136 dở; report `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md`)
 Worktree **`/tmp/b_p9b3` giữ** (nhánh `p9-b3`, symlink `data/` + `knowledge-base-hue/`). Lệnh nền: `cd /tmp/b_p9b3/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag [--env-file /home/minhhieu/hue_rag/.env] …`.
@@ -14,8 +15,14 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 5. Commit report + C review nhánh `10ec9a2..<cuối>` ⇒ A merge.
 
 ## Đang khai báo sửa
+- **B137 (A giao 18:04 03/11/2026 ghi nhận): bước 8 giao diện Bản 1** — worktree `/tmp/b_p9b3` (`p9-b3`, tạo lại): `frontend/src/App.jsx`, `frontend/src/index.css`, `frontend/src/stream.js`, `frontend/src/markdown.js`, `frontend/index.html`, (nếu cần) `backend/tests/test_static_ui.py`. Không sửa backend / lời dặn / `settings.yaml`. Ảnh + script Playwright: `data/phase_9/b3/giao_dien/` (private).
 - nhánh `p9-b3` (`/tmp/b_p9b3`): `backend/api/conversations.py` (mới), `backend/api/app.py`, `backend/api/routes/chat.py`, `backend/llm/assistant.py`, `backend/llm/generator_openai_full_corpus.py`, `backend/llm/full_corpus_prompt.py`, `backend/retrieval/full_corpus_context.py`, `backend/evaluation/full_corpus_eval.py`, `backend/config/settings.yaml`, `backend/tests/test_b3_memory.py` (mới), `backend/tests/test_b2_tool_loop.py`; (bước 8) `frontend/`.
 - `data/phase_9/b3/` (private); `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md` (working tree `main`, chưa commit).
+
+## Phiên tối 03/11 (18:14 03/11/2026)
+- **B137 bước 8 giao diện Bản 1: xong** — `p9-b3` `291b459` (chỉ `frontend/src/`, đã push); Playwright server thật lần 2 đạt (CSP 0, ngoài 0, D9 (b) (c), bấm nguồn lượt cũ, khẩn cấp, lỗi + Thử lại, cuộc mới, điện thoại, giảm chuyển động) — report §2b, §4b; ảnh `data/phase_9/b3/giao_dien/anh/`. Tiền 0,0035.
+- Số kín C146 đã nhận + ghi report §5b: mọi luật đạt **trừ Q5 ngoài kho chờ A quyết** (C: lỗi nhãn). Tiếp: A quyết Q5 ⇒ Q10 cổng (nhớ bật trên bản sao settings, cả giao diện) ⇒ bật `nho_hoi_thoai` ⇒ C review `10ec9a2..` ⇒ A merge.
+- Report `b136_b3_implementation.md` sửa ở working tree `main` (chưa commit — A commit).
 
 ## Phiên 03/11 đã xong
 | Việc | Kết quả |
@@ -27,7 +34,7 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 | B136 code B3 (dở) | Q1 PASS · Q2 2 vòng ⇒ D6 hẹp giữ (từ chối 4, P0_sai 0) · Q3 6 / 6 · Q4 +0,65 [+0,15; +1,25] · Q5 0 / 0 · Q6 tụt 0 · Q8 max 167 < 512 · khoá `46008ed` |
 
 ## Tiền paid (B, 03/11, giá đủ)
-B131 0,0029 · B134 (B2) ≈ 0,255 (gồm cổng Q9) · B136 (B3) ≈ 0,255 ⇒ **≈ 0,513 USD**. Judge: quota Claude. Không gọi `agy`.
+B131 0,0029 · B134 (B2) ≈ 0,255 (gồm cổng Q9) · B136 (B3) ≈ 0,255 ⇒ **≈ 0,513 USD** (phiên trưa). Phiên tối: B137 0,0035. Judge: quota Claude. Không gọi `agy`.
 
 ## Bẫy đã gặp — đọc trước khi làm
 - (03/11) **Brief judge thiếu "ghi item / case_index"** ⇒ file điểm không ghép được (`KeyError`); phải ghép lại theo thứ tự dòng. Mỗi brief judge ghi rõ khoá đầu ra gồm id mục, dù rubric không có.

@@ -1,3 +1,21 @@
+# STATUS C — MỞ PHIÊN CHIỀU 03/11 (17:59 03/11/2026 `date`)
+
+- Terminal C: `hue-rag-40`. B = `hue-rag-32` (B tự báo) ⇒ A = `hue-rag-9e` (A xác nhận). Kênh: trực tiếp.
+- Kiểm nhanh (chỉ đọc): `main` `115d5de`; working tree chỉ 3 file docs đổi chưa commit (CURRENT_HANDOFF, STATUS_A, STATUS_C — sửa của A sau kết phiên 13:31); hooksPath `.githooks`; Qdrant 1 collection, 8.424 point (khớp); `frontend/dist/` có;
+  `p9-b3` = `origin/p9-b3` = `46008ed` (= commit khoá trong `b136_b3_implementation.md` §5, khoá 13:17); worktree `/tmp/b_p9b3` "prunable" (đã lường); 4 worktree AGY cũ còn.
+- Việc dự kiến của C (handoff mục 2a): chạy + chấm phần kín B3 (15 chuỗi `chuoi_sealed.jsonl`, `--khong-in-chu`, đúng `46008ed`). Có phí ⇒ chờ A giao + quyền phiên mới. Chưa sửa file nào ngoài file này; 0 USD.
+- **User (18:02 03/11/2026, ghi bằng `date`):** C làm việc trực tiếp với A; việc A giao = User nói "làm đi". Chờ A giao việc.
+
+## C146 — chạy + chấm phần kín B3 (A giao, tin A = "làm đi"; bắt đầu 18:03 03/11/2026)
+- Plan B3 bản 2 `cd099ec0a00e` §4 (Q3–Q6, kết quả âm); commit khoá `46008ed`; trần chung B3 0,40 (đã ≈ 0,255; > 0,37 ⇒ báo A trước).
+- **File sẽ ghi (khai báo):** worktree `/tmp/c_p9b3` (detach `46008ed`, symlink `data/` + `knowledge-base-hue/`, chỉ chạy, không sửa code); kết quả private `data/phase_9/b3/chuoi_sealed_c146/` (+ `judge/`, `an_toan_dk/`); script tạm `/tmp/c146/` (xoá khi xong); dòng C146 trong `CURRENT_HANDOFF.md`; và file này.
+  Không ghi nội dung câu kín vào file tracked; terminal dùng `--khong-in-chu`.
+- **XONG (18:12 03/11/2026):** tóm tắt private `data/phase_9/b3/chuoi_sealed_c146/KET_QUA_C146.md` `16afdf317df0` (+ `nho/doc_lap/tran.jsonl`, `may.json`, `analyze.json`, `q4_10.json`, `judge/`, `an_toan_dk/`, `tools/` 2 script). 0 lỗi; **0,032185 USD** ⇒ B3 ≈ 0,287 / 0,40.
+  Q3 4 / 4 (cộng 10 / 10) · Q4 kín 10 lượt +0,60 [0,00; +1,40] 2 / 8 / 0 (không ngược chiều) · Q5 điều kiện 0 đảo (2 judge) · **Q5 ngoài kho máy 1 / 2 bị trả lời (K-N2)** — kiểm: nhãn bộ đo sai (kho có dòng bác tiền đề sai của câu hỏi), A quyết · Q6 tụt 0 / 2, câu tìm 0 / 4 · Q8 max 178 < 512.
+  Judge 4 sub-agent mới + 1 sub-agent kiểm K-N2 (C tự kiểm lại 3 ý). Worktree `/tmp/c_p9b3` + `/tmp/c146` đã gỡ / xoá. Bẫy: script tạm lỗi lọc dòng (`r.strip()` sau `json.loads`) — 0 USD, sửa ngay; `analyze` chỉ tính Q4 trên 2 loại hỏi tiếp ⇒ Q4 quyết tính lại trên mọi lượt có golden (kiểm bằng số đã thấy của B).
+
+- **18:15 03/11/2026:** B báo đã ghi số kín vào b136 §5b; bước 8 giao diện ở `p9-b3` `291b459` (Q10 + bật cờ sau). C chờ A: quyết Q5 K-N2 + có review sớm `10ec9a2..291b459` ngay không.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
 
 **Trạng thái:** C không còn việc đang chạy, không server / tiến trình nền, không thư mục tạm (`/tmp/c13*`, `/tmp/c14*` đã xoá). C không commit; A commit.
@@ -6,7 +24,7 @@ Terminal phiên 03/11: C `hue-rag-d8`, A `hue-rag-5e`, B `hue-rag-52` (đổi m�
 **Việc dở cho phiên sau (C):**
 1. **Phần kín B3** — khi B ghi dòng "Khoá" (sha lời dặn + `settings.yaml` + commit) vào report B136: C **chạy và chấm** 15 chuỗi `data/phase_9/bo_do_b3/chuoi_sealed.jsonl` bằng harness `chuoi` của B ở đúng commit khoá (`--khong-in-chu`), judge = sub-agent do C gửi (cùng prompt / thủ tục phần đã thấy; thước an toàn 2 judge cho `hoi_tiep_dieu_kien`). Gửi B / A **chỉ số đếm + sha** (Q3 nhớ tên, Q4 hỏi tiếp — bên so = câu gõ thật không lịch sử (D11 (a)), Q5 sàn, Q6 đổi chủ đề). Plan B3 bản 2 `cd099ec0a00e`.
 2. **Review cuối `p9-b3`** `e69c293..<cuối>` vào `b136_review.md` (vòng sớm `8caaa610ab0f`: 2 minor m-1 test kiểm tên rỗng, m-2 lượt lỗi không gửi cookie) + bằng chứng có phí (Q2 208 + S20 × 3 + `P0_thieu`, Q8 token thật − builder mọi lượt, Q3–Q7, Q10 cổng).
-3. Chờ User: chọn 1 / 3 bản mẫu giao diện (`data/giao_dien_v2/mau/`), cách trình bày chi phí A / B (`data/phase_9/bo_do_b4/chi_phi_hai_cach.md`), đọc mẫu B3 / B4, duyệt bảng điểm B5 nháp (`data/phase_9/lich_trinh/diem_cho_user.md`, 3 câu cần quyết).
+3. *(A sửa 13:31 03/11/2026, C đã kết phiên)* User đã chọn: giao diện **Bản 1 — Huế hiện đại** (13:11) ⇒ B code ở bước 8 B3; chi phí **Cách A** (13:13) ⇒ plan B4. Còn chờ User: đọc mẫu B4 (`data/phase_9/bo_do_b4/mau_cho_user.md`); bảng điểm B5 nháp (`data/phase_9/lich_trinh/diem_cho_user.md`, 3 câu) trình lúc viết plan B5. Mẫu B3: User đã đọc ("ổn rồi", 03/11).
 
 **Việc xong 03/11 (C133–C145):**
 - C133 bộ đo B2 (`data/phase_9/b2/`, `cham --nhom dev`, ca dương / âm tổng hợp) · C134 review cuối B1 (ready) · C135 review plan B2 (3 vòng, ready bản 3) · C136 bộ đo B3 (40 chuỗi + 3 web, mẫu cho User) ·

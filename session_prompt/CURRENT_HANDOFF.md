@@ -47,6 +47,9 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
   Q10 cổng + bật `nho_hoi_thoai` **sau** khi C báo số kín. Đầu ra: phần bước 8 trong `b136_b3_implementation.md` + ảnh Playwright (private `data/`).
 - **C146 — chạy + chấm phần kín B3** (C, `hue-rag-40`): worktree riêng `/tmp/c_p9b3` `--detach 46008ed` (không đụng worktree của B), theo `STATUS_B.md` "PHIÊN SAU — B3" mục 1 + plan B3 bản 2 `cd099ec0a00e` (luật giữ / gỡ §4).
   Ước tiền trước khi chạy; trần chung B3 0,40 USD (đã ≈ 0,255), tổng sắp > 0,37 ⇒ báo A trước. Gửi B / A **chỉ số đếm Q3–Q6 + sha**. Xong ⇒ chờ B xong bước 8 + Q10 ⇒ review cả nhánh (C, mục 2 `STATUS_C.md`).
+  **C: XONG 18:12 03/11/2026** — số đếm gửi A + B; private `data/phase_9/b3/chuoi_sealed_c146/KET_QUA_C146.md` `16afdf317df0`; 0,0322 USD (B3 ≈ 0,287). **Chờ A quyết** Q5 K-N2 (máy đếm 1 lượt ngoài kho bị trả lời; C kiểm: nhãn bộ đo sai). Sau đó C chờ B ⇒ review nhánh.
+- **C146 xong** (C báo): Q3 kín 4 / 4 (cộng 10 / 10) · Q4 nhớ ↔ gõ không lịch sử +0,60 [0,00; +1,40] (luật kín TB ≥ 0 đạt) · Q5 điều kiện 0 đảo · Q6 tụt 0 · Q8 max 178 < 512 · 0,0322 USD ⇒ B3 ≈ 0,287 / 0,40. Q5 ngoài kho: 1 lượt máy đếm "trả lời", C kiểm ⇒ nhãn bộ đo sai (câu mang tiền đề sai mà kho có dòng bác) ⇒ **A quyết 18:15 03/11/2026: (1) loại khỏi sàn nếu (3) chạy lại có ngữ cảnh xác nhận trích dẫn trỏ đúng đoạn; sai ⇒ tính nghiêm, báo A**. Kết quả private `data/phase_9/b3/chuoi_sealed_c146/KET_QUA_C146.md` `16afdf317df0`.
+- **B5 — User chọn (18:15 03/11/2026):** Quyết 1 = gán 07h00–17h30 **chỉ cho điểm có tên trong file vé** (trích file vé + dòng "có thể đã thay đổi"; điểm khác "kho không ghi giờ"); Quyết 2 = 2 điểm phía nam xa giữ, **chỉ xếp khi ở ≥ 3 ngày hoặc người dùng hỏi** (Thác Nhị Hồ nhắc đóng mùa mưa lũ). Quyết 3 (thời lượng) đang hỏi.
 - Không có lượt đo latency trong lúc này (W31 không chặn). B báo A trước khi đo latency ở Q10.
 
 ## Session
@@ -59,6 +62,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 ## Quyền
 
+- **User 18:05 (A ghi nhận 18:05 03/11/2026):** "tiếp tục điều phối, phát triển, tự nghiên cứu, so sánh, tối ưu, đánh giá, viết báo cáo"; **kết phiên ~22:10** ⇒ A bắt đầu kết phiên ~21:40.
 - **Phiên tối 03/11 (User chọn "như trưa 03/11", A ghi nhận 18:01 03/11/2026):** A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD / phiên; B / C push nhánh riêng. Hết hạn cuối phiên.
 - **Phiên 03/11 — HẾT HẠN (kết phiên 13:26 03/11/2026)** (User: "quyền của A như 02/11" 08:46; "đồng ý cả phiên" A tự commit / push ~09:10): A tự điều phối + tự quyết trong kế hoạch; ≤ 1 USD / phiên; B / C push nhánh riêng. Tiền phiên 03/11 ≈ **0,514 USD** (B ≈ 0,513 · C ≈ 0,0006 · A 0). User: C làm trực tiếp với A, việc A giao = "làm đi".
 - **Phase 9 (spec duyệt, không hết hạn theo phiên):** trần **2,0 USD** cả Phase; Serper dùng luôn (User chấp nhận rủi ro điều khoản — spec §2, §7); gói npm giao diện như đã duyệt 02/11.
