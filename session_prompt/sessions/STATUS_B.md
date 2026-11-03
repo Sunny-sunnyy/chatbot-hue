@@ -15,6 +15,7 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 5. Commit report + C review nhánh `10ec9a2..<cuối>` ⇒ A merge.
 
 ## Đang khai báo sửa
+- **B138 (B3b, A giao): một câu vào `ASSISTANT_HISTORY_NOTE`** — worktree `/tmp/b_p9b3b` (nhánh `p9-b3b` từ `main` `a3dabba`): `backend/llm/full_corpus_prompt.py`, (test) `backend/tests/test_b3_memory.py`. Không mở `data/phase_9/bo_do_b3b/`. Dữ liệu: `data/phase_9/b3b/` (private). Worktree cũ `/tmp/b_p9b3` đã gỡ.
 - **B137 (A giao 18:04 03/11/2026 ghi nhận): bước 8 giao diện Bản 1** — worktree `/tmp/b_p9b3` (`p9-b3`, tạo lại): `frontend/src/App.jsx`, `frontend/src/index.css`, `frontend/src/stream.js`, `frontend/src/markdown.js`, `frontend/index.html`, (nếu cần) `backend/tests/test_static_ui.py`. Không sửa backend / lời dặn / `settings.yaml`. Ảnh + script Playwright: `data/phase_9/b3/giao_dien/` (private).
 - nhánh `p9-b3` (`/tmp/b_p9b3`): `backend/api/conversations.py` (mới), `backend/api/app.py`, `backend/api/routes/chat.py`, `backend/llm/assistant.py`, `backend/llm/generator_openai_full_corpus.py`, `backend/llm/full_corpus_prompt.py`, `backend/retrieval/full_corpus_context.py`, `backend/evaluation/full_corpus_eval.py`, `backend/config/settings.yaml`, `backend/tests/test_b3_memory.py` (mới), `backend/tests/test_b2_tool_loop.py`; (bước 8) `frontend/`.
 - `data/phase_9/b3/` (private); `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md` (working tree `main`, chưa commit).
@@ -39,6 +40,7 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 B131 0,0029 · B134 (B2) ≈ 0,255 (gồm cổng Q9) · B136 (B3) ≈ 0,255 ⇒ **≈ 0,513 USD** (phiên trưa). Phiên tối: B137 0,0035 + Q10 0,0047 = 0,0082. Judge: quota Claude. Không gọi `agy`.
 
 ## Bẫy đã gặp — đọc trước khi làm
+- (03/11 tối) `full_corpus_eval chuoi --out` là **đường dẫn file** `.jsonl` (không phải thư mục) ⇒ chạy hai bên cùng `--out <dir>` thì bên sau ghi đè bên trước (mất lượt nho dò, 0,0057 USD). Luôn `--out <thư mục>/<bên>.jsonl`.
 - (03/11) **Brief judge thiếu "ghi item / case_index"** ⇒ file điểm không ghép được (`KeyError`); phải ghép lại theo thứ tự dòng. Mỗi brief judge ghi rõ khoá đầu ra gồm id mục, dù rubric không có.
 - (03/11) Chấm thước an toàn với **ngữ cảnh = đáp án mẫu** (không phải ngữ cảnh thật) ⇒ ý đúng theo kho bị gắn "không có" ⇒ đọc kèm `grep_kb.sh` trước khi kết luận.
 - (03/11) Lời dặn "chỉ nêu điều có trong Bằng chứng; không thêm lời khuyên chung" làm model **dè dặt**: từ chối nhầm tăng, bỏ cả lời khuyên có trong nguồn, mở đầu cụt "Có." — judge an toàn không bắt các lỗi này ⇒ **đọc chữ câu bị đổi**, đếm trên mọi lần sinh. Chặn đúng loại lỗi (lưu ý an toàn không nguồn), không chặn chung.

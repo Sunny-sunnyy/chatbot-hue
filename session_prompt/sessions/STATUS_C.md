@@ -26,6 +26,17 @@
 
 - **m-3 đóng (18:27 03/11/2026):** report B136 `1c4459e8d80d` sửa đủ; review `ced8cb38e2c3` — dải `10ec9a2..b156f92` **ready_for_user_confirmation** (merge với cờ nhớ tắt). C rảnh, chờ A.
 
+
+## C148 — bộ chuỗi mới B3b (A giao, tin A = "làm đi"; bắt đầu 18:28 03/11/2026)
+- User chọn "sửa trên bộ mới rồi bật"; trần B3 0,50 (dừng > 0,47). Luật S1 / S2 + đã thấy (A ghi trước) chép vào README bộ.
+- **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b3b/` (`chuoi_moi.jsonl` — B không mở, `README.md`, `tools/` kiểm bộ + chạy có lưu ngữ cảnh + chấm); dòng C trong `CURRENT_HANDOFF.md`; và file này. Đọc kho chỉ `scripts/grep_kb.sh`. 0 USD tới khi chạy.
+- **Bộ XONG (18:37 03/11/2026):** `data/phase_9/bo_do_b3b/` — `chuoi_moi.jsonl` md5 `0f2360466366` (12 chuỗi / 25 lượt: 6 thiếu ⇒ 6 lượt `tu_choi`; 6 có trong kho cùng loại ý; 19 `tra_loi`), README `cc1b1a707a52` (luật S1 / S2 + đã thấy của A, nhãn người đọc a–e ghi trước, thủ tục, ước ≈ 0,03 USD), tools `kiem_bo.py` (OK; ca phá bắt đủ — lần đầu văng lỗi khi thiếu trường ⇒ sửa), `chay.py` (lưu ngữ cảnh, tuần tự, so câu hỏi — chưa chạy có phí), `cham.py` (dữ liệu giả: bắt đúng 1 S1 + 1 S2). 0 USD. Chờ B báo commit sửa ⇒ C chạy.
+
+- README B3b thêm điều kiện nhãn e (A) ⇒ `58dd7910eeb9`.
+
+## C149 — nháp plan B5 lịch trình (A giao, tin A = "làm đi"; bắt đầu 18:39 03/11/2026; B báo commit B3b ⇒ dừng, chạy bộ B3b trước)
+- **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` (mới); dòng C trong `CURRENT_HANDOFF.md`; và file này. 0 USD; chỉ đọc.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
 
 **Trạng thái:** C không còn việc đang chạy, không server / tiến trình nền, không thư mục tạm (`/tmp/c13*`, `/tmp/c14*` đã xoá). C không commit; A commit.

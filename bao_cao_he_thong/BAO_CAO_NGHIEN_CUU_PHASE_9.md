@@ -1,8 +1,34 @@
 # Báo cáo cho bạn: Nghiên cứu rộng trước Phase 9 (trợ lý du lịch - văn hoá)
 
-**Cập nhật lần cuối: 14:55 02/11/2026 — bản 3: hướng đổi thành trợ lý agent có công cụ (nghiên cứu thêm 02/11, spec duyệt) — xem mục 0 ngay dưới.** Trước: 16:13 01/11/2026 — bản 2: thêm kết quả ChatGPT (đã kiểm 9 ý), thử Huế TRIPO trên 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ.**
+**Cập nhật lần cuối: 18:40 03/11/2026 — bản 4: thêm mục 00 — nghiên cứu sản phẩm thật (15 trợ lý du lịch / di sản trên thế giới + thử Huế TRIPO vòng 2) ⇒ tính năng đáng học, xếp theo bậc Phase 9.** Trước: 14:55 02/11/2026 — bản 3: hướng đổi thành trợ lý agent có công cụ (nghiên cứu thêm 02/11, spec duyệt) — xem mục 0 ngay dưới.** Trước: 16:13 01/11/2026 — bản 2: thêm kết quả ChatGPT (đã kiểm 9 ý), thử Huế TRIPO trên 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ.**
 Trước: 15:28 01/11/2026 — bản 1 sơ bộ (Codex + kiểm tay; review B118 đạt). Người viết: A · Tra + kiểm: B (thực tế, người dùng, thử TRIPO), C (paper, repo, kiểm
 ChatGPT) · Review bản 2: B (B120). Tiền: 0 USD API cho nghiên cứu; thử hue_rag 11 câu ≈ 0,004 USD (~100 đồng).
+
+## 00. Cập nhật 03/11 tối — sản phẩm thật: có gì đáng học (bạn yêu cầu 03/11)
+
+**Đã làm (0 USD API):** (1) Codex quét **15 trợ lý AI du lịch / di sản đang chạy** (Tokyo EDO, HelloBC Canada, AI Tour Quý Châu, Pythia Hy Lạp, Chessie Baltimore, Booking, Tripadvisor, Google Canvas, Expedia, bảo tàng Dalí / National Gallery / Acropolis…) + khảo sát người dùng — Codex chỉ tìm 8 lượt, **0 trang mở thật** ⇒ A tự mở kiểm 3 nguồn chính (Tokyo EDO, HelloBC, khảo sát Beach.com): **đúng**; các nguồn khác là tự khai, chưa kiểm. (2) Agent con của A thử **Huế TRIPO vòng 2** bằng Playwright (11 lượt chat + các tính năng vòng 1 chưa thử; không đăng nhập, không gửi biểu mẫu); A kiểm 3 ý bằng file thô: đúng.
+
+**Điều thấy được (quan sát):**
+- TRIPO **hỏi tiếp không tìm lại kho** (gói tin `used_rag: false` ở 3 / 11 lượt): "còn lăng kia thì sao" hiểu đúng đối tượng nhưng nói "không có dữ liệu giá vé" — trong khi lượt sau chính nó liệt kê giá lăng đó. Chào "Xin chào" bị chặn là "không liên quan chủ đề".
+- TRIPO **có dữ liệu theo ngày trên trang** (lịch sự kiện tháng, thời tiết 23–31°C) nhưng chat trả lời "không có dữ liệu thời gian thực"; thời tiết ghi "trực tiếp" mà thật ra là bản tin ngày hôm trước.
+- Câu khẩn cấp (người thân ngã trong Đại Nội): có số 115 nhưng 7 bước sơ cứu tự sinh, không nguồn, ~32 s. Lịch trình / chi phí: **trả lời tạm rồi hỏi lại 2–3 ý bằng chữ** (vòng 1 không hỏi lại). Nguồn 0–4 link / câu, có link hỏng; chữ hiện sau **6–58 s**, không hiện dần.
+- Thế giới (nguồn đã kiểm): Tokyo EDO có **nút báo câu sai**, cảnh báo "không bảo đảm đúng / đủ", lịch sử mất khi đóng trang; HelloBC dùng RAG, 8 câu gợi ý mẫu, tự nhắc người dùng kiểm thông tin quan trọng; khảo sát Mỹ 09/2025 (1.003 người): 77 % tin AI khi lập kế hoạch nhưng chỉ **32 %** để AI lập trọn chuyến.
+
+**Tính năng đáng học — A xếp theo bậc Phase 9 (đề xuất, chưa chốt):**
+
+| Nhóm | Tính năng | Học từ | Ở hue_rag | Công sức · rủi ro nói sai |
+|---|---|---|---|---|
+| Đã có — giữ, dùng khi trình bày | hỏi tiếp vẫn tìm kho bằng câu có tên đối tượng; trích nguồn từng ý; chữ hiện dần; câu gợi ý; nhãn "AI có thể sai" + dòng "có thể đã thay đổi"; câu khẩn cấp soạn sẵn có nguồn | TRIPO hỏng đúng các chỗ này | B2–B3, giao diện | — |
+| Đưa vào bậc đang có | **trả lời tạm có nguồn + hỏi lại 1–3 ý, kèm nút chọn nhanh** | TRIPO v2, Tripadvisor, Booking (7 / 15 sản phẩm hỏi tiếp) | **B4** (thiết kế cách hỏi) | vừa · thấp |
+| Đưa vào bậc đang có | **link "mở bản đồ"** cho từng điểm trong lịch trình, dựng bằng code từ tên / địa chỉ có trong kho (không để model tạo toạ độ) | TRIPO, Google | **B5** | nhỏ · thấp |
+| Đưa vào bậc đang có | **dữ liệu theo ngày do code lọc** (sự kiện tuần này từ lịch trong kho, thời tiết từ API) — luôn ghi ngày của dữ liệu | chỗ TRIPO hỏng | "code giữ ngày" (spec) + thời tiết (plan B5 quyết) | vừa · trung bình (ngày sai) |
+| Mới — cần bạn chọn | **nút 👍 / 👎 "báo sai" ở mỗi câu** (lưu mã lượt + đánh giá, không lưu chữ nếu bạn muốn) — vừa giúp người dùng, vừa cho dữ liệu đánh giá bằng người thật khi bảo vệ | Tokyo EDO; bài báo về câu sai trong du lịch khuyên có kênh báo lỗi | chưa có | nhỏ · không |
+| Mới — cần bạn chọn | câu ngoài phạm vi kèm 1–2 gợi ý câu trong phạm vi (thay vì chỉ "bạn muốn hỏi gì về Huế") | TRIPO vòng 1 câu 10 | một phần | nhỏ · không |
+| Không làm (7 tuần, một người) | thuyết minh âm thanh, giọng nói, đa ngôn ngữ, bản đồ toàn tỉnh, nhận diện ảnh, đặt chỗ | bảo tàng, OTA | — | lớn · dữ liệu không có |
+
+**Chỗ hue_rag đang kém:** tốc độ chữ đầu câu về Huế 3,50 / 5,33 s **vượt sàn bạn đặt** (3 / 5 s) — vẫn nhanh hơn TRIPO nhiều lần, nhưng là sàn của chính mình. Log cho thấy phần tìm kho chỉ ~50 ms; thời gian nằm ở lần gọi phân loại câu (~1,5–2,9 s) + chờ model trả chữ đầu ⇒ hướng tối ưu: giảm mức suy luận / cố định khoá đệm cho lần phân loại, hoặc gộp phân loại vào lần trả lời (đổi kiến trúc — bạn quyết). Chưa đo, chưa hứa số.
+
+**Giới hạn:** TRIPO thử một lần, mỗi loại một câu; không kiểm dữ kiện TRIPO với nguồn chính thức. Danh sách thế giới: 15 sản phẩm, phần lớn nguồn là thông cáo của chính đơn vị (nguồn nói), 3 nguồn A đã mở kiểm. Hồ sơ (private): `data/nghien_cuu_tinh_nang_2026-11-03/tripo_v2/bao_cao_tripo_v2.md`, `data/tra_cuu_cli/2026-11-03_tinh-nang-the-gioi/ket_qua.md`.
 
 ## 0. Cập nhật 02/11 — hướng đổi thành trợ lý agent có công cụ (đọc mục này trước; mục 1–7 là bản 01/11)
 
