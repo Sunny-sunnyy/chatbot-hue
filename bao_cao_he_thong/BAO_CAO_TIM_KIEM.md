@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 12:03 01/11/2026 — đo lại theo loại câu trên kho hiện tại (so sánh 0,527 / nhiều nguồn 0,543); câu nhiều nguồn để Phase 9.** Trước: 11:07 01/11/2026 — sửa lý do gác "chọn đoạn bằng luna" (luật số câu tụt 27/10; sàn tốc độ có sau). Bản 11 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
+**Cập nhật lần cuối: 10:41 03/11/2026 — Phase 9 B2a: thử để model viết lại câu tìm cho câu nhiều nguồn / so sánh (3 cách) ⇒ không cách nào qua luật, giữ tìm bằng câu gốc; kho không thiếu thông tin cho các câu này (0 / 38).** Trước: 12:03 01/11/2026 — đo lại theo loại câu trên kho hiện tại (so sánh 0,527 / nhiều nguồn 0,543); câu nhiều nguồn để Phase 9.** Trước: 11:07 01/11/2026 — sửa lý do gác "chọn đoạn bằng luna" (luật số câu tụt 27/10; sàn tốc độ có sau). Bản 11 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
 Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -22,7 +22,8 @@ Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (b�
   - Câu gõ không dấu gần như không tìm được — ngoài phạm vi (bạn quyết 25/10).
 - **Chi phí / tốc độ:** không tốn tiền API (model và Qdrant chạy trên máy); tạo vector câu hỏi 21–28 ms (p50 / p95, đo 30/10).
 - **Đã thử, không đưa vào chatbot** (chi tiết §3, §4): đổi cách trộn, lấy rộng 100 ứng viên, reranker chạy trên card đồ họa, cho `gpt-6-luna` xếp lại /
-  chọn 10 trong 30 ứng viên, đổi model vector sang Qwen3-Embedding-8B (30/10: kém hơn ⇒ giữ e5-small).
+  chọn 10 trong 30 ứng viên, đổi model vector sang Qwen3-Embedding-8B (30/10: kém hơn ⇒ giữ e5-small); **03/11 (Phase 9 B2a):** để model viết lại câu tìm
+  (viết lại / viết lại + tách ≤ 3 câu nhỏ / trợ lý tự viết) ⇒ không cách nào qua luật, giữ câu gốc (§4).
 - **Bạn cần quyết gì:** hiện không có việc nào cần bạn quyết ở khâu này.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
@@ -70,6 +71,14 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 03/11/2026 — Phase 9 B2a: model viết lại câu tìm cho câu nhiều nguồn / so sánh (không đưa vào)
+- **Vì sao:** 38 câu nhiều nguồn + so sánh trong Golden là chỗ yếu nhất (Đủ ý 3,50 ở câu nhiều nguồn); 12 / 38 câu chưa đủ keyword trong 10 đoạn ⇒ thử để model viết câu tìm thay câu gốc.
+- **Luật ghi trước** (A 08:56 03/11/2026, bộ đo C viết, người code B không chỉnh trên nhóm kiểm): qua khi thêm **≥ 3 / 12** câu đủ keyword ở **cả hai lượt**, **0** câu mất đoạn đúng trên 55 câu có nhãn, nhóm kiểm không ngược chiều.
+- **Thử 3 cách** (khoá trước khi đo; mỗi cách 2 lượt × 61 câu, 0 lỗi): **V1** model viết lại câu tìm ⇒ thêm 0 / 12; **V3** viết lại + tách ≤ 3 câu nhỏ, trộn RRF ⇒ thêm 1 / 12 (cần 3), lượt 1 mất đoạn đúng 1 câu;
+  **V2** trợ lý tự quyết có tìm không + tự viết câu ⇒ thêm 0 / 12 (26 ↔ 28 câu đủ keyword giữa hai lượt — câu tìm model viết dao động; +3 thấy ở vòng chỉnh trên 9 câu dev **không lặp lại** ⇒ vòng chỉnh đã dò theo nhiễu).
+- **Kết luận:** **giữ câu gốc** (V0) — kết quả âm. Tiền tầng tìm ≈ 0,069 USD (cả pilot + chỉnh). Đếm thêm (C, 0 USD): **0 / 38** câu có một vế mà kho không có keyword nào ⇒ thiếu bằng chứng là do **xếp hạng**, không do kho thiếu.
+- Hồ sơ: `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md`, `c133_bo_do_b2.md`; plan `docs/superpowers/plans/2026-11-03-phase-9-b2-plan.md`. Bước tiếp B2b (trợ lý được tìm thêm ≤ 2 lần) đang đo.
 
 ### 30/10/2026 — Kho sửa đợt 2, chỉ mục dựng lại; thử Qwen3-Embedding-8B
 - **Kho sửa đợt 2:** cách tìm không đổi; kết quả tìm 158 câu có 25 câu đổi danh sách 10 đoạn (11 chỉ đổi thứ tự; 24 có đoạn của file đã sửa). Đo lại mốc
@@ -131,7 +140,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), build 
 ## 6. Việc còn lại / cần quyết
 
 - **Không có việc cần bạn quyết** ở khâu này.
-- **Chỗ yếu còn mở:** 9 / 40 câu thử có đoạn đúng trong ứng viên nhưng bị xếp ngoài 10 đầu; câu so sánh / nhiều nguồn. Các hướng đã thử đều không qua luật.
+- **Chỗ yếu còn mở:** 9 / 40 câu thử có đoạn đúng trong ứng viên nhưng bị xếp ngoài 10 đầu; câu so sánh / nhiều nguồn. Các hướng đã thử đều không qua luật — kể cả model viết lại câu tìm (B2a 03/11). Đang đo: trợ lý được tìm thêm ≤ 2 lần (B2b).
   Hướng để ngỏ (hồ sơ, chưa lên lịch): bản "luna chọn đoạn" nhanh hơn, chỉ khi có luật nhận mới cho loại thay đổi này và vừa sàn tốc độ; sửa nhãn đoạn đúng
   để đếm cả chỗ kho viết lại cùng thông tin.
 - **Đo lại theo loại câu 01/11** (0 USD, câu trả lời đã chấm 30/10, tiêu chí ghi trước): chỉ **câu nhiều nguồn** còn lỗi lớn ⇒ để Phase 9; dòng bảng giá dài: keyword lọt top-10 80 % ↔ 90 % câu khác, Đủ ý 4,50 ↔ 4,53 ⇒ **không còn là lỗi lớn**. `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.

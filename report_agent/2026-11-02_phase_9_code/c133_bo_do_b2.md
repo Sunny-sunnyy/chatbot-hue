@@ -56,6 +56,11 @@ Qdrant thật (`hue_full_corpus_7a2_e5_small_384`, 8.424 point, chỉ đọc), e
 
 Thêm `cham --nhom dev`: vòng chỉnh của plan B2 D8 chấm 43 câu dev mà không tính / in / ghi số nhóm test. Tự kiểm (dữ liệu giả + V0): biến giả có 3 câu đổi đều thuộc test ⇒ chế độ dev ra 0 câu thêm, đầu ra 0 chuỗi `test`; chế độ đủ 61 câu ra đúng số cũ. 0 USD.
 
+## 5c. Bước 0 câu hai ý (C138, 10:39 03/11/2026)
+
+Spec §5 B2 / plan B2 bước 7, sau khi B2a ra kết quả âm (giữ V0). Luật ghi trước (`data/phase_9/b2/cau_hai_y.md` §1): câu có ≥ 1 vế mà mọi keyword Golden của vế đó 0 file trong kho (`scripts/grep_kb.sh -F -i -l`).
+Kết quả: keyword 0 file **0 / 90** ⇒ câu có vế không có keyword nào trong kho **0 / 38** (nhiều nguồn 0 / 18, so sánh 0 / 20) ⇒ **< 3 ⇒ "không cần"** mở việc riêng. Giới hạn: "có trong kho" tính mọi file (chữ spec), là cận dưới. 0 USD.
+
 ## 6. Tiền
 
 0 USD (không gọi API).

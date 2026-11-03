@@ -33,9 +33,22 @@
   Bẫy: gõ giờ "09:42" ở đầu mục trước khi chạy `date` (thật 09:38) — đã sửa trước khi báo A. ⇒ chạy `date` trước, chép giờ từ output.
 - **Vòng 3 (bản 3 `efa27cb8207c`) XONG 09:43 03/11/2026: ready_for_user_confirmation** — review `90ed2605c9a9`: M-4 đóng; 5 điểm chuẩn bị code đạt (đối chiếu code `f01c032`); 2 minor m-6 (handler / cờ max_turns dựng mỗi lượt + test đồng thời), m-7 (pilot so token builder ↔ usage thật). Không có chỗ đổi ngoài 2 bảng (diff bản 1 ↔ 3). 0 USD. Tiếp C136.
 
-## C136 — bộ đo B3 nhớ hội thoại (A giao 09:40 03/11/2026; bắt đầu 09:39 03/11/2026; dừng khi B báo plan B2 bản 3)
+## C136 — bộ đo B3 nhớ hội thoại (A giao 09:39 03/11/2026 theo handoff; bắt đầu 09:39 03/11/2026; dừng khi B báo plan B2 bản 3)
 - 0 USD; đọc kho chỉ `scripts/grep_kb.sh`; phần kín `*sealed*`, B không mở.
 - **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b3/` (README, chuỗi đã thấy, `*sealed*`, chuỗi B6 nêu tên, script kiểm); `report_agent/2026-11-02_phase_9_code/c136_bo_do_b3.md` (mới); dòng C136 trong `CURRENT_HANDOFF.md`; và file này.
+- Dừng cho C135 vòng 3 (plan B2 bản 3 ready 09:43), rồi tiếp.
+- **XONG 09:48 03/11/2026:** report `c136_bo_do_b3.md` (quét trùng 0); README `2c094e287c65`; đã thấy `2f4f985b5540` (25 / 56 lượt), kín `e7cd934bd6cf` (15 / 33), web `2219b5c65237` (3); `kiem_bo.py` `9377764f0033` OK + ca phá đúng. Đáp án mẫu = câu Golden cùng nghĩa (lượt sau 20 / 10). Chưa làm: mẫu 10 câu cho User (hỏi A). 0 USD.
+- **A: có** ⇒ `mau_cho_user.md` `dadb44ffcc6c` (09:54 03/11/2026): 10 chuỗi đã thấy, đủ 6 loại, lời thường. Sau đó C rảnh có lý do: chờ commit đầu B2 để review (A nhắn); không viết trước bộ đo B4 / B5 (A).
+  Bẫy: đầu mục C136 ghi giờ A giao bằng phỏng đoán (09:40, handoff 09:39) — đã sửa. ⇒ giờ của người khác lấy từ file của họ, không đoán.
+
+## C137 — review sớm `p9-b2` `456df18` (A giao, bắt đầu 10:15 03/11/2026)
+- Đối chiếu plan B2 bản 3 `efa27cb8207c`; chỉ việc 0 USD, nhẹ (B đang chạy pilot có phí).
+- **File sẽ ghi (khai báo):** `report_agent/2026-11-02_phase_9_code/b134_review.md` (mới, "Vòng sớm"); ca dò tạm `/tmp/c137/` (xoá khi xong, giữ bản cần vào `data/phase_9/c137_review/`); dòng C137 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (10:20 03/11/2026):** `b134_review.md` `3e05245866e1` "Vòng sớm": 0B / 0M / 2m (m-1 harness `tang_tim` một câu lỗi hỏng cả lượt; m-2 lệch D2: V3 > 3 câu ⇒ mất cả tuyến). Lệch D2 đúng kỹ thuật (SDK chặn 4 câu, lỗi ⇒ câu gốc). Q7 độc lập 42 / 42 giống byte; test 41 / 41. Ca dò `data/phase_9/c137_review/`. 0 USD.
+
+## C138 — bước 0 câu hai ý (A giao sau khi B2a ra kết quả âm; bắt đầu 10:38 03/11/2026)
+- 0 USD; tìm kho chỉ `scripts/grep_kb.sh`. **File sẽ ghi:** `data/phase_9/b2/cau_hai_y.md` (không cần script riêng — lệnh shell ghi trong file); mục mới trong `report_agent/2026-11-02_phase_9_code/c133_bo_do_b2.md`; dòng STATUS này.
+- **XONG (10:39 03/11/2026):** keyword 0 file 0 / 90 ⇒ câu hai ý thiếu vế 0 / 38 (0 / 18 nhiều nguồn) ⇒ **"không cần"**. `cau_hai_y.md` + report c133 §5c. 0 USD. Tiếp: chờ review cuối B2.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 
