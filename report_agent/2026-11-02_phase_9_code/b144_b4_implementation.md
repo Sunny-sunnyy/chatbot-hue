@@ -24,10 +24,30 @@ Report tracked, repo public: không chép câu bộ đo; câu ví dụ tự vi�
 - Test: `test_b4_hoi_lai` + `test_b3_memory` + `test_b2_tool_loop` + `test_api_chat` + `test_chat_stream` + `test_feedback` + `test_assistant_boundary` ⇒ **66 passed** (+ `test_b4` thêm 1 sau đó), 1 error = test cần khoá API (bẫy đã biết); `test_static_ui` 3 / 3; `npm ci && npm run build`.
 - **Q1 (byte, `capture_all.py` B134 — thay `AsyncResponses.create`, không gọi mạng; 176 Golden + 32 an toàn + smoke = 228 ca × 2 lần gọi):** lần 1 (nhánh trước rebase ↔ cây `main`) khác ở **lần định tuyến 228 / 228**, lần trả lời giống 228 / 228 ⇒ nguyên nhân: A merge B143 vào `main` trong lúc chạy (`ROUTER_INSTRUCTIONS` main `164bd4a254e9` ↔ nhánh `fb4e1aa7f8fe`), không phải B4. Sau rebase: **giống byte 228 / 228** (`data/phase_9/b4/q1/main.jsonl` ↔ `b4_rebase_co_tat.jsonl`, `cmp`) ⇒ **Q1 PASS** — cờ tắt, chuỗi gửi model như `main`.
 
+## 2b. Pilot + Q2 / Q3 đã thấy (B145, A giao tối 03/11; 21:39 03/11/2026) — **chưa khoá, chưa kín**
+
+Harness `data/phase_9/b4/tools/chay_b4.py` (cờ `hoi_lai` bật ở rìa trên bản sao cờ, nhớ tắt, định tuyến theo settings), commit nhánh lúc chạy: pilot + v0 trên `86c311b`, v1 trên cây có ghi chú vòng 1 (commit sau đó `c76934c`; phần sửa m-1 chỉ chạm đường stream, harness đi đường thường). Không đo latency.
+
+| Lượt | Ghi chú `HOI_LAI_NOTE` | Q2 thiếu hỏi đúng (tham số thô) | Q3 câu đủ bị hỏi | gần giống bị hỏi | hỏi thừa · D3 điền / cắt | USD |
+|---|---|---|---|---|---|---|
+| pilot 4 câu (2 thiếu · 1 đủ · 1 gần giống) | bản code `c4f2b76` | 2 / 2 | **1 / 1** (LD1 — hỏi thêm 2 trường không bắt buộc) | 0 / 1 | — · 0 / 0 | 0,0016 |
+| **v0** 20 câu | như trên | **9 / 10** (trượt LT4) | **0 / 7** | 0 / 3 | 0 · 0 / 0 | 0,0124 |
+| **v1** 20 câu (vòng chỉnh 1: "câu đã đủ bắt buộc thì không gọi hoi_lai chỉ để hỏi trường không bắt buộc", sha `2b62c390f2fa`) | `c76934c` | **9 / 10** (trượt LT4) | **1 / 7** (CD4) | 0 / 3 | 0 · 0 / 0 | 0,0115 |
+
+- Ngưỡng plan: Q2 ≥ 8 / 10 — **đạt cả hai lượt**; Q3 ≤ 1 / 10 (7 đã thấy + 3 kín) — v0 0 / 7, v1 1 / 7 (còn 0 suất cho phần kín nếu giữ v1).
+- **Câu đủ bị hỏi chập chờn:** LD1 bị hỏi ở pilot, không bị hỏi ở v0 / v1; CD4 không bị ở v0, bị ở v1 ⇒ vòng chỉnh 1 **không cho thấy cải thiện rõ** (quan sát trên 1 lượt mỗi bản; chưa đo A/A). Đề xuất phiên sau: đo lại v0 ↔ v1 trên 7 câu đủ × 2–3 lượt trước khi chọn bản khoá.
+- LT4 (lịch trình theo sở thích ẩm thực, thiếu số ngày): model **trả lời luôn** bằng mẹo ăn uống có nguồn (3 nguồn), không hỏi — trượt Q2 nhưng không nói sai.
+- Tiền B145: **0,0256 USD** (ước pilot 0,002 — đúng; mỗi lượt 20 câu ≈ 0,012, cao hơn ước 0,008 / lượt của plan — câu đủ / gần giống có lượt viết). B4 tới giờ ≈ 0,026 / 0,12.
+
+**Review sớm C163** (`b144_review.md` "Vòng sớm" `1ccb676f475d`, 0B / 0M / 3m) — A quyết:
+- **m-1** stream phát "đã tìm" cho lần gọi `hoi_lai` ⇒ **sửa xong `c76934c`** (bỏ cả `searching` lẫn `searched` khi công cụ là `hoi_lai`; test mới hỏng khi bỏ phần sửa, đạt khi có).
+- **m-2** model chỉ hỏi trường không bắt buộc ⇒ câu lịch trình thiếu `so_ngay` vẫn đi tiếp ⇒ **sửa ở phiên sau**: D3 thêm "code luôn thêm trường bắt buộc còn thiếu (theo `loai`) vào thẻ" ⇒ **plan bản 3** (chỉ D3 + chỗ đổi), C kiểm, A duyệt sha lại. Q2 vẫn đếm trên tham số thô (M-1).
+- **m-3** đệm token chưa đếm lược đồ công cụ `hoi_lai` ⇒ báo `usage − builder` max ⇒ **chưa có số**: harness `chay_b4.py` chưa ghi `usage_tru_builder` ⇒ phiên sau thêm trường này (như harness `chuoi` B3) rồi báo max ở lượt đã thấy.
+
 ## 3. Còn lại (PHIÊN SAU — thứ tự)
 
 1. ~~Chờ B143 merge ⇒ rebase ⇒ Q1~~ **xong** (§2).
-2. **Pilot 4 câu đã thấy** (2 thiếu / 1 đủ / 1 gần giống) ⇒ ước lại tiền (trần B4 0,12, dừng > 0,11).
+2. ~~Pilot~~ xong (§2b). **Plan bản 3** (D3: code thêm trường bắt buộc còn thiếu — C163 m-2) ⇒ C kiểm ⇒ A duyệt sha; harness ghi `usage − builder` (m-3); đo lại câu đủ v0 ↔ v1 × 2–3 lượt ⇒ chọn bản ghi chú.
 3. **Q2 + Q3** 20 câu đã thấy ⇒ ≤ 3 vòng chỉnh `HOI_LAI_NOTE` ⇒ **khoá** (sha ghi chú + `settings.yaml` + commit) ⇒ Q4 (bộ tuyến, nhãn `can_hoi_lai.json` C158 `ef9179c8f266`), Q5 (mẫu 30 + an toàn 32, ngoài nhãn), Q6 (`--chon`, judge an toàn 2 sub-agent + regex tổng), Q7 (4 chuỗi tự viết, nhớ bật).
 4. C chạy kín 10 câu ⇒ Q2 / Q3 kín.
 5. **Q8 cổng** + Playwright thẻ hỏi lại (laptop + điện thoại, CSP) ⇒ report ⇒ C review ⇒ A merge (cờ theo kết quả).

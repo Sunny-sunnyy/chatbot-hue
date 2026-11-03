@@ -6,12 +6,14 @@ Quyền phiên (User qua A: việc A giao = "làm đi", B push nhánh riêng) **
 **Phiên chiều 03/11 (mở 18:02 03/11/2026):** terminal B `hue-rag-32`; peer `hue-rag-40`, `hue-rag-9e` (chưa rõ ai là A). User: B làm trực tiếp với A, việc A giao = "làm đi". Worktree `/tmp/b_p9b3` mất (prunable) ⇒ tạo lại khi được giao.
 
 ## PHIÊN SAU — B4 (B144 dở, 21:10 03/11/2026; report `report_agent/2026-11-02_phase_9_code/b144_b4_implementation.md`)
-Worktree **`/tmp/b_b4`** (nhánh `p9-b4` `86c311b` — đã rebase lên `main` `ac46c96` có B143, symlink `data/` + `knowledge-base-hue/`; mất sau khởi động lại ⇒ `git worktree prune` + tạo lại). Code + test 0 USD xong, cờ `hoi_lai` tắt.
+Worktree **`/tmp/b_b4`** (nhánh `p9-b4` **`c76934c`** — đã rebase lên `main` `ac46c96` có B143, symlink `data/` + `knowledge-base-hue/`; mất sau khởi động lại ⇒ `git worktree prune` + tạo lại). Code + test 0 USD xong, cờ `hoi_lai` tắt.
 **Q1 PASS** (21:13 03/11/2026: capture 228 ca giống byte `main`). **Chưa chạy lượt có phí nào** (B143 đã merge `e3cdb96`; pilot để phiên sau — hỏi lại quyền phiên).
 Lệnh (từ `/tmp/b_b4/backend`):
 - (Q1 đã đạt — chỉ chạy lại nếu rebase lại.) Q1: `env -u OPENAI_API_KEY OPENAI_API_KEY=capture-only HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag python /home/minhhieu/hue_rag/data/phase_9/b2_chay/tools/capture_all.py <out>` trên main mới và nhánh ⇒ `cmp`.
 - Đo: `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/b4/tools/chay_b4.py chay ../data/phase_9/bo_do_b4/cau_da_thay.jsonl /home/minhhieu/hue_rag/data/phase_9/b4/<lượt>.jsonl [--chi id…] [--chon ../data/phase_9/bo_do_b4/chon_da_thay.json]` ⇒ `… dem <bo> <out>` (0 USD). `--out` là FILE.
-- Thứ tự: pilot 4 câu ⇒ Q2 / Q3 (≤ 3 vòng chỉnh `HOI_LAI_NOTE`) ⇒ khoá ⇒ Q4 / Q5 / Q6 / Q7 ⇒ C kín ⇒ Q8 cổng + Playwright ⇒ report ⇒ C review. Trần B4 0,12 USD (dừng > 0,11).
+- **B145 (21:39 03/11/2026) pilot + đã thấy, nhánh `c76934c`:** pilot 4 câu sạch kỹ thuật; v0 Q2 9/10, Q3 0/7; v1 (vòng chỉnh 1, note `2b62c390f2fa`) Q2 9/10, Q3 1/7 — câu đủ bị hỏi **chập chờn** (LD1 pilot, CD4 v1) ⇒ chưa khoá. Tiền 0,0256 ⇒ B4 ≈ 0,026 / 0,12. File: `data/phase_9/b4/pilot.jsonl`, `da_thay_v0.jsonl`, `da_thay_v1.jsonl`.
+- **3 mục review sớm C163 (A quyết):** m-1 stream "đã tìm" cho `hoi_lai` — **xong `c76934c`**; **m-2** D3 code thêm trường bắt buộc còn thiếu vào thẻ ⇒ **plan bản 3** (chỉ D3 + chỗ đổi) ⇒ C kiểm ⇒ A duyệt sha ⇒ code; **m-3** harness thêm `usage_tru_builder` ⇒ báo max.
+- Thứ tự phiên sau: plan bản 3 + m-2 + m-3 ⇒ đo lại câu đủ v0 ↔ v1 × 2–3 lượt (chọn ghi chú) ⇒ Q2 / Q3 ⇒ khoá ⇒ Q4 / Q5 / Q6 / Q7 ⇒ C kín ⇒ Q8 cổng + Playwright ⇒ report ⇒ C review. Mỗi lượt 20 câu ≈ 0,012 USD. Trần B4 0,12 (dừng > 0,11).
 
 ## PHIÊN SAU — B3 (B136 dở; report `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md`)
 Worktree **`/tmp/b_p9b3` giữ** (nhánh `p9-b3`, symlink `data/` + `knowledge-base-hue/`). Lệnh nền: `cd /tmp/b_p9b3/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag [--env-file /home/minhhieu/hue_rag/.env] …`.
