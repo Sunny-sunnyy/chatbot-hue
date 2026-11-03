@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C
 
-Cập nhật: 20:47 02/11/2026 (A, **kết phiên tối 02/11**: B0 merge `1c10111`; B1 đo xong trên `p9-b1`, chưa merge). Trước: 14:52 02/11/2026 (A, **kết phiên 02/11**: giao diện mới vào `main` `ed8e6e8`; Phase 9 đổi hướng agent; **spec Phase 9 bản 9 User duyệt sha `169c2dd5f86a`**; vòng cải tiến 14).
+Cập nhật: 08:46 03/11/2026 (A, **mở phiên 03/11**: giao B131 hoàn tất B1, C133 bộ đo B2, C134 review delta — mục "Việc đang mở — phiên 03/11"). Trước: 20:47 02/11/2026 (A, **kết phiên tối 02/11**: B0 merge `1c10111`; B1 đo xong trên `p9-b1`, chưa merge). Trước: 14:52 02/11/2026 (A, **kết phiên 02/11**: giao diện mới vào `main` `ed8e6e8`; Phase 9 đổi hướng agent; **spec Phase 9 bản 9 User duyệt sha `169c2dd5f86a`**; vòng cải tiến 14).
 Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Lịch sử phiên 02/11 (mọi mục việc B121–B124 / C118–C121, quyết định theo giờ, trạng thái review) dời **nguyên văn** sang
 `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`; 01/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-01.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-02_giao_dien_moi_va_spec_phase_9.md`.
 
@@ -50,7 +50,29 @@ clone / worktree mới hoặc sửa `frontend/src/` ⇒ `cd frontend && npm ci &
 **Mã hay gặp:** B0–B7 = bậc Phase 9 (spec §5); P1–P5 = câu User đã chọn 14:42 02/11 (spec §10); V0–V3 = phương án câu tìm kho (B2a); [w n] = trích dẫn web; T1 = kết quả tìm 158 câu (so "giống byte");
 S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.md`; M-n / m-n = finding major / minor; Bxx / Cxx = mã việc A giao B / C.
 
-## Việc đang mở — phiên tối 02/11 (User "làm đi" theo kế hoạch tuần, A ghi nhận 18:32 02/11/2026)
+## Việc đang mở — phiên 03/11 (User "làm đi", A ghi nhận 08:46 03/11/2026)
+
+Quyền phiên: như 02/11 (mục "Quyền"). Tốc độ B1 (định tuyến +1,7 s p50 / câu): User không chọn khác ⇒ **PA1 mặc định A khuyên** — merge B1 như đo, chưa tối ưu (đợi B2a quyết có dùng câu định tuyến viết hay không);
+cổng cuối B1 đo chữ đầu 10 câu thật trên đường stream (≈ 0,003 USD) để có số thay 1 câu. Không có lượt đo latency khác chạy cùng lúc trong lúc B đo 10 câu (W31) ⇒ C chỉ làm việc 0 USD, nhẹ CPU khi đó.
+
+### B131 — hoàn tất B1 (B, `hue-rag-52`) — giao 08:46 03/11/2026 — **XONG 09:00 03/11/2026, chờ C134 review delta `7e190d7..dcd1519`** (push; (a) 32 / 32 giống byte ⇒ dùng lại S-AT; (b) m-1 + test; (c) 2 cờ true; (d) cổng + 2 ca ngắt thật + chữ đầu 10 câu p50 3,05 / p95 5,64 s; 0,0029 USD; report `b129_b1_implementation.md` §4b `0febf8eb574d`, chưa commit — trên `main` working tree)
+- **Việc:** CURRENT_HANDOFF "KẾT PHIÊN TỐI 02/11" mục 2 (a)–(d) + `STATUS_B.md` "PHIÊN SAU — B1": `git worktree prune` + tạo lại `/tmp/b_p9b1` (symlink `data/`, `knowledge-base-hue/`; `npm ci && npm run build`);
+  (a) 32 câu an toàn giống byte B0 (0 USD) ⇒ giống thì dùng lại S-AT 01/11; (b) sửa m-1 C132; (c) mặc định `router` + `may_have_changed_notice` = true; (d) cổng ổn định có 1 ca ngắt thật `curl -m` **+ chữ đầu 10 câu tự viết trên `/api/chat/stream`** (p50 / p95, ghi theo tuyến).
+- **Trần:** 0,02 USD. Cập nhật `b129_b1_implementation.md` ⇒ commit + push `p9-b1` ⇒ báo A. Không mở `*sealed*`.
+
+### C133 — bộ đo B2 (C, `hue-rag-d8`) — giao 08:46 03/11/2026 — **XONG 08:55 03/11/2026** (report `c133_bo_do_b2.md`; mục lục `data/phase_9/b2/README.md` `3bdffc77d46e` (2 quyết định A đã ghi; script `04bdba9ea11a`; tự kiểm 2 ca âm + 2 ca dương tổng hợp đạt, `tu_kiem.json` `adc6f5288514`); bộ câu `e5d40678c1aa`: 38 / 12 có thể đổi / 32 nhãn v5 / dev 28 – test 10; V0 trùng T1 61 / 61; 0 USD). **Cần A quyết cho plan B2:** (1) luật "≥ 3 / 12" ↔ Holm (dev 28: 3 câu thêm ⇒ p 0,082; cần ≥ 5–6) — Holm là cổng hay chỉ báo số; (2) sàn mất đoạn đúng chấm trên cả 55 câu có nhãn (C đề xuất) hay chỉ 32 trong 38. **A quyết 08:56 03/11/2026 (ghi trước khi đo):** (1) tầng tìm = cổng sàng theo luật đếm spec (≥ 3 / 12 thêm cả hai lượt trên 38 + 0 mất + test không ngược chiều); Holm chỉ báo số + xếp hạng khi nhiều biến qua — cổng chất lượng thật là khâu trả lời (Completeness 18 câu CI > 0 + sàn §4); (2) sàn mất đoạn đúng trên cả 55 câu có nhãn ("mọi câu bị đổi"), báo tách trong / ngoài 38
+- **Việc:** theo spec §5 B2 + 3 quyết định A (tin nhắn sáng 03/11): 38 câu Golden (18 nhiều nguồn + 20 so sánh), không thêm câu mới; chốt 12 câu chưa đủ keyword @10 (6 + 6, khớp Q3a §4); ghi rõ sàn "mất đoạn đúng" chỉ kiểm được trên 32 / 38 câu có nhãn v5;
+  chia dev / test theo `split.json` + md5 — B chỉnh V1 / V3 chỉ trên dev, test không ngược chiều; script đo tầng tìm (đủ keyword @10, mất đoạn đúng v5, Holm 3 biến so V0) chạy được trên V0 (0 USD, nhẹ).
+- **Đầu ra:** `data/phase_9/b2/` (private) + README; report `report_agent/2026-11-02_phase_9_code/c133_bo_do_b2.md` (số đếm, md5, cách chọn — không nội dung câu). 0 USD. Không đụng file nhánh `p9-b1`.
+
+### B132 — viết plan B2 (B) — giao 09:00 03/11/2026; 0 USD — **bản 1 XONG 09:07 03/11/2026 sha `0cf5c194a182`** (A tính từ file) ⇒ **C135 review plan** (sau C134). A chốt: trần B2 **0,45 USD**, dừng > 0,40; bước 0 câu hai ý: C đếm. B rảnh có lý do (nhánh `p9-b1` đang review) — chỉ probe SDK 0 USD cho D5 / D6 trong `/tmp` ⇒ `data/phase_9/b2/probe_sdk.md` — **bản 1 09:06 03/11/2026 sha `0cf5c194a182`, chờ C review** (B)
+- `docs/superpowers/plans/2026-11-03-phase-9-b2-plan.md` có "Căn cứ để review"; đọc spec §4, §5 B2, §7–§8; plan B1 + review; bộ đo C133 (`data/phase_9/b2/README.md`, `c133_bo_do_b2.md`); tài liệu cũ Phase 9 (W46, `find` 09:00: roadmap, 2 review spec, plan / review B0 + B1).
+- Luật đã chốt A 08:56 (mục C133). Ghi: thứ tự biến, vòng công cụ, ước tiền + pilot 10 câu, trần, điều kiện dừng, luật cắt 16/11, trường `routing_ms` (quan sát B131). Xong ⇒ sha ⇒ C review plan.
+
+### C134 — review delta `p9-b1` (C) — **giao 09:00 03/11/2026** (delta `7e190d7..dcd1519`; trước ca dương tổng hợp C133) — **XONG 09:09 03/11/2026: ready_for_user_confirmation** (`b129_review.md` `4730a847d853` "Vòng cuối": 0 blocker / 0 major / 1 minor m-3 `generate` không `--flags` nay có định tuyến ⇒ ghi guide 6 / LUONG lúc merge; m-1 / m-2 vòng sớm đóng; 32 / 32 an toàn giống byte (HTTP, định tuyến thành công); P6 `190a6999c43b` = `main`; ngắt thật trước + giữa chữ đạt; ≈ 0,0006 USD)
+- `7e190d7..<cuối>` vào `b129_review.md` theo `risk-gated-agent-review`; chạy lại ca dò byte HTTP P6 + 1 ca ngắt thật; ≈ 0,0005 USD. Đạt ⇒ A merge ⇒ 5 chỗ báo cáo. P2 kín bỏ (`today_line` tắt).
+
+## (cũ) Việc đang mở — phiên tối 02/11 (User "làm đi" theo kế hoạch tuần, A ghi nhận 18:32 02/11/2026)
 
 Đợt: `report_agent/2026-11-02_phase_9_code/` (report từng việc). Dữ liệu chạy: `data/phase_9/<việc>/` (private). Spec: bản 9 sha `169c2dd5f86a` — đọc §3–§5, §7–§8 (full-read §5 phần bậc mình làm).
 Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_rag_roadmap.md` (đã thay — chỉ reference), `…_design_review.md`, `…_design_review_v6.md`. Không có lượt đo latency trong phiên này (W31 không chặn).
@@ -137,6 +159,8 @@ Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_r
 
 ## Session
 
+**Phiên 03/11 (mở 08:36):** A `hue-rag-5e` · B `hue-rag-52` · C `hue-rag-d8` — cả ba Claude Code, trực tiếp. Bảng dưới là phiên tối 02/11.
+
 | Vai | Terminal (phiên tối 02/11, mở 18:27) | Agent | Liên lạc | Phiên tối 02/11 | Trạng thái |
 |---|---|---|---|---|---|
 | A — điều phối | `hue-rag-24` | Claude Opus 5.5 | trực tiếp | điều phối; merge B0; 5 chỗ báo cáo; vòng cải tiến 15 | `STATUS_A.md`; 0 USD |
@@ -149,6 +173,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 ## Quyền
 
+- **Phiên 03/11** (User: "quyền của A như 02/11", A ghi nhận 08:46 03/11/2026): A tự điều phối + tự quyết trong kế hoạch; ≤ 1 USD / phiên; A tự commit / push; B / C push nhánh riêng. Hết hạn cuối phiên. User: C làm trực tiếp với A, việc A giao = "làm đi".
 - **Phiên tối 02/11 — HẾT HẠN (kết phiên 20:47 02/11/2026)** (User chọn "như 02/11", A ghi nhận 18:32 02/11/2026): A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push (hỏi User trước theo luật chung); B / C push nhánh riêng. **Kết phiên 22:00 02/11/2026** (User, nói lúc 18:32) — A bắt đầu kết phiên ~21:30; B / C ghi STATUS + report dở trước ~21:40.
 - (cũ) **Phiên 02/11 — HẾT HẠN cuối phiên** (User, A ghi nhận 09:48 02/11/2026): như 01/11 — A tự điều phối + tự thử; ≤ 1 USD; A tự commit / push; B / C push nhánh riêng. Tiền phiên 02/11 ≈ **0,003 USD** paid
   (B ≈ 0,002 · C ≈ 0,0006 · A 0; sub-agent + judge dùng quota Claude).

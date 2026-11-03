@@ -1,8 +1,8 @@
-# Implementation Report: Phase 9 B1 — định tuyến + trò chuyện + ngoài phạm vi + khẩn cấp + ngày + H4c (**PARTIAL** — còn judge P5)
+# Implementation Report: Phase 9 B1 — định tuyến + trò chuyện + ngoài phạm vi + khẩn cấp + ngày + H4c (**xong — chờ C review delta `7e190d7..dcd1519`**)
 
-Người làm: B (Claude Opus 5.5, `hue-rag-e7`) · việc **B129** · bắt đầu 19:55 02/11/2026, bản này 20:33 02/11/2026 (`date`).
+Người làm: B (Claude Opus 5.5, `hue-rag-e7`; phiên 03/11 `hue-rag-52`) · việc **B129** + **B131** (hoàn tất) · bắt đầu 19:55 02/11/2026, bản này 08:59 03/11/2026 (`date`).
 Plan: `docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md` bản 2 sha `0c9e137b56af` (A duyệt; C129 vòng 2 ready).
-Nhánh **`p9-b1`** (từ `main` `a406bea`), commit code **`d7a4382`** + vòng chỉnh định tuyến **`7e190d7`**, đã push; worktree `/tmp/b_p9b1`. **Chưa merge. 4 cờ mặc định tắt.**
+Nhánh **`p9-b1`** (từ `main` `a406bea`), commit code **`d7a4382`** + vòng chỉnh định tuyến **`7e190d7`** + **B131 `dcd1519`** (m-1, 2 cờ bật), đã push; worktree `/tmp/b_p9b1`. **Chưa merge. Mặc định: `router` + `may_have_changed_notice` BẬT, `emergency_rule` + `today_line` TẮT.**
 Report tracked, repo public: không chép câu bộ đo / Golden / kho; chỉ số đếm + mã câu bộ tuyến (`t…`, `l…`) + `case_index`. Dữ liệu chạy: `data/phase_9/b1/` (private).
 **B không mở `*sealed*`.**
 
@@ -13,10 +13,10 @@ Report tracked, repo public: không chép câu bộ đo / Golden / kho; chỉ s�
 | D1 / D2 luật khẩn cấp (P3) | xong | **xong** (0 USD) | **C131: (a) KHÔNG ĐẠT ⇒ cờ `emergency_rule` tắt**; (b) âm |
 | D3 định tuyến + D4 trò chuyện + D5 ngoài phạm vi (P1) | xong | **xong** (vòng chỉnh 1) + sàn 2 judge | **C131: đạt** |
 | D7 ngày hôm nay (P2) | xong | **xong — KHÔNG ĐẠT ⇒ cờ `today_line` tắt** | không chạy (phần đã thấy đã âm) |
-| D8 H4c (P4) | xong + test 3 ca | theo dõi ở P5: NOT RUN | — |
-| P5 hồi quy 208 | — | Golden **chấm xong** (sàn đạt; Đủ vượt 1 câu tụt — nhiễu, xem §4); S-AT **NOT RUN** | — |
+| D8 H4c (P4) | xong + test 3 ca | theo dõi ở P5: dòng H4c 66 / 176 Golden, 24 / 32 an toàn | — |
+| P5 hồi quy 208 | — | Golden **chấm xong** (sàn đạt; Đủ vượt 1 câu tụt — nhiễu, xem §4); S-AT **dùng lại 01/11** (B131: 32 / 32 giống byte) | — |
 | P6 4 cờ tắt ⇒ giống B0 | — | **PASS** | — |
-| P7 log + cổng ổn định | xong (test) | **cổng xong** (4 cờ bật, uvicorn + Playwright) | — |
+| P7 log + cổng ổn định | xong (test) | **cổng xong** (4 cờ bật, uvicorn + Playwright); **cổng cuối B131** (mặc định mới) + ca ngắt thật + chữ đầu 10 câu | — |
 | sàn 2 (judge lời trò chuyện) | — | **xong** | **C131: 0 / 5 lọt** |
 
 ## 2. Thay đổi chính (`git diff a406bea..d7a4382`, 16 file, +640 / −177)
@@ -30,7 +30,7 @@ Report tracked, repo public: không chép câu bộ đo / Golden / kho; chỉ s�
 | `backend/retrieval/full_corpus_context.py` | `PackedSource.source` (không vào chữ ngữ cảnh); `build(…, today)` đếm token cùng chuỗi gửi |
 | `backend/api/routes/chat.py` | `/api/chat` qua `answer_turn`; stream: chỉ kiểm "chưa sẵn sàng" trước luồng (thêm generator), còn lại trong luồng; `StreamEvents.fixed`, sự kiện `notice`, `failure` mang mã + câu cũ cho lỗi tìm / ngữ cảnh; `ChatResponse.notice`; trường log `route_error`, `emergency_by`, `today` |
 | `backend/evaluation/full_corpus_eval.py` | `answer_case` qua `answer_turn`; `is_refusal` nhận 2 câu; `generate --flags …`; dòng thêm `route_error`, `emergency_by`, `notice`, `today` |
-| `backend/config/settings.yaml` | khối `assistant:` 4 cờ (tắt) + `router_timeout_seconds: 10` |
+| `backend/config/settings.yaml` | khối `assistant:` 4 cờ + `router_timeout_seconds: 10`; B131: `router`, `may_have_changed_notice` = `true` |
 | `backend/api/app.py` | `app.state.assistant_flags` |
 | `frontend/src/App.jsx`, `stream.js` | nhãn `routing` ("Đang hiểu câu hỏi…"); trạng thái lạ không còn bị gán "đã tìm" (`App.jsx:61` cũ); dòng `notice` dưới câu trả lời |
 | tests | mới `test_emergency.py` (3); `test_assistant.py` +9 (rẽ tuyến với generator thay thế — logic, không phải bằng chứng model); `test_chat_stream.py` (câu cố định, lỗi tìm giữa luồng giữ câu 503 cũ, sự kiện `notice`); 2 fake cập nhật chữ ký |
@@ -93,12 +93,27 @@ khác (vd định tuyến chạy trước, hoặc luật viết lại trên bộ
 
 **P5 và luật khẩn cấp:** lượt sinh P5 chạy với `emergency_rule` bật trước khi có C131, nhưng luật khớp **0 / 208** câu hồi quy (P3 (a) đã thấy) ⇒ câu trả lời P5 giống như khi tắt luật — dùng được cho cấu hình {`router`, `may_have_changed_notice`} [Suy ra từ 0 / 208, tất định].
 
+### 4b. B131 — hoàn tất (03/11, `git diff 7e190d7..dcd1519`, 4 file, +41 / −11)
+
+| Việc | Kết quả | Bằng chứng |
+|---|---|---|
+| (a) 32 câu an toàn — lần gọi trả lời giống byte B0 (0 USD, không mạng) | **32 / 32 giống**: bên {`router`, `may_have_changed_notice`} bắt 2 lần / câu (định tuyến + trả lời), bên 4 cờ tắt 1 lần; lần bắt cuối (trả lời) chuẩn hoá như T-2 B0 ⇒ cùng sha ở mọi câu. Lượt P5 thật: 32 / 32 câu đi `tro_ly_hue` ⇒ đúng đường được so. Dòng H4c là trường riêng (`notice`), không vào chữ trả lời ⇒ **dùng lại S-AT 01/11** theo spec §4 | `data/phase_9/b1/b131_at_bytes.jsonl`; script tạm `/tmp/b131_at_bytes.py` (dùng `capture_model_request.py` B0) |
+| (b) C132 m-1 | `_answer_events` `finally`: lấy `total_ms` (như B0, chưa tính đọc nốt) ⇒ `await turn.aclose()` **trong vùng che** ⇒ (`finally` lồng) `_copy_trace_metrics` + dòng log. Trước dòng log chỉ còn một `await` và nó được che ⇒ ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ. Thứ tự dòng log đổi: `chat_stream_drain` giờ đứng **trước** `chat_metrics` của cùng lượt. Test mới `test_disconnect_while_route_sends_text_still_logs_calls_the_core_records_on_close`: **FAIL trên code cũ, PASS trên code sửa** [Chạy] | `backend/api/routes/chat.py`, `backend/tests/test_chat_stream.py` |
+| (c) mặc định cờ | `router: true`, `may_have_changed_notice: true`; `emergency_rule`, `today_line` giữ `false` (chú thích lý do trong `settings.yaml`). `test_api_chat.py`: generator giả thêm `route()` trả `tro_ly_hue` (cờ bật ⇒ lõi hỏi tuyến trước) | `backend/config/settings.yaml` |
+| test chạm | có key, 8 file (`test_assistant`, `_boundary`, `test_chat_stream`, `test_api_chat`, `test_openai_full_corpus_generator`, `test_emergency`, `test_phase6_settings`, `test_static_ui`): **60 / 60 pass**; `git diff --check` sạch | — |
+| (d) cổng ổn định (uvicorn cổng 8861, `settings.yaml` mặc định mới, `npm ci && npm run build`) | `/` 200; `/health` 5 / 5 (5 thành phần ready); 1 câu trong kho `/api/chat` ⇒ 6 nguồn; 1 câu ngoài kho ⇒ câu ngoài phạm vi, 0 nguồn; `chat_metrics` mới **14 = 14 câu đã gửi**; grep câu hỏi trong log **0**; tắt bằng TaskStop | `data/phase_9/b131/` |
+| (d) ngắt thật `curl -m` (C132 m-2) | lần 1 `-m 4.5`: cắt **trước** chữ đầu (3 `status`) ⇒ `client_disconnected`, `n_llm_calls` 1 (định tuyến), `chat_stream_drain` finished. Lần 2 `-m 7`: cắt **giữa chữ** (262 `delta`, không `done`) ⇒ `outcome: client_disconnected`, `chat_stream_drain` `finished: true` 0,5 ms, `llm_calls` = [định tuyến] (lần trả lời bị huỷ không có usage — đúng spec §4.5); `/health` 200 ngay sau ⇒ server không treo | log worktree |
+| (d) **chữ đầu 10 câu tự viết** trên `/api/chat/stream` (theo dõi; máy khách httpx tuần tự — gửi ⇒ sự kiện `delta` đầu; số phía server lệch ≤ 2 ms) | **tất cả 10: p50 3,05 s / p95 5,64 s** (max 7,30 s). Theo tuyến: `tro_ly_hue` 5 câu p50 **3,57 s** / p95 **6,57 s**; `tro_chuyen` 2 câu p50 2,63 / p95 2,82 s; `ngoai_pham_vi` 2 câu p50 1,82 / p95 1,93 s; `khan_cap` (định tuyến bắt) 1 câu 1,63 s. Định tuyến p50 **1,56 s** (1 câu 5,96 s ⇒ chữ đầu 7,30 s). Mốc trước B1 (01/11, trình duyệt Playwright, 38 câu): p50 1,23 / p95 2,61 s ⇒ **sàn cũ p50 ≤ 3 / p95 ≤ 5 s tới chữ đầu không đạt ở 10 câu này** — Phase 9 chỉ theo dõi (PA1 User mặc định 03/11) | `data/phase_9/b131/questions.jsonl`, `first_text_client.jsonl`, `first_text_server.jsonl` |
+| tiền B131 | cổng 14 câu **0,002906 USD** (10 câu đo 0,002228; từ `usd` trong `chat_metrics`); (a) 0 USD. Trần 0,02 | log |
+
+Ghi thêm (quan sát, không sửa): `chat_metrics` không có trường `routing_ms` riêng — ms định tuyến nằm trong mục `llm_calls` có `route: router`.
+
 ## 5. Lỗi, giới hạn, chưa chạy
 
-- NOT RUN: P5 S-AT (bộ an toàn — đề xuất dùng lại số 01/11 theo spec §4); A/A của B1; sàn L1 / L2 của P2 (cờ đã tắt; thước C93 phải sửa cho bên được báo ngày).
+- NOT RUN: A/A của B1 (P5 Golden + S-AT dùng lại theo spec §4 nhờ giống byte); sàn L1 / L2 của P2 (cờ đã tắt; thước C93 phải sửa cho bên được báo ngày).
 - P3 luật khẩn cấp: kết quả âm ở phần kín ⇒ cờ tắt (A quyết); sàn spec "0 câu khẩn cấp vào model" **không đạt** nguyên văn — câu khẩn cấp qua 1 lần gọi định tuyến rồi nhận Bản 1 (model không viết lời khẩn cấp).
-- **Chữ đầu chậm thêm** do lần định tuyến (p50 1,7 s): `tro_ly_hue` 4,86 s ở cổng (1 câu) > sàn theo dõi 3 s p50 — chỉ theo dõi (User 13:36); ứng viên tối ưu sau (plan §9).
-- Đường ngắt giữa luồng sau khi dời vòng stream vào lõi: test logic + cổng chưa chạy ⇒ **[Code, chưa chạy]** trên uvicorn thật.
+- **Chữ đầu chậm thêm** do lần định tuyến: 10 câu B131 p50 3,05 / p95 5,64 s (`tro_ly_hue` p50 3,57 / p95 6,57 s) — vượt sàn cũ; chỉ theo dõi (PA1); ứng viên tối ưu sau (plan §9). 10 câu là mẫu nhỏ; đo máy khách httpx, không phải trình duyệt.
+- Đường ngắt giữa luồng sau khi dời vòng stream vào lõi: **đã chạy thật** B131 (2 ca `curl -m`, trước chữ + giữa chữ).
 - Độ trễ định tuyến 1,6–3,5 s / câu (pilot) ⇒ chữ đầu dự kiến chậm thêm tương ứng — chỉ theo dõi (User 13:36).
 
 ## 6. Khoá (cho phần kín — plan §5 bước 6, review C129 m-2)
@@ -114,7 +129,7 @@ khác (vd định tuyến chạy trước, hoặc luật viết lại trên bộ
 
 ## 7. Bàn giao / chạy tiếp
 
-**Việc phiên sau (A giao, theo thứ tự):** (1) kiểm 32 câu an toàn giống byte B0 (lệnh ở `STATUS_B.md`); (2) review C132 m-1: route `aclose()` lõi (vùng che) **trước** khi ghi `chat_metrics`; (3) C132 m-2: cổng cắt giữa stream (`curl -m`) ⇒ `client_disconnected` + `chat_stream_drain` + server không treo; (4) đổi mặc định cờ `router` + `may_have_changed_notice` = `true` trong `settings.yaml`; (5) cổng ổn định cuối ⇒ C review diff `7e190d7..<cuối>` ⇒ A merge.
+**B131 xong (03/11):** (1)–(5) của phiên trước làm xong — §4b. **Tiếp:** C review delta `7e190d7..dcd1519` (C134) ⇒ A merge ⇒ 5 chỗ báo cáo.
 
-**Đề xuất cờ (A đồng ý, chưa merge):** bật `router`, `may_have_changed_notice`; tắt `emergency_rule`, `today_line` (code giữ sau cờ). **Tối nay không merge** (A): phiên sau judge P5 ⇒ C review phần đổi ⇒ cổng ổn định ⇒ merge.
-Chữ cho người dùng (§2) A chọn. Lệnh chạy tiếp: `session_prompt/sessions/STATUS_B.md` mục B129. Worktree `/tmp/b_p9b1` giữ (đã build `frontend/dist/`).
+**Đề xuất cờ (A đồng ý, chưa merge):** bật `router`, `may_have_changed_notice`; tắt `emergency_rule`, `today_line` (code giữ sau cờ). Đã vào mặc định ở `dcd1519`.
+Chữ cho người dùng (§2) A chọn. Worktree `/tmp/b_p9b1` giữ cho review (đã build `frontend/dist/`; gỡ sau merge: `unlink` `data`, `knowledge-base-hue` rồi `git worktree remove`).

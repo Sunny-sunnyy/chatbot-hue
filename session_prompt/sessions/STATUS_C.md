@@ -1,3 +1,29 @@
+# STATUS C — MỞ PHIÊN 03/11 (08:38 03/11/2026 `date`)
+
+- Terminal C: `hue-rag-d8`. B = `hue-rag-52` (B tự báo) ⇒ A = `hue-rag-5e` (suy ra, chờ A xác nhận). Kênh: trực tiếp. Đã báo A + trả lời B.
+- Kiểm nhanh (chỉ đọc): `main` `22068df`, working tree sạch, không untracked; hooksPath `.githooks`; Qdrant 1 collection, 8.424 point (khớp `Project_Status.md` §4);
+  `frontend/dist/` có; nhánh `p9-b1` `7e190d7` (= origin); worktree `/tmp/b_p9b1` mất ("prunable", máy khởi động lại — handoff đã lường); 4 worktree AGY cũ còn.
+- Việc của C: chưa giao. Dự kiến: review delta `p9-b1` `7e190d7..<cuối>` (P2, P5, m-1 / m-2, ca ngắt thật `curl -m`, ca dò byte P6). Hỏi A: P2 kín bỏ vì `today_line` tắt?; quyền phiên; việc song song.
+- Chưa sửa file nào ngoài file này; 0 USD.
+- **User (08:42 03/11/2026, ghi bằng `date`):** C làm việc trực tiếp với A; việc A giao = User nói "làm đi". Chờ A giao việc.
+- **A trả lời ghi chú bộ đo B2 (08:39 03/11/2026 ghi nhận, chưa giao chính thức — chờ User "làm đi"):** (1) bộ đo B2 = 38 câu Golden (18 nhiều nguồn + 20 so sánh) + 12 câu chưa đủ keyword (6 + 6) chốt trước
+  + script tầng tìm (đủ keyword @10, mất đoạn đúng v5, Holm 3 biến so V0); không thêm câu mới (câu hỏi tiếp thuộc B3, B2 chỉ ghi lý do câu tìm đứng một mình);
+  (2) README bộ đo ghi sàn "mất đoạn đúng" chỉ kiểm trên 32 / 38 câu có nhãn v5; (3) nhóm kiểm = test của `split.json`; B chỉnh V1 / V3 chỉ trên dev; C chốt danh sách dev / test của 38 câu + md5 trước khi B chỉnh.
+
+## C133 — bộ đo B2 (A giao 08:46 03/11/2026; tin A = "làm đi"; bắt đầu 08:48 03/11/2026)
+- 0 USD; nhẹ CPU (chỉ tìm 38 câu V0 trên Qdrant đọc). Không đụng file nhánh `p9-b1`. B báo B131 xong ⇒ dừng, làm C134. B đang đo chữ đầu ⇒ không chạy tìm Qdrant (W31).
+- **File sẽ ghi (khai báo):** `data/phase_9/b2/` (README, danh sách 38 câu + dev / test, 12 câu chưa đủ keyword, script đo tầng tìm, kết quả V0); `report_agent/2026-11-02_phase_9_code/c133_bo_do_b2.md` (mới);
+  dòng trạng thái C133 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (08:55 03/11/2026):** report `c133_bo_do_b2.md` (quét trùng 0); README `111c63982add`; `bo_cau_b2.json` `e5d40678c1aa`; `chon_bo_cau.py` `78649cf48ec4`; `do_tang_tim.py` `019704b06db4`; `ket_qua/v0.jsonl` `a849b1ccad75`.
+  38 câu / 12 có thể đổi (dev 9, test 3) / 32 nhãn v5; V0 trùng T1 61 / 61; tự kiểm 2 ca đối chứng đúng chiều. Hỏi A: Holm ↔ "≥ 3 / 12"; sàn trên 55 câu có nhãn. File tạm `/tmp/c133*` đã xoá. 0 USD.
+- **Sửa theo A:** cổng sàng (≥ 3 / 12 cả hai lượt + 0 mất đoạn đúng trên 55 + test thêm − mất ≥ 0; Holm chỉ báo số / phá hoà) ⇒ README `ed120ccba6da`, script `04bdba9ea11a`; tự kiểm chạy lại sau W31 (`tu_kiem.json` `89bfb9cc86e6`); nhánh qua cổng chưa có ca dương.
+- **Ca dương tổng hợp (A giao):** GIA_QUA qua cổng + đứng đầu; GIA_MAT (mất 1 đoạn đúng ngoài 38) trượt — `tu_kiem.json` `adc6f5288514`; dữ liệu giả ở `data/phase_9/b2/tu_kiem/`. 0 USD.
+
+## C134 — review delta `p9-b1` `7e190d7..dcd1519` (A giao 09:00 03/11/2026; tin A = "làm đi")
+- **File sẽ ghi (khai báo):** mục mới "Vòng cuối" trong `report_agent/2026-11-02_phase_9_code/b129_review.md`; ca dò `data/phase_9/c134_review/` (private); dòng C134 trong `CURRENT_HANDOFF.md`; và file này.
+  Chạy trong worktree B `/tmp/b_p9b1` (chỉ đọc / chạy, không sửa code). Server tạm 8871 đã tắt bằng TaskStop (09:08 03/11/2026).
+- **XONG (09:09 03/11/2026): ready_for_user_confirmation** — `b129_review.md` `4730a847d853` (quét trùng 0). 0B / 0M / 1m (m-3 `generate` không `--flags` theo `settings.yaml` ⇒ có định tuyến; ghi khi merge). Tiền ≈ 0,0006 USD. `/tmp/c134` đã xoá.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 
 **Trạng thái:** C không còn việc dở. Không còn server, worktree hay file tạm của C (`/tmp/c128*`, `/tmp/c131`, `/tmp/c132*`, `/tmp/c124*` đều đã gỡ). C không commit; A commit.

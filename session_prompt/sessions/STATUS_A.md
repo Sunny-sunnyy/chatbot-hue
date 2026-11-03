@@ -1,4 +1,13 @@
-# STATUS A — KẾT PHIÊN TỐI 02/11 (20:47 02/11/2026 `date`; mở 18:27)
+# STATUS A — PHIÊN 03/11 (mở 08:36 03/11/2026 `date`)
+
+Terminal: `hue-rag-5e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-52`, C = `hue-rag-d8` (cả ba Claude Code, trực tiếp; B / C tự báo).
+- Kiểm nhanh: `main` `22068df` sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 sha `169c2dd5f86a` khớp; `frontend/dist/` có; `/tmp/b_p9b1` mất (máy khởi động lại, prunable); 4 worktree AGY cũ còn; 4 session dự án khác đang mở (RAM còn ~10 GB ⇒ một việc nặng một lúc).
+- **Quyền phiên (User "quyền của A như 02/11", A ghi nhận 08:46 03/11/2026):** A tự điều phối + tự quyết trong kế hoạch; ≤ 1 USD; A commit / push; B / C push nhánh riêng. Hết hạn cuối phiên.
+- Tốc độ B1: User nói "làm đi" không chọn PA ⇒ PA1 mặc định (merge như đo, đo chữ đầu 10 câu ở cổng cuối).
+- Giao 08:46: B131 (hoàn tất B1), C133 (bộ đo B2), C134 (review delta khi B xong). A quyết 3 ý bộ đo B2 (38 câu Golden, 32 / 38 có nhãn v5, nhóm kiểm = test của split.json).
+- Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`.
+
+# (cũ) STATUS A — KẾT PHIÊN TỐI 02/11 (20:47 02/11/2026 `date`; mở 18:27)
 
 Terminal: `hue-rag-24` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-e7`, C = `hue-rag-cc` (cả ba Claude Code, trực tiếp; B / C tự báo).
 - Kiểm nhanh: `main` `a17a596` sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; `frontend/dist/` có; spec Phase 9 sha `169c2dd5f86a` khớp; 4 worktree AGY cũ còn.
