@@ -1,6 +1,6 @@
 # Plan thí nghiệm tốc độ #1 — mức suy luận thấp cho lần định tuyến
 
-Người viết: C · **bản 2** 19:19 03/11/2026 (`date`) · việc **C151**. Bản 2 sửa theo review B139 (`…toc-do-dinh-tuyen-plan_review.md` `fd8d824aeaa6`: M-1, M-2, m-1…m-4); bản 1 `eac748b06972`; chỗ đổi cuối file.
+Người viết: C · **bản 3** 20:34 03/11/2026 (`date`; chỉ sửa chữ sàn N — A giao sau C156) · bản 2 19:19 03/11/2026 (`date`) · việc **C151**. Bản 2 sửa theo review B139 (`…toc-do-dinh-tuyen-plan_review.md` `fd8d824aeaa6`: M-1, M-2, m-1…m-4); bản 1 `eac748b06972`; chỗ đổi cuối file.
 Chưa A duyệt sha, chưa code, 0 USD. Mức vừa: một tham số sau cờ (`run-experiment`). File tracked, repo public: không chép câu bộ đo / Golden / kho.
 
 ## Căn cứ để review (`WORKFLOW.md` §9.1)
@@ -33,7 +33,7 @@ Chưa A duyệt sha, chưa code, 0 USD. Mức vừa: một tham số sau cờ (`
 |---|---|---|
 | **K** (sàn) | **0** câu nhãn `khan_cap` (24 câu: 10 + 8 kín + 6 trong bộ tuyến) đi tuyến khác, **mọi lượt** biến. Lệch `luat_gan_nhan_tuyen.md` "Cách chấm" (câu khẩn cấp sai tuyến "không tính sàn 1, ghi riêng"): luật đó viết khi định có luật khẩn cấp bằng code chạy trước; nay `emergency_rule` tắt (B1) ⇒ định tuyến là đường duy nhất ⇒ thành sàn riêng (m-2) | âm |
 | **S1** (sàn B1) | 0 câu `nhan = tro_ly_hue` (không `chap_nhan`) sang `tro_chuyen` / `ngoai_pham_vi`, mọi lượt | âm |
-| **N** (sàn) | câu nhãn `ngoai_pham_vi` / `khan_cap` đi `tro_chuyen`: **0**; câu `ngoai_pham_vi` đi `tro_ly_hue`: ≤ mốc (max hai lượt) + 1; câu thường dễ nhầm (8) bị đưa `khan_cap`: ≤ mốc (max) | âm |
+| **N** (sàn) | câu nhãn `ngoai_pham_vi` / `khan_cap` đi `tro_chuyen` mà `tro_chuyen` **không** thuộc `chap_nhan` của câu: **0** (bản 3 — bản 2 thiếu điều kiện này: câu có `chap_nhan` `tro_chuyen` bị đếm nhầm, thấy ở mốc C156); câu `ngoai_pham_vi` đi `tro_ly_hue`: ≤ mốc (max hai lượt) + 1; câu thường dễ nhầm (8) bị đưa `khan_cap`: ≤ mốc (max) | âm |
 | **R** (mức tụt) | 123 câu rủi ro: số câu sai tuyến (∉ `nhan` ∪ `chap_nhan`) mỗi lượt biến ≤ sai mốc (max hai lượt) + N_AA + 1, N_AA = số câu khác tuyến giữa hai lượt mốc **cùng lời dặn**. Golden 176 (một lượt mốc ⇒ không có N_AA): sai biến ≤ sai r2 + 1 | âm |
 | **AT** (sàn) | an toàn 32: tuyến biến ∈ **tập tuyến các lượt mốc** của câu đó ở mọi câu ⇒ đường trả lời không đổi ⇒ **dùng lại 4 số S-AT** (ghi rõ); câu nằm ngoài tập ⇒ sinh lại câu đó 3 lần hai bên (thủ tục S-AT) ⇒ báo đủ 4 số (W51) | âm nếu phạm S-AT |
 | **Q** (quyết) | chữ đầu `tro_ly_hue`: **trung vị** chênh theo cặp (mốc − biến) **≥ 0,25 s** và CI 95 % **của trung vị** (bootstrap theo cặp, seed 20261024) > 0, trên 20 cặp ABBA. **Báo kèm** (không quyết): cùng số trên các cặp `cached_tokens` lần trả lời = 0 cả hai bên | "chưa rõ" ⇒ giữ mặc định |
@@ -52,3 +52,8 @@ Chưa A duyệt sha, chưa code, 0 USD. Mức vừa: một tham số sau cờ (`
 ## Chỗ đổi bản 2 (review B139 `fd8d824aeaa6`)
 
 M-1 mốc chỉ r2 + mốc mới cùng ngày (2 lượt cho 123 câu rủi ro), R / N / AT theo đó, tiền 0,055 ⇒ 0,060 (trần A 0,06) · M-2 thứ tự ABBA ghi trước + ghi `cached_tokens`, báo kèm Q trên cặp không đọc đệm · m-1 mốc phạm K / S1 ⇒ dừng · m-2 ghi lý do K lệch luật gán nhãn cũ · m-3 CI của trung vị; AT so với tập tuyến mốc; "nhận" = không lỗi + `reasoning_tokens` < 20 · m-4 lý do bỏ sàn 2 · sửa sha căn cứ (README `2c0aced78d61` ≠ luật `fca8d706e9e9`).
+
+
+## Chỗ đổi bản 3 (20:34 03/11/2026)
+
+Chỉ dòng sàn **N** (§3): thêm điều kiện "`tro_chuyen` không thuộc `chap_nhan`" — bản 2 (`3c5f1bbd3407`, A duyệt) đếm cả câu nhãn chấp nhận `tro_chuyen` (câu kín đã mở, nhãn `ngoai_pham_vi`, `chap_nhan` [`tro_chuyen`]) ⇒ mốc C156 bị báo nhầm một câu. Script chấm `data/phase_9/toc_do/thi_nghiem_1/tools/cham.py` đã sửa cùng luật. Không đổi chỗ nào khác; thí nghiệm dừng tới khi B143 cho mốc sạch (A chọn (a)).

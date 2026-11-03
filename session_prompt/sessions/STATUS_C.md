@@ -42,6 +42,63 @@
 
 ## C150 — phân tích tốc độ chữ đầu (A giao, "làm đi"; bắt đầu 18:45 03/11/2026; B báo commit B3b ⇒ dừng)
 - 0 USD, chỉ đọc dữ liệu đo đã có. **File sẽ ghi:** `data/phase_9/toc_do/c150_phan_tich.md` (+ script đọc `data/phase_9/toc_do/tools/`); dòng C trong handoff; file này.
+- **XONG (18:51 03/11/2026):** `c150_phan_tich.md` `db2cab1d821c` + `tools/phan_tich.py` + `ket_qua.json`. Định tuyến ≈ 46 % chữ đầu `tro_ly_hue` (p50 1,5 s); TTFT trợ lý ≈ 1,7 s (RAG 1–8 1,2 s); suy luận ở 99–100 % lần định tuyến (code không đặt mức); `cached_tokens` = 0 chỉ ở định tuyến + lần 1 — lần sau trong vòng công cụ 159 / 162 có đọc đệm. Bẫy: `latency_ms` harness không gồm định tuyến (kiểm 6 dòng). 0 USD.
+
+- Sửa handoff: dòng C150 mang nhầm hậu tố "nháp XONG … `42afc1c7bc64`" của C149 (A sửa dòng sau khi C thêm) ⇒ thay bằng trạng thái C150 đúng.
+
+## C151 — plan ngắn thí nghiệm tốc độ #1 (mức suy luận thấp cho định tuyến) (A giao, "làm đi"; bắt đầu 18:52 03/11/2026)
+- **File sẽ ghi:** `docs/superpowers/plans/2026-11-03-phase-9-toc-do-dinh-tuyen-plan.md` (mới); dòng C trong handoff; file này. 0 USD (chỉ đọc mã thư viện, không gọi API).
+- **XONG (18:55 03/11/2026):** plan bản 1 (47 dòng, quét trùng 0). Mốc dùng lại B1 P1 r1 / r2 (lời dặn định tuyến không đổi) + mốc mới 46 câu; sàn K / S1 / N / R / AT; quyết chữ đầu trung vị chênh ≥ 0,25 s + CI > 0; ước ≈ 0,055 ⇒ Golden 176 chỉ chạy sau khi 123 câu rủi ro đạt, dừng > 0,045. Probe mức `effort` hợp lệ: thư viện cho `none · minimal · low…`, model chưa biết.
+
+## C152 — chạy bộ B3b (B báo `p9-b3b` `57f0e0b`; A: chạy nho + doc_lap, bỏ tran; mốc dừng B3 0,49, trần cứng 0,50) — bắt đầu 18:57 03/11/2026
+- Cấu hình kiểm khớp: `settings.yaml` `b730b7af41a0` (`nho_cau_tra_loi: false`), `ASSISTANT_HISTORY_NOTE` `64e347d5df58`, `ANSWER_SYSTEM_INSTRUCTIONS` `81d3040cf53f`, `ROUTER_HISTORY_NOTE` `62f8197730ad`; bộ md5 `0f2360466366`, README `58dd7910eeb9`, `kiem_bo.py` OK.
+- **File sẽ ghi:** worktree `/tmp/c_p9b3b` (detach, gỡ khi xong); `data/phase_9/b3b/chuoi_moi_c152/` (private); `/tmp/c152/` (xoá khi xong); handoff dòng C; file này.
+- Pilot N-T1 bên nho: 0 lỗi, ngữ cảnh lưu đủ, 0,000905 USD.
+- **XONG (19:03 03/11/2026):** S1 **0 / 6** (nho từ chối chuẩn 6 / 6 lượt thiếu ⇒ lô người đọc rỗng) · S2 nho **0 / 19** ↔ doc_lap 5 ⇒ **đạt cả hai**. Theo dõi: nho 19 / 19 lượt bình thường trích đúng đối tượng; doc_lap 3 / 6 lượt thiếu trả lời bằng đoạn không nói đối tượng (bẫy có tác dụng). 0,020337 USD ⇒ B3 ≈ 0,466. `KET_QUA_C152.md` `ea5be7210723`. Worktree + `/tmp/c152` đã gỡ / xoá.
+
+- A quyết bật nhớ (sau C152). Việc kế của C: review delta `a3dabba..<cuối p9-b3b>` (B138 + cổng B141) khi B báo sha. Rảnh hợp lệ tới đó.
+
+## C153 — nháp phiếu chấm 5 lịch kín cho User (plan B5 Q3) — A gợi ý "nếu muốn", private; bắt đầu 19:04 03/11/2026
+- **File sẽ ghi:** `data/phase_9/lich_trinh/phieu_cham_user_nhap.md` (mới); file này. 0 USD. Không sửa plan B5 / C151.
+- **XONG:** phiếu nháp `965f9a2bb867` (3 tiêu chí thành câu tự hỏi + bảng 5 lịch + ghi cho người làm). Chưa dùng tới khi plan B5 duyệt.
+
+## Chuẩn bị review B3b (đọc trước, 19:05 03/11/2026; chờ B báo sha cuối B141)
+- `a3dabba..57f0e0b`: 2 file (`ASSISTANT_HISTORY_NOTE` +1 câu; `nho_cau_tra_loi: false`), `diff --check` sạch. Mỗi cấu hình chạy đúng 1 lần (`data/phase_9/b3b/sau/` = câu dặn, `sau_a/` = chỉ nhớ câu hỏi) ⇒ không "chạy lại tìm lần đạt"; (a) đúng đường kết quả âm plan B3 §4.
+- C tính lại Q4 (a) từ điểm thô (`chuoi_sealed_c146/tools/q4_all.py`): +0,80 [+0,25; +1,50] 6 / 14 / 0 — **khớp B**.
+- Code: chỉ nhớ câu hỏi ⇒ `append` lưu câu trả lời rỗng, `with_history` **bỏ** tin assistant rỗng (chuỗi tin user liên tiếp); API dựng `ConversationStore(keep_answers=flags.nho_cau_tra_loi)` (`app.py:124`) ⇒ đường API theo cờ. Còn lại khi B báo: cổng B141 + commit bật cờ.
+
+## C154 — review B3b `a3dabba..7a76ba2` (B138 + B141) — bắt đầu 19:14 03/11/2026
+- **File sẽ ghi:** mục mới "B3b" trong `report_agent/2026-11-02_phase_9_code/b136_review.md`; ca dò private `data/phase_9/c154_review/`; worktree `/tmp/c_p9b3b` nếu cần chạy test (gỡ khi xong); file này. 0 USD.
+- Sau đó: sửa plan C151 theo review B139 (`…toc-do-dinh-tuyen-plan_review.md` `fd8d824aeaa6`, 0B / 2M / 4m) ⇒ review plan B4 bản 1 `a6d4140690d9`.
+
+- **C154 XONG:** `b136_review.md` mục "B3b" — **ready** 0B / 0M / 1m (m-4 câu "ngoài kho" của cổng là ngoài phạm vi) ⇒ B sửa report `05714acd9fc9` ⇒ m-4 đóng (review `d810865b059b`). Q4 (a) tính lại khớp; ca dò app mặc định 2 lượt; test 41 / 41. Worktree gỡ (`--force` vì có `node_modules` / `dist` của bản build — chỉ trong worktree của C).
+- **C151 bản 2 (19:20 03/11/2026):** `eb1b502fd70f` → sửa giờ bản 1 gõ tay (hook bắt "19:55" — bỏ giờ, giữ sha) ⇒ sha cuối trong tin gửi A / B. Sửa M-1 (mốc chỉ r2 + mốc mới cùng ngày), M-2 (ABBA + `cached_tokens`), m-1…m-4; tiền ≈ 0,060 / trần 0,06.
+  Bẫy: gõ tay giờ bản cũ khi viết bản mới — lấy giờ bản cũ từ STATUS / bỏ giờ.
+
+## C155 — review plan B4 bản 1 `a6d4140690d9` (B nhờ, A giao; bắt đầu 19:20 03/11/2026)
+- Chỉ dựa "Căn cứ để review" của plan (WORKFLOW §9.1); không đọc STATUS_B / tin B. 0 USD. **File sẽ ghi:** `docs/superpowers/plans/2026-11-03-phase-9-b4-plan_review.md` (mới); ca dò `/tmp/c155/` (xoá khi xong); file này.
+- Lưu ý vai: C viết bộ đo B4 (C143) ⇒ phần "bộ đo" C tự kiểm việc mình — ghi rõ trong review.
+
+- **C155 XONG:** review plan B4 bản 1 — changes_requested 0B / 2M / 5m + mục đối chiếu nghiên cứu (A nhờ) — `…b4-plan_review.md` `9ff89cab1b1d`.
+
+## C156 — thí nghiệm tốc độ #1 theo plan duyệt `3c5f1bbd3407` (A duyệt; trần 0,065 / dừng 0,062) — bắt đầu 19:24 03/11/2026
+- **File sẽ ghi (khai báo):** nhánh `p9-toc-do-1` từ `main` `9e2ecd9`, worktree `/tmp/c_toc_do`: `backend/llm/generator_openai_full_corpus.py` (router `reasoning` sau cờ), `backend/config/settings.yaml` (`router_reasoning_effort: null`), chỗ nạp cờ, 1 test; dữ liệu private `data/phase_9/toc_do/thi_nghiem_1/`; report `report_agent/2026-11-02_phase_9_code/c156_toc_do_dinh_tuyen.md`; file này. Không đụng file B142.
+- Thứ tự (A): probe ⇒ mốc ⇒ biến 123 ⇒ Golden; chữ đầu ABBA chỉ khi B báo không chạy server / Playwright / lượt có phí.
+- Code + test (26 / 26) ⇒ commit `4c6adc6` trên `p9-toc-do-1` (chưa push). Probe: `none` được nhận, `reasoning_tokens` 0 ⇒ X = `none`.
+- **DỪNG theo m-1 (19:32 03/11/2026):** mốc (cấu hình chạy thật) phạm **K** — câu khẩn cấp `kc08` (bộ 10 câu bước 0, loại "bị cướp / mất giấy tờ") ⇒ `tro_ly_hue` ở **cả 2 lượt mốc**; bộ 10 câu này B1 chưa từng chạy qua định tuyến (P1 không gồm). S1 0, N 0 (sau khi sửa script: `s15` có `chap_nhan` `tro_chuyen` ⇒ không tính — lỗi chữ sàn N trong plan của C). Biến **chưa chạy**. Tiền ≈ 0,0139 USD (probe 0,000066 + mốc 0,010152 + 0,00369).
+
+## C157 — review B142 `p9-phan-hoi` `9e2ecd9..6f45f58` (👍 / 👎 + gợi ý câu ngoài phạm vi) — bắt đầu 19:35 03/11/2026
+- **File sẽ ghi:** `report_agent/2026-11-02_phase_9_code/b142_review.md` (mới); ca dò private `data/phase_9/c157_review/`; worktree `/tmp/c_phanhoi` nếu cần (gỡ khi xong); file này. 0 USD (không gọi model). C156 chờ A chọn.
+- **XONG:** `b142_review.md` `a89673b6e282` — **ready** 0B / 0M / 0m (2 ghi nhận). Bẫy lặp lại: handler log gắn trong ca dò không bắt được dòng (app dựng handler riêng) ⇒ ca dò lần đầu báo "0 dòng" vô nghĩa ⇒ đổi sang đọc `application.log` sau mốc dòng. **Luật cho mình: kiểm log luôn ở file app ghi, không qua handler tự gắn.** Worktree gỡ.
+- **Plan B4 bản 2 `42fa62d2425f` (19:42 03/11/2026):** vòng 2 **ready** (review `8517a548a565`). Sau A duyệt: C làm `chon_da_thay.json` + nhãn `can_hoi_lai` (60 + 62 câu).
+
+- A chọn (a) cho kc08: B làm B143 (sửa định nghĩa khan_cap trong lời dặn định tuyến, dùng harness của C); thí nghiệm tốc độ dừng tới khi có mốc sạch. C review B143 khi B báo.
+
+## C158 — chuẩn bị B4 (plan bản 2 duyệt `42fa62d2425f`) — bắt đầu 20:32 03/11/2026
+- **File sẽ ghi:** `data/phase_9/bo_do_b4/chon_da_thay.json`, `data/phase_9/bo_do_b4/can_hoi_lai.json` (+ luật trong `data/phase_9/bo_do_b4/README.md` mục mới), plan tốc độ bản 3 (chỉ sửa chữ sàn N); file này. 0 USD.
+- **XONG (20:35 03/11/2026):** `chon_da_thay.json` `060d62a56e97` (10 câu, chỉ trường bắt buộc thiếu, phủ so_ngay 1/2/3/4+) · `can_hoi_lai.json` `ef9179c8f266` — **0 / 122** câu can_hoi_lai (t16 lịch trình đủ trường; 11 câu giá một thứ cụ thể không thuộc chi_phi D2) · README B4 `76766aa2287a` (`kiem_bo.py` OK) · plan tốc độ **bản 3** `984d67829a34` (chỉ sửa chữ sàn N — cần A duyệt lại phần đổi).
+
+- **A duyệt plan tốc độ bản 3 `984d67829a34`** (ghi nhận 20:35 03/11/2026); lần chạy lại dùng mốc mới sau B143. C chờ B143 ⇒ review.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
 

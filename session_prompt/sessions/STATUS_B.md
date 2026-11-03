@@ -32,6 +32,8 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 
 - **B142 xong:** `p9-phan-hoi` `6f45f58` (push) — 👍/👎 + gợi ý câu ngoài phạm vi; Playwright thật đạt (lỗi mạng thật = tắt server); report `b142_phan_hoi_implementation.md`; ≈ 0,0022 USD. C review **ready 0/0/0** (`b142_review.md` `a89673b6e282`). Plan B4 bản 2 `42fa62d2425f`: C vòng 2 **ready** (`8517a548a565`; Lệch Q6 chờ A). (19:43 03/11/2026) Chờ A: merge B142, duyệt sha plan B4 + quyết Lệch Q6 / Q-a / Q-b.
 
+- **B143 (AN TOÀN kc08) xong 20:49 03/11/2026:** `p9-khan-cap` `8d141d0` (push) — `ROUTER_INSTRUCTIONS` `164bd4a254e9`; mọi luật ghi trước đạt (K 0/24 × 2, kc08 2/2, cùng loại 6/6 × 2, thường 0/5, 123 / Golden trong ngưỡng); ≈ 0,0424 USD. Report `b143_khan_cap_implementation.md`. Chờ C review ⇒ A merge. Worktree `/tmp/b_khancap` giữ. Plan B4 duyệt `42fa62d2425f` — code sau.
+
 ## Phiên 03/11 đã xong
 | Việc | Kết quả |
 |---|---|

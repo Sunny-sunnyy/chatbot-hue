@@ -7,6 +7,7 @@ Terminal: `hue-rag-9e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`.
 - Diễn biến tối: C146 kín (K-N2 trích sai ⇒ cờ nhớ tắt) ⇒ User chọn B3b ⇒ merge B3 `a3dabba` + 5 chỗ báo cáo `9b97ce0` ⇒ B138 vòng 1 Q4 không đạt ⇒ (a) chỉ nhớ câu hỏi đạt `57f0e0b` ⇒ C chạy bộ mới. Nghiên cứu sản phẩm thật (Codex + agent con TRIPO v2) ⇒ báo cáo nghiên cứu bản 4. C149 nháp plan B5, C150 phân tích tốc độ, C151 plan tốc độ #1.
 - **Bẫy A (tối 03/11, đầu vào vòng cải tiến):** (1) khi A viết lại dòng việc của C trong handoff, hậu tố "XONG … sha" C ghi ở dòng cũ bị giữ sang dòng mới ⇒ sha sai, 2 lần (C phát hiện, C sửa) ⇒ tách trạng thái ra dòng riêng; (2) một giờ ước dạng HH:Mx trong handoff — hook bắt, sửa ngay; (3) gửi câu cổng với trường `question` thay vì `query` (422) — đọc schema trước khi gửi.
+  (4) **B / C đứng chờ ~55 phút (khoảng 19:37–20:31)**: A mở hộp hỏi User (câu thời tiết) trong khi User đã đi nghỉ — hộp hỏi chặn A, 4 tin của B / C (kc08 an toàn, B142 xong, plan B4 bản 2) nằm chờ ⇒ khi User có thể vắng: trả lời / giao B, C **trước**, rồi mới mở hộp hỏi User; câu không gấp để vào handoff.
 
 # (cũ) STATUS A — KẾT PHIÊN 03/11 (13:26 03/11/2026 `date`; mở 08:36)
 
