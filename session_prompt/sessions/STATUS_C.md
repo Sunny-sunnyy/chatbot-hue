@@ -100,6 +100,10 @@
 
 - **A duyệt plan tốc độ bản 3 `984d67829a34`** (ghi nhận 20:35 03/11/2026); lần chạy lại dùng mốc mới sau B143. C chờ B143 ⇒ review.
 
+## C159 — review B143 `p9-khan-cap` `6817897..8d141d0` (an toàn kc08) — bắt đầu 20:50 03/11/2026
+- **File sẽ ghi:** `report_agent/2026-11-02_phase_9_code/b143_review.md` (mới); ca dò private `data/phase_9/c159_review/`; file này. 0 USD trừ khi cần chạy lại (báo A trước).
+- **XONG (20:53 03/11/2026):** `b143_review.md` `a06fb3124a79` — **ready** 0 / 0 / 0 (3 ghi nhận). Số định tuyến tính lại bằng `floors` C156 khớp toàn bộ. `chay_tuyen.py` thêm trường `router_sha` mỗi dòng (đóng ghi nhận 3). Sau merge B143: mốc tốc độ đổi ⇒ plan cần sửa phần mốc (r2 B1 không dùng được) — báo A.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
 
 **Trạng thái:** C không còn việc đang chạy, không server / tiến trình nền, không thư mục tạm (`/tmp/c13*`, `/tmp/c14*` đã xoá). C không commit; A commit.
