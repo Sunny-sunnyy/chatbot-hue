@@ -72,6 +72,14 @@
 ## C143 — bộ đo B4 (hỏi lại) + 2 cách trình bày chi phí (A giao; bắt đầu 11:45 03/11/2026; dừng khi B báo plan B3 bản 2)
 - 0 USD; kho chỉ `scripts/grep_kb.sh`; tra web `scripts/tra_web_codex.sh` (chỉ công khai) + WebFetch. Phần kín `*sealed*`, B không mở.
 - **File sẽ ghi:** `data/phase_9/bo_do_b4/` (README, `cau_da_thay.jsonl`, `cau_sealed.jsonl`, `tools/kiem_bo.py`, `chi_phi_hai_cach.md`, yêu cầu tra web); `data/tra_cuu_cli/<ngày>_c143-*`; `report_agent/2026-11-02_phase_9_code/c143_bo_do_b4.md`; dòng STATUS này.
+- Dừng giữa chừng cho C142 vòng 2 (plan B3 bản 2 `cd099ec0a00e` ready, review `6a12de7acf3e`), rồi tiếp.
+- **XONG (11:55 03/11/2026):** bộ đo B4 README `ce6ddc8a7e6e` (30 câu 10/7/3 + 5/3/2, `kiem_bo.py` OK — bắt 2 lỗi nhãn của C, đã sửa); `chi_phi_hai_cach.md` (tra web, Codex mở 0 trang ⇒ C kiểm 3 ý; khuyên cách A); report `c143_bo_do_b4.md` (quét trùng 0). 0 USD.
+- C143 thêm: mẫu 10 câu B4 cho User `data/phase_9/bo_do_b4/mau_cho_user.md` `d034ec2f3ed8` (README cập nhật).
+
+## C144 — nháp bảng điểm B5 (A giao; bắt đầu 11:58 03/11/2026; nháp, chưa trình User; dừng nếu B nhắn "Khoá" B3)
+- 0 USD; đọc kho **chỉ** `scripts/grep_kb.sh`; không tự đặt số khi kho không có (thời lượng / giờ ⇒ null).
+- **File sẽ ghi:** `data/phase_9/lich_trinh/diem.json`, `diem_cho_user.md`, `tools/` (script dựng nếu cần); dòng STATUS này.
+- **XONG nháp (12:04 03/11/2026):** `diem.json` `335786dafb97` (28 điểm, 8 cụm; thời lượng 4 / 28, giờ / trạng thái 10 / 28 — chỉ khi kho ghi), `diem_cho_user.md` `f87c81699a32` (3 câu cần User quyết), `tools/trich.py` `19dfdc52e199`. Tự kiểm lại bằng kho: tách cụm "lăng xa" (Minh Mạng 12–14, Gia Long 16–20 km), bỏ nhãn chụp ảnh không có căn cứ. Khung 07h00–17h30 Quần thể **chưa gán** từng điểm. 0 USD. Chưa trình User.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 

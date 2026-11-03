@@ -167,6 +167,8 @@ Tài liệu cũ cùng Phase (W46, `find` 18:27 02/11): `guides/phase_9_agentic_r
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
+**Trình User khi quay lại (~13:00 03/11, A ghi 11:56 03/11/2026):** (1) chọn mẫu giao diện 1 / 2 / 3 (`data/giao_dien_v2/mau/`) — chặn bật B3; (2) cách trình bày chi phí A / B (`data/phase_9/bo_do_b4/chi_phi_hai_cach.md`, C khuyên A); (3) báo: B2b P0_thieu 10 ⇒ 9 (2 mới / 3 hết) — theo dõi ở B3; (4) mẫu 10 câu B4 `data/phase_9/bo_do_b4/mau_cho_user.md` (đọc khi rảnh). **Không trình hôm nay:** nháp bảng điểm B5 (C144, `data/phase_9/lich_trinh/diem.json` 28 điểm / 8 cụm, `diem_cho_user.md`; 3 câu cho User ở cuối file: giờ "07h00–17h30" chưa gán từng điểm · 2 điểm phía nam xa · thời lượng chỉ 4 / 28) ⇒ trình lúc viết plan B5, cùng nghiên cứu thời tiết + `báo cáo nghiên cứu github.txt`.
+
 1. **Quyền phiên.** A khuyên: như 02/11 (A tự điều phối + tự thử trong luật; ≤ 1 USD / phiên; A tự commit / push; B / C push nhánh riêng).
 2. ~~**Xoá nhánh `giao-dien-moi`**~~ **XONG 15:15 02/11/2026** (User `!` xoá local + origin). Cũ: (local + origin): đã merge `ed8e6e8`; `git log main..giao-dien-moi` rỗng (A kiểm 14:52 02/11/2026) — User `!`
    (`git branch -d giao-dien-moi` + `git push origin --delete giao-dien-moi`).
