@@ -5,6 +5,14 @@ Terminal phiên 03/11: `hue-rag-52` (A = `hue-rag-5e`, C = `hue-rag-d8`) · Agen
 Quyền phiên (User qua A: việc A giao = "làm đi", B push nhánh riêng) **hết hạn cuối phiên** — hỏi lại phiên sau.
 **Phiên chiều 03/11 (mở 18:02 03/11/2026):** terminal B `hue-rag-32`; peer `hue-rag-40`, `hue-rag-9e` (chưa rõ ai là A). User: B làm trực tiếp với A, việc A giao = "làm đi". Worktree `/tmp/b_p9b3` mất (prunable) ⇒ tạo lại khi được giao.
 
+## PHIÊN SAU — B4 (B144 dở, 21:10 03/11/2026; report `report_agent/2026-11-02_phase_9_code/b144_b4_implementation.md`)
+Worktree **`/tmp/b_b4`** (nhánh `p9-b4` `86c311b` — đã rebase lên `main` `ac46c96` có B143, symlink `data/` + `knowledge-base-hue/`; mất sau khởi động lại ⇒ `git worktree prune` + tạo lại). Code + test 0 USD xong, cờ `hoi_lai` tắt.
+**Q1 PASS** (21:13 03/11/2026: capture 228 ca giống byte `main`). **Chưa chạy lượt có phí nào** (B143 đã merge `e3cdb96`; pilot để phiên sau — hỏi lại quyền phiên).
+Lệnh (từ `/tmp/b_b4/backend`):
+- (Q1 đã đạt — chỉ chạy lại nếu rebase lại.) Q1: `env -u OPENAI_API_KEY OPENAI_API_KEY=capture-only HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag python /home/minhhieu/hue_rag/data/phase_9/b2_chay/tools/capture_all.py <out>` trên main mới và nhánh ⇒ `cmp`.
+- Đo: `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/b4/tools/chay_b4.py chay ../data/phase_9/bo_do_b4/cau_da_thay.jsonl /home/minhhieu/hue_rag/data/phase_9/b4/<lượt>.jsonl [--chi id…] [--chon ../data/phase_9/bo_do_b4/chon_da_thay.json]` ⇒ `… dem <bo> <out>` (0 USD). `--out` là FILE.
+- Thứ tự: pilot 4 câu ⇒ Q2 / Q3 (≤ 3 vòng chỉnh `HOI_LAI_NOTE`) ⇒ khoá ⇒ Q4 / Q5 / Q6 / Q7 ⇒ C kín ⇒ Q8 cổng + Playwright ⇒ report ⇒ C review. Trần B4 0,12 USD (dừng > 0,11).
+
 ## PHIÊN SAU — B3 (B136 dở; report `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md`)
 Worktree **`/tmp/b_p9b3` giữ** (nhánh `p9-b3`, symlink `data/` + `knowledge-base-hue/`). Lệnh nền: `cd /tmp/b_p9b3/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag [--env-file /home/minhhieu/hue_rag/.env] …`.
 Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ước tiền từng bước trước khi chạy; bước làm tổng > 0,37 ⇒ báo A trước.
