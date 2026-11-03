@@ -1,21 +1,92 @@
 @import "tailwindcss";
 
-/* Màu + chữ theo B116 (report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md "Hướng nhìn"; mọi cặp chữ / nền đạt AA).
-   Tên token: `page` = `bg`, `ink` = `text` của B116 (tránh lớp `bg-bg`, `text-text`). */
+/* Màu + chữ theo bản mẫu 1 "Huế hiện đại" (C140, `data/giao_dien_v2/mau/1.html`; C kiểm mọi cặp chữ / nền ≥ 4,5 : 1).
+   Tên token: `page` = `bg`, `ink` = `text` của bản mẫu (tránh lớp `bg-bg`, `text-text`). */
 @theme {
-  --color-page: #F6F6F8;
+  --color-page: #F7F5FB;
   --color-surface: #FFFFFF;
-  --color-ink: #211D27;
-  --color-muted: #5E5866;
-  --color-accent: #5B2C83;          /* tím Huế: tiêu đề, nút, số nguồn đã bật, viền focus */
-  --color-accent-strong: #47206A;
+  --color-ink: #1F1A2B;
+  --color-muted: #5C556B;
+  --color-accent: #5B2C83;          /* tím Huế: nút, chữ nhấn, viền focus */
+  --color-accent-deep: #3D1A5C;     /* dải đầu trang, tiêu đề, nút khi rê chuột */
   --color-on-accent: #FFFFFF;
-  --color-accent-soft: #F1EBF7;
-  --color-line: #DCD8E1;            /* chỉ trang trí — không dùng làm viền ô nhập */
+  --color-on-top-muted: #E6DDF2;
+  --color-accent-soft: #EFE8F7;
+  --color-gold: #E9B949;            /* chỉ trang trí + nền số nguồn đang chọn (chữ trên nó là tím đậm) */
+  --color-gold-soft: #FBEFC9;
+  --color-gold-ink: #6E4B00;
+  --color-line: #E2DCEB;            /* chỉ trang trí — không dùng làm viền ô nhập */
   --color-field-line: #7D7785;
   --color-error: #A4262C;
   --color-error-soft: #FBEDEE;
   --font-sans: "Be Vietnam Pro", system-ui, "Segoe UI", sans-serif;
+}
+
+body { background: var(--color-page); }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+
+/* Đầu trang: dải tím + sông Hương vẽ SVG tự vẽ ra khi mở trang — chuyển động trang trí duy nhất. */
+.top { position: relative; overflow: hidden; background: var(--color-accent-deep); color: #fff; padding: 18px 24px 46px; }
+.top :focus-visible { outline-color: var(--color-gold); }
+.river { position: absolute; left: 0; right: 0; bottom: -2px; width: 100%; height: 56px; }
+.river path { fill: none; stroke-linecap: round; }
+.river .r1 { stroke: var(--color-gold); stroke-width: 3; stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 2.2s ease-out .2s forwards; }
+.river .r2 { stroke: #9B78C2; stroke-width: 2; opacity: .7; stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 2.6s ease-out .5s forwards; }
+.river .bank { fill: var(--color-page); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.new-chat { position: relative; z-index: 1; border: 1px solid #fff; border-radius: 999px; padding: 0 16px; min-height: 40px; font-size: 15px; font-weight: 600;
+            background: transparent; color: #fff; cursor: pointer; }
+.new-chat:hover { background: #fff; color: var(--color-accent-deep); }
+.new-chat:disabled { opacity: .6; cursor: not-allowed; background: transparent; color: #fff; }
+
+/* Màn hình chào: 5 chủ đề — 3 thẻ hàng trên, 2 thẻ hàng dưới; điện thoại một cột. */
+.topics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.topic { grid-column: span 2; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 14px; padding: 16px 16px 12px; }
+.topic:nth-child(n+4) { grid-column: span 3; }
+@media (max-width: 700px) { .topics { grid-template-columns: 1fr; } .topic, .topic:nth-child(n+4) { grid-column: auto; } }
+.topic h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 17px; font-weight: 600; color: var(--color-accent); }
+.topic svg { flex: none; box-sizing: content-box; padding: 6px; border-radius: 50%; background: var(--color-gold-soft); }
+.topic button { display: block; width: calc(100% + 16px); margin: 0 -8px; padding: 7px 8px; border-radius: 8px; text-align: left; font-size: 15px; line-height: 1.45;
+                cursor: pointer; min-height: 44px; }
+.topic button:hover { background: var(--color-accent-soft); }
+
+/* Trò chuyện: câu hỏi bên phải (tím), câu trả lời bên trái (thẻ trắng). */
+.turn { margin-bottom: 26px; scroll-margin-top: 16px; }
+.ask { width: fit-content; max-width: 82%; margin: 0 0 10px auto; padding: 10px 16px; border-radius: 22px 22px 6px 22px; background: var(--color-accent); color: #fff;
+       font-size: 17px; font-weight: 400; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-line; }
+.bubble { max-width: 64ch; padding: 16px 20px; border: 1px solid var(--color-line); border-radius: 6px 22px 22px 22px; background: var(--color-surface); }
+.bubble-error { border-color: var(--color-error); background: var(--color-error-soft); }
+.retry { margin-top: 12px; border: 1px solid var(--color-field-line); border-radius: 999px; background: var(--color-surface); padding: 0 18px; min-height: 40px;
+         font-weight: 600; color: var(--color-accent); cursor: pointer; }
+.retry:hover { background: var(--color-accent-soft); }
+.notice { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; font-size: 14px; color: var(--color-muted); }
+.notice svg { flex: none; margin-top: 3px; }
+.searching { display: flex; gap: 14px; align-items: center; max-width: 64ch; padding: 14px 16px; border: 1px dashed #B9A5D3; border-radius: 14px; background: var(--color-surface); }
+.wave { flex: none; width: 46px; height: 24px; }
+.wave path { fill: none; stroke: var(--color-accent); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 8 6; animation: flow 1.2s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -28; } }
+.emergency { max-width: 64ch; padding: 16px 20px; border: 2px solid var(--color-error); border-radius: 14px; background: var(--color-error-soft); font-size: 17px; line-height: 1.6; }
+.emergency p::first-line { font-weight: 600; color: var(--color-error); }
+
+/* Ô hỏi: viên bo tròn, viền đậm đủ tương phản (field-line), focus viền tím quanh cả khung. */
+.composer { display: flex; gap: 10px; align-items: flex-end; padding: 8px 8px 8px 16px; border: 1px solid var(--color-field-line); border-radius: 22px; background: var(--color-surface); }
+.composer:focus-within { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+.composer textarea:focus-visible { outline: none; }
+.send { min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 600; cursor: pointer; white-space: nowrap; }
+.send:hover { background: var(--color-accent-deep); }
+.send:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Khung nguồn: số tím, mục đang chọn nền vàng nhạt. */
+.sources { padding: 16px 18px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-surface); font-size: 15px; }
+.sources li { margin: 0 -10px; padding: 10px; border-top: 1px solid var(--color-line); border-radius: 8px; transition: background-color .25s; }
+.sources li:first-child { border-top: 0; }
+.sources li.on { background: var(--color-gold-soft); }
+.sources .n { display: inline-flex; flex: none; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 6px; border-radius: 999px;
+              background: var(--color-accent); color: #fff; font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .river .r1, .river .r2 { stroke-dashoffset: 0; }
 }
 
 /* Câu trả lời là HTML từ Markdown (đã lọc) ⇒ kiểu chữ đặt theo thẻ, vì Tailwind xoá kiểu mặc định của trình duyệt. */
@@ -45,9 +116,10 @@
 .answer th, .answer td { border: 1px solid var(--color-line); padding: 0.35em 0.6em; }
 .answer th { font-weight: 600; background: var(--color-page); }
 
-/* Số nguồn trong câu: mờ khi chưa kiểm trích dẫn (yêu cầu 9), tím + bấm được khi đã có `sources`. */
+/* Số nguồn trong câu: chữ mờ (số gốc) khi chưa kiểm trích dẫn (yêu cầu 9); viên vàng bấm được, số hiển thị 1..k khi đã có `sources` (D9 (c)). */
 .answer sup.cite { font-size: 0.72em; line-height: 0; margin-left: 0.1em; color: var(--color-muted); font-weight: 600; }
-.answer sup.cite + sup.cite { margin-left: 0.25em; }
-.answer sup.cite a { color: var(--color-accent); text-decoration: none; padding: 0 0.15em; border-radius: 3px; }
-.answer sup.cite a:hover { background: var(--color-accent-soft); }
-.answer sup.cite a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+.answer sup.cite + sup.cite { margin-left: 0.15em; }
+.answer sup.cite a { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 6px; border-radius: 999px;
+                     background: var(--color-gold-soft); color: var(--color-gold-ink); font-size: 13px; font-weight: 600; text-decoration: none; vertical-align: 2px; }
+.answer sup.cite a:hover, .answer sup.cite a[aria-current="true"] { background: var(--color-gold); color: var(--color-accent-deep); }
+.answer sup.cite a:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 1px; }
