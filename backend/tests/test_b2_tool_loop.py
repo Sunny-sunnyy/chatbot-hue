@@ -17,6 +17,7 @@ from evaluation.full_corpus_eval import build_context_builder, build_retrieval
 from llm.assistant import MODEL_SEARCH_LIMIT, AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, search_into_trace
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, TOOL_LIMIT_TEXT
 from llm.generator_openai_full_corpus import ASSISTANT_MAX_TURNS, OpenAIFullCorpusGenerator
+from retrieval.full_corpus_context import ITEM_OVERHEAD, TOOL_PATH_OVERHEAD
 
 V2 = AssistantFlags(lan_tim_dau="v2")
 _ids = itertools.count(1)
@@ -138,7 +139,8 @@ def test_max_turns_gives_fixed_refusal_and_one_delta_on_stream(deps):
     deltas = [data for kind, data in events if kind == "delta"]
     stages = [data["stage"] for kind, data in events if kind == "status"]
     assert trace.fixed_outcome == "max_turns" and deltas == [INSUFFICIENT_ANSWER]
-    assert stages[0] == "generating" and stages.count("searching") == 4 and "searched" in stages  # thẻ công cụ (D7): mỗi lần gọi
+    # thẻ công cụ (D7): mỗi lần gọi; B3 D9 (b): "đang viết" chỉ phát ngay trước chữ đầu ⇒ chạm trần (không chữ model) thì không có
+    assert stages.count("searching") == 4 and "searched" in stages and "generating" not in stages
 
 
 def test_concurrent_turns_do_not_share_max_turns_flag(deps):
@@ -184,7 +186,9 @@ def test_budget_count_for_tool_path_is_within_safety_margin_of_sent_request(deps
     texts = [sent["instructions"]] + [_item_text(i) for i in sent["input"]]
     sent_tokens = sum(len(builder._tokenizer.encode(t)) for t in texts if t)
     counted = builder._token_count("Giá vé Đại Nội và lăng Tự Đức?", "\n\n".join(trace.context_parts), None, gen.assistant_instructions)
-    assert abs(counted - sent_tokens) < 512
+    # B3 D5: số đếm có cộng phần đệm API (không có trong thân yêu cầu) ⇒ so phần chữ: bỏ phần đệm ra trước khi so thân
+    overhead = TOOL_PATH_OVERHEAD + ITEM_OVERHEAD * 1
+    assert abs(counted - overhead - sent_tokens) < 128
 
 
 def _item_text(item) -> str:

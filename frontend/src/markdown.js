@@ -13,16 +13,30 @@ export const SANITIZE_OPTIONS = {
 // Cùng mẫu với `backend/llm/citations.py` CITATION_PATTERN: model viết cả `[n]` lẫn `[Nguồn n]`, mà chữ hiện dần là chữ thô chưa chuẩn hoá (yêu cầu 18).
 const CITATION = /\[\s*(?:nguồn\s*)?(\d+)\s*\]/giu;
 
-// Markdown ⇒ HTML đã lọc, rồi đổi trích dẫn thành số nhỏ nâng lên. `citedIds` = null khi chưa có sự kiện `sources` ⇒ số chỉ là chữ mờ, không bấm được
-// (yêu cầu 9); có `sources` ⇒ số thuộc `citedIds` thành link tới nguồn. Đổi trên nút chữ SAU bộ lọc, phần tử dựng bằng DOM — không ghép chuỗi HTML.
-export function renderAnswerHtml(text, citedIds) {
+// Số hiển thị của nguồn (B3 D9 (c)): sổ nguồn đánh số nối qua mọi lần `tim_kho` ([17] dù chỉ 2 nguồn) — code kiểm trích dẫn, judge, log giữ số gốc;
+// người đọc thấy 1..k theo thứ tự xuất hiện đầu tiên trong câu. Nguồn được trích mà không thấy mã trong chữ (không nên có) xếp cuối.
+// Trả Map(số gốc dạng chuỗi ⇒ số hiển thị).
+export function displayNumbers(text, sources) {
+  const cited = new Set(sources.map(source => String(source.id)));
+  const numbers = new Map();
+  for (const match of text.matchAll(CITATION)) {
+    if (cited.has(match[1]) && !numbers.has(match[1])) numbers.set(match[1], numbers.size + 1);
+  }
+  for (const id of cited) if (!numbers.has(id)) numbers.set(id, numbers.size + 1);
+  return numbers;
+}
+
+// Markdown ⇒ HTML đã lọc, rồi đổi trích dẫn thành số nhỏ nâng lên. `numbers` = null khi chưa có sự kiện `sources` ⇒ số gốc chỉ là chữ mờ, không
+// bấm được (yêu cầu 9); có `sources` ⇒ số thuộc `numbers` thành link tới nguồn, hiện số hiển thị (đổi tại chỗ). `turnKey` tách id nguồn giữa các
+// lượt; `activeId` = số gốc đang chọn (aria-current). Đổi trên nút chữ SAU bộ lọc, phần tử dựng bằng DOM — không ghép chuỗi HTML.
+export function renderAnswerHtml(text, numbers, turnKey, activeId) {
   const template = document.createElement("template");  // nội dung <template> trơ: không chạy script, không tải tài nguyên
   template.innerHTML = DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS);
-  markCitations(template.content, citedIds);
+  markCitations(template.content, mark => citationMark(mark, numbers, turnKey, activeId));
   return template.innerHTML;
 }
 
-function markCitations(root, citedIds) {
+function markCitations(root, makeMark) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const nodes = [];
   while (walker.nextNode()) {
@@ -33,7 +47,7 @@ function markCitations(root, citedIds) {
     const fragment = document.createDocumentFragment();
     let last = 0;
     for (const match of text.matchAll(CITATION)) {
-      fragment.append(text.slice(last, match.index), citationMark(match[1], citedIds));
+      fragment.append(text.slice(last, match.index), makeMark(match[1]));
       last = match.index + match[0].length;
     }
     if (last === 0) continue;
@@ -42,18 +56,20 @@ function markCitations(root, citedIds) {
   }
 }
 
-function citationMark(id, citedIds) {
+function citationMark(id, numbers, turnKey, activeId) {
   const sup = document.createElement("sup");
   sup.className = "cite";
-  if (!citedIds?.has(id)) {
+  const shown = numbers?.get(id);
+  if (!shown) {
     sup.textContent = id;
     return sup;
   }
   const link = document.createElement("a");
-  link.href = `#source-${id}`;
+  link.href = `#source-${turnKey}-${id}`;
   link.dataset.cite = id;
-  link.setAttribute("aria-label", `Nguồn ${id}`);
-  link.textContent = id;
+  link.setAttribute("aria-label", `Nguồn ${shown}`);
+  if (id === activeId) link.setAttribute("aria-current", "true");
+  link.textContent = String(shown);
   sup.append(link);
   return sup;
 }
