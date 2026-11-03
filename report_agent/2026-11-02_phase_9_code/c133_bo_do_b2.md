@@ -15,7 +15,7 @@ Chốt bộ câu + script chấm tầng tìm cho B2a (V0 / V1 / V3 / V2). Không
 |---|---|---|
 | `tools/chon_bo_cau.py` | `78649cf48ec4` | chọn 38 câu, 12 câu có thể đổi, dev / test; khoá 4 đầu vào bằng hash |
 | `bo_cau_b2.json` | `e5d40678c1aa` | kết quả chọn (chỉ chỉ số + nhãn) |
-| `tools/do_tang_tim.py` | `04bdba9ea11a` (bản đầu `019704b06db4`) | `v0` (tìm bằng câu gốc) + `cham` (chấm các lượt biến thể so V0, cổng sàng, xếp hạng) |
+| `tools/do_tang_tim.py` | `45e35e800500` (trước `019704b06db4`, `04bdba9ea11a`) | `v0` (tìm bằng câu gốc) + `cham` (chấm các lượt biến thể so V0, cổng sàng, xếp hạng; `--nhom dev` cho vòng chỉnh — không tính / in số test) |
 | `ket_qua/v0.jsonl` | `a849b1ccad75` | V0 61 câu |
 | `ket_qua/tu_kiem.json` (`adc6f5288514`), `doi_chung_khong_goi.jsonl`, `tu_kiem/` | — | 2 ca đối chứng âm + 2 ca dương tổng hợp (dữ liệu giả) |
 
@@ -51,6 +51,10 @@ Qdrant thật (`hue_full_corpus_7a2_e5_small_384`, 8.424 point, chỉ đọc), e
 3. Nhóm test 10 câu, 3 câu có thể đổi ⇒ "không ngược chiều" là kiểm yếu.
 4. Keyword là thước chuỗi con; khâu trả lời (Completeness 18 câu nhiều nguồn) không thuộc bộ này.
 5. Hợp đồng đầu vào cho harness B2 (README §4): mỗi lượt một JSONL `{case_index, top_chunk_ids}` đủ 61 câu; V2 ghi `goi_tim_kho: false` khi không gọi, lấy lần gọi đầu.
+
+## 5b. Sửa sau review plan B2 (C135 M-3, A quyết 09:33 03/11/2026)
+
+Thêm `cham --nhom dev`: vòng chỉnh của plan B2 D8 chấm 43 câu dev mà không tính / in / ghi số nhóm test. Tự kiểm (dữ liệu giả + V0): biến giả có 3 câu đổi đều thuộc test ⇒ chế độ dev ra 0 câu thêm, đầu ra 0 chuỗi `test`; chế độ đủ 61 câu ra đúng số cũ. 0 USD.
 
 ## 6. Tiền
 

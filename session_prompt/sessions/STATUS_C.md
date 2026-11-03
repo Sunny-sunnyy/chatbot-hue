@@ -24,6 +24,19 @@
   Chạy trong worktree B `/tmp/b_p9b1` (chỉ đọc / chạy, không sửa code). Server tạm 8871 đã tắt bằng TaskStop (09:08 03/11/2026).
 - **XONG (09:09 03/11/2026): ready_for_user_confirmation** — `b129_review.md` `4730a847d853` (quét trùng 0). 0B / 0M / 1m (m-3 `generate` không `--flags` theo `settings.yaml` ⇒ có định tuyến; ghi khi merge). Tiền ≈ 0,0006 USD. `/tmp/c134` đã xoá.
 
+## C135 — review plan B2 bản 1 sha `0cf5c194a182` (A giao 09:08 03/11/2026; bắt đầu 09:26 03/11/2026)
+- Chỉ dựa "Căn cứ để review"; không đọc STATUS_B / tin B. D5 coi như sẽ đổi (A: max_turns 4 + chuỗi hết lượt ở lần `tim_kho` thứ 3).
+- **File sẽ ghi (khai báo):** `docs/superpowers/plans/2026-11-03-phase-9-b2-plan_review.md` (mới); ca dò tạm `/tmp/c135/` (xoá khi xong); dòng C135 trong `CURRENT_HANDOFF.md`; và file này.
+- **XONG (09:30 03/11/2026): changes_requested** — review `1cfa46d1b03d` (quét trùng 0): M-1 N_AA, M-2 tuyến ≠ `tro_ly_hue` ở tầng tìm, M-3 chấm dev lộ test (việc của C nếu A đồng ý); m-1…m-5. 0 USD.
+- **A quyết C135:** M-1 (a) N_AA = 6 từ B1 P5; M-2 tầng tìm luôn tìm bằng `cau_tim` bất kể tuyến; M-3 ⇒ C thêm `cham --nhom dev` — **XONG 09:33 03/11/2026**: script `45e35e800500`, README `7cbc8eec3e59`, `tu_kiem.json` `31ac1aaf292d`; dev 43 câu, 0 chuỗi `test` trong đầu ra. Chờ B báo sha plan bản 2 ⇒ C kiểm phần sửa.
+- **Vòng 2 (bản 2 `52fd872b941f`) XONG 09:38 03/11/2026: changes_requested** — review `cb977b24ad8e`: 8 / 8 finding vòng 1 đóng (m-1: C nhận sai phần "16 / 20 không nguồn" — có ở plan B1 P1); M-4 mới (A quyết) Q8 dùng N_AA từ A/A B2b. 0 USD.
+  Bẫy: gõ giờ "09:42" ở đầu mục trước khi chạy `date` (thật 09:38) — đã sửa trước khi báo A. ⇒ chạy `date` trước, chép giờ từ output.
+- **Vòng 3 (bản 3 `efa27cb8207c`) XONG 09:43 03/11/2026: ready_for_user_confirmation** — review `90ed2605c9a9`: M-4 đóng; 5 điểm chuẩn bị code đạt (đối chiếu code `f01c032`); 2 minor m-6 (handler / cờ max_turns dựng mỗi lượt + test đồng thời), m-7 (pilot so token builder ↔ usage thật). Không có chỗ đổi ngoài 2 bảng (diff bản 1 ↔ 3). 0 USD. Tiếp C136.
+
+## C136 — bộ đo B3 nhớ hội thoại (A giao 09:40 03/11/2026; bắt đầu 09:39 03/11/2026; dừng khi B báo plan B2 bản 3)
+- 0 USD; đọc kho chỉ `scripts/grep_kb.sh`; phần kín `*sealed*`, B không mở.
+- **File sẽ ghi (khai báo):** `data/phase_9/bo_do_b3/` (README, chuỗi đã thấy, `*sealed*`, chuỗi B6 nêu tên, script kiểm); `report_agent/2026-11-02_phase_9_code/c136_bo_do_b3.md` (mới); dòng C136 trong `CURRENT_HANDOFF.md`; và file này.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 
 **Trạng thái:** C không còn việc dở. Không còn server, worktree hay file tạm của C (`/tmp/c128*`, `/tmp/c131`, `/tmp/c132*`, `/tmp/c124*` đều đã gỡ). C không commit; A commit.
