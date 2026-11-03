@@ -436,6 +436,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     trong vùng che (spec §4.5). Lỗi đi ra nguyên kiểu (route đổi thành sự kiện `error`)."""
     result = call_log = tool_state = None
     pending_generating = False
+    asking = False  # B4: lần gọi công cụ đang chạy là `hoi_lai` ⇒ không phát trạng thái tìm kho
     call_route = None
     stopped_early = False
     try:
@@ -488,9 +489,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             yield "status", {"stage": "generating"}
                         yield "delta", text
                 elif event.type == "run_item_stream_event" and event.name == "tool_called":  # thẻ công cụ (B2 D7): lượt gọi không có chữ
-                    if getattr(getattr(event.item, "raw_item", None), "name", None) != "hoi_lai":  # B4: hỏi lại không phải "đang tìm"
+                    asking = getattr(getattr(event.item, "raw_item", None), "name", None) == "hoi_lai"  # B4: hỏi lại không phải "tìm kho"
+                    if not asking:
                         yield "status", {"stage": "searching"}
-                elif event.type == "run_item_stream_event" and event.name == "tool_output":
+                elif event.type == "run_item_stream_event" and event.name == "tool_output" and not asking:  # review C163 m-1
                     yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
         except Exception:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)

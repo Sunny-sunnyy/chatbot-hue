@@ -62,6 +62,8 @@ def test_stream_hoi_lai_has_no_searching_status_and_no_text(deps):
 
     events = asyncio.run(run())
     assert ("status", {"stage": "searching"}) not in events and not [e for e in events if e[0] == "delta"]
+    searched = [e for e in events if e[0] == "status" and e[1]["stage"] == "searched"]
+    assert searched == [("status", {"stage": "searched", "n_sources": len(trace.packed.sources)})]  # chỉ lần tìm đầu của code (C163 m-1)
     assert trace.fixed_outcome == "hoi_lai" and [t["ten"] for t in trace.clarify["truong"]] == ["so_ngay"] and trace.hoi_lai_d3 == "dien"
 
 
