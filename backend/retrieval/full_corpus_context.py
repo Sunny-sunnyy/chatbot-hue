@@ -20,6 +20,7 @@ class PackedContext:
     text: str
     sources: tuple[PackedSource, ...]
     input_tokens: int
+    document_ids: tuple[str, ...] = ()  # chunk_id của các đoạn đã vào ngữ cảnh — để lần tìm sau bỏ trùng (Phase 9 B2 D5)
 
 
 class FullCorpusContextBuilder:
@@ -38,8 +39,10 @@ class FullCorpusContextBuilder:
         self._margin = safety_margin
         self._max_documents = max_documents
 
-    def _token_count(self, query: str, context: str, today: str | None = None) -> int:
+    def _token_count(self, query: str, context: str, today: str | None = None, instructions: str | None = None) -> int:
         messages = build_answer_messages(query, context, today)
+        if instructions is not None:  # B2 D5: đường trợ lý có lời dặn riêng (dài hơn) — đếm bằng chính lời dặn gửi đi
+            messages[0]["content"] = instructions
         num_tokens = 3
         for message in messages:
             num_tokens += 3
@@ -81,26 +84,39 @@ class FullCorpusContextBuilder:
         )
 
     def build(
-        self, query: str, documents: Sequence[RetrievedDocument], today: str | None = None
+        self, query: str, documents: Sequence[RetrievedDocument], today: str | None = None, *,
+        first_id: int = 1, prior_context: str = "", skip_ids: frozenset[str] = frozenset(), instructions: str | None = None,
     ) -> PackedContext:
-        """`today`: dòng ngày sẽ đứng đầu tin nhắn gửi model (B1 D7) — đếm cùng một chuỗi với chuỗi gửi đi."""
+        """`today`: dòng ngày sẽ đứng đầu tin nhắn gửi model (B1 D7) — đếm cùng một chuỗi với chuỗi gửi đi.
+        Lần tìm thêm trong một lượt (Phase 9 B2 D5): đánh số từ `first_id`, bỏ đoạn `skip_ids` đã có, và đếm ngân sách **chung** —
+        `prior_context` (ngữ cảnh các lần trước) + khối mới, bằng `instructions` của trợ lý. Hết ngân sách ở lần tìm thêm ⇒ ít / 0 đoạn,
+        không lỗi (chỉ lần đầu mới `ContextBudgetError`). Mặc định = một lần tìm như B1 (giống byte)."""
         blocks: list[str] = []
         sources: list[PackedSource] = []
-        input_tokens = self._token_count(query, "", today)
+        ids: list[str] = []
+
+        def counted(new_text: str) -> int:
+            context = "\n\n".join(part for part in (prior_context, new_text) if part)
+            return self._token_count(query, context, today, instructions)
+
+        input_tokens = counted("")
         for document in documents:
             if len(sources) >= self._max_documents:
                 break
-            source = self._source(document, len(sources) + 1)
+            if document.id in skip_ids:
+                continue
+            source = self._source(document, first_id + len(sources))
             if source is None:
                 continue
             candidate_text = "\n\n".join([*blocks, self._block(source)])
-            candidate_tokens = self._token_count(query, candidate_text, today)
+            candidate_tokens = counted(candidate_text)
             fits = candidate_tokens + self._reserved + self._margin <= self._context_limit
             if not fits:
-                if not sources:
+                if not sources and not prior_context:
                     raise ContextBudgetError("Highest-ranked evidence block exceeds budget")
                 break
             blocks.append(self._block(source))
             sources.append(source)
+            ids.append(document.id)
             input_tokens = candidate_tokens
-        return PackedContext("\n\n".join(blocks), tuple(sources), input_tokens)
+        return PackedContext("\n\n".join(blocks), tuple(sources), input_tokens, tuple(ids))
