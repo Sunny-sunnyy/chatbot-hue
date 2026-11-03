@@ -112,6 +112,7 @@ class AnswerTrace:
     cau_tim: list[str] | None = None
     cau_tim_rong: bool = False
     model_searches: int = 0  # số lần model gọi `tim_kho` (D5 trần)
+    model_queries: list[str] = field(default_factory=list)  # câu tìm model viết khi gọi `tim_kho` — KHÔNG log
     context_parts: list[str] = field(default_factory=list)  # chữ ngữ cảnh mỗi lần tìm — đếm ngân sách chung (D5)
     seen_ids: list[str] = field(default_factory=list)  # chunk_id đã vào ngữ cảnh — lần tìm sau bỏ trùng (D5)
     tool_error: Exception | None = None  # lỗi tìm / ngữ cảnh trong công cụ: SDK có thể bọc lại ⇒ lõi ném lại đúng lỗi gốc
@@ -182,6 +183,7 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
             cau_tim: câu tìm đứng một mình cho phần thông tin còn thiếu.
         """
         trace.model_searches += 1
+        trace.model_queries.append(cau_tim)  # chỉ RAM / file private của harness — không log (chữ do model viết từ câu người dùng)
         if trace.model_searches > MODEL_SEARCH_LIMIT:
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "het_luot": True})
             return TOOL_LIMIT_TEXT

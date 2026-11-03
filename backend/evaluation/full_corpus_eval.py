@@ -421,19 +421,37 @@ async def run_search_layer(cases: list[dict], variant: str) -> tuple[list[dict],
     generator = None if variant == "v0" else OpenAIFullCorpusGenerator.from_environment(settings)
     semaphore = asyncio.Semaphore(CONCURRENCY)
 
-    async def one(case: dict) -> tuple[dict, dict]:
+    async def one(case: dict) -> tuple[dict | None, dict]:
         question = case["question"].strip()
         trace, call_log = AnswerTrace(), CallLog()
-        detail = {"case_index": case["case_index"], "route": None, "route_error": None, "cau_tim": None, "cau_tim_rong": False}
+        detail = {"case_index": case["case_index"], "route": None, "route_error": None, "qua_3_cau": False, "cau_tim": None,
+                  "cau_tim_rong": False, "error": None}
         started = time.perf_counter()
+        try:
+            await _search_one(question, trace, call_log, detail)
+        except Exception as exc:  # review C137 m-1: một câu lỗi không làm mất cả lượt — ghi lỗi, câu đó chạy lại riêng
+            detail["error"] = describe_error(exc)
+        detail.update(usd=sum(c["usd"] for c in call_log.calls), n_llm_calls=len(call_log.calls), ms=elapsed_ms_since(started),
+                      llm_ms=[c["ms"] for c in call_log.calls])
+        if detail["error"] is not None:
+            return None, detail
+        row = {"case_index": case["case_index"],
+               "top_chunk_ids": [doc.id for doc in (trace.documents or [])[:RETRIEVAL_K]]}
+        if variant == "v2":
+            row["goi_tim_kho"] = trace.documents is not None
+        return row, detail
+
+    async def _search_one(question: str, trace: AnswerTrace, call_log: CallLog, detail: dict) -> None:
         async with semaphore:
             if variant == "v0":
                 await tim_kho(question, retrieval_service=service, context_builder=context_builder, trace=trace)
             elif variant in ("v1", "v3"):
                 try:
                     detail["route"], queries = await generator.route_search(question, call_log, variant)
-                except GenerationError:
+                except GenerationError as exc:
                     detail["route_error"], queries = "router_failed", []
+                    # review C137 m-2: V3 trả > 3 câu ⇒ SDK chặn theo `maxItems` ⇒ mất cả tuyến; đếm riêng (> 0 ⇒ quay về cắt 3 câu trong code)
+                    detail["qua_3_cau"] = "at most 3 items" in repr(exc.__cause__) or "too_long" in repr(exc.__cause__)
                 kept = [q.strip() for q in queries if q.strip()]
                 detail["cau_tim_rong"] = not kept and detail["route_error"] is None
                 queries = kept or [question]
@@ -442,13 +460,7 @@ async def run_search_layer(cases: list[dict], variant: str) -> tuple[list[dict],
             else:
                 tool_fn = tool_for_turn(question, service, context_builder, trace, None, generator.assistant_instructions)
                 await generator.first_tool_search(build_assistant_input(question, None), tool_fn, call_log)
-        row = {"case_index": case["case_index"],
-               "top_chunk_ids": [doc.id for doc in (trace.documents or [])[:RETRIEVAL_K]]}
-        if variant == "v2":
-            row["goi_tim_kho"] = trace.documents is not None
-        detail.update(usd=sum(c["usd"] for c in call_log.calls), n_llm_calls=len(call_log.calls), ms=elapsed_ms_since(started),
-                      llm_ms=[c["ms"] for c in call_log.calls])
-        return row, detail
+                detail["cau_tim"] = trace.model_queries
 
     try:
         pairs = await asyncio.gather(*(one(case) for case in cases))
@@ -456,7 +468,7 @@ async def run_search_layer(cases: list[dict], variant: str) -> tuple[list[dict],
         service.close()
         if generator is not None:
             await generator.aclose()
-    return [p[0] for p in pairs], [p[1] for p in pairs]
+    return [p[0] for p in pairs if p[0] is not None], [p[1] for p in pairs]
 
 
 def elapsed_ms_since(started: float) -> float:
@@ -974,7 +986,11 @@ def main(argv: list[str] | None = None) -> int:
         write_jsonl(_path(args.out), rows)
         write_jsonl(_path(args.out + ".chi_tiet.jsonl"), details)
         usd = sum(d["usd"] for d in details)
-        print(json.dumps({"bien": args.bien, "n": len(rows), "usd": round(usd, 6),
+        failed = [d["case_index"] for d in details if d["error"] is not None]
+        if failed:  # file lượt thiếu các câu này ⇒ bộ chấm C133 dừng; chạy lại riêng: --cases-file <out>.loi.json, rồi nối file
+            Path(_path(args.out + ".loi.json")).write_text(json.dumps(failed), encoding="utf-8")
+        print(json.dumps({"bien": args.bien, "n": len(rows), "loi": len(failed), "usd": round(usd, 6),
+                          "qua_3_cau": sum(d["qua_3_cau"] for d in details),
                           "khac_tro_ly_hue": sum(d["route"] not in (None, "tro_ly_hue") for d in details),
                           "route_error": sum(d["route_error"] is not None for d in details),
                           "goi_tim_kho": sum(r.get("goi_tim_kho", True) for r in rows)}, ensure_ascii=False))
