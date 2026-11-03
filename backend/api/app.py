@@ -9,6 +9,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from api.conversations import ConversationStore
+from api.feedback import FeedbackTurns
+from api.feedback import router as feedback_router
 from api.health import router as health_router
 from api.routes.chat import router as chat_router
 from core.logging_setup import setup_logging
@@ -163,6 +165,8 @@ def create_app(settings=None):
 
     app.include_router(health_router)
     app.include_router(chat_router)
+    app.include_router(feedback_router)
+    app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 
     if not FRONTEND_DIR.is_dir():
         logger.warning("Frontend build not found at frontend/dist — run `npm ci && npm run build` in frontend/")

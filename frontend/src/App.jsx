@@ -29,6 +29,10 @@ const TOPICS = [
     questions: ["Đi Huế hai ngày nên xếp lịch ra sao?", "Từ sân bay vào trung tâm bằng gì?"] },
 ];
 
+// B142: câu ngoài phạm vi kèm 3 câu gợi ý cố định (lấy từ TOPICS, đã kiểm có trong kho bằng `scripts/grep_kb.sh`) — bấm là hỏi luôn.
+const OUT_OF_SCOPE_SUGGESTIONS = ["Vào Đại Nội nên mặc thế nào?", "Lễ hội Điện Huệ Nam diễn ra khi nào?", "Nhã nhạc cung đình diễn lúc nào?"];
+const FEEDBACK_ERROR = "Chưa gửi được đánh giá — bạn thử lại sau nhé.";
+
 function reducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
@@ -37,7 +41,7 @@ function reducedMotion() {
 // `sources`; [] = không nguồn), numbers (số hiển thị 1..k — D9 (c)), nSources, notice, outcome (từ `done`), error }.
 function newTurn(key, question) {
   // lượt mới bắt đầu ở "đang hiểu câu hỏi": việc đầu tiên của server là định tuyến (B1) — thứ tự nhãn như D9 (b), không "đang tìm" trước
-  return { key, question, phase: "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null, error: "" };
+  return { key, question, phase: "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null, turnId: null, error: "" };
 }
 
 export default function App() {
@@ -120,7 +124,7 @@ export default function App() {
           } else if (name === "notice") {
             update({ notice: data.text });
           } else if (name === "done") {
-            update({ outcome: data.outcome });
+            update({ outcome: data.outcome, turnId: data.turn_id ?? null });  // B142: mã lượt chỉ có ở lượt có câu trả lời cuối
           }
         },
       });
@@ -201,6 +205,7 @@ export default function App() {
                     activeSource={selected.turn === turn.key ? selected.source : null}
                     onCite={source => setSelected({ turn: turn.key, source })}
                     onRetry={() => ask(turn.question, turn.key)}
+                    onAsk={ask}
                   />
                 ))}
               </section>
@@ -268,7 +273,7 @@ function Welcome({ onPick }) {
   );
 }
 
-function Turn({ turn, turnRef, activeSource, onCite, onRetry }) {
+function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
   const html = useMemo(() => renderAnswerHtml(turn.text, turn.numbers, turn.key, activeSource),
     [turn.text, turn.numbers, turn.key, activeSource]);
   const pending = PENDING.has(turn.phase);
@@ -324,7 +329,63 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry }) {
           )}
         </div>
       )}
+      {turn.phase === "done" && turn.outcome === "out_of_scope" && (
+        <div className="suggest" aria-label="Câu gợi ý">
+          <p className="text-sm text-muted">Bạn có thể hỏi, ví dụ:</p>
+          {OUT_OF_SCOPE_SUGGESTIONS.map(question => (
+            <button key={question} type="button" onClick={() => onAsk(question)}>{question}</button>
+          ))}
+        </div>
+      )}
+      {turn.phase === "done" && turn.turnId && <Feedback turnId={turn.turnId} />}
     </article>
+  );
+}
+
+// B142: 👍 / 👎 dưới câu trả lời — server chỉ lưu đánh giá + số đếm của lượt. Đổi ý được (bấm nút kia); lỗi ⇒ báo nhẹ, giữ lựa chọn cũ.
+function Feedback({ turnId }) {
+  const [rating, setRating] = useState(null);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  async function send(value) {
+    if (sending || value === rating) return;
+    setSending(true);
+    setFailed(false);
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ turn_id: turnId, rating: value }),
+      });
+      if (!response.ok) throw new Error(String(response.status));
+      setRating(value);
+    } catch {
+      setFailed(true);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className="feedback">
+      <span className="text-sm text-muted">{rating ? "Cảm ơn bạn đã đánh giá." : "Câu trả lời có hữu ích không?"}</span>
+      <button type="button" onClick={() => send("up")} disabled={sending} aria-pressed={rating === "up"} aria-label="Hữu ích"><Thumb /></button>
+      <button type="button" onClick={() => send("down")} disabled={sending} aria-pressed={rating === "down"} aria-label="Chưa hữu ích"><Thumb down /></button>
+      {failed && <span className="text-sm text-error" role="status">{FEEDBACK_ERROR}</span>}
+    </div>
+  );
+}
+
+// Ngón cái vẽ bằng SVG (không dùng emoji: máy thiếu font emoji thì nút trống — thấy ở ảnh Playwright B142); xuống = lật dọc.
+function Thumb({ down = false }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+      <g transform={down ? "rotate(180 12 12)" : undefined} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+        <path d="M3 10h3.5v10.5H3z" />
+        <path d="M6.5 10.5 10.5 3c1.6 0 2.6 1.1 2.4 2.7L12.4 9.5h6.1a2 2 0 0 1 2 2.4l-1.5 7a2 2 0 0 1-2 1.6H6.5" />
+      </g>
+    </svg>
   );
 }
 
