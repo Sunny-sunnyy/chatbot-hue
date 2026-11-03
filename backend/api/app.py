@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from api.conversations import ConversationStore
 from api.health import router as health_router
 from api.routes.chat import router as chat_router
 from core.logging_setup import setup_logging
@@ -67,6 +68,7 @@ def create_app(settings=None):
         app.state.tokenizer_ready = False
         app.state.tokenizer = None
         app.state.context_builder = None
+        app.state.conversations = None
 
         app.state.generator_ready = False
         app.state.generator = None
@@ -117,6 +119,10 @@ def create_app(settings=None):
             )
             app.state.tokenizer = tokenizer
             app.state.context_builder = context_builder
+            flags = app.state.assistant_flags
+            # B3 D1: kho cuộc trò chuyện trong RAM — chỉ khi cờ nhớ bật (tắt ⇒ không cookie, không kho)
+            app.state.conversations = ConversationStore(lambda text: len(tokenizer.encode(text)), keep_answers=flags.nho_cau_tra_loi) \
+                if flags.nho_hoi_thoai else None
             app.state.tokenizer_ready = True
             logger.info("OpenAI tokenizer and context builder initialized successfully")
         except Exception:

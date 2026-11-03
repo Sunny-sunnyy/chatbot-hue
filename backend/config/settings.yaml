@@ -64,3 +64,5 @@ assistant:
   router_timeout_seconds: 10
   lan_tim_dau: v0                # B2 (plan D1): v0 câu gốc · v1 / v3 câu tìm do định tuyến viết · v2 trợ lý tự gọi tim_kho
   tim_them: true                 # BẬT (B2b Q8: 18 câu nhiều nguồn +1,17 [+0,44; +2,00]; User giữ 03/11). Sau lần tìm đầu, trợ lý được gọi tim_kho thêm ≤ 2 lần
+  nho_hoi_thoai: false           # B3 (plan D7, D8): nhớ hội thoại trong một cuộc — TẮT tới khi giao diện nhiều lượt xong (User chọn mẫu)
+  nho_cau_tra_loi: true          # B3 D2: nhớ cả câu trả lời (tắt ⇒ chỉ nhớ câu hỏi — đường dự phòng khi kết quả âm)

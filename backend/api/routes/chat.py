@@ -11,7 +11,7 @@ import time
 
 import anyio
 from agents.exceptions import AgentsException
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.sse import format_sse_event
 from openai import OpenAIError
@@ -26,6 +26,7 @@ from core.schema import (
 from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
+from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, elapsed_ms, turn_usd
 
 logger = logging.getLogger("chat")
@@ -42,6 +43,8 @@ METRIC_FIELDS = (
     "route_error", "emergency_by", "today",
     # B2 D9: ms của lần gọi định tuyến (đã có trong `llm_calls`, tách riêng để theo dõi tốc độ theo tuyến)
     "routing_ms",
+    # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
+    "n_history_turns", "history_tokens",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -78,16 +81,57 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
     )
 
 
+# B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` tắt vì chạy http://127.0.0.1
+# (bật trước khi deploy — spec §7).
+CONVERSATION_COOKIE = "conversation_id"
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns"}
+
+
+def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
+    """Nhớ bật ⇒ mã cuộc của lượt này (giữ cookie còn hạn, không thì cuộc mới) + đưa lịch sử vào `trace`. Nhớ tắt ⇒ None."""
+    store = getattr(request.app.state, "conversations", None)
+    if store is None:
+        return None
+    conversation_id = store.ensure(request.cookies.get(CONVERSATION_COOKIE))
+    trace.history = store.history(conversation_id)
+    metrics["n_history_turns"], metrics["history_tokens"] = len(trace.history), store.history_tokens(conversation_id)
+    return conversation_id
+
+
+def _remember(request: Request, conversation_id: str | None, query: str, trace: AnswerTrace, outcome: str | None) -> None:
+    """Ghi lượt đã xong vào cuộc (D2): chỉ lượt có câu trả lời cuối — lỗi / ngắt / rút lại không ghi."""
+    if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and trace.answer:
+        request.app.state.conversations.append(conversation_id, query, trace.answer)
+
+
+def _set_cookie(response, conversation_id: str | None) -> None:
+    if conversation_id is not None:
+        response.set_cookie(CONVERSATION_COOKIE, conversation_id, max_age=TTL_SECONDS, path="/api", httponly=True, samesite="strict",
+                            secure=False)
+
+
+@router.post("/api/conversation/new")
+async def new_conversation(request: Request):
+    """"Cuộc trò chuyện mới" (D1): xoá cuộc hiện tại khỏi RAM, đặt mã mới. Nhớ tắt ⇒ không làm gì."""
+    store = getattr(request.app.state, "conversations", None)
+    response = JSONResponse({"nho_hoi_thoai": store is not None})
+    if store is not None:
+        _set_cookie(response, store.reset(request.cookies.get(CONVERSATION_COOKIE)))
+    return response
+
+
 @router.post("/api/chat", response_model=ChatResponse)
-async def chat(body: ChatRequest, request: Request):
+async def chat(body: ChatRequest, request: Request, response: Response):
     """Điểm ghi số đo duy nhất: mọi nhánh của `_answer`, kể cả exception đi tới handler 500 chung (`api/app.py`), đều có đúng một dòng log.
     Phần suy `outcome` chỉ đọc giá trị kiểu thường; log không được đổi phản hồi."""
     started = time.perf_counter()
     metrics = dict.fromkeys(METRIC_FIELDS)
     try:
-        response = await _answer(body, request, metrics)
-        _set_outcome(response, metrics)
-        return response
+        result, conversation_id = await _answer(body, request, metrics)
+        _set_outcome(result, metrics)
+        if not isinstance(result, JSONResponse):  # trả lời thường: cookie đi theo phản hồi mặc định
+            _set_cookie(response, conversation_id)
+        return result
     except Exception:
         metrics["outcome"], metrics["status_code"] = "internal_error", 500
         raise
@@ -109,27 +153,30 @@ def _set_outcome(response, metrics: dict) -> None:
 
 
 async def _answer(body: ChatRequest, request: Request, metrics: dict):
+    """Trả (phản hồi, mã cuộc trò chuyện hoặc None). Lỗi trước khi vào cuộc ⇒ không mã."""
     query = body.query.strip()
     if not query:
-        return error_response(422, "invalid_request", "Yêu cầu không hợp lệ.")
+        return error_response(422, "invalid_request", "Yêu cầu không hợp lệ."), None
 
     state = request.app.state
     recorder = get_current_recorder()
     not_ready = _retrieval_not_ready(state, recorder)
     if not_ready is not None:
-        return not_ready
+        return not_ready, None
 
     trace = AnswerTrace()
+    conversation_id = _start_conversation(request, trace, metrics)
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder)
     except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
-        return _error_response_for(exc, recorder, metrics)
+        return _error_response_for(exc, recorder, metrics), conversation_id
     finally:
         _copy_trace_metrics(trace, metrics)  # cả khi lỗi: bước nào đã chạy thì có số đo của bước đó
 
     if trace.fixed_outcome is not None:
         metrics["outcome"] = trace.fixed_outcome  # câu cố định / từ chối trước model: không qua kiểm citation
-        return ChatResponse(answer=trace.answer, sources=[])
+        _remember(request, conversation_id, query, trace, trace.fixed_outcome)
+        return ChatResponse(answer=trace.answer, sources=[]), conversation_id
 
     if trace.citation_error is not None:
         logger.error("Citation integrity failed")
@@ -139,12 +186,13 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
             500,
             "citation_integrity_error",
             "Câu trả lời không đáp ứng yêu cầu trích dẫn.",
-        )
+        ), conversation_id
 
     if recorder:
         recorder.mark_success()
 
-    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice)
+    _remember(request, conversation_id, query, trace, "success")
+    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice), conversation_id
 
 
 # ---------- Phần trước model, chung cho hai route ----------
@@ -214,7 +262,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         generation_ms=trace.generation_ms, citation_ms=trace.citation_ms,
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
-        route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms,
+        route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms, n_history_turns=len(trace.history),
         today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
     )
     if trace.generated is not None:
@@ -253,12 +301,18 @@ async def chat_stream(body: ChatRequest, request: Request):
             return response
 
         trace = AnswerTrace()
+        conversation_id = _start_conversation(request, trace, metrics)
         turn = answer_turn_stream(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
+
+        def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
+            _remember(request, conversation_id, query, trace, metrics["outcome"])
+
         response = StreamingResponse(
-            _answer_events(turn, trace, metrics, started),
+            _answer_events(turn, trace, metrics, started, remember),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
+        _set_cookie(response, conversation_id)
         stream_opened = True
         return response
     except Exception:
@@ -342,7 +396,7 @@ class StreamEvents:
         return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
 
 
-async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float):
+async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
@@ -369,3 +423,5 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
         finally:
             _copy_trace_metrics(trace, metrics)  # sau `aclose` để có `llm_calls` lõi vừa ghi (C132 m-1)
             logger.info("chat_metrics %s", json.dumps(metrics))
+            if remember is not None:  # B3: ghi lượt vào cuộc trò chuyện (chỉ outcome đã xong — `_remember` lọc)
+                remember()

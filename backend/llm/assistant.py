@@ -56,6 +56,9 @@ class AssistantFlags:
     may_have_changed_notice: bool = False
     lan_tim_dau: str = "v0"
     tim_them: bool = False
+    # B3 (plan B3 D7): nhớ hội thoại trong một cuộc trò chuyện — tắt tới khi giao diện nhiều lượt xong (D8); chỉ nhớ câu hỏi khi `nho_cau_tra_loi` tắt
+    nho_hoi_thoai: bool = False
+    nho_cau_tra_loi: bool = True
 
     def __post_init__(self) -> None:
         if self.lan_tim_dau not in SEARCH_VARIANTS:
@@ -66,7 +69,7 @@ class AssistantFlags:
     @classmethod
     def from_settings(cls, settings: dict) -> "AssistantFlags":
         config = settings.get("assistant") or {}
-        values = {name: bool(config.get(name, False)) for name in cls.__dataclass_fields__ if name != "lan_tim_dau"}
+        values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in cls.__dataclass_fields__ if name != "lan_tim_dau"}
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")))
 
     @property
@@ -116,6 +119,8 @@ class AnswerTrace:
     context_parts: list[str] = field(default_factory=list)  # chữ ngữ cảnh mỗi lần tìm — đếm ngân sách chung (D5)
     seen_ids: list[str] = field(default_factory=list)  # chunk_id đã vào ngữ cảnh — lần tìm sau bỏ trùng (D5)
     tool_error: Exception | None = None  # lỗi tìm / ngữ cảnh trong công cụ: SDK có thể bọc lại ⇒ lõi ném lại đúng lỗi gốc
+    # B3: lịch sử cuộc trò chuyện của lượt này ((câu hỏi, câu trả lời đã cắt), …) — route đọc từ kho; rỗng = không nhớ (B2). KHÔNG log.
+    history: tuple[tuple[str, str], ...] = ()
 
 
 async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
@@ -145,7 +150,8 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
         started = time.perf_counter()
         packed = context_builder.build(cau_hoi, result.documents, today=today, first_id=len(trace.so_nguon) + 1,
                                        prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids),
-                                       instructions=instructions)
+                                       instructions=instructions, history=trace.history,
+                                       n_tool_items=2 * trace.model_searches if by == "model" else 0)
         context_ms = elapsed_ms(started)
         if first:
             trace.packed, trace.context_ms = packed, context_ms
@@ -200,6 +206,16 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
 
 # Mọi công cụ của trợ lý, một chỗ (test ranh giới khoá tên + tham số; B2 bọc `function_tool` từ đây).
 TOOLS = {"tim_kho": tim_kho}
+
+
+def _history_kwargs(trace: AnswerTrace) -> dict:
+    """`history=` chỉ truyền khi có lịch sử: lượt không lịch sử gọi generator y như B2 (generator thay thế trong test không cần tham số này)."""
+    return {"history": trace.history} if trace.history else {}
+
+
+def _assistant_instructions(generator, trace: AnswerTrace) -> str:
+    """Lời dặn trợ lý thật sự gửi ở lượt này (có câu dặn lịch sử khi có lịch sử — B3 D3) — để đếm ngân sách đúng chuỗi gửi (D5)."""
+    return generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
 
 
 def record_llm_calls(trace: AnswerTrace, calls, call_route: str | None = None) -> None:
@@ -264,7 +280,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
         if generator is None:
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
-    instructions = generator.assistant_instructions if (flags.tim_them and generator is not None) else None
+    instructions = _assistant_instructions(generator, trace) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
     return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
 
@@ -292,9 +308,9 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     call_log = CallLog()
     try:
         if flags.uses_tools:
-            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, generator.assistant_instructions)
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, _assistant_instructions(generator, trace))
             try:
-                trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log)
+                trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace))
             except GenerationError:
                 if trace.tool_error is not None:
                     raise trace.tool_error from None
@@ -302,7 +318,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
         else:
             # `today` chỉ truyền khi có: generator thay thế trong test route chỉ nhận (query, context)
             kwargs = {"call_log": call_log} if today is None else {"call_log": call_log, "today": today}
-            trace.generated = await generator.generate_answer(query, trace.packed.text, **kwargs)
+            trace.generated = await generator.generate_answer(query, trace.packed.text, **kwargs, **_history_kwargs(trace))
     finally:
         trace.generation_ms = elapsed_ms(started)  # có cả khi model lỗi (route log `generation_failed` kèm thời gian)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)  # cả khi lượt lỗi sau phản hồi (review C128 m-1)
@@ -332,7 +348,7 @@ async def _pick_route(query: str, generator, trace: AnswerTrace, flags: Assistan
                 trace.cau_tim = [q.strip() for q in queries if q.strip()] or None
                 trace.cau_tim_rong = trace.cau_tim is None  # rỗng ⇒ tìm bằng câu gốc, đếm được
             else:
-                trace.route = await generator.route(query, call_log)
+                trace.route = await generator.route(query, call_log, **_history_kwargs(trace))
         except GenerationError:
             trace.route, trace.route_error = ROUTE_TRO_LY_HUE, "router_failed"  # lỗi ⇒ đường cũ (D3)
         finally:
@@ -360,7 +376,7 @@ async def answer_turn(query: str, retrieval_service, context_builder, generator,
         started = time.perf_counter()
         call_log = CallLog()
         try:
-            trace.generated = await generator.generate_chat(query, call_log)
+            trace.generated = await generator.generate_chat(query, call_log, **_history_kwargs(trace))
         finally:
             trace.generation_ms = elapsed_ms(started)
             record_llm_calls(trace, call_log.calls, ROUTE_TRO_CHUYEN)
@@ -376,6 +392,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     `error` / `notice` / `done`. Hạn giờ model bọc cả vòng đọc (spec streaming §4.3); tự dừng đọc (hết giờ / ngắt) ⇒ `cancel()` + đọc nốt
     trong vùng che (spec §4.5). Lỗi đi ra nguyên kiểu (route đổi thành sự kiện `error`)."""
     result = call_log = tool_state = None
+    pending_generating = False
     call_route = None
     stopped_early = False
     try:
@@ -388,7 +405,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         if trace.route == ROUTE_TRO_CHUYEN:
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_CHUYEN
-            result, call_log = generator.start_chat_stream(query)
+            result, call_log = generator.start_chat_stream(query, **_history_kwargs(trace))
         else:
             today = _today(flags, trace)
             tool_prompt = await _before_model(query, retrieval_service, context_builder, generator, trace, recorder, today, flags)
@@ -397,13 +414,15 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             if trace.fixed_outcome is not None:  # ngữ cảnh không có nguồn ⇒ từ chối, không gọi model
                 yield "delta", trace.answer
                 return
-            yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_LY_HUE
             if flags.uses_tools:
-                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, generator.assistant_instructions)
-                result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn)
+                # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
+                pending_generating = True
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, _assistant_instructions(generator, trace))
+                result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace))
             else:
-                result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today)
+                yield "status", {"stage": "generating"}
+                result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today, **_history_kwargs(trace))
 
         started, generator_started = time.perf_counter(), time.monotonic()
         extractor = AnswerTextStream()
@@ -419,6 +438,9 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 if event.type == "raw_response_event" and event.data.type == "response.output_text.delta":
                     text = extractor.feed(event.data.delta)
                     if text:
+                        if pending_generating:
+                            pending_generating = False
+                            yield "status", {"stage": "generating"}
                         yield "delta", text
                 elif event.type == "run_item_stream_event" and event.name == "tool_called":  # thẻ công cụ (B2 D7): lượt gọi không có chữ
                     yield "status", {"stage": "searching"}

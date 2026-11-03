@@ -32,6 +32,8 @@ from llm.full_corpus_prompt import (
     ROUTER_INSTRUCTIONS,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
+    ROUTER_HISTORY_NOTE,
+    ASSISTANT_HISTORY_NOTE,
     build_answer_input,
 )
 
@@ -170,6 +172,19 @@ def call_entry(response: Any, ms: float | None) -> dict:
     }
 
 
+def with_history(user_prompt: str, history) -> "str | list[dict]":
+    """Đầu vào một lần chạy (B3 D3): lịch sử rỗng ⇒ đúng chuỗi như B2 (chuỗi gửi model không đổi — Q1); có lịch sử ⇒ danh sách tin
+    user / assistant theo thứ tự rồi tin user lượt này. Câu trả lời rỗng (chỉ nhớ câu hỏi) ⇒ bỏ tin assistant đó."""
+    if not history:
+        return user_prompt
+    items: list[dict] = []
+    for question, answer in history:
+        items.append({"role": "user", "content": question})
+        if answer:
+            items.append({"role": "assistant", "content": answer})
+    return items + [{"role": "user", "content": user_prompt}]
+
+
 def _sum_or_none(values) -> int | None:
     """Cộng các số có mặt; không có số nào ⇒ None (giữ nghĩa "không có usage" như khi chỉ đọc một lần gọi)."""
     present = [v for v in values if v is not None]
@@ -253,6 +268,10 @@ class OpenAIFullCorpusGenerator:
             instructions=self.assistant_instructions,
             model_settings=dataclasses.replace(self.answer_agent.model_settings, parallel_tool_calls=False),
         )
+        # B3 D3: bản agent cho lượt có lịch sử — thêm đúng một câu dặn; lượt không lịch sử dùng bản trên (chuỗi gửi model như B2).
+        self.router_history_agent = self.router_agent.clone(instructions=f"{ROUTER_INSTRUCTIONS}\n\n{ROUTER_HISTORY_NOTE}")
+        self.assistant_history_instructions = f"{self.assistant_instructions}\n\n{ASSISTANT_HISTORY_NOTE}"
+        self.assistant_history_agent = self.assistant_agent.clone(instructions=self.assistant_history_instructions)
 
     @classmethod
     def from_environment(
@@ -288,7 +307,7 @@ class OpenAIFullCorpusGenerator:
             router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
         )
 
-    async def _run(self, agent: Agent, user_prompt: str, call_log: "CallLog", timeout: float, *, max_turns: int = 1,
+    async def _run(self, agent: Agent, user_prompt: "str | list[dict]", call_log: "CallLog", timeout: float, *, max_turns: int = 1,
                    error_handlers: dict | None = None):
         """Một `Runner.run` không stream; lỗi ⇒ `GenerationError`. `call_log` do nơi gọi tạo ⇒ lần gọi đã xong vẫn còn mục khi lượt lỗi sau phản hồi
         (review C128 m-1). `max_turns` / `error_handlers` chỉ đường trợ lý có công cụ đổi (B2 D5); mặc định = một lần gọi như B1."""
@@ -312,9 +331,14 @@ class OpenAIFullCorpusGenerator:
         except Exception as exc:
             raise GenerationError("OpenAI generation encountered unexpected failure") from exc
 
-    async def route(self, query: str, call_log: "CallLog") -> str:
+    def assistant_instructions_for(self, history) -> str:
+        """Lời dặn trợ lý thật sự gửi đi ở lượt này — bộ dựng ngữ cảnh đếm ngân sách bằng chính chuỗi này (B3 D5)."""
+        return self.assistant_history_instructions if history else self.assistant_instructions
+
+    async def route(self, query: str, call_log: "CallLog", history=()) -> str:
         """Định tuyến (B1 D3): tuyến model chọn. Lỗi / hết giờ (`router_timeout`) / đầu ra hỏng ⇒ `GenerationError` (lõi đổi thành `tro_ly_hue`)."""
-        result = await self._run(self.router_agent, query.strip(), call_log, self.router_timeout)
+        agent = self.router_history_agent if history else self.router_agent
+        result = await self._run(agent, with_history(query.strip(), history), call_log, self.router_timeout)
         output = getattr(result, "final_output", None)
         try:
             return (output if isinstance(output, RouteOutput) else RouteOutput.model_validate(output)).route
@@ -334,7 +358,7 @@ class OpenAIFullCorpusGenerator:
         queries = [parsed.cau_tim] if isinstance(parsed.cau_tim, str) else list(parsed.cau_tim)
         return parsed.route, queries
 
-    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False) -> tuple[Agent, dict, dict]:
+    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=()) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -346,22 +370,24 @@ class OpenAIFullCorpusGenerator:
 
         tool = function_tool(tool_fn, name_override="tim_kho", failure_error_function=None)
         extra = {"tool_use_behavior": "stop_on_first_tool"} if stop_on_first_tool else {}
-        return self.assistant_agent.clone(tools=[tool], **extra), {"max_turns": on_max_turns}, state
+        base = self.assistant_history_agent if history else self.assistant_agent
+        return base.clone(tools=[tool], **extra), {"max_turns": on_max_turns}, state
 
-    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None) -> GeneratedText:
+    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=()) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn)
-        result = await self._run(agent, user_prompt, call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS, error_handlers=handlers)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history)
+        result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS,
+                                 error_handlers=handlers)
         text = parse_structured_output(getattr(result, "final_output", None), AnswerOutput)
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
-    def start_tools_stream(self, user_prompt: str, tool_fn) -> tuple[RunResultStreaming, "CallLog", dict]:
+    def start_tools_stream(self, user_prompt: str, tool_fn, history=()) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn)
-        result = Runner.run_streamed(agent, input=user_prompt, max_turns=ASSISTANT_MAX_TURNS, run_config=_run_config(), hooks=call_log,
+        agent, handlers, state = self._assistant_for(tool_fn, history=history)
+        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=ASSISTANT_MAX_TURNS, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
 
@@ -371,15 +397,15 @@ class OpenAIFullCorpusGenerator:
         agent, handlers, _ = self._assistant_for(tool_fn, stop_on_first_tool=True)
         await self._run(agent, user_prompt, call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS, error_handlers=handlers)
 
-    async def generate_chat(self, query: str, call_log: "CallLog | None" = None) -> GeneratedText:
+    async def generate_chat(self, query: str, call_log: "CallLog | None" = None, history=()) -> GeneratedText:
         """Trò chuyện (B1 D4): lời dặn riêng, không ngữ cảnh kho."""
-        return await self._execute_agent(self.chat_agent, query.strip(), AnswerOutput, call_log)
+        return await self._execute_agent(self.chat_agent, with_history(query.strip(), history), AnswerOutput, call_log)
 
-    def start_chat_stream(self, query: str) -> tuple[RunResultStreaming, "CallLog"]:
-        return self._start_stream(self.chat_agent, query.strip())
+    def start_chat_stream(self, query: str, history=()) -> tuple[RunResultStreaming, "CallLog"]:
+        return self._start_stream(self.chat_agent, with_history(query.strip(), history))
 
     async def _execute_agent(
-        self, agent: Agent, user_prompt: str, expected_type: type[BaseModel], call_log: "CallLog | None" = None
+        self, agent: Agent, user_prompt: "str | list[dict]", expected_type: type[BaseModel], call_log: "CallLog | None" = None
     ) -> GeneratedText:
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
@@ -436,23 +462,25 @@ class OpenAIFullCorpusGenerator:
             llm_calls=tuple(call_log.calls),
         )
 
-    async def generate_answer(self, query: str, context: str, today: str | None = None, call_log: "CallLog | None" = None) -> GeneratedText:
+    async def generate_answer(self, query: str, context: str, today: str | None = None, call_log: "CallLog | None" = None,
+                              history=()) -> GeneratedText:
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return await self._execute_agent(self.answer_agent, build_answer_input(query, context, today), AnswerOutput, call_log)
+        return await self._execute_agent(self.answer_agent, with_history(build_answer_input(query, context, today), history), AnswerOutput,
+                                         call_log)
 
-    def _start_stream(self, agent: Agent, user_prompt: str) -> tuple[RunResultStreaming, "CallLog"]:
+    def _start_stream(self, agent: Agent, user_prompt: "str | list[dict]") -> tuple[RunResultStreaming, "CallLog"]:
         call_log = CallLog()
         result = Runner.run_streamed(agent, input=user_prompt, max_turns=1, run_config=_run_config(), hooks=call_log)
         return result, call_log
 
-    def start_answer_stream(self, query: str, context: str, today: str | None = None) -> tuple[RunResultStreaming, CallLog]:
+    def start_answer_stream(self, query: str, context: str, today: str | None = None, history=()) -> tuple[RunResultStreaming, CallLog]:
         """Cùng agent + cùng tham số lần gọi như `generate_answer`, nhưng stream (spec streaming §4.3 bước 1). Trả ngay; model chạy
         trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`.
         `CallLog` của lượt trả kèm: nơi gọi đọc `calls` cả khi lượt bị ngắt / lỗi (chỉ có mục của lần gọi đã xong)."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return self._start_stream(self.answer_agent, build_answer_input(query, context, today))
+        return self._start_stream(self.answer_agent, with_history(build_answer_input(query, context, today), history))
 
     def finish_answer_stream(self, result: RunResultStreaming, call_log: CallLog, started: float, state: dict | None = None) -> GeneratedText:
         """Sau khi `stream_events()` đã đọc hết: chữ cuối kiểm chặt như `generate_answer` (`parse_structured_output`) + usage.

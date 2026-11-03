@@ -20,7 +20,7 @@ import random
 import sys
 import time
 import unicodedata
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -31,7 +31,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from core.settings_loader import load_settings
 from llm.full_corpus_prompt import REFUSAL_ANSWERS, build_assistant_input
 from llm.generator_openai_full_corpus import CallLog, OpenAIFullCorpusGenerator, input_cache_tokens
-from llm.assistant import (SEARCH_VARIANTS, AnswerTrace, AssistantFlags, answer_turn, search_into_trace, tim_kho, tool_for_turn,
+from llm.assistant import (ROUTE_TRO_LY_HUE as ROUTE_TRO_LY_HUE_NAME, SEARCH_VARIANTS, AnswerTrace, AssistantFlags, answer_turn,
+                           search_into_trace, tim_kho, tool_for_turn,
                            turn_usd)
 from core.schema import GenerationError
 from llm.pricing import cost_usd  # giá dời sang `llm.pricing` (Phase 9 B0); `from evaluation.full_corpus_eval import cost_usd` cũ vẫn chạy
@@ -469,6 +470,67 @@ async def run_search_layer(cases: list[dict], variant: str) -> tuple[list[dict],
         if generator is not None:
             await generator.aclose()
     return [p[0] for p in pairs if p[0] is not None], [p[1] for p in pairs]
+
+
+CHAIN_SIDES = ("nho", "doc_lap", "tran")
+
+
+async def run_chains(chains: list[dict], side: str) -> list[dict]:
+    """B3 (plan B3 bản 2 §4, D11 (a)): mỗi chuỗi gửi từng lượt qua lõi thật. `nho` — cùng một `ConversationStore` (code của API), lượt sau
+    nhận lịch sử; `doc_lap` — câu gõ thật của lượt, không lịch sử (mốc quyết 2); `tran` — `dung_mot_minh` (câu viết lại đứng một mình), không
+    lịch sử (trần, chỉ báo số; lượt không có `dung_mot_minh` bỏ). Cờ = `settings.yaml` + bật `nho_hoi_thoai` ở bên `nho`. Mỗi lượt một dòng:
+    câu trả lời (private), tuyến, câu tìm model viết (private), và `usage − builder` của lần gọi viết (Q8)."""
+    from api.conversations import ConversationStore  # cùng kho với API
+    from llm.assistant import _assistant_instructions
+    settings = load_settings(validate_private_paths=False)
+    flags = dataclasses.replace(AssistantFlags.from_settings(settings), nho_hoi_thoai=side == "nho")
+    service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
+    context_builder = build_context_builder(settings)
+    generator = OpenAIFullCorpusGenerator.from_environment(settings)
+    tokens = lambda text: len(context_builder._tokenizer.encode(text))  # noqa: E731
+    semaphore = asyncio.Semaphore(CONCURRENCY)
+
+    async def one_turn(chain: dict, idx: int, turn: dict, history) -> dict:
+        question = (turn["dung_mot_minh"] if side == "tran" else turn["cau"]).strip()
+        trace, error = AnswerTrace(history=history), None
+        try:
+            await answer_turn(question, service, context_builder, generator, trace, flags)
+        except Exception as exc:  # một lượt lỗi: ghi, đi tiếp (lượt lỗi không vào lịch sử — như API)
+            error = describe_error(exc)
+        writer = [c for c in trace.llm_calls if c["route"] == ROUTE_TRO_LY_HUE_NAME]
+        builder = None
+        if writer and trace.context_parts:
+            builder = context_builder._token_count(question, "\n\n".join(trace.context_parts), trace.today,
+                                                   _assistant_instructions(generator, trace), trace.history, 2 * trace.model_searches)
+        return {"id": chain["id"], "loai": chain["loai"], "luot": idx, "ben": side, "ky_vong": turn["ky_vong"], "golden": turn.get("golden"),
+                "answer": trace.answer, "refusal": None if trace.answer is None else is_refusal(trace.answer), "error": error,
+                "citation_error": None if trace.citation_error is None else str(trace.citation_error), "route": trace.route,
+                "fixed_outcome": trace.fixed_outcome, "n_history_turns": len(history), "cau_tim_model": trace.model_queries,
+                "n_tim_kho_model": trace.model_searches, "usd": turn_usd(trace), "n_llm_calls": len(trace.llm_calls),
+                "viet_input_tokens": writer[-1]["input_tokens"] if writer else None, "builder_tokens": builder,
+                "usage_tru_builder": None if (not writer or builder is None) else writer[-1]["input_tokens"] - builder}
+
+    async def one_chain(chain: dict) -> list[dict]:
+        rows = []
+        async with semaphore:
+            store = ConversationStore(tokens, keep_answers=flags.nho_cau_tra_loi)
+            conversation_id = store.ensure(None)
+            for idx, turn in enumerate(chain["luot"]):
+                if side == "tran" and not turn.get("dung_mot_minh"):
+                    continue
+                history = store.history(conversation_id) if side == "nho" else ()
+                row = await one_turn(chain, idx, turn, history)
+                rows.append(row)
+                if side == "nho" and row["error"] is None and row["answer"] and (row["fixed_outcome"] or not row["citation_error"]):
+                    store.append(conversation_id, turn["cau"].strip(), row["answer"])
+        return rows
+
+    try:
+        nested = await asyncio.gather(*(one_chain(c) for c in chains))
+    finally:
+        service.close()
+        await generator.aclose()
+    return [row for rows in nested for row in rows]
 
 
 def elapsed_ms_since(started: float) -> float:
@@ -916,6 +978,13 @@ def main(argv: list[str] | None = None) -> int:
                           help="cờ bật cho lượt này (không truyền ⇒ theo settings.yaml; truyền rỗng ⇒ tắt cả)")
     generate.add_argument("--lan-tim-dau", choices=list(SEARCH_VARIANTS), help="B2: biến lần tìm đầu (không truyền ⇒ theo settings.yaml)")
 
+    chains_cmd = commands.add_parser("chuoi", help="B3: chạy bộ chuỗi nhiều lượt qua lõi thật (paid)")
+    chains_cmd.add_argument("bo", help="JSONL chuỗi (bộ đo C136)")
+    chains_cmd.add_argument("--ben", choices=list(CHAIN_SIDES), required=True)
+    chains_cmd.add_argument("--out", required=True)
+    chains_cmd.add_argument("--chi", nargs="*", help="chỉ các id chuỗi này (pilot)")
+    chains_cmd.add_argument("--khong-in-chu", action="store_true", help="chỉ in số đếm (phần kín — review C142 m-3)")
+
     search_layer = commands.add_parser("tang_tim", help="B2a tầng tìm: top-10 lần tìm đầu theo biến (v0 0 đồng; v1 / v3 / v2 paid)")
     search_layer.add_argument("bien", choices=list(SEARCH_VARIANTS))
     search_layer.add_argument("--cases-file", required=True, help="JSON danh sách case_index (61 câu, hoặc 43 câu dev cho vòng chỉnh)")
@@ -979,6 +1048,16 @@ def main(argv: list[str] | None = None) -> int:
         rows = asyncio.run(run_generation(selected, args.max_context_documents, args.flags, args.lan_tim_dau))
         write_jsonl(_path(args.out), rows)
         print(json.dumps(summarize_answers(rows, None), ensure_ascii=False, indent=2))
+    elif args.command == "chuoi":
+        chains = [json.loads(line) for line in Path(args.bo).read_text(encoding="utf-8").splitlines() if line.strip()]
+        chains = [c for c in chains if args.chi is None or c["id"] in args.chi]
+        rows = asyncio.run(run_chains(chains, args.ben))
+        write_jsonl(_path(args.out), rows)
+        diffs = [r["usage_tru_builder"] for r in rows if r["usage_tru_builder"] is not None]
+        summary = {"ben": args.ben, "chuoi": len(chains), "luot": len(rows), "loi": sum(r["error"] is not None for r in rows),
+                   "usd": round(sum(r["usd"] or 0 for r in rows), 6), "usage_tru_builder_max": max(diffs) if diffs else None,
+                   "usage_tru_builder_min": min(diffs) if diffs else None, "tuyen": dict(Counter(r["route"] for r in rows))}
+        print(json.dumps(summary, ensure_ascii=False))  # --khong-in-chu: chỉ số đếm (mặc định cũng không in chữ)
     elif args.command == "tang_tim":
         wanted = json.loads(Path(args.cases_file).read_text(encoding="utf-8"))
         selected = select_cases(load_golden_cases("full"), wanted)
