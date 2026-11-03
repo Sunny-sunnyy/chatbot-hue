@@ -22,7 +22,9 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 ## Phiên tối 03/11 (18:14 03/11/2026)
 - **B137 bước 8 giao diện Bản 1: xong** — `p9-b3` `291b459` (chỉ `frontend/src/`, đã push); Playwright server thật lần 2 đạt (CSP 0, ngoài 0, D9 (b) (c), bấm nguồn lượt cũ, khẩn cấp, lỗi + Thử lại, cuộc mới, điện thoại, giảm chuyển động) — report §2b, §4b; ảnh `data/phase_9/b3/giao_dien/anh/`. Tiền 0,0035.
 - Số kín C146 đã nhận + ghi report §5b: mọi luật đạt **trừ Q5 ngoài kho chờ A quyết** (C: lỗi nhãn). Tiếp: A quyết Q5 ⇒ Q10 cổng (nhớ bật trên bản sao settings, cả giao diện) ⇒ bật `nho_hoi_thoai` ⇒ C review `10ec9a2..` ⇒ A merge.
-- Report `b136_b3_implementation.md` sửa ở working tree `main` (chưa commit — A commit).
+- Report `b136_b3_implementation.md` sửa ở working tree `main` (A commit `e00e752`).
+- **Q10 cổng: xong 18:21 03/11/2026, đạt** (report §4c; `data/phase_9/b3/q10/`, nhớ bật qua `app_nho.py` — không sửa `settings.yaml`); câu gợi ý lễ hội đổi `b156f92` (A quyết). Tiền Q10 0,0047. K-N2 chạy lại có ngữ cảnh ⇒ trích dẫn trỏ sai ⇒ **sàn Q5 phạm ⇒ cờ nhớ KHÔNG bật** (A báo 18:23 03/11/2026; report §5b). A trình User hướng (A khuyên B3b trên bộ chuỗi mới C viết). B chờ: không sửa settings / lời dặn; chỉ đọc chỗ lời dặn nhớ để chuẩn bị phương án. Report + STATUS chưa commit (A commit).
+- C147 review dải `10ec9a2..b156f92`: **ready_for_user_confirmation** (merge với cờ nhớ tắt; m-3 đóng 18:27 03/11/2026, report `1c4459e8d80d`). B chờ A merge / User chọn hướng B3b.
 
 ## Phiên 03/11 đã xong
 | Việc | Kết quả |
@@ -34,7 +36,7 @@ Trần B3 **0,40 USD, dừng > 0,37** (A, 03/11); đã dùng **≈ 0,255**. Ư�
 | B136 code B3 (dở) | Q1 PASS · Q2 2 vòng ⇒ D6 hẹp giữ (từ chối 4, P0_sai 0) · Q3 6 / 6 · Q4 +0,65 [+0,15; +1,25] · Q5 0 / 0 · Q6 tụt 0 · Q8 max 167 < 512 · khoá `46008ed` |
 
 ## Tiền paid (B, 03/11, giá đủ)
-B131 0,0029 · B134 (B2) ≈ 0,255 (gồm cổng Q9) · B136 (B3) ≈ 0,255 ⇒ **≈ 0,513 USD** (phiên trưa). Phiên tối: B137 0,0035. Judge: quota Claude. Không gọi `agy`.
+B131 0,0029 · B134 (B2) ≈ 0,255 (gồm cổng Q9) · B136 (B3) ≈ 0,255 ⇒ **≈ 0,513 USD** (phiên trưa). Phiên tối: B137 0,0035 + Q10 0,0047 = 0,0082. Judge: quota Claude. Không gọi `agy`.
 
 ## Bẫy đã gặp — đọc trước khi làm
 - (03/11) **Brief judge thiếu "ghi item / case_index"** ⇒ file điểm không ghép được (`KeyError`); phải ghép lại theo thứ tự dòng. Mỗi brief judge ghi rõ khoá đầu ra gồm id mục, dù rubric không có.

@@ -16,6 +16,16 @@
 
 - **18:15 03/11/2026:** B báo đã ghi số kín vào b136 §5b; bước 8 giao diện ở `p9-b3` `291b459` (Q10 + bật cờ sau). C chờ A: quyết Q5 K-N2 + có review sớm `10ec9a2..291b459` ngay không.
 
+- **K-N2 chạy lại (18:18 03/11/2026):** trích dẫn trỏ sai (đoạn của đối tượng khác; dòng bác tiền đề không có trong ngữ cảnh) ⇒ nhánh "tính nghiêm (2)" — đã báo A, chờ A quyết. 0,001065 USD (C146 tổng ≈ 0,0333). `KET_QUA_C146.md` `0be2f074fba3`.
+
+## C147 — review sớm `p9-b3` `10ec9a2..291b459` (A giao; bắt đầu 18:18 03/11/2026)
+- Đã review sớm `e69c293` (C145); vòng này: `cb73e19` (m-1 / m-2), `46008ed` (D6 hẹp), `291b459` (bước 8 giao diện) + cổng tối thiểu cả dải. 0 USD.
+- **File sẽ ghi (khai báo):** mục mới "Vòng sớm 2" trong `report_agent/2026-11-02_phase_9_code/b136_review.md`; worktree `/tmp/c_p9b3` (detach `291b459`, chỉ chạy test / build, không sửa code — gỡ khi xong); ca dò private `data/phase_9/c147_review/`; dòng C trong `CURRENT_HANDOFF.md`; và file này.
+- **A quyết K-N2:** tính nghiêm ⇒ sàn Q5 kín phạm ⇒ cờ nhớ không bật; C đã gửi B một dòng. Chưa viết bộ chuỗi mới tới khi A báo User chọn (A khuyên B3b trên bộ mới của C). `KET_QUA_C146.md` `7901ff994abb`.
+- **XONG (18:25 03/11/2026):** `b136_review.md` mục "Vòng sớm 2" `c0c7f5a12d04` (quét trùng 0): dải `10ec9a2..b156f92` **0B / 0M / 1m** (m-3 report cập nhật sau quyết định phần kín); m-1, m-2 vòng 1 đóng. Ca dò `data/phase_9/c147_review/` (`do_so_hien_thi.mjs` 6 / 6, `do_cookie_loi.py`). Test 36 / 36; build `b156f92` CSP sạch; Q10 đối chiếu file thô + log server B. 0 USD. Worktree `/tmp/c_p9b3` đã gỡ.
+
+- **m-3 đóng (18:27 03/11/2026):** report B136 `1c4459e8d80d` sửa đủ; review `ced8cb38e2c3` — dải `10ec9a2..b156f92` **ready_for_user_confirmation** (merge với cờ nhớ tắt). C rảnh, chờ A.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 13:19 03/11/2026 `date`, kết phiên 03/11)
 
 **Trạng thái:** C không còn việc đang chạy, không server / tiến trình nền, không thư mục tạm (`/tmp/c13*`, `/tmp/c14*` đã xoá). C không commit; A commit.

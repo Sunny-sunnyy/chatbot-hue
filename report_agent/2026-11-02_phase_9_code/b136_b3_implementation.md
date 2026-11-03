@@ -1,8 +1,8 @@
-# Implementation Report: Phase 9 B3 — nhớ hội thoại (cờ `nho_hoi_thoai` TẮT) + sửa lời dặn D6 + giao diện nhiều lượt (**dở — giao diện xong; chờ C chạy kín, rồi Q10 + bật cờ**)
+# Implementation Report: Phase 9 B3 — nhớ hội thoại (cờ `nho_hoi_thoai` TẮT) + sửa lời dặn D6 + giao diện nhiều lượt (**giao diện + Q10 đạt; sàn Q5 kín PHẠM ⇒ cờ nhớ KHÔNG bật — chờ User chọn hướng (A trình)**)
 
 Người làm: B (Claude Opus 5.5, `hue-rag-52`) · việc **B136** · bắt đầu 11:50 03/11/2026, bản trước 13:19 03/11/2026 (kết phiên trưa); **bước 8 giao diện: B137** (B, `hue-rag-32`, A giao 18:01), bản này 18:13 03/11/2026 (giờ các mốc từ `date`).
 Plan: `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` bản 2 sha `cd099ec0a00e` (A duyệt; commit `10ec9a2`). Bộ đo: C136 `report_agent/2026-11-02_phase_9_code/c136_bo_do_b3.md` (sha `3301f3c7b7e3` khi giao việc).
-Nhánh **`p9-b3`** từ `10ec9a2`, worktree `/tmp/b_p9b3` (tạo lại tối 03/11 — bản cũ mất khi khởi động lại). Commit: `e69c293` (code D1–D5, D9 (b) + test), `cb73e19` (review C145 m-1 / m-2), **`46008ed`** (D6 bản hẹp — mốc khoá phần kín), **`291b459`** (bước 8 giao diện, chỉ `frontend/src/`). Đã push. **Chưa merge.**
+Nhánh **`p9-b3`** từ `10ec9a2`, worktree `/tmp/b_p9b3` (tạo lại tối 03/11 — bản cũ mất khi khởi động lại). Commit: `e69c293` (code D1–D5, D9 (b) + test), `cb73e19` (review C145 m-1 / m-2), **`46008ed`** (D6 bản hẹp — mốc khoá phần kín), **`291b459`** (bước 8 giao diện, chỉ `frontend/src/`), **`b156f92`** (đổi câu gợi ý lễ hội — A quyết). Đã push. **Chưa merge.** Dải code để review / merge: **`10ec9a2..b156f92`**.
 Report tracked, repo public: không chép câu Golden / câu chuỗi / kho; chỉ số đếm, `case_index`, mã chuỗi. Dữ liệu chạy: `data/phase_9/b3/` (private).
 
 ## 1. Phạm vi — đã làm / chưa làm
@@ -20,9 +20,9 @@ Report tracked, repo public: không chép câu Golden / câu chuỗi / kho; ch�
 | Q1, Q2, Q8 pilot, chuỗi đã thấy (Q3–Q7 phần đã thấy) | **xong** (§4) |
 | Khoá trước phần kín | **xong** (§5) |
 | Phần kín 15 chuỗi (C chạy + chấm) | **chưa** — chờ C |
-| Q10 cổng (uvicorn, cookie thật, ngắt `curl -m`) | **chưa** |
+| Q10 cổng (uvicorn, cookie thật, ngắt `curl -m`, giao diện với nhớ bật) | **xong** 18:21 03/11/2026 — đạt (§4c) |
 | Bước 8 giao diện (User chọn **Bản 1 — Huế hiện đại**, `data/giao_dien_v2/mau/1.html` `2952d57f3a92`, 13:11 03/11) + D9 (c) số hiển thị 1..k | **xong** `291b459` — Playwright server thật (§4b) |
-| Mặc định `nho_hoi_thoai` | vẫn **false** — A: bật **sau** khi C báo số kín (cùng Q10) |
+| Mặc định `nho_hoi_thoai` | **false — không bật, giữ `false` khi merge** (luật plan §4: sàn Q5 phạm ⇒ cờ nhớ không bật dù quyết đạt; K-N2 chạy lại có ngữ cảnh ⇒ trích dẫn trỏ sai, A báo 18:23 03/11/2026) |
 
 ## 2. Thay đổi chính (`git diff 10ec9a2..46008ed -- backend`, 11 file, +588 / −54)
 
@@ -39,7 +39,7 @@ Report tracked, repo public: không chép câu Golden / câu chuỗi / kho; ch�
 | `backend/config/settings.yaml` | `nho_hoi_thoai: false`, `nho_cau_tra_loi: true` |
 | tests | `test_b3_memory.py` (mới, 13 test), `test_b2_tool_loop.py` (thứ tự `generating`, ngân sách trừ phần đệm) |
 
-### 2b. Bước 8 giao diện (`git diff 46008ed..291b459`, 4 file `frontend/src/`, +386 / −176; backend / lời dặn / `settings.yaml` không đổi)
+### 2b. Bước 8 giao diện (`git diff 46008ed..b156f92`, 4 file `frontend/src/`, 2 commit: `291b459` +386 / −176, `b156f92` câu gợi ý lễ hội; backend / lời dặn / `settings.yaml` không đổi)
 
 | File | Thay đổi |
 |---|---|
@@ -90,6 +90,23 @@ Server: `uvicorn api.app:app --port 8851` từ `/tmp/b_p9b3/backend` (cấu hìn
 
 Nhìn ảnh (B tự xem): bố cục khớp bản mẫu 1; câu trả lời dài vẫn rộng 64 ký tự như mẫu. Ảnh "cả trang" có ô hỏi dính đáy đè lên giữa ảnh — do cách chụp cả trang, không phải lỗi giao diện.
 
+## 4c. Q10 cổng ổn định (18:21 03/11/2026, bản `b156f92`)
+
+Server thật `uvicorn --factory` cổng 8852 từ `/tmp/b_p9b3/backend`, **nhớ bật trên bản sao settings trong RAM** (`data/phase_9/b3/q10/app_nho.py` — `create_app(settings)` với `nho_hoi_thoai: true`; `settings.yaml` của nhánh không đổi); tắt bằng TaskStop.
+Script + đầu ra (private): `data/phase_9/b3/q10/` (`q10_curl.sh`, `curl_out/`, `q10_ui.py`, `q10_ui.json`, `anh/`). Câu tự viết (không từ Golden / bộ đo). Không đo latency (W31 không chạm).
+
+| Kiểm (plan §4 Q10) | Kết quả |
+|---|---|
+| Chuỗi A 3 lượt `/api/chat` qua cookie jar (`curl -c/-b`) | lượt 3 "còn nhớ tên tôi?" ⇒ có đúng tên đã giới thiệu ở lượt 1; lượt 2 "món đó…" hiểu đúng món lượt 1. `n_history_turns` 0 ⇒ 1 ⇒ 2 |
+| "Cuộc trò chuyện mới" (`POST /api/conversation/new`) | mã cuộc mới khác mã cũ; hỏi lại câu nhớ tên ⇒ "chưa thấy bạn giới thiệu tên", `n_history_turns` 0 |
+| Chuỗi B 3 lượt stream (`/api/chat/stream`) + **1 ca ngắt `curl -m 2`** giữa lượt 1 và 2 | ca ngắt: exit 28, chỉ 2 sự kiện `status`, log `client_disconnected`, **không được nhớ** (lượt kế có `n_history_turns` 1 = chỉ lượt 1); lượt 2 "lăng đó…" hiểu đúng đối tượng lượt 1; lượt 3 lịch sử 2 |
+| Cookie | `conversation_id`: `HttpOnly; Max-Age=1800; Path=/api; SameSite=strict` (mọi phản hồi); cùng mã trong một chuỗi, chuỗi A ≠ chuỗi B |
+| Giao diện với nhớ bật (Playwright) | bấm câu gợi ý lễ hội ⇒ hỏi tiếp "lễ hội đó…" ⇒ trả lời đúng lễ hội lượt 1, có nguồn (lịch sử 1); "Cuộc trò chuyện mới" ⇒ cùng câu hỏi tiếp có lịch sử **0** (câu trả lời mở bằng "Nếu bạn đang hỏi về…" — tìm kho tự ra cùng lễ hội, không phải nhớ); CSP 0, request ngoài 0; điện thoại không cuộn ngang |
+| Log | **11 dòng `chat_metrics` = 11 lượt** (4 + 4 kể cả ca ngắt + 3 giao diện); grep tên đã giới thiệu / chữ câu hỏi / tên món, lăng, lễ hội / `conversation_id` trong dòng log mới = **0** |
+| `/` · `/health` | 200 · 5 / 5 ready |
+
+Tiền Q10: **0,0047 USD** (11 lượt, cộng `usd` từng dòng; ước 0,006). Test `test_static_ui.py` 3 / 3 trên bản build cuối.
+
 ## 5. Khoá (plan §4 — trước phần kín)
 
 **Khoá 13:17 03/11/2026** — nhánh `p9-b3` **`46008ed`** (đã push). sha256 (12): `ANSWER_SYSTEM_INSTRUCTIONS` `81d3040cf53f` · `ROUTER_INSTRUCTIONS` `fb4e1aa7f8fe` (= B1) · `ROUTER_HISTORY_NOTE` `62f8197730ad` · `ASSISTANT_HISTORY_NOTE` `798f6af34f26` · `ASSISTANT_TOOL_NOTE` `4cba5621ee48` (= B2) · `TOOL_LIMIT_TEXT` `0f64fe52619c`; `backend/config/settings.yaml` `c18aa9872a6f`; chấm `data/phase_9/b3/tools/cham_chuoi.py` `6bcd64e6bc1c`.
@@ -105,9 +122,11 @@ C chạy ở `46008ed`, 0 lỗi, 0,032185 USD. Thư mục C: `data/phase_9/b3/ch
 | Q3 nhớ tên | 4 / 4 ⇒ cộng **10 / 10** | ≥ 9 / 10 | đạt |
 | Q4 hỏi tiếp (10 lượt) | nhớ ↔ câu gõ không lịch sử **+0,60 [0,00; +1,40]**, 2 thắng / 8 hoà / 0 thua; báo kèm nhớ ↔ trần 0,00 [−0,30; +0,30] | kín không ngược chiều (TB ≥ 0) | đạt |
 | Q5 điều kiện (2 lượt) | 0 đảo cảnh báo (2 judge) | 0 | đạt |
-| Q5 ngoài kho (2 lượt) | máy đếm **1 lượt bên nhớ không từ chối**; C kiểm: lỗi nhãn bộ đo | 0 câu bị trả lời | **chờ A quyết cách tính** — tới lúc đó cờ nhớ chưa bật |
+| Q5 ngoài kho (2 lượt) | máy đếm **1 lượt bên nhớ không từ chối** (mã K-N2). A quyết cách tính: chạy lại **có ngữ cảnh** — trích dẫn trỏ đúng ⇒ loại khỏi sàn; sai ⇒ tính. C chạy lại: **trích dẫn trỏ sai** — câu trả lời mượn đoạn kho của một đối tượng khác, và dòng bác tiền đề của câu không có trong ngữ cảnh (chi tiết private `data/phase_9/b3/chuoi_sealed_c146/KET_QUA_C146.md` sha `0be2f074fba3`, lượt chạy lại `kn2_rerun_ctx.jsonl` `211aef977434`; B không mở) | 0 câu bị trả lời | **PHẠM sàn** ⇒ cờ nhớ không bật |
 | Q6 đổi chủ đề | tụt 0 / 2 (cộng 0 / 5); câu tìm mang đối tượng cũ 0 / 4 | tụt ≤ 1; 0 | đạt |
 | Q7 · Q8 · Q9 | 5 / 12 · nhớ max 0, mọi bên max 178 < 512 · `khan_cap` 0, tuyến đúng mọi lượt | theo dõi · < 512 · theo dõi | — · đạt · — |
+
+**Kết luận theo luật ghi trước (§4, B ghi 18:23 03/11/2026):** quyết 1 (Q3) và quyết 2 (Q4) **đạt**, Q6 / Q8 đạt, Q10 cổng đạt; **sàn Q5 (ngoài kho) phạm ở 1 lượt kín** ⇒ "cờ nhớ không bật dù quyết đạt" ⇒ `nho_hoi_thoai` giữ **false**; code nhớ + giao diện nhiều lượt giữ trên nhánh (cờ tắt ⇒ chatbot như B2 + D6). Kiểu lỗi (theo lời A): ở lượt hỏi tiếp về điều kho không có, có lịch sử thì model trả lời bằng đoạn của đối tượng khác thay vì từ chối — đúng loại "trả lời câu ngoài kho" (mức 3 trong thứ tự lỗi). Spec ghi B3 "bắt buộc, không cắt" ⇒ **A trình User hướng đi** (A khuyên: vòng sửa B3b trên **bộ chuỗi mới** do C viết, không chỉnh trên phần kín đã mở). B không sửa lời dặn / settings tới khi có quyết định.
 
 ## 6. Lệch, lỗi, giới hạn
 
@@ -116,11 +135,12 @@ C chạy ở `46008ed`, 0 lỗi, 0,032185 USD. Thư mục C: `data/phase_9/b3/ch
 - **Q2 chạy 2 vòng** (plan cho ≤ 2) ⇒ tiền Q2 ≈ 0,192 so ước 0,08; A nới trần B3 0,30 ⇒ **0,40** (dừng > 0,37).
 - Đáp án mẫu `hoi_tiep_dieu_kien` dùng làm "ngữ cảnh" cho thước an toàn ⇒ ý đúng theo kho nhưng ngoài đáp án mẫu bị gắn "không có" (D02) — đọc kèm kho.
 - Mẫu nhỏ (20 lượt quyết 2, 3 + 3 lượt sàn) — 0 lỗi trên n câu không chứng minh tỉ lệ 0 (spec §9).
-- NOT RUN: phần kín, Q10 cổng (cookie thật, 2 chuỗi 3 lượt, giao diện với nhớ **bật**), M2 / "chỉ nhớ câu hỏi" (không cần — Q3 / Q4 đạt).
-- Giao diện (B137): (1) chưa thấy trên trình duyệt cảnh **nhớ bật** — làm ở Q10; (2) cookie hết hạn 30 phút trong khi màn hình còn các lượt cũ ⇒ server bắt đầu cuộc mới âm thầm, người dùng không được báo (giới hạn, chưa xử lý — một người dùng / máy User); (3) câu gợi ý "Tháng này ở Huế có lễ hội gì?" (chữ bản mẫu) cần ngày — dòng ngày đang tắt (B1) ⇒ dễ ra câu yếu khi trình bày; đề xuất A / User đổi câu gợi ý (chưa đổi: chữ mẫu do User chọn); (4) câu khẩn cấp hiện chữ nguyên văn trong thẻ, chưa tách lưới số như bản mẫu (giữ một nguồn chữ ở `llm/emergency.py`).
+- NOT RUN: M2 / "chỉ nhớ câu hỏi" (không cần — Q3 / Q4 đạt).
+- **Merge với `nho_hoi_thoai: false`** (A quyết sau C146): sàn Q5 kín phạm — ngoài kho bên nhớ **1 / 2 lượt** bị trả lời (chạy lại có ngữ cảnh: trích dẫn trỏ nguồn của đối tượng khác, dòng kho đúng không có trong ngữ cảnh); cộng cả đã thấy: 1 / 6 lượt ngoài kho. Code nhớ + giao diện nhiều lượt vào `main` nhưng chatbot chạy như B2 + D6 (một lượt, không cookie) tới khi vòng sửa (hướng do User chọn) qua sàn.
+- Giao diện (B137): (1) cảnh **nhớ bật** trên trình duyệt đã kiểm ở Q10 (§4c); (2) cookie hết hạn 30 phút trong khi màn hình còn các lượt cũ ⇒ server bắt đầu cuộc mới âm thầm, người dùng không được báo — **A quyết giữ là giới hạn** (một người dùng, chạy local), không xử lý ở B3; (3) câu gợi ý "Tháng này ở Huế có lễ hội gì?" (chữ bản mẫu) cần ngày hôm nay mà dòng ngày tắt (B1) ⇒ **A quyết đổi** sang câu theo tên một lễ hội có trong kho (B viết, `b156f92`; Q10 chạy thật: trả lời đủ hai kỳ lễ, có nguồn) — A báo User; (4) câu khẩn cấp hiện chữ nguyên văn trong thẻ, chưa tách lưới số như bản mẫu (giữ một nguồn chữ ở `llm/emergency.py`).
 
 ## 7. Tiền B3 (giá đủ, cộng `usd` từng dòng)
 
-Q2 vòng 1 ≈ 0,086 + S20 sinh lại 0,0009 + S10 / S04 sinh lại 0,0051 · thử nhanh vòng 2 0,0068 · pilot 10 0,0029 · 208 câu 0,0844 · S09 / S26 sinh lại 0,0059 · pilot nhớ 0,0027 · chuỗi đã thấy 3 bên 0,0602 ⇒ ≈ 0,255 · **B137 Playwright 2 lần 0,0035** (ước 0,002; câu so sánh gọi `tim_kho` 3 lần) ⇒ **≈ 0,259 USD** của B; phần kín C146 0,0322 ⇒ **B3 ≈ 0,291 USD** (trần 0,40, dừng > 0,37). Judge: quota Claude.
+Q2 vòng 1 ≈ 0,086 + S20 sinh lại 0,0009 + S10 / S04 sinh lại 0,0051 · thử nhanh vòng 2 0,0068 · pilot 10 0,0029 · 208 câu 0,0844 · S09 / S26 sinh lại 0,0059 · pilot nhớ 0,0027 · chuỗi đã thấy 3 bên 0,0602 ⇒ ≈ 0,255 · **B137 Playwright 2 lần 0,0035** (ước 0,002; câu so sánh gọi `tim_kho` 3 lần) · **Q10 0,0047** ⇒ **≈ 0,263 USD** của B; phần kín C146 0,0322 ⇒ **B3 ≈ 0,296 USD** (trần 0,40, dừng > 0,37; chưa tính lượt chạy lại K-N2 của C). Judge: quota Claude.
 
-**Giải thích ngắn:** B3 cho chatbot nhớ 3 lượt gần nhất trong một cuộc trò chuyện (server giữ, cookie mang mã); cờ còn tắt tới khi có giao diện. Câu dặn D6 bản hẹp chặn đúng lỗi "thêm lưu ý an toàn không có nguồn" (S20) mà không làm chatbot dè dặt — bản đầu làm tăng từ chối và bỏ cả lời khuyên có nguồn. Trên 25 chuỗi đã thấy, nhớ hội thoại làm câu hỏi tiếp kiểu "chùa đó…" trả lời đủ hơn rõ (+0,65 / 5 điểm) mà không trả lời câu ngoài kho hay đảo cảnh báo; chờ phần kín của C để quyết giữ. Giao diện nhiều lượt (Bản 1) đã code xong: lịch sử hiện trên màn hình, nút "Cuộc trò chuyện mới", số nguồn đánh lại 1, 2, 3… thay số lớn như [17].
+**Giải thích ngắn:** B3 cho chatbot nhớ 3 lượt gần nhất trong một cuộc trò chuyện (server giữ, cookie mang mã); cờ còn tắt tới khi có giao diện. Câu dặn D6 bản hẹp chặn đúng lỗi "thêm lưu ý an toàn không có nguồn" (S20) mà không làm chatbot dè dặt — bản đầu làm tăng từ chối và bỏ cả lời khuyên có nguồn. Trên 25 chuỗi đã thấy, nhớ hội thoại làm câu hỏi tiếp kiểu "chùa đó…" trả lời đủ hơn rõ (+0,65 / 5 điểm) mà không trả lời câu ngoài kho hay đảo cảnh báo; phần kín: nhớ tên / hỏi tiếp vẫn đạt nhưng **1 lượt hỏi tiếp về điều kho không có bị trả lời bằng nguồn sai** ⇒ theo luật, cờ nhớ chưa bật; chờ User chọn hướng sửa. Giao diện nhiều lượt (Bản 1) đã code xong: lịch sử hiện trên màn hình, nút "Cuộc trò chuyện mới", số nguồn đánh lại 1, 2, 3… thay số lớn như [17].
