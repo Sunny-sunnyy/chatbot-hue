@@ -8,6 +8,12 @@ Terminal phiên tối 03/11: C `hue-rag-40`, A `hue-rag-9e`, B `hue-rag-32` (đ�
 2. **B4:** C đã chuẩn bị `data/phase_9/bo_do_b4/chon_da_thay.json` `060d62a56e97` + `can_hoi_lai.json` `ef9179c8f266` (0 / 122). Khi B chạy xong đã thấy ⇒ **C chạy + chấm phần kín B4** (10 câu `cau_sealed.jsonl`, B không mở) + review nhánh B4.
 3. **B5:** plan nháp `42afc1c7bc64` chờ chốt sau B4 (A gom 3 câu hỏi User); phiếu chấm nháp `data/phase_9/lich_trinh/phieu_cham_user_nhap.md` `965f9a2bb867`.
 
+**C160 — nháp bộ đo B6 (web)** (A giao, "làm ngay", 0 USD, dừng ~21:55) — bắt đầu 21:00 03/11/2026. **File sẽ ghi:** `data/phase_9/bo_do_b6/` (private: `cau_da_thay.jsonl`, `cau_sealed.jsonl` — B không mở, `README.md` luật ghi trước nháp, `tools/kiem_bo.py`); file này.
+**C160 XONG (21:06 03/11/2026):** `data/phase_9/bo_do_b6/` — đã thấy md5 `9be5c35dcb29` (27: 9 web · 6 không xác minh · 4 ngoài Huế · 4 kho có · 2 theo ngày · 2 tên trong câu) · kín md5 `b85d5d0351f4` (10: 6 web · 4 không xác minh — B không mở) · README nháp `83aa15035aa8` (luật spec + User 03/11) · `tools/kiem_bo.py` OK (ca phá bắt đủ) · `mau_cho_user.md`. 3 chuỗi nêu tên dùng lại bộ B3. 0 USD. **Việc dở 4 (phiên sau):** plan B6 chốt luật; trước lượt đo chạy lại `grep_kb.sh` theo `mau_da_kiem` (kho có thể đổi).
+
+**C161 XONG (21:11 03/11/2026):** plan B5 **bản 2** `0df068b47df6` (khớp plan B4 duyệt `42fa62d2425f` — 4 trường / `so_ngay` bắt buộc / câu ghép D4; D11 link bản đồ do code dựng từ tên + vị trí bảng, chữ model 0 URL; D9 thời tiết = B5b User chọn). Reviewer: B phiên sau. **Việc dở 5.**
+**C162 XONG (21:11 03/11/2026):** `data/phase_9/khan_cap_buoc0/chu_moi_phuong_an.md` `a0bc71cbfaff` — 3 phương án chữ câu khẩn cấp (PA1 mở rộng dòng mở · PA2 mở bằng hành động + 113 ghi việc · PA3 hai nhánh + dòng mất giấy tờ), giữ 4 số + "miễn phí"; C nghiêng PA1. Chờ User chọn (A hỏi). Đổi chữ ⇒ sửa `test_emergency.py` (khoá dòng) + câu bản gốc `data/phase_9/cau_khan_cap_soan_san.md`.
+
 **Việc xong tối 03/11:** C146 kín B3 · C147 review sớm 2 B3 · C148 bộ B3b · C149 nháp plan B5 · C150 phân tích chữ đầu · C151 plan tốc độ (bản 1→3) · C152 chạy bộ B3b (S1 / S2 đạt ⇒ nhớ bật) · C153 phiếu chấm B5 nháp · C154 review B3b (ready) · C155 review plan B4 (2 vòng, ready) · C156 thí nghiệm tốc độ (DỪNG đúng luật: mốc lọt câu khẩn cấp kc08 ⇒ B143) · C157 review B142 (ready) · C158 chuẩn bị B4 · C159 review B143 (ready) · plan tốc độ bản 4.
 
 **Tiền paid của C tối 03/11:** C146 0,033185 (kín 0,032185 + K-N2 0,001065) · C152 0,020337 · C156 0,013908 ⇒ **≈ 0,067 USD**. Judge / sub-agent: quota Claude.

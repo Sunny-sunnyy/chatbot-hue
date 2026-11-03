@@ -15,10 +15,10 @@ Kho 204 file / 8.424 đoạn; Golden md5 `6331e88fb171`; T1 `4d5bbe9e0edc`. Qdra
 
 **Phiên sau làm theo thứ tự:**
 1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền tối 03/11 hết hạn) — đề xuất một câu: như 03/11 (A tự điều phối + tự quyết trong kế hoạch, A tự commit / push cả phiên, ≤ 1 USD). Kiểm Qdrant; worktree `/tmp/…` mất sau khởi động lại ⇒ B / C tạo lại.
-2. **Hỏi User (mỗi lần một câu):** (a) duyệt vòng cải tiến 17 — **W52** (User có thể vắng ⇒ giao B / C trước rồi mới hỏi User), **W54** (câu an toàn / khẩn cấp mới viết ⇒ vào bộ hồi quy ngay), **I9** (dời bẫy kiểm log) — `SO_CAI_TIEN_CACH_LAM.md`; (b) câu soạn sẵn khẩn cấp mở bằng "đang gặp nguy hiểm" — đổi chữ cho sát người vừa bị giật đồ? (User duyệt chữ); (c) xoá nhánh đã merge `p9-b3`, `p9-b3b`, `p9-phan-hoi`, `p9-khan-cap` (đã kiểm `git log main..<nhánh>` rỗng lúc kết phiên — User `!`); (d) plan B5 nháp: trần 0,10 + bảng cụm kề + 2 cột `toi` / `luu_y` (khi chốt plan B5).
+2. **Hỏi User (mỗi lần một câu):** (a) duyệt vòng cải tiến 17 — **W52** (User có thể vắng ⇒ giao B / C trước rồi mới hỏi User), **W54** (câu an toàn / khẩn cấp mới viết ⇒ vào bộ hồi quy ngay), **I9** (dời bẫy kiểm log) — `SO_CAI_TIEN_CACH_LAM.md`; (b) câu soạn sẵn khẩn cấp mở bằng "đang gặp nguy hiểm" — chọn 1 trong 3 phương án chữ C162 (`data/phase_9/khan_cap_buoc0/chu_moi_phuong_an.md` `a0bc71cbfaff`; C nghiêng PA1 mở rộng dòng mở "…hoặc vừa gặp chuyện (bị cướp, tai nạn, cháy, ốm nặng)"; đổi chữ ⇒ sửa `test_emergency.py`) hay giữ; (c) xoá nhánh đã merge `p9-b3`, `p9-b3b`, `p9-phan-hoi`, `p9-khan-cap` (đã kiểm `git log main..<nhánh>` rỗng lúc kết phiên — User `!`); (d) plan B5 nháp: trần 0,10 + bảng cụm kề + 2 cột `toi` / `luu_y` (khi chốt plan B5).
 3. **B4 (hỏi lại)** — plan bản 2 **duyệt `42fa62d2425f`**; trần 0,12; nhãn C158 sẵn (`data/phase_9/bo_do_b4/chon_da_thay.json` `060d62a56e97`, `can_hoi_lai.json` `ef9179c8f266`); B code trên `p9-b4` (trạng thái: `STATUS_B.md` "PHIÊN SAU — B4") ⇒ đo theo plan ⇒ C review ⇒ merge. Mốc định tuyến đã đổi (B143) — đo trên `main` mới.
 4. **Thí nghiệm tốc độ #1** (suy luận thấp cho lần định tuyến — `effort none` model nhận, 0 token suy luận): plan bản 4 của C `395c79bbe168` (mốc mới sau B143, trần 0,085) ⇒ B review ⇒ A duyệt sha ⇒ C chạy; đo chữ đầu chỉ khi không session nào chạy server / Playwright / lượt có phí (W31). Code cờ: `p9-toc-do-1` `4c6adc6` (chưa push lúc C dừng — xem `STATUS_C.md`). Phân tích: `data/phase_9/toc_do/c150_phan_tich.md`. Bước sau nếu #1 không đủ: #6 (chạy trước lần trả lời song song định tuyến); #4 gộp định tuyến ⇒ User quyết.
-5. **Plan B5** nháp C149 `42afc1c7bc64` — chốt sau plan B4 (dùng 4 trường B4); User đã chốt Quyết 1 (giờ chung chỉ điểm có tên trong file vé), Quyết 2 (điểm xa chỉ khi ≥ 3 ngày / được hỏi), thời lượng: xếp theo buổi + độ dày theo nhịp đi (B4); thời tiết = B5b sau B5. Thêm link "mở bản đồ" do code dựng (nghiên cứu sản phẩm thật). Reviewer: B.
+5. **Plan B5 bản 2** `0df068b47df6` (C161: khớp 4 trường plan B4 duyệt; D11 link "mở bản đồ" do code dựng, href chỉ nhận gốc maps/search; thời tiết = B5b) — **B review** ⇒ A duyệt sha; User đã chốt Quyết 1 (giờ chung chỉ điểm có tên trong file vé), Quyết 2 (điểm xa chỉ khi ≥ 3 ngày / được hỏi), thời lượng: xếp theo buổi + độ dày theo nhịp đi (B4); thời tiết = B5b sau B5. Thêm link "mở bản đồ" do code dựng (nghiên cứu sản phẩm thật). Reviewer: B.
 6. **B6 (web):** User chọn web chỉ cho câu **về Huế** mà kho không có; câu ngoài phạm vi giữ từ chối + nút gợi ý. Bộ đo B6 phải có ca "ở Huế có quán phở Hà Nội nào ngon" (định tuyến đúng `tro_ly_hue`, kho từ chối sau 3 lần tìm ~8 s).
 7. Theo dõi: router đưa S20 sang `khan_cap` (2 lần trước); định tuyến quá 10 s ⇒ `tro_ly_hue` (nếu rơi vào câu khẩn cấp ⇒ mất câu soạn sẵn; 1 / 246 lần ở B143, câu ngoài phạm vi) — ứng viên việc sau; `chat_feedback` chưa nối với `chat_metrics` (thêm `turn_id` nếu cần phân tích); câu từ chối sau 3 lần tìm chờ ~8 s.
 
@@ -28,7 +28,7 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
 1. Quyền phiên + mục 2 ở trên.
-2. Khi rảnh: đọc 10 câu mẫu B4 `data/phase_9/bo_do_b4/mau_cho_user.md` — câu nào không giống người thật hỏi ⇒ báo A.
+2. Khi rảnh: đọc 10 câu mẫu B4 `data/phase_9/bo_do_b4/mau_cho_user.md` và 10 câu mẫu B6 `data/phase_9/bo_do_b6/mau_cho_user.md` — câu nào không giống người thật hỏi ⇒ báo A.
 3. Không gấp: 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`) giữ hay gỡ; xoá sao lưu kho đợt 1 + 2?
 4. File báo cáo tiến độ cho giáo viên (`gửi chatgpt/2026-11-03/báo cáo tiến độ giáo viên/…`, cập nhật tới B2) — cập nhật thêm B3 / B3b / B142 / B143 nếu User muốn gửi lại.
 
@@ -42,6 +42,7 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
 ## Việc đang chạy lúc kết phiên tối 03/11
 
 - **B144 (B):** code B4 trên `p9-b4` — dừng ~21:50, ghi `STATUS_B.md` "PHIÊN SAU — B4".
+- **C160 xong (nháp bộ đo B6):** `data/phase_9/bo_do_b6/` — đã thấy 27 câu `9be5c35dcb29` (9 web trả lời được · 6 không xác minh · 4 ngoài Huế phải từ chối, 0 web · 4 kho có, 0 web · 2 theo ngày · 2 tên trong câu; có ca "phở Hà Nội ở Huế") + kín 10 `b85d5d0351f4` (B không mở) + 3 chuỗi nêu tên (bộ B3); README nháp `83aa15035aa8`; mẫu cho User `mau_cho_user.md` `34253b305cb7`. Chốt khi viết plan B6.
 - **Plan tốc độ bản 4** `395c79bbe168` (C; mốc mới trên `ROUTER_INSTRUCTIONS` `164bd4a254e9`, trần 0,085 / dừng 0,08) — **chưa duyệt**: B review phần đổi phiên sau ⇒ A duyệt sha. Code cờ `p9-toc-do-1` `4c6adc6` (worktree `/tmp/c_toc_do`, chưa push; rebase lên `main`). C dừng — `STATUS_C.md` "PHIÊN SAU ĐỌC TRƯỚC".
 - Chi tiết tối 03/11 (B137–B144, C146–C159, quyết định theo giờ): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03_toi.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-03_toi_phase_9_b3.md`.
 
