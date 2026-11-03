@@ -14,14 +14,15 @@ const STATUS_TEXT = {
 const PENDING = new Set(Object.keys(STATUS_TEXT));
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
 
-// 5 chủ đề × 2 câu gợi ý (chữ của bản mẫu C140 — tự viết chung chung, không chép kho). Biểu tượng vẽ bằng SVG trong JSX (CSP: không tải ảnh).
+// 5 chủ đề × 2 câu gợi ý (chữ của bản mẫu C140 — tự viết chung chung, không chép kho; câu lễ hội "tháng này…" cần ngày hôm nay mà dòng ngày tắt (B1)
+// ⇒ A đổi sang câu theo tên lễ hội có trong kho, 03/11). Biểu tượng vẽ bằng SVG trong JSX (CSP: không tải ảnh).
 const TOPICS = [
   { name: "Di tích", icon: "M3 23h20M5 23V12h16v11M2 12l11-8 11 8M10 23v-6h6v6",
     questions: ["Chỉ có nửa ngày thì nên đi lăng nào?", "Vào Đại Nội nên mặc thế nào?"] },
   { name: "Ẩm thực", icon: "M3 12h20a10 9 0 0 1-20 0zM9 8c0-2 2-2 2-4M14 8c0-2 2-2 2-4",
     questions: ["Ăn sáng ở Huế nên thử món gì?", "Gần trung tâm có quán chay nào?"] },
   { name: "Lễ hội", icon: "M13 2v3M8 6h10l2 4-2 9H8l-2-9zM10 19v4M16 19v4",
-    questions: ["Tháng này ở Huế có lễ hội gì?", "Festival Huế thường vào mùa nào?"] },
+    questions: ["Lễ hội Điện Huệ Nam diễn ra khi nào?", "Festival Huế thường vào mùa nào?"] },
   { name: "Nghệ thuật", icon: "M13 22V5l9-2v15M13 22a3 3 0 1 1-3-3h3M22 18a3 3 0 1 1-3-3h3",
     questions: ["Nghe ca Huế trên sông ở đâu?", "Nhã nhạc cung đình diễn lúc nào?"] },
   { name: "Chuyến đi", icon: "M2 18c4-3 7 3 11 0s7 3 11 0M6 15l3-9h8l3 9",
