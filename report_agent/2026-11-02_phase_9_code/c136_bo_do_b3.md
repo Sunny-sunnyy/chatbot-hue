@@ -21,7 +21,7 @@ Viết bộ chuỗi hội thoại nhiều lượt cho B3 + 3 chuỗi cho B6, kè
 | Loại | Đã thấy | Kín | Tiêu chí spec §5 B3 |
 |---|---:|---:|---|
 | nhớ tên (gồm chuỗi sửa tên, nói tên ở giữa) | 6 | 4 | quyết 1: ≥ 9 / 10 |
-| hỏi tiếp ý cũ | 5 | 3 | quyết 2: Completeness lượt sau so "gửi như câu độc lập" |
+| hỏi tiếp ý cũ | 5 | 3 | quyết 2: Completeness lượt sau, nhớ bật ↔ câu gõ thật gửi không lịch sử (A quyết D11 (a) plan B3; câu viết lại đứng một mình = trần, chỉ báo số) |
 | hỏi tiếp ý mới ("còn … thì sao") | 4 | 2 | quyết 2 |
 | hỏi tiếp ngoài kho | 4 | 2 | sàn: 0 câu bị trả lời |
 | hỏi tiếp điều kiện / an toàn | 3 | 2 | sàn: 0 đảo cảnh báo |

@@ -64,6 +64,15 @@
 - **File sẽ ghi:** mục "Vòng cuối" trong `report_agent/2026-11-02_phase_9_code/b134_review.md`; ca dò `data/phase_9/c141_review/` (tạm ở `/tmp/c141/`, xoá khi xong); dòng STATUS này.
 - **XONG (11:37 03/11/2026): ready_for_user_confirmation** — `b134_review.md` `4ae586d05978` "Vòng cuối": 0B / 0M / 3m (m-3 thứ tự `generating` trước `searching` ~26 % câu; m-4 `tim_kho` lần 3 hiếm, `max_turns` 0; m-5 số trích dẫn lớn nhưng đúng) ⇒ B3 / giao diện v2. Q7 độc lập 42 / 42 (bật 0 / 42); Q8 tính lại khớp B, lượt 2 cũng qua; S-AT thủ tục đúng (kappa 0 ⇒ đọc bảo thủ); Q9 một dòng log / lượt, 0 câu hỏi trong log. 0 USD. Tiếp C142.
 
+## C142 — review plan B3 bản 1 sha `aa75f956c320` + sửa README bộ đo B3 theo D11 (a) (A giao; bắt đầu 11:41 03/11/2026)
+- Chỉ dựa "Căn cứ để review"; không đọc STATUS_B / tin B. 0 USD.
+- **File sẽ ghi:** `docs/superpowers/plans/2026-11-03-phase-9-b3-plan_review.md` (mới); `data/phase_9/bo_do_b3/README.md` (câu chữ D11); report `c136_bo_do_b3.md` (một dòng nếu cần); dòng STATUS này.
+- **XONG (11:44 03/11/2026):** review `…b3-plan_review.md` `49e44a396b3f`: 0B / 0M / 5m (m-1 token: đệm theo số mục + đo mọi lượt có phí; m-2 D6 có thể làm thiếu cảnh báo — báo `P0_thieu`; m-3 ai chấm phần kín; m-4 cận dưới tiền 0,17; m-5 ghi D11 (a) + README mới) ⇒ ready sau bản 2. README bộ đo B3 sửa D11 (a) `57c31a7110c5`; report C136 `3301f3c7b7e3`. 0 USD.
+
+## C143 — bộ đo B4 (hỏi lại) + 2 cách trình bày chi phí (A giao; bắt đầu 11:45 03/11/2026; dừng khi B báo plan B3 bản 2)
+- 0 USD; kho chỉ `scripts/grep_kb.sh`; tra web `scripts/tra_web_codex.sh` (chỉ công khai) + WebFetch. Phần kín `*sealed*`, B không mở.
+- **File sẽ ghi:** `data/phase_9/bo_do_b4/` (README, `cau_da_thay.jsonl`, `cau_sealed.jsonl`, `tools/kiem_bo.py`, `chi_phi_hai_cach.md`, yêu cầu tra web); `data/tra_cuu_cli/<ngày>_c143-*`; `report_agent/2026-11-02_phase_9_code/c143_bo_do_b4.md`; dòng STATUS này.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 20:35 02/11/2026 `date`, kết phiên tối 02/11)
 
 **Trạng thái:** C không còn việc dở. Không còn server, worktree hay file tạm của C (`/tmp/c128*`, `/tmp/c131`, `/tmp/c132*`, `/tmp/c124*` đều đã gỡ). C không commit; A commit.

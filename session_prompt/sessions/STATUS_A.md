@@ -6,6 +6,7 @@ Terminal: `hue-rag-5e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Tốc độ B1: User nói "làm đi" không chọn PA ⇒ PA1 mặc định (merge như đo, đo chữ đầu 10 câu ở cổng cuối).
 - Giao 08:46: B131 (hoàn tất B1), C133 (bộ đo B2), C134 (review delta khi B xong). A quyết 3 ý bộ đo B2 (38 câu Golden, 32 / 38 có nhãn v5, nhóm kiểm = test của split.json).
 - Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`.
+- **Đã học / bẫy (03/11, đầu vào vòng cải tiến):** (1) A gõ tay giờ 2 lần trong tài liệu (gán biến `T` cứng trước khi chạy `date`; viết "09:39" khi `date` 09:31) — hook bắt 1 lần, A tự thấy 1 lần; cách chắc: `T=$(date …)` cùng lệnh, truyền vào script. (2) C 2 lần báo "bắt đầu Cxxx" rồi kết lượt không làm (sau C134, sau C141) — `notify_when_idle` + kiểm file đầu ra bắt được; tin giao việc nối tiếp nên gửi **sau** khi C kết lượt việc trước. (3) A nói sai "chạy song song phân loại ↔ tìm kho giấu ~1,7 s" trước khi đọc log thật — đã đính chính với User.
 
 # (cũ) STATUS A — KẾT PHIÊN TỐI 02/11 (20:47 02/11/2026 `date`; mở 18:27)
 
