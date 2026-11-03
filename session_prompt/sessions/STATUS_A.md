@@ -1,4 +1,12 @@
-# STATUS A — KẾT PHIÊN 03/11 (13:26 03/11/2026 `date`; mở 08:36)
+# STATUS A — PHIÊN TỐI 03/11 (mở 17:56; ghi 18:02 03/11/2026 `date`)
+
+Terminal: `hue-rag-9e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-32`, C = `hue-rag-40` (cả ba Claude Code, trực tiếp; B / C tự báo).
+- Kiểm nhanh 17:58: `main` `115d5de`; 3 file docs chưa commit (sửa sau kết phiên trưa); hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 `169c2dd5f86a` khớp; `frontend/dist/` có; `/tmp/b_p9b3` mất (prunable); RAM trống ~12 GB.
+- **Quyền phiên (User chọn "như trưa 03/11", A ghi nhận 18:02 03/11/2026):** A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD; B / C push nhánh riêng. Hết hạn cuối phiên.
+- Giao: B137 (tạo lại worktree + bước 8 giao diện Bản 1, chỉ `frontend/`), C146 (phần kín B3, worktree riêng `/tmp/c_p9b3` `46008ed`) — `CURRENT_HANDOFF.md` "Phiên tối 03/11".
+- Đang khai báo sửa (A): `session_prompt/CURRENT_HANDOFF.md`, `sessions/STATUS_A.md`.
+
+# (cũ) STATUS A — KẾT PHIÊN 03/11 (13:26 03/11/2026 `date`; mở 08:36)
 
 Terminal: `hue-rag-5e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-52`, C = `hue-rag-d8` (cả ba Claude Code, trực tiếp; B / C tự báo).
 - Kiểm nhanh: `main` `22068df` sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 sha `169c2dd5f86a` khớp; `frontend/dist/` có; `/tmp/b_p9b1` mất (máy khởi động lại, prunable); 4 worktree AGY cũ còn; 4 session dự án khác đang mở (RAM còn ~10 GB ⇒ một việc nặng một lúc).
@@ -6,6 +14,7 @@ Terminal: `hue-rag-5e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Tốc độ B1: User nói "làm đi" không chọn PA ⇒ PA1 mặc định (merge như đo, đo chữ đầu 10 câu ở cổng cuối).
 - Giao 08:46: B131 (hoàn tất B1), C133 (bộ đo B2), C134 (review delta khi B xong). A quyết 3 ý bộ đo B2 (38 câu Golden, 32 / 38 có nhãn v5, nhóm kiểm = test của split.json).
 - **Kết phiên 13:26 03/11/2026:** B1 merge `f01c032`, B2 merge `00d670e` (5 chỗ báo cáo mỗi lần); B3 trên `p9-b3` `46008ed` (chờ phần kín + giao diện Bản 1); README repo `a70665a`; báo cáo giáo viên (gửi chatgpt, private); vòng cải tiến 16 (W49–W51 cho thử; W46–W48 đang dùng). Tiền phiên ≈ 0,514 USD (B 0,513 · C 0,0006 · A 0). Quyền phiên hết hạn.
+- **Sau kết phiên (13:31 03/11/2026):** User `!` xoá nhánh `p9-b1`, `p9-b2` (local + origin) — handoff mục 6 đánh XONG; A sửa mục 3 STATUS_C (User đã chọn giao diện Bản 1 + chi phí Cách A). Nhánh còn: `main`, `p9-b3` (+ 4 worktree AGY cũ).
 - **Phiên sau A:** đọc `CURRENT_HANDOFF.md` "PHIÊN SAU" — hỏi quyền ⇒ B tạo lại `/tmp/b_p9b3` ⇒ C chạy phần kín B3 ⇒ cổng ⇒ bước 8 giao diện Bản 1 ⇒ review ⇒ merge ⇒ B4.
 - **Đã học / bẫy (03/11, đầu vào vòng cải tiến):** (1) A gõ tay giờ 2 lần trong tài liệu (gán biến `T` cứng trước khi chạy `date`; viết "09:39" khi `date` 09:31) — hook bắt 1 lần, A tự thấy 1 lần; cách chắc: `T=$(date …)` cùng lệnh, truyền vào script. (2) C 2 lần báo "bắt đầu Cxxx" rồi kết lượt không làm (sau C134, sau C141) — `notify_when_idle` + kiểm file đầu ra bắt được; tin giao việc nối tiếp nên gửi **sau** khi C kết lượt việc trước. (3) A nói sai "chạy song song phân loại ↔ tìm kho giấu ~1,7 s" trước khi đọc log thật — đã đính chính với User.
 
