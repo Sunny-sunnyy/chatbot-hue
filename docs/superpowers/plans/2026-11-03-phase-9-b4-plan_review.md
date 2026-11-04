@@ -100,3 +100,70 @@ Kiểm phần sửa (sha tính từ file; đọc mục "Chỗ đổi bản 2" + 
 §10 (Q-a, Q-b) khớp đối chiếu nghiên cứu; A đã trả lời trong tin (giữ bắt buộc chỉ `so_ngay` + đếm "hỏi trường không bắt buộc"; giữ D6). Không thấy chỗ đổi ngoài các dòng trên.
 
 **Decision vòng 2: ready_for_user_confirmation** — A duyệt sha `42fa62d2425f` (gồm quyết Lệch Q6). Sau duyệt: C làm `chon_da_thay.json` + nhãn `can_hoi_lai` (bộ tuyến 60 + 62 câu Q5) theo luật §4 của review này.
+
+## Vòng 3 — bản 3 `507bd5b72ae9` (C166 · 19:49 04/11/2026 `date`)
+
+Chỉ kiểm phần đổi so với bản 2 `42fa62d2425f` (A đã duyệt): sha tính từ file = `507bd5b72ae9`, `git show HEAD:<plan>` = `42fa62d2425f`; `git diff` 21+ / 6−, mọi hunk nằm trong danh sách "Chỗ đổi bản 3" (đầu file, căn cứ, D3, Q2, Q6k, theo dõi, §5 bước 5, §6, §7, mục cuối) — không thấy sửa ngoài danh sách. Căn cứ: `b144_review.md` §3 m-2 / m-3 + handoff dòng "C163 xong" / "C164 xong" (đọc), code `p9-b4` `c76934c` (đọc, 0 USD), dữ liệu `data/phase_9/b4/` (tính lại, 0 USD). **Không mở câu kín** (việc này chỉ kiểm phần đổi).
+
+**Đã kiểm, khớp:**
+- D3 đúng quyết định A (m-2): luôn thêm trường bắt buộc còn thiếu, kể cả danh sách rỗng; cắt > 3 theo thứ tự bảng ⇒ `so_ngay` (đầu bảng lịch trình) / `so_nguoi` + `so_ngay` (chi phí, chỉ 3 trường) không bao giờ bị cắt.
+- "Dùng lại bằng chứng" đúng: trên `p9-b4` D3 chạy **trong** hàm công cụ, sau lời gọi của model; tham số thô ghi trước D3 (`backend/llm/assistant.py:249–250`); `StopAtTools` dừng ngay ⇒ kết quả D3 không quay lại model ⇒ Q2 / Q3 thô không đổi. C tính lại từ `hoi_lai_raw`: lượt hỏi có thô thiếu trường bắt buộc pilot **1 / 3**, v0 **2 / 9**, v1 **3 / 10** — **khớp** B. Q1 không bị chạm (D3 chỉ có khi cờ bật).
+- Q6k đúng quyết định A (thước Q6: 0 ý "trái" + 0 ý "không có" loại giá / giờ / điều kiện, 2 judge "một trong hai"; (b) 0 con số tổng); §5 bước 5 + §7 "kín ngược chiều" nối đúng.
+- Ngân sách token (m-3): harness `chay_b4.py` `9d0fb8d8a946` đã có `usage_tru_builder` (ghi mỗi dòng + `dem` in max / min); file v0 / v1 cũ không có trường ⇒ số đầu tiên ở lượt có phí kế. Ngưỡng 512 = mức B3 Q8 — hợp lý.
+- Giá trị chọn đã thấy `chon_da_thay.json`: **10 / 10** câu thiếu có giá trị cho mọi trường bắt buộc thiếu ⇒ lượt ghép Q6 vẫn đủ ý khi thẻ D3 mới luôn có trường bắt buộc. Phần kín (`chon_sealed.json`): C kiểm ở bước 0 của việc kín, không ở đây.
+- Tiền tới bản 3 tính lại: pilot 0,001625 + v0 0,012439 + v1 0,011549 = **0,0256** — khớp "≈ 0,026".
+
+### M-1 (major) — §6: dự phóng theo giá thật đã chạm / vượt mốc dừng 0,11 trước khi B4 đo xong
+
+- **Vị trí:** §6 dòng "Số thật tới bản 3" (mới ở bản 3) + bảng tiền.
+- **Bằng chứng (tính lại từ `data/phase_9/b4/*.jsonl`, 0 USD):** lượt **trả lời** khi cờ bật ≈ **0,00075–0,00079 USD / câu** (v0 / v1; pilot 0,00044) ⇒ gần gấp đôi mức 0,0004 / câu bảng dùng cho Q4 / Q5; lượt **hỏi lại** ≈ 0,0004 (đúng ước). Dự phóng phần còn lại cộng 0,026 đã dùng:
+  - thấp (Q4 / Q5 / Q6 / kín / Q7 / cổng theo bảng, thêm 1 lượt đã thấy 0,012): 0,026 + 0,012 + 0,024 + 0,025 + 0,008 + 0,006 + 0,004 + 0,005 ≈ **0,110** = đúng mốc dừng;
+  - cao (lượt trả lời theo 0,00075; thêm 2 lượt đã thấy — handoff B145 định đo câu đủ v0 ↔ v1 × 2–3 lượt): ≈ 0,026 + 0,024 + 0,045 + 0,047 + 0,015 + 0,008 + 0,006 + 0,005 ≈ **0,176** > trần 0,12.
+  - [Suy luận] câu đủ của bộ B4 là câu lịch trình / chi phí (trả lời dài) nên có thể đắt hơn câu Q4 / Q5 trung bình ⇒ số thật nằm giữa hai mức; chưa đo.
+- **Tác động:** theo §6 "dừng > 0,11", lượt đo nhiều khả năng dừng giữa Q5 / trước kín ⇒ B4 dở, tiền đã chi không ra kết luận. Câu "báo A sau mỗi lượt" không thay một quyết định trước khi chạy.
+- **Tiêu chí đóng:** §6 ghi dự phóng theo giá thật (lượt hỏi / lượt trả lời tách riêng) + một điểm quyết **trước** lượt có phí kế: A nới trần (ghi số) **hoặc** bớt phạm vi (ví dụ số vòng đo câu đủ thêm; thứ tự chạy để mọi sàn — Q3 / Q4 / Q5 / kín — xong trước phần báo kèm). Không đổi sàn / quyết.
+
+### m-1 — Q6k "H0 chỉ báo kèm" nhưng không có lượt H0 kín trong bảng tiền / lệnh
+
+- Q6 đã thấy có "10 ghép + 10 H0"; dòng "kín (C)" chỉ "10 câu + 5 ghép"; lệnh kín C164 không có lượt H0. **Tiêu chí đóng:** ghi rõ một trong hai: (a) **không** chạy H0 kín (đề xuất — Q6k là sàn tuyệt đối, H0 không vào quyết, tiết kiệm ≈ 0,004 + judge), hoặc (b) chạy 5 H0 kín (cờ tắt) + thêm vào dòng tiền.
+
+### m-2 — D3: cờ `dien` / `cat` không ghi được khi cả hai cùng xảy ra
+
+- Lịch trình có 4 trường: model chọn `[di_cung, kieu_di, so_thich]` ⇒ bản 3 thêm `so_ngay` ⇒ 4 ⇒ cắt còn 3 (bỏ `so_thich` model đã chọn). Code bản 2 `loc_truong` trả **một** giá trị `"dien" | "cat" | None` (`backend/llm/hoi_lai.py:48–56` trên `p9-b4`) ⇒ nếu giữ kiểu đó, số "D3 điền" báo kèm Q2 đếm thiếu. **Tiêu chí đóng:** plan ghi cờ là tập (`dien` + `cat` cùng lúc được) hoặc ghi rõ luật ưu tiên; test D3 có ca này.
+
+**Ghi nhận (không phải finding):** `dem` hiện đếm "hỏi thừa" chỉ theo thô; Q2 bản 3 thêm "sau D3" ⇒ phần code harness, kiểm ở review nhánh.
+
+**Decision vòng 3: changes_requested** — 0B / 1M / 2m. M-1 chỉ cần một dòng dự phóng + điểm quyết của A trong §6; m-1 / m-2 một câu mỗi cái. Sửa xong ⇒ C kiểm phần sửa.
+
+## Vòng 4 — bản 4 `ca0a9f2faace` (C166 · 19:52 04/11/2026 `date`)
+
+Sha tính từ file = `ca0a9f2faace`. Kiểm phần sửa theo mục "Chỗ đổi bản 4" + `git diff` với bản 2.
+
+| Finding | Sửa | Kết luận |
+|---|---|---|
+| M-1 | §6 bảng dự phóng tách lượt hỏi / trả lời; C cộng lại: thấp 0,0256 + 0,081 = **0,106**, cao 0,0256 + 0,153 = **0,179** (khớp ≈ 0,106 / ≈ 0,178); (b) bớt lượt chọn + H0 Q6 ⇒ ≈ 0,098 / 0,146 (khớp); điểm quyết A (a) / (b) / (c) trước lượt có phí kế, A ghi trong handoff (sha giữ) | **đóng** |
+| m-1 | Q6k: không chạy H0 kín | đóng |
+| m-2 | D3: cờ là tập ⊂ {`dien`, `cat`}, ca vừa thêm vừa cắt có test | đóng |
+
+### m-3 — thứ tự mới (kín trước Q4 / Q5) mâu thuẫn §5 và cần câu "sau khoá không chỉnh"
+
+- §6 (dòng "Thứ tự chạy bản 4"): khoá ⇒ **kín** ⇒ Q6 ⇒ Q4 ⇒ Q5; nhưng §5 bước 4–5 vẫn "khoá ⇒ Q4, Q5, Q6 trên bản khoá" rồi mới "Kín".
+- Đưa kín lên trước chỉ an toàn khi **sau khoá không chỉnh ghi chú nữa**. Bảng Q4 / Q5 ghi "Không đạt ⇒ âm" (đúng), nhưng §7 "Q3 / Q4 / Q5 phạm sàn sau 3 vòng chỉnh" đọc như được chỉnh sau khi Q4 / Q5 phạm ⇒ nếu chỉnh, bản cuối khác bản đã chạy kín, mà bộ kín chỉ mở một lần.
+- **Tiêu chí đóng:** §5 bước 4–5 theo thứ tự §6; một câu "sau khoá không chỉnh; Q4 / Q5 / Q6 phạm ⇒ kết quả âm" (§7 sửa cho khớp: chỉnh chỉ trước khoá, trên đã thấy).
+
+### m-4 — §7 "tiền > 0,11 USD" chưa theo điểm quyết §6
+
+- Nếu A chọn (a) (dừng 0,17), §7 vẫn ghi dừng 0,11. **Tiêu chí đóng:** §7 ghi "tiền > mốc dừng A chọn ở §6".
+
+**Decision vòng 4:** M-1, m-1, m-2 đóng; còn **2 minor câu chữ** (m-3, m-4) ⇒ **ready_for_user_confirmation sau khi B sửa m-3 + m-4** (chỉ §5 bước 4–5 + §7) — C kiểm nhanh phần sửa, rồi A duyệt sha + ghi lựa chọn (a) / (b) / (c).
+
+## Vòng 5 — bản 5 `acfaf8ca0df5` (C166 · 19:54 04/11/2026 `date`)
+
+Sha tính từ file = `acfaf8ca0df5`. `git diff -U0` với bản 2 (A duyệt): hunk chỉ ở đầu file, căn cứ, D3, Q2, Q6k, theo dõi, §5 bước 4–5, §6, §7 (2 dòng), mục "Chỗ đổi" — đúng các chỗ đã kiểm ở vòng 3–4 + phần sửa vòng này.
+
+| Finding | Sửa | Kết luận |
+|---|---|---|
+| m-3 | §5 bước 4 "sau khoá không chỉnh nữa; một sàn phạm ⇒ âm"; bước 5 kín ngay sau khoá rồi Q6 ⇒ Q4 ⇒ Q5 (khớp §6); §7 tách: Q3 chỉnh ≤ 3 vòng trước khoá, sau khoá Q3 kín / Q4 / Q5 / Q6 / Q6k phạm ⇒ âm | đóng |
+| m-4 | §7 "tiền > mốc dừng A chọn ở §6" | đóng |
+
+**Decision vòng 5: ready_for_user_confirmation** — A duyệt sha `acfaf8ca0df5` + ghi lựa chọn tiền (a) / (b) / (c) của §6 vào `CURRENT_HANDOFF.md`.
