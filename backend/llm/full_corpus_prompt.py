@@ -110,10 +110,12 @@ ASSISTANT_HISTORY_NOTE = (
 # luật "không cộng tổng" (Q6 đã thấy 2 / 5 câu có tổng tự tính). Gắn mọi lượt trợ lý khi cờ `hoi_lai` bật; chữ giữ nguyên.
 CACH_A_NOTE = (
     "Câu hỏi chi phí: liệt kê từng giá có trong Bằng chứng kèm [n] (ghi thời điểm nếu nguồn ghi); không cộng tổng; không ước khoản không có giá; "
-    "nói rõ khoản nào tài liệu chưa có."
+    "nói rõ khoản nào tài liệu chưa có. "
+    # Khoá 3 (User chọn vòng sửa 2, A ghi nhận 20:55 04/11/2026): khoá 2 còn 1 / 5 câu ghép nhân dự toán mỗi người theo số người.
+    "Không nhân giá theo số người hay số ngày: nêu giá mỗi người / mỗi mục đúng như nguồn ghi để người dùng tự tính."
 )
 # Phase 9 B4 (plan B4 bản 2 D1, D7): chỉ ghép vào lời dặn trợ lý khi cờ `assistant.hoi_lai` bật và lượt chưa mang giá trị trường (D4).
-# Chuỗi giữ đúng byte khoá 1 (sha 2b62c390f2fa): phần mô tả công cụ + "\n" + CACH_A_NOTE.
+# = phần mô tả công cụ (giữ đúng byte từ khoá 1) + "\n" + CACH_A_NOTE (khoá 1 / 2: sha 2b62c390f2fa; khoá 3 thêm một câu Cách A).
 HOI_LAI_NOTE = (
     "Công cụ hoi_lai: chỉ gọi khi người dùng nhờ lên lịch trình hoặc dự trù chi phí chuyến đi mà THIẾU thông tin bắt buộc "
     "(lịch trình: số ngày; chi phí: số người và số ngày). Khi gọi: chọn loai và các trường còn thiếu (tối đa 3, không hỏi điều câu đã nêu); "
