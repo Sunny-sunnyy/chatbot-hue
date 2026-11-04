@@ -95,3 +95,15 @@ Cách kiểm: `git diff 849005c ac46c96` (bản 3 `984d67829a34` ↔ bản 4) + 
 **Ghi nhận (không finding):** định tuyến trên lời dặn mới chậm hơn lúc đo: ms p50 ≈ 3,2 s (B143 `rui_ro_r1/r2`, `golden`) ↔ 1,7 s (C156 `moc_r1`), dù `reasoning_tokens` p50 gần như cũ (21–22 ↔ 23) ⇒ nhiều khả năng do phía provider / giờ đo, chưa chứng minh. Q đo theo cặp ABBA cùng lúc nên không lệch; nhưng nếu định tuyến nay ≈ 3 s thì phần lợi tối đa của #1 nhỏ hơn so với phần chờ do mạng — C nên ghi ms định tuyến mốc lúc chạy. Probe `none` 7,5 s là 1 lần, không dùng để kết luận.
 
 **Bước tiếp:** C sửa M-3, M-4 (+ minor nếu muốn) ⇒ báo sha bản 5 ⇒ B kiểm phần sửa ⇒ A duyệt sha. M-3 (b) và M-4 (b) / (c) là quyết định của A.
+
+## Vòng 4 — kiểm phần sửa bản 5 (sha `da2ff2c8e56c`, B, 20:19 04/11/2026)
+
+Decision: **ready_for_user_confirmation** (0 blocker · 0 major · 0 minor mới) — A duyệt sha. 0 USD. Cách kiểm: `git diff HEAD` bản 4 ↔ 5 (mọi hunk thuộc bảng "Chỗ đổi bản 5"), tính lại số, đọc dữ liệu (chỉ nhãn / số đếm).
+
+| Finding | Kiểm | Kết luận |
+|---|---|---|
+| M-3 | §4 tính lại: 123×2×0,000088 ≈ 0,0216 · lịch sử 100×0,00009 ≈ 0,009 · biến 246×0,000076 ≈ 0,0187 · biến lịch sử 100×0,000078 ≈ 0,0078 · Golden 176 × (0,000088 + 0,000076) ≈ 0,0289 · chữ đầu 40×0,0004 ≈ 0,016 ⇒ **≈ 0,102** (plan 0,103) — khớp; trần 0,11 / dừng 0,105 + luật "trước chữ đầu: đã dùng + 0,016 > 0,105 ⇒ báo A, không bắt đầu" ⇒ chỉ số quyết Q không bị cắt giữa chừng | **đóng** |
+| M-4 | §1 ghi đường bị đổi (`router_history_agent` = bản sao); `route(query, call_log, history=())` chọn bản sao khi có lịch sử (`generator_openai_full_corpus.py:338–341`) ⇒ harness gọi đúng đường; 44 lượt = B3 31 + B3b 13 (B đếm lại: khớp); file chuỗi khẩn cấp md5 `5834ac1a4cc2` (khớp), 6 chuỗi, lượt cuối nhãn `khan_cap`, lượt trước không nhãn (chỉ làm lịch sử) ⇒ 50 lượt đo; lịch sử ≤ 3 câu hỏi, trả lời rỗng = đúng chạy thật (`nho_cau_tra_loi: false`); K / S1 / R áp tầng này, R tính riêng; mốc phạm K / S1 ở tầng này ⇒ dừng | **đóng** |
+| m-6, m-7, m-8 | tiêu đề §2 đúng sha mới; dòng 4 + hàng căn cứ sửa; comment code sửa trên nhánh trước khi chạy (ghi trong plan — kiểm ở report); AT ghi nguồn 4 số (B3 Q2 vòng 2, lời dặn trả lời một lượt không đổi qua B3b / B142 / B143) | **đóng** |
+
+**Ghi nhận (không finding):** nhãn lượt ở file chuỗi khẩn cấp là trường `nhan`, ở bộ B3 / B3b là `tuyen` ⇒ harness đọc đúng trường từng file (một dòng báo số lượt có nhãn đọc được = 50 là đủ chứng minh).

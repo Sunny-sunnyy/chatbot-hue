@@ -3,7 +3,9 @@
 Terminal: `hue-rag-b7` · Agent: Claude Opus 5.5 · Vai: điều phối. Hai session khác đang mở: `hue-rag-2d`, `hue-rag-81` — chưa rõ ai B / ai C (chờ tự báo).
 - Kiểm nhanh: `main` `0adcaf3` = `origin/main`, sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 `169c2dd5f86a` khớp; `frontend/dist/` có; worktree `/tmp/b_b4`, `/tmp/c_toc_do` mất (prunable — máy khởi động lại; commit còn trên nhánh đã push); 4 worktree AGY cũ còn; RAM trống ~12 GB.
 - Lệch: dòng "Nhánh còn" ở khối kết phiên tối 03/11 dưới đây ghi `p9-toc-do-1` "chưa push" — thực tế đã push (`origin/p9-toc-do-1` có).
-- Chờ User: quyền phiên ⇒ "làm đi".
+- User: quyền "như 03/11", "làm đi theo thứ tự", "tiếp tục điều phối, phát triển, triển khai, tự nghiên cứu, so sánh, đánh giá, viết báo cáo"; duyệt W52 / W54 / I10; chữ khẩn cấp PA1; xoá 4 nhánh đã merge (đưa `!`).
+- (20:17 04/11/2026) Đã duyệt plan B4 bản 5 `acfaf8ca0df5` (trần 0,18); quyết M-3 / M-4 plan tốc độ (trần 0,11); B5 M-1 / M-3. Giao B153 (đo B4), B154 (chữ khẩn cấp), C (kín B4, plan tốc độ bản 5, C167 plan B5 bản 3).
+- (20:17 04/11/2026) Nghiên cứu tính năng (User): 2 agent con — github.txt ⇒ `data/nghien_cuu_tinh_nang_2026-11-04/sa1_github.md`; TRIPO vòng 3 Playwright + agentic ⇒ `…/sa2_tripo_v3_agentic.md`. Báo C: đo chữ đầu chỉ sau khi A xác nhận Playwright dừng.
 
 # STATUS A — KẾT PHIÊN TỐI 03/11 (20:58 03/11/2026 `date`; mở 17:56)
 
