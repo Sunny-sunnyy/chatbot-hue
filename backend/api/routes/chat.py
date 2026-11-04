@@ -28,7 +28,7 @@ from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm.hoi_lai import TruongInput, ghep_cau
 from api.conversations import TTL_SECONDS
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, elapsed_ms, lich_cho_giao_dien, turn_usd
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, elapsed_ms, lich_cho_giao_dien, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -53,7 +53,9 @@ METRIC_FIELDS = (
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
-STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delta_matches_final")
+STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delta_matches_final",
+                                        # thí nghiệm tốc độ #6 (plan D2): phần `tro_ly_hue` chạy trước rồi bị bỏ — số lần, USD, bị huỷ giữa chừng
+                                        "n_tra_loi_bo", "usd_bo", "bo_huy_giua")
 
 GENERATION_FAILURE_MESSAGE = "Không thể tạo câu trả lời vào lúc này."
 INTERNAL_ERROR_MESSAGE = "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau."  # giống handler 500 chung (`api/app.py`)
@@ -337,7 +339,7 @@ async def chat_stream(body: ChatRequest, request: Request):
         trace = AnswerTrace()
         conversation_id = _start_conversation(request, trace, metrics)
         query = _model_query(body, query, trace, metrics)
-        turn = answer_turn_stream(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
+        turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
         cau_goc = trace.search_query or query
 
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
@@ -469,6 +471,7 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
                 await turn.aclose()  # lõi dừng ở `yield` (ngắt lúc gửi) ⇒ `finally` của lõi ghi `llm_calls`, huỷ lần gọi model + đọc nốt
         finally:
             _copy_trace_metrics(trace, metrics)  # sau `aclose` để có `llm_calls` lõi vừa ghi (C132 m-1)
+            metrics.update(n_tra_loi_bo=trace.n_tra_loi_bo, usd_bo=trace.usd_bo, bo_huy_giua=trace.bo_huy_giua)  # #6, chỉ đường stream
             logger.info("chat_metrics %s", json.dumps(metrics))
             if remember is not None:  # B3: ghi lượt vào cuộc trò chuyện (chỉ outcome đã xong — `_remember` lọc)
                 remember()
