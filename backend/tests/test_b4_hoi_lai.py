@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from api.app import create_app
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream
-from llm.full_corpus_prompt import HOI_LAI_NOTE
+from llm.full_corpus_prompt import CACH_A_NOTE, HOI_LAI_NOTE
 from llm.hoi_lai import TruongInput, ghep_cau, loc_truong
 from test_api_chat import chat_log_records, metric_lines
 from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: F401  (fixture `deps` dùng chung)
@@ -85,7 +85,22 @@ def test_no_hoi_lai_when_flag_off_or_turn_already_has_fields(deps, flags, da_co_
     asyncio.run(answer_turn(QUESTION, *deps, gen, trace, flags))
     kwargs = gen.client.responses.calls[0]
     assert tool_names(kwargs) == ["tim_kho"] and HOI_LAI_NOTE not in kwargs["instructions"]
-    assert kwargs["instructions"] == gen.assistant_instructions and trace.clarify is None
+    # cờ tắt ⇒ lời dặn y như B3 (Q1); lượt ghép khi cờ bật ⇒ thêm đúng câu Cách A (D7 khoá 2 — khoá 1 thiếu ⇒ câu chi phí ghép tự cộng tổng)
+    expected = f"{gen.assistant_instructions}\n\n{CACH_A_NOTE}" if flags.hoi_lai else gen.assistant_instructions
+    assert kwargs["instructions"] == expected and trace.clarify is None
+
+
+def test_stream_composed_turn_sends_cach_a_without_hoi_lai(deps):
+    """D7 khoá 2, đường stream: lượt ghép (đã có giá trị trường) khi cờ bật ⇒ lời dặn có Cách A, không công cụ `hoi_lai`."""
+    gen = generator(lambda n, kw: [answer("Vé vào Đại Nội 200.000 đồng [1].")])
+    trace = AnswerTrace(da_co_truong=True)
+
+    async def run():
+        return [event async for event in answer_turn_stream(QUESTION, *deps, gen, trace, TOOLS_ON)]
+
+    asyncio.run(run())
+    kwargs = gen.client.responses.calls[0]
+    assert tool_names(kwargs) == ["tim_kho"] and kwargs["instructions"] == f"{gen.assistant_instructions}\n\n{CACH_A_NOTE}"
 
 
 def test_route_clarify_then_composed_turn(deps, caplog):
@@ -109,6 +124,7 @@ def test_route_clarify_then_composed_turn(deps, caplog):
     assert [t["ten"] for t in body["clarify"]["truong"]] == ["so_nguoi", "so_ngay"]
     sent = json.dumps(gen.client.responses.calls[-1]["input"], ensure_ascii=False)
     assert composed.status_code == 200 and "Thông tin thêm: 2 ngày; 2 người." in sent and "hoi_lai" not in tool_names(gen.client.responses.calls[-1])
+    assert gen.client.responses.calls[-1]["instructions"].endswith(CACH_A_NOTE)  # D7 khoá 2: lượt ghép có Cách A
     assert bad_value.status_code == 422 and bad_field.status_code == 422
     first, second = metric_lines(records)
     assert first["outcome"] == "hoi_lai" and first["hoi_lai"] == {"loai": "chi_phi", "n": 2, "d3": []} and first["co_truong"] is None

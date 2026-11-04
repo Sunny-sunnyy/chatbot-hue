@@ -106,14 +106,20 @@ ASSISTANT_HISTORY_NOTE = (
     "thông tin của đối tượng khác cho đối tượng đang được hỏi; Bằng chứng không nói điều được hỏi về đối tượng đó thì trả câu không đủ thông tin."
 )
 
+# Phase 9 B4 D7 Cách A — tách riêng (khoá 2, A quyết 04/11): khoá 1 chỉ có câu này trong HOI_LAI_NOTE ⇒ lượt ghép (không đưa `hoi_lai`) thiếu
+# luật "không cộng tổng" (Q6 đã thấy 2 / 5 câu có tổng tự tính). Gắn mọi lượt trợ lý khi cờ `hoi_lai` bật; chữ giữ nguyên.
+CACH_A_NOTE = (
+    "Câu hỏi chi phí: liệt kê từng giá có trong Bằng chứng kèm [n] (ghi thời điểm nếu nguồn ghi); không cộng tổng; không ước khoản không có giá; "
+    "nói rõ khoản nào tài liệu chưa có."
+)
 # Phase 9 B4 (plan B4 bản 2 D1, D7): chỉ ghép vào lời dặn trợ lý khi cờ `assistant.hoi_lai` bật và lượt chưa mang giá trị trường (D4).
+# Chuỗi giữ đúng byte khoá 1 (sha 2b62c390f2fa): phần mô tả công cụ + "\n" + CACH_A_NOTE.
 HOI_LAI_NOTE = (
     "Công cụ hoi_lai: chỉ gọi khi người dùng nhờ lên lịch trình hoặc dự trù chi phí chuyến đi mà THIẾU thông tin bắt buộc "
     "(lịch trình: số ngày; chi phí: số người và số ngày). Khi gọi: chọn loai và các trường còn thiếu (tối đa 3, không hỏi điều câu đã nêu); "
     "câu đã có đủ thông tin bắt buộc thì KHÔNG gọi hoi_lai chỉ để hỏi thêm trường không bắt buộc (đi cùng ai, kiểu đi, sở thích, mức chi); "
     "không viết câu trả lời. Câu đã đủ thông tin bắt buộc, hoặc câu khác (giá một vé, mùa nào đẹp, đường đi…) thì trả lời bình thường, không gọi hoi_lai.\n"
-    "Câu hỏi chi phí: liệt kê từng giá có trong Bằng chứng kèm [n] (ghi thời điểm nếu nguồn ghi); không cộng tổng; không ước khoản không có giá; "
-    "nói rõ khoản nào tài liệu chưa có."
+    + CACH_A_NOTE
 )
 
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.
