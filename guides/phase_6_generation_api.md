@@ -21,6 +21,8 @@
 
 **Hiện hành 01/11 (A, 12:51 01/11/2026):** thêm `POST /api/chat/stream` (SSE — `status` / `delta` / `sources` / `error{after_text}` / `done`; kiểm trích dẫn lúc cuối; ngắt ⇒ huỷ model, một dòng log) và giao diện chữ hiện dần; route JSON `/api/chat` giữ nguyên hành vi. API và bộ đánh giá dùng chung lõi `backend/llm/grounded_answer.py` (`answer_query` / `prepare_answer`). Trang web: DOMPurify danh sách cho phép + CSP cho mọi trang HTML. `cost_usd` theo giá đủ (ghi / đọc đệm). Spec `docs/superpowers/specs/2026-10-31-streaming-design.md` (`00fb57ee01b2`); merge `a80e12d`; số đo `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md`. Các mục dưới về UI một lượt là lịch sử.
 
+**Hiện hành 04/11 — B154 (review C168 đạt; merge `4e3cb4e`, A 20:32 04/11/2026):** `backend/llm/emergency.py` `EMERGENCY_ANSWER` dòng mở PA1 (thêm "hoặc vừa gặp chuyện (bị cướp, tai nạn, cháy, ốm nặng)"); `test_emergency.py` khoá đủ 5 dòng. Định tuyến không đổi.
+
 **Hiện hành 03/11 tối — B143 (review C159 đạt; merge `e3cdb96`, A 20:54 03/11/2026):** `ROUTER_INSTRUCTIONS` `fb4e1aa7f8fe` ⇒ `164bd4a254e9` — chỉ dòng `khan_cap` (thêm loại vừa bị cướp / giật / trộm / hành hung cần báo công an). Bộ định tuyến từ nay gồm 10 câu khẩn cấp tự viết `data/phase_9/khan_cap_buoc0/` + 6 câu cùng loại B143.
 
 **Hiện hành 03/11 tối — B142 (review C157 đạt; merge `6817897`, A 20:34 03/11/2026):** `backend/api/feedback.py` (sổ `turn_id` RAM ≤ 2.000) + `POST /api/feedback` {turn_id, rating up|down} (422 sai khuôn, 404 mã lạ) ⇒ log `chat_feedback`; `/api/chat` + `done` trả `turn_id` chỉ khi có câu trả lời cuối; `App.jsx` nút SVG 👍 / 👎 + 3 nút gợi ý dưới câu ngoài phạm vi. Test `tests/test_feedback.py`.
