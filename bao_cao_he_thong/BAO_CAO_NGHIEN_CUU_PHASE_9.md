@@ -29,6 +29,8 @@ ChatGPT) · Review bản 2: B (B120). Tiền: 0 USD API cho nghiên cứu; thử
 | **Sau Phase 9 — đo rẻ trước** | **lọc / ưu tiên theo lĩnh vực** (ý của bạn): đếm 0 USD trên kết quả đo đã có, chỉ thí nghiệm khi ≥ 3 câu thiếu ý vì đoạn lĩnh vực khác chiếm chỗ; đếm đoạn gần trùng trong 10 đoạn; gắn nhãn lỗi tự động | ghi chú của bạn, `vietnamese-rag-system` | có thể bớt từ chối nhầm | đếm 0 USD · thí nghiệm sau |
 | **Không làm** | gợi ý theo lọc cộng tác / rating (không có dữ liệu), tối ưu quãng đường (9 file có toạ độ), GraphRAG, định tuyến bằng danh sách từ, bảng SQL giá, rerank / sparse mới (Phase 8 đã thử, bỏ), nhớ cả câu trả lời, web bật sẵn | — | — | — |
 
+**Đã đưa vào kế hoạch (21:16 04/11/2026):** 18 ý — mỗi ý gắn bậc, người làm, trạng thái — ở `session_prompt/CURRENT_HANDOFF.md` mục "Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 ⇒ ÁP DỤNG" (7 ý vào plan B5 bản 4 đang viết; bậc mới "sửa lịch nhiều lượt" sau B5; ý lọc theo lĩnh vực của bạn: đếm 0 USD trước; ý cho báo cáo bảo vệ ở B7).
+
 **Giới hạn:** đọc code, **không chạy** code repo (lỗi trong repo là suy từ code, chưa thấy chạy); TRIPO thử một lần, 15 lượt; nguồn web phần lớn Codex tự khai (0 trang mở thật), A mở kiểm 4. Hồ sơ: `data/nghien_cuu_tinh_nang_2026-11-04/` — `sa1_github.md`, `sa2_tripo_v3_agentic.md` (+ `tripo_v3/`), `sa3_khaiboipho.md`, `repo_*.md` (7), `paper_2203.07742.md`.
 
 ## 00. Cập nhật 03/11 tối — sản phẩm thật: có gì đáng học (bạn yêu cầu 03/11)

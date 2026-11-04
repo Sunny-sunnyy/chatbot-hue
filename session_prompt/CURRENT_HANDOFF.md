@@ -40,6 +40,33 @@ User chọn quyền "như 03/11" + "làm đi theo thứ tự" (A ghi nhận 19:3
   - **Xoá 4 nhánh đã merge — XONG** (User `!` 20:22 04/11/2026): `p9-b3`, `p9-b3b`, `p9-phan-hoi`, `p9-khan-cap` xoá local + origin (A kiểm `main..<nhánh>` rỗng trước).
   - **Nghiên cứu tính năng (User, A ghi nhận 20:14 04/11/2026):** đọc `data/nghien_cuu_phase_9_2026-11-01/báo cáo nghiên cứu github.txt` + trải nghiệm Huế TRIPO (`huetripo.hue.gov.vn`) bằng Playwright + nghiên cứu agent / agentic ⇒ đề xuất tính năng phát triển được. A dẫn (agent con), không chạy chatbot có phí; Playwright chỉ khi không có lượt đo chữ đầu.
 
+## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 ⇒ ÁP DỤNG (User: "cái gì đáng học thì ứng dụng, phát triển, cải thiện, add vào" — A ghi 21:16 04/11/2026)
+
+Nguồn: `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ từng repo `data/nghien_cuu_tinh_nang_2026-11-04/` (`sa1`–`sa3`, `repo_*.md`, `paper_2203.07742.md` — đủ để không clone lại). Mỗi ý khi làm vẫn đi plan / đo / review như thường.
+
+| # | Ý | Học từ | Bậc | Ai | Trạng thái |
+|---|---|---|---|---|---|
+| 1 | Kiểm giá sau sinh bắt cả "…000đ" và "triệu" | repo khách sạn (lọc giá sai không báo) | B5 (D8) | C172 plan, B code | đang đưa vào plan B5 bản 4 |
+| 2 | Không đủ điểm hợp sở thích ⇒ câu cố định nói rõ, không lặng lẽ lấp | Travel-AI, TRIPO | B5 (D2 / D4) | C172 | như trên |
+| 3 | Trường `khong_xep` + lý do từ mã luật code (model chỉ diễn đạt) + D8 kiểm lời nhắc đủ | TRIPO bớt điểm im lặng | B5 | C172 | như trên |
+| 4 | Dòng giả định / lưu ý do **code** nối, không để model chép | Travel-AI (câu trả lời cuối là khuôn code) | B5 | C172 | như trên |
+| 5 | Mỗi luật xếp lịch có một test **cố tình vi phạm** | Travel-AI (bộ đo để ca sai vẫn đạt) | B5 | B code | như trên |
+| 6 | Dòng "Mình hiểu: 2 ngày · … — sai thì bấm sửa" + code dò số trong câu để phát hiện lệch ⇒ hỏi lại | TRIPO mất "2 ngày" | B5 (dùng đường hỏi lại B4) | C172 | như trên |
+| 7 | Cột `ten_khac` (bí danh điểm) trong bảng | đối chiếu kho | B5 bảng v3 | C172 ⇒ User duyệt | User đồng ý thêm cột |
+| 8 | **Sửa lịch nhiều lượt**: khung lịch giữ ở server, công cụ `sua_lich` hành động có tên, xếp lại cùng luật, dòng "Đã đổi / Giữ nguyên", thay điểm ⇒ 2–3 điểm cùng cụm để bấm; tránh 2 lỗi gộp của Travel-AI (không bỏ được sở thích; giá trị mặc định ghi đè giá trị đã nói); ≤ 2 hành động / lượt, nêu ý không làm | TRIPO, Travel-AI, Flex-TravelPlanner | **bậc mới sau B5** (User chọn) | plan sau B5 merge | chờ B5 |
+| 9 | Bộ đo chuỗi sửa, mỗi chuỗi 3 lần (đạt cả 3 = pass^3) + câu sửa kiểu người thật (dời buổi, ý gộp hai yêu cầu) | nguồn agent đã kiểm, TRIPO v3 | bậc sửa lịch | người viết bộ đo | chờ |
+| 10 | Cột trong nhà / nhiều bậc ⇒ "phương án ngày mưa", "ít bậc thang"; kho không ghi ⇒ để trống, không khẳng định | trip-advisor, TRIPO | B5b (cùng thời tiết) | C soạn, User duyệt | chờ |
+| 11 | Bộ đo B4: thêm vài câu `so_ngay` viết lạ ("3N2Đ", "cuối tuần") — chỉ theo dõi, không đổi sàn | SA4b | B4 lượt sau / bậc sửa lịch | B | ý cho lượt đo sau |
+| 12 | Lời dặn không dùng tên địa danh thật làm ví dụ (model dễ chép ví dụ) | SA4b | B5 + lời dặn mới | B / C | áp khi viết lời dặn |
+| 13 | **Lọc / ưu tiên theo lĩnh vực** (ý của User trong github.txt): đếm 0 USD trên kết quả đo đã có — thí nghiệm chỉ khi ≥ 3 câu thiếu ý vì đoạn lĩnh vực khác chiếm chỗ; ưu tiên mềm, không lọc cứng | User, SA1 | sau Phase 9 (hoặc lúc rảnh, phần đếm) | session rảnh | chờ |
+| 14 | Đếm đoạn gần trùng trong 10 đoạn vào model (0 USD) ⇒ có nhiều mới thử lọc | `vietnamese-rag-system` | như #13 | session rảnh | chờ |
+| 15 | Gắn nhãn lỗi tự động trên kết quả đo (thứ tự đúng: xét trả lời đúng trước "không tìm thấy") | `vietnamese-rag-system` (thứ tự sai) | B7 / sau | — | chờ |
+| 16 | Báo cáo đồ án: "0 lỗi trên n ca" kèm **luật ba** (tỉ lệ lỗi thật vẫn có thể tới ~3 / n); ghi rõ nhãn nào do LLM gán, phần nào người kiểm mù; datasheet cho bộ đo | ViHoRec | B7 (đóng gói / báo cáo bảo vệ) | A | chờ |
+| 17 | Dự phòng demo khi mất mạng (video / câu trả lời ghi sẵn — không dùng làm bằng chứng đo); đề cương gọi "trợ lý RAG có công cụ", không nói quá | github.txt | B7 | A | đã ghi ở "A còn nợ" |
+| 18 | Nếu B5 đo thấy model hay bỏ sót `lich_trinh` (Q2a < 9 / 10): định tuyến gắn cờ ⇒ code gọi `lich_trinh` thẳng (đổi lời dặn định tuyến ⇒ hồi quy 176 + 32) | KhaiBoiPho (`app/core/chat/router.py` 1–15) | B5 phương án dự phòng | B | chỉ khi Q2a trượt |
+
+**Không làm** (đã cân): lọc cộng tác / rating, tối ưu quãng đường (TSP), GraphRAG, định tuyến bằng danh sách từ, bảng SQL giá, rerank / sparse mới (Phase 8 đã bỏ), nhớ cả câu trả lời, web bật sẵn, công cụ ghi ra ngoài không cần duyệt.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (đọc trước nhất)
 
 **Hệ thống (`main` `e3cdb96` + docs):** chatbot = RAG 1–8 + **trợ lý Phase 9**: định tuyến 4 tuyến (trò chuyện / trợ lý Huế / ngoài phạm vi / khẩn cấp — câu soạn sẵn 113 / 114 / 115 / 112; từ B143 khẩn cấp phủ cả "vừa bị cướp / giật, cần báo công an") + dòng nhắc "có thể đã thay đổi"
