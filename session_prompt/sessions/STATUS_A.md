@@ -1,4 +1,6 @@
-# STATUS A — MỞ PHIÊN 04/11 (19:35 04/11/2026 `date`)
+# STATUS A — KẾT PHIÊN 04/11 (21:40 04/11/2026 `date`; mở 19:35)
+
+**Phiên sau A:** đọc `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" — hỏi quyền + giờ kết phiên ⇒ kín B4 (User `!` ở terminal C, lệnh trong `STATUS_C.md`) + Q4 kín (terminal B hoặc C) ⇒ Q5 / Q7 / Q8 ⇒ C review ⇒ merge B4; C report #6 ⇒ B review ⇒ merge #6 (bên merge sau rebase + chạy lại Q1); C173 plan B5 bản 4 + bảng v3 ⇒ User duyệt bảng; bảng 18 ý trong handoff. Nhánh: `main`, `p9-b4`, `p9-toc-do-6`. W55 / W56 / W52 / W54 `đang thử`; W4 / W39 hạn 07/11 ⇒ đề xuất gỡ.
 
 Terminal: `hue-rag-b7` · Agent: Claude Opus 5.5 · Vai: điều phối. Hai session khác đang mở: `hue-rag-2d`, `hue-rag-81` — chưa rõ ai B / ai C (chờ tự báo).
 - Kiểm nhanh: `main` `0adcaf3` = `origin/main`, sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 `169c2dd5f86a` khớp; `frontend/dist/` có; worktree `/tmp/b_b4`, `/tmp/c_toc_do` mất (prunable — máy khởi động lại; commit còn trên nhánh đã push); 4 worktree AGY cũ còn; RAM trống ~12 GB.
