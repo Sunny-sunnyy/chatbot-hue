@@ -73,6 +73,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    - (4b) Khẳng định về **hành vi thư viện / định dạng log / rào bằng script** ⇒ chạy một probe nhỏ thật (input nhỏ, 0 USD) trước khi bàn giao, ghi nhãn [Chạy] /
    [Code, chưa chạy]; **script / runbook có lượt trả phí** ⇒ chạy thử mọi lệnh 0 USD (trên bản sao thư mục kết quả; lệnh có phí chạy bản 0 USD: `--help`, kiểm đầu vào, không gọi API) trước khi bàn giao review
    (W36 — 31/10 S58: 3 major một phiên; 01/11: runbook đo cuối bản 1 có lệnh không chạy được, chỉ `py_compile`, B bắt).
+   - (4c) Thêm lời dặn / công cụ **gắn theo cờ** ⇒ trước lượt có phí, một test cho **mỗi loại lượt** (lượt đầu, lượt hỏi lại, lượt ghép sau khi bấm nút, lượt có lịch sử) khẳng định chuỗi gửi model có / không có phần mới đúng như plan — test "cờ tắt giống byte" không đủ (04/11: B4 khoá 1, lượt ghép thiếu luật Cách A, lộ ở lượt đo có phí — S91, W55).
 5. Viết report (mục 6), cập nhật trạng thái mục việc của mình trong
    `CURRENT_HANDOFF.md` thành "chờ review", cập nhật `STATUS_<X>.md`, nhắn A.
 

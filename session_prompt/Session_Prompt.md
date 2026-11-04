@@ -79,7 +79,7 @@ report.
   câu** (so sánh, giá, nhiều nguồn…), không nêu chủ đề cụ thể (tên nơi, món, loại giá, tên thông tin) cạnh `case_index` —
   hook chỉ bắt chép nguyên văn ≥ 40 ký tự (27/10: lỗi tả quá cụ thể đã xảy ra ≥ 4 lần — S40).
 - **Câu kín** (`*sealed*`): chỉ mở khi việc giao rõ cho đúng session / sub-agent đó;
-  người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User quyết.
+  người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User quyết. Auto mode chặn agent đọc `*sealed*` (rào đúng, không lách) ⇒ người chạy chuẩn bị lệnh kín **sớm** (lệnh `!` chỉ in số đếm — đầu ra hiện vào hội thoại agent), đưa User `!` ngay khi đã thấy đạt trên **đúng sha khoá**; bản khoá đổi ⇒ bỏ lệnh cũ, đưa lệnh mới; User có thể vắng ⇒ ghi lệnh vào `STATUS_<X>.md` để chạy đầu phiên sau (04/11: kín B4 dời phiên vì chờ `!`, suýt chạy trên khoá cũ — S92, W56).
   Giữ mù (25/10: 2 lần lộ một phần) — áp cho mọi session / sub-agent chưa được giao mở câu kín: báo cáo về việc câu kín
   không ghi tên file corpus mà câu dựa vào, không ghi nội dung câu (chỉ số dòng, số đếm, đúng / sai, md5); khi grep
   **nội dung corpus** (mọi việc, không chỉ câu kín) dùng `scripts/grep_kb.sh [--dir <thư mục con>] [cờ] <mẫu>` (luôn trong kho, loại `evaluation/`, `meta/`, `_source-dumps/`, `*sealed*`;

@@ -1006,3 +1006,10 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - B142 merge `6817897` (👍 / 👎 chỉ lưu đánh giá; 3 nút gợi ý dưới câu ngoài phạm vi — User chọn từ nghiên cứu sản phẩm thật). B143 merge `e3cdb96`: lỗ hổng định tuyến khẩn cấp "vừa bị giật đồ, báo công an" (có từ B1; C phát hiện nhờ luật dừng của plan tốc độ) — sửa một dòng định nghĩa `khan_cap`, mọi sàn đạt.
 - Nghiên cứu: 15 trợ lý thế giới (Codex; A kiểm 3 nguồn) + Huế TRIPO vòng 2 (agent con, Playwright) ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 4. Phân tích tốc độ C150 (định tuyến ≈ 46 % chữ đầu). Plan B4 bản 2 duyệt `42fa62d2425f`; plan B5 nháp; plan tốc độ bản 4 chờ review. User: thời tiết = B5b; B6 web chỉ cho câu về Huế.
 - Vòng cải tiến 17: S86–S90; W52 / W54 / I9 đề xuất chờ User; W50 ⇒ `đang dùng`. Tiền phiên tối ≈ 0,28 USD; Phase 9 ≈ 0,94 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03_toi.md`.
+
+## 2026-11-04 — câu khẩn cấp PA1; tốc độ #1 âm, #6 đạt; B4 khoá 3; nghiên cứu 8 repo + TRIPO v3 (A, 21:34 04/11/2026)
+
+- `main`: B154 câu khẩn cấp PA1 (`4e3cb4e`). Thí nghiệm tốc độ #1 (suy luận "none" khi định tuyến) **âm** — phạm sàn an toàn (tag `hoso/p9-toc-do-1`); #6 (trả lời song song định tuyến) **đạt** −1,37 s [0,34; 2,14], chưa merge.
+- B4: khoá 1 âm (lỗi cài đặt — S91), khoá 2 còn 1 / 5 câu nhân giá ⇒ User chọn vòng sửa 2 ⇒ khoá 3 đạt mọi phần đã thấy; trần 0,24; còn kín.
+- Plan B5 bản 3 + bảng điểm v2 duyệt; User thêm bậc "sửa lịch nhiều lượt" + cột `ten_khac`.
+- Nghiên cứu: đọc code 8 repo + ViWOZ, TRIPO vòng 3, nguồn agent ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; 18 ý ⇒ `CURRENT_HANDOFF.md`. Vòng cải tiến 17 (W52, W54, I10) + 18 (W55, W56). Tiền phiên ≈ 0,226 USD. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-04.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-04_phase_9_b4_toc_do.md`.
