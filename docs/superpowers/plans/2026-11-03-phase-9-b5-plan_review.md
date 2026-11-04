@@ -44,3 +44,18 @@ Như bảng "Đã khớp" + bằng chứng trong từng finding. Không chạy m
 ## 6. Decision và bước tiếp theo
 
 **changes_requested** — C sửa M-1, M-2, M-3 (+ minor nếu muốn) thành bản 3, báo sha; B kiểm phần sửa; A duyệt sha. M-1 (ngưỡng "gọi công cụ"; có chạy kiểm giờ / giá trên câu không qua công cụ không) và M-3 (a) (cột buổi vào bảng User duyệt) là chỗ A / User quyết. Plan vẫn chờ B4 merge + bảng điểm User duyệt trước khi chạy — không chặn việc khác.
+
+## Vòng 2 — kiểm phần sửa bản 3 (sha `bba7d2559b77`, B, 20:43 04/11/2026)
+
+Decision: **ready_for_user_confirmation** (0 blocker · 0 major · 0 minor mới) — A chốt trần (đề xuất 0,15 / dừng 0,14) rồi duyệt sha. 0 USD. Cách kiểm: `git diff HEAD` bản 2 ↔ 3 — mọi hunk thuộc bảng "Chỗ đổi bản 3".
+
+| Finding | Kiểm | Kết luận |
+|---|---|---|
+| M-1 | **Q2a** mới (gọi `lich_trinh` ≥ 9 / 10 mỗi lượt đã thấy, ≥ 4 / 5 kín); câu không gọi vẫn chấm Q2 với khung rỗng; D8 (7) chạy thật trên câu không gọi mà lời có dạng lịch (≥ 2 tiêu đề ngày hoặc ≥ 2 dòng Sáng / Chiều / Tối kèm tên điểm bảng) ⇒ lịch tự viết không còn lọt; giá phải trả (rút nhầm câu thường) có sàn Q4 "≤ 1 / 62" + "sai khi" D8 | **đóng** |
+| M-2 | D6 (i) gọi thẳng `retrieval_service.search`, chọn 1 đoạn đúng `source`, không qua `search_into_trace`; (ii) đoạn đã có ⇒ dùng lại `[n]`; (iii) ≤ 20 đoạn, vượt ngân sách ⇒ bớt từ ngày cuối, không thành câu lỗi; (iv) ba ca test. Khớp code hiện hành (`search_into_trace` đóng gói cả top-10 + `skip_ids`) | **đóng** |
+| M-3 | cột `buoi` có cấu trúc (mặc định {sáng, chiều}; tối chỉ khi kho ghi) — User duyệt cùng bảng, §5 bước 1 thành bắt buộc; code không đọc chữ `gio_mo_cua`; tập giờ khung = cặp (giờ, phút) chuẩn hoá; D8 (2) liệt kê 6 dạng giờ + thời lượng tính vi phạm + ca test; Q2 "0 suất ở buổi ∉ `buoi`" | **đóng** |
+| m-1 … m-6 | D5 (a) ghi luật lấy 11 id + điểm bị loại; §9 hai chuỗi nhớ ghi trước; 2 / 10 câu đủ trường dạng câu ghép; D8 "sai khi" + trừ "nghìn năm"; D11 `ten` + ", Huế" (Q2 so theo đó); căn cứ trỏ đúng archive + handoff | **đóng** |
+| §1 "bản đồ" (A) | "bản đồ tương tác / chỉ đường" — hết mâu thuẫn với D11 | **đóng** |
+| Tiền | §6 theo giá thật B4 (câu trả lời cờ bật ≈ 0,00075 với 10 đoạn; lịch ≤ 20 đoạn ⇒ ≈ 0,0015 hợp lý); cộng 0,06–0,14; trần đề xuất 0,15 / dừng 0,14 — A chốt | **đóng** (số A chốt) |
+
+**Ghi nhận (không finding):** B4 khoá 2 (`p9-b4` `f8c9914`) gắn câu Cách A vào mọi lượt trợ lý khi cờ `hoi_lai` bật ⇒ lượt B5 cũng mang câu đó khi B4 bật — không đụng luật B5 (Cách A chỉ nói về câu chi phí), nhưng chuỗi gửi model của B5 phải lấy mốc là `main` **sau** B4 merge (Q1 của B5 đã ghi "giống byte B4").
