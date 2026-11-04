@@ -18,7 +18,7 @@ Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Ph
 6. **B6 (web):** User chọn web chỉ cho câu **về Huế** kho không có; bộ đo B6 nháp C160 (`data/phase_9/bo_do_b6/`), phải có ca "ở Huế có quán phở Hà Nội nào ngon".
 7. Theo dõi: router đưa S20 sang `khan_cap` (2 lần trước); định tuyến quá 10 s ⇒ `tro_ly_hue`; `chat_feedback` chưa nối `chat_metrics`; câu từ chối sau 3 lần tìm ~8 s; #6: câu trò chuyện có thể chậm hơn (mẫu 2 câu).
 
-**Nhánh:** `main`; `p9-b4` (B4); `p9-toc-do-6` (#6); `p9-chu-khan-cap` đã merge `4e3cb4e`, worktree đã gỡ ⇒ **chờ User `!` xoá**; `p9-toc-do-1` có tag `hoso/p9-toc-do-1` ⇒ User đã được đưa lệnh xoá (kiểm `git branch -a`).
+**Nhánh:** `main`; `p9-b4` (B4); `p9-toc-do-6` (#6). `p9-chu-khan-cap` + `p9-toc-do-1` đã xoá (User `!` 21:39 04/11/2026; `p9-toc-do-1` giữ bằng tag `hoso/p9-toc-do-1`).
 
 **Mã hay gặp:** B0–B7 = bậc Phase 9 (spec §5); D… / Q… / m-… = quyết định / câu đo / finding minor; S20, S10, S04 = mã câu bộ an toàn 32 (private); P0_sai / P0_thieu = sai điều kiện / thiếu cảnh báo; N_AA = số câu tụt giữa hai lượt cùng cấu hình; Bxx / Cxx = mã việc A giao B / C; S / W / I = sự cố / đề xuất / dời luật trong `SO_CAI_TIEN_CACH_LAM.md`; #1–#18 = ý tưởng từ nghiên cứu 04/11 (bảng dưới).
 
