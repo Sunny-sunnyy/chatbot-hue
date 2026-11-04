@@ -20,3 +20,9 @@ def test_ordinary_questions_with_risky_words_are_not():
 def test_answer_is_exact_approved_text_with_four_numbers():
     lines = EMERGENCY_ANSWER.split("\n")
     assert len(lines) == 5 and lines[1] == "113 Công an · 114 Cháy, cứu nạn cứu hộ · 115 Cấp cứu y tế · 112 Thiên tai, lũ lụt."
+    # Khoá dòng mở PA1 (User chọn 04/11): đổi chữ câu soạn sẵn phải là quyết định có duyệt, không sửa lặng lẽ.
+    assert lines[0] == ("Nếu bạn hoặc người bên cạnh đang gặp nguy hiểm hoặc vừa gặp chuyện (bị cướp, tai nạn, cháy, ốm nặng), "
+                        "hãy gọi ngay số khẩn cấp (miễn phí):")
+    assert lines[2:] == ["Khi gọi, nói rõ bạn đang ở đâu và chuyện gì đang xảy ra.",
+                         "Mình là trợ lý thông tin du lịch, không gọi hộ hay điều người tới giúp được.",
+                         "Emergency in Vietnam (free): 113 Police · 114 Fire & rescue · 115 Ambulance · 112 Natural disasters."]

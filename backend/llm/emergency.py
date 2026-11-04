@@ -9,7 +9,8 @@ import re
 import unicodedata
 
 EMERGENCY_ANSWER = (
-    "Nếu bạn hoặc người bên cạnh đang gặp nguy hiểm, hãy gọi ngay số khẩn cấp (miễn phí):\n"
+    # Dòng mở PA1 (C162 `chu_moi_phuong_an.md` `a0bc71cbfaff`, User chọn 04/11): phủ cả người **vừa** gặp chuyện (bị cướp…) — tuyến khan_cap từ B143.
+    "Nếu bạn hoặc người bên cạnh đang gặp nguy hiểm hoặc vừa gặp chuyện (bị cướp, tai nạn, cháy, ốm nặng), hãy gọi ngay số khẩn cấp (miễn phí):\n"
     "113 Công an · 114 Cháy, cứu nạn cứu hộ · 115 Cấp cứu y tế · 112 Thiên tai, lũ lụt.\n"
     "Khi gọi, nói rõ bạn đang ở đâu và chuyện gì đang xảy ra.\n"
     "Mình là trợ lý thông tin du lịch, không gọi hộ hay điều người tới giúp được.\n"
