@@ -30,7 +30,7 @@ from llm.hoi_lai import Loai, TruongTen, loc_truong, the_hoi_lai
 from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT,
                                    build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
-from retrieval.full_corpus_context import PackedContext, PackedSource
+from retrieval.full_corpus_context import HOI_LAI_TOOL_OVERHEAD, PackedContext, PackedSource
 
 logger = logging.getLogger("chat")  # cùng logger với route: dòng `chat_stream_drain` giữ tên + khuôn như trước B1
 
@@ -129,7 +129,8 @@ class AnswerTrace:
     search_query: str | None = None
     clarify: dict | None = None  # dữ liệu thẻ hỏi lại (sau D3)
     hoi_lai_raw: dict | None = None  # tham số model gửi, trước D3 — chỉ RAM / harness (Q2 đếm trên đây — M-1)
-    hoi_lai_d3: str | None = None  # "dien" / "cat" / None
+    hoi_lai_d3: list[str] | None = None  # cờ D3 ⊂ ["dien", "cat"] (plan B4 bản 5); None = chưa gọi hoi_lai
+    hoi_lai_offered: bool = False  # lượt này đưa công cụ `hoi_lai` ⇒ đếm ngân sách cộng lược đồ công cụ (HOI_LAI_TOOL_OVERHEAD)
 
 
 async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
@@ -160,7 +161,8 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
         packed = context_builder.build(cau_hoi, result.documents, today=today, first_id=len(trace.so_nguon) + 1,
                                        prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids),
                                        instructions=instructions, history=trace.history,
-                                       n_tool_items=2 * trace.model_searches if by == "model" else 0)
+                                       n_tool_items=2 * trace.model_searches if by == "model" else 0,
+                                       extra_tool_tokens=HOI_LAI_TOOL_OVERHEAD if trace.hoi_lai_offered else 0)
         context_ms = elapsed_ms(started)
         if first:
             trace.packed, trace.context_ms = packed, context_ms
@@ -315,7 +317,8 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
         if generator is None:
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
-    instructions = _assistant_instructions(generator, trace, _offer_hoi_lai(flags, trace)) if (flags.tim_them and generator is not None) else None
+    trace.hoi_lai_offered = flags.tim_them and generator is not None and _offer_hoi_lai(flags, trace)
+    instructions = _assistant_instructions(generator, trace, trace.hoi_lai_offered) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
     return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
 

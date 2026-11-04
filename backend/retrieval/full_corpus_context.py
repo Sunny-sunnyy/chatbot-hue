@@ -11,6 +11,10 @@ from llm.full_corpus_prompt import build_answer_messages
 # ~268 ở 3 mục, ~338 ở 5 mục ⇒ ≈ 158 cố định + 36 / mục. Pilot B3 (có lịch sử) ước lại — giá trị và nguồn ghi ở report B136.
 TOOL_PATH_OVERHEAD = 158
 ITEM_OVERHEAD = 36
+# B4 (A quyết 04/11, review C163 m-3): lược đồ công cụ thứ hai `hoi_lai` gửi kèm khi lượt đưa công cụ này — phép đếm không thấy. Đo B153
+# (`data/phase_9/b4/chon_ghi_chu/`, 28 lượt cờ bật): token thật − số đếm ≥ 185 ở mọi lượt, đúng 185 ở lượt không tìm thêm ⇒ hằng 185.
+# Phần chênh còn tăng theo số lần tìm thêm (tới ~450 sau hằng) — chưa rõ nguồn, ghi giới hạn ở report B4; lề 512 vẫn giữ.
+HOI_LAI_TOOL_OVERHEAD = 185
 
 
 @dataclass(frozen=True)
@@ -47,7 +51,7 @@ class FullCorpusContextBuilder:
         self._max_documents = max_documents
 
     def _token_count(self, query: str, context: str, today: str | None = None, instructions: str | None = None,
-                     history=(), n_tool_items: int = 0) -> int:
+                     history=(), n_tool_items: int = 0, extra_tool_tokens: int = 0) -> int:
         """Token phần vào của lần gọi trả lời. Đường sinh một lần (`instructions` None, không lịch sử) = đúng phép đếm B1. Đường trợ lý có công cụ
         (B2 / B3 D5): đếm bằng lời dặn trợ lý, cộng các tin lịch sử (câu hỏi / câu trả lời lượt trước) và phần đệm API theo số mục gửi đi."""
         messages = build_answer_messages(query, context, today)
@@ -61,7 +65,7 @@ class FullCorpusContextBuilder:
             for key, value in message.items():
                 num_tokens += len(self._tokenizer.encode(value))
         if instructions is not None:
-            num_tokens += TOOL_PATH_OVERHEAD + ITEM_OVERHEAD * (len(messages) - 1 + n_tool_items)
+            num_tokens += TOOL_PATH_OVERHEAD + ITEM_OVERHEAD * (len(messages) - 1 + n_tool_items) + extra_tool_tokens
         return num_tokens
 
     @staticmethod
@@ -100,7 +104,7 @@ class FullCorpusContextBuilder:
     def build(
         self, query: str, documents: Sequence[RetrievedDocument], today: str | None = None, *,
         first_id: int = 1, prior_context: str = "", skip_ids: frozenset[str] = frozenset(), instructions: str | None = None,
-        history=(), n_tool_items: int = 0,
+        history=(), n_tool_items: int = 0, extra_tool_tokens: int = 0,
     ) -> PackedContext:
         """`today`: dòng ngày sẽ đứng đầu tin nhắn gửi model (B1 D7) — đếm cùng một chuỗi với chuỗi gửi đi.
         Lần tìm thêm trong một lượt (Phase 9 B2 D5): đánh số từ `first_id`, bỏ đoạn `skip_ids` đã có, và đếm ngân sách **chung** —
@@ -112,7 +116,7 @@ class FullCorpusContextBuilder:
 
         def counted(new_text: str) -> int:
             context = "\n\n".join(part for part in (prior_context, new_text) if part)
-            return self._token_count(query, context, today, instructions, history, n_tool_items)
+            return self._token_count(query, context, today, instructions, history, n_tool_items, extra_tool_tokens)
 
         input_tokens = counted("")
         for document in documents:

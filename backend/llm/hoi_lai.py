@@ -45,15 +45,17 @@ class TruongInput(BaseModel):
     muc_chi: Literal["tiet_kiem", "tieu_chuan", "thoai_mai"] | None = None
 
 
-def loc_truong(loai: str, truong_thieu: list[str]) -> tuple[list[str], str | None]:
-    """D3 — ranh giới, không phải phép đo: bỏ trường không thuộc `loai` (giữ thứ tự bảng, bỏ trùng); rỗng ⇒ trường bắt buộc của `loai`;
-    > 3 ⇒ giữ 3 theo thứ tự bảng. Trả (danh sách, "dien" | "cat" | None) — harness đếm số lần code phải điền / cắt (plan M-1)."""
-    thuoc = [t for t in TRUONG_THEO_LOAI[loai] if t in set(truong_thieu)]
-    if not thuoc:
-        return list(BAT_BUOC[loai]), "dien"
-    if len(thuoc) > MAX_TRUONG:
-        return thuoc[:MAX_TRUONG], "cat"
-    return thuoc, None
+def loc_truong(loai: str, truong_thieu: list[str]) -> tuple[list[str], list[str]]:
+    """D3 (plan B4 bản 5 `acfaf8ca0df5`) — ranh giới, không phải phép đo: bỏ trường không thuộc `loai` (giữ thứ tự bảng, bỏ trùng);
+    **luôn thêm trường bắt buộc của `loai` mà model không chọn** (review C163 m-2: model chỉ hỏi trường không bắt buộc ⇒ thẻ không có
+    trường bắt buộc ⇒ câu lịch trình đi tiếp thiếu số ngày); > 3 ⇒ giữ 3 theo thứ tự bảng (bắt buộc đứng trước ⇒ không bao giờ bị cắt).
+    Trả (danh sách, cờ) — cờ ⊂ ["dien", "cat"], có thể cả hai (C166 m-2); harness đếm số lần code phải thêm / cắt (plan M-1)."""
+    chon = set(truong_thieu)
+    co: list[str] = ["dien"] if any(t not in chon for t in BAT_BUOC[loai]) else []
+    giu = [t for t in TRUONG_THEO_LOAI[loai] if t in chon or t in BAT_BUOC[loai]]
+    if len(giu) > MAX_TRUONG:
+        giu, co = giu[:MAX_TRUONG], co + ["cat"]
+    return giu, co
 
 
 def the_hoi_lai(loai: str, truong: list[str], cau_goc: str) -> dict:

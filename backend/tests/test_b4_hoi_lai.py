@@ -30,9 +30,18 @@ def tool_names(kwargs) -> list[str]:
 
 
 def test_loc_truong_keeps_boundary_and_reports_fill_or_cut():
-    assert loc_truong("chi_phi", ["so_ngay", "di_cung", "so_ngay"]) == (["so_ngay"], None)  # bỏ trường sai loại + trùng
-    assert loc_truong("lich_trinh", ["so_nguoi"]) == (["so_ngay"], "dien")  # rỗng sau lọc ⇒ trường bắt buộc
-    assert loc_truong("lich_trinh", ["so_thich", "kieu_di", "di_cung", "so_ngay"]) == (["so_ngay", "di_cung", "kieu_di"], "cat")
+    assert loc_truong("chi_phi", ["so_nguoi", "so_ngay", "di_cung", "so_ngay"]) == (["so_nguoi", "so_ngay"], [])  # bỏ trường sai loại + trùng
+    assert loc_truong("lich_trinh", ["so_nguoi"]) == (["so_ngay"], ["dien"])  # rỗng sau lọc ⇒ trường bắt buộc
+    assert loc_truong("lich_trinh", ["so_thich", "kieu_di", "di_cung", "so_ngay"]) == (["so_ngay", "di_cung", "kieu_di"], ["cat"])
+
+
+def test_loc_truong_always_adds_missing_required_fields():
+    # Plan B4 bản 5 D3 (C163 m-2): model chỉ hỏi trường không bắt buộc ⇒ code thêm trường bắt buộc, để thẻ không cho "Gửi" khi thiếu số ngày.
+    assert loc_truong("lich_trinh", ["so_thich"]) == (["so_ngay", "so_thich"], ["dien"])
+    assert loc_truong("chi_phi", ["so_ngay"]) == (["so_nguoi", "so_ngay"], ["dien"])
+    assert loc_truong("chi_phi", ["muc_chi"]) == (["so_nguoi", "so_ngay", "muc_chi"], ["dien"])
+    # vừa thêm vừa cắt (C166 m-2): 3 trường không bắt buộc + so_ngay ⇒ 4 ⇒ cắt trường cuối bảng; trường bắt buộc không bị cắt
+    assert loc_truong("lich_trinh", ["di_cung", "kieu_di", "so_thich"]) == (["so_ngay", "di_cung", "kieu_di"], ["dien", "cat"])
 
 
 def test_ghep_cau_is_deterministic_and_empty_means_original():
@@ -50,7 +59,8 @@ def test_stop_at_hoi_lai_gives_clarify_without_answer(deps):
     assert tool_names(calls[0]) == ["tim_kho", "hoi_lai"] and calls[0]["instructions"].endswith(HOI_LAI_NOTE)
     assert trace.fixed_outcome == "hoi_lai" and trace.answer == "" and trace.cited == ()
     assert [t["ten"] for t in trace.clarify["truong"]] == ["so_nguoi", "so_ngay"] and trace.clarify["cau_goc"] == QUESTION
-    assert trace.hoi_lai_raw == {"loai": "chi_phi", "truong_thieu": ["so_nguoi", "so_ngay", "di_cung"]} and trace.hoi_lai_d3 is None
+    assert trace.hoi_lai_raw == {"loai": "chi_phi", "truong_thieu": ["so_nguoi", "so_ngay", "di_cung"]} and trace.hoi_lai_d3 == []
+    assert trace.hoi_lai_offered  # ngân sách lượt này cộng HOI_LAI_TOOL_OVERHEAD
 
 
 def test_stream_hoi_lai_has_no_searching_status_and_no_text(deps):
@@ -64,7 +74,7 @@ def test_stream_hoi_lai_has_no_searching_status_and_no_text(deps):
     assert ("status", {"stage": "searching"}) not in events and not [e for e in events if e[0] == "delta"]
     searched = [e for e in events if e[0] == "status" and e[1]["stage"] == "searched"]
     assert searched == [("status", {"stage": "searched", "n_sources": len(trace.packed.sources)})]  # chỉ lần tìm đầu của code (C163 m-1)
-    assert trace.fixed_outcome == "hoi_lai" and [t["ten"] for t in trace.clarify["truong"]] == ["so_ngay"] and trace.hoi_lai_d3 == "dien"
+    assert trace.fixed_outcome == "hoi_lai" and [t["ten"] for t in trace.clarify["truong"]] == ["so_ngay"] and trace.hoi_lai_d3 == ["dien"]
 
 
 @pytest.mark.parametrize("flags, da_co_truong", [(TOOLS_OFF, False), (TOOLS_ON, True)])
@@ -101,7 +111,7 @@ def test_route_clarify_then_composed_turn(deps, caplog):
     assert composed.status_code == 200 and "Thông tin thêm: 2 ngày; 2 người." in sent and "hoi_lai" not in tool_names(gen.client.responses.calls[-1])
     assert bad_value.status_code == 422 and bad_field.status_code == 422
     first, second = metric_lines(records)
-    assert first["outcome"] == "hoi_lai" and first["hoi_lai"] == {"loai": "chi_phi", "n": 2, "d3": None} and first["co_truong"] is None
+    assert first["outcome"] == "hoi_lai" and first["hoi_lai"] == {"loai": "chi_phi", "n": 2, "d3": []} and first["co_truong"] is None
     assert second["outcome"] == "success" and second["co_truong"] == 2 and second["hoi_lai"] is None
 
 
@@ -115,3 +125,17 @@ def test_stream_route_sends_clarify_event_and_done_without_turn_id():
     stream = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(), lambda: "C" * 16)
     events = parse_sse(stream.fixed(AnswerTrace(answer="", cited=(), fixed_outcome="hoi_lai", clarify=clarify)))
     assert events == [("clarify", clarify), ("done", {"outcome": "hoi_lai"})]
+
+
+def test_hoi_lai_tool_overhead_counts_only_on_tool_path():
+    # A quyết (a) 04/11: lược đồ `hoi_lai` = hằng 185 token, chỉ cộng ở đường trợ lý có công cụ; đường sinh một lần (B1) đếm như cũ.
+    from retrieval.full_corpus_context import HOI_LAI_TOOL_OVERHEAD, FullCorpusContextBuilder
+
+    class Words:
+        def encode(self, text):
+            return text.split()
+
+    b = FullCorpusContextBuilder(Words())
+    base = b._token_count("câu hỏi", "ngữ cảnh", None, "lời dặn")
+    assert b._token_count("câu hỏi", "ngữ cảnh", None, "lời dặn", extra_tool_tokens=HOI_LAI_TOOL_OVERHEAD) == base + 185
+    assert b._token_count("câu hỏi", "ngữ cảnh", extra_tool_tokens=HOI_LAI_TOOL_OVERHEAD) == b._token_count("câu hỏi", "ngữ cảnh")
