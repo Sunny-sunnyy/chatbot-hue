@@ -6,6 +6,8 @@ Terminal: `hue-rag-b7` · Agent: Claude Opus 5.5 · Vai: điều phối. Hai ses
 - User: quyền "như 03/11", "làm đi theo thứ tự", "tiếp tục điều phối, phát triển, triển khai, tự nghiên cứu, so sánh, đánh giá, viết báo cáo"; duyệt W52 / W54 / I10; chữ khẩn cấp PA1; xoá 4 nhánh đã merge (đưa `!`).
 - (20:17 04/11/2026) Đã duyệt plan B4 bản 5 `acfaf8ca0df5` (trần 0,18); quyết M-3 / M-4 plan tốc độ (trần 0,11); B5 M-1 / M-3. Giao B153 (đo B4), B154 (chữ khẩn cấp), C (kín B4, plan tốc độ bản 5, C167 plan B5 bản 3).
 - (20:17 04/11/2026) Nghiên cứu tính năng (User): 2 agent con — github.txt ⇒ `data/nghien_cuu_tinh_nang_2026-11-04/sa1_github.md`; TRIPO vòng 3 Playwright + agentic ⇒ `…/sa2_tripo_v3_agentic.md`. Báo C: đo chữ đầu chỉ sau khi A xác nhận Playwright dừng.
+- (20:33 04/11/2026) C165 tốc độ #1 âm (phạm S1) ⇒ B155 review, C169 plan #6. Merge B154 `4e3cb4e` (PA1) + cổng thật 3 câu + 5 chỗ báo cáo `f648904`; nhánh `p9-chu-khan-cap` đã merge ⇒ chờ User xoá. B4 khoá `p9-b4` `6cf67e9`; kín B4 (C) chặn bởi auto mode ⇒ User `!` ở terminal C. Agent con 3 đọc code `KhaiBoiPho/agentic-rag` (User: ghi đủ hồ sơ repo; A xoá `/tmp/sa3_repo` sau kiểm).
+- **Bẫy A (04/11):** gõ tay giờ "20:33" vào nhật ký khi viết bằng Write (không qua `date`) — tự phát hiện, sửa bằng `date` ngay (trùng may). Viết file mới có giờ ⇒ để chỗ trống rồi điền bằng script có `$T`.
 
 # STATUS A — KẾT PHIÊN TỐI 03/11 (20:58 03/11/2026 `date`; mở 17:56)
 
