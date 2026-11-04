@@ -112,6 +112,8 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 - **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
   · câu ngoài kho bị trả lời — người quyết phải thấy đủ trước khi chọn (03/11: báo B2b thiếu số "thiếu cảnh báo", User quyết giữ khi chưa thấy;
   C bắt ở review plan sau — S84, W51).
+- **Câu an toàn / khẩn cấp / ca rủi ro mới viết** (bất kỳ bậc nào) ⇒ thêm ngay vào bộ hồi quy của khâu nó kiểm (hue_rag: bộ tuyến, bộ an toàn 32 + phần thêm) ở
+  lượt đo kế tiếp; ghi trong mục việc (03/11 tối: câu khẩn cấp mới viết không nằm trong bộ đo ⇒ lỗ định tuyến lọt tới B1 — S88, W54).
 - "Tốt hơn" chỉ đề xuất vào chatbot khi **đã xác nhận trên nhóm kiểm**; đưa vào runtime là việc riêng, User duyệt.
 - **3 vòng sửa cùng một biến thể không đạt ⇒ dừng**, ghi giới hạn, báo A/User; không vá cơ chế bảo vệ cơ chế.
   Hết trần tiền / thời gian ⇒ dừng, báo A.
