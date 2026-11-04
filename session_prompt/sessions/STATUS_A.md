@@ -1,3 +1,10 @@
+# STATUS A — MỞ PHIÊN 04/11 (19:35 04/11/2026 `date`)
+
+Terminal: `hue-rag-b7` · Agent: Claude Opus 5.5 · Vai: điều phối. Hai session khác đang mở: `hue-rag-2d`, `hue-rag-81` — chưa rõ ai B / ai C (chờ tự báo).
+- Kiểm nhanh: `main` `0adcaf3` = `origin/main`, sạch; hooksPath `.githooks`; Qdrant 1 collection 8.424 point; spec Phase 9 `169c2dd5f86a` khớp; `frontend/dist/` có; worktree `/tmp/b_b4`, `/tmp/c_toc_do` mất (prunable — máy khởi động lại; commit còn trên nhánh đã push); 4 worktree AGY cũ còn; RAM trống ~12 GB.
+- Lệch: dòng "Nhánh còn" ở khối kết phiên tối 03/11 dưới đây ghi `p9-toc-do-1` "chưa push" — thực tế đã push (`origin/p9-toc-do-1` có).
+- Chờ User: quyền phiên ⇒ "làm đi".
+
 # STATUS A — KẾT PHIÊN TỐI 03/11 (20:58 03/11/2026 `date`; mở 17:56)
 
 Terminal: `hue-rag-9e` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hue-rag-32`, C = `hue-rag-40` (cả ba Claude Code, trực tiếp; B / C tự báo).

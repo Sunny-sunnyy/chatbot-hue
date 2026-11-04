@@ -4,6 +4,16 @@ Cập nhật: 20:56 03/11/2026 (A, **kết phiên tối 03/11**: B3 `a3dabba` + 
 Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở. Tối 03/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03_toi.md`; trưa 03/11 (B131–B136 / C133–C145) ở `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-03.md`;
 02/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-03_phase_9_b1_va_b2.md`.
 
+## PHIÊN 04/11 — VIỆC ĐANG GIAO (A ghi 19:38 04/11/2026)
+
+User chọn quyền "như 03/11" + "làm đi theo thứ tự" (A ghi nhận 19:38 04/11/2026). Thứ tự: B review plan tốc độ ⇒ C chạy tốc độ; song song B viết plan B4 bản 3 ⇒ C kiểm phần đổi ⇒ A duyệt sha ⇒ B đo; B review plan B5. Mọi việc: `notify_when_idle`; tiền phiên ≤ 1 USD.
+
+- **B150 (B, 0 USD) — review vòng 3 plan tốc độ bản 4** `docs/superpowers/plans/2026-11-03-phase-9-toc-do-dinh-tuyen-plan.md` `395c79bbe168` (bản 3 đã duyệt `984d67829a34`): chỉ phần đổi (mốc mới sau B143, `ROUTER_INSTRUCTIONS` `164bd4a254e9`, trần 0,085 / dừng 0,08). Đọc: mục "Căn cứ để review" của plan + `git diff` bản 3 ↔ 4 (không đọc STATUS / tin của C). Ghi "Vòng 3" vào `…-toc-do-dinh-tuyen-plan_review.md`. Không chạy lượt có phí. Xong ⇒ nhắn A.
+- **B151 (B, 0 USD) — plan B4 bản 3** `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md` (bản 2 `42fa62d2425f`): chỉ đổi D3 (m-2: code luôn thêm trường bắt buộc còn thiếu) + ghi thước an toàn cho 5 lượt ghép kín (như Q6 đã thấy: sàn 0 ý trái + 0 ý không nguồn về giá / giờ / điều kiện) + m-3 (`usage_tru_builder`); trước đó `git worktree prune` + tạo lại `/tmp/b_b4` (`p9-b4` `c76934c`, symlink `data/`, `knowledge-base-hue/`). Báo sha mới ⇒ C kiểm phần đổi. Không đo trước khi A duyệt sha bản 3.
+- **B152 (B, 0 USD) — review plan B5 bản 2** `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` `0df068b47df6` theo §9.1 (chỉ gói "Căn cứ để review"); ghi `2026-11-03-phase-9-b5-plan_review.md`. Làm sau B150 + B151.
+- **C165 (C) — thí nghiệm tốc độ #1:** chờ A duyệt sha bản 4 (sau B150) ⇒ `git worktree prune` + tạo lại `/tmp/c_toc_do`, rebase `p9-toc-do-1` lên `main` `0adcaf3` ⇒ chạy theo plan (trần 0,085). Đo chữ đầu chỉ khi không session nào chạy server / Playwright / lượt có phí (W31) — B151 / B152 chỉ viết tài liệu nên không chặn; khi C đo, B không chạy lượt có phí.
+- **C166 (C, 0 USD) — kiểm phần đổi plan B4 bản 3** khi B báo sha (chỉ D3 + thước an toàn + m-3); ghi vòng mới trong `2026-11-03-phase-9-b4-plan_review.md`.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (đọc trước nhất)
 
 **Hệ thống (`main` `e3cdb96` + docs):** chatbot = RAG 1–8 + **trợ lý Phase 9**: định tuyến 4 tuyến (trò chuyện / trợ lý Huế / ngoài phạm vi / khẩn cấp — câu soạn sẵn 113 / 114 / 115 / 112; từ B143 khẩn cấp phủ cả "vừa bị cướp / giật, cần báo công an") + dòng nhắc "có thể đã thay đổi"
@@ -56,6 +66,8 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
 
 ## Session
 
+**Phiên 04/11 (mở 19:34):** A `hue-rag-b7` · B `hue-rag-2d` · C `hue-rag-81` — cả ba Claude Code, trực tiếp.
+
 **Phiên tối 03/11 (mở 17:56):** A `hue-rag-9e` · B `hue-rag-32` · C `hue-rag-40` — cả ba Claude Code, trực tiếp.
 
 **Phiên 03/11 (mở 08:36, kết 13:26 03/11/2026):** A `hue-rag-5e` · B `hue-rag-52` · C `hue-rag-d8` — cả ba Claude Code, trực tiếp. B: B131 hoàn tất B1, B132 plan B2, B134 code B2, B135 plan B3, B136 code B3 (≈ 0,513 USD). C: C133 bộ đo B2, C134 review B1, C135 review plan B2, C136 bộ đo B3, C137 / C141 review B2, C138 câu hai ý, C139 thời tiết, C140 mẫu giao diện, C142 review plan B3, C143 bộ đo B4 + chi phí, C144 bảng điểm B5, C145 review sớm B3 (≈ 0,0006 USD). A: điều phối, merge B1 + B2, 5 chỗ báo cáo × 2, README repo, báo cáo cho giáo viên, vòng cải tiến 16.
@@ -64,6 +76,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 ## Quyền
 
+- **Phiên 04/11** (User chọn "như 03/11", A ghi nhận 19:38 04/11/2026): A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD / phiên; B / C push nhánh riêng. Hết hạn cuối phiên.
 - **User 18:05 (A ghi nhận 18:05 03/11/2026):** "tiếp tục điều phối, phát triển, tự nghiên cứu, so sánh, tối ưu, đánh giá, viết báo cáo"; **kết phiên ~22:10** ⇒ A bắt đầu kết phiên ~21:40.
 - **Phiên tối 03/11 — HẾT HẠN lúc kết phiên** (User chọn "như trưa 03/11", A ghi nhận 18:01 03/11/2026): A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD / phiên; B / C push nhánh riêng. Hết hạn cuối phiên.
 - **Phiên 03/11 — HẾT HẠN (kết phiên 13:26 03/11/2026)** (User: "quyền của A như 02/11" 08:46; "đồng ý cả phiên" A tự commit / push ~09:10): A tự điều phối + tự quyết trong kế hoạch; ≤ 1 USD / phiên; B / C push nhánh riêng. Tiền phiên 03/11 ≈ **0,514 USD** (B ≈ 0,513 · C ≈ 0,0006 · A 0). User: C làm trực tiếp với A, việc A giao = "làm đi".
