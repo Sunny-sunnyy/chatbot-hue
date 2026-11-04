@@ -1,11 +1,29 @@
-# STATUS B — cập nhật 21:54 03/11/2026 (KẾT PHIÊN TỐI 03/11: B3 / B3b / B142 / B143 đã merge `main`; B4 trên `p9-b4` `c76934c` — dở, cờ `hoi_lai` tắt)
+# STATUS B — cập nhật 21:11 04/11/2026 (KẾT PHIÊN 04/11: B4 khoá 3 `7d72703` đã push; đã thấy Q1 / Q2 / Q3 / Q6 đạt; kín chưa mở)
 
-Terminal phiên tối 03/11: `hue-rag-32` (A = `hue-rag-9e`, C = `hue-rag-40`) · Agent: Claude Opus 5.5 · Vai: thực thi. Mã việc = mã A giao.
+Terminal phiên 04/11: `hue-rag-2d` (A = `hue-rag-b7`, C = `hue-rag-81`) · Agent: Claude Opus 5.5 · Vai: thực thi. Mã việc = mã A giao.
 **Phiên mới:** mở theo `session_prompt/START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md` (A viết) — file này chỉ là sổ tay của B. Tên terminal đổi mỗi lần mở ⇒ `ListAgents`.
 Quyền phiên (User qua A: việc A giao = "làm đi", B push nhánh riêng) **hết hạn cuối phiên** — hỏi lại phiên sau.
 Worktree còn: **`/tmp/b_b4`** (giữ cho B4). Đã gỡ: `/tmp/b_p9b3`, `/tmp/b_p9b3b`, `/tmp/b_phanhoi`, `/tmp/b_khancap` (đều đã merge). Nhánh đã merge (A đề xuất xoá): `p9-b3`, `p9-b3b`, `p9-phan-hoi`, `p9-khan-cap`.
 
-## PHIÊN SAU — B4 (B144 code + B145 pilot / đã thấy + B146 harness, dở; report `report_agent/2026-11-02_phase_9_code/b144_b4_implementation.md`)
+## Phiên 04/11 (19:52 04/11/2026)
+- **B150** review vòng 3 plan tốc độ bản 4 `395c79bbe168`: changes_requested 0 / 2 / 3 (M-3 tiền theo giá lời dặn cũ ⇒ ≈ 0,083 > dừng 0,08; M-4 định tuyến có lịch sử — bản sao kế thừa cờ — chưa đo; 44 lượt có lịch sử đã thấy). Review `b7c6a7028c76`.
+- **B151** plan B4 bản 3 `507bd5b72ae9` (D3 thêm trường bắt buộc, Q6k, ngân sách token) ⇒ C166 vòng 3 changes_requested 0 / 1 / 2 ⇒ **bản 4 `ca0a9f2faace`** ⇒ C166 vòng 4 (2 minor câu chữ) ⇒ **bản 5 `acfaf8ca0df5`** (§6 dự phóng 0,106–0,178 + điểm quyết A (a) 0,18 / (b) giữ 0,12 bớt / (c); Q6k không H0 kín; cờ D3 là tập). Worktree `/tmp/b_b4` tạo lại `c76934c`.
+- **B152** review plan B5 bản 2 `0df068b47df6`: changes_requested 0 / 3 / 6 (M-1 sàn "gọi `lich_trinh`"; M-2 D6 đường tìm đóng gói top-10 + bỏ đoạn đã thấy; M-3 giờ / buổi chữ tự do). Review `f27478a0ecb0`.
+- Chờ: A quyết trần B4 + duyệt sha bản 4 ⇒ (nếu (a)) chọn ghi chú câu đủ ⇒ khoá ⇒ code D3 bản 3/4 + test ⇒ đo theo thứ tự §6. Khi C đo tốc độ: B không chạy lượt có phí.
+- **B153 (20:44 04/11/2026):** D3 bản 5 + hằng `HOI_LAI_TOOL_OVERHEAD` 185 (A (a)) + ghi chú v1 ⇒ **khoá 1 `6cf67e9`**; Q6 đã thấy: (b) phạm 2 / 5 (tổng tự tính) — lỗi cài đặt: Cách A chỉ gửi khi đưa `hoi_lai`, lượt ghép thiếu ⇒ A chọn (2) ⇒ **khoá 2 `f8c9914`** (`CACH_A_NOTE` `50006a120d03` gắn mọi lượt khi cờ bật; `HOI_LAI_NOTE` giữ byte `2b62c390f2fa`); Q1 228 / 228 giống byte main (cả hai khoá); test 70 / 70. Q6 khoá 2: regex 0 / 5, **đọc chữ CT1 nhân dự toán mỗi người × 2** (số không có trong kho) ⇒ báo A, dừng; kín chưa mở. Tiền B4 ≈ **0,083 / 0,18** (pilot + v0 + v1 0,026 · chọn ghi chú 0,027 · Q6 khoá 1 0,0197 · Q6 khoá 2 0,0105). Dữ liệu `data/phase_9/b4/{chon_ghi_chu,q6,q1}/`; công cụ Q5 `data/phase_9/b4/tools/q5_golden.py` (chưa chạy); `sinh_an_toan.py --hoi-lai` thêm. Chênh token lượt ghép max 909 (khoá 1) / 514 (khoá 2) — A: ghi giới hạn.
+- **B154:** chữ khẩn cấp PA1 `p9-chu-khan-cap` `e6a011c` (A merge `4e3cb4e`); worktree `/tmp/b_chukc` đã gỡ. **B155:** review report tốc độ c156 ready (`c2ee7230ddca`). Plan B5 bản 3 vòng 2 ready (`4e6b5fb66bfd`).
+- Bẫy (04/11): máy khởi động lại ⇒ worktree `/tmp` mất (git báo prunable) — `git worktree prune` + `git worktree add` + symlink lại; nhánh còn nguyên.
+
+## PHIÊN SAU ĐỌC TRƯỚC (kết phiên 04/11, 21:11 04/11/2026)
+- **B4 trên `p9-b4` `7d72703` (khoá 3, đã push)** — worktree `/tmp/b_b4` (mất khi khởi động lại ⇒ `git worktree prune` + `git worktree add /tmp/b_b4 p9-b4` + symlink `data/`, `knowledge-base-hue/`). Plan bản 5 `acfaf8ca0df5`; **trần B4 0,24 / dừng 0,23** (A 04/11). Đã dùng ≈ **0,120**.
+- Đã đạt trên đã thấy (khoá 3): Q1 228 / 228 giống byte main · Q2 8 / 10 · Q3 0 / 7 (gần giống 0 / 3) · Q6 (b) 0 / 5 × 2 lượt (bộ đếm `data/phase_9/b4/tools/dem_tong.py` + đọc tay) · **Q6 (a) ĐẠT** (0 trái / 0 không có giá-giờ-điều kiện, 2 judge; `ket_qua.json`). (cũ) Q6 (a): judge 2 sub-agent trên `data/phase_9/b4/khoa3/q6a/` (30 mục: ghép r1 / r2 + H0) ⇒ `python3 data/phase_9/b4/tools/q6_an_toan.py analyze data/phase_9/b4/khoa3/q6a` (cần `labels_j1/j2.jsonl`). Sàn: 0 "trái" + 0 "không có" loại giá / giờ / điều kiện ở bên ghép (H0 chỉ báo kèm).
+- Thứ tự còn lại (plan §6 bản 5): Q6 (a) đạt ⇒ A cho **C mở kín** (10 hỏi + 5 ghép Q6k trên `7d72703`) ⇒ **Q4** bộ tuyến 60 (`bo_do_b1/tuyen_*.jsonl` field `query` ⇒ cần chuyển sang `cau` cho harness; nhãn `bo_do_b4/can_hoi_lai.json` — 0 câu can_hoi_lai; t16 câu đủ, nhóm giá một thứ) ⇒ **Q5** mẫu Golden 30 (`full_corpus_eval generate --golden full --cases <30> --flags router may_have_changed_notice tim_them hoi_lai` ⇒ `sau.jsonl` trong thư mục Q5 ⇒ `q5_golden.py export/check/analyze` — mốc = B3 q2v2 sau, chấm cùng lượt mù) + an toàn 32 (`sinh_an_toan.py <out> sau 1 --hoi-lai` vào `DO_CUOI_DIR=<q5>/an_toan/sau/answers_r1.jsonl` ⇒ `an_toan_b2.py export/check/accept/compare`, báo đủ 4 số) ⇒ **Q7** 4 chuỗi tự viết (nhớ bật) ⇒ **Q8** cổng + Playwright ⇒ report ⇒ C review ⇒ A merge.
+- Mỗi lượt có phí: ghi tiền thật ngay; vượt ước > 50 % ⇒ dừng báo A; khi C đo latency ⇒ B không chạy lượt có phí (W31).
+- Report `report_agent/2026-11-02_phase_9_code/b144_b4_implementation.md` §2c (khoá 1 / 2), §2d (khoá 3), §4b giới hạn (chênh token tăng theo số lần tìm: max 854 — A cho ghi giới hạn).
+- Tiền B phiên 04/11: **≈ 0,094 USD** (chọn ghi chú 0,0268 · Q6 khoá 1 0,0197 · Q6 khoá 2 0,0105 · khoá 3 0,037); B150–B152, B154, B155, review plan B5 / #6: 0 USD. Judge: quota Claude.
+- Bẫy 04/11: (1) regex "tổng … số tiền" một dòng hụt khi câu xuống dòng ⇒ đếm số tiền theo đoạn + tra từng số trong kho; (2) số viết "x,yz triệu" ≠ số đủ trong kho ⇒ grep phải quy đổi đơn vị trước khi kết luận "không có trong kho" (B ghi nhầm một câu, đã đính chính); (3) ghi chú chỉ gắn khi đưa công cụ ⇒ lượt không đưa công cụ thiếu luật — test cả lượt ghép khi thêm câu dặn gắn với cờ; (4) commit + push gộp một lệnh bị auto mode chặn ⇒ tách; worktree mới thiếu symlink `data/` ⇒ test lỗi build record.
+
+## (cũ, 03/11) PHIÊN SAU — B4 (B144 code + B145 pilot / đã thấy + B146 harness, dở; report `report_agent/2026-11-02_phase_9_code/b144_b4_implementation.md`)
 Worktree **`/tmp/b_b4`** (nhánh `p9-b4` **`c76934c`** — đã rebase lên `main` `ac46c96` có B143, symlink `data/` + `knowledge-base-hue/`; mất sau khởi động lại ⇒ `git worktree prune` + tạo lại). Code + test 0 USD xong, cờ `hoi_lai` tắt.
 **Q1 PASS** (21:13 03/11/2026: capture 228 ca giống byte `main`). **Đã chạy có phí (B145):** pilot 4 câu + đã thấy 20 câu × 2 bản ghi chú (v0, v1) — **B4 ≈ 0,026 / 0,12 USD**; chưa khoá, chưa kín. Phiên sau hỏi lại quyền phiên trước lượt có phí kế tiếp.
 Lệnh (từ `/tmp/b_b4/backend`):
@@ -18,6 +36,7 @@ Lệnh (từ `/tmp/b_b4/backend`):
 ## ~~PHIÊN SAU — B3~~ XONG (B3 merge `a3dabba`; B3b nhớ bật merge `9e2ecd9`) — chi tiết: `b136_b3_implementation.md`, `b138_b3b_implementation.md`
 
 ## Đang khai báo sửa
+- **Phiên 04/11 (19:39 04/11/2026):** B150 ⇒ `docs/superpowers/plans/2026-11-03-phase-9-toc-do-dinh-tuyen-plan_review.md` (thêm "Vòng 3"); B151 ⇒ `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md` (bản 3: D3 / m-2, thước an toàn 5 lượt ghép kín, m-3) + tạo lại worktree `/tmp/b_b4`; B152 ⇒ `docs/superpowers/plans/2026-11-03-phase-9-b5-plan_review.md`. 0 USD.
 - **B4** — `/tmp/b_b4` nhánh `p9-b4`: `backend/llm/hoi_lai.py` (mới), `backend/llm/assistant.py`, `backend/llm/generator_openai_full_corpus.py`, `backend/llm/full_corpus_prompt.py`, `backend/api/routes/chat.py`, `backend/config/settings.yaml`, `backend/tests/test_b4_hoi_lai.py` (mới), `frontend/src/App.jsx`, `frontend/src/stream.js`, `frontend/src/index.css`; plan bản 3 (D3) phiên sau `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md`. Dữ liệu: `data/phase_9/b4/` (private).
 
 ## Phiên tối 03/11 (18:14 03/11/2026)
