@@ -13,7 +13,20 @@ Vì sao có file này: bạn thấy tính năng Phase 9 "không có gì nổi b�
 - Giọng nói: **nghiên cứu mô hình open-source / Việt Nam trước, không gọi API ngay**.
 - Vẫn áp **nền tảng AI FDE**.
 - **Đóng code khi bạn nói** (dự kiến 25–30/12, không còn 20/12); lúc đóng hệ thống **đã chạy trên AWS**.
-- Bảng lịch §4 dưới đây là bản cũ. Lịch hiện hành: spec Phase 9 §11.4.
+- Bảng lịch §4 dưới đây là bản cũ. Lịch hiện hành: spec Phase 9 §11.4 (Phase 9) + spec Phase 10 §11 (Phase 10).
+
+**Tiến độ (10:28 05/11/2026):**
+- **Phase 10 — ảnh: spec bản 2 bạn duyệt** (`docs/superpowers/specs/2026-11-05-phase-10-design.md` `bf67b90fb6fc`). Gồm:
+  - mốc rẻ nhất = chọn tên từ danh sách có ảnh;
+  - thử trước `gpt-6-luna` ⇒ ≤ 3 tên ứng viên ⇒ người dùng bấm xác nhận;
+  - dự phòng SigLIP 2 chạy máy;
+  - bộ đo 25 ảnh Huế + 5 ngoài + 3 ảnh chữ ra lệnh + 10 kín;
+  - chặn gửi chéo trang, bỏ EXIF;
+  - trần 0,15 USD.
+
+  E bắt đầu code. Giọng nói: nghiên cứu dở (open-source / VN), mở lại sau.
+- **Lưu trú (Phase 11, backlog):** kho có 1 mục "nên ở khu nào" (3 nhóm khu + lý do theo kiểu đi). Link chính = Google Maps (tài liệu chính thức, không khoá). Booking: bạn quyết. Agoda: không dùng (`data/phase_11_nghien_cuu/luu_tru/e5_khu_o_va_link.md`).
+- **Backlog #13 (ưu tiên đoạn cùng lĩnh vực):** bước kiểm 0 USD chỉ cứu 2 / 4 câu < ngưỡng 3 / 4 ⇒ không mở thí nghiệm. #14 đoạn gần trùng: quá ít ⇒ không mở.
 
 Nhãn độ tin cậy:
 - **[đã kiểm]**: A tự mở trang gốc ngày 05/11/2026 và thấy đúng.

@@ -34,6 +34,30 @@
 
 ## C179 — đếm #13 / #14 (A giao; bắt đầu 09:47 05/11/2026) — dừng nếu B báo khoá B4b
 - **File sẽ ghi:** `data/phase_9/backlog/c179_dem_13_14.md` + `data/phase_9/backlog/tools/`; file này. 0 USD.
+- **C180 (kín B4b) — lệnh sẵn (09:53 05/11/2026):** worktree `/tmp/c_b4k` detach `990825e`; `/tmp/c180/chay.sh` `cbc9f62b40d2` + `buoc0.py` `aa801ccbf715` (kiểm head + settings `37b9ab1beb37` + `chay_b4.py` `4429bff746b3` + note `2d94456fffe8`; 10 hỏi / 3 ghép lịch trình / Q4 20; chặn 0,02 USD); kết quả `data/phase_9/b4/kin_c_b4b/`. A cho chạy; **đã đưa User `! bash /tmp/c180/chay.sh`, chưa chạy**. Sau khi chạy: chấm Q6 (a) 2 judge (`kin_c_b4b/q6_judge/`) ⇒ `q6_an_toan.py analyze` ⇒ báo A + B số đếm.
+- **C179 XONG (09:53 05/11/2026):** `data/phase_9/backlog/c179_dem_13_14.md` `4fcf0e6dbc54` — #13 4 / 18 (chạm ngưỡng theo chữ, chưa chứng minh "vì"; bước 0 USD đề xuất), #14 28 / 176 câu, 51 cặp (2,9 % chỗ). 0 USD.
+- **C180 XONG (09:59 05/11/2026):** kín B4b đạt hết (Q2′ 3/3 · Q2c 0/3 · Q3 0/3 · Q4 0/20, 20/20 · Q6 (a) 0 trái / 0 không có ggd); 0,018360 USD. `/tmp/c174`, `/tmp/c180` đã gỡ; **giữ `/tmp/c_b4k` tới khi B4b merge** (A).
+- **C179 bước 0 XONG (09:59 05/11/2026):** #13 lọc lĩnh vực giúp 2 / 4 < 3 / 4 ⇒ backlog, không mở. `c179_dem_13_14.md` `df76281f0334`.
+
+## C181 — plan B5c tính tiền bằng code (A giao; bắt đầu 09:59 05/11/2026)
+- **File sẽ ghi:** `docs/superpowers/plans/2026-11-05-phase-9-b5c-plan.md` (mới); nháp bộ đo private `data/phase_9/bo_do_b5c/` nếu cần; file này. 0 USD. Reviewer: B sau B4b.
+- **Plan B5 bản 5 (10:07 05/11/2026, A ưu tiên):** sha `dff61a2db4e6` — sửa review E vòng 3 `5a55ff898a85` (M-1 ⇒ D14 dòng tiến độ bước thật; m-1…m-5; D2b A quyết giữ). Đã nhắn E (`hue-rag-7a`) kiểm phần sửa.
+- **C181 XONG (10:07 05/11/2026):** plan B5c bản 1 `d82e57a47174` (reviewer B sau B4b; D5 chờ A / User chọn (a) / (b)). overlap_scan: 0 trùng (lỡ trích nguyên văn kho 3 chỗ ⇒ đã viết lại — bẫy: plan tracked, trích chữ kho để giải thích luật ⇒ luôn chạy `.githooks/overlap_scan.py <file>` trước khi báo sha).
+
+## C182 plan B5 bản 6 + C183 review B4b cờ tắt (A giao; bắt đầu 10:08 05/11/2026)
+- **File sẽ ghi:** `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` (bản 6), `docs/superpowers/plans/2026-11-05-phase-9-b5c-plan.md` (D5 A quyết); `report_agent/2026-11-02_phase_9_code/b157_b4b_review.md` (mới); worktree đọc `/tmp/c_b4k` (`990825e`, đã có); file này. 0 USD.
+- C182 bản 6 `46c1ec1a8242` gửi E ⇒ E vòng 5 changes_requested 0/1/2 (M-2 "Trả lời luôn" ⇒ vòng hỏi không dứt). **C183 dở (10:14 05/11/2026):** Q1 C chạy lại trên `990825e` = 228/228 giống byte `main_cafb1b6` (`/tmp/c183_q1_990825e.jsonl`); test 83 passed (b4, assistant*, b2, b3, chat_stream, emergency, feedback); diff đọc hết — cờ tắt: lời dặn / công cụ / đếm token như main; giao diện không thẻ; **m-1 dự kiến:** `truong` nhận cả khi cờ tắt (main 422). Còn: ca dò riêng + viết review. Đang làm bản 7 trước (A).
+- **Plan B5 bản 7 `b572443dc9cd` — A DUYỆT** (E vòng 6 ready; M-2 "Trả lời luôn" ⇒ 1 ngày tạm, D16 ngân sách mô tả công cụ).
+- **C183 XONG (10:24 05/11/2026):** review B4b cờ tắt `report_agent/2026-11-02_phase_9_code/b157_b4b_review.md` `0825ff902b1a` — **ready** 0B/0M/2m (m-1 `truong` không gắn cờ; m-2 phần công cụ `hoi_lai` thành code chết ⇒ B5 gỡ). Fresh Q1 228/228, 83 test, merge-tree sạch. Bẫy: heredoc chưa quote chứa backtick ⇒ file rỗng (sha `e3b0c44298fc`) ⇒ viết file Markdown dài bằng Write tool, không heredoc không quote.
+- **C181b XONG (10:24 05/11/2026):** plan B5c bản 2 `549c2fe19a0d` (M-1 code tự hỏi như B5 D15; M-2 D2b chỉ vé lẻ Quần thể; m-1…m-6) — chờ B kiểm + A chọn tiền (a)/(b). Bản 1 sao private `data/phase_9/tinh_tien/b5c_plan_ban1_65e43944e014.md`.
+- Plan B5c `89b67bfb24a5` (A quyết tiền (a) 0,14 / 0,13 ghi §6; báo B). B4b merge `b019aab`; `/tmp/c_b4k` đã gỡ.
+
+## C184 — bộ đo B5c (A giao; bắt đầu 10:25 05/11/2026)
+- **File sẽ ghi (private):** `data/phase_9/bo_do_b5c/` — `README.md` (luật ghi trước), `cau_da_thay.jsonl` (14), `cau_sealed.jsonl` (6, B không mở), `chuoi.jsonl` (g2 tham chiếu + ≥ 3 mới + ≥ 2 "Trả lời luôn"), `dap_an_*.json` (số C tính tay từ kho), `mau_cho_user.md`, `tools/kiem_bo.py`, `tools/tinh_tay.py`; file này. 0 USD. Đọc kho chỉ `scripts/grep_kb.sh`.
+- **C184 TẠM DỪNG (10:28 05/11/2026, A ưu tiên C185):** đã có `cau_da_thay.jsonl` (14: T1–T8 · N1–N4 · H1–H2), `cau_sealed.jsonl` (6), `chuoi.jsonl` (7: g2 + c1–c3 có số + c4–c5 Trả lời luôn + c6 theo dõi), `tools/tinh_tay.py` + `dap_an_da_thay.json` (8) + `dap_an_sealed.json` (4) — tổng kho = tổng tay 9/9, 12 dòng vé. **Còn:** README (luật ghi trước), `tools/kiem_bo.py`, `mau_cho_user.md`, sha. Plan B5c `bab730a57798` B ready (vòng 2b).
+
+## C185 — bộ đo B5 (A giao, ưu tiên; bắt đầu 10:28 05/11/2026)
+- **File sẽ ghi (private):** `data/phase_9/bo_do_b5/` — README, `cau_da_thay.jsonl` (13), `cau_sealed.jsonl` (5, B không mở), `chuoi.jsonl`, `mau_cho_user.md`, `tools/kiem_bo.py`; file này. 0 USD.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 21:18 04/11/2026 `date` — kết phiên 04/11)
 

@@ -14,16 +14,29 @@ Terminal: `hue-rag-7a` (mở 09:47 05/11/2026) · Agent: Claude Opus 5.5 (User m
 ## Việc đầu tiên: E1 — xem mục E1 trong `CURRENT_HANDOFF.md` ("PHIÊN 05/11 — VIỆC ĐANG GIAO")
 
 ## Đang làm
-- E1 nghiên cứu STT / TTS tiếng Việt (A "làm đi" 09:47 05/11/2026; 0 USD; Codex + WebFetch)
+- **E7 sửa `scripts/tra_web_codex.sh`** (A giao 10:25 05/11/2026): cách đếm trang mở + câu cấm tự dựng URL; kiểm 0 USD trên thư mục cũ + 1 probe Codex
+- E1 giọng nói: **dở — tạm dừng 09:51 05/11/2026 theo User**; phần đã kiểm `data/phase_10_nghien_cuu/giong_noi/nghien_cuu_mo_hinh.md`; Codex `e1-stt`, `e1-tts` để chạy hết, chưa đọc
 
 ## Đang khai báo sửa
-- `data/phase_10_nghien_cuu/giong_noi/` (mới, private) · `data/tra_cuu_cli/2026-11-05_e1-*` (đầu ra script) · file này
+- **`scripts/tra_web_codex.sh`** (E7) · thư mục probe `data/tra_cuu_cli/<ngày>_e7-probe-*` · không (các file E đã viết: `data/phase_10_nghien_cuu/`, `data/phase_11_nghien_cuu/luu_tru/`, `…b5-plan_review.md` vòng 3–6, `docs/superpowers/specs/2026-11-05-phase-10-design.md` nháp — chưa commit, A commit) · `data/phase_10_nghien_cuu/giong_noi/` (mới, private) · `data/phase_10_nghien_cuu/anh/` · `data/tra_cuu_cli/2026-11-05_e1-*`, `…_e2-anh` (đầu ra script) · file này
 
 ## Vừa xong
-- —
+- **E6 XONG** — `data/tra_cuu_cli/e6_ra_soat_script.md` sha `f0df99e5ecd8`: `url_da_mo` thiếu vì lô mở trang có `action.type: other` (results `ref_id` *view*); đếm đúng 8–41 trang / lượt; Codex tự mở URL tự dựng do hướng dẫn "URL đã mở" + yêu cầu "URL mẫu" ⇒ đề xuất câu cấm + cách đếm mới (A sửa script)
+- Spec Phase 10 bản 2 `bf67b90fb6fc` ⇒ **B vòng 2 ready** (review `6aeebc5e0914`)
+- **E5 XONG** — `data/phase_11_nghien_cuu/luu_tru/e5_khu_o_va_link.md` sha `9c5411f6c032` (kho: 1 mục "nên ở khu nào", 3 nhóm khu; link chính Google Maps URLs; Booking User quyết; Agoda không)
+- **Plan B5 vòng 5** bản 6 `46c1ec1a8242` ⇒ changes_requested 0/1/2 (M-2 "Trả lời luôn" hỏi không dứt) · **vòng 6** bản 7 `b572443dc9cd` ⇒ **ready** — review `…b5-plan_review.md` sha `d576aa9c9ef8`
+- **E3** review plan B5 bản 4 ⇒ changes_requested 0/1/5; **vòng 4a** bản 5 `dff61a2db4e6` (tạm, bị thay vì User đổi hướng B4b) — `…b5-plan_review.md`
+- **E4** nháp spec Phase 10 sha `d640b8696edd` ⇒ B review changes_requested 0/2/6 ⇒ **E4b bản 2 `bf67b90fb6fc`** (A10 chặn gửi chéo trang: thân `image/*` + Sec-Fetch-Site/Origin 403 + byte trước khi đọc; Q-k kín; luật A/A; Q-d ca khó; bảng FDE có file:dòng; lịch thay cột Phase 10 spec 9 §11.4) — chờ B kiểm
+- **E2 XONG 09:57 05/11/2026** — `data/phase_10_nghien_cuu/anh/nghien_cuu_anh.md` sha `0dcc2c717498` (0 USD; Codex e2-anh + 12 WebFetch); tóm đã nhắn A. Đề xuất P1 luna enum + xác nhận, P2 SigLIP 2 chạy máy; ngưỡng ghi trước mục 5.1; lượt đo P1 ước 0,04–0,07 USD.
 
 ## Đã học / bẫy gặp
-- —
+- Gõ tay giờ "10:21" vào spec (hook bắt) ⇒ luôn `T=$(date …)` trước, kể cả khi sửa bằng Edit.
+- `main` đổi giữa lúc viết (B4b merge) ⇒ `file:dòng` lệch ⇒ grep lại số dòng ngay trước khi báo sha.
+- Tin A / C có thể tới **sau** khi đã ghi review (bản 5 bị thay giữa chừng) ⇒ ghi kết luận "tạm, bị thay" thay vì xoá; trước khi ghi kết luận vòng, kiểm lại sha file plan.
+- Codex tự "thử mở" URL trang đặt phòng dù yêu cầu không bảo ⇒ yêu cầu Codex ghi rõ "không mở URL tìm kiếm / trang của hãng".
+- `tra_web_codex.sh`: `url_da_mo.txt` **đếm thiếu** (bỏ lô mở trang `other`) — E6 chứng minh; tới khi A sửa script, đếm trang mở bằng jq trên `results[].ref_id` chứa `view`.
+- Bảng token ảnh của OpenAI không có dòng `gpt-6-luna` ⇒ số token ảnh là giả định (theo `gpt-5.6-luna`), cần 1 lần gọi thật để kiểm.
 
 ## Việc dở / câu hỏi cho A
+- E1 giọng nói dở (xem "Đang làm").
 - —

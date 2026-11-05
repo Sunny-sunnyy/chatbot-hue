@@ -170,7 +170,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    câu có đáp án, kèm đổi gì, tốn gì, khi nào sai). Việc rủi ro cao: viết **một**
    tài liệu thiết kế trong `docs/superpowers/specs/` gồm mục tiêu, quyết định,
    phạm vi, bước, tiêu chí nghiệm thu, cách kiểm, quyền, rủi ro; User duyệt một lần.
-   Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** file kế hoạch / spec
+   Spec / plan có agent, công cụ, dữ liệu hay đường ra mới phải có **bảng rà khung AI FDE** (`Session_Prompt.md` §7; User 05/11). Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** file kế hoạch / spec
    chưa commit thì khi duyệt ghi kèm `sha256sum` (12 ký tự) vào `CURRENT_HANDOFF.md`; sửa sau khi duyệt là
    bản mới, cần duyệt lại phần đổi. A tính sha **từ file** (`sha256sum <file> | cut -c1-12`) ngay lúc ghi duyệt, không
    chép sha từ tin nhắn; người viết không sửa plan sau khi báo sha — cần sửa thì báo sha mới (26/10: duyệt nhầm bản R2).

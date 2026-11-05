@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 B4 — hỏi lại (`hoi_lai`) — **ÂM theo plan §7 (Q6k (b) kín 1 / 2; Q7 câu chi phí gõ chữ bị hỏi lại 4 / 4) — cờ tắt; nhánh `p9-b4` `406393c` (rebase lên `main` `cafb1b6`)**
+# Implementation Report: Phase 9 B4 — hỏi lại (`hoi_lai`) — **ÂM theo plan §7 (Q6k (b) kín 1 / 2; Q7 câu chi phí gõ chữ bị hỏi lại 4 / 4); B4b (chỉ lịch trình, §2g) cũng ÂM (Q5 thiếu cảnh báo, thủ tục S-AT) — cờ tắt; nhánh `p9-b4` `990825e`**
 
 Người làm: B (Claude Opus 5.5, `hue-rag-32` → `hue-rag-2d` 04/11) · việc **B144 → B153** (A giao) · bản này 20:46 04/11/2026 (`date`; §2c mới) — trước 21:10 03/11/2026. **Plan nay bản 5 `acfaf8ca0df5`** (A duyệt 20:14 04/11/2026; trần B4 0,18 / dừng 0,17). Plan: `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md` bản 2 **`42fa62d2425f`** (A duyệt; Lệch Q6 chấp nhận; Q-a giữ + đo hỏi thừa; Q-b không trả lời tạm).
 Nhánh **`p9-b4`** từ `main` `849005c`, worktree `/tmp/b_b4`. Commit (sau rebase lên `main` `ac46c96` — có B143 `e3cdb96`, 21:13 03/11/2026): **`c4f2b76`** (backend + test), **`86c311b`** (giao diện); trước rebase `18da59b`, `10d57c1`. Đã push (`--force-with-lease`, nhánh riêng chưa review). **Chưa merge, cờ `hoi_lai` tắt.** B4 không chạm `ROUTER_INSTRUCTIONS`.
@@ -123,6 +123,29 @@ Chạy trên khoá 3 `7d72703` (worktree riêng của C; `HOI_LAI_NOTE` `42022ba
 
 **Tiền B156: ≈ 0,0509 USD** (Q5 0,0320 · sinh lại S20 0,0027 · Q7 / Q8 API 0,0086 + lặp g2 0,0023 · Playwright 0,0053 gồm lần selector sai 0,0026) ⇒ **B4 ≈ 0,205 / 0,24** (trước ≈ 0,134 + kín C 0,0198). Judge: quota Claude.
 
+## 2g. B157 = B4b "Tách — giữ lịch trình" (plan bản 8 `69afbb2732cf`, A duyệt) — **ÂM theo luật Q5 A ghi trước** — 10:04 05/11/2026
+
+User chọn tách sau khi B4 âm ở câu chi phí: `hoi_lai` chỉ cho câu lịch trình; câu chi phí giữ hành vi `main`. Trần B4b riêng: 0,06 ⇒ A nới 0,10 / dừng 0,09 (bản 7) ⇒ 0,12 / dừng 0,11 (trước lượt sinh lại S-AT).
+**Code — khoá `990825e`** (`p9-b4`, đã push; `HOI_LAI_NOTE` bản 6 `2d94456fffe8`, `settings.yaml` `37b9ab1beb37` không đổi, harness `chay_b4.py` `4429bff746b3`): `Loai` chỉ `lich_trinh`, bỏ `so_nguoi` / `muc_chi` (gửi lên ⇒ 422); bỏ Cách A — `assistant.py` / `generator_openai_full_corpus.py` lấy lại bản khoá 1 (`60339b4`, trước nhánh `cach_a`); ghi chú mới: chỉ lịch trình thiếu số ngày, câu giá / chi phí / dự trù tiền ⇒ trả lời bình thường. Test viết lại + test W36 (4c) cho từng loại lượt (đầu / có lịch sử / ghép / cờ tắt × thường / stream): 22 / 22; nhóm file chạm 91 passed, 1 error (test cần khoá). Harness sửa 4 điểm (bỏ `_cach_a`; ghi chú `b4b` mặc định; `--chon` chỉ câu lịch trình; `dem` đếm câu chi phí bị hỏi), chạy thử 0 USD đạt (W36 4b).
+
+| Mã | Ngưỡng (ghi trước) | Kết quả | |
+|---|---|---|---|
+| Q1 | cờ tắt 228 / 228 giống byte `main` | 228 / 228 (`b4b_990825e_co_tat.jsonl` ↔ `main_cafb1b6.jsonl`) | đạt |
+| Q2′ | lịch trình thiếu hỏi đúng ≥ 4 / 5 đã thấy, ≥ 2 / 3 kín | 4 / 5 (LT4 trượt như mọi khoá) · kín 3 / 3 (C) | đạt |
+| Q2c | mọi câu chi phí 0 bị hỏi lại | 0 / 9 đã thấy · kín 0 / 3 (C) | đạt |
+| Q3 | câu đủ ≤ 1 / 10 | 0 / 7 + kín 0 / 3; gần giống 0 / 3 + kín 0 / 2 | đạt |
+| Q4 | 0 / 60 bị hỏi lại | 0 / 40 đã thấy · 0 / 20 kín (C); tuyến 60 / 60 | đạt |
+| Q5 Golden 30 | F1–F4 sạch | sạch; hỏi lại 0 / 30; Completeness 4,80 ⇒ 4,70, Accuracy 4,933 ⇒ 4,967 (cùng lượt mù) | đạt |
+| **Q5 an toàn 32** | 4 số; sai điều kiện mới ≤ 1, thiếu cảnh báo mới ≤ 1 | đảo 0 · sai điều kiện mới 0 / hết 1 · **thiếu cảnh báo mới 2 (S03, S09)** / hết 1 · ngoài kho bị trả lời 0 · hỏi lại 0 / 32 (2 judge, cổng đối chứng đạt cả hai) | **vượt ⇒ thủ tục S-AT** |
+| **S-AT (A ghi luật trước khi chạy)** | mỗi câu 3 lần B4b + 3 lần mốc cờ tắt; đạt khi B4b thiếu cảnh báo ≤ mốc ở **cả hai** câu | S03 B4b **2 / 3** ↔ mốc 1 / 3 · S09 B4b **3 / 3** ↔ mốc 2 / 3 · sai điều kiện 0 / 12 (2 judge mới, cổng đối chứng đạt) | **phạm ⇒ B4b âm** |
+| Q6 (a) lịch trình | 0 "trái" + 0 "không có" giá / giờ / điều kiện | 5 ghép đã thấy: 0 · 0 · kín 3 ghép (C): 0 · 0 | đạt |
+| Q7 / Q8 / Playwright | — | **NOT RUN** — A: B4b âm, không chạy thêm vòng (đỡ ≈ 0,013 USD) | — |
+
+- **Giới hạn của kết luận âm:** mỗi bên S-AT chỉ n = 3; mốc cũng thiếu cảnh báo ở 3 / 6 lượt; chênh mỗi câu đúng 1 lượt ⇒ không đủ nói B4b **thật sự** tệ hơn `main`, cũng không chứng minh được là không. Luật đã ghi trước ⇒ báo âm.
+- **Có thể là nguyên nhân [suy luận, 0 USD, chưa chứng minh]:** cờ bật ⇒ mọi câu tuyến trợ lý (cả câu an toàn) nhận thêm `HOI_LAI_NOTE` + công cụ thứ hai ⇒ chuỗi gửi model khác `main`. S03: bên B4b tự tìm kho thêm 3 / 3 lần (mốc 0 / 3), câu trả lời ngắn hơn (118–210 ↔ 179–245 ký tự); S09 lẫn lộn; cả bộ 32 câu độ dài / số lần tìm như các lượt `main` trước ⇒ không lệch có hệ thống.
+- Chênh token max 548 (CT2, câu chi phí nay được trả lời, tìm thêm) — A: ghi giới hạn như khoá 3; kín max 619 (C).
+- **Tiền B4b ≈ 0,0884** / dừng 0,11: B 0,0700 (đã thấy 0,0135 · Q4 0,0144 · Q5 0,0293 · Q6 ghép 0,0059 · sinh lại S-AT 0,0069) + kín C 0,0184. Dữ liệu `data/phase_9/b4/b4b/`, kín `data/phase_9/b4/kin_c_b4b/` (private).
+
 **Tổng hợp B4 (khoá 3 / `406393c`):** đạt Q1, Q2 (đã thấy 8 / 10, kín 4 / 5), Q3 (0 / 7 + 0 / 3), Q4 (0 / 60, tuyến 60 / 60), Q5 (sàn F1–F4, hỏi lại 0 / 62; S-AT vế 1), Q6 (a) + (b) đã thấy, Q6k (a), Q8. **Không đạt: Q6k (b) kín 1 / 2 (sàn — §2e) và Q7 g2 (4 / 4)** ⇒ **kết quả âm theo plan §7**: cờ `hoi_lai` giữ **tắt**; hướng đi do User (qua A).
 
 ## 4b. Giới hạn đã biết
@@ -130,8 +153,9 @@ Chạy trên khoá 3 `7d72703` (worktree riêng của C; `HOI_LAI_NOTE` `42022ba
 - Phép đếm ngân sách token thiếu phần tăng theo số lần `tim_kho` thêm (chênh tới ~450–900 token ở lượt tìm nhiều) — nguồn chưa rõ; lề 512 có thể bị vượt khi ngữ cảnh sát trần (chưa gặp: ngữ cảnh thật ≪ trần).
 - Q6 (b) dựa regex + đọc; regex đã hụt một dạng (§2c).
 
-## 3. Còn lại (sau B156 — mọi lượt đo của plan bản 5 đã chạy)
+## 3. Còn lại (sau B157 — B4 âm, B4b âm; nhánh `p9-b4` dừng ở `990825e`, cờ `hoi_lai` tắt)
 
-1. **Kết quả âm** (Q6k (b) kín 1 / 2 — sàn; Q7 g2 4 / 4): theo plan §7 cờ `hoi_lai` **tắt**, không chỉnh trên kín. **User chọn hướng (qua A):** (a) giữ hồ sơ — tag `hoso/p9-b4`, không merge; (b) merge với cờ tắt (Q1 228 / 228 giống byte `main` ⇒ người dùng không thấy đổi) để B5 dùng lại thẻ hỏi lại / bảng trường; (c) mở vòng sửa mới bằng plan mới + bộ đo kín mới (kín hiện đã mở, không dùng lại để quyết).
+0. **B4b (§2g) âm** (luật S-AT Q5). Hướng A đang cân, trình User: merge code với cờ tắt (Q1: người dùng không thấy đổi); trong B5 code tự quyết hỏi lại khi `lich_trinh` thiếu `so_ngay` (tham số bắt buộc của công cụ lịch trình), **không** thêm `HOI_LAI_NOTE` vào lời dặn chung ⇒ câu không phải lịch trình giữ lời dặn đúng byte `main` (kiểm bằng Q1 mở rộng cho cờ bật).
+1. **Kết quả âm B4 (khoá 3)** (Q6k (b) kín 1 / 2 — sàn; Q7 g2 4 / 4): theo plan §7 cờ `hoi_lai` **tắt**, không chỉnh trên kín. **User chọn hướng (qua A):** (a) giữ hồ sơ — tag `hoso/p9-b4`, không merge; (b) merge với cờ tắt (Q1 228 / 228 giống byte `main` ⇒ người dùng không thấy đổi) để B5 dùng lại thẻ hỏi lại / bảng trường; (c) mở vòng sửa mới bằng plan mới + bộ đo kín mới (kín hiện đã mở, không dùng lại để quyết).
 2. Nếu sửa ở vòng sau, hai lỗi đã thấy cần nhắm: model nhân dự toán theo số người dù đã có câu dặn (lời dặn không đủ ⇒ cân nhắc code kiểm số tiền sau sinh — ý #1 của nghiên cứu 04/11); lượt có lịch sử mà lượt trước là `hoi_lai` ⇒ không đưa công cụ `hoi_lai` lần hai (Q7 g2).
 3. Nợ nhỏ: chấm S20 sinh lại (thủ tục S-AT vế 2, 0 USD) nếu A cần; "Trả lời luôn" trên giao diện (Playwright) chưa bấm; C review nhánh `406393c` nếu chọn (b).

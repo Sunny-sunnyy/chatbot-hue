@@ -115,6 +115,7 @@ report.
 
 ## 7. Đơn giản là mặc định; chất lượng trước tối ưu
 
+- **Xây trên nền tảng AI FDE** (User 2026-11-05, nhắc lại 2 lần; khung khoá AI FDE của User, đã chép thành skill): mọi Phase / spec / plan có agent, công cụ, nguồn dữ liệu hay đường ra mới ⇒ có **bảng rà theo khung** bằng skill `agent-design-review` + `agent-security-review` (mục · hiện trạng `file:dòng` · khớp / lệch · đề xuất); mọi thay đổi đo theo `run-experiment` (mốc rẻ nhất / có cần model không, tiêu chí ghi trước, đổi một thứ). Nguyên tắc hay quên: **phép tính, luật tiền, trường bắt buộc, thứ tự bắt buộc ⇒ code**, model chỉ đề xuất / diễn đạt (B4 05/11: dặn model "không cộng tổng" ⇒ âm). Reviewer kiểm bảng này như một tiêu chí.
 - **Đo theo mục tiêu sản phẩm cuối cùng** (User 2026-10-26, từ khóa học AI FDE): đánh giá dự án / sản phẩm bàn giao bằng thước **càng sát
   mục tiêu cuối cùng càng tốt** (người dùng thật hỏi gì, câu trả lời "dùng được" là gì, lỗi nào tệ nhất — `Project_Status.md` §1 "Mục tiêu
   sản phẩm"); thước đó dẫn việc chọn mô hình / biến thể. **Sau đó** mới xét tốc độ, chi phí theo **yêu cầu phi chức năng ghi bằng số**. Thước
