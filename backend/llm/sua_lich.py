@@ -43,9 +43,9 @@ CAU_KHONG_DOI = {
     "da_co_trong_lich": "{diem} đã có trong lịch.",
     "khong_hop_luat": "{diem} đặt ở chỗ đó sẽ làm lịch phạm luật xếp (cụm xa / quá dày) nên mình chưa đổi.",
     "thieu_cho": "Chưa rõ ngày / buổi để dời {diem}.",
+    "het_diem_thay": "Không còn điểm phù hợp để thay {diem} (cùng cụm, hợp sở thích, đặt được vào chỗ đó) nên mình giữ nguyên.",
 }
 TIEU_DE_SUA = "**Mình đã sửa lịch**"
-CAU_KHONG_CO_THAY = "Không còn điểm cùng cụm hợp sở thích để thay vào chỗ này — bạn bấm Bỏ, hoặc giữ nguyên lịch."
 
 
 def luu_tu_lich(khung: dict, da_noi: list[str], them: list[str], cau_goc: str) -> dict:
@@ -170,9 +170,8 @@ def _lua_chon_thay(bang: Bang, khung: dict, them: list[str], loai: list[str], cu
 
 
 def the_chon(bang: Bang, cu: str, lua_chon: list[str], cau_goc: str) -> dict:
-    """Dữ liệu thẻ chọn (D6) — nút chỉ chứa id code đưa; thêm nút "Bỏ điểm này, không thay"."""
-    ghi = None if lua_chon else CAU_KHONG_CO_THAY  # C (05/11): 0 điểm thay hợp luật ⇒ thẻ chỉ có nút Bỏ + câu cố định
-    return {"loai": "sua_chon", "cau_goc": cau_goc, "cu": cu, "ten_cu": _ten(bang, cu), "ghi": ghi,
+    """Dữ liệu thẻ chọn (D6) — nút chỉ chứa id code đưa (≥ 1 điểm thay: hết điểm thì không có thẻ, B166); thêm nút "Bỏ điểm này, không thay"."""
+    return {"loai": "sua_chon", "cau_goc": cau_goc, "cu": cu, "ten_cu": _ten(bang, cu),
             "lua_chon": [{"gia_tri": i, "nhan": _ten(bang, i)} for i in lua_chon] + [{"gia_tri": "bo", "nhan": "Bỏ điểm này, không thay"}]}
 
 
@@ -292,7 +291,11 @@ def ap_hanh_dong(bang: Bang, luu: dict, hanh_dong: list[HanhDong], sua_chon: dic
             if h.ten_moi is None:  # D6: không nói thay bằng gì ⇒ thẻ chọn (khung không đổi lượt này)
                 if sua_chon is not None:
                     continue
-                kq["the"] = {"cu": i, "lua_chon": _lua_chon_thay(bang, khung, them, loai, i)}
+                lua_chon = _lua_chon_thay(bang, khung, them, loai, i)
+                if not lua_chon:  # B166 (bộ kín mô phỏng 0 USD của C, K-S2): thẻ chỉ có nút Bỏ là thẻ rỗng ⇒ không thẻ, ghi "Không đổi được"
+                    khong(_ten(bang, i), "het_diem_thay")
+                    continue
+                kq["the"] = {"cu": i, "lua_chon": lua_chon}
                 return {**kq, "khung": copy.deepcopy(luu["khung"]), "luu": {**luu, "the_chon": kq["the"]}}
             j = id_cua(h.ten_moi)
             if j is None:

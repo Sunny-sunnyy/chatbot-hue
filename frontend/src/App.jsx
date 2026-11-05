@@ -474,7 +474,6 @@ function ChonCard({ clarify, onAsk }) {
   return (
     <div className="clarify bubble">
       <p className="mb-2">Bạn muốn thay {clarify.ten_cu} bằng điểm nào?</p>
-      {clarify.ghi && <p className="mb-2 text-sm">{clarify.ghi}</p>}
       <fieldset className="mb-2">
         <legend className="sr-only">Điểm thay</legend>
         <div className="flex flex-wrap gap-2 pt-1">

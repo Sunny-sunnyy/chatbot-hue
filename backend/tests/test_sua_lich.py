@@ -72,8 +72,21 @@ def test_replace_named_and_unnamed_and_empty_card():
         assert bam["the"] is None and vt(bam["khung"])[lua[0]] == vt(s["khung"])[cu] and cu not in vt(bam["khung"])
     bo = sl.ap_hanh_dong(BANG, kq["luu"], [hd(loai="thay_diem", ten=BANG.theo_id[cu]["ten"])], {"cu": cu, "moi": "bo"})
     assert bo["the"] is None and cu not in vt(bo["khung"])  # lượt bấm nút không bao giờ đưa thẻ lần hai
-    rong = sl.the_chon(BANG, cu, [], CAU)  # C 05/11: 0 điểm thay hợp luật ⇒ chỉ nút Bỏ + câu cố định
-    assert [c["gia_tri"] for c in rong["lua_chon"]] == ["bo"] and rong["ghi"] == sl.CAU_KHONG_CO_THAY
+
+
+def test_no_valid_replacement_gives_not_changed_line_not_empty_card():
+    """B166 (K-S2): hết điểm thay hợp lệ ⇒ không thẻ, khung giữ nguyên, khối "Không đổi được" có câu cố định của mã `het_diem_thay`."""
+    s = luu(so_thich="am_thuc")
+    vtri = vt(s["khung"])
+    het = next((i for i in vtri if not sl._lua_chon_thay(BANG, s["khung"], s["them"], s["loai"], i)), None)
+    if het is None:  # bảng hôm nay còn điểm thay cho mọi chỗ ⇒ dồn mọi điểm cùng sở thích vào `loai` để chắc chắn hết
+        het = next(iter(vtri))
+        s = {**s, "loai": [d["id"] for d in BANG.diem if d["id"] not in vtri]}
+    assert sl._lua_chon_thay(BANG, s["khung"], s["them"], s["loai"], het) == []
+    kq = sl.ap_hanh_dong(BANG, s, [hd(loai="thay_diem", ten=BANG.theo_id[het]["ten"])])
+    assert kq["the"] is None and kq["luu"]["the_chon"] is None and vt(kq["khung"]) == vtri
+    assert kq["khong_doi"] == [{"diem": BANG.theo_id[het]["ten"], "ma_luat": "het_diem_thay"}]
+    assert sl.CAU_KHONG_DOI["het_diem_thay"].format(diem=BANG.theo_id[het]["ten"]) in sl.khoi_sua(BANG, kq)
 
 
 def test_move_swaps_two_points_and_rejects_bad_slot():
