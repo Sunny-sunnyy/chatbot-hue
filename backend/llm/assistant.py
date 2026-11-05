@@ -450,7 +450,7 @@ def tinh_tien_for_turn(query: str, retrieval_service, context_builder, trace: An
 async def _lay_nguon_tien(bang, kq: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
                           instructions: str) -> tuple[int | None, dict[str, int]]:
     """D10 (như B5 D6): đoạn kho chứa bảng — dự toán: `search(<tiêu đề mục>)`, đoạn đầu top-10 đúng file + đúng mục + có dòng tổng; vé: mỗi dòng
-    `search("Giá vé <tên>")`, đoạn đầu đúng file + mục vé lẻ + chứa tên dòng (kho chia bảng vé một dòng / đoạn). Đã có trong sổ ⇒ dùng lại số."""
+    `search("Giá vé lẻ <tên> người lớn trẻ em")`, đoạn đầu đúng file + mục vé lẻ + chứa tên dòng (kho chia bảng vé một dòng / đoạn). Đã có trong sổ ⇒ dùng lại số."""
     try:
         da_co = {doc_id: i + 1 for i, doc_id in enumerate(trace.seen_ids)}
         cho: dict[str, str] = {}  # chunk_id mới ⇒ khoá ("du_toan" / tên dòng vé)
@@ -467,7 +467,8 @@ async def _lay_nguon_tien(bang, kq: dict, query: str, retrieval_service, context
             tieu_de = kq["du_toan"]["tieu_de"]
             can.append(("du_toan", tieu_de, bang.nguon_du_toan, lambda h, t=tieu_de: h == t, "Tổng tại Huế"))
         for h in (kq["ve"] or {}).get("hang", []):
-            can.append((h["ten"], f"Giá vé {h['ten']}", bang.nguon_ve, tt.la_muc_ve, h["ten"]))
+            # câu tìm chọn ở bước dò 0 USD (B162): mẫu này lấy được đoạn đúng dòng của cả 12 / 12 dòng vé trong top-10 (mẫu "Giá vé <tên>": 10 / 12)
+            can.append((h["ten"], f"Giá vé lẻ {h['ten']} người lớn trẻ em", bang.nguon_ve, tt.la_muc_ve, h["ten"]))
         for khoa, cau, source, muc, chua in can:
             doc = await dau_tien(cau, source, muc, chua)
             if doc is None:
