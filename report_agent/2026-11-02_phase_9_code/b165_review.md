@@ -111,3 +111,25 @@ Phạm vi: diff `9140152..77d51b6` — 4 file (`tra_web.py`, `app.py`, `markdown
 **Giới hạn còn lại (không chặn):** dò thiên tai / thời gian thực bằng từ khoá không bao giờ đủ; chữ đầu mục web p50 ≈ 13 s (Q5); điều khoản Serper chưa rõ (User chấp nhận P5); tên trong cùng câu ra Serper (theo dõi).
 
 **Kết luận:** ready — A merge **cờ `tra_web` tắt** được; **bật cờ là quyết định của User** (chất lượng Q2 / Q3 / kín đạt; đánh đổi: độ trễ ~13 s cho câu kho từ chối, 0,0018 USD / câu đường web, điều khoản Serper).
+
+## Kiểm bật cờ (C) — C206, 21:18 05/11/2026 (`date`)
+
+Kết luận: **ready** — 0 blocker · 0 major · 1 minor. Người kiểm: C (`hue-rag-3c`); A làm, C kiểm (review chéo). 0 USD.
+- **Diff `b7c024e`:** phần code đúng **1 dòng** — `backend/config/settings.yaml` `tra_web: false ⇒ true`; 3 file còn lại là báo cáo cho User (SINH, LUONG, README).
+- **Khớp khoá B6:**
+  - `TU_WEB_LUAT` trên `main` = **`e5f516aa383e`**;
+  - `backend/llm/tra_web.py` `main` = bản sau sửa E13 `77d51b6` (sha256 `f6f8704e2dd2` cả hai);
+  - `full_corpus_prompt.py`, `assistant.py`, `generator_openai_full_corpus.py`, `api/routes/chat.py`: diff `77d51b6..HEAD` rỗng;
+  - `load_settings()`: `tra_web` True, kèm `router` + `tim_them` True, timeout 5 s.
+- **Test trên `main`** (không khoá OpenAI / Serper): `tests/test_b6_tra_web.py` + `tests/test_assistant_boundary.py` — **80 passed**.
+- **Log `chat_metrics` 3 câu cổng** (`backend/logs/application.log`, 21:13:53 / 21:14:02 / 21:14:05) — khớp số A ghi:
+  - (1) `co_muc`, 5 kết quả, 1 mã, `web_kiem` [], 18,2 s, 0,00184 USD;
+  - (2) `thien_tai`, 5 kết quả, 0 mã, không mục web (câu cố định), 9,1 s;
+  - (3) không tra web, 3,1 s.
+  - Mọi trường thuộc `METRIC_FIELDS` / `STREAM_METRIC_FIELDS`, không trường lạ, không chuỗi > 40 ký tự (không chữ câu hỏi).
+  - 16 dòng log 21:10–21:19: **0** dấu hiệu khoá (`x-api-key`, `api_key`, `bearer`, `sk-…`).
+- **m-1 (minor, theo dõi):** câu thiên tai vẫn **gọi Serper** (5 kết quả, 0,00157 USD) rồi mới trả câu cố định.
+  - Đúng thiết kế `cedac73`: câu cố định kèm link sổ, nên cần kết quả.
+  - Nhưng tốn ~0,001 USD / câu cho phần không dùng chữ web. Nếu sau này chỉ cần link cố định (NCHMF / chính quyền) ⇒ có thể bỏ lần gọi. Không chặn.
+- Ghi chú: 2 dòng `chat_metrics` lúc 21:17:29 (72–92 ms) không phải câu cổng — nhiều khả năng do pytest ghi cùng file log (bẫy `Project_Status` §8).
+

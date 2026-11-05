@@ -18,6 +18,7 @@
 - (20:52 05/11/2026) User `!` `chay_kin_c203.sh` xong: **B6 kín** 22 lượt 0 lỗi, Q2 code 0 sai, **Q3 7/7** (≥ 5/7), Q5 co_muc 21 / chua_xac_minh 1, web_ms p50 13,4 s, 0,040633 USD · **Sửa lịch kín 5/5** sau sửa nhãn K-S2 (`daf762bcbbe5`), kiem_bo OK. Server 8857 đã tắt. Đang chờ 2 judge Q2 B6 (`b6/kin_c/judge/`).
 - (21:06 05/11/2026) C203 B6 kín: Q2 judge 0/7 ⇒ **ĐẠT** (report b165 §10). C202 ghi đệm: **âm** (explicit đắt hơn 21 % vì mất đọc đệm ở 45 % lượt nhiều lần gọi) — `report_agent/2026-11-02_phase_9_code/c202_ghi_dem.md`, 0,003097 USD. C204 bảng v5 `c7d294fcacd5` + phiếu `diem_cho_user_v5.md` + toạ độ v5 (kiem_v5 OK) ⇒ chờ User tick. **Tiền C phiên tối:** 0,012834 (C192) + 0,040633 (C203) + 0,003097 (C202) = **0,056564 USD**. Worktree gỡ được: `/tmp/c198`, `/tmp/c202`, `/tmp/c_b6` (sau review B6), `/tmp/c_sualich` (sau đo sửa lịch).
 - (21:11 05/11/2026) C205 bộ 40 câu giọng nói xong: `data/phase_10/giong_noi/bo_40_cau/` (`cau.jsonl` `a24d445bfe61`, kiem_bo OK, phiếu thu cho User) ⇒ chờ User duyệt câu + thu vào `data/phase_10/giong_noi/thu/`.
+- (21:18 05/11/2026) C206 kiểm A bật `tra_web` (`b7c024e`): **ready** 0/0/1 — mục "Kiểm bật cờ (C)" trong `b165_review.md`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **C192 sửa kho giờ mở cửa** (plan `65e7e2b2b68c`, A duyệt): chưa xong — xoá collection bị auto mode chặn ⇒ cần **User `!`**. Kho đã khôi phục, chỉ mục nguyên 8.424 point. Lệnh đã chép vào **`data/sua_kho_2026-11-05_gio/tools/chay.sh`** (`eb101131f146`, không phụ thuộc `/tmp`) ⇒ `! bash data/sua_kho_2026-11-05_gio/tools/chay.sh` (B / E tắt server trước).
