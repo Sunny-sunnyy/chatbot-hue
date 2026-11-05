@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Vector nghĩa và từ khóa — embedding + BM25 (Phase 3, thử nghiệm Phase 8)
 
-**Cập nhật lần cuối: 17:10 31/10/2026 — bản 5: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 20:06 05/11/2026 — cách không đổi; chỉ mục dựng lại trên **8.435 đoạn** (từ điển vẫn 5.631 từ).** Trước: **17:10 31/10/2026 — bản 5: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
 Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 5) · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -8,7 +8,7 @@ Các bản trước: xem `git log` file này. Người viết: agent con của A
 - **Khâu này làm gì:** biến mỗi đoạn tri thức thành hai dạng để tìm. **Vector nghĩa** (dense) tìm được câu cùng ý dù khác chữ.
   **Từ khóa** (sparse, BM25) giữ tín hiệu tên riêng như tên món, tên di tích. Đã đóng (bản toàn kho 12/09/2026, chỉnh ở Phase 7A2).
 - **Đang chạy cách nào:** model `e5-small` (chạy trên máy, CPU, 384 số mỗi vector) cho cả đoạn và câu hỏi. BM25 dùng danh sách
-  **5.631 từ** lập từ **8.424 đoạn** (kho sau hai đợt sửa, build lại 30/10), tách từ theo âm tiết. Câu hỏi được chuẩn hóa Unicode
+  **5.631 từ** lập từ **8.435 đoạn** (kho sau hai đợt sửa + giờ mở cửa, build lại 05/11 tối), tách từ theo âm tiết. Câu hỏi được chuẩn hóa Unicode
   (NFC — gộp dấu tách rời thành ký tự có dấu) trước khi tìm (từ 28/10).
 - **Đo được:** chưa có số chất lượng riêng cho khâu này; chất lượng tìm đoạn chung (vector + từ khóa) ở `BAO_CAO_TIM_KIEM.md`. Kiểm kỹ
   thuật: danh sách từ khóa build lại ra giống hệt từng byte (test đạt sau build lại 30/10).
@@ -43,7 +43,7 @@ khi hỏi: câu hỏi -> chuẩn hóa NFC -> thêm "query: " -> e5-small -> vect
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Vector nghĩa bằng e5-small (chạy trên máy) | **Đã xử lý, đóng gói** | 8.424 vector trong chỉ mục đang chạy (dựng lại 30/10); `embedding/full_corpus.py:43` |
+| Vector nghĩa bằng e5-small (chạy trên máy) | **Đã xử lý, đóng gói** | 8.435 vector trong chỉ mục đang chạy (dựng lại 05/11 tối); `embedding/full_corpus.py:43` |
 | Từ khóa BM25 cho toàn kho | **Đã xử lý, đóng gói** | 5.631 từ (30/10), k1 1,5, b 0,75; build lại giống từng byte; `scoring/bm25.py:15-16` |
 | Từ ghép tiếng Việt trong BM25 | **Đã thử, chưa áp dụng** | 8.1: ghép cặp âm tiết và `pyvi` đều kém hơn (mất 1–4 câu đoạn đúng); vẫn tách theo âm tiết (`scoring/bm25.py:6`, `:9-12`) |
 | Mã số / số nguyên cụm (ví dụ số nhà, giá) | **Đã thử, chưa áp dụng** | 8.1: không khác (0 câu đổi) |
@@ -114,7 +114,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
 | Định dạng danh sách từ khóa `phase_3_sparse_state:v1` | **còn dùng**; lúc chạy từ chối định dạng khác | `backend/embedding/sparse.py:19`; `backend/retrieval/full_corpus.py:380-381` |
 | Tách từ BM25 theo chữ / số, chữ thường | **còn dùng**; 8.1 thử cách khác, không tốt hơn | `backend/scoring/bm25.py:6`, `:9-12` |
 | BM25 k1 1,5 / b 0,75, trộn thứ hạng k 60 | **còn dùng**; 8.1 thử b 0,5 / 1,0 và k 10 / 30, không tốt hơn | `backend/scoring/bm25.py:15-16`; `backend/retrieval/full_corpus.py:402` |
-| Danh sách từ khóa | **5.631 từ** trên 8.424 đoạn từ 30/10 (trước: 5.660 từ 24/10, 5.662 ngày 12/09) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`sparse.vocabulary_size`) |
+| Danh sách từ khóa | **5.631 từ** trên 8.435 đoạn từ 05/11 tối (số từ không đổi; 30/10: 8.424 đoạn; trước: 5.660 từ 24/10, 5.662 ngày 12/09) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`sparse.vocabulary_size`) |
 | Danh sách từ khóa ghi một lần, build sau phải giống hệt | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:137-146` |
 
 ## 6. Việc còn lại / cần quyết

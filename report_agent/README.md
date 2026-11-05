@@ -29,6 +29,7 @@ Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 | [2026-11-02_phase_9_code/](2026-11-02_phase_9_code/) | **Phase 9 code theo spec bản 9 `169c2dd5f86a`** (User "làm đi" 18:32 02/11): B0 nền (plan B125, review C124), bước 0 khẩn cấp (C122), bộ đo B1 (C123); các bậc B1–B7 sau | **mở** |
 | [2026-10-31_khung_fde/](2026-10-31_khung_fde/) | Áp khung làm dự án theo khoá AI FDE (khung cá nhân của User) vào cách làm: W37–W41, vòng cải tiến 12 (40 ⇒ 7 mục đang thử); sửa 4 báo cáo khâu bị cũ — **ĐÓNG** 31/10 chiều |
 | `2026-10-25_ra_soat_code/` | Rà code Phase 0–7 (chỉ đọc): code thừa, độ phức tạp, khâu dính, test, guide lệch code, hiệu năng, cơ hội phát triển. User 16:5x 25/10 dừng 8.2 để rà trước | **ĐÓNG** 16:4x 26/10 — rà + kiểm chéo + sửa cả 5 gói (1a, 1b, 3, 4, đợt 3 `421c302`); [TONG_HOP.md](2026-10-25_ra_soat_code/TONG_HOP.md) |
+| [2026-11-05_sua_kho_gio/](2026-11-05_sua_kho_gio/) | Sửa kho nhỏ: giờ mở cửa chung 11 điểm Quần thể (lấy từ file vé trong kho) + dựng lại chỉ mục 8.435 đoạn (C192) | **ĐÓNG** 05/11 tối — User giữ (1 câu Golden phạm sàn ở lượt đầu, chạy lại đạt) |
 
 Phase 7B (2026-10-24): report nằm ở `reports/phase_7b_*` và `reports/phase_8_*` (viết trước khi đổi
 cấu trúc, giữ nguyên để không gãy link).

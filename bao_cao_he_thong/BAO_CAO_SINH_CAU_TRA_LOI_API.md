@@ -249,7 +249,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:10 31/10/2026 và `session_prompt/P
 | Công cụ hỏi lại `hoi_lai` + thẻ nút | **có code, TẮT** (merge `b019aab` 05/11; B4 âm hai vòng); B5 dùng lại thẻ với cách code tự hỏi | `backend/llm/hoi_lai.py`; `settings.yaml` `hoi_lai: false` |
 | Định tuyến 4 tuyến trước khi trả lời; dòng nhắc "có thể đã thay đổi" | **còn dùng** (từ 03/11, merge `f01c032`); luật từ khoá khẩn cấp + dòng ngày hôm nay: code giữ, **tắt** | `backend/llm/assistant.py` `_pick_route`; `settings.yaml` khối `assistant:` |
 | Từ chối khởi động khi kho lệch chỉ mục | **còn dùng** | `retrieval/full_corpus.py:383–385` |
-| Chỉ mục đang dùng | **còn dùng**: `hue_full_corpus_7a2_e5_small_384`, 8.424 đoạn (dựng lại 30/10), Qdrant cổng 6335 | `Project_Status.md` §4; `settings.yaml:38` |
+| Chỉ mục đang dùng | **còn dùng**: `hue_full_corpus_7a2_e5_small_384`, 8.435 đoạn (dựng lại 05/11 tối), Qdrant cổng 6335 | `Project_Status.md` §4; `settings.yaml:38` |
 | `cost_usd` của công cụ đo | **Đã sửa 01/11** — giá đủ (ghi đệm 0,125 · đọc đệm 0,01 · thường 0,10 · ra 0,50 USD / 1M); `chat_metrics` ghi token đệm | `backend/evaluation/full_corpus_eval.py` `cost_usd`; review `b108_cost_usd_review.md` |
 | Chẩn đoán 7B "4 / 22 câu đủ bằng chứng vẫn từ chối" | **đã thay** bởi số đo theo đoạn đúng của 8.1: 0 / 22 | `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g1_implementation.md` |
 | "Representation B" (LLM viết thêm ngữ cảnh cho đoạn) | **đã gỡ** 26/10 | commit `c6e130c` |

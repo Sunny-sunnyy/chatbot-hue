@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Lưu đoạn vào Qdrant (Phase 4)
 
-**Cập nhật lần cuối: 17:13 31/10/2026 — bản 4: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
+**Cập nhật lần cuối: 20:06 05/11/2026 — đợt giờ mở cửa ⇒ **8.435 điểm**.** Trước: **17:13 31/10/2026 — bản 4: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
 Các bản trước: xem `git log` file này.
 Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
@@ -9,10 +9,10 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 - **Khâu này làm gì:** đưa các đoạn (kèm vector nghĩa và từ khoá) vào cơ sở dữ liệu vector Qdrant để chatbot tìm được, và giữ một
   "phiếu build" ghi chỉ mục được tạo từ đúng bản corpus nào. Đã đóng (Phase 4, 09/2026); đường build hiện nay có từ Phase 7A2 (24/10).
 - **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **đúng 1 collection**
-  `hue_full_corpus_7a2_e5_small_384`: **8.424 điểm** (build lại 30/10 sau sửa kho đợt 2), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
+  `hue_full_corpus_7a2_e5_small_384`: **8.435 điểm** (build lại 05/11 tối sau đợt giờ mở cửa; 30/10: 8.424), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
   trường thông tin. Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
 - **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (30/10):
-  204 file, 8.424 điểm, phiếu `51fb1ec63cbc`; A kiểm Qdrant 31/10: 8.424 điểm.
+  204 file, 8.435 điểm, phiếu `9921888f2030`; A kiểm Qdrant 20:06 05/11/2026: 8.435 điểm.
 - **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 2 lần: 28/10, 30/10; mỗi lần vài phút trên máy). Tắt Docker Desktop
   thì chatbot không tìm được (gặp 31/10).
 - **Chi phí / tốc độ:** không tốn tiền (Qdrant chạy trên máy).
@@ -21,7 +21,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-204 file Markdown -> chia đoạn -> 8.424 đoạn
+204 file Markdown -> chia đoạn -> 8.435 đoạn
   -> vector nghĩa (e5-small, 384 số) + từ khoá (BM25)
   -> mỗi đoạn một điểm: ID suy từ ID đoạn, 7 trường thông tin
   -> ghi từng lô 64 điểm vào collection mới
@@ -42,7 +42,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.424 điểm (build 30/10, phiếu `51fb1ec63cbc`); chatbot đang dùng |
+| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.435 điểm (build 05/11 tối, phiếu `9921888f2030`); chatbot đang dùng |
 | Phiếu build ghi chỉ mục khớp corpus nào | **Đã xử lý, đóng gói** | `source_state.py:95`, `:99-150` (tạo), `:159-176` (ghi, không ghi đè) |
 | Chatbot từ chối chạy khi corpus đổi mà chưa build lại | **Đã xử lý, đóng gói** | `source_state.py:179-196`; `retrieval/full_corpus.py:383-385`, `:685` |
 | Kiểm cấu trúc collection và số điểm khi khởi động | **Đã xử lý, đóng gói** | `retrieval/full_corpus.py:707-720`; `vectorstore/qdrant.py:75-80` |
@@ -56,6 +56,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
+- **05/11/2026 tối — Build lại sau đợt giờ mở cửa (11 file Quần thể):** 8.424 ⇒ **8.435 điểm** (+11 đoạn), phiếu `9921888f2030`, ~4 phút; xoá collection do bạn chạy lệnh `!` (rào quyền chặn agent); bản sao phiếu / từ điển cũ trong `data/sua_kho_2026-11-05_gio/backup/`.
 - **30/10/2026 — Build lại sau sửa kho đợt 2:** 8.426 ⇒ **8.424 điểm** (hai dòng kho bị xoá), phiếu `51fb1ec63cbc`; đo trước ↔ sau trên 176
   câu Golden + 32 câu an toàn: không làm hỏng · giữ (`BAO_CAO_KHO_DU_LIEU.md`).
 - **30/10/2026 — Collection thử cho Qwen3-Embedding-8B:** 8.424 điểm, 0 lỗi; tìm kém hơn (3 / 40 câu thử mất đoạn đúng, luật cho 0), mỗi câu

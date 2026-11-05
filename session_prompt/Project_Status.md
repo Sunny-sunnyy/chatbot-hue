@@ -13,7 +13,7 @@ curated `knowledge-base-hue/` (5 domain: `foods`, `heritages`, `festivals`,
 xứng nhu cầu và bằng chứng từ dữ liệu, Qdrant, model, API thật.
 
 ```text
-curated Markdown (204 file, sửa kho đợt 1 28/10 + đợt 2 30/10) -> chunker (8.424 chunk) -> e5-small dense + BM25 sparse
+curated Markdown (204 file, sửa kho đợt 1 28/10 + đợt 2 30/10 + giờ mở cửa 05/11) -> chunker (8.435 chunk) -> e5-small dense + BM25 sparse
 -> Qdrant -> query NFC -> retrieval dense_bm25_rrf (top-10 whole chunk vào context) -> gpt-6-luna -> API/UI có citation (stream SSE từ 01/11, `a80e12d`)
 ```
 
@@ -91,14 +91,14 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 **Full-corpus runtime (API `backend/api/app.py`):**
 
 - candidate `e5-small-384` (`intfloat/multilingual-e5-small`, local CPU, 384 chiều);
-- collection `hue_full_corpus_7a2_e5_small_384`, 8.424 point (build lại 30/10, đợt 2 sửa kho; build record `51fb1ec63cbc`; trước 28/10 `574b5d02088b`), payload 7 field
+- collection `hue_full_corpus_7a2_e5_small_384`, 8.435 point (build lại 05/11 tối, đợt giờ mở cửa 11 file; build record `9921888f2030`; 30/10 `51fb1ec63cbc`; trước 28/10 `574b5d02088b`), payload 7 field
   (`search_text`, `source`, `title`, `heading_path`, `evidence_parts`,
   `chunk_id`, `domain`), dense + sparse;
 - build record `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`
   (schema `full_corpus_build:v3`) là nguồn sự thật duy nhất "index khớp corpus";
   runtime từ chối khởi động nếu hash file corpus khác record;
 - sparse state chung `data/full_corpus_builds/full_corpus_sparse_state.json`
-  (vocabulary 5.631; sparse state `c8134c49a648` từ 30/10, trước `1bae9e0f3c49`); mốc tìm T1 (158 câu) **`4d5bbe9e0edc`** từ 30/10 (28/10 `23c58c47635d`, trước nữa `cefb2d1ad609`);
+  (vocabulary 5.631; sparse state `4a8311a2dfef` từ 05/11 tối, 30/10 `c8134c49a648`, trước `1bae9e0f3c49`); mốc tìm T1 (158 câu) **`64656a87c109`** từ 05/11 tối (30/10 `4d5bbe9e0edc`, 28/10 `23c58c47635d`, trước nữa `cefb2d1ad609`);
 - query chuẩn hóa NFC trước khi tìm (`backend/retrieval/full_corpus.py` `normalize_query`, từ 28/10 `510e1a8`);
 - retrieval `dense_bm25_rrf`, reranker `none`, context tối đa **10** whole chunk (`settings.yaml` `max_context_documents: 10`, từ 28/10 `510e1a8`; trước 5);
   chọn bằng judge Claude 8.1; **B0 01/11** (mốc người tham khảo): User giữ 10 — 3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau;

@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 10:41 03/11/2026 — Phase 9 B2a: thử để model viết lại câu tìm cho câu nhiều nguồn / so sánh (3 cách) ⇒ không cách nào qua luật, giữ tìm bằng câu gốc; kho không thiếu thông tin cho các câu này (0 / 38).** Trước: 12:03 01/11/2026 — đo lại theo loại câu trên kho hiện tại (so sánh 0,527 / nhiều nguồn 0,543); câu nhiều nguồn để Phase 9.** Trước: 11:07 01/11/2026 — sửa lý do gác "chọn đoạn bằng luna" (luật số câu tụt 27/10; sàn tốc độ có sau). Bản 11 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
+**Cập nhật lần cuối: 20:06 05/11/2026 — cách tìm không đổi; chỉ mục dựng lại sau đợt giờ mở cửa — 148 / 158 câu tìm giống hệt, điểm tìm giống tới 4 chữ số.** Trước: **10:41 03/11/2026 — Phase 9 B2a: thử để model viết lại câu tìm cho câu nhiều nguồn / so sánh (3 cách) ⇒ không cách nào qua luật, giữ tìm bằng câu gốc; kho không thiếu thông tin cho các câu này (0 / 38).** Trước: 12:03 01/11/2026 — đo lại theo loại câu trên kho hiện tại (so sánh 0,527 / nhiều nguồn 0,543); câu nhiều nguồn để Phase 9.** Trước: 11:07 01/11/2026 — sửa lý do gác "chọn đoạn bằng luna" (luật số câu tụt 27/10; sàn tốc độ có sau). Bản 11 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
 Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -9,7 +9,7 @@ Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (b�
   đọc 10 đoạn này (từ 28/10; trước đó 5), nên tìm sai thì trả lời sai hoặc từ chối.
 - **Đang chạy cách nào:** câu hỏi đổi về dạng Unicode NFC (một cách viết chuẩn của chữ có dấu) → e5-small (model biến câu thành vector, chạy trên
   máy) lấy 30 đoạn gần nghĩa nhất trong Qdrant (cơ sở dữ liệu vector) → BM25 (chấm theo khớp từ khóa) chấm lại 30 đoạn đó → RRF (cách trộn hai
-  bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 30/10 trên kho đã sửa hai đợt (204 file, 8.424 đoạn) — **cách tìm
+  bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 05/11 tối trên kho đã sửa hai đợt + giờ mở cửa 11 điểm (204 file, 8.435 đoạn) — **cách tìm
   không đổi**.
 - **Đo được trên kho hiện tại** (30/10, nhãn "đoạn đúng" bản 5 — vị trí đáp án trong file nguồn, gắn tay cho 40 câu thử + 15 câu kiểm):
   - **24 / 40** câu thử có đủ đoạn đúng trong 10 đoạn đưa model; **33 / 40** có đủ trong 30 ứng viên ⇒ 9 câu có đoạn đúng trong ứng viên nhưng bị xếp
@@ -134,7 +134,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), build 
 | Chuẩn hóa NFC câu hỏi trước khi tìm | **còn dùng** (từ 28/10) | `backend/retrieval/full_corpus.py:97–102`, `:420` |
 | Không xếp hạng lại | **còn dùng** (MiniLM đã gỡ khỏi chatbot 26/10) | `backend/config/settings.yaml:44` |
 | Model vector e5-small | **còn dùng**; Qwen3-8B đã thử 30/10 — kém hơn, chỉ mục thử đã xoá | `backend/embedding/full_corpus.py:41–66` |
-| Chỉ mục tìm trên 204 file / 8.424 đoạn | **còn dùng** (dựng lại 30/10) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
+| Chỉ mục tìm trên 204 file / 8.435 đoạn | **còn dùng** (dựng lại 05/11 tối; mốc tìm 158 câu mới `64656a87c109`: 148 giống hệt, MRR 0,7216 / nDCG 0,7554 giống tới 4 chữ số) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
 | "BM25 chỉ chấm lại 30 đoạn vector" là cách tốt nhất đã thử | **còn đúng** — nhưng chỉ vì các cách khác không chắc hơn; đoạn đúng hay bị xếp thấp | §3, §4 |
 | Cho `gpt-6-luna` chọn 10 trong 30 ứng viên | **gác làm hồ sơ** (bạn chốt 27/10) | §4 27/10 |
 

@@ -3,7 +3,7 @@
 Người làm: E (Claude Opus 5.5, `hue-rag-7a`) · việc **E8** (A giao)
 Date: 11:16 05/11/2026 (`date`)
 Plan: `docs/superpowers/plans/2026-11-05-phase-10-a1-plan.md` bản 2 **`2fc2fcea33d4`** (A duyệt; review C vòng 2 ready `bf48ae1e2620`). Spec: `docs/superpowers/specs/2026-11-05-phase-10-design.md` bản 2 `bf67b90fb6fc` (User duyệt §12 (1)–(4)).
-Nhánh: `p10-anh` từ `main` `b019aab`, worktree `/tmp/e_anh`. **Chưa commit / push** — auto mode chặn vì luật User "commit / push luôn hỏi trước" (quyền A cho là tin của phiên khác); 6 file đang *staged*, chờ User đồng ý. Cờ `anh.bat: false`.
+Nhánh: `p10-anh` từ `main` `b019aab`, worktree `/tmp/e_anh`. **Đã commit + push `0632e10`** (19:50 05/11/2026, phiên tối — E10: dựng lại worktree từ `268466d` + patch `9138ca6b1fc3`, 9 file +542 / −2, 40 test passed). Trước đó chưa commit vì auto mode chặn. Cờ `anh.bat: false`.
 
 ## 1. Phạm vi
 
@@ -14,10 +14,10 @@ Repo public: report không chép kho / bộ đo; tên món trong ví dụ là t�
 
 | File | Thay đổi |
 |---|---|
-| `backend/llm/nhan_anh.py` (mới, 120 dòng) | `chuan_bi_anh` (Pillow `formats` cố định, chặn `w*h > max_pixels` **trước** `load()`, `exif_transpose` ⇒ RGB ⇒ `thumbnail(1024)` ⇒ JPEG **không EXIF**, không ghi đĩa) · `nap_danh_sach` (id / khoá tên trùng ⇒ lỗi) · `kieu_dau_ra` (Pydantic `Literal[<42 id>]`, ≤ 3, `extra="forbid"`) · `NHAN_ANH_INSTRUCTIONS` · `dau_vao` (danh sách chữ + ảnh data URL) · `kiem_lai` (id ∈ danh sách, bỏ trùng, `khong_nhan_ra` ⇒ rỗng) · `tao_agent` / `doan_ten` (một `Agent` dùng `generator.responses_model`, `max_tokens` 512, `store=False`; gọi qua `generator._run`) |
+| `backend/llm/nhan_anh.py` (mới, 126 dòng — bản merge, sau A2) | `chuan_bi_anh` (Pillow `formats` cố định, chặn `w*h > max_pixels` **trước** `load()`, `exif_transpose` ⇒ RGB ⇒ `thumbnail(1024)` ⇒ JPEG **không EXIF**, không ghi đĩa) · `nap_danh_sach` (id / khoá tên trùng ⇒ lỗi) · `kieu_dau_ra` (Pydantic `Literal[<42 id>]`, ≤ 3, `extra="forbid"`) · `NHAN_ANH_INSTRUCTIONS` · `dau_vao` (danh sách chữ + ảnh data URL) · `kiem_lai` (id ∈ danh sách, bỏ trùng, `khong_nhan_ra` ⇒ rỗng) · `tao_agent` / `doan_ten` (một `Agent` dùng `generator.responses_model`, `max_tokens` **1024** (A1 512 ⇒ đổi sau A2 vì lỗi cắt), `store=False`; gọi qua `generator._run`) |
 | `backend/api/routes/anh.py` (mới, 108 dòng) | `kiem_dau_vao` (hàm thuần: `Sec-Fetch-Site` ≠ same-origin ⇒ 403 · `Origin` khác gốc ⇒ 403 · `Content-Type` ∉ jpeg/png/webp ⇒ 415 · `Content-Length` thiếu / sai / > 10 MB ⇒ 413) · `doc_than` (đọc `request.stream()` có bộ đếm, không `UploadFile`) · route: cờ tắt ⇒ 404; lỗi model ⇒ 200 `khong_doan_duoc`, không thử lại · một dòng `anh_metrics` / yêu cầu (chỉ số đếm / mã / ms / USD) |
 | `backend/api/app.py` (+19 / −1) | luôn `include_router(anh_router)`; lifespan đặt `app.state.anh` khi `anh.bat` + có generator (nạp danh sách, `Image.MAX_IMAGE_PIXELS`), không thì `None` |
-| `backend/config/settings.yaml` (+10) | khối `anh:` (`bat: false`, đường danh sách, 10 MB, 40 MP, 1024, 15 s) |
+| `backend/config/settings.yaml` (+10) | khối `anh:` (`bat: false`, đường danh sách, 10 MB, 40 MP, 1024, **20 s** — A1 15 s, đổi sau A2) |
 | `backend/tests/test_p10_anh.py` (mới, 165 dòng) | T1–T7 + test mức route |
 | `backend/tests/test_assistant_boundary.py` (+2) | **`ALLOWED` thêm `"llm.nhan_anh": {"agents"}`** — test rào "chỉ module được phép import thư viện mạng" hỏng khi thêm `nhan_anh` (import `Agent`, `ModelSettings`); docstring test ghi "thêm module ⇒ sửa `ALLOWED` có chủ đích"; `nhan_anh` chỉ **dựng** agent, lần gọi mạng qua client của generator. **Người kiểm xem kỹ dòng này** |
 | `data/phase_10/anh/tools/dung_danh_sach.py` (private) | dựng `danh_sach_ten.json` + `ca_trung.md` qua `scripts/grep_kb.sh`; áp `duyet_user.json` (quyết định User) |
@@ -45,7 +45,7 @@ Worktree nối `data/`, `knowledge-base-hue/`, `frontend/dist` bằng symlink (u
 
 | Tiêu chí | Kết quả |
 |---|---|
-| **T1–T7 + route** | `test_p10_anh.py` **36 passed** (T1 21 ca rào; T2 EXIF GPS + Orientation xoá, xoay đúng; T3 1200×1000 với ngưỡng 1 MP ⇒ 413 trước `load()`; T4 GIF / BMP / rác / rỗng ⇒ 415; T5 4032×3024 ⇒ 1024×768; T6 enum strict + kiểm lại; T7 trùng id / khoá ⇒ lỗi + danh sách thật nạp được; route: tắt ⇒ 404, 403 / 403 / 415 multipart / 413 trước bước cần generator, ảnh hợp lệ ⇒ 503 khi chưa có generator) — **PASS** |
+| **T1–T7 + route** | `test_p10_anh.py` **36 passed** ở A1 (bản merge `0632e10`: cùng boundary **40 passed**; C198 chạy 7 file 80 passed / 1 error cần khoá) (T1 21 ca rào; T2 EXIF GPS + Orientation xoá, xoay đúng; T3 1200×1000 với ngưỡng 1 MP ⇒ 413 trước `load()`; T4 GIF / BMP / rác / rỗng ⇒ 415; T5 4032×3024 ⇒ 1024×768; T6 enum strict + kiểm lại; T7 trùng id / khoá ⇒ lỗi + danh sách thật nạp được; route: tắt ⇒ 404, 403 / 403 / 415 multipart / 413 trước bước cần generator, ảnh hợp lệ ⇒ 503 khi chưa có generator) — **PASS** |
 | **T9 (c)** pytest 7 file | **83 passed, 1 error** — lỗi là `test_api_chat.py::test_health_is_cached_and_ready_after_real_lifespan` (cần khoá; **giống `main`**: main 47 passed / 1 error cùng test). Lần đầu nhánh có thêm 1 failed `test_only_allowed_modules_import_network_clients` ⇒ sửa `ALLOWED` (mục 2) ⇒ hết — **PASS** |
 | **T8** (server thật, cờ bật) | 7 ca: cross-site 403 · Origin lạ 403 · multipart 415 · multipart 11 MB 415 · chunked thiếu `Content-Length` 413 · thân **11 MB** 413 · `text/plain` cùng gốc 415; mỗi ca **≈ 1 ms**, đúng 1 dòng `anh_metrics` **`n_llm_calls: 0`**, `bytes_vao: null` (không đọc thân); **RSS chênh 0 kB**; **0 file tạm mới** (so `find` cây `TMPDIR` riêng trước / sau) — **PASS** |
 | **T9 (b)** cờ tắt | `POST /api/anh/ung_vien` **404** (`anh_metrics` `outcome: tat`, 0 lần gọi), `/` 200, `/health` 5 / 5 ready, không nạp danh sách — **PASS** |
@@ -103,3 +103,26 @@ Cách đo: `data/phase_10/anh/tools/do_a2.py` gửi 33 ảnh **tuần tự qua r
 **Quyết định User sau A2 (A chuyển, E ghi 16:49 05/11/2026):** **giữ P1 bản v1 dạng GỢI Ý có xác nhận** — nhãn "Gợi ý từ ảnh, có thể sai — chọn đúng tên", luôn có "Không phải các tên này" + ô gõ tên,
 trợ lý chỉ trả lời sau khi người dùng bấm. **Ghi trung thực:** P1 **âm theo tiêu chí gốc** (spec §5); User **đổi thước** vì có bước xác nhận (lỗi nhận sai không thành câu trả lời sai).
 Code đã đưa lời dặn về v1 (`max_tokens` 1024, timeout 20). Song song: thí nghiệm P2 SigLIP 2 (E9, tiêu chí ghi trước `data/phase_10/anh/e9/tieu_chi_ghi_truoc.md`) — chưa chạy.
+
+---
+
+# Giao diện P1 v1 — Playwright trên server thật (19:50 05/11/2026)
+
+**Kết luận: ĐẠT mọi kiểm đã ghi** (A giao E10; 2 lượt đường đầy đủ A duyệt ≈ 0,003 USD).
+Cách chạy: nhánh `p10-anh` `0632e10`, worktree `/tmp/e_anh`, `npm ci && npm run build` trong worktree, uvicorn thật cổng 8841 (chỉ mục mới sau C192), **không chặn / giả mạng**;
+script `data/phase_10/anh/a1_playwright/ui_p1.py` (Chromium headless, 1280×900), kết quả + ảnh chụp `data/phase_10/anh/a1_playwright/ket_qua/` (private). Cờ `anh.bat` bật **tạm** trong worktree rồi trả về `false` (không commit).
+
+| Kiểm | Kết quả |
+|---|---|
+| Cờ tắt | `GET /api/anh/ung_vien` 404 · **0 nút** "Hỏi bằng ảnh" · 0 vi phạm CSP · 0 request ra ngoài — **PASS** |
+| Cờ bật, 0 USD | có nút + dòng báo "Ảnh được gửi tới OpenAI…" · file GIF ⇒ "Chọn ảnh JPEG, PNG hoặc WEBP." · file > 10 MB ⇒ báo lỗi · **0 POST** tới server cho hai ca này — **PASS** |
+| Lượt có phí 1 — ảnh công trình trong danh sách (bộ đã thấy) | xem trước `blob:` hiện được (CSP `img-src 'self' blob:` không chặn) · nhãn "Gợi ý từ ảnh, có thể sai" · 1 tên gợi ý (đúng chủ thể) + nút "Không phải các tên này — tôi gõ tên" · **0 câu gửi chatbot trước khi bấm** · bấm tên ⇒ câu ghép "Giới thiệu về <tên>" (spec A3) ⇒ `/api/chat/stream` ⇒ có câu trả lời, 7 nguồn; thẻ ảnh đóng — **PASS** |
+| Lượt có phí 2 — ảnh ngoài danh sách (con mèo) | "Mình chưa nhận ra ảnh này…" · 0 tên · bấm "Gõ tên" ⇒ con trỏ về ô gõ câu hỏi · **không gửi câu nào tới chatbot** — **PASS** |
+| Toàn lượt | 0 vi phạm CSP · 0 request ra ngoài gốc · 2 POST ảnh · 1 lượt chat |
+
+**Tiền thật (log `anh_metrics` / `chat_metrics` worktree):** ảnh 0,00042005 + 0,00031405 · chat 0,000540875 · **cộng một lần gọi ảnh thừa 0,00035855** (lần chạy đầu script hỏng ở bước chờ — xem dưới) ⇒ **0,001634 USD**. **Tiền Phase 10: 0,078545 + 0,001634 = 0,080179 USD** / trần 0,15 (dừng 0,13). Độ trễ model ảnh 5,2–5,9 s / lần (một mẫu mỗi loại; p95 mục tiêu ≤ 5 s — vẫn không đạt như A2).
+
+**Lỗi / giới hạn:**
+- Lần chạy đầu: `page.wait_for_function` bị **CSP của trang chặn** (`script-src 'self'`, không `unsafe-eval`) — rào đúng, lỗi ở script đo ⇒ đổi sang chờ bằng locator; ảnh đã gửi một lần (tiền tính ở trên).
+- Quan sát giao diện (ảnh chụp, chưa sửa): thẻ ảnh (xem trước + nút) cao ~330 px ở khung 1280×900, phần câu trả lời phía trên co lại còn ít dòng. **Chưa thử khung điện thoại** — reviewer / User xem có cần thu nhỏ xem trước không.
+- Một ảnh mỗi loại — đây là kiểm luồng giao diện, không phải đo chất lượng (chất lượng: A2).

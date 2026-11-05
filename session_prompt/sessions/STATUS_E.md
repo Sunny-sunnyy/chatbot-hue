@@ -1,7 +1,13 @@
 # STATUS E — kết phiên 16:48 05/11/2026 (`date`) · terminal phiên 05/11 `hue-rag-7a` · Claude Opus 5.5 · vai thực thi (Phase 10 + review)
 
-## PHIÊN TỐI 05/11 — terminal `hue-rag-bc` · đang làm E10 (A giao, 19:21 05/11/2026)
-- Khai báo sửa: worktree `/tmp/e_anh` (nhánh `p10-anh`: 9 file trong patch), `session_prompt/sessions/STATUS_E.md`.
+## PHIÊN TỐI 05/11 — terminal `hue-rag-bc` · E10 XONG (19:23 05/11/2026)
+- **`p10-anh` đã commit + push: `0632e10`** (từ `268466d`, áp patch `9138ca6b1fc3`: 9 file +542 / −2, cờ `anh.bat: false`; hook quét 0 trùng). Test `test_p10_anh.py` + `test_assistant_boundary.py`: **40 passed** [Chạy].
+  Mục "Nhánh p10-anh CHƯA COMMIT" bên dưới đã hết đúng.
+- Worktree `/tmp/e_anh` (nhánh `p10-anh`) dựng lại; symlink `data`, `knowledge-base-hue` untracked — gỡ khi xong.
+- **Playwright P1 ĐẠT (19:51 05/11/2026)** — report e8 mục cuối; script `data/phase_10/anh/a1_playwright/ui_p1.py`, kết quả `…/ket_qua/`. Cờ tắt 0 nút; cờ bật: lỗi kiểu / > 10 MB chặn ở trình duyệt; ảnh trong ds ⇒ gợi ý ⇒ bấm ⇒ trả lời 7 nguồn; ảnh mèo ⇒ "chưa nhận ra" ⇒ Gõ tên; 0 CSP / 0 request ngoài. Server đã tắt, cờ trả `false`.
+- **Tiền Phase 10: 0,080179 USD** / trần 0,15 (dừng 0,13) — lượt này 0,001634 (gồm 1 lần gọi ảnh thừa do script hỏng lần đầu).
+- **E9 chuẩn bị (A giao):** vòng tải 6 tên trống đang chạy nền; script kiểm trùng lớp 2 `data/phase_10/anh/e9/kiem_trung.py` (sha256 + tên file Commons ⇒ `kiem_trung_ket_qua.json`). Embed SigLIP **chờ A báo** (B Q1 xong / RAM ≥ 5 GB).
+- Ảnh mẫu E9 đếm lại: 179 ảnh / 34 tên (trống 6: che_heo_quay, lang_gia_long, lang_khai_dinh, nui_ngu_binh, pho_nguyen_dinh_chieu, pho_tay).
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Nhánh `p10-anh` — CHƯA COMMIT** (auto mode chặn: luật User "commit / push hỏi trước"; tin A không thay User). Worktree `/tmp/e_anh` ở `main` `268466d` + 9 file chưa commit
