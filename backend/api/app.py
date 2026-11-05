@@ -1,6 +1,5 @@
 """FastAPI application factory for Phase 6 Full-Corpus RAG API."""
 from contextlib import asynccontextmanager
-import functools
 import logging
 import os
 from pathlib import Path
@@ -57,6 +56,16 @@ class FrontendStaticFiles(StaticFiles):
         return response
 
 
+def _tim_web_server(settings: dict):
+    """B6: hàm tra web của server. Khoá đọc **trong** hàm mỗi lần tra (review E13 m-1: `functools.partial(api_key=…)` để lộ khoá trong `repr`)."""
+    timeout = float((settings.get("assistant") or {}).get("tra_web_timeout_seconds", 5))
+
+    async def tim(cau: str):
+        return await tim_web(cau, api_key=os.getenv(SERPER_API_KEY_ENV, "").strip() or None, timeout=timeout)
+
+    return tim
+
+
 def create_app(settings=None):
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -67,10 +76,8 @@ def create_app(settings=None):
         setup_logging()
         logger.info("Starting Hue Full-Corpus RAG API")
         app.state.assistant_flags = AssistantFlags.from_settings(settings)  # Phase 9 B1 D9
-        # B6 D3: hàm tra web của server — khoá Serper đọc ở rìa, chỉ ở server; thiếu khoá ⇒ mỗi lần tra ra "loi", không mở mạng. Cờ tắt ⇒ None.
-        app.state.tim_web = functools.partial(
-            tim_web, api_key=os.getenv(SERPER_API_KEY_ENV, "").strip() or None,
-            timeout=float((settings.get("assistant") or {}).get("tra_web_timeout_seconds", 5))) if app.state.assistant_flags.tra_web else None
+        # B6 D3: hàm tra web của server — khoá Serper chỉ ở server; thiếu khoá ⇒ mỗi lần tra ra "loi", không mở mạng. Cờ tắt ⇒ None.
+        app.state.tim_web = _tim_web_server(settings) if app.state.assistant_flags.tra_web else None
 
         app.state.retrieval_ready = False
         app.state.retrieval_service = None

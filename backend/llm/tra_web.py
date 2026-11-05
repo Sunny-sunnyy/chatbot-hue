@@ -35,14 +35,15 @@ _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 _PHONE = re.compile(r"(?<!\d)(?:\+?84|0)(?:[\s.-]?\d){8,10}(?!\d)")
 _WEB_CODE = re.compile(r"\[\s*w\s*(\d+)\s*\]", re.IGNORECASE)
 _KHO_CODE = re.compile(r"\[\s*(?:nguồn\s*)?\d+\s*\]", re.IGNORECASE)  # mã kho `[n]` / `[Nguồn n]` không được có trong mục web
-# D5 (ii): mọi dạng link / tên miền model có thể tự viết — `https?://`, `www.`, link Markdown `[x](…)`, tên miền trần có đuôi phổ biến
-_URL = re.compile(r"https?:|www\.|\]\s*\(|\b[\w-]+(?:\.[\w-]+)*\.(?:com\.vn|net\.vn|org\.vn|edu\.vn|gov\.vn|vn|com|net|org|info|io|biz)\b",
-                  re.IGNORECASE)
+# D5 (ii): mọi dạng link / tên miền model có thể tự viết — `https?://`, `www.`, link Markdown `[x](…)`, tên miền trần có đuôi phổ biến;
+# review E13 M-1: + thẻ HTML `<a`, thuộc tính `href=`, link tương đối giao thức `//host` (lớp hai — giao diện cũng không tạo thẻ `a` từ chữ model)
+_URL = re.compile(r"https?:|www\.|\]\s*\(|<\s*a\b|href\s*=|(?<![:\w])//[\w-]|"
+                  r"\b[\w-]+(?:\.[\w-]+)*\.(?:com\.vn|net\.vn|org\.vn|edu\.vn|gov\.vn|vn|com|net|org|info|io|biz)\b", re.IGNORECASE)
 LUU_TRU_TU = ("khách sạn", "homestay", "resort", "nhà nghỉ", "phòng nghỉ", "villa")  # D5 (iii): câu lưu trú ⇒ 0 số tiền (không nói giá phòng)
 
 # Vòng chỉnh 1 (A quyết 05/11 tối, sau đã thấy ×2: 2 câu không xác minh bị khẳng định — mức lũ có số mét, lịch cúp điện có ngày giờ) — luật an toàn ⇒ code:
 # câu thiên tai ⇒ KHÔNG có chữ web do model viết (câu cố định + link nguồn); câu thời gian thực ⇒ mục web 0 chữ số / thứ trong tuần.
-_THIEN_TAI = re.compile(r"\b(?:lũ|bão|ngập|sạt\s+lở|triều\s+cường)\b", re.IGNORECASE)
+_THIEN_TAI = re.compile(r"\b(?:lũ|lụt|bão|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp)\b", re.IGNORECASE)  # E13 M-2: + "lụt", "áp thấp"
 _THOI_GIAN_THUC = re.compile(r"\b(?:cúp\s+điện|mất\s+điện|cắt\s+điện|tuần\s+này|tuần\s+sau|năm\s+nay|hôm\s+nay|tối\s+nay|sáng\s+nay|chiều\s+nay|"
                              r"ngày\s+mai|hiện\s+giờ|hiện\s+tại|bây\s+giờ|lúc\s+này)\b", re.IGNORECASE)
 _SO_HOAC_THU = re.compile(r"\d|\bthứ\s+(?:hai|ba|tư|năm|sáu|bảy)\b|\bchủ\s+nhật\b", re.IGNORECASE)  # con số / ngày giờ / thứ trong tuần

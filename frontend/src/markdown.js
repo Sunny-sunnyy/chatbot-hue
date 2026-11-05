@@ -78,10 +78,17 @@ function citationMark(id, numbers, turnKey, activeId) {
 // nguồn web cùng lượt (`#web-<lượt>-<n>`); mã không thuộc `sources` chỉ là chữ mờ. Không đổi mã kho [n] (mục web không có mã kho).
 const WEB_CITATION = /\[\s*w\s*(\d+)\s*\]/giu;
 
+// Review E13 M-1: chữ model ở khối web KHÔNG được tạo link — bộ lọc riêng bỏ thẻ `a` + thuộc tính `href` (HTML thô `<a href="//…">` qua được bộ lọc
+// chung). Link web chỉ ở danh sách nguồn do code dựng; số [w n] là link nội bộ dựng bằng DOM SAU bộ lọc.
+export const WEB_SANITIZE_OPTIONS = {
+  ALLOWED_TAGS: SANITIZE_OPTIONS.ALLOWED_TAGS.filter(tag => tag !== "a"),
+  ALLOWED_ATTR: SANITIZE_OPTIONS.ALLOWED_ATTR.filter(attr => attr !== "href"),
+};
+
 export function renderWebHtml(text, sources, turnKey) {
   const ids = new Set(sources.map(source => String(source.id)));
   const template = document.createElement("template");
-  template.innerHTML = DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS);
+  template.innerHTML = DOMPurify.sanitize(marked.parse(text), WEB_SANITIZE_OPTIONS);
   const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
   const nodes = [];
   while (walker.nextNode()) {

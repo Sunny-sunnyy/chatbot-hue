@@ -328,3 +328,43 @@ def test_realtime_question_section_has_no_number_or_weekday(text, outcome):
 def test_realtime_violation_plus_link_is_dropped_without_links():
     trace, _ = run_web("Xem evil.example.vn: thứ Ba cúp điện [w3].", query="Tuần này ở Huế khu nào cúp điện?")
     assert trace.web["outcome"] == "khong_tin_cay" and trace.web["nguon"] == [] and set(trace.web["kiem"]) == {"url", "so_thoi_gian_thuc"}
+
+
+# ---------- sửa sau review E13 ----------
+
+@pytest.mark.parametrize("text", ['Xem <a href="//datve.xyz">đặt vé tại đây</a> [w1].', "Đặt vé ở //datve.xyz [w1].", "Bấm vào <a title=x href=y>đây</a> [w1].",
+                                  "Xem < a href='x'>đây</a> [w1]."])
+def test_html_link_and_protocol_relative_are_caught(text):  # M-1 lớp server: ca dò của E (HTML thô, giao thức tương đối)
+    assert "url" in tw.kiem_muc_web(text, SO, luu_tru=False)
+
+
+def test_plain_slash_text_is_not_a_link():  # bất biến: "a/b" thường (không "//host") không bị bắt nhầm
+    assert tw.kiem_muc_web("Mở cửa 7h/ngày, 2/3 phòng còn trống [w1].", SO, luu_tru=False) == []
+
+
+@pytest.mark.parametrize("cau, thien_tai", [
+    ("Huế đang lụt không?", True), ("Ngập lụt ở Huế mấy hôm nay thế nào?", True), ("Áp thấp nhiệt đới vào Huế chưa?", True),
+    ("Đường lên Bạch Mã có bị lụt không?", True), ("Thành lũy Huế xây năm nào?", False),
+])
+def test_disaster_words_after_review(cau, thien_tai):  # M-2
+    assert tw.la_cau_thien_tai(cau) is thien_tai
+
+
+def test_flood_question_with_lut_gets_fixed_sentence_not_model_text():  # M-2: đúng câu E dò ⇒ câu cố định NCHMF / 112, 0 lần gọi model
+    trace, calls = run_web("Nước đang lên 2 m [w1].", query="Huế đang lụt không?")
+    assert calls == [] and trace.web["outcome"] == "thien_tai" and "112" in trace.web["text"]
+
+
+def test_server_search_function_does_not_show_key_in_repr(monkeypatch):  # m-1
+    from api.app import _tim_web_server
+    monkeypatch.setenv(tw.SERPER_API_KEY_ENV, "KHOA_GIA_123")
+    fn = _tim_web_server({"assistant": {"tra_web_timeout_seconds": 5}})
+    assert "KHOA_GIA_123" not in repr(fn) and "KHOA_GIA_123" not in repr(getattr(fn, "__closure__", None))
+
+
+def test_web_section_renderer_uses_filter_without_links():  # M-1 lớp giao diện: bộ lọc của khối web không có thẻ a / href
+    from pathlib import Path
+    src = (Path(__file__).resolve().parents[2] / "frontend" / "src" / "markdown.js").read_text(encoding="utf-8")
+    body = src.split("export function renderWebHtml", 1)[1]
+    assert "WEB_SANITIZE_OPTIONS)" in body.split("\n")[3] and "SANITIZE_OPTIONS)" not in body.replace("WEB_SANITIZE_OPTIONS)", "")
+    assert 'filter(tag => tag !== "a")' in src and 'filter(attr => attr !== "href")' in src
