@@ -329,8 +329,9 @@ def _cau_thieu(bang: Bang, khung: dict) -> str:
     return CAU_THIEU_SO_THICH.format(k=khung["thieu_so_thich"], ten=", ".join(bang.theo_id[i]["ten"] for i in khung["ngoai_so_thich"]))
 
 
-def khoi_ghi_chu(bang: Bang, khung: dict, nguon: dict[str, int]) -> str:
-    """D4b: khối "Ghi chú của lịch" do code nối sau chữ model — giả định, câu thiếu sở thích, điểm không xếp, lưu ý có [n], dòng giờ có thể đổi."""
+def khoi_ghi_chu(bang: Bang, khung: dict, nguon: dict[str, int], them_dong=()) -> str:
+    """D4b: khối "Ghi chú của lịch" do code nối sau chữ model — giả định, câu thiếu sở thích, điểm không xếp, lưu ý có [n], dòng giờ có thể đổi.
+    B5b D9 / D10: `them_dong` (dự báo theo ngày, "nếu mưa", bậc thang — code dựng) nối cuối; rỗng ⇒ đúng như B5."""
     dong = [CAU_GIA_DINH[k] for k in khung["gia_dinh"]]
     if khung["thieu_so_thich"] is not None:
         dong.append(_cau_thieu(bang, khung))
@@ -339,6 +340,7 @@ def khoi_ghi_chu(bang: Bang, khung: dict, nguon: dict[str, int]) -> str:
     dong += [f"{bang.theo_id[i]['ten']}: {bang.theo_id[i]['luu_y']} [{nguon[i]}]" for i in ids if bang.theo_id[i]["luu_y"]]
     if any(gio_diem(bang, i) for i in ids):
         dong.append(CAU_CO_THE_DOI)
+    dong += list(them_dong)
     return "\n".join([TIEU_DE_GHI_CHU, *(f"- {d}" for d in dong)]) if dong else ""
 
 

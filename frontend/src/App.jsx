@@ -13,6 +13,7 @@ const STATUS_TEXT = {
   generating: "Đang viết câu trả lời…",
   lich_trinh: "Đang xếp lịch…",  // Phase 9 B5 D14: công cụ lịch trình đang chạy
   tra_web: "Kho chưa có — đang tra web…",  // Phase 9 B6 D6: cổng web mở sau câu từ chối của kho
+  thoi_tiet: "Đang xem dự báo thời tiết…",  // Phase 9 B5b: công cụ thời tiết đang chạy
 };
 const WEB_LINK = /^https?:\/\//;  // B6: link nguồn web do server dựng từ sổ — trình duyệt kiểm lại gốc trước khi vẽ
 // B5 D14 (c): nhãn cố định của từng bước code đã làm (sự kiện `status` stage `lich_trinh`); tên điểm + lý do lấy từ dữ liệu sự kiện, không chữ model.

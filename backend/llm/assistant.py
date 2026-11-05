@@ -20,19 +20,23 @@ from pathlib import Path
 
 import json
 import logging
+from datetime import datetime
+from typing import Literal
 
 import anyio
 
 from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
-from llm.citations import select_cited_sources
+from llm.citations import CITATION_PATTERN, select_cited_sources
 from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm import tra_web as tw
+from llm import thoi_tiet as tt
+from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
-                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
+                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIETNAM_TZ, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, PackedContext, PackedSource
@@ -72,6 +76,10 @@ class AssistantFlags:
     song_song_tra_loi: bool = False
     # B6 (plan B6 bản 3 D10): cổng web sau câu trả lời kho — TẮT tới khi đạt luật ghi trước; cần định tuyến + vòng công cụ
     tra_web: bool = False
+    # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
+    # phản hồi ghi sẵn)
+    thoi_tiet: bool = False
+    du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.lan_tim_dau not in SEARCH_VARIANTS:
@@ -82,13 +90,16 @@ class AssistantFlags:
             raise ValueError("assistant.lich_trinh needs assistant.tim_them: true and the itinerary table (assistant.lich_trinh_bang)")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
+        if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
+            raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
 
     @classmethod
     def from_settings(cls, settings: dict) -> "AssistantFlags":
         config = settings.get("assistant") or {}
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
         bang = nap_bang_lich(settings) if values["lich_trinh"] else None  # chỉ nạp khi cờ bật (clone không có `data/` vẫn chạy cờ tắt)
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang)
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang,
+                   du_bao=tt.lay_du_bao if values["thoi_tiet"] else None)
 
     @property
     def uses_tools(self) -> bool:
@@ -101,7 +112,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
     return lt.nap_bang(Path(__file__).resolve().parents[1] / settings["assistant"]["lich_trinh_bang"])
 
 
-BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich"))
+BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "du_bao"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -166,6 +177,12 @@ class AnswerTrace:
     # B6: kết quả cổng web — {"outcome", "text", "nguon", "n_ket_qua", "n_ma", "kiem", "usd_serper"}; None = cổng không mở. Chữ web chỉ ở đây
     # (không vào `answer`) ⇒ lịch sử nhớ (`answer`) không bao giờ chứa chữ web (D7). KHÔNG log chữ.
     web: dict | None = None
+    # B5b: ngữ cảnh code dò ở câu này (bão / lũ, ngoài 7 ngày, có buổi, có đưa công cụ) · kết quả công cụ `thoi_tiet` (trạng thái, khối số liệu code
+    # in) · phần code nối sau chữ model · số thời tiết ngoài tập cho phép (D8). KHÔNG log chữ.
+    thoi_tiet_ctx: dict | None = None
+    thoi_tiet: dict | None = None
+    thoi_tiet_noi: str | None = None
+    thoi_tiet_kiem: list[str] | None = None
 
 
 async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
@@ -268,7 +285,8 @@ def _assistant_instructions(generator, trace: AnswerTrace) -> str:
     return generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
 
 
-def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str, bang):
+def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str, bang,
+                        du_bao=None):
     """Hàm `lich_trinh` của **một lượt** (plan B5 bản 7 D1, D6, D14, D15): generator bọc thành công cụ SDK (lõi không import SDK).
     Model chỉ trích trường; **code** chốt số ngày (thiếu ⇒ trả dữ liệu thẻ hỏi lại — `tool_use_behavior` dừng lượt), xếp, kiểm luật, lấy một
     đoạn kho đúng file cho mỗi điểm vào sổ nguồn, rồi trả chữ khung + đoạn mới cho model viết lời. Trần ≤ 1 lần / câu."""
@@ -304,6 +322,8 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
             packed, nguon, nguon_ve = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, instructions)
             loi = lt.kiem_khung(bang, khung)
             trace.lich = {"khung": khung, "nguon": nguon, "nguon_ve": nguon_ve, "loi_khung": loi}
+            if du_bao is not None:  # B5b D9 / D10: dòng dự báo theo ngày đi + "nếu mưa" + bậc thang — chỉ thêm vào ghi chú, khung không đổi
+                trace.lich["them_dong"] = await _dong_thoi_tiet_lich(bang, khung, query, du_bao, trace)
             # D14 (a): bước = việc code đã làm xong, đúng thứ tự (`kiem_luat_ok` chỉ khi khung 0 lỗi)
             trace.buoc_lich += [{"buoc": "xep_xong", "n_diem": n_xep},
                                 {"buoc": "kiem_luat_ok"} if not loi else {"buoc": "kiem_luat_loi", "n_loi": len(loi)},
@@ -319,6 +339,105 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
             trace.tools.append(entry)
 
     return lich_trinh
+
+
+def hom_nay_vn():
+    return datetime.now(VIETNAM_TZ).date()
+
+
+async def _dong_thoi_tiet_lich(bang, khung: dict, query: str, du_bao, trace: AnswerTrace) -> list[str]:
+    """B5b D9: lịch có ngày đi trong 7 ngày (code dò — `do_so.do_ngay_di`) ⇒ một dòng dự báo / ngày của lịch + "Nếu mưa: thay <điểm ngoài trời> bằng
+    <điểm trong nhà cùng cụm>" khi khả năng mưa ≥ 60 % (cột `trong_nha` của bảng; thiếu cột ⇒ không gợi ý). API lỗi ⇒ một câu cố định, 0 số. Không dò
+    được ngày ⇒ không dòng nào (lịch như B5). D10: `bac_thang: nhieu` + người lớn tuổi ⇒ "X có nhiều bậc thang (theo kho)"."""
+    ids = lt.diem_trong_khung(khung)
+    dong = [f"{bang.theo_id[i]['ten']} có nhiều bậc thang (theo kho)." for i in ids
+            if khung["tham_so"].get("di_cung") == "nguoi_lon_tuoi" and bang.theo_id[i].get("bac_thang") == "nhieu"]
+    if do_ngay_di(query, hom_nay_vn()) is None:
+        return dong
+    kq = await du_bao()
+    # lưu riêng ở `trace.lich` — không đè kết quả công cụ `thoi_tiet` nếu model cũng gọi trong lượt này
+    trace.lich["thoi_tiet"] = {"trang_thai": kq.trang_thai, "loi": kq.loi, "ms": kq.ms, "tu_cache": kq.tu_cache}
+    trace.tools.append({"name": "thoi_tiet", "ms": kq.ms, "by": "code", "trang_thai": kq.trang_thai, "loi": kq.loi})
+    if kq.trang_thai != "ok":
+        return dong + [tt.CAU_LOI]
+    bat_dau = do_ngay_di(query, kq.ngay[0]["ngay"])  # ngày theo lịch của API (giờ Việt Nam) — tất định theo bản ghi API
+    if bat_dau is None:
+        return dong
+    co = set(ids)
+    for k, ngay in enumerate(khung["ngay"]):
+        n = bat_dau + k
+        if n >= tt.SO_NGAY:
+            break
+        d = kq.ngay[n]
+        dong.append(f"Ngày {ngay['ngay']} — {tt.dong_ngay(d)}.")
+        if d["xs"] is not None and d["xs"] >= tt.NGUONG_MUA:
+            ngoai = [i for b in lt.BUOI for i in ngay["buoi"][b] if bang.theo_id[i].get("trong_nha") == "ngoai_troi"]
+            for i in ngoai:
+                thay = next((x["id"] for x in bang.diem if x.get("trong_nha") in ("trong_nha", "ca_hai") and x["cum"] == bang.theo_id[i]["cum"]
+                             and x["id"] not in co), None)
+                if thay is not None:
+                    dong.append(f"Nếu mưa ngày {ngay['ngay']}: có thể thay {bang.theo_id[i]['ten']} bằng {bang.theo_id[thay]['ten']} (trong nhà).")
+                    break
+    return dong + [tt.dong_nguon(kq)]
+
+
+def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
+    """Hàm `thoi_tiet` của **một lượt** (B5b D3, D5, D7): model chỉ gửi số ngày (0–6); code lấy dự báo, dựng khối số liệu cố định. ≤ 1 lần / câu."""
+    Ngay = Literal[0, 1, 2, 3, 4, 5, 6]
+
+    async def thoi_tiet(tu_ngay: Ngay, den_ngay: Ngay) -> str:
+        """Lấy dự báo thời tiết Huế theo ngày.
+
+        Args:
+            tu_ngay: ngày đầu, tính từ hôm nay (0 = hôm nay, 1 = mai, … 6).
+            den_ngay: ngày cuối, tính từ hôm nay (0–6); một ngày thì bằng tu_ngay.
+        """
+        entry = {"name": "thoi_tiet"}
+        try:
+            if trace.thoi_tiet is not None:
+                entry["het_luot"] = True
+                return "Đã lấy dự báo ở lần gọi trước trong lượt này; hãy viết câu trả lời."
+            kq = await du_bao()
+            trace.thoi_tiet = {"trang_thai": kq.trang_thai, "loi": kq.loi, "ms": kq.ms, "tu_cache": kq.tu_cache, "khoi": None}
+            entry.update(ms=kq.ms, trang_thai=kq.trang_thai, loi=kq.loi)
+            if kq.trang_thai != "ok":
+                return "Chưa lấy được dự báo thời tiết. Không đưa con số thời tiết nào; hệ thống sẽ nối câu chỉ nguồn chính thức."
+            khoi = tt.khoi_du_bao(kq, tu_ngay, den_ngay, bool(trace.thoi_tiet_ctx and trace.thoi_tiet_ctx["buoi"]))
+            trace.thoi_tiet.update(khoi=khoi, n_ngay=abs(den_ngay - tu_ngay) + 1)
+            return khoi
+        finally:
+            entry.setdefault("ms", 0.0)
+            trace.tools.append(entry)
+
+    return thoi_tiet
+
+
+NO_CITATION = "Grounded answer has no citation"  # thông điệp của `select_cited_sources` khi chữ không có mã [n]
+
+
+def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
+    """B5b, sau lần sinh (cờ bật, mọi câu tuyến `tro_ly_hue` — D8 m-1): số thời tiết trong chữ model ⊂ số code in ∪ số trong đoạn kho được trích; hỏng
+    ⇒ rút lại như citation hỏng. Rồi code nối: khối số liệu (hoặc câu lỗi) · câu bão / lũ (D6) · câu "chỉ có dự báo 7 ngày" (D3)."""
+    ctx = trace.thoi_tiet_ctx or {}
+    tool = trace.thoi_tiet
+    if tool is not None and trace.citation_error is not None and str(trace.citation_error) == NO_CITATION and not CITATION_PATTERN.search(text):
+        # câu dự báo chỉ dựa khối số liệu code nối (ghi công + giờ cập nhật — D5 / D8): không cần mã [n] của kho; lỗi citation khác vẫn rút lại
+        trace.citation_error, trace.cited = None, ()
+    cho_phep = tt.tap_so(tool["khoi"]) if tool and tool["khoi"] else set()
+    cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) for e in src.excerpts))
+    trace.thoi_tiet_kiem = tt.kiem_so(text, cho_phep)
+    noi = []
+    if tool is not None:
+        noi.append(tool["khoi"] or tt.CAU_LOI)
+    if ctx.get("bao_lu"):
+        noi.append(tt.CAU_BAO_LU)
+    if ctx.get("ngoai_7") and ctx.get("co_cong_cu"):
+        noi.append(tt.CAU_NGOAI_7_NGAY)
+    trace.thoi_tiet_noi = "\n\n".join(noi) or None
+    if trace.thoi_tiet_noi:
+        trace.answer = f"{trace.answer}\n\n{trace.thoi_tiet_noi}"
+    if trace.thoi_tiet_kiem and trace.citation_error is None:
+        trace.citation_error = CitationIntegrityError(f"weather numbers without source: {len(trace.thoi_tiet_kiem)}")
 
 
 async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
@@ -463,7 +582,7 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         bang, khung, nguon = flags.bang_lich, trace.lich["khung"], trace.lich["nguon"]
         loi = lt.kiem_cuoi(bang, text, khung, nguon)
         trace.lich["minh_hieu"] = lt.dong_minh_hieu(khung)
-        trace.lich["ghi_chu"] = lt.khoi_ghi_chu(bang, khung, nguon)
+        trace.lich["ghi_chu"] = lt.khoi_ghi_chu(bang, khung, nguon, trace.lich.get("them_dong", ()))
         trace.lich["nhac_lai"] = lt.dem_nhac_lai(bang, text, khung)
         trace.answer = "\n\n".join(part for part in (trace.lich["minh_hieu"], text, trace.lich["ghi_chu"]) if part)
     else:
@@ -474,6 +593,8 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         trace.lich_kiem = loi
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")
         trace.citation_error = CitationIntegrityError("itinerary check failed: " + ",".join(loi))
+    if flags is not None and flags.thoi_tiet:
+        _thoi_tiet_cuoi(trace, text)
 
 
 def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) -> dict | None:
@@ -524,10 +645,19 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
-    """Cờ `lich_trinh` bật ⇒ công cụ thứ hai cho generator; tắt ⇒ {} (generator gọi y như trước — Q1)."""
-    if not flags.lich_trinh:
-        return {}
-    return {"lich_trinh_fn": lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich)}
+    """Cờ `lich_trinh` bật ⇒ công cụ thứ hai cho generator; B5b: cờ `thoi_tiet` bật ⇒ code dò ngữ cảnh thời tiết của câu, và **chỉ khi** câu cuối /
+    câu hỏi liền trước có từ khoá ⇒ thêm công cụ `thoi_tiet` (D4). Cờ tắt ⇒ {} (generator gọi y như trước — Q1)."""
+    extra = {}
+    if flags.lich_trinh:
+        extra["lich_trinh_fn"] = lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich,
+                                                     flags.du_bao if flags.thoi_tiet else None)
+    if flags.thoi_tiet:
+        co = tt.co_tu_khoa_luot(query, trace.history)
+        trace.thoi_tiet_ctx = {"bao_lu": tt.la_cau_bao_lu(query), "ngoai_7": tt.ngoai_7_ngay(query, hom_nay_vn()), "buoi": tt.co_buoi(query),
+                               "co_cong_cu": co}
+        if co:
+            extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
+    return extra
 
 
 # ---------- Một lượt có định tuyến (Phase 9 B1, plan D1, D6) ----------
@@ -721,6 +851,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                     cong_cu = getattr(getattr(event.item, "raw_item", None), "name", None)
                     if cong_cu == "lich_trinh":  # D14: "đang xếp lịch…" khi code bắt đầu chạy — không phát "đang tìm" (m-6)
                         yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
+                    elif cong_cu == "thoi_tiet":  # B5b: "đang xem dự báo…" (không phải "đang tìm kho")
+                        yield "status", {"stage": "thoi_tiet"}
                     else:
                         yield "status", {"stage": "searching"}
                 elif event.type == "run_item_stream_event" and event.name == "tool_output":
@@ -728,7 +860,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         for buoc in trace.buoc_lich[da_phat_buoc:]:
                             yield "status", {"stage": "lich_trinh", **buoc}
                         da_phat_buoc = len(trace.buoc_lich)
-                    else:
+                    elif cong_cu != "thoi_tiet":  # B5b: kết quả dự báo không phải "đã tìm kho"
                         yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
         except Exception:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)
@@ -748,6 +880,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 return
             if trace.lich is not None and trace.citation_error is None and trace.lich["ghi_chu"]:
                 yield "delta", f"\n\n{trace.lich['ghi_chu']}"  # D4b: khối ghi chú do code nối, sau phần model
+            if trace.thoi_tiet_noi and trace.citation_error is None:
+                yield "delta", f"\n\n{trace.thoi_tiet_noi}"  # B5b: khối số liệu / câu cố định do code nối, sau phần model
             set_notice(trace, flags)
             async for event in _web_stream(query, generator, trace, flags, tim_web):
                 yield event
