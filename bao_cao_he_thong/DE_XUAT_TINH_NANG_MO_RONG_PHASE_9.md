@@ -25,6 +25,7 @@ Vì sao có file này: bạn thấy tính năng Phase 9 "không có gì nổi b�
   - trần 0,15 USD.
 
   E bắt đầu code. Giọng nói: nghiên cứu dở (open-source / VN), mở lại sau.
+- **Phase 10 ảnh — đo lần 1 (11:48 05/11/2026): ÂM theo tiêu chí ghi trước.** Đã có đường nhận ảnh có rào chặn (gửi chéo trang, file sai loại, ảnh quá lớn ⇒ chặn trước khi gọi model; cờ tắt ⇒ chatbot y như cũ 228 / 228). Đo `gpt-6-luna` trên 33 ảnh, 2 lượt, 2 vòng chỉnh lời dặn: bản v1 nhận đúng tên Huế 22 / 25 (đạt) nhưng gán nhầm 2 / 5 ảnh nơi khác (Ngọ Môn Bắc Kinh ⇒ Đại Nội, phở ⇒ bún bò; ngưỡng ≤ 1); bản v2 hết gán nhầm nhưng nhận đúng tụt còn 20–21. Ảnh nào cũng sai: điện Hòn Chén, lăng Gia Long, bánh canh Nam Phổ. 6–9 s / ảnh, 0,0004 USD / ảnh; tiền Phase 10 0,079 / 0,15. **Bạn chọn:** giữ v1 dạng **gợi ý có xác nhận** (nhãn "có thể sai", nút "Không phải các tên này", ô gõ tên; trợ lý chỉ trả lời sau khi bạn bấm) — ghi rõ là âm theo thước gốc, đổi thước vì có bước xác nhận; **và thử thêm SigLIP 2 chạy máy + collection Qdrant ảnh riêng** (ảnh mẫu + mô tả, so ảnh người dùng với ảnh mẫu) để so với luna — E đang làm. Ảnh minh hoạ 38 / 42 tên đã có.
 - **Lưu trú (Phase 11, backlog):** kho có 1 mục "nên ở khu nào" (3 nhóm khu + lý do theo kiểu đi). Link chính = Google Maps (tài liệu chính thức, không khoá). Booking: bạn quyết. Agoda: không dùng (`data/phase_11_nghien_cuu/luu_tru/e5_khu_o_va_link.md`).
 - **Backlog #13 (ưu tiên đoạn cùng lĩnh vực):** bước kiểm 0 USD chỉ cứu 2 / 4 câu < ngưỡng 3 / 4 ⇒ không mở thí nghiệm. #14 đoạn gần trùng: quá ít ⇒ không mở.
 
