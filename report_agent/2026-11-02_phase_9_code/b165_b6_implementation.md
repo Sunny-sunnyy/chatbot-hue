@@ -141,3 +141,12 @@ Người chạy: C (`hue-rag-3c`); User gõ `!` (auto mode chặn agent đọc f
 
 Tiền kín: **0,040633 USD** (lần 1 0,020361 · lần 2 0,020272; theo `chat_metrics`). Judge dùng quota Claude.
 Giới hạn: n = 7 câu quyết nên chỉ thấy được khác biệt lớn. Độ trễ mục web cao (p50 13,4 s), cần theo dõi khi xét bật cờ.
+
+## 11. Chỗ đổi sau review E13 (B169, 21:03 05/11/2026)
+
+Review E13 (`report_agent/2026-11-02_phase_9_code/b165_review.md`, changes_requested 0 / 2 / 2) ⇒ commit **`77d51b6`** trên `9140152` (đã push). Sửa chỉ siết đầu ra / thêm từ khoá — không đổi đầu vào model ⇒ **dùng lại** Q2–Q5 / Q8 / kín (điều kiện E ghi: bộ dò thiên tai mới không khớp thêm câu `web_tra_loi_duoc` — đã kiểm, dưới).
+- **M-1 (link HTML thô):** (a) giao diện — `markdown.js` `WEB_SANITIZE_OPTIONS` = bộ lọc chung bỏ thẻ `a` + `href`; `renderWebHtml` dùng bộ này (số `[w n]` vẫn là link nội bộ dựng bằng DOM sau bộ lọc). (b) server — `tra_web._URL` thêm `<\s*a\b`, `href\s*=`, `(?<![:\w])//[\w-]`. (c) [Chạy] dò Chromium với `marked` / `DOMPurify` của dự án (`/tmp/b169/probe_fe.py`, cùng cách `/tmp/e13/probe_fe.py` của E): 5 ca (HTML `//`, link Markdown, link tham chiếu, HTML `https`, tên miền trần) — bộ lọc chung còn link ở 4 / 5, **bộ lọc web 0 / 5**. Test: 4 ca server (`<a href="//…">`, `//host`, `href=` sau thuộc tính khác, `< a`) ⇒ `url`; bất biến "a/b" thường không bị bắt; kiểm nguồn `renderWebHtml` dùng bộ lọc web.
+- **M-2 (thiên tai):** `_THIEN_TAI` + `lụt`, `áp thấp` ("lũ lụt", "ngập lụt" đã khớp). Test 5 ca gồm câu E dò ("Huế đang lụt không?" ⇒ `thien_tai`, 0 lần gọi model) + ranh giới "lũy". [Chạy, 0 USD] trên bộ đã thấy (28 câu + 3 chuỗi): bộ dò mới **không khớp thêm câu nào** ⇒ Q3 dùng lại.
+- **m-1 (khoá trong `repr`):** `app.py` `_tim_web_server` — hàm lồng đọc khoá **trong** hàm mỗi lần tra (bỏ `functools.partial`); test `repr` không chứa khoá. Harness `app_web.py` vẫn bọc được (hàm lồng gọi tên `tim_web` của module lúc chạy).
+- **m-2 ("đang"):** **không thêm** — [Chạy] thêm "đang" vào luật thời gian thực khớp thêm **1 câu `web_tra_loi_duoc`** (W08) + 1 lượt chuỗi ⇒ sẽ đổi Q3 ⇒ theo A: ghi giới hạn. **Giới hạn:** dò thiên tai / thời gian thực bằng từ khoá không bao giờ đủ ("đang …", từ địa phương); câu không khớp đi đường model + kiểm cuối D5 thường.
+- [Chạy] build; **277 passed** (13 file như E chạy + test mới); **Q1 228 / 228 giống byte `main`** (`data/phase_9/b6/q1_e13/nhanh.jsonl` ↔ `main_80faf1a.jsonl`, dùng lại vì `80faf1a..main` chỉ đổi `index.css`). 0 USD.

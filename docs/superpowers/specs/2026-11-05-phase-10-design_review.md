@@ -79,3 +79,48 @@ Kiểm theo mục "Chỗ đổi bản 2" của spec, rồi đọc lại các ph�
 **Nhận xét (không phải finding, không cần sửa trước khi duyệt):** §7 ước 150–185 lần gọi. Luật A/A làm mỗi vòng chỉnh cũng cần 2 lượt mới quyết được ⇒ tối đa 66 + 2 × 66 + 20 = 218 lần ≈ **0,065–0,11 USD**, vẫn dưới dừng 0,13. Plan A2 nên ghi rõ số lượt mỗi vòng.
 
 **Kết luận:** mọi finding vòng 1 đã đóng, không có finding mới ⇒ **ready_for_user_confirmation**. A trình User gói duyệt §12 (đường ra ảnh tới OpenAI, tải ảnh Commons, CSP `blob:`, trần 0,15) cùng spec; phần giọng nói (§8) không thuộc lần duyệt này.
+
+## Vòng 3 — phần giọng nói (vòng 1 của phần này), spec bản 3 `bc246a4ba3d6` (B167, A giao)
+
+Decision: **changes_requested** (0 blocker · 1 major · 6 minor). Người kiểm: B (Claude Code, Opus 5.5) · 20:54 05/11/2026 (`date`).
+Phạm vi: chỉ phần đổi — §8 (giọng nói NGHE), §9, §12 (7)–(10), §13 dòng giọng nói, "Chỗ đổi bản 3". Phần ảnh không đổi ⇒ không kiểm lại.
+Căn cứ đã đọc: spec bản 3 (sha `bc246a4ba3d6` tính từ file, khớp tin giao); `data/phase_10_nghien_cuu/giong_noi/nghien_cuu_mo_hinh.md` §0, §1, §5, §6, §7, §8; vòng 1–2 file này.
+Đã kiểm [Chạy, chỉ đọc]: số tự báo trong G2 khớp file nghiên cứu §1 (Gipformer ViMD 7,17 / giọng Trung 32,27; Zipformer 30M giọng Trung 45,19, RTF 0,011, ~32 MB; PhoWhisper giọng Trung 59–65); MDN "audio is sent to a web service" (§0, nhãn [đã kiểm]); mọi `file:dòng` trên `main` `b75fefc` khớp (`anh.py:28` `kiem_dau_vao`, `:44` `doc_than`; `app.py:42-43` CSP, `:146-152` nạp ảnh; `App.jsx:62` `draft`, `:72` `queryRef`; `chat.py:68` `max_length=500`, `:112` `_remember`); 15 s × 16 kHz × 2 byte = 480.000 B + đầu WAV 44 B < 512 KB (G5 đủ chỗ).
+
+### M-1 (major) — V-b "WER ≤ 15 %" là tiêu chí **quyết**, lệch mục tiêu sản phẩm và gần như chắc trượt vì giọng, không vì chất lượng dùng được
+
+- **Vị trí:** §8.5 V-b + dòng "Chọn: model đạt cả V-a…V-d".
+- **Bằng chứng:** (1) file nghiên cứu §5 xếp WER là **chỉ số phụ**; chỉ số chính là "tên riêng đúng — quyết định tìm kho có ra đúng không". (2) Bảng nguồn §1: WER giọng Trung **tốt nhất 32,27 %** (Gipformer), Zipformer 45,19 %; spec bắt ≥ 1 người giọng Huế đọc (§8.4) và 10 / 40 câu có ồn ⇒ WER cả bộ ≤ 15 % rất khó đạt dù tên và số đúng. (3) G3: chữ vào ô gõ, **người dùng sửa rồi mới gửi** ⇒ một từ thường chép sai ít hại; tên riêng sai mới làm tìm kho sai (đã có V-a), số sai mới làm sai giá / giờ (đã có V-c).
+- **Tác động:** kết quả âm có thể do thước không gần mục tiêu cuối (`Session_Prompt.md` §7 "đo theo mục tiêu sản phẩm cuối cùng"), hoặc phải sửa tiêu chí sau khi đo.
+- **Tiêu chí đóng (chọn một, ghi trước):** (a) **khuyến nghị** — V-b thành **theo dõi** (báo WER theo người đọc × yên / ồn); quyết = V-a + V-c + V-d (+ V-e khi có hotwords); hoặc (b) giữ V-b là quyết nhưng chỉ trên nhóm "yên tĩnh" và ghi lý do chọn 15 % (nguồn nào, giọng nào). Đổi tiêu chí trước khi đo ⇒ A / User duyệt cùng bản.
+
+### Minor
+
+- **m-1 — chuẩn hoá số chưa đủ cho V-c và WER.** §8.4: nhãn ghi số **bằng chữ** ("theo cách đọc"); §8.5 chuẩn hoá chỉ có NFC / chữ thường / bỏ dấu câu / khoảng trắng. Model có thể ra chữ số ("50000", "8 giờ") ⇒ tính sai cả khi chép đúng. **Đóng:** G0 ghi dạng số của đầu ra từng model; plan ghi trước một hàm chuẩn hoá số (chữ ↔ chữ số, hoặc so theo giá trị) dùng chung cho V-b, V-c.
+- **m-2 — hết hạn 10 s (G9) không dừng được luồng `asyncio.to_thread`.** Sau khi trả G9, luồng chép vẫn chạy tới hết. Nếu khoá "một lượt / lúc" (G7) mở ra lúc hết hạn thì lượt sau chạy chồng lên CPU. **Đóng:** G7 ghi rõ khoá chỉ mở khi luồng chép **xong thật** (đang chạy ⇒ 429), kèm một test.
+- **m-3 — V-d thiếu điều kiện độ dài câu.** File nghiên cứu §5 đặt "p95 ≤ 1,5 s **cho câu 5–10 s**"; spec bỏ điều kiện này mà cho câu tới 15 s. **Đóng:** ghi p95 trên đúng 40 câu thu (kèm phân bố độ dài), hoặc giữ ràng buộc độ dài như nguồn.
+- **m-4 — "dùng lại `kiem_dau_vao`, chỉ đổi tập kiểu" (G5) chưa làm được ngay.** Hàm gắn cứng `KIEU_ANH` (`anh.py:22`, `:36`). **Đóng:** plan G3 thêm tham số tập kiểu (mặc định = ảnh, route ảnh giữ nguyên hành vi) + test route ảnh không đổi.
+- **m-5 — giá trị "du khách đang đi / tay bận" (§8.1 ý 1) chưa thử được trước Phase 12.** Micro chỉ chạy trên `localhost` / HTTPS (§8.6), nên điện thoại thật qua mạng LAN không dùng được; Playwright khung điện thoại không thay được. **Đóng:** §13 thêm một dòng giới hạn; G4 ghi "chưa thử trên điện thoại thật".
+- **m-6 (thông tin, không chặn).** G2 ghi giấy phép Gipformer (MIT) nhưng không ghi của Zipformer; file nghiên cứu §1 ghi Zipformer CC-BY-NC-ND. Theo luật User 05/11 (5) thì không kiểm giấy phép. Nhưng User coi đồ án như sản phẩm kinh doanh thật (`Project_Status.md` §1), nên nên có **một dòng** ở §13 để User thấy. Không cần thêm bước nào.
+
+**Không có finding ở:** G1 không agent / không LLM; G3 không tự gửi; G4 WAV đổi ở trình duyệt (không ffmpeg ở server); G6 không lưu / không log chữ; G8 hotwords đo hai chiều (V-e); V-a mẫu số + Wilson; V-e; V-f; §8.6 bộ ba (không đường ra mới; lượt so Web Speech tách là egress tuỳ chọn §12 (9)); `Permissions-Policy: microphone=(self)`; §8.7 hai bảng rà có `file:dòng` + khớp / lệch; **bộ kín: không** (đúng luật 05/11 (2): model tất định, không lời dặn); TTS để sau; Web Speech không vào bộ đo chính (không quá tay). §9: **M-1, M-3 đóng được**, vì §8.1 + G2 + §12 (7)–(9) liệt kê đường ra và phương án cần duyệt, và §8.5 có ngưỡng bằng số. Riêng M-3 cần đóng M-1 vòng này cho thước dùng được. §12 (7)–(10) đủ cho G0–G1.
+
+**Kết luận:** sửa M-1 (A / User chọn (a) hoặc (b)) + m-1…m-5 ⇒ vòng 2 (cuối) B kiểm phần sửa; chỉ còn minor ⇒ A duyệt.
+
+## Vòng 4 — kiểm phần sửa phần giọng nói (vòng 2, cuối), spec bản 4 `784d6f7abd9f` (A giao sau B169)
+
+Decision: **ready_for_user_confirmation** — 0 blocker · 0 major · 0 minor mới. Người kiểm: B · 21:04 05/11/2026 (`date`). Sha tính từ file, khớp tin giao.
+Chỉ kiểm phần sửa theo vòng 3 (`d2c3b9560672`): §8.2 G4 / G5 / G7, §8.5 (chuẩn hoá, V-b, V-d, "Chọn"), §9 dòng M-3, §13 hai dòng mới, "Chỗ đổi bản 4".
+
+| Finding vòng 3 | Kết quả | Chỗ |
+|---|---|---|
+| **M-1** V-b WER là quyết | **đóng** — V-b thành **theo dõi** (báo theo người đọc × yên / ồn, lý do ghi ngay trong ô); "Chọn" = V-a + V-c + V-d (+ V-e); §9 M-3 cập nhật theo | §8.5, §9 |
+| m-1 chuẩn hoá số | **đóng** — một hàm chuẩn hoá số so theo giá trị (ví dụ "năm mươi nghìn" = "50000" = "50.000"), ghi trước ở plan, dùng chung V-b / V-c; G0 ghi dạng số đầu ra | §8.5 dòng chuẩn hoá |
+| m-2 hết hạn không dừng luồng | **đóng** — khoá chỉ mở khi luồng chép xong thật; test lượt kế tiếp nhận 429 | G7 |
+| m-3 V-d thiếu độ dài câu | **đóng** — p95 trên câu ≤ 10 s (như nguồn), câu > 10 s báo riêng, report ghi phân bố độ dài | V-d |
+| m-4 `kiem_dau_vao` gắn cứng | **đóng** — plan G3 thêm tham số tập kiểu (mặc định ảnh) + test route ảnh không đổi | G5 |
+| m-5 chưa thử điện thoại thật | **đóng** — G4 ghi "chưa thử trên điện thoại thật"; §13 dòng giới hạn | G4, §13 |
+| m-6 giấy phép (thông tin) | **đóng** — §13 một dòng (Gipformer MIT; Zipformer CC-BY-NC-ND-4.0, xem lại nếu thành sản phẩm bán), không thêm bước | §13 |
+
+Không thấy thay đổi ngoài phạm vi: "Không đổi" của bản 4 khớp với phần mình đọc (G1–G3, G6, G8, G9, §8.1, §8.3, §8.4, §8.6–§8.8, V-a, V-c, V-e, V-f, §12, phần ảnh).
+**Kết luận:** phần giọng nói đủ để A trình User cùng §12 (7)–(10): thêm `sherpa-onnx`, tải 2 model ≤ 300 MB, lượt so Web Speech (tuỳ chọn), thu 40 câu.

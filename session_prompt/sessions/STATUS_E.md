@@ -14,7 +14,8 @@
 - Ảnh mẫu E9 (đếm lại sau vòng tải tối — số 179 / 34 lúc mở phiên là **đếm nhầm** cả file phiếu): **172 ảnh / 40 tên**; 5 tên tải dở thiếu `phieu_nguon.jsonl` (bien_thuan_an, dan_xa_tac, doi_vong_canh, me_xung, pho_tay — nguồn tra theo thứ tự dòng `mau/<id>.txt`); pho_tay chỉ 2 ảnh (Commons giữ > 15 phút ⇒ bỏ). **Kiểm lớp 2: 0 trùng** với 36 ảnh đo (sha256 + tên file Commons) ⇒ `e9/kiem_trung_ket_qua.json`.
 
 - **E12 XONG:** spec Phase 10 **bản 3 `bc246a4ba3d6`** (§8 giọng nói NGHE viết đủ: G1–G9, bậc G0–G4, bộ 40 câu, V-a…V-f, bảo mật, bảng FDE; §9 M-1 / M-3 đề xuất đóng; §12 (7)–(10); phần ảnh không đổi) — chờ review ≤ 2 vòng ⇒ User duyệt sha.
-- **E13 đang làm:** review cả nhánh `p9-b6` (B6 tra web) ⇒ `report_agent/2026-11-02_phase_9_code/b165_review.md`.
+- **E13 + E15 XONG:** review `p9-b6` vòng 1 `9140152` changes_requested 0 / 2 / 2 ⇒ B169 sửa `77d51b6` ⇒ **vòng 2 ready_for_user_confirmation** (`report_agent/2026-11-02_phase_9_code/b165_review.md`: dò `renderWebHtml` thật trong Chromium 0 link ngoài; server bắt `<a` / `href=` / `//host`; lụt / áp thấp; khoá không trong `repr`; "đang" ⇒ giới hạn, lý do đủ). Worktree `/tmp/e13/wt` đã gỡ; còn `/tmp/e13/probe_fe*.py` (tạm).
+- **E14 XONG:** spec Phase 10 **bản 4 `784d6f7abd9f`** (B167 vòng 3: M-1 (a) V-b WER ⇒ theo dõi, quyết V-a + V-c + V-d; m-1 chuẩn hoá số; m-2 khoá mở khi luồng xong; m-3 p95 câu ≤ 10 s; m-4 tham số tập kiểu; m-5, m-6 §13) — chờ B vòng 2 (cuối).
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Nhánh `p10-anh` — CHƯA COMMIT** (auto mode chặn: luật User "commit / push hỏi trước"; tin A không thay User). Worktree `/tmp/e_anh` ở `main` `268466d` + 9 file chưa commit

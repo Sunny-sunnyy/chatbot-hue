@@ -89,3 +89,25 @@ Qdrant thật (6 test B6 cần), không khoá Serper, không khoá OpenAI, 0 USD
 ## 6. Decision và bước tiếp theo
 
 **changes_requested** — B sửa M-1 (giao diện không tạo link từ chữ model + server bắt thẻ / `href` / `//`) và M-2 (`lụt`, `áp thấp` + test + kiểm bộ đã thấy) trong một lượt; m-1, m-2 sửa luôn hoặc ghi giới hạn. Kiểm lại: E xem đúng hai chỗ sửa + chạy `test_b6_tra_web.py` + lặp lại hai dò (server + `probe_fe.py`); **dùng lại** Q1–Q5 / Q8 / kín vì sửa chỉ siết đầu ra / thêm từ khoá (với điều kiện M-2 không khớp thêm câu `web_tra_loi_duoc`). Sau đó A merge **cờ tắt** như kế hoạch; bật cờ là quyết định của User (chữ đầu mục web p50 ≈ 13 s — Q5).
+
+---
+
+## Vòng 2 — kiểm phần sửa `77d51b6` (B169) · 21:05 05/11/2026 (`date`) · E (việc **E15**)
+
+Decision: **ready_for_user_confirmation** (0 blocker / 0 major / 0 minor mở)
+Phạm vi: diff `9140152..77d51b6` — 4 file (`tra_web.py`, `app.py`, `markdown.js`, `test_b6_tra_web.py`), +65 / −10, `git diff --check` sạch; report b165 §11. Code ngoài 4 file không đổi ⇒ phần đã khớp ở vòng 1 dùng lại.
+
+| Finding | Kiểm lại [Chạy, 0 USD] — cách **khác** B | Kết quả |
+|---|---|---|
+| **M-1** link HTML thô | (giao diện) nạp **chính `renderWebHtml` của nhánh** (`frontend/src/markdown.js` qua import map, `marked.esm` + `purify.es.mjs` của `frontend/node_modules`) vào Chromium — không chép lại bộ lọc như dò vòng 1 / B — 5 ca: `<a href="//…">`, `[x](https://…)`, `<a href="https://…">`, link tham chiếu `[x][d]` + `[d]: //…`, mã ngoài sổ `[w9]` ⇒ mọi ca chỉ còn link nội bộ `#web-L1-1` (của `[w1]`), **0 link ngoài** (`/tmp/e13/probe_fe2.py`). Đối chứng cùng script trên `9140152`: 4 / 4 ca có link ngoài — dò bắt được lỗi cũ, kể cả link tham chiếu tách đoạn mà dò vòng 1 không phủ. (server) `kiem_muc_web`: `<a href="//…">`, `< A HREF = …>`, `//1.2.3.4/x` ⇒ `url`; chữ thường `7h–22h`, `1/2` ⇒ không bắt nhầm | **đóng** |
+| **M-2** thiên tai | `la_cau_thien_tai`: "Huế đang lụt không?", "… ngập lụt …", "Áp thấp nhiệt đới …", "Áp thấp vào chưa" ⇒ True; "Thành lũy …", câu món ăn ⇒ False | **đóng** |
+| m-1 khoá trong `repr` | `_tim_web_server({})` với khoá giả trong env ⇒ khoá **không** có trong `repr`, không nằm trong closure (đọc env mỗi lần tra) | **đóng** |
+| m-2 "đang" | E tự đếm trên `data/phase_9/bo_do_b6/cau_da_thay.jsonl`: câu có "đang" = **W08 (`web_tra_loi_duoc`)** — khớp lý do B. Thêm "đang" ⇒ luật "0 chữ số" chạm cả câu web trả lời được (giờ / giá có ích) và chữ này quá phổ biến ⇒ lý do **đủ**; ghi giới hạn (report §11) | **đóng bằng giới hạn** |
+| Test | build `npm run build` worktree; `test_b6_tra_web` + boundary + `test_static_ui` + `test_p10_anh` + `test_chat_stream` + `test_toc_do_song_song`: **147 passed** (B báo 277 cho 13 file + test mới) | đạt |
+| Q1 | dùng lại (B: `q1_e13/nhanh.jsonl` ↔ `main_80faf1a`; sửa không chạm chuỗi gửi model — chỉ đầu ra / từ khoá / cách cầm khoá) | lý do đủ |
+
+**Dùng lại bằng chứng có phí** (Q2–Q5, Q8, kín C203): hợp lệ — sửa chỉ siết đầu ra (bộ lọc giao diện, mẫu URL) + thêm 2 từ khoá thiên tai không khớp thêm câu `web_tra_loi_duoc` (B kiểm; E kiểm W08 riêng cho "đang").
+
+**Giới hạn còn lại (không chặn):** dò thiên tai / thời gian thực bằng từ khoá không bao giờ đủ; chữ đầu mục web p50 ≈ 13 s (Q5); điều khoản Serper chưa rõ (User chấp nhận P5); tên trong cùng câu ra Serper (theo dõi).
+
+**Kết luận:** ready — A merge **cờ `tra_web` tắt** được; **bật cờ là quyết định của User** (chất lượng Q2 / Q3 / kín đạt; đánh đổi: độ trễ ~13 s cho câu kho từ chối, 0,0018 USD / câu đường web, điều khoản Serper).

@@ -1,6 +1,6 @@
 # Phase 10 — hỏi bằng ảnh (trước) + giọng nói (sau) — tài liệu thiết kế
 
-Người viết: E (`hue-rag-7a`; bản 3 `hue-rag-bc`) · **bản 3, 20:47 05/11/2026** (`date`; việc **E12** — viết đủ §8 giọng nói phần NGHE theo nghiên cứu E1 + User chọn "nghe trước, đọc sau"; **phần ảnh §1–§7, §10 không đổi**; chỗ đổi cuối file; trạng thái: **chờ review, chưa trình User**) · bản 2 `bf67b90fb6fc` **User duyệt 10:28 05/11/2026** (phần ảnh) · bản 2, 10:18 05/11/2026 (`date`; việc **E4b** — sửa theo review B vòng 1 `…phase-10-design_review.md` `62ffcac51b1a`: M-1, M-2, m-1…m-6; chỗ đổi cuối file) · bản nháp 1 `d640b8696edd` 10:04 05/11/2026 (E4). Trạng thái: **chờ B kiểm phần sửa, chưa trình User**.
+Người viết: E (`hue-rag-7a`; bản 3 `hue-rag-bc`) · **bản 4, 20:58 05/11/2026** (`date`; việc **E14** — sửa theo review B vòng 3 `…phase-10-design_review.md` `d2c3b9560672`: M-1 (A chốt (a)), m-1…m-6; chỉ §8, §9, §13; chỗ đổi cuối file) · bản 3 `bc246a4ba3d6` 20:47 05/11/2026 (`date`; việc **E12** — viết đủ §8 giọng nói phần NGHE theo nghiên cứu E1 + User chọn "nghe trước, đọc sau"; **phần ảnh §1–§7, §10 không đổi**; chỗ đổi cuối file; trạng thái: **chờ review, chưa trình User**) · bản 2 `bf67b90fb6fc` **User duyệt 10:28 05/11/2026** (phần ảnh) · bản 2, 10:18 05/11/2026 (`date`; việc **E4b** — sửa theo review B vòng 1 `…phase-10-design_review.md` `62ffcac51b1a`: M-1, M-2, m-1…m-6; chỗ đổi cuối file) · bản nháp 1 `d640b8696edd` 10:04 05/11/2026 (E4). Trạng thái: **chờ B kiểm phần sửa, chưa trình User**.
 Mức rủi ro: **cao** (Phase mới; **đường ra mới**: ảnh của người dùng tới OpenAI; có thể thêm model chạy máy). Spec chốt mục tiêu, quyết định, bậc, bộ đo +
 tiêu chí ghi trước, bảo mật, tiền, lịch; chi tiết code để plan từng bậc. Repo public: không chép kho, Golden, câu kín; tên điểm là tên công khai.
 
@@ -159,9 +159,9 @@ tiếp (A3), người dùng xác nhận.
 | **G2** | **Model chạy máy, hai ứng viên:** **Gipformer 68M RNNT int8** (bảng tác giả: ViMD 7,17 · giọng Trung 32,27 — tốt nhất bảng; MIT) và **Zipformer-30M-RNNT-6000h** (`hynt`, gói sherpa int8 ~32 MB, RTF 0,011 một luồng [đã kiểm log sherpa]; giọng Trung 45,19); chạy bằng **sherpa-onnx** (ONNX Runtime, **không torch**) | âm thanh không rời máy; nhỏ; số giọng Trung tốt nhất trong nguồn có | mọi số là **tự báo** của một nhóm ⇒ phải đo. Gipformer chạy được bằng sherpa-onnx **chưa kiểm** ⇒ bước G0; không chạy ⇒ chỉ còn Zipformer (không thêm thư viện khác khi chưa duyệt). Khác: PhoWhisper — mất: cần torch, giọng Trung 59–65 trong bảng |
 | **G3** | **Chữ chép luôn vào ô gõ** (`frontend/src/App.jsx:62` `draft` / `setDraft`, `:72` `queryRef`): ô trống ⇒ thay; ô có chữ ⇒ nối sau một dấu cách; con trỏ về ô gõ; **người dùng sửa / bấm Hỏi** — code **không bao giờ tự gửi** | lỗi chép không thành câu hỏi sai (như "hỏi bằng ảnh": model chỉ đề xuất, người xác nhận); chữ đi đúng đường `/api/chat` như câu gõ | thêm một lần bấm. Khác: tự gửi khi đủ tin cậy — mất: điểm tin cậy của model không phải bảo đảm, câu sai tên đi thẳng vào kho |
 | **G4** | **Luồng:** nút "Nói" (component riêng `frontend/src/HoiBangGiong.jsx`, cùng cách tách file của A8) ⇒ trình duyệt xin quyền micro **chỉ khi bấm** ⇒ ghi tối đa **15 s** (bấm lần nữa để dừng; tự dừng ở 15 s) ⇒ **trình duyệt tự đổi sang WAV PCM 16 kHz mono 16-bit** (giải mã + lấy mẫu lại bằng Web Audio ngay trong trang) ⇒ `POST /api/giong_noi/chep` (thân = bytes WAV, `Content-Type: audio/wav`) ⇒ `{chu: "…"}` | backend **không cần ffmpeg / thư viện giải mã** (đọc WAV bằng `wave` của Python); 15 s × 32 KB/s ≈ 480 KB | trình duyệt cũ không có Web Audio ⇒ nút không hiện. Khác: gửi WebM / Opus của `MediaRecorder` — mất: cần ffmpeg ở server (công cụ hệ thống mới vào runtime) |
-| **G5** | **Rào route = rào route ảnh** (`backend/api/routes/anh.py:28` `kiem_dau_vao`, `:44` `doc_than` — dùng lại, chỉ đổi tập kiểu): `Sec-Fetch-Site` ≠ `same-origin` / `Origin` khác gốc ⇒ 403; `Content-Type` ≠ `audio/wav` ⇒ 415; `Content-Length` thiếu hoặc > **512 KB** ⇒ 413; đọc luồng có bộ đếm; sau khi đọc: WAV phải **1 kênh, 16 bit, 16 kHz, ≤ 15 s** (`wave`) ⇒ sai ⇒ 415 / 413 — **trước khi gọi model** | cùng mức chặn gửi chéo trang (A10: thân `audio/*` bắt preflight, không CORS); không thêm token / cookie | — |
+| **G5** | **Rào route = rào route ảnh** (`backend/api/routes/anh.py:28` `kiem_dau_vao`, `:44` `doc_than` — dùng lại; **bản 4 (m-4):** `kiem_dau_vao` hôm nay gắn cứng `KIEU_ANH` (`anh.py:22`, `:36`) ⇒ plan G3 thêm tham số tập kiểu, mặc định = ảnh, + test route ảnh giữ nguyên hành vi): `Sec-Fetch-Site` ≠ `same-origin` / `Origin` khác gốc ⇒ 403; `Content-Type` ≠ `audio/wav` ⇒ 415; `Content-Length` thiếu hoặc > **512 KB** ⇒ 413; đọc luồng có bộ đếm; sau khi đọc: WAV phải **1 kênh, 16 bit, 16 kHz, ≤ 15 s** (`wave`) ⇒ sai ⇒ 415 / 413 — **trước khi gọi model** | cùng mức chặn gửi chéo trang (A10: thân `audio/*` bắt preflight, không CORS); không thêm token / cookie | — |
 | **G6** | **Không lưu âm thanh, không log chữ:** âm thanh chỉ ở RAM trong lượt; log `giong_noi_metrics` một dòng / yêu cầu: outcome, mã HTTP, giây âm thanh, **số ký tự** chép, ms xử lý — **không** chữ, không âm thanh, không header | giọng nói = dữ liệu cá nhân (§8.6) | — |
-| **G7** | **Model nạp một lần lúc khởi động** khi cờ `giong_noi.bat` bật (như `app.state.anh`, `backend/api/app.py:146-152`); cờ tắt / nạp lỗi ⇒ route 404, nút không hiện (`GET` trước, như ảnh); chép trong `asyncio.to_thread`; **một lượt chép tại một thời điểm** (đang bận ⇒ 429 "đang nghe câu khác, thử lại") | CPU máy User; tránh hai lượt cùng ăn CPU / RAM (bài học review C198 m-3) | người dùng thứ hai phải chờ — chấp nhận trên máy User; Phase 12 xem lại |
+| **G7** | **Model nạp một lần lúc khởi động** khi cờ `giong_noi.bat` bật (như `app.state.anh`, `backend/api/app.py:146-152`); cờ tắt / nạp lỗi ⇒ route 404, nút không hiện (`GET` trước, như ảnh); chép trong `asyncio.to_thread`; **một lượt chép tại một thời điểm** (đang bận ⇒ 429 "đang nghe câu khác, thử lại"). **Bản 4 (m-2):** hết hạn G9 trả câu cố định nhưng luồng chép vẫn chạy ⇒ khoá **chỉ mở khi luồng chép xong thật** (không mở lúc hết hạn); test: lượt hết hạn ⇒ lượt kế tiếp trong lúc luồng cũ còn chạy nhận 429 | CPU máy User; tránh hai lượt cùng ăn CPU / RAM (bài học review C198 m-3) | người dùng thứ hai phải chờ — chấp nhận trên máy User; Phase 12 xem lại |
 | **G8** | **Từ khoá tên riêng (hotwords) do code dựng** từ danh sách tên Phase 10 (`data/phase_10/anh/danh_sach_ten.json`, 42 mục + bí danh) — chỉ bật ở **vòng chỉnh** nếu vòng 0 thiếu tên riêng; cần `modified_beam_search` [Codex — trang hotwords sherpa; kiểm ở G0] | tên Huế là điểm yếu dễ đoán trước; danh sách đã có, User đã duyệt | hotwords có thể **chèn tên sai** vào câu không có tên ⇒ đo hai chiều (V-e) |
 | **G9** | Lỗi / quá hạn (**10 s** cho một lượt chép) / chữ rỗng ⇒ câu cố định "Mình chưa nghe rõ — bạn nói lại hoặc gõ giúp nhé" (code); chữ > 500 ký tự (`backend/api/routes/chat.py:68`) ⇒ cắt, báo | đường lùi = gõ tay | — |
 
@@ -173,7 +173,7 @@ tiếp (A3), người dùng xác nhận.
 | **G1** | User thu bộ 40 câu (§8.4) ⇒ đổi sang WAV 16 kHz mono bằng `ffmpeg` **có sẵn trên máy** (công cụ đo, không vào runtime) | có | `data/phase_10/giong_noi/bo_do/` (private) |
 | **G2** | script đo: 2 model × 40 câu (vòng 0, không hotwords) ⇒ V-a…V-f; lặp lần 2 kiểm **giống hệt** (tất định); ≤ 2 vòng chỉnh (hotwords G8, số luồng / cách giải mã) trên cùng bộ | có | report + bảng so |
 | **G3** | (model đạt) route + rào + test (G5, G6, G9: ca 403 / 413 / 415 / WAV sai dạng ⇒ 0 lần gọi model; log không có chữ) sau cờ `giong_noi: false` | có | nhánh `p10-giong` |
-| **G4** | giao diện `HoiBangGiong.jsx` + Playwright (máy tính + khung điện thoại; micro giả của Chromium phát file WAV có sẵn — không cần người nói) + Q1 kiểu Phase 9 (cờ tắt / bật ⇒ chuỗi gửi model `/api/chat*` giống byte `main`) | có | merge `main`, cờ bật nếu User đồng ý |
+| **G4** | giao diện `HoiBangGiong.jsx` + Playwright (máy tính + khung điện thoại; micro giả của Chromium phát file WAV có sẵn — không cần người nói; **chưa thử trên điện thoại thật** — micro chỉ chạy trên `localhost` / HTTPS, bản 4 m-5) + Q1 kiểu Phase 9 (cờ tắt / bật ⇒ chuỗi gửi model `/api/chat*` giống byte `main`) | có | merge `main`, cờ bật nếu User đồng ý |
 
 ### 8.4 Bộ đo — 40 câu User thu (người dựng bộ ≠ người code)
 
@@ -189,18 +189,18 @@ tiếp (A3), người dùng xác nhận.
 
 ### 8.5 Tiêu chí ghi trước (áp cho từng model, trên 40 câu)
 
-Chuẩn hoá trước khi so (một hàm, mọi model như nhau, ghi trong plan): NFC, chữ thường, bỏ dấu câu, gộp khoảng trắng.
+Chuẩn hoá trước khi so (một hàm, mọi model như nhau, ghi trong plan): NFC, chữ thường, bỏ dấu câu, gộp khoảng trắng; **số** (bản 4, m-1): nhãn ghi số bằng chữ, model có thể ra chữ số ⇒ plan ghi trước **một hàm chuẩn hoá số** (so theo giá trị: "năm mươi nghìn" = "50000" = "50.000"; "tám giờ" = "8 giờ") dùng chung cho V-b, V-c; G0 ghi dạng số đầu ra của từng model.
 
 | Mã | Loại | Chỉ số / ngưỡng | Ghi chú |
 |---|---|---|---|
 | **V-a** | **quyết** | **tên riêng đúng ≥ 90 %** số lần tên riêng xuất hiện (tên đúng = cả cụm tên sau chuẩn hoá có trong bản chép) | mẫu số ≈ 20–30 lần xuất hiện ⇒ ghi k / n + khoảng Wilson |
-| **V-b** | **quyết** | **WER ≤ 15 %** (cả 40 câu) | báo riêng nhóm yên tĩnh / có ồn, theo người đọc |
+| **V-b** | theo dõi (bản 4, review B vòng 3 M-1 — A chốt (a)) | WER (cả 40 câu) | báo theo **người đọc × yên / ồn**; không quyết: chữ vào ô gõ để người dùng sửa (G3) ⇒ từ thường sai ít hại; tên sai (V-a) và số sai (V-c) mới làm sai câu trả lời. Nguồn: WER giọng Trung tốt nhất 32 % (bảng tác giả) |
 | **V-c** | **quyết** (M-3) | **số đúng ≥ 90 %** số con số trong 10 câu có số | |
-| **V-d** | **quyết** | **p95 ≤ 1,5 s** / câu (đọc WAV + chép, sau khi nạp model, số luồng ghi trước = như lúc chạy thật) · **RAM đỉnh tiến trình đo ≤ 1,5 GB** | báo thêm p50, thời gian nạp model, dung lượng model |
+| **V-d** | **quyết** | **p95 ≤ 1,5 s** / câu trên các câu dài **≤ 10 s** (như nguồn nghiên cứu §5; câu > 10 s báo riêng; report ghi phân bố độ dài 40 câu) (đọc WAV + chép, sau khi nạp model, số luồng ghi trước = như lúc chạy thật) · **RAM đỉnh tiến trình đo ≤ 1,5 GB** | báo thêm p50, thời gian nạp model, dung lượng model |
 | **V-e** | **sàn** (khi bật hotwords) | **chèn tên sai** (tên riêng có trong bản chép mà không có trong câu nói) **≤ 1 / 40 câu** | rào đo hai chiều: 10 câu thường là ca gần giống |
 | **V-f** | **sàn** (test) | route: yêu cầu khác nguồn / sai kiểu / quá cỡ / WAV sai dạng ⇒ 403 / 415 / 413 và **0 lần chép**; log không có chữ; không file âm thanh nào ghi ra đĩa | G3 |
 
-**Chọn:** model đạt **cả** V-a…V-d (và V-e nếu dùng hotwords); cả hai đạt ⇒ chọn V-a cao hơn, bằng nhau ⇒ nhỏ / nhanh hơn. **Kết quả âm:** không model nào đạt sau
+**Chọn:** model đạt **cả** V-a, V-c, V-d (và V-e nếu dùng hotwords) — V-b chỉ báo; cả hai đạt ⇒ chọn V-a cao hơn, bằng nhau ⇒ nhỏ / nhanh hơn. **Kết quả âm:** không model nào đạt sau
 2 vòng chỉnh ⇒ không bật, ghi âm vào báo cáo; xét Moonshine (§8.1 ý 5) chỉ khi User muốn. Lặp lần 2 phải giống hệt — khác ⇒ báo A trước khi kết luận.
 
 ### 8.6 Bảo mật (`agent-security-review`) + dữ liệu cá nhân
@@ -260,7 +260,7 @@ Dòng báo dưới nút: "Giọng nói được chép thành chữ ngay trên m�
 | Mã | Tiêu chí đóng (review) | Spec này | Trạng thái |
 |---|---|---|---|
 | **M-1** | liệt kê đường ra nhận dạng giọng trình duyệt (kể cả lượt thử); User duyệt cả các phương án (provider trình duyệt, PhoWhisper — giấy phép + RAM + không chạy cùng việc nặng) hoặc bỏ phương án chưa duyệt | §8.1 ý 3 + G2 + §8.6: **chỉ model chạy máy**, Web Speech không ở đường chính (lượt so tuỳ chọn = egress cần duyệt §12 (9)); model mới + thư viện User duyệt §12 (7)–(8); không chạy cùng việc nặng §8.8 | đề xuất đóng (bản 3) — reviewer kiểm |
-| **M-3** | ngưỡng V1 tên đúng ≥ x / 15 và số đúng ≥ y, dưới ⇒ không bật | §8.5: V-a tên riêng đúng ≥ 90 %, V-c số đúng ≥ 90 %, V-b WER ≤ 15 %, V-d p95 ≤ 1,5 s + RAM ≤ 1,5 GB trên **40 câu** (thay 15 câu bản 2); dưới ⇒ không bật | đề xuất đóng (bản 3) — reviewer kiểm |
+| **M-3** | ngưỡng V1 tên đúng ≥ x / 15 và số đúng ≥ y, dưới ⇒ không bật | §8.5: quyết = V-a tên riêng đúng ≥ 90 % + V-c số đúng ≥ 90 % + V-d p95 ≤ 1,5 s (câu ≤ 10 s) + RAM ≤ 1,5 GB trên **40 câu** (thay 15 câu bản 2); V-b WER theo dõi (bản 4); dưới ⇒ không bật | đề xuất đóng (bản 3) — reviewer kiểm |
 | **M-4** | tách mẫu số ảnh Huế / ngoài Huế; danh sách tên cụ thể (nguồn + số tên) | §3.1 (nguồn + số), §3.2 (n_H = 25 / 5 riêng), §5 Q-a / Q-c | đề xuất đóng — reviewer kiểm |
 | **m-7** | rào giới hạn điểm ảnh khi giải mã; Pillow đã có | §6 dòng 1 | đề xuất đóng — reviewer kiểm |
 
@@ -328,6 +328,8 @@ Route ảnh chưa có ⇒ cột "hiện trạng" trỏ **chỗ code hiện hành
 - 30 ảnh chỉ bắt lỗi lớn (§5 Wilson); ảnh Commons đẹp hơn ảnh du khách ⇒ đo có thể lạc quan — bù bằng 1/3 ảnh User chụp.
 - Token ảnh của `gpt-6-luna` là giả định tới bước 0.
 - Giọng nói (bản 3): mọi số WER / tốc độ của model nghe là **tự báo** (bảng giọng Trung là bộ riêng của một nhóm); Gipformer chạy bằng sherpa-onnx chưa kiểm (G0); 40 câu chỉ bắt lỗi lớn; đọc thành tiếng (TTS) chưa thiết kế.
+- **(bản 4, m-5)** giá trị "du khách đang đi / tay bận" chưa thử được trước Phase 12: micro trình duyệt chỉ chạy trên `localhost` / HTTPS ⇒ điện thoại thật qua mạng LAN không dùng được; Playwright khung điện thoại không thay được người dùng thật.
+- **(bản 4, m-6, thông tin)** giấy phép theo nguồn (không kiểm — luật User 05/11): Gipformer MIT; Zipformer-30M `hynt` **CC-BY-NC-ND-4.0** (không thương mại) — nếu đồ án thành sản phẩm bán thì cần xem lại model này.
 
 ## Chỗ đổi bản 2 (review B vòng 1 `…phase-10-design_review.md` `62ffcac51b1a`, changes_requested 0 / 2 / 6)
 
@@ -355,3 +357,17 @@ Không đổi: A1, A3–A9, §3, Q-b, Q-c, Q-e, Q-f, Q-h, Q-i, tiền trần 0,1
 | §12 | (6) bỏ (không kiểm giấy phép); thêm (7) `sherpa-onnx` · (8) tải 2 model ≤ 300 MB · (9) tuỳ chọn lượt so Web Speech (egress) · (10) thu 40 câu |
 | §13 | dòng giọng nói viết lại |
 | đầu file | dòng người viết / bản; căn cứ bản 3 |
+
+## Chỗ đổi bản 4 (20:58 05/11/2026, review B vòng 3 `d2c3b9560672`, changes_requested 0 / 1 / 6)
+
+| Finding | Sửa ở |
+|---|---|
+| **M-1** V-b WER là quyết (A chốt (a)) | §8.5 V-b ⇒ **theo dõi** (báo theo người đọc × yên / ồn, lý do ghi trong ô); "Chọn" = V-a + V-c + V-d (+ V-e); §9 dòng M-3 |
+| m-1 chuẩn hoá số | §8.5 dòng chuẩn hoá: hàm chuẩn hoá số so theo giá trị, ghi trước ở plan, dùng chung V-b / V-c; G0 ghi dạng số đầu ra |
+| m-2 hết hạn không dừng luồng | G7: khoá chỉ mở khi luồng chép xong thật + test 429 |
+| m-3 V-d thiếu độ dài câu | V-d: p95 trên câu ≤ 10 s; câu > 10 s báo riêng; report ghi phân bố độ dài |
+| m-4 `kiem_dau_vao` gắn cứng kiểu ảnh | G5: plan G3 thêm tham số tập kiểu (mặc định ảnh) + test route ảnh không đổi |
+| m-5 chưa thử điện thoại thật | G4 + §13 dòng giới hạn |
+| m-6 giấy phép Zipformer | §13 một dòng thông tin (không thêm bước) |
+
+Không đổi: G1–G4, G6, G8, G9, §8.1–§8.4, §8.6–§8.8, V-a, V-c (ngưỡng), V-e, V-f, §12, phần ảnh.
