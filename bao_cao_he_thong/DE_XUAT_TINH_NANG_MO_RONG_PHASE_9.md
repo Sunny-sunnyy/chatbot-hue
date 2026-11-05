@@ -1,6 +1,6 @@
 # Đề xuất tính năng mở rộng Phase 9 — agent "nhìn thấy được", giọng nói, ảnh, và lịch tới 20/12
 
-Viết: 09:25 05/11/2026 (A). Trạng thái: **đề xuất — chờ bạn duyệt từng mục**. Chưa có gì trong đây được code.
+Viết: 09:25 05/11/2026 (A); thêm O5 cache 20:27 05/11/2026. Trạng thái: **đề xuất — chờ bạn duyệt từng mục**. Chưa có gì trong đây được code.
 Vì sao có file này: bạn thấy tính năng Phase 9 "không có gì nổi bật", muốn nghĩ rộng về agent / agentic và trải nghiệm Huế (05/11).
 
 **Cập nhật 09:43 05/11/2026 (bạn quyết):**
@@ -78,6 +78,7 @@ Nhãn độ tin cậy:
 | Vận hành | O1 | Trang theo dõi: số câu, tuyến, tiền, độ trễ, 👍/👎 (từ log có sẵn) | Hệ thống được vận hành, đo thật | nhỏ | thấp | Bậc 2 (B7) |
 | | O2 | Agent đề xuất sửa kho khi thấy giờ / giá đổi, **bạn duyệt** rồi mới ghi | Câu chuyện "agent có người duyệt" | vừa–lớn | ghi nhầm kho | Sau Phase 9 |
 | | O3 | Đưa demo lên mạng | Hội đồng thử bằng điện thoại | vừa | bảo mật, tài khoản | Quyết ở B7 |
+| | O5 | **Cache câu trả lời giữa các cuộc trò chuyện** (người A hỏi X, người B hỏi X ⇒ trả lại câu đã lưu) | Câu lặp trả ngay thay vì 2–5 s | nhỏ (khớp đúng chữ) | cache theo nghĩa trả sai ~8 % lần trúng (benchmark AWS, A kiểm) ⇒ "nói chắc sai"; cache đóng băng một lần trả lời kém; câu nối tiếp / thời tiết / web không cache được | **Phase 12, bạn chọn 20:27 05/11/2026:** khi có người dùng thật, đo tỉ lệ câu lặp (`cau_lap`, băm chỉ trong RAM) 1–2 tuần; lặp ≥ 20 % mới làm cache khớp đúng chữ hẹp (lượt đầu, có nguồn kho, không câu từ chối / web / thời tiết, khoá theo phiên bản kho + lời dặn + model, 24 h); **không** cache theo nghĩa. Nghiên cứu: `data/nghien_cuu_cache_2026-11-05/c201_cache.md` (private) |
 | | O4 | Dùng API 1.100 điểm của Huế | Dữ liệu chính thống, 3 thứ tiếng | ? | chưa có tài liệu / giấy phép công khai | Chỉ tra thêm (hỏi đơn vị chủ quản nếu bạn muốn) |
 
 ## 3. Chi tiết bậc 1
