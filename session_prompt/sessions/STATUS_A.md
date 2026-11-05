@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN TỐI 05/11 (mở 19:16; cập nhật 22:03 05/11/2026 `date`)
+
+Terminal `hue-rag-4f` · B `hue-rag-4b` · C `hue-rag-3c` · E `hue-rag-bc` (cả bốn Claude Code, trực tiếp). Quyền: như sáng 05/11 (User chọn) — hết hạn cuối phiên; trần Phase 9 nâng 2,5.
+- Lúc mở: kết phiên 16:49 bỏ dở (handoff chưa viết lại, tài liệu chưa commit); máy khởi động lại 19:12 ⇒ worktree `/tmp` mất. A viết lại handoff + commit.
+- Merge tối: `p10-anh` `2ca9937` (cờ tắt) · `p10-anh-mobile` `76319e2` · B6 `7ff8e5a` + **bật `tra_web` `b7c024e`** (C206 kiểm). Cổng `main` 3 lần (≈ 0,005 USD).
+- User quyết tối: giữ sửa kho giờ mở cửa; trần 2,5; luật S-AT mới; cache ⇒ Phase 12; giọng nói nghe trước (spec Phase 10 bản 4 `784d6f7abd9f` duyệt, (9) bỏ); bảng điểm v5; bật tra web.
+- Đang chạy: B B5b Q4 / Q8 (`p9-b5b` `8bdeb65`); chờ User: chấm Q3 B5, thu 40 câu, phiếu v5.
+- **Bẫy A tối nay (đầu vào vòng cải tiến):** (1) báo User "phụ phí ghi đệm 13 % không được gì" từ số đo 02/11 đã cũ (trước B2) — C202 đo lại ra ngược ⇒ đo lại khi hệ thống đổi rồi mới báo; (2) báo B5b "thiếu câu cố định" khi chưa xem dữ liệu — B kiểm ra sai ⇒ xem dữ liệu trước khi kết luận; (3) report C192 chép nguyên văn câu trả lời có chữ kho ⇒ hook chặn đúng — A sửa trước commit.
+
 # STATUS A — KẾT PHIÊN 05/11 (16:49 05/11/2026 `date`; mở 08:43)
 
 **Phiên sau A:** đọc `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" (viết lại kết phiên 05/11; nguyên văn phiên ở `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05.md`) ⇒ hỏi quyền phiên ⇒ đưa User 4 việc chờ (chấm Q3 B5 · `!` dựng chỉ mục sửa kho ở terminal C · duyệt bảng v4 + 5 điểm trong nhà · nâng trần Phase 9 lên 2,5) + xác nhận cho E commit / push `p10-anh` ⇒ đề xuất xoá 4 nhánh đã merge (`p9-b4`, `p9-b5`, `p9-toc-do-6`, `p9-toc-do-6b` — User `!`).
