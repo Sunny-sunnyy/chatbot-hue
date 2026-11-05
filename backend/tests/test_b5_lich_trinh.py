@@ -183,6 +183,13 @@ def test_final_check_ignores_names_in_descriptions_b5_1():
     "\nTối (19h00): Chợ Đông Ba",                          # nhãn buổi kèm ngoặc giờ
     "\nNgày 2 – Lăng Tự Đức",                              # tiêu đề ngày có tên điểm
     "\n1. Lăng Tự Đức",                                    # danh sách số
+    # C191 M-1: 5 dạng dòng lọt sau B5.1 (luật cũ đều bắt) + câu văn mở bằng buổi
+    "\n### Tối: Chợ Đông Ba",                              # tiêu đề markdown
+    "\n| Tối | Chợ Đông Ba [4] |",                         # dòng bảng có ô nhãn buổi
+    "\n🌙 Tối: Chợ Đông Ba [4]",                           # emoji đầu dòng
+    "\n**Tối**\nChợ Đông Ba [4] · ý ngắn.",                # nhãn buổi đứng riêng, tên ở dòng sau
+    "\n> Tối: Chợ Đông Ba [4]",                            # trích dẫn ">"
+    "\nBuổi tối, bạn ghé Chợ Đông Ba [4].",               # câu văn mở bằng buổi
 ])
 def test_final_check_still_catches_scheduled_outside_frame(them):
     k = khung(so_ngay="1", so_thich="di_tich", kieu_di="thong_tha")
@@ -191,6 +198,28 @@ def test_final_check_still_catches_scheduled_outside_frame(them):
     assert "diem_ngoai_khung" in lt.kiem_cuoi(BANG, ok + them, k, nguon)
     # cùng dòng buổi, điểm ngoài khung đứng sau điểm trong khung (chưa tới dấu tách) vẫn bị bắt
     assert "diem_ngoai_khung" in lt.kiem_cuoi(BANG, ok.replace("Đại Nội Huế [3]", "Đại Nội Huế, sau đó ghé Chợ Đông Ba [3]"), k, nguon)
+
+
+def test_route_composed_turn_with_values_and_bad_fields_422():
+    # C191 m-2 (giữ hành vi B4 ở mức route): lượt bấm nút có giá trị ⇒ câu ghép tới model, không thẻ lần hai; trường / giá trị lạ ⇒ 422
+    script = lambda n, kw: [lich_call(so_ngay=None)] if "lich_trinh" in tool_names(kw) and not any(  # noqa: E731
+        i.get("type") == "function_call_output" for i in kw["input"]) else [answer(viet_theo_khung(kw))]
+    app = create_app()
+    with TestClient(app) as client:
+        gen = generator(script)
+        original = app.state.generator, app.state.generator_ready, app.state.assistant_flags
+        app.state.generator, app.state.generator_ready = gen, True
+        app.state.assistant_flags = dataclasses.replace(ON, router=False)
+        r = client.post("/api/chat", json={"query": CAU, "truong": {"so_ngay": "2", "kieu_di": "thong_tha"}})
+        bad_field = client.post("/api/chat", json={"query": CAU, "truong": {"ten_toi": "Lan"}})
+        bad_value = client.post("/api/chat", json={"query": CAU, "truong": {"so_ngay": "7"}})
+        app.state.generator, app.state.generator_ready, app.state.assistant_flags = original
+    body = r.json()
+    first_input = json.dumps(gen.client.responses.calls[0]["input"], ensure_ascii=False)
+    assert r.status_code == 200 and body["clarify"] is None, body
+    assert "Thông tin thêm: 2 ngày; đi thong thả." in first_input
+    assert body["answer"].startswith("Mình hiểu: 2 ngày") and body["lich_trinh"]["sua"]["chon"].get("so_ngay") == "2"
+    assert bad_field.status_code == 422 and bad_value.status_code == 422
 
 
 @pytest.mark.parametrize("text, found", [

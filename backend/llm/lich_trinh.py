@@ -342,7 +342,7 @@ def khoi_ghi_chu(bang: Bang, khung: dict, nguon: dict[str, int]) -> str:
     return "\n".join([TIEU_DE_GHI_CHU, *(f"- {d}" for d in dong)]) if dong else ""
 
 
-def kiem_ghi_chu(bang: Bang, khung: dict, khoi: str) -> list[str]:
+def kiem_ghi_chu(bang: Bang, khung: dict, khoi: str) -> list[str]:  # C191 m-3: giữ ở đây — sàn Q2 ghi trước đo bằng hàm này (harness + test dùng chung)
     """Q2: khối D4b có đủ mọi câu bắt buộc — giả định cho trường thiếu, câu thiếu sở thích, mỗi điểm không xếp, mỗi lưu ý của điểm trong
     khung (vd Thác Nhị Hồ mùa mưa lũ — D3). Thiếu ⇒ mã lỗi (test cố tình vi phạm đưa khối thiếu một câu)."""
     can = [CAU_GIA_DINH[k] for k in khung["gia_dinh"]] + [CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"]) for k in khung["khong_xep"]]
@@ -396,30 +396,63 @@ def _ten_xuat_hien(bang: Bang, text: str) -> dict[str, list[int]]:
     return hit
 
 
-# B5.1 (A quyết 05/11, sau kín khoá `908e93b`): D8 (1) chỉ coi tên điểm là "đã xếp" khi nằm ở **đầu một dòng lịch** — dòng mở bằng gạch đầu
-# dòng / số thứ tự, hoặc nhãn buổi (Sáng / Chiều / Tối) / tiêu đề ngày; "đầu dòng" = phần trước dấu tách đầu tiên (— · [ ; : ". "), đã bỏ
-# ngoặc. Tên điểm khác nhắc trong lời tả ("từng là … của Kinh thành") không còn bị bắt nhầm.
-_GACH_DAU = re.compile(r"^\s*(?:[-*•+]|\d+[.)])\s+")
+# B5.1 (A quyết 05/11, sau kín khoá `908e93b`) + C191 M-1: D8 (1) chỉ coi tên điểm là "đã xếp" khi nằm ở **đầu một dòng lịch**: dòng mở bằng
+# ký hiệu không phải chữ / số (gạch đầu dòng, "#", ">", emoji…) hoặc số thứ tự, hoặc mở bằng nhãn buổi (Sáng / Chiều / Tối) / tiêu đề ngày;
+# dòng ngay sau một nhãn đứng riêng ("**Tối**"); ô của dòng bảng có ô nhãn buổi / ngày. "Đầu dòng" = phần trước dấu tách đầu tiên
+# (— · [ ; : ". "), đã bỏ ngoặc. Tên điểm khác nhắc trong lời tả ("từng là … của Kinh thành") không còn bị bắt nhầm.
+_KY_HIEU_DAU = re.compile(r"^[^\w]+")
+_SO_THU_TU = re.compile(r"^\d+[.)]\s+")
 _NHAN_DONG = re.compile(r"^(?:buổi\s+)?(?:sáng|chiều|tối)(?![\w])|^ngày\s*(?:thứ\s*)?\d+(?![\w])|^ngày\s+(?:một|hai|ba|bốn)(?![\w])")
 _NGOAC = re.compile(r"\([^)]*\)")
 _TACH_DAU = re.compile(r"\s[—–-]\s|[—·\[;:]|\.\s|\.$")
+_KE_BANG = re.compile(r"\s*:?-{3,}:?\s*")
 
 
-def _dau_dong_lich(dong: str) -> str | None:
-    """Phần đầu của một dòng lịch (chữ đã chuẩn hoá); dòng không phải dòng lịch ⇒ None."""
-    d = " ".join(unicodedata.normalize("NFC", dong).replace("*", "").casefold().split())
-    gach = _GACH_DAU.match(d)
-    d = d[gach.end():] if gach else d
+def _bo_dau(doan: str) -> tuple[str, bool]:
+    """Chữ đã chuẩn hoá, bỏ ký hiệu / số thứ tự đầu dòng ⇒ (chữ, có ký hiệu đầu dòng)."""
+    d = " ".join(unicodedata.normalize("NFC", doan).replace("*", "").casefold().split())
+    m = _KY_HIEU_DAU.match(d)
+    d = d[m.end():] if m else d
+    so = _SO_THU_TU.match(d)
+    return (d[so.end():] if so else d), bool(m or so)
+
+
+def _dau_doan(doan: str, la_lich: bool) -> tuple[str | None, bool]:
+    """Một dòng / ô ⇒ (phần đầu nếu là chỗ xếp lịch, nhãn buổi / ngày đứng riêng?)."""
+    d, co_ky_hieu = _bo_dau(doan)
     nhan = _NHAN_DONG.match(d)
-    if not (gach or nhan):
-        return None
-    d = _NGOAC.sub(" ", d[nhan.end():] if nhan else d).lstrip(" :–—-")
-    return _TACH_DAU.split(d, maxsplit=1)[0]
+    if not (co_ky_hieu or nhan or la_lich):
+        return None, False
+    con = _NGOAC.sub(" ", d[nhan.end():] if nhan else d).lstrip(" :–—-,")
+    if nhan and not con.strip():
+        return None, True
+    return _TACH_DAU.split(con, maxsplit=1)[0], False
+
+
+def _dau_dong_lich(text: str) -> list[str]:
+    """Phần đầu của mọi chỗ xếp lịch trong chữ (dòng, ô bảng, dòng sau nhãn đứng riêng)."""
+    out: list[str] = []
+    sau_nhan = False
+    for dong in text.splitlines():
+        if not dong.strip():
+            continue
+        if dong.strip().startswith("|"):  # dòng bảng: mỗi ô một đoạn; có ô nhãn buổi / ngày ⇒ các ô khác là chỗ xếp
+            o = dong.strip().strip("|").split("|")
+            if all(_KE_BANG.fullmatch(x) for x in o):
+                continue
+            co_nhan = any(_NHAN_DONG.match(_bo_dau(x)[0]) for x in o)
+            out += [h for h in (_dau_doan(x, co_nhan)[0] for x in o) if h]
+            sau_nhan = False
+            continue
+        dau, sau_nhan = _dau_doan(dong, sau_nhan)
+        if dau:
+            out.append(dau)
+    return out
 
 
 def _ten_da_xep(bang: Bang, text: str) -> set[str]:
-    """Id điểm bảng có tên ở đầu một dòng lịch (D8 (1), B5.1)."""
-    dau = [h for h in map(_dau_dong_lich, text.splitlines()) if h]
+    """Id điểm bảng có tên ở đầu một chỗ xếp lịch (D8 (1), B5.1 + C191 M-1)."""
+    dau = _dau_dong_lich(text)
     return {id_ for khoa, id_ in bang.khoa.items() if khoa != id_
             and any(re.search(r"(?<![\w])" + re.escape(khoa) + r"(?![\w])", h) for h in dau)}
 
@@ -459,4 +492,3 @@ def dem_nhac_lai(bang: Bang, text: str, khung: dict) -> int:
     t = unicodedata.normalize("NFC", text).casefold()
     cau = [CAU_GIA_DINH[k] for k in khung["gia_dinh"]] + [bang.theo_id[i]["luu_y"] for i in diem_trong_khung(khung) if bang.theo_id[i]["luu_y"]]
     return sum(c.casefold()[:30] in t for c in cau)
-

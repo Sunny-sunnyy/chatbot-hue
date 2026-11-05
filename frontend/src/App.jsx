@@ -14,7 +14,6 @@ const STATUS_TEXT = {
 };
 // B5 D14 (c): nhãn cố định của từng bước code đã làm (sự kiện `status` stage `lich_trinh`); tên điểm + lý do lấy từ dữ liệu sự kiện, không chữ model.
 const LICH_BUOC = {
-  dang_xep: () => "Đang xếp lịch…",
   xep_xong: d => `Đã xếp lịch (${d.n_diem} điểm)`,
   kiem_luat_ok: () => "Đã kiểm luật xếp ✓",
   kiem_luat_loi: d => `Kiểm luật xếp: ${d.n_loi} lỗi`,
@@ -119,6 +118,7 @@ export default function App() {
         truong,
         onEvent(name, data) {
           if (name === "status" && data.stage === "lich_trinh") {
+            // C191 m-1: "dang_xep" không có trong LICH_BUOC ⇒ chỉ là nhãn trạng thái (`phase` ⇒ "Đang xếp lịch…"), không vào danh sách bước
             const text = LICH_BUOC[data.buoc]?.(data);
             if (text) progress.push(text);
             update({ phase: "lich_trinh", progress: [...progress] });
