@@ -40,6 +40,16 @@ _URL = re.compile(r"https?:|www\.|\]\s*\(|\b[\w-]+(?:\.[\w-]+)*\.(?:com\.vn|net\
                   re.IGNORECASE)
 LUU_TRU_TU = ("khách sạn", "homestay", "resort", "nhà nghỉ", "phòng nghỉ", "villa")  # D5 (iii): câu lưu trú ⇒ 0 số tiền (không nói giá phòng)
 
+# Vòng chỉnh 1 (A quyết 05/11 tối, sau đã thấy ×2: 2 câu không xác minh bị khẳng định — mức lũ có số mét, lịch cúp điện có ngày giờ) — luật an toàn ⇒ code:
+# câu thiên tai ⇒ KHÔNG có chữ web do model viết (câu cố định + link nguồn); câu thời gian thực ⇒ mục web 0 chữ số / thứ trong tuần.
+_THIEN_TAI = re.compile(r"\b(?:lũ|bão|ngập|sạt\s+lở|triều\s+cường)\b", re.IGNORECASE)
+_THOI_GIAN_THUC = re.compile(r"\b(?:cúp\s+điện|mất\s+điện|cắt\s+điện|tuần\s+này|tuần\s+sau|năm\s+nay|hôm\s+nay|tối\s+nay|sáng\s+nay|chiều\s+nay|"
+                             r"ngày\s+mai|hiện\s+giờ|hiện\s+tại|bây\s+giờ|lúc\s+này)\b", re.IGNORECASE)
+_SO_HOAC_THU = re.compile(r"\d|\bthứ\s+(?:hai|ba|tư|năm|sáu|bảy)\b|\bchủ\s+nhật\b", re.IGNORECASE)  # con số / ngày giờ / thứ trong tuần
+THIEN_TAI_TEXT = ("Thông tin thiên tai (lũ, bão, ngập, sạt lở) thay đổi theo từng giờ nên mình không tóm tắt từ web. Bạn xem bản tin chính thức "
+                  "của Trung tâm Dự báo khí tượng thủy văn quốc gia (NCHMF) và thông báo của chính quyền địa phương; khi khẩn cấp gọi 112.")
+CHUA_XAC_MINH_TEXT = "Thông tin này thay đổi theo thời gian nên mình chưa xác minh được trên web — bạn xem nguồn chính thức trong danh sách bên dưới."
+
 
 def _nfc(text: str) -> str:
     return unicodedata.normalize("NFC", text)
@@ -51,6 +61,14 @@ def cau_tim_web(cau_hoi: str) -> str:
     text = _PHONE.sub(" ", _EMAIL.sub(" ", _nfc(cau_hoi)))
     text = " ".join(text.split())[:MAX_QUERY_CHARS].rstrip()
     return text if "huế" in text.casefold() else f"{text} Huế"
+
+
+def la_cau_thien_tai(cau_hoi: str) -> bool:
+    return bool(_THIEN_TAI.search(_nfc(cau_hoi)))
+
+
+def la_cau_thoi_gian_thuc(cau_hoi: str) -> bool:
+    return bool(_THOI_GIAN_THUC.search(_nfc(cau_hoi)))
 
 
 def la_cau_luu_tru(cau_hoi: str) -> bool:
@@ -140,9 +158,10 @@ def _so_tien_chuan(text: str) -> set[str]:
     return {"".join(m.split()).casefold() for m in tim_so_tien(text)}
 
 
-def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool) -> list[str]:
+def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: bool = False) -> list[str]:
     """D5: mã lỗi của mục web model viết (rỗng = đạt). (i) mỗi mã `[w n]` ∈ sổ, mỗi đoạn văn ≥ 1 mã, không mã kho `[n]`; (ii) 0 URL / tên miền /
-    link Markdown; (iii) số tiền ⊂ số tiền trong đoạn trích; câu lưu trú ⇒ 0 số tiền."""
+    link Markdown; (iii) số tiền ⊂ số tiền trong đoạn trích; câu lưu trú ⇒ 0 số tiền; (vòng chỉnh 1) câu thời gian thực ⇒ 0 chữ số / thứ trong tuần
+    (ngoài mã `[w n]`)."""
     loi = []
     co = {s["id"] for s in so_web}
     doan = [p for p in re.split(r"\n\s*\n", text.strip()) if p.strip()]
@@ -161,6 +180,8 @@ def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool) -> list[str]:
         loi.append("gia_luu_tru")
     elif tien - _so_tien_chuan(" ".join(s["snippet"] for s in so_web)):
         loi.append("tien_ngoai_trich")
+    if thoi_gian_thuc and _SO_HOAC_THU.search(_WEB_CODE.sub("", text)):
+        loi.append("so_thoi_gian_thuc")
     return loi
 
 

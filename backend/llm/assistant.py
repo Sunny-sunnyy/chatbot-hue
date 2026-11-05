@@ -596,6 +596,9 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
         web.update(outcome="web_rong", text=tw.WEB_RONG_TEXT)
     if kq.trang_thai != "ok":
         return
+    if tw.la_cau_thien_tai(query):  # vòng chỉnh 1: câu thiên tai ⇒ không gọi model; câu cố định (NCHMF / chính quyền / 112) + link nguồn do code
+        web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=list(kq.so_web))
+        return
     call_log = CallLog()
     try:
         generated = await generator.generate_web_section(tw.dau_vao_model(query, kq.so_web), call_log)
@@ -604,8 +607,11 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
         return
     finally:
         record_llm_calls(trace, call_log.calls, "tra_web")
-    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(query))
+    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(query), tw.la_cau_thoi_gian_thuc(query))
     web["kiem"] = loi
+    if loi == ["so_thoi_gian_thuc"]:  # vòng chỉnh 1: câu thời gian thực có số / ngày giờ ⇒ câu cố định "chưa xác minh" + link nguồn
+        web.update(outcome="chua_xac_minh", text=tw.CHUA_XAC_MINH_TEXT, nguon=list(kq.so_web))
+        return
     if loi:  # D5 (iv): bỏ mục model viết, giữ câu từ chối của kho + câu cố định
         web.update(outcome="khong_tin_cay", text=tw.WEB_KHONG_TIN_CAY_TEXT)
         return

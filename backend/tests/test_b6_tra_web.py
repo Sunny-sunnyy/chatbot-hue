@@ -288,3 +288,43 @@ def test_route_sends_web_after_sources_keeps_web_out_of_history_and_logs_counts_
         assert line["has_web_section"] is True and line["web_outcome"] == "co_muc" and line["web_n_ket_qua"] == 3 and line["web_n_ma"] == 1
         assert line["refusal"] is True and [t["name"] for t in line["tools"]][-1] == "tra_web"
         assert "gym" not in json.dumps(line, ensure_ascii=False) and "example" not in json.dumps(line)  # không chữ truy vấn / kết quả
+
+
+# ---------- vòng chỉnh 1 (A quyết 05/11 tối): câu thiên tai / thời gian thực — luật an toàn bằng code ----------
+
+@pytest.mark.parametrize("cau, thien_tai, thoi_gian_thuc", [
+    ("Mùa lũ năm nay nước sông lên bao nhiêu mét?", True, True),
+    ("Bão sắp vào Huế chưa?", True, False),
+    ("Đường nào hay bị ngập khi mưa?", True, False),
+    ("Thành lũy ở Huế xây năm nào?", False, False),  # "lũy" không phải "lũ" (ranh giới từ)
+    ("Tuần này khu nào cúp điện?", False, True),
+    ("Hiện giờ quán phở nào còn mở?", False, True),
+    (CAU, False, False),
+])
+def test_disaster_and_realtime_detectors(cau, thien_tai, thoi_gian_thuc):
+    assert (tw.la_cau_thien_tai(cau), tw.la_cau_thoi_gian_thuc(cau)) == (thien_tai, thoi_gian_thuc)
+
+
+def test_disaster_question_never_gets_model_text_only_fixed_sentence_and_sources():
+    """Cố tình: model kịch bản sẽ viết số mét nếu được gọi ⇒ phải không được gọi."""
+    trace, calls = run_web("Năm nay nước lên 4,4 m [w1].", query="Mùa lũ năm nay nước sông Hương lên bao nhiêu mét?")
+    assert calls == [] and trace.llm_calls == []
+    assert (trace.web["outcome"], trace.web["text"]) == ("thien_tai", tw.THIEN_TAI_TEXT) and "112" in tw.THIEN_TAI_TEXT
+    assert [s["id"] for s in trace.web["nguon"]] == [1, 2, 3]  # link nguồn do code (sổ web), không chữ model
+
+
+@pytest.mark.parametrize("text, outcome", [
+    ("Khu A cúp điện thứ Ba từ 7h đến 11h [w1].", "chua_xac_minh"),   # cố tình: có ngày giờ
+    ("Khu A cúp điện vào thứ hai [w1].", "chua_xac_minh"),            # thứ trong tuần, không chữ số
+    ("Lịch cúp điện được đăng trên trang điện lực; mình chưa xác minh được khu nào [w1].", "co_muc"),
+])
+def test_realtime_question_section_has_no_number_or_weekday(text, outcome):
+    trace, calls = run_web(text, query="Tuần này ở Huế khu nào cúp điện?")
+    assert len(calls) == 1 and trace.web["outcome"] == outcome
+    if outcome == "chua_xac_minh":
+        assert trace.web["text"] == tw.CHUA_XAC_MINH_TEXT and trace.web["kiem"] == ["so_thoi_gian_thuc"] and len(trace.web["nguon"]) == 3
+
+
+def test_realtime_violation_plus_link_is_dropped_without_links():
+    trace, _ = run_web("Xem evil.example.vn: thứ Ba cúp điện [w3].", query="Tuần này ở Huế khu nào cúp điện?")
+    assert trace.web["outcome"] == "khong_tin_cay" and trace.web["nguon"] == [] and set(trace.web["kiem"]) == {"url", "so_thoi_gian_thuc"}
