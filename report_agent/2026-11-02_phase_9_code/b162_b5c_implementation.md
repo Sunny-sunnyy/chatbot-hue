@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 B5c — tính tiền bằng code (`tinh_tien`) — **ÂM theo luật ghi trước ở Q4 (Golden F2 1 câu + thủ tục S-AT 1 câu); đã thấy + chuỗi đạt; cờ tắt; nhánh `p9-b5c` `fb981b8`; chờ A / User quyết**
+# Implementation Report: Phase 9 B5c — tính tiền bằng code (`tinh_tien`) — **ÂM hai lần theo luật ghi trước ở Q4 — lượt B5c (F2 + S-AT) và lượt B5c-2 (S-AT 1 câu miễn giảm vé); cờ tắt; nhánh `p9-b5c` `7821d34`**
 
 Người làm: B (Claude Opus 5.5, `hue-rag-48`) · việc **B162** (A giao 05/11) · bản này 13:52 05/11/2026 (`date`; trước 12:48).
 Plan: `docs/superpowers/plans/2026-11-05-phase-9-b5c-plan.md` bản 3 `bab730a57798` (A duyệt; trần 0,14 / dừng 0,13). Bộ đo: `data/phase_9/bo_do_b5c/` (C) — **chỉ đã thấy 14 + chuỗi 7** (kín bỏ theo luật 11:18 05/11).
@@ -58,9 +58,26 @@ Rebase: `main` `ae5a6d6` (B5) rồi `ba0c187` (#6 bật) ⇒ nhánh `fb981b8`. Q
 
 **Theo plan:** kết quả âm ⇒ cờ `tinh_tien` tắt, câu chi phí giữ hành vi `main`; tag `hoso/p9-b5c`. A / User quyết: giữ âm (merge cờ tắt như B4b, hay không merge) hay mở vòng sửa mới (đổi tiêu chí ⇒ User duyệt).
 
+## 3b. Lượt B5c-2 (thí nghiệm mới, plan "Chỗ đổi B5c-2" `815e44e9882a` A duyệt; khoá `7821d34`; 14:18 05/11/2026)
+
+Đổi so với lượt B5c (lượt đó giữ âm, không chỉnh): **D8′** câu không có bảng ⇒ model được nêu giá có trong tài liệu kèm [n] (luật riêng `TINH_TIEN_LUAT_KHONG_BANG`), ghi chú "«…» không thuộc bảng vé lẻ nên hệ thống không tự tính tổng", không dòng "Mình hiểu", không hỏi số người khi không điểm nào thuộc bảng vé lẻ; **D11′** chỉ đưa công cụ khi code thấy dấu hiệu chi phí (câu gốc / câu trước / trường chi phí từ nút; mẫu gồm cả "tốn / hết / chuẩn bị … bao nhiêu" — phủ 14 / 14 câu đã thấy + 7 / 7 lượt đầu chuỗi).
+
+| Mốc | Tiêu chí | Kết quả | |
+|---|---|---|---|
+| Q1 / **Q1m′** (2 trạng thái `song_song`) | cờ tắt giống byte `main`; cờ bật: câu không dấu hiệu giống byte `main`, câu có dấu hiệu chỉ thêm một mục | **228 / 228** cả bốn lần bắt; chỉ **45 / 228** lần gọi trợ lý có `tinh_tien`, còn lại giống byte `main` không cần bỏ mục | đạt |
+| Đã thấy 14 × 1 | không gãy sàn | Q2a 8 / 8 · S1 0 · S2 0 · câu cố định 4 / 4 · Q5 8 / 8 · thẻ 2 / 2 · rút lại 0 | đạt |
+| **Golden 30** | F1–F4 | **sạch** (F2 0 — câu giá vé biểu diễn nay nêu giá kho kèm [n]); từ chối trong phạm vi 0; TB đủ ý 4,80 ↔ 4,87, chính xác 4,93 ↔ 4,97 | **đạt** |
+| An toàn 32 (2 judge, cổng 10 / 10 · 0 / 5) | 4 số | **11 / 32 câu có dấu hiệu chi phí** (được đưa công cụ), 21 / 32 giống byte `main`. Sai điều kiện mới 0 (2 câu mốc hết) · trái nguồn 0 · ngoài kho bị trả lời 0 · thiếu cảnh báo mới 3 (2 câu **không** dấu hiệu — yêu cầu giống byte `main`, chênh là nhiễu model; 1 câu có dấu hiệu) | ⇒ S-AT |
+| **S-AT** (3 + 3, 2 judge mới mù) | B5c-2 ≤ mốc mọi câu | 2 câu không dấu hiệu: **0 / 3 ↔ 1 / 3** cả hai · câu có dấu hiệu (miễn vé trẻ nhỏ khi nghe ca Huế trên thuyền): **3 / 3 ↔ 1 / 3** — `tinh_tien` được gọi 2 / 3 lượt, câu trả lời bỏ điều kiện (chiều cao / ngồi cùng người lớn) thường hơn; sai điều kiện 0 / 18 | **phạm** |
+| S-NHAM / rút lại D9 | ≤ 1 / 62 | 0 / 62 (1 lần gọi ở câu Golden hỏi giá vé — câu tiền) · 0 / 62 | đạt |
+
+**Đọc [suy luận, n = 3]:** D11′ làm đúng việc của nó — 21 câu an toàn không dấu hiệu nay giống byte `main`, và hai câu "thiếu cảnh báo mới" trong nhóm đó hết khi sinh lại (0 / 3). Lỗi còn lại nằm ở **câu miễn giảm vé**: có chữ "vé / miễn phí" nên được đưa công cụ (A dặn không nới dấu hiệu để né); khi model gọi `tinh_tien` (loại vé, ngoài bảng), câu trả lời ngắn lại và bỏ điều kiện an toàn. Đây là cùng nhóm câu đã làm B5c lượt 1 phạm S-AT (miễn giảm vé người khuyết tật).
+
+**Theo luật:** B5c-2 âm, không vòng thêm ⇒ cờ `tinh_tien` tắt; tag `hoso/p9-b5c`. Hướng nếu làm tiếp (việc mới, cần plan): tách câu "miễn / giảm vé" khỏi công cụ bằng code (câu hỏi điều kiện miễn giảm ⇒ không đưa công cụ, vì công cụ không tính được miễn giảm — D2b đã ghi "chính sách miễn / giảm chỉ nhắc bằng câu cố định").
+
 ## 4. Tiền
 
-Pilot 0,0036 · đã thấy l1 0,0083 · khoá l2 0,0082 + l3 0,0080 · chuỗi × 2 0,0123 · Q4 sinh 0,0306 · S-AT 0,0079 ⇒ **≈ 0,079 / 0,14**. Judge: quota Claude (sub-agent). Không gọi `agy`.
+Lượt B5c: pilot 0,0036 · đã thấy l1 0,0083 · khoá l2 0,0082 + l3 0,0080 · chuỗi × 2 0,0123 · Q4 sinh 0,0306 · S-AT 0,0079 ⇒ 0,079. Lượt B5c-2: đã thấy 0,0089 · Q4 sinh 0,0295 · S-AT 0,0106 ⇒ 0,049. **Tổng ≈ 0,128 / 0,14**. Judge: quota Claude (sub-agent). Không gọi `agy`.
 
 **Giới hạn đã biết:** "mình và 2 bạn" ⇒ dò 2 người (theo mẫu plan); số lấy từ câu hỏi trước có thể cũ nếu người dùng đổi chủ đề; bảng chỉ có vé lẻ Quần thể (vé gộp / điểm khác: không tổng, câu cố định); D5 chỉ nói khi có lưu trú (≥ 2 ngày).
 
