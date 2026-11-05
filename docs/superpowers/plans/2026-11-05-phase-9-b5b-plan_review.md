@@ -30,3 +30,19 @@ theo file + hàm. 0 USD. Đếm kho chỉ bằng `scripts/grep_kb.sh` (in số f
 
 ### Decision và bước tiếp
 **changes_requested** — C sửa M-1 (+ minor) thành bản 2, báo sha; E kiểm vòng 2 (cuối).
+
+## Vòng 2 — bản 2 (sha tính từ file `cc09fda9f634`, E, 13:35 05/11/2026) — vòng cuối
+
+Decision: **ready_for_user_confirmation** (0 blocker · 0 major · 0 minor mới) — A duyệt sha. 0 USD. Kiểm: "Chỗ đổi bản 2" + D2, D4, D5, D6, D8, D9, §3, §5, §7, §9.
+
+| Finding | Kiểm | Kết luận |
+|---|---|---|
+| **M-1** | D8 chạy ở **mọi** câu `tro_ly_hue` khi cờ bật, có công cụ hay không; tập = số code đưa ∪ số trong đoạn kho được trích; D4 ghi rõ "bỏ sót từ khoá ⇒ không công cụ nhưng D8 vẫn chạy (không lọt số bịa)"; §5 thêm 2 câu không từ khoá + ca khí hậu kho; Q2 có sàn | **đóng** |
+| m-1 | dạng số liệt kê (°C, °, độ, độ C, %, phần trăm cạnh mưa / ẩm, mm, mi-li-mét, li, khoảng, thập phân); làm tròn trước khi dựng tập; mỗi dạng một test | **đóng** |
+| m-2 | cổng xét tin nhắn cuối **hoặc** câu hỏi liền trước (`trace.history`); chuỗi "còn chủ nhật?" | **đóng** |
+| m-3 | D6: "cảnh báo" chỉ khi cùng từ thời tiết; ca "cảnh báo bậc thang" | **đóng** |
+| m-4 | §3: gọi async (`httpx.AsyncClient` / `to_thread`); `ALLOWED` thêm `llm.thoi_tiet` + lý do | **đóng** |
+| m-5 | câu "dự báo theo cả ngày"; D2 `timezone=Asia/Ho_Chi_Minh` (probe kiểm); D9 API lỗi ⇒ lịch B5 + câu cố định, 0 số | **đóng** |
+| m-6 | §9 có cột hiện trạng + đề xuất | **đóng** |
+
+**Ghi nhận (không finding):** "li" / "độ" đứng một mình có thể báo nhầm ("2 li cà phê", "góc 45 độ") ⇒ rút nhầm; đã có điều kiện dừng §8 "rút lại > 2 / 20 ⇒ xem lại". Tiền 0,05–0,06 / trần 0,07 hợp lý (+4 câu).
