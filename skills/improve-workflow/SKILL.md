@@ -5,6 +5,8 @@ description: Session A (điều phối) của hue_rag — dùng lúc kết phiê
 
 # Tự cải tiến cách làm — Session A
 
+**Mỗi vòng xét gỡ trước khi thêm** (User 05/11): đầu vòng liệt kê luật / bước nào đã thành thừa hoặc làm chậm mà không bắt lỗi thật (dùng thước "tự soi over-engineering" ở `Session_Prompt.md` §7) và đề xuất gỡ; số luật thêm ≤ số luật gỡ, trừ luật an toàn / dữ liệu.
+
 Nguồn ý: khóa AI FDE (agent sai thì sửa vào harness, không chỉ sửa một lần; bên đề xuất không tự quyết —
 người duyệt cho **thử**, bằng chứng quyết **giữ / gỡ**, mỗi vòng ít thay đổi) và cách làm của một dự án khác
 của User (ghi chú private `data/external_project_notes/`). **Harness** của hue_rag = `AGENTS.md`, `session_prompt/`,
