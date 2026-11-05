@@ -49,6 +49,9 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 - **Sửa lịch — phần 0 USD XONG (20:53 05/11/2026):** `p9-sua-lich` `6543f82` đã thấy 10 / 10, kín mô phỏng 5 / 5 (nhãn K-S2 sửa theo B166: md5 `34b20600ac00` ⇒ `daf762bcbbe5`, bản cũ `chuoi_sealed.truoc_B166.jsonl`). Lượt có phí khi `lich_trinh` bật.
 - **B6:** Q4 ĐẠT (từ chối nhầm 0 ≤ 2; S-OOS 0 / 11), Q8 ĐẠT (server + Playwright); tiền ≈ 0,144 / 0,22; rebase ⇒ **`p9-b6` `9140152`** (code = khoá `cedac73`; 251 test; Q1 228). Giới hạn: địa chỉ / SĐT trong mục web chưa kiểm ⊂ đoạn trích (việc sau). **E13** review nhánh; kín C203 đang chấm judge.
 - **E12 XONG:** spec Phase 10 bản 3 `bc246a4ba3d6` (giọng nói STT §8, gói duyệt §12 (7)–(10)) ⇒ **B167** review ⇒ User duyệt sha.
+- **Kín B6 ×2 ĐẠT (C203):** 22 lượt 0 lỗi, Q2 judge 0 / 7, Q3 7 / 7; **chữ đầu mục web p50 13,4 s** (nêu khi xét bật); tiền B6 tổng ≈ 0,185 / 0,22.
+- **B167** review spec Phase 10 bản 3 ⇒ changes_requested 0 / 1 / 6 (`d2c3b9560672`); **A chốt M-1 (20:57 05/11/2026):** WER thành theo dõi, quyết bằng tên riêng + số + tốc độ / RAM ⇒ E bản 4 sau E13 ⇒ B vòng 2. **B168** code B5b phần 0 USD (`p9-b5b` từ `main`).
+- **User chọn bảng điểm v5 (20:57 05/11/2026)** = v4 + 5 điểm trong nhà (Bảo tàng Cổ vật Cung đình, Duyệt Thị Đường, Không gian Lê Bá Đảng, Bảo tàng Mỹ thuật, Bảo tàng Hồ Chí Minh) ⇒ **C204** soạn `diem_v5.json` + phiếu 5 dòng cho User (sau C202). B5 đo trên v3 ⇒ đổi bảng phải chạy lại kiểm 0 USD.
 - **C (sau C192):** khi B163 có report ⇒ chạy lại `kiem_bo` / `mo_phong` bộ sửa lịch trên code B (đã thấy 10 + kín 5, chỉ số đếm).
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 — trạng thái (nguồn `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ `data/nghien_cuu_tinh_nang_2026-11-04/`)
@@ -70,7 +73,7 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 
 1. **(gấp nhất)** Chấm 5 lịch kín B5 — `data/phase_9/b5/kin/phieu_cham_user.md` (đạt ≥ 4 / 5 cả 3 tiêu chí ⇒ A bật `lich_trinh` ⇒ mở đường cho sửa lịch + B5b).
 2. Gõ ở **terminal C**: `! bash data/phase_9/b6/kin_c/chay_kin_c203.sh` (kín B6 ×2 + bước 2 kín sửa lịch; chỉ in số đếm).
-4. Duyệt bảng điểm v4 `data/phase_9/lich_trinh/diem_cho_user_v4.md` (một ô tick) + có thêm 5 điểm trong nhà kho đã có (Bảo tàng Cổ vật Cung đình, Duyệt Thị Đường, Không gian Lê Bá Đảng, Bảo tàng Mỹ thuật, Bảo tàng Hồ Chí Minh) thành bảng v5 không.
+4. (User chọn v5 20:57 05/11/2026) Xem phiếu 5 điểm trong nhà mới khi C204 xong.
 6. Xoá 4 nhánh đã merge `p9-b4`, `p9-b5`, `p9-toc-do-6`, `p9-toc-do-6b` (local + origin, User `!`).
 7. Vòng cải tiến 19: gỡ W4 / W39 (Session D 0 buổi, hạn 07/11) — hay giữ để dùng D. (S-AT: User quyết 20:14 05/11/2026 — chênh đúng 1 ⇒ sinh thêm 3 + 3, âm khi tổng chênh ≥ 2 / 6; `skills/run-experiment/SKILL.md` §4.)
 8. Không gấp: đọc 10 câu mẫu B4 / B6 (`data/phase_9/bo_do_b4/mau_cho_user.md`, `data/phase_9/bo_do_b6/mau_cho_user.md`); 4 worktree AGY cũ giữ hay gỡ; xoá sao lưu kho đợt 1 + 2?; báo cáo tiến độ cho giáo viên.
