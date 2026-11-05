@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 B5c — tính tiền bằng code (`tinh_tien`) — **ÂM hai lần theo luật ghi trước ở Q4 — lượt B5c (F2 + S-AT) và lượt B5c-2 (S-AT 1 câu miễn giảm vé); cờ tắt; nhánh `p9-b5c` `7821d34`**
+# Implementation Report: Phase 9 B5c — tính tiền bằng code (`tinh_tien`) — **ÂM hai lần theo luật ghi trước ở Q4 — lượt B5c (F2 + S-AT) và lượt B5c-2 (S-AT 1 câu miễn giảm vé); A quyết: không merge, không vòng 3 lúc này; tag `hoso/p9-b5c` tại `7821d34`, giữ nhánh**
 
 Người làm: B (Claude Opus 5.5, `hue-rag-48`) · việc **B162** (A giao 05/11) · bản này 13:52 05/11/2026 (`date`; trước 12:48).
 Plan: `docs/superpowers/plans/2026-11-05-phase-9-b5c-plan.md` bản 3 `bab730a57798` (A duyệt; trần 0,14 / dừng 0,13). Bộ đo: `data/phase_9/bo_do_b5c/` (C) — **chỉ đã thấy 14 + chuỗi 7** (kín bỏ theo luật 11:18 05/11).
@@ -74,6 +74,8 @@ Rebase: `main` `ae5a6d6` (B5) rồi `ba0c187` (#6 bật) ⇒ nhánh `fb981b8`. Q
 **Đọc [suy luận, n = 3]:** D11′ làm đúng việc của nó — 21 câu an toàn không dấu hiệu nay giống byte `main`, và hai câu "thiếu cảnh báo mới" trong nhóm đó hết khi sinh lại (0 / 3). Lỗi còn lại nằm ở **câu miễn giảm vé**: có chữ "vé / miễn phí" nên được đưa công cụ (A dặn không nới dấu hiệu để né); khi model gọi `tinh_tien` (loại vé, ngoài bảng), câu trả lời ngắn lại và bỏ điều kiện an toàn. Đây là cùng nhóm câu đã làm B5c lượt 1 phạm S-AT (miễn giảm vé người khuyết tật).
 
 **Theo luật:** B5c-2 âm, không vòng thêm ⇒ cờ `tinh_tien` tắt; tag `hoso/p9-b5c`. Hướng nếu làm tiếp (việc mới, cần plan): tách câu "miễn / giảm vé" khỏi công cụ bằng code (câu hỏi điều kiện miễn giảm ⇒ không đưa công cụ, vì công cụ không tính được miễn giảm — D2b đã ghi "chính sách miễn / giảm chỉ nhắc bằng câu cố định").
+
+**Hướng tiếp (A ghi 05/11, cho lần sau):** thay vì né câu miễn / giảm vé, để **code** nối dòng điều kiện miễn giảm của bảng vé (chiều cao, ngồi cùng người lớn, độ tuổi…) vào kết quả công cụ và khối ghi chú — đúng khung FDE "điều kiện bắt buộc ⇒ code". Lý do dừng: lần thứ 3 thử cùng một bậc (B4b, B5c, B5c-2) ⇒ luật tự soi over-engineering.
 
 ## 4. Tiền
 

@@ -99,3 +99,7 @@ Cách đo: `data/phase_10/anh/tools/do_a2.py` gửi 33 ảnh **tuần tự qua r
 **Trạng thái code:** lời dặn **v2** + `max_tokens` 1024 + timeout 20 trong working tree `/tmp/e_anh` (chưa staged lại; bản staged là A1). Cờ `bat: false`. pytest `test_p10_anh.py` + boundary 40 passed.
 
 **Hướng tiếp (chờ A / User — không tự làm):** (a) P2 SigLIP 2 chạy máy (spec A6 — **User chưa duyệt** tải ~1,6 GB); (b) giữ P1 làm "gợi ý" nhưng giao diện **luôn kèm ô gõ tên / chọn danh sách (M0)** — vẫn phạm sàn đã ghi, cần User quyết đổi tiêu chí (không áp ở bản này); (c) dừng tính năng ảnh, ghi kết quả âm vào báo cáo (spec "phương án B" cuối: giữ M0). Thử thêm `reasoning` thấp / `detail` khác = thí nghiệm mới, cần tiêu chí + bộ mới (bộ này đã chỉnh 2 vòng).
+
+**Quyết định User sau A2 (A chuyển, E ghi 16:49 05/11/2026):** **giữ P1 bản v1 dạng GỢI Ý có xác nhận** — nhãn "Gợi ý từ ảnh, có thể sai — chọn đúng tên", luôn có "Không phải các tên này" + ô gõ tên,
+trợ lý chỉ trả lời sau khi người dùng bấm. **Ghi trung thực:** P1 **âm theo tiêu chí gốc** (spec §5); User **đổi thước** vì có bước xác nhận (lỗi nhận sai không thành câu trả lời sai).
+Code đã đưa lời dặn về v1 (`max_tokens` 1024, timeout 20). Song song: thí nghiệm P2 SigLIP 2 (E9, tiêu chí ghi trước `data/phase_10/anh/e9/tieu_chi_ghi_truoc.md`) — chưa chạy.

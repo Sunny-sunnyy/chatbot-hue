@@ -151,19 +151,16 @@ File tracked, repo public: không chép kho / Golden / câu bộ đo; mô tả d
 - Nút `so_nguoi` đổi tập giá trị so với B4 D2 cũ (Lệch có lý do D7) ⇒ bộ đo B4 cũ không dùng lại cho chi phí.
 - `TruongInput` thêm trường chi phí ⇒ đường `truong` (không gắn cờ — `b157_b4b_review.md` m-1) nhận thêm `so_nguoi` / `muc_chi` cả khi cờ `tinh_tien` tắt ⇒ test route: cờ tắt + `truong` chi phí ⇒ câu ghép, đường trả lời như `main` (không có `tinh_tien`).
 
-## Chỗ đổi bản 2 (10:19 05/11/2026, review B vòng 1 `68a4f8e13690` — changes_requested 0 / 2 / 6)
+## Chỗ đổi B5c-2 (13:55 05/11/2026, A quyết theo User "không cần hỏi lại"; bản trước `bab730a57798` — lịch sử chỗ đổi xem git)
 
-| Finding | Sửa ở |
-|---|---|
-| M-1 mở lại `hoi_lai` cho model, lưu `outcome` | **A quyết (User 10:07):** D7 viết lại — code tự hỏi như B5 D15 (dấu "cần hỏi" ⇒ `tool_use_behavior` dạng hàm ⇒ `clarify` chỉ trường thiếu), không công cụ `hoi_lai`, không lời dặn hệ thống (D1, D11), bỏ `conversations.py`; "Trả lời luôn" ⇒ 1 người 1 ngày tạm + dòng giả định; §3 (bỏ `conversations.py`, `full_corpus_prompt.py`; thêm generator, `full_corpus_context.py`); Q1m mới; Q2a mới (gọi công cụ, D9 mọi câu); Q3 thêm chuỗi "Trả lời luôn"; §8 |
-| M-2 đường vé chưa định nghĩa | **D2b** mới: chỉ bảng vé lẻ Quần thể; schema + ngày hiệu lực; khớp tên qua bảng điểm B5 (11 `quan_the` ⇒ đúng 1 dòng); trẻ em nhân chỉ khi có số, điều kiện tuổi đọc từ tiêu đề cột; tên lạ ⇒ câu cố định; §1 "Không làm" vé khác; test; §7 dừng |
-| m-1 3 × 6 hạng mục | D2 + mã: 5 / 6 / 6; §7 |
-| m-2 ca dò lệch mẫu | D6 thêm "X ngày Y đêm"; §3b sửa kỳ vọng "ngày thứ 2" ⇒ 3, thêm ca nhiều giá trị thật |
-| m-3 dự toán có trẻ em | D3: đếm đủ người + câu cố định; bộ đo có ca; test |
-| m-4 tiền vượt trần | §6 điểm quyết A (a) 0,14 / (b) 0,10 bớt lượt / (c) |
-| m-5 S-AT ghi trước | Q4: thủ tục 3 + 3, 2 judge mù, đạt ⇔ B5c ≤ mốc mọi câu |
-| m-6 căn cứ B5 cũ, `do_so.py` | Căn cứ trỏ B5 bản 7 `b572443dc9cd`; D6 + §3: **B5c tạo `do_so.py`** (chuyển hàm dò số ngày của B5) |
+**Lượt B5c (khoá `ecc099c`, nhánh `fb981b8`) GHI ÂM đúng luật** (report `b162_b5c_implementation.md` §3: Golden F2 1 câu + S-AT 1 câu). B5c-2 là **thí nghiệm mới**: đo lại phần Q4 từ đầu, không chỉnh trên kết quả cũ.
 
-Không đổi: D3 (luật cộng), D4, D5 (A quyết (a)), D8, D10, Q1, Q5, cỡ mẫu (đã thấy 14 / kín 6), kết quả âm, luật cắt.
+| Đổi | Chỗ | Vì sao |
+|---|---|---|
+| **D8′** câu không có bảng (ngoài bảng / ngoài phạm vi): khung cho model **được nêu giá có trong tài liệu kèm [n]** (không tự nhân / cộng / ước tổng); câu ghi chú tên điểm ngoài bảng = "«…» không thuộc bảng vé lẻ nên hệ thống không tự tính tổng"; không dòng "Mình hiểu" khi không tính gì. D9 giữ (số có trong đoạn kho vẫn được) | `tinh_tien.py` `khung_chu`, `khoi_ghi_chu`, `dong_minh_hieu`; `full_corpus_prompt.py` luật không bảng | Golden F2: luật "không tự viết số tiền" làm model bỏ giá có trong kho |
+| **D11′** công cụ `tinh_tien` **chỉ đưa** khi code thấy dấu hiệu chi phí (tiền, giá, chi phí, bao nhiêu tiền, dự toán / dự trù, ngân sách, vé, phí…) trong câu gốc hoặc câu trước (nhớ chỉ câu hỏi), hoặc lượt mang trường chi phí từ nút. Câu khác ⇒ chuỗi gửi model **giống byte `main`** | `tinh_tien.py` `co_dau_hieu_chi_phi`; `assistant.py` `_before_model` / `_lich_extra` | S-AT: thêm công cụ vào mọi lượt đổi cách tìm ở câu an toàn (B4b, B5c). Bỏ sót dấu hiệu ⇒ câu đi đường `main` (liệt kê giá có nguồn) — an toàn |
+| **Q1m′** cờ bật: câu **không** có dấu hiệu chi phí của 176 + 32 + smoke ⇒ yêu cầu gửi model **giống byte `main`** (không cần bỏ mục công cụ); câu có dấu hiệu ⇒ chỉ khác đúng một mục `tinh_tien` | `capture_co.py` | đo được bằng code |
 
-**Sửa nhỏ sau bản 2 (10:26 05/11/2026, C tự bắt lúc soạn bộ đo C184 — trước khi B kiểm xong):** D7 "Trả lời luôn" chỉ đặt tạm **trường vẫn thiếu sau D6**; Q3 / §4: chuỗi "cả nhà" (gõ chữ không số) là theo dõi, hỏi lại lần hai ở chuỗi đó là đúng nên không vào sàn. Cùng lần: D6 / §3 `do_so.py` — B5 tạo module (B báo vòng 2), B5c chỉ thêm dò số người. Không đổi chỗ khác.
+**Đo lại (ghi trước):** Q1 + Q1m′ (0 USD) ⇒ đã thấy 14 × 1 (không gãy sàn Q2a / S1 / S2 / Q5 / thẻ) ⇒ Q4 Golden 30 + an toàn 32 (F1–F4, 4 số, S-NHAM ≤ 1 / 62, rút lại D9 ≤ 1 / 62) ⇒ thủ tục S-AT như cũ nếu có câu mới. **Đạt ⇔ mọi sàn trên đạt**; phạm ⇒ âm, không vòng thêm. Tiền: trần còn ≈ 0,06 (0,14 − 0,079); vượt ⇒ dừng báo A. Sau đó C review cả nhánh một lần.
+
+Không đổi: D1–D7, D9, D10, D12, Q2a, Q2, Q3, Q5, bộ đo, luật âm.

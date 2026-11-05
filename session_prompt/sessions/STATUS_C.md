@@ -1,27 +1,29 @@
-# STATUS C — 05/11 (gọn lại 11:44 05/11/2026 `date`, luật ≤ 30 dòng — commit `1d1fa77`)
+# STATUS C — kết phiên 05/11 (16:47 05/11/2026 `date`; luật ≤ 30 dòng; lịch sử: `git show 1d1fa77:session_prompt/sessions/STATUS_C.md`)
 
-Lịch sử trước khi gọn: `git show 1d1fa77:session_prompt/sessions/STATUS_C.md`. Số liệu nằm trong report, file này chỉ trỏ tới.
+## PHIÊN SAU ĐỌC TRƯỚC
+- **C192 sửa kho giờ mở cửa** (plan `65e7e2b2b68c`, A duyệt): chưa xong — xoá collection bị auto mode chặn ⇒ cần **User `!`**. Kho đã khôi phục, chỉ mục nguyên 8.424 point. Lệnh đã chép vào **`data/sua_kho_2026-11-05_gio/tools/chay.sh`** (`eb101131f146`, không phụ thuộc `/tmp`) ⇒ `! bash data/sua_kho_2026-11-05_gio/tools/chay.sh` (B / E tắt server trước).
+  - Bước 0 kiểm backend = `5a8aa5e`. `main` đổi phần backend ⇒ bước 0 dừng ⇒ xem diff. Đường **không stream** (`answer_case`) chưa đổi ⇒ sửa dòng kiểm sang commit mới. Đã đổi ⇒ chạy lại bộ "trước" (Golden 11 + an toàn 10 ≈ 0,011) trước khi chạy lệnh.
+  - Sao lưu: `knowledge-base-hue/meta/backup_gio_mo_cua_2026-11-05/` · `data/sua_kho_2026-11-05_gio/backup/` (record `51fb1ec63cbc`, sparse `c8134c49a648`) · snapshot Qdrant 13:05.
+  - Sau lệnh: Golden 11 + an toàn 10 bên "sau" (`touched.json`) + 1 câu thật + judge. Ghi lệch nhỏ đã báo A: dòng nguồn "chép từ tài liệu vé Quần thể trong kho".
+- **Bộ đo đã soạn (private, md5 12):**
+  - Sửa lịch `data/phase_9/bo_do_sua_lich/`: `chuoi_da_thay` `d0ad12b6ed12` · `chuoi_sealed` `34b20600ac00` (B / E không mở) · `kiem_bo.py` OK 6/6 · `mo_phong_kin.py` (bản sao mo_phong của B trỏ kín).
+    - Đã thấy 10/10 khớp code B (`/tmp/b_sualich`, chưa push); kín 4/5 + K-S2 ca biên "thẻ chỉ có nút Bỏ". Khi B push ⇒ chạy lại cả hai.
+  - B5b: bảng `lich_trinh/diem_v4.json` `c7beec6b70a5` (`kiem_v4.py` OK, 23/23 căn cứ) · toạ độ `diem_toa_do.json` `74640c475399` (17/28; ghi chú `toa_do_ghi_chu.md`).
+  - B6 `bo_do_b6/`: đã thấy `6ed74db21616` (+L01 lưu trú) · kín `4de04132600b` (+K-L01) · `kiem_bo` OK (cỡ 27).
+  - B5c `bo_do_b5c/` (B5c đã âm — B dừng): đã thấy `bc6755a34dbe` · kín `13eedb9884a6` (không chạy) · chuỗi `79e458b7a023`.
+- **Phiếu chờ User:**
+  - (1) chấm Q3 B5 `data/phase_9/b5/kin/phieu_cham_user.md` `f83069cb5a67`;
+  - (2) duyệt bảng v4 `data/phase_9/lich_trinh/diem_cho_user_v4.md` `12f1003cd3a3` + 5 điểm trong nhà gợi ý (`toa_do_ghi_chu.md`: Bảo tàng Cổ vật Cung đình, Duyệt Thị Đường, Lê Bá Đảng, Bảo tàng Mỹ thuật, Bảo tàng Hồ Chí Minh — chưa thêm).
+- **Plan (C viết):** sửa lịch bản 3 `5b68f3cb666a` (A duyệt; trần 0,20) · B5b bản 2 `cc09fda9f634` (A duyệt; trần 0,07) · B6 bản 2 `b6a046e944c0` (B review sau B5c; trần 0,22).
+- **Câu hỏi mở:** đổi link Maps B5 sang toạ độ cho 17 điểm? (đề xuất, chưa sửa code) · dự phóng Phase 9 ≈ 2,4 > 2,0 (A báo User).
 
-**Terminal:** C `hue-rag-52` · A `hue-rag-b0` · B `hue-rag-48` · E `hue-rag-7a`. Việc A giao = User nói "làm đi".
-
-## Đang chờ
-- **Kín B5 XONG** (11:51, 0,004612 USD): `data/phase_9/b5/kin/KET_QUA.md` — Q2a 5 / 5; `kiem_cuoi` bắt 1 / 5 (K-L3, D8 (1) báo nhầm: tên bảng làm ngữ cảnh lịch sử). A quyết Q2 đạt theo nội dung (rút lại ⇒ Q5, giới hạn). **Chờ User chấm Q3:** `data/phase_9/b5/kin/phieu_cham_user.md`. Gỡ `/tmp/c_b5kin*` sau khi A chốt.
-- **C192 sửa kho giờ (plan `65e7e2b2b68c`):** lệnh xoá collection bị auto mode chặn ⇒ kho đã khôi phục từ bản sao, chỉ mục nguyên 8424. **Chờ User `! bash /tmp/c192/chay.sh`** (`eb101131f146`, bước 0 kiểm backend = `5a8aa5e`; nhắn B / E tắt server trước). Sau đó: Golden 11 + an toàn 10 bên "sau" + 1 câu thật + judge. Dữ liệu `data/sua_kho_2026-11-05_gio/`. Đã tốn 0,010791 (bên "trước").
-- **C193 plan sửa lịch:** bản 3 `…/2026-11-05-phase-9-sua-lich-plan.md` `5b68f3cb666a` — E vòng 2 **ready** (review `f03506e4c25e`); chờ A duyệt sha. Code chỉ khi B5 bật.
-- **C194 plan B5b:** bản 2 `cc09fda9f634` — E vòng 2 **ready** (`cd94d8384f9e`); chờ A duyệt. **User duyệt bảng v4:** `data/phase_9/lich_trinh/diem_cho_user_v4.md`.
-- **C195 plan B6:** bản 2 `…/2026-11-05-phase-9-b6-plan.md` `b6a046e944c0` (trần 0,22 / dừng 0,21) — B review sau B5c.
-
-## Xong hôm nay (chi tiết ở file đầu ra)
-- C196 bộ đo: `data/phase_9/bo_do_sua_lich/` (10 + 5 kín, kiem_bo OK 6/6) · bảng `diem_v4.json` (kiem_v4 OK) · B6 + L01 / K-L01 lưu trú. · C197 toạ độ `diem_toa_do.json` 17 / 28 + gợi ý 5 điểm trong nhà (`toa_do_ghi_chu.md`).
-- C173–C187: plan / review B4b, B5, B5c, Phase 10 A1; #6 report; #13/#14; bộ B5, B5c (kín không chạy); dữ liệu mở ⇒ `data/nguon_mo_huegov_2026-08-05/`.
-- C188 bộ ảnh Phase 10 (kín không chạy) + ảnh minh hoạ 38/42 · C189 kho thiếu gì · rà soát over-engineering · C191 review B5 (ready) · #6 vòng 2 (ready). · C191 review B5 + #6 vòng 2: ready (gỡ `/tmp/c_b5kin`, `/tmp/c_q1main`, `/tmp/c191`, `/tmp/c_toc_do6b_r` khi A merge xong)
-- **Tiền C 05/11:** 0,035249 USD (C174 0,019846 + kín B5 0,004612 + C192 "trước" 0,010791).
-
-## Dọn khi xong
-- `/tmp/c188/` (script + ảnh tạm C188) — xoá khi A chốt C188. `/tmp/c_b5kin` + `/tmp/c_b5kin_run` — gỡ sau kín B5. `/tmp/c_toc_do6` giữ cho review #6.
+## Worktree / tạm
+- **Gỡ được** (việc đã merge): `/tmp/c_b5kin` (B5 `5bc45cf`, có `frontend/dist`), `/tmp/c_q1main` (`b019aab`), `/tmp/c_toc_do6b_r` (#6 `14db83b`), `/tmp/c_toc_do6` (#6 cũ `ea081b0`) ⇒ `git worktree remove --force <dir>` (có symlink `data` / `knowledge-base-hue` chưa theo dõi).
+- `/tmp/c191`, `/tmp/c192`, `/tmp/c188`, `/tmp/c_b5kin_run`: tạm — phần cần giữ đã chép vào `data/`. Mất khi khởi động lại.
 
 ## Bẫy (giữ)
-- Ảnh tải về: xem lưới thu nhỏ trước khi gắn nhãn — tên file Commons từng sai nội dung 3 / 33.
-- Commons 429: tải từng file, giãn 8 s; `tai_anh.py` ghi đè phiếu + đánh số lại mỗi lần chạy ⇒ mỗi file một thư mục rồi gộp (`/tmp/c188/gop.py`).
-- Trước khi gọi một số là "sai", đọc cả file nguồn về đơn vị (C174: bảng giá tính theo một người).
-- Heredoc không ngoặc có backtick ⇒ file rỗng; Markdown dài viết bằng Write.
+- Kiểm nhãn bộ đo bằng **code thật** của bậc (mô phỏng) trước lượt có phí — `kiem_bo` tự viết bỏ sót "thêm điểm không nêu chỗ" (B163 bắt 2 nhãn).
+- Xoá / dựng lại chỉ mục ⇒ auto mode chặn ⇒ soạn lệnh `!` có bước 0 + tự lùi, đừng thử cách khác.
+- Ca phá phải so với số lỗi gốc (lần đầu 6/6 là đạt giả vì bộ còn lỗi khác).
+- Đọc số dòng từ đầu ra `grep` cẩn thận (C197 lấy nhầm số thứ tự danh sách làm số dòng kho — máy kiểm bắt).
+- **Tiền C 05/11:** 0,035249 USD (C174 0,019846 + kín B5 0,004612 + C192 "trước" 0,010791).

@@ -1013,3 +1013,14 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - B4: khoá 1 âm (lỗi cài đặt — S91), khoá 2 còn 1 / 5 câu nhân giá ⇒ User chọn vòng sửa 2 ⇒ khoá 3 đạt mọi phần đã thấy; trần 0,24; còn kín.
 - Plan B5 bản 3 + bảng điểm v2 duyệt; User thêm bậc "sửa lịch nhiều lượt" + cột `ten_khac`.
 - Nghiên cứu: đọc code 8 repo + ViWOZ, TRIPO vòng 3, nguồn agent ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; 18 ý ⇒ `CURRENT_HANDOFF.md`. Vòng cải tiến 17 (W52, W54, I10) + 18 (W55, W56). Tiền phiên ≈ 0,226 USD. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-04.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-04_phase_9_b4_toc_do.md`.
+
+## 2026-11-05 — B4 âm 2 vòng; B5 lịch trình vào `main` cờ tắt; #6 bật; B5c âm 2 vòng; chia Phase 10–12; luật chống over-engineering (A, 16:49 05/11/2026)
+
+- B4 (hỏi lại): vòng 1 âm (câu chi phí tự ghi tổng; gõ chữ bị hỏi lại), vòng 2 B4b âm (S-AT thiếu cảnh báo) ⇒ code vào cờ tắt `b019aab`; User chọn "code tự hỏi" ⇒ B5 dùng lại thẻ.
+- B5 lịch trình (plan bản 7) đạt mọi sàn máy (đã thấy, kín theo nội dung, hồi quy + S-AT) ⇒ merge `d66f6a3` **cờ tắt**, chờ User chấm 5 lịch kín. B5.1 sửa bộ kiểm báo nhầm; review C 2 vòng.
+- Tốc độ #6 (trả lời song song định tuyến) review đạt ⇒ merge `92705ce` + **bật** `5a8aa5e` (User duyệt).
+- B5c tính tiền bằng code: phép tính đúng 8 / 8 nhưng âm 2 vòng (giá ngoài bảng bị bỏ; câu miễn vé mất điều kiện) ⇒ dừng, tag `hoso/p9-b5c`.
+- Spec Phase 9 bản 12 duyệt `77250689e605` (B4b, B5c, lịch mới, quỹ B7, đóng code khi User nói + AWS). User chia **Phase 10** (ảnh + giọng nói, song song — spec ảnh duyệt `bf67b90fb6fc`, P1 luna âm ⇒ dạng gợi ý có xác nhận + thử SigLIP / Qdrant ảnh), **11** (trải nghiệm Huế, lưu trú), **12** (vận hành, AWS). Phiên E mở.
+- Dữ liệu: `backend/data/` ⇒ `data/nguon_mo_huegov_2026-08-05/`; kiểm kho thiếu gì (lỗi chủ yếu ở khâu tìm); sửa kho giờ mở cửa 11 điểm chuẩn bị xong, chờ User `!` dựng chỉ mục. Ảnh không cần giấy phép (User).
+- Cách làm: luật nền tảng AI FDE (Session_Prompt §7); rà over-engineering 4 phiên ⇒ luật thường trực tự soi + rút gọn (review ≤ 2 vòng, kín chỉ khi chỉnh lời dặn, 3 chỗ báo cáo, sha chỉ bản duyệt, đọc mở phiên gọn).
+- Tiền phiên ≈ 0,49 USD (Phase 9 ≈ 0,41; Phase 10 ≈ 0,08); Phase 9 ≈ 1,61 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-05_b4_am_chia_phase_10_12.md`.
