@@ -36,6 +36,7 @@ from llm.full_corpus_prompt import (
     ROUTER_SEARCH_V3,
     ROUTER_HISTORY_NOTE,
     ASSISTANT_HISTORY_NOTE,
+    TU_WEB_LUAT,
     build_answer_input,
 )
 
@@ -72,6 +73,7 @@ ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lầ
 
 
 ROUTER_MAX_OUTPUT_TOKENS = 512  # gồm cả token suy luận của model
+WEB_MAX_OUTPUT_TOKENS = 1024  # B6 D8: lần gọi viết mục web (gồm token suy luận); mục ≤ 3 đoạn văn ngắn
 
 
 def _dung_khi_hoi_lai(_context, results) -> ToolsToFinalOutputResult:
@@ -285,6 +287,14 @@ class OpenAIFullCorpusGenerator:
         self.router_history_agent = self.router_agent.clone(instructions=f"{ROUTER_INSTRUCTIONS}\n\n{ROUTER_HISTORY_NOTE}")
         self.assistant_history_instructions = f"{self.assistant_instructions}\n\n{ASSISTANT_HISTORY_NOTE}"
         self.assistant_history_agent = self.assistant_agent.clone(instructions=self.assistant_history_instructions)
+        # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.
+        self.web_agent = Agent(
+            name="hue_web_section",
+            instructions=TU_WEB_LUAT,
+            model=self.responses_model,
+            model_settings=ModelSettings(max_tokens=WEB_MAX_OUTPUT_TOKENS, include_usage=True, store=False),
+            output_type=AnswerOutput,
+        )
 
     @classmethod
     def from_environment(
@@ -425,6 +435,10 @@ class OpenAIFullCorpusGenerator:
     async def generate_chat(self, query: str, call_log: "CallLog | None" = None, history=()) -> GeneratedText:
         """Trò chuyện (B1 D4): lời dặn riêng, không ngữ cảnh kho."""
         return await self._execute_agent(self.chat_agent, with_history(query.strip(), history), AnswerOutput, call_log)
+
+    async def generate_web_section(self, user_prompt: str, call_log: "CallLog | None" = None) -> GeneratedText:
+        """B6 D4: mục "Từ web" từ câu hỏi + đoạn trích (`tra_web.dau_vao_model`). Một lần gọi, không lịch sử; lỗi ⇒ `GenerationError`."""
+        return await self._execute_agent(self.web_agent, user_prompt, AnswerOutput, call_log)
 
     def start_chat_stream(self, query: str, history=()) -> tuple[RunResultStreaming, "CallLog"]:
         return self._start_stream(self.chat_agent, with_history(query.strip(), history))
