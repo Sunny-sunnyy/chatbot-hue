@@ -782,7 +782,8 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
             yield event
         return
 
-    without_router = dataclasses.replace(flags, router=False, emergency_rule=False)
+    # B6: bản cờ của phần chạy song song / đường trò chuyện tắt cả `tra_web` (cờ này cần `router`; cổng web chạy bằng `flags` gốc sau khi gộp)
+    without_router = dataclasses.replace(flags, router=False, emergency_rule=False, tra_web=False)
     # B161 M-1: trace phụ mang **mọi đầu vào route đặt trước khi gọi lõi** (lịch sử B3; giá trị nút + câu gốc của lượt ghép B4b / B5) — chép
     # từng trường (không `dataclasses.replace`: sẽ dùng chung list sổ nguồn / công cụ giữa hai trace)
     spec = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
