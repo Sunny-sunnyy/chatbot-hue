@@ -436,7 +436,7 @@ def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
         noi.append(tool["khoi"] or tt.CAU_LOI)
     if ctx.get("bao_lu"):
         noi.append(tt.CAU_BAO_LU)
-    if ctx.get("ngoai_7") and ctx.get("co_cong_cu"):
+    if ctx.get("ngoai_7") and ctx.get("tu_khoa"):
         noi.append(tt.CAU_NGOAI_7_NGAY)
     trace.thoi_tiet_noi = "\n\n".join(noi) or None
     if trace.thoi_tiet_noi:
@@ -657,10 +657,11 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         extra["lich_trinh_fn"] = lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich,
                                                      flags.du_bao if flags.thoi_tiet else None)
     if flags.thoi_tiet:
-        co = tt.co_tu_khoa_luot(query, trace.history)
-        trace.thoi_tiet_ctx = {"bao_lu": tt.la_cau_bao_lu(query), "ngoai_7": tt.ngoai_7_ngay(query, hom_nay_vn()), "buoi": tt.co_buoi(query),
-                               "co_cong_cu": co}
-        if co:
+        tu_khoa, ngoai_7 = tt.co_tu_khoa_luot(query, trace.history), tt.ngoai_7_ngay(query, hom_nay_vn())
+        # vòng chỉnh 1 (A duyệt, sửa D3): câu ngoài 7 ngày ⇒ KHÔNG đưa công cụ (không số dự báo nào để model chép) — code nối câu cố định
+        trace.thoi_tiet_ctx = {"bao_lu": tt.la_cau_bao_lu(query), "ngoai_7": ngoai_7, "buoi": tt.co_buoi(query), "tu_khoa": tu_khoa,
+                               "co_cong_cu": tu_khoa and not ngoai_7}
+        if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     return extra
 

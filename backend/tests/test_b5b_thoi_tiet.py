@@ -83,6 +83,15 @@ def test_beyond_seven_days_and_part_of_day():
     assert tt.co_buoi("Chiều nay có mưa không?") and tt.co_buoi("buổi tối mai") and not tt.co_buoi("Mai có mưa không?")
 
 
+@pytest.mark.parametrize("cau, ngoai", [  # vòng chỉnh 1: tháng N / tên tháng / tuần sau nữa
+    ("Tháng 12 Huế có mưa không?", True), ("Tháng chạp trời Huế thế nào?", True), ("tháng mười hai có lạnh không", True),
+    ("Tuần sau nữa trời ra sao?", True), ("Tháng 11 Huế mưa nhiều không?", False),  # tháng hiện tại (NGAY0 = 06/11) ⇒ không tính
+    ("Tháng 1 năm sau có rét không?", True),
+])
+def test_beyond_seven_days_month_words(cau, ngoai):
+    assert tt.ngoai_7_ngay(cau, NGAY0) is ngoai
+
+
 @pytest.mark.parametrize("cau, n", [("lịch mai", 1), ("ngày kia", 2), ("thứ Bảy này", 1), ("cuối tuần này", 1), ("8/11", 2), ("ngày thứ ba đi đâu", None),
                                     ("mai và chủ nhật", None), ("lịch 2 ngày", None), ("20/11", None)])
 def test_travel_day(cau, n):
@@ -146,7 +155,7 @@ def test_weather_number_forms(text, so):
 
 def _trace(text_cited="", tool_khoi=None, **ctx):
     trace = AnswerTrace(answer="chữ model", cited=(PackedSource(1, "t", (), (text_cited,)),) if text_cited else ())
-    trace.thoi_tiet_ctx = {"bao_lu": False, "ngoai_7": False, "buoi": False, "co_cong_cu": tool_khoi is not None, **ctx}
+    trace.thoi_tiet_ctx = {"bao_lu": False, "ngoai_7": False, "buoi": False, "co_cong_cu": tool_khoi is not None, "tu_khoa": tool_khoi is not None, **ctx}
     if tool_khoi is not None:
         trace.thoi_tiet = {"trang_thai": "ok" if tool_khoi else "loi", "khoi": tool_khoi or None}
     return trace
@@ -313,3 +322,19 @@ def test_itinerary_turn_with_day_puts_forecast_in_notes(deps, monkeypatch):
     assert trace.citation_error is None and trace.lich["khung"] == goc.lich["khung"]  # khung lịch giống B5
     assert "Ngày 1 — Thứ Bảy 07/11:" in trace.lich["ghi_chu"] and tt.GHI_CONG in trace.lich["ghi_chu"]
 
+
+
+def test_beyond_seven_days_offers_no_tool_and_appends_new_fixed_sentence(deps, monkeypatch):
+    """Vòng chỉnh 1 (A duyệt, sửa D3): câu có từ khoá + ngoài 7 ngày ⇒ không công cụ ⇒ không số dự báo; câu cố định "không phải dự báo" do code nối."""
+    monkeypatch.setattr("llm.assistant.hom_nay_vn", lambda: NGAY0)
+    seen = []
+    gen = generator(lambda n, kw: (seen.append(tool_names(kw)), [answer("Mình chưa có dự báo cho tuần sau.")])[1])
+    trace, _ = run(deps, "Tuần sau Huế có mưa không?", gen, dataclasses.replace(WEATHER, du_bao=nguon()))
+    assert seen == [["tim_kho"]] and trace.thoi_tiet is None and not trace.thoi_tiet_ctx["co_cong_cu"] and trace.thoi_tiet_ctx["tu_khoa"]
+    assert trace.answer.endswith(tt.CAU_NGOAI_7_NGAY) and "không phải dự báo" in tt.CAU_NGOAI_7_NGAY and not tt.so_thoi_tiet(trace.thoi_tiet_noi)
+
+
+def test_beyond_seven_days_kho_climate_number_with_citation_still_allowed():
+    t = _trace(text_cited="Tháng 12 ở Huế nhiệt độ trung bình khoảng 20 °C.", ngoai_7=True, tu_khoa=True)
+    _thoi_tiet_cuoi(t, "Tháng 12 thường khoảng 20 °C [1].")
+    assert t.citation_error is None and t.answer.endswith(tt.CAU_NGOAI_7_NGAY)

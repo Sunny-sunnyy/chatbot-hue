@@ -36,7 +36,8 @@ NGUON_SOURCE = "open-meteo"  # `source` của nguồn — không thuộc tiền 
 CAU_LOI = f"Mình chưa lấy được dự báo thời tiết lúc này — bạn xem bản tin của Trung tâm Dự báo khí tượng thủy văn quốc gia: {NCHMF_URL}"
 CAU_BAO_LU = (f"Với bão, lũ, ngập: hãy theo dõi bản tin chính thức của Trung tâm Dự báo khí tượng thủy văn quốc gia ({NCHMF_URL}) và cổng cảnh "
               f"báo lũ quét, sạt lở ({LU_QUET_URL}); khi gặp nguy hiểm gọi 112.")
-CAU_NGOAI_7_NGAY = "Mình chỉ có dự báo 7 ngày tới."
+CAU_NGOAI_7_NGAY = ("Mình chỉ có dự báo 7 ngày tới, chưa có dự báo cho ngày bạn hỏi; số trong câu trả lời (nếu có) là khí hậu chung theo tài liệu, "
+                    "không phải dự báo.")  # vòng chỉnh 1 (A duyệt): câu ngoài 7 ngày ⇒ không khối số liệu, chỉ câu này
 CAU_THEO_CA_NGAY = "Đây là dự báo theo cả ngày, không riêng buổi bạn hỏi."
 CAU_CO_THE_DOI = "Dự báo có thể thay đổi."
 THU = ("Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật")
@@ -47,6 +48,9 @@ _CANH_BAO = re.compile(r"\bcảnh\s+báo\b", re.IGNORECASE)
 _BUOI = re.compile(r"\b(?:sáng|trưa|chiều|tối|đêm)\s+(?:nay|mai)\b|\bbuổi\s+(?:sáng|trưa|chiều|tối)\b", re.IGNORECASE)
 _XA = re.compile(r"\b(?:tuần\s+sau|tháng\s+sau|tháng\s+tới|năm\s+sau|năm\s+tới)\b", re.IGNORECASE)
 _NGAY_THANG = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?![\d/])")
+_TEN_THANG = {"giêng": 1, "một": 1, "hai": 2, "ba": 3, "tư": 4, "bốn": 4, "năm": 5, "sáu": 6, "bảy": 7, "tám": 8, "chín": 9, "mười": 10,
+              "mười một": 11, "mười hai": 12, "chạp": 12}
+_THANG = re.compile(r"\btháng\s+(\d{1,2}|mười\s+một|mười\s+hai|giêng|chạp|một|hai|ba|tư|bốn|năm|sáu|bảy|tám|chín|mười)\b", re.IGNORECASE)
 
 
 def _nfc(text: str) -> str:
@@ -79,6 +83,13 @@ def ngoai_7_ngay(text: str, hom_nay: date | None) -> bool:
         return True
     if hom_nay is None:
         return False
+    for m in _THANG.findall(t):  # vòng chỉnh 1: "tháng 12" / "tháng chạp" — khác tháng này và ngày đầu tháng cách hôm nay ≥ 7 ngày
+        so = int(m) if m.isdigit() else _TEN_THANG[" ".join(m.casefold().split())]
+        if not 1 <= so <= 12 or so == hom_nay.month:
+            continue
+        dau = date(hom_nay.year + (so < hom_nay.month), so, 1)
+        if (dau - hom_nay).days >= SO_NGAY:
+            return True
     for d, m in _NGAY_THANG.findall(t):
         try:
             ngay = date(hom_nay.year, int(m), int(d))
