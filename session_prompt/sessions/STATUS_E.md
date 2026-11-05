@@ -19,6 +19,8 @@
 
 - **E16 G0 giọng nói XONG (21:16 05/11/2026, 0 USD):** nhánh `p10-giong-noi` **`93bbc63`** (đã push; `sherpa-onnx` 2.0.1 + core — lock không đổi gói khác; gói mới ~10 ngày). Model `data/phase_10/giong_noi/models/` 108 MB (Gipformer int8 ghim `318322b`, Zipformer-30M int8). Cả hai chạy được; chữ HOA, không dấu câu; Gipformer số bằng chữ, Zipformer có chữ số ("TV"); 2 luồng ≈ 0,1 s / câu 3,7 s, RSS 180–230 MB; hotwords chạy với `modified_beam_search` nhưng điểm khác nhau giữa model, điểm 20 Gipformer chèn lặp ⇒ chọn ở G2. Report `report_agent/2026-11-05_phase_10_anh/e16_g0_giong_noi.md`. Worktree `/tmp/e_giong` (nhánh `p10-giong-noi`) giữ cho G3. **Chờ G1 (User thu 40 câu do C soạn).**
 
+- **E17 XONG (review sớm B5b `b669981`):** major — miễn `[n]` ở lượt thời tiết áp cho cả chữ model ⇒ giờ / giá kho không trích lọt (dò 3 / 3 qua). Đề xuất: miễn chỉ khi mọi số ⊂ khối (hẹp) hoặc khối dự báo là nguồn thật (sạch); thiếu test. `report_agent/2026-11-02_phase_9_code/b168_review_som.md`; đã nhắn A + B. Worktree `/tmp/e17` đã gỡ. **A chọn cách (4)** (khối dự báo thành nguồn thật, 0 miễn `[n]`) ⇒ chờ B sửa rồi E kiểm một vòng (dò lại 3 ca (a)(b)(c) + ca trích `[k]` nguồn dự báo).
+
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Nhánh `p10-anh` — CHƯA COMMIT** (auto mode chặn: luật User "commit / push hỏi trước"; tin A không thay User). Worktree `/tmp/e_anh` ở `main` `268466d` + 9 file chưa commit
   (+542 / −2: `backend/llm/nhan_anh.py`, `backend/api/routes/anh.py`, `backend/tests/test_p10_anh.py`, `app.py`, `settings.yaml` khối `anh:` (`bat: false`), `test_assistant_boundary.py` (`ALLOWED`),
