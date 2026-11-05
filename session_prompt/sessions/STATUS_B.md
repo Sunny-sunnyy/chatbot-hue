@@ -15,6 +15,8 @@ Lúc mở: B163 đã có `p9-sua-lich` `1c53627` (16:49, đã push, cờ tắt, 
 - **B162 = B5c `tinh_tien`** — nhánh `p9-b5c` **`42bdd93`** (từ `p9-b5` `5bc45cf`, worktree `/tmp/b_b5c`). Phần 0 USD xong: test 160, Q1 228/228, Q1m 228/228, đáp án C 8/8. Report `report_agent/2026-11-02_phase_9_code/b162_b5c_implementation.md`. Rebase lên main `ae5a6d6` ⇒ `ae1bb63`, Q1/Q1m 228/228 lại. **B5c ÂM ở Q4 (luật ghi trước):** Golden F2 1 câu (giá vé biểu diễn ngoài bảng — luật trình bày làm model bỏ giá kho) + S-AT câu miễn giảm vé 1/3 ↔ 0/3. Đã thấy 14×2 + chuỗi 7×2 đạt. **B5c-2 cũng ÂM** (khoá `7821d34`): Q1/Q1m′ đạt, đã thấy đạt, Golden sạch, nhưng S-AT câu miễn vé trẻ nhỏ 3/3 ↔ 1/3. Tiền tổng ≈ 0,128 / 0,14. Chờ A.
 - Đã xong phiên này (chi tiết ở report / file review): B156 B4 âm, B157 B4b âm (`b144_b4_implementation.md` §2f §2g); B158 review spec Phase 10; B159 review plan B5c; rà over-engineering `data/ra_soat_over_engineering_2026-11-05/B.md`.
 
+- **Trước merge (A báo tối 05/11):** `main` có `p10-anh` `2ca9937` (chạm `app.py`, `settings.yaml`, `test_assistant_boundary.py`, `App.jsx`) ⇒ `p9-sua-lich` + `p9-b6` rebase lên `main` mới + chạy lại Q1 (+ test + build) lúc tới bước merge.
+
 ## Lệnh hay dùng (từ `/tmp/b_b5/backend`, luôn `PYTHONPATH=$PWD HF_HUB_OFFLINE=1`)
 - Có phí: `uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python <tool> …`; 0 USD bỏ `--env-file`.
 - An toàn 32: `sinh_an_toan.py <out> <side> <round> [--qids …] [--lich-trinh|--moc]` ⇒ `DO_CUOI_DIR=<thư mục> an_toan_b2.py export|check|accept|compare --judge k [--round regen]`.

@@ -1,13 +1,15 @@
 # STATUS E — kết phiên 16:48 05/11/2026 (`date`) · terminal phiên 05/11 `hue-rag-7a` · Claude Opus 5.5 · vai thực thi (Phase 10 + review)
 
-## PHIÊN TỐI 05/11 — terminal `hue-rag-bc` · E10 XONG (19:23 05/11/2026)
+## PHIÊN TỐI 05/11 — terminal `hue-rag-bc` · E10 + Playwright + E9 XONG (20:19 05/11/2026)
 - **`p10-anh` đã commit + push: `0632e10`** (từ `268466d`, áp patch `9138ca6b1fc3`: 9 file +542 / −2, cờ `anh.bat: false`; hook quét 0 trùng). Test `test_p10_anh.py` + `test_assistant_boundary.py`: **40 passed** [Chạy].
   Mục "Nhánh p10-anh CHƯA COMMIT" bên dưới đã hết đúng.
 - Worktree `/tmp/e_anh` (nhánh `p10-anh`) dựng lại; symlink `data`, `knowledge-base-hue` untracked — gỡ khi xong.
-- **Playwright P1 ĐẠT (19:51 05/11/2026)** — report e8 mục cuối; script `data/phase_10/anh/a1_playwright/ui_p1.py`, kết quả `…/ket_qua/`. Cờ tắt 0 nút; cờ bật: lỗi kiểu / > 10 MB chặn ở trình duyệt; ảnh trong ds ⇒ gợi ý ⇒ bấm ⇒ trả lời 7 nguồn; ảnh mèo ⇒ "chưa nhận ra" ⇒ Gõ tên; 0 CSP / 0 request ngoài. Server đã tắt, cờ trả `false`.
-- **Tiền Phase 10: 0,080179 USD** / trần 0,15 (dừng 0,13) — lượt này 0,001634 (gồm 1 lần gọi ảnh thừa do script hỏng lần đầu).
-- **E9 chuẩn bị (A giao):** vòng tải 6 tên trống đang chạy nền; script kiểm trùng lớp 2 `data/phase_10/anh/e9/kiem_trung.py` (sha256 + tên file Commons ⇒ `kiem_trung_ket_qua.json`). Embed SigLIP **chờ A báo** (B Q1 xong / RAM ≥ 5 GB).
-- Ảnh mẫu E9 đếm lại: 179 ảnh / 34 tên (trống 6: che_heo_quay, lang_gia_long, lang_khai_dinh, nui_ngu_binh, pho_nguyen_dinh_chieu, pho_tay).
+- **Playwright P1 ĐẠT (19:51 05/11/2026)** — report e8 mục cuối; script `data/phase_10/anh/a1_playwright/ui_p1.py`, kết quả `…/ket_qua/`. Cờ tắt 0 nút; cờ bật: lỗi kiểu / > 10 MB chặn ở trình duyệt; ảnh trong ds ⇒ gợi ý ⇒ bấm ⇒ trả lời 7 nguồn; ảnh mèo ⇒ "chưa nhận ra" ⇒ Gõ tên; 0 CSP / 0 request ngoài. Server đã tắt, cờ trả `false`. Tiền lượt này 0,001634 (gồm 1 lần gọi ảnh thừa do script hỏng lần đầu).
+- **E9 XONG — ÂM cả 3 phương án (20:19 05/11/2026)**: report `report_agent/2026-11-05_phase_10_anh/e9_siglip_implementation.md`. P2a 5/25 · P2b 20/25, ép 5/5 (điểm ngoài chồng điểm trong) · P2c 21·19, ép 1·3, Q-e 12/33. Không chạy vòng chỉnh (lý do §4). Collection **`hue_anh_siglip2` 172 điểm** còn trong Qdrant — chờ User quyết xoá.
+- **Merge `main` `2ca9937`** (A, cờ tắt) gồm `973823f` (C198 m-1). Report e8 sửa m-2 + dòng boundary.
+- **Báo cáo User mới `bao_cao_he_thong/BAO_CAO_HOI_BANG_ANH.md` bản 1** — chờ A review (A thêm dòng vào `bao_cao_he_thong/README.md`).
+- **Tiền Phase 10: 0,095860 USD** / trần 0,15 (dừng 0,13) — P2c 0,015681 (+ 2 lần quá hạn log 0 USD, ≤ ~0,0008).
+- Ảnh mẫu E9 (đếm lại sau vòng tải tối — số 179 / 34 lúc mở phiên là **đếm nhầm** cả file phiếu): **172 ảnh / 40 tên**; 5 tên tải dở thiếu `phieu_nguon.jsonl` (bien_thuan_an, dan_xa_tac, doi_vong_canh, me_xung, pho_tay — nguồn tra theo thứ tự dòng `mau/<id>.txt`); pho_tay chỉ 2 ảnh (Commons giữ > 15 phút ⇒ bỏ). **Kiểm lớp 2: 0 trùng** với 36 ảnh đo (sha256 + tên file Commons) ⇒ `e9/kiem_trung_ket_qua.json`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Nhánh `p10-anh` — CHƯA COMMIT** (auto mode chặn: luật User "commit / push hỏi trước"; tin A không thay User). Worktree `/tmp/e_anh` ở `main` `268466d` + 9 file chưa commit
