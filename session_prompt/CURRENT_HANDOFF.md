@@ -148,6 +148,7 @@ Nguồn: `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ t�
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
+0. **(05/11, gấp nhất)** Chấm 5 lịch kín B5 — `data/phase_9/b5/kin/phieu_cham_user.md` (đạt ≥ 4 / 5 cả 3 tiêu chí ⇒ A bật cờ `lich_trinh`). B5 đã merge cờ tắt `d66f6a3` (13:02 05/11/2026).
 1. Quyền phiên + giờ kết phiên.
 2. Vòng cải tiến 18 (A chuẩn bị lúc kết phiên 04/11 — `SO_CAI_TIEN_CACH_LAM.md` "Vòng 18").
 3. Duyệt bảng điểm B5 v3 (cột `ten_khac`) khi C172 xong.
@@ -176,6 +177,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 ## Quyền
 
+- **User 12:59 05/11/2026 (đi nghỉ):** "tiếp tục nghiên cứu, triển khai, tối ưu, làm việc, phát triển, **không cần hỏi lại**, viết báo cáo đầy đủ, **đừng dừng lại**, dùng Codex để research, **vẫn duyệt chi phí API nếu vượt trần**" ⇒ A tự quyết trong phạm vi đã duyệt; vượt trần Phase / phiên ⇒ được, nhưng ghi rõ số + lý do vào handoff + báo cáo trước lượt đó; việc cần User (chấm Q3 B5, lệnh `!` kín) ⇒ ghi "Câu hỏi cho User", không chặn việc khác. Không deploy, không xoá dữ liệu, không đổi provider mới khi User vắng.
 - **Phiên 05/11** (User "vẫn có quyền như 04/11 … cứ làm đi", A ghi nhận 08:53 05/11/2026): A tự điều phối + tự quyết trong kế hoạch; A tự commit / push cả phiên; ≤ 1 USD / phiên; B / C push nhánh riêng; mandate "tiếp tục điều phối, phát triển, triển khai, tự nghiên cứu, so sánh, đánh giá, viết báo cáo". Không hỏi giờ kết phiên (User). Hết hạn cuối phiên.
 - **User (A ghi nhận 09:00 05/11/2026):** "có cần thêm các tools gì, hay nghiên cứu gì, hay tải gì, hay cần thêm khoá gì, thì cứ nghiên cứu, phát triển, và trình bày với tôi" ⇒ A / B / C tự nghiên cứu (0 USD, thông tin công khai) + đề xuất; **thêm công cụ / thư viện lớn / tải model / khoá / tài khoản mới vẫn trình User duyệt** trước khi dùng (`Session_Prompt.md` §4).
 - **Tiền Phase 9 (User, A ghi nhận 08:55 05/11/2026):** "khi hết thì xin tôi, tôi sẽ xem xét để cấp thêm chi phí, hiện tại cứ làm đi" ⇒ giữ trần 2,0; không cắt bậc trước; khi một plan dự phóng vượt phần còn lại ⇒ A xin User thêm (kèm số đã dùng + dự phóng) **trước** lượt có phí, không tự vượt.

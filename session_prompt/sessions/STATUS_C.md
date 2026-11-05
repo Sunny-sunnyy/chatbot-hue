@@ -7,7 +7,7 @@ Lịch sử trước khi gọn: `git show 1d1fa77:session_prompt/sessions/STATUS
 ## Đang chờ
 - **C191 review `p9-b5` XONG:** vòng 1 `5f0a1a3` changes_requested ⇒ vòng 2 `5bc45cf` **ready** (`report_agent/2026-11-02_phase_9_code/b160_review.md` `470ecc7552cc`). Gỡ `/tmp/c_b5kin`, `/tmp/c_q1main`, `/tmp/c191` sau khi A merge.
 - **Kín B5 XONG** (11:51, 0,004612 USD): `data/phase_9/b5/kin/KET_QUA.md` — Q2a 5 / 5; `kiem_cuoi` bắt 1 / 5 (K-L3, D8 (1) báo nhầm: tên bảng làm ngữ cảnh lịch sử). A quyết Q2 đạt theo nội dung (rút lại ⇒ Q5, giới hạn). **Chờ User chấm Q3:** `data/phase_9/b5/kin/phieu_cham_user.md`. Gỡ `/tmp/c_b5kin*` sau khi A chốt.
-- **C190:** plan bản 2 `c7c1ac0655f9` (11 file Quần thể, giờ chung 07h00 – 17h30 của kho; bỏ Kinh thành + chợ Đông Ba). **A duyệt**; chạy sau khi B5 merge.
+- **C190:** plan bản 2 `65e7e2b2b68c` (sửa chữ cho hook, nội dung như `c7c1ac0655f9`) (11 file Quần thể, giờ chung 07h00 – 17h30 của kho; bỏ Kinh thành + chợ Đông Ba). **A duyệt**; chạy sau khi B5 merge.
 - **#6 M-1 (B161 `c172_review.md`):** rebase `p9-toc-do-6` + trace phụ chép đủ trường — khi A xếp lịch (sau B5 merge).
 
 ## Xong hôm nay (chi tiết ở file đầu ra)
