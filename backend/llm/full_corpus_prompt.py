@@ -130,6 +130,22 @@ TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
 # B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
 TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã có; không tìm thêm — hãy viết câu trả lời ngay theo khung."
 
+# B5c (plan bản 3 D1, D8, D11): công cụ `tinh_tien` — mô tả ngắn, không thêm lời dặn hệ thống (bài học B4b §2g); luật trình bày đi trong kết quả
+# công cụ. Không dùng ví dụ địa danh / số thật (ý #12).
+TINH_TIEN_MO_TA = (
+    "Tính tiền cho chuyến đi Huế bằng bảng giá của hệ thống. Chỉ gọi khi tin nhắn cuối cùng của người dùng hỏi dự trù chi phí / ngân sách chuyến "
+    "đi, hoặc hỏi tiền vé tham quan cho một hay nhiều điểm; không gọi cho câu hỏi khác. loai: du_toan (chi phí chuyến đi), ve (tiền vé các "
+    "điểm), ca_hai (hỏi cả hai), ngoai_bang (hỏi giá một khoản cụ thể như một khách sạn, một bữa ăn, một chuyến xe). Số người, số ngày "
+    "do hệ thống tự lấy từ câu người dùng — không truyền. muc_chi chỉ khi người dùng nói rõ, chưa nói thì null; diem là tên điểm người dùng "
+    "hỏi vé, đúng chữ người dùng gõ."
+)
+TINH_TIEN_LUAT = (
+    "Luật trình bày: bảng số tiền và phần ghi chú do hệ thống tự thêm ngay sau câu trả lời của bạn. Bạn chỉ viết 1–3 câu ngắn dẫn vào "
+    "(nhắc lại người dùng hỏi gì, có thể kèm một lời khuyên lấy từ tài liệu kèm [n]); không chép lại hay tự viết số tiền, không tự cộng, "
+    "nhân hay viết bảng, không nêu tổng. Không gọi thêm công cụ, viết câu trả lời ngay."
+)
+TOOL_DA_TINH = "Đã tính tiền ở lần gọi trước trong lượt này; hãy viết câu trả lời ngay."
+
 
 def build_assistant_input(query: str, context: str | None, today: str | None = None) -> str:
     """Tin nhắn user cho trợ lý có công cụ: có ngữ cảnh tìm trước (B2b) ⇒ đúng chuỗi `build_answer_input`; không tìm trước (V2) ⇒ chỉ câu hỏi."""

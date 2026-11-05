@@ -28,7 +28,7 @@ from llm.pricing import cost_usd
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     ASSISTANT_TOOL_NOTE,
-    LICH_TRINH_MO_TA,
+    LICH_TRINH_MO_TA, TINH_TIEN_MO_TA,
     CHAT_INSTRUCTIONS,
     INSUFFICIENT_ANSWER,
     ROUTER_INSTRUCTIONS,
@@ -78,7 +78,7 @@ def _dung_khi_hoi_lai(_context, results) -> ToolsToFinalOutputResult:
     """B5 D12 (b) / D15 — `tool_use_behavior` dạng hàm (probe 0 USD `data/phase_9/b5/probe_tool_use_behavior.py`): `lich_trinh` trả dữ liệu thẻ
     hỏi lại (dict có `loai`) ⇒ dừng lượt, thẻ thành `final_output`; mọi kết quả khác (`tim_kho`, khung lịch) ⇒ model chạy tiếp."""
     for result in results:
-        if result.tool.name == "lich_trinh" and isinstance(result.output, dict) and "loai" in result.output:
+        if result.tool.name in ("lich_trinh", "tinh_tien") and isinstance(result.output, dict) and "loai" in result.output:  # B5c D7: cùng cơ chế
             return ToolsToFinalOutputResult(is_final_output=True, final_output=result.output)
     return ToolsToFinalOutputResult(is_final_output=False)
 
@@ -372,7 +372,7 @@ class OpenAIFullCorpusGenerator:
         queries = [parsed.cau_tim] if isinstance(parsed.cau_tim, str) else list(parsed.cau_tim)
         return parsed.route, queries
 
-    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None) -> tuple[Agent, dict, dict]:
+    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, tinh_tien_fn=None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -388,13 +388,17 @@ class OpenAIFullCorpusGenerator:
         if lich_trinh_fn is not None:  # B5 D1: công cụ thứ hai; mô tả ngắn, không đổi lời dặn (D7); dừng lượt chỉ khi code trả thẻ hỏi lại (D15)
             tools.append(function_tool(lich_trinh_fn, name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None))
             extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
+        if tinh_tien_fn is not None:  # B5c D1, D11: như `lich_trinh` — mô tả ngắn, không đổi lời dặn; dừng lượt khi code trả thẻ hỏi lại (D7)
+            tools.append(function_tool(tinh_tien_fn, name_override="tinh_tien", description_override=TINH_TIEN_MO_TA, failure_error_function=None))
+            extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
-    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None) -> GeneratedText:
+    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
+                                  tinh_tien_fn=None) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, tinh_tien_fn=tinh_tien_fn)
         result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS,
                                  error_handlers=handlers)
         return self._tools_result(result, started, call_log, state)
@@ -408,10 +412,10 @@ class OpenAIFullCorpusGenerator:
         text = parse_structured_output(output, AnswerOutput)
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
-    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
+    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, tinh_tien_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, tinh_tien_fn=tinh_tien_fn)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=ASSISTANT_MAX_TURNS, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state

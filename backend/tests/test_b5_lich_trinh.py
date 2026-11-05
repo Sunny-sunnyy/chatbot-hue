@@ -257,7 +257,8 @@ def test_composed_question_and_fields():
     truong = TruongInput(so_ngay="2", di_cung="cap_doi", kieu_di="thong_tha")
     assert ghep_cau(" Xếp lịch đi Huế giúp mình ", truong) == "Xếp lịch đi Huế giúp mình (Thông tin thêm: 2 ngày; đi hai người (cặp đôi); đi thong thả.)"
     assert ghep_cau("Xếp lịch đi Huế giúp mình", TruongInput()) == "Xếp lịch đi Huế giúp mình"
-    for field in ({"so_nguoi": "2"}, {"muc_chi": "tieu_chuan"}, {"so_ngay": "7"}):
+    # B5c thêm `so_nguoi` (số nguyên 1–20) + `muc_chi` vào TruongInput (plan B5c D7) ⇒ giá trị sai / trường lạ vẫn 422
+    for field in ({"so_nguoi": 0}, {"so_nguoi": 21}, {"muc_chi": "xa_xi"}, {"ngan_sach": "1"}, {"so_ngay": "7"}):
         with pytest.raises(ValidationError):
             TruongInput(**field)
 
@@ -398,7 +399,7 @@ def test_route_clarify_then_answer_now(deps, caplog):
         with chat_log_records(caplog) as records:
             asked = client.post("/api/chat", json={"query": CAU})
             now = client.post("/api/chat", json={"query": CAU, "truong": {}})
-        cost_field = client.post("/api/chat", json={"query": CAU, "truong": {"so_nguoi": "2"}})
+        cost_field = client.post("/api/chat", json={"query": CAU, "truong": {"ngan_sach": "2"}})  # trường lạ (B5c có so_nguoi hợp lệ)
         app.state.generator, app.state.generator_ready, app.state.assistant_flags = original
     assert asked.json()["clarify"]["truong"][0]["ten"] == "so_ngay" and asked.json()["answer"] == ""
     body = now.json()

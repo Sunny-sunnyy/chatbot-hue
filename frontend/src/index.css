@@ -92,6 +92,7 @@ body { background: var(--color-page); }
                            font-size: 15px; cursor: pointer; }
 .clarify fieldset button:hover { background: var(--color-accent-soft); }
 .clarify fieldset button[aria-pressed="true"] { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent-deep); font-weight: 600; }
+.clarify .so-nguoi { margin-top: 8px; width: 7rem; min-height: 40px; padding: 0 10px; border: 1px solid var(--color-field-line); border-radius: 10px; background: var(--color-surface); }
 .ask-chon { opacity: .85; font-size: 15px; }
 
 /* Ô hỏi: viên bo tròn, viền đậm đủ tương phản (field-line), focus viền tím quanh cả khung. */

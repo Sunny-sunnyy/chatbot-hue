@@ -32,7 +32,7 @@ from core.settings_loader import load_settings
 from llm.full_corpus_prompt import REFUSAL_ANSWERS, build_assistant_input
 from llm.generator_openai_full_corpus import CallLog, OpenAIFullCorpusGenerator, input_cache_tokens
 from llm.assistant import (BOOL_FIELDS as ASSISTANT_BOOL_FIELDS, ROUTE_TRO_LY_HUE as ROUTE_TRO_LY_HUE_NAME, SEARCH_VARIANTS, AnswerTrace,
-                           AssistantFlags, answer_turn, nap_bang_lich,
+                           AssistantFlags, answer_turn, nap_bang_lich, nap_bang_tien,
                            search_into_trace, tim_kho, tool_for_turn,
                            turn_usd)
 from core.schema import GenerationError
@@ -384,7 +384,7 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
     return row
 
 
-BOOL_FLAGS = ASSISTANT_BOOL_FIELDS  # cờ bật / tắt (bỏ `lan_tim_dau`, `bang_lich`)
+BOOL_FLAGS = ASSISTANT_BOOL_FIELDS  # cờ bật / tắt (bỏ `lan_tim_dau`, `bang_lich`, `bang_tien`)
 
 
 async def run_generation(cases: list[dict], max_context_documents: int | None = None, flags_on: list[str] | None = None,
@@ -396,7 +396,8 @@ async def run_generation(cases: list[dict], max_context_documents: int | None = 
     if flags_on is not None:
         # B5: bật `lich_trinh` ⇒ nạp bảng điểm như runtime (đường dẫn trong `settings.yaml`, đọc ở rìa)
         bang = flags.bang_lich or (nap_bang_lich(settings) if "lich_trinh" in flags_on else None)
-        flags = AssistantFlags(**{name: name in flags_on for name in BOOL_FLAGS}, lan_tim_dau=lan_tim_dau or "v0", bang_lich=bang)
+        tien = flags.bang_tien or (nap_bang_tien(settings) if "tinh_tien" in flags_on else None)  # B5c: bảng tiền nạp từ kho như runtime
+        flags = AssistantFlags(**{name: name in flags_on for name in BOOL_FLAGS}, lan_tim_dau=lan_tim_dau or "v0", bang_lich=bang, bang_tien=tien)
     elif lan_tim_dau is not None:
         flags = dataclasses.replace(flags, lan_tim_dau=lan_tim_dau)
     service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])

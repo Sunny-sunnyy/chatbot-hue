@@ -15,6 +15,7 @@ ITEM_OVERHEAD = 36
 # thấy. Đo ở pilot B160 (`data/phase_9/b5/pilot/thuong2.jsonl`, cờ bật): lượt **không gọi công cụ nào** ⇒ token thật − số đếm = 359 (như B4 B153
 # đo 185 cho `hoi_lai`); lượt có một `tim_kho` 345. (B4 `HOI_LAI_TOOL_OVERHEAD` đã gỡ cùng công cụ `hoi_lai` — review C183 m-2.)
 LICH_TRINH_TOOL_OVERHEAD = 359
+TINH_TIEN_TOOL_OVERHEAD = 275  # B5c D11: ước trước pilot = 359 × (token lược đồ tinh_tien 433 / lich_trinh 566, o200k); pilot đo lại như B5 D16
 
 
 @dataclass(frozen=True)

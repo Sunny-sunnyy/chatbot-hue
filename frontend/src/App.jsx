@@ -11,6 +11,7 @@ const STATUS_TEXT = {
   searched: "Đã tìm trong kho, đang chuẩn bị câu trả lời…",
   generating: "Đang viết câu trả lời…",
   lich_trinh: "Đang xếp lịch…",  // Phase 9 B5 D14: công cụ lịch trình đang chạy
+  tinh_tien: "Đang tính tiền…",  // Phase 9 B5c D12: công cụ tính tiền đang chạy
 };
 // B5 D14 (c): nhãn cố định của từng bước code đã làm (sự kiện `status` stage `lich_trinh`); tên điểm + lý do lấy từ dữ liệu sự kiện, không chữ model.
 const LICH_BUOC = {
@@ -20,6 +21,16 @@ const LICH_BUOC = {
   bo_diem: d => d.ly_do,
   lay_nguon: d => `Đã lấy tài liệu cho từng điểm (${d.n_doan} đoạn mới)`,
 };
+// B5c D12: bước code của `tinh_tien` (stage `tinh_tien`); "dang_tinh" chỉ là nhãn trạng thái (không có ở đây — như "dang_xep" B5).
+const LOAI_BANG = { du_toan: "bảng dự toán", ve: "bảng vé lẻ", ca_hai: "bảng dự toán và bảng vé lẻ", ngoai_bang: "bảng giá" };
+const TEN_TRUONG = { so_nguoi: "số người", so_ngay: "số ngày" };
+const TINH_BUOC = {
+  nap_bang: d => `Đã chọn ${LOAI_BANG[d.loai] ?? "bảng giá"} trong kho`,
+  tinh_xong: () => "Đã tính bằng code ✓",
+  thieu: d => `Cần thêm ${(d.truong || []).map(t => TEN_TRUONG[t] ?? t).join(", ")} để tính`,
+  ngoai_pham_vi: () => "Ngoài phạm vi bảng giá — không tính tổng",
+};
+const BUOC = { lich_trinh: LICH_BUOC, tinh_tien: TINH_BUOC };
 const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ nhận link bản đồ đúng gốc này (kiểm cả phía trình duyệt)
 const PENDING = new Set(Object.keys(STATUS_TEXT));
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
@@ -117,11 +128,11 @@ export default function App() {
         signal: controller.signal,
         truong,
         onEvent(name, data) {
-          if (name === "status" && data.stage === "lich_trinh") {
-            // C191 m-1: "dang_xep" không có trong LICH_BUOC ⇒ chỉ là nhãn trạng thái (`phase` ⇒ "Đang xếp lịch…"), không vào danh sách bước
-            const text = LICH_BUOC[data.buoc]?.(data);
+          if (name === "status" && data.stage in BUOC) {
+            // C191 m-1: "dang_xep" / "dang_tinh" không có trong bảng nhãn ⇒ chỉ là nhãn trạng thái (`phase`), không vào danh sách bước
+            const text = BUOC[data.stage][data.buoc]?.(data);
             if (text) progress.push(text);
-            update({ phase: "lich_trinh", progress: [...progress] });
+            update({ phase: data.stage, progress: [...progress] });
           } else if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
             update({ phase: data.stage in STATUS_TEXT ? data.stage : "searched", ...(data.n_sources != null && { nSources: data.n_sources }) });
@@ -144,8 +155,8 @@ export default function App() {
             update({ notice: data.text });
           } else if (name === "clarify") {
             update({ clarify: data });  // B4 D8: thẻ hỏi lại — code dựng nút từ danh sách trường
-          } else if (name === "lich_trinh") {
-            update({ lich: data });  // B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code)
+          } else if (name === "lich_trinh" || name === "tinh_tien") {
+            update({ lich: data });  // B5 D11 / D12 (+ B5c): link bản đồ (lịch) + thẻ "Sửa" chọn sẵn (dữ liệu code)
           } else if (name === "done") {
             update({ outcome: data.outcome, turnId: data.turn_id ?? null });  // B142: mã lượt chỉ có ở lượt có câu trả lời cuối
           }
@@ -353,7 +364,7 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
         </div>
       )}
       {turn.progress.length > 0 && (
-        <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
+        <ul className="progress" aria-label="Các bước code đã làm">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
       {turn.phase === "done" && turn.lich && <LichExtras lich={turn.lich} onAsk={onAsk} />}
@@ -427,10 +438,19 @@ function LichExtras({ lich, onAsk }) {
   );
 }
 
+// B5c D7: số người — nút 1–5 + "6+" mở ô số (6–20); server nhận số nguyên (`TruongInput.so_nguoi`).
 function ClarifyCard({ clarify, onAsk, initial = {} }) {
-  const [chosen, setChosen] = useState(initial);
-  const ready = clarify.bat_buoc.every(ten => chosen[ten]);
-  const summary = clarify.truong.filter(t => chosen[t.ten]).map(t => t.lua_chon.find(c => c.gia_tri === chosen[t.ten]).nhan).join(" · ");
+  const lon = typeof initial.so_nguoi === "number" && initial.so_nguoi > 5;
+  const [khac, setKhac] = useState(lon ? String(initial.so_nguoi) : "");
+  const [chosen, setChosen] = useState(() => (typeof initial.so_nguoi === "number"
+    ? { ...initial, so_nguoi: lon ? "6+" : String(initial.so_nguoi) } : initial));
+  const soKhac = Number(khac);
+  const khacOk = Number.isInteger(soKhac) && soKhac >= 6 && soKhac <= 20;
+  const ok = ten => chosen[ten] && (ten !== "so_nguoi" || chosen[ten] !== "6+" || khacOk);
+  const ready = clarify.bat_buoc.every(ok);
+  const giaTri = (ten, v) => (ten !== "so_nguoi" ? v : v === "6+" ? soKhac : Number(v));
+  const nhan = t => (t.ten === "so_nguoi" && chosen[t.ten] === "6+" ? `${soKhac} người` : t.lua_chon.find(c => c.gia_tri === chosen[t.ten]).nhan);
+  const summary = clarify.truong.filter(t => ok(t.ten)).map(nhan).join(" · ");
   return (
     <div className="clarify bubble">
       <p className="mb-2">Để gợi ý sát hơn, bạn chọn thêm:</p>
@@ -445,11 +465,15 @@ function ClarifyCard({ clarify, onAsk, initial = {} }) {
               </button>
             ))}
           </div>
+          {t.ten === "so_nguoi" && chosen.so_nguoi === "6+" && (
+            <input type="number" min="6" max="20" inputMode="numeric" className="so-nguoi" aria-label="Số người (6–20)"
+                   value={khac} onChange={e => setKhac(e.target.value)} />
+          )}
         </fieldset>
       ))}
       <div className="flex flex-wrap gap-2 pt-2">
         <button type="button" className="send" disabled={!ready}
-                onClick={() => onAsk(clarify.cau_goc, null, Object.fromEntries(Object.entries(chosen).filter(([, v]) => v)), summary)}>Gửi</button>
+                onClick={() => onAsk(clarify.cau_goc, null, Object.fromEntries(Object.entries(chosen).filter(([ten]) => ok(ten)).map(([ten, v]) => [ten, giaTri(ten, v)])), summary)}>Gửi</button>
         <button type="button" className="retry" onClick={() => onAsk(clarify.cau_goc, null, {}, "trả lời luôn")}>Trả lời luôn</button>
       </div>
     </div>

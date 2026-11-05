@@ -69,3 +69,6 @@ assistant:
   nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true
   lich_trinh: false              # B5 (plan bản 7 D1): công cụ lịch trình (code xếp + code tự hỏi số ngày) — TẮT tới khi đạt luật ghi trước. Công cụ `hoi_lai` của B4 đã gỡ (C183 m-2)
   lich_trinh_bang: ../data/phase_9/lich_trinh/diem_v3.json  # bảng điểm User duyệt (v3 `e94b7f4263f2`, private); chỉ nạp khi cờ bật
+  tinh_tien: false              # B5c (plan bản 3 bab730a57798 D11): công cụ tính tiền bằng code (dự toán + vé lẻ Quần thể, code tự hỏi số người / ngày) — TẮT tới khi đạt luật ghi trước
+  tinh_tien_du_toan: travel/services/Chi phí du lịch Huế.md  # tương đối gốc kho; nạp + kiểm schema / tổng lúc khởi động khi cờ bật (D2)
+  tinh_tien_ve: travel/tickets/Vé tham quan Quần thể Di tích Cố đô Huế.md  # bảng vé lẻ (D2b)

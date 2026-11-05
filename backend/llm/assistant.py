@@ -29,12 +29,14 @@ from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
 from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
+from llm import tinh_tien as tt
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.do_so import do_ngay_du_toan, do_so_nguoi
+from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TINH_TIEN_LUAT, TOOL_DA_DU_LICH, TOOL_DA_TINH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
-from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, PackedContext, PackedSource
+from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, TINH_TIEN_TOOL_OVERHEAD, PackedContext, PackedSource
 
 logger = logging.getLogger("chat")  # cùng logger với route: dòng `chat_stream_drain` giữ tên + khuôn như trước B1
 
@@ -69,6 +71,9 @@ class AssistantFlags:
     bang_lich: "lt.Bang | None" = field(default=None, compare=False, repr=False)
     # Thí nghiệm tốc độ #6 (plan 2026-11-04-phase-9-toc-do-song-song): đường stream chạy phần `tro_ly_hue` cùng lúc định tuyến; tắt = như cũ
     song_song_tra_loi: bool = False
+    # B5c (plan bản 3 D11): công cụ `tinh_tien` — tắt tới khi đạt luật ghi trước; bảng dự toán + vé lẻ nạp từ kho ở rìa (`bang_tien`)
+    tinh_tien: bool = False
+    bang_tien: "tt.BangTien | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.lan_tim_dau not in SEARCH_VARIANTS:
@@ -77,13 +82,16 @@ class AssistantFlags:
             raise ValueError("assistant.lan_tim_dau v1 / v3 needs assistant.router: true (search text is written by the router)")
         if self.lich_trinh and (not self.tim_them or self.bang_lich is None):
             raise ValueError("assistant.lich_trinh needs assistant.tim_them: true and the itinerary table (assistant.lich_trinh_bang)")
+        if self.tinh_tien and (not self.tim_them or self.bang_tien is None):
+            raise ValueError("assistant.tinh_tien needs assistant.tim_them: true and the price tables (assistant.tinh_tien_du_toan / tinh_tien_ve)")
 
     @classmethod
     def from_settings(cls, settings: dict) -> "AssistantFlags":
         config = settings.get("assistant") or {}
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
         bang = nap_bang_lich(settings) if values["lich_trinh"] else None  # chỉ nạp khi cờ bật (clone không có `data/` vẫn chạy cờ tắt)
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang)
+        tien = nap_bang_tien(settings) if values["tinh_tien"] else None
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, bang_tien=tien)
 
     @property
     def uses_tools(self) -> bool:
@@ -96,7 +104,15 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
     return lt.nap_bang(Path(__file__).resolve().parents[1] / settings["assistant"]["lich_trinh_bang"])
 
 
-BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich"))
+def nap_bang_tien(settings: dict) -> "tt.BangTien":
+    """B5c D2 / D2b: 3 bảng dự toán + bảng vé lẻ Quần thể đọc thẳng từ kho (`full_corpus.knowledge_base.root_dir` + `assistant.tinh_tien_du_toan` /
+    `tinh_tien_ve`), khớp tên qua bảng điểm B5. Sai schema / tổng ⇒ ValueError (không khởi động)."""
+    root = Path(__file__).resolve().parents[1] / settings["full_corpus"]["knowledge_base"]["root_dir"]
+    a = settings["assistant"]
+    return tt.nap_bang_tien(root, a["tinh_tien_du_toan"], a["tinh_tien_ve"], nap_bang_lich(settings))
+
+
+BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "bang_tien"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -158,6 +174,17 @@ class AnswerTrace:
     n_tra_loi_bo: int = 0
     usd_bo: float | None = None
     bo_huy_giua: bool | None = None
+    # B5c: như B5 cho công cụ `tinh_tien` (D11 ngân sách, D12 bước tiến độ, D9 mã kiểm số tiền). KHÔNG log chữ.
+    tien_offered: bool = False
+    tien_calls: int = 0
+    tien: dict | None = None
+    buoc_tien: list[dict] = field(default_factory=list)
+    tien_kiem: list[str] | None = None
+
+
+def tool_overhead(trace: AnswerTrace) -> int:
+    """Token lược đồ + mô tả các công cụ thêm đang đưa model ở lượt này (B5 D16, B5c D11); cờ tắt ⇒ 0 (như trước)."""
+    return (LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0) + (TINH_TIEN_TOOL_OVERHEAD if trace.tien_offered else 0)
 
 
 async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
@@ -189,7 +216,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
                                        prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids),
                                        instructions=instructions, history=trace.history,
                                        n_tool_items=2 * trace.model_searches if by == "model" else 0,
-                                       extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0)
+                                       extra_tool_tokens=tool_overhead(trace))
         context_ms = elapsed_ms(started)
         if first:
             trace.packed, trace.context_ms = packed, context_ms
@@ -350,7 +377,7 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
         packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1,
                                        prior_context="\n\n".join([*trace.context_parts, nhap]),
                                        skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
-                                       n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD)
+                                       n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=tool_overhead(trace))
     except (RetrievalDependencyError, ContextBudgetError) as exc:
         trace.tool_error = exc
         raise
@@ -367,6 +394,101 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
     trace.context_parts.append(packed.text)
     trace.seen_ids.extend(packed.document_ids)
     return packed, nguon, nguon_ve
+
+
+def tinh_tien_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str, bang):
+    """Hàm `tinh_tien` của **một lượt** (plan B5c bản 3 D1, D6, D7, D10, D12): model chỉ chọn loại / mức / tên điểm; **code** lấy số người / ngày
+    (nút ⇒ dò câu gốc + câu trước ⇒ thiếu: trả thẻ hỏi lại, lượt mang `truong` thì đặt tạm), tính, lấy đoạn kho của bảng vào sổ nguồn, trả khung
+    (luật trình bày + bảng sẽ hiện gì — **không số**) cho model viết lời dẫn. Trần ≤ 1 lần / câu."""
+
+    async def tinh_tien(loai: tt.Loai, muc_chi: tt.MucChi | None, diem: list[str] | None) -> "str | dict":
+        """Tính tiền chuyến đi Huế / tiền vé tham quan.
+
+        Args:
+            loai: du_toan, ve, ca_hai hoặc ngoai_bang.
+            muc_chi: tiet_kiem, tieu_chuan hoặc thoai_mai nếu người dùng nói rõ; chưa nói thì null.
+            diem: tên điểm người dùng hỏi vé, đúng chữ người dùng gõ (tối đa 5); không hỏi vé thì null.
+        """
+        started = time.perf_counter()
+        trace.tien_calls += 1
+        entry = {"name": "tinh_tien"}
+        try:
+            if trace.tien_calls > 1:
+                entry["het_luot"] = True
+                return TOOL_DA_TINH
+            cau = trace.search_query or query
+            truoc = trace.history[-1][0] if trace.history else None
+            nguoi, ngay = do_so_nguoi(cau), do_ngay_du_toan(cau)
+            if truoc is not None and nguoi.tong is None and nguoi.nguoi_lon is None:  # D6 (2): câu gốc lượt trước (nhớ chỉ câu hỏi)
+                nguoi = do_so_nguoi(truoc)
+            if truoc is not None and ngay == (None, None):
+                ngay = do_ngay_du_toan(truoc)
+            ts, thieu = tt.chot_tham_so(loai, muc_chi, diem, trace.truong, nguoi, ngay)
+            if ts is None:  # D7: code hỏi lại — chỉ trường còn thiếu
+                entry["hoi_lai"] = True
+                trace.buoc_tien.append({"buoc": "thieu", "truong": thieu})
+                return the_hoi_lai("chi_phi", thieu, cau)
+            kq = tt.tinh(bang, ts)
+            trace.buoc_tien.append({"buoc": "nap_bang", "loai": ts.loai})
+            n_du_toan, n_ve = await _lay_nguon_tien(bang, kq, query, retrieval_service, context_builder, trace, today, instructions)
+            if kq["du_toan"] is not None and n_du_toan is None:  # D10: không thấy đoạn bảng ⇒ không hiện bảng
+                kq["du_toan"], kq["ngoai"] = None, kq["ngoai"] or "khong_co_doan_nguon"
+            trace.tien = {"kq": kq, "bang_md": tt.bang_markdown(bang, kq, n_du_toan, n_ve)}
+            trace.buoc_tien.append({"buoc": "ngoai_pham_vi", "ma": kq["ngoai"]} if kq["ngoai"] and not (kq["du_toan"] or kq["ve"])
+                                   else {"buoc": "tinh_xong"})
+            entry.update(loai=ts.loai, ngoai=kq["ngoai"], tam=list(ts.tam))
+            khung = tt.khung_chu(kq, TINH_TIEN_LUAT)
+            trace.context_parts.append(khung)
+            return khung
+        finally:
+            entry["ms"] = elapsed_ms(started)
+            trace.tools.append(entry)
+
+    return tinh_tien
+
+
+async def _lay_nguon_tien(bang, kq: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
+                          instructions: str) -> tuple[int | None, dict[str, int]]:
+    """D10 (như B5 D6): đoạn kho chứa bảng — dự toán: `search(<tiêu đề mục>)`, đoạn đầu top-10 đúng file + đúng mục + có dòng tổng; vé: mỗi dòng
+    `search("Giá vé <tên>")`, đoạn đầu đúng file + mục vé lẻ + chứa tên dòng (kho chia bảng vé một dòng / đoạn). Đã có trong sổ ⇒ dùng lại số."""
+    try:
+        da_co = {doc_id: i + 1 for i, doc_id in enumerate(trace.seen_ids)}
+        cho: dict[str, str] = {}  # chunk_id mới ⇒ khoá ("du_toan" / tên dòng vé)
+        moi: list[RetrievedDocument] = []
+        so: dict[str, int] = {}
+
+        async def dau_tien(cau: str, source: str, muc, chua: str) -> RetrievedDocument | None:
+            result = await asyncio.to_thread(retrieval_service.search, cau)
+            return next((d for d in result.documents[:10] if d.metadata.get("source") == source
+                         and any(muc(h) for h in (d.metadata.get("heading_path") or ())) and chua in d.text), None)
+
+        can = []
+        if kq["du_toan"] is not None:
+            tieu_de = kq["du_toan"]["tieu_de"]
+            can.append(("du_toan", tieu_de, bang.nguon_du_toan, lambda h, t=tieu_de: h == t, "Tổng tại Huế"))
+        for h in (kq["ve"] or {}).get("hang", []):
+            can.append((h["ten"], f"Giá vé {h['ten']}", bang.nguon_ve, tt.la_muc_ve, h["ten"]))
+        for khoa, cau, source, muc, chua in can:
+            doc = await dau_tien(cau, source, muc, chua)
+            if doc is None:
+                continue
+            if doc.id in da_co:
+                so[khoa] = da_co[doc.id]
+            elif doc.id not in cho:
+                cho[doc.id] = khoa
+                moi.append(doc)
+        packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1, prior_context="\n\n".join(trace.context_parts),
+                                       skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
+                                       n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=tool_overhead(trace))
+    except (RetrievalDependencyError, ContextBudgetError) as exc:
+        trace.tool_error = exc
+        raise
+    for doc_id, src in zip(packed.document_ids, packed.sources):
+        so[cho[doc_id]] = src.id
+    trace.so_nguon.extend(packed.sources)
+    trace.context_parts.append(packed.text)
+    trace.seen_ids.extend(packed.document_ids)
+    return so.pop("du_toan", None), so
 
 
 def record_llm_calls(trace: AnswerTrace, calls, call_route: str | None = None) -> None:
@@ -432,6 +554,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
+    trace.tien_offered = flags.tinh_tien and generator is not None  # B5c D11
     instructions = _assistant_instructions(generator, trace) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
     return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
@@ -460,11 +583,35 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     else:
         loi = lt.kiem_cuoi(flags.bang_lich, text, None) if flags is not None and flags.lich_trinh and lt.co_dang_lich(text) else []
         trace.answer = text
+    loi_tien = []
+    if flags is not None and flags.tinh_tien:  # B5c D9: kiểm số tiền trên chữ model ở **mọi** câu trợ lý khi cờ bật
+        kq = None if trace.tien is None else trace.tien["kq"]
+        loi_tien = tt.kiem_tien(text, [x for src in trace.so_nguon for x in src.excerpts], kq)
+        if trace.tien is not None:  # D8: dòng "Mình hiểu" + chữ model + bảng + ghi chú (code nối)
+            trace.tien["minh_hieu"] = tt.dong_minh_hieu(kq["tham_so"])
+            trace.tien["ghi_chu"] = tt.khoi_ghi_chu(flags.bang_tien, kq)
+            trace.answer = "\n\n".join(part for part in (trace.tien["minh_hieu"], trace.answer, trace.tien["bang_md"], trace.tien["ghi_chu"]) if part)
+        if trace.tien is not None or loi_tien:
+            trace.tien_kiem = loi_tien
     check_citations(trace)
     if trace.lich is not None or loi:
         trace.lich_kiem = loi
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")
         trace.citation_error = CitationIntegrityError("itinerary check failed: " + ",".join(loi))
+    if loi_tien and trace.citation_error is None:  # B5c D9: như citation hỏng
+        trace.citation_error = CitationIntegrityError("money check failed: " + ",".join(loi_tien))
+
+
+def tien_cho_giao_dien(trace: AnswerTrace, cau_goc: str) -> dict | None:
+    """B5c (D12 dùng chung B5): thẻ "Sửa" chọn sẵn tham số đã dùng (trường tạm không chọn sẵn); lượt không có bảng tiền ⇒ None."""
+    if trace.tien is None:
+        return None
+    ts = trace.tien["kq"]["tham_so"]
+    truong = ["so_nguoi"] if ts.loai == "ve" else list(TRUONG_THEO_LOAI["chi_phi"])
+    sua = the_hoi_lai("chi_phi", truong, cau_goc)
+    sua["chon"] = {k: v for k, v in (("so_nguoi", ts.so_nguoi), ("so_ngay", ts.so_ngay), ("muc_chi", ts.muc_chi))
+                   if k in truong and v is not None and k not in ts.tam}
+    return {"sua": sua}
 
 
 def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) -> dict | None:
@@ -515,10 +662,13 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
-    """Cờ `lich_trinh` bật ⇒ công cụ thứ hai cho generator; tắt ⇒ {} (generator gọi y như trước — Q1)."""
-    if not flags.lich_trinh:
-        return {}
-    return {"lich_trinh_fn": lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich)}
+    """Cờ `lich_trinh` / `tinh_tien` bật ⇒ công cụ thêm cho generator; tắt ⇒ {} (generator gọi y như trước — Q1)."""
+    extra = {}
+    if flags.lich_trinh:
+        extra["lich_trinh_fn"] = lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich)
+    if flags.tinh_tien:
+        extra["tinh_tien_fn"] = tinh_tien_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_tien)
+    return extra
 
 
 # ---------- Một lượt có định tuyến (Phase 9 B1, plan D1, D6) ----------
@@ -589,6 +739,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     pending_generating = False
     cong_cu = None  # tên công cụ của lần gọi đang chạy (gọi lần lượt, `parallel_tool_calls=False`) — B5 D14 (b): mỗi công cụ một loại trạng thái
     da_phat_buoc = 0  # số bước `trace.buoc_lich` đã phát
+    da_phat_tien = 0  # B5c D12: số bước `trace.buoc_tien` đã phát
     da_noi_dau = False  # D12 (a): dòng "Mình hiểu" đi liền trước chữ đầu của model
     call_route = None
     stopped_early = False
@@ -640,14 +791,17 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         if pending_generating:
                             pending_generating = False
                             yield "status", {"stage": "generating"}
-                        if trace.lich is not None and not da_noi_dau:
+                        if (trace.lich is not None or trace.tien is not None) and not da_noi_dau:
                             da_noi_dau = True
-                            text = f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{text}"
+                            dau = lt.dong_minh_hieu(trace.lich["khung"]) if trace.lich is not None else tt.dong_minh_hieu(trace.tien["kq"]["tham_so"])
+                            text = f"{dau}\n\n{text}" if dau else text
                         yield "delta", text
                 elif event.type == "run_item_stream_event" and event.name == "tool_called":  # thẻ công cụ (B2 D7): lượt gọi không có chữ
                     cong_cu = getattr(getattr(event.item, "raw_item", None), "name", None)
                     if cong_cu == "lich_trinh":  # D14: "đang xếp lịch…" khi code bắt đầu chạy — không phát "đang tìm" (m-6)
                         yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
+                    elif cong_cu == "tinh_tien":  # B5c D12
+                        yield "status", {"stage": "tinh_tien", "buoc": "dang_tinh"}
                     else:
                         yield "status", {"stage": "searching"}
                 elif event.type == "run_item_stream_event" and event.name == "tool_output":
@@ -655,6 +809,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         for buoc in trace.buoc_lich[da_phat_buoc:]:
                             yield "status", {"stage": "lich_trinh", **buoc}
                         da_phat_buoc = len(trace.buoc_lich)
+                    elif cong_cu == "tinh_tien":
+                        for buoc in trace.buoc_tien[da_phat_tien:]:
+                            yield "status", {"stage": "tinh_tien", **buoc}
+                        da_phat_tien = len(trace.buoc_tien)
                     else:
                         yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
         except Exception:
@@ -675,6 +833,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 return
             if trace.lich is not None and trace.citation_error is None and trace.lich["ghi_chu"]:
                 yield "delta", f"\n\n{trace.lich['ghi_chu']}"  # D4b: khối ghi chú do code nối, sau phần model
+            if trace.tien is not None and trace.citation_error is None:  # B5c D8: bảng + ghi chú do code nối, sau phần model
+                duoi = "\n\n".join(part for part in (trace.tien["bang_md"], trace.tien["ghi_chu"]) if part)
+                if duoi:
+                    yield "delta", f"\n\n{duoi}"
             set_notice(trace, flags)
     except (asyncio.CancelledError, GeneratorExit, TimeoutError):
         stopped_early = True
