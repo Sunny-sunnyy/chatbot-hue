@@ -8,7 +8,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
 | Session | Việc |
 |---|---|
 | **A — điều phối** | Làm việc với User (trò chuyện, brainstorm, thiết kế); giao việc B/C; review chéo; tự làm việc nhỏ; giữ `CURRENT_HANDOFF.md`, `Project_Status.md`, `PROJECT_HISTORY.md`; commit/push |
-| **B, C — thực thi** | Làm việc A giao; tự kiểm; viết report; review chéo khi được giao; đề xuất cải tiến có bằng chứng |
+| **B, C, E — thực thi** (E tùy chọn, User 05/11: việc không chồng file chung với B / C) | Làm việc A giao; tự kiểm; viết report; review chéo khi được giao; đề xuất cải tiến có bằng chứng |
 | **D — học cùng User** (tùy chọn) | Chỉ đọc; giúp User tự hiểu và tự giải thích lại việc A/B/C đã làm (§10) |
 
 - Tên là vai, không phải model: agent nào mở bằng `START_SESSION.md` với `<X>` nào

@@ -1,3 +1,40 @@
+# STATUS C — MỞ PHIÊN 05/11 (08:44 05/11/2026 `date`)
+
+- Terminal: C `hue-rag-52`; peer `hue-rag-48`, `hue-rag-b0` (chưa rõ ai là A / B). Kênh: trực tiếp.
+- Kiểm nhanh (chỉ đọc): `main` = `cafb1b6` sạch; hooksPath `.githooks`; Qdrant 1 collection, 8.424 point (khớp). Mọi worktree `/tmp/…` (`c_b4k`, `c_q1main`, `c_toc_do6`, `c_toc_do6b`, `b_b4`) **prunable** (máy khởi động lại) — nhánh `p9-b4` `7d72703`, `p9-toc-do-6` `ea081b0` còn trên origin.
+- Lệch: lệnh kín B4 khoá 3 ghi "ở cuối file, mục C170" nhưng file chỉ có lệnh mẫu C164 (commit `86c311b`) ⇒ dựng lại lệnh từ C164 trên `7d72703`, chạy bước 0 trước khi đưa User `!`. `data/phase_9/b4/kin_c/` chưa có ⇒ kín chưa chạy.
+- A = `hue-rag-b0`, B = `hue-rag-48` (cả hai tự xác nhận). A đính chính, C kiểm lại bằng `merge-base --is-ancestor`: `p9-toc-do-6` **đã có** `4e3cb4e` (PA1), chỉ `p9-b4` thiếu.
+- A sẽ giao theo thứ tự (a) kín B4 trên `7d72703` (kiểm diff `7d72703..main` trước) ⇒ (b) report #6 ⇒ (c) C173. Chờ User chốt quyền + "làm đi"; trong lúc chờ chỉ đọc, 0 USD.
+- **User (08:51 05/11/2026):** C làm việc trực tiếp với A; việc A giao xem như User nói "làm đi". Chờ A giao việc.
+- Chưa sửa file nào ngoài file này; 0 USD.
+
+## C174 — kín B4 + Q4 kín (A giao; bắt đầu 08:54 05/11/2026)
+- **File sẽ ghi:** worktree `/tmp/c_b4k` (detach `7d72703`, symlink `data/`, `knowledge-base-hue/`; chỉ chạy — gỡ khi xong); private `data/phase_9/b4/kin_c/` (kết quả, `judge/`, `KET_QUA.md`), script tạm kín ở `/tmp`; mục C trong `report_agent/2026-11-02_phase_9_code/b144_b4_implementation.md`; file này; dòng C handoff. Trần ≈ 0,03 USD.
+- **C174 chạy xong (09:01 05/11/2026; User `! bash /tmp/c174/chay.sh`, script `2ad29979242f` + `/tmp/c174/q4_dem.py` `a74c2db814ec`):** bước 0 đúng (10 / 5 / 20); 0 lỗi; **0,019846 USD**. Q2 kín thô 4 / 5 ĐẠT · Q3 kín 0 / 3 ĐẠT (gần giống 0 / 2) · Q4 kín 0 / 20 hỏi lại, 20 / 20 đúng tuyến ĐẠT · usage−builder max 237 · **Q6k (b) PHẠM**: K-CT1 nhân đôi bảng dự toán theo 2 người (cả tiền phòng) + hàng "Tổng tại Huế" 6 số tự tính (C đọc tay) ⇒ plan §7 "kín ngược chiều ⇒ âm" — đã báo A, chờ A quyết. Q6k (a): 2 judge sub-agent đang chấm `data/phase_9/b4/kin_c/q6k_judge/`. Worktree `/tmp/c_b4k` giữ tới khi A quyết.
+- **C174 XONG (09:03 05/11/2026):** Q6k (a) ĐẠT (2 judge: 0 trái, 0 không có giá/giờ/điều kiện; `kin_c/q6k_judge/ket_qua.json`) · kết luận kín **âm** (Q6k (b) 1 / 2). Report: mục "2e" trong `b144_b4_implementation.md` (chưa commit). Trả lời A câu H0: chưa đo được (1 / 5 câu chi phí đã thấy có số người, H0 câu đó từ chối). `/tmp/c_b4k` giữ; `/tmp/c174/` xoá khi A chốt.
+
+## C173 — plan B5 bản 4 + bảng v3 (A giao; bắt đầu 09:03 05/11/2026) — làm trước C175 (A đổi thứ tự)
+- **File sẽ ghi:** `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` (bản 4); private `data/phase_9/lich_trinh/diem_v3.json`, `diem_cho_user_v3.md`; file này; dòng C handoff. 0 USD. Đọc kho chỉ `scripts/grep_kb.sh`.
+- **C173 XONG — chờ review (09:10 05/11/2026):** plan B5 bản 4 sha `e176b7478b2d` (9 ý #1–#7, #12, #18 ⇒ D2 luật khớp tên + lấp có nhãn, **D2b** `khong_xep` 5 mã luật (Lệch chữ #3: code nối câu), **D4b** khối ghi chú code nối, D7 #12, D8 (3) regex tiền #1 + (8), **D12** "Mình hiểu" + dò số ngày ⇒ hỏi lại (probe `tool_use_behavior` hàm), **D13** dự phòng #18; tests vi phạm từng luật #5; §1 phụ thuộc B4 âm phần chi phí). Bảng v3 `diem_v3.json` `e94b7f4263f2` (26 / 28 điểm, 54 tên khác, khoá không trùng; script `data/phase_9/lich_trinh/tools/dung_v3.py` `7e50fa55a9c0`) + `diem_cho_user_v3.md` `76694bbff550`. 0 USD.
+
+## C175 — report #6 (A giao; bắt đầu 09:10 05/11/2026)
+- **File sẽ ghi:** `report_agent/2026-11-02_phase_9_code/c172_toc_do_song_song.md` (mới); file này; dòng C handoff. 0 USD.
+- **C175 XONG — chờ review (09:13 05/11/2026):** `report_agent/2026-11-02_phase_9_code/c172_toc_do_song_song.md` `43f501cb37da`; tính lại số (cham_an_toan / chu_dau_abba tinh / q1) khớp 04/11; pytest 20 passed trên `ea081b0` (worktree `/tmp/c_toc_do6` tạo lại, symlink data/kb). 0 USD. **Tiền C phiên 05/11: 0,019846 USD** (C174).
+
+## C176 (A giao, 0 USD) — 09:30 05/11/2026
+- **File đã ghi:** `data/phase_9/tinh_tien/kiem_ke_gia.md` `deb4a0eff9c8` + `tools/kiem_ke.py`; vòng 6 trong `docs/superpowers/plans/2026-11-03-phase-9-b4-plan_review.md` (`067fd69881b0`); đính chính §2e `b144_b4_implementation.md`.
+- (a) kín theo loại: lịch trình thiếu **n = 3**, hỏi đúng 2 / 3; chi phí 2 / 2; đủ lịch trình 0 / 2, đủ chi phí 0 / 1; gần giống 0 / 2. (b) 100 file runtime có giá; chỉ file chi phí có bảng cộng được (1 / 2 / 3 ngày × 3 mức, một người). (c) plan B4 bản 7 `db3a9931b16f` **changes_requested** 0B / 1M / 4m (M-1 harness không chạy trên code B4b) — chờ sha mới.
+- **Đính chính (bẫy):** C174 viết K-CT1 "nhân sai so với kho" — kho ghi bảng một người + dặn nhân đủ số người ⇒ phép nhân khớp kho; lỗi chỉ là phạm luật Cách A. Bài học: trước khi gọi một số là "sai", đọc cả file nguồn về đơn vị (mỗi người / cả nhóm), không chỉ đoạn được trích.
+
+## C177 — review spec Phase 9 bản 10 §11 (A giao; bắt đầu 09:30 05/11/2026)
+- **File sẽ ghi:** `docs/superpowers/specs/2026-11-02-phase-9-design_review_v10.md` (mới); file này. 0 USD. Ưu tiên: B báo sha plan B4 bản 8 ⇒ review bản 8 trước.
+- **C177 XONG (09:34 05/11/2026):** (ưu tiên) review plan B4 bản 8 `69afbb2732cf` vòng 7 **ready** (`plan_review.md` `c0650a57460d`); review spec bản 10 §11 **changes_requested** 0B / 6M / 7m — `docs/superpowers/specs/2026-11-02-phase-9-design_review_v10.md` `da0853ef6f22`. 0 USD. Việc kế: khi B khoá B4b ⇒ C dựng lệnh kín (10 hỏi + 3 ghép lịch trình + Q4 20) + bước 0 ⇒ User `!`.
+- **C178 XONG (09:45 05/11/2026):** review spec Phase 9 bản 11 `4d2c2a165af0` (vòng 2 trong `…design_review_v10.md` `0329dc208ce1`) **changes_requested** 0B / 2M / 5m (M-1 deploy ↔ giả định §7 local; M-2 quỹ B7 khi dự phóng 2,14 > 2,0). Vòng 1: đóng / chuyển hợp lệ hết. 0 USD.
+- **C178 vòng 3 XONG (09:46 05/11/2026):** spec bản 12 `77250689e605` **ready_for_user_confirmation** (mọi finding vòng 2 đóng). 0 USD.
+
+## C179 — đếm #13 / #14 (A giao; bắt đầu 09:47 05/11/2026) — dừng nếu B báo khoá B4b
+- **File sẽ ghi:** `data/phase_9/backlog/c179_dem_13_14.md` + `data/phase_9/backlog/tools/`; file này. 0 USD.
+
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 21:18 04/11/2026 `date` — kết phiên 04/11)
 
 **Trạng thái:** không server / tiến trình nền của C. Worktree còn: `/tmp/c_toc_do6` (`p9-toc-do-6` `ea081b0`, đã push), `/tmp/c_toc_do6b` (detach `ea081b0` + `settings.yaml` sửa tạm cờ `song_song_tra_loi: true` — chỉ để đo, **gỡ**), `/tmp/c_q1main` (detach `ebd8965`, Q1 — **gỡ**), `/tmp/c_b4k` (detach B4 khoá 3 `7d72703`, kín B4). Mỗi worktree có symlink `data/`, `knowledge-base-hue/` ⇒ `rm` 2 symlink rồi `git worktree remove --force`.

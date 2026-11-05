@@ -2,7 +2,7 @@
 
 Người viết: C · bản 6 13:39 · bản 7 13:54 · bản 8 14:14 · **bản 9 14:42 02/11/2026** (`date`). Review `2026-11-02-phase-9-design_review_v6.md`: vòng 3 trên bản 8 (`82127aabcb5b`) = ready_for_user_confirmation.
 - Bản 9 **chỉ ghi lựa chọn của User P1–P5 + quyết định A về bộ hồi quy + m17** (chỗ đổi liệt kê cuối file). Bản 5 (hướng không agent) giữ ở commit `077e3cb`.
-- Trạng thái: **bản 9 — chờ User duyệt sha.**
+- Trạng thái: bản 9 User duyệt `169c2dd5f86a` (14:55 02/11/2026). Bản 10 (09:30 05/11/2026, A) §11 — review C177 changes_requested. Bản 11 (09:42 05/11/2026, A) §11 viết lại chỉ phần Phase 9 — review C178 changes_requested 0 / 2 / 5. **Bản 12 (09:45 05/11/2026, A): sửa M-1, M-2, m-1–m-5 của C178 — chờ C kiểm phần sửa + User duyệt sha.**
 
 Mức rủi ro: **cao** (Phase mới, thêm công cụ + đường ra ngoài).
 - Spec chốt kiến trúc, bậc làm, bộ đo, tiêu chí ghi trước, tiền, bảo mật. Chi tiết code để plan nhỏ của từng bậc (nguyên tắc "làm vừa đủ", sổ cải tiến S64).
@@ -31,7 +31,7 @@ P0_sai = câu nói sai điều kiện · H4c = dòng "có thể đã thay đổi
 
 RAG 1–8: mỗi câu một lượt tìm + một lần gọi model, không công cụ. User 02/11: "lên trợ lý mà không có gì khác RAG mức 1 thì gọi thẳng LLM cần gì trợ lý".
 ⇒ Phase 9: **trợ lý dạng agent cho mọi câu**; RAG 1–8 thành công cụ tìm kho; **giữ chỗ mạnh đã đo** (nguồn từng ý, không bịa, không nói ngược kho ở câu điều kiện).
-Bảo vệ 04–10/01/2027 ⇒ **đóng code 20/12/2026**.
+Bảo vệ 04–10/01/2027 ⇒ ~~đóng code 20/12/2026~~ — **sửa 05/11 (§11.4): đóng code khi User nói, dự kiến 25–30/12, lúc đó đã chạy trên AWS**.
 
 **Năm dòng khám phá** (`propose-options` §4b):
 1. **Vấn đề + đo bằng gì.** Hôm nay hệ thống:
@@ -413,3 +413,66 @@ Giữ nguyên theo ranh giới review: hướng agent, SDK 0.19.4, thứ tự B0
 - m17: A/A đường có công cụ tại B2a khi đo V2 (§5 B2a);
 - m18: §10 câu hỏi thay bằng bảng "User đã chọn" ⇒ không còn phương án thiếu dòng.
 Không đổi chỗ khác.
+
+## 11. Sửa đổi 05/11/2026 — bản 11 (A viết 09:42 05/11/2026) + bản 12 (sửa review C178, 09:45 05/11/2026)
+
+**Căn cứ:** User duyệt bậc 1 + lịch (`bao_cao_he_thong/DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md`, 05/11); User chọn "Tách — giữ lịch trình" cho B4 (09:21); **User 05/11: không dồn hết vào Phase 9 ⇒ chia Phase 10 (giọng nói + ảnh), 11 (trải nghiệm Huế: bản đồ, sự kiện theo ngày, tiếng Anh…), 12 (vận hành); Phase 10 thiết kế / code song song Phase 9** (ngoại lệ `WORKFLOW.md` §9.4 chỉ cho Phase 10); **User 05/11: vẫn áp nền tảng AI FDE** (skill `agent-design-review`, `agent-security-review`, `run-experiment`).
+Bản 9 §1–§10 giữ nguyên trừ chỗ ghi dưới. Review bản 11: chỉ mục này, đối chiếu §5–§8 + review bản 10 (`…phase-9-design_review_v10.md`).
+**Chuyển khỏi Phase 9** (review bản 10 M-1–M-4, m-4, m-7 mang sang spec Phase 10 / 11): giọng nói, ảnh, bản đồ (toạ độ ngoài kho + nới CSP). Plan B5 bản 4 giữ "không bản đồ".
+
+### 11.1 Đổi bậc trong Phase 9
+
+| Bậc | Đổi | Vì sao |
+|---|---|---|
+| **B4 ⇒ B4b** | `hoi_lai` chỉ loại `lich_trinh`; câu chi phí giữ hành vi `main`. Tiêu chí: plan B4 **bản 8 `69afbb2732cf`** (A duyệt 09:37 05/11/2026). §5 B4 câu "chi phí: chỉ liệt kê giá có nguồn" + "≥ 8 / 10, ≥ 4 / 5" **thay bằng plan bản 8** (n câu lịch trình: đã thấy 5, kín 3) | B4 khoá 3 âm (Q6k (b) kín + Q7 g2) ⇒ thu hẹp bỏ phần hỏng |
+| **B5** thêm (i) | **dòng tiến độ dùng bước thật**: giao diện đã có dòng tiến độ theo sự kiện SSE (`frontend/src/App.jsx`); B5 thêm các bước của `lich_trinh` ("đang xếp lịch", "đã kiểm luật ✓", "bỏ 1 điểm vì …") **chỉ phát khi code đã làm bước đó**. Kiểm: Playwright + so danh sách sự kiện SSE đã gửi (không cần trường log mới) | demo thấy agent làm gì, không bước giả |
+| **B5c — tính tiền bằng code** (mới, sau B5) | công cụ tất định đọc **bảng dự toán có nguồn** (file chi phí du lịch: 1 ngày / 2N1Đ / 3N2Đ × 3 mức, khoảng giá **một người**, có ngày đối chiếu, luật nhóm) + **vé** (bảng có cấu trúc, mỗi người / lượt, ngày hiệu lực) — C176 `data/phase_9/tinh_tien/kiem_ke_gia.md` `deb4a0eff9c8` ⇒ code nhân theo số người, cộng theo luật nhóm của kho, giữ khoảng A–B ⇒ bảng có `[n]` + ngày nguồn; model chỉ viết lời quanh bảng. **Ngoài phạm vi dữ liệu** (≥ 4 ngày, giá món ăn không ngày, phòng / xe không bảng) ⇒ liệt kê giá có nguồn + câu cố định "chưa đủ dữ liệu để tính tổng". `hoi_lai` loại `chi_phi` mở lại **chỉ trong bậc này**, kèm chặn hỏi lần hai **chỉ cho loại `chi_phi`** (lượt có lịch sử mà lượt trước là `hoi_lai` loại `chi_phi` ⇒ không đưa `hoi_lai` loại `chi_phi`; đường lịch trình của B4b giữ nguyên); số người / ngày người dùng gõ ⇒ code dò số trong câu trước, thiếu mới hỏi | lời dặn không chặn được model tự tính (B4); khung AI FDE: phép tính / luật tiền ⇒ code |
+| sửa lịch nhiều lượt | như User chọn 04/11 (ý #8, #9 handoff) | — |
+| B5b, B6, B7 | giữ (sự kiện theo ngày ⇒ Phase 11) | — |
+
+### 11.2 Tiêu chí mức spec cho B5c (plan ghi số trước khi đo)
+
+- **Sàn:** (1) **0 con số tiền** trong câu trả lời ngoài {số có trong đoạn kho được trích} ∪ {số code tính} (code đếm mọi dạng "…000đ / k / triệu / VNĐ"); (2) 0 dòng "tổng" khi thiếu dữ kiện / ngoài phạm vi dữ liệu; (3) **người dùng gõ số người + số ngày sau thẻ hỏi lại ⇒ 0 / n bị hỏi lại lần hai** (ca g2 của B4 + ≥ 3 chuỗi mới); (4) an toàn 32 đủ 4 số; câu ngoài kho bị trả lời 0; (5) Q1 cờ tắt giống byte `main`.
+- **Quyết:** bộ chi phí tự viết (đã thấy + kín mới, C viết, có câu trong + ngoài phạm vi dữ liệu): bảng đúng từng dòng (số = code tính lại từ kho) ≥ n − 1 / n.
+- Kết quả âm ⇒ cờ tắt, câu chi phí giữ hành vi `main`.
+
+### 11.3 Rà theo khung AI FDE (skill `agent-design-review` / `agent-security-review`, phần chạm bản 11)
+
+| Mục khung | Hiện trạng | Bản 11 |
+|---|---|---|
+| §2 phép tính, luật tiền ⇒ code | B4 Cách A để model tự giữ "không cộng" bằng lời dặn ⇒ phạm (lệch khung — bài học ghi lại) | B5c: code tính, model chỉ diễn đạt |
+| §3 tham số phạm vi do code điền | B4b: giá trị nút qua `TruongInput` (`Literal`, `extra="forbid"`) | B5c: số người / ngày từ nút hoặc code dò số, model không tự điền giá trị |
+| §3 "không thấy ≠ không tồn tại" | — | ngoài phạm vi dữ liệu ⇒ câu cố định "chưa đủ dữ liệu", không trả lời như "không có" |
+| §4 trần + đường phục hồi | `max_turns`, hết ⇒ câu từ chối (`assistant.py:289-291`) | giữ |
+| §5 một agent trước | một agent trợ lý + định tuyến | giữ; không thêm agent con |
+| bảo mật: đường ra mới | — | **không có** ở Phase 9 bản 11 (giọng nói / ảnh / tile bản đồ sang Phase 10 / 11, mỗi spec tự rà) |
+
+### 11.4 Lịch Phase 9 (thay §6 từ 05/11; bậc đường trả lời **lần lượt**)
+
+| Tuần | Phase 9 (B, C) | Phase 10 (E, song song — chỉ route mới + ô nhập, merge xen giữa hai lần merge Phase 9) |
+|---|---|---|
+| 05–09/11 | B4b ⇒ merge; code B5; plan B5c | nghiên cứu giọng nói open-source / VN (E1); spec Phase 10 |
+| 10–16/11 | đo + merge B5 | bộ đo + thử STT trên máy |
+| 17–23/11 | B5c ⇒ merge | code giọng nói |
+| 24–30/11 | sửa lịch nhiều lượt ⇒ merge | ảnh |
+| 01–07/12 | B5b + plan B6 | đo Phase 10 |
+| 08–14/12 | B6 | đóng Phase 10 |
+| 15–21/12 | B7 (so sánh cuối — trên máy User; khoá commit đo, không việc nặng song song — W31) | — |
+| 22–30/12 | sửa lỗi; Phase 12 phần **deploy AWS** (spec riêng, User duyệt) — **sau** B7 | Phase 11 phần User chọn (nếu kịp) |
+| **khi User nói** | **đóng code** — dự kiến 25–30/12; lúc đóng hệ thống **đã chạy trên AWS** | — |
+
+**Đóng code (User, A ghi nhận 09:43 05/11/2026):** không còn mốc cứng 20/12 (User nghỉ) — dự kiến **25–30/12**, **chỉ đóng khi User nói** (A không tự quyết); đóng code = đã **triển khai lên AWS** ⇒ deploy là việc bắt buộc trước khi đóng (Phase 12, spec + `agent-security-review` + tài khoản / chi phí AWS User duyệt). Bảo vệ 04–10/01/2027 giữ.
+
+**Luật cắt (thay §6 1–5; ngày cắt là mốc A kiểm, không phải hạn đóng):** 23/11 B5 chưa merge ⇒ B5c thu nhỏ còn vé; 30/11 B5c chưa merge ⇒ dừng B5c, ghi dở, sửa lịch vẫn làm; 07/12 sửa lịch chưa merge ⇒ dừng, ghi dở; 07/12 B5b chưa merge ⇒ cắt B5b; 14/12 B6 chưa qua rào ⇒ cờ web tắt; **B3 và B7 không cắt**. Phase 10 xung đột file với Phase 9 ⇒ Phase 9 ưu tiên, Phase 10 rebase.
+
+**#6 tốc độ (song song trả lời ↔ định tuyến, đã đạt 04/11):** không phải bậc; merge sau B4b (rebase + Q1) khi User quyết bật.
+
+**Phase 9 ↔ deploy (review bản 11 M-1):** mọi rào / đo của Phase 9 (§7 giả định "chạy máy User, không deploy"; điều khoản Serper; nhớ RAM; tốc độ đo CPU máy User) giữ nguyên — **B6, B7 đo trên máy User**. Mục §7 "Trước khi deploy" là **đầu vào bắt buộc** của spec Phase 12; trên AWS **cờ web tắt** tới khi Phase 12 rà lại; tốc độ / tiền đo lại trên AWS ở Phase 12.
+
+**Chi tiết để plan B5c (review bản 11 m-4):** không cộng vé riêng khi hàng "tham quan" của bảng dự toán đã gồm vé (một khoản một lần); cách code dò số người / ngày trong câu (chữ số + chữ "hai, ba…" + "3N2Đ") ghi trong plan cùng ca thử.
+
+**Finding chuyển sang Phase 10 / 11** (review bản 10, `…design_review_v10.md`): M-1 (đường ra nhận dạng giọng trình duyệt + PhoWhisper là model mới), M-3 (ngưỡng V1), M-4 (mẫu số V2 + danh sách tên) ⇒ spec Phase 10; M-2 (toạ độ ngoài kho + tile / CSP), m-4 (plan B5 cấm bản đồ) ⇒ spec Phase 11; m-7 (giới hạn điểm ảnh khi giải mã) ⇒ spec Phase 10. Spec Phase 10 / 11 phải trỏ lại các mã này.
+
+### 11.5 Tiền (cập nhật §8)
+
+Đã dùng ≈ 1,27 (05/11, gồm B4 ≈ 0,205). Còn: B4b ≤ 0,10 · B5 trần 0,15 (plan) · B5c ≈ 0,07 · sửa lịch ≈ 0,10 (chuỗi × 3 lần + hồi quy rút gọn, ước thô) · B5b ≈ 0,05 · B6 ≈ 0,05 · B7 ≈ 0,35 ⇒ **dự phóng ≈ 2,1–2,2 > trần 2,0** ⇒ theo User (08:55 05/11/2026) A xin thêm **trước** lượt có phí vượt, kèm số đã dùng + dự phóng. **Quỹ B7 0,35 giữ riêng** (B7 không cắt — review bản 11 M-2): trước mỗi bậc, nếu (trần − đã dùng − quỹ B7) < ước bậc đó ⇒ A xin User thêm **trước** khi bắt đầu bậc, nếu không duyệt ⇒ bậc thu nhỏ / cắt theo luật cắt; quỹ B7 không bị dùng cho bậc khác. Phase 10 có trần riêng trong spec Phase 10.

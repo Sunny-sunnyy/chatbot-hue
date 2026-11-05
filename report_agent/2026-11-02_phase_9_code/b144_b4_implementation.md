@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 B4 — hỏi lại (`hoi_lai`) — **dở: khoá 3 `7d72703` — Q1 / Q2 / Q3 / Q6 đạt đã thấy; chờ kín (C) ⇒ Q4 / Q5 / Q7 / Q8**
+# Implementation Report: Phase 9 B4 — hỏi lại (`hoi_lai`) — **ÂM theo plan §7 (Q6k (b) kín 1 / 2; Q7 câu chi phí gõ chữ bị hỏi lại 4 / 4) — cờ tắt; nhánh `p9-b4` `406393c` (rebase lên `main` `cafb1b6`)**
 
 Người làm: B (Claude Opus 5.5, `hue-rag-32` → `hue-rag-2d` 04/11) · việc **B144 → B153** (A giao) · bản này 20:46 04/11/2026 (`date`; §2c mới) — trước 21:10 03/11/2026. **Plan nay bản 5 `acfaf8ca0df5`** (A duyệt 20:14 04/11/2026; trần B4 0,18 / dừng 0,17). Plan: `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md` bản 2 **`42fa62d2425f`** (A duyệt; Lệch Q6 chấp nhận; Q-a giữ + đo hỏi thừa; Q-b không trả lời tạm).
 Nhánh **`p9-b4`** từ `main` `849005c`, worktree `/tmp/b_b4`. Commit (sau rebase lên `main` `ac46c96` — có B143 `e3cdb96`, 21:13 03/11/2026): **`c4f2b76`** (backend + test), **`86c311b`** (giao diện); trước rebase `18da59b`, `10d57c1`. Đã push (`--force-with-lease`, nhánh riêng chưa review). **Chưa merge, cờ `hoi_lai` tắt.** B4 không chạm `ROUTER_INSTRUCTIONS`.
@@ -79,13 +79,59 @@ Harness `data/phase_9/b4/tools/chay_b4.py` (cờ `hoi_lai` bật ở rìa trên 
 - Chênh token (m-3): max 854 ở lượt đã thấy (lượt trả lời có tìm thêm; lượt dừng ở `hoi_lai` ≤ 0); ghép 337 / 273 — giới hạn §4b.
 - **Tiền:** lượt khoá 3 0,037 ⇒ B4 ≈ **0,120**. Dự phóng phần còn lại 0,066–0,113 ⇒ vượt dừng 0,17 ⇒ **A nới trần B4 0,24 / dừng 0,23** (sàn còn lại bắt buộc theo spec). Mỗi lượt có phí ghi tiền thật ngay sau lượt.
 
+## 2e. Kín (C174, C viết — 09:03 05/11/2026) — **Q6k (b) phạm 1 / 2 ⇒ âm theo plan §7**
+
+Chạy trên khoá 3 `7d72703` (worktree riêng của C; `HOI_LAI_NOTE` `42022ba2cdde`, `CACH_A_NOTE` `6f7be345f782`, `settings.yaml` `37b9ab1beb37`, `chay_b4.py` `84198ab25892`, `chon_sealed.json` `463e3b5938e7`). `main` sau mốc tách chỉ đổi `emergency.py` + test (không chạm đường hỏi lại). Auto mode chặn agent đọc file kín ⇒ User chạy một lệnh `!` ở terminal C (script tạm `/tmp/c174/`, chỉ in số đếm); bước 0 (0 USD) đúng 10 / 5 / 20 trước lượt có phí. 0 lỗi. **Tiền 0,019846 USD** (hỏi 0,006799 · ghép 0,005864 · Q4 0,007183) ⇒ B4 ≈ 0,154 / 0,24. Kết quả private `data/phase_9/b4/kin_c/`.
+
+| Mục | Sàn / ngưỡng (plan bản 5) | Kín | |
+|---|---|---|---|
+| Q2 kín (câu thiếu được hỏi đúng, tham số thô) | ≥ 4 / 5 | 4 / 5 (sau D3 4 / 5) | đạt |
+| Q3 kín (câu đủ bị hỏi lại) | 0 / 3 | 0 / 3 (gần giống 0 / 2) | đạt |
+| Q4 kín (bộ tuyến 20: bị hỏi lại ngoài nhãn `can_hoi_lai` · đúng tuyến) | 0 | 0 / 20 · 20 / 20 | đạt ⇒ Q4 đủ 60: 0 / 60, 60 / 60 |
+| Q6k (a) 5 lượt ghép, 2 judge sub-agent mới, "một trong hai" | 0 ý "trái" + 0 ý "không có" giá / giờ / điều kiện | 0 · 0 ("không có" loại khác 2 ý) | đạt |
+| **Q6k (b) câu chi phí: 0 câu có con số tổng** | 0 / 2 | **1 / 2** | **phạm** |
+
+- **Q6k (b):** bộ đếm `dem_tong.py` đánh dấu một câu dự trù chi phí (đủ số người + số ngày sau khi bấm nút) có 6 con số tiền không có trong kho; C đọc tay: câu trả lời **nhân cả bảng dự toán theo số người** rồi ghi một hàng tổng — phạm luật Cách A ("không cộng tổng, không nhân giá theo số người / ngày"), đúng loại lỗi khoá 2 và khoá 3 nhắm sửa. **Đính chính (09:26 05/11/2026, C176 kiểm kê giá):** bản đầu mục này viết "đoạn kho dặn chia tiền phòng" như thể phép nhân sai với kho — **không đúng**: file chi phí ghi bảng dự toán "tính cho một người" (tiền phòng đã chia trước khi vào cột từng người) và dặn khoản tính theo người "phải nhân đủ số người" ⇒ phép nhân ×2 **khớp luật kho về số học** (tổng mỗi bên đúng bằng 2 × tổng một người kho ghi). Sàn Q6k (b) vẫn phạm vì sàn là "0 câu có con số tổng", không phải "0 số sai". Judge không bắt được: theo rubric, phép nhân số trong ngữ cảnh là ý "có" ⇒ (a) đạt, (b) mới là thước của lỗi này. Câu chi phí kín còn lại: câu trả lời là câu từ chối "không đủ thông tin" (0 số tiền) — theo dõi (từ chối nhầm sau khi người dùng đã bấm đủ trường).
+- **Kết luận:** kín ngược chiều ⇒ **kết quả âm theo plan §7, không chỉnh trên kín**; A trình User hướng đi.
+- Theo dõi: D3 điền thêm trường ở 1 câu (`hoi_thua_sau_D3` 1 — trường người dùng đã có); chênh token lượt hỏi max 237 (< 512); 1 câu xếp lịch kín judge ghi 3 điều kiện kho có mà câu trả lời không nêu (không thuộc sàn Q6k).
+
+## 2f. B156 (05/11): rebase ⇒ Q1 ⇒ Q5 ⇒ Q7 ⇒ Q8 trên bản rebase `406393c` — 09:15 05/11/2026
+
+**Rebase.** `p9-b4` rebase lên `main` `cafb1b6` (lấy câu khẩn cấp PA1 `4e3cb4e`) ⇒ **`406393c`**, push `--force-with-lease` (từ working tree chung — auto mode chặn push từ worktree). Rebase sạch. `git diff 7d72703 406393c -- backend/llm/hoi_lai.py backend/llm/assistant.py` **rỗng**; trong `backend/` + `frontend/` hai sha chỉ khác `backend/llm/emergency.py` + `backend/tests/test_emergency.py` (PA1) ⇒ kín (C, §2e) chạy trên `7d72703` vẫn đại diện đường hỏi lại của `406393c`.
+- **Q1:** `capture_all.py` trên `main` `cafb1b6` ↔ nhánh `406393c` (cờ tắt): **228 / 228 giống byte** (`data/phase_9/b4/q1/main_cafb1b6.jsonl` ↔ `b4_rebase2_co_tat.jsonl`, `cmp`); `main` mới cũng giống byte bản `main` 03/11 (PA1 chỉ đổi câu soạn sẵn, không đổi chuỗi gửi model). Test file chạm (B2–B4, stream, feedback, assistant, emergency, api_chat): **72 passed, 1 error** (test cần khoá — bẫy đã biết); `test_static_ui` không chạy riêng (bản build kiểm qua Q8). `git diff --check` sạch.
+
+**Q5 hồi quy (cờ `router may_have_changed_notice tim_them hoi_lai`, một lượt, không nhớ).** Dữ liệu `data/phase_9/b4/q5/` (private).
+- **Golden mẫu 30** (mốc = B3 Q2 vòng 2, chấm lại **cùng lượt mù**, 52 mục khác nhau, 3 judge sub-agent mới): F1 câu ngoài kho bị trả lời **0 / 6** · F2 nói sai mới **0** · F3 lỗi **0** · F4 lỗi trích dẫn mới **0** · từ chối nhầm 0 ↔ 0 · **bị hỏi lại 0 / 30**. Completeness 4,833 ⇒ 4,800 · Accuracy 4,933 ⇒ 4,900 (chênh 1 câu, trong nhiễu judge). 0,0129 USD.
+- **An toàn 32** (mốc S-AT = lượt đo cuối 01/11 RAG 1–8; 2 judge × 6 sub-agent mới; cổng đối chứng **cả hai judge đạt**: bắt câu chèn sai 10 / 10, báo nhầm câu chép 0 / 5, tách lô 0; kappa bên sau 1,0). **4 số:** đảo cảnh báo mới **0** (S11 có ở cả hai bên) · sai điều kiện mới **1 (S20)** / hết 1 (S12) · thiếu cảnh báo mới **1 (S10)** / hết 1 (S19) · ngoài kho bị trả lời **0** — `compare` ghi X01 vì lần sinh đầu lỗi `GenerationError` (không có chữ, API sẽ báo lỗi chứ không trả lời); sinh lại X01 3 lần: 3 / 3 từ chối, 0 lỗi ⇒ lỗi provider tạm, không tái hiện. **Bị hỏi lại 0 / 32** ⇒ cùng Golden: **0 / 62 ngoài nhãn** (sàn ≤ 1 / 62 — đạt). 0,0167 + sinh lại X01 0,0023 USD.
+- A2 vế 1 (sai điều kiện mới ≤ 2): đạt. **S20:** so với lượt B3 (`main` hiện tại về lời dặn trả lời) S20 không phạm ⇒ đổi thật ở lượt này; S20 là câu đã từng phạm ở B2 (User giữ). Thủ tục S-AT: đã **sinh** S20 3 lần bản B4 + 3 lần mốc cờ tắt (`regen_sau/`, `regen_moc/`, 0,0027 USD); **chấm + phân loại (i) / (ii) / (iii): NOT RUN** — B4 đã âm ở kín (§2e) nên cờ `hoi_lai` giữ tắt; chấm được 0 USD nếu A cần. S10 thiếu cảnh báo: có cả ở lượt B3 ⇒ không do B4.
+
+**Q7 — 4 chuỗi tự viết qua server thật** (lệch plan §4 "harness `chuoi`": harness đó không có nút `truong` và không lưu lượt hỏi lại như API (D5) ⇒ đo bằng uvicorn + cookie thật, `nho_hoi_thoai` bật như `main`, `hoi_lai` bật trên bản sao settings trong RAM — `data/phase_9/b4/q78/app_hoi_lai.py`; không sửa `settings.yaml`).
+
+| Chuỗi | Lượt 1 | Lượt 2 | Kết quả |
+|---|---|---|---|
+| g1 lịch trình, gõ số ngày | hỏi `so_ngay` | trả lời, `tro_ly_hue`, 3 nguồn, không hỏi lại | đạt |
+| g3 lịch trình gia đình, gõ số ngày | hỏi `so_ngay` | trả lời, 7 nguồn | đạt |
+| **g2 chi phí, gõ "số người, số ngày"** | hỏi `so_nguoi` + `so_ngay` | **hỏi lại lần nữa** (`chi_phi`, 3 trường, D3 `dien`) | **không đạt — 4 / 4 lần** (chạy lại 3 lần, giống hệt) |
+| n1 bấm nút rồi hỏi tiếp giá một thứ | hỏi `so_ngay` ⇒ bấm "2 ngày" ⇒ trả lời 10 nguồn | lượt 3: `tro_ly_hue`, không hỏi lại, 1 nguồn | đạt |
+
+- `history_tokens` lượt sau 11–34 (≪ trần).
+- **g2 — nguyên nhân [suy từ log, chưa chạy ca dò]:** D3 `dien` ⇒ tham số model gửi thiếu trường bắt buộc ⇒ nhiều khả năng model đã thấy số người / số ngày trong lịch sử nhưng vẫn gọi `hoi_lai` để hỏi `muc_chi` (không bắt buộc); D3 chỉ biết giá trị từ nút, không biết chữ người dùng gõ ⇒ thêm lại 2 trường bắt buộc ⇒ thẻ hỏi lại cả 3 trường. Bỏ D3 vẫn còn hỏi thừa `muc_chi`. Bấm nút thì không gặp (lượt ghép không đưa `hoi_lai` — D4). Đã báo A; **không sửa** (A: sau khoá, trình User).
+
+**Q8 cổng (cùng server).** `/` 200 · `/health` ok 5 / 5 · 1 câu trong kho (có nguồn) + 1 câu ngoài kho (`out_of_scope`) · stream câu thiếu ⇒ `clarify` + `done` (`outcome` `hoi_lai`), không `delta` · stream ghép (`truong` 2 giá trị) ⇒ trả lời có nguồn, `co_truong` 2 · stream `truong: {}` ("Trả lời luôn") ⇒ trả lời, `co_truong` 0 · `/api/chat` câu chi phí thiếu ⇒ `clarify` 3 trường · giá trị lạ / trường lạ ⇒ **422 / 422** · `chat_metrics` mới **15 = 15** lượt vào handler (422 dừng ở kiểm đầu vào, không ghi — như thiết kế) · dòng log chứa câu hỏi **0**; log chỉ có số đếm (`hoi_lai` {loai, n, d3}, `co_truong`). Server tắt bằng TaskStop.
+- **Playwright** (`npm ci && npm run build` trong worktree; `q8_ui.py`): thẻ hỏi lại hiện (1 nhóm "Số ngày"), "Gửi" **tắt** khi chưa chọn ⇒ chọn "2 ngày" ⇒ **bật**; lượt ghép hiện "· 2 ngày" + câu trả lời có liên kết nguồn; điện thoại 390 px không cuộn ngang; **CSP 0, 0 yêu cầu ra ngoài**; ảnh `data/phase_9/b4/q78/ui/`. Nút "Trả lời luôn" **trên giao diện: NOT RUN** (lượt 3 có lịch sử số ngày ⇒ model trả lời thẳng, không ra thẻ; đường API của nút đã kiểm ở trên). Lần chạy đầu sai selector của script (`button.send` khớp cả nút "Gửi" của thẻ cũ) ⇒ sửa, chạy lại; lần đầu giữ ở `ui_lan1_selector_sai/`.
+- Quan sát nhỏ (theo dõi): thẻ hỏi lại của lượt cũ vẫn bấm "Gửi" lại được sau khi đã trả lời (gửi lại đúng câu ghép — không sai, chỉ lặp).
+
+**Tiền B156: ≈ 0,0509 USD** (Q5 0,0320 · sinh lại S20 0,0027 · Q7 / Q8 API 0,0086 + lặp g2 0,0023 · Playwright 0,0053 gồm lần selector sai 0,0026) ⇒ **B4 ≈ 0,205 / 0,24** (trước ≈ 0,134 + kín C 0,0198). Judge: quota Claude.
+
+**Tổng hợp B4 (khoá 3 / `406393c`):** đạt Q1, Q2 (đã thấy 8 / 10, kín 4 / 5), Q3 (0 / 7 + 0 / 3), Q4 (0 / 60, tuyến 60 / 60), Q5 (sàn F1–F4, hỏi lại 0 / 62; S-AT vế 1), Q6 (a) + (b) đã thấy, Q6k (a), Q8. **Không đạt: Q6k (b) kín 1 / 2 (sàn — §2e) và Q7 g2 (4 / 4)** ⇒ **kết quả âm theo plan §7**: cờ `hoi_lai` giữ **tắt**; hướng đi do User (qua A).
+
 ## 4b. Giới hạn đã biết
 
 - Phép đếm ngân sách token thiếu phần tăng theo số lần `tim_kho` thêm (chênh tới ~450–900 token ở lượt tìm nhiều) — nguồn chưa rõ; lề 512 có thể bị vượt khi ngữ cảnh sát trần (chưa gặp: ngữ cảnh thật ≪ trần).
 - Q6 (b) dựa regex + đọc; regex đã hụt một dạng (§2c).
 
-## 3. Còn lại (theo plan bản 5 §6, sau quyết định của User)
+## 3. Còn lại (sau B156 — mọi lượt đo của plan bản 5 đã chạy)
 
-1. **Quyết của User:** vòng sửa 2 (A ghi nhận 20:55 04/11/2026) ⇒ khoá 3 (§2d).
-2. Nếu đi tiếp: Q6 đã thấy đạt (cả (a) judge 2 sub-agent thước an toàn trên đoạn câu trả lời trích, lẫn (b)) ⇒ **kín (C)**: 10 lượt hỏi (Q2 / Q3) + 5 lượt ghép (Q6k) trên bản khoá cuối ⇒ Q4 (bộ tuyến 60, nhãn `can_hoi_lai.json`) ⇒ Q5 (mẫu Golden 30 + an toàn 32, `q5_golden.py` + `sinh_an_toan.py --hoi-lai` ⇒ `an_toan_b2.py`) ⇒ Q7 (4 chuỗi, nhớ bật) ⇒ Q8 cổng + Playwright ⇒ C review nhánh ⇒ A merge.
-3. Nếu âm: cờ `hoi_lai` giữ tắt; tag `hoso/p9-b4`; ghi kết quả vào báo cáo khâu.
+1. **Kết quả âm** (Q6k (b) kín 1 / 2 — sàn; Q7 g2 4 / 4): theo plan §7 cờ `hoi_lai` **tắt**, không chỉnh trên kín. **User chọn hướng (qua A):** (a) giữ hồ sơ — tag `hoso/p9-b4`, không merge; (b) merge với cờ tắt (Q1 228 / 228 giống byte `main` ⇒ người dùng không thấy đổi) để B5 dùng lại thẻ hỏi lại / bảng trường; (c) mở vòng sửa mới bằng plan mới + bộ đo kín mới (kín hiện đã mở, không dùng lại để quyết).
+2. Nếu sửa ở vòng sau, hai lỗi đã thấy cần nhắm: model nhân dự toán theo số người dù đã có câu dặn (lời dặn không đủ ⇒ cân nhắc code kiểm số tiền sau sinh — ý #1 của nghiên cứu 04/11); lượt có lịch sử mà lượt trước là `hoi_lai` ⇒ không đưa công cụ `hoi_lai` lần hai (Q7 g2).
+3. Nợ nhỏ: chấm S20 sinh lại (thủ tục S-AT vế 2, 0 USD) nếu A cần; "Trả lời luôn" trên giao diện (Playwright) chưa bấm; C review nhánh `406393c` nếu chọn (b).

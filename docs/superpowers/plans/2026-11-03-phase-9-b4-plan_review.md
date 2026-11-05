@@ -167,3 +167,37 @@ Sha tính từ file = `acfaf8ca0df5`. `git diff -U0` với bản 2 (A duyệt): 
 | m-4 | §7 "tiền > mốc dừng A chọn ở §6" | đóng |
 
 **Decision vòng 5: ready_for_user_confirmation** — A duyệt sha `acfaf8ca0df5` + ghi lựa chọn tiền (a) / (b) / (c) của §6 vào `CURRENT_HANDOFF.md`.
+
+## Vòng 6 — bản 7 `db3a9931b16f` (B4b "Tách — giữ lịch trình"; C176 (c) · 09:29 05/11/2026 `date`)
+
+Sha tính từ file = `db3a9931b16f`. Phạm vi (A / B): dòng "Trạng thái" + mục "Chỗ đổi bản 6" (gồm 2 dòng A quyết của bản 7). Đối chiếu: tiêu chí A ghi trước `CURRENT_HANDOFF.md` mục B157; `b144_b4_implementation.md` §2e, §2f; code nhánh `p9-b4` (`git grep`, chỉ đọc); harness `data/phase_9/b4/tools/chay_b4.py` + `data/phase_9/bo_do_b4/tools/kin_c164.py` + `chon_sealed.json` (chỉ khoá, không mở câu kín). 0 USD.
+
+**Khớp tiêu chí A (B157):** Q1 228 · Q2′ ≥ n − 1 / n · Q2c câu chi phí thiếu (đã thấy + Q7 g2) 0 bị hỏi lại · Q3 ≤ 1 / 10 · Q4 0 / 60 (40 + 20 kín) · Q5 an toàn 32 đủ 4 số, mới ≤ khoá 3 (= 1 / 1 theo §2f) + Golden 30 F1–F4 · Q7 g1 / g3 / n1 + 1 chuỗi chi phí không `hoi_lai` · Q8 smoke + Playwright "Trả lời luôn" · kín C chạy lại câu thiếu kín — **đúng / chặt hơn** (kín chạy cả 10 câu vì lời dặn đổi: hợp lý). Trần 0,10 / dừng 0,09 + Q6 (a) lịch trình: đúng 2 quyết A (bản 7). D2′ / D7′ khớp hướng User (câu chi phí về đúng `main`). C kiểm `p9-b4` `frontend/src` + `backend/api`: 0 chỗ dựng sẵn `so_nguoi` / `muc_chi` (nút dựng từ `clarify`) ⇒ D2′ không để lại nút chết.
+
+| # | Mức | Vị trí | Finding | Bằng chứng | Tiêu chí đóng |
+|---|---|---|---|---|---|
+| **M-1** | major | D2′ cột "lý do" ("harness không đổi"); dòng **Harness**; dòng **kín (C)** "`chay_b4.py` (như C174)"; Q6 lịch trình | **Harness không chạy được trên code B4b như plan ghi** ⇒ mọi lượt có phí (đã thấy, kín, Q4, Q6) dừng ngay hoặc phải sửa harness sau khi đã duyệt plan: (i) `chay_b4.py` import `_cach_a` từ `llm.assistant` và gọi `_assistant_instructions(gen, trace, …, _cach_a(flags, trace))` — D7′ xoá nhánh `cach_a` ⇒ `ImportError` / sai chữ ký; (ii) `NOTE_SHA` chỉ có `v0` / `v1` / `k3`, mặc định `--ghi_chu k3` = `42022ba2cdde` — ghi chú bản 6 khác ⇒ `SystemExit`; (iii) lượt ghép kín Q6 lịch trình dùng `chon_sealed.json` (5 khoá: 3 lịch trình + **2 chi phí có `so_nguoi`**) — `items()` dựng `TruongInput` cho mọi câu có khoá trong tệp chọn ⇒ với D2′ (`extra="forbid"`, bỏ `so_nguoi`) 2 câu chi phí báo `ValidationError`; chỉ chạy được khi truyền `--chi` 3 câu lịch trình (`--chi` lọc bộ trước khi dựng) — plan không ghi; bước 0 `kin_c164.py` (lệnh C174) dựng ghép cả 5 ⇒ hỏng chắc chắn; (iv) lượt ghép đã thấy: `chon_da_thay.json` có 10 khoá (LT1–5 + **CT1–5**) ⇒ cùng lỗi nếu không `--chi` LT1–LT5 | `chay_b4.py` dòng 13, 43, 83; `kin_c164.py` dòng 7–9; `git grep _cach_a p9-b4` (`assistant.py` :227, :328, :365, :478); khoá `chon_sealed.json` = K-LT1–3, K-CT1–2 | dòng Harness ghi đủ: bỏ import / tham số `_cach_a`, thêm sha ghi chú bản 6 vào `NOTE_SHA` (đặt làm mặc định), lượt ghép chỉ câu lịch trình (`--chi` hoặc tệp chọn mới chỉ 3 / 5 câu lịch trình); bỏ chữ "harness không đổi"; dòng kín: "C dựng lại lệnh kín trên bản khoá, chạy bước 0 0 USD" (không "như C174"); §5 W36 (4b): chạy thử `kiem` + bước 0 kín trên **code B4b** trước lượt có phí đầu |
+| m-1 | minor | Q2c | Chữ sàn "câu chi phí **thiếu** 0 bị hỏi lại" ≠ dòng Harness "mọi `hoi_lai` ở câu `chu_de = chi_phi`, **thiếu hay đủ**" ⇒ câu chi phí **đủ** bị hỏi lại (CD1–CD4 + 1 kín) rơi vào đâu: Q2c (sàn 0) hay Q3 (≤ 1 / 10)? | dòng Q2c ↔ dòng Harness | ghi rõ một nơi (đề xuất: Q2c = **mọi** câu chi phí, thiếu + đủ — ở B4b mọi `hoi_lai` ở câu chi phí đều là lỗi; Q3 chỉ còn câu đủ lịch trình + đếm riêng), không đếm hai lần |
+| m-2 | minor | Q2′ kín | n kín chưa điền: C176 (a) báo **n = 3** (3 lịch trình / 5 thiếu kín) ⇒ "≥ 2 / 3"; khoá 3 kín lịch trình = **2 / 3, đúng bằng ngưỡng** ⇒ biên rất mỏng — ghi trong rủi ro (2) cùng LT4 | C176 (a) (tin C ⇒ A, B) | điền n = 3 + một dòng biên |
+| m-3 | minor | đầu plan "Căn cứ để review" | Mục căn cứ vẫn của bản 3 — không có `CURRENT_HANDOFF.md` B157, `b144_b4_implementation.md` §2e / §2f, `data/phase_9/b4/tools/chay_b4.py` ⇒ reviewer chỉ dựa căn cứ (W §9.1) thì thiếu tiêu chí A để đối chiếu (C dùng theo tin B) | §"Căn cứ để review" | thêm một dòng "bản 6 / 7" với 3 file trên |
+| m-4 | minor | dòng kín (C) ↔ dòng A quyết (2) | Dòng kín chỉ ghi "10 lượt hỏi + Q4 kín 20"; 3 lượt ghép lịch trình kín (Q6 (a), A quyết) chỉ nằm ở dòng A quyết ⇒ người chạy kín đọc một dòng sẽ sót | 2 dòng | gộp vào dòng kín (C): 10 hỏi + 3 ghép lịch trình + Q4 20; báo Q6 (a) kín chỉ số đếm |
+
+**Theo dõi (không phải finding):** Q5 mốc "≤ khoá 3" dùng S20 / S10 của §2f — S20 ở khoá 3 mới sinh lại 3 + 3, **chấm + phân loại NOT RUN** ⇒ nếu S20 lại mới ở B4b thì thủ tục S-AT phải chạy đủ (plan đã ghi). Q7 g2: D2′ bỏ `muc_chi` ⇒ đường "hỏi thêm `muc_chi`" (nguyên nhân suy từ log ở §2f) mất; chỗ còn hở là model gọi `hoi_lai(lich_trinh)` cho chuỗi chi phí — Q2c + Q7 bắt.
+
+**Decision vòng 6: changes_requested** (0B / 1M / 4m) — sửa M-1 (+ minor) ⇒ báo sha mới ⇒ C kiểm phần sửa.
+
+## Vòng 7 — bản 8 `69afbb2732cf` (C177 ưu tiên · 09:33 05/11/2026 `date`)
+
+Sha tính từ file = `69afbb2732cf`. Chỉ kiểm phần sửa theo vòng 6 (dòng "Căn cứ", "Nền" bản 6, Harness, Q2′, Q2c, kín (C), "Bản 8").
+
+| Finding | Sửa | Kết luận |
+|---|---|---|
+| M-1 | Harness ghi 4 sửa: bỏ `_cach_a`; `NOTE_SHA` thêm `b4b` mặc định (giữ v0 / v1 / k3 để đọc lại); lượt ghép **lọc `chu_de = lich_trinh` trong code** (không sửa tệp chọn — đúng, tệp chọn là bộ đo C viết trước); `dem` đếm câu chi phí bị hỏi lại; W36 (4b): B chạy thử `kiem` + `dem`, C chạy bước 0 kín trước `!`. "Nền" bỏ "harness không đổi" ⇒ "phải sửa". Dòng kín: C dựng lại lệnh | đóng |
+| m-1 | Q2c = mọi câu chi phí (9 đã thấy = CT1–5 + CD1–4 — khớp bộ, C đếm) + kín + g2 | đóng — Q3 vẫn ghi "7 đã thấy + 3 kín" (gồm câu đủ chi phí) ⇒ câu đủ chi phí bị hỏi nằm ở cả hai, nhưng Q2c (sàn 0) chặt hơn ⇒ không có trường hợp kết luận lệch nhau; không cần sửa |
+| m-2 | Q2′ kín n = 3 ⇒ ≥ 2 / 3 + ghi biên mỏng | đóng |
+| m-3 | Căn cứ thêm dòng bản 6–8 (B157, §2e / §2f, `chay_b4.py`) | đóng |
+| m-4 | Dòng kín (C): + 3 lượt ghép lịch trình kín, giá trị = mục lịch trình của `chon_sealed.json`, 2 judge, báo số đếm | đóng |
+
+Không thấy đổi ngoài phạm vi (tiêu chí khác, tiền, quyết A bản 7 giữ nguyên).
+
+**Decision vòng 7: ready_for_user_confirmation** — A duyệt sha `69afbb2732cf`.
