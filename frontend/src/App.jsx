@@ -10,7 +10,17 @@ const STATUS_TEXT = {
   searching: "Đang tìm trong kho…",
   searched: "Đã tìm trong kho, đang chuẩn bị câu trả lời…",
   generating: "Đang viết câu trả lời…",
+  lich_trinh: "Đang xếp lịch…",  // Phase 9 B5 D14: công cụ lịch trình đang chạy
 };
+// B5 D14 (c): nhãn cố định của từng bước code đã làm (sự kiện `status` stage `lich_trinh`); tên điểm + lý do lấy từ dữ liệu sự kiện, không chữ model.
+const LICH_BUOC = {
+  xep_xong: d => `Đã xếp lịch (${d.n_diem} điểm)`,
+  kiem_luat_ok: () => "Đã kiểm luật xếp ✓",
+  kiem_luat_loi: d => `Kiểm luật xếp: ${d.n_loi} lỗi`,
+  bo_diem: d => d.ly_do,
+  lay_nguon: d => `Đã lấy tài liệu cho từng điểm (${d.n_doan} đoạn mới)`,
+};
+const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ nhận link bản đồ đúng gốc này (kiểm cả phía trình duyệt)
 const PENDING = new Set(Object.keys(STATUS_TEXT));
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
 
@@ -42,7 +52,8 @@ function reducedMotion() {
 function newTurn(key, question, truong = null, summary = "") {
   // lượt mới bắt đầu ở "đang hiểu câu hỏi": việc đầu tiên của server là định tuyến (B1) — thứ tự nhãn như D9 (b), không "đang tìm" trước
   return { key, question, phase: "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null, turnId: null, error: "",
-           clarify: null, truong, summary };  // B4: thẻ hỏi lại (sự kiện `clarify`); lượt ghép mang `truong` + tóm tắt lựa chọn
+           clarify: null, truong, summary,  // B4: thẻ hỏi lại (sự kiện `clarify`); lượt ghép mang `truong` + tóm tắt lựa chọn
+           progress: [], lich: null };  // B5: các bước tiến độ của lịch (D14) + dữ liệu lịch (link bản đồ, thẻ Sửa — D11, D12)
 }
 
 export default function App() {
@@ -96,6 +107,7 @@ export default function App() {
     lastSeqRef.current = 0;
     const key = ++keyRef.current;
     const update = patch => setTurns(all => all.map(turn => (turn.key === key ? { ...turn, ...patch } : turn)));
+    const progress = [];  // B5 D14: các bước lịch đã nhận của lượt này, đúng thứ tự server gửi
     // "Thử lại" thay lượt lỗi (server không nhớ lượt lỗi — plan B3 D2) bằng lượt mới cùng câu hỏi.
     setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary)]);
     setSelected({ turn: key, source: null });
@@ -105,7 +117,12 @@ export default function App() {
         signal: controller.signal,
         truong,
         onEvent(name, data) {
-          if (name === "status") {
+          if (name === "status" && data.stage === "lich_trinh") {
+            // C191 m-1: "dang_xep" không có trong LICH_BUOC ⇒ chỉ là nhãn trạng thái (`phase` ⇒ "Đang xếp lịch…"), không vào danh sách bước
+            const text = LICH_BUOC[data.buoc]?.(data);
+            if (text) progress.push(text);
+            update({ phase: "lich_trinh", progress: [...progress] });
+          } else if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
             update({ phase: data.stage in STATUS_TEXT ? data.stage : "searched", ...(data.n_sources != null && { nSources: data.n_sources }) });
           } else if (name === "delta") {
@@ -127,6 +144,8 @@ export default function App() {
             update({ notice: data.text });
           } else if (name === "clarify") {
             update({ clarify: data });  // B4 D8: thẻ hỏi lại — code dựng nút từ danh sách trường
+          } else if (name === "lich_trinh") {
+            update({ lich: data });  // B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code)
           } else if (name === "done") {
             update({ outcome: data.outcome, turnId: data.turn_id ?? null });  // B142: mã lượt chỉ có ở lượt có câu trả lời cuối
           }
@@ -333,7 +352,11 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
           )}
         </div>
       )}
+      {turn.progress.length > 0 && (
+        <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
+      )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
+      {turn.phase === "done" && turn.lich && <LichExtras lich={turn.lich} onAsk={onAsk} />}
       {turn.phase === "done" && turn.outcome === "out_of_scope" && (
         <div className="suggest" aria-label="Câu gợi ý">
           <p className="text-sm text-muted">Bạn có thể hỏi, ví dụ:</p>
@@ -384,8 +407,28 @@ function Feedback({ turnId }) {
 
 // B4 D10: thẻ hỏi lại — mỗi trường một nhóm nút (chọn một), "Gửi" bật khi đủ trường bắt buộc, "Trả lời luôn" gửi `truong: {}`.
 // Server ghép câu gốc + nhãn của code thành câu đủ ý (không cần nhớ hội thoại); trang chỉ gửi giá trị trong danh sách server đưa.
-function ClarifyCard({ clarify, onAsk }) {
-  const [chosen, setChosen] = useState({});
+// B5 D11 + D12 (a): link "mở bản đồ" từng điểm (code dựng, chỉ đúng gốc Google Maps) + nút "Sửa" mở lại thẻ hỏi lại với giá trị đang dùng.
+function LichExtras({ lich, onAsk }) {
+  const [editing, setEditing] = useState(false);
+  const links = (lich.ban_do || []).filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
+  return (
+    <div className="lich">
+      {links.length > 0 && (
+        <div>
+          <p className="text-sm font-semibold text-accent-deep">Bản đồ từng điểm</p>
+          <ul className="map-links">
+            {links.map(item => <li key={item.map_url}><a href={item.map_url} target="_blank" rel="noopener noreferrer">{item.ten}</a></li>)}
+          </ul>
+        </div>
+      )}
+      {lich.sua && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
+      {lich.sua && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}
+    </div>
+  );
+}
+
+function ClarifyCard({ clarify, onAsk, initial = {} }) {
+  const [chosen, setChosen] = useState(initial);
   const ready = clarify.bat_buoc.every(ten => chosen[ten]);
   const summary = clarify.truong.filter(t => chosen[t.ten]).map(t => t.lua_chon.find(c => c.gia_tri === chosen[t.ten]).nhan).join(" · ");
   return (

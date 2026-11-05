@@ -11,10 +11,10 @@ from llm.full_corpus_prompt import build_answer_messages
 # ~268 ở 3 mục, ~338 ở 5 mục ⇒ ≈ 158 cố định + 36 / mục. Pilot B3 (có lịch sử) ước lại — giá trị và nguồn ghi ở report B136.
 TOOL_PATH_OVERHEAD = 158
 ITEM_OVERHEAD = 36
-# B4 (A quyết 04/11, review C163 m-3): lược đồ công cụ thứ hai `hoi_lai` gửi kèm khi lượt đưa công cụ này — phép đếm không thấy. Đo B153
-# (`data/phase_9/b4/chon_ghi_chu/`, 28 lượt cờ bật): token thật − số đếm ≥ 185 ở mọi lượt, đúng 185 ở lượt không tìm thêm ⇒ hằng 185.
-# Phần chênh còn tăng theo số lần tìm thêm (tới ~450 sau hằng) — chưa rõ nguồn, ghi giới hạn ở report B4; lề 512 vẫn giữ.
-HOI_LAI_TOOL_OVERHEAD = 185
+# B5 (plan B5 bản 7 D16): lược đồ + mô tả công cụ thứ hai `lich_trinh` gửi kèm **mọi** lượt trợ lý khi cờ `lich_trinh` bật — phép đếm không
+# thấy. Đo ở pilot B160 (`data/phase_9/b5/pilot/thuong2.jsonl`, cờ bật): lượt **không gọi công cụ nào** ⇒ token thật − số đếm = 359 (như B4 B153
+# đo 185 cho `hoi_lai`); lượt có một `tim_kho` 345. (B4 `HOI_LAI_TOOL_OVERHEAD` đã gỡ cùng công cụ `hoi_lai` — review C183 m-2.)
+LICH_TRINH_TOOL_OVERHEAD = 359
 
 
 @dataclass(frozen=True)

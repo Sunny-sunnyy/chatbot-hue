@@ -31,7 +31,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from core.settings_loader import load_settings
 from llm.full_corpus_prompt import REFUSAL_ANSWERS, build_assistant_input
 from llm.generator_openai_full_corpus import CallLog, OpenAIFullCorpusGenerator, input_cache_tokens
-from llm.assistant import (ROUTE_TRO_LY_HUE as ROUTE_TRO_LY_HUE_NAME, SEARCH_VARIANTS, AnswerTrace, AssistantFlags, answer_turn,
+from llm.assistant import (BOOL_FIELDS as ASSISTANT_BOOL_FIELDS, ROUTE_TRO_LY_HUE as ROUTE_TRO_LY_HUE_NAME, SEARCH_VARIANTS, AnswerTrace,
+                           AssistantFlags, answer_turn, nap_bang_lich,
                            search_into_trace, tim_kho, tool_for_turn,
                            turn_usd)
 from core.schema import GenerationError
@@ -383,7 +384,7 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
     return row
 
 
-BOOL_FLAGS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name != "lan_tim_dau")
+BOOL_FLAGS = ASSISTANT_BOOL_FIELDS  # cờ bật / tắt (bỏ `lan_tim_dau`, `bang_lich`)
 
 
 async def run_generation(cases: list[dict], max_context_documents: int | None = None, flags_on: list[str] | None = None,
@@ -393,7 +394,9 @@ async def run_generation(cases: list[dict], max_context_documents: int | None = 
     settings = load_settings(validate_private_paths=False)
     flags = AssistantFlags.from_settings(settings)
     if flags_on is not None:
-        flags = AssistantFlags(**{name: name in flags_on for name in BOOL_FLAGS}, lan_tim_dau=lan_tim_dau or "v0")
+        # B5: bật `lich_trinh` ⇒ nạp bảng điểm như runtime (đường dẫn trong `settings.yaml`, đọc ở rìa)
+        bang = flags.bang_lich or (nap_bang_lich(settings) if "lich_trinh" in flags_on else None)
+        flags = AssistantFlags(**{name: name in flags_on for name in BOOL_FLAGS}, lan_tim_dau=lan_tim_dau or "v0", bang_lich=bang)
     elif lan_tim_dau is not None:
         flags = dataclasses.replace(flags, lan_tim_dau=lan_tim_dau)
     service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
