@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: `16:48 05/11/2026` (A, **kết phiên 05/11**: `main` = B4b code (cờ tắt) + **B5 lịch trình code (cờ tắt, chờ User chấm Q3)** + **tốc độ #6 BẬT**; B5c tính tiền âm 2 vòng ⇒ dừng (tag `hoso/p9-b5c`); plan sửa lịch / B5b / B6 duyệt hoặc sẵn; Phase 10 ảnh: spec duyệt, đo luna âm ⇒ User giữ dạng gợi ý + thử SigLIP; chia Phase 10–12; đóng code khi User nói (đã chạy AWS); luật tự soi over-engineering).
+Last updated: `22:15 05/11/2026` (A, **kết phiên tối 05/11**: `main` = Phase 9 tới B6 — **tra web BẬT** + #6 bật; B4b / B5 lịch trình / ảnh Phase 10 code ở cờ tắt; kho 8.435 đoạn (giờ mở cửa 11 điểm); spec Phase 10 bản 4 duyệt (giọng nói STT, G0 xong); sửa lịch + B5b thời tiết trên nhánh, chờ đo / User; trần Phase 9 2,5).
 
 Chỉ ghi hiện trạng (quy tắc: Governance v2 §6). Lịch sử và lý do các quyết
 định cũ: `PROJECT_HISTORY.md`. Việc đang làm của từng session: `CURRENT_HANDOFF.md`.
@@ -34,7 +34,7 @@ Thước tạm giữ: Completeness / Accuracy (judge Claude) trên câu tự nhi
 
 ## 2. Phase hiện tại
 
-**Bây giờ (16:48 05/11/2026, kết phiên 05/11):** `main` (HEAD xem git) = RAG 1–8 + trợ lý Phase 9 (định tuyến 4 tuyến, tìm thêm ≤ 2, nhớ câu hỏi 3 lượt, câu dặn hẹp, giao diện nhiều lượt, 👍 / 👎, khẩn cấp PA1) + **trả lời song song định tuyến (#6, bật 05/11)** + code **hỏi lại do code** (thẻ nút) + **B5 lịch trình** (code xếp + code tự hỏi số ngày + kiểm cuối + bước tiến độ + link bản đồ; **cờ `lich_trinh` TẮT — chờ User chấm 5 lịch kín**). B5c tính tiền: âm 2 vòng (câu miễn vé mất điều kiện) ⇒ dừng, nhánh lưu tag. Kế tiếp: User chấm Q3 ⇒ bật B5 ⇒ bậc sửa lịch nhiều lượt (plan duyệt) ⇒ B5b thời tiết (plan duyệt; bảng v4 User duyệt) ⇒ B6 web (plan bản 2) ⇒ B7. Phase 10 ảnh (spec duyệt; P1 luna âm ⇒ dạng gợi ý có xác nhận + thử SigLIP / Qdrant ảnh). Đợt sửa kho giờ mở cửa 11 điểm: chuẩn bị xong, chờ User `!` dựng chỉ mục. Tiền Phase 9 ≈ 1,61 / 2,0 (dự phóng ≈ 2,4 — đề xuất nâng 2,5); Phase 10 ≈ 0,08 / 0,15.
+**Bây giờ (22:15 05/11/2026, kết phiên tối 05/11):** `main` (HEAD xem git) = RAG 1–8 + trợ lý Phase 9 (định tuyến 4 tuyến, tìm thêm ≤ 2, nhớ câu hỏi 3 lượt, câu dặn hẹp, giao diện nhiều lượt, 👍 / 👎, khẩn cấp PA1, **#6 song song bật**, **tra web B6 bật** `b7c024e`) + code cờ tắt: hỏi lại do code (B4b), **B5 lịch trình** (chờ User chấm Q3), **hỏi bằng ảnh Phase 10** (`2ca9937` + giao diện điện thoại `76319e2`). Kho 204 file / **8.435 đoạn** (giờ mở cửa chung 11 điểm Quần thể, User giữ). Nhánh đang làm: `p9-sua-lich` `6543f82` (0 USD xong, đo có phí khi B5 bật), `p9-b5b` (thời tiết; đã thấy ×2 đạt sau vòng chỉnh 1; Q4 / Q8 dở — xem `CURRENT_HANDOFF.md`), `p10-giong-noi` `93bbc63` (G0 xong; chờ User thu 40 câu). B5c dừng (tag). Cache câu trả lời ⇒ backlog Phase 12; thử tắt ghi đệm âm. Tiền Phase 9 ≈ 1,85 / **2,5**; Phase 10 ≈ 0,098 / 0,15.
 
 Diễn biến các phiên trước: `session_prompt/archive/PROJECT_STATUS_LICH_SU_2026-11-05.md`, `PROJECT_HISTORY.md`.
 
@@ -84,7 +84,7 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 | 8.1 | `approved` | User-closed 15:27 25/10: chỉ context 10 thắng (đề xuất 8.2); còn lại giữ; G0.6 khóa; không đổi chatbot (`report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md`) |
 | 8.2 | `approved` | **User-closed 10:23 28/10/2026**: context 10 + NFC vào chatbot (`510e1a8`); B3 câu kín (S36, 33 câu trong kho): Completeness +0,818 [+0,394; +1,333], Accuracy +0,697, 0 câu tụt; ngoài kho 0 / 3 bị trả lời; Bước 2 đợt cải tiến: không biến thể nào vào; B0 dời (spec §11, mốc người làm sau). ≈ 0,227 / 0,5 USD. `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md` |
 | 8 (đóng gói 1–8) | `approved` | **User-closed 14:29 01/11/2026**: streaming (`a80e12d`); lượt đo cuối mọi sàn đạt (`report_agent/2026-10-31_streaming_spec/do_cuoi_implementation.md`); báo cáo so sánh phương án; B0 mốc người tham khảo ⇒ giữ 10 đoạn. Giới hạn: judge Claude, B0 không chọn bên theo cặp + kho cũ; câu nhiều nguồn Đủ 3,50 ⇒ Phase 9; nhiều lượt ⇒ Phase 9; chữ đầu đo một lần (`report_agent/2026-10-31_streaming_spec/TONG_HOP.md`) |
-| 9 | `in_progress` | **05/11 (kết phiên):** B4 âm 2 vòng (code hỏi lại vào cờ tắt); **B5 lịch trình merge `d66f6a3` cờ tắt** (chờ User chấm Q3); **#6 bật** (`5a8aa5e`); B5c âm 2 vòng ⇒ dừng (tag `hoso/p9-b5c`); spec bản 12 duyệt `77250689e605` (§11: B4b, B5c, lịch mới, quỹ B7 0,35, đóng code khi User nói + AWS). Plan duyệt: sửa lịch `5b68f3cb666a`, B5b `cc09fda9f634`; B6 bản 2 `b6a046e944c0` chờ review. B0–B3b, B142, B143, PA1 vào `main` 02–04/11. Trần 2,0 (đã dùng ≈ 1,61). |
+| 9 | `in_progress` | **05/11 tối (kết phiên):** **B6 tra web merge `7ff8e5a` + BẬT** (kín ×2 đạt; review E bắt 2 lỗi đã sửa); B5 lịch trình cờ tắt (chờ User chấm Q3); sửa lịch 0 USD xong (`p9-sua-lich`); B5b thời tiết trên nhánh (Q4 / Q8 dở); B5c dừng (tag `hoso/p9-b5c`); B4b cờ tắt; #6 bật. Spec bản 12 `77250689e605`. Luật S-AT mới (User 05/11 tối). Trần **2,5** (đã dùng ≈ 1,85). |
 
 ## 4. Runtime và dữ liệu đang chạy
 

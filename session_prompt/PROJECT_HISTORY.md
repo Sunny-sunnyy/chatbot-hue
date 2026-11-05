@@ -1024,3 +1024,14 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - Dữ liệu: `backend/data/` ⇒ `data/nguon_mo_huegov_2026-08-05/`; kiểm kho thiếu gì (lỗi chủ yếu ở khâu tìm); sửa kho giờ mở cửa 11 điểm chuẩn bị xong, chờ User `!` dựng chỉ mục. Ảnh không cần giấy phép (User).
 - Cách làm: luật nền tảng AI FDE (Session_Prompt §7); rà over-engineering 4 phiên ⇒ luật thường trực tự soi + rút gọn (review ≤ 2 vòng, kín chỉ khi chỉnh lời dặn, 3 chỗ báo cáo, sha chỉ bản duyệt, đọc mở phiên gọn).
 - Tiền phiên ≈ 0,49 USD (Phase 9 ≈ 0,41; Phase 10 ≈ 0,08); Phase 9 ≈ 1,61 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-05_b4_am_chia_phase_10_12.md`.
+
+## 2026-11-05 tối — tra web B6 vào chatbot; ảnh Phase 10 vào main cờ tắt; giọng nói spec duyệt; sửa kho giờ mở cửa (A, 22:15 05/11/2026)
+
+- Mở 19:16 (A `hue-rag-4f`, B `hue-rag-4b`, C `hue-rag-3c`, E `hue-rag-bc`); kết phiên chiều bỏ dở ⇒ A viết lại handoff; máy khởi động lại 19:12 ⇒ worktree `/tmp` mất (E khôi phục code ảnh từ patch).
+- Sửa kho giờ mở cửa 11 điểm (User `!`) ⇒ 8.435 đoạn; 1 câu Golden phạm sàn lượt 1, chạy lại đạt ⇒ User giữ.
+- **B6 tra web**: plan bản 3 ⇒ code ⇒ đã thấy vòng 1 phạm (2 câu khẳng định chưa xác minh) ⇒ vòng chỉnh bằng code (thiên tai / thời gian thực) ⇒ đạt; kín ×2, hồi quy, Playwright đạt; review E bắt link HTML lọt + thiếu "lụt" ⇒ sửa ⇒ merge `7ff8e5a` ⇒ **User bật** `b7c024e`.
+- Phase 10 ảnh: merge cờ tắt `2ca9937`, giao diện điện thoại `76319e2`; SigLIP 2 âm 3 cách. Giọng nói: nghiên cứu ⇒ spec bản 4 `784d6f7abd9f` User duyệt (nghe trước; sherpa-onnx + 2 model) ⇒ G0 chạy được.
+- B5b thời tiết: review sớm E bắt miễn [n] quá rộng ⇒ dự báo thành nguồn thật; đã thấy ×2 đạt sau vòng chỉnh 1 (câu ngoài 7 ngày — plan tự mâu thuẫn D3 ↔ Q2, chọn phía chặt).
+- Sửa lịch 0 USD xong (thẻ rỗng là lỗi ⇒ sửa; kín mô phỏng 5 / 5). Cache câu trả lời ⇒ Phase 12 (nghiên cứu C + ý kiến Session A dự án khác — private); tắt ghi đệm OpenAI âm. Luật S-AT mới. Trần Phase 9 2,5.
+- Tiền phiên tối ≈ 0,26 USD (chốt trong `CURRENT_HANDOFF.md`). Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05_toi.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-05_b4_am_chia_phase_10_12.md`.
+
