@@ -62,7 +62,7 @@ assistant:
   today_line: false              # TẮT (B1 P2: từ chối nhầm không giảm). Dòng ngày hôm nay đầu tin nhắn gửi model trả lời (D7)
   may_have_changed_notice: true  # BẬT (B1). Dòng H4c dưới câu trả lời có nguồn vé / điểm đến / lễ hội (D8)
   router_timeout_seconds: 10
-  song_song_tra_loi: false        # thí nghiệm tốc độ #6 (plan …toc-do-song-song-plan.md): true = đường stream chạy phần tro_ly_hue cùng lúc định tuyến
+  song_song_tra_loi: true         # BẬT (User duyệt 05/11; #6 đạt: chữ đầu câu về Huế −1,37 s [0,34; 2,14], an toàn 90 lượt 0 vi phạm): đường stream chạy phần tro_ly_hue cùng lúc định tuyến
   lan_tim_dau: v0                # B2 (plan D1): v0 câu gốc · v1 / v3 câu tìm do định tuyến viết · v2 trợ lý tự gọi tim_kho
   tim_them: true                 # BẬT (B2b Q8: 18 câu nhiều nguồn +1,17 [+0,44; +2,00]; User giữ 03/11). Sau lần tìm đầu, trợ lý được gọi tim_kho thêm ≤ 2 lần
   nho_hoi_thoai: true            # BẬT (B3b: đã thấy Q3 6/6, Q4 +0,80 [+0,25; +1,50], Q5 0/0; bộ mới C152 S1 0/6, S2 0/19 ↔ 5/19; A quyết theo User "đạt ⇒ bật")
