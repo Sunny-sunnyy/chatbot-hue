@@ -149,3 +149,9 @@ body { background: var(--color-page); }
                      background: var(--color-gold-soft); color: var(--color-gold-ink); font-size: 13px; font-weight: 600; text-decoration: none; vertical-align: 2px; }
 .answer sup.cite a:hover, .answer sup.cite a[aria-current="true"] { background: var(--color-gold); color: var(--color-accent-deep); }
 .answer sup.cite a:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 1px; }
+
+/* Phase 10 — hỏi bằng ảnh (HoiBangAnh.jsx) */
+.hoi-anh { margin-bottom: 10px; }
+.hoi-anh-nut { margin-top: 0; }
+.hoi-anh-the { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.hoi-anh-xem { max-width: 220px; max-height: 160px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-line); }

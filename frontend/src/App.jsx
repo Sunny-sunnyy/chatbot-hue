@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { displayNumbers, renderAnswerHtml } from "./markdown.js";
 import { streamAnswer } from "./stream.js";
+import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
 
 // Giao diện nhiều lượt theo bản mẫu 1 "Huế hiện đại" (User chọn 13:11 03/11/2026; Phase 9 B3 bước 8, plan B3 D8, D9 (b) (c)).
 // Server giữ lịch sử (cookie HttpOnly `conversation_id`) — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1).
@@ -68,6 +69,7 @@ export default function App() {
   const frameRef = useRef(0);
   const abortRef = useRef(null);
   const lastTurnRef = useRef(null);
+  const queryRef = useRef(null);  // Phase 10: "Không phải các tên này" ⇒ đưa con trỏ về ô gõ tên
   const pending = turns.length > 0 && PENDING.has(turns[turns.length - 1].phase);
   const panelTurn = turns.find(turn => turn.key === selected.turn) ?? turns[turns.length - 1];
 
@@ -236,9 +238,12 @@ export default function App() {
           </div>
 
           <form onSubmit={submit} className="sticky bottom-0 bg-page pt-3 pb-4">
+            <HoiBangAnh draft={draft} disabled={pending || resetting} onAsk={query => { ask(query); setDraft(""); }}
+                        onGoTen={() => queryRef.current?.focus()} />
             <div className="composer">
               <label htmlFor="query" className="sr-only">Câu hỏi về Huế</label>
               <textarea
+                ref={queryRef}
                 id="query"
                 rows={1}
                 value={draft}

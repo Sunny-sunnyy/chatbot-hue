@@ -18,6 +18,8 @@ NETWORK_PACKAGES = ("openai", "agents", "httpx", "requests", "aiohttp", "urllib.
 ALLOWED = {
     "llm.generator_openai_full_corpus": {"openai", "agents"},  # OpenAI — mọi lần gọi model
     "embedding.full_corpus": {"httpx", "huggingface_hub"},  # OpenRouter (candidate Qwen3) + tải model e5 từ HF Hub (không mang chữ người dùng)
+    # Phase 10 A1 (plan D3): chỉ DỰNG `Agent` / `ModelSettings` cho lượt ảnh; lần gọi model vẫn qua `generator._run` (client OpenAI của generator)
+    "llm.nhan_anh": {"agents"},
 }
 EXPECTED_TOOLS = {"tim_kho": ("cau_tim",)}
 
