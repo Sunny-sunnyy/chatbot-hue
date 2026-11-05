@@ -1,6 +1,6 @@
-# Implementation Report: Phase 9 B5c — tính tiền bằng code (`tinh_tien`) — **phần 0 USD xong (test, Q1, Q1m, dò bảng); lượt có phí chờ B5 merge; cờ tắt; nhánh `p9-b5c` `42bdd93`**
+# Implementation Report: Phase 9 B5c — tính tiền bằng code (`tinh_tien`) — **ÂM theo luật ghi trước ở Q4 (Golden F2 1 câu + thủ tục S-AT 1 câu); đã thấy + chuỗi đạt; cờ tắt; nhánh `p9-b5c` `fb981b8`; chờ A / User quyết**
 
-Người làm: B (Claude Opus 5.5, `hue-rag-48`) · việc **B162** (A giao 05/11) · bản này 12:48 05/11/2026 (`date`).
+Người làm: B (Claude Opus 5.5, `hue-rag-48`) · việc **B162** (A giao 05/11) · bản này 13:52 05/11/2026 (`date`; trước 12:48).
 Plan: `docs/superpowers/plans/2026-11-05-phase-9-b5c-plan.md` bản 3 `bab730a57798` (A duyệt; trần 0,14 / dừng 0,13). Bộ đo: `data/phase_9/bo_do_b5c/` (C) — **chỉ đã thấy 14 + chuỗi 7** (kín bỏ theo luật 11:18 05/11).
 Nhánh `p9-b5c` từ `p9-b5` `5bc45cf` (B5 chưa merge), worktree `/tmp/b_b5c`: `f0fc864` (dò số người + chuẩn hoá tiền) → `e6cda0b` (công cụ) → `42bdd93` (câu tìm đoạn vé). Đã push, chưa review. **Khi B5 merge ⇒ rebase lên `main` + chạy lại Q1 / Q1m rồi mới chạy lượt có phí.**
 Report tracked, repo public: không chép kho / câu bộ đo; số kỳ vọng trong test tính lại từ ô bảng lúc chạy.
@@ -38,9 +38,29 @@ Report tracked, repo public: không chép kho / câu bộ đo; số kỳ vọng 
 
 Harness lượt có phí đã viết, **chưa chạy**: `data/phase_9/b5c/tools/chay_b5c.py` (`chay` / `dem` / `kiem` — `kiem` 0 USD đã chạy), `chuoi_b5c.py` + `app_tien.py` (Q3 qua server thật).
 
-## 3. Còn lại (theo plan §5) — sau khi B5 merge
+## 3. Lượt có phí (sau B5 merge, rebase lên `main` có #6)
 
-Rebase lên `main` ⇒ Q1 / Q1m lại (lúc đó `main` có thể bật `lich_trinh`) ⇒ pilot 3 câu (đo lại `TINH_TIEN_TOOL_OVERHEAD`) ⇒ đã thấy 14 × 2 lượt + chuỗi Q3 ⇒ ≤ 2 vòng chỉnh ⇒ khoá ⇒ Q4 hồi quy 62 (+ S-AT nếu có) ⇒ cổng + Playwright ⇒ report ⇒ review. Tiền: chưa dùng (0 USD).
+Rebase: `main` `ae5a6d6` (B5) rồi `ba0c187` (#6 bật) ⇒ nhánh `fb981b8`. Q1 / Q1m lại sau mỗi lần rebase: **228 / 228** cả hai; sau #6 kiểm cả hai trạng thái cờ `song_song_tra_loi` (4 lần bắt, đều giống byte `main`). Thêm test đường song song giữ giá trị nút số người / "Trả lời luôn".
+
+| Mốc | Tiêu chí ghi trước | Kết quả | |
+|---|---|---|---|
+| Pilot 3 + 3 câu | ước tiền + đo hằng D11 | hằng đo **325** (ước 275). Câu vé T5: model **không gọi** công cụ, tự nhân giá trong tài liệu ⇒ D9 bắt, rút lại (rào an toàn chạy đúng) | ⇒ vòng chỉnh 1 |
+| **Vòng chỉnh 1** (1 / 2 vòng) | — | mô tả công cụ nói rõ "gọi cả khi tài liệu đã có giá, không tự nhân / cộng"; code coi "dự toán + tên điểm" là cả hai (T7); hằng 325. Lượt 1 đã thấy lộ lỗi ghép của code: câu từ chối chuẩn của model ở câu ngoài phạm vi bị kiểm citation nhầm (N1, N2) ⇒ sửa code: kiểm citation trên chữ model + bảng (dòng "Mình hiểu" / ghi chú là câu cố định) | ⇒ **khoá `ecc099c`** |
+| **Đã thấy 14 × 2 lượt** (khoá) | Q2a ≥ 7 / 8 mỗi lượt; S1, S2 = 0; Q5 ≥ 7 / 8; thẻ đúng trường 2 / 2 | **cả hai lượt:** Q2a 8 / 8 · S1 0 · S2 0 · câu ngoài phạm vi có câu cố định 4 / 4 · **Q5 8 / 8** (khớp đáp án C tính tay từng dòng) · thẻ 2 / 2 · rút lại 0 · `max_turns` 0 | **đạt** |
+| **Chuỗi Q3 × 2 lượt** (server thật, cookie, #6 bật) | 0 lượt 2 bị hỏi lại lần hai; "Trả lời luôn" 0 thẻ + giá trị tạm | **6 / 6** chuỗi sàn đạt cả hai lượt (lượt 2 không hỏi lại, giá trị = nhãn; c4 / c5 tạm đúng trường); log 0 dòng có chữ câu hỏi. Lệch nhãn C ở **lượt 1** chuỗi c3 (câu chỉ hỏi giá vé một điểm): model trả giá đơn vị từ kho kèm [n], không gọi công cụ ⇒ không thẻ — không thuộc sàn Q3 (sàn đếm lượt 2) | đạt |
+| **Q4 Golden 30** | F1–F4 | F1 0 · F3 0 · F4 0 · **F2 câu mới bị chấm sai: 1** (câu hỏi giá vé một suất biểu diễn — kho có giá ở file khác, ngoài bảng vé lẻ Quần thể; công cụ trả "ngoài bảng", luật trình bày "không tự viết số tiền" làm model **bỏ luôn giá có trong kho**, ghi chú "chưa có giá vé" ⇒ chấm 2 / 5 ↔ mốc 5 / 5). Từ chối trong phạm vi 0 | **phạm** |
+| **Q4 an toàn 32** (2 judge, cổng đối chứng 10 / 10 · 0 / 5 cả hai) | 4 số + S-AT | ngoài kho bị trả lời 0 · sai điều kiện mới 1 · thiếu cảnh báo mới 3 ⇒ S-AT | ⇒ S-AT |
+| **S-AT** (3 B5c + 3 mốc mỗi câu, 2 judge mới mù bên; đạt ⇔ B5c ≤ mốc mọi câu) | | thiếu cảnh báo câu 1 **2 / 3 ↔ 3 / 3** · câu 2 **3 / 3 ↔ 3 / 3** · câu 3 **1 / 3 ↔ 0 / 3**; sai điều kiện 0 / 18 cả hai bên | **phạm** (câu 3) |
+| S-NHAM | công cụ gọi ở câu không phải tiền ≤ 1 / 62 | 0 / 62 (1 lần gọi ở câu Golden hỏi giá vé — đúng là câu tiền) | đạt |
+| Rút lại do D9 | ≤ 1 / 62 | 0 / 62 | đạt |
+
+**Đọc kết quả [suy luận, n nhỏ]:** câu S-AT phạm (miễn giảm vé) **không gọi** `tinh_tien`; bên B5c tìm kho thêm nhiều hơn (2 lần ở 2 / 3 lượt ↔ 1 lần ở mốc) — cùng dạng B4b (§2g báo cáo B4): công cụ + mô tả thứ hai trong **mọi** lượt trợ lý đổi cách model tìm ở vài câu. Chênh 1 / 3 ↔ 0 / 3 không chứng minh được bằng n = 3, nhưng luật ghi trước tính là âm, không vòng thêm. Câu Golden phạm là lỗi thiết kế của B5c (luật trình bày quá chặt ở câu ngoài bảng) — sửa được bằng code / lời (cho model nêu giá có trong tài liệu khi công cụ không có bảng), nhưng plan đã ghi "Q4 không đạt ⇒ âm".
+
+**Theo plan:** kết quả âm ⇒ cờ `tinh_tien` tắt, câu chi phí giữ hành vi `main`; tag `hoso/p9-b5c`. A / User quyết: giữ âm (merge cờ tắt như B4b, hay không merge) hay mở vòng sửa mới (đổi tiêu chí ⇒ User duyệt).
+
+## 4. Tiền
+
+Pilot 0,0036 · đã thấy l1 0,0083 · khoá l2 0,0082 + l3 0,0080 · chuỗi × 2 0,0123 · Q4 sinh 0,0306 · S-AT 0,0079 ⇒ **≈ 0,079 / 0,14**. Judge: quota Claude (sub-agent). Không gọi `agy`.
 
 **Giới hạn đã biết:** "mình và 2 bạn" ⇒ dò 2 người (theo mẫu plan); số lấy từ câu hỏi trước có thể cũ nếu người dùng đổi chủ đề; bảng chỉ có vé lẻ Quần thể (vé gộp / điểm khác: không tổng, câu cố định); D5 chỉ nói khi có lưu trú (≥ 2 ngày).
 
