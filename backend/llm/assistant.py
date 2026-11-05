@@ -29,8 +29,8 @@ from llm.citations import select_cited_sources
 from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_LIMIT_TEXT,
-                                   TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
+from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, PackedContext, PackedSource
 
@@ -219,6 +219,9 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         """
         trace.model_searches += 1
         trace.model_queries.append(cau_tim)  # chỉ RAM / file private của harness — không log (chữ do model viết từ câu người dùng)
+        if trace.lich is not None:  # B5 vòng chỉnh 1 (a): đã có khung lịch + đoạn từng điểm ⇒ không tìm thật, bảo model viết ngay (chặn bằng code)
+            trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "sau_lich": True})
+            return TOOL_DA_DU_LICH
         if trace.model_searches > MODEL_SEARCH_LIMIT:
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "het_luot": True})
             return TOOL_LIMIT_TEXT

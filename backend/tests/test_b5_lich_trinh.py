@@ -302,6 +302,28 @@ def test_search_twice_then_itinerary_within_turn_limit(deps):
     assert trace.fixed_outcome is None and trace.lich is not None  # vừa đủ trần: ra lời (lần gọi thứ 5 mới chạm)
 
 
+def test_search_after_itinerary_is_blocked_by_code(deps):
+    # vòng chỉnh 1 (a): sau khi có khung, `tim_kho` trả "đã đủ tài liệu" và **không** tìm thật (0 nguồn mới, 0 lần gọi Qdrant thêm)
+    from llm.full_corpus_prompt import TOOL_DA_DU_LICH
+    outputs = []
+
+    def script(n, kw):
+        if n == 1:
+            return [lich_call(so_ngay="1", so_thich="di_tich")]
+        if n == 2:
+            outputs.append(last_tool_output(kw))
+            return [tool_call("thêm tài liệu về điểm đầu")]
+        outputs.append(last_tool_output(kw))
+        return [answer(viet_theo_khung({"input": [{"type": "function_call_output", "output": outputs[0]}]}))]
+
+    trace, _ = run(deps, "Lên lịch Huế 1 ngày, mình thích di tích", generator(script), ON)
+    n_nguon = len(trace.so_nguon)
+    assert outputs[1] == TOOL_DA_DU_LICH and trace.tools[-1] == {"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0,
+                                                                  "sau_lich": True}
+    assert trace.fixed_outcome is None and trace.citation_error is None and len(trace.so_nguon) == n_nguon
+    assert [t["name"] for t in trace.tools] == ["tim_kho", "lich_trinh", "tim_kho"] and "n_new" not in trace.tools[0]
+
+
 def test_self_written_itinerary_without_tool_is_retracted(deps):
     gen = generator(lambda n, kw: [answer("Ngày 1\nSáng: Đại Nội Huế [1]\nNgày 2\nSáng: Lăng Tự Đức [1]")])
     trace, _ = run(deps, CAU, gen, ON)

@@ -110,8 +110,9 @@ ASSISTANT_HISTORY_NOTE = (
 # Mô tả công cụ `lich_trinh` ngắn đi kèm danh sách công cụ; luật trình bày dài nằm **trong kết quả công cụ** (chỉ câu gọi `lich_trinh` mới thấy).
 # Không dùng tên địa danh thật làm ví dụ (ý #12 — model hay chép ví dụ).
 LICH_TRINH_MO_TA = (
-    "Xếp lịch tham quan Huế từ bảng điểm của hệ thống. Chỉ gọi khi người dùng nhờ lên lịch trình / gợi ý đi đâu cho chuyến đi; "
-    "không gọi cho câu hỏi về một điểm cụ thể. Truyền đúng thông tin người dùng đã nói, chưa nói thì để null, không tự đoán. "
+    "Xếp lịch tham quan Huế từ bảng điểm của hệ thống. Chỉ gọi khi tin nhắn cuối cùng của người dùng nhờ lên lịch trình / gợi ý đi đâu cho "
+    "chuyến đi, hoặc nhờ sửa lịch; không gọi cho câu hỏi về một điểm cụ thể, kể cả câu hỏi tiếp sau một lịch đã xếp (câu đó trả lời bằng "
+    "tim_kho). Truyền đúng thông tin người dùng đã nói, chưa nói thì để null, không tự đoán. "
     "Kết quả gồm khung lịch, luật trình bày và tài liệu của từng điểm."
 )
 LICH_TRINH_LUAT = (
@@ -126,6 +127,8 @@ LICH_TRINH_LUAT = (
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.
 TOOL_LIMIT_TEXT = "Đã hết lượt tìm kho. Hãy trả lời bằng Bằng chứng đã có hoặc trả câu không đủ thông tin."
 TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
+# B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
+TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã có; không tìm thêm — hãy viết câu trả lời ngay theo khung."
 
 
 def build_assistant_input(query: str, context: str | None, today: str | None = None) -> str:
