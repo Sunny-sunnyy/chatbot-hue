@@ -167,6 +167,32 @@ def test_final_check_each_item():
     assert lt.co_dang_lich(viet_tu_lich) and lt.kiem_cuoi(BANG, viet_tu_lich, None) == ["diem_ngoai_khung"]  # (7) không gọi công cụ
 
 
+def test_final_check_ignores_names_in_descriptions_b5_1():
+    # B5.1 (A 05/11): tên điểm khác nhắc trong lời tả không phải điểm đã xếp; câu tự viết cùng kiểu "từng là … của Kinh thành"
+    k = khung(so_ngay="1", so_thich="di_tich", kieu_di="thong_tha")
+    nguon = {"dai_noi": 3, "kinh_thanh": 4}
+    ok = ("- Sáng: Đại Nội Huế [3] — nơi từng là trung tâm của Kinh thành Huế, gần Chợ Đông Ba\n"
+          "- Chiều: Kinh thành Huế (Ngọ Môn – Kỳ Đài) [4] · đoạn tường thành từng là ranh giới với Phố cổ Bao Vinh\n"
+          "Đại Nội và Lăng Tự Đức đều là di tích của triều Nguyễn.")
+    assert lt.kiem_cuoi(BANG, ok, k, nguon) == []
+
+
+@pytest.mark.parametrize("them", [
+    "\n- Tối: Phố đi bộ Nguyễn Đình Chiểu [4]",          # dòng buổi có gạch đầu dòng
+    "\n**Tối:** Phố đi bộ Nguyễn Đình Chiểu",             # nhãn buổi in đậm
+    "\nTối (19h00): Chợ Đông Ba",                          # nhãn buổi kèm ngoặc giờ
+    "\nNgày 2 – Lăng Tự Đức",                              # tiêu đề ngày có tên điểm
+    "\n1. Lăng Tự Đức",                                    # danh sách số
+])
+def test_final_check_still_catches_scheduled_outside_frame(them):
+    k = khung(so_ngay="1", so_thich="di_tich", kieu_di="thong_tha")
+    nguon = {"dai_noi": 3, "kinh_thanh": 4}
+    ok = "Sáng: Đại Nội Huế [3].\nChiều: Kinh thành Huế (Ngọ Môn – Kỳ Đài) [4]."
+    assert "diem_ngoai_khung" in lt.kiem_cuoi(BANG, ok + them, k, nguon)
+    # cùng dòng buổi, điểm ngoài khung đứng sau điểm trong khung (chưa tới dấu tách) vẫn bị bắt
+    assert "diem_ngoai_khung" in lt.kiem_cuoi(BANG, ok.replace("Đại Nội Huế [3]", "Đại Nội Huế, sau đó ghé Chợ Đông Ba [3]"), k, nguon)
+
+
 @pytest.mark.parametrize("text, found", [
     ("vé 50.000đ", True), ("50.000 đ", True), ("1,5 triệu", True), ("200k", True), ("200.000 VNĐ", True), ("300 nghìn", True),
     ("đi 3N2Đ", False), ("hơn 1 nghìn năm", False), ("127 bậc", False), ("mở 7h00", False),

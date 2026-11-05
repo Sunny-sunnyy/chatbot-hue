@@ -396,6 +396,34 @@ def _ten_xuat_hien(bang: Bang, text: str) -> dict[str, list[int]]:
     return hit
 
 
+# B5.1 (A quyết 05/11, sau kín khoá `908e93b`): D8 (1) chỉ coi tên điểm là "đã xếp" khi nằm ở **đầu một dòng lịch** — dòng mở bằng gạch đầu
+# dòng / số thứ tự, hoặc nhãn buổi (Sáng / Chiều / Tối) / tiêu đề ngày; "đầu dòng" = phần trước dấu tách đầu tiên (— · [ ; : ". "), đã bỏ
+# ngoặc. Tên điểm khác nhắc trong lời tả ("từng là … của Kinh thành") không còn bị bắt nhầm.
+_GACH_DAU = re.compile(r"^\s*(?:[-*•+]|\d+[.)])\s+")
+_NHAN_DONG = re.compile(r"^(?:buổi\s+)?(?:sáng|chiều|tối)(?![\w])|^ngày\s*(?:thứ\s*)?\d+(?![\w])|^ngày\s+(?:một|hai|ba|bốn)(?![\w])")
+_NGOAC = re.compile(r"\([^)]*\)")
+_TACH_DAU = re.compile(r"\s[—–-]\s|[—·\[;:]|\.\s|\.$")
+
+
+def _dau_dong_lich(dong: str) -> str | None:
+    """Phần đầu của một dòng lịch (chữ đã chuẩn hoá); dòng không phải dòng lịch ⇒ None."""
+    d = " ".join(unicodedata.normalize("NFC", dong).replace("*", "").casefold().split())
+    gach = _GACH_DAU.match(d)
+    d = d[gach.end():] if gach else d
+    nhan = _NHAN_DONG.match(d)
+    if not (gach or nhan):
+        return None
+    d = _NGOAC.sub(" ", d[nhan.end():] if nhan else d).lstrip(" :–—-")
+    return _TACH_DAU.split(d, maxsplit=1)[0]
+
+
+def _ten_da_xep(bang: Bang, text: str) -> set[str]:
+    """Id điểm bảng có tên ở đầu một dòng lịch (D8 (1), B5.1)."""
+    dau = [h for h in map(_dau_dong_lich, text.splitlines()) if h]
+    return {id_ for khoa, id_ in bang.khoa.items() if khoa != id_
+            and any(re.search(r"(?<![\w])" + re.escape(khoa) + r"(?![\w])", h) for h in dau)}
+
+
 def co_dang_lich(text: str) -> bool:
     """D8 (7): chữ có dạng lịch (≥ 2 tiêu đề ngày, hoặc ≥ 2 dòng mở bằng Sáng / Chiều / Tối)."""
     return len(_TIEU_DE_NGAY.findall(text)) >= 2 or len(_DONG_BUOI.findall(text)) >= 2
@@ -407,8 +435,8 @@ def kiem_cuoi(bang: Bang, text: str, khung: dict | None, nguon: dict[str, int] |
     ids = set() if khung is None else set(diem_trong_khung(khung))
     hit = _ten_xuat_hien(bang, text)
     loi = []
-    if set(hit) - ids:
-        loi.append("diem_ngoai_khung")  # (1) (+ (8): tên điểm `khong_xep` như điểm đã xếp)
+    if _ten_da_xep(bang, text) - ids:
+        loi.append("diem_ngoai_khung")  # (1) tên ở đầu dòng lịch (B5.1) (+ (8): tên điểm `khong_xep` như điểm đã xếp)
     if gio_trong_chu(text) - (set() if khung is None else tap_gio(bang, khung)):
         loi.append("gio_ngoai_khung")  # (2)
     if _THOI_LUONG.search(text):
