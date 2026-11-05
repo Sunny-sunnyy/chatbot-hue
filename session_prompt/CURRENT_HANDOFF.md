@@ -119,7 +119,9 @@ Lệch phát hiện lúc mở: `p9-b4` chưa có `4e3cb4e` (PA1) — `p9-toc-do-
 - **B5.1 XONG** (`p9-b5` `5f0a1a3`): D8 (1) chỉ xét tên điểm ở đầu dòng lịch; test câu tự viết + ca vi phạm; đã thấy 13 chạy lại sạch (0,0094); khác luật cũ 0 / 30. Tiền B5 ≈ 0,104 / 0,15. Phiếu User chấm Q3: `data/phase_9/b5/kin/phieu_cham_user.md` `30c5207d16a1`. Giao (12:15 05/11/2026): **C191** review cả nhánh `p9-b5` · **B162** code B5c trên `p9-b5c` (lượt có phí sau B5 merge). Tiền Phase 9 ≈ 1,46; còn sau quỹ B7 ≈ 0,19 ≥ trần B5c ⇒ chưa xin User; **xin trước bậc sửa lịch**.
 - **MERGE B5 `d66f6a3` (cờ `lich_trinh` TẮT — chờ User chấm Q3)** + cổng (120 test, build, server thật). **MERGE #6 `92705ce` + BẬT `song_song_tra_loi` `5a8aa5e` (13:23 05/11/2026)** (review C vòng 2 ready `5c0bbf2746dc`); cổng: câu về Huế chữ đầu 2,75 s, khẩn cấp / ngoài phạm vi đúng, log 0 câu hỏi. Báo cáo: `BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 30, `LUONG` bản 28.
 - **C192 sửa kho giờ mở cửa:** chuẩn bị xong (sao lưu, bộ "trước" 0,0108 USD, script 21 edit, chia đoạn thử 8.435 đoạn 0 lỗi); bước xoá + dựng lại chỉ mục bị rào quyền ⇒ **chờ User `! bash /tmp/c192/chay.sh`** (Câu hỏi cho User 0b). Kho + chỉ mục hiện nguyên như cũ.
-- **C193 plan sửa lịch nhiều lượt** bản 1 `d98beebb5c4c` ⇒ **A quyết pass^2** (≈ 0,15; trần 0,16 / dừng 0,15 — vượt phần còn của trần Phase 9, User cho vượt khi vắng) ⇒ C bản 2 ⇒ **E review** (≤ 2 vòng). Code sau khi B5 bật.
+- **C193 plan sửa lịch nhiều lượt** bản 1 `d98beebb5c4c` ⇒ **A quyết pass^2** (≈ 0,15; trần 0,16 / dừng 0,15 ⇒ E review M-2: **trần 0,20 / dừng 0,19** đủ 1 vòng chỉnh — vượt phần còn của trần Phase 9, User cho vượt khi vắng) ⇒ C bản 2 ⇒ **E review** (≤ 2 vòng). Code sau khi B5 bật.
+- **C194 plan B5b thời tiết** bản 1 `6d6454fd9fae` (Open-Meteo ghi công; code dựng số + nguồn + giờ; kiểm số °C / % / mm; bão lũ ⇒ câu cố định NCHMF + 112; API lỗi ⇒ không số; công cụ chỉ đưa khi có từ khoá thời tiết; không bộ kín; trần 0,06; bảng v4 cột trong nhà / bậc thang ⇒ User duyệt) ⇒ **E review** (13:29 05/11/2026).
+- **A duyệt plan sửa lịch nhiều lượt bản 3 sha `5b68f3cb666a` (13:31 05/11/2026, tính từ file; E vòng 2 ready `f03506e4c25e`)** — pass^2, trần 0,20 / dừng 0,19 (vượt phần còn của trần Phase 9; User cho vượt khi vắng). Code khi B5 bật (sau User chấm Q3); B làm sau B5c.
 - Thứ tự merge: B4b trước ⇒ #6 rebase lên `main` mới + chạy lại Q1 ⇒ User quyết bật #6 (đổi hành vi).
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 ⇒ ÁP DỤNG (User: "cái gì đáng học thì ứng dụng, phát triển, cải thiện, add vào" — A ghi 21:16 04/11/2026)
@@ -151,7 +153,8 @@ Nguồn: `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ t�
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
-0b. **(05/11)** Gõ ở **terminal C**: `! bash /tmp/c192/chay.sh` (sha `4aa29d2b86b1`) — đợt sửa kho giờ mở cửa 11 điểm: ghi kho ⇒ chia đoạn thử ⇒ **xoá + dựng lại chỉ mục** (vài chục phút CPU) ⇒ T1; lỗi ⇒ tự lùi về kho cũ. Rào quyền chặn agent xoá collection ⇒ cần User. Trước khi gõ: C nhắn B / E tắt server (bước 0 tự kiểm). Bộ "trước" đã đo 0,0108 USD (13:14 05/11/2026).
+0c. **(05/11, sau khi plan B5b review xong)** Duyệt **bảng điểm v4** (thêm cột trong nhà / ngoài trời + nhiều bậc thang cho "phương án ngày mưa" — C soạn ở bước 1 plan B5b `docs/superpowers/plans/2026-11-05-phase-9-b5b-plan.md`).
+0b. **(05/11)** Gõ ở **terminal C**: `! bash /tmp/c192/chay.sh` (sha `eb101131f146` — C sửa bước 0 sau khi #6 merge) — đợt sửa kho giờ mở cửa 11 điểm: ghi kho ⇒ chia đoạn thử ⇒ **xoá + dựng lại chỉ mục** (vài chục phút CPU) ⇒ T1; lỗi ⇒ tự lùi về kho cũ. Rào quyền chặn agent xoá collection ⇒ cần User. Trước khi gõ: C nhắn B / E tắt server (bước 0 tự kiểm). Bộ "trước" đã đo 0,0108 USD (13:14 05/11/2026).
 0. **(05/11, gấp nhất)** Chấm 5 lịch kín B5 — `data/phase_9/b5/kin/phieu_cham_user.md` (đạt ≥ 4 / 5 cả 3 tiêu chí ⇒ A bật cờ `lich_trinh`). B5 đã merge cờ tắt `d66f6a3` (13:02 05/11/2026).
 1. Quyền phiên + giờ kết phiên.
 2. Vòng cải tiến 18 (A chuẩn bị lúc kết phiên 04/11 — `SO_CAI_TIEN_CACH_LAM.md` "Vòng 18").
