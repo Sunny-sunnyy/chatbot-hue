@@ -122,6 +122,8 @@ Lệch phát hiện lúc mở: `p9-b4` chưa có `4e3cb4e` (PA1) — `p9-toc-do-
 - **C193 plan sửa lịch nhiều lượt** bản 1 `d98beebb5c4c` ⇒ **A quyết pass^2** (≈ 0,15; trần 0,16 / dừng 0,15 ⇒ E review M-2: **trần 0,20 / dừng 0,19** đủ 1 vòng chỉnh — vượt phần còn của trần Phase 9, User cho vượt khi vắng) ⇒ C bản 2 ⇒ **E review** (≤ 2 vòng). Code sau khi B5 bật.
 - **C194 plan B5b thời tiết** bản 1 `6d6454fd9fae` (Open-Meteo ghi công; code dựng số + nguồn + giờ; kiểm số °C / % / mm; bão lũ ⇒ câu cố định NCHMF + 112; API lỗi ⇒ không số; công cụ chỉ đưa khi có từ khoá thời tiết; không bộ kín; trần 0,06; bảng v4 cột trong nhà / bậc thang ⇒ User duyệt) ⇒ **E review** (13:29 05/11/2026).
 - **A duyệt plan sửa lịch nhiều lượt bản 3 sha `5b68f3cb666a` (13:31 05/11/2026, tính từ file; E vòng 2 ready `f03506e4c25e`)** — pass^2, trần 0,20 / dừng 0,19 (vượt phần còn của trần Phase 9; User cho vượt khi vắng). Code khi B5 bật (sau User chấm Q3); B làm sau B5c.
+- **C195 plan B6 tra web** bản 1 `2e58a6f7749c` (cổng code sau câu từ chối; một module Serper; lần gọi model riêng; kiểm `[w n]` ∈ sổ / 0 URL / số tiền ⊂ đoạn trích; câu lưu trú 0 số tiền; bộ kín CÓ) ⇒ **A quyết (13:35 05/11/2026)** áp cách giảm (a) + (b), trần 0,22 / dừng 0,21 ⇒ **B review** sau B5c. E review B5b bản 1 changes_requested 0 / 1 / 6 (`c836a12438de`; M-1 số bịa khi bỏ sót từ khoá ⇒ tập số cho phép = số code ∪ số đoạn kho) ⇒ C bản 2.
+- **Tiền Phase 9 dự phóng (13:35 05/11/2026):** đã dùng ≈ 1,46 + B5c ≤ 0,14 + sửa lịch ≤ 0,20 + B5b ≤ 0,06 + B6 ≤ 0,22 + B7 0,35 ≈ **2,4 > trần 2,0** — User cho vượt khi vắng (tin \"đi nghỉ\", A ghi nhận 12:59 05/11/2026) ⇒ **báo User khi dậy** (đề xuất nâng trần Phase 9 lên 2,5).
 - Thứ tự merge: B4b trước ⇒ #6 rebase lên `main` mới + chạy lại Q1 ⇒ User quyết bật #6 (đổi hành vi).
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 ⇒ ÁP DỤNG (User: "cái gì đáng học thì ứng dụng, phát triển, cải thiện, add vào" — A ghi 21:16 04/11/2026)
@@ -153,6 +155,7 @@ Nguồn: `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ t�
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
+0d. **(05/11)** Dự phóng tiền Phase 9 ≈ 2,4 > trần 2,0 (thêm B5c, sửa lịch, đo ≥ 2 lượt) — đề xuất nâng trần lên **2,5** (bạn đã cho vượt khi vắng; xác nhận lại).
 0c. **(05/11, sau khi plan B5b review xong)** Duyệt **bảng điểm v4** (thêm cột trong nhà / ngoài trời + nhiều bậc thang cho "phương án ngày mưa" — C soạn ở bước 1 plan B5b `docs/superpowers/plans/2026-11-05-phase-9-b5b-plan.md`).
 0b. **(05/11)** Gõ ở **terminal C**: `! bash /tmp/c192/chay.sh` (sha `eb101131f146` — C sửa bước 0 sau khi #6 merge) — đợt sửa kho giờ mở cửa 11 điểm: ghi kho ⇒ chia đoạn thử ⇒ **xoá + dựng lại chỉ mục** (vài chục phút CPU) ⇒ T1; lỗi ⇒ tự lùi về kho cũ. Rào quyền chặn agent xoá collection ⇒ cần User. Trước khi gõ: C nhắn B / E tắt server (bước 0 tự kiểm). Bộ "trước" đã đo 0,0108 USD (13:14 05/11/2026).
 0. **(05/11, gấp nhất)** Chấm 5 lịch kín B5 — `data/phase_9/b5/kin/phieu_cham_user.md` (đạt ≥ 4 / 5 cả 3 tiêu chí ⇒ A bật cờ `lich_trinh`). B5 đã merge cờ tắt `d66f6a3` (13:02 05/11/2026).
