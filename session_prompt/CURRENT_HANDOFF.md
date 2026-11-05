@@ -34,6 +34,7 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 - **E Playwright P1 ĐẠT** (`p10-anh` `0632e10`, server thật; 0,001634 USD; Phase 10 ≈ 0,0802 / 0,15) ⇒ **C198** review cả nhánh `p10-anh` sau report C192 (`report_agent/2026-11-05_phase_10_anh/e8_review.md`); **E9** embed SigLIP 2 + collection `hue_anh_siglip2` + đo theo tiêu chí `a8524989f221` (A giao 19:51 05/11/2026).
 - **User GIỮ sửa kho C192 (20:07 05/11/2026)** (1 câu Golden case 67 phạm sàn lượt 1, chạy lại 2 / 2 đạt ⇒ theo dõi). A sửa báo cáo khâu kho / chia đoạn / Qdrant / từ khoá / tìm / LUONG bản 29 / nền tảng / sinh câu + `Project_Status` §4. **C199** bộ B6 giữ nhãn ⇒ B chạy đã thấy ×2. **C198** review `p10-anh` ready 0 / 0 / 3 (`e8_review.md` `67d64f39b829`) ⇒ E sửa m-1, m-2 ⇒ A merge cờ tắt. Bộ sửa lịch đã thấy 10 / 10 trên `1c53627`; kín chờ User `!` ở terminal C (lệnh trong `STATUS_C.md`; K-S2 thẻ rỗng — A xét khi có số). Kín B6 kiểm nhãn: chờ User `!` ở terminal C.
 - **MERGE `p10-anh` `2ca9937` (20:10 05/11/2026, cờ `anh.bat: false`; C198 ready + m-1 / m-2 sửa `973823f`):** cổng A: test 43 passed (3 file), `npm ci && npm run build`, `/` 200, `/health` 5 / 5, `/api/anh/ung_vien` 404, câu trong kho (giờ mở cửa lăng — trả giờ mới có [1]) + câu ngoài phạm vi đúng, `chat_metrics` 2 / 2, câu hỏi trong log 0; ≈ 0,0004 USD. m-3 (Host / DNS rebinding, trần yêu cầu ảnh đồng thời) ⇒ Phase 12. **E** viết `bao_cao_he_thong/BAO_CAO_HOI_BANG_ANH.md` sau khi có kết quả E9 (A review). Nhánh `p10-anh` đã merge ⇒ chờ User xoá.
+- **C200** phân tích nhiễu S-AT (`data/phase_9/s_at_nhieu/c200_phan_tich.md`, 0 USD) ⇒ **User duyệt luật S-AT mới (20:14 05/11/2026)** — áp cho B6 Q4, sửa lịch và mọi lượt sau. **C199** kín B6 giữ nhãn (User `!`); bộ B6 sẵn.
 - **C (sau C192):** khi B163 có report ⇒ chạy lại `kiem_bo` / `mo_phong` bộ sửa lịch trên code B (đã thấy 10 + kín 5, chỉ số đếm).
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 — trạng thái (nguồn `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ `data/nghien_cuu_tinh_nang_2026-11-04/`)
@@ -57,7 +58,7 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 2. Gõ ở **terminal C** các lệnh `!` kín C đã đưa (chỉ in số đếm): bộ kín sửa lịch + kiểm nhãn bộ kín B6 (lệnh trong `STATUS_C.md`).
 4. Duyệt bảng điểm v4 `data/phase_9/lich_trinh/diem_cho_user_v4.md` (một ô tick) + có thêm 5 điểm trong nhà kho đã có (Bảo tàng Cổ vật Cung đình, Duyệt Thị Đường, Không gian Lê Bá Đảng, Bảo tàng Mỹ thuật, Bảo tàng Hồ Chí Minh) thành bảng v5 không.
 6. Xoá 4 nhánh đã merge `p9-b4`, `p9-b5`, `p9-toc-do-6`, `p9-toc-do-6b` (local + origin, User `!`).
-7. Vòng cải tiến 19 (đề xuất, `SO_CAI_TIEN_CACH_LAM.md`): gỡ W4 / W39 (Session D 0 buổi, hạn 07/11) — hay giữ để dùng D; **S-AT n = 3 dễ âm oan** (B4b, B5c đều chênh đúng 1 lượt) ⇒ tăng n hay luật "chênh ≥ 2" — chạm thước an toàn ⇒ User quyết.
+7. Vòng cải tiến 19: gỡ W4 / W39 (Session D 0 buổi, hạn 07/11) — hay giữ để dùng D. (S-AT: User quyết 20:14 05/11/2026 — chênh đúng 1 ⇒ sinh thêm 3 + 3, âm khi tổng chênh ≥ 2 / 6; `skills/run-experiment/SKILL.md` §4.)
 8. Không gấp: đọc 10 câu mẫu B4 / B6 (`data/phase_9/bo_do_b4/mau_cho_user.md`, `data/phase_9/bo_do_b6/mau_cho_user.md`); 4 worktree AGY cũ giữ hay gỡ; xoá sao lưu kho đợt 1 + 2?; báo cáo tiến độ cho giáo viên.
 
 ## Câu hỏi A còn nợ (không cần User)
