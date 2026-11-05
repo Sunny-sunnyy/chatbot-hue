@@ -4,9 +4,10 @@ Vai: thực thi. Phiên mở theo `session_prompt/START_SESSION.md`; việc lấ
 Phiên 05/11: B `hue-rag-48` · A `hue-rag-b0` · C `hue-rag-52`. Quyền (User 08:51 05/11): việc A giao = "làm đi"; hết hạn cuối phiên.
 
 ## Đang làm
-- **B160 = B5 `lich_trinh`** — nhánh `p9-b5` **`908e93b`** (khoá, push), worktree `/tmp/b_b5` (symlink `data/`, `knowledge-base-hue/`). Report **`report_agent/2026-11-02_phase_9_code/b160_b5_implementation.md`**.
-  Mọi sàn B đo được đạt (Q1, Q1m, đã thấy v2, chuỗi v2, Q4 + S-AT, Q8 cổng 2 lượt + Playwright). **Chờ:** kín 5 câu (C, User) ⇒ User chấm Q3 ⇒ C review ⇒ A merge.
-  Tiền B5 (B) ≈ 0,0903 / 0,15. Dữ liệu `data/phase_9/b5/`; harness `data/phase_9/b5/tools/` (`chay_b5.py`, `chuoi_b5.py`, `q8_b5.py`, `app_lich.py`).
+- **B160 = B5 `lich_trinh`** — nhánh `p9-b5` **`5bc45cf`** (khoá `908e93b` + B5.1 + sửa C191 vòng 1, push), worktree `/tmp/b_b5` (symlink `data/`, `knowledge-base-hue/`). Report **`report_agent/2026-11-02_phase_9_code/b160_b5_implementation.md`**.
+  Mọi sàn B đo được đạt (Q1, Q1m, đã thấy v2, chuỗi v2, Q4 + S-AT, Q8 cổng 2 lượt + Playwright). Kín (C, khoá 908e93b): Q2a 5/5, đạt theo nội dung (A); rút nhầm 1/5 ⇒ B5.1 sửa, đã thấy 13 chạy lại sạch. **Chờ:** User chấm Q3 ⇒ C review ⇒ A merge.
+  Tiền B5 (B) ≈ 0,0997 (+ kín C 0,0046) / 0,15. Dữ liệu `data/phase_9/b5/`; harness `data/phase_9/b5/tools/` (`chay_b5.py`, `chuoi_b5.py`, `q8_b5.py`, `app_lich.py`).
+- **B161** review c172 tốc độ #6 ⇒ ready + điều kiện merge M-1 (`report_agent/2026-11-02_phase_9_code/c172_review.md`). **B5c chuẩn bị:** nhánh `p9-b5c` `d55d7a9` (từ `p9-b5`, worktree `/tmp/b_b5c`) — `do_so_nguoi`, `do_ngay_du_toan`, `tim_gia_tri` + 37 test; harness 0 USD `data/phase_9/b5c/tools/do_so_bo.py` (đã thấy khớp nhãn 100 %). Chưa nối lõi; rebase khi B5 merge.
 - Đã xong phiên này (chi tiết ở report / file review): B156 B4 âm, B157 B4b âm (`b144_b4_implementation.md` §2f §2g); B158 review spec Phase 10; B159 review plan B5c; rà over-engineering `data/ra_soat_over_engineering_2026-11-05/B.md`.
 
 ## Lệnh hay dùng (từ `/tmp/b_b5/backend`, luôn `PYTHONPATH=$PWD HF_HUB_OFFLINE=1`)

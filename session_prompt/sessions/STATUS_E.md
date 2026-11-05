@@ -14,11 +14,12 @@ Terminal: `hue-rag-7a` (mở 09:47 05/11/2026) · Agent: Claude Opus 5.5 (User m
 ## Việc đầu tiên: E1 — xem mục E1 trong `CURRENT_HANDOFF.md` ("PHIÊN 05/11 — VIỆC ĐANG GIAO")
 
 ## Đang làm
+- **E9 thí nghiệm P2 SigLIP 2** (User duyệt tải model + collection Qdrant mới; A giao) — 11:51 05/11/2026: tiêu chí ghi trước `data/phase_10/anh/e9/tieu_chi_ghi_truoc.md` `a8524989f221`; model 1,5 GB đã tải; ảnh mẫu 186 / 40 tên đang tải. Lời dặn code đã về **v1** (User chọn giữ v1 dạng gợi ý). Giao diện P1 sau khi B5 merge.
 - **E8 Phase 10 A1** — code + kiểm XONG (11:17 05/11/2026): T1–T9 + A1b đạt; report `report_agent/2026-11-05_phase_10_anh/e8_a1_implementation.md` `8d2399b3b425`. **Commit + push nhánh `p10-anh` bị auto mode chặn** (luật User: commit / push hỏi trước; quyền A là tin phiên khác) ⇒ 6 file *staged* trong `/tmp/e_anh`, **chờ User đồng ý**. Tiền A1 0,00038418 USD.
 - E1 giọng nói: **dở — tạm dừng 09:51 05/11/2026 theo User**; phần đã kiểm `data/phase_10_nghien_cuu/giong_noi/nghien_cuu_mo_hinh.md`; Codex `e1-stt`, `e1-tts` để chạy hết, chưa đọc
 
 ## Đang khai báo sửa
-- `docs/superpowers/plans/2026-11-05-phase-10-a1-plan.md` (E8) · sẽ: worktree `/tmp/e_anh` nhánh `p10-anh` (`backend/llm/nhan_anh.py`, `backend/api/routes/anh.py`, `backend/tests/test_p10_anh.py`, `backend/api/app.py`, `backend/config/settings.yaml`), `data/phase_10/anh/` · không (các file E đã viết: `data/phase_10_nghien_cuu/`, `data/phase_11_nghien_cuu/luu_tru/`, `…b5-plan_review.md` vòng 3–6, `docs/superpowers/specs/2026-11-05-phase-10-design.md` nháp — chưa commit, A commit) · `data/phase_10_nghien_cuu/giong_noi/` (mới, private) · `data/phase_10_nghien_cuu/anh/` · `data/tra_cuu_cli/2026-11-05_e1-*`, `…_e2-anh` (đầu ra script) · file này
+- Qdrant collection **`hue_anh_siglip2`** (mới, E9 — không đụng `hue_full_corpus_*`) · `data/phase_10/anh/e9/` · `docs/superpowers/plans/2026-11-05-phase-10-a1-plan.md` (E8) · sẽ: worktree `/tmp/e_anh` nhánh `p10-anh` (`backend/llm/nhan_anh.py`, `backend/api/routes/anh.py`, `backend/tests/test_p10_anh.py`, `backend/api/app.py`, `backend/config/settings.yaml`), `data/phase_10/anh/` · không (các file E đã viết: `data/phase_10_nghien_cuu/`, `data/phase_11_nghien_cuu/luu_tru/`, `…b5-plan_review.md` vòng 3–6, `docs/superpowers/specs/2026-11-05-phase-10-design.md` nháp — chưa commit, A commit) · `data/phase_10_nghien_cuu/giong_noi/` (mới, private) · `data/phase_10_nghien_cuu/anh/` · `data/tra_cuu_cli/2026-11-05_e1-*`, `…_e2-anh` (đầu ra script) · file này
 
 ## Vừa xong
 - **A2 P1 XONG — KẾT QUẢ ÂM** (11:37 05/11/2026): v0 / v1 / v2 × 2 lượt, chưa vòng nào đạt cả Q-a + Q-c hai lượt; tiền Phase 10 0,078545 / 0,15. Report mục A2 trong `e8_a1_implementation.md`. Chờ A / User chọn (P2 SigLIP / gợi ý + M0 / dừng).
