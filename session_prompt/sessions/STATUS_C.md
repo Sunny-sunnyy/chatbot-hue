@@ -58,6 +58,23 @@
 
 ## C185 — bộ đo B5 (A giao, ưu tiên; bắt đầu 10:28 05/11/2026)
 - **File sẽ ghi (private):** `data/phase_9/bo_do_b5/` — README, `cau_da_thay.jsonl` (13), `cau_sealed.jsonl` (5, B không mở), `chuoi.jsonl`, `mau_cho_user.md`, `tools/kiem_bo.py`; file này. 0 USD.
+- **C185 XONG (10:34 05/11/2026):** bộ đo B5 `data/phase_9/bo_do_b5/` — đã thấy 13 `e518a76a624a` · kín 5 `6469a713edc0` (K-L4 đổi "Bạch Mã" ⇒ "thác Nhị Hồ": tên rút gọn chờ User câu 2) · chuỗi 5 `2a3b87b8c481` · README `cb3638be5018` · `kiem_bo.py` OK, ca phá 4/4.
+- **C184 XONG (10:34 05/11/2026):** bộ đo B5c `data/phase_9/bo_do_b5c/` — đã thấy 14 `bc6755a34dbe` · kín 6 `13eedb9884a6` · chuỗi 7 `79e458b7a023` · đáp án tay 8 + 4 · README · `kiem_bo.py` OK (3 câu viết lại vì trùng 3-gram > 0,5 với bộ B4 / Golden), ca phá 3/3. 0 USD cả hai.
+- Bảng v3 **User duyệt ~10:16** (A): (a) cả 3 câu — bộ B5 không đổi.
+
+## C187 review plan Phase 10 A1 + C186 chuyển backend/data (A giao; bắt đầu 10:42 05/11/2026)
+- **File sẽ ghi:** `docs/superpowers/plans/2026-11-05-phase-10-a1-plan_review.md`; `data/nguon_mo_huegov_2026-08-05/` (+ README); sửa đường dẫn `data/tools/huegov_converters/`; xoá `backend/data/` sau khi chuyển (rm bị chặn ⇒ User `!`); file này. 0 USD.
+- **C187 XONG (10:51 05/11/2026):** review plan Phase 10 A1 — vòng 1 `2b30ebac8c02` changes_requested 0/1/7; vòng 2 `2fc2fcea33d4` **ready** (`…phase-10-a1-plan_review.md` `bf48ae1e2620`). A quyết (1) C chọn 33+10 ảnh + 3 ảnh chữ ra lệnh, giữ kín; (2) bỏ "một lượt / phiên".
+- **C186 XONG (10:51 05/11/2026):** `backend/data/` ⇒ `data/nguon_mo_huegov_2026-08-05/` (md5 32/32; bỏ 3 bản trùng byte; 29 file; README đánh dấu dữ liệu cá nhân / nhạy); `data/tools/huegov_converters/` sửa đường dẫn + `SHARED_IN_CULTURE` (kiểm khô, không chạy thật vì ghi đè `_source-dumps`). `backend/data` đã gỡ.
+- **Việc kế (chờ A + User duyệt `ca_trung.md`):** chọn ảnh Phase 10 bằng `uv run python -I data/phase_10/anh/tools/tai_anh.py <ds.txt> <thư mục>` (E).
+
+## C188 bộ ảnh Phase 10 + ảnh minh hoạ · C189 kho thiếu gì · kín B5 · rà soát (A giao; 11:16–11:28 05/11/2026 `date`)
+- **C188 bộ đo XONG:** `data/phase_10/bo_do_anh/README.md` (33 đã thấy, nhãn md5 `1f37c7f11821`) + `bo_do_anh_sealed/` (10 ảnh, `55ac37916483`) — luật mới 05/11: **kín ảnh không chạy**.
+- **Ảnh minh hoạ XONG:** `data/phase_10/anh/minh_hoa/` (README, `nhan_minh_hoa.jsonl` `27da06f18bd3`) — 38 / 42 id (29 Commons + 9 báo qua `og:image`); thiếu `dam_chuon`, `thac_nhi_ho`, `pho_hai_ba_trung`, di tích HCM; 0 trùng bộ đo / kín. Đã báo A. Dọn `/tmp/c188` khi A chốt.
+- **C189 XONG:** `data/kiem_kho_thieu_2026-11-05/c189_ket_qua.md` — Golden 18 / 18 nhóm (b); nhóm (a) từ B6 15 câu; giờ 13 điểm B5 lấp được từ dữ liệu mở. Đã báo A.
+- **Kín B5:** lệnh `/tmp/c_b5kin_run/chay.sh` (worktree `/tmp/c_b5kin` detach `908e93b`); bước 0 chạy khô đạt 11:23; **chờ User `!`** ⇒ đầu ra `data/phase_9/b5/kin/kin_v1*.json*`, báo B / A số đếm.
+- **Rà soát over-engineering XONG:** `data/ra_soat_over_engineering_2026-11-05/C.md` (28 dòng). Đã báo A.
+- Bẫy: file này 870+ dòng — chính C đề xuất ≤ 30 dòng; chờ A chốt luật rồi gọn một lần.
 
 # STATUS C — PHIÊN SAU ĐỌC TRƯỚC (C viết 21:18 04/11/2026 `date` — kết phiên 04/11)
 

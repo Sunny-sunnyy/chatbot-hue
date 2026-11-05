@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Kho dữ liệu — sửa dữ liệu và tạo lại chỉ mục (Phase 7A2 → sửa kho đợt 1, 2)
 
-**Cập nhật lần cuối: 11:04 01/11/2026 — câu Golden lệch kho: bạn giữ nguyên. Bản 7 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
+**Cập nhật lần cuối: 11:22 05/11/2026 — bản 8: **kiểm kho thiếu gì** (C189, 0 USD): câu Golden mất điểm đều do khâu tìm, không do kho thiếu; lỗ hổng thật nằm ở câu kho không có (ăn uống, giờ / vé, lễ hội theo ngày); dữ liệu mở của tỉnh chuyển vào `data/` — lấp được giờ mở cửa 13 điểm lịch trình. Kho **chưa sửa**.** Trước: 11:04 01/11/2026 — câu Golden lệch kho: bạn giữ nguyên. Bản 7 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
 Người viết: B (bản 4–6; bản 1–3: C), A (bản 7, qua sub-agent) · Review: A (bản 1–6); bản 7 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -72,6 +72,13 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 05/11/2026 — Kiểm kho thiếu gì (C189, chỉ đọc kết quả đo đã có, 0 USD) + dữ liệu mở của tỉnh
+- **Câu hỏi:** câu bị từ chối nhầm / thiếu ý là do (a) kho thật sự không có, (b) kho có nhưng khâu tìm không đưa đoạn đúng vào 10 đoạn, hay (c) có đoạn đúng mà model bỏ?
+- **Golden 176 (lượt đo cuối 01/11):** 18 câu thiếu ý / từ chối nhầm ⇒ **18 / 18 là (b)** (25 ý thiếu đoạn đúng trong 10 đoạn), 0 (a), 0 (c); phần lớn câu nhiều nguồn (12) và so sánh (4). Giới hạn: Golden được soạn để kho trả lời được ⇒ không lộ lỗ hổng kho. Ở bản đang chạy (Phase 9, có tìm thêm), 5 câu trong số đó nằm trong mẫu 30 câu đã đo ⇒ cả 5 không còn bị từ chối.
+- **Lỗ hổng kho thật (nhóm a, từ bộ câu "về Huế mà kho không có" của B6, 15 câu):** ăn uống 5 · giờ / vé / giá 4 · di tích 2 · lễ hội theo ngày 1 · khác 3. Ví dụ hôm nay: "Lăng Tự Đức mở cửa mấy giờ" ⇒ file lăng không ghi giờ.
+- **Dữ liệu mở của tỉnh** (cổng dữ liệu Huế, tải 05/08/2026; trước nằm ở `backend/data/`, **chuyển sang `data/nguon_mo_huegov_2026-08-05/`** 05/11 theo bạn — không đổi chatbot): file di tích có giờ mở / đóng cửa cho 47 / 180 điểm (130 ghi "cả ngày"); trong 28 điểm lịch trình B5 có **13 điểm có giờ thật** (Đại Nội, Kinh thành, chợ Đông Ba, cung An Định, đàn Nam Giao, điện Hòn Chén, 7 lăng); lễ hội 138 bản ghi chỉ có mô tả, không có ngày; quán ăn 6.794 bản ghi có tên + địa chỉ + toạ độ (giờ / giá hầu như không có); toạ độ di tích 179 / 180 dùng được cho bản đồ (Phase 11). Có file chứa dữ liệu cá nhân (hướng dẫn viên; SĐT / email / mã số thuế cơ sở) ⇒ không đưa vào kho / báo cáo.
+- **Đề xuất (chưa làm, chờ bạn):** (1) nhóm (b) sửa ở **khâu tìm** (trợ lý tìm thêm đã giúp; backlog #13 / #14 chưa đủ căn cứ), không phải thêm kho; (2) **đợt sửa kho nhỏ:** thêm giờ mở cửa cho 13 điểm từ dữ liệu mở (ghi nguồn + ngày) — sửa đúng ví dụ lăng Tự Đức và cho lịch trình B5 giờ riêng từng điểm; cần sao lưu + dựng lại chỉ mục + đo lại, làm **sau khi B5 đo xong** để không đổi kho giữa lượt đo; (3) ăn uống / lễ hội theo ngày / lưu trú ⇒ tra web (B6) + Phase 11. Hồ sơ: `data/kiem_kho_thieu_2026-11-05/c189_ket_qua.md` (private).
 
 ### 30/10/2026 — Sửa kho đợt 2 + dựng lại chỉ mục + đo "trước ↔ sau" (bạn đóng 14:39 30/10, giữ sao lưu)
 - Soạn theo luật bạn đặt 29/10 (20 mục, 123 chỗ); C review 3 vòng, A duyệt; plan đo ghi tiêu chí trước. Bộ "trước" dùng lại bộ "sau" đợt 1 sau 4 kiểm "còn hiệu

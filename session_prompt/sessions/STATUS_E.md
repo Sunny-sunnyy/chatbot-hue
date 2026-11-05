@@ -14,13 +14,16 @@ Terminal: `hue-rag-7a` (mở 09:47 05/11/2026) · Agent: Claude Opus 5.5 (User m
 ## Việc đầu tiên: E1 — xem mục E1 trong `CURRENT_HANDOFF.md` ("PHIÊN 05/11 — VIỆC ĐANG GIAO")
 
 ## Đang làm
-- **E7 sửa `scripts/tra_web_codex.sh`** (A giao 10:25 05/11/2026): cách đếm trang mở + câu cấm tự dựng URL; kiểm 0 USD trên thư mục cũ + 1 probe Codex
+- **E8 Phase 10 A1** — code + kiểm XONG (11:17 05/11/2026): T1–T9 + A1b đạt; report `report_agent/2026-11-05_phase_10_anh/e8_a1_implementation.md` `8d2399b3b425`. **Commit + push nhánh `p10-anh` bị auto mode chặn** (luật User: commit / push hỏi trước; quyền A là tin phiên khác) ⇒ 6 file *staged* trong `/tmp/e_anh`, **chờ User đồng ý**. Tiền A1 0,00038418 USD.
 - E1 giọng nói: **dở — tạm dừng 09:51 05/11/2026 theo User**; phần đã kiểm `data/phase_10_nghien_cuu/giong_noi/nghien_cuu_mo_hinh.md`; Codex `e1-stt`, `e1-tts` để chạy hết, chưa đọc
 
 ## Đang khai báo sửa
-- **`scripts/tra_web_codex.sh`** (E7) · thư mục probe `data/tra_cuu_cli/<ngày>_e7-probe-*` · không (các file E đã viết: `data/phase_10_nghien_cuu/`, `data/phase_11_nghien_cuu/luu_tru/`, `…b5-plan_review.md` vòng 3–6, `docs/superpowers/specs/2026-11-05-phase-10-design.md` nháp — chưa commit, A commit) · `data/phase_10_nghien_cuu/giong_noi/` (mới, private) · `data/phase_10_nghien_cuu/anh/` · `data/tra_cuu_cli/2026-11-05_e1-*`, `…_e2-anh` (đầu ra script) · file này
+- `docs/superpowers/plans/2026-11-05-phase-10-a1-plan.md` (E8) · sẽ: worktree `/tmp/e_anh` nhánh `p10-anh` (`backend/llm/nhan_anh.py`, `backend/api/routes/anh.py`, `backend/tests/test_p10_anh.py`, `backend/api/app.py`, `backend/config/settings.yaml`), `data/phase_10/anh/` · không (các file E đã viết: `data/phase_10_nghien_cuu/`, `data/phase_11_nghien_cuu/luu_tru/`, `…b5-plan_review.md` vòng 3–6, `docs/superpowers/specs/2026-11-05-phase-10-design.md` nháp — chưa commit, A commit) · `data/phase_10_nghien_cuu/giong_noi/` (mới, private) · `data/phase_10_nghien_cuu/anh/` · `data/tra_cuu_cli/2026-11-05_e1-*`, `…_e2-anh` (đầu ra script) · file này
 
 ## Vừa xong
+- **A2 P1 XONG — KẾT QUẢ ÂM** (11:37 05/11/2026): v0 / v1 / v2 × 2 lượt, chưa vòng nào đạt cả Q-a + Q-c hai lượt; tiền Phase 10 0,078545 / 0,15. Report mục A2 trong `e8_a1_implementation.md`. Chờ A / User chọn (P2 SigLIP / gợi ý + M0 / dừng).
+- **Rà over-engineering** `data/ra_soat_over_engineering_2026-11-05/E.md` (38 dòng).
+- **E7 XONG** — `scripts/tra_web_codex.sh` +47/−5 (chưa commit, A review): đếm trang mở đúng (khớp E6 trên 6 thư mục), `--dem`, câu cấm; probe `e7-probe-url-mau` PARTIAL (0 trang đặt chỗ, URL mẫu có nhãn; 1 lần mở lỗi không quy được). Probe là gói User, 0 USD API.
 - **E6 XONG** — `data/tra_cuu_cli/e6_ra_soat_script.md` sha `f0df99e5ecd8`: `url_da_mo` thiếu vì lô mở trang có `action.type: other` (results `ref_id` *view*); đếm đúng 8–41 trang / lượt; Codex tự mở URL tự dựng do hướng dẫn "URL đã mở" + yêu cầu "URL mẫu" ⇒ đề xuất câu cấm + cách đếm mới (A sửa script)
 - Spec Phase 10 bản 2 `bf67b90fb6fc` ⇒ **B vòng 2 ready** (review `6aeebc5e0914`)
 - **E5 XONG** — `data/phase_11_nghien_cuu/luu_tru/e5_khu_o_va_link.md` sha `9c5411f6c032` (kho: 1 mục "nên ở khu nào", 3 nhóm khu; link chính Google Maps URLs; Booking User quyết; Agoda không)
@@ -30,6 +33,9 @@ Terminal: `hue-rag-7a` (mở 09:47 05/11/2026) · Agent: Claude Opus 5.5 (User m
 - **E2 XONG 09:57 05/11/2026** — `data/phase_10_nghien_cuu/anh/nghien_cuu_anh.md` sha `0dcc2c717498` (0 USD; Codex e2-anh + 12 WebFetch); tóm đã nhắn A. Đề xuất P1 luna enum + xác nhận, P2 SigLIP 2 chạy máy; ngưỡng ghi trước mục 5.1; lượt đo P1 ước 0,04–0,07 USD.
 
 ## Đã học / bẫy gặp
+- `max_tokens` gồm suy luận: 512 cắt 4 / 66 ảnh khó (đầu ra hỏng ⇒ chấm "không nhận ra" ⇒ số đo lạc quan) ⇒ luôn đếm `output_tokens == trần` trong lượt đo.
+- Commit / push từ E: auto mode coi "A cho phép" là tin phiên khác, không phải User đồng ý (luật CLAUDE.md của User) ⇒ E cần User xác nhận ngay trong terminal E (hoặc User `!`).
+- Lỡ chạy `python3` hệ thống (không Pillow) để tạo ảnh test ⇒ luôn `uv run`.
 - Gõ tay giờ "10:21" vào spec (hook bắt) ⇒ luôn `T=$(date …)` trước, kể cả khi sửa bằng Edit.
 - `main` đổi giữa lúc viết (B4b merge) ⇒ `file:dòng` lệch ⇒ grep lại số dòng ngay trước khi báo sha.
 - Tin A / C có thể tới **sau** khi đã ghi review (bản 5 bị thay giữa chừng) ⇒ ghi kết luận "tạm, bị thay" thay vì xoá; trước khi ghi kết luận vòng, kiểm lại sha file plan.

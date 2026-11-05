@@ -1,7 +1,7 @@
 # Ngữ cảnh riêng của từng session
 
 Mỗi session giữ một file `STATUS_<X>.md` (A, B, C…). Chính session đó ghi đè,
-giữ ngắn (≤ ~60 dòng), cập nhật khi xong một việc và trước khi kết phiên. Session
+giữ ngắn (**≤ ~30 dòng**, trỏ tới report thay vì chép số; 05/11), cập nhật khi xong một việc và trước khi kết phiên. Session
 mới mở với vai `<X>` đọc file này để nối tiếp. Việc được giao nằm ở
 `CURRENT_HANDOFF.md`; lịch sử ở `PROJECT_HISTORY.md`; ở đây chỉ giữ ngữ cảnh làm
 việc của riêng session.

@@ -91,6 +91,7 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 - **Kết luận:** `ready_for_user_confirmation` · `changes_requested` · `blocked`.
 - Mỗi finding: vị trí, yêu cầu bị ảnh hưởng, bằng chứng, tác động, tiêu chí đóng.
   Người làm được phản biện bằng bằng chứng.
+- **Review dừng ngay** khi A biết hướng / phụ thuộc sắp đổi (05/11: một lượt review plan B5 bản 5 bị bỏ).
 - **Tối đa 2 vòng review** cho plan / spec (User 05/11 — `Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt; vẫn còn blocker / major sau vòng 2 ⇒ A xem lại thiết kế (với User nếu đổi phạm vi). Code: một review cả nhánh.
 
 ## 6. Report
@@ -112,10 +113,9 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
   bảng "Các đợt" của `report_agent/README.md`. Dữ liệu chạy (kết quả, trace) để ở `data/` hoặc `/tmp`,
   report chỉ trỏ đường dẫn. `reports/` là lịch sử tới 2026-10-24, không thêm file.
 - **User chỉ cần đọc `bao_cao_he_thong/`** (mục lục `bao_cao_he_thong/README.md`). Mỗi thay đổi vào
-  hệ thống đang chạy ⇒ A sửa **đủ 5 chỗ**: `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md` của
-  đúng khâu (sửa cả Tóm tắt + checklist, không chỉ thêm mục cuối), `nhat_ky/` của đợt,
-  `Project_Status.md`, **và** mục "Hiện hành" của guide khâu đó (`guides/phase_<n>_*.md`, `guides/full_corpus_rag.md`); rồi bảng trong
-  `bao_cao_he_thong/README.md` (27/10: guide 8 ghi "8.2 tạm dừng" 1 ngày, guide 6 thiếu log mới sau merge — W29).
+  hệ thống đang chạy ⇒ A sửa **ngay trong đợt** (rút gọn 05/11 từ "5 chỗ"): `BAO_CAO_<KHÂU>.md` của đúng khâu (sửa cả Tóm tắt + checklist,
+  không chỉ thêm mục cuối) + `nhat_ky/` của ngày + bảng `bao_cao_he_thong/README.md`; `LUONG_HOAT_DONG_HE_THONG.md` **chỉ khi hành vi người
+  dùng thấy đổi**. `Project_Status.md` sửa ở kết phiên; mục "Hiện hành" của guide (`guides/…`) sửa khi đóng Phase.
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
@@ -170,12 +170,13 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    câu có đáp án, kèm đổi gì, tốn gì, khi nào sai). Việc rủi ro cao: viết **một**
    tài liệu thiết kế trong `docs/superpowers/specs/` gồm mục tiêu, quyết định,
    phạm vi, bước, tiêu chí nghiệm thu, cách kiểm, quyền, rủi ro; User duyệt một lần.
-   Spec / plan có agent, công cụ, dữ liệu hay đường ra mới phải có **bảng rà khung AI FDE** (`Session_Prompt.md` §7; User 05/11). Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** file kế hoạch / spec
-   chưa commit thì khi duyệt ghi kèm `sha256sum` (12 ký tự) vào `CURRENT_HANDOFF.md`; sửa sau khi duyệt là
-   bản mới, cần duyệt lại phần đổi. A tính sha **từ file** (`sha256sum <file> | cut -c1-12`) ngay lúc ghi duyệt, không
-   chép sha từ tin nhắn; người viết không sửa plan sau khi báo sha — cần sửa thì báo sha mới (26/10: duyệt nhầm bản R2).
-   **Kế hoạch có tiêu chí ghi trước** (thí nghiệm; người viết thường là B/C): đầu file có mục "Căn cứ để review" — 2–4
-   file, mỗi file ghi mục cần đọc. A chọn một session khác người viết review chỉ dựa trên gói đó (được chạy lệnh chỉ đọc /
+   Spec / plan có agent, công cụ, dữ liệu hay đường ra mới phải có **bảng rà khung AI FDE** (`Session_Prompt.md` §7; User 05/11). Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** chỉ **bản trình duyệt** cần sha
+   (bản nháp giữa vòng không báo sha từng lần); A tính sha **từ file** (`sha256sum <file> | cut -c1-12`) lúc ghi duyệt vào `CURRENT_HANDOFF.md`.
+   Sửa sau duyệt: đổi **tiêu chí / ngưỡng / tiền / phạm vi** ⇒ bản mới, duyệt lại phần đổi; sửa chữ / chi tiết không đổi những thứ đó ⇒ ghi một dòng,
+   không cần duyệt lại. Mục "Chỗ đổi" trong plan chỉ giữ **bản cuối** (bản cũ ở git).
+   **Kế hoạch có tiêu chí ghi trước** (thí nghiệm có lượt trả phí > ~0,05 USD hoặc chạm an toàn; plan nhỏ 0 USD ⇒ A đọc rồi duyệt): đầu file có mục
+   "Căn cứ để review" — 2–4 file, ghi **file + mục / hàm** (không số dòng — số dòng cũ khi `main` đổi). **Có bộ kín hay không ghi ngay ở spec / plan**,
+   trước khi dựng bộ (05/11: bộ kín B5c + ảnh dựng xong rồi bỏ). A chọn một session khác người viết review chỉ dựa trên gói đó (được chạy lệnh chỉ đọc /
    tính lại từ dữ liệu; không đọc STATUS / tin nhắn của người viết; thiếu căn cứ ⇒ finding), ghi `<plan>_review.md` (§6),
    trước khi A ghi "duyệt bản sha"; sửa sau review thì người review kiểm phần sửa (25/10: A tự duyệt plan G3, B tìm 3 lỗi sau).
 2. **Giao việc:** mỗi session một mục trong `CURRENT_HANDOFF.md` (mục tiêu, đọc gì
