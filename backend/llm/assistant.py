@@ -224,23 +224,16 @@ def _history_kwargs(trace: AnswerTrace) -> dict:
     return {"history": trace.history} if trace.history else {}
 
 
-def _cach_a(flags: AssistantFlags, trace: AnswerTrace) -> bool:
-    """B4 D7 khoá 2: cờ `hoi_lai` bật mà lượt không đưa công cụ (lượt ghép / "Trả lời luôn") ⇒ vẫn gửi câu Cách A (chi phí không cộng tổng)."""
-    return flags.hoi_lai and not _offer_hoi_lai(flags, trace)
-
-
 def _offer_hoi_lai(flags: AssistantFlags, trace: AnswerTrace) -> bool:
     """B4 D1 / D4: đưa công cụ `hoi_lai` khi cờ bật và lượt chưa mang giá trị trường (lượt ghép / "Trả lời luôn" ⇒ không hỏi lại lần hai)."""
     return flags.hoi_lai and not trace.da_co_truong
 
 
-def _assistant_instructions(generator, trace: AnswerTrace, hoi_lai: bool = False, cach_a: bool = False) -> str:
+def _assistant_instructions(generator, trace: AnswerTrace, hoi_lai: bool = False) -> str:
     """Lời dặn trợ lý thật sự gửi ở lượt này (có câu dặn lịch sử khi có lịch sử — B3 D3; ghi chú `hoi_lai` khi đưa công cụ — B4) — để đếm
     ngân sách đúng chuỗi gửi (D5). Không `hoi_lai` ⇒ gọi y như B3 (generator thay thế trong test không cần tham số mới)."""
     if hoi_lai:
         return generator.assistant_instructions_for(trace.history, True)
-    if cach_a:  # B4 D7 khoá 2: cờ hoi_lai bật, lượt không đưa công cụ (lượt ghép) ⇒ lời dặn có Cách A
-        return generator.assistant_instructions_for(trace.history, cach_a=True)
     return generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
 
 
@@ -249,11 +242,11 @@ def hoi_lai_for_turn(query: str, trace: AnswerTrace):
     trả dữ liệu thẻ hỏi lại sau D3 — SDK đặt giá trị này làm `final_output` của lượt."""
 
     async def hoi_lai(loai: Loai, truong_thieu: list[TruongTen]) -> dict:
-        """Hỏi lại người dùng khi câu lịch trình / chi phí thiếu thông tin bắt buộc; giao diện hiện nút để người dùng chọn.
+        """Hỏi lại người dùng khi câu lên lịch trình chuyến đi thiếu số ngày; giao diện hiện nút để người dùng chọn.
 
         Args:
-            loai: lich_trinh (lên lịch trình) hoặc chi_phi (dự trù chi phí chuyến đi).
-            truong_thieu: các trường còn thiếu (tối đa 3). Lịch trình: so_ngay, di_cung, kieu_di, so_thich. Chi phí: so_nguoi, so_ngay, muc_chi.
+            loai: lich_trinh (lên lịch trình).
+            truong_thieu: các trường còn thiếu (tối đa 3): so_ngay, di_cung, kieu_di, so_thich.
         """
         trace.hoi_lai_raw = {"loai": loai, "truong_thieu": list(truong_thieu)}
         truong, trace.hoi_lai_d3 = loc_truong(loai, list(truong_thieu))
@@ -325,8 +318,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
     trace.hoi_lai_offered = flags.tim_them and generator is not None and _offer_hoi_lai(flags, trace)
-    instructions = (_assistant_instructions(generator, trace, trace.hoi_lai_offered, _cach_a(flags, trace))
-                    if (flags.tim_them and generator is not None) else None)
+    instructions = _assistant_instructions(generator, trace, trace.hoi_lai_offered) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
     return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
 
@@ -361,8 +353,8 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     try:
         if flags.uses_tools:
             offer = _offer_hoi_lai(flags, trace)
-            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, _assistant_instructions(generator, trace, offer, _cach_a(flags, trace)))
-            extra = {"hoi_lai_fn": hoi_lai_for_turn(query, trace)} if offer else ({"cach_a": True} if _cach_a(flags, trace) else {})
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, _assistant_instructions(generator, trace, offer))
+            extra = {"hoi_lai_fn": hoi_lai_for_turn(query, trace)} if offer else {}
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
             except GenerationError:
@@ -474,8 +466,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
                 offer = _offer_hoi_lai(flags, trace)
-                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, _assistant_instructions(generator, trace, offer, _cach_a(flags, trace)))
-                extra = {"hoi_lai_fn": hoi_lai_for_turn(query, trace)} if offer else ({"cach_a": True} if _cach_a(flags, trace) else {})
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, _assistant_instructions(generator, trace, offer))
+                extra = {"hoi_lai_fn": hoi_lai_for_turn(query, trace)} if offer else {}
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
             else:
                 yield "status", {"stage": "generating"}
