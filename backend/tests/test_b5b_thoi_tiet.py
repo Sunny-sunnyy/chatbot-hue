@@ -6,6 +6,7 @@ import asyncio
 import dataclasses
 import functools
 import json
+import re
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -236,6 +237,17 @@ def tt_call(tu=1, den=1) -> dict:
             "arguments": json.dumps({"tu_ngay": tu, "den_ngay": den}), "status": "completed"}
 
 
+def ma_nguon_du_bao(kw) -> int:
+    """Mã [k] của nguồn dự báo trong kết quả công cụ model vừa nhận (E17: dự báo là một nguồn của sổ nguồn)."""
+    out = next(item["output"] for item in reversed(kw["input"]) if item.get("type") == "function_call_output")
+    return int(re.search(r"\[Nguồn (\d+)\]", out).group(1))
+
+
+def sau_cong_cu(text_fn):
+    """Kịch bản: lần 1 gọi `thoi_tiet`, lần 2 viết `text_fn(k)` với k = mã nguồn dự báo."""
+    return lambda n, kw: [tt_call()] if n == 1 else [answer(text_fn(ma_nguon_du_bao(kw)))]
+
+
 def run(deps, query, gen, flags, history=(), stream=False):
     trace = AnswerTrace(history=history)
 
@@ -257,26 +269,36 @@ def test_tool_only_with_keyword_and_flag_off_request_unchanged(deps):
     assert seen[0] == seen[1] == ["tim_kho"] and seen[2] == seen[3] == ["tim_kho", "thoi_tiet"]
 
 
-def test_forecast_turn_appends_code_block_and_catches_invented_number(deps):
-    def script(text):
-        return lambda n, kw: [tt_call(1, 1)] if n == 1 else [answer(text)]
+def test_forecast_turn_cites_forecast_source_and_catches_invented_number(deps):
     flags = dataclasses.replace(WEATHER, du_bao=nguon())
-    ok, _ = run(deps, "Mai Huế có mưa không?", generator(script("Mai Huế 23–27 °C, khả năng mưa 80 %, nên mang ô.")), flags)
+    ok, _ = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(lambda k: f"Mai Huế 23–27 °C, khả năng mưa 80 % [{k}], nên mang ô.")), flags)
+    k = ok.thoi_tiet["nguon_id"]
     assert ok.citation_error is None and ok.answer.endswith(ok.thoi_tiet["khoi"]) and ok.thoi_tiet["n_ngay"] == 1
-    bia, _ = run(deps, "Mai Huế có mưa không?", generator(script("Mai Huế khoảng 33 độ.")), flags)
+    assert [s.id for s in ok.cited] == [k] and ok.so_nguon[k - 1].title == tt.TIEU_DE_NGUON and ok.so_nguon[k - 1].source == tt.NGUON_SOURCE
+    bia, _ = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(lambda k: f"Mai Huế khoảng 33 độ [{k}].")), flags)
     assert bia.citation_error is not None and bia.thoi_tiet_kiem == ["33"]
+
+
+@pytest.mark.parametrize("text_fn, rut", [
+    (lambda k: "Mai trời 23–27 °C. Đại Nội mở cửa 7h–17h, vé 200.000 đồng.", True),  # E17 ca (b): có công cụ + nội dung không [n] ⇒ rút lại
+    (lambda k: "Lăng Tự Đức đóng cửa thứ hai.", True),                                 # E17: ca không số, không [n] ⇒ rút lại
+    (lambda k: f"Ngày mai Huế có thể mưa [{k}].", False),                               # E17 ca (a): câu chỉ dự báo có [k] ⇒ qua
+])
+def test_no_citation_exemption_after_e17(deps, text_fn, rut):
+    trace, _ = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(text_fn)), dataclasses.replace(WEATHER, du_bao=nguon()))
+    assert (trace.citation_error is not None) is rut
 
 
 def test_api_error_turn_has_fixed_sentence_and_no_numbers(deps):
     flags = dataclasses.replace(WEATHER, du_bao=nguon(status=503))
-    trace, _ = run(deps, "Mai Huế có mưa không?", generator(lambda n, kw: [tt_call()] if n == 1 else [answer("Mình chưa lấy được dự báo.")]), flags)
+    trace, _ = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(lambda k: f"Mình chưa lấy được dự báo [{k}].")), flags)
     assert trace.citation_error is None and trace.answer.endswith(tt.CAU_LOI) and not tt.so_thoi_tiet(trace.answer)
+    assert trace.so_nguon[trace.thoi_tiet["nguon_id"] - 1].title == tt.TIEU_DE_NGUON_LOI
 
 
 def test_stream_deltas_equal_final_answer(deps):
     flags = dataclasses.replace(WEATHER, du_bao=nguon())
-    trace, events = run(deps, "Mai Huế có bão không?", generator(lambda n, kw: [tt_call()] if n == 1 else [answer("Mai trời 23–27 °C.")]), flags,
-                        stream=True)
+    trace, events = run(deps, "Mai Huế có bão không?", generator(sau_cong_cu(lambda k: f"Mai trời 23–27 °C [{k}].")), flags, stream=True)
     shown = "".join(d for k, d in events if k == "delta")
     assert shown == trace.answer and tt.CAU_BAO_LU in shown and ("status", {"stage": "thoi_tiet"}) in events
 
@@ -291,21 +313,3 @@ def test_itinerary_turn_with_day_puts_forecast_in_notes(deps, monkeypatch):
     assert trace.citation_error is None and trace.lich["khung"] == goc.lich["khung"]  # khung lịch giống B5
     assert "Ngày 1 — Thứ Bảy 07/11:" in trace.lich["ghi_chu"] and tt.GHI_CONG in trace.lich["ghi_chu"]
 
-
-def test_no_citation_allowed_only_for_weather_tool_turns():
-    """Bất biến: chỉ lỗi "không có [n]" ở lượt có gọi công cụ thời tiết được bỏ qua; mã lạ / lượt không công cụ vẫn rút lại."""
-    from core.schema import CitationIntegrityError
-    from llm.assistant import NO_CITATION
-    khoi = tt.khoi_du_bao(du_bao_ok(), 1, 1)
-    co_tool = _trace(tool_khoi=khoi)
-    co_tool.citation_error = CitationIntegrityError(NO_CITATION)
-    _thoi_tiet_cuoi(co_tool, "Mai trời 23–27 °C.")
-    assert co_tool.citation_error is None and co_tool.cited == ()
-    ma_la = _trace(tool_khoi=khoi)
-    ma_la.citation_error = CitationIntegrityError("Unknown citation IDs: [9]")
-    _thoi_tiet_cuoi(ma_la, "Mai trời 23–27 °C [9].")
-    assert ma_la.citation_error is not None
-    khong_tool = _trace()
-    khong_tool.citation_error = CitationIntegrityError(NO_CITATION)
-    _thoi_tiet_cuoi(khong_tool, "Huế đẹp lắm.")
-    assert khong_tool.citation_error is not None

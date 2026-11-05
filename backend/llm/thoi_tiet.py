@@ -28,6 +28,11 @@ GHI_CONG = "Dữ liệu thời tiết: Open-Meteo.com (CC BY 4.0)"
 NCHMF_URL = "https://nchmf.gov.vn"
 LU_QUET_URL = "https://luquetsatlo.nchmf.gov.vn"
 TIEU_DE = "**Dự báo thời tiết Huế**"
+# E17 (A chọn): kết quả công cụ là một nguồn trong sổ nguồn — model trích [k]; khung nguồn của giao diện hiện nguồn này
+TIEU_DE_NGUON = "Dự báo thời tiết Huế (Open-Meteo)"
+TIEU_DE_NGUON_LOI = "Dự báo thời tiết Huế — chưa lấy được"
+MUC_NGUON = "Dự báo 7 ngày tới"
+NGUON_SOURCE = "open-meteo"  # `source` của nguồn — không thuộc tiền tố H4c (vé / điểm đến / lễ hội)
 CAU_LOI = f"Mình chưa lấy được dự báo thời tiết lúc này — bạn xem bản tin của Trung tâm Dự báo khí tượng thủy văn quốc gia: {NCHMF_URL}"
 CAU_BAO_LU = (f"Với bão, lũ, ngập: hãy theo dõi bản tin chính thức của Trung tâm Dự báo khí tượng thủy văn quốc gia ({NCHMF_URL}) và cổng cảnh "
               f"báo lũ quét, sạt lở ({LU_QUET_URL}); khi gặp nguy hiểm gọi 112.")

@@ -132,7 +132,8 @@ TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
 THOI_TIET_MO_TA = (
     "Lấy dự báo thời tiết Huế (nhiệt độ, khả năng mưa, lượng mưa theo ngày) cho 7 ngày tới. Chỉ gọi khi người dùng hỏi thời tiết sắp tới; câu hỏi về "
     "khí hậu chung (mùa mưa…) ⇒ dùng tim_kho. tu_ngay / den_ngay = số ngày tính từ hôm nay (0 = hôm nay, 1 = mai, tối đa 6). Kết quả là khối số liệu "
-    "do hệ thống dựng, sẽ được nối nguyên văn sau câu trả lời: không chép lại, không thêm số nào khác."
+    "do hệ thống dựng (một nguồn có mã [n]), sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về dự báo ghi "
+    "mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
 )
 TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã có; không tìm thêm — hãy viết câu trả lời ngay theo khung."
 

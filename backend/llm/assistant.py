@@ -28,7 +28,7 @@ import anyio
 from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
-from llm.citations import CITATION_PATTERN, select_cited_sources
+from llm.citations import select_cited_sources
 from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm import tra_web as tw
@@ -39,7 +39,7 @@ from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HA
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIETNAM_TZ, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
-from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, PackedContext, PackedSource
+from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
 
 logger = logging.getLogger("chat")  # cùng logger với route: dòng `chat_stream_drain` giữ tên + khuôn như trước B1
 
@@ -381,6 +381,17 @@ async def _dong_thoi_tiet_lich(bang, khung: dict, query: str, du_bao, trace: Ans
     return dong + [tt.dong_nguon(kq)]
 
 
+def _nguon_thoi_tiet(trace: AnswerTrace, title: str, excerpts: tuple[str, ...]) -> str:
+    """E17 (A chọn): kết quả công cụ thời tiết là **một nguồn thật** trong sổ nguồn (id tiếp theo, khuôn như đoạn kho) ⇒ model trích [k] như mọi
+    nguồn; bộ kiểm citation giữ nguyên như `main` (không miễn [n]). Trả chữ nguồn cho model; đếm vào ngân sách như lần tìm thêm."""
+    src = PackedSource(id=len(trace.so_nguon) + 1, title=title, heading_path=(tt.MUC_NGUON,), excerpts=excerpts, source=tt.NGUON_SOURCE)
+    trace.so_nguon.append(src)
+    chu = FullCorpusContextBuilder._block(src)
+    trace.context_parts.append(chu)
+    trace.thoi_tiet["nguon_id"] = src.id
+    return chu
+
+
 def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
     """Hàm `thoi_tiet` của **một lượt** (B5b D3, D5, D7): model chỉ gửi số ngày (0–6); code lấy dự báo, dựng khối số liệu cố định. ≤ 1 lần / câu."""
     Ngay = Literal[0, 1, 2, 3, 4, 5, 6]
@@ -401,10 +412,10 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
             trace.thoi_tiet = {"trang_thai": kq.trang_thai, "loi": kq.loi, "ms": kq.ms, "tu_cache": kq.tu_cache, "khoi": None}
             entry.update(ms=kq.ms, trang_thai=kq.trang_thai, loi=kq.loi)
             if kq.trang_thai != "ok":
-                return "Chưa lấy được dự báo thời tiết. Không đưa con số thời tiết nào; hệ thống sẽ nối câu chỉ nguồn chính thức."
+                return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON_LOI, (tt.CAU_LOI,))
             khoi = tt.khoi_du_bao(kq, tu_ngay, den_ngay, bool(trace.thoi_tiet_ctx and trace.thoi_tiet_ctx["buoi"]))
             trace.thoi_tiet.update(khoi=khoi, n_ngay=abs(den_ngay - tu_ngay) + 1)
-            return khoi
+            return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON, tuple(khoi.splitlines()[1:]))  # bỏ dòng tiêu đề; còn dòng ngày + dòng ghi công / giờ
         finally:
             entry.setdefault("ms", 0.0)
             trace.tools.append(entry)
@@ -412,17 +423,11 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
     return thoi_tiet
 
 
-NO_CITATION = "Grounded answer has no citation"  # thông điệp của `select_cited_sources` khi chữ không có mã [n]
-
-
 def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
     """B5b, sau lần sinh (cờ bật, mọi câu tuyến `tro_ly_hue` — D8 m-1): số thời tiết trong chữ model ⊂ số code in ∪ số trong đoạn kho được trích; hỏng
     ⇒ rút lại như citation hỏng. Rồi code nối: khối số liệu (hoặc câu lỗi) · câu bão / lũ (D6) · câu "chỉ có dự báo 7 ngày" (D3)."""
     ctx = trace.thoi_tiet_ctx or {}
     tool = trace.thoi_tiet
-    if tool is not None and trace.citation_error is not None and str(trace.citation_error) == NO_CITATION and not CITATION_PATTERN.search(text):
-        # câu dự báo chỉ dựa khối số liệu code nối (ghi công + giờ cập nhật — D5 / D8): không cần mã [n] của kho; lỗi citation khác vẫn rút lại
-        trace.citation_error, trace.cited = None, ()
     cho_phep = tt.tap_so(tool["khoi"]) if tool and tool["khoi"] else set()
     cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) for e in src.excerpts))
     trace.thoi_tiet_kiem = tt.kiem_so(text, cho_phep)
