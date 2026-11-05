@@ -68,3 +68,13 @@ Chỉ chọn test **không đọc Qdrant** vì C192 có thể đang dựng lại
 - Đọc trước: plan bản 3 (D1–D11, §3 danh sách test, §8 điều kiện dừng), rồi `backend/llm/sua_lich.py` `ap_hanh_dong`, `assistant.py` chỗ dùng `lich_cu`, `chat.py` chỗ lưu khung.
 - Q1 / Q1m / test / build đã chạy (§4). C chạy `data/phase_9/sua_lich/tools/mo_phong.py` + `kiem_bo` trên code nhánh (đã thấy 10 + kín 5, chỉ số đếm).
 - Review cả nhánh sau khi đo xong (plan §6 bước 5).
+
+## 7. B166 — sửa trước lượt có phí: hết điểm thay hợp lệ (tối 05/11)
+
+- **Nguồn phát hiện:** bộ **kín** mô phỏng 0 USD của C (chuỗi K-S2; C chạy `mo_phong.py`, B không mở bộ kín). Khi người dùng nhờ "thay X" mà không nói bằng gì và **không còn điểm thay hợp lệ**, code cũ vẫn trả thẻ chọn chỉ có nút "Bỏ" + câu cố định — thẻ rỗng, lỗi trải nghiệm do code tất định (không phải hành vi model). A giao sửa **trước** lượt có phí (A quyết 05/11 tối).
+- **Đổi (`6543f82`, nhánh đã rebase lên `main` `80faf1a` ⇒ commit B163 thành `8ee101c`; xung đột duy nhất `settings.yaml` — giữ cả `sua_lich` và khối `anh:` mới):**
+  - `sua_lich.py` `ap_hanh_dong`: `thay_diem` không có `ten_moi` mà `_lua_chon_thay` rỗng ⇒ **không thẻ**, khung giữ nguyên, khối "Không đổi được" có câu cố định mã mới `het_diem_thay` ("Không còn điểm phù hợp để thay {điểm} (cùng cụm, hợp sở thích, đặt được vào chỗ đó) nên mình giữ nguyên."). Hành động khác trong cùng lượt vẫn áp.
+  - Gỡ phần thành thừa: `CAU_KHONG_CO_THAY`, trường `ghi` của thẻ, dòng hiện `ghi` trong `App.jsx`.
+  - Test thay ca "thẻ rỗng" cũ bằng ca hết điểm thay (`test_no_valid_replacement_gives_not_changed_line_not_empty_card`).
+  - `data/phase_9/sua_lich/tools/mo_phong.py`: bỏ luật "thẻ rỗng = Bỏ" (thẻ luôn có ≥ 1 điểm thay); nhãn lượt bấm mà code không đưa thẻ ⇒ báo "không có thẻ để chọn" (bản trước: `/tmp/b164/mo_phong_truoc_B166.py`). Nhãn kín K-S2: C sửa theo hành vi mới.
+- **Đã chạy [Chạy]:** `test_sua_lich.py` 14 passed; mô phỏng bộ đã thấy 10 / 10 ok; build giao diện; 202 passed (`test_sua_lich`, `test_b5_lich_trinh`, `test_b2_tool_loop`, `test_b3_memory`, `test_toc_do_song_song`, `test_assistant`, `test_static_ui`, `test_chat_stream`, `test_assistant_boundary`, `test_feedback` + test Phase 10 ảnh trên `main`). **Q1 trên `main` mới `80faf1a`: 228 / 228 giống byte** (sha `dba1f578eef1` cả hai) · **Q1m 228 / 228** (`lich_trinh` bật, `sua_lich` bật ↔ tắt; sha `ac53ea9046f3` cả hai) — `data/phase_9/sua_lich/q1b166/`. Nhánh `p9-sua-lich` `6543f82`.

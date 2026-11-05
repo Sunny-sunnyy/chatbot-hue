@@ -11,6 +11,8 @@
 - (20:13 05/11/2026) C199 kín B6 (User `!`): đạt — 0 câu khớp dòng mới, web 0 file ⇒ nhãn giữ. **C199 xong.** Còn chờ: `!` kín sửa lịch.
 - (20:14 05/11/2026) Sửa lịch kín trên `1c53627` (User `!`): K-S1/3/4/5 ok · **K-S2 "L2 thẻ rỗng"** (như lần trước; bản B coi thẻ rỗng = Bỏ) · `kiem_bo` OK ⇒ A chốt luật ca thẻ rỗng.
 - (20:14 05/11/2026) A chốt K-S2 = (b) lỗi ⇒ B166 sửa code. **Khi B báo xong:** chạy lại sửa lịch đã thấy (`data/phase_9/sua_lich/tools/mo_phong.py`) + kín (lệnh `!` ở dòng trên, worktree dựng lại ở commit mới của B). User duyệt S-AT phương án (3) C200 (A ghi `skills/run-experiment` §4). C rảnh tới khi B166 xong.
+- (20:23 05/11/2026) C201 cache câu trả lời xong: `data/nghien_cuu_cache_2026-11-05/c201_cache.md` (đề xuất không làm / Phase 12; nếu làm thì đo `cau_lap` trước) ⇒ A trình User. Tiếp: chờ B166 ⇒ chạy lại sửa lịch.
+- (20:28 05/11/2026) Sửa lịch trên **`6543f82`** (B166; worktree `/tmp/c_sualich` dựng lại): đã thấy **10/10 ok**. `mo_phong_kin.py` đồng bộ bản B mới (+ giữ kiểm "thẻ rỗng"; bản cũ `/tmp/c198_probe/mo_phong_kin_truoc_B166.py`). **Kín bước 1 chờ User `!`:** in khuôn nhãn K-S2 (`tools/cau_truc.py`, không chữ câu) + chạy `mo_phong_kin` ⇒ C viết lệnh sửa nhãn K-S2 theo hành vi B166 (A giao) ⇒ `!` bước 2.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **C192 sửa kho giờ mở cửa** (plan `65e7e2b2b68c`, A duyệt): chưa xong — xoá collection bị auto mode chặn ⇒ cần **User `!`**. Kho đã khôi phục, chỉ mục nguyên 8.424 point. Lệnh đã chép vào **`data/sua_kho_2026-11-05_gio/tools/chay.sh`** (`eb101131f146`, không phụ thuộc `/tmp`) ⇒ `! bash data/sua_kho_2026-11-05_gio/tools/chay.sh` (B / E tắt server trước).
