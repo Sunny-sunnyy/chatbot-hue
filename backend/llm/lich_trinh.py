@@ -59,7 +59,8 @@ CAU_GIA_DINH = {
     "kieu_di": "Chưa biết kiểu đi nên mình xếp thong thả, mỗi buổi một điểm.",
     "di_cung": "Chưa biết bạn đi cùng ai nên mình xếp cho người lớn đi được nhiều.",
 }
-CAU_THIEU_SO_THICH = "Kho chỉ có {k} điểm hợp sở thích của bạn nên mình thêm điểm di tích tiêu biểu (đánh dấu ◦)."
+# pilot B160: model bỏ dấu ◦ khi viết lời ⇒ câu cố định nêu thẳng tên điểm lấp (code biết), không dựa vào dấu model phải chép
+CAU_THIEU_SO_THICH = "Kho chỉ có {k} điểm hợp sở thích của bạn nên mình thêm điểm di tích tiêu biểu: {ten}."
 CAU_CO_THE_DOI = "Giờ mở cửa có thể đã thay đổi — bạn kiểm tra lại trước khi đi."
 TIEU_DE_GHI_CHU = "**Ghi chú của lịch**"
 MAP_BASE = "https://www.google.com/maps/search/?api=1&query="  # D11: URL tìm kiếm Google Maps (định dạng công khai)
@@ -324,11 +325,15 @@ def khung_chu(bang: Bang, khung: dict, nguon: dict[str, int], luat: str, nguon_v
     return "\n".join(dong)
 
 
+def _cau_thieu(bang: Bang, khung: dict) -> str:
+    return CAU_THIEU_SO_THICH.format(k=khung["thieu_so_thich"], ten=", ".join(bang.theo_id[i]["ten"] for i in khung["ngoai_so_thich"]))
+
+
 def khoi_ghi_chu(bang: Bang, khung: dict, nguon: dict[str, int]) -> str:
     """D4b: khối "Ghi chú của lịch" do code nối sau chữ model — giả định, câu thiếu sở thích, điểm không xếp, lưu ý có [n], dòng giờ có thể đổi."""
     dong = [CAU_GIA_DINH[k] for k in khung["gia_dinh"]]
     if khung["thieu_so_thich"] is not None:
-        dong.append(CAU_THIEU_SO_THICH.format(k=khung["thieu_so_thich"]))
+        dong.append(_cau_thieu(bang, khung))
     dong += [CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"]) for k in khung["khong_xep"]]
     ids = diem_trong_khung(khung)
     dong += [f"{bang.theo_id[i]['ten']}: {bang.theo_id[i]['luu_y']} [{nguon[i]}]" for i in ids if bang.theo_id[i]["luu_y"]]
@@ -342,7 +347,7 @@ def kiem_ghi_chu(bang: Bang, khung: dict, khoi: str) -> list[str]:
     khung (vd Thác Nhị Hồ mùa mưa lũ — D3). Thiếu ⇒ mã lỗi (test cố tình vi phạm đưa khối thiếu một câu)."""
     can = [CAU_GIA_DINH[k] for k in khung["gia_dinh"]] + [CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"]) for k in khung["khong_xep"]]
     if khung["thieu_so_thich"] is not None:
-        can.append(CAU_THIEU_SO_THICH.format(k=khung["thieu_so_thich"]))
+        can.append(_cau_thieu(bang, khung))
     can += [bang.theo_id[i]["luu_y"] for i in diem_trong_khung(khung) if bang.theo_id[i]["luu_y"]]
     return ["ghi_chu_thieu"] if any(c not in khoi for c in can) else []
 

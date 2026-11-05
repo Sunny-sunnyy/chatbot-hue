@@ -292,6 +292,7 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
                                 {"buoc": "lay_nguon", "n_doan": len(packed.sources)}]
             entry.update(n_diem=len(lt.diem_trong_khung(khung)), n_new=len(packed.sources), n_khong_xep=len(khung["khong_xep"]))
             chu = lt.khung_chu(bang, khung, nguon, LICH_TRINH_LUAT, nguon_ve)
+            trace.context_parts.append(chu)  # lần tìm thêm sau đó (nếu có) đếm cả chữ khung
             return f"{chu}\n\n{packed.text}" if packed.text else chu
         finally:
             entry["ms"] = elapsed_ms(started)
@@ -332,7 +333,10 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
             ve = await dau_tien(lt.VE_CAU_TIM, lt.VE_NGUON, chua="17h30")
             if ve is not None and ve.id not in da_co and ve.id not in cho:
                 moi.append(ve)
-        packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1, prior_context="\n\n".join(trace.context_parts),
+        # chữ khung cũng vào model ⇒ đếm vào ngân sách bằng bản nháp (số nguồn tạm) — D6 (iii)
+        nhap = lt.khung_chu(bang, khung, dict.fromkeys(lt.diem_trong_khung(khung), 0), LICH_TRINH_LUAT, 0)
+        packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1,
+                                       prior_context="\n\n".join([*trace.context_parts, nhap]),
                                        skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
                                        n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD)
     except (RetrievalDependencyError, ContextBudgetError) as exc:

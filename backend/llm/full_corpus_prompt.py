@@ -118,7 +118,9 @@ LICH_TRINH_LUAT = (
     "Luật trình bày lịch: viết theo đúng khung dưới — giữ thứ tự ngày, buổi, điểm; không thêm, không bớt điểm. Mỗi điểm một dòng mở bằng "
     "tên buổi, nêu tên điểm và ít nhất một trích dẫn [n] đúng số của điểm đó trong khung, kèm một ý ngắn lấy từ tài liệu của điểm. "
     "Chỉ nêu giờ có trong khung; không nêu giá tiền, thời lượng tham quan, thời gian hay quãng đường di chuyển. Không viết đường link. "
-    "Không viết phần ghi chú, lưu ý, giả định hay điểm chưa xếp — hệ thống tự thêm sau câu trả lời."
+    "Không viết phần ghi chú, lưu ý, giả định hay điểm chưa xếp — hệ thống tự thêm sau câu trả lời. "
+    # pilot B160 (L2): sau khung, model gọi `tim_kho` thêm 3 lần ⇒ chạm `max_turns` ⇒ mất lịch — tài liệu từng điểm đã đi kèm khung
+    "Tài liệu của từng điểm đã có ngay dưới khung: không gọi thêm công cụ, viết câu trả lời ngay."
 )
 
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.

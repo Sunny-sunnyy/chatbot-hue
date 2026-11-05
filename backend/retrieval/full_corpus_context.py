@@ -12,9 +12,9 @@ from llm.full_corpus_prompt import build_answer_messages
 TOOL_PATH_OVERHEAD = 158
 ITEM_OVERHEAD = 36
 # B5 (plan B5 bản 7 D16): lược đồ + mô tả công cụ thứ hai `lich_trinh` gửi kèm **mọi** lượt trợ lý khi cờ `lich_trinh` bật — phép đếm không
-# thấy. Giá trị đo ở pilot (token thật − số đếm ở lượt không gọi công cụ, như B4 B153 đo 185 cho `hoi_lai`); ghi nguồn số ở report B160.
-# (B4 `HOI_LAI_TOOL_OVERHEAD` đã gỡ cùng công cụ `hoi_lai` — review C183 m-2.)
-LICH_TRINH_TOOL_OVERHEAD = 350
+# thấy. Đo ở pilot B160 (`data/phase_9/b5/pilot/thuong2.jsonl`, cờ bật): lượt **không gọi công cụ nào** ⇒ token thật − số đếm = 359 (như B4 B153
+# đo 185 cho `hoi_lai`); lượt có một `tim_kho` 345. (B4 `HOI_LAI_TOOL_OVERHEAD` đã gỡ cùng công cụ `hoi_lai` — review C183 m-2.)
+LICH_TRINH_TOOL_OVERHEAD = 359
 
 
 @dataclass(frozen=True)

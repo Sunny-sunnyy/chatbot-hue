@@ -108,7 +108,7 @@ def test_branches_of_the_plan():
     food = khung(so_thich="am_thuc")
     assert food["ngoai_so_thich"] and food["thieu_so_thich"] is not None  # D2 #2: lấp có nhãn + câu cố định
     note = lt.khoi_ghi_chu(BANG, food, {i: 1 for i in lt.diem_trong_khung(food)})
-    assert "đánh dấu ◦" in note and lt.CAU_GIA_DINH["kieu_di"] in note
+    assert all(BANG.theo_id[i]["ten"] in note for i in food["ngoai_so_thich"]) and lt.CAU_GIA_DINH["kieu_di"] in note  # nêu tên điểm lấp
     assert khung(so_ngay="4+")["gia_dinh"][0] == "so_ngay_4" and len(khung(so_ngay="4+")["ngay"]) == 4
 
 
