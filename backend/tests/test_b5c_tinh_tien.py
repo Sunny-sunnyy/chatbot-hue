@@ -122,6 +122,12 @@ def test_params_ask_only_missing_and_answer_now_sets_temporary_values():
     assert (t.so_nguoi, t.so_ngay, t.muc_chi, t.tam) == (4, "3", "tiet_kiem", ())  # nút thắng chữ dò
 
 
+def test_budget_with_point_names_becomes_both_tables():
+    t, _ = tt.chot_tham_so("du_toan", None, [BANG.ve[0].ten], None, SoNguoi(tong=2), ("2", None))
+    kq = tt.tinh(BANG, t)
+    assert t.loai == "ca_hai" and kq["du_toan"] and kq["ve"] and "D4_khong_cong_ve" in kq["luu_y"]
+
+
 @pytest.mark.parametrize("cau, ngoai", [("đi 5 ngày cho 2 người", "so_ngay_4_tro_len"), ("2 ngày 2 đêm cho 2 người", "dem_lech"),
                                         ("nhóm 30 người đi 2 ngày", "qua_20_nguoi")])
 def test_out_of_range_has_fixed_sentence_and_no_total(cau, ngoai):

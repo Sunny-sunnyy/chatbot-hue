@@ -237,6 +237,8 @@ def chot_tham_so(loai: str, muc_chi: str | None, diem: list[str] | None, truong:
                  ngay: tuple[str | None, str | None]) -> tuple[ThamSoTien | None, list[str]]:
     """D6 + D7: (1) `truong` từ nút ⇒ (2) dò số (đã dò từ câu gốc + câu trước, `nguoi`, `ngay`) ⇒ (3) thiếu: lượt thường ⇒ trả danh sách trường
     cần hỏi (ThamSo None); lượt mang `truong` ⇒ **không hỏi lần hai**, trường còn thiếu đặt tạm 1."""
+    if loai == "du_toan" and diem:  # vòng chỉnh 1 (pilot T7): model gửi dự toán kèm tên điểm hỏi vé ⇒ code coi là cả hai (D4: hai bảng riêng)
+        loai = "ca_hai"
     tu_nut = truong or {}
     so_nguoi = tu_nut.get("so_nguoi") or nguoi.tong
     nguoi_lon, tre_em = (None, None) if tu_nut.get("so_nguoi") else (nguoi.nguoi_lon, nguoi.tre_em)

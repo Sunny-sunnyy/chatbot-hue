@@ -133,8 +133,9 @@ TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã c
 # B5c (plan bản 3 D1, D8, D11): công cụ `tinh_tien` — mô tả ngắn, không thêm lời dặn hệ thống (bài học B4b §2g); luật trình bày đi trong kết quả
 # công cụ. Không dùng ví dụ địa danh / số thật (ý #12).
 TINH_TIEN_MO_TA = (
-    "Tính tiền cho chuyến đi Huế bằng bảng giá của hệ thống. Chỉ gọi khi tin nhắn cuối cùng của người dùng hỏi dự trù chi phí / ngân sách chuyến "
-    "đi, hoặc hỏi tiền vé tham quan cho một hay nhiều điểm; không gọi cho câu hỏi khác. loai: du_toan (chi phí chuyến đi), ve (tiền vé các "
+    "Tính tiền cho chuyến đi Huế bằng bảng giá của hệ thống. Gọi khi tin nhắn cuối cùng của người dùng hỏi số tiền phải trả: dự trù chi phí / "
+    "ngân sách chuyến đi, hoặc tiền vé tham quan cho một hay nhiều điểm — kể cả khi tài liệu đã có giá: không tự nhân, cộng hay tính tổng, "
+    "hệ thống tính. Không gọi cho câu hỏi khác. loai: du_toan (chi phí chuyến đi), ve (tiền vé các "
     "điểm), ca_hai (hỏi cả hai), ngoai_bang (hỏi giá một khoản cụ thể như một khách sạn, một bữa ăn, một chuyến xe). Số người, số ngày "
     "do hệ thống tự lấy từ câu người dùng — không truyền. muc_chi chỉ khi người dùng nói rõ, chưa nói thì null; diem là tên điểm người dùng "
     "hỏi vé, đúng chữ người dùng gõ."
