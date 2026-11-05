@@ -136,6 +136,7 @@ report.
   matching, tamper detection, validator chồng lớp…) chỉ quay lại khi có nhu cầu
   quan sát được.
 - Over-engineering là finding khi review, không phải sở thích.
+- **Cắt giảm cụ thể (User duyệt 11:17 05/11/2026, sau lần nhắc thứ 5):** (1) review plan / spec **tối đa 2 vòng** — vòng 2 chỉ còn minor ⇒ A duyệt, minor sửa lúc code; (2) **bộ câu kín** chỉ cho bậc chỉnh **lời dặn / mô tả công cụ** của model qua nhiều vòng (vd B5); bậc mà code tính / kiểm tất định (vd B5c) hoặc tính năng đo bằng bộ đã thấy chạy 2 lượt (vd ảnh Phase 10) ⇒ không bộ kín; (3) B / C / E **tự quyết chi tiết trong phạm vi plan** (hằng số, tên, cách sửa lỗi nhỏ, phân bổ tiền dưới trần) và ghi report — chỉ nhắn A khi chạm tiền vượt trần, an toàn, phạm vi hoặc tiêu chí ghi trước; (4) A **chỉ hỏi User** chuyện phạm vi, tiền, dữ liệu, hướng sản phẩm; (5) dữ liệu công khai dùng cho học tập: **không** kiểm giấy phép / điều khoản (User 05/11).
 - Mỗi thay đổi code giải thích được cho User bằng lời thường.
 - Code/test/debug theo skill `practical-project-coding`.
 

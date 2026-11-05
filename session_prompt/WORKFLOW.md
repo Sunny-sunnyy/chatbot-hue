@@ -91,7 +91,7 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 - **Kết luận:** `ready_for_user_confirmation` · `changes_requested` · `blocked`.
 - Mỗi finding: vị trí, yêu cầu bị ảnh hưởng, bằng chứng, tác động, tiêu chí đóng.
   Người làm được phản biện bằng bằng chứng.
-- Quá bốn vòng `changes_requested` cho cùng một việc: dừng, A xem lại thiết kế với User.
+- **Tối đa 2 vòng review** cho plan / spec (User 05/11 — `Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt; vẫn còn blocker / major sau vòng 2 ⇒ A xem lại thiết kế (với User nếu đổi phạm vi). Code: một review cả nhánh.
 
 ## 6. Report
 
