@@ -53,3 +53,15 @@ Câu hỏi độ đơn giản: hàng đợi + task huỷ là cách trực tiếp
 **Trước merge:** rebase lên `main` (B4b, và B5 nếu đã merge) ⇒ đóng **M-1** theo tiêu chí trên ⇒ Q1 + test chạy lại ⇒ cổng ổn định ⇒ B kiểm lại phần M-1 (một vòng).
 
 **Giải thích ngắn:** Bật cờ này thì câu về Huế ra chữ sớm hơn khoảng 1,4 giây, vì code bắt đầu tìm kho và gọi model trả lời trong lúc model định tuyến còn đang chạy; tuyến khác thì code bỏ phần chạy trước, không lọt chữ. Số đo của C tái lập được. Có một chỗ phải sửa lúc rebase: phần chạy trước phải mang theo các giá trị người dùng bấm nút (B4b / B5), không thì lịch trình sẽ hỏi lại lần hai.
+
+## Vòng 2 — rebase + sửa M-1: `p9-toc-do-6b` `14db83b` (C kiểm · 13:18 05/11/2026 `date`, A giao)
+
+Người sửa là B (rebase lên `main` `d66f6a3` + sửa M-1) ⇒ C kiểm (người viết code #6 ban đầu là C, phần sửa của vòng này là của B). Chỉ kiểm phần sửa M-1 + 2 test + Q1. 0 USD.
+
+- **Cổng:** `d66f6a3..14db83b` = 1 commit, 4 file (`chat.py`, `settings.yaml` thêm `song_song_tra_loi: false`, `assistant.py`, test mới). `git diff --check` sạch. `git range-diff` so `ea081b0`: ngoài phần nối với B5 (`lich_cho_giao_dien`), chỉ đổi đúng chỗ M-1.
+- **M-1 — đóng.** `ROUTE_INPUTS = ("history", "truong", "search_query")`. Trace phụ chép từng trường (không `dataclasses.replace` — đúng lý do B ghi: tránh dùng chung list sổ nguồn / công cụ). `_merge_spec` giữ cả 3 trường trong `keep_own`. **C kiểm đủ:** `chat.py` chỉ đặt sẵn đúng 3 trường này trước khi gọi lõi (`_start_conversation` ⇒ `history`; `_model_query` ⇒ `truong`, `search_query`).
+- **2 test mới có giá trị thật** (C kiểm ngược, cách khác B): tạm đặt `ROUTE_INPUTS = ("history",)` trong worktree review ⇒ **cả 2 test hỏng**; trả lại ⇒ đạt. pytest `test_toc_do_song_song` + `test_b5_lich_trinh` + `test_chat_stream` + `test_api_chat` trên `14db83b`: **118 passed** (1 error = test cần khoá API thật, đã biết).
+- **Q1 — C tự chạy lại độc lập** (`capture_all.py` trên worktree `/tmp/c_toc_do6b_r` detach `14db83b`; so với bản bắt `main` của C ở C191 — phần backend giống `d66f6a3` theo chuỗi bằng chứng C191 vòng 1–2): cờ `song_song_tra_loi` **tắt 228 / 228 giống byte**; **bật** (sửa `settings.yaml` tạm trong worktree review, đã trả lại) **228 / 228 giống byte**, cả thứ tự dòng. 10 lượt `api_chat_stream` đi đường song song.
+- **Ghi chú (không phải finding):** khi bậc "sửa lịch nhiều lượt" thêm đầu vào route đặt trước (vd khung lịch đã lưu của cuộc) ⇒ phải thêm vào `ROUTE_INPUTS` — C ghi điều này vào plan C193.
+
+**Decision vòng 2: ready_for_user_confirmation** — A merge với cờ bật (theo quyết của User).
