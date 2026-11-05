@@ -19,6 +19,11 @@ ALLOWED = {
     "llm.generator_openai_full_corpus": {"openai", "agents"},  # OpenAI — mọi lần gọi model
     "embedding.full_corpus": {"httpx", "huggingface_hub"},  # OpenRouter (candidate Qwen3) + tải model e5 từ HF Hub (không mang chữ người dùng)
 }
+# Module chỉ được import vài TÊN của một gói mạng, không cả gói. Phase 10 A1 (plan D3): `nhan_anh` chỉ DỰNG `Agent` / `ModelSettings`;
+# lần gọi model vẫn qua `generator._run` (hạn giờ, lỗi, tiền) — import thêm `Runner` (gọi model thẳng) phải làm test đỏ.
+ALLOWED_NAMES = {
+    "llm.nhan_anh": {"agents": {"Agent", "ModelSettings"}},
+}
 EXPECTED_TOOLS = {"tim_kho": ("cau_tim",)}
 
 
@@ -83,6 +88,8 @@ def test_only_allowed_modules_import_network_clients():
         for module, names in imports:
             package = _network_package(module)
             if package is None or package in ALLOWED.get(name, set()) or _only_error_classes(module, names):
+                continue
+            if names and set(names) <= ALLOWED_NAMES.get(name, {}).get(module, set()):
                 continue
             violations.append(f"{name}: {module} {names}")
     assert violations == []

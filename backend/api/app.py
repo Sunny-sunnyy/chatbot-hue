@@ -7,11 +7,13 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from PIL import Image
 
 from api.conversations import ConversationStore
 from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
 from api.health import router as health_router
+from api.routes.anh import router as anh_router
 from api.routes.chat import router as chat_router
 from core.logging_setup import setup_logging
 from core.schema import (
@@ -19,9 +21,10 @@ from core.schema import (
     RetrievalConfigurationError,
     RetrievalDependencyError,
 )
-from core.settings_loader import load_settings
+from core.settings_loader import BACKEND_DIR, load_settings
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 from llm.assistant import AssistantFlags
+from llm.nhan_anh import nap_danh_sach, tao_agent
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -35,7 +38,8 @@ FRONTEND_DIR = REPO_ROOT / "frontend" / "dist"
 
 # Trang chỉ nạp script / CSS từ chính server (`/static/…`, không script nội dòng, bản build không dùng `eval`) ⇒ chặn mọi tải từ máy khác,
 # kể cả khi chữ Markdown do model viết lọt qua DOMPurify (rà bảo mật C106 R2, S3 streaming).
-FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; "
+# Phase 10 (spec A7, User duyệt 05/11): `img-src` thêm `blob:` — chỉ để xem trước ảnh người dùng vừa chọn (URL do chính trang tạo, không mở mạng).
+FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; "
                 "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
 
 
@@ -139,6 +143,18 @@ def create_app(settings=None):
         except Exception:
             logger.error("Generator startup failed")
 
+        # 4. Hỏi bằng ảnh (Phase 10 A1 D2): cờ tắt / thiếu generator / danh sách lỗi ⇒ `app.state.anh = None` ⇒ route trả 404
+        anh = settings.get("anh") or {}
+        if anh.get("bat") and app.state.generator is not None:
+            try:
+                Image.MAX_IMAGE_PIXELS = anh["max_pixels"]  # lớp sau của rào bom giải nén (`nhan_anh.chuan_bi_anh`)
+                danh_sach = nap_danh_sach((BACKEND_DIR / anh["danh_sach"]).resolve())
+                app.state.anh = {"danh_sach": danh_sach, "agent": tao_agent(app.state.generator, danh_sach), "max_bytes": anh["max_bytes"],
+                                 "max_pixels": anh["max_pixels"], "canh_dai": anh["canh_dai"], "timeout": anh["timeout"]}
+                logger.info("Image route enabled (%d names)", len(danh_sach))
+            except Exception:
+                logger.error("Image route startup failed")
+
         try:
             yield
         finally:
@@ -162,9 +178,11 @@ def create_app(settings=None):
     app.state.context_builder = None
     app.state.generator_ready = False
     app.state.generator = None
+    app.state.anh = None
 
     app.include_router(health_router)
     app.include_router(chat_router)
+    app.include_router(anh_router)  # luôn đăng ký: `settings` chỉ có trong lifespan (Phase 10 A1 D2, review C m-1); cờ tắt ⇒ 404
     app.include_router(feedback_router)
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 

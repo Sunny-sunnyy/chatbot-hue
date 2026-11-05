@@ -69,3 +69,13 @@ assistant:
   nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true
   lich_trinh: false              # B5 (plan bản 7 D1): công cụ lịch trình (code xếp + code tự hỏi số ngày) — TẮT tới khi đạt luật ghi trước. Công cụ `hoi_lai` của B4 đã gỡ (C183 m-2)
   lich_trinh_bang: ../data/phase_9/lich_trinh/diem_v3.json  # bảng điểm User duyệt (v3 `e94b7f4263f2`, private); chỉ nạp khi cờ bật
+
+# Phase 10 A1 (plan `2026-11-05-phase-10-a1-plan.md` bản 2 D2): hỏi bằng ảnh — `POST /api/anh/ung_vien`. TẮT tới khi đạt A2 (spec Phase 10 §5).
+# Tắt ⇒ route trả 404, không nạp danh sách. Đường dẫn tính từ `backend/`.
+anh:
+  bat: false
+  danh_sach: ../data/phase_10/anh/danh_sach_ten.json   # do code dựng (`data/phase_10/anh/tools/dung_danh_sach.py`), User duyệt
+  max_bytes: 10485760        # 10 MB — chặn trước khi đọc thân (spec A10 (3))
+  max_pixels: 40000000       # chặn ảnh "bom giải nén" trước khi giải mã (spec §6)
+  canh_dai: 1024             # thu nhỏ trước khi gửi model (spec A5)
+  timeout: 20                # giây, một lần gọi model (A2: 1024 token ra có thể > 15 s); quá ⇒ khong_doan_duoc, không thử lại
