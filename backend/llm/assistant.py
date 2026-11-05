@@ -591,10 +591,15 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         if trace.tien is not None:  # D8: dòng "Mình hiểu" + chữ model + bảng + ghi chú (code nối)
             trace.tien["minh_hieu"] = tt.dong_minh_hieu(kq["tham_so"])
             trace.tien["ghi_chu"] = tt.khoi_ghi_chu(flags.bang_tien, kq)
-            trace.answer = "\n\n".join(part for part in (trace.tien["minh_hieu"], trace.answer, trace.tien["bang_md"], trace.tien["ghi_chu"]) if part)
+            full = "\n\n".join(part for part in (trace.tien["minh_hieu"], trace.answer, trace.tien["bang_md"], trace.tien["ghi_chu"]) if part)
+            # citation kiểm trên chữ model + bảng (dòng "Mình hiểu" / ghi chú là câu cố định của code, không trích) — chữ model là câu từ chối
+            # chuẩn và không có bảng (ngoài phạm vi) ⇒ vẫn là lượt từ chối hợp lệ, kèm câu cố định "chưa đủ dữ liệu…" (đã thấy N1, N2)
+            trace.answer = "\n\n".join(part for part in (trace.answer, trace.tien["bang_md"]) if part)
         if trace.tien is not None or loi_tien:
             trace.tien_kiem = loi_tien
     check_citations(trace)
+    if trace.tien is not None:
+        trace.answer = full
     if trace.lich is not None or loi:
         trace.lich_kiem = loi
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")

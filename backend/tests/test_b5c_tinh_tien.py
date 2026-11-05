@@ -217,6 +217,14 @@ def test_full_turn_stream_table_after_model_text(deps):
     assert tt.dong(BANG.du_toan[3].tong["tieu_chuan"][1] * 2) in text and tt.TIEU_DE_GHI_CHU in text
 
 
+def test_out_of_range_refusal_keeps_fixed_sentence_and_passes(deps):
+    from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
+    gen = generator(lambda n, kw: [tien_call(loai="ngoai_bang")] if n == 1 else [answer(INSUFFICIENT_ANSWER)])
+    trace, _ = run(deps, "Một đêm ở một khách sạn ven sông hết bao nhiêu?", gen, ON)
+    assert trace.citation_error is None and trace.cited == () and INSUFFICIENT_ANSWER in trace.answer
+    assert "Chưa đủ dữ liệu để tính tổng" in trace.answer
+
+
 def test_invented_money_is_retracted_even_without_tool(deps):
     gen = generator(lambda n, kw: [answer("Đi Huế mỗi người cần khoảng 777.000 đ [1].")])
     trace, _ = run(deps, "Huế có gì vui?", gen, ON)
