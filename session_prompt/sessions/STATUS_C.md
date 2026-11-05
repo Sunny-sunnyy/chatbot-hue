@@ -20,6 +20,7 @@
 - (21:11 05/11/2026) C205 bộ 40 câu giọng nói xong: `data/phase_10/giong_noi/bo_40_cau/` (`cau.jsonl` `a24d445bfe61`, kiem_bo OK, phiếu thu cho User) ⇒ chờ User duyệt câu + thu vào `data/phase_10/giong_noi/thu/`.
 - (21:18 05/11/2026) C206 kiểm A bật `tra_web` (`b7c024e`): **ready** 0/0/1 — mục "Kiểm bật cờ (C)" trong `b165_review.md`.
 - (21:32 05/11/2026) C207 bộ đo B5b: `data/phase_9/bo_do_b5b/` (`cau_da_thay.jsonl` `25b9feced049`, 24 câu, không kín); kiem_bo trên `p9-b5b` `b669981` OK + ca phá 5/5 (worktree `/tmp/c_b5b`). D9/D10 cần bảng v4/v5 (settings v3). Đã nhắn A + B.
+- (21:58 05/11/2026) C208: bộ B5b X01/X02 `cong_cu` ⇒ False (luật 8bdeb65); md5 `7e1bc3da2e44`; kiem_bo trên `8bdeb65` OK + ca phá 5/5 (worktree `/tmp/c_b5b` ở 8bdeb65).
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **C192 sửa kho giờ mở cửa** (plan `65e7e2b2b68c`, A duyệt): chưa xong — xoá collection bị auto mode chặn ⇒ cần **User `!`**. Kho đã khôi phục, chỉ mục nguyên 8.424 point. Lệnh đã chép vào **`data/sua_kho_2026-11-05_gio/tools/chay.sh`** (`eb101131f146`, không phụ thuộc `/tmp`) ⇒ `! bash data/sua_kho_2026-11-05_gio/tools/chay.sh` (B / E tắt server trước).

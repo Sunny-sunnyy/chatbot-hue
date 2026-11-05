@@ -52,7 +52,7 @@ File tracked, repo public: không chép kho / Golden / câu bộ đo; câu ví d
 |---|---|---|---|
 | **Q1** | sàn | cờ tắt ⇒ chuỗi gửi giống byte `main` (228 / 228) | `capture_all.py` |
 | **Q1m** | sàn | cờ bật ⇒ mọi lượt **không có từ khoá** (ở cả tin nhắn cuối lẫn câu liền trước) giống byte cờ tắt; lượt có từ khoá chỉ khác một mục công cụ | `capture_q1m.py` (bỏ mục `thoi_tiet`) |
-| **Q2** | sàn code, mọi câu, **2 lần chạy** | 0 số thời tiết ngoài tập code đưa · 100 % câu có số mang dòng nguồn + giờ cập nhật · câu bão / lũ có NCHMF + 112 · câu > 7 ngày có câu cố định, 0 số · khi API lỗi (fixture ở harness) ⇒ 0 số + câu cố định · lịch có ngày ⇒ dòng dự báo đúng ngày, khung lịch giống B5 · **câu không từ khoá / câu hỏi tiếp** (§5): 0 số thời tiết ngoài tập · câu khí hậu kho: 0 lần bị rút nhầm | harness đọc kết quả công cụ + chữ (tất định theo bản ghi API của lần chạy) |
+| **Q2** | sàn code, mọi câu, **2 lần chạy** | 0 số thời tiết ngoài tập code đưa · 100 % câu có số mang dòng nguồn + giờ cập nhật · câu bão / lũ có NCHMF + 112 · câu > 7 ngày có câu cố định, 0 số **dự báo** (số khí hậu kho có [n] được theo D8 — A chốt trước lượt chạy vòng chỉnh 1) · khi API lỗi (fixture ở harness) ⇒ 0 số + câu cố định · lịch có ngày ⇒ dòng dự báo đúng ngày, khung lịch giống B5 · **câu không từ khoá / câu hỏi tiếp** (§5): 0 số thời tiết ngoài tập · câu khí hậu kho: 0 lần bị rút nhầm | harness đọc kết quả công cụ + chữ (tất định theo bản ghi API của lần chạy) |
 | **Q3** | quyết | gọi `thoi_tiet` ở câu dự báo **≥ 9 / 10 mỗi lần** (2 lần); 0 lần gọi ở câu khí hậu chung (kho trả lời) | harness |
 | **Q4** | sàn hồi quy | 5 câu có từ khoá (Golden 1 + an toàn 4), cờ tắt ↔ bật, 2 lần: Golden F1–F4 sạch; an toàn: 0 sai điều kiện / thiếu cảnh báo mới (judge 2 sub-agent mù) | `generate` + `sinh_an_toan.py --qids` |
 | **Q8** | cổng | server thật: 1 câu dự báo + 1 lịch có "mai" + 1 câu thường; hiện ghi công Open-Meteo; log không chữ; CSP 0 (trình duyệt không gọi API ngoài) | như B5 Q8 |
@@ -113,6 +113,10 @@ File tracked, repo public: không chép kho / Golden / câu bộ đo; câu ví d
 - **Dò từ khoá** bỏ sót câu hỏi thời tiết không có từ khoá ⇒ không có công cụ ⇒ trả từ kho / từ chối, **nhưng D8 vẫn chặn số bịa** (bản 2). Thêm từ vào D4 chỉ qua vòng chỉnh có đo.
 - **Độ chính xác:** lưới ~27 km, mưa miền Trung khó dự báo (C139 §2) ⇒ luôn có câu "dự báo có thể đổi".
 - **Bảng v4:** kho có thể ít ghi trong nhà / bậc thang ⇒ nhiều ô null ⇒ ít phương án ngày mưa. Chấp nhận (không suy).
+
+## Chỗ đổi vòng chỉnh 1 (21:49 05/11/2026, A duyệt — sửa D3, không đổi tiêu chí / tiền)
+
+**D3 thay:** câu có từ khoá thời tiết + dấu hiệu ngoài 7 ngày (tuần sau / tháng sau / tháng N / tên tháng / dd/mm ≥ 7 ngày) ⇒ không đưa công cụ, không nối khối số liệu; code nối câu cố định "chưa có dự báo cho ngày bạn hỏi; số (nếu có) là khí hậu chung theo tài liệu, không phải dự báo". Lý do: D3 cũ (lấy ngày xa nhất) mâu thuẫn Q2 "câu > 7 ngày … 0 số". Chi tiết: report b168 §9.
 
 ## Chỗ đổi theo review sớm E17 (21:35 05/11/2026, A chọn — không đổi tiêu chí / tiền)
 

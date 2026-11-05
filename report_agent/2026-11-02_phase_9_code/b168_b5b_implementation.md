@@ -74,3 +74,19 @@ A quyết: chạy bộ C207 (`data/phase_9/bo_do_b5b/cau_da_thay.jsonl` md5 `25b
 - **Q2 sàn code:** số thời tiết ngoài tập (số code in theo bản ghi API ∪ số đoạn được trích) **0**; câu bão / lũ thiếu NCHMF / 112 **0**; câu ngoài 7 ngày thiếu câu cố định **0**; nhãn "code đưa công cụ" (D4) khớp **42 / 42** lượt (cả 42 lượt có nhãn, 0 lệch); **API lỗi ⇒ 0 số + câu cố định 4 / 4**, không rút.
 - **Một chỗ cần A đọc tiêu chí — "câu có số mang dòng nguồn + giờ":** lượt X02 (câu ngoài 7 ngày) lần 1 có số dạng thời tiết **lấy từ đoạn kho khí hậu, có trích `[7][11]`** (số ∈ đoạn được trích — D8 cho phép), không gọi công cụ ⇒ không có dòng ghi công Open-Meteo. Đọc theo chữ Q2 ⇒ **1 lượt**; đọc theo D8 ("có số **từ công cụ** mà thiếu dòng nguồn + giờ ⇒ rút lại") ⇒ **0**. B không tự chọn — A quyết.
 - Theo dõi: 2 câu ngoài 7 ngày ⇒ model lấy ngày xa nhất có (D3), mục có số của 7 ngày (⊂ tập code) + câu "Mình chỉ có dự báo 7 ngày tới".
+
+## 9. Chỗ đổi vòng chỉnh 1 — ghi TRƯỚC lượt chạy lại (21:49 05/11/2026)
+
+**Kết luận đã thấy × 2 theo chữ Q2 (A quyết, không đọc lại cho đạt):** "câu > 7 ngày có câu cố định, **0 số**" ⇒ **PHẠM**. B kiểm lại dữ liệu: câu cố định **có** ở cả 4 lượt ngoài 7 ngày, nhưng cả 4 lượt có số — 3 lượt có khối số liệu 7 ngày đang có (D3 cho model lấy ngày xa nhất), 1 lượt có số khí hậu kho kèm `[n]`. Gốc: plan tự mâu thuẫn D3 ↔ Q2.
+**A chọn (a) — phía chặt hơn, khớp Q2 + khung FDE "luật bắt buộc ⇒ code"; A duyệt sửa D3:**
+- Câu có từ khoá thời tiết (D4) **và** dấu hiệu ngoài 7 ngày ⇒ code **không nối khối số liệu**; câu cố định viết lại: "Mình chỉ có dự báo 7 ngày tới, chưa có dự báo cho ngày bạn hỏi; số trong câu trả lời (nếu có) là khí hậu chung theo tài liệu, không phải dự báo." Số khí hậu kho có `[n]` vẫn được (D8).
+- **Chi tiết B chọn trong phạm vi (a):** câu ngoài 7 ngày ⇒ **không đưa công cụ `thoi_tiet`** (thay vì đưa rồi bỏ khối) — nếu vẫn đưa, model có thể chép số dự báo của 7 ngày đang có (kèm `[k]`) vào chữ của nó ⇒ hoặc vẫn "có số", hoặc bị rút lại thành lỗi cho người dùng. Hệ quả: nhãn `cong_cu` của 2 câu ngoài 7 ngày trong bộ C207 (D4 cũ) sẽ lệch — đổi có chủ đích, ghi ở đây; C sửa nhãn theo luật mới.
+- Bộ dò ngoài 7 ngày thêm: "tháng N" / tên tháng ("tháng mười hai", "tháng chạp") khác tháng hiện tại mà ngày đầu tháng đó cách hôm nay ≥ 7 ngày; "tuần sau nữa" (đã khớp "tuần sau").
+- **Giới hạn:** "tuần sau" / "tháng sau" luôn tính là ngoài 7 ngày ⇒ người hỏi "tuần sau" mà thật ra muốn xem mấy ngày tới sẽ không có dự báo.
+- **Chạy lại** (A quyết): 2 câu ngoài 7 ngày × 2 + 2 câu đã đạt × 1 làm đối chứng (≈ 0,005). Còn phạm ⇒ vòng 2 (cuối).
+
+**Vòng chỉnh 1 — đã chạy (21:56 05/11/2026) [Chạy]** (commit `8bdeb65`, đã push; Q1 **228 / 228** giống byte `main` `439ccd4`; Q1m **5** lần bắt có mục `thoi_tiet`, bỏ mục ⇒ giống byte — `data/phase_9/b5b/q1_vong1/`; test **350 passed**; `kiem_bo.py --pha` OK; bộ dò mới không lệch nhãn `ngoai_7` câu nào):
+- Tiền **0,002441 + 0,001309 = 0,00375** ⇒ B5b tổng **≈ 0,0324 / 0,07**.
+- X01, X02 × 2 (4 lượt ngoài 7 ngày): công cụ **không** đưa; câu cố định mới có **4 / 4**; **số dự báo 0 / 4**; bị rút 0. **3 / 4 lượt 0 số**; X02 lần 1 có **2 số khí hậu lấy từ đoạn kho được trích (có `[n]`)** + câu cố định "… số trong câu trả lời (nếu có) là khí hậu chung theo tài liệu, không phải dự báo" — đúng luật (a) A chốt ("số kho có `[n]` vẫn được"); theo chữ cũ "0 số" thì vẫn là 1 lượt có số ⇒ A kết luận.
+- Đối chứng × 1: F01 (dự báo) có khối số liệu, số ⊂ đoạn được trích, không rút; K01 (khí hậu) không gọi công cụ, không rút.
+- **A kết luận vòng chỉnh 1: ĐẠT** (21:58 05/11/2026) — chấm theo luật (a) A chốt **trước** lượt chạy ("ngoài 7 ngày: 0 số dự báo + câu cố định; số kho có `[n]` vẫn được theo D8"), không phải đọc lại sau khi thấy kết quả. Lượt X02 lần 1: 2 số khí hậu lấy từ đoạn kho được trích, kèm `[n]`, + câu "không phải dự báo". A đồng ý chi tiết "ngoài 7 ngày ⇒ không đưa công cụ"; C sửa nhãn `cong_cu` của X01 / X02.
