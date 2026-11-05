@@ -28,7 +28,7 @@ from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm.hoi_lai import TruongInput, ghep_cau
 from api.conversations import TTL_SECONDS
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, elapsed_ms, turn_usd
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, elapsed_ms, lich_cho_giao_dien, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -46,8 +46,10 @@ METRIC_FIELDS = (
     "routing_ms",
     # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
     "n_history_turns", "history_tokens",
-    # B4 D9: lượt hỏi lại ({loai, n, d3} — không giá trị) · lượt ghép: số trường người dùng chọn (không giá trị)
+    # B4 D9: lượt hỏi lại ({loai, n} — không giá trị) · lượt ghép: số trường người dùng chọn (không giá trị)
     "hoi_lai", "co_truong",
+    # B5 (plan B5 bản 7 §3, D14 (d)): có lịch + qua kiểm cuối · số điểm đã xếp · mã vi phạm kiểm cuối (D8) · mã các bước tiến độ đã phát
+    "lich_trinh_ok", "lich_trinh_so_diem", "lich_trinh_kiem", "lich_trinh_buoc",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -78,6 +80,7 @@ class ChatResponse(BaseModel):
     notice: str | None = None  # B1 H4c: dòng "có thể đã thay đổi" (D8)
     turn_id: str | None = None  # B142: mã lượt cho 👍 / 👎 (`api/feedback.py`)
     clarify: dict | None = None  # B4 D8: thẻ hỏi lại (trường + lựa chọn do code dựng)
+    lich_trinh: dict | None = None  # B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code, không chữ model)
 
 
 def error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -115,7 +118,7 @@ def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: d
     """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc."""
     if body.truong is None:
         return query
-    trace.da_co_truong, trace.search_query = True, query
+    trace.truong, trace.search_query = body.truong.model_dump(exclude_none=True), query
     metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))
     return ghep_cau(query, body.truong)
 
@@ -218,7 +221,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
 
     _remember(request, conversation_id, query, trace, "success")
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice,
-                        turn_id=_new_turn_id(request, trace, "success")), conversation_id
+                        turn_id=_new_turn_id(request, trace, "success"),
+                        lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query)), conversation_id
 
 
 # ---------- Phần trước model, chung cho hai route ----------
@@ -289,7 +293,10 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
         route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms, n_history_turns=len(trace.history),
-        hoi_lai=None if trace.clarify is None else {"loai": trace.clarify["loai"], "n": len(trace.clarify["truong"]), "d3": trace.hoi_lai_d3},
+        hoi_lai=None if trace.clarify is None else {"loai": trace.clarify["loai"], "n": len(trace.clarify["truong"])},
+        lich_trinh_ok=None if trace.lich is None else not trace.lich_kiem and trace.citation_error is None,
+        lich_trinh_so_diem=None if trace.lich is None else len(trace.lich["nguon"]),
+        lich_trinh_kiem=trace.lich_kiem, lich_trinh_buoc=[b["buoc"] for b in trace.buoc_lich] or None,
         today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
     )
     if trace.generated is not None:
@@ -331,12 +338,14 @@ async def chat_stream(body: ChatRequest, request: Request):
         conversation_id = _start_conversation(request, trace, metrics)
         query = _model_query(body, query, trace, metrics)
         turn = answer_turn_stream(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
+        cau_goc = trace.search_query or query
 
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
             _remember(request, conversation_id, query, trace, metrics["outcome"])
 
         response = StreamingResponse(
-            _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"])),
+            _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"]),
+                           lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -360,10 +369,11 @@ class StreamEvents:
     """Dựng sự kiện SSE của một lượt stream và điền `outcome` / mốc thời gian vào `metrics` (spec §4.4, §4.6). Không gọi model ⇒ test
     được bằng chữ có sẵn; `_answer_events` chỉ nối nó với luồng model."""
 
-    def __init__(self, metrics: dict, started: float, new_turn_id=None) -> None:
+    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None) -> None:
         self.metrics = metrics
         self.started = started
         self.new_turn_id = new_turn_id  # B142: cấp mã lượt (đánh giá 👍 / 👎) ở `done` của lượt có câu trả lời cuối; None ⇒ `done` như cũ
+        self.lich = lich  # B5: dựng dữ liệu sự kiện `lich_trinh` (link bản đồ + thẻ Sửa) khi lượt có lịch qua kiểm; None ⇒ không có sự kiện
         self.seq = 0
         self.shown: list[str] = []  # các mảnh chữ đã gửi
 
@@ -409,6 +419,9 @@ class StreamEvents:
             events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited)])]
             if trace.notice is not None:
                 events.append(sse_event("notice", {"text": trace.notice}))
+            lich = None if self.lich is None else self.lich()
+            if lich is not None:  # B5 D11 / D12: dữ liệu có cấu trúc, sau `sources` (chỉ khi lịch qua kiểm)
+                events.append(sse_event("lich_trinh", lich))
         return events + [self.done(answered=trace.citation_error is None)]
 
     def failure(self, exc: Exception) -> list[bytes]:
@@ -430,13 +443,13 @@ class StreamEvents:
         return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
 
 
-async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None):
+async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
     trước dòng log, nên ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ nguyên (C132 m-1)."""
     metrics["status_code"] = 200
-    stream = StreamEvents(metrics, started, new_turn_id)
+    stream = StreamEvents(metrics, started, new_turn_id, lich)
     try:
         async for kind, data in turn:
             yield stream.status(data) if kind == "status" else stream.delta(data)

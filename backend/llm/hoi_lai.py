@@ -1,23 +1,21 @@
 """Hỏi lại khi câu lịch trình thiếu thông tin (Phase 9 B4, plan `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md` bản 2 `42fa62d2425f`;
 **B4b — bản 8 `69afbb2732cf` D2′:** chỉ còn loại lịch trình — câu chi phí giữ hành vi `main` vì B4 âm ở câu chi phí, report B4 §2e / §2f).
 
-Một chỗ cho danh sách trường (D2 — khớp bộ đo C143 `data/phase_9/bo_do_b4/luat_ghi_truoc.md` và plan B5 D1), luật lọc lời gọi của model (D3),
-dữ liệu dựng nút (D8) và câu ghép đủ ý (D4). Không gọi mạng, không SDK — lõi và route đều dùng. Chữ người dùng thấy ở thẻ hỏi lại và câu ghép
+**B5 (plan B5 bản 7 D15, User 10:07 05/11/2026 "code tự hỏi"; review C183 m-2):** công cụ `hoi_lai` cho model đã gỡ (luật lọc D3 cũng gỡ —
+lịch sử ở tag `hoso/p9-b4`); **code** của công cụ `lich_trinh` tự trả thẻ khi thiếu số ngày. Ở đây còn: danh sách trường (D2 — khớp bộ đo C143
+`data/phase_9/bo_do_b4/luat_ghi_truoc.md` và plan B5 D1), dữ liệu dựng nút (D8) và câu ghép đủ ý (D4). Không gọi mạng, không SDK — lõi và route đều dùng. Chữ người dùng thấy ở thẻ hỏi lại và câu ghép
 là chữ cố định ở đây, không phải chữ model hay chữ tự do từ trình duyệt.
 """
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-Loai = Literal["lich_trinh"]  # B4b D2′: giữ tham số một giá trị ⇒ khuôn `clarify`, log, harness không đổi
-TruongTen = Literal["so_ngay", "di_cung", "kieu_di", "so_thich"]
 
 # Trường theo loại (thứ tự = thứ tự hỏi / cắt; bắt buộc đứng trước) và trường bắt buộc (D2 — mặc định bộ đo C143).
 TRUONG_THEO_LOAI: dict[str, tuple[str, ...]] = {
     "lich_trinh": ("so_ngay", "di_cung", "kieu_di", "so_thich"),
 }
 BAT_BUOC: dict[str, tuple[str, ...]] = {"lich_trinh": ("so_ngay",)}
-MAX_TRUONG = 3
 
 # Nhãn nút: tên trường + từng giá trị cho phép (giá trị = khoá bộ đo C143). Nhãn dùng cả cho câu ghép.
 NHAN_TRUONG = {"so_ngay": "Số ngày", "di_cung": "Đi cùng ai", "kieu_di": "Kiểu đi", "so_thich": "Sở thích"}
@@ -39,19 +37,6 @@ class TruongInput(BaseModel):
     di_cung: Literal["mot_minh", "cap_doi", "gia_dinh_tre_em", "nguoi_lon_tuoi", "nhom_ban"] | None = None
     kieu_di: Literal["thong_tha", "day_lich"] | None = None
     so_thich: Literal["di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chup_anh"] | None = None
-
-
-def loc_truong(loai: str, truong_thieu: list[str]) -> tuple[list[str], list[str]]:
-    """D3 (plan B4 bản 5 `acfaf8ca0df5`) — ranh giới, không phải phép đo: bỏ trường không thuộc `loai` (giữ thứ tự bảng, bỏ trùng);
-    **luôn thêm trường bắt buộc của `loai` mà model không chọn** (review C163 m-2: model chỉ hỏi trường không bắt buộc ⇒ thẻ không có
-    trường bắt buộc ⇒ câu lịch trình đi tiếp thiếu số ngày); > 3 ⇒ giữ 3 theo thứ tự bảng (bắt buộc đứng trước ⇒ không bao giờ bị cắt).
-    Trả (danh sách, cờ) — cờ ⊂ ["dien", "cat"], có thể cả hai (C166 m-2); harness đếm số lần code phải thêm / cắt (plan M-1)."""
-    chon = set(truong_thieu)
-    co: list[str] = ["dien"] if any(t not in chon for t in BAT_BUOC[loai]) else []
-    giu = [t for t in TRUONG_THEO_LOAI[loai] if t in chon or t in BAT_BUOC[loai]]
-    if len(giu) > MAX_TRUONG:
-        giu, co = giu[:MAX_TRUONG], co + ["cat"]
-    return giu, co
 
 
 def the_hoi_lai(loai: str, truong: list[str], cau_goc: str) -> dict:

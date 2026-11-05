@@ -106,13 +106,19 @@ ASSISTANT_HISTORY_NOTE = (
     "thông tin của đối tượng khác cho đối tượng đang được hỏi; Bằng chứng không nói điều được hỏi về đối tượng đó thì trả câu không đủ thông tin."
 )
 
-# Phase 9 B4 (plan B4 bản 2 D1): chỉ ghép vào lời dặn trợ lý khi cờ `assistant.hoi_lai` bật và lượt chưa mang giá trị trường (D4).
-# B4b (plan bản 8 `69afbb2732cf` D1′ / D7′): chỉ câu lịch trình; bỏ Cách A — câu chi phí giữ hành vi `main` (B4 âm ở câu chi phí, report §2e / §2f).
-HOI_LAI_NOTE = (
-    "Công cụ hoi_lai: chỉ gọi khi người dùng nhờ lên lịch trình chuyến đi mà THIẾU số ngày. Khi gọi: chọn các trường còn thiếu "
-    "(tối đa 3, không hỏi điều câu đã nêu); câu đã có số ngày thì KHÔNG gọi hoi_lai chỉ để hỏi thêm trường không bắt buộc "
-    "(đi cùng ai, kiểu đi, sở thích); không viết câu trả lời. Câu hỏi giá, chi phí, dự trù tiền chuyến đi và mọi câu khác thì trả lời "
-    "bình thường, không gọi hoi_lai."
+# Phase 9 B5 (plan B5 bản 7 D7): **không** thêm lời dặn hệ thống (bài học B4b §2g — ghi chú công cụ vào lời dặn mọi câu đổi hành vi câu khác).
+# Mô tả công cụ `lich_trinh` ngắn đi kèm danh sách công cụ; luật trình bày dài nằm **trong kết quả công cụ** (chỉ câu gọi `lich_trinh` mới thấy).
+# Không dùng tên địa danh thật làm ví dụ (ý #12 — model hay chép ví dụ).
+LICH_TRINH_MO_TA = (
+    "Xếp lịch tham quan Huế từ bảng điểm của hệ thống. Chỉ gọi khi người dùng nhờ lên lịch trình / gợi ý đi đâu cho chuyến đi; "
+    "không gọi cho câu hỏi về một điểm cụ thể. Truyền đúng thông tin người dùng đã nói, chưa nói thì để null, không tự đoán. "
+    "Kết quả gồm khung lịch, luật trình bày và tài liệu của từng điểm."
+)
+LICH_TRINH_LUAT = (
+    "Luật trình bày lịch: viết theo đúng khung dưới — giữ thứ tự ngày, buổi, điểm; không thêm, không bớt điểm. Mỗi điểm một dòng mở bằng "
+    "tên buổi, nêu tên điểm và ít nhất một trích dẫn [n] đúng số của điểm đó trong khung, kèm một ý ngắn lấy từ tài liệu của điểm. "
+    "Chỉ nêu giờ có trong khung; không nêu giá tiền, thời lượng tham quan, thời gian hay quãng đường di chuyển. Không viết đường link. "
+    "Không viết phần ghi chú, lưu ý, giả định hay điểm chưa xếp — hệ thống tự thêm sau câu trả lời."
 )
 
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.
