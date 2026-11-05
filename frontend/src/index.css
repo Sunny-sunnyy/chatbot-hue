@@ -155,3 +155,11 @@ body { background: var(--color-page); }
 .hoi-anh-nut { margin-top: 0; }
 .hoi-anh-the { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .hoi-anh-xem { max-width: 220px; max-height: 160px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-line); }
+/* Màn hẹp: form dính đáy nên thẻ ảnh cao che câu trả lời (E11 đo 360×740: còn 191 px để đọc) ⇒ ảnh xem trước nhỏ, đặt bên trái chữ;
+   hàng nút cuối trải cả chiều ngang. Chỉ khi có ảnh (thẻ lỗi kiểu file không có ảnh giữ một cột). */
+@media (max-width: 700px) {
+  .hoi-anh-the { padding: 12px 14px; }
+  .hoi-anh-the:has(> .hoi-anh-xem) { display: grid; grid-template-columns: 72px 1fr; column-gap: 12px; row-gap: 6px; align-items: start; }
+  .hoi-anh-the > .hoi-anh-xem { grid-row: span 2; width: 72px; height: 72px; max-width: none; max-height: none; }
+  .hoi-anh-the:has(> .hoi-anh-xem) > div:last-child { grid-column: 1 / -1; }
+}
