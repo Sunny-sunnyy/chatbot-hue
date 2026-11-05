@@ -1,0 +1,67 @@
+"""Hỏi lại khi câu lịch trình thiếu thông tin (Phase 9 B4, plan `docs/superpowers/plans/2026-11-03-phase-9-b4-plan.md` bản 2 `42fa62d2425f`;
+**B4b — bản 8 `69afbb2732cf` D2′:** chỉ còn loại lịch trình — câu chi phí giữ hành vi `main` vì B4 âm ở câu chi phí, report B4 §2e / §2f).
+
+Một chỗ cho danh sách trường (D2 — khớp bộ đo C143 `data/phase_9/bo_do_b4/luat_ghi_truoc.md` và plan B5 D1), luật lọc lời gọi của model (D3),
+dữ liệu dựng nút (D8) và câu ghép đủ ý (D4). Không gọi mạng, không SDK — lõi và route đều dùng. Chữ người dùng thấy ở thẻ hỏi lại và câu ghép
+là chữ cố định ở đây, không phải chữ model hay chữ tự do từ trình duyệt.
+"""
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict
+
+Loai = Literal["lich_trinh"]  # B4b D2′: giữ tham số một giá trị ⇒ khuôn `clarify`, log, harness không đổi
+TruongTen = Literal["so_ngay", "di_cung", "kieu_di", "so_thich"]
+
+# Trường theo loại (thứ tự = thứ tự hỏi / cắt; bắt buộc đứng trước) và trường bắt buộc (D2 — mặc định bộ đo C143).
+TRUONG_THEO_LOAI: dict[str, tuple[str, ...]] = {
+    "lich_trinh": ("so_ngay", "di_cung", "kieu_di", "so_thich"),
+}
+BAT_BUOC: dict[str, tuple[str, ...]] = {"lich_trinh": ("so_ngay",)}
+MAX_TRUONG = 3
+
+# Nhãn nút: tên trường + từng giá trị cho phép (giá trị = khoá bộ đo C143). Nhãn dùng cả cho câu ghép.
+NHAN_TRUONG = {"so_ngay": "Số ngày", "di_cung": "Đi cùng ai", "kieu_di": "Kiểu đi", "so_thich": "Sở thích"}
+GIA_TRI: dict[str, dict[str, str]] = {
+    "so_ngay": {"1": "1 ngày", "2": "2 ngày", "3": "3 ngày", "4+": "từ 4 ngày"},
+    "di_cung": {"mot_minh": "đi một mình", "cap_doi": "đi hai người (cặp đôi)", "gia_dinh_tre_em": "gia đình có trẻ em",
+                "nguoi_lon_tuoi": "có người lớn tuổi", "nhom_ban": "nhóm bạn"},
+    "kieu_di": {"thong_tha": "đi thong thả", "day_lich": "đi dày lịch"},
+    "so_thich": {"di_tich": "thích di tích", "am_thuc": "thích ẩm thực", "thien_nhien": "thích thiên nhiên",
+                 "le_hoi_nghe_thuat": "thích lễ hội, nghệ thuật", "chup_anh": "thích chụp ảnh"},
+}
+
+
+class TruongInput(BaseModel):
+    """Giá trị người dùng chọn ở nút (D4): dữ liệu không tin cậy từ trình duyệt ⇒ chỉ đúng tập giá trị trên, trường lạ ⇒ 422.
+    Rỗng (`{}`) = "Trả lời luôn" (không hỏi lại nữa)."""
+    model_config = ConfigDict(extra="forbid")
+    so_ngay: Literal["1", "2", "3", "4+"] | None = None
+    di_cung: Literal["mot_minh", "cap_doi", "gia_dinh_tre_em", "nguoi_lon_tuoi", "nhom_ban"] | None = None
+    kieu_di: Literal["thong_tha", "day_lich"] | None = None
+    so_thich: Literal["di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chup_anh"] | None = None
+
+
+def loc_truong(loai: str, truong_thieu: list[str]) -> tuple[list[str], list[str]]:
+    """D3 (plan B4 bản 5 `acfaf8ca0df5`) — ranh giới, không phải phép đo: bỏ trường không thuộc `loai` (giữ thứ tự bảng, bỏ trùng);
+    **luôn thêm trường bắt buộc của `loai` mà model không chọn** (review C163 m-2: model chỉ hỏi trường không bắt buộc ⇒ thẻ không có
+    trường bắt buộc ⇒ câu lịch trình đi tiếp thiếu số ngày); > 3 ⇒ giữ 3 theo thứ tự bảng (bắt buộc đứng trước ⇒ không bao giờ bị cắt).
+    Trả (danh sách, cờ) — cờ ⊂ ["dien", "cat"], có thể cả hai (C166 m-2); harness đếm số lần code phải thêm / cắt (plan M-1)."""
+    chon = set(truong_thieu)
+    co: list[str] = ["dien"] if any(t not in chon for t in BAT_BUOC[loai]) else []
+    giu = [t for t in TRUONG_THEO_LOAI[loai] if t in chon or t in BAT_BUOC[loai]]
+    if len(giu) > MAX_TRUONG:
+        giu, co = giu[:MAX_TRUONG], co + ["cat"]
+    return giu, co
+
+
+def the_hoi_lai(loai: str, truong: list[str], cau_goc: str) -> dict:
+    """Dữ liệu thẻ hỏi lại cho giao diện (sự kiện `clarify` / trường `clarify` của `/api/chat`) — code dựng nút từ bảng (spec §3)."""
+    return {"loai": loai, "cau_goc": cau_goc, "bat_buoc": [t for t in truong if t in BAT_BUOC[loai]],
+            "truong": [{"ten": t, "nhan": NHAN_TRUONG[t], "lua_chon": [{"gia_tri": k, "nhan": v} for k, v in GIA_TRI[t].items()]} for t in truong]}
+
+
+def ghep_cau(cau_goc: str, truong: TruongInput) -> str:
+    """D4: câu gốc + giá trị đã chọn ⇒ một câu đủ ý, chữ từ bảng nhãn (tất định). Không chọn gì ("Trả lời luôn") ⇒ đúng câu gốc."""
+    chon = [GIA_TRI[ten][gia_tri] for ten, gia_tri in truong.model_dump(exclude_none=True).items()]
+    cau = cau_goc.strip()
+    return cau if not chon else f"{cau} (Thông tin thêm: {'; '.join(chon)}.)"

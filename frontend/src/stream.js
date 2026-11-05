@@ -32,13 +32,14 @@ export function createSseParser(onEvent) {
 // `onEvent` nhận `status` / `delta` / `sources` / `notice` (B1 H4c) / `done` (B3 bước 8: `outcome` để vẽ câu khẩn cấp thành thẻ riêng). Mọi lỗi khác ⇒ ném `StreamError` mang lời tiếng Việt cho người dùng: lời của server (JSON lỗi
 // trước luồng, sự kiện `error`) giữ nguyên; mạng / thân lỗi không phải JSON / luồng hỏng hoặc đứt ⇒ câu cố định.
 // `signal` (AbortController) huỷ `fetch` ⇒ server thấy ngắt kết nối, dừng model (yêu cầu 17); khi đó hàm ném `AbortError`.
-export async function streamAnswer(query, { signal, onEvent }) {
+// B4: `truong` (giá trị chọn ở thẻ hỏi lại, `{}` = "Trả lời luôn") gửi kèm câu gốc; server ghép câu đủ ý.
+export async function streamAnswer(query, { signal, onEvent, truong = null }) {
   let response;
   try {
     response = await fetch("/api/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify(truong === null ? { query } : { query, truong }),
       signal,
     });
   } catch (error) {

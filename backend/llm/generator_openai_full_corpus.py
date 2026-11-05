@@ -17,6 +17,7 @@ from agents import (
     Runner,
     function_tool,
 )
+from agents.agent import StopAtTools
 from agents.exceptions import AgentsException
 from openai import AsyncOpenAI, OpenAIError
 from openai.types.shared import Reasoning
@@ -27,6 +28,7 @@ from llm.pricing import cost_usd
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     ASSISTANT_TOOL_NOTE,
+    HOI_LAI_NOTE,
     CHAT_INSTRUCTIONS,
     INSUFFICIENT_ANSWER,
     ROUTER_INSTRUCTIONS,
@@ -91,6 +93,8 @@ class GeneratedText:
     llm_calls: tuple[dict, ...] = ()
     # B2 D5: lượt trợ lý chạm `max_turns` ⇒ handler trả câu từ chối; lõi đọc cờ này để đặt `outcome="max_turns"`
     hit_max_turns: bool = False
+    # B4 D8: lượt dừng ở công cụ `hoi_lai` (`StopAtTools`) ⇒ giá trị công cụ trả (dữ liệu thẻ hỏi lại), không có chữ trả lời
+    clarify: dict | None = None
 
 
 def input_cache_tokens(usage: Any) -> tuple[int | None, int | None]:
@@ -331,9 +335,10 @@ class OpenAIFullCorpusGenerator:
         except Exception as exc:
             raise GenerationError("OpenAI generation encountered unexpected failure") from exc
 
-    def assistant_instructions_for(self, history) -> str:
-        """Lời dặn trợ lý thật sự gửi đi ở lượt này — bộ dựng ngữ cảnh đếm ngân sách bằng chính chuỗi này (B3 D5)."""
-        return self.assistant_history_instructions if history else self.assistant_instructions
+    def assistant_instructions_for(self, history, hoi_lai: bool = False) -> str:
+        """Lời dặn trợ lý thật sự gửi đi ở lượt này — bộ dựng ngữ cảnh đếm ngân sách bằng chính chuỗi này (B3 D5). B4: có `hoi_lai` ⇒ thêm ghi chú."""
+        base = self.assistant_history_instructions if history else self.assistant_instructions
+        return f"{base}\n\n{HOI_LAI_NOTE}" if hoi_lai else base
 
     async def route(self, query: str, call_log: "CallLog", history=()) -> str:
         """Định tuyến (B1 D3): tuyến model chọn. Lỗi / hết giờ (`router_timeout`) / đầu ra hỏng ⇒ `GenerationError` (lõi đổi thành `tro_ly_hue`)."""
@@ -358,7 +363,7 @@ class OpenAIFullCorpusGenerator:
         queries = [parsed.cau_tim] if isinstance(parsed.cau_tim, str) else list(parsed.cau_tim)
         return parsed.route, queries
 
-    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=()) -> tuple[Agent, dict, dict]:
+    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), hoi_lai_fn=None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -368,25 +373,35 @@ class OpenAIFullCorpusGenerator:
             state["hit_max_turns"] = True
             return AnswerOutput(answer=INSUFFICIENT_ANSWER)
 
-        tool = function_tool(tool_fn, name_override="tim_kho", failure_error_function=None)
+        tools = [function_tool(tool_fn, name_override="tim_kho", failure_error_function=None)]
         extra = {"tool_use_behavior": "stop_on_first_tool"} if stop_on_first_tool else {}
         base = self.assistant_history_agent if history else self.assistant_agent
-        return base.clone(tools=[tool], **extra), {"max_turns": on_max_turns}, state
+        if hoi_lai_fn is not None:  # B4 D1: công cụ thứ hai, dừng ngay khi gọi (spec §3) — `final_output` = giá trị công cụ trả
+            tools.append(function_tool(hoi_lai_fn, name_override="hoi_lai", failure_error_function=None))
+            extra = {"tool_use_behavior": StopAtTools(stop_at_tool_names=["hoi_lai"]), "instructions": self.assistant_instructions_for(history, True)}
+        return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
-    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=()) -> GeneratedText:
+    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), hoi_lai_fn=None) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, hoi_lai_fn=hoi_lai_fn)
         result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS,
                                  error_handlers=handlers)
-        text = parse_structured_output(getattr(result, "final_output", None), AnswerOutput)
+        return self._tools_result(result, started, call_log, state)
+
+    def _tools_result(self, result, started: float, call_log: "CallLog", state: dict) -> GeneratedText:
+        """Kết quả lượt trợ lý có công cụ. B4 D8: dừng ở `hoi_lai` ⇒ `final_output` là dict công cụ trả ⇒ đọc **trước** khi ép `AnswerOutput`."""
+        output = getattr(result, "final_output", None)
+        if isinstance(output, dict) and "loai" in output:
+            return dataclasses.replace(self._generated_text(result, "", started, call_log), clarify=output)
+        text = parse_structured_output(output, AnswerOutput)
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
-    def start_tools_stream(self, user_prompt: str, tool_fn, history=()) -> tuple[RunResultStreaming, "CallLog", dict]:
+    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), hoi_lai_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, hoi_lai_fn=hoi_lai_fn)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=ASSISTANT_MAX_TURNS, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
@@ -485,9 +500,10 @@ class OpenAIFullCorpusGenerator:
     def finish_answer_stream(self, result: RunResultStreaming, call_log: CallLog, started: float, state: dict | None = None) -> GeneratedText:
         """Sau khi `stream_events()` đã đọc hết: chữ cuối kiểm chặt như `generate_answer` (`parse_structured_output`) + usage.
         `started` lấy bằng `time.monotonic()` trước `start_answer_stream`. `state`: của `start_tools_stream` (cờ `hit_max_turns`)."""
+        if state is not None:  # lượt có công cụ (có thể dừng ở `hoi_lai` — B4)
+            return self._tools_result(result, started, call_log, state)
         text = parse_structured_output(getattr(result, "final_output", None), AnswerOutput)
-        generated = self._generated_text(result, text, started, call_log)
-        return generated if state is None else dataclasses.replace(generated, hit_max_turns=state["hit_max_turns"])
+        return self._generated_text(result, text, started, call_log)
 
     async def aclose(self) -> None:
         """Close AsyncOpenAI client connection."""

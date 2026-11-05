@@ -26,6 +26,7 @@ from core.schema import (
 from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
+from llm.hoi_lai import TruongInput, ghep_cau
 from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, elapsed_ms, turn_usd
 
@@ -45,6 +46,8 @@ METRIC_FIELDS = (
     "routing_ms",
     # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
     "n_history_turns", "history_tokens",
+    # B4 D9: lượt hỏi lại ({loai, n, d3} — không giá trị) · lượt ghép: số trường người dùng chọn (không giá trị)
+    "hoi_lai", "co_truong",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -59,6 +62,7 @@ CONTEXT_BUDGET_MESSAGE = "Không thể đóng gói ngữ cảnh trong giới h�
 class ChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     query: str = Field(min_length=1, max_length=500)
+    truong: TruongInput | None = None  # B4 D4: giá trị chọn ở nút hỏi lại; `{}` = "Trả lời luôn"
 
 
 class SourceResponse(BaseModel):
@@ -73,6 +77,7 @@ class ChatResponse(BaseModel):
     sources: list[SourceResponse]
     notice: str | None = None  # B1 H4c: dòng "có thể đã thay đổi" (D8)
     turn_id: str | None = None  # B142: mã lượt cho 👍 / 👎 (`api/feedback.py`)
+    clarify: dict | None = None  # B4 D8: thẻ hỏi lại (trường + lựa chọn do code dựng)
 
 
 def error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -85,7 +90,7 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 # B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` tắt vì chạy http://127.0.0.1
 # (bật trước khi deploy — spec §7).
 CONVERSATION_COOKIE = "conversation_id"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns"}
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns", "hoi_lai"}
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
@@ -101,8 +106,18 @@ def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> 
 
 def _remember(request: Request, conversation_id: str | None, query: str, trace: AnswerTrace, outcome: str | None) -> None:
     """Ghi lượt đã xong vào cuộc (D2): chỉ lượt có câu trả lời cuối — lỗi / ngắt / rút lại không ghi."""
-    if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and trace.answer:
+    # B4 D5: lượt hỏi lại không có chữ trả lời nhưng vẫn lưu câu hỏi ⇒ người dùng gõ giá trị bằng chữ ở lượt sau vẫn có câu gốc
+    if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and (trace.answer or outcome == "hoi_lai"):
         request.app.state.conversations.append(conversation_id, query, trace.answer)
+
+
+def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict) -> str:
+    """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc."""
+    if body.truong is None:
+        return query
+    trace.da_co_truong, trace.search_query = True, query
+    metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))
+    return ghep_cau(query, body.truong)
 
 
 def _new_turn_id(request: Request, trace: AnswerTrace, outcome: str | None) -> str | None:
@@ -173,6 +188,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
 
     trace = AnswerTrace()
     conversation_id = _start_conversation(request, trace, metrics)
+    query = _model_query(body, query, trace, metrics)
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder)
     except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
@@ -183,6 +199,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     if trace.fixed_outcome is not None:
         metrics["outcome"] = trace.fixed_outcome  # câu cố định / từ chối trước model: không qua kiểm citation
         _remember(request, conversation_id, query, trace, trace.fixed_outcome)
+        if trace.clarify is not None:  # B4: lượt hỏi lại — không chữ, không mã đánh giá
+            return ChatResponse(answer="", sources=[], clarify=trace.clarify), conversation_id
         return ChatResponse(answer=trace.answer, sources=[], turn_id=_new_turn_id(request, trace, trace.fixed_outcome)), conversation_id
 
     if trace.citation_error is not None:
@@ -271,6 +289,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
         route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms, n_history_turns=len(trace.history),
+        hoi_lai=None if trace.clarify is None else {"loai": trace.clarify["loai"], "n": len(trace.clarify["truong"]), "d3": trace.hoi_lai_d3},
         today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
     )
     if trace.generated is not None:
@@ -310,6 +329,7 @@ async def chat_stream(body: ChatRequest, request: Request):
 
         trace = AnswerTrace()
         conversation_id = _start_conversation(request, trace, metrics)
+        query = _model_query(body, query, trace, metrics)
         turn = answer_turn_stream(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
 
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
@@ -370,6 +390,8 @@ class StreamEvents:
         self.metrics["outcome"] = trace.fixed_outcome
         self.metrics["refusal"] = trace.answer.strip() in REFUSAL_ANSWERS
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
+        if trace.clarify is not None:  # B4 D8: lượt hỏi lại ⇒ thẻ nút, không chữ, không mã đánh giá
+            return [sse_event("clarify", trace.clarify), self.done()]
         return [sse_event("sources", []), self.done(answered=True)]
 
     def finish(self, trace: AnswerTrace) -> list[bytes]:
