@@ -24,7 +24,7 @@ Nhánh: `p9-b5b` — code `2005566` rồi rebase 2 lần (lên `7ff8e5a` merge B
 | `backend/tests/test_b5b_thoi_tiet.py` (mới) | Xem mục 4. |
 
 **Lệch nhỏ so với plan (B tự quyết trong phạm vi):**
-1. **Câu dự báo không cần mã `[n]` của kho** — lỗi thật test bắt: bộ kiểm citation hiện có rút lại mọi câu không có `[n]` ⇒ câu trả lời dự báo (nguồn = khối số liệu code nối) **luôn bị rút**. Sửa hẹp: chỉ lỗi "không có `[n]`" ở lượt **có gọi công cụ thời tiết** và chữ model không có mã nào ⇒ bỏ qua (nguồn là dòng ghi công + giờ do code nối — đúng ý D8 "thiếu dòng nguồn + giờ ⇒ rút lại"); mã lạ / lỗi khác / lượt không công cụ vẫn rút (test bất biến).
+1. ~~**Câu dự báo không cần mã `[n]` của kho**~~ — **đã thay ở §7 (E17)**. Bản đầu: lỗi thật test bắt: bộ kiểm citation hiện có rút lại mọi câu không có `[n]` ⇒ câu trả lời dự báo (nguồn = khối số liệu code nối) **luôn bị rút**. Sửa hẹp: chỉ lỗi "không có `[n]`" ở lượt **có gọi công cụ thời tiết** và chữ model không có mã nào ⇒ bỏ qua (nguồn là dòng ghi công + giờ do code nối — đúng ý D8 "thiếu dòng nguồn + giờ ⇒ rút lại"); mã lạ / lỗi khác / lượt không công cụ vẫn rút (test bất biến).
 2. Toạ độ + hết giờ là hằng số trong code (D2 ghi "cố định trong code"; §3 ghi `settings.yaml`) — chỉ cờ ở `settings.yaml`.
 3. "Hôm nay" của công cụ = ngày đầu API trả (giờ Việt Nam) ⇒ tất định theo bản ghi API của lần chạy (plan §5).
 4. Câu "ngoài 7 ngày" chỉ nối khi câu có từ khoá thời tiết (tránh nối vào câu kho thường kiểu "tháng sau có lễ hội gì").
@@ -54,3 +54,23 @@ Từ `/tmp/b_b5b/backend`: `HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue
 
 - Đọc trước: plan D3–D9, rồi `thoi_tiet.py`, `assistant.py` `_lich_extra` / `thoi_tiet_for_turn` / `_thoi_tiet_cuoi` / `_dong_thoi_tiet_lich`.
 - Bước tiếp: probe Open-Meteo (0 USD) ⇒ đã thấy × 2 (có phí, sau khi A báo).
+
+## 7. Chỗ đổi theo E17 (21:35 05/11/2026)
+
+Review sớm E17 (`report_agent/2026-11-02_phase_9_code/b168_review_som.md`, major): chỗ miễn "không có `[n]`" ở lượt có công cụ thời tiết cho qua cả câu nêu **nội dung kho** không trích (E dò: "… Đại Nội mở cửa 7h–17h, vé 200.000 đồng." và "Lăng Tự Đức đóng cửa thứ hai" ⇒ qua). **A chọn Cách 2** (trùng khuyến nghị của B) + thêm dòng dặn của Cách 1 ⇒ commit **`a0906a6`**:
+- Kết quả công cụ `thoi_tiet` là **một nguồn thật trong sổ nguồn** (`_nguon_thoi_tiet`: id tiếp theo, khuôn `FullCorpusContextBuilder._block` như đoạn kho; tiêu đề "Dự báo thời tiết Huế (Open-Meteo)", mục "Dự báo 7 ngày tới", bằng chứng = các dòng ngày + dòng ghi công / "số liệu lúc HH:MM"; `source` = `open-meteo`, không thuộc tiền tố H4c). API lỗi ⇒ nguồn "Dự báo thời tiết Huế — chưa lấy được" với câu lỗi cố định. Model trích `[k]` như mọi nguồn; khung nguồn của giao diện hiện nguồn này.
+- **Bỏ hẳn chỗ miễn** — bộ kiểm citation giữ nguyên như `main`. `kiem_so` (D8) giữ: số °C / % / mm trong chữ model ⊂ số code in ∪ số đoạn được trích (nguồn dự báo nằm trong tập khi được trích). Câu bão / lũ, câu ngoài 7 ngày, khối số liệu vẫn do code nối.
+- `THOI_TIET_MO_TA` thêm: "khi nói về dự báo ghi mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
+- Test [Chạy]: ca E (b) có công cụ + nội dung không `[n]` (có số / không số) ⇒ **rút lại**; (a) câu chỉ dự báo có `[k]` ⇒ **qua**; câu dự báo trích đúng `[k]`, `cited` = nguồn dự báo; API lỗi ⇒ nguồn lỗi + câu cố định. `test_b5b_thoi_tiet.py` **65 passed**; cùng 13 file khác **342 passed**; build xong; `data/phase_9/bo_do_b5b/kiem_bo.py --pha` (bộ đo C207, md5 `25b9feced049`) trên code này: **OK**, ca phá 5 / 5.
+- Giới hạn còn (chung cho mọi câu trả lời, không phải lỗ mới): bộ kiểm chỉ kiểm có mã hợp lệ, không kiểm từng ý — model có thể dùng `[k]` của nguồn dự báo cho một ý của kho.
+- **Q1 / Q1m sau E17 [Chạy]:** Q1 **228 / 228** giống byte `main` `439ccd4` (`main` không đổi backend / frontend từ đó); Q1m: **5** lần bắt có mục `thoi_tiet` (như trước), bỏ mục ⇒ giống byte (`data/phase_9/b5b/q1_e17/`). Nhánh `p9-b5b` **`a0906a6`** (đã push). 0 USD.
+
+## 8. Đã thấy × 2 — phần câu thời tiết đơn lẻ (21:46 05/11/2026) [Chạy]
+
+A quyết: chạy bộ C207 (`data/phase_9/bo_do_b5b/cau_da_thay.jsonl` md5 `25b9feced049`) **bỏ 4 câu lịch** (`lich_co_ngay`, `lich_khong_ngay` — chờ `lich_trinh` bật + bảng v5 User duyệt) ⇒ **20 câu / 21 lượt × 2 lần**, trên `a0906a6`. Server thật `data/phase_9/b5b/tools/app_thoi_tiet.py` (cờ bật trên bản sao settings; ghi bản ghi API của lần chạy); chạy thử 0 USD trước (khoá giả + OpenAI trỏ cổng đóng + ép lỗi API). Dữ liệu private `data/phase_9/b5b/da_thay/`; chấm `data/phase_9/b5b/tools/cham_b5b.py` ⇒ `cham.json`.
+- **Tiền:** lần 1 **0,013678** · lần 2 **0,013199** · ca ép lỗi API (2 câu × 2) **0,001788** ⇒ **0,028665 / 0,07** (dừng 0,065). Open-Meteo 0 USD; 28 lần lấy, 27 từ cache (cache 30 phút làm số cả lượt đo **cùng một bản ghi API**).
+- **Q3 ĐẠT:** câu `du_bao` có gọi công cụ **9 / 10** ở **cả 2 lần** (ngưỡng ≥ 9); câu khí hậu chung gọi công cụ **0**. Câu có nhãn `goi` theo dõi khớp 4 / 4 mỗi lần.
+- **Bị rút lại: 0 / 21** mỗi lần (điều kiện dừng §8 "> 2" không chạm); câu khí hậu kho bị rút nhầm **0**.
+- **Q2 sàn code:** số thời tiết ngoài tập (số code in theo bản ghi API ∪ số đoạn được trích) **0**; câu bão / lũ thiếu NCHMF / 112 **0**; câu ngoài 7 ngày thiếu câu cố định **0**; nhãn "code đưa công cụ" (D4) khớp **42 / 42** lượt (cả 42 lượt có nhãn, 0 lệch); **API lỗi ⇒ 0 số + câu cố định 4 / 4**, không rút.
+- **Một chỗ cần A đọc tiêu chí — "câu có số mang dòng nguồn + giờ":** lượt X02 (câu ngoài 7 ngày) lần 1 có số dạng thời tiết **lấy từ đoạn kho khí hậu, có trích `[7][11]`** (số ∈ đoạn được trích — D8 cho phép), không gọi công cụ ⇒ không có dòng ghi công Open-Meteo. Đọc theo chữ Q2 ⇒ **1 lượt**; đọc theo D8 ("có số **từ công cụ** mà thiếu dòng nguồn + giờ ⇒ rút lại") ⇒ **0**. B không tự chọn — A quyết.
+- Theo dõi: 2 câu ngoài 7 ngày ⇒ model lấy ngày xa nhất có (D3), mục có số của 7 ngày (⊂ tập code) + câu "Mình chỉ có dự báo 7 ngày tới".

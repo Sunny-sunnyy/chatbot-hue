@@ -10,3 +10,13 @@ Người kiểm: E (Claude Opus 5.5, `hue-rag-bc`) · việc **E17** (A giao) ·
 5. **Test bất biến chưa đủ:** test hiện có phủ "có công cụ ⇒ miễn / mã lạ ⇒ rút / không công cụ ⇒ rút", **thiếu** ca "có công cụ + nội dung kho không `[n]`". Đóng: thêm (b) ⇒ rút lại (bắt buộc với cách 3), (a) ⇒ qua, (c) ⇒ ghi rõ là giới hạn (hoặc rút lại nếu chọn cách 4); chạy lại `test_b5b_thoi_tiet.py` + Q1 / Q1m (cờ tắt không đổi).
 
 Dò: worktree `/tmp/e17` (`b669981`, symlink `data/` + `knowledge-base-hue/`) — gỡ được.
+
+---
+
+## Vòng 2 — kiểm phần sửa `a0906a6` (cha `b669981`; A chọn cách 4) · 21:38 05/11/2026 · E (việc **E18**)
+
+**Kết luận: đạt** (0 major; 1 minor). Diff 4 file (`assistant.py`, `thoi_tiet.py`, `full_corpus_prompt.py`, `test_b5b_thoi_tiet.py`), +52 / −37.
+- **Khối dự báo là nguồn thật:** `_nguon_thoi_tiet` thêm `PackedSource` id tiếp theo vào sổ nguồn (khuôn `_block` như đoạn kho, `source="open-meteo"` — không trùng tiền tố H4c), đếm vào ngữ cảnh; API lỗi ⇒ nguồn "chưa lấy được" với câu `CAU_LOI` (không chữ số). **Chỗ miễn `NO_CITATION` đã gỡ** ⇒ bộ kiểm citation giống `main`. Mô tả công cụ thêm "ý kho vẫn ghi đúng mã [n]".
+- **Dò lại [Chạy, 0 USD] qua đường thật của test** (`run` ⇒ generator kịch bản ⇒ kiểm citation ⇒ `_thoi_tiet_cuoi`; file dò tạm, không commit, đã xoá): (a) chỉ dự báo không mã ⇒ **rút** · (b) kho có số không mã ⇒ **rút** · (c) kho không số không mã ⇒ **rút** · (d) dự báo có `[k]` ⇒ **qua** · (f) API lỗi, model trích `[k]` rồi tự viết "30 °C" ⇒ **rút** (`weather numbers without source`) · (e) "dự báo `[k]`. Đại Nội mở cửa 7h–17h." (câu kho không mã cạnh câu có mã) ⇒ qua — **giới hạn chung có sẵn ở `main`** (`select_cited_sources` đòi ≥ 1 mã hợp lệ, không đòi từng câu), không còn là chỗ nới riêng của B5b.
+- Test: cả file `test_b5b_thoi_tiet.py` (65) + 6 ca dò ⇒ **71 passed**. Q1 / Q1m: dùng lại của B (report b168 §7) — sửa chỉ chạm đường cờ bật.
+- **m-1 (minor):** `git diff --check b669981 a0906a6` ⇒ `backend/tests/test_b5b_thoi_tiet.py:315: new blank line at EOF` — xoá dòng trống cuối file.

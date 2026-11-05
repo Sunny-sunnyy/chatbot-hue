@@ -114,6 +114,10 @@ File tracked, repo public: không chép kho / Golden / câu bộ đo; câu ví d
 - **Độ chính xác:** lưới ~27 km, mưa miền Trung khó dự báo (C139 §2) ⇒ luôn có câu "dự báo có thể đổi".
 - **Bảng v4:** kho có thể ít ghi trong nhà / bậc thang ⇒ nhiều ô null ⇒ ít phương án ngày mưa. Chấp nhận (không suy).
 
+## Chỗ đổi theo review sớm E17 (21:35 05/11/2026, A chọn — không đổi tiêu chí / tiền)
+
+Kết quả công cụ `thoi_tiet` là một nguồn trong sổ nguồn (model trích [k]); bộ kiểm citation không miễn [n] (giữ như `main`); D5 / D8 giữ. Chi tiết: `report_agent/2026-11-02_phase_9_code/b168_b5b_implementation.md` §7.
+
 ## Chỗ đổi bản 2 (13:34 05/11/2026)
 
 Theo review E vòng 1 (`…b5b-plan_review.md` `c836a12438de`):
