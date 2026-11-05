@@ -17,6 +17,8 @@
 - **E13 + E15 XONG:** review `p9-b6` vòng 1 `9140152` changes_requested 0 / 2 / 2 ⇒ B169 sửa `77d51b6` ⇒ **vòng 2 ready_for_user_confirmation** (`report_agent/2026-11-02_phase_9_code/b165_review.md`: dò `renderWebHtml` thật trong Chromium 0 link ngoài; server bắt `<a` / `href=` / `//host`; lụt / áp thấp; khoá không trong `repr`; "đang" ⇒ giới hạn, lý do đủ). Worktree `/tmp/e13/wt` đã gỡ; còn `/tmp/e13/probe_fe*.py` (tạm).
 - **E14 XONG:** spec Phase 10 **bản 4 `784d6f7abd9f`** (B167 vòng 3: M-1 (a) V-b WER ⇒ theo dõi, quyết V-a + V-c + V-d; m-1 chuẩn hoá số; m-2 khoá mở khi luồng xong; m-3 p95 câu ≤ 10 s; m-4 tham số tập kiểu; m-5, m-6 §13) — chờ B vòng 2 (cuối).
 
+- **E16 đang làm (G0 giọng nói):** nhánh `p10-giong-noi` từ `main` `7ff8e5a`, worktree `/tmp/e_giong`; khai báo sửa: `pyproject.toml`, `uv.lock` (nhánh), `report_agent/2026-11-05_phase_10_anh/e16_g0_giong_noi.md`, model vào `data/phase_10/giong_noi/models/` (không commit).
+
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Nhánh `p10-anh` — CHƯA COMMIT** (auto mode chặn: luật User "commit / push hỏi trước"; tin A không thay User). Worktree `/tmp/e_anh` ở `main` `268466d` + 9 file chưa commit
   (+542 / −2: `backend/llm/nhan_anh.py`, `backend/api/routes/anh.py`, `backend/tests/test_p10_anh.py`, `app.py`, `settings.yaml` khối `anh:` (`bat: false`), `test_assistant_boundary.py` (`ALLOWED`),

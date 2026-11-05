@@ -57,6 +57,8 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 - **E15:** review `p9-b6` vòng 2 ready (`77d51b6`) ⇒ A merge cờ `tra_web` tắt; bật = User quyết (mục web ~13 s p50, ~0,0018 USD / câu đường web).
 - **C204 XONG:** bảng `diem_v5.json` `c7d294fcacd5` (33 điểm) + phiếu `diem_cho_user_v5.md`; lệch: "Bảo tàng Mỹ thuật" kho không có mục riêng; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (backlog sửa kho); "trong nhà" có chữ rõ 2 / 5 ⇒ phiếu 1 ô tick.
 - **MERGE B6 `7ff8e5a` (21:10 05/11/2026, cờ `tra_web: false`):** cổng A: build, test 128 passed / 1 error (test cần khoá — như `main`), `/health` 5 / 5, `/` 200, câu trong kho có [n] + câu ngoài phạm vi đúng, `chat_metrics` 2 / 2, câu hỏi trong log 0, 0 lần gọi Serper; ≈ 0,0004 USD. Báo cáo bản 34. Nhánh `p9-b6` chờ User xoá. **Bật cờ: hỏi User.**
+- **BẬT `tra_web` (21:15 05/11/2026, User duyệt):** cổng A server thật 3 câu tự viết — quán ăn kho không có ⇒ mục web (1 mã, `web_kiem` rỗng) 18,2 s 0,0018 USD · "đang lụt" ⇒ `thien_tai` câu cố định 9,1 s · giờ mở cửa kho có ⇒ không tra 3,1 s; `chat_metrics` 3 / 3, chữ câu hỏi trong log 0, khoá 0. Báo cáo: SINH bản 35, LUONG bản 30. **B / C kiểm lại thay đổi cờ của A** (1 dòng settings) khi rảnh.
+- **C205 XONG** bộ 40 câu giọng nói `data/phase_10/giong_noi/bo_40_cau/` (md5 `a24d445bfe61`) + hướng dẫn thu cho User.
 - **C (sau C192):** khi B163 có report ⇒ chạy lại `kiem_bo` / `mo_phong` bộ sửa lịch trên code B (đã thấy 10 + kín 5, chỉ số đếm).
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 — trạng thái (nguồn `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ `data/nghien_cuu_tinh_nang_2026-11-04/`)

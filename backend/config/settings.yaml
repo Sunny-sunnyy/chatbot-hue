@@ -69,7 +69,7 @@ assistant:
   nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true
   lich_trinh: false              # B5 (plan bản 7 D1): công cụ lịch trình (code xếp + code tự hỏi số ngày) — TẮT tới khi đạt luật ghi trước. Công cụ `hoi_lai` của B4 đã gỡ (C183 m-2)
   lich_trinh_bang: ../data/phase_9/lich_trinh/diem_v3.json  # bảng điểm User duyệt (v3 `e94b7f4263f2`, private); chỉ nạp khi cờ bật
-  tra_web: false                 # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — TẮT tới khi đạt luật ghi trước; cần router + tim_them
+  tra_web: true                  # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — BẬT 05/11/2026 tối (đạt luật ghi trước + kín ×2 + review; User duyệt); cần router + tim_them
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại
 
 # Phase 10 A1 (plan `2026-11-05-phase-10-a1-plan.md` bản 2 D2): hỏi bằng ảnh — `POST /api/anh/ung_vien`. TẮT tới khi đạt A2 (spec Phase 10 §5).
