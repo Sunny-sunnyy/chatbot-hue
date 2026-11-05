@@ -52,6 +52,7 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 - **Kín B6 ×2 ĐẠT (C203):** 22 lượt 0 lỗi, Q2 judge 0 / 7, Q3 7 / 7; **chữ đầu mục web p50 13,4 s** (nêu khi xét bật); tiền B6 tổng ≈ 0,185 / 0,22.
 - **B167** review spec Phase 10 bản 3 ⇒ changes_requested 0 / 1 / 6 (`d2c3b9560672`); **A chốt M-1 (20:57 05/11/2026):** WER thành theo dõi, quyết bằng tên riêng + số + tốc độ / RAM ⇒ E bản 4 sau E13 ⇒ B vòng 2. **B168** code B5b phần 0 USD (`p9-b5b` từ `main`).
 - **User chọn bảng điểm v5 (20:57 05/11/2026)** = v4 + 5 điểm trong nhà (Bảo tàng Cổ vật Cung đình, Duyệt Thị Đường, Không gian Lê Bá Đảng, Bảo tàng Mỹ thuật, Bảo tàng Hồ Chí Minh) ⇒ **C204** soạn `diem_v5.json` + phiếu 5 dòng cho User (sau C202). B5 đo trên v3 ⇒ đổi bảng phải chạy lại kiểm 0 USD.
+- **C202 ÂM (21:00 05/11/2026)**: tắt ghi đệm (`prompt_cache_options` explicit) ⇒ tiền / câu tăng (lượt tìm thêm đọc lại đệm của lần đầu: 45 % lượt ≥ 2 lần gọi, 81 % phần vào giá đọc) ⇒ giữ như cũ; bản vá `data/phase_9/c202_ghi_dem/patch.diff`. A đính chính nhận định "phụ phí ~13 % không được gì" (số 02/11, trước B2). **E13** review B6 ⇒ changes_requested 0 / 2 / 2 (link HTML thô lọt; thiếu "lụt" / "áp thấp") ⇒ **B169** sửa ⇒ E kiểm lại. **E14** spec Phase 10 bản 4 `784d6f7abd9f` ⇒ B kiểm vòng 2. E chờ B169.
 - **C (sau C192):** khi B163 có report ⇒ chạy lại `kiem_bo` / `mo_phong` bộ sửa lịch trên code B (đã thấy 10 + kín 5, chỉ số đếm).
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 — trạng thái (nguồn `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ `data/nghien_cuu_tinh_nang_2026-11-04/`)
@@ -82,7 +83,7 @@ Lệch phát hiện lúc mở: (1) kết phiên 16:49 chỉ chép handoff sang a
 
 - Link Google Maps của B5 đổi sang toạ độ cho 17 điểm có toạ độ (C197 đề xuất; mở kiểm bằng mắt trước) — A quyết khi bật B5.
 - Cách đếm token (`_token_count`) không tính kết quả tìm thêm + mô tả công cụ ⇒ chênh tới ~900 token; ngữ cảnh đo 1,7–4k ≪ trần 16k ⇒ xem lại khi lời dặn / công cụ dài thêm.
-- `prompt_cache_key`: lợi ≈ 0 hiện tại. Bảng sổ cải tiến: S41–S44 thiếu 1 cột. Log `FileHandler` không xoay vòng (deploy). Hạn mức OpenAI / Serper — đặt khi tới B6.
+- `prompt_cache_key` / ghi đệm: C202 05/11 tối — giữ như cũ (lượt tìm thêm đã đọc đệm); xét lại nếu tắt tìm thêm. Bảng sổ cải tiến: S41–S44 thiếu 1 cột. Log `FileHandler` không xoay vòng (deploy). Hạn mức OpenAI / Serper — đặt khi tới B6.
 - B7: dự phòng demo khi mất mạng; đề cương nói "trợ lý RAG có công cụ"; ý #15–#17.
 - Theo dõi: router đưa S20 sang `khan_cap`; định tuyến > 10 s ⇒ `tro_ly_hue`; `chat_feedback` chưa nối `chat_metrics`; câu từ chối sau 3 lần tìm ~8–12 s (file lăng không ghi giờ — C192 sửa phần giờ chung).
 

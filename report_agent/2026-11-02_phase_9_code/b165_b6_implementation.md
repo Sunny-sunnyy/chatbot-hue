@@ -122,7 +122,7 @@ HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python -m pytest -q -p 
 - Kín (C203) chạy trên code B6 của khoá — sau rebase code B6 giống hệt; C dùng `9140152` hoặc `cedac73` đều cùng code B6.
 
 
-## 9. Kín × 2 trên khoá (C203 — C viết 20:53 05/11/2026)
+## 10. Kín × 2 trên khoá (C203 — C viết 20:53 05/11/2026)
 
 Người chạy: C (`hue-rag-3c`); User gõ `!` (auto mode chặn agent đọc file kín).
 - **Khoá:** `cedac73` (C kiểm lại `TU_WEB_LUAT` `e5f516aa383e` · `tra_web.py` `282da23b2add` · `settings.yaml` `3186360ef29a`).
