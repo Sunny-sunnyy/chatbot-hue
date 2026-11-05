@@ -42,7 +42,7 @@ CAU = {
     "ve_doi_tuong": "Trẻ ngoài độ tuổi này và các đối tượng miễn / giảm: xem chính sách trong nguồn của bảng vé.",
     "ve_gop": "Có vé tuyến gộp nhiều điểm thường rẻ hơn mua lẻ — xem bảng vé gộp trong kho.",
     "ve_tre_khong_so": "Chưa biết số trẻ em nên chưa tính tổng tiền vé.",
-    "ve_khong_co": "Chưa có giá vé của «{ten}» trong bảng vé lẻ.",
+    "ve_khong_co": "«{ten}» không thuộc bảng vé lẻ nên hệ thống không tự tính tổng.",  # B5c-2 D8′
     "ngoai": "Chưa đủ dữ liệu để tính tổng: {ly_do}.",
     "tam": "Mình tạm tính cho {phan} — bấm Sửa để đổi.",
 }
@@ -213,6 +213,16 @@ def khop_ve(bang: BangTien, ten: str) -> DongVe | None:
     return next((v for v in bang.ve if k in v.khoa or (id_ is not None and v.id_diem == id_)), None)
 
 
+# ---------- B5c-2 D11′: chỉ đưa công cụ khi code thấy dấu hiệu chi phí ----------
+# Bỏ sót ⇒ câu đi đường `main` (liệt kê giá có nguồn) — an toàn; thừa ⇒ chỉ thêm một mục công cụ ở câu đó.
+_DAU_HIEU_TIEN = re.compile(r"(?<![\w])(?:bao\s+nhiêu\s+tiền|(?:hết|tốn|chuẩn\s+bị|mang\s+theo)\s+(?:khoảng\s+|chừng\s+)?bao\s+nhiêu"
+                            r"(?!\s+(?:ngày|giờ|tiếng|thời\s+gian|lâu|km|người))|tiền|chi\s+phí|phí|dự\s+toán|dự\s+trù|ngân\s+sách|vé|giá(?!\s+trị))(?![\w])")
+
+
+def co_dau_hieu_chi_phi(*texts: str | None) -> bool:
+    return any(t and _DAU_HIEU_TIEN.search(unicodedata.normalize("NFC", t).casefold()) for t in texts)
+
+
 # ---------- tham số (D6, D7) ----------
 
 @dataclass(frozen=True)
@@ -234,7 +244,7 @@ def can_truong(loai: str) -> tuple[str, ...]:
 
 
 def chot_tham_so(loai: str, muc_chi: str | None, diem: list[str] | None, truong: dict | None, nguoi: SoNguoi,
-                 ngay: tuple[str | None, str | None]) -> tuple[ThamSoTien | None, list[str]]:
+                 ngay: tuple[str | None, str | None], bat_buoc: tuple[str, ...] | None = None) -> tuple[ThamSoTien | None, list[str]]:
     """D6 + D7: (1) `truong` từ nút ⇒ (2) dò số (đã dò từ câu gốc + câu trước, `nguoi`, `ngay`) ⇒ (3) thiếu: lượt thường ⇒ trả danh sách trường
     cần hỏi (ThamSo None); lượt mang `truong` ⇒ **không hỏi lần hai**, trường còn thiếu đặt tạm 1."""
     if loai == "du_toan" and diem:  # vòng chỉnh 1 (pilot T7): model gửi dự toán kèm tên điểm hỏi vé ⇒ code coi là cả hai (D4: hai bảng riêng)
@@ -248,7 +258,7 @@ def chot_tham_so(loai: str, muc_chi: str | None, diem: list[str] | None, truong:
         ngoai = None
     if loai in ("ve", "ca_hai") and so_nguoi is None and nguoi_lon is not None:
         so_nguoi = nguoi_lon  # vé: chỉ biết người lớn (trẻ có nhắc nhưng không số) — vẫn tính được tiền người lớn
-    can = can_truong(loai)
+    can = can_truong(loai) if bat_buoc is None else bat_buoc
     thieu = [t for t in can if {"so_nguoi": so_nguoi, "so_ngay": so_ngay if ngoai is None else "x"}[t] is None]
     tam: list[str] = []
     if thieu and truong is None:
@@ -323,8 +333,7 @@ def khung_chu(kq: dict, luat: str) -> str:
     if kq["khong_co"]:
         phan.append("Bảng vé lẻ không có: " + ", ".join(kq["khong_co"]) + ".")
     if kq["ngoai"]:
-        phan.append(f"Không tính tổng được ({LY_DO_NGOAI[kq['ngoai']]}): trả lời bằng thông tin trong tài liệu đã có, kèm [n]; "
-                    "không tự ước hay cộng số tiền.")
+        phan.append(f"Không tính tổng được ({LY_DO_NGOAI[kq['ngoai']]}).")
     return "\n".join(phan)
 
 
@@ -364,8 +373,15 @@ def bang_markdown(bang: BangTien, kq: dict, n_du_toan: int | None, n_ve: dict[st
     return "\n\n".join(phan)
 
 
-def dong_minh_hieu(ts: ThamSoTien) -> str:
-    """D12 (a) dùng chung với B5: dòng đầu dựng từ tham số thật; "(tạm)" khi code đặt tạm."""
+def co_bang(kq: dict) -> bool:
+    """Lượt có bảng do code tính (dự toán hoặc vé)."""
+    return kq["du_toan"] is not None or kq["ve"] is not None
+
+
+def dong_minh_hieu(ts: ThamSoTien, tinh: bool = True) -> str:
+    """D12 (a) dùng chung với B5: dòng đầu dựng từ tham số thật; "(tạm)" khi code đặt tạm. B5c-2: không tính gì (`tinh` False) ⇒ không dòng."""
+    if not tinh:
+        return ""
     phan = []
     if ts.loai in ("ve", "ca_hai") and ts.nguoi_lon is not None and ts.tre_em:
         phan.append(f"{ts.nguoi_lon} người lớn · {ts.tre_em} trẻ em")

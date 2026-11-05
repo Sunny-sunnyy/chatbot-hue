@@ -145,6 +145,11 @@ TINH_TIEN_LUAT = (
     "(nhắc lại người dùng hỏi gì, có thể kèm một lời khuyên lấy từ tài liệu kèm [n]); không chép lại hay tự viết số tiền, không tự cộng, "
     "nhân hay viết bảng, không nêu tổng. Không gọi thêm công cụ, viết câu trả lời ngay."
 )
+# B5c-2 D8′: câu không có bảng tính (ngoài bảng / ngoài phạm vi) — Golden F2 lượt B5c: luật "không tự viết số tiền" làm model bỏ giá có trong kho
+TINH_TIEN_LUAT_KHONG_BANG = (
+    "Luật trình bày: hệ thống không có bảng tính cho câu này. Trả lời theo tài liệu như bình thường — được nêu giá có trong tài liệu, mỗi giá "
+    "kèm [n]; không tự nhân, cộng hay ước tổng. Phần ghi chú do hệ thống tự thêm sau câu trả lời. Không gọi thêm công cụ, viết câu trả lời ngay."
+)
 TOOL_DA_TINH = "Đã tính tiền ở lần gọi trước trong lượt này; hãy viết câu trả lời ngay."
 
 

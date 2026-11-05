@@ -270,3 +270,46 @@ def test_parallel_stream_keeps_button_values(deps, truong, so_nguoi, tam):
     asyncio.run(go())
     t = trace.tien["kq"]["tham_so"]
     assert trace.clarify is None and (t.so_nguoi, t.tam) == (so_nguoi, tam) and trace.truong == truong
+
+
+# ---------- B5c-2 (plan Chỗ đổi B5c-2 `815e44e9882a`) ----------
+
+@pytest.mark.parametrize("cau, co", [("Đi Huế 3 ngày tốn bao nhiêu?", True), ("Mua vé Đại Nội", True), ("Người cao tuổi có được miễn phí không?", True),
+                                     ("Lăng Tự Đức ở đâu?", False), ("Giá trị lịch sử của Đại Nội là gì?", False), ("Đi Lăng Tự Đức mất bao lâu?", False)])
+def test_cost_signal(cau, co):
+    assert tt.co_dau_hieu_chi_phi(cau) is co
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_non_cost_question_sends_exactly_main_request(deps, stream):
+    # D11′: câu không dấu hiệu chi phí ⇒ không đưa `tinh_tien` ⇒ yêu cầu gửi model giống hệt cờ tắt (Q1m′ mức test)
+    sent = {}
+    for name, flags in (("on", ON), ("off", OFF)):
+        gen = generator(lambda n, kw: [answer("Lăng Tự Đức ở phía nam kinh thành [1].")])
+        run(deps, "Lăng Tự Đức ở đâu?", gen, flags, AnswerTrace(), stream)
+        sent[name] = gen.client.responses.calls[0]
+    assert tool_names(sent["on"]) == ["tim_kho"] and json.dumps(sent["on"], sort_keys=True, default=str) == json.dumps(sent["off"], sort_keys=True, default=str)
+
+
+def test_previous_question_or_cost_button_turns_tool_on(deps):
+    gen = generator(lambda n, kw: [answer("x [1].")])
+    trace, _ = run(deps, "2 người, đi 3 ngày", gen, ON, AnswerTrace(history=((CAU_THIEU, ""),)))
+    assert "tinh_tien" in tool_names(gen.client.responses.calls[0]) and trace.tien_offered
+    gen = generator(lambda n, kw: [answer("x [1].")])
+    run(deps, "Lăng Tự Đức ở đâu?", gen, ON, AnswerTrace(truong={"so_nguoi": 2}, search_query="Lăng Tự Đức ở đâu?"))
+    assert "tinh_tien" in tool_names(gen.client.responses.calls[0])
+
+
+def test_no_table_lets_model_cite_kho_prices(deps):
+    # D8′: câu ngoài bảng ⇒ khung nói được nêu giá có trong tài liệu kèm [n]; ghi chú "không thuộc bảng vé lẻ…"; không dòng "Mình hiểu"
+    from llm.full_corpus_prompt import TINH_TIEN_LUAT_KHONG_BANG
+    seen = {}
+
+    def script(n, kw):
+        if n == 1:
+            return [tien_call(loai="ve", diem=["Một nhà hát lạ"])]
+        seen["khung"] = next(i["output"] for i in reversed(kw["input"]) if i.get("type") == "function_call_output")
+        return [answer("Vé xem biểu diễn có giá ghi trong tài liệu [1].")]
+    trace, _ = run(deps, "Vé xem biểu diễn ở một nhà hát lạ bao nhiêu tiền?", generator(script), ON)
+    assert TINH_TIEN_LUAT_KHONG_BANG in seen["khung"] and trace.citation_error is None
+    assert not trace.answer.startswith("Mình hiểu") and "«Một nhà hát lạ» không thuộc bảng vé lẻ nên hệ thống không tự tính tổng." in trace.answer
