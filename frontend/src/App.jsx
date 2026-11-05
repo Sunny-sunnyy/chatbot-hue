@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { displayNumbers, renderAnswerHtml } from "./markdown.js";
+import { displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
 import { streamAnswer } from "./stream.js";
 import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
 
@@ -12,7 +12,9 @@ const STATUS_TEXT = {
   searched: "Đã tìm trong kho, đang chuẩn bị câu trả lời…",
   generating: "Đang viết câu trả lời…",
   lich_trinh: "Đang xếp lịch…",  // Phase 9 B5 D14: công cụ lịch trình đang chạy
+  tra_web: "Kho chưa có — đang tra web…",  // Phase 9 B6 D6: cổng web mở sau câu từ chối của kho
 };
+const WEB_LINK = /^https?:\/\//;  // B6: link nguồn web do server dựng từ sổ — trình duyệt kiểm lại gốc trước khi vẽ
 // B5 D14 (c): nhãn cố định của từng bước code đã làm (sự kiện `status` stage `lich_trinh`); tên điểm + lý do lấy từ dữ liệu sự kiện, không chữ model.
 const LICH_BUOC = {
   xep_xong: d => `Đã xếp lịch (${d.n_diem} điểm)`,
@@ -54,7 +56,8 @@ function newTurn(key, question, truong = null, summary = "") {
   // lượt mới bắt đầu ở "đang hiểu câu hỏi": việc đầu tiên của server là định tuyến (B1) — thứ tự nhãn như D9 (b), không "đang tìm" trước
   return { key, question, phase: "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null, turnId: null, error: "",
            clarify: null, truong, summary,  // B4: thẻ hỏi lại (sự kiện `clarify`); lượt ghép mang `truong` + tóm tắt lựa chọn
-           progress: [], lich: null };  // B5: các bước tiến độ của lịch (D14) + dữ liệu lịch (link bản đồ, thẻ Sửa — D11, D12)
+           progress: [], lich: null,  // B5: các bước tiến độ của lịch (D14) + dữ liệu lịch (link bản đồ, thẻ Sửa — D11, D12)
+           web: null };  // B6: mục "Từ web (chưa kiểm)" (sự kiện `web`)
 }
 
 export default function App() {
@@ -148,6 +151,8 @@ export default function App() {
             update({ clarify: data });  // B4 D8: thẻ hỏi lại — code dựng nút từ danh sách trường
           } else if (name === "lich_trinh") {
             update({ lich: data });  // B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code)
+          } else if (name === "web") {
+            update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
             update({ outcome: data.outcome, turnId: data.turn_id ?? null });  // B142: mã lượt chỉ có ở lượt có câu trả lời cuối
           }
@@ -158,7 +163,7 @@ export default function App() {
       if (failure.name === "AbortError") return;  // chính trang huỷ (rời trang) — không còn ai xem
       // D3: kiểm cuối hỏng (rút lại) hoặc lỗi / đứt giữa chừng (xoá hết) — xoá chữ + nguồn đã hiện, hiện lời báo + "Thử lại" (yêu cầu 10, 11).
       stopFrame();
-      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", error: failure.message });
+      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", web: null, error: failure.message });
     }
   }
 
@@ -357,6 +362,7 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
           )}
         </div>
       )}
+      {turn.web && turn.phase !== "error" && <WebSection web={turn.web} turnKey={turn.key} />}
       {turn.progress.length > 0 && (
         <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
       )}
@@ -372,6 +378,29 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
       )}
       {turn.phase === "done" && turn.turnId && <Feedback turnId={turn.turnId} />}
     </article>
+  );
+}
+
+// B6 D6: khối riêng sau câu từ chối của kho. Nhãn "chưa kiểm" cố định; chữ + nguồn từ sự kiện `web` (server đã kiểm mã, link, số tiền).
+function WebSection({ web, turnKey }) {
+  const sources = web.sources.filter(source => WEB_LINK.test(source.link));
+  const html = useMemo(() => renderWebHtml(web.text, sources, turnKey), [web.text, sources, turnKey]);
+  return (
+    <section className="bubble web" aria-label="Từ web (chưa kiểm)">
+      <h3 className="mb-2 font-semibold text-accent-deep">Từ web (chưa kiểm)</h3>
+      <div className="answer" dangerouslySetInnerHTML={{ __html: html }} />
+      {sources.length > 0 && (
+        <ol className="mt-2 text-sm">
+          {sources.map(source => (
+            <li key={source.id} id={`web-${turnKey}-${source.id}`}>
+              <span className="n">w{source.id}</span>{" "}
+              <a href={source.link} target="_blank" rel="noopener noreferrer nofollow">{source.title}</a>{" "}
+              <span className="text-muted">({source.domain})</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }
 

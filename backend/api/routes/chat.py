@@ -50,6 +50,8 @@ METRIC_FIELDS = (
     "hoi_lai", "co_truong",
     # B5 (plan B5 bản 7 §3, D14 (d)): có lịch + qua kiểm cuối · số điểm đã xếp · mã vi phạm kiểm cuối (D8) · mã các bước tiến độ đã phát
     "lich_trinh_ok", "lich_trinh_so_diem", "lich_trinh_kiem", "lich_trinh_buoc",
+    # B6 D9: câu có mục web · kết quả cổng web · số kết quả Serper · số mã [w n] được trích · mã kiểm cuối hỏng (lần tra: mục `tools` "tra_web")
+    "has_web_section", "web_outcome", "web_n_ket_qua", "web_n_ma", "web_kiem",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -83,6 +85,7 @@ class ChatResponse(BaseModel):
     turn_id: str | None = None  # B142: mã lượt cho 👍 / 👎 (`api/feedback.py`)
     clarify: dict | None = None  # B4 D8: thẻ hỏi lại (trường + lựa chọn do code dựng)
     lich_trinh: dict | None = None  # B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code, không chữ model)
+    web: dict | None = None  # B6 D6: mục "Từ web (chưa kiểm)" — chữ đã qua kiểm cuối + nguồn web (link do code); sau câu từ chối của kho
 
 
 def error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -123,6 +126,18 @@ def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: d
     trace.truong, trace.search_query = body.truong.model_dump(exclude_none=True), query
     metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))
     return ghep_cau(query, body.truong)
+
+
+def _web_payload(trace: AnswerTrace) -> dict | None:
+    """B6 D6: dữ liệu mục web cho giao diện — chữ (đã kiểm hoặc câu cố định) + nguồn web được trích (số w n, tiêu đề, tên miền, link do code)."""
+    if trace.web is None:
+        return None
+    return {"outcome": trace.web["outcome"], "text": trace.web["text"],
+            "sources": [{k: s[k] for k in ("id", "title", "domain", "link")} for s in trace.web["nguon"]]}
+
+
+def _tim_web(state):
+    return getattr(state, "tim_web", None)
 
 
 def _new_turn_id(request: Request, trace: AnswerTrace, outcome: str | None) -> str | None:
@@ -195,7 +210,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     conversation_id = _start_conversation(request, trace, metrics)
     query = _model_query(body, query, trace, metrics)
     try:
-        await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder)
+        await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
+                          _tim_web(state))
     except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
         return _error_response_for(exc, recorder, metrics), conversation_id
     finally:
@@ -206,7 +222,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
         _remember(request, conversation_id, query, trace, trace.fixed_outcome)
         if trace.clarify is not None:  # B4: lượt hỏi lại — không chữ, không mã đánh giá
             return ChatResponse(answer="", sources=[], clarify=trace.clarify), conversation_id
-        return ChatResponse(answer=trace.answer, sources=[], turn_id=_new_turn_id(request, trace, trace.fixed_outcome)), conversation_id
+        return ChatResponse(answer=trace.answer, sources=[], turn_id=_new_turn_id(request, trace, trace.fixed_outcome),
+                            web=_web_payload(trace)), conversation_id
 
     if trace.citation_error is not None:
         logger.error("Citation integrity failed")
@@ -224,7 +241,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     _remember(request, conversation_id, query, trace, "success")
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
-                        lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query)), conversation_id
+                        lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
 
 
 # ---------- Phần trước model, chung cho hai route ----------
@@ -300,6 +317,9 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         lich_trinh_so_diem=None if trace.lich is None else len(trace.lich["nguon"]),
         lich_trinh_kiem=trace.lich_kiem, lich_trinh_buoc=[b["buoc"] for b in trace.buoc_lich] or None,
         today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
+        has_web_section=trace.web is not None and trace.web["outcome"] == "co_muc",
+        web_outcome=None if trace.web is None else trace.web["outcome"], web_n_ket_qua=None if trace.web is None else trace.web["n_ket_qua"],
+        web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
     )
     if trace.generated is not None:
         # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
@@ -339,7 +359,8 @@ async def chat_stream(body: ChatRequest, request: Request):
         trace = AnswerTrace()
         conversation_id = _start_conversation(request, trace, metrics)
         query = _model_query(body, query, trace, metrics)
-        turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder)
+        turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder,
+                                           _tim_web(state))
         cau_goc = trace.search_query or query
 
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
@@ -404,7 +425,13 @@ class StreamEvents:
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
         if trace.clarify is not None:  # B4 D8: lượt hỏi lại ⇒ thẻ nút, không chữ, không mã đánh giá
             return [sse_event("clarify", trace.clarify), self.done()]
-        return [sse_event("sources", []), self.done(answered=True)]
+        return [sse_event("sources", []), *self._web(trace), self.done(answered=True)]
+
+    @staticmethod
+    def _web(trace: AnswerTrace) -> list[bytes]:
+        """B6 D6: mục web một sự kiện `web`, sau `sources` (chữ đã kiểm cuối — không stream từng chữ)."""
+        payload = _web_payload(trace)
+        return [] if payload is None else [sse_event("web", payload)]
 
     def finish(self, trace: AnswerTrace) -> list[bytes]:
         """Sau kiểm citation: qua ⇒ `sources` (chỉ nguồn được trích) [+ `notice` H4c]; hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
@@ -424,6 +451,7 @@ class StreamEvents:
             lich = None if self.lich is None else self.lich()
             if lich is not None:  # B5 D11 / D12: dữ liệu có cấu trúc, sau `sources` (chỉ khi lịch qua kiểm)
                 events.append(sse_event("lich_trinh", lich))
+            events += self._web(trace)
         return events + [self.done(answered=trace.citation_error is None)]
 
     def failure(self, exc: Exception) -> list[bytes]:

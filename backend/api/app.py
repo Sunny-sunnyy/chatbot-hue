@@ -1,6 +1,7 @@
 """FastAPI application factory for Phase 6 Full-Corpus RAG API."""
 from contextlib import asynccontextmanager
 import logging
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -25,6 +26,7 @@ from core.settings_loader import BACKEND_DIR, load_settings
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 from llm.assistant import AssistantFlags
 from llm.nhan_anh import nap_danh_sach, tao_agent
+from llm.tra_web import SERPER_API_KEY_ENV, tim_web
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -54,6 +56,16 @@ class FrontendStaticFiles(StaticFiles):
         return response
 
 
+def _tim_web_server(settings: dict):
+    """B6: hàm tra web của server. Khoá đọc **trong** hàm mỗi lần tra (review E13 m-1: `functools.partial(api_key=…)` để lộ khoá trong `repr`)."""
+    timeout = float((settings.get("assistant") or {}).get("tra_web_timeout_seconds", 5))
+
+    async def tim(cau: str):
+        return await tim_web(cau, api_key=os.getenv(SERPER_API_KEY_ENV, "").strip() or None, timeout=timeout)
+
+    return tim
+
+
 def create_app(settings=None):
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -64,6 +76,8 @@ def create_app(settings=None):
         setup_logging()
         logger.info("Starting Hue Full-Corpus RAG API")
         app.state.assistant_flags = AssistantFlags.from_settings(settings)  # Phase 9 B1 D9
+        # B6 D3: hàm tra web của server — khoá Serper chỉ ở server; thiếu khoá ⇒ mỗi lần tra ra "loi", không mở mạng. Cờ tắt ⇒ None.
+        app.state.tim_web = _tim_web_server(settings) if app.state.assistant_flags.tra_web else None
 
         app.state.retrieval_ready = False
         app.state.retrieval_service = None

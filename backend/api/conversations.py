@@ -23,7 +23,7 @@ _SPACE_BEFORE_PUNCT = re.compile(r"\s+([.,;:!?])")
 
 def stored_answer(answer: str) -> str:
     """Câu trả lời đem vào lịch sử: bỏ mã trích dẫn `[n]` / `[Nguồn n]` — số nguồn đánh lại mỗi lượt, mã cũ làm model trích nhầm sổ nguồn
-    lượt mới (D2). Chỗ cắt mục "Từ web" của B6 đặt ở đây."""
+    lượt mới (D2). Mục "Từ web" (B6 D7) không cần cắt ở đây: chữ web nằm riêng ở `trace.web`, không bao giờ vào câu trả lời được nhớ."""
     text = CITATION_PATTERN.sub("", answer)
     return _SPACE_BEFORE_PUNCT.sub(r"\1", re.sub(r"[ \t]{2,}", " ", text)).strip()
 
