@@ -246,3 +246,27 @@ def test_route_cost_fields_validate_and_flag_off_composes():
         app.state.generator, app.state.generator_ready, app.state.assistant_flags = original
     assert ok.status_code == 200 and "Thông tin thêm: 3 người; mức thoải mái." in json.dumps(gen.client.responses.calls[0]["input"], ensure_ascii=False)
     assert qua.status_code == 422
+
+
+# ---------- #6 (đường stream song song, bật trên main): giá trị nút số người đi qua trace phụ (ROUTE_INPUTS) ----------
+
+@pytest.mark.parametrize("truong, so_nguoi, tam", [({"so_nguoi": 3, "so_ngay": "2"}, 3, ()), ({}, 1, ("so_nguoi", "so_ngay"))])
+def test_parallel_stream_keeps_button_values(deps, truong, so_nguoi, tam):
+    from llm.assistant import answer_turn_stream_parallel
+    from llm.full_corpus_prompt import ROUTER_INSTRUCTIONS
+
+    def script(_n, kw):  # định tuyến và trợ lý chạy cùng lúc ⇒ quyết theo nội dung lần gọi, không theo thứ tự
+        if str(kw.get("instructions", "")).startswith(ROUTER_INSTRUCTIONS[:80]):
+            return [{"type": "message", "id": f"msg_{next(_ids)}", "role": "assistant", "status": "completed",
+                     "content": [{"type": "output_text", "text": json.dumps({"route": "tro_ly_hue"}), "annotations": []}]}]
+        da_goi = any(isinstance(i, dict) and i.get("type") == "function_call_output" for i in kw["input"])
+        return [answer("Bạn xem bảng dưới nhé.")] if da_goi else [tien_call()]
+
+    flags = dataclasses.replace(ON, router=True, song_song_tra_loi=True)
+    trace = AnswerTrace(truong=truong, search_query=CAU_THIEU)
+
+    async def go():
+        return [e async for e in answer_turn_stream_parallel(CAU_THIEU, *deps, generator(script), trace, flags)]
+    asyncio.run(go())
+    t = trace.tien["kq"]["tham_so"]
+    assert trace.clarify is None and (t.so_nguoi, t.tam) == (so_nguoi, tam) and trace.truong == truong
