@@ -30,6 +30,7 @@ dependencies = [
     "tiktoken>=0.12,<1",
     "httpx>=0.28.1",
     "sentencepiece>=0.2.2",
+    "sherpa-onnx>=2.0.1",
 ]
 
 [dependency-groups]
