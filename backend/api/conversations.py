@@ -5,6 +5,7 @@ không gửi lại "trợ lý đã nói…" (chỗ cài lệnh, spec §3). Hết
 ≤ 1.500 token lịch sử (bỏ lượt cũ nhất trước, không tóm tắt). Không ghi đĩa, không log chữ / mã cuộc. Khởi động lại server ⇒ mất hết.
 Không khoá: hai yêu cầu cùng cuộc chạy song song thì lượt xong sau ghi sau (một người dùng — spec §7).
 """
+import copy
 import re
 import secrets
 import time
@@ -32,6 +33,9 @@ def stored_answer(answer: str) -> str:
 class Conversation:
     turns: list[tuple[str, str]] = field(default_factory=list)  # (câu hỏi, câu trả lời đã cắt) — câu trả lời "" khi chỉ nhớ câu hỏi
     expires_at: float = 0.0
+    # Sửa lịch nhiều lượt (plan sửa lịch D1): khung cuối của cuộc do code dựng ({tham_so, da_noi, khung, them, loai, cau_goc, the_chon}) — RAM,
+    # cùng TTL; không chữ người dùng tự do; chỉ route ghi sau lượt đạt; đọc / ghi bằng bản sao sâu
+    lich: dict | None = None
 
 
 class ConversationStore:
@@ -80,6 +84,16 @@ class ConversationStore:
             conversation.turns.pop(0)
         conversation.expires_at = self._clock() + self._ttl
         self._items.move_to_end(conversation_id)
+
+    def lich(self, conversation_id: str) -> dict | None:
+        """Khung đã lưu của cuộc (bản sao sâu — lõi không bao giờ cầm bản gốc)."""
+        conversation = self._items.get(conversation_id)
+        return None if conversation is None or conversation.lich is None else copy.deepcopy(conversation.lich)
+
+    def set_lich(self, conversation_id: str, lich: dict) -> None:
+        conversation = self._items.get(conversation_id)
+        if conversation is not None:
+            conversation.lich = copy.deepcopy(lich)
 
     def reset(self, conversation_id: str | None) -> str:
         """"Cuộc trò chuyện mới": xoá cuộc hiện tại khỏi RAM, trả mã mới."""

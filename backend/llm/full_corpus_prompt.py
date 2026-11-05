@@ -135,6 +135,13 @@ THOI_TIET_MO_TA = (
     "do hệ thống dựng (một nguồn có mã [n]), sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về dự báo ghi "
     "mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
 )
+# Sửa lịch (plan sửa lịch D8): mô tả ngắn, không thêm lời dặn hệ thống (bài học B4b); không dùng tên điểm thật (ý #12)
+SUA_LICH_MO_TA = (
+    "Sửa lịch đã xếp trước đó trong cuộc trò chuyện. Chỉ gọi khi tin nhắn cuối cùng của người dùng nhờ đổi lịch vừa xếp (bỏ, thêm, thay "
+    "điểm; dời buổi; đổi số ngày, người đi cùng, kiểu đi, sở thích). Câu hỏi về một điểm ⇒ dùng tim_kho; nhờ một lịch mới hoàn toàn ⇒ dùng "
+    "lich_trinh. Mỗi thay đổi là một hành động, đúng thứ tự trong câu; tên điểm đúng chữ người dùng gõ; thay mà người dùng không nói thay bằng gì "
+    "thì để trống ten_moi. Kết quả gồm khung lịch mới, luật trình bày và tài liệu của từng điểm."
+)
 TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã có; không tìm thêm — hãy viết câu trả lời ngay theo khung."
 
 

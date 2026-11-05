@@ -23,6 +23,10 @@ const LICH_BUOC = {
   kiem_luat_loi: d => `Kiểm luật xếp: ${d.n_loi} lỗi`,
   bo_diem: d => d.ly_do,
   lay_nguon: d => `Đã lấy tài liệu cho từng điểm (${d.n_doan} đoạn mới)`,
+  // sửa lịch D11: bước thật của code khi sửa lịch đã xếp
+  da_doi: d => `Đã sửa ${d.n} chỗ trong lịch`,
+  khong_doi: d => d.ly_do,
+  chua_lam: d => `Còn ${d.n} ý chưa làm — bạn nhắn tiếp nhé`,
 };
 const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ nhận link bản đồ đúng gốc này (kiểm cả phía trình duyệt)
 const PENDING = new Set(Object.keys(STATUS_TEXT));
@@ -102,7 +106,7 @@ export default function App() {
     frameRef.current = 0;
   }
 
-  async function ask(value, retryKey = null, truong = null, summary = "") {
+  async function ask(value, retryKey = null, truong = null, summary = "", suaChon = null) {
     const query = value.trim();
     if (!query || pending || resetting) return;
     abortRef.current?.abort();
@@ -122,6 +126,7 @@ export default function App() {
       await streamAnswer(query, {
         signal: controller.signal,
         truong,
+        suaChon,
         onEvent(name, data) {
           if (name === "status" && data.stage === "lich_trinh") {
             // C191 m-1: "dang_xep" không có trong LICH_BUOC ⇒ chỉ là nhãn trạng thái (`phase` ⇒ "Đang xếp lịch…"), không vào danh sách bước
@@ -367,7 +372,9 @@ function Turn({ turn, turnRef, activeSource, onCite, onRetry, onAsk }) {
       {turn.progress.length > 0 && (
         <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
       )}
-      {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
+      {turn.phase === "done" && turn.clarify && (turn.clarify.loai === "sua_chon"
+        ? <ChonCard clarify={turn.clarify} onAsk={onAsk} />
+        : <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />)}
       {turn.phase === "done" && turn.lich && <LichExtras lich={turn.lich} onAsk={onAsk} />}
       {turn.phase === "done" && turn.outcome === "out_of_scope" && (
         <div className="suggest" aria-label="Câu gợi ý">
@@ -458,6 +465,28 @@ function LichExtras({ lich, onAsk }) {
       )}
       {lich.sua && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
       {lich.sua && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}
+    </div>
+  );
+}
+
+// Sửa lịch D6: thẻ chọn điểm thay — mỗi nút là một id code đưa (hoặc "bo"); câu gửi là câu gốc của thẻ, server dựng câu cố định cho model.
+function ChonCard({ clarify, onAsk }) {
+  return (
+    <div className="clarify bubble">
+      <p className="mb-2">Bạn muốn thay {clarify.ten_cu} bằng điểm nào?</p>
+      {clarify.ghi && <p className="mb-2 text-sm">{clarify.ghi}</p>}
+      <fieldset className="mb-2">
+        <legend className="sr-only">Điểm thay</legend>
+        <div className="flex flex-wrap gap-2 pt-1">
+          {clarify.lua_chon.map(c => (
+            <button key={c.gia_tri} type="button"
+                    onClick={() => onAsk(clarify.cau_goc, null, null, c.gia_tri === "bo" ? `bỏ ${clarify.ten_cu}` : `thay bằng ${c.nhan}`,
+                                         { cu: clarify.cu, moi: c.gia_tri })}>
+              {c.nhan}
+            </button>
+          ))}
+        </div>
+      </fieldset>
     </div>
   );
 }

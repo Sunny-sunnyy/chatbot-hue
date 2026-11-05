@@ -180,10 +180,13 @@ def _cum_hop(cum: str, cums: list[str]) -> bool:
     return len(cums) < 2 and any(cum in CUM_KE.get(c, ()) for c in cums)
 
 
-def xep(bang: Bang, ts: ThamSo) -> dict:
+def xep(bang: Bang, ts: ThamSo, giu: dict[str, tuple[int, str]] | None = None, loai: frozenset[str] = frozenset()) -> dict:
     """D2–D5: chọn + xếp điểm theo buổi ⇒ khung. Thứ tự ưu tiên = điểm người dùng nêu, rồi điểm hợp sở thích theo thứ tự bảng; thiếu ⇒ lấp
-    bằng di tích theo thứ tự bảng **có nhãn** (D2 #2). Điểm nêu mà không xếp được ⇒ `khong_xep` + mã luật (D2b)."""
+    bằng di tích theo thứ tự bảng **có nhãn** (D2 #2). Điểm nêu mà không xếp được ⇒ `khong_xep` + mã luật (D2b).
+    Sửa lịch (plan `2026-11-05-phase-9-sua-lich-plan.md` D5): `giu` = điểm giữ nguyên chỗ (id ⇒ (ngày, buổi)), đặt trước khi lấp; `loai` = id người
+    dùng đã bỏ — không bao giờ được chọn lại. Mặc định (None, rỗng) ⇒ đúng như B5."""
     n = _so_ngay(ts)
+    giu = {i: v for i, v in (giu or {}).items() if v[0] <= n and i not in loai}
     han_che = ts.di_cung in HAN_CHE
     buoi_duoc = ("sang", "chieu") if han_che else BUOI
     khong_xep: list[dict] = []
@@ -194,19 +197,19 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
             khong_xep.append({"diem": ten, "ma_luat": "ngoai_bang"})
         elif not set(bang.theo_id[id_]["buoi"]) & set(buoi_duoc):
             khong_xep.append({"diem": bang.theo_id[id_]["ten"], "ma_luat": "khong_buoi_hop_le"})
-        elif id_ not in them_ids:
+        elif id_ not in them_ids and id_ not in loai:
             them_ids.append(id_)
     khong_xep += [{"diem": ten, "ma_luat": "het_suat"} for ten in ts.them_diem[MAX_THEM_DIEM:]]
 
     def dung_duoc(d: dict) -> bool:
-        return (d["cum"] != CUM_XA or n >= 3 or d["id"] in them_ids) and bool(set(d["buoi"]) & set(buoi_duoc))
+        return d["id"] not in loai and (d["cum"] != CUM_XA or n >= 3 or d["id"] in them_ids) and bool(set(d["buoi"]) & set(buoi_duoc))
 
     so_thich = ts.so_thich or "di_tich"
     hop = [d["id"] for d in bang.diem if d["id"] not in them_ids and so_thich in d["loai"] and dung_duoc(d)]
     pool = them_ids + hop
     thien_nhien = [d["id"] for d in bang.diem if ts.so_thich is None and "thien_nhien" in d["loai"] and dung_duoc(d)]
     lap = [d["id"] for d in bang.diem if "di_tich" in d["loai"] and dung_duoc(d)]
-    used: set[str] = set()
+    used: set[str] = set(giu)
     ngoai_so_thich: list[str] = []
 
     def chon(cands: list[str], buoi: str, cums: list[str], chi_ngan: bool = False) -> str | None:
@@ -233,7 +236,14 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
         cums: list[str] = []
         slots = {b: [] for b in BUOI}
         tn_hom_nay = False
+        for id_, (ng_giu, b_giu) in giu.items():  # D5: điểm giữ nguyên chỗ đặt trước, tính vào cụm của ngày
+            if ng_giu == i:
+                slots[b_giu].append(id_)
+                cums += [] if bang.theo_id[id_]["cum"] in cums else [bang.theo_id[id_]["cum"]]
+                tn_hom_nay = tn_hom_nay or "thien_nhien" in bang.theo_id[id_]["loai"]
         for buoi in buoi_duoc:
+            if slots[buoi]:  # buổi đã có điểm giữ ⇒ không lấp thêm (dày lịch: suất hai chỉ ở buổi do `xep` chọn)
+                continue
             id_ = None
             if buoi == "chieu" and not tn_hom_nay:
                 id_ = chon(thien_nhien, buoi, cums)  # mặc định công khai: một điểm thiên nhiên / ngày (D2)

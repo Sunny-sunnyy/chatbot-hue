@@ -11,7 +11,7 @@ import time
 
 import anyio
 from agents.exceptions import AgentsException
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.sse import format_sse_event
 from openai import OpenAIError
@@ -54,6 +54,8 @@ METRIC_FIELDS = (
     "has_web_section", "web_outcome", "web_n_ket_qua", "web_n_ma", "web_kiem",
     # B5b D11: thời tiết — có đưa công cụ, có gọi API (trạng thái, mã lỗi, ms, từ cache), số ngày, số "số ngoài tập" (D8), câu bão / lũ; không chữ
     "thoi_tiet",
+    # sửa lịch (D11): mã hành động code đã áp, số không đổi được / chưa làm, có thẻ chọn — chỉ nhãn / số, không chữ
+    "sua_lich_ap", "sua_lich_khong_doi", "sua_lich_chua_lam", "sua_lich_the",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -67,10 +69,18 @@ RETRIEVAL_UNAVAILABLE_MESSAGE = "Hệ thống tra cứu tạm thời không kh�
 CONTEXT_BUDGET_MESSAGE = "Không thể đóng gói ngữ cảnh trong giới hạn cho phép."
 
 
+class SuaChonInput(BaseModel):
+    """Sửa lịch D6: nút bấm trên thẻ chọn — `moi` = id điểm code đã đưa, hoặc "bo" (bỏ điểm, không thay). Server kiểm lại với danh sách đã lưu."""
+    model_config = ConfigDict(extra="forbid")
+    cu: str = Field(min_length=1, max_length=60)
+    moi: str = Field(min_length=1, max_length=60)
+
+
 class ChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     query: str = Field(min_length=1, max_length=500)
     truong: TruongInput | None = None  # B4 D4: giá trị chọn ở nút hỏi lại; `{}` = "Trả lời luôn"
+    sua_chon: SuaChonInput | None = None  # sửa lịch D6
 
 
 class SourceResponse(BaseModel):
@@ -111,6 +121,8 @@ def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> 
     conversation_id = store.ensure(request.cookies.get(CONVERSATION_COOKIE))
     trace.history = store.history(conversation_id)
     metrics["n_history_turns"], metrics["history_tokens"] = len(trace.history), store.history_tokens(conversation_id)
+    if _flags(request.app.state).sua_lich:  # sửa lịch D1 / D2: khung đã lưu của cuộc (bản sao sâu) ⇒ lõi đưa công cụ `sua_lich`
+        trace.lich_cu = store.lich(conversation_id)
     return conversation_id
 
 
@@ -119,10 +131,28 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
     # B4 D5: lượt hỏi lại không có chữ trả lời nhưng vẫn lưu câu hỏi ⇒ người dùng gõ giá trị bằng chữ ở lượt sau vẫn có câu gốc
     if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and (trace.answer or outcome == "hoi_lai"):
         request.app.state.conversations.append(conversation_id, query, trace.answer)
+    if conversation_id is None or not _flags(request.app.state).sua_lich:
+        return
+    # sửa lịch D1: lưu khung **chỉ** sau lượt có lịch qua kiểm cuối, từ trace chính (đường #6: tuyến cuối `tro_ly_hue`); dừng ở thẻ chọn ⇒ chỉ lưu
+    # danh sách lựa chọn (khung giữ nguyên); rút lại / lỗi / huỷ ⇒ không ghi
+    if outcome == "success" and trace.route == "tro_ly_hue" and trace.citation_error is None and trace.lich is not None and trace.lich.get("luu"):
+        request.app.state.conversations.set_lich(conversation_id, trace.lich["luu"])
+    elif outcome == "hoi_lai" and trace.sua is not None and trace.sua.get("the") is not None:
+        request.app.state.conversations.set_lich(conversation_id, trace.sua["luu"])
 
 
-def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict) -> str:
-    """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc."""
+def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict, bang=None) -> str:
+    """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc.
+    Sửa lịch D6: lượt bấm thẻ chọn ⇒ server kiểm lựa chọn với danh sách đã lưu (sai ⇒ 422) và dựng câu cố định cho model."""
+    if body.sua_chon is not None:
+        the = (trace.lich_cu or {}).get("the_chon")
+        if the is None or body.sua_chon.cu != the["cu"] or body.sua_chon.moi not in [*the["lua_chon"], "bo"]:
+            raise HTTPException(status_code=422, detail="sua_chon không khớp thẻ đã đưa")
+        trace.sua_chon = body.sua_chon.model_dump()
+        cu = bang.theo_id[body.sua_chon.cu]["ten"]
+        cau = f"Bỏ {cu} khỏi lịch vừa xếp." if body.sua_chon.moi == "bo" else f"Thay {cu} bằng {bang.theo_id[body.sua_chon.moi]['ten']} trong lịch vừa xếp."
+        trace.search_query = cau
+        return cau
     if body.truong is None:
         return query
     trace.truong, trace.search_query = body.truong.model_dump(exclude_none=True), query
@@ -211,7 +241,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
 
     trace = AnswerTrace()
     conversation_id = _start_conversation(request, trace, metrics)
-    query = _model_query(body, query, trace, metrics)
+    query = _model_query(body, query, trace, metrics, _flags(state).bang_lich)
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
@@ -326,10 +356,15 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
         route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms, n_history_turns=len(trace.history),
-        hoi_lai=None if trace.clarify is None else {"loai": trace.clarify["loai"], "n": len(trace.clarify["truong"])},
+        hoi_lai=None if trace.clarify is None else {"loai": trace.clarify["loai"],  # sửa lịch: thẻ chọn đếm số nút
+                                                    "n": len(trace.clarify.get("truong") or trace.clarify.get("lua_chon") or [])},
         lich_trinh_ok=None if trace.lich is None else not trace.lich_kiem and trace.citation_error is None,
         lich_trinh_so_diem=None if trace.lich is None else len(trace.lich["nguon"]),
         lich_trinh_kiem=trace.lich_kiem, lich_trinh_buoc=[b["buoc"] for b in trace.buoc_lich] or None,
+        sua_lich_ap=None if trace.sua is None else [x["loai"] for x in trace.sua["da_ap"]],
+        sua_lich_khong_doi=None if trace.sua is None else len(trace.sua["khong_doi"]),
+        sua_lich_chua_lam=None if trace.sua is None else len(trace.sua["chua_lam"]),
+        sua_lich_the=None if trace.sua is None else trace.sua["the"] is not None,
         today=None if trace.today is None else trace.today.split(", ")[-1].split(" ")[0],  # chỉ "dd/mm/yyyy"
         has_web_section=trace.web is not None and trace.web["outcome"] == "co_muc",
         web_outcome=None if trace.web is None else trace.web["outcome"], web_n_ket_qua=None if trace.web is None else trace.web["n_ket_qua"],
@@ -373,7 +408,7 @@ async def chat_stream(body: ChatRequest, request: Request):
 
         trace = AnswerTrace()
         conversation_id = _start_conversation(request, trace, metrics)
-        query = _model_query(body, query, trace, metrics)
+        query = _model_query(body, query, trace, metrics, _flags(state).bang_lich)
         turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder,
                                            _tim_web(state))
         cau_goc = trace.search_query or query
