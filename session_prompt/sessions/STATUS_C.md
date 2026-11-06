@@ -8,7 +8,7 @@
 
 - (d) **C209 XONG (22:18 06/11/2026), chờ A:** `data/nghien_cuu_giao_dien_2026-11-06/nguon_du_lieu_dot_2.md` (3 phương án; khuyến nghị P1 = dữ liệu kho + Leaflet / tile OSM) + `report_agent/2026-11-06_giao_dien_cong/c209_implementation.md`. Overpass quá tải 3/5 lượt (502) ⇒ chưa lấy tên OSM khớp toạ độ 15 điểm. 0 USD.
 
-- (e) **C210 (22:20 06/11/2026, A giao):** tin số ngày code dò khi rõ ràng — nhánh `p9-so-ngay` từ `main` `3ec526d`, worktree `/tmp/c_so_ngay`; file: `backend/llm/lich_trinh.py` (`chot_so_ngay`), `backend/llm/do_so.py`, `backend/tests/test_b5_lich_trinh.py`, report `report_agent/2026-11-06_b5_cau_tu_nhien/c210_implementation.md`, `data/phase_9/c210/`. Lượt có phí ≤ 0,005 USD (câu đã thấy).
+- (e) **C210 (22:27 06/11/2026): CHƯA TÁI TẠO ĐƯỢC ⇒ không sửa code** — 5 câu tự viết (3N2D / 4n3d / 2 hôm / đi trong ngày / khoảng 2–3 ngày + hỏi kèm) ⇒ 5/5 ra lịch, model gửi đúng số; 0,003855 USD. Bản sửa viết trước khi tái tạo cất ở `data/phase_9/c210/sua_khong_ap_dung.patch`; nhánh `p9-so-ngay` rỗng đã xoá. Report `report_agent/2026-11-06_b5_cau_tu_nhien/c210_implementation.md` (4 giả thuyết + đề xuất harness kín ghi tham số so_ngay). **Bẫy:** sửa trước khi tái tạo — A phải nhắc.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (phiên sáng 06/11)
 - **Đã xong 06/11** (terminal `hue-rag-a4`, 0 USD):

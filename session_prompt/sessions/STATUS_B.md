@@ -1,6 +1,6 @@
-# STATUS B — PHIÊN TỐI 06/11 (cập nhật 22:03 06/11/2026 `date`)
+# STATUS B — PHIÊN TỐI 06/11 (cập nhật 22:27 06/11/2026 `date`; trước 22:03 06/11/2026 `date`)
 
-**Đang làm: B172 nghiên cứu giao diện cổng du lịch** (A giao 22:01 06/11/2026; 0 USD, không sửa code). Terminal: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28`.
+**B172 nghiên cứu giao diện cổng du lịch — XONG (22:27 06/11/2026)**, chờ A dùng viết spec đợt 1. Kết quả `data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md` (15 mẫu nên học, 10 không nên chép), report `report_agent/2026-11-06_giao_dien_cong/b172_implementation.md`. 0 USD. Terminal: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28`.
 **Khai báo file:** `data/nghien_cuu_giao_dien_2026-11-06/` (trừ `nguon_du_lieu_dot_2.md` — của C209) gồm `tools/`, `anh/`, `tong_hop.md`; `data/tra_cuu_cli/` (kết quả Codex); `report_agent/2026-11-06_giao_dien_cong/b172_implementation.md`.
 **Xong trước đó:** B171 merge `dbb4004` (C ready `b0e52f8`); tiền B171 0,028844 / 0,04; phiên tối B 0,010975 USD.
 
