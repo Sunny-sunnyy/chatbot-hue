@@ -12,9 +12,11 @@ import re
 import time
 import unicodedata
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 
 import httpx
+
+from llm.full_corpus_prompt import VIETNAM_TZ
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 HUE_LAT, HUE_LON = 16.4637, 107.5909  # D2: một điểm trung tâm TP Huế, cố định trong code
@@ -40,6 +42,8 @@ CAU_NGOAI_7_NGAY = ("Mình chỉ có dự báo 7 ngày tới, chưa có dự bá
                     "không phải dự báo.")  # vòng chỉnh 1 (A duyệt): câu ngoài 7 ngày ⇒ không khối số liệu, chỉ câu này
 CAU_THEO_CA_NGAY = "Đây là dự báo theo cả ngày, không riêng buổi bạn hỏi."
 CAU_CO_THE_DOI = "Dự báo có thể thay đổi."
+# review C M-1: công cụ đã lấy được dự báo mà chữ model đúng bằng câu từ chối ⇒ code thay bằng câu dẫn này rồi nối khối số liệu như thường
+CAU_DAN_DU_BAO = "Mình có dự báo cho ngày bạn hỏi:"
 THU = ("Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật")
 
 _TU_KHOA = re.compile(r"\b(?:thời\s+tiết|mưa|nắng|nhiệt\s+độ|bão|lũ|trời|nóng|lạnh|độ\s+ẩm|gió)\b", re.IGNORECASE)
@@ -141,11 +145,23 @@ def doc_phan_hoi(data) -> DuBao:
     return DuBao("ok", ngay, f"{gio[11:16]} {ngay_cn:%d/%m}")
 
 
+def hom_nay_vn() -> date:
+    return datetime.now(VIETNAM_TZ).date()
+
+
+def tu_cache() -> DuBao | None:
+    """Bản ghi "ok" còn hạn 30 phút **và** ngày đầu là hôm nay giờ Việt Nam (review C m-3: qua nửa đêm "mai" = tu_ngay 1 không lệch một ngày)."""
+    cu = _CACHE.get("kq")
+    if cu is None or time.monotonic() - _CACHE["t"] >= CACHE_S or cu.ngay[0]["ngay"] != hom_nay_vn():
+        return None
+    return DuBao(cu.trang_thai, cu.ngay, cu.cap_nhat, None, 0.0, True)
+
+
 async def lay_du_bao(*, timeout: float = TIMEOUT_S, transport: httpx.AsyncBaseTransport | None = None) -> DuBao:
     """D7: một lần gọi (không thử lại); cache RAM 30 phút (chỉ kết quả "ok"). `transport`: chỉ test truyền (phản hồi ghi sẵn, không mạng)."""
-    cu = _CACHE.get("kq")
-    if cu is not None and time.monotonic() - _CACHE["t"] < CACHE_S and transport is None:
-        return DuBao(cu.trang_thai, cu.ngay, cu.cap_nhat, None, 0.0, True)
+    cu = None if transport is not None else tu_cache()
+    if cu is not None:
+        return cu
     started = time.perf_counter()
     params = {"latitude": HUE_LAT, "longitude": HUE_LON, "timezone": "Asia/Ho_Chi_Minh", "forecast_days": SO_NGAY, "current": "temperature_2m",
               "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum"}
@@ -202,7 +218,8 @@ def khoi_du_bao(du_bao: DuBao, tu: int, den: int, buoi: bool = False) -> str:
 # D8: số dạng thời tiết — °C / ° / độ (C) / % hay "phần trăm" cạnh mưa / ẩm / khả năng / mm / mi-li-mét / "li" cạnh mưa; khoảng "24–30", "từ 24 đến 30"
 _SO = r"\d+(?:[.,]\d+)?"
 _KHOANG = rf"({_SO})(?:\s*(?:–|-|—|đến|tới)\s*({_SO}))?\s*"
-_DON_VI_LUON = re.compile(_KHOANG + r"(?:°\s*c|°|độ\s*c|độ|mm|mi-li-mét|milimét)(?![\w])", re.IGNORECASE)
+# review C m-2: thêm ℃ / ℉ (một ký tự), º (U+00BA, hay gõ nhầm cho °), "oC", °F, "milimet" không dấu
+_DON_VI_LUON = re.compile(_KHOANG + r"(?:°\s*[cf]|º\s*[cf]?|℃|℉|°|o\s*c|độ\s*c|độ|mm|mi-li-mét|mi-li-met|milimét|milimet)(?![\w])", re.IGNORECASE)
 _DON_VI_CANH_MUA = re.compile(_KHOANG + r"(?:%|phần\s+trăm|li)(?![\w])", re.IGNORECASE)
 _CANH_MUA = re.compile(r"mưa|ẩm|khả\s+năng|xác\s+suất", re.IGNORECASE)
 _MOI_SO = re.compile(_SO)

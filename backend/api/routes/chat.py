@@ -28,7 +28,7 @@ from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm.hoi_lai import TruongInput, ghep_cau
 from api.conversations import TTL_SECONDS
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, elapsed_ms, lich_cho_giao_dien, turn_usd
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, elapsed_ms, lich_cho_giao_dien, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -191,7 +191,8 @@ def _set_outcome(response, metrics: dict) -> None:
             metrics["outcome"] = json.loads(response.body)["error"]["code"]
     else:
         metrics["status_code"] = 200
-        metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
+        if metrics["refusal"] is None:  # lượt có chữ model: `_answer` đã đặt trên chữ model (review C m-1)
+            metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
         if metrics["outcome"] is None:
             metrics["outcome"] = "success"
 
@@ -241,6 +242,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
         recorder.mark_success()
 
     _remember(request, conversation_id, query, trace, "success")
+    metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
                         lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
@@ -449,7 +451,7 @@ class StreamEvents:
     def finish(self, trace: AnswerTrace) -> list[bytes]:
         """Sau kiểm citation: qua ⇒ `sources` (chỉ nguồn được trích) [+ `notice` H4c]; hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
         final = normalize_citations(trace.answer)
-        self.metrics["refusal"] = final.strip() in REFUSAL_ANSWERS
+        self.metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS  # review C m-1: trên chữ model
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")

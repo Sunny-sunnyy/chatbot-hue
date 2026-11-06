@@ -20,7 +20,6 @@ from pathlib import Path
 
 import json
 import logging
-from datetime import datetime
 from typing import Literal
 
 import anyio
@@ -36,7 +35,7 @@ from llm import thoi_tiet as tt
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
-                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIETNAM_TZ, build_assistant_input, today_line)
+                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
@@ -341,8 +340,7 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
     return lich_trinh
 
 
-def hom_nay_vn():
-    return datetime.now(VIETNAM_TZ).date()
+hom_nay_vn = tt.hom_nay_vn  # một chỗ tính "hôm nay" giờ Việt Nam cho lịch + thời tiết (cache dự báo dùng cùng hàm)
 
 
 async def _dong_thoi_tiet_lich(bang, khung: dict, query: str, du_bao, trace: AnswerTrace) -> list[str]:
@@ -423,6 +421,12 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
     return thoi_tiet
 
 
+def chu_cua_model(trace: AnswerTrace) -> str:
+    """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
+    answer, noi = trace.answer or "", trace.thoi_tiet_noi
+    return answer[: -len(noi) - 2] if noi and answer.endswith(f"\n\n{noi}") else answer
+
+
 def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
     """B5b, sau lần sinh (cờ bật, mọi câu tuyến `tro_ly_hue` — D8 m-1): số thời tiết trong chữ model ⊂ số code in ∪ số trong đoạn kho được trích; hỏng
     ⇒ rút lại như citation hỏng. Rồi code nối: khối số liệu (hoặc câu lỗi) · câu bão / lũ (D6) · câu "chỉ có dự báo 7 ngày" (D3)."""
@@ -431,6 +435,9 @@ def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
     cho_phep = tt.tap_so(tool["khoi"]) if tool and tool["khoi"] else set()
     cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) for e in src.excerpts))
     trace.thoi_tiet_kiem = tt.kiem_so(text, cho_phep)
+    if tool is not None and tool["khoi"] and (trace.answer or "").strip() == INSUFFICIENT_ANSWER:
+        trace.answer = tt.CAU_DAN_DU_BAO  # review C M-1: có dự báo mà model từ chối ⇒ không để câu từ chối đứng trước số liệu
+        tool["thay_tu_choi"] = True
     noi = []
     if tool is not None:
         noi.append(tool["khoi"] or tt.CAU_LOI)
@@ -797,6 +804,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     cong_cu = None  # tên công cụ của lần gọi đang chạy (gọi lần lượt, `parallel_tool_calls=False`) — B5 D14 (b): mỗi công cụ một loại trạng thái
     da_phat_buoc = 0  # số bước `trace.buoc_lich` đã phát
     da_noi_dau = False  # D12 (a): dòng "Mình hiểu" đi liền trước chữ đầu của model
+    giu_chu: str | bool | None = None  # review C M-1: None = chưa có chữ; "" / chuỗi = đang giữ; False = không giữ
     call_route = None
     stopped_early = False
     try:
@@ -849,6 +857,13 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         if pending_generating:
                             pending_generating = False
                             yield "status", {"stage": "generating"}
+                        if giu_chu is None:  # review C M-1: đã có dự báo ⇒ giữ chữ chừng nào còn có thể là câu từ chối (chưa hiện)
+                            giu_chu = "" if flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"] else False
+                        if giu_chu is not False:
+                            giu_chu += text
+                            if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()):
+                                continue
+                            text, giu_chu = giu_chu, False
                         if trace.lich is not None and not da_noi_dau:
                             da_noi_dau = True
                             text = f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{text}"
@@ -884,6 +899,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
+            if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay bằng câu dẫn) hoặc một khúc đầu của nó
+                yield "delta", tt.CAU_DAN_DU_BAO if trace.thoi_tiet.get("thay_tu_choi") else giu_chu
             if trace.lich is not None and trace.citation_error is None and trace.lich["ghi_chu"]:
                 yield "delta", f"\n\n{trace.lich['ghi_chu']}"  # D4b: khối ghi chú do code nối, sau phần model
             if trace.thoi_tiet_noi and trace.citation_error is None:

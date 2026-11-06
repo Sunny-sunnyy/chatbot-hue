@@ -16,7 +16,10 @@ import pytest
 from core.settings_loader import load_settings
 from llm import lich_trinh as lt
 from llm import thoi_tiet as tt
-from llm.assistant import AnswerTrace, AssistantFlags, _dong_thoi_tiet_lich, _thoi_tiet_cuoi, answer_turn, answer_turn_stream
+from llm.assistant import (AnswerTrace, AssistantFlags, _dong_thoi_tiet_lich, _thoi_tiet_cuoi, answer_turn, answer_turn_stream, chu_cua_model,
+                           ROUTE_TRO_LY_HUE, web_gate_open)
+
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from llm.do_so import do_ngay_di
 from retrieval.full_corpus_context import PackedSource
 from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
@@ -128,8 +131,18 @@ def test_request_has_only_fixed_coordinates_and_vietnam_timezone():
 
 def test_cache_returns_without_network(monkeypatch):
     monkeypatch.setattr(tt, "_CACHE", {"kq": du_bao_ok(), "t": tt.time.monotonic()})
+    monkeypatch.setattr(tt, "hom_nay_vn", lambda: NGAY0)
     kq = asyncio.run(tt.lay_du_bao())  # không transport ⇒ nếu không có cache sẽ ra mạng thật; cache còn hạn ⇒ trả ngay
     assert kq.trang_thai == "ok" and kq.tu_cache
+
+
+def test_cache_not_used_after_midnight(monkeypatch):
+    # review C m-3: bản ghi ngày đầu 06/11 còn hạn 30 phút, nhưng giờ Việt Nam đã sang 07/11 ⇒ không dùng (gọi lại API)
+    monkeypatch.setattr(tt, "_CACHE", {"kq": du_bao_ok(), "t": tt.time.monotonic()})
+    monkeypatch.setattr(tt, "hom_nay_vn", lambda: NGAY0)
+    assert tt.tu_cache() is not None
+    monkeypatch.setattr(tt, "hom_nay_vn", lambda: NGAY0 + timedelta(days=1))
+    assert tt.tu_cache() is None
 
 
 # ---------- D5 khối số liệu ----------
@@ -148,6 +161,9 @@ def test_block_has_fixed_lines_source_and_time():
     ("khả năng mưa tám mươi phần trăm, tức 80 phần trăm", ["80"]), ("lượng mưa 12,2 mm", ["12,2"]), ("mưa 12.2 mi-li-mét", ["12,2"]),
     ("mưa khoảng 12 li", ["12"]), ("nhiệt độ 23–27 °C", ["23", "27"]), ("từ 23 đến 27 độ", ["23", "27"]),
     ("Vé giảm 50 % cho trẻ em.", []), ("Gọi 2 li cà phê.", []), ("Đi 3 ngày, 2 người.", []),
+    # review C m-2: các cách viết đơn vị từng lọt
+    ("cao nhất 31℃", ["31"]), ("cao nhất 31ºC", ["31"]), ("tầm 31º", ["31"]), ("cao nhất 31oC", ["31"]), ("khoảng 88 °F", ["88"]),
+    ("lượng mưa 12 milimet", ["12"]), ("mưa 12 mi-li-met", ["12"]),
 ])
 def test_weather_number_forms(text, so):
     assert tt.so_thoi_tiet(text) == so
@@ -310,6 +326,33 @@ def test_stream_deltas_equal_final_answer(deps):
     trace, events = run(deps, "Mai Huế có bão không?", generator(sau_cong_cu(lambda k: f"Mai trời 23–27 °C [{k}].")), flags, stream=True)
     shown = "".join(d for k, d in events if k == "delta")
     assert shown == trace.answer and tt.CAU_BAO_LU in shown and ("status", {"stage": "thoi_tiet"}) in events
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_refusal_after_forecast_is_replaced_by_lead_sentence(deps, stream):
+    # review C M-1: công cụ trả dự báo "ok" mà model viết đúng câu từ chối ⇒ code thay bằng câu dẫn, nối khối như thường (không còn câu từ chối
+    # đứng trước số); stream: chữ giữ lại tới khi biết không phải câu từ chối ⇒ người dùng không thấy câu từ chối rồi bị thay
+    flags = dataclasses.replace(WEATHER, du_bao=nguon())
+    trace, events = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(lambda k: INSUFFICIENT_ANSWER)), flags, stream=stream)
+    assert trace.citation_error is None and INSUFFICIENT_ANSWER not in trace.answer
+    assert trace.answer == f"{tt.CAU_DAN_DU_BAO}\n\n{trace.thoi_tiet['khoi']}" and chu_cua_model(trace) == tt.CAU_DAN_DU_BAO
+    if stream:
+        assert "".join(d for k, d in events if k == "delta") == trace.answer
+    thuong, ev = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(lambda k: f"Tôi xem rồi: mai có thể mưa [{k}].")), flags, stream=stream)
+    assert thuong.answer.startswith("Tôi xem rồi") and not thuong.thoi_tiet.get("thay_tu_choi")  # chữ chung khúc đầu với câu từ chối vẫn ra
+    if stream:
+        assert "".join(d for k, d in ev if k == "delta") == thuong.answer
+
+
+def test_storm_refusal_keeps_web_closed_and_refusal_flag_on_model_text(deps):
+    # review C m-1 (A chốt giữ hành vi): câu bão / lũ kho từ chối ⇒ code nối câu NCHMF / 112, cổng tra web đóng (câu cố định B5b thay web);
+    # cờ `refusal` của log tính trên chữ model ⇒ vẫn đếm là từ chối
+    trace, _ = run(deps, "Mấy hôm nay Huế có bão không?", generator(lambda n, kw: [answer(INSUFFICIENT_ANSWER)]), dataclasses.replace(WEATHER, du_bao=nguon()))
+    assert trace.answer == f"{INSUFFICIENT_ANSWER}\n\n{tt.CAU_BAO_LU}" and chu_cua_model(trace) == INSUFFICIENT_ANSWER
+    co_web = dataclasses.replace(WEATHER, router=True, tra_web=True)  # cổng web xét như lượt thật tuyến trợ lý Huế (test không chạy định tuyến)
+    trace.route = ROUTE_TRO_LY_HUE
+    assert not web_gate_open(trace, co_web, tim_web=object())
+    assert web_gate_open(dataclasses.replace(trace, answer=INSUFFICIENT_ANSWER), co_web, tim_web=object())  # chỉ câu nối làm cổng đóng
 
 
 def test_itinerary_turn_with_day_puts_forecast_in_notes(deps, monkeypatch):
