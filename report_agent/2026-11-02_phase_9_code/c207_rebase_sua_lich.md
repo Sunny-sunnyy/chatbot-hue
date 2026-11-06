@@ -41,10 +41,10 @@ Không chạy: `test_api_chat.py`, `test_openai_full_corpus_generator.py` (cần
 
 ## 6. Trạng thái (sửa 21:08 06/11/2026)
 
-- Nhánh `p9-sua-lich` = `09ddaf9` trên `main` `0a9e0f3`. Cờ `sua_lich: false`. `main` nay `8fc790f` (đã có B5b `db77f32`) ⇒ rebase khi gộp, sau B171 (A: không cần làm ngay).
+- Nhánh `p9-sua-lich` = **`79b3d9c`** trên `main` `d930867` (B5b + B171) — §8. Cờ `sua_lich: false`.
 - Tiền C207 + harness: **0 USD**.
 - Harness lượt có phí: **xong phần 0 USD** (§7); review E vòng 1 changes_requested ⇒ **đã sửa** ⇒ chờ E kiểm phần sửa.
-- Còn: lượt có phí chờ `lich_trinh` bật (B5 — bộ kín v2 do E chạy); trước lượt đó rebase lại lên `main` (gồm B171 ⇒ `tham_so.hoi_toi` + `chon_sang`) + Q1.
+- Còn: lượt có phí chờ `lich_trinh` bật (B5 — bộ kín v2 do E chạy); `main` đổi code nữa ⇒ rebase lại + Q1 / Q1m. Mô phỏng bộ kín trên nền mới chờ User `!` (§8).
 
 ## 7. Harness lượt có phí sửa lịch (C, phiên tối 06/11 — A giao, 0 USD)
 
@@ -99,3 +99,42 @@ PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-f
 PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python $H cham $B/chuoi_da_thay.jsonl $K/da_thay.jsonl
 # kín (User `!`, chỉ in số): chay $B/chuoi_sealed.jsonl $K/kin.jsonl --lan 1 / --lan 2 rồi cham … --so
 ```
+
+## 8. C208 — rebase lên `main` có B5b + B171, sửa lịch tôn trọng `hoi_toi` (C, 21:51 06/11/2026; A giao, 0 USD)
+
+**Rebase:** `p9-sua-lich` `09ddaf9` ⇒ **`79b3d9c`** trên `main` `d930867` (`c788658` + 1 commit tài liệu; `backend/` / `frontend/` như `c788658`). Push `--force-with-lease=p9-sua-lich:09ddaf9` (`+ 09ddaf9...79b3d9c`). 3 commit: `ec14ede` (B163, gỡ xung đột) · `6a65df1` (B166, `range-diff` "=") · **`79b3d9c`** (C208, mới).
+
+**Gỡ xung đột (commit B163, 5 file — "hai bên cùng thêm", giữ cả hai):**
+- `settings.yaml` (`thoi_tiet` + `sua_lich`), `full_corpus_prompt.py` (`THOI_TIET_MO_TA` + `SUA_LICH_MO_TA`), `chat.py` (trường log `thoi_tiet` + `sua_lich_*`), `generator_openai_full_corpus.py` (`_assistant_for` / `generate_with_tools` / `start_tools_stream` nhận cả `thoi_tiet_fn` + `sua_lich_fn`; thứ tự công cụ `tim_kho`, `lich_trinh`, `thoi_tiet`, `sua_lich`).
+- `assistant.py`: hàm `lich_trinh` dùng `_xong_lich` của nhánh (chung cho xếp mới / nút Sửa / `sua_lich`) + `hoi_toi=lt.hoi_buoi_toi(query)` của B171; `_xong_lich` nhận `du_bao` ⇒ dòng thời tiết / bậc thang B5b (`them_dong`) chạy cho cả lượt sửa; `sua_lich_for_turn` nhận `du_bao`; khối ghi chú = "Đã đổi…" (sửa lịch D7) + `khoi_ghi_chu(…, them_dong)` (B5b); `_lich_extra` = bản B5b + công cụ `sua_lich` khi cuộc có khung. T3 B171 (`chu_thay`, `_chu_giu_lai`) giữ nguyên.
+- `lich_trinh.py` tự gộp: `xep(giu, loai)` + `chon_sang` B171 — `chon_sang` chỉ chọn trong `pool` (đã loại `loai` qua `dung_duoc`) và `used` có sẵn điểm `giu` ⇒ tôn trọng giữ chỗ / điểm đã bỏ [đọc code + test].
+
+**Lỗi gộp tái tạo được [Chạy, `/tmp/c_b171_tools/repro_hoi_toi.py`]** (lịch 2 ngày, người lớn tuổi, có xin buổi tối ⇒ code không xếp tối, mã `toi_lon_tuoi`):
+- đổi số ngày (xếp lại) ⇒ `hoi_toi` **mất** (`_xep_lai` dựng `ThamSo` thiếu trường) ⇒ mất câu lý do + dòng khung "Buổi tối: để trống — …" + kiểm nói ngược;
+- bỏ một điểm (sửa trực tiếp) ⇒ `hoi_toi` còn nhưng mục `toi_lon_tuoi` bị lọc khỏi `khong_xep` (chỉ giữ `vuot_ngan_sach`) ⇒ cùng hậu quả.
+
+**Sửa `79b3d9c` (`sua_lich.py`, +6 / −3):** `_xep_lai` truyền `hoi_toi` đã lưu; sửa trực tiếp giữ mục mã `MA_TOI` khi khung vẫn không có buổi tối (người dùng tự thêm điểm buổi tối ⇒ mục mất — đúng sự thật). Test `test_sua_lich.py`: `test_edit_keeps_evening_request_and_reason` ×3 (đổi số ngày · đổi kiểu đi · bỏ điểm) + `test_adding_an_evening_point_drops_the_evening_reason`; trên code cũ **3 / 4 hỏng** (ca thứ 4 giữ nhánh mới không giữ lý do sai).
+
+**Kiểm [Chạy]:**
+
+| Kiểm | Kết quả |
+|---|---|
+| test `test_sua_lich` + `test_b5_lich_trinh` + `test_b5b_thoi_tiet` + `test_chat_stream` + `test_assistant_boundary` + `test_b3_memory` + `test_b2_tool_loop` + `test_toc_do_song_song` + `test_api_chat` | **411 passed**, 1 error = `test_health_is_cached_and_ready_after_real_lifespan` (cần khoá — đã biết) |
+| `npm ci && npm run build` + `test_static_ui.py` | build đạt; 3 passed (`App.jsx` / `stream.js` tự gộp biên dịch được) |
+| Q1 (`capture_all.py`, khoá giả) so `q1_c207/main_0a9e0f3.jsonl` (B5b, B171 đã chứng minh `main` giống byte file này) | **228 / 228 giống byte** (`data/phase_9/sua_lich/q1_c208/nhanh_c208.jsonl` `dba1f578eef1`) |
+| Q1m (`b5b/tools/capture_flags.py`): `lich_trinh=1 sua_lich=1` ↔ `lich_trinh=1 sua_lich=0` | **228 / 228 giống byte** (`ac53ea9046f3` cả hai — trùng sha Q1m C207) |
+| `mo_phong.py` (đã thấy) | trước sửa nhãn **8 / 10** (S03, S08 — xem dưới) ⇒ sau **10 / 10** |
+| `kiem_bo.py --pha` | OK, ca phá 6 / 6 |
+| harness `kiem` (đã thấy) | Q3 10 / 10, Q2 0 / 42, ca phá + ca ngược 13 / 13 |
+
+**Sửa nhãn bộ đã thấy (trước mọi lượt có phí — luật "đổi hành vi code ⇒ sửa nhãn trước"):** B171 (L-a) bỏ điểm lấp ngoài sở thích ⇒ khung thiên nhiên 3 ngày **không còn lăng nào** ⇒ S03 lượt 2 ("bỏ <lăng>, thêm …, rút 2 ngày") và S08 lượt 2 (câu mơ hồ "bớt lăng") hết nghĩa. Sửa đúng 2 lượt, giữ loại câu: S03 — bỏ một điểm có trong khung mới (vẫn 3 ý, `ap_toi_da 2`, `chua_lam 1`); S08 — vẫn câu mơ hồ (bớt một chỗ của một ngày), `chap_nhan` ghi trước 2 cách hiểu. `chuoi_da_thay.jsonl` `d0ad12b6ed12` ⇒ **`c00de07114b5`** (sao lưu `chuoi_da_thay.truoc_C208.jsonl`); README bộ đo ghi lại.
+
+**Harness:** n-1 review E vòng 2 (thư mục kết quả chưa có) ⇒ `chay` tự `mkdir`; md5 **`559ebaf5f81e`**. Không đổi gì khác do rebase (harness đọc khung lưu, không dựng `ThamSo`).
+
+**Chờ User `!` (bộ kín — C không mở được, lệnh chỉ in số đếm + mã chuỗi / số lượt hỏng):**
+```bash
+cd /tmp/c_sualich/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python ../data/phase_9/bo_do_sua_lich/tools/mo_phong_kin.py | python3 -c "import json,sys,re; d=json.load(sys.stdin); print('kin ok', sum(v=='ok' for v in d.values()), '/', len(d)); [print(k, [re.match(r'L[0-9]+', x).group() for x in v]) for k, v in d.items() if v != 'ok']"
+```
+Lần trước (C207, nền cũ) kín đạt. Hỏng ⇒ C sửa nhãn kín bằng `bo_do_sua_lich/tools/cau_truc.py` (chỉ in khuôn nhãn, không in câu) **trước** lượt có phí.
+
+Tiền C208: **0 USD**.
