@@ -195,7 +195,8 @@ def khoi_du_bao(du_bao: DuBao, tu: int, den: int, buoi: bool = False) -> str:
     dong = [f"- {dong_ngay(d)}" for d in du_bao.ngay[tu:den + 1]]
     if buoi:
         dong.append(f"- {CAU_THEO_CA_NGAY}")
-    return "\n".join([TIEU_DE, *dong, dong_nguon(du_bao)])
+    # dòng trống trước dòng ghi công: không có thì Markdown nối nó vào gạch đầu dòng cuối (thấy ở ảnh Q8)
+    return "\n".join([TIEU_DE, *dong, "", dong_nguon(du_bao)])
 
 
 # D8: số dạng thời tiết — °C / ° / độ (C) / % hay "phần trăm" cạnh mưa / ẩm / khả năng / mm / mi-li-mét / "li" cạnh mưa; khoảng "24–30", "từ 24 đến 30"

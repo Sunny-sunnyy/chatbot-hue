@@ -138,7 +138,7 @@ def test_block_has_fixed_lines_source_and_time():
     khoi = tt.khoi_du_bao(du_bao_ok(), 1, 2, buoi=True)
     assert khoi.splitlines() == [
         tt.TIEU_DE, "- Thứ Bảy 07/11: 23–27 °C, khả năng mưa 80 %, lượng mưa 12,2 mm", "- Chủ nhật 08/11: 24–30 °C, khả năng mưa 10 %, lượng mưa 0,0 mm",
-        f"- {tt.CAU_THEO_CA_NGAY}", f"{tt.GHI_CONG} — số liệu lúc 09:15 06/11. {tt.CAU_CO_THE_DOI}"]
+        f"- {tt.CAU_THEO_CA_NGAY}", "", f"{tt.GHI_CONG} — số liệu lúc 09:15 06/11. {tt.CAU_CO_THE_DOI}"]
 
 
 # ---------- D8 mỗi dạng số ----------

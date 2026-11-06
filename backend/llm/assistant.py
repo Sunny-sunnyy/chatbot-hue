@@ -415,7 +415,7 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
                 return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON_LOI, (tt.CAU_LOI,))
             khoi = tt.khoi_du_bao(kq, tu_ngay, den_ngay, bool(trace.thoi_tiet_ctx and trace.thoi_tiet_ctx["buoi"]))
             trace.thoi_tiet.update(khoi=khoi, n_ngay=abs(den_ngay - tu_ngay) + 1)
-            return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON, tuple(khoi.splitlines()[1:]))  # bỏ dòng tiêu đề; còn dòng ngày + dòng ghi công / giờ
+            return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON, tuple(x for x in khoi.splitlines()[1:] if x))  # bỏ dòng tiêu đề; còn dòng ngày + dòng ghi công / giờ
         finally:
             entry.setdefault("ms", 0.0)
             trace.tools.append(entry)
