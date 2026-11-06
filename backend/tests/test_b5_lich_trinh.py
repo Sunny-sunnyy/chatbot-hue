@@ -187,6 +187,10 @@ def test_l_b_evening_refused_gets_reason_frame_line_and_check():
     ("Tối về khách sạn sớm để bé ngủ.", False), ("Buổi tối bạn có thể về khách sạn sớm.", False), ("Bạn nên về trước khi trời tối.", False),
     ("Lịch không xếp buổi tối.", False), ("Sáng đi sớm được thì tránh nắng.", False), ("Tối hôm trước nên chuẩn bị nước và mũ.", False),
     ("Ngày 2 có thể đi chậm, tối thư giãn ở khách sạn.", False),
+    # review C vòng 2 M-2: số đêm của chuyến, bữa tối ở vế khác không phải hứa hoạt động buổi tối
+    ("Lịch 3 ngày 2 đêm này bạn có thể đi chậm rãi.", False), ("Chuyến hai đêm được xếp thong thả.", False),
+    ("Chiều về sớm kịp bữa tối, bạn có thể đi chậm.", False),
+    ("Buổi tối, bạn có thể ghé chợ đêm.", True), ("Nếu còn sức, tối bạn có thể dạo phố.", True),
     ("Tối: dạo phố đi bộ.", True), ("Buổi tối có thể ghé chợ đêm.", True), ("Tối nay bạn đi thuyền nghe ca Huế được nhé.", True),
     ("Tối ghé chợ đêm nhé.", True), ("- Tối: ăn chè.", True), ("Đêm có thể dạo cầu Trường Tiền.", True),
 ])

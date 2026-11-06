@@ -531,7 +531,8 @@ def co_dang_lich(text: str) -> bool:
 # điểm của bảng": lời hứa buổi tối thường không nêu tên điểm ("Tối: ăn chè.") — 6 / 6 câu nói ngược trong ca dò của C không có tên điểm nào.
 _DONG_TOI = re.compile(r"^(?:buổi\s+)?tối(?![\w])")
 _NHAC_TOI = re.compile(r"(?<![\w])(?:tối(?!\s+(?:đa|ưu|thiểu|giản|mật|cao|tân|thượng|hậu|quan\s+trọng))|đêm)(?![\w])")
-_TROI_TOI = re.compile(r"(?<![\w])trời\s+tối(?![\w])")  # "trước khi trời tối" = lúc trời tối, không phải hoạt động buổi tối
+# không phải nhắc buổi tối: "trước khi trời tối" (lúc trời tối); "3 ngày 2 đêm" (số đêm của chuyến — review C vòng 2 M-2)
+_TROI_TOI = re.compile(r"(?<![\w])(?:trời\s+tối|(?:\d+|một|hai|ba|bốn|năm)\s+đêm)(?![\w])")
 _KHANG_DINH = re.compile(r"(?<![\w])(?:được|có\s+thể)(?![\w])")
 _KHONG_HOAT_DONG = re.compile(r"(?<![\w])(?:không|chưa|đừng|tránh|nghỉ|tự\s+do|để\s+trống|khách\s+sạn|ngủ|thư\s+giãn|chuẩn\s+bị)(?![\w])")
 
@@ -540,7 +541,8 @@ def _noi_nguoc_toi(text: str) -> bool:
     t = _TROI_TOI.sub(" ", unicodedata.normalize("NFC", text).casefold())
     if any(_DONG_TOI.match(_bo_dau(d)[0]) and not _KHONG_HOAT_DONG.search(d) for d in t.splitlines() if d.strip()):
         return True
-    return any(_NHAC_TOI.search(c) and _KHANG_DINH.search(c) and not _KHONG_HOAT_DONG.search(c) for c in re.split(r"[.!?\n]", t))
+    # (b) xét từng vế (tách cả dấu phẩy / chấm phẩy): "Chiều về sớm kịp bữa tối, bạn có thể đi chậm." — "tối" và "có thể" ở hai vế khác nhau
+    return any(_NHAC_TOI.search(c) and _KHANG_DINH.search(c) and not _KHONG_HOAT_DONG.search(c) for c in re.split(r"[.!?\n,;]", t))
 
 
 def kiem_cuoi(bang: Bang, text: str, khung: dict | None, nguon: dict[str, int] | None = None) -> list[str]:
