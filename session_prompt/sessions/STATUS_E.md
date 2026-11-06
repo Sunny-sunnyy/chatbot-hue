@@ -15,7 +15,7 @@
   - Ước ≈ 0,005 USD (5 câu, chưa đo trên bộ này).
   - Mọi lệnh dưới chỉ in số đếm / id / mã, không in câu hay chữ trả lời. Auto mode chặn ⇒ User `!` ở terminal E.
   ```bash
-  md5sum /home/minhhieu/hue_rag/data/phase_9/b5_v2/cau_sealed.jsonl | cut -c1-12      # phải = cd552f7cf7cb (hoặc md5 mới sau khi User sửa)
+  md5sum /home/minhhieu/hue_rag/data/phase_9/b5_v2/cau_sealed.jsonl | cut -c1-12      # phải = de95ff85e491 (bộ khoá 06/11 tối)
   cd /home/minhhieu/hue_rag/backend && git log --oneline -1                           # có commit merge B171
   PYTHONPATH=$PWD HF_HUB_OFFLINE=1 timeout 120 uv run python ../data/phase_9/b5/tools/chay_b5.py kiem ../data/phase_9/b5_v2/cau_sealed.jsonl
   PYTHONPATH=$PWD HF_HUB_OFFLINE=1 timeout 900 uv run --env-file /home/minhhieu/hue_rag/.env python ../data/phase_9/b5/tools/chay_b5.py chay ../data/phase_9/b5_v2/cau_sealed.jsonl ../data/phase_9/b5_v2/kin_v2_ra.jsonl   # CÓ PHÍ; in n / loi / usd
@@ -29,6 +29,11 @@
   - A chốt: m-1 Q3 = hành động đúng nhãn, rút lại do kiểm cuối in số riêng + danh sách mã; m-5 giữ cách hiểu của C chỉ khi có test code giữ chỗ sau xếp lại (ghi tên test), không có ⇒ thêm lại kiểm. **Chờ C sửa harness ⇒ E kiểm phần sửa, ghi nối vào `c207_harness_review.md` ⇒ nhắn A.**
 - **(21:33 06/11/2026) Harness vòng 2 XONG:** ready (`c207_harness_review.md` mục "Vòng 2"), còn n-1 minor (mkdir thư mục `do/`).
 - **(21:33 06/11/2026) Bộ kín v2 — User bàn thẳng với E** (A cho): User đọc ⇒ K1 đạt, K2–K5 cần sửa (chưa thực tế, dài dòng). E viết lại 4 câu ngắn (mục "Vòng 2" trong `duyet_tu_nhien_user.md`); bản cũ `cau_sealed_v1_bo.jsonl`. Ghi `cau_sealed.jsonl` bị auto mode chặn ⇒ lệnh User `!`: `cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run python /tmp/e_kin_moi.py --ghi && md5sum ../data/phase_9/b5_v2/cau_sealed.jsonl | cut -c1-12` (script `/tmp` mất nếu máy khởi động lại ⇒ viết lại theo mục Vòng 2). Chờ User duyệt lại ⇒ md5 mới ⇒ báo A ⇒ sửa md5 trong lệnh chạy kín.
+- **(21:55 06/11/2026) Rebase C208 (`p9-sua-lich` `79b3d9c`) kiểm XONG:** ready, 0 finding mới (mục "Vòng 3" của `c207_harness_review.md`).
+- **(21:55 06/11/2026) Bộ kín v2: User duyệt đủ 5 câu** (vòng 3: E viết lại K2, K3). Script `/tmp/e_kin_moi.py` đã có bản cuối; **chờ User chạy `!`** (lệnh ở dòng trên) ⇒ md5 mới ⇒ báo A + sửa md5 trong lệnh chạy kín.
+- **(21:57 06/11/2026) Bộ kín v2 KHOÁ:** User duyệt đủ 5 câu và chạy `!` ⇒ `cau_sealed.jsonl` 5 dòng, md5 **`de95ff85e491`** (sha256 `85f7dbd66e67`). Bản cũ `cd552f7cf7cb` lưu ở `cau_sealed_v1_bo.jsonl`. Script `/tmp` đã xoá. Mã ràng buộc: K1 R2·R3·R9 · K2 R1·R4·R10·R14·R15 · K3 R1·R3·R5·R15 · K4 R1·R3·R4·R15·R8 · K5 R1·R3·R9·R10·R15·R6. Ngoài lịch 2 / 5 (K4, K5). Lệnh chạy kín (dưới) dùng md5 mới; chạy khi A báo B171 đã vào `main` (đã vào — xem rebase C208) và A cho chạy.
+- **(22:06 06/11/2026) Chạy kín v2 (A cho):** `kiem` 0 USD + chạy thử khoá giả OK ⇒ User `!` lượt có phí ⇒ n 5 · lỗi 0 · **0,003029 USD** (`data/phase_9/b5_v2/kin_v2_ra.jsonl`, main `c3ce3e5`). `dem`: hỏi lại K1 (mong đợi) + **K2** (câu có "2N1Đ", code dò 2 nhưng model gửi số khác ⇒ luật `chot_so_ngay` "lệch ⇒ hỏi"). 2 sub-agent chấm độc lập đang chạy ⇒ `cham_agent_{1,2}.md`. Report sẽ ở `report_agent/2026-11-06_b5_cau_tu_nhien/e19_kin_v2.md`.
+- **(22:09 06/11/2026) Kín v2 CHẤM XONG — Q3 không đạt 3 / 5** (2 agent khớp 15 / 15; K2 hỏi lại thừa, K3 không dày; K4 / K5 đạt nhờ lời code dựng khi model từ chối). Report `report_agent/2026-11-06_b5_cau_tu_nhien/e19_kin_v2.md`; phiếu `data/phase_9/b5_v2/cham_agent_{1,2}.md`. Đã báo A. Tiền E phiên tối: 0,003029 USD.
 - **File sắp sửa (khai báo):** `data/phase_9/b5_v2/duyet_tu_nhien_user.md` (mới), `data/phase_10/giong_noi/plan_g2.md`, `session_prompt/sessions/STATUS_E.md`, mục E trong `CURRENT_HANDOFF.md`. Không sửa code.
 
 ## PHIÊN SAU ĐỌC TRƯỚC

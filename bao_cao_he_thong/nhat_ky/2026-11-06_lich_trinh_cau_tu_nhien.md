@@ -40,3 +40,5 @@ Muốn biết lịch trình chatbot gợi ý có dùng được không thì ph�
 - (21:33 06/11/2026) Sửa lỗi lịch trình (B171) vào `main` với cờ tắt: thêm sửa dòng "Buổi tối" cho người dùng đọc được và lỗi "3 ngày 2 đêm" bị hiểu là xin buổi tối (C bắt). Cổng đạt.
 - Bạn đọc 5 câu kín v2: câu 1 đạt, câu 2–5 "dài dòng, cố viết cho tự nhiên" ⇒ E viết lại ngắn hơn, chờ bạn duyệt lại.
 - Harness đo sửa lịch: E review bắt 1 lỗi lớn (chấm đạt cả khi công cụ sửa lịch chưa được đưa) ⇒ C sửa xong, E đang kiểm lại.
+- (22:10 06/11/2026) Lịch trình đo bộ kín v2: **3 / 5 câu đạt, cần 4 / 5 ⇒ chưa bật.** Lỗi chính: model từ chối khi câu có hỏi kèm chỗ ở / cách đi (lịch vẫn ra nhờ code dựng), hỏi lại số ngày thừa, "đi dày" mà lịch thưa. 0,003 USD.
+- Giao diện: bạn chọn bỏ số trong câu (dòng "Nguồn" dưới câu) + cổng du lịch kiểu Huế TRIPO mức đầy đủ, hai đợt; B nghiên cứu giao diện, C nghiên cứu nguồn dữ liệu.

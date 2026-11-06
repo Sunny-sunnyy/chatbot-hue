@@ -176,3 +176,38 @@ Bất biến vòng 1 (bọc hàm gọi hàm thật với cùng đối số; chu�
 ### Kết luận vòng 2: `ready_for_user_confirmation`
 
 M-1 và 6 minor vòng 1 đã đóng. Còn n-1 (minor, 1 dòng, không tốn tiền nếu quên). Harness đủ để chạy pilot S01 + S06 khi A cho.
+
+---
+
+## Vòng 3 — kiểm phần đổi do rebase C208 (E, 21:54 06/11/2026 `date`)
+
+Đối tượng: `p9-sua-lich` `09ddaf9` ⇒ **`79b3d9c`** trên `main` `d930867` (B5b + B171). Report C: `c207_rebase_sua_lich.md` §8.
+Harness `559ebaf5f81e`; bộ đã thấy `chuoi_da_thay.jsonl` `c00de07114b5`. Worktree tạm `/tmp/e_rv_sl` (`79b3d9c`, đã gỡ). 0 USD. Không mở `chuoi_sealed*`.
+
+### Đã kiểm
+
+| Kiểm | Kết quả |
+|---|---|
+| `git log main..79b3d9c` | 3 commit đúng report (`ec14ede` gỡ xung đột · `6a65df1` = B166 · `79b3d9c` C208). `range-diff`: B166 "="; B163 chỉ đổi phần gộp |
+| Đọc `git diff main 79b3d9c -- backend/llm/assistant.py` | `_xong_lich` chung cho xếp mới / nút Sửa / `sua_lich`, có `du_bao` (dòng thời tiết B5b chạy cả lượt sửa); `hoi_toi=lt.hoi_buoi_toi(query)` của B171 còn ở lượt xếp mới; `_lich_extra` = công cụ `lich_trinh` + `sua_lich` (chỉ khi cuộc có khung) + phần `thoi_tiet` của B5b; `ROUTE_INPUTS` có `lich_cu`, `sua_chon` — khớp report |
+| Đọc diff `79b3d9c` (`sua_lich.py` +6 / −3) | `_xep_lai` truyền `hoi_toi` đã lưu (`tham_so` của khung có khoá `hoi_toi` — `lich_trinh.py` dòng dựng `tham_so`); sửa trực tiếp giữ mục `MA_TOI` khi khung vẫn không có buổi tối. Mục `MA_TOI` chỉ được `xep` thêm khi `hoi_toi` ⇒ không xin tối thì không đổi gì |
+| **Ca dò E** (cách khác test của C: chuỗi 2 lượt + đổi người đi cùng) [Chạy] | (1) người lớn tuổi + xin tối ⇒ đổi sang cặp đôi (xếp lại): `toi_lon_tuoi` mất, `hoi_toi` lưu vẫn True, lý do đổi thành `toi_khong_diem` — giống hệt xếp mới cặp đôi + xin tối trên `main` (đã chạy so). (2) **Bất biến:** không xin tối ⇒ bỏ điểm / đổi số ngày ⇒ 0 mục `MA_TOI`. (3) trẻ em + xin tối ⇒ đổi số ngày rồi bỏ điểm (2 lượt liền) ⇒ `toi_tre_em` còn ở cả hai lượt |
+| `pytest test_sua_lich.py test_b5_lich_trinh.py test_b5b_thoi_tiet.py` (không khoá) | **347 passed** |
+| Nhãn đã thấy: so `chuoi_da_thay.truoc_C208.jsonl` ↔ bản mới theo trường | đổi S03 L2 (vẫn `ap_toi_da 2`, `chua_lam 1`), S08 L2 (vẫn 1 `chap_nhan`), S03 L3 chỉ đổi dòng `ghi` theo tên điểm mới (README có ghi). Số chuỗi / lượt / loại câu không đổi |
+| harness `kiem` trên bộ mới, code `79b3d9c` | Q3 **10 / 10**, Q2 **0 / 42**, ca phá **13 / 13** |
+| n-1 vòng 2 | **đóng** — `chay` tự `mkdir` thư mục kết quả (`559ebaf5f81e`) |
+
+Dùng lại, không chạy lại: Q1 / Q1m 228 / 228 giống byte và build giao diện của C (§8). Lý do: phần E kiểm thêm không đổi chuỗi gửi model; Q1m trùng sha với C207.
+
+### Ngoài phạm vi (ghi nhận, không phải finding của rebase)
+
+- Câu cố định `toi_khong_diem` ("…chưa có điểm buổi tối hợp sở thích của bạn") vẫn hiện khi người dùng **không nêu sở thích**. Hành vi này có sẵn trên `main` (B171), không do rebase. A xét khi bật `lich_trinh`.
+- Lượt sửa không có cách **mới** xin buổi tối: `hoi_toi` chỉ lấy từ câu lịch đầu. Câu kiểu "thêm buổi tối nhé" ở lượt sửa ⇒ model phải dùng `them_diem` có buổi. Theo dõi khi đo.
+
+### Còn chờ
+
+- Mô phỏng nhãn **kín** trên nền mới (`mo_phong_kin.py`, User `!` ở terminal C) — E không mở được. Kết quả hỏng ⇒ C sửa nhãn kín trước lượt có phí.
+
+### Kết luận vòng 3: `ready_for_user_confirmation`
+
+Gộp B5b + B171 đúng ở các chỗ đã kiểm. Lỗi gộp `hoi_toi` đã sửa và có test; ca dò riêng của E đạt. Không có finding mới.
