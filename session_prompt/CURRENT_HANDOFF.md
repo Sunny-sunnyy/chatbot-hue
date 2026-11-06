@@ -21,7 +21,8 @@ Nguyên văn phiên tối 05/11 (mọi việc giao + quyết định theo giờ)
   - **Trạng thái E (21:04 06/11/2026):** (1) xong — chờ User; (2) xong — plan G2 bản 2 `2ed4bd6e3153` chờ review vòng 2 (công cụ: `chuan_hoa` `190a9d4dfde3`, `doi_wav` `7986adebde78`, `g2_do` `4301654e6b42`); (3) xong — lệnh ở `STATUS_E.md` (`kiem` 0 USD đã chạy: n 5). 0 USD.
   - **Plan G2 DUYỆT bản `2ed4bd6e3153` (A, 21:07 06/11/2026):** review vòng 2 (sub-agent ngữ cảnh mới) `ready_for_user_confirmation`, 9 / 9 finding vòng 1 đóng; 3 minor mới sửa lúc code trước khi chạy G2 — n-1 xét bước §4 theo thứ tự, dừng ở bước đầu khớp; n-2 `--bo-qua` in số dòng thật bị bỏ, mã không khớp ⇒ dừng; n-3 **A chọn giữ như code** (trần V-e tính trên số lần đọc sau khi bỏ — chặt hơn spec, không làm lỏng), ghi một câu vào plan. Công cụ: `chuan_hoa` `190a9d4dfde3`, `doi_wav` `7986adebde78`, `g2_do` `4301654e6b42` (A đo lại khớp). Kết quả review: `data/phase_10/giong_noi/plan_g2_review.md` mục "Vòng 2". G2 chạy khi User thu xong 40 câu (G1). **Sau sửa 3 minor (không đổi tiêu chí, A đo lại):** plan `92ec551531fd`, `g2_do` `a3a32eba4f94` — bản dùng để chạy.
   - **E (A, 21:11 06/11/2026):** review harness sửa lịch của C ⇒ `report_agent/2026-11-02_phase_9_code/c207_harness_review.md` (0 USD, không mở `chuoi_sealed*`). Sau đó chờ User (duyệt độ tự nhiên, thu 40 câu G1).
-  - **C rảnh có lý do (A, 21:11 06/11/2026):** harness 0 USD xong (pilot = S01 + S06, A đồng ý); chờ E review + chờ B nhắn kiểm B171 (B đang rebase lên `main` mới).
+  - **C rảnh có lý do (A, 21:52 06/11/2026):** C208 xong (`p9-sua-lich` `79b3d9c` trên `main`); chờ User `!` mô phỏng kín sửa lịch ở terminal C (lệnh: `c207_rebase_sua_lich.md` §8) + E kiểm phần đổi do rebase. Lượt có phí sửa lịch chỉ sau khi `lich_trinh` bật.
+  - **B rảnh có lý do (A, 21:52 06/11/2026):** B171 merge `dbb4004`; chờ kết quả kín v2 (lỗi code ⇒ B sửa).
 
 ## PHIÊN 06/11 (09:54 – kết 12:17 06/11/2026) — nguyên văn việc giao + trạng thái từng session
 
