@@ -35,7 +35,8 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    (B/C). Agent khác (Codex, AGY): ghi "qua User" (§7).
 4. Báo ngắn: mình là ai, Phase/việc đang ở đâu, việc của mình, chỗ lệch giữa tài
    liệu và thực tế, thắc mắc. A báo User; B/C báo User trong terminal **và** báo A theo kênh ở §7.
-5. Chỉ bắt đầu làm khi: A — User nói "làm đi" hoặc giao việc; B/C — A giao việc
+5. Chỉ bắt đầu làm khi: A — User nói "làm đi" hoặc giao việc; **User cấp quyền phiên "A tự điều phối" ⇒ A giao ngay
+   cho B/C/E mọi việc đã có trong handoff, cùng lượt đó** (chỉ việc mới ngoài handoff mới chờ User); B/C — A giao việc
    (mục việc trong `CURRENT_HANDOFF.md` + tin nhắn của A = "làm đi").
 
 ## 3. Nhận và làm việc
@@ -182,6 +183,9 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 2. **Giao việc:** mỗi session một mục trong `CURRENT_HANDOFF.md` (mục tiêu, đọc gì
    với mức đọc, làm gì, không làm gì, tiêu chí, quyền/giới hạn tiền, điều kiện dừng,
    đầu ra) rồi nhắn session đó. Giao việc song song chỉ khi file không chồng nhau.
+   **A tự kiểm B/C/E có đang làm không — không đợi User hỏi:** mỗi tin giao việc gửi kèm `notify_when_idle: true`; trước khi
+   kết mỗi lượt của mình (nhất là trước khi mở hộp hỏi User hay giao việc phụ cho sub-agent) A chạy `ListAgents` — session nào
+   rảnh mà không có việc / lý do ghi ⇒ giao ngay.
    **Session rảnh** (chờ người khác): A giao ngay việc không chồng file (viết plan, review, danh sách ứng viên, đo chỉ đọc)
    hoặc ghi một dòng lý do để rảnh trong `CURRENT_HANDOFF.md` (25/10: User phải hỏi "đang rảnh hả"; 26/10: B rảnh được giao
    đối chiếu, bắt lỗi mô tả trong yêu cầu ChatGPT).

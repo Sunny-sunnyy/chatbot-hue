@@ -1,5 +1,9 @@
 # STATUS C — kết phiên tối 05/11 (22:14 05/11/2026 `date`; ≤ 30 dòng; lịch sử: `git show c0e2f89:session_prompt/sessions/STATUS_C.md`)
 
+## PHIÊN 06/11 (terminal `hue-rag-a4`; A giao 10:48 06/11/2026 `date`)
+- **C207 (đang làm):** rebase `p9-sua-lich` lên `main` mới trong worktree `/tmp/c_sualich` (nhánh tạm `c207-rebase`, chưa đụng ref `p9-sua-lich`, chưa push) + Q1 (capture_all 228) + test 0 USD. File sẽ ghi: chỉ code trong worktree (giải xung đột rebase nếu có), kết quả `data/phase_9/sua_lich/q1_c207/`, report `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md`. Không đọc `data/phase_9/b5_v2/`.
+- **Kế:** review nhánh `p9-b5b` khi B báo; review B171 khi B xong.
+
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Đã xong tối 05/11** (terminal `hue-rag-3c`): C192 sửa kho giờ (User giữ; 8.435 đoạn, record `9921888f2030`, T1 `64656a87c109`; `report_agent/2026-11-05_sua_kho_gio/c192_implementation.md`) · B6 kín ×2 đạt (`b165_b6_implementation.md` §10) · kiểm A bật `tra_web` ready (`b165_review.md`) · review `p10-anh` ready (`e8_review.md`) · C202 tắt ghi đệm **âm** (`c202_ghi_dem.md`) · C200 nhiễu S-AT (User duyệt phương án 3) · C201 cache ⇒ backlog Phase 12.
 - **Bộ đo (private, md5 12):**

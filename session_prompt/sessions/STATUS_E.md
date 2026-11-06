@@ -1,4 +1,12 @@
-# STATUS E — kết phiên tối 22:14 05/11/2026 (`date`) · terminal `hue-rag-bc` · Claude Opus 5.5 · vai thực thi (Phase 10 + review)
+# STATUS E — phiên 06/11 (mở 09:54 06/11/2026) · terminal `hue-rag-99` · Claude Opus 5.5
+
+## Đang làm: E19 (A giao, User: việc A giao = "làm đi") — cập nhật 10:48 06/11/2026
+- (1) TRIPO vòng 4 Playwright (phần chưa thử) · (2) nghiên cứu cách người thật hỏi lịch trình Huế · (3) `data/phase_9/b5_v2/mau_cau_tu_nhien.md` ⇒ nhắn A · (4) sau User duyệt: bộ kín 5 câu `data/phase_9/b5_v2/cau_sealed.jsonl` (không cho A / B / C xem).
+- **Khai báo file sẽ tạo / sửa:** `data/nghien_cuu_tinh_nang_2026-11-06/tripo_v4/` (script, ảnh, JSON, ghi chép) · `data/tra_cuu_cli/2026-11-06_*` (kết quả Codex) · `data/phase_9/b5_v2/` (mẫu câu, bộ kín) · `report_agent/2026-11-06_b5_cau_tu_nhien/e19_implementation.md` · file này. Không sửa code. Tiền 0 USD.
+- Sau E19: giọng nói (script đổi WAV + plan G2, 0 USD).
+
+---
+## (Phiên trước) kết phiên tối 22:14 05/11/2026 (`date`) · terminal `hue-rag-bc` · Claude Opus 5.5 · vai thực thi (Phase 10 + review)
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 - **Ảnh (Phase 10) — xong, cờ tắt:** `main` có `2ca9937` (P1 luna v1 dạng gợi ý có xác nhận) + `76319e2` (CSS khung điện thoại). Báo cáo User `bao_cao_he_thong/BAO_CAO_HOI_BANG_ANH.md` bản 2.

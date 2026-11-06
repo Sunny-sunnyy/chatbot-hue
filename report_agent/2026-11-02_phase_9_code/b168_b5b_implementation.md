@@ -106,3 +106,10 @@ A quyết: chạy bộ C207 (`data/phase_9/bo_do_b5b/cau_da_thay.jsonl` md5 `25b
 - Tiền Q8: **0,003556** (7 lượt: API 3 + giao diện 2 + giao diện sau sửa 2) ⇒ **B5b tổng ≈ 0,0508 / 0,07**.
 
 **Trạng thái cuối phiên 05/11:** nhánh `p9-b5b` **`8bdeb65`** (đã push) + bản sửa hiển thị chưa commit. Đạt: code + test, Q1 / Q1m, probe Open-Meteo, đã thấy × 2 (Q3 9 / 10 × 2) + vòng chỉnh 1 (A kết luận ĐẠT), Q4 (S-AT đạt), Q8. **Còn:** commit bản sửa hiển thị; phần lịch D9 / D10 (chờ `lich_trinh` bật + User duyệt bảng v5); rebase lên `main` mới + Q1 trước merge; review cả nhánh.
+
+## 12. Commit bản sửa hiển thị (10:51 06/11/2026) [Chạy]
+
+- Máy khởi động lại ⇒ worktree `/tmp/b_b5b` mất ⇒ `git worktree prune`, tạo lại trên `8bdeb65`, `git apply` patch `182904f45888` (3 file: `assistant.py`, `thoi_tiet.py`, test) ⇒ commit **`18d1cec`**, đã push `p9-b5b`.
+- Kiểm: `test_b5b_thoi_tiet.py` **73 passed**; `npm ci && npm run build` ⇒ `test_static_ui.py` **3 passed**; Playwright Q8 giao diện (câu dự báo + câu thường, server thật `app_thoi_tiet.py`): ghi công Open-Meteo + "số liệu lúc" thành **đoạn riêng** (đã xem ảnh laptop), nguồn dự báo trong khung nguồn, điện thoại 390 px không cuộn ngang, CSP 0, 0 request ra ngoài; log 0 dòng có chữ câu hỏi. Kết quả `data/phase_9/b5b/q8_0611/`.
+- Tiền: **0,000860** (2 lượt) ⇒ B5b tổng ≈ **0,0517 / 0,07**.
+- Còn: review cả nhánh (C); rebase lên `main` mới + Q1 trước merge; phần lịch D9 / D10 chờ `lich_trinh` bật + bảng v5.
