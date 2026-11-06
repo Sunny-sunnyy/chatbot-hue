@@ -1,8 +1,27 @@
-# STATUS B — PHIÊN TỐI 06/11 (cập nhật 22:27 06/11/2026 `date`; trước 22:03 06/11/2026 `date`)
+# STATUS B — KẾT PHIÊN TỐI 06/11 (22:41 06/11/2026 `date`; mở 20:54) — sổ tay cho phiên sau
 
-**B172 nghiên cứu giao diện cổng du lịch — XONG (22:27 06/11/2026)**, chờ A dùng viết spec đợt 1. Kết quả `data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md` (15 mẫu nên học, 10 không nên chép), report `report_agent/2026-11-06_giao_dien_cong/b172_implementation.md`. 0 USD. Terminal: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28`.
-**Khai báo file:** `data/nghien_cuu_giao_dien_2026-11-06/` (trừ `nguon_du_lieu_dot_2.md` — của C209) gồm `tools/`, `anh/`, `tong_hop.md`; `data/tra_cuu_cli/` (kết quả Codex); `report_agent/2026-11-06_giao_dien_cong/b172_implementation.md`.
-**Xong trước đó:** B171 merge `dbb4004` (C ready `b0e52f8`); tiền B171 0,028844 / 0,04; phiên tối B 0,010975 USD.
+Vai: thực thi. Terminal phiên tối 06/11: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28` (đổi mỗi lần mở ⇒ `ListAgents`). Quyền phiên **hết hạn**. Không còn worktree `/tmp` của B. Không có code dở.
+
+## Xong phiên tối 06/11
+- **B171** sửa lỗi lịch trình: merge `main` `dbb4004` (cờ `lich_trinh` tắt; C ready `b0e52f8`). Tiền B171 0,028844 / 0,04. Nhánh `p9-b5-sua` chờ User xoá.
+- **B172** nghiên cứu giao diện cổng: `data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md` (15 mẫu, 10 không nên chép) + `report_agent/2026-11-06_giao_dien_cong/b172_implementation.md`.
+- **B173** 3 bản mẫu HTML tĩnh: `data/nghien_cuu_giao_dien_2026-11-06/mau/{1,2,3}.html` (1 Son thếp · 2 Sông Hương · 3 Tím Huế trầm = mốc hiện tại), 24 ảnh `mau/anh/`, bản so `mau/anh_nho/so_*.jpg`; tương phản đạt (6 chỗ dưới ngưỡng = nhãn ẩn); report `…/b173_implementation.md`. **Chưa ai soát ngoài B.**
+
+## Việc dở / bước kế
+- B173: chờ A đưa User chọn hướng. Thiếu, nếu User cần:
+  - danh sách / chi tiết khác bố cục giữa 3 bản (hiện chung bố cục);
+  - font tiêu đề có chân — cần thêm 1 gói `@fontsource`, chưa cài, cần duyệt;
+  - ảnh thật (chưa có ảnh được phép).
+  - Sinh lại: `uv run python data/nghien_cuu_giao_dien_2026-11-06/tools/dung_mau.py` rồi `chup_mau.py`, `do_tuong_phan.py`.
+- Khi spec đợt 1 duyệt ⇒ B code (A giao).
+
+## Tiền B phiên tối 06/11: 0,010975 USD (chỉ B171: M-1 0,002843 + T3 0,002337 + dòng tối 0,003915 + T5 / T5b 0,00188); B172 / B173 0 USD.
+
+## Bẫy mới phiên tối
+- Ảnh cả trang (Playwright `full_page`) vẽ phần tử `position: fixed` (nút nổi, thanh dưới) chồng giữa trang — xem vị trí thật bằng ảnh màn đầu.
+- Đo tương phản: nhãn `.sr` (1 px) báo dưới ngưỡng — bỏ qua.
+- Câu thử tự viết cho lịch trình phải có ý "lên lịch" rõ, nếu không model trả lời thẳng, không gọi `lich_trinh` (T5 phiên tối).
+- Không `uv sync` ở `main` (gỡ sherpa-onnx của E).
 
 ## Sổ tay (từ phiên sáng 06/11, còn đúng)
 

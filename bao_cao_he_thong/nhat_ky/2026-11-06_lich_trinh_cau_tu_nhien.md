@@ -42,3 +42,10 @@ Muốn biết lịch trình chatbot gợi ý có dùng được không thì ph�
 - Harness đo sửa lịch: E review bắt 1 lỗi lớn (chấm đạt cả khi công cụ sửa lịch chưa được đưa) ⇒ C sửa xong, E đang kiểm lại.
 - (22:10 06/11/2026) Lịch trình đo bộ kín v2: **3 / 5 câu đạt, cần 4 / 5 ⇒ chưa bật.** Lỗi chính: model từ chối khi câu có hỏi kèm chỗ ở / cách đi (lịch vẫn ra nhờ code dựng), hỏi lại số ngày thừa, "đi dày" mà lịch thưa. 0,003 USD.
 - Giao diện: bạn chọn bỏ số trong câu (dòng "Nguồn" dưới câu) + cổng du lịch kiểu Huế TRIPO mức đầy đủ, hai đợt; B nghiên cứu giao diện, C nghiên cứu nguồn dữ liệu.
+- B dựng 3 bản mẫu giao diện (Son thếp · Sông Hương · Tím Huế trầm); spec giao diện cổng đợt 1 qua review 2 vòng.
+
+### Bạn cần làm gì (phiên sau, ghi 22:43 06/11/2026)
+- Duyệt spec giao diện cổng đợt 1, rồi chọn: bản mẫu · ảnh · "đi dày" · bật thời tiết · tên cổng (A hỏi từng câu).
+- Chọn cách làm bản đồ cho đợt 2 (P1 / P2 / P3).
+- Chạy lệnh `!` mô phỏng sửa lịch ở terminal C; thu 40 câu nói khi tiện.
+

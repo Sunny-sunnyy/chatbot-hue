@@ -1041,3 +1041,12 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - Q3 B5: User chọn agent chấm trước ⇒ 2 sub-agent độc lập khớp 15 / 15, (ii) 3 / 5 ⇒ User thấy câu kín không tự nhiên ⇒ gác (S100). E19: TRIPO vòng 4 + 20 lượt hỏi thật VOZ ⇒ 8 câu mẫu User duyệt giọng ⇒ bộ kín v2 5 câu (md5 `cd552f7cf7cb`).
 - B5b: commit Q8 `18d1cec` ⇒ review C (1 major + 3 minor) ⇒ sửa `0380345` ⇒ C ready ⇒ rebase `1610155`. B171 (`p9-b5-sua` `d5028d4`): sửa lấp điểm ngoài sở thích + câu báo buổi tối ⇒ review C changes_requested (kiểm bắt nhầm). C207: `p9-sua-lich` rebase `09ddaf9`. Plan G2 giọng nói `555a35af92ab` ⇒ sub-agent review.
 - Tiền ≈ 0,021 USD (B). Chatbot không đổi. Chi tiết: `CURRENT_HANDOFF.md` mục "PHIÊN 06/11", nhật ký `bao_cao_he_thong/nhat_ky/2026-11-06_lich_trinh_cau_tu_nhien.md`.
+
+## 2026-11-06 tối — thời tiết + sửa lỗi lịch trình vào `main` cờ tắt; lịch trình kín v2 không đạt ⇒ biểu mẫu trước; giao diện cổng du lịch (A, 22:43 06/11/2026)
+
+- Mở 20:54 (A `hue-rag-cc`, B `hue-rag-1a`, C `hue-rag-42`, E `hue-rag-28`); máy khởi động lại 20:48. Quyền như 06/11; A giao ngay việc có sẵn (luật mới chạy đúng).
+- Merge cờ tắt: B5b thời tiết `db77f32` (không cần rebase — `main` chỉ đổi tài liệu), B171 `dbb4004` (C review 2 vòng; thêm dòng "Buổi tối: để trống" + sửa "3 ngày 2 đêm"). Cổng ổn định 2 lần. Plan G2 giọng nói duyệt `92ec551531fd`. C208 rebase `p9-sua-lich` `79b3d9c` + harness (E review ready).
+- Bộ kín B5 v2: User duyệt (sửa 4 / 5 câu "dài dòng") ⇒ chạy ⇒ **3 / 5 không đạt**. E20: từ chối khi hỏi kèm = `tim_kho` bị chặn sau lịch (chứng minh bằng code). C210: lỗi hỏi lại số ngày **chưa tái tạo được**. E21: thời lượng từ kho không làm "đi dày" khác. ⇒ **User chọn lịch trình qua biểu mẫu, code quyết.**
+- Giao diện (User): bỏ số `[n]` trong chữ ⇒ dòng "Nguồn"; cổng du lịch kiểu Huế TRIPO mức 2, hai đợt. B172 (TRIPO 17 trang + 5 trang cùng đề tài), C209 (nguồn dữ liệu đợt 2), C211 (phần kỹ thuật), B173 (3 bản mẫu) ⇒ spec đợt 1 bản 2 `ff3c317ec88b` (E review 2 vòng ready) chờ User duyệt.
+- Tiền ≈ 0,027 USD. Sổ: S101–S103. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`, `report_agent/2026-11-06_b5_cau_tu_nhien/TONG_HOP.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-06_lich_trinh_cau_tu_nhien.md`.
+
