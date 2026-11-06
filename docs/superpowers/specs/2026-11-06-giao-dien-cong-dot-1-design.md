@@ -1,4 +1,4 @@
-# Spec — Giao diện cổng du lịch, đợt 1 (bản 1, nháp chờ review)
+# Spec — Giao diện cổng du lịch, đợt 1 (bản 2, sau review vòng 1)
 
 A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **trung bình** (đổi giao diện người dùng thấy + 3 API chỉ đọc + một đường lịch trình mới do code quyết; không đổi kho, không đổi chỉ mục, không model / provider mới).
 
@@ -23,9 +23,9 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 
 | # | Quyết định | Ai / lý do | Cái giá |
 |---|---|---|---|
-| D1 | Câu trả lời **không hiện số `[n]` trong chữ**; dưới câu một dòng **"Nguồn: <tên> · <tên>"**, bấm mở đoạn gốc (đợt 1: khung nguồn hiện có; có `bai_id` ⇒ link trang bài Khám phá). Tầng máy giữ `[n]` + bộ kiểm citation như cũ | User 06/11 tối | mất "câu nào từ nguồn nào" trên giao diện |
+| D1 | Câu trả lời **không hiện số `[n]` trong chữ**; dưới câu một dòng **"Nguồn: <tên> · <tên>"**, bấm mở đoạn gốc (đợt 1: khung nguồn hiện có; có `bai_id` ⇒ link trang bài Khám phá). Tầng máy giữ `[n]` + bộ kiểm citation như cũ. Nguồn web `[w n]` (tra web B6 đang bật): mục "Từ web (chưa kiểm)" giữ khối riêng + link như `main`, cũng bỏ số trong chữ của mục đó | User 06/11 tối | mất "câu nào từ nguồn nào" trên giao diện |
 | D2 | Cổng **mức 2** (như Huế TRIPO), **hai đợt**; đợt 1 = khung cổng từ cái đã có; đợt 2 = bản đồ, lưu trú, ăn uống theo cơ sở, sự kiện (spec riêng, sau nghiên cứu C209) | User 06/11 tối | ~1–1,5 tuần agent cho đợt 1 |
-| D3 | **Lịch trình qua biểu mẫu "Lên kế hoạch" — code quyết hẳn** (C211 §2 cách (b)): `ChatRequest` thêm `bieu_mau: true` ⇒ bỏ định tuyến, **code gọi thẳng** `lich_trinh` với giá trị nút (nút thắng **cả 4 trường**), model chỉ viết lời theo khung; câu gõ tự do giữ như `main` (cờ `lich_trinh` vẫn tắt) | User chọn "biểu mẫu trước"; A chọn (b) vì biểu mẫu là lối vào chính và luật "trường bắt buộc ⇒ code" (hiện `assistant.py:lich_trinh_for_turn` cho tham số model thắng nút ở `di_cung` / `kieu_di` / `so_thich` — A đọc code xác nhận) | thêm một nhánh đường trả lời + cờ |
+| D3 | **Lịch trình qua biểu mẫu "Lên kế hoạch" — code quyết hẳn** (C211 §2 cách (b)): `ChatRequest` thêm `bieu_mau: true` ⇒ bỏ định tuyến, **code gọi thẳng** `lich_trinh` với giá trị nút (nút thắng **cả 4 trường**), model chỉ viết lời theo khung; câu gõ tự do giữ như `main` (cờ `lich_trinh` vẫn tắt). Chi tiết: `query` của lượt = câu cố định do code dựng từ giá trị nút (vd "Lên kế hoạch <n> ngày …") — câu này vào lịch sử hội thoại như câu người dùng; ở lượt này model nhận **chỉ** `tim_kho` (không `lich_trinh` — lịch đã xếp, `trace.lich` chặn gọi lại); lượt sau trong cùng cuộc đi như `main`. **Giới hạn:** sửa lịch bằng chat sau biểu mẫu **chưa có** (`sua_lich` cần cờ `lich_trinh`) — giao diện nói "muốn đổi thì điền lại biểu mẫu" | User chọn "biểu mẫu trước"; A chọn (b) vì biểu mẫu là lối vào chính và luật "trường bắt buộc ⇒ code" (hiện `assistant.py:lich_trinh_for_turn` cho tham số model thắng nút ở `di_cung` / `kieu_di` / `so_thich` — A đọc code xác nhận) | thêm một nhánh đường trả lời + cờ |
 | D4 | Cờ mới `assistant.lich_trinh_bieu_mau` (tắt tới khi đạt §6 Q-F) — tách khỏi `lich_trinh` (câu tự do) | A | một cờ nữa |
 | D5 | Điều hướng **bằng hash** (`#/`, `#/kham-pha/<linh_vuc>`, `#/kham-pha/bai/<id>`, `#/len-ke-hoach`, `#/tro-ly`, `#/gioi-thieu`); **0 gói router**, 0 đổi server / CSP | A (C211 §7) | URL có `#` |
 | D6 | API chỉ đọc mới: `GET /api/kham_pha`, `GET /api/kham_pha/bai?id=` (chỉ `id` nằm nguyên văn trong `corpus.sources` của build record; lạ / `..` / `evaluation/` / tên có `sealed` ⇒ 404; cache RAM lúc khởi động), `GET /api/thoi_tiet` (từ `thoi_tiet.lay_du_bao`, cache 30 phút có sẵn, không gọi model, lỗi ⇒ ẩn ô), `GET /api/tinh_nang` (chỉ boolean các cờ) | A (C211 §1, §3, §5) | 4 route + test |
@@ -41,8 +41,8 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 ## 3. Câu hỏi cho User (trước khi code giao diện — mỗi lần một câu)
 
 - **Q-U1 Hướng nhìn:** chọn 1 trong 3 bản mẫu HTML tĩnh của B (`data/nghien_cuu_giao_dien_2026-11-06/mau/`) — màu, chữ, cảm giác.
-- **Q-U2 Ảnh:** kho gần như không có ảnh được phép dùng (B172: 2 file). (a) không ảnh — hình vẽ SVG / hoa văn / khối màu; (b) ảnh công khai có giấy phép mở (vd Wikimedia Commons) kèm dòng ghi công; (c) ảnh bạn tự chụp. Ảnh mới = dữ liệu mới ⇒ bạn quyết.
-- **Q-U3 "Đi dày" trên biểu mẫu:** cột thời lượng từ kho không làm lịch dày hơn (E21, `data/phase_9/lich_trinh/diem_cho_user_v6.md`: 4 hướng). Mặc định nếu chưa quyết: **ẩn lựa chọn "đi dày"** khỏi biểu mẫu (không hứa điều code chưa làm được).
+- **Q-U2 Ảnh:** kho gần như không có ảnh được phép dùng (B172: 2 file). (a) không ảnh — hình vẽ SVG / hoa văn / khối màu; (b) ảnh công khai có giấy phép mở (vd Wikimedia Commons) kèm dòng ghi công — **tải về, đóng vào bản build** (`frontend/` ⇒ `dist/`), không link ảnh ngoài (CSP `img-src 'self'` giữ nguyên); (c) ảnh bạn tự chụp. Ảnh mới = dữ liệu mới ⇒ bạn quyết.
+- **Q-U3 "Đi dày" trên biểu mẫu:** cột thời lượng từ kho không làm lịch dày hơn (E21, `data/phase_9/lich_trinh/diem_cho_user_v6.md`: 4 hướng). Mặc định nếu chưa quyết: **ẩn lựa chọn "đi dày"** khỏi biểu mẫu (không hứa điều code chưa làm được). Câu này chốt **trước** khi ghi bộ tổ hợp Q-F.
 - **Q-U4 Ô thời tiết + công cụ thời tiết:** bật cờ `thoi_tiet` (B5b đã đạt luật ghi trước) để trang chủ có ô nhiệt độ hôm nay + trợ lý trả lời câu dự báo?
 - **Q-U5 Tên hiển thị của cổng** (chữ ở đầu trang) — vd tên ngắn từ đề tài; không dùng tên giống cổng nhà nước.
 
@@ -66,8 +66,13 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 
 - **Q-K (Khám phá):** `/api/kham_pha` trả đúng **204 / 204** bài của `corpus.sources`, đúng 5 lĩnh vực; 0 bài ngoài danh sách; `id` ngoài danh sách / `..` / `evaluation/…` / có `sealed` ⇒ 404 (test).
 - **Q-N (Nguồn):** trên 10 câu tự viết có trích dẫn (Playwright): **0** số `[n]` / chip số hiện trong chữ; tập tên ở dòng "Nguồn" = tập nguồn được trích của câu đó (so với `sources` của API) 10 / 10.
-- **Q-F (biểu mẫu lịch trình — quyết bật cờ):** ≥ 12 tổ hợp biểu mẫu tự viết (đủ 6 kiểu "đi cùng ai", có / không sở thích, 1 / 2 / 3 ngày), chạy **×2**: khung lịch nhận **đúng 4 giá trị chọn** 24 / 24 (code đếm); **0** thẻ hỏi lại; **0** lượt chữ model là câu từ chối thay lịch; sàn Q2 B5 (code đếm: 0 điểm ngoài bảng, 0 giờ / giá, 0 vi phạm luật xếp) 24 / 24; 2 sub-agent Claude chấm (iii) "không thêm điều sai" ≥ 11 / 12 **mỗi lượt**. Trượt ⇒ cờ tắt, biểu mẫu ẩn (phương án B §1).
-- **Q-G (giao diện):** Playwright 1440 + 390: mọi trang hash mở được và tải lại đúng trang; **0 lỗi CSP**, 0 lỗi console; cờ tắt ⇒ mục tương ứng ẩn; ≥ **6** tính năng chính (hỏi trợ lý, 5 lĩnh vực Khám phá, Lên kế hoạch khi bật, thời tiết khi bật, Giới thiệu, hỏi bằng ảnh khi bật) tới được trong ≤ 2 lần bấm từ trang chủ; chữ chính tương phản ≥ 4,5 : 1; bundle JS gzip ≤ 200 KB.
+- **Q-F (biểu mẫu lịch trình — quyết bật cờ `lich_trinh_bieu_mau`):**
+  - **Phần tất định ⇒ test 0 USD (S1, không cần lượt có phí):** với mọi tổ hợp giá trị nút (`so_ngay` 4 × `di_cung` 5 × `kieu_di` theo Q-U3 × `so_thich` 5 + "không chọn"), khung `lich_trinh` nhận **đúng giá trị nút ở cả 4 trường**; 0 sự kiện `clarify`; model ở lượt biểu mẫu không được đưa `lich_trinh`.
+  - **Bộ tổ hợp đo có phí:** **12** tổ hợp, ghi vào report S3 **trước** lượt chạy, sau khi chốt Q-U3: phủ đủ **5** giá trị `di_cung`, mỗi `so_ngay` 1 / 2 / 3 ít nhất 3 lần, ≥ 4 tổ hợp có `so_thich`, ≥ 2 không chọn sở thích; `kieu_di` theo Q-U3. Chạy **×2** (24 lượt).
+  - **Sàn code đếm (24 / 24):** 0 lượt chữ model là câu từ chối thay lịch (khi đó code dựng lời — đếm riêng, coi là trượt); sàn Q2 của B5 qua `kiem_cuoi` (0 điểm ngoài khung, 0 giờ / giá ngoài khung, 0 vi phạm luật xếp, 0 rút lại); harness lưu **khung + chữ model + tham số** mỗi lượt.
+  - **Tiêu chí chấm (F-a) "lời khớp khung":** 2 sub-agent Claude ngữ cảnh mới, độc lập, mỗi lượt nhận **khung + chữ model + giá trị nút** (không cần chữ đoạn nguồn): chữ model **không** nêu điểm / buổi không có trong khung, **không** nói "được / có thể" với buổi khung để trống, lý do không xếp (nếu có) nói đúng như khung, lời phù hợp người đi cùng đã chọn. Đạt khi **≥ 11 / 12 mỗi lượt** theo cả hai người chấm (bất đồng ⇒ tính trượt).
+  - Trượt bất kỳ mục nào ⇒ cờ tắt, biểu mẫu ẩn (phương án B §1).
+- **Q-G (giao diện):** Playwright 1440 + 390: mọi trang hash mở được và tải lại đúng trang; **0 lỗi CSP**, 0 lỗi console; cờ tắt ⇒ mục tương ứng ẩn; tới được trong ≤ 2 lần bấm từ trang chủ: hỏi trợ lý · **mỗi** trang danh sách của 5 lĩnh vực (đếm 5) · Giới thiệu — tổng **7 / 7** đích luôn có; thêm Lên kế hoạch / thời tiết / hỏi bằng ảnh khi cờ tương ứng bật; chữ chính tương phản ≥ 4,5 : 1 — đo bằng script tính tỉ lệ tương phản WCAG từ token màu trong `index.css` (mọi cặp chữ / nền dùng thật); bundle JS gzip ≤ 200 KB.
 - **Q-C (chat không hỏng):** Q1 228 / 228 giống byte `main` khi cờ mới tắt; cổng ổn định (`/health` 5 / 5, 1 câu trong kho + 1 ngoài kho, `chat_metrics` = số câu, 0 câu hỏi trong log); stream, nhớ 3 lượt, 👍 / 👎, "Cuộc trò chuyện mới" chạy như `main` trong khung nổi lẫn trang trợ lý.
 - **Tiền:** ≤ **0,03 USD** (Q-F ≈ 24 × ~0,0006 + cổng); vượt dự phóng ⇒ dừng, báo A.
 
@@ -81,6 +86,8 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 | Đường ra mới | `/api/thoi_tiet` gọi Open-Meteo **từ server** (không gửi gì của người dùng; ≤ 1 lần / 30 phút) | khớp | CSP trình duyệt không đổi |
 | Chữ người dùng là dữ liệu | `id` bài từ URL | rủi ro đọc file tuỳ ý | D6: so nguyên chuỗi với `corpus.sources`, không ghép đường dẫn; test `..` / `evaluation/` / `sealed` |
 | Hiển thị nội dung | Markdown kho + câu trả lời qua DOMPurify | khớp | thêm `rel="noopener noreferrer"` link ngoài (C211 §1 phát hiện) |
+| Toàn văn bài kho ra trình duyệt | `/api/kham_pha/bai` trả nguyên Markdown bài kho (kho private trong git, nhưng là nội dung sản phẩm) | khớp mục đích, **mới** | chạy local: chấp nhận; **trước deploy** (Phase 12): xét lại phạm vi công khai + giới hạn tần suất |
+| Cờ tắt | `/api/thoi_tiet`, `/api/kham_pha*` khi tính năng tắt | — | `/api/thoi_tiet` cờ `thoi_tiet` tắt ⇒ 404; `/api/tinh_nang` trả `false` |
 | Dữ liệu cá nhân | cookie 30 phút, RAM | khớp | nói ra ở D12 |
 | Bộ ba chết người (dữ liệu riêng · nội dung lạ · kênh ra) | không thêm kênh ra | khớp | — |
 
@@ -92,4 +99,4 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 
 ## Chỗ đổi
 
-- Bản 1 (22:32 06/11/2026): bản đầu.
+- Bản 2 (22:38 06/11/2026): sửa theo review vòng 1 (E, `…_review.md`): M-1 viết lại Q-F (5 giá trị `di_cung` theo enum; phần tất định ⇒ test 0 USD; tiêu chí chấm F-a định nghĩa riêng trên khung + chữ + giá trị nút; bộ 12 tổ hợp ghi trước, sau Q-U3); m-1 chi tiết D3 (câu cố định, công cụ ở lượt biểu mẫu, giới hạn sửa lịch); m-2 Q-G đếm 7 / 7 đích + cách đo tương phản; m-3 D1 nguồn web; m-4 §7 thêm 2 dòng; m-5 Q-U2 (b) ảnh đóng vào bản build. Bản 1 `03904f669e8f` ở git.
