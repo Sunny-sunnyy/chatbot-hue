@@ -10,7 +10,7 @@
 
 - (e) **C210 (22:27 06/11/2026): CHƯA TÁI TẠO ĐƯỢC ⇒ không sửa code** — 5 câu tự viết (3N2D / 4n3d / 2 hôm / đi trong ngày / khoảng 2–3 ngày + hỏi kèm) ⇒ 5/5 ra lịch, model gửi đúng số; 0,003855 USD. Bản sửa viết trước khi tái tạo cất ở `data/phase_9/c210/sua_khong_ap_dung.patch`; nhánh `p9-so-ngay` rỗng đã xoá. Report `report_agent/2026-11-06_b5_cau_tu_nhien/c210_implementation.md` (4 giả thuyết + đề xuất harness kín ghi tham số so_ngay). **Bẫy:** sửa trước khi tái tạo — A phải nhắc.
 
-- (f) **C211 (22:28 06/11/2026, A giao):** nháp kỹ thuật spec giao diện cổng đợt 1 — file `data/nghien_cuu_giao_dien_2026-11-06/spec_dot1_ky_thuat_nhap.md`. 0 USD, không sửa code.
+- (f) **C211 XONG (22:32 06/11/2026), chờ A:** `data/nghien_cuu_giao_dien_2026-11-06/spec_dot1_ky_thuat_nhap.md` — 8 mục, mỗi ý `file:hàm` hiện có + đề xuất. Điểm chính: API Khám phá chỉ đọc trong `corpus.sources` của build record; form hiện có `truong` thì model vẫn thắng di_cung / kieu_di / so_thich ⇒ đề xuất (a) đảo `or` / (b) code gọi thẳng `lich_trinh`; thời tiết qua server, CSP đợt 1 không đổi; điều hướng bằng hash, 0 gói. 0 USD.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (phiên sáng 06/11)
 - **Đã xong 06/11** (terminal `hue-rag-a4`, 0 USD):
