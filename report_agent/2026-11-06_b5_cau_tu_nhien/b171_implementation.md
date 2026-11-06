@@ -80,3 +80,43 @@ Từ `backend/` của worktree `/tmp/b_b5sua` (`p9-b5-sua`), `PYTHONPATH=$PWD HF
   B nghiêng **(b)**: đã có phép thử, chi phí 0 USD / câu, cùng khuôn với B5b M-1.
 
 **Giải thích ngắn:** lịch "thích thiên nhiên" trước đây hay chèn một lăng vào buổi chiều dù vẫn còn bãi biển / đầm phá chưa đi. Nguyên nhân: code chọn buổi sáng mà không nhìn trước buổi chiều. Giờ code ưu tiên điểm còn "bạn đi chiều", và câu giải thích khi phải chèn di tích luôn nói đúng lý do. Khi khách xin buổi tối mà lịch không xếp (đi cùng trẻ nhỏ / người lớn tuổi, hoặc không có điểm tối hợp sở thích), code tự ghi một câu nói rõ vì sao, và chặn câu trả lời nào hứa buổi tối trái với lịch. Còn một dạng câu (hỏi "tối có … được không?") khiến model bỏ cả lịch; cần A chọn cách xử lý.
+
+
+## 7. Sửa theo review C + T3 (b) — phiên tối 06/11 (21:15 06/11/2026 `date`)
+
+Nhánh `p9-b5-sua` **rebase lên `main` `d38b05a`** (đã có B5b `db77f32`; A dặn rebase trước khi C kiểm), không xung đột ⇒ 3 commit: `15402dd` (B171 nháp, = `d5028d4` cũ) · **`27b56cb`** (M-1 / m-1 / m-2) · **`a08d2e9`** (T3 b). Push `--force-with-lease=p9-b5-sua:d5028d4`. Cờ `lich_trinh` vẫn tắt.
+
+**M-1 — kiểm "nói ngược buổi tối" bắt nhầm lời hợp khung.** Sửa `_noi_nguoc_toi`: cả hai luật (dòng mở bằng nhãn tối; câu nhắc tối / đêm + "được / có thể") bỏ qua câu có từ phủ định **hoặc** lời không phải hoạt động: nghỉ, tự do, khách sạn, ngủ, thư giãn, chuẩn bị; "trời tối" không tính là buổi tối.
+- **Lệch so với cách A / C đề xuất (B tự quyết, A xem):** đề xuất là "chỉ bắt khi câu có tên điểm của bảng". B chạy thử [Chạy]: 6 / 6 câu nói ngược trong ca dò của C **không có tên điểm nào** ("Tối: ăn chè.", "Tối ghé chợ đêm nhé.", "Đêm có thể dạo cầu Trường Tiền."…) ⇒ luật tên điểm bắt 0 / 6, trái tiêu chí đóng (6 / 6). Tên điểm bảng ở đầu dòng lịch đã được kiểm `diem_ngoai_khung` (D8 (1)) bắt sẵn. Nên B giữ luật theo từ, thêm danh sách "không phải hoạt động".
+- 16 ca dò của C vào test (`test_l_b_evening_contradiction_probe`): **16 / 16** [Chạy]. Trên code cũ cùng test hỏng đúng 5 ca bắt nhầm.
+- **Lượt có phí: 4 câu xin buổi tối (L4, T2, T3, T4) × 1 = 0,002843 USD ⇒ 0 / 4 rút lại**, `lich_kiem` rỗng cả 4 (`data/phase_9/b171/m1_9037b91.jsonl`; commit lúc chạy `9037b91` = `27b56cb` trước rebase).
+
+**m-1 — bộ dò xin buổi tối.** Thêm "tối muốn / tối thích", "chơi / đi / dạo đêm", "khuya"; "3 ngày 2 đêm", "tối đa 2 điểm" vẫn không bắt. 6 ca test mới [Chạy]; trên code cũ hỏng 4 ca.
+
+**m-2 — "k điểm hợp sở thích".** `hop_ngay` chỉ đếm điểm **đúng sở thích** đi được buổi ngày; điểm người dùng nêu mà không hợp sở thích không tính nữa. Ví dụ ẩm thực 2 ngày + Lăng Tự Đức: cách đếm cũ ra 4, mới ra 3. 1 test [Chạy]. Phép quét 0 USD không đổi: `tai_tao_la.py` 120 ca, L-a còn 6; `so_khung_cu_moi.py` (so với `origin/main`) 1.728 ca, đổi 168, đều thiên nhiên [Chạy].
+
+**T3 = (b) (A chốt).** Lượt có khung lịch mà chữ model đúng bằng câu từ chối ⇒ code dựng lời lịch tối thiểu từ khung (`lt.loi_lich_toi_thieu`: tiêu đề ngày, mỗi điểm một dòng "Sáng: tên [n]"). Lõi ghép dòng "Mình hiểu" + khối ghi chú như thường; chữ code dựng vẫn đi qua kiểm cuối + kiểm citation. Chỗ sửa:
+- `assistant.py` `_finish_generated`: nhánh có lịch; `trace.lich["chu_thay"]` đánh dấu đã thay.
+- Đường stream: giữ chữ như B5b. Điều kiện giữ mở rộng "có dự báo **hoặc có khung lịch**". Hàm `_chu_giu_lai` dùng chung cho lịch / dự báo, phát chữ thay + dòng "Mình hiểu" nếu chưa phát.
+- Lượt lịch bình thường chỉ giữ tới ký tự đầu khác câu từ chối ⇒ không thêm độ trễ thấy được.
+- Test `test_t3_refusal_with_frame_becomes_code_built_itinerary` (thường + stream; có ca model viết lịch thật ⇒ không thay) [Chạy]; bỏ phần sửa `assistant.py` ⇒ 2 / 2 hỏng.
+- **Lượt có phí T3 × 3 = 0,002337 USD ⇒ 3 / 3 ra lịch, 0 rút lại** (`data/phase_9/b171/t3b_lan{1,2,3}.jsonl`). Lượt 2 model trả nguyên câu từ chối ⇒ code thay; lượt 1, 3 model tự viết lịch đúng khung, không hứa buổi tối. Trước sửa: 7 / 7 rút lại.
+
+**Câu B hỏi (6 ca "thiên nhiên 4 ngày") — A chốt 06/11 tối:** giữ lấp có nhãn, đúng lựa chọn D2 (lấp có nhãn thay vì để ngày trống); câu "không cùng hướng" đúng sự thật là đủ.
+
+**Kiểm sau rebase [Chạy]:**
+- Test rộng không key (29 file, trừ 3 file cần key / model): **695 passed, 3 failed + 1 error**, đều loại đã biết:
+  - 2 cần `OPENAI_API_KEY`: `test_phase6_settings::…key…`, `test_api_chat::test_health…lifespan`;
+  - 2 `test_static_ui` cần bản build giao diện (B không sửa `frontend/`, không build trong worktree).
+- `test_b5_lich_trinh.py` 239 passed.
+- **Q1: 228 / 228 giống byte** `data/phase_9/sua_lich/q1_c207/main_0a9e0f3.jsonl` (`data/phase_9/b171/q1_sua/nhanh_sau_rebase.jsonl`). `main` mới có B5b cờ tắt, A đã kiểm giống byte lúc merge.
+
+**Tiền B171: 0,023049 / 0,04 USD** (trước 0,017869 + M-1 0,002843 + T3 0,002337).
+
+**Giới hạn / ghi nhận (không sửa):**
+1. Model hay **chép nguyên dòng khung** "Buổi tối: không xếp — không gợi ý hoạt động buổi tối." vào câu trả lời (**4 / 4** lượt M-1; T3 lần 1 / 3 chép dạng ngắn "Buổi tối: không xếp hoạt động." / "Buổi tối: không xếp."). Nửa sau là lời dặn cho model, người dùng đọc hơi lạ. Đổi chữ dòng khung = bậc chỉnh lời dặn ⇒ để A quyết, có thể làm cùng lượt kín v2.
+2. Lời lịch code dựng (T3) không có giờ / mô tả điểm, chỉ tên + [n] + khối ghi chú: đúng phạm vi (b), kém tự nhiên hơn chữ model.
+3. Kiểm nói ngược vẫn dựa trên từ: lọt câu hứa buổi tối không dùng "được / có thể" và không mở dòng bằng "tối" (vd "Bạn ghé chợ đêm sau bữa tối nhé"). Lời có chữ nghỉ / khách sạn đi kèm một hoạt động (vd "tối nghỉ ở khách sạn rồi ra phố đi bộ") cũng lọt.
+4. **Ghi chú merge với `p9-sua-lich` (C dặn):** `tham_so` có thêm khoá `hoi_toi`, `xep` có `chon_sang` ⇒ người gộp sau phải để `chon_sang` tôn trọng `giu` / `loai` (đi qua `used` / `dung_duoc`), và `ThamSo(**…)` dựng lại từ khung đã lưu phải nhận `hoi_toi`.
+
+**Bàn giao C:** diff `origin/main…p9-b5-sua` (commit `27b56cb`, `a08d2e9`; `15402dd` = bản C đã review). Chạy lại: `tests/test_b5_lich_trinh.py` (+ `test_b5b_thoi_tiet.py`, `test_chat_stream.py` vì đổi đường stream chung với B5b), ca dò của C, Q1, 2 phép quét 0 USD.
