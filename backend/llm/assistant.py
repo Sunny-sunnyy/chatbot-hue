@@ -315,7 +315,8 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
                 return the_hoi_lai("lich_trinh", ["so_ngay"], trace.search_query or query)
             tu_nut = truong or {}
             ts = lt.ThamSo(so_ngay=so_ngay_chot, di_cung=di_cung or tu_nut.get("di_cung"), kieu_di=kieu_di or tu_nut.get("kieu_di"),
-                           so_thich=so_thich or tu_nut.get("so_thich"), them_diem=tuple(them_diem or ()), so_ngay_tam=tam)
+                           so_thich=so_thich or tu_nut.get("so_thich"), them_diem=tuple(them_diem or ()), so_ngay_tam=tam,
+                           hoi_toi=lt.hoi_buoi_toi(query))
             khung = lt.xep(bang, ts)
             n_xep = len(lt.diem_trong_khung(khung))
             packed, nguon, nguon_ve = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, instructions)
@@ -592,6 +593,8 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     text = trace.generated.text
     if trace.lich is not None:
         bang, khung, nguon = flags.bang_lich, trace.lich["khung"], trace.lich["nguon"]
+        if text.strip() == INSUFFICIENT_ANSWER:  # B171 T3 (b): có khung mà model từ chối ⇒ code dựng lời lịch tối thiểu (stream: `_chu_giu_lai`)
+            text = trace.lich["chu_thay"] = lt.loi_lich_toi_thieu(bang, khung, nguon)
         loi = lt.kiem_cuoi(bang, text, khung, nguon)
         trace.lich["minh_hieu"] = lt.dong_minh_hieu(khung)
         trace.lich["ghi_chu"] = lt.khoi_ghi_chu(bang, khung, nguon, trace.lich.get("them_dong", ()))
@@ -857,8 +860,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         if pending_generating:
                             pending_generating = False
                             yield "status", {"stage": "generating"}
-                        if giu_chu is None:  # review C M-1: đã có dự báo ⇒ giữ chữ chừng nào còn có thể là câu từ chối (chưa hiện)
-                            giu_chu = "" if flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"] else False
+                        if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
+                            giu_chu = "" if (flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None else False
                         if giu_chu is not False:
                             giu_chu += text
                             if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()):
@@ -899,8 +902,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
-            if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay bằng câu dẫn) hoặc một khúc đầu của nó
-                yield "delta", tt.CAU_DAN_DU_BAO if trace.thoi_tiet.get("thay_tu_choi") else giu_chu
+            if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay) hoặc một khúc đầu của nó
+                yield "delta", _chu_giu_lai(trace, giu_chu, da_noi_dau)
             if trace.lich is not None and trace.citation_error is None and trace.lich["ghi_chu"]:
                 yield "delta", f"\n\n{trace.lich['ghi_chu']}"  # D4b: khối ghi chú do code nối, sau phần model
             if trace.thoi_tiet_noi and trace.citation_error is None:
@@ -924,6 +927,18 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         pass
             logger.info("chat_stream_drain %s", json.dumps({"finished": not drain_scope.cancelled_caught,
                                                              "ms": elapsed_ms(drain_started)}))
+
+
+def _chu_giu_lai(trace: AnswerTrace, giu: str, da_noi_dau: bool) -> str:
+    """Stream: chữ model giữ lại tới hết ⇒ chữ phát ra — lời lịch code dựng (B171 T3) / câu dẫn dự báo (B5b M-1) / chính chữ đó; lượt có lịch
+    chưa phát chữ nào ⇒ dòng "Mình hiểu" đi trước (D12 (a))."""
+    if trace.lich is not None and trace.lich.get("chu_thay"):
+        chu = trace.lich["chu_thay"]
+    elif trace.thoi_tiet and trace.thoi_tiet.get("thay_tu_choi"):
+        chu = tt.CAU_DAN_DU_BAO
+    else:
+        chu = giu
+    return f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{chu}" if trace.lich is not None and not da_noi_dau else chu
 
 
 _SPEC_END = object()  # dấu hết hàng đợi của phần chạy trước (#6)

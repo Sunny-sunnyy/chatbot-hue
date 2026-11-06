@@ -22,6 +22,7 @@ from core.settings_loader import load_settings
 from llm import lich_trinh as lt
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, nap_bang_lich
 from llm.do_so import do_so_ngay
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from llm.hoi_lai import TruongInput, ghep_cau, the_hoi_lai
 from llm.so_tien import tim_so_tien
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder
@@ -112,12 +113,111 @@ def test_branches_of_the_plan():
     assert khung(so_ngay="4+")["gia_dinh"][0] == "so_ngay_4" and len(khung(so_ngay="4+")["ngay"]) == 4
 
 
+# ---------- B171: L-a lấp ngoài sở thích khi bảng còn điểm hợp sở thích; L-b buổi tối xin mà không xếp ----------
+
+ALL_TS = [dict(so_ngay=n, di_cung=c, kieu_di=k, so_thich=t) for n in ("1", "2", "3", "4+") for c in (None, "mot_minh", "nguoi_lon_tuoi")
+          for k in ("thong_tha", "day_lich") for t in ("di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chup_anh")]
+
+
+def test_l_a_nature_trip_uses_nature_points_before_filling():
+    # lỗi cũ: sáng ngày 2 chọn điểm thiên nhiên không còn bạn chiều cùng cụm / cụm kề ⇒ chiều lấp lăng dù bãi biển / đầm phá còn trống
+    for so_ngay in ("1", "2", "3"):
+        k = khung(so_ngay=so_ngay, so_thich="thien_nhien")
+        assert k["ngoai_so_thich"] == [] and all("thien_nhien" in BANG.theo_id[i]["loai"] for i in lt.diem_trong_khung(k))
+    four = khung(so_ngay="4+", so_thich="thien_nhien")  # 8 điểm cho 8 suất nhưng cụm lẻ không kề nhau ⇒ lấp 1, câu lý do "không cùng hướng"
+    assert len(four["ngoai_so_thich"]) == 1 and four["lap_vi"] == "khong_cung_huong"
+
+
+@pytest.mark.parametrize("ts", ALL_TS)
+def test_l_a_fill_reason_is_true(ts):
+    k = lt.xep(BANG, lt.ThamSo(**ts))
+    assert lt.kiem_khung(BANG, k) == []
+    if not k["ngoai_so_thich"]:
+        assert k["lap_vi"] is None and k["thieu_so_thich"] is None
+        return
+    n = 4 if ts["so_ngay"] == "4+" else int(ts["so_ngay"])
+    da_xep = lt.diem_trong_khung(k)
+    hop_ngay = [d["id"] for d in BANG.diem if ts["so_thich"] in d["loai"] and set(d["buoi"]) & {"sang", "chieu"} and (d["cum"] != lt.CUM_XA or n >= 3)]
+    assert k["thieu_so_thich"] == len(hop_ngay)  # số trong câu = đúng số điểm hợp sở thích đi được buổi ngày
+    if k["lap_vi"] == "it_diem":
+        assert len(hop_ngay) < 2 * n
+    else:  # đủ số mà vẫn lấp ⇒ phải còn điểm hợp sở thích chưa xếp (lý do "không cùng hướng" mới đúng)
+        assert len(hop_ngay) >= 2 * n and set(hop_ngay) - set(da_xep)
+    note = lt.khoi_ghi_chu(BANG, k, {i: 1 for i in da_xep})
+    assert lt.CAU_THIEU_SO_THICH[k["lap_vi"]].split("{")[0] in note and lt.kiem_ghi_chu(BANG, k, note) == []
+
+
+@pytest.mark.parametrize("cau, hoi", [
+    ("Tối đi đâu chơi cho bé?", True), ("muốn buổi tối dạo phố", True), ("có chợ đêm không", True), ("ăn tối ở đâu ngon", True),
+    ("sáng đi Đại Nội, chiều và tối đi dạo", True),
+    ("Lên lịch 4 ngày 3 đêm ở Huế", False), ("2 ngày 1 đêm có nên đi lăng không", False), ("đi tối đa 3 điểm", False), ("lịch tối ưu", False),
+    # review C m-1: cách nói hay gặp bị sót
+    ("tối muốn đi nghe ca Huế", True), ("tối thích ngồi cà phê", True), ("đi chơi đêm ở đâu", True), ("khuya đi đâu", True),
+    ("3 ngày 2 đêm đi Huế", False), ("đi tối đa 2 điểm mỗi ngày", False),
+])
+def test_l_b_evening_request_detector(cau, hoi):
+    assert lt.hoi_buoi_toi(cau) is hoi
+
+
+def test_l_b_evening_refused_gets_reason_frame_line_and_check():
+    kid = khung(di_cung="gia_dinh_tre_em", hoi_toi=True)
+    assert {"diem": "buổi tối", "ma_luat": "toi_tre_em"} in kid["khong_xep"] and lt.kiem_khung(BANG, kid) == []
+    nguon = {i: n for n, i in enumerate(lt.diem_trong_khung(kid), 1)}
+    assert lt.CAU_KHONG_XEP["toi_tre_em"] in lt.khoi_ghi_chu(BANG, kid, nguon)
+    assert lt.khung_chu(BANG, kid, nguon, "LUAT").endswith(lt.DONG_KHUNG_TOI["toi_tre_em"])
+    assert {"diem": "buổi tối", "ma_luat": "toi_lon_tuoi"} in khung(di_cung="nguoi_lon_tuoi", hoi_toi=True)["khong_xep"]
+    assert {"diem": "buổi tối", "ma_luat": "toi_khong_diem"} in khung(so_thich="di_tich", di_cung="mot_minh", hoi_toi=True)["khong_xep"]
+    food = khung(so_thich="am_thuc", di_cung="mot_minh", hoi_toi=True)  # có phố đêm hợp sở thích ⇒ buổi tối được xếp, không câu từ chối
+    assert any(ng["buoi"]["toi"] for ng in food["ngay"]) and not any(x["ma_luat"] in lt.MA_TOI for x in food["khong_xep"])
+    plain = khung(di_cung="gia_dinh_tre_em")  # không xin buổi tối ⇒ khung + ghi chú như trước
+    assert "Buổi tối: để trống" not in lt.khung_chu(BANG, plain, {i: 1 for i in lt.diem_trong_khung(plain)}, "LUAT")
+    assert not any(x["ma_luat"] in lt.MA_TOI for x in plain["khong_xep"])
+    ok = "\n".join(f"{lt.NHAN_BUOI[b]}: {BANG.theo_id[i]['ten']} [{nguon[i]}]." for ng in kid["ngay"] for b in lt.BUOI for i in ng["buoi"][b])
+    assert lt.kiem_cuoi(BANG, ok, kid, nguon) == []
+    assert lt.kiem_cuoi(BANG, ok + "\nBuổi tối nên nghỉ ngơi để bé có sức.", kid, nguon) == []
+    for nguoc in ("\nBuổi tối cả nhà vẫn có thể dạo phố đêm.", "\nTối: dạo cầu Trường Tiền.", "\nĐi chợ đêm buổi tối cũng được nhé."):
+        assert lt.kiem_cuoi(BANG, ok + nguoc, kid, nguon) == ["toi_ngoai_khung"]
+        assert "toi_ngoai_khung" not in lt.kiem_cuoi(BANG, ok + nguoc, plain, {i: 1 for i in lt.diem_trong_khung(plain)})  # chỉ khi đã từ chối
+
+
+# review C M-1: ca dò của C (`data/phase_9/b171/tools/probe_b171_cua_C.py`) — lời hợp khung khi không xếp tối không được bắt (bắt ⇒ rút cả câu
+# trả lời), lời hứa / xếp hoạt động buổi tối phải bắt
+@pytest.mark.parametrize("cau, nguoc", [
+    ("Buổi tối bạn có thể nghỉ ngơi tại khách sạn.", False), ("Tối: nghỉ ngơi.", False), ("Buổi tối: tự do.", False),
+    ("Tối về khách sạn sớm để bé ngủ.", False), ("Buổi tối bạn có thể về khách sạn sớm.", False), ("Bạn nên về trước khi trời tối.", False),
+    ("Lịch không xếp buổi tối.", False), ("Sáng đi sớm được thì tránh nắng.", False), ("Tối hôm trước nên chuẩn bị nước và mũ.", False),
+    ("Ngày 2 có thể đi chậm, tối thư giãn ở khách sạn.", False),
+    # review C vòng 2 M-2: số đêm của chuyến, bữa tối ở vế khác không phải hứa hoạt động buổi tối
+    ("Lịch 3 ngày 2 đêm này bạn có thể đi chậm rãi.", False), ("Chuyến hai đêm được xếp thong thả.", False),
+    ("Chiều về sớm kịp bữa tối, bạn có thể đi chậm.", False),
+    ("Buổi tối, bạn có thể ghé chợ đêm.", True), ("Nếu còn sức, tối bạn có thể dạo phố.", True),
+    ("Tối: dạo phố đi bộ.", True), ("Buổi tối có thể ghé chợ đêm.", True), ("Tối nay bạn đi thuyền nghe ca Huế được nhé.", True),
+    ("Tối ghé chợ đêm nhé.", True), ("- Tối: ăn chè.", True), ("Đêm có thể dạo cầu Trường Tiền.", True),
+])
+def test_l_b_evening_contradiction_probe(cau, nguoc):
+    assert lt._noi_nguoc_toi(cau) is nguoc
+
+
+def test_evening_frame_line_is_user_readable_and_not_a_contradiction():
+    # A 06/11 tối: model chép nguyên dòng khung tối vào lời ⇒ dòng phải đọc được cho người dùng (không lời dặn model) và không bị kiểm cuối bắt
+    assert set(lt.DONG_KHUNG_TOI) == set(lt.MA_TOI)
+    for ma, dong in lt.DONG_KHUNG_TOI.items():
+        assert "gợi ý" not in dong and not lt._noi_nguoc_toi(dong) and not lt._noi_nguoc_toi(f"- {dong}")
+
+
+def test_m2_fill_count_excludes_named_points_outside_preference():
+    # điểm người dùng nêu (Lăng Tự Đức: di tích) không hợp sở thích ẩm thực ⇒ không tính vào "k điểm hợp sở thích" của câu lấp (cách đếm cũ: 4)
+    ts = dict(so_ngay="2", di_cung="mot_minh", kieu_di="thong_tha", so_thich="am_thuc")
+    goc, neu = khung(**ts), khung(**ts, them_diem=("Lăng Tự Đức",))
+    assert neu["ngoai_so_thich"] and "lang_tu_duc" in lt.diem_trong_khung(neu) and neu["thieu_so_thich"] == goc["thieu_so_thich"] == 3
+
+
 # ---------- mỗi luật xếp một test cố tình vi phạm (#5) ----------
 
 def frame(ngay: list[dict], **ts) -> dict:
     base = {"so_ngay": str(len(ngay)), "di_cung": None, "kieu_di": None, "so_thich": None, "them_diem": [], "so_ngay_tam": False}
     return {"tham_so": {**base, **ts}, "ngay": [{"ngay": i, "buoi": {"sang": [], "chieu": [], "toi": [], **b}} for i, b in enumerate(ngay, 1)],
-            "ngoai_so_thich": [], "thieu_so_thich": None, "khong_xep": [], "gia_dinh": []}
+            "ngoai_so_thich": [], "thieu_so_thich": None, "lap_vi": None, "khong_xep": [], "gia_dinh": []}
 
 
 @pytest.mark.parametrize("bad, code", [
@@ -132,6 +232,7 @@ def frame(ngay: list[dict], **ts) -> dict:
     (frame([{"sang": ["dai_noi"]}], them_diem=["Lăng Tự Đức"]), "them_diem_lac"),
     (frame([{"sang": ["dai_noi"]}], so_thich="am_thuc"), "lap_khong_nhan"),
     (frame([{"sang": ["dai_noi"]}], so_ngay="2"), "so_ngay"),
+    (frame([{"sang": ["dai_noi"]}], hoi_toi=True), "toi_khong_bao"),  # B171 L-b: xin buổi tối, khung không có, không có câu lý do
 ])
 def test_rule_check_catches_each_violation(bad, code):
     assert code in lt.kiem_khung(BANG, bad)
@@ -335,6 +436,27 @@ def test_answer_now_never_asks_twice_and_marks_one_day(deps):
     assert trace.answer.startswith("Mình hiểu: 1 ngày (tạm)") and lt.CAU_GIA_DINH["so_ngay_tam"] in trace.answer
 
 
+@pytest.mark.parametrize("stream", [False, True])
+def test_t3_refusal_with_frame_becomes_code_built_itinerary(deps, stream):
+    # B171 T3 (b): câu hỏi phụ (có / không về buổi tối không xếp) ⇒ model trả nguyên câu từ chối dù đã có khung ⇒ code dựng lời lịch tối thiểu
+    # (có trích dẫn) thay vì rút lại; stream: chữ giữ tới khi biết không phải câu từ chối ⇒ người dùng không thấy câu từ chối rồi bị thay
+    cau = "Lên lịch Huế 2 ngày cho ông bà, thích thiên nhiên, tối đi thuyền nghe ca Huế được không?"
+    script = lambda n, kw: [lich_call(so_ngay="2", di_cung="nguoi_lon_tuoi", so_thich="thien_nhien")] if n == 1 else [answer(INSUFFICIENT_ANSWER)]  # noqa: E731
+    trace, events = run(deps, cau, generator(script), ON, stream=stream)
+    k, nguon = trace.lich["khung"], trace.lich["nguon"]
+    assert trace.citation_error is None and trace.lich_kiem == [] and INSUFFICIENT_ANSWER not in trace.answer
+    assert trace.lich["chu_thay"] == lt.loi_lich_toi_thieu(BANG, k, nguon) and trace.answer.startswith("Mình hiểu")
+    assert all(f"{BANG.theo_id[i]['ten']} [{nguon[i]}]" in trace.answer for i in lt.diem_trong_khung(k))
+    assert lt.CAU_KHONG_XEP["toi_lon_tuoi"] in trace.answer and lt.TIEU_DE_GHI_CHU in trace.answer
+    if stream:
+        assert "".join(d for kind, d in events if kind == "delta") == trace.answer
+    viet = lambda n, kw: [lich_call(so_ngay="2", di_cung="nguoi_lon_tuoi", so_thich="thien_nhien")] if n == 1 else [answer(viet_theo_khung(kw))]  # noqa: E731
+    thuong, ev = run(deps, cau, generator(viet), ON, stream=stream)  # model viết lịch ⇒ giữ chữ model, không thay
+    assert "chu_thay" not in thuong.lich and thuong.citation_error is None and lt.loi_lich_toi_thieu(BANG, thuong.lich["khung"], thuong.lich["nguon"]) not in thuong.answer
+    if stream:
+        assert "".join(d for kind, d in ev if kind == "delta") == thuong.answer
+
+
 def test_full_itinerary_turn_stream_order_and_text(deps):
     script = lambda n, kw: [lich_call(so_ngay="1", so_thich="di_tich", them_diem=["chùa Từ Hiếu"])] if n == 1 else [answer(viet_theo_khung(kw))]  # noqa: E731
     trace, events = run(deps, "Lên lịch Huế 1 ngày, mình thích di tích", generator(script), ON, stream=True)
@@ -348,6 +470,14 @@ def test_full_itinerary_turn_stream_order_and_text(deps):
     assert trace.citation_error is None and text == trace.answer and text.startswith("Mình hiểu: 1 ngày")
     assert lt.TIEU_DE_GHI_CHU in text and "chùa Từ Hiếu" in text  # khối D4b có dòng `khong_xep`
     assert {b["buoc"] for b in trace.buoc_lich if b["buoc"] == "kiem_luat_ok"} and trace.lich["nguon"]
+
+
+def test_l_b_turn_passes_evening_request_from_question(deps):
+    # nối: câu người dùng xin buổi tối + trẻ nhỏ ⇒ code (không phải model) ghi câu lý do vào khối ghi chú và dòng khung cho model
+    script = lambda n, kw: [lich_call(so_ngay="1", di_cung="gia_dinh_tre_em")] if n == 1 else [answer(viet_theo_khung(kw))]  # noqa: E731
+    trace, _ = run(deps, "Lên lịch Huế 1 ngày cho nhà có 2 bé, tối thì đi đâu?", generator(script), ON)
+    assert trace.lich["khung"]["tham_so"]["hoi_toi"] and trace.citation_error is None and trace.lich_kiem == []
+    assert lt.CAU_KHONG_XEP["toi_tre_em"] in trace.answer and lt.DONG_KHUNG_TOI["toi_tre_em"] in trace.context_parts[-1]
 
 
 def test_search_twice_then_itinerary_within_turn_limit(deps):
