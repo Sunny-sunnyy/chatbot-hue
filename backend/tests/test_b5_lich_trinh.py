@@ -150,6 +150,9 @@ def test_l_a_fill_reason_is_true(ts):
     ("Tối đi đâu chơi cho bé?", True), ("muốn buổi tối dạo phố", True), ("có chợ đêm không", True), ("ăn tối ở đâu ngon", True),
     ("sáng đi Đại Nội, chiều và tối đi dạo", True),
     ("Lên lịch 4 ngày 3 đêm ở Huế", False), ("2 ngày 1 đêm có nên đi lăng không", False), ("đi tối đa 3 điểm", False), ("lịch tối ưu", False),
+    # review C m-1: cách nói hay gặp bị sót
+    ("tối muốn đi nghe ca Huế", True), ("tối thích ngồi cà phê", True), ("đi chơi đêm ở đâu", True), ("khuya đi đâu", True),
+    ("3 ngày 2 đêm đi Huế", False), ("đi tối đa 2 điểm mỗi ngày", False),
 ])
 def test_l_b_evening_request_detector(cau, hoi):
     assert lt.hoi_buoi_toi(cau) is hoi
@@ -174,6 +177,27 @@ def test_l_b_evening_refused_gets_reason_frame_line_and_check():
     for nguoc in ("\nBuổi tối cả nhà vẫn có thể dạo phố đêm.", "\nTối: dạo cầu Trường Tiền.", "\nĐi chợ đêm buổi tối cũng được nhé."):
         assert lt.kiem_cuoi(BANG, ok + nguoc, kid, nguon) == ["toi_ngoai_khung"]
         assert "toi_ngoai_khung" not in lt.kiem_cuoi(BANG, ok + nguoc, plain, {i: 1 for i in lt.diem_trong_khung(plain)})  # chỉ khi đã từ chối
+
+
+# review C M-1: ca dò của C (`data/phase_9/b171/tools/probe_b171_cua_C.py`) — lời hợp khung khi không xếp tối không được bắt (bắt ⇒ rút cả câu
+# trả lời), lời hứa / xếp hoạt động buổi tối phải bắt
+@pytest.mark.parametrize("cau, nguoc", [
+    ("Buổi tối bạn có thể nghỉ ngơi tại khách sạn.", False), ("Tối: nghỉ ngơi.", False), ("Buổi tối: tự do.", False),
+    ("Tối về khách sạn sớm để bé ngủ.", False), ("Buổi tối bạn có thể về khách sạn sớm.", False), ("Bạn nên về trước khi trời tối.", False),
+    ("Lịch không xếp buổi tối.", False), ("Sáng đi sớm được thì tránh nắng.", False), ("Tối hôm trước nên chuẩn bị nước và mũ.", False),
+    ("Ngày 2 có thể đi chậm, tối thư giãn ở khách sạn.", False),
+    ("Tối: dạo phố đi bộ.", True), ("Buổi tối có thể ghé chợ đêm.", True), ("Tối nay bạn đi thuyền nghe ca Huế được nhé.", True),
+    ("Tối ghé chợ đêm nhé.", True), ("- Tối: ăn chè.", True), ("Đêm có thể dạo cầu Trường Tiền.", True),
+])
+def test_l_b_evening_contradiction_probe(cau, nguoc):
+    assert lt._noi_nguoc_toi(cau) is nguoc
+
+
+def test_m2_fill_count_excludes_named_points_outside_preference():
+    # điểm người dùng nêu (Lăng Tự Đức: di tích) không hợp sở thích ẩm thực ⇒ không tính vào "k điểm hợp sở thích" của câu lấp (cách đếm cũ: 4)
+    ts = dict(so_ngay="2", di_cung="mot_minh", kieu_di="thong_tha", so_thich="am_thuc")
+    goc, neu = khung(**ts), khung(**ts, them_diem=("Lăng Tự Đức",))
+    assert neu["ngoai_so_thich"] and "lang_tu_duc" in lt.diem_trong_khung(neu) and neu["thieu_so_thich"] == goc["thieu_so_thich"] == 3
 
 
 # ---------- mỗi luật xếp một test cố tình vi phạm (#5) ----------

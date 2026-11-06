@@ -145,10 +145,11 @@ def chot_so_ngay(truong: dict | None, tu_model: str | None, cau: str) -> tuple[s
 
 
 # B171 (L-b): câu xin buổi tối. Dò rộng có chủ đích — nhận nhầm chỉ thêm một câu đúng sự thật (khi khung không có buổi tối) và bật kiểm
-# "nói ngược khung"; "N ngày N đêm" không khớp (chữ "đêm" chỉ tính khi đi với buổi / ban / về / phố / chợ); "tối đa / tối ưu" không khớp.
-_HOI_TOI = re.compile(r"(?<![\w])(?:buổi\s+tối|ban\s+tối|tối\s+(?:nay|mai|đến|về|thì|có|đi|ăn|chơi|dạo|ngủ|ở|ra)|"
+# "nói ngược khung"; "N ngày N đêm" không khớp (chữ "đêm" chỉ tính khi đi với buổi / ban / về / phố / chợ / chơi / đi / dạo); "tối đa / tối ưu"
+# không khớp; "khuya" luôn khớp (review C m-1).
+_HOI_TOI = re.compile(r"(?<![\w])(?:buổi\s+tối|ban\s+tối|tối\s+(?:nay|mai|đến|về|thì|có|đi|ăn|chơi|dạo|ngủ|ở|ra|muốn|thích)|"
                       r"(?:ăn|chơi|đi|dạo|ngắm|ra)\s+(?:phố\s+)?tối|chiều\s*(?:,|và|với|-|–)\s*tối|ban\s+đêm|về\s+đêm|buổi\s+đêm|"
-                      r"(?:phố|chợ)\s+đêm)(?![\w])", re.IGNORECASE)
+                      r"(?:phố|chợ)\s+đêm|(?:chơi|đi|dạo)\s+đêm|khuya)(?![\w])", re.IGNORECASE)
 
 
 _TOI_KHAC_NGHIA = re.compile(r"(?<![\w])tối\s+(?:đa|ưu|thiểu)(?![\w])", re.IGNORECASE)
@@ -251,7 +252,8 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
         ngay.append({"ngay": i, "buoi": slots})
 
     khong_xep += [{"diem": bang.theo_id[id_]["ten"], "ma_luat": "het_suat"} for id_ in them_ids if id_ not in used]
-    hop_ngay = sum(bool(set(bang.theo_id[i]["buoi"]) & {"sang", "chieu"}) for i in pool)  # điểm hợp sở thích lấp được buổi ngày
+    # điểm hợp sở thích lấp được buổi ngày — chỉ điểm có đúng sở thích (review C m-2: điểm người dùng nêu không hợp sở thích không tính)
+    hop_ngay = sum(so_thich in bang.theo_id[i]["loai"] and bool(set(bang.theo_id[i]["buoi"]) & {"sang", "chieu"}) for i in pool)
     if ts.hoi_toi and not any(ng["buoi"]["toi"] for ng in ngay):
         ma = ("toi_tre_em" if ts.di_cung == "gia_dinh_tre_em" else "toi_lon_tuoi") if han_che else "toi_khong_diem"
         khong_xep.append({"diem": "buổi tối", "ma_luat": ma})
@@ -516,20 +518,22 @@ def co_dang_lich(text: str) -> bool:
     return len(_TIEU_DE_NGAY.findall(text)) >= 2 or len(_DONG_BUOI.findall(text)) >= 2
 
 
-# B171 (L-b) kiểm "nói ngược khung" — chỉ chạy khi code đã từ chối buổi tối người dùng xin: (a) dòng lịch mở bằng nhãn buổi tối (trừ dòng phủ
-# định / khuyên nghỉ, vd "Buổi tối nên nghỉ ngơi"); (b) câu nhắc
-# tối / đêm mà khẳng định làm được ("được", "có thể") và không phủ định / khuyên nghỉ.
+# B171 (L-b) kiểm "nói ngược khung" — chỉ chạy khi code đã từ chối buổi tối người dùng xin: (a) dòng lịch mở bằng nhãn buổi tối; (b) câu nhắc
+# tối / đêm mà khẳng định làm được ("được", "có thể"). Cả hai bỏ qua câu có từ phủ định hoặc lời khuyên nghỉ / về khách sạn / chuẩn bị
+# (review C M-1: "Buổi tối: tự do.", "Tối về khách sạn sớm để bé ngủ." từng bị bắt nhầm ⇒ rút cả câu trả lời). Không dùng luật "phải có tên
+# điểm của bảng": lời hứa buổi tối thường không nêu tên điểm ("Tối: ăn chè.") — 6 / 6 câu nói ngược trong ca dò của C không có tên điểm nào.
 _DONG_TOI = re.compile(r"^(?:buổi\s+)?tối(?![\w])")
 _NHAC_TOI = re.compile(r"(?<![\w])(?:tối(?!\s+(?:đa|ưu|thiểu|giản|mật|cao|tân|thượng|hậu|quan\s+trọng))|đêm)(?![\w])")
+_TROI_TOI = re.compile(r"(?<![\w])trời\s+tối(?![\w])")  # "trước khi trời tối" = lúc trời tối, không phải hoạt động buổi tối
 _KHANG_DINH = re.compile(r"(?<![\w])(?:được|có\s+thể)(?![\w])")
-_PHU_DINH = re.compile(r"(?<![\w])(?:không|chưa|đừng|tránh|nghỉ)(?![\w])")
+_KHONG_HOAT_DONG = re.compile(r"(?<![\w])(?:không|chưa|đừng|tránh|nghỉ|tự\s+do|khách\s+sạn|ngủ|thư\s+giãn|chuẩn\s+bị)(?![\w])")
 
 
 def _noi_nguoc_toi(text: str) -> bool:
-    t = unicodedata.normalize("NFC", text).casefold()
-    if any(_DONG_TOI.match(_bo_dau(d)[0]) and not _PHU_DINH.search(d) for d in t.splitlines() if d.strip()):
+    t = _TROI_TOI.sub(" ", unicodedata.normalize("NFC", text).casefold())
+    if any(_DONG_TOI.match(_bo_dau(d)[0]) and not _KHONG_HOAT_DONG.search(d) for d in t.splitlines() if d.strip()):
         return True
-    return any(_NHAC_TOI.search(c) and _KHANG_DINH.search(c) and not _PHU_DINH.search(c) for c in re.split(r"[.!?\n]", t))
+    return any(_NHAC_TOI.search(c) and _KHANG_DINH.search(c) and not _KHONG_HOAT_DONG.search(c) for c in re.split(r"[.!?\n]", t))
 
 
 def kiem_cuoi(bang: Bang, text: str, khung: dict | None, nguon: dict[str, int] | None = None) -> list[str]:
