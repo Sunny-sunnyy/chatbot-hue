@@ -1,5 +1,31 @@
 # STATUS E — kết phiên 12:14 06/11/2026 (`date`) · terminal `hue-rag-99` · Claude Opus 5.5 · vai thực thi (Phase 9 B5 v2 câu tự nhiên + Phase 10 giọng nói)
 
+## PHIÊN TỐI 06/11 — đang làm (terminal `hue-rag-28`; A = `hue-rag-cc`, C = `hue-rag-42`; mở 20:58 06/11/2026)
+
+- A giao (= User "làm đi"): (1) `duyet_tu_nhien_user.md` ⇒ nhắn A; (2) sửa plan G2 theo review ⇒ nhắn A; (3) E là người chạy kín v2 (harness B5 cũ + đường dẫn mới; trường ràng buộc cho 2 sub-agent chấm; 3 tiêu chí + ≥ 4/5) — chuẩn bị lệnh `!` chỉ in số đếm, chạy khi User duyệt độ tự nhiên **và** B171 merge.
+- **Trạng thái (21:04 06/11/2026):**
+  - (1) xong: `data/phase_9/b5_v2/duyet_tu_nhien_user.md`; A đã đưa User, chờ User trả lời.
+  - (2) xong: plan G2 bản 2 sha `2ed4bd6e3153`, chờ review vòng 2. Công cụ đổi sha: `chuan_hoa` `190a9d4dfde3` · `doi_wav` `7986adebde78` · `g2_do` `4301654e6b42`.
+  - (3) lệnh chạy kín v2 đã chuẩn bị (dưới).
+  - (21:08 06/11/2026) A duyệt plan G2 (review vòng 2 ready). E sửa 3 minor n-1…n-3 ⇒ plan `92ec551531fd`, `g2_do.py` `a3a32eba4f94`. Tiếp: chờ User thu 40 câu (G1).
+- **Lệnh chạy kín v2 — chạy khi User duyệt độ tự nhiên VÀ A báo B171 đã merge:**
+  - Chạy ở working tree chung, `main` sau merge. Harness bật cờ `lich_trinh` **trong tiến trình**, không sửa `settings.yaml` ⇒ không cần worktree.
+  - Lệnh `kiem` đã chạy 0 USD lúc 21:04 06/11/2026, trên `main` `7bc6927` ⇒ `n 5`, `ghep []`.
+  - User sửa câu ⇒ md5 đổi ⇒ chạy lại `kiem` trước khi chạy có phí.
+  - Ước ≈ 0,005 USD (5 câu, chưa đo trên bộ này).
+  - Mọi lệnh dưới chỉ in số đếm / id / mã, không in câu hay chữ trả lời. Auto mode chặn ⇒ User `!` ở terminal E.
+  ```bash
+  md5sum /home/minhhieu/hue_rag/data/phase_9/b5_v2/cau_sealed.jsonl | cut -c1-12      # phải = cd552f7cf7cb (hoặc md5 mới sau khi User sửa)
+  cd /home/minhhieu/hue_rag/backend && git log --oneline -1                           # có commit merge B171
+  PYTHONPATH=$PWD HF_HUB_OFFLINE=1 timeout 120 uv run python ../data/phase_9/b5/tools/chay_b5.py kiem ../data/phase_9/b5_v2/cau_sealed.jsonl
+  PYTHONPATH=$PWD HF_HUB_OFFLINE=1 timeout 900 uv run --env-file /home/minhhieu/hue_rag/.env python ../data/phase_9/b5/tools/chay_b5.py chay ../data/phase_9/b5_v2/cau_sealed.jsonl ../data/phase_9/b5_v2/kin_v2_ra.jsonl   # CÓ PHÍ; in n / loi / usd
+  PYTHONPATH=$PWD HF_HUB_OFFLINE=1 timeout 120 uv run python ../data/phase_9/b5/tools/chay_b5.py dem ../data/phase_9/b5_v2/cau_sealed.jsonl ../data/phase_9/b5_v2/kin_v2_ra.jsonl    # 0 USD: kiểm cuối / lỗi khung / rút lại theo id
+  ```
+  - `dem`: bộ v2 không có trường `nhom` / `ky_vong` ⇒ `Q2a_n` = 0 và `lech_nhan` rỗng. Hai dòng đó không có nghĩa trên bộ này; việc so `b5_mong` để 2 agent chấm.
+  - **Sau khi chạy:** 2 sub-agent Claude, ngữ cảnh mới, độc lập. Mỗi agent nhận: `cau_sealed.jsonl` (gồm `rang_buoc`, `b5_mong`, `can_cham`), bảng R1–R15 của `mau_cau_tu_nhien.md` §2, `kin_v2_ra.jsonl` (chữ trả lời + khung + nguồn), 3 tiêu chí Q3 nguyên văn (plan B5 `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` dòng 104, ngưỡng ≥ 4 / 5 cả 3).
+  - Kết quả ⇒ `data/phase_9/b5_v2/cham_agent_{1,2}.md` ⇒ E đối chiếu 2 agent ⇒ báo A chỉ số ô đạt / lệch ⇒ User đọc ô không đạt.
+- **File sắp sửa (khai báo):** `data/phase_9/b5_v2/duyet_tu_nhien_user.md` (mới), `data/phase_10/giong_noi/plan_g2.md`, `session_prompt/sessions/STATUS_E.md`, mục E trong `CURRENT_HANDOFF.md`. Không sửa code.
+
 ## PHIÊN SAU ĐỌC TRƯỚC
 
 ### 1. E19 — bộ câu lịch trình tự nhiên cho B5 (việc A giao 06/11)

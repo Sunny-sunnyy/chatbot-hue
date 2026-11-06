@@ -1,6 +1,10 @@
 # STATUS C — kết phiên 06/11 (12:14 06/11/2026 `date`; ≤ 35 dòng; lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`)
 
-## PHIÊN SAU ĐỌC TRƯỚC
+## ĐANG LÀM — phiên tối 06/11 (terminal `hue-rag-42`; A `hue-rag-cc` giao, 21:01 06/11/2026)
+- (a) **Harness XONG phần 0 USD (21:09 06/11/2026) — chờ review:** `chay_sua_lich.py` md5 `c4dee2ccf654` (`kiem` Q3 10/10 · Q2 0/42 · ca phá 9/9; chạy thử khoá giả 22 lượt đạt), bộ Q4 `chuoi_q4.jsonl` `d35f8d9c5027`; report C207 §7. A quyết: pilot = S01 + S06; E review (`c207_harness_review.md`, E nhắn C); 3 chỗ tự quyết giữ. Lượt có phí chỉ sau khi `lich_trinh` bật. File đã sửa: `data/phase_9/sua_lich/tools/chay_sua_lich.py` (mới), `data/phase_9/bo_do_sua_lich/chuoi_q4.jsonl` (mới, Q4: TD1–TD5 của B5 + 2 chuỗi an toàn sau lịch), `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md` §5, file này. Worktree `/tmp/c_sualich` (`p9-sua-lich` `09ddaf9`). 0 USD.
+- (b) Kiểm phần sửa B171 khi B (`hue-rag-1a`) nhắn — ưu tiên hơn (a).
+
+## PHIÊN SAU ĐỌC TRƯỚC (phiên sáng 06/11)
 - **Đã xong 06/11** (terminal `hue-rag-a4`, 0 USD):
   - **C207:** `p9-sua-lich` `6543f82` → **`09ddaf9`** trên `main` `0a9e0f3`, đã push. Q1 228/228 (`dba1f578eef1`) · Q1m 228/228 (`ac53ea9046f3`) · 239 + 3 test · `mo_phong.py` 10/10 · `kiem_bo.py --pha` OK 6/6. Report `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md`; kết quả `data/phase_9/sua_lich/q1_c207/`.
   - **Review `p9-b5b`:** vòng 1 `18d1cec` changes_requested ⇒ vòng 2 `0380345` **ready** (`report_agent/2026-11-02_phase_9_code/b168_b5b_review.md` §7). Còn: B rebase + Q1 ⇒ A merge cờ tắt ⇒ User bật.
