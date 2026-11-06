@@ -50,7 +50,13 @@ CAU_KHONG_XEP = {
     "het_suat": "{diem} chưa xếp được vì lịch đã kín chỗ — thêm ngày thì mình xếp được.",
     "khong_co_doan_nguon": "{diem} chưa xếp vì mình chưa lấy được tài liệu của điểm này trong kho.",
     "vuot_ngan_sach": "Ngày {diem} chưa xếp — bạn hỏi thêm để mình xếp tiếp nhé.",
+    # B171 (L-b): người dùng xin buổi tối mà khung không có buổi tối nào ⇒ code nói rõ vì sao (mục `diem` = "buổi tối")
+    "toi_tre_em": "Buổi tối mình chưa xếp vì đi cùng trẻ nhỏ — lịch chỉ xếp buổi sáng và chiều.",
+    "toi_lon_tuoi": "Buổi tối mình chưa xếp vì đi cùng người lớn tuổi — lịch chỉ xếp buổi sáng và chiều.",
+    "toi_khong_diem": "Buổi tối mình chưa xếp vì bảng điểm của mình chưa có điểm buổi tối hợp sở thích của bạn.",
 }
+MA_TOI = ("toi_tre_em", "toi_lon_tuoi", "toi_khong_diem")
+DONG_KHUNG_TOI = "Buổi tối: không xếp — không gợi ý hoạt động buổi tối."
 # D4b (1) — giả định công khai khi trường không bắt buộc bị thiếu; D15 (bản 7) "Trả lời luôn" ⇒ 1 ngày tạm
 CAU_GIA_DINH = {
     "so_ngay_tam": "Mình tạm xếp cho 1 ngày — bấm Sửa để đổi.",
@@ -59,8 +65,13 @@ CAU_GIA_DINH = {
     "kieu_di": "Chưa biết kiểu đi nên mình xếp thong thả, mỗi buổi một điểm.",
     "di_cung": "Chưa biết bạn đi cùng ai nên mình xếp cho người lớn đi được nhiều.",
 }
-# pilot B160: model bỏ dấu ◦ khi viết lời ⇒ câu cố định nêu thẳng tên điểm lấp (code biết), không dựa vào dấu model phải chép
-CAU_THIEU_SO_THICH = "Kho chỉ có {k} điểm hợp sở thích của bạn nên mình thêm điểm di tích tiêu biểu: {ten}."
+# pilot B160: model bỏ dấu ◦ khi viết lời ⇒ câu cố định nêu thẳng tên điểm lấp (code biết), không dựa vào dấu model phải chép.
+# B171 (L-a): hai lý do, câu nào cũng đúng sự thật — k = số điểm hợp sở thích đi được buổi sáng / chiều (phố đêm không tính: không lấp được
+# buổi ngày); đủ số mà vẫn phải lấp ⇒ vì điểm còn lại không cùng cụm / cụm kề với ngày đó (luật ≤ 2 cụm kề, D4)
+CAU_THIEU_SO_THICH = {
+    "it_diem": "Kho chỉ có {k} điểm hợp sở thích của bạn đi được buổi sáng / chiều nên mình thêm điểm di tích tiêu biểu: {ten}.",
+    "khong_cung_huong": "Các điểm hợp sở thích còn lại của bạn không cùng hướng với lịch trong ngày nên mình thêm điểm di tích tiêu biểu: {ten}.",
+}
 CAU_CO_THE_DOI = "Giờ mở cửa có thể đã thay đổi — bạn kiểm tra lại trước khi đi."
 TIEU_DE_GHI_CHU = "**Ghi chú của lịch**"
 MAP_BASE = "https://www.google.com/maps/search/?api=1&query="  # D11: URL tìm kiếm Google Maps (định dạng công khai)
@@ -118,6 +129,7 @@ class ThamSo:
     so_thich: str | None = None
     them_diem: tuple[str, ...] = ()
     so_ngay_tam: bool = False  # D15 bản 7: "Trả lời luôn" ⇒ 1 ngày tạm
+    hoi_toi: bool = False  # B171 (L-b): câu người dùng có xin buổi tối (code dò — `hoi_buoi_toi`)
 
 
 def chot_so_ngay(truong: dict | None, tu_model: str | None, cau: str) -> tuple[str | None, bool]:
@@ -130,6 +142,20 @@ def chot_so_ngay(truong: dict | None, tu_model: str | None, cau: str) -> tuple[s
     if tu_model is not None:
         return (None, False) if do is not None and do != tu_model else (tu_model, False)
     return do, False
+
+
+# B171 (L-b): câu xin buổi tối. Dò rộng có chủ đích — nhận nhầm chỉ thêm một câu đúng sự thật (khi khung không có buổi tối) và bật kiểm
+# "nói ngược khung"; "N ngày N đêm" không khớp (chữ "đêm" chỉ tính khi đi với buổi / ban / về / phố / chợ); "tối đa / tối ưu" không khớp.
+_HOI_TOI = re.compile(r"(?<![\w])(?:buổi\s+tối|ban\s+tối|tối\s+(?:nay|mai|đến|về|thì|có|đi|ăn|chơi|dạo|ngủ|ở|ra)|"
+                      r"(?:ăn|chơi|đi|dạo|ngắm|ra)\s+(?:phố\s+)?tối|chiều\s*(?:,|và|với|-|–)\s*tối|ban\s+đêm|về\s+đêm|buổi\s+đêm|"
+                      r"(?:phố|chợ)\s+đêm)(?![\w])", re.IGNORECASE)
+
+
+_TOI_KHAC_NGHIA = re.compile(r"(?<![\w])tối\s+(?:đa|ưu|thiểu)(?![\w])", re.IGNORECASE)
+
+
+def hoi_buoi_toi(cau: str) -> bool:
+    return bool(_HOI_TOI.search(_TOI_KHAC_NGHIA.sub(" ", unicodedata.normalize("NFC", cau))))
 
 
 def _so_ngay(ts: ThamSo) -> int:
@@ -183,6 +209,18 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
                 return id_
         return None
 
+    def chon_sang(cums: list[str]) -> str | None:
+        """B171 (L-a): buổi sáng ưu tiên điểm hợp sở thích **còn bạn chiều** (điểm hợp sở thích khác cùng cụm / cụm kề) — chọn tham lam theo
+        thứ tự bảng từng để chiều không còn điểm hợp cụm ⇒ lấp di tích ngoài sở thích dù bảng còn điểm hợp sở thích ở cụm khác.
+        Điểm người dùng nêu vẫn đứng trước (không cần bạn chiều)."""
+        for id_ in pool:
+            d = bang.theo_id[id_]
+            if id_ not in used and "sang" in d["buoi"] and _cum_hop(d["cum"], cums) and (id_ in them_ids or any(
+                    p != id_ and p not in used and "chieu" in bang.theo_id[p]["buoi"] and _cum_hop(bang.theo_id[p]["cum"], [d["cum"]])
+                    for p in pool)):
+                return id_
+        return chon(pool, "sang", cums)
+
     ngay = []
     for i in range(1, n + 1):
         cums: list[str] = []
@@ -193,7 +231,7 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
             if buoi == "chieu" and not tn_hom_nay:
                 id_ = chon(thien_nhien, buoi, cums)  # mặc định công khai: một điểm thiên nhiên / ngày (D2)
                 tn_hom_nay = id_ is not None
-            id_ = id_ or chon(pool, buoi, cums)
+            id_ = id_ or (chon_sang(cums) if buoi == "sang" else chon(pool, buoi, cums))
             if id_ is None and buoi != "toi":  # buổi tối chỉ xếp điểm hợp sở thích / người dùng nêu, không lấp
                 id_ = chon(lap, buoi, cums)
                 if id_ is not None and ts.so_thich is not None and ts.so_thich not in bang.theo_id[id_]["loai"]:
@@ -213,12 +251,17 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
         ngay.append({"ngay": i, "buoi": slots})
 
     khong_xep += [{"diem": bang.theo_id[id_]["ten"], "ma_luat": "het_suat"} for id_ in them_ids if id_ not in used]
+    hop_ngay = sum(bool(set(bang.theo_id[i]["buoi"]) & {"sang", "chieu"}) for i in pool)  # điểm hợp sở thích lấp được buổi ngày
+    if ts.hoi_toi and not any(ng["buoi"]["toi"] for ng in ngay):
+        ma = ("toi_tre_em" if ts.di_cung == "gia_dinh_tre_em" else "toi_lon_tuoi") if han_che else "toi_khong_diem"
+        khong_xep.append({"diem": "buổi tối", "ma_luat": ma})
     gia_dinh = (["so_ngay_tam"] if ts.so_ngay_tam else []) + (["so_ngay_4"] if ts.so_ngay == "4+" else []) + \
         [k for k in ("so_thich", "kieu_di", "di_cung") if getattr(ts, k) is None]
     return {"tham_so": {"so_ngay": ts.so_ngay, "di_cung": ts.di_cung, "kieu_di": ts.kieu_di, "so_thich": ts.so_thich,
-                        "them_diem": list(ts.them_diem), "so_ngay_tam": ts.so_ngay_tam},
+                        "them_diem": list(ts.them_diem), "so_ngay_tam": ts.so_ngay_tam, "hoi_toi": ts.hoi_toi},
             "ngay": ngay, "ngoai_so_thich": ngoai_so_thich,
-            "thieu_so_thich": len(hop) + len(them_ids) if ngoai_so_thich else None,
+            "thieu_so_thich": hop_ngay if ngoai_so_thich else None,
+            "lap_vi": None if not ngoai_so_thich else "it_diem" if hop_ngay < 2 * n else "khong_cung_huong",
             "khong_xep": khong_xep, "gia_dinh": gia_dinh}
 
 
@@ -297,6 +340,9 @@ def kiem_khung(bang: Bang, khung: dict) -> list[str]:
                 loi.append("lap_khong_nhan")
         if khung["ngoai_so_thich"] and khung["thieu_so_thich"] is None:
             loi.append("lap_khong_cau")
+    co_toi = any(ng["buoi"]["toi"] for ng in khung["ngay"])
+    if ts.get("hoi_toi") and not co_toi and not any(k["ma_luat"] in MA_TOI for k in khung["khong_xep"]):
+        loi.append("toi_khong_bao")  # L-b: xin buổi tối, khung không có ⇒ phải có câu lý do
     return loi
 
 
@@ -322,11 +368,17 @@ def khung_chu(bang: Bang, khung: dict, nguon: dict[str, int], luat: str, nguon_v
                     gio = f"{gio} [{nguon_ve}]"
                 nhan = " ◦" if id_ in khung["ngoai_so_thich"] else ""
                 dong.append(f"- {NHAN_BUOI[b]}: {d['ten']}{nhan} [{nguon[id_]}]" + (f" · giờ: {gio}" if gio else ""))
+    if _tu_choi_toi(khung):  # L-b: chỉ khi người dùng xin buổi tối mà code không xếp — lượt khác chữ khung giữ nguyên
+        dong.append(DONG_KHUNG_TOI)
     return "\n".join(dong)
 
 
+def _tu_choi_toi(khung: dict) -> bool:
+    return any(k["ma_luat"] in MA_TOI for k in khung["khong_xep"])
+
+
 def _cau_thieu(bang: Bang, khung: dict) -> str:
-    return CAU_THIEU_SO_THICH.format(k=khung["thieu_so_thich"], ten=", ".join(bang.theo_id[i]["ten"] for i in khung["ngoai_so_thich"]))
+    return CAU_THIEU_SO_THICH[khung["lap_vi"]].format(k=khung["thieu_so_thich"], ten=", ".join(bang.theo_id[i]["ten"] for i in khung["ngoai_so_thich"]))
 
 
 def khoi_ghi_chu(bang: Bang, khung: dict, nguon: dict[str, int], them_dong=()) -> str:
@@ -464,6 +516,22 @@ def co_dang_lich(text: str) -> bool:
     return len(_TIEU_DE_NGAY.findall(text)) >= 2 or len(_DONG_BUOI.findall(text)) >= 2
 
 
+# B171 (L-b) kiểm "nói ngược khung" — chỉ chạy khi code đã từ chối buổi tối người dùng xin: (a) dòng lịch mở bằng nhãn buổi tối (trừ dòng phủ
+# định / khuyên nghỉ, vd "Buổi tối nên nghỉ ngơi"); (b) câu nhắc
+# tối / đêm mà khẳng định làm được ("được", "có thể") và không phủ định / khuyên nghỉ.
+_DONG_TOI = re.compile(r"^(?:buổi\s+)?tối(?![\w])")
+_NHAC_TOI = re.compile(r"(?<![\w])(?:tối(?!\s+(?:đa|ưu|thiểu|giản|mật|cao|tân|thượng|hậu|quan\s+trọng))|đêm)(?![\w])")
+_KHANG_DINH = re.compile(r"(?<![\w])(?:được|có\s+thể)(?![\w])")
+_PHU_DINH = re.compile(r"(?<![\w])(?:không|chưa|đừng|tránh|nghỉ)(?![\w])")
+
+
+def _noi_nguoc_toi(text: str) -> bool:
+    t = unicodedata.normalize("NFC", text).casefold()
+    if any(_DONG_TOI.match(_bo_dau(d)[0]) and not _PHU_DINH.search(d) for d in t.splitlines() if d.strip()):
+        return True
+    return any(_NHAC_TOI.search(c) and _KHANG_DINH.search(c) and not _PHU_DINH.search(c) for c in re.split(r"[.!?\n]", t))
+
+
 def kiem_cuoi(bang: Bang, text: str, khung: dict | None, nguon: dict[str, int] | None = None) -> list[str]:
     """D8 trên **chữ model** (không gồm khối code nối). Khung None = câu không gọi `lich_trinh` mà chữ có dạng lịch (D8 (7)) ⇒ kiểm với khung
     rỗng. Trả mã vi phạm (rỗng = đạt); hỏng ⇒ lõi xử như citation hỏng (rút lại)."""
@@ -480,6 +548,8 @@ def kiem_cuoi(bang: Bang, text: str, khung: dict | None, nguon: dict[str, int] |
         loi.append("gia")  # (3)
     if _URL.search(text):
         loi.append("url")  # (6)
+    if khung is not None and _tu_choi_toi(khung) and _noi_nguoc_toi(text):
+        loi.append("toi_ngoai_khung")  # B171 (L-b): khung không có buổi tối mà lời model xếp / hứa buổi tối
     if khung is not None and nguon is not None:  # (4) mỗi điểm trong khung có [n] của chính nó trên dòng nhắc tên
         dong = text.splitlines()
         for id_ in ids:

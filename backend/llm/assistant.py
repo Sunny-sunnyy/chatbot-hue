@@ -315,7 +315,8 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
                 return the_hoi_lai("lich_trinh", ["so_ngay"], trace.search_query or query)
             tu_nut = truong or {}
             ts = lt.ThamSo(so_ngay=so_ngay_chot, di_cung=di_cung or tu_nut.get("di_cung"), kieu_di=kieu_di or tu_nut.get("kieu_di"),
-                           so_thich=so_thich or tu_nut.get("so_thich"), them_diem=tuple(them_diem or ()), so_ngay_tam=tam)
+                           so_thich=so_thich or tu_nut.get("so_thich"), them_diem=tuple(them_diem or ()), so_ngay_tam=tam,
+                           hoi_toi=lt.hoi_buoi_toi(query))
             khung = lt.xep(bang, ts)
             n_xep = len(lt.diem_trong_khung(khung))
             packed, nguon, nguon_ve = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, instructions)
