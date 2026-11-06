@@ -43,7 +43,7 @@ Không chạy: `test_api_chat.py`, `test_openai_full_corpus_generator.py` (cần
 
 - Nhánh `p9-sua-lich` = `09ddaf9` trên `main` `0a9e0f3`. Cờ `sua_lich: false`. `main` nay `8fc790f` (đã có B5b `db77f32`) ⇒ rebase khi gộp, sau B171 (A: không cần làm ngay).
 - Tiền C207 + harness: **0 USD**.
-- Harness lượt có phí: **xong phần 0 USD** (§7) ⇒ chờ review trước lượt có phí đầu (pilot).
+- Harness lượt có phí: **xong phần 0 USD** (§7); review E vòng 1 changes_requested ⇒ **đã sửa** ⇒ chờ E kiểm phần sửa.
 - Còn: lượt có phí chờ `lich_trinh` bật (B5 — bộ kín v2 do E chạy); trước lượt đó rebase lại lên `main` (gồm B171 ⇒ `tham_so.hoi_toi` + `chon_sang`) + Q1.
 
 ## 7. Harness lượt có phí sửa lịch (C, phiên tối 06/11 — A giao, 0 USD)
@@ -52,12 +52,12 @@ Theo plan bản 3 `5b68f3cb666a` §4–§6 và luật chấm ghi trước ở `d
 
 | File | md5 (12) | Gì |
 |---|---|---|
-| `data/phase_9/sua_lich/tools/chay_sua_lich.py` | `c4dee2ccf654` (bản bàn giao review) | 3 lệnh: `kiem` (0 USD) · `chay` (có phí) · `cham` (0 USD) |
+| `data/phase_9/sua_lich/tools/chay_sua_lich.py` | `b68e7c970782` (sau sửa review E; bản review vòng 1 `c4dee2ccf654`) | 3 lệnh: `kiem` (0 USD) · `chay` (có phí) · `cham` (0 USD) |
 | `data/phase_9/bo_do_sua_lich/chuoi_q4.jsonl` | `d35f8d9c5027` | bộ Q4: 5 chuỗi TD của B5 (`b5/chuoi_v2.jsonl`) + 2 chuỗi an toàn sau lịch (C tự viết: một câu khẩn cấp, một câu ngoài phạm vi) |
 
 **Cách chạy (đúng đường giao diện):** app thật **trong tiến trình** (`TestClient(create_app(<bản sao settings bật `lich_trinh` + `sua_lich`>))`, không sửa `settings.yaml`), gọi `/api/chat/stream` (đường #6 song song như giao diện), cookie thật, mỗi chuỗi một cuộc mới. Mỗi lượt ghi: sự kiện SSE, dòng `chat_metrics` (đọc `backend/logs/application.log` sau mốc dòng — không gắn handler), trace (bọc `_remember` của route — hàm thật vẫn chạy), hành động model gửi (bọc `ap_hanh_dong` — hàm thật vẫn chạy), khung đã lưu của cuộc trước / sau lượt (`app.state.conversations.lich`). Lượt bấm thẻ: body như giao diện (`query` = câu gốc của thẻ, `sua_chon` = điểm đầu code đưa hoặc `bo`). `--tran <USD>` dừng trước chuỗi kế khi chạm trần; chuỗi đã có ở cùng lần trong file ⇒ bỏ qua (không chạy lại), gọi lại cùng lệnh = chạy tiếp.
 
-**Chấm (`cham`):** Q2 (a)–(i) mọi lượt sửa / bấm, mọi lần; Q3 pass^k trên các lần đưa vào (lượt lịch đầu cũng phải đúng `tham_so` nhãn — không có khung thì chuỗi không đo được); Q4 tuyến + `sua_lich` không gọi nhầm; Q5 (rút lại, thẻ chọn, USD / lượt, token vào có / không có công cụ `sua_lich`). `--so` ⇒ chỉ in số (bộ kín, lệnh `!`).
+**Chấm (`cham`):** Q2 (a)–(i) mọi lượt sửa / bấm, mọi lần; Q3 pass^k trên các lần đưa vào = **hành động code áp đúng nhãn** (lượt lịch đầu cũng phải đúng `tham_so` nhãn; không có khung ⇒ "không đo được", chuỗi không đạt); lượt bị kiểm cuối rút lại / có mã kiểm cuối liệt kê riêng để đọc tay (A chốt, sửa theo review E); Q4 tuyến + `sua_lich` không gọi nhầm; Q5 (rút lại, thẻ chọn, USD / lượt, token vào có / không có công cụ `sua_lich`). `--so` ⇒ chỉ in số (bộ kín, lệnh `!`).
 
 **Chỗ C tự quyết trong phạm vi plan (ghi để review):** (1) Q3: hành động nhãn mà trường điền lại **đúng giá trị cũ** ⇒ không tính là phải áp (D5); câu ngoài bảng ⇒ chỉ so mã luật `Không đổi được` (model có thể viết hoa khác chữ người dùng); dư một dòng "Không đổi được" ngoài nhãn ⇒ không trừ (chỉ hiện trong file kết quả). (2) Q2 (b) sau lượt **xếp lại** (đổi số ngày / tham số) chỉ kiểm (d) + điểm đã thêm, như `mo_phong.py` (D5 cho xếp lại có giữ, không bắt buộc giữ chỗ); dời buổi vào ô có một điểm ⇒ điểm kia được phép đổi chỗ (code đổi chỗ hai điểm). (3) Q4: TD1 (đổi người đi cùng) nay **là** câu sửa ⇒ gọi `sua_lich` là đúng ⇒ chỉ theo dõi; TD3 lượt 2 là lịch đầu (chưa có khung). Bộ Q4 chưa có ở bộ đo (plan §5 có ghi) ⇒ C bổ sung 2 chuỗi an toàn.
 
@@ -72,11 +72,25 @@ Theo plan bản 3 `5b68f3cb666a` §4–§6 và luật chấm ghi trước ở `d
 
 **Chưa kiểm được ở 0 USD (NOT RUN):** đường thành công (khung lưu sau lượt đạt, công cụ `sua_lich` được đưa, thẻ chọn thật ⇒ lượt bấm, 422) — cần model thật ⇒ lộ ở **pilot** (plan bước 3: 2 chuỗi đầu lần 1, ≈ 0,007 USD); đọc file pilot trước khi chạy tiếp. S06 (chuỗi duy nhất có thẻ chọn) nằm ngoài pilot ⇒ đề xuất pilot = S01 + S06 (đổi so với "2 chuỗi đầu" — A quyết).
 
+**Sửa theo review E** (`c207_harness_review.md`, changes_requested 1 major + 6 minor; A chốt m-1, m-5 — 21:27 06/11/2026):
+
+| Finding | Sửa |
+|---|---|
+| M-1 Q4 đạt rỗng khi chưa có khung | `cham_q4` ⇒ "không đo được" khi `luu_truoc` None, hoặc tuyến `tro_ly_hue` có khung mà `sua_lich` không được đưa; đếm `q4_khong_do`, liệt kê `khong_do` |
+| m-1 (A: Q3 = hành động đúng nhãn) | Q3 không gộp Q2; lượt `retracted` vẫn chấm hành động đã áp; `rut_lai_kiem_cuoi` = (chuỗi, lần, lượt, mã) in cả khi `--so` |
+| m-2 `n_metrics` ≠ 1 | lượt đó "không đo được" (liệt kê), chuỗi không đạt |
+| m-3 tóm tắt sau DỪNG | in `da_chay` / `chua_chay` |
+| m-4 trần cả đợt | `--dung` (mặc định 0,19): cộng `usd` + `usd_bo` của mọi `*.jsonl` trong thư mục kết quả + lệnh này; in tiền cả đợt sau mỗi chuỗi ⇒ **thư mục kết quả chỉ chứa file kết quả của đợt này** |
+| m-5 (A: thêm kiểm nếu chưa có test) | `test_sua_lich.py` không có test khẳng định giữ chỗ trên đường xếp lại của `ap_hanh_dong` (chỉ `test_xep_keeps_positions…` gọi `xep` trực tiếp 1 điểm; `test_day_change…` chỉ kiểm điểm đã thêm / đã bỏ) ⇒ harness kiểm Q2 (b) sau xếp lại theo chữ D5 (`_giu_khi_xep_lai`: ngày còn trong lịch, hợp sở thích mới / người dùng thêm, nhóm hạn chế không tối, ≤ 2 / ngày); trừ điểm bị hành động trực tiếp cùng lượt chạm. Đường dự phòng của code ("giữ làm khung phạm luật ⇒ xếp lại không giữ") sẽ hiện thành vi phạm (b) — đọc tay khi gặp |
+| m-6 chuỗi dở | dòng "bỏ qua" tách "đủ lượt" / "DỞ (k / n lượt)"; không còn chuỗi ⇒ thoát, không nạp app |
+
+[Chạy] sau sửa: `kiem` Q3 10 / 10, Q2 0 / 42 (kiểm (b) sau xếp lại không báo nhầm trên mô phỏng đúng nhãn); ca phá + ca ngược **13 / 13** (thêm: xếp lại không giữ chỗ · 2 dòng `chat_metrics` · kiểm cuối ở lượt đúng nhãn ⇒ Q3 vẫn đạt + liệt kê · Q4 chưa có khung ⇒ không đo được). Khoá giả: TD2 + AT1 ⇒ `khong_do` 3 (2 lượt lịch hỏng + TD2 lượt 2 "chưa có khung"), `q4_loi 0 / 0`; xoá dòng cuối AT1 ⇒ "DỞ: AT1 (1 / 2 lượt)"; `--tran 0` / `--dung 0` ⇒ dừng, `da_chay []`, `chua_chay` đúng. 0 USD.
+
 **Lệnh (worktree nhánh đo, từ `backend/`):**
 ```bash
 H=/home/minhhieu/hue_rag/data/phase_9/sua_lich/tools/chay_sua_lich.py; B=/home/minhhieu/hue_rag/data/phase_9/bo_do_sua_lich; K=/home/minhhieu/hue_rag/data/phase_9/sua_lich/do
 # pilot (lần 1)
-PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python $H chay $B/chuoi_da_thay.jsonl $K/da_thay.jsonl --lan 1 --chi S01,S06 --tran 0.02
+PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python $H chay $B/chuoi_da_thay.jsonl $K/da_thay.jsonl --lan 1 --chi S01,S06 --tran 0.02   # --dung 0.19 mặc định (cả đợt, mọi file trong $K)
 # phần còn lại lần 1, rồi lần 2; Q4 ×2
 … chay $B/chuoi_da_thay.jsonl $K/da_thay.jsonl --lan 1 --tran <phần trần còn>   # chuỗi đã có ở lần 1 (pilot) tự bỏ qua, không chạy lại
 … chay $B/chuoi_da_thay.jsonl $K/da_thay.jsonl --lan 2 --tran <…>

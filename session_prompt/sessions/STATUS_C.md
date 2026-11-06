@@ -1,8 +1,8 @@
 # STATUS C — kết phiên 06/11 (12:14 06/11/2026 `date`; ≤ 35 dòng; lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`)
 
 ## ĐANG LÀM — phiên tối 06/11 (terminal `hue-rag-42`; A `hue-rag-cc` giao, 21:01 06/11/2026)
-- (a) **Harness XONG phần 0 USD (21:09 06/11/2026) — chờ review:** `chay_sua_lich.py` md5 `c4dee2ccf654` (`kiem` Q3 10/10 · Q2 0/42 · ca phá 9/9; chạy thử khoá giả 22 lượt đạt), bộ Q4 `chuoi_q4.jsonl` `d35f8d9c5027`; report C207 §7. A quyết: pilot = S01 + S06; E review (`c207_harness_review.md`, E nhắn C); 3 chỗ tự quyết giữ. Lượt có phí chỉ sau khi `lich_trinh` bật. File đã sửa: `data/phase_9/sua_lich/tools/chay_sua_lich.py` (mới), `data/phase_9/bo_do_sua_lich/chuoi_q4.jsonl` (mới, Q4: TD1–TD5 của B5 + 2 chuỗi an toàn sau lịch), `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md` §5, file này. Worktree `/tmp/c_sualich` (`p9-sua-lich` `09ddaf9`). 0 USD.
-- (b) Kiểm phần sửa B171 khi B (`hue-rag-1a`) nhắn — ưu tiên hơn (a).
+- (a) **Harness XONG phần 0 USD — review E vòng 1 changes_requested ⇒ đã sửa 21:27 06/11/2026, chờ E kiểm:** `chay_sua_lich.py` md5 `b68e7c970782` (vòng 1 `c4dee2ccf654`) (`kiem` Q3 10/10 · Q2 0/42 · ca phá 9/9; chạy thử khoá giả 22 lượt đạt), bộ Q4 `chuoi_q4.jsonl` `d35f8d9c5027`; report C207 §7. A quyết: pilot = S01 + S06; E review (`c207_harness_review.md`, E nhắn C); 3 chỗ tự quyết giữ. Lượt có phí chỉ sau khi `lich_trinh` bật. File đã sửa: `data/phase_9/sua_lich/tools/chay_sua_lich.py` (mới), `data/phase_9/bo_do_sua_lich/chuoi_q4.jsonl` (mới, Q4: TD1–TD5 của B5 + 2 chuỗi an toàn sau lịch), `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md` §5, file này. Worktree `/tmp/c_sualich` (`p9-sua-lich` `09ddaf9`). 0 USD.
+- (b) **B171 vòng 2 (21:27 06/11/2026): changes_requested** trên `a08d2e9` — đóng M-1 / m-1 / m-2 / T3; **M-2 mới** "N ngày N đêm" bắt nhầm (`b171_review.md` §7) ⇒ chờ B (gộp với commit đổi chữ dòng khung) ⇒ C kiểm cả hai. Worktree `/tmp/c_b171` detach `a08d2e9`; ca dò `/tmp/c_b171_tools/`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (phiên sáng 06/11)
 - **Đã xong 06/11** (terminal `hue-rag-a4`, 0 USD):

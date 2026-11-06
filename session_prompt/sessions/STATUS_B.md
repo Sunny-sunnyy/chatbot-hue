@@ -1,9 +1,9 @@
 # STATUS B — PHIÊN TỐI 06/11 (mở 20:54 06/11/2026; A giao B171 20:58; cập nhật 21:16 06/11/2026 `date`)
 
-**Trạng thái:** B171 sửa review C + T3 (b) **XONG, chờ C review**. `p9-b5-sua` rebase lên `main` `d38b05a` ⇒ **`a08d2e9`** (push `--force-with-lease`). Worktree `/tmp/b_b5sua`. Terminal: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28`.
+**Trạng thái:** B171 sửa review C + T3 (b) **XONG, chờ C review**. `p9-b5-sua` rebase lên `main` `d38b05a` ⇒ `a08d2e9` (push `--force-with-lease`) ⇒ `fd16732` (dòng khung tối cho người đọc, A quyết) ⇒ **`b0e52f8`** (review C vòng 2 M-2 "N ngày N đêm"); chờ C kiểm `fd16732` + `b0e52f8`. Worktree `/tmp/b_b5sua`. Terminal: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28`.
 **File đã sửa (nhánh):** `backend/llm/lich_trinh.py`, `backend/llm/assistant.py`, `backend/tests/test_b5_lich_trinh.py`; `report_agent/2026-11-06_b5_cau_tu_nhien/b171_implementation.md` §7 (working tree chung, A commit); `data/phase_9/b171/` (m1_9037b91, t3b_lan1–3, q1_sua).
-**Tiền B phiên tối:** 0,00518 USD (M-1 0,002843 + T3 0,002337) ⇒ B171 0,023049 / 0,04.
-**Bước kế:** C review ⇒ B sửa nếu có ⇒ A merge cờ tắt. Câu cho A: dòng khung tối bị model chép nguyên 4 / 4 (report §7 giới hạn 1).
+**Tiền B phiên tối:** 0,010975 USD (M-1 0,002843 + T3 0,002337 + dòng tối 0,003915 + T5 / T5b 0,00188) ⇒ B171 0,028844 / 0,04.
+**Bước kế:** C review ⇒ B sửa nếu có ⇒ A merge cờ tắt. Dòng khung tối đã đổi (A quyết) — 5 / 5 lượt đạt; lý do tối hiện 2 lần (lịch + ghi chú) và T5b model viết "tối có thể nghỉ hoặc đi bộ ngắn" lọt kiểm (giới hạn 3) — chờ A xem.
 
 
 ## Sổ tay (từ phiên sáng 06/11, còn đúng)

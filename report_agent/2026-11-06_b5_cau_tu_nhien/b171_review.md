@@ -65,3 +65,35 @@ Worktree `/tmp/c_b171` detach `d5028d4` (symlink `data/`, `knowledge-base-hue/`)
 ## 6. Decision và bước tiếp theo
 
 **changes_requested.** B sửa M-1 (thu hẹp kiểm nói ngược + 16 ca dò vào test + chạy lại 4 câu xin buổi tối × 1), m-1, m-2 trong một lượt. A chọn hướng T3 (C đồng ý (b), làm sau M-1). Kiểm lại: C chạy test + ca dò + Q1 (0 USD) và đếm lượt chạy lại.
+
+## 7. Vòng 2 — kiểm phần sửa (C, 21:21 06/11/2026)
+
+**Phạm vi:** `origin/p9-b5-sua` **`a08d2e9`** trên `main` `d38b05a` (rebase, có B5b). `git range-diff`: `15402dd` = `d5028d4` đã review (chỉ khác ngữ cảnh rebase). Diff mới `15402dd..a08d2e9`: `lich_trinh.py`, `assistant.py`, `test_b5_lich_trinh.py` (+91 / −15); `git diff --check` sạch; không file ngoài phạm vi. Commit B sắp thêm (đổi chữ dòng khung buổi tối — A báo) **chưa có** ⇒ kiểm khi B nhắn, cùng vòng này.
+
+**Kết quả [Chạy, worktree `/tmp/c_b171` detach `a08d2e9`]:**
+
+| Kiểm | Kết quả |
+|---|---|
+| test `test_b5_lich_trinh.py` + `test_b5b_thoi_tiet.py` + `test_chat_stream.py` + `test_assistant_boundary.py` | **345 passed** |
+| Q1 (`capture_all.py`, khoá giả) so `data/phase_9/sua_lich/q1_c207/main_0a9e0f3.jsonl` | **228 / 228 giống byte** (`data/phase_9/b171/q1_c_review2/nhanh_a08d2e9.jsonl`) |
+| `tai_tao_la.py` | 120 ca, L-a **6** (không đổi) |
+| T3: lời lịch code dựng (`loi_lich_toi_thieu`) qua `kiem_cuoi` trên khung thật — 160 tổ hợp (số ngày × người đi cùng × sở thích × có / không xin tối), ca dò C `/tmp/c_b171_tools/probe_t3.py` | **0 / 160** hỏng |
+| Ca dò vòng 2 C tự viết (khác 16 câu vòng 1) — `/tmp/c_b171_tools/probe2.py` | xem dưới |
+
+**Đóng vòng 1:**
+- **M-1 — đóng phần đã nêu.** B lệch đề xuất "chỉ bắt khi có tên điểm" có bằng chứng (luật đó bắt 0 / 6 câu nói ngược) ⇒ C đồng ý cách của B (luật theo từ + danh sách "không phải hoạt động"). 16 / 16 ca dò vòng 1 vào test; lượt có phí 4 câu xin tối × 1 ⇒ 0 rút lại (dùng lại số của B, `data/phase_9/b171/m1_9037b91.jsonl` — commit `9037b91` = `27b56cb` trước rebase, phần code kiểm không đổi khi rebase).
+- **m-1 — đóng.** Ca dò C 11 câu xin / không xin tối (gồm "tối muốn…", "đi chơi đêm", "khuya", "dạo đêm"; không bắt "3 ngày 2 đêm", "2 ngày 1 đêm", "tối đa", "tối ưu", "tối giản") ⇒ 11 / 11 đúng.
+- **m-2 — đóng.** `hop_ngay` chỉ đếm điểm đúng sở thích; test khẳng định số trong câu = đúng số điểm hợp sở thích đi được buổi ngày.
+- **T3 (b) — đạt.** Thay chỉ khi chữ model **đúng bằng** câu từ chối; chữ thay đi qua kiểm cuối + citation; stream giữ chữ chỉ khi lượt có khung / dự báo, nhả ngay khi khác câu từ chối ⇒ lượt không có lịch không đổi (Q1 giống byte; test stream qua). Bất biến C kiểm: "lượt không có lịch / dự báo ⇒ không giữ chữ" — đọc `answer_turn_stream` (`giu_chu = False` khi `trace.lich is None` và không dự báo) + `test_chat_stream.py` qua.
+
+### Finding mới (vòng 2)
+
+**M-2 (major) — "N ngày N đêm" bị tính là nhắc buổi tối ⇒ rút cả câu trả lời.** Điểm vòng 1 bỏ sót (16 câu vòng 1 không có dạng này).
+- **Vị trí:** `lich_trinh.py` `_NHAC_TOI` (luật (b) của `_noi_nguoc_toi`): chữ "đêm" luôn tính, kể cả "3 ngày 2 đêm"; `_HOI_TOI` đã loại dạng này nhưng `_NHAC_TOI` thì chưa.
+- **Bằng chứng [Chạy]:** "Lịch 3 ngày 2 đêm này bạn có thể đi chậm rãi." ⇒ `_noi_nguoc_toi` = True (bắt nhầm). Cùng loại, nhẹ hơn: "Chiều về sớm kịp bữa tối, bạn có thể đi chậm." ⇒ bắt nhầm.
+- **Tác động:** kiểm chỉ chạy khi người dùng xin buổi tối mà code không xếp, nhưng "N ngày N đêm" là cách người thật hay gõ (E19: "3N2Đ", "3 ngày 2 đêm") và model hay nhắc lại số ngày ⇒ câu như "3 ngày 2 đêm, tối có gì chơi" có thể bị rút cả lịch ("Thử lại") — cùng lỗi M-1, trúng thẳng bộ kín v2.
+- **Tiêu chí đóng:** "<số> đêm" (và "N ngày N đêm") không tính là nhắc buổi tối trong `_noi_nguoc_toi` (như `_TROI_TOI`); 2 câu trên vào test (không bắt); 16 + 6 ca cũ vẫn đạt. Không cần lượt có phí (luật thuần, chỉ bớt bắt). "kịp / trước bữa tối": B tự quyết (thêm vào loại trừ hoặc ghi giới hạn).
+
+**Ghi nhận (không phải finding):** 2 câu nói ngược vẫn lọt — "Tối nghỉ ở khách sạn một lát rồi ra phố đi bộ nhé." (từ loại trừ đi kèm hoạt động), "Bạn ghé chợ đêm sau bữa tối nhé." (không "được / có thể") — đúng giới hạn #3 B đã ghi; không tệ hơn `main` (trước B171 không có kiểm này). Lời code dựng T3 chỉ có tên + [n] (giới hạn #2 B ghi) — đúng phạm vi (b).
+
+**Decision vòng 2: changes_requested** (M-2, sửa nhỏ 0 USD — gộp được vào commit B sắp thêm). Kiểm lại: C chạy test + 2 câu M-2 + ca dò vòng 1–2 + Q1 trên commit mới, cùng phần đổi chữ dòng khung. Tiền review: 0 USD.
