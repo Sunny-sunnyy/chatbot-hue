@@ -20,7 +20,7 @@
 |---|---|---|
 | Chấm 5 lịch kín B5 | 2 agent khớp 15 / 15; (ii) 3 / 5 | Gác — câu đo không tự nhiên |
 | Bộ câu tự nhiên (E19) | 8 câu mẫu bạn duyệt giọng; bộ kín 5 câu đang viết | Đo lại lịch trình bằng câu giống người thật |
-| Sửa lỗi lịch trình (B171) | Code xong, review: changes_requested (kiểm bắt nhầm) | Phiên sau B sửa ⇒ C kiểm |
+| Sửa lỗi lịch trình (B171) | **Vào `main` cờ tắt** (tối 06/11, `dbb4004`); review C 2 vòng đạt | Chờ đo kín v2 |
 | Thời tiết (B5b) | **Vào `main` cờ tắt** (tối 06/11, `db77f32`); cổng đạt | Chờ bạn quyết bật |
 | Sửa lịch nhiều lượt | Nhánh cập nhật theo `main`, kiểm 0 USD đạt; đang viết bộ chạy đo | Chờ lịch trình bật |
 | Plan đo giọng nói G2 | E viết xong; sub-agent đang review | Chờ bạn thu 40 câu |
@@ -37,3 +37,6 @@ Muốn biết lịch trình chatbot gợi ý có dùng được không thì ph�
 - Thời tiết vào `main` với cờ tắt; kiểm sau merge đạt (test, giao diện, 2 câu server thật, log không chứa câu hỏi).
 - Plan giọng nói G2 bản 2 (E sửa 9 chỗ review) ⇒ review vòng 2 đang chạy.
 - Bạn đang duyệt độ tự nhiên 5 câu kín mới.
+- (21:33 06/11/2026) Sửa lỗi lịch trình (B171) vào `main` với cờ tắt: thêm sửa dòng "Buổi tối" cho người dùng đọc được và lỗi "3 ngày 2 đêm" bị hiểu là xin buổi tối (C bắt). Cổng đạt.
+- Bạn đọc 5 câu kín v2: câu 1 đạt, câu 2–5 "dài dòng, cố viết cho tự nhiên" ⇒ E viết lại ngắn hơn, chờ bạn duyệt lại.
+- Harness đo sửa lịch: E review bắt 1 lỗi lớn (chấm đạt cả khi công cụ sửa lịch chưa được đưa) ⇒ C sửa xong, E đang kiểm lại.

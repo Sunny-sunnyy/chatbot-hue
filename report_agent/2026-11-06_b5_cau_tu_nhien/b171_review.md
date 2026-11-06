@@ -1,6 +1,6 @@
 # Review: Phase 9 B5 — B171 sửa 2 loại lỗi lịch trình bằng code (L-a, L-b)
 
-Decision: **changes_requested** (1 major, 2 minor) + 1 câu A chọn (T3, B đã nêu)
+Decision: **ready_for_user_confirmation** trên `b0e52f8` (vòng 2, 21:29 06/11/2026 — §8). Vòng 1 `d5028d4`: changes_requested (1 major, 2 minor) + T3 · vòng 2 `a08d2e9`: changes_requested (M-2)
 Người kiểm: C (Claude Code, Opus 5.5) — không viết code B5 / B171; **không** đọc `data/phase_9/b5/kin/`, `data/phase_9/b5_v2/`.
 Date: 11:26 06/11/2026 (`date`)
 Canonical guide: plan B5 bản 7 (D2, D2b, D4, D4b, D8); việc B171 trong `CURRENT_HANDOFF.md` mục "PHIÊN 06/11".
@@ -97,3 +97,27 @@ Worktree `/tmp/c_b171` detach `d5028d4` (symlink `data/`, `knowledge-base-hue/`)
 **Ghi nhận (không phải finding):** 2 câu nói ngược vẫn lọt — "Tối nghỉ ở khách sạn một lát rồi ra phố đi bộ nhé." (từ loại trừ đi kèm hoạt động), "Bạn ghé chợ đêm sau bữa tối nhé." (không "được / có thể") — đúng giới hạn #3 B đã ghi; không tệ hơn `main` (trước B171 không có kiểm này). Lời code dựng T3 chỉ có tên + [n] (giới hạn #2 B ghi) — đúng phạm vi (b).
 
 **Decision vòng 2: changes_requested** (M-2, sửa nhỏ 0 USD — gộp được vào commit B sắp thêm). Kiểm lại: C chạy test + 2 câu M-2 + ca dò vòng 1–2 + Q1 trên commit mới, cùng phần đổi chữ dòng khung. Tiền review: 0 USD.
+
+## 8. Vòng 2 — kiểm commit sửa M-2 + dòng khung tối (C, 21:29 06/11/2026)
+
+**Phạm vi:** `origin/p9-b5-sua` `a08d2e9` ⇒ **`fd16732`** (dòng khung tối viết cho người dùng đọc, A quyết) ⇒ **`b0e52f8`** (M-2). Diff `a08d2e9..b0e52f8`: `lich_trinh.py` (+23 / −10), `test_b5_lich_trinh.py`; `git diff --check` sạch; không file ngoài phạm vi.
+
+**Đọc diff:** `DONG_KHUNG_TOI` thành bảng theo mã luật, không còn lời dặn model; `khung_chu` nối đúng dòng của mã `MA_TOI` có trong `khong_xep` (chỉ khi code từ chối buổi tối — lượt khác chữ khung không đổi). `_TROI_TOI` bỏ "<số> đêm" (số hoặc một…năm); luật (b) xét từng vế (tách `, ;`); "để trống" vào danh sách không phải hoạt động.
+
+**Kết quả [Chạy, `/tmp/c_b171` detach `b0e52f8`]:**
+
+| Kiểm | Kết quả |
+|---|---|
+| test `test_b5_lich_trinh` + `test_b5b_thoi_tiet` + `test_chat_stream` + `test_assistant_boundary` | **351 passed** |
+| Q1 so `main_0a9e0f3.jsonl` | **228 / 228 giống byte** (`data/phase_9/b171/q1_c_review2/nhanh_b0e52f8.jsonl`) |
+| ca dò vòng 2 (`probe2.py`) + ca mới `probe3.py` (tách vế, "để trống", "<số> đêm"; C tự viết) | hợp khung bị bắt nhầm **0 / 12** (gồm 2 câu M-2 + câu chép nguyên dòng khung mới); câu xin / không xin tối **11 / 11** |
+| T3: lời lịch code dựng qua `kiem_cuoi` (`probe_t3.py`, 160 khung thật) | **0 / 160** hỏng |
+
+- **M-2 — đóng.**
+- Dùng lại (không chạy lại): lượt có phí của B sau 2 commit (4 câu xin tối + T3 + T5b "3 ngày 2 đêm" ⇒ ra lịch, 0 rút lại, 0 lượt chép lời dặn; B171 0,0288 / 0,04 USD) — chỉ đọc số trong report B §7.
+
+**Ghi nhận (không phải finding — A quyết 06/11 tối không sửa thêm phần "lọt", để bộ kín v2 đo ở tiêu chí (iii)):**
+- Tách vế theo dấu phẩy làm **lọt thêm** dạng "nhắc tối ở vế đầu, hoạt động ở vế sau": "Ngày 1 buổi tối, cả nhà có thể đi thuyền nghe ca Huế.", "Sau bữa tối, bạn có thể dạo phố đi bộ." (trước `b0e52f8` bắt được). Đổi lại: hết bắt nhầm "kịp bữa tối, bạn có thể…". Cùng loại giới hạn #3 của B ⇒ đề xuất B thêm dạng này vào giới hạn #3 trong report.
+- 2 câu lọt từ vòng 2 (§7) vẫn lọt — như cũ.
+
+**Decision: ready_for_user_confirmation** (`b0e52f8`). Bước tiếp: A merge cờ `lich_trinh` tắt + cổng ổn định ⇒ chạy kín v2 (E) theo quyết A. Tiền review C: 0 USD.

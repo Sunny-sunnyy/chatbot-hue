@@ -9,6 +9,8 @@ Nguyên văn phiên tối 05/11 (mọi việc giao + quyết định theo giờ)
 **Quyền phiên tối 06/11 (User chọn "như 06/11", A ghi nhận 20:57 06/11/2026):** A tự điều phối, giao ngay việc có sẵn; A commit / push `main`; B / C / E push nhánh riêng; ≤ 1 USD / phiên; trần Phase 9 2,5, Phase 10 0,15. Hết hạn cuối phiên.
 **A quyết (20:57 06/11/2026):** (1) `p9-b5b` merge thẳng không rebase — `main` từ `23ea0f9` chỉ đổi tài liệu (0 dòng `backend/` / `frontend/`), Q1 228/228 còn đúng. (2) Câu B (6 ca "thiên nhiên 4 ngày"): **giữ lấp có nhãn** — đúng lựa chọn D2 plan B5 (lấp có nhãn thay vì ngày trống); nhãn "không cùng hướng" đúng sự thật là đủ; ghi 1 dòng trong report B171. (3) Câu E (bộ kín v2): **E chạy** (E viết bộ ⇒ không thêm người thấy câu; A / B / C giữ mù); dùng harness B5 cũ + đổi đường dẫn bộ câu; trường mô tả ràng buộc của từng câu đưa cho 2 sub-agent chấm (cần để chấm); **giữ nguyên 3 tiêu chí (i)(ii)(iii) + ngưỡng ≥ 4/5** như Q3 cũ; E chuẩn bị lệnh `!` chỉ in số đếm, ghi `STATUS_E.md`; chạy khi User duyệt độ tự nhiên **và** B171 merge.
 
+**Merge tối 06/11:** `db77f32` B5b thời tiết (cờ tắt) · `dbb4004` B171 sửa lỗi lịch trình (cờ tắt; C ready §8) — cổng ổn định đạt cả hai (21:33 06/11/2026). **Bộ kín v2:** User đọc — K1 đạt, K2–K5 "Sửa" (dài dòng, cố tự nhiên) ⇒ E viết lại, chờ User duyệt lại + `!` ghi file (auto mode chặn E ghi `*sealed*`).
+
 **Việc giao tối 06/11:**
 - **A:** merge `p9-b5b` `1610155` (cờ `thoi_tiet` tắt) + cổng ổn định + 3 chỗ báo cáo ⇒ hỏi User bật.
 - **B — B171 tiếp:** theo mục 3 "Phiên sau làm theo thứ tự" + `STATUS_B.md` (M-1 / m-1 / m-2 theo `b171_review.md` ⇒ T3 (b) ⇒ test + Q1 ⇒ push ⇒ report ⇒ nhắn C). Trần 0,04 (đã 0,0179).

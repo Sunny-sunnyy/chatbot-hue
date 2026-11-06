@@ -136,7 +136,10 @@ Nhánh `p9-b5-sua` **rebase lên `main` `d38b05a`** (đã có B5b `db77f32`; A d
 **Giới hạn / ghi nhận (không sửa):**
 1. ~~Model chép nguyên dòng khung có lời dặn~~ ⇒ đã sửa (`fd16732`, mục trên).
 2. Lời lịch code dựng (T3) không có giờ / mô tả điểm, chỉ tên + [n] + khối ghi chú: đúng phạm vi (b), kém tự nhiên hơn chữ model.
-3. Kiểm nói ngược vẫn dựa trên từ: lọt câu hứa buổi tối không dùng "được / có thể" và không mở dòng bằng "tối" (vd "Bạn ghé chợ đêm sau bữa tối nhé"). Lời có chữ nghỉ / khách sạn đi kèm một hoạt động (vd "tối nghỉ ở khách sạn rồi ra phố đi bộ") cũng lọt.
-4. **Ghi chú merge với `p9-sua-lich` (C dặn):** `tham_so` có thêm khoá `hoi_toi`, `xep` có `chon_sang` ⇒ người gộp sau phải để `chon_sang` tôn trọng `giu` / `loai` (đi qua `used` / `dung_duoc`), và `ThamSo(**…)` dựng lại từ khung đã lưu phải nhận `hoi_toi`.
+3. Kiểm nói ngược vẫn dựa trên từ: lọt câu hứa buổi tối không dùng "được / có thể" và không mở dòng bằng "tối" (vd "Bạn ghé chợ đêm sau bữa tối nhé"). Lời có chữ nghỉ / khách sạn đi kèm một hoạt động (vd "tối nghỉ ở khách sạn rồi ra phố đi bộ") cũng lọt. Từ `b0e52f8` (xét từng vế theo dấu phẩy) lọt thêm dạng "nhắc tối ở vế đầu, hoạt động ở vế sau": "Ngày 1 buổi tối, cả nhà có thể đi thuyền nghe ca Huế.", "Sau bữa tối, bạn có thể dạo phố đi bộ." (C dò vòng 3; trước `b0e52f8` hai câu này bị bắt) — đổi lấy việc hết bắt nhầm "kịp bữa tối, bạn có thể đi chậm". **Đã thấy trên lượt thật** (T5b): "Buổi tối: có thể nghỉ hoặc đi bộ ngắn…" lọt vì có chữ "nghỉ". **A quyết 06/11 tối: không sửa** (không thêm kiểm hiểu nghĩa câu, không đổi lời dặn) ⇒ bộ kín v2 đo ở tiêu chí (iii).
+4. **Lý do không xếp tối hiện 2 lần** khi model chép dòng khung (trong lịch + khối ghi chú). Lặp chữ, không sai. **A quyết 06/11 tối: không sửa**; 2 agent chấm kín v2 đánh lỗi thì sửa sau.
+5. **Ghi chú merge với `p9-sua-lich` (C dặn):** `tham_so` có thêm khoá `hoi_toi`, `xep` có `chon_sang` ⇒ người gộp sau phải để `chon_sang` tôn trọng `giu` / `loai` (đi qua `used` / `dung_duoc`), và `ThamSo(**…)` dựng lại từ khung đã lưu phải nhận `hoi_toi`.
+
+**Review C vòng 3 (`b0e52f8`): ready_for_user_confirmation** (`b171_review.md` §8).
 
 **Bàn giao C:** diff `origin/main…p9-b5-sua` (commit `27b56cb`, `a08d2e9` = vòng 2 C đã kiểm; mới: `fd16732`, `b0e52f8`; `15402dd` = bản C review vòng 1). Chạy lại: `tests/test_b5_lich_trinh.py` (+ `test_b5b_thoi_tiet.py`, `test_chat_stream.py` vì đổi đường stream chung với B5b), ca dò của C, Q1, 2 phép quét 0 USD.
