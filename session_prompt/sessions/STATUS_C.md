@@ -6,7 +6,7 @@
 
 - (c) **C208 XONG (21:51 06/11/2026):** `p9-sua-lich` `09ddaf9` ⇒ **`79b3d9c`** trên `main` `d930867` (pushed) — gỡ xung đột B5b, sửa `hoi_toi` (xếp lại + sửa trực tiếp) + 4 test; 411 test, Q1 / Q1m 228/228; sửa nhãn đã thấy S03 / S08 (`c00de07114b5`); harness `559ebaf5f81e` (n-1). E kiểm rebase: **ready**, 0 finding (`c207_harness_review.md` "Vòng 3"). **Chờ User `!`** mô phỏng kín (lệnh ở report C207 §8). Report C207 §8.
 
-- (d) **C209 (22:02 06/11/2026, A giao):** nghiên cứu nguồn dữ liệu đợt 2 giao diện cổng (0 USD, không sửa code / kho) — file: `data/nghien_cuu_giao_dien_2026-11-06/nguon_du_lieu_dot_2.md`, `data/nghien_cuu_giao_dien_2026-11-06/c209/` (công cụ / kết quả thô), `report_agent/2026-11-06_giao_dien_cong/c209_implementation.md`.
+- (d) **C209 XONG (22:18 06/11/2026), chờ A:** `data/nghien_cuu_giao_dien_2026-11-06/nguon_du_lieu_dot_2.md` (3 phương án; khuyến nghị P1 = dữ liệu kho + Leaflet / tile OSM) + `report_agent/2026-11-06_giao_dien_cong/c209_implementation.md`. Overpass quá tải 3/5 lượt (502) ⇒ chưa lấy tên OSM khớp toạ độ 15 điểm. 0 USD.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (phiên sáng 06/11)
 - **Đã xong 06/11** (terminal `hue-rag-a4`, 0 USD):
