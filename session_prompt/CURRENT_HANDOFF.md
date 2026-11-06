@@ -3,6 +3,18 @@
 Cập nhật: 12:16 06/11/2026 (A, **kết phiên 06/11** — User dừng giữa ngày, việc còn lại làm phiên sau). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Nguyên văn phiên tối 05/11 (mọi việc giao + quyết định theo giờ): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05_toi.md`; sáng–chiều 05/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-05_b4_am_chia_phase_10_12.md`.
 
+## PHIÊN TỐI 06/11 (mở 20:54 06/11/2026) — việc giao + trạng thái
+
+**Session:** A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28` — cả bốn Claude Code, trực tiếp. Máy khởi động lại 20:48 ⇒ 5 worktree `/tmp` mất (nhánh còn đủ).
+**Quyền phiên tối 06/11 (User chọn "như 06/11", A ghi nhận 20:57 06/11/2026):** A tự điều phối, giao ngay việc có sẵn; A commit / push `main`; B / C / E push nhánh riêng; ≤ 1 USD / phiên; trần Phase 9 2,5, Phase 10 0,15. Hết hạn cuối phiên.
+**A quyết (20:57 06/11/2026):** (1) `p9-b5b` merge thẳng không rebase — `main` từ `23ea0f9` chỉ đổi tài liệu (0 dòng `backend/` / `frontend/`), Q1 228/228 còn đúng. (2) Câu B (6 ca "thiên nhiên 4 ngày"): **giữ lấp có nhãn** — đúng lựa chọn D2 plan B5 (lấp có nhãn thay vì ngày trống); nhãn "không cùng hướng" đúng sự thật là đủ; ghi 1 dòng trong report B171. (3) Câu E (bộ kín v2): **E chạy** (E viết bộ ⇒ không thêm người thấy câu; A / B / C giữ mù); dùng harness B5 cũ + đổi đường dẫn bộ câu; trường mô tả ràng buộc của từng câu đưa cho 2 sub-agent chấm (cần để chấm); **giữ nguyên 3 tiêu chí (i)(ii)(iii) + ngưỡng ≥ 4/5** như Q3 cũ; E chuẩn bị lệnh `!` chỉ in số đếm, ghi `STATUS_E.md`; chạy khi User duyệt độ tự nhiên **và** B171 merge.
+
+**Việc giao tối 06/11:**
+- **A:** merge `p9-b5b` `1610155` (cờ `thoi_tiet` tắt) + cổng ổn định + 3 chỗ báo cáo ⇒ hỏi User bật.
+- **B — B171 tiếp:** theo mục 3 "Phiên sau làm theo thứ tự" + `STATUS_B.md` (M-1 / m-1 / m-2 theo `b171_review.md` ⇒ T3 (b) ⇒ test + Q1 ⇒ push ⇒ report ⇒ nhắn C). Trần 0,04 (đã 0,0179).
+- **C:** (a) viết harness lượt có phí sửa lịch theo `HARNESS_GHI_CHU.md` (0 USD, khoá giả) — làm ngay; (b) kiểm phần sửa B171 khi B nhắn (ưu tiên hơn (a)).
+- **E:** (1) `duyet_tu_nhien_user.md` ⇒ nhắn A; (2) sửa plan G2 theo `plan_g2_review.md` ⇒ nhắn A (A chọn người review vòng 2); (3) chuẩn bị lệnh chạy kín v2 (quyết (3) trên).
+
 ## PHIÊN 06/11 (09:54 – kết 12:17 06/11/2026) — nguyên văn việc giao + trạng thái từng session
 
 **Session:** A `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99` — cả bốn Claude Code, trực tiếp. Máy khởi động lại 09:50 ⇒ 4 worktree `/tmp` mất (nhánh còn đủ); `git worktree prune` được (không đụng 4 worktree AGY).
