@@ -30,6 +30,7 @@ Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 | [2026-10-31_khung_fde/](2026-10-31_khung_fde/) | Áp khung làm dự án theo khoá AI FDE (khung cá nhân của User) vào cách làm: W37–W41, vòng cải tiến 12 (40 ⇒ 7 mục đang thử); sửa 4 báo cáo khâu bị cũ — **ĐÓNG** 31/10 chiều |
 | `2026-10-25_ra_soat_code/` | Rà code Phase 0–7 (chỉ đọc): code thừa, độ phức tạp, khâu dính, test, guide lệch code, hiệu năng, cơ hội phát triển. User 16:5x 25/10 dừng 8.2 để rà trước | **ĐÓNG** 16:4x 26/10 — rà + kiểm chéo + sửa cả 5 gói (1a, 1b, 3, 4, đợt 3 `421c302`); [TONG_HOP.md](2026-10-25_ra_soat_code/TONG_HOP.md) |
 | [2026-11-06_b5_cau_tu_nhien/](2026-11-06_b5_cau_tu_nhien/) | Lịch trình B5: bộ câu đo theo cách người thật hỏi (E19 — TRIPO vòng 4 + diễn đàn), sửa 2 loại lỗi code lịch trình (B171) + review | mở 06/11 |
+| [2026-11-06_giao_dien_cong/](2026-11-06_giao_dien_cong/) | Giao diện kiểu cổng du lịch (User chọn mức 2, hai đợt): nghiên cứu giao diện Huế TRIPO + trang cùng đề tài (B172), nguồn dữ liệu bản đồ / lưu trú / ăn uống / sự kiện (C209), spec đợt 1 | mở 06/11 tối |
 | [2026-11-05_sua_kho_gio/](2026-11-05_sua_kho_gio/) | Sửa kho nhỏ: giờ mở cửa chung 11 điểm Quần thể (lấy từ file vé trong kho) + dựng lại chỉ mục 8.435 đoạn (C192) | **ĐÓNG** 05/11 tối — User giữ (1 câu Golden phạm sàn ở lượt đầu, chạy lại đạt) |
 
 Phase 7B (2026-10-24): report nằm ở `reports/phase_7b_*` và `reports/phase_8_*` (viết trước khi đổi
