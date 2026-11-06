@@ -113,3 +113,24 @@ A quyết: chạy bộ C207 (`data/phase_9/bo_do_b5b/cau_da_thay.jsonl` md5 `25b
 - Kiểm: `test_b5b_thoi_tiet.py` **73 passed**; `npm ci && npm run build` ⇒ `test_static_ui.py` **3 passed**; Playwright Q8 giao diện (câu dự báo + câu thường, server thật `app_thoi_tiet.py`): ghi công Open-Meteo + "số liệu lúc" thành **đoạn riêng** (đã xem ảnh laptop), nguồn dự báo trong khung nguồn, điện thoại 390 px không cuộn ngang, CSP 0, 0 request ra ngoài; log 0 dòng có chữ câu hỏi. Kết quả `data/phase_9/b5b/q8_0611/`.
 - Tiền: **0,000860** (2 lượt) ⇒ B5b tổng ≈ **0,0517 / 0,07**.
 - Còn: review cả nhánh (C); rebase lên `main` mới + Q1 trước merge; phần lịch D9 / D10 chờ `lich_trinh` bật + bảng v5.
+
+## 13. Sửa theo review C (`b168_b5b_review.md`, changes_requested) — 11:12 06/11/2026 [Chạy]
+
+Commit **`0380345`** (đã push `p9-b5b`, trên `18d1cec`). Plan hiện `50fbdd0b4c27` (bản 2 + 2 mục "Chỗ đổi" A duyệt). Cách sửa A chốt.
+
+| Finding | Sửa | Kiểm |
+|---|---|---|
+| **M-1** dự báo `ok` mà chữ model = câu từ chối ⇒ câu từ chối đứng trước số | `_thoi_tiet_cuoi`: chữ model (sau `strip()`) đúng câu từ chối + công cụ có khối ⇒ code thay bằng `tt.CAU_DAN_DU_BAO` ("Mình có dự báo cho ngày bạn hỏi:") rồi nối khối như cũ. Stream: khi đã có khối dự báo, chữ model được **giữ** chừng nào còn là khúc đầu của câu từ chối; lệch ⇒ phát ngay; tới hết vẫn là câu từ chối ⇒ phát câu dẫn (người dùng không thấy câu từ chối rồi bị thay) | test thường + stream (cả ca chữ chung khúc đầu "Tôi …" vẫn ra đủ); **đo lại F03 / F07 × 2**: 4 / 4 lượt model **vẫn** từ chối ⇒ code thay; **0 / 4** câu từ chối trong chữ, 4 / 4 có câu dẫn + khối, `delta_matches_final` 4 / 4, `refusal` false, rút lại 0 |
+| **m-1** chữ code nối làm cổng web đóng + cờ `refusal` sai | Giữ hành vi (câu cố định B5b thay cổng web cho câu bão / lũ / ngoài 7 ngày); `chu_cua_model(trace)` = câu trả lời bỏ phần thời tiết code nối ⇒ cờ `refusal` của log (cả `/api/chat` và stream) tính trên phần đó | test: bão / lũ + kho từ chối ⇒ câu = từ chối + NCHMF / 112, `chu_cua_model` = câu từ chối, cổng web đóng; cùng lượt chỉ còn câu từ chối ⇒ cổng mở (chỉ câu nối làm đóng) |
+| **m-2** đơn vị lọt | thêm `℃`, `℉`, `º` (± C / F), `oC`, `°F`, `milimet`, `mi-li-met` | 7 ca test mới, các ca cũ giữ |
+| **m-3** cache qua nửa đêm | `tu_cache()`: chỉ dùng bản ghi khi ngày đầu = `hom_nay_vn()`; `assistant.hom_nay_vn` trỏ cùng hàm (một chỗ tính "hôm nay") | test: cùng bản ghi, ngày 06/11 dùng / 07/11 không dùng |
+
+- Test: `test_b5b_thoi_tiet.py` **84 passed**; bộ rộng (mọi file trừ 2 file gọi API trả phí + `test_startup_model_missing`) **539 passed**, 1 failed + 1 error = đúng 2 test cần `OPENAI_API_KEY` (bẫy đã ghi). **Q1** (`capture_all.py`, 0 USD): **228 / 228 giống byte** bản bắt `main` `0a9e0f3` của C (sha `dba1f578eef1`) — `data/phase_9/b5b/q1_sua_review/`.
+- Quan sát (không sửa — A dặn chỉ đổi khi đo thấy cần): cả 4 lượt đo lại model gọi `thoi_tiet` **2 lần** rồi từ chối; lần gọi 2 nhận chữ "Đã lấy dự báo ở lần gọi trước…". Đây là bằng chứng (4 / 4, cỡ nhỏ) cho giả thuyết C nêu — lời trả lần 2 có thể làm model hiểu là không có dự báo. Bản sửa M-1 không phụ thuộc giả thuyết này.
+- Tiền: **0,002664** (4 lượt) ⇒ B5b tổng ≈ **0,0544 / 0,07**. Dữ liệu private: `data/phase_9/b5b/da_thay/raw_sua_m1_lan{1,2}.jsonl`, `api_sua_m1.jsonl`, `chat_metrics_sua_m1.log`.
+- Còn: C kiểm phần sửa; rebase lên `main` mới + Q1 trước merge; phần lịch D9 / D10 chờ `lich_trinh` + bảng v5.
+
+## 14. Rebase lên `main` + theo dõi (12:15 06/11/2026) [Chạy]
+
+- C review phần sửa: **ready_for_user_confirmation**. Rebase `p9-b5b` lên `main` `23ea0f9` ⇒ **`1610155`** (push `--force-with-lease` từ `0380345`). Q1 **228 / 228 giống byte** bản `main` (`data/phase_9/b5b/q1_sua_review/nhanh_rebase.jsonl`); test file chạm (`test_b5b_thoi_tiet`, `test_assistant_boundary`, `test_chat_stream`, `test_b5_lich_trinh`, `test_static_ui`) **190 passed**. Sẵn để A merge cờ `thoi_tiet` tắt.
+- **Theo dõi (A chốt, không sửa lúc này):** 4 / 4 lượt đo lại §13 model gọi `thoi_tiet` 2 lần rồi từ chối (lần 2 nhận "Đã lấy dự báo ở lần gọi trước…"). Bản sửa M-1 che được phía người dùng; xem lại khi có lượt đo lớn hơn.

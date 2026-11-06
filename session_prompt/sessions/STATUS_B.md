@@ -1,34 +1,39 @@
-# STATUS B — PHIÊN 06/11 (mở 09:54 06/11/2026, cập nhật 10:48 06/11/2026) — terminal `hue-rag-85`
+# STATUS B — KẾT PHIÊN 06/11 (12:16 06/11/2026 `date`; mở 09:54) — sổ tay cho phiên sau, kết quả ở report
 
-## Đang làm (A giao 06/11, "làm đi")
-- (a) B5b: worktree `/tmp/b_b5b` (`p9-b5b`), áp patch `182904f45888`, test, ảnh Q8 một câu, commit + push `p9-b5b`. File sửa: chỉ trong nhánh `p9-b5b` (theo patch).
-- (b) B171: nhánh mới `p9-b5-sua` từ `main`, worktree `/tmp/b_b5sua`; file dự kiến sửa: `backend/llm/lich_trinh.py` (+ test B5 liên quan); report `report_agent/2026-11-06_b5_cau_tu_nhien/b171_implementation.md`. Không đọc `data/phase_9/b5/kin/`, `data/phase_9/b5_v2/`. Có phí ≤ 0,02 USD (bộ đã thấy).
-
----
-# STATUS B — KẾT PHIÊN TỐI 05/11 (22:17 05/11/2026 `date`; mở 19:16) — sổ tay ≤ 30 dòng, kết quả ở report
-
-Vai: thực thi. Mở theo `START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md`; tên terminal đổi mỗi lần mở ⇒ `ListAgents`. Phiên tối: B `hue-rag-4b` · A `hue-rag-4f` · C `hue-rag-3c` · E `hue-rag-bc`. Quyền phiên (việc A giao = "làm đi", ≤ 1 USD) **hết hạn**.
+Vai: thực thi. Mở theo `START_SESSION.md`; việc lấy ở `CURRENT_HANDOFF.md`; tên terminal đổi mỗi lần mở ⇒ `ListAgents`. Phiên 06/11: A `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99`. Quyền phiên (việc A giao = "làm đi", ≤ 1 USD) **hết hạn**.
 
 ## Việc dở — bước kế chính xác
-- **B5b thời tiết (B168)** — `p9-b5b` **`8bdeb65`** (push), worktree `/tmp/b_b5b` (symlink `data/`, `knowledge-base-hue/`). Report `report_agent/2026-11-02_phase_9_code/b168_b5b_implementation.md` §1–§11. **ĐẠT:** Q1/Q1m, probe, đã thấy ×2 (Q3 9/10 ×2) + vòng chỉnh 1 (A kết luận đạt), Q4 (S-AT đạt), Q8. **Bước kế:** (1) **commit bản sửa hiển thị chưa commit** (dòng trống trước dòng ghi công) — nằm ở `/tmp/b_b5b`; mất worktree ⇒ `git apply data/phase_9/b5b/p9-b5b_chua_commit_q8_hien_thi.patch` (sha `182904f45888`) trên `8bdeb65`, chạy `tests/test_b5b_thoi_tiet.py`; (2) review cả nhánh (A giao); (3) phần lịch D9/D10 chờ `lich_trinh` bật + User duyệt bảng v5; (4) trước merge: `main` hiện `98acf73` — backend không đổi từ `439ccd4` ⇒ chưa cần rebase; `main` đổi backend thì rebase + Q1.
-- **Sửa lịch (B163/B164/B166)** — `p9-sua-lich` **`6543f82`** (push, gốc `main` `80faf1a`), worktree `/tmp/b_sualich`. Report `b163_sua_lich_implementation.md` §4, §7. Kín C 5/5. **Bước kế:** rebase lên `main` mới (đã có B6 bật — chạm `assistant.py`, `chat.py`, `settings.yaml`, test boundary) + build + test + Q1/Q1m **trước** lượt có phí; lượt có phí chờ `lich_trinh` bật (User chấm Q3 B5).
-- Đã xong phiên này: B164, B165 (B6 code + đo — merge `7ff8e5a`, đã bật), B167 + vòng 4 (spec Phase 10 giọng nói ready), B169 (sửa review E13), E17 (dự báo là nguồn [k]). Worktree `/tmp/b_b6` đã gỡ (p9-b6 đã merge).
+1. **B5b thời tiết — XONG phía B.** `p9-b5b` **`1610155`** (đã rebase lên `main` `23ea0f9`, push `--force-with-lease`). C review: ready_for_user_confirmation. Q1 228 / 228, test file chạm 190 passed. Report `report_agent/2026-11-02_phase_9_code/b168_b5b_implementation.md` §12–§14. **Bước kế (A):** merge cờ `thoi_tiet` tắt ⇒ hỏi User bật. `main` đổi backend trước khi merge ⇒ B rebase lại + Q1. Theo dõi: model gọi `thoi_tiet` 2 lần rồi từ chối (4 / 4) — không sửa lúc này (A chốt).
+2. **B171 lịch trình — CHƯA làm phần sửa review.** `p9-b5-sua` **`d5028d4`** (push, gốc `main` `0a9e0f3`). Report `report_agent/2026-11-06_b5_cau_tu_nhien/b171_implementation.md`; review C `…/b171_review.md` = changes_requested. **A chốt (06/11), làm theo thứ tự:**
+   - **M-1:** thu hẹp `_noi_nguoc_toi` — chỉ bắt khi dòng / câu nhắc tối / đêm **có tên điểm của bảng** (`khop_diem` / `_ten_xuat_hien`) hoặc nhãn tối kèm tên điểm; "Tối: tự do / nghỉ / về khách sạn" không bắt. Đưa **16 ca dò của C** vào test (10 hợp khung ⇒ không bắt, 6 nói ngược ⇒ bắt) — script C đã chép về `data/phase_9/b171/tools/probe_b171_cua_C.py` (sha `bca869690a8b`; bản gốc `/tmp/c207_tools/` sẽ mất). Rồi chạy lại 4 câu xin tối (L4, T2, T3, T4) × 1 (≈ 0,003 USD) ⇒ 0 rút nhầm.
+   - **m-1:** bộ dò `hoi_buoi_toi` thêm "tối muốn / tối thích", "chơi / đi … đêm", "khuya" — kiểm lại "N ngày N đêm", "tối đa" không bắt; 1 test mỗi dạng.
+   - **m-2:** `hop_ngay` đếm trên `pool = them_ids + hop` ⇒ đếm `hop` riêng (điểm hợp sở thích, không gồm điểm người dùng nêu); 1 test.
+   - **T3 = (b):** lượt có khung lịch mà chữ model (sau `strip()`) = `INSUFFICIENT_ANSWER` ⇒ **code dựng lời lịch tối thiểu từ khung** (mỗi điểm một dòng "Sáng: tên [n]" theo ngày, rồi khối ghi chú như thường) — như B5b M-1 (`_thoi_tiet_cuoi` + giữ chữ ở stream). Chỗ sửa: `assistant.py` `_finish_generated` (nhánh `trace.lich is not None`) + đường stream (chữ model đã phát dần ⇒ cần giữ chữ khi đang có khung, như `giu_chu` của B5b). Đo lại T3 trên bộ đã thấy (`data/phase_9/b171/bo_chay.jsonl`, `--chi T3`).
+   - Xong ⇒ test + Q1 ⇒ push ⇒ report (thêm mục) ⇒ nhắn C kiểm + A. **Trần B171 0,04 USD** (A nâng 06/11; đã dùng 0,0179).
+   - Ghi vào report (C dặn): `tham_so` có thêm `hoi_toi`, `xep` có `chon_sang` ⇒ khi merge với `p9-sua-lich` (C), phần `giu` / `loai` phải được tôn trọng trong `chon_sang` (dùng `used` / `dung_duoc`), và `ThamSo` dựng lại từ khung phải mang `hoi_toi`.
 
-## Lệnh hay dùng (từ `backend/` của worktree, `PYTHONPATH=$PWD HF_HUB_OFFLINE=1`)
-- Q1: `env -u OPENAI_API_KEY -u SERPER_API_KEY OPENAI_API_KEY=capture-only … uv run --project /home/minhhieu/hue_rag python /home/minhhieu/hue_rag/data/phase_9/b5b/tools/capture_flags.py <out> [co=1]`; Q1m bỏ một mục công cụ: `…/capture_bo_cong_cu.py <out> <ten_cong_cu> co=1`; so `cmp` với file chụp `main` cùng chỉ mục.
-- B5b: server `B5B_API=<file> uvicorn --factory --app-dir data/phase_9/b5b/tools app_thoi_tiet:make_app` (`B5B_EP_LOI=1` ép lỗi API) · `chay_b5b.py` · `cham_b5b.py` · `sinh_q4.py` + `judge_q4.py` · `q8_b5b.py`. B6: `data/phase_9/b6/tools/` (`app_web.py`, `chay_b6.py`, `cham_b6.py`, `xuat_judge.py`, `sinh_q4.py`, `q8_b6.py`, `probe_fe.py`).
+## Dựng lại worktree (máy khởi động lại ⇒ `/tmp` mất)
+- `git worktree prune`; `git worktree add /tmp/b_b5sua p9-b5-sua` (hoặc `/tmp/b_b5b p9-b5b`); trong worktree: `ln -s /home/minhhieu/hue_rag/data data && ln -s /home/minhhieu/hue_rag/knowledge-base-hue knowledge-base-hue`. Không đụng 4 worktree AGY (`~/.gemini/…`).
+- Giao diện (`test_static_ui`, Playwright): `cd frontend && npm ci && npm run build` trong worktree.
+- So bản cũ ↔ mới (`so_khung_cu_moi.py`): `mkdir -p /tmp/b171_cu/llm && git show main:backend/llm/lich_trinh.py > /tmp/b171_cu/llm/lich_trinh_cu.py`.
 
-## Tiền B phiên tối (USD, từ log / harness) — tổng ≈ 0,194
-- B6 ≈ 0,1431: probe Serper ≤ 0,001 · đã thấy lần 1 0,0430 + lần 2 0,0396 + chạy bù W01 0,0019 · vòng 1 0,0263 · Q4 0,0289 · Q8 0,0024.
-- B5b ≈ 0,0508: đã thấy 0,0269 · ép lỗi API 0,0018 · vòng 1 0,0038 · Q4 0,0148 · Q8 0,0036. Open-Meteo 0. Code B164/B166/B168/B169: 0.
+## Lệnh hay dùng (từ `backend/` của worktree, `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag …`)
+- Q1: `env -u OPENAI_API_KEY -u SERPER_API_KEY OPENAI_API_KEY=capture-only … python ../data/phase_9/b2_chay/tools/capture_all.py <out>` ⇒ `cmp` với `../data/phase_9/sua_lich/q1_c207/main_0a9e0f3.jsonl` (sha `dba1f578eef1`; `main` sau đó chỉ đổi tài liệu).
+- B5 có phí: `--env-file /home/minhhieu/hue_rag/.env python ../data/phase_9/b5/tools/chay_b5.py chay <bo> <out> [--chi id …]`; đếm `… dem <bo> <out>` (0 USD). Không ghi đè file cũ.
+- B5b server: `B5B_API=<file> uvicorn --factory --app-dir /home/minhhieu/hue_rag/data/phase_9/b5b/tools app_thoi_tiet:make_app --port 8851`; `chay_b5b.py <BASE> <out> <log> --lan N --chi F03,F07`; `q8_b5b.py ui …`.
+- B171 0 USD: `data/phase_9/b171/tools/tai_tao_la.py` (quét 120 tổ hợp), `so_khung_cu_moi.py` (1.728 tổ hợp cũ ↔ mới), `chay_khong_dong_toi.py` (biến thể bỏ dòng khung — có phí).
+- Test rộng không key: mọi file `tests/*.py` trừ `test_phase6_live_smoke`, `test_openai_full_corpus_generator`, `test_startup_model_missing` ⇒ 2 hỏng đúng là test cần key.
+
+## Tiền B phiên 06/11 (USD, từ log / harness) — tổng ≈ 0,0214
+- B5b ≈ 0,0035 (Q8 0,00086 · đo lại F03 / F07 × 2 0,00266) ⇒ **B5b tổng ≈ 0,0544 / 0,07**.
+- B171 0,017869 (17 câu 0,011375 · T3 thêm 6 lượt 0,006494) / trần **0,04**.
 
 ## Bẫy — đọc trước khi làm
-- Lệnh ghép có `git push` bị auto mode chặn cả khối ⇒ push lệnh riêng; push nhánh đã rebase ⇒ `--force-with-lease=<nhánh>:<sha cũ>`.
-- Heredoc có backtick lồng trong `$(…)` / `cat <<EOF` (không nháy) ⇒ lỗi "bad substitution" ⇒ ghi báo cáo bằng `python3 - <<'PYEOF'` (nháy đơn).
-- Bộ kiểm citation rút mọi câu không có `[n]` ⇒ tính năng có nguồn không phải kho: đưa vào **sổ nguồn** (như dự báo `[k]`), không miễn kiểm.
-- Bộ dò từ khoá mới ⇒ chạy 0 USD trên bộ đã thấy xem có khớp thêm câu ngoài ý không **trước** khi dùng lại số đo cũ ("đang" khớp W08 ⇒ không thêm).
-- Xem ảnh Playwright, không chỉ cờ đúng / sai (lỗi dòng ghi công dính danh sách chỉ thấy ở ảnh). Máy khởi động lại ⇒ `/tmp` mất: lưu patch / tool vào `data/`.
-- Dặn cũ vẫn đúng: chờ nền bằng `run_in_background` (không `pgrep -f`); giờ ghi file lấy từ `date`; không gọi `agy`; câu kín B không mở.
+- Chọn trước buổi sáng đã từng làm rơi điểm người dùng nêu (Bạch Mã) ⇒ điểm người dùng nêu luôn đứng trước; test `test_branches_of_the_plan` bắt được.
+- Kiểm "nói ngược" theo từ dễ bắt nhầm lời khuyên nghỉ (C dò: 5 / 10) ⇒ luật rút lại cả câu chỉ nên bắt khi có **tên điểm** — lượt có phí 4 câu không đủ thấy bắt nhầm.
+- Câu hỏi có / không về phần lịch không xếp ⇒ model trả nguyên câu từ chối kho (7 / 7) — đổi chữ dòng khung không giúp.
+- Stream: chữ model phát dần ⇒ muốn thay chữ model phải giữ chữ chừng nào còn là khúc đầu câu từ chối (`giu_chu` B5b).
+- Dặn cũ vẫn đúng: lệnh `git push` tách riêng (auto mode chặn khối ghép); push nhánh đã rebase ⇒ `--force-with-lease=<nhánh>:<sha cũ>`; báo cáo có backtick ⇒ `python3 - <<'PYEOF'`; chờ nền bằng `run_in_background` (không `pgrep -f`); tắt server bằng TaskStop; giờ lấy từ `date`; không gọi `agy`; không mở câu kín (`data/phase_9/b5/kin/`, `data/phase_9/b5_v2/`, `bo_do_b5/cau_sealed.jsonl`).
 
-## A đã trả lời (kết phiên 05/11)
-- **Đầu phiên sau B tự commit + push** bản sửa hiển thị lên `p9-b5b` (từ patch `182904f45888` nếu `/tmp` mất) ⇒ chạy lại `test_static_ui.py` + Q8 ảnh một câu (0 USD nếu được) ⇒ báo A ⇒ A giao review cả nhánh `p9-b5b`.
+## Câu hỏi cho A
+- B171: ở 6 ca "thiên nhiên 4 ngày" B vẫn lấp có nhãn ("không cùng hướng") thay vì để trống một buổi (lệch chữ D2) — A giữ hay đổi?

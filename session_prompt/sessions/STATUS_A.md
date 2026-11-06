@@ -1,8 +1,13 @@
-# STATUS A — PHIÊN 06/11 (mở 09:54; cập nhật 10:48 06/11/2026 `date`)
+# STATUS A — KẾT PHIÊN 06/11 (mở 09:54; cập nhật 12:18 06/11/2026 `date`)
 
-Terminal `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99` (Claude Code, trực tiếp). Quyền như tối 05/11. Việc giao: `CURRENT_HANDOFF.md` mục "PHIÊN 06/11" (E19 · B5b + B171 · C207 + review).
-- Q3 B5: 2 sub-agent chấm độc lập (khớp 15/15; (ii) 3/5) ⇒ User thấy câu kín không tự nhiên ⇒ gác, làm bộ kín mới.
-- **Bẫy A (đầu vào vòng cải tiến):** (1) A giữ B/C/E rảnh ~50 phút vì chờ User nói "làm đi" dù User đã cấp "A tự điều phối" — User phải hỏi "sao không giao việc" ⇒ quyền tự điều phối đã cấp = giao ngay việc có sẵn trong handoff; (2) bộ kín B5 có câu không tự nhiên — người viết (C), review plan và 2 người chấm đều không bắt; luật "câu đo phải tự nhiên" chưa có bước kiểm khi dựng bộ (đề xuất: User / người ngoài duyệt độ tự nhiên trước khi khoá bộ kín).
+**Phiên sau A:** đọc `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ **cùng lượt** giao B / C / E theo "Phiên sau làm theo thứ tự" (luật mới `WORKFLOW.md` §2.5, §9.2) ⇒ `ListAgents` trước khi kết mỗi lượt.
+**Việc A đầu phiên:** (1) merge `p9-b5b` `1610155` cờ `thoi_tiet` tắt + cổng ổn định (`CURRENT_HANDOFF.md` "Việc đang mở — luật chung") ⇒ hỏi User bật; (2) đưa User file duyệt độ tự nhiên bộ kín v2 (E viết đầu phiên); (3) đọc `data/phase_10/giong_noi/plan_g2_review.md` (sub-agent A giao 06/11 — nếu chưa có file thì giao lại cho C) ⇒ E sửa ⇒ A duyệt sha; (4) quyết câu E: cách chạy bộ kín v2 + ai chạy (C hoặc E; B / C chưa đọc lý do chấm cũ — A cũng không).
+
+- Terminal 06/11: A `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99` (đổi mỗi lần mở).
+- Q3 B5 cũ: 2 sub-agent chấm (khớp 15 / 15; (ii) 3 / 5 — L3 code xếp bỏ sở thích, L5 lời "được" buổi tối) ⇒ **gác** (câu kín không tự nhiên). Lý do chi tiết chỉ ở `data/phase_9/b5/kin/cham_agent_{1,2}.md` — **A không đọc** (nội dung kín). A chỉ biết mức loại lỗi (đã chuyển thành B171 L-a / L-b).
+- Máy dùng chung với dự án khác (phiên A `docker-images-src` chạy ~4–5 GB nhiều giờ 06/11) ⇒ đo latency phải nhắn bên đó trước.
+- Tiền 06/11: A 0 (chấm + review = quota Claude); cả phiên ≈ 0,021 USD (B).
+- **Bẫy A (đầu vào vòng cải tiến — đã ghi S99, S100):** (1) giao việc trễ ~50 phút ⇒ luật mới; (2) bộ kín không tự nhiên không ai bắt ⇒ đề xuất W58; (3) hook giờ ước bắt 2 lần ("10:4x", "12:2x") — đã sửa bằng `date`.
 
 # STATUS A — PHIÊN TỐI 05/11 (mở 19:16; cập nhật 22:03 05/11/2026 `date`)
 

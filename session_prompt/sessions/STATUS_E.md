@@ -1,37 +1,98 @@
-# STATUS E — phiên 06/11 (mở 09:54 06/11/2026) · terminal `hue-rag-99` · Claude Opus 5.5
-
-## Đang làm: E19 (A giao, User: việc A giao = "làm đi") — cập nhật 10:48 06/11/2026
-- (1) TRIPO vòng 4 Playwright (phần chưa thử) · (2) nghiên cứu cách người thật hỏi lịch trình Huế · (3) `data/phase_9/b5_v2/mau_cau_tu_nhien.md` ⇒ nhắn A · (4) sau User duyệt: bộ kín 5 câu `data/phase_9/b5_v2/cau_sealed.jsonl` (không cho A / B / C xem).
-- **Khai báo file sẽ tạo / sửa:** `data/nghien_cuu_tinh_nang_2026-11-06/tripo_v4/` (script, ảnh, JSON, ghi chép) · `data/tra_cuu_cli/2026-11-06_*` (kết quả Codex) · `data/phase_9/b5_v2/` (mẫu câu, bộ kín) · `report_agent/2026-11-06_b5_cau_tu_nhien/e19_implementation.md` · file này. Không sửa code. Tiền 0 USD.
-- Sau E19: giọng nói (script đổi WAV + plan G2, 0 USD).
-
----
-## (Phiên trước) kết phiên tối 22:14 05/11/2026 (`date`) · terminal `hue-rag-bc` · Claude Opus 5.5 · vai thực thi (Phase 10 + review)
+# STATUS E — kết phiên 12:14 06/11/2026 (`date`) · terminal `hue-rag-99` · Claude Opus 5.5 · vai thực thi (Phase 9 B5 v2 câu tự nhiên + Phase 10 giọng nói)
 
 ## PHIÊN SAU ĐỌC TRƯỚC
-- **Ảnh (Phase 10) — xong, cờ tắt:** `main` có `2ca9937` (P1 luna v1 dạng gợi ý có xác nhận) + `76319e2` (CSS khung điện thoại). Báo cáo User `bao_cao_he_thong/BAO_CAO_HOI_BANG_ANH.md` bản 2.
-  E9 SigLIP 2 **âm** cả 3 cách (`report_agent/2026-11-05_phase_10_anh/e9_siglip_implementation.md`). **Câu chờ User (A hỏi):** bật cờ `anh.bat`? xoá collection thử `hue_anh_siglip2` (172 điểm)?
-- **Giọng nói — NGHE:** spec Phase 10 **bản 4 `784d6f7abd9f` User duyệt** (§12 (7) sherpa-onnx, (8) tải model, (10) thu 40 câu; (9) Web Speech **bỏ**). **G0 xong** — nhánh `p10-giong-noi` **`93bbc63`** (đã push; chỉ `pyproject.toml` + `uv.lock`: `sherpa-onnx` + `sherpa-onnx-core` 2.0.1), report `report_agent/2026-11-05_phase_10_anh/e16_g0_giong_noi.md`.
-  Model (private, gitignore) `data/phase_10/giong_noi/models/` 108 MB: `gipformer_68m/` (int8, HF commit `318322b`), `zipformer_30m/sherpa-onnx-zipformer-vi-30M-int8-2026-02-09/`; script `data/phase_10/giong_noi/tools/g0.py`.
-  **Bước kế:** G1 — 40 câu **C đã soạn** (C205, `data/phase_10/giong_noi/bo_40_cau/`, md5 `a24d445bfe61`) ⇒ **chờ User** + ≥ 1 giọng Huế / Trung thu ⇒ E đổi WAV 16 kHz mono bằng `ffmpeg` có sẵn ⇒ **G2** đo 2 model theo **V-a tên riêng ≥ 90 % · V-c số ≥ 90 % · V-d p95 ≤ 1,5 s (câu ≤ 10 s) + RAM ≤ 1,5 GB** (V-b WER chỉ báo; V-e chèn tên sai ≤ 1/40 khi hotwords) ⇒ G3 route + G4 giao diện. Plan G2 ghi trước: 2 luồng; hàm chuẩn hoá số nhận chữ + chữ số (Zipformer ra "TV" / chữ số); dải điểm hotwords thử (Zipformer cần ≥ 8, Gipformer 20 chèn lặp).
-  **Tạo lại worktree** (đã gỡ): `git worktree add /tmp/e_giong p10-giong-noi` ⇒ symlink `data/`, `knowledge-base-hue/` khi cần ⇒ chạy bằng `uv run --project /home/minhhieu/hue_rag …`.
-- **TTS (đọc thành tiếng):** để sau (ứng viên ở `data/phase_10_nghien_cuu/giong_noi/nghien_cuu_mo_hinh.md` §6 — VieNeu-TTS v3 Turbo, ZeroTTS).
 
-## Review đã làm phiên tối
-- **E13 / E15 B6 tra web** (`report_agent/2026-11-02_phase_9_code/b165_review.md`): vòng 1 `9140152` changes_requested 0/2/2 (link HTML `//` lọt server + giao diện; thiếu "lụt" / "áp thấp") ⇒ B sửa `77d51b6` ⇒ vòng 2 **ready** (A đã merge cờ tắt `7ff8e5a`).
-- **E17 / E18 B5b thời tiết** (`report_agent/2026-11-02_phase_9_code/b168_review_som.md`): miễn `[n]` quá rộng (major) ⇒ A chọn khối dự báo thành nguồn `[k]` ⇒ B sửa `a0906a6` ⇒ vòng 2 **đạt**, m-1 dòng trống cuối `test_b5b_thoi_tiet.py`.
-- Khác: E10 khôi phục + push `p10-anh`; Playwright P1 (máy tính + điện thoại); E12 / E14 spec giọng nói bản 3 ⇒ 4; E1 nghiên cứu giọng nói xong.
+### 1. E19 — bộ câu lịch trình tự nhiên cho B5 (việc A giao 06/11)
+
+User đọc phiếu chấm B5 và thấy câu kín cũ không tự nhiên. Vì vậy cần bộ câu giống người thật hỏi.
+
+- **(1)–(3) xong:**
+  - TRIPO vòng 4: `data/nghien_cuu_tinh_nang_2026-11-06/tripo_v4/tripo_v4.md`.
+  - Nghiên cứu cách người thật hỏi: Codex 2 lượt `data/tra_cuu_cli/2026-11-06_e19-*`, ra 20 lượt hỏi tiếng Việt trên VOZ; WebFetch kiểm 3 chủ đề.
+  - Câu mẫu: `data/phase_9/b5_v2/mau_cau_tu_nhien.md` — 8 câu mẫu + bảng 15 loại ràng buộc R1–R15.
+  - Report: `report_agent/2026-11-06_b5_cau_tu_nhien/e19_implementation.md` (A rà rồi commit).
+- **User duyệt giọng 8 câu mẫu** ("Đạt, viết bộ kín theo giọng này"). A chốt hai câu hỏi còn lại:
+  - **không** có câu hai lượt trong bộ kín;
+  - **≥ 2 / 5** câu có phần ngoài lịch (chỗ ở / đi lại / giờ tới).
+- **(4) bộ kín — đã viết:** `data/phase_9/b5_v2/cau_sealed.jsonl`, **5 câu**, md5 **`cd552f7cf7cb`** (sha256 `981ccb5120e6`). 4 / 5 câu có phần ngoài lịch.
+  - Mỗi dòng có: `id`, `cau`, `rang_buoc`, `ngoai_lich`, `b5_mong` (trường B5 mong đợi), `can_cham` (điều cần chấm).
+  - Không cho A / B / C xem. Báo A chỉ md5 + mã ràng buộc:
+
+| Câu | Mã ràng buộc |
+|---|---|
+| K1 | R2 · R3 · R9 |
+| K2 | R1 · R4 · R10 · R14 · R7 · R6 |
+| K3 | R1 · R3 · R5 · R14 · R15 |
+| K4 | R1 · R2 · R4 · R11 · R8 |
+| K5 | R1 · R3 · R6 · R9 · R10 · R15 |
+
+  - Đã đạt các yêu cầu ở §4 của file câu mẫu:
+    - 1 câu ngắn thiếu số ngày;
+    - 2 câu có tên điểm / lịch nháp;
+    - 2 câu có người già / trẻ nhỏ;
+    - câu có viết tắt kiểu "2N1Đ" / "ko";
+    - 1 câu dài, kể hoàn cảnh, nhiều câu hỏi;
+    - đủ 5 giá trị đi cùng (cặp đôi · người lớn tuổi · nhóm bạn · gia đình trẻ em · một mình).
+  - Hàm dò số ngày của code (`do_so_ngay`) trên 5 câu: 4 câu ra đúng số; K1 ra None, đúng ý câu (thiếu số ngày).
+- **Bước kế (CHƯA làm):**
+  1. Viết `data/phase_9/b5_v2/duyet_tu_nhien_user.md` — bản cho **User** đọc, duyệt độ tự nhiên: 5 câu + ô tick "tự nhiên / sửa", không lộ `can_cham`. Đầu file ghi rõ "A / B / C không mở".
+  2. Nhắn A **chỉ đường dẫn** để A đưa User.
+  3. User sửa câu nào ⇒ E sửa ⇒ md5 mới ⇒ báo A.
+  4. Sau đó A tổ chức: B171 sửa 2 loại lỗi code (đo trên bộ đã thấy) ⇒ chạy kín mới ⇒ 2 agent chấm ⇒ User đọc chỗ không đạt.
+
+### 2. Giọng nói — NGHE (Phase 10)
+
+- Spec bản 4 `784d6f7abd9f` đã duyệt.
+- **G0 xong:** nhánh `p10-giong-noi` `93bbc63`, đã push.
+- **G1:** chờ User thu 40 câu (`data/phase_10/giong_noi/thu/` **rỗng** lúc kết phiên). Bộ câu C205: `bo_40_cau/cau.jsonl` md5 `a24d445bfe61`.
+- **Plan G1 + G2 bản 1:** `data/phase_10/giong_noi/plan_g2.md` sha256 **`555a35af92ab`**. **Chờ review** — A giao một sub-agent, kết quả sẽ ở `data/phase_10/giong_noi/plan_g2_review.md` ⇒ sửa nếu cần ⇒ A duyệt sha.
+- Công cụ `data/phase_10/giong_noi/tools/`:
+
+| File | sha256 (12) | Việc |
+|---|---|---|
+| `chuan_hoa.py` | `75544e8560e0` | chuẩn hoá chữ + số; tự kiểm 24 ca OK |
+| `doi_wav.py` | `effed30bcf2a` | G1: ffmpeg ⇒ WAV 16 kHz mono + manifest; không xoá file gốc |
+| `g2_do.py` | `10680ec17c79` | G2: V-a…V-e, chép 2 lần để kiểm tất định, `--cham` chấm lại |
+
+  Đã chạy thử 0 USD trên 3 file mẫu kèm gói model (thư mục thử `/tmp` đã xoá).
+- **Plan chốt** (reviewer có thể đổi):
+  - gộp mọi người đọc khi quyết;
+  - V-a tính cả cụm như nhãn `doc`;
+  - vòng 1 thử hotwords điểm 4 / 8, vòng 2 điểm 12 hoặc 2;
+  - V-e ≤ 1 / 40 lần đọc;
+  - không nhận cách nói tắt "ba lăm nghìn" / "một triệu hai".
+- **Khi User thu xong:** kiểm `thu/nguoi_doc.md` (không tên thật) ⇒ `doi_wav.py` ⇒ xoá file gốc (User `!` nếu `rm` bị chặn) ⇒ đo theo plan ⇒ report ⇒ A.
+- Tạo lại worktree khi cần code G3: `git worktree add /tmp/e_giong p10-giong-noi`.
+- TTS: để sau.
+
+### 3. Việc cũ còn chờ User (A hỏi)
+
+- Bật `anh.bat`?
+- Xoá collection thử `hue_anh_siglip2` (172 điểm)?
+- Luật "gói Python ≥ 2 tuần"?
 
 ## Tiền
-- **E phiên tối: 0,019835 USD** = Playwright P1 0,001634 + E9 P2c 0,015681 (+ 2 lần quá hạn log 0, ≤ ~0,0008) + E11 điện thoại 0,00252. **Phase 10 tổng: 0,098380 / trần 0,15 (dừng 0,13).** Giọng nói 0 USD.
+
+- **E phiên 06/11: 0 USD.** Codex tra web chạy bằng gói ChatGPT; TRIPO không tốn; Playwright và đo giọng nói chạy trên máy.
+- Phase 10 tổng vẫn 0,098380 / trần 0,15.
 
 ## Bẫy / đã học
-- `.venv` chung **có `sherpa-onnx`** nhưng lock `main` chưa có (tới khi `p10-giong-noi` merge): `uv run` (đồng bộ không chặt) giữ gói; **`uv sync` thường ở `main` sẽ gỡ** ⇒ cài lại: từ worktree nhánh `UV_PROJECT_ENVIRONMENT=/home/minhhieu/hue_rag/.venv uv sync --inexact --frozen`. `sherpa-onnx` 2.0.1 mới ~10 ngày (luật "≥ 2 tuần" chỉ có ở `frontend/.npmrc`).
-- CSP trang (`script-src 'self'`) chặn `page.wait_for_function` của Playwright ⇒ chờ bằng locator. Dò giao diện: nạp **chính** `markdown.js` qua import map (`page.route`) thay vì chép lại bộ lọc.
-- Kiểm worktree dò đang ở **đúng sha** trước khi kết luận (E15 suýt kết luận trên code cũ).
-- Đếm ảnh: loại file phiếu `.jsonl` (đầu phiên báo 179 / 34 là đếm nhầm; đúng 172 / 40).
+
+- `.venv` chung **có `sherpa-onnx`**, nhưng `uv.lock` của `main` chưa có (tới khi `p10-giong-noi` merge).
+  - `uv run` giữ gói; **`uv sync` thường ở `main` sẽ gỡ mất**.
+  - Cài lại: từ worktree nhánh chạy `UV_PROJECT_ENVIRONMENT=/home/minhhieu/hue_rag/.venv uv sync --inexact --frozen`.
+- **Codex tra web tiếng Việt:** lượt chung chung chỉ ra 1 bài tiếng Việt. Lượt hai chỉ rõ diễn đàn (VOZ…) và đòi "mở trang 1 của chủ đề" thì ra 20 lượt hỏi ⇒ yêu cầu phải nêu nơi tìm cụ thể.
+- **TRIPO:** biểu mẫu đủ trường ⇒ không gọi mô hình, không hỏi thêm.
+  - Chỉ bấm "Xác nhận phương án"; chờ chữ trang dài thêm ≥ 150–200 ký tự rồi đứng yên 3 × 2 s (đây là bài học vòng 3).
+  - Ô nhập tự sinh câu chậm hơn lúc bấm chip ⇒ đọc giá trị sau cùng.
+- **`do_so_ngay`** không dò được "4n3d" (d không dấu), "2 hôm", "cuối tuần", "đi trong ngày" ⇒ dựa vào model. Đã báo A; không phải lỗi.
+- **Hàm chuẩn hoá số:**
+  - "không" trong "phải không" từng bị đọc thành 0 ⇒ đã bỏ;
+  - "hai trăm nghìn một người" từng ra 200.001 ⇒ đã tách số đơn đứng sau "nghìn".
+- CSP trang chặn `page.wait_for_function` của Playwright ⇒ chờ bằng locator.
 - Script đặt theo đường dẫn không thấy gói `backend/` ⇒ `PYTHONPATH=<worktree>/backend`.
 
 ## Câu hỏi cho A
-- Có thêm luật "gói Python ≥ 2 tuần tuổi" như `frontend/.npmrc` không (sherpa-onnx 2.0.1 ~10 ngày)?
-- (A trả lời 05/11 tối) luật "gói Python ≥ 2 tuần" ⇒ A hỏi User phiên sau, chưa áp. G1: chỉ chờ User thu — E có thể chuẩn bị trước script đổi WAV + plan G2.
+
+- Bộ kín B5 v2: chạy bằng harness đo B5 cũ, đổi đường dẫn bộ câu, hay cần chỗ đọc trường `b5_mong` / `can_cham` cho 2 agent chấm? Người chạy kín không được xem câu, nên cần lệnh `!` chỉ in số đếm (`Session_Prompt.md` §5).
+- Plan G2: chờ kết quả review của sub-agent.

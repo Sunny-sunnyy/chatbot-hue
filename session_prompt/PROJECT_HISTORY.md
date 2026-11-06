@@ -1035,3 +1035,9 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - Sửa lịch 0 USD xong (thẻ rỗng là lỗi ⇒ sửa; kín mô phỏng 5 / 5). Cache câu trả lời ⇒ Phase 12 (nghiên cứu C + ý kiến Session A dự án khác — private); tắt ghi đệm OpenAI âm. Luật S-AT mới. Trần Phase 9 2,5.
 - Tiền phiên tối ≈ 0,26 USD (chốt trong `CURRENT_HANDOFF.md`). Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-05_toi.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-05_b4_am_chia_phase_10_12.md`.
 
+## 2026-11-06 — lịch trình: câu đo không tự nhiên ⇒ bộ kín v2; sửa lỗi lịch trình + thời tiết trên nhánh (A, 12:18 06/11/2026)
+
+- Mở 09:54 (A `hue-rag-f7`, B `hue-rag-85`, C `hue-rag-a4`, E `hue-rag-99`); máy khởi động lại 09:50 ⇒ worktree `/tmp` mất. Quyền như tối 05/11. A giao việc trễ ~50 phút ⇒ luật mới giao ngay + tự kiểm session rảnh (`23ea0f9`, S99).
+- Q3 B5: User chọn agent chấm trước ⇒ 2 sub-agent độc lập khớp 15 / 15, (ii) 3 / 5 ⇒ User thấy câu kín không tự nhiên ⇒ gác (S100). E19: TRIPO vòng 4 + 20 lượt hỏi thật VOZ ⇒ 8 câu mẫu User duyệt giọng ⇒ bộ kín v2 5 câu (md5 `cd552f7cf7cb`).
+- B5b: commit Q8 `18d1cec` ⇒ review C (1 major + 3 minor) ⇒ sửa `0380345` ⇒ C ready ⇒ rebase `1610155`. B171 (`p9-b5-sua` `d5028d4`): sửa lấp điểm ngoài sở thích + câu báo buổi tối ⇒ review C changes_requested (kiểm bắt nhầm). C207: `p9-sua-lich` rebase `09ddaf9`. Plan G2 giọng nói `555a35af92ab` ⇒ sub-agent review.
+- Tiền ≈ 0,021 USD (B). Chatbot không đổi. Chi tiết: `CURRENT_HANDOFF.md` mục "PHIÊN 06/11", nhật ký `bao_cao_he_thong/nhat_ky/2026-11-06_lich_trinh_cau_tu_nhien.md`.
