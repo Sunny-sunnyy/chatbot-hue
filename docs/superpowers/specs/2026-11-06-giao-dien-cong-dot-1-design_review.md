@@ -114,3 +114,35 @@ Không chạy giao diện (chưa có code).
 
 **changes_requested.** A sửa M-1 (định nghĩa lại Q-F) + 5 minor (thêm câu / dòng) ⇒ người review kiểm vòng 2 (chỉ phần sửa).
 Vòng 2 còn minor ⇒ A duyệt (luật 05/11). Không có blocker. Quyết định D1–D14 khớp lựa chọn User; D3 khớp code thật.
+
+---
+
+## Vòng 2 — kiểm phần sửa (E, 22:39 06/11/2026 `date`)
+
+Đối tượng: bản 2 sha256 **`7ada5634a016`** (commit `e3e2592`). Chỉ xem `git diff e3e2592~1 e3e2592` của spec + đường bị ảnh hưởng. 0 USD.
+
+| Finding | Đóng? | Bằng chứng |
+|---|---|---|
+| M-1 (1) 6 kiểu đi cùng | **đóng** | Q-F ghi "`di_cung` 5", phủ đủ **5** giá trị — khớp `DiCung` |
+| M-1 (2) tiêu chí agent không có dữ liệu | **đóng** | F-a định nghĩa trên **khung + chữ model + giá trị nút**, harness lưu cả ba. Bốn ý chấm cụ thể: không nêu điểm / buổi ngoài khung, không nói "được" với buổi trống, lý do đúng khung, hợp người đi cùng. Không cần chữ đoạn nguồn. Bất đồng ⇒ trượt |
+| M-1 (3) phần tất định | **đóng** | "khung = nút ở cả 4 trường", 0 `clarify`, không đưa `lich_trinh` ⇒ test 0 USD trên **mọi** tổ hợp (4 × 5 × `kieu_di` × 6) |
+| M-1 (4) Q-U3 ↔ bộ tổ hợp | **đóng** | Q-U3 "chốt **trước** khi ghi bộ tổ hợp"; 12 tổ hợp ghi vào report S3 trước lượt chạy |
+| M-1 nhãn trùng (iii) | **đóng** | đổi thành "F-a" |
+| m-1 D3 chi tiết | **đóng** | câu cố định do code dựng, vào lịch sử; lượt biểu mẫu chỉ đưa `tim_kho`; giới hạn sửa lịch bằng chat + câu giao diện "điền lại biểu mẫu" |
+| m-2 Q-G | **đóng** | 7 / 7 đích luôn có (trợ lý · 5 trang lĩnh vực · Giới thiệu), cộng mục theo cờ; tương phản đo bằng script WCAG từ token `index.css` |
+| m-3 D1 nguồn web | **đóng** | mục "Từ web (chưa kiểm)" giữ khối riêng + link như `main`, bỏ số trong chữ |
+| m-4 §7 | **đóng** | thêm dòng "toàn văn bài kho ra trình duyệt" (local chấp nhận; trước deploy xét lại + giới hạn tần suất) và dòng cờ tắt (`/api/thoi_tiet` 404) |
+| m-5 ảnh | **đóng** | Q-U2 (b) "tải về, đóng vào bản build, CSP giữ" |
+
+### Finding mới
+
+- **n-1 (minor) — `tim_kho` ở lượt biểu mẫu luôn bị chặn.**
+  - D3 đưa model **chỉ** `tim_kho`. Nhưng code hiện tại trả `TOOL_DA_DU_LICH` cho mọi lần gọi `tim_kho` khi `trace.lich` đã có (`assistant.py` hàm `tim_kho`; E20 §4). Ở đường biểu mẫu, lịch luôn xếp trước lần sinh ⇒ công cụ được đưa nhưng không bao giờ tìm.
+  - Theo E20, lượt từ chối đi kèm đúng lần gọi bị chặn này. Biểu mẫu không có câu hỏi kèm nên rủi ro thấp, và Q-F đã có sàn "0 lượt từ chối".
+  - **Đóng (lúc code, không cần review lại):** B chọn một trong hai và ghi report:
+    - không đưa công cụ nào ở lượt biểu mẫu — gọn hơn, bớt token mô tả công cụ;
+    - hoặc giữ `tim_kho`, ghi lý do.
+
+### Kết luận vòng 2: `ready_for_user_confirmation`
+
+M-1 + 5 minor vòng 1 đã đóng. Còn n-1 (minor, quyết lúc code). Theo luật 05/11: vòng 2 chỉ còn minor ⇒ A duyệt sha bản 2 ⇒ User duyệt spec một lần.

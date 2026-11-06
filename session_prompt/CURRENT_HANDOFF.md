@@ -51,6 +51,7 @@ Nguyên văn phiên tối 05/11 (mọi việc giao + quyết định theo giờ)
 - **B172 xong (22:29 06/11/2026):** `data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md` (TRIPO 17 trang + Visit Wales, GO TOKYO, GoVietnam, Visit Vietnam, Layla; 15 mẫu nên học; 10 điều không chép); thiếu lớn: **ảnh được phép dùng** (kho 2 file có ảnh) ⇒ câu hỏi User.
 - **B173 (B, 22:29 06/11/2026):** 3 bản mẫu HTML tĩnh (trang chủ, danh sách, chi tiết, khung chat nổi; 3 hướng màu gợi Huế, không giống nhận diện TRIPO) ⇒ `data/nghien_cuu_giao_dien_2026-11-06/mau/` + ảnh 1440 / 390 ⇒ User chọn hướng.
 - **Spec đợt 1 bản 1 (22:34 06/11/2026):** `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` sha `03904f669e8f` (C211 phần kỹ thuật `spec_dot1_ky_thuat_nhap.md`; A xác nhận trong code: `lich_trinh_for_turn` cho tham số model thắng nút ở 3 trường ⇒ D3 đường biểu mẫu code quyết) ⇒ **E review vòng 1** ⇒ User duyệt sha + Q-U1…Q-U5. **C rảnh có lý do:** chờ User duyệt spec (C làm S3 đo + S4 review).
+- **Spec đợt 1 bản 2 (22:39 06/11/2026):** sha **`ff3c317ec88b`** — E review vòng 1 changes_requested (1 major Q-F chưa đo được + 5 minor) ⇒ A sửa ⇒ vòng 2 **ready** (n-1 sửa chữ: lượt biểu mẫu không đưa công cụ). **Chờ User duyệt sha.**
 - **A:** sau B172 ⇒ viết spec đợt 1 (`docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`, có 5 dòng khám phá + bảng rà AI FDE nhẹ + tiêu chí nghiệm thu) bằng skill thiết kế (`frontend-design`) ⇒ review chéo ⇒ User duyệt ⇒ B code.
 
 ## PHIÊN 06/11 (09:54 – kết 12:17 06/11/2026) — nguyên văn việc giao + trạng thái từng session
