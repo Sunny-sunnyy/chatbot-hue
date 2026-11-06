@@ -164,13 +164,13 @@ def test_l_b_evening_refused_gets_reason_frame_line_and_check():
     assert {"diem": "buổi tối", "ma_luat": "toi_tre_em"} in kid["khong_xep"] and lt.kiem_khung(BANG, kid) == []
     nguon = {i: n for n, i in enumerate(lt.diem_trong_khung(kid), 1)}
     assert lt.CAU_KHONG_XEP["toi_tre_em"] in lt.khoi_ghi_chu(BANG, kid, nguon)
-    assert lt.khung_chu(BANG, kid, nguon, "LUAT").endswith(lt.DONG_KHUNG_TOI)
+    assert lt.khung_chu(BANG, kid, nguon, "LUAT").endswith(lt.DONG_KHUNG_TOI["toi_tre_em"])
     assert {"diem": "buổi tối", "ma_luat": "toi_lon_tuoi"} in khung(di_cung="nguoi_lon_tuoi", hoi_toi=True)["khong_xep"]
     assert {"diem": "buổi tối", "ma_luat": "toi_khong_diem"} in khung(so_thich="di_tich", di_cung="mot_minh", hoi_toi=True)["khong_xep"]
     food = khung(so_thich="am_thuc", di_cung="mot_minh", hoi_toi=True)  # có phố đêm hợp sở thích ⇒ buổi tối được xếp, không câu từ chối
     assert any(ng["buoi"]["toi"] for ng in food["ngay"]) and not any(x["ma_luat"] in lt.MA_TOI for x in food["khong_xep"])
     plain = khung(di_cung="gia_dinh_tre_em")  # không xin buổi tối ⇒ khung + ghi chú như trước
-    assert lt.DONG_KHUNG_TOI not in lt.khung_chu(BANG, plain, {i: 1 for i in lt.diem_trong_khung(plain)}, "LUAT")
+    assert "Buổi tối: để trống" not in lt.khung_chu(BANG, plain, {i: 1 for i in lt.diem_trong_khung(plain)}, "LUAT")
     assert not any(x["ma_luat"] in lt.MA_TOI for x in plain["khong_xep"])
     ok = "\n".join(f"{lt.NHAN_BUOI[b]}: {BANG.theo_id[i]['ten']} [{nguon[i]}]." for ng in kid["ngay"] for b in lt.BUOI for i in ng["buoi"][b])
     assert lt.kiem_cuoi(BANG, ok, kid, nguon) == []
@@ -192,6 +192,13 @@ def test_l_b_evening_refused_gets_reason_frame_line_and_check():
 ])
 def test_l_b_evening_contradiction_probe(cau, nguoc):
     assert lt._noi_nguoc_toi(cau) is nguoc
+
+
+def test_evening_frame_line_is_user_readable_and_not_a_contradiction():
+    # A 06/11 tối: model chép nguyên dòng khung tối vào lời ⇒ dòng phải đọc được cho người dùng (không lời dặn model) và không bị kiểm cuối bắt
+    assert set(lt.DONG_KHUNG_TOI) == set(lt.MA_TOI)
+    for ma, dong in lt.DONG_KHUNG_TOI.items():
+        assert "gợi ý" not in dong and not lt._noi_nguoc_toi(dong) and not lt._noi_nguoc_toi(f"- {dong}")
 
 
 def test_m2_fill_count_excludes_named_points_outside_preference():
@@ -466,7 +473,7 @@ def test_l_b_turn_passes_evening_request_from_question(deps):
     script = lambda n, kw: [lich_call(so_ngay="1", di_cung="gia_dinh_tre_em")] if n == 1 else [answer(viet_theo_khung(kw))]  # noqa: E731
     trace, _ = run(deps, "Lên lịch Huế 1 ngày cho nhà có 2 bé, tối thì đi đâu?", generator(script), ON)
     assert trace.lich["khung"]["tham_so"]["hoi_toi"] and trace.citation_error is None and trace.lich_kiem == []
-    assert lt.CAU_KHONG_XEP["toi_tre_em"] in trace.answer and lt.DONG_KHUNG_TOI in trace.context_parts[-1]
+    assert lt.CAU_KHONG_XEP["toi_tre_em"] in trace.answer and lt.DONG_KHUNG_TOI["toi_tre_em"] in trace.context_parts[-1]
 
 
 def test_search_twice_then_itinerary_within_turn_limit(deps):

@@ -56,7 +56,13 @@ CAU_KHONG_XEP = {
     "toi_khong_diem": "Buổi tối mình chưa xếp vì bảng điểm của mình chưa có điểm buổi tối hợp sở thích của bạn.",
 }
 MA_TOI = ("toi_tre_em", "toi_lon_tuoi", "toi_khong_diem")
-DONG_KHUNG_TOI = "Buổi tối: không xếp — không gợi ý hoạt động buổi tối."
+# Dòng khung gửi model khi code từ chối buổi tối — viết cho **người dùng đọc** (model hay chép nguyên dòng khung vào lời: B171 đo 4 / 4),
+# lý do do code chọn theo mã luật; không chứa lời dặn model (A quyết 06/11 tối)
+DONG_KHUNG_TOI = {
+    "toi_tre_em": "Buổi tối: để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
+    "toi_lon_tuoi": "Buổi tối: để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
+    "toi_khong_diem": "Buổi tối: để trống — bảng điểm của mình chưa có điểm buổi tối hợp sở thích của bạn.",
+}
 # D4b (1) — giả định công khai khi trường không bắt buộc bị thiếu; D15 (bản 7) "Trả lời luôn" ⇒ 1 ngày tạm
 CAU_GIA_DINH = {
     "so_ngay_tam": "Mình tạm xếp cho 1 ngày — bấm Sửa để đổi.",
@@ -370,8 +376,9 @@ def khung_chu(bang: Bang, khung: dict, nguon: dict[str, int], luat: str, nguon_v
                     gio = f"{gio} [{nguon_ve}]"
                 nhan = " ◦" if id_ in khung["ngoai_so_thich"] else ""
                 dong.append(f"- {NHAN_BUOI[b]}: {d['ten']}{nhan} [{nguon[id_]}]" + (f" · giờ: {gio}" if gio else ""))
-    if _tu_choi_toi(khung):  # L-b: chỉ khi người dùng xin buổi tối mà code không xếp — lượt khác chữ khung giữ nguyên
-        dong.append(DONG_KHUNG_TOI)
+    for k in khung["khong_xep"]:  # L-b: chỉ khi người dùng xin buổi tối mà code không xếp — lượt khác chữ khung giữ nguyên
+        if k["ma_luat"] in MA_TOI:
+            dong.append(DONG_KHUNG_TOI[k["ma_luat"]])
     return "\n".join(dong)
 
 
@@ -520,13 +527,13 @@ def co_dang_lich(text: str) -> bool:
 
 # B171 (L-b) kiểm "nói ngược khung" — chỉ chạy khi code đã từ chối buổi tối người dùng xin: (a) dòng lịch mở bằng nhãn buổi tối; (b) câu nhắc
 # tối / đêm mà khẳng định làm được ("được", "có thể"). Cả hai bỏ qua câu có từ phủ định hoặc lời khuyên nghỉ / về khách sạn / chuẩn bị
-# (review C M-1: "Buổi tối: tự do.", "Tối về khách sạn sớm để bé ngủ." từng bị bắt nhầm ⇒ rút cả câu trả lời). Không dùng luật "phải có tên
+# ("để trống" = dòng khung `DONG_KHUNG_TOI` model hay chép) (review C M-1: "Buổi tối: tự do.", "Tối về khách sạn sớm để bé ngủ." từng bị bắt nhầm ⇒ rút cả câu trả lời). Không dùng luật "phải có tên
 # điểm của bảng": lời hứa buổi tối thường không nêu tên điểm ("Tối: ăn chè.") — 6 / 6 câu nói ngược trong ca dò của C không có tên điểm nào.
 _DONG_TOI = re.compile(r"^(?:buổi\s+)?tối(?![\w])")
 _NHAC_TOI = re.compile(r"(?<![\w])(?:tối(?!\s+(?:đa|ưu|thiểu|giản|mật|cao|tân|thượng|hậu|quan\s+trọng))|đêm)(?![\w])")
 _TROI_TOI = re.compile(r"(?<![\w])trời\s+tối(?![\w])")  # "trước khi trời tối" = lúc trời tối, không phải hoạt động buổi tối
 _KHANG_DINH = re.compile(r"(?<![\w])(?:được|có\s+thể)(?![\w])")
-_KHONG_HOAT_DONG = re.compile(r"(?<![\w])(?:không|chưa|đừng|tránh|nghỉ|tự\s+do|khách\s+sạn|ngủ|thư\s+giãn|chuẩn\s+bị)(?![\w])")
+_KHONG_HOAT_DONG = re.compile(r"(?<![\w])(?:không|chưa|đừng|tránh|nghỉ|tự\s+do|để\s+trống|khách\s+sạn|ngủ|thư\s+giãn|chuẩn\s+bị)(?![\w])")
 
 
 def _noi_nguoc_toi(text: str) -> bool:
