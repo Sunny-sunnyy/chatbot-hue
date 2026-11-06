@@ -143,3 +143,36 @@ Lượt `chay`: `OPENAI_API_KEY=<khoá giả>`, `OPENAI_BASE_URL=http://127.0.0.
 Hai chỗ cần **A chốt trước lượt có phí đầu**: m-1 (Q3 chặt hay theo hành động — E khuyến nghị in cả hai) và m-5 (ghi nhận cách hiểu Q2 (b) sau xếp lại).
 m-4 sửa bằng harness hoặc bằng runbook đều được.
 Người kiểm lại: chạy probe M-1 (khoá giả, TD2) + `kiem` ⇒ vẫn 10 / 10, 9 / 9; dùng lại các kiểm khác của bản này nếu phần sửa không chạm `lenh_chay` ngoài dòng in.
+
+---
+
+## Vòng 2 — kiểm phần sửa (E, 21:33 06/11/2026 `date`)
+
+Đối tượng: `chay_sua_lich.py` md5 **`b68e7c970782`** (vòng 1 `c4dee2ccf654`). Bảng sửa của C: `c207_rebase_sua_lich.md` §7 "Sửa theo review E"; README bộ đo mục "Cách chấm của harness".
+Chỉ xem phần sửa + đường bị ảnh hưởng; worktree tạm `/tmp/e_rv_sl` (`09ddaf9`, đã gỡ). 0 USD. Không mở `chuoi_sealed*`.
+
+### Đối chiếu từng finding
+
+| Finding | Đóng? | Bằng chứng |
+|---|---|---|
+| M-1 Q4 đạt rỗng | **đóng** | Đọc `cham_q4`: trả "không đo được" khi `luu_truoc` None hoặc khi tuyến `tro_ly_hue` có khung mà `sua_lich` không được đưa; đếm `q4_khong_do`, danh sách `khong_do`. Ca dò E [Chạy] (cách khác C: gọi thẳng `cham_q4` với dòng tự dựng): tuyến khẩn cấp có khung + không đưa công cụ ⇒ **vẫn đo**, đúng vì tuyến khẩn cấp không đưa công cụ; có khung + gọi nhầm ⇒ lỗi "gọi sua_lich nhầm"; 0 dòng `chat_metrics` ⇒ không đo được |
+| m-1 Q3 = hành động (A chốt) | **đóng** | `ok = ok and not q3` (không gộp Q2); lượt `retracted` vẫn chấm hành động; `rut_lai_kiem_cuoi` (chuỗi, lần, lượt, mã) in cả khi `--so`. `kiem` [Chạy]: ca ngược "kiểm cuối ở lượt đúng nhãn ⇒ Q3 vẫn đạt + liệt kê" đúng |
+| m-2 `n_metrics` ≠ 1 | **đóng** | `cham_luot` / `cham_q4` ⇒ không đo được; `kiem`: ca phá "2 dòng chat_metrics" bắt |
+| m-3 tóm tắt sau DỪNG | **đóng** | [Chạy] ⇒ `"da_chay": [], "chua_chay": ["TD2"]` |
+| m-4 trần cả đợt | **đóng** | `--dung` mặc định 0,19, cộng `usd` + `usd_bo` mọi `*.jsonl` cùng thư mục. [Chạy]: 2 file giả tổng 0,19 ⇒ "DỪNG … cả đợt 0.190000 USD" trước chuỗi đầu, 0 lượt gọi |
+| m-5 Q2 (b) sau xếp lại | **đóng** | Thêm `_giu_khi_xep_lai` viết theo chữ D5, độc lập với code: điểm còn hợp tham số mới phải giữ chỗ, trừ điểm hành động cùng lượt chạm. Đường dự phòng "xếp lại không giữ" của code sẽ hiện thành vi phạm (b) ⇒ đọc tay — ghi rõ ở README. `kiem`: Q2 0 / 42 (không báo nhầm trên mô phỏng đúng nhãn), ca phá "xếp lại không giữ chỗ" bắt |
+| m-6 chuỗi dở | **đóng** | Dòng "bỏ qua" tách "đủ lượt" / "DỞ (k / n lượt)", ghi rõ là lỗi chạy, không phải lỗi model (đọc code; C đã chạy ca xoá dòng cuối) |
+
+`kiem chuoi_da_thay.jsonl` [Chạy]: Q3 **10 / 10**, Q2 **0 / 42**, ca phá + ca ngược **13 / 13**, khớp C.
+Bất biến vòng 1 (bọc hàm gọi hàm thật với cùng đối số; chuỗi đã có ở cùng lần không chạy lại; log 0 câu hỏi): phần code đó không đổi ngoài dòng in ⇒ **dùng lại** kết quả vòng 1.
+
+### Finding mới
+
+- **n-1 (minor) — thư mục kết quả chưa có ⇒ lệnh `chay` lỗi.**
+  - **Bằng chứng [Chạy]:** out trỏ vào thư mục chưa tạo ⇒ `FileNotFoundError` ở `out.open("a")`. Lỗi xảy ra sau khi nạp app, **trước** mọi lượt gọi ⇒ 0 USD.
+  - Thư mục `data/phase_9/sua_lich/do/` mà lệnh pilot dùng **chưa có** (đã `ls`).
+  - **Đóng:** `out.parent.mkdir(parents=True, exist_ok=True)`, hoặc runbook thêm `mkdir -p $K` trước pilot. Sửa lúc chạy, không cần review lại.
+
+### Kết luận vòng 2: `ready_for_user_confirmation`
+
+M-1 và 6 minor vòng 1 đã đóng. Còn n-1 (minor, 1 dòng, không tốn tiền nếu quên). Harness đủ để chạy pilot S01 + S06 khi A cho.

@@ -27,6 +27,8 @@
 - **(21:10 06/11/2026) Việc mới A giao: review harness sửa lịch của C** (một vòng, 0 USD; không mở `chuoi_sealed*`, không đọc STATUS_C). Ghi: `report_agent/2026-11-02_phase_9_code/c207_harness_review.md` (mới), worktree tạm `/tmp/e_rv_sl` (gỡ khi xong).
 - **(21:17 06/11/2026) Review harness sửa lịch XONG:** `report_agent/2026-11-02_phase_9_code/c207_harness_review.md` — changes_requested, 1 major (Q4 đạt rỗng khi lượt lịch không có khung) + 6 minor; A chốt m-1 (Q3 chặt hay theo hành động) + m-5. Worktree `/tmp/e_rv_sl` đã gỡ. 0 USD.
   - A chốt: m-1 Q3 = hành động đúng nhãn, rút lại do kiểm cuối in số riêng + danh sách mã; m-5 giữ cách hiểu của C chỉ khi có test code giữ chỗ sau xếp lại (ghi tên test), không có ⇒ thêm lại kiểm. **Chờ C sửa harness ⇒ E kiểm phần sửa, ghi nối vào `c207_harness_review.md` ⇒ nhắn A.**
+- **(21:33 06/11/2026) Harness vòng 2 XONG:** ready (`c207_harness_review.md` mục "Vòng 2"), còn n-1 minor (mkdir thư mục `do/`).
+- **(21:33 06/11/2026) Bộ kín v2 — User bàn thẳng với E** (A cho): User đọc ⇒ K1 đạt, K2–K5 cần sửa (chưa thực tế, dài dòng). E viết lại 4 câu ngắn (mục "Vòng 2" trong `duyet_tu_nhien_user.md`); bản cũ `cau_sealed_v1_bo.jsonl`. Ghi `cau_sealed.jsonl` bị auto mode chặn ⇒ lệnh User `!`: `cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run python /tmp/e_kin_moi.py --ghi && md5sum ../data/phase_9/b5_v2/cau_sealed.jsonl | cut -c1-12` (script `/tmp` mất nếu máy khởi động lại ⇒ viết lại theo mục Vòng 2). Chờ User duyệt lại ⇒ md5 mới ⇒ báo A ⇒ sửa md5 trong lệnh chạy kín.
 - **File sắp sửa (khai báo):** `data/phase_9/b5_v2/duyet_tu_nhien_user.md` (mới), `data/phase_10/giong_noi/plan_g2.md`, `session_prompt/sessions/STATUS_E.md`, mục E trong `CURRENT_HANDOFF.md`. Không sửa code.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
