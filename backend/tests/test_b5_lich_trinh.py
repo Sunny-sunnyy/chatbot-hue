@@ -22,6 +22,7 @@ from core.settings_loader import load_settings
 from llm import lich_trinh as lt
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, nap_bang_lich
 from llm.do_so import do_so_ngay
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from llm.hoi_lai import TruongInput, ghep_cau, the_hoi_lai
 from llm.so_tien import tim_so_tien
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder
@@ -422,6 +423,27 @@ def test_answer_now_never_asks_twice_and_marks_one_day(deps):
     k = trace.lich["khung"]
     assert k["tham_so"]["so_ngay"] == "1" and k["tham_so"]["so_ngay_tam"] and len(k["ngay"]) == 1
     assert trace.answer.startswith("Mình hiểu: 1 ngày (tạm)") and lt.CAU_GIA_DINH["so_ngay_tam"] in trace.answer
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_t3_refusal_with_frame_becomes_code_built_itinerary(deps, stream):
+    # B171 T3 (b): câu hỏi phụ (có / không về buổi tối không xếp) ⇒ model trả nguyên câu từ chối dù đã có khung ⇒ code dựng lời lịch tối thiểu
+    # (có trích dẫn) thay vì rút lại; stream: chữ giữ tới khi biết không phải câu từ chối ⇒ người dùng không thấy câu từ chối rồi bị thay
+    cau = "Lên lịch Huế 2 ngày cho ông bà, thích thiên nhiên, tối đi thuyền nghe ca Huế được không?"
+    script = lambda n, kw: [lich_call(so_ngay="2", di_cung="nguoi_lon_tuoi", so_thich="thien_nhien")] if n == 1 else [answer(INSUFFICIENT_ANSWER)]  # noqa: E731
+    trace, events = run(deps, cau, generator(script), ON, stream=stream)
+    k, nguon = trace.lich["khung"], trace.lich["nguon"]
+    assert trace.citation_error is None and trace.lich_kiem == [] and INSUFFICIENT_ANSWER not in trace.answer
+    assert trace.lich["chu_thay"] == lt.loi_lich_toi_thieu(BANG, k, nguon) and trace.answer.startswith("Mình hiểu")
+    assert all(f"{BANG.theo_id[i]['ten']} [{nguon[i]}]" in trace.answer for i in lt.diem_trong_khung(k))
+    assert lt.CAU_KHONG_XEP["toi_lon_tuoi"] in trace.answer and lt.TIEU_DE_GHI_CHU in trace.answer
+    if stream:
+        assert "".join(d for kind, d in events if kind == "delta") == trace.answer
+    viet = lambda n, kw: [lich_call(so_ngay="2", di_cung="nguoi_lon_tuoi", so_thich="thien_nhien")] if n == 1 else [answer(viet_theo_khung(kw))]  # noqa: E731
+    thuong, ev = run(deps, cau, generator(viet), ON, stream=stream)  # model viết lịch ⇒ giữ chữ model, không thay
+    assert "chu_thay" not in thuong.lich and thuong.citation_error is None and lt.loi_lich_toi_thieu(BANG, thuong.lich["khung"], thuong.lich["nguon"]) not in thuong.answer
+    if stream:
+        assert "".join(d for kind, d in ev if kind == "delta") == thuong.answer
 
 
 def test_full_itinerary_turn_stream_order_and_text(deps):

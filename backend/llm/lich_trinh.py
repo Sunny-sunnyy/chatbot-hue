@@ -563,6 +563,18 @@ def kiem_cuoi(bang: Bang, text: str, khung: dict | None, nguon: dict[str, int] |
     return loi
 
 
+def loi_lich_toi_thieu(bang: Bang, khung: dict, nguon: dict[str, int]) -> str:
+    """B171 T3 (b, A chốt 06/11): lượt có khung mà chữ model đúng bằng câu từ chối (câu hỏi phụ kho không có, vd hỏi có / không về buổi tối
+    không xếp) ⇒ code dựng lời lịch tối thiểu từ khung: mỗi ngày một tiêu đề, mỗi điểm một dòng "Sáng: tên [n]". Lõi ghép dòng "Mình hiểu"
+    + khối ghi chú như thường; chữ này đi qua kiểm cuối + kiểm citation như chữ model."""
+    dong: list[str] = []
+    for ng in khung["ngay"]:
+        diem = [f"- {NHAN_BUOI[b]}: {bang.theo_id[i]['ten']} [{nguon[i]}]" for b in BUOI for i in ng["buoi"][b]]
+        if diem:
+            dong += ["", f"**Ngày {ng['ngay']}**", *diem]
+    return "\n".join(dong).strip()
+
+
 def dem_nhac_lai(bang: Bang, text: str, khung: dict) -> int:
     """D8 (8) — chỉ đếm (Q5): số câu giả định / lưu ý của khối D4b mà model chép lại."""
     t = unicodedata.normalize("NFC", text).casefold()
