@@ -127,11 +127,11 @@ B1 (context 10 + NFC) rebase lên `main` mới ⇒ nhánh `p82-b1` `811d25d` (27
 8B đã thử 30/10: kém hơn, không chọn, index thử đã xoá.
 
 **Qdrant** `127.0.0.1:6335` (gRPC 6336; port đổi để chạy song song
-một dự án khác của User). Còn đúng **1 collection** `hue_full_corpus_7a2_e5_small_384` (8.424
-point). Hai collection Foods đã xóa ở B9 (24/10, User chạy); code/test/notebook Foods cũ đã gỡ
+một dự án khác của User). Collection chatbot `hue_full_corpus_7a2_e5_small_384` (8.435
+point) + collection thử ảnh `hue_anh_siglip2` (172 điểm, chờ User quyết xoá). Hai collection Foods đã xóa ở B9 (24/10, User chạy); code/test/notebook Foods cũ đã gỡ
 (`1832201`).
 
-**Corpus:** 204 file → 8.424 chunk (28/10: đợt sửa kho 123 sửa / 65 file, loại file danh mục `performing_arts`; 30/10 đợt 2: 123 sửa / 40 file, 2 dòng xoá ⇒ −2 đoạn, chunk_id `file#số` dồn ở 2 file; chunker giữ nguyên từ Phase 2: chia theo cấu
+**Corpus:** 204 file → 8.435 chunk (05/11 tối: giờ mở cửa 11 file; 28/10: đợt sửa kho 123 sửa / 65 file, loại file danh mục `performing_arts`; 30/10 đợt 2: 123 sửa / 40 file, 2 dòng xoá ⇒ −2 đoạn, chunk_id `file#số` dồn ở 2 file; chunker giữ nguyên từ Phase 2: chia theo cấu
 trúc Markdown, không overlap có chủ đích (thực tế 3 cặp chunk lặp body: blockquote lồng trong list
 item, `markdown_blocks.py:233-250`, B8 2026-10-24), mỗi chunk vừa cả 3 tokenizer e5-small 512 / e5-base
 512 / huydang 256; trung vị 85 token e5). `knowledge-base-hue/` không có Git
