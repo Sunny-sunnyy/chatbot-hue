@@ -15,6 +15,51 @@ Vai: thực thi. Terminal phiên tối 06/11: A `hue-rag-cc` · B `hue-rag-1a` �
   - Sinh lại: `uv run python data/nghien_cuu_giao_dien_2026-11-06/tools/dung_mau.py` rồi `chup_mau.py`, `do_tuong_phan.py`.
 - Khi spec đợt 1 duyệt ⇒ B code (A giao).
 
+## Phiên sau — S1 / S2 cổng đợt 1 (bổ sung 22:46 06/11/2026 `date`, A nhờ)
+**Điều kiện bắt đầu:**
+- S1 backend: User duyệt spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` sha **`ff3c317ec88b`** (`sha256sum … | cut -c1-12` — đổi sha ⇒ đọc lại).
+- S2 frontend: thêm Q-U1 (bản mẫu) + Q-U2 (ảnh) + Q-U5 (tên cổng).
+- Q-U3 "đi dày": mặc định ẩn. Q-U4 bật thời tiết: ô thời tiết ẩn khi cờ tắt.
+
+**Đọc trước:**
+- spec §2 D1–D14, §6 tiêu chí;
+- `data/nghien_cuu_giao_dien_2026-11-06/spec_dot1_ky_thuat_nhap.md` (C211: mỗi ý có `file:hàm`);
+- bản mẫu User chọn (`mau/<n>.html`, sinh từ `tools/dung_mau.py`).
+
+**Nhánh:** `p11-cong-dot-1` từ `main` mới nhất, worktree `/tmp/b_cong` (symlink `data/`, `knowledge-base-hue/`; `npm ci && npm run build` trong `frontend/` của worktree).
+
+**S1 — file / hàm sẽ sửa (dự kiến, đối chiếu C211 trước khi code):**
+- `backend/api/routes/chat.py`:
+  - `ChatRequest` thêm `bieu_mau` (D3) — kiểm ghép với `truong: TruongInput` (B4) đã có;
+  - `SourceResponse` + `_source_responses` thêm `bai_id` (D7);
+  - đường `/api/chat` + `/api/chat/stream` rẽ nhánh khi `bieu_mau`.
+- `backend/llm/assistant.py`:
+  - nhánh biểu mẫu: bỏ `_pick_route`, code gọi phần xếp của `lich_trinh_for_turn` (`lt.xep` + `_lay_nguon_lich` + `khung_chu`) với giá trị nút ở **cả 4 trường**, rồi sinh **không công cụ**;
+  - `_finish_generated` giữ kiểm cuối D8 + T3 (b) `chu_thay`;
+  - `AssistantFlags` + `BOOL_FIELDS` thêm `lich_trinh_bieu_mau` (D4).
+- `backend/config/settings.yaml` (cờ, tắt).
+- Route mới D6 trong `backend/api/routes/` + đăng ký ở `backend/api/app.py` `create_app`: `/api/kham_pha`, `/api/kham_pha/bai`, `/api/thoi_tiet` (`llm/thoi_tiet.py` `lay_du_bao`), `/api/tinh_nang`.
+- Test:
+  - mọi tổ hợp nút (Q-F phần tất định), 404 cho id lạ / `..` / `evaluation/` / `sealed`, khuôn JSON có `bai_id`;
+  - khoá tập trường `chat_metrics` (`test_api_chat.py`) nếu thêm trường log.
+- Kiểm: Q1 228 / 228 giống byte (`capture_all.py`, cờ mới tắt) + Q1m (cờ `lich_trinh_bieu_mau` bật).
+
+**S2:** `frontend/src/App.jsx` (tách trang theo hash D5), `markdown.js` (bỏ số `[n]` ⇒ dòng Nguồn D1; link ngoài `rel="noopener noreferrer"` D11), `index.css` (token theo bản mẫu), `stream.js`.
+- Đo Q-G tương phản: dùng lại `data/nghien_cuu_giao_dien_2026-11-06/tools/do_tuong_phan.py` (đo chữ thật trên trang; trỏ vào bản build thay file mẫu).
+- Bundle gzip ≤ 200 KB.
+
+**Bẫy đã thấy khi đọc spec / code (chưa code):**
+- Cờ **#6 `song_song_tra_loi` đang BẬT**: route stream đi qua `answer_turn_stream_parallel` (chạy trước phần trả lời cùng lúc định tuyến). Nhánh biểu mẫu phải rẽ **trước** đường song song (không định tuyến, không chạy trước).
+- Hiện khung lịch tới model qua **kết quả công cụ** `lich_trinh` (gồm `LICH_TRINH_LUAT`). Lượt biểu mẫu "không công cụ" ⇒ khung + luật phải vào ngữ cảnh / tin nhắn do code dựng. Đổi chuỗi gửi model khi cờ bật ⇒ cần test mỗi loại lượt (`WORKFLOW.md` §4 (4c)).
+- 4 bài nằm ngay gốc lĩnh vực (file hướng dẫn chung của 4 lĩnh vực festivals / foods / heritages / performing_arts — tên ở `corpus.sources`) ⇒ không có "loại con" theo thư mục cấp 2 (D10). `travel` không có bài gốc. `corpus.sources` là dict 204 khoá dạng `<lĩnh vực>/<loại>/<tên>.md`.
+- Câu `query` cố định do code dựng từ nút: không được khớp `hoi_buoi_toi` nhầm. Biểu mẫu không có trường buổi tối ⇒ `hoi_toi` false.
+- `frontend/dist/` không commit; `test_static_ui` cần bản build trong worktree.
+
+**Câu hỏi / thắc mắc cho A (hỏi khi bắt đầu S1):**
+1. D3 dùng lại `truong` (TruongInput, 4 trường B4) + `bieu_mau: true`, hay trường riêng? Câu `query` cố định dựng bằng `ghep_cau` B4 hay câu mới?
+2. Lượt biểu mẫu khi `kieu_di` bị ẩn (Q-U3) ⇒ `kieu_di = None` (giả định "thong thả" do code nối như hiện nay) — đúng ý spec?
+3. Thứ tự spec §5 / handoff mục 3 ghi "S1 sau khi User duyệt spec **+ chọn bản mẫu**", nhưng đoạn "Mặc định đã ghi trong spec" nói S1 chỉ cần duyệt spec ⇒ B hiểu: S1 chạy ngay khi spec duyệt, S2 chờ Q-U1 / Q-U2 / Q-U5.
+
 ## Tiền B phiên tối 06/11: 0,010975 USD (chỉ B171: M-1 0,002843 + T3 0,002337 + dòng tối 0,003915 + T5 / T5b 0,00188); B172 / B173 0 USD.
 
 ## Bẫy mới phiên tối

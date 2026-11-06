@@ -13,6 +13,18 @@
    User chọn ⇒ E chốt v6 theo ô tick (A giao).
 3. Việc cũ A hỏi User: bật `anh.bat`? xoá collection thử `hue_anh_siglip2`? luật "gói Python ≥ 2 tuần"?
 
+**Việc kế của E, theo thứ tự (handoff mục "Phiên sau làm theo thứ tự" bước 5):**
+- (a) **G1 ⇒ G2** khi User thu xong — mục 4 dưới, plan `92ec551531fd`. 0 USD, chạy máy.
+- (b) **Phiếu v6** — User tick (A hỏi cùng Q-U3 của spec cổng) ⇒ E chốt `diem_v6` theo ô tick nếu A giao. Ai chốt chưa ghi trong handoff ⇒ hỏi A.
+  - User chọn hướng (1) "luật xếp đi dày bằng code" ⇒ việc của B, E không làm.
+  - Hướng (2) "thời lượng theo loại" ⇒ E soạn bảng theo loại để User duyệt từng dòng.
+- (c) **Review spec cổng đợt 2** khi A viết (C209 P1 / P2 / P3) — theo `risk-gated-agent-review`, ≤ 2 vòng.
+- (d) **Hoãn, chỉ làm khi A giao lúc xét bật câu gõ tự do:**
+  - E20 Sửa 1 (code nối câu cố định khi lời do code dựng + có `tim_kho` sau lịch), đo bộ E20 ×1 ≈ 0,008;
+  - Sửa 2 (cho `tim_kho` tìm thật 1 lần sau lịch), đo ×2 ≈ 0,04;
+  - report `e20_tu_choi_hoi_kem.md` §5.
+- (e) Có thể đề xuất (A quyết): dò lỗi K2 "hỏi lại số ngày thừa". C210 chưa tái tạo được. Cách dò: `e20/tools/chay_e20.py` ghi đúng số ngày model gửi; 3–4 câu tự viết có số ngày viết tắt kiểu "số ngày + số đêm" ⇒ ≈ 0,002 USD.
+
 ## 1. Đã xong phiên tối 06/11 (mọi việc A giao; A commit)
 
 | Việc | Kết quả | File |
@@ -62,6 +74,8 @@
 - **E phiên tối 06/11: 0,011121 USD** (kín v2 0,003029 + E20 0,008092; đều Phase 9). Chấm agent = quota Claude. Codex / Playwright / giọng nói: 0.
 - E phiên sáng 06/11: 0 USD. Phase 10 tổng vẫn 0,098380 / 0,15.
 
-## Câu hỏi cho A
+## Câu hỏi cho A (treo)
 
-- Không có câu mới. (Câu cũ về cách chạy kín v2 đã được A quyết và đã chạy.)
+- Sau khi User tick phiếu v6, ai chốt file `diem_v6` (E soạn nháp — E chốt luôn?). Bảng v6 vào runtime khi nào — `settings.yaml` `lich_trinh_bang` đang trỏ **v3**; v4 / v5 / v6 đều chưa User duyệt.
+- Mục (e) trên: có cho dò K2 bằng `chay_e20.py` (≈ 0,002 USD) không, hay để B / C?
+- `p10-giong-noi` (`93bbc63`) chưa merge ⇒ `uv.lock` của `main` chưa có `sherpa-onnx`. Bẫy `uv sync` còn tới khi merge (G3).
