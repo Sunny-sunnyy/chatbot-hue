@@ -11,7 +11,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
 from llm.hoi_lai import GIA_TRI, NHAN_TRUONG
-from llm.lich_trinh import (BUOI, CAU_KHONG_XEP, HAN_CHE, NHAN_BUOI, Bang, DiCung, KieuDi, SoNgay, ThamSo, diem_trong_khung, khop_diem,
+from llm.lich_trinh import (BUOI, CAU_KHONG_XEP, HAN_CHE, MA_TOI, NHAN_BUOI, Bang, DiCung, KieuDi, SoNgay, ThamSo, diem_trong_khung, khop_diem,
                             kiem_khung, xep)
 
 MAX_AP = 2  # D4
@@ -139,7 +139,7 @@ def _xep_lai(bang: Bang, luu: dict, ts_moi: dict, them: list[str], loai: list[st
         giu[id_] = (ngay, buoi)
         dem_ngay[ngay] = dem_ngay.get(ngay, 0) + 1
     ts = ThamSo(so_ngay=ts_moi["so_ngay"], di_cung=ts_moi["di_cung"], kieu_di=ts_moi["kieu_di"], so_thich=ts_moi["so_thich"],
-                them_diem=tuple(_ten(bang, i) for i in them))
+                them_diem=tuple(_ten(bang, i) for i in them), hoi_toi=bool(ts_moi.get("hoi_toi")))  # B171: người dùng đã xin buổi tối
     khung = xep(bang, ts, giu, frozenset(loai))
     if kiem_khung(bang, khung):
         khung = xep(bang, ts, None, frozenset(loai))
@@ -315,7 +315,10 @@ def ap_hanh_dong(bang: Bang, luu: dict, hanh_dong: list[HanhDong], sua_chon: dic
             loai = [x for x in loai if x not in (j,)] + [i]
             kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j})
     _dong_bo(bang, khung, them)
-    khung["khong_xep"] = [k for k in khung["khong_xep"] if k["ma_luat"] in ("vuot_ngan_sach",)] if not tham else khung["khong_xep"]
+    # sửa trực tiếp: giữ lý do vượt ngân sách; giữ lý do "không xếp buổi tối" (B171) khi khung vẫn không có buổi tối (vẫn đúng sự thật)
+    co_toi = any(ng["buoi"]["toi"] for ng in khung["ngay"])
+    khung["khong_xep"] = [k for k in khung["khong_xep"] if k["ma_luat"] == "vuot_ngan_sach" or (k["ma_luat"] in MA_TOI and not co_toi)] \
+        if not tham else khung["khong_xep"]
     khung["tham_so"]["so_ngay_tam"] = False
     luu.update(tham_so=copy.deepcopy(khung["tham_so"]), khung=copy.deepcopy(khung), them=them, loai=loai, the_chon=None)
     return {**kq, "khung": khung, "luu": luu}

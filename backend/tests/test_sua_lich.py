@@ -219,3 +219,28 @@ def test_flag_off_or_no_plan_sends_b5_request(deps):
         run(deps, CAU, gen, flags)
         sent[name] = gen.client.responses.calls[0]
     assert json.dumps(sent["b5"], sort_keys=True, default=str) == json.dumps(sent["sua"], sort_keys=True, default=str)  # Q1m mức test
+
+
+# ---------- C208: gộp B171 — người dùng đã xin buổi tối (`hoi_toi`) ----------
+
+@pytest.mark.parametrize("hanh_dong", [
+    [{"loai": "doi_so_ngay", "so_ngay": "3"}],  # xếp lại (D5)
+    [{"loai": "doi_tham_so", "kieu_di": "day_lich"}],  # xếp lại (D5)
+    "bo_diem_dau",  # sửa trực tiếp
+])
+def test_edit_keeps_evening_request_and_reason(hanh_dong):
+    s = luu(di_cung="nguoi_lon_tuoi", hoi_toi=True)
+    assert s["tham_so"]["hoi_toi"] and lt._tu_choi_toi(s["khung"])
+    if hanh_dong == "bo_diem_dau":
+        hanh_dong = [{"loai": "bo_diem", "ten": BANG.theo_id[next(iter(vt(s["khung"])))]["ten"]}]
+    kq = sl.ap_hanh_dong(BANG, s, [hd(**h) for h in hanh_dong])
+    assert kq["da_ap"] and kq["khung"]["tham_so"]["hoi_toi"] and kq["luu"]["tham_so"]["hoi_toi"]
+    assert [k["ma_luat"] for k in kq["khung"]["khong_xep"] if k["ma_luat"] in lt.MA_TOI] == ["toi_lon_tuoi"]
+    assert lt._tu_choi_toi(kq["khung"])  # dòng khung "Buổi tối: để trống — …" + kiểm nói ngược còn chạy ở lượt sửa
+
+
+def test_adding_an_evening_point_drops_the_evening_reason():
+    s = luu(so_ngay="1", hoi_toi=True)
+    assert [k["ma_luat"] for k in s["khung"]["khong_xep"] if k["ma_luat"] in lt.MA_TOI] == ["toi_khong_diem"]
+    kq = sl.ap_hanh_dong(BANG, s, [hd(loai="them_diem", ten="Chợ Đông Ba", ngay=1, buoi="toi")])
+    assert kq["da_ap"] and not [k for k in kq["khung"]["khong_xep"] if k["ma_luat"] in lt.MA_TOI] and not lt._tu_choi_toi(kq["khung"])
