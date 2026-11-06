@@ -24,6 +24,9 @@
   - `dem`: bộ v2 không có trường `nhom` / `ky_vong` ⇒ `Q2a_n` = 0 và `lech_nhan` rỗng. Hai dòng đó không có nghĩa trên bộ này; việc so `b5_mong` để 2 agent chấm.
   - **Sau khi chạy:** 2 sub-agent Claude, ngữ cảnh mới, độc lập. Mỗi agent nhận: `cau_sealed.jsonl` (gồm `rang_buoc`, `b5_mong`, `can_cham`), bảng R1–R15 của `mau_cau_tu_nhien.md` §2, `kin_v2_ra.jsonl` (chữ trả lời + khung + nguồn), 3 tiêu chí Q3 nguyên văn (plan B5 `docs/superpowers/plans/2026-11-03-phase-9-b5-plan.md` dòng 104, ngưỡng ≥ 4 / 5 cả 3).
   - Kết quả ⇒ `data/phase_9/b5_v2/cham_agent_{1,2}.md` ⇒ E đối chiếu 2 agent ⇒ báo A chỉ số ô đạt / lệch ⇒ User đọc ô không đạt.
+- **(21:10 06/11/2026) Việc mới A giao: review harness sửa lịch của C** (một vòng, 0 USD; không mở `chuoi_sealed*`, không đọc STATUS_C). Ghi: `report_agent/2026-11-02_phase_9_code/c207_harness_review.md` (mới), worktree tạm `/tmp/e_rv_sl` (gỡ khi xong).
+- **(21:17 06/11/2026) Review harness sửa lịch XONG:** `report_agent/2026-11-02_phase_9_code/c207_harness_review.md` — changes_requested, 1 major (Q4 đạt rỗng khi lượt lịch không có khung) + 6 minor; A chốt m-1 (Q3 chặt hay theo hành động) + m-5. Worktree `/tmp/e_rv_sl` đã gỡ. 0 USD.
+  - A chốt: m-1 Q3 = hành động đúng nhãn, rút lại do kiểm cuối in số riêng + danh sách mã; m-5 giữ cách hiểu của C chỉ khi có test code giữ chỗ sau xếp lại (ghi tên test), không có ⇒ thêm lại kiểm. **Chờ C sửa harness ⇒ E kiểm phần sửa, ghi nối vào `c207_harness_review.md` ⇒ nhắn A.**
 - **File sắp sửa (khai báo):** `data/phase_9/b5_v2/duyet_tu_nhien_user.md` (mới), `data/phase_10/giong_noi/plan_g2.md`, `session_prompt/sessions/STATUS_E.md`, mục E trong `CURRENT_HANDOFF.md`. Không sửa code.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
