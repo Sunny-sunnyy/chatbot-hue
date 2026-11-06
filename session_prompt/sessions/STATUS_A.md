@@ -1,7 +1,7 @@
 # STATUS A — KẾT PHIÊN 06/11 (mở 09:54; cập nhật 12:18 06/11/2026 `date`)
 
 **Phiên sau A:** đọc `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ **cùng lượt** giao B / C / E theo "Phiên sau làm theo thứ tự" (luật mới `WORKFLOW.md` §2.5, §9.2) ⇒ `ListAgents` trước khi kết mỗi lượt.
-**Việc A đầu phiên:** (1) merge `p9-b5b` `1610155` cờ `thoi_tiet` tắt + cổng ổn định (`CURRENT_HANDOFF.md` "Việc đang mở — luật chung") ⇒ hỏi User bật; (2) đưa User file duyệt độ tự nhiên bộ kín v2 (E viết đầu phiên); (3) đọc `data/phase_10/giong_noi/plan_g2_review.md` (sub-agent A giao 06/11 — nếu chưa có file thì giao lại cho C) ⇒ E sửa ⇒ A duyệt sha; (4) quyết câu E: cách chạy bộ kín v2 + ai chạy (C hoặc E; B / C chưa đọc lý do chấm cũ — A cũng không).
+**Việc A đầu phiên:** (1) merge `p9-b5b` `1610155` cờ `thoi_tiet` tắt + cổng ổn định (`CURRENT_HANDOFF.md` "Việc đang mở — luật chung") ⇒ hỏi User bật; (2) đưa User file duyệt độ tự nhiên bộ kín v2 (E viết đầu phiên); (3) review plan G2 xong 06/11: changes_requested (1 major M-1 luật vòng chỉnh hotwords + 8 minor — `data/phase_10/giong_noi/plan_g2_review.md`) ⇒ giao E sửa ⇒ kiểm phần sửa (vòng 2) ⇒ A duyệt sha; (4) quyết câu E: cách chạy bộ kín v2 + ai chạy (C hoặc E; B / C chưa đọc lý do chấm cũ — A cũng không).
 
 - Terminal 06/11: A `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99` (đổi mỗi lần mở).
 - Q3 B5 cũ: 2 sub-agent chấm (khớp 15 / 15; (ii) 3 / 5 — L3 code xếp bỏ sở thích, L5 lời "được" buổi tối) ⇒ **gác** (câu kín không tự nhiên). Lý do chi tiết chỉ ở `data/phase_9/b5/kin/cham_agent_{1,2}.md` — **A không đọc** (nội dung kín). A chỉ biết mức loại lỗi (đã chuyển thành B171 L-a / L-b).
