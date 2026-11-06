@@ -19,6 +19,7 @@ ALLOWED = {
     "llm.generator_openai_full_corpus": {"openai", "agents"},  # OpenAI — mọi lần gọi model
     "embedding.full_corpus": {"httpx", "huggingface_hub"},  # OpenRouter (candidate Qwen3) + tải model e5 từ HF Hub (không mang chữ người dùng)
     "llm.tra_web": {"httpx"},  # B6 D3: Serper — module duy nhất gọi web (truy vấn = câu hỏi lượt này, đã bỏ SĐT / email)
+    "llm.thoi_tiet": {"httpx"},  # B5b D2: Open-Meteo — module duy nhất gọi dịch vụ thời tiết (chỉ toạ độ cố định + tham số do code, không chữ người dùng)
 }
 # Module chỉ được import vài TÊN của một gói mạng, không cả gói. Phase 10 A1 (plan D3): `nhan_anh` chỉ DỰNG `Agent` / `ModelSettings`;
 # lần gọi model vẫn qua `generator._run` (hạn giờ, lỗi, tiền) — import thêm `Runner` (gọi model thẳng) phải làm test đỏ.

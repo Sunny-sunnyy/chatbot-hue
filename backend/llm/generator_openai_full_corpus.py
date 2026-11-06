@@ -29,6 +29,7 @@ from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     ASSISTANT_TOOL_NOTE,
     LICH_TRINH_MO_TA,
+    THOI_TIET_MO_TA,
     CHAT_INSTRUCTIONS,
     INSUFFICIENT_ANSWER,
     ROUTER_INSTRUCTIONS,
@@ -382,7 +383,7 @@ class OpenAIFullCorpusGenerator:
         queries = [parsed.cau_tim] if isinstance(parsed.cau_tim, str) else list(parsed.cau_tim)
         return parsed.route, queries
 
-    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None) -> tuple[Agent, dict, dict]:
+    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -398,13 +399,16 @@ class OpenAIFullCorpusGenerator:
         if lich_trinh_fn is not None:  # B5 D1: công cụ thứ hai; mô tả ngắn, không đổi lời dặn (D7); dừng lượt chỉ khi code trả thẻ hỏi lại (D15)
             tools.append(function_tool(lich_trinh_fn, name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None))
             extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
+        if thoi_tiet_fn is not None:  # B5b D4: chỉ khi code thấy từ khoá thời tiết (lượt khác ⇒ danh sách công cụ như trước)
+            tools.append(function_tool(thoi_tiet_fn, name_override="thoi_tiet", description_override=THOI_TIET_MO_TA, failure_error_function=None))
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
-    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None) -> GeneratedText:
+    async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
+                                  thoi_tiet_fn=None) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn)
         result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS,
                                  error_handlers=handlers)
         return self._tools_result(result, started, call_log, state)
@@ -418,10 +422,10 @@ class OpenAIFullCorpusGenerator:
         text = parse_structured_output(output, AnswerOutput)
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
-    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
+    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=ASSISTANT_MAX_TURNS, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state

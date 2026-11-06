@@ -28,7 +28,7 @@ from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm.hoi_lai import TruongInput, ghep_cau
 from api.conversations import TTL_SECONDS
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, elapsed_ms, lich_cho_giao_dien, turn_usd
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, elapsed_ms, lich_cho_giao_dien, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -52,6 +52,8 @@ METRIC_FIELDS = (
     "lich_trinh_ok", "lich_trinh_so_diem", "lich_trinh_kiem", "lich_trinh_buoc",
     # B6 D9: câu có mục web · kết quả cổng web · số kết quả Serper · số mã [w n] được trích · mã kiểm cuối hỏng (lần tra: mục `tools` "tra_web")
     "has_web_section", "web_outcome", "web_n_ket_qua", "web_n_ma", "web_kiem",
+    # B5b D11: thời tiết — có đưa công cụ, có gọi API (trạng thái, mã lỗi, ms, từ cache), số ngày, số "số ngoài tập" (D8), câu bão / lũ; không chữ
+    "thoi_tiet",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -189,7 +191,8 @@ def _set_outcome(response, metrics: dict) -> None:
             metrics["outcome"] = json.loads(response.body)["error"]["code"]
     else:
         metrics["status_code"] = 200
-        metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
+        if metrics["refusal"] is None:  # lượt có chữ model: `_answer` đã đặt trên chữ model (review C m-1)
+            metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
         if metrics["outcome"] is None:
             metrics["outcome"] = "success"
 
@@ -239,6 +242,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
         recorder.mark_success()
 
     _remember(request, conversation_id, query, trace, "success")
+    metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
                         lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
@@ -304,6 +308,16 @@ def _source_responses(cited) -> list[SourceResponse]:
     ]
 
 
+def _thoi_tiet_metrics(trace: AnswerTrace) -> dict | None:
+    if trace.thoi_tiet_ctx is None:
+        return None
+    goi = trace.thoi_tiet or (trace.lich or {}).get("thoi_tiet")
+    return {"cong_cu": trace.thoi_tiet_ctx["co_cong_cu"], "bao_lu": trace.thoi_tiet_ctx["bao_lu"], "goi": goi is not None,
+            "trang_thai": None if goi is None else goi["trang_thai"], "loi": None if goi is None else goi["loi"],
+            "ms": None if goi is None else goi["ms"], "tu_cache": None if goi is None else goi["tu_cache"],
+            "n_ngay": (trace.thoi_tiet or {}).get("n_ngay"), "so_ngoai_tap": None if trace.thoi_tiet_kiem is None else len(trace.thoi_tiet_kiem)}
+
+
 def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
     metrics.update(
         search_ms=trace.search_ms, dense_ms=trace.dense_ms, context_ms=trace.context_ms,
@@ -320,6 +334,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         has_web_section=trace.web is not None and trace.web["outcome"] == "co_muc",
         web_outcome=None if trace.web is None else trace.web["outcome"], web_n_ket_qua=None if trace.web is None else trace.web["n_ket_qua"],
         web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
+        thoi_tiet=_thoi_tiet_metrics(trace),
     )
     if trace.generated is not None:
         # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
@@ -436,7 +451,7 @@ class StreamEvents:
     def finish(self, trace: AnswerTrace) -> list[bytes]:
         """Sau kiểm citation: qua ⇒ `sources` (chỉ nguồn được trích) [+ `notice` H4c]; hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
         final = normalize_citations(trace.answer)
-        self.metrics["refusal"] = final.strip() in REFUSAL_ANSWERS
+        self.metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS  # review C m-1: trên chữ model
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")

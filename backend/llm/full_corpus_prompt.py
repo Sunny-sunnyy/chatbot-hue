@@ -128,6 +128,13 @@ LICH_TRINH_LUAT = (
 TOOL_LIMIT_TEXT = "Đã hết lượt tìm kho. Hãy trả lời bằng Bằng chứng đã có hoặc trả câu không đủ thông tin."
 TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
 # B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
+# B5b D3 (plan B5b bản 2): mô tả ngắn, không thêm lời dặn hệ thống; số liệu do code in (model không thêm số)
+THOI_TIET_MO_TA = (
+    "Lấy dự báo thời tiết Huế (nhiệt độ, khả năng mưa, lượng mưa theo ngày) cho 7 ngày tới. Chỉ gọi khi người dùng hỏi thời tiết sắp tới; câu hỏi về "
+    "khí hậu chung (mùa mưa…) ⇒ dùng tim_kho. tu_ngay / den_ngay = số ngày tính từ hôm nay (0 = hôm nay, 1 = mai, tối đa 6). Kết quả là khối số liệu "
+    "do hệ thống dựng (một nguồn có mã [n]), sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về dự báo ghi "
+    "mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
+)
 TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã có; không tìm thêm — hãy viết câu trả lời ngay theo khung."
 
 
