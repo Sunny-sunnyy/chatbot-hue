@@ -10,6 +10,8 @@
 
 - (e) **C210 (22:27 06/11/2026): CHƯA TÁI TẠO ĐƯỢC ⇒ không sửa code** — 5 câu tự viết (3N2D / 4n3d / 2 hôm / đi trong ngày / khoảng 2–3 ngày + hỏi kèm) ⇒ 5/5 ra lịch, model gửi đúng số; 0,003855 USD. Bản sửa viết trước khi tái tạo cất ở `data/phase_9/c210/sua_khong_ap_dung.patch`; nhánh `p9-so-ngay` rỗng đã xoá. Report `report_agent/2026-11-06_b5_cau_tu_nhien/c210_implementation.md` (4 giả thuyết + đề xuất harness kín ghi tham số so_ngay). **Bẫy:** sửa trước khi tái tạo — A phải nhắc.
 
+- (f) **C211 (22:28 06/11/2026, A giao):** nháp kỹ thuật spec giao diện cổng đợt 1 — file `data/nghien_cuu_giao_dien_2026-11-06/spec_dot1_ky_thuat_nhap.md`. 0 USD, không sửa code.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (phiên sáng 06/11)
 - **Đã xong 06/11** (terminal `hue-rag-a4`, 0 USD):
   - **C207:** `p9-sua-lich` `6543f82` → **`09ddaf9`** trên `main` `0a9e0f3`, đã push. Q1 228/228 (`dba1f578eef1`) · Q1m 228/228 (`ac53ea9046f3`) · 239 + 3 test · `mo_phong.py` 10/10 · `kiem_bo.py --pha` OK 6/6. Report `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md`; kết quả `data/phase_9/sua_lich/q1_c207/`.
@@ -31,6 +33,7 @@
 - `/tmp/c_b5b_probe/src` (detach), `/tmp/c_b171` (detach `d5028d4`) — gỡ được (`git worktree remove`). Script tạm `/tmp/c207_tools/` (capture_flags, probe_*) — mất khi khởi động lại.
 
 ## Bẫy (giữ)
+- **Sửa trước khi tái tạo (C210, 06/11 tối):** việc "sửa lỗi X" mà nguyên nhân chưa chứng minh ⇒ tái tạo trên code gốc TRƯỚC (đọc tham số thật), chưa viết sửa; A phải nhắc lần này.
 - Q1m cần cờ bật trên bản sao settings: đặt `core.settings_loader.SETTINGS_PATH` sang file tạm rồi `runpy` `capture_all.py`.
 - `python -I` bỏ đường dẫn cwd ⇒ script import `llm.*` chạy không `-I`, với `PYTHONPATH=$PWD`.
 - Rebase "hai bên cùng thêm": giữ cả hai, kiểm bằng `git range-diff`.
