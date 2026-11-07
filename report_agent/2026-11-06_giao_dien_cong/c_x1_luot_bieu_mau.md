@@ -121,3 +121,26 @@ Tiền X1 + X1b: 0,024689 + 0,017425 = **0,042114 USD**.
 - Báo thêm: token suy luận p50 / max; USD / lượt; số dòng "được / có thể" ở buổi khung trống (đếm thô). Lượt biểu mẫu không có câu an toàn (khung + kiểm cuối do code); vẫn ghi đủ mọi số. (04/11: mức "none" cho định tuyến từng phạm sàn an toàn — khác khâu.)
 - **Trần X1c: 0,03 USD** (script dừng 0,027). Dự phóng 48 lượt × ~0,0005 ≈ 0,024 (V5 / V6 ít token suy luận hơn ⇒ có thể thấp hơn).
 - **Chạy SAU** khi E xong ca dò CPU và B xong docker build cục bộ (đo latency không chồng việc nặng).
+
+### Kết quả (13:07 07/11/2026) — 48 lượt stream (13:03:50 – 13:06:49, máy rảnh: E + B đã xong, chỉ container Qdrant), **0,014332 USD**
+
+Kết quả private `x1/x1c_lan_1_2.jsonl` md5 `f3a728d86d89`; bảng in bằng `x1/tong_b.py`.
+
+| Biến thể | đo được | từ chối | kiem_cuoi qua / tự viết | ý ngắn / điểm | "được / có thể" ở buổi trống | **chữ đầu p50 / p95 ms** | cả lượt p50 / p95 ms | USD / lượt | suy luận p50 / max | khả thi |
+|---|---|---|---|---|---|---|---|---|---|---|
+| V2 (mốc, mặc định) | 16 / 16 | 0 / 16 | 16 / 16 | 74 / 74 | 0 | 5.562 / 8.789 | 7.139 / 11.608 | 0,000505 | 299 / 1.024 | không (chữ đầu) |
+| **V5 `low`** | 16 / 16 | **0 / 16** | **16 / 16** | **74 / 74** | 0 | 2.667 / **4.748** | 4.960 / 7.785 | **0,000391** | 88 / 233 | **CÓ** |
+| V6 `minimal` | **0 / 16** | — | — | — | — | — | — | 0 | — | không — API từ chối |
+
+- **V6:** cả 16 lượt `BadRequestError` (HTTP 400 từ OpenAI; app ghi tên lỗi, không ghi chữ lỗi) ⇒ `gpt-6-luna` không nhận `minimal` ở đường này; giao diện nhận sự kiện `error` "Không thể tạo câu trả lời vào lúc này." — 0 USD. Theo luật ghi trước: chỉ kết luận V5.
+- **Phân rã (p50 / p95):** xếp + lấy nguồn ~150 / 260 ms cả ba; lần gọi model V2 6.929 / 11.460 ms ⇒ **V5 4.783 / 7.459 ms**; token suy luận p50 299 ⇒ 88.
+- V2 lặp lại X1b (0 / 16 từ chối hai lần liên tiếp; chữ đầu p95 8,75 ⇒ 8,79 s — ổn định giữa hai lượt).
+- Đọc chữ V5 (C): đúng thứ tự khung, mỗi điểm một ý ngắn từ tài liệu kèm [n]; câu ngắn hơn V2. Không thấy lời hứa ở buổi trống.
+
+### Kết luận X1c
+
+- **V5 = V2 + mức suy luận `low` riêng lượt biểu mẫu đạt cả bốn tiêu chí ghi trước trên bộ phát triển** (0 / 16 từ chối, kiểm cuối 16 / 16, chữ đầu p95 4,75 s ≤ 5 s, ý ngắn 74 / 74), rẻ hơn V2 ~23 %.
+- Giới hạn: n = 16 trên bộ đã dùng để chỉnh; **biên chữ đầu mỏng** (4,75 so với sàn 5 s, một lượt đo, máy rảnh). Chưa xác nhận trên bộ quyết.
+- **Bước kế (đề xuất):** B đưa V5 vào nhánh (lời dặn hệ thống của lượt biểu mẫu = lời dặn trả lời + `LICH_TRINH_LUAT`; `reasoning.effort = "low"` chỉ ở lần gọi này; test chuỗi gửi model mỗi loại lượt — lượt biểu mẫu có luật + `low`, lượt khác giống byte) ⇒ C chạy **S3 trên bộ quyết 12 ×2** (Q-F, chưa xem) + ghi chữ đầu p50 / p95 làm số kèm. Đề xuất (1) "hiện khung code trước" để dự phòng nếu chữ đầu trượt ở bộ quyết.
+
+Tiền X1 + X1b + X1c: 0,024689 + 0,017425 + 0,014332 = **0,056446 USD** (mỗi bậc dưới trần 0,03 của bậc).
