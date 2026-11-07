@@ -460,10 +460,17 @@ def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
         trace.citation_error = CitationIntegrityError(f"weather numbers without source: {len(trace.thoi_tiet_kiem)}")
 
 
+def _do_dai_bang_chung(doc: RetrievedDocument) -> int:
+    """Số ký tự bằng chứng của một đoạn — đúng phần đi vào ngữ cảnh (`evidence_parts`, như `FullCorpusContextBuilder._source`)."""
+    return sum(len(part["text"].strip()) for part in doc.metadata.get("evidence_parts") or []
+               if isinstance(part, dict) and isinstance(part.get("text"), str))
+
+
 async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
                           instructions: str):
-    """D6: mỗi điểm trong khung — `retrieval_service.search(<tên điểm>)` (đọc Qdrant, không ghi), chọn **đúng 1 đoạn** = đoạn đầu trong top-10 có
-    `source` = file nguồn của điểm; đoạn đã có trong sổ nguồn ⇒ dùng lại số [n] cũ; không có đoạn đúng file ⇒ bỏ điểm (mã `khong_co_doan_nguon`).
+    """D6: mỗi điểm trong khung — `retrieval_service.search(<tên điểm>)` (đọc Qdrant, không ghi), chọn **đúng 1 đoạn** = đoạn có bằng chứng dài
+    nhất trong top-10 có `source` = file nguồn của điểm (cổng đợt 1 S1, A chốt: "đoạn đầu" hay chỉ là dòng tên — 11/28 điểm < 80 ký tự — nên
+    luật "kèm một ý ngắn lấy từ tài liệu" không viết được ⇒ model từ chối; bằng nhau ⇒ đoạn đứng trước); đoạn đã có trong sổ nguồn ⇒ dùng lại số [n] cũ; không có đoạn đúng file ⇒ bỏ điểm (mã `khong_co_doan_nguon`).
     Có điểm Quần thể ⇒ thêm 1 đoạn file vé chứa khung giờ (D5 (a)). Đoạn mới dựng ngữ cảnh nối sổ nguồn; vượt ngân sách ⇒ bớt ngày cuối (iii).
     Lỗi tìm / ngữ cảnh ⇒ `trace.tool_error` rồi ném (như `tim_kho`)."""
     try:
@@ -472,13 +479,14 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
         moi: list[RetrievedDocument] = []
         nguon: dict[str, int] = {}
 
-        async def dau_tien(cau: str, source: str, chua: str | None = None) -> RetrievedDocument | None:
+        async def chon_doan(cau: str, source: str, chua: str | None = None) -> RetrievedDocument | None:
             result = await asyncio.to_thread(retrieval_service.search, cau)
-            return next((d for d in result.documents[:10] if d.metadata.get("source") == source and (chua is None or chua in d.text)), None)
+            cung_file = [d for d in result.documents[:10] if d.metadata.get("source") == source and (chua is None or chua in d.text)]
+            return max(cung_file, key=_do_dai_bang_chung, default=None)
 
         for id_ in lt.diem_trong_khung(khung):
             d = bang.theo_id[id_]
-            doc = await dau_tien(d["ten"], d["nguon"])
+            doc = await chon_doan(d["ten"], d["nguon"])
             if doc is None:
                 lt.bo_diem(khung, id_, d["ten"], "khong_co_doan_nguon")
             elif doc.id in da_co:
@@ -489,7 +497,7 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
                 cho.setdefault(doc.id, []).append(id_)
         ve = None
         if any(bang.theo_id[i]["quan_the"] for i in lt.diem_trong_khung(khung)):
-            ve = await dau_tien(lt.VE_CAU_TIM, lt.VE_NGUON, chua="17h30")
+            ve = await chon_doan(lt.VE_CAU_TIM, lt.VE_NGUON, chua="17h30")
             if ve is not None and ve.id not in da_co and ve.id not in cho:
                 moi.append(ve)
         # chữ khung cũng vào model ⇒ đếm vào ngân sách bằng bản nháp (số nguồn tạm) — D6 (iii)
