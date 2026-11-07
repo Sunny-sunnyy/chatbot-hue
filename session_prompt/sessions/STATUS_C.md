@@ -1,7 +1,7 @@
 # STATUS C — phiên 07/11 ở trên; mục "PHIÊN SAU ĐỌC TRƯỚC" dưới là của kết phiên tối 06/11 (lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`)
 
 ## PHIÊN 07/11 (terminal `hue-rag-a0`; A = `hue-rag-7a`, B = `hue-rag-10`, E = `hue-rag-81`) — cập nhật 13:25 07/11/2026 (`date`)
-**Trạng thái: rảnh có lý do** — chờ User quyết bật biểu mẫu `lich_trinh_bieu_mau` (gồm cách hiểu F-a (4), handoff "Chờ User quyết" mục 1) + phiếu v7 thời lượng. Không mở việc mới. **Tiền C 07/11 ≈ 0,07 USD** (X1 0,056 · Q-N 0,004 · S3 0,009; còn lại 0 USD).
+**Trạng thái: rảnh có lý do** — chờ User quyết bật biểu mẫu `lich_trinh_bieu_mau` (gồm cách hiểu F-a (4), handoff "Chờ User quyết" mục 1) + phiếu v7 thời lượng. Không mở việc mới. **Tiền C 07/11 ≈ 0,078 USD** (X1 0,056 · Q-N 0,004 · S3 0,009 · chữ đầu main 0,008; còn lại 0 USD).
 Việc đã xong (theo giờ, mọi report ở `report_agent/2026-11-06_giao_dien_cong/` trừ tự soi):
 - 12:00 nháp harness S3 `data/phase_9/cong_dot_1/tools/do_bieu_mau.py` (nay `4de78cb35999`, thêm đếm `cat_ngay_cuoi`); [Chạy] `kieu_di` không đổi khung 0 / 120 tổ hợp (dữ kiện Q-U3).
 - 12:19 Q-G tương phản bản mẫu 2 (`tuong_phan.py` `f53a31153ce3`: 0 cặp < 4,5; 2 gợi ý cho B) + nháp `playwright_cong.py` `fa580e39f5ed`.
@@ -9,6 +9,7 @@ Việc đã xong (theo giờ, mọi report ở `report_agent/2026-11-06_giao_die
 - 12:42–13:07 **X1 / X1b / X1c** lượt biểu mẫu bị từ chối (`c_x1_luot_bieu_mau.md`; dữ liệu `data/phase_11/cong_dot_1/x1/`): nguyên nhân = luật trình bày nằm trong bằng chứng; V2 (luật lên lời dặn hệ thống) hết từ chối nhưng chữ đầu p95 8,8 s; **V5 = V2 + reasoning `low`** đạt cả 4 tiêu chí trên bộ phát triển (p95 4,75 s); V4 (thêm câu dặn) kém; V6 `minimal` ⇒ 400.
 - 13:11 **Q-G + Q-N trên `27ed091`: ĐẠT** (7 / 7 đích × 2 bề rộng, 0 CSP / console, JS gzip 101,9 KB, tương phản thấp nhất 5,42, Q-N 10 / 10; chữ đầu theo dõi p50 2,03 · max 4,22 s) — A đã merge (`main` `0dab4e5`).
 - 13:24 **S3 Q-F bộ quyết trên `632a4f7` (V5): ĐẠT** — sàn code 24 / 24, F-a 12 / 12 + 12 / 12 (2 người chấm, 0 bất đồng), chữ đầu p95 4,25 s. Cả hai người chấm tự nêu: chữ model trung tính với người đi cùng ⇒ hiểu "phù hợp" = "không trái" (A ghi cả hai cách hiểu cho User). A commit `89b65be`.
+- 15:31 **chữ đầu trên `main` `a884de4` (biểu mẫu bật, theo dõi):** biểu mẫu p50 2,30 / p95 4,22 s · câu kho 1,78 / 3,61 s (n = 10 mỗi loại), 0,008368 USD ⇒ tiền C 07/11 ≈ 0,078. Report S3 §6. Worktree `/tmp/c_lat` đã gỡ.
 - Câu treo đã được A trả lời: C210 giữ dùng số model; C211 rel / target ⇒ S2 (đã vào); mô phỏng kín sửa lịch: dời.
 - Worktree `/tmp` của C: không còn (`c_x1`, `c_ui`, `c_s3` đã gỡ). Thư mục tạm `/tmp/c_tl/` chỉ có file thử / bảng tạm (không dữ liệu kín).
 

@@ -89,3 +89,18 @@ Nền: worktree tách `/tmp/c_ui` = `origin/p11-cong-dot-1` `27ed091` (S2 + 3 mi
 - Người chấm 2 ghi file kết quả bằng lệnh Python qua Bash thay vì công cụ Write như brief (nội dung đúng khuôn, đủ 24 mã) — ghi lại cho đúng hồ sơ.
 - Dữ liệu private `data/phase_9/cong_dot_1/s3/`: `lan_1.jsonl` md5 `1fb4cab70ea1`, `lan_2.jsonl` `9728b6ef00e0`, `fa/phieu.json` `ea2e1f27697f`, `fa/huong_dan.md` `b4b1125f573d`, `fa/cham_1.json` `1737845d5605`, `fa/cham_2.json` `b2b2015f34d7`.
 - Giới hạn: n = 24 lượt (12 tổ hợp ×2) — "0 / 24 từ chối" không loại được tỉ lệ từ chối nhỏ (X1 V2: 1 / 32 trước khi có `low`); lời dặn lượt biểu mẫu khác spec (V5) — số này là **đầu vào cho User quyết** bật cờ `lich_trinh_bieu_mau`, chưa merge. **Điều kiện đo đổi so với lúc ghi bộ:** `main` `0dab4e5` bật cờ `thoi_tiet` (Q-U4) ⇒ lượt biểu mẫu gọi Open-Meteo và khối ghi chú (code nối) có dòng dự báo; tiêu chí Q-F **không đổi** (dòng dự báo nằm ngoài chữ model — F-a chấm chữ model; `kiem_cuoi` chạy trên chữ model).
+
+## 6. Chữ đầu trên `main` `a884de4` sau khi bật biểu mẫu (theo dõi, A giao)
+
+**Ghi trước (15:29 07/11/2026):** số **theo dõi**, không quyết; server mới (uvicorn, worktree tách `a884de4`, cờ như `settings.yaml` — biểu mẫu + thời tiết + #6 bật), bỏ 1 lượt khởi động, rồi 10 lượt biểu mẫu (tổ hợp ngoài bộ quyết) xen kẽ 10 câu kho tự viết (bộ Q-N) qua `/api/chat/stream`, tuần tự, mỗi lượt cuộc mới, máy rảnh (B / E được báo); báo chữ đầu p50 / p95 phía server (`first_text_ms`) + phía khách, so sàn 5 s; p95 > 5 s ⇒ phân rã (định tuyến / tìm / model), không sửa gì; trần 0,01 USD (dừng 0,0095). Script `data/phase_9/cong_dot_1/tools/do_chu_dau_main.py` md5 `5915e4a681ef`.
+
+**Kết quả (15:31 07/11/2026)** — 21 lượt thật (15:29–15:31; lượt 0 khởi động bỏ), 21 / 21 HTTP 200 + `success`, đúng 1 dòng `chat_metrics` / lượt, 0 sự kiện `error`; **0,008368 USD** (gồm lượt khởi động). Dữ liệu private `data/phase_9/cong_dot_1/chu_dau_main_a884de4.jsonl` md5 `9a769fa14bcc`.
+
+| Loại (n = 10) | chữ đầu p50 / p95 (server `first_text_ms`) | chữ đầu p50 / p95 (phía khách) | cả lượt p50 / p95 | lần gọi model / lượt |
+|---|---|---|---|---|
+| Biểu mẫu (V5) | 2,30 / **4,22 s** | 2,30 / 4,22 s | 3,94 / 6,17 s | 1 (không định tuyến) |
+| Câu kho | 1,78 / **3,61 s** | 1,78 / 3,61 s | 2,22 / 4,79 s | 2–3 (định tuyến + #6 song song + tìm thêm) |
+
+- Cả hai loại **≤ sàn 5 s** ở lượt đo này; không cần phân rã. Chậm nhất: biểu mẫu 4,55 s (1 lượt), câu kho 3,88 s (1 lượt). Lượt khởi động (bỏ) 2,45 s.
+- 5,77 / 5,89 s A thấy ở cổng là **một lượt ngay sau khởi động** — lượt khởi động ở đây 2,45 s nên không tái tạo được; với n = 1 không phân biệt được nhiễu provider với hiệu ứng khởi động (ghi nhận, không kết luận).
+- Grep chữ 10 câu kho trong log server = 0. Server tạm (cổng 8877, worktree tách `/tmp/c_lat`) đã tắt bằng TaskStop.
