@@ -1,18 +1,29 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 21:15 05/11/2026 — bản 30: **tra web bật** — câu về Huế mà kho không có ⇒ thêm mục "Từ web (chưa kiểm)" có link (mục 3 bước 14); câu thiên tai chỉ ra câu cố định + 112.** Trước: **20:06 05/11/2026 — bản 29: kho thêm giờ mở cửa chung 07h00–17h30 cho 11 điểm Quần thể ⇒ câu "mấy giờ mở cửa" ở các điểm này trả lời có nguồn thay vì từ chối; chỉ mục 8.435 đoạn.** Trước: **13:22 05/11/2026 — bản 28: **câu trả lời viết song song với bước định tuyến** (tốc độ #6, bật): câu về Huế không còn chờ định tuyến xong mới tìm kho; định tuyến ra khẩn cấp / ngoài phạm vi / trò chuyện ⇒ bỏ phần đã viết. B5 lịch trình có code ở `main` nhưng cờ **tắt** (chờ bạn chấm).** Trước: 10:25 05/11/2026 — bản 27: **hành vi không đổi**; code công cụ hỏi lại (B4) vào `main` với cờ **tắt** (merge `b019aab`, B4 âm hai vòng) — sẽ dùng lại ở B5 (lịch trình) theo cách code tự hỏi khi thiếu số ngày.** Trước: 20:32 04/11/2026 — bản 26: câu khẩn cấp soạn sẵn đổi dòng mở (phủ người vừa gặp chuyện; merge `4e3cb4e`).** Trước: 20:54 03/11/2026 — bản 25: định tuyến khẩn cấp phủ thêm "vừa bị cướp / giật / trộm / hành hung, cần báo công an" (merge `e3cdb96`, mục 3 bước 10).** Trước: 20:34 03/11/2026 — bản 24: nút 👍 / 👎 + `POST /api/feedback` (log `chat_feedback` không nội dung) và nút gợi ý dưới câu ngoài phạm vi (mục 3 bước 13).** Trước: 19:28 03/11/2026 — bản 23: Phase 9 B3b — **nhớ hội thoại bật** (merge `9e2ecd9`, mục 3 bước 12 (b)): chỉ nhớ câu hỏi, câu dặn nhận định chỉ từ đoạn nói đúng đối tượng.** Trước: 18:31 03/11/2026 — bản 22: Phase 9 B3 vào chatbot (merge `a3dabba`) — câu dặn hẹp (không tự thêm lời khuyên an toàn không có nguồn) + giao diện nhiều lượt Bản 1; **nhớ hội thoại có code nhưng TẮT** (mục 3 bước 12) chờ vòng sửa B3b.** Trước: 11:39 03/11/2026 — bản 21: Phase 9 B2 vào chatbot (merge `00d670e`) — trợ lý được **tự tìm thêm trong kho tối đa 2 lần** sau lần tìm đầu (mục 3 bước 11); câu nhiều nguồn đủ ý +1,17; thử để model viết lại câu tìm — không giữ.** Trước: 09:17 03/11/2026 — bản 20: Phase 9 B1 vào chatbot (merge `f01c032`) — trợ lý phân loại câu hỏi trước khi trả lời (mục 3 bước 10); chữ đầu tiên chậm hơn ~2 s (mục 4).** Trước: 19:48 02/11/2026 — Phase 9 B0 (nền trợ lý, người dùng thấy không đổi). Trước: 10:35 02/11/2026 — bản 19: giao diện web làm lại (React + Vite + Tailwind, merge `ed8e6e8`); API, tìm kiếm, model không đổi.** Trước: 14:33 01/11/2026 — bản 18: B0 xong, Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 13:42 01/11/2026 — bản 17: lượt đo cuối xong (mọi sàn đạt). Trước: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
+**Cập nhật lần cuối: 13:18 07/11/2026 — bản 31: giao diện đổi thành **cổng du lịch đợt 1** (trang chủ, Khám phá 5 lĩnh vực + trang bài, Trợ lý Huế nổi mọi trang + trang riêng, Giới thiệu, thanh dưới điện thoại); câu trả lời **không còn số [n] trong chữ** — dòng "Nguồn" dưới câu; **thời tiết bật** (ô trang chủ + công cụ trả lời câu dự báo); 4 API chỉ đọc mới (mục 1, mục 3 bước 15–16). Biểu mẫu "Lên kế hoạch" có code nhưng **ẩn** (đang đo). Merge `dbfc925` + `0dab4e5`.** Trước: **21:15 05/11/2026 — bản 30: **tra web bật** — câu về Huế mà kho không có ⇒ thêm mục "Từ web (chưa kiểm)" có link (mục 3 bước 14); câu thiên tai chỉ ra câu cố định + 112.** Trước: **20:06 05/11/2026 — bản 29: kho thêm giờ mở cửa chung 07h00–17h30 cho 11 điểm Quần thể ⇒ câu "mấy giờ mở cửa" ở các điểm này trả lời có nguồn thay vì từ chối; chỉ mục 8.435 đoạn.** Trước: **13:22 05/11/2026 — bản 28: **câu trả lời viết song song với bước định tuyến** (tốc độ #6, bật): câu về Huế không còn chờ định tuyến xong mới tìm kho; định tuyến ra khẩn cấp / ngoài phạm vi / trò chuyện ⇒ bỏ phần đã viết. B5 lịch trình có code ở `main` nhưng cờ **tắt** (chờ bạn chấm).** Trước: 10:25 05/11/2026 — bản 27: **hành vi không đổi**; code công cụ hỏi lại (B4) vào `main` với cờ **tắt** (merge `b019aab`, B4 âm hai vòng) — sẽ dùng lại ở B5 (lịch trình) theo cách code tự hỏi khi thiếu số ngày.** Trước: 20:32 04/11/2026 — bản 26: câu khẩn cấp soạn sẵn đổi dòng mở (phủ người vừa gặp chuyện; merge `4e3cb4e`).** Trước: 20:54 03/11/2026 — bản 25: định tuyến khẩn cấp phủ thêm "vừa bị cướp / giật / trộm / hành hung, cần báo công an" (merge `e3cdb96`, mục 3 bước 10).** Trước: 20:34 03/11/2026 — bản 24: nút 👍 / 👎 + `POST /api/feedback` (log `chat_feedback` không nội dung) và nút gợi ý dưới câu ngoài phạm vi (mục 3 bước 13).** Trước: 19:28 03/11/2026 — bản 23: Phase 9 B3b — **nhớ hội thoại bật** (merge `9e2ecd9`, mục 3 bước 12 (b)): chỉ nhớ câu hỏi, câu dặn nhận định chỉ từ đoạn nói đúng đối tượng.** Trước: 18:31 03/11/2026 — bản 22: Phase 9 B3 vào chatbot (merge `a3dabba`) — câu dặn hẹp (không tự thêm lời khuyên an toàn không có nguồn) + giao diện nhiều lượt Bản 1; **nhớ hội thoại có code nhưng TẮT** (mục 3 bước 12) chờ vòng sửa B3b.** Trước: 11:39 03/11/2026 — bản 21: Phase 9 B2 vào chatbot (merge `00d670e`) — trợ lý được **tự tìm thêm trong kho tối đa 2 lần** sau lần tìm đầu (mục 3 bước 11); câu nhiều nguồn đủ ý +1,17; thử để model viết lại câu tìm — không giữ.** Trước: 09:17 03/11/2026 — bản 20: Phase 9 B1 vào chatbot (merge `f01c032`) — trợ lý phân loại câu hỏi trước khi trả lời (mục 3 bước 10); chữ đầu tiên chậm hơn ~2 s (mục 4).** Trước: 19:48 02/11/2026 — Phase 9 B0 (nền trợ lý, người dùng thấy không đổi). Trước: 10:35 02/11/2026 — bản 19: giao diện web làm lại (React + Vite + Tailwind, merge `ed8e6e8`); API, tìm kiếm, model không đổi.** Trước: 14:33 01/11/2026 — bản 18: B0 xong, Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 13:42 01/11/2026 — bản 17: lượt đo cuối xong (mọi sàn đạt). Trước: 12:50 01/11/2026 — bản 16: streaming vào chatbot (bước 8 mục 3, số tốc độ mới mục 5); công thức tiền giá đủ; việc kế tiếp = đo cuối.** Trước: 11:33 01/11/2026 — bản 15: mục 5 "Giới hạn đã biết" viết lại đầy đủ theo mức nặng (bảng giới hạn bản 4, 01/11); việc kế tiếp: streaming đang code, nhiều lượt dời Phase 9.** Bản 14: 17:10 31/10/2026.
 Các bản trước: xem `git log` file này.
 
 File này mô tả hệ thống **đang chạy**. Mỗi lần hành vi đổi (chia đoạn, chỉ mục, cách tìm, prompt, model), file này được cập nhật theo.
 Những gì đã thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-**Tóm tắt hôm nay (03/11):** kho 204 file / 8.435 đoạn (từ 05/11 tối); tìm bằng vector nghĩa e5-small + từ khoá BM25; đưa tối đa 10 đoạn vào ngữ cảnh; `gpt-6-luna`
-trả lời có trích dẫn, chữ hiện dần trên giao diện web mới (React, 02/11). **Mới 03/11 (Phase 9 B1):** trước khi trả lời, model **phân loại câu hỏi** thành
-trò chuyện / hỏi về Huế / ngoài phạm vi / khẩn cấp: câu chào hỏi được đáp tự nhiên (không tìm kho), câu ngoài phạm vi và câu khẩn cấp ra câu soạn sẵn
-(khẩn cấp: số 113 / 114 / 115 / 112), câu về Huế đi đường RAG như cũ; câu trả lời có nguồn vé / điểm đến / lễ hội kèm dòng nhắc "thông tin có thể đã thay đổi".
-**Mới 03/11 trưa (Phase 9 B2):** câu về Huế — sau lần tìm đầu bằng câu gốc, trợ lý được **tự gọi tìm thêm tối đa 2 lần** bằng câu tìm nó tự viết (câu nhiều nguồn
-đủ ý **+1,17** [+0,44; +2,00]; từ chối nhầm 12 ⇒ 4–6 / 158). Đổi lại: **chữ đầu tiên chậm hơn bản RAG cũ** — câu về Huế trung vị 3,50 s / câu chậm 5,33 s (10 câu; trước Phase 9: 1,23 / 2,61 s) — Phase 9 chỉ theo dõi tốc độ (mục 4, 5).
-Phase 8 bạn đóng 14:29 01/11/2026; Phase 9 (trợ lý agent có công cụ) đang làm bậc B2 (mục 5).
+**Tóm tắt hôm nay (07/11):**
+- **Kho và tìm:** kho 204 file / 8.435 đoạn; tìm bằng vector nghĩa e5-small + từ khoá BM25; đưa tối đa 10 đoạn vào ngữ cảnh; `gpt-6-luna` trả lời có trích dẫn, chữ hiện dần.
+- **Người dùng thấy (từ 07/11, cổng đợt 1):** một cổng du lịch thay cho trang hỏi đáp đơn:
+  - **trang chủ** có ô hỏi lớn, 5 câu gợi ý, 5 lĩnh vực, ô thời tiết hôm nay;
+  - **Khám phá** đọc thẳng 204 bài của kho (danh sách theo lĩnh vực, trang bài, nút "Hỏi trợ lý về điểm này");
+  - **Trợ lý Huế** nổi ở góc mọi trang (điện thoại: phủ màn) và có trang riêng — **một cuộc trò chuyện** giữ nguyên khi chuyển trang;
+  - trang **Giới thiệu** (làm được gì, giới hạn, dữ liệu người dùng);
+  - **thanh dưới** trên điện thoại.
+- **Nguồn:** câu trả lời **không còn số [n] chen trong chữ**; dưới câu có dòng **"Nguồn: <tên> · <tên>"**, bấm tên ⇒ đoạn gốc + "Đọc cả bài". Tầng máy vẫn giữ và kiểm [n] như cũ.
+- **Trợ lý (Phase 9):**
+  - phân loại câu hỏi (trò chuyện / về Huế / ngoài phạm vi / khẩn cấp — câu soạn sẵn có 113 / 114 / 115 / 112);
+  - tự tìm thêm trong kho ≤ 2 lần;
+  - nhớ câu hỏi 3 lượt;
+  - kho không có ⇒ mục "Từ web (chưa kiểm)";
+  - **từ 07/11 trả lời câu dự báo thời tiết** bằng số Open-Meteo do code dựng.
+- **Chưa bật:** biểu mẫu "Lên kế hoạch" (code có, đang đo — mục 5), lịch trình khi gõ câu tự do, hỏi bằng ảnh, giọng nói.
+- **Tốc độ:** chữ đầu câu về Huế sau định tuyến + song song #6 — đo 07/11 trên giao diện mới 10 câu: trung vị 2,03 s, chậm nhất 4,22 s (đồng hồ trình duyệt, một lần, chỉ theo dõi — mục 4).
+- Phase 8 bạn đóng 14:29 01/11/2026; Phase 9 đang làm (còn biểu mẫu lịch trình ⇒ B7 đóng gói, mục 5).
 
 ---
 
@@ -22,9 +33,14 @@ Phase 8 bạn đóng 14:29 01/11/2026; Phase 9 (trợ lý agent có công cụ) 
 CHUẨN BỊ (chạy một lần khi kho đổi):
   204 file Markdown → chia đoạn (8.435 đoạn) → vector nghĩa e5-small + từ khoá BM25 → lưu Qdrant
 HỎI ĐÁP (mỗi câu hỏi):
-  giao diện web → API /api/chat/stream (hoặc /api/chat) → chuẩn hóa NFC → gpt-6-luna phân loại câu hỏi (từ 03/11)
+  cổng web (Trợ lý Huế nổi / trang riêng) → API /api/chat/stream (hoặc /api/chat) → chuẩn hóa NFC → gpt-6-luna phân loại câu hỏi
     ├ trò chuyện → gpt-6-luna đáp ngắn, không tìm kho        ├ ngoài phạm vi / khẩn cấp → câu soạn sẵn
-    └ hỏi về Huế → tìm 10 đoạn bằng câu gốc → ngữ cảnh → gpt-6-luna (được gọi tìm thêm ≤ 2 lần, từ 03/11) trả lời (chữ hiện dần) → kiểm trích dẫn [n] → nguồn
+    └ hỏi về Huế → tìm 10 đoạn bằng câu gốc → ngữ cảnh → gpt-6-luna trả lời (chữ hiện dần), được gọi công cụ:
+         tim_kho thêm ≤ 2 lần · thoi_tiet (từ 07/11; số Open-Meteo do code dựng)
+       → kiểm trích dẫn [n] → dòng "Nguồn: …" (giao diện bỏ số [n] khỏi chữ)
+       → kho từ chối ⇒ tra web một lần ⇒ mục "Từ web (chưa kiểm)"
+TRANG KHÁC (không gọi model):
+  Khám phá → GET /api/kham_pha (204 bài) · /api/kham_pha/bai?id= (một bài)   ·   ô thời tiết → GET /api/thoi_tiet   ·   cờ → GET /api/tinh_nang
 ```
 
 | Thành phần | Dùng gì | Code |
@@ -33,10 +49,11 @@ HỎI ĐÁP (mỗi câu hỏi):
 | Chia đoạn | Theo cấu trúc Markdown (tiêu đề, đoạn, bảng), không chồng lấn | `backend/ingestion/chunking/full_corpus_chunker.py` |
 | Vector nghĩa | `intfloat/multilingual-e5-small`, 384 chiều, chạy trên máy (CPU), miễn phí | `backend/embedding/full_corpus.py` |
 | Từ khoá | BM25 tự viết, tách theo âm tiết, từ điển 5.631 từ | `backend/scoring/bm25.py` |
-| Cơ sở dữ liệu vector | Qdrant `127.0.0.1:6335`, chạy trong Docker Desktop (Windows); collection `hue_full_corpus_7a2_e5_small_384`, 8.424 điểm | `backend/vectorstore/`, `docker-compose.yml` |
+| Cơ sở dữ liệu vector | Qdrant `127.0.0.1:6335`, chạy trong Docker Desktop (Windows); collection `hue_full_corpus_7a2_e5_small_384`, 8.435 điểm (từ 05/11 tối) | `backend/vectorstore/`, `docker-compose.yml` |
 | Tìm kiếm | `dense_bm25_rrf` (mục 3) | `backend/retrieval/full_corpus.py` |
 | Trả lời | `gpt-6-luna` (OpenAI) | `backend/llm/generator_openai_full_corpus.py` |
-| API + giao diện | FastAPI (`/api/chat`, `/api/chat/stream`, `/health`); trang web React + Vite + Tailwind (từ 02/11) — FastAPI phục vụ bản build tĩnh `frontend/dist/` (build một lần: `cd frontend && npm ci && npm run build`; thiếu bản build ⇒ API vẫn chạy, log cảnh báo) | `backend/api/`, `frontend/src/` |
+| API + giao diện | FastAPI (`/api/chat`, `/api/chat/stream`, `/health`, `/api/feedback`; từ 07/11 thêm 4 API chỉ đọc `/api/kham_pha`, `/api/kham_pha/bai`, `/api/thoi_tiet`, `/api/tinh_nang`); cổng web React + Vite + Tailwind (cổng đợt 1 từ 07/11, bản mẫu "Sông Hương"; điều hướng bằng `#/…`) — FastAPI phục vụ bản build tĩnh `frontend/dist/` (build một lần: `cd frontend && npm ci && npm run build`; thiếu bản build ⇒ API vẫn chạy, log cảnh báo) | `backend/api/` (`routes/cong.py` cho 4 API mới), `frontend/src/` (`App.jsx`, `pages.jsx`, `chat.jsx`, `route.js`) |
+| Thời tiết | Open-Meteo (miễn phí), cache 30 phút, số do code dựng; **bật từ 07/11** | `backend/llm/thoi_tiet.py` |
 | Cấu hình | `backend/config/settings.yaml` (`full_corpus_runtime`, `full_corpus_generation`) | |
 
 ## 2. Chuẩn bị kho (khi corpus đổi)
@@ -75,7 +92,7 @@ HỎI ĐÁP (mỗi câu hỏi):
    và ở đường stream: thời gian tới sự kiện / chữ đầu tiên, có ngắt giữa chừng không.
 8. **Chữ hiện dần (từ 01/11, `POST /api/chat/stream`, trang web dùng đường này):** bước 0–5 như trên; lỗi trước khi model viết vẫn trả JSON như `/api/chat`.
    Khi model viết, server gửi từng mảnh chữ (sự kiện `status` → `delta` … → `sources` → `done`); **bước 6 (kiểm trích dẫn) chạy lúc cuối** — qua thì mới gửi
-   nguồn và bật link [n]; **hỏng thì trang web rút lại chữ đã hiện**, lỗi / đứt giữa chừng thì **xoá hết** — cả hai hiện lời báo + nút "Thử lại" (bạn chọn 31/10).
+   nguồn và hiện dòng "Nguồn" (từ 07/11; trước đó là số [n] bấm được trong chữ); **hỏng thì trang web rút lại chữ đã hiện**, lỗi / đứt giữa chừng thì **xoá hết** — cả hai hiện lời báo + nút "Thử lại" (bạn chọn 31/10).
    Người dùng rời trang ⇒ server dừng model, vẫn ghi một dòng log. Trang web chỉ hiện các thẻ Markdown thường (danh sách cho phép) và có chính sách bảo mật
    trang (CSP) — không tự tải ảnh / tài nguyên từ máy khác. `/api/chat` (một lần, JSON) vẫn giữ; API và bộ đánh giá dùng **chung một lõi**
    (`backend/llm/assistant.py` — đổi tên từ `grounded_answer.py` ở Phase 9 B0, merge `1c10111` 19:48 02/11/2026) nên đo và chạy đi đúng một đường.
@@ -108,6 +125,13 @@ HỎI ĐÁP (mỗi câu hỏi):
    (c) giao diện nhiều lượt (Bản 1 — Huế hiện đại): lượt nối nhau, số nguồn hiển thị đánh lại 1..k, nút "Cuộc trò chuyện mới". Hồ sơ: `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md`, review `b136_review.md`.
 13. **Đánh giá của người dùng + gợi ý (B142, merge `6817897`, 03/11/2026 tối):** mỗi lượt có câu trả lời cuối nhận `turn_id` ngẫu nhiên (RAM, ≤ 2.000; không liên quan mã cuộc; trả trong `/api/chat` và sự kiện `done` của stream); nút 👍 / 👎 gọi `POST /api/feedback` ⇒ một dòng log `chat_feedback` (turn_id, tuyến, kết quả, số nguồn, đánh giá — không chữ). Câu `ngoai_pham_vi` hiện 3 nút câu gợi ý cố định có trong kho. Hồ sơ `b142_phan_hoi_implementation.md`, review `b142_review.md`.
 14. **Phase 9 B6 — tra web khi kho không có (merge `7ff8e5a`, BẬT 21:15 05/11/2026):** chỉ khi tuyến `tro_ly_hue` ra câu "không đủ thông tin" của kho ⇒ code tra Serper một lần (hạn 5 s) ⇒ một lần gọi model viết mục **"Từ web (chưa kiểm)"** tách khỏi câu trả lời kho, mã [w n] trỏ link trong sổ kết quả; code kiểm trước khi hiện: link / HTML thô bị chặn, số tiền phải có trong đoạn trích, câu lưu trú 0 số tiền, câu thời gian thực 0 chữ số / ngày giờ, câu thiên tai (lũ, lụt, bão, áp thấp…) ⇒ câu cố định "xem NCHMF / chính quyền, khẩn cấp gọi 112" + link (không chữ do model viết). Câu kho trả lời được: không đổi. Đổi lại: mục web tới sau ~9–18 s; ~0,0016–0,0018 USD / câu đi web.
+15. **Thời tiết (B5b, code vào `main` 06/11 tối, BẬT 07/11 — bạn chọn khi merge cổng):** tuyến `tro_ly_hue` có thêm công cụ `thoi_tiet`: model hỏi ngày ⇒ code lấy dự báo Huế từ Open-Meteo (cache 30 phút, một lần gọi, không thử lại), **số do code dựng** thành khối nối sau câu trả lời kèm giờ số liệu + ghi công Open-Meteo; ngoài 7 ngày ⇒ câu cố định; bão / lũ ⇒ câu cố định NCHMF + 112. Ô "Huế hôm nay" ở trang chủ đọc `GET /api/thoi_tiet` (cùng hàm + cache, không gọi model); lỗi ⇒ ẩn ô, không hiện số cũ. Cổng sau khi bật (A, 07/11): câu thời tiết gọi đúng công cụ, ghi Open-Meteo + giờ.
+16. **Cổng du lịch đợt 1 (merge `dbfc925`, 07/11/2026):**
+   - **Giao diện:** điều hướng bằng `#/…` (không gói router). Trang chủ, Khám phá (5 lĩnh vực, chip lọc loại con, "Xem thêm"), trang bài (Markdown kho qua bộ lọc DOMPurify, link ngoài mở tab mới `rel=noopener noreferrer`), Trợ lý Huế (nút nổi + trang `#/tro-ly`, chung một cuộc), Giới thiệu, thanh dưới điện thoại. Cờ đọc từ `/api/tinh_nang` ⇒ mục nào tắt thì ẩn.
+   - **4 API chỉ đọc, không gọi model:** `/api/kham_pha` (danh sách 204 bài = đúng danh sách file của chỉ mục), `/api/kham_pha/bai?id=` (chỉ nhận mã bài **trùng nguyên văn** một file trong danh sách — `..`, `evaluation/`, câu kín, mã hoá lạ ⇒ 404; không ghép đường dẫn từ chữ người dùng), `/api/thoi_tiet`, `/api/tinh_nang` (chỉ đúng / sai).
+   - **Nguồn:** mỗi nguồn kèm `bai_id` khi là một bài kho ⇒ "Đọc cả bài" mở trang bài.
+   - **Biểu mẫu "Lên kế hoạch" — có code, cờ `lich_trinh_bieu_mau` TẮT ⇒ ẩn:** chọn số ngày / đi cùng / sở thích ⇒ **code** xếp lịch bằng đúng giá trị nút (không định tuyến, không công cụ, chữ gõ không vào model) ⇒ model chỉ viết lời theo khung. Bật khi đạt luật ghi trước (mục 5).
+   - Kiểm: review cả nhánh đạt; 228 / 228 chuỗi gửi model giống byte khi cờ mới tắt; Playwright 7 / 7 đích ≤ 2 lần bấm, 0 lỗi CSP / console, tương phản ≥ 4,5 : 1 (17 cặp), 10 / 10 câu dòng "Nguồn" khớp nguồn API; JS 106 KB gzip; cổng ổn định sau merge (352 test, `/health` 5 / 5, 3 câu thật, 0 câu hỏi trong log, ≈ 0,001 USD).
 
 ## 4. Chất lượng, tốc độ, tiền đo được
 
@@ -120,6 +144,8 @@ HỎI ĐÁP (mỗi câu hỏi):
 | Thời gian chờ (176 câu, hỏi lần lượt, đo trong công cụ đo — **chưa** tính đường mạng tới trang web) | trung vị **2,19 s**, câu chậm (p95) **4,90 s** — trong trần bạn chốt 3 / 5 s; câu trả lời dài (bộ tự viết) trung vị 4,6 s ⇒ chưa đạt | như trên; `BAO_CAO_DANH_GIA.md` |
 | Chữ đầu tiên sau B1 (03/11, 10 câu tự viết, `/api/chat/stream`, máy khách tuần tự) | cả 10 câu trung vị **3,05 s** / p95 **5,64 s**; câu về Huế **3,57 / 6,57 s**; trò chuyện 2,63 / 2,82 s; ngoài phạm vi 1,82 / 1,93 s; khẩn cấp 1,63 s. Trước B1: 1,23 / 2,61 s ⇒ vượt sàn cũ 3 / 5 s — Phase 9 chỉ theo dõi (bạn để mặc định 03/11: merge, tối ưu sau B2). Mẫu nhỏ: p95 gần bằng câu chậm nhất | `report_agent/2026-11-02_phase_9_code/b129_b1_implementation.md` §4b |
 | Chữ đầu tiên sau B2 (03/11, cùng 10 câu, script gọi API) | cả 10 câu trung vị **3,33 s** / p95 **5,20 s**; câu về Huế **3,50 / 5,33 s** (B1: 3,57 / 6,57) — tìm thêm gần như không làm chậm chữ đầu; vẫn vượt sàn cũ, chỉ theo dõi | `b134_b2_implementation.md` §4c |
+| Song song #6 (04/11, bật 05/11) | chữ đầu câu về Huế nhanh hơn trung vị **1,37 s** [0,34; 2,14] so với chờ định tuyến xong | `BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 05/11 |
+| Chữ đầu trên cổng mới (07/11, 10 câu tự viết có nguồn, đồng hồ trình duyệt, máy rảnh) | bấm gửi ⇒ chữ đầu trung vị **2,03 s**, chậm nhất 4,22 s; ⇒ hết câu 2,51 / 6,03 s. Khác bộ câu + cách đo với các dòng trên ⇒ chỉ tham khảo | `report_agent/2026-11-06_giao_dien_cong/c_s3_q_f_implementation.md` §5 |
 | Tiền một câu | ~0,00021 USD (~5 đồng) tính theo giá phẳng 0,10 USD / 1M token vào, 0,50 USD / 1M token ra; nhà cung cấp còn tính phần "ghi đệm" 0,125 USD / 1M nên số thật cao hơn ~20 % (≈ 0,00025 USD / câu), vẫn dưới trần 0,0005. Sửa công thức tính tiền: việc đóng gói Phase 1–8 | `session_prompt/Project_Status.md` §5 (30/10) |
 
 Người chấm: Claude (chấm theo đáp án mẫu). Mốc người: B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
@@ -177,7 +203,8 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 
 - Trong vài giây người dùng thấy chữ **chưa qua bộ kiểm**; nếu bộ kiểm cuối hỏng thì chữ bị rút lại, lỗi giữa chừng thì xoá hết + nút "Thử lại" (bạn chọn 31/10). Lỗi kiểm cuối hôm nay 0 / 489 lần ⇒ hiếm;
   sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật (chỉ phát lại luồng). Giao diện **làm lại 02/11** (merge `ed8e6e8`)
-  giữ đủ 17 yêu cầu đó + nguồn hiện bằng số nhỏ bấm được + nhãn "Trợ lý AI… có thể sai"; lỗi mạng / server lạ báo bằng tiếng Việt (`report_agent/2026-11-02_giao_dien_moi_code/`).
+  rồi **thành cổng đợt 1 07/11** (merge `dbfc925`) — giữ đủ 17 yêu cầu đó; nguồn nay là dòng "Nguồn" dưới câu (bỏ số trong chữ); nhãn "có thể sai"; lỗi mạng / server lạ báo bằng tiếng Việt.
+- **Cổng chưa có:** ảnh thật (27 ảnh giấy phép mở đang chờ bạn kiểm; giờ là khối hoa văn giữ chỗ); bản đồ, lưu trú, ăn uống theo cơ sở, sự kiện theo ngày (đợt 2); tóm tắt thẻ lấy "đoạn đầu" của bài nên vài thẻ là dòng kiểu "Tên chính thức: …".
 
 **Thước đo (giới hạn của bằng chứng)**
 
@@ -196,11 +223,17 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 
 Chi tiết từng dòng (số đo, nguồn, hướng xử lý) và mọi phương án đã thử: báo cáo khâu (`BAO_CAO_*.md`) và [`BAO_CAO_SO_SANH_PHUONG_AN.md`](BAO_CAO_SO_SANH_PHUONG_AN.md).
 
-**Việc kế tiếp (03/11):** Phase 9 theo spec bản 9 — B0 nền ✓ (02/11), B1 định tuyến ✓, B2 tìm thêm ✓ (03/11) ⇒ **B3 + B3b** ✓ merge 03/11 tối (câu dặn hẹp + giao diện nhiều lượt + nhớ hội thoại bật) ⇒ B4 hỏi lại ⇒ B5 lịch trình ⇒ B6 tra web ⇒ B7 so với RAG cũ; đóng code ~20/12/2026. Tốc độ chữ đầu (câu về Huế 3,50 / 5,33 s, vượt sàn 3 / 5 s): A đề xuất tối ưu sớm, sau B3b.
+**Việc kế tiếp (07/11):**
+- **Biểu mẫu "Lên kế hoạch" — đang đo, chưa bật.** Lượt biểu mẫu từng bị model trả câu từ chối (khi đó code tự dựng lời tối thiểu). Thử đổi chỗ đặt luật viết lời (X1, bộ phát triển 8 tổ hợp ×2):
+  - luật nằm trong phần tài liệu ⇒ từ chối 10 / 16;
+  - đưa luật lên lời dặn hệ thống ⇒ 0–1 / 16 nhưng chữ đầu p95 8,8 s;
+  - **thêm mức suy luận "low" cho riêng lượt biểu mẫu (V5) ⇒ 0 / 16 từ chối, chữ đầu p95 4,7 s ⇒ khả thi**.
+  - Còn: B đưa V5 vào nhánh ⇒ C đo bộ quyết 12 tổ hợp ×2 (Q-F) ⇒ đạt thì bật cờ (bạn quyết).
+- Sau đó: **B7 đóng gói** Phase 9; **đợt 2 cổng** (bản đồ / lưu trú / ăn uống / sự kiện); **deploy AWS** (đã thử build Docker trên máy, còn sửa trước khi đưa link công khai: giới hạn lượt, cookie `Secure`, tắt `/docs`, bỏ dữ liệu đánh giá khỏi ảnh). Đóng code khi bạn nói (dự kiến 25–30/12/2026; đóng = đã chạy trên AWS).
 Lịch sử thứ tự cũ (30/10–01/11, đã xong):
 1. ~~Hiện chữ dần (streaming)~~ — **xong, chạy từ 01/11** (merge `a80e12d`).
 2. **Đóng gói Phase 1–8 — xong, Phase 8 bạn đóng 14:29 01/11/2026:** lượt đo cuối cùng một commit (Golden 176 + lượt lặp cùng ngày, bộ an toàn 32, câu theo ngày, 22 câu qua API, **bộ kín mới 40 câu**) — **xong 01/11, mọi sàn đạt** (`report_agent/2026-10-31_streaming_spec/do_cuoi_implementation.md`; bộ kín cho thấy số dev lạc quan: Đủ 4,18 ↔ 4,58); B0 xong 01/11 (bạn giữ 10 đoạn); báo cáo so sánh phương án (đã đăng 01/11, thêm phần mới khi xong); bảng giới hạn (mục này).
-3. ~~Giao diện mới~~ — **xong 02/11** (merge `ed8e6e8`). Từ nhận xét B0 (đề xuất A, chờ bạn): `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn.
+3. ~~Giao diện mới~~ — **xong 02/11** (merge `ed8e6e8`). Từ nhận xét B0: `[n]` chen trong câu khó đọc ⇒ **đã đổi 07/11** thành dòng "Nguồn" (cổng đợt 1).
 4. Phase 9 — **đang làm** (B0, B1 xong): mở bằng nghiên cứu rộng rồi mới thử nghiệm; gồm **hội thoại nhiều lượt / nhớ lịch sử** và **câu cần nhiều nguồn** (agent tách câu con). Từ nhận xét B0 (đề xuất A, chờ bạn): câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng.
 
 ## 6. Chạy thử
