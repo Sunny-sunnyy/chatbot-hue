@@ -15,7 +15,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.sse import format_sse_event
 from openai import OpenAIError
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from core.schema import (
     ContextBudgetError,
@@ -67,10 +67,22 @@ RETRIEVAL_UNAVAILABLE_MESSAGE = "Hệ thống tra cứu tạm thời không kh�
 CONTEXT_BUDGET_MESSAGE = "Không thể đóng gói ngữ cảnh trong giới hạn cho phép."
 
 
+# Cổng đợt 1 D3: câu gốc cố định của lượt biểu mẫu "Lên kế hoạch"; câu gửi model = câu này + giá trị nút (`ghep_cau`, tất định).
+# Chữ `query` trình duyệt gửi kèm biểu mẫu **không** dùng — biểu mẫu không đưa chữ tự do nào vào model.
+CAU_BIEU_MAU = "Lên kế hoạch tham quan Huế"
+
+
 class ChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     query: str = Field(min_length=1, max_length=500)
     truong: TruongInput | None = None  # B4 D4: giá trị chọn ở nút hỏi lại; `{}` = "Trả lời luôn"
+    bieu_mau: bool = False  # cổng đợt 1 D3: lượt từ biểu mẫu — cần `truong` có `so_ngay` (thiếu ⇒ 422)
+
+    @model_validator(mode="after")
+    def _bieu_mau_can_so_ngay(self):
+        if self.bieu_mau and (self.truong is None or self.truong.so_ngay is None):
+            raise ValueError("bieu_mau needs truong.so_ngay")
+        return self
 
 
 class SourceResponse(BaseModel):
@@ -78,6 +90,7 @@ class SourceResponse(BaseModel):
     title: str
     heading_path: list[str]
     excerpts: list[str]
+    bai_id: str | None = None  # cổng đợt 1 D7: đường dẫn bài kho (mở trang Khám phá) khi nguồn là một bài của kho; nguồn khác ⇒ null
 
 
 class ChatResponse(BaseModel):
@@ -122,9 +135,12 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
 
 
 def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict) -> str:
-    """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc."""
+    """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc.
+    Cổng D3: lượt biểu mẫu ⇒ câu gốc là `CAU_BIEU_MAU` (bỏ chữ `query` của trình duyệt); câu này vào lịch sử như câu người dùng."""
     if body.truong is None:
         return query
+    if body.bieu_mau:
+        trace.bieu_mau, query = True, CAU_BIEU_MAU
     trace.truong, trace.search_query = body.truong.model_dump(exclude_none=True), query
     metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))
     return ghep_cau(query, body.truong)
@@ -204,6 +220,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
         return error_response(422, "invalid_request", "Yêu cầu không hợp lệ."), None
 
     state = request.app.state
+    if body.bieu_mau and not _flags(state).lich_trinh_bieu_mau:
+        return _bieu_mau_off(), None
     recorder = get_current_recorder()
     not_ready = _retrieval_not_ready(state, recorder)
     if not_ready is not None:
@@ -243,9 +261,14 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
 
     _remember(request, conversation_id, query, trace, "success")
     metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS
-    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited), notice=trace.notice,
+    return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited, _bai_ids(state)), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
                         lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
+
+
+def _bieu_mau_off() -> JSONResponse:
+    """Cờ `lich_trinh_bieu_mau` tắt ⇒ đường biểu mẫu không có (giao diện ẩn biểu mẫu theo `/api/tinh_nang`)."""
+    return error_response(404, "not_found", "Tính năng này chưa bật.")
 
 
 # ---------- Phần trước model, chung cho hai route ----------
@@ -296,13 +319,19 @@ def _error_response_for(exc: Exception, recorder, metrics: dict) -> JSONResponse
     return error_response(502, "generation_unavailable", GENERATION_FAILURE_MESSAGE)
 
 
-def _source_responses(cited) -> list[SourceResponse]:
+def _bai_ids(state):
+    """Cổng D7: tập đường dẫn bài kho (nạp lúc khởi động — `api/routes/cong.py`); chưa nạp ⇒ rỗng (mọi `bai_id` null)."""
+    return getattr(state, "kham_pha", None) or {}
+
+
+def _source_responses(cited, bai_ids=()) -> list[SourceResponse]:
     return [
         SourceResponse(
             id=source.id,
             title=source.title,
             heading_path=list(source.heading_path),
             excerpts=list(source.excerpts),
+            bai_id=source.source if source.source in bai_ids else None,
         )
         for source in cited
     ]
@@ -359,6 +388,10 @@ async def chat_stream(body: ChatRequest, request: Request):
             _set_outcome(response, metrics)
             return response
         state = request.app.state
+        if body.bieu_mau and not _flags(state).lich_trinh_bieu_mau:
+            response = _bieu_mau_off()
+            _set_outcome(response, metrics)
+            return response
         recorder = get_current_recorder()
         response = _retrieval_not_ready(state, recorder)
         if response is not None:
@@ -383,7 +416,7 @@ async def chat_stream(body: ChatRequest, request: Request):
 
         response = StreamingResponse(
             _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"]),
-                           lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc)),
+                           lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -407,8 +440,9 @@ class StreamEvents:
     """Dựng sự kiện SSE của một lượt stream và điền `outcome` / mốc thời gian vào `metrics` (spec §4.4, §4.6). Không gọi model ⇒ test
     được bằng chữ có sẵn; `_answer_events` chỉ nối nó với luồng model."""
 
-    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None) -> None:
+    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None, bai_ids=()) -> None:
         self.metrics = metrics
+        self.bai_ids = bai_ids  # cổng D7: `bai_id` của nguồn
         self.started = started
         self.new_turn_id = new_turn_id  # B142: cấp mã lượt (đánh giá 👍 / 👎) ở `done` của lượt có câu trả lời cuối; None ⇒ `done` như cũ
         self.lich = lich  # B5: dựng dữ liệu sự kiện `lich_trinh` (link bản đồ + thẻ Sửa) khi lượt có lịch qua kiểm; None ⇒ không có sự kiện
@@ -460,7 +494,7 @@ class StreamEvents:
                                           "message": "Câu trả lời không đáp ứng yêu cầu trích dẫn.", "after_text": bool(self.shown)})]
         else:
             self.metrics["outcome"] = "success"
-            events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited)])]
+            events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited, self.bai_ids)])]
             if trace.notice is not None:
                 events.append(sse_event("notice", {"text": trace.notice}))
             lich = None if self.lich is None else self.lich()
@@ -488,13 +522,13 @@ class StreamEvents:
         return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
 
 
-async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None):
+async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None, bai_ids=()):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
     trước dòng log, nên ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ nguyên (C132 m-1)."""
     metrics["status_code"] = 200
-    stream = StreamEvents(metrics, started, new_turn_id, lich)
+    stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids)
     try:
         async for kind, data in turn:
             yield stream.status(data) if kind == "status" else stream.delta(data)

@@ -16,15 +16,12 @@ export function cauGhep(chu, ten) {
   return goc ? goc.slice(0, MAX_QUERY - duoi.length) + duoi : `Giới thiệu về ${ten}`;
 }
 
-export default function HoiBangAnh({ draft, disabled, onAsk, onGoTen }) {
-  const [bat, setBat] = useState(false);
+// Chỉ hiện nút khi server bật tính năng (cờ `anh.bat`): cổng đợt 1 đọc cờ một lần ở `/api/tinh_nang` (App) thay vì dò `GET /api/anh/ung_vien` —
+// dò ra 404 thành lỗi console mỗi lần mở trợ lý (Q-G đòi 0 lỗi console).
+export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   const [state, setState] = useState(null);  // null · {preview, phase: "dang" | "xong" | "loi", ungVien, text}
   const inputRef = useRef(null);
 
-  // Chỉ hiện nút khi server bật tính năng (cờ `anh.bat`; tắt ⇒ 404).
-  useEffect(() => {
-    fetch("/api/anh/ung_vien").then(r => setBat(r.ok)).catch(() => setBat(false));
-  }, []);
   useEffect(() => () => state?.preview && URL.revokeObjectURL(state.preview), [state?.preview]);
 
   if (!bat) return null;

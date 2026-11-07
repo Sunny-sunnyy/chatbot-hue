@@ -49,7 +49,8 @@ CAU_KHONG_XEP = {
     "khong_buoi_hop_le": "{diem} chỉ hợp buổi không phù hợp với người đi cùng nên mình chưa xếp.",
     "het_suat": "{diem} chưa xếp được vì lịch đã kín chỗ — thêm ngày thì mình xếp được.",
     "khong_co_doan_nguon": "{diem} chưa xếp vì mình chưa lấy được tài liệu của điểm này trong kho.",
-    "vuot_ngan_sach": "Ngày {diem} chưa xếp — bạn hỏi thêm để mình xếp tiếp nhé.",
+    # review S4 m-5: lượt biểu mẫu không có "hỏi thêm để xếp tiếp" (sửa lịch qua chat chưa có) ⇒ câu đúng cho cả biểu mẫu lẫn câu gõ
+    "vuot_ngan_sach": "Ngày {diem} chưa xếp vì lịch dài quá mức một lần trả lời — bạn chọn ít ngày hơn thì mình xếp đủ.",
     # B171 (L-b): người dùng xin buổi tối mà khung không có buổi tối nào ⇒ code nói rõ vì sao (mục `diem` = "buổi tối")
     "toi_tre_em": "Buổi tối mình chưa xếp vì đi cùng trẻ nhỏ — lịch chỉ xếp buổi sáng và chiều.",
     "toi_lon_tuoi": "Buổi tối mình chưa xếp vì đi cùng người lớn tuổi — lịch chỉ xếp buổi sáng và chiều.",

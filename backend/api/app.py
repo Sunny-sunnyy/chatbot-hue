@@ -16,6 +16,8 @@ from api.feedback import router as feedback_router
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
 from api.routes.chat import router as chat_router
+from api.routes.cong import nap_kham_pha
+from api.routes.cong import router as cong_router
 from core.logging_setup import setup_logging
 from core.schema import (
     ComponentNotReadyError,
@@ -23,6 +25,7 @@ from core.schema import (
     RetrievalDependencyError,
 )
 from core.settings_loader import BACKEND_DIR, load_settings
+from ingestion.source_state import discover_full_corpus_files
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 from llm.assistant import AssistantFlags
 from llm.nhan_anh import nap_danh_sach, tao_agent
@@ -81,6 +84,7 @@ def create_app(settings=None):
 
         app.state.retrieval_ready = False
         app.state.retrieval_service = None
+        app.state.kham_pha = None
         app.state.retrieval_error_status = 503
         app.state.retrieval_error_code = "retrieval_unavailable"
         app.state.retrieval_error_message = "Hệ thống tra cứu tạm thời không khả dụng."
@@ -125,6 +129,13 @@ def create_app(settings=None):
             app.state.retrieval_error_message = (
                 "Hệ thống tra cứu tạm thời không khả dụng."
             )
+
+        # 1b. Cổng đợt 1 D6: bài kho cho trang Khám phá — chỉ khi bước 1 đã kiểm danh sách + hash file khớp build record; lỗi ⇒ route 503
+        if app.state.retrieval_ready:
+            try:
+                app.state.kham_pha = nap_kham_pha(*discover_full_corpus_files(settings))
+            except Exception:
+                logger.error("Explore list startup failed")
 
         # 2. Tokenizer and Context Builder
         try:
@@ -193,11 +204,13 @@ def create_app(settings=None):
     app.state.generator_ready = False
     app.state.generator = None
     app.state.anh = None
+    app.state.kham_pha = None
 
     app.include_router(health_router)
     app.include_router(chat_router)
     app.include_router(anh_router)  # luôn đăng ký: `settings` chỉ có trong lifespan (Phase 10 A1 D2, review C m-1); cờ tắt ⇒ 404
     app.include_router(feedback_router)
+    app.include_router(cong_router)  # cổng đợt 1 D6: 4 route chỉ đọc
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 
     if not FRONTEND_DIR.is_dir():
