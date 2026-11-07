@@ -18,7 +18,7 @@ const CITATION_SHOWN = /\s*\[\s*(?:nguồn\s*)?\d+\s*\]/giu;
 const CITATION_TAIL = /\s*\[\s*(?:n(?:g(?:u(?:ồ(?:n)?)?)?)?\s*)?\d*\s*$/iu;
 const WEB_CITATION_SHOWN = /\s*\[\s*w\s*\d+\s*\]/giu;
 const WEB_CITATION_TAIL = /\s*\[\s*w?\s*\d*\s*$/iu;
-const EXTERNAL = /^https?:\/\//i;
+const EXTERNAL = /^(https?:)?\/\//i;  // cả link `//host` (cùng giao thức) — review S4 m-f1
 
 // Thứ tự nguồn ở dòng "Nguồn: …" (B3 D9 (c)): theo lần xuất hiện đầu tiên của mã trong câu; nguồn được trích mà không thấy mã (không nên có) xếp cuối.
 // Trả Map(số gốc dạng chuỗi ⇒ thứ tự 1..k).
