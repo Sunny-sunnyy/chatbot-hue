@@ -1,4 +1,59 @@
-# STATUS B — PHIÊN 07/11 (mở 11:53 07/11/2026 `date`)
+# STATUS B — viết lại 15:43 07/11/2026 (`date`) cho B mở lại giữa phiên (User reset context cả 4 session)
+
+Vai: thực thi. Terminal đổi khi mở lại ⇒ `ListAgents` (07/11 trước reset: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`).
+`main` = `75a0cf9` (tài liệu). **Biểu mẫu "Lên kế hoạch" V5 BẬT trên `main`** (`lich_trinh_bieu_mau: true`, `thoi_tiet: true` — User 07/11).
+**Không còn worktree nào của B** (`/tmp/b_cong`, `/tmp/b_dep` đã gỡ; mọi nhánh đã push). Không code dở.
+⚠ Dự án khác của User dùng máy tới ~16:00 ⇒ hỏi A trước khi chạy test / build / server nặng.
+
+## 1. Đã xong 07/11 (sha trên origin)
+
+- **S1 backend cổng đợt 1** `1c31ce4`:
+  - D3 lượt biểu mẫu (code xếp bằng giá trị nút; không định tuyến / #6 / công cụ);
+  - D4 cờ `lich_trinh_bieu_mau`;
+  - D6 `/api/kham_pha`, `/api/kham_pha/bai`, `/api/thoi_tiet`, `/api/tinh_nang` (`backend/api/routes/cong.py`);
+  - D7 `bai_id`.
+- **(e)** `_lay_nguon_lich` chọn đoạn cùng file có bằng chứng dài nhất `0cb0b0a`.
+- **S2 giao diện** (bản mẫu 2 Sông Hương, hash route, trợ lý nổi, dòng Nguồn, biểu mẫu) `f20fd28`.
+- **3 minor review S4** `27ed091` ⇒ A merge `main` `0dab4e5` (+ bật thời tiết).
+- **V5** (luật lịch trong lời dặn hệ thống + reasoning "low", chỉ lượt biểu mẫu) `632a4f7` ⇒ S3 của C đạt, User duyệt, A merge.
+- **Sửa 4 test mốc cờ tắt** sau khi bật cờ `a884de4` ⇒ A merge `main`, cổng đạt.
+- **B-dep** — nhánh `p12-deploy-nhap` = `4cfe681`, chưa merge (deploy chờ User):
+  - biến môi trường `HUE_QDRANT_URL` / `HUE_TRA_WEB`;
+  - nháp `data/phase_12/deploy_nhap/` (private): `Dockerfile` (có `--no-cache`, chưa build lại), `Dockerfile.dockerignore` **sinh bằng `dung_dockerignore.py`** (danh sách chừa 204 bài + 8 mục), `compose.yml`, `Caddyfile`;
+  - ảnh sạch `hue-rag-app:nhap2` (204 .md, 0 Golden / sealed / backup — E review vòng 2 ready).
+  - Ảnh cũ `hue-rag-app:nhap` (có file private): **User đã xoá 07/11**.
+- **Report:** `report_agent/2026-11-06_giao_dien_cong/{s1,s2,b_v5}_implementation.md`, `report_agent/2026-11-07_tu_soi_lo_trinh/{tu_soi_B,b_dep_build_cuc_bo}.md`.
+
+## 2. Đang chờ — việc kế của B
+
+1. **7 ảnh Commons** (2 đầu trang + 5 lĩnh vực; không ảnh thẻ bài — User chọn):
+   - E lấy lại từ ảnh đại diện vi.wikipedia, chỉ file Commons; danh sách + giấy phép `data/nghien_cuu_giao_dien_2026-11-06/anh/commons/tai_ve.json`;
+   - User kiểm xong ⇒ B đóng ảnh vào build (`frontend/` ⇒ `dist/`; CSP `img-src 'self'` giữ, không link ảnh ngoài) + dòng ghi công;
+   - chỗ chừa: `.hero` + 5 ô lĩnh vực (`frontend/src/pages.jsx`, `index.css`).
+2. **Deploy thật chờ User.** Khi lên máy:
+   - merge `main` vào `p12-deploy-nhap` ⇒ build lại ⇒ đo lại cỡ ảnh (bản trước có cache uv 1,9 GB);
+   - chạy lại `dung_dockerignore.py` nếu build record đổi;
+   - đếm trong ảnh `docker run --rm --network none … find`.
+   - Trước link công khai còn phải làm: giới hạn lượt / ngày, cookie `Secure`, tắt `/docs`.
+
+## 3. Bẫy đã gặp 07/11
+
+- Test lấy `settings.yaml` thật làm mốc "cờ tắt" ⇒ hỏng khi bật cờ ⇒ đặt rõ `OFF = flags_from(lich_trinh_bieu_mau=False)` trong test, so đúng một cờ.
+- Đếm file private trong ảnh phải đếm đủ: `find … | head` từng cho số sai "0 evaluation" ⇒ dùng danh sách chừa + `wc -l` toàn ảnh (bỏ `.venv`).
+- Đường mới có model ⇒ gọi thật 1 lượt (≤ 0,001 USD) ngay khi chạy được, trước khi viết bộ test.
+- `huggingface_hub` 1.26 + model tải một phần ⇒ `IncompleteSnapshotError` ⇒ xoá `trees/` sau khi tải (Dockerfile đã có).
+- Push từ worktree / lệnh ghép commit + push bị chặn ⇒ commit ở worktree, `git push` riêng từ repo chính. Build nhánh chưa merge: `--build-context code=<worktree>/backend`.
+- Mốc Q1 đổi khi bật cờ ⇒ luôn chụp lại trên `main` hiện tại, so cùng cờ.
+
+## 4. Tiền B 07/11 ≈ 0,0074 USD (S1 0,0041 · S2 0,0018 · B-dep 0,0011 · V5 0,0004)
+
+## 5. Lệnh cho User
+
+- Nhánh đã merge, xoá khi muốn: `p11-cong-dot-1`, `p11-bat-bieu-mau` (local + origin).
+
+---
+
+# (cũ) Chi tiết phiên 07/11 — nhật ký từng bước (tham khảo)
 
 Vai: thực thi. Terminal 07/11: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`. Quyền phiên: User cấp "như 06/11" (A báo).
 
@@ -6,7 +61,8 @@ Vai: thực thi. Terminal 07/11: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-
 - `p11-cong-dot-1` = `632a4f7` (S1 + S2 + 3 minor S4 + V5; `27ed091` đã merge `main` `0dab4e5` bởi A). V5 chờ S3 của C + User duyệt bật cờ.
 - `p12-deploy-nhap` = `4cfe681` (biến môi trường `HUE_QDRANT_URL` / `HUE_TRA_WEB` + merge `main` `fb8d3d2`; 26 test đạt), giữ riêng, chưa merge. Nháp Dockerfile thêm `uv pip install --no-cache` (E m-6) — chưa build lại, đo lại cỡ ảnh lúc lên máy. E review B-dep vòng 2: ready.
 - Deploy cục bộ: ảnh `hue-rag-app:nhap2` sạch (204 .md, 0 Golden / sealed / backup), `/health` 5/5. Ảnh cũ `hue-rag-app:nhap` có file private ⇒ chờ User `! docker image rm hue-rag-app:nhap`. Report `report_agent/2026-11-07_tu_soi_lo_trinh/b_dep_build_cuc_bo.md`.
-- Worktree còn: `/tmp/b_cong` (p11), `/tmp/b_dep` (p12).
+- `a884de4` (sửa 4 test mốc cờ tắt) đã merge `main` (A, cổng đạt) ⇒ biểu mẫu V5 BẬT trên `main`. Worktree `/tmp/b_cong` đã gỡ; còn `/tmp/b_dep` (p12).
+- Việc chờ: User kiểm 7 ảnh Commons (2 đầu trang + 5 lĩnh vực, không ảnh thẻ bài) ⇒ B đóng ảnh vào build + dòng ghi công (`tai_ve.json`).
 - **B rảnh có lý do:** deploy thật / bật biểu mẫu V5 / ảnh Commons đều chờ User. **Lệnh cho User:** `! docker image rm hue-rag-app:nhap` (ảnh cũ có file private; giữ `nhap2`).
 - Tiền B phiên 07/11 ≈ 0,0074 USD (S1 0,0041 · S2 0,0018 · B-dep 0,0011 · V5 0,0004).
 
