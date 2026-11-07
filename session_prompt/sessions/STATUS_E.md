@@ -1,69 +1,43 @@
-# STATUS E — cập nhật 13:01 07/11/2026 (`date`) · terminal `hue-rag-81` (A `hue-rag-7a`, B `hue-rag-10`, C `hue-rag-a0`) · Claude Opus 5.5 · vai thực thi · **RẢNH, chờ User** (A 13:01: không tự mở việc mới)
+# STATUS E — kết phần việc 16:23 07/11/2026 (`date`) · terminal `hue-rag-81` (A `hue-rag-7a`, B `hue-rag-10`, C `hue-rag-a0`) · Claude Opus 5.5 · vai thực thi
 
-## Đang chờ (07/11, sau phiên sáng)
+## PHIÊN SAU ĐỌC TRƯỚC (viết 16:23 07/11/2026)
 
-- **User kiểm 27 ảnh** (`data/nghien_cuu_giao_dien_2026-11-06/anh/commons/xem_anh.html`) ⇒ B đưa vào build (S2). Cần thì E tìm tiếp ảnh cho 3 điểm thiếu / các điểm "chưa thử".
-- **Giọng nói:** User thu 40 câu **hoặc** quyết giữ / cắt khỏi đồ án (E đề xuất cắt — `tu_soi_E.md` §4). Thu xong ⇒ G2 (mục 4 dưới).
-- **Phiếu v6:** User tick ⇒ E chốt `diem_v6.json` + chạy `kiem_v6.py`.
-- Review / việc mới: A nhắn.
+**E không có việc dở, không code dở, không worktree, không file `/tmp` của E.** Mọi file E tạo 07/11 nằm trong `data/` (private) hoặc `report_agent/` (A đã commit phần tracked).
 
-**Tiền E 07/11: 0,000953 USD** (3 câu đo RAM, E-dep). Commons / Codex tra web / review / ca dò: 0.
+**Việc chờ — đều do User:**
+1. **Ảnh cổng (bộ mới theo vi.wikipedia):** User kiểm `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/xem_anh.html`. Đường dẫn Windows: `\\wsl.localhost\Ubuntu-24.04\home\minhhieu\hue_rag\data\nghien_cuu_giao_dien_2026-11-06\anh\viwiki\xem_anh.html`.
+   - Đã có lựa chọn: User chọn **#1 đầu trang = File:Truong_Tien_bridge_(I).jpg** (A báo chiều 07/11 — không nằm trong bài vi.wiki Sông Hương; ảnh đại diện bài cũ ở `hero_song_cu.jpg`).
+   - User kiểm xong ⇒ **B** đưa 7 ảnh (#1–#7) vào `frontend/` + dòng ghi công (tác giả / giấy phép / link ở `danh_sach.md`, `tai_ve.json`).
+   - Bộ cũ `anh/commons/` (27 ảnh) chỉ là hồ sơ — có 2 nhãn sai User bắt.
+2. **Giọng nói:** User thu 40 câu **hoặc** quyết giữ / cắt khỏi đồ án (E đề xuất cắt — `report_agent/2026-11-07_tu_soi_lo_trinh/tu_soi_E.md` §4). `data/phase_10/giong_noi/thu/` vẫn **rỗng** (16:23 07/11). Thu xong ⇒ G2 (mục 4).
+3. **Phiếu bảng điểm v6** (`data/phase_9/lich_trinh/diem_cho_user_v6.md`, 4 ô tick) ⇒ E chốt `diem_v6.json` + chạy `kiem_v6.py` (lệnh ở bảng 07/11 dưới). Lưu ý: biểu mẫu đã bật 07/11 trên **bảng v3**.
+4. Việc cũ A hỏi User: bật `anh.bat`? xoá collection thử `hue_anh_siglip2`? xoá ảnh Docker cũ `hue-rag-app:nhap` (còn chứa file đánh giá — User `! docker rmi hue-rag-app:nhap`)?
 
-## Đang làm (A giao 07/11, sau merge cổng `0dab4e5`)
+**Việc kế của E khi có tín hiệu:**
+- (a) User kiểm ảnh, đòi đổi ⇒ dùng `tools/tai_anh_viwiki.py` (liệt kê ảnh trong bài + chú thích; `--tai` tải) + `tools/dung_trang_viwiki.py` (dựng `danh_sach.md` + `xem_anh.html`). Luật: chỉ file Commons (URL `upload.wikimedia.org/wikipedia/commons/…`), mở từng ảnh đối chiếu chú thích bài.
+- (b) G1 ⇒ G2 giọng nói (mục 4, plan `92ec551531fd`). 0 USD, chạy máy — hỏi A trước (máy dùng chung với dự án khác).
+- (c) Phiếu v6 (mục 3 ở trên).
+- (d) Review khi A giao: spec cổng đợt 2 (C209 P1 / P2 / P3), nhánh mới của B (vd giới hạn lượt / cookie `Secure` / tắt `/docs` trước deploy).
+- (e) Hoãn tới khi xét bật câu gõ tự do: E20 Sửa 1 / Sửa 2 (`report_agent/2026-11-06_b5_cau_tu_nhien/e20_tu_choi_hoi_kem.md` §5); dò K2 bằng `chay_e20.py` (≈ 0,002 USD, A quyết).
 
-- **Cập nhật báo cáo User — XONG 13:22 07/11/2026, chờ A review + commit** (chỉ tài liệu, 0 USD): `LUONG_HOAT_DONG_HE_THONG.md` bản 31 (tóm tắt 07/11, sơ đồ, bảng thành phần, bước 15 thời tiết + 16 cổng, số chữ đầu 07/11, việc kế tiếp); `BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 40 (tóm tắt, sơ đồ, checklist 5 dòng mới, mục 4 07/11 gồm X1 V0–V6, §5, §6); `README.md` (đầu file, 2 dòng báo cáo, dòng Phase 9, dòng streaming).
+**Máy:** dự án khác của User đang dùng máy từng lúc ⇒ **việc nặng (server, pytest rộng, docker build, đo latency) hỏi A trước**; C hay đo latency — hỏi C "xong đo chưa".
 
-## Đã làm 07/11 (A giao — tất cả xong)
+## 0. Đã làm 07/11 (A giao; A commit phần tracked) — tiền E 07/11: **0,000953 USD**
 
-- **Review B-dep — XONG 13:06 07/11/2026** (0 USD): `report_agent/2026-11-07_tu_soi_lo_trinh/e_review_b_dep.md` — **changes_requested**: code `p12-deploy-nhap` `50e4ebf` đạt; **M-1** ảnh Docker chứa 16 file `*/evaluation/` + `meta/` 148 file (sao lưu Golden) vì dockerignore chỉ loại `evaluation/` ở gốc kho; 5 minor. **Vòng 2 13:26: ready** — E đếm riêng ảnh `nhap2`: kho = đúng 204 `corpus.sources` + 1 file `meta/`, 0 file đánh giá / câu kín / sao lưu / `.env`; m-6 mới (cache uv 1,9 GB, không chặn). Ảnh cũ `nhap` nên xoá (User `!`). Worktree `/tmp/e_rv2` đã gỡ.
+| Giờ xong | Việc | Kết quả | File |
+|---|---|---|---|
+| 11:59 | Script kiểm v5 ↔ v6 theo ô tick | 8 ca giả: 2 đúng OK, 6 sai đều bắt. Lệnh (từ `backend/`): `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python ../data/phase_9/lich_trinh/tools/kiem_v6.py <phiếu> <diem_v6.json>`; lúc chốt bỏ chữ "ĐỀ XUẤT, chờ User" ở căn cứ Đại Nội nếu User chọn A | `data/phase_9/lich_trinh/tools/kiem_v6.py` |
+| 12:30 | Ảnh Commons bộ 1 (27) | **User bắt 2 nhãn sai** ⇒ thay bằng bộ vi.wiki | `data/nghien_cuu_giao_dien_2026-11-06/anh/commons/` |
+| 12:32 | Tự soi over-engineering | đóng hẳn câu tự do tới sau bảo vệ; gỡ cờ âm; giọng nói đề xuất cắt; deploy sớm; rủi ro bỏ quên (giới hạn lượt, quyển báo cáo + slide, dự phòng demo) | `report_agent/2026-11-07_tu_soi_lo_trinh/tu_soi_E.md` |
+| 12:38 | E-dep chuẩn bị deploy | RSS app 1,49 → 1,51 GB, Qdrant 378 MiB ⇒ máy 4 GB; Lightsail 4 GB 24 USD / tháng; checklist 9 mục. Nháp Docker B nhận và sửa tiếp | `report_agent/2026-11-07_tu_soi_lo_trinh/e_dep_chuan_bi_deploy.md`; `data/phase_12/deploy_nhap/` |
+| 12:56 | S4 review cổng đợt 1 | backend `0cb0b0a` ready (Q1 228 / 228 E tự chạy; API bài kho chặn 20 kiểu id lạ; m-5 bớt ngày 3 / 120); giao diện `f20fd28` ready (m-f1 link `//`, m-f2 `<title>` — B sửa `27ed091`) | `report_agent/2026-11-06_giao_dien_cong/s4_review_{backend,frontend}.md` |
+| 12:58 | Bảng bằng chứng đồ án | theo khâu, nhãn ai đo, lỗ hổng trước bảo vệ (A kiểm 3 số khớp) | `report_agent/2026-11-07_tu_soi_lo_trinh/e_tb_bang_bang_chung.md` |
+| 13:00 | Nháp demo 5 phút | 7 bước + dự phòng; câu mẫu **chưa chạy thử** | `…/e_demo_5_phut.md` |
+| 13:06 → 13:26 | Review B-dep (biến môi trường + Docker) | vòng 1 changes_requested (M-1 ảnh chứa 16 file `*/evaluation/` + sao lưu Golden) ⇒ vòng 2 **ready** (E đếm riêng ảnh `nhap2`); m-6 cache uv 1,9 GB | `…/e_review_b_dep.md` |
+| 13:22, 15:28 | Báo cáo User sau merge cổng + bật biểu mẫu | LUONG bản 31 → 32, SINH bản 40 → 41, README; **A sửa 1 câu sai của E** (dòng dự báo) | `bao_cao_he_thong/` (A commit `7cad6ac`, `bdde1d9`) |
+| 16:14 → 16:22 | Ảnh theo bài vi.wikipedia | 30 ảnh (#1–#7 đợt 1 + 23 thẻ), 30 / 30 URL Commons, E mở từng ảnh đối chiếu chú thích (30 «có»); Nhã nhạc: bài không có ảnh ⇒ ảnh «Đội nhạc cung đình Huế» bài Festival Huế; ⚠ Đại Nội / Kinh thành = Ngọ Môn (trùng đầu trang), thẻ Phá Tam Giang trùng ô du lịch, Lăng Tự Đức bưu thiếp cũ. Theo User: #1 = cầu Trường Tiền (226 KB); #2 Ngọ Môn cắt 16:7, 249 KB | `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/` (`muc_7.json`, `muc_the.json`, `ung_vien_*.json`, `tai_ve*.json`) |
 
-- **E-anh — XONG 12:30 07/11/2026** (bắt đầu 12:16; A giao; 0 USD): 27 ảnh giấy phép mở Wikimedia Commons (CC0 / PD / CC BY / CC BY-SA) cho bản mẫu 2 cổng đợt 1 — 2 hero · 5 ô lĩnh vực · 20 thẻ điểm; 3,2 MB; mỗi ảnh ≤ 200 KB (trừ hero Ngọ Môn 218 KB).
-  - Đầu ra: `data/nghien_cuu_giao_dien_2026-11-06/anh/commons/` — `xem_anh.html` (lưới ảnh để User kiểm), `danh_sach.md` (chỗ dùng · file · địa điểm · tác giả · giấy phép · link · mức chắc + vì sao · thiếu ảnh · chưa thử), `tai_ve.json` (tác giả đầy đủ cho dòng ghi công), `chon.json`, `ung_vien.json`. Thư mục con riêng để không lẫn ảnh chụp màn hình B172 trong `anh/`.
-  - Công cụ: `tools/tai_anh_commons.py` (tim / ung_vien / tai; chờ theo Retry-After khi 429), `tools/dung_trang_anh.py`.
-  - [Chạy] E tự xem cả 27 ảnh; đổi 4 ảnh yếu (Bạch Mã ảnh sân bay, Thiệu Trị ảnh cũ chụp trên cao, 2 ảnh Lăng Cô sai cảnh). Mức chắc: 22 cao / 5 vừa. Thiếu: Điện Hòn Chén, bãi Thuận An, núi Ngự Bình. 4 ảnh có người rõ ⇒ đánh ⚠ (không ảnh nào làm hero). Trang chạy headless: 27 / 27 ảnh hiện, 0 ảnh ngoài.
-  - Không đụng `frontend/`, nhánh B, file C. Ảnh vào build ⇒ B ở S2 sau khi User kiểm.
-
-- **XONG 11:59 07/11/2026 — script kiểm v5 ↔ v6 theo ô tick** (0 USD, chỉ đọc): `data/phase_9/lich_trinh/tools/kiem_v6.py`. Không đụng `diem_v3/v5`, phiếu thật, `settings.yaml`.
-  - Lệnh (từ `backend/`): `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python ../data/phase_9/lich_trinh/tools/kiem_v6.py <phiếu đã tick> <diem_v6.json>` ⇒ in `OK` / danh sách lỗi, mã thoát 0 / 1.
-  - Xét 3 nhóm ô tick (Đại Nội · 2 bảo tàng · dòng 32) + Phá Tam Giang cố định; mục 3 (hướng "đi dày") không phải ô tick ⇒ không xét. Căn cứ `file:dòng «chữ»` so kho bằng `grep_kb.sh`; `nap_bang` thật.
-  - [Chạy] thử 8 ca giả ở `/tmp/e_kiem_v6/`: 2 ca đúng ⇒ OK; 6 ca sai (Đại Nội lệch ô tick, đổi trường ngoài ô tick, thiếu tick, tick 2 ô, căn cứ sai dòng, dòng 32 chưa bỏ) ⇒ đều báo lỗi đúng chỗ.
-  - Lúc chốt thật: bỏ chữ "ĐỀ XUẤT, chờ User" trong căn cứ Đại Nội (nếu User chọn A); ghi `ghi_chu` "BẢN 6 … User duyệt <giờ>".
-
-- **Tự soi — XONG 12:32 07/11/2026** (A giao, 0 USD): `report_agent/2026-11-07_tu_soi_lo_trinh/tu_soi_E.md`. Chờ A chốt chung với B / C.
-
-- **E-dep — XONG 12:38 07/11/2026** (bắt đầu 12:33, A giao): report `report_agent/2026-11-07_tu_soi_lo_trinh/e_dep_chuan_bi_deploy.md`; nháp `data/phase_12/deploy_nhap/` (`Dockerfile`, `compose.yml`, `Caddyfile`, `yeu_cau_tra_aws.md` — **chưa build**); tra web `data/tra_cuu_cli/2026-11-07_e-dep-aws/`. [Chạy] RSS app 1,49 → 1,51 GB, Qdrant 378 MiB ⇒ máy 4 GB. Tiền 0,000953 USD (3 câu). Không sửa `backend/`.
-
-- **S4 review cổng đợt 1 — XONG 12:56 07/11/2026** (A giao, 0 USD): `report_agent/2026-11-06_giao_dien_cong/s4_review_backend.md` (`0cb0b0a`, ready; Q1 228 / 228 E tự chạy; m-5 bớt ngày 3 / 120) + `s4_review_frontend.md` (`f20fd28`, ready; m-f1 regex link `//`, m-f2 `<title>`). Worktree `/tmp/e_rv`, `/tmp/e_rv_main`, `/tmp/e_rv_do/` **đã gỡ** (A cho, 12:57).
-- **E-tb — XONG 12:58 07/11/2026** (A giao, 0 USD, chỉ đọc): `report_agent/2026-11-07_tu_soi_lo_trinh/e_tb_bang_bang_chung.md` — bảng bằng chứng theo khâu cho quyển báo cáo + slide (nhãn ai đo; lỗ hổng bằng chứng trước bảo vệ).
-
-- **Kịch bản demo 5 phút — NHÁP XONG 13:00 07/11/2026** (A giao, 0 USD): `report_agent/2026-11-07_tu_soi_lo_trinh/e_demo_5_phut.md`. Câu mẫu **chưa chạy thử** (cần ≈ 0,005 USD trên bản cuối); User đọc / sửa.
-
-## PHIÊN SAU ĐỌC TRƯỚC (viết 22:40 06/11/2026 — phần chờ đã cập nhật ở mục "Đang chờ" trên)
-
-**E không có việc đang làm dở, không có code dở, không có worktree.** Việc chờ đều do User:
-1. **G1 giọng nói:** User thu 40 câu (`data/phase_10/giong_noi/thu/` vẫn **rỗng**). Khi có ⇒ làm theo plan G2 (mục 4 dưới).
-2. **Phiếu bảng điểm v6** (`data/phase_9/lich_trinh/diem_cho_user_v6.md`): A trình User cùng spec giao diện cổng đợt 1. Có 4 ô tick:
-   - Đại Nội dùng căn cứ file vé?
-   - hướng "đi dày" (4 hướng);
-   - 2 bảo tàng "trong nhà"?
-   - giữ / bỏ dòng 32.
-
-   User chọn ⇒ E chốt v6 theo ô tick (A giao).
-3. Việc cũ A hỏi User: bật `anh.bat`? xoá collection thử `hue_anh_siglip2`? luật "gói Python ≥ 2 tuần"?
-
-**Việc kế của E, theo thứ tự (handoff mục "Phiên sau làm theo thứ tự" bước 5):**
-- (a) **G1 ⇒ G2** khi User thu xong — mục 4 dưới, plan `92ec551531fd`. 0 USD, chạy máy.
-- (b) **Phiếu v6** — User tick (A hỏi cùng Q-U3 của spec cổng) ⇒ E chốt `diem_v6` theo ô tick (A xác nhận 07/11).
-  - User chọn hướng (1) "luật xếp đi dày bằng code" ⇒ việc của B, E không làm.
-  - Hướng (2) "thời lượng theo loại" ⇒ E soạn bảng theo loại để User duyệt từng dòng.
-- (c) **Review spec cổng đợt 2** khi A viết (C209 P1 / P2 / P3) — theo `risk-gated-agent-review`, ≤ 2 vòng.
-- (d) **Hoãn, chỉ làm khi A giao lúc xét bật câu gõ tự do:**
-  - E20 Sửa 1 (code nối câu cố định khi lời do code dựng + có `tim_kho` sau lịch), đo bộ E20 ×1 ≈ 0,008;
-  - Sửa 2 (cho `tim_kho` tìm thật 1 lần sau lịch), đo ×2 ≈ 0,04;
-  - report `e20_tu_choi_hoi_kem.md` §5.
-- (e) Có thể đề xuất (A quyết): dò lỗi K2 "hỏi lại số ngày thừa". C210 chưa tái tạo được. Cách dò: `e20/tools/chay_e20.py` ghi đúng số ngày model gửi; 3–4 câu tự viết có số ngày viết tắt kiểu "số ngày + số đêm" ⇒ ≈ 0,002 USD.
-
-## 1. Đã xong phiên tối 06/11 (mọi việc A giao; A commit)
+## 1. Đã xong phiên tối 06/11 (lịch sử) (mọi việc A giao; A commit)
 
 | Việc | Kết quả | File |
 |---|---|---|
@@ -86,7 +60,12 @@
 - Muốn biết model gửi tham số gì / tìm câu gì: dùng `data/phase_9/b5_v2/e20/tools/chay_e20.py` (cùng khuôn lệnh).
 - Chấm bằng 2 sub-agent: brief ghi file `/tmp` (đề chấm nguyên văn + câu + đường dẫn dữ liệu + "không xem phiếu kia"), dùng `general-purpose` ngữ cảnh mới (không `fork`), mỗi agent ghi một file `cham_agent_<N>.md`.
 
-## 3. Bẫy / đã học (phiên tối 06/11)
+## 3. Bẫy / đã học
+
+- **07/11 — nhãn ảnh không đối chiếu mô tả (User bắt 2 lỗi trong 27 ảnh Commons):** ô ẩm thực đặt nhãn "Bún bò Huế" theo **tên danh mục** Commons, ảnh thật là bún riêu; ô di tích ghi "Điện Thái Hòa" trong khi mô tả Commons ghi rõ là Đại Cung môn. E có mở ảnh nhưng chỉ soát "đúng nơi / có người", không so ảnh với **mô tả của chính file** + nhãn mình đặt. Ảnh "chắc: vừa" vẫn đưa vào danh sách chính. ⇒ Từ nay: nhãn = đúng chủ thể trong mô tả / chú thích bài (copy nguyên), mở ảnh đối chiếu từng cái, ghi "khớp chú thích: có / không"; ảnh không chắc ⇒ để mục riêng, không vào danh sách dùng.
+- **07/11 — câu về hành vi lấy từ ghi chú, không từ số đếm:** E viết "thời tiết bật ⇒ lịch biểu mẫu có dòng dự báo" theo ghi chú điều kiện trong report C; S3 đếm 0 / 24 (biểu mẫu chưa có ô ngày đi). A sửa.
+
+### Phiên tối 06/11
 
 - **Auto mode chặn agent ghi file `*sealed*`** (đọc thì được) ⇒ viết script `/tmp` dựng file, User chạy `!`. Xong thì xoá script `/tmp`.
 - **Câu kín agent viết hay "cố tự nhiên"**: cài ý để thử tính năng (giờ ra ga, tiền vé), câu dài, chi tiết lạ. User bắt 2 vòng. Cách đạt: mỗi câu **một nhu cầu thật**, có chủ ngữ, ngắn vừa đủ.
@@ -109,6 +88,7 @@
 
 ## Tiền
 
+- **E 07/11: 0,000953 USD** (3 câu đo RAM ở E-dep; ảnh Commons / vi.wiki, Codex tra AWS, review, ca dò: 0).
 - **E phiên tối 06/11: 0,011121 USD** (kín v2 0,003029 + E20 0,008092; đều Phase 9). Chấm agent = quota Claude. Codex / Playwright / giọng nói: 0.
 - E phiên sáng 06/11: 0 USD. Phase 10 tổng vẫn 0,098380 / 0,15.
 
