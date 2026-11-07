@@ -42,7 +42,8 @@ def flags_from(**assistant) -> AssistantFlags:
     return AssistantFlags.from_settings(s)
 
 
-PROD = flags_from()  # cờ đang chạy (định tuyến, #6 song song, tra web bật)
+# settings.yaml bật biểu mẫu + thời tiết từ 07/11 ⇒ mốc "cờ biểu mẫu tắt" đặt rõ; mọi cờ khác như đang chạy (định tuyến, #6, tra web…) ⇒ so đúng một cờ
+OFF = flags_from(lich_trinh_bieu_mau=False)
 FORM = flags_from(lich_trinh_bieu_mau=True)
 TRUONG = ("so_ngay", "di_cung", "kieu_di", "so_thich")
 FORM_INSTRUCTIONS = f"{ANSWER_SYSTEM_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}"  # V5 (X1c của C): luật lịch trong lời dặn hệ thống của lượt biểu mẫu
@@ -88,7 +89,7 @@ def form_trace(truong: dict, history=()) -> tuple[str, AnswerTrace]:
 
 def run(deps, query, gen, flags, trace, stream=False):
     async def go():
-        if stream:  # đường route stream: qua `answer_turn_stream_parallel` (#6 bật trong PROD / FORM)
+        if stream:  # đường route stream: qua `answer_turn_stream_parallel` (#6 bật trong OFF / FORM)
             return [e async for e in answer_turn_stream_parallel(query, *deps, gen, trace, flags)]
         await answer_turn(query, *deps, gen, trace, flags)
     return asyncio.run(go())
@@ -171,18 +172,18 @@ def test_follow_up_turn_after_form_goes_like_main(deps, stream):
     # lượt hỏi tiếp sau biểu mẫu: đường thường; bật cờ biểu mẫu không đổi chuỗi gửi model (định tuyến tắt để client giả chỉ cần một kịch bản)
     history = ((ghep_cau(CAU_BIEU_MAU, TruongInput(so_ngay="2")), ""),)
     sent = {}
-    for name, flags in (("form", FORM), ("prod", PROD)):
+    for name, flags in (("form", FORM), ("off", OFF)):
         gen = generator(lambda n, kw: [answer("Đại Nội mở cửa từ 7 giờ [1].")])
         run(deps, "Đại Nội mở cửa mấy giờ?", gen, dataclasses.replace(flags, router=False, tra_web=False), AnswerTrace(history=history), stream)
         sent[name] = gen.client.responses.calls
-    assert sent["form"] == sent["prod"] and len(sent["form"]) == 1
+    assert sent["form"] == sent["off"] and len(sent["form"]) == 1
     assert effort(sent["form"][0]) is None and LICH_TRINH_LUAT not in sent["form"][0]["instructions"]  # lượt thường: không suy luận "low", không luật lịch
 
 
 def test_form_flag_needs_table_only():
     with pytest.raises(ValueError):
         AssistantFlags(lich_trinh_bieu_mau=True)
-    assert FORM.bang_lich is not None and not FORM.lich_trinh and PROD.bang_lich is None
+    assert FORM.bang_lich is not None and not FORM.lich_trinh and OFF.bang_lich is None
 
 
 # ---------- route: biểu mẫu, bai_id, Khám phá, thời tiết, cờ ----------
@@ -208,7 +209,7 @@ def _restore(app, original):
 
 def test_route_form_off_404_and_needs_day_count(app_client):
     app, client = app_client
-    original = _with(app, PROD)
+    original = _with(app, OFF)
     try:
         off = client.post("/api/chat", json={"query": "x", "bieu_mau": True, "truong": {"so_ngay": "2"}})
         off_stream = client.post("/api/chat/stream", json={"query": "x", "bieu_mau": True, "truong": {"so_ngay": "2"}})
@@ -281,14 +282,14 @@ def test_explore_article_only_by_exact_id(app_client):
 
 def test_weather_and_feature_routes(app_client):
     app, client = app_client
-    original = _with(app, dataclasses.replace(PROD, thoi_tiet=False))  # cờ tắt đặt rõ: settings.yaml bật thoi_tiet từ 07/11
+    original = _with(app, dataclasses.replace(OFF, thoi_tiet=False))  # cờ tắt đặt rõ: settings.yaml bật thoi_tiet + biểu mẫu từ 07/11
     try:
         off = client.get("/api/thoi_tiet")
         features_off = client.get("/api/tinh_nang").json()
-        _with(app, dataclasses.replace(PROD, thoi_tiet=True, du_bao=nguon()))
+        _with(app, dataclasses.replace(OFF, thoi_tiet=True, du_bao=nguon()))
         ok = client.get("/api/thoi_tiet").json()
         features_on = client.get("/api/tinh_nang").json()
-        _with(app, dataclasses.replace(PROD, thoi_tiet=True, du_bao=nguon(status=500)))
+        _with(app, dataclasses.replace(OFF, thoi_tiet=True, du_bao=nguon(status=500)))
         loi = client.get("/api/thoi_tiet").json()
         _with(app, FORM)
         features_form = client.get("/api/tinh_nang").json()
