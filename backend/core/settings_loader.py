@@ -1,4 +1,5 @@
 """Load application settings from config/settings.yaml."""
+import os
 from pathlib import Path
 
 import yaml
@@ -12,6 +13,7 @@ def load_settings(validate_private_paths: bool = True):
     """Load settings and validate the full-corpus groups fail-closed."""
     with SETTINGS_PATH.open() as file:
         settings = yaml.safe_load(file)
+    apply_env_overrides(settings, os.environ)
     if "full_corpus" in settings:
         validate_full_corpus_settings(
             settings["full_corpus"], validate_private_paths=validate_private_paths
@@ -19,6 +21,20 @@ def load_settings(validate_private_paths: bool = True):
     if "full_corpus_runtime" in settings or "full_corpus_generation" in settings:
         validate_phase6_settings(settings)
     return settings
+
+
+# Phase 12 (bản deploy chạy Docker): hai giá trị đổi theo máy chạy, đọc từ biến môi trường ở rìa — không đặt ⇒ đúng `settings.yaml` (máy User).
+#   HUE_QDRANT_URL  ⇒ vector_database.url (trong compose: http://qdrant:6335 thay vì localhost)
+#   HUE_TRA_WEB     ⇒ assistant.tra_web ("true" / "false"; bản công khai tắt tới khi User quyết — review spec Phase 9 v10 M-1)
+def apply_env_overrides(settings: dict, env) -> None:
+    url = env.get("HUE_QDRANT_URL")
+    if url:
+        settings["vector_database"]["url"] = url
+    tra_web = env.get("HUE_TRA_WEB")
+    if tra_web is not None:
+        if tra_web not in ("true", "false"):
+            raise ValueError("HUE_TRA_WEB must be 'true' or 'false'")
+        settings["assistant"]["tra_web"] = tra_web == "true"
 
 
 def validate_phase6_settings(settings: dict) -> None:
