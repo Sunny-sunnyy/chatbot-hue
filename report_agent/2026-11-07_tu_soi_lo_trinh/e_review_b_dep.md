@@ -1,7 +1,7 @@
 # Review: B-dep — nhánh `p12-deploy-nhap` `50e4ebf` + nháp `data/phase_12/deploy_nhap/` sau sửa của B
 
-Decision: **changes_requested** · 0 blocker · **1 major** (M-1: ảnh có dữ liệu đánh giá private) · 5 minor. Phần code của nhánh (biến môi trường) **đạt**.
-Người kiểm: E (Claude Opus 5.5) · 13:06 07/11/2026 (`date`) · 0 USD
+Decision: **ready_for_user_confirmation** (vòng 2, 13:26 07/11/2026 — §5) · vòng 1: changes_requested (1 major M-1 + 5 minor) ⇒ B sửa ⇒ M-1 + m-1…m-4 **đóng**, m-5 ghi nhận; 1 minor mới m-6 (không chặn).
+Người kiểm: E (Claude Opus 5.5) · vòng 1 13:06, vòng 2 13:26 07/11/2026 (`date`) · 0 USD
 Căn cứ: `e_dep_chuan_bi_deploy.md` (E), `tu_soi_B.md` §5 (B review nháp của E: M1–M3), report B `b_dep_build_cuc_bo.md`; luật `Session_Prompt.md` §5 (Golden / câu kín / `evaluation/` private).
 
 ## 1. Phạm vi đã review
@@ -74,3 +74,26 @@ Căn cứ: `e_dep_chuan_bi_deploy.md` (E), `tu_soi_B.md` §5 (B review nháp c�
 - Gỡ worktree.
 - Ảnh: `timeout 60 docker run --rm --name e_rv_ls --network none --entrypoint sh hue-rag-app:nhap -c 'find …'`. Vài giây, không tải mạng; C đang đo latency, lệnh này không chạy app hay model.
 - **Bất biến kiểm:** không đặt biến ⇒ `load_settings()` y hệt `settings.yaml` (test của B + E đọc code: chỉ ghi khi biến có giá trị).
+
+## 5. Vòng 2 — kiểm phần sửa (13:26 07/11/2026)
+
+Căn cứ: B sửa ở `b_dep_build_cuc_bo.md` §4; ảnh mới `hue-rag-app:nhap2`; nhánh `p12-deploy-nhap` `23454f3`. E đếm **bằng cách riêng**, không dùng lệnh của B:
+- `find /` toàn ảnh, bỏ `.venv` / `/usr` / `/proc`, lọc tên chứa `evaluation|golden|sealed|backup|_source-dumps|.env|split.json|gold_v`;
+- so danh sách `.md` trong ảnh với `corpus.sources` của build record, trên máy chủ.
+
+Lệnh `docker run --rm --network none --entrypoint sh` — chỉ liệt kê, không chạy app.
+
+| Finding | Kết quả [Chạy] | Trạng thái |
+|---|---|---|
+| **M-1** dữ liệu đánh giá trong ảnh | Tên khớp mẫu chỉ còn **mã**: `backend/evaluation/*.py` + `.md` lời dặn chấm, `backend/tests/test_golden_full_corpus.py`, thư viện `sentence_transformers/*/evaluation/` trong cache uv, 2 file `dpkg-db-backup` của hệ điều hành. **0** file `evaluation/` của kho, 0 câu kín, 0 sao lưu Golden / kho, 0 `.env`. Kho trong ảnh: 204 `.md` = **đúng tập `corpus.sources`** (so bằng Python) + `meta/` **đúng 1 file** `full_corpus_conditions.json`. `data/` đúng 3 file (record, sparse state, `diem_v3.json`). Danh sách chừa sinh bằng script từ build record (`dung_dockerignore.py`) ⇒ kho đổi thì sinh lại, không sót thư mục lồng | **đóng** |
+| m-1 cổng 443 · m-3 `systemctl enable docker` | Ghi ở đầu `compose.yml` | **đóng** |
+| m-2 log Docker không trần | `x-log` json-file 10 MB × 3 áp cho các dịch vụ; B thấy áp vào container | **đóng** |
+| m-4 chú thích cổng | `23454f3` sửa thành 6333 | **đóng** |
+| m-5 `trees/` | Không cần sửa (như vòng 1) | ghi nhận |
+
+- **m-6 (minor, mới) — cache uv 1,9 GB còn trong ảnh.**
+  - `/root/.cache` = 1,9 GB [Chạy]: bản sao gói của `uv pip install`, trùng với `.venv`.
+  - Ảnh nặng gần gấp đôi khi chuyển máy hoặc ghi đĩa. Lightsail 80 GB vẫn đủ, nhưng `docker save | ssh` chậm hơn.
+  - *Đóng:* thêm `--no-cache` vào `uv pip install` (hoặc `&& rm -rf /root/.cache/uv` trong cùng `RUN`), build lại, `du -sh /root/.cache` ≈ 0. Không chặn.
+
+**Kết luận vòng 2:** ready_for_user_confirmation. Deploy thật vẫn chờ User (tài khoản, máy, tiền). Trước khi đưa link công khai còn: giới hạn lượt, cookie `Secure`, tắt `/docs` (`e_dep_chuan_bi_deploy.md` §4).
