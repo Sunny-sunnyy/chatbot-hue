@@ -1,51 +1,30 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 11:55 07/11/2026 (A, mở phiên 07/11: quyền phiên, terminal, Qdrant bật lại). Trước: 22:41 06/11/2026 (A, **kết phiên tối 06/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
-Nguyên văn phiên 06/11 sáng + tối (mọi việc giao, quyết định theo giờ, kết quả): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-06_lich_trinh_cau_tu_nhien.md`.
+Cập nhật: 15:43 07/11/2026 (A, **trước khi User mở lại cả 4 session để reset context — giữa phiên 07/11, chưa kết phiên**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Nguyên văn phần đầu phiên 07/11 (11:53 → 15:43 07/11/2026): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-07.md`; 06/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-07_cong_dot_1_tu_soi.md`.
 
-## PHIÊN SAU ĐỌC TRƯỚC (đọc trước nhất — viết lại 22:41 06/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (viết lại 15:43 07/11/2026)
 
-**Hệ thống (`main` = `origin/main`):** RAG 1–8 + trợ lý Phase 9 (định tuyến 4 tuyến, tìm thêm ≤ 2, nhớ câu hỏi 3 lượt, câu dặn hẹp, giao diện nhiều lượt, 👍 / 👎, khẩn cấp PA1, #6 song song **bật**, tra web B6 **bật**). **Tối 06/11 merge, cờ TẮT, người dùng chưa thấy đổi:** B5b thời tiết (`db77f32`) · B171 sửa lỗi lịch trình (`dbb4004`). Cờ tắt khác: `lich_trinh` (câu tự do), `hoi_lai`, `anh.bat`. Kho 204 file / 8.435 đoạn; build record `9921888f2030`; Golden md5 `6331e88fb171`. `frontend/dist/` không commit ⇒ build khi cần. **Bẫy:** đừng `uv sync` ở `main` (gỡ sherpa-onnx khỏi `.venv` — `STATUS_E.md`).
+**Mở lại giữa phiên 07/11:** User tắt + mở lại A / B / C / E để reset context, **không kết phiên**. Quyền phiên 07/11 dưới đây vẫn là ý User hôm nay ⇒ A mới **xác nhận lại bằng một câu** (không hỏi lại từ đầu), rồi giao việc theo mục "Làm tiếp".
 
-**Tiền:** Phase 9 ≈ **1,92 / 2,5 USD** (tối 06/11 ≈ 0,027: B 0,011 · E 0,011 · C 0,004 · A 0,001 cổng). Phase 10 ≈ 0,098 / 0,15.
+**Hệ thống (`main` = `origin/main`, `fbcb903` trở lên):** RAG 1–8 + trợ lý Phase 9 (định tuyến 4 tuyến, tìm thêm ≤ 2, nhớ câu hỏi 3 lượt, khẩn cấp PA1, #6 song song, tra web B6) **+ từ 07/11:** **giao diện cổng du lịch đợt 1** (merge `dbfc925`: bản mẫu Sông Hương; trang chủ, Khám phá 204 bài, Trợ lý Huế nổi mọi trang + trang riêng, Giới thiệu, dòng "Nguồn" thay số [n]; 4 API chỉ đọc) · **thời tiết BẬT** (`0dab4e5`) · **biểu mẫu "Lên kế hoạch" BẬT** (V5 merge `312ad9f` + cờ `a884de4`: code xếp lịch bằng giá trị nút; lượt biểu mẫu = luật lịch trong lời dặn hệ thống + suy luận "low"). Cờ tắt: `lich_trinh` (câu tự do), `hoi_lai`, `anh.bat`. Kho 204 / 8.435; build record `9921888f2030`; Golden md5 `6331e88fb171`; bảng điểm runtime `diem_v3.json`. `frontend/dist/` không commit ⇒ build khi cần. Bẫy: đừng `uv sync` ở `main` (sherpa-onnx — `STATUS_E.md`); test đọc `settings.yaml` thật ⇒ mốc "cờ tắt" đặt rõ trong test (B `a884de4`).
+**Số đo 07/11:** biểu mẫu S3 bộ quyết 24 / 24 sàn, F-a 12 / 12 × 2, chữ đầu p95 4,25 s; trên `main` sau bật: biểu mẫu chữ đầu p50 2,30 / p95 4,22 s, câu kho 1,78 / 3,61 s (n = 10). Q-G / Q-N đạt.
+**Tiền:** 07/11 ≈ 0,10 USD (C ≈ 0,078 · B ≈ 0,009 · E ≈ 0,002 · A ≈ 0,002). Phase 9 ≈ 2,02 / 2,5. Phase 10 ≈ 0,098 / 0,15.
 
-**Quyết định User tối 06/11 (nguyên văn + giờ ở archive):**
-- **Lịch trình:** kín v2 (5 câu tự nhiên User duyệt, md5 `de95ff85e491`) **không đạt** 3 / 5 (cần 4 / 5) ⇒ cờ tắt. User chọn **"biểu mẫu trước"**: lịch trình vào qua biểu mẫu "Lên kế hoạch" của giao diện mới, **code quyết** (giá trị nút), đo trên bộ đã thấy, không bộ kín; câu gõ tự do chưa bật. Đã tìm ra: từ chối khi hỏi kèm = `tim_kho` bị chặn sau lịch (E20, chứng minh bằng code; sửa để khi bật câu tự do); hỏi lại số ngày thừa **chưa tái tạo được** (C210); "đi dày" không làm được bằng dữ liệu kho (E21) ⇒ câu User.
-- **Giao diện:** bỏ số `[n]` trong chữ ⇒ dòng "Nguồn: …" dưới câu; **cổng du lịch kiểu Huế TRIPO mức 2, hai đợt** (đợt 1 khung cổng từ cái đã có; đợt 2 bản đồ / lưu trú / ăn uống / sự kiện sau nghiên cứu dữ liệu). Nghiên cứu xong: B172 giao diện (`data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md`), C209 nguồn dữ liệu (`…/nguon_du_lieu_dot_2.md`). **Spec đợt 1 bản 2 `ff3c317ec88b`** (`docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`) — E review 2 vòng **ready** ⇒ **User DUYỆT 11:56 07/11/2026** (sha tính từ file) ⇒ B làm S1. **3 bản mẫu HTML (B173 xong):** `data/nghien_cuu_giao_dien_2026-11-06/mau/1.html` Son thếp · `2.html` Sông Hương · `3.html` Tím Huế trầm (= mốc hiện tại); ảnh so `mau/anh_nho/so_*.jpg`; report `report_agent/2026-11-06_giao_dien_cong/b173_implementation.md`.
+**Quyền phiên 07/11 (User):** như 06/11 (A tự điều phối, giao ngay việc có sẵn, A tự commit / push, B / C / E push nhánh riêng) + **vượt 1 USD / phiên được, thoải mái thực nghiệm** + khoá `SERPER_API_KEY` dùng được cho tra cứu (qua `--env-file`, không đọc khoá) + "việc cần User duyệt thì gác lại, khi User nhắn thì đề xuất; tự do nghiên cứu, nghĩ rộng, xem lại tối ưu + over-engineer; A / B / C / E thảo luận, đề xuất lẫn nhau".
 
-**Phase 9 — còn lại:** giao diện cổng đợt 1 (gồm biểu mẫu lịch trình) ⇒ bật biểu mẫu khi Q-F đạt ⇒ B7 đóng gói. **Sửa lịch** (`p9-sua-lich` `79b3d9c`, harness ready E): cần cờ `lich_trinh` câu tự do ⇒ **hoãn** tới khi xét bật câu tự do (A xem lại cách sửa lịch sau biểu mẫu: "điền lại biểu mẫu"). Mô phỏng kín sửa lịch chờ User `!` (terminal C — lệnh `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md` §8).
-**Phase 10:** ảnh xong (cờ tắt); giọng nói: plan G2 duyệt `92ec551531fd` ⇒ **G1 chờ User thu 40 câu**.
-**Phase 11 / 12:** đợt 2 cổng kéo dữ liệu Phase 11 lên (C209 P1 / P2 / P3); Phase 12 deploy AWS = điều kiện đóng code (25–30/12).
-**Đợt report đang mở:** `report_agent/2026-11-06_giao_dien_cong/` (B172, B173, C209 + spec đợt 1 ở `docs/superpowers/specs/`). Đóng: `2026-11-06_b5_cau_tu_nhien/` (`TONG_HOP.md`).
-**Mặc định đã ghi trong spec (nếu User chưa trả lời):** Q-U3 ⇒ ẩn "đi dày" khỏi biểu mẫu. Các câu Q-U khác không có mặc định — hỏi trước S2 (frontend); S1 (backend) không phụ thuộc Q-U1 / Q-U2 / Q-U5, chỉ cần User duyệt spec.
+**User quyết 07/11 (giờ ở archive):** duyệt spec cổng `ff3c317ec88b`; Q-U1 bản 2 Sông Hương · Q-U2 ảnh giấy phép mở (agent tìm, User kiểm) · Q-U3 ẩn "đi dày" + bổ sung thời gian tham quan song song · Q-U4 bật thời tiết · Q-U5 "Huế · Trải nghiệm văn hóa & du lịch" / "Trợ lý Huế"; "biểu mẫu + bổ sung dữ liệu"; **bật biểu mẫu với V5**; F-a (4) = "không trái nhóm là đủ" (User hỏi "sao code chọn điểm mà không phải agent" ⇒ A giải thích luật AI FDE: luật cứng / thứ tự ⇒ code, agent hiểu ý + viết lời); **ảnh: chỉ 7 (2 đầu trang + 5 lĩnh vực)**; **mọi ảnh lấy từ ảnh đại diện bài vi.wikipedia, chỉ file `/wikipedia/commons/`** (User bắt bộ cũ sai: "bún bò" là bún riêu; "Điện Thái Hòa" là Đại Cung môn).
 
-### Quyết định User 07/11 (A ghi nhận 11:55–12:26 07/11/2026, giờ `date` khi ghi)
-- Quyền phiên như 06/11. **Duyệt spec cổng đợt 1 `ff3c317ec88b`.** Q-U1 bản mẫu 2 "Sông Hương" (không thêm font) · Q-U2 (b) ảnh giấy phép mở, agent tìm, User kiểm từng ảnh (E làm) · Q-U3 ẩn "đi dày" đợt 1 **+ song song bổ sung thời gian tham quan từ web công khai** (C làm, User duyệt bảng v7) ⇒ có dữ liệu thì xét bật "đi dày"; sau đợt 1 sửa đường chat tự do (E20) rồi đo lại · Q-U4 bật `thoi_tiet` khi merge S5 · Q-U5 đầu trang "Huế · Trải nghiệm văn hóa & du lịch" (điện thoại "Trải nghiệm Huế"), trợ lý "Trợ lý Huế". Ghi ở spec §3 (sửa chữ).
-- User hỏi lại hướng lịch trình ("trợ lý tự hỏi thêm + bổ sung dữ liệu") ⇒ A giải thích B5 đã làm vậy, kín v2 3 / 5 trượt do thiếu dữ liệu + E20 ⇒ User chọn "biểu mẫu + bổ sung dữ liệu song song".
-- A quyết (kỹ thuật): S1 lượt biểu mẫu bị model từ chối 5 / 5 vì đoạn nguồn mỗi điểm chỉ là dòng tên (B đo: 11 / 28 điểm < 80 ký tự) ⇒ (e) sửa `_lay_nguon_lich` chọn đoạn nhiều nội dung; thử (a) lượt công cụ dựng sẵn vẫn từ chối 3 / 3. Qdrant: container mất ⇒ A `docker compose up -d qdrant` (8.435 point).
-- **Trạng thái (13:01 07/11/2026):** S1 + S2 xong trên `p11-cong-dot-1` `f20fd28` (B; tiền 0,0059); S4 review backend + frontend **ready** (E; 0 blocker / 0 major; 3 minor B sửa). **X1 / X1b (C, 0,042 USD):** V2 = luật lịch vào lời dặn hệ thống lượt biểu mẫu ⇒ từ chối 1 / 32 nhưng chữ đầu p95 8,75 s > 5 s; V4 bỏ ⇒ X1c (V2 + suy luận low / minimal) chờ B build xong. **Chờ User:** cách sửa lượt biểu mẫu (đổi lời dặn = ngoài phạm vi spec), 27 ảnh (`…/anh/commons/xem_anh.html`), phiếu v7 thời lượng, 3 ô phiếu v6, lộ trình / giọng nói / deploy thật (`report_agent/2026-11-07_tu_soi_lo_trinh/TONG_HOP.md` §4). **Deploy thử cục bộ (B, nhánh `p12-deploy-nhap`):** build + compose đang chạy. E rảnh có lý do (việc còn lại chờ User).
-
-**User quyết (15:15 07/11/2026):** (1) **bật biểu mẫu với V5**; (2) F-a (4) = **"không trái nhóm là đủ"** (code chọn điểm hợp nhóm; lời model chỉ cần không sai với nhóm) — A giải thích lại 2 lần (vì sao code chọn điểm, agent hiểu ý + viết lời) rồi User chốt.
-
-### Chờ User quyết khi dậy (A ghi 13:25 07/11/2026; hỏi mỗi lần một câu, theo thứ tự)
-1. **Bật biểu mẫu "Lên kế hoạch" với V5?** S3 bộ quyết trên `p11-cong-dot-1` `632a4f7` **đạt** (sàn code 24 / 24, F-a 12 / 12 × 2 cả hai người chấm, chữ đầu p95 4,25 s, 0,0087 USD — `c_s3_q_f_implementation.md` §5). V5 = luật viết lịch vào lời dặn hệ thống + suy luận "low" **chỉ lượt biểu mẫu** ⇒ **đổi lời dặn = ngoài phạm vi spec §4** ⇒ User duyệt. **Kèm:** F-a (4) "lời phù hợp người đi cùng" — người chấm hiểu "không trái nhóm" (đạt); lời model 24 / 24 trung tính, không câu riêng cho nhóm; hiểu "phải nhắm riêng nhóm" ⇒ trượt. A (người viết spec) ý ban đầu là "không trái nhóm" (code đã chọn điểm theo nhóm) nhưng không tự chốt sau khi có kết quả ⇒ User chọn cách hiểu. Duyệt ⇒ A merge `632a4f7` + bật `lich_trinh_bieu_mau` + cổng ổn định.
-2. Kiểm 27 ảnh (`data/nghien_cuu_giao_dien_2026-11-06/anh/commons/xem_anh.html`) ⇒ B đóng ảnh đã duyệt vào build.
-3. Lộ trình (`report_agent/2026-11-07_tu_soi_lo_trinh/TONG_HOP.md` §4): deploy thử sớm (Lightsail 4 GB ≈ 24 USD / tháng; tài khoản + khoá OpenAI riêng có hạn mức), giọng nói giữ / nhẹ / cắt, đóng lịch trình câu tự do + sửa lịch, mốc quyển báo cáo + slide.
-4. Phiếu thời lượng v7 + 3 ô phiếu v6. 5. Kịch bản demo nháp (`e_demo_5_phut.md`) — đọc, sửa. 6. Xoá ảnh Docker thử cũ (lệnh trong `b_dep_build_cuc_bo.md`) + 9 nhánh đã merge (User `!`).
-
-### Phiên sau làm theo thứ tự (A giao ngay sau câu quyền phiên — không chờ "làm đi")
-
-1. Mở A / B / C / E; `ListAgents`; **hỏi quyền phiên** (đề xuất như 06/11) ⇒ **cùng lượt** nhắn B / C / E (kèm `notify_when_idle`; **chỉ gửi việc kế khi session đã idle** — S101).
-2. **A hỏi User mỗi lần một câu:** duyệt spec cổng đợt 1 (sha `ff3c317ec88b`) ⇒ Q-U1 chọn bản mẫu ⇒ Q-U2 ảnh ⇒ Q-U3 "đi dày" (phiếu `data/phase_9/lich_trinh/diem_cho_user_v6.md`) ⇒ Q-U4 bật thời tiết ⇒ Q-U5 tên cổng. Ghi lựa chọn vào spec §3 (sửa chữ, không đổi tiêu chí).
-3. **B:** **S1 backend ngay khi User duyệt spec** (không chờ Q-U) — **S1 backend** (nhánh `p11-cong-dot-1` từ `main`: D3 đường biểu mẫu + D4 cờ + D6 4 API + D7 `bai_id` + test + Q1 / Q1m) ⇒ **S2 frontend** sau khi User trả lời Q-U1 (bản mẫu) / Q-U2 (ảnh) / Q-U5 (tên) — theo bản mẫu User chọn. **Bẫy S1:** (a) cờ #6 `song_song_tra_loi` đang BẬT ⇒ nhánh biểu mẫu phải rẽ **trước** `answer_turn_stream_parallel` (không chạy phần song song); (b) khung lịch hiện tới model qua kết quả công cụ — lượt biểu mẫu "không công cụ" ⇒ khung + luật viết lời phải do **code đưa vào ngữ cảnh** ⇒ test cho mỗi loại lượt (`WORKFLOW.md` §4 (4c)): lượt biểu mẫu đầu, lượt hỏi tiếp sau biểu mẫu, cờ tắt giống byte.
-4. **C:** S3 đo Q-F khi S1 xong (12 tổ hợp ghi trước, ×2; trần **0,03 USD là của cả spec** gồm cổng) + S4 review cả nhánh `p11-cong-dot-1`. **Mô phỏng kín sửa lịch: A dời** (C nêu, A đồng ý 06/11 tối) — sửa lịch đang hoãn và có thể đổi cách ("điền lại biểu mẫu"); chạy lại khi xét bật câu tự do (lệnh + bước dựng worktree ở `STATUS_C.md`).
-5. **E:** chờ User thu 40 câu (G1) ⇒ G2 theo plan `92ec551531fd`; có thể review spec đợt 2 khi A viết.
-   **Bảng điểm:** `settings.yaml` `lich_trinh_bang` vẫn trỏ **`diem_v3.json`** (v4 / v5 / v6 chưa User duyệt). User tick phiếu v6 ⇒ **E** chốt `diem_v6.json` theo lựa chọn (máy kiểm khác v5 đúng chỗ đã tick) ⇒ A đổi `lich_trinh_bang` khi merge S1 (B chạy test + Q1m trên bảng mới). Chưa tick ⇒ S1 dùng v3.
-6. **A:** sau Q-U: viết spec đợt 2 (C209 P1 / P2 / P3 — hỏi User) song song đợt 1.
+### Làm tiếp (theo thứ tự)
+1. **E:** đang làm lại ảnh từ vi.wikipedia (thư mục `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/`, có `xem_anh.html` mở qua `\\wsl.localhost\Ubuntu-24.04\…`) ⇒ **User kiểm 7 ảnh** ⇒ **B** đóng 7 ảnh vào `frontend/` + dòng ghi công (tác giả · giấy phép · link) ⇒ review (C hoặc E) ⇒ A merge + cổng (`npm ci && npm run build`).
+2. **Hỏi User (mỗi lần một câu):** (a) lộ trình tới đóng code (`report_agent/2026-11-07_tu_soi_lo_trinh/TONG_HOP.md` §4 — bốn session đồng thuận: **deploy thử sớm** Lightsail 4 GB ≈ 24 USD / tháng, User tạo tài khoản + khoá OpenAI riêng có hạn mức; ⚠ gói miễn phí AWS tự đóng tài khoản sau 6 tháng / hết tín dụng) ⇒ (b) giọng nói giữ / nhẹ 10 câu / cắt ⇒ (c) đóng lịch trình câu tự do + sửa lịch tới sau bảo vệ ⇒ (d) mốc quyển báo cáo + slide (nguồn: `e_tb_bang_bang_chung.md`) ⇒ (e) phiếu thời lượng v7 (C) + 3 ô phiếu v6 ⇒ (f) kịch bản demo nháp (`e_demo_5_phut.md`) ⇒ (g) luật cải tiến: "đường mới có model ⇒ 1 lượt thật trước bộ test" (B) + "đồ đo dựng sau khi code chạy được" (C) + "đóng gói dữ liệu private bằng danh sách chừa + đếm trong sản phẩm cuối" (A).
+3. **Deploy (khi User duyệt):** nhánh `p12-deploy-nhap` `4cfe681` (biến môi trường `HUE_QDRANT_URL` / `HUE_TRA_WEB`, review E ready) + nháp `data/phase_12/deploy_nhap/` (allow-list `dung_dockerignore.py`, review E vòng 2 ready; build lại vì `--no-cache`, đo cỡ ảnh). Trước link công khai: giới hạn lượt, cookie `Secure`, tắt `/docs`, `tra_web` tắt trên AWS (E-dep checklist 9 mục).
+4. **User `!` khi tiện:** `docker image rm hue-rag-app:nhap` (ảnh cũ chứa file đánh giá — chưa đi đâu); xoá nhánh đã merge (mục Nhánh).
+5. A: kết phiên khi User nói (Project_Status, PROJECT_HISTORY, TONG_HOP đợt `2026-11-06_giao_dien_cong/`, vòng cải tiến — bẫy ghi ở `STATUS_A.md`).
 
 ### Nhánh
 
-`main`; **đang mở:** `p9-sua-lich` `79b3d9c` (C; hoãn), `p10-giong-noi` `93bbc63` (E), `p9-b5c` (hồ sơ, đã tag). **Đã merge ⇒ chờ User xoá (User `!`):** `p9-b4`, `p9-b5`, `p9-toc-do-6`, `p9-toc-do-6b`, `p10-anh`, `p10-anh-mobile`, `p9-b6`, `p9-b5b`, `p9-b5-sua` (local + origin). 4 worktree AGY cũ `c725987` (User quyết).
+`main`; **đang mở:** `p12-deploy-nhap` `4cfe681` (B; chờ User duyệt deploy), `p9-sua-lich` `79b3d9c` (C; hoãn), `p10-giong-noi` `93bbc63` (E), `p9-b5c` (hồ sơ, đã tag). **Đã merge ⇒ chờ User xoá (User `!`):** `p11-cong-dot-1`, `p11-bat-bieu-mau`, `p9-b4`, `p9-b5`, `p9-toc-do-6`, `p9-toc-do-6b`, `p10-anh`, `p10-anh-mobile`, `p9-b6`, `p9-b5b`, `p9-b5-sua` (local + origin). 4 worktree AGY cũ `c725987` (User quyết).
 
 ### Mã hay gặp
 
@@ -67,16 +46,9 @@ B0–B7 = bậc Phase 9; B5b = thời tiết, B6 = tra web; G0–G4 = bậc gi�
 **Không làm** (đã cân): lọc cộng tác / rating, TSP, GraphRAG, định tuyến bằng danh sách từ, bảng SQL giá, rerank / sparse mới, nhớ cả câu trả lời, web bật sẵn, công cụ ghi ra ngoài không cần duyệt.
 
 
-## Câu hỏi cho User (hỏi mỗi lần một câu — đầu phiên sau)
+## Câu hỏi cho User (hỏi mỗi lần một câu)
 
-1. **Quyền phiên** (đề xuất như 06/11: A tự điều phối — giao ngay việc có sẵn, A tự commit / push, ≤ 1 USD / phiên, B / C / E push nhánh riêng, trần Phase 9 2,5).
-2. **(gấp nhất)** Duyệt **spec giao diện cổng đợt 1** bản 2 sha `ff3c317ec88b` (review E ready) ⇒ rồi Q-U1…Q-U5 theo spec §3 (bản mẫu · ảnh · "đi dày" · bật thời tiết · tên cổng).
-3. Đợt 2 cổng: bản đồ P1 (kho + Leaflet + tile OSM) / P2 (tự lưu tile) / P3 (thêm 208 lưu trú + 697 ăn uống OSM, nhãn "chưa kiểm") + có cần trang danh sách lưu trú (C209).
-4. Thu 40 câu nói — `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`.
-5. Bật **hỏi bằng ảnh** (`anh.bat`)? Xoá collection thử `hue_anh_siglip2`?
-6. Vòng cải tiến (sổ): **W58** (S100: User / người ngoài duyệt độ tự nhiên trước khi khoá bộ kín — tối 06/11 đã làm đúng cách này và bắt được 4 / 5 câu cần sửa); **sửa câu W50** (S101: không gửi việc kế khi session đang chạy lượt); gỡ W4 / W39 (Session D 0 buổi, hạn 07/11); W57; luật "gói Python phát hành ≥ 2 tuần".
-7. Xoá 9 nhánh đã merge (mục Nhánh) — User `!`.
-8. Không gấp: mô phỏng kín sửa lịch (dời — A); câu thiên tai vẫn gọi Serper chỉ để lấy link; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; báo cáo tiến độ cho giáo viên.
+Xem "Làm tiếp" mục 1 (kiểm 7 ảnh vi.wikipedia) + mục 2 (a)–(g). Không gấp: bật hỏi bằng ảnh `anh.bat` + xoá collection thử `hue_anh_siglip2`; đợt 2 cổng (C209: P1 bản đồ từ toạ độ kho — tự soi đề xuất chỉ P1); thu câu giọng nói (nếu giữ); câu thiên tai vẫn gọi Serper chỉ để lấy link; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; báo cáo tiến độ cho giáo viên; vòng cải tiến cũ (W58, sửa câu W50, gỡ W4 / W39 — hạn 07/11, Session D 0 buổi, W57).
 
 ## Câu hỏi A còn nợ (không cần User)
 
