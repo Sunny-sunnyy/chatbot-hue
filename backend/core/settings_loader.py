@@ -24,7 +24,7 @@ def load_settings(validate_private_paths: bool = True):
 
 
 # Phase 12 (bản deploy chạy Docker): hai giá trị đổi theo máy chạy, đọc từ biến môi trường ở rìa — không đặt ⇒ đúng `settings.yaml` (máy User).
-#   HUE_QDRANT_URL  ⇒ vector_database.url (trong compose: http://qdrant:6335 thay vì localhost)
+#   HUE_QDRANT_URL  ⇒ vector_database.url (trong compose: http://qdrant:6333 — cổng gốc của Qdrant — thay vì localhost:6335)
 #   HUE_TRA_WEB     ⇒ assistant.tra_web ("true" / "false"; bản công khai tắt tới khi User quyết — review spec Phase 9 v10 M-1)
 def apply_env_overrides(settings: dict, env) -> None:
     url = env.get("HUE_QDRANT_URL")
