@@ -1,6 +1,18 @@
-# STATUS C — kết phiên tối 06/11 (22:40 06/11/2026 `date`, bổ sung việc S3 / S4 theo handoff sau đó; ≤ 35 dòng; lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`)
+# STATUS C — phiên 07/11 ở trên; mục "PHIÊN SAU ĐỌC TRƯỚC" dưới là của kết phiên tối 06/11 (lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`)
 
-## PHIÊN SAU ĐỌC TRƯỚC
+## PHIÊN 07/11 (terminal `hue-rag-a0`; A = `hue-rag-7a`, B = `hue-rag-10`, E = `hue-rag-81`) — cập nhật 13:25 07/11/2026 (`date`)
+**Trạng thái: rảnh có lý do** — chờ User quyết bật biểu mẫu `lich_trinh_bieu_mau` (gồm cách hiểu F-a (4), handoff "Chờ User quyết" mục 1) + phiếu v7 thời lượng. Không mở việc mới. **Tiền C 07/11 ≈ 0,07 USD** (X1 0,056 · Q-N 0,004 · S3 0,009; còn lại 0 USD).
+Việc đã xong (theo giờ, mọi report ở `report_agent/2026-11-06_giao_dien_cong/` trừ tự soi):
+- 12:00 nháp harness S3 `data/phase_9/cong_dot_1/tools/do_bieu_mau.py` (nay `4de78cb35999`, thêm đếm `cat_ngay_cuoi`); [Chạy] `kieu_di` không đổi khung 0 / 120 tổ hợp (dữ kiện Q-U3).
+- 12:19 Q-G tương phản bản mẫu 2 (`tuong_phan.py` `f53a31153ce3`: 0 cặp < 4,5; 2 gợi ý cho B) + nháp `playwright_cong.py` `fa580e39f5ed`.
+- 12:31 bộ S3 chính thức `to_hop_chinh_thuc.jsonl` `792a3cbe3fe5` ghi trước (`c_s3_q_f_implementation.md`) · **C-tl** thời lượng web ⇒ `data/phase_9/lich_trinh/diem_v7_thoi_luong_web_nhap.json` `363763ae2101` + phiếu `diem_cho_user_v7.md` (19 / 26 điểm; "đi dày" khác 12 / 120) — chờ User · tự soi `report_agent/2026-11-07_tu_soi_lo_trinh/tu_soi_C.md`.
+- 12:42–13:07 **X1 / X1b / X1c** lượt biểu mẫu bị từ chối (`c_x1_luot_bieu_mau.md`; dữ liệu `data/phase_11/cong_dot_1/x1/`): nguyên nhân = luật trình bày nằm trong bằng chứng; V2 (luật lên lời dặn hệ thống) hết từ chối nhưng chữ đầu p95 8,8 s; **V5 = V2 + reasoning `low`** đạt cả 4 tiêu chí trên bộ phát triển (p95 4,75 s); V4 (thêm câu dặn) kém; V6 `minimal` ⇒ 400.
+- 13:11 **Q-G + Q-N trên `27ed091`: ĐẠT** (7 / 7 đích × 2 bề rộng, 0 CSP / console, JS gzip 101,9 KB, tương phản thấp nhất 5,42, Q-N 10 / 10; chữ đầu theo dõi p50 2,03 · max 4,22 s) — A đã merge (`main` `0dab4e5`).
+- 13:24 **S3 Q-F bộ quyết trên `632a4f7` (V5): ĐẠT** — sàn code 24 / 24, F-a 12 / 12 + 12 / 12 (2 người chấm, 0 bất đồng), chữ đầu p95 4,25 s. Cả hai người chấm tự nêu: chữ model trung tính với người đi cùng ⇒ hiểu "phù hợp" = "không trái" (A ghi cả hai cách hiểu cho User). A commit `89b65be`.
+- Câu treo đã được A trả lời: C210 giữ dùng số model; C211 rel / target ⇒ S2 (đã vào); mô phỏng kín sửa lịch: dời.
+- Worktree `/tmp` của C: không còn (`c_x1`, `c_ui`, `c_s3` đã gỡ). Thư mục tạm `/tmp/c_tl/` chỉ có file thử / bảng tạm (không dữ liệu kín).
+
+## PHIÊN SAU ĐỌC TRƯỚC (viết 06/11 — đã cũ một phần: mục S3 dưới đã XONG 07/11, S4 E làm; harness / lệnh sửa lịch vẫn đúng khi mở lại)
 - **Đã xong tối 06/11** (terminal `hue-rag-42`):
   - **Harness sửa lịch:** `data/phase_9/sua_lich/tools/chay_sua_lich.py` md5 `559ebaf5f81e` — E review vòng 2 + vòng 3: **ready**. Bộ Q4 `bo_do_sua_lich/chuoi_q4.jsonl` `d35f8d9c5027`. Pilot = S01 + S06 (A duyệt). Report `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md` §7–§8.
   - **B171 review:** ready trên `b0e52f8` (đã merge `dbb4004`) — `report_agent/2026-11-06_b5_cau_tu_nhien/b171_review.md` §7–§8.

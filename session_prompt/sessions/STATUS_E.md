@@ -1,6 +1,44 @@
-# STATUS E — kết phiên tối 22:40 06/11/2026 (`date`) · terminal `hue-rag-28` (A `hue-rag-cc`, B `hue-rag-1a`, C `hue-rag-42`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — cập nhật 13:01 07/11/2026 (`date`) · terminal `hue-rag-81` (A `hue-rag-7a`, B `hue-rag-10`, C `hue-rag-a0`) · Claude Opus 5.5 · vai thực thi · **RẢNH, chờ User** (A 13:01: không tự mở việc mới)
 
-## PHIÊN SAU ĐỌC TRƯỚC
+## Đang chờ (07/11, sau phiên sáng)
+
+- **User kiểm 27 ảnh** (`data/nghien_cuu_giao_dien_2026-11-06/anh/commons/xem_anh.html`) ⇒ B đưa vào build (S2). Cần thì E tìm tiếp ảnh cho 3 điểm thiếu / các điểm "chưa thử".
+- **Giọng nói:** User thu 40 câu **hoặc** quyết giữ / cắt khỏi đồ án (E đề xuất cắt — `tu_soi_E.md` §4). Thu xong ⇒ G2 (mục 4 dưới).
+- **Phiếu v6:** User tick ⇒ E chốt `diem_v6.json` + chạy `kiem_v6.py`.
+- Review / việc mới: A nhắn.
+
+**Tiền E 07/11: 0,000953 USD** (3 câu đo RAM, E-dep). Commons / Codex tra web / review / ca dò: 0.
+
+## Đang làm (A giao 07/11, sau merge cổng `0dab4e5`)
+
+- **Cập nhật báo cáo User — XONG 13:22 07/11/2026, chờ A review + commit** (chỉ tài liệu, 0 USD): `LUONG_HOAT_DONG_HE_THONG.md` bản 31 (tóm tắt 07/11, sơ đồ, bảng thành phần, bước 15 thời tiết + 16 cổng, số chữ đầu 07/11, việc kế tiếp); `BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 40 (tóm tắt, sơ đồ, checklist 5 dòng mới, mục 4 07/11 gồm X1 V0–V6, §5, §6); `README.md` (đầu file, 2 dòng báo cáo, dòng Phase 9, dòng streaming).
+
+## Đã làm 07/11 (A giao — tất cả xong)
+
+- **Review B-dep — XONG 13:06 07/11/2026** (0 USD): `report_agent/2026-11-07_tu_soi_lo_trinh/e_review_b_dep.md` — **changes_requested**: code `p12-deploy-nhap` `50e4ebf` đạt; **M-1** ảnh Docker chứa 16 file `*/evaluation/` + `meta/` 148 file (sao lưu Golden) vì dockerignore chỉ loại `evaluation/` ở gốc kho; 5 minor. **Vòng 2 13:26: ready** — E đếm riêng ảnh `nhap2`: kho = đúng 204 `corpus.sources` + 1 file `meta/`, 0 file đánh giá / câu kín / sao lưu / `.env`; m-6 mới (cache uv 1,9 GB, không chặn). Ảnh cũ `nhap` nên xoá (User `!`). Worktree `/tmp/e_rv2` đã gỡ.
+
+- **E-anh — XONG 12:30 07/11/2026** (bắt đầu 12:16; A giao; 0 USD): 27 ảnh giấy phép mở Wikimedia Commons (CC0 / PD / CC BY / CC BY-SA) cho bản mẫu 2 cổng đợt 1 — 2 hero · 5 ô lĩnh vực · 20 thẻ điểm; 3,2 MB; mỗi ảnh ≤ 200 KB (trừ hero Ngọ Môn 218 KB).
+  - Đầu ra: `data/nghien_cuu_giao_dien_2026-11-06/anh/commons/` — `xem_anh.html` (lưới ảnh để User kiểm), `danh_sach.md` (chỗ dùng · file · địa điểm · tác giả · giấy phép · link · mức chắc + vì sao · thiếu ảnh · chưa thử), `tai_ve.json` (tác giả đầy đủ cho dòng ghi công), `chon.json`, `ung_vien.json`. Thư mục con riêng để không lẫn ảnh chụp màn hình B172 trong `anh/`.
+  - Công cụ: `tools/tai_anh_commons.py` (tim / ung_vien / tai; chờ theo Retry-After khi 429), `tools/dung_trang_anh.py`.
+  - [Chạy] E tự xem cả 27 ảnh; đổi 4 ảnh yếu (Bạch Mã ảnh sân bay, Thiệu Trị ảnh cũ chụp trên cao, 2 ảnh Lăng Cô sai cảnh). Mức chắc: 22 cao / 5 vừa. Thiếu: Điện Hòn Chén, bãi Thuận An, núi Ngự Bình. 4 ảnh có người rõ ⇒ đánh ⚠ (không ảnh nào làm hero). Trang chạy headless: 27 / 27 ảnh hiện, 0 ảnh ngoài.
+  - Không đụng `frontend/`, nhánh B, file C. Ảnh vào build ⇒ B ở S2 sau khi User kiểm.
+
+- **XONG 11:59 07/11/2026 — script kiểm v5 ↔ v6 theo ô tick** (0 USD, chỉ đọc): `data/phase_9/lich_trinh/tools/kiem_v6.py`. Không đụng `diem_v3/v5`, phiếu thật, `settings.yaml`.
+  - Lệnh (từ `backend/`): `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python ../data/phase_9/lich_trinh/tools/kiem_v6.py <phiếu đã tick> <diem_v6.json>` ⇒ in `OK` / danh sách lỗi, mã thoát 0 / 1.
+  - Xét 3 nhóm ô tick (Đại Nội · 2 bảo tàng · dòng 32) + Phá Tam Giang cố định; mục 3 (hướng "đi dày") không phải ô tick ⇒ không xét. Căn cứ `file:dòng «chữ»` so kho bằng `grep_kb.sh`; `nap_bang` thật.
+  - [Chạy] thử 8 ca giả ở `/tmp/e_kiem_v6/`: 2 ca đúng ⇒ OK; 6 ca sai (Đại Nội lệch ô tick, đổi trường ngoài ô tick, thiếu tick, tick 2 ô, căn cứ sai dòng, dòng 32 chưa bỏ) ⇒ đều báo lỗi đúng chỗ.
+  - Lúc chốt thật: bỏ chữ "ĐỀ XUẤT, chờ User" trong căn cứ Đại Nội (nếu User chọn A); ghi `ghi_chu` "BẢN 6 … User duyệt <giờ>".
+
+- **Tự soi — XONG 12:32 07/11/2026** (A giao, 0 USD): `report_agent/2026-11-07_tu_soi_lo_trinh/tu_soi_E.md`. Chờ A chốt chung với B / C.
+
+- **E-dep — XONG 12:38 07/11/2026** (bắt đầu 12:33, A giao): report `report_agent/2026-11-07_tu_soi_lo_trinh/e_dep_chuan_bi_deploy.md`; nháp `data/phase_12/deploy_nhap/` (`Dockerfile`, `compose.yml`, `Caddyfile`, `yeu_cau_tra_aws.md` — **chưa build**); tra web `data/tra_cuu_cli/2026-11-07_e-dep-aws/`. [Chạy] RSS app 1,49 → 1,51 GB, Qdrant 378 MiB ⇒ máy 4 GB. Tiền 0,000953 USD (3 câu). Không sửa `backend/`.
+
+- **S4 review cổng đợt 1 — XONG 12:56 07/11/2026** (A giao, 0 USD): `report_agent/2026-11-06_giao_dien_cong/s4_review_backend.md` (`0cb0b0a`, ready; Q1 228 / 228 E tự chạy; m-5 bớt ngày 3 / 120) + `s4_review_frontend.md` (`f20fd28`, ready; m-f1 regex link `//`, m-f2 `<title>`). Worktree `/tmp/e_rv`, `/tmp/e_rv_main`, `/tmp/e_rv_do/` **đã gỡ** (A cho, 12:57).
+- **E-tb — XONG 12:58 07/11/2026** (A giao, 0 USD, chỉ đọc): `report_agent/2026-11-07_tu_soi_lo_trinh/e_tb_bang_bang_chung.md` — bảng bằng chứng theo khâu cho quyển báo cáo + slide (nhãn ai đo; lỗ hổng bằng chứng trước bảo vệ).
+
+- **Kịch bản demo 5 phút — NHÁP XONG 13:00 07/11/2026** (A giao, 0 USD): `report_agent/2026-11-07_tu_soi_lo_trinh/e_demo_5_phut.md`. Câu mẫu **chưa chạy thử** (cần ≈ 0,005 USD trên bản cuối); User đọc / sửa.
+
+## PHIÊN SAU ĐỌC TRƯỚC (viết 22:40 06/11/2026 — phần chờ đã cập nhật ở mục "Đang chờ" trên)
 
 **E không có việc đang làm dở, không có code dở, không có worktree.** Việc chờ đều do User:
 1. **G1 giọng nói:** User thu 40 câu (`data/phase_10/giong_noi/thu/` vẫn **rỗng**). Khi có ⇒ làm theo plan G2 (mục 4 dưới).
@@ -15,7 +53,7 @@
 
 **Việc kế của E, theo thứ tự (handoff mục "Phiên sau làm theo thứ tự" bước 5):**
 - (a) **G1 ⇒ G2** khi User thu xong — mục 4 dưới, plan `92ec551531fd`. 0 USD, chạy máy.
-- (b) **Phiếu v6** — User tick (A hỏi cùng Q-U3 của spec cổng) ⇒ E chốt `diem_v6` theo ô tick nếu A giao. Ai chốt chưa ghi trong handoff ⇒ hỏi A.
+- (b) **Phiếu v6** — User tick (A hỏi cùng Q-U3 của spec cổng) ⇒ E chốt `diem_v6` theo ô tick (A xác nhận 07/11).
   - User chọn hướng (1) "luật xếp đi dày bằng code" ⇒ việc của B, E không làm.
   - Hướng (2) "thời lượng theo loại" ⇒ E soạn bảng theo loại để User duyệt từng dòng.
 - (c) **Review spec cổng đợt 2** khi A viết (C209 P1 / P2 / P3) — theo `risk-gated-agent-review`, ≤ 2 vòng.
@@ -76,6 +114,6 @@
 
 ## Câu hỏi cho A (treo)
 
-- Sau khi User tick phiếu v6, ai chốt file `diem_v6` (E soạn nháp — E chốt luôn?). Bảng v6 vào runtime khi nào — `settings.yaml` `lich_trinh_bang` đang trỏ **v3**; v4 / v5 / v6 đều chưa User duyệt.
+- ~~Ai chốt `diem_v6`~~ — **đã trả lời** (handoff bước 5 + A 07/11): User tick ⇒ **E chốt** `diem_v6.json`; A đổi `lich_trinh_bang` khi merge S1. Chưa tick ⇒ S1 dùng v3.
 - Mục (e) trên: có cho dò K2 bằng `chay_e20.py` (≈ 0,002 USD) không, hay để B / C?
 - `p10-giong-noi` (`93bbc63`) chưa merge ⇒ `uv.lock` của `main` chưa có `sherpa-onnx`. Bẫy `uv sync` còn tới khi merge (G3).

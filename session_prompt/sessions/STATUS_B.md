@@ -1,4 +1,45 @@
-# STATUS B — KẾT PHIÊN TỐI 06/11 (22:41 06/11/2026 `date`; mở 20:54) — sổ tay cho phiên sau
+# STATUS B — PHIÊN 07/11 (mở 11:53 07/11/2026 `date`)
+
+Vai: thực thi. Terminal 07/11: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`. Quyền phiên: User cấp "như 06/11" (A báo).
+
+## Tóm tắt mới nhất (13:25 07/11/2026 `date`)
+- `p11-cong-dot-1` = `632a4f7` (S1 + S2 + 3 minor S4 + V5; `27ed091` đã merge `main` `0dab4e5` bởi A). V5 chờ S3 của C + User duyệt bật cờ.
+- `p12-deploy-nhap` = `4cfe681` (biến môi trường `HUE_QDRANT_URL` / `HUE_TRA_WEB` + merge `main` `fb8d3d2`; 26 test đạt), giữ riêng, chưa merge. Nháp Dockerfile thêm `uv pip install --no-cache` (E m-6) — chưa build lại, đo lại cỡ ảnh lúc lên máy. E review B-dep vòng 2: ready.
+- Deploy cục bộ: ảnh `hue-rag-app:nhap2` sạch (204 .md, 0 Golden / sealed / backup), `/health` 5/5. Ảnh cũ `hue-rag-app:nhap` có file private ⇒ chờ User `! docker image rm hue-rag-app:nhap`. Report `report_agent/2026-11-07_tu_soi_lo_trinh/b_dep_build_cuc_bo.md`.
+- Worktree còn: `/tmp/b_cong` (p11), `/tmp/b_dep` (p12).
+- **B rảnh có lý do:** deploy thật / bật biểu mẫu V5 / ảnh Commons đều chờ User. **Lệnh cho User:** `! docker image rm hue-rag-app:nhap` (ảnh cũ có file private; giữ `nhap2`).
+- Tiền B phiên 07/11 ≈ 0,0074 USD (S1 0,0041 · S2 0,0018 · B-dep 0,0011 · V5 0,0004).
+
+## Đang làm — S1 backend cổng đợt 1 (spec duyệt `ff3c317ec88b`, User 11:56 07/11; A giao)
+- Nhánh `p11-cong-dot-1` từ `main` `eb68458`; worktree `/tmp/b_cong` (symlink `data/`, `knowledge-base-hue/`).
+- A trả lời 3 câu (07/11): (1) `bieu_mau` trường mới; giá trị nút dùng `truong`; câu `query` cố định code dựng — B quyết; (2) Q-U3 chưa chốt ⇒ ẩn "đi dày", `kieu_di` = mặc định code; (3) S1 chỉ cần duyệt spec.
+- Q-U1 = bản mẫu 2 "Sông Hương" (cho S2), không thêm font.
+- **File khai báo sửa (trong worktree `/tmp/b_cong`):**
+  - `backend/api/routes/chat.py` (`ChatRequest.bieu_mau`, `SourceResponse.bai_id`, nhánh biểu mẫu ở 2 route)
+  - `backend/llm/assistant.py` (cờ `lich_trinh_bieu_mau`, `AnswerTrace.bieu_mau`, đường biểu mẫu trong `answer_turn` / `answer_turn_stream`, bỏ qua phần song song #6)
+  - `backend/api/routes/cong.py` (mới: `/api/kham_pha`, `/api/kham_pha/bai`, `/api/thoi_tiet`, `/api/tinh_nang`)
+  - `backend/api/app.py` (đăng ký route + nạp danh sách bài lúc khởi động)
+  - `backend/config/settings.yaml` (cờ `lich_trinh_bieu_mau: false`)
+  - test: `backend/tests/test_cong_dot_1.py` (mới), `test_api_chat.py` / `test_chat_stream.py` (khuôn `sources` nếu cần)
+  - report: `report_agent/2026-11-06_giao_dien_cong/s1_implementation.md`
+- Tiền S1 dự kiến 0 USD (Q1 / Q1m chụp chuỗi, không gửi).
+
+### Tiến độ S1 (12:24 07/11/2026 `date`)
+- Commit dở `1c31ce4` trên `p11-cong-dot-1` (chưa push). D4 / D6 / D7 xong; D3 code xong nhưng **dừng chờ A** (lỗi model từ chối).
+- Đạt: Q1 228/228 giống byte (cờ tắt + cờ bật, mốc `main_eb68458.jsonl` sha `dba1f578eef1`); Q1m lượt biểu mẫu (1 lần gọi, 0 công cụ, chat = stream, tất định, chữ gõ không lọt) — `data/phase_11/cong_dot_1/q1/`; 20 test mới; test rộng 723 đạt (2 hỏng = test cần khoá); cổng ổn định đạt (cổng 8861).
+- Vướng D3: lượt thật từ chối 5/5 (server 8862) + cách (a) "lượt công cụ dựng sẵn" 3/3 (`data/phase_11/cong_dot_1/thu_cach_a/lan1.jsonl`). Nguyên nhân: đoạn chọn cho mỗi điểm (`_lay_nguon_lich`) chỉ là dòng tên ở 11/28 điểm ⇒ luật lịch đòi "ý ngắn từ tài liệu" không có ⇒ từ chối. Đề xuất A: (e) chọn đoạn nhiều bằng chứng nhất.
+- Tiền S1: 0,0028 USD.
+- Script: `data/phase_11/cong_dot_1/tools/` (`q1m_bieu_mau.py`, `app_bieu_mau.py` cho S3, `thu_cach_a.py`).
+- (e) xong (`0cb0b0a`, đã push): 0 điểm < 80 ký tự, Q1 228/228; pilot 1/3 model viết, 2/3 vẫn từ chối ⇒ dừng D3 theo A.
+
+## Đang làm — S2 frontend (A giao, bản mẫu 2 Sông Hương; tên "Huế · Trải nghiệm văn hóa & du lịch" / "Trải nghiệm Huế" / "Trợ lý Huế")
+- **File khai báo sửa (worktree `/tmp/b_cong/frontend/src/`):** `App.jsx` (khung cổng + điều hướng hash), `chat.jsx` (mới — trợ lý: hook + lượt + dòng Nguồn), `pages.jsx` (mới — trang chủ, Khám phá, bài, Lên kế hoạch, Giới thiệu), `route.js` (mới), `markdown.js` (bỏ số [n], link ngoài), `stream.js` (`bieu_mau`), `index.css` (token bản 2); `HoiBangAnh.jsx` chỉ nếu cần.
+- **S2 xong (12:45 07/11/2026 `date`), chờ review:** commit `f20fd28` (đã push). 0 lỗi console trên 11 hash × 1440 / 390; bundle 105,99 KB gzip; lượt thật: 0 `[n]` trong chữ, dòng Nguồn = sources 6/6, biểu mẫu ⇒ lịch + "Sửa" về biểu mẫu chọn sẵn. Tiền S2 0,0018 USD. Report `report_agent/2026-11-06_giao_dien_cong/s2_implementation.md`; S1: `s1_implementation.md`. Ảnh `data/phase_11/cong_dot_1/anh_s2/`.
+- Còn mở: ảnh thật (chờ User / E), D3 chờ X1 của C, server thử đã tắt. Worktree `/tmp/b_cong` giữ (nhánh `p11-cong-dot-1`).
+
+---
+
+# (cũ) STATUS B — KẾT PHIÊN TỐI 06/11 (22:41 06/11/2026 `date`; mở 20:54) — sổ tay cho phiên sau
 
 Vai: thực thi. Terminal phiên tối 06/11: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28` (đổi mỗi lần mở ⇒ `ListAgents`). Quyền phiên **hết hạn**. Không còn worktree `/tmp` của B. Không có code dở.
 
