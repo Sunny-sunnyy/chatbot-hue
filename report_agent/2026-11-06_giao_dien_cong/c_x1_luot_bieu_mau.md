@@ -82,3 +82,42 @@ Tiền X1: 0,024689 / 0,03 USD.
 - **V4 "khả thi"** khi cả ba: (1) từ chối **0 / 16** (chữ model đúng bằng câu từ chối; lượt code dựng lời thay tính là từ chối); (2) `kiem_cuoi` qua trên **mọi** lượt model tự viết; (3) **chữ đầu p95 ≤ 5 s** (`chat_metrics.first_text_ms`, sàn sản phẩm).
 - Báo thêm: ý ngắn / tổng điểm (cách đếm X1); số dòng nói "được / có thể" ở buổi khung để trống (đếm thô, đọc lại tay); USD / lượt; cả lượt p50 / p95 (`total_ms`). Chữ đầu p95 > 5 s ở cả hai ⇒ phân rã: `lich_trinh` (xếp + lấy nguồn) ↔ lần gọi model.
 - **Trần X1b: 0,03 USD** (script dừng 0,027). Dự phóng 32 × ~0,00055 ≈ 0,018.
+
+### Kết quả (12:50 07/11/2026) — 32 lượt stream thật (12:46:09 – 12:49:43), 32 / 32 đo được, **0,017425 USD**
+
+Kết quả private `x1/x1b_lan_1_2.jsonl` md5 `f0a71eb77c9e`; bảng in bằng `x1/tong_b.py`.
+
+| Biến thể | từ chối (code dựng thay) | kiem_cuoi qua / lượt model tự viết | ý ngắn / điểm | "được / có thể" ở buổi trống (thô) | **chữ đầu p50 / p95 ms** | cả lượt p50 / p95 ms | USD / lượt | khả thi |
+|---|---|---|---|---|---|---|---|---|
+| V2 | **0 / 16** | 16 / 16 | 74 / 74 | 0 | 4.740 / **8.751** | 7.452 / 10.875 | 0,000521 | không — trượt sàn chữ đầu |
+| V4 | 2 / 16 (X04 lần 1, X05 lần 2) | 14 / 14 | 63 / 74 | 0 | 6.451 / **11.186** | 8.520 / 12.288 | 0,000568 | không |
+
+- **Phân rã thời gian (p50 / p95):** `lich_trinh` (xếp + lấy nguồn, CPU) V2 147 / 225 ms · V4 137 / 224 ms ↔ **lần gọi model V2 7.290 / 10.665 ms** · V4 8.332 / 12.152 ms. Chỗ chậm là model: token suy luận p50 V2 295 (max 864), V4 462 (max 975); token ra p50 V2 503, V4 711; vào ~1.800.
+- Trùng giờ: E chạy pytest CPU trong worktree riêng "vài phút trước" 12:47; phần CPU của lượt chỉ ~0,15 s ⇒ trùng (nếu có) không giải thích được 7–11 s chờ model.
+- **V4 phản tác dụng:** câu dặn thêm làm từ chối 0 ⇒ 2 / 16, suy luận dài hơn, chữ đầu chậm hơn ⇒ bỏ V4.
+- **V2 cộng hai lượt đo (X1 + X1b, 32 lượt trên bộ phát triển):** từ chối **1 / 32**; mọi lượt model tự viết qua `kiem_cuoi` (31 / 31).
+- Mốc so: câu hỏi thường của chatbot đang chạy — chữ đầu p50 1,23 / p95 2,61 s (38 câu, đo 01/11). Lượt biểu mẫu chậm hơn vì model suy luận ~300 token rồi viết lời cho cả lịch.
+
+### Kết luận X1b
+
+- V2 đạt hai tiêu chí chất lượng (0 / 16 từ chối, kiểm cuối 16 / 16) nhưng **trượt sàn chữ đầu p95 ≤ 5 s (8,75 s)** ⇒ chưa "khả thi". V4 kém hơn V2 ở mọi số.
+- Bộ quyết (12 tổ hợp S3) **chưa chạy, chưa xem**.
+
+### Đề xuất bậc kế (cho User qua A — chưa làm)
+
+1. **Hiện khung do code ngay, lời model sau** (đổi giao diện / thứ tự phát chữ, không đổi model): dòng "Mình hiểu" + khung lịch (tên điểm theo ngày / buổi, code dựng như V3 không có câu trích) phát ngay sau khi xếp (~0,2 s), lời model (V2) nối sau hoặc thay khung khi xong. Chữ đầu ≈ 0,2–0,5 s chắc qua sàn; cái giá: chữ hiện hai lần / giao diện phải thay khối. Cần spec nhỏ (đổi luồng sự kiện SSE) — B làm, đo lại Q-F.
+2. **V2 + mức suy luận thấp cho riêng lượt biểu mẫu** (đổi một tham số): rẻ để thử (~0,01 USD trên bộ phát triển); rủi ro từ chối / sai khung tăng — thử #1 04/11 "none" cho định tuyến từng phạm sàn an toàn (khác khâu, chưa biết ở đây).
+3. Giữ sàn chữ đầu, chấp nhận lượt biểu mẫu chậm (giao diện có bước tiến độ thật "đang xếp… đang viết") — **trái sàn đã chốt** ⇒ chỉ User đổi được.
+
+Tiền X1 + X1b: 0,024689 + 0,017425 = **0,042114 USD**.
+
+## 6. X1c — V2 + mức suy luận thấp riêng lượt biểu mẫu
+
+### Ghi trước (12:52 07/11/2026, trước mọi lượt có phí)
+
+- **Bộ:** 8 tổ hợp X1 (bộ PHÁT TRIỂN) ×2, đường stream như X1b. Bộ quyết S3 vẫn **không chạy, không xem**.
+- **Biến thể** (harness `x1/x1c.py` md5 `2d002c50394a` = `x1b.py` + 2 agent clone): V2 chạy lại cùng lượt làm mốc (runtime không gửi tham số suy luận ⇒ mức mặc định của model); **V5** = V2 + `reasoning.effort = "low"`; **V6** = V2 + `"minimal"` — chỉ ở lần gọi của lượt biểu mẫu (agent clone), không đổi đường khác. `gpt-6-luna` không nhận `minimal` ⇒ ghi lỗi API, chỉ kết luận V5.
+- **"Khả thi"** khi đủ bốn: từ chối **0 / 16** · `kiem_cuoi` qua mọi lượt model tự viết · **chữ đầu p95 ≤ 5 s** · **ý ngắn ≥ 70 / 74** điểm.
+- Báo thêm: token suy luận p50 / max; USD / lượt; số dòng "được / có thể" ở buổi khung trống (đếm thô). Lượt biểu mẫu không có câu an toàn (khung + kiểm cuối do code); vẫn ghi đủ mọi số. (04/11: mức "none" cho định tuyến từng phạm sàn an toàn — khác khâu.)
+- **Trần X1c: 0,03 USD** (script dừng 0,027). Dự phóng 48 lượt × ~0,0005 ≈ 0,024 (V5 / V6 ít token suy luận hơn ⇒ có thể thấp hơn).
+- **Chạy SAU** khi E xong ca dò CPU và B xong docker build cục bộ (đo latency không chồng việc nặng).

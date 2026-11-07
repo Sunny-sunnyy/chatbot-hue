@@ -34,13 +34,23 @@ Luật phủ §6 (máy kiểm, `do_bieu_mau.py kiem`): đủ 5 `di_cung` (mot_mi
 
 ## 2. Công cụ (private, `data/phase_9/cong_dot_1/tools/`)
 
-- `do_bieu_mau.py` (md5 `b07002c6e173`): `kiem` 0 USD — luật phủ + `lich_trinh.xep` thật với nút (12 / 12 khung 0 lỗi, tham số = nút) + 9 / 9 ca phá bắt [Chạy]; `chay` CÓ PHÍ — `TestClient(create_app(<bản sao settings bật lich_trinh_bieu_mau>))`, đường `/api/chat/stream`, mỗi tổ hợp một cuộc mới, bọc `_remember` (hàm thật vẫn chạy) giữ khung + chữ model + mã kiểm cuối; `cham` sàn code; `phieu` / `gop` cho F-a [Chạy trên dòng giả].
+- `do_bieu_mau.py` (md5 `4de78cb35999`; bản trước `b07002c6e173` — 07/11 thêm số theo dõi `cat_ngay_cuoi`): `kiem` 0 USD — luật phủ + `lich_trinh.xep` thật với nút (12 / 12 khung 0 lỗi, tham số = nút) + 9 / 9 ca phá bắt [Chạy]; `chay` CÓ PHÍ — `TestClient(create_app(<bản sao settings bật lich_trinh_bieu_mau>))`, đường `/api/chat/stream`, mỗi tổ hợp một cuộc mới, bọc `_remember` (hàm thật vẫn chạy) giữ khung + chữ model + mã kiểm cuối; `cham` sàn code; `phieu` / `gop` cho F-a [Chạy trên dòng giả].
 - **Còn khớp với S1** trước lượt có phí: khuôn body biểu mẫu (`body_bieu_mau` — đang GIẢ ĐỊNH `bieu_mau: true` + `truong`), tên cờ, đường biểu mẫu vẫn qua `_remember`. Khớp xong ⇒ chạy lại `kiem` + 1 lượt thử (pilot 1 tổ hợp) rồi mới chạy ×2.
+
+**Ghi nhận từ E (review S4, 07/11):** 3 / 120 tổ hợp biểu mẫu (4+ ngày · ẩm thực · một mình / cặp đôi / nhóm bạn) bị bớt ngày cuối vì vượt ngân sách ngữ cảnh (`vuot_ngan_sach`, có cả trước `0cb0b0a`). Bộ quyết 12 không có tổ hợp này (F12 = 4+ · cặp đôi · lễ hội nghệ thuật). Lưu ý: `kiem_khung` **coi ngày cắt là hợp lệ** (`lich_trinh.py:310-311` cộng ngày `vuot_ngan_sach` vào số ngày) ⇒ sàn code không bắt; harness S3 sẽ đếm riêng số lượt có `vuot_ngan_sach` (theo dõi, không quyết).
 
 ## 3. Dữ kiện đi kèm (đã báo A, dùng cho Q-U3)
 
 [Chạy] `kieu_di` thong_tha / day_lich / không chọn ⇒ khung giống hệt nhau ở **0 / 120** tổ hợp (`so_ngay` 4 × `di_cung` 5 × `so_thich` 6, bảng `diem_v3.json`) — chọn "đi dày" hiện không đổi gì.
 
-## 4. Kết quả
+## 4. Q-G + Q-N cho bản S2 `f20fd28` — ghi trước (12:53 07/11/2026; chạy SAU X1c)
+
+Tiêu chí chép spec §6 (không đổi); dưới đây chỉ ghi **cách đo** cố định trước:
+- **Nền:** worktree tách `f20fd28`, `cd frontend && npm ci && npm run build`, FastAPI phục vụ bản build (`uvicorn api.app:app` cổng trống) — không `vite dev`. Cờ như `settings.yaml` của nhánh (biểu mẫu tắt ⇒ "Lên kế hoạch" là đích theo cờ, không tính vào 7 / 7).
+- **Q-G đích + CSP** — `data/phase_9/cong_dot_1/tools/playwright_cong.py` md5 `fa580e39f5ed`, ở 1440 và 390: 7 / 7 đích (trợ lý · 5 trang lĩnh vực `#/kham-pha/<tên thư mục kho>` · giới thiệu) tới được trong ≤ 2 lần bấm từ `#/` (link `#…` đang hiện, hoặc mở menu `aria-expanded` rồi theo link); mỗi trang mở thẳng + tải lại giữ hash và có `h1`; 0 lỗi CSP; 0 lỗi console / `pageerror`; bundle JS gzip ≤ 200 KB. Hash khớp `frontend/src/route.js` của `f20fd28` (C đã đọc).
+- **Q-G tương phản** — `tools/tuong_phan.py` md5 `f53a31153ce3`: mọi cặp chữ / nền trên trang đã dựng (mặc định + `:hover` + `::placeholder`) ở 7 trang × 1440 / 390 ≥ 4,5 : 1; chữ trên ảnh / SVG / gradient liệt kê để đọc mắt.
+- **Q-N** — `tools/qn_nguon.py` md5 `1aab1db65b88` trên 10 câu C tự viết (`data/phase_9/cong_dot_1/qn/cau_qn.txt` md5 `a6a4b6df98e7`; loại câu: nguồn gốc món, năm xây dựng, thời gian lễ hội, công nhận di sản, giá vé, vị trí, món ăn kèm, nơi biểu diễn, đặc điểm điểm đến, tháng lễ hội; quét trùng Golden / kho / kín bằng `.githooks/overlap_scan.py`: 0 trùng): mỗi câu một cuộc mới ở `#/tro-ly`; đạt khi **10 / 10** câu có nguồn **và** chữ hiện ra 0 `[n]` / `[Nguồn n]` **và** tập tên dòng "Nguồn" = tập `title` của sự kiện SSE `sources` cùng lượt. Câu không có nguồn (từ chối) ⇒ không tính, báo A để thay câu (không tự đổi). Có phí ≈ 10 lượt chat (~0,005 USD) — trong trần cả spec.
+
+## 5. Kết quả
 
 NOT RUN.
