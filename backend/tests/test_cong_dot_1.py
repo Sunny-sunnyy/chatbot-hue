@@ -45,6 +45,12 @@ def flags_from(**assistant) -> AssistantFlags:
 PROD = flags_from()  # cờ đang chạy (định tuyến, #6 song song, tra web bật)
 FORM = flags_from(lich_trinh_bieu_mau=True)
 TRUONG = ("so_ngay", "di_cung", "kieu_di", "so_thich")
+FORM_INSTRUCTIONS = f"{ANSWER_SYSTEM_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}"  # V5 (X1c của C): luật lịch trong lời dặn hệ thống của lượt biểu mẫu
+
+
+def effort(kwargs):
+    """Mức suy luận trong thân yêu cầu gửi OpenAI: SDK gửi `Reasoning(effort=…)`, không đặt ⇒ `Omit` (không có `effort`) ⇒ None."""
+    return getattr(kwargs.get("reasoning"), "effort", None)
 
 
 def chu_gui(kwargs) -> str:
@@ -108,7 +114,7 @@ def test_qf_every_button_combo_reaches_the_frame_unchanged(deps):
     calls = gen.client.responses.calls
     assert lech == [] and khong_qua == []
     assert len(calls) == len(combos)  # đúng 1 lần gọi model / lượt: không định tuyến, không vòng công cụ
-    assert all(tools_of(c) == [] and c["instructions"] == ANSWER_SYSTEM_INSTRUCTIONS for c in calls)
+    assert all(tools_of(c) == [] and c["instructions"] == FORM_INSTRUCTIONS and effort(c) == "low" for c in calls)
 
 
 @pytest.mark.parametrize("kieu_di", list(GIA_TRI["kieu_di"]))
@@ -137,7 +143,7 @@ def test_form_turn_request_has_frame_rules_and_no_tools(deps, history, stream):
     events = run(deps, query, gen, FORM, trace, stream)
     (sent,) = gen.client.responses.calls  # 1 lần gọi: #6 song song không chạy, không định tuyến
     text = chu_gui(sent)
-    assert tools_of(sent) == [] and sent["instructions"] == ANSWER_SYSTEM_INSTRUCTIONS
+    assert tools_of(sent) == [] and sent["instructions"] == FORM_INSTRUCTIONS and effort(sent) == "low"
     assert LICH_TRINH_LUAT in text and f"Câu hỏi:\n{query}" in text  # khung + luật viết lời do code đưa vào ngữ cảnh
     assert ("Huế có món gì ngon?" in text) == bool(history)
     assert trace.route == "tro_ly_hue" and trace.citation_error is None and trace.lich_kiem == []
@@ -170,6 +176,7 @@ def test_follow_up_turn_after_form_goes_like_main(deps, stream):
         run(deps, "Đại Nội mở cửa mấy giờ?", gen, dataclasses.replace(flags, router=False, tra_web=False), AnswerTrace(history=history), stream)
         sent[name] = gen.client.responses.calls
     assert sent["form"] == sent["prod"] and len(sent["form"]) == 1
+    assert effort(sent["form"][0]) is None and LICH_TRINH_LUAT not in sent["form"][0]["instructions"]  # lượt thường: không suy luận "low", không luật lịch
 
 
 def test_form_flag_needs_table_only():

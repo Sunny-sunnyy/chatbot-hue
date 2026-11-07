@@ -32,6 +32,7 @@ from llm.full_corpus_prompt import (
     THOI_TIET_MO_TA,
     CHAT_INSTRUCTIONS,
     INSUFFICIENT_ANSWER,
+    LICH_TRINH_LUAT,
     ROUTER_INSTRUCTIONS,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
@@ -42,6 +43,8 @@ from llm.full_corpus_prompt import (
 )
 
 logger = logging.getLogger("llm.full_corpus")
+# Cổng đợt 1 D3 — X1c của C (V5, bộ phát triển: 0 / 16 từ chối, chữ đầu p95 4,75 s): mức suy luận của RIÊNG lần gọi lượt biểu mẫu
+BIEU_MAU_REASONING = "low"
 
 
 class AnswerOutput(BaseModel):
@@ -288,6 +291,12 @@ class OpenAIFullCorpusGenerator:
         self.router_history_agent = self.router_agent.clone(instructions=f"{ROUTER_INSTRUCTIONS}\n\n{ROUTER_HISTORY_NOTE}")
         self.assistant_history_instructions = f"{self.assistant_instructions}\n\n{ASSISTANT_HISTORY_NOTE}"
         self.assistant_history_agent = self.assistant_agent.clone(instructions=self.assistant_history_instructions)
+        # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
+        # mẫu dùng; mọi lượt khác gọi `answer_agent` như cũ (Q1). Luật vẫn nằm cả trong khung ngữ cảnh — giữ đúng cấu hình C đã đo.
+        self.bieu_mau_agent = self.answer_agent.clone(
+            instructions=f"{answer_instructions}\n\n{LICH_TRINH_LUAT}",
+            model_settings=dataclasses.replace(self.answer_agent.model_settings, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
+        )
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.
         self.web_agent = Agent(
             name="hue_web_section",
@@ -506,10 +515,11 @@ class OpenAIFullCorpusGenerator:
         )
 
     async def generate_answer(self, query: str, context: str, today: str | None = None, call_log: "CallLog | None" = None,
-                              history=()) -> GeneratedText:
+                              history=(), bieu_mau: bool = False) -> GeneratedText:
+        """`bieu_mau`: lượt biểu mẫu (cổng D3) ⇒ `bieu_mau_agent`; mặc định = `answer_agent` như cũ."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return await self._execute_agent(self.answer_agent, with_history(build_answer_input(query, context, today), history), AnswerOutput,
+        return await self._execute_agent(self.bieu_mau_agent if bieu_mau else self.answer_agent, with_history(build_answer_input(query, context, today), history), AnswerOutput,
                                          call_log)
 
     def _start_stream(self, agent: Agent, user_prompt: "str | list[dict]") -> tuple[RunResultStreaming, "CallLog"]:
@@ -517,13 +527,15 @@ class OpenAIFullCorpusGenerator:
         result = Runner.run_streamed(agent, input=user_prompt, max_turns=1, run_config=_run_config(), hooks=call_log)
         return result, call_log
 
-    def start_answer_stream(self, query: str, context: str, today: str | None = None, history=()) -> tuple[RunResultStreaming, CallLog]:
+    def start_answer_stream(self, query: str, context: str, today: str | None = None, history=(),
+                            bieu_mau: bool = False) -> tuple[RunResultStreaming, CallLog]:
         """Cùng agent + cùng tham số lần gọi như `generate_answer`, nhưng stream (spec streaming §4.3 bước 1). Trả ngay; model chạy
         trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`.
         `CallLog` của lượt trả kèm: nơi gọi đọc `calls` cả khi lượt bị ngắt / lỗi (chỉ có mục của lần gọi đã xong)."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return self._start_stream(self.answer_agent, with_history(build_answer_input(query, context, today), history))
+        return self._start_stream(self.bieu_mau_agent if bieu_mau else self.answer_agent,
+                                  with_history(build_answer_input(query, context, today), history))
 
     def finish_answer_stream(self, result: RunResultStreaming, call_log: CallLog, started: float, state: dict | None = None) -> GeneratedText:
         """Sau khi `stream_events()` đã đọc hết: chữ cuối kiểm chặt như `generate_answer` (`parse_structured_output`) + usage.

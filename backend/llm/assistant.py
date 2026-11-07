@@ -704,7 +704,8 @@ async def _xep_bieu_mau(query: str, retrieval_service, context_builder, trace: A
 
 
 async def answer_bieu_mau(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags) -> None:
-    """Lượt biểu mẫu không stream (`POST /api/chat`): code xếp ⇒ một lần sinh **không công cụ** ⇒ kiểm như lượt có lịch (`_finish_generated`).
+    """Lượt biểu mẫu không stream (`POST /api/chat`): code xếp ⇒ một lần sinh **không công cụ** bằng agent biểu mẫu (luật lịch trong lời dặn +
+    mức suy luận thấp — V5 X1c) ⇒ kiểm như lượt có lịch (`_finish_generated`).
     Lỗi tìm / ngữ cảnh / sinh đi ra nguyên kiểu như `answer_query`."""
     if generator is None:
         raise GeneratorNotReadyError("generator is not ready")
@@ -713,7 +714,8 @@ async def answer_bieu_mau(query: str, retrieval_service, context_builder, genera
     started = time.perf_counter()
     call_log = CallLog()
     try:
-        trace.generated = await generator.generate_answer(query, context, today=today, call_log=call_log, **_history_kwargs(trace))
+        trace.generated = await generator.generate_answer(query, context, today=today, call_log=call_log, bieu_mau=True,
+                                                          **_history_kwargs(trace))
     finally:
         trace.generation_ms = elapsed_ms(started)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)
@@ -878,7 +880,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 yield "status", {"stage": "lich_trinh", **buoc}
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_LY_HUE
-            result, call_log = generator.start_answer_stream(query, context, today, **_history_kwargs(trace))
+            result, call_log = generator.start_answer_stream(query, context, today, bieu_mau=True, **_history_kwargs(trace))
         elif trace.route == ROUTE_TRO_CHUYEN:
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_CHUYEN
