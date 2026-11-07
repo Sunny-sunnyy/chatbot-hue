@@ -1,11 +1,12 @@
-# STATUS A — PHIÊN 07/11 (mở 11:53; cập nhật 13:07 07/11/2026 `date`)
+# STATUS A — PHIÊN 07/11 (mở 11:53; cập nhật 15:44 07/11/2026 `date`, trước khi User mở lại 4 session — CHƯA kết phiên)
 
-- Terminal: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81` (cả bốn Claude Code, trực tiếp).
-- Quyền: như 06/11 + (User đi nghỉ) tiếp tục / gác việc cần duyệt / tự do nghiên cứu; vượt 1 USD được; Serper cho tra cứu. Qdrant mất container ⇒ A `docker compose up -d qdrant`.
-- User: duyệt spec cổng đợt 1 `ff3c317ec88b`; Q-U1…Q-U5 (spec §3); "biểu mẫu + bổ sung dữ liệu song song".
-- A quyết: (e) chọn đoạn nguồn dài nhất (B); thứ tự việc nặng CPU (E dò ⇒ B build ⇒ C X1c ⇒ C Q-G/Q-N).
-- Tiền tới giờ ≈ 0,05 USD (C X1+X1b 0,042 · B 0,007 · E 0,002).
-- **Bẫy / đầu vào vòng cải tiến:** (1) Q-U3 hỏi bằng chi tiết kỹ thuật ⇒ User không hiểu, hỏi lại hướng ⇒ hỏi bằng lời sản phẩm, nói bối cảnh trước. (2) Tin "đổi thứ tự D6/D7 trước" tới sau khi B đã xong S1 — gửi theo ý định cũ, chưa xem trạng thái B. (3) B report deploy ghi "0 file evaluation" từ đếm chưa đủ (chỉ gốc kho) — E bắt 16 file Golden + 148 meta trong ảnh ⇒ đề xuất: đóng gói dữ liệu private bằng **danh sách chừa** (allow-list) + đếm bên trong sản phẩm cuối, không loại dần. (4) B: dựng test trước lượt model thật đầu tiên ⇒ lỗi lộ trễ ~40 phút (B tự nêu).
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" (viết lại 15:44 07/11/2026) ⇒ xác nhận quyền phiên 07/11 bằng một câu ⇒ `ListAgents` ⇒ giao theo "Làm tiếp" ⇒ hỏi User mỗi lần một câu.
+
+- Terminal cũ (đổi khi mở lại): A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`.
+- Xong 07/11: spec cổng duyệt + 5 Q-U; S1 / S2 / S4 / S3 / X1–X1c; merge cổng `dbfc925` + thời tiết `0dab4e5` + V5 `312ad9f` + cờ biểu mẫu `a884de4` (cổng ổn định A chạy 2 lần, đạt); tự soi 4 session + TONG_HOP; thử deploy cục bộ (B) + review E 2 vòng; báo cáo User (LUONG bản 32, SINH bản 41, nhật ký 07/11); Project_Status sửa dòng hiện trạng.
+- Dự án khác (`docker-images-src`) xin máy 15:30–16:00 ⇒ A cho sau khi C đo xong; trước khi đo latency nhắn bên đó.
+- Tiền 07/11 ≈ 0,10 USD (C 0,078 · B 0,009 · E 0,002 · A 0,002).
+- **Bẫy / đầu vào vòng cải tiến:** (1) Q-U3 + F-a(4) hỏi bằng chi tiết kỹ thuật ⇒ User không hiểu 3 lần ⇒ hỏi bằng ví dụ người dùng thấy, nói bối cảnh / vì sao trước khi hỏi. (2) Tin "đổi thứ tự D6/D7" gửi khi B đã xong S1. (3) B ghi "0 file evaluation" từ đếm chưa đủ ⇒ E bắt 16 + 148 file trong ảnh ⇒ đóng gói dữ liệu private bằng danh sách chừa + đếm trong sản phẩm cuối. (4) B dựng test trước lượt model thật đầu tiên ⇒ lỗi lộ trễ ~40 phút. (5) Ảnh: E đưa ảnh "vừa" + nhãn không đối chiếu mô tả ⇒ User bắt 2 ảnh sai (bún riêu, Đại Cung môn) ⇒ nguồn có biên tập (ảnh đại diện bài vi.wiki, chỉ file Commons) + đối chiếu chú thích. (6) A bật cờ trước khi chạy test ⇒ 4 test hỏng vì đọc settings thật — A dời commit sang nhánh, B sửa; lần sau: chạy test file chạm cờ ngay sau khi đổi `settings.yaml`, trước commit. (7) User mở HTML tải về Windows ⇒ ảnh không hiện ⇒ đưa đường dẫn `\\wsl.localhost\Ubuntu-24.04\…`.
 
 # STATUS A — KẾT PHIÊN TỐI 06/11 (mở 20:54; cập nhật 22:43 06/11/2026 `date`)
 
