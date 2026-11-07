@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 22:41 06/11/2026 (A, **kết phiên tối 06/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
+Cập nhật: 11:55 07/11/2026 (A, mở phiên 07/11: quyền phiên, terminal, Qdrant bật lại). Trước: 22:41 06/11/2026 (A, **kết phiên tối 06/11**). Cách dùng: `WORKFLOW.md` §3, §6, §7, §9. Chỉ giữ việc đang mở.
 Nguyên văn phiên 06/11 sáng + tối (mọi việc giao, quyết định theo giờ, kết quả): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-06_lich_trinh_cau_tu_nhien.md`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (đọc trước nhất — viết lại 22:41 06/11/2026)
@@ -11,13 +11,19 @@ Nguyên văn phiên 06/11 sáng + tối (mọi việc giao, quyết định theo
 
 **Quyết định User tối 06/11 (nguyên văn + giờ ở archive):**
 - **Lịch trình:** kín v2 (5 câu tự nhiên User duyệt, md5 `de95ff85e491`) **không đạt** 3 / 5 (cần 4 / 5) ⇒ cờ tắt. User chọn **"biểu mẫu trước"**: lịch trình vào qua biểu mẫu "Lên kế hoạch" của giao diện mới, **code quyết** (giá trị nút), đo trên bộ đã thấy, không bộ kín; câu gõ tự do chưa bật. Đã tìm ra: từ chối khi hỏi kèm = `tim_kho` bị chặn sau lịch (E20, chứng minh bằng code; sửa để khi bật câu tự do); hỏi lại số ngày thừa **chưa tái tạo được** (C210); "đi dày" không làm được bằng dữ liệu kho (E21) ⇒ câu User.
-- **Giao diện:** bỏ số `[n]` trong chữ ⇒ dòng "Nguồn: …" dưới câu; **cổng du lịch kiểu Huế TRIPO mức 2, hai đợt** (đợt 1 khung cổng từ cái đã có; đợt 2 bản đồ / lưu trú / ăn uống / sự kiện sau nghiên cứu dữ liệu). Nghiên cứu xong: B172 giao diện (`data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md`), C209 nguồn dữ liệu (`…/nguon_du_lieu_dot_2.md`). **Spec đợt 1 bản 2 `ff3c317ec88b`** (`docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`) — E review 2 vòng **ready** ⇒ **chờ User duyệt sha**. **3 bản mẫu HTML (B173 xong):** `data/nghien_cuu_giao_dien_2026-11-06/mau/1.html` Son thếp · `2.html` Sông Hương · `3.html` Tím Huế trầm (= mốc hiện tại); ảnh so `mau/anh_nho/so_*.jpg`; report `report_agent/2026-11-06_giao_dien_cong/b173_implementation.md`.
+- **Giao diện:** bỏ số `[n]` trong chữ ⇒ dòng "Nguồn: …" dưới câu; **cổng du lịch kiểu Huế TRIPO mức 2, hai đợt** (đợt 1 khung cổng từ cái đã có; đợt 2 bản đồ / lưu trú / ăn uống / sự kiện sau nghiên cứu dữ liệu). Nghiên cứu xong: B172 giao diện (`data/nghien_cuu_giao_dien_2026-11-06/tong_hop.md`), C209 nguồn dữ liệu (`…/nguon_du_lieu_dot_2.md`). **Spec đợt 1 bản 2 `ff3c317ec88b`** (`docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`) — E review 2 vòng **ready** ⇒ **User DUYỆT 11:56 07/11/2026** (sha tính từ file) ⇒ B làm S1. **3 bản mẫu HTML (B173 xong):** `data/nghien_cuu_giao_dien_2026-11-06/mau/1.html` Son thếp · `2.html` Sông Hương · `3.html` Tím Huế trầm (= mốc hiện tại); ảnh so `mau/anh_nho/so_*.jpg`; report `report_agent/2026-11-06_giao_dien_cong/b173_implementation.md`.
 
 **Phase 9 — còn lại:** giao diện cổng đợt 1 (gồm biểu mẫu lịch trình) ⇒ bật biểu mẫu khi Q-F đạt ⇒ B7 đóng gói. **Sửa lịch** (`p9-sua-lich` `79b3d9c`, harness ready E): cần cờ `lich_trinh` câu tự do ⇒ **hoãn** tới khi xét bật câu tự do (A xem lại cách sửa lịch sau biểu mẫu: "điền lại biểu mẫu"). Mô phỏng kín sửa lịch chờ User `!` (terminal C — lệnh `report_agent/2026-11-02_phase_9_code/c207_rebase_sua_lich.md` §8).
 **Phase 10:** ảnh xong (cờ tắt); giọng nói: plan G2 duyệt `92ec551531fd` ⇒ **G1 chờ User thu 40 câu**.
 **Phase 11 / 12:** đợt 2 cổng kéo dữ liệu Phase 11 lên (C209 P1 / P2 / P3); Phase 12 deploy AWS = điều kiện đóng code (25–30/12).
 **Đợt report đang mở:** `report_agent/2026-11-06_giao_dien_cong/` (B172, B173, C209 + spec đợt 1 ở `docs/superpowers/specs/`). Đóng: `2026-11-06_b5_cau_tu_nhien/` (`TONG_HOP.md`).
 **Mặc định đã ghi trong spec (nếu User chưa trả lời):** Q-U3 ⇒ ẩn "đi dày" khỏi biểu mẫu. Các câu Q-U khác không có mặc định — hỏi trước S2 (frontend); S1 (backend) không phụ thuộc Q-U1 / Q-U2 / Q-U5, chỉ cần User duyệt spec.
+
+### Quyết định User 07/11 (A ghi nhận 11:55–12:26 07/11/2026, giờ `date` khi ghi)
+- Quyền phiên như 06/11. **Duyệt spec cổng đợt 1 `ff3c317ec88b`.** Q-U1 bản mẫu 2 "Sông Hương" (không thêm font) · Q-U2 (b) ảnh giấy phép mở, agent tìm, User kiểm từng ảnh (E làm) · Q-U3 ẩn "đi dày" đợt 1 **+ song song bổ sung thời gian tham quan từ web công khai** (C làm, User duyệt bảng v7) ⇒ có dữ liệu thì xét bật "đi dày"; sau đợt 1 sửa đường chat tự do (E20) rồi đo lại · Q-U4 bật `thoi_tiet` khi merge S5 · Q-U5 đầu trang "Huế · Trải nghiệm văn hóa & du lịch" (điện thoại "Trải nghiệm Huế"), trợ lý "Trợ lý Huế". Ghi ở spec §3 (sửa chữ).
+- User hỏi lại hướng lịch trình ("trợ lý tự hỏi thêm + bổ sung dữ liệu") ⇒ A giải thích B5 đã làm vậy, kín v2 3 / 5 trượt do thiếu dữ liệu + E20 ⇒ User chọn "biểu mẫu + bổ sung dữ liệu song song".
+- A quyết (kỹ thuật): S1 lượt biểu mẫu bị model từ chối 5 / 5 vì đoạn nguồn mỗi điểm chỉ là dòng tên (B đo: 11 / 28 điểm < 80 ký tự) ⇒ (e) sửa `_lay_nguon_lich` chọn đoạn nhiều nội dung; thử (a) lượt công cụ dựng sẵn vẫn từ chối 3 / 3. Qdrant: container mất ⇒ A `docker compose up -d qdrant` (8.435 point).
+- Việc đang chạy: B (e) + pilot ⇒ S2 · C chốt bộ Q-F 12 tổ hợp (ẩn đi dày) + C-tl thời lượng web ⇒ `diem_cho_user_v7.md` · E ảnh Commons ⇒ `data/nghien_cuu_giao_dien_2026-11-06/anh/xem_anh.html`.
 
 ### Phiên sau làm theo thứ tự (A giao ngay sau câu quyền phiên — không chờ "làm đi")
 
@@ -77,15 +83,18 @@ B0–B7 = bậc Phase 9; B5b = thời tiết, B6 = tra web; G0–G4 = bậc gi�
 
 ## Session
 
-**Phiên tối 06/11 (20:54 – kết 22:41 06/11/2026):** A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28` — cả bốn Claude Code, trực tiếp. Mỗi session viết lại `sessions/STATUS_<X>.md` cho phiên sau.
+**Phiên 07/11 (mở 11:53 07/11/2026):** A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81` — cả bốn Claude Code, trực tiếp (B / C / E tự báo).
+
+Phiên tối 06/11: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28`.
 
 Tên terminal đổi mỗi lần mở: `ListAgents`. B / C / E lúc mở phiên sau: kiểm nhanh ⇒ đọc `STATUS_<X>.md` + mục "PHIÊN SAU ĐỌC TRƯỚC" ⇒ báo A ⇒ chờ (việc A giao = User nói "làm đi").
 
 ## Quyền
 
-- **Phiên tối 06/11 — HẾT HẠN lúc kết phiên (22:41 06/11/2026)** (User chọn "như 06/11"). Tiền phiên ≈ 0,027 USD.
+- **Phiên 07/11 (User chọn "như 06/11", A ghi nhận 11:55 07/11/2026):** A tự điều phối — giao ngay việc có sẵn trong handoff, A tự commit / push, ≤ 1 USD / phiên, B / C / E push nhánh riêng, trần Phase 9 2,5. Hết hạn cuối phiên.
+- Phiên tối 06/11 — hết hạn 22:41 06/11/2026. Tiền phiên ≈ 0,027 USD.
 - **Tiền Phase 9: trần 2,5 USD** (User nâng 19:29 05/11/2026; không hết hạn theo phiên; dự phóng vượt ⇒ xin trước). **Phase 10:** trần 0,15 (dừng 0,13).
-- **Đã duyệt, không hết hạn theo phiên:** plan G2 giọng nói `92ec551531fd` (A duyệt sau review 2 vòng, 06/11 tối); spec Phase 10 bản 4 `784d6f7abd9f` (sherpa-onnx, tải model ≤ 300 MB, thu 40 câu; Web Speech bỏ); tải SigLIP 2 + collection ảnh (11:42 05/11); luật S-AT mới (20:14 05/11); cache câu trả lời ⇒ Phase 12 (20:27 05/11); bật `tra_web` (21:15 05/11).
+- **Đã duyệt, không hết hạn theo phiên:** spec giao diện cổng đợt 1 bản 2 `ff3c317ec88b` (User 11:56 07/11/2026); plan G2 giọng nói `92ec551531fd` (A duyệt sau review 2 vòng, 06/11 tối); spec Phase 10 bản 4 `784d6f7abd9f` (sherpa-onnx, tải model ≤ 300 MB, thu 40 câu; Web Speech bỏ); tải SigLIP 2 + collection ảnh (11:42 05/11); luật S-AT mới (20:14 05/11); cache câu trả lời ⇒ Phase 12 (20:27 05/11); bật `tra_web` (21:15 05/11).
 - **User (09:00 05/11/2026):** cần công cụ / nghiên cứu / tải / khoá mới ⇒ tự nghiên cứu (0 USD, thông tin công khai) + đề xuất; thêm công cụ / thư viện lớn / tải model / khoá / tài khoản mới vẫn trình User trước (`Session_Prompt.md` §4).
 - **Phase 9 (spec):** Serper dùng luôn (User chấp nhận rủi ro điều khoản); gói npm giao diện như đã duyệt 02/11; dữ liệu công khai dùng cho học tập, không kiểm giấy phép (05/11).
 - **Thường trực:** A commit / push — hỏi User trước (luật chung), rồi A tự chạy; chỉ khi bị chặn / lỗi mới đưa `!` (`WORKFLOW.md` §9.6); B / C / E không commit trừ khi việc ghi rõ; duyệt cho A = duyệt cho B / C / E; thư viện nhỏ cần cho việc đã duyệt: A tự duyệt, báo sau; Qdrant chỉ đọc trừ đích ghi trong việc; paid ghi usage + tiền; code luôn `uv run`.

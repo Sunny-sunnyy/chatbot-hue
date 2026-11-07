@@ -40,11 +40,11 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 
 ## 3. Câu hỏi cho User (trước khi code giao diện — mỗi lần một câu)
 
-- **Q-U1 Hướng nhìn:** chọn 1 trong 3 bản mẫu HTML tĩnh của B (`data/nghien_cuu_giao_dien_2026-11-06/mau/`) — màu, chữ, cảm giác.
-- **Q-U2 Ảnh:** kho gần như không có ảnh được phép dùng (B172: 2 file). (a) không ảnh — hình vẽ SVG / hoa văn / khối màu; (b) ảnh công khai có giấy phép mở (vd Wikimedia Commons) kèm dòng ghi công — **tải về, đóng vào bản build** (`frontend/` ⇒ `dist/`), không link ảnh ngoài (CSP `img-src 'self'` giữ nguyên); (c) ảnh bạn tự chụp. Ảnh mới = dữ liệu mới ⇒ bạn quyết.
-- **Q-U3 "Đi dày" trên biểu mẫu:** cột thời lượng từ kho không làm lịch dày hơn (E21, `data/phase_9/lich_trinh/diem_cho_user_v6.md`: 4 hướng). Mặc định nếu chưa quyết: **ẩn lựa chọn "đi dày"** khỏi biểu mẫu (không hứa điều code chưa làm được). Câu này chốt **trước** khi ghi bộ tổ hợp Q-F.
-- **Q-U4 Ô thời tiết + công cụ thời tiết:** bật cờ `thoi_tiet` (B5b đã đạt luật ghi trước) để trang chủ có ô nhiệt độ hôm nay + trợ lý trả lời câu dự báo?
-- **Q-U5 Tên hiển thị của cổng** (chữ ở đầu trang) — vd tên ngắn từ đề tài; không dùng tên giống cổng nhà nước.
+- **Q-U1 Hướng nhìn:** chọn 1 trong 3 bản mẫu HTML tĩnh của B (`data/nghien_cuu_giao_dien_2026-11-06/mau/`) — màu, chữ, cảm giác. **User chọn (11:59 07/11/2026): bản 2 "Sông Hương"** (`mau/2.html`: xanh ngọc `#0E6B66`, nước sâu `#0A3D40`, sen `#9C2A4F` cho nút "Hỏi trợ lý", hero căn giữa sóng SVG, 5 lĩnh vực là 5 "bến" dọc đường sông, bo tròn); chỉ Be Vietnam Pro ⇒ không thêm font (D14).
+- **Q-U2 Ảnh:** kho gần như không có ảnh được phép dùng (B172: 2 file). (a) không ảnh — hình vẽ SVG / hoa văn / khối màu; (b) ảnh công khai có giấy phép mở (vd Wikimedia Commons) kèm dòng ghi công — **tải về, đóng vào bản build** (`frontend/` ⇒ `dist/`), không link ảnh ngoài (CSP `img-src 'self'` giữ nguyên); (c) ảnh bạn tự chụp. Ảnh mới = dữ liệu mới ⇒ bạn quyết. **User chọn (12:15 07/11/2026): (b)** — agent tìm + tải ảnh giấy phép mở (ghi tác giả / giấy phép / link nguồn cho dòng ghi công), User kiểm từng ảnh trước khi vào build; chỗ thiếu ảnh tốt ⇒ agent đưa danh sách địa điểm, User tự tìm và cung cấp.
+- **Q-U3 "Đi dày" trên biểu mẫu:** cột thời lượng từ kho không làm lịch dày hơn (E21, `data/phase_9/lich_trinh/diem_cho_user_v6.md`: 4 hướng). Mặc định nếu chưa quyết: **ẩn lựa chọn "đi dày"** khỏi biểu mẫu (không hứa điều code chưa làm được). Câu này chốt **trước** khi ghi bộ tổ hợp Q-F. **User chọn (12:21 07/11/2026): ẩn "đi dày" ở đợt 1** (`kieu_di` = mặc định code) + **song song bổ sung dữ liệu thời gian tham quan** cho các điểm thiếu từ nguồn web công khai (ghi nguồn, User duyệt bảng) ⇒ có dữ liệu thì xét bật "đi dày" (việc riêng, ngoài tiêu chí đợt 1); sau đợt 1 sửa lỗi đường chat tự do (E20) rồi đo lại để bật trợ lý tự hỏi thêm.
+- **Q-U4 Ô thời tiết + công cụ thời tiết:** bật cờ `thoi_tiet` (B5b đã đạt luật ghi trước) để trang chủ có ô nhiệt độ hôm nay + trợ lý trả lời câu dự báo? **User chọn (12:23 07/11/2026): bật khi merge đợt 1** (A bật cờ `thoi_tiet` ở S5, cổng ổn định thêm 1 câu thời tiết).
+- **Q-U5 Tên hiển thị của cổng** (chữ ở đầu trang) — vd tên ngắn từ đề tài; không dùng tên giống cổng nhà nước. **User chọn (12:25 07/11/2026):** đầu trang "Huế · Trải nghiệm văn hóa & du lịch" (điện thoại rút "Trải nghiệm Huế"); nút nổi / trang trợ lý tên "Trợ lý Huế".
 
 ## 4. Phạm vi
 
@@ -101,3 +101,8 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 
 - Bản 2 (22:38 06/11/2026): sửa theo review vòng 1 (E, `…_review.md`): M-1 viết lại Q-F (5 giá trị `di_cung` theo enum; phần tất định ⇒ test 0 USD; tiêu chí chấm F-a định nghĩa riêng trên khung + chữ + giá trị nút; bộ 12 tổ hợp ghi trước, sau Q-U3); m-1 chi tiết D3 (câu cố định, công cụ ở lượt biểu mẫu, giới hạn sửa lịch); m-2 Q-G đếm 7 / 7 đích + cách đo tương phản; m-3 D1 nguồn web; m-4 §7 thêm 2 dòng; m-5 Q-U2 (b) ảnh đóng vào bản build. Bản 1 `03904f669e8f` ở git.
 - (22:39 06/11/2026) Sửa chữ sau review vòng 2 (n-1, E): lượt biểu mẫu không đưa công cụ nào (thay "chỉ `tim_kho`") — không đổi tiêu chí / tiền / phạm vi.
+- (11:59 07/11/2026) Ghi lựa chọn Q-U1 của User vào §3 — sửa chữ, không đổi tiêu chí / tiền / phạm vi (bản User duyệt: `ff3c317ec88b`).
+- (12:15 07/11/2026) Ghi lựa chọn Q-U2 của User vào §3 — sửa chữ (ảnh vào build đúng như §3 (b) đã ghi; không đổi tiêu chí / tiền).
+- (12:21 07/11/2026) Ghi lựa chọn Q-U3 của User vào §3 — đúng mặc định đã ghi (ẩn); việc dữ liệu song song ngoài phạm vi §4 đợt 1, không đổi tiêu chí / tiền.
+- (12:23 07/11/2026) Ghi lựa chọn Q-U4 của User vào §3 — sửa chữ, không đổi tiêu chí / tiền.
+- (12:25 07/11/2026) Ghi lựa chọn Q-U5 của User vào §3 — sửa chữ, không đổi tiêu chí / tiền. B (S2) dùng `(e)` sửa `_lay_nguon_lich` (A quyết, ghi report S1).
