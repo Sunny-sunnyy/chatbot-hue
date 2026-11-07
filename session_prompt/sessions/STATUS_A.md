@@ -4,7 +4,7 @@
 
 - Terminal cũ (đổi khi mở lại): A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`.
 - Xong 07/11: spec cổng duyệt + 5 Q-U; S1 / S2 / S4 / S3 / X1–X1c; merge cổng `dbfc925` + thời tiết `0dab4e5` + V5 `312ad9f` + cờ biểu mẫu `a884de4` (cổng ổn định A chạy 2 lần, đạt); tự soi 4 session + TONG_HOP; thử deploy cục bộ (B) + review E 2 vòng; báo cáo User (LUONG bản 32, SINH bản 41, nhật ký 07/11); Project_Status sửa dòng hiện trạng.
-- Dự án khác (`docker-images-src`) xin máy 15:30–16:00 ⇒ A cho sau khi C đo xong; trước khi đo latency nhắn bên đó.
+- Dự án khác của User xin máy 15:30–16:00 ⇒ A cho sau khi C đo xong; trước khi đo latency nhắn bên đó.
 - Tiền 07/11 ≈ 0,10 USD (C 0,078 · B 0,009 · E 0,002 · A 0,002).
 - **Bẫy / đầu vào vòng cải tiến:** (1) Q-U3 + F-a(4) hỏi bằng chi tiết kỹ thuật ⇒ User không hiểu 3 lần ⇒ hỏi bằng ví dụ người dùng thấy, nói bối cảnh / vì sao trước khi hỏi. (2) Tin "đổi thứ tự D6/D7" gửi khi B đã xong S1. (3) B ghi "0 file evaluation" từ đếm chưa đủ ⇒ E bắt 16 + 148 file trong ảnh ⇒ đóng gói dữ liệu private bằng danh sách chừa + đếm trong sản phẩm cuối. (4) B dựng test trước lượt model thật đầu tiên ⇒ lỗi lộ trễ ~40 phút. (5) Ảnh: E đưa ảnh "vừa" + nhãn không đối chiếu mô tả ⇒ User bắt 2 ảnh sai (bún riêu, Đại Cung môn) ⇒ nguồn có biên tập (ảnh đại diện bài vi.wiki, chỉ file Commons) + đối chiếu chú thích. (6) A bật cờ trước khi chạy test ⇒ 4 test hỏng vì đọc settings thật — A dời commit sang nhánh, B sửa; lần sau: chạy test file chạm cờ ngay sau khi đổi `settings.yaml`, trước commit. (7) User mở HTML tải về Windows ⇒ ảnh không hiện ⇒ đưa đường dẫn `\\wsl.localhost\Ubuntu-24.04\…`.
 
@@ -25,7 +25,7 @@
 
 - Terminal 06/11: A `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99` (đổi mỗi lần mở).
 - Q3 B5 cũ: 2 sub-agent chấm (khớp 15 / 15; (ii) 3 / 5 — L3 code xếp bỏ sở thích, L5 lời "được" buổi tối) ⇒ **gác** (câu kín không tự nhiên). Lý do chi tiết chỉ ở `data/phase_9/b5/kin/cham_agent_{1,2}.md` — **A không đọc** (nội dung kín). A chỉ biết mức loại lỗi (đã chuyển thành B171 L-a / L-b).
-- Máy dùng chung với dự án khác (phiên A `docker-images-src` chạy ~4–5 GB nhiều giờ 06/11) ⇒ đo latency phải nhắn bên đó trước.
+- Máy dùng chung với dự án khác (phiên A của dự án đó chạy ~4–5 GB nhiều giờ 06/11) ⇒ đo latency phải nhắn bên đó trước.
 - Tiền 06/11: A 0 (chấm + review = quota Claude); cả phiên ≈ 0,021 USD (B).
 - **Bẫy A (đầu vào vòng cải tiến — đã ghi S99, S100):** (1) giao việc trễ ~50 phút ⇒ luật mới; (2) bộ kín không tự nhiên không ai bắt ⇒ đề xuất W58; (3) hook giờ ước bắt 2 lần ("10:4x", "12:2x") — đã sửa bằng `date`.
 
