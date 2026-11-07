@@ -69,6 +69,7 @@ assistant:
   nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true
   lich_trinh: false              # B5 (plan bản 7 D1): công cụ lịch trình (code xếp + code tự hỏi số ngày) — TẮT tới khi đạt luật ghi trước. Công cụ `hoi_lai` của B4 đã gỡ (C183 m-2)
   lich_trinh_bang: ../data/phase_9/lich_trinh/diem_v3.json  # bảng điểm User duyệt (v3 `e94b7f4263f2`, private); chỉ nạp khi cờ bật
+  lich_trinh_bieu_mau: false     # cổng đợt 1 (spec D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp bằng giá trị nút, sinh không công cụ. TẮT tới khi đạt Q-F
   tra_web: true                  # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — BẬT 05/11/2026 tối (đạt luật ghi trước + kín ×2 + review; User duyệt); cần router + tim_them
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại
   thoi_tiet: false               # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — TẮT tới khi đạt luật ghi trước; cần tim_them

@@ -71,6 +71,9 @@ class AssistantFlags:
     # B5 (plan B5 bản 7 D1): công cụ `lich_trinh` — tắt tới khi đạt luật ghi trước; cần bảng điểm User duyệt (`bang_lich`, nạp ở rìa)
     lich_trinh: bool = False
     bang_lich: "lt.Bang | None" = field(default=None, compare=False, repr=False)
+    # Cổng đợt 1 (spec `2026-11-06-giao-dien-cong-dot-1-design.md` D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp lịch bằng giá trị nút; tách khỏi
+    # `lich_trinh` (câu gõ tự do). TẮT tới khi đạt Q-F; cần bảng điểm (không cần vòng công cụ: lượt biểu mẫu sinh một lần, không công cụ)
+    lich_trinh_bieu_mau: bool = False
     # Thí nghiệm tốc độ #6 (plan 2026-11-04-phase-9-toc-do-song-song): đường stream chạy phần `tro_ly_hue` cùng lúc định tuyến; tắt = như cũ
     song_song_tra_loi: bool = False
     # B6 (plan B6 bản 3 D10): cổng web sau câu trả lời kho — TẮT tới khi đạt luật ghi trước; cần định tuyến + vòng công cụ
@@ -87,6 +90,8 @@ class AssistantFlags:
             raise ValueError("assistant.lan_tim_dau v1 / v3 needs assistant.router: true (search text is written by the router)")
         if self.lich_trinh and (not self.tim_them or self.bang_lich is None):
             raise ValueError("assistant.lich_trinh needs assistant.tim_them: true and the itinerary table (assistant.lich_trinh_bang)")
+        if self.lich_trinh_bieu_mau and self.bang_lich is None:
+            raise ValueError("assistant.lich_trinh_bieu_mau needs the itinerary table (assistant.lich_trinh_bang)")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
@@ -96,7 +101,8 @@ class AssistantFlags:
     def from_settings(cls, settings: dict) -> "AssistantFlags":
         config = settings.get("assistant") or {}
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
-        bang = nap_bang_lich(settings) if values["lich_trinh"] else None  # chỉ nạp khi cờ bật (clone không có `data/` vẫn chạy cờ tắt)
+        # chỉ nạp khi một trong hai cờ lịch bật (clone không có `data/` vẫn chạy cờ tắt)
+        bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None)
 
@@ -160,6 +166,7 @@ class AnswerTrace:
     # B4 D4: lượt ghép mang giá trị trường từ nút (`truong`, `{}` = "Trả lời luôn"); lần tìm đầu dùng câu gốc (m-3) thay vì câu ghép
     truong: dict | None = None
     search_query: str | None = None
+    bieu_mau: bool = False  # cổng đợt 1 D3: lượt từ biểu mẫu "Lên kế hoạch" (route đặt; `truong` có đủ giá trị nút, `so_ngay` bắt buộc)
     clarify: dict | None = None  # dữ liệu thẻ hỏi lại (B5 D15: do code của `lich_trinh` dựng)
     # B5: lượt đưa công cụ `lich_trinh` (đếm ngân sách cộng LICH_TRINH_TOOL_OVERHEAD — D16); kết quả lần xếp (khung, số nguồn mỗi điểm…);
     # bước tiến độ đã làm (D14, mã + số / tên điểm — không chữ người dùng); mã vi phạm kiểm cuối (D8). KHÔNG log chữ.
@@ -676,6 +683,36 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     return extra
 
 
+# ---------- Biểu mẫu "Lên kế hoạch" (cổng đợt 1, spec D3) ----------
+
+async def _xep_bieu_mau(query: str, retrieval_service, context_builder, trace: AnswerTrace, flags: AssistantFlags, today: str | None) -> str:
+    """D3: **code** gọi `lich_trinh` với giá trị nút ở cả 4 trường (không định tuyến, model không chọn công cụ, không lần tìm đầu). Trả ngữ cảnh
+    cho lần sinh không công cụ = đúng chuỗi công cụ trả ở đường câu tự do (chữ khung có `LICH_TRINH_LUAT` + đoạn nguồn của các điểm).
+    `instructions=None`: ngân sách đếm như đường sinh một lần (lời dặn trả lời) — đúng lần gọi của lượt này."""
+    t = trace.truong
+    lich_trinh = lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, None, flags.bang_lich,
+                                     flags.du_bao if flags.thoi_tiet else None)
+    return await lich_trinh(t["so_ngay"], t.get("di_cung"), t.get("kieu_di"), t.get("so_thich"), None)
+
+
+async def answer_bieu_mau(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags) -> None:
+    """Lượt biểu mẫu không stream (`POST /api/chat`): code xếp ⇒ một lần sinh **không công cụ** ⇒ kiểm như lượt có lịch (`_finish_generated`).
+    Lỗi tìm / ngữ cảnh / sinh đi ra nguyên kiểu như `answer_query`."""
+    if generator is None:
+        raise GeneratorNotReadyError("generator is not ready")
+    today = _today(flags, trace)
+    context = await _xep_bieu_mau(query, retrieval_service, context_builder, trace, flags, today)
+    started = time.perf_counter()
+    call_log = CallLog()
+    try:
+        trace.generated = await generator.generate_answer(query, context, today=today, call_log=call_log, **_history_kwargs(trace))
+    finally:
+        trace.generation_ms = elapsed_ms(started)
+        record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)
+    _finish_generated(trace, flags)
+    set_notice(trace, flags)
+
+
 # ---------- Một lượt có định tuyến (Phase 9 B1, plan D1, D6) ----------
 
 def _set_fixed(trace: AnswerTrace, text: str, outcome: str) -> None:
@@ -777,7 +814,10 @@ async def _web_stream(query: str, generator, trace: AnswerTrace, flags: Assistan
 async def answer_turn(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
                       recorder=None, tim_web=None) -> None:
     """Một lượt không stream (`POST /api/chat`, `answer_case`): luật khẩn cấp ⇒ định tuyến ⇒ trả lời theo tuyến ⇒ cổng web (B6; `tim_web` do route
-    truyền, None ⇒ không tra). Lỗi như `answer_query`."""
+    truyền, None ⇒ không tra). Lỗi như `answer_query`. Lượt biểu mẫu (D3) ⇒ `answer_bieu_mau` (không định tuyến, không web)."""
+    if trace.bieu_mau:
+        await answer_bieu_mau(query, retrieval_service, context_builder, generator, trace, flags)
+        return
     await _pick_route(query, generator, trace, flags)
     if trace.fixed_outcome is not None:
         return
@@ -811,13 +851,27 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     call_route = None
     stopped_early = False
     try:
-        if flags.router and generator is not None and not (flags.emergency_rule and is_emergency(query)):
-            yield "status", {"stage": "routing"}
-        await _pick_route(query, generator, trace, flags)
-        if trace.fixed_outcome is not None:
-            yield "delta", trace.answer
-            return
-        if trace.route == ROUTE_TRO_CHUYEN:
+        if not trace.bieu_mau:  # D3: lượt biểu mẫu không định tuyến
+            if flags.router and generator is not None and not (flags.emergency_rule and is_emergency(query)):
+                yield "status", {"stage": "routing"}
+            await _pick_route(query, generator, trace, flags)
+            if trace.fixed_outcome is not None:
+                yield "delta", trace.answer
+                return
+        if trace.bieu_mau:
+            # D3: code xếp ngay (bước tiến độ như đường công cụ — D14) rồi một lần sinh không công cụ; phần sau vòng đọc dùng chung
+            # (giữ chữ khi còn có thể là câu từ chối, dòng "Mình hiểu", kiểm cuối, khối ghi chú)
+            if generator is None:
+                raise GeneratorNotReadyError("generator is not ready")
+            yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
+            today = _today(flags, trace)
+            context = await _xep_bieu_mau(query, retrieval_service, context_builder, trace, flags, today)
+            for buoc in trace.buoc_lich:
+                yield "status", {"stage": "lich_trinh", **buoc}
+            yield "status", {"stage": "generating"}
+            call_route = ROUTE_TRO_LY_HUE
+            result, call_log = generator.start_answer_stream(query, context, today, **_history_kwargs(trace))
+        elif trace.route == ROUTE_TRO_CHUYEN:
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_CHUYEN
             result, call_log = generator.start_chat_stream(query, **_history_kwargs(trace))
@@ -954,8 +1008,8 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     đầu vào hai lần gọi model không phụ thuộc tuyến). Sự kiện của (ii) giữ trong hàng đợi tới khi có tuyến:
     `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
-    if not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0") or (
-            flags.emergency_rule and is_emergency(query)):
+    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0") or (
+            flags.emergency_rule and is_emergency(query)):  # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
             yield event
         return
