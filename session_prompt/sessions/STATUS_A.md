@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN 07/11 (mở 11:53; cập nhật 13:07 07/11/2026 `date`)
+
+- Terminal: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81` (cả bốn Claude Code, trực tiếp).
+- Quyền: như 06/11 + (User đi nghỉ) tiếp tục / gác việc cần duyệt / tự do nghiên cứu; vượt 1 USD được; Serper cho tra cứu. Qdrant mất container ⇒ A `docker compose up -d qdrant`.
+- User: duyệt spec cổng đợt 1 `ff3c317ec88b`; Q-U1…Q-U5 (spec §3); "biểu mẫu + bổ sung dữ liệu song song".
+- A quyết: (e) chọn đoạn nguồn dài nhất (B); thứ tự việc nặng CPU (E dò ⇒ B build ⇒ C X1c ⇒ C Q-G/Q-N).
+- Tiền tới giờ ≈ 0,05 USD (C X1+X1b 0,042 · B 0,007 · E 0,002).
+- **Bẫy / đầu vào vòng cải tiến:** (1) Q-U3 hỏi bằng chi tiết kỹ thuật ⇒ User không hiểu, hỏi lại hướng ⇒ hỏi bằng lời sản phẩm, nói bối cảnh trước. (2) Tin "đổi thứ tự D6/D7 trước" tới sau khi B đã xong S1 — gửi theo ý định cũ, chưa xem trạng thái B. (3) B report deploy ghi "0 file evaluation" từ đếm chưa đủ (chỉ gốc kho) — E bắt 16 file Golden + 148 meta trong ảnh ⇒ đề xuất: đóng gói dữ liệu private bằng **danh sách chừa** (allow-list) + đếm bên trong sản phẩm cuối, không loại dần. (4) B: dựng test trước lượt model thật đầu tiên ⇒ lỗi lộ trễ ~40 phút (B tự nêu).
+
 # STATUS A — KẾT PHIÊN TỐI 06/11 (mở 20:54; cập nhật 22:43 06/11/2026 `date`)
 
 **Phiên sau A:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền ⇒ cùng lượt giao B / C / E ⇒ hỏi User mỗi lần một câu: duyệt spec cổng đợt 1 `ff3c317ec88b` ⇒ Q-U1…Q-U5 ⇒ đợt 2 P1 / P2 / P3.

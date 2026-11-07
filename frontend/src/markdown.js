@@ -12,10 +12,16 @@ export const SANITIZE_OPTIONS = {
 
 // Cùng mẫu với `backend/llm/citations.py` CITATION_PATTERN: model viết cả `[n]` lẫn `[Nguồn n]`, mà chữ hiện dần là chữ thô chưa chuẩn hoá (yêu cầu 18).
 const CITATION = /\[\s*(?:nguồn\s*)?(\d+)\s*\]/giu;
+// Cổng đợt 1 D1: chữ hiển thị KHÔNG có số [n] (tầng máy vẫn giữ + kiểm). Bỏ cả khoảng trắng đứng trước số; chữ đang hiện dần có thể dừng giữa
+// một mã ("… [1") ⇒ bỏ luôn phần mã dở ở cuối.
+const CITATION_SHOWN = /\s*\[\s*(?:nguồn\s*)?\d+\s*\]/giu;
+const CITATION_TAIL = /\s*\[\s*(?:n(?:g(?:u(?:ồ(?:n)?)?)?)?\s*)?\d*\s*$/iu;
+const WEB_CITATION_SHOWN = /\s*\[\s*w\s*\d+\s*\]/giu;
+const WEB_CITATION_TAIL = /\s*\[\s*w?\s*\d*\s*$/iu;
+const EXTERNAL = /^(https?:)?\/\//i;  // cả link `//host` (cùng giao thức) — review S4 m-f1
 
-// Số hiển thị của nguồn (B3 D9 (c)): sổ nguồn đánh số nối qua mọi lần `tim_kho` ([17] dù chỉ 2 nguồn) — code kiểm trích dẫn, judge, log giữ số gốc;
-// người đọc thấy 1..k theo thứ tự xuất hiện đầu tiên trong câu. Nguồn được trích mà không thấy mã trong chữ (không nên có) xếp cuối.
-// Trả Map(số gốc dạng chuỗi ⇒ số hiển thị).
+// Thứ tự nguồn ở dòng "Nguồn: …" (B3 D9 (c)): theo lần xuất hiện đầu tiên của mã trong câu; nguồn được trích mà không thấy mã (không nên có) xếp cuối.
+// Trả Map(số gốc dạng chuỗi ⇒ thứ tự 1..k).
 export function displayNumbers(text, sources) {
   const cited = new Set(sources.map(source => String(source.id)));
   const numbers = new Map();
@@ -26,96 +32,40 @@ export function displayNumbers(text, sources) {
   return numbers;
 }
 
-// Markdown ⇒ HTML đã lọc, rồi đổi trích dẫn thành số nhỏ nâng lên. `numbers` = null khi chưa có sự kiện `sources` ⇒ số gốc chỉ là chữ mờ, không
-// bấm được (yêu cầu 9); có `sources` ⇒ số thuộc `numbers` thành link tới nguồn, hiện số hiển thị (đổi tại chỗ). `turnKey` tách id nguồn giữa các
-// lượt; `activeId` = số gốc đang chọn (aria-current). Đổi trên nút chữ SAU bộ lọc, phần tử dựng bằng DOM — không ghép chuỗi HTML.
-export function renderAnswerHtml(text, numbers, turnKey, activeId) {
+// D11: link ra ngoài mở tab mới, không để trang kia điều khiển tab này / biết trang gửi. Sửa trên HTML đã lọc, bằng DOM (không ghép chuỗi).
+function withSafeLinks(html) {
   const template = document.createElement("template");  // nội dung <template> trơ: không chạy script, không tải tài nguyên
-  template.innerHTML = DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS);
-  markCitations(template.content, mark => citationMark(mark, numbers, turnKey, activeId));
+  template.innerHTML = html;
+  for (const link of template.content.querySelectorAll("a[href]")) {
+    if (EXTERNAL.test(link.getAttribute("href"))) {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    }
+  }
   return template.innerHTML;
 }
 
-function markCitations(root, makeMark) {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  const nodes = [];
-  while (walker.nextNode()) {
-    if (!walker.currentNode.parentElement?.closest("a, code, pre")) nodes.push(walker.currentNode);
-  }
-  for (const node of nodes) {
-    const text = node.nodeValue;
-    const fragment = document.createDocumentFragment();
-    let last = 0;
-    for (const match of text.matchAll(CITATION)) {
-      fragment.append(text.slice(last, match.index), makeMark(match[1]));
-      last = match.index + match[0].length;
-    }
-    if (last === 0) continue;
-    fragment.append(text.slice(last));
-    node.replaceWith(fragment);
-  }
+// Markdown của câu trả lời ⇒ HTML đã lọc, bỏ số [n] (D1). Bỏ trên chữ thô trước khi dựng (chữ trong code cũng mất số — không hại).
+export function renderAnswerHtml(raw) {
+  const text = raw.replace(CITATION_SHOWN, "").replace(CITATION_TAIL, "");
+  return withSafeLinks(DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS));
 }
 
-function citationMark(id, numbers, turnKey, activeId) {
-  const sup = document.createElement("sup");
-  sup.className = "cite";
-  const shown = numbers?.get(id);
-  if (!shown) {
-    sup.textContent = id;
-    return sup;
-  }
-  const link = document.createElement("a");
-  link.href = `#source-${turnKey}-${id}`;
-  link.dataset.cite = id;
-  link.setAttribute("aria-label", `Nguồn ${shown}`);
-  if (id === activeId) link.setAttribute("aria-current", "true");
-  link.textContent = String(shown);
-  sup.append(link);
-  return sup;
+// Bài kho ở trang Khám phá (D11): cùng bộ lọc; bỏ dòng tiêu đề `# …` đầu bài (trang đã có tiêu đề lớn).
+export function renderArticleHtml(markdown) {
+  const text = markdown.replace(/^# .*\n?/, "");
+  return withSafeLinks(DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS));
 }
-
-// B6 D6: mục "Từ web (chưa kiểm)" — chữ model đã qua kiểm cuối của server (mã [w n] ∈ sổ, 0 link). Mã [w n] thành số nhỏ nâng lên trỏ tới mục
-// nguồn web cùng lượt (`#web-<lượt>-<n>`); mã không thuộc `sources` chỉ là chữ mờ. Không đổi mã kho [n] (mục web không có mã kho).
-const WEB_CITATION = /\[\s*w\s*(\d+)\s*\]/giu;
 
 // Review E13 M-1: chữ model ở khối web KHÔNG được tạo link — bộ lọc riêng bỏ thẻ `a` + thuộc tính `href` (HTML thô `<a href="//…">` qua được bộ lọc
-// chung). Link web chỉ ở danh sách nguồn do code dựng; số [w n] là link nội bộ dựng bằng DOM SAU bộ lọc.
+// chung). Link web chỉ ở danh sách nguồn do code dựng.
 export const WEB_SANITIZE_OPTIONS = {
   ALLOWED_TAGS: SANITIZE_OPTIONS.ALLOWED_TAGS.filter(tag => tag !== "a"),
   ALLOWED_ATTR: SANITIZE_OPTIONS.ALLOWED_ATTR.filter(attr => attr !== "href"),
 };
 
-export function renderWebHtml(text, sources, turnKey) {
-  const ids = new Set(sources.map(source => String(source.id)));
-  const template = document.createElement("template");
-  template.innerHTML = DOMPurify.sanitize(marked.parse(text), WEB_SANITIZE_OPTIONS);
-  const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
-  const nodes = [];
-  while (walker.nextNode()) {
-    if (!walker.currentNode.parentElement?.closest("a, code, pre")) nodes.push(walker.currentNode);
-  }
-  for (const node of nodes) {
-    const value = node.nodeValue;
-    const fragment = document.createDocumentFragment();
-    let last = 0;
-    for (const match of value.matchAll(WEB_CITATION)) {
-      const sup = document.createElement("sup");
-      sup.className = "cite";
-      if (ids.has(match[1])) {
-        const link = document.createElement("a");
-        link.href = `#web-${turnKey}-${match[1]}`;
-        link.setAttribute("aria-label", `Nguồn web ${match[1]}`);
-        link.textContent = `w${match[1]}`;
-        sup.append(link);
-      } else {
-        sup.textContent = `w${match[1]}`;
-      }
-      fragment.append(value.slice(last, match.index), sup);
-      last = match.index + match[0].length;
-    }
-    if (last === 0) continue;
-    fragment.append(value.slice(last));
-    node.replaceWith(fragment);
-  }
-  return template.innerHTML;
+// B6 D6 + cổng D1: mục "Từ web (chưa kiểm)" — chữ đã qua kiểm cuối của server; mã [w n] bỏ khỏi chữ (nguồn web liệt kê ngay dưới).
+export function renderWebHtml(raw) {
+  const text = raw.replace(WEB_CITATION_SHOWN, "").replace(WEB_CITATION_TAIL, "");
+  return DOMPurify.sanitize(marked.parse(text), WEB_SANITIZE_OPTIONS);
 }
