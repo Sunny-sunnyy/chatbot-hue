@@ -274,7 +274,7 @@ def test_explore_article_only_by_exact_id(app_client):
 
 def test_weather_and_feature_routes(app_client):
     app, client = app_client
-    original = _with(app, PROD)
+    original = _with(app, dataclasses.replace(PROD, thoi_tiet=False))  # cờ tắt đặt rõ: settings.yaml bật thoi_tiet từ 07/11
     try:
         off = client.get("/api/thoi_tiet")
         features_off = client.get("/api/tinh_nang").json()
