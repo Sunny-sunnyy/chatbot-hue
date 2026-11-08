@@ -32,6 +32,8 @@ knowledge-base-hue/
 # Giao diện: gói npm + bản build sinh lại bằng `npm ci && npm run build`
 frontend/node_modules/
 frontend/dist/
+# Ảnh không giấy phép mở (User duyệt dùng cho đồ án, 07/11) — không vào repo công khai; thiếu ⇒ bản build dùng ảnh Commons dự phòng
+frontend/public/anh/rieng/
 
 # Superpowers workflow scratch
 .superpowers/
