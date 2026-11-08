@@ -28,6 +28,13 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
   `backend/api/routes/cong.py`, `frontend/package.json` + `package-lock.json`, `frontend/src/BanDoLich.jsx` (mới), `frontend/src/chat.jsx`, `frontend/src/pages.jsx`,
   `frontend/src/index.css`, `frontend/src/App.jsx` (nếu cần cờ), test `backend/tests/test_ban_do_lich.py` (mới) + test cũ chạm cờ / CSP;
   report `report_agent/2026-11-06_giao_dien_cong/b_ban_do_implementation.md`; dữ liệu đo `data/phase_11/ban_do/`.
+- **Xong 09:59 08/11/2026 (`date`), chờ review:** `p11-ban-do` = `d0adf31` (đã push; rebase lên `main` `1611d34`, 355 test + kiểm 0 USD đạt). Q1 228/228 giống byte (cờ tắt + bật); test rộng 731 đạt (hỏng còn lại = test cần khoá); Playwright lượt 2: 6/6 ngày ghim đúng, 0 lỗi CSP, tile 66/66, 0 host lạ, 0 lộ chữ; cổng ổn định đạt. CSP cờ bật = `img-src 'self' blob: data: https://tile.openstreetmap.org` (A chọn (a)). Sửa test B6 hỏng sẵn (A giao). Tiền 0,00306 USD / 0,005. Server 8873 đã tắt; worktree `/tmp/b_bando` giữ tới review.
+
+## 0d. Đang làm — việc nhỏ (1) sao chép / tải lịch · (4) câu buổi tối chỉ khi có sở thích · (6) link Maps theo toạ độ (User duyệt Nhóm 1 + 2, A giao 08/11)
+- Nhánh `p11-lich-nho` xếp chồng trên `p11-ban-do` `d0adf31` (dùng bảng toạ độ của nhánh bản đồ), worktree `/tmp/b_nho`; rebase lên `main` sau khi bản đồ merge.
+- **File khai báo sửa:** `backend/llm/lich_trinh.py`, `backend/llm/assistant.py`, `backend/tests/test_ban_do_lich.py`, `backend/tests/test_b5_lich_trinh.py` (nếu chạm), `frontend/src/chat.jsx`,
+  `frontend/src/index.css`; report `report_agent/2026-11-06_giao_dien_cong/b_lich_nho_implementation.md`; dữ liệu `data/phase_11/lich_nho/`.
+- **Xong 10:14 08/11/2026 (`date`), chờ review:** `p11-lich-nho` = `098a710` (đã push). Q1 228/228; test rộng 735 đạt; trình duyệt: clipboard = file tải, 4/4 link đúng code; cổng ổn định đạt. Tiền 0,000435 USD. Cần User mở 17 link theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`) — nghi lệch 1 điểm (Kinh thành / Ngọ Môn – Kỳ Đài). Server 8874 đã tắt; worktree `/tmp/b_nho` giữ.
 
 # (cũ) STATUS B viết lại 15:43 07/11/2026
 
