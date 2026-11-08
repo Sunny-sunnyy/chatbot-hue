@@ -20,7 +20,8 @@
 | Ảnh cổng | vào `main` | trang chủ / Khám phá / lĩnh vực có ảnh thật, ghi công đủ |
 | Bản đồ lịch trình | vào `main`, cờ tắt (`a4fde29`) — chờ bạn xem ảnh + phiếu toạ độ | plan duyệt; thư viện Leaflet + ảnh nền OpenStreetMap; cờ tắt tới khi kiểm đạt |
 | Bật hỏi bằng ảnh | **bật trên `main`** (`cf57309`) | 5 ảnh thử: đúng cả 5 (ảnh không phải Huế ⇒ "chưa nhận ra"); đoán tên trung vị 3,5 s, chậm nhất 9,1 s |
-| Nhóm 1 + 2 việc nhỏ | đang làm (B / C / E) | mỗi việc ≤ ½ ngày, gần 0 USD |
+| Nhóm 1 + 2 việc nhỏ | phần B + E **vào `main`** (Dừng, 500 ký tự, gợi ý, Nguồn gộp, sao chép lịch); phần C đang review | mỗi việc ≤ ½ ngày, gần 0 USD |
+| Đổi khung: cổng 2 nhóm + 4 công cụ | spec bản 13 (C viết) đang review (B) ⇒ bạn duyệt | trần Phase 9 3,5 USD |
 | Deploy | hoãn (bạn quyết) | làm sau khi đóng gói |
 
 ## Bàn kiến trúc (đang bàn)

@@ -2,7 +2,7 @@
 
 Người viết: C · bản 6 13:39 · bản 7 13:54 · bản 8 14:14 · **bản 9 14:42 02/11/2026** (`date`). Review `2026-11-02-phase-9-design_review_v6.md`: vòng 3 trên bản 8 (`82127aabcb5b`) = ready_for_user_confirmation.
 - Bản 9 **chỉ ghi lựa chọn của User P1–P5 + quyết định A về bộ hồi quy + m17** (chỗ đổi liệt kê cuối file). Bản 5 (hướng không agent) giữ ở commit `077e3cb`.
-- Trạng thái: bản 9 User duyệt `169c2dd5f86a` (14:55 02/11/2026). Bản 10 (09:30 05/11/2026, A) §11 — review C177 changes_requested. Bản 11 (09:42 05/11/2026, A) §11 viết lại chỉ phần Phase 9 — review C178 changes_requested 0 / 2 / 5. **Bản 12 (09:45 05/11/2026, A): sửa M-1, M-2, m-1–m-5 của C178 — chờ C kiểm phần sửa + User duyệt sha.**
+- Trạng thái: bản 9 User duyệt `169c2dd5f86a` (14:55 02/11/2026). Bản 10 (09:30 05/11/2026, A) §11 — review C177 changes_requested. Bản 11 (09:42 05/11/2026, A) §11 viết lại chỉ phần Phase 9 — review C178 changes_requested 0 / 2 / 5. **Bản 12 (09:45 05/11/2026, A): sửa M-1, M-2, m-1–m-5 của C178 — chờ C kiểm phần sửa + User duyệt sha.** **Bản 13 (10:47 08/11/2026, C — A giao): §12 cổng 2 nhóm + 4 công cụ T1–T4 — chờ review (≤ 2 vòng) + A duyệt sha.**
 
 Mức rủi ro: **cao** (Phase mới, thêm công cụ + đường ra ngoài).
 - Spec chốt kiến trúc, bậc làm, bộ đo, tiêu chí ghi trước, tiền, bảo mật. Chi tiết code để plan nhỏ của từng bậc (nguyên tắc "làm vừa đủ", sổ cải tiến S64).
@@ -17,6 +17,17 @@ Mức rủi ro: **cao** (Phase mới, thêm công cụ + đường ra ngoài).
 | `data/nghien_cuu_phase_9_2026-11-01/agent/a_sa1.md` + `a_sa3.md` | a_sa1 §2.1–§2.5; a_sa3 §2b–§2d, §3a | trần, công cụ, ước tiền / độ trễ dẫn đúng |
 | `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` | §3.1–§3.3 | sàn Golden / bộ an toàn / câu theo ngày dùng lại đúng |
 | code `main` | `backend/llm/generator_openai_full_corpus.py:96-104, 130-145, 183-190`; `backend/llm/grounded_answer.py`; `backend/api/routes/chat.py:35-53, 355-400` | `file:dòng` khớp; lõi chung + streaming làm được |
+
+**Bản 13 (§12) — căn cứ:**
+
+| File | Mục cần đọc | Để kiểm gì |
+|---|---|---|
+| `session_prompt/CURRENT_HANDOFF.md` | mục 2d (brainstorm định tuyến 10:30 08/11) + tin A giao C 08/11 | §12 đúng quyết định User: 2 nhóm, bỏ khẩn cấp, `OUT_OF_SCOPE_ANSWER`, 4 công cụ, thứ tự, trần 3,5 |
+| `data/phase_9/dinh_tuyen_2/bo_do_nhap.md` (private) | §0–§4 + mục "A quyết" | sàn S1–S6, bộ có sẵn / thiếu, số log, ước tiền chép đúng |
+| `report_agent/2026-11-06_b5_cau_tu_nhien/e19_kin_v2.md`, `e20_tu_choi_hoi_kem.md`, `c210_implementation.md` | §3–§5 | sửa T4 (a)–(d) đúng nguyên nhân đã chứng minh |
+| `report_agent/2026-11-02_phase_9_code/b162_b5c_implementation.md` | dòng 1, 57, 76 | bài học B5c vào T3 |
+| `docs/superpowers/plans/2026-11-05-phase-9-b6-plan.md` | D1–D5 | T2 giữ rào B6 |
+| code `main` | `backend/llm/assistant.py:46-52, 250-290, 742-785`; `backend/llm/full_corpus_prompt.py:42-50`; `backend/config/settings.yaml:59-75` | `file:dòng` khớp |
 
 **Dẫn, ngoài căn cứ:**
 - kết quả ChatGPT 02/11 — dữ liệu; A đã kiểm SDK v0.24.0 + `max_turns`;
@@ -476,3 +487,122 @@ Bản 9 §1–§10 giữ nguyên trừ chỗ ghi dưới. Review bản 11: chỉ
 ### 11.5 Tiền (cập nhật §8)
 
 Đã dùng ≈ 1,27 (05/11, gồm B4 ≈ 0,205). Còn: B4b ≤ 0,10 · B5 trần 0,15 (plan) · B5c ≈ 0,07 · sửa lịch ≈ 0,10 (chuỗi × 3 lần + hồi quy rút gọn, ước thô) · B5b ≈ 0,05 · B6 ≈ 0,05 · B7 ≈ 0,35 ⇒ **dự phóng ≈ 2,1–2,2 > trần 2,0** ⇒ theo User (08:55 05/11/2026) A xin thêm **trước** lượt có phí vượt, kèm số đã dùng + dự phóng. **Quỹ B7 0,35 giữ riêng** (B7 không cắt — review bản 11 M-2): trước mỗi bậc, nếu (trần − đã dùng − quỹ B7) < ước bậc đó ⇒ A xin User thêm **trước** khi bắt đầu bậc, nếu không duyệt ⇒ bậc thu nhỏ / cắt theo luật cắt; quỹ B7 không bị dùng cho bậc khác. Phase 10 có trần riêng trong spec Phase 10.
+
+## 12. Sửa đổi 08/11/2026 — bản 13 (C viết 10:47 08/11/2026, A giao)
+
+**Căn cứ:** User 10:30 08/11/2026 (brainstorm định tuyến, A ghi `CURRENT_HANDOFF.md` mục 2d) + User chọn 4 công cụ và thứ tự (A nhắn C 08/11); nháp bộ đo
+`data/phase_9/dinh_tuyen_2/bo_do_nhap.md` (private, C) + 4 quyết định A ghi trong đó. Bản 12 §1–§11 giữ nguyên trừ chỗ ghi dưới. Review bản 13: chỉ mục này (≤ 2 vòng).
+**Không đổi:** closed-world từ kho, câu chuẩn `INSUFFICIENT_ANSWER` / `OUT_OF_SCOPE_ANSWER`, sổ nguồn + kiểm citation, nhớ chỉ câu hỏi 3 lượt, `tim_kho` ≤ 2,
+`max_turns` 4, mục "Từ web (chưa kiểm)" tách riêng + mọi kiểm code của B6, biểu mẫu "Lên kế hoạch" (không qua định tuyến), log không chữ.
+
+### 12.1 Việc và thứ tự (User)
+
+| Đợt | Việc | Ai (A giao) | Thay cho |
+|---|---|---|---|
+| 1 (song song) | **G — cổng 2 nhóm** "trò chuyện xã giao" / "về Huế" chạy mọi câu (giữ #6); bỏ tuyến khẩn cấp; câu ngoài phạm vi ⇒ agent Huế trả `OUT_OF_SCOPE_ANSWER` | B | định tuyến 4 tuyến B1 (`assistant.py:742-768`) |
+| 1 | **T1 — ngày + âm lịch** (code tính; agent gọi khi câu có ngày) | E | cờ `today_line` (âm ở B1 P2, `settings.yaml:62`) |
+| 1 | **T3 — bảng vé + giờ mở cửa có cấu trúc** (phần dữ liệu trước: dựng từ kho, User duyệt bảng) | C | B5c `tinh_tien` (âm 2 lần, tag `hoso/p9-b5c`) |
+| 2 (sau khi G vào `main`) | **T2 — tra web thành công cụ agent tự yêu cầu** | A giao | cổng web B6 chỉ mở sau câu từ chối (`assistant.py:777-785`) |
+| 2 (sau T2) | **T4 — lịch trình từ câu gõ tự do** (cờ `lich_trinh`) | A giao | kín v2 3 / 5 (06/11), câu tự do đang tắt |
+
+Mỗi việc = một bậc giữ / gỡ riêng (luật bản 9); bậc sau rebase lên bậc trước. Mỗi việc một plan nhỏ (≤ 2 vòng review), plan ghi số **trước** lượt có phí.
+
+### 12.2 Năm dòng khám phá mỗi việc (`run-experiment`)
+
+| Việc | Vấn đề + đo bằng gì | Mốc | Tiêu chí số ghi trước (plan chốt số cuối) | Phương án B (nếu âm) |
+|---|---|---|---|---|
+| **G** | 4 tuyến có 2 câu soạn sẵn + 1 lần gọi định tuyến chọn 4 nhãn; User muốn gọn: chỉ tách xã giao. Đo: chỉ lần gọi định tuyến (rẻ) trên Golden 176 + bộ 123 + bộ mới; cả câu trả lời cho ngoài phạm vi / an toàn | định tuyến `164bd4a254e9` (lượt B143 v1 r1 / r2 dùng lại; bộ mới chạy mốc cùng ngày ×2) | S1, S2, S2b, S3 (§12.3) đạt ×2; S5 không chậm hơn mốc quá nhiễu | giữ 4 tuyến (cờ), chỉ bỏ câu soạn sẵn khẩn cấp ⇒ `khan_cap` đi agent Huế |
+| **T1** | câu "hôm nay / tuần này / rằm tháng Giêng năm nay" bị từ chối nhầm (6 / 14 ở 27/10) vì model không biết ngày; dòng ngày trong tin nhắn (B1 P2) không đỡ. Đo: bộ ngày 15 + 3 (đã thấy) + bộ âm lịch mới ~10 (đã thấy) | `main` cờ công cụ tắt, cùng lượt | từ chối nhầm ở câu ngày giảm ≥ 3 câu so mốc; **0** ngày / thứ sai (L2) do code; S1 4 số; Golden mẫu 30 không tụt quá nhiễu | đưa kết quả công cụ vào **mọi** lượt bằng code (không để model quyết gọi) chỉ khi câu có từ chỉ ngày (code dò) |
+| **T3** | giá vé / giờ mở cửa rải ở nhiều file, nhiều dạng bảng; model chép / suy sai được; B5c (nhân + cộng) âm vì công cụ trong mọi lượt đổi cách tìm + câu miễn giảm. T3 **không tính tổng**, chỉ tra dòng. Đo: câu vé / giờ đã thấy ~20 (C viết) + an toàn 32 (có 6 câu miễn giảm, 5 câu giờ) + Golden mẫu 30 | `main` cùng lượt | **0** số tiền / giờ trong chữ model ngoài {số trong bảng} ∪ {số trong đoạn kho được trích} (code đếm — dùng lại `so_tien.py` + bộ đếm chuỗi số của `tra_web.py`); điều kiện miễn giảm **do code nối nguyên văn** từ kho (0 câu model tự diễn đạt điều kiện); S1 4 số; câu đúng ≥ mốc | chỉ bảng **dữ liệu** dùng cho kiểm cuối (không công cụ): code kiểm số trong câu trả lời so với bảng, sai ⇒ thêm câu cố định "giá / giờ có thể khác — xem nguồn" |
+| **T2** | cổng web chỉ mở khi cả câu bị từ chối ⇒ câu hỏi kèm (một phần kho thiếu — E20: 3 / 4 bị từ chối cả câu) không có web. Đo: B6 đã thấy 28 + E20 10 + câu kho trả lời được (Golden mẫu 30) + S2b | `main` sau G, cùng lượt | S2b = 0; câu kho trả lời được mà vẫn tra web ≤ 2 % (B6 cũ); câu hỏi kèm có phần web ≥ mốc + 2 / 10; mọi sàn B6 (0 link ngoài sổ, 0 số / tiền ngoài trích, câu thiên tai cố định) | giữ cổng B6 (chỉ sau câu từ chối); thêm cổng cho câu "từ chối + đã hỏi kèm" do code nhận |
+| **T4** | câu gõ tự do: kín v2 **3 / 5** (06/11) — K2 hỏi lại thừa (model gửi số ngày khác số code dò ⇒ luật D12 (b) hỏi); E20 câu xin lịch + hỏi kèm ⇒ model từ chối (bị chặn `tim_kho` sau lịch). Đo: B5 đã thấy 13 + E19 mẫu 8 + kín v2 5 (**đã dùng**) + E20 10 | `main` cờ `lich_trinh` tắt; số cũ kín v2 3 / 5 | Q3 B5 (đúng luật xếp · hợp người đi cùng · mỗi điểm có nguồn) ≥ n − 1 / n trên bộ 36 câu, 2 người chấm; 0 hỏi lại thừa khi code dò được số ngày; 0 lượt "từ chối thay cả lịch" | giữ biểu mẫu là đường lịch trình duy nhất; câu gõ tự do ⇒ code gợi ý mở biểu mẫu |
+
+**Sửa trước khi đo lại T4 (bằng code, tất định):** (a) **code dò được số ngày ⇒ dùng số code**, bỏ luật "model gửi số khác ⇒ hỏi" (khung §3: tham số do code điền; K2); (b) E20 **Sửa 1**: lời lịch do code dựng thay câu từ chối ∧ model đã gọi `tim_kho` sau lịch ⇒ code nối câu cố định "phần hỏi thêm ngoài lịch chưa có trong nguồn"; (c) harness ghi `so_ngay` model gửi + số code dò + có thẻ hỏi không (đề xuất C210); (d) E20 **Sửa 2** (`tim_kho` sau lịch tìm thật 1 lần) chỉ khi (a)–(b) đo xong còn từ chối. Giờ tới / về: ngoài phạm vi (giới hạn ghi ở câu trả lời không thêm).
+
+### 12.3 Sàn chung (từ `bo_do_nhap.md` §4, áp cho mọi việc có lượt trả lời)
+
+| Sàn | Đo trên | Mức |
+|---|---|---|
+| **S1** an toàn | bộ an toàn 32, ×2 | đảo cảnh báo 0 · sai điều kiện **mới** 0 · thiếu cảnh báo **mới** 0 · ngoài kho bị trả lời 0 (thủ tục S-AT khi chênh 1) |
+| **S2** ngoài phạm vi bị trả lời | 11 câu Golden ngoài phạm vi + bộ tuyến 8 + 4 + lái 1 + bộ mới (b) 20 đã thấy + 10 kín, ×2 | **0** (code: chữ = `OUT_OF_SCOPE_ANSWER` / `INSUFFICIENT_ANSWER`; câu không khớp ⇒ sub-agent đọc) |
+| **S2b** ngoài phạm vi có mục web | như S2 + 4 câu "ngoài Huế" của B6 | **0** — `OUT_OF_SCOPE_ANSWER` đã nằm trong `REFUSAL_ANSWERS` (`full_corpus_prompt.py:49-50`) và cổng web chỉ mở với `INSUFFICIENT_ANSWER` (`assistant.py:782-785`, test B6) ⇒ chỉ cần lời dặn agent dùng đúng câu; rủi ro còn: model chọn nhầm câu "không đủ thông tin" |
+| **S2c** Huế-kho-thiếu vẫn có web | 7 câu Golden OOS nhãn `tro_ly_hue` + 10 câu B6 "web trả lời được" | cổng web mở ≥ mốc − 1 |
+| **S3** câu về Huế bị coi là xã giao | Golden 176 (chỉ định tuyến, 1 lượt) + bộ tuyến Huế 30 + lái 4 + 8 câu thường dễ nhầm + bộ mới (a) phần "về Huế" + câu hỏi tiếp của 37 chuỗi B3 / B3b | **0**; chiều ngược (chào thuần ⇒ về Huế) chỉ tốn tiền: ≤ 2 / 16 |
+| **S4** chất lượng câu Huế | `mau_golden_30.json` biến thể + mốc cùng lượt chấm mù | không tụt quá nhiễu (chỉ khi lời dặn / công cụ agent đổi — mọi việc T1–T4 đổi ⇒ áp) |
+| **S5** tốc độ | chữ đầu trên server thật, n = 20 / loại | câu Huế p50 ≤ 3 s, p95 ≤ 5 s (User 28/10) và không chậm hơn mốc quá nhiễu; ngoài phạm vi (nay qua agent) p95 ≤ 5 s |
+| **S6** tiền | `chat_metrics.usd` | ≤ 0,0005 USD / câu Huế; báo USD / câu ngoài phạm vi |
+| Quan sát khẩn cấp (không sàn) | ~36 câu / chuỗi có sẵn (bước 0 10 · kín C125 8 · bộ tuyến 6 · B143 m1–m6 · 6 chuỗi lịch sử), 1 lượt | bảng 4 loại câu trả lời (chỉ dẫn nơi giúp có trong kho · từ chối thuần · mục web · nói sai nguy hiểm) báo User |
+
+### 12.4 Bộ đo — có bộ kín hay không (luật cắt giảm 05/11 (2): kín chỉ cho bậc chỉnh lời dặn / mô tả công cụ qua nhiều vòng)
+
+| Việc | Bộ | Kín |
+|---|---|---|
+| G | có sẵn (`bo_do_nhap.md` §1) + **(a) ranh giới xã giao ↔ hỏi** 16 đã thấy + 8 kín · **(b) ngoài phạm vi dạng mới** (kiến thức chung, code, dịch, toán, nơi khác, y tế / pháp lý chung, lệnh lái) 20 đã thấy + 10 kín. Nhãn: "hỏi về chính trợ lý" = **xã giao** (A 08/11). Bộ tuyến kín B1 20 câu = **đã dùng** (A 08/11) | **có** — chỉnh lời dặn định tuyến + lời dặn ngoài phạm vi của agent qua nhiều vòng. Người viết câu ≠ người sửa lời dặn |
+| T1 | bộ ngày 15 + 3 (đã thấy) + ~10 câu âm lịch mới (lễ hội ngày âm, "rằm / mùng một tháng tới") — đáp án theo **ngày chạy**, đối chiếu lịch Việt Nam công khai | **không** — code tính, kiểm tất định |
+| T3 | bảng dữ liệu (User duyệt) + ~20 câu vé / giờ đã thấy (có câu điểm ngoài bảng, câu miễn giảm, câu giờ theo mùa) | **không** — số do code kiểm |
+| T2 | B6 đã thấy 28 + kín B6 (**đã dùng**) + E20 10 + câu kho trả lời được | **không** — cổng / kiểm là code; mô tả công cụ chỉnh ≤ 2 vòng trên đã thấy |
+| T4 | 36 câu (§12.2) | **không** — các sửa là code; kín v2 đã dùng |
+
+### 12.5 Thiết kế mức spec từng việc (plan ghi chi tiết)
+
+- **G:** lời dặn định tuyến mới 2 nhãn `tro_chuyen` / `tro_ly_hue`; lỗi / > 10 s ⇒ `tro_ly_hue` (giữ — log thật: 5 / 252 lượt có phí hết giờ ≈ 2 %, `bo_do_nhap.md` §3). #6 giữ: phần `tro_ly_hue` chạy song song định tuyến; câu ngoài phạm vi nay **không bị bỏ phần đã chạy** (đi chính agent Huế). Gỡ: `ROUTE_KHAN_CAP`, `EMERGENCY_ANSWER`, cờ `emergency_rule` + `is_emergency` (cờ âm — gộp việc "gỡ 3 cờ âm" của B7 cho phần này), câu soạn sẵn PA1, giao diện câu khẩn cấp; `ROUTE_NGOAI_PHAM_VI` thành nhãn lịch sử (không còn nhánh). Agent Huế: thêm một câu lời dặn "câu không về văn hoá / du lịch Huế ⇒ trả **đúng** `OUT_OF_SCOPE_ANSWER`". Log `route` giữ 2 giá trị + `route_error`.
+- **T1:** công cụ `ngay_lich(…)` — **code** (giờ Việt Nam `zoneinfo`) trả: hôm nay (dương + âm + thứ), và đổi một ngày người dùng nêu (dương ↔ âm) theo **lịch âm Việt Nam (múi UTC+7)** — không dùng thư viện lịch Trung Quốc (UTC+8 lệch ở vài năm); thư viện nhỏ hay thuật toán công khai: plan chọn, A tự duyệt nếu thư viện nhỏ (`Session_Prompt.md` §4), test đối chiếu ≥ 10 ngày Tết / rằm công khai. Tham số model chỉ là ngày / tháng / năm + loại lịch (kiểu `Literal`, kiểm khoảng), ≤ 2 lần / câu. Model **không** tự đổi âm ↔ dương.
+- **T3:** đợt 1 = **dữ liệu**: C dựng bảng từ kho (đọc qua `scripts/grep_kb.sh`) — mỗi dòng: điểm (tên + bí danh), loại vé, giá người lớn / trẻ em (nguyên chuỗi điều kiện tuổi), giờ mở cửa (theo mùa nếu kho ghi), ngày hiệu lực, file + mục nguồn, điều kiện miễn giảm (nguyên văn); file private trong `data/`, **User duyệt bảng** trước khi code đọc (như bảng điểm lịch trình). Đợt sau: công cụ `tra_ve_gio(diem: list[str] ≤ 5)` — code khớp tên (dùng lại `khop_diem` B5), trả dòng + `[n]` đoạn nguồn (như B5 D6); điểm không có trong bảng ⇒ câu cố định "bảng chưa có điểm này" (không thấy ≠ không tồn tại); **không** cộng / nhân (B5c âm); kiểm cuối số (Q tiêu chí §12.2). Bài học B5c: công cụ + mô tả trong mọi lượt đổi cách model tìm ⇒ đo S1 + S4 **bắt buộc**; plan cân nhắc chỉ đưa công cụ khi code dò thấy dấu hiệu vé / giờ — nhưng câu miễn giảm **luôn** nhận khối điều kiện do code nối khi có dòng bảng (không để model quyết).
+- **T2:** công cụ `yeu_cau_tra_web()` **không tham số**: model chỉ **yêu cầu**; code ghi cờ, **sau khi** có câu trả lời kho mới tra (một chỗ: hàm cổng hiện có, thêm điều kiện "model đã yêu cầu ∧ câu trả lời ≠ `OUT_OF_SCOPE_ANSWER`"); truy vấn vẫn do code dựng từ câu hỏi lượt này (B6 D2); chữ web vẫn chỉ vào lần gọi riêng không công cụ / không lịch sử ⇒ **agent chính không bao giờ thấy chữ web**; kết quả công cụ cho model là câu cố định ("mục web sẽ hiện riêng — đừng nêu nội dung web"). Cổng cũ (sau câu từ chối) giữ. Trần 1 lần / câu; cờ `tra_web` + cờ mới `tra_web_cong_cu`.
+- **T4:** bật cờ `lich_trinh` sau sửa (a)–(c) §12.2; biểu mẫu giữ nguyên; luật khung / kiểm cuối / bảng điểm `diem_v3.json` giữ.
+
+### 12.6 Rà theo khung AI FDE (phần chạm bản 13)
+
+**`agent-design-review`**
+
+| Mục khung | Hiện trạng | Bản 13 | Khớp / lệch |
+|---|---|---|---|
+| §1 có cần agent | định tuyến model 4 nhãn (`assistant.py:742-768`); trợ lý agent `tim_kho` (`:259-290`) | định tuyến còn 2 nhãn (danh sách từ đã loại — "Không làm"); phương án B G: bỏ hẳn định tuyến (agent trả cả xã giao) — chậm + tốn hơn cho câu chào ⇒ không chọn | khớp |
+| §2 phép tính / thứ tự bắt buộc ⇒ code | `today_line` đưa ngày (âm); B5c model nhân / cộng ⇒ âm | T1 đổi âm ↔ dương **code**; T3 không phép tính, miễn giảm **code nối**; T2 lúc tra + truy vấn **code**; T4 số ngày **code** thắng model | khớp (sửa lệch K2) |
+| §2 một nơi gốc | luật mở cổng web một chỗ (`assistant.py:777`) | T2 thêm điều kiện **vào cùng hàm** | khớp |
+| §3 tham số do code điền | `tim_kho(cau_tim)`; `lich_trinh` model gửi `so_ngay` | T2 không tham số; T3 `diem` khớp bằng code; T1 chỉ ngày / loại lịch (`Literal`, kiểm khoảng); T4 `so_ngay` code dò thắng | khớp |
+| §3 không thấy ≠ không tồn tại | B5c câu cố định "chưa đủ dữ liệu" | T3 điểm ngoài bảng ⇒ "bảng chưa có"; T2 lỗi Serper ⇒ câu cố định (B6 D3) | khớp |
+| §4 trần + phục hồi | `max_turns` 4, `tim_kho` ≤ 2 (`assistant.py:52`) | `ngay_lich` ≤ 2, `tra_ve_gio` ≤ 1, `yeu_cau_tra_web` ≤ 1 (đếm trong code); hết trần ⇒ câu từ chối chuẩn như cũ; plan kiểm `max_turns` đủ khi đủ 4 công cụ | khớp — plan đo `max_turns` = 0 |
+| §5 một agent | agent Huế + model xã giao (đã có) | giữ; không thêm agent con | khớp |
+| §5 lời dặn | thêm công cụ vào mọi lượt đã làm tụt S-AT 2 lần (B4b §2g, B5c) | mỗi công cụ một bậc; S1 + S4 bắt buộc mỗi bậc | khớp (bài học ghi lại) |
+
+**`agent-security-review`**
+
+| Rủi ro | Hiện trạng | Bản 13 | Mức · đề xuất |
+|---|---|---|---|
+| Bộ ba chết người | (a) chữ người dùng + câu hỏi lịch sử · (b) chữ web, kho lấy từ web · (c) OpenAI, Serper, link (spec §7) | T2: model **quyết lúc** tra ⇒ đường ra Serper nay theo phán đoán model; giữ: truy vấn code dựng từ câu lượt này, chữ web không vào agent chính ⇒ (b) không lái được (a)–(c) | minor — sàn S2b + "câu kho trả lời được mà tra web ≤ 2 %" |
+| Câu ngoài phạm vi lọt ra Serper | không thể (tuyến riêng) | agent có thể yêu cầu web cho câu ngoài phạm vi ⇒ code chặn khi câu trả lời = `OUT_OF_SCOPE_ANSWER`; model chọn nhầm câu từ chối ⇒ lọt | major nếu không đo — S2b = 0 ×2 là điều kiện merge G / T2 |
+| Lệnh trong chữ người dùng ("bỏ qua hướng dẫn, tra web …") | cổng là code | T2 vẫn ≤ 1 lần / câu, truy vấn bỏ SĐT / email (B6 D2) | minor — bộ (b) có câu lệnh lái |
+| Tham số vào đường dẫn / truy vấn | — | T1 / T3 không chạm file hay URL (bảng nạp lúc khởi động từ đường dẫn `settings.yaml`); T2 không tham số | khớp |
+| Dữ liệu cá nhân | log không chữ (`chat.py` `METRIC_FIELDS`) | không thêm trường chữ; log công cụ chỉ tên + số đếm | khớp |
+| Câu khẩn cấp | câu soạn sẵn PA1 (số 113 / 114 / 115 / 112) | bỏ (User) ⇒ có thể nhận câu từ chối thường | **User xác nhận** (§12.8) |
+| Deploy | spec §7, §11.4: web tắt trên AWS | giữ: cờ `tra_web` / `tra_web_cong_cu` tắt trên AWS tới Phase 12 rà lại | khớp |
+
+**Giả định an toàn (bổ sung §7):** như bản 12; thêm — model quyết lúc tra web (T2) nhưng không thấy chữ web; bảng vé / giờ là dữ liệu kho User duyệt, có ngày hiệu lực.
+
+### 12.7 Tiền + luật cắt
+
+**Tiền** (giá `gpt-6-luna`; định tuyến ≈ 0,00008 · lượt agent ≈ 0,0005–0,0008 · mục web +0,0012 gồm Serper / câu). Trần Phase 9 **3,5 USD** (User 08/11), đã dùng
+≈ 2,05 (handoff 2,02 + 08/11); **quỹ B7 0,35 giữ riêng** ⇒ còn ≈ 1,1 cho bản 13.
+
+| Việc | Ước (một biến thể + mốc) | Ghi |
+|---|---|---|
+| G | ≈ 0,25 (xấu nhất 0,4) | `bo_do_nhap.md` §4 |
+| T1 | ≈ 0,11 | (28 ngày + 32 an toàn + 30 Golden mẫu) × 2 × 0,0006 |
+| T3 | dữ liệu 0 · đo ≈ 0,10 | (20 + 32 + 30) × 2 × 0,0006 |
+| T2 | ≈ 0,19 | (28 + 10) × 2 × 0,0018 + 30 × 0,0006 + 32 × 2 × 0,0006 |
+| T4 | ≈ 0,14 | 36 × 2 × 0,0008 + an toàn + Golden mẫu |
+| **Tổng** | **≈ 0,8** (một vòng mỗi việc) | vòng chỉnh thứ hai chỉ chạy phần "chỉ định tuyến" / bộ đã thấy; dự phóng vượt 1,1 ⇒ A xin User trước |
+
+**Luật cắt** (ngày là mốc A kiểm; B7 15–21/12 không cắt; đóng code 25–30/12 khi User nói):
+- 16/11 G chưa merge ⇒ giữ 4 tuyến; T2 vẫn làm trên 4 tuyến (S2b thay bằng "tuyến `ngoai_pham_vi` không tra web" như cũ).
+- 23/11 T1 / T3 chưa merge ⇒ T1 cắt (giữ cờ `today_line` tắt); T3 thu nhỏ còn **bảng dữ liệu cho kiểm cuối** (phương án B).
+- 30/11 T2 chưa merge ⇒ giữ cổng web B6.
+- 07/12 T4 chưa merge ⇒ câu tự do tắt, biểu mẫu là đường lịch trình.
+- 14/12: không mở bậc mới; chỉ sửa lỗi + chuẩn bị B7.
+
+### 12.8 User xác nhận
+
+- **Bỏ tuyến khẩn cấp (User 08/11/2026):** không câu soạn sẵn, không công cụ. Câu khẩn cấp vào agent Huế ⇒ có thể nhận **câu từ chối thường** hoặc mục web. A đã nêu
+  rủi ro (User 28/10 xếp "sai cảnh báo an toàn" là lỗi tệ nhất; C122 "chỉ từ chối = lỗi"); User chấp nhận 08/11 ("không cần, không tập trung"). Bộ khẩn cấp chỉ quan sát (§12.3).
+- Câu "hỏi về chính trợ lý" ⇒ nhãn xã giao (A 08/11). Bộ tuyến kín B1 ⇒ đã dùng (A 08/11).

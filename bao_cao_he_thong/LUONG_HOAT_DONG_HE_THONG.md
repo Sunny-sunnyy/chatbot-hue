@@ -22,6 +22,7 @@ Những gì đã thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.m
   - nhớ câu hỏi 3 lượt;
   - kho không có ⇒ mục "Từ web (chưa kiểm)";
   - **từ 07/11 trả lời câu dự báo thời tiết** bằng số Open-Meteo do code dựng.
+- **Từ 08/11 (giao diện):** nút Dừng khi đang trả lời (máy chủ huỷ lần gọi model), ô hỏi ≤ 500 ký tự, gợi ý cách hỏi dưới câu kho từ chối, dòng "Nguồn" gộp theo bài, nút sao chép / tải lịch trình.
 - **Bật từ 08/11:** hỏi bằng ảnh (gợi ý ≤ 3 tên, người dùng bấm xác nhận). **Chưa bật:** lịch trình khi gõ câu tự do (chỉ qua biểu mẫu), bản đồ lịch trình (code có, chờ bạn xem), giọng nói.
 - **Tốc độ:** chữ đầu câu về Huế sau định tuyến + song song #6 — đo 07/11 trên giao diện mới 10 câu: trung vị 2,03 s, chậm nhất 4,22 s (đồng hồ trình duyệt, một lần, chỉ theo dõi — mục 4).
 - Phase 8 bạn đóng 14:29 01/11/2026; Phase 9 đang làm (còn B7 đóng gói, mục 5).
