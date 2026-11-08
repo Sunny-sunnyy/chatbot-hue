@@ -144,6 +144,7 @@ report.
 
 ## 8. Test và verification
 
+- **Giảm thời gian test (User duyệt 11:29 08/11/2026):** trong lúc sửa chỉ chạy file test bị chạm; **test rộng (cả `backend/tests`) một lần trước khi bàn giao / merge**; Q1 "chuỗi gửi model giống byte" chỉ khi code chạm phần dựng chuỗi gửi model / lời dặn / công cụ; Playwright chỉ khi sửa giao diện (một khổ màn nếu thay đổi không theo cỡ màn); chạy test nền song song việc khác (trừ lúc đo độ trễ); việc nhỏ đo 1 lượt. Report ghi **thời gian từng bước** (pytest, Q1, Playwright, lượt có phí) bằng số đo thật.
 - Test chỉ khi bảo vệ behavior cần thiết, contract quan trọng hoặc bug thật có
   nguy cơ tái diễn; không đặt mục tiêu số test/coverage.
 - Chọn kiểm tra theo hành vi và phạm vi ảnh hưởng: logic thuần → kiểm tra nhỏ;
