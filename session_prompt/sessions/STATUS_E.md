@@ -11,6 +11,7 @@
 - 10:37 08/11/2026 — A giao: review `p11-lich-nho` `a43cd14` (B) ⇒ **ready** (`report_agent/2026-11-06_giao_dien_cong/e_lich_nho_review.md`; 864 tổ hợp: 48 khác đúng dạng; link 28 / 28; Q1 byte; sao chép / tải 0 request, 0 HTML thô; ghim khớp; m-1 link toạ độ mất thẻ địa điểm — A / User chọn; m-2 toạ độ Kinh thành nghi lệch). 0,001028 USD. Worktree đã gỡ.
 - 10:48 08/11/2026 — review B `p11-viec-nho-e` ready 2 minor ⇒ m-2 sửa (`607902a`, rebase `b50d9c0`, push); m-1 sửa report. **Bẫy E tự gây:** gọi lần gọi 56 / 89 token là "lần bị dừng" — thật là lần đã xong; SDK `cancel()` mặc định không trả usage ⇒ token lần bị huỷ không đo được. Từ nay: khẳng định "lần X" phải khớp loại / thứ tự lần gọi, không suy từ vị trí cuối danh sách.
 - 10:56 08/11/2026 — A giao: review `p11-viec-nho-c` `2c2c1bf` (C) ⇒ **ready sau rebase** (`report_agent/2026-11-06_giao_dien_cong/e_viec_nho_c_review.md`; m-1 luật số so theo chữ số; m-2 máy chính thiếu `rieng/lv_festivals_nho.jpg` ⇒ chạy `anh_nho.py` trước build; m-3 xung đột `App.jsx` / `pages.jsx`). 0,0004 USD. Việc kế: đọc trước công cụ ngày + âm lịch (chưa cài gì).
+- 11:02 08/11/2026 — A giao (User duyệt spec bản 13 `5557f0fd7650`): **T1 ngày + âm lịch** — plan trước. **File sẽ ghi:** `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` (mới); sau khi A duyệt plan: nhánh `p9-t1-ngay`, worktree `/tmp/e_t1`. Tra cứu thư viện âm lịch xong: `data/tra_cuu_cli/2026-11-08_e-am-lich-python/` (E WebFetch kiểm 4 nguồn).
 
 ## PHIÊN SAU ĐỌC TRƯỚC (viết 16:23 07/11/2026)
 

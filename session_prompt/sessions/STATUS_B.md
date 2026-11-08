@@ -36,6 +36,8 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
   `frontend/src/index.css`; report `report_agent/2026-11-06_giao_dien_cong/b_lich_nho_implementation.md`; dữ liệu `data/phase_11/lich_nho/`.
 - **10:47 08/11/2026 (`date`):** `p11-lich-nho` = `de08454` (rebase lên `main` `06dafb4`; 2 minor bản đồ + **bỏ (6)** theo A; 735 test; trình duyệt đạt) ⇒ A merge (E kiểm diff). Bản cũ: `098a710` (đã push). Q1 228/228; test rộng 735 đạt; trình duyệt: clipboard = file tải, 4/4 link đúng code; cổng ổn định đạt. Tiền 0,000435 USD. Cần User mở 17 link theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`) — nghi lệch 1 điểm (Kinh thành / Ngọ Môn – Kỳ Đài). Server 8874 đã tắt; worktree `/tmp/b_nho` giữ.
 
+## 0g. Đang làm — việc G cổng 2 nhóm (spec bản 13 §12, User duyệt sha `5557f0fd7650`, A giao 08/11). Bước 1 plan: `docs/superpowers/plans/2026-11-08-phase-9-g-cong-plan.md` (mới). Code sau khi plan duyệt: nhánh `p9-g-cong`, worktree `/tmp/b_g`. B viết lời dặn ⇒ **không đọc câu kín** của bộ (a) / (b).
+
 ## 0f. Đang làm — review spec Phase 9 bản 13 (§12, sha `0845b1caefbc`, C viết; A giao 08/11). File khai báo: `docs/superpowers/specs/2026-11-02-phase-9-design_review_v13.md` (mới). Chỉ đọc spec + gói căn cứ + code / dữ liệu; không đọc STATUS_C / tin của C.
 - **Vòng 1 xong 10:53 08/11/2026 (`date`): `changes_requested`** — 2 major (M-1 outcome `out_of_scope` mất khi gỡ nhánh định tuyến; M-2 thiếu sàn S3b agent từ chối nhầm câu Huế) + 5 minor; 0 USD. Chờ C sửa ⇒ vòng 2 (diff §12). Sau khi User duyệt: B code G.
 - **Vòng 2 xong (sha `89a48ca72cbd`): `ready_for_user_confirmation`** — 7 / 7 finding vòng 1 đóng; còn 1 minor n-1 (dòng G §12.2 chưa liệt kê S3b ⇒ plan G ghi). 0 USD. Chờ A duyệt sha / User duyệt ⇒ B viết plan + code G.
