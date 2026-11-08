@@ -1,4 +1,4 @@
-# STATUS C — viết lại cho phiên sau 12:17 08/11/2026 (`date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên 08/11 (viết lại 12:17, bổ sung 12:50 08/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
 ## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 12:17 08/11/2026)
 
@@ -9,8 +9,14 @@
   Gỡ khi xong: `rm /tmp/c_t3/data /tmp/c_t3/knowledge-base-hue && git worktree remove /tmp/c_t3` (`rm` bị chặn ⇒ User `!`).
 - Report `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (§1–§11). Plan bản 2 `docs/superpowers/plans/2026-11-08-phase-9-t3-bang-plan.md` `dbcd1a2f6d81` (A duyệt).
 - Kết quả: Q2 (20 câu) `main` 16 · v1 17 · v2 18 · **v3 19 / 20 ✓** · khối điều kiện 4 / 4 ✓ · **sàn Q3 trượt 6 / 10** (model tự nêu điều kiện miễn giảm, chép từ đoạn kho) ⇒ **âm** theo luật.
-- **Câu chờ User (A ghi handoff "Câu hỏi cho User"):** (a) phương án B của spec — bảng chỉ dùng kiểm số cuối, không công cụ · (b) việc mới thiết kế lại — code lọc câu điều kiện khỏi chữ
-  model, hoặc đổi sàn Q3 (User duyệt).
+- **Câu chờ User — phiếu `data/phase_9/t3_bang_ve_gio/phieu_chon_huong.md` (C khuyến nghị (a)):**
+  - **(a) phương án B:** bỏ tra bảng đưa model + khối; bảng chỉ dùng kiểm số **sau** khi model viết, số lạ ⇒ câu cố định "giá / giờ có thể khác — xem nguồn" (≈ 0,05 USD, ~1 giờ).
+    Làm: trong `_ve_gio_cuoi` bỏ khối / câu dẫn, kiểm mọi câu tuyến Huế khi cờ bật có từ khoá; bỏ `tra_truoc` + công cụ; đo lại Q2 (mốc + nhánh, `do_t3.py` đã sửa) + S1 ×2.
+  - **(b) code lọc câu điều kiện khỏi chữ model** (giữ dòng giá theo nhãn), vòng 4 ngoài plan (≈ 0,1 USD, 1–2 giờ): thêm bộ lọc trong `_ve_gio_cuoi` khi có khối; test cắt nhầm /
+    bỏ sót; đo Q2 + Q3 + S1 ×2 + S4.
+  - **(c) đổi sàn Q3** (User duyệt — nới tiêu chí sau khi thấy số): không code; chạy S1 ×2 + mốc + S4 rồi quyết theo S1.
+- **Bảng + quyết định User:** `bang_v1.json` `874af96dd995` — User 08/11 câu 1 (a) hiện cả hai nguyên văn khi kho ghi khác nhau; A theo khuyến nghị câu 2–5 (bỏ sự kiện đã diễn
+  ra · giữ dịch vụ · quy định chung chỉ cho Quần thể · giờ chung Quần thể cho Bảo tàng Cổ vật + vé tuyến · chợ = "giờ hoạt động (kho mô tả)").
 - **Dữ liệu (private):** `data/phase_9/t3_bang_ve_gio/` — `bang_v1.json` `874af96dd995` (User duyệt 08/11 câu 1; A câu 2–5), `bang_nhap.json`, `phieu_cho_user.md`, `q1/`, `do/` (bộ
   `bo_t3.jsonl` md5 `c89955f1bed9`, kết quả Q2 mốc + v1–v3, `q3_cham.json`, `s1_nhanh/` sinh nhánh ×2 **chưa chấm**), `tools/` (`kiem_nhap.py`, `gop.py`, `chot_v1.py`, `do_t3.py`,
   `an_toan_t3.py`, `anh_nho.py` ở `data/phase_11/anh_cong/tools/`).
@@ -41,7 +47,12 @@
 - Sub-agent đọc kho đôi khi đổ đầu ra ra `/tmp` — brief nhắc "không ghi file ngoài đích".
 - Giờ trong file: luôn `date`; không ghi "~hh:mm".
 
-### 4. Tiền C 08/11 ≈ **0,096 USD**: review bật ảnh 0,0020 · việc nhỏ ≈ 0,009 · T3 0,0853 (Q2 mốc 0,0128 + v1 0,0128 + v2 0,0119 + v3 0,0122 + S1 sinh 0,0355); mọi việc khác 0 USD.
+### 4. Thắc mắc / câu hỏi còn treo
+- T3: chờ User chọn (a) / (b) / (c) — trước đó không code thêm.
+- Q3 hiện đếm "model tự nêu điều kiện" kể cả khi đúng với kho (T06 đúng) — nếu chọn (c) cần định nghĩa lại sàn bằng chữ trước khi đo.
+- Kiểm cuối T3 chỉ chạy ở lượt có tra bảng; câu tiền / giờ không nêu tên điểm có trong bảng không được kiểm (giới hạn thiết kế, report §11).
+
+### 5. Tiền C 08/11 ≈ **0,096 USD**: review bật ảnh 0,0020 · việc nhỏ ≈ 0,009 · T3 0,0853 (Q2 mốc 0,0128 + v1 0,0128 + v2 0,0119 + v3 0,0122 + S1 sinh 0,0355); mọi việc khác 0 USD.
 
 ---
 

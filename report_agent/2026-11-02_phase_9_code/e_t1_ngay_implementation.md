@@ -2,7 +2,7 @@
 
 Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026 · **cập nhật sau review nhánh 12:23 08/11/2026; lượt 3 12:09 08/11/2026; trước đó 12:00 08/11/2026: lượt 2 sau sửa (b) — mục 4b**
 - Plan: `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a` — mức nhẹ, A duyệt.
-- Nhánh `p9-t1-ngay` `f388b19` (6 commit; sau sửa (b) + (i) + review nhánh M-1 / m-1 từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
+- **Đã merge vào `main` (cờ `ngay_lich: false`):** `e401c71` (nhánh `p9-t1-ngay` `f388b19`) + `7ee12f1` (nhánh `p9-t1-ngay-2` `c865159`: bộ dò bỏ số thứ tự / phân số; test stream, song song #6, biểu mẫu — review m-2, m-6).
 - **Kết quả lượt 3 (sau 2 sửa A chọn): tiêu chí 1–4 ĐẠT; S1 đạt (lượt 1), S4 sát.** Còn 1 câu kém đi ổn định (R8) + 1 câu đổi qua lại giữa lượt (E2 / E3). S5 NOT RUN. A quyết merge (mục 4c, 6).
 
 ## 1. Phạm vi

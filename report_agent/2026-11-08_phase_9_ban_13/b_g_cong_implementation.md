@@ -43,7 +43,10 @@ chấm mù theo đáp án mẫu (`data/phase_9/g_cong/s4/cap_mu.jsonl` ⇒ `cham
   nhận khi bỏ câu soạn sẵn (spec §12.8). Bảng 4 loại câu trả lời (chỉ dẫn nơi giúp · từ chối thuần · mục web · nói sai nguy hiểm) **chưa** làm — cần đọc chữ.
 - A4 / A5 (E nhờ): định tuyến đưa vào agent Huế (đúng); agent trả "không đủ thông tin" vì chưa có công cụ ngày — việc của T1.
 
-## 3. Còn làm
+## 3. Còn làm (kết phiên 08/11 — chi tiết + lệnh: `session_prompt/sessions/STATUS_B.md` "PHIÊN SAU ĐỌC TRƯỚC")
+
+- Kín dời phiên sau (A: G đã sát mức 0,75 User đặt, A không tự vượt; User chạy `!`). `do_g.py` đã lưu `context` + trường B2 cho S1 (kiểm 0 USD).
+- Nhánh tách từ `main` `442f758`; T1 (`e401c71`) đã vào `main` và chạm `assistant.py` ⇒ rebase trước merge.
 
 1. **Kín (A chạy, lệnh trong `STATUS_B.md` mục 0g):** (a) 8 câu chỉ định tuyến ×2 (S3 = 0, chào thuần ⇒ Huế cộng phần đã thấy ≤ 2 / 16) · (b) 10 câu cả câu ×2
    (S2 = 0, S2b = 0). ≈ 0,011 USD ⇒ vượt nhẹ 0,75 — A quyết.

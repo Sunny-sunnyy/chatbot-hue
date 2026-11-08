@@ -1,53 +1,60 @@
-# STATUS E — kết phần việc 12:16 08/11/2026 (`date`) · terminal `hue-rag-22` (A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — KẾT PHIÊN 12:50 08/11/2026 (`date`) · terminal `hue-rag-22` (A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`) · Claude Opus 5.5 · vai thực thi
 
-## PHIÊN SAU ĐỌC TRƯỚC (viết 12:16 08/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (viết 12:50 08/11/2026)
 
-**Việc dở — T1 ngày + âm lịch (spec Phase 9 bản 13 §12, plan `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a`, A duyệt):**
-- **T1 đã vào `main`** (A merge `e401c71`, cờ `ngay_lich: false`; `lunar-vn` nay có trong `uv.lock` của `main`).
-- **12:33 08/11/2026:** nhánh **`p9-t1-ngay-2` `c865159`** (push, từ `main` `08abc1e`) — **chờ A kiểm + merge**:
-  - m-2 bộ dò bỏ "thứ X" sau danh từ thứ tự + phân số đứng một mình (Golden 176 vẫn 9 / 176, cả 9 là cụm ngày thật);
-  - m-6: test stream có gọi `ngay_lich` + đường song song #6 + lượt biểu mẫu không có công cụ;
-  - `test_ngay_lich.py` 69 passed, 5 file liên quan 175 passed.
-- Không còn worktree / server nào của E.
-- Review cả nhánh (sub-agent A, `report_agent/2026-11-02_phase_9_code/t1_ngay_branch_review.md`): `changes_requested` 0 / 1 / 6.
-  - **M-1 + m-1 đã sửa** ở `f388b19`: không nêu năm ⇒ code trả lần gần nhất + lần sắp tới; ngày / tháng vô lý ⇒ câu cố định.
-  - m-3 đóng: Q1 đầu nhánh ↔ `main` `6f30404` giống byte 228 / 228.
-  - m-4 report đã sửa.
-  - **Chờ A** kiểm phần sửa (review vòng 2 hay A tự kiểm).
-- Report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` **xong**:
-  - 3 lượt; lượt 3 đạt tiêu chí 1–4 (R→OK 8, L1 / L3 0, L2 0, `max_turns` 0); S1 16 / 16; S4 sát;
-  - R8 kém ổn định (A chấp nhận); có đoạn lời thường cho `BAO_CAO_SINH_CAU_TRA_LOI_API`.
-- **Còn mở từ review nhánh:**
-  - m-5: lượt xác nhận trên câu ngày mới trước khi bật (gồm ca 1/1 – Tết của M-1);
-  - giới hạn: "tháng tới / tháng sau / cuối tuần" vẫn do model tự tính (code chỉ ghi tuần này / tuần sau / tháng này).
-- **Còn lại theo thứ tự:**
-  1. A kiểm + merge `p9-t1-ngay-2`;
-  2. **S5** khi A xếp lượt (thứ tự B ⇒ E ⇒ C);
-  3. A merge + **bật cờ** (User / A quyết);
-  4. sau G (B) vào `main`: đo lại 5 câu ngày bị định tuyến xếp ngoài phạm vi (R11, A3, A4, A5, A10).
-- **Lệnh S5** (một server một lúc):
-  - (a) `sed -i 's/^  ngay_lich: false /  ngay_lich: true  /' /tmp/e_t1/backend/config/settings.yaml`;
-  - (b) `cd /tmp/e_t1/backend && HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8862` (nền);
-  - (c) `cd /home/minhhieu/hue_rag && .venv/bin/python data/phase_9/t1/tools/chay_t1.py http://127.0.0.1:8862 chon:R1,R2,R3,R4,R6,R7,R8,R9,R10,R11,R12,E1,E2,E3,N1,N2,N3,A1,A2,A6 nhanh 5 data/phase_9/t1/ket_qua/s5_nhanh.jsonl`;
-  - (d) tắt server, `git -C /tmp/e_t1 checkout -- backend/config/settings.yaml`;
-  - (e) server `main` cổng 8861 (từ `backend/` thư mục chính) cùng lệnh, `moc`;
-  - (f) đọc `chat_metrics.first_text_ms` theo **`turn_id`** (log thư mục chính dùng chung với session khác — không đếm theo mốc dòng);
-  - sàn p50 ≤ 3 s / p95 ≤ 5 s, không chậm hơn mốc quá nhiễu.
-  - ≈ 0,03 USD.
-- **Bẫy cho mọi session:** tới khi T1 vào `main`, `uv sync` thường ở `main` sẽ gỡ `lunar-vn` + `sherpa-onnx` ⇒ chỉ `uv sync --inexact`.
+**E không có code dở, không worktree, không server, không file `/tmp` của E.** Nhánh của E đều đã merge.
 
-**Đã xong 08/11 (A merge / commit):**
-- README + Golden report;
-- `p10-anh-bat` (rebase `9800eeb`);
-- việc nhỏ `p11-viec-nho-e` (Dừng, 500 ký tự, gợi ý dưới từ chối, Nguồn gộp, huỷ model + USD khi ngắt);
-- review `p11-ban-do` / `p11-lich-nho` / `p11-viec-nho-c` (ready cả 3);
-- sửa test cổng `p9-sua-test-cong` (A merge `e7ad76f`).
+### 1. T1 ngày + âm lịch — ĐÃ Ở `main`, CỜ `ngay_lich: false`
 
-**Việc chờ User (còn đúng):**
-- giọng nói — User **giữ**, sẽ thu 40 câu (hướng dẫn: `data/ra_soat_tinh_nang_2026-11-08/E.md` cuối file + phiếu `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`; `thu/` còn rỗng) ⇒ G1 / G2 mục 4;
-- phiếu bảng điểm v6 (4 ô) ⇒ E chốt `diem_v6.json`;
-- 17 link Maps theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`, B soạn).
+- **Merge:** `e401c71` (T1) + `7ee12f1` (bộ dò bỏ số thứ tự / phân số; test stream, song song #6, biểu mẫu). `lunar-vn==1.4.0` có trong `uv.lock` của `main`.
+- **Tài liệu:**
+  - plan `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a`;
+  - report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` (3 lượt đo, 4d sau review nhánh, đoạn lời thường cho `BAO_CAO_SINH_CAU_TRA_LOI_API`);
+  - review `report_agent/2026-11-02_phase_9_code/t1_ngay_branch_review.md`.
+- **Số đo (lượt 3, bộ ngày 27 câu, 2 người chấm mù khớp 27 / 27):** từ chối nhầm −8 · L1 / L3 0 · ngày / thứ sai 0 · chạm `max_turns` 0; an toàn 16 / 16; R8 kém ổn định (A chấp nhận).
+- **Còn TRƯỚC KHI BẬT cờ:**
+  1. **Lượt xác nhận trên câu ngày MỚI** (review m-5: "đạt" là trên chính bộ đã dùng để chỉnh qua 3 lượt) — gồm ca **1/1 – Tết** của M-1 (không nêu năm ⇒ code trả lần gần nhất + lần sắp tới). Server không dùng giờ giả được ⇒ viết câu kiểu "Tết năm sau" / "rằm tháng Giêng tới", hoặc đợi đúng mùa. Dùng `data/phase_9/t1/tools/chay_t1.py` (thêm bộ mới) + `kiem_l2.py` + brief `data/phase_9/t1/cham/brief_cham.md` + `dung_cap_mu.py`.
+  2. **S5 tốc độ** (A xếp lượt, thứ tự B ⇒ E ⇒ C; **một server một lúc**):
+     ```bash
+     # (a) server nhánh = main với cờ bật TẠM: sửa backend/config/settings.yaml của một worktree từ main: ngay_lich: true
+     git worktree add --detach /tmp/e_s5 main && ln -s /home/minhhieu/hue_rag/data /tmp/e_s5/data && ln -s /home/minhhieu/hue_rag/knowledge-base-hue /tmp/e_s5/knowledge-base-hue
+     sed -i 's/^  ngay_lich: false /  ngay_lich: true  /' /tmp/e_s5/backend/config/settings.yaml
+     cd /tmp/e_s5/backend && HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8862   # nền
+     cd /home/minhhieu/hue_rag && .venv/bin/python data/phase_9/t1/tools/chay_t1.py http://127.0.0.1:8862 chon:R1,R2,R3,R4,R6,R7,R8,R9,R10,R11,R12,E1,E2,E3,N1,N2,N3,A1,A2,A6 nhanh 5 data/phase_9/t1/ket_qua/s5_nhanh.jsonl
+     # (b) tắt server ⇒ server main (cờ tắt) từ backend/ thư mục chính, cổng 8861, cùng lệnh với "moc" ⇒ s5_moc.jsonl
+     # (c) đọc chat_metrics.first_text_ms THEO turn_id (log thư mục chính lẫn session khác); sàn p50 ≤ 3 s / p95 ≤ 5 s, không chậm hơn mốc quá nhiễu
+     # (d) gỡ /tmp/e_s5 (rm 2 symlink + git worktree remove); ≈ 0,03 USD
+     ```
+     (`chay_t1.py` hiện chưa ghi `turn_id` vào file ⇒ thêm đọc `done.turn_id` từ SSE trước khi chạy.)
+  3. **Sau khi G (B) vào `main`:** đo lại 5 câu ngày bị định tuyến xếp ngoài phạm vi — R11, A3, A4, A5, A10 (`data/phase_9/t1/bo_am_lich.jsonl`, bộ 15 cũ).
+  4. **Giới hạn ghi khi bật:** "tháng tới / tháng sau / cuối tuần" vẫn do model tự cộng (code chỉ ghi tuần này / tuần sau / tháng này); chỉ năm 1976–2100; R8 "dịp lễ sắp tới" cần dữ liệu lịch sự kiện theo ngày (đợt 2 cổng).
 
+### 2. Việc chờ User
+
+- **Giọng nói — User GIỮ, sẽ thu 40 câu.**
+  - Hướng dẫn: `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md` + tóm tắt cuối `data/ra_soat_tinh_nang_2026-11-08/E.md`.
+  - `data/phase_10/giong_noi/thu/` còn rỗng.
+  - Thu xong ⇒ G1 → G2 theo plan `92ec551531fd` (mục 4 dưới); 0 USD, chạy máy ⇒ hỏi A trước.
+- **Phiếu bảng điểm v6** (`data/phase_9/lich_trinh/diem_cho_user_v6.md`, 4 ô) ⇒ E chốt `diem_v6.json` + `kiem_v6.py`.
+- **17 link Maps theo toạ độ** (`data/phase_11/lich_nho/kiem_17_link.md`, B soạn) — User mở, tick đúng chỗ. Điểm nghi: "Kinh thành (Ngọ Môn – Kỳ Đài)" lệch ~0,6 km đông Đại Nội.
+
+### 3. Bẫy hôm nay (chi tiết mục 3)
+
+- **`uv sync` thường ở `main` gỡ `sherpa-onnx`** (giọng nói, chưa có trong lock) ⇒ chỉ dùng `uv sync --inexact`. `lunar-vn` nay đã ở lock nên không bị gỡ.
+- **Một server thử một lúc** mỗi session (RAM); chạy mốc ⇒ tắt ⇒ chạy nhánh.
+- **Đếm `chat_metrics` theo `turn_id`**, không theo mốc dòng (log thư mục chính dùng chung).
+- **Token của lần gọi bị huỷ không đo được** (SDK `cancel()` không trả usage) — đừng gọi lần đã xong là "lần bị dừng".
+- **Tách commit và push** thành 2 lệnh (auto mode chặn lệnh ghép).
+
+### 4. Tiền
+
+**E 08/11 ≈ 0,128 USD (cận trên).** Chi tiết ở mục Tiền.
+
+### 5. Câu hỏi cho A
+
+- T1 bật cờ khi nào (sau lượt xác nhận + S5)?
+- Ghi R8 (cần lịch sự kiện theo ngày) vào backlog đợt 2 cổng?
+- `chay_t1.py` dùng tiếp cho lượt xác nhận hay A muốn harness chung với T3 / G?
 
 ## 0a. Nhật ký việc 08/11 (theo giờ, lịch sử)
 
