@@ -24,8 +24,13 @@ số đếm + id, không chữ câu:
 
 **Tiền B phiên 08/11 (log):** ảnh cổng 0 · bản đồ 0,0031 · việc nhỏ lịch 0,0023 · review E 0,0053 · G **0,7487** ⇒ **≈ 0,759 USD**. Worktree `/tmp/b_anh`, `/tmp/b_bando`, `/tmp/b_nho` đã gỡ (nhánh đã merge).
 
+**Nháp plan T2** (A giao, chờ G merge, chưa review): `docs/superpowers/plans/2026-11-08-phase-9-t2-web-plan.md` — 1 trang, mức nhẹ; điểm cần chốt khi viết bản chính: bộ hỏi kèm 10 (E20 gắn cờ `lich_trinh`).
+
 **2. Phần 0 USD còn lại:** S4 **xong, đạt** (12:25 08/11/2026: đúng 30 ngang; đủ mốc hơn 1, 29 ngang ⇒ tụt 1 / 30 < 3). S1 3 số còn lại — quy trình `data/phase_9/b2_chay/tools/an_toan_b2.py` (2 judge, mỗi judge ~6 sub-agent, 15 câu đối chứng, cổng `accept`) cần **ngữ cảnh nguồn**
-mỗi câu trả lời mà `do_g.py` **chưa lưu** ⇒ thêm `context=trace.packed.text` vào dòng `ca_cau`, chạy lại an toàn ×2 trên sha khoá + mốc ×1 (≈ 0,05 USD — cần A / User nâng tiền cùng lúc với kín), rồi export / check / accept / compare như B2. S6 **xong, đạt** (câu Huế 0,000425 ≤ 0,0005; ngoài phạm vi 0,000422 / câu, mốc 0,00009). **3.** S5 (cần tiền + báo A trước). **4.** Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
+mỗi câu trả lời ⇒ **đã thêm 08/11** vào `do_g.py` (hàm `dong`: `context` = nối `trace.context_parts` như `sinh_an_toan.py`, + `qid`, `in_kho`, `refusal`,
+`error`, `citation_error` dạng chuỗi; kiểm 0 USD bằng trace dựng tay). File `ket_qua/*` hôm nay **chưa có** `context` ⇒ phiên sau (khi có tiền): chạy lại
+`… do_g.py ca_cau $K/s1_g_r1.jsonl an_toan` (+ `_r2`) trên `/tmp/b_g` và `… $K/s1_moc_r1.jsonl an_toan` trên `/tmp/b_moc_g` (≈ 0,05 USD), rồi một bản sao
+`an_toan_b2.py` trỏ `TRUOC` = `s1_moc_r1`, `D/sau/answers_r1.jsonl` = `s1_g_r1` (định dạng dòng đã khớp) ⇒ export / check / accept / compare như B2 (2 judge, đối chứng). S6 **xong, đạt** (câu Huế 0,000425 ≤ 0,0005; ngoài phạm vi 0,000422 / câu, mốc 0,00009). **3.** S5 (cần tiền + báo A trước). **4.** Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
 
 ## 0. Đang làm — B-ảnh: đưa 7 ảnh cổng vào `frontend/` (A giao 08/11, 0 USD)
 - Nhánh `p11-anh-cong` từ `main` `db6e15d`, worktree `/tmp/b_anh` (symlink `data/`, `knowledge-base-hue/`).
