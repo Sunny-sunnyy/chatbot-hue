@@ -146,3 +146,10 @@ def test_max_turns_plus_one_only_when_date_tool_offered(deps, cau, flags, so_von
     gen = generator(lambda n, kw: (vong.append(n), [tool_call(f"lễ hội {n}")])[1])  # model cứ đòi tìm thêm ⇒ chạm trần
     trace, _ = chay(deps, cau, gen, flags, stream=stream)
     assert len(vong) == so_vong and trace.fixed_outcome == "max_turns"
+
+
+@pytest.mark.parametrize("ngay, thang, nam, sau", [(18, 6, 2026, "đã qua 100 ngày"), (30, 9, 2026, "là hôm nay"), (1, 1, 2027, "còn 90 ngày nữa")])
+def test_result_states_before_after_today_by_code(ngay, thang, nam, sau):
+    # A2 lượt đo 08/11: model tự so trước / sau rồi kết luận ngược ⇒ code ghi luôn khoảng cách với hôm nay (08/11/2026 = 30/9 âm Bính Ngọ)
+    now = dt.datetime(2026, 11, 8, 9, 0, tzinfo=dt.timezone.utc)
+    assert nl.ket_qua("am", ngay, thang, nam, False, now).splitlines()[1].endswith(f"— {sau} (so với hôm nay)")

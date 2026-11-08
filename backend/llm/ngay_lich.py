@@ -40,15 +40,13 @@ def mo_ta(ngay: dt.date) -> str:
             f"năm {can_chi.get_year_can_chi(am.year)}")
 
 
-def doi(ngay: int, thang: int, nam: int, loai: Literal["duong", "am"], nhuan: bool = False) -> str:
-    """Đổi một ngày người dùng nêu (dương ⇒ âm hoặc âm ⇒ dương) ⇒ dòng chữ của `mo_ta`, hoặc câu cố định khi ngoài khoảng / không có ngày đó."""
+def ngay_duong(ngay: int, thang: int, nam: int, loai: Literal["duong", "am"], nhuan: bool = False) -> dt.date | str:
+    """Ngày người dùng nêu (dương hoặc âm) ⇒ ngày dương, hoặc câu cố định khi ngoài khoảng / không có ngày đó."""
     if not NAM_MIN <= nam <= NAM_MAX:
         return CAU_NGOAI_KHOANG
     try:
         if loai == "duong":
-            if nhuan:
-                return CAU_NGAY_SAI
-            return mo_ta(dt.date(nam, thang, ngay))
+            return CAU_NGAY_SAI if nhuan else dt.date(nam, thang, ngay)
         am = LunarDate(ngay, thang, nam, nhuan)
         duong = lunar_to_solar(am)
     except ValueError:  # ngày dương không có (31/4…), tháng âm sai, cờ nhuận không khớp năm
@@ -56,9 +54,19 @@ def doi(ngay: int, thang: int, nam: int, loai: Literal["duong", "am"], nhuan: bo
     # `lunar_to_solar` không kiểm số ngày của tháng âm (30 ở tháng 29 ngày ⇒ lặng lẽ ra ngày đầu tháng sau) ⇒ đổi ngược để chắc ngày có thật
     if solar_to_lunar(duong) != am:
         return CAU_NGAY_SAI
-    if not NAM_MIN <= duong.year <= NAM_MAX:
-        return CAU_NGOAI_KHOANG
-    return mo_ta(duong)
+    return duong if NAM_MIN <= duong.year <= NAM_MAX else CAU_NGOAI_KHOANG
+
+
+def doi(ngay: int, thang: int, nam: int, loai: Literal["duong", "am"], nhuan: bool = False) -> str:
+    """Đổi một ngày người dùng nêu ⇒ dòng chữ của `mo_ta`, hoặc câu cố định."""
+    d = ngay_duong(ngay, thang, nam, loai, nhuan)
+    return d if isinstance(d, str) else mo_ta(d)
+
+
+def so_voi_hom_nay(ngay: dt.date, hom: dt.date) -> str:
+    """A chọn (b) 08/11 sau lượt đo (A2: model tự so ngày lễ với hôm nay rồi kết luận ngược): phép so trước / sau do **code** làm."""
+    n = (ngay - hom).days
+    return "là hôm nay" if n == 0 else (f"còn {n} ngày nữa" if n > 0 else f"đã qua {-n} ngày")
 
 
 # Dò từ chỉ ngày (code — chỉ khi có mới đưa công cụ cho model; bài học B5c: công cụ có mặt mọi lượt đổi cách model tìm). Viết hẹp: "mai" đứng một mình
@@ -87,8 +95,9 @@ def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam:
     dong = [f"Hôm nay (giờ Việt Nam): {mo_ta(hom)}."]
     if loai != "hom_nay":
         nam = nam or (solar_to_lunar(hom).year if loai == "am" else hom.year)
-        dong.append(f"Ngày được hỏi ({'âm' if loai == 'am' else 'dương'} lịch {ngay}/{thang}/{nam}"
-                    + (", tháng nhuận" if thang_nhuan else "") + f"): {doi(ngay, thang, nam, loai, thang_nhuan)}")
+        d = ngay_duong(ngay, thang, nam, loai, thang_nhuan)
+        chu = d if isinstance(d, str) else f"{mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay)"
+        dong.append(f"Ngày được hỏi ({'âm' if loai == 'am' else 'dương'} lịch {ngay}/{thang}/{nam}" + (", tháng nhuận" if thang_nhuan else "") + f"): {chu}")
     return "\n".join(dong)
 
 
