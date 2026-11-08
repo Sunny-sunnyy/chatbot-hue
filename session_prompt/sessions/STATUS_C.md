@@ -1,6 +1,52 @@
-# STATUS C — viết lại cho phiên sau (reset context) 15:44 07/11/2026 (`date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — viết lại cho phiên sau 12:17 08/11/2026 (`date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN 08/11 (mở 09:16 08/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 12:17 08/11/2026)
+
+**Trạng thái:** rảnh có lý do — việc dở duy nhất là **T3 chờ User chọn hướng**. Phiên 08/11 terminal: C `hue-rag-e9` · A `hue-rag-a8` · B `hue-rag-a1` · E `hue-rag-22` (tên đổi khi mở lại — `ListAgents`).
+
+### 1. T3 bảng vé + giờ mở cửa — cờ `tra_ve_gio` TẮT, chờ User
+- Nhánh **`p9-t3-bang` = `21ec06d`** (pushed; rebase trên `main` `f124527`). Worktree **`/tmp/c_t3`** còn (symlink `data/`, `knowledge-base-hue/`; cờ trong worktree đã trả `false`).
+  Gỡ khi xong: `rm /tmp/c_t3/data /tmp/c_t3/knowledge-base-hue && git worktree remove /tmp/c_t3` (`rm` bị chặn ⇒ User `!`).
+- Report `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (§1–§11). Plan bản 2 `docs/superpowers/plans/2026-11-08-phase-9-t3-bang-plan.md` `dbcd1a2f6d81` (A duyệt).
+- Kết quả: Q2 (20 câu) `main` 16 · v1 17 · v2 18 · **v3 19 / 20 ✓** · khối điều kiện 4 / 4 ✓ · **sàn Q3 trượt 6 / 10** (model tự nêu điều kiện miễn giảm, chép từ đoạn kho) ⇒ **âm** theo luật.
+- **Câu chờ User (A ghi handoff "Câu hỏi cho User"):** (a) phương án B của spec — bảng chỉ dùng kiểm số cuối, không công cụ · (b) việc mới thiết kế lại — code lọc câu điều kiện khỏi chữ
+  model, hoặc đổi sàn Q3 (User duyệt).
+- **Dữ liệu (private):** `data/phase_9/t3_bang_ve_gio/` — `bang_v1.json` `874af96dd995` (User duyệt 08/11 câu 1; A câu 2–5), `bang_nhap.json`, `phieu_cho_user.md`, `q1/`, `do/` (bộ
+  `bo_t3.jsonl` md5 `c89955f1bed9`, kết quả Q2 mốc + v1–v3, `q3_cham.json`, `s1_nhanh/` sinh nhánh ×2 **chưa chấm**), `tools/` (`kiem_nhap.py`, `gop.py`, `chot_v1.py`, `do_t3.py`,
+  `an_toan_t3.py`, `anh_nho.py` ở `data/phase_11/anh_cong/tools/`).
+- **Lệnh khi đi tiếp** (chạy từ `/tmp/c_t3/backend`, bật cờ tạm `sed -i 's/^  tra_ve_gio: false /  tra_ve_gio: true  /' config/settings.yaml`, trả lại sau):
+  - Q2: server `HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --host 127.0.0.1 --port 8899` (chạy nền, tắt bằng
+    TaskStop) ⇒ từ gốc repo `uv run python data/phase_9/t3_bang_ve_gio/tools/do_t3.py chay http://127.0.0.1:8899 /tmp/c_t3/backend/logs/application.log data/phase_9/t3_bang_ve_gio/do/bo_t3.jsonl <ra.jsonl> --dung 0.04`
+    ⇒ `… do_t3.py cham data/phase_9/t3_bang_ve_gio/do/bo_t3.jsonl <ra.jsonl> data/phase_9/t3_bang_ve_gio/do/q2_moc_main.jsonl` (công cụ đã sửa: client mới mỗi câu ⇒ chạy lại cả mốc).
+  - S1 nhánh: `HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/t3_bang_ve_gio/tools/an_toan_t3.py <thư mục mới> --repeat 2 --cap 0.06`;
+    S1 mốc: cùng lệnh từ `/home/minhhieu/hue_rag/backend` (`main`, cờ tắt) `--repeat 1`; chấm 4 số theo thủ tục bộ an toàn (2 người chấm mù).
+  - S4: mẫu Golden 30 (`data/phase_9/bo_do_b1/mau_golden_30.json`) nhánh + mốc cùng lượt chấm mù — **chưa có công cụ** (dựng theo khuôn `an_toan_t3.py`).
+  - S5 (tốc độ): A xếp lượt riêng (máy dùng chung) — `do_t3.py chay` ghi `first_text_ms`.
+- Lỗi đã biết: (1) fallback "câu hỏi liền trước" gắn điểm cũ khi đổi chủ đề (report §11); (2) `do_t3.py` bản cũ chạy cả bộ trong một cuộc (đã sửa).
+
+### 2. Việc khác hôm nay — xong, đã vào `main` (chi tiết ở nhật ký dưới + report)
+- Review 7 ảnh cổng (`c9931be`) · review bật hỏi bằng ảnh (`3da1cb1`) · việc nhỏ của C (`ad21b6c`: tóm tắt thẻ, nút báo sai, ảnh nhỏ điện thoại, link "Nguồn ảnh", số mục web ⊂ kết quả
+  tìm, `turn_id` trong `chat_metrics`) · rà tính năng chưa làm (`data/ra_soat_tinh_nang_2026-11-08/C.md`) · nháp bộ đo định tuyến (`data/phase_9/dinh_tuyen_2/bo_do_nhap.md`) · spec
+  bản 13 §12 (User duyệt `5557f0fd7650`) · nháp `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md` (A duyệt lúc kết phiên).
+
+### 3. Bẫy gặp hôm nay
+- **Không `uv sync` thường** khi nhánh T1 (thư viện `lunar-vn`) chưa vào `main` — dùng `uv sync --inexact --frozen` nếu cần.
+- `kill` PID server tạm bị auto mode chặn ⇒ chạy server bằng `run_in_background` để tắt bằng TaskStop; nếu lỡ `nohup` ⇒ User `!`.
+- `test_cong_dot_1::test_weather_and_feature_routes` hỏng **chỉ khi nạp khoá** (`--env-file`; có khoá ⇒ ảnh bật) — không do nhánh.
+- `tim_so_tien` cần đơn vị ("đồng") — ô bảng giá trong kho thường ghi số trần ⇒ phía "cho phép" phải nhận cả số nhóm nghìn trần.
+- Công cụ đo SSE: một `httpx.Client` giữ cookie ⇒ mọi câu chung một cuộc trò chuyện — mỗi câu một client.
+- Bộ chấm: nhãn giá phải kèm đơn vị như bảng; tập cho phép theo đúng chữ plan — kiểm bộ chấm trên một câu trước khi đọc số.
+- `an_toan_run.py` cũ gọi `answer_case` **không** cờ (= RAG 1–8) ⇒ đo trợ lý phải truyền `AssistantFlags.from_settings`.
+- `wait_for_function` chuỗi của Playwright bị CSP chặn (`unsafe-eval`) ⇒ chờ bằng vòng Python.
+- Sub-agent đọc kho đôi khi đổ đầu ra ra `/tmp` — brief nhắc "không ghi file ngoài đích".
+- Giờ trong file: luôn `date`; không ghi "~hh:mm".
+
+### 4. Tiền C 08/11 ≈ **0,096 USD**: review bật ảnh 0,0020 · việc nhỏ ≈ 0,009 · T3 0,0853 (Q2 mốc 0,0128 + v1 0,0128 + v2 0,0119 + v3 0,0122 + S1 sinh 0,0355); mọi việc khác 0 USD.
+
+---
+
+## (08/11) nhật ký trong phiên — chỉ tra cứu
+
 Terminal: C `hue-rag-e9` · A `hue-rag-a8` · B `hue-rag-a1` · E `hue-rag-22`. User cấp lại quyền phiên "như 07/11" (A báo).
 **Việc A giao (09:22 08/11/2026):** review cả nhánh `p11-anh-cong` của B (7 ảnh cổng) **khi B nhắn xong** ⇒ report `report_agent/2026-11-06_giao_dien_cong/c_anh_cong_review.md`. Tiêu chí: git ls-files / log -p không chứa ảnh #5 thật; clone sạch hiện `5_3` + đúng ghi công; ghi công 7 ảnh khớp `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/danh_sach.md`; CSP 0 vi phạm; build + `test_static_ui.py`; hook.
 Chuẩn bị (0 USD): git blob hash ảnh #5 thật (`ngoai_git/lv_festivals.jpg`) = `b2005024230b` (md5 `7eb7c9dc3625`) ⇒ tìm trong mọi blob của nhánh. Dự phòng `lv_festivals.jpg` blob `81d76895dfee`. Ghi công #1 trong `danh_sach.md` bị cắt cụt ("…Feel free to") ⇒ kiểm B ghi tên tác giả đúng.

@@ -1,8 +1,8 @@
 # Implementation Report: Phase 9 T1 — ngày + âm lịch Việt Nam
 
-Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026 · **cập nhật lượt 3 12:09 08/11/2026; trước đó 12:00 08/11/2026: lượt 2 sau sửa (b) — mục 4b**
+Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026 · **cập nhật sau review nhánh 12:23 08/11/2026; lượt 3 12:09 08/11/2026; trước đó 12:00 08/11/2026: lượt 2 sau sửa (b) — mục 4b**
 - Plan: `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a` — mức nhẹ, A duyệt.
-- Nhánh `p9-t1-ngay` `9f08d91` (5 commit; sau sửa (b) + (i) từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
+- Nhánh `p9-t1-ngay` `f388b19` (6 commit; sau sửa (b) + (i) + review nhánh M-1 / m-1 từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
 - **Kết quả lượt 3 (sau 2 sửa A chọn): tiêu chí 1–4 ĐẠT; S1 đạt (lượt 1), S4 sát.** Còn 1 câu kém đi ổn định (R8) + 1 câu đổi qua lại giữa lượt (E2 / E3). S5 NOT RUN. A quyết merge (mục 4c, 6).
 
 ## 1. Phạm vi
@@ -23,7 +23,7 @@ Không đổi định tuyến (B làm G), không đổi lời dặn trả lời.
 | `backend/llm/generator_openai_full_corpus.py` | tham số `ngay_lich_fn`; `max_turns_for`: lượt có đưa công cụ ngày ⇒ **4 + 1** (A chọn sau lượt đo — tham số B2 D5 đổi **có điều kiện**, lý do mục 4); lượt khác giữ 4 |
 | `backend/llm/full_corpus_prompt.py` | `NGAY_LICH_MO_TA` (mô tả công cụ) |
 | `backend/config/settings.yaml` | `ngay_lich: false` |
-| `backend/tests/test_ngay_lich.py` (mới) | 44 test (mục 4) |
+| `backend/tests/test_ngay_lich.py` (mới) | 53 test (mục 4, 4d) |
 
 **Thư viện:** A duyệt **11:06 08/11**, trước khi E cài (§4). Lý do:
 - nhỏ, MIT, 0 phụ thuộc, lịch Việt Nam UTC+7;
@@ -56,7 +56,7 @@ Cài vào `.venv` chung bằng `uv add --no-sync` + `uv sync --inexact --frozen`
   - 11 ngày Tết khớp bảng vi.wikipedia "Ngày đầu năm theo Con giáp" (UTC+7, mở 08/11); 2007 thêm Tuổi Trẻ (16/07/2006);
   - 1985 / 2007 ở UTC+8 ra đúng ngày của Trung Quốc;
   - đổi qua đổi lại 1976–2100 (kiểm phụ).
-- **Test 44 passed** (`test_ngay_lich.py`) + 4 file liên quan, tổng 142 passed. Gồm:
+- **Test (đầu nhánh `f388b19`): 53 passed** (`test_ngay_lich.py`) + 3 file liên quan, tổng 151 passed. Gồm:
   - 4c: lượt đầu / lượt có lịch sử / cờ tắt × không stream + stream;
   - câu chỉ trích nguồn ngày qua kiểm citation;
   - ≤ 2 lần gọi;
@@ -138,12 +138,26 @@ E đề xuất (i) nếu làm tiếp. Hoặc chấp nhận merge với cờ tắ
 
 Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm dừng 0,13).
 
+## 4d. Sau review cả nhánh (sub-agent A, `t1_ngay_branch_review.md`: 0 / 1 / 6)
+
+- **M-1 sửa (`f388b19`).**
+  - Lỗi: không nêu năm (`nam = 0`) mà từ 1/1 tới Tết thì "năm nay" âm ≠ năm dương ⇒ "Tết năm nay" thành Tết đã qua ("đã qua 337 ngày" khi hỏi 20/01/2027).
+  - A chọn: code trả **cả lần gần nhất đã qua và lần sắp tới**, không đoán; mô tả công cụ sửa theo.
+  - Test: 20/01/2027, ngày sau Tết 2027, "rằm tháng Chạp" trong tháng 1.
+- **m-1 sửa:** ngày / tháng ngoài khoảng (vd `10**20`) ⇒ câu cố định thay vì `OverflowError` (trước làm hỏng cả lượt); 2 ca test.
+- **m-3 đóng bằng lần chạy mới:** Q1 đầu nhánh `f388b19` (cờ tắt) ↔ `main` `6f30404`: **228 / 228 giống byte** (12:22).
+  - Ca "cờ bật, câu không từ chỉ ngày": giống theo cấu trúc code (không có `ngay_lich_fn` ⇒ generator gọi như cờ tắt), có test tên công cụ; chưa so byte riêng.
+- **Sau sửa M-1 chưa đo lại lượt có phí.** Đổi chỉ ở ca không nêu năm, và lượt đo 08/11 rơi vào tháng 11: năm âm = năm dương ⇒ câu trả lời bộ ngày không đổi theo cấu trúc. Lượt xác nhận trước khi bật nên có câu hỏi trong khoảng 1/1 – Tết (giờ giả không dùng được cho server — cần câu mới hoặc đợi đúng mùa) ⇒ ghi điều kiện bật.
+- **m-2, m-5, m-6 (phiên sau, `STATUS_E.md`):**
+  - m-2: bộ dò bắt nhầm "thứ hai / thứ ba" chỉ thứ tự và phân số "1/2", "24/7";
+  - m-5: "đạt" là trên **chính bộ đã dùng để chỉnh** qua 3 lượt (sửa đều là phép tính tất định, không phải lời dặn riêng từng câu) ⇒ trước khi bật cần S5 + một lượt xác nhận trên vài câu ngày mới;
+  - m-6: thiếu test stream có gọi `ngay_lich` thật và test đường song song; **"tháng tới / tháng sau / cuối tuần" vẫn do model tự cộng** (chỉ "tuần này / tuần sau / tháng này" do code ghi) — giới hạn.
+
 ## 5. Lỗi và giới hạn
 
 - **R8 — A chấp nhận (08/11) đổi lấy 8 câu cứu được.** Câu "dịp lễ sắp tới" kém ổn định cả 3 lượt. Nguyên nhân: kho thiếu lịch lễ hội "sắp tới" theo ngày; khi model biết hôm nay là 08/11, nó tìm lễ sau ngày đó, không thấy ⇒ từ chối. Bản cũ trả lời chung chung (đoán dịp 30/4) + hỏi lại. Sửa thật cần dữ liệu lịch sự kiện theo ngày (đợt 2 cổng), không phải code công cụ.
 
-- **A2 (tiêu chí 3):** model so ngày lễ với hôm nay rồi kết luận ngược. Hướng sửa theo nguyên tắc "phép so sánh ⇒ code": kết quả `ngay_lich` ghi luôn "đã qua N ngày" / "còn N ngày nữa" so với hôm nay. **Chưa làm** — thay đổi sau khi đã thấy kết quả ⇒ cần A quyết + đo lại bộ ngày.
-- **R8:** biết hôm nay là 08/11 thì model không tìm được lễ "sắp tới" trong kho ⇒ từ chối; mốc nói chung chung + hỏi lại (người chấm OK).
+- **A2:** đã sửa ở `f536dfe` (code ghi "đã qua / còn N ngày") — lượt 2 / 3 không còn lỗi.
 - Bộ kiểm L2 bằng code chỉ bắt sai ngày / thứ, không bắt sai lập luận trước / sau ⇒ người chấm bắt.
 - Đáp án ngày dùng cùng thư viện (vòng tròn) — đã qua bộ đối chiếu ở trên.
 - Một lượt (mức nhẹ) ⇒ câu chỉ đổi do nhiễu chưa tách được ở bộ ngày.
@@ -151,11 +165,14 @@ Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm
 
 ## 6. Bàn giao
 
-- **Quyết (A / User):**
-  - (a) giữ cờ tắt, merge code — 8 câu tốt hơn, 1 câu "nói chắc sai" (A2) thay câu từ chối, 1 câu từ chối mới (R8);
-  - (b) thêm "đã qua / còn N ngày" bằng code rồi đo lại bộ ngày (≈ 0,03 USD);
-  - (c) phương án B của spec.
-  - Theo thứ tự lỗi User (nói chắc sai > từ chối nhầm), E đề xuất **(b) trước khi bật**.
+- **Trạng thái:**
+  - A chọn (b) rồi (i), lượt 3 đạt tiêu chí 1–4;
+  - R8 A chấp nhận;
+  - review nhánh `changes_requested` 0 / 1 / 6 ⇒ M-1 + m-1 sửa ở `f388b19`; m-2 / m-5 / m-6 phiên sau.
+- **Trước khi bật cờ:**
+  - S5;
+  - lượt xác nhận trên câu ngày mới (gồm ca 1/1 – Tết của M-1);
+  - G vào `main` ⇒ đo lại 5 câu bị định tuyến xếp ngoài phạm vi.
 - **Dữ liệu (private):** kết quả `data/phase_9/t1/ket_qua/`, chấm `data/phase_9/t1/cham/` (brief ghi trước 11:32, khoá, 2 phiếu), công cụ `data/phase_9/t1/tools/`.
 - **Chạy lại:**
   - server + `chay_t1.py <BASE> <ngay|an_toan|golden|chon:Rx> <moc|nhanh> <luot> <out>`;

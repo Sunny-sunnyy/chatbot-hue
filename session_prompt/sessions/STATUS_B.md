@@ -2,6 +2,30 @@
 
 Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22`. Quyền phiên: User cấp lại "như 07/11" (A báo).
 
+## PHIÊN SAU ĐỌC TRƯỚC (viết 12:24 08/11/2026 `date`)
+
+**Việc dở: Phase 9 bậc G — cổng 2 nhóm.** Nhánh `p9-g-cong` **sha khoá `87d6798`** (đã push) · `ROUTER_INSTRUCTIONS` `6b4796f7a35c` · `ANSWER_SYSTEM_INSTRUCTIONS` `426109d21b13`
+· biểu mẫu `81d3040cf53f` (= `main`). Report có bảng từng vòng: `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`. Tiền G ≈ **0,747 / 0,75** (mức User).
+Worktree `/tmp/b_g` = `87d6798` (giữ nguyên); mốc `/tmp/b_moc_g` = `main` `442f758`. **`/tmp` mất (khởi động lại)** ⇒
+`cd /home/minhhieu/hue_rag && git worktree prune && git worktree add /tmp/b_g 87d6798 && git worktree add --detach /tmp/b_moc_g 442f758` rồi trong mỗi worktree
+`ln -s /home/minhhieu/hue_rag/data data && ln -s /home/minhhieu/hue_rag/knowledge-base-hue knowledge-base-hue` (G không cần build giao diện cho các lệnh dưới).
+
+**1. Bộ kín — A xin User nâng tiền (≈ 0,011 USD vượt 0,75) rồi User chạy `!` (agent không đọc `*sealed*`).** Chạy lần lượt N = 1 rồi N = 2 (4 lệnh), mỗi lệnh in **một dòng**
+số đếm + id, không chữ câu:
+
+```
+! cd /tmp/b_g/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py tuyen /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/kin_a_sealed_r1.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/a_ranh_gioi_sealed.jsonl 2>&1 | tail -1
+! cd /tmp/b_g/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py ca_cau /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/kin_b_sealed_r1.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/b_ngoai_pham_vi_sealed.jsonl 2>&1 | tail -1
+```
+(đổi `_r1` ⇒ `_r2` cho lượt 2; file ra đã có thì lệnh dừng — không ghi đè.)
+
+**Cách đọc:** dòng `tuyen` (bộ a, 8 câu): `"S3_hue_sang_xa_giao": []` bắt buộc; `"xa_giao_sang_hue": "k / n"` cộng phần đã thấy (1 / 8 ở lượt G1) phải ≤ 2 / 16. Dòng `ca_cau`
+(bộ b, 10 câu): `"S2_ngoai_bi_tra_loi": []` và `"S2b_ngoai_cong_web_mo": []` bắt buộc; `"S2_ngoai_tu_choi_kho"` khác rỗng ⇒ **C** đọc các câu đó (B không đọc). Cả 2 lượt đạt ⇒ sàn kín đạt.
+
+**2. Phần 0 USD còn lại:** S4 — cặp mù `data/phase_9/g_cong/s4/cap_mu.jsonl` (30, khoá giải mã `khoa_giai_ma.json`), sub-agent chấm ⇒ `s4/cham_1.jsonl` (đã giao 12:26 08/11, xem
+có file chưa; giải mã: đếm cặp G tệ hơn − tốt hơn theo `dung` / `du`, ≥ 3 / 30 ⇒ âm). S1 3 số còn lại (2 judge mù, mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py`; mốc `ket_qua/cacau_moc_r1.jsonl`,
+khoá `ket_qua/khoa_r1.jsonl` + `khoa_r2.jsonl`). S6 từ `khoa_r1.jsonl`. **3.** S5 (cần tiền + báo A trước). **4.** Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
+
 ## 0. Đang làm — B-ảnh: đưa 7 ảnh cổng vào `frontend/` (A giao 08/11, 0 USD)
 - Nhánh `p11-anh-cong` từ `main` `db6e15d`, worktree `/tmp/b_anh` (symlink `data/`, `knowledge-base-hue/`).
 - Nguồn: `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/` (`bay_anh_dot1.json`, `danh_sach.md` "7 ảnh dùng cho đợt 1"; #5 thật ở `ngoai_git/`).
@@ -42,12 +66,11 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
 - Công cụ: `data/phase_9/g_cong/tools/do_g.py` (`tuyen` / `ca_cau` web thật / `dem`); kết quả `data/phase_9/g_cong/ket_qua/`.
 - Đã chạy: 1 lượt thật (0,00072 USD) đạt. **Bước 2 xong:** mốc `main` ×2 (S3 0, xã giao ⇒ Huế 1/15); biến thể bản đầu S3 0 ×2 nhưng lượt nhắc tên B3 6/7 ⇒ Huế ⇒ **1 vòng chỉnh** lời dặn định tuyến (`9c8a7f2`, ROUTER `6b4796f7a35c`) ⇒ S3 **0 ×2**, xã giao ⇒ Huế 2/27 (lịch sử 1/7, (a) 1/8); A4 / A5 âm lịch (E) ⇒ `tro_ly_hue` ×2. File `ket_qua/tuyen_*`. Tiền bước 2 ≈ 0,128 USD (6 lượt định tuyến, cộng từ file; tin cho A ghi nhầm 0,107).
 - **Bước 3 xong (ANSWER `33690e611fd9`):** S2 0 ×2 ✓ · S2c 16 / 15 vs mốc 16 ✓ · S3b 0 ✓ · **S2b trượt 7 & 5** (câu nơi khác ⇒ agent trả "không đủ thông tin" ⇒ web) · quan sát: khẩn cấp 9/30 + A4/A5 ⇒ câu ngoài phạm vi. Tiền bước 3 0,301.
-- **Chỉnh 2** lời dặn agent `c9f2df4` (ANSWER `5d70126fdf17`, đã push) — **chưa đo**; chờ A / User nâng trần G (đã dùng ≈ 0,43; dự phóng ≈ 0,7 > dừng 0,55).
-- Report dở: `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`.
-- **Lệnh chạy tiếp** (từ `/tmp/b_g/backend`, `K=/home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua`, `T=…/g_cong/tools/do_g.py`, `AM=…/g_cong/quan_sat_am_lich_A4_A5.jsonl`):
-  `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python $T ca_cau $K/cacau_g3_r1.jsonl an_toan mau30 s2 s2c a khan_cap $AM` (≈ 0,12 USD) ⇒ đạt ⇒ `…cacau_g3_r2…` ⇒ chấm S1 / S4 ⇒ kín ⇒ S5. Mất `/tmp` (khởi động lại) ⇒ `git worktree prune; git worktree add /tmp/b_g p9-g-cong; git worktree add --detach /tmp/b_moc_g 442f758` + symlink `data/`, `knowledge-base-hue/`.
-- Còn: bước 3 cả câu (an_toan, mau30, s2, s2c, a) biến thể ×2 + mốc ×1 (an_toan, mau30, s2c) ⇒ chấm S1 (mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py` / B6 `xuat_judge.py`, 2 judge mù) + S4 (mẫu 30, judge mù) ⇒ câu đã thấy xếp `tra_loi` ⇒ sub-agent đọc (A m-6) ⇒ kín (A chạy, lệnh chỉ in số đếm) ⇒ S5 (báo A trước) ⇒ report + cổng.
-- **Lệnh kín cho A** (sau khi khoá sha, chạy từ `/tmp/b_g/backend`): `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py tuyen /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/kin_a_sealed_rN.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/a_ranh_gioi_sealed.jsonl` và `… ca_cau …/kin_b_sealed_rN.jsonl …/b_ngoai_pham_vi_sealed.jsonl` (N = 1, 2) — in số đếm + id.
+- User (qua A): mức dừng G 0,75; chỉnh nhiều vòng trên đã thấy. **Vòng 2** `c9f2df4` (A `5d70126f`): S2b 2. **Vòng 3** `87d6798` (A `426109d21b13`): S2 0 · S2b 0 · S3b 0 · S2c 15/17 (= sàn) · khẩn cấp 0 ngoài phạm vi.
+- **SHA KHOÁ: `87d6798` · ROUTER `6b4796f7a35c` · ANSWER `426109d21b13`** (đã push). Lượt khoá: an toàn ×2 + mẫu 30 (`ket_qua/khoa_r1/r2`): S2 / S2b / S3b 0; S1 "ngoài kho bị trả lời" 0 ×2.
+- **Tiền G ≈ 0,747 / 0,75.** Report (bảng từng vòng): `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`.
+- **Còn:** (1) kín — A chạy lệnh dưới (≈ 0,011, vượt nhẹ ⇒ A quyết); (2) chấm mù S1 (3 số) + S4 mẫu 30, 0 USD, mốc `ket_qua/cacau_moc_r1.jsonl`; (3) S5 (cần thêm tiền, báo A trước) + S6 từ `khoa_r1`; (4) cổng ổn định ⇒ review nhánh.
+- **Lệnh kín cho A** (sha khoá `87d6798`, từ `/tmp/b_g/backend`, `T=/home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py`, `K=/home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua`, `D=/home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2`, `E="--env-file /home/minhhieu/hue_rag/.env"`): với N = 1, 2 — `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag $E python $T tuyen $K/kin_a_sealed_rN.jsonl $D/a_ranh_gioi_sealed.jsonl` và `… python $T ca_cau $K/kin_b_sealed_rN.jsonl $D/b_ngoai_pham_vi_sealed.jsonl` — mỗi lệnh in một dòng số đếm + id (không chữ).
 
 ## 0f. Đang làm — review spec Phase 9 bản 13 (§12, sha `0845b1caefbc`, C viết; A giao 08/11). File khai báo: `docs/superpowers/specs/2026-11-02-phase-9-design_review_v13.md` (mới). Chỉ đọc spec + gói căn cứ + code / dữ liệu; không đọc STATUS_C / tin của C.
 - **Vòng 1 xong 10:53 08/11/2026 (`date`): `changes_requested`** — 2 major (M-1 outcome `out_of_scope` mất khi gỡ nhánh định tuyến; M-2 thiếu sàn S3b agent từ chối nhầm câu Huế) + 5 minor; 0 USD. Chờ C sửa ⇒ vòng 2 (diff §12). Sau khi User duyệt: B code G.
