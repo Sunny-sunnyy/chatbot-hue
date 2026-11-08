@@ -1081,7 +1081,10 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     finally:
         if not task.done():
             task.cancel()
-        await asyncio.gather(task, return_exceptions=True)  # (ii) tự ghi `llm_calls` + đọc nốt trong `finally` của nó; lỗi của (ii) bị bỏ (D3)
+        # Việc nhỏ (7) 08/11: người dùng ngắt ⇒ Starlette huỷ kiểu anyio (mọi lần chờ trong vùng bị huỷ lại) ⇒ không che thì `gather` bị huỷ, bỏ qua
+        # bước gộp dưới ⇒ `chat_metrics` mất `llm_calls` / USD của (ii) (tái tạo: `data/phase_11/viec_nho_e/do_dung_song_song.py`).
+        with anyio.CancelScope(shield=True):
+            await asyncio.gather(task, return_exceptions=True)  # (ii) tự ghi `llm_calls` + đọc nốt trong `finally` của nó; lỗi của (ii) bị bỏ (D3)
         if keep and not merged:  # lỗi / ngắt trước khi gộp xong ⇒ gộp ở đây như trước B6
             _merge_spec(trace, spec, recorder)
         elif not keep:
