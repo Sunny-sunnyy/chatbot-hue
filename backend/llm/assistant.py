@@ -32,6 +32,7 @@ from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
+from llm import ngay_lich as nl
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
@@ -85,6 +86,8 @@ class AssistantFlags:
     # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
     # phản hồi ghi sẵn)
     thoi_tiet: bool = False
+    # Phase 9 T1 (plan `2026-11-08-phase-9-t1-ngay-plan.md`): công cụ `ngay_lich` (code tính ngày + đổi âm ↔ dương) — chỉ đưa khi câu có từ chỉ ngày
+    ngay_lich: bool = False
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -100,6 +103,8 @@ class AssistantFlags:
             raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
+        if self.ngay_lich and not self.tim_them:
+            raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
 
@@ -439,6 +444,39 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
     return thoi_tiet
 
 
+def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
+    """Hàm `ngay_lich` của **một lượt** (T1): model chỉ gửi loại lịch + số; code tính, dựng chữ, đăng thành **một nguồn** trong sổ nguồn (như
+    `_nguon_thoi_tiet` — câu chỉ có ngày vẫn trích được [n]). ≤ 2 lần / câu (lần thứ 3 ⇒ câu nhắc, không tính)."""
+    LoaiLich = Literal["hom_nay", "duong", "am"]
+
+    async def ngay_lich(loai: LoaiLich, ngay: int, thang: int, nam: int, thang_nhuan: bool) -> str:
+        """Hôm nay theo giờ Việt Nam và đổi ngày dương ↔ âm lịch Việt Nam.
+
+        Args:
+            loai: "hom_nay" (chỉ hôm nay), "duong" (đổi ngày dương sang âm) hoặc "am" (đổi ngày âm sang dương).
+            ngay: ngày cần đổi (0 khi loai là "hom_nay").
+            thang: tháng cần đổi (0 khi loai là "hom_nay").
+            nam: năm cần đổi; 0 = năm nay.
+            thang_nhuan: true nếu là tháng âm nhuận.
+        """
+        lan = sum(t["name"] == "ngay_lich" for t in trace.tools)
+        entry = {"name": "ngay_lich", "ms": 0.0, "loai": loai}
+        trace.tools.append(entry)
+        if lan >= 2:
+            entry["het_luot"] = True
+            return "Đã đổi ngày ở các lần gọi trước trong lượt này; hãy viết câu trả lời."
+        # (i) A 08/11: khoảng "tuần này / tuần sau / tháng này" do code ghi — xét câu cuối + câu hỏi liền trước (như bộ dò)
+        cau = " ".join([query] + ([trace.history[-1][0]] if trace.history else []))
+        dong = nl.ket_qua(loai, ngay, thang, nam, thang_nhuan, cau=cau).splitlines()
+        src = PackedSource(id=len(trace.so_nguon) + 1, title=nl.TIEU_DE_NGUON, heading_path=(nl.MUC_NGUON,), excerpts=tuple(dong), source=nl.NGUON_SOURCE)
+        trace.so_nguon.append(src)
+        chu = FullCorpusContextBuilder._block(src)
+        trace.context_parts.append(chu)
+        return chu
+
+    return ngay_lich
+
+
 def chu_cua_model(trace: AnswerTrace) -> str:
     """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
     answer, noi = trace.answer or "", trace.thoi_tiet_noi
@@ -698,6 +736,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
                                "co_cong_cu": tu_khoa and not ngoai_7}
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
+    if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
+        extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     return extra
 
 
@@ -960,6 +1000,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
                     elif cong_cu == "thoi_tiet":  # B5b: "đang xem dự báo…" (không phải "đang tìm kho")
                         yield "status", {"stage": "thoi_tiet"}
+                    elif cong_cu == "ngay_lich":  # T1: tính ngày ở code, tức thì — không báo "đang tìm kho" (giữ trạng thái đang có)
+                        pass
                     else:
                         yield "status", {"stage": "searching"}
                 elif event.type == "run_item_stream_event" and event.name == "tool_output":
@@ -967,7 +1009,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         for buoc in trace.buoc_lich[da_phat_buoc:]:
                             yield "status", {"stage": "lich_trinh", **buoc}
                         da_phat_buoc = len(trace.buoc_lich)
-                    elif cong_cu != "thoi_tiet":  # B5b: kết quả dự báo không phải "đã tìm kho"
+                    elif cong_cu not in ("thoi_tiet", "ngay_lich"):  # B5b / T1: kết quả dự báo / ngày không phải "đã tìm kho"
                         yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
         except Exception:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)

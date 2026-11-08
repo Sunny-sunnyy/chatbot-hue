@@ -999,6 +999,7 @@ dependencies = [
     { name = "httpx" },
     { name = "ipykernel" },
     { name = "jupyter" },
+    { name = "lunar-vn" },
     { name = "markdown-it-py" },
     { name = "nltk" },
     { name = "numpy" },
@@ -1037,6 +1038,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "ipykernel" },
     { name = "jupyter" },
+    { name = "lunar-vn", specifier = "==1.4.0" },
     { name = "markdown-it-py", specifier = ">=4.0.0,<5.0.0" },
     { name = "nltk" },
     { name = "numpy" },
@@ -1555,6 +1557,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/da/34/28fff3ab31ccff1fd4f6c7c7b0ceb2b6968d8ea4950663eadcb5720591a0/lark-1.3.1.tar.gz", hash = "sha256:b426a7a6d6d53189d318f2b6236ab5d6429eaf09259f1ca33eb716eed10d2905", size = 382732, upload-time = "2025-10-27T18:25:56.653Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/82/3d/14ce75ef66813643812f3093ab17e46d3a206942ce7376d31ec2d36229e7/lark-1.3.1-py3-none-any.whl", hash = "sha256:c629b661023a014c37da873b4ff58a817398d12635d3bbb2c5a03be7fe5d1e12", size = 113151, upload-time = "2025-10-27T18:25:54.882Z" },
+]
+
+[[package]]
+name = "lunar-vn"
+version = "1.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1d/99/15477fcd75dd6a875f7f9306b0aeb44fe047c24eb9b20b3eb4f18847b2bd/lunar_vn-1.4.0.tar.gz", hash = "sha256:d8101646226ead82932d0c17075cc6ed48a7f74803bc399d56a743d4f7c11bf9", size = 17136, upload-time = "2026-07-11T08:07:23.88Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b9/89/017dcc744c7a9066288c440dc9f0da5b6cd4a2bf35ecaa263fa03260059e/lunar_vn-1.4.0-py3-none-any.whl", hash = "sha256:c42506eed4bc599bd3f88777ab2650f8ea60aee1cb69980073b731bb74c34749", size = 13220, upload-time = "2026-07-11T08:07:22.562Z" },
 ]
 
 [[package]]
