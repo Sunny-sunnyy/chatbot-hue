@@ -299,5 +299,5 @@ def test_weather_and_feature_routes(app_client):
     assert ok == {"trang_thai": "ok", "hom_nay": {"tmax": 30, "tmin": 23, "xs_mua": 20}, "cap_nhat": "09:15 06/11",
                   "ghi_cong": "Dữ liệu thời tiết: Open-Meteo.com (CC BY 4.0)"}
     assert loi == {"trang_thai": "loi"}  # lỗi ⇒ không số
-    assert features_off == {"lich_trinh_bieu_mau": False, "thoi_tiet": False, "anh": False, "tra_web": True}
+    assert features_off == {"lich_trinh_bieu_mau": False, "thoi_tiet": False, "anh": False, "tra_web": True, "ban_do_lich": False}
     assert features_on["thoi_tiet"] is True and features_form["lich_trinh_bieu_mau"] is True

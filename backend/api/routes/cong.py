@@ -109,4 +109,4 @@ async def tinh_nang(request: Request):
     state = request.app.state
     flags = _flags(state)
     return {"lich_trinh_bieu_mau": flags.lich_trinh_bieu_mau, "thoi_tiet": flags.thoi_tiet, "anh": getattr(state, "anh", None) is not None,
-            "tra_web": flags.tra_web}
+            "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}

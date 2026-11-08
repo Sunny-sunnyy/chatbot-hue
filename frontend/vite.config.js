@@ -11,5 +11,7 @@ const CO_ANH_LE_HOI_RIENG = existsSync(new URL("./public/anh/rieng/lv_festivals.
 export default defineConfig({
   base: "/static/",
   define: { __CO_ANH_LE_HOI_RIENG__: JSON.stringify(CO_ANH_LE_HOI_RIENG) },
+  // Không nhúng ảnh thành `data:` (CSP gốc `img-src` không có `data:`; CSS Leaflet có 3 ảnh PNG không dùng) ⇒ ảnh thành file riêng, chỉ tải khi dùng
+  build: { assetsInlineLimit: 0 },
   plugins: [react(), tailwindcss()],
 });

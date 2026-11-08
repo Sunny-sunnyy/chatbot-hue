@@ -7,7 +7,7 @@ import { useRoute } from "./route.js";
 // điều hướng bằng hash (D5), trợ lý nổi trên mọi trang + trang `#/tro-ly`, MỘT cuộc trò chuyện qua các trang (D8), điện thoại có thanh dưới.
 // Cờ server (`/api/tinh_nang`) ⇒ mục tương ứng ẩn khi tắt.
 
-const TINH_NANG_TAT = { lich_trinh_bieu_mau: false, thoi_tiet: false, anh: false, tra_web: false };
+const TINH_NANG_TAT = { lich_trinh_bieu_mau: false, thoi_tiet: false, anh: false, tra_web: false, ban_do_lich: false };
 const TEN_DAY_DU = "Huế · Trải nghiệm văn hóa & du lịch";  // Q-U5 (User 07/11)
 const TEN_NGAN = "Trải nghiệm Huế";
 const TEN_TRO_LY = "Trợ lý Huế";
@@ -103,7 +103,7 @@ export default function App() {
         {route.page === "len-ke-hoach" && (
           <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
-        {route.page === "gioi-thieu" && <GioiThieu />}
+        {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} />}
         {onTroLy && (
           <div className="khung tro-ly-trang">
             <h1 className="trang-h">{TEN_TRO_LY}</h1>

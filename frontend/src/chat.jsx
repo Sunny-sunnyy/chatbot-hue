@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
 import { streamAnswer } from "./stream.js";
 import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
+// Bản đồ lịch trình (plan 2026-11-08): chunk riêng — chỉ tải khi lịch có ≥ 1 toạ độ hợp lệ (server chỉ gửi `toa_do` khi cờ `ban_do_lich` bật)
+const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
+const coToaDo = td => Array.isArray(td) && td.length === 2 && td.every(Number.isFinite);  // kiểm đủ (khung Huế) ở `BanDoLich.toaDoHopLe`
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -382,19 +385,25 @@ function LichExtras({ lich, onAsk, onEditPlan }) {
   const links = (lich.ban_do || []).filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
   return (
     <div className="lich">
-      {links.length > 0 && (
-        <div>
-          <p className="text-sm font-semibold text-accent-deep">Bản đồ từng điểm</p>
-          <ul className="map-links">
-            {links.map(item => <li key={item.map_url}><a href={item.map_url} target="_blank" rel="noopener noreferrer">{item.ten}</a></li>)}
-          </ul>
-        </div>
-      )}
+      {links.some(item => coToaDo(item.toa_do)) ? (
+        <Suspense fallback={<MapLinks links={links} />}><BanDoLich items={links} /></Suspense>
+      ) : links.length > 0 && <MapLinks links={links} />}
       {lich.sua && onEditPlan && (
         <button type="button" className="retry" onClick={() => onEditPlan(lich.sua.chon)}>Sửa — điền lại biểu mẫu</button>
       )}
       {lich.sua && !onEditPlan && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
       {lich.sua && !onEditPlan && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}
+    </div>
+  );
+}
+
+function MapLinks({ links }) {
+  return (
+    <div>
+      <p className="text-sm font-semibold text-accent-deep">Bản đồ từng điểm</p>
+      <ul className="map-links">
+        {links.map(item => <li key={item.map_url}><a href={item.map_url} target="_blank" rel="noopener noreferrer">{item.ten}</a></li>)}
+      </ul>
     </div>
   );
 }

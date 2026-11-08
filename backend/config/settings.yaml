@@ -69,6 +69,8 @@ assistant:
   nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true
   lich_trinh: false              # B5 (plan bản 7 D1): công cụ lịch trình (code xếp + code tự hỏi số ngày) — TẮT tới khi đạt luật ghi trước. Công cụ `hoi_lai` của B4 đã gỡ (C183 m-2)
   lich_trinh_bang: ../data/phase_9/lich_trinh/diem_v3.json  # bảng điểm User duyệt (v3 `e94b7f4263f2`, private); chỉ nạp khi cờ bật
+  ban_do_lich: false             # bản đồ lịch trình (plan 2026-11-08 bản 1 `e738f6f9f3ae`): ghim có số theo thứ tự trong ngày, toạ độ do code gắn; bật ⇒ CSP img-src thêm data: + tile.openstreetmap.org (Leaflet huỷ tile bằng GIF data:). TẮT tới khi đạt §7
+  lich_trinh_toa_do: ../data/phase_9/lich_trinh/diem_toa_do_v5.json  # toạ độ dữ liệu mở Huế (C204, private); chỉ nạp khi ban_do_lich bật
   lich_trinh_bieu_mau: true      # cổng đợt 1 (spec D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp bằng giá trị nút, sinh không công cụ (V5: luật lịch trong lời dặn + suy luận low). BẬT 07/11/2026 (User; S3 Q-F bộ quyết đạt 24/24, F-a 12/12 ×2)
   tra_web: true                  # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — BẬT 05/11/2026 tối (đạt luật ghi trước + kín ×2 + review; User duyệt); cần router + tim_them
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại

@@ -230,6 +230,16 @@ a { color: inherit; }
 .lich { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; max-width: 68ch; margin-top: 10px; }
 .map-links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 0; padding: 0; list-style: none; }
 .map-links a { color: var(--color-accent); text-decoration: underline; }
+/* Bản đồ lịch trình (plan 2026-11-08 §2): ghim tròn có số = thứ tự trong ngày; dòng ghi công OSM luôn hiện trong khung */
+.bd { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.bd-ngay { display: flex; flex-wrap: wrap; gap: 6px; }
+.bd-khung { height: 260px; width: 100%; border-radius: 12px; border: 1px solid var(--color-line); z-index: 0; }
+.ghim { display: flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-accent); color: #fff;
+        font-size: 14px; font-weight: 600; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .35); }
+.bd-ds { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 15px; }
+.bd-ds a { color: var(--color-accent); text-decoration: underline; }
+.bd-so { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 999px;
+         background: var(--color-accent); color: #fff; font-size: 12px; font-weight: 600; }
 .suggest { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 68ch; margin-top: 10px; }
 .suggest p { width: 100%; }
 .suggest button { min-height: 40px; padding: 0 14px; border: 1px solid var(--color-field-line); border-radius: 999px; background: var(--color-surface);
@@ -321,6 +331,7 @@ a { color: inherit; }
   .ct-hop { position: static; }
   .anh-lon { aspect-ratio: 16 / 7; }
   .ft { padding-bottom: 96px; }
+  .bd-khung { height: 220px; }
   .noi { display: none; }
   .chat { inset: 0; width: auto; height: auto; max-height: none; border-radius: 0; border: 0; }
   .td { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: 64px;

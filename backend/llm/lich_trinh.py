@@ -421,8 +421,38 @@ def map_url(ten: str) -> str:
     return MAP_BASE + quote(f"{ten}, Huế")
 
 
-def ban_do(bang: Bang, khung: dict) -> list[dict]:
-    return [{"ten": bang.theo_id[i]["ten"], "map_url": map_url(bang.theo_id[i]["ten"])} for i in diem_trong_khung(khung)]
+# Bản đồ lịch trình (plan `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` §3): khung Huế để kiểm toạ độ lúc nạp (trình duyệt kiểm lại)
+KHUNG_HUE = ((16.0, 16.8), (107.0, 108.0))
+
+
+def nap_toa_do(path: str | Path, bang: Bang) -> dict[str, tuple[float, float]]:
+    """Toạ độ điểm (`diem_toa_do_v5.json`, dữ liệu mở Huế — C204) cho bản đồ giao diện: chỉ điểm có trong bảng lịch và có toạ độ.
+    Toạ độ không phải số / ngoài khung Huế ⇒ `ValueError` (không khởi động). Model không thấy toạ độ."""
+    toa_do = {}
+    for d in json.loads(Path(path).read_text(encoding="utf-8"))["diem"]:
+        if d["id"] not in bang.theo_id or d["vi_do"] is None:
+            continue
+        vi, kinh = d["vi_do"], d["kinh_do"]
+        (vmin, vmax), (kmin, kmax) = KHUNG_HUE
+        if not all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in (vi, kinh)) or not (vmin <= vi <= vmax and kmin <= kinh <= kmax):
+            raise ValueError(f"bảng toạ độ: {d['id']} sai toạ độ")
+        toa_do[d["id"]] = (float(vi), float(kinh))
+    return toa_do
+
+
+def ban_do(bang: Bang, khung: dict, toa_do: dict[str, tuple[float, float]] | None = None) -> list[dict]:
+    """Link "mở bản đồ" từng điểm theo thứ tự khung. Có `toa_do` (cờ `ban_do_lich`) ⇒ thêm ngày / buổi / thứ tự trong ngày (từ 1) / toạ độ
+    (`None` khi bảng không có) để giao diện vẽ ghim có số."""
+    if toa_do is None:
+        return [{"ten": bang.theo_id[i]["ten"], "map_url": map_url(bang.theo_id[i]["ten"])} for i in diem_trong_khung(khung)]
+    out = []
+    for ng in khung["ngay"]:
+        ids = [(b, id_) for b in BUOI for id_ in ng["buoi"][b]]
+        for thu_tu, (b, id_) in enumerate(ids, 1):
+            ten = bang.theo_id[id_]["ten"]
+            out.append({"ten": ten, "map_url": map_url(ten), "ngay": ng["ngay"], "buoi": b, "thu_tu": thu_tu,
+                        "toa_do": list(toa_do[id_]) if id_ in toa_do else None})
+    return out
 
 
 # ---------- D8: kiểm cuối chữ model ----------

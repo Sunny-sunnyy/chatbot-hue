@@ -46,6 +46,17 @@ FRONTEND_DIR = REPO_ROOT / "frontend" / "dist"
 # Phase 10 (spec A7, User duyệt 05/11): `img-src` thêm `blob:` — chỉ để xem trước ảnh người dùng vừa chọn (URL do chính trang tạo, không mở mạng).
 FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; "
                 "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
+# Bản đồ lịch trình (plan 2026-11-08 §5): cờ `ban_do_lich` bật ⇒ `img-src` thêm host ảnh tile + `data:`. Leaflet tải tile bằng `<img>` ⇒ không đổi
+# connect-src. `data:` (A chọn 08/11): Leaflet huỷ tile đang tải bằng cách gán GIF rỗng `data:` (`_removeTile` / `_abortLoading`); không mở mạng, và chữ
+# model không chèn được ảnh vì DOMPurify không cho thẻ `img` (`tests/test_static_ui.py::test_answer_sanitizer_is_an_allowlist_without_fetching_tags`)
+TILE_HOST = "https://tile.openstreetmap.org"
+FRONTEND_CSP_BAN_DO = FRONTEND_CSP.replace("img-src 'self' blob:;", f"img-src 'self' blob: data: {TILE_HOST};")
+
+
+def frontend_csp(app_state) -> str:
+    """CSP theo cờ — trước lifespan (chưa có cờ) ⇒ bản gốc."""
+    flags = getattr(app_state, "assistant_flags", None)
+    return FRONTEND_CSP_BAN_DO if flags is not None and flags.ban_do_lich else FRONTEND_CSP
 
 
 class FrontendStaticFiles(StaticFiles):
@@ -55,7 +66,7 @@ class FrontendStaticFiles(StaticFiles):
     async def get_response(self, path, scope):
         response = await super().get_response(path, scope)
         if response.media_type == "text/html":
-            response.headers["Content-Security-Policy"] = FRONTEND_CSP
+            response.headers["Content-Security-Policy"] = frontend_csp(scope["app"].state)
         return response
 
 
@@ -219,8 +230,8 @@ def create_app(settings=None):
         app.mount("/static", FrontendStaticFiles(directory=FRONTEND_DIR), name="static")
 
         @app.get("/", include_in_schema=False)
-        async def frontend_index():
-            return FileResponse(FRONTEND_DIR / "index.html", headers={"Content-Security-Policy": FRONTEND_CSP})
+        async def frontend_index(request: Request):
+            return FileResponse(FRONTEND_DIR / "index.html", headers={"Content-Security-Policy": frontend_csp(request.app.state)})
 
     @app.exception_handler(RequestValidationError)
     async def validation_handler(request: Request, error: RequestValidationError):
