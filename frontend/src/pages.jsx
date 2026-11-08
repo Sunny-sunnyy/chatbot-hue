@@ -1,23 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { renderArticleHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
+import { ANH_DAU_TRANG, ANH_LINH_VUC, MOI_ANH } from "./anh.js";
 
 // Các trang của cổng đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` D9–D12), bản mẫu 2 "Sông Hương".
-// Thẻ bài chỉ hiện trường kho có (tên, loại, tóm tắt) — không sao, không "Liên hệ", không giờ / giá chung chung (D10). Chưa có ảnh được phép ⇒ khối
-// hoa văn giữ chỗ (Q-U2 (b): ảnh Commons vào sau khi User kiểm).
+// Thẻ bài chỉ hiện trường kho có (tên, loại, tóm tắt) — không sao, không "Liên hệ", không giờ / giá chung chung (D10). Ảnh (User chốt 07/11):
+// chỉ 2 ảnh đầu trang + 5 ô lĩnh vực (`anh.js`); thẻ bài / trang bài giữ khối hoa văn.
 
 // 5 lĩnh vực kho (mã = tên thư mục); thứ tự như bản mẫu.
 export const LINH_VUC = [
-  { id: "foods", ten: "Ẩm thực", mo: "Món Huế, quán ăn, cà phê, đặc sản",
-    icon: "M3 12h18a9 8 0 0 1-18 0zM8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4" },
-  { id: "heritages", ten: "Di tích", mo: "Kinh thành, lăng tẩm, chùa, di sản",
-    icon: "M2 21h20M4 21V11h16v10M1 11l11-8 11 8M9 21v-6h6v6" },
-  { id: "festivals", ten: "Lễ hội", mo: "Lễ cung đình, lễ dân gian, Festival",
-    icon: "M12 2v3M7 6h10l2 4-2 9H7l-2-9zM9 19v3M15 19v3" },
-  { id: "performing_arts", ten: "Nghệ thuật biểu diễn", mo: "Nhã nhạc, ca Huế, tuồng",
-    icon: "M12 20V5l8-2v13M12 20a3 3 0 1 1-3-3h3M20 16a3 3 0 1 1-3-3h3" },
-  { id: "travel", ten: "Đi lại và tham quan", mo: "Điểm đến, vé tham quan, dịch vụ",
-    icon: "M2 17c4-3 6 3 10 0s6 3 10 0M6 14l3-8h6l3 8" },
+  { id: "foods", ten: "Ẩm thực", mo: "Món Huế, quán ăn, cà phê, đặc sản" },
+  { id: "heritages", ten: "Di tích", mo: "Kinh thành, lăng tẩm, chùa, di sản" },
+  { id: "festivals", ten: "Lễ hội", mo: "Lễ cung đình, lễ dân gian, Festival" },
+  { id: "performing_arts", ten: "Nghệ thuật biểu diễn", mo: "Nhã nhạc, ca Huế, tuồng" },
+  { id: "travel", ten: "Đi lại và tham quan", mo: "Điểm đến, vé tham quan, dịch vụ" },
 ];
 const LOAI_CON = { restaurants: "Quán ăn", cafes: "Quán cà phê", local_specialties: "Đặc sản", heritage: "Di tích", festival: "Lễ hội",
                    arts: "Loại hình nghệ thuật", places: "Điểm đến", tickets: "Vé tham quan", services: "Dịch vụ" };
@@ -42,15 +38,6 @@ const BIEU_MAU = [
 ];
 export const CAU_BIEU_MAU = "Lên kế hoạch tham quan Huế";  // chỉ để in lại trong khung trò chuyện — server dựng câu từ giá trị nút
 
-function Icon({ d, size = 26 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
-         aria-hidden="true">
-      <path d={d} />
-    </svg>
-  );
-}
-
 function Song({ className }) {
   return (
     <svg className={className} viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
@@ -74,6 +61,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk }) {
   return (
     <>
       <section className="hero" aria-labelledby="hero-h">
+        <img className="hero-anh" src={ANH_DAU_TRANG.song.src} alt="" fetchpriority="high" />
         <Song className="song" />
         <div className="hero-in">
           <h1 id="hero-h" className="hero-h">Hỏi về Huế, như hỏi người bản xứ</h1>
@@ -131,7 +119,7 @@ function O5LinhVuc({ bai }) {
     <div className="kp-ds">
       {LINH_VUC.map(lv => (
         <a key={lv.id} className="kp" href={`#/kham-pha/${lv.id}`}>
-          <span className="kp-ic"><Icon d={lv.icon} /></span>
+          <img className="kp-anh" src={ANH_LINH_VUC[lv.id].src} alt="" loading="lazy" />
           <span className="kp-ten">{lv.ten}</span>
           <span className="kp-mo">{lv.mo}</span>
           {soBai(bai, lv.id) != null && <span className="kp-so">{soBai(bai, lv.id)} bài</span>}
@@ -143,12 +131,19 @@ function O5LinhVuc({ bai }) {
 
 export function KhamPha({ bai }) {
   return (
-    <div className="khung khoi-trang">
-      <p className="vet"><a href="#/">Trang chủ</a> / Khám phá</p>
-      <h1 className="trang-h">Khám phá Huế</h1>
-      <p className="khoi-p">Năm chủ đề của kho tư liệu — đọc bài gốc mà trợ lý dùng để trả lời.</p>
-      <O5LinhVuc bai={bai} />
-    </div>
+    <>
+      <section className="kp-dau" aria-labelledby="kp-dau-h">
+        <img className="hero-anh" src={ANH_DAU_TRANG.ngoMon.src} alt="" />
+        <div className="khung kp-dau-in">
+          <p className="vet"><a href="#/">Trang chủ</a> / Khám phá</p>
+          <h1 id="kp-dau-h" className="trang-h">Khám phá Huế</h1>
+          <p className="ds-p">Năm chủ đề của kho tư liệu — đọc bài gốc mà trợ lý dùng để trả lời.</p>
+        </div>
+      </section>
+      <div className="khung khoi-trang">
+        <O5LinhVuc bai={bai} />
+      </div>
+    </>
   );
 }
 
@@ -331,6 +326,22 @@ export function GioiThieu() {
         trò chuyện. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký. Nút “Cuộc trò chuyện mới” xoá phần đã nhớ.</p>
       <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI (OpenAI); khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm. Đừng gõ thông tin cá nhân
         vào câu hỏi.</p>
+      <h2 id="nguon-anh">Nguồn ảnh</h2>
+      <ul className="nguon-anh">
+        {MOI_ANH.map(a => <li key={a.src}><GhiCong a={a} /></li>)}
+      </ul>
     </div>
+  );
+}
+
+function GhiCong({ a }) {
+  const ngoai = { target: "_blank", rel: "noopener noreferrer" };
+  return (
+    <>
+      {a.cho}. Ảnh: {a.tacGia}
+      {a.giayPhep && <> · {a.linkGiayPhep ? <a href={a.linkGiayPhep} {...ngoai}>{a.giayPhep}</a> : a.giayPhep}</>}
+      {" · "}<a href={a.nguon} {...ngoai}>{a.giayPhep ? "trang ảnh trên Wikimedia Commons" : "nguồn ảnh"}</a>
+      {a.doi && <> · đã {a.doi}</>}
+    </>
   );
 }

@@ -58,3 +58,18 @@ def test_root_and_assets_are_served_without_starting_lifespan():
         response = client.get(asset)
         assert response.status_code == 200, asset
         assert "content-security-policy" not in response.headers
+
+
+def test_portal_images_are_in_repo_and_private_image_is_gitignored():
+    # Bản clone (không có ảnh riêng) phải build ra đủ ảnh: mọi ảnh `anh.js` trỏ tới ngoài `rieng/` có trong `public/anh/`;
+    # ảnh lễ hội không giấy phép mở (`rieng/`) không được vào repo công khai (User 07/11).
+    import subprocess
+
+    js = (REPO_ROOT / "frontend/src/anh.js").read_text(encoding="utf-8")
+    files = re.findall(r'anh\("([^"]+\.jpg)"', js)
+    assert len(files) == 8  # 2 đầu trang + 5 lĩnh vực + ảnh lễ hội riêng
+    for name in files:
+        if not name.startswith("rieng/"):
+            assert (REPO_ROOT / "frontend/public/anh" / name).is_file(), name
+    ignored = subprocess.run(["git", "check-ignore", "-q", "frontend/public/anh/rieng/lv_festivals.jpg"], cwd=REPO_ROOT)
+    assert ignored.returncode == 0

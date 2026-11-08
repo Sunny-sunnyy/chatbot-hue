@@ -112,7 +112,8 @@ export default function App() {
         )}
       </main>
 
-      {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.</div></footer>}
+      {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.
+        {" "}<a href="#/gioi-thieu">Nguồn ảnh</a></div></footer>}
 
       {!onTroLy && !panelOpen && (
         <button type="button" className="noi" aria-expanded="false" aria-controls="khung-tro-ly" onClick={() => setPanelOpen(true)}>
