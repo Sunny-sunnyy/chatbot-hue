@@ -207,7 +207,8 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 - Trong vài giây người dùng thấy chữ **chưa qua bộ kiểm**; nếu bộ kiểm cuối hỏng thì chữ bị rút lại, lỗi giữa chừng thì xoá hết + nút "Thử lại" (bạn chọn 31/10). Lỗi kiểm cuối hôm nay 0 / 489 lần ⇒ hiếm;
   sẽ xem lại nếu > 1 % câu / tuần bị rút / xoá. Ca giao diện "rút lại" và "luồng đứt" chưa kiểm được bằng đường thật (chỉ phát lại luồng). Giao diện **làm lại 02/11** (merge `ed8e6e8`)
   rồi **thành cổng đợt 1 07/11** (merge `dbfc925`) — giữ đủ 17 yêu cầu đó; nguồn nay là dòng "Nguồn" dưới câu (bỏ số trong chữ); nhãn "có thể sai"; lỗi mạng / server lạ báo bằng tiếng Việt.
-- **Cổng chưa có:** ảnh thật (27 ảnh giấy phép mở đang chờ bạn kiểm; giờ là khối hoa văn giữ chỗ); bản đồ, lưu trú, ăn uống theo cơ sở, sự kiện theo ngày (đợt 2); tóm tắt thẻ lấy "đoạn đầu" của bài nên vài thẻ là dòng kiểu "Tên chính thức: …".
+- **Ảnh cổng (09:58 08/11/2026, `c9931be`):** 7 ảnh thật (6 ảnh Commons trong git + ảnh lễ hội riêng ngoài git; bản tải về dùng ảnh Commons thay), ghi công ở Giới thiệu.
+- **Cổng chưa có:** bản đồ, lưu trú, ăn uống theo cơ sở, sự kiện theo ngày (đợt 2); tóm tắt thẻ lấy "đoạn đầu" của bài nên vài thẻ là dòng kiểu "Tên chính thức: …".
 
 **Thước đo (giới hạn của bằng chứng)**
 
@@ -233,7 +234,7 @@ Chi tiết từng dòng (số đo, nguồn, hướng xử lý) và mọi phươn
   - Tiêu chí "lời phù hợp người đi cùng": bạn chốt hiểu là **"không có lời trái với nhóm đã chọn" là đủ** (lời hiện trung tính, không câu riêng cho từng nhóm).
   - Theo dõi: chữ đầu một lượt ngay sau khởi động 5,77 s ⇒ **đang đo lại** 10 lượt (C).
   - Bộ 24 lượt không loại được tỉ lệ từ chối nhỏ — khi đó người dùng vẫn thấy lịch (lời do code dựng).
-- Sau đó: **B7 đóng gói** Phase 9; **đợt 2 cổng** (bản đồ / lưu trú / ăn uống / sự kiện); **deploy AWS** (đã thử build Docker trên máy, ảnh đã bỏ dữ liệu đánh giá; còn sửa trước khi đưa link công khai: giới hạn lượt, cookie `Secure`, tắt `/docs`). Đóng code khi bạn nói (dự kiến 25–30/12/2026; đóng = đã chạy trên AWS).
+- Sau đó: **B7 đóng gói** Phase 9; **đợt 2 cổng** (bản đồ / lưu trú / ăn uống / sự kiện); **deploy AWS chỉ khi hệ thống đủ tính năng, ổn định, đóng gói + Docker đầy đủ** (bạn quyết 08/11) (đã thử build Docker trên máy, ảnh đã bỏ dữ liệu đánh giá; còn sửa trước khi đưa link công khai: giới hạn lượt, cookie `Secure`, tắt `/docs`). Đóng code khi bạn nói (dự kiến 25–30/12/2026; đóng = đã chạy trên AWS).
 Lịch sử thứ tự cũ (30/10–01/11, đã xong):
 1. ~~Hiện chữ dần (streaming)~~ — **xong, chạy từ 01/11** (merge `a80e12d`).
 2. **Đóng gói Phase 1–8 — xong, Phase 8 bạn đóng 14:29 01/11/2026:** lượt đo cuối cùng một commit (Golden 176 + lượt lặp cùng ngày, bộ an toàn 32, câu theo ngày, 22 câu qua API, **bộ kín mới 40 câu**) — **xong 01/11, mọi sàn đạt** (`report_agent/2026-10-31_streaming_spec/do_cuoi_implementation.md`; bộ kín cho thấy số dev lạc quan: Đủ 4,18 ↔ 4,58); B0 xong 01/11 (bạn giữ 10 đoạn); báo cáo so sánh phương án (đã đăng 01/11, thêm phần mới khi xong); bảng giới hạn (mục này).
