@@ -1,9 +1,23 @@
-# STATUS B — viết lại 15:43 07/11/2026 (`date`) cho B mở lại giữa phiên (User reset context cả 4 session)
+# STATUS B — phiên 08/11 (mở 09:16 08/11/2026 `date`)
 
-Vai: thực thi. Terminal đổi khi mở lại ⇒ `ListAgents` (07/11 trước reset: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`).
-`main` = `75a0cf9` (tài liệu). **Biểu mẫu "Lên kế hoạch" V5 BẬT trên `main`** (`lich_trinh_bieu_mau: true`, `thoi_tiet: true` — User 07/11).
-**Không còn worktree nào của B** (`/tmp/b_cong`, `/tmp/b_dep` đã gỡ; mọi nhánh đã push). Không code dở.
-⚠ Dự án khác của User dùng máy tới ~16:00 ⇒ hỏi A trước khi chạy test / build / server nặng.
+Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22`. Quyền phiên: User cấp lại "như 07/11" (A báo).
+
+## 0. Đang làm — B-ảnh: đưa 7 ảnh cổng vào `frontend/` (A giao 08/11, 0 USD)
+- Nhánh `p11-anh-cong` từ `main` `db6e15d`, worktree `/tmp/b_anh` (symlink `data/`, `knowledge-base-hue/`).
+- Nguồn: `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/` (`bay_anh_dot1.json`, `danh_sach.md` "7 ảnh dùng cho đợt 1"; #5 thật ở `ngoai_git/`).
+- **File khai báo sửa (trong worktree):**
+  - `frontend/public/anh/*.jpg` (mới — 6 ảnh Commons + dự phòng lễ hội)
+  - `frontend/public/anh/rieng/` (gitignore — ảnh #5 thật, không commit) + `.gitignore`
+  - `frontend/vite.config.js` (cờ build: có ảnh #5 thật hay không)
+  - `frontend/src/pages.jsx` (ảnh đầu trang, 5 ô lĩnh vực, mục "Nguồn ảnh" ở Giới thiệu), `frontend/src/anh.js` (mới — danh sách ảnh + ghi công), `frontend/src/index.css`, `frontend/src/App.jsx` (link "Nguồn ảnh" ở chân trang)
+  - test: `backend/tests/test_static_ui.py` (nếu cần)
+  - report: `report_agent/2026-11-06_giao_dien_cong/b_anh_cong_implementation.md`
+- Ảnh: User đã chốt 17:11 07/11 (bộ vi.wikipedia, không còn bộ `commons/` cũ).
+- **Xong 09:31 08/11/2026 (`date`), chờ review C:** `p11-anh-cong` = `fb00719` (đã push). 24 test đạt; Playwright 1440 + 390: 7 ảnh tải, 0 lỗi console / CSP, cả khi có lẫn không có ảnh riêng; `git ls-files` 0 file `rieng`. Report `report_agent/2026-11-06_giao_dien_cong/b_anh_cong_implementation.md`. Tiền 0 USD. Server thử 8871 đã tắt. Worktree `/tmp/b_anh` giữ tới khi review xong.
+- Script: `data/phase_11/anh_cong/tools/dong_anh.py` (chép + thu nhỏ, chạy lại ra cùng byte), `kiem_anh.py` (Playwright tự kiểm).
+- Cần A quyết lúc deploy: ảnh #5 riêng vào `dist/` nếu máy build có file ⇒ link công khai có phục vụ ảnh này không.
+
+# (cũ) STATUS B viết lại 15:43 07/11/2026
 
 ## 1. Đã xong 07/11 (sha trên origin)
 
@@ -26,10 +40,7 @@ Vai: thực thi. Terminal đổi khi mở lại ⇒ `ListAgents` (07/11 trước
 
 ## 2. Đang chờ — việc kế của B
 
-1. **7 ảnh Commons** (2 đầu trang + 5 lĩnh vực; không ảnh thẻ bài — User chọn):
-   - E lấy lại từ ảnh đại diện vi.wikipedia, chỉ file Commons; danh sách + giấy phép `data/nghien_cuu_giao_dien_2026-11-06/anh/commons/tai_ve.json`;
-   - User kiểm xong ⇒ B đóng ảnh vào build (`frontend/` ⇒ `dist/`; CSP `img-src 'self'` giữ, không link ảnh ngoài) + dòng ghi công;
-   - chỗ chừa: `.hero` + 5 ô lĩnh vực (`frontend/src/pages.jsx`, `index.css`).
+1. **7 ảnh cổng** — đang làm (mục 0).
 2. **Deploy thật chờ User.** Khi lên máy:
    - merge `main` vào `p12-deploy-nhap` ⇒ build lại ⇒ đo lại cỡ ảnh (bản trước có cache uv 1,9 GB);
    - chạy lại `dung_dockerignore.py` nếu build record đổi;
