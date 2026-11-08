@@ -103,6 +103,10 @@ def test_short_block_when_question_is_not_about_who_pays():
     ("Vé 250.000 đồng.", "vé: 200.000 đồng", ["tien_ngoai_bang"]),
     ("Mở cửa lúc 8h.", "giờ mở cửa: 07h00 – 17h30", ["gio_ngoai_bang"]),
     ("Nhóm 3 người tốn 600.000 đồng.", "vé: 200.000 đồng · câu hỏi: 3 người", ["tien_ngoai_bang"]),  # không cộng / nhân
+    # vòng 3 (lượt 2 T05): đoạn kho ghi ô bảng "420.000" không kèm "đồng" ⇒ vẫn là số được phép; số khác vẫn bị bắt
+    ("Vé tuyến 420.000 đồng/người lớn và 80.000 đồng/trẻ em.", "| Tuyến 1 | 420.000 | 80.000 |", []),
+    ("Vé tuyến 450.000 đồng.", "| Tuyến 1 | 420.000 | 80.000 |", ["tien_ngoai_bang"]),
+    ("Vé 2.000 đồng.", "năm 2026, mở 7:30", ["tien_ngoai_bang"]),            # năm / giờ không thành số tiền được phép
 ])
 def test_number_check(chu, cho_phep, loi):
     assert vg.kiem_so(chu, cho_phep) == loi

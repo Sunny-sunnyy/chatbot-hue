@@ -190,11 +190,16 @@ def _so_tien(text: str) -> set[str]:
     return {re.sub(r"\D", "", t) for t in tim_so_tien(text)}
 
 
+_NHOM_NGHIN = re.compile(r"(?<![\d.,])\d{1,3}(?:\.\d{3})+(?![\d,]|\.\d)")  # "420.000" trần — ô bảng giá của kho thường không kèm "đồng"
+
+
 def kiem_so(chu_model: str, cho_phep: str) -> list[str]:
     """Kiểm cuối (plan M-1, n-3): số tiền + giờ (so theo cặp giờ / phút đã chuẩn hoá: "7h30" ↔ "7:30") trong chữ model ⊂ số trong `cho_phep`
-    (dòng đã gửi model + đoạn kho được trích + câu hỏi). Trả mã lỗi; rỗng = đạt."""
+    (dòng đã gửi model + đoạn kho được trích + câu hỏi). Phía cho phép nhận cả số nhóm nghìn **trần** (vòng 3, User duyệt 08/11: ô bảng giá trong kho
+    ghi "420.000" không kèm "đồng" ⇒ `tim_so_tien` không nhận ⇒ rút lại oan một câu đúng — như thời tiết dùng `tap_so` cho mọi số). Trả mã lỗi."""
     loi = []
-    if _so_tien(chu_model) - _so_tien(cho_phep):
+    cho_tien = _so_tien(cho_phep) | {re.sub(r"\D", "", x) for x in _NHOM_NGHIN.findall(_nfc(cho_phep))}
+    if _so_tien(chu_model) - cho_tien:
         loi.append("tien_ngoai_bang")
     if _so_gio(chu_model) - _so_gio(cho_phep):
         loi.append("gio_ngoai_bang")
