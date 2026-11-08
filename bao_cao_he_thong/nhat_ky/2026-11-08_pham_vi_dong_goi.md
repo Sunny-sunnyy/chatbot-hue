@@ -10,6 +10,7 @@
 - README của repo sửa cho đúng hiện trạng (trước ghi sai "chưa nhớ hội thoại").
 
 ## Bạn cần làm gì
+- Xem phiếu toạ độ bản đồ (tick "Đúng chỗ?"): `data/phase_11/ban_do/phieu_toa_do_11_diem.md`; ảnh chụp bản đồ: `data/phase_11/ban_do/anh_v2/`.
 - Thu 40 câu giọng nói khi rảnh: `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`.
 - Việc 14 (định tuyến lỗi mà câu có dấu hiệu khẩn cấp ⇒ vẫn trả câu khẩn cấp): A sẽ hỏi riêng.
 
@@ -17,10 +18,13 @@
 | Việc | Kết quả | Ý nghĩa |
 |---|---|---|
 | Ảnh cổng | vào `main` | trang chủ / Khám phá / lĩnh vực có ảnh thật, ghi công đủ |
-| Bản đồ lịch trình | đang code (B) | plan duyệt; thư viện Leaflet + ảnh nền OpenStreetMap; cờ tắt tới khi kiểm đạt |
-| Bật hỏi bằng ảnh | đang review (C) | 5 ảnh thử: đúng cả 5 (ảnh không phải Huế ⇒ "chưa nhận ra"); đoán tên trung vị 3,5 s, chậm nhất 9,1 s |
+| Bản đồ lịch trình | vào `main`, cờ tắt (`a4fde29`) — chờ bạn xem ảnh + phiếu toạ độ | plan duyệt; thư viện Leaflet + ảnh nền OpenStreetMap; cờ tắt tới khi kiểm đạt |
+| Bật hỏi bằng ảnh | **bật trên `main`** (`cf57309`) | 5 ảnh thử: đúng cả 5 (ảnh không phải Huế ⇒ "chưa nhận ra"); đoán tên trung vị 3,5 s, chậm nhất 9,1 s |
 | Nhóm 1 + 2 việc nhỏ | đang làm (B / C / E) | mỗi việc ≤ ½ ngày, gần 0 USD |
 | Deploy | hoãn (bạn quyết) | làm sau khi đóng gói |
+
+## Bàn kiến trúc (đang bàn)
+Bỏ tuyến khẩn cấp; cổng chỉ còn 2 nhóm (trò chuyện xã giao / về Huế), chạy mọi câu; câu ngoài phạm vi vào agent Huế tự từ chối. Bộ đệm: đệm phần đầu câu gửi OpenAI đang chạy tự động; đệm câu trả lời để Phase 12 khi có người dùng thật.
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Trước khi đóng gói, nhóm rà lại mọi ghi chú cũ để không bỏ sót tính năng; việc nhỏ người dùng thấy ngay làm trước, việc lớn / thí nghiệm ghi làm "hướng phát triển". Ảnh cổng: ảnh không có giấy phép mở để ngoài git, bản tải về tự dùng ảnh Commons thay — nên repo công khai không chứa ảnh không được phép.

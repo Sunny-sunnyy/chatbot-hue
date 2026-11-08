@@ -1,12 +1,12 @@
 # Báo cáo cho bạn: Hỏi bằng ảnh (Phase 10)
 
-**Cập nhật lần cuối: 20:26 05/11/2026 — bản 2: thử giao diện ở khung điện thoại ⇒ thẻ ảnh che câu trả lời ⇒ sửa nhỏ giao diện (nhánh chờ review, chưa vào `main`).** Trước: 20:18 05/11/2026 — bản 1: viết mới.
+**Cập nhật lần cuối: 10:30 08/11/2026 — bản 3: **BẬT** (bạn chọn 08/11; merge `3da1cb1`, cờ `cf57309`): nút ảnh ở trang Trợ lý (máy tính thêm khung nổi), thẻ gợi ý không đè câu trả lời, trang Giới thiệu ghi ảnh gửi tới OpenAI; thử 5 ảnh đã thấy đúng cả 5, đoán tên trung vị 3,5 s, chậm nhất 9,1 s (vẫn trên mục tiêu 5 s).** Trước: 20:26 05/11/2026 — bản 2: thử giao diện ở khung điện thoại ⇒ thẻ ảnh che câu trả lời ⇒ sửa nhỏ giao diện (nhánh chờ review, chưa vào `main`).** Trước: 20:18 05/11/2026 — bản 1: viết mới.
 Người viết: E · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
 
 - **Làm gì:** người dùng chụp / chọn một ảnh (món ăn, công trình, cảnh ở Huế) ⇒ hệ thống đoán **1–3 tên** trong một danh sách 42 tên lấy từ kho (bạn đã duyệt) ⇒ người dùng **bấm tên đúng** ⇒ chatbot trả lời như khi gõ câu "Giới thiệu về <tên>", có nguồn như thường. Trợ lý **không bao giờ trả lời thẳng từ ảnh** — chỉ gợi tên để bấm.
-- **Đang chạy thế nào:** code đã vào `main` nhưng **đang tắt** (`anh.bat: false` trong `backend/config/settings.yaml`) ⇒ người dùng **chưa thấy** nút "Hỏi bằng ảnh". Khi bật, ảnh được gửi tới OpenAI (`gpt-6-luna`) để đoán tên.
+- **Đang chạy thế nào:** **đang bật** từ 08/11 (`anh.bat: true`) ⇒ người dùng thấy nút "Hỏi bằng ảnh" ở trang Trợ lý (máy tính: cả khung nổi). Khi bật, ảnh được gửi tới OpenAI (`gpt-6-luna`) để đoán tên.
 - **Chất lượng (bộ 33 ảnh đã thấy):** đoán đúng tên trong 3 gợi ý ở **22 / 25** ảnh Huế (đạt ngưỡng 22), nhưng có lượt gán nhầm tên Huế cho **2 / 5** ảnh không phải Huế (ngưỡng ≤ 1) ⇒ **âm theo thước gốc**. Bạn chọn (11:42 05/11) **giữ dạng gợi ý có xác nhận**: nhãn "có thể sai", luôn có nút "Không phải các tên này — tôi gõ tên"; lỗi đoán nhầm không thành câu trả lời sai vì người dùng phải bấm tên.
 - **Thử thay bằng model chạy trên máy (SigLIP 2, miễn phí):** 3 cách đều **âm** — cách tốt nhất đoán đúng 20 / 25 nhưng **không biết nói "không nhận ra"** (ảnh con mèo cũng được gợi tên Huế). Không đưa vào chatbot.
 - **Tiền / tốc độ:** ≈ **0,0004 USD / ảnh** (≈ 10 đồng) cộng câu trả lời sau khi bấm (≈ 0,0005 USD). Đoán tên mất trung vị ≈ 3 s, chậm nhất (p95) 6,3–9,1 s — **chưa đạt** mục tiêu ≤ 5 s. Tổng tiền Phase 10 tới nay **0,0984 USD** (≈ 2.500 đồng) / trần 0,15.
