@@ -38,6 +38,7 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
 
 ## 0f. Đang làm — review spec Phase 9 bản 13 (§12, sha `0845b1caefbc`, C viết; A giao 08/11). File khai báo: `docs/superpowers/specs/2026-11-02-phase-9-design_review_v13.md` (mới). Chỉ đọc spec + gói căn cứ + code / dữ liệu; không đọc STATUS_C / tin của C.
 - **Vòng 1 xong 10:53 08/11/2026 (`date`): `changes_requested`** — 2 major (M-1 outcome `out_of_scope` mất khi gỡ nhánh định tuyến; M-2 thiếu sàn S3b agent từ chối nhầm câu Huế) + 5 minor; 0 USD. Chờ C sửa ⇒ vòng 2 (diff §12). Sau khi User duyệt: B code G.
+- **Vòng 2 xong (sha `89a48ca72cbd`): `ready_for_user_confirmation`** — 7 / 7 finding vòng 1 đóng; còn 1 minor n-1 (dòng G §12.2 chưa liệt kê S3b ⇒ plan G ghi). 0 USD. Chờ A duyệt sha / User duyệt ⇒ B viết plan + code G.
 
 ## 0e. Xong 08/11 — phiếu toạ độ (`data/phase_11/ban_do/phieu_toa_do_11_diem.md` + nháp `diem_toa_do_v6_nhap.json`, chờ User tick) · review `p11-viec-nho-e` (`report_agent/2026-11-06_giao_dien_cong/b_viec_nho_e_review.md`: ready, 2 minor; tiền ≈ 0,0053 USD — vượt trần 0,005 của A ~0,0003).
 

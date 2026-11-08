@@ -113,3 +113,33 @@ Review tài liệu, 0 USD. Lệnh chỉ đọc: `sha256sum` spec; `grep` / `sed`
 
 **`changes_requested`** — 0 blocker · **2 major** (M-1 outcome ngoài phạm vi; M-2 sàn S3b) · 5 minor. Cả 2 major đóng bằng **thêm chữ vào spec** (một dòng G + một dòng sàn),
 không đổi thiết kế, 0 USD thêm. Minor: plan từng việc xử lý, không cần vòng spec riêng. Vòng 2: B kiểm M-1 / M-2 bằng diff §12.
+
+---
+
+## Vòng 2 — B, 10:59 08/11/2026 (`date`)
+
+Đối tượng: §12 sha256 **`89a48ca72cbd`** (B tính từ file working tree chính). Cách kiểm: `git diff HEAD -- docs/superpowers/specs/2026-11-02-phase-9-design.md` (HEAD
+`5d5edde` chứa bản 13 vòng 1) — đọc mọi dòng đổi; 0 USD. Diff chỉ chạm §12 + dòng trạng thái đầu file.
+
+| Finding vòng 1 | Phần sửa (§12) | Kết luận |
+|---|---|---|
+| **M-1** outcome ngoài phạm vi | §12.5 G: code nhận chữ = `OUT_OF_SCOPE_ANSWER` (so sau `strip()`) ⇒ outcome `out_of_scope` như câu cố định cũ; nêu đủ 3 chỗ phụ thuộc (gợi ý cũ, `tu_choi_kho`, log) + test cả 3 đường (`/api/chat`, stream, #6) | **đóng** |
+| **M-2** sàn S3b | §12.3 thêm dòng **S3b** = 0, đếm bằng code trên các lượt cả-câu đã có, ×2, 0 USD thêm | **đóng** (kèm n-1) |
+| m-1 T3 miễn giảm | §12.5 T3 (a) chữ điều kiện không vào model (b) code nối mỗi khi dòng bảng có điều kiện (c) đếm bằng code + sub-agent | đóng |
+| m-2 T1 | §12.2: "0 ngày / thứ sai **trong chữ trả lời** … cả khi model không gọi công cụ"; §12.5: test có ngày VN ≠ TQ — Tết Ất Sửu 1985 (VN 21/01, TQ 20/02); B WebFetch en.wikipedia "Vietnamese calendar" 08/11: **khớp** (đông chí Hà Nội 21/12 / Bắc Kinh 22/12; miền Bắc đổi UTC+8 ⇒ UTC+7 ngày 08/08/1967) | đóng |
+| m-3 số đo | S3 Golden **×2** (đã tính trong tiền G); T2 "**0 / 34**" (mẫu 30 + 4 câu "kho có" của B6, ×2) | đóng |
+| m-4 T2 câu cố định | câu trung tính "đã ghi nhận — viết câu trả lời từ kho như bình thường" + plan đếm "câu kho nhắc mục web" = 0 | đóng |
+| m-5 thứ tự đo G | §12.5 G: vòng chỉnh định tuyến chỉ đo S3 / chỉ-định-tuyến; S2 / S2b / S3b đo trên bản có cả hai lời dặn | đóng |
+| Câu xác nhận User (T2) | §12.8 thêm: agent **chỉ quyết lúc** tra; code dựng câu tra, tra, viết mục web riêng; agent **không** đọc chữ web (User xác nhận 08/11/2026, A hỏi) | đã ghi |
+
+### Finding mới vòng 2
+
+- **n-1 (minor)** — dòng G ở §12.2 (cột tiêu chí) vẫn ghi "S1, S2, S2b, S3 (§12.3) đạt ×2", **chưa có S3b**. §12.3 có S3b và tiêu đề "Sàn chung … áp cho mọi việc có lượt
+  trả lời" nên ý vẫn rõ ⇒ không chặn. Đóng: plan G liệt kê S3b trong luật ghi trước (hoặc C thêm "S3b" vào dòng G khi tiện — sửa chữ, không cần vòng review).
+
+Không có thay đổi ngoài phạm vi trong diff; không đổi tiền (≈ 0,8) hay luật cắt.
+
+### Decision vòng 2
+
+**`ready_for_user_confirmation`** — 0 blocker · 0 major · 1 minor (n-1). Theo luật 2 vòng (`Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt sha; n-1 sửa lúc
+viết plan G.
