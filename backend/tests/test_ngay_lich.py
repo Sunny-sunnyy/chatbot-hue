@@ -181,3 +181,14 @@ def test_no_year_gives_last_and_next_occurrence(now, ngay, thang, qua, toi):
     dong = nl.ket_qua("am", ngay, thang, 0, False, now).splitlines()
     assert "lần gần nhất" in dong[1] and qua[0] in dong[1] and dong[1].endswith(f"{qua[1]} (so với hôm nay)")
     assert "lần sắp tới" in dong[2] and toi[0] in dong[2] and dong[2].endswith(f"{toi[1]} (so với hôm nay)")
+
+
+@pytest.mark.parametrize("cau, co", [
+    ("Hôm nay là thứ hai à?", True), ("Thứ 7 này đi Đại Nội được không?", True), ("Chiều 15/1 có gì?", True),
+    ("Ngày 2/9/2026 có miễn vé không?", True), ("Đi vào thứ Bảy được không?", True),
+    ("Vua thứ ba triều Nguyễn là ai?", False), ("Lần thứ hai tổ chức là năm nào?", False), ("Mùa thứ hai của lễ hội?", False),
+    ("Quán mở 24/7 không?", False), ("Uống 1/2 ly thôi", False), ("Đại Nội rộng bao nhiêu?", False),
+])
+def test_detector_skips_ordinals_and_fractions(cau, co):
+    # review nhánh m-2: "thứ X" sau danh từ thứ tự và phân số "1/2", "24/7" không phải ngày (Golden 176 vẫn bật 9 câu — cả 9 là cụm ngày thật)
+    assert nl.co_tu_ngay(cau) is co

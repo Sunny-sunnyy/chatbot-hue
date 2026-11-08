@@ -76,13 +76,22 @@ def so_voi_hom_nay(ngay: dt.date, hom: dt.date) -> str:
 # sẽ nhận công cụ không cần — tốn tiền, rủi ro S4).
 _TU_NGAY = re.compile(
     r"(?<!\w)(?:hôm nay|bữa nay|hôm qua|(?:sáng|trưa|chiều|tối|đêm) nay|bây giờ|lúc này|hiện giờ|sắp tới|ngày mai|sáng mai|trưa mai|chiều mai|tối mai|ngày kia|tuần (?:này|sau|tới|trước)|cuối tuần|"
-    r"tháng (?:này|sau|tới|trước)|năm (?:nay|sau|tới|ngoái)|thứ (?:hai|ba|tư|năm|sáu|bảy|[2-7])|chủ nhật|rằm|mùng|mồng|âm lịch|dương lịch|"
-    r"lịch âm|lịch dương|tết)(?!\w)|\b\d{1,2}/\d{1,2}\b",
+    r"tháng (?:này|sau|tới|trước)|năm (?:nay|sau|tới|ngoái)|chủ nhật|rằm|mùng|mồng|âm lịch|dương lịch|"
+    r"lịch âm|lịch dương|tết)(?!\w)"
+    # review nhánh m-2: "dd/mm" chỉ khi đứng sau từ chỉ thời điểm hoặc có năm ("1/2", "24/7" đứng một mình không phải ngày)
+    r"|(?<!\w)(?:ngày|hôm|sáng|trưa|chiều|tối|đêm|từ|đến|tới|vào|dịp|qua)\s+\d{1,2}/\d{1,2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b",
     re.IGNORECASE)
+# review nhánh m-2: "thứ hai / thứ 3…" là ngày trong tuần TRỪ KHI đứng sau danh từ chỉ thứ tự ("vua thứ ba", "lần thứ hai", "mùa thứ hai")
+_THU = re.compile(r"(?:(\w+)\s+)?thứ (?:hai|ba|tư|năm|sáu|bảy|[2-7])(?!\w)", re.IGNORECASE)
+_THU_TU = {"vua", "đời", "lần", "mùa", "người", "con", "bậc", "tầng", "hạng", "giải", "lớp", "phần", "chương", "tập", "vị", "đợt", "kỳ", "khóa",
+           "khoá", "cấp", "hàng", "số", "ngôi", "đứng", "xếp", "thế", "hệ", "chúa", "hoàng", "chiếc", "cái", "điều", "bước", "vòng", "trận"}
 
 
 def co_tu_ngay(text: str) -> bool:
-    return bool(_TU_NGAY.search(unicodedata.normalize("NFC", text)))
+    text = unicodedata.normalize("NFC", text)
+    if _TU_NGAY.search(text):
+        return True
+    return any((m.group(1) or "").lower() not in _THU_TU for m in _THU.finditer(text))
 
 
 def co_tu_ngay_luot(query: str, history) -> bool:
