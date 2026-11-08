@@ -77,6 +77,11 @@ ROUTER_OUTPUTS = {"v1": (RouteSearchOutput, ROUTER_SEARCH_V1), "v3": (RouteSplit
 ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lần 3 "đã hết lượt" + 1 lượt viết
 
 
+def max_turns_for(ngay_lich_fn) -> int:
+    """T1 (A chọn 08/11, sau lượt đo: 1 câu chạm trần vì `ngay_lich` ăn một vòng): lượt có đưa công cụ ngày ⇒ thêm 1 vòng; lượt khác giữ B2 D5."""
+    return ASSISTANT_MAX_TURNS + (1 if ngay_lich_fn is not None else 0)
+
+
 ROUTER_MAX_OUTPUT_TOKENS = 512  # gồm cả token suy luận của model
 WEB_MAX_OUTPUT_TOKENS = 1024  # B6 D8: lần gọi viết mục web (gồm token suy luận); mục ≤ 3 đoạn văn ngắn
 
@@ -421,7 +426,7 @@ class OpenAIFullCorpusGenerator:
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn)
-        result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS,
+        result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn),
                                  error_handlers=handlers)
         return self._tools_result(result, started, call_log, state)
 
@@ -438,7 +443,7 @@ class OpenAIFullCorpusGenerator:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn)
-        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=ASSISTANT_MAX_TURNS, run_config=_run_config(), hooks=call_log,
+        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn), run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
 

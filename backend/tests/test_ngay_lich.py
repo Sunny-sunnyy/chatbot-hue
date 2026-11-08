@@ -132,3 +132,17 @@ def test_date_tool_counts_at_most_two_calls(deps):
     trace, _ = chay(deps, "Rằm các tháng năm nay là ngày nào?", gen, BAT)
     goi = [t for t in trace.tools if t["name"] == "ngay_lich"]
     assert len(goi) == 3 and goi[2].get("het_luot") and sum(s.title == nl.TIEU_DE_NGUON for s in trace.so_nguon) == 2
+
+
+@pytest.mark.parametrize("cau, flags, so_vong", [
+    ("Rằm tháng Giêng năm nay có lễ hội gì?", BAT, 5),   # có đưa `ngay_lich` ⇒ 4 + 1 (A chọn 08/11: công cụ ngày ăn một vòng — R8 chạm trần ở lượt đo)
+    ("Đại Nội có những công trình gì?", BAT, 4),          # không từ chỉ ngày ⇒ giữ B2 D5
+    ("Rằm tháng Giêng năm nay có lễ hội gì?", TAT, 4),    # cờ tắt ⇒ như cũ
+])
+@pytest.mark.parametrize("stream", [False, True])
+def test_max_turns_plus_one_only_when_date_tool_offered(deps, cau, flags, so_vong, stream):
+    from test_b2_tool_loop import tool_call
+    vong = []
+    gen = generator(lambda n, kw: (vong.append(n), [tool_call(f"lễ hội {n}")])[1])  # model cứ đòi tìm thêm ⇒ chạm trần
+    trace, _ = chay(deps, cau, gen, flags, stream=stream)
+    assert len(vong) == so_vong and trace.fixed_outcome == "max_turns"
