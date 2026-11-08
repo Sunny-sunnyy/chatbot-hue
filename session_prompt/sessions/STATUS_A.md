@@ -1,3 +1,13 @@
+# STATUS A — KẾT PHIÊN 08/11 (mở 09:16; cập nhật 12:51 08/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" + "Câu hỏi cho User" (0)–(6) ⇒ hỏi quyền phiên ⇒ hỏi tiền (nâng trần Phase 9) ⇒ cùng lượt giao B (G: S1 có ngữ cảnh, sau đó kín khi User `!`, S5, review, merge), C (T3 theo hướng User chọn), E (T1 lượt xác nhận + S5 ⇒ bật) ⇒ đợt 2 T2 / T4. User bật Docker Desktop + `docker compose up -d qdrant` trước (A đã `docker compose down` lúc kết phiên).
+
+- Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22`.
+- Xong 08/11: ảnh cổng `c9931be`; bản đồ cờ tắt `a4fde29`; hỏi bằng ảnh bật `cf57309`; việc nhỏ B / E / C (`1ff425c`, `56b8baa`, `ad21b6c`); README; spec bản 13 User duyệt `5557f0fd7650`; plan G / T1 / T3 qua review sub-agent; T1 merge cờ tắt (`e401c71`, `7ee12f1`); test cờ ảnh sửa `e7ad76f`; governance mức nhẹ `099c756` + test nhanh `f124527`; vòng cải tiến 22 (S104–S108, W59 / W60 chờ User).
+- Cách làm mới hôm nay (giữ): khi B / C / E bận ⇒ A giao review plan / nhánh cho **sub-agent ngữ cảnh mới** (chỉ dựa spec + code) — 4 lần, bắt lỗi thật (Tết tháng 1, câu từ chối phát 2 lần, công cụ đo không tra web thật); sub-agent viết bộ kín, A chỉ nhận số đếm + md5.
+- Tiền A 08/11 ≈ 0,003 USD (cổng ổn định). Cả phiên ≈ 0,98 USD.
+- **Bẫy A hôm nay:** (1) bật cờ `anh.bat` rồi chỉ chạy test không khoá ⇒ 1 test hỏng khi có khoá (lần 2 — W59); (2) gộp nhánh thêm gói npm mà quên `npm ci` (luật có sẵn); (3) suýt tính tiền Phase 9 sai (2,9 ⇒ 3,0) — cộng lại từng session trước khi ghi; (4) nhiều thông báo idle cũ tới sau tin giao việc ⇒ kiểm `ListAgents` / file đầu ra trước khi nhắn lại.
+
 # STATUS A — PHIÊN 07/11 (mở 11:53; cập nhật 15:44 07/11/2026 `date`, trước khi User mở lại 4 session — CHƯA kết phiên)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" (viết lại 15:44 07/11/2026) ⇒ xác nhận quyền phiên 07/11 bằng một câu ⇒ `ListAgents` ⇒ giao theo "Làm tiếp" ⇒ hỏi User mỗi lần một câu.
