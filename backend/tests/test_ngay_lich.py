@@ -192,3 +192,37 @@ def test_no_year_gives_last_and_next_occurrence(now, ngay, thang, qua, toi):
 def test_detector_skips_ordinals_and_fractions(cau, co):
     # review nhánh m-2: "thứ X" sau danh từ thứ tự và phân số "1/2", "24/7" không phải ngày (Golden 176 vẫn bật 9 câu — cả 9 là cụm ngày thật)
     assert nl.co_tu_ngay(cau) is co
+
+
+def test_stream_turn_calling_date_tool_has_no_search_status_and_passes_citation(deps):
+    # review nhánh m-6: đường stream có gọi `ngay_lich` thật — không báo "đang tìm kho" cho công cụ này, câu chỉ trích nguồn ngày qua kiểm citation
+    def kich_ban(n, kw):
+        if n == 1:
+            return [ngay_call("am", 1, 1, 2027)]
+        so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Lịch hệ thống", json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n"))
+        return [answer(f"Mùng 1 Tết năm 2027 là thứ Bảy, 06/02/2027 [{so[-1]}].")]
+
+    trace, events = chay(deps, "Mùng 1 Tết năm sau là thứ mấy?", generator(kich_ban), BAT, stream=True)
+    stages = [d["stage"] for k, d in events if k == "status"]
+    assert "searching" not in stages and stages.count("searched") == 1  # "searched" duy nhất là lần tìm đầu V0, không phải từ `ngay_lich`
+    assert any(t["name"] == "ngay_lich" for t in trace.tools) and trace.citation_error is None
+
+
+@pytest.mark.parametrize("cau, co_cong_cu", [("Tết năm nay là ngày nào?", True), ("Đại Nội rộng bao nhiêu?", False)])
+def test_parallel_path_offers_date_tool_only_with_date_words(deps, cau, co_cong_cu):
+    # review nhánh m-6: đường song song #6 (định tuyến chạy cùng phần trả lời) — phần trả lời nhận `ngay_lich` đúng như đường thường
+    from llm.assistant import answer_turn_stream_parallel
+    from llm.full_corpus_prompt import ROUTER_INSTRUCTIONS
+    from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+    from test_toc_do_song_song import Client, TimedResponses
+
+    responses = TimedResponses(route="tro_ly_hue", router_delay=0, answer_delay=0)
+    gen = OpenAIFullCorpusGenerator(client=Client(responses), model="probe")
+    flags = dataclasses.replace(BAT, router=True, song_song_tra_loi=True)
+
+    async def go():
+        return [e async for e in answer_turn_stream_parallel(cau, *deps, gen, AnswerTrace(), flags)]
+
+    asyncio.run(go())
+    tra_loi = [c for c in responses.calls if not str(c.get("instructions", "")).startswith(ROUTER_INSTRUCTIONS[:80])]
+    assert tra_loi and all(("ngay_lich" in tool_names(c)) is co_cong_cu for c in tra_loi)
