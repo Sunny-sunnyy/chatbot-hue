@@ -1,0 +1,65 @@
+# Implementation Report: Phase 9 T3 — bảng vé + giờ mở cửa (`tra_ve_gio`) — lượt 1 **ÂM theo luật ghi trước** (Q2 17 / 20 < 19, Q3 0 / 4 khối)
+
+Người làm: C (Claude Code, `hue-rag-e9`) · 08/11/2026 (code 11:12 → đo xong 11:36 — `date`)
+Nhánh `p9-t3-bang` = `7ae4faf` (từ `main` `de10c6b`, đã push; cờ `tra_ve_gio: false`). Plan bản 2 `dbcd1a2f6d81` (A duyệt). Luật đo nhẹ (User 08/11, `Session_Prompt.md` §7–§8):
+Q2 mốc 1 + nhánh 1 lượt. Tiền lượt này **0,025679 USD** (Q2 mốc 0,012847 + nhánh 0,012832, từ `chat_metrics.usd`). Repo public: không chép kho / câu bộ đo.
+
+## 1. Dữ liệu (User duyệt 08/11 câu 1; A theo khuyến nghị câu 2–5)
+
+- `data/phase_9/t3_bang_ve_gio/bang_v1.json` sha256 `874af96dd995` (private): 60 điểm, 161 dòng vé, 119 dòng giờ (gồm 9 điểm dùng **giờ chung Quần thể**, ghi rõ), 28 điểm
+  đánh dấu "nguồn ghi khác nhau", 59 mục quy định chung áp cho nhóm Quần thể; bỏ 6 sự kiện đã diễn ra. Nháp `bang_nhap.json` kiểm **1.011 / 1.011** chuỗi có thật ở đúng
+  file:dòng (`tools/kiem_nhap.py`, đọc kho qua `scripts/grep_kb.sh`); `tools/chot_v1.py` chứng minh v1 không thêm dòng nào ngoài nháp.
+
+## 2. Code (`7ae4faf`, 0 USD)
+
+`backend/llm/ve_gio.py` (mới: nạp + khớp tên / bí danh, cổng từ khoá, trường gửi model ↔ khối code, khối điều kiện nguyên văn, kiểm số tiền + giờ trong ngày) · `assistant.py`
+(cờ + bảng chỉ nạp khi cờ bật, `ve_gio_for_turn`, nguồn mỗi file kho một nguồn — `source` = file kho, `_ve_gio_cuoi`: kiểm số ⇒ rút lại như thời tiết, câu từ chối có dòng ⇒
+câu dẫn + dòng, `OUT_OF_SCOPE_ANSWER` ⇒ không khối, `chu_cua_model` bóc khối, stream giữ chữ từ chối) · `generator_openai_full_corpus.py` (công cụ thứ tư + `max_turns_cho`: +1 có
+`tra_ve_gio`, +1 nữa khi cùng có `thoi_tiet` — n-1) · `settings.yaml` (cờ tắt + đường dẫn) · `tests/test_t3_ve_gio.py` (36 ca).
+
+## 3. Kiểm 0 USD
+
+| Kiểm | Kết quả | Thời gian |
+|---|---|---|
+| `test_t3_ve_gio.py` | **36 passed** — gồm rút lại khi bịa giá trên **cả 3 đường** (`/api/chat`, stream, song song), câu từ chối có dòng ⇒ câu dẫn (stream không lộ câu từ chối), dòng miễn phí không vào chuỗi gửi model, nguồn có `bai_id`, cổng từ khoá (10 câu dương + 6 câu thường âm + 6 / 6 câu miễn giảm của bộ an toàn trúng), `max_turns` | ~15 s |
+| 12 file test bị chạm | **542 passed / 1 failed** — failed `test_cong_dot_1.py::test_weather_and_feature_routes` (`anh: True ≠ False`) **cũng hỏng trên `main` `099c756` khi chạy cả file** (C chạy); chạy riêng thì đạt ⇒ phụ thuộc thứ tự, không do nhánh | 2 phút 42 giây |
+| Q1 (`capture_all.py`) | cờ tắt **228 / 228** giống byte `main` `806b5df`; cờ bật: **181 / 181** câu không từ khoá giống byte; đúng 45 câu có từ khoá được đưa công cụ (Golden 30 / 176 · an toàn 13 / 32 · smoke 2 / 10) | 3 lần chụp × ~1–2 phút |
+
+## 4. Lượt có phí — Q2 (20 câu, ghi nhãn trước `do/bo_t3.jsonl` md5 `c89955f1bed9`; server thật `/api/chat/stream`)
+
+| | Mốc `main` | Nhánh (cờ bật) |
+|---|---|---|
+| Q2 đạt (luật plan: mọi số tiền / giờ ∈ dòng bảng của điểm nhãn ∧ có số nhãn ∧ không rút lại) | 16 / 20 | **17 / 20** (≥ mốc ✓, **< 19 / 20** ✗) |
+| Model gọi `tra_ve_gio` | — | **2 / 20** |
+| Q3 khối điều kiện ở 4 câu miễn giảm / đối tượng | 0 / 4 | **0 / 4** ✗ (khối chỉ có khi công cụ được gọi) |
+| rút lại · `max_turns` | 0 · 0 | 0 · 0 |
+| USD | 0,012847 | 0,012832 |
+
+Chữ đầu (chỉ ghi, **không** là S5 — A: máy đang đo việc khác): mốc p50 2,1 s / p95 8,5 s · nhánh p50 2,8 s / p95 10,3 s.
+
+**Sửa bộ chấm (không chạy lại lượt có phí):** bản chấm đầu báo gần mọi câu "tiền ngoài bảng" ở **cả hai** nhánh vì (1) nhãn giá ghi thiếu đơn vị ("200.000") ⇒ bộ nhận tiền
+không đọc được nhãn; (2) tập cho phép chỉ gồm số nhãn, hẹp hơn luật plan ("∈ dòng nhãn của câu"). Sửa theo đúng chữ plan (mọi dòng bảng của điểm nhãn, giá kèm đơn vị) rồi
+chấm lại cùng dữ liệu. Code runtime không bị ảnh hưởng (dòng gửi model có đơn vị).
+
+## 5. Đọc kết quả
+
+- **Quan sát:** model trả lời giá / giờ từ đoạn kho của lần tìm đầu (`lan_tim_dau: v0` — đoạn bảng vé thường đã có trong 10 đoạn) ⇒ hiếm khi gọi công cụ thứ tư; Q2 nhánh
+  ≈ mốc (17 ↔ 16). Phần T3 thật sự thêm giá trị — **khối điều kiện nguyên văn** và **kiểm số theo bảng** — chỉ chạy khi model gọi ⇒ 0 / 4 câu miễn giảm có khối.
+- **Theo luật ghi trước:** Q2 < n − 1 và Q3 trượt ⇒ **âm** ở lượt 1; cờ giữ tắt. Không chạy S1 / S4 cho biến thể này (tiết kiệm ≈ 0,1 USD — biến thể đã trượt sàn).
+- **Giả thuyết (chưa chứng minh):** để model quyết gọi là sai chỗ theo khung AI FDE ("thứ tự bắt buộc ⇒ code") — khi code đã thấy từ khoá vé / giờ **và** dò được tên điểm
+  trong câu, việc tra bảng là bắt buộc, không cần phán đoán.
+
+## 6. Hướng tiếp (A / User quyết)
+
+- **(a) Phương án B của spec:** bảng chỉ cho kiểm cuối (không công cụ) — code kiểm số trong câu trả lời so với bảng, sai ⇒ câu cố định "giá / giờ có thể khác — xem nguồn".
+- **(b) Vòng chỉnh 2 (plan cho phép tới 2 vòng):** **code tự tra** khi câu có từ khoá **và** code dò được ≥ 1 tên điểm của bảng trong câu (khớp nguyên tên / bí danh trong
+  chữ) ⇒ dòng bảng thành nguồn **trước** lần sinh (như lần tìm đầu) + khối điều kiện + kiểm số như hiện có; công cụ giữ cho câu code không dò ra tên. Đo lại Q2 (2 × 0,013) rồi
+  S1 ×2 + S4 (≈ 0,1). C khuyến nghị (b): giữ đúng hai giá trị T3 (khối nguyên văn + kiểm số) mà không phụ thuộc model.
+
+## 7. Bằng chứng (private)
+
+`data/phase_9/t3_bang_ve_gio/`: `bang_v1.json`, `phieu_cho_user.md`, `q1/` (3 bản chụp + `khac_bat.json`), `do/bo_t3.jsonl`, `do/q2_moc_main.jsonl` / `.cham.json`,
+`do/q2_nhanh.jsonl` / `.cham.json`, `tools/` (`kiem_nhap.py`, `gop.py`, `chot_v1.py`, `do_t3.py`).
+
+**Giải thích ngắn:** bảng vé / giờ đã dựng và kiểm từng chữ với kho; code đọc bảng đúng (test, 3 đường). Nhưng khi để model tự quyết có tra bảng hay không, nó gần như không
+tra (2 / 20) vì kho đã có giá — nên phần quan trọng (điều kiện miễn giảm chép nguyên văn, kiểm số) không chạy. Đề xuất: code tự tra khi thấy tên điểm + câu hỏi về vé / giờ.
