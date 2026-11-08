@@ -17,6 +17,11 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
 - Script: `data/phase_11/anh_cong/tools/dong_anh.py` (chép + thu nhỏ, chạy lại ra cùng byte), `kiem_anh.py` (Playwright tự kiểm).
 - Cần A quyết lúc deploy: ảnh #5 riêng vào `dist/` nếu máy build có file ⇒ link công khai có phục vụ ảnh này không.
 
+## 0b. Đang làm — plan "bản đồ lịch trình" (A giao 08/11, P1 đợt 2 cổng; 0 USD, chưa code)
+- File khai báo sửa: `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` (mới).
+- **Bản 1 xong 09:35 08/11/2026 (`date`), chờ review** (A chọn người). Khuyến nghị Leaflet 1.9.4 + tile OSM, cờ `ban_do_lich` tắt mặc định, CSP thêm 1 host `img-src` theo cờ; 17 / 28 điểm có toạ độ; 3 câu cần A quyết ở §10. 0 USD.
+- Ảnh cổng: A nhận `fb00719`, C review sau; deploy công khai mặc định KHÔNG kèm ảnh #5 riêng (A ghi checklist).
+
 # (cũ) STATUS B viết lại 15:43 07/11/2026
 
 ## 1. Đã xong 07/11 (sha trên origin)
