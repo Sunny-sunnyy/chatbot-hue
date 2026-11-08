@@ -22,6 +22,13 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
 - **Bản 1 xong 09:35 08/11/2026 (`date`), chờ review** (A chọn người). Khuyến nghị Leaflet 1.9.4 + tile OSM, cờ `ban_do_lich` tắt mặc định, CSP thêm 1 host `img-src` theo cờ; 17 / 28 điểm có toạ độ; 3 câu cần A quyết ở §10. 0 USD.
 - Ảnh cổng: A nhận `fb00719`, C review sau; deploy công khai mặc định KHÔNG kèm ảnh #5 riêng (A ghi checklist).
 
+## 0c. Đang làm — code bản đồ lịch trình (A duyệt plan `e738f6f9f3ae` 08/11; trần 0,005 USD)
+- Nhánh `p11-ban-do` từ `main` `2a2a40e`, worktree `/tmp/b_bando` (symlink `data/`, `knowledge-base-hue/`).
+- **File khai báo sửa (trong worktree):** `backend/llm/lich_trinh.py`, `backend/llm/assistant.py`, `backend/config/settings.yaml`, `backend/api/app.py`,
+  `backend/api/routes/cong.py`, `frontend/package.json` + `package-lock.json`, `frontend/src/BanDoLich.jsx` (mới), `frontend/src/chat.jsx`, `frontend/src/pages.jsx`,
+  `frontend/src/index.css`, `frontend/src/App.jsx` (nếu cần cờ), test `backend/tests/test_ban_do_lich.py` (mới) + test cũ chạm cờ / CSP;
+  report `report_agent/2026-11-06_giao_dien_cong/b_ban_do_implementation.md`; dữ liệu đo `data/phase_11/ban_do/`.
+
 # (cũ) STATUS B viết lại 15:43 07/11/2026
 
 ## 1. Đã xong 07/11 (sha trên origin)
