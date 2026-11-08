@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 T3 — bảng vé + giờ mở cửa (`tra_ve_gio`) — **vòng 1 ÂM, vòng 2 (cuối) ÂM sát ngưỡng** (Q2 18 / 20 < 19; Q3 khối 4 / 4 ✓)
+# Implementation Report: Phase 9 T3 — bảng vé + giờ mở cửa (`tra_ve_gio`) — **ÂM theo luật ghi trước** sau vòng 3 (User duyệt): Q2 19 / 20 ✓ nhưng **Q3 sàn trượt 6 / 10** — cờ tắt
 
 Người làm: C (Claude Code, `hue-rag-e9`) · 08/11/2026 (code 11:12 → đo xong 11:36 — `date`)
 Nhánh `p9-t3-bang` = `7ae4faf` (từ `main` `de10c6b`, đã push; cờ `tra_ve_gio: false`). Plan bản 2 `dbcd1a2f6d81` (A duyệt). Luật đo nhẹ (User 08/11, `Session_Prompt.md` §7–§8):
@@ -99,3 +99,27 @@ thêm sau lượt 2.**
   (vòng thứ ba — ngoài plan) là của A / User.
 - **Chưa chạy:** S1 (an toàn 32 ×2 + mốc), S4 (mẫu 30), S5 (A xếp riêng) — lệnh ở `STATUS_C.md`.
 - Tiền T3: vòng 1 0,025679 + vòng 2 0,011858 = **0,037537 USD**.
+
+
+## 9. Vòng 3 — User duyệt 08/11 (ngoài plan), lý do = sửa lỗi code thật, **không nới sàn / luật chấm**
+
+- **Sửa:** `kiem_so` — phía cho phép nhận thêm số nhóm nghìn **trần** ("420.000") từ đoạn kho được trích, như thời tiết dùng `tap_so` (lỗi T05 vòng 2: ô bảng giá kho không kèm
+  "đồng" ⇒ `tim_so_tien` bỏ qua ⇒ rút lại oan một câu đúng). Commit `21ec06d` (pushed). Test: 3 ca mới (số trần được phép · số khác vẫn bị bắt · năm / giờ không thành số tiền);
+  `test_t3_ve_gio.py` + `test_b5b_thoi_tiet.py` **130 passed**. Chỉ chạm kiểm **sau** lần sinh ⇒ chuỗi gửi model không đổi ⇒ **không chạy lại Q1** (luật §8 User 08/11).
+- **Q2 vòng 3** (cùng bộ, cùng bộ chấm, server thật, 83 giây, **0,012194 USD**): **19 / 20** ✓ (≥ n − 1 và ≥ mốc 16) · rút lại 0 · `max_turns` 0 · bảng tra 19 / 20 · khối điều kiện 4 / 4.
+  Câu trượt duy nhất: T14 (luật chấm như ghi trước; mốc `main` trượt cùng câu).
+- **Q3 (sàn "0 câu model tự nêu điều kiện ngoài khối") — TRƯỢT:** sub-agent mới đọc 10 câu code gắn cờ (luật ghi trước: nhãn hàng giá "trẻ em 7–12 tuổi: …" không tính) ⇒
+  **6 / 10 có** (T01, T06, T07, T08, T19, T20 — model tự viết "trẻ dưới 7 tuổi miễn phí", "người dân Huế giảm 50 %", "người cao tuổi giảm 50 %", "học sinh ngoại khoá miễn"…)
+  — `do/q3_cham.json`. **Nguyên nhân (suy luận, chưa chứng minh):** thiết kế chỉ giữ chữ điều kiện **của bảng** ngoài model; **đoạn kho** của lần tìm đầu vẫn chứa điều kiện
+  miễn giảm ⇒ model chép từ đó. Sub-agent ghi T06 "trẻ em 7–12 tuổi được miễn phí" có thể **sai** với nguồn (bảng: 30.000 / 40.000 cho 7–12 tuổi tuỳ điểm) — chưa kiểm.
+- **Lỗi công cụ đo của C (ảnh hưởng mọi lượt Q2 — mốc + 3 vòng):** `do_t3.py` dùng **một** `httpx.Client` ⇒ cookie giữ ⇒ 20 câu chạy trong **một cuộc trò chuyện** (nhớ 3
+  câu hỏi trước), trái chú thích "mỗi câu cuộc mới". Mốc và nhánh cùng điều kiện ⇒ so sánh vẫn cùng thước, nhưng số không phải "câu độc lập". Sửa lần sau: client mới mỗi câu.
+- **Lỗi thiết kế lộ ra nhờ lỗi trên (T17):** đường code tự tra lấy điểm của **câu hỏi liền trước** khi câu này không nêu tên ⇒ người dùng đổi chủ đề (hỏi chợ rồi hỏi chùa) vẫn bị
+  nối dòng "nguồn ghi khác nhau ở … Chợ Đông Ba" — sai ngữ cảnh. Sửa khả dĩ: chỉ lấy câu trước khi câu này **không** có danh từ địa điểm nào khác / bỏ hẳn fallback.
+- **S1 (an toàn 32):** đã **sinh** nhánh ×2 (`tools/an_toan_t3.py` — công cụ mới vì `an_toan_run.py` cũ gọi cờ mặc định = RAG 1–8; `do/s1_nhanh/`, **0,035522 USD**); **chưa chấm
+  4 số, chưa chạy mốc** (dừng vì Q3 đã trượt sàn + hết phiên). S4, S5: chưa chạy.
+- **Theo luật ghi trước + lời User ("vẫn trượt ⇒ giữ cờ tắt, phương án B"):** Q2 đạt nhưng **Q3 là sàn và trượt** ⇒ **âm** ⇒ cờ `tra_ve_gio` tắt; A / User chọn: phương án B
+  (bảng chỉ cho kiểm cuối) hay việc mới (thiết kế lại cách giữ điều kiện ngoài model — vd lọc câu điều kiện khỏi chữ model bằng code, hoặc chấp nhận model nêu điều kiện khi có
+  trích dẫn kho và đổi sàn ⇒ User duyệt).
+- **Tiền T3:** vòng 1 0,025679 · vòng 2 0,011858 · vòng 3 0,012194 · S1 sinh 0,035522 = **0,085253 USD** (trần 0,20).
+- **Thời gian:** pytest rộng 2 phút 10–42 giây; Q1 51 giây / lần; Q2 70–90 giây / lượt; S1 sinh 6 phút 16 giây (2 × 32 câu); Playwright: không (không sửa giao diện).

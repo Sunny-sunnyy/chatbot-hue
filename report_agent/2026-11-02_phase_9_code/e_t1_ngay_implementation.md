@@ -1,9 +1,9 @@
 # Implementation Report: Phase 9 T1 — ngày + âm lịch Việt Nam
 
-Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026 · **cập nhật 12:00 08/11/2026: lượt 2 sau sửa (b) — mục 4b**
+Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026 · **cập nhật lượt 3 12:09 08/11/2026; trước đó 12:00 08/11/2026: lượt 2 sau sửa (b) — mục 4b**
 - Plan: `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a` — mức nhẹ, A duyệt.
-- Nhánh `p9-t1-ngay` `f536dfe` (4 commit; sau sửa (b) từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
-- **Kết quả: PARTIAL — 4 / 6 tiêu chí đạt, tiêu chí 3 trượt 1 câu, S4 sát.** A / User quyết giữ / sửa / gỡ (mục 6).
+- Nhánh `p9-t1-ngay` `9f08d91` (5 commit; sau sửa (b) + (i) từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
+- **Kết quả lượt 3 (sau 2 sửa A chọn): tiêu chí 1–4 ĐẠT; S1 đạt (lượt 1), S4 sát.** Còn 1 câu kém đi ổn định (R8) + 1 câu đổi qua lại giữa lượt (E2 / E3). S5 NOT RUN. A quyết merge (mục 4c, 6).
 
 ## 1. Phạm vi
 
@@ -114,7 +114,33 @@ Tiền lượt 2: **0,018178 USD**. Tổng T1 ≤ 0,094 USD (điểm dừng 0,10
 
 E đề xuất (i) nếu làm tiếp. Hoặc chấp nhận merge với cờ tắt và ghi giới hạn.
 
+## 4c. Lượt 3 — sau sửa (i) của A (code ghi đầu / cuối "tuần này / tuần sau / tháng này", dương + âm)
+
+**Sửa:** commit `9f08d91` — `khoang_ngay`: tuần tính từ thứ Hai; "tháng này" ⇒ cả tháng dương và tháng âm hiện tại. Chỉ khi câu cuối / câu hỏi liền trước có cụm đó. Test 48 file / 146 liên quan passed.
+
+**Đo:**
+- Bộ ngày 27, nhánh × 1 (12:02:31–12:05:03). Mốc dùng lại lượt 1 (lý do như 4b).
+- 2 sub-agent mới chấm mù (khoá `khoa_v3.json`), **khớp 27 / 27**.
+
+| Tiêu chí | Lượt 1 | Lượt 2 | **Lượt 3** |
+|---|---|---|---|
+| 1. từ chối ⇒ trả lời OK | 8 | 9 | **8** (R6, R7, N3, A1, A2, A7, A8, A9) |
+| 2. L1 / L3 mới | 0 | 0 | **0** |
+| 3. L2 trong chữ trả lời | 1 (A2) | 1 (R7) | **0** |
+| 4. chạm `max_turns` | 1 | 0 | **0** |
+| trả lời ⇒ từ chối | R8 | R8, E2 | **R8, E3** |
+
+**Đọc kết quả:**
+- **R8 kém ổn định cả 3 lượt** ("dịp lễ sắp tới có lễ hội gì"). Biết hôm nay là 08/11, model tìm lễ sau ngày đó, không thấy trong kho ⇒ từ chối. Mốc nói chung chung + hỏi lại (người chấm OK, giáp L1 vì đoán dịp 30/4).
+- **E2 / E3 đổi qua lại** ⇒ nhiễu một lượt.
+- A6 lượt 3 bị từ chối ở cả hai bên — lượt 1 / 2 nhánh trả lời được ⇒ dao động.
+- 5 câu ngoài phạm vi (định tuyến) như cũ.
+
+Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm dừng 0,13).
+
 ## 5. Lỗi và giới hạn
+
+- **R8 — A chấp nhận (08/11) đổi lấy 8 câu cứu được.** Câu "dịp lễ sắp tới" kém ổn định cả 3 lượt. Nguyên nhân: kho thiếu lịch lễ hội "sắp tới" theo ngày; khi model biết hôm nay là 08/11, nó tìm lễ sau ngày đó, không thấy ⇒ từ chối. Bản cũ trả lời chung chung (đoán dịp 30/4) + hỏi lại. Sửa thật cần dữ liệu lịch sự kiện theo ngày (đợt 2 cổng), không phải code công cụ.
 
 - **A2 (tiêu chí 3):** model so ngày lễ với hôm nay rồi kết luận ngược. Hướng sửa theo nguyên tắc "phép so sánh ⇒ code": kết quả `ngay_lich` ghi luôn "đã qua N ngày" / "còn N ngày nữa" so với hôm nay. **Chưa làm** — thay đổi sau khi đã thấy kết quả ⇒ cần A quyết + đo lại bộ ngày.
 - **R8:** biết hôm nay là 08/11 thì model không tìm được lễ "sắp tới" trong kho ⇒ từ chối; mốc nói chung chung + hỏi lại (người chấm OK).
@@ -137,3 +163,16 @@ E đề xuất (i) nếu làm tiếp. Hoặc chấp nhận merge với cờ tắ
   - 0 USD: `so_tet.py`, `dem_bo_do.py`.
 - **S5 (chờ A xếp):** 1 server nhánh (cờ bật) rồi 1 server `main`, mỗi bên 20 câu ngày bật (`chon:<20 mã>`), đọc `chat_metrics.first_text_ms` theo `turn_id`.
 - **Review cả nhánh:** `git diff main...p9-t1-ngay`.
+
+
+## Đoạn cho `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (A dán lúc đóng đợt)
+
+**Ngày và âm lịch (T1, 08/11/2026) — code xong, cờ `ngay_lich` đang tắt.**
+- Trợ lý có thêm một công cụ để biết hôm nay là ngày nào và đổi ngày dương ↔ âm theo lịch âm Việt Nam (giờ UTC+7, không phải lịch Trung Quốc).
+- Mọi phép tính đều do code làm: đổi ngày, so "đã qua / còn N ngày nữa", khoảng "tuần này / tháng này". Model chỉ gửi số rồi viết lời. Công cụ chỉ có mặt khi câu hỏi có từ chỉ ngày.
+- Đo trên 27 câu có ngày (2 người chấm mù, khớp nhau): bớt 8 câu từ chối nhầm, 0 câu nói sai ngày / thứ, 0 câu sai so với kho; bộ an toàn không đổi.
+- Giới hạn:
+  - câu "dịp lễ sắp tới có gì" giờ bị từ chối, vì kho chưa có lịch sự kiện theo ngày;
+  - câu thuần về ngày ("hôm nay ngày bao nhiêu âm") vẫn bị định tuyến coi là ngoài phạm vi, chờ việc định tuyến mới;
+  - chỉ đổi ngày từ năm 1976 tới 2100.
+- Tiền đo ≈ 0,11 USD. Chữ đầu (tốc độ) chưa đo.

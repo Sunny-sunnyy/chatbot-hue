@@ -53,6 +53,8 @@ B0–B7 = bậc Phase 9; B5b = thời tiết, B6 = tra web; G0–G4 = bậc gi�
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
+**Mới 08/11 (User nghỉ lúc hỏi):** (1) **T3 bảng vé + giờ** — vòng 3: đúng 19/20 (đạt), khối điều kiện 4/4, nhưng sàn Q3 "0 câu model tự nêu điều kiện ngoài khối" trượt 6/10 (model chép điều kiện từ đoạn kho của lần tìm đầu) ⇒ chọn: phương án B (bảng chỉ cho kiểm cuối số, cờ tắt) · hay thiết kế lại (code lọc câu điều kiện khỏi chữ model) · hay đổi sàn Q3 (User duyệt). Report `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` §9. (2) Bật bản đồ `ban_do_lich` sau khi User tick phiếu toạ độ. (3) Bật `ngay_lich` sau review nhánh + đo S5.
+
 Xem "Làm tiếp" mục 1 (kiểm 7 ảnh vi.wikipedia) + mục 2 (a)–(g). Không gấp: bật hỏi bằng ảnh `anh.bat` + xoá collection thử `hue_anh_siglip2`; đợt 2 cổng (C209: P1 bản đồ từ toạ độ kho — tự soi đề xuất chỉ P1); thu câu giọng nói (nếu giữ); câu thiên tai vẫn gọi Serper chỉ để lấy link; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; báo cáo tiến độ cho giáo viên; vòng cải tiến cũ (W58, sửa câu W50, gỡ W4 / W39 — hạn 07/11, Session D 0 buổi, W57).
 
 ## Câu hỏi A còn nợ (không cần User)
