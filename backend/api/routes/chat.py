@@ -54,6 +54,8 @@ METRIC_FIELDS = (
     "has_web_section", "web_outcome", "web_n_ket_qua", "web_n_ma", "web_kiem",
     # B5b D11: thời tiết — có đưa công cụ, có gọi API (trạng thái, mã lỗi, ms, từ cache), số ngày, số "số ngoài tập" (D8), câu bão / lũ; không chữ
     "thoi_tiet",
+    # việc nhỏ 13 (A 08/11): mã lượt ngẫu nhiên của 👍 / 👎 (`api/feedback.py`) ⇒ nối dòng `chat_feedback` với số đo của đúng lượt; không nội dung
+    "turn_id",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -207,6 +209,7 @@ def _set_outcome(response, metrics: dict) -> None:
             metrics["outcome"] = json.loads(response.body)["error"]["code"]
     else:
         metrics["status_code"] = 200
+        metrics["turn_id"] = response.turn_id
         if metrics["refusal"] is None:  # lượt có chữ model: `_answer` đã đặt trên chữ model (review C m-1)
             metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
         if metrics["outcome"] is None:
@@ -466,7 +469,7 @@ class StreamEvents:
         if self.metrics.get("refusal") and self.metrics["outcome"] != "out_of_scope":
             data["tu_choi_kho"] = True  # việc nhỏ (5) 08/11: kho không đủ ⇒ giao diện hiện gợi ý cách hỏi do code viết sẵn (không gọi model)
         if answered and self.new_turn_id is not None:
-            data["turn_id"] = self.new_turn_id()
+            data["turn_id"] = self.metrics["turn_id"] = self.new_turn_id()
         return sse_event("done", data)
 
     def fixed(self, trace: AnswerTrace) -> list[bytes]:

@@ -301,3 +301,26 @@ def test_weather_and_feature_routes(app_client):
     assert loi == {"trang_thai": "loi"}  # lỗi ⇒ không số
     assert features_off == {"lich_trinh_bieu_mau": False, "thoi_tiet": False, "anh": False, "tra_web": True, "ban_do_lich": False}
     assert features_on["thoi_tiet"] is True and features_form["lich_trinh_bieu_mau"] is True
+
+
+def test_report_wrong_info_logs_only_known_article_id(app_client, caplog):
+    """Việc nhỏ 8: nút "Báo thông tin chưa đúng" — chỉ nhận `bai_id` có trong danh sách Khám phá; log một dòng chỉ có `bai_id`."""
+    app, client = app_client
+    some = next(iter(app.state.kham_pha))
+    with chat_log_records(caplog) as records:
+        ok = client.post("/api/bao_sai", json={"bai_id": some})
+        bad = [client.post("/api/bao_sai", json=body) for body in (
+            {"bai_id": "../.env"}, {"bai_id": "foods/khong_co.md"}, {"bai_id": some.upper()}, {"bai_id": ""}, {},
+            {"bai_id": some, "ghi_chu": "chữ tự do"}, {"bai_id": "x" * 301})]
+    assert ok.status_code == 200 and ok.json() == {"ok": True}
+    assert [r.status_code for r in bad] == [404, 404, 404, 422, 422, 422, 422]
+    lines = [json.loads(r.getMessage().removeprefix("chat_bao_sai ")) for r in records if r.getMessage().startswith("chat_bao_sai ")]
+    assert lines == [{"bai_id": some}]
+
+
+def test_card_summary_skips_label_bullets():
+    """Việc nhỏ 3: thẻ Khám phá lấy đoạn văn xuôi đầu, không lấy mục "Thông tin chung" dạng "- **Tên chính thức:** …"."""
+    from api.routes.cong import _tom_tat
+    md = "# Chùa X\n\n## Thông tin chung\n\n- **Tên chính thức:** Chùa X\n- **Loại:** chùa\n\n## Tổng quan\n\n> Chùa X là một **ngôi chùa** cổ.\n"
+    assert _tom_tat(md) == "Chùa X là một ngôi chùa cổ."
+    assert _tom_tat("# X\n\n- **Tên:** X\n- Mục hai\n") == "Tên: X Mục hai"  # bài chỉ có danh sách ⇒ như trước

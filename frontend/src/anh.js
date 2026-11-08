@@ -11,9 +11,12 @@ const GP = {
 };
 const commons = file => `https://commons.wikimedia.org/wiki/File:${file}`;
 
+// `srcNho`: bản cho màn ≤ 760 px (`data/phase_11/anh_cong/tools/anh_nho.py`; việc nhỏ 10 — điện thoại tải ít byte hơn).
 function anh(file, cho, tacGia, giayPhep, nguon, doi = "thu nhỏ") {
-  return { src: GOC + file, cho, tacGia, giayPhep, linkGiayPhep: GP[giayPhep] ?? null, nguon, doi };
+  return { src: GOC + file, srcNho: GOC + file.replace(/\.jpg$/, "_nho.jpg"), cho, tacGia, giayPhep, linkGiayPhep: GP[giayPhep] ?? null, nguon, doi };
 }
+
+export const MAN_NHO = "(max-width: 760px)";  // cùng mốc khổ điện thoại của `index.css`
 
 // Ảnh lễ hội: ảnh thật chỉ có khi máy build có file `public/anh/rieng/` (xem `vite.config.js`); không thì ảnh Commons phạm vi công cộng.
 const LE_HOI = __CO_ANH_LE_HOI_RIENG__

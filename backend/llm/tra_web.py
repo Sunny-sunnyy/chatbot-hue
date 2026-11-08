@@ -159,10 +159,24 @@ def _so_tien_chuan(text: str) -> set[str]:
     return {"".join(m.split()).casefold() for m in tim_so_tien(text)}
 
 
+# Chuỗi số (số nhà, điện thoại, giờ, năm…): dãy chữ số nối bằng đúng một dấu ` . : / , h` (hoặc ")" / ") " của mã vùng "(0234) 3822") giữa hai
+# chữ số; so bằng phần chữ số (bỏ dấu nối) ⇒ "7h30" ↔ "7:30", "(0234) 3822.123" ↔ "0234 3822 123". Dấu "-" và ", " không nối (khoảng "7:00-17:00",
+# liệt kê "2019, 300").
+# Bỏ trước khi tìm: mã `[w n]` / `[n]` (luật mã riêng) và số tiền (luật tiền riêng) ⇒ mỗi lỗi một mã.
+_CHUOI_SO = re.compile(r"\d+(?:(?:\) ?|[ .:/,h])\d+)*")
+
+
+def _chuoi_so(text: str) -> set[str]:
+    text = _KHO_CODE.sub(" ", _WEB_CODE.sub(" ", text))
+    for tien in tim_so_tien(text):
+        text = text.replace(tien, " ")
+    return {re.sub(r"\D", "", m) for m in _CHUOI_SO.findall(text)}
+
+
 def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: bool = False) -> list[str]:
     """D5: mã lỗi của mục web model viết (rỗng = đạt). (i) mỗi mã `[w n]` ∈ sổ, mỗi đoạn văn ≥ 1 mã, không mã kho `[n]`; (ii) 0 URL / tên miền /
     link Markdown; (iii) số tiền ⊂ số tiền trong đoạn trích; câu lưu trú ⇒ 0 số tiền; (vòng chỉnh 1) câu thời gian thực ⇒ 0 chữ số / thứ trong tuần
-    (ngoài mã `[w n]`)."""
+    (ngoài mã `[w n]`); câu khác ⇒ mọi chuỗi số (số nhà, điện thoại, giờ) ⊂ chuỗi số trong tiêu đề + đoạn trích."""
     loi = []
     co = {s["id"] for s in so_web}
     doan = [p for p in re.split(r"\n\s*\n", text.strip()) if p.strip()]
@@ -181,8 +195,13 @@ def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: b
         loi.append("gia_luu_tru")
     elif tien - _so_tien_chuan(" ".join(s["snippet"] for s in so_web)):
         loi.append("tien_ngoai_trich")
-    if thoi_gian_thuc and _SO_HOAC_THU.search(_WEB_CODE.sub("", text)):
-        loi.append("so_thoi_gian_thuc")
+    if thoi_gian_thuc:
+        if _SO_HOAC_THU.search(_WEB_CODE.sub("", text)):
+            loi.append("so_thoi_gian_thuc")
+    elif _chuoi_so(text) - set().union(*(_chuoi_so(s[k]) for s in so_web for k in ("title", "snippet"))):
+        # (A 08/11, việc nhỏ 11) mọi chuỗi số ⊂ chuỗi số của tiêu đề + đoạn trích (model thấy cả hai — `dau_vao_model`; tên như "… 24/7" nằm ở tiêu
+        # đề) — như luật tiền: một số không có ⇒ cả mục bị bỏ. Câu thời gian thực đã cấm mọi chữ số ở trên (giữ đường "chưa xác minh") ⇒ không kiểm thêm.
+        loi.append("so_ngoai_trich")
     return loi
 
 

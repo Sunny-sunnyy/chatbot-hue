@@ -10,7 +10,7 @@ from api.feedback import FEEDBACK_FIELDS, FeedbackTurns
 from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents
 from llm.assistant import AnswerTrace
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
-from test_api_chat import chat_log_records
+from test_api_chat import chat_log_records, metric_lines
 from test_b3_memory import MemoryGenerator
 from test_chat_stream import parse_sse, stream_with_text
 
@@ -39,6 +39,7 @@ def test_chat_turn_id_feedback_logs_counts_only(caplog):
     assert [line["rating"] for line in lines] == ["up", "down"]
     assert all(tuple(line) == FEEDBACK_FIELDS for line in lines)
     assert lines[0] == {"turn_id": turn_id, "route": "tro_ly_hue", "outcome": "success", "n_cited_sources": 1, "rating": "up"}
+    assert metric_lines(records)[0]["turn_id"] == turn_id  # việc nhỏ 13: nối 👍 / 👎 với số đo của đúng lượt
     logged = "\n".join(r.getMessage() for r in records)
     assert QUESTION not in logged and "Mở cửa từ 7 giờ" not in logged and "conversation_id" not in logged
 
@@ -69,7 +70,7 @@ def test_stream_done_has_turn_id_only_for_answered_turns():
     stream, chunks, trace = stream_with_text("Mở cửa từ 7 giờ [1].")
     stream.new_turn_id = new_id
     done = parse_sse(stream.finish(trace))[-1]
-    assert done == ("done", {"outcome": "success", "turn_id": "B" * 16})
+    assert done == ("done", {"outcome": "success", "turn_id": "B" * 16}) and stream.metrics["turn_id"] == "B" * 16
 
     stream, chunks, trace = stream_with_text("Mở cửa từ 7 giờ [9].")  # mã trích dẫn ngoài sổ ⇒ rút lại
     stream.new_turn_id = new_id
@@ -80,5 +81,5 @@ def test_stream_done_has_turn_id_only_for_answered_turns():
     assert events[-1] == ("done", {"outcome": "refusal_no_sources", "tu_choi_kho": True, "turn_id": "B" * 16})
 
     failed = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(), new_id)
-    assert "turn_id" not in parse_sse(failed.failure(TimeoutError()))[-1][1]
+    assert "turn_id" not in parse_sse(failed.failure(TimeoutError()))[-1][1] and failed.metrics["turn_id"] is None
     assert len(calls) == 2
