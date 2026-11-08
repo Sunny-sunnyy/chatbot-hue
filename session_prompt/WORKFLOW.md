@@ -120,6 +120,7 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
+- **Mức nhẹ (User 11:20 08/11/2026):** mỗi merge chỉ ghi **1 dòng nhật ký** ngày đó + bảng `README.md`; `BAO_CAO_<KHÂU>.md` + `LUONG_HOAT_DONG_HE_THONG.md` sửa **lúc đóng đợt / kết phiên** (gộp mọi thay đổi trong đợt). Luật "luôn mới nhất" dưới đây áp ở mốc đóng đợt; chỗ sai vẫn xoá.
 - **Báo cáo cho User luôn đúng thông tin mới nhất** (User 31/10/2026 — User chỉ đọc `bao_cao_he_thong/`): (1) **mọi** thay đổi hoặc thử nghiệm
   chạm hệ thống — kể cả thử rồi **không áp dụng**, sửa kho, build lại chỉ mục, đổi thước đo — ⇒ cập nhật `BAO_CAO_<KHÂU>.md` của mọi khâu bị chạm
   (cả Tóm tắt, sơ đồ bản đang chạy, checklist) + bảng `README.md` **ngay trong đợt đó**, không đợi kết phiên; (2) chỗ **không còn đúng** thì **xoá**
