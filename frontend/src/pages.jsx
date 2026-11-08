@@ -302,7 +302,7 @@ export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
   );
 }
 
-export function GioiThieu({ banDo }) {
+export function GioiThieu({ banDo, anh }) {
   return (
     <div className="khung khoi-trang gioi-thieu">
       <p className="vet"><a href="#/">Trang chủ</a> / Giới thiệu</p>
@@ -312,6 +312,7 @@ export function GioiThieu({ banDo }) {
         <li>Trả lời câu hỏi về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, đi lại và vé tham quan ở Huế.</li>
         <li>Xếp lịch tham quan theo buổi từ các điểm trong kho (khi tính năng Lên kế hoạch bật).</li>
         <li>Khi kho không có, có thể tra thêm trên web — phần đó ghi rõ “Từ web (chưa kiểm)”.</li>
+        {anh && <li>Hỏi bằng ảnh: trợ lý gợi ý tên nơi / món trong ảnh (có thể sai), bạn bấm chọn đúng tên rồi mới hỏi.</li>}
       </ul>
       <h2>Trả lời từ kho, có nguồn</h2>
       <p>Mỗi câu trả lời lấy từ kho tư liệu về Huế và ghi tên tài liệu đã dùng ở dòng “Nguồn”. Bấm tên để xem đoạn gốc hoặc đọc cả bài ở mục Khám phá.</p>
@@ -329,6 +330,7 @@ export function GioiThieu({ banDo }) {
         vào câu hỏi.</p>
       {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ OpenStreetMap — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
         đang xem (không nhận câu hỏi của bạn).</p>}
+      {anh && <p>Ảnh bạn gửi được thu nhỏ, bỏ thông tin vị trí, gửi tới OpenAI để đoán tên, không lưu.</p>}
       <h2 id="nguon-anh">Nguồn ảnh</h2>
       <ul className="nguon-anh">
         {MOI_ANH.map(a => <li key={a.src}><GhiCong a={a} /></li>)}
