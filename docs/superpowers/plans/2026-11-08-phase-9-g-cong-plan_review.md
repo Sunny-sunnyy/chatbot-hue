@@ -39,3 +39,25 @@ không bộ nào đo.
 - Nhớ hội thoại / gợi ý: `REMEMBERED_OUTCOMES` có `out_of_scope` (`chat.py:118`); `tu_choi_kho` chỉ khi outcome ≠ `out_of_scope` (`chat.py:469`); gợi ý ngoài phạm vi theo `turn.outcome === "out_of_scope"` (`chat.jsx:322`) — giữ được nếu outcome đi đường `StreamEvents.fixed` (`chat.py:475-483`).
 - 4c: plan §4 bước 1 liệt kê đủ loại lượt (đầu · lịch sử · hỏi lại · ghép nút · biểu mẫu · #6) — đạt về danh sách; thiếu mong đợi cho lượt biểu mẫu (M-4).
 - Không đọc `.env`, `*sealed*`, `session_prompt/sessions/STATUS_*.md`; không gọi API trả phí.
+
+## Vòng 2 — plan bản 2 (sha256 `2513df2c6930`)
+
+Người kiểm: cùng sub-agent · 08/11/2026 · chỉ đọc, 0 USD, không mở `*sealed*`. Code: nhánh `p9-g-cong` vẫn ở `442f758` (chưa commit, chưa push; thay đổi chỉ nằm
+chưa commit trong `/tmp/b_g`) ⇒ theo lời A **chỉ xét plan**, chưa đối chiếu code của nhánh.
+
+### Kết luận vòng 2: `ready_for_user_confirmation` — 0 blocker · 0 major · 1 minor mới (4 major + 5 minor vòng 1 đã đóng)
+
+| Mã | Trạng thái | Căn cứ trong plan bản 2 / kiểm lại |
+|---|---|---|
+| M-1 | **đóng** | §1 mục 3: nhận ở **một** chỗ `_finish_generated`, so `trace.generated.text.strip()` trước `check_citations` / `_thoi_tiet_cuoi` / `set_notice`; stream không phát lại chữ khi `out_of_scope`; #6 gộp như cũ. §4 bước 1: test 3 đường (chữ ghép đúng một lần, outcome, không kiểm citation, cổng web đóng, `n_tra_loi_bo` = 0, `done.outcome`, không `tu_choi_kho`, `delta_matches_final`, ca thời tiết). Khớp đúng các dòng code đã nêu (`assistant.py:631`, `:637`, `:984-987`) |
+| M-2 | **đóng** | §3: công cụ mới `do_g.py` — `tuyen` (chỉ định tuyến) tách khỏi `ca_cau` (`answer_turn` thật + `tim_web` dựng như `api/app.py` `_tim_web_server` — có thật ở `app.py:73`, `:94`); S2b / S2c đếm bằng `trace.web` (đặt cả khi web lỗi / rỗng ⇒ đếm "cổng mở", chặt hơn). Mốc cả câu = worktree `main` `442f758`; kiểm: từ `442f758` tới `main` hiện tại chỉ có commit tài liệu, `backend/` + `frontend/src` không đổi ⇒ mốc đúng là bản đang chạy. Chạy thử 0 USD trước bàn giao có ghi |
+| M-3 | **đóng** | §5 bảng 9 dòng, cộng lại 0,46 (tôi cộng lại: khớp); có mốc cả câu, web S2c cả biến thể lẫn mốc, kín, S5 cả mốc, một vòng chỉnh. Mục tiêu ≤ 0,5 / dừng 0,55 theo A. Giá 0,0005 / lượt dựa log thật 08/11 (trung bình 0,00042) — hợp lý; chưa tính thủ tục S-AT khi chênh 1 (dự phòng còn ≈ 0,04 tới 0,5 là đủ cho một lần 3 + 3 vài câu) |
+| M-4 | **đóng** | §1 mục 2: `bieu_mau_agent` giữ bản cũ `81d3040cf53f` + test so byte. Kiểm [Chạy, 0 USD]: băm `ANSWER_SYSTEM_INSTRUCTIONS` trên `442f758` = `81d3040cf53f` (khớp); `ROUTER_INSTRUCTIONS` = `164bd4a254e9` |
+| m-1 | **đóng** | §1 mục 4 liệt kê đủ các chỗ vòng 1 nêu (kể cả `REMEMBERED_OUTCOMES`, `keep_own`, `full_corpus_eval.py`, 3 nhánh chết, `stream.js`, build `dist`); `test_b6_tra_web.py` nhận định tuyến bằng tiền tố `ROUTER_INSTRUCTIONS`; có lệnh `git grep` kiểm |
+| m-2 | **đóng** | §3: md5 bộ đã thấy ghi trong plan — kiểm lại: `a_ranh_gioi_da_thay.jsonl` `9a7b39ede0f5`, `b_ngoai_pham_vi_da_thay.jsonl` `2a003dd4860d` (khớp); md5 2 file kín **không kiểm** (không mở `*sealed*`). B không mở kín, A chạy lượt kín, C (không viết lời dặn) đọc câu kín không khớp. §2: sha khoá = commit + 2 sha lời dặn, in trong mỗi file kết quả |
+| m-3 | **đóng** | S4 ngưỡng số (≥ 3 / 30 tụt ⇒ âm; nguồn nhiễu judge-only 2/88 có ở `Project_Status.md:296`); S5 mốc `main` cùng buổi + ngưỡng chênh p50 / p95 bằng số; S6 = trung bình câu Huế không web trên mẫu 30; câu "Đạt" sửa (S5 1 lượt); mốc định tuyến ×2 cho golden / `lich_su` / (a); "lời dặn đổi ⇒ chạy lại sàn bị ảnh hưởng" |
+| m-4 | **đóng** | §4 cuối: ghi giới hạn trước — chuỗi nhiều lượt chỉ đo định tuyến (`lich_su` 50) |
+| m-5 | **đóng** | §2 dòng "Theo dõi": `oos_lech` + số `citation_error` báo cùng S2. Gợi ý (không chặn): ghi luật "gần" bằng code trong `do_g.py` (vd. chứa câu đầu của `OUT_OF_SCOPE_ANSWER`) |
+| m-6 (mới) | **mở — minor** | Plan §2 dòng S2: "**0** câu `lop = tra_loi`" trên bộ **đã thấy**, còn bước "câu không khớp ⇒ sub-agent đọc" của spec §12.3 S2 chỉ còn ở bộ kín (§3). Theo chữ plan, một câu từ chối diễn đạt khác (hoặc câu xã giao mời hỏi về Huế khi định tuyến chọn `tro_chuyen`) bị tính "bị trả lời" ⇒ G có thể âm oan; ngược lại không ai đọc để biết thật sự có câu trả lời thông tin ngoài phạm vi hay không. **Đóng:** ghi trong plan / report: câu đã thấy có `lop = tra_loi` ⇒ một sub-agent đọc và xếp "trả lời thông tin ngoài phạm vi" (vi phạm) hay "từ chối / mời hỏi Huế" (không vi phạm), giống bộ kín; số đếm báo cả hai |
+
+Không thấy over-engineering mới: công cụ `do_g.py` một file hai chế độ, dùng lại `chay_tuyen.py`, đúng tầm việc.
