@@ -1,7 +1,7 @@
 # Implementation Report: việc nhỏ trước đóng gói (Nhóm 1 + 2, phần E)
 
 Người làm: E (Claude Code, `hue-rag-22`) · Date: 10:26 08/11/2026
-Nhánh `p11-viec-nho-e` `45b3710` (2 commit trên `main` `1611d34`, đã push) · 6 file +106 / −24 · Tiền ≈ **0,0055 USD** (trần 0,01)
+Nhánh `p11-viec-nho-e` `607902a` (3 commit trên `main` `b50d9c0` — rebase + sửa review B m-2; bản đầu `45b3710`, đã push) · 6 file +106 / −24 · Tiền ≈ **0,0055 USD** (trần 0,01)
 
 ## 1. Phạm vi
 
@@ -10,6 +10,8 @@ model · (12) lỗi stream không do SDK cũng huỷ model · (+) dòng Nguồn 
 
 - **(9) GÁC** theo A (User đang bàn đổi định tuyến). Code (9) đã viết rồi **gỡ khỏi nhánh**, nhánh không còn gì của (9).
 - **Thêm ngoài danh sách**, tìm thấy khi đo (7): đường song song (#6) mất số đo tiền khi người dùng ngắt. Đã tái tạo trước rồi sửa (commit 2).
+
+**Sau review B (10:48 08/11/2026):** m-2 sửa — gợi ý cách hỏi không hiện dưới lượt biểu mẫu (`!turn.bieuMau`, commit `607902a`; build + 5 file test 57 passed); m-1 sửa câu trong report (§4, Giải thích ngắn).
 
 ## 2. Thay đổi chính
 
@@ -40,9 +42,9 @@ model · (12) lỗi stream không do SDK cũng huỷ model · (+) dòng Nguồn 
 | Việc | Kết quả (lần chạy mới) |
 |---|---|
 | (12) tái tạo | `main`: **không** có `chat_stream_drain` (không `cancel()`), tác vụ nền SDK còn sống sau 2 s rồi tự chạy tới hết · nhánh: `chat_stream_drain {"finished": true}`, không còn tác vụ nền sau 2 s |
-| Số đo khi ngắt (đường song song) | `main`: `llm_calls` chỉ còn lần định tuyến (mất tiền phần trả lời), không drain · nhánh: đủ 4 lần gọi (định tuyến + 3 lần trả lời), drain xong; lần gọi bị dừng **56 token ra** |
+| Số đo khi ngắt (đường song song) | `main`: `llm_calls` chỉ còn lần định tuyến (mất tiền phần trả lời), không drain · nhánh: có **mọi lần gọi đã xong trước khi ngắt** (định tuyến + các lượt công cụ đã chạy xong), drain xong. Lần đang sinh dở **không có usage** (giới hạn SDK: `cancel()` mặc định huỷ ngay ⇒ không có `usage` — review B m-1) ⇒ không ghi được số token của lần đó |
 | (7) trình duyệt | Dừng sau 60 ký tự (lượt 1) / 28 ký tự (lượt sau sửa): chữ bị xoá, không nguồn, "Đã dừng" + "Hỏi lại", ô hỏi mở lại; Hỏi lại ra câu đầy đủ |
-| (7) log lượt Dừng sau sửa | `client_disconnected`, `chat_stream_drain` có, `llm_calls` đủ 4 lần, lần trả lời bị dừng **89 token ra** — câu đầy đủ cùng loại 517 token (lượt Hỏi lại) ⇒ model dừng thật; USD ghi 0,00078 |
+| (7) log lượt Dừng sau sửa | `client_disconnected`, `chat_stream_drain {"finished": true}` có (đã `cancel()` + đọc nốt). `llm_calls` có định tuyến + các lần đã xong trước khi ngắt; lần đang sinh dở không có usage (giới hạn SDK) ⇒ **không đo được** token của lần bị dừng. USD ghi 0,00078 là **cận dưới**. *(Bản trước ghi "lần bị dừng ra 89 token" — **sai**: đó là một lần đã xong, sửa theo review B m-1.)* |
 | (7) lượt Dừng trước sửa | không có drain: hôm đó định tuyến chậm (chữ đầu 9,96 s) nên phần chạy song song đã xong trước khi chữ hiện — không còn gì để huỷ; nhưng log mất tiền phần đó (đúng lỗi đã sửa) |
 | (2) | gõ thật 520 ký tự ⇒ ô giữ **500**, dòng "Đã đủ 500 ký tự…"; 449 ký tự ⇒ không có dòng đếm; 390: "460 / 500 ký tự" |
 | (+) Nguồn | câu về một lăng: **1 tên** (trước sửa cùng câu ra 8 lần cùng tên — E thấy khi kiểm ảnh 08/11), bấm ⇒ 5 đoạn + link "Đọc cả bài" |
@@ -76,7 +78,7 @@ model · (12) lỗi stream không do SDK cũng huỷ model · (+) dòng Nguồn 
 - Ca dò gợi ý cho người kiểm: bấm Dừng **trước** chữ đầu (đang "Đang tìm…") ⇒ cùng nhãn "Đã dừng"; dòng Nguồn của câu có ≥ 2 bài.
 
 **Giải thích ngắn:**
-- Người dùng bấm Dừng được khi trợ lý đang trả lời. Phần đã hiện bị xoá vì chưa kiểm nguồn, và server dừng model thật (log thấy số token ra ít hẳn).
+- Người dùng bấm Dừng được khi trợ lý đang trả lời. Phần đã hiện bị xoá vì chưa kiểm nguồn, và server huỷ lần gọi model (log có dòng huỷ + đọc nốt). Số token của lần bị huỷ không đo được — SDK không trả usage khi huỷ ngay.
 - Server giờ huỷ model mỗi khi luồng còn chạy mà phải dừng, kể cả khi chính code của mình lỗi. Lượt bị ngắt ghi đủ tiền vào log.
 - Ô hỏi chặn ở 500 ký tự và báo trước, thay cho lỗi "Yêu cầu không hợp lệ".
 - Câu kho không trả lời được có gợi ý cách hỏi lại (không gọi model).
