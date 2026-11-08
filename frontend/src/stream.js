@@ -29,7 +29,7 @@ export function createSseParser(onEvent) {
   };
 }
 
-// `onEvent` nhận `status` / `delta` / `sources` / `notice` (B1 H4c) / `done` (B3 bước 8: `outcome` để vẽ câu khẩn cấp thành thẻ riêng). Mọi lỗi khác ⇒ ném `StreamError` mang lời tiếng Việt cho người dùng: lời của server (JSON lỗi
+// `onEvent` nhận `status` / `delta` / `sources` / `notice` (B1 H4c) / `done` (B3 bước 8: `outcome`: câu ngoài phạm vi có gợi ý riêng). Mọi lỗi khác ⇒ ném `StreamError` mang lời tiếng Việt cho người dùng: lời của server (JSON lỗi
 // trước luồng, sự kiện `error`) giữ nguyên; mạng / thân lỗi không phải JSON / luồng hỏng hoặc đứt ⇒ câu cố định.
 // `signal` (AbortController) huỷ `fetch` ⇒ server thấy ngắt kết nối, dừng model (yêu cầu 17); khi đó hàm ném `AbortError`.
 // B4: `truong` (giá trị chọn ở thẻ hỏi lại, `{}` = "Trả lời luôn") gửi kèm câu gốc; server ghép câu đủ ý.

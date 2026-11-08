@@ -28,7 +28,6 @@ from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationE
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
-from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
@@ -43,11 +42,9 @@ from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusCo
 
 logger = logging.getLogger("chat")  # cùng logger với route: dòng `chat_stream_drain` giữ tên + khuôn như trước B1
 
-# Tuyến (spec Phase 9 §3). B0: mọi câu `tro_ly_hue` = đường RAG 1–8. B1: luật khẩn cấp + định tuyến chọn một trong 4.
+# Tuyến (spec Phase 9 §3). B0: mọi câu `tro_ly_hue` = đường RAG 1–8. B1: luật khẩn cấp + định tuyến 4 tuyến; bậc G (spec bản 13): còn 2 nhóm.
 ROUTE_TRO_LY_HUE = "tro_ly_hue"
 ROUTE_TRO_CHUYEN = "tro_chuyen"
-ROUTE_NGOAI_PHAM_VI = "ngoai_pham_vi"
-ROUTE_KHAN_CAP = "khan_cap"
 # H4c (B1 D8): nguồn trích thuộc vé / điểm đến / lễ hội ⇒ dòng "có thể đã thay đổi".
 NOTICE_SOURCE_PREFIXES = ("travel/tickets/", "travel/places/", "festivals/")
 MODEL_SEARCH_LIMIT = 2  # B2 D5: số lần MODEL gọi `tim_kho` được tìm thật (lần tìm đầu của code không tính); lần 3 ⇒ TOOL_LIMIT_TEXT
@@ -60,7 +57,6 @@ class AssistantFlags:
     """Cờ từng phần B1 (plan D9, `settings.yaml` khối `assistant:`); tắt cả 4 ⇒ chuỗi gửi model như B0.
     B2 (plan B2 D1): `lan_tim_dau` — v0 câu gốc · v1 / v3 câu tìm do định tuyến viết (cần `router`) · v2 trợ lý tự gọi `tim_kho`;
     `tim_them` — sau lần tìm đầu của code, trợ lý được gọi `tim_kho` thêm (B2b). `v0` + `tim_them` tắt ⇒ chuỗi gửi model như B1."""
-    emergency_rule: bool = False
     router: bool = False
     today_line: bool = False
     may_have_changed_notice: bool = False
@@ -161,9 +157,8 @@ class AnswerTrace:
     so_nguon: list[PackedSource] = field(default_factory=list)
     tools: list[dict] = field(default_factory=list)  # mỗi lần chạy công cụ: {"name", "ms"}
     llm_calls: list[dict] = field(default_factory=list)  # mỗi lần gọi model (generator `CallLog`) + `route` của lần gọi
-    # B1: câu trả lời cố định (không qua kiểm citation) ⇒ outcome riêng: "emergency" / "out_of_scope" / "refusal_no_sources"
+    # B1: câu trả lời cố định (không qua kiểm citation) ⇒ outcome riêng: "out_of_scope" (bậc G: agent trả đúng câu, code nhận) / "refusal_no_sources" / …
     fixed_outcome: str | None = None
-    emergency_by: str | None = None  # "rule" (luật code) | "router" (định tuyến chọn khan_cap)
     route_error: str | None = None  # định tuyến lỗi ⇒ đi `tro_ly_hue`
     routing_ms: float | None = None
     today: str | None = None  # dòng ngày đã gửi model (D7) — log chỉ ghi phần ngày
@@ -664,6 +659,9 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         trace.lich["nhac_lai"] = lt.dem_nhac_lai(bang, text, khung)
         trace.answer = "\n\n".join(part for part in (trace.lich["minh_hieu"], text, trace.lich["ghi_chu"]) if part)
     else:
+        if text.strip() == OUT_OF_SCOPE_ANSWER:  # bậc G (spec bản 13 §12.5): agent trả đúng câu ngoài phạm vi ⇒ code đặt outcome như câu cố định cũ
+            _set_fixed(trace, OUT_OF_SCOPE_ANSWER, "out_of_scope")  # (không kiểm citation; cổng web đóng; giao diện / log / nhớ như tuyến cũ)
+            return
         loi = lt.kiem_cuoi(flags.bang_lich, text, None) if flags is not None and flags.lich_trinh and lt.co_dang_lich(text) else []
         trace.answer = text
     check_citations(trace)
@@ -780,11 +778,8 @@ def _set_fixed(trace: AnswerTrace, text: str, outcome: str) -> None:
 
 
 async def _pick_route(query: str, generator, trace: AnswerTrace, flags: AssistantFlags) -> None:
-    """Luật khẩn cấp (code) ⇒ định tuyến (model) ⇒ câu cố định cho `khan_cap` / `ngoai_pham_vi`. Còn lại để `trace.route` cho bước sau."""
-    if flags.emergency_rule and is_emergency(query):
-        trace.route, trace.emergency_by = ROUTE_KHAN_CAP, "rule"
-        _set_fixed(trace, EMERGENCY_ANSWER, "emergency")
-        return
+    """Định tuyến (model) chọn `tro_ly_hue` / `tro_chuyen` (bậc G — spec bản 13 §12.5: bỏ tuyến khẩn cấp + ngoài phạm vi; câu ngoài phạm vi do agent Huế
+    tự từ chối). Kết quả để ở `trace.route` cho bước sau."""
     if flags.router and generator is not None:
         started = time.perf_counter()
         call_log = CallLog()
@@ -800,11 +795,6 @@ async def _pick_route(query: str, generator, trace: AnswerTrace, flags: Assistan
         finally:
             trace.routing_ms = elapsed_ms(started)
             record_llm_calls(trace, call_log.calls, "router")
-    if trace.route == ROUTE_KHAN_CAP:
-        trace.emergency_by = "router"
-        _set_fixed(trace, EMERGENCY_ANSWER, "emergency")
-    elif trace.route == ROUTE_NGOAI_PHAM_VI:
-        _set_fixed(trace, OUT_OF_SCOPE_ANSWER, "out_of_scope")
 
 
 def _today(flags: AssistantFlags, trace: AnswerTrace) -> str | None:
@@ -817,7 +807,7 @@ def _today(flags: AssistantFlags, trace: AnswerTrace) -> str | None:
 def web_gate_open(trace: AnswerTrace, flags: AssistantFlags, tim_web) -> bool:
     """D1 — luật mở cổng, **một chỗ** cho cả 3 đường: câu trả lời kho đúng bằng câu từ chối "không đủ thông tin" (so sau `strip()` như cờ
     `refusal`; không mở với câu ngoài phạm vi) ∧ outcome thường (model tự từ chối, hoặc ngữ cảnh rỗng `refusal_no_sources`) — không chạm trần,
-    không lỗi công cụ, không hỏi lại ∧ tuyến `tro_ly_hue` (khẩn cấp / ngoài phạm vi / trò chuyện không mở) ∧ chưa tra ∧ lượt không có lịch ∧
+    không lỗi công cụ, không hỏi lại ∧ tuyến `tro_ly_hue` (trò chuyện không mở; câu ngoài phạm vi có outcome riêng nên không mở) ∧ chưa tra ∧ lượt không có lịch ∧
     không phải lượt ghép từ nút (D8) ∧ cờ bật ∧ nơi gọi có hàm tra (bộ đánh giá không truyền ⇒ không tra)."""
     return (flags.tra_web and tim_web is not None and trace.web is None and trace.route == ROUTE_TRO_LY_HUE
             and trace.fixed_outcome in (None, "refusal_no_sources") and trace.citation_error is None and trace.tool_error is None
@@ -873,14 +863,12 @@ async def _web_stream(query: str, generator, trace: AnswerTrace, flags: Assistan
 
 async def answer_turn(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
                       recorder=None, tim_web=None) -> None:
-    """Một lượt không stream (`POST /api/chat`, `answer_case`): luật khẩn cấp ⇒ định tuyến ⇒ trả lời theo tuyến ⇒ cổng web (B6; `tim_web` do route
+    """Một lượt không stream (`POST /api/chat`, `answer_case`): định tuyến 2 nhóm ⇒ trả lời theo tuyến ⇒ cổng web (B6; `tim_web` do route
     truyền, None ⇒ không tra). Lỗi như `answer_query`. Lượt biểu mẫu (D3) ⇒ `answer_bieu_mau` (không định tuyến, không web)."""
     if trace.bieu_mau:
         await answer_bieu_mau(query, retrieval_service, context_builder, generator, trace, flags)
         return
     await _pick_route(query, generator, trace, flags)
-    if trace.fixed_outcome is not None:
-        return
     if trace.route == ROUTE_TRO_CHUYEN:
         started = time.perf_counter()
         call_log = CallLog()
@@ -914,12 +902,9 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     stream_live = False
     try:
         if not trace.bieu_mau:  # D3: lượt biểu mẫu không định tuyến
-            if flags.router and generator is not None and not (flags.emergency_rule and is_emergency(query)):
+            if flags.router and generator is not None:
                 yield "status", {"stage": "routing"}
             await _pick_route(query, generator, trace, flags)
-            if trace.fixed_outcome is not None:
-                yield "delta", trace.answer
-                return
         if trace.bieu_mau:
             # D3: code xếp ngay (bước tiến độ như đường công cụ — D14) rồi một lần sinh không công cụ; phần sau vòng đọc dùng chung
             # (giữ chữ khi còn có thể là câu từ chối, dòng "Mình hiểu", kiểm cuối, khối ghi chú)
@@ -1024,7 +1009,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         else:
             _finish_generated(trace, flags)
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
-                if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
+                # lượt hỏi lại: không chữ ⇒ route gửi `clarify`; câu ngoài phạm vi (bậc G): chữ model đã phát dần ⇒ không phát lại
+                if trace.answer and trace.fixed_outcome != "out_of_scope":
                     yield "delta", trace.answer
                 return
             if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay) hoặc một khúc đầu của nó
@@ -1071,19 +1057,19 @@ ROUTE_INPUTS = ("history", "truong", "search_query")
 async def answer_turn_stream_parallel(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
                                       recorder=None, tim_web=None):
     """Thí nghiệm tốc độ #6 (plan `2026-11-04-phase-9-toc-do-song-song-plan.md`). Cờ `song_song_tra_loi` tắt (hoặc định tuyến không chạy /
-    câu tìm do định tuyến viết / luật khẩn cấp bắt) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
+    câu tìm do định tuyến viết) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
     chạy cùng lúc. (ii) chính là `answer_turn_stream` với `router` tắt trên **trace phụ** (đi thẳng lần tìm đầu câu gốc + lần gọi trợ lý —
     đầu vào hai lần gọi model không phụ thuộc tuyến). Sự kiện của (ii) giữ trong hàng đợi tới khi có tuyến:
     `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
-    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0") or (
-            flags.emergency_rule and is_emergency(query)):  # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
+    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
+        # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
             yield event
         return
 
     # B6: bản cờ của phần chạy song song / đường trò chuyện tắt cả `tra_web` (cờ này cần `router`; cổng web chạy bằng `flags` gốc sau khi gộp)
-    without_router = dataclasses.replace(flags, router=False, emergency_rule=False, tra_web=False)
+    without_router = dataclasses.replace(flags, router=False, tra_web=False)
     # B161 M-1: trace phụ mang **mọi đầu vào route đặt trước khi gọi lõi** (lịch sử B3; giá trị nút + câu gốc của lượt ghép B4b / B5) — chép
     # từng trường (không `dataclasses.replace`: sẽ dùng chung list sổ nguồn / công cụ giữa hai trace)
     spec = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
@@ -1102,7 +1088,7 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     finished_before_route = False
     try:
         await _pick_route(query, generator, trace, flags)
-        keep = trace.route == ROUTE_TRO_LY_HUE and trace.fixed_outcome is None
+        keep = trace.route == ROUTE_TRO_LY_HUE
         if keep:
             while (event := await queue.get()) is not _SPEC_END:
                 yield event
@@ -1114,9 +1100,6 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
             return
         finished_before_route = task.done()
         task.cancel()  # huỷ ngay: lần gọi bị bỏ không giữ chữ đầu của tuyến khác (sàn KC)
-        if trace.fixed_outcome is not None:
-            yield "delta", trace.answer
-            return
         # `tro_chuyen`: định tuyến đã xong ⇒ đường cũ của tuyến này, không định tuyến lại
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, without_router, recorder, tim_web):
             yield event
@@ -1139,7 +1122,7 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
 
 def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
     """Tuyến `tro_ly_hue` ⇒ trace chính nhận mọi thứ (ii) đã làm; giữ phần định tuyến của trace chính; `llm_calls` = định tuyến rồi trả lời."""
-    keep_own = {"route", "route_error", "routing_ms", "emergency_by", "llm_calls", *ROUTE_INPUTS}
+    keep_own = {"route", "route_error", "routing_ms", "llm_calls", *ROUTE_INPUTS}
     for item in dataclasses.fields(AnswerTrace):
         if item.name not in keep_own:
             setattr(trace, item.name, getattr(spec, item.name))

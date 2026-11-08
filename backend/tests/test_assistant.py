@@ -34,10 +34,10 @@ import pytest
 
 from core.schema import GenerationError
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn
-from llm.emergency import EMERGENCY_ANSWER
-from llm.full_corpus_prompt import OUT_OF_SCOPE_ANSWER
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER
+from llm.generator_openai_full_corpus import RouteOutput
 
-ALL_ON = AssistantFlags(emergency_rule=True, router=True, today_line=True, may_have_changed_notice=True)
+ALL_ON = AssistantFlags(router=True, today_line=True, may_have_changed_notice=True)
 CALL = {"kind": ["message"], "ms": 1.0, "usd": 0.00001, "input_tokens": 10, "output_tokens": 2, "reasoning_tokens": 0,
         "cached_tokens": 0, "cache_write_tokens": 0}
 
@@ -83,18 +83,32 @@ def run(deps, query, generator, flags=ALL_ON):
     return trace
 
 
-def test_emergency_rule_answers_without_any_model_call(deps):
+def test_router_has_only_two_groups():
+    # bậc G (spec bản 13 §12.5): bỏ tuyến khẩn cấp + ngoài phạm vi — nhãn cũ bị schema từ chối (lõi đổi thành `tro_ly_hue` như lỗi định tuyến)
+    assert RouteOutput.model_validate({"route": "tro_chuyen"}).route == "tro_chuyen"
+    for old in ("khan_cap", "ngoai_pham_vi"):
+        with pytest.raises(ValueError):
+            RouteOutput.model_validate({"route": old})
+
+
+def test_emergency_text_goes_to_kho_agent(deps):
+    # không còn câu soạn sẵn: câu khẩn cấp đi định tuyến rồi agent Huế như câu thường (User 08/11)
     gen = FakeGenerator()
-    trace = run(deps, "Có người vừa bị đuối nước, không thở", gen)
-    assert gen.calls == [] and trace.answer == EMERGENCY_ANSWER and trace.emergency_by == "rule" and trace.llm_calls == []
+    trace = run(deps, "Có người vừa bị đuối nước ở bãi biển Thuận An", gen)
+    assert gen.calls == ["route", ("answer", True)] and trace.fixed_outcome is None and trace.answer == "Có thông tin [1]."
 
 
-@pytest.mark.parametrize("route, answer, outcome", [("khan_cap", EMERGENCY_ANSWER, "emergency"), ("ngoai_pham_vi", OUT_OF_SCOPE_ANSWER, "out_of_scope")])
-def test_router_fixed_routes_skip_answer_model(deps, route, answer, outcome):
-    gen = FakeGenerator(route=route)
-    trace = run(deps, "Câu tự viết bất kỳ", gen)
-    assert gen.calls == ["route"] and trace.answer == answer and trace.fixed_outcome == outcome and trace.documents is None
-    assert [c["route"] for c in trace.llm_calls] == ["router"]
+@pytest.mark.parametrize("text", [OUT_OF_SCOPE_ANSWER, f"  {OUT_OF_SCOPE_ANSWER}\n"])
+def test_agent_out_of_scope_answer_gets_out_of_scope_outcome(deps, text):
+    # review B M-1: code nhận đúng câu ⇒ outcome `out_of_scope` như câu cố định cũ (không kiểm citation, giao diện / log / gợi ý như trước)
+    trace = run(deps, "Viết giúp mình một hàm sắp xếp mảng", FakeGenerator(answer=text))
+    assert trace.fixed_outcome == "out_of_scope" and trace.answer == OUT_OF_SCOPE_ANSWER and trace.cited == () and trace.citation_error is None
+
+
+def test_other_text_is_not_out_of_scope(deps):
+    # câu từ chối kho / câu có thêm chữ ⇒ không phải `out_of_scope` (không so lỏng)
+    for text in (INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER + " Ví dụ về Đại Nội [1]."):
+        assert run(deps, "Đại Nội mở cửa mấy giờ?", FakeGenerator(answer=text)).fixed_outcome != "out_of_scope"
 
 
 def test_chat_route_does_not_search(deps):

@@ -14,7 +14,7 @@ from openai import APIConnectionError
 from llm import tra_web as tw
 from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, answer_turn_stream_parallel, cong_web, turn_usd,
                            web_gate_open)
-from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER, TU_WEB_LUAT
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER, ROUTER_INSTRUCTIONS, TU_WEB_LUAT
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
 
 WEB = AssistantFlags(router=True, tim_them=True, tra_web=True)
@@ -137,7 +137,6 @@ def test_lodging_section_has_no_money_even_if_in_snippet():
     (refused(answer=OUT_OF_SCOPE_ANSWER), WEB, False),                 # câu ngoài phạm vi trong tuyến trợ lý
     (refused(answer=f"{INSUFFICIENT_ANSWER} Nhưng có thể [1]."), WEB, False),  # trả lời một phần ⇒ kho thắng
     (refused(fixed_outcome="max_turns"), WEB, False),
-    (refused(route="khan_cap", fixed_outcome="emergency"), WEB, False),
     (refused(route="tro_chuyen"), WEB, False),
     (refused(lich={"khung": {}}), WEB, False),
     (refused(truong={}), WEB, False),                                  # lượt ghép từ nút (D8)
@@ -207,7 +206,7 @@ def _script_refuse(router_route="tro_ly_hue", web_text="Phòng tập A mở từ
         instructions = kw.get("instructions") or ""
         if instructions == TU_WEB_LUAT:
             return [answer(web_text)]
-        if "tro_ly_hue" in instructions and "ngoai_pham_vi" in instructions:  # lời dặn định tuyến
+        if instructions.startswith(ROUTER_INSTRUCTIONS[:80]):  # lời dặn định tuyến
             return [{"type": "message", "id": f"r{n}", "role": "assistant", "status": "completed",
                      "content": [{"type": "output_text", "text": json.dumps({"route": router_route}), "annotations": []}]}]
         return [answer(INSUFFICIENT_ANSWER)]

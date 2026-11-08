@@ -40,8 +40,8 @@ METRIC_FIELDS = (
     "outcome", "status_code", "refusal", "model", "input_tokens", "output_tokens", "reasoning_tokens", "cache_write_tokens", "cached_tokens",
     "n_context_sources", "n_cited_sources", "search_ms", "dense_ms", "context_ms", "generation_ms", "citation_ms", "total_ms",
     "route", "usd", "n_llm_calls", "llm_calls", "tools",
-    # B1: định tuyến lỗi ⇒ đường cũ; câu khẩn cấp do luật / định tuyến bắt; ngày đã đưa model (chỉ ngày, không giờ)
-    "route_error", "emergency_by", "today",
+    # B1: định tuyến lỗi ⇒ đường cũ; ngày đã đưa model (chỉ ngày, không giờ). Bậc G (spec bản 13): bỏ `emergency_by` (không còn tuyến khẩn cấp)
+    "route_error", "today",
     # B2 D9: ms của lần gọi định tuyến (đã có trong `llm_calls`, tách riêng để theo dõi tốc độ theo tuyến)
     "routing_ms",
     # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
@@ -115,7 +115,7 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 # B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` tắt vì chạy http://127.0.0.1
 # (bật trước khi deploy — spec §7).
 CONVERSATION_COOKIE = "conversation_id"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns", "hoi_lai"}
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai"}
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
@@ -357,7 +357,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         generation_ms=trace.generation_ms, citation_ms=trace.citation_ms,
         n_cited_sources=None if trace.cited is None else len(trace.cited),
         route=trace.route, usd=turn_usd(trace), n_llm_calls=len(trace.llm_calls), llm_calls=trace.llm_calls, tools=trace.tools,
-        route_error=trace.route_error, emergency_by=trace.emergency_by, routing_ms=trace.routing_ms, n_history_turns=len(trace.history),
+        route_error=trace.route_error, routing_ms=trace.routing_ms, n_history_turns=len(trace.history),
         hoi_lai=None if trace.clarify is None else {"loai": trace.clarify["loai"], "n": len(trace.clarify["truong"])},
         lich_trinh_ok=None if trace.lich is None else not trace.lich_kiem and trace.citation_error is None,
         lich_trinh_so_diem=None if trace.lich is None else len(trace.lich["nguon"]),
@@ -473,7 +473,7 @@ class StreamEvents:
         return sse_event("done", data)
 
     def fixed(self, trace: AnswerTrace) -> list[bytes]:
-        """Câu cố định (khẩn cấp, ngoài phạm vi, từ chối khi ngữ cảnh không có nguồn) — chữ đã ra một `delta`; không kiểm citation."""
+        """Câu cố định (ngoài phạm vi — agent trả, code nhận; từ chối khi ngữ cảnh không có nguồn; chạm `max_turns`) — chữ đã ra một `delta`; không kiểm citation."""
         self.metrics["outcome"] = trace.fixed_outcome
         self.metrics["refusal"] = trace.answer.strip() in REFUSAL_ANSWERS
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()

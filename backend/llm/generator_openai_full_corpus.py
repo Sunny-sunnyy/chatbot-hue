@@ -27,6 +27,7 @@ from core.schema import GenerationError
 from llm.pricing import cost_usd
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
+    ANSWER_BIEU_MAU_INSTRUCTIONS,
     ASSISTANT_TOOL_NOTE,
     LICH_TRINH_MO_TA,
     NGAY_LICH_MO_TA,
@@ -54,22 +55,22 @@ class AnswerOutput(BaseModel):
 
 
 class RouteOutput(BaseModel):
-    """Đầu ra định tuyến (Phase 9 B1 D3): đúng một trong 4 tuyến, strict."""
+    """Đầu ra định tuyến (Phase 9 B1 D3; bậc G spec bản 13: còn 2 nhóm — xã giao / về Huế), strict."""
     model_config = ConfigDict(extra="forbid")
-    route: Literal["tro_chuyen", "tro_ly_hue", "ngoai_pham_vi", "khan_cap"]
+    route: Literal["tro_chuyen", "tro_ly_hue"]
 
 
 class RouteSearchOutput(BaseModel):
     """B2 V1 (plan D2): tuyến + một câu tìm kho đứng một mình."""
     model_config = ConfigDict(extra="forbid")
-    route: Literal["tro_chuyen", "tro_ly_hue", "ngoai_pham_vi", "khan_cap"]
+    route: Literal["tro_chuyen", "tro_ly_hue"]
     cau_tim: str
 
 
 class RouteSplitOutput(BaseModel):
     """B2 V3 (plan D2): tuyến + 1–3 câu tìm (schema gửi `maxItems` 3; API thật có nhận không kiểm ở pilot)."""
     model_config = ConfigDict(extra="forbid")
-    route: Literal["tro_chuyen", "tro_ly_hue", "ngoai_pham_vi", "khan_cap"]
+    route: Literal["tro_chuyen", "tro_ly_hue"]
     cau_tim: list[str] = Field(max_length=3)
 
 
@@ -300,7 +301,7 @@ class OpenAIFullCorpusGenerator:
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
         # mẫu dùng; mọi lượt khác gọi `answer_agent` như cũ (Q1). Luật vẫn nằm cả trong khung ngữ cảnh — giữ đúng cấu hình C đã đo.
         self.bieu_mau_agent = self.answer_agent.clone(
-            instructions=f"{answer_instructions}\n\n{LICH_TRINH_LUAT}",
+            instructions=f"{ANSWER_BIEU_MAU_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}",  # bậc G: lời dặn trước G (giống byte)
             model_settings=dataclasses.replace(self.answer_agent.model_settings, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
         )
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.

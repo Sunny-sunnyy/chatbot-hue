@@ -339,7 +339,6 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
         "latency_ms": None,
         "response_id": None,
         "route_error": None,
-        "emergency_by": None,
         "notice": None,
         "today": None,
         "route": None,
@@ -370,7 +369,7 @@ async def answer_case(case: dict, service, context_builder, generator, flags: As
         row["context_sources"] = len(trace.packed.sources)
     # log Phase 9 (spec §3 "Log + vết"): cùng các trường như `chat_metrics`
     row.update(route=trace.route, usd=turn_usd(trace), llm_calls=trace.llm_calls, tools=trace.tools,
-               route_error=trace.route_error, emergency_by=trace.emergency_by, notice=trace.notice, today=trace.today,
+               route_error=trace.route_error, notice=trace.notice, today=trace.today,
                routing_ms=trace.routing_ms, fixed_outcome=trace.fixed_outcome, cau_tim_rong=trace.cau_tim_rong)
     if trace.generated is not None:
         row.update(

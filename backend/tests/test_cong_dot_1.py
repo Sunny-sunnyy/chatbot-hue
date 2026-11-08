@@ -24,7 +24,7 @@ from core.settings_loader import load_settings
 from llm import lich_trinh as lt
 from llm.do_so import do_ngay_di
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel
-from llm.full_corpus_prompt import ANSWER_SYSTEM_INSTRUCTIONS, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT
+from llm.full_corpus_prompt import ANSWER_BIEU_MAU_INSTRUCTIONS, ANSWER_SYSTEM_INSTRUCTIONS, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT
 from llm.hoi_lai import GIA_TRI, TruongInput, ghep_cau
 from retrieval.full_corpus_context import PackedSource
 from test_api_chat import chat_log_records, metric_lines
@@ -46,7 +46,8 @@ def flags_from(**assistant) -> AssistantFlags:
 OFF = flags_from(lich_trinh_bieu_mau=False)
 FORM = flags_from(lich_trinh_bieu_mau=True)
 TRUONG = ("so_ngay", "di_cung", "kieu_di", "so_thich")
-FORM_INSTRUCTIONS = f"{ANSWER_SYSTEM_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}"  # V5 (X1c của C): luật lịch trong lời dặn hệ thống của lượt biểu mẫu
+# V5 (X1c của C): luật lịch trong lời dặn hệ thống của lượt biểu mẫu; bậc G: lượt biểu mẫu giữ lời dặn trước G (giống byte — plan G bản 2 M-4)
+FORM_INSTRUCTIONS = f"{ANSWER_BIEU_MAU_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}"
 
 
 def effort(kwargs):
