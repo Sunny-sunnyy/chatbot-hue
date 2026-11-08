@@ -67,3 +67,68 @@ def test_today_uses_vietnam_time_not_server_time():
     # 17:30 UTC 07/11 = 00:30 08/11 giờ Việt Nam
     assert nl.hom_nay(dt.datetime(2026, 11, 7, 17, 30, tzinfo=dt.timezone.utc)) == dt.date(2026, 11, 8)
     assert nl.hom_nay(dt.datetime(2026, 11, 7, 16, 59, tzinfo=dt.timezone.utc)) == dt.date(2026, 11, 7)
+
+
+# ---------- Nối vào trợ lý (review plan M-2, m-1 / WORKFLOW §4c): fixture `deps` = Qdrant thật, chỉ đọc; model = client soạn kịch bản ----------
+import asyncio  # noqa: E402
+import dataclasses  # noqa: E402
+import json  # noqa: E402
+import re  # noqa: E402
+
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream  # noqa: E402
+from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: E402,F401
+from test_b5_lich_trinh import tool_names  # noqa: E402
+
+TAT = AssistantFlags(tim_them=True)
+BAT = dataclasses.replace(TAT, ngay_lich=True)
+
+
+def ngay_call(loai="am", ngay=1, thang=1, nam=0, thang_nhuan=False) -> dict:
+    n = next(_ids)
+    return {"type": "function_call", "id": f"fc_{n}", "call_id": f"call_{n}", "name": "ngay_lich",
+            "arguments": json.dumps({"loai": loai, "ngay": ngay, "thang": thang, "nam": nam, "thang_nhuan": thang_nhuan}), "status": "completed"}
+
+
+def chay(deps, cau, gen, flags, history=(), stream=False):
+    trace = AnswerTrace(history=list(history))
+
+    async def go():
+        if stream:
+            return [e async for e in answer_turn_stream(cau, *deps, gen, trace, flags)]
+        await answer_turn(cau, *deps, gen, trace, flags)
+
+    return trace, asyncio.run(go())
+
+
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("cau, history, flags, co_cong_cu", [
+    ("Rằm tháng Giêng năm nay là ngày nào dương lịch?", (), BAT, True),                                 # lượt đầu có từ chỉ ngày
+    ("Đại Nội rộng bao nhiêu?", (), BAT, False),                                                    # không từ chỉ ngày ⇒ như cũ
+    ("Còn chùa Thiên Mụ thì sao?", (("Tối nay Đại Nội có mở cửa không?", "…"),), BAT, True),       # lượt có lịch sử: câu hỏi liền trước có từ chỉ ngày
+    ("Rằm tháng Giêng năm nay là ngày nào dương lịch?", (), TAT, False),                             # cờ tắt ⇒ như cũ
+])
+def test_date_tool_offered_only_with_date_words(deps, cau, history, flags, co_cong_cu, stream):
+    seen = []
+    gen = generator(lambda n, kw: (seen.append(tool_names(kw)), [answer("Mình chưa rõ.")])[1])
+    chay(deps, cau, gen, flags, history, stream)
+    assert seen and all(("ngay_lich" in names) is co_cong_cu and "tim_kho" in names for names in seen)
+
+
+def test_answer_citing_only_the_date_source_passes_citation_check(deps):
+    # M-2: câu chỉ có ngày (không đoạn kho) vẫn qua kiểm citation vì kết quả công cụ là một nguồn trong sổ nguồn
+    def kich_ban(n, kw):
+        if n == 1:
+            return [ngay_call("am", 1, 1, 2027)]
+        so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Lịch hệ thống", json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n"))
+        return [answer(f"Mùng 1 Tết năm 2027 là thứ Bảy, 06/02/2027 dương lịch [{so[-1]}].")]
+
+    trace, _ = chay(deps, "Mùng 1 Tết năm sau là thứ mấy?", generator(kich_ban), BAT)
+    assert trace.citation_error is None and trace.cited and trace.cited[-1].title == nl.TIEU_DE_NGUON
+    assert "06/02/2027" in trace.so_nguon[-1].excerpts[1]
+
+
+def test_date_tool_counts_at_most_two_calls(deps):
+    gen = generator(lambda n, kw: [ngay_call("am", 15, n, 2026)] if n <= 3 else [answer("Mình chưa rõ.")])
+    trace, _ = chay(deps, "Rằm các tháng năm nay là ngày nào?", gen, BAT)
+    goi = [t for t in trace.tools if t["name"] == "ngay_lich"]
+    assert len(goi) == 3 and goi[2].get("het_luot") and sum(s.title == nl.TIEU_DE_NGUON for s in trace.so_nguon) == 2
