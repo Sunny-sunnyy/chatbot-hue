@@ -41,3 +41,41 @@ phòng xa / over-engineering.
 - Sàn S1 (4 số + S-AT), S3b (đếm code), S4 (chấm mù với mốc) có mặt; tiêu chí ghi trước lượt có phí; nhãn bộ T3 ghi trước khi chạy.
 - Đơn giản: không thấy cơ chế phòng xa (không cache, không retry, không validator chồng); log chỉ số / nhãn — khớp §7 Session_Prompt và §12.6 "log không chữ".
 - Không chạy model, server, Qdrant hay lệnh có phí.
+
+---
+
+## Vòng 2 — plan bản 2 (sha256 `dbcd1a2f6d81`, khớp)
+
+**Kết luận: `ready_for_user_confirmation`** — 6 / 6 major đóng, 4 / 4 minor cũ đóng; còn **5 minor mới** (không chặn, sửa lúc code — `WORKFLOW.md` §5: vòng 2 chỉ còn
+minor ⇒ A duyệt). M-5: A chấp nhận lệch spec §12.5; tôi chỉ kiểm plan đã ghi rõ lệch + lý do và nguồn mở được bài gốc.
+
+### Đóng / còn
+
+| Mã | Trạng thái | Căn cứ ở bản 2 |
+|---|---|---|
+| M-1 | **đóng** | Kiểm cuối chỉ ở lượt đã gọi `tra_ve_gio`; tập kiểm = số tiền + chuỗi dạng giờ (không số đơn lẻ / năm); tập cho phép gồm số trong câu hỏi; vi phạm ⇒ rút lại như thời tiết (`citation_error`, `assistant.py:469-470`, `chat.py:495-499`) cùng một đường cho 3 đường, giữ S5; test 3 đường (plan :33-37, :63-64) |
+| M-2 | **đóng** | Bảng trường → model / khối (plan :15-21): dòng giá "miễn phí" / 0, `mien_giam[]`, `ghi_chu_nguyen_van` chỉ vào khối; test "điểm có dòng miễn cho trẻ nhỏ" (:63) |
+| M-3 | **đóng** (kèm n-1) | `max_turns` 5 khi có `tra_ve_gio`, 4 khi không (không vào thân yêu cầu ⇒ Q1 không đổi); sàn `outcome = max_turns` = 0; test chuỗi (plan :31-32, :50) |
+| M-4 | **đóng** (kèm n-2) | `INSUFFICIENT_ANSWER` ⇒ câu dẫn cố định + dòng (tất định) + khối, khuôn `CAU_DAN_DU_BAO`; `OUT_OF_SCOPE_ANSWER` ⇒ không nối khối; `chu_cua_model` bóc khối T3 ⇒ `refusal` + S3b đúng (plan :38-40, :52) |
+| M-5 | **đóng** | Ghi rõ "lệch spec §12.5" + lý do (tìm đoạn thật chỉ 10 / 12) (plan :23-26). `source` = đường dẫn file kho ⇒ `bai_id` có khi đường dẫn nằm trong tập bài (`chat.py:330-337`); kèm theo: dòng H4c "có thể thay đổi" sẽ hiện vì tiền tố `travel/tickets/` (`assistant.py:51`, `:586-589`) — hợp ý |
+| M-6 | **đóng** (kèm n-4) | Bảng lượt chạy bộ × nhánh × lượt có mốc `main` (plan :66-72); Q2 thêm "≥ mốc `main`" (:48); S1 so mốc cùng ngày (:51); ước lại sau pilot, vượt ⇒ nhắn A |
+| m-1 | **đóng** | Q1 tách cờ tắt 228 / 228 · cờ bật k / k + báo số câu được đưa công cụ (:47) |
+| m-2 | **đóng** | Regex có ranh giới từ ghi sẵn, chốt trong test trước lượt có phí; câu dương / âm (:27-30) |
+| m-3 | **đóng** | Luật một câu đạt Q2; Q3 phạm vi lượt + câu hỏi có / không cho sub-agent (:48-49) |
+| m-4 | **đóng** (kèm n-3) | Nạp chỉ khi cờ bật (:10); S5 / S6 có lý do (:54-55) |
+
+### Minor mới (sửa lúc code, không cần vòng 3)
+
+| Mã | Vị trí | Bằng chứng | Tiêu chí đóng |
+|---|---|---|---|
+| n-1 | `max_turns` (:31) | Trần 4 gốc đã tính lần gọi thứ 3 "đã hết lượt" (`generator_openai_full_corpus.py:76`); chuỗi xấu nhất có cả nó là `tim_kho` ×2 + "hết lượt" + `tra_ve_gio` + `thoi_tiet` + viết = 6 | Chọn 5 hay 6 kèm một câu lý do; sàn `max_turns` = 0 vẫn bắt nếu thiếu |
+| n-2 | stream câu từ chối (:39) | Chữ chỉ được giữ lại khi đã có khối thời tiết hoặc lịch (`assistant.py:947`); plan ghi "đang được giữ lại" nhưng chưa nêu thêm điều kiện "đã có dòng `tra_ve_gio`" vào chỗ này | Mở rộng điều kiện ở `:947` + nhánh trong `_chu_giu_lai`; test stream ca `INSUFFICIENT_ANSWER` có dòng bảng |
+| n-3 | kiểm giờ (:34) | Regex `\d{1,2}\s*(h\|giờ\|:)\s*\d{0,2}` khớp cả thời lượng ("mất 2 giờ"); "7h30" / "7:30" / "07:30" khác chuỗi | So theo cặp (giờ, phút) đã chuẩn hoá; test "7h30" ↔ "7:30" và một câu thời lượng có trong đoạn kho được trích không bị rút lại |
+| n-4 | S5 / S6 + tiền (:54-57, :70-72) | S6 ghi "sàn" nhưng không có trong danh sách "Âm"; §12.7 ghi lượt agent ≈ 0,0005–0,0008 nên mốc `main` có thể đã vượt 0,0005. S5 đo "lượt Q2 (stream)" — ghi rõ Q2 chạy qua đường stream server thật. Cộng nhẩm: S1 biến thể 64 × 0,0008 = 0,051 (plan 0,045), S4 biến thể 30 × 0,0008 = 0,024 (plan 0,021) ⇒ tổng ≈ 0,15, vẫn dưới điểm dừng 0,20 | S6 so với mốc `main` (hoặc đưa vào danh sách âm cho nhất quán); ghi đường chạy của Q2; sửa số |
+| n-5 | nguồn (:24) | `bai_id` chỉ có khi `source` trùng đúng chuỗi đường dẫn trong tập bài (`chat.py:337`) | Một test: nguồn T3 của một file vé có `bai_id` khác null |
+
+### Đã kiểm thêm ở vòng 2
+
+- Đọc toàn bộ bản 2 (74 dòng); đối chiếu lại `assistant.py:442-470`, `:586-589`, `:615-622`, `:947-956`, `:1012-1018`; `chat.py:266`, `:330-337`, `:493-499`;
+  `generator_openai_full_corpus.py:76`, `:288`; `thoi_tiet.py:37`. Không chạy model / server, không lệnh có phí.
+- Bản 2 không thêm cơ chế phòng xa: rút lại dùng đường sẵn có (không sự kiện mới), câu thay từ chối theo khuôn thời tiết, log thêm một nhãn `thay_tu_choi`.
