@@ -231,6 +231,8 @@ a { color: inherit; }
 .map-links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 0; padding: 0; list-style: none; }
 .map-links a { color: var(--color-accent); text-decoration: underline; }
 /* Bản đồ lịch trình (plan 2026-11-08 §2): ghim tròn có số = thứ tự trong ngày; dòng ghi công OSM luôn hiện trong khung */
+.luu-lich { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
+.luu-lich .retry { margin-top: 0; }
 .bd { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 .bd-ngay { display: flex; flex-wrap: wrap; gap: 6px; }
 .bd-khung { height: 260px; width: 100%; border-radius: 12px; border: 1px solid var(--color-line); z-index: 0; }

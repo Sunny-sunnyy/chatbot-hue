@@ -237,6 +237,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
 function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   const html = useMemo(() => renderAnswerHtml(turn.text), [turn.text]);
   const pending = PENDING.has(turn.phase);
+  const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
   return (
     <article className="turn" ref={turnRef} data-turn={turn.key}>
       <h2 className="ask">{turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
@@ -261,7 +262,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
       {turn.text && turn.phase !== "error" && turn.outcome !== "emergency" && (
         <div className="bubble">
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
-          <div className="answer" dangerouslySetInnerHTML={{ __html: html }} />
+          <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
           {turn.sources?.length > 0 && <SourceLine turn={turn} />}
           {turn.notice && (
             <p className="notice">
@@ -279,7 +280,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
-      {turn.phase === "done" && turn.lich && <LichExtras lich={turn.lich} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null} />}
+      {turn.phase === "done" && turn.lich && (
+        <LichExtras lich={turn.lich} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
+                    getText={() => vanBanLich(turn, answerRef.current?.innerText ?? "", turn.lich.ban_do || [])} />
+      )}
       {turn.phase === "done" && turn.outcome === "out_of_scope" && (
         <div className="suggest" aria-label="Câu gợi ý">
           <p className="text-sm text-muted">Bạn có thể hỏi, ví dụ:</p>
@@ -380,7 +384,7 @@ function Feedback({ turnId }) {
 
 // B5 D11 + D12 (a): link "mở bản đồ" từng điểm (code dựng, chỉ đúng gốc Google Maps) + nút "Sửa": lịch từ câu gõ ⇒ mở lại thẻ hỏi lại; lịch từ
 // biểu mẫu ⇒ quay lại biểu mẫu với lựa chọn đang dùng (cổng D3).
-function LichExtras({ lich, onAsk, onEditPlan }) {
+function LichExtras({ lich, onAsk, onEditPlan, getText }) {
   const [editing, setEditing] = useState(false);
   const links = (lich.ban_do || []).filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
   return (
@@ -388,11 +392,51 @@ function LichExtras({ lich, onAsk, onEditPlan }) {
       {links.some(item => coToaDo(item.toa_do)) ? (
         <Suspense fallback={<MapLinks links={links} />}><BanDoLich items={links} /></Suspense>
       ) : links.length > 0 && <MapLinks links={links} />}
+      <LuuLich getText={getText} />
       {lich.sua && onEditPlan && (
         <button type="button" className="retry" onClick={() => onEditPlan(lich.sua.chon)}>Sửa — điền lại biểu mẫu</button>
       )}
       {lich.sua && !onEditPlan && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
       {lich.sua && !onEditPlan && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}
+    </div>
+  );
+}
+
+// Việc nhỏ (1) 08/11: lưu lịch ra chữ thường — chữ lấy từ phần đang hiện (không gọi server, không gửi đi đâu).
+const TEN_FILE_LICH = "lich-trinh-hue.txt";
+const DONG_CUOI_LICH = "Từ Trợ lý Huế — có thể sai; giờ mở cửa, giá vé có thể đã thay đổi, hãy kiểm lại trước khi đi.";
+
+export function vanBanLich(turn, answerText, items) {
+  const links = items.filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
+  const diem = links.map(i => (i.ngay ? `Ngày ${i.ngay} · ${i.thu_tu}. ${i.ten}: ${i.map_url}` : `- ${i.ten}: ${i.map_url}`));
+  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), "", answerText.trim(),
+          ...(diem.length ? ["", "Bản đồ từng điểm:", ...diem] : []), "", DONG_CUOI_LICH, ""].join("\n");
+}
+
+function LuuLich({ getText }) {
+  const [bao, setBao] = useState("");
+  async function saoChep() {
+    try {
+      await navigator.clipboard.writeText(getText());  // chỉ có ở trang https / localhost
+      setBao("Đã sao chép lịch.");
+    } catch {
+      setBao("Trình duyệt không cho sao chép — dùng nút Tải về.");
+    }
+  }
+  function taiVe() {
+    const url = URL.createObjectURL(new Blob([getText()], { type: "text/plain;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = TEN_FILE_LICH;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setBao("Đã tải về " + TEN_FILE_LICH + ".");
+  }
+  return (
+    <div className="luu-lich">
+      <button type="button" className="retry" onClick={saoChep}>Sao chép lịch</button>
+      <button type="button" className="retry" onClick={taiVe}>Tải về (.txt)</button>
+      <span className="text-sm text-muted" role="status">{bao}</span>
     </div>
   );
 }
