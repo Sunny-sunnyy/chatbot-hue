@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { toaDoHopLe } from "./toaDo.js";
 
 // Bản đồ lịch trình (plan `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` §2, §4): ghim có số theo thứ tự trong ngày, dữ liệu do server
 // dựng từ bảng (model không tạo toạ độ). File này tải riêng (`lazy` ở `chat.jsx`) ⇒ câu thường không tải Leaflet, không gọi máy chủ tile.
@@ -10,11 +11,6 @@ const TILE = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";  // khớp `TILE_
 const GHI_CONG = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
   + " · Toạ độ: dữ liệu mở thành phố Huế";
 const NHAN_BUOI = { sang: "Sáng", chieu: "Chiều", toi: "Tối" };
-
-// Kiểm lại phía trình duyệt (như server, `lich_trinh.KHUNG_HUE`): sai ⇒ coi như chưa có toạ độ.
-export function toaDoHopLe(td) {
-  return Array.isArray(td) && td.length === 2 && td.every(Number.isFinite) && td[0] >= 16 && td[0] <= 16.8 && td[1] >= 107 && td[1] <= 108;
-}
 
 function oGhim(item) {
   // dựng bằng DOM + textContent (tên điểm không đi qua HTML)
@@ -36,7 +32,8 @@ export default function BanDoLich({ items }) {
   const ngays = [...new Set(items.map(i => i.ngay))];
   const [ngay, setNgay] = useState(ngays[0]);
   const cuaNgay = items.filter(i => i.ngay === ngay);
-  const coToaDo = cuaNgay.filter(i => toaDoHopLe(i.toa_do));
+  // review E m-1: số trên ghim đi qua `innerHTML` của Leaflet ⇒ chỉ nhận số nguyên dương (server luôn dựng vậy — kiểm lại như toạ độ)
+  const coToaDo = cuaNgay.filter(i => toaDoHopLe(i.toa_do) && Number.isInteger(i.thu_tu) && i.thu_tu > 0);
   const khoa = coToaDo.map(i => `${i.thu_tu}:${i.toa_do}`).join("|");
   const khung = useRef(null);
 

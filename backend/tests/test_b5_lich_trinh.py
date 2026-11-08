@@ -167,6 +167,10 @@ def test_l_b_evening_refused_gets_reason_frame_line_and_check():
     assert lt.khung_chu(BANG, kid, nguon, "LUAT").endswith(lt.DONG_KHUNG_TOI["toi_tre_em"])
     assert {"diem": "buổi tối", "ma_luat": "toi_lon_tuoi"} in khung(di_cung="nguoi_lon_tuoi", hoi_toi=True)["khong_xep"]
     assert {"diem": "buổi tối", "ma_luat": "toi_khong_diem"} in khung(so_thich="di_tich", di_cung="mot_minh", hoi_toi=True)["khong_xep"]
+    # việc nhỏ (4): chưa nêu sở thích ⇒ không nói "hợp sở thích của bạn"
+    chua = khung(di_cung="mot_minh", hoi_toi=True)["khong_xep"]
+    assert {"diem": "buổi tối", "ma_luat": "toi_chua_so_thich"} in chua and not any(x["ma_luat"] == "toi_khong_diem" for x in chua)
+    assert "sở thích của bạn" not in lt.CAU_KHONG_XEP["toi_chua_so_thich"] + lt.DONG_KHUNG_TOI["toi_chua_so_thich"]
     food = khung(so_thich="am_thuc", di_cung="mot_minh", hoi_toi=True)  # có phố đêm hợp sở thích ⇒ buổi tối được xếp, không câu từ chối
     assert any(ng["buoi"]["toi"] for ng in food["ngay"]) and not any(x["ma_luat"] in lt.MA_TOI for x in food["khong_xep"])
     plain = khung(di_cung="gia_dinh_tre_em")  # không xin buổi tối ⇒ khung + ghi chú như trước

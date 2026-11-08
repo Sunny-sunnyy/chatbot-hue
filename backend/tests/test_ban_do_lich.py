@@ -56,6 +56,14 @@ def test_flag_off_keeps_the_old_payload_shape():
     assert [{"ten": i["ten"], "map_url": i["map_url"]} for i in new] == old
 
 
+def test_maps_link_by_name_and_coordinates_only_loaded_for_map_flag():
+    # A 08/11 (review E p11-lich-nho): link Google Maps theo TÊN (bỏ link theo toạ độ); toạ độ chỉ nạp khi cờ `ban_do_lich` bật ⇒ bật biểu mẫu
+    # không cần file toạ độ
+    for i in lt.ban_do(BANG, KHUNG, TOA_DO):
+        assert i["map_url"] == lt.MAP_BASE + lt.quote(f"{i['ten']}, Huế")
+    assert not SETTINGS["assistant"].get("ban_do_lich") and AssistantFlags.from_settings(SETTINGS).toa_do_lich is None
+
+
 def test_flag_needs_coordinates():
     with pytest.raises(ValueError, match="ban_do_lich"):
         AssistantFlags(lich_trinh_bieu_mau=True, bang_lich=BANG, ban_do_lich=True)
