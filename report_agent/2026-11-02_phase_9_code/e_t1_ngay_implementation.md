@@ -1,8 +1,8 @@
 # Implementation Report: Phase 9 T1 — ngày + âm lịch Việt Nam
 
-Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026
+Người làm: E (Claude Code, `hue-rag-22`) · Date: 11:44 08/11/2026 · **cập nhật 12:00 08/11/2026: lượt 2 sau sửa (b) — mục 4b**
 - Plan: `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a` — mức nhẹ, A duyệt.
-- Nhánh `p9-t1-ngay` `2c6cd46` (3 commit từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
+- Nhánh `p9-t1-ngay` `f536dfe` (4 commit; sau sửa (b) từ `main` `442f758`, đã push). Cờ `ngay_lich: false` trong `settings.yaml`.
 - **Kết quả: PARTIAL — 4 / 6 tiêu chí đạt, tiêu chí 3 trượt 1 câu, S4 sát.** A / User quyết giữ / sửa / gỡ (mục 6).
 
 ## 1. Phạm vi
@@ -84,6 +84,35 @@ Cài vào `.venv` chung bằng `uv add --no-sync` + `uv sync --inexact --frozen`
 - nhánh 0,022 USD (log worktree, gồm pilot + R8 chạy lại 0,00225);
 - mốc ≤ 0,051 USD — file log ở thư mục chính lẫn dòng của session khác ⇒ cận trên; lần sau đếm theo `turn_id`;
 - ⇒ **≤ 0,076 USD** (điểm dừng 0,10), tiền Phase 9.
+
+## 4b. Lượt 2 — sau sửa (b) của A (code ghi "đã qua N ngày / còn N ngày nữa / là hôm nay")
+
+**Sửa:** commit `f536dfe` — `ngay_duong` trả ngày dương; `ket_qua` nối khoảng cách tới hôm nay; test 47 passed.
+
+**Đo:**
+- Bộ ngày 27 câu, nhánh × 1 (11:47:10–11:49:39).
+- **Mốc dùng lại lượt 1.** Lý do: mốc là `main`, không đổi; chỉ nhánh đổi (chữ kết quả công cụ). Chạy lại mốc chỉ thêm nhiễu và tiền.
+- Chấm: 2 sub-agent **mới** chấm mù, cùng brief Phần 1 (khoá `khoa_v2.json`). **Khớp 27 / 27.**
+
+| Tiêu chí | Lượt 1 | **Lượt 2** |
+|---|---|---|
+| 1. từ chối ⇒ trả lời OK | 8 | **9** (R6, R11, N3, A1, **A2**, A6, A7, A8, A9) |
+| 2. L1 / L3 mới | 0 | **0** |
+| 3. L2 trong chữ trả lời | 1 (A2 "Chưa … đã qua") | **1 khác: R7** — model **tự viết** "tuần này là giữa tháng 9 âm lịch" trong khi ghi đúng hôm nay là 30/9 âm; kết luận vẫn đúng. Câu này lượt 1 nhánh OK ⇒ lỗi thật + dao động giữa lượt. Code kiểm L2: 0 (không bắt được kiểu mô tả "tuần / tháng âm") |
+| 4. chạm `max_turns` | 1 (R8) | **0** |
+| trả lời ⇒ từ chối (kém đi) | R8 | **R8, E2** — E2 lượt 1 nhánh vẫn trả lời ⇒ có thể nhiễu 1 lượt |
+
+A2 đã hết lỗi nhờ phép so trước / sau do code làm.
+
+Tiền lượt 2: **0,018178 USD**. Tổng T1 ≤ 0,094 USD (điểm dừng 0,10).
+
+**Kết quả lượt 2: PARTIAL** — tiêu chí 1, 2, 4 đạt; tiêu chí 3 trượt 1 câu (R7, lỗi mô tả lịch âm của tuần do model tự suy, không từ công cụ).
+
+**Hướng nếu A muốn đóng cả R7:**
+- (i) công cụ trả luôn ngày âm đầu / cuối của **tuần này** khi câu có "tuần này / tuần sau" (code);
+- (ii) mô tả công cụ dặn "không tự suy ngày âm của ngày khác — gọi công cụ" (lời dặn: model có thể không theo).
+
+E đề xuất (i) nếu làm tiếp. Hoặc chấp nhận merge với cờ tắt và ghi giới hạn.
 
 ## 5. Lỗi và giới hạn
 

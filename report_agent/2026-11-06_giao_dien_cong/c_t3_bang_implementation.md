@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 T3 — bảng vé + giờ mở cửa (`tra_ve_gio`) — lượt 1 **ÂM theo luật ghi trước** (Q2 17 / 20 < 19, Q3 0 / 4 khối)
+# Implementation Report: Phase 9 T3 — bảng vé + giờ mở cửa (`tra_ve_gio`) — **vòng 1 ÂM, vòng 2 (cuối) ÂM sát ngưỡng** (Q2 18 / 20 < 19; Q3 khối 4 / 4 ✓)
 
 Người làm: C (Claude Code, `hue-rag-e9`) · 08/11/2026 (code 11:12 → đo xong 11:36 — `date`)
 Nhánh `p9-t3-bang` = `7ae4faf` (từ `main` `de10c6b`, đã push; cờ `tra_ve_gio: false`). Plan bản 2 `dbcd1a2f6d81` (A duyệt). Luật đo nhẹ (User 08/11, `Session_Prompt.md` §7–§8):
@@ -63,3 +63,39 @@ chấm lại cùng dữ liệu. Code runtime không bị ảnh hưởng (dòng g
 
 **Giải thích ngắn:** bảng vé / giờ đã dựng và kiểm từng chữ với kho; code đọc bảng đúng (test, 3 đường). Nhưng khi để model tự quyết có tra bảng hay không, nó gần như không
 tra (2 / 20) vì kho đã có giá — nên phần quan trọng (điều kiện miễn giảm chép nguyên văn, kiểm số) không chạy. Đề xuất: code tự tra khi thấy tên điểm + câu hỏi về vé / giờ.
+
+
+## 8. Vòng chỉnh 2 (cuối) — A chọn (b) 08/11
+
+**Ghi rõ (A yêu cầu):** (1) đây là vòng 2, **vòng cuối** của plan — trượt ⇒ phương án B; (2) **bộ chấm sửa sau khi thấy dữ liệu lượt 1**, hai chỗ, mỗi chỗ khớp chữ plan:
+(a) tập số hợp lệ = **mọi** số trong các dòng bảng (vé + giờ) của điểm nhãn — đúng chữ plan Q2 "mọi số tiền / giờ trong chữ ∈ **dòng nhãn** của câu" (bản đầu chỉ lấy số nhãn ⇒
+hẹp hơn plan); (b) chuỗi giá của nhãn kèm đơn vị như bảng — để bộ nhận tiền (`so_tien.py`, cần đơn vị) đọc được; không đổi luật, chỉ đổi cách đọc nhãn. **Không sửa gì
+thêm sau lượt 2.**
+
+- **Đổi một thứ:** câu có từ khoá vé / giờ **và** code dò được ≥ 1 tên / bí danh điểm của bảng trong câu (hoặc câu hỏi liền trước) ⇒ **code tự tra**: dòng bảng thành nguồn nối
+  cuối ngữ cảnh **trước** lần sinh (`tra_truoc`, `by="code"`); công cụ chỉ còn cho câu có từ khoá mà code không dò ra tên. Khối điều kiện, kiểm số, câu từ chối giữ nguyên.
+- Commit `c706c2f` (rebase lên `main` `f124527`, đẩy lại nhánh). Test T3 **43 passed**; 12 file test **549 passed / 1 failed** (cùng `test_cong_dot_1::test_weather_and_feature_routes`
+  — C kiểm: **chỉ hỏng khi nạp khoá** `--env-file` (có khoá ⇒ ảnh bật ⇒ `anh: True`); không khoá ⇒ cả file 22 / 22; hỏng sẵn, không do nhánh). 2 phút 10 giây.
+- **Q1 (đổi chuỗi gửi model ⇒ chạy lại):** cờ tắt **228 / 228** giống byte (mốc `main` `806b5df` **dùng lại** — `backend/` không đổi `806b5df..f124527`, `git diff --stat` rỗng);
+  cờ bật **181 / 181** câu không từ khoá giống byte; 45 câu có từ khoá: **21 code tự tra** (Golden 12 · an toàn 7 · smoke 2) · 24 đưa công cụ. 51 giây.
+- **Q2 vòng 2** (cùng bộ 20 câu, cùng bộ chấm, server thật, 71 giây, **0,011858 USD**):
+
+| | Mốc `main` | Vòng 1 | **Vòng 2** |
+|---|---|---|---|
+| Q2 đạt | 16 / 20 | 17 / 20 | **18 / 20** (≥ mốc ✓, **< 19** ✗) |
+| Bảng được tra (code / model) | — | 2 / 20 | **19 / 20** |
+| Q3 khối điều kiện (4 câu miễn giảm / đối tượng) | 0 / 4 | 0 / 4 | **4 / 4** ✓ |
+| rút lại · `max_turns` | 0 · 0 | 0 · 0 | 1 · 0 |
+| chữ đầu (chỉ ghi, không là S5) | p50 2,1 / p95 8,5 s | 2,8 / 10,3 s | 2,8 / 4,1 s |
+
+- **2 câu không đạt — đọc chữ:**
+  - **T05 (rút lại):** chữ model đúng (giá vé tuyến 3 điểm + giá trẻ em, trích đoạn kho). Bị rút lại vì **lỗi của kiểm cuối runtime**: code dò ra 3 điểm lẻ (không phải vé
+    tuyến) nên dòng gửi model không có giá tuyến; giá có trong đoạn kho được trích, nhưng bảng giá trong kho ghi số **không kèm "đồng"** ⇒ `tim_so_tien` không nhận số ở đoạn
+    trích ⇒ tập cho phép thiếu. Sửa 1 dòng: tập cho phép thêm số nhóm nghìn trần (`\d{1,3}(\.\d{3})+`) như thời tiết dùng `tap_so`. **Chưa sửa** (vòng cuối; A / User quyết).
+  - **T14 (số ngoài dòng nhãn):** chữ model đúng — thêm giá vé Đại Nội có trích dẫn kho ("chưa gồm vé vào Đại Nội …"). Luật Q2 ghi trước chỉ cho số trong dòng bảng của điểm
+    nhãn ⇒ trượt (mốc `main` trượt đúng câu này). Kiểm cuối runtime cho qua (số có trong đoạn kho được trích) — đúng thiết kế.
+- **Theo luật ghi trước:** vòng 2 **âm** (18 < 19) ⇒ theo plan: phương án B, cờ tắt. **Quan sát cho A / User:** cả 2 câu trượt có chữ đúng; 1 câu do lỗi code đã rõ nguyên nhân
+  (sửa 1 dòng), 1 câu do luật chấm chặt hơn kiểm runtime. Phần giá trị chính của T3 (khối điều kiện nguyên văn) đạt 4 / 4. Quyết giữ âm (phương án B) hay sửa lỗi T05 + đo lại
+  (vòng thứ ba — ngoài plan) là của A / User.
+- **Chưa chạy:** S1 (an toàn 32 ×2 + mốc), S4 (mẫu 30), S5 (A xếp riêng) — lệnh ở `STATUS_C.md`.
+- Tiền T3: vòng 1 0,025679 + vòng 2 0,011858 = **0,037537 USD**.
