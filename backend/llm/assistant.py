@@ -869,7 +869,9 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     da_noi_dau = False  # D12 (a): dòng "Mình hiểu" đi liền trước chữ đầu của model
     giu_chu: str | bool | None = None  # review C M-1: None = chưa có chữ; "" / chuỗi = đang giữ; False = không giữ
     call_route = None
-    stopped_early = False
+    # Việc nhỏ (12) 08/11 — review streaming 31/10 m-1: huỷ theo "luồng model còn sống" thay vì liệt kê lỗi. Mọi cách rời vòng đọc khi luồng chưa
+    # hết (hết giờ, người dùng ngắt, lỗi trong code của mình) ⇒ `cancel()`; luồng tự hết hoặc chính luồng báo lỗi (lần chạy đã dừng) ⇒ không.
+    stream_live = False
     try:
         if not trace.bieu_mau:  # D3: lượt biểu mẫu không định tuyến
             if flags.router and generator is not None and not (flags.emergency_rule and is_emergency(query)):
@@ -920,6 +922,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         started, generator_started = time.perf_counter(), time.monotonic()
         extractor = AnswerTextStream()
         events = result.stream_events()
+        stream_live = True
         deadline = asyncio.get_running_loop().time() + generator.timeout
         try:
             while True:
@@ -927,7 +930,13 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                     async with asyncio.timeout_at(deadline):
                         event = await anext(events)
                 except StopAsyncIteration:
+                    stream_live = False
                     break
+                except TimeoutError:
+                    raise
+                except Exception:
+                    stream_live = False  # lỗi của chính luồng (SDK / provider): lần chạy đã dừng, đọc nốt sẽ ném lại lỗi đó
+                    raise
                 if event.type == "raw_response_event" and event.data.type == "response.output_text.delta":
                     text = extractor.feed(event.data.delta)
                     if text:
@@ -985,13 +994,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             set_notice(trace, flags)
             async for event in _web_stream(query, generator, trace, flags, tim_web):
                 yield event
-    except (asyncio.CancelledError, GeneratorExit, TimeoutError):
-        stopped_early = True
-        raise
     finally:
         if call_log is not None:
             record_llm_calls(trace, call_log.calls, call_route)
-        if result is not None and stopped_early:
+        if result is not None and stream_live:
             # dừng lần gọi model rồi đọc nốt bằng iterator mới, trong vùng che có hạn giờ (spec streaming §4.5). Không dựa `result.is_complete`.
             result.cancel()
             drain_started = time.perf_counter()
