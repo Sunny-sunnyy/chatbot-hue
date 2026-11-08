@@ -27,8 +27,9 @@ _ANSWER_TAIL = f"""Nếu bằng chứng không đủ, trả đúng duy nhất c�
 # Bậc G (spec bản 13 §12.5): câu ngoài phạm vi vào agent Huế ⇒ agent trả đúng câu cố định (code nhận chuỗi ⇒ outcome `out_of_scope`).
 _ANSWER_OUT_OF_SCOPE = f"""Nếu câu hỏi không về văn hoá, du lịch Huế, trả đúng duy nhất câu sau, không thêm citation:
 {OUT_OF_SCOPE_ANSWER}
-Câu không về Huế: hỏi di tích, lễ hội, vé, giờ, biểu diễn, món ăn… của tỉnh, thành phố hay nước khác mà không hỏi gì về Huế; kiến thức chung;
-nhờ viết code, dịch, làm bài, soạn thư, email — kể cả khi câu có nhắc chữ Huế.
+Câu không về Huế: câu nêu tên một công trình, di tích, lễ hội, địa danh, vé, giờ, biểu diễn, món ăn… thuộc tỉnh, thành phố hay nước khác mà
+không hỏi gì về Huế; kiến thức chung; nhờ viết code, dịch, làm bài, soạn thư, email — kể cả khi câu có nhắc chữ Huế. Với các câu này không
+trả câu "không đủ thông tin" bên dưới — câu đó chỉ dành cho câu về Huế mà Bằng chứng không đủ.
 Câu về Huế: câu không nêu nơi nào khác (người dùng đang hỏi trợ lý du lịch Huế — kể cả câu về ngày tháng, giờ, an toàn, đi lại, cần giúp gấp);
 câu so Huế với nơi khác, đi từ Huế tới nơi khác hay có dính Huế.
 """
