@@ -365,6 +365,7 @@ def test_server_search_function_does_not_show_key_in_repr(monkeypatch):  # m-1
 def test_web_section_renderer_uses_filter_without_links():  # M-1 lớp giao diện: bộ lọc của khối web không có thẻ a / href
     from pathlib import Path
     src = (Path(__file__).resolve().parents[2] / "frontend" / "src" / "markdown.js").read_text(encoding="utf-8")
-    body = src.split("export function renderWebHtml", 1)[1]
-    assert "WEB_SANITIZE_OPTIONS)" in body.split("\n")[3] and "SANITIZE_OPTIONS)" not in body.replace("WEB_SANITIZE_OPTIONS)", "")
+    # thân hàm `renderWebHtml` (tới dấu đóng hàm đầu tiên): lọc bằng bộ lọc riêng của khối web, không dùng bộ lọc câu trả lời
+    body = src.split("export function renderWebHtml", 1)[1].split("\n}", 1)[0]
+    assert "DOMPurify.sanitize(" in body and "WEB_SANITIZE_OPTIONS)" in body and "SANITIZE_OPTIONS)" not in body.replace("WEB_SANITIZE_OPTIONS)", "")
     assert 'filter(tag => tag !== "a")' in src and 'filter(attr => attr !== "href")' in src

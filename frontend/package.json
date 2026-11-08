@@ -8,6 +8,7 @@
   "dependencies": {
     "@fontsource/be-vietnam-pro": "5.3.0",
     "dompurify": "3.4.17",
+    "leaflet": "1.9.4",
     "marked": "18.1.1",
     "react": "19.3.1",
     "react-dom": "19.3.1"

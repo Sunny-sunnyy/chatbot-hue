@@ -302,7 +302,7 @@ export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
   );
 }
 
-export function GioiThieu() {
+export function GioiThieu({ banDo }) {
   return (
     <div className="khung khoi-trang gioi-thieu">
       <p className="vet"><a href="#/">Trang chủ</a> / Giới thiệu</p>
@@ -318,7 +318,8 @@ export function GioiThieu() {
       <h2>Giới hạn</h2>
       <ul>
         <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi — hãy kiểm lại trước khi đi.</li>
-        <li>Chưa có bản đồ, nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau).</li>
+        <li>{banDo ? "Chưa có nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau). Bản đồ lịch trình chỉ ghim các điểm đã có toạ độ."
+          : "Chưa có bản đồ, nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau)."}</li>
         <li>Câu hỏi ngoài chủ đề Huế sẽ được báo là ngoài phạm vi.</li>
       </ul>
       <h2>Dữ liệu của bạn</h2>
@@ -326,6 +327,8 @@ export function GioiThieu() {
         trò chuyện. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký. Nút “Cuộc trò chuyện mới” xoá phần đã nhớ.</p>
       <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI (OpenAI); khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm. Đừng gõ thông tin cá nhân
         vào câu hỏi.</p>
+      {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ OpenStreetMap — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
+        đang xem (không nhận câu hỏi của bạn).</p>}
       <h2 id="nguon-anh">Nguồn ảnh</h2>
       <ul className="nguon-anh">
         {MOI_ANH.map(a => <li key={a.src}><GhiCong a={a} /></li>)}

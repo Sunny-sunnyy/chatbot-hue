@@ -74,6 +74,10 @@ class AssistantFlags:
     # Cổng đợt 1 (spec `2026-11-06-giao-dien-cong-dot-1-design.md` D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp lịch bằng giá trị nút; tách khỏi
     # `lich_trinh` (câu gõ tự do). TẮT tới khi đạt Q-F; cần bảng điểm (không cần vòng công cụ: lượt biểu mẫu sinh một lần, không công cụ)
     lich_trinh_bieu_mau: bool = False
+    # Bản đồ lịch trình (plan `2026-11-08-ban-do-lich-trinh-plan.md`): toạ độ do code gắn vào dữ liệu giao diện của lịch (không vào chuỗi gửi model);
+    # bật ⇒ CSP cho ảnh tile OSM (`api/app.py`). Cần bảng điểm + bảng toạ độ (`toa_do_lich`, nạp ở rìa)
+    ban_do_lich: bool = False
+    toa_do_lich: "dict | None" = field(default=None, compare=False, repr=False)
     # Thí nghiệm tốc độ #6 (plan 2026-11-04-phase-9-toc-do-song-song): đường stream chạy phần `tro_ly_hue` cùng lúc định tuyến; tắt = như cũ
     song_song_tra_loi: bool = False
     # B6 (plan B6 bản 3 D10): cổng web sau câu trả lời kho — TẮT tới khi đạt luật ghi trước; cần định tuyến + vòng công cụ
@@ -92,6 +96,8 @@ class AssistantFlags:
             raise ValueError("assistant.lich_trinh needs assistant.tim_them: true and the itinerary table (assistant.lich_trinh_bang)")
         if self.lich_trinh_bieu_mau and self.bang_lich is None:
             raise ValueError("assistant.lich_trinh_bieu_mau needs the itinerary table (assistant.lich_trinh_bang)")
+        if self.ban_do_lich and (self.bang_lich is None or self.toa_do_lich is None):
+            raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
@@ -103,7 +109,8 @@ class AssistantFlags:
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
         # chỉ nạp khi một trong hai cờ lịch bật (clone không có `data/` vẫn chạy cờ tắt)
         bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang,
+        toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None)
 
     @property
@@ -112,12 +119,15 @@ class AssistantFlags:
         return self.lan_tim_dau == "v2" or self.tim_them
 
 
+BACKEND_DIR = Path(__file__).resolve().parents[1]  # đường dẫn trong settings tương đối theo `backend/`
+
+
 def nap_bang_lich(settings: dict) -> "lt.Bang":
     """Bảng điểm lịch trình (B5 D2) từ `assistant.lich_trinh_bang` (tương đối theo `backend/`, như các đường dẫn khác của settings)."""
-    return lt.nap_bang(Path(__file__).resolve().parents[1] / settings["assistant"]["lich_trinh_bang"])
+    return lt.nap_bang(BACKEND_DIR / settings["assistant"]["lich_trinh_bang"])
 
 
-BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "du_bao"))
+BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -636,7 +646,7 @@ def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) 
     ts = khung["tham_so"]
     sua = the_hoi_lai("lich_trinh", list(TRUONG_THEO_LOAI["lich_trinh"]), cau_goc)
     sua["chon"] = {k: ts[k] for k in TRUONG_THEO_LOAI["lich_trinh"] if ts[k] and not (k == "so_ngay" and ts["so_ngay_tam"])}
-    return {"ban_do": lt.ban_do(flags.bang_lich, khung), "sua": sua}
+    return {"ban_do": lt.ban_do(flags.bang_lich, khung, flags.toa_do_lich if flags.ban_do_lich else None), "sua": sua}
 
 
 async def answer_query(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder=None,
