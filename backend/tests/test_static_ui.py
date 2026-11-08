@@ -71,5 +71,6 @@ def test_portal_images_are_in_repo_and_private_image_is_gitignored():
     for name in files:
         if not name.startswith("rieng/"):
             assert (REPO_ROOT / "frontend/public/anh" / name).is_file(), name
+            assert (REPO_ROOT / "frontend/public/anh" / name.replace(".jpg", "_nho.jpg")).is_file(), name  # bản điện thoại (việc nhỏ 10)
     ignored = subprocess.run(["git", "check-ignore", "-q", "frontend/public/anh/rieng/lv_festivals.jpg"], cwd=REPO_ROOT)
     assert ignored.returncode == 0

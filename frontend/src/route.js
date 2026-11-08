@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 //   #/kham-pha/<linh_vuc>    danh sách bài một lĩnh vực (mã = tên thư mục kho)
 //   #/kham-pha/bai/<id>      một bài (id = đường dẫn bài trong kho, có dấu `/`)
 //   #/len-ke-hoach · #/tro-ly · #/gioi-thieu
+//   #/gioi-thieu/<mục>       trang Giới thiệu, cuộn tới mục có id đó (vd `nguon-anh` — link "Nguồn ảnh" ở chân trang)
 // Hash lạ ⇒ trang chủ.
 export function parseHash(hash) {
   let path;
@@ -20,7 +21,8 @@ export function parseHash(hash) {
     if (parts[1]) return { page: "linh-vuc", linhVuc: parts[1] };
     return { page: "kham-pha" };
   }
-  if (["len-ke-hoach", "tro-ly", "gioi-thieu"].includes(parts[0])) return { page: parts[0] };
+  if (parts[0] === "gioi-thieu") return parts[1] ? { page: "gioi-thieu", muc: parts[1] } : { page: "gioi-thieu" };
+  if (["len-ke-hoach", "tro-ly"].includes(parts[0])) return { page: parts[0] };
   return { page: "trang-chu" };
 }
 

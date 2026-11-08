@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { renderArticleHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
-import { ANH_DAU_TRANG, ANH_LINH_VUC, MOI_ANH } from "./anh.js";
+import { ANH_DAU_TRANG, ANH_LINH_VUC, MAN_NHO, MOI_ANH } from "./anh.js";
 
 // Các trang của cổng đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` D9–D12), bản mẫu 2 "Sông Hương".
 // Thẻ bài chỉ hiện trường kho có (tên, loại, tóm tắt) — không sao, không "Liên hệ", không giờ / giá chung chung (D10). Ảnh (User chốt 07/11):
@@ -38,6 +38,16 @@ const BIEU_MAU = [
 ];
 export const CAU_BIEU_MAU = "Lên kế hoạch tham quan Huế";  // chỉ để in lại trong khung trò chuyện — server dựng câu từ giá trị nút
 
+// Ảnh có bản nhỏ cho điện thoại: `<source media>` chọn theo khổ màn (không theo mật độ điểm ảnh như `srcset`) ⇒ máy ≤ 760 px luôn tải bản nhỏ.
+function Anh({ a, ...props }) {
+  return (
+    <picture>
+      <source media={MAN_NHO} srcSet={a.srcNho} />
+      <img src={a.src} alt="" {...props} />
+    </picture>
+  );
+}
+
 function Song({ className }) {
   return (
     <svg className={className} viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
@@ -61,7 +71,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk }) {
   return (
     <>
       <section className="hero" aria-labelledby="hero-h">
-        <img className="hero-anh" src={ANH_DAU_TRANG.song.src} alt="" fetchpriority="high" />
+        <Anh a={ANH_DAU_TRANG.song} className="hero-anh" fetchpriority="high" />
         <Song className="song" />
         <div className="hero-in">
           <h1 id="hero-h" className="hero-h">Hỏi về Huế, như hỏi người bản xứ</h1>
@@ -119,7 +129,7 @@ function O5LinhVuc({ bai }) {
     <div className="kp-ds">
       {LINH_VUC.map(lv => (
         <a key={lv.id} className="kp" href={`#/kham-pha/${lv.id}`}>
-          <img className="kp-anh" src={ANH_LINH_VUC[lv.id].src} alt="" loading="lazy" />
+          <Anh a={ANH_LINH_VUC[lv.id]} className="kp-anh" loading="lazy" />
           <span className="kp-ten">{lv.ten}</span>
           <span className="kp-mo">{lv.mo}</span>
           {soBai(bai, lv.id) != null && <span className="kp-so">{soBai(bai, lv.id)} bài</span>}
@@ -133,7 +143,7 @@ export function KhamPha({ bai }) {
   return (
     <>
       <section className="kp-dau" aria-labelledby="kp-dau-h">
-        <img className="hero-anh" src={ANH_DAU_TRANG.ngoMon.src} alt="" />
+        <Anh a={ANH_DAU_TRANG.ngoMon} className="hero-anh" />
         <div className="khung kp-dau-in">
           <p className="vet"><a href="#/">Trang chủ</a> / Khám phá</p>
           <h1 id="kp-dau-h" className="trang-h">Khám phá Huế</h1>
@@ -258,9 +268,31 @@ export function Bai({ baiId, bai, onAskAbout }) {
               <ul className="ct-khac">{khac.map(b => <li key={b.id}><a href={baiHref(b.id)}>{b.tieu_de}</a></li>)}</ul>
             </>
           )}
+          <BaoSai key={data.id} baiId={data.id} />
         </aside>
       </div>
     </div>
+  );
+}
+
+// Việc nhỏ 8: "Báo thông tin chưa đúng" — server chỉ ghi mã bài (`POST /api/bao_sai`), không nhận chữ tự do. Một lần mỗi lần mở bài.
+function BaoSai({ baiId }) {
+  const [trangThai, setTrangThai] = useState("chua");  // chua · dang · xong · loi
+  async function gui() {
+    setTrangThai("dang");
+    try {
+      const r = await fetch("/api/bao_sai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bai_id: baiId }) });
+      setTrangThai(r.ok ? "xong" : "loi");
+    } catch {
+      setTrangThai("loi");
+    }
+  }
+  return (
+    <p className="ct-bao" role="status">
+      {trangThai === "xong" ? "Cảm ơn bạn — bài này sẽ được kiểm lại."
+        : <>Thấy thông tin chưa đúng? <button type="button" onClick={gui} disabled={trangThai === "dang"}>Báo thông tin chưa đúng</button>
+            {trangThai === "loi" && " Chưa gửi được — thử lại sau."}</>}
+    </p>
   );
 }
 
@@ -302,7 +334,11 @@ export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
   );
 }
 
-export function GioiThieu() {
+export function GioiThieu({ muc }) {
+  // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash — effect chạy sau khi trang đã vẽ)
+  useEffect(() => {
+    if (muc) document.getElementById(muc)?.scrollIntoView();
+  }, [muc]);
   return (
     <div className="khung khoi-trang gioi-thieu">
       <p className="vet"><a href="#/">Trang chủ</a> / Giới thiệu</p>

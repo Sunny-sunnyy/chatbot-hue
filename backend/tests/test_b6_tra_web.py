@@ -339,7 +339,8 @@ def test_html_link_and_protocol_relative_are_caught(text):  # M-1 lớp server: 
 
 
 def test_plain_slash_text_is_not_a_link():  # bất biến: "a/b" thường (không "//host") không bị bắt nhầm
-    assert tw.kiem_muc_web("Mở cửa 7h/ngày, 2/3 phòng còn trống [w1].", SO, luu_tru=False) == []
+    # (việc nhỏ 11, 08/11) số trong câu không có trong đoạn trích ⇒ giờ có thêm `so_ngoai_trich`; ca này chỉ khoá luật link
+    assert "url" not in tw.kiem_muc_web("Mở cửa 7h/ngày, 2/3 phòng còn trống [w1].", SO, luu_tru=False)
 
 
 @pytest.mark.parametrize("cau, thien_tai", [
@@ -368,3 +369,30 @@ def test_web_section_renderer_uses_filter_without_links():  # M-1 lớp giao di�
     body = src.split("export function renderWebHtml", 1)[1]
     assert "WEB_SANITIZE_OPTIONS)" in body.split("\n")[3] and "SANITIZE_OPTIONS)" not in body.replace("WEB_SANITIZE_OPTIONS)", "")
     assert 'filter(tag => tag !== "a")' in src and 'filter(attr => attr !== "href")' in src
+
+
+# ---------- việc nhỏ 11 (A 08/11): mọi chuỗi số trong mục web ⊂ chuỗi số của đoạn trích ----------
+
+SO_SO = tw.doc_ket_qua({"organic": [
+    {"title": "Quán B 24/7", "link": "https://b.example.vn/x", "snippet": "Địa chỉ 12/3 Lê Lợi. ĐT (0234) 3822.123, mở 6:30-21:00 từ năm 2019."},
+]})
+
+
+@pytest.mark.parametrize("text, loi", [
+    ("Quán ở 12/3 Lê Lợi, mở 6h30 đến 21:00, từ năm 2019 [w1].", []),            # cách viết khác cùng số (h ↔ :) vẫn đạt
+    ("Gọi 0234 3822 123 [w1].", []),                                              # trích ghi "(0234) 3822.123" — cùng số, khác dấu
+    ("Gọi 0234 3822 [w1].", ["so_ngoai_trich"]),                                  # số cắt dở ≠ số trong trích
+    ("Gọi 3822.123 [w1].", ["so_ngoai_trich"]),                                   # bỏ mã vùng = khác chuỗi trong trích ⇒ bỏ mục (phía an toàn)
+    ("Quán ở số 15 Lê Lợi [w1].", ["so_ngoai_trich"]),                            # số nhà bịa
+    ("Mở 7:00 tới 21:00 [w1].", ["so_ngoai_trich"]),                              # giờ mở bịa
+    ("ĐT 0905 123 456 [w1].", ["so_ngoai_trich"]),                                # số điện thoại bịa
+    ("Mở từ năm 2019 [w1] [3].", ["ma_kho"]),                                     # mã kho chỉ ra một lỗi
+    ("Quán B 24/7 ở Lê Lợi [w1].", []),                                           # số ở tiêu đề (lượt thật 08/11: "SV GYM 24/7" bị bỏ nhầm)
+])
+def test_numbers_must_come_from_snippets(text, loi):
+    assert tw.kiem_muc_web(text, SO_SO, luu_tru=False) == loi
+
+
+def test_number_rule_keeps_money_and_realtime_codes_single():
+    assert tw.kiem_muc_web("Vé tháng 250.000đ [w1].", SO, luu_tru=False) == ["tien_ngoai_trich"]   # tiền bịa: chỉ mã tiền
+    assert tw.kiem_muc_web("Hôm nay mở 9h [w1].", SO_SO, luu_tru=False, thoi_gian_thuc=True) == ["so_thoi_gian_thuc"]  # giữ đường "chưa xác minh"
