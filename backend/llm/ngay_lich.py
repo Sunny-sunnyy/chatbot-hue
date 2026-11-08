@@ -88,11 +88,43 @@ def co_tu_ngay_luot(query: str, history) -> bool:
     return co_tu_ngay(query) or bool(history and co_tu_ngay(history[-1][0]))
 
 
-def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam: int, thang_nhuan: bool, now: dt.datetime | None = None) -> str:
+def _ngan(d: dt.date) -> str:
+    am = solar_to_lunar(d)
+    return f"{THU[d.weekday()]}, {d:%d/%m/%Y} (ngày {am.day} {_thang_am(am)} âm)"
+
+
+_KHOANG = re.compile(r"(?<!\w)(tuần này|tuần sau|tuần tới|tháng này)(?!\w)", re.IGNORECASE)
+
+
+def khoang_ngay(cau: str, hom: dt.date) -> list[str]:
+    """A chọn (i) 08/11 sau lượt 2 (R7: model tự suy "tuần này là giữa tháng 9 âm" ⇒ sai): câu có "tuần này / tuần sau / tuần tới / tháng này" ⇒ code
+    ghi ngày đầu / cuối của khoảng đó (dương + âm). Tuần tính từ thứ Hai. "Tháng này" ⇒ cả tháng dương và tháng âm hiện tại."""
+    cum = {m.lower() for m in _KHOANG.findall(unicodedata.normalize("NFC", cau))}
+    dong = []
+    dau_tuan = hom - dt.timedelta(days=hom.weekday())
+    if "tuần này" in cum:
+        dong.append(f"Tuần này: từ {_ngan(dau_tuan)} đến {_ngan(dau_tuan + dt.timedelta(days=6))}.")
+    if cum & {"tuần sau", "tuần tới"}:
+        dong.append(f"Tuần sau: từ {_ngan(dau_tuan + dt.timedelta(days=7))} đến {_ngan(dau_tuan + dt.timedelta(days=13))}.")
+    if "tháng này" in cum:
+        dau = hom.replace(day=1)
+        cuoi = (dau + dt.timedelta(days=32)).replace(day=1) - dt.timedelta(days=1)
+        dong.append(f"Tháng này (dương lịch): từ {_ngan(dau)} đến {_ngan(cuoi)}.")
+        am = solar_to_lunar(hom)
+        dau_am = lunar_to_solar(LunarDate(1, am.month, am.year, am.leap))
+        cuoi_am = dau_am + dt.timedelta(days=28)
+        while solar_to_lunar(cuoi_am + dt.timedelta(days=1)).day != 1:
+            cuoi_am += dt.timedelta(days=1)
+        dong.append(f"Tháng âm hiện tại ({_thang_am(am)}): từ {_ngan(dau_am)} đến {_ngan(cuoi_am)}.")
+    return dong
+
+
+def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam: int, thang_nhuan: bool, now: dt.datetime | None = None,
+            cau: str = "") -> str:
     """Chữ trả cho model (do code dựng): luôn có dòng hôm nay; `loai` khác `hom_nay` ⇒ thêm dòng ngày được đổi. `nam` = 0 ⇒ năm nay (năm âm hiện tại khi
     `loai` = "am")."""
     hom = hom_nay(now)
-    dong = [f"Hôm nay (giờ Việt Nam): {mo_ta(hom)}."]
+    dong = [f"Hôm nay (giờ Việt Nam): {mo_ta(hom)}.", *khoang_ngay(cau, hom)]
     if loai != "hom_nay":
         nam = nam or (solar_to_lunar(hom).year if loai == "am" else hom.year)
         d = ngay_duong(ngay, thang, nam, loai, thang_nhuan)

@@ -153,3 +153,13 @@ def test_result_states_before_after_today_by_code(ngay, thang, nam, sau):
     # A2 lượt đo 08/11: model tự so trước / sau rồi kết luận ngược ⇒ code ghi luôn khoảng cách với hôm nay (08/11/2026 = 30/9 âm Bính Ngọ)
     now = dt.datetime(2026, 11, 8, 9, 0, tzinfo=dt.timezone.utc)
     assert nl.ket_qua("am", ngay, thang, nam, False, now).splitlines()[1].endswith(f"— {sau} (so với hôm nay)")
+
+
+def test_week_and_month_ranges_written_by_code_only_when_asked():
+    # R7 lượt 2 (08/11): model tự suy "tuần này là giữa tháng 9 âm" ⇒ code ghi khoảng ngày (A chọn (i))
+    now = dt.datetime(2026, 11, 8, 9, 0, tzinfo=dt.timezone.utc)  # Chủ nhật 08/11/2026 = 30/9 âm
+    chu = nl.ket_qua("hom_nay", 0, 0, 0, False, now, cau="Tuần này có lễ gì? Tuần tới thì sao, tháng này nữa?").splitlines()
+    assert chu[1] == "Tuần này: từ Thứ Hai, 02/11/2026 (ngày 24 tháng 9 âm) đến Chủ nhật, 08/11/2026 (ngày 30 tháng 9 âm)."
+    assert chu[2].startswith("Tuần sau: từ Thứ Hai, 09/11/2026 (ngày 1 tháng 10 âm)")
+    assert chu[4] == "Tháng âm hiện tại (tháng 9): từ Thứ Bảy, 10/10/2026 (ngày 1 tháng 9 âm) đến Chủ nhật, 08/11/2026 (ngày 30 tháng 9 âm)."
+    assert nl.ket_qua("hom_nay", 0, 0, 0, False, now, cau="Rằm tháng Giêng năm nay?").count("\n") == 0  # không cụm khoảng ⇒ chỉ dòng hôm nay

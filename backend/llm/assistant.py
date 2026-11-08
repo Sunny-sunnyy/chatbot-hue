@@ -444,7 +444,7 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
     return thoi_tiet
 
 
-def ngay_lich_for_turn(trace: AnswerTrace):
+def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
     """Hàm `ngay_lich` của **một lượt** (T1): model chỉ gửi loại lịch + số; code tính, dựng chữ, đăng thành **một nguồn** trong sổ nguồn (như
     `_nguon_thoi_tiet` — câu chỉ có ngày vẫn trích được [n]). ≤ 2 lần / câu (lần thứ 3 ⇒ câu nhắc, không tính)."""
     LoaiLich = Literal["hom_nay", "duong", "am"]
@@ -465,7 +465,9 @@ def ngay_lich_for_turn(trace: AnswerTrace):
         if lan >= 2:
             entry["het_luot"] = True
             return "Đã đổi ngày ở các lần gọi trước trong lượt này; hãy viết câu trả lời."
-        dong = nl.ket_qua(loai, ngay, thang, nam, thang_nhuan).splitlines()
+        # (i) A 08/11: khoảng "tuần này / tuần sau / tháng này" do code ghi — xét câu cuối + câu hỏi liền trước (như bộ dò)
+        cau = " ".join([query] + ([trace.history[-1][0]] if trace.history else []))
+        dong = nl.ket_qua(loai, ngay, thang, nam, thang_nhuan, cau=cau).splitlines()
         src = PackedSource(id=len(trace.so_nguon) + 1, title=nl.TIEU_DE_NGUON, heading_path=(nl.MUC_NGUON,), excerpts=tuple(dong), source=nl.NGUON_SOURCE)
         trace.so_nguon.append(src)
         chu = FullCorpusContextBuilder._block(src)
@@ -735,7 +737,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
-        extra["ngay_lich_fn"] = ngay_lich_for_turn(trace)
+        extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     return extra
 
 
