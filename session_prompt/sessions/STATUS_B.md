@@ -34,7 +34,9 @@ Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-
 - Nhánh `p11-lich-nho` xếp chồng trên `p11-ban-do` `d0adf31` (dùng bảng toạ độ của nhánh bản đồ), worktree `/tmp/b_nho`; rebase lên `main` sau khi bản đồ merge.
 - **File khai báo sửa:** `backend/llm/lich_trinh.py`, `backend/llm/assistant.py`, `backend/tests/test_ban_do_lich.py`, `backend/tests/test_b5_lich_trinh.py` (nếu chạm), `frontend/src/chat.jsx`,
   `frontend/src/index.css`; report `report_agent/2026-11-06_giao_dien_cong/b_lich_nho_implementation.md`; dữ liệu `data/phase_11/lich_nho/`.
-- **Xong 10:14 08/11/2026 (`date`), chờ review:** `p11-lich-nho` = `098a710` (đã push). Q1 228/228; test rộng 735 đạt; trình duyệt: clipboard = file tải, 4/4 link đúng code; cổng ổn định đạt. Tiền 0,000435 USD. Cần User mở 17 link theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`) — nghi lệch 1 điểm (Kinh thành / Ngọ Môn – Kỳ Đài). Server 8874 đã tắt; worktree `/tmp/b_nho` giữ.
+- **10:47 08/11/2026 (`date`):** `p11-lich-nho` = `de08454` (rebase lên `main` `06dafb4`; 2 minor bản đồ + **bỏ (6)** theo A; 735 test; trình duyệt đạt) ⇒ A merge (E kiểm diff). Bản cũ: `098a710` (đã push). Q1 228/228; test rộng 735 đạt; trình duyệt: clipboard = file tải, 4/4 link đúng code; cổng ổn định đạt. Tiền 0,000435 USD. Cần User mở 17 link theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`) — nghi lệch 1 điểm (Kinh thành / Ngọ Môn – Kỳ Đài). Server 8874 đã tắt; worktree `/tmp/b_nho` giữ.
+
+## 0e. Xong 08/11 — phiếu toạ độ (`data/phase_11/ban_do/phieu_toa_do_11_diem.md` + nháp `diem_toa_do_v6_nhap.json`, chờ User tick) · review `p11-viec-nho-e` (`report_agent/2026-11-06_giao_dien_cong/b_viec_nho_e_review.md`: ready, 2 minor; tiền ≈ 0,0053 USD — vượt trần 0,005 của A ~0,0003).
 
 # (cũ) STATUS B viết lại 15:43 07/11/2026
 

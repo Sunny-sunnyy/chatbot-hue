@@ -1,10 +1,24 @@
-# Implementation Report: việc nhỏ lịch trình — (1) sao chép / tải lịch · (4) câu buổi tối · (6) link Google Maps theo toạ độ
+# Implementation Report: việc nhỏ lịch trình — (1) sao chép / tải lịch · (4) câu buổi tối · ~~(6) link Google Maps theo toạ độ~~ (đã bỏ)
 
 Người làm: B (Claude Code, terminal `hue-rag-a1`)
 Date: 08/11/2026 (report 10:14 — `date`)
 Nguồn việc: User duyệt "Nhóm 1 + 2" (`data/ra_soat_tinh_nang_2026-11-08/`), A giao B các ý 1, 4, 6 (`CURRENT_HANDOFF.md` mục 2c).
 Nhánh: `p11-lich-nho` **xếp chồng trên `p11-ban-do` `d0adf31`** (A đồng ý: (6) dùng bảng toạ độ nạp ở nhánh bản đồ) — rebase lên `main` sau khi bản đồ merge.
 Tiền: **0,000435 USD** (1 lượt biểu mẫu + 1 câu ngoài kho).
+
+## 0. Cập nhật 10:47 08/11/2026 (`date`) — sau review E (ready, 3 minor) + quyết định A
+
+- **Nhánh hiện tại: `p11-lich-nho` = `de08454`**, rebase lên `main` `06dafb4` (bản đồ đã merge `a4fde29`; `origin/main` `dcd68f4` sau đó chỉ đổi tài liệu). 3 commit:
+  `993bcf2` (1)(4)(6) · `9f7b036` 2 minor review bản đồ của E (m-1 số ghim chỉ nhận số nguyên dương — đi qua `innerHTML` của `divIcon`; m-2 một hàm `toaDoHopLe`
+  dùng chung ở `frontend/src/toaDo.js`) · `de08454` **bỏ (6)**.
+- **(6) bỏ (A quyết theo review E):** link toạ độ chỉ mở ghim trần, mất thẻ địa điểm của Google; vài toạ độ còn lệch ⇒ link Google Maps về **theo tên** như
+  trước; toạ độ chỉ dùng cho bản đồ của mình và **chỉ nạp khi cờ `ban_do_lich` bật** (đúng plan bản đồ) ⇒ bật biểu mẫu không cần file toạ độ (m-3 của E).
+  `assistant.py` / `settings.yaml` giờ giống hệt nhánh bản đồ; diff backend so với `main` chỉ còn (4) + chú thích `map_url` + test.
+- Kiểm lại sau 3 commit + rebase: test rộng **735 đạt** (còn lại = 2 test cần khoá); m-1 / m-2: server cờ bản đồ bật, `kiem_ban_do.py` 6 / 6 ngày ghim đúng, 0 lỗi
+  console / CSP, tile 68 / 68 (≈ 0,0015 USD); sau bỏ (6): server cờ như `settings.yaml`, `kiem_luu_lich.py` — clipboard = file tải, chữ lịch trọn trong file,
+  4 / 4 link **theo tên**, 0 lỗi (0,00036 USD) — `data/phase_11/lich_nho/kiem_sau_bo_6.json`.
+- Tiền cả việc: 0,000435 + 0,001532 + 0,00036 ≈ **0,0023 USD**.
+- Các mục (6) bên dưới là hồ sơ bản đã bỏ.
 
 ## 1. Phạm vi
 
