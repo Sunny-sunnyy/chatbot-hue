@@ -321,7 +321,8 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
           {OUT_OF_SCOPE_SUGGESTIONS.map(question => <button key={question} type="button" onClick={() => onAsk(question)}>{question}</button>)}
         </div>
       )}
-      {turn.phase === "done" && turn.tuChoiKho && turn.web?.outcome !== "co_muc" && (
+      {/* review B m-2: lượt biểu mẫu không có câu gõ ⇒ gợi ý "cách hỏi" không hợp */}
+      {turn.phase === "done" && turn.tuChoiKho && !turn.bieuMau && turn.web?.outcome !== "co_muc" && (
         <div className="goi-y-hoi" aria-label="Gợi ý cách hỏi">
           <p className="text-sm text-muted">Bạn có thể thử:</p>
           <ul>
