@@ -22,8 +22,7 @@ số đếm + id, không chữ câu:
 **Cách đọc:** dòng `tuyen` (bộ a, 8 câu): `"S3_hue_sang_xa_giao": []` bắt buộc; `"xa_giao_sang_hue": "k / n"` cộng phần đã thấy (1 / 8 ở lượt G1) phải ≤ 2 / 16. Dòng `ca_cau`
 (bộ b, 10 câu): `"S2_ngoai_bi_tra_loi": []` và `"S2b_ngoai_cong_web_mo": []` bắt buộc; `"S2_ngoai_tu_choi_kho"` khác rỗng ⇒ **C** đọc các câu đó (B không đọc). Cả 2 lượt đạt ⇒ sàn kín đạt.
 
-**2. Phần 0 USD còn lại:** S4 — cặp mù `data/phase_9/g_cong/s4/cap_mu.jsonl` (30, khoá giải mã `khoa_giai_ma.json`), sub-agent chấm ⇒ `s4/cham_1.jsonl` (đã giao 12:26 08/11, xem
-có file chưa; giải mã: đếm cặp G tệ hơn − tốt hơn theo `dung` / `du`, ≥ 3 / 30 ⇒ âm). S1 3 số còn lại (2 judge mù, mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py`; mốc `ket_qua/cacau_moc_r1.jsonl`,
+**2. Phần 0 USD còn lại:** S4 **xong, đạt** (12:25 08/11/2026: đúng 30 ngang; đủ mốc hơn 1, 29 ngang ⇒ tụt 1 / 30 < 3). S1 3 số còn lại (2 judge mù, mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py`; mốc `ket_qua/cacau_moc_r1.jsonl`,
 khoá `ket_qua/khoa_r1.jsonl` + `khoa_r2.jsonl`). S6 từ `khoa_r1.jsonl`. **3.** S5 (cần tiền + báo A trước). **4.** Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
 
 ## 0. Đang làm — B-ảnh: đưa 7 ảnh cổng vào `frontend/` (A giao 08/11, 0 USD)

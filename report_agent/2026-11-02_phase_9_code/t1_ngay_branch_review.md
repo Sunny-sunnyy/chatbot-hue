@@ -119,7 +119,7 @@ Người review: sub-agent độc lập (Claude Code, ngữ cảnh mới) · 12:
   - `uv.lock` sạch;
   - không làm quá tay.
 
-## Vòng 2 — kiểm phần sửa `f388b19` (12:26 08/11/2026)
+## Vòng 2 — kiểm phần sửa `f388b19` (12:25 08/11/2026)
 
 - Phạm vi: `git diff 9f08d91..origin/p9-t1-ngay`, 3 file, +40 / −7: `ngay_lich.py`, `NGAY_LICH_MO_TA`, `test_ngay_lich.py`.
 - Worktree `/tmp/e_t1` đang ở `f388b19`, sạch.
