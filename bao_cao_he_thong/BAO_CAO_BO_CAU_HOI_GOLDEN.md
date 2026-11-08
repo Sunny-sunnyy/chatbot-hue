@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden (Phase 7A, 8.1, sửa kho đợt 1–2)
 
-**Cập nhật lần cuối: 11:04 01/11/2026 — bản 8: câu Golden lệch kho đã rõ nguyên nhân (chỉ lệnh kiểm phân biệt hoa / thường, chấm không sai); bạn chọn giữ nguyên.** Bản 7: 17:19 31/10/2026.
+**Cập nhật lần cuối: 09:40 08/11/2026 — bản 9: sửa chỗ ghi sai "bộ câu kín mới chưa làm" — bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (khớp `BAO_CAO_DANH_GIA.md`); lần kiểm tổng quát sau cần bộ mới nữa.** Bản 8: 11:04 01/11/2026 (câu Golden lệch kho đã rõ nguyên nhân; bạn chọn giữ nguyên). Bản 7: 17:19 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 7) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
@@ -16,15 +16,15 @@ Các bản trước: xem `git log` file này. Người viết: agent con của A
   - **nhãn độ tự nhiên**: 82 câu tự nhiên / 65 câu chỉ đo năng lực / 29 câu không tự nhiên — số chính của mọi thí nghiệm bỏ 29 câu không tự nhiên.
 - **Đo được:** 176 câu = một dữ kiện 75, nhiều nguồn 29, có điều kiện 29, so sánh 25, ngoài kho 18; 100 % câu đã đối chiếu với file nguồn
   (23/10). Dùng thật ở 7B: chấm hai lần chênh ≤ 0,011 điểm ⇒ thước đo ổn định.
-- **Bộ 36 câu kín** (viết kiểu người dùng thật, khoá 25/10) **đã dùng** ở lần chấm cuối Phase 8.2 (28/10) ⇒ từ đó chỉ còn là bộ kiểm hồi quy,
-  **không còn bộ kiểm "chưa ai thấy"**.
+- **Bộ 36 câu kín** (viết kiểu người dùng thật, khoá 25/10) **đã dùng** ở lần chấm cuối Phase 8.2 (28/10) ⇒ từ đó chỉ còn là bộ kiểm hồi quy.
+  **Bộ kín mới 40 câu** (01/11) đã dùng ở lượt đo cuối Phase 1–8 (`BAO_CAO_DANH_GIA.md` mục 4) ⇒ hiện **không còn bộ kiểm "chưa ai thấy"**.
 - **Sau mỗi đợt sửa kho, đề được quét lại** xem đáp án còn khớp kho không: đợt 1 (28/10) 0 câu cần sửa; đợt 2 (30/10) sửa đáp án tham chiếu
   của 2 câu theo bạn chọn. Chạy lại kiểm định dạng 31/10 vẫn bắt thêm **1 câu** có keyword không còn nguyên văn trong kho mà
   3 lớp quét sót. Nguyên nhân (01/11): kho đổi một chữ hoa thành thường; lệnh kiểm phân biệt hoa / thường, còn phép chấm thì không ⇒ **không số chấm nào sai**; bạn chọn **giữ nguyên** (lệnh kiểm sẽ báo 1 lỗi đã biết).
 - **Giới hạn chính:** câu do AI viết rồi người duyệt, không phải câu người dùng thật hỏi; keyword chỉ là thước gần đúng ("proxy"); giá vé, giờ
   mở cửa lấy mốc 09/2026; đoạn đúng mới có cho 55 / 176 câu; 121 / 176 câu đã đạt điểm tối đa ở mốc 7B (cải tiến chủ yếu thấy ở số còn lại).
 - **Chi phí:** kiểm định dạng và quét lại đề 0 USD.
-- **Bạn cần quyết gì:** không có việc gấp. Trước buổi bảo vệ cần một bộ câu kín mới (đã ghi vào bước đóng gói Phase 1–8, §6).
+- **Bạn cần quyết gì:** không có việc gấp. Muốn có một mốc trung thực cho lần kiểm tổng quát sau (vd trước buổi bảo vệ) thì cần một bộ câu kín **mới nữa** (§6).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -70,7 +70,7 @@ HF_HUB_OFFLINE=1 uv run python -m evaluation.golden_full_corpus check ../knowled
 | Đoạn đúng cho câu khó | **Xử lý một phần** | 55 câu (40 thử / 15 kiểm); bản 5 (30/10) là bản code đo đang dùng |
 | Nhãn độ tự nhiên | **Đã xử lý** | 82 / 65 / 29; số chính bỏ 29 câu không tự nhiên |
 | Đáp án tham chiếu chỉ trả lời điều được hỏi | **Đã xử lý** | sửa 10 câu (25/10); 5 câu "chưa chắc" giữ nguyên |
-| Bộ câu kín cho chấm cuối | **Đã xử lý** (đã dùng 28/10) | 36 câu, đủ dấu, 36 / 36 tự nhiên; nay là bộ hồi quy; bộ kín mới: **chưa thực hiện** |
+| Bộ câu kín cho chấm cuối | **Đã xử lý** (đã dùng 28/10) | 36 câu, đủ dấu, 36 / 36 tự nhiên; nay là bộ hồi quy; bộ kín mới 40 câu: **đã dùng** 01/11; bộ mới nữa: **chưa thực hiện** |
 | Câu người dùng thật hỏi | **Chưa thực hiện** | đề do AI viết, người duyệt; câu kín viết theo kiểu người dùng thật nhưng vẫn do AI soạn |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
@@ -116,7 +116,7 @@ Kiểm 31/10/2026 với code (commit `1985a81`) và `session_prompt/Project_Stat
 
 ## 6. Việc còn lại / cần quyết
 
-- **Bộ câu kín mới** trước buổi bảo vệ (để có một mốc trung thực): đã ghi vào bước đóng gói Phase 1–8; chưa làm.
+- **Bộ câu kín mới nữa** cho lần kiểm tổng quát sau (vd trước buổi bảo vệ): bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (`BAO_CAO_DANH_GIA.md` mục 4); bộ tiếp theo chưa làm.
 - **Lỗi đã biết của lệnh `check`:** 1 câu có keyword khác kho chỉ ở chữ hoa / thường (phát hiện 17:17 31/10/2026; nguyên nhân B107 01/11) — bạn chọn giữ nguyên (11:04 01/11/2026); chấm điểm không bị ảnh hưởng.
 - Sau mỗi đợt sửa kho sau này: quét lại đề đủ 3 lớp như 30/10 (lớp "cụm chữ bị bỏ" bắt buộc) **và** chạy `golden_full_corpus check` (miễn phí,
   vài giây) — 31/10 lệnh này bắt 1 câu mà 3 lớp quét sót.
