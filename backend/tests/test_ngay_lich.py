@@ -47,7 +47,8 @@ def test_weekday_and_can_chi_text():
 @pytest.mark.parametrize("args", [(30, 12, 2025, "am"),            # tháng Chạp Ất Tỵ chỉ 29 ngày (thư viện lặng lẽ ra ngày đầu tháng sau — code bắt)
                                   (1, 6, 2026, "am", True),         # 2026 không có tháng nhuận
                                   (31, 4, 2026, "duong"), (29, 2, 2027, "duong"), (0, 1, 2026, "am"), (1, 13, 2026, "am"),
-                                  (1, 1, 2026, "duong", True)])
+                                  (1, 1, 2026, "duong", True),
+                                  (10 ** 20, 1, 2026, "duong"), (1, 10 ** 20, 2026, "am")])  # review nhánh m-1: số vô lý ⇒ câu cố định, không OverflowError
 def test_impossible_dates_get_fixed_sentence(args):
     assert nl.doi(*args) == nl.CAU_NGAY_SAI
 
@@ -163,3 +164,20 @@ def test_week_and_month_ranges_written_by_code_only_when_asked():
     assert chu[2].startswith("Tuần sau: từ Thứ Hai, 09/11/2026 (ngày 1 tháng 10 âm)")
     assert chu[4] == "Tháng âm hiện tại (tháng 9): từ Thứ Bảy, 10/10/2026 (ngày 1 tháng 9 âm) đến Chủ nhật, 08/11/2026 (ngày 30 tháng 9 âm)."
     assert nl.ket_qua("hom_nay", 0, 0, 0, False, now, cau="Rằm tháng Giêng năm nay?").count("\n") == 0  # không cụm khoảng ⇒ chỉ dòng hôm nay
+
+
+
+def _vn(y, m, d, h=10):
+    return dt.datetime(y, m, d, h - 7, 0, tzinfo=dt.timezone.utc)
+
+
+@pytest.mark.parametrize("now, ngay, thang, qua, toi", [
+    (_vn(2027, 1, 20), 1, 1, ("17/02/2026", "đã qua 337 ngày"), ("06/02/2027", "còn 17 ngày nữa")),     # giữa 1/1 và Tết: "Tết năm nay" không thành Tết đã qua
+    (_vn(2027, 2, 7), 1, 1, ("06/02/2027", "đã qua 1 ngày"), ("26/01/2028", "còn 353 ngày nữa")),      # một ngày sau Tết
+    (_vn(2027, 1, 20), 15, 12, ("02/02/2026", "đã qua 352 ngày"), ("22/01/2027", "còn 2 ngày nữa")),   # "rằm tháng Chạp năm nay" trong tháng 1
+])
+def test_no_year_gives_last_and_next_occurrence(now, ngay, thang, qua, toi):
+    # review nhánh M-1 (A chọn 08/11): không nêu năm ⇒ code trả cả lần gần nhất đã qua và lần sắp tới, không đoán "năm nay"
+    dong = nl.ket_qua("am", ngay, thang, 0, False, now).splitlines()
+    assert "lần gần nhất" in dong[1] and qua[0] in dong[1] and dong[1].endswith(f"{qua[1]} (so với hôm nay)")
+    assert "lần sắp tới" in dong[2] and toi[0] in dong[2] and dong[2].endswith(f"{toi[1]} (so với hôm nay)")

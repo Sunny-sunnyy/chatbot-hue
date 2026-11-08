@@ -44,6 +44,8 @@ def ngay_duong(ngay: int, thang: int, nam: int, loai: Literal["duong", "am"], nh
     """Ngày người dùng nêu (dương hoặc âm) ⇒ ngày dương, hoặc câu cố định khi ngoài khoảng / không có ngày đó."""
     if not NAM_MIN <= nam <= NAM_MAX:
         return CAU_NGOAI_KHOANG
+    if not (1 <= ngay <= 31 and 1 <= thang <= 12):  # review nhánh m-1: số vô lý ⇒ câu cố định (trước: OverflowError làm hỏng cả lượt)
+        return CAU_NGAY_SAI
     try:
         if loai == "duong":
             return CAU_NGAY_SAI if nhuan else dt.date(nam, thang, ngay)
@@ -121,15 +123,28 @@ def khoang_ngay(cau: str, hom: dt.date) -> list[str]:
 
 def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam: int, thang_nhuan: bool, now: dt.datetime | None = None,
             cau: str = "") -> str:
-    """Chữ trả cho model (do code dựng): luôn có dòng hôm nay; `loai` khác `hom_nay` ⇒ thêm dòng ngày được đổi. `nam` = 0 ⇒ năm nay (năm âm hiện tại khi
-    `loai` = "am")."""
+    """Chữ trả cho model (do code dựng): luôn có dòng hôm nay; `loai` khác `hom_nay` ⇒ thêm dòng ngày được đổi. `nam` = 0 (không nêu năm) ⇒ cả lần gần nhất đã qua và lần sắp tới."""
     hom = hom_nay(now)
     dong = [f"Hôm nay (giờ Việt Nam): {mo_ta(hom)}.", *khoang_ngay(cau, hom)]
-    if loai != "hom_nay":
-        nam = nam or (solar_to_lunar(hom).year if loai == "am" else hom.year)
+    lich = "âm" if loai == "am" else "dương"
+    nhuan = ", tháng nhuận" if thang_nhuan else ""
+    if loai != "hom_nay" and nam:
         d = ngay_duong(ngay, thang, nam, loai, thang_nhuan)
         chu = d if isinstance(d, str) else f"{mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay)"
-        dong.append(f"Ngày được hỏi ({'âm' if loai == 'am' else 'dương'} lịch {ngay}/{thang}/{nam}" + (", tháng nhuận" if thang_nhuan else "") + f"): {chu}")
+        dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}/{nam}{nhuan}): {chu}")
+    elif loai != "hom_nay":
+        # review nhánh M-1 (A chọn 08/11): không nêu năm ⇒ KHÔNG đoán "năm nay" (từ 1/1 tới Tết năm âm ≠ năm dương: "Tết năm nay" sẽ thành Tết đã qua) ⇒ code
+        # trả cả lần gần nhất đã qua (hoặc hôm nay) và lần sắp tới
+        goc = solar_to_lunar(hom).year if loai == "am" else hom.year
+        ngays = sorted({d for y in (goc - 1, goc, goc + 1) if isinstance(d := ngay_duong(ngay, thang, y, loai, thang_nhuan), dt.date)})
+        qua = [d for d in ngays if d <= hom]
+        toi = [d for d in ngays if d > hom]
+        if not qua and not toi:
+            dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}): {ngay_duong(ngay, thang, goc, loai, thang_nhuan)}")
+        if qua:
+            dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần gần nhất: {mo_ta(qua[-1])} — {so_voi_hom_nay(qua[-1], hom)} (so với hôm nay)")
+        if toi:
+            dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần sắp tới: {mo_ta(toi[0])} — {so_voi_hom_nay(toi[0], hom)} (so với hôm nay)")
     return "\n".join(dong)
 
 
