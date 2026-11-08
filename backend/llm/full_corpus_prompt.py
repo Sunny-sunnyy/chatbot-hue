@@ -25,10 +25,12 @@ _ANSWER_TAIL = f"""Nếu bằng chứng không đủ, trả đúng duy nhất c�
 {INSUFFICIENT_ANSWER}
 """
 # Bậc G (spec bản 13 §12.5): câu ngoài phạm vi vào agent Huế ⇒ agent trả đúng câu cố định (code nhận chuỗi ⇒ outcome `out_of_scope`).
-_ANSWER_OUT_OF_SCOPE = f"""Nếu câu hỏi không về văn hoá, du lịch Huế (nơi khác không dính Huế, kiến thức chung, viết code, dịch, làm bài…), trả đúng duy nhất câu sau,
-không thêm citation:
+_ANSWER_OUT_OF_SCOPE = f"""Nếu câu hỏi không về văn hoá, du lịch Huế, trả đúng duy nhất câu sau, không thêm citation:
 {OUT_OF_SCOPE_ANSWER}
-Câu so Huế với nơi khác, đi từ Huế tới nơi khác hay có dính Huế vẫn là câu về Huế.
+Câu không về Huế: hỏi di tích, lễ hội, vé, giờ, biểu diễn, món ăn… của tỉnh, thành phố hay nước khác mà không hỏi gì về Huế; kiến thức chung;
+nhờ viết code, dịch, làm bài, soạn thư, email — kể cả khi câu có nhắc chữ Huế.
+Câu về Huế: câu không nêu nơi nào khác (người dùng đang hỏi trợ lý du lịch Huế — kể cả câu về ngày tháng, giờ, an toàn, đi lại, cần giúp gấp);
+câu so Huế với nơi khác, đi từ Huế tới nơi khác hay có dính Huế.
 """
 ANSWER_SYSTEM_INSTRUCTIONS = (_ANSWER_HEAD + _ANSWER_OUT_OF_SCOPE + _ANSWER_TAIL).strip()
 # Lượt biểu mẫu (cổng D3) không qua cổng, câu luôn về lịch Huế ⇒ giữ lời dặn trước bậc G **giống byte** (plan G bản 2 §1.2, A quyết M-4: Q-F / V5 đo trên bản này)

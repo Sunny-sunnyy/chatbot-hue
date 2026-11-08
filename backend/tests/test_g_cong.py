@@ -28,7 +28,7 @@ def _sha(text: str) -> str:
 def test_prompts_per_turn_type():
     gen = OpenAIFullCorpusGenerator(client=Client(TimedResponses("tro_ly_hue", 0, 0)), model="probe")
     for instructions in (gen.answer_agent.instructions, gen.assistant_instructions, gen.assistant_history_instructions):
-        assert OUT_OF_SCOPE_ANSWER in instructions and "vẫn là câu về Huế" in instructions  # lượt đầu / có công cụ / có lịch sử
+        assert OUT_OF_SCOPE_ANSWER in instructions and "Câu về Huế: câu không nêu nơi nào khác" in instructions  # lượt đầu / có công cụ / có lịch sử
     assert ANSWER_SYSTEM_INSTRUCTIONS in gen.assistant_instructions and ANSWER_SYSTEM_INSTRUCTIONS in gen.assistant_history_instructions
     for router in (gen.router_agent.instructions, gen.router_history_agent.instructions):
         assert router.startswith(ROUTER_INSTRUCTIONS) and "khan_cap" not in router and "ngoai_pham_vi" not in router
