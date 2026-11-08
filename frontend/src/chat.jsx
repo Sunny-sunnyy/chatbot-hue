@@ -5,7 +5,7 @@ import { streamAnswer } from "./stream.js";
 import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
 // Bản đồ lịch trình (plan 2026-11-08): chunk riêng — chỉ tải khi lịch có ≥ 1 toạ độ hợp lệ (server chỉ gửi `toa_do` khi cờ `ban_do_lich` bật)
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
-const coToaDo = td => Array.isArray(td) && td.length === 2 && td.every(Number.isFinite);  // kiểm đủ (khung Huế) ở `BanDoLich.toaDoHopLe`
+import { toaDoHopLe } from "./toaDo.js";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -389,7 +389,7 @@ function LichExtras({ lich, onAsk, onEditPlan, getText }) {
   const links = (lich.ban_do || []).filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
   return (
     <div className="lich">
-      {links.some(item => coToaDo(item.toa_do)) ? (
+      {links.some(item => toaDoHopLe(item.toa_do)) ? (
         <Suspense fallback={<MapLinks links={links} />}><BanDoLich items={links} /></Suspense>
       ) : links.length > 0 && <MapLinks links={links} />}
       <LuuLich getText={getText} />
