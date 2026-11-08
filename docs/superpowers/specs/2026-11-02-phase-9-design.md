@@ -595,7 +595,7 @@ Mỗi việc = một bậc giữ / gỡ riêng (luật bản 9); bậc sau rebas
 | T4 | ≈ 0,14 | 36 × 2 × 0,0008 + an toàn + Golden mẫu |
 | **Tổng** | **≈ 0,8** (một vòng mỗi việc) | vòng chỉnh thứ hai chỉ chạy phần "chỉ định tuyến" / bộ đã thấy; dự phóng vượt 1,1 ⇒ A xin User trước |
 
-**Luật cắt** (ngày là mốc A kiểm; B7 15–21/12 không cắt; đóng code 25–30/12 khi User nói):
+**User 11:02 08/11/2026: bỏ mốc ngày — làm càng nhanh càng tốt** (luật cắt theo ngày dưới đây không còn áp; sàn §12.3 và trần tiền giữ nguyên; việc không đạt sàn ⇒ giữ bản cũ như "phương án B" §12.2). Bản cũ để tra cứu: **Luật cắt** (ngày là mốc A kiểm; B7 15–21/12 không cắt; đóng code 25–30/12 khi User nói):
 - 16/11 G chưa merge ⇒ giữ 4 tuyến; T2 vẫn làm trên 4 tuyến (S2b thay bằng "tuyến `ngoai_pham_vi` không tra web" như cũ).
 - 23/11 T1 / T3 chưa merge ⇒ T1 cắt (giữ cờ `today_line` tắt); T3 thu nhỏ còn **bảng dữ liệu cho kiểm cuối** (phương án B).
 - 30/11 T2 chưa merge ⇒ giữ cổng web B6.
