@@ -123,3 +123,20 @@ thêm sau lượt 2.**
   trích dẫn kho và đổi sàn ⇒ User duyệt).
 - **Tiền T3:** vòng 1 0,025679 · vòng 2 0,011858 · vòng 3 0,012194 · S1 sinh 0,035522 = **0,085253 USD** (trần 0,20).
 - **Thời gian:** pytest rộng 2 phút 10–42 giây; Q1 51 giây / lần; Q2 70–90 giây / lượt; S1 sinh 6 phút 16 giây (2 × 32 câu); Playwright: không (không sửa giao diện).
+
+
+## 10. Kiểm thêm sau vòng 3 (A giao, 0 USD)
+
+- **Câu sub-agent nghi sai (T06 "trẻ em 7–12 tuổi được miễn phí" — Bảo tàng Cổ vật Cung đình Huế): ĐÚNG với kho.** `scripts/grep_kb.sh --dir travel/tickets`: file vé Quần thể
+  dòng 24 tiêu đề cột "Giá vé trẻ em từ 7–12 tuổi", dòng 33 hàng Bảo tàng Cổ vật = 50.000 · **Miễn phí**. Mốc `main` và nhánh trả lời cùng nội dung ⇒ **không** phải lỗi đang chạy.
+  (Q3 vẫn đếm câu này là "model tự nêu điều kiện" theo luật ghi trước — luật đo chỗ chữ điều kiện, không đo đúng / sai.)
+- **Sửa lỗi đo `do_t3.py`:** mỗi câu một `httpx.Client` mới ⇒ không cookie ⇒ mỗi câu một cuộc trò chuyện riêng (probe 0 USD: client mới không mang cookie). **Các lượt đã chạy**
+  (mốc + vòng 1–3) đều chạy **trong một cuộc** với cùng công cụ ⇒ cùng thước, so sánh giữa chúng vẫn hợp lệ; nhưng số không phải "câu độc lập" — lượt đo sau dùng bản đã sửa.
+
+## 11. Giới hạn (cập nhật)
+
+- **Lỗi thiết kế T17 — lưu ý gắn điểm cũ khi đổi chủ đề:** đường code tự tra lấy điểm của **câu hỏi liền trước** khi câu này không nêu tên điểm của bảng ⇒ người dùng hỏi chợ rồi
+  hỏi chùa (không có trong bảng) vẫn bị nối dòng "nguồn dữ liệu ghi khác nhau ở … Chợ Đông Ba". Lộ ra vì lượt đo chạy trong một cuộc. Hướng sửa (chưa làm): chỉ dùng câu trước khi
+  câu này là câu hỏi tiếp không nêu địa điểm nào (vd "còn giờ mở cửa?"), hoặc bỏ fallback.
+- Q3 trượt vì đoạn kho của lần tìm đầu vẫn chứa điều kiện miễn giảm (thiết kế chỉ giữ chữ điều kiện **của bảng** ngoài model) — chọn hướng ở "Câu hỏi cho User" (A ghi handoff).
+- S1 mới sinh nhánh ×2 (`do/s1_nhanh/`), chưa chấm / chưa mốc; S4, S5 chưa chạy.

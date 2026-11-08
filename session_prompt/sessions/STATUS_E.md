@@ -1,6 +1,42 @@
-# STATUS E — kết phần việc 16:23 07/11/2026 (`date`) · terminal `hue-rag-81` (A `hue-rag-7a`, B `hue-rag-10`, C `hue-rag-a0`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — kết phần việc 12:16 08/11/2026 (`date`) · terminal `hue-rag-22` (A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`) · Claude Opus 5.5 · vai thực thi
 
-## ĐANG LÀM 08/11 (terminal `hue-rag-22`; A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`)
+## PHIÊN SAU ĐỌC TRƯỚC (viết 12:16 08/11/2026)
+
+**Việc dở — T1 ngày + âm lịch (spec Phase 9 bản 13 §12, plan `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a`, A duyệt):**
+- Nhánh `p9-t1-ngay` **`9f08d91`** (đã push), **cờ `ngay_lich: false`**. Worktree `/tmp/e_t1` **giữ** (sạch) — sub-agent của A review cả nhánh ở đó ⇒ `report_agent/2026-11-02_phase_9_code/t1_ngay_branch_review.md`.
+- Report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` **xong**:
+  - 3 lượt; lượt 3 đạt tiêu chí 1–4 (R→OK 8, L1 / L3 0, L2 0, `max_turns` 0); S1 16 / 16; S4 sát;
+  - R8 kém ổn định (A chấp nhận); có đoạn lời thường cho `BAO_CAO_SINH_CAU_TRA_LOI_API`.
+- **Còn lại theo thứ tự:**
+  1. **review cả nhánh** (sub-agent A) ⇒ E sửa finding nếu có;
+  2. **S5** khi A xếp lượt (thứ tự B ⇒ E ⇒ C);
+  3. A merge + **bật cờ** (User / A quyết);
+  4. sau G (B) vào `main`: đo lại 5 câu ngày bị định tuyến xếp ngoài phạm vi (R11, A3, A4, A5, A10).
+- **Lệnh S5** (một server một lúc):
+  - (a) `sed -i 's/^  ngay_lich: false /  ngay_lich: true  /' /tmp/e_t1/backend/config/settings.yaml`;
+  - (b) `cd /tmp/e_t1/backend && HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8862` (nền);
+  - (c) `cd /home/minhhieu/hue_rag && .venv/bin/python data/phase_9/t1/tools/chay_t1.py http://127.0.0.1:8862 chon:R1,R2,R3,R4,R6,R7,R8,R9,R10,R11,R12,E1,E2,E3,N1,N2,N3,A1,A2,A6 nhanh 5 data/phase_9/t1/ket_qua/s5_nhanh.jsonl`;
+  - (d) tắt server, `git -C /tmp/e_t1 checkout -- backend/config/settings.yaml`;
+  - (e) server `main` cổng 8861 (từ `backend/` thư mục chính) cùng lệnh, `moc`;
+  - (f) đọc `chat_metrics.first_text_ms` theo **`turn_id`** (log thư mục chính dùng chung với session khác — không đếm theo mốc dòng);
+  - sàn p50 ≤ 3 s / p95 ≤ 5 s, không chậm hơn mốc quá nhiễu.
+  - ≈ 0,03 USD.
+- **Bẫy cho mọi session:** tới khi T1 vào `main`, `uv sync` thường ở `main` sẽ gỡ `lunar-vn` + `sherpa-onnx` ⇒ chỉ `uv sync --inexact`.
+
+**Đã xong 08/11 (A merge / commit):**
+- README + Golden report;
+- `p10-anh-bat` (rebase `9800eeb`);
+- việc nhỏ `p11-viec-nho-e` (Dừng, 500 ký tự, gợi ý dưới từ chối, Nguồn gộp, huỷ model + USD khi ngắt);
+- review `p11-ban-do` / `p11-lich-nho` / `p11-viec-nho-c` (ready cả 3);
+- sửa test cổng `p9-sua-test-cong` (A merge `e7ad76f`).
+
+**Việc chờ User (còn đúng):**
+- giọng nói — User **giữ**, sẽ thu 40 câu (hướng dẫn: `data/ra_soat_tinh_nang_2026-11-08/E.md` cuối file + phiếu `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`; `thu/` còn rỗng) ⇒ G1 / G2 mục 4;
+- phiếu bảng điểm v6 (4 ô) ⇒ E chốt `diem_v6.json`;
+- 17 link Maps theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`, B soạn).
+
+
+## 0a. Nhật ký việc 08/11 (theo giờ, lịch sử)
 
 - 09:22 08/11/2026 — A giao: rà "Câu hỏi A còn nợ" (C211 rel, log xoay vòng, hạn mức OpenAI / Serper, mục deploy) — chỉ đọc, 0 USD. **XONG 09:23 08/11/2026**: (1) `rel` đã sửa (`markdown.js:36-46`); (2) log chưa xoay; (3) hạn mức chưa đặt, code không có trần tổng; checklist E-dep còn thiếu #1a / #5 / #6 / #7. **File:** `data/phase_12/deploy_nhap/ra_soat_no_A_2026-11-08.md` (mới), file này.
 - 09:30 08/11/2026 — A giao: rà `.md` tìm tính năng đã ghi mà chưa làm (phần E: `bao_cao_he_thong/`, `docs/superpowers/specs` + `plans`, `guides/`, `README.md`) + hướng dẫn User thu 40 câu. Chỉ đọc, 0 USD. **XONG 09:37 08/11/2026**: (A) 22 ý · (B) 21 ý; 2 agent phụ quét specs / plans + guides, E kiểm 9 khẳng định (đúng 9 / 9); hướng dẫn thu trỏ phiếu C `bo_40_cau/huong_dan_thu_cho_user.md`. **File:** `data/ra_soat_tinh_nang_2026-11-08/E.md` (mới), file này.
@@ -16,30 +52,7 @@
 - 11:45 08/11/2026 — **T1 đo xong (PARTIAL)**, report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md`, nhánh `p9-t1-ngay` `2c6cd46` (push). 2 người chấm mù khớp 29 / 29: từ chối nhầm −8 (đạt); L1 / L3 mới 0; **L2 1 câu (A2: "Chưa … đã qua")** ⇒ tiêu chí 3 trượt; `max_turns` 4 + 1 khi có công cụ (A chọn) ⇒ R8 hết chạm trần nhưng vẫn từ chối; S1 16 / 16; S4 sát. Tiền ≤ 0,076 USD. **Chờ A quyết** (a) merge cờ tắt / (b) code ghi "đã qua / còn N ngày" + đo lại bộ ngày ≈ 0,03 / (c) phương án B. **S5 NOT RUN** — A xếp lượt B ⇒ E ⇒ C; lệnh: cờ bật tạm trong `/tmp/e_t1/backend/config/settings.yaml` ⇒ `cd /tmp/e_t1/backend && HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8862` ⇒ `.venv/bin/python data/phase_9/t1/tools/chay_t1.py http://127.0.0.1:8862 chon:<20 mã câu ngày> nhanh 3 <out>` ⇒ tắt ⇒ server `main` 8861 cùng lệnh `moc` ⇒ `chat_metrics.first_text_ms` theo `turn_id`. Worktree `/tmp/e_t1` giữ (cờ đã trả về tắt).
 - 12:00 08/11/2026 — T1 lượt 2 (sửa (b), `f536dfe` push): 2 người chấm mới khớp 27 / 27 — R→OK **9** (A2 hết lỗi), L1 / L3 0, **L2 1 (R7: model tự viết "tuần này giữa tháng 9 âm")**, max_turns 0, kém đi R8 + E2. Tiền T1 ≤ 0,094 USD. Report mục 4b. **Chờ A quyết:** merge cờ tắt / (i) công cụ trả ngày âm của tuần này. S5 chưa chạy (lệnh ở dòng trên).
 - 12:09 08/11/2026 — **T1 lượt 3** (sửa (i), `9f08d91` push): 2 người chấm khớp 27 / 27 — **tiêu chí 1–4 đạt** (R→OK 8, L1 / L3 0, L2 0, max_turns 0); kém đi R8 (ổn định 3 lượt) + E3 (dao động). Tiền T1 ≤ 0,112 / 0,13. Report mục 4c. **Chờ A:** merge cờ tắt + review cả nhánh (phiên sau); S5 chưa chạy (lệnh ở trên). Worktree `/tmp/e_t1` giữ, sạch.
-
-## PHIÊN SAU ĐỌC TRƯỚC (viết 16:23 07/11/2026)
-
-**E-anh-3 — XONG 16:40 07/11/2026** (A giao): ứng viên Commons cho #5 / #6 / #7 theo ảnh mẫu User; trang `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/chon_567.html` (mỗi chỗ ảnh hiện tại + 3 ứng viên), bảng `anh/viwiki/ung_vien_567/bang.md`, công cụ `tools/tim_anh_567.py`. Gần mẫu nhất: #5 `5_1` (Ngọ Môn đêm, người áo lính hầu cầm cờ), #7 `7_4` (hoàng hôn đầm Chuồn có hàng sáo, không từ trên cao); #6 không có ảnh múa Lục cúng hoa đăng trên Commons ⇒ `6_1` Duyệt Thị Đường. **User chốt #7 = `7_4`** (hoàng hôn đầm Chuồn) ⇒ đã thay `lv_travel.jpg` (cũ: `lv_travel_cu.jpg`), dựng lại `danh_sach.md` / `xem_anh.html`. **Vòng 2 #5 / #6** (xong 16:54 07/11/2026): `tools/tim_anh_56_v2.py` (ảnh trong bài vi / en / fr.wiki + danh mục + tìm) ⇒ thêm vào `chon_567.html` (khung xanh): #5 `5_3` Phu Văn Lâu đông người nhiều màu, `5_4` rước lọng Nam Giao, `5_v2_4` / `5_v2_7` ảnh cũ đen trắng; #6 ca Huế `6_v2_1` (CC0) / `6_v2_2` / `6_v2_4` (tác giả trống trên Commons) / `6_v2_3`, `6_v2_5` sân khấu Duyệt Thị Đường. Commons vẫn không có khai mạc đông người trước Ngọ Môn / Lục cúng hoa đăng. **17:13 07/11/2026: User chốt đủ 7 ảnh** — #6 = `6_v2_1` ca Huế thính phòng (CC0) ⇒ `lv_performing_arts.jpg`; #5 chính = ảnh ngoài Commons User đưa (khai mạc Festival Huế 2024, vietnamtourism.gov.vn, không giấy phép mở, **không commit**) ⇒ `ngoai_git/lv_festivals.jpg`, dự phòng trong git = `5_3` Phu Văn Lâu (PD) ⇒ `lv_festivals.jpg`; bảng cuối "7 ảnh dùng cho đợt 1" trong `danh_sach.md` + `bay_anh_dot1.json`; ảnh cũ = `*_cu.jpg`. Việc kế: B đóng vào `frontend/`.
-
-**E không có việc dở, không code dở, không worktree, không file `/tmp` của E.** Mọi file E tạo 07/11 nằm trong `data/` (private) hoặc `report_agent/` (A đã commit phần tracked).
-
-**Việc chờ — đều do User:**
-1. **Ảnh cổng (bộ mới theo vi.wikipedia):** User kiểm `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/xem_anh.html`. Đường dẫn Windows: `\\wsl.localhost\Ubuntu-24.04\home\minhhieu\hue_rag\data\nghien_cuu_giao_dien_2026-11-06\anh\viwiki\xem_anh.html`.
-   - Đã có lựa chọn: User chọn **#1 đầu trang = File:Truong_Tien_bridge_(I).jpg** (A báo chiều 07/11 — không nằm trong bài vi.wiki Sông Hương; ảnh đại diện bài cũ ở `hero_song_cu.jpg`).
-   - User kiểm xong ⇒ **B** đưa 7 ảnh (#1–#7) vào `frontend/` + dòng ghi công (tác giả / giấy phép / link ở `danh_sach.md`, `tai_ve.json`).
-   - Bộ cũ `anh/commons/` (27 ảnh) chỉ là hồ sơ — có 2 nhãn sai User bắt.
-2. **Giọng nói:** User thu 40 câu **hoặc** quyết giữ / cắt khỏi đồ án (E đề xuất cắt — `report_agent/2026-11-07_tu_soi_lo_trinh/tu_soi_E.md` §4). `data/phase_10/giong_noi/thu/` vẫn **rỗng** (16:23 07/11). Thu xong ⇒ G2 (mục 4).
-3. **Phiếu bảng điểm v6** (`data/phase_9/lich_trinh/diem_cho_user_v6.md`, 4 ô tick) ⇒ E chốt `diem_v6.json` + chạy `kiem_v6.py` (lệnh ở bảng 07/11 dưới). Lưu ý: biểu mẫu đã bật 07/11 trên **bảng v3**.
-4. Việc cũ A hỏi User: bật `anh.bat`? xoá collection thử `hue_anh_siglip2`? xoá ảnh Docker cũ `hue-rag-app:nhap` (còn chứa file đánh giá — User `! docker rmi hue-rag-app:nhap`)?
-
-**Việc kế của E khi có tín hiệu:**
-- (a) User kiểm ảnh, đòi đổi ⇒ dùng `tools/tai_anh_viwiki.py` (liệt kê ảnh trong bài + chú thích; `--tai` tải) + `tools/dung_trang_viwiki.py` (dựng `danh_sach.md` + `xem_anh.html`). Luật: chỉ file Commons (URL `upload.wikimedia.org/wikipedia/commons/…`), mở từng ảnh đối chiếu chú thích bài.
-- (b) G1 ⇒ G2 giọng nói (mục 4, plan `92ec551531fd`). 0 USD, chạy máy — hỏi A trước (máy dùng chung với dự án khác).
-- (c) Phiếu v6 (mục 3 ở trên).
-- (d) Review khi A giao: spec cổng đợt 2 (C209 P1 / P2 / P3), nhánh mới của B (vd giới hạn lượt / cookie `Secure` / tắt `/docs` trước deploy).
-- (e) Hoãn tới khi xét bật câu gõ tự do: E20 Sửa 1 / Sửa 2 (`report_agent/2026-11-06_b5_cau_tu_nhien/e20_tu_choi_hoi_kem.md` §5); dò K2 bằng `chay_e20.py` (≈ 0,002 USD, A quyết).
-
-**Máy:** dự án khác của User đang dùng máy từng lúc ⇒ **việc nặng (server, pytest rộng, docker build, đo latency) hỏi A trước**; C hay đo latency — hỏi C "xong đo chưa".
+- 12:14 08/11/2026 — A giao: sửa test `test_weather_and_feature_routes` (hỏng khi có `--env-file` vì `anh.bat` bật) ⇒ nhánh `p9-sua-test-cong` `35c93ec` (push): test đặt rõ `app.state.anh = None` + trả lại. Tái tạo trên `main` trước: có env 1 failed / không env passed ⇒ sau sửa `test_cong_dot_1.py` 22 / 22 cả hai. Chờ A merge. Worktree đã gỡ.
 
 ## 0. Đã làm 07/11 (A giao; A commit phần tracked) — tiền E 07/11: **0,000953 USD**
 
@@ -81,6 +94,21 @@
 
 ## 3. Bẫy / đã học
 
+### 08/11
+
+- **Gọi sai lần gọi model trong log (E tự gây, B bắt):** E ghi "lần bị dừng ra 89 token" — đó là lần **đã xong**; SDK `cancel()` mặc định không trả usage ⇒ token lần bị huỷ không đo được.
+  - Từ nay khẳng định "lần X" phải khớp loại / thứ tự lần gọi, không suy từ vị trí cuối danh sách.
+- **Chạy 2 server một lúc** khi A vừa ra luật "1 server / session" (RAM) ⇒ phải dừng, bỏ 3 câu đã chạy (≈ 0,003 USD).
+  - Từ nay chạy mốc ⇒ tắt ⇒ chạy nhánh.
+  - Đếm `chat_metrics` theo `turn_id`: log thư mục chính dùng chung, mốc dòng lẫn dòng session khác.
+- **Ghép commit + push một lệnh** ⇒ auto mode chặn ⇒ tách 2 lệnh.
+- **Sửa chuỗi bằng `str.replace` khi đoạn xuất hiện 2 lần trong file** (assert `count == 1` trượt) ⇒ tìm đúng vị trí trong hàm đích (`index(a, start)`).
+- **Bộ kiểm L2 bằng regex chỉ bắt sai ngày / thứ**, không bắt sai lập luận trước / sau ("Chưa … đã qua") hay mô tả "tuần này giữa tháng 9 âm" — người chấm bắt.
+  - Cách sửa đúng là **code tính luôn** (khoảng cách tới hôm nay, đầu / cuối tuần), không viết thêm regex.
+- **Định nghĩa nhãn cũ (L1 bộ 30/10) sai khi hệ thống biết ngày** ⇒ chỉnh định nghĩa trong brief **trước** khi xem câu trả lời, ghi giờ.
+- **`python -I` bỏ qua `PYTHONPATH`** ⇒ script import `backend/` không chạy `-I`; `-I` chỉ cho script đọc file tải về.
+- **Thư viện ngoài:** đọc đúng file sẽ cài (wheel từ PyPI + hash), không đọc bản trên GitHub.
+
 - **07/11 — nhãn ảnh không đối chiếu mô tả (User bắt 2 lỗi trong 27 ảnh Commons):** ô ẩm thực đặt nhãn "Bún bò Huế" theo **tên danh mục** Commons, ảnh thật là bún riêu; ô di tích ghi "Điện Thái Hòa" trong khi mô tả Commons ghi rõ là Đại Cung môn. E có mở ảnh nhưng chỉ soát "đúng nơi / có người", không so ảnh với **mô tả của chính file** + nhãn mình đặt. Ảnh "chắc: vừa" vẫn đưa vào danh sách chính. ⇒ Từ nay: nhãn = đúng chủ thể trong mô tả / chú thích bài (copy nguyên), mở ảnh đối chiếu từng cái, ghi "khớp chú thích: có / không"; ảnh không chắc ⇒ để mục riêng, không vào danh sách dùng.
 - **07/11 — câu về hành vi lấy từ ghi chú, không từ số đếm:** E viết "thời tiết bật ⇒ lịch biểu mẫu có dòng dự báo" theo ghi chú điều kiện trong report C; S3 đếm 0 / 24 (biểu mẫu chưa có ô ngày đi). A sửa.
 
@@ -107,11 +135,21 @@
 
 ## Tiền
 
+- **E 08/11 ≈ 0,128 USD (cận trên):**
+  - T1 ≤ 0,112 (nhánh 0,061 + mốc ≤ 0,051, log mốc lẫn session khác);
+  - bật ảnh 0,0083;
+  - việc nhỏ ≈ 0,0055;
+  - review lịch nhỏ 0,0010 / bản đồ 0,0004 / việc nhỏ C 0,0004.
+  - Codex tra cứu, sub-agent chấm = quota, 0 USD.
+  - Phase 9 (T1 + việc nhỏ + review) + Phase 10 (ảnh 0,0083 ⇒ ≈ 0,107 / 0,15).
+
 - **E 07/11: 0,000953 USD** (3 câu đo RAM ở E-dep; ảnh Commons / vi.wiki, Codex tra AWS, review, ca dò: 0).
 - **E phiên tối 06/11: 0,011121 USD** (kín v2 0,003029 + E20 0,008092; đều Phase 9). Chấm agent = quota Claude. Codex / Playwright / giọng nói: 0.
 - E phiên sáng 06/11: 0 USD. Phase 10 tổng vẫn 0,098380 / 0,15.
 
 ## Câu hỏi cho A (treo)
+
+- 08/11: T1 bật cờ khi nào (sau review nhánh + S5)? Câu R8 (kém ổn định) cần dữ liệu lịch sự kiện theo ngày (đợt 2 cổng) — ghi vào backlog?
 
 - ~~Ai chốt `diem_v6`~~ — **đã trả lời** (handoff bước 5 + A 07/11): User tick ⇒ **E chốt** `diem_v6.json`; A đổi `lich_trinh_bang` khi merge S1. Chưa tick ⇒ S1 dùng v3.
 - Mục (e) trên: có cho dò K2 bằng `chay_e20.py` (≈ 0,002 USD) không, hay để B / C?
