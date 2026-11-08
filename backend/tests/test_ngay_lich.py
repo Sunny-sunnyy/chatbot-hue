@@ -226,3 +226,15 @@ def test_parallel_path_offers_date_tool_only_with_date_words(deps, cau, co_cong_
     asyncio.run(go())
     tra_loi = [c for c in responses.calls if not str(c.get("instructions", "")).startswith(ROUTER_INSTRUCTIONS[:80])]
     assert tra_loi and all(("ngay_lich" in tool_names(c)) is co_cong_cu for c in tra_loi)
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_form_turn_never_gets_date_tool(deps, stream):
+    # review nhánh m-6: lượt biểu mẫu "Lên kế hoạch" sinh một lần, không công cụ — kể cả khi cờ `ngay_lich` bật và câu hỏi trước có từ chỉ ngày
+    from test_cong_dot_1 import FORM, form_trace, run, tools_of, viet_theo_khung
+
+    gen = generator(lambda n, kw: [answer(viet_theo_khung(kw))])
+    query, trace = form_trace({"so_ngay": "2", "so_thich": "di_tich"}, (("Tuần sau mình đi Huế, có gì chơi?", ""),))
+    run(deps, query, gen, dataclasses.replace(FORM, ngay_lich=True), trace, stream)
+    (sent,) = gen.client.responses.calls
+    assert tools_of(sent) == [] and not any(t["name"] == "ngay_lich" for t in trace.tools)
