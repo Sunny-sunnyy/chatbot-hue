@@ -218,6 +218,12 @@ a { color: inherit; }
 .nguon-ten[aria-expanded="true"] { font-weight: 600; }
 .nguon-doan { margin-top: 8px; padding: 8px 12px; border-left: 3px solid var(--color-accent); background: var(--color-page); border-radius: 0 8px 8px 0; }
 .nguon-doan blockquote + blockquote { margin-top: 6px; }
+.nguon-phan + .nguon-phan { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--color-line); }
+/* Việc nhỏ 08/11: gợi ý dưới câu từ chối của kho (5), bộ đếm ký tự (2) */
+.goi-y-hoi { margin-top: 10px; font-size: 15px; }
+.goi-y-hoi ul { margin-top: 4px; padding-left: 1.2em; list-style: disc; }
+.goi-y-hoi a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
+.dem-ky-tu { margin-top: 4px; font-size: 13px; color: var(--color-muted); }
 .nguon-bai { display: inline-block; margin-top: 6px; color: var(--color-accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
 .feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 68ch; margin-top: 8px; padding-left: 4px; }

@@ -77,7 +77,7 @@ def test_stream_done_has_turn_id_only_for_answered_turns():
 
     fixed = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(), new_id)
     events = parse_sse(fixed.fixed(AnswerTrace(answer=INSUFFICIENT_ANSWER, cited=(), fixed_outcome="refusal_no_sources")))
-    assert events[-1] == ("done", {"outcome": "refusal_no_sources", "turn_id": "B" * 16})
+    assert events[-1] == ("done", {"outcome": "refusal_no_sources", "tu_choi_kho": True, "turn_id": "B" * 16})
 
     failed = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(), new_id)
     assert "turn_id" not in parse_sse(failed.failure(TimeoutError()))[-1][1]

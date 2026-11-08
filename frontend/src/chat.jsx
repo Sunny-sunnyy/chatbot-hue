@@ -34,6 +34,11 @@ const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện
 // B142: câu ngoài phạm vi kèm 3 câu gợi ý cố định (đã kiểm có trong kho bằng `scripts/grep_kb.sh`) — bấm là hỏi luôn.
 const OUT_OF_SCOPE_SUGGESTIONS = ["Vào Đại Nội nên mặc thế nào?", "Lễ hội Điện Huệ Nam diễn ra khi nào?", "Nhã nhạc cung đình diễn lúc nào?"];
 const FEEDBACK_ERROR = "Chưa gửi được đánh giá — bạn thử lại sau nhé.";
+const MAX_QUERY = 500;  // khớp `ChatRequest.query` max_length (server: quá ⇒ 422 "Yêu cầu không hợp lệ")
+const DEM_KY_TU_TU = 450;  // từ đây hiện bộ đếm ký tự
+// Việc nhỏ (5) 08/11: dưới câu từ chối của kho — gợi ý cách hỏi cố định do code viết (không gọi model). Mục cuối là link sang Khám phá.
+const REFUSAL_TIPS = ["Gõ đúng tên nơi, món hay lễ hội bạn muốn hỏi (tên riêng giúp tìm đúng tài liệu).",
+                      "Câu có nhiều ý thì tách thành từng câu ngắn, mỗi câu một ý."];
 
 function reducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -44,7 +49,7 @@ function reducedMotion() {
 function newTurn(key, question, truong, summary, bieuMau) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null };
+           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false };
 }
 
 export function useChat() {
@@ -57,6 +62,7 @@ export function useChat() {
   const lastSeqRef = useRef(0);
   const frameRef = useRef(0);
   const abortRef = useRef(null);
+  const stoppedRef = useRef(null);  // controller của lượt người dùng bấm "Dừng" (phân biệt với huỷ khi rời trang)
   const pending = turns.length > 0 && PENDING.has(turns[turns.length - 1].phase);
 
   // Rời trang / đóng tab ⇒ huỷ `fetch` để server dừng model (yêu cầu 17). Chuyển trang hash KHÔNG huỷ (cùng một trang).
@@ -127,18 +133,33 @@ export function useChat() {
           } else if (name === "web") {
             update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
-            update({ outcome: data.outcome, turnId: data.turn_id ?? null });  // B142: mã lượt chỉ có ở lượt có câu trả lời cuối
+            // B142: mã lượt chỉ có ở lượt có câu trả lời cuối; (5) `tu_choi_kho`: kho không đủ ⇒ gợi ý cách hỏi
+            update({ outcome: data.outcome, turnId: data.turn_id ?? null, tuChoiKho: data.tu_choi_kho === true });
           }
         },
       });
       update({ phase: "done" });
     } catch (failure) {
-      if (failure.name === "AbortError") return true;  // chính trang huỷ (rời trang) — không còn ai xem
+      if (failure.name === "AbortError") {
+        // (7) người dùng bấm "Dừng": chữ đã hiện CHƯA qua kiểm trích dẫn ⇒ xoá như luật D3 (rút lại khi kiểm cuối hỏng), báo "đã dừng" + "Hỏi lại".
+        // Server thấy ngắt ⇒ huỷ lần gọi model, không nhớ lượt này (`client_disconnected` ∉ REMEMBERED_OUTCOMES). Rời trang ⇒ không còn ai xem.
+        if (stoppedRef.current === controller) {
+          stopFrame();
+          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", web: null, clarify: null, lich: null, progress: [] });
+        }
+        return true;
+      }
       // D3: kiểm cuối hỏng (rút lại) hoặc lỗi / đứt giữa chừng (xoá hết) — xoá chữ + nguồn đã hiện, hiện lời báo + "Thử lại" (yêu cầu 10, 11).
       stopFrame();
       update({ phase: "error", text: "", sources: null, numbers: null, notice: "", web: null, error: failure.message });
     }
     return true;
+  }
+
+  function stop() {
+    if (!pending) return;
+    stoppedRef.current = abortRef.current;
+    abortRef.current?.abort();
   }
 
   // "Cuộc trò chuyện mới": server xoá lịch sử trước rồi trang mới xoá màn hình — lỗi ⇒ giữ nguyên màn hình, để thứ người dùng thấy khớp thứ
@@ -159,13 +180,13 @@ export function useChat() {
     }
   }
 
-  return { turns, draft, setDraft, pending, resetting, resetError, ask, startNewConversation };
+  return { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation };
 }
 
 // Khung trò chuyện (dùng ở khung nổi và trang trợ lý). `onEditPlan(chon)`: "Sửa" của lịch từ biểu mẫu ⇒ quay lại biểu mẫu (D3: sửa lịch bằng chat
 // chưa có).
 export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = false }) {
-  const { turns, draft, setDraft, pending, resetting, resetError, ask, startNewConversation } = chat;
+  const { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation } = chat;
   const lastTurnRef = useRef(null);
   const queryRef = useRef(null);
   const queryId = `${idPrefix}-query`;
@@ -217,12 +238,20 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
                     onGoTen={() => queryRef.current?.focus()} />
         <div className="composer">
           <label htmlFor={queryId} className="sr-only">Câu hỏi về Huế</label>
-          <textarea ref={queryRef} id={queryId} rows={1} value={draft} disabled={pending}
+          <textarea ref={queryRef} id={queryId} rows={1} value={draft} disabled={pending} maxLength={MAX_QUERY}
+                    aria-describedby={draft.length >= DEM_KY_TU_TU ? `${queryId}-dem` : undefined}
                     onChange={event => setDraft(event.target.value)} onKeyDown={onQueryKeyDown}
                     placeholder={turns.length > 0 ? "Hỏi tiếp…" : "Hỏi gì về Huế…"}
                     className="min-h-11 flex-1 resize-none bg-transparent py-2 text-[16px] leading-[1.5] outline-none disabled:opacity-60" />
-          <button type="submit" disabled={pending || resetting} className="send">{pending ? "Đang trả lời…" : "Hỏi"}</button>
+          {pending
+            ? <button type="button" onClick={stop} className="send">Dừng</button>
+            : <button type="submit" disabled={resetting} className="send">Hỏi</button>}
         </div>
+        {draft.length >= DEM_KY_TU_TU && (
+          <p id={`${queryId}-dem`} className="dem-ky-tu" aria-live="polite">
+            {draft.length >= MAX_QUERY ? `Đã đủ ${MAX_QUERY} ký tự — câu dài hơn sẽ không gõ thêm được.` : `${draft.length} / ${MAX_QUERY} ký tự`}
+          </p>
+        )}
         <div className="chat-chan">
           <p>Trợ lý AI trả lời từ kho tư liệu, có thể sai — xem nguồn trước khi dùng thông tin quan trọng.</p>
           {turns.length > 0 && (
@@ -254,6 +283,12 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         <div className="bubble bubble-error" role="alert">
           <p className="text-error">{turn.error}</p>
           <button type="button" onClick={onRetry} className="retry">Thử lại</button>
+        </div>
+      )}
+      {turn.phase === "stopped" && (
+        <div className="bubble" role="status">
+          <p className="text-muted">Đã dừng. Phần trả lời chưa xong nên không hiện (chưa kiểm nguồn).</p>
+          <button type="button" onClick={onRetry} className="retry">Hỏi lại</button>
         </div>
       )}
       {turn.outcome === "emergency" && (
@@ -290,34 +325,56 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
           {OUT_OF_SCOPE_SUGGESTIONS.map(question => <button key={question} type="button" onClick={() => onAsk(question)}>{question}</button>)}
         </div>
       )}
+      {/* review B m-2: lượt biểu mẫu không có câu gõ ⇒ gợi ý "cách hỏi" không hợp */}
+      {turn.phase === "done" && turn.tuChoiKho && !turn.bieuMau && turn.web?.outcome !== "co_muc" && (
+        <div className="goi-y-hoi" aria-label="Gợi ý cách hỏi">
+          <p className="text-sm text-muted">Bạn có thể thử:</p>
+          <ul>
+            {REFUSAL_TIPS.map(tip => <li key={tip}>{tip}</li>)}
+            <li>Xem <a href="#/kham-pha">mục Khám phá</a> để biết kho có những bài nào.</li>
+          </ul>
+        </div>
+      )}
       {turn.phase === "done" && turn.turnId && <Feedback turnId={turn.turnId} />}
     </article>
   );
 }
 
 // Cổng D1: dưới câu trả lời một dòng "Nguồn: <tên> · <tên>" (thứ tự xuất hiện trong câu); bấm tên ⇒ mở đoạn gốc ngay dưới; nguồn là bài kho
-// (`bai_id`) ⇒ link sang trang bài Khám phá.
+// (`bai_id`) ⇒ link sang trang bài Khám phá. Việc nhỏ 08/11: nhiều đoạn của CÙNG một bài ⇒ một tên (trước: một câu ra 8 lần cùng tên bài);
+// bấm tên ⇒ hiện mọi đoạn được trích của bài đó.
 function SourceLine({ turn }) {
   const [open, setOpen] = useState(null);
   const sources = [...turn.sources].sort((a, b) => turn.numbers.get(String(a.id)) - turn.numbers.get(String(b.id)));
-  const shown = sources.find(source => source.id === open);
+  const groups = [];
+  for (const source of sources) {
+    const key = source.bai_id != null ? `b:${source.bai_id}` : `t:${source.title}`;
+    const group = groups.find(item => item.key === key);
+    if (group) group.parts.push(source);
+    else groups.push({ key, title: source.title, bai_id: source.bai_id, parts: [source] });
+  }
+  const shown = groups.find(group => group.key === open);
   const panelId = `nguon-${turn.key}`;
   return (
     <div className="nguon">
       <p className="nguon-dong">
         <span className="nguon-nhan">Nguồn:</span>{" "}
-        {sources.map((source, index) => (
-          <span key={source.id}>
+        {groups.map((group, index) => (
+          <span key={group.key}>
             {index > 0 && <span aria-hidden="true"> · </span>}
-            <button type="button" className="nguon-ten" aria-expanded={open === source.id} aria-controls={panelId}
-                    onClick={() => setOpen(open === source.id ? null : source.id)}>{source.title}</button>
+            <button type="button" className="nguon-ten" aria-expanded={open === group.key} aria-controls={panelId}
+                    onClick={() => setOpen(open === group.key ? null : group.key)}>{group.title}</button>
           </span>
         ))}
       </p>
       {shown && (
         <div className="nguon-doan" id={panelId}>
-          {shown.heading_path.length > 0 && <p className="text-sm text-muted">{shown.heading_path.join(" › ")}</p>}
-          {shown.excerpts.map((excerpt, index) => <blockquote key={index} className="whitespace-pre-line">{excerpt}</blockquote>)}
+          {shown.parts.map(part => (
+            <div key={part.id} className="nguon-phan">
+              {part.heading_path.length > 0 && <p className="text-sm text-muted">{part.heading_path.join(" › ")}</p>}
+              {part.excerpts.map((excerpt, index) => <blockquote key={index} className="whitespace-pre-line">{excerpt}</blockquote>)}
+            </div>
+          ))}
           {shown.bai_id && <a className="nguon-bai" href={baiHref(shown.bai_id)}>Đọc cả bài “{shown.title}”</a>}
         </div>
       )}

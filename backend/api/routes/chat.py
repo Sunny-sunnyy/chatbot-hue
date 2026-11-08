@@ -463,6 +463,8 @@ class StreamEvents:
 
     def done(self, answered: bool = False) -> bytes:
         data = {"outcome": self.metrics["outcome"]}
+        if self.metrics.get("refusal") and self.metrics["outcome"] != "out_of_scope":
+            data["tu_choi_kho"] = True  # việc nhỏ (5) 08/11: kho không đủ ⇒ giao diện hiện gợi ý cách hỏi do code viết sẵn (không gọi model)
         if answered and self.new_turn_id is not None:
             data["turn_id"] = self.new_turn_id()
         return sse_event("done", data)
