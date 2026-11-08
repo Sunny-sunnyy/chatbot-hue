@@ -32,7 +32,11 @@ User 08/11 (qua A): mức dừng G **0,75 USD**; cho chỉnh lời dặn **nhi�
 (Một lượt thử 11:42 0,0007; R = `ROUTER_INSTRUCTIONS`, A = `ANSWER_SYSTEM_INSTRUCTIONS`, 8 chữ đầu sha.) **Tiền G tới giờ ≈ 0,747 USD** / mức dừng 0,75.
 
 S1 phần đếm được bằng code: "ngoài kho bị trả lời" **0** (4 câu ngoài kho của bộ an toàn ra "không đủ thông tin") ở cả 2 lượt khoá — mốc cũng 0. 3 số còn lại
-(đảo cảnh báo · sai điều kiện mới · thiếu cảnh báo mới) **chưa chấm** (judge mù). S4 (mẫu 30) **chưa chấm**.
+(đảo cảnh báo · sai điều kiện mới · thiếu cảnh báo mới) **chưa chấm** (judge mù).
+
+**S4 (chấm 12:25 08/11/2026, 0 USD):** 30 cặp mẫu Golden, bản khoá (`khoa_r1`) ↔ mốc (`cacau_moc_r1`), đảo vị trí ngẫu nhiên (seed 20261108), một sub-agent Claude ngữ cảnh mới
+chấm mù theo đáp án mẫu (`data/phase_9/g_cong/s4/cap_mu.jsonl` ⇒ `cham_1.jsonl`; giải mã `khoa_giai_ma.json`). Đúng: G tốt hơn 0 · mốc tốt hơn 0 · ngang 30.
+Đủ: G 0 · mốc **1** · ngang 29 ⇒ tụt 1 / 30 < ngưỡng âm 3 / 30 ⇒ **đạt**. 9 / 30 cặp giống hệt chữ. Một judge (plan ghi "sub-agent Claude"); nhiễu judge-only tham chiếu 2 / 88.
 
 Đọc số:
 - Khẩn cấp (chỉ quan sát, không sàn): sau G3 không câu nào bị trả "ngoài phạm vi"; 28 / 30 ra "không đủ thông tin" (đa số có mục web) — đúng rủi ro User đã chấp
@@ -43,8 +47,8 @@ S1 phần đếm được bằng code: "ngoài kho bị trả lời" **0** (4 c�
 
 1. **Kín (A chạy, lệnh trong `STATUS_B.md` mục 0g):** (a) 8 câu chỉ định tuyến ×2 (S3 = 0, chào thuần ⇒ Huế cộng phần đã thấy ≤ 2 / 16) · (b) 10 câu cả câu ×2
    (S2 = 0, S2b = 0). ≈ 0,011 USD ⇒ vượt nhẹ 0,75 — A quyết.
-2. **Chấm mù 0 USD:** S1 (3 số còn lại, 2 judge, mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py`, so mốc `ket_qua/cacau_moc_r1.jsonl`) · S4 (mẫu 30 khoá ↔ mốc).
-3. **S5** (báo A trước; ≈ 0,06 USD ⇒ cần thêm tiền) · S6 từ `ket_qua/khoa_r1.jsonl` (trung bình câu Huế không web).
+2. **Chấm mù 0 USD:** S1 (3 số còn lại, 2 judge, mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py`, so mốc `ket_qua/cacau_moc_r1.jsonl`). S4 xong (đạt).
+3. **S5** (báo A trước; ≈ 0,06 USD ⇒ cần thêm tiền). **S6 xong, đạt:** câu Huế không mục web trên mẫu 30 (n = 24) trung bình **0,000425** USD (mốc 0,000456; sàn ≤ 0,0005); câu ngoài phạm vi 0,000422 / câu (mốc 0,00009 — nay qua một lượt agent, như spec dự kiến).
 4. Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
 
 Giới hạn: chuỗi nhiều lượt chỉ đo định tuyến (`lich_su`), chưa đo cả câu; đường đo cả câu là `answer_turn` (không stream) — stream / #6 tương đương bằng test 0 USD.

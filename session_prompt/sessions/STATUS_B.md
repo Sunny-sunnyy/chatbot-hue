@@ -22,8 +22,10 @@ số đếm + id, không chữ câu:
 **Cách đọc:** dòng `tuyen` (bộ a, 8 câu): `"S3_hue_sang_xa_giao": []` bắt buộc; `"xa_giao_sang_hue": "k / n"` cộng phần đã thấy (1 / 8 ở lượt G1) phải ≤ 2 / 16. Dòng `ca_cau`
 (bộ b, 10 câu): `"S2_ngoai_bi_tra_loi": []` và `"S2b_ngoai_cong_web_mo": []` bắt buộc; `"S2_ngoai_tu_choi_kho"` khác rỗng ⇒ **C** đọc các câu đó (B không đọc). Cả 2 lượt đạt ⇒ sàn kín đạt.
 
-**2. Phần 0 USD còn lại:** S4 **xong, đạt** (12:25 08/11/2026: đúng 30 ngang; đủ mốc hơn 1, 29 ngang ⇒ tụt 1 / 30 < 3). S1 3 số còn lại (2 judge mù, mẫu `data/phase_9/b2_chay/tools/an_toan_b2.py`; mốc `ket_qua/cacau_moc_r1.jsonl`,
-khoá `ket_qua/khoa_r1.jsonl` + `khoa_r2.jsonl`). S6 từ `khoa_r1.jsonl`. **3.** S5 (cần tiền + báo A trước). **4.** Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
+**Tiền B phiên 08/11 (log):** ảnh cổng 0 · bản đồ 0,0031 · việc nhỏ lịch 0,0023 · review E 0,0053 · G **0,7487** ⇒ **≈ 0,759 USD**. Worktree `/tmp/b_anh`, `/tmp/b_bando`, `/tmp/b_nho` đã gỡ (nhánh đã merge).
+
+**2. Phần 0 USD còn lại:** S4 **xong, đạt** (12:25 08/11/2026: đúng 30 ngang; đủ mốc hơn 1, 29 ngang ⇒ tụt 1 / 30 < 3). S1 3 số còn lại — quy trình `data/phase_9/b2_chay/tools/an_toan_b2.py` (2 judge, mỗi judge ~6 sub-agent, 15 câu đối chứng, cổng `accept`) cần **ngữ cảnh nguồn**
+mỗi câu trả lời mà `do_g.py` **chưa lưu** ⇒ thêm `context=trace.packed.text` vào dòng `ca_cau`, chạy lại an toàn ×2 trên sha khoá + mốc ×1 (≈ 0,05 USD — cần A / User nâng tiền cùng lúc với kín), rồi export / check / accept / compare như B2. S6 **xong, đạt** (câu Huế 0,000425 ≤ 0,0005; ngoài phạm vi 0,000422 / câu, mốc 0,00009). **3.** S5 (cần tiền + báo A trước). **4.** Cổng ổn định ⇒ report đủ ⇒ review cả nhánh.
 
 ## 0. Đang làm — B-ảnh: đưa 7 ảnh cổng vào `frontend/` (A giao 08/11, 0 USD)
 - Nhánh `p11-anh-cong` từ `main` `db6e15d`, worktree `/tmp/b_anh` (symlink `data/`, `knowledge-base-hue/`).
