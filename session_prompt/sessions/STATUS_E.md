@@ -3,7 +3,12 @@
 ## PHIÊN SAU ĐỌC TRƯỚC (viết 12:16 08/11/2026)
 
 **Việc dở — T1 ngày + âm lịch (spec Phase 9 bản 13 §12, plan `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a`, A duyệt):**
-- Nhánh `p9-t1-ngay` **`f388b19`** (đã push), **cờ `ngay_lich: false`**. Worktree `/tmp/e_t1` giữ (sạch).
+- **T1 đã vào `main`** (A merge `e401c71`, cờ `ngay_lich: false`; `lunar-vn` nay có trong `uv.lock` của `main`).
+- **12:33 08/11/2026:** nhánh **`p9-t1-ngay-2` `c865159`** (push, từ `main` `08abc1e`) — **chờ A kiểm + merge**:
+  - m-2 bộ dò bỏ "thứ X" sau danh từ thứ tự + phân số đứng một mình (Golden 176 vẫn 9 / 176, cả 9 là cụm ngày thật);
+  - m-6: test stream có gọi `ngay_lich` + đường song song #6 + lượt biểu mẫu không có công cụ;
+  - `test_ngay_lich.py` 69 passed, 5 file liên quan 175 passed.
+- Không còn worktree / server nào của E.
 - Review cả nhánh (sub-agent A, `report_agent/2026-11-02_phase_9_code/t1_ngay_branch_review.md`): `changes_requested` 0 / 1 / 6.
   - **M-1 + m-1 đã sửa** ở `f388b19`: không nêu năm ⇒ code trả lần gần nhất + lần sắp tới; ngày / tháng vô lý ⇒ câu cố định.
   - m-3 đóng: Q1 đầu nhánh ↔ `main` `6f30404` giống byte 228 / 228.
@@ -12,12 +17,11 @@
 - Report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` **xong**:
   - 3 lượt; lượt 3 đạt tiêu chí 1–4 (R→OK 8, L1 / L3 0, L2 0, `max_turns` 0); S1 16 / 16; S4 sát;
   - R8 kém ổn định (A chấp nhận); có đoạn lời thường cho `BAO_CAO_SINH_CAU_TRA_LOI_API`.
-- **Minor review nhánh để phiên sau:**
-  - m-2: bộ dò bắt nhầm "thứ hai / thứ ba" chỉ thứ tự ("vua thứ ba", "lần thứ hai") và phân số "1/2", "24/7" ⇒ loại "thứ X" sau danh từ thứ tự hoặc đếm số bắt nhầm trong Golden 9 / 176;
+- **Còn mở từ review nhánh:**
   - m-5: lượt xác nhận trên câu ngày mới trước khi bật (gồm ca 1/1 – Tết của M-1);
-  - m-6: thêm test stream có gọi `ngay_lich` thật + test đường song song #6; ghi giới hạn "tháng tới / cuối tuần do model tính".
+  - giới hạn: "tháng tới / tháng sau / cuối tuần" vẫn do model tự tính (code chỉ ghi tuần này / tuần sau / tháng này).
 - **Còn lại theo thứ tự:**
-  1. A kiểm phần sửa review nhánh (M-1, m-1);
+  1. A kiểm + merge `p9-t1-ngay-2`;
   2. **S5** khi A xếp lượt (thứ tự B ⇒ E ⇒ C);
   3. A merge + **bật cờ** (User / A quyết);
   4. sau G (B) vào `main`: đo lại 5 câu ngày bị định tuyến xếp ngoài phạm vi (R11, A3, A4, A5, A10).
