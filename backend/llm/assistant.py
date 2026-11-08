@@ -654,7 +654,11 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
-    return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
+    if not flags.tim_them:
+        return None
+    prompt = build_assistant_input(query, trace.packed.text, today)
+    them = tra_truoc(query, trace, flags) if trace.fixed_outcome is None else None
+    return f"{prompt}\n\n{them}" if them else prompt
 
 
 def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -> None:
@@ -756,7 +760,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
-    if flags.tra_ve_gio and vg.co_tu_khoa_luot(query, trace.history):  # T3: chỉ khi code thấy từ khoá vé / giá / giờ (lượt khác giống byte)
+    if flags.tra_ve_gio and trace.ve_gio is None and vg.co_tu_khoa_luot(query, trace.history):  # T3: từ khoá ∧ code chưa tự tra (vòng 2)
         extra["ve_gio_fn"] = ve_gio_for_turn(query, trace, flags.bang_ve_gio)
     return extra
 
@@ -867,22 +871,46 @@ def ve_gio_for_turn(query: str, trace: AnswerTrace, bang: "vg.BangVeGio"):
             ten = [t for t in diem[: vg.MAX_DIEM] if isinstance(t, str) and t.strip()]
             khop = [(t, vg.khop(bang, t)) for t in ten]
             co = [d for _, d in khop if d is not None]
-            co = [d for i, d in enumerate(co) if d not in co[:i]]
-            dong = [x for d in co for x in vg.dong_gui_model(d)]
-            trace.ve_gio = {"cau": query, "diem": co, "chu": "\n".join(c for _, c in dong), "n_diem": len(ten), "n_khop": len(co),
-                            "n_khong_bang": sum(d is None for _, d in khop), "thay_tu_choi": False}
-            entry.update(n_diem=len(ten), n_khop=len(co), n_khong_bang=trace.ve_gio["n_khong_bang"],
-                         co_dieu_kien=any(vg.co_dieu_kien(bang, d) for d in co))
-            phan = [_nguon_ve_gio(trace, dong)] if dong else []
-            if any(vg.co_dieu_kien(bang, d) for d in co):
-                phan.append(vg.CAU_CO_DIEU_KIEN)
+            phan = [_tra_bang(query, trace, bang, [d for i, d in enumerate(co) if d not in co[:i]], entry, by="model", n_diem=len(ten),
+                              n_khong_bang=sum(d is None for _, d in khop))] if co else []
+            if not co:
+                trace.ve_gio = {"cau": query, "diem": [], "chu": "", "thay_tu_choi": False}
+                entry.update(n_diem=len(ten), n_khop=0, n_khong_bang=len(ten), by="model")
             phan += [f"{t}: {vg.CAU_NGOAI_BANG}" for t, d in khop if d is None]
-            return "\n\n".join(phan) or vg.CAU_NGOAI_BANG
+            return "\n\n".join(x for x in phan if x) or vg.CAU_NGOAI_BANG
         finally:
             entry.setdefault("ms", 0.0)
             trace.tools.append(entry)
 
     return tra_ve_gio
+
+
+def _tra_bang(query: str, trace: AnswerTrace, bang: "vg.BangVeGio", co: list[dict], entry: dict, *, by: str, n_diem: int, n_khong_bang: int = 0) -> str:
+    """Dùng chung cho công cụ (model gọi) và đường code tự tra (vòng chỉnh 2): dòng gửi model ⇒ nguồn trong sổ nguồn; ghi `trace.ve_gio` + mục log.
+    Trả chữ đưa model (khối nguồn + câu "có điều kiện" nếu có)."""
+    dong = [x for d in co for x in vg.dong_gui_model(d)]
+    trace.ve_gio = {"cau": query, "diem": co, "chu": "\n".join(c for _, c in dong), "thay_tu_choi": False}
+    co_dk = any(vg.co_dieu_kien(bang, d) for d in co)
+    entry.update(n_diem=n_diem, n_khop=len(co), n_khong_bang=n_khong_bang, co_dieu_kien=co_dk, by=by)
+    phan = [_nguon_ve_gio(trace, dong)] if dong else []
+    if co_dk:
+        phan.append(vg.CAU_CO_DIEU_KIEN)
+    return "\n\n".join(phan)
+
+
+def tra_truoc(query: str, trace: AnswerTrace, flags: "AssistantFlags") -> str | None:
+    """Vòng chỉnh 2 (A 08/11, plan bản 2 §2 "tới 2 vòng"): câu có từ khoá vé / giờ **và** code dò được ≥ 1 điểm của bảng trong câu (câu này, hoặc câu
+    hỏi liền trước nếu câu này không nêu tên) ⇒ **code tự tra** trước lần sinh — model không phải quyết gọi (lượt 1: model gọi 2 / 20). Trả chữ nguồn để
+    nối vào cuối ngữ cảnh gửi model; None ⇒ không tra (đường công cụ giữ cho câu code không dò ra tên)."""
+    if not (flags.tra_ve_gio and vg.co_tu_khoa_luot(query, trace.history)):
+        return None
+    co = vg.do_diem(flags.bang_ve_gio, query) or (vg.do_diem(flags.bang_ve_gio, trace.history[-1][0]) if trace.history else [])
+    if not co:
+        return None
+    entry = {"name": "tra_ve_gio", "ms": 0.0}
+    chu = _tra_bang(query, trace, flags.bang_ve_gio, co, entry, by="code", n_diem=len(co))
+    trace.tools.append(entry)
+    return chu
 
 
 def _ve_gio_cuoi(trace: AnswerTrace, text: str, bang: "vg.BangVeGio") -> None:

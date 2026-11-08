@@ -124,8 +124,8 @@ def test_tool_result_is_a_source_with_corpus_file_and_bai_id():
     assert src.source.startswith("travel/tickets/") or src.source.startswith("heritages/")
     bai_ids = {s.source: {} for s in trace.so_nguon}
     assert all(r.bai_id == s.source for r, s in zip(_source_responses(tuple(trace.so_nguon), bai_ids), trace.so_nguon))
-    assert trace.ve_gio["n_khop"] == 1 and trace.ve_gio["n_khong_bang"] == 1
-    assert trace.tools[-1] == {"name": "tra_ve_gio", "n_diem": 2, "n_khop": 1, "n_khong_bang": 1, "co_dieu_kien": True, "ms": 0.0}
+    assert [d["ten"] for d in trace.ve_gio["diem"]] == ["Đại Nội Huế"]
+    assert trace.tools[-1] == {"name": "tra_ve_gio", "n_diem": 2, "n_khop": 1, "n_khong_bang": 1, "co_dieu_kien": True, "by": "model", "ms": 0.0}
     n_nguon = len(trace.so_nguon)  # Đại Nội: dòng vé (file vé) + dòng giờ (file di tích) ⇒ 2 nguồn, mỗi file một nguồn
     assert n_nguon == len({s.source for s in trace.so_nguon}) == 2
     lan2 = asyncio.run(ve_gio_for_turn("x", trace, BANG)(["Đại Nội"]))
@@ -159,12 +159,13 @@ def ve_call(diem) -> dict:
 
 
 def ma_nguon(kw) -> int:
-    out = next(item["output"] for item in reversed(kw["input"]) if item.get("type") == "function_call_output")
-    return int(re.search(r"\[Nguồn (\d+)\]", out).group(1))
+    """Mã [k] của nguồn bảng: vòng 2 — code tự tra ⇒ nguồn nằm trong tin nhắn đầu (không phải kết quả công cụ)."""
+    chu = json.dumps(kw["input"], ensure_ascii=False)
+    return int(re.search(rf"\[Nguồn (\d+)\]\\nTiêu đề: {vg.TIEU_DE_NGUON}", chu).group(1))
 
 
 def kich_ban(text_fn, route="tro_ly_hue"):
-    """Định tuyến (nhận bằng lời dặn) ⇒ `route`; trợ lý: lần 1 gọi `tra_ve_gio`, lần 2 viết `text_fn(k)`. Ghi tên công cụ mỗi lần gọi trợ lý."""
+    """Định tuyến (nhận bằng lời dặn) ⇒ `route`; trợ lý viết `text_fn(k)` ngay (k = nguồn bảng code đã tra). Ghi tên công cụ mỗi lần gọi trợ lý."""
     seen, n_tro_ly = [], [0]
 
     def script(n, kw):
@@ -173,7 +174,7 @@ def kich_ban(text_fn, route="tro_ly_hue"):
                      "content": [{"type": "output_text", "text": json.dumps({"route": route}), "annotations": []}]}]
         n_tro_ly[0] += 1
         seen.append(sorted(t.get("name") for t in kw.get("tools") or []))
-        return [ve_call(["Đại Nội"])] if n_tro_ly[0] == 1 else [answer(text_fn(ma_nguon(kw)))]
+        return [answer(text_fn(ma_nguon(kw)))]
     return script, seen
 
 
@@ -195,7 +196,8 @@ def chay(deps, duong, text_fn, flags=ON, query="Vé vào Đại Nội bao nhiêu
 @pytest.mark.parametrize("duong", ["chat", "stream", "song_song"])
 def test_invented_price_is_retracted_on_all_three_paths(deps, duong):
     ok, ev_ok, seen = chay(deps, duong, lambda k: f"Vé người lớn vào Đại Nội là 200.000 đồng [{k}].")
-    assert ok.citation_error is None and ok.ve_gio_kiem == [] and "tra_ve_gio" in seen[0]
+    assert ok.citation_error is None and ok.ve_gio_kiem == [] and "tra_ve_gio" not in seen[0]  # code đã tra ⇒ không đưa công cụ
+    assert [t for t in ok.tools if t["name"] == "tra_ve_gio"][0]["by"] == "code"
     bia, ev_bia, _ = chay(deps, duong, lambda k: f"Vé người lớn vào Đại Nội là 250.000 đồng [{k}].")
     assert bia.citation_error is not None and bia.ve_gio_kiem == ["tien_ngoai_bang"]
     if duong != "chat":
@@ -215,9 +217,30 @@ def test_stream_holds_refusal_when_rows_exist(deps, duong):
 
 def test_tool_offered_only_with_keyword_and_flag(deps):
     seen_all = []
-    for flags, q in ((ON, "Lăng Tự Đức có gì đẹp?"), (OFF, "Vé vào Đại Nội bao nhiêu?"), (ON, "Vé vào Đại Nội bao nhiêu?")):
+    for flags, q in ((ON, "Lăng Tự Đức có gì đẹp?"), (OFF, "Vé vào Đại Nội bao nhiêu?"), (ON, "Vé vào chỗ này bao nhiêu?"), (ON, "Vé vào Đại Nội bao nhiêu?")):
         seen = []
         gen = generator(lambda n, kw: (seen.append(sorted(t.get("name") for t in kw.get("tools") or [])), [answer("Có trong nguồn [1].")])[1])
         asyncio.run(answer_turn(q, *deps, gen, AnswerTrace(), flags))
         seen_all.append(seen[0])
-    assert seen_all == [["tim_kho"], ["tim_kho"], ["tim_kho", "tra_ve_gio"]]
+    # từ khoá + không dò ra tên ⇒ công cụ; dò ra tên ⇒ code tự tra, không đưa công cụ (vòng 2)
+    assert seen_all == [["tim_kho"], ["tim_kho"], ["tim_kho", "tra_ve_gio"], ["tim_kho"]]
+
+
+@pytest.mark.parametrize("cau, ten", [
+    ("Vé vào Đại Nội bao nhiêu?", ["Đại Nội Huế"]),
+    ("Giá vé lăng Tự Đức và lăng Khải Định?", ["Lăng vua Tự Đức", "Lăng vua Khải Định"]),
+    ("Khiêm Lăng mở cửa mấy giờ?", ["Lăng vua Tự Đức"]),
+    ("Vé tham quan Hải Vân Quan bao nhiêu?", ["Hải Vân Quan"]),
+    ("Vé vào chùa Thiên Mụ bao nhiêu?", []),
+    ("Bây giờ đi đâu chơi?", []),
+])
+def test_code_detects_point_names_in_question(cau, ten):
+    assert [d["ten"] for d in vg.do_diem(BANG, cau)] == ten
+
+
+def test_code_lookup_puts_rows_into_model_input(deps):
+    seen = []
+    gen = generator(lambda n, kw: (seen.append(json.dumps(kw["input"], ensure_ascii=False)), [answer("Có trong nguồn [1].")])[1])
+    trace = AnswerTrace()
+    asyncio.run(answer_turn("Vé vào Đại Nội bao nhiêu?", *deps, gen, trace, ON))
+    assert f"Tiêu đề: {vg.TIEU_DE_NGUON}" in seen[0] and "200.000" in seen[0] and trace.ve_gio["diem"][0]["ten"] == "Đại Nội Huế"

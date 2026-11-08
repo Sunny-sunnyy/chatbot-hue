@@ -85,6 +85,26 @@ def khop(bang: BangVeGio, ten: str) -> dict | None:
     return None if i is None else bang.diem[i]
 
 
+def do_diem(bang: BangVeGio, text: str) -> list[dict]:
+    """Vòng chỉnh 2 (A 08/11): tên / bí danh điểm của bảng **có trong chữ** người dùng (so sau chuẩn hoá như `chuan_ten`, ranh giới từ, khoá dài
+    trước — khoá ngắn nằm trong khoá dài đã khớp thì bỏ; khoá < 4 ký tự bỏ). Trả điểm theo thứ tự xuất hiện, ≤ `MAX_DIEM`."""
+    t = " ".join(re.sub(r"[^\w]+", " ", _nfc(text).casefold()).split())
+    da_che, gap = [False] * len(t), []
+    for khoa_ten in sorted(bang.khoa, key=len, reverse=True):
+        k = " ".join(re.sub(r"[^\w]+", " ", khoa_ten).split())
+        if len(k) < 4:
+            continue
+        for m in re.finditer(rf"(?<!\w){re.escape(k)}(?!\w)", t):
+            if not any(da_che[m.start():m.end()]):
+                da_che[m.start():m.end()] = [True] * (m.end() - m.start())
+                gap.append((m.start(), bang.khoa[khoa_ten]))
+    out = []
+    for _, i in sorted(gap):
+        if bang.diem[i] not in out:
+            out.append(bang.diem[i])
+    return out[:MAX_DIEM]
+
+
 def co_tu_khoa(text: str) -> bool:
     return bool(_TU_KHOA.search(_nfc(text)))
 
