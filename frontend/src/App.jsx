@@ -103,7 +103,7 @@ export default function App() {
         {route.page === "len-ke-hoach" && (
           <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
-        {route.page === "gioi-thieu" && <GioiThieu />}
+        {route.page === "gioi-thieu" && <GioiThieu anh={tinhNang.anh} />}
         {onTroLy && (
           <div className="khung tro-ly-trang">
             <h1 className="trang-h">{TEN_TRO_LY}</h1>
