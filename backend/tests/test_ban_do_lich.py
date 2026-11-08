@@ -29,7 +29,7 @@ def test_coordinates_loaded_only_for_itinerary_points_that_have_them():
 
 
 def test_map_items_follow_the_plan_order_with_per_day_numbers():
-    items = lt.ban_do(BANG, KHUNG, TOA_DO, chi_tiet=True)
+    items = lt.ban_do(BANG, KHUNG, TOA_DO)
     assert [i["ten"] for i in items] == [BANG.theo_id[i]["ten"] for i in lt.diem_trong_khung(KHUNG)]
     for ng in KHUNG["ngay"]:
         ids = [id_ for b in lt.BUOI for id_ in ng["buoi"][b]]
@@ -38,7 +38,7 @@ def test_map_items_follow_the_plan_order_with_per_day_numbers():
         for item, id_ in zip(cua_ngay, ids):
             assert item["buoi"] in ng["buoi"] and id_ in ng["buoi"][item["buoi"]]
             assert item["toa_do"] == (list(TOA_DO[id_]) if id_ in TOA_DO else None)
-            assert item["map_url"] == lt.map_url(BANG.theo_id[id_]["ten"], TOA_DO.get(id_))
+            assert item["map_url"] == lt.map_url(BANG.theo_id[id_]["ten"])
 
 
 def test_flag_off_keeps_the_old_payload_shape():
@@ -47,26 +47,21 @@ def test_flag_off_keeps_the_old_payload_shape():
         t.lich = {"khung": KHUNG}
         return t
 
-    off = AssistantFlags(lich_trinh_bieu_mau=True, bang_lich=BANG, toa_do_lich=TOA_DO)  # toạ độ nạp cùng bảng (link theo toạ độ)
+    off = AssistantFlags(lich_trinh_bieu_mau=True, bang_lich=BANG)
     on = AssistantFlags(lich_trinh_bieu_mau=True, bang_lich=BANG, ban_do_lich=True, toa_do_lich=TOA_DO)
     old = lich_cho_giao_dien(trace(), off, "câu")["ban_do"]
-    assert all(set(i) == {"ten", "map_url"} for i in old) and old == lt.ban_do(BANG, KHUNG, TOA_DO)
+    assert all(set(i) == {"ten", "map_url"} for i in old) and old == lt.ban_do(BANG, KHUNG)
     new = lich_cho_giao_dien(trace(), on, "câu")["ban_do"]
     assert all(set(i) == {"ten", "map_url", "ngay", "buoi", "thu_tu", "toa_do"} for i in new)
     assert [{"ten": i["ten"], "map_url": i["map_url"]} for i in new] == old
 
 
-def test_maps_link_uses_coordinates_when_known_else_name():
-    # việc nhỏ (6): điểm có toạ độ ⇒ tìm theo "vĩ độ,kinh độ" (không lệch sang nơi trùng tên); điểm thiếu ⇒ tên + ", Huế" như trước
-    co = next(i for i in BANG.theo_id if i in TOA_DO)
-    thieu = next(i for i in BANG.theo_id if i not in TOA_DO)
-    vi, kinh = TOA_DO[co]
-    assert lt.map_url(BANG.theo_id[co]["ten"], TOA_DO[co]) == f"{lt.MAP_BASE}{vi}%2C{kinh}"
-    assert lt.map_url(BANG.theo_id[thieu]["ten"], None) == lt.MAP_BASE + lt.quote(f"{BANG.theo_id[thieu]['ten']}, Huế")
-    links = {i["ten"]: i["map_url"] for i in lt.ban_do(BANG, KHUNG, TOA_DO)}
-    for id_ in lt.diem_trong_khung(KHUNG):
-        assert links[BANG.theo_id[id_]["ten"]] == lt.map_url(BANG.theo_id[id_]["ten"], TOA_DO.get(id_))
-    assert AssistantFlags.from_settings(SETTINGS).toa_do_lich == TOA_DO  # nạp cùng bảng lịch, kể cả khi cờ bản đồ tắt
+def test_maps_link_by_name_and_coordinates_only_loaded_for_map_flag():
+    # A 08/11 (review E p11-lich-nho): link Google Maps theo TÊN (bỏ link theo toạ độ); toạ độ chỉ nạp khi cờ `ban_do_lich` bật ⇒ bật biểu mẫu
+    # không cần file toạ độ
+    for i in lt.ban_do(BANG, KHUNG, TOA_DO):
+        assert i["map_url"] == lt.MAP_BASE + lt.quote(f"{i['ten']}, Huế")
+    assert not SETTINGS["assistant"].get("ban_do_lich") and AssistantFlags.from_settings(SETTINGS).toa_do_lich is None
 
 
 def test_flag_needs_coordinates():

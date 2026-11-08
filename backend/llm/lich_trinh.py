@@ -420,11 +420,9 @@ def kiem_ghi_chu(bang: Bang, khung: dict, khoi: str) -> list[str]:  # C191 m-3: 
     return ["ghi_chu_thieu"] if any(c not in khoi for c in can) else []
 
 
-def map_url(ten: str, toa_do: tuple[float, float] | None = None) -> str:
-    """D11: link "mở bản đồ" dựng bằng code (không chữ model). Việc nhỏ (6) 08/11: điểm có toạ độ (dữ liệu mở Huế) ⇒ tìm theo "vĩ độ,kinh độ" — không lệch
-    sang nơi trùng tên (C197); điểm thiếu ⇒ tên + ", Huế" như cũ."""
-    if toa_do is not None:
-        return MAP_BASE + quote(f"{toa_do[0]},{toa_do[1]}")
+def map_url(ten: str) -> str:
+    """D11: link "mở bản đồ" dựng bằng code từ tên điểm + ", Huế" (không toạ độ, không chữ model). Link theo toạ độ đã thử và bỏ (A 08/11: chỉ mở ghim
+    trần, mất thẻ địa điểm của Google; vài toạ độ còn lệch) ⇒ toạ độ chỉ dùng cho bản đồ của mình."""
     return MAP_BASE + quote(f"{ten}, Huế")
 
 
@@ -447,18 +445,17 @@ def nap_toa_do(path: str | Path, bang: Bang) -> dict[str, tuple[float, float]]:
     return toa_do
 
 
-def ban_do(bang: Bang, khung: dict, toa_do: dict[str, tuple[float, float]] | None = None, chi_tiet: bool = False) -> list[dict]:
-    """Link "mở bản đồ" từng điểm theo thứ tự khung (theo toạ độ khi có). `chi_tiet` (cờ `ban_do_lich`) ⇒ thêm ngày / buổi / thứ tự trong ngày (từ 1) /
-    toạ độ (`None` khi bảng không có) để giao diện vẽ ghim có số."""
-    toa_do = toa_do or {}
-    if not chi_tiet:
-        return [{"ten": bang.theo_id[i]["ten"], "map_url": map_url(bang.theo_id[i]["ten"], toa_do.get(i))} for i in diem_trong_khung(khung)]
+def ban_do(bang: Bang, khung: dict, toa_do: dict[str, tuple[float, float]] | None = None) -> list[dict]:
+    """Link "mở bản đồ" từng điểm theo thứ tự khung. Có `toa_do` (cờ `ban_do_lich`) ⇒ thêm ngày / buổi / thứ tự trong ngày (từ 1) / toạ độ
+    (`None` khi bảng không có) để giao diện vẽ ghim có số."""
+    if toa_do is None:
+        return [{"ten": bang.theo_id[i]["ten"], "map_url": map_url(bang.theo_id[i]["ten"])} for i in diem_trong_khung(khung)]
     out = []
     for ng in khung["ngay"]:
         ids = [(b, id_) for b in BUOI for id_ in ng["buoi"][b]]
         for thu_tu, (b, id_) in enumerate(ids, 1):
             ten = bang.theo_id[id_]["ten"]
-            out.append({"ten": ten, "map_url": map_url(ten, toa_do.get(id_)), "ngay": ng["ngay"], "buoi": b, "thu_tu": thu_tu,
+            out.append({"ten": ten, "map_url": map_url(ten), "ngay": ng["ngay"], "buoi": b, "thu_tu": thu_tu,
                         "toa_do": list(toa_do[id_]) if id_ in toa_do else None})
     return out
 

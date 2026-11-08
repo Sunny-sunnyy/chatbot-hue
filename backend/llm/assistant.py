@@ -109,8 +109,7 @@ class AssistantFlags:
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
         # chỉ nạp khi một trong hai cờ lịch bật (clone không có `data/` vẫn chạy cờ tắt)
         bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
-        # toạ độ nạp cùng bảng lịch: link Google Maps theo toạ độ (việc nhỏ (6)) + bản đồ khi `ban_do_lich` bật
-        toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if bang is not None else None
+        toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None)
 
@@ -647,7 +646,7 @@ def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) 
     ts = khung["tham_so"]
     sua = the_hoi_lai("lich_trinh", list(TRUONG_THEO_LOAI["lich_trinh"]), cau_goc)
     sua["chon"] = {k: ts[k] for k in TRUONG_THEO_LOAI["lich_trinh"] if ts[k] and not (k == "so_ngay" and ts["so_ngay_tam"])}
-    return {"ban_do": lt.ban_do(flags.bang_lich, khung, flags.toa_do_lich, chi_tiet=flags.ban_do_lich), "sua": sua}
+    return {"ban_do": lt.ban_do(flags.bang_lich, khung, flags.toa_do_lich if flags.ban_do_lich else None), "sua": sua}
 
 
 async def answer_query(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder=None,
