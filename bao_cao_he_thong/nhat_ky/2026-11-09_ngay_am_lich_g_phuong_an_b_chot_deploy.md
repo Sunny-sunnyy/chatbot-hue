@@ -15,13 +15,13 @@
   - nhận câu ngoài phạm vi thỉnh thoảng có mục web là giới hạn đã biết;
   - nhận lỗi bỏ điều kiện mùa mưa lũ ở một câu an toàn là giới hạn (lỗi có cả ở bản đang chạy);
   - chọn phương án B cho bảng vé, rồi đóng hồ sơ.
-- **Sắp tới:** khi công cụ ngày đo lại đạt, A sẽ hỏi bạn có bật cờ `ngay_lich` không.
 - **Khi rảnh:** tick phiếu toạ độ bản đồ; thu 40 câu giọng nói.
 
 ## Trạng thái
 | Việc | Kết quả | Ý nghĩa |
 |---|---|---|
 | Ngày + âm lịch (T1) — đo xác nhận 14 câu mới | từ chối nhầm −9 · sai ngày 0 · trượt 1 câu "Tết năm nay" | công cụ giúp thật, chưa bật; sửa câu "năm nay" bằng code (nhánh `p9-t1-sang-nam`), đo lại sau định tuyến mới |
+| **Ngày + âm lịch — BẬT** (merge `99ea59a`, cờ `ngay_lich: true`, bạn duyệt 09/11) | lượt sau định tuyến mới: sai ngày 0 · câu ngày có nhắc Huế 3 / 3 (bản cũ 1 / 3) · an toàn 4 / 4; thử server thật: "rằm tháng Giêng tới" ⇒ đúng thứ Bảy 20/2/2027, câu ngoài phạm vi vẫn từ chối | khách hỏi lễ theo ngày nay được trả lời; giới hạn: câu lịch thuần không nhắc Huế vẫn ra ngoài phạm vi, "tháng tới / cuối tuần" model tự cộng |
 | Tốc độ T1 (cùng lượt đo) | chữ đầu trung vị 3,35 s ↔ bản đang chạy 4,90 s | không chậm hơn; p95 vượt 5 s ở cả hai do câu đi qua tra web |
 | Bảng vé + giờ (T3) | đúng 19 / 20, nhưng sàn điều kiện trượt 6 / 10; phương án B lợi ≈ 0 | **đóng hồ sơ** (tag `hoso/p9-t3-bang`), câu giá / giờ trả lời như cũ |
 | Định tuyến 2 nhóm (G) | 2 / 44 câu ngoài phạm vi đã thấy bị gắn mục web (bản cũ 0 / 44) | **dừng** ⇒ phương án B: giữ 4 nhóm, bỏ câu khẩn cấp soạn sẵn — **đã vào `main`** (merge `3b52017`; đo 92 câu: 0 câu ngoài phạm vi / ngoài kho bị trả lời; test 842 đạt; thử trên server thật đạt). Người dùng thấy đổi một chỗ: câu khẩn cấp (vd vừa bị cướp) giờ được trợ lý trả lời như câu thường, không còn câu soạn sẵn có số 113 / 114 / 115 — đúng như bạn quyết 08/11 |
