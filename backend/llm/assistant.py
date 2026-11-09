@@ -454,11 +454,11 @@ def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
             loai: "hom_nay" (chỉ hôm nay), "duong" (đổi ngày dương sang âm) hoặc "am" (đổi ngày âm sang dương).
             ngay: ngày cần đổi (0 khi loai là "hom_nay").
             thang: tháng cần đổi (0 khi loai là "hom_nay").
-            nam: năm cần đổi; 0 = năm nay.
+            nam: năm cần đổi; 0 = người dùng không nêu năm (công cụ trả lần gần nhất đã qua và lần sắp tới).
             thang_nhuan: true nếu là tháng âm nhuận.
         """
         lan = sum(t["name"] == "ngay_lich" for t in trace.tools)
-        entry = {"name": "ngay_lich", "ms": 0.0, "loai": loai}
+        entry = {"name": "ngay_lich", "ms": 0.0, "loai": loai, "nam": nam}  # 09/11: `nam` để biết model gửi năm nào (chỉ số, không chữ)
         trace.tools.append(entry)
         if lan >= 2:
             entry["het_luot"] = True

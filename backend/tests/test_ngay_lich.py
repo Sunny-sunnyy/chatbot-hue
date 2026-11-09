@@ -183,9 +183,26 @@ def test_no_year_gives_last_and_next_occurrence(now, ngay, thang, qua, toi):
     assert "lần sắp tới" in dong[2] and toi[0] in dong[2] and dong[2].endswith(f"{toi[1]} (so với hôm nay)")
 
 
+def test_no_year_adds_note_and_lunar_this_year_adds_both_occurrences():
+    # lượt xác nhận 09/11 (A chọn (b)): hỏi tháng 11 "Tết năm nay" ⇒ model gọi Tết sắp tới là "năm nay" ⇒ code nêu cả hai lần + ghi chú, dù model gửi năm nào
+    now = _vn(2026, 11, 9)
+    khong_nam = nl.ket_qua("am", 1, 1, 0, False, now).splitlines()
+    assert khong_nam[-1] == nl.GHI_CHU_NAM and "17/02/2026" in khong_nam[1] and "06/02/2027" in khong_nam[2]
+    for nam in (2026, 2027):
+        dong = nl.ket_qua("am", 1, 1, nam, False, now, cau="Tết năm nay rơi vào ngày nào vậy?").splitlines()
+        assert dong[-1] == nl.GHI_CHU_NAM
+        assert any("lần gần nhất" in d and "17/02/2026" in d and "đã qua 265 ngày" in d for d in dong)
+        assert any("lần sắp tới" in d and "06/02/2027" in d and "còn 89 ngày nữa" in d for d in dong)
+    # có năm, câu không nói "năm nay" ⇒ như cũ (một dòng, không ghi chú); "năm nay" với ngày dương ⇒ không đổi
+    assert nl.ket_qua("am", 1, 1, 2027, False, now, cau="Tết năm 2027 là thứ mấy?").splitlines()[1:] == [
+        "Ngày được hỏi (âm lịch 1/1/2027): Thứ Bảy, 06/02/2027 dương lịch — ngày 1 tháng Giêng âm lịch, năm Đinh Mùi — còn 89 ngày nữa (so với hôm nay)"]
+    assert nl.GHI_CHU_NAM not in nl.ket_qua("duong", 2, 9, 2026, False, now, cau="2/9 năm nay là thứ mấy?")
+
+
 @pytest.mark.parametrize("cau, co", [
     ("Hôm nay là thứ hai à?", True), ("Thứ 7 này đi Đại Nội được không?", True), ("Chiều 15/1 có gì?", True),
     ("Ngày 2/9/2026 có miễn vé không?", True), ("Đi vào thứ Bảy được không?", True),
+    ("Sang năm lễ hội làng rơi vào thứ mấy?", True), ("Bước sang năm 1945 triều Nguyễn thế nào?", False),
     ("Vua thứ ba triều Nguyễn là ai?", False), ("Lần thứ hai tổ chức là năm nào?", False), ("Mùa thứ hai của lễ hội?", False),
     ("Quán mở 24/7 không?", False), ("Uống 1/2 ly thôi", False), ("Đại Nội rộng bao nhiêu?", False),
 ])
