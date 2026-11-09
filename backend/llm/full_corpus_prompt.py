@@ -141,6 +141,11 @@ NGAY_LICH_MO_TA = (  # Phase 9 T1: code tính ngày + đổi âm ↔ dương (l�
     "nam ghi 0); loai = \"duong\" / \"am\" ⇒ đổi ngày ngay/thang/nam của lịch đó (nam = 0 khi người dùng không nêu năm — công cụ trả cả lần gần nhất đã qua và lần sắp tới); thang_nhuan chỉ dùng cho tháng âm nhuận. "
     "Không tự tính hay tự đổi ngày âm ↔ dương; chỉ dùng ngày công cụ trả về."
 )
+# Phase 9 T2 (plan `2026-11-08-phase-9-t2-web-plan.md` bản 2 §1.1): mô tả công cụ chốt nguyên văn trước khi có bộ hỏi kèm — không chỉnh khi đo
+YEU_CAU_TRA_WEB_MO_TA = ("Gọi khi câu hỏi về Huế có một phần mà Bằng chứng không có thông tin (vd giá hiện tại, sự kiện mới). "
+                         "Không gọi khi Bằng chứng đã đủ trả lời, hoặc câu hỏi không về văn hoá / du lịch Huế.")
+# câu cố định trung tính (không hứa mục web — tra có thể lỗi / rỗng, B6 D3)
+YEU_CAU_TRA_WEB_KQ = "Đã ghi nhận — viết câu trả lời từ kho như bình thường."
 TOOL_DA_DU_LICH = "Lịch đã xếp và tài liệu của từng điểm đã có; không tìm thêm — hãy viết câu trả lời ngay theo khung."
 
 

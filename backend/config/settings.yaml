@@ -72,6 +72,7 @@ assistant:
   lich_trinh_toa_do: ../data/phase_9/lich_trinh/diem_toa_do_v5.json  # toạ độ dữ liệu mở Huế (C204, private); chỉ nạp khi ban_do_lich bật
   lich_trinh_bieu_mau: true      # cổng đợt 1 (spec D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp bằng giá trị nút, sinh không công cụ (V5: luật lịch trong lời dặn + suy luận low). BẬT 07/11/2026 (User; S3 Q-F bộ quyết đạt 24/24, F-a 12/12 ×2)
   tra_web: true                  # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — BẬT 05/11/2026 tối (đạt luật ghi trước + kín ×2 + review; User duyệt); cần router + tim_them
+  tra_web_cong_cu: false         # Phase 9 T2 (plan 2026-11-08-phase-9-t2-web-plan.md bản 2): công cụ yeu_cau_tra_web — agent chỉ yêu cầu, code tra sau câu kho; TẮT tới khi đạt §2; cần tra_web
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại
   thoi_tiet: true                # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — BẬT 07/11/2026 (User Q-U4 spec cổng đợt 1: bật khi merge đợt 1; B5b đạt luật ghi trước); cần tim_them
   ngay_lich: false               # Phase 9 T1 (plan 2026-11-08-phase-9-t1-ngay-plan.md): công cụ ngày + âm lịch Việt Nam (code tính) — chỉ đưa khi câu có từ chỉ ngày; TẮT tới khi đạt §1; cần tim_them

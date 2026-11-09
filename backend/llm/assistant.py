@@ -34,7 +34,8 @@ from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, REFUSAL_ANSWERS,
+                                   TOOL_DA_DU_LICH, YEU_CAU_TRA_WEB_KQ,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
@@ -81,6 +82,9 @@ class AssistantFlags:
     song_song_tra_loi: bool = False
     # B6 (plan B6 bản 3 D10): cổng web sau câu trả lời kho — TẮT tới khi đạt luật ghi trước; cần định tuyến + vòng công cụ
     tra_web: bool = False
+    # Phase 9 T2 (plan `2026-11-08-phase-9-t2-web-plan.md` bản 2): công cụ `yeu_cau_tra_web` — agent chỉ **yêu cầu**, code tra sau câu kho (cổng D1);
+    # cần `tra_web` (kiểm ở `from_settings`; #6 tắt `tra_web` ở phần chạy song song nhưng vẫn đưa công cụ để chuỗi gửi model giống đường thường)
+    tra_web_cong_cu: bool = False
     # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
     # phản hồi ghi sẵn)
     thoi_tiet: bool = False
@@ -101,6 +105,8 @@ class AssistantFlags:
             raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
+        if self.tra_web_cong_cu and not self.tim_them:
+            raise ValueError("assistant.tra_web_cong_cu needs assistant.tim_them: true (tool loop)")
         if self.ngay_lich and not self.tim_them:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
@@ -110,6 +116,8 @@ class AssistantFlags:
     def from_settings(cls, settings: dict) -> "AssistantFlags":
         config = settings.get("assistant") or {}
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
+        if values["tra_web_cong_cu"] and not values["tra_web"]:
+            raise ValueError("assistant.tra_web_cong_cu needs assistant.tra_web: true")
         # chỉ nạp khi một trong hai cờ lịch bật (clone không có `data/` vẫn chạy cờ tắt)
         bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
@@ -196,6 +204,7 @@ class AnswerTrace:
     # B6: kết quả cổng web — {"outcome", "text", "nguon", "n_ket_qua", "n_ma", "kiem", "usd_serper"}; None = cổng không mở. Chữ web chỉ ở đây
     # (không vào `answer`) ⇒ lịch sử nhớ (`answer`) không bao giờ chứa chữ web (D7). KHÔNG log chữ.
     web: dict | None = None
+    web_yeu_cau: bool = False  # T2: model đã gọi `yeu_cau_tra_web` (trường của trace ⇒ `_merge_spec` của #6 chép sang trace chính)
     # B5b: ngữ cảnh code dò ở câu này (bão / lũ, ngoài 7 ngày, có buổi, có đưa công cụ) · kết quả công cụ `thoi_tiet` (trạng thái, khối số liệu code
     # in) · phần code nối sau chữ model · số thời tiết ngoài tập cho phép (D8). KHÔNG log chữ.
     thoi_tiet_ctx: dict | None = None
@@ -736,7 +745,21 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
+    if flags.tra_web_cong_cu and trace.truong is None:  # T2 plan §1.1: mọi lượt `tro_ly_hue` có công cụ, trừ lượt ghép từ nút (cổng cũng đóng)
+        extra["web_fn"] = yeu_cau_tra_web_for_turn(trace)
     return extra
+
+
+def yeu_cau_tra_web_for_turn(trace: AnswerTrace):
+    """T2 plan bản 2 §1.1: model chỉ **yêu cầu** tra web (không tham số) ⇒ code ghi cờ; tra **sau** câu kho ở cổng D1 (`web_gate_open`), câu tra do code
+    dựng (B6 D2), chữ web không về model. Kết quả cho model là câu cố định trung tính. Trần 1 lần / câu (lần sau: cùng câu, không đổi gì)."""
+
+    async def yeu_cau_tra_web() -> str:
+        trace.tools.append({"name": "yeu_cau_tra_web", "ms": 0.0, **({"het_luot": True} if trace.web_yeu_cau else {})})
+        trace.web_yeu_cau = True
+        return YEU_CAU_TRA_WEB_KQ
+
+    return yeu_cau_tra_web
 
 
 # ---------- Biểu mẫu "Lên kế hoạch" (cổng đợt 1, spec D3) ----------
@@ -813,10 +836,13 @@ def web_gate_open(trace: AnswerTrace, flags: AssistantFlags, tim_web) -> bool:
     `refusal`; không mở với câu ngoài phạm vi) ∧ outcome thường (model tự từ chối, hoặc ngữ cảnh rỗng `refusal_no_sources`) — không chạm trần,
     không lỗi công cụ, không hỏi lại ∧ tuyến `tro_ly_hue` (khẩn cấp / ngoài phạm vi / trò chuyện không mở) ∧ chưa tra ∧ lượt không có lịch ∧
     không phải lượt ghép từ nút (D8) ∧ cờ bật ∧ nơi gọi có hàm tra (bộ đánh giá không truyền ⇒ không tra)."""
-    return (flags.tra_web and tim_web is not None and trace.web is None and trace.route == ROUTE_TRO_LY_HUE
-            and trace.fixed_outcome in (None, "refusal_no_sources") and trace.citation_error is None and trace.tool_error is None
-            and trace.clarify is None and trace.lich is None and trace.truong is None
-            and (trace.answer or "").strip() == INSUFFICIENT_ANSWER)
+    chung = (flags.tra_web and tim_web is not None and trace.web is None and trace.route == ROUTE_TRO_LY_HUE
+             and trace.citation_error is None and trace.tool_error is None and trace.clarify is None and trace.lich is None and trace.truong is None)
+    tra_loi = (trace.answer or "").strip()
+    sau_tu_choi = trace.fixed_outcome in (None, "refusal_no_sources") and tra_loi == INSUFFICIENT_ANSWER
+    # T2 plan bản 2 §1.3: model đã yêu cầu ∧ câu trả lời kho thường (không câu cố định, không câu từ chối / ngoài phạm vi)
+    model_yeu_cau = flags.tra_web_cong_cu and trace.web_yeu_cau and trace.fixed_outcome is None and tra_loi not in REFUSAL_ANSWERS
+    return chung and (sau_tu_choi or model_yeu_cau)
 
 
 async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
