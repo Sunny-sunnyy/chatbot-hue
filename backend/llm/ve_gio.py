@@ -23,7 +23,10 @@ _TU_KHOA = re.compile(
     r"|\bgiờ\s+(?:mở|đóng|tham\s+quan|hoạt\s+động)\b|\bmiễn\s+(?:giảm|phí|vé)\b|\bgiảm\s+(?:giá|vé|\d+\s*%)|\bưu\s+đãi\b",
     re.IGNORECASE)
 # Giờ trong ngày (n-3): "7:30" · "7h30" · "7h" · "7 giờ 30" · "lúc / từ / đến … 7 giờ"; "mất 2 giờ" (thời lượng) **không** tính.
-_GIO = re.compile(r"(?<![\d.,])(\d{1,2})\s*(?::|h(?=\s*\d|\b)|giờ\s+(?=\d))\s*(\d{2})?(?![\d,]|\.\d)", re.IGNORECASE)
+# Ranh giới số (S05 09/11: "17:20, 18:00" — dấu phẩy + khoảng trắng là liệt kê, không phải số thập phân ⇒ bản cũ `(?![\d,]|\.\d)` bỏ mọi giờ đứng trước dấu
+# phẩy): trước không là chữ số / "chữ số + . ,"; sau không là chữ số / ". ," + chữ số.
+_TRUOC, _SAU = r"(?<!\d)(?<!\d[.,])", r"(?!\d|[.,]\d)"
+_GIO = re.compile(_TRUOC + r"(\d{1,2})\s*(?::|h(?=\s*\d|\b)|giờ\s+(?=\d))\s*(\d{2})?" + _SAU, re.IGNORECASE)
 _GIO_SAU_TU = re.compile(r"\b(?:lúc|từ|đến|tới|mở\s+cửa|đóng\s+cửa|trước|sau)\s+(\d{1,2})\s*giờ\b(?!\s*\d)", re.IGNORECASE)
 
 
@@ -106,7 +109,7 @@ def _so_tien(text: str) -> set[str]:
     return {re.sub(r"\D", "", t) for t in tim_so_tien(text)}
 
 
-_NHOM_NGHIN = re.compile(r"(?<![\d.,])\d{1,3}(?:\.\d{3})+(?![\d,]|\.\d)")  # "420.000" trần — ô bảng giá của kho thường không kèm "đồng"
+_NHOM_NGHIN = re.compile(_TRUOC + r"\d{1,3}(?:\.\d{3})+" + _SAU)  # "420.000" trần — ô bảng giá của kho thường không kèm "đồng"
 
 
 def kiem_so(chu_model: str, cho_phep: str) -> list[str]:

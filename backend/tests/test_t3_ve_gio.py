@@ -89,6 +89,10 @@ def test_gate_hits_every_safety_question_about_exemptions():
     ("Vé tuyến 420.000 đồng/người lớn và 80.000 đồng/trẻ em.", "| Tuyến 1 | 420.000 | 80.000 |", []),
     ("Vé tuyến 450.000 đồng.", "| Tuyến 1 | 420.000 | 80.000 |", ["tien_ngoai_bang"]),
     ("Vé 2.000 đồng.", "năm 2026, mở 7:30", ["tien_ngoai_bang"]),            # năm / giờ không thành số tiền được phép
+    # S05 (lượt an toàn 09/11): giờ / giá liệt kê bằng dấu phẩy trong kho vẫn đọc được — bản cũ bỏ mọi số đứng trước dấu phẩy ⇒ báo nhầm
+    ("Khởi hành lúc 17:20, 18:00 và 20:10.", "Khung giờ khởi hành: 17:20, 18:00, 20:10, 20:40.", []),
+    ("Vé 420.000 đồng và 80.000 đồng.", "| 420.000, 80.000 |", []),
+    ("Mở lúc 7,5 giờ.", "mở 7:30", []),                                       # "7,5" không thành giờ 5:00 / 7:00
 ])
 def test_number_check(chu, cho_phep, loi):
     assert vg.kiem_so(chu, cho_phep) == loi
