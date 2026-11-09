@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN 09/11 (mở 20:09; cập nhật 20:21 09/11/2026 `date`)
+
+- Terminal: A `hue-rag-87` · B `hue-rag-99` · C `hue-rag-6a` · E `hue-rag-ea` (cả bốn Claude Code, trực tiếp).
+- Kiểm nhanh: `main` `5c982a0` = origin, sạch; hooksPath `.githooks`; Qdrant chạy sẵn (2 collection, 8.435 điểm); worktree `/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/c_t3` mất ⇒ B / C dựng lại; spec Phase 9 sha file `01b7476a3eb1` (sửa chữ `442f758` sau bản duyệt `5557f0fd7650`).
+- User: quyền phiên "như 08/11"; trần Phase 9 nâng **4,0**; T3 chọn **(a) phương án B**; khẩn cấp sau G **đóng** (giữ như 08/11, bỏ bộ quan sát).
+- Giao: B — G (rebase, S1 có ngữ cảnh, kín qua User `!`, S5 đầu tiên); C — dựng T3 + review plan T2 `921f75d64a7c` ⇒ code T3 (a); E — bộ câu ngày mới + lượt xác nhận T1.
+- Thứ tự S5: B ⇒ E ⇒ C; lúc đo ⇒ A dừng lượt có phí / việc nặng ở session khác.
+- **Bẫy A (09/11):** hỏi lại User câu khẩn cấp đã quyết 08/11 chỉ vì handoff ghi "hỏi trước khi bật" ⇒ User: "test những thứ vô nghĩa, over-engineer" (lần 6). Đã quyết rồi thì không hỏi lại; handoff kết phiên không ghi "hỏi lại" cho việc User đã chốt. W59 / W60 dồn tới kết phiên, không hỏi lẻ.
+
 # STATUS A — KẾT PHIÊN 08/11 (mở 09:16; cập nhật 12:51 08/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" + "Câu hỏi cho User" (0)–(6) ⇒ hỏi quyền phiên ⇒ hỏi tiền (nâng trần Phase 9) ⇒ cùng lượt giao B (G: S1 có ngữ cảnh, sau đó kín khi User `!`, S5, review, merge), C (T3 theo hướng User chọn), E (T1 lượt xác nhận + S5 ⇒ bật) ⇒ đợt 2 T2 / T4. User bật Docker Desktop + `docker compose up -d qdrant` trước (A đã `docker compose down` lúc kết phiên).
