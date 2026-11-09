@@ -117,7 +117,7 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 # `HUE_COOKIE_SECURE=1` (bản https — spec §7); không đặt ⇒ tắt vì máy User chạy http://127.0.0.1 (trình duyệt không gửi cookie Secure qua http).
 CONVERSATION_COOKIE = "conversation_id"
 COOKIE_SECURE_ENV = "HUE_COOKIE_SECURE"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns", "hoi_lai"}
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai"}  # phương án B G: bỏ "emergency"
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:

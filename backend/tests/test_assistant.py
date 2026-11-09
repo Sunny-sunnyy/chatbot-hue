@@ -34,10 +34,9 @@ import pytest
 
 from core.schema import GenerationError
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn
-from llm.emergency import EMERGENCY_ANSWER
 from llm.full_corpus_prompt import OUT_OF_SCOPE_ANSWER
 
-ALL_ON = AssistantFlags(emergency_rule=True, router=True, today_line=True, may_have_changed_notice=True)
+ALL_ON = AssistantFlags(router=True, today_line=True, may_have_changed_notice=True)
 CALL = {"kind": ["message"], "ms": 1.0, "usd": 0.00001, "input_tokens": 10, "output_tokens": 2, "reasoning_tokens": 0,
         "cached_tokens": 0, "cache_write_tokens": 0}
 
@@ -83,17 +82,18 @@ def run(deps, query, generator, flags=ALL_ON):
     return trace
 
 
-def test_emergency_rule_answers_without_any_model_call(deps):
-    gen = FakeGenerator()
-    trace = run(deps, "Có người vừa bị đuối nước, không thở", gen)
-    assert gen.calls == [] and trace.answer == EMERGENCY_ANSWER and trace.emergency_by == "rule" and trace.llm_calls == []
-
-
-@pytest.mark.parametrize("route, answer, outcome", [("khan_cap", EMERGENCY_ANSWER, "emergency"), ("ngoai_pham_vi", OUT_OF_SCOPE_ANSWER, "out_of_scope")])
-def test_router_fixed_routes_skip_answer_model(deps, route, answer, outcome):
-    gen = FakeGenerator(route=route)
+def test_emergency_route_goes_to_hue_agent_without_canned_answer(deps):
+    """Phương án B bậc G: định tuyến chọn khan_cap ⇒ đi đường trợ lý Huế như câu về Huế (không câu soạn sẵn); log giữ emergency_by."""
+    gen = FakeGenerator(route="khan_cap")
     trace = run(deps, "Câu tự viết bất kỳ", gen)
-    assert gen.calls == ["route"] and trace.answer == answer and trace.fixed_outcome == outcome and trace.documents is None
+    assert gen.calls == ["route", ("answer", True)] and trace.route == "tro_ly_hue" and trace.emergency_by == "router"
+    assert trace.fixed_outcome is None and trace.documents is not None
+
+
+def test_router_out_of_scope_skips_answer_model(deps):
+    gen = FakeGenerator(route="ngoai_pham_vi")
+    trace = run(deps, "Câu tự viết bất kỳ", gen)
+    assert gen.calls == ["route"] and trace.answer == OUT_OF_SCOPE_ANSWER and trace.fixed_outcome == "out_of_scope" and trace.documents is None
     assert [c["route"] for c in trace.llm_calls] == ["router"]
 
 

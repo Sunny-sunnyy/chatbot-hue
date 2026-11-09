@@ -12,7 +12,6 @@ from openai.types.responses import Response, ResponseCompletedEvent, ResponseCre
 from core.settings_loader import load_settings
 from evaluation.full_corpus_eval import build_context_builder, build_retrieval
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn_stream, answer_turn_stream_parallel
-from llm.emergency import EMERGENCY_ANSWER
 from llm.full_corpus_prompt import OUT_OF_SCOPE_ANSWER, ROUTER_INSTRUCTIONS
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 
@@ -118,18 +117,17 @@ def test_kept_route_holds_events_until_routed_and_sends_same_requests(deps):
     assert trace.n_tra_loi_bo == 0 and trace.usd_bo is None
 
 
-@pytest.mark.parametrize("route, fixed", [("khan_cap", EMERGENCY_ANSWER), ("ngoai_pham_vi", OUT_OF_SCOPE_ANSWER)], ids=["khan_cap", "ngoai_pham_vi"])
-def test_other_route_discards_everything_of_the_early_answer(deps, route, fixed):
-    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route=route, router_delay=0.3, answer_delay=0)
-    assert [(k, d) for k, d, _ in events] == [("status", {"stage": "routing"}), ("delta", fixed)]
+def test_other_route_discards_everything_of_the_early_answer(deps):
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="ngoai_pham_vi", router_delay=0.3, answer_delay=0)
+    assert [(k, d) for k, d, _ in events] == [("status", {"stage": "routing"}), ("delta", OUT_OF_SCOPE_ANSWER)]
     assert trace.so_nguon == [] and trace.tools == [] and trace.packed is None and trace.cited == ()  # như câu cố định đường cũ
     assert [c["route"] for c in trace.llm_calls] == ["router"]
     assert trace.n_tra_loi_bo == 1 and trace.bo_huy_giua is False and trace.usd_bo > 0  # xong trước tuyến ⇒ usage thật
 
 
 def test_cancelled_mid_answer_counts_lower_bound_and_does_not_delay_fixed_answer(deps):
-    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="khan_cap", router_delay=0, answer_delay=2)
-    assert [d for k, d, _ in events if k == "delta"] == [EMERGENCY_ANSWER]
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="ngoai_pham_vi", router_delay=0, answer_delay=2)
+    assert [d for k, d, _ in events if k == "delta"] == [OUT_OF_SCOPE_ANSWER]
     assert trace.n_tra_loi_bo == 1 and trace.bo_huy_giua is True
     assert trace.usd_bo is not None and trace.usd_bo >= 0  # lần gọi bị huỷ: không usage ⇒ chỉ cận dưới (có thể 0 khi huỷ trước model)
 
@@ -165,8 +163,15 @@ def test_router_error_keeps_early_answer(deps):
 
 
 def test_early_answer_error_is_dropped_when_route_is_other(deps):
-    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="khan_cap", router_delay=0.3, answer_delay=0, answer_fails=True)
-    assert [d for k, d, _ in events if k == "delta"] == [EMERGENCY_ANSWER] and trace.n_tra_loi_bo == 1
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="ngoai_pham_vi", router_delay=0.3, answer_delay=0, answer_fails=True)
+    assert [d for k, d, _ in events if k == "delta"] == [OUT_OF_SCOPE_ANSWER] and trace.n_tra_loi_bo == 1
+
+
+def test_emergency_route_keeps_early_answer(deps):
+    """Phương án B bậc G: khan_cap đi đường trợ lý Huế ⇒ giữ phần đã chạy song song như tuyến tro_ly_hue."""
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="khan_cap", router_delay=0.2, answer_delay=0)
+    assert trace.route == "tro_ly_hue" and trace.emergency_by == "router" and trace.n_tra_loi_bo == 0
+    assert any(k == "delta" for k, _, _ in events)
 
 
 # ---------- B161 M-1: lượt mang giá trị nút (B4b / B5) — phần chạy trước nhận đủ đầu vào route đặt ----------

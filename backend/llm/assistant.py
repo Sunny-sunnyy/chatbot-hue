@@ -28,7 +28,6 @@ from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationE
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
-from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
@@ -60,7 +59,6 @@ class AssistantFlags:
     """Cờ từng phần B1 (plan D9, `settings.yaml` khối `assistant:`); tắt cả 4 ⇒ chuỗi gửi model như B0.
     B2 (plan B2 D1): `lan_tim_dau` — v0 câu gốc · v1 / v3 câu tìm do định tuyến viết (cần `router`) · v2 trợ lý tự gọi `tim_kho`;
     `tim_them` — sau lần tìm đầu của code, trợ lý được gọi `tim_kho` thêm (B2b). `v0` + `tim_them` tắt ⇒ chuỗi gửi model như B1."""
-    emergency_rule: bool = False
     router: bool = False
     today_line: bool = False
     may_have_changed_notice: bool = False
@@ -161,9 +159,9 @@ class AnswerTrace:
     so_nguon: list[PackedSource] = field(default_factory=list)
     tools: list[dict] = field(default_factory=list)  # mỗi lần chạy công cụ: {"name", "ms"}
     llm_calls: list[dict] = field(default_factory=list)  # mỗi lần gọi model (generator `CallLog`) + `route` của lần gọi
-    # B1: câu trả lời cố định (không qua kiểm citation) ⇒ outcome riêng: "emergency" / "out_of_scope" / "refusal_no_sources"
+    # B1: câu trả lời cố định (không qua kiểm citation) ⇒ outcome riêng: "out_of_scope" / "refusal_no_sources" (phương án B G: bỏ "emergency")
     fixed_outcome: str | None = None
-    emergency_by: str | None = None  # "rule" (luật code) | "router" (định tuyến chọn khan_cap)
+    emergency_by: str | None = None  # "router" — định tuyến chọn khan_cap (phương án B G: câu vẫn đi agent Huế, không câu soạn sẵn)
     route_error: str | None = None  # định tuyến lỗi ⇒ đi `tro_ly_hue`
     routing_ms: float | None = None
     today: str | None = None  # dòng ngày đã gửi model (D7) — log chỉ ghi phần ngày
@@ -780,11 +778,8 @@ def _set_fixed(trace: AnswerTrace, text: str, outcome: str) -> None:
 
 
 async def _pick_route(query: str, generator, trace: AnswerTrace, flags: AssistantFlags) -> None:
-    """Luật khẩn cấp (code) ⇒ định tuyến (model) ⇒ câu cố định cho `khan_cap` / `ngoai_pham_vi`. Còn lại để `trace.route` cho bước sau."""
-    if flags.emergency_rule and is_emergency(query):
-        trace.route, trace.emergency_by = ROUTE_KHAN_CAP, "rule"
-        _set_fixed(trace, EMERGENCY_ANSWER, "emergency")
-        return
+    """Định tuyến (model) ⇒ câu cố định cho `ngoai_pham_vi`; `khan_cap` đi agent Huế (phương án B của bậc G, spec bản 13 §12.2: bỏ câu soạn sẵn
+    khẩn cấp, giữ 4 tuyến). Còn lại để `trace.route` cho bước sau."""
     if flags.router and generator is not None:
         started = time.perf_counter()
         call_log = CallLog()
@@ -800,9 +795,8 @@ async def _pick_route(query: str, generator, trace: AnswerTrace, flags: Assistan
         finally:
             trace.routing_ms = elapsed_ms(started)
             record_llm_calls(trace, call_log.calls, "router")
-    if trace.route == ROUTE_KHAN_CAP:
-        trace.emergency_by = "router"
-        _set_fixed(trace, EMERGENCY_ANSWER, "emergency")
+    if trace.route == ROUTE_KHAN_CAP:  # phương án B G: không câu soạn sẵn — trả lời như câu về Huế; log giữ dấu định tuyến đã chọn khẩn cấp
+        trace.route, trace.emergency_by = ROUTE_TRO_LY_HUE, "router"
     elif trace.route == ROUTE_NGOAI_PHAM_VI:
         _set_fixed(trace, OUT_OF_SCOPE_ANSWER, "out_of_scope")
 
@@ -914,7 +908,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     stream_live = False
     try:
         if not trace.bieu_mau:  # D3: lượt biểu mẫu không định tuyến
-            if flags.router and generator is not None and not (flags.emergency_rule and is_emergency(query)):
+            if flags.router and generator is not None:
                 yield "status", {"stage": "routing"}
             await _pick_route(query, generator, trace, flags)
             if trace.fixed_outcome is not None:
@@ -1071,19 +1065,19 @@ ROUTE_INPUTS = ("history", "truong", "search_query")
 async def answer_turn_stream_parallel(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
                                       recorder=None, tim_web=None):
     """Thí nghiệm tốc độ #6 (plan `2026-11-04-phase-9-toc-do-song-song-plan.md`). Cờ `song_song_tra_loi` tắt (hoặc định tuyến không chạy /
-    câu tìm do định tuyến viết / luật khẩn cấp bắt) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
+    câu tìm do định tuyến viết) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
     chạy cùng lúc. (ii) chính là `answer_turn_stream` với `router` tắt trên **trace phụ** (đi thẳng lần tìm đầu câu gốc + lần gọi trợ lý —
     đầu vào hai lần gọi model không phụ thuộc tuyến). Sự kiện của (ii) giữ trong hàng đợi tới khi có tuyến:
     `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
-    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0") or (
-            flags.emergency_rule and is_emergency(query)):  # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
+    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
+        # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
             yield event
         return
 
     # B6: bản cờ của phần chạy song song / đường trò chuyện tắt cả `tra_web` (cờ này cần `router`; cổng web chạy bằng `flags` gốc sau khi gộp)
-    without_router = dataclasses.replace(flags, router=False, emergency_rule=False, tra_web=False)
+    without_router = dataclasses.replace(flags, router=False, tra_web=False)
     # B161 M-1: trace phụ mang **mọi đầu vào route đặt trước khi gọi lõi** (lịch sử B3; giá trị nút + câu gốc của lượt ghép B4b / B5) — chép
     # từng trường (không `dataclasses.replace`: sẽ dùng chung list sổ nguồn / công cụ giữa hai trace)
     spec = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
