@@ -153,6 +153,39 @@ Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm
   - m-5: "đạt" là trên **chính bộ đã dùng để chỉnh** qua 3 lượt (sửa đều là phép tính tất định, không phải lời dặn riêng từng câu) ⇒ trước khi bật cần S5 + một lượt xác nhận trên vài câu ngày mới;
   - m-6: thiếu test stream có gọi `ngay_lich` thật và test đường song song; **"tháng tới / tháng sau / cuối tuần" vẫn do model tự cộng** (chỉ "tuần này / tuần sau / tháng này" do code ghi) — giới hạn.
 
+## 4e. Lượt xác nhận trên câu ngày MỚI (09/11, review m-5) — ghi 20:27 09/11/2026
+
+- **Cách làm:** tiêu chí ghi trước (`data/phase_9/t1/xac_nhan/tieu_chi.md`, 20:18) ⇒ 14 câu mới E viết 09/11, chưa dùng để chỉnh (`bo_xac_nhan.jsonl` `9d95dc64a455`):
+  Tết có năm / không năm / "năm nay", rằm sắp tới, rằm tháng này, ngày mai âm, Chủ nhật này âm, 5 lễ có ngày âm trong kho (khác bộ cũ), 1 điểm đóng cửa theo thứ, 1 câu ngoài kho.
+  `main` cờ tắt ↔ `main` cờ bật tạm (worktree, đã gỡ), `/api/chat/stream` thật, 1 lượt mỗi bên, một server một lúc. Code `main` `5c982a0`, không sửa giữa chừng.
+- **Chấm:** 2 sub-agent ngữ cảnh mới, chấm mù cặp, **khớp 14 / 14**; `kiem_l2.py` 0 đánh dấu cả hai bên.
+
+| Tiêu chí (ghi trước) | Kết quả | |
+|---|---|---|
+| 1. Từ chối nhầm giảm ≥ 3 | **9** câu từ chối ⇒ OK | đạt |
+| 2. 0 câu L1 / L3 mới | **1 L1** (câu "Tết năm nay") | **trượt** |
+| 3. 0 L2 (ngày / thứ / âm ↔ dương sai) | 0 (máy + 2 người tự đổi lịch) | đạt |
+| 4. 0 lượt chạm `max_turns` | 0 | đạt |
+| 5. Ca M-1 (2 câu không nêu năm) đều OK | "còn bao nhiêu ngày tới Tết" OK; "Tết năm nay" **L1** | **trượt** |
+
+- **Câu trượt:** hỏi tháng 11 "Tết năm nay rơi vào ngày nào?". Code trả đủ cả hai lần (Tết đã qua + Tết sắp tới). Model chọn Tết sắp tới, ngày và năm đúng
+  (có ghi năm, năm can chi), nhưng gọi nó là "năm nay" và không nhắc Tết năm âm hiện tại đã qua. Nhãn ghi trước xếp ca này vào L1 ⇒ giữ đúng nhãn. Đây là câu
+  mơ hồ thật (tháng 11 nhiều người nói "Tết năm nay" để chỉ Tết sắp tới), nhưng **không đổi tiêu chí sau khi đã thấy kết quả**.
+- **Ca biên người chấm 2 nêu (vẫn OK):** câu "ngày hội cuối năm âm, năm nay khi nào / còn bao lâu" — model lấy kỳ trong kho (đầu năm dương) rồi nói "đã kết thúc",
+  không nhắc kỳ sắp tới theo năm âm. Cùng gốc với câu trượt: **model tự chọn "năm nay" theo năm nào**.
+- **Định tuyến xếp ngoài phạm vi 3 câu ở cả hai bên** (Tết có năm, ngày mai âm, Chủ nhật này âm) — cùng loại lỗi G sửa; mốc thêm 2 câu (dao động) ⇒ tính trong 9 câu R của mốc.
+- **Chữ đầu (dùng thay S5, A chốt 09/11):** nhánh p50 **3,35 s** / p95 **6,33 s** ↔ mốc p50 **4,90 s** / p95 **7,87 s** (n = 14 mỗi bên, `chat_metrics.first_text_ms`
+  theo `turn_id`, `tools/doc_metrics.py`). Nhánh không chậm hơn mốc. p95 vượt sàn 5 s ở **cả hai** bên vì có câu đi qua tra web / nhiều vòng — không do T1.
+- **Tiền thật:** nhánh 0,008295 + mốc 0,017327 = **0,025622 USD** (mốc đắt hơn: từ chối rồi tra web). Chấm: sub-agent (không gọi API trả phí).
+- **Bắt thêm:** bộ dò không bắt "sang năm …" ⇒ nhánh `p9-t1-sang-nam` `d3e7d02` (thêm "sang năm", trừ khi theo sau là số năm; 1 dòng regex + 2 ca test;
+  `test_ngay_lich.py` 71 passed; số câu bộ dò bật trên Golden 176 / an toàn 32 / Golden mẫu 30 không đổi: 9 / 4 / 2). Cờ vẫn tắt.
+- **Giới hạn:** khoảng 1/1 – Tết vẫn chỉ có test giờ giả (không chạy thật được trong tháng 10 âm). n = 14, 1 lượt ⇒ chưa tách nhiễu.
+- **A chọn (b) — sửa bằng code (`p9-t1-sang-nam` `ff65510`):** ngày âm mà câu hỏi nói "năm nay" hoặc không nêu năm ⇒ kết quả công cụ có cả lần gần nhất
+  (đã qua) và lần sắp tới, cộng một dòng ghi chú do code viết ("ghi rõ năm từng ngày; lần đã qua nói là đã qua"); mô tả tham số `nam` trong công cụ sửa cho khớp
+  ("0 = người dùng không nêu năm" — trước ghi "0 = năm nay", ngược với mô tả chung); log công cụ ghi thêm năm model gửi (chỉ số). Test: `test_ngay_lich.py`
+  72 passed; `backend/tests` 824 passed (hỏng đúng 4 test cần khoá + 3 test giao diện thiếu bản build ở worktree — đạt trên thư mục chính). Cờ vẫn tắt.
+  **Chưa đo có phí** — đo ở lượt sau G (tiêu chí ghi trước `tieu_chi.md` mục 2: 3 câu mới cùng loại, L1 = 0; thêm an toàn 4 câu × 2 lượt + 1 câu ngoài kho).
+
 ## 5. Lỗi và giới hạn
 
 - **R8 — A chấp nhận (08/11) đổi lấy 8 câu cứu được.** Câu "dịp lễ sắp tới" kém ổn định cả 3 lượt. Nguyên nhân: kho thiếu lịch lễ hội "sắp tới" theo ngày; khi model biết hôm nay là 08/11, nó tìm lễ sau ngày đó, không thấy ⇒ từ chối. Bản cũ trả lời chung chung (đoán dịp 30/4) + hỏi lại. Sửa thật cần dữ liệu lịch sự kiện theo ngày (đợt 2 cổng), không phải code công cụ.
@@ -169,16 +202,16 @@ Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm
   - A chọn (b) rồi (i), lượt 3 đạt tiêu chí 1–4;
   - R8 A chấp nhận;
   - review nhánh `changes_requested` 0 / 1 / 6 ⇒ M-1 + m-1 sửa ở `f388b19`; m-2 / m-5 / m-6 phiên sau.
-- **Trước khi bật cờ:**
-  - S5;
-  - lượt xác nhận trên câu ngày mới (gồm ca 1/1 – Tết của M-1);
-  - G vào `main` ⇒ đo lại 5 câu bị định tuyến xếp ngoài phạm vi.
+- **Trước khi bật cờ (cập nhật 09/11):**
+  - ~~S5 riêng~~ — A chốt 09/11: dùng số chữ đầu của lượt xác nhận (mục 4e);
+  - lượt xác nhận: **chạy 09/11, trượt 1 câu** ("Tết năm nay" — mục 4e) ⇒ chờ A quyết;
+  - G vào `main` ⇒ MỘT lượt nhỏ: 5 câu cũ bị định tuyến xếp ngoài phạm vi + 3 câu của mục 4e + câu "sang năm" (nhánh `p9-t1-sang-nam`).
 - **Dữ liệu (private):** kết quả `data/phase_9/t1/ket_qua/`, chấm `data/phase_9/t1/cham/` (brief ghi trước 11:32, khoá, 2 phiếu), công cụ `data/phase_9/t1/tools/`.
 - **Chạy lại:**
   - server + `chay_t1.py <BASE> <ngay|an_toan|golden|chon:Rx> <moc|nhanh> <luot> <out>`;
   - `kiem_l2.py`, `dung_cap_mu.py`;
   - 0 USD: `so_tet.py`, `dem_bo_do.py`.
-- **S5 (chờ A xếp):** 1 server nhánh (cờ bật) rồi 1 server `main`, mỗi bên 20 câu ngày bật (`chon:<20 mã>`), đọc `chat_metrics.first_text_ms` theo `turn_id`.
+- **Chữ đầu:** `chay_t1.py` ghi `turn_id` (từ 09/11) ⇒ `doc_metrics.py <application.log> <ket_qua.jsonl>`; bộ xác nhận: `chay_t1.py <BASE> xac_nhan …`, `dung_cap_mu.py xac_nhan`.
 - **Review cả nhánh:** `git diff main...p9-t1-ngay`.
 
 
@@ -192,4 +225,6 @@ Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm
   - câu "dịp lễ sắp tới có gì" giờ bị từ chối, vì kho chưa có lịch sự kiện theo ngày;
   - câu thuần về ngày ("hôm nay ngày bao nhiêu âm") vẫn bị định tuyến coi là ngoài phạm vi, chờ việc định tuyến mới;
   - chỉ đổi ngày từ năm 1976 tới 2100.
-- Tiền đo ≈ 0,11 USD. Chữ đầu (tốc độ) chưa đo.
+- Lượt xác nhận 09/11 trên 14 câu mới: bớt 9 câu từ chối nhầm, 0 sai ngày; 1 câu mơ hồ "Tết năm nay" bị chấm là nói sai thời điểm (chờ quyết).
+- Chữ đầu (09/11, 14 câu): bản có công cụ p50 3,35 s ↔ bản cũ 4,90 s — không chậm hơn.
+- Tiền đo ≈ 0,14 USD.

@@ -140,3 +140,63 @@ thêm sau lượt 2.**
   câu này là câu hỏi tiếp không nêu địa điểm nào (vd "còn giờ mở cửa?"), hoặc bỏ fallback.
 - Q3 trượt vì đoạn kho của lần tìm đầu vẫn chứa điều kiện miễn giảm (thiết kế chỉ giữ chữ điều kiện **của bảng** ngoài model) — chọn hướng ở "Câu hỏi cho User" (A ghi handoff).
 - S1 mới sinh nhánh ×2 (`do/s1_nhanh/`), chưa chấm / chưa mốc; S4, S5 chưa chạy.
+
+## 12. Hướng (a) — "phương án B" của spec (User chọn 09/11, A giao; viết 20:32 09/11/2026 — `date`)
+
+**Đổi gì (commit `4bc2e5f`, nhánh rebase lên `main` `5c982a0`, cờ `tra_ve_gio` tắt):** bỏ công cụ `tra_ve_gio`, bỏ "code tự tra" trước lần sinh, bỏ khối điều kiện miễn
+giảm, bỏ thay câu từ chối. Bảng chỉ dùng **sau** khi model viết: câu (hoặc câu hỏi liền trước) có từ khoá vé / giá / giờ ∧ chữ model không phải câu từ chối / ngoài phạm
+vi ∧ lượt không có lịch ⇒ kiểm số tiền + giờ trong chữ model ⊂ dòng bảng của điểm **nêu trong câu này** ∪ mọi đoạn kho đã đưa model ∪ câu hỏi; lệch ⇒ nối câu cố định
+"Lưu ý: giá vé / giờ mở cửa nêu trên có chỗ chưa khớp bảng vé và nguồn dữ liệu, có thể khác thực tế — hãy xem phần Nguồn hoặc hỏi nơi đến trước khi đi." (không rút lại câu
+trả lời). Không lấy điểm từ câu hỏi liền trước (sửa lỗi gắn điểm cũ §11). Log: một mục `tools` `kiem_ve_gio` (số điểm + mã lỗi, không chữ).
+`generator_openai_full_corpus.py` trở về đúng bản `main`.
+
+**0 USD (đã chạy):** test T3 41 đạt (19 giây); 7 file lõi (b2 / b5 / b5b / b6 / ngày / feedback / b3) 511 đạt (76 giây). **Q1 cờ BẬT giống byte `main` 228 / 228**
+(`capture_all.py`, `data/phase_9/t3_bang_ve_gio/q1_a/`, 27–31 giây / lần) ⇒ cờ bật không đổi gì gửi model.
+
+**Tiêu chí ghi trước lượt có phí** (A 09/11: đo 20 câu + bộ an toàn 32; ×2 chỉ khi S-AT đòi; bỏ S4 vì chuỗi gửi model giống byte):
+- **Cách đo ghép cặp trong cùng một lượt:** Q1 chứng minh lần sinh của nhánh = lần sinh của `main` ⇒ "mốc" của mỗi câu là **chính phần chữ model** của câu đó (bỏ câu lưu ý),
+  "nhánh" là chữ hiện cho người dùng. Không chạy mốc riêng; không dùng lại mốc 08/11 (không cần).
+- **K2 báo nhầm:** câu Q2 đúng theo bộ chấm (`do_t3.py cham`, nhãn 08/11) mà vẫn bị gắn lưu ý **≤ 2 / 20**.
+- **K3 bắt lệch (quan sát, không sàn):** câu bộ chấm thấy số ngoài nhãn mà không có lưu ý — ghi số + lý do (số có trong đoạn kho đã đưa model ⇒ đúng thiết kế).
+- **K4:** 0 câu bị rút lại / đổi chữ model do T3 (chữ hiện = chữ model [+ lưu ý]).
+- **S1 (bộ an toàn 32, ×1, cờ bật):** ngoài kho bị trả lời **0** (so với câu chuẩn); mọi câu có lưu ý ⇒ sub-agent đọc mù: lưu ý không đảo / không làm thiếu cảnh báo, không thêm
+  điều kiện sai. Phần chữ model giống `main` theo Q1 ⇒ 4 số trên phần đó là tính chất của `main`, không do T3. Chênh 1 ở bất kỳ số nào ⇒ thủ tục S-AT (chạy ×2).
+- **Đạt** = K2 + K4 + S1. Q2 đạt / 20 chỉ báo số (model không đổi ⇒ dự kiến ≈ mốc 16 / 20).
+
+**Kết quả lượt có phí (viết 20:43 09/11/2026 — `date`; trên `4bc2e5f`, cờ bật tạm trong worktree, đã trả `false`):**
+
+| Tiêu chí | Kết quả | |
+|---|---|---|
+| K1 Q1 cờ bật giống byte `main` | 228 / 228 | ✓ |
+| K2 câu đúng mà bị gắn lưu ý (≤ 2 / 20) | **0 / 20** (lưu ý bật 0 / 20) | ✓ |
+| K3 bộ chấm thấy số ngoài nhãn, không lưu ý (quan sát) | 3 / 20 (T04, T06, T14) — runtime cho qua vì số có trong đoạn kho đã đưa model (đúng thiết kế; T06 đã kiểm 08/11 là đúng kho) | — |
+| K4 câu bị rút lại / đổi chữ model do T3 | 0 / 20 · 0 / 32 | ✓ |
+| S1 ngoài kho bị trả lời | **0 / 4** (code, so câu chuẩn); 0 lỗi citation / lỗi chạy trên 32 | ✓ |
+| S1 câu có lưu ý | 1 / 32 (một câu loại "giờ") — **báo nhầm** do lỗi code thật (dưới) | ✗ ⇒ sửa |
+| Q2 đạt (báo số) | 15 / 20 (mốc 08/11 16 / 20; 2 câu miễn giảm không số nhãn trượt theo luật chấm cũ đòi khối điều kiện — hướng (a) không còn khối) | — |
+| Tiền · thời gian | Q2 0,010562 USD / 69 giây · an toàn 32 0,017105 USD / 3 phút 49 giây | |
+
+**Lỗi tìm được bằng lượt thật (sửa `e547b9e`):** bộ đọc giờ (và bộ đọc số tiền trần "420.000") chặn mọi số đứng trước dấu phẩy — luật nhằm bỏ số thập phân "7,5" nhưng bắt
+cả liệt kê "17:20, 18:00" ⇒ giờ trong kho không được đọc ⇒ câu trả lời đúng kho bị gắn lưu ý. Tái tạo: chữ model 9 giờ khởi hành, dòng kho chứa cả 9 (đọc qua `grep_kb.sh`)
+⇒ bản cũ đọc model 2 giờ / kho 1 giờ ⇒ `gio_ngoai_bang`; bản sửa đọc 9 / 9 ⇒ `[]`. Ranh giới mới: trước không là chữ số / "chữ số + . ,", sau không là chữ số / ". ," + chữ số
+("7,5" vẫn không thành giờ). +3 ca test; test T3 44 đạt. Lỗi này có từ vòng 1 (cả kiểm cuối vòng 1–3).
+
+**Đọc kết quả (quan sát):** trên 52 câu thật, lưới kiểm **chưa bắt được một số sai nào** — lần bật duy nhất là báo nhầm do lỗi trên. Hướng (a) an toàn theo thiết kế (không đổi
+chuỗi gửi model, không rút lại), nhưng lợi đo được ≈ 0 ⇒ đề xuất A hỏi User: merge cờ tắt (giữ làm lưới) hay đóng hồ sơ. Chạy lại an toàn 32 ×1 trên `e547b9e` để có số sau sửa:
+**chưa chạy** (A dặn không mở lượt mới tới khi chốt vòng tự soi). Chấm mù 2 người bộ 32: không làm — chữ hiện = chữ model (giống `main` theo Q1) trừ câu lưu ý ⇒ số "mới" = 0
+theo định nghĩa (C đề xuất trong vòng tự soi, chờ A chốt).
+Data private: `data/phase_9/t3_bang_ve_gio/q1_a/`, `do/q2_nhanh_a.jsonl` (+ `.cham.json`), `do/s1_a/`.
+
+## 13. Kết luận — ĐÓNG HỒ SƠ, không merge (User chọn, A báo C; ghi 20:50 09/11/2026 — `date`)
+
+- **Đo gì:** T3 thử 4 cách dùng bảng vé + giờ User duyệt (60 điểm): (1) công cụ model tự gọi — model gọi 2 / 20, Q2 17 / 20 < 19; (2) code tự tra trước lần sinh — Q2 18 / 20;
+  (3) vòng 3 sửa kiểm cuối — Q2 19 / 20 nhưng sàn Q3 trượt 6 / 10 (model tự nêu điều kiện miễn giảm chép từ kho); (4) hướng (a) = phương án B của spec — bảng chỉ kiểm số
+  sau khi model viết, chuỗi gửi model giống byte `main`.
+- **Ra gì (hướng (a), 52 câu thật):** an toàn theo thiết kế (0 rút lại, ngoài kho bị trả lời 0 / 4), nhưng lưới kiểm **chưa bắt được số sai nào**; lần bật duy nhất là báo nhầm do
+  lỗi bộ đọc giờ (đã sửa `e547b9e`, không đo lại theo chỉ thị).
+- **Vì sao đóng:** lợi đo được ≈ 0 so với `main` mà thêm ~120 dòng code + một bảng private phải giữ đúng theo kho. Model ở `main` đã chép giá / giờ từ đoạn kho khá đúng
+  (mốc Q2 16 / 20; câu trượt chủ yếu do thiếu / chọn sai dòng, không do bịa số).
+- **Giữ lại để dùng sau:** nhánh `p9-t3-bang` = `e547b9e` (A gắn tag `hoso/p9-t3-bang` + xoá nhánh khi User duyệt); bảng `data/phase_9/t3_bang_ve_gio/bang_v1.json`
+  (`874af96dd995`, User duyệt) — dùng lại được nếu sau này cần kiểm cuối số cho tính năng khác; bài học: **kiểm bằng code trên lượt thật nhỏ trước khi kết luận** (lỗi dấu
+  phẩy chỉ lộ ở dữ liệu thật); bộ đọc số liệt kê nên dùng lại cách ranh giới mới nếu `thoi_tiet` / `tra_web` có lỗi tương tự (chưa kiểm).
+- **Tiền T3 cả đợt:** 08/11 0,085253 + 09/11 0,027667 ≈ **0,113 USD**.

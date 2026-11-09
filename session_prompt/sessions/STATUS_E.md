@@ -1,4 +1,19 @@
-# STATUS E — KẾT PHIÊN 12:50 08/11/2026 (`date`) · terminal `hue-rag-22` (A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — PHIÊN 09/11 (mở 20:10 09/11/2026, `date`) · terminal `hue-rag-ea` (A `hue-rag-87`, B `hue-rag-99`, C `hue-rag-6a`) · Claude Opus 5.5 · vai thực thi
+
+## ĐANG LÀM (cập nhật 20:28 09/11/2026)
+
+- **T1 lượt xác nhận — XONG, trượt 1 câu (chờ A quyết):** report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` §4e. 14 câu mới, 2 người chấm khớp 14 / 14:
+  R ⇒ OK 9 · L2 0 · max_turns 0 · **L1 1 ("Tết năm nay": model gọi Tết sắp tới là "năm nay")** ⇒ tiêu chí 2 + 5 trượt. Chữ đầu nhánh p50 3,35 / p95 6,33 s ↔ mốc 4,90 / 7,87 (thay S5, A chốt). Tiền **0,025622 USD**.
+  Dữ liệu `data/phase_9/t1/xac_nhan/` (tiêu chí, brief, kết quả, khoá, 2 phiếu); công cụ mới `tools/doc_metrics.py`; `chay_t1.py` ghi `turn_id` + bộ `xac_nhan`; `dung_cap_mu.py xac_nhan`.
+- **Nhánh `p9-t1-sang-nam`:** `d3e7d02` bộ dò "sang năm" + `ff65510` sửa "năm nay". Chờ G merge ⇒ rebase ⇒ lượt sau G ⇒ review nhánh.
+- **A chốt 09/11:** bỏ S5 riêng; sau khi G merge chạy MỘT lượt nhỏ (5 câu cũ + 3 câu bị xếp ngoài phạm vi + "sang năm"). Khi B khoá G ⇒ E review cả nhánh G (A báo).
+- **Sửa (b) "năm nay" (A chọn) — `p9-t1-sang-nam` `ff65510` (push):** ngày âm + câu nói "năm nay" / không nêu năm ⇒ code thêm lần gần nhất + lần sắp tới + dòng `GHI_CHU_NAM`; docstring `nam` sửa; log công cụ ghi `nam`. `test_ngay_lich.py` 72 passed; `backend/tests` 824 passed (hỏng: 4 cần khoá + 3 giao diện thiếu `frontend/dist` ở worktree — đạt trên thư mục chính). Lượt sau G ghi trước: `tieu_chi.md` mục 2 (bộ `bo_sau_g.jsonl` `be692a908902`, 14 câu + an toàn 4 × 2 lượt). Worktree đã gỡ.
+- **Đọc trước diff G (`origin/p9-g-cong` `87d6798`; nhánh cục bộ `p9-g-cong` = `f8bfc69` khác sha — hỏi B khi review):** ghi nhận để review: (1) `bieu_mau_agent` giờ dùng hằng `ANSWER_BIEU_MAU_INSTRUCTIONS`, bỏ qua tham số `answer_instructions` (chỉ harness 8.1 dùng) — minor; (2) bỏ hẳn đường khẩn cấp (rủi ro User đã chấp nhận, câu hỏi 3b còn chờ); (3) T1 sau G: câu ngày đi qua agent ⇒ lời dặn mới có "kể cả câu về ngày tháng" là câu về Huế — khớp ý T1; (4) xung đột rebase `assistant.py` với T1 (B đã biết).
+- **Review sớm G (A giao, 0 USD) — XONG nháp:** `report_agent/2026-11-08_phase_9_ban_13/g_cong_branch_review.md` — phần code `f8bfc69`: 0 blocker / 0 major / 3 minor (B nhận cả 3). 825 passed. Chữ lời dặn chờ sha cuối (B: `cc2d525` dời khối ngoài phạm vi, ANSWER `507f891eafec`; nếu âm ⇒ phương án B, code đổi nhiều ⇒ B báo E).
+- **Nháp plan T4 (A giao, chưa code):** `docs/superpowers/plans/2026-11-09-phase-9-t4-lich-trinh-plan.md` bản 1 `46f6fdd69f90` — mức nhẹ ≈ 0,15 USD, **không bộ kín** (sửa là code; kín v2 đã dùng); 3 câu hỏi cho A (mở kín v2 đã dùng? chữ câu cố định (b)? S5 chung?).
+- Worktree còn: `/tmp/e_g` (G `f8bfc69`, có `node_modules` + `frontend/dist`, 2 symlink) — giữ cho review cuối G; `/tmp/e_g_probe/probe.py` (ca dò). Gỡ khi xong G.
+
+## (lịch sử) STATUS E — KẾT PHIÊN 12:50 08/11/2026 (`date`) · terminal `hue-rag-22` (A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`) · Claude Opus 5.5 · vai thực thi
 
 ## PHIÊN SAU ĐỌC TRƯỚC (viết 12:50 08/11/2026)
 

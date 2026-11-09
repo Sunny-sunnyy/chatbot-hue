@@ -1,3 +1,20 @@
+# STATUS B — PHIÊN 09/11 (mở 20:14 09/11/2026, terminal `hue-rag-99`; A `hue-rag-87` · C `hue-rag-6a` · E `hue-rag-ea`)
+
+## Đang làm — G phần 0 USD (A giao 20:14 09/11/2026)
+- Worktree dựng lại: `/tmp/b_g` = `p9-g-cong` `87d6798`, `/tmp/b_moc_g` = `442f758` (tách rời; symlink `data/`, `knowledge-base-hue/`).
+- **Khai báo sửa (trong `/tmp/b_g`, nhánh `p9-g-cong`):** rebase lên `main` `5c982a0` — có thể chạm `backend/llm/assistant.py`, `backend/llm/full_corpus_prompt.py`,
+  `backend/llm/generator_openai_full_corpus.py`, `backend/config/settings.yaml`, `backend/tests/test_cong_dot_1.py` (chỗ trùng với T1); report `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`; file này.
+- S4 đã xong 08/11. S1 **không chấm được bằng dữ liệu cũ** (judge cần `context`, kết quả cũ không lưu) ⇒ chờ lượt có phí ≈ 0,05 (A đang xin User).
+- Rebase xong: `p9-g-cong` = **`f8bfc69`** (từ `87d6798`, không xung đột; lời dặn giống byte bản khoá: ROUTER `6b4796f7a35c` · ANSWER `426109d21b13` · biểu mẫu `81d3040cf53f` = `main`). Test 6 file chạm (+ `test_ngay_lich`) 200 đạt, 92 s. **Chưa push** (bản trên origin vẫn `87d6798`).
+- User nâng trần Phase 9 lên 4,0 (qua A) ⇒ mức dừng G ≈ 0,87. Đang chạy S1 có ngữ cảnh: `s1_g_r1`, `s1_g_r2` (trên `/tmp/b_g` `f8bfc69`), `s1_moc_r1` (trên `/tmp/b_moc_g` `442f758`). Chấm bằng `data/phase_9/g_cong/tools/an_toan_g.py` (bản sao B2, 3 bên một lượt mù).
+- **Lệnh kín ở §1 bên dưới vẫn đúng** (trỏ worktree `/tmp/b_g`, không ghi sha) — chạy trên `f8bfc69`.
+- **Kết quả (20:34 09/11/2026):** test rộng `f8bfc69` 848 đạt (4 phút 25 giây) · cổng ổn định đạt (cổng 8873, đã tắt). S1 (`data/phase_9/g_cong/s1/`, 2 judge qua cổng cả 2 vòng): ngoài kho bị trả lời 0 ×2 · đảo cảnh báo 0 · g2 sạch · g1 S11 sai điều kiện mới (nói nguồn không nêu giấy tờ). S-AT sinh lại 3 + 3: S11 sai điều kiện G 2/3 ↔ mốc 1/3; thiếu cảnh báo S09 3↔2, S11 3↔2, S10 2↔3 ⇒ theo luật là "mới thật" ⇒ **chờ A quyết** (a nhận nhiễu / b sinh lại 10+10 / c chỉnh lời dặn; B khuyến nghị b). Tiền 09/11: S1 0,0625 + S-AT 0,0117 + cổng ổn định ≈ 0,001 ⇒ ≈ 0,075 USD.
+- **20:43 09/11/2026 — kín (User `!`):** a ×2 đạt (S3 0; xã giao⇒Huế 0/4 mỗi lượt); b r1 đạt; **b r2 trượt S2b** (`b_kin_07` ngoài phạm vi ⇒ "không đủ" ⇒ mở web; S2 vẫn 0). Mốc trên bộ S2 đã thấy (44 câu): mở web 0/44 (do cấu trúc) ⇒ lỗi mới do G. **S-AT luật 05/11 (r1–r6, 2 vòng chấm, cổng đạt): ÂM** — S11 sai điều kiện G 4/6 ↔ mốc 2/6; S11 thiếu cảnh báo 6/6 ↔ 4/6; S09 thiếu 6/6 ↔ 4/6. Đã báo A, chờ chốt (vòng chỉnh nhỏ hay phương án B spec). Tiền 09/11 ≈ 0,09 USD. Công cụ: `an_toan_g.py` (`--round main|regen|regen2`), `do_g.py` thêm bộ `an_toan:<id,…>`.
+- **Lệnh kín gộp — User chạy MỘT lệnh `!`** (thay 4 lệnh ở §1; cả r1 + r2; in 4 dòng số đếm + id, không nội dung; file ra đã có thì `do_g.py` dừng):
+```
+! cd /tmp/b_g/backend && for r in r1 r2; do for x in "tuyen kin_a_sealed a_ranh_gioi_sealed" "ca_cau kin_b_sealed b_ngoai_pham_vi_sealed"; do set -- $x; PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py $1 /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/$2_$r.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/$3.jsonl 2>&1 | tail -1; done; done
+```
+
 # STATUS B — KẾT PHIÊN 08/11 (12:50 08/11/2026 `date`; mở 09:16) — sổ tay cho phiên sau
 
 Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22` (đổi mỗi lần mở ⇒ `ListAgents`). Quyền phiên 08/11 **hết hạn**.
