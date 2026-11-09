@@ -21,7 +21,7 @@ Nguyên văn phần đầu phiên 07/11 (11:53 → 15:43 07/11/2026): `archive/C
 7. Kết phiên sau: báo cáo khâu (`BAO_CAO_SINH_CAU_TRA_LOI_API`, `LUONG`) gộp mọi thay đổi đợt (luật mới: sửa lúc đóng đợt), `Project_Status.md`, vòng cải tiến (W59, W60 chờ User).
 
 ### Nhánh
-`main`; **đang mở:** `p9-g-cong` (B), `p9-t3-bang` (C), `p12-deploy-nhap` (chờ deploy), `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). **Đã merge ⇒ chờ User xoá (User `!`):** `p10-anh-bat`, `p11-anh-cong`, `p11-ban-do`, `p11-lich-nho`, `p11-viec-nho-c`, `p11-viec-nho-e`, `p9-sua-test-cong`, `p9-t1-ngay`, `p9-t1-ngay-2` + các nhánh cũ ở archive 07/11. Worktree giữ: `/tmp/b_g` (G, `87d6798`), `/tmp/b_moc_g` (mốc G, `442f758`), `/tmp/c_t3` (T3) — mất sau khởi động lại ⇒ dựng lại từ commit (cách ở `STATUS_B` / `STATUS_C`).
+`main`; **đang mở:** `p9-g-cong` (B), `p9-t3-bang` (C), `p12-deploy-nhap` (chờ deploy), `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). **Đã xoá (20:33 09/11/2026, User `!`):** 19 nhánh đã merge (local + origin). Còn: `p9-t1-sang-nam` (E, mới 09/11). Worktree giữ: `/tmp/b_g` (G, `87d6798`), `/tmp/b_moc_g` (mốc G, `442f758`), `/tmp/c_t3` (T3) — mất sau khởi động lại ⇒ dựng lại từ commit (cách ở `STATUS_B` / `STATUS_C`).
 
 ### Mã hay gặp
 G = cổng 2 nhóm; T1 ngày + âm lịch; T2 web thành công cụ; T3 bảng vé + giờ; T4 lịch trình câu gõ (spec §12); S1–S6 / S2b / S2c / S3b = sàn §12.3; B0–B7 = bậc Phase 9; Bxx / Cxx / Exx = việc A giao; S / W / I = sổ `SO_CAI_TIEN_CACH_LAM.md`.
