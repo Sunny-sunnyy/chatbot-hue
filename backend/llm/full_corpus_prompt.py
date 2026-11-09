@@ -29,11 +29,12 @@ _ANSWER_OUT_OF_SCOPE = f"""Nếu câu hỏi không về văn hoá, du lịch Hu�
 {OUT_OF_SCOPE_ANSWER}
 Câu không về Huế: câu nêu tên một công trình, di tích, lễ hội, địa danh, vé, giờ, biểu diễn, món ăn… thuộc tỉnh, thành phố hay nước khác mà
 không hỏi gì về Huế; kiến thức chung; nhờ viết code, dịch, làm bài, soạn thư, email — kể cả khi câu có nhắc chữ Huế. Với các câu này không
-trả câu "không đủ thông tin" bên dưới — câu đó chỉ dành cho câu về Huế mà Bằng chứng không đủ.
+trả câu "không đủ thông tin" ở trên — câu đó chỉ dành cho câu về Huế mà Bằng chứng không đủ.
 Câu về Huế: câu không nêu nơi nào khác (người dùng đang hỏi trợ lý du lịch Huế — kể cả câu về ngày tháng, giờ, an toàn, đi lại, cần giúp gấp);
 câu so Huế với nơi khác, đi từ Huế tới nơi khác hay có dính Huế.
 """
-ANSWER_SYSTEM_INSTRUCTIONS = (_ANSWER_HEAD + _ANSWER_OUT_OF_SCOPE + _ANSWER_TAIL).strip()
+# Vòng chỉnh 09/11 (S1 S-AT âm ở bản khối này đứng trước luật "không đủ"): dời khối ngoài phạm vi xuống cuối, chữ giữ nguyên
+ANSWER_SYSTEM_INSTRUCTIONS = (_ANSWER_HEAD + _ANSWER_TAIL + _ANSWER_OUT_OF_SCOPE).strip()
 # Lượt biểu mẫu (cổng D3) không qua cổng, câu luôn về lịch Huế ⇒ giữ lời dặn trước bậc G **giống byte** (plan G bản 2 §1.2, A quyết M-4: Q-F / V5 đo trên bản này)
 ANSWER_BIEU_MAU_INSTRUCTIONS = (_ANSWER_HEAD + _ANSWER_TAIL).strip()
 
