@@ -216,6 +216,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    chỉ nằm trên nhánh; nhánh hồ sơ ⇒ gắn tag `hoso/<tên>` trước khi xóa để không mất report / code (User 30/10). Xóa chỉ khi User duyệt (User `!`).
 7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/a_…`), không trong
    working tree chung đang có B/C làm; việc A tự làm vẫn để B/C kiểm.
+7b. **Vòng tự soi mỗi phiên** (`Session_Prompt.md` §7): A mở vòng 1 khi mỗi session đã có kết quả đầu tiên, vòng 2 ngắn trước kết phiên; ghi chốt vào `CURRENT_HANDOFF.md`. Phiên không có vòng ⇒ ghi lý do ở `STATUS_A.md`.
 8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)
    ghi vào `CURRENT_HANDOFF.md` kèm ngày và **hết hạn cuối phiên**; phiên sau A hỏi lại trong báo cáo
    mở phiên. Quyền thường trực (A commit/push; duyệt cho A = duyệt cho B/C) giữ nguyên.

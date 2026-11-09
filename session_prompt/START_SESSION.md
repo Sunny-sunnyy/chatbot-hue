@@ -28,6 +28,7 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
    và thực tế, thắc mắc. Nếu <X> là B, C hoặc E: báo cả A — bằng SendMessage nếu cả
    hai là Claude Code, nếu không thì viết khối "Tin cho A" để User chuyển
    (WORKFLOW.md §7).
+   Mọi session (cả A): trong phiên tham gia **vòng tự soi bắt buộc** (Session_Prompt.md §7 — bỏ test không bảo vệ sàn; bàn với cả nhóm xem có over-engineer không).
    Rồi chờ: A hỏi User quyền phiên — User cấp "A tự điều phối" ⇒ **cùng lượt đó** A giao B/C/E mọi việc đã có trong
    handoff (không chờ "làm đi"; việc mới ngoài handoff mới chờ User); B/C/E chờ A giao việc (việc A giao = User nói "làm đi"); D chờ User nói muốn hiểu việc gì. Trước đó không sửa file (trừ tạo
    `sessions/STATUS_<X>.md` của mình), không chạy việc nặng, không gọi API trả phí.
