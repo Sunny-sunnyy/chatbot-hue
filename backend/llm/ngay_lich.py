@@ -73,10 +73,10 @@ def so_voi_hom_nay(ngay: dt.date, hom: dt.date) -> str:
 
 # Dò từ chỉ ngày (code — chỉ khi có mới đưa công cụ cho model; bài học B5c: công cụ có mặt mọi lượt đổi cách model tìm). Viết hẹp: "mai" đứng một mình
 # không tính (hoa mai, mai mốt), "tết" tính (hỏi ngày Tết), số dạng "15/1" tính. Không tính "khi nào / bao giờ / ngày nào" (câu lịch sử "xây khi nào"
-# sẽ nhận công cụ không cần — tốn tiền, rủi ro S4).
+# sẽ nhận công cụ không cần — tốn tiền, rủi ro S4). "sang năm" tính (09/11, lượt xác nhận bắt sót), trừ khi theo sau là số ("sang năm 1945").
 _TU_NGAY = re.compile(
     r"(?<!\w)(?:hôm nay|bữa nay|hôm qua|(?:sáng|trưa|chiều|tối|đêm) nay|bây giờ|lúc này|hiện giờ|sắp tới|ngày mai|sáng mai|trưa mai|chiều mai|tối mai|ngày kia|tuần (?:này|sau|tới|trước)|cuối tuần|"
-    r"tháng (?:này|sau|tới|trước)|năm (?:nay|sau|tới|ngoái)|chủ nhật|rằm|mùng|mồng|âm lịch|dương lịch|"
+    r"tháng (?:này|sau|tới|trước)|năm (?:nay|sau|tới|ngoái)|sang năm(?!\s*\d)|chủ nhật|rằm|mùng|mồng|âm lịch|dương lịch|"
     r"lịch âm|lịch dương|tết)(?!\w)"
     # review nhánh m-2: "dd/mm" chỉ khi đứng sau từ chỉ thời điểm hoặc có năm ("1/2", "24/7" đứng một mình không phải ngày)
     r"|(?<!\w)(?:ngày|hôm|sáng|trưa|chiều|tối|đêm|từ|đến|tới|vào|dịp|qua)\s+\d{1,2}/\d{1,2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b",

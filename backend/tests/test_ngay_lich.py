@@ -186,6 +186,7 @@ def test_no_year_gives_last_and_next_occurrence(now, ngay, thang, qua, toi):
 @pytest.mark.parametrize("cau, co", [
     ("Hôm nay là thứ hai à?", True), ("Thứ 7 này đi Đại Nội được không?", True), ("Chiều 15/1 có gì?", True),
     ("Ngày 2/9/2026 có miễn vé không?", True), ("Đi vào thứ Bảy được không?", True),
+    ("Sang năm lễ hội làng rơi vào thứ mấy?", True), ("Bước sang năm 1945 triều Nguyễn thế nào?", False),
     ("Vua thứ ba triều Nguyễn là ai?", False), ("Lần thứ hai tổ chức là năm nào?", False), ("Mùa thứ hai của lễ hội?", False),
     ("Quán mở 24/7 không?", False), ("Uống 1/2 ly thôi", False), ("Đại Nội rộng bao nhiêu?", False),
 ])
