@@ -301,6 +301,7 @@ class OpenAIFullCorpusGenerator:
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
         # mẫu dùng; mọi lượt khác gọi `answer_agent` như cũ (Q1). Luật vẫn nằm cả trong khung ngữ cảnh — giữ đúng cấu hình C đã đo.
         self.bieu_mau_agent = self.answer_agent.clone(
+            # bậc G (A quyết M-4): lượt biểu mẫu luôn dùng lời dặn trước G — cố ý bỏ qua tham số `answer_instructions` (chỉ harness 8.1 đổi)
             instructions=f"{ANSWER_BIEU_MAU_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}",  # bậc G: lời dặn trước G (giống byte)
             model_settings=dataclasses.replace(self.answer_agent.model_settings, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
         )
