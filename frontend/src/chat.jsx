@@ -291,10 +291,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
           <button type="button" onClick={onRetry} className="retry">Hỏi lại</button>
         </div>
       )}
-      {turn.outcome === "emergency" && (
-        <div className="emergency" role="alert"><p className="whitespace-pre-line">{turn.text}</p></div>
-      )}
-      {turn.text && turn.phase !== "error" && turn.outcome !== "emergency" && (
+      {turn.text && turn.phase !== "error" && (
         <div className="bubble">
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />

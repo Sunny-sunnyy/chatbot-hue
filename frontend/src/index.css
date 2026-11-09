@@ -213,9 +213,6 @@ picture { display: contents; }
 .wave { flex: none; width: 46px; height: 24px; }
 .wave path { fill: none; stroke: var(--color-accent); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 8 6; animation: flow 1.2s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -28; } }
-.emergency { max-width: 68ch; padding: 16px 20px; border: 2px solid var(--color-error); border-radius: 14px; background: var(--color-error-soft); font-size: 17px;
-             line-height: 1.6; }
-.emergency p::first-line { font-weight: 600; color: var(--color-error); }
 
 /* Cổng D1: dòng "Nguồn: …" dưới câu trả lời; bấm tên ⇒ đoạn gốc + link bài Khám phá */
 .nguon { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--color-line); font-size: 15px; }

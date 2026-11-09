@@ -115,7 +115,7 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 # B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` tắt vì chạy http://127.0.0.1
 # (bật trước khi deploy — spec §7).
 CONVERSATION_COOKIE = "conversation_id"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns", "hoi_lai"}
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai"}  # phương án B G: bỏ "emergency"
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
