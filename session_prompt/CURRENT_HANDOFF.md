@@ -16,12 +16,12 @@ Nguyên văn phần đầu phiên 07/11 (11:53 → 15:43 07/11/2026): `archive/C
 ### Làm tiếp (theo thứ tự)
 1. **Hỏi User quyền phiên** (một câu) ⇒ **mốc đóng tính năng** (User 09/11 chưa chốt; A đề xuất 30/11; căn cứ: đợt 2 hôm nay 4 / 5 việc âm) ⇒ **W61 + W59** (gom một lần, sổ vòng 23).
 2. **User khi rảnh (không chặn):** duyệt **bảng điểm v7** `data/phase_9/lich_trinh/diem_cho_user_v7.md` (thời lượng 19 điểm từ web ⇒ nút "dày lịch" của biểu mẫu mới có tác dụng — hiện gần như không, E rà 09/11); tick phiếu toạ độ bản đồ `data/phase_11/ban_do/phieu_toa_do_11_diem.md` (⇒ bật `ban_do_lich`); thu 40 câu giọng nói (`data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`).
-3. **User `!` xoá 7 nhánh** (đã kiểm: 3 đã merge, 4 có tag hồ sơ cùng commit; worktree đã gỡ): `git branch -d p12-chot-deploy p9-g-b p9-t1-sang-nam && git branch -D p9-g-cong p9-t3-bang p9-t2-web p9-t4-lich && git push -q origin --delete p12-chot-deploy p9-g-b p9-t1-sang-nam p9-g-cong p9-t3-bang p9-t2-web p9-t4-lich` (nếu User chưa chạy lúc kết phiên).
+3. ~~**User `!` xoá 7 nhánh**~~ — **XONG 22:40 09/11/2026** (User chạy; tag `hoso/p9-*` giữ code). (đã kiểm: 3 đã merge, 4 có tag hồ sơ cùng commit; worktree đã gỡ): `git branch -d p12-chot-deploy p9-g-b p9-t1-sang-nam && git branch -D p9-g-cong p9-t3-bang p9-t2-web p9-t4-lich && git push -q origin --delete p12-chot-deploy p9-g-b p9-t1-sang-nam p9-g-cong p9-t3-bang p9-t2-web p9-t4-lich` (nếu User chưa chạy lúc kết phiên).
 4. **Còn trong phạm vi trước đóng gói:** bản đồ (chờ phiếu), giọng nói (chờ 40 câu, nhánh `p10-giong-noi`), deploy AWS (nhánh `p12-deploy-nhap` + 4 chốt đã có; checklist ở "Câu hỏi A còn nợ"), B7 đóng gói. Đợt 2 cổng (lưu trú, ăn gần, sự kiện) chưa bắt đầu — chờ User chốt mốc đóng tính năng.
 5. Giới hạn biểu mẫu "Lên kế hoạch" (E / C rà 09/11, chưa thấy ở người dùng thật ⇒ chỉ ghi báo cáo): "dày lịch" gần như không tác dụng (bảng thiếu thời lượng ⇒ v7); người lớn tuổi / trẻ em không bao giờ có buổi tối; không có ô "lo mưa".
 
 ### Nhánh
-`main`; **đang mở:** `p12-deploy-nhap` (chờ deploy), `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). **Chờ User `!` xoá:** 7 nhánh ở mục 3. Worktree `/tmp`: không còn (đã gỡ 09/11).
+`main`; **đang mở:** `p12-deploy-nhap` (chờ deploy), `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). 7 nhánh 09/11 đã xoá (User). Worktree `/tmp`: không còn (đã gỡ 09/11).
 
 ### Mã hay gặp
 G = cổng 2 nhóm (đóng; phương án B đang chạy); T1 ngày + âm lịch (bật); T2 web thành công cụ, T3 bảng vé + giờ, T4 lịch trình câu gõ (đóng hồ sơ); S1–S6 / S2b / S2c / S3b = sàn §12.3; B0–B7 = bậc Phase 9; S / W / I = sổ `SO_CAI_TIEN_CACH_LAM.md`.
