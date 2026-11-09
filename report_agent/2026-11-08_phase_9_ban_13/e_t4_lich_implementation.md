@@ -37,3 +37,5 @@ Công cụ: `data/phase_9/t4/tools/do_t4.py` (31 câu, `answer_turn` thật, web
 - **Âm** theo luật ghi trước (Q3 (ii)). Sửa (a)–(c) **làm đúng việc của nó** (K2 0, từ chối thay lịch 0, câu cố định không nói sai) — nhưng câu gõ tự do còn yếu ở phần **xếp hợp nhu cầu**, do luật xếp / bảng điểm.
 - Spec §12.2 phương án B: **giữ biểu mẫu "Lên kế hoạch" là đường lịch trình duy nhất**, `lich_trinh` tắt. Bậc "câu gõ tự do ⇒ code gợi ý mở biểu mẫu" **chưa** đề xuất làm: chưa có số người dùng thật gõ câu xin lịch (log không ghi chữ) — nếu muốn, đo rẻ trước bằng đếm `route` + công cụ trong `chat_metrics` khi có người dùng.
 - Code (a)–(c): (1) **merge cờ tắt** — nhỏ, Q1 giống byte, test đạt; dùng lại khi bảng điểm có thời lượng / sở thích tự do; hoặc (2) **đóng hồ sơ** tag `hoso/p9-t4-lich`. E nghiêng (2) cho gọn (mã không chạy khi cờ tắt; luật 09/11 "không làm thì mất gì": mất 0 với người dùng hiện tại).
+
+## 4. Kết luận (22:18 09/11/2026) — **A chọn đóng hồ sơ**: tag `hoso/p9-t4-lich` (A gắn + push), không merge; `lich_trinh` giữ tắt; biểu mẫu "Lên kế hoạch" là đường lịch trình duy nhất.

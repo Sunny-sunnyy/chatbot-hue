@@ -1,6 +1,46 @@
-# STATUS C — kết phiên 08/11 (viết lại 12:17, bổ sung 12:50 08/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên 09/11 (viết 22:28 09/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN 09/11 (mở 20:10 09/11/2026) — C `hue-rag-6a` · A `hue-rag-87` · B `hue-rag-99` · E `hue-rag-ea`
+## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 22:28 09/11/2026)
+
+**Trạng thái:** **rảnh — không việc dở, không worktree `/tmp` nào, không nhánh của C đang mở.** Phiên 09/11 terminal: C `hue-rag-6a` · A `hue-rag-87` · B `hue-rag-99` · E
+`hue-rag-ea` (tên đổi khi mở lại — `ListAgents`). Chờ A giao (việc A giao = User nói "làm đi").
+
+**Việc C phiên 09/11 (đều xong):**
+- T3 bảng vé + giờ: hướng (a) code + đo (Q1 bật cờ 228/228 giống byte · Q2 lưu ý 0/20 · an toàn 32: ngoài kho bị trả lời 0/4, 1 báo nhầm do lỗi bộ đọc giờ dấu phẩy ⇒ sửa) ⇒
+  **đóng hồ sơ** (User), tag `hoso/p9-t3-bang` `e547b9e`; kết luận `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` §13. Bảng `data/phase_9/t3_bang_ve_gio/bang_v1.json` giữ.
+- T2: review plan bản nháp (3 major) ⇒ C viết lại plan bản 2 (A duyệt `88b1f0586e99`; + md5 bộ hỏi kèm của E ⇒ `69836a615353`) ⇒ review code E phần 0 USD (ready) ⇒ lượt đo của E **âm** ⇒ đóng hồ sơ.
+- T4: review sớm code E (1 major: tiêu chí "câu cố định (b) không nói sai" — E đo 0/19, đóng) ⇒ lượt đo **âm** ở luật xếp ⇒ đóng hồ sơ.
+- 4 chốt trước deploy: `p12-chot-deploy` ⇒ merge `ccc9f4f` (A review). Biến: `HUE_LUOT_MOI_NGAY`, `HUE_COOKIE_SECURE`, `HUE_TAT_DOCS`; log xoay vòng 10 MB × 3 luôn bật.
+  **Checklist deploy:** uvicorn sau Caddy cần `--proxy-headers --forwarded-allow-ips <ip Caddy>`; đặt 3 biến trong `compose.yml`; sổ đếm lượt ở RAM.
+- Nháp mục "Phiên 09/11" của `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md` (A duyệt / sửa; số S5 + tiền B / E / A để trống).
+- Tự soi cuối phiên đã gửi A / B / E: bài học chính — **đếm lỗi thật trên mốc trước khi dựng tính năng** (T3 chữa lỗi chưa thấy; T2 + T4 âm cùng gốc "lời dặn từ chối cả câu" — một pilot
+  mốc 10 câu ≈ 0,012 USD đã đủ thấy).
+
+**Tiền C 09/11 ≈ 0,028 USD:** T3 (a) Q2 0,010562 + an toàn 32 0,017105 · chốt deploy ≈ 0,00035 · review / plan 0 USD.
+
+**Bẫy mới 09/11:**
+- Auto mode chặn đọc file `*sealed*` cả khi A giao rõ (rào đúng, không lách) ⇒ viết sẵn một lệnh `!` chỉ in dòng cần, gửi A; `cut -c1-4000` có thể cắt mất phần trả lời — bỏ trường `context` trước khi in.
+- `git worktree remove` cần `--force` khi worktree còn file gitignore (`backend/logs/`); gỡ symlink `data/`, `knowledge-base-hue/` trước.
+- Log `application.log` xoay vòng ở 10 MB (từ `ccc9f4f`) ⇒ harness đếm dòng theo vị trí có thể đếm hụt nếu xoay giữa lượt — kiểm cỡ log trước lượt đo.
+- `@app.middleware("http")` (BaseHTTPMiddleware) bọc luồng SSE + dò ngắt kết nối ⇒ middleware chặn lượt viết dạng ASGI thuần (`api/gioi_han.py` `ChanLuot`).
+- Test gọi `logging.config.dictConfig` đổi logging toàn cục cả tiến trình pytest ⇒ hỏng test đếm dòng log — không viết test kiểu đó.
+- Bộ đọc giờ / số liệt kê: ranh giới số phải cho ", " (liệt kê) — luật cũ `(?![\d,])` bỏ mọi số đứng trước dấu phẩy.
+
+### Bẫy (08/11, vẫn đúng)
+- `kill` PID server tạm bị auto mode chặn ⇒ chạy server bằng `run_in_background` để tắt bằng TaskStop; nếu lỡ `nohup` ⇒ User `!`.
+- `test_cong_dot_1::test_weather_and_feature_routes` hỏng **chỉ khi nạp khoá** (`--env-file`; có khoá ⇒ ảnh bật) — không do nhánh.
+- `tim_so_tien` cần đơn vị ("đồng") — ô bảng giá trong kho thường ghi số trần ⇒ phía "cho phép" phải nhận cả số nhóm nghìn trần.
+- Công cụ đo SSE: một `httpx.Client` giữ cookie ⇒ mọi câu chung một cuộc trò chuyện — mỗi câu một client.
+- Bộ chấm: nhãn giá phải kèm đơn vị như bảng; tập cho phép theo đúng chữ plan — kiểm bộ chấm trên một câu trước khi đọc số.
+- `an_toan_run.py` cũ gọi `answer_case` **không** cờ (= RAG 1–8) ⇒ đo trợ lý phải truyền `AssistantFlags.from_settings`.
+- `wait_for_function` chuỗi của Playwright bị CSP chặn (`unsafe-eval`) ⇒ chờ bằng vòng Python.
+- Sub-agent đọc kho đôi khi đổ đầu ra ra `/tmp` — brief nhắc "không ghi file ngoài đích".
+- Giờ trong file: luôn `date`; không ghi "~hh:mm".
+
+
+---
+
+## (09/11) nhật ký trong phiên — chỉ tra cứu (mở 20:10 09/11/2026) — C `hue-rag-6a` · A `hue-rag-87` · B `hue-rag-99` · E `hue-rag-ea`
 **A giao (20:13 09/11/2026, User: việc A giao = "làm đi"), 0 USD:**
 (1) dựng lại `/tmp/c_t3` từ `p9-t3-bang` `21ec06d`, rebase lên `main` `5c982a0`, chạy test file bị chạm (chưa đo). Khai báo sửa: nhánh `p9-t3-bang` (5 file của nhánh, chỉ giải xung đột rebase), push nhánh.
 (2) review plan T2 `docs/superpowers/plans/2026-11-08-phase-9-t2-web-plan.md` (`921f75d64a7c`) ⇒ file mới `docs/superpowers/plans/2026-11-08-phase-9-t2-web-plan_review.md`.
@@ -21,88 +61,11 @@
 **(6) XONG (21:08 09/11/2026):** review `p9-t2-web` `2ac126a` (E, phần 0 USD) — **ready** 0 blocker · 0 major · 2 minor; `report_agent/2026-11-08_phase_9_ban_13/c_t2_web_review.md` (untracked). Chạy lại: 183 test đạt · Q1 cờ tắt 228/228 giống byte. Worktree `/tmp/c_t2rv` (tách, symlink `data/`, `knowledge-base-hue/`) — gỡ khi xong.
 **Bẫy (A ghi, 1 dòng):** harness đếm dòng `application.log` theo vị trí — từ `ccc9f4f` log xoay vòng 10 MB ⇒ lượt đo trùng lúc xoay đếm hụt; kiểm cỡ log trước lượt đo. `p12-chot-deploy` đã merge (`ccc9f4f`), nhánh chờ User `!` xoá; worktree `/tmp/c_dep` gỡ khi xoá nhánh.
 **(7) XONG (21:11 09/11/2026, A giao):** review sớm `p9-t4-lich` `9780d93` (E) — 0 blocker · 1 major (thêm tiêu chí "câu xin lịch không hỏi kèm có câu cố định (b) = 0", code không sửa); `report_agent/2026-11-08_phase_9_ban_13/c_t4_lich_review.md` (untracked). 331 test · Q1 tắt 228/228. Worktree `/tmp/c_t4rv` (tách, symlink) — gỡ khi xong. Lệch: plan T4 sha trên ổ `5a22b51fe49c` ≠ A duyệt `29708ef92e30` (đã báo A).
-**RẢNH CÓ LÝ DO (21:11 09/11/2026):** chờ G phương án B (`p9-g-b`, B) vào `main` ⇒ xem delta sau rebase của T2 (E) + T4 (E) + kết quả lượt có phí.
+**T2 âm (E, 21:49 09/11/2026):** hỏi kèm có web 4/10 = mốc; C đồng ý đóng hồ sơ, không đề xuất vòng chỉnh mô tả (đã nhắn A). **RẢNH — chờ E** rebase + đo T4 ⇒ C xem delta. Worktree `/tmp/c_t2rv` hết dùng.
+**T4 âm (E, 22:18 09/11/2026):** Q3 (ii) 21 · 15 / 27 < 26; review M-1 của C đóng (câu (b) nói sai 0/19). C đồng ý đóng hồ sơ (đã nhắn A). **RẢNH — chờ A** (không còn delta nào phải xem). Worktree `/tmp/c_t4rv` hết dùng.
+**Dọn (22:19 09/11/2026, A giao):** đã gỡ 4 worktree `/tmp/c_dep`, `/tmp/c_t2rv`, `/tmp/c_t3`, `/tmp/c_t4rv` (gỡ symlink trước; chỉ còn file bị gitignore như `backend/logs/` ⇒ `--force`). C không còn worktree nào. **RẢNH — chờ A** (đang khoá máy cho S5 của B: không chạy lượt có phí / pytest rộng / build).
 
-## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 12:17 08/11/2026)
-
-**Trạng thái:** rảnh có lý do — việc dở duy nhất là **T3 chờ User chọn hướng**. Phiên 08/11 terminal: C `hue-rag-e9` · A `hue-rag-a8` · B `hue-rag-a1` · E `hue-rag-22` (tên đổi khi mở lại — `ListAgents`).
-
-### 1. T3 bảng vé + giờ mở cửa — cờ `tra_ve_gio` TẮT, chờ User
-- Nhánh **`p9-t3-bang` = `21ec06d`** (pushed; rebase trên `main` `f124527`). Worktree **`/tmp/c_t3`** còn (symlink `data/`, `knowledge-base-hue/`; cờ trong worktree đã trả `false`).
-  Gỡ khi xong: `rm /tmp/c_t3/data /tmp/c_t3/knowledge-base-hue && git worktree remove /tmp/c_t3` (`rm` bị chặn ⇒ User `!`).
-- Report `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (§1–§11). Plan bản 2 `docs/superpowers/plans/2026-11-08-phase-9-t3-bang-plan.md` `dbcd1a2f6d81` (A duyệt).
-- Kết quả: Q2 (20 câu) `main` 16 · v1 17 · v2 18 · **v3 19 / 20 ✓** · khối điều kiện 4 / 4 ✓ · **sàn Q3 trượt 6 / 10** (model tự nêu điều kiện miễn giảm, chép từ đoạn kho) ⇒ **âm** theo luật.
-- **Câu chờ User — phiếu `data/phase_9/t3_bang_ve_gio/phieu_chon_huong.md` (C khuyến nghị (a)):**
-  - **(a) phương án B:** bỏ tra bảng đưa model + khối; bảng chỉ dùng kiểm số **sau** khi model viết, số lạ ⇒ câu cố định "giá / giờ có thể khác — xem nguồn" (≈ 0,05 USD, ~1 giờ).
-    Làm: trong `_ve_gio_cuoi` bỏ khối / câu dẫn, kiểm mọi câu tuyến Huế khi cờ bật có từ khoá; bỏ `tra_truoc` + công cụ; đo lại Q2 (mốc + nhánh, `do_t3.py` đã sửa) + S1 ×2.
-  - **(b) code lọc câu điều kiện khỏi chữ model** (giữ dòng giá theo nhãn), vòng 4 ngoài plan (≈ 0,1 USD, 1–2 giờ): thêm bộ lọc trong `_ve_gio_cuoi` khi có khối; test cắt nhầm /
-    bỏ sót; đo Q2 + Q3 + S1 ×2 + S4.
-  - **(c) đổi sàn Q3** (User duyệt — nới tiêu chí sau khi thấy số): không code; chạy S1 ×2 + mốc + S4 rồi quyết theo S1.
-- **Bảng + quyết định User:** `bang_v1.json` `874af96dd995` — User 08/11 câu 1 (a) hiện cả hai nguyên văn khi kho ghi khác nhau; A theo khuyến nghị câu 2–5 (bỏ sự kiện đã diễn
-  ra · giữ dịch vụ · quy định chung chỉ cho Quần thể · giờ chung Quần thể cho Bảo tàng Cổ vật + vé tuyến · chợ = "giờ hoạt động (kho mô tả)").
-- **Dữ liệu (private):** `data/phase_9/t3_bang_ve_gio/` — `bang_v1.json` `874af96dd995` (User duyệt 08/11 câu 1; A câu 2–5), `bang_nhap.json`, `phieu_cho_user.md`, `q1/`, `do/` (bộ
-  `bo_t3.jsonl` md5 `c89955f1bed9`, kết quả Q2 mốc + v1–v3, `q3_cham.json`, `s1_nhanh/` sinh nhánh ×2 **chưa chấm**), `tools/` (`kiem_nhap.py`, `gop.py`, `chot_v1.py`, `do_t3.py`,
-  `an_toan_t3.py`, `anh_nho.py` ở `data/phase_11/anh_cong/tools/`).
-- **Lệnh khi đi tiếp** (chạy từ `/tmp/c_t3/backend`, bật cờ tạm `sed -i 's/^  tra_ve_gio: false /  tra_ve_gio: true  /' config/settings.yaml`, trả lại sau):
-  - Q2: server `HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --host 127.0.0.1 --port 8899` (chạy nền, tắt bằng
-    TaskStop) ⇒ từ gốc repo `uv run python data/phase_9/t3_bang_ve_gio/tools/do_t3.py chay http://127.0.0.1:8899 /tmp/c_t3/backend/logs/application.log data/phase_9/t3_bang_ve_gio/do/bo_t3.jsonl <ra.jsonl> --dung 0.04`
-    ⇒ `… do_t3.py cham data/phase_9/t3_bang_ve_gio/do/bo_t3.jsonl <ra.jsonl> data/phase_9/t3_bang_ve_gio/do/q2_moc_main.jsonl` (công cụ đã sửa: client mới mỗi câu ⇒ chạy lại cả mốc).
-  - S1 nhánh: `HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/t3_bang_ve_gio/tools/an_toan_t3.py <thư mục mới> --repeat 2 --cap 0.06`;
-    S1 mốc: cùng lệnh từ `/home/minhhieu/hue_rag/backend` (`main`, cờ tắt) `--repeat 1`; chấm 4 số theo thủ tục bộ an toàn (2 người chấm mù).
-  - S4: mẫu Golden 30 (`data/phase_9/bo_do_b1/mau_golden_30.json`) nhánh + mốc cùng lượt chấm mù — **chưa có công cụ** (dựng theo khuôn `an_toan_t3.py`).
-  - S5 (tốc độ): A xếp lượt riêng (máy dùng chung) — `do_t3.py chay` ghi `first_text_ms`.
-- Lỗi đã biết: (1) fallback "câu hỏi liền trước" gắn điểm cũ khi đổi chủ đề (report §11); (2) `do_t3.py` bản cũ chạy cả bộ trong một cuộc (đã sửa).
-
-### 2. Việc khác hôm nay — xong, đã vào `main` (chi tiết ở nhật ký dưới + report)
-- Review 7 ảnh cổng (`c9931be`) · review bật hỏi bằng ảnh (`3da1cb1`) · việc nhỏ của C (`ad21b6c`: tóm tắt thẻ, nút báo sai, ảnh nhỏ điện thoại, link "Nguồn ảnh", số mục web ⊂ kết quả
-  tìm, `turn_id` trong `chat_metrics`) · rà tính năng chưa làm (`data/ra_soat_tinh_nang_2026-11-08/C.md`) · nháp bộ đo định tuyến (`data/phase_9/dinh_tuyen_2/bo_do_nhap.md`) · spec
-  bản 13 §12 (User duyệt `5557f0fd7650`) · nháp `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md` (A duyệt lúc kết phiên).
-
-### 3. Bẫy gặp hôm nay
-- **Không `uv sync` thường** khi nhánh T1 (thư viện `lunar-vn`) chưa vào `main` — dùng `uv sync --inexact --frozen` nếu cần.
-- `kill` PID server tạm bị auto mode chặn ⇒ chạy server bằng `run_in_background` để tắt bằng TaskStop; nếu lỡ `nohup` ⇒ User `!`.
-- `test_cong_dot_1::test_weather_and_feature_routes` hỏng **chỉ khi nạp khoá** (`--env-file`; có khoá ⇒ ảnh bật) — không do nhánh.
-- `tim_so_tien` cần đơn vị ("đồng") — ô bảng giá trong kho thường ghi số trần ⇒ phía "cho phép" phải nhận cả số nhóm nghìn trần.
-- Công cụ đo SSE: một `httpx.Client` giữ cookie ⇒ mọi câu chung một cuộc trò chuyện — mỗi câu một client.
-- Bộ chấm: nhãn giá phải kèm đơn vị như bảng; tập cho phép theo đúng chữ plan — kiểm bộ chấm trên một câu trước khi đọc số.
-- `an_toan_run.py` cũ gọi `answer_case` **không** cờ (= RAG 1–8) ⇒ đo trợ lý phải truyền `AssistantFlags.from_settings`.
-- `wait_for_function` chuỗi của Playwright bị CSP chặn (`unsafe-eval`) ⇒ chờ bằng vòng Python.
-- Sub-agent đọc kho đôi khi đổ đầu ra ra `/tmp` — brief nhắc "không ghi file ngoài đích".
-- Giờ trong file: luôn `date`; không ghi "~hh:mm".
-
-### 4. Thắc mắc / câu hỏi còn treo
-- T3: chờ User chọn (a) / (b) / (c) — trước đó không code thêm.
-- Q3 hiện đếm "model tự nêu điều kiện" kể cả khi đúng với kho (T06 đúng) — nếu chọn (c) cần định nghĩa lại sàn bằng chữ trước khi đo.
-- Kiểm cuối T3 chỉ chạy ở lượt có tra bảng; câu tiền / giờ không nêu tên điểm có trong bảng không được kiểm (giới hạn thiết kế, report §11).
-
-### 5. Tiền C 08/11 ≈ **0,096 USD**: review bật ảnh 0,0020 · việc nhỏ ≈ 0,009 · T3 0,0853 (Q2 mốc 0,0128 + v1 0,0128 + v2 0,0119 + v3 0,0122 + S1 sinh 0,0355); mọi việc khác 0 USD.
-
----
-
-## (08/11) nhật ký trong phiên — chỉ tra cứu
-
-Terminal: C `hue-rag-e9` · A `hue-rag-a8` · B `hue-rag-a1` · E `hue-rag-22`. User cấp lại quyền phiên "như 07/11" (A báo).
-**Việc A giao (09:22 08/11/2026):** review cả nhánh `p11-anh-cong` của B (7 ảnh cổng) **khi B nhắn xong** ⇒ report `report_agent/2026-11-06_giao_dien_cong/c_anh_cong_review.md`. Tiêu chí: git ls-files / log -p không chứa ảnh #5 thật; clone sạch hiện `5_3` + đúng ghi công; ghi công 7 ảnh khớp `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/danh_sach.md`; CSP 0 vi phạm; build + `test_static_ui.py`; hook.
-Chuẩn bị (0 USD): git blob hash ảnh #5 thật (`ngoai_git/lv_festivals.jpg`) = `b2005024230b` (md5 `7eb7c9dc3625`) ⇒ tìm trong mọi blob của nhánh. Dự phòng `lv_festivals.jpg` blob `81d76895dfee`. Ghi công #1 trong `danh_sach.md` bị cắt cụt ("…Feel free to") ⇒ kiểm B ghi tên tác giả đúng.
-**Việc A giao ưu tiên trước (sau 09:22 08/11/2026):** rà .md tìm tính năng đã ghi mà chưa làm — phạm vi C: `session_prompt/` (kể cả archive, bỏ SO_CAI_TIEN), `report_agent/`, `data/**/*.md` nghiên cứu; E làm `bao_cao_he_thong/` + `docs/` + `guides/`. Đầu ra **duy nhất** `data/ra_soat_tinh_nang_2026-11-08/C.md` (private). Cách làm: 4 sub-agent chỉ đọc (session_prompt · report_agent 24/10–01/11 · report_agent 02/11+ · data nghiên cứu), C gộp + kiểm trạng thái bằng `settings.yaml` / code. 0 USD. **XONG 09:42 08/11/2026:** `C.md` sha256 `be44d3d54342` — A 31 ý · B 47 ý + mục quyết không làm + mục đã làm; đã nhắn A. Tiếp: review ảnh khi B nhắn.
-**Review ảnh XONG 09:50 08/11/2026:** `report_agent/2026-11-06_giao_dien_cong/c_anh_cong_review.md` sha256 `c9ecc607ff64` (untracked — A commit) — **ready_for_user_confirmation**, 0 blocker / 0 major / 2 minor (link "Nguồn ảnh" chân trang không cuộn tới mục; số tương phản làm tròn). Bằng chứng `data/phase_11/anh_cong/c_review/`. Worktree `/tmp/c_anh_rv` đã gỡ. 0 USD. Rảnh có lý do — chờ A.
-**Review bật ảnh XONG 10:01 08/11/2026:** `report_agent/2026-11-05_phase_10_anh/c_bat_anh_review.md` — ready (E rebase: xung đột `GioiThieu` với `c9931be`, giữ cả hai). ≈ 0,0020 USD (Phase 10).
-**ĐANG LÀM — Việc 2 "việc nhỏ" (User 08/11 duyệt Nhóm 1 + 2, A giao):** nhánh `p11-viec-nho-c` worktree `/tmp/c_vn` (symlink `data/`, `knowledge-base-hue/`) từ `main` `1611d34`. Ý: (3) tóm tắt thẻ · (8) nút báo sai trang bài · (10) ảnh nhỏ điện thoại · m-1 link Nguồn ảnh cuộn tới mục · (11) chuỗi số mục web ⊂ đoạn trích · (13) `turn_id` vào `chat_metrics`. Trần ≤ 0,01 USD.
-Khai báo file sẽ sửa: `backend/api/routes/cong.py`, `backend/api/feedback.py` (hoặc route mới cạnh đó), `backend/api/routes/chat.py` (chỉ dòng metrics), `backend/llm/tra_web.py` (`kiem_muc_web`), test tương ứng (`tests/test_cong_dot_1.py`, `tests/test_tra_web*.py`, `tests/test_api_chat.py` nếu cần), `frontend/src/pages.jsx` (trang bài, ảnh `srcset`), `frontend/src/App.jsx` (chân trang), `frontend/src/anh.js`, `frontend/src/route.js` (nếu cần cuộn mục), `frontend/src/index.css`, `frontend/public/anh/*_800*.jpg` (mới). Chồng: B `p11-ban-do` (pages.jsx Giới thiệu, chat.jsx, app.py), E (chat.jsx stream, assistant.py) — bên merge sau rebase.
-**XONG — chờ review (10:27 08/11/2026):** `p11-viec-nho-c` = `2c2c1bf` (pushed). Report `report_agent/2026-11-06_giao_dien_cong/c_viec_nho_implementation.md` sha256 `ddde67946081` (untracked — A commit). Tiền ≈ 0,009 USD. Bằng chứng `data/phase_11/viec_nho_c/`; công cụ ảnh nhỏ `data/phase_11/anh_cong/tools/anh_nho.py`. Worktree `/tmp/c_vn` (symlink `data/`, `knowledge-base-hue/`) giữ tới khi review xong — gỡ symlink trước `git worktree remove`. Test hỏng sẵn trên `main`: `test_b6_tra_web.py::test_web_section_renderer_uses_filter_without_links` (từ `27ed091`) — A: B đã sửa (`a4fde29`) ⇒ rebase là hết; gộp `GioiThieu({ banDo, anh, muc })` khi rebase.
-**Nháp bộ đo đổi định tuyến XONG 10:34 08/11/2026:** `data/phase_9/dinh_tuyen_2/bo_do_nhap.md` + `tools/dem_tuyen.py` (0 USD). Chờ A / User chốt sàn. A quyết 4 điểm (ghi trong nháp). **Chờ A nhắn "viết spec"** (sửa đổi spec Phase 9: định tuyến 2 nhóm + 4 công cụ: ngày + âm lịch · tra web thành công cụ · bảng vé + giờ có cấu trúc · lịch trình câu tự do). Đã đọc trước (10:39 08/11/2026): spec Phase 9 §3, §5 B6, §7, §11; plan B5c (âm 2 lần — `b162`), plan B6 D1; TONG_HOP `2026-11-06_b5_cau_tu_nhien` (kín v2 3/5), E20 (Sửa 1 / 2), e19_kin_v2 (K2 hỏi lại thừa do model gửi số khác). `OUT_OF_SCOPE_ANSWER` đã có + cổng web đã đóng với nó.
-**Spec bản 13 XONG — chờ review (khoảng 10:50 08/11/2026):** `docs/superpowers/specs/2026-11-02-phase-9-design.md` §12 (dòng 491–608, +131) + dòng trạng thái + bảng căn cứ bản 13; sha256 lúc viết `0845b1caefbc` (A tính lại). Chưa commit (A). 0 USD. Đợt 1 phần C sau khi duyệt: **T3 dữ liệu** (bảng vé + giờ từ kho, User duyệt).
-**ĐANG LÀM (A giao, spec đang B review `5d5edde`):** nháp bảng T3 — 2 sub-agent (giá vé · giờ) đọc kho qua `grep_kb.sh` ⇒ `data/phase_9/t3_bang_ve_gio/ve_nhap.json`, `gio_nhap.json`; C kiểm bằng `tools/kiem_nhap.py` (chuỗi có thật ở file:dòng) ⇒ gộp `bang_nhap.json` + `phieu_cho_user.md`. 0 USD.
-**XONG 11:08 08/11/2026:** `bang_nhap.json` sha256 `22df90450f0c` (66 điểm · 161 dòng vé · 107 dòng giờ · 42 + 59 miễn giảm; kiểm 1.011 / 1.011 chuỗi có thật ở file:dòng) + `phieu_cho_user.md` `25145f6123b7` (5 câu: 14 chỗ kho mâu thuẫn · sự kiện đã qua · dịch vụ · áp quy định chung / giờ chung · chợ). Công cụ `tools/kiem_nhap.py`, `tools/gop.py`. Plan T3 `docs/superpowers/plans/2026-11-08-phase-9-t3-bang-plan.md` (A sha `81767d819e13`, sub-agent review). Chưa code tới khi plan duyệt + User duyệt bảng. Sub-agent giờ lỡ đổ một đầu ra `grep_kb` (travel/places) ra `/tmp` rồi xoá ngay. User: phiên dừng ~13:00, A nhắn "kết phiên".
-**T3 (11:36 08/11/2026):** User duyệt bảng (câu 1 (a); A câu 2–5) ⇒ `bang_v1.json` `874af96dd995`. Plan bản 2 `dbcd1a2f6d81` A duyệt. Code `p9-t3-bang` = **`7ae4faf`** (pushed, cờ tắt), worktree **`/tmp/c_t3`** (symlink `data/`, `knowledge-base-hue/`; gỡ symlink trước `git worktree remove`). Test 36 + 542/1 (hỏng sẵn main, phụ thuộc thứ tự). Q1 off 228/228, on 181/181 + 45 câu có công cụ. **Q2 lượt 1 ÂM** (nhánh 17/20 < 19, mốc 16/20; model gọi công cụ 2/20; Q3 khối 0/4) — report `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` `f77b5f023be9` (untracked). Tiền T3 0,025679. **Chờ A chọn:** (a) phương án B (bảng chỉ kiểm cuối) · (b) khuyến nghị: code tự tra khi có từ khoá + dò được tên điểm ⇒ dòng bảng thành nguồn trước lần sinh. Lệnh chạy lại Q2 (server nhánh cờ bật, cổng 8898): `uv run python data/phase_9/t3_bang_ve_gio/tools/do_t3.py chay http://127.0.0.1:8898 /tmp/c_t3/backend/logs/application.log data/phase_9/t3_bang_ve_gio/do/bo_t3.jsonl <ra.jsonl> --dung 0.04` rồi `… cham data/phase_9/t3_bang_ve_gio/do/bo_t3.jsonl <ra.jsonl> data/phase_9/t3_bang_ve_gio/do/q2_moc_main.jsonl`. S1 (an toàn 32 nhánh ×2 + mốc ×1, `data/loi_nang_2026-10-28/tools/an_toan_run.py`) + S4 chưa chạy; S5 A xếp riêng. **Tiền C 08/11 ≈ 0,05 USD** (review bật ảnh 0,0020 · việc nhỏ 0,009 · T3 0,0375 · khác 0).
-**12:15 08/11/2026:** nháp `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md` (A duyệt / sửa lúc kết phiên; chỗ trống cho B / E). C rảnh.
-**12:14 08/11/2026 (A giao, 0 USD) xong:** T06 "trẻ 7–12 tuổi miễn phí" (Bảo tàng Cổ vật) **ĐÚNG với kho** (file vé Quần thể dòng 24 + 33) ⇒ không phải lỗi đang chạy; `do_t3.py` sửa: client mới mỗi câu (lượt đã chạy cùng thước, ghi report); lỗi T17 vào report §11 giới hạn. Report `ca952b559efc`. C rảnh — chờ A / kết phiên.
-**T3 vòng 3 (User duyệt) — KẾT QUẢ 12:12 08/11/2026: ÂM** (Q2 19/20 ✓ nhưng sàn Q3 trượt 6/10 — model tự nêu điều kiện miễn giảm, chép từ đoạn kho). Cờ `tra_ve_gio` tắt. Nhánh `p9-t3-bang` = **`21ec06d`** (pushed). Report §9 `8fb8a3949a66` (untracked — A commit). Lỗi phát hiện: (1) `do_t3.py` chạy 20 câu trong **một cuộc** (một `httpx.Client` giữ cookie) ⇒ lần sau client mới mỗi câu; (2) fallback "câu hỏi liền trước" gắn điểm cũ khi đổi chủ đề (T17 ⇒ lưu ý Chợ Đông Ba trên câu chùa Thiên Mụ). S1 nhánh ×2 đã **sinh** (`do/s1_nhanh/`, chưa chấm, chưa mốc). **Chờ A / User:** phương án B hay thiết kế lại. Tiền T3 0,085253; **C 08/11 ≈ 0,096 USD**. Worktree `/tmp/c_t3` (cờ đã trả false; symlink `data/`, `knowledge-base-hue/`) — gỡ: `rm /tmp/c_t3/data /tmp/c_t3/knowledge-base-hue && git worktree remove /tmp/c_t3`. Worktree `/tmp/c_vn` (p11-viec-nho-c, chờ review) giữ.
-**T3 vòng 2 (11:49 08/11/2026, A chọn (b)):** code tự tra khi có từ khoá + dò ra tên — `c706c2f` (rebase lên `f124527`, pushed). Q1 vòng 2: tắt 228/228, bật 181/181 + 45 (21 code tra · 24 công cụ). **Q2 18/20 < 19 ⇒ âm sát ngưỡng** (Q3 khối 4/4 ✓; 2 câu trượt chữ đúng: T05 rút lại do lỗi kiểm cuối — số bảng kho không kèm "đồng", sửa 1 dòng, CHƯA sửa; T14 luật chấm chặt). Report §8 `4ce54e5cb540`. **Chờ A / User:** giữ âm (phương án B) hay sửa T05 + đo lại (vòng 3, ngoài plan). Server tạm cổng 8898 PID 360806 / 360799 còn chạy — `kill` bị auto mode chặn ⇒ User `!`. Worktree `/tmp/c_t3` giữ (cờ trong worktree đã trả `false`). Lệnh S1 khi cần: từ `/tmp/c_t3/backend` bật cờ tạm ⇒ `HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python ../data/loi_nang_2026-10-28/tools/an_toan_run.py --out t3_nhanh_<ngày> --repeat 2 --cap 0.05` (+ mốc từ `main` `--repeat 1`), chấm 4 số theo thủ tục bộ an toàn.
-Câu cũ: mô phỏng kín sửa lịch KHÔNG chạy (A 08/11); phiếu v7 A hỏi User.
-Ghi chú cũ bên dưới (07/11) chỉ tra cứu.
-
-## (07/11) PHIÊN SAU ĐỌC TRƯỚC
+## (07/11) kết phiên — chỉ tra cứu
 **Trạng thái:** rảnh có lý do — không việc đang dở, không worktree `/tmp` nào của C. Chờ A giao (việc A giao = User nói "làm đi"). `main` khi viết: `fbcb903`.
 Phiên 07/11: terminal C `hue-rag-a0` · A `hue-rag-7a` · B `hue-rag-10` · E `hue-rag-81` (tên đổi khi mở lại — `ListAgents`).
 

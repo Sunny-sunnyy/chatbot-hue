@@ -1,6 +1,6 @@
 # Nhật ký 09/11/2026 — ngày + âm lịch đo xác nhận, bảng vé đóng hồ sơ, định tuyến về phương án B, 4 chốt trước deploy
 
-**Cập nhật lần cuối: 21:10 09/11/2026 (E viết, A đọc + cộng tiền).** Tiền paid trong ngày: **≈ 0,27 USD** (định tuyến G ≈ 0,18 + phương án B 0,036 · ngày + âm lịch 0,026 · bảng vé 0,028 · chốt deploy ≈ 0,0004 · A 0 — số từ report / log từng việc, chưa đối chiếu log tổng) (~6.800 đồng). Trần Phase 9: **4,0 USD** (bạn nâng 09/11).
+**Cập nhật lần cuối: 22:32 09/11/2026 (E viết, A đọc + cộng tiền).** Tiền paid trong ngày: **≈ 0,62 USD** (B ≈ 0,24: định tuyến G + phương án B + đo tốc độ · E ≈ 0,35: ngày + âm lịch, tra web thành công cụ, lịch trình câu gõ · C ≈ 0,03 · A ≈ 0,003 — số từ report / log từng việc) (~15.500 đồng). Trần Phase 9: **4,0 USD** (bạn nâng 09/11).
 
 ## Tóm tắt
 - Người dùng thấy đổi **một chỗ**: câu khẩn cấp không còn câu soạn sẵn (định tuyến phương án B vào `main`). Mọi thứ mới khác đều tắt hoặc chưa vào chatbot.
@@ -9,6 +9,8 @@
 - **Định tuyến "2 nhóm":** dừng sau hơn 3 vòng chỉnh, chuyển phương án B: giữ định tuyến 4 nhóm như cũ, chỉ bỏ câu khẩn cấp soạn sẵn.
 - **4 chốt trước khi đưa link công khai** đã vào code. Chúng chỉ bật khi đặt biến môi trường; trên máy bạn mọi thứ chạy y như trước.
 - **Cách làm:** từ hôm nay mỗi phiên có vòng tự soi bắt buộc. Lượt đo nào không chỉ ra được nó giữ sàn chất lượng nào thì không chạy.
+
+- **Tốc độ (đo chung cuối ngày):** một lượt trên trình duyệt thật, 65 câu, 0,0197 USD: câu về Huế tới chữ đầu p50 2,16 s / p95 4,32 s (đạt sàn 3 / 5 s), 0,00047 USD / câu (đạt ≤ 0,0005); câu ngoài phạm vi 1,62 / 2,97 s; **câu xã giao 3,46 / 7,73 s (p95 vượt sàn — đường cũ, không đổi hôm nay)**; **câu có từ chỉ ngày (công cụ ngày bật, chỉ 5 câu) p50 5,19 s, chậm nhất 11 s, 0,00063 USD / câu — vượt sàn**; bạn chọn giữ bật, tối ưu sau (chất lượng trước).
 
 ## Bạn cần làm gì
 - **Không có quyết định mới bắt buộc hôm nay.** Đã quyết trong ngày:

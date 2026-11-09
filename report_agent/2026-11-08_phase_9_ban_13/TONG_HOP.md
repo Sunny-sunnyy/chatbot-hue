@@ -82,3 +82,71 @@ Phase 9: trần **3,5** (đã dùng ≈ 2,05 trước hôm nay + phần hôm nay
 4. Bản đồ: User xem ảnh + phiếu toạ độ ⇒ bật cờ.
 5. Giọng nói: User thu 40 câu theo hướng dẫn.
 6. Sau đó: so sánh cuối B7 ⇒ đóng gói + Docker ⇒ deploy khi User nói.
+
+---
+
+## Phiên 09/11 (NHÁP — C viết 22:27 09/11/2026, `date`; A duyệt / sửa lúc kết phiên)
+
+Nguồn: `session_prompt/CURRENT_HANDOFF.md` mục "Phiên 09/11" (giờ A ghi nhận), giờ commit `git log`, report từng việc. Không chép kho / câu đo.
+
+### Quyết định theo giờ
+
+| Giờ (09/11) | Ai | Quyết định |
+|---|---|---|
+| 20:13 | User | Quyền phiên như 08/11 (A tự điều phối, B / C / E push nhánh riêng) |
+| 20:15 | User | Trần Phase 9 nâng **4,0 USD** |
+| 20:18 | User | T3 chọn hướng (a) = phương án B của spec (bảng chỉ để kiểm số sau khi model viết) |
+| 20:20 | User | Khẩn cấp sau G: giữ như 08/11, bỏ bộ quan sát khẩn cấp khỏi các lượt đo |
+| 20:21 | User | Tiền API thoải mái nhưng ưu tiên tốc độ; bỏ test / đo không phục vụ sàn; 4 session tự bàn ⇒ vòng tự soi (A chốt: S5 đo một lượt chung lúc đóng đợt; review chỉ blocker / major) |
+| 20:33 | User | Xoá 19 nhánh đã merge |
+| 20:50 | User | **T3 đóng hồ sơ, không merge** (lợi đo được ≈ 0) — tag `hoso/p9-t3-bang` |
+| 20:52 | A | Duyệt plan T2 bản 2 `88b1f0586e99` (mức nhẹ, ≈ 0,17 USD) |
+| 20:55 | User | G: nhận S09 (thiếu cảnh báo mưa lũ — có cả ở bản đang chạy) là giới hạn, đi tiếp |
+| 21:01 | A | G vượt 3 vòng chỉnh (S2b 2/44 trên bộ đã thấy) ⇒ **phương án B của spec**: giữ định tuyến 4 tuyến, bỏ câu soạn sẵn khẩn cấp (câu khẩn cấp đi trợ lý Huế); tag `hoso/p9-g-cong` |
+| 21:05 | A | Merge 4 chốt trước deploy `ccc9f4f` (C) |
+| 21:14 | User | Mốc đóng tính năng chưa chốt (A đề xuất 30/11); học dự án sau khi xây xong |
+| 21:15 | A | Duyệt plan T4 bản 2a `75dfd272fceb` |
+| 21:20 | A | Merge G phương án B `3b52017` |
+| 21:35 · 21:43 | A · User | Merge T1 `99ea59a`; **bật** `ngay_lich` `7eb1f12` (User duyệt) |
+| 21:49 | A | T2 âm ⇒ đóng hồ sơ `hoso/p9-t2-web`, giữ cổng web B6 |
+| 22:18 | A | T4 âm ⇒ đóng hồ sơ `hoso/p9-t4-lich`; biểu mẫu "Lên kế hoạch" là đường lịch trình duy nhất |
+
+### Kết quả từng việc
+
+- **G — cổng 2 nhóm (B):** bản 2 tuyến chỉnh lời dặn 3 vòng vẫn trượt sàn "câu ngoài phạm vi không có mục web" ⇒ **phương án B vào `main`** (định tuyến 4 tuyến giữ nguyên, câu khẩn cấp đi trợ lý Huế, gỡ cờ / mã khẩn cấp + khối giao diện). Test rộng 842 đạt. Giới hạn nhận: S09, S2b 1 / 20 câu kín.
+- **T1 — ngày + âm lịch (E):** xác nhận 14 câu (sai ngày / thứ 0); sửa "sang năm / năm nay" bằng code ⇒ merge + **bật** — tính năng duy nhất của bản 13 lên người dùng hôm nay.
+- **T2 — tra web thành công cụ (C viết lại plan, E code + đo):** **âm** — câu hỏi kèm có phần web 4 / 10 = mốc. Model yêu cầu web ở 9 / 10 câu hỏi kèm, nhưng 26 / 29 lần yêu cầu rơi vào câu
+  kho từ chối cả câu ⇒ cổng cũ đã mở sẵn; cổng mới mở 3 lần, 0 mục web dùng được thêm. Các sàn an toàn / ngoài phạm vi đạt. Gốc: lời dặn "thiếu bằng chứng ⇒ từ chối cả câu".
+- **T3 — bảng vé + giờ (C):** hướng (a) — bật cờ thì chuỗi gửi model giống byte `main` (228 / 228); 20 câu vé / giờ + bộ an toàn 32: 0 rút lại, ngoài kho bị trả lời 0 / 4, nhưng
+  lưới kiểm chưa bắt được số sai nào (lần bật duy nhất là báo nhầm do lỗi bộ đọc giờ liệt kê bằng dấu phẩy — đã sửa) ⇒ **đóng hồ sơ**. Bảng User duyệt giữ để dùng lại.
+- **T4 — lịch trình câu gõ tự do (E code + đo, C review):** **âm** ở "hợp người đi cùng" (2 người chấm 21 / 27 và 15 / 27, cần 26). Ba sửa của T4 đúng việc (hỏi lại thừa 0, từ chối thay
+  cả lịch 0, câu cố định nói sai 0 / 19); gốc lỗi ở luật xếp / bảng điểm dùng chung ⇒ **đóng hồ sơ**, cờ `lich_trinh` tắt.
+- **4 chốt trước deploy (C):** giới hạn lượt / IP / ngày (429), cookie `Secure`, tắt `/docs`, log xoay vòng — bật bằng biến môi trường, không đặt ⇒ như cũ; merge `ccc9f4f`.
+- **S5 tốc độ (B, một lượt chung trên `main` `0ce6713`):** một lượt trên trình duyệt thật, 65 câu, 0,0197 USD: câu về Huế tới chữ đầu p50 2,16 s / p95 4,32 s (đạt sàn 3 / 5 s), 0,00047 USD / câu (đạt ≤ 0,0005); câu ngoài phạm vi 1,62 / 2,97 s; **câu xã giao 3,46 / 7,73 s (p95 vượt sàn — đường cũ, không đổi hôm nay)**; **câu có từ chỉ ngày (công cụ ngày bật, chỉ 5 câu) p50 5,19 s, chậm nhất 11 s, 0,00063 USD / câu — vượt sàn**; bạn chọn giữ bật, tối ưu sau (chất lượng trước) (User 22:32 09/11/2026). Dữ liệu `data/phase_9/s5_chung/`.
+
+### Tiền (USD, từ report / STATUS — số log `chat_metrics`)
+
+| Session | 09/11 | Gồm |
+|---|---|---|
+| C | ≈ 0,028 | T3 (a) Q2 0,010562 + an toàn 32 0,017105 · chốt deploy ≈ 0,00035 · review T2 / T4 + plan T2 0 USD |
+| E | ≈ 0,352 | T2 0,171397 (nhánh 0,119908 + mốc 0,051489) · T4 0,136074 · T1 xác nhận 0,025622 + sau G 0,019393 |
+| B | ≈ 0,24 | G ≈ 0,18 · phương án B 0,036 · S5 0,0197 |
+| A | ≈ 0,003 | 2 cổng ổn định (merge phương án B, bật T1) |
+
+Tổng 09/11 ≈ **0,62 USD**. Phase 9 ≈ **3,6 / 4,0** (≈ 3,0 trước 09/11; cộng từ report, chưa đối chiếu log tổng).
+
+### Giới hạn
+
+- Định tuyến vẫn 4 tuyến: ngoài phạm vi do định tuyến quyết; câu khẩn cấp nhận câu trả lời thường của trợ lý Huế (User chấp nhận); 1 câu y tế bị định tuyến xếp khẩn cấp ⇒ mục web (đã biết).
+- Câu hỏi có một phần kho thiếu vẫn bị từ chối cả câu (lời dặn); muốn "nửa kho + nửa web" phải đổi luật này — đã âm 2 lần trước, cần bộ kín.
+- Luật xếp lịch dùng chung với biểu mẫu đang bật: "tối không xếp cho người lớn tuổi" bỏ cả điểm kho ghi hợp người lớn tuổi; người lo mưa vẫn được xếp điểm ngoài trời — chưa thấy ở
+  người dùng thật, đo khi có phản hồi.
+- Câu trả lời có thể bỏ điều kiện tạm ngừng mùa mưa lũ có trong nguồn (S09, có cả ở bản trước bản 13) — backlog.
+- Giới hạn lượt đếm trong RAM: khởi động lại là xoá sổ; sau Caddy cần `--proxy-headers` để IP đúng.
+
+### Bước tiếp
+
+1. Tối ưu tốc độ (sau, chất lượng trước): câu ngày (đo thêm 15–20 câu; thử code tính sẵn ngày thay vì model gọi công cụ), câu xã giao (chạy song song định tuyến như #6).
+2. Kết phiên: báo cáo khâu `BAO_CAO_SINH_CAU_TRA_LOI_API` + `LUONG_HOAT_DONG_HE_THONG` gộp đợt (T1 bật, G phương án B, 3 việc đóng hồ sơ, chốt deploy); `Project_Status.md`.
+3. B7 so sánh cuối ⇒ đóng gói + Docker (nhánh `p12-deploy-nhap` chờ User) ⇒ deploy khi User nói (đặt 3 biến môi trường + `--proxy-headers`).
+4. User khi rảnh: phiếu toạ độ bản đồ (bật `ban_do_lich`), thu 40 câu giọng nói; chốt mốc đóng tính năng.

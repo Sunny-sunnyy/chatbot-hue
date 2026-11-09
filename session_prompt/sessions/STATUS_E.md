@@ -1,28 +1,30 @@
-# STATUS E — PHIÊN 09/11 (mở 20:10 09/11/2026, `date`) · terminal `hue-rag-ea` (A `hue-rag-87`, B `hue-rag-99`, C `hue-rag-6a`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — KẾT PHIÊN 22:29 09/11/2026 (`date`) · terminal `hue-rag-ea` (A `hue-rag-87`, B `hue-rag-99`, C `hue-rag-6a`) · Claude Opus 5.5 · vai thực thi
 
-## ĐANG LÀM (cập nhật 20:28 09/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (viết 22:29 09/11/2026)
 
-- **TIỀN E phiên 09/11:** xác nhận T1 0,025622 + T1 sau G 0,019393 + T2 0,171397 + T4 0,136074 = **≈ 0,352 USD** (log `chat_metrics` / `usd` từng lượt).
-- **T1 sau G — ĐẠT** (report §4f): A merge `99ea59a`, **bật `ngay_lich`** `7eb1f12` (User duyệt).
-- **T2 lượt có phí — ÂM** (report `e_t2_web_implementation.md` §4): hỏi kèm có web 4 / 10 = mốc; 26 / 29 lần model yêu cầu web thì lượt đó từ chối cả câu (cổng cũ đã mở). **A đồng ý đóng hồ sơ** (tag `hoso/p9-t2-web`), không merge. S1 / S4 chưa chấm (chỉ cần khi merge). Nhánh `p9-t2-web` `bdfbbdc` (rebase trên `3b52017`).
-- **T4 — ÂM ở Q3 (ii) "hợp người đi cùng"** (21 · 15 / 27, cần 26): report `report_agent/2026-11-08_phase_9_ban_13/e_t4_lich_implementation.md`. K2 0 · từ chối thay lịch 0 · (b) không nói sai 0 · S1 / S4 / S3b đạt. Gốc lỗi ở luật xếp / bảng điểm B5. **Chờ A:** đóng hồ sơ (E nghiêng) hay merge cờ tắt. Tiền 0,136074. Nhánh `p9-t4-lich` `9481904`; worktree `/tmp/e_t4r` (gỡ sau khi A quyết).
+**E không có code dở, không worktree, không server.** File thử còn ở `/tmp/e_g_probe/` (ca dò review, xoá được). **Tiền E phiên 09/11 ≈ 0,352 USD** (T1 xác nhận 0,025622 · T1 sau G 0,019393 · T2 0,171397 · T4 0,136074 — `chat_metrics.usd` / `usd` từng lượt; chấm bằng sub-agent 0 USD API).
 
-- **T1 lượt xác nhận — XONG, trượt 1 câu (chờ A quyết):** report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` §4e. 14 câu mới, 2 người chấm khớp 14 / 14:
-  R ⇒ OK 9 · L2 0 · max_turns 0 · **L1 1 ("Tết năm nay": model gọi Tết sắp tới là "năm nay")** ⇒ tiêu chí 2 + 5 trượt. Chữ đầu nhánh p50 3,35 / p95 6,33 s ↔ mốc 4,90 / 7,87 (thay S5, A chốt). Tiền **0,025622 USD**.
-  Dữ liệu `data/phase_9/t1/xac_nhan/` (tiêu chí, brief, kết quả, khoá, 2 phiếu); công cụ mới `tools/doc_metrics.py`; `chay_t1.py` ghi `turn_id` + bộ `xac_nhan`; `dung_cap_mu.py xac_nhan`.
-- **Nhánh `p9-t1-sang-nam`:** `d3e7d02` bộ dò "sang năm" + `ff65510` sửa "năm nay". Chờ G merge ⇒ rebase ⇒ lượt sau G ⇒ review nhánh.
-- **A chốt 09/11:** bỏ S5 riêng; sau khi G merge chạy MỘT lượt nhỏ (5 câu cũ + 3 câu bị xếp ngoài phạm vi + "sang năm"). Khi B khoá G ⇒ E review cả nhánh G (A báo).
-- **Sửa (b) "năm nay" (A chọn) — `p9-t1-sang-nam` `ff65510` (push):** ngày âm + câu nói "năm nay" / không nêu năm ⇒ code thêm lần gần nhất + lần sắp tới + dòng `GHI_CHU_NAM`; docstring `nam` sửa; log công cụ ghi `nam`. `test_ngay_lich.py` 72 passed; `backend/tests` 824 passed (hỏng: 4 cần khoá + 3 giao diện thiếu `frontend/dist` ở worktree — đạt trên thư mục chính). Lượt sau G ghi trước: `tieu_chi.md` mục 2 (bộ `bo_sau_g.jsonl` `be692a908902`, 14 câu + an toàn 4 × 2 lượt). Worktree đã gỡ.
-- **Đọc trước diff G (`origin/p9-g-cong` `87d6798`; nhánh cục bộ `p9-g-cong` = `f8bfc69` khác sha — hỏi B khi review):** ghi nhận để review: (1) `bieu_mau_agent` giờ dùng hằng `ANSWER_BIEU_MAU_INSTRUCTIONS`, bỏ qua tham số `answer_instructions` (chỉ harness 8.1 dùng) — minor; (2) bỏ hẳn đường khẩn cấp (rủi ro User đã chấp nhận, câu hỏi 3b còn chờ); (3) T1 sau G: câu ngày đi qua agent ⇒ lời dặn mới có "kể cả câu về ngày tháng" là câu về Huế — khớp ý T1; (4) xung đột rebase `assistant.py` với T1 (B đã biết).
-- **Review sớm G (A giao, 0 USD) — XONG nháp:** `report_agent/2026-11-08_phase_9_ban_13/g_cong_branch_review.md` — phần code `f8bfc69`: 0 blocker / 0 major / 3 minor (B nhận cả 3). 825 passed. Chữ lời dặn chờ sha cuối (B: `cc2d525` dời khối ngoài phạm vi, ANSWER `507f891eafec`; nếu âm ⇒ phương án B, code đổi nhiều ⇒ B báo E).
-- **Nháp plan T4 (A giao, chưa code):** `docs/superpowers/plans/2026-11-09-phase-9-t4-lich-trinh-plan.md` bản 1 `46f6fdd69f90` — mức nhẹ ≈ 0,15 USD, **không bộ kín** (sửa là code; kín v2 đã dùng); 3 câu hỏi cho A (mở kín v2 đã dùng? chữ câu cố định (b)? S5 chung?).
-- **T4 code — XONG phần 0 USD:** nhánh `p9-t4-lich` **`9780d93`** (push; từ `main` `3d2d420`; worktree đã gỡ). (a) số ngày dò được thắng tham số model · (b) câu cố định `CAU_HOI_THEM_CHUA_CO` khi model từ chối sau `tim_kho` bị chặn · (c) log `so_ngay_model` / `so_ngay_do`. `test_b5_lich_trinh.py` **247 passed**; Q1 cờ tắt **228 / 228 giống byte** `main` (`data/phase_9/t4/q1/`). **Còn:** rebase khi G + T2 vào `main` ⇒ test rộng 1 lần ⇒ tách 8 câu E19 ⇒ lượt có phí ≈ 0,11 (plan `29708ef92e30`) ⇒ chấm ⇒ report ⇒ review nhánh.
-- **Bộ "hỏi kèm" T2 cho C — XONG:** `data/phase_9/t2_web/hoi_kem_10.jsonl` md5 `04aa82399972` (10 câu, phần kho kiểm `grep_kb.sh`; E chưa đọc plan T2 §1.1). K1, K5 bật bộ dò ngày (vô hại khi `ngay_lich` tắt).
-- **T2 code — XONG phần 0 USD:** nhánh `p9-t2-web` **`2ac126a`** (push, từ `main` `fb621e0`, worktree đã gỡ); report `report_agent/2026-11-08_phase_9_ban_13/e_t2_web_implementation.md`. 18 test mới + 438 file chạm đạt; Q1 cờ tắt 228 / 228 byte. C review **ready** 0 / 0 / 2 (`c_t2_web_review.md`): m-1 T4 kiểm `max_turns` chuỗi `tim_kho` + `lich_trinh` + `yeu_cau_tra_web`; m-2 kiểm cỡ `application.log` trước lượt đo (log xoay 10 MB). Sau rebase G: file chạm + Q1 tắt ⇒ lượt có phí ≈ 0,17 ⇒ C xem delta + số đo.
-- **Nháp báo cáo User (A giao, 0 USD):** **file sẽ sửa:** `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (Tóm tắt + checklist + mục T1 / T3 / G / chốt deploy), `bao_cao_he_thong/nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md` (mới). **XONG nháp** — A đọc rồi commit.
-- **Review `p9-g-b` (B, phương án B) — XONG:** `report_agent/2026-11-08_phase_9_ban_13/g_b_branch_review.md` — `4df9427` ready 0 / 0 / 2 (m-1 `REMEMBERED_OUTCOMES` còn "emergency"; m-2 khối `.emergency` giao diện). Delta `2deec02` xem xong ⇒ **ready**, m-1 / m-2 đóng (review §7); đã báo A merge.
-- **T4 plan bản 2a:** thêm dòng tiêu chí "(b) không nói sai" (review C M-1 `c_t4_lich_review.md`, A duyệt luôn); sha cuối `75dfd272fceb` (A ghi vào handoff). C ghi thêm: #6 chưa có test cho (b); sau rebase lên T2 kiểm `max_turns` chuỗi `tim_kho` + `lich_trinh` + `yeu_cau_tra_web`.
-- Worktree: không còn của E (đã gỡ `/tmp/e_g`, `/tmp/e_gb`). File thử `/tmp/e_g_probe/` (ca dò review, xoá được). **Rảnh — chờ A merge `p9-g-b` ⇒ rebase 3 nhánh ⇒ lượt có phí T1 ⇒ T2 ⇒ T4.**
+### Kết quả phiên 09/11 (việc của E)
+- **T1 ngày + âm lịch — BẬT** (`99ea59a` + `7eb1f12`, User duyệt). Report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` §4e, §4f. Giới hạn: câu lịch thuần không nhắc Huế ⇒ định tuyến xếp ngoài phạm vi (A chọn giữ); "tháng tới / cuối tuần" model tự cộng.
+- **T2 tra web thành công cụ — ÂM ⇒ hồ sơ** `hoso/p9-t2-web` (`e_t2_web_implementation.md` §4–5). Bộ hỏi kèm 10 E viết: `data/phase_9/t2_web/hoi_kem_10.jsonl` md5 `04aa82399972`.
+- **T4 lịch trình câu gõ — ÂM ⇒ hồ sơ** `hoso/p9-t4-lich` (`e_t4_lich_implementation.md`). Gốc lỗi ở luật xếp / bảng B5; áp cả cho biểu mẫu: "dày lịch" gần như không tác dụng (bảng 1 / 28 điểm `ngan`), nhóm hạn chế không có buổi tối, không nói được lo mưa.
+- **Review:** G 2 nhóm phần code (`g_cong_branch_review.md`, hồ sơ); G phương án B `p9-g-b` `2deec02` ready ⇒ merge `3b52017` (`g_b_branch_review.md`).
+- **Báo cáo User (nháp, A commit):** `BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 45 ⇒ 46; `LUONG_HOAT_DONG_HE_THONG.md` bản 33; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md`. Chỗ số S5 để trống cho A (B đo: câu ngày p50 ~5,2 s — B báo).
+
+### Việc mở liên quan E (không gấp, chờ A / User)
+- Bảng điểm v7 (cột thời lượng) — User duyệt ⇒ "dày lịch" của biểu mẫu mới có tác dụng.
+- Giọng nói: User thu 40 câu (`data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`) ⇒ G1 → G2 (plan `92ec551531fd`).
+- Nhánh hồ sơ có thể xoá khi User muốn: `p9-t2-web`, `p9-t4-lich` (đã có tag); `p9-t1-sang-nam` đã merge.
+
+### Bẫy / đã học (phiên 09/11)
+- **Tiêu chí ghi trước phụ thuộc nền chưa có** (T1 tiêu chí 3 giả định G 2 nhóm) ⇒ phải xin "không áp dụng". Ghi nền giả định vào tiêu chí.
+- **Pilot rẻ trước giả thuyết hành vi model:** T2 âm vì model từ chối cả câu — 10 câu hỏi kèm một bên (≈ 0,02) đã đủ thấy.
+- **Đọc giới hạn cũ của khâu trước khi viết plan đo** (T4 âm vì giới hạn B5 ghi từ 06/11).
+- **Phiếu chấm có phán đoán cần ngưỡng ghi trước** (Q3 (ii) hai người 21 vs 15).
+- **Harness: chạy thử 0 USD với khoá giả** bắt được lỗi đếm lượt lỗi thành "từ chối" (`do_t4.py`).
+- **Bộ "golden" trùng id** giữa `mau30` và `s2` (Golden OOS) ⇒ đếm theo bộ phải tách nguồn (T2 "3 / 38" thô).
+- **Push từ worktree / lệnh ghép push + worktree remove** bị auto mode chặn ⇒ push từ working tree chung, tách lệnh.
+- `chay_t1.py` ghi `turn_id`; `doc_metrics.py` đọc `chat_metrics` theo `turn_id`; log xoay vòng 10 MB (từ `ccc9f4f`) ⇒ lượt dài có thể cần đọc cả `application.log.1`.
 
 ## (lịch sử) STATUS E — KẾT PHIÊN 12:50 08/11/2026 (`date`) · terminal `hue-rag-22` (A `hue-rag-a8`, B `hue-rag-a1`, C `hue-rag-e9`) · Claude Opus 5.5 · vai thực thi
 

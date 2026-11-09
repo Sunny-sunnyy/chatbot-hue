@@ -186,6 +186,23 @@ Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm
   72 passed; `backend/tests` 824 passed (hỏng đúng 4 test cần khoá + 3 test giao diện thiếu bản build ở worktree — đạt trên thư mục chính). Cờ vẫn tắt.
   **Chưa đo có phí** — đo ở lượt sau G (tiêu chí ghi trước `tieu_chi.md` mục 2: 3 câu mới cùng loại, L1 = 0; thêm an toàn 4 câu × 2 lượt + 1 câu ngoài kho).
 
+## 4f. Lượt sau G (nền phương án B) — sửa "năm nay" / "sang năm" (ghi 21:35 09/11/2026)
+
+- **Nền:** `main` `3b52017` (G phương án B: giữ định tuyến 4 tuyến) + `p9-t1-sang-nam` rebase **`7db1fb6`** (cờ bật tạm ở worktree); mốc = `main` cờ tắt. 14 câu `bo_sau_g.jsonl` + an toàn 4 câu ×1 mỗi bên (A chốt vòng tự soi, ghi trước ở `tieu_chi.md` mục 2b); 1 người chấm mù + `kiem_l2.py`.
+- **Kết quả (người chấm mù, mở khoá sau):**
+
+| Tiêu chí (`tieu_chi.md` mục 2) | Kết quả | |
+|---|---|---|
+| 1. L1 = 0 ở loại "năm nay / không nêu năm" | L1 **0**. "Tết năm nay" (câu trượt hôm trước) ⇒ **OK**: nêu Tết năm âm hiện tại kèm năm + "đã qua" (mốc: từ chối). Câu lễ "năm nay" mới ⇒ OK ở cả hai. 2 câu lịch thuần ⇒ định tuyến chặn (xem 3) | đạt (phần tới được agent) |
+| 2. L2 0 · L3 mới 0 · `max_turns` 0 | 0 · 0 · 0 (`kiem_l2` 0 đánh dấu cả hai bên) | đạt |
+| 3. 8 câu bị định tuyến chặn hết bị chặn | **Không áp dụng — nền đổi** (A 09/11): tiêu chí viết khi nền là G 2 nhóm; nền thật là phương án B (lời dặn định tuyến = `main`) ⇒ câu lịch thuần không nhắc Huế vẫn "ngoài phạm vi" ở **cả hai bên** (mốc 9 / 14, nhánh 10 / 14). Ghi là **giới hạn**: đúng phạm vi sản phẩm du lịch Huế | n/a |
+| 4. "sang năm" có gọi công cụ + OK | gọi `ngay_lich` (âm, năm sau) ⇒ **OK** (mốc: từ chối) | đạt |
+| 5. An toàn 4 số + ngoài kho 0 | 4 câu: đảo cảnh báo 0 · sai điều kiện 0 · thiếu cảnh báo 0 · ngoài kho bị trả lời 0 (cả hai bên OK 4 / 4); câu ngoài kho X14 ⇒ từ chối cả hai | đạt |
+
+- **Tổng:** 3 câu ngày có ngữ cảnh Huế (Tết năm nay · lễ năm nay · "sang năm") nhánh OK 3 / 3 ↔ mốc OK 1 / 3. Một câu "còn mấy ngày tới rằm tháng Giêng" ra "ngoài phạm vi" ở nhánh nhưng tới agent ở mốc (định tuyến dao động — cùng giới hạn mục 3).
+- **Tiền thật** (`chat_metrics.usd` theo `turn_id`): nhánh 0,007739 + mốc 0,011654 = **0,019393 USD**. Chữ đầu (n nhỏ, chỉ ghi): nhánh p50 2,88 s ↔ mốc 3,05 s.
+- **Kết luận:** đạt các tiêu chí còn áp dụng ⇒ A merge cờ tắt, trình User bật. Giới hạn ghi khi bật: câu lịch thuần (không nhắc Huế) do định tuyến coi là ngoài phạm vi; "tháng tới / cuối tuần" model tự cộng; năm 1976–2100.
+
 ## 5. Lỗi và giới hạn
 
 - **R8 — A chấp nhận (08/11) đổi lấy 8 câu cứu được.** Câu "dịp lễ sắp tới" kém ổn định cả 3 lượt. Nguyên nhân: kho thiếu lịch lễ hội "sắp tới" theo ngày; khi model biết hôm nay là 08/11, nó tìm lễ sau ngày đó, không thấy ⇒ từ chối. Bản cũ trả lời chung chung (đoán dịp 30/4) + hỏi lại. Sửa thật cần dữ liệu lịch sự kiện theo ngày (đợt 2 cổng), không phải code công cụ.

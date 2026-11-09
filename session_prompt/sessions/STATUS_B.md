@@ -1,10 +1,21 @@
 # STATUS B — PHIÊN 09/11 (mở 20:14 09/11/2026, terminal `hue-rag-99`; A `hue-rag-87` · C `hue-rag-6a` · E `hue-rag-ea`)
 
-## Trạng thái 21:19 09/11/2026 — rảnh, chờ A merge `p9-g-b` `2deec02` (E xem delta 2 minor)
+## KẾT PHIÊN 09/11 (22:28 09/11/2026 `date`) — PHIÊN SAU ĐỌC TRƯỚC
+
+- **Không việc dở.** Không server / tiến trình / worktree nào của B còn chạy (`/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/b_gb`, `/tmp/b_s5` đã gỡ). Quyền phiên 09/11 hết hạn.
+- **Xong hôm nay:** G 2 tuyến DỪNG (hồ sơ tag `hoso/p9-g-cong`) ⇒ phương án B đã merge `main` `3b52017` (A). S5 chung trên `main` `0ce6713` xong — số ở dưới, chờ A / User quyết đề xuất.
+- **S5 (1 lượt, Chromium, 65 câu, 0,0197 USD; `data/phase_9/s5_chung/`):** chữ đầu p50 / p95 — Huế 2,16 / 4,32 s ✓ · ngoài phạm vi 1,62 / 2,97 s ✓ ·
+  **xã giao 3,46 / 7,73 s** (định tuyến xong mới gọi model trò chuyện) · **ngày (5) p50 5,19 s, max 11,0 s** (3–5 lần gọi / câu, 0,00063 USD / câu). USD câu Huế không web 0,00042.
+  Đề xuất đã gửi A (chưa đo): chạy song song model trò chuyện cùng lúc định tuyến; kiểm `ngay_lich` chỉ đưa khi code dò thấy từ ngày.
+- **Lệnh đo lại S5** (server `main` từ worktree có `frontend/dist`, cổng trống): `cd data/phase_9/s5_chung/tools && uv run --project /home/minhhieu/hue_rag python s5_do.py http://127.0.0.1:<cổng> <worktree>/backend/logs/application.log ../cau_s5.jsonl ../s5_<tên>.jsonl --dung 0.075` rồi `… s5_tong.py ../s5_<tên>.jsonl`.
+- **Bẫy:** (1) S-AT đếm theo nhãn judge — đọc chữ cả hai bên trước khi sinh lại (S09: 21 / 21 câu như nhau, chênh do judge); (2) công cụ S4 01/11 dùng selector giao diện cũ — dùng `s5_do.py`;
+  (3) rule CSS nhiều dòng: xoá theo dòng dễ để sót dòng sau (`.emergency` — đã bắt trước build); (4) `do_g.py bo('rui_ro')` nạp cả phần kín B1 (đã dùng) — lọc `set`, không in.
+- **Tiền B phiên 09/11 (log):** G ≈ 0,18 · phương án B ≈ 0,037 · cổng ổn định ≈ 0,003 · S5 ≈ 0,020 ⇒ **≈ 0,24 USD**.
+- Nhánh chờ User `!` xoá: `p9-g-cong` (đã tag), `p9-g-b` (đã merge).
 - **G 2 tuyến DỪNG** (quá 3 vòng chỉnh: bản `426109d2` trượt S1 S-AT; bản `507f891e` trượt S2b đã thấy 2/44) ⇒ hồ sơ `p9-g-cong` `6956ac0` (tag `hoso/p9-g-cong`, A gắn).
 - **Phương án B** `p9-g-b` `2deec02` (đã push; worktree `/tmp/b_gb`): khan_cap ⇒ agent Huế, gỡ câu khẩn cấp soạn sẵn + luật code + phần chết giao diện. Lời dặn giống byte `main`. Test rộng 842 · cổng ổn định đạt · S2/S3/S3b 0 · S2b 1 (câu y tế bị định tuyến xếp khan_cap — A nhận là giới hạn). E review `4df9427` ready (0/0/2 minor, đã sửa).
 - Giới hạn User nhận: S2b kín G 1/20; S09 thiếu điều kiện thời tiết (21/21 lần cả G lẫn mốc không nêu — do judge). Report `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md` §0 + §4.
-- Worktree giữ: `/tmp/b_g` (G, `6956ac0`), `/tmp/b_moc_g` (`442f758`), `/tmp/b_gb` (B) — gỡ sau merge. Tiền B 09/11 ≈ 0,22 USD.
+- Worktree `/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/b_gb` đã gỡ (dữ liệu ở `data/` còn nguyên). Nhánh `p9-g-cong` (tag) + `p9-g-b` chờ User `!` xoá. Tiền B 09/11 ≈ 0,22 USD.
 
 ## Đang làm — G phần 0 USD (A giao 20:14 09/11/2026)
 - Worktree dựng lại: `/tmp/b_g` = `p9-g-cong` `87d6798`, `/tmp/b_moc_g` = `442f758` (tách rời; symlink `data/`, `knowledge-base-hue/`).

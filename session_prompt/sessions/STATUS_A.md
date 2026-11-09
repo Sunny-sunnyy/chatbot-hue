@@ -1,4 +1,9 @@
-# STATUS A — PHIÊN 09/11 (mở 20:09; cập nhật 20:21 09/11/2026 `date`)
+# STATUS A — KẾT PHIÊN 09/11 (mở 20:09; cập nhật 22:34 09/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ hỏi mốc đóng tính năng ⇒ W61 / W59 / W62 / W63 (gom một lần) ⇒ mở vòng tự soi khi mỗi session có kết quả đầu tiên. Không còn worktree / server; 7 nhánh chờ User `!` xoá (lệnh ở handoff mục 3).
+- Xong 09/11: chốt deploy `ccc9f4f`; phương án B `3b52017`; T1 `99ea59a` + bật `7eb1f12`; tag hồ sơ G / T2 / T3 / T4; luật tự soi `fb621e0`, rảnh là bình thường `902f57d`; báo cáo khâu bản 46 + LUONG bản 33 (E viết, A đọc); TONG_HOP mục 09/11 (C nháp, A điền S5 + tiền); sổ vòng 23. Tiền A ≈ 0,003 (2 cổng). Cả phiên ≈ 0,62.
+- Chuyển luật tự soi cho 2 phiên dự án khác (User yêu cầu) — tin tới được lúc chúng còn mở.
+
 
 - Terminal: A `hue-rag-87` · B `hue-rag-99` · C `hue-rag-6a` · E `hue-rag-ea` (cả bốn Claude Code, trực tiếp).
 - Kiểm nhanh: `main` `5c982a0` = origin, sạch; hooksPath `.githooks`; Qdrant chạy sẵn (2 collection, 8.435 điểm); worktree `/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/c_t3` mất ⇒ B / C dựng lại; spec Phase 9 sha file `01b7476a3eb1` (sửa chữ `442f758` sau bản duyệt `5557f0fd7650`).

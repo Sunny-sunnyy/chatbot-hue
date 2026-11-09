@@ -31,3 +31,9 @@ Căn cứ: spec Phase 9 bản 13 §12.2 dòng G cột "Phương án B"; report B
 
 ## 6. Decision
 `ready_for_user_confirmation` (backend). Khi B báo sha cuối: E xem delta giao diện + m-1 ⇒ đóng.
+
+## 7. Delta `4df9427` → `2deec02` (sha cuối, B báo) — 21:19 09/11/2026
+
+- `git diff 4df9427 2deec02`: 3 file, +2 / −8 — đúng m-1 (`REMEMBERED_OUTCOMES` bỏ "emergency") và m-2 (`chat.jsx` bỏ khối + điều kiện `.emergency`, `index.css` bỏ 2 rule). `git diff --check` sạch; `git grep emergency` trong `frontend/src` = 0.
+- Dùng lại bằng chứng của B cho phần chạy (build giao diện, test rộng 842, server thật 3 câu) — delta chỉ gỡ mã chết, không đổi đường dữ liệu.
+- **m-1, m-2 đóng.** Decision cuối: **`ready_for_user_confirmation`** cho `2deec02`.
