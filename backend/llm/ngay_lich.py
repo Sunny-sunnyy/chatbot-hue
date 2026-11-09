@@ -130,9 +130,36 @@ def khoang_ngay(cau: str, hom: dt.date) -> list[str]:
     return dong
 
 
+_NAM_NAY = re.compile(r"(?<!\w)năm nay(?!\w)", re.IGNORECASE)
+# 09/11 (lượt xác nhận, A chọn (b)): hỏi tháng 11 "Tết năm nay…" ⇒ model gọi Tết sắp tới là "năm nay", không nói Tết năm âm hiện tại đã qua ⇒ code nêu
+# cả hai lần và dòng ghi chú này (chữ do code dựng; không đổi lời dặn chung)
+GHI_CHU_NAM = ("Ghi chú: người dùng không nêu năm cụ thể (hoặc nói \"năm nay\" với ngày âm) ⇒ trả lời ghi rõ năm của từng ngày; lần gần nhất đã qua thì "
+               "nói là đã qua, rồi nêu lần sắp tới.")
+
+
+def _hai_lan(ngay: int, thang: int, loai: str, thang_nhuan: bool, hom: dt.date, lich: str, nhuan: str) -> list[str]:
+    """Không nêu năm ⇒ lần gần nhất đã qua (hoặc hôm nay) và lần sắp tới (review nhánh M-1, A chọn 08/11: không đoán "năm nay" — từ 1/1 tới Tết năm âm
+    ≠ năm dương, "Tết năm nay" sẽ thành Tết đã qua)."""
+    goc = solar_to_lunar(hom).year if loai == "am" else hom.year
+    ngays = sorted({d for y in (goc - 1, goc, goc + 1) if isinstance(d := ngay_duong(ngay, thang, y, loai, thang_nhuan), dt.date)})
+    qua = [d for d in ngays if d <= hom]
+    toi = [d for d in ngays if d > hom]
+    if not qua and not toi:
+        return [f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}): {ngay_duong(ngay, thang, goc, loai, thang_nhuan)}"]
+    dong = []
+    if qua:
+        dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần gần nhất: {mo_ta(qua[-1])} — {so_voi_hom_nay(qua[-1], hom)} (so với hôm nay)")
+    if toi:
+        dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần sắp tới: {mo_ta(toi[0])} — {so_voi_hom_nay(toi[0], hom)} (so với hôm nay)")
+    if qua and toi:
+        dong.append(GHI_CHU_NAM)
+    return dong
+
+
 def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam: int, thang_nhuan: bool, now: dt.datetime | None = None,
             cau: str = "") -> str:
-    """Chữ trả cho model (do code dựng): luôn có dòng hôm nay; `loai` khác `hom_nay` ⇒ thêm dòng ngày được đổi. `nam` = 0 (không nêu năm) ⇒ cả lần gần nhất đã qua và lần sắp tới."""
+    """Chữ trả cho model (do code dựng): luôn có dòng hôm nay; `loai` khác `hom_nay` ⇒ thêm dòng ngày được đổi. `nam` = 0 (không nêu năm), hoặc ngày âm mà câu
+    hỏi nói "năm nay" ⇒ thêm cả lần gần nhất đã qua và lần sắp tới."""
     hom = hom_nay(now)
     dong = [f"Hôm nay (giờ Việt Nam): {mo_ta(hom)}.", *khoang_ngay(cau, hom)]
     lich = "âm" if loai == "am" else "dương"
@@ -141,19 +168,8 @@ def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam:
         d = ngay_duong(ngay, thang, nam, loai, thang_nhuan)
         chu = d if isinstance(d, str) else f"{mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay)"
         dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}/{nam}{nhuan}): {chu}")
-    elif loai != "hom_nay":
-        # review nhánh M-1 (A chọn 08/11): không nêu năm ⇒ KHÔNG đoán "năm nay" (từ 1/1 tới Tết năm âm ≠ năm dương: "Tết năm nay" sẽ thành Tết đã qua) ⇒ code
-        # trả cả lần gần nhất đã qua (hoặc hôm nay) và lần sắp tới
-        goc = solar_to_lunar(hom).year if loai == "am" else hom.year
-        ngays = sorted({d for y in (goc - 1, goc, goc + 1) if isinstance(d := ngay_duong(ngay, thang, y, loai, thang_nhuan), dt.date)})
-        qua = [d for d in ngays if d <= hom]
-        toi = [d for d in ngays if d > hom]
-        if not qua and not toi:
-            dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}): {ngay_duong(ngay, thang, goc, loai, thang_nhuan)}")
-        if qua:
-            dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần gần nhất: {mo_ta(qua[-1])} — {so_voi_hom_nay(qua[-1], hom)} (so với hôm nay)")
-        if toi:
-            dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần sắp tới: {mo_ta(toi[0])} — {so_voi_hom_nay(toi[0], hom)} (so với hôm nay)")
+    if loai != "hom_nay" and (not nam or (loai == "am" and _NAM_NAY.search(unicodedata.normalize("NFC", cau)))):
+        dong += _hai_lan(ngay, thang, loai, thang_nhuan, hom, lich, nhuan)
     return "\n".join(dong)
 
 
