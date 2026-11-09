@@ -13,6 +13,7 @@ from PIL import Image
 from api.conversations import ConversationStore
 from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
+from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
 from api.routes.chat import router as chat_router
@@ -35,6 +36,8 @@ from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
 
 logger = logging.getLogger("api")
+TAT_DOCS_ENV = "HUE_TAT_DOCS"
+BAT = {"1", "true", "yes"}
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 # Bản build của giao diện React (`cd frontend && npm ci && npm run build`); không commit. Thiếu ⇒ API vẫn chạy, chỉ không có trang web.
@@ -206,7 +209,10 @@ def create_app(settings=None):
                 except Exception:
                     logger.warning("Error closing generator during shutdown")
 
-    app = FastAPI(title="Hue Full-Corpus RAG API", lifespan=lifespan)
+    # Chốt trước deploy: `HUE_TAT_DOCS=1` ⇒ tắt /docs, /redoc, /openapi.json (bản công khai không lộ sơ đồ API); không đặt ⇒ như cũ
+    tat_docs = os.getenv(TAT_DOCS_ENV, "").strip().lower() in BAT
+    app = FastAPI(title="Hue Full-Corpus RAG API", lifespan=lifespan,
+                  **({"docs_url": None, "redoc_url": None, "openapi_url": None} if tat_docs else {}))
     app.state.retrieval_ready = False
     app.state.retrieval_service = None
     app.state.tokenizer_ready = False
@@ -223,6 +229,10 @@ def create_app(settings=None):
     app.include_router(feedback_router)
     app.include_router(cong_router)  # cổng đợt 1 D6: 4 route chỉ đọc
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
+
+    tran = tran_tu_moi_truong()
+    if tran:  # chốt trước deploy: giới hạn lượt / IP / ngày (`HUE_LUOT_MOI_NGAY`); không đặt ⇒ không thêm middleware (như cũ)
+        app.add_middleware(ChanLuot, gioi_han=GioiHanLuot(tran))
 
     if not FRONTEND_DIR.is_dir():
         logger.warning("Frontend build not found at frontend/dist — run `npm ci && npm run build` in frontend/")

@@ -7,6 +7,7 @@ cùng một đoạn code (`_retrieval_not_ready`, `_error_response_for`) nên m�
 import asyncio
 import json
 import logging
+import os
 import time
 
 import anyio
@@ -112,9 +113,10 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
     )
 
 
-# B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` tắt vì chạy http://127.0.0.1
-# (bật trước khi deploy — spec §7).
+# B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` theo biến môi trường
+# `HUE_COOKIE_SECURE=1` (bản https — spec §7); không đặt ⇒ tắt vì máy User chạy http://127.0.0.1 (trình duyệt không gửi cookie Secure qua http).
 CONVERSATION_COOKIE = "conversation_id"
+COOKIE_SECURE_ENV = "HUE_COOKIE_SECURE"
 REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns", "hoi_lai"}
 
 
@@ -169,7 +171,7 @@ def _new_turn_id(request: Request, trace: AnswerTrace, outcome: str | None) -> s
 def _set_cookie(response, conversation_id: str | None) -> None:
     if conversation_id is not None:
         response.set_cookie(CONVERSATION_COOKIE, conversation_id, max_age=TTL_SECONDS, path="/api", httponly=True, samesite="strict",
-                            secure=False)
+                            secure=os.getenv(COOKIE_SECURE_ENV, "").strip().lower() in {"1", "true", "yes"})
 
 
 @router.post("/api/conversation/new")
