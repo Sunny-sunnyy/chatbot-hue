@@ -27,7 +27,7 @@
 | Định tuyến 2 nhóm (G) | 2 / 44 câu ngoài phạm vi đã thấy bị gắn mục web (bản cũ 0 / 44) | **dừng** ⇒ phương án B: giữ 4 nhóm, bỏ câu khẩn cấp soạn sẵn — **đã vào `main`** (merge `3b52017`; đo 92 câu: 0 câu ngoài phạm vi / ngoài kho bị trả lời; test 842 đạt; thử trên server thật đạt). Người dùng thấy đổi một chỗ: câu khẩn cấp (vd vừa bị cướp) giờ được trợ lý trả lời như câu thường, không còn câu soạn sẵn có số 113 / 114 / 115 — đúng như bạn quyết 08/11 |
 | 4 chốt trước deploy | merge `ccc9f4f` | giới hạn lượt / IP / ngày, cookie chỉ qua https, tắt `/docs`, log xoay vòng — bật bằng biến môi trường |
 | Tra web thành công cụ (T2) | đo: câu hỏi kèm có mục web 4 / 10 = bản đang chạy 4 / 10 (cần hơn 2); 26 / 29 lần trợ lý xin tra web lại chính là câu nó từ chối cả câu — cổng cũ đã xử lý | **đóng hồ sơ** (tag `hoso/p9-t2-web`), tra web giữ như cũ (chỉ sau câu từ chối); 0,171 USD |
-| Lịch trình từ câu gõ (T4) | code xong trên nhánh, cờ tắt | đang đo trên `main` mới |
+| Lịch trình từ câu gõ (T4) | 27 / 27 câu có lịch, hỏi lại thừa 0, từ chối thay lịch 0; nhưng "hợp người đi cùng" chỉ 21 / 27 và 15 / 27 (2 người chấm; cần ≥ 26) — gốc ở luật xếp / bảng điểm (đi dày vẫn 2 điểm / ngày, sở thích nói bằng lời chưa dùng, buổi tối cho người lớn tuổi, lo mưa vẫn xếp ven nước) | **đóng hồ sơ** (tag `hoso/p9-t4-lich`); lịch trình chỉ qua biểu mẫu "Lên kế hoạch" như hiện nay; 0,136 USD |
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 1. **Vấn đề:** chatbot không biết hôm nay là ngày nào, nên từ chối những câu như "tối nay", "rằm tháng Giêng tới".
