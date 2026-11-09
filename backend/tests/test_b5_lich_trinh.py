@@ -346,7 +346,9 @@ def test_day_count_detector(text, so_ngay):
 def test_day_count_resolution_d15():
     assert lt.chot_so_ngay({}, None, CAU) == ("1", True)  # "Trả lời luôn" ⇒ 1 ngày tạm, không hỏi lần hai
     assert lt.chot_so_ngay({"so_ngay": "3"}, "1", CAU) == ("3", False)  # nút thắng
-    assert lt.chot_so_ngay(None, "1", "đi Huế 3 ngày") == (None, False)  # dò số lệch tham số ⇒ hỏi
+    assert lt.chot_so_ngay(None, "1", "đi Huế 3 ngày") == ("3", False)  # T4 (a): dò được ⇒ số code thắng tham số model, không hỏi
+    assert lt.chot_so_ngay(None, "3", "đi Huế 3 ngày") == ("3", False)
+    assert lt.chot_so_ngay(None, "2", "đi 3 ngày hay 4 ngày") == ("2", False)  # dò ra nhiều giá trị ⇒ tin model
     assert lt.chot_so_ngay(None, None, "đi Huế 3 ngày") == ("3", False)
     assert lt.chot_so_ngay(None, None, CAU) == (None, False)  # thiếu ⇒ hỏi
     assert lt.chot_so_ngay(None, "2", CAU) == ("2", False)
@@ -425,10 +427,13 @@ def test_code_asks_only_days_when_missing(deps):
     assert trace.lich is None and trace.answer == ""
 
 
-def test_detected_day_count_mismatch_asks(deps):
-    gen = generator(lambda n, kw: [lich_call(so_ngay="1")])
+def test_detected_day_count_beats_model_and_is_logged(deps):
+    # T4 (a) (kín v2 K2): câu nói 3 ngày, model gửi 1 ⇒ code xếp 3 ngày, không thẻ hỏi lại; log công cụ ghi cả hai giá trị (c)
+    gen = generator(lambda n, kw: [lich_call(so_ngay="1")] if n == 1 else [answer(viet_theo_khung(kw))])
     trace, _ = run(deps, "Lên lịch đi Huế 3 ngày giúp mình", gen, ON)
-    assert trace.fixed_outcome == "hoi_lai"  # D12 (b): câu nói 3 ngày, model gửi 1 ⇒ hỏi lại
+    assert trace.fixed_outcome is None and trace.clarify is None and trace.lich["khung"]["tham_so"]["so_ngay"] == "3"
+    entry = next(t for t in trace.tools if t["name"] == "lich_trinh")
+    assert entry["so_ngay_model"] == "1" and entry["so_ngay_do"] == "3"
 
 
 def test_answer_now_never_asks_twice_and_marks_one_day(deps):
@@ -438,6 +443,25 @@ def test_answer_now_never_asks_twice_and_marks_one_day(deps):
     k = trace.lich["khung"]
     assert k["tham_so"]["so_ngay"] == "1" and k["tham_so"]["so_ngay_tam"] and len(k["ngay"]) == 1
     assert trace.answer.startswith("Mình hiểu: 1 ngày (tạm)") and lt.CAU_GIA_DINH["so_ngay_tam"] in trace.answer
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_t4_refusal_after_blocked_search_adds_fixed_sentence(deps, stream):
+    # T4 (b) (E20 Sửa 1): xin lịch + hỏi kèm ⇒ model gọi `lich_trinh`, rồi `tim_kho` (bị chặn `TOOL_DA_DU_LICH`), rồi trả câu từ chối ⇒ code dựng lời
+    # lịch tối thiểu + đúng một câu cố định; không gọi `tim_kho` sau lịch ⇒ như B171 (không câu cố định)
+    cau = "Lên lịch Huế 2 ngày, thích di tích, gần đó có tiệm sửa xe máy nào không?"
+    lich = lich_call(so_ngay="2", so_thich="di_tich")
+    script = lambda n, kw: [lich] if n == 1 else [tool_call("tiệm sửa xe máy")] if n == 2 else [answer(INSUFFICIENT_ANSWER)]  # noqa: E731
+    trace, events = run(deps, cau, generator(script), ON, stream=stream)
+    k, nguon = trace.lich["khung"], trace.lich["nguon"]
+    assert any(t.get("sau_lich") for t in trace.tools) and trace.citation_error is None and trace.lich_kiem == []
+    assert trace.lich["chu_thay"] == f"{lt.loi_lich_toi_thieu(BANG, k, nguon)}\n\n{lt.CAU_HOI_THEM_CHUA_CO}"
+    assert trace.answer.count(lt.CAU_HOI_THEM_CHUA_CO) == 1 and INSUFFICIENT_ANSWER not in trace.answer
+    if stream:
+        assert "".join(d for kind, d in events if kind == "delta") == trace.answer
+    khong_tim = lambda n, kw: [lich_call(so_ngay="2", so_thich="di_tich")] if n == 1 else [answer(INSUFFICIENT_ANSWER)]  # noqa: E731
+    b171, _ = run(deps, cau, generator(khong_tim), ON, stream=stream)
+    assert lt.CAU_HOI_THEM_CHUA_CO not in b171.answer and b171.lich["chu_thay"] == lt.loi_lich_toi_thieu(BANG, b171.lich["khung"], b171.lich["nguon"])
 
 
 @pytest.mark.parametrize("stream", [False, True])

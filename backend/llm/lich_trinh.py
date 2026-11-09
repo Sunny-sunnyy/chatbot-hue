@@ -143,15 +143,18 @@ class ThamSo:
 
 
 def chot_so_ngay(truong: dict | None, tu_model: str | None, cau: str) -> tuple[str | None, bool]:
-    """D15 (+ D12 (b)): số ngày code dùng ⇒ (giá trị, tạm?); (None, False) = **cần hỏi lại**. Thứ tự: (1) lượt ghép (`truong` từ nút) — không bao
-    giờ hỏi lần hai: có `so_ngay` ⇒ dùng, rỗng / thiếu ("Trả lời luôn") ⇒ 1 ngày **tạm**; (2) tham số model, đối chiếu số dò trong câu người
-    dùng — lệch ⇒ hỏi; (3) model không gửi ⇒ số dò được (đúng một giá trị); (4) vẫn thiếu ⇒ hỏi."""
+    """D15 (T4 sửa (a), spec Phase 9 bản 13 §12.2): số ngày code dùng ⇒ (giá trị, tạm?); (None, False) = **cần hỏi lại**. Thứ tự: (1) lượt ghép
+    (`truong` từ nút) — không bao giờ hỏi lần hai: có `so_ngay` ⇒ dùng, rỗng / thiếu ("Trả lời luôn") ⇒ 1 ngày **tạm**; (2) số dò được trong câu
+    người dùng (đúng một giá trị) ⇒ **dùng số code**, bỏ qua tham số model (trước T4: lệch ⇒ hỏi — kín v2 K2 hỏi lại thừa); (3) không dò được ⇒
+    tham số model; (4) vẫn thiếu ⇒ hỏi."""
     if truong is not None:
         return (truong["so_ngay"], False) if truong.get("so_ngay") else ("1", True)
     do = do_so_ngay(cau)
-    if tu_model is not None:
-        return (None, False) if do is not None and do != tu_model else (tu_model, False)
-    return do, False
+    return (do if do is not None else tu_model), False
+
+
+# T4 sửa (b) (E20 Sửa 1): model từ chối cả lượt có lịch sau khi tìm thêm bị chặn (`TOOL_DA_DU_LICH`) ⇒ code dựng lời lịch tối thiểu (B171) + câu này
+CAU_HOI_THEM_CHUA_CO = "Phần bạn hỏi thêm ngoài lịch hiện chưa có trong nguồn dữ liệu của mình."
 
 
 # B171 (L-b): câu xin buổi tối. Dò rộng có chủ đích — nhận nhầm chỉ thêm một câu đúng sự thật (khi khung không có buổi tối) và bật kiểm

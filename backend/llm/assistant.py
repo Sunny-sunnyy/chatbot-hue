@@ -330,6 +330,7 @@ def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: A
                 return "Lịch đã xếp ở lần gọi trước trong lượt này; hãy viết câu trả lời theo khung đó."
             truong = trace.truong
             so_ngay_chot, tam = lt.chot_so_ngay(truong, so_ngay, query)
+            entry.update(so_ngay_model=so_ngay, so_ngay_do=lt.do_so_ngay(query))  # T4 (c): giá trị trường model gửi ↔ số code dò (không chữ)
             if so_ngay_chot is None:  # D15 (4) / D12 (b): code hỏi lại — chỉ số ngày
                 entry["hoi_lai"] = True
                 return the_hoi_lai("lich_trinh", ["so_ngay"], trace.search_query or query)
@@ -655,7 +656,10 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     if trace.lich is not None:
         bang, khung, nguon = flags.bang_lich, trace.lich["khung"], trace.lich["nguon"]
         if text.strip() == INSUFFICIENT_ANSWER:  # B171 T3 (b): có khung mà model từ chối ⇒ code dựng lời lịch tối thiểu (stream: `_chu_giu_lai`)
-            text = trace.lich["chu_thay"] = lt.loi_lich_toi_thieu(bang, khung, nguon)
+            text = lt.loi_lich_toi_thieu(bang, khung, nguon)
+            if any(t.get("sau_lich") for t in trace.tools):  # T4 (b): model đã muốn tìm phần hỏi thêm sau lịch (bị chặn) ⇒ nói rõ phần đó kho chưa có
+                text = f"{text}\n\n{lt.CAU_HOI_THEM_CHUA_CO}"
+            trace.lich["chu_thay"] = text
         loi = lt.kiem_cuoi(bang, text, khung, nguon)
         trace.lich["minh_hieu"] = lt.dong_minh_hieu(khung)
         trace.lich["ghi_chu"] = lt.khoi_ghi_chu(bang, khung, nguon, trace.lich.get("them_dong", ()))
