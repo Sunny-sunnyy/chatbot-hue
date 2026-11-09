@@ -76,7 +76,7 @@ assistant:
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại
   thoi_tiet: true                # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — BẬT 07/11/2026 (User Q-U4 spec cổng đợt 1: bật khi merge đợt 1; B5b đạt luật ghi trước); cần tim_them
   ngay_lich: false               # Phase 9 T1 (plan 2026-11-08-phase-9-t1-ngay-plan.md): công cụ ngày + âm lịch Việt Nam (code tính) — chỉ đưa khi câu có từ chỉ ngày; TẮT tới khi đạt §1; cần tim_them
-  tra_ve_gio: false              # T3 (plan 2026-11-08-phase-9-t3-bang-plan bản 2): công cụ tra bảng vé + giờ User duyệt — TẮT tới khi đạt luật ghi trước; cần tim_them
+  tra_ve_gio: false              # T3 hướng (a) (User 09/11): bảng vé + giờ User duyệt chỉ để kiểm số sau khi model viết (lệch ⇒ câu cố định) — không công cụ; TẮT tới khi đạt luật ghi trước
   tra_ve_gio_bang: ../data/phase_9/t3_bang_ve_gio/bang_v1.json  # private (User duyệt 08/11 câu 1; A theo khuyến nghị câu 2–5); chỉ nạp khi cờ bật
 
 # Phase 10 A1 (plan `2026-11-05-phase-10-a1-plan.md` bản 2 D2): hỏi bằng ảnh — `POST /api/anh/ung_vien`. TẮT tới khi đạt A2 (spec Phase 10 §5).

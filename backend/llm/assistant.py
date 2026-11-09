@@ -37,7 +37,7 @@ from llm import ve_gio as vg
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
-                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
+                                   REFUSAL_ANSWERS, TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
@@ -90,8 +90,8 @@ class AssistantFlags:
     # Phase 9 T1 (plan `2026-11-08-phase-9-t1-ngay-plan.md`): công cụ `ngay_lich` (code tính ngày + đổi âm ↔ dương) — chỉ đưa khi câu có từ chỉ ngày
     ngay_lich: bool = False
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
-    # T3 (plan `2026-11-08-phase-9-t3-bang-plan.md` bản 2): công cụ `tra_ve_gio` đọc bảng vé + giờ User duyệt — TẮT tới khi đạt luật ghi trước;
-    # bảng nạp ở rìa **chỉ khi cờ bật** (clone không có `data/` vẫn chạy cờ tắt)
+    # T3 hướng (a) (User 09/11, spec §12.2 phương án B): bảng vé + giờ User duyệt chỉ dùng **kiểm số sau khi model viết** — không công cụ, không
+    # đổi chuỗi gửi model; TẮT tới khi đạt luật ghi trước; bảng nạp ở rìa **chỉ khi cờ bật** (clone không có `data/` vẫn chạy cờ tắt)
     tra_ve_gio: bool = False
     bang_ve_gio: "vg.BangVeGio | None" = field(default=None, compare=False, repr=False)
 
@@ -112,8 +112,8 @@ class AssistantFlags:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
-        if self.tra_ve_gio and (not self.tim_them or self.bang_ve_gio is None):
-            raise ValueError("assistant.tra_ve_gio needs assistant.tim_them: true and the ticket / hours table (assistant.tra_ve_gio_bang)")
+        if self.tra_ve_gio and self.bang_ve_gio is None:
+            raise ValueError("assistant.tra_ve_gio needs the ticket / hours table (assistant.tra_ve_gio_bang)")
 
     @classmethod
     def from_settings(cls, settings: dict) -> "AssistantFlags":
@@ -213,8 +213,7 @@ class AnswerTrace:
     thoi_tiet: dict | None = None
     thoi_tiet_noi: str | None = None
     thoi_tiet_kiem: list[str] | None = None
-    # T3: kết quả `tra_ve_gio` (điểm khớp, chữ đã gửi model, câu hỏi — để kiểm cuối) · khối code nối sau chữ model · mã kiểm cuối. KHÔNG log chữ.
-    ve_gio: dict | None = None
+    # T3 (a): câu cố định code nối sau chữ model khi kiểm số lệch · mã kiểm cuối (None = không kiểm). KHÔNG log chữ.
     ve_gio_noi: str | None = None
     ve_gio_kiem: list[str] | None = None
 
@@ -493,7 +492,7 @@ def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
 def chu_cua_model(trace: AnswerTrace) -> str:
     """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
     answer = trace.answer or ""
-    for noi in (trace.ve_gio_noi, trace.thoi_tiet_noi):  # T3 nối sau thời tiết ⇒ bóc T3 trước (plan bản 2 M-4)
+    for noi in (trace.ve_gio_noi, trace.thoi_tiet_noi):  # T3 nối sau thời tiết ⇒ bóc T3 trước
         if noi and answer.endswith(f"\n\n{noi}"):
             answer = answer[: -len(noi) - 2]
     return answer
@@ -654,14 +653,10 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
-    if not flags.tim_them:
-        return None
-    prompt = build_assistant_input(query, trace.packed.text, today)
-    them = tra_truoc(query, trace, flags) if trace.fixed_outcome is None else None
-    return f"{prompt}\n\n{them}" if them else prompt
+    return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
 
 
-def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -> None:
+def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, query: str = "") -> None:
     """Sau lần sinh: dừng ở thẻ hỏi lại (B5 D15) ⇒ lượt hỏi lại (không chữ, không kiểm citation); chạm `max_turns` (cờ generator, B2 D5) ⇒ câu
     từ chối cố định `max_turns`; lượt có lịch ⇒ ghép dòng "Mình hiểu" + chữ model + khối ghi chú (D12, D4b) rồi kiểm citation + kiểm cuối (D8);
     còn lại ⇒ kiểm citation trên sổ nguồn (cờ `lich_trinh` bật mà chữ có dạng lịch ⇒ kiểm cuối với khung rỗng, D8 (7))."""
@@ -694,7 +689,7 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     if flags is not None and flags.thoi_tiet:
         _thoi_tiet_cuoi(trace, text)
     if flags is not None and flags.tra_ve_gio:
-        _ve_gio_cuoi(trace, text, flags.bang_ve_gio)
+        _ve_gio_cuoi(trace, text, query, flags.bang_ve_gio)
 
 
 def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) -> dict | None:
@@ -741,7 +736,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)  # cả khi lượt lỗi sau phản hồi (review C128 m-1)
     if recorder:
         recorder.record_generation_result(trace.generated)
-    _finish_generated(trace, flags)
+    _finish_generated(trace, flags, query)
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
@@ -760,8 +755,6 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
-    if flags.tra_ve_gio and trace.ve_gio is None and vg.co_tu_khoa_luot(query, trace.history):  # T3: từ khoá ∧ code chưa tự tra (vòng 2)
-        extra["ve_gio_fn"] = ve_gio_for_turn(query, trace, flags.bang_ve_gio)
     return extra
 
 
@@ -793,7 +786,7 @@ async def answer_bieu_mau(query: str, retrieval_service, context_builder, genera
     finally:
         trace.generation_ms = elapsed_ms(started)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)
-    _finish_generated(trace, flags)
+    _finish_generated(trace, flags, query)
     set_notice(trace, flags)
 
 
@@ -836,101 +829,20 @@ def _today(flags: AssistantFlags, trace: AnswerTrace) -> str | None:
     return trace.today
 
 
-def _nguon_ve_gio(trace: AnswerTrace, dong: list[tuple[str, str]]) -> str:
-    """T3 (plan bản 2 M-5 — lệch spec §12.5, A chấp nhận): mỗi file kho có dòng được trả = **một nguồn** trong sổ nguồn (khuôn thời tiết), `source` =
-    đường dẫn file kho thật ⇒ dòng "Nguồn" mở được bài gốc (`bai_id`). Chữ nguồn = các dòng gửi model. Trả chữ cho model (ngân sách như tìm thêm)."""
-    theo_file: dict[str, list[str]] = {}
-    for f, chu in dong:
-        theo_file.setdefault(f, []).append(chu)
-    khoi = []
-    for f, cac in theo_file.items():
-        src = PackedSource(id=len(trace.so_nguon) + 1, title=f"{vg.TIEU_DE_NGUON} — {Path(f).stem}", heading_path=(vg.TIEU_DE_NGUON,),
-                           excerpts=tuple(cac), source=f)
-        trace.so_nguon.append(src)
-        chu = FullCorpusContextBuilder._block(src)
-        trace.context_parts.append(chu)
-        khoi.append(chu)
-    return "\n\n".join(khoi)
-
-
-def ve_gio_for_turn(query: str, trace: AnswerTrace, bang: "vg.BangVeGio"):
-    """Hàm `tra_ve_gio` của **một lượt**: model chỉ gửi tên điểm (≤ 5); code khớp, dựng chữ gửi model (dòng giá là số + giờ + ngày nguồn) — chữ điều
-    kiện miễn giảm **không** vào model (plan bản 2 M-2). ≤ 1 lần / câu. Không cộng / nhân."""
-
-    async def tra_ve_gio(diem: list[str]) -> str:
-        """Tra giá vé và giờ mở cửa có trong bảng của hệ thống cho các điểm ở Huế người dùng hỏi.
-
-        Args:
-            diem: tên các điểm (tối đa 5), viết như người dùng gọi.
-        """
-        entry = {"name": "tra_ve_gio"}
-        try:
-            if trace.ve_gio is not None:
-                entry["het_luot"] = True
-                return "Đã tra bảng ở lần gọi trước trong lượt này; hãy viết câu trả lời."
-            ten = [t for t in diem[: vg.MAX_DIEM] if isinstance(t, str) and t.strip()]
-            khop = [(t, vg.khop(bang, t)) for t in ten]
-            co = [d for _, d in khop if d is not None]
-            phan = [_tra_bang(query, trace, bang, [d for i, d in enumerate(co) if d not in co[:i]], entry, by="model", n_diem=len(ten),
-                              n_khong_bang=sum(d is None for _, d in khop))] if co else []
-            if not co:
-                trace.ve_gio = {"cau": query, "diem": [], "chu": "", "thay_tu_choi": False}
-                entry.update(n_diem=len(ten), n_khop=0, n_khong_bang=len(ten), by="model")
-            phan += [f"{t}: {vg.CAU_NGOAI_BANG}" for t, d in khop if d is None]
-            return "\n\n".join(x for x in phan if x) or vg.CAU_NGOAI_BANG
-        finally:
-            entry.setdefault("ms", 0.0)
-            trace.tools.append(entry)
-
-    return tra_ve_gio
-
-
-def _tra_bang(query: str, trace: AnswerTrace, bang: "vg.BangVeGio", co: list[dict], entry: dict, *, by: str, n_diem: int, n_khong_bang: int = 0) -> str:
-    """Dùng chung cho công cụ (model gọi) và đường code tự tra (vòng chỉnh 2): dòng gửi model ⇒ nguồn trong sổ nguồn; ghi `trace.ve_gio` + mục log.
-    Trả chữ đưa model (khối nguồn + câu "có điều kiện" nếu có)."""
-    dong = [x for d in co for x in vg.dong_gui_model(d)]
-    trace.ve_gio = {"cau": query, "diem": co, "chu": "\n".join(c for _, c in dong), "thay_tu_choi": False}
-    co_dk = any(vg.co_dieu_kien(bang, d) for d in co)
-    entry.update(n_diem=n_diem, n_khop=len(co), n_khong_bang=n_khong_bang, co_dieu_kien=co_dk, by=by)
-    phan = [_nguon_ve_gio(trace, dong)] if dong else []
-    if co_dk:
-        phan.append(vg.CAU_CO_DIEU_KIEN)
-    return "\n\n".join(phan)
-
-
-def tra_truoc(query: str, trace: AnswerTrace, flags: "AssistantFlags") -> str | None:
-    """Vòng chỉnh 2 (A 08/11, plan bản 2 §2 "tới 2 vòng"): câu có từ khoá vé / giờ **và** code dò được ≥ 1 điểm của bảng trong câu (câu này, hoặc câu
-    hỏi liền trước nếu câu này không nêu tên) ⇒ **code tự tra** trước lần sinh — model không phải quyết gọi (lượt 1: model gọi 2 / 20). Trả chữ nguồn để
-    nối vào cuối ngữ cảnh gửi model; None ⇒ không tra (đường công cụ giữ cho câu code không dò ra tên)."""
-    if not (flags.tra_ve_gio and vg.co_tu_khoa_luot(query, trace.history)):
-        return None
-    co = vg.do_diem(flags.bang_ve_gio, query) or (vg.do_diem(flags.bang_ve_gio, trace.history[-1][0]) if trace.history else [])
-    if not co:
-        return None
-    entry = {"name": "tra_ve_gio", "ms": 0.0}
-    chu = _tra_bang(query, trace, flags.bang_ve_gio, co, entry, by="code", n_diem=len(co))
-    trace.tools.append(entry)
-    return chu
-
-
-def _ve_gio_cuoi(trace: AnswerTrace, text: str, bang: "vg.BangVeGio") -> None:
-    """T3 sau lần sinh, **chỉ** lượt đã gọi `tra_ve_gio` có điểm khớp: kiểm số tiền + giờ trong chữ model ⊂ dòng đã gửi ∪ đoạn kho được trích ∪ câu hỏi
-    (vi phạm ⇒ rút lại như thời tiết / lịch); model từ chối mà có dòng ⇒ câu dẫn + dòng do code dựng (M-4); câu ngoài phạm vi ⇒ không nối khối."""
-    kq = trace.ve_gio
-    if kq is None or not kq["diem"]:
+def _ve_gio_cuoi(trace: AnswerTrace, text: str, query: str, bang: "vg.BangVeGio") -> None:
+    """T3 (a) sau lần sinh: câu (hoặc câu hỏi liền trước) có từ khoá vé / giá / giờ ∧ chữ model không phải câu từ chối / ngoài phạm vi ∧ lượt không
+    có lịch (lịch có kiểm cuối riêng) ⇒ kiểm số tiền + giờ trong chữ model ⊂ dòng bảng của điểm **nêu trong câu này** ∪ đoạn kho đã đưa model (cả
+    sổ nguồn, không chỉ nguồn được trích) ∪ câu hỏi. Lệch ⇒ nối `CAU_CO_THE_KHAC` sau chữ model (không rút lại câu trả lời — spec §12.2 phương án B).
+    Không lấy điểm từ câu hỏi liền trước (vòng 3: gắn nhầm điểm cũ khi đổi chủ đề)."""
+    if trace.lich is not None or text.strip() in REFUSAL_ANSWERS or not vg.co_tu_khoa_luot(query, trace.history):
         return
-    cho_phep = " ".join([kq["chu"], kq["cau"], *(e for src in (trace.cited or ()) for e in src.excerpts)])
+    diem = vg.do_diem(bang, query)
+    cho_phep = " ".join([query, *(vg.chu_cua_diem(d) for d in diem), *(e for src in trace.so_nguon for e in src.excerpts)])
     trace.ve_gio_kiem = vg.kiem_so(text, cho_phep)
-    if text.strip() == OUT_OF_SCOPE_ANSWER:
-        return
-    if text.strip() == INSUFFICIENT_ANSWER and (trace.answer or "").strip() == INSUFFICIENT_ANSWER:
-        trace.answer = f"{vg.CAU_DAN_TU_CHOI}\n\n" + "\n".join(f"- {c}" for c in kq["chu"].splitlines())
-        kq["thay_tu_choi"] = True
-    trace.ve_gio_noi = vg.khoi_dieu_kien(bang, kq["diem"], vg.hoi_dieu_kien(kq["cau"]))
-    if trace.ve_gio_noi:
+    trace.tools.append({"name": "kiem_ve_gio", "ms": 0.0, "n_diem": len(diem), "loi": trace.ve_gio_kiem})
+    if trace.ve_gio_kiem:
+        trace.ve_gio_noi = vg.CAU_CO_THE_KHAC
         trace.answer = f"{trace.answer}\n\n{trace.ve_gio_noi}"
-    if trace.ve_gio_kiem and trace.citation_error is None:
-        trace.citation_error = CitationIntegrityError(f"ticket / hours numbers outside table: {','.join(trace.ve_gio_kiem)}")
 
 
 # ---------- Cổng web (Phase 9 B6, plan B6 bản 3 D1–D9) ----------
@@ -1105,8 +1017,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             pending_generating = False
                             yield "status", {"stage": "generating"}
                         if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
-                            giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
-                                             or (trace.ve_gio is not None and trace.ve_gio["diem"])) else False  # T3 n-2
+                            giu_chu = "" if (flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None else False
                         if giu_chu is not False:
                             giu_chu += text
                             if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()):
@@ -1144,7 +1055,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         if call_route == ROUTE_TRO_CHUYEN:
             trace.answer, trace.cited = trace.generated.text, ()
         else:
-            _finish_generated(trace, flags)
+            _finish_generated(trace, flags, query)
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
@@ -1156,7 +1067,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             if trace.thoi_tiet_noi and trace.citation_error is None:
                 yield "delta", f"\n\n{trace.thoi_tiet_noi}"  # B5b: khối số liệu / câu cố định do code nối, sau phần model
             if trace.ve_gio_noi and trace.citation_error is None:
-                yield "delta", f"\n\n{trace.ve_gio_noi}"  # T3: khối điều kiện do code nối nguyên văn
+                yield "delta", f"\n\n{trace.ve_gio_noi}"  # T3 (a): câu cố định khi kiểm số lệch
             set_notice(trace, flags)
             async for event in _web_stream(query, generator, trace, flags, tim_web):
                 yield event
@@ -1182,8 +1093,6 @@ def _chu_giu_lai(trace: AnswerTrace, giu: str, da_noi_dau: bool) -> str:
         chu = trace.lich["chu_thay"]
     elif trace.thoi_tiet and trace.thoi_tiet.get("thay_tu_choi"):
         chu = tt.CAU_DAN_DU_BAO
-    elif trace.ve_gio and trace.ve_gio.get("thay_tu_choi"):  # T3 M-4: câu dẫn + dòng bảng do code dựng (không gồm khối — khối phát sau)
-        chu = chu_cua_model(trace)
     else:
         chu = giu
     return f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{chu}" if trace.lich is not None and not da_noi_dau else chu
