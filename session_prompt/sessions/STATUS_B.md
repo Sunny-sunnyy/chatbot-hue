@@ -1,5 +1,11 @@
 # STATUS B — PHIÊN 09/11 (mở 20:14 09/11/2026, terminal `hue-rag-99`; A `hue-rag-87` · C `hue-rag-6a` · E `hue-rag-ea`)
 
+## Trạng thái 21:19 09/11/2026 — rảnh, chờ A merge `p9-g-b` `2deec02` (E xem delta 2 minor)
+- **G 2 tuyến DỪNG** (quá 3 vòng chỉnh: bản `426109d2` trượt S1 S-AT; bản `507f891e` trượt S2b đã thấy 2/44) ⇒ hồ sơ `p9-g-cong` `6956ac0` (tag `hoso/p9-g-cong`, A gắn).
+- **Phương án B** `p9-g-b` `2deec02` (đã push; worktree `/tmp/b_gb`): khan_cap ⇒ agent Huế, gỡ câu khẩn cấp soạn sẵn + luật code + phần chết giao diện. Lời dặn giống byte `main`. Test rộng 842 · cổng ổn định đạt · S2/S3/S3b 0 · S2b 1 (câu y tế bị định tuyến xếp khan_cap — A nhận là giới hạn). E review `4df9427` ready (0/0/2 minor, đã sửa).
+- Giới hạn User nhận: S2b kín G 1/20; S09 thiếu điều kiện thời tiết (21/21 lần cả G lẫn mốc không nêu — do judge). Report `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md` §0 + §4.
+- Worktree giữ: `/tmp/b_g` (G, `6956ac0`), `/tmp/b_moc_g` (`442f758`), `/tmp/b_gb` (B) — gỡ sau merge. Tiền B 09/11 ≈ 0,22 USD.
+
 ## Đang làm — G phần 0 USD (A giao 20:14 09/11/2026)
 - Worktree dựng lại: `/tmp/b_g` = `p9-g-cong` `87d6798`, `/tmp/b_moc_g` = `442f758` (tách rời; symlink `data/`, `knowledge-base-hue/`).
 - **Khai báo sửa (trong `/tmp/b_g`, nhánh `p9-g-cong`):** rebase lên `main` `5c982a0` — có thể chạm `backend/llm/assistant.py`, `backend/llm/full_corpus_prompt.py`,

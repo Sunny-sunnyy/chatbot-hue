@@ -1,4 +1,4 @@
-# Implementation Report: Phase 9 bậc G — cổng 2 nhóm (ĐANG LÀM — còn kín, S1 / S4 chấm mù, S5)
+# Implementation Report: Phase 9 bậc G — cổng 2 nhóm (DỪNG 09/11 ⇒ phương án B `p9-g-b` `4df9427`)
 
 Người làm: B (Claude Code, `hue-rag-a1`) · cập nhật 12:22 08/11/2026 (`date`)
 Plan: `docs/superpowers/plans/2026-11-08-phase-9-g-cong-plan.md` bản 2 `2513df2c6930` (A duyệt sau review sub-agent 2 vòng). Spec bản 13 §12 `5557f0fd7650`.
@@ -6,6 +6,41 @@ User 08/11 (qua A): mức dừng G **0,75 USD**; cho chỉnh lời dặn **nhi�
 
 **Sha khoá:** nhánh `p9-g-cong` **`87d6798`** · `ROUTER_INSTRUCTIONS` **`6b4796f7a35c`** · `ANSWER_SYSTEM_INSTRUCTIONS` **`426109d21b13`** · lời dặn biểu mẫu `81d3040cf53f`
 (= `main`, giống byte). Mốc: worktree `main` `442f758` (ROUTER `164bd4a254e9`, ANSWER `81d3040cf53f`).
+
+
+## 0. Kết luận 09/11 (B `hue-rag-99`, cập nhật 21:10 09/11/2026 `date`)
+
+- **G (2 tuyến) dừng, không merge.** Đã chạy 3 vòng chỉnh lời dặn trên bộ đã thấy và 1 vòng sau bộ kín; vòng nào sửa được một chiều thì hỏng chiều kia:
+  - bản khoá `426109d2` (`f8bfc69`, đã rebase lên `main`) trượt **S1** theo luật S-AT 05/11;
+  - bản chỉnh `507f891e` (`cc2d525` / `6956ac0`) sửa được S1 ở câu "nói sai về nguồn", nhưng trượt **S2b** trên bộ đã thấy (2 / 44; bản trước 0 / 44).
+  Theo luật dừng A ghi trước (quá 3 vòng) ⇒ **phương án B của spec** (§12.2). Hồ sơ G: nhánh `p9-g-cong` `6956ac0` (A gắn tag `hoso/p9-g-cong`).
+- **Phương án B** — nhánh `p9-g-b` **`4df9427`** (từ `main` `85cf473`): giữ định tuyến 4 tuyến; tuyến `khan_cap` ⇒ đi agent Huế như câu về Huế (không còn
+  câu soạn sẵn); log giữ `emergency_by = "router"`; gỡ luật khẩn cấp bằng code (cờ đang tắt) + `llm/emergency.py` + `test_emergency.py`. Lời dặn gửi model
+  **giống byte `main`** (ROUTER `164bd4a254e9`, ANSWER `81d3040cf53f`). Giao diện không đổi (nhánh hiển thị outcome `emergency` giờ không còn đường nào
+  gọi tới — minor, gỡ khi đụng giao diện).
+- **Giới hạn đã biết (User nhận, qua A 09/11):** (1) bộ kín G: 1 / 20 câu ngoài phạm vi ⇒ "không đủ thông tin" ⇒ mục web (chỉ áp cho G, ghi lại để
+  tham khảo); (2) S09 thiếu một điều kiện thời tiết có trong nguồn [2] của lần tìm đầu — **21 / 21** câu trả lời (G 15, mốc 6) đều không nêu; chênh
+  "G 6 / 6 ↔ mốc 4 / 6" là do judge, hành vi như nhau; lỗi có từ RAG 1–8. Khẩn cấp: User bỏ bộ quan sát 30 câu (09/11).
+
+## 4. Phiên 09/11 — các bước (số đếm bằng code; chấm mù 2 judge sub-agent, rubric `data/loi_nang_2026-10-28/rubric.md`, cổng đối chứng 15 câu mỗi vòng)
+
+| Bước | Sha | Kết quả | USD |
+|---|---|---|---|
+| Rebase lên `main` `5c982a0` (T1) | `f8bfc69` | không xung đột; lời dặn giống byte bản khoá; test 6 file 200 đạt; **test rộng 848 đạt** (4 phút 25 giây); cổng ổn định đạt (server thật, `/health` 5 / 5, 1 câu trong kho + 1 ngoài kho, 2 dòng `chat_metrics`, 0 câu hỏi trong log) | 0,001 |
+| S1 có ngữ cảnh (G ×2 + mốc ×1) | `f8bfc69` · `442f758` | ngoài kho bị trả lời 0 · đảo cảnh báo 0 · lượt 2 sạch; lượt 1: 1 câu sai điều kiện mới ("nguồn không nêu" trong khi có) · 2 judge qua cổng (10 / 10, 5 / 5, 0 / 5) | 0,0625 |
+| S-AT 3 + 3 (lúc đầu đọc theo luật cũ "G hơn mốc ⇒ mới thật", A sửa theo luật 05/11) | 〃 | chênh đúng 1 ở 3 ca ⇒ thêm 3 + 3 | 0,0117 |
+| S-AT thêm 3 + 3 (luật 05/11, tổng 6 / 6) | 〃 | **âm**: sai điều kiện 4 ↔ 2; thiếu cảnh báo 6 ↔ 4 (2 ca) | 0,0088 |
+| Bộ kín a 8 + b 10, ×2 (User `!`) | `f8bfc69` | a đạt ×2; b lượt 1 đạt; **b lượt 2 trượt S2b** (1 câu ngoài phạm vi ⇒ "không đủ" ⇒ web) | 0,0094 |
+| Mốc trên bộ S2 đã thấy (44) | `442f758` | mở web 0 / 44 (do cấu trúc: định tuyến chặn trước) ⇒ lỗi S2b là lỗi mới do G | 0,0040 |
+| Vòng chỉnh: dời khối ngoài phạm vi xuống cuối (chữ giữ nguyên) | `cc2d525` | 3 câu ×6: câu sai điều kiện **0 / 6** (mốc 2 / 6) — đạt; 1 câu thiếu cảnh báo vẫn 6 ↔ 4 (đọc chữ: như nhau, do judge) | 0,0109 |
+| Bản chỉnh: an toàn ×2 + S2 + mẫu 30 | `6956ac0` | ngoài kho / ngoài phạm vi bị trả lời 0 ×2; **S2b bộ đã thấy 2 / 44** ⇒ dừng | 0,0758 |
+| Phương án B: s2 + a + an toàn ×1 (92 câu) | `4df9427` | S2 0 · S3 0 · S3b 0 · lỗi citation 0 · xã giao ⇒ Huế 1 / 8 (= mốc) · an toàn: mốc không đưa câu nào vào `khan_cap` + lời dặn giống byte ⇒ đường cũ, ngoài kho bị trả lời 0 / 4 (không chấm mù — theo định nghĩa không có lỗi mới) · **1 câu S2b**: câu y tế ngoài phạm vi bị định tuyến (không đổi) xếp `khan_cap` — mốc ra câu soạn sẵn, nay đi agent ⇒ "không đủ" ⇒ cổng web mở, kết quả web bị lọc "không tin cậy" ⇒ người dùng chỉ thấy câu từ chối — **chờ A** | 0,0365 |
+
+**Khoá phương án B (21:18 09/11/2026): `p9-g-b` `2deec02`** = `4df9427` + gỡ phần chết (khối giao diện `.emergency`, `"emergency"` trong `REMEMBERED_OUTCOMES` — review E m-1 / m-2). A chọn (a) cho câu S2b của phương án B: giới hạn cùng loại User đã nhận, không thêm luật code. Test rộng **842 đạt** (4 phút 9 giây, có `test_static_ui` trên bản build mới) + 46 đạt 4 file chat sau sửa `chat.py`. Cổng ổn định (server thật cổng 8874, đã tắt): `/` 200, `/health` 5 / 5; câu trong kho (tự viết) trả lời có nguồn; câu ngoài kho ⇒ câu chuẩn `out_of_scope`; câu khẩn cấp tự viết qua stream ⇒ `emergency_by = router`, tuyến `tro_ly_hue`, có mục web; số dòng `chat_metrics` = số câu; 0 chữ câu hỏi trong log. Quan sát: một câu tự viết về giờ buổi tối bị từ chối (lời dặn giống byte `main` — không do nhánh). Review cả nhánh: E `g_b_branch_review.md` (`4df9427` ready, 0 / 0 / 2 minor — đã sửa cả 2).
+
+Tiền B 09/11 ≈ **0,22 USD**. Công cụ: `data/phase_9/g_cong/tools/an_toan_g.py` (bản sao B2, `--round main | regen | regen2 | v4 | v5`), `do_g.py` thêm bộ
+`an_toan:<id,…>`. Kết quả: `data/phase_9/g_cong/ket_qua/` (`s1_*`, `kin_*_sealed_*`, `s2_moc_r1`, `s2s4_v5_r1`, `pab_r1`), chấm `data/phase_9/g_cong/s1/`.
+Review sớm code G của E (`g_cong_branch_review.md`): 0 blocker / 0 major / 3 minor — m-3 đã thêm chú thích (`6956ac0`); m-1 / m-2 chỉ áp cho G.
 
 ## 1. Thay đổi code (`d0849ce` + 3 commit chỉnh lời dặn)
 
