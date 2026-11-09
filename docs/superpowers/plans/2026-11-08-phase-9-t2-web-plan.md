@@ -59,7 +59,8 @@ là bản đó) — nhánh `p9-t2-web` tách từ đúng sha G đã đo. Code ch
 - **Bộ hỏi kèm 10 (mới, đã thấy — không kín):** `data/phase_9/t2_web/hoi_kem_10.jsonl`. Người viết: **E** (không viết / không chỉnh mô tả công cụ). Mỗi câu: hỏi về Huế
   có **một phần kho trả lời được** + **một phần kho không có** mà web có thể có (giá hiện tại, sự kiện năm nay, dịch vụ mới…); không câu khẩn cấp / thiên tai / lưu trú cụ thể
   (đã có luật riêng). Trường: `id`, `cau`, `phan_kho`, `phan_web` (mô tả loại phần, không đáp án). Người viết kiểm phần kho bằng `scripts/grep_kb.sh`. **md5 ghi vào đây trước
-  lượt có phí**; không sửa bộ sau khi thấy số.
+  lượt có phí**; không sửa bộ sau khi thấy số. **Đã chốt (E, 09/11): 10 câu K1–K10, md5 `04aa82399972`** (E: K1, K5 có từ chỉ ngày ⇒ nếu `ngay_lich` bật trước lượt đo
+  thì hai câu có thêm công cụ ngày — ghi khi đọc số). Vì E vừa viết bộ vừa code T2: nếu cần vòng chỉnh mô tả công cụ (§2) thì người khác E sửa mô tả.
 - Mốc (`main` sau G, cùng lượt): bộ hỏi kèm 10 + 10 câu S2c. S1 / S4 mốc **dùng lại lượt G** khi nhánh tách từ đúng sha G đã đo (cờ T1 / T3 tắt, Q1 giống byte) — ghi nhãn
   "dùng lại" + lý do; sha khác ⇒ chạy mốc mẫu 30 (+ 0,018).
 
