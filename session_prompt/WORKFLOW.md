@@ -186,10 +186,10 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    đầu ra) rồi nhắn session đó. Giao việc song song chỉ khi file không chồng nhau.
    **A tự kiểm B/C/E có đang làm không — không đợi User hỏi:** mỗi tin giao việc gửi kèm `notify_when_idle: true`; trước khi
    kết mỗi lượt của mình (nhất là trước khi mở hộp hỏi User hay giao việc phụ cho sub-agent) A chạy `ListAgents` — session nào
-   rảnh mà không có việc / lý do ghi ⇒ giao ngay.
-   **Session rảnh** (chờ người khác): A giao ngay việc không chồng file (viết plan, review, danh sách ứng viên, đo chỉ đọc)
-   hoặc ghi một dòng lý do để rảnh trong `CURRENT_HANDOFF.md` (25/10: User phải hỏi "đang rảnh hả"; 26/10: B rảnh được giao
-   đối chiếu, bắt lỗi mô tả trong yêu cầu ChatGPT).
+   rảnh mà còn việc **đã có trong handoff** chưa ai làm ⇒ giao ngay; mục đích là bắt session **kẹt** (chờ permission, vòng chờ hỏng), không phải lấp giờ.
+   **Session rảnh là bình thường** (User 21:11 09/11/2026: bỏ luật "rảnh phải giao việc"; vẫn mở 4 session để A điều phối khi có việc): chỉ giao việc thật
+   — việc trong handoff, review việc sắp merge, báo cáo kết phiên phải làm; **không** dựng việc phụ để khỏi rảnh. Session rảnh ghi một dòng
+   "rảnh — chờ …" trong `STATUS_<X>.md`.
    **Việc giao chạy > 30 phút** (nghiên cứu, đo, code) ⇒ A đặt mốc kiểm ngay lúc giao: Claude Code `SendMessage` kèm `notify_when_idle: true`; agent khác: xem file đầu ra sau ~30 phút
    (02/11: B đứng ~2 giờ vì vòng chờ `pgrep -f` tự khớp chính nó, C rảnh không việc — User phát hiện; S75, W47).
    **Giao việc kế cho session đang làm việc khác** ⇒ tin ghi "làm ngay sau việc hiện tại, không kết lượt ở giữa", gửi kèm `notify_when_idle: true`; nhận thông báo session đó dừng lượt ⇒ A kiểm
