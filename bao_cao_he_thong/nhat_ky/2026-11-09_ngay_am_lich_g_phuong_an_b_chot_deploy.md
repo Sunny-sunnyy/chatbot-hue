@@ -26,7 +26,8 @@
 | Bảng vé + giờ (T3) | đúng 19 / 20, nhưng sàn điều kiện trượt 6 / 10; phương án B lợi ≈ 0 | **đóng hồ sơ** (tag `hoso/p9-t3-bang`), câu giá / giờ trả lời như cũ |
 | Định tuyến 2 nhóm (G) | 2 / 44 câu ngoài phạm vi đã thấy bị gắn mục web (bản cũ 0 / 44) | **dừng** ⇒ phương án B: giữ 4 nhóm, bỏ câu khẩn cấp soạn sẵn — **đã vào `main`** (merge `3b52017`; đo 92 câu: 0 câu ngoài phạm vi / ngoài kho bị trả lời; test 842 đạt; thử trên server thật đạt). Người dùng thấy đổi một chỗ: câu khẩn cấp (vd vừa bị cướp) giờ được trợ lý trả lời như câu thường, không còn câu soạn sẵn có số 113 / 114 / 115 — đúng như bạn quyết 08/11 |
 | 4 chốt trước deploy | merge `ccc9f4f` | giới hạn lượt / IP / ngày, cookie chỉ qua https, tắt `/docs`, log xoay vòng — bật bằng biến môi trường |
-| Tra web thành công cụ (T2) + lịch trình câu gõ (T4) | code xong trên nhánh, cờ tắt, test đạt | chờ định tuyến mới vào `main` rồi đo |
+| Tra web thành công cụ (T2) | đo: câu hỏi kèm có mục web 4 / 10 = bản đang chạy 4 / 10 (cần hơn 2); 26 / 29 lần trợ lý xin tra web lại chính là câu nó từ chối cả câu — cổng cũ đã xử lý | **đóng hồ sơ** (tag `hoso/p9-t2-web`), tra web giữ như cũ (chỉ sau câu từ chối); 0,171 USD |
+| Lịch trình từ câu gõ (T4) | code xong trên nhánh, cờ tắt | đang đo trên `main` mới |
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 1. **Vấn đề:** chatbot không biết hôm nay là ngày nào, nên từ chối những câu như "tối nay", "rằm tháng Giêng tới".
