@@ -16,7 +16,7 @@ from llm import ve_gio as vg
 from llm.assistant import (AnswerTrace, AssistantFlags, _ve_gio_cuoi, answer_turn, answer_turn_stream, answer_turn_stream_parallel,
                            chu_cua_model, ve_gio_for_turn)
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER, ROUTER_INSTRUCTIONS
-from llm.generator_openai_full_corpus import ASSISTANT_MAX_TURNS, max_turns_cho
+from llm.generator_openai_full_corpus import ASSISTANT_MAX_TURNS, max_turns_cho, max_turns_for
 from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
 
 SETTINGS = load_settings(validate_private_paths=False)
@@ -116,6 +116,8 @@ def test_max_turns_only_grows_with_ticket_tool():
     f = object()
     assert max_turns_cho(None, None) == max_turns_cho(None, f) == ASSISTANT_MAX_TURNS
     assert max_turns_cho(f, None) == ASSISTANT_MAX_TURNS + 1 and max_turns_cho(f, f) == ASSISTANT_MAX_TURNS + 2
+    # rebase lên T1: lượt có cả `ngay_lich` lẫn `tra_ve_gio` + `thoi_tiet` ⇒ cộng cả hai phần (4 + 1 + 2)
+    assert max_turns_for(None) == ASSISTANT_MAX_TURNS and max_turns_for(f, f, f) == ASSISTANT_MAX_TURNS + 3
 
 
 # ---------- công cụ + sổ nguồn (M-5, n-5) ----------
