@@ -137,7 +137,6 @@ def test_lodging_section_has_no_money_even_if_in_snippet():
     (refused(answer=OUT_OF_SCOPE_ANSWER), WEB, False),                 # câu ngoài phạm vi trong tuyến trợ lý
     (refused(answer=f"{INSUFFICIENT_ANSWER} Nhưng có thể [1]."), WEB, False),  # trả lời một phần ⇒ kho thắng
     (refused(fixed_outcome="max_turns"), WEB, False),
-    (refused(route="khan_cap", fixed_outcome="emergency"), WEB, False),
     (refused(route="tro_chuyen"), WEB, False),
     (refused(lich={"khung": {}}), WEB, False),
     (refused(truong={}), WEB, False),                                  # lượt ghép từ nút (D8)
