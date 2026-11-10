@@ -22,7 +22,7 @@
 | **Hỏi bằng ảnh (Phase 10)** — **bật từ 08/11** (10:31 08/11/2026); luna gợi tên + bạn xác nhận; SigLIP 2 thử âm | [BAO_CAO_HOI_BANG_ANH.md](BAO_CAO_HOI_BANG_ANH.md) | 19:32 10/11/2026 (bản 4: đã bật 08/11 — bỏ chỗ ghi "cờ tắt") |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 19:32 10/11/2026 (bản 10: 2 collection, giờ mở cửa 11 điểm) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 17:11 31/10/2026 (bản 3: viết lại thành "5 gói đã xong", kèm commit) |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [10/11 — tăng tốc câu xã giao và câu hỏi ngày (đang làm)](nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md) | 19:16 10/11/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [10/11 — câu ngày nhanh đạt (chờ bạn), xã giao chưa đạt, báo cáo sửa cho đúng hiện trạng](nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md) | 19:48 10/11/2026 |
 
 ## Trạng thái ngắn
 

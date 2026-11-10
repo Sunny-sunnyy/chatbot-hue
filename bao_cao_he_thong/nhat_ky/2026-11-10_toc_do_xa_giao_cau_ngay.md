@@ -1,31 +1,35 @@
-# Nhật ký 10/11/2026 — tăng tốc câu xã giao và câu hỏi ngày
+# Nhật ký 10/11/2026 — tăng tốc câu xã giao và câu hỏi ngày; sửa báo cáo cho đúng hiện trạng
 
-**Cập nhật lần cuối: 19:16 10/11/2026.** Tiền paid trong ngày: chưa có lượt có phí nào xong (sẽ ghi từ log khi B / E đo xong).
+**Cập nhật lần cuối: 19:48 10/11/2026.** Tiền paid trong ngày tới giờ: ≈ 0,11 USD (~2.800 đồng) — B ≈ 0,079 (xã giao) · E ≈ 0,031 (câu ngày) · C, A 0 (review / sửa báo cáo dùng quota Claude). Phase 9 ≈ 3,7 / trần 4,2 USD.
 
 ## Tóm tắt
-- Phiên tối 10/11 (mở 19:02) chỉ làm **hai lỗi tốc độ đã đo thật** ở lượt đo chung S5 hôm 09/11, không thêm tính năng mới:
-  - **Câu xã giao** (chào hỏi, cảm ơn): chữ đầu chậm nhất (p95) 7,7 s, sàn 5 s. Nguyên nhân: phải chờ bước định tuyến (~1,7 s) xong mới gọi model trò chuyện.
-  - **Câu hỏi ngày** (hôm nay là ngày âm nào, lễ hội còn mấy ngày): chữ đầu trung vị (p50) 5,2 s, sàn 3 s; 0,00063 USD / câu, sàn 0,0005. Nguyên nhân: model gọi công cụ ngày 2–4 lần rồi mới viết.
-- Cách sửa đang làm: B cho model trò chuyện **chạy cùng lúc** với định tuyến (như câu về Huế đã làm từ 05/11); E cho **code tính sẵn ngày** đưa vào ngữ cảnh trước lần gọi model đầu, công cụ cũ giữ làm dự phòng. C review cả hai khi xong.
-- Bạn chốt: quyền phiên như 09/11, trần tiền Phase 9 nâng 4,0 ⇒ 4,2 USD; **không chốt mốc đóng tính năng** (xong sớm đóng sớm, vẫn giữ chất lượng); 2 luật cách làm mới (W59, W61 — dưới).
-- Vòng tự soi 1 (cả nhóm bàn): cắt bớt bộ đo không bảo vệ sàn nào — B bỏ 22 câu kiểm thêm và 5 câu ngày khỏi lượt đo tốc độ; E thu gọn phần code dò ngày chỉ còn các dạng câu có thật trong bộ đo, bỏ đo lại mốc cho 9 câu Golden.
+- Phiên tối 10/11 (mở 19:02) chỉ sửa **hai lỗi tốc độ đã đo thật** ở lượt đo chung 09/11, không thêm tính năng:
+  - **Câu hỏi ngày** (hôm nay là ngày âm nào, lễ hội còn mấy ngày) — **ĐẠT mọi tiêu chí ghi trước**: code tính sẵn ngày đưa vào ngữ cảnh, model không phải gọi công cụ nhiều vòng. Chữ đầu trung vị 5,60 ⇒ **2,35 s**, chậm nhất (p95) 10,14 ⇒ **4,56 s**; tiền 0,00049 ⇒ **0,00036 USD / câu**; số lần gọi model 52 ⇒ 31 (19 câu); đúng ngày bằng bản cũ; an toàn 12 / 12. Lượt đo đầu có 1 câu nói sai năm ("năm nay") ⇒ sửa bằng code, đo lại đúng. Review (C) bắt thêm 1 lỗi tiềm ẩn ("mùng 2 tháng 9" không có chữ "âm" bị hiểu là ngày âm) ⇒ đã sửa. **Chờ bạn đồng ý để thay bản đang chạy** (không có cờ riêng — merge là đổi ngay).
+  - **Câu xã giao** (chào, cảm ơn) — **CHƯA ĐẠT tiêu chí ghi trước**: cho model trò chuyện chạy cùng lúc với bước phân loại câu hỏi. Trung vị 3,46 ⇒ **1,85 s** (nhanh rõ), nhưng chậm nhất (p95) 7,73 ⇒ **5,74 s** (sàn 5 s); câu ngoài phạm vi p95 5,21 s (sàn 5) và 0,00056 USD / câu (trần 0,0005). Phần đuôi chậm nghi do bước phân loại xếp nhầm / chậm ở vài câu (giả thuyết, chưa chứng minh). Mình **không sửa tiêu chí sau khi thấy số**, không đưa vào chatbot; code đã review xong, để sẵn — **bạn chọn bật hay đóng thành hồ sơ**.
+- **Sửa báo cáo cho đúng hiện trạng** (bạn yêu cầu): 2 agent con đọc thử thư mục này như người không đọc code, tìm ~60 chỗ cũ / sai và chỗ khó hiểu ⇒ sửa mục lục + 10 báo cáo khâu (vd Qdrant có 2 collection, hỏi bằng ảnh đã bật 08/11, câu khẩn cấp soạn sẵn đã gỡ 09/11, số tốc độ 09/11, chatbot Phase 9 **chưa đo lại cả bộ 176 câu**); mỗi file chỉ còn một dòng "Cập nhật lần cuối". C review: đạt. **Chưa đổi cấu trúc / thứ tự đọc** — chờ bạn chọn.
+- B chuẩn bị bản deploy chạy trên máy (không đụng AWS): bắt được 1 lỗi thật — cấu hình cũ sẽ đưa ảnh riêng #5 vào bản công khai ⇒ đã chặn.
+- C viết nháp kế hoạch so sánh cuối B7 (0 USD); mốc so sánh "RAG 1–8" đã gắn tag `p9-moc` (trước đó spec ghi mà chưa có).
+- Bạn chốt: quyền như 09/11, trần 4,2; không chốt mốc đóng tính năng; luật W59 + W61; "cắt test không cần, đẩy nhanh" ⇒ vòng tự soi cắt bớt bộ đo (B bỏ 22 câu kiểm thêm + 5 câu ngày; E thu gọn phần dò ngày, bỏ đo lại mốc cho 9 câu Golden).
 
-## Bạn cần làm gì
-- Không gấp, khi rảnh: phiếu toạ độ bản đồ (~15 phút) · bảng điểm v7 (~10 phút) · thu 40 câu giọng nói (~30–45 phút / người) — đường dẫn ở `session_prompt/CURRENT_HANDOFF.md` "Làm tiếp" mục 2.
-- Khi bạn về: bật hay không hai cờ tốc độ (A trình kèm số đo + tiền mỗi câu). Lưu ý trước: chạy song song xã giao làm **mỗi câu về Huế đắt thêm ≈ 0,00004 USD** (có thể chạm trần 0,0005 USD / câu) — B đo số thật.
+## Bạn cần làm gì (khi về — A hỏi mỗi lần một câu)
+1. Thay bản câu hỏi ngày nhanh vào chatbot? (A khuyên: có — đạt mọi tiêu chí, nhanh hơn + rẻ hơn.)
+2. Câu xã giao chạy song song: bật dù p95 chưa đạt, hay đóng hồ sơ?
+3. Câu ngày không nhắc Huế (vd "rằm tháng Giêng năm nay là ngày nào"): 9 / 19 câu đo bị từ chối vì bước phân loại xếp "ngoài phạm vi" — trợ lý Huế có nên trả lời loại câu này?
+4. Sắp xếp lại thư mục báo cáo để đọc theo thứ tự (A chuẩn bị 2–3 cách).
+- Không gấp: phiếu toạ độ bản đồ · bảng điểm v7 · thu 40 câu giọng nói.
 
 ## Trạng thái
 | Việc | Kết quả | Ý nghĩa |
 |---|---|---|
-| Xã giao chạy song song định tuyến (B) | đang đo — code + test đạt | nếu đạt: chào hỏi hiện chữ nhanh hơn ~1,7 s |
-| Câu ngày tính sẵn (E) | đang code | nếu đạt: câu ngày bớt 1–3 lần gọi model, rẻ hơn |
-| Nháp plan so sánh cuối B7 (C, 0 USD) | đang viết | chuẩn bị bước so cả hệ với RAG 1–8 trước bảo vệ |
-| Luật W61 "đếm lỗi trước khi xây" | vào luật | trước tính năng mới chạy một lượt đếm rẻ; không thấy lỗi thật ⇒ không xây (09/11 bốn việc âm tốn ≈ 0,6 USD) |
-| Luật W59 "đổi cờ ⇒ test có và không khoá" | vào luật | lỗi này đã lặp 3 lần |
+| Câu ngày tính sẵn (E) | đạt, review đạt, chờ bạn | câu ngày đạt sàn tốc độ + tiền |
+| Xã giao song song (B) | chưa đạt p95, review code đạt, chờ bạn | trung vị nhanh hơn ~1,6 s; đuôi chưa đạt |
+| Sửa báo cáo (A + agent con, C review) | xong | báo cáo khớp hệ thống đang chạy |
+| Deploy chạy trên máy (B) | đang làm | sẵn sàng khi bạn quyết deploy AWS |
+| Nháp kế hoạch B7 (C) | nháp xong; tag mốc gắn | chuẩn bị bước so cả hệ với RAG 1–8 |
 
 ## Giải thích ngắn (để bạn tự nói lại được)
-Hai lần gọi model không phụ thuộc nhau thì cho chạy cùng lúc, bớt thời gian chờ; phép tính (ngày âm, đếm ngày) để code làm trước rồi đưa kết quả cho model, thay vì để model gọi công cụ nhiều vòng. Cả hai giữ nguyên sàn an toàn và sàn "không nói sai ngày"; đo một lượt, review một lần, cờ tắt khi merge, bạn quyết bật.
+Câu ngày chậm vì model phải hỏi công cụ rồi mới viết; đổi sang để code tính ngày trước rồi đưa cho model ⇒ bớt vòng gọi, nhanh hơn và rẻ hơn, vẫn đúng ngày. Câu xã giao chậm vì phải chờ phân loại xong mới gọi model; chạy song song bớt được phần chờ ở đa số câu, nhưng vài câu bị phân loại chậm / sai vẫn kéo phần chậm nhất vượt sàn — nên chưa đưa vào.
 
 ## Đọc thêm
-- `session_prompt/CURRENT_HANDOFF.md` "VIỆC PHIÊN 10/11" (việc, tiêu chí, chốt tự soi)
-- Plan: `docs/superpowers/plans/2026-11-10-phase-9-xa-giao-song-song-plan.md` (B), `…-t1-nhanh-plan.md` (E, trên nhánh `p9-t1-nhanh`)
+- Report: `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md` (+ `_review.md`), `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md` (+ `_review.md`), `…/c_sua_bao_cao_1011_review.md`
+- Kế hoạch B7 (nháp): `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md`
