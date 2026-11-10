@@ -22,7 +22,7 @@
 | **Hỏi bằng ảnh (Phase 10)** — **bật từ 08/11** (10:31 08/11/2026); luna gợi tên + bạn xác nhận; SigLIP 2 thử âm | [BAO_CAO_HOI_BANG_ANH.md](BAO_CAO_HOI_BANG_ANH.md) | 20:29 05/11/2026 (bản 2: giao diện điện thoại — thẻ ảnh gọn hơn, merge `76319e2`) · 20:20 05/11/2026 (bản 1: viết mới — E viết, A review) |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 20:07 05/11/2026 (bản 9: giờ mở cửa 11 điểm Quần thể vào kho, chỉ mục 8.435 đoạn — bạn giữ) · 11:22 05/11/2026 (bản 8: kiểm kho thiếu gì — lỗi chủ yếu ở khâu tìm; dữ liệu mở lấp được giờ 13 điểm; kho chưa sửa) · 11:04 01/11/2026 (câu Golden lệch: giữ nguyên) · 17:14 31/10/2026 (bản 7: rà lại — 2 đợt sửa kho đóng, giữ sao lưu; 204 file / 8.424 đoạn) |
 | Rà code: nên sửa gì (bạn duyệt 5 gói 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 17:11 31/10/2026 (bản 3: viết lại thành "5 gói đã xong", kèm commit) |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [09/11 — ngày + âm lịch đo xác nhận, bảng vé đóng hồ sơ, định tuyến về phương án B, 4 chốt trước deploy](nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md) | 21:10 09/11/2026 |
+| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [10/11 — tăng tốc câu xã giao và câu hỏi ngày (đang làm)](nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md) | 19:16 10/11/2026 |
 
 ## Trạng thái ngắn
 
