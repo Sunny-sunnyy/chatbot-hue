@@ -132,7 +132,8 @@ def test_date_tool_counts_at_most_two_calls(deps):
     gen = generator(lambda n, kw: [ngay_call("am", 15, n, 2026)] if n <= 3 else [answer("Mình chưa rõ.")])
     trace, _ = chay(deps, "Rằm các tháng năm nay là ngày nào?", gen, BAT)
     goi = [t for t in trace.tools if t["name"] == "ngay_lich"]
-    assert len(goi) == 3 and goi[2].get("het_luot") and sum(s.title == nl.TIEU_DE_NGUON for s in trace.so_nguon) == 2
+    # T1 nhanh: + 1 nguồn lịch tính sẵn trước lần gọi đầu ⇒ 3 nguồn "Lịch hệ thống" (2 từ công cụ)
+    assert len(goi) == 3 and goi[2].get("het_luot") and sum(s.title == nl.TIEU_DE_NGUON for s in trace.so_nguon) == 3
 
 
 @pytest.mark.parametrize("cau, flags, so_vong", [
@@ -255,3 +256,56 @@ def test_form_turn_never_gets_date_tool(deps, stream):
     run(deps, query, gen, dataclasses.replace(FORM, ngay_lich=True), trace, stream)
     (sent,) = gen.client.responses.calls
     assert tools_of(sent) == [] and not any(t["name"] == "ngay_lich" for t in trace.tools)
+
+
+# ---------- T1 nhanh (plan `2026-11-10-phase-9-t1-nhanh-plan.md`): lịch code tính sẵn trước lần gọi model đầu ----------
+
+def test_precomputed_lines_cover_only_forms_in_the_date_set():
+    now = _vn(2026, 11, 10)  # Thứ Ba 10/11/2026 = 2/10 âm Bính Ngọ
+    dong, n = nl.lich_san("Mùng 1 Tết năm 2027 là thứ mấy?", "", now)
+    assert dong[0] == "Hôm nay (giờ Việt Nam): Thứ Ba, 10/11/2026 dương lịch — ngày 2 tháng 10 âm lịch, năm Bính Ngọ."
+    assert dong[1].startswith("Ngày mai: Thứ Tư, 11/11/2026") and n == 1 and dong[-1] == nl.GHI_CHU_NAM
+    assert any(d.startswith("Ngày được hỏi (âm lịch 1/1/2027): Thứ Bảy, 06/02/2027") for d in dong)
+    tuan = nl.lich_san("Thứ 7 tuần sau là ngày bao nhiêu âm lịch?", "", now)[0]
+    assert "Tuần sau — Thứ Bảy, 21/11/2026 (ngày 13 tháng 10 âm)." in tuan and len(tuan) == 2 + 7
+    assert "Tuần này — Chủ nhật, 15/11/2026 (ngày 7 tháng 10 âm)." in nl.lich_san("Chủ nhật này là ngày bao nhiêu âm lịch?", "", now)[0]
+    assert nl.lich_san("Rằm tháng tới là ngày nào dương lịch?", "", now)[0][2].startswith(
+        "Rằm tháng tới (ngày 15 tháng 11 âm lịch): Thứ Tư, 23/12/2026 dương lịch")
+    assert nl.lich_san("Hôm nay là ngày mấy âm lịch?", "", now) == (dong[:2], 0)  # chỉ hôm nay + mai
+
+
+def test_lunar_dates_in_documents_need_lunar_marker_and_are_capped():
+    now = _vn(2026, 11, 10)
+    tai_lieu = ("Hội làng A: **mồng 10 tháng Giêng Âm lịch**. Lễ B: Rằm tháng Tư (15/4 Âm lịch). Hội C: ngày 12–14 tháng 2 Âm lịch. "
+                "Hội D: tháng 3 Âm lịch. Ngày 2 tháng 9 năm 1945. Ngày 20 tháng 11. Rằm tháng năm nay.")  # chữ tự đặt (không chép kho)
+    dong, n = nl.lich_san("Lễ hội này năm sau vào ngày nào?", tai_lieu, now)
+    tl = [d.split(") — ")[0] for d in dong if d.startswith("Ngày âm trong tài liệu") and "lần sắp tới" in d]
+    assert n == 3 and tl == ["Ngày âm trong tài liệu (âm lịch 10/1", "Ngày âm trong tài liệu (âm lịch 15/4", "Ngày âm trong tài liệu (âm lịch 12/2"]
+    nhieu = " ".join(f"mồng {k} tháng Giêng" for k in range(1, 10)) + " mồng 1 tháng Giêng"
+    assert nl.lich_san("Tết năm nay?", nhieu, now)[1] == nl.SO_NGAY_AM_TOI_DA  # Tết (câu hỏi) trước, trùng 1/1 bỏ, tối đa 6
+
+
+def _chu_gui(kw) -> str:
+    return json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n")
+
+
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("cau, history, co_lich", [
+    ("Hôm nay là ngày mấy âm lịch?", (), True),                                              # lượt đầu
+    ("Còn chùa Thiên Mụ thì sao?", (("Tối nay Đại Nội có mở cửa không?", "…"),), True),   # lượt có lịch sử: câu hỏi liền trước có từ chỉ ngày
+    ("Đại Nội rộng bao nhiêu?", (), False),                                                  # không từ chỉ ngày ⇒ như cũ
+])
+def test_first_model_call_already_has_the_date_source(deps, cau, history, co_lich, stream):
+    # WORKFLOW §4c: mỗi loại lượt — lần gọi đầu đã có nguồn "Lịch hệ thống"; trả lời trích nguồn đó ngay (không gọi công cụ) vẫn qua kiểm citation
+    gui = []
+
+    def kich_ban(n, kw):
+        gui.append(_chu_gui(kw))
+        so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Lịch hệ thống", gui[-1])
+        return [answer(f"Hôm nay là ngày âm như nguồn [{so[-1]}]." if so else "Mình chưa rõ.")]
+
+    trace, _ = chay(deps, cau, generator(kich_ban), BAT, history, stream)
+    assert len(gui) == 1 and ("Hôm nay (giờ Việt Nam):" in gui[0]) is co_lich
+    assert any(t["name"] == "lich_san" for t in trace.tools) is co_lich and not any(t["name"] == "ngay_lich" for t in trace.tools)
+    if co_lich:
+        assert trace.citation_error is None and trace.cited[-1].title == nl.TIEU_DE_NGUON

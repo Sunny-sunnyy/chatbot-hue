@@ -137,21 +137,22 @@ GHI_CHU_NAM = ("Ghi chú: người dùng không nêu năm cụ thể (hoặc nó
                "nói là đã qua, rồi nêu lần sắp tới.")
 
 
-def _hai_lan(ngay: int, thang: int, loai: str, thang_nhuan: bool, hom: dt.date, lich: str, nhuan: str) -> list[str]:
+def _hai_lan(ngay: int, thang: int, loai: str, thang_nhuan: bool, hom: dt.date, lich: str, nhuan: str, nhan: str = "Ngày được hỏi",
+             ghi_chu: bool = True) -> list[str]:
     """Không nêu năm ⇒ lần gần nhất đã qua (hoặc hôm nay) và lần sắp tới (review nhánh M-1, A chọn 08/11: không đoán "năm nay" — từ 1/1 tới Tết năm âm
-    ≠ năm dương, "Tết năm nay" sẽ thành Tết đã qua)."""
+    ≠ năm dương, "Tết năm nay" sẽ thành Tết đã qua). `nhan` / `ghi_chu`: `lich_san` ghi nhãn riêng cho ngày lấy từ tài liệu và nối ghi chú một lần."""
     goc = solar_to_lunar(hom).year if loai == "am" else hom.year
     ngays = sorted({d for y in (goc - 1, goc, goc + 1) if isinstance(d := ngay_duong(ngay, thang, y, loai, thang_nhuan), dt.date)})
     qua = [d for d in ngays if d <= hom]
     toi = [d for d in ngays if d > hom]
     if not qua and not toi:
-        return [f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}): {ngay_duong(ngay, thang, goc, loai, thang_nhuan)}"]
+        return [f"{nhan} ({lich} lịch {ngay}/{thang}{nhuan}): {ngay_duong(ngay, thang, goc, loai, thang_nhuan)}"]
     dong = []
     if qua:
-        dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần gần nhất: {mo_ta(qua[-1])} — {so_voi_hom_nay(qua[-1], hom)} (so với hôm nay)")
+        dong.append(f"{nhan} ({lich} lịch {ngay}/{thang}{nhuan}) — lần gần nhất: {mo_ta(qua[-1])} — {so_voi_hom_nay(qua[-1], hom)} (so với hôm nay)")
     if toi:
-        dong.append(f"Ngày được hỏi ({lich} lịch {ngay}/{thang}{nhuan}) — lần sắp tới: {mo_ta(toi[0])} — {so_voi_hom_nay(toi[0], hom)} (so với hôm nay)")
-    if qua and toi:
+        dong.append(f"{nhan} ({lich} lịch {ngay}/{thang}{nhuan}) — lần sắp tới: {mo_ta(toi[0])} — {so_voi_hom_nay(toi[0], hom)} (so với hôm nay)")
+    if qua and toi and ghi_chu:
         dong.append(GHI_CHU_NAM)
     return dong
 
@@ -171,6 +172,92 @@ def ket_qua(loai: Literal["hom_nay", "duong", "am"], ngay: int, thang: int, nam:
     if loai != "hom_nay" and (not nam or (loai == "am" and _NAM_NAY.search(unicodedata.normalize("NFC", cau)))):
         dong += _hai_lan(ngay, thang, loai, thang_nhuan, hom, lich, nhuan)
     return "\n".join(dong)
+
+
+# ---------- Lịch tính sẵn trước lần gọi model đầu (T1 nhanh, plan `2026-11-10-phase-9-t1-nhanh-plan.md` D1) ----------
+# S5 09/11: model gọi `ngay_lich` rồi mới viết ⇒ 2–4 lần gọi / câu ngày. Code dò sẵn ngày người dùng / tài liệu nêu, đổi trước, đưa vào ngữ cảnh.
+# Chỉ các dạng plan liệt kê (A 10/11: không mở thêm dạng khi chưa thấy lỗi thật); dạng khác ⇒ model vẫn gọi được công cụ.
+_SO_THANG = {"giêng": 1, "hai": 2, "ba": 3, "tư": 4, "năm": 5, "sáu": 6, "bảy": 7, "tám": 8, "chín": 9, "mười": 10, "mười một": 11, "mười hai": 12,
+             "chạp": 12}
+_THANG = r"(mười một|mười hai|mười|giêng|chạp|hai|ba|tư|năm(?!\s+(?:nay|sau|tới|ngoái))|sáu|bảy|tám|chín|\d{1,2})(?!\w)"  # "tháng năm nay" ≠ tháng Năm
+_NHUAN = r"(\s*\(?\s*nhuận\s*\)?)?"
+# "rằm / mùng / mồng … tháng …" (âm lịch ngầm hiểu) — câu hỏi và tài liệu
+_AM_TIEN_TO = re.compile(rf"(?<!\w)(?:(rằm)|(?:mùng|mồng)\s+(\d{{1,2}}))\s+tháng\s+{_THANG}{_NHUAN}", re.IGNORECASE)
+# "ngày N (– M) tháng X âm (lịch)" và "N/N âm (lịch)" — phải có chữ "âm" theo sau
+_AM_HAU_TO = re.compile(rf"(?<!\w)ngày\s+(\d{{1,2}})(?:\s*(?:[-–]|đến|hoặc)\s*\d{{1,2}})?\s+tháng\s+{_THANG}{_NHUAN}\s+âm(?!\w)", re.IGNORECASE)
+_AM_SO = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})\s*âm(?!\w)", re.IGNORECASE)
+# chỉ câu hỏi: "Tết" / "mùng N Tết" ⇒ N/1 âm (Tết Trung thu, Đoan ngọ… không phải Tết Nguyên đán ⇒ bỏ); "rằm tháng này / tới / sau"
+_TET = re.compile(r"(?<!\w)(?:(?:mùng|mồng)\s+([1-9])\s+)?tết(?!\s+(?:trung thu|đoan ngọ|hàn thực|thanh minh|ông công|táo|dương|tây|độc lập))(?!\w)",
+                  re.IGNORECASE)
+_RAM_TUONG_DOI = re.compile(r"(?<!\w)rằm tháng (này|tới|sau)(?!\w)", re.IGNORECASE)
+_NAM_SO = re.compile(r"(?<!\d)(\d{4})(?!\d)")
+_TUAN_NAY = re.compile(r"(?<!\w)(?:tuần này|cuối tuần|chủ nhật này|thứ (?:hai|ba|tư|năm|sáu|bảy|[2-7]) này)(?!\w)", re.IGNORECASE)
+_TUAN_SAU = re.compile(r"(?<!\w)tuần (?:sau|tới)(?!\w)", re.IGNORECASE)
+SO_NGAY_AM_TOI_DA = 6
+
+
+def _thang_so(chu: str) -> int:
+    return _SO_THANG.get(chu.lower()) or int(chu)
+
+
+def _ngay_am(text: str, cau_hoi: bool) -> list[tuple[int, int, bool]]:
+    """(ngày, tháng, nhuận) âm lịch theo thứ tự xuất hiện. Câu hỏi thêm dạng Tết."""
+    gap = []
+    for m in _AM_TIEN_TO.finditer(text):
+        gap.append((m.start(), 15 if m.group(1) else int(m.group(2)), _thang_so(m.group(3)), bool(m.group(4))))
+    for m in _AM_HAU_TO.finditer(text):
+        gap.append((m.start(), int(m.group(1)), _thang_so(m.group(2)), bool(m.group(3))))
+    for m in _AM_SO.finditer(text):
+        gap.append((m.start(), int(m.group(1)), int(m.group(2)), False))
+    if cau_hoi:
+        for m in _TET.finditer(text):
+            gap.append((m.start(), int(m.group(1) or 1), 1, False))
+    return [(d, t, n) for _, d, t, n in sorted(gap)]
+
+
+def _thang_am_sau(hom: dt.date) -> LunarDate:
+    """Ngày 1 của tháng âm sau tháng âm hiện tại (tháng âm 29 hoặc 30 ngày ⇒ dò bằng code, không đoán)."""
+    am = solar_to_lunar(hom)
+    d = lunar_to_solar(LunarDate(1, am.month, am.year, am.leap)) + dt.timedelta(days=29)
+    while solar_to_lunar(d).day != 1:
+        d += dt.timedelta(days=1)
+    return solar_to_lunar(d)
+
+
+def lich_san(cau: str, ngu_canh: str, now: dt.datetime | None = None) -> tuple[list[str], int]:
+    """Các dòng lịch do code dựng cho một lượt có từ chỉ ngày ⇒ (dòng, số ngày âm đã đổi). `cau`: câu hỏi (+ câu hỏi liền trước); `ngu_canh`: chữ
+    ngữ cảnh lần tìm đầu (đoạn kho). Hôm nay / mai luôn có; tuần, rằm tháng này / tới, ngày âm chỉ khi câu / tài liệu nêu. Chỉ dạng có trong bộ đo
+    (tự soi 10/11, C): "tháng này", ngày dương có năm, "ngày kia"… ⇒ model gọi công cụ `ngay_lich` như trước."""
+    cau, ngu_canh = unicodedata.normalize("NFC", cau), unicodedata.normalize("NFC", ngu_canh)
+    hom = hom_nay(now)
+    dong = [f"Hôm nay (giờ Việt Nam): {mo_ta(hom)}.", f"Ngày mai: {mo_ta(hom + dt.timedelta(days=1))}."]
+    dau_tuan = hom - dt.timedelta(days=hom.weekday())
+    if _TUAN_NAY.search(cau):
+        dong += [f"Tuần này — {_ngan(dau_tuan + dt.timedelta(days=k))}." for k in range(7)]
+    if _TUAN_SAU.search(cau):
+        dong += [f"Tuần sau — {_ngan(dau_tuan + dt.timedelta(days=7 + k))}." for k in range(7)]
+    for m in _RAM_TUONG_DOI.finditer(cau):
+        am = solar_to_lunar(hom) if m.group(1).lower() == "này" else _thang_am_sau(hom)
+        d = lunar_to_solar(LunarDate(15, am.month, am.year, am.leap))
+        dong.append(f"Rằm tháng {m.group(1).lower()} (ngày 15 {_thang_am(am)} âm lịch): {mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay).")
+
+    nam_hoi = sorted({y for y in map(int, _NAM_SO.findall(cau)) if NAM_MIN <= y <= NAM_MAX})
+    da_co, n_am = set(), 0
+    for nguon, nhan in ((_ngay_am(cau, True), "Ngày được hỏi"), (_ngay_am(ngu_canh, False), "Ngày âm trong tài liệu")):
+        for ngay, thang, nhuan in nguon:
+            if (ngay, thang, nhuan) in da_co or n_am >= SO_NGAY_AM_TOI_DA:
+                continue
+            da_co.add((ngay, thang, nhuan))
+            n_am += 1
+            chu_nhuan = ", tháng nhuận" if nhuan else ""
+            dong += _hai_lan(ngay, thang, "am", nhuan, hom, "âm", chu_nhuan, nhan=nhan, ghi_chu=False)
+            for nam in nam_hoi:
+                d = ngay_duong(ngay, thang, nam, "am", nhuan)
+                chu = d if isinstance(d, str) else f"{mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay)"
+                dong.append(f"{nhan} (âm lịch {ngay}/{thang}/{nam}{chu_nhuan}): {chu}")
+    if n_am:
+        dong.append(GHI_CHU_NAM)
+    return dong, n_am
 
 
 # Nguồn trong sổ nguồn (review plan M-2): câu trả lời chỉ có ngày (không đoạn kho) vẫn phải có [n] để qua bộ kiểm citation — như nguồn thời tiết
