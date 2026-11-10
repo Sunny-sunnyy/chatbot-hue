@@ -135,9 +135,10 @@ THOI_TIET_MO_TA = (
     "do hệ thống dựng (một nguồn có mã [n]), sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về dự báo ghi "
     "mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
 )
-NGAY_LICH_MO_TA = (  # Phase 9 T1: code tính ngày + đổi âm ↔ dương (lịch Việt Nam UTC+7); model chỉ gửi số
-    "Cho biết hôm nay (giờ Việt Nam: thứ, ngày dương, ngày âm) và đổi một ngày giữa dương lịch và âm lịch Việt Nam. Gọi khi câu hỏi cần biết hôm nay / "
-    "ngày mai / tuần này là ngày nào, hoặc cần đổi ngày âm ↔ dương (rằm, mùng một, lễ hội ngày âm). loai = \"hom_nay\" ⇒ chỉ ngày hôm nay (ngay, thang, "
+NGAY_LICH_MO_TA = (  # Phase 9 T1: code tính ngày + đổi âm ↔ dương (lịch Việt Nam UTC+7); model chỉ gửi số. T1 nhanh D3: lịch tính sẵn đã ở ngữ cảnh
+    "Đổi một ngày giữa dương lịch và âm lịch Việt Nam (giờ Việt Nam). Hôm nay, ngày mai, các ngày trong tuần được hỏi và ngày âm có trong câu hỏi / "
+    "tài liệu đã được hệ thống tính sẵn trong nguồn \"Lịch hệ thống\" của ngữ cảnh: dùng nguồn đó, không gọi công cụ cho các ngày ấy. Chỉ gọi khi cần "
+    "một ngày chưa có trong nguồn Lịch hệ thống (vd ngày âm đọc được ở tài liệu tìm thêm). loai = \"hom_nay\" ⇒ chỉ ngày hôm nay (ngay, thang, "
     "nam ghi 0); loai = \"duong\" / \"am\" ⇒ đổi ngày ngay/thang/nam của lịch đó (nam = 0 khi người dùng không nêu năm — công cụ trả cả lần gần nhất đã qua và lần sắp tới); thang_nhuan chỉ dùng cho tháng âm nhuận. "
     "Không tự tính hay tự đổi ngày âm ↔ dương; chỉ dùng ngày công cụ trả về."
 )

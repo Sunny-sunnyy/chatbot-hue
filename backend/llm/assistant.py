@@ -475,6 +475,21 @@ def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
     return ngay_lich
 
 
+def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
+    """T1 nhanh (plan `2026-11-10-phase-9-t1-nhanh-plan.md` D2): S5 09/11 câu ngày gọi model 2–4 lần vì model phải gọi `ngay_lich` rồi mới viết ⇒
+    code tính sẵn hôm nay / mai / tuần / ngày âm nêu trong câu và trong đoạn kho lần tìm đầu, đăng thành **một nguồn** (như kết quả `ngay_lich`), nối
+    sau ngữ cảnh. Log chỉ số đếm (số dòng, số ngày âm), không chữ."""
+    started = time.perf_counter()
+    cau = " ".join([query] + ([trace.history[-1][0]] if trace.history else []))  # như `ngay_lich_for_turn`: câu cuối + câu hỏi liền trước
+    dong, n_am = nl.lich_san(cau, trace.packed.text)
+    src = PackedSource(id=len(trace.so_nguon) + 1, title=nl.TIEU_DE_NGUON, heading_path=(nl.MUC_NGUON,), excerpts=tuple(dong), source=nl.NGUON_SOURCE)
+    trace.so_nguon.append(src)
+    chu = FullCorpusContextBuilder._block(src)
+    trace.context_parts.append(chu)
+    trace.tools.append({"name": "lich_san", "ms": elapsed_ms(started), "n_dong": len(dong), "n_am": n_am})
+    return chu
+
+
 def chu_cua_model(trace: AnswerTrace) -> str:
     """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
     answer, noi = trace.answer or "", trace.thoi_tiet_noi
@@ -636,7 +651,12 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
-    return build_assistant_input(query, trace.packed.text, today) if flags.tim_them else None
+    if not flags.tim_them:
+        return None
+    context = trace.packed.text
+    if flags.ngay_lich and trace.fixed_outcome is None and nl.co_tu_ngay_luot(query, trace.history):
+        context = f"{context}\n\n{_nguon_lich_san(trace, query)}"  # T1 nhanh D2: lượt có từ chỉ ngày ⇒ lịch code tính trước lần gọi model đầu
+    return build_assistant_input(query, context, today)
 
 
 def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -> None:
