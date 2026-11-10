@@ -1,6 +1,18 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 22:27 09/11/2026 (A, kết phiên 09/11). Trước: 12:50 08/11/2026 (A, kết phiên 08/11).
+Cập nhật: 19:05 10/11/2026 (A, mở phiên 10/11 — mục "VIỆC PHIÊN 10/11" ngay dưới). Trước: 22:27 09/11/2026 (A, kết phiên 09/11).
+
+## VIỆC PHIÊN 10/11 (A giao 19:05 10/11/2026 — User cấp quyền "như 09/11 + trần Phase 9 4,2")
+
+Luật chung việc này: **mức nhẹ** (`Session_Prompt.md` §7: ≤ 0,2 USD, không đổi kiến trúc ⇒ plan 1 trang: tiêu chí ghi trước + bộ đo + tiền ⇒ **A đọc rồi duyệt, không review plan** ⇒ code ⇒ đo 1 lượt ⇒ **1 review cả nhánh** (C) ⇒ A merge). Cả B và E chạm `backend/llm/assistant.py` ⇒ mỗi bên **worktree `/tmp` riêng**, nhánh riêng; merge lần lượt (ai review đạt trước merge trước, bên sau rebase + chạy lại test file chạm). **Lượt đo tốc độ không chồng nhau:** trước khi đo, nhắn A + bên kia "bắt đầu đo"; bên kia lúc đó không chạy lượt trả phí / việc nặng CPU; xong nhắn "đo xong". Mỗi lượt đo / bộ kiểm trong plan ghi rõ **giữ sàn nào** (vòng tự soi: không chỉ ra được ⇒ không chạy). Đổi cờ `settings.yaml` ⇒ test file chạm chạy cả có lẫn không `--env-file`.
+
+| Session | Việc | Tiêu chí (sàn ghi trước) | Tiền | Đầu ra |
+|---|---|---|---|---|
+| **B** `hue-rag-05` | **Xã giao chạy song song định tuyến** (giống #6 cho tuyến `tro_chuyen`): gọi model trò chuyện cùng lúc với định tuyến, tuyến khác ⇒ bỏ phần đã chạy. Nhánh `p9-xa-giao-song-song`. Đọc: `assistant.py` hàm chạy song song #6 + `_pick_route`; plan #6 `docs/superpowers/plans/2026-11-04-phase-9-toc-do-song-song-plan.md`; số S5 `data/phase_9/s5_chung/` | xã giao chữ đầu p95 ≤ 5 s (S5 7,73); câu Huế / ngoài phạm vi không chậm hơn S5 quá nhiễu; **không chữ nào hiện trước khi định tuyến xong** nếu tuyến cuối không phải `tro_chuyen` (chạm thứ tự hiện chữ ⇒ bộ an toàn 32 đủ 4 số); cờ tắt ⇒ chuỗi gửi model giống byte | ≤ 0,1 USD | plan 1 trang ⇒ A; report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md` |
+| **E** `hue-rag-e4` | **Câu ngày nhanh hơn:** code tính sẵn ngày (hôm nay / đổi âm ↔ dương khi dò thấy) đưa vào ngữ cảnh thay vì model gọi công cụ `ngay_lich` 3–5 lần. Nhánh `p9-t1-nhanh`. Đọc: `backend/llm/ngay_lich.py`, `assistant.py` `ngay_lich_for_turn`; report T1 `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md`; bộ câu ngày đã có | câu ngày chữ đầu p50 ≤ 3 s, p95 ≤ 5 s (S5 5,19 / max 11,0, n = 5 ⇒ đo 15–20 câu); ≤ 0,0005 USD / câu; **đúng ngày không tụt** so T1 đang bật (cùng bộ câu ngày); câu không có từ chỉ ngày ⇒ chuỗi gửi model giống byte | ≤ 0,1 USD | plan 1 trang ⇒ A; report `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md` |
+| **C** `hue-rag-4f` | **Review cả nhánh** B rồi E khi mỗi bên báo xong (`risk-gated-agent-review`, chỉ dựa plan + diff + số đo). Trước đó: rảnh (ghi "rảnh — chờ review" ở `STATUS_C.md`) | — | 0 (chạy lại ≤ 0,01 nếu cần) | `<việc>_review.md` cạnh report |
+
+Điều kiện dừng: tiền dự phóng vượt 0,1 / việc ⇒ nhắn A; sàn an toàn / đúng ngày tụt ⇒ dừng, báo A (không chỉnh lời dặn vòng 2 khi chưa báo). Không làm: thêm tính năng, đổi model, đổi lời dặn ngoài phần cần cho việc.
 Nguyên văn phần đầu phiên 07/11 (11:53 → 15:43 07/11/2026): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-07.md`; 06/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-07_cong_dot_1_tu_soi.md`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (viết lại 22:27 09/11/2026, kết phiên 09/11)
@@ -54,6 +66,8 @@ G = cổng 2 nhóm (đóng; phương án B đang chạy); T1 ngày + âm lịch 
 
 ## Session
 
+**Phiên 10/11 (mở 19:02 10/11/2026):** A `hue-rag-55` · B `hue-rag-05` · C `hue-rag-4f` · E `hue-rag-e4` — cả bốn Claude Code, trực tiếp (B / C / E tự báo). Qdrant chạy sẵn (2 collection, 8.435 điểm); không worktree `/tmp`.
+
 **Phiên 09/11 (mở 20:09 09/11/2026):** A `hue-rag-87` · B `hue-rag-99` · C `hue-rag-6a` · E `hue-rag-ea` — cả bốn Claude Code, trực tiếp (B / C / E tự báo). Qdrant chạy sẵn lúc mở (2 collection, 8.435 điểm). Worktree `/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/c_t3` mất (prunable) ⇒ dựng lại từ nhánh.
 
 **Phiên 08/11 (mở 09:16 08/11/2026):** A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22` — cả bốn Claude Code, trực tiếp (B / C / E tự báo).
@@ -66,6 +80,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C / E lúc mở phiên 
 
 ## Quyền
 
+- **Phiên 10/11 (User chọn "như 09/11 + trần 4,2", A ghi nhận 19:05 10/11/2026):** như 09/11 dưới đây (A tự điều phối, giao ngay việc có sẵn, A tự commit / push, B / C / E push nhánh riêng, vượt 1 USD / phiên được, việc cần User duyệt thì gác; tiền API thoải mái nhưng ưu tiên tốc độ, không test vô nghĩa). **Trần Phase 9 nâng 4,0 ⇒ 4,2 USD** (cho 2 việc tốc độ, quỹ B7 0,35 giữ riêng). Hết hạn cuối phiên.
 - **Phiên 09/11 (User chọn "như 08/11", A ghi nhận 20:13 09/11/2026):** A tự điều phối, giao ngay việc có sẵn, A tự commit / push, B / C / E push nhánh riêng, vượt 1 USD / phiên được, việc cần User duyệt thì gác. Trần Phase 9 nâng 4,0. Hết hạn cuối phiên.
   **Thêm (20:21 09/11/2026) User:** "thoải mái tiền API cho triển khai, phát triển nhưng phải đảm bảo tốc độ; không làm những thứ vô nghĩa hay test những thứ mất thời gian; 4 bạn trao đổi, thảo luận cùng nhau để đưa ra phương pháp, hướng xử lý phù hợp" ⇒ ưu tiên tốc độ làm; cắt test / đo không phục vụ sàn chất lượng; B / C / E bàn thẳng với nhau, A chốt khi lệch phạm vi.
 - Spec Phase 9 file hiện tại sha `01b7476a3eb1` ≠ bản duyệt `5557f0fd7650` do commit `442f758` (bỏ mốc ngày theo User 08/11; sàn + tiền không đổi) ⇒ sửa chữ, không cần duyệt lại (A ghi 20:13 09/11/2026).
