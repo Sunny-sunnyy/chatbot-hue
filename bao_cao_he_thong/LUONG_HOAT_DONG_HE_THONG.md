@@ -1,11 +1,11 @@
 # Luồng hoạt động hiện tại của chatbot Huế (hue_rag)
 
-**Cập nhật lần cuối: 19:30 10/11/2026 — bản 34:** hệ thống không đổi; sửa các chỗ cũ theo rà soát 10/11 (tốc độ / tiền theo lượt đo chung 09/11, 4 chốt trước deploy đã có code, log xoay vòng, hỏi bằng ảnh trong sơ đồ + API, mã 429, việc kế tiếp, phiếu build mới). Các bản trước: xem lịch sử git.
+**Cập nhật lần cuối: 20:52 10/11/2026 — bản 35:** câu có ngày: code tính sẵn ngày trước lần gọi model đầu (merge `1633c18`), công cụ `ngay_lich` chỉ còn dự phòng. Bản 34 (19:30 10/11/2026): hệ thống không đổi; sửa các chỗ cũ theo rà soát 10/11 (tốc độ / tiền theo lượt đo chung 09/11, 4 chốt trước deploy đã có code, log xoay vòng, hỏi bằng ảnh trong sơ đồ + API, mã 429, việc kế tiếp, phiếu build mới). Các bản trước: xem lịch sử git.
 
 File này mô tả hệ thống **đang chạy**. Mỗi lần hành vi đổi (chia đoạn, chỉ mục, cách tìm, prompt, model), file này được cập nhật theo.
 Những gì đã thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.md` cùng thư mục). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-**Tóm tắt (hiện trạng sau 09/11; việc đang thử 10/11 chưa vào chatbot):**
+**Tóm tắt (hiện trạng 10/11):**
 - **Kho và tìm:** kho 204 file / 8.435 đoạn; tìm bằng vector nghĩa e5-small + từ khoá BM25; đưa tối đa 10 đoạn vào ngữ cảnh; `gpt-6-luna` trả lời có trích dẫn, chữ hiện dần.
 - **Người dùng thấy (từ 07/11, cổng đợt 1):** một cổng du lịch thay cho trang hỏi đáp đơn:
   - **trang chủ** có ô hỏi lớn, 5 câu gợi ý, 5 lĩnh vực, ô thời tiết hôm nay;
@@ -21,10 +21,11 @@ Những gì đã thử và bỏ nằm trong báo cáo từng khâu (`BAO_CAO_*.m
   - nhớ câu hỏi 3 lượt;
   - kho không có ⇒ mục "Từ web (chưa kiểm)";
   - **từ 07/11 trả lời câu dự báo thời tiết** bằng số Open-Meteo do code dựng;
-  - **từ 09/11 trả lời câu có ngày** ("tối nay", "rằm tháng Giêng tới", "Tết năm nay", lễ ngày âm "năm sau"): code tính ngày + đổi âm ↔ dương lịch Việt Nam, model chỉ gửi số.
+  - **từ 09/11 trả lời câu có ngày** ("tối nay", "rằm tháng Giêng tới", "Tết năm nay", lễ ngày âm "năm sau"): code tính ngày + đổi âm ↔ dương lịch Việt Nam. **Từ 10/11 code tính sẵn**
+    hôm nay / mai / các ngày trong tuần được hỏi / ngày âm trong câu và trong đoạn kho vừa tìm, đưa model ngay lần đầu ⇒ nhanh hơn (bước 17).
 - **Từ 08/11 (giao diện):** nút Dừng khi đang trả lời (máy chủ huỷ lần gọi model), ô hỏi ≤ 500 ký tự, gợi ý cách hỏi dưới câu kho từ chối, dòng "Nguồn" gộp theo bài, nút sao chép / tải lịch trình.
 - **Bật từ 08/11:** hỏi bằng ảnh (gợi ý ≤ 3 tên, người dùng bấm xác nhận; ảnh thu nhỏ gửi OpenAI để đoán tên, máy chủ không lưu ảnh, log không ghi nội dung). **Chưa bật:** lịch trình khi gõ câu tự do (chỉ qua biểu mẫu), bản đồ lịch trình (code có, chờ bạn xem), giọng nói.
-- **Tốc độ + tiền (lượt đo chung 09/11: 65 câu, trình duyệt thật, một lượt — mục 4):** câu về Huế tới chữ đầu trung vị 2,16 s / p95 4,32 s, 0,00047 USD / câu ⇒ **đạt** sàn 3 / 5 s và trần 0,0005; câu ngoài phạm vi 1,62 / 2,97 s; **câu xã giao p95 7,73 s ⇒ vượt sàn**; **câu có từ chỉ ngày** (chỉ 5 câu) trung vị 5,19 s, chậm nhất 11 s, 0,00063 USD ⇒ **vượt** — bạn chọn giữ bật, tối ưu sau (đang thử 10/11, chưa vào chatbot).
+- **Tốc độ + tiền (lượt đo chung 09/11: 65 câu, trình duyệt thật, một lượt — mục 4):** câu về Huế tới chữ đầu trung vị 2,16 s / p95 4,32 s, 0,00047 USD / câu ⇒ **đạt** sàn 3 / 5 s và trần 0,0005; câu ngoài phạm vi 1,62 / 2,97 s; **câu xã giao p95 7,73 s ⇒ vượt sàn**; **câu có từ chỉ ngày: từ 10/11 trung vị 2,35 s / p95 4,56 s, 0,00036 USD / câu (19 câu, 1 lượt, đo ở máy chủ; trước 5,60 / 10,14 s, 0,00049 USD) ⇒ đạt** (lượt chung 09/11 còn vượt: 5,19 s, 0,00063 USD).
 - Phase 8 bạn đóng 14:29 01/11/2026; Phase 9 đang làm (còn B7 đóng gói, mục 5).
 
 ---
@@ -38,7 +39,8 @@ HỎI ĐÁP (mỗi câu hỏi):
   cổng web (Trợ lý Huế nổi / trang riêng) → API /api/chat/stream (hoặc /api/chat) → chuẩn hóa NFC → gpt-6-luna phân loại câu hỏi
     ├ trò chuyện → gpt-6-luna đáp ngắn, không tìm kho        ├ ngoài phạm vi → câu soạn sẵn   (khẩn cấp → như "hỏi về Huế", từ 09/11)
     └ hỏi về Huế → tìm 10 đoạn bằng câu gốc → ngữ cảnh → gpt-6-luna trả lời (chữ hiện dần), được gọi công cụ:
-         tim_kho thêm ≤ 2 lần · thoi_tiet (từ 07/11; số Open-Meteo do code dựng) · ngay_lich (từ 09/11, chỉ câu có từ chỉ ngày; code tính)
+         tim_kho thêm ≤ 2 lần · thoi_tiet (từ 07/11; số Open-Meteo do code dựng) · ngay_lich (từ 09/11; từ 10/11 chỉ dự phòng)
+         (câu có từ chỉ ngày: từ 10/11 code thêm sẵn nguồn "Lịch hệ thống" vào ngữ cảnh TRƯỚC lần gọi model đầu)
        → kiểm trích dẫn [n] → dòng "Nguồn: …" (giao diện bỏ số [n] khỏi chữ)
        → kho từ chối ⇒ tra web một lần ⇒ mục "Từ web (chưa kiểm)"
   biểu mẫu "Lên kế hoạch" (từ 07/11) → /api/chat/stream {bieu_mau, giá trị nút} → KHÔNG định tuyến → code xếp lịch (biểu mẫu chưa có ô ngày đi ⇒ lịch không kèm dòng dự báo — S3 đếm 0 / 24)
@@ -140,7 +142,7 @@ TRANG KHÁC (không gọi model):
    - **Nguồn:** mỗi nguồn kèm `bai_id` khi là một bài kho ⇒ "Đọc cả bài" mở trang bài.
    - **Biểu mẫu "Lên kế hoạch" — BẬT 07/11** (bạn duyệt; cờ `lich_trinh_bieu_mau: true`, `a884de4`): chọn số ngày / đi cùng / sở thích ⇒ **code** xếp lịch bằng đúng giá trị nút (không định tuyến, không công cụ, chữ gõ không vào model) ⇒ model chỉ viết lời theo khung. **V5:** luật viết lời đặt trong lời dặn hệ thống + mức suy luận "low" **chỉ ở lượt này** (lượt khác giống byte như trước). Model vẫn từ chối ⇒ code tự dựng lời lịch tối thiểu. "Sửa" ⇒ về biểu mẫu chọn sẵn lựa chọn cũ (sửa lịch bằng chat chưa có).
    - Kiểm: review cả nhánh đạt; 228 / 228 chuỗi gửi model giống byte khi cờ mới tắt; Playwright 7 / 7 đích ≤ 2 lần bấm, 0 lỗi CSP / console, tương phản ≥ 4,5 : 1 (17 cặp), 10 / 10 câu dòng "Nguồn" khớp nguồn API; JS 106 KB gzip; cổng ổn định sau merge (352 test, `/health` 5 / 5, 3 câu thật, 0 câu hỏi trong log, ≈ 0,001 USD).
-17. **Ngày + âm lịch (T1, merge `99ea59a`, BẬT 09/11 `7eb1f12`, bạn duyệt):** câu cuối (hoặc câu hỏi liền trước) có từ chỉ ngày ("hôm nay", "tối mai", "tuần sau", "tháng này", "năm sau", "sang năm", "rằm", "mùng", "Tết", "thứ Bảy", "15/1"…; không tính "vua thứ ba", "24/7") ⇒ tuyến `tro_ly_hue` có thêm công cụ `ngay_lich` (≤ 2 lần / câu, thêm 1 vòng trần). **Code** (`backend/llm/ngay_lich.py`, thư viện `lunar-vn`, lịch Việt Nam UTC+7, năm 1976–2100) trả: hôm nay (thứ, dương, âm, can chi), ngày được đổi + "đã qua N ngày / còn N ngày nữa", khoảng "tuần này / tuần sau / tháng này"; không nêu năm hoặc nói "năm nay" với ngày âm ⇒ cả lần đã qua lẫn lần sắp tới + dòng nhắc ghi rõ năm. Kết quả là một nguồn trong sổ nguồn ("Lịch hệ thống — tính theo giờ Việt Nam") ⇒ câu chỉ có ngày vẫn trích được. Đo: 14 câu mới bớt 9 từ chối nhầm, 0 sai ngày; server thật sau khi bật: "rằm tháng Giêng" ⇒ thứ Bảy 20/02/2027. Giới hạn: câu lịch thuần không nhắc Huế bị định tuyến xếp ngoài phạm vi; "tháng tới / cuối tuần" model tự cộng.
+17. **Ngày + âm lịch (T1, merge `99ea59a`, BẬT 09/11 `7eb1f12`, bạn duyệt):** câu cuối (hoặc câu hỏi liền trước) có từ chỉ ngày ("hôm nay", "tối mai", "tuần sau", "tháng này", "năm sau", "sang năm", "rằm", "mùng", "Tết", "thứ Bảy", "15/1"…; không tính "vua thứ ba", "24/7") ⇒ **từ 10/11 (merge `1633c18`) code tính sẵn trước lần gọi model đầu** (`lich_san`): hôm nay, ngày mai, từng ngày "tuần này / tuần sau" (cả "chủ nhật này", "cuối tuần"), "rằm tháng này / tới", và các ngày âm có trong câu hỏi (Tết, "rằm / mùng … tháng …", "… âm lịch") hoặc trong đoạn kho lần tìm đầu (≤ 6; "mùng N tháng <số>" chỉ tính khi có chữ "âm") — mỗi ngày âm: lần đã qua + lần sắp tới, và đúng năm âm khi câu nói "năm nay / năm sau"; thêm thành nguồn "Lịch hệ thống". Đo 10/11 (19 câu): chữ đầu 5,60 ⇒ 2,35 s trung vị, 10,14 ⇒ 4,56 s p95; 0,00049 ⇒ 0,00036 USD; số câu sai ngày không tăng; model không gọi công cụ lần nào. Công cụ `ngay_lich` vẫn có (≤ 2 lần / câu, thêm 1 vòng trần) làm **dự phòng** cho ngày chưa có trong nguồn đó (dạng ít gặp: "ngày kia", "tháng tới"…). **Code** (`backend/llm/ngay_lich.py`, thư viện `lunar-vn`, lịch Việt Nam UTC+7, năm 1976–2100) trả: hôm nay (thứ, dương, âm, can chi), ngày được đổi + "đã qua N ngày / còn N ngày nữa", khoảng "tuần này / tuần sau / tháng này"; không nêu năm hoặc nói "năm nay" với ngày âm ⇒ cả lần đã qua lẫn lần sắp tới + dòng nhắc ghi rõ năm. Kết quả là một nguồn trong sổ nguồn ("Lịch hệ thống — tính theo giờ Việt Nam") ⇒ câu chỉ có ngày vẫn trích được. Đo: 14 câu mới bớt 9 từ chối nhầm, 0 sai ngày; server thật sau khi bật: "rằm tháng Giêng" ⇒ thứ Bảy 20/02/2027. Giới hạn: câu lịch thuần không nhắc Huế bị định tuyến xếp ngoài phạm vi; "tháng tới / cuối tuần" model tự cộng.
 
 ## 4. Chất lượng, tốc độ, tiền đo được
 
@@ -155,8 +157,8 @@ TRANG KHÁC (không gọi model):
 | Chữ đầu tiên sau B2 (03/11, cùng 10 câu, script gọi API) | cả 10 câu trung vị **3,33 s** / p95 **5,20 s**; câu về Huế **3,50 / 5,33 s** (B1: 3,57 / 6,57) — tìm thêm gần như không làm chậm chữ đầu; vẫn vượt sàn cũ, chỉ theo dõi | `b134_b2_implementation.md` §4c |
 | Song song #6 (04/11, bật 05/11) | chữ đầu câu về Huế nhanh hơn trung vị **1,37 s** [0,34; 2,14] so với chờ định tuyến xong | `BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 05/11 |
 | Chữ đầu trên cổng mới (07/11, 10 câu tự viết có nguồn, đồng hồ trình duyệt, máy rảnh) | bấm gửi ⇒ chữ đầu trung vị **2,03 s**, chậm nhất 4,22 s; ⇒ hết câu 2,51 / 6,03 s. Khác bộ câu + cách đo với các dòng trên ⇒ chỉ tham khảo | `report_agent/2026-11-06_giao_dien_cong/c_s3_q_f_implementation.md` §5 |
-| **Lượt đo chung mới nhất (09/11, `main` sau mọi thay đổi 09/11, 65 câu, trình duyệt thật, một lượt — số hiện hành)** | chữ đầu: câu về Huế trung vị **2,16 s** / p95 **4,32 s** ✓; ngoài phạm vi 1,62 / 2,97 s ✓; **xã giao 3,46 / 7,73 s ✗** (chờ định tuyến ~1,7 s xong mới gọi model trò chuyện); **câu có ngày (n = 5) trung vị 5,19 s, chậm nhất 11,0 s ✗** (3–5 lần gọi model / câu). So 07/11 câu về Huế chậm hơn ~0,4 s trung vị (khác bộ câu — tham khảo). Cả lượt 0,0197 USD | `session_prompt/Project_Status.md` §2; `session_prompt/CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" |
-| Tiền một câu (giá đủ, cùng lượt 09/11) | câu về Huế **0,00047 USD** (~12 đồng) ✓ trần 0,0005 (sát trần); **câu có ngày 0,00063 USD ✗**. Trước Phase 9 (01/11): ≈ 0,00025 USD / câu | như trên |
+| **Lượt đo chung mới nhất (09/11, `main` sau mọi thay đổi 09/11, 65 câu, trình duyệt thật, một lượt — số hiện hành)** | chữ đầu: câu về Huế trung vị **2,16 s** / p95 **4,32 s** ✓; ngoài phạm vi 1,62 / 2,97 s ✓; **xã giao 3,46 / 7,73 s ✗** (chờ định tuyến ~1,7 s xong mới gọi model trò chuyện); câu có ngày lúc đó (n = 5) 5,19 s ✗ ⇒ **10/11 sau khi code tính sẵn ngày: trung vị 2,35 s / p95 4,56 s, 0,00036 USD / câu (19 câu, 1 lượt, đo ở máy chủ; trước 5,60 / 10,14 s, 0,00049 USD) ✓**. So 07/11 câu về Huế chậm hơn ~0,4 s trung vị (khác bộ câu — tham khảo). Cả lượt 0,0197 USD | `session_prompt/Project_Status.md` §2; `session_prompt/CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" |
+| Tiền một câu (giá đủ, cùng lượt 09/11) | câu về Huế **0,00047 USD** (~12 đồng) ✓ trần 0,0005 (sát trần); câu có ngày 0,00063 USD ✗ lúc đó ⇒ **0,00036 USD ✓ từ 10/11**. Trước Phase 9 (01/11): ≈ 0,00025 USD / câu | như trên |
 
 Người chấm: Claude (chấm theo đáp án mẫu). Mốc người: B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp).
 
@@ -186,7 +188,7 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
   ("nguồn không nêu…") rồi lần sinh lại không sai ⇒ "lúc có lúc không". Bộ này do AI viết, chỉ 28 câu trong kho ⇒ "0 lỗi" chỉ nói được tỉ lệ sai dưới ~12 %.
 - **M1 — kho có dữ kiện theo thời điểm** (giá, giờ mở cửa, lịch, tên đơn vị hành chính) có thể đã cũ; hai đợt sửa kho đã sửa 246 chỗ và **không làm hỏng** chatbot, nhưng vẫn còn mục chờ tra ngoài /
   chờ người địa phương.
-- **M1 / M5 — model không biết hôm nay là ngày nào — đã xử lý 09/11** (công cụ ngày bật, mục 3 bước 17): 14 câu mới bớt 9 từ chối nhầm, 0 sai ngày. Còn: câu lịch thuần không nhắc Huế ⇒ ngoài phạm vi; "tháng tới / cuối tuần" model tự cộng; "dịp lễ sắp tới" cần lịch sự kiện theo ngày.
+- **M1 / M5 — model không biết hôm nay là ngày nào — đã xử lý 09/11** (công cụ ngày bật, mục 3 bước 17): 14 câu mới bớt 9 từ chối nhầm, 0 sai ngày; 10/11 code tính sẵn ngày ⇒ nhanh hơn, đạt sàn tốc độ / tiền. Còn: câu lịch thuần không nhắc Huế ⇒ ngoài phạm vi; "tháng tới / cuối tuần" model tự cộng; "dịp lễ sắp tới" cần lịch sự kiện theo ngày.
 - **Thử 09/11, không áp dụng:** trợ lý tự yêu cầu tra web phần kho thiếu (T2) — 26 / 29 lần yêu cầu thì vẫn từ chối cả câu ⇒ không lợi (tag `hoso/p9-t2-web`); lịch trình từ câu gõ tự do (T4) — lịch "hợp người đi cùng" 21 / 27 · 15 / 27 (cần 26) ⇒ lịch trình chỉ qua biểu mẫu (tag `hoso/p9-t4-lich`).
 - **Biểu mẫu "Lên kế hoạch" (đọc code + bảng 09/11):** nút "dày lịch" gần như không tác dụng (bảng 1 / 28 điểm có thời lượng "ngắn" — chờ bảng v7); nhóm người lớn tuổi / trẻ em không có buổi tối; không nói được "lo mưa", giờ tới / về.
 - **M2 — đôi khi thêm chi tiết không có trong nguồn** (thường là nhận xét chung ở câu nhiều nguồn): 1 / 145 câu (Claude chấm, chưa có người đọc). **Bộ kiểm trích dẫn chỉ kiểm định dạng** (`[n]` có, số nguồn
@@ -202,9 +204,9 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 
 **Tốc độ, tiền, tính năng**
 
-- **Tốc độ (đo "tới chữ trả lời đầu tiên trên trình duyệt"; số hiện hành = lượt đo chung 09/11, mục 4):** câu về Huế 2,16 / 4,32 s ⇒ **đạt** sàn 3 / 5 s; **câu xã giao p95 7,73 s ⇒ vượt** (phải chờ định tuyến xong mới gọi model trò chuyện); **câu có ngày trung vị 5,19 s ⇒ vượt** (3–5 lần gọi model / câu) — bạn chọn giữ bật, tối ưu sau; cách làm nhanh hai loại này đang thử 10/11, **chưa vào chatbot**. Một lượt đo, câu ngày chỉ 5 câu ⇒ số còn thô.
+- **Tốc độ (đo "tới chữ trả lời đầu tiên trên trình duyệt"; số hiện hành = lượt đo chung 09/11, mục 4):** câu về Huế 2,16 / 4,32 s ⇒ **đạt** sàn 3 / 5 s; **câu xã giao p95 7,73 s ⇒ vượt** (phải chờ định tuyến xong mới gọi model trò chuyện); **câu có ngày: từ 10/11 trung vị 2,35 s / p95 4,56 s, 0,00036 USD / câu (19 câu, 1 lượt, đo ở máy chủ; trước 5,60 / 10,14 s, 0,00049 USD) ⇒ đạt** (09/11 còn 5,19 s, 3–5 lần gọi model / câu); cách làm nhanh câu xã giao đang thử 10/11. Một lượt đo mỗi loại ⇒ số còn thô.
   Trước khi có định tuyến (01/11, 38 câu): 1,23 / 2,61 s; bạn chọn giữ cách hiện chữ dần (lợi ~0,44 s so với chờ đủ câu).
-- **Tiền (giá đủ, lượt 09/11):** câu về Huế ≈ **0,00047 USD / câu** ⇒ đạt trần 0,0005 nhưng sát trần; **câu có ngày 0,00063 USD ⇒ vượt**. Trước Phase 9 (01/11) ≈ 0,00025 USD / câu. Công cụ đo tính theo giá đủ từ 01/11.
+- **Tiền (giá đủ, lượt 09/11):** câu về Huế ≈ **0,00047 USD / câu** ⇒ đạt trần 0,0005 nhưng sát trần; **câu có ngày 0,00036 USD ⇒ đạt từ 10/11** (09/11: 0,00063 vượt). Trước Phase 9 (01/11) ≈ 0,00025 USD / câu. Công cụ đo tính theo giá đủ từ 01/11.
 - **Nhớ có giới hạn (từ 03/11 tối):** chỉ nhớ câu hỏi 3 lượt gần nhất, không nhớ câu trả lời ⇒ "ý thứ hai bạn vừa nói…" chưa hiểu; cookie hết hạn 30 phút thì server âm thầm bắt đầu cuộc mới trong khi màn hình còn lượt cũ (chưa xử lý).
 - **Một nhà cung cấp sinh** (`gpt-6-luna`), không dự phòng: lỗi hoặc quá 45 s ⇒ báo lỗi, không tự đổi model.
 - **Chưa đưa ra ngoài:** chạy máy cá nhân. 4 chốt trước khi đưa link công khai **đã có code từ 09/11** (giới hạn số lượt hỏi / IP / ngày, cookie chỉ qua https, tắt trang `/docs` — 3 chốt này bật bằng biến môi trường lúc deploy, không đặt ⇒ như cũ; log xoay vòng 10 MB × 3 thì luôn bật). Còn chưa có: đăng nhập, hạn mức tiền phía nhà cung cấp (OpenAI / Serper).
@@ -237,7 +239,7 @@ Chi tiết từng dòng (số đo, nguồn, hướng xử lý) và mọi phươn
 **Việc kế tiếp (sau 09/11):**
 - **Bạn chốt mốc đóng tính năng** (chưa chốt; A đề xuất 30/11).
 - **Khi bạn rảnh (không chặn việc khác):** duyệt bảng điểm v7 (cột thời lượng ⇒ nút "dày lịch" có tác dụng); tick phiếu toạ độ (⇒ bật bản đồ lịch trình); thu 40 câu giọng nói.
-- **Đang thử 10/11 (chưa vào chatbot):** cho câu xã giao chạy song song với định tuyến; câu có ngày để code tính sẵn ngày thay vì model gọi công cụ nhiều lần.
+- **Đang thử 10/11 (chưa vào chatbot):** cho câu xã giao chạy song song với định tuyến. (Câu có ngày — code tính sẵn ngày — **đã vào chatbot 10/11**, merge `1633c18`.)
 - **Còn trước đóng gói:** bản đồ lịch trình, giọng nói, **B7** (so cả hệ với bản RAG 1–8, đóng gói Phase 9 — đang nháp kế hoạch); **deploy AWS chỉ khi hệ thống đủ tính năng, ổn định, đóng gói + Docker đầy đủ** (bạn quyết 08/11; đã thử build Docker trên máy; 4 chốt trước khi đưa link công khai đã có code 09/11). Đợt 2 cổng (lưu trú, ăn gần, sự kiện) chờ mốc đóng tính năng. Đóng code khi bạn nói (dự kiến 25–30/12/2026; đóng = đã chạy trên AWS).
 - Biểu mẫu "Lên kế hoạch" (bật 07/11): bộ quyết 24 / 24 sàn code, lời khớp khung 12 / 12 mỗi lượt; lượt chậm 5,77 s ngay sau khởi động đã đo lại 07/11 (10 lượt: chữ đầu 2,30 / 4,22 s — dưới sàn 5 s, không tái tạo được); giới hạn còn lại ở mục 5 trên.
 Lịch sử thứ tự cũ (30/10–01/11, đã xong):

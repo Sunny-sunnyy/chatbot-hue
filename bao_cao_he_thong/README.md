@@ -7,7 +7,7 @@
 
 | Muốn biết | File | Cập nhật lần cuối |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 19:32 10/11/2026 (bản 34: sửa chỗ cũ — số tốc độ 09/11, hỏi bằng ảnh, 4 chốt deploy) |
+| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 20:53 10/11/2026 (bản 35: câu có ngày — code tính sẵn ngày trước lần gọi model đầu, công cụ ngày chỉ dự phòng) |
 | **Nghiên cứu rộng trước Phase 9** (thực tế triển khai, người dùng cần gì, paper, repo; Huế TRIPO) | [BAO_CAO_NGHIEN_CUU_PHASE_9.md](BAO_CAO_NGHIEN_CUU_PHASE_9.md) | 21:05 04/11/2026 (bản 5: đọc code 8 repo + paper, TRIPO vòng 3, agent ⇒ tính năng theo bậc) · 18:40 03/11/2026 (bản 4: sản phẩm thật — 15 trợ lý thế giới + Huế TRIPO vòng 2 ⇒ tính năng đáng học theo bậc) · 14:55 02/11/2026 (bản 3: đổi hướng agent có công cụ — khoá AI FDE, ChatGPT, Serper, SDK; spec duyệt) · 16:13 01/11/2026 (bản 2: ChatGPT đã kiểm, thử Huế TRIPO 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ) · 15:25 01/11/2026 (bản 1 sơ bộ) |
 | **Đề xuất mở rộng + lộ trình Phase 9–12** (agent nhìn thấy được, tính tiền bằng code, ảnh, giọng nói, trải nghiệm Huế, lưu trú, vận hành / AWS) — bậc 1 bạn duyệt; ý khác là backlog | [DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md](DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md) | 10:24 05/11/2026 (bản 2: chia Phase 10–12, nghiên cứu ảnh + lưu trú, backlog) · 09:27 05/11/2026 (bản 1: brainstorm 21 ý + nghiên cứu Codex 3 mạch, A kiểm 8 nguồn) |
 | **So sánh mọi phương án đã thử / chọn / bỏ** (Phase 0 → 8.2, sửa kho, Qwen3-8B) — theo khâu + theo Phase | [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md) | 14:33 01/11/2026 (bản 5: B0 — E7, S2, §6) · 11:29 01/11/2026 (bản 3: mới; 62 khối, có số đo + nhãn độ tin; 2 lượt kiểm độc lập đạt; phần streaming / đo cuối thêm sau) |
@@ -17,7 +17,7 @@
 | Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 19:32 10/11/2026 (bản 6: trợ lý tìm thêm ≤ 2 lần) |
 | Lưu vào Qdrant (Phase 4) | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | 19:32 10/11/2026 (bản 5: 2 collection (thêm collection thử ảnh), build lại 05/11) |
 | Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 19:32 10/11/2026 (bản 12: thêm bước định tuyến + tìm thêm) |
-| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 19:32 10/11/2026 (bản 47: sửa chỗ cũ — cổng du lịch, từ chối nhầm 4–6 / 158, số 09/11) |
+| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 20:53 10/11/2026 (bản 48: **câu hỏi về ngày nhanh hơn** — chữ đầu trung vị 5,60 ⇒ 2,35 s, 0,00049 ⇒ 0,00036 USD / câu, merge `1633c18`) |
 | Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 09:40 08/11/2026 (bản 9: sửa chỗ ghi sai — bộ kín mới 40 câu đã dùng 01/11, cần bộ mới nữa) · 11:04 01/11/2026 (bản 8: 1 câu keyword lệch kho chỉ ở hoa / thường — chấm không sai; **bạn giữ nguyên**) |
 | **Hỏi bằng ảnh (Phase 10)** — **bật từ 08/11** (10:31 08/11/2026); luna gợi tên + bạn xác nhận; SigLIP 2 thử âm | [BAO_CAO_HOI_BANG_ANH.md](BAO_CAO_HOI_BANG_ANH.md) | 19:32 10/11/2026 (bản 4: đã bật 08/11 — bỏ chỗ ghi "cờ tắt") |
 | Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 19:32 10/11/2026 (bản 10: 2 collection, giờ mở cửa 11 điểm) |
