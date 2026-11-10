@@ -6,6 +6,7 @@
 - **Khai báo file sẽ sửa (chỉ trong worktree):** `backend/llm/ngay_lich.py`, `backend/llm/assistant.py` (chỉ `_before_model` + `ngay_lich_for_turn` — B sửa phần định tuyến / song song), `backend/llm/full_corpus_prompt.py` (chỉ `NGAY_LICH_MO_TA`), `backend/tests/test_ngay_lich.py`; plan `docs/superpowers/plans/2026-11-10-phase-9-t1-nhanh-plan.md`; report `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md`; dữ liệu đo `data/phase_9/t1_nhanh/`.
 - Trạng thái (19:40 10/11/2026): plan `935f9358e25d` A duyệt ⇒ code `5d0559b` + sửa (a) `b8a96d8` + report `7d6f25f`, nhánh đã push ⇒ **chờ C review cả nhánh**.
 - Kết quả: tiêu chí 1–6 đạt sau sửa (a) (Y2 "năm nay" tụt ở lượt chính ⇒ A chọn sửa bằng code ⇒ lượt lại đúng). Tiền ≈ 0,031 USD. Server đã tắt.
+- 19:48 10/11/2026: review C changes_requested (M-1 "mùng N tháng <số>" ⇒ cần chữ "âm") ⇒ sửa `0385bcf` (đã push) ⇒ C: **ready_for_user_confirmation** ⇒ chờ A merge.
 - Sau merge: gỡ worktree `/tmp/e_t1_nhanh` (rm 2 symlink + `git worktree remove`).
 
 ## (lịch sử) STATUS E — KẾT PHIÊN 22:29 09/11/2026 (`date`) · terminal `hue-rag-ea` (A `hue-rag-87`, B `hue-rag-99`, C `hue-rag-6a`) · Claude Opus 5.5 · vai thực thi

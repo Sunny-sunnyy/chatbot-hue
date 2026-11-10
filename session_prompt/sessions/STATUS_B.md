@@ -10,6 +10,8 @@
   Code + T xong (chưa commit): `test_toc_do_song_song.py` 15 đạt (31 s); `test_b6_tra_web.py` + `test_ngay_lich.py` 157 đạt (23 s).
   **AN đạt** (`data/phase_9/xa_giao_song_song/an_r1.jsonl`, 0,042 + bỏ 0,0097 USD): 0 lượt lọt; `delta_matches_final` đúng mọi lượt. Bộ chấm chữ thô bắt 2 ca lệch không phải lọt (1 dấu cách cuối ở tuyến trò chuyện; 1 ca đánh số lại citation ở tuyến Huế — #6 cũng có 1).
   Chờ E "đo xong" ⇒ lượt S (bật tạm cờ trong `settings.yaml` của worktree, đo xong trả `false`).
+- **XONG deploy cục bộ (19:53 10/11/2026):** `p12-deploy-nhap` `8d650ad` (merge `main` `bb78e1e`, đã push, chưa vào main). Nháp `data/phase_12/deploy_nhap/` sửa: compose 3 biến chốt; dockerignore loại `frontend/public/anh/rieng` (ảnh #5 suýt lọt). Ảnh `hue-rag-app:dep10` (191 s, 3,57 GB) sạch; compose qua Caddy: health 5/5, docs 404, câu kho / ngoài kho đúng, quá lượt + giả XFF ⇒ 429, log 0 câu hỏi / 0 IP; đã down. Test rộng 851 đạt / 1 cần bản build giao diện. Report `b_deploy_cuc_bo_implementation.md`. Worktree `/tmp/b_dep` (symlink data/kho) giữ cho C. Tiền ≈ 0,00045.
+  `/tmp/b_xg` đã gỡ (A đồng ý); nhánh xã giao `22abb2a` (sửa m-2 C).
 - **XONG — CHƯA ĐẠT tiêu chí ghi trước (19:36 10/11/2026 `date`):** nhánh `p9-xa-giao-song-song` **`9ce7cfd`** (đã push; cờ `false`). S (60 câu, `s_r1.jsonl`): xã giao p50 3,46 → 1,85 s nhưng
   p95 5,74 ✗; ngoài phạm vi p95 5,21 ✗ + 0,00056 USD / câu > 0,0005; Huế 2,28 / 4,23 ✓. Test rộng 855 đạt (4 phút). A quyết: không merge, chưa tag — A trình User;
   User bật ⇒ C review ⇒ merge cờ false rồi bật; không ⇒ tag hồ sơ. Report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md` (working tree chung, A commit).
