@@ -1,6 +1,37 @@
-# STATUS C — phiên 10/11 (viết 19:06 10/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên 10/11 (viết 22:41 10/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN 10/11 (mở 19:06 10/11/2026) — C `hue-rag-4f` · A `hue-rag-55` · B `hue-rag-05` · E `hue-rag-e4`
+## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 22:41 10/11/2026)
+
+**Trạng thái:** **rảnh — không việc dở, không worktree `/tmp`, không nhánh, không container của C.** Phiên 10/11 terminal: C `hue-rag-4f` · A `hue-rag-55` · B `hue-rag-05` ·
+E `hue-rag-e4` (tên đổi khi mở lại — `ListAgents`). Chờ A giao (việc A giao = User nói "làm đi"). Mọi file C viết hôm nay: A commit.
+
+**Hướng mới cho báo cáo (User chốt cuối phiên 10/11 — A ghi đủ trong `CURRENT_HANDOFF.md`):** User đọc file 02 bản 10/11 vẫn thấy khó hiểu ⇒ thêm thư mục
+`bao_cao_he_thong/hieu_he_thong/` = **chuỗi bài để hiểu**, mỗi bài **một ý**, nói **vì sao trước**, có **ví dụ đời thường**, thuật ngữ đưa ra sau khi đã giải thích;
+các file `01_…10_` hiện có = **sổ ghi việc** (giữ). Bài học từ mẫu 10/11: bảng "đợt sửa / số chỗ / kết quả" và danh sách tính năng vẫn là giọng sổ công trường — User cần
+câu chuyện "vấn đề là gì → làm gì → vì sao vậy". Memory `user-reading-style` đã ghi.
+
+**Việc C phiên 10/11 (đều xong, 0 USD):**
+- Review: nhánh B xã giao song song (code ready, đo chưa đạt ⇒ đóng hồ sơ) · nhánh E câu ngày nhanh (1 major — "mùng N tháng <số>" không "âm" bị coi là ngày âm ⇒ E sửa ⇒ ready, merge `1633c18`)
+  · sửa báo cáo `c54c932` (ready, 2 minor) · deploy cục bộ B (1 major — danh sách ảnh thiếu trong Docker ⇒ hỏi bằng ảnh tắt im lặng ⇒ sửa ⇒ ready, merge `5081e89`)
+  · plan định tuyến câu lịch B (2 vòng ⇒ ready `aa493aec252f`). Nhánh định tuyến: E review (không phải C).
+- Nháp plan B7 `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` (A chốt Q1–Q4, tag `p9-moc` = `18e8f42`).
+- Mẫu báo cáo: `README.md`, `01_LUONG_HOAT_DONG_HE_THONG.md`, `02_BAO_CAO_KHO_DU_LIEU.md` (mỗi file sub-agent vai người không đọc code đọc thử, sửa theo góp ý).
+
+**Bẫy / học được 10/11:**
+- Log truy cập mặc định của uvicorn **ghi IP + đường dẫn** (log chatbot thì không) ⇒ bản deploy muốn "không lưu IP" phải `--no-access-log` — đã báo A làm câu cho User.
+- Ảnh Docker chỉ chép file theo danh sách chừa ⇒ thiếu file cấu hình của một cờ đang bật ⇒ tính năng **tắt im lặng** (log "startup failed", không lỗi khởi động). Review deploy: so cờ bật ↔ file runtime cần.
+- Regex ngày âm: "mùng / mồng N tháng <số>" không "âm" thường là ngày **dương** (Quốc khánh 2/9, 8/3) — probe bằng câu tự viết trước khi tin bộ đo (bộ đo có 0 câu dạng này).
+- Dòng "thông tin có thể đã thay đổi" chỉ cho nguồn vé / địa điểm / lễ hội (`NOTICE_SOURCE_PREFIXES`) — tả báo cáo phải đối chiếu code, đừng suy.
+- Hai session gửi tin chéo nhau trong brainstorm ⇒ mỗi bên nhận ý bên kia ⇒ phải gửi thêm một bản chốt chung; lần sau: đợi tin bên kia rồi mới nhận / bác.
+- `ugrep` (lệnh `grep` trên máy) báo "exceeds complexity limits" với regex dài có `.{0,80}` + tiếng Việt ⇒ dùng Python để tìm trong tài liệu.
+- Bẫy cũ còn đúng (09/11, 08/11): xem khối "(09/11)" ngay dưới.
+
+**Tiền C 10/11:** 0 USD (mọi việc chỉ đọc / test 0 USD / sub-agent).
+
+---
+
+## (10/11) nhật ký trong phiên — chỉ tra cứu
+### Phiên 10/11 (mở 19:06 10/11/2026) — C `hue-rag-4f` · A `hue-rag-55` · B `hue-rag-05` · E `hue-rag-e4`
 
 **Trạng thái: rảnh — chờ review B / E.** A giao (CURRENT_HANDOFF "VIỆC PHIÊN 10/11", `main` `624a17b`): review cả nhánh (`risk-gated-agent-review`, một vòng, chỉ plan + diff + số đo)
 (1) B `p9-xa-giao-song-song` ⇒ `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_review.md`; (2) E `p9-t1-nhanh` ⇒ `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_review.md`. Tiền 0 (chạy lại ≤ 0,01 nếu cần).
@@ -12,9 +43,11 @@ Danh sách soi khi review: **B** — khối `finally` của `answer_turn_stream_
 
 ---
 
+---
+
 ## (09/11) STATUS C — kết phiên 09/11 (viết 22:28 09/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 22:28 09/11/2026)
+### (09/11) phần "phiên sau" cũ — bẫy còn đúng ở cuối khối
 
 **Trạng thái:** **rảnh — không việc dở, không worktree `/tmp` nào, không nhánh của C đang mở.** Phiên 09/11 terminal: C `hue-rag-6a` · A `hue-rag-87` · B `hue-rag-99` · E
 `hue-rag-ea` (tên đổi khi mở lại — `ListAgents`). Chờ A giao (việc A giao = User nói "làm đi").

@@ -1,3 +1,10 @@
+# STATUS A — KẾT PHIÊN 10/11 (mở 19:02; cập nhật 22:44 10/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" — **VIỆC SỐ 1 = bài để hiểu cho User** (đọc trước file private `data/hoc_cung_user_2026-11-10/ghi_chu_cach_doc_cua_user.md` + memory `user-reading-style` + `WORKFLOW.md` §6 "Viết để User hiểu"); hỏi quyền phiên ⇒ 2 bài mẫu (00 cả hệ thống trong 3 phút; 01 kho = sổ tay) ⇒ User đọc ⇒ mới viết tiếp; đưa User lệnh `!` xoá 4 nhánh (handoff "Làm tiếp" 2).
+- Xong 10/11: câu ngày nhanh `1633c18`; câu lịch chung `89571d7`; env Docker `5081e89`; xã giao đóng hồ sơ; tag `p9-moc`; sửa ~60 chỗ cũ báo cáo (`c54c932`); đánh số file (`f380d76`); mẫu README / 01 / 02 (User: chưa dễ hiểu ⇒ hướng mới); W59 + W61 vào luật; luật "Viết để User hiểu" + memory; sổ vòng 24; Project_Status; nhật ký. Tiền A ≈ 0,002 (2 cổng). Cả phiên ≈ 0,28.
+- **Bẫy A (10/11):** (1) dừng khi User vắng mà không soạn sẵn bản nháp (S115, W64 đề xuất); (2) để C viết mẫu báo cáo theo khuôn của agent (bảng đợt, số chỗ) + sub-agent "đọc thử" chấm đạt ⇒ User vẫn không hiểu — đọc thử bằng agent không thay User đọc; (3) script đổi tên chạm file có tên dự án khác (hook chặn — S116); (4) hỏi User câu mâu thuẫn ("Không" + "nên trả lời") ⇒ hỏi lại một câu là đúng.
+- B không ghi được STATUS_B (auto mode phiên B chặn) — A ghi trạng thái B vào handoff, không ghi hộ STATUS_B.
+
 # STATUS A — PHIÊN 10/11 (mở 19:02; cập nhật 19:06 10/11/2026 `date`)
 
 - Terminal: A `hue-rag-55` · B `hue-rag-05` · C `hue-rag-4f` · E `hue-rag-e4` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).

@@ -1,17 +1,33 @@
-# STATUS E — PHIÊN 10/11 (mở 19:09 10/11/2026) · terminal `hue-rag-e4` (A `hue-rag-55`, B `hue-rag-05`, C `hue-rag-4f`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — KẾT PHIÊN 22:40 10/11/2026 (`date`) · terminal `hue-rag-e4` (A `hue-rag-55`, B `hue-rag-05`, C `hue-rag-4f`) · Claude Opus 5.5 · vai thực thi
 
-## Việc đang làm: câu ngày nhanh hơn (A giao 19:05 10/11/2026, mục "VIỆC PHIÊN 10/11" của handoff) — mức nhẹ, trần ≤ 0,1 USD
+## PHIÊN SAU ĐỌC TRƯỚC (viết 22:40 10/11/2026)
 
-- Nhánh `p9-t1-nhanh` từ `main` `624a17b`, worktree `/tmp/e_t1_nhanh` (symlink `data/`, `knowledge-base-hue/` — gỡ khi xong).
-- **Khai báo file sẽ sửa (chỉ trong worktree):** `backend/llm/ngay_lich.py`, `backend/llm/assistant.py` (chỉ `_before_model` + `ngay_lich_for_turn` — B sửa phần định tuyến / song song), `backend/llm/full_corpus_prompt.py` (chỉ `NGAY_LICH_MO_TA`), `backend/tests/test_ngay_lich.py`; plan `docs/superpowers/plans/2026-11-10-phase-9-t1-nhanh-plan.md`; report `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md`; dữ liệu đo `data/phase_9/t1_nhanh/`.
-- Trạng thái (19:40 10/11/2026): plan `935f9358e25d` A duyệt ⇒ code `5d0559b` + sửa (a) `b8a96d8` + report `7d6f25f`, nhánh đã push ⇒ **chờ C review cả nhánh**.
-- Kết quả: tiêu chí 1–6 đạt sau sửa (a) (Y2 "năm nay" tụt ở lượt chính ⇒ A chọn sửa bằng code ⇒ lượt lại đúng). Tiền ≈ 0,031 USD. Server đã tắt.
-- 19:48 10/11/2026: review C changes_requested (M-1 "mùng N tháng <số>" ⇒ cần chữ "âm") ⇒ sửa `0385bcf` (đã push) ⇒ C: **ready_for_user_confirmation** ⇒ chờ A merge.
-- 21:01 10/11/2026: A merge `1633c18` (User duyệt) ⇒ E gỡ worktree; báo cáo User (SINH bản 48, LUONG bản 35, README) A commit `3e0607b`. **Việc T1 nhanh xong.**
-- **Bẫy (E sơ suất 10/11):** gỡ worktree xoá luôn `backend/logs/` của nó ⇒ mất dòng `chat_metrics` lượt nhánh (số đã ở report) — lần sau chép log ra `data/` trước khi gỡ.
-- Tiếp: hỗ trợ B (câu lịch chung không nhắc Huế ⇒ trả lời, sửa lời dặn định tuyến). E đã viết **bộ kín H** 25 câu `data/phase_9/dinh_tuyen_lich/giu_mu_sealed.jsonl` sha `5ef0d41b62f2` (A giữ, plan B bản 2 `8c57c47`). **E chạy H một lần khi B báo bản khoá**; chỉ báo số đếm + id (B / A không đọc nội dung).
-- **H đã chạy (10/11):** bản khoá định tuyến `8cd30cbb359a`, 25 câu, 0 lỗi, 0,002623 USD — lịch chung 12 / 12 đi trợ lý · ngoài phạm vi 10 / 10 · khẩn cấp 3 / 3 ⇒ cả 3 sàn đạt; kết quả `data/phase_9/dinh_tuyen_lich/h_sealed_r1.jsonl`. **Bộ H đã dùng** (không dùng lại để chỉnh).
-- 21:40 10/11/2026: **review nhánh B `p9-dinh-tuyen-lich` `e8e07c9`** (A giao thay C) ⇒ ready_for_user_confirmation, 0 / 0 / 2 minor — `report_agent/2026-11-08_phase_9_ban_13/b_dinh_tuyen_lich_review.md`. Sửa nhãn R11 trong `data/phase_9/t1/bo_sau_g.jsonl` (refuse ⇒ trả lời; bộ gốc 30/10 A quyết). Ca dò `/tmp/e_do_dtl/` (xoá được). Tiền review 0,0022 USD.
+**E không có code dở, không worktree, không server.** `/tmp/e_do_dtl/` (ca dò review, xoá được). **Tiền E phiên 10/11 ≈ 0,0357 USD** (T1 nhanh 0,030857 = mốc
+0,009263 + nhánh 0,006859 + an toàn × 2 0,004354 + Golden 9 0,004587 + lượt lại 0,003420 + an toàn 0,002374 · bộ H 0,002623 · ca dò review 0,002213 — `chat_metrics.usd`
+/ dòng in của harness; chấm bằng sub-agent 0 USD API).
+
+### Kết quả phiên 10/11 (việc của E)
+- **T1 nhanh — câu ngày: code tính sẵn ngày trước lần gọi model đầu — MERGE `1633c18`** (User duyệt). Chữ đầu p50 5,60 ⇒ 2,35 s, p95 10,14 ⇒ 4,56 s; 0,00049 ⇒ 0,00036 USD;
+  model gọi `ngay_lich` 0 lần. Report `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md`; review C `e_t1_nhanh_review.md` (M-1 "mùng N tháng <số>" ⇒ đã sửa).
+  Báo cáo User: SINH bản 48 + LUONG bản 35 (A commit `3e0607b`; sau đó A đổi tên file theo số thứ tự đọc `f380d76`).
+- **Bộ giữ mù H cho B** (định tuyến lịch): `data/phase_9/dinh_tuyen_lich/giu_mu_sealed.jsonl` sha `5ef0d41b62f2` — E viết + chạy một lần trên bản khoá `8cd30cbb359a` ⇒ 3 sàn đạt. **Đã dùng.**
+- **Review nhánh B `p9-dinh-tuyen-lich` `e8e07c9`** ⇒ ready (0 / 0 / 2 minor), `report_agent/2026-11-08_phase_9_ban_13/b_dinh_tuyen_lich_review.md`. Sửa nhãn R11 trong
+  `data/phase_9/t1/bo_sau_g.jsonl` (refuse ⇒ trả lời; nhãn cũ ở `nhan_cu_truoc_10_11`).
+- Brainstorm sắp xếp `bao_cao_he_thong/` (với C) — A chốt: C viết mẫu README + LUONG ⇒ User duyệt ⇒ A chia file khâu cho C + E.
+
+### Việc mở liên quan E (chờ A / User)
+- **Sắp xếp báo cáo:** khi User duyệt mẫu, A giao E một phần file khâu (luật đã chốt: mỗi số / định nghĩa một nơi — README; thân bài không mã; phần "đang chạy" ≤ ~40 dòng).
+- **Theo dõi (từ review B, m-1):** câu lịch thuần đi trợ lý có thể bị rút vì model không ghi [n] (1 / 9) — đếm trên ≥ 20 câu trước khi sửa; không tự gắn [n] bằng code.
+- Bộ ngày gốc 30/10 `data/ngay_hien_tai_2026-10-30/questions.jsonl` R11 còn nhãn "từ chối" — A quyết.
+- Giọng nói: chờ User thu 40 câu (`data/phase_10/giong_noi/thu/` vẫn rỗng). Bảng điểm v7: chờ User. Nhánh `p9-t1-nhanh` đã merge — xoá khi User / A muốn.
+
+### Bẫy / đã học (phiên 10/11)
+- **Gỡ worktree xoá luôn `backend/logs/` của nó** ⇒ mất dòng `chat_metrics` lượt nhánh (số đã vào report kịp). **Trước `git worktree remove`: chép log cần giữ ra `data/`.**
+- **Dò ngày âm bằng chữ: "mùng N tháng <số>" thường là ngày DƯƠNG** (Quốc khánh) — chỉ tính âm khi có chữ "âm"; "rằm", tháng chữ (Giêng, Chạp, Tư…) mới ngầm hiểu âm.
+- **Có đủ hai lần (đã qua / sắp tới) chưa đủ:** câu "năm nay" model vẫn chọn lần sắp tới ⇒ ghi thẳng dòng của đúng năm âm được nói (code).
+- **Dao động định tuyến** làm lệch so sánh câu ngày (cùng chuỗi gửi, khác tuyến) ⇒ báo tách nhóm "câu đi trợ lý" và kiểm chuỗi gửi định tuyến giống byte trước khi đổ lỗi cho thay đổi.
+- **Đo tốc độ khi session khác chạy pytest / docker** ⇒ không dùng số đó cho tốc độ (nhắn "bắt đầu đo" / "đo xong" giữ được lượt chính sạch).
+- Hook pre-commit chặn câu test chép gần nguyên văn kho (≥ 40 ký tự) — câu thử tự đặt ("Hội làng A…").
 
 ## (lịch sử) STATUS E — KẾT PHIÊN 22:29 09/11/2026 (`date`) · terminal `hue-rag-ea` (A `hue-rag-87`, B `hue-rag-99`, C `hue-rag-6a`) · Claude Opus 5.5 · vai thực thi
 

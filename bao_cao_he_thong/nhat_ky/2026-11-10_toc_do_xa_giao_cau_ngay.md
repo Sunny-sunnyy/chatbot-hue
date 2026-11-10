@@ -1,6 +1,6 @@
-# Nhật ký 10/11/2026 — tăng tốc câu xã giao và câu hỏi ngày; sửa báo cáo cho đúng hiện trạng
+# Nhật ký 10/11/2026 — câu ngày nhanh, câu lịch chung, cách viết báo cáo cho bạn
 
-**Cập nhật lần cuối: 19:48 10/11/2026.** Tiền paid trong ngày tới giờ: ≈ 0,11 USD (~2.800 đồng) — B ≈ 0,079 (xã giao) · E ≈ 0,031 (câu ngày) · C, A 0 (review / sửa báo cáo dùng quota Claude). Phase 9 ≈ 3,7 / trần 4,2 USD.
+**Cập nhật lần cuối: 22:43 10/11/2026.** Tiền trong ngày: ≈ 0,28 USD (~7.000 đồng) — B ≈ 0,25 (xã giao 0,08 · câu lịch chung 0,17) · E ≈ 0,04 · A ≈ 0,002 · C 0. Phase 9 ≈ 3,88 / trần 4,2 USD.
 
 ## Tóm tắt
 - Phiên tối 10/11 (mở 19:02) chỉ sửa **hai lỗi tốc độ đã đo thật** ở lượt đo chung 09/11, không thêm tính năng:
@@ -15,11 +15,21 @@
 - C viết nháp kế hoạch so sánh cuối B7 (0 USD); mốc so sánh "RAG 1–8" đã gắn tag `p9-moc` (trước đó spec ghi mà chưa có).
 - Bạn chốt: quyền như 09/11, trần 4,2; không chốt mốc đóng tính năng; luật W59 + W61; "cắt test không cần, đẩy nhanh" ⇒ vòng tự soi cắt bớt bộ đo (B bỏ 22 câu kiểm thêm + 5 câu ngày; E thu gọn phần dò ngày, bỏ đo lại mốc cho 9 câu Golden).
 
-## Bạn cần làm gì (khi về — A hỏi mỗi lần một câu)
-1. Thay bản câu hỏi ngày nhanh vào chatbot? (A khuyên: có — đạt mọi tiêu chí, nhanh hơn + rẻ hơn.)
-2. Câu xã giao chạy song song: bật dù p95 chưa đạt, hay đóng hồ sơ?
-3. Câu ngày không nhắc Huế (vd "rằm tháng Giêng năm nay là ngày nào"): 9 / 19 câu đo bị từ chối vì bước phân loại xếp "ngoài phạm vi" — trợ lý Huế có nên trả lời loại câu này?
-4. Sắp xếp lại thư mục báo cáo để đọc theo thứ tự (A chuẩn bị 2–3 cách).
+## Điều bạn kể tối nay — và mình sẽ làm khác thế nào
+Bạn nói báo cáo đọc không hiểu nổi: nhiều từ lạ (chỉ mục, phiếu, vân tay…), bảng dày số, kể "đã sửa gì" thay vì "nó là gì, vì sao". Bạn không đọc code nên chỉ nắm dự án qua những gì mình viết — viết khó là bạn mất dự án. Mình hiểu lỗi nằm ở cách viết, không phải ở bạn.
+
+Bạn đã chọn, và từ mai mọi agent viết theo đúng vậy:
+- **Kể như giải thích**, có ví dụ đời thường (vd "kho giống cuốn sổ tay du lịch: hỏi chùa Thiên Mụ thì chatbot lật sổ tay, tìm vài đoạn, đọc rồi viết, kèm tên bài").
+- Mỗi bài trả lời bốn điều: **nó là gì · vì sao làm cách này · tốt tới đâu · khi nào hỏng**.
+- Lời thường trước, tên kỹ thuật chỉ ghi một lần trong ngoặc sau khi đã giải thích.
+- Khoảng một trang mỗi bài, chỗ làm kỹ thì dài hơn.
+- **Hai chỗ riêng:** thư mục mới `hieu_he_thong/` là chuỗi bài để hiểu, đọc theo số; các file cũ là sổ ghi việc, chỉ để tra.
+- Không câu hỏi kiểm tra, không "nói lại bằng lời của bạn".
+- Mai viết **2 bài mẫu** trước (cả hệ thống trong 3 phút; kho dữ liệu) — bạn đọc, góp ý, rồi mới viết tiếp.
+
+## Bạn cần làm gì
+- Sáng mai: đọc 2 bài mẫu khi A đưa, nói chỗ nào còn vấp.
+- Chạy một lệnh xoá 4 nhánh đã xong (A đưa lệnh ở đầu phiên).
 - Không gấp: phiếu toạ độ bản đồ · bảng điểm v7 · thu 40 câu giọng nói.
 
 ## Trạng thái

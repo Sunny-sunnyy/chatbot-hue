@@ -1057,3 +1057,8 @@ User: chưa deploy tới khi đủ tính năng + đóng gói; phạm vi = bản 
 ## 09/11/2026 — đợt 2 Phase 9: định tuyến phương án B, công cụ ngày bật, 4 việc đóng hồ sơ (A, 22:34 09/11/2026)
 
 Vào `main`: 4 chốt deploy `ccc9f4f`, định tuyến phương án B `3b52017` (G cổng 2 nhóm dừng sau > 3 vòng chỉnh: S1 an toàn âm thật, rồi S2b 2/44 trên bộ đã thấy), T1 ngày + âm lịch `99ea59a` + **bật** `7eb1f12`. Đóng hồ sơ (đo âm theo tiêu chí ghi trước): G `hoso/p9-g-cong`, T2 `hoso/p9-t2-web` (câu hỏi kèm có web 4/10 = mốc; 26/29 lần gọi trùng câu từ chối), T3 `hoso/p9-t3-bang` (lợi ≈ 0), T4 `hoso/p9-t4-lich` ("hợp người đi cùng" 21/27, 15/27). S5 chung: câu Huế đạt sàn; xã giao + câu ngày vượt sàn tốc độ (tối ưu sau). User: vòng tự soi bắt buộc mỗi phiên; bỏ "rảnh phải giao việc"; trần 4,0. Tiền ≈ 0,62 USD. Sổ: S109–S113, vòng 23 (W61). Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-09.md`, `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md`.
+
+## 10/11/2026 — tốc độ câu ngày, câu lịch chung, deploy cục bộ, báo cáo cho User (A, 22:42 10/11/2026)
+
+Vào `main`: câu ngày nhanh `1633c18` (code tính sẵn ngày; p50 5,60 ⇒ 2,35 s), câu lịch chung đi trợ lý `89571d7` (lời dặn định tuyến; bộ giữ mù 12/12 · 0/10 lọt · 3/3), biến môi trường Docker `5081e89`; xã giao song song chưa đạt p95 ⇒ hồ sơ `hoso/p9-xa-giao-song-song`; tag `p9-moc`; nháp plan B7; sửa ~60 chỗ cũ ở báo cáo + đánh số file; User chốt hướng "bài để hiểu" (`hieu_he_thong/`, chưa viết). Tiền ≈ 0,28 USD; Phase 9 ≈ 3,88 / 4,2. Chi tiết: `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC", nhật ký `bao_cao_he_thong/nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md`, sổ vòng 24.
+
