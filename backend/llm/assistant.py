@@ -1159,7 +1159,8 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
 
 
 def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
-    """Tuyến `tro_ly_hue` ⇒ trace chính nhận mọi thứ (ii) đã làm; giữ phần định tuyến của trace chính; `llm_calls` = định tuyến rồi trả lời."""
+    """Tuyến có phần chạy trước (`tro_ly_hue`; `tro_chuyen` khi cờ xã giao bật) ⇒ trace chính nhận mọi thứ phần đó đã làm; giữ phần định tuyến của
+    trace chính; `llm_calls` = định tuyến rồi trả lời."""
     keep_own = {"route", "route_error", "routing_ms", "emergency_by", "llm_calls", *ROUTE_INPUTS}
     for item in dataclasses.fields(AnswerTrace):
         if item.name not in keep_own:
