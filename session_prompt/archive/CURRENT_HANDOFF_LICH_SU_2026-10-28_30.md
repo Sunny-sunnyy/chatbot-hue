@@ -85,9 +85,9 @@ Chi tiết phiên 28/10: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md`
     **Xong 11:53 (0,0008 USD):** API trả `input_tokens_details.cache_write_tokens` = vào − 3 ở 4 / 4 lần, `cached_tokens` = 0 kể cả lần gọi lặp ngay ⇒ mỗi câu **ghi đệm gần hết
     phần vào mà không bao giờ đọc lại**; generator chỉ đọc vào / ra / suy luận (`generator_openai_full_corpus.py:199-204`). API không trả giá ⇒ **câu hỏi User: xem billing** giá
     ghi đệm; nếu 1,25× ⇒ `cost_usd` thiếu ≈ 20 % / câu (~0,00021 ⇒ ~0,00025, vẫn dưới trần) và có thể tối ưu (tắt ghi đệm nếu API cho). Chưa sửa code. B kiểm C89 (`c89_review.md`).
-  - **C90 (C):** nháp bảng **giới hạn đã biết** Phase 0–8 (cho đóng gói): gom từ `Project_Status.md`, `LUONG_HOAT_DONG_HE_THONG.md` §5, `TONG_HOP` các đợt, finding "chấp nhận không
+  - **C90 (C):** nháp bảng **giới hạn đã biết** Phase 0–8 (cho đóng gói): gom từ `Project_Status.md`, `01_LUONG_HOAT_DONG_HE_THONG.md` §5, `TONG_HOP` các đợt, finding "chấp nhận không
     sửa" ⇒ `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (mỗi dòng: giới hạn, khâu, bằng chứng `file:dòng`, mức nặng theo thứ tự lỗi User, có số đo chưa). Chỉ đọc, 0 USD.
-    **Xong 11:55** (`fdf1f19f974a`, 33 dòng: chất lượng 11, tốc độ / tiền / tính năng 5, chia đoạn / index 6, thước đo 6, vận hành 5). Lệch: `LUONG_HOAT_DONG_HE_THONG.md`:89
+    **Xong 11:55** (`fdf1f19f974a`, 33 dòng: chất lượng 11, tốc độ / tiền / tính năng 5, chia đoạn / index 6, thước đo 6, vận hành 5). Lệch: `01_LUONG_HOAT_DONG_HE_THONG.md`:89
     "context 10 chưa đo" + §5 dòng cuối "việc của Phase 8" cũ ⇒ A sửa cùng 5 chỗ sau đợt 2.
   - **C91 (C):** nháp phương án hội thoại nhiều lượt `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` (như C77: 2–4 phương án + danh sách quyết định D cho User;
     đầu vào B94, `chat.py`, câu hỏi 8). Chỉ đọc + nháp, 0 USD.

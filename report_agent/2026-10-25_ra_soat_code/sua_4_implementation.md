@@ -2,7 +2,7 @@
 
 Người làm: B (Claude Opus 5.5, terminal `hue-rag-c3`) · việc B26
 Date: 2026-10-25 20:04 +0700 (`date`) · nền `main` `5d3376f` · chưa commit (A commit sau review) · **0 USD**
-Canonical: `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` gói 4 (User duyệt 19:4x: thêm dòng lịch sử cho guide 0–4; đường dẫn dự án khác ra khỏi
+Canonical: `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` gói 4 (User duyệt 19:4x: thêm dòng lịch sử cho guide 0–4; đường dẫn dự án khác ra khỏi
 file tracked, không xóa lịch sử git); mục B26 trong `session_prompt/CURRENT_HANDOFF.md`; finding B-16, B-18, B-19, B-21 (`ra_soat_code_B.md`),
 C-12, C-13, C-14 (`ra_soat_code_C.md`), R2 (`kiem_cheo_C.md`). Review: C.
 

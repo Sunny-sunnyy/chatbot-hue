@@ -1,7 +1,7 @@
 # TONG_HOP — rà code Phase 0–7 (đợt `2026-10-25_ra_soat_code`)
 
 Người gộp: A (Claude Opus 5.5, `hue-rag-77`) · 18:57 25/10/2026, cập nhật 22:3x · trạng thái: **ĐÓNG 16:4x 26/10** — sửa code xong cả 5 gói (đợt 3 merge `421c302`, cổng ổn định trên `main` đạt; phần A tự sửa B kiểm ready, `a_dong_dot3_review.md`).
-Báo cáo cho User (lời thường, có câu hỏi): `bao_cao_he_thong/DE_XUAT_SUA_CODE.md`. Chưa sửa code (User 18:3x: "tôi đồng ý mới sửa").
+Báo cáo cho User (lời thường, có câu hỏi): `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md`. Chưa sửa code (User 18:3x: "tôi đồng ý mới sửa").
 
 ## Mục tiêu
 
@@ -51,7 +51,7 @@ lại index → gói 4 bất cứ lúc nào. Mỗi gói: commit + push trước 
 
 ## Bước tiếp
 
-User trả lời 4 câu ở `DE_XUAT_SUA_CODE.md` §4 ⇒ A ghi mục việc từng gói trong `CURRENT_HANDOFF.md`, giao B / C (file không chồng nhau).
+User trả lời 4 câu ở `94_DE_XUAT_SUA_CODE.md` §4 ⇒ A ghi mục việc từng gói trong `CURRENT_HANDOFF.md`, giao B / C (file không chồng nhau).
 
 ## Sửa code (User duyệt 19:4x 25/10: cả 5 gói)
 

@@ -17,7 +17,7 @@ import trần, chạy từ `backend/`**. Review: C.
   `test_full_corpus_qdrant_ingestion.py`, `test_full_corpus_retrieval.py`, `test_full_corpus_sparse.py`) + 1 test mới `test_startup_model_missing.py`,
   3 notebook, `guides/full_corpus_rag.md`.
 - `evaluation/full_corpus_eval.py:29-31`: sửa **sau** khi A commit gói 3 (`47a4e32`), như A dặn. Không đụng file nào khác của C.
-- **A cần sửa** (governance / báo cáo User): `session_prompt/chạy_môi_trường.md:10-12`, `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md:89` (lệnh build ⇒ `cd backend &&
+- **A cần sửa** (governance / báo cáo User): `session_prompt/chạy_môi_trường.md:10-12`, `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md:89` (lệnh build ⇒ `cd backend &&
   uv run python -m ingestion.full_corpus_pipeline …`); `Project_Status.md` §8 bẫy mới (§5).
 
 ## 2. Thay đổi chính

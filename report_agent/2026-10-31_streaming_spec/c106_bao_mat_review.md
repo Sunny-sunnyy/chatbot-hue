@@ -80,7 +80,7 @@ Không có `blocker`. Có **1 `major`**, 6 `minor`.
 - **Vị trí:** `c106_bao_mat_dong_goi.md:43, :45`.
 - **Bằng chứng:** (1) "OpenAI không lưu câu trả lời để truy xuất lại (`store=False`)": đúng với `store=False` (`830df0e:generator…:128`), nhưng người đọc thường dễ hiểu là
   "OpenAI không lưu gì"; chính báo cáo R7 ghi chính sách lưu giữ phía OpenAI **chưa kiểm**. (2) "API nghe `127.0.0.1`" chỉ đúng khi chạy lệnh trong tài liệu
-  (`LUONG_HOAT_DONG_HE_THONG.md:123` trên `887cbc5`, không có `--host` ⇒ mặc định của uvicorn) — code không ép.
+  (`01_LUONG_HOAT_DONG_HE_THONG.md:123` trên `887cbc5`, không có `--host` ⇒ mặc định của uvicorn) — code không ép.
 - Các ý khác của §3 người kiểm thấy **khớp** code: model không công cụ (Agent không khai báo `tools`, `max_turns=1`), không bí mật trong ngữ cảnh, log runtime không ghi chữ
   (`logging.yaml` mức INFO, không logger nào ghi body; `app.py:150, :163` chỉ ghi `url.path`), Qdrant chỉ `127.0.0.1`.
 - **Tiêu chí đóng:** (1) thêm "OpenAI vẫn có thể giữ dữ liệu một thời gian theo chính sách API của họ — chưa kiểm"; (2) "khi chạy đúng lệnh trong tài liệu (không đặt `--host`)".
@@ -157,7 +157,7 @@ Báo cáo kiểm: `c106_bao_mat_dong_goi.md` bản 2, sha256 12 ký tự đầu 
 | m-1 | đầu file: `887cbc5` + câu delta; `bbbdbf9` dựng trên `830df0e`; thêm `716ba4d` | đóng |
 | m-2 | `830df0e:chat.py:35-36`, `generator…:145`, `chat.py:47-48`, `tra_web_codex.sh:60-64 / :68` — đúng | đóng |
 | m-3 | R2 viết lại theo S3. Đã kiểm `716ba4d`: `frontend/app.js:77` `SANITIZE_OPTIONS` (25 thẻ Markdown, thuộc tính chỉ `href` / `title` / `align` / `start`); `:85` mọi lần vẽ lại đều qua `DOMPurify.sanitize(…, SANITIZE_OPTIONS)`, `innerHTML` chỉ dùng ở đó; `backend/api/app.py:33` CSP có `img-src 'self'`, `form-action 'self'`, `object-src 'none'`; `:37` `FrontendStaticFiles` gắn CSP cho trang HTML dưới `/static`, `:163` cho `/`. `form-action 'self'` đủ vì `form` không còn trong danh sách cho phép. Số "0 request ra ngoài, 25 ca" là bằng chứng của `s3_giao_dien_review.md` Vòng 2 (ready) — người kiểm không chạy lại trình duyệt | đóng |
-| m-4 | §3 + R7: "khi chạy đúng lệnh trong tài liệu"; "OpenAI vẫn có thể giữ dữ liệu… chưa kiểm". `LUONG_HOAT_DONG_HE_THONG.md:168` (working tree / `main`) đúng là lệnh không có `--host` | đóng |
+| m-4 | §3 + R7: "khi chạy đúng lệnh trong tài liệu"; "OpenAI vẫn có thể giữ dữ liệu… chưa kiểm". `01_LUONG_HOAT_DONG_HE_THONG.md:168` (working tree / `main`) đúng là lệnh không có `--host` | đóng |
 | m-5 | R1 + §3 + §4: DNS rebinding (ghi suy luận), kiểm `Host` vào điều kiện, câu CORS / 422 sửa đúng | đóng |
 | m-6 | §1 (c) + R7: telemetry Qdrant (chưa kiểm), HF hub — không mang chữ người dùng | đóng |
 | ghi chú R9, R11 | R9 nêu `chmod` không chặn tiến trình cùng user; R11 ghi cả hai cách đếm | đóng |

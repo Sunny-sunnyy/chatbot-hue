@@ -12,7 +12,7 @@ File tracked: **không chép** câu Golden, câu kín, nội dung kho; câu tả
 | File | Mục cần đọc | Để kiểm gì |
 |---|---|---|
 | file này | toàn bộ | tiêu chí ghi trước đủ ba lớp (sàn / mức tụt / chỉ số quyết hoặc theo dõi), cỡ mẫu, tiền, thứ tự, giữ mù bộ kín mới |
-| `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` | §1, §2, §3, phụ lục | số mốc hiện hành, thước đang dùng, giới hạn (nhóm kiểm + câu kín đã dùng) |
+| `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` | §1, §2, §3, phụ lục | số mốc hiện hành, thước đang dùng, giới hạn (nhóm kiểm + câu kín đã dùng) |
 | `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_do_plan.md` | §2, §5, §7 | sàn F / mức tụt T / sàn bộ an toàn A1–A2, N_AA, cách dùng lại bộ "trước", tiền thật — plan này dùng lại cùng thước |
 | `docs/superpowers/specs/2026-10-31-streaming-design.md` (`00fb57ee01b2`) | §6 C1–C3, C6 | thước tốc độ trên trình duyệt (plan này không đổi thước đó) |
 
@@ -24,7 +24,7 @@ File tracked: **không chép** câu Golden, câu kín, nội dung kho; câu tả
 Lượt đo cuối **không chọn biến thể**. Nó cho ra bộ số cuối cùng của "RAG mức 1" (Phase 1–8) để ghi vào báo cáo so sánh + chương đánh giá đồ án:
 1. **Không làm hỏng:** chatbot sau streaming (+ sửa `cost_usd`) vẫn giữ chất lượng của mốc 30/10 (bộ "sau" đợt 2 sửa kho) trên Golden 176 và bộ an toàn 32.
 2. **Số tuyệt đối trên một commit:** chất lượng (Golden, an toàn, ngày tương đối), tốc độ trên trình duyệt, tiền / câu — cùng một commit, cùng ngày.
-3. **Tổng quát hóa:** số trên **bộ kín mới** chưa ai thấy (nhóm kiểm 56 câu và 36 câu kín cũ **đã dùng** — `BAO_CAO_DANH_GIA.md` §1 "Giới hạn chính") so với số trên câu đã dùng để chọn.
+3. **Tổng quát hóa:** số trên **bộ kín mới** chưa ai thấy (nhóm kiểm 56 câu và 36 câu kín cũ **đã dùng** — `10_BAO_CAO_DANH_GIA.md` §1 "Giới hạn chính") so với số trên câu đã dùng để chọn.
 4. **Mốc người:** kết quả B0 (User đọc 20 cặp mù) — kiểm judge Claude, vốn là căn cứ của mọi kết luận Phase 8.
 
 ## 2. Điều kiện bắt đầu — "cùng một commit"
@@ -32,7 +32,7 @@ Lượt đo cuối **không chọn biến thể**. Nó cho ra bộ số cuối c
 Lượt đo chạy trên **một** commit `main` (ghi sha vào report) khi đã có đủ:
 - streaming S1–S4 đã merge và đóng (spec streaming). Hội thoại nhiều lượt **không** thuộc lượt này (User 11:20 01/11: dời sang Phase 9);
 - `cost_usd` tính theo giá đủ (ghi đệm 0,125 USD / 1M; hôm nay giá phẳng `backend/evaluation/full_corpus_eval.py:167` ⇒ thiếu ≈ 20 % — `Project_Status.md` §5 dòng 2026-10-30 15:07) + log `cache_write_tokens` (việc đóng gói);
-- Golden: câu lệch kho đã quyết — User **giữ nguyên** (11:04 01/11/2026; chỉ khác chữ hoa / thường, không làm sai số chấm; `golden_full_corpus check` báo 1 lỗi đã biết — `session_prompt/CURRENT_HANDOFF.md:89`, `bao_cao_he_thong/BAO_CAO_BO_CAU_HOI_GOLDEN.md` mục 1). Golden đổi lại vì lý do khác ⇒ ghi md5 mới, chấm "trước" bằng Golden mới;
+- Golden: câu lệch kho đã quyết — User **giữ nguyên** (11:04 01/11/2026; chỉ khác chữ hoa / thường, không làm sai số chấm; `golden_full_corpus check` báo 1 lỗi đã biết — `session_prompt/CURRENT_HANDOFF.md:89`, `bao_cao_he_thong/09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` mục 1). Golden đổi lại vì lý do khác ⇒ ghi md5 mới, chấm "trước" bằng Golden mới;
 - mọi "thử thêm có giới hạn" (§4) đã kết luận (vào hay không vào chatbot) — không thử gì sau khi chốt commit.
 
 Ghi trước khi chạy (kiểm bằng máy, 0 USD): sha commit; build record (hôm nay `51fb1ec63cbc`), sparse state (`c8134c49a648`), Qdrant 1 collection 8.424 point; T1 158 câu **giống byte**
@@ -63,7 +63,7 @@ Kết luận chung: **đạt** = mọi sàn + mọi mức tụt của §3.1–§
   `uv run --project /home/minhhieu/hue_rag`, dùng **cùng** Qdrant / build record `51fb1ec63cbc` / sparse `c8134c49a648` — index không đổi từ 30/10; kiểm T1 giống byte `4d5bbe9e0edc` trên worktree trước khi sinh;
   gỡ worktree khi xong — bẫy `Project_Status.md` §8). Ghi trước: sinh lại mốc chỉ cho câu P0_sai mới (≤ 2 câu trước khi vỡ sàn), không sinh lại cả 32 câu; **đảo cảnh báo / điều kiện vào = 0** (thủ tục phân loại (i) / (ii) / (iii) của `sua_kho_dot2_do_plan.md` §5 A2 vế 2, người phân loại không viết câu trả lời).
 - **Theo dõi:** H (bịa thêm) mới so với N_AA(H) = 2; P0_thiếu.
-- Giới hạn: 28 câu trong kho ⇒ 0 lỗi chỉ nói được tỉ lệ sai điều kiện < ~10 % (**quy ước của plan: cận trên một phía 95 %, Clopper–Pearson**; `BAO_CAO_DANH_GIA.md` §1 ghi ~12 % = cận hai phía).
+- Giới hạn: 28 câu trong kho ⇒ 0 lỗi chỉ nói được tỉ lệ sai điều kiện < ~10 % (**quy ước của plan: cận trên một phía 95 %, Clopper–Pearson**; `10_BAO_CAO_DANH_GIA.md` §1 ghi ~12 % = cận hai phía).
 
 ### 3.3 Bộ 15 câu theo ngày tương đối
 
@@ -123,8 +123,8 @@ giữ + rẻ / nhanh hơn rõ; (i) chất lượng tăng vượt nhiễu, latenc
 
 | Lỗi | Số hiện tại (nguồn) | Đã thử và bỏ (không thử lại nếu không có lý do mới) | Hướng cần nghiên cứu |
 |---|---|---|---|
-| L1 Từ chối nhầm câu có trong kho | 12 / 158 (30/10, `BAO_CAO_DANH_GIA.md` §1); 8.1: 22 / 22 câu từ chối nhầm thiếu dữ kiện trong ngữ cảnh ⇒ nghẽn ở tầng tìm / xếp hạng | trả lời phần có căn cứ (P1, R2 — phạm sàn ngoài kho); pool 100; luna chọn 10 / 30 (khâu trả lời kém hơn, chậm ×); rerank GPU; Qwen3-8B | xếp hạng / chọn đoạn rẻ (không thêm lần gọi model trên đường chính) |
-| L2 Câu so sánh / nhiều nguồn | MRR 0,53 / 0,54 (24/10, **kho cũ** — chưa đo lại, `BAO_CAO_TIM_KIEM.md` §1); context 10 đã nâng Đủ chủ yếu ở loại này | context 10 (đã vào); small-to-big, gộp đoạn (kém hơn) | tách câu hỏi nhiều vế (thường thêm lần gọi model ⇒ vướng sàn tốc độ) |
+| L1 Từ chối nhầm câu có trong kho | 12 / 158 (30/10, `10_BAO_CAO_DANH_GIA.md` §1); 8.1: 22 / 22 câu từ chối nhầm thiếu dữ kiện trong ngữ cảnh ⇒ nghẽn ở tầng tìm / xếp hạng | trả lời phần có căn cứ (P1, R2 — phạm sàn ngoài kho); pool 100; luna chọn 10 / 30 (khâu trả lời kém hơn, chậm ×); rerank GPU; Qwen3-8B | xếp hạng / chọn đoạn rẻ (không thêm lần gọi model trên đường chính) |
+| L2 Câu so sánh / nhiều nguồn | MRR 0,53 / 0,54 (24/10, **kho cũ** — chưa đo lại, `06_BAO_CAO_TIM_KIEM.md` §1); context 10 đã nâng Đủ chủ yếu ở loại này | context 10 (đã vào); small-to-big, gộp đoạn (kém hơn) | tách câu hỏi nhiều vế (thường thêm lần gọi model ⇒ vướng sàn tốc độ) |
 | L3 Dòng bảng giá | đoạn bảng giá xếp rất thấp (24/10, kho cũ); chưa có số riêng ở context 10 | gộp dòng bảng khi chia đoạn (không khác, 8.1) | chia bảng kèm tiêu đề cột / mục |
 
 Thứ tự đề xuất: đo lại L2 / L3 theo loại câu trên kho hiện tại **trước** (0 USD, tất định — tầng tìm) để biết lỗi còn lớn không, rồi mới nghiên cứu.
@@ -143,7 +143,7 @@ Thứ tự đề xuất: đo lại L2 / L3 theo loại câu trên kho hiện t�
 | 7 | Bộ an toàn 32 + 15 câu ngày | người chạy | ~10 phút | |
 | 8 | Bộ kín mới: sinh — người chạy **chỉ in số đếm** | sub-agent mới (hoặc session không đọc nội dung) | ~5 phút | |
 | 9 | Judge cùng lượt mù (Golden hai bên; an toàn; ngày; bộ kín) + phân loại câu P0_sai mới | sub-agent mới | ~1–1,5 giờ | quota Claude |
-| 10 | Report `report_agent/<đợt>/do_cuoi_implementation.md` (bảng do script in) ⇒ review chéo ⇒ báo cáo 5 chỗ + `BAO_CAO_SO_SANH_PHUONG_AN.md` | người chạy ⇒ session khác ⇒ A | ~1 giờ | |
+| 10 | Report `report_agent/<đợt>/do_cuoi_implementation.md` (bảng do script in) ⇒ review chéo ⇒ báo cáo 5 chỗ + `91_BAO_CAO_SO_SANH_PHUONG_AN.md` | người chạy ⇒ session khác ⇒ A | ~1 giờ | |
 | — | B0 (User đọc 20 cặp) | User ⇒ sub-agent tóm nhãn | User ~30–45 phút | lúc nào cũng được trước bảo vệ |
 
 ## 6. Tiền (ước từ token thật; giá phẳng ⇒ thật cao hơn ≈ 20 %)
@@ -155,11 +155,11 @@ Thứ tự đề xuất: đo lại L2 / L3 theo loại câu trên kho hiện t�
 | Bộ an toàn 32 + sinh lại 3 lần ≤ 2 câu × 2 bên | 0,0081 + ≈ 0,003 | lượt C84; plan đợt 2 §7 |
 | 15 câu ngày | 0,0037 | C93 |
 | Tốc độ trình duyệt (~50 câu + pilot) | ≈ 0,014 | spec streaming §8 |
-| Bộ kín mới 40 câu | ≈ 0,01 | 40 × 0,00025 (`BAO_CAO_DANH_GIA.md` §1) |
+| Bộ kín mới 40 câu | ≈ 0,01 | 40 × 0,00025 (`10_BAO_CAO_DANH_GIA.md` §1) |
 | Cổng ổn định | ≈ 0,001 | |
 | 22 câu B65 qua `/api/chat` (§3.4 theo dõi; `data/phase_8_2/latency_2710/questions.jsonl` sha `bac5c91db005`) | ≈ 0,0055 | 22 × 0,00025 |
 | **Cộng theo giá phẳng (không A/A)** · **có A/A** | **≈ 0,082** · **≈ 0,118** | |
-| **Cộng theo giá đủ (+20 %, ghi đệm 0,125 USD / 1M — `cost_usd` lúc chạy đã là giá đủ, §2)** | **≈ 0,098** · **≈ 0,142** | `BAO_CAO_DANH_GIA.md` §1 (thiếu ≈ 20 %) |
+| **Cộng theo giá đủ (+20 %, ghi đệm 0,125 USD / 1M — `cost_usd` lúc chạy đã là giá đủ, §2)** | **≈ 0,098** · **≈ 0,142** | `10_BAO_CAO_DANH_GIA.md` §1 (thiếu ≈ 20 %) |
 
 - **Trần lượt đo cuối: 0,20 USD** (User Q4) (≈ +40 % trên ước giá đủ có A/A 0,142; bản 2 đề xuất 0,15 chỉ dư ≈ 6 % sau khi tính giá đủ). "Thử thêm" (§4) có trần riêng mỗi plan. Lượt nào vượt ước > 50 % ⇒ dừng, báo A.
 - Judge, sub-agent: quota Claude (0 USD).
@@ -232,7 +232,7 @@ số trên bộ câu chưa ai thấy (để biết số dev lạc quan bao nhiê
 | m-6 rào đọc kho + "5 loại" + `category` 4 câu điều kiện | §3.7: chỉ file ngoài `evaluation/`, `meta/`, `_source-dumps/`, tìm bằng `grep_kb.sh`; "4 loại trong kho + ngoài kho"; 4 câu điều kiện gắn `conditional`; sàn đảo cảnh báo áp mọi câu `conditional` |
 | n-1 A/A mới thay N_AA? | §11 Q2 PA1: luật ghi trước — giữ N_AA = 2, A/A cùng ngày chỉ để tách trôi khi sát ngưỡng |
 | n-2 dùng lại S4 | §3.4: thêm điều kiện build record / sparse / Qdrant giống (§2) |
-| n-3 nguồn quyết định Golden | §2: dẫn `CURRENT_HANDOFF.md:89` + `BAO_CAO_BO_CAU_HOI_GOLDEN.md` mục 1 (A đã cập nhật báo cáo khâu, commit `ce37bb1`) |
+| n-3 nguồn quyết định Golden | §2: dẫn `CURRENT_HANDOFF.md:89` + `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` mục 1 (A đã cập nhật báo cáo khâu, commit `ce37bb1`) |
 
 ## 13. Điền `TBD` theo User (bản 4, 11:48 01/11/2026)
 

@@ -66,7 +66,7 @@ Mọi lệnh từ `/tmp/b_p9b0/backend`, `uv run --project /home/minhhieu/hue_ra
 - T-2 qua `TestClient` chỉ so thân yêu cầu; hành vi luồng thật kiểm ở T-9 trên uvicorn.
 - T-3: import động (`importlib`, `__import__`) không theo được (ghi trong test).
 - Mẫu Golden ~30 câu "khoá ở B0" là C123 — ngoài việc này.
-- Tài liệu còn nhắc `grounded_answer` (plan §6, A sửa lúc merge): `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `BAO_CAO_SO_SANH_PHUONG_AN.md`,
+- Tài liệu còn nhắc `grounded_answer` (plan §6, A sửa lúc merge): `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md`, `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `91_BAO_CAO_SO_SANH_PHUONG_AN.md`,
   `guides/phase_6_generation_api.md`, `session_prompt/Project_Status.md` (kể cả §4 "không ghi USD" ⇒ nay có `usd`).
 
 ## 6. Bàn giao cho người kiểm

@@ -38,14 +38,14 @@ Mức kiểm theo A giao: (1) chỗ sửa đúng hiện trạng không (lấy m�
 
 **Minor (A tự sửa):**
 
-- **m-1 · `LUONG_HOAT_DONG_HE_THONG.md` mục "Chưa đưa ra ngoài"** — câu "4 chốt … (giới hạn số lượt hỏi / IP / ngày, cookie chỉ qua https, tắt trang `/docs`,
+- **m-1 · `01_LUONG_HOAT_DONG_HE_THONG.md` mục "Chưa đưa ra ngoài"** — câu "4 chốt … (giới hạn số lượt hỏi / IP / ngày, cookie chỉ qua https, tắt trang `/docs`,
   log xoay vòng) — **bật bằng biến môi trường lúc deploy, không đặt ⇒ như cũ**". Log xoay vòng **luôn bật** từ `ccc9f4f` (`backend/config/logging.yaml`, không
   có biến môi trường); chỉ 3 chốt kia theo biến. Cùng file, mục giới hạn đã ghi đúng ("Log xoay vòng từ 09/11"). Tác động: người đọc tưởng log hiện chưa xoay
   vòng. Đóng: tách "3 chốt bật bằng biến môi trường; log xoay vòng luôn bật".
-- **m-2 · `BAO_CAO_NEN_TANG.md`** — "hàm đọc cấu hình chung chỉ kiểm 4 nhóm gốc". `backend/core/settings_loader.py` kiểm 3 nhóm (`full_corpus`,
+- **m-2 · `90_BAO_CAO_NEN_TANG.md`** — "hàm đọc cấu hình chung chỉ kiểm 4 nhóm gốc". `backend/core/settings_loader.py` kiểm 3 nhóm (`full_corpus`,
   `full_corpus_runtime`, `full_corpus_generation`); `vector_database` không được kiểm (`grep -c vector_database` = 0). Câu cũ ("kiểm đúng các nhóm này") cũng
   đã sai. Đóng: "kiểm 3 nhóm (kho, runtime, sinh)".
-- ~~m-3~~ **đã kiểm, không phải lỗi:** dòng đầu SINH rút gọn, nhưng 2 thay đổi người dùng thấy 09/11 vẫn nằm ở mục 1 (`BAO_CAO_SINH_CAU_TRA_LOI_API.md:9` câu ngày + âm lịch
+- ~~m-3~~ **đã kiểm, không phải lỗi:** dòng đầu SINH rút gọn, nhưng 2 thay đổi người dùng thấy 09/11 vẫn nằm ở mục 1 (`07_BAO_CAO_SINH_CAU_TRA_LOI_API.md:9` câu ngày + âm lịch
   bật, `:13` câu khẩn cấp không còn câu soạn sẵn).
 
 **Câu hỏi (2) — có chỗ sửa thành sai / ghi 10/11 như đã chạy:** không thấy. Mọi chỗ nhắc việc 10/11 đều ghi "đang thử 10/11, chưa vào chatbot" (xã giao

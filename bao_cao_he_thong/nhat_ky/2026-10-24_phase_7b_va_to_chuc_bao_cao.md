@@ -38,5 +38,5 @@ bot từ chối nhầm khi chỉ tìm thấy một phần thông tin — đó l�
 
 ## Đọc thêm
 
-- `bao_cao_he_thong/README.md` (mục lục), `BAO_CAO_DANH_GIA.md` (Phase 7B)
+- `bao_cao_he_thong/README.md` (mục lục), `10_BAO_CAO_DANH_GIA.md` (Phase 7B)
 - `report_agent/2026-10-24_to_chuc_bao_cao/TONG_HOP.md` (kỹ thuật, đợt tổ chức báo cáo)

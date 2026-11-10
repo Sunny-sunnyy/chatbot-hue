@@ -124,4 +124,4 @@ Muốn hiểu từng khâu: đọc tiếp các file theo thứ tự trong [READM
 - Trợ lý Phase 9 (thiết kế, từng bậc): `docs/superpowers/specs/2026-11-02-phase-9-design.md` · `report_agent/2026-11-02_phase_9_code/` · `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md`
 - Cổng du lịch + biểu mẫu: `report_agent/2026-11-06_giao_dien_cong/c_s3_q_f_implementation.md` · hỏi bằng ảnh: `report_agent/2026-11-05_phase_10_anh/`
 - Ngày tính sẵn: `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md` · chạy thử bản Docker: `report_agent/2026-11-08_phase_9_ban_13/b_deploy_cuc_bo_implementation.md`
-- Dựng lại kho / chạy máy: `guides/full_corpus_rag.md` · mọi phương án đã thử: [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md)
+- Dựng lại kho / chạy máy: `guides/full_corpus_rag.md` · mọi phương án đã thử: [91_BAO_CAO_SO_SANH_PHUONG_AN.md](91_BAO_CAO_SO_SANH_PHUONG_AN.md)

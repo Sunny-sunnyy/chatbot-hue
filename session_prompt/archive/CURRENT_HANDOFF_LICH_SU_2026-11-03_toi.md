@@ -27,7 +27,7 @@ N_AA = số câu tụt giữa hai lượt cùng cấu hình (nhiễu); Bxx / Cxx
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
 1. ~~Quyền phiên~~ — User chọn "như trưa 03/11" (phiên tối).
-1b. **Khi User quay lại (phiên tối), hỏi mỗi lần một câu:** (a) tính năng mới từ nghiên cứu sản phẩm thật — nút 👍 / 👎 "báo sai" mỗi câu; câu ngoài phạm vi kèm 1–2 gợi ý (`BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00); (b) tối ưu tốc độ chữ đầu sớm (sau B3b) — chờ C150 phân tích; (c) plan B5 nháp (C149 `42afc1c7bc64`): trần 0,10 USD, bảng cụm kề + 2 cột `toi` / `luu_y`, thời tiết gộp B5 hay bậc nhỏ B5b sau (C đề xuất B5b).
+1b. **Khi User quay lại (phiên tối), hỏi mỗi lần một câu:** (a) tính năng mới từ nghiên cứu sản phẩm thật — nút 👍 / 👎 "báo sai" mỗi câu; câu ngoài phạm vi kèm 1–2 gợi ý (`92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00); (b) tối ưu tốc độ chữ đầu sớm (sau B3b) — chờ C150 phân tích; (c) plan B5 nháp (C149 `42afc1c7bc64`): trần 0,10 USD, bảng cụm kề + 2 cột `toi` / `luu_y`, thời tiết gộp B5 hay bậc nhỏ B5b sau (C đề xuất B5b).
 2. Khi rảnh: đọc 10 câu mẫu B4 `data/phase_9/bo_do_b4/mau_cho_user.md` — câu nào không giống người thật hỏi ⇒ báo A.
 3. Không gấp: 4 worktree AGY cũ (`~/.gemini/antigravity-cli/…`) giữ hay gỡ; xoá sao lưu kho đợt 1 + 2?
 4. File báo cáo tiến độ cho giáo viên (`gửi chatgpt/2026-11-03/báo cáo tiến độ giáo viên/TONG_HOP_TIEN_DO_DO_AN_03_11_2026_CHO_CHATGPT.md`, cập nhật tới B2) — User gửi ChatGPT; không nhắc coding agent (User 03/11); không link repo.

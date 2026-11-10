@@ -91,7 +91,7 @@ Terminal: `hue-rag-51` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Duyệt plan B3 `27e75be5ed44` (M-1 / M-2 do A quyết); spec sửa kho viết + 3 vòng C ⇒ User duyệt `937cf8969810`; gold v3 (User duyệt).
 - Bàn tính năng (PA3): streaming trước, rồi hội thoại nhiều lượt; C63 căn cứ.
 - Vòng cải tiến 8: S41–S44, W27–W29 áp (`scripts/grep_kb.sh`); handoff viết lại 280 ⇒ ~113 dòng; tài liệu kết phiên.
-- Sau yêu cầu "cập nhật đầy đủ" của User (16:3x): `grep_kb.sh` qua 4 vòng B thử phá (bản cuối `77ac6ec`); B77 `BAO_CAO_KHO_DU_LIEU` bản 4; C69 `BAO_CAO_DANH_GIA`
+- Sau yêu cầu "cập nhật đầy đủ" của User (16:3x): `grep_kb.sh` qua 4 vòng B thử phá (bản cuối `77ac6ec`); B77 `02_BAO_CAO_KHO_DU_LIEU` bản 4; C69 `10_BAO_CAO_DANH_GIA`
   bản 3 + guide 7 "Hiện hành" (A đối chiếu 2 sửa với code); handoff thêm "Mục việc phiên sau" từng session + câu hỏi lưu câu hỏi người dùng (hội thoại nhiều lượt).
 - Ghi chú C (STATUS_C, chưa xử lý): spec 8.2 §3 mục 2 dẫn số dòng NFC cũ (`:91, :132`) — lịch sử, không đổi hành vi; K076 / K077 "quận", K002, K117 — đợt sửa kho.
 
@@ -177,7 +177,7 @@ Terminal: `hue-rag-2d` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - Giao + review: B41 (rebase B1), B42, C36 (phân loại lỗi), B43 / C37 (đề xuất), spec §10 (C38), plan K1 (C41) → K1 chạy (B48) → review (C42), R4 (C39 → B47),
   plan R2 (C40 → B49) → R2 chạy (C43), plan K3 (B50 → C44, duyệt), plan R3 (B51 → C45 ⇒ NOT RUN), B44 (comment), B45 (hook câu kín).
 - Governance (B / C kiểm): hook quét trùng Golden / kho / câu kín; W14 + W18, W17, W19, W20; §7 ba nguyên tắc; sổ vòng 6 (S33–S36, W21–W23).
-- Kết phiên: `TONG_HOP.md` đợt cải tiến, nhật ký, `BAO_CAO_TIM_KIEM` bản 7, `BAO_CAO_SINH_CAU_TRA_LOI_API` bản 9, README, Project_Status, HISTORY, handoff.
+- Kết phiên: `TONG_HOP.md` đợt cải tiến, nhật ký, `06_BAO_CAO_TIM_KIEM` bản 7, `07_BAO_CAO_SINH_CAU_TRA_LOI_API` bản 9, README, Project_Status, HISTORY, handoff.
 
 ## Quyền phiên này (User 20:3x 26/10 — HẾT HẠN cuối phiên)
 - A tự điều phối B/C, tự đề xuất / thử / chọn trong luật (User 21:1x); API ≤ 1 USD cả phiên; B commit + push `p82-b1` / `p82-k1`; C commit + push `p82-r2`;
@@ -234,7 +234,7 @@ Terminal: `hue-rag-b0` · Agent: Claude Opus 5.5 · Vai: điều phối. B = `hu
 - 14:3x: C đang ở `dot3` trong working tree chung ⇒ A sửa / commit tài liệu `main` qua worktree `/tmp/a_docs`. `git push` từ worktree bị auto mode
   chặn ⇒ User chạy `! cd /tmp/a_docs && git push origin main` (đã đẩy `13afcf2`).
 - 14:4x: C (commit B-20) nối quét trùng với commit bằng `;` ⇒ commit chạy dù scan exit 1 — **lặp S23** (A tối 25/10) ⇒ bằng chứng thêm cho W16 (rào bằng hook).
-- 16:0x: A nói với User "tài liệu mô tả sai khâu tìm" — sai: `LUONG` §3 và `BAO_CAO_TIM_KIEM` §2 đã ghi BM25 chỉ chấm lại 30 đoạn; thiếu chỉ ở yêu cầu ChatGPT. Đã đính chính.
+- 16:0x: A nói với User "tài liệu mô tả sai khâu tìm" — sai: `LUONG` §3 và `06_BAO_CAO_TIM_KIEM` §2 đã ghi BM25 chỉ chấm lại 30 đoạn; thiếu chỉ ở yêu cầu ChatGPT. Đã đính chính.
 - 16:0x: ghi giờ "16:3x" ước trước khi chạy `date` (16:03) — lặp S17; đã sửa.
 - B40: yêu cầu ChatGPT mô tả sai khâu tìm (BM25 chỉ chấm lại 30 đoạn dense) ⇒ khi viết yêu cầu nghiên cứu, đối chiếu mô tả hệ thống với code (`file:dòng`) trước khi gửi.
 
@@ -259,7 +259,7 @@ mỗi lần mở — `ListAgents`).
 - không (kết phiên)
 
 ## Vừa xong (phiên đêm 25/10)
-- Rà code xong + kiểm chéo; `DE_XUAT_SUA_CODE.md` (5 gói, 4 câu) → User duyệt 19:4x. A tự kiểm C-09, B-11, B-12, B-19, 3c v2.
+- Rà code xong + kiểm chéo; `94_DE_XUAT_SUA_CODE.md` (5 gói, 4 câu) → User duyệt 19:4x. A tự kiểm C-09, B-11, B-12, B-19, 3c v2.
 - Đóng gói 1a (`9e6d371`), 4 (`1b9c126`), 3 (`47a4e32`), 1b (`1e4acd0`) — mỗi gói review chéo + cổng ổn định; 4 chỗ báo cáo (`b60f362`).
 - Duyệt plan 1b (`8b36bab7901c`) và plan đợt 3 (`7c8c660558e5`) sau review của session khác.
 - Yêu cầu ChatGPT `gửi chatgpt/2026-10-25/tìm thông tin/cai_tien_tung_khau_2026_10_25.md` (10 câu; chưa gửi).

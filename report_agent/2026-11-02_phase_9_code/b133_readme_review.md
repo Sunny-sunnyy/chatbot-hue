@@ -32,13 +32,13 @@ Người kiểm: B (Claude Opus 5.5, `hue-rag-52`) · 09:26 03/11/2026 (`date`) 
 - **Sửa thành:** ghi thêm "và file điều kiện `knowledge-base-hue/meta/full_corpus_conditions.json`" (nói nó là gì ở mức chung, không chép nội dung), hoặc ghi rõ "build chỉ chạy được khi có kho private của dự án". Nên trỏ thêm `guides/full_corpus_rag.md` mục "Build lại index" (bẫy sparse state chỉ ghi một lần — `Project_Status.md` §8).
 
 ### M-3 (major) — Bảng "Kết quả đo": 2 dòng sai / lệch ngày so với nguồn mới nhất
-1. **"Sai điều kiện / cảnh báo trên bộ an toàn 32 câu: 0 — 30/10/2026"** — lượt đo cuối **01/11** (số đang chạy): **0 đảo cảnh báo**, nhưng **2 câu sai điều kiện mới** (cả hai "nói sai về nguồn"; đúng ngưỡng ≤ 2; bản cũ sinh lại cũng sai 1 / 3 mỗi bên) — `bao_cao_he_thong/BAO_CAO_DANH_GIA.md:34-35`. Số 0 của 30/10 là lượt sửa kho, đã cũ.
+1. **"Sai điều kiện / cảnh báo trên bộ an toàn 32 câu: 0 — 30/10/2026"** — lượt đo cuối **01/11** (số đang chạy): **0 đảo cảnh báo**, nhưng **2 câu sai điều kiện mới** (cả hai "nói sai về nguồn"; đúng ngưỡng ≤ 2; bản cũ sinh lại cũng sai 1 / 3 mỗi bên) — `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md:34-35`. Số 0 của 30/10 là lượt sửa kho, đã cũ.
    **Sửa thành:** "0 đảo cảnh báo; 2 câu sai điều kiện mới (đúng ngưỡng ≤ 2, bản trước cũng sai y vậy) — 01/11/2026". Ghi số xấu hơn ở README public là đúng luật "báo cáo đúng, không chọn số đẹp".
-2. **"Lỗi trích dẫn 0 / 489 lần sinh — 01/11/2026"** — số 489 là phép đếm **C89** trong đợt phần tồn (`report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md:142`), `DE_XUAT_SUA_CODE.md:15` ghi "số 30/10". Không có nguồn nào đếm 489 ngày 01/11. Lượt đo cuối 01/11 ghi "0 lỗi trích dẫn" trên Golden 176 (`BAO_CAO_DANH_GIA.md:29`); hồi quy B1 02/11 cũng 0 / 208 (`b129_b1_implementation.md` P5).
+2. **"Lỗi trích dẫn 0 / 489 lần sinh — 01/11/2026"** — số 489 là phép đếm **C89** trong đợt phần tồn (`report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md:142`), `94_DE_XUAT_SUA_CODE.md:15` ghi "số 30/10". Không có nguồn nào đếm 489 ngày 01/11. Lượt đo cuối 01/11 ghi "0 lỗi trích dẫn" trên Golden 176 (`10_BAO_CAO_DANH_GIA.md:29`); hồi quy B1 02/11 cũng 0 / 208 (`b129_b1_implementation.md` P5).
    **Sửa thành (chọn một):** "0 / 489 lần sinh — đếm 30/10 trên mọi lượt đã lưu (cấu hình 10 đoạn)" **hoặc** "0 trên Golden 176 + 32 an toàn — 01/11 và 02/11/2026".
 
 ### m-1 — "Câu ngoài kho bị trả lời 0 — 30/10": ngày cũ
-Lượt đo cuối 01/11: 0 Golden, 0 / 4 an toàn, 0 / 6 bộ kín 40 câu (`BAO_CAO_DANH_GIA.md:29, :34, :36`); B1 02/11: 18 / 18 câu `out_of_scope` từ chối. ⇒ ghi "01/11/2026 (và hồi quy B1 02/11)". Tương tự 12 / 158: số này giữ nguyên ở 01/11 và 02/11 ⇒ ghi 01/11.
+Lượt đo cuối 01/11: 0 Golden, 0 / 4 an toàn, 0 / 6 bộ kín 40 câu (`10_BAO_CAO_DANH_GIA.md:29, :34, :36`); B1 02/11: 18 / 18 câu `out_of_scope` từ chối. ⇒ ghi "01/11/2026 (và hồi quy B1 02/11)". Tương tự 12 / 158: số này giữ nguyên ở 01/11 và 02/11 ⇒ ghi 01/11.
 
 ### m-2 — "So với bản đầu Phase 8 trên 33 câu kín"
 Phép so là **đầu ↔ cuối Phase 8.2**: ngữ cảnh 5 ⇒ 10 đoạn + chuẩn hoá NFC (`Project_Status.md` §3 dòng 8.2), không phải "bản đầu Phase 8". **Sửa:** "Ngữ cảnh 5 ⇒ 10 đoạn (Phase 8.2), 33 câu kín: đủ ý +0,82, đúng +0,70, 0 câu tụt".

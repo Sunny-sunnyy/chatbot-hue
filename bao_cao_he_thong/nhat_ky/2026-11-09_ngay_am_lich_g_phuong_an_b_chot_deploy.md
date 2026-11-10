@@ -38,7 +38,7 @@
 4. **Giới hạn:** câu mơ hồ kiểu "Tết năm nay" hỏi vào cuối năm. Sửa bằng cách bắt code đưa cả Tết đã qua lẫn Tết sắp tới. Cờ vẫn tắt tới khi đo lại đạt.
 
 ## Đọc thêm
-- `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 45 — mục 1, checklist, mục 4 "09/11")
+- `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 45 — mục 1, checklist, mục 4 "09/11")
 - `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` §4e (ngày + âm lịch)
 - `report_agent/2026-11-08_phase_9_ban_13/` (định tuyến G, T2)
 - `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (bảng vé)

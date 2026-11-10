@@ -21,7 +21,7 @@ Không có blocker / major.
   ném ở bước của nó); rủi ro chỉ khi sau này một bước khác ném cùng lớp ⇒ ra mã lỗi đó thay vì 500. Đã khai báo ở report §5 (b). Tiêu chí đóng: S2 thêm route stream ⇒ người làm
   `git grep` lại các `raise` của 4 lớp; ghi vào mục giới hạn streaming khi đóng spec (a6).
 - **m-2 (minor, không mở vòng):** `citation_ms` trong `chat_metrics` nay không gồm `normalize_citations` (đổi nghĩa trường log, chênh micro giây; đã khai báo §5 (a)). Tiêu chí đóng:
-  ghi một dòng vào `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (mục log số đo) khi merge nhánh streaming.
+  ghi một dòng vào `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (mục log số đo) khi merge nhánh streaming.
 
 Độ đơn giản: `AnswerTrace` điền dần phục vụ hành vi thật (dòng log / dòng chấm của lần lỗi vẫn có số đo bước đã chạy — trước S1 hai nơi có hành vi này riêng lẻ); `GeneratorNotReadyError`
 cần vì `ComponentNotReadyError` bị bước tìm / reranker ném (route sẽ bắt nhầm). Không có lớp phòng xa cho S2. Đạt.

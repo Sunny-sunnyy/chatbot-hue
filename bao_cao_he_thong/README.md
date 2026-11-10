@@ -76,24 +76,24 @@ thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riên
 
 | # | File | Đọc để biết |
 |---:|---|---|
-| 1 | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | Một câu hỏi đi qua những bước nào; một ví dụ trọn vẹn; dữ liệu người dùng gửi đi đâu |
-| 2 | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | Kho lấy từ đâu, đã sửa gì, còn thiếu gì |
-| 3 | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | Bài được cắt thành đoạn thế nào, vì sao cắt vậy |
-| 4 | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | Đoạn biến thành vector nghĩa + từ khoá ra sao, vì sao chọn model nhỏ |
-| 5 | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | Cất ở đâu, khi nào phải dựng lại |
-| 6 | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | Chọn 10 đoạn nào cho một câu hỏi, vì sao hay từ chối nhầm |
-| 7 | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | Trợ lý viết câu trả lời: phân loại, công cụ, kiểm nguồn, giao diện |
-| 8 | [BAO_CAO_HOI_BANG_ANH.md](BAO_CAO_HOI_BANG_ANH.md) | Hỏi bằng ảnh làm gì, đúng tới đâu |
-| 9 | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) → [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | Đo bằng bộ câu nào, chấm thế nào, tốt tới đâu |
+| 1 | [01_LUONG_HOAT_DONG_HE_THONG.md](01_LUONG_HOAT_DONG_HE_THONG.md) | Một câu hỏi đi qua những bước nào; một ví dụ trọn vẹn; dữ liệu người dùng gửi đi đâu |
+| 2 | [02_BAO_CAO_KHO_DU_LIEU.md](02_BAO_CAO_KHO_DU_LIEU.md) | Kho lấy từ đâu, đã sửa gì, còn thiếu gì |
+| 3 | [03_BAO_CAO_CHIA_DOAN.md](03_BAO_CAO_CHIA_DOAN.md) | Bài được cắt thành đoạn thế nào, vì sao cắt vậy |
+| 4 | [04_BAO_CAO_EMBEDDING_TU_KHOA.md](04_BAO_CAO_EMBEDDING_TU_KHOA.md) | Đoạn biến thành vector nghĩa + từ khoá ra sao, vì sao chọn model nhỏ |
+| 5 | [05_BAO_CAO_LUU_TRU_QDRANT.md](05_BAO_CAO_LUU_TRU_QDRANT.md) | Cất ở đâu, khi nào phải dựng lại |
+| 6 | [06_BAO_CAO_TIM_KIEM.md](06_BAO_CAO_TIM_KIEM.md) | Chọn 10 đoạn nào cho một câu hỏi, vì sao hay từ chối nhầm |
+| 7 | [07_BAO_CAO_SINH_CAU_TRA_LOI_API.md](07_BAO_CAO_SINH_CAU_TRA_LOI_API.md) | Trợ lý viết câu trả lời: phân loại, công cụ, kiểm nguồn, giao diện |
+| 8 | [08_BAO_CAO_HOI_BANG_ANH.md](08_BAO_CAO_HOI_BANG_ANH.md) | Hỏi bằng ảnh làm gì, đúng tới đâu |
+| 9 | [09_BAO_CAO_BO_CAU_HOI_GOLDEN.md](09_BAO_CAO_BO_CAU_HOI_GOLDEN.md) → [10_BAO_CAO_DANH_GIA.md](10_BAO_CAO_DANH_GIA.md) | Đo bằng bộ câu nào, chấm thế nào, tốt tới đâu |
 
-**Hồ sơ tra (ngoài đường đọc):** [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md) (mọi cách đã thử / chọn / bỏ) ·
-[BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) (dự án dựng trên gì) · [BAO_CAO_NGHIEN_CUU_PHASE_9.md](BAO_CAO_NGHIEN_CUU_PHASE_9.md) +
-[DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md](DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md) (vì sao làm Phase 9 – 12) · [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md)
+**Hồ sơ tra (ngoài đường đọc):** [91_BAO_CAO_SO_SANH_PHUONG_AN.md](91_BAO_CAO_SO_SANH_PHUONG_AN.md) (mọi cách đã thử / chọn / bỏ) ·
+[90_BAO_CAO_NEN_TANG.md](90_BAO_CAO_NEN_TANG.md) (dự án dựng trên gì) · [92_BAO_CAO_NGHIEN_CUU_PHASE_9.md](92_BAO_CAO_NGHIEN_CUU_PHASE_9.md) +
+[93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md](93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md) (vì sao làm Phase 9 – 12) · [94_DE_XUAT_SUA_CODE.md](94_DE_XUAT_SUA_CODE.md)
 (đợt dọn code 25–26/10) · [nhat_ky/](nhat_ky/) (chuyện từng ngày).
 
 ## Luật cập nhật (cho agent — bạn bỏ qua mục này)
 
 - Thay đổi vào hệ thống đang chạy ⇒ sửa đúng file khâu bị chạm + 1 dòng nhật ký ngày đó; LUONG chỉ khi đường đi của câu hỏi đổi; số chung ⇒ **chỉ** bảng
   "Số chính" ở trên (file khác trỏ về, không chép số). Quy tắc đủ: `session_prompt/WORKFLOW.md` §6.
-- Thân bài lời thường: không mã việc, mã commit, tên hàm, file:dòng — gom vào mục "Đọc chi tiết" cuối file. Phương án đã bỏ: 1 dòng + trỏ `BAO_CAO_SO_SANH_PHUONG_AN.md`.
+- Thân bài lời thường: không mã việc, mã commit, tên hàm, file:dòng — gom vào mục "Đọc chi tiết" cuối file. Phương án đã bỏ: 1 dòng + trỏ `91_BAO_CAO_SO_SANH_PHUONG_AN.md`.
 - Phần "đang chạy" của file khâu ≤ ~40 dòng; LUONG ≤ ~120 dòng. Không dòng "Trước: …", không khối "Mới ngày …" (git + nhật ký giữ lịch sử). Giờ lấy bằng `date`.

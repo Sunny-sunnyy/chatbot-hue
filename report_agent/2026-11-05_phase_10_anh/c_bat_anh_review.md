@@ -73,4 +73,4 @@ công cụ của C (xem §3), phải chạy lại. Tính vào Phase 10.
 ## 6. Decision và bước tiếp theo
 
 **ready_for_user_confirmation**, sau m-1 (E rebase lên `c9931be` giữ cả hai phần). Khi merge để bật: `settings.yaml` `anh.bat: true` + build lại giao diện +
-báo cáo `BAO_CAO_HOI_BANG_ANH.md` / `LUONG_HOAT_DONG_HE_THONG.md` (E đã ghi ở report §6). Bằng chứng private: `data/phase_10/anh/c_bat_review/`.
+báo cáo `08_BAO_CAO_HOI_BANG_ANH.md` / `01_LUONG_HOAT_DONG_HE_THONG.md` (E đã ghi ở report §6). Bằng chứng private: `data/phase_10/anh/c_bat_review/`.

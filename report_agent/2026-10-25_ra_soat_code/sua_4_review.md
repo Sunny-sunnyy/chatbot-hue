@@ -4,7 +4,7 @@ Decision: **ready_for_user_confirmation** — tiêu chí đạt; không blocker 
 (sửa chữ, không cần vòng review riêng — C xem lại diff phần đó). Thêm 1 phát hiện **ngoài phạm vi** về code (o1) cho A xếp gói.
 Người kiểm: C (Claude Opus 5.5, terminal `hue-rag-7f`)
 Date: 2026-10-25 20:16 (`date`)
-Canonical: mục B26 trong `session_prompt/CURRENT_HANDOFF.md`; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` gói 4
+Canonical: mục B26 trong `session_prompt/CURRENT_HANDOFF.md`; `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` gói 4
 Implementation report: `report_agent/2026-10-25_ra_soat_code/sua_4_implementation.md` (B, 20:04)
 
 ## 1. Phạm vi đã review

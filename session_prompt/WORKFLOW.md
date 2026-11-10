@@ -104,8 +104,8 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
 | Implementation report | `report_agent/<đợt>/phase_<x>_<gate>_<chủ_đề>_implementation.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
 | Review | `report_agent/<đợt>/phase_<x>_<gate>_review.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
 | Tổng hợp đợt | `report_agent/<đợt>/TONG_HOP.md` | A | đóng đợt: mục tiêu, quyết định theo giờ, kết quả, giới hạn, bước tiếp |
-| Báo cáo khâu cho User | `bao_cao_he_thong/BAO_CAO_<KHÂU>.md` | A (B/C khi được giao, A review) | khâu đó đổi hành vi hoặc có thử nghiệm mới (`TEMPLATE_USER_REPORT.md`) |
-| Luồng hệ thống | `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` | A | mỗi lần hành vi hệ thống đổi (chunker, index, retrieval, prompt, model, API) |
+| Báo cáo khâu cho User | `bao_cao_he_thong/<số>_BAO_CAO_<KHÂU>.md` (số = thứ tự đọc ở `README.md`: 01 luồng, 02–10 khâu theo dòng chảy dữ liệu, 9x hồ sơ tra) | A (B/C khi được giao, A review) | khâu đó đổi hành vi hoặc có thử nghiệm mới (`TEMPLATE_USER_REPORT.md`) |
+| Luồng hệ thống | `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` | A | mỗi lần hành vi hệ thống đổi (chunker, index, retrieval, prompt, model, API) |
 | Nhật ký cho User | `bao_cao_he_thong/nhat_ky/<YYYY-MM-DD>_<chủ_đề>.md` | A | đóng đợt / cuối ngày làm việc (`TEMPLATE_NHAT_KY.md`) |
 | STATUS | `session_prompt/sessions/STATUS_<X>.md` | session X | ngay sau mỗi việc + kết phiên |
 
@@ -115,12 +115,12 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
   report chỉ trỏ đường dẫn. `reports/` là lịch sử tới 2026-10-24, không thêm file.
 - **User chỉ cần đọc `bao_cao_he_thong/`** (mục lục `bao_cao_he_thong/README.md`). Mỗi thay đổi vào
   hệ thống đang chạy ⇒ A sửa **ngay trong đợt** (rút gọn 05/11 từ "5 chỗ"): `BAO_CAO_<KHÂU>.md` của đúng khâu (sửa cả Tóm tắt + checklist,
-  không chỉ thêm mục cuối) + `nhat_ky/` của ngày + bảng `bao_cao_he_thong/README.md`; `LUONG_HOAT_DONG_HE_THONG.md` **chỉ khi hành vi người
+  không chỉ thêm mục cuối) + `nhat_ky/` của ngày + bảng `bao_cao_he_thong/README.md`; `01_LUONG_HOAT_DONG_HE_THONG.md` **chỉ khi hành vi người
   dùng thấy đổi**. `Project_Status.md` sửa ở kết phiên; mục "Hiện hành" của guide (`guides/…`) sửa khi đóng Phase.
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
-- **Mức nhẹ (User 11:20 08/11/2026):** mỗi merge chỉ ghi **1 dòng nhật ký** ngày đó + bảng `README.md`; `BAO_CAO_<KHÂU>.md` + `LUONG_HOAT_DONG_HE_THONG.md` sửa **lúc đóng đợt / kết phiên** (gộp mọi thay đổi trong đợt). Luật "luôn mới nhất" dưới đây áp ở mốc đóng đợt; chỗ sai vẫn xoá.
+- **Mức nhẹ (User 11:20 08/11/2026):** mỗi merge chỉ ghi **1 dòng nhật ký** ngày đó + bảng `README.md`; `BAO_CAO_<KHÂU>.md` + `01_LUONG_HOAT_DONG_HE_THONG.md` sửa **lúc đóng đợt / kết phiên** (gộp mọi thay đổi trong đợt). Luật "luôn mới nhất" dưới đây áp ở mốc đóng đợt; chỗ sai vẫn xoá.
 - **Báo cáo cho User luôn đúng thông tin mới nhất** (User 31/10/2026 — User chỉ đọc `bao_cao_he_thong/`): (1) **mọi** thay đổi hoặc thử nghiệm
   chạm hệ thống — kể cả thử rồi **không áp dụng**, sửa kho, build lại chỉ mục, đổi thước đo — ⇒ cập nhật `BAO_CAO_<KHÂU>.md` của mọi khâu bị chạm
   (cả Tóm tắt, sơ đồ bản đang chạy, checklist) + bảng `README.md` **ngay trong đợt đó**, không đợi kết phiên; (2) chỗ **không còn đúng** thì **xoá**

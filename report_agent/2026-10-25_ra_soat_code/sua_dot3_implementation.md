@@ -88,8 +88,8 @@ D7 (code / tests): `76ff419` 8.345 / 4.394 · C1 8.347 · C2 8.354 · C3 8.109 �
 - **Giữ (theo plan):** `CrossEncoderReranker` (harness g1 / g4_rerank); `ConditionManager` hai lượt kiểm; `ListItemInfo.parent_*`; kiểm lát cắt sau dựng;
   `upsert.py` kiểm sau upsert; nhánh `native_hybrid_rrf`. Nhánh `pass` cho `bullet_list_open` trong vòng gom mục con (vô hại) — để nguyên.
 - **Ngoài phạm vi, cho A:** `guides/phase_5_retrieval_profiles_reranking.md:65` vẫn nói "Reranker tùy chọn trong code: MiniLM" — sau C6 service không còn
-  nhánh này; `bao_cao_he_thong/` theo plan §8 (B-11 "build dừng khi đoạn vượt", Rep B khỏi `BAO_CAO_CHIA_DOAN.md:136`, smoke Phase 5 trong
-  `BAO_CAO_NEN_TANG.md:116`, conditions file chuyển chỗ ở `BAO_CAO_CHIA_DOAN.md:49, 62, 130`); `Project_Status.md` §4 / §8. `guides/full_corpus_rag.md`
+  nhánh này; `bao_cao_he_thong/` theo plan §8 (B-11 "build dừng khi đoạn vượt", Rep B khỏi `03_BAO_CAO_CHIA_DOAN.md:136`, smoke Phase 5 trong
+  `90_BAO_CAO_NEN_TANG.md:116`, conditions file chuyển chỗ ở `03_BAO_CAO_CHIA_DOAN.md:49, 62, 130`); `Project_Status.md` §4 / §8. `guides/full_corpus_rag.md`
   bước 4b còn "cutover cần sửa code (B-06)" — mã B-06 của B26 khác B-06 của plan này, C không đổi.
 - Clone public: test chunker mẫu + `load_settings()` cần file trong `knowledge-base-hue/meta/` — như trước B-12 (đã cần kho), không xấu hơn; A quyết không thêm fixture.
 - `backend/scripts/__pycache__/` (untracked, bị ignore) còn trên đĩa — không ảnh hưởng.

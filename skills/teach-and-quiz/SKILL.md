@@ -28,7 +28,7 @@ Thứ cần có là **năng lực của User**, không phải năng lực của 
 | Mức | Đọc gì | Khi nào |
 |---|---|---|
 | 0 | câu hỏi của User; sổ học (đã giảng gì, User đã hiểu gì) | luôn |
-| 1 | `bao_cao_he_thong/` (mục lục `README.md`, `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md`, `nhat_ky/`); `report_agent/<đợt>/TONG_HOP.md` | giảng việc đã làm, vì sao chọn |
+| 1 | `bao_cao_he_thong/` (mục lục `README.md`, `01_LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md`, `nhat_ky/`); `report_agent/<đợt>/TONG_HOP.md` | giảng việc đã làm, vì sao chọn |
 | 2 | đúng hàm / file code liên quan; số đo gốc trong báo cáo session | cơ chế, "code ở đâu", số liệu |
 | 3 | lệnh đọc nhỏ trên repo / dịch vụ (chỉ GET) | chỉ khi tài liệu mâu thuẫn code |
 

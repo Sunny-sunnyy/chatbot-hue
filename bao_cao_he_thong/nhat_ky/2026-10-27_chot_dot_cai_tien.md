@@ -46,8 +46,8 @@ mở lại khi có con số thời gian chờ chấp nhận được.
 
 ## Đọc thêm
 
-- `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` (bản 8 — các thử nghiệm xếp lại đoạn)
-- `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 10 — R1, khâu trả lời của K3b-m)
+- `bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md` (bản 8 — các thử nghiệm xếp lại đoạn)
+- `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 10 — R1, khâu trả lời của K3b-m)
 - `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md` (kỹ thuật, đã đóng)
 
 ## Buổi chiều (sau khi chốt đợt) — đo thời gian chờ thật, thêm số đo vào API

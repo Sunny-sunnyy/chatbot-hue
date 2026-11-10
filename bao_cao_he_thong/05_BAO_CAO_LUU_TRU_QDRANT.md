@@ -9,7 +9,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
   "phiếu build" ghi chỉ mục được tạo từ đúng bản corpus nào. Đã đóng (Phase 4, 09/2026); đường build hiện nay có từ Phase 7A2 (24/10).
 - **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **2 collection**: (1) `hue_full_corpus_7a2_e5_small_384` — chỉ mục chatbot dùng,
   **8.435 điểm** (build lại 05/11 tối sau đợt giờ mở cửa; 30/10: 8.424), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
-  trường thông tin; (2) `hue_anh_siglip2` — 172 điểm của thử nghiệm hỏi bằng ảnh 05/11 (đã bỏ), chatbot **không** dùng, chờ bạn quyết xoá (`BAO_CAO_HOI_BANG_ANH.md`). Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
+  trường thông tin; (2) `hue_anh_siglip2` — 172 điểm của thử nghiệm hỏi bằng ảnh 05/11 (đã bỏ), chatbot **không** dùng, chờ bạn quyết xoá (`08_BAO_CAO_HOI_BANG_ANH.md`). Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
 - **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (05/11 tối):
   204 file, 8.435 điểm, phiếu `9921888f2030`; kiểm Qdrant thật 19:31 10/11/2026: 2 collection, 8.435 + 172 điểm.
 - **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 3 lần: 28/10, 30/10, 05/11; mỗi lần vài phút trên máy). Tắt Docker Desktop
@@ -46,7 +46,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 | Chatbot từ chối chạy khi corpus đổi mà chưa build lại | **Đã xử lý, đóng gói** | `source_state.py:179-196`; `retrieval/full_corpus.py:383-385`, `:685` |
 | Kiểm cấu trúc collection và số điểm khi khởi động | **Đã xử lý, đóng gói** | `retrieval/full_corpus.py:707-720`; `vectorstore/qdrant.py:75-80` |
 | Không ghi đè collection hay phiếu build đã có | **Đã xử lý, đóng gói** | `vectorstore/qdrant.py:91-109`, `:135-140`; `full_corpus_pipeline.py:184-186`; `source_state.py:162-163` |
-| Collection cho model lớn Qwen3-Embedding-8B | **Đã thử, chưa áp dụng** (30/10) | collection thử 8.424 điểm, build 0 lỗi; tìm kém hơn e5-small ⇒ không chọn, **đã xoá** (`BAO_CAO_EMBEDDING_TU_KHOA.md`) |
+| Collection cho model lớn Qwen3-Embedding-8B | **Đã thử, chưa áp dụng** (30/10) | collection thử 8.424 điểm, build 0 lỗi; tìm kém hơn e5-small ⇒ không chọn, **đã xoá** (`04_BAO_CAO_EMBEDDING_TU_KHOA.md`) |
 | Lọc theo trường thông tin (payload index) | **Chưa thực hiện** | chưa có nhu cầu; collection có index sẽ bị từ chối (`vectorstore/qdrant.py:77-80`) |
 | Notebook 04 minh hoạ nạp / kiểm Qdrant | **Xử lý một phần** | chạy hết không lỗi (bản tạm, 24/10, chỉ đọc Qdrant); phần chữ đầu notebook còn ghi số đoạn cũ 8.459 (hiện 8.435) |
 
@@ -57,11 +57,11 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 - **05/11/2026 tối — Build lại sau đợt giờ mở cửa (11 file Quần thể):** 8.424 ⇒ **8.435 điểm** (+11 đoạn), phiếu `9921888f2030`, ~4 phút; xoá collection do bạn chạy lệnh `!` (rào quyền chặn agent); bản sao phiếu / từ điển cũ trong `data/sua_kho_2026-11-05_gio/backup/`.
 - **30/10/2026 — Build lại sau sửa kho đợt 2:** 8.426 ⇒ **8.424 điểm** (hai dòng kho bị xoá), phiếu `51fb1ec63cbc`; đo trước ↔ sau trên 176
-  câu Golden + 32 câu an toàn: không làm hỏng · giữ (`BAO_CAO_KHO_DU_LIEU.md`).
+  câu Golden + 32 câu an toàn: không làm hỏng · giữ (`02_BAO_CAO_KHO_DU_LIEU.md`).
 - **30/10/2026 — Collection thử cho Qwen3-Embedding-8B:** 8.424 điểm, 0 lỗi; tìm kém hơn (3 / 40 câu thử mất đoạn đúng, luật cho 0), mỗi câu
-  hỏi chậm thêm ~2,2 s; 0,0089 USD · bỏ, collection đã xoá (`BAO_CAO_EMBEDDING_TU_KHOA.md`).
+  hỏi chậm thêm ~2,2 s; 0,0089 USD · bỏ, collection đã xoá (`04_BAO_CAO_EMBEDDING_TU_KHOA.md`).
 - **28/10/2026 — Build lại sau sửa kho đợt 1:** 205 ⇒ 204 file (bỏ file danh mục nghệ thuật biểu diễn), 8.459 ⇒ 8.426 điểm, phiếu
-  `574b5d02088b`; không làm hỏng · giữ tới 30/10 (`BAO_CAO_KHO_DU_LIEU.md`).
+  `574b5d02088b`; không làm hỏng · giữ tới 30/10 (`02_BAO_CAO_KHO_DU_LIEU.md`).
 - **24/10/2026 — Xoá 2 collection bản món ăn, gỡ code nạp bản món ăn:** tiêu chí ghi trước (tìm giống từng byte, test đạt, API lên) ·
   **PASS**: 191 test, giống từng byte, sức khỏe 200; xoá `hue_foods_e5_small_384` và `hue_foods_e5_small_384_dense` (mỗi cái 572 điểm; bạn
   chạy lệnh xoá) ⇒ còn 1 collection · 0 USD.

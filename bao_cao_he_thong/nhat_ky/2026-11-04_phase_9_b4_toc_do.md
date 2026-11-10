@@ -29,5 +29,5 @@
 Bước định tuyến (chọn loại câu) tốn ~1,7 s trước khi chatbot bắt đầu viết. Tắt phần "suy nghĩ" của model ở bước này thì nhanh hơn chút nhưng xếp sai câu an toàn ⇒ bỏ. Cách thứ hai: bắt đầu viết câu trả lời **cùng lúc** với định tuyến, xếp ra loại khác thì bỏ phần đã viết — người dùng thấy chữ sớm hơn ~1,4 s, đổi lại tốn thêm chút tiền cho lượt bỏ. Ở B4, lỗi nằm ở chỗ đặt câu dặn trong code chứ không ở thiết kế; sửa xong vẫn còn model tự nhân giá ⇒ thêm một câu dặn rõ hơn, rồi kiểm lại bằng bộ câu kín chưa ai nhìn.
 
 ## Đọc thêm
-- `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (mục 04/11: câu khẩn cấp, tốc độ #1); `BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; `LUONG_HOAT_DONG_HE_THONG.md`.
+- `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (mục 04/11: câu khẩn cấp, tốc độ #1); `92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; `01_LUONG_HOAT_DONG_HE_THONG.md`.
 - Hồ sơ agent: `report_agent/2026-11-02_phase_9_code/` (`b154_review.md`, `c156_toc_do_dinh_tuyen*.md`, `b144_b4_implementation.md`).

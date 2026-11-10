@@ -36,5 +36,5 @@ Bỏ tuyến khẩn cấp; cổng chỉ còn 2 nhóm (trò chuyện xã giao / v
 Trước khi đóng gói, nhóm rà lại mọi ghi chú cũ để không bỏ sót tính năng; việc nhỏ người dùng thấy ngay làm trước, việc lớn / thí nghiệm ghi làm "hướng phát triển". Ảnh cổng: ảnh không có giấy phép mở để ngoài git, bản tải về tự dùng ảnh Commons thay — nên repo công khai không chứa ảnh không được phép.
 
 ## Đọc thêm
-- `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 42), `LUONG_HOAT_DONG_HE_THONG.md`
+- `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 42), `01_LUONG_HOAT_DONG_HE_THONG.md`
 - `report_agent/2026-11-06_giao_dien_cong/b_anh_cong_implementation.md`, `c_anh_cong_review.md`; plan bản đồ `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md`

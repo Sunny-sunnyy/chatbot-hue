@@ -1,4 +1,4 @@
-# B118 — review bản sơ bộ `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` (bản 1)
+# B118 — review bản sơ bộ `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` (bản 1)
 
 B, 15:26 01/11/2026 (`date`). Việc: A nhờ qua tin nhắn (B118). Người viết: A. B không sửa file của A.
 

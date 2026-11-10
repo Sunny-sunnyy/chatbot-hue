@@ -232,7 +232,7 @@ Tiền lượt 3: **0,018327 USD**. **Tổng T1 ≤ 0,112 USD** (A nâng điểm
 - **Review cả nhánh:** `git diff main...p9-t1-ngay`.
 
 
-## Đoạn cho `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (A dán lúc đóng đợt)
+## Đoạn cho `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (A dán lúc đóng đợt)
 
 **Ngày và âm lịch (T1, 08/11/2026) — code xong, cờ `ngay_lich` đang tắt.**
 - Trợ lý có thêm một công cụ để biết hôm nay là ngày nào và đổi ngày dương ↔ âm theo lịch âm Việt Nam (giờ UTC+7, không phải lịch Trung Quốc).

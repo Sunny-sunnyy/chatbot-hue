@@ -94,5 +94,5 @@ Bằng chứng ở `data/phase_9/c128_review/` (private).
 **`ready_for_user_confirmation`** cho nhánh `p9-b0` `215a77f`.
 
 - m-1 sửa hoặc ghi giới hạn khi tiện, không mở vòng review mới.
-- Trước merge, A làm "5 chỗ" (plan §6): báo cáo khâu, `LUONG_HOAT_DONG_HE_THONG.md`, `Project_Status.md` §4 (có `usd` trong `chat_metrics`), guide 6, nhật ký.
+- Trước merge, A làm "5 chỗ" (plan §6): báo cáo khâu, `01_LUONG_HOAT_DONG_HE_THONG.md`, `Project_Status.md` §4 (có `usd` trong `chat_metrics`), guide 6, nhật ký.
 - Worktree của C (`/tmp/c128`, `/tmp/c128_head`) đã gỡ, script tạm `/tmp/c128_probe` đã xoá. Worktree `/tmp/b_p9b0` của B để B gỡ sau merge.

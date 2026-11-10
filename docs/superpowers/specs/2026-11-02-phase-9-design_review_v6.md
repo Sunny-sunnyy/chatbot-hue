@@ -14,7 +14,7 @@ Implementation report: không có (việc chỉ tài liệu — spec chờ User 
   - [Đọc] `data/nghien_cuu_phase_9_2026-11-01/agent/a_sa2.md` §3 (3a, 3b R1–R15, 3c, 3d); `a_sa1.md` §2.0–§2.5; `a_sa3.md` §2a–§2d, §3a;
   - [Đọc] `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` §3.1–§3.3;
   - [Đọc] code `HEAD`: `backend/llm/generator_openai_full_corpus.py:98-103, 133-144, 184-190`; `backend/llm/grounded_answer.py` (cả file); `backend/api/routes/chat.py:35-53, 223-400`; `backend/retrieval/full_corpus.py:419`; `backend/evaluation/full_corpus_eval.py:169`; `frontend/src/markdown.js:7-14`.
-- **Ngoài căn cứ, chỉ để đối chiếu số spec dẫn:** `bao_cao_he_thong/BAO_CAO_DANH_GIA.md:99, 133-136, 141, 166-167` (số Đủ 3,50 / 4,92, câu theo ngày). Không đọc `STATUS_*.md`, tin nhắn của người viết, `*sealed*`, `.env`, nội dung kho.
+- **Ngoài căn cứ, chỉ để đối chiếu số spec dẫn:** `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md:99, 133-136, 141, 166-167` (số Đủ 3,50 / 4,92, câu theo ngày). Không đọc `STATUS_*.md`, tin nhắn của người viết, `*sealed*`, `.env`, nội dung kho.
 - **Danh sách kiểm:** `skills/risk-gated-agent-review`, `skills/agent-design-review`, `skills/agent-security-review`, `skills/run-experiment` §1, §4.
 
 ## 2. Findings
@@ -63,7 +63,7 @@ Tóm tắt: **0 blocker · 10 major · 8 minor.** Phần lớn major sửa đư�
 
 - **Vị trí:** §5 B1 dòng 152–166; §1 dòng 41.
 - **Yêu cầu:** `run-experiment` §1 mục 2–3 (một thay đổi; mỗi chỉ số định nghĩa: tập nào, n bao nhiêu); §4 spec luật giữ / gỡ.
-- **Bằng chứng:** B1 = định tuyến + trò chuyện + ngoài phạm vi + khẩn cấp + ngày + H4c, hai chỉ số quyết (định tuyến ≥ 90 %; từ chối nhầm câu theo ngày giảm ≥ 3 / 12). Không ghi: một phần đạt, phần kia không thì giữ gì (vd ngày đạt, định tuyến 85 %). Bộ tuyến ~60 câu không ghi phần đã thấy / kín bao nhiêu, mà quyết dùng "kín không ngược chiều". Câu theo ngày: spec "5 / 12", "12 câu cũ"; báo cáo ghi bộ **15** câu, mốc từ chối nhầm **6 / 14** (30/10) và **5** câu trong kho lượt 01/11 (`BAO_CAO_DANH_GIA.md:99, 141`; plan đo cuối §3.3). H4c không có tiêu chí nào.
+- **Bằng chứng:** B1 = định tuyến + trò chuyện + ngoài phạm vi + khẩn cấp + ngày + H4c, hai chỉ số quyết (định tuyến ≥ 90 %; từ chối nhầm câu theo ngày giảm ≥ 3 / 12). Không ghi: một phần đạt, phần kia không thì giữ gì (vd ngày đạt, định tuyến 85 %). Bộ tuyến ~60 câu không ghi phần đã thấy / kín bao nhiêu, mà quyết dùng "kín không ngược chiều". Câu theo ngày: spec "5 / 12", "12 câu cũ"; báo cáo ghi bộ **15** câu, mốc từ chối nhầm **6 / 14** (30/10) và **5** câu trong kho lượt 01/11 (`10_BAO_CAO_DANH_GIA.md:99, 141`; plan đo cuối §3.3). H4c không có tiêu chí nào.
 - **Tác động:** kết quả B1 có thể không quyết được; ngưỡng "≥ 3 / 12" có thể tính trên mẫu số sai.
 - **Tiêu chí đóng:** bảng giữ / gỡ cho từng phần B1 (định tuyến; ngày; H4c; khẩn cấp) — phần nào gỡ độc lập được bằng cờ; ghi chia đã thấy / kín của bộ tuyến; sửa mẫu số câu theo ngày theo đúng bộ đã đo (ghi nguồn); H4c có test code (dòng có đúng khi nguồn thuộc 3 thư mục, không có khi không).
 
@@ -156,7 +156,7 @@ Chỉ đọc / đếm, 0 USD, không gọi API:
 - `grep -n -A2 '^name = "openai-agents"' uv.lock` ⇒ `0.19.4`; `.venv/.../openai_agents-0.19.4.dist-info`.
 - `grep` trong `.venv/lib/python3.13/site-packages/agents/`: `error_handlers` (`run.py:218, 388`), `max_turns` (`run_error_handlers.py:53`), `StopAtTools` (`agent.py:143`), `parallel_tool_calls` (`model_settings.py:113`), `tool_output_guardrails` (`tool.py:484`).
 - `git show HEAD:<file> | cat -n` cho các file code ở mục 1; `git diff --stat a80e12d HEAD -- backend/`.
-- `git grep -n 4d5bbe9e0edc HEAD` (T1 = mốc kết quả tìm 158 câu — `BAO_CAO_TIM_KIEM.md:142`).
+- `git grep -n 4d5bbe9e0edc HEAD` (T1 = mốc kết quả tìm 158 câu — `06_BAO_CAO_TIM_KIEM.md:142`).
 - `uv run python .githooks/overlap_scan.py docs/superpowers/specs/2026-11-02-phase-9-design.md` ⇒ `0 trùng` (script chỉ in số dòng + loại, không in nội dung).
 
 ## 4. Kết quả quan sát
@@ -165,7 +165,7 @@ Chỉ đọc / đếm, 0 USD, không gọi API:
 - SDK 0.19.4 có mọi tính năng spec dựa vào (mục 3) ⇒ "chưa cần nâng bản" hợp lý; streaming khi có công cụ còn là việc thiết kế (M7), không phải thiếu SDK.
 - Đúng quyết định User: agent mọi câu, RAG thành công cụ, SDK giữ, định tuyến có cấu trúc, câu tìm là thí nghiệm nhiều phương án, nhớ hỏi + đáp bắt buộc, tiền / tốc độ theo dõi + log USD bắt buộc, web sau 6 rào + cờ, Q1–Q4 bản 5 giữ — **có đủ**; lệch: M8.
 - 6 rào a_sa2 §3c: đủ cả 6 trong B6 dòng 230–236; thiếu vế R7 "truy vấn chỉ dựa trên câu hỏi lượt này" và tương tác với nhớ (M3).
-- Số Đủ 3,50 / 4,92 khớp `BAO_CAO_DANH_GIA.md:133-136`; số câu theo ngày lệch (M5).
+- Số Đủ 3,50 / 4,92 khớp `10_BAO_CAO_DANH_GIA.md:133-136`; số câu theo ngày lệch (M5).
 - File spec: 0 dòng trùng Golden / kho / câu kín (quét máy); không thấy chi tiết dự án khác của User.
 
 ## 5. Giới hạn hoặc phần chưa chạy
@@ -192,7 +192,7 @@ Date: 14:00 02/11/2026 (`date`) · Người kiểm: như vòng 1.
 
 - [Chạy] `sha256sum … | cut -c1-12` ⇒ `37e306ef40f7`, 447 dòng — khớp tin A.
 - [Chạy] `uv run python .githooks/overlap_scan.py <spec>` ⇒ `0 trùng`.
-- [Đọc] spec bản 7 (cả file, kể cả bảng "Trả lời review"); `CURRENT_HANDOFF.md` mục C120 (dòng 122–130, working tree); căn cứ mới `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md`; `git show HEAD:backend/llm/generator_openai_full_corpus.py:60-95, 266-270` (cách đọc đầu ra cuối); `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` T3-10 (đối chiếu số Q3a).
+- [Đọc] spec bản 7 (cả file, kể cả bảng "Trả lời review"); `CURRENT_HANDOFF.md` mục C120 (dòng 122–130, working tree); căn cứ mới `data/nghien_cuu_phase_9_2026-11-01/agent/b123_sdk_probe.md`; `git show HEAD:backend/llm/generator_openai_full_corpus.py:60-95, 266-270` (cách đọc đầu ra cuối); `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` T3-10 (đối chiếu số Q3a).
 - Cùng luật vòng 1: chỉ đọc, 0 USD, không `*sealed*`, không `.env`.
 
 ## V2.2 Finding vòng 1 — đóng / chưa

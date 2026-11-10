@@ -1,9 +1,9 @@
-# Review: báo cáo hệ thống của A — `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_DANH_GIA.md`
+# Review: báo cáo hệ thống của A — `01_LUONG_HOAT_DONG_HE_THONG.md`, `10_BAO_CAO_DANH_GIA.md`
 
 Decision: **changes_requested** (1 major, 6 minor; sửa nhỏ, không cần review lại cả file)
 Người kiểm: B (Claude Opus 5.5, terminal `hue-rag-64`)
 Date: 2026-10-24
-Đối tượng: `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` (87 dòng), `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (84 dòng)
+Đối tượng: `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` (87 dòng), `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (84 dòng)
 Nguồn đối chiếu: `reports/phase_7b_gate_4_baseline_implementation_2026_10_24.md`,
 `reports/phase_7b_false_refusal_diagnosis_2026_10_24.md`, `reports/phase_8_probe_context_top10_2026_10_24.md`,
 `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C1), code `backend/`.
@@ -18,7 +18,7 @@ chiếu với code hiện tại.
 
 ### Major
 
-**M1 — `LUONG_HOAT_DONG_HE_THONG.md:73`: gán sai nguyên nhân của chunk vụn.**
+**M1 — `01_LUONG_HOAT_DONG_HE_THONG.md:73`: gán sai nguyên nhân của chunk vụn.**
 - File ghi: "20% đoạn rất ngắn (≤48 token) **do** chunker vẫn giữ giới hạn 256 token của model
   HuyDang đã bỏ."
 - Bằng chứng: report C1 tách thành hai quan sát riêng.
@@ -35,35 +35,35 @@ chiếu với code hiện tại.
 
 ### Minor
 
-**m1 — `LUONG_HOAT_DONG_HE_THONG.md:52`: viết giả thuyết như sự thật.**
+**m1 — `01_LUONG_HOAT_DONG_HE_THONG.md:52`: viết giả thuyết như sự thật.**
 - File ghi "kể cả khi chỉ thiếu một phần (prompt 'tất cả hoặc không')".
 - Prompt thật (`backend/llm/full_corpus_prompt.py:7-16`) chỉ nói "Nếu bằng chứng không đủ, trả đúng
   duy nhất câu sau". Prompt không nói gì về trường hợp thiếu một phần. "Tất cả hoặc không" là giả
   thuyết H8, rút từ hành vi quan sát được ở B4 (10/22 case có một phần bằng chứng mà vẫn từ chối).
 - Tiêu chí đóng: ghi "quan sát: bot thường từ chối cả câu khi chỉ có một vế (giả thuyết H8, Phase 8 thử)".
 
-**m2 — `LUONG_HOAT_DONG_HE_THONG.md:62`: "gần như toàn bộ điểm bị mất nằm ở đây" là nói quá.**
+**m2 — `01_LUONG_HOAT_DONG_HE_THONG.md:62`: "gần như toàn bộ điểm bị mất nằm ở đây" là nói quá.**
 - Khoảng cách tới trần do 22 từ chối nhầm, tính từ số trong Gate 4 §4.4: Accuracy ~85%,
   Completeness ~65%, Relevance ~90%. Phần còn lại của Completeness đến từ câu đã trả lời nhưng thiếu ý.
 - Tiêu chí đóng: "phần lớn điểm bị mất (65–90% tùy tiêu chí) nằm ở đây".
 
-**m3 — `LUONG_HOAT_DONG_HE_THONG.md:65`: token ra mỗi câu.**
+**m3 — `01_LUONG_HOAT_DONG_HE_THONG.md:65`: token ra mỗi câu.**
 - File ghi "~70 token ra". Run 1 thật: 14.392 / 176 = **~82** output, 166.713 / 176 = **~947** input.
   Chi phí ~0,00014 USD là đúng (0,02387 / 176).
 - Tiêu chí đóng: "~950 token vào, ~80 token ra".
 
-**m4 — `BAO_CAO_DANH_GIA.md:47-51`: cột "Nguyên nhân" trình bày phân loại như nguyên nhân đã chứng minh.**
+**m4 — `10_BAO_CAO_DANH_GIA.md:47-51`: cột "Nguyên nhân" trình bày phân loại như nguyên nhân đã chứng minh.**
 - B4 ghi rõ đây là phân loại theo keyword proxy, chưa chứng minh nguyên nhân
   (`reports/phase_7b_false_refusal_diagnosis_2026_10_24.md` §4.3, "Giới hạn của cách đo").
 - Tiêu chí đóng: đổi tiêu đề cột thành "Phân loại (theo keyword đáp án trong 5 đoạn)", và thêm một
   câu "dấu hiệu, chưa chứng minh nguyên nhân".
 
-**m5 — `BAO_CAO_DANH_GIA.md:53`: "12/22 câu có đáp án nằm ở hạng 6–10" là nói quá số đo.**
+**m5 — `10_BAO_CAO_DANH_GIA.md:53`: "12/22 câu có đáp án nằm ở hạng 6–10" là nói quá số đo.**
 - B4 đo được: 12/22 case có **nhiều keyword hơn** trong top-10 so với trong 5 đoạn ngữ cảnh. Phép đo
   tính trên mọi keyword, không chỉ keyword mang đáp án, và không đòi đủ đáp án.
 - Tiêu chí đóng: "12/22 câu có thêm keyword liên quan ở hạng 6–10, bị cắt vì chỉ giữ 5 đoạn".
 
-**m6 — `BAO_CAO_DANH_GIA.md`: còn thiếu so với yêu cầu "Việc chung" và spec §7.6.**
+**m6 — `10_BAO_CAO_DANH_GIA.md`: còn thiếu so với yêu cầu "Việc chung" và spec §7.6.**
 - (a) Bảng "Hôm nay còn đúng không" (`:69-75`) chưa dẫn file:dòng. Mục "Việc chung" trong
   `CURRENT_HANDOFF.md` yêu cầu phần này.
 - (b) Baseline có 6 metric, nhưng file chỉ nêu 3 metric answer. Thiếu retrieval: MRR 0,72 / nDCG 0,75
@@ -76,7 +76,7 @@ chiếu với code hiện tại.
 
 Kiểm bằng đọc file và tính lại từ dữ liệu private. Không gọi paid, không sửa code.
 
-- Số trong `BAO_CAO_DANH_GIA.md` §3 và `LUONG_HOAT_DONG_HE_THONG.md` §4: so với Gate 4 §4–6
+- Số trong `10_BAO_CAO_DANH_GIA.md` §3 và `01_LUONG_HOAT_DONG_HE_THONG.md` §4: so với Gate 4 §4–6
   (B đã tính lại từ `run1_answers.jsonl` và `claude_run1.jsonl` trong B6).
 - Đường chạy (mục 1–3 của `LUONG`): đọc `backend/api/app.py:182` (`app = create_app()`, nên lệnh
   `uvicorn api.app:app` ở `:83` đúng); `backend/retrieval/full_corpus.py:149-150`, `:608`
@@ -113,7 +113,7 @@ cần chạy lại gì. B kiểm lại diff khi A báo sửa xong.
 
 ## 7. Kiểm lại correction (commit `a29f6a5`)
 
-B đọc diff `git show a29f6a5 -- bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md bao_cao_he_thong/BAO_CAO_DANH_GIA.md`.
+B đọc diff `git show a29f6a5 -- bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md`.
 
 | Finding | Kết quả |
 |---|---|

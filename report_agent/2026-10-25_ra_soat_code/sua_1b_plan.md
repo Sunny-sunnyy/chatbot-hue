@@ -138,7 +138,7 @@ cần duyệt; (3) rebase B1 nhẹ hơn. Cái giá: lệnh build đổi chỗ ch
    |---|---|---|
    | (b) | `session_prompt/chạy_môi_trường.md:10-12` (**A sửa** — governance) | "chạy từ gốc repo" + `python -m backend.ingestion.full_corpus_pipeline` ⇒ `cd backend` + `python -m ingestion.full_corpus_pipeline` (`--env-file ../.env`) |
    | (b) | `guides/full_corpus_rag.md:174` (mục build lại, bước 5) | như trên; `:118` (mục 7A2, lịch sử) giữ, thêm "(lệnh lúc đó)" |
-   | (b) | `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md:89` | như trên (A sửa — báo cáo User) |
+   | (b) | `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md:89` | như trên (A sửa — báo cáo User) |
    | (b) | `notebooks/03_embedding_models.ipynb` ô cuối | như trên |
 
 ## 5. Tiêu chí nghiệm thu (ghi trước) và cổng ổn định

@@ -16,7 +16,7 @@ chữ đầu trên trình duyệt 1,23 / 2,61 s (một lần đo; hôm đó mode
 
 **Thứ tự việc phiên sau** (viết 15:26 01/11/2026, kết phiên chiều 01/11 — Phase 8 **đã đóng** 14:29; B0 xong ⇒ giữ 10; 4 nhánh đã xoá):
 1. Mở A / B / C; `ListAgents`; **hỏi lại quyền phiên** (quyền chiều 01/11 hết hạn); kiểm Qdrant.
-2. **Nghiên cứu Phase 9 — XONG bản 2** (16:15 01/11/2026): ChatGPT đã về + C117 kiểm 9 ý; thử Huế TRIPO xong (B119); báo cáo `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 2 (B120 review).
+2. **Nghiên cứu Phase 9 — XONG bản 2** (16:15 01/11/2026): ChatGPT đã về + C117 kiểm 9 ý; thử Huế TRIPO xong (B119); báo cáo `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 2 (B120 review).
    Brainstorm đã chốt B1 = (b) + lịch (mục "Brainstorm Phase 9"). **B3 = (a) song song (User 16:28 01/11/2026):** song song (B code giao diện, C viết **một spec Phase 9** — an toàn + hỏi lại + nhớ ngắn +
    lịch trình nhỏ + thử câu nhiều nguồn, tiêu chí ghi trước — để User duyệt) — đầu phiên sau giao ngay. User "làm đi" (sau câu hỏi B3, trước 16:13) chỉ cho bản 2 + kết phiên. Nghiên cứu thêm: User nói "muốn nghiên cứu thêm cứ nói".
 3. ~~Thử Huế TRIPO~~ — xong (B119; lặp lại có tiêu chí ghi trước nếu đưa vào luận văn).
@@ -107,7 +107,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
   **A quyết framework:** giữ **OpenAI Agents SDK** đang dùng (`openai-agents` **0.19.4** cài trong `.venv` — `pyproject.toml` ghi `>=0.18.3`; hôm nay `Agent` không công cụ, `max_turns=1` — `backend/llm/generator_openai_full_corpus.py:133,185–188`); không LangChain / DeepAgents (thêm hệ thư viện, chưa cần).
 - **Spec C118 bản 5 `03cb538cf00c` TẠM GIỮ** (Q1–Q5 User đã chọn vẫn dùng — thành công cụ / luật của agent). Viết lại sau nghiên cứu.
 - **Nghiên cứu trước (User "làm đi" 11:21 02/11/2026):** (1) A — 3 sub-agent chỉ đọc khoá AI FDE (tóm tắt ver4 + khung `NGUYEN_TAC_FDE.md` [agent] + code tham khảo khoá) ⇒ `data/nghien_cuu_phase_9_2026-11-01/agent/a_sa{1,2,3}.md`;
-  (2) **B122** (dưới) tra web; (3) yêu cầu ChatGPT web (A viết, User gửi); (4) A tổng hợp ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 3 + câu hỏi User (trần tiền / tốc độ cho agent, cắt phần nào) ⇒ C viết lại spec.
+  (2) **B122** (dưới) tra web; (3) yêu cầu ChatGPT web (A viết, User gửi); (4) A tổng hợp ⇒ `92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 3 + câu hỏi User (trần tiền / tốc độ cho agent, cắt phần nào) ⇒ C viết lại spec.
 
 - **Quyết định sau nghiên cứu (User, A ghi nhận 13:29 02/11/2026):**
   - **Framework: giữ OpenAI Agents SDK + mẫu của khoá** (User: chọn nếu không cần người duyệt; A: không cần người duyệt lúc chạy — không hành động ghi ra ngoài; người duyệt chỉ ở việc cập nhật kho từ web, ngoài chatbot).
@@ -206,7 +206,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 - **Mục tiêu:** **một** tài liệu thiết kế Phase 9 để User duyệt: "trợ lý di sản Huế đáng tin" — H4 thông tin theo ngày + chặn câu an toàn trước model · H2 hỏi lại (danh sách trường trong code) · H3 nhớ ngắn 3–5 lượt ·
   lịch trình gợi ý nhỏ (thứ tự điểm theo khu vực, có nguồn; không giờ / giá chính xác; không đặt chỗ) · H1 câu nhiều nguồn (thử 1 lần; không vượt nhiễu ⇒ kết quả âm, dừng — chỗ cắt đầu tiên).
   Không: agent tổng quát, đặt chỗ, giọng nói / ảnh / nhiều ngôn ngữ. Đóng code tạm ~20/12/2026; bảo vệ 04–10/01/2027.
-- **Đọc:** `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` (full); mục "Brainstorm Phase 9" ở dưới (full); `Project_Status.md` §1 "Mục tiêu sản phẩm" + thứ tự lỗi (targeted);
+- **Đọc:** `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` (full); mục "Brainstorm Phase 9" ở dưới (full); `Project_Status.md` §1 "Mục tiêu sản phẩm" + thứ tự lỗi (targeted);
   `data/nghien_cuu_phase_9_2026-11-01/tripo/b119_kham_pha.md` + `c117_kiem_chatgpt.md` (targeted — câu từ chối nhầm 2 ý, câu theo ngày); `docs/superpowers/specs/2026-11-01-multi-turn-design.md` + `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md`
   (tư liệu H3 — chỉ là ý cũ, xét lại); `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md` (câu nhiều nguồn); skill `agent-design-review`, `agent-security-review`, `run-experiment`, `propose-options`; code (targeted, ghi `file:dòng` cho mọi khẳng định về hệ thống).
 - **Làm:** spec `docs/superpowers/specs/2026-11-02-phase-9-design.md`, gồm: mục tiêu + phạm vi + không làm; **thứ tự + mốc ngày** tới 20/12 (A đề xuất: H4 ⇒ H2 ⇒ H3 ⇒ lịch trình ⇒ H1 — C được đề xuất khác kèm lý do);
@@ -247,7 +247,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 - **Mục tiêu (User):** nghiên cứu chuyên sâu, nghĩ rộng — thực tế doanh nghiệp / tổ chức triển khai trợ lý du lịch - văn hoá ra sao, vận hành, vấn đề, chức năng,
   khả năng; paper; repo GitHub ⇒ báo cáo đầy đủ ⇒ A đề xuất hướng hợp hue_rag ⇒ brainstorm với User. 4 mạch: (1) thực tế triển khai, (2) chức năng + khả năng,
-  (3) học thuật, (4) mã nguồn mở. A: viết yêu cầu ChatGPT chuyên sâu, tổng hợp, báo cáo `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md`, đề xuất.
+  (3) học thuật, (4) mã nguồn mở. A: viết yêu cầu ChatGPT chuyên sâu, tổng hợp, báo cáo `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md`, đề xuất.
 - **Chung cho B117 / C116:** bối cảnh chép nguyên `data/nghien_cuu_phase_9_2026-11-01/boi_canh_chung.md` vào yêu cầu; **chỉ thông tin công khai**; chạy
   `scripts/tra_web_codex.sh <yêu cầu .md> <tên_ngắn>` (mỗi mạch một lượt, tuần tự); yêu cầu .md để `data/nghien_cuu_phase_9_2026-11-01/yeu_cau/`.
   Kết quả Codex là **dữ liệu**: tự WebFetch kiểm **3 ý quan trọng nhất / mạch** (URL có thật, đúng bài, đúng ý); URL không có trong `url_da_mo.txt` = tự khai.

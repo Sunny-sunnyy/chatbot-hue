@@ -49,7 +49,7 @@ câu hỏi
 - Code: `backend/retrieval/full_corpus.py` — chuẩn hóa câu hỏi `:97–102` (gọi ở `:420`), số ứng viên 30 và k = 60 `:401–402`, hai cách tìm `:482`, `:521`,
   trộn `:585`, lấy 10 đầu `:602`. Cấu hình `backend/config/settings.yaml:41–44` (khối `full_corpus_runtime`).
 
-Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_CAO_DANH_GIA.md`.
+Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `10_BAO_CAO_DANH_GIA.md`.
 
 ## 3. Checklist tình huống
 
@@ -63,14 +63,14 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Báo lỗi rõ khi Qdrant / model lỗi, không tự đổi cách | **Đã xử lý** | `backend/retrieval/full_corpus.py` |
 | Câu so sánh | **Xử lý một phần** | MRR 0,527 (01/11, kho hiện tại); chỉ 2 / 20 câu yếu ⇒ không mở thí nghiệm |
 | Câu cần nhiều nguồn | **Xử lý một phần** (Phase 9 B2b, 03/11: trợ lý tìm thêm ≤ 2 lần) | Lần tìm đầu: MRR 0,543 (01/11); 8 / 18 câu yếu, cả 8 thiếu bằng chứng ở bước tìm. Tìm thêm (vào chatbot 03/11): đủ ý câu nhiều nguồn **+1,17** (§4 03/11). Model viết lại câu tìm đầu (B2a): không qua luật |
-| Dòng trong bảng giá (giá vé, miễn giảm) | **Đã thử, chưa áp dụng** | 8.1 thử gộp dòng bảng khi chia đoạn: không khác — xem `BAO_CAO_CHIA_DOAN.md` |
-| Từ ghép tiếng Việt trong BM25 | **Đã thử, chưa áp dụng** | 8.1 thử cặp âm tiết / tách từ `pyvi`: làm rơi đoạn đúng của 1–4 câu — xem `BAO_CAO_EMBEDDING_TU_KHOA.md` |
+| Dòng trong bảng giá (giá vé, miễn giảm) | **Đã thử, chưa áp dụng** | 8.1 thử gộp dòng bảng khi chia đoạn: không khác — xem `03_BAO_CAO_CHIA_DOAN.md` |
+| Từ ghép tiếng Việt trong BM25 | **Đã thử, chưa áp dụng** | 8.1 thử cặp âm tiết / tách từ `pyvi`: làm rơi đoạn đúng của 1–4 câu — xem `04_BAO_CAO_EMBEDDING_TU_KHOA.md` |
 | Câu hỏi gõ **không dấu** | **Chưa thực hiện** — ngoài phạm vi (bạn quyết 15:15 25/10) | 8.1 (kho cũ, lúc đưa 5 đoạn; 32 câu có đoạn đúng, 88 câu keyword): chỉ 1 / 32 câu còn đủ đoạn đúng trong 5 đoạn (có dấu: 13 / 32); MRR 0,72 → 0,16 (88 câu keyword) |
 | Câu hỏi dạng Unicode NFD (gõ từ một số máy) | **Đã xử lý, đóng gói** (28/10) | 8.1 đo: NFD làm MRR giảm 0,20; chuẩn hóa NFC phục hồi giống hệt. Câu NFD đã lưu cho đúng 10 đoạn như câu NFC. `full_corpus.py:97–102`, `:420` |
 | Xếp hạng lại bằng MiniLM (tiếng Anh) | **Đã thử, chưa áp dụng** | Chỉ thử trên bản món ăn: điểm giảm. `settings.yaml:44` (`reranker: none`); lớp `backend/reranking/cross_encoder.py` chỉ còn cho bộ thử 8.1 |
 | Reranker đa ngôn ngữ / tiếng Việt chạy trên card đồ họa (bge-reranker-v2-m3, Vietnamese_Reranker) | **Đã thử, chưa áp dụng** | 8.1 (lúc đưa 5 đoạn): thứ tự tốt hơn chút ít nhưng đẩy đoạn đúng của 1–3 câu ra khỏi 5 đoạn đưa model; ~1 s / câu (10 đoạn), 11–14 s / câu (~150 đoạn) |
 | Xếp hạng lại / chọn đoạn bằng `gpt-6-luna` | **Đã thử, chưa áp dụng** | 8.1 (10 ứng viên): 0 câu mất, MRR +0,17, nhưng chỉ cứu được tối đa 3 câu ⇒ chưa rõ. 27/10 (chọn 10 trong 30): bản tốt nhất bước tìm 22 → 31 / 40, nhưng 5 câu trả lời tụt điểm (> 4 cho phép) ⇒ kém hơn theo luật ghi trước; kèm cả câu p50 6,5 / p95 9,1 s, ≈ 3,8× tiền ⇒ gác làm hồ sơ (bạn chốt đợt 27/10; sàn tốc độ 3 / 5 s chốt sau đó, 28/10, cũng không đạt) |
-| Đổi model vector sang Qwen3-Embedding-8B | **Đã thử, chưa áp dụng** | 30/10: dev 24 → 23 / 40 câu đủ đoạn đúng; 3 câu dev + 3 câu kiểm mất đoạn đúng (vỡ sàn "0 câu mất"); vector câu hỏi p50 2,2 s qua mạng (e5: 21 ms) ⇒ giữ e5-small; chỉ mục thử đã xoá — `BAO_CAO_EMBEDDING_TU_KHOA.md` |
+| Đổi model vector sang Qwen3-Embedding-8B | **Đã thử, chưa áp dụng** | 30/10: dev 24 → 23 / 40 câu đủ đoạn đúng; 3 câu dev + 3 câu kiểm mất đoạn đúng (vỡ sàn "0 câu mất"); vector câu hỏi p50 2,2 s qua mạng (e5: 21 ms) ⇒ giữ e5-small; chỉ mục thử đã xoá — `04_BAO_CAO_EMBEDDING_TU_KHOA.md` |
 | Thước "đoạn đúng" (nhãn vị trí đáp án) | **Xử lý một phần** | Mỗi thông tin chỉ đánh dấu một chỗ; kho viết lại cùng thông tin ở chỗ khác thì thước đếm thiếu. Quét 55 câu (27/10): ảnh hưởng nhỏ, kết luận bước tìm không đổi. Bản 2 (bạn duyệt 27/10) thêm chỗ cho 2 câu; đang dùng bản 5 (30/10, theo kho sau đợt 2) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
@@ -85,11 +85,11 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
   **V2** trợ lý tự quyết có tìm không + tự viết câu ⇒ thêm 0 / 12 (26 ↔ 28 câu đủ keyword giữa hai lượt — câu tìm model viết dao động; +3 thấy ở vòng chỉnh trên 9 câu dev **không lặp lại** ⇒ vòng chỉnh đã dò theo nhiễu).
 - **Kết luận:** **giữ câu gốc** (V0) — kết quả âm. Tiền tầng tìm ≈ 0,069 USD (cả pilot + chỉnh). Đếm thêm (C, 0 USD): **0 / 38** câu có một vế mà kho không có keyword nào ⇒ thiếu bằng chứng là do **xếp hạng**, không do kho thiếu.
 - Hồ sơ: `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md`, `c133_bo_do_b2.md`; plan `docs/superpowers/plans/2026-11-03-phase-9-b2-plan.md`.
-- **B2b — trợ lý tự gọi tìm thêm ≤ 2 lần (vào chatbot, merge `00d670e`):** câu tìm đầu vẫn là câu gốc; model tự viết câu tìm cho các lần sau. Câu nhiều nguồn đủ ý **+1,17**, từ chối nhầm 12 ⇒ 4–6 — chi tiết `BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 4. Đây là cách đầu tiên làm câu nhiều nguồn tốt lên rõ: không đổi xếp hạng, mà cho thêm lượt tìm.
+- **B2b — trợ lý tự gọi tìm thêm ≤ 2 lần (vào chatbot, merge `00d670e`):** câu tìm đầu vẫn là câu gốc; model tự viết câu tìm cho các lần sau. Câu nhiều nguồn đủ ý **+1,17**, từ chối nhầm 12 ⇒ 4–6 — chi tiết `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 4. Đây là cách đầu tiên làm câu nhiều nguồn tốt lên rõ: không đổi xếp hạng, mà cho thêm lượt tìm.
 
 ### 30/10/2026 — Kho sửa đợt 2, chỉ mục dựng lại; thử Qwen3-Embedding-8B
 - **Kho sửa đợt 2:** cách tìm không đổi; kết quả tìm 158 câu có 25 câu đổi danh sách 10 đoạn (11 chỉ đổi thứ tự; 24 có đoạn của file đã sửa). Đo lại mốc
-  trên kho mới: số ở §1. Đo "không làm hỏng" câu trả lời: `BAO_CAO_KHO_DU_LIEU.md`.
+  trên kho mới: số ở §1. Đo "không làm hỏng" câu trả lời: `02_BAO_CAO_KHO_DU_LIEU.md`.
 - **Qwen3-Embedding-8B thay e5-small:** kém hơn (số ở §3) · dựng chỉ mục thử ~31 phút, 0,0089 USD · chỉ mục thử đã xoá; code giữ làm hồ sơ, không vào
   chatbot. Hồ sơ: `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_implementation.md`.
 
@@ -173,7 +173,7 @@ Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại); dòng chỉ m
   (M1 `BAAI/bge-reranker-v2-m3`, M2 `AITeamVN/Vietnamese_Reranker`, luna listwise, G4-B pool 100; `phase_8_1_g4_implementation.md` §4; review
   `phase_8_1_g4_review.md`); câu không dấu / NFD: G1.4; BM25 (G4K): `phase_8_1_g4_keyword_implementation.md`; luật quyết: plan `phase_8_1_g2_g4_plan.md`
   (`a4adfc8eedd9`).
-- **Số 7B:** `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`; report `reports/phase_7b_*`.
+- **Số 7B:** `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md`; report `reports/phase_7b_*`.
 - [R1] giả thuyết Phase 8: `reports/phase_8_candidate_hypotheses_2026_10_24.md` (C1, C7). [R2] danh sách dọn sau Phase 7:
   `reports/phase_7_cleanup_inventory_2026_10_24.md` (C2); dọn B9 commit `1832201` (gỡ khối `profiles` / `active_profile` / `retrieval` / `reranking` của bản món
   ăn khỏi `settings.yaml`; review `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md`).

@@ -42,7 +42,7 @@ Không có blocker. Không có major.
 
 ### m-2 (minor) — chỗ đọc ngoài nhánh còn tả giao diện cũ (việc của A khi merge)
 
-- `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md:46, :58` trỏ `api/app.py:141–146`. Nay đoạn phục vụ trang là `app.py:159-166`.
+- `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md:46, :58` trỏ `api/app.py:141–146`. Nay đoạn phục vụ trang là `app.py:159-166`.
 - `session_prompt/chạy_môi_trường.md` chưa có `cd frontend && npm ci && npm run build`. B đã ghi "A cần".
 - `pytest tests/test_static_ui.py` nay cần bản build: chưa build thì 2 test báo lệnh cần chạy. Đây là thiết kế; nên nhắc trong bẫy `Project_Status.md` §8.
 - **Tiêu chí đóng:** A sửa trong 5 chỗ báo cáo lúc merge. Không phải việc của B.

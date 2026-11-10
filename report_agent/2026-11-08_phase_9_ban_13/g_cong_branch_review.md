@@ -29,7 +29,7 @@ Không có blocker. Không có major.
 
 ### m-2 (minor) — log `route` của câu ngoài phạm vi đổi nghĩa
 - Câu ngoài phạm vi giờ có `route = tro_ly_hue` + `outcome = out_of_scope` (trước: `route = ngoai_pham_vi`). Script phân tích cũ lọc theo `route == "ngoai_pham_vi"`
-  (vd `data/phase_9/b143/tools/`) sẽ đếm 0. **Đóng khi:** report / `LUONG_HOAT_DONG_HE_THONG.md` ghi "đếm câu ngoài phạm vi theo `outcome`". Không cần sửa code.
+  (vd `data/phase_9/b143/tools/`) sẽ đếm 0. **Đóng khi:** report / `01_LUONG_HOAT_DONG_HE_THONG.md` ghi "đếm câu ngoài phạm vi theo `outcome`". Không cần sửa code.
 
 ### m-3 (minor) — `bieu_mau_agent` bỏ qua tham số `answer_instructions`
 - `generator_openai_full_corpus.py`: trước dùng `answer_instructions` (tham số cho harness 8.1 thử lời dặn), nay dùng hằng `ANSWER_BIEU_MAU_INSTRUCTIONS`. Đúng ý

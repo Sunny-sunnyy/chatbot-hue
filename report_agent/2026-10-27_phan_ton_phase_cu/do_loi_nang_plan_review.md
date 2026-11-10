@@ -9,7 +9,7 @@ Chỉ dựa gói "Căn cứ để review" (`WORKFLOW.md` §9.1). Không đọc S
 
 - Plan (đọc hết, 141 dòng).
 - `backend/evaluation/full_corpus_judge_prompt.md:10-16, :25-31` — judge hiện tại không trừ chi tiết thêm, bỏ qua citation, không chấm bám nguồn.
-- `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` §1 "Thước đạt", §6 "Thước còn thiếu".
+- `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` §1 "Thước đạt", §6 "Thước còn thiếu".
 - `data/muc_tieu_san_pham_2026-10-28/doi_chieu_nghien_cuu.md` §1 mục 8–10, §3 "Mới".
 - `skills/run-experiment/SKILL.md` §1–§2.
 - Hai script khả thi (`b87_ctx_check.py` `7f4c8ded626b`, `b87_safety_count.py` `28303fea2f24`): đọc code, chạy lại (0 USD; trước khi chạy đã kiểm không có lượt đo latency nào
@@ -50,7 +50,7 @@ Chỉ dựa gói "Căn cứ để review" (`WORKFLOW.md` §9.1). Không đọc S
 ### M-1 (major) — phép kiểm người chấm không đo **báo nhầm trên câu trả lời thật**, nên thước có thể được "nhận" trong khi H bị thổi phồng
 
 - **Vị trí:** §4 `controls.negative` (10 câu chép nguyên văn), `accept.báo_nhầm_âm`, `accept.đồng_thuận` (kappa ≥ 0,6); §3 bước 1–2 (tách ý, nhãn).
-- **Yêu cầu:** `run-experiment` §2 (kiểm người chấm trước khi chấm hàng loạt bằng rubric mới — phiếu "đã biết mức" phải giống loại câu sẽ chấm); BAO_CAO_DANH_GIA §6 ("bịa
+- **Yêu cầu:** `run-experiment` §2 (kiểm người chấm trước khi chấm hàng loạt bằng rubric mới — phiếu "đã biết mức" phải giống loại câu sẽ chấm); 10_BAO_CAO_DANH_GIA §6 ("bịa
   thêm" là lỗi nặng nhì ⇒ số sai theo hướng nào cũng đổi quyết định); nghiên cứu §3 "Mới" (kiểm judge bằng người, báo false-pass).
 - **Bằng chứng:**
   - (a) Câu âm chép nguyên văn ngữ cảnh: mọi ý trùng chữ, nên judge gần như chắc gắn "có". Câu trả lời thật thì **diễn đạt lại, gộp hai nguồn, so sánh, tính chênh lệch** (ví dụ

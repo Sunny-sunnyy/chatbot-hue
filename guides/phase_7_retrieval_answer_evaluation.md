@@ -6,7 +6,7 @@
 ## Hiện hành
 
 Cập nhật 2026-11-01 (C115: dòng Judge — B0); trước 2026-10-27 (C69, theo W29 — guide "Hiện hành" cập nhật cùng lúc hành vi / thước đổi; trước: 2026-10-25). Nguồn chung: `session_prompt/Project_Status.md`
-§2–§5, §8; `session_prompt/CURRENT_HANDOFF.md` "Phiên sau — đọc trước nhất"; báo cáo cho User `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (bản 3).
+§2–§5, §8; `session_prompt/CURRENT_HANDOFF.md` "Phiên sau — đọc trước nhất"; báo cáo cho User `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (bản 3).
 
 - **Golden full-corpus (Phase 7A, User-closed 2026-10-23):** 176 case + smoke 10, schema 4 field (`question`, `keywords`, `reference_answer`, `category`), private
   `knowledge-base-hue/evaluation/`; md5 `0f7dbf41b422` sau khi sửa 10 đáp án 2026-10-25 (`Project_Status.md` §2 dòng 8.1). Spec

@@ -45,7 +45,7 @@ Terminal `hue-rag-0e` · A = `hue-rag-0f`, B = `hue-rag-24` (trực tiếp). Quy
 | C91 | nháp hội thoại nhiều lượt | PA0–PA3, nghiêng PA1 | `data/tinh_nang_moi_2026-10-27/c91_phuong_an_nhieu_luot.md` |
 | C92 | review plan B96 (ngày hôm nay) | 2 vòng ready | `data/ngay_hien_tai_2026-10-30/plan_nhap_review.md` |
 | C93 | chạy plan B96 | 0 / 12 + 0 / 11 câu đoán ngày; 6 / 14 câu ngày tương đối bị từ chối ⇒ User: Phase 9; B ready, A đóng | `ngay_hien_tai_implementation.md`, `data/ngay_hien_tai_2026-10-30/` |
-| C94 | đưa C93 + C89 vào báo cáo User | A review đạt | `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 13), `BAO_CAO_DANH_GIA.md`, `README.md` |
+| C94 | đưa C93 + C89 vào báo cáo User | A review đạt | `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 13), `10_BAO_CAO_DANH_GIA.md`, `README.md` |
 | C95 | review kết quả Qwen3-8B | ready 0/0/0 — "kém hơn" đứng (3 câu mất là thật) | `qwen3_8b_review.md` |
 
 **Tiền paid C phiên 30/10: 0,0037029 USD** (C93: pilot 0,0010797 + chính 0,0026232). Judge / sub-agent: quota Claude, 0 USD.
@@ -129,7 +129,7 @@ A (11:32 30/10/2026 ghi nhận): duyệt plan `70ee5d44c260`; M-1 theo cách 1 +
 
 **TÓM TẮT 14:54 30/10/2026 (đọc trước):** Xong + ready: C87 (C85 v2–v3), kiểm B93 bước 1–9 (`sua_kho_dot2_b2_6_review.md`), C88 (B92, 3 vòng), C89, C90 (bảng giới hạn bản 3 `8211d5d6eb7f`), C91, C92, C93 (A đóng). Tiền paid C phiên này: **0,0037029 USD** (C93). Ghi chú kết phiên cho A: `data/ket_phien_2026-10-30/c_ghi_chu.md` (`562aac7cb984`) — 3 đề xuất Đ-C1…Đ-C3. **Đang:** B chạy Qwen3-8B (W31 — C không CPU / Qdrant / paid). **Dở / phiên sau:** review kết quả Qwen3-8B khi B xong. Không worktree / file tạm của C còn lại (`/tmp/c9*` đã xóa; `/tmp/an_toan_run_before_c93.py` — bản sao script, không chữ kho, giữ cho B so diff).
 
-**C94 (A giao 15:07 30/10/2026):** khai báo sửa `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`, `bao_cao_he_thong/README.md` (chỉ chữ; A review).
+**C94 (A giao 15:07 30/10/2026):** khai báo sửa `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md`, `bao_cao_he_thong/README.md` (chỉ chữ; A review).
 **C94 xong 15:09 30/10/2026:** 3 file `bao_cao_he_thong/` (+32 / −7 so HEAD; chỉ chữ, quét trùng 0) ⇒ A review.
 **C95 (A giao 15:56 30/10/2026):** review kết quả Qwen3-8B. Khai báo file mới `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_review.md`; script tạm `/tmp/c97/` (xóa khi xong). 0 USD.
 **C95 xong 15:59 30/10/2026:** review Qwen3-8B ready 0/0/1 (`qwen3_8b_review.md` `f648cdd287cd`) — "kém hơn" đứng; 3 câu mất là thật (kiểm theo đoạn); m-1 giải thích p95 test. `/tmp/c97` xóa. 0 USD.

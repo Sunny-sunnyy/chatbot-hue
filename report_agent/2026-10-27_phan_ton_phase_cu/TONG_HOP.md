@@ -84,7 +84,7 @@ Paid (`gpt-6-luna`, token trong log): B71 cổng ≈ 0,000325; C review B71 ≈ 
 | Sửa kho bước 1–6 (B81) | 123 edit / 65 file / 51 mục; 204 file / 8.426 đoạn; build `574b5d02088b`; T1 `23c58c47635d` (40 / 158 đổi top-10, giải thích được) | `sua_kho_b1_6_*` (C75 ready) |
 | Bước 7–8 (B82) | gold v4 (2 trích dẫn User duyệt); 0 câu Golden cần sửa | `sua_kho_b7_8_*` (C76 ready) |
 | Bước 9 (B83) | **không làm hỏng**: F1–F4 = 0; T1 4 tụt (≤ 5), TB −0,008; T2 TB 0; T3 12 ⇒ 13; p95 lượt "sau" không đại diện (phía mạng / provider) | `sua_kho_b9_*`, `sua_kho_b83_code_review.md` (C80 ready) |
-| Bước 10 | `BAO_CAO_KHO_DU_LIEU` bản 5, `BAO_CAO_DANH_GIA` bản 4, `LUONG`, guide, README, nhật ký | commit `87c38fd` … `f420155` |
+| Bước 10 | `02_BAO_CAO_KHO_DU_LIEU` bản 5, `10_BAO_CAO_DANH_GIA` bản 4, `LUONG`, guide, README, nhật ký | commit `87c38fd` … `f420155` |
 | C77 streaming | yêu cầu ChatGPT `c573949ac59a` (B đối chiếu code) chờ User gửi; bản nháp 4 phương án | `data/tinh_nang_moi_2026-10-27/c77_phuong_an_streaming.md` |
 | C78 Qwen3-8B | plan duyệt; chạy chờ User | `qwen3_8b_plan*.md` |
 | C79 đợt 2 | 96 edit / 34 file soạn sẵn; D1–D7 + 15 câu chờ User | `data/sua_kho_2026-10-27/dot2/` |

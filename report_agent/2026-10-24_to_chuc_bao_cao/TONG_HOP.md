@@ -24,7 +24,7 @@ MekongAI; dọn code/test/notebook Foods + 2 collection Foods.
 
 ## Kết quả
 
-- `bao_cao_he_thong/`: `README.md` (mục lục), `LUONG_HOAT_DONG_HE_THONG.md`, 9 `BAO_CAO_*.md`
+- `bao_cao_he_thong/`: `README.md` (mục lục), `01_LUONG_HOAT_DONG_HE_THONG.md`, 9 `BAO_CAO_*.md`
   (Phase 0–7B). Review chéo: A review B (0–4) và C (5–7A2); B review A (7B + luồng):
   `bao_cao_he_thong_A1_review.md` — 1 major + 6 minor, đã sửa và đóng.
 - Kiểm lại các Phase trước (mục "Hôm nay còn đúng không" + "Lệch phát hiện"), không có lỗi làm hỏng

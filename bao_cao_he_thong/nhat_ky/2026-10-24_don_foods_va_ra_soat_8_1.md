@@ -41,7 +41,7 @@ thước đo trước, rồi đo lại từng lựa chọn với cách cũ làm 
 
 ## Đọc thêm
 
-- `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_KHO_DU_LIEU.md`, `BAO_CAO_LUU_TRU_QDRANT.md`
+- `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md`, `02_BAO_CAO_KHO_DU_LIEU.md`, `05_BAO_CAO_LUU_TRU_QDRANT.md`
 - `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_decision_inventory.md` (kỹ thuật)
 - `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_review.md` (kiểm chéo dọn món ăn)
 

@@ -234,10 +234,10 @@ citation bỏ câu trả lời tốt (6.6), Representation A chưa ablation (2.7
     - `reports/phase_8_candidate_hypotheses_2026_10_24.md` H6/O9 ghi "Foods: hybrid RRF không hơn
       dense+BM25 cục bộ". Thực ra bản "dense+BM25 cục bộ" ở Foods 08b là **weighted 0,6/0,4**, không
       phải RRF, nên tổ hợp runtime chưa từng chạy trên Foods.
-    - `bao_cao_he_thong/BAO_CAO_BO_CAU_HOI_GOLDEN.md` §2 ghi "gộp thành 1 file (xáo cố định)" là
+    - `bao_cao_he_thong/09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` §2 ghi "gộp thành 1 file (xáo cố định)" là
       **sai**: không xáo (mục 1.1).
-    - `BAO_CAO_TIM_KIEM.md` §3 ghi MiniLM "Đã thử, chưa áp dụng" mà không nói là chỉ thử trên Foods.
-    - `BAO_CAO_SINH_CAU_TRA_LOI_API.md` §5 ghi Representation B "chưa từng dùng": generator B đã gọi
+    - `06_BAO_CAO_TIM_KIEM.md` §3 ghi MiniLM "Đã thử, chưa áp dụng" mà không nói là chỉ thử trên Foods.
+    - `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` §5 ghi Representation B "chưa từng dùng": generator B đã gọi
       live 1 lần, chỉ chưa có index.
 
     C đề xuất tự sửa 3 file `bao_cao_he_thong` khi A giao (C không sửa ngoài khai báo C11).

@@ -29,5 +29,5 @@ công cụ (tìm thêm trong kho, hỏi lại khi thiếu thông tin, lịch tr�
 nay, giới hạn số lần gọi) để code làm cho chắc và rẻ. Giới hạn: tiền / tốc độ của đường agent mới chỉ là ước; điều khoản Serper chưa rõ cho người dùng cuối (bạn chấp nhận rủi ro).
 
 ## Đọc thêm
-- `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` (mục 0 — bản 3), `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 18 — giao diện), `LUONG_HOAT_DONG_HE_THONG.md` (bản 19)
+- `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` (mục 0 — bản 3), `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 18 — giao diện), `01_LUONG_HOAT_DONG_HE_THONG.md` (bản 19)
 - `docs/superpowers/specs/2026-11-02-phase-9-design.md`; `report_agent/2026-11-02_giao_dien_moi_code/TONG_HOP.md`

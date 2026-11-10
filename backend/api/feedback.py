@@ -1,4 +1,4 @@
-"""Đánh giá 👍 / 👎 cho một lượt trả lời (B142 — User chọn "chỉ lưu đánh giá"; nghiên cứu sản phẩm thật `BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00).
+"""Đánh giá 👍 / 👎 cho một lượt trả lời (B142 — User chọn "chỉ lưu đánh giá"; nghiên cứu sản phẩm thật `92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00).
 
 Server cấp **mã lượt** ngẫu nhiên (không suy ra từ mã cuộc trò chuyện, không nằm trong cookie) khi lượt có câu trả lời cuối, giữ trong RAM
 mã ⇒ {tuyến, outcome, số nguồn được trích} (trần số lượt, khởi động lại server ⇒ mất). `POST /api/feedback` chỉ nhận mã đó + `up` / `down`

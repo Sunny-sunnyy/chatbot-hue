@@ -30,7 +30,7 @@ C84–C93, mục cũ 28/10; phần sau 14:45 — C94 / C95 / B98, Qwen3-8B, quy�
    `knowledge-base-hue/`). Giao diện "ra dáng sản phẩm" bàn cùng spec (User 30/10: hỏi "chưa có giao diện").
 4. **Hội thoại nhiều lượt:** nháp `c91_phuong_an_nhieu_luot.md` (`1c0313aafd25`; PA1 trình duyệt giữ lịch sử, server không lưu) ⇒ spec sau streaming.
 5. **Đóng gói Phase 1–8** (User; A hỏi lại nghĩa "đóng gói" khi tới): bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (37 dòng, `8211d5d6eb7f`) ⇒
-   `LUONG` §5; báo cáo tổng "đã thử / chọn / bỏ" (`BAO_CAO_SO_SANH_PHUONG_AN.md`, đề xuất); sửa `cost_usd` + log `cache_write_tokens`; lệnh kiểm sạch (test cần key bỏ qua rõ);
+   `LUONG` §5; báo cáo tổng "đã thử / chọn / bỏ" (`91_BAO_CAO_SO_SANH_PHUONG_AN.md`, đề xuất); sửa `cost_usd` + log `cache_write_tokens`; lệnh kiểm sạch (test cần key bỏ qua rõ);
    bộ kín mới trước bảo vệ; tối ưu: tắt ghi đệm nếu API cho (chưa biết — tra trước).
 6. Sau đóng gói: brainstorm Phase 9 (đầu vào: `data/course_notes/v3/TONG_HOP_A_2026-10-30.md` §3, file cập nhật dự án kia II–VII; câu ngày tương đối = ca đầu cho trợ lý).
 7. Khi rảnh (User): **B0** (mốc người) — quy trình `report_agent/2026-10-25_phase_8_2_ap_dung/phase_8_2_b0_prep_implementation.md` (User đọc `data/phase_8_2/b0/doc_cap_mu.md`,

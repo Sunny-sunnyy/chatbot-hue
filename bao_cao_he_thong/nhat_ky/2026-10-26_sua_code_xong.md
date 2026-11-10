@@ -37,6 +37,6 @@ vi; cái được là lần dựng lại kho sau sẽ không âm thầm sai. Gi�
 
 ## Đọc thêm
 
-- `LUONG_HOAT_DONG_HE_THONG.md` §2 – §3; `BAO_CAO_CHIA_DOAN.md` (bản 4), `BAO_CAO_TIM_KIEM.md` (bản 6), `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 8)
+- `01_LUONG_HOAT_DONG_HE_THONG.md` §2 – §3; `03_BAO_CAO_CHIA_DOAN.md` (bản 4), `06_BAO_CAO_TIM_KIEM.md` (bản 6), `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 8)
 - `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`, `sua_dot3_implementation.md`, `sua_dot3_review.md`
 - `report_agent/2026-10-26_cai_tien_tung_khau/doi_chieu_nghien_cuu_B.md` (đối chiếu kết quả ChatGPT)

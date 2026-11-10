@@ -5,8 +5,8 @@
 ## Tóm tắt
 - **Chữ hiện dần (streaming) đã chạy trong chatbot** (merge `a80e12d`): trên trình duyệt, chữ trả lời đầu tiên hiện sau trung vị **1,23 s**, câu chậm (p95) **2,61 s** —
   đạt sàn 3 / 5 s và cả mục tiêu 1,5 / 3 s. Lợi so với chờ đủ câu chỉ ~0,44 s (câu thử ngắn); bạn chọn giữ cách này, giữ sàn.
-- **Báo cáo so sánh mọi phương án Phase 0 → 8.2** đã đăng (`BAO_CAO_SO_SANH_PHUONG_AN.md`, 62 khối, ~115 số đối chiếu với file gốc, 2 lượt kiểm độc lập đạt).
-- **Bảng giới hạn đã biết** theo mức nặng vào `LUONG_HOAT_DONG_HE_THONG.md` mục 5. Công thức tiền của công cụ đo đã tính theo giá đủ.
+- **Báo cáo so sánh mọi phương án Phase 0 → 8.2** đã đăng (`91_BAO_CAO_SO_SANH_PHUONG_AN.md`, 62 khối, ~115 số đối chiếu với file gốc, 2 lượt kiểm độc lập đạt).
+- **Bảng giới hạn đã biết** theo mức nặng vào `01_LUONG_HOAT_DONG_HE_THONG.md` mục 5. Công thức tiền của công cụ đo đã tính theo giá đủ.
 - **Đo lại theo loại câu** trên kho hiện tại (0 USD): chỉ câu cần nhiều nguồn còn yếu rõ ⇒ bạn để **Phase 9** (cùng hội thoại nhiều lượt).
 - **Rà bảo mật một lần lúc đóng gói:** 11 rủi ro, 0 chặn; đã rào 2 rủi ro chính của chính các agent (công cụ tra web Codex không còn đọc được file máy; hook trước khi push).
 - **Lượt đo cuối Phase 1–8 xong — mọi sàn đạt:** Golden 176 "không làm hỏng" (2 câu tụt, cho phép ≤ 5; Đúng 4,71 · Đủ 4,58); bộ an toàn và câu theo ngày đạt; **bộ kín mới 40 câu** (bạn duyệt mẫu):
@@ -37,10 +37,10 @@
 - **Giao diện mới — đã chốt hướng, chưa code:** React + Vite + Tailwind, FastAPI phục vụ; làm cho laptop; chỉ trang hỏi đáp (khung nguồn bên cạnh); hiện đại, nét Huế nhẹ (tím Huế,
   font Be Vietnam Pro tự lưu); số nguồn nhỏ bấm được; giữ chữ hiện dần. Khi lên trợ lý (Phase 9) nâng cấp thêm. So sánh + hướng nhìn: `report_agent/2026-11-01_giao_dien_moi/b116_so_sanh_giao_dien.md`.
 - **Mở nghiên cứu rộng Phase 9:** 4 mạch (thực tế, chức năng, paper, repo) tra bằng Codex + kiểm tay; yêu cầu chuyên sâu đã gửi ChatGPT. Phát hiện lớn: **Huế TRIPO** — trợ lý AI lịch trình
-  của Sở VHTTDL Huế ra mắt 31/10/2026 ⇒ phiên sau bạn gõ thử ~10 câu để so. Bản sơ bộ: [BAO_CAO_NGHIEN_CUU_PHASE_9.md](../BAO_CAO_NGHIEN_CUU_PHASE_9.md).
+  của Sở VHTTDL Huế ra mắt 31/10/2026 ⇒ phiên sau bạn gõ thử ~10 câu để so. Bản sơ bộ: [92_BAO_CAO_NGHIEN_CUU_PHASE_9.md](../92_BAO_CAO_NGHIEN_CUU_PHASE_9.md).
 - **Sau 15:32:** kết quả ChatGPT về (C kiểm 9 ý: 6 đúng, 3 sai một phần); B thử Huế TRIPO bằng trình duyệt tự động + cùng 10 câu trên hue_rag — TRIPO mạnh lịch trình nhưng
   sai giờ đóng cửa, không nguồn, nói ngược kho ở câu trang phục vào Đại Nội; hue_rag từ chối nhầm một câu 2 ý và không nhớ lượt trước. **Bạn chọn hướng Phase 9:** trợ lý di sản đáng tin
-  + lịch trình gợi ý nhỏ; đề tài đã chốt với giảng viên; bảo vệ 04–10/01/2027 ⇒ đóng code tạm ~20/12. Báo cáo: [BAO_CAO_NGHIEN_CUU_PHASE_9.md](../BAO_CAO_NGHIEN_CUU_PHASE_9.md) bản 2.
+  + lịch trình gợi ý nhỏ; đề tài đã chốt với giảng viên; bảo vệ 04–10/01/2027 ⇒ đóng code tạm ~20/12. Báo cáo: [92_BAO_CAO_NGHIEN_CUU_PHASE_9.md](../92_BAO_CAO_NGHIEN_CUU_PHASE_9.md) bản 2.
 - Tiền phiên chiều: ≈ 0,004 USD (~100 đồng, 11 câu hue_rag khi thử so với TRIPO).
 
 ## Giải thích ngắn (để bạn tự nói lại được)
@@ -50,5 +50,5 @@ giao diện JS thuần sẽ làm lại sau Phase 8 theo danh sách yêu cầu đ
 một lần review, phần sắp thay làm tối thiểu).
 
 ## Đọc thêm
-- `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_SO_SANH_PHUONG_AN.md`
+- `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `01_LUONG_HOAT_DONG_HE_THONG.md`, `91_BAO_CAO_SO_SANH_PHUONG_AN.md`
 - `report_agent/2026-10-31_streaming_spec/` (spec, review từng bước, S4, bảo mật C106)

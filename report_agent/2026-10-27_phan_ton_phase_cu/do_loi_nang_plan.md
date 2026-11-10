@@ -8,7 +8,7 @@ Trạng thái: chờ C kiểm phần sửa ⇒ A duyệt sha ⇒ chạy khi A gi
 ## Căn cứ để review
 
 1. File này — toàn bộ.
-2. `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (bản 4, `f420155`) §1 dòng "Thước đạt" + §6; `backend/evaluation/full_corpus_judge_prompt.md:13-16` (judge hiện tại **không** trừ chi tiết
+2. `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (bản 4, `f420155`) §1 dòng "Thước đạt" + §6; `backend/evaluation/full_corpus_judge_prompt.md:13-16` (judge hiện tại **không** trừ chi tiết
    thêm, không chấm độ bám nguồn) và `:29-31` (thang Accuracy).
 3. `data/muc_tieu_san_pham_2026-10-28/doi_chieu_nghien_cuu.md` (private) §1 mục 8–10 (P0 = an toàn / điều kiện tiếp cận; báo cận tin cậy khi "0 lỗi") và §3 "Mới" (kiểm
    judge bằng người: nhãn nhị phân, hai người, kappa + "lỗi nặng lọt qua").

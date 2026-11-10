@@ -19,7 +19,7 @@ Người viết: B (bản 4–6; bản 1–3: C), A (bản 7, qua sub-agent) · 
 - **Đo "trước ↔ sau" mỗi đợt** (176 câu Golden; đợt 2 thêm 32 câu an toàn; chấm mù cùng lượt): **không làm hỏng** — 0 câu ngoài kho bị trả lời, 0 lỗi, 0 lỗi
   trích dẫn, 0 câu "nói chắc sai" mới; điểm đủ ý / đúng gần như y hệt; từ chối nhầm 12 → 13 (đợt 1), 13 → 12 (đợt 2). Bộ an toàn đợt 2: 0 câu nói sai điều kiện
   mới, 0 câu đảo cảnh báo. Nhãn "đoạn đúng" và Golden đã cập nhật theo kho mới, phần đổi bạn đã duyệt — riêng **1 câu Golden** có
-  keyword khác kho chỉ ở chữ hoa / thường (phát hiện 31/10; điểm không lệch) — **bạn giữ nguyên 11:04 01/11** (`BAO_CAO_BO_CAU_HOI_GOLDEN.md`).
+  keyword khác kho chỉ ở chữ hoa / thường (phát hiện 31/10; điểm không lệch) — **bạn giữ nguyên 11:04 01/11** (`09_BAO_CAO_BO_CAU_HOI_GOLDEN.md`).
 - **Giới hạn chính:** hai đợt làm kho **đúng hơn / thận trọng hơn** nhưng **không làm điểm tăng** — thước đo không nhạy với loại sửa này (tên phường, bỏ chi
   tiết không chắc). Vài mục vẫn chờ tra ngoài (kho đã tự rào). Kho còn thiếu vài thông tin hay được hỏi (giờ mở cửa: đã thêm giờ chung cho 11 điểm Quần thể 05/11; điểm khác — chợ, phố, chùa ngoài Quần thể — chưa có). Mã đoạn dạng
   "tên file + số thứ tự" bị dồn số khi xóa một dòng giữa file (đợt 2 đã đo bù).
@@ -63,9 +63,9 @@ Tự kiểm (không bắt buộc): hỏi chatbot một câu về một thông ti
 | Phiếu build: dữ liệu lệch → từ chối khởi động | **Đã xử lý, đóng gói** | Phiếu `full_corpus_build:v3`, `complete`, 204 file / 8.435 đoạn (phiếu `9921888f2030`, dựng 05/11 tối; trước `51fb1ec63cbc` 30/10); `source_state.py:95`, `:179`; `retrieval/full_corpus.py:383–385` |
 | Một lệnh build cho mọi lần sửa dữ liệu | **Đã xử lý, đóng gói** | `full_corpus_pipeline.py:263–279` |
 | Build lại sau khi sửa kho (từ điển BM25) | **Đã xử lý** (làm thật 28/10, 30/10, 05/11) | Xóa đủ ba đích (collection + phiếu build + từ điển) rồi build, ~4–5,5 phút; từ điển 5.660 → 5.631 từ (đợt 2 giữ 5.631). Lệnh xóa bị chặn ở terminal agent ⇒ bạn chạy bằng `!`. Từ điển ghi một lần, khác kho thì build dừng: `full_corpus_pipeline.py:137–146` |
-| Chỉ mục Qwen3-Embedding-8B qua OpenRouter | **Đã thử, chưa áp dụng** | 7A2: lần 1 trộn 3 nhà cung cấp (vector không đồng nhất), lần 2 chỉ Nebius lỗi 504 ⇒ hoãn. 30/10: dựng được (chỉ Nebius, 0 lỗi, ~31 phút, 0,0089 USD) nhưng **kém hơn** ở tìm đoạn ⇒ giữ e5-small; collection thử đã xóa — `BAO_CAO_TIM_KIEM.md` |
+| Chỉ mục Qwen3-Embedding-8B qua OpenRouter | **Đã thử, chưa áp dụng** | 7A2: lần 1 trộn 3 nhà cung cấp (vector không đồng nhất), lần 2 chỉ Nebius lỗi 504 ⇒ hoãn. 30/10: dựng được (chỉ Nebius, 0 lỗi, ~31 phút, 0,0089 USD) nhưng **kém hơn** ở tìm đoạn ⇒ giữ e5-small; collection thử đã xóa — `06_BAO_CAO_TIM_KIEM.md` |
 | Dọn collection cũ trong Qdrant | **Đã xử lý, đóng gói** | 16 → 3 collection (7A2) → 1 (24/10, xóa 2 collection món ăn, không sao lưu theo danh sách dọn). Nay 2: `hue_full_corpus_7a2_e5_small_384` (chatbot) + `hue_anh_siglip2` (172 điểm, thử ảnh 05/11 đã bỏ, chatbot không dùng — chờ bạn quyết xoá) |
-| Đoạn bị giữ nhỏ vì kiểm tokenizer model đã bỏ | **Đã thử, chưa áp dụng** | 6 bảng bị tách chỉ vì giới hạn HuyDang 256 (`settings.yaml:23–35`); 8.1 bỏ ràng buộc này: không đổi kết quả ⇒ chưa có lý do đổi — `BAO_CAO_CHIA_DOAN.md` |
+| Đoạn bị giữ nhỏ vì kiểm tokenizer model đã bỏ | **Đã thử, chưa áp dụng** | 6 bảng bị tách chỉ vì giới hạn HuyDang 256 (`settings.yaml:23–35`); 8.1 bỏ ràng buộc này: không đổi kết quả ⇒ chưa có lý do đổi — `03_BAO_CAO_CHIA_DOAN.md` |
 | Notebook 03, 04 mô tả / gọi tên cũ | **Đã xử lý, đóng gói** | Đã sửa khi dọn (commit `1832201`); Run All 0 lỗi |
 | Notebook 06 mô tả tên cũ | **Đã xử lý** | Chỉ sửa phần chữ; chưa chạy lại vì có gọi API trả phí |
 
@@ -123,7 +123,7 @@ Qdrant thật 10/11/2026 (chỉ đọc): 2 collection — chỉ mục chatbot 8.
 | Một lệnh build `cd backend && uv run python -m ingestion.full_corpus_pipeline build --candidate <id>` (chạy từ `backend/`) | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:263–279` |
 | Từ điển BM25 chung, ghi một lần; dữ liệu đổi thì phải xóa file cũ trước khi build | **còn dùng** (bẫy đã ghi ở `Project_Status.md` §8) | `full_corpus_pipeline.py:137–146` |
 | Model vector: e5-small chạy; Qwen3-Embedding-8B còn trong code | **còn dùng** e5-small; 8B **đã thử 30/10 — kém hơn**, không có chỉ mục | `backend/embedding/full_corpus.py:41–66` |
-| Chia đoạn giữ nguyên từ Phase 2 | **còn dùng** (8.1 thử 12 cách chia khác: không cách nào hơn) | `backend/ingestion/chunking/full_corpus_chunker.py`; `BAO_CAO_CHIA_DOAN.md` |
+| Chia đoạn giữ nguyên từ Phase 2 | **còn dùng** (8.1 thử 12 cách chia khác: không cách nào hơn) | `backend/ingestion/chunking/full_corpus_chunker.py`; `03_BAO_CAO_CHIA_DOAN.md` |
 | Payload 7 trường (metadata v2) | **còn dùng** | `backend/retrieval/full_corpus.py:166` (`REQUIRED_PAYLOAD_FIELDS`) |
 | Qdrant chỉ còn 1 collection | **đã thay** 05/11 tối: thêm collection thử ảnh `hue_anh_siglip2` (172 điểm, chatbot không dùng, chờ bạn quyết xoá) | Qdrant thật 10/11/2026; `Project_Status.md` §4 |
 | 205 file / 8.459 đoạn trong chỉ mục | **đã thay** 28/10 bởi 204 / 8.426 (đợt 1), 30/10 bởi 204 / 8.424 (đợt 2), rồi 05/11 bởi **204 / 8.435** (giờ mở cửa) | phiếu build `corpus.file_count` 204, `chunk_count` 8.435 |
@@ -131,14 +131,14 @@ Qdrant thật 10/11/2026 (chỉ đọc): 2 collection — chỉ mục chatbot 8.
 
 ## 6. Việc còn lại / cần quyết
 
-- Sau mỗi đợt sửa kho sau này: chạy thêm `golden_full_corpus check` (1 lỗi hoa / thường đã biết — `BAO_CAO_BO_CAU_HOI_GOLDEN.md` §6).
+- Sau mỗi đợt sửa kho sau này: chạy thêm `golden_full_corpus check` (1 lỗi hoa / thường đã biết — `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` §6).
 
 - **Sao lưu đợt 1 + đợt 2:** đang giữ theo bạn chọn (mỗi đợt: ảnh chụp Qdrant ~51 MB, bản gốc file kho, phiếu build + từ điển cũ); giữ thì quay lại được bất cứ
   lúc nào. Muốn xóa thì báo — không gấp.
 - Vài mục còn "tra ngoài" (kho đã tự rào); giờ mở cửa: 11 điểm Quần thể đã có giờ chung (05/11); điểm ngoài Quần thể (chợ, phố, chùa…) chưa có — cần nguồn ngoài.
 - Mã đoạn "file#số" không bền khi xóa dòng giữa file — lần sửa kho sau: ghi luật đo bù trước, hoặc đổi cách đặt mã (đổi chunker ⇒ cần thí nghiệm).
 - Bộ chia đoạn vẫn kiểm cả 3 tokenizer (gồm HuyDang 256 đã bỏ) → đoạn bị giữ nhỏ; 8.1 bỏ ràng buộc này "không khác" ⇒ chưa có số ủng hộ đổi.
-- Lỗi bảng giá và tổng hợp nhiều nguồn: xem `BAO_CAO_DANH_GIA.md`, `BAO_CAO_TIM_KIEM.md`.
+- Lỗi bảng giá và tổng hợp nhiều nguồn: xem `10_BAO_CAO_DANH_GIA.md`, `06_BAO_CAO_TIM_KIEM.md`.
 
 ## Phụ lục — hồ sơ kỹ thuật
 

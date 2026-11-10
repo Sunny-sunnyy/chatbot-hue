@@ -219,4 +219,4 @@ Không có dòng nào gửi dữ liệu ra ngoài. Dòng bị gạch → hướn
 - Nghiên cứu (private): `gửi chatgpt/2026-10-24/kết quả nghiên cứu/phase_8_1_decision_audit_2026_10_24.md`,
   `phase_8_rag_retrieval_2026_10_24.md`, `phase_7b_rag_evaluation_2026_10_24.md`
 - Giả thuyết: `reports/phase_8_candidate_hypotheses_2026_10_24.md`; baseline: spec 7B,
-  `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`
+  `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md`

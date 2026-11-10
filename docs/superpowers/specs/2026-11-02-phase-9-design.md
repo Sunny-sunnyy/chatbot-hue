@@ -427,7 +427,7 @@ Không đổi chỗ khác.
 
 ## 11. Sửa đổi 05/11/2026 — bản 11 (A viết 09:42 05/11/2026) + bản 12 (sửa review C178, 09:45 05/11/2026)
 
-**Căn cứ:** User duyệt bậc 1 + lịch (`bao_cao_he_thong/DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md`, 05/11); User chọn "Tách — giữ lịch trình" cho B4 (09:21); **User 05/11: không dồn hết vào Phase 9 ⇒ chia Phase 10 (giọng nói + ảnh), 11 (trải nghiệm Huế: bản đồ, sự kiện theo ngày, tiếng Anh…), 12 (vận hành); Phase 10 thiết kế / code song song Phase 9** (ngoại lệ `WORKFLOW.md` §9.4 chỉ cho Phase 10); **User 05/11: vẫn áp nền tảng AI FDE** (skill `agent-design-review`, `agent-security-review`, `run-experiment`).
+**Căn cứ:** User duyệt bậc 1 + lịch (`bao_cao_he_thong/93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md`, 05/11); User chọn "Tách — giữ lịch trình" cho B4 (09:21); **User 05/11: không dồn hết vào Phase 9 ⇒ chia Phase 10 (giọng nói + ảnh), 11 (trải nghiệm Huế: bản đồ, sự kiện theo ngày, tiếng Anh…), 12 (vận hành); Phase 10 thiết kế / code song song Phase 9** (ngoại lệ `WORKFLOW.md` §9.4 chỉ cho Phase 10); **User 05/11: vẫn áp nền tảng AI FDE** (skill `agent-design-review`, `agent-security-review`, `run-experiment`).
 Bản 9 §1–§10 giữ nguyên trừ chỗ ghi dưới. Review bản 11: chỉ mục này, đối chiếu §5–§8 + review bản 10 (`…phase-9-design_review_v10.md`).
 **Chuyển khỏi Phase 9** (review bản 10 M-1–M-4, m-4, m-7 mang sang spec Phase 10 / 11): giọng nói, ảnh, bản đồ (toạ độ ngoài kho + nới CSP). Plan B5 bản 4 giữ "không bản đồ".
 

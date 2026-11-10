@@ -29,7 +29,7 @@
 Muốn biết lịch trình chatbot gợi ý có dùng được không thì phải hỏi bằng câu **giống người thật hỏi**. Bộ câu cũ do agent viết nên đọc như danh sách tiêu chí — chấm trên đó, dù đạt hay không, cũng không nói được gì về người dùng thật. Vì vậy làm lại bộ câu dựa trên câu hỏi thật ngoài diễn đàn, bạn duyệt giọng trước; trong lúc đó sửa những lỗi code đã thấy, rồi mới đo lại trên bộ câu mới (bộ cũ đã lộ lỗi nên không dùng đo lại).
 
 ## Đọc thêm
-- `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 06/11
+- `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 06/11
 - `report_agent/2026-11-06_b5_cau_tu_nhien/` (E19, B171 + review), `report_agent/2026-11-02_phase_9_code/b168_b5b_review.md`, `c207_rebase_sua_lich.md`
 
 ## Tối 06/11 (mở 20:54, ghi 21:03 06/11/2026)

@@ -10,7 +10,7 @@ Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh m
 - **Chatbot đang chạy là bản Phase 9** (từ 03/11: định tuyến 4 tuyến, tìm thêm ≤ 2 lần, nhớ câu hỏi; sau đó tra web sau câu từ chối, thời tiết,
   hỏi bằng ảnh 08/11, công cụ ngày + âm lịch 09/11…). **Bản này chưa được đo lại trên cả bộ Golden 176** — dự kiến đo ở bước so sánh cuối Phase 9
   (B7: so cả hệ với RAG 1–8; kế hoạch đang nháp). Mọi số Golden dưới đây là của **chatbot cuối Phase 8 (01/11)**. Từng tính năng Phase 9 được đo riêng
-  trên bộ câu của nó (vài bước có dùng một phần Golden để kiểm không tụt, vd tìm thêm 03/11, sửa kho 05/11: 11 câu chạm) — số ở `BAO_CAO_SINH_CAU_TRA_LOI_API.md`.
+  trên bộ câu của nó (vài bước có dùng một phần Golden để kiểm không tụt, vd tìm thêm 03/11, sửa kho 05/11: 11 câu chạm) — số ở `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`.
 - **Thước đang dùng:**
   - **Golden 176 câu** (md5 `6331e88fb171` từ 30/10), chia **120 câu thử** (để chọn) / **56 câu kiểm** (để xác nhận). Số chính bỏ 29 câu người thật ít hỏi.
   - Bộ chấm chạy đường trả lời của API (tìm đoạn → đóng gói đoạn → `gpt-6-luna` trả lời → kiểm trích dẫn). Từ Phase 9, lệnh `evaluation generate` không ghi
@@ -25,7 +25,7 @@ Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh m
     quy định, cảnh báo). **Bộ 32 câu an toàn** tự viết (giờ, vé, miễn giảm, giấy tờ, cảnh báo sông nước…; 28 trong kho, 4 ngoài kho) là phép kiểm **bắt buộc** cho
     mọi thay đổi, kèm 15 câu đối chứng (chèn sai / chép đúng) để kiểm người chấm mỗi lượt.
   - **Bộ 15 câu theo ngày tương đối** ("tối nay", "tháng sau"…, 30/10) — mốc cho công cụ ngày + âm lịch (bật 09/11; xác nhận trên 14 câu mới: bớt 9 câu
-    từ chối nhầm, 0 câu sai ngày — `BAO_CAO_SINH_CAU_TRA_LOI_API.md`).
+    từ chối nhầm, 0 câu sai ngày — `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`).
 - **Thước "đạt" (bạn chốt 28/10):**
   - **Thứ tự lỗi** nặng → nhẹ: sai cảnh báo an toàn / điều kiện vào khu vực > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
   - **Sàn bộ an toàn** (theo nhiễu đo 29/10): câu sai điều kiện **mới** ≤ 2, mỗi câu mới sinh lại 3 lần; **đảo cảnh báo = 0**; 0 câu ngoài kho bị trả lời.
@@ -185,7 +185,7 @@ So sánh: Đủ ý 4,35, chỉ 2 câu yếu; bảng giá: không còn lỗi lớ
   câu nào mất đoạn đúng. Bộ an toàn: 0 câu sai điều kiện mới, 0 đảo cảnh báo; 2 câu sai ở lượt 28/10 nay không sai (sinh lại 3 lần cũng 0) ⇒ "lúc có lúc không".
   **Không làm hỏng ⇒ bạn đóng đợt.** ≈ 0,047 USD. `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_implementation.md`.
 - Cùng ngày: **nhãn đoạn đúng bản 5** (173 / 174 trích dẫn tìm lại nguyên văn; 1 đổi chữ, bạn duyệt) và **Golden md5 `6331e88fb171`**. Thí nghiệm Qwen3-8B (tầng tìm) dùng
-  thước này: kém hơn ⇒ không tới bước kiểm cuối (`BAO_CAO_EMBEDDING_TU_KHOA.md`).
+  thước này: kém hơn ⇒ không tới bước kiểm cuối (`04_BAO_CAO_EMBEDDING_TU_KHOA.md`).
 - **Câu hỏi theo ngày tương đối** (15 câu + 11 câu bộ an toàn, 0,0037 USD): 0 câu đoán ngày rồi nói sai (với cỡ mẫu này chỉ nói được tần suất dưới ~25 %); 6 / 14 câu
   bị từ chối nhầm ⇒ bạn quyết để Phase 9. `report_agent/2026-10-27_phan_ton_phase_cu/ngay_hien_tai_implementation.md`.
 
@@ -211,7 +211,7 @@ So sánh: Đủ ý 4,35, chỉ 2 câu yếu; bảng giá: không còn lỗi lớ
 ### 26–27/10/2026 — đợt cải tiến từng khâu (8.2): thước đã dùng
 - Mốc duy nhất: chatbot 10 đoạn + chuẩn hóa dấu; luật nhận: (a) rẻ / nhanh hơn rõ mà chất lượng giữ; (i) chất lượng tăng vượt nhiễu, tiền / câu ≤ +20 %. "Tốc độ" khâu
   sinh đo bằng số token viết ra (thời gian một lần gọi dao động quá mạnh).
-- Kết quả: không biến thể nào qua luật (chi tiết từng biến thể: `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `BAO_CAO_TIM_KIEM.md`). Phát hiện: 80 % điểm mất đi kèm thiếu bằng
+- Kết quả: không biến thể nào qua luật (chi tiết từng biến thể: `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `06_BAO_CAO_TIM_KIEM.md`). Phát hiện: 80 % điểm mất đi kèm thiếu bằng
   chứng trong ngữ cảnh (chỗ nghẽn là xếp hạng). `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md`.
 
 ### 25/10/2026 — Phase 8.1: làm thước đo chặt hơn
@@ -255,7 +255,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 0
 | Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 204 file / 8.435 đoạn từ 05/11 tối (lượt đo 01/11 chạy trên 8.424); số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
 | Mốc kết quả tìm 158 câu | **còn dùng**: `64656a87c109` (từ 05/11 tối; 30/10 `4d5bbe9e0edc`) | `Project_Status.md` §4 |
 | Nhãn đoạn đúng | **bản 5 mặc định** (30/10); bản 1–4 chỉ để tái lập số cũ | `backend/experiments/phase_8_1/g1_retrieval.py:48` |
-| Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
+| Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
 | Bộ 32 câu an toàn, thước lỗi nặng | **còn dùng**, bắt buộc | `do_loi_nang_implementation.md`; `sua_kho_dot2_implementation.md` |
 | `cost_usd` của công cụ đo | **đã sửa** (01/11): giá đủ (ghi đệm / đọc đệm); số USD cũ giữ, ghi "giá phẳng" | `full_corpus_eval.py:169,176`; `Project_Status.md` §5 (30/10 15:07) |
 | Điểm 7B làm mốc | **lịch sử** (5 đoạn; 10 đáp án Golden sửa 25/10, 2 đáp án sửa 30/10 ⇒ không so trực tiếp) | `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md` |

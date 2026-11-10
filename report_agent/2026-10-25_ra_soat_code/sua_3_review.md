@@ -3,7 +3,7 @@
 Decision: **ready_for_user_confirmation** (0 blocker, 0 major, 2 minor không chặn) — việc rủi ro trung bình ⇒ A đóng, báo User
 Người kiểm: B (Claude Opus 5.5, terminal `hue-rag-c3`)
 Date: 2026-10-25 20:46 +0700 (`date`) · nền `main` `83e1aa9` + diff chưa commit của C · chỉ đọc · **0 USD**
-Canonical: mục "Đợt 2" trong `session_prompt/CURRENT_HANDOFF.md`; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` gói 3a / 3b; C-02, C-03, C-20
+Canonical: mục "Đợt 2" trong `session_prompt/CURRENT_HANDOFF.md`; `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` gói 3a / 3b; C-02, C-03, C-20
 Implementation report: `report_agent/2026-10-25_ra_soat_code/sua_3_implementation.md`
 
 Không đọc `STATUS_C.md`; không chạy script của C. Mốc "trước" lấy bằng `git show 1b9c126:backend/evaluation/full_corpus_eval.py` và

@@ -154,4 +154,4 @@ B và C chạy song song; mỗi việc vẫn đi theo trình tự plan ⇒ revie
   - OpenAI trang model `gpt-6-luna`, trang giá, hướng dẫn chuyển giọng nói thành chữ.
 - Tự khai (Codex, chưa mở): toàn bộ danh mục URL ở `data/tra_cuu_cli/2026-11-05_a05-agentic/`, `…_a05-trai-nghiem-hue/`, `…_a05-giong-noi-anh/` (private).
 - Yêu cầu nghiên cứu sâu gửi ChatGPT (bạn gửi khi rảnh): `gửi chatgpt/2026-11-05/tìm thông tin/nghien_cuu_agentic_noi_bat_2026_11_05.md`.
-- Nghiên cứu trước (cách làm cho đúng, 8 repo, TRIPO): [BAO_CAO_NGHIEN_CUU_PHASE_9.md](BAO_CAO_NGHIEN_CUU_PHASE_9.md).
+- Nghiên cứu trước (cách làm cho đúng, 8 repo, TRIPO): [92_BAO_CAO_NGHIEN_CUU_PHASE_9.md](92_BAO_CAO_NGHIEN_CUU_PHASE_9.md).

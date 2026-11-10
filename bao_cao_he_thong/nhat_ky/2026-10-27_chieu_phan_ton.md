@@ -47,7 +47,7 @@ mốc trước khi chọn").
 
 ## Đọc thêm
 
-- `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md` (bản 4 — đợt sửa kho) và `BAO_CAO_DANH_GIA.md` (bản 3 — thước đo, nhãn v3, mốc cuối)
+- `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md` (bản 4 — đợt sửa kho) và `10_BAO_CAO_DANH_GIA.md` (bản 3 — thước đo, nhãn v3, mốc cuối)
 
 - `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` (kỹ thuật)
 - `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` (đợt sửa kho)

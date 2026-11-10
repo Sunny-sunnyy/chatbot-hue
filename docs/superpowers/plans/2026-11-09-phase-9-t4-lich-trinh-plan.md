@@ -65,7 +65,7 @@ Cộng các sàn chung (spec §12.3): **an toàn 32** (cờ bật ⇒ công cụ
 4. **1 lượt có phí** (khi G + T2 đã vào `main`, nhánh rebase): server nhánh (cờ bật tạm), `/api/chat/stream` thật, `chat_metrics` theo `turn_id`. **31 câu lịch chỉ chạy nhánh** (A 09/11: mốc cờ tắt không có lịch, Q3 không dùng mốc, mức nền K2 / E20 đã có — kín v2 3 / 5). Server `main` (mốc) chỉ cho an toàn 32 + mẫu 30 khi không dùng lại được.
    **Mốc dùng lại (0 USD):** an toàn 32 + mẫu 30 của lượt khoá G **nếu** `main` lúc tách = sha G khoá + chỉ các bậc cờ tắt (T1 / T3 / T2 cờ tắt ⇒ Q1 giống byte) — E kiểm bằng Q1 trước khi dùng lại; không đạt ⇒ chạy mốc.
 5. Chấm: 2 sub-agent Q3 (mù cặp không cần — mốc không có lịch); 1 sub-agent S4 mù cặp; S1 theo `data/phase_9/t1/cham/brief_cham.md` phần 2 (2 người như luật S-AT).
-6. Report `report_agent/<đợt>/e_t4_lich_trinh_implementation.md` + đoạn lời thường cho `BAO_CAO_SINH_CAU_TRA_LOI_API` ⇒ test rộng 1 lần ⇒ review cả nhánh.
+6. Report `report_agent/<đợt>/e_t4_lich_trinh_implementation.md` + đoạn lời thường cho `07_BAO_CAO_SINH_CAU_TRA_LOI_API` ⇒ test rộng 1 lần ⇒ review cả nhánh.
 
 ## 6. Tiền (giá `gpt-6-luna` từ `chat_metrics`: lượt có lịch ≈ 0,0009; câu thường ≈ 0,0006; ngoài phạm vi ≈ 0,0005; web +0,0012)
 

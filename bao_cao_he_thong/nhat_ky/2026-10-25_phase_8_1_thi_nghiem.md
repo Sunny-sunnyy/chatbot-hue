@@ -30,5 +30,5 @@ một nửa tiền mỗi câu (vẫn dưới 0,0003 USD). Giới hạn: bộ th�
 
 ## Đọc thêm
 - `report_agent/2026-10-24_phase_8_1_ra_soat/TONG_HOP.md` (kỹ thuật), `phase_8_1_g5_synthesis.md` (kết luận + đề xuất 8.2)
-- `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `BAO_CAO_CHIA_DOAN.md`,
-  `BAO_CAO_EMBEDDING_TU_KHOA.md`, `BAO_CAO_DANH_GIA.md`, `BAO_CAO_BO_CAU_HOI_GOLDEN.md` (B / C đang thêm mục 8.1)
+- `bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md`, `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `03_BAO_CAO_CHIA_DOAN.md`,
+  `04_BAO_CAO_EMBEDDING_TU_KHOA.md`, `10_BAO_CAO_DANH_GIA.md`, `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` (B / C đang thêm mục 8.1)

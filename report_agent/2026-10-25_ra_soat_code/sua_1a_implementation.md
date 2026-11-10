@@ -2,7 +2,7 @@
 
 Người làm: C (Claude Opus 5.5, terminal `hue-rag-7f`) · việc C35
 Date: 2026-10-25 19:51 (`date`) · nền `main` `5d3376f` · chưa commit (A commit sau review)
-Canonical: `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` gói 1a (User duyệt 19:4x); mục C35 trong `session_prompt/CURRENT_HANDOFF.md`;
+Canonical: `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` gói 1a (User duyệt 19:4x); mục C35 trong `session_prompt/CURRENT_HANDOFF.md`;
 finding C-09 `report_agent/2026-10-25_ra_soat_code/ra_soat_code_C.md`. Review: B.
 
 ## 1. Phạm vi

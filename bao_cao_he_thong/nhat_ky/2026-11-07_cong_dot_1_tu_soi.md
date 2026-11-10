@@ -31,5 +31,5 @@
 - **Câu cần bạn chọn:** tiêu chí ghi "lời phù hợp người đi cùng". Lời model không sai với nhóm nào (code đã chọn điểm theo nhóm), nhưng cũng không có câu viết riêng cho nhóm. Hiểu "không trái nhóm" ⇒ đạt; hiểu "phải nói riêng cho nhóm" ⇒ trượt. A không tự chọn cách hiểu sau khi đã thấy kết quả.
 
 ## Đọc thêm
-- `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` (bản 31), `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 40)
+- `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` (bản 31), `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 40)
 - `report_agent/2026-11-06_giao_dien_cong/` (S1–S4, X1, S3), `report_agent/2026-11-07_tu_soi_lo_trinh/TONG_HOP.md`

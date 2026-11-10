@@ -10,7 +10,7 @@ Implementation report: `report_agent/2026-10-25_ra_soat_code/sua_1b_implementati
 
 - Git: nền `main` `47a4e32`; working tree chưa commit. File của gói: 21 file `backend/` + test mới `backend/tests/test_startup_model_missing.py`, 3 notebook,
   `guides/full_corpus_rag.md` — khớp danh sách report. Cũng đang đổi (không thuộc B): `session_prompt/chạy_môi_trường.md`,
-  `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md` (A sửa lệnh build — governance / báo cáo User), `CURRENT_HANDOFF.md`, `STATUS_B/C`.
+  `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md` (A sửa lệnh build — governance / báo cáo User), `CURRENT_HANDOFF.md`, `STATUS_B/C`.
 - Không đọc `STATUS_B`; không chạy script của B (`data/ra_soat_code/tools/dup_modules.py`, `/tmp/b30/*`). Script của C: `/tmp/c41/`, bản dùng lại
   `data/ra_soat_code_2026-10-25/tools/review_1b/` + `review_1b_plan/` (plugin pytest, mô phỏng notebook), `sua_3/gate.py`. 0 USD trừ cổng ổn định.
 - Đọc: mọi dòng diff `backend/` **không phải** import / `sys.path` (lọc bằng grep, đọc tay); `api/app.py` diff đầy đủ; danh sách `raise` trong

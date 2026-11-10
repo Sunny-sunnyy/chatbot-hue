@@ -53,4 +53,4 @@ B dùng `gold_coverage` (vị trí ký tự của trích dẫn ↔ `evidence_par
 ## 6. Vòng 2 (16:01 30/10/2026 `date`): m-1 **đóng** — `ready_for_user_confirmation` 0 / 0 / 0
 
 Report `2d9588d91962` §2 (dòng `dense_ms` test) + §3: ghi 1 lần 504 sau ~62 s rồi thử lại được, 17 request thành công > 5 s (49 s, 75 s), p95 request thành công ~25 s (24,8), dev 18
-(lần 2: 13) request > 5 s — C đếm lại lần 2 = 13 ✓. `BAO_CAO_EMBEDDING_TU_KHOA.md` §4 thêm câu tương ứng (dòng 82) ✓. Quét trùng 0 cả hai file.
+(lần 2: 13) request > 5 s — C đếm lại lần 2 = 13 ✓. `04_BAO_CAO_EMBEDDING_TU_KHOA.md` §4 thêm câu tương ứng (dòng 82) ✓. Quét trùng 0 cả hai file.

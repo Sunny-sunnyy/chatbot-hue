@@ -65,4 +65,4 @@ lượt. Chỉ số tính bằng `full_corpus_eval.paired_stats` + `holm_adjust`
 ## 6. Decision và bước tiếp theo
 
 **ready_for_user_confirmation:** K1 = **kém hơn**, không đưa vào chatbot, không chạy test hay lượt sinh. Việc mức trung bình ⇒ A đóng, báo User,
-ghi `BAO_CAO_TIM_KIEM.md` mục "Đã thử, chưa áp dụng". K3 chạy hay không: A trình User theo §10.2, vì K3 tốn 3–5 s và có phí. n-1 sửa khi tiện.
+ghi `06_BAO_CAO_TIM_KIEM.md` mục "Đã thử, chưa áp dụng". K3 chạy hay không: A trình User theo §10.2, vì K3 tốn 3–5 s và có phí. n-1 sửa khi tiện.

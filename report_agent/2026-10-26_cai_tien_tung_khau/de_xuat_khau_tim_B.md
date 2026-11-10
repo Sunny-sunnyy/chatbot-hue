@@ -81,7 +81,7 @@ câu để kiểm mức tụt Completeness. Ước tiền ≈ 88 × 0,000204 ≈
    lại dev.
 3. **V3 luna trên pool 30**: chỉ làm khi V1 / V2 không đủ **và** User chấp nhận +3–5 s / câu cùng phí API. Pilot 10 câu và ước lại tiền
    trước (bẫy `Project_Status.md` §8: luna ra ~270 token / câu).
-4. V4, V5: không chạy; ghi vào `BAO_CAO_TIM_KIEM.md` mục "Đã thử / không chọn" (V5) và "không đề xuất, vì sao" (V4).
+4. V4, V5: không chạy; ghi vào `06_BAO_CAO_TIM_KIEM.md` mục "Đã thử / không chọn" (V5) và "không đề xuất, vì sao" (V4).
 
 Lý do đặt khâu tìm cạnh khâu trả lời (nối C36): khoảng 18 / 40 câu dev thiếu đoạn đúng ở context 10. Không cách sửa ở khâu trả lời nào
 làm câu trả lời đủ được khi model không thấy fact.

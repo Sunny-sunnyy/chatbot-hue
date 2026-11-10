@@ -4,7 +4,7 @@ Decision: **ready_for_user_confirmation** (0 blocker, 0 major, 2 minor không ch
 Người kiểm: B (Claude Opus 5.5, terminal `hue-rag-c3`)
 Date: 2026-10-25 19:56 +0700 (`date`) · nền `main` `5d3376f` + diff chưa commit của C · chỉ đọc · **0 USD** (không gọi paid)
 Canonical guide: mục C35 trong `session_prompt/CURRENT_HANDOFF.md` (tiêu chí 1–3; A duyệt thêm `chat.py`, `test_api_chat.py` 19:5x);
-`bao_cao_he_thong/DE_XUAT_SUA_CODE.md` gói 1a
+`bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` gói 1a
 Implementation report: `report_agent/2026-10-25_ra_soat_code/sua_1a_implementation.md`
 
 Không đọc `STATUS_C.md`; không dùng script hay `before.json` của C — mốc "trước" lấy thẳng từ `git show 5d3376f:backend/llm/citations.py`.

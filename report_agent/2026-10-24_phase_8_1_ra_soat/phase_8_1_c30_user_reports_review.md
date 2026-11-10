@@ -2,8 +2,8 @@
 
 Decision: **ready_for_user_confirmation** (0 blocker, 0 major, 4 minor — sửa chữ)
 Người kiểm: B (Claude Opus 5.5, terminal `hue-rag-3f`) · 2026-10-25 (`date` khi viết: sau 14:10)
-File được kiểm: `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (bản 2, sha `e923249c13af`), `BAO_CAO_BO_CAU_HOI_GOLDEN.md` (bản 5,
-`98c92d8e9d40`), `BAO_CAO_EMBEDDING_TU_KHOA.md` (bản 3, `e056d8561662`). Đối chiếu: `session_prompt/TEMPLATE_USER_REPORT.md`,
+File được kiểm: `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (bản 2, sha `e923249c13af`), `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` (bản 5,
+`98c92d8e9d40`), `04_BAO_CAO_EMBEDDING_TU_KHOA.md` (bản 3, `e056d8561662`). Đối chiếu: `session_prompt/TEMPLATE_USER_REPORT.md`,
 `WORKFLOW.md` §6, report gốc G0–G4K. Chỉ docs ⇒ kiểm nhất quán, số, link, trạng thái; không chạy lại.
 
 ## 1. Cổng tối thiểu
@@ -40,7 +40,7 @@ File được kiểm: `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (bản 2, sha `e923
   đổi"). Tùy A nếu muốn để A ghi ở `TONG_HOP`.
 
 Ghi nhận, không phải finding:
-- DANH_GIA §4 (bản 1 của A) ghi nDCG 7B **0,75**, `BAO_CAO_TIM_KIEM.md` ghi **0,76** (số gốc 0,755) — chênh do làm tròn, có từ
+- DANH_GIA §4 (bản 1 của A) ghi nDCG 7B **0,75**, `06_BAO_CAO_TIM_KIEM.md` ghi **0,76** (số gốc 0,755) — chênh do làm tròn, có từ
   bản trước; nếu sửa thì chọn một cách làm tròn cho cả hai.
 - EMBEDDING ghi đúng chỗ "câu không dấu do máy bỏ dấu, chưa phải câu thật" — giới hạn quan trọng nhất của G4K E.
 

@@ -84,7 +84,7 @@ nhóm *tài liệu* = C-12 + C-13 + C-14; nhóm *harness 8.2* = C-02 + C-20 (tr�
   (`experiments/phase_8_1/*` thêm `..` vào `sys.path`).
 - **Rủi ro khi sửa:** test hiện import cả hai kiểu (`from backend.reranking…`, `from llm…`) ⇒ phải sửa cùng lúc. **Đã grep (phiên tối
   25/10):** lệnh build index chính thức chạy **từ gốc repo** — `python -m backend.ingestion.full_corpus_pipeline build --candidate <id>`
-  (`guides/full_corpus_rag.md:114`, `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md:89`; `ingestion/preview.py:4` cũng vậy), còn API chạy **từ
+  (`guides/full_corpus_rag.md:114`, `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md:89`; `ingestion/preview.py:4` cũng vậy), còn API chạy **từ
   `backend/`** — `uvicorn api.app:app` (22 lần trong tài liệu). Hai đầu vào ⇒ hai kiểu import là gốc của C-01. Chọn import trần thì lệnh build
   phải đổi thành `cd backend && python -m ingestion.full_corpus_pipeline …` (và sửa guide / báo cáo); chọn `backend.*` thì API chạy
   `uvicorn backend.api.app:app` từ gốc. Phải chọn **một** quy ước cho cả build, API, test, harness — việc của A / User.

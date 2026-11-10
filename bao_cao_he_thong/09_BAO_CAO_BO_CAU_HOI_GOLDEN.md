@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden (Phase 7A, 8.1, sửa kho đợt 1–2)
 
-**Cập nhật lần cuối: 09:40 08/11/2026 — bản 9: sửa chỗ ghi sai "bộ câu kín mới chưa làm" — bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (khớp `BAO_CAO_DANH_GIA.md`); lần kiểm tổng quát sau cần bộ mới nữa.** Bản 8: 11:04 01/11/2026 (câu Golden lệch kho đã rõ nguyên nhân; bạn chọn giữ nguyên). Bản 7: 17:19 31/10/2026.
+**Cập nhật lần cuối: 09:40 08/11/2026 — bản 9: sửa chỗ ghi sai "bộ câu kín mới chưa làm" — bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (khớp `10_BAO_CAO_DANH_GIA.md`); lần kiểm tổng quát sau cần bộ mới nữa.** Bản 8: 11:04 01/11/2026 (câu Golden lệch kho đã rõ nguyên nhân; bạn chọn giữ nguyên). Bản 7: 17:19 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 7) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
@@ -17,7 +17,7 @@ Các bản trước: xem `git log` file này. Người viết: agent con của A
 - **Đo được:** 176 câu = một dữ kiện 75, nhiều nguồn 29, có điều kiện 29, so sánh 25, ngoài kho 18; 100 % câu đã đối chiếu với file nguồn
   (23/10). Dùng thật ở 7B: chấm hai lần chênh ≤ 0,011 điểm ⇒ thước đo ổn định.
 - **Bộ 36 câu kín** (viết kiểu người dùng thật, khoá 25/10) **đã dùng** ở lần chấm cuối Phase 8.2 (28/10) ⇒ từ đó chỉ còn là bộ kiểm hồi quy.
-  **Bộ kín mới 40 câu** (01/11) đã dùng ở lượt đo cuối Phase 1–8 (`BAO_CAO_DANH_GIA.md` mục 4) ⇒ hiện **không còn bộ kiểm "chưa ai thấy"**.
+  **Bộ kín mới 40 câu** (01/11) đã dùng ở lượt đo cuối Phase 1–8 (`10_BAO_CAO_DANH_GIA.md` mục 4) ⇒ hiện **không còn bộ kiểm "chưa ai thấy"**.
 - **Sau mỗi đợt sửa kho, đề được quét lại** xem đáp án còn khớp kho không: đợt 1 (28/10) 0 câu cần sửa; đợt 2 (30/10) sửa đáp án tham chiếu
   của 2 câu theo bạn chọn. Chạy lại kiểm định dạng 31/10 vẫn bắt thêm **1 câu** có keyword không còn nguyên văn trong kho mà
   3 lớp quét sót. Nguyên nhân (01/11): kho đổi một chữ hoa thành thường; lệnh kiểm phân biệt hoa / thường, còn phép chấm thì không ⇒ **không số chấm nào sai**; bạn chọn **giữ nguyên** (lệnh kiểm sẽ báo 1 lỗi đã biết).
@@ -106,7 +106,7 @@ Kiểm 31/10/2026 với code (commit `1985a81`) và `session_prompt/Project_Stat
 | 5 loại câu (gồm ngoài kho) | **còn dùng** | `golden_full_corpus.py:13` |
 | File soạn theo nhóm (`*/evaluation/golden_full_corpus_authoring.jsonl`), gộp theo thứ tự cố định | **còn dùng** cho `check` / `merge` | `golden_full_corpus.py:26`, `:110–119` |
 | Thước đo: tìm đoạn (MRR@10, nDCG@10, Keyword Coverage@10) + Đúng / Đủ / Trúng ý 1–5, trung bình theo câu | **còn dùng** | `full_corpus_eval.py` |
-| Người chấm câu trả lời | **Claude chính**, `gpt-6-luna` chấm phụ để so (7B, bạn chọn) | `BAO_CAO_DANH_GIA.md` |
+| Người chấm câu trả lời | **Claude chính**, `gpt-6-luna` chấm phụ để so (7B, bạn chọn) | `10_BAO_CAO_DANH_GIA.md` |
 | Chia đề 120 thử / 56 kiểm | **còn dùng** | `knowledge-base-hue/evaluation/phase_8_1/split.json` (private) |
 | Số chính bỏ 29 câu không tự nhiên | **còn dùng** | `data/phase_8_1/golden_realism_final.jsonl` (private) |
 | Golden md5 `6331e88fb171` | **còn dùng** (từ 30/10); bản trước sao lưu | `knowledge-base-hue/meta/golden_backup_dot2_2026-10-30/` (private) |
@@ -116,7 +116,7 @@ Kiểm 31/10/2026 với code (commit `1985a81`) và `session_prompt/Project_Stat
 
 ## 6. Việc còn lại / cần quyết
 
-- **Bộ câu kín mới nữa** cho lần kiểm tổng quát sau (vd trước buổi bảo vệ): bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (`BAO_CAO_DANH_GIA.md` mục 4); bộ tiếp theo chưa làm.
+- **Bộ câu kín mới nữa** cho lần kiểm tổng quát sau (vd trước buổi bảo vệ): bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (`10_BAO_CAO_DANH_GIA.md` mục 4); bộ tiếp theo chưa làm.
 - **Lỗi đã biết của lệnh `check`:** 1 câu có keyword khác kho chỉ ở chữ hoa / thường (phát hiện 17:17 31/10/2026; nguyên nhân B107 01/11) — bạn chọn giữ nguyên (11:04 01/11/2026); chấm điểm không bị ảnh hưởng.
 - Sau mỗi đợt sửa kho sau này: quét lại đề đủ 3 lớp như 30/10 (lớp "cụm chữ bị bỏ" bắt buộc) **và** chạy `golden_full_corpus check` (miễn phí,
   vài giây) — 31/10 lệnh này bắt 1 câu mà 3 lớp quét sót.

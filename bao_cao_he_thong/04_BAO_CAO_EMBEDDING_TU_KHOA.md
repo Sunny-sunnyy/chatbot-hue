@@ -10,7 +10,7 @@ Người viết: agent con của A (bản 5) · Review: A. Bản 10/11: agent co
 - **Đang chạy cách nào:** model `e5-small` (chạy trên máy, CPU, 384 số mỗi vector) cho cả đoạn và câu hỏi. BM25 dùng danh sách
   **5.631 từ** lập từ **8.435 đoạn** (kho sau hai đợt sửa + giờ mở cửa, build lại 05/11 tối), tách từ theo âm tiết. Câu hỏi được chuẩn hóa Unicode
   (NFC — gộp dấu tách rời thành ký tự có dấu) trước khi tìm (từ 28/10).
-- **Đo được:** chưa có số chất lượng riêng cho khâu này; chất lượng tìm đoạn chung (vector + từ khóa) ở `BAO_CAO_TIM_KIEM.md`. Kiểm kỹ
+- **Đo được:** chưa có số chất lượng riêng cho khâu này; chất lượng tìm đoạn chung (vector + từ khóa) ở `06_BAO_CAO_TIM_KIEM.md`. Kiểm kỹ
   thuật: danh sách từ khóa build lại ra giống hệt từng byte (test đạt sau build lại 30/10).
 - **Đã thử để cải thiện (Phase 8):**
   - **model vector lớn Qwen3-Embedding-8B** thay e5-small (30/10): **kém hơn** — 3 / 40 câu mất đoạn đúng (luật: không được mất câu
@@ -125,7 +125,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
 - Câu gõ không dấu: ngoài phạm vi (bạn quyết 25/10); nếu mở lại, hướng đã thấy là chỉ bật bản bỏ dấu khi câu hỏi không có dấu nào,
   đo bằng câu không dấu thật của người dùng.
 - Kho đổi thì phải xoá danh sách từ khóa cũ trước khi build lại (bẫy đã biết).
-- Đoạn dài nhất 255 / 256 token theo tokenizer huydang (đo 30/10, `BAO_CAO_CHIA_DOAN.md`) — sát trần của ràng buộc cũ, chatbot không dùng model đó.
+- Đoạn dài nhất 255 / 256 token theo tokenizer huydang (đo 30/10, `03_BAO_CAO_CHIA_DOAN.md`) — sát trần của ràng buộc cũ, chatbot không dùng model đó.
 
 ## Phụ lục — hồ sơ kỹ thuật
 

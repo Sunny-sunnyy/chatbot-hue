@@ -51,4 +51,4 @@ luận là tạm cho tới khi có đánh giá của bạn (B0).
 
 - `report_agent/2026-10-26_cai_tien_tung_khau/TONG_HOP.md` (kỹ thuật, theo giờ)
 - `docs/superpowers/specs/2026-10-25-phase-8-2-apply-winners-design.md` §10 (luật nhận, biến thể)
-- `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md`, `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (mục "đã thử")
+- `bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md`, `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (mục "đã thử")

@@ -1,6 +1,6 @@
 # Implementation Report: B142 — nút đánh giá 👍 / 👎 + câu ngoài phạm vi kèm nút gợi ý
 
-Người làm: B (Claude Opus 5.5, `hue-rag-32`) · việc **B142** (A giao; User chọn từ nghiên cứu sản phẩm thật `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00: "chỉ lưu đánh giá") · 19:34 03/11/2026 (`date`).
+Người làm: B (Claude Opus 5.5, `hue-rag-32`) · việc **B142** (A giao; User chọn từ nghiên cứu sản phẩm thật `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 00: "chỉ lưu đánh giá") · 19:34 03/11/2026 (`date`).
 Nhánh **`p9-phan-hoi`** từ `main` `9e2ecd9`, worktree `/tmp/b_phanhoi`, commit **`6f45f58`** (đã push). Chưa merge. Report tracked: không chép kho / Golden; câu thử tự viết. Dữ liệu: `data/phase_9/b142/` (private).
 
 ## 1. Thay đổi (`git diff 9e2ecd9..6f45f58`, 6 file, +243 / −13)

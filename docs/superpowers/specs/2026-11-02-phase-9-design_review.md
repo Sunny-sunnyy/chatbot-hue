@@ -9,7 +9,7 @@ Implementation report: không có (việc tài liệu); căn cứ là mục "Că
 ## 1. Phạm vi đã review
 
 Chỉ dựa trên spec + 4 nguồn trong "Căn cứ để review":
-- [Đọc] `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md` §1, §3, §6.
+- [Đọc] `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` §1, §3, §6.
 - [Đọc] `session_prompt/CURRENT_HANDOFF.md` mục "Brainstorm Phase 9", mục "C118" (bản trong worktree, có sửa chưa commit).
 - [Đọc] `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md` §4 (và §5 giới hạn cỡ mẫu).
 - [Đọc] code `main` `411bbc5` qua `git show HEAD:`: `backend/llm/grounded_answer.py`, `backend/llm/full_corpus_prompt.py`, `backend/api/routes/chat.py` (1–80),

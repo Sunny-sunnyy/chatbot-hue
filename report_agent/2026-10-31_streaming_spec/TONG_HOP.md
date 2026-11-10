@@ -51,7 +51,7 @@ vòng cải tiến 13: W36, W45, I8 cho thử, W44 không chọn. **User hỏi "
 | Rà bảo mật C106 | C + agent con | 11 rủi ro, 0 chặn; CA1 / CA3 rào (A, review B 2 vòng) | `c106_*`, `a_governance_ca1_ca3_review.md` |
 | Plan + runbook đo cuối | C; review B | plan 3 vòng ⇒ duyệt; runbook 2 vòng | `c103_plan_review.md`, `c108_runbook_review.md` |
 | Lượt đo cuối | C (§1–§5), B (§6–§8) | **mọi sàn đạt**; Golden không làm hỏng (2 câu tụt / ≤ 5); bộ kín 0 / 6 ngoài kho, Đủ 4,18 ↔ Golden 4,58 (câu được trả lời 4,60 ↔ 4,82 ⇒ số dev lạc quan thật); ≈ 0,139 USD | `do_cuoi_*`, `do_cuoi_review.md` |
-| Báo cáo so sánh phương án | C (6 agent con) + 2 review | đăng `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` | `data/so_sanh_phuong_an/` |
+| Báo cáo so sánh phương án | C (6 agent con) + 2 review | đăng `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` | `data/so_sanh_phuong_an/` |
 
 **Giới hạn khi đóng streaming (a6):** trường log `delta_matches_final` thêm ngoài spec §4.6 (A quyết giữ); lỗi hiếm ngoài SDK chưa huỷ lần gọi model; giao diện hiện lời lỗi trình duyệt khi đứt mạng; route stream ghi bản ghi bằng
 chứng nửa chừng; rút lại / luồng đứt chỉ kiểm bằng phát lại; một lần đo 38 câu; giao diện JS thuần sẽ làm lại (`yeu_cau_cho_giao_dien_moi.md`).

@@ -14,7 +14,7 @@ không cấp quyền và không tạo việc phải làm.
 ## 2026-11-01 (13:37) — Streaming vào chatbot; lượt đo cuối Phase 1–8 (mọi sàn đạt); báo cáo so sánh phương án; rà bảo mật đóng gói
 
 - Streaming (spec `00fb57ee01b2`, S1–S4, review cả nhánh) merge `a80e12d`: chữ đầu trên trình duyệt 1,23 / 2,61 s. Lượt đo cuối (plan `ae8d42d520d4`): Golden không làm hỏng; an toàn, ngày, bộ kín mới
-  40 câu đạt sàn; bộ kín cho thấy số dev lạc quan (Đủ 4,18 ↔ 4,58). Hội thoại nhiều lượt + câu nhiều nguồn ⇒ Phase 9 (User). Báo cáo `BAO_CAO_SO_SANH_PHUONG_AN.md`; `LUONG` §5 giới hạn theo mức nặng;
+  40 câu đạt sàn; bộ kín cho thấy số dev lạc quan (Đủ 4,18 ↔ 4,58). Hội thoại nhiều lượt + câu nhiều nguồn ⇒ Phase 9 (User). Báo cáo `91_BAO_CAO_SO_SANH_PHUONG_AN.md`; `LUONG` §5 giới hạn theo mức nặng;
   `cost_usd` giá đủ; CA1 pre-push + CA3 rào Codex; vòng cải tiến 13 (W36, W45, I8). User hỏi over-engineer ⇒ A: có (S64). ≈ 0,15 USD. Còn: B0 ⇒ User đóng Phase 8.
   Tổng hợp: `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`.
 
@@ -102,7 +102,7 @@ cải tiến + B40 đối chiếu với code. Chi tiết: `report_agent/2026-10-
 ## 2026-10-25 (22:3x) — Rà code Phase 0–7 xong; sửa gói 1a, 1b, 3, 4; đợt 3 dở (nhánh `dot3`); kết phiên
 
 - Rà code (B25 dựng index + nền, C34 trả lời + đánh giá; chỉ đọc) + kiểm chéo hai chiều: 39 phát hiện → 5 gói
-  (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md`, `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`). User duyệt 19:4x cả 5 gói.
+  (`bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md`, `report_agent/2026-10-25_ra_soat_code/TONG_HOP.md`). User duyệt 19:4x cả 5 gói.
 - Đã sửa + review chéo + cổng ổn định (uvicorn thật + 2 câu): **1a** `9e6d371` validator nhận `[Nguồn n]` (lỗi citation 69 → 14 / 1.600 câu đã
   sinh; nguyên nhân "model quên `[n]`" của 8.1 sai); **4** `1b9c126` guide 0–8 + notebook; **3** `47a4e32` `paired_stats` đúng chiều, một chỗ dựng tin
   nhắn; 3c free: đếm lại citation mọi mốc (`sua_3c_citation_v2.md`) — lý do loại reasoning `none` ở 8.1 không còn (chờ xác nhận test);
@@ -158,7 +158,7 @@ cải tiến + B40 đối chiếu với code. Chi tiết: `report_agent/2026-10-
 
 ## 2026-10-24 (17:10) — Báo cáo cho User ở `bao_cao_he_thong/`; cách làm MekongAI; dọn Foods (dở)
 
-- Báo cáo cho User gom về `bao_cao_he_thong/` (README mục lục, `LUONG_HOAT_DONG_HE_THONG.md`, 9
+- Báo cáo cho User gom về `bao_cao_he_thong/` (README mục lục, `01_LUONG_HOAT_DONG_HE_THONG.md`, 9
   `BAO_CAO_<khâu>.md` cho Phase 0–7B, `nhat_ky/`); viết lại + kiểm "hôm nay còn đúng không" (B 0–4,
   C 5–7A2, A 7B + luồng), review chéo đạt. Lệch tìm thấy ghi `Project_Status.md` §4/§8.
 - Cách làm việc học MekongAI (`0a709db`): `WORKFLOW.md` §6/§8/§9.6–9.8, mẫu báo cáo khâu sống + nhật ký.
@@ -1004,7 +1004,7 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 
 - B3 merge `a3dabba` (câu dặn hẹp D6 + giao diện nhiều lượt Bản 1), nhớ tắt vì phần kín: 1 / 2 lượt ngoài kho trả lời bằng đoạn đối tượng khác (K-N2 — kiểm có ngữ cảnh bác giả thuyết "lỗi nhãn"). User chọn sửa trên bộ mới ⇒ B3b: vòng 1 Q4 không đạt ⇒ đường âm ghi trước "chỉ nhớ câu hỏi" đạt; bộ mới C 6 / 6 từ chối đúng ⇒ bật, merge `9e2ecd9`.
 - B142 merge `6817897` (👍 / 👎 chỉ lưu đánh giá; 3 nút gợi ý dưới câu ngoài phạm vi — User chọn từ nghiên cứu sản phẩm thật). B143 merge `e3cdb96`: lỗ hổng định tuyến khẩn cấp "vừa bị giật đồ, báo công an" (có từ B1; C phát hiện nhờ luật dừng của plan tốc độ) — sửa một dòng định nghĩa `khan_cap`, mọi sàn đạt.
-- Nghiên cứu: 15 trợ lý thế giới (Codex; A kiểm 3 nguồn) + Huế TRIPO vòng 2 (agent con, Playwright) ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 4. Phân tích tốc độ C150 (định tuyến ≈ 46 % chữ đầu). Plan B4 bản 2 duyệt `42fa62d2425f`; plan B5 nháp; plan tốc độ bản 4 chờ review. User: thời tiết = B5b; B6 web chỉ cho câu về Huế.
+- Nghiên cứu: 15 trợ lý thế giới (Codex; A kiểm 3 nguồn) + Huế TRIPO vòng 2 (agent con, Playwright) ⇒ `92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` bản 4. Phân tích tốc độ C150 (định tuyến ≈ 46 % chữ đầu). Plan B4 bản 2 duyệt `42fa62d2425f`; plan B5 nháp; plan tốc độ bản 4 chờ review. User: thời tiết = B5b; B6 web chỉ cho câu về Huế.
 - Vòng cải tiến 17: S86–S90; W52 / W54 / I9 đề xuất chờ User; W50 ⇒ `đang dùng`. Tiền phiên tối ≈ 0,28 USD; Phase 9 ≈ 0,94 / 2,0. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-03_toi.md`.
 
 ## 2026-11-04 — câu khẩn cấp PA1; tốc độ #1 âm, #6 đạt; B4 khoá 3; nghiên cứu 8 repo + TRIPO v3 (A, 21:34 04/11/2026)
@@ -1012,7 +1012,7 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - `main`: B154 câu khẩn cấp PA1 (`4e3cb4e`). Thí nghiệm tốc độ #1 (suy luận "none" khi định tuyến) **âm** — phạm sàn an toàn (tag `hoso/p9-toc-do-1`); #6 (trả lời song song định tuyến) **đạt** −1,37 s [0,34; 2,14], chưa merge.
 - B4: khoá 1 âm (lỗi cài đặt — S91), khoá 2 còn 1 / 5 câu nhân giá ⇒ User chọn vòng sửa 2 ⇒ khoá 3 đạt mọi phần đã thấy; trần 0,24; còn kín.
 - Plan B5 bản 3 + bảng điểm v2 duyệt; User thêm bậc "sửa lịch nhiều lượt" + cột `ten_khac`.
-- Nghiên cứu: đọc code 8 repo + ViWOZ, TRIPO vòng 3, nguồn agent ⇒ `BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; 18 ý ⇒ `CURRENT_HANDOFF.md`. Vòng cải tiến 17 (W52, W54, I10) + 18 (W55, W56). Tiền phiên ≈ 0,226 USD. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-04.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-04_phase_9_b4_toc_do.md`.
+- Nghiên cứu: đọc code 8 repo + ViWOZ, TRIPO vòng 3, nguồn agent ⇒ `92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; 18 ý ⇒ `CURRENT_HANDOFF.md`. Vòng cải tiến 17 (W52, W54, I10) + 18 (W55, W56). Tiền phiên ≈ 0,226 USD. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-04.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-04_phase_9_b4_toc_do.md`.
 
 ## 2026-11-05 — B4 âm 2 vòng; B5 lịch trình vào `main` cờ tắt; #6 bật; B5c âm 2 vòng; chia Phase 10–12; luật chống over-engineering (A, 16:49 05/11/2026)
 

@@ -2,7 +2,7 @@
 
 Decision: **changes_requested** (0 blocker / 1 major / 6 minor) · Người kiểm: B (Claude Opus 5.5) · Date: 11:32 01/11/2026 (`date`)
 Bản kiểm: `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` **`ba70843a4652`** (B tự tính `sha256sum`; file untracked, 212 dòng).
-Cách review (`WORKFLOW.md` §9.1): **chỉ** gói "Căn cứ để review" của plan — plan toàn bộ; `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` §1–§3 + phụ lục;
+Cách review (`WORKFLOW.md` §9.1): **chỉ** gói "Căn cứ để review" của plan — plan toàn bộ; `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` §1–§3 + phụ lục;
 `report_agent/2026-10-27_phan_ton_phase_cu/sua_kho_dot2_do_plan.md` §1, §2, §5, §7; spec streaming `00fb57ee01b2` §6 C1–C3, C6 (B đã đọc khi làm S1 / S2) — cộng lệnh chỉ đọc
 trên dữ liệu private. **Không** đọc `STATUS_C.md`, tin nhắn của C. Không mở câu kín. 0 USD.
 
@@ -12,7 +12,7 @@ Tiêu chí ghi trước (sàn / mức tụt / theo dõi) của §3.1–§3.8, c�
 Không review: nội dung các plan "thử thêm" §4 (chưa có), phương án streaming (spec riêng).
 
 **Đạt (đối chiếu được):**
-- Ba lớp tiêu chí đủ cho Golden (F1–F4, T1–T3 giữ đúng như plan đợt 2 §5; A/A = 2 ⇒ ≤ 5 câu khớp `BAO_CAO_DANH_GIA.md` §1 "Đủ tụt 1, Đúng tụt 2") và bộ an toàn (A1, A2 hai vế,
+- Ba lớp tiêu chí đủ cho Golden (F1–F4, T1–T3 giữ đúng như plan đợt 2 §5; A/A = 2 ⇒ ≤ 5 câu khớp `10_BAO_CAO_DANH_GIA.md` §1 "Đủ tụt 1, Đúng tụt 2") và bộ an toàn (A1, A2 hai vế,
   N_AA = 2, thủ tục (i)/(ii)/(iii) dẫn đúng plan đợt 2 §5).
 - Cỡ mẫu số chính **129 trong kho + 18 ngoài kho**: B tính lại từ `data/phase_8_1/golden_realism_final.jsonl` (82 / 65 / 29) + Golden ⇒ 147 câu, đúng 129 + 18.
 - Cận trên Clopper–Pearson một phía 95 %: 0 / 6 ⇒ 0,393 ✓; 0 / 28 ⇒ 0,1015 ✓ (B tính lại).
@@ -41,10 +41,10 @@ Không review: nội dung các plan "thử thêm" §4 (chưa có), phương án 
 (`Runner.run_streamed`). Hai đường cùng agent / prompt / kiểm citation, và chữ stream = chữ cuối đã kiểm theo spec C5 — nhưng plan nên ghi một câu: chất lượng route stream dựa trên
 Golden (đường thường) + C5 (tương đương chữ), không đo Golden qua route stream. Tiêu chí đóng: thêm câu đó vào §3.1 hoặc §10.
 
-**m-3 — §3.2 ↔ §10 / §3.7: cùng n = 28 mà hai con số khác nhau.** §3.2 (dẫn `BAO_CAO_DANH_GIA.md` §1) ghi "28 câu ⇒ < ~12 %" — đó là cận trên **hai phía** 95 % (1 − 0,025^(1/28) = 0,123);
+**m-3 — §3.2 ↔ §10 / §3.7: cùng n = 28 mà hai con số khác nhau.** §3.2 (dẫn `10_BAO_CAO_DANH_GIA.md` §1) ghi "28 câu ⇒ < ~12 %" — đó là cận trên **hai phía** 95 % (1 − 0,025^(1/28) = 0,123);
 §10 / §3.7 ghi "0 / 28 ⇒ < ~10 %" — cận **một phía** (0,1015). Tiêu chí đóng: dùng một quy ước cho mọi cận trên trong plan / report (B khuyên một phía 95 %, ghi rõ), sửa con số kia.
 
-**m-4 — §6 tiền: ước theo giá phẳng, nhưng lúc chạy `cost_usd` đã là giá đủ (điều kiện §2).** Ước có A/A 0,113 (phẳng) ⇒ ≈ 0,136 theo giá đủ (+20 %, `BAO_CAO_DANH_GIA.md` §1); trần đề xuất
+**m-4 — §6 tiền: ước theo giá phẳng, nhưng lúc chạy `cost_usd` đã là giá đủ (điều kiện §2).** Ước có A/A 0,113 (phẳng) ⇒ ≈ 0,136 theo giá đủ (+20 %, `10_BAO_CAO_DANH_GIA.md` §1); trần đề xuất
 0,15 chỉ dư ≈ 10 % (không phải "+30 %"), trong khi luật dừng là "vượt ước > 50 %". Tiêu chí đóng: ghi ước theo giá đủ và mức dư thật của trần (hoặc nâng trần đề xuất), để Q4 trình User đúng.
 (Tham khảo: B108 01/11 — `cost_usd` giá đủ đã code trên nhánh `dg-cost-usd` `bbbdbf9`, chưa merge; mục §2 dòng 32 cập nhật lúc đó.)
 
@@ -58,7 +58,7 @@ trong kho (loại thứ 5 là ngoài kho, tính riêng 6 câu) — sửa chữ; 
 **Ghi chú (không phải finding):**
 - n-1: §11 Q2 PA1 (A/A cùng ngày) chưa nói A/A mới **thay** N_AA = 2 hay chỉ dùng để tách trôi khi sát ngưỡng. Plan để `TBD` — khi User chọn PA1, phải ghi luật quyết trước khi chạy.
 - n-2: §3.4 điều kiện dùng lại lượt S4: thêm "cùng build record / sparse / Qdrant" (dữ liệu không nằm trong `git diff`) — §2 "ghi trước" đã có các mục này nên chỉ cần dẫn chéo.
-- n-3: §2 câu Golden lệch kho "User giữ nguyên 11:04 01/11" — B không kiểm được quyết định này trong gói căn cứ (chỉ thấy `BAO_CAO_DANH_GIA.md` §1 ghi "chờ bạn duyệt", bản 31/10) ⇒ A xác nhận
+- n-3: §2 câu Golden lệch kho "User giữ nguyên 11:04 01/11" — B không kiểm được quyết định này trong gói căn cứ (chỉ thấy `10_BAO_CAO_DANH_GIA.md` §1 ghi "chờ bạn duyệt", bản 31/10) ⇒ A xác nhận
   và cập nhật báo cáo khâu.
 
 ## 3. Cách người kiểm chạy lại thật
@@ -72,8 +72,8 @@ Như §1 "Đạt" và bằng chứng trong từng finding. Không có số nào 
 
 ## 5. Giới hạn hoặc phần chưa chạy
 
-- Không đọc plan gốc đợt 1 `sua_kho_do_truoc_sau_plan.md` (ngoài gói) ⇒ định nghĩa chi tiết F1–F4 / T3 / W1–W8 kiểm qua plan đợt 2 + `BAO_CAO_DANH_GIA.md`, không qua bản gốc.
-- Không kiểm các số mốc ngày tương đối ("0 / 12 câu quyết", "6 / 14") ngoài dòng tóm tắt của `BAO_CAO_DANH_GIA.md` §3 (khớp "6 / 14").
+- Không đọc plan gốc đợt 1 `sua_kho_do_truoc_sau_plan.md` (ngoài gói) ⇒ định nghĩa chi tiết F1–F4 / T3 / W1–W8 kiểm qua plan đợt 2 + `10_BAO_CAO_DANH_GIA.md`, không qua bản gốc.
+- Không kiểm các số mốc ngày tương đối ("0 / 12 câu quyết", "6 / 14") ngoài dòng tóm tắt của `10_BAO_CAO_DANH_GIA.md` §3 (khớp "6 / 14").
 - B là người viết B107 (đề xuất sửa Golden) và người code S1 / S2 / B108 mà plan dựa vào — không phải người viết plan, nên review vẫn độc lập theo §9.1; ghi để A biết.
 
 ## 6. Decision và bước tiếp theo
@@ -101,11 +101,11 @@ và chỗ bị ảnh hưởng. Cùng ranh giới vòng 1 (chỉ gói căn cứ +
 | m-6 | §3.7 rào đọc kho (ngoài `evaluation/`, `meta/`, `_source-dumps/`; `grep_kb.sh`); "4 loại trong kho + `out_of_scope`"; 4 câu điều kiện gắn `conditional` | 30 + 6 + 4 = 40 ✓; sàn "mọi câu `conditional`" nay gồm 4 câu thêm | ✓ |
 | n-1 | §11 Q2 PA1: giữ N_AA = 2; A/A cùng ngày chỉ khi sát ngưỡng (4–5 câu tụt hoặc vượt 1) | luật ghi trước, không đổi thước sau khi thấy số | ✓ |
 | n-2 | §3.4 thêm điều kiện build record / sparse / Qdrant | ✓ | ✓ |
-| n-3 | §2 dẫn `CURRENT_HANDOFF.md:89` + `BAO_CAO_BO_CAU_HOI_GOLDEN.md` (bản 8, 11:04 01/11) | cả hai ghi "User 11:04 01/11: giữ nguyên" ✓ | ✓ |
+| n-3 | §2 dẫn `CURRENT_HANDOFF.md:89` + `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` (bản 8, 11:04 01/11) | cả hai ghi "User 11:04 01/11: giữ nguyên" ✓ | ✓ |
 
 **Ghi chú (không mở vòng):**
 - n-4: §3.4 / §6 "22 câu tự viết của B65" chưa ghi đường dẫn + sha bộ câu — có ở `b65_latency_dau_cuoi.md:25`: `data/phase_8_2/latency_2710/questions.jsonl` (`bac5c91db005`). Thêm khi điền `TBD` (cùng kiểu m-5). Bộ này có trường `question` trong `data/` ⇒ tự nằm trong phép so SHA256 §3.7.
-- n-5: dòng "giá đủ (+20 %)" §6 nhân 1,2 cả hai dòng đã tính bằng 0,00025 USD / câu (tốc độ trình duyệt, bộ kín, 22 câu B65) — số 0,00025 vốn là **giá đủ** (`BAO_CAO_DANH_GIA.md` §1) ⇒ ước hơi dư (≈ +0,006 USD), theo chiều an toàn; không cần sửa.
+- n-5: dòng "giá đủ (+20 %)" §6 nhân 1,2 cả hai dòng đã tính bằng 0,00025 USD / câu (tốc độ trình duyệt, bộ kín, 22 câu B65) — số 0,00025 vốn là **giá đủ** (`10_BAO_CAO_DANH_GIA.md` §1) ⇒ ước hơi dư (≈ +0,006 USD), theo chiều an toàn; không cần sửa.
 
 Bước tiếp: A điền `TBD` theo câu trả lời Q1–Q4 của User ⇒ người review kiểm đúng phần điền ⇒ A ghi "duyệt bản sha" (tính từ file).
 

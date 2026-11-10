@@ -96,7 +96,7 @@ cổng cuối B1 đo chữ đầu 10 câu thật trên đường stream (≈ 0,0
 - **B2b ĐẠT (Q8):** Đủ 18 câu nhiều nguồn **+1,17** [+0,44; +2,00] (6 / 12 / 0), test không ngược; N_AA đường công cụ 5 / 5 ⇒ ngưỡng 8; Golden Đủ / Đúng TB +0,22; F1–F4 0; từ chối nhầm 12 ⇒ 4 / 6; S-AT: **1 P0_sai mới thật** (S20, thêm lời khuyên chung không có trong nguồn — không đảo cảnh báo; 2 / 3 ↔ 0 / 3) ⇒ dùng 1 / 2 suất cả Phase. Tiền B2 0,2478 / 0,45.
 - **User quyết 11:16 03/11/2026 (hộp chọn): GIỮ `tim_them`; sửa ở B3** — plan B3 thêm dòng lời dặn "chỉ nêu điều có trong nguồn, không thêm lời khuyên chung" + kiểm lại S20 trong lượt an toàn B3. Theo dõi: router đưa S20 sang `khan_cap` 1 / 3 lần sinh lại. ⇒ B: mặc định `tim_them` true ⇒ Q7 ⇒ cổng Q9 ⇒ C review nhánh ⇒ A merge.
 
-**B2 MERGE 11:39 03/11/2026: `main` `00d670e`** (A; C141 vòng cuối ready `b134_review.md` `4ae586d05978` — 0 / 0 / 3 minor m-3…m-5 ⇒ plan B3 D9; code `main` = nhánh ⇒ dùng lại cổng Q9; A chạy lại trên `main` pytest 9 file có key **70 / 70 pass**). 5 chỗ báo cáo: LUONG bản 21, BAO_CAO_SINH bản 21, BAO_CAO_TIM_KIEM, Project_Status, guide 6, nhật ký + mục lục. Nhánh `p9-b1`, `p9-b2` + worktree `/tmp/b_p9b1`, `/tmp/b_p9b2` ⇒ đề xuất xoá lúc kết phiên (User `!`).
+**B2 MERGE 11:39 03/11/2026: `main` `00d670e`** (A; C141 vòng cuối ready `b134_review.md` `4ae586d05978` — 0 / 0 / 3 minor m-3…m-5 ⇒ plan B3 D9; code `main` = nhánh ⇒ dùng lại cổng Q9; A chạy lại trên `main` pytest 9 file có key **70 / 70 pass**). 5 chỗ báo cáo: LUONG bản 21, BAO_CAO_SINH bản 21, 06_BAO_CAO_TIM_KIEM, Project_Status, guide 6, nhật ký + mục lục. Nhánh `p9-b1`, `p9-b2` + worktree `/tmp/b_p9b1`, `/tmp/b_p9b2` ⇒ đề xuất xoá lúc kết phiên (User `!`).
 **B135 plan B3 bản 1** `aa75f956c320` ⇒ **C142 review**. A quyết: D11 (a) mốc quyết 2 = câu gõ thật không lịch sử; trần B3 0,30 (dừng > 0,27).
 
 - **C142 review plan B3 bản 1** (`…-b3-plan_review.md` `49e44a396b3f`): 0 / 0 / 5 minor (m-1 ITEM_OVERHEAD + "usage − builder" mọi lượt; m-2 D6 có thể làm **thiếu** cảnh báo — B2b P0_thieu 10 ⇒ 9 (mới S10, S28; hết S09, S12, S14), Q2 báo ghi trước, tăng ⇒ báo A; m-3 C chạy kín; m-4 tiền ≥ 0,17; m-5 D11). README bộ đo B3 `57c31a7110c5`. ⇒ B plan bản 2.
@@ -253,5 +253,5 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C lúc mở phiên sau:
 
 - Phiên 02/11 nguyên văn (B121 giao diện, B122 / B123, C118–C121, các quyết định agent theo giờ): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-02.md`.
 - Giao diện mới: `report_agent/2026-11-02_giao_dien_moi_code/` (`b121_giao_dien_implementation.md`, `b121_review.md`); hướng chọn B116 `report_agent/2026-11-01_giao_dien_moi/`.
-- Nghiên cứu Phase 9: `report_agent/2026-11-01_nghien_cuu_phase_9/` + `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md`.
+- Nghiên cứu Phase 9: `report_agent/2026-11-01_nghien_cuu_phase_9/` + `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md`.
 - Streaming + lượt đo cuối Phase 1–8 (01/11): `report_agent/2026-10-31_streaming_spec/TONG_HOP.md`. Phase 8.2: `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md`.

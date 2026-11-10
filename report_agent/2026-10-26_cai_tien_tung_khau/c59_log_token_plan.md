@@ -112,7 +112,7 @@ Cả hai test gắn thẳng `caplog.handler` vào `logging.getLogger("chat")` (g
    - tổng `input_tokens` / `output_tokens` khớp với số đo được bằng `cost_usd` (tiền thật cổng ≈ 0,0003 USD);
    - `total_ms` so với thời gian client đo: chênh vài ms (C58: ~2 ms) ⇒ đo đúng chỗ.
 3. Không chạm tìm kiếm / chia đoạn ⇒ không cần T1 (ghi lý do).
-4. Hành vi người dùng không đổi ⇒ chỉ ghi một dòng ở `LUONG_HOAT_DONG_HE_THONG.md` / `BAO_CAO_SINH_CAU_TRA_LOI_API.md` (A quyết).
+4. Hành vi người dùng không đổi ⇒ chỉ ghi một dòng ở `01_LUONG_HOAT_DONG_HE_THONG.md` / `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (A quyết).
 5. Hook pre-commit quét trùng; A commit + push.
 
 ## 6. Rủi ro và cách giảm

@@ -6,9 +6,9 @@ Date: 2026-10-25, viết xong trước 14:13 (giờ "14:20" ghi ở bản đầu
 
 | File | Sha 12 (khớp tin B) |
 |---|---|
-| `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` bản 5 | `536c99450528` |
-| `BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 5 | `ea3f850571ca` |
-| `BAO_CAO_CHIA_DOAN.md` bản 3 | `40e7fe8c6fd4` |
+| `bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md` bản 5 | `536c99450528` |
+| `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 5 | `ea3f850571ca` |
+| `03_BAO_CAO_CHIA_DOAN.md` bản 3 | `40e7fe8c6fd4` |
 
 ## 1. Phạm vi đã review
 
@@ -41,10 +41,10 @@ Date: 2026-10-25, viết xong trước 14:13 (giờ "14:20" ghi ở bản đầu
 
 **SINH_CAU_TRA_LOI_API: không có finding.** Mọi số khớp review G2: Đủ +0,26 / +0,27; từ chối nhầm 13 → 7 (G2.1a), 13 → 1
 (P1); 2 câu ngoài kho bị trả lời; citation 4 → 8 / 9 (none / low); 0,157 USD cho ≈ 1.070 câu trả lời; nhóm đủ bằng chứng
-0/13/0; nhiễu người chấm 2/88. Đính chính "4/22 → 0/22" khớp G1.6 và khớp `BAO_CAO_DANH_GIA.md` bản 2 của C.
+0/13/0; nhiễu người chấm 2/88. Đính chính "4/22 → 0/22" khớp G1.6 và khớp `10_BAO_CAO_DANH_GIA.md` bản 2 của C.
 
 Kiểm khớp chéo:
-- Câu không dấu "1/32 vs 13/32", đề xuất "chỉ dùng bản bỏ dấu khi câu không dấu" và NFC: khớp `BAO_CAO_EMBEDDING_TU_KHOA.md`
+- Câu không dấu "1/32 vs 13/32", đề xuất "chỉ dùng bản bỏ dấu khi câu không dấu" và NFC: khớp `04_BAO_CAO_EMBEDDING_TU_KHOA.md`
   bản 3 của C.
 - Phần G3 trong CHIA_DOAN tóm đúng report G3: 12 cách; mất 4 / 6 / 6 / 8 / 7 / 8 câu; B10 mất 6; S1–S3 không khác; ngân sách 750
   / 1.500.

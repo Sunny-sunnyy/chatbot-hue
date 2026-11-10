@@ -147,6 +147,6 @@ Tổng 09/11 ≈ **0,62 USD**. Phase 9 ≈ **3,6 / 4,0** (≈ 3,0 trước 09/11
 ### Bước tiếp
 
 1. Tối ưu tốc độ (sau, chất lượng trước): câu ngày (đo thêm 15–20 câu; thử code tính sẵn ngày thay vì model gọi công cụ), câu xã giao (chạy song song định tuyến như #6).
-2. Kết phiên: báo cáo khâu `BAO_CAO_SINH_CAU_TRA_LOI_API` + `LUONG_HOAT_DONG_HE_THONG` gộp đợt (T1 bật, G phương án B, 3 việc đóng hồ sơ, chốt deploy); `Project_Status.md`.
+2. Kết phiên: báo cáo khâu `07_BAO_CAO_SINH_CAU_TRA_LOI_API` + `01_LUONG_HOAT_DONG_HE_THONG` gộp đợt (T1 bật, G phương án B, 3 việc đóng hồ sơ, chốt deploy); `Project_Status.md`.
 3. B7 so sánh cuối ⇒ đóng gói + Docker (nhánh `p12-deploy-nhap` chờ User) ⇒ deploy khi User nói (đặt 3 biến môi trường + `--proxy-headers`).
 4. User khi rảnh: phiếu toạ độ bản đồ (bật `ban_do_lich`), thu 40 câu giọng nói; chốt mốc đóng tính năng.

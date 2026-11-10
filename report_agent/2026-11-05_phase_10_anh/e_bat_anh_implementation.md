@@ -70,7 +70,7 @@ A giao (User 08/11 chọn bật hỏi bằng ảnh trước đóng gói):
 
 - **Ngoài phạm vi, gặp khi chụp ảnh (cổng đợt 1, không phải ảnh):** dòng "Nguồn" lặp cùng một tên bài nhiều lần. Một câu về lăng ra 8 lần cùng tên, vì mỗi đoạn trích của cùng bài là một nguồn và giao diện in tên bài cho từng đoạn. Đề xuất: gộp theo bài, mỗi bài một tên, bấm tên thì hiện các đoạn của bài đó. Chưa sửa — báo A.
 - Cổng ổn định với cờ tắt **chưa hỏi 2 câu có phí** (trong kho / ngoài kho). Lý do: thay đổi chỉ ở 3 file giao diện, `HoiBangAnh` trả `null` khi cờ tắt, đường chat không đổi; 5 câu có phí ở lượt bật cờ đã đi đúng đường hỏi thường trên cùng bản build. Đây là **dùng lại**, không phải lượt mới — A quyết có cần 2 câu không (≈ 0,0015 USD).
-- Cỡ mẫu nhỏ (5 ảnh khác nhau), chỉ để kiểm giao diện; chất lượng nhận ảnh vẫn theo số đo 05/11 (`BAO_CAO_HOI_BANG_ANH.md`).
+- Cỡ mẫu nhỏ (5 ảnh khác nhau), chỉ để kiểm giao diện; chất lượng nhận ảnh vẫn theo số đo 05/11 (`08_BAO_CAO_HOI_BANG_ANH.md`).
 - Khung nổi trên máy tính: thẻ ảnh làm vùng hội thoại của khung thấp đi (khung có chiều cao cố định), nhưng không đè lên nội dung. Ca đo khung nổi chưa có câu trả lời trước đó.
 - Nhánh B `p11-ban-do` chạm `pages.jsx` / `index.css` ⇒ bên merge sau rebase. Nhánh này chỉ chạm `GioiThieu` + `App.jsx` 1 dòng.
 
@@ -80,4 +80,4 @@ A giao (User 08/11 chọn bật hỏi bằng ảnh trước đóng gói):
 - Chạy lại (có phí khoảng 0,002 USD):
   - build ⇒ server có `anh.bat: true` ⇒ `uv run python -I data/phase_10/anh/e_bat/ui_bat.py <BASE> <OUT> data/phase_10/bo_do_anh/da_thay/khong_tin_cay data/phase_10/anh/e_bat/ca_sau_sua.json`;
   - cờ tắt, 0 USD: `co_tat.py <BASE>`.
-- Khi merge để bật: đổi `settings.yaml` `anh.bat: true` + build lại giao diện; báo cáo `BAO_CAO_HOI_BANG_ANH.md` (Tóm tắt: "đã bật") + `LUONG_HOAT_DONG_HE_THONG.md` (người dùng thấy đổi).
+- Khi merge để bật: đổi `settings.yaml` `anh.bat: true` + build lại giao diện; báo cáo `08_BAO_CAO_HOI_BANG_ANH.md` (Tóm tắt: "đã bật") + `01_LUONG_HOAT_DONG_HE_THONG.md` (người dùng thấy đổi).

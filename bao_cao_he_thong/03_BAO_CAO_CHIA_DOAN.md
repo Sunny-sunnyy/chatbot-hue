@@ -18,7 +18,7 @@ Người viết: agent con của A (bản 6) · Review: A. Bản 10/11: agent co
   dưới 50 token ("đoạn vụn"): **đo trên kho cũ (8.459 đoạn, 24/10), chưa đo lại.**
 - **Giới hạn chính:**
   - nhiều đoạn rất ngắn — 8.1 thử gộp lại: không giúp (§4);
-  - bảng dài bị tách từng hàng nên dòng giá đứng riêng, khó tìm (gốc ở khâu tìm, `BAO_CAO_TIM_KIEM.md`); bảng ngắn giữ nguyên;
+  - bảng dài bị tách từng hàng nên dòng giá đứng riêng, khó tìm (gốc ở khâu tìm, `06_BAO_CAO_TIM_KIEM.md`); bảng ngắn giữ nguyên;
   - 3 cặp đoạn lặp một phần nội dung (đếm trên kho cũ, chưa đếm lại);
   - ID đoạn dạng `file#số` dồn số khi xoá / thêm dòng giữa file (gặp 30/10 ở 2 file) ⇒ so trước ↔ sau phải theo nội dung;
   - đoạn dài nhất sát trần tokenizer huydang (255 / 256) — model này chatbot không dùng, code vẫn kiểm (xem §2).
@@ -58,7 +58,7 @@ Người viết: agent con của A (bản 6) · Review: A. Bản 10/11: agent co
 |---|---|---|
 | Đoạn văn, tiêu đề thường | **Đã xử lý, đóng gói** | 8.435 đoạn (05/11 tối; 30/10: 8.424), 0 lỗi; chỉ mục đang chạy dùng đúng các đoạn này |
 | Đoạn văn quá dài | **Đã xử lý, đóng gói** | tách ở ranh giới câu; `full_corpus_chunker.py:482` |
-| Bảng (bảng giá, lịch) | **Xử lý một phần** | bảng dài tách từng hàng kèm dòng tiêu đề (`full_corpus_chunker.py:400`); dòng giá đứng riêng nên khó tìm — xem `BAO_CAO_TIM_KIEM.md`. 144 đoạn là bảng (đếm 26/10 trên kho cũ). 8.1 thử gộp các dòng liền nhau của cùng bảng: **không khác** |
+| Bảng (bảng giá, lịch) | **Xử lý một phần** | bảng dài tách từng hàng kèm dòng tiêu đề (`full_corpus_chunker.py:400`); dòng giá đứng riêng nên khó tìm — xem `06_BAO_CAO_TIM_KIEM.md`. 144 đoạn là bảng (đếm 26/10 trên kho cũ). 8.1 thử gộp các dòng liền nhau của cùng bảng: **không khác** |
 | Danh sách dài | **Đã xử lý, đóng gói** | tách từng mục con; `full_corpus_chunker.py:450` |
 | Trích dẫn (blockquote) lồng trong mục danh sách | **Xử lý một phần** | 3 cặp đoạn lặp một phần thân đoạn (3 file di tích; đếm 24/10 trên kho cũ); `markdown_blocks.py:228-245`. 8.1 thử bỏ đoạn lặp: không khác |
 | Khối code (```) trong 2 file di tích | **Đã thử, chưa áp dụng** | bộ đọc Markdown bỏ qua không báo (~360 ký tự; đếm trên kho cũ); 8.1 thử giữ lại thành đoạn: không khác |
@@ -103,7 +103,7 @@ xoá ngay sau khi đo. Tiền: 0.
 | Gộp 384 / 512 với hạn mức gấp đôi (cỡ 10 đoạn) | mất 6 câu so với đoạn hiện tại cùng hạn mức | **kém hơn** ⇒ bỏ |
 
 Vì sao: đoạn to **tìm thấy** nhiều hơn, nhưng mỗi đoạn chiếm nhiều chỗ nên chỉ ~4–5 đoạn vừa hạn mức thay vì ~9 đoạn nhỏ trỏ tới
-nhiều chỗ khác nhau. Cách cải thiện có bằng chứng nằm ở bước sinh (đưa 10 đoạn — đã vào chatbot 28/10, `BAO_CAO_SINH_CAU_TRA_LOI_API.md`).
+nhiều chỗ khác nhau. Cách cải thiện có bằng chứng nằm ở bước sinh (đưa 10 đoạn — đã vào chatbot 28/10, `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`).
 Giới hạn: 32 câu có nhãn; chỉ đo bước tìm / đưa đoạn. Report: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g3_implementation.md`.
 
 ### 24/10/2026 — Gỡ bộ chia đoạn bản món ăn, sửa test mốc cũ
@@ -141,7 +141,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
 - Hai sửa nhỏ còn lại từ 8.1 (giữ 2 khối code, bỏ 3 đoạn lặp) và bỏ kiểm 2 tokenizer cũ: **chưa làm**. 8.1 đo: không đổi đoạn đúng
   nhưng cũng không làm tốt lên ⇒ chỉ là lựa chọn nếu sau này build lại vì lý do khác.
 - Gộp đoạn vụn / gộp dòng bảng: 8.1 đo không giúp hoặc làm hại — không đề xuất.
-- Bảng giá khó tìm vẫn còn; gốc ở khâu tìm / xếp đoạn (`BAO_CAO_TIM_KIEM.md`).
+- Bảng giá khó tìm vẫn còn; gốc ở khâu tìm / xếp đoạn (`06_BAO_CAO_TIM_KIEM.md`).
 - Thống kê đoạn (trung vị token, đoạn vụn, số đoạn bảng, đoạn lặp, phần điều kiện) chưa đo lại trên kho hiện tại (8.435 đoạn).
 - ID đoạn `file#số` không bền khi sửa giữa file — đã biết, chưa có kế hoạch đổi.
 

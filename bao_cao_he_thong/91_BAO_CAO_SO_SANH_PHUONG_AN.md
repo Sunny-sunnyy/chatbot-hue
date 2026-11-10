@@ -1001,7 +1001,7 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 - **Cách đo:** B95 đọc `cache_write_tokens` / `cached_tokens` trong log; 0,0008 USD (TH27:148).
 - **Tiêu chí ghi trước:** không có tiêu chí ghi trước (kiểm sổ sách).
 - **Kết quả số:** mỗi câu `cache_write_tokens` ≈ toàn bộ phần vào, `cached_tokens` = 0 ⇒ `cost_usd` **ghi thiếu ≈ 20 %**: ~0,00021 ⇒ **~0,00025 USD / câu**, vẫn dưới trần (PS:141; BSA:19, :88-89).
-  Tham chiếu: 7B 5 đoạn ≈ 0,00014 USD / câu (giá phẳng, `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md:86`); sau đợt 2: 0,0002086 USD / câu giá phẳng (R27/sua_kho_dot2_implementation.md:64).
+  Tham chiếu: 7B 5 đoạn ≈ 0,00014 USD / câu (giá phẳng, `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md:86`); sau đợt 2: 0,0002086 USD / câu giá phẳng (R27/sua_kho_dot2_implementation.md:64).
 - **Tiền + tốc độ:** như trên.
 - **Quyết định + lý do:** sửa công thức + ghi `cache_write_tokens` ở bước đóng gói Phase 1–8 (BSA:171; PS:141).
 - **Giới hạn:** **mọi số USD cũ trong báo cáo này đếm theo giá phẳng** (BSA:89); chưa đối chiếu hoá đơn thật ("chờ User xem billing", TH27:141).
@@ -1238,7 +1238,7 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 #### E12 — Rà code: gỡ hay giữ công cụ cũ; nội dung kho trong repo public; cách sửa hướng dẫn
 - **Vấn đề:** rà code Phase 0–7 (25/10, 39 phát hiện, 5 gói) đặt 3 câu hỏi có phương án cho User ngoài việc "sửa lỗi" (các sửa lỗi thường không có so sánh phương án, không ghi khối).
 - **Ngày / Phase:** 25/10/2026 (đề xuất, User duyệt tối 25/10 — sổ gốc chỉ ghi giờ ước) → 26/10/2026 (đợt 3, merge `421c302`).
-- **Phương án + mốc** (bản đề xuất `git show 0663676:bao_cao_he_thong/DE_XUAT_SUA_CODE.md` §4, dòng 78–86):
+- **Phương án + mốc** (bản đề xuất `git show 0663676:bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` §4, dòng 78–86):
   - Công cụ cũ: (a) đường "Representation B" (chatbot không dùng) giữ / gỡ; (b) 2 bộ kiểm khói Phase 5 / 6. A nghiêng: gỡ (a) + Phase 5, giữ Phase 6 bỏ phần thừa — **chọn như A nghiêng**.
   - Hướng dẫn Phase 0–4: (a) thêm dòng "lịch sử"; (b) viết lại phần hiện hành; (c) chuyển vào `guides/history/` — **chọn (a)**.
   - Repo public (nội dung kho nguyên văn trong cấu hình / test / script; đường dẫn tới một dự án khác của User trong hướng dẫn): để nguyên / chuyển sang private từ giờ, không xoá lịch sử / xoá cả lịch sử git — **chọn chuyển từ giờ, không xoá lịch sử**; 80 report lịch sử còn trích kho: User chọn để nguyên (26/10).
@@ -1247,10 +1247,10 @@ Sáu khối N2-01 → N2-06 cùng một đợt đo (8.1 G3, 25/10/2026) và cùn
 - **Kết quả số:** D1 sha đoạn `60591acff422ece6`; D2 mốc tìm `cefb2d1ad609`; D3 25 câu giống byte; D4 197 đạt / 1 hỏng / 4 lỗi (phần cần khoá API); code **8.345 → 6.218 dòng**; 0 chuỗi kho trong code (THRC:65); đường dẫn dự án khác 48 → 0, đường dẫn chết 34 → 1 (THRC:61).
 - **Tiền + tốc độ:** cả đợt ~0,003 USD (phần lớn ước) (THRC:69).
 - **Quyết định + lý do:** User tối 25/10 "gỡ code không dùng nếu không ảnh hưởng hệ thống; hướng dẫn 0–4 thêm dòng lịch sử; nội dung kho + đường dẫn dự án khác ra khỏi file tracked từ giờ, không xoá lịch sử git" (PS:158).
-- **Giới hạn:** một số tác động chỉ suy từ code (vd Qdrant lỗi giữa lúc hỏi); test cần khoá OpenAI không chạy (`bao_cao_he_thong/DE_XUAT_SUA_CODE.md:40-41`).
-- **Bằng chứng:** THRC:26-35, :56-69; `bao_cao_he_thong/DE_XUAT_SUA_CODE.md:25-33`; PS:158.
+- **Giới hạn:** một số tác động chỉ suy từ code (vd Qdrant lỗi giữa lúc hỏi); test cần khoá OpenAI không chạy (`bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md:40-41`).
+- **Bằng chứng:** THRC:26-35, :56-69; `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md:25-33`; PS:158.
 - **Nhãn:** `[một lần chạy]`.
-- **Suy ra:** "chọn như A nghiêng" ở mục công cụ cũ ghép từ `DE_XUAT_SUA_CODE.md:32` (gỡ Representation B, smoke Phase 5, giữ smoke Phase 6 còn 4 câu) với bản đề xuất — nguồn không có một dòng "User chọn (a)…" riêng cho câu hỏi này.
+- **Suy ra:** "chọn như A nghiêng" ở mục công cụ cũ ghép từ `94_DE_XUAT_SUA_CODE.md:32` (gỡ Representation B, smoke Phase 5, giữ smoke Phase 6 còn 4 câu) với bản đề xuất — nguồn không có một dòng "User chọn (a)…" riêng cho câu hỏi này.
 
 
 #### E13 — Lượt đo cuối Phase 1–8: bản cuối có "làm hỏng" so với mốc 30/10 không
@@ -1390,14 +1390,14 @@ Số sau dấu hai chấm là số dòng trong file đó (vd `BKD:54`). Mọi fi
 
 | Viết tắt | Đường dẫn |
 |---|---|
-| BKD | `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md` |
-| BG | `bao_cao_he_thong/BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
-| CD | `bao_cao_he_thong/BAO_CAO_CHIA_DOAN.md` |
-| EM | `bao_cao_he_thong/BAO_CAO_EMBEDDING_TU_KHOA.md` |
-| QD | `bao_cao_he_thong/BAO_CAO_LUU_TRU_QDRANT.md` |
-| BTK | `bao_cao_he_thong/BAO_CAO_TIM_KIEM.md` |
-| BSA | `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md` |
-| BDG | `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` |
+| BKD | `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md` |
+| BG | `bao_cao_he_thong/09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
+| CD | `bao_cao_he_thong/03_BAO_CAO_CHIA_DOAN.md` |
+| EM | `bao_cao_he_thong/04_BAO_CAO_EMBEDDING_TU_KHOA.md` |
+| QD | `bao_cao_he_thong/05_BAO_CAO_LUU_TRU_QDRANT.md` |
+| BTK | `bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md` |
+| BSA | `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` |
+| BDG | `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` |
 | PS | `session_prompt/Project_Status.md` |
 | PH | `session_prompt/PROJECT_HISTORY.md` |
 | R81/ | `report_agent/2026-10-24_phase_8_1_ra_soat/` |

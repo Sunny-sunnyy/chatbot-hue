@@ -1,4 +1,4 @@
-# Mẫu báo cáo khâu cho User — `bao_cao_he_thong/BAO_CAO_<KHÂU>.md`
+# Mẫu báo cáo khâu cho User — `bao_cao_he_thong/<số>_BAO_CAO_<KHÂU>.md`
 
 Mỗi khâu một file **sống**: sửa tại chỗ khi khâu đổi, không tạo file mới theo ngày (chuyện theo ngày
 nằm ở `nhat_ky/`, mẫu `TEMPLATE_NHAT_KY.md`). Quy tắc chung: `WORKFLOW.md` §6. Lời thường, số kèm ý

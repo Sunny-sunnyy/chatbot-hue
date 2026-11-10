@@ -22,7 +22,7 @@ Không đổi code / dữ liệu dùng chung. File mới (private): `data/q3a_20
 của 8.424 đoạn — chữ đoạn dựng lại từ file kho), nhãn đoạn đúng **v5** `33d16fd6b8f4` (cùng luật giao vị trí như W6 của harness đợt 2), Golden md5 `6331e88fb171`, nhãn độ tự nhiên
 (số chính = bỏ 29 câu người thật ít hỏi). "Câu bảng" (L3) = câu có ≥ 1 keyword đáp án **chỉ** nằm trong đoạn dạng bảng (đoạn có ≥ 2 dòng bắt đầu bằng `|`).
 
-**Kiểm chéo (bất biến):** từ chối nhầm cộng 4 loại = 1 + 8 + 0 + 3 = **12 / 158** (= mốc 30/10 `BAO_CAO_DANH_GIA.md` §1); câu có nhãn đoạn đúng cộng lại = **55** (= 40 + 15 nhãn v5) ✓.
+**Kiểm chéo (bất biến):** từ chối nhầm cộng 4 loại = 1 + 8 + 0 + 3 = **12 / 158** (= mốc 30/10 `10_BAO_CAO_DANH_GIA.md` §1); câu có nhãn đoạn đúng cộng lại = **55** (= 40 + 15 nhãn v5) ✓.
 
 ## 4. Kết quả quan sát
 
@@ -36,7 +36,7 @@ của 8.424 đoạn — chữ đoạn dựng lại từ file kho), nhãn đoạn
 | So sánh | 20 | 0,510 | 82,5 % | 14 / 20 | 11 / 16 | 4,35 | 4,50 | 2 | 2 | 2 |
 
 Cả 158 câu trong kho (không bỏ câu nào): nhiều nguồn MRR 0,543, Đủ 3,52, 13 câu Đủ ≤ 3 (cả 13 thiếu bằng chứng), từ chối nhầm 8; so sánh MRR 0,527, Đủ 4,32, 3 câu ≤ 3 (cả 3 thiếu bằng chứng).
-MRR so với số cũ (24/10, kho cũ, 158 câu: so sánh 0,53 / nhiều nguồn 0,54 — `BAO_CAO_TIM_KIEM.md`) ⇒ **gần như không đổi** sau hai đợt sửa kho + context 10 (context 10 nâng khâu trả lời, không đổi xếp hạng).
+MRR so với số cũ (24/10, kho cũ, 158 câu: so sánh 0,53 / nhiều nguồn 0,54 — `06_BAO_CAO_TIM_KIEM.md`) ⇒ **gần như không đổi** sau hai đợt sửa kho + context 10 (context 10 nâng khâu trả lời, không đổi xếp hạng).
 
 **L3 — dòng bảng giá:** 144 / 8.424 đoạn có dạng bảng. **8** câu bảng (6 một dữ kiện, 1 có điều kiện, 1 so sánh; cả 8 thuộc số chính).
 

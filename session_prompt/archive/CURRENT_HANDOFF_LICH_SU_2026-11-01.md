@@ -29,7 +29,7 @@ Lịch sử phiên 31/10 (mục việc B99–B106, C97–C100, quyết định t
 3. ~~Hội thoại nhiều lượt~~ — **DỜI SANG PHASE 9** (User 11:20 01/11/2026: "nghiên cứu về vấn đề lịch sử cuộc trò chuyện, tiếp tục trò chuyện với người dùng ở vấn đề trợ lý / agent, không cần làm ở các phase này"). Tư liệu: nháp spec C102 `docs/superpowers/specs/2026-11-01-multi-turn-design.md` (`45d159e09636`, Q1 User nghiêng PA1 trình duyệt giữ lịch sử — chỉ là ý, Phase 9 nghiên cứu lại) + C91.
 4. **Đóng gói Phase 1–8** (A hỏi lại nghĩa "đóng gói" khi tới): bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (`8211d5d6eb7f`) ⇒ `LUONG` §5; báo cáo
    "đã thử / chọn / bỏ"; sửa `cost_usd` + log `cache_write_tokens`; lệnh kiểm sạch; bộ kín mới trước bảo vệ; tắt ghi đệm nếu API cho (tra Codex trước).
-   **Báo cáo tổng so sánh + nhìn lại Phase 1–8 (User chốt 17:13–17:39 31/10, brainstorm 5 câu):** một file `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` (public,
+   **Báo cáo tổng so sánh + nhìn lại Phase 1–8 (User chốt 17:13–17:39 31/10, brainstorm 5 câu):** một file `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` (public,
    mức loại câu); hai phần — theo khâu (chính, đủ số đo) + theo Phase (khung khoá, chỉ trỏ về) + chỉ mục chéo; người đọc = User + Claude + ChatGPT (không phải hội đồng) ⇒
    tự đọc được; mỗi so sánh: vấn đề · ngày / Phase · mọi phương án + mốc · cách đo · tiêu chí ghi trước · kết quả số (CI, thắng / hoà / thua) · tiền + tốc độ · quyết định
    + lý do · giới hạn · bằng chứng (report, commit, sha); **nhãn độ tin** ([rà lại 8.1] / [kho, cấu hình cũ] / [chưa kiểm lại Phase 0–7] / [một lần chạy] / [xác nhận nhóm
@@ -145,7 +145,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
     Dừng + báo A khi: T1 lệch; một khác biệt §4.8 buộc phải đổi; cần đổi spec. Xong ⇒ "chờ review", nhắn A (C review, W32 ca dò khác cách).
 - **B — kiểm phần đổi spec sau Q1 (GIAO 01/11, bản 5 `0b2679cfccd6`):** căn cứ: `git diff` (hoặc `diff`) spec bản mới ↔ `cf1ae9ef6c2c` + câu trả lời Q1 User (A ghi vào mục Streaming); chỉ kiểm chỗ `TBD` §2 + §6 C1 và mọi
   chỗ nhắc tới nó; không đổi chỗ khác; không chạy Codex. Đầu ra: mục "Vòng 3" cuối `report_agent/2026-10-31_streaming_spec/b105_review.md` + sha bản kiểm. 0 USD.
-- **Báo cáo so sánh (1b) ĐÃ GHÉP 11:29 01/11/2026:** `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` bản 3 (từ nháp C `f1722077fc48` + 3 sửa nhỏ của A); review R1 / R2 vòng 2 ready (`data/so_sanh_phuong_an/review_r*.md`). Phần streaming + đo cuối thêm khi làm.
+- **Báo cáo so sánh (1b) ĐÃ GHÉP 11:29 01/11/2026:** `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` bản 3 (từ nháp C `f1722077fc48` + 3 sửa nhỏ của A); review R1 / R2 vòng 2 ready (`data/so_sanh_phuong_an/review_r*.md`). Phần streaming + đo cuối thêm khi làm.
 - **Trạng thái 11:35 01/11/2026:** B review plan C103 ⇒ changes_requested (1 major / 6 minor, `c103_plan_review.md`) ⇒ C sửa trước C106. **B — S3 giao diện** bắt đầu song song (nhánh `s3-giao-dien` từ `830df0e`, cổng 8793, ≤ 0,003 USD) — **không bàn giao tới khi S2 review đóng** (A cho phép lệch thứ tự "review trước bước sau" vì hợp đồng sự kiện cố định trong spec §4.4; S2 có finding ⇒ sửa S2 trước, rebase S3).
 - **12:02 01/11/2026:** Q3a (B) xong — chỉ **câu nhiều nguồn** còn lớn (18 câu: Đủ 3,50 ↔ 4,92 câu một dữ kiện; 8 câu yếu đều thiếu bằng chứng tầng tìm; 8 / 12 từ chối nhầm); bảng giá không còn lớn; so sánh không qua luật ⇒ **User: câu nhiều nguồn để Phase 9** (agent tách câu con), không mở plan. **S3 review (C107) changes_requested** M-1 lọt `background` / `input image` + `/static/index.html` thiếu CSP ⇒ B sửa ⇒ C kiểm.
 - **12:07 01/11/2026:** S3 M-1 sửa `716ba4d` (danh sách cho phép DOMPurify + CSP mọi trang dưới `/static`; probe C 0 request ở cả hai đường) ⇒ C kiểm phần sửa. **B:** nhánh gộp `streaming-final` (= `s3-giao-dien` + `dg-cost-usd`) + chuẩn bị S4 (chưa chạy — chờ S3 đóng + W31).
@@ -174,7 +174,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
 - **C105 XONG + ĐÃ GHÉP 11:33 01/11/2026:** bảng giới hạn bản 4 `f1a7c4cad145` (private); khối giới hạn ⇒ `LUONG` §5 bản 15 (A kiểm 3 số với nguồn). **B108 review ready** (A, `b108_cost_usd_review.md`).
 - **C — C105 bảng giới hạn đã biết bản 4 + nháp `LUONG` §5 (GIAO 11:27 01/11/2026):** 0 USD, chỉ tài liệu. (1) Cập nhật `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (bản 3 `8211d5d6eb7f`, C viết) theo
   hiện trạng 01/11: kho sau đợt 2, Qwen3-8B, streaming spec §10 giới hạn (S1–S2 đã làm), nhiều lượt dời Phase 9, tốc độ qua API (p95 6,0 s chưa đạt), Golden 127 giữ nguyên, `cost_usd` (B108 đang sửa) —
-  dòng không còn đúng thì sửa / xoá; mỗi dòng có nguồn `file:dòng`. (2) Nháp mục "Giới hạn đã biết" cho `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` §5 (lời thường cho User, mức loại câu, mức nặng
+  dòng không còn đúng thì sửa / xoá; mỗi dòng có nguồn `file:dòng`. (2) Nháp mục "Giới hạn đã biết" cho `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` §5 (lời thường cho User, mức loại câu, mức nặng
   M1–M5 / PCN / ĐO / VH giải nghĩa) vào `data/dong_goi_2026-10-30/luong_muc5_de_xuat.md` — **không sửa `LUONG`** (A ghép). Đối chiếu bản public báo cáo so sánh (§6 "Giới hạn chung") để không mâu thuẫn.
   Xong ⇒ báo A sha; review: agent con ngữ cảnh mới (A giao).
 - **C — C103 kế hoạch lượt đo cuối Phase 1–8 (bản 2 `ba70843a4652`, B review; GIAO 11:12 01/11/2026):** 0 USD, chỉ tài liệu. Nháp `docs/superpowers/plans/2026-11-01-do-cuoi-phase-1-8-plan.md` — kế hoạch có **tiêu chí ghi trước**
@@ -191,9 +191,9 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
   "Câu hỏi cho User" (mỗi câu 2–3 phương án, hệ quả, khi nào sai, khuyên gì — skill `propose-options`); mọi khẳng định về code kèm `file:dòng`. Câu dùng làm ví dụ: tự viết, mức loại câu.
   Không làm: code; sửa spec streaming / handoff mục khác; tra web (nếu cần nguồn ngoài ⇒ ghi câu cần tra, A quyết). Xong ⇒ báo A sha; A trình User từng câu rồi cho session khác review.
 - **C — việc 1b (XONG 11:04, C101; GIAO 10:28 01/11/2026; User chọn "giao C ngay"):** gom báo cáo so sánh **phần đã đóng** (Phase 0 → 8.2, sửa kho đợt 1 + 2, Qwen3-8B, thước lỗi nặng / ngày hôm nay).
-  - Mục tiêu: nháp đủ để A ghép `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` theo khung mục 4 "Báo cáo tổng so sánh" (đọc full mục 4 trên). Phần **theo khâu** là chính (đủ số đo);
+  - Mục tiêu: nháp đủ để A ghép `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` theo khung mục 4 "Báo cáo tổng so sánh" (đọc full mục 4 trên). Phần **theo khâu** là chính (đủ số đo);
     phần **theo Phase** chỉ bảng một hàng / Phase trỏ về phần khâu + chỉ mục chéo; "nhìn lại theo khung khoá AI FDE" để bước đóng gói (không làm ở 1b). Streaming / nhiều lượt chưa có ⇒ để chỗ trống ghi "chưa làm".
-  - Đọc (targeted): `bao_cao_he_thong/BAO_CAO_*.md` (9 khâu) + `LUONG_HOAT_DONG_HE_THONG.md`; `report_agent/*/TONG_HOP.md` + report gốc khi cần số; `reports/` (Phase 0–7, lịch sử); `docs/superpowers/specs/`;
+  - Đọc (targeted): `bao_cao_he_thong/BAO_CAO_*.md` (9 khâu) + `01_LUONG_HOAT_DONG_HE_THONG.md`; `report_agent/*/TONG_HOP.md` + report gốc khi cần số; `reports/` (Phase 0–7, lịch sử); `docs/superpowers/specs/`;
     `guides/`; `Project_Status.md` §5; bảng giới hạn `data/dong_goi_2026-10-30/gioi_han_da_biet_nhap.md` (để không lặp, trỏ chéo).
   - Làm: dùng agent con theo nhóm khâu (gợi ý ~5, chạy song song; mỗi agent đọc file dài ≤ 3 cái — `WORKFLOW.md` §9.9: brief có khuôn trả về cố định, tách "nguồn nói" ↔ "suy ra",
     báo chỗ tài liệu mâu thuẫn nhau). Mỗi so sánh: vấn đề · ngày / Phase · mọi phương án + mốc · cách đo · tiêu chí ghi trước · kết quả số (CI, thắng / hoà / thua) · tiền + tốc độ ·
@@ -202,7 +202,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. Cả ba Claude Code ⇒ `tr
   - Không làm: không sửa `bao_cao_he_thong/`, guide, spec, governance (A ghép + sửa); không chạy đo / API trả phí; không mở câu kín, `split.json` theo từng câu, `.env`; tìm trong kho **chỉ**
     `scripts/grep_kb.sh` (thường không cần đọc kho). Agent con kế thừa đúng các ranh giới này (ghi vào brief).
   - Đầu ra: `data/so_sanh_phuong_an/` (private): `nhap_theo_khau.md`, `nhap_theo_phase.md`, `cho_mau_thuan.md` (số / kết luận lệch giữa các tài liệu, kèm `file:dòng`), `brief_agent_con.md`;
-    **bản đề xuất public** `data/so_sanh_phuong_an/BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md` — mức loại câu (`Session_Prompt.md` §5: không chủ đề cụ thể cạnh `case_index`, không chi tiết dự án
+    **bản đề xuất public** `data/so_sanh_phuong_an/91_BAO_CAO_SO_SANH_PHUONG_AN_de_xuat.md` — mức loại câu (`Session_Prompt.md` §5: không chủ đề cụ thể cạnh `case_index`, không chi tiết dự án
     khác, không nguyên văn kho / Golden). Báo A kèm sha các file. STATUS_C khai báo.
   - Tiền: 0 USD. Dừng + báo A khi: thấy tài liệu mâu thuẫn làm đổi một quyết định đã chốt; khối lượng vượt ~3 giờ; cần mở thứ ngoài danh sách đọc.
   - Sau: A ghép + B (hoặc agent con ngữ cảnh mới) kiểm độc lập; A commit sau khi hỏi User.

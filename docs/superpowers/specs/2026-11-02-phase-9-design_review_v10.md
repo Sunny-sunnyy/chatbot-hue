@@ -1,6 +1,6 @@
 # Review spec Phase 9 bản 10 — mục §11 "Sửa đổi 05/11/2026" (C177)
 
-Người kiểm: C · 09:34 05/11/2026 (`date`) · spec `docs/superpowers/specs/2026-11-02-phase-9-design.md` sha tính từ file **`b7dbb778db9e`** (A viết). Phạm vi (A giao): chỉ §11, đối chiếu §5–§8 bản 9. Căn cứ ngoài: `bao_cao_he_thong/DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md` (User duyệt bậc 1 + lịch), `data/phase_9/tinh_tien/kiem_ke_gia.md` (C176, private). Kiểm thêm bằng lệnh chỉ đọc: `backend/api/app.py` CSP, `frontend/src/App.jsx`, bảng điểm `diem_v3.json`, kho qua `scripts/grep_kb.sh`. 0 USD.
+Người kiểm: C · 09:34 05/11/2026 (`date`) · spec `docs/superpowers/specs/2026-11-02-phase-9-design.md` sha tính từ file **`b7dbb778db9e`** (A viết). Phạm vi (A giao): chỉ §11, đối chiếu §5–§8 bản 9. Căn cứ ngoài: `bao_cao_he_thong/93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md` (User duyệt bậc 1 + lịch), `data/phase_9/tinh_tien/kiem_ke_gia.md` (C176, private). Kiểm thêm bằng lệnh chỉ đọc: `backend/api/app.py` CSP, `frontend/src/App.jsx`, bảng điểm `diem_v3.json`, kho qua `scripts/grep_kb.sh`. 0 USD.
 
 **Kết luận: changes_requested — 0 blocker / 6 major / 7 minor.** Hướng (bậc 1, B4b, "model đề xuất ⇒ code kiểm / tính") khớp đề xuất User duyệt và bài học B4. Chỗ phải sửa trước khi User duyệt sha: đường ra / provider mới chưa liệt kê đủ (giọng nói của trình duyệt, nguồn toạ độ + tile), tiêu chí V1 / V2 chưa đo được thành "đạt / không", B5c thiếu sàn cho đúng lỗi đã thấy ở B4, lịch tự mâu thuẫn với luật "lần lượt", bảng tiền chưa phải dự phóng đầy đủ.
 

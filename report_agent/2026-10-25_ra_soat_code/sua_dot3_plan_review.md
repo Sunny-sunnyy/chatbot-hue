@@ -31,8 +31,8 @@ Toàn bộ plan (136 dòng, sha khớp). Kiểm lại bằng lệnh riêng: số
 
 ### m-2 — C-05: thiếu tài liệu hiện hành phải sửa khi gỡ Representation B, và một hàm trở thành thừa
 - Bằng chứng: `notebooks/06_generation_and_api.ipynb` ô 0 ("Representation B: có trong code … runtime không dùng"); `guides/phase_6_generation_api.md:54, 79` (mục
-  "Hiện hành": "Representation B cap 256", "một call Representation B"); `bao_cao_he_thong/BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `guides/full_corpus_rag.md` cũng nhắc —
-  plan chỉ ghi `BAO_CAO_CHIA_DOAN.md:136`. `llm/phase6_live_smoke.py:104` `make_fits_all_checker` chỉ được gọi ở `:311` trong nhánh Attempt 1 Representation B
+  "Hiện hành": "Representation B cap 256", "một call Representation B"); `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `guides/full_corpus_rag.md` cũng nhắc —
+  plan chỉ ghi `03_BAO_CAO_CHIA_DOAN.md:136`. `llm/phase6_live_smoke.py:104` `make_fits_all_checker` chỉ được gọi ở `:311` trong nhánh Attempt 1 Representation B
   (`:328`) ⇒ gỡ C-19b Attempt 1 thì hàm này 0 nơi gọi.
 - Tiêu chí đóng: commit 7 gỡ cả `make_fits_all_checker`; sửa chữ notebook 06 ô 0 + guide 6 mục Hiện hành (`:54`, `:79`); A sửa 2 báo cáo.
 
@@ -63,7 +63,7 @@ Toàn bộ plan (136 dòng, sha khớp). Kiểm lại bằng lệnh riêng: số
 
 1. **Bảng gỡ / giữ — bằng chứng 0 nơi gọi:** B đếm lại trên working tree (đã có 1b): `record_generation_success` 0 / 0 (ngoài / trong test); `build_representation_b_messages`
    0 / 0; `verify_build_record_freshness` 0 / 1 (chỉ import test); `apply_chat_template` chỉ 2 dòng chính nhánh đó; `generate_preview` 1 (`main`) + 5 test;
-   `partition_for_source` 2 + 2 test; `full_corpus_smoke` ngoài chính file chỉ có 2 dòng **báo cáo** (`BAO_CAO_NEN_TANG.md:45, 116` — plan đã ghi A sửa) + 3 test;
+   `partition_for_source` 2 + 2 test; `full_corpus_smoke` ngoài chính file chỉ có 2 dòng **báo cáo** (`90_BAO_CAO_NEN_TANG.md:45, 116` — plan đã ghi A sửa) + 3 test;
    dịch vụ `reranker="minilm"` chỉ `retrieval/full_corpus_smoke.py:244` (harness g1 / g4 dựng service mặc định `none`; g1 / g4_rerank dùng `CrossEncoderReranker` trực
    tiếp — plan **giữ** lớp, đúng; `g4_rerank` chạy `--device cuda` cho CrossEncoder, không đụng nhánh cuda của `embedding/full_corpus.py` mà B-07 gỡ — đúng);
    `DenseModelSpec` trong test chỉ `device="cpu"` (`test_full_corpus_embedding.py:85-95`) ⇒ B-07 không làm hỏng test. **Gỡ được mà plan giữ:** `make_fits_all_checker`

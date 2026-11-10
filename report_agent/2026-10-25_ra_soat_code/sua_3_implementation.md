@@ -2,7 +2,7 @@
 
 Người làm: C (Claude Opus 5.5, terminal `hue-rag-7f`)
 Date: 2026-10-25 20:37 (`date`) · nền `main` `1b9c126` · chưa commit (A commit sau review) · paid ~0,0004 USD (ước, xem §4)
-Canonical: `bao_cao_he_thong/DE_XUAT_SUA_CODE.md` gói 3a / 3b (User duyệt 19:4x); mục "Đợt 2" trong `session_prompt/CURRENT_HANDOFF.md`; A giao
+Canonical: `bao_cao_he_thong/94_DE_XUAT_SUA_CODE.md` gói 3a / 3b (User duyệt 19:4x); mục "Đợt 2" trong `session_prompt/CURRENT_HANDOFF.md`; A giao
 20:1x; finding C-02, C-03, C-20 (`ra_soat_code_C.md`). Review: B.
 
 ## 1. Phạm vi

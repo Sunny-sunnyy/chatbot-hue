@@ -63,11 +63,11 @@ Terminal 30/10: `hue-rag-24` (A = `hue-rag-0f`, C = `hue-rag-0e`).
     Report `sua_kho_dot2_implementation.md` `f6dbbc59375e`. A3 P0_thiếu đổi 5 (> A/A 3) — theo dõi. `/tmp/judge_*` của sub-agent đã xóa. **Tiền B phiên 30/10 ≈ 0,0479 USD**
     (đợt 2 0,0471 + B95 0,0008).
 - **B97** (A giao sau 14:15 30/10/2026): (1) kiểm diff `GOLD_PATH` ⇒ v5 (A sửa `g1_retrieval.py`), chạy g1 mặc định chỉ đọc; (2) 5 chỗ đợt 2. **Khai báo sửa:**
-  `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md`, `bao_cao_he_thong/BAO_CAO_KHO_DU_LIEU.md`, `guides/full_corpus_rag.md` (mục "Hiện hành"), `guides/README.md` (dòng 8.2),
+  `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md`, `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md`, `guides/full_corpus_rag.md` (mục "Hiện hành"), `guides/README.md` (dòng 8.2),
   `bao_cao_he_thong/README.md` (bảng mục lục). Không sửa nhật ký / Project_Status (A).
   - **Xong 14:2x 30/10/2026** (giờ chưa đo; file ghi 14:19 `date`) — chờ A review. (1) GOLD_PATH v5 đúng; g1 v5 0,7706 vs W6 0,7615 = luật dòng tiêu đề (0,5 / 55).
     (2) 5 file +92 / −40, overlap 0. Report đợt 2 sửa m-1 C ⇒ `8fae5afe6d16`. C bước 9 ready 0/0/1.
-  - A review B97: đạt. **Thêm (A giao):** khai báo sửa `bao_cao_he_thong/BAO_CAO_BO_CAU_HOI_GOLDEN.md`, `bao_cao_he_thong/BAO_CAO_DANH_GIA.md`, 2 dòng tương ứng trong
+  - A review B97: đạt. **Thêm (A giao):** khai báo sửa `bao_cao_he_thong/09_BAO_CAO_BO_CAU_HOI_GOLDEN.md`, `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md`, 2 dòng tương ứng trong
     `bao_cao_he_thong/README.md`. Report đợt 2 sha cuối `2e40e5902d36` (C bước 9 ready 0/0/0).
   - **Xong 14:33 30/10/2026** — chờ A review: Golden bản 6, Đánh giá bản 5, README 2 dòng (3 file +108 / −50 so HEAD, overlap 0). Sửa cả dòng cũ ngoài danh sách (câu kín đã dùng;
     thước lỗi nặng đã có) — đã báo A.
@@ -88,8 +88,8 @@ Terminal 30/10: `hue-rag-24` (A = `hue-rag-0f`, C = `hue-rag-0e`).
     collection); `emb/` 133 MB giữ (chờ User). Report `qwen3_8b_implementation.md` `06eaaf1f66bd`. **Tiền 0,008857 USD.**
   - **Tiền B phiên 30/10 ≈ 0,0568 USD** (đợt 2 0,0471 + B95 0,0008 + 8B 0,0089).
   - A: không merge `b92-qwen3-harness`; A tag `hoso/b92-qwen3-harness` + User `!` xóa nhánh; `emb/` A hỏi User.
-- **B98** (A giao sau 15:54 30/10/2026; chốt số sau C95 ready): khai báo sửa `bao_cao_he_thong/BAO_CAO_EMBEDDING_TU_KHOA.md`, `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (dòng 8B nếu có),
-  `bao_cao_he_thong/LUONG_HOAT_DONG_HE_THONG.md` (§5 dòng 8B), `bao_cao_he_thong/README.md`. Bẫy: sửa plan sau khi đã báo sha mà chưa báo sha mới (WORKFLOW §9.1) — A phát hiện.
+- **B98** (A giao sau 15:54 30/10/2026; chốt số sau C95 ready): khai báo sửa `bao_cao_he_thong/04_BAO_CAO_EMBEDDING_TU_KHOA.md`, `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (dòng 8B nếu có),
+  `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` (§5 dòng 8B), `bao_cao_he_thong/README.md`. Bẫy: sửa plan sau khi đã báo sha mà chưa báo sha mới (WORKFLOW §9.1) — A phát hiện.
   - **Xong 15:59 30/10/2026 — chờ A review.** EMBEDDING bản 4 (Tóm tắt, checklist 8B ⇒ "Đã thử, chưa áp dụng", NFC ⇒ "đóng gói", 8.424 / 5.631, §4 mục 30/10, §5, §6,
     phụ lục) `1fb6375eff78`; LUONG §5 + header; DANH_GIA §6 + header; README 4 dòng + trạng thái ngắn (8.426 ⇒ 8.424, dòng 8B). 4 file +67 / −33 so HEAD (gồm phần A sửa trước),
     `git diff --check` sạch, overlap 0. Build thật 14:57–15:28 (~31 phút, theo `attempts.jsonl`).

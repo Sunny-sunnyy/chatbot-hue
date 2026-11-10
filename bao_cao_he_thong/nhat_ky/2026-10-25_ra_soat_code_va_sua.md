@@ -5,7 +5,7 @@
 ## Hôm nay làm gì
 
 - **Rà code Phase 0–7 xong** (18:55): B rà phần dựng kho tìm kiếm, C rà phần trả lời + đánh giá; mỗi bên kiểm lại 5 phát hiện nặng
-  nhất của bên kia bằng script riêng. 39 phát hiện, gom thành 5 gói ⇒ `../DE_XUAT_SUA_CODE.md`.
+  nhất của bên kia bằng script riêng. 39 phát hiện, gom thành 5 gói ⇒ `../94_DE_XUAT_SUA_CODE.md`.
 - **Bạn duyệt 19:4x:** sửa cả 5 gói; gỡ code không dùng nếu không ảnh hưởng hệ thống; guide cũ thêm dòng lịch sử; đưa nội dung kho /
   đường dẫn dự án khác ra khỏi file public từ giờ (không xóa lịch sử).
 - **A đổi một chỗ trong đề xuất của chính mình:** không đưa "10 đoạn" (B1) vào trước — spec 8.2 chỉ cho đưa vào sau khi bạn đọc cặp mù.
@@ -47,5 +47,5 @@ hiện lên web. Điều này cũng cho thấy một kết luận cũ của 8.1 
 
 ## Đọc thêm
 
-- `../DE_XUAT_SUA_CODE.md`, `../BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 6)
+- `../94_DE_XUAT_SUA_CODE.md`, `../07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` (bản 6)
 - `report_agent/2026-10-25_ra_soat_code/` (`TONG_HOP.md`, `sua_1a_implementation.md`, `sua_1a_review.md`)

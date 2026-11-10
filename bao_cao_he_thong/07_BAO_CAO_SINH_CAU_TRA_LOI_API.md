@@ -126,7 +126,7 @@ Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose 
 | Qdrant / model tìm kiếm lỗi → báo lỗi tạm | **Đã xử lý, đóng gói** | 503 `retrieval_unavailable` (`chat.py:96–119`); test `test_startup_model_missing.py` (bạn chạy `!`) |
 | Đưa 10 đoạn thay vì 5 + chuẩn hóa NFC | **Đã xử lý, đóng gói** (từ 28/10) — B0 01/11: bạn giữ 10 (tham khảo) | 8.1: Đủ +0,26 (thử) / +0,27 (kiểm); câu kín +0,82; trung vị / p95 2,19 / 4,90 s. Đổi ngược về 5: sửa `settings.yaml:56` **và** chốt kiểm ở `core/settings_loader.py:75` (đang ép đúng 10) |
 | Câu có một vế có bằng chứng, vế kia thiếu | **Đã thử, chưa áp dụng** | prompt bắt từ chối cả câu (`full_corpus_prompt.py`). Hai lần thử "trả lời phần có căn cứ" đều trả lời câu ngoài kho ⇒ gác. **09/11 (T2):** cho trợ lý tự yêu cầu tra web phần thiếu — 26 / 29 lần yêu cầu thì vẫn từ chối cả câu ⇒ không lợi (hỏi kèm có web 4 / 10 = bản cũ), đóng hồ sơ `hoso/p9-t2-web` |
-| Đoạn chứa đáp án nằm ngoài các đoạn đưa model | **Xử lý một phần** | mọi câu từ chối nhầm đo ở 8.1 đều thiếu ít nhất một đoạn đúng — gốc ở khâu tìm; 10 đoạn giảm gần một nửa; phần còn lại: `BAO_CAO_TIM_KIEM.md` |
+| Đoạn chứa đáp án nằm ngoài các đoạn đưa model | **Xử lý một phần** | mọi câu từ chối nhầm đo ở 8.1 đều thiếu ít nhất một đoạn đúng — gốc ở khâu tìm; 10 đoạn giảm gần một nửa; phần còn lại: `06_BAO_CAO_TIM_KIEM.md` |
 | Mức suy luận của model | **Đã thử, chưa áp dụng** | giữ mặc định (không gửi tham số: `generator_openai_full_corpus.py:98–99,120`); `none` kém hơn (trả lời vòng câu lẽ ra từ chối), lợi tiền chỉ 3–6 % (mục 4) |
 | Câu trả lời quá gọn, bỏ chi tiết có trong nguồn | **Chưa thực hiện** | 26/10: 9 / 88 câu mất điểm vì bỏ chi tiết; thử "nêu đủ chi tiết" không chạy được (chỉ 6 câu đổi được, quá ít để kết luận) |
 | Câu trả lời ghi sai con số (giá, giờ, năm) | **Xử lý một phần** (đo được, chưa có rào chặn) | 27/10, 10 đoạn: 0 / 68 câu có số bị thấy sai; chưa đo sai về chữ (tên, sự kiện) |
@@ -134,7 +134,7 @@ Tự hỏi chatbot (không bắt buộc): bật Docker Desktop, `docker compose 
 | Để model chọn 10 / 30 đoạn trước khi trả lời | **Đã thử, chưa áp dụng** | trung bình tốt lên nhưng 5 câu tụt > 4 cho phép; chờ ~6,5 s, tiền ×3,8 (mục 4) |
 | Xếp đoạn gom theo tài liệu; 2 luật cũ của prompt Phase 6; "một nguồn thì gán nguồn đó" | **Đã thử, chưa áp dụng** | 8.1: không khác (mục 4) |
 | Câu tổng hợp nhiều nguồn | **Xử lý một phần** | lúc đóng Phase 6 chỉ dùng 1 nguồn; 8.1: lợi của 10 đoạn nằm nhiều ở câu nhiều nguồn / so sánh; chưa có phép đo riêng "tổng hợp đúng" |
-| Câu hỏi giá vé + miễn giảm (bảng giá) | **Đã thử, chưa áp dụng** | không tìm ra dòng bảng giá; 8.1 thử gộp dòng bảng khi chia đoạn: không khác (`BAO_CAO_TIM_KIEM.md`); chưa đo lại riêng ở 10 đoạn |
+| Câu hỏi giá vé + miễn giảm (bảng giá) | **Đã thử, chưa áp dụng** | không tìm ra dòng bảng giá; 8.1 thử gộp dòng bảng khi chia đoạn: không khác (`06_BAO_CAO_TIM_KIEM.md`); chưa đo lại riêng ở 10 đoạn |
 | Tách câu hỏi hai ý | **Chưa thực hiện** | Phase 8 không làm; giả thuyết xếp "cân nhắc cho Phase 9" (`reports/phase_8_candidate_hypotheses_2026_10_24.md:68`) |
 | Câu hỏi theo ngày tương đối ("tối nay", "tháng sau", "rằm tháng Giêng") | **Đã xử lý, đóng gói** (09/11: merge `99ea59a`, **bật** `7eb1f12`, bạn duyệt; **10/11 nhanh hơn**: code tính sẵn ngày, merge `1633c18` — chữ đầu 2,35 / 4,56 s, 0,00036 USD) | công cụ ngày (code tính, lịch âm Việt Nam UTC+7, năm 1976–2100): 14 câu mới bớt 9 từ chối nhầm, 0 sai ngày; sau sửa "năm nay" / "sang năm": câu ngày có ngữ cảnh Huế 3 / 3 ↔ bản cũ 1 / 3; an toàn 0 lỗi; server thật sau khi bật: "rằm tháng Giêng" ⇒ thứ Bảy 20/02/2027. Giới hạn: câu lịch thuần không nhắc Huế ⇒ ngoài phạm vi; "tháng tới / cuối tuần" model tự cộng. `backend/llm/ngay_lich.py` |
 | Hiện chữ dần (streaming) | **Đã xử lý, đóng gói** (01/11, merge `a80e12d`) — 4 bước + review cả nhánh đạt; S4 đạt sàn + mục tiêu | bạn duyệt spec 01/11 (`00fb57ee01b2`); cả 4 bước (gom lõi chung, luồng chữ, giao diện, đo) xong 01/11 (mục 6) |
@@ -282,7 +282,7 @@ Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Thí 
   `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md`.
 
 ### 03/11/2026 trưa — Phase 9 B2 vào chatbot (merge `00d670e`)
-- **B2a — model viết lại câu tìm đầu** (3 cách, 2 lượt × 61 câu, ≈ 0,069 USD): không cách nào qua luật ⇒ **không giữ**, tìm bằng câu gốc (`BAO_CAO_TIM_KIEM.md` mục 4).
+- **B2a — model viết lại câu tìm đầu** (3 cách, 2 lượt × 61 câu, ≈ 0,069 USD): không cách nào qua luật ⇒ **không giữ**, tìm bằng câu gốc (`06_BAO_CAO_TIM_KIEM.md` mục 4).
 - **B2b — trợ lý tự gọi `tim_kho` thêm ≤ 2 lần** (luật ghi trước; nhiễu đo bằng 2 lượt của chính đường công cụ): đủ ý câu nhiều nguồn +1,17, Golden không tụt quá nhiễu, 0 câu ngoài kho bị trả lời ⇒ **giữ**;
   1 câu an toàn sai mới thật (2 / 3 lần sinh lại, bản cũ 0 / 3) — bạn chọn giữ + sửa lời dặn ở B3 (11:16 03/11). Cổng ổn định: 2 ca ngắt thật (giữa vòng công cụ / giữa chữ), log đúng. Review C137 + C141 `ready`. Tiền B2 ≈ 0,255 USD.
   `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md`, `b134_review.md`.

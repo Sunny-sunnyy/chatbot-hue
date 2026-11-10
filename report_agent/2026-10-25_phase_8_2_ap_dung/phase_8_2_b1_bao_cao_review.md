@@ -6,7 +6,7 @@ Canonical: `WORKFLOW.md` §6 (5 chỗ + văn phong cho User); code trên `main` 
 
 ## 1. Phạm vi đã review
 
-`git show 92b9a43`: 9 file, +150 / −59 — `bao_cao_he_thong/{LUONG_HOAT_DONG_HE_THONG, BAO_CAO_SINH_CAU_TRA_LOI_API (bản 12), BAO_CAO_TIM_KIEM (bản 9),
+`git show 92b9a43`: 9 file, +150 / −59 — `bao_cao_he_thong/{01_LUONG_HOAT_DONG_HE_THONG, 07_BAO_CAO_SINH_CAU_TRA_LOI_API (bản 12), 06_BAO_CAO_TIM_KIEM (bản 9),
 README}.md`, `bao_cao_he_thong/nhat_ky/2026-10-28_dua_context_10.md` (mới), `session_prompt/Project_Status.md`, `guides/{phase_6_generation_api, phase_8_benchmark_model_selection,
 full_corpus_rag}.md`. Đọc exact diff cả 9 file + bản đầy đủ của nhật ký mới; quét mọi chỗ còn ghi "5 đoạn / top-5 / tối đa 5" trong 7 file sống.
 
@@ -32,7 +32,7 @@ full_corpus_rag}.md`. Đọc exact diff cả 9 file + bản đầy đủ của n
 
 ### m-2 — "chưa đo lại trên bộ lớn" sai: tiền / token ở 10 đoạn đã đo trên 176 câu
 
-- `LUONG_HOAT_DONG_HE_THONG.md:83` ("Ở 10 đoạn … tiền mỗi câu tăng (8.1 ước ~+50 %); chưa đo lại trên bộ lớn") và nhật ký "Giải thích ngắn" ("8.1 ước ~+50 %").
+- `01_LUONG_HOAT_DONG_HE_THONG.md:83` ("Ở 10 đoạn … tiền mỗi câu tăng (8.1 ước ~+50 %); chưa đo lại trên bộ lớn") và nhật ký "Giải thích ngắn" ("8.1 ước ~+50 %").
 - Bằng chứng: lượt B1 (cùng cấu hình context 10, đường `answer_case`) trên **176 câu**: **0,0369 USD** = ≈ **0,00021 USD / câu**, token vào TB **1.655** (`phase_8_2_b1_implementation.md` §4;
   B tính lại từ `data/phase_8_2/b1/b1_{dev,test}.jsonl`). So với ~0,00014 ở 5 đoạn ⇒ +50 % là **số đo**, không chỉ là ước. (Số này đo qua harness, không qua API — nhưng cùng
   đường tìm → đóng gói → sinh.)
@@ -40,14 +40,14 @@ full_corpus_rag}.md`. Đọc exact diff cả 9 file + bản đầy đủ của n
 
 ### m-3 — `BAO_CAO_SINH` Tóm tắt: "Giới hạn chính: từ chối nhầm 22/158" là số 5 đoạn, không có nhãn
 
-- `BAO_CAO_SINH_CAU_TRA_LOI_API.md:19`. Tóm tắt phải "luôn đúng hiện trạng"; 22 / 158 là 7B (5 đoạn). Ở 10 đoạn, lượt B1 176 câu có **12 / 158** câu trong kho bị từ chối
+- `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md:19`. Tóm tắt phải "luôn đúng hiện trạng"; 22 / 158 là 7B (5 đoạn). Ở 10 đoạn, lượt B1 176 câu có **12 / 158** câu trong kho bị từ chối
   (đếm `refusal` trên `b1_{dev,test}.jsonl`; 8.1 dev: 13 → 7).
 - **Đóng:** "từ chối nhầm 22/158 ở 5 đoạn (7B); ở 10 đoạn còn 12/158 (lượt B1)" — hoặc chỉ thêm nhãn "(7B, 5 đoạn)". Bảng §4 của LUONG đã có câu "Bảng trên đo ở bản 5 đoạn" ⇒ đạt; có thể
   thêm số 12 / 158 vào đoạn ngay dưới bảng cho rõ.
 
 ### m-4 — `BAO_CAO_SINH` Tóm tắt: "Chi phí: sinh 176 câu ~0,024 USD" không có nhãn 5 đoạn
 
-- `BAO_CAO_SINH_CAU_TRA_LOI_API.md:21`. Đó là 7B (5 đoạn); ở 10 đoạn lượt B1 176 câu = **0,0369 USD** (~920 đồng).
+- `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md:21`. Đó là 7B (5 đoạn); ở 10 đoạn lượt B1 176 câu = **0,0369 USD** (~920 đồng).
 - **Đóng:** thêm nhãn và số 10 đoạn (cùng nguồn m-2).
 
 ### m-5 — `Project_Status.md` §3: dòng 8.2 ghi "chờ C71 review" trong khi §2 ghi "C71 ready"
@@ -57,7 +57,7 @@ full_corpus_rag}.md`. Đọc exact diff cả 9 file + bản đầy đủ của n
 
 ### Ngoài phạm vi (không yêu cầu sửa)
 
-- Dòng "Cập nhật lần cuối" đầu `BAO_CAO_TIM_KIEM.md` và `BAO_CAO_SINH_CAU_TRA_LOI_API.md` còn dấu `**` lẻ từ các bản trước (ví dụ "… giống từng byte.** Bản 5"; "… (25 câu).** Bản 7")
+- Dòng "Cập nhật lần cuối" đầu `06_BAO_CAO_TIM_KIEM.md` và `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` còn dấu `**` lẻ từ các bản trước (ví dụ "… giống từng byte.** Bản 5"; "… (25 câu).** Bản 7")
   ⇒ Markdown có thể hiện dấu sao thừa. Có từ trước commit này; sửa khi tiện.
 
 ## 4. Cách người kiểm chạy lại thật

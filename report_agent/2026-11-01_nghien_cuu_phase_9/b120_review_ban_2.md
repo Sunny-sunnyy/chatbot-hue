@@ -1,4 +1,4 @@
-# B120 — review bản 2 `bao_cao_he_thong/BAO_CAO_NGHIEN_CUU_PHASE_9.md`
+# B120 — review bản 2 `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md`
 
 B, 16:15 01/11/2026 (`date`). Việc: A nhờ qua tin nhắn (B120). B không sửa file của A.
 

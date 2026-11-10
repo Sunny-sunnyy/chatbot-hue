@@ -60,7 +60,7 @@ A viết 22:32 06/11/2026 (`date`). Nền `main` `c07e2df`. Mức rủi ro: **tr
 | S2 | B | Frontend theo bản mẫu đã chọn: D1, D5, D8–D12 | cùng nhánh |
 | S3 | C | Đo đường biểu mẫu (§6 Q-F) trên bộ đã thấy ×2; Playwright §6 | report đo |
 | S4 | C (hoặc E) | Review cả nhánh một lần (`risk-gated-agent-review`) | review |
-| S5 | A | Merge (cờ `lich_trinh_bieu_mau` theo kết quả Q-F) + cổng ổn định + báo cáo (`LUONG_HOAT_DONG_HE_THONG.md` đổi — người dùng thấy giao diện mới) ⇒ User dùng thử | — |
+| S5 | A | Merge (cờ `lich_trinh_bieu_mau` theo kết quả Q-F) + cổng ổn định + báo cáo (`01_LUONG_HOAT_DONG_HE_THONG.md` đổi — người dùng thấy giao diện mới) ⇒ User dùng thử | — |
 
 ## 6. Tiêu chí nghiệm thu (ghi trước)
 

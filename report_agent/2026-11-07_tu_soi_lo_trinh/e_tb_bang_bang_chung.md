@@ -2,8 +2,8 @@
 
 Việc A giao: nguồn cho quyển báo cáo + slide. 0 USD, chỉ đọc. Chỉ có số và loại câu — không chép kho, Golden hay câu kín.
 **Nguồn chính:**
-- `bao_cao_he_thong/BAO_CAO_SO_SANH_PHUONG_AN.md` §2.1 — 67 quyết định Phase 0 → 8.2, đã review 2 vòng; số `#n` dưới đây là số dòng của bảng đó.
-- `BAO_CAO_DANH_GIA.md` §1, `BAO_CAO_SINH_CAU_TRA_LOI_API.md` §1 + mục theo ngày, `BAO_CAO_HOI_BANG_ANH.md` §1.
+- `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` §2.1 — 67 quyết định Phase 0 → 8.2, đã review 2 vòng; số `#n` dưới đây là số dòng của bảng đó.
+- `10_BAO_CAO_DANH_GIA.md` §1, `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` §1 + mục theo ngày, `08_BAO_CAO_HOI_BANG_ANH.md` §1.
 - `Project_Status.md` §2–§4; report đợt cổng `report_agent/2026-11-06_giao_dien_cong/`.
 
 E **không** đối chiếu lại từng số với file gốc. Bảng so sánh phương án đã đối chiếu 115 khẳng định; các số Phase 9–10 lấy từ báo cáo khâu. Trước khi đưa lên slide, nên đối chiếu số nào in lớn.

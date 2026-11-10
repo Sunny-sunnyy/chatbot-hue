@@ -29,11 +29,11 @@
 | Vòng xét luật (lần đầu) | 40 ⇒ 7 luật đang thử; 1 memory cũ sửa | luật nào còn tác dụng thì rõ hơn, file mở phiên không phình |
 | Skill mới | `teach-and-quiz` (Session D); `agent-design-review`, `agent-security-review` (Phase 9) | sẵn cho buổi học D và cho Phase 9 |
 | Phase 9 | ghi rõ: **mở bằng nghiên cứu rộng** (đề tài, dự án, paper, ứng dụng thật), không khoá vào gợi ý lịch trình; Phase 1–8 = "RAG mức 1" | đúng ý bạn |
-| Báo cáo bị cũ | sửa `BAO_CAO_LUU_TRU_QDRANT`, `BAO_CAO_CHIA_DOAN`, `BAO_CAO_TIM_KIEM`, `BAO_CAO_NEN_TANG` + mục lục | thư mục này lại khớp hiện trạng (204 file / 8.424 đoạn) |
+| Báo cáo bị cũ | sửa `05_BAO_CAO_LUU_TRU_QDRANT`, `03_BAO_CAO_CHIA_DOAN`, `06_BAO_CAO_TIM_KIEM`, `90_BAO_CAO_NEN_TANG` + mục lục | thư mục này lại khớp hiện trạng (204 file / 8.424 đoạn) |
 
 ## Giải thích ngắn (để bạn tự nói lại được)
 Vấn đề: agent hay lặp vài lỗi cách làm (ghi giờ đoán, luật thử mãi không ai xét), và hai dự án tự học cùng bài học. Cách làm: dùng chung một khung theo khoá AI FDE; mỗi dự án chỉ lấy phần có lý do và kiểm lại bằng người kiểm khác. Kết quả: 5 luật / skill mới đang thử, vòng xét đầu tiên chạy được, khung chung sửa được 3 lỗi nhờ hue_rag. Giới hạn: phần lớn bằng chứng là "dùng rồi, chưa thấy lặp" (quan sát, chưa chứng minh); việc báo cáo cũ cho thấy luật "sửa đủ 5 chỗ" mấy ngày qua chưa được làm đủ.
 
 ## Đọc thêm
 - `report_agent/2026-10-31_khung_fde/TONG_HOP.md` (kỹ thuật, giờ quyết định, commit)
-- `BAO_CAO_LUU_TRU_QDRANT.md`, `BAO_CAO_CHIA_DOAN.md`, `BAO_CAO_TIM_KIEM.md` (vừa cập nhật)
+- `05_BAO_CAO_LUU_TRU_QDRANT.md`, `03_BAO_CAO_CHIA_DOAN.md`, `06_BAO_CAO_TIM_KIEM.md` (vừa cập nhật)
