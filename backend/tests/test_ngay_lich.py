@@ -285,6 +285,17 @@ def test_lunar_dates_in_documents_need_lunar_marker_and_are_capped():
     assert nl.lich_san("Tết năm nay?", nhieu, now)[1] == nl.SO_NGAY_AM_TOI_DA  # Tết (câu hỏi) trước, trùng 1/1 bỏ, tối đa 6
 
 
+@pytest.mark.parametrize("cau, ten, ngay, sau", [
+    ("Lễ B năm nay rơi vào ngày nào?", "năm âm lịch nay (Bính Ngọ, âm lịch 15/4/2026)", "31/05/2026", "đã qua 163 ngày"),
+    ("Sang năm lễ B rơi vào thứ mấy?", "năm âm lịch sau (Đinh Mùi, âm lịch 15/4/2027)", "20/05/2027", "còn 191 ngày nữa"),
+])
+def test_this_or_next_year_named_in_question_gets_its_own_line(cau, ten, ngay, sau):
+    # lượt đo 10/11 (Y2, A chọn (a)): "năm nay" với ngày âm đã qua ⇒ model gọi lần sắp tới là "năm nay" ⇒ code ghi thẳng ngày của năm âm được nói
+    dong = nl.lich_san(cau, "Lễ B: Rằm tháng Tư (15/4 Âm lịch).", _vn(2026, 11, 10))[0]
+    (d,) = [x for x in dong if ten in x]
+    assert ngay in d and d.endswith(f"{sau} (so với hôm nay)")
+
+
 def _chu_gui(kw) -> str:
     return json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n")
 

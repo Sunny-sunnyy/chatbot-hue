@@ -193,6 +193,7 @@ _RAM_TUONG_DOI = re.compile(r"(?<!\w)rằm tháng (này|tới|sau)(?!\w)", re.IG
 _NAM_SO = re.compile(r"(?<!\d)(\d{4})(?!\d)")
 _TUAN_NAY = re.compile(r"(?<!\w)(?:tuần này|cuối tuần|chủ nhật này|thứ (?:hai|ba|tư|năm|sáu|bảy|[2-7]) này)(?!\w)", re.IGNORECASE)
 _TUAN_SAU = re.compile(r"(?<!\w)tuần (?:sau|tới)(?!\w)", re.IGNORECASE)
+_NAM_SAU = re.compile(r"(?<!\w)(?:năm (?:sau|tới)|sang năm(?!\s*\d))(?!\w)", re.IGNORECASE)
 SO_NGAY_AM_TOI_DA = 6
 
 
@@ -242,6 +243,10 @@ def lich_san(cau: str, ngu_canh: str, now: dt.datetime | None = None) -> tuple[l
         dong.append(f"Rằm tháng {m.group(1).lower()} (ngày 15 {_thang_am(am)} âm lịch): {mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay).")
 
     nam_hoi = sorted({y for y in map(int, _NAM_SO.findall(cau)) if NAM_MIN <= y <= NAM_MAX})
+    # A chọn (a) 10/11 sau lượt đo (Y2: có đủ lần đã qua + lần sắp tới, model vẫn gọi lần 2027 là "năm nay") ⇒ câu nói "năm nay / năm sau" ⇒ code ghi
+    # thẳng ngày của đúng năm âm lịch đó
+    nam_am = solar_to_lunar(hom).year
+    nam_noi = ([("năm âm lịch nay", nam_am)] if _NAM_NAY.search(cau) else []) + ([("năm âm lịch sau", nam_am + 1)] if _NAM_SAU.search(cau) else [])
     da_co, n_am = set(), 0
     for nguon, nhan in ((_ngay_am(cau, True), "Ngày được hỏi"), (_ngay_am(ngu_canh, False), "Ngày âm trong tài liệu")):
         for ngay, thang, nhuan in nguon:
@@ -250,6 +255,10 @@ def lich_san(cau: str, ngu_canh: str, now: dt.datetime | None = None) -> tuple[l
             da_co.add((ngay, thang, nhuan))
             n_am += 1
             chu_nhuan = ", tháng nhuận" if nhuan else ""
+            for ten, nam in nam_noi:
+                d = ngay_duong(ngay, thang, nam, "am", nhuan)
+                chu = d if isinstance(d, str) else f"{mo_ta(d)} — {so_voi_hom_nay(d, hom)} (so với hôm nay)"
+                dong.append(f"{nhan} — {ten} ({can_chi.get_year_can_chi(nam)}, âm lịch {ngay}/{thang}/{nam}{chu_nhuan}): {chu}")
             dong += _hai_lan(ngay, thang, "am", nhuan, hom, "âm", chu_nhuan, nhan=nhan, ghi_chu=False)
             for nam in nam_hoi:
                 d = ngay_duong(ngay, thang, nam, "am", nhuan)
