@@ -1,10 +1,20 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6, cải tiến ở Phase 8 và 9)
 
-**Cập nhật lần cuối: 20:52 10/11/2026 — bản 48:** câu hỏi về ngày trả lời nhanh hơn (code tính sẵn ngày, merge `1633c18`). Bản 47 (19:30 10/11/2026): hệ thống không đổi; sửa các chỗ cũ theo rà soát 10/11 (tốc độ / tiền theo lượt đo chung 09/11, công cụ hỏi lại đã gỡ chứ không phải "tắt", nguồn hiện bằng dòng "Nguồn", 👍 / 👎 đã nối số đo, mã 429, cờ tắt thật, mục 5 kiểm lại cờ). Các bản trước: xem lịch sử git.
+**Cập nhật lần cuối: 21:49 10/11/2026 — bản 49:** câu chỉ hỏi về ngày tháng nay được trả lời dù không nhắc Huế (bước phân loại câu được dặn thêm). Bản 48: câu về ngày trả lời nhanh hơn.
 Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 10/11/2026)
 
+- **Mới 10/11 — người dùng thấy: câu chỉ hỏi về ngày tháng được trả lời dù không nhắc Huế** (bạn đồng ý 21:43 10/11/2026; review E đạt).
+  - Câu như "hôm nay là ngày mấy âm lịch", "Tết năm sau là thứ mấy", "còn bao nhiêu ngày tới rằm" trước bị bước phân loại câu coi là "không liên quan Huế" và từ chối.
+    Nay bước phân loại được dặn thêm hai câu: câu **chỉ hỏi về chính ngày tháng** thì chuyển cho trợ lý; câu hỏi **việc khác diễn ra vào ngày đó** mà không gắn Huế
+    (giá vàng, tỷ giá, kết quả xổ số, thời tiết hay sự kiện nơi khác, lịch nghỉ) vẫn từ chối. Phép tính ngày vẫn do code; câu trả lời dặn như cũ.
+  - Đo (chỉ lần phân loại, bản cũ và mới mỗi bản 2 lượt trên hơn 160 câu rủi ro + 176 câu Golden): 9 / 9 câu lịch từng bị từ chối nay đi trợ lý (bản cũ 0 / 9);
+    0 câu khẩn cấp, 0 câu an toàn, 0 câu về Huế bị xếp sai thêm; 0 / 10 câu ngoài phạm vi có từ chỉ ngày lọt vào trợ lý. Bộ 25 câu do người khác viết, người sửa
+    không đọc: 12 / 12 câu lịch đi trợ lý, 0 / 10 câu ngoài phạm vi lọt, 3 / 3 câu khẩn cấp đúng. Trả lời thật: **8 / 9** câu lịch đúng ngày (người chấm tự đổi lịch kiểm lại).
+    Bản dặn đầu viết rộng quá, kéo nhầm 1 câu hỏi việc diễn ra vào một ngày lễ ⇒ thu hẹp ở bản thứ hai. Tiền đo ≈ 0,17 USD.
+  - **Giới hạn:** câu thứ 9 có nội dung đúng lịch nhưng không ghi nguồn ⇒ bị luật kiểm nguồn rút lại (giao diện báo lỗi) — luật có từ trước; câu hỏi nghỉ lễ / Tết
+    mấy ngày (lịch nghỉ chung) vẫn từ chối.
 - **Mới 10/11 — người dùng thấy: câu hỏi về ngày trả lời nhanh hơn** (merge `1633c18`, bạn duyệt 20:47 10/11/2026; review C đạt).
   - Trước: với câu như "Tết năm nay vào ngày nào", trợ lý phải xin công cụ lịch rồi mới viết — 2–4 lần gọi model, chữ đầu chờ ~5–6 giây. Nay **code tự tính sẵn** hôm nay,
     ngày mai, các ngày trong tuần được hỏi, và đổi sẵn các ngày âm có trong câu hỏi hoặc trong tài liệu vừa tìm được (lần đã qua, lần sắp tới, và đúng năm âm khi câu nói
@@ -13,13 +23,13 @@ Tỉ giá ước: 1 USD ≈ 25.000 đồng.
     (đạt ≤ 0,0005); số lần gọi model 52 ⇒ 31; model không gọi công cụ lịch lần nào. Số câu sai ngày **không tăng** (chấm mù + bộ kiểm bằng code); bộ an toàn 12 / 12 đạt;
     9 câu Golden có từ chỉ ngày 9 / 9 đạt; câu không nói về ngày: chuỗi gửi model giống hệt bản trước. Lần đo đầu có 1 câu "năm nay" bị model gọi nhầm lần năm sau ⇒
     sửa bằng code, đo lại đúng. Tiền đo ≈ 0,031 USD.
-  - **Giới hạn:** câu chỉ hỏi lịch, không nhắc Huế, vẫn bị xếp ngoài phạm vi (9 / 19 câu đo, như trước) ⇒ phần nhanh hơn chỉ tới câu đi trợ lý; dạng ít gặp ("ngày kia",
+  - **Giới hạn:** dạng ít gặp ("ngày kia",
     "tháng tới"…) vẫn đi đường cũ. Hồ sơ `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md`.
 - **Mới 09/11 — người dùng thấy:**
   - **Câu có ngày trả lời được — công cụ ngày + âm lịch BẬT** (merge `99ea59a`, cờ `ngay_lich: true` `7eb1f12`, bạn duyệt). Câu có từ chỉ ngày ("hôm nay", "tuần sau", "rằm", "Tết", "năm sau", "sang năm"…) ⇒ **code** tính hôm nay là ngày nào và đổi dương ↔ âm theo lịch Việt Nam (UTC+7, năm 1976–2100) — 09/11 qua một công cụ model gọi; **từ 10/11 code tính sẵn trước** (mục trên), công cụ chỉ còn dự phòng. Câu không nêu năm / nói "năm nay" với ngày âm ⇒ code đưa cả lần đã qua lẫn lần sắp tới, nhắc ghi rõ năm.
     - Đo (2 lượt, câu chưa dùng để chỉnh, chấm mù): 14 câu mới — **bớt 9 câu từ chối nhầm, 0 câu sai ngày / thứ**; sau khi sửa "năm nay" + "sang năm": 3 câu ngày có ngữ cảnh Huế nhánh đúng 3 / 3 ↔ bản cũ 1 / 3, 0 sai ngày, bộ an toàn 4 câu có ngày 0 lỗi. Tiền đo 0,045 USD.
     - Thử trên server thật sau khi bật (A): câu "rằm tháng Giêng" gọi công cụ, ra đúng thứ Bảy 20/02/2027; câu ngoài phạm vi vẫn từ chối.
-    - **Giới hạn:** câu **lịch thuần không nhắc Huế** ("hôm nay bao nhiêu âm", "rằm tháng Giêng năm nay là ngày nào") vẫn bị định tuyến xếp **ngoài phạm vi** (đúng phạm vi sản phẩm du lịch Huế — A chọn); "tháng tới / cuối tuần" model tự cộng; "dịp lễ sắp tới" cần lịch sự kiện theo ngày (đợt 2 cổng).
+    - **Giới hạn:** "tháng tới / cuối tuần" model tự cộng; "dịp lễ sắp tới" cần lịch sự kiện theo ngày (đợt 2 cổng).
   - **Câu khẩn cấp không còn câu soạn sẵn** (định tuyến phương án B, merge `3b52017`, review E đạt): giữ định tuyến 4 nhóm; câu bị xếp "khẩn cấp" đi trợ lý Huế như câu về Huế (bạn chấp nhận 08/11) ⇒ có thể nhận câu trả lời từ kho, câu "không đủ thông tin" kèm mục "Từ web (chưa kiểm)", hoặc câu cố định NCHMF / 112 nếu là thiên tai. Bản "2 nhóm" (G) dừng: 2 / 44 câu ngoài phạm vi đã thấy có mục web (bản cũ 0 / 44) — hồ sơ `hoso/p9-g-cong`.
   - **4 chốt trước deploy vào `main`** (merge `ccc9f4f`): `HUE_LUOT_MOI_NGAY=<n>` ⇒ mỗi IP tối đa n lượt / ngày (quá ⇒ 429 + câu tiếng Việt; không ghi IP); `HUE_COOKIE_SECURE=1` ⇒ cookie chỉ qua https; `HUE_TAT_DOCS=1` ⇒ tắt `/docs`; log xoay vòng 10 MB × 3. **Không đặt biến ⇒ như trước.**
   - Tốc độ chung sau các thay đổi hôm nay (một lượt đo trên `main`, B): một lượt trên trình duyệt thật, 65 câu, 0,0197 USD: câu về Huế tới chữ đầu p50 2,16 s / p95 4,32 s (đạt sàn 3 / 5 s), 0,00047 USD / câu (đạt ≤ 0,0005); câu ngoài phạm vi 1,62 / 2,97 s; **câu xã giao 3,46 / 7,73 s (p95 vượt sàn — đường cũ, không đổi hôm nay)**; câu có từ chỉ ngày lúc đó (5 câu) vượt sàn ⇒ **đã tối ưu 10/11** (2,35 / 4,56 s, 0,00036 USD — mục "Mới 10/11").
@@ -58,7 +68,7 @@ Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 - **Khâu này làm gì:** chatbot Huế trả lời câu hỏi trên toàn bộ kho (món ăn, di tích, lễ hội, nghệ thuật, du lịch) qua một API và cổng du lịch
   trên web (từ 07/11). Dưới mỗi câu trả lời có dòng "Nguồn" trỏ tới đoạn nguồn thật (bên trong, máy vẫn đánh số `[n]` từng ý để kiểm); thiếu thông tin thì trả đúng một câu từ chối cố định, không bịa.
 - **Đang chạy cách nào:** chuẩn hóa chữ câu hỏi (NFC — gộp dấu tiếng Việt về một dạng) → **từ 03/11 (B1):** `gpt-6-luna` phân loại câu hỏi (một lần gọi ngắn ~1,5 s): chào hỏi ⇒ đáp ngắn không tìm kho;
-  ngoài phạm vi ⇒ câu soạn sẵn; khẩn cấp ⇒ **từ 09/11 đi trợ lý Huế như câu về Huế** (trước: câu soạn sẵn 5 dòng 113 / 114 / 115 / 112); **từ 09/11 câu có từ chỉ ngày ⇒ thêm công cụ ngày + âm lịch (code tính)**; hỏi về Huế ⇒ tìm đoạn (từ 03/11 trưa, B2: model được gọi tìm thêm ≤ 2 lần bằng câu tự viết, đoạn mới đánh số tiếp) → lấy tối đa **10 đoạn** nguyên vẹn vừa
+  ngoài phạm vi ⇒ câu soạn sẵn (**từ 10/11** câu chỉ hỏi về ngày tháng không tính là ngoài phạm vi); khẩn cấp ⇒ **từ 09/11 đi trợ lý Huế như câu về Huế** (trước: câu soạn sẵn 5 dòng 113 / 114 / 115 / 112); **từ 09/11 câu có từ chỉ ngày ⇒ thêm công cụ ngày + âm lịch (code tính)**; hỏi về Huế ⇒ tìm đoạn (từ 03/11 trưa, B2: model được gọi tìm thêm ≤ 2 lần bằng câu tự viết, đoạn mới đánh số tiếp) → lấy tối đa **10 đoạn** nguyên vẹn vừa
   ngân sách 16.384 token → `gpt-6-luna` (OpenAI, để mức suy luận mặc định) viết câu trả lời chỉ từ các đoạn đó → backend kiểm từng `[n]` →
   trả câu trả lời + nguồn. Mỗi lần hỏi, API ghi **một dòng số đo** (token, thời gian từng khâu, **tiền USD của câu và của từng lần gọi model, tuyến, công cụ đã chạy** — từ Phase 9 B0; không ghi nội dung câu hỏi / trả lời).
   **Từ B3 (03/11 tối, merge `a3dabba`):** câu dặn trả lời thêm một ý hẹp — không tự thêm lời khuyên / lưu ý an toàn mà nguồn không nêu, giữ lời khuyên có trong nguồn. **nhớ hội thoại BẬT từ B3b (merge `9e2ecd9`)**: server giữ **câu hỏi** của 3 lượt gần nhất (không giữ câu trả lời — `nho_cau_tra_loi: false`), cookie 30 phút; câu dặn thêm cho đường có lịch sử: mọi nhận định và trích dẫn chỉ từ đoạn nói đúng đối tượng được hỏi.
@@ -77,7 +87,7 @@ Tỉ giá ước: 1 USD ≈ 25.000 đồng.
   Trước đó: từ B1 (03/11) câu về Huế từng vượt sàn (3,57 / 6,57 s); song song #6 (bật 05/11) nhanh hơn ~1,37 s; trước B1 (01/11): 1,23 / 2,61 s. Bạn chọn giữ sàn 3 / 5 s (không nâng — mức dư nhỏ, hôm đo model gần như không suy luận trước) và giữ cách hiện chữ dần dù lợi chỉ ~0,44 s.
   Trước streaming (cả câu qua API, 27/10): 3,1 / 6,0 s — chưa đạt.
 - **Giới hạn chính:** từ chối nhầm vẫn là chỗ mất điểm lớn nhất (gốc ở khâu tìm: đoạn có đáp án không vào 10 đoạn); câu hỏi theo ngày tương đối
-  từng bị từ chối (6 / 14 câu, 30/10) ⇒ **từ 09/11 công cụ ngày bật** (mục đầu; câu lịch thuần không nhắc Huế vẫn ra ngoài phạm vi); bảng giá và câu tổng hợp nhiều nguồn còn yếu;
+  từng bị từ chối (6 / 14 câu, 30/10) ⇒ **từ 09/11 công cụ ngày bật** (mục đầu; từ 10/11 cả câu chỉ hỏi ngày tháng không nhắc Huế); bảng giá và câu tổng hợp nhiều nguồn còn yếu;
   10 đoạn được chọn bằng người chấm Claude; mốc người B0 (01/11) chỉ tham khảo — phần lớn cặp như nhau, 3 cặp bản 5 đoạn từ chối nhầm còn bản 10 trả lời được ⇒ bạn giữ 10.
 - **Tối ưu tốc độ (04/11):** thí nghiệm #1 (tắt suy luận khi định tuyến) **âm** — nhanh hơn ~0,2–0,35 s nhưng phạm sàn an toàn ⇒ bỏ (mục 04/11). #6 (viết câu trả lời song song với định tuyến) **bật từ 05/11** (mục 4).
 - **Hỏi lại người dùng (B4, 04–05/11) — không áp dụng:** thử cho trợ lý một công cụ "hỏi lại" (thẻ có nút chọn số ngày, số người…); hai vòng đo đều **âm** (mục 4, 05/11) ⇒ **công cụ này đã gỡ ở B5** (05/11), không còn cờ. Chỉ giữ thẻ nút do **code** bật khi lịch trình câu gõ thiếu số ngày — mà lịch trình câu gõ đang tắt ⇒ người dùng hiện không thấy thẻ này. Câu chi phí: thử **B5c (code tính tiền)** cũng âm, dừng.
@@ -154,6 +164,14 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (mới ở trên)
+
+### 10/11/2026 — câu chỉ hỏi về ngày tháng đi trợ lý (sửa lời dặn bước phân loại)
+
+- **Thử gì:** thêm 2 câu vào lời dặn bước phân loại (bạn chọn cách này 21:00 10/11 thay cho luật từ khoá: "nhiều cách viết, code không bắt hết"). Luật ghi trước: plan
+  định tuyến lịch bản 2 (2 vòng review). Đo rẻ: chỉ chạy lần phân loại cũ ↔ mới; chỉ câu đổi loại mới sinh câu trả lời và chấm.
+- **Kết quả:** bản dặn 1 kéo nhầm 1 câu ngoài phạm vi ⇒ bản 2 thu hẹp ⇒ đạt mọi tiêu chí (mục đầu). 1 câu Golden đổi loại ở một lượt nhưng không có từ chỉ ngày; chạy lại
+  5 lần mỗi bản đều đúng ⇒ nhiễu.
+- **Giữ:** merge (bạn đồng ý). Hồ sơ ở phụ lục.
 
 Mỗi dòng: thử gì · kết quả · giữ / bỏ vì sao · hồ sơ. Thí nghiệm chọn / bỏ phương án có luật ghi trước khi chạy và người khác kiểm lại; các lượt **đo hiện trạng** (tốc độ, giá, token) chỉ đo — không có luật giữ / bỏ ghi trước.
 
@@ -403,7 +421,7 @@ Bảng lập 31/10 (code `main` `1985a81`), thêm dòng tới 09/11. **Cờ, rou
 - **Giao diện — giới hạn (cập nhật 09/11):** lưu trú / ăn uống / sự kiện để đợt 2; bản đồ lịch trình có code, cờ tắt (chờ bạn tick phiếu toạ độ); ca "rút lại" / luồng đứt giữa chừng vẫn kiểm bằng luồng tự dựng. (Link "Nguồn ảnh", ảnh nhỏ cho điện thoại, thẻ "Tên chính thức" đã sửa 08/11.)
 - **Phase 9 (cập nhật 09/11):**
   - đang chạy: B0–B3b, 👍 / 👎, sửa khẩn cấp, #6 song song, B6 tra web, thời tiết, cổng đợt 1, **biểu mẫu Lên kế hoạch (07/11)**, hỏi bằng ảnh (08/11 — ảnh thu nhỏ gửi OpenAI để đoán tên, máy chủ không lưu ảnh);
-  - **bật 09/11:** T1 ngày + âm lịch; định tuyến phương án B (khẩn cấp đi trợ lý Huế); **10/11:** câu ngày nhanh hơn (code tính sẵn ngày, merge `1633c18`);
+  - **bật 09/11:** T1 ngày + âm lịch; định tuyến phương án B (khẩn cấp đi trợ lý Huế); **10/11:** câu ngày nhanh hơn (code tính sẵn ngày, merge `1633c18`); câu chỉ hỏi ngày tháng đi trợ lý (merge `89571d7`);
   - cờ tắt: lịch trình câu gõ tự do (`lich_trinh`), bản đồ lịch trình (`ban_do_lich`, chờ phiếu toạ độ), dòng ngày hôm nay (`today_line`); công cụ hỏi lại B4 đã gỡ (không còn cờ);
   - chờ bạn: bảng điểm v7 (cột thời lượng — để nút "dày lịch" có tác dụng);
   - dừng / đóng hồ sơ (tag): B5c, **T3 bảng vé + giờ**, **G cổng 2 nhóm**, **T2 tra web thành công cụ**, **T4 lịch trình câu gõ**.
@@ -428,3 +446,4 @@ Bảng lập 31/10 (code `main` `1985a81`), thêm dòng tới 09/11. **Cờ, rou
     Code theo spec Phase 6.
   - `guides/full_corpus_rag.md:500` (đoạn lịch sử) còn ghi "direct `AsyncOpenAI`, không Agent/Runner"; code dùng OpenAI Agents SDK một lượt, không tool — đúng theo
     `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md`. Không phải lỗi code.
+- Câu chỉ hỏi ngày tháng đi trợ lý (10/11, merge `89571d7`, lời dặn phân loại `164bd4a254e9` → `8cd30cbb359a`): plan `docs/superpowers/plans/2026-11-10-phase-9-dinh-tuyen-lich-plan.md`; report `report_agent/2026-11-08_phase_9_ban_13/b_dinh_tuyen_lich_implementation.md`; review `b_dinh_tuyen_lich_review.md` (E); dữ liệu `data/phase_9/dinh_tuyen_lich/`.

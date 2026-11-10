@@ -7,7 +7,11 @@
 - Trạng thái (19:40 10/11/2026): plan `935f9358e25d` A duyệt ⇒ code `5d0559b` + sửa (a) `b8a96d8` + report `7d6f25f`, nhánh đã push ⇒ **chờ C review cả nhánh**.
 - Kết quả: tiêu chí 1–6 đạt sau sửa (a) (Y2 "năm nay" tụt ở lượt chính ⇒ A chọn sửa bằng code ⇒ lượt lại đúng). Tiền ≈ 0,031 USD. Server đã tắt.
 - 19:48 10/11/2026: review C changes_requested (M-1 "mùng N tháng <số>" ⇒ cần chữ "âm") ⇒ sửa `0385bcf` (đã push) ⇒ C: **ready_for_user_confirmation** ⇒ chờ A merge.
-- Sau merge: gỡ worktree `/tmp/e_t1_nhanh` (rm 2 symlink + `git worktree remove`).
+- 21:01 10/11/2026: A merge `1633c18` (User duyệt) ⇒ E gỡ worktree; báo cáo User (SINH bản 48, LUONG bản 35, README) A commit `3e0607b`. **Việc T1 nhanh xong.**
+- **Bẫy (E sơ suất 10/11):** gỡ worktree xoá luôn `backend/logs/` của nó ⇒ mất dòng `chat_metrics` lượt nhánh (số đã ở report) — lần sau chép log ra `data/` trước khi gỡ.
+- Tiếp: hỗ trợ B (câu lịch chung không nhắc Huế ⇒ trả lời, sửa lời dặn định tuyến). E đã viết **bộ kín H** 25 câu `data/phase_9/dinh_tuyen_lich/giu_mu_sealed.jsonl` sha `5ef0d41b62f2` (A giữ, plan B bản 2 `8c57c47`). **E chạy H một lần khi B báo bản khoá**; chỉ báo số đếm + id (B / A không đọc nội dung).
+- **H đã chạy (10/11):** bản khoá định tuyến `8cd30cbb359a`, 25 câu, 0 lỗi, 0,002623 USD — lịch chung 12 / 12 đi trợ lý · ngoài phạm vi 10 / 10 · khẩn cấp 3 / 3 ⇒ cả 3 sàn đạt; kết quả `data/phase_9/dinh_tuyen_lich/h_sealed_r1.jsonl`. **Bộ H đã dùng** (không dùng lại để chỉnh).
+- 21:40 10/11/2026: **review nhánh B `p9-dinh-tuyen-lich` `e8e07c9`** (A giao thay C) ⇒ ready_for_user_confirmation, 0 / 0 / 2 minor — `report_agent/2026-11-08_phase_9_ban_13/b_dinh_tuyen_lich_review.md`. Sửa nhãn R11 trong `data/phase_9/t1/bo_sau_g.jsonl` (refuse ⇒ trả lời; bộ gốc 30/10 A quyết). Ca dò `/tmp/e_do_dtl/` (xoá được). Tiền review 0,0022 USD.
 
 ## (lịch sử) STATUS E — KẾT PHIÊN 22:29 09/11/2026 (`date`) · terminal `hue-rag-ea` (A `hue-rag-87`, B `hue-rag-99`, C `hue-rag-6a`) · Claude Opus 5.5 · vai thực thi
 
@@ -20,7 +24,7 @@
 - **T2 tra web thành công cụ — ÂM ⇒ hồ sơ** `hoso/p9-t2-web` (`e_t2_web_implementation.md` §4–5). Bộ hỏi kèm 10 E viết: `data/phase_9/t2_web/hoi_kem_10.jsonl` md5 `04aa82399972`.
 - **T4 lịch trình câu gõ — ÂM ⇒ hồ sơ** `hoso/p9-t4-lich` (`e_t4_lich_implementation.md`). Gốc lỗi ở luật xếp / bảng B5; áp cả cho biểu mẫu: "dày lịch" gần như không tác dụng (bảng 1 / 28 điểm `ngan`), nhóm hạn chế không có buổi tối, không nói được lo mưa.
 - **Review:** G 2 nhóm phần code (`g_cong_branch_review.md`, hồ sơ); G phương án B `p9-g-b` `2deec02` ready ⇒ merge `3b52017` (`g_b_branch_review.md`).
-- **Báo cáo User (nháp, A commit):** `BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 45 ⇒ 46; `LUONG_HOAT_DONG_HE_THONG.md` bản 33; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md`. Chỗ số S5 để trống cho A (B đo: câu ngày p50 ~5,2 s — B báo).
+- **Báo cáo User (nháp, A commit):** `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 45 ⇒ 46; `01_LUONG_HOAT_DONG_HE_THONG.md` bản 33; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md`. Chỗ số S5 để trống cho A (B đo: câu ngày p50 ~5,2 s — B báo).
 
 ### Việc mở liên quan E (không gấp, chờ A / User)
 - Bảng điểm v7 (cột thời lượng) — User duyệt ⇒ "dày lịch" của biểu mẫu mới có tác dụng.
@@ -48,7 +52,7 @@
 - **Merge:** `e401c71` (T1) + `7ee12f1` (bộ dò bỏ số thứ tự / phân số; test stream, song song #6, biểu mẫu). `lunar-vn==1.4.0` có trong `uv.lock` của `main`.
 - **Tài liệu:**
   - plan `docs/superpowers/plans/2026-11-08-phase-9-t1-ngay-plan.md` bản 2 `cdf2c061381a`;
-  - report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` (3 lượt đo, 4d sau review nhánh, đoạn lời thường cho `BAO_CAO_SINH_CAU_TRA_LOI_API`);
+  - report `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md` (3 lượt đo, 4d sau review nhánh, đoạn lời thường cho `07_BAO_CAO_SINH_CAU_TRA_LOI_API`);
   - review `report_agent/2026-11-02_phase_9_code/t1_ngay_branch_review.md`.
 - **Số đo (lượt 3, bộ ngày 27 câu, 2 người chấm mù khớp 27 / 27):** từ chối nhầm −8 · L1 / L3 0 · ngày / thứ sai 0 · chạm `max_turns` 0; an toàn 16 / 16; R8 kém ổn định (A chấp nhận).
 - **Còn TRƯỚC KHI BẬT cờ:**
@@ -99,7 +103,7 @@
 
 - 09:22 08/11/2026 — A giao: rà "Câu hỏi A còn nợ" (C211 rel, log xoay vòng, hạn mức OpenAI / Serper, mục deploy) — chỉ đọc, 0 USD. **XONG 09:23 08/11/2026**: (1) `rel` đã sửa (`markdown.js:36-46`); (2) log chưa xoay; (3) hạn mức chưa đặt, code không có trần tổng; checklist E-dep còn thiếu #1a / #5 / #6 / #7. **File:** `data/phase_12/deploy_nhap/ra_soat_no_A_2026-11-08.md` (mới), file này.
 - 09:30 08/11/2026 — A giao: rà `.md` tìm tính năng đã ghi mà chưa làm (phần E: `bao_cao_he_thong/`, `docs/superpowers/specs` + `plans`, `guides/`, `README.md`) + hướng dẫn User thu 40 câu. Chỉ đọc, 0 USD. **XONG 09:37 08/11/2026**: (A) 22 ý · (B) 21 ý; 2 agent phụ quét specs / plans + guides, E kiểm 9 khẳng định (đúng 9 / 9); hướng dẫn thu trỏ phiếu C `bo_40_cau/huong_dan_thu_cho_user.md`. **File:** `data/ra_soat_tinh_nang_2026-11-08/E.md` (mới), file này.
-- 09:38 08/11/2026 — A giao (1): sửa `README.md` phần tính năng theo `main` + sửa mâu thuẫn bộ kín. **XONG 09:40 08/11/2026** (chờ A commit): README phần tính năng + sơ đồ + API + giới hạn; Golden bản 9 (bộ kín 40 câu đã dùng 01/11 — DANH_GIA đúng) + dòng README `bao_cao_he_thong/`. **File:** `README.md`, `bao_cao_he_thong/BAO_CAO_BO_CAU_HOI_GOLDEN.md` hoặc `bao_cao_he_thong/BAO_CAO_DANH_GIA.md` (đoạn bộ kín). A commit.
+- 09:38 08/11/2026 — A giao (1): sửa `README.md` phần tính năng theo `main` + sửa mâu thuẫn bộ kín. **XONG 09:40 08/11/2026** (chờ A commit): README phần tính năng + sơ đồ + API + giới hạn; Golden bản 9 (bộ kín 40 câu đã dùng 01/11 — DANH_GIA đúng) + dòng README `bao_cao_he_thong/`. **File:** `README.md`, `bao_cao_he_thong/09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` hoặc `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (đoạn bộ kín). A commit.
 - 09:38 08/11/2026 — A giao (2) (làm sau (1)): kiểm bật hỏi bằng ảnh trên cổng — worktree `/tmp/e_anh_bat`, nhánh `p10-anh-bat` từ `main`; sửa nhỏ giao diện nếu cần + câu ở trang Giới thiệu (`frontend/src/pages.jsx`); ≤ 0,01 USD (Phase 10). Report `report_agent/2026-11-05_phase_10_anh/e_bat_anh_implementation.md`. **XONG 09:51 08/11/2026 — chờ review:** nhánh `p10-anh-bat` `ce89e42` (đã push; 3 file giao diện: cuộn đáy khi thẻ ảnh hiện — trước sửa thẻ đè cuối câu trả lời ở 1440 + 390; câu Giới thiệu khi cờ bật). Test 59 passed; cờ tắt 0 USD đạt; 0 CSP / console. Tiền thật **0,008346 USD** (Phase 10 ⇒ ≈ 0,107 / 0,15). Worktree đã gỡ. Ngoài phạm vi: dòng "Nguồn" lặp cùng tên bài (8 lần) — báo A.
 - 09:56 08/11/2026 — A giao: việc nhỏ Nhóm 1 + 2 (User duyệt 08/11) — (2) ô chat maxLength 500 + đếm; (5) gợi ý cách hỏi dưới câu từ chối; (7) nút Dừng + backend huỷ gọi model; (12) lỗi stream khác cũng huỷ gọi model; (9) khẩn cấp số `tel:` + ẩn 👍/👎; (+) dòng Nguồn gộp theo bài. **XONG 10:28 08/11/2026 — chờ review:** nhánh `p11-viec-nho-e` `45b3710` (đã push; (9) GÁC theo A — đã gỡ khỏi nhánh). Thêm: sửa đường song song mất USD trong `chat_metrics` khi người dùng ngắt (tái tạo trước). Test 520 passed + 1 hỏng sẵn trên `main` (B sửa ở `p11-ban-do`); Q1 giống byte. Tiền ≈ 0,0055 USD. Report `report_agent/2026-11-06_giao_dien_cong/e_viec_nho_implementation.md`. Worktree đã gỡ. Worktree `/tmp/e_viec_nho`, nhánh `p11-viec-nho-e` từ `main` `c9931be`. **File sẽ sửa:** `frontend/src/chat.jsx`, `frontend/src/stream.js`, `frontend/src/index.css`, `backend/llm/assistant.py`, `backend/api/routes/chat.py` (nếu cần), test liên quan; report `report_agent/2026-11-06_giao_dien_cong/e_viec_nho_implementation.md`. ≤ 0,01 USD.
 - 10:28 08/11/2026 — A giao (giữa việc nhỏ): rebase `p10-anh-bat` ⇒ **`9800eeb`** (push, 60 passed) · review `p11-ban-do` `d0adf31` ⇒ **ready** (`report_agent/2026-11-06_giao_dien_cong/e_ban_do_review.md`; cờ tắt: Q1 byte, CSP byte, 0 host lạ; 432 tổ hợp 0 sai; 0,00038 USD).

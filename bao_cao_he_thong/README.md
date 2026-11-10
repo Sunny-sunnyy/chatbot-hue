@@ -13,7 +13,8 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 **Làm được (đang chạy):**
 - Hỏi đáp về Huế; nhớ 3 câu hỏi gần nhất trong một cuộc trò chuyện (chỉ câu hỏi, không nhớ câu trả lời); chữ hiện dần; dòng "Nguồn" bấm được để đọc đoạn gốc / cả bài.
 - Trò chuyện xã giao (chào, cảm ơn, hỏi chatbot là ai).
-- Câu hỏi có ngày (hôm nay, cuối tuần, rằm, Tết, ngày âm của lễ hội): **ngày do code tính**, model chỉ diễn đạt.
+- Câu hỏi có ngày (hôm nay, cuối tuần, rằm, Tết, ngày âm của lễ hội): **ngày do code tính**, model chỉ diễn đạt. Câu chỉ hỏi về ngày tháng (âm ↔ dương, thứ mấy,
+  lễ / Tết ngày nào) được trả lời cả khi không nhắc Huế; câu hỏi việc khác vào ngày đó mà không về Huế (giá vàng, thời tiết nơi khác…) vẫn từ chối.
 - Dự báo thời tiết Huế 7 ngày (số lấy từ Open-Meteo, code dựng câu).
 - Kho không có ⇒ tra web một lần, hiện riêng mục "Từ web (chưa kiểm)".
 - Biểu mẫu "Lên kế hoạch": chọn số ngày / người đi cùng / sở thích ⇒ code xếp lịch theo buổi từ địa điểm trong kho, model viết lời.
@@ -24,7 +25,6 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · lưu trú, quán gần đây, sự kiện theo ngày · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
 chưa đưa lên mạng (đã chạy thử bản đóng gói Docker trên máy; đưa lên máy chủ AWS chờ bạn quyết + tài khoản).
 
-**Đang làm (chưa vào chatbot):** câu hỏi lịch chung không nhắc Huế (vd "rằm tháng này là ngày nào") hiện bị xếp ngoài phạm vi ⇒ đang sửa bước phân loại.
 **Bước cuối Phase 9:** đo lại cả hệ thống hiện tại so với bản cuối Phase 8 trên cùng các bộ câu (kế hoạch đang nháp).
 
 ## Số chính (mỗi số chỉ ghi ở đây — file khác trỏ về)

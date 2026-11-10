@@ -1,5 +1,14 @@
 # STATUS B — PHIÊN 10/11 (mở 19:02 10/11/2026, terminal `hue-rag-05`; A `hue-rag-55` · C `hue-rag-4f` · E `hue-rag-e4`)
 
+## Đang làm — định tuyến câu lịch chung (A giao 21:00 10/11/2026, quy trình đủ) — cập nhật 21:04 10/11/2026
+- **XONG, ĐẠT mọi tiêu chí** (21:35 10/11/2026): nhánh `p9-dinh-tuyen-lich` `e8e07c9` (push), ROUTER `8cd30cbb359a` (vòng 2). L1 9/9 · L2 8/9 · K/N0/S1/AT/H đạt. Tiền ≈ 0,169 / trần 0,18. Report `b_dinh_tuyen_lich_implementation.md` (A commit `f060a0d`). **E review: ready_for_user_confirmation** (0/0/2 minor, `b_dinh_tuyen_lich_review.md`). **User đồng ý ⇒ A merge `89571d7`.** Worktree `/tmp/b_dtl` đã gỡ. Báo cáo cho User đã sửa (21:49 10/11/2026): `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` bản 49 + README (bỏ dòng "Đang làm", thêm vào "Làm được") — chờ A commit. Plan bản 2 `aa493aec252f` (A duyệt). Bộ giữ mù E `giu_mu_sealed.jsonl` `5ef0d41b62f2` (B không đọc).
+- **Khai báo sửa:** nhánh `p9-dinh-tuyen-lich` (worktree `/tmp/b_dtl`, sau khi A duyệt): `backend/llm/full_corpus_prompt.py` (**chỉ** `ROUTER_INSTRUCTIONS`), test chạm; công cụ `data/phase_9/dinh_tuyen_lich/`; report `report_agent/2026-11-08_phase_9_ban_13/b_dinh_tuyen_lich_implementation.md`.
+
+## (cũ) TRẠNG THÁI: rảnh — chờ User (20:04 10/11/2026 `date`)
+- A đã commit report + review deploy (`895fd04`) và merge `p12-deploy-nhap` vào `main` (`5081e89`). Câu cho User: handoff Q-DP (hỏi khi tới deploy AWS).
+- Xã giao song song: nhánh `p9-xa-giao-song-song` `22abb2a` chờ User chọn bật (bật ⇒ merge cờ false rồi bật; không ⇒ tag hồ sơ).
+- Tiền B 10/11 ≈ 0,080 USD. Không worktree / server / container nào của B.
+
 ## Đang làm — xã giao chạy song song định tuyến (A giao 19:05 10/11/2026, mục "VIỆC PHIÊN 10/11")
 - Nhánh `p9-xa-giao-song-song` từ `main` `624a17b`, worktree `/tmp/b_xg` (dựng sau khi A duyệt plan). Trần ≤ 0,1 USD.
 - **Khai báo sửa:** plan `docs/superpowers/plans/2026-11-10-phase-9-xa-giao-song-song-plan.md` (working tree chung, A commit); trong worktree:
@@ -12,6 +21,7 @@
   Chờ E "đo xong" ⇒ lượt S (bật tạm cờ trong `settings.yaml` của worktree, đo xong trả `false`).
 - **XONG deploy cục bộ (19:53 10/11/2026):** `p12-deploy-nhap` `8d650ad` (merge `main` `bb78e1e`, đã push, chưa vào main). Nháp `data/phase_12/deploy_nhap/` sửa: compose 3 biến chốt; dockerignore loại `frontend/public/anh/rieng` (ảnh #5 suýt lọt). Ảnh `hue-rag-app:dep10` (191 s, 3,57 GB) sạch; compose qua Caddy: health 5/5, docs 404, câu kho / ngoài kho đúng, quá lượt + giả XFF ⇒ 429, log 0 câu hỏi / 0 IP; đã down. Test rộng 851 đạt / 1 cần bản build giao diện. Report `b_deploy_cuc_bo_implementation.md`. Worktree `/tmp/b_dep` (symlink data/kho) giữ cho C. Tiền ≈ 0,00045.
   `/tmp/b_xg` đã gỡ (A đồng ý); nhánh xã giao `22abb2a` (sửa m-2 C).
+- **Review C deploy (changes_requested 1 major / 2 minor) ⇒ sửa xong 20:01 10/11/2026:** danh sách ảnh vào ảnh (`dep10b`, route ảnh chạy), dòng ⚠ HUE_SITE, Caddy ghim 2.11.7 + XFF giả vẫn 429. Report §5. **C delta: ready_for_user_confirmation** (review §6). Worktree `/tmp/b_dep` đã gỡ (nhánh `8d650ad` trên origin). B không còn worktree / server / container.
 - **XONG — CHƯA ĐẠT tiêu chí ghi trước (19:36 10/11/2026 `date`):** nhánh `p9-xa-giao-song-song` **`9ce7cfd`** (đã push; cờ `false`). S (60 câu, `s_r1.jsonl`): xã giao p50 3,46 → 1,85 s nhưng
   p95 5,74 ✗; ngoài phạm vi p95 5,21 ✗ + 0,00056 USD / câu > 0,0005; Huế 2,28 / 4,23 ✓. Test rộng 855 đạt (4 phút). A quyết: không merge, chưa tag — A trình User;
   User bật ⇒ C review ⇒ merge cờ false rồi bật; không ⇒ tag hồ sơ. Report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md` (working tree chung, A commit).
