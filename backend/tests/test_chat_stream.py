@@ -13,7 +13,7 @@ from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents, _answer_events, 
 from core.schema import GenerationError
 from llm.answer_stream import AnswerTextStream, decode_partial_string, displayable_prefix
 from llm.citations import normalize_citations
-from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER
 from llm.assistant import AnswerTrace, check_citations
 from retrieval.full_corpus_context import PackedContext, PackedSource
 
@@ -163,7 +163,7 @@ def test_refusal_without_model_still_goes_through_stream():
     stream = StreamEvents(metrics, time.perf_counter())
     trace = AnswerTrace(answer=INSUFFICIENT_ANSWER, cited=(), fixed_outcome="refusal_no_sources")
     events = parse_sse([stream.delta(trace.answer), *stream.fixed(trace)])
-    assert events == [("delta", {"seq": 1, "text": INSUFFICIENT_ANSWER}), ("sources", []), ("done", {"outcome": "refusal_no_sources"})]
+    assert events == [("delta", {"seq": 1, "text": INSUFFICIENT_ANSWER}), ("sources", []), ("done", {"outcome": "refusal_no_sources", "tu_choi_kho": True})]
     assert metrics["refusal"] is True and metrics["delta_matches_final"] is True
 
 
@@ -183,6 +183,15 @@ def test_notice_event_follows_sources_when_set():
     trace.notice = "dòng thử"
     names = [name for name, _ in parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).finish(trace))]
     assert names == ["sources", "notice", "done"]
+
+
+def test_kho_refusal_marks_done_so_ui_shows_ask_tips():
+    """Việc nhỏ (5) 08/11: kho không đủ (model từ chối / từ chối trước model) ⇒ `done` có `tu_choi_kho`; câu trả lời thường và câu ngoài phạm vi ⇒ không."""
+    assert parse_sse(stream_with_text(INSUFFICIENT_ANSWER)[1])[-1] == ("done", {"outcome": "success", "tu_choi_kho": True})
+    assert parse_sse(stream_with_text("Mở cửa từ 7 giờ [1].")[1])[-1] == ("done", {"outcome": "success"})
+    out = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter())
+    events = parse_sse(out.fixed(AnswerTrace(answer=OUT_OF_SCOPE_ANSWER, cited=(), fixed_outcome="out_of_scope")))
+    assert events[-1] == ("done", {"outcome": "out_of_scope"})
 
 
 def test_any_error_after_stream_opened_ends_with_error_then_done():

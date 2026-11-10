@@ -1050,3 +1050,10 @@ Chi tiết tiến độ và các artifact nghiệm thu nằm tại:
 - Giao diện (User): bỏ số `[n]` trong chữ ⇒ dòng "Nguồn"; cổng du lịch kiểu Huế TRIPO mức 2, hai đợt. B172 (TRIPO 17 trang + 5 trang cùng đề tài), C209 (nguồn dữ liệu đợt 2), C211 (phần kỹ thuật), B173 (3 bản mẫu) ⇒ spec đợt 1 bản 2 `ff3c317ec88b` (E review 2 vòng ready) chờ User duyệt.
 - Tiền ≈ 0,027 USD. Sổ: S101–S103. Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`, `report_agent/2026-11-06_b5_cau_tu_nhien/TONG_HOP.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-06_lich_trinh_cau_tu_nhien.md`.
 
+## 08/11/2026 — chốt phạm vi trước đóng gói; spec Phase 9 bản 13 (A, 12:25 08/11/2026)
+
+User: chưa deploy tới khi đủ tính năng + đóng gói; phạm vi = bản đồ + ảnh + giọng nói + 14 việc nhỏ; brainstorm ⇒ cổng 2 nhóm, bỏ khẩn cấp, 4 công cụ (spec bản 13 `5557f0fd7650`); mức nhẹ cho việc nhỏ + giảm thời gian test. Vào `main`: ảnh cổng, hỏi bằng ảnh bật, bản đồ (cờ tắt), 14 việc nhỏ. Trên nhánh: G (chờ kín), T1 (chờ review vòng 2), T3 (âm Q3, chờ User). Tiền ≈ 0,98 USD. Tổng hợp: `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md`.
+
+## 09/11/2026 — đợt 2 Phase 9: định tuyến phương án B, công cụ ngày bật, 4 việc đóng hồ sơ (A, 22:34 09/11/2026)
+
+Vào `main`: 4 chốt deploy `ccc9f4f`, định tuyến phương án B `3b52017` (G cổng 2 nhóm dừng sau > 3 vòng chỉnh: S1 an toàn âm thật, rồi S2b 2/44 trên bộ đã thấy), T1 ngày + âm lịch `99ea59a` + **bật** `7eb1f12`. Đóng hồ sơ (đo âm theo tiêu chí ghi trước): G `hoso/p9-g-cong`, T2 `hoso/p9-t2-web` (câu hỏi kèm có web 4/10 = mốc; 26/29 lần gọi trùng câu từ chối), T3 `hoso/p9-t3-bang` (lợi ≈ 0), T4 `hoso/p9-t4-lich` ("hợp người đi cùng" 21/27, 15/27). S5 chung: câu Huế đạt sàn; xã giao + câu ngày vượt sàn tốc độ (tối ưu sau). User: vòng tự soi bắt buộc mỗi phiên; bỏ "rảnh phải giao việc"; trần 4,0. Tiền ≈ 0,62 USD. Sổ: S109–S113, vòng 23 (W61). Chi tiết: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-09.md`, `report_agent/2026-11-08_phase_9_ban_13/TONG_HOP.md`, nhật ký `bao_cao_he_thong/nhat_ky/2026-11-09_ngay_am_lich_g_phuong_an_b_chot_deploy.md`.

@@ -28,10 +28,10 @@ from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationE
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
-from llm.emergency import EMERGENCY_ANSWER, is_emergency
 from llm import lich_trinh as lt
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
+from llm import ngay_lich as nl
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
@@ -59,7 +59,6 @@ class AssistantFlags:
     """Cờ từng phần B1 (plan D9, `settings.yaml` khối `assistant:`); tắt cả 4 ⇒ chuỗi gửi model như B0.
     B2 (plan B2 D1): `lan_tim_dau` — v0 câu gốc · v1 / v3 câu tìm do định tuyến viết (cần `router`) · v2 trợ lý tự gọi `tim_kho`;
     `tim_them` — sau lần tìm đầu của code, trợ lý được gọi `tim_kho` thêm (B2b). `v0` + `tim_them` tắt ⇒ chuỗi gửi model như B1."""
-    emergency_rule: bool = False
     router: bool = False
     today_line: bool = False
     may_have_changed_notice: bool = False
@@ -74,6 +73,10 @@ class AssistantFlags:
     # Cổng đợt 1 (spec `2026-11-06-giao-dien-cong-dot-1-design.md` D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp lịch bằng giá trị nút; tách khỏi
     # `lich_trinh` (câu gõ tự do). TẮT tới khi đạt Q-F; cần bảng điểm (không cần vòng công cụ: lượt biểu mẫu sinh một lần, không công cụ)
     lich_trinh_bieu_mau: bool = False
+    # Bản đồ lịch trình (plan `2026-11-08-ban-do-lich-trinh-plan.md`): toạ độ do code gắn vào dữ liệu giao diện của lịch (không vào chuỗi gửi model);
+    # bật ⇒ CSP cho ảnh tile OSM (`api/app.py`). Cần bảng điểm + bảng toạ độ (`toa_do_lich`, nạp ở rìa)
+    ban_do_lich: bool = False
+    toa_do_lich: "dict | None" = field(default=None, compare=False, repr=False)
     # Thí nghiệm tốc độ #6 (plan 2026-11-04-phase-9-toc-do-song-song): đường stream chạy phần `tro_ly_hue` cùng lúc định tuyến; tắt = như cũ
     song_song_tra_loi: bool = False
     # B6 (plan B6 bản 3 D10): cổng web sau câu trả lời kho — TẮT tới khi đạt luật ghi trước; cần định tuyến + vòng công cụ
@@ -81,6 +84,8 @@ class AssistantFlags:
     # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
     # phản hồi ghi sẵn)
     thoi_tiet: bool = False
+    # Phase 9 T1 (plan `2026-11-08-phase-9-t1-ngay-plan.md`): công cụ `ngay_lich` (code tính ngày + đổi âm ↔ dương) — chỉ đưa khi câu có từ chỉ ngày
+    ngay_lich: bool = False
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -92,8 +97,12 @@ class AssistantFlags:
             raise ValueError("assistant.lich_trinh needs assistant.tim_them: true and the itinerary table (assistant.lich_trinh_bang)")
         if self.lich_trinh_bieu_mau and self.bang_lich is None:
             raise ValueError("assistant.lich_trinh_bieu_mau needs the itinerary table (assistant.lich_trinh_bang)")
+        if self.ban_do_lich and (self.bang_lich is None or self.toa_do_lich is None):
+            raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
+        if self.ngay_lich and not self.tim_them:
+            raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
 
@@ -103,7 +112,8 @@ class AssistantFlags:
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
         # chỉ nạp khi một trong hai cờ lịch bật (clone không có `data/` vẫn chạy cờ tắt)
         bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang,
+        toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None)
 
     @property
@@ -112,12 +122,15 @@ class AssistantFlags:
         return self.lan_tim_dau == "v2" or self.tim_them
 
 
+BACKEND_DIR = Path(__file__).resolve().parents[1]  # đường dẫn trong settings tương đối theo `backend/`
+
+
 def nap_bang_lich(settings: dict) -> "lt.Bang":
     """Bảng điểm lịch trình (B5 D2) từ `assistant.lich_trinh_bang` (tương đối theo `backend/`, như các đường dẫn khác của settings)."""
-    return lt.nap_bang(Path(__file__).resolve().parents[1] / settings["assistant"]["lich_trinh_bang"])
+    return lt.nap_bang(BACKEND_DIR / settings["assistant"]["lich_trinh_bang"])
 
 
-BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "du_bao"))
+BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -146,9 +159,9 @@ class AnswerTrace:
     so_nguon: list[PackedSource] = field(default_factory=list)
     tools: list[dict] = field(default_factory=list)  # mỗi lần chạy công cụ: {"name", "ms"}
     llm_calls: list[dict] = field(default_factory=list)  # mỗi lần gọi model (generator `CallLog`) + `route` của lần gọi
-    # B1: câu trả lời cố định (không qua kiểm citation) ⇒ outcome riêng: "emergency" / "out_of_scope" / "refusal_no_sources"
+    # B1: câu trả lời cố định (không qua kiểm citation) ⇒ outcome riêng: "out_of_scope" / "refusal_no_sources" (phương án B G: bỏ "emergency")
     fixed_outcome: str | None = None
-    emergency_by: str | None = None  # "rule" (luật code) | "router" (định tuyến chọn khan_cap)
+    emergency_by: str | None = None  # "router" — định tuyến chọn khan_cap (phương án B G: câu vẫn đi agent Huế, không câu soạn sẵn)
     route_error: str | None = None  # định tuyến lỗi ⇒ đi `tro_ly_hue`
     routing_ms: float | None = None
     today: str | None = None  # dòng ngày đã gửi model (D7) — log chỉ ghi phần ngày
@@ -429,6 +442,39 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
     return thoi_tiet
 
 
+def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
+    """Hàm `ngay_lich` của **một lượt** (T1): model chỉ gửi loại lịch + số; code tính, dựng chữ, đăng thành **một nguồn** trong sổ nguồn (như
+    `_nguon_thoi_tiet` — câu chỉ có ngày vẫn trích được [n]). ≤ 2 lần / câu (lần thứ 3 ⇒ câu nhắc, không tính)."""
+    LoaiLich = Literal["hom_nay", "duong", "am"]
+
+    async def ngay_lich(loai: LoaiLich, ngay: int, thang: int, nam: int, thang_nhuan: bool) -> str:
+        """Hôm nay theo giờ Việt Nam và đổi ngày dương ↔ âm lịch Việt Nam.
+
+        Args:
+            loai: "hom_nay" (chỉ hôm nay), "duong" (đổi ngày dương sang âm) hoặc "am" (đổi ngày âm sang dương).
+            ngay: ngày cần đổi (0 khi loai là "hom_nay").
+            thang: tháng cần đổi (0 khi loai là "hom_nay").
+            nam: năm cần đổi; 0 = người dùng không nêu năm (công cụ trả lần gần nhất đã qua và lần sắp tới).
+            thang_nhuan: true nếu là tháng âm nhuận.
+        """
+        lan = sum(t["name"] == "ngay_lich" for t in trace.tools)
+        entry = {"name": "ngay_lich", "ms": 0.0, "loai": loai, "nam": nam}  # 09/11: `nam` để biết model gửi năm nào (chỉ số, không chữ)
+        trace.tools.append(entry)
+        if lan >= 2:
+            entry["het_luot"] = True
+            return "Đã đổi ngày ở các lần gọi trước trong lượt này; hãy viết câu trả lời."
+        # (i) A 08/11: khoảng "tuần này / tuần sau / tháng này" do code ghi — xét câu cuối + câu hỏi liền trước (như bộ dò)
+        cau = " ".join([query] + ([trace.history[-1][0]] if trace.history else []))
+        dong = nl.ket_qua(loai, ngay, thang, nam, thang_nhuan, cau=cau).splitlines()
+        src = PackedSource(id=len(trace.so_nguon) + 1, title=nl.TIEU_DE_NGUON, heading_path=(nl.MUC_NGUON,), excerpts=tuple(dong), source=nl.NGUON_SOURCE)
+        trace.so_nguon.append(src)
+        chu = FullCorpusContextBuilder._block(src)
+        trace.context_parts.append(chu)
+        return chu
+
+    return ngay_lich
+
+
 def chu_cua_model(trace: AnswerTrace) -> str:
     """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
     answer, noi = trace.answer or "", trace.thoi_tiet_noi
@@ -636,7 +682,7 @@ def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) 
     ts = khung["tham_so"]
     sua = the_hoi_lai("lich_trinh", list(TRUONG_THEO_LOAI["lich_trinh"]), cau_goc)
     sua["chon"] = {k: ts[k] for k in TRUONG_THEO_LOAI["lich_trinh"] if ts[k] and not (k == "so_ngay" and ts["so_ngay_tam"])}
-    return {"ban_do": lt.ban_do(flags.bang_lich, khung), "sua": sua}
+    return {"ban_do": lt.ban_do(flags.bang_lich, khung, flags.toa_do_lich if flags.ban_do_lich else None), "sua": sua}
 
 
 async def answer_query(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder=None,
@@ -688,6 +734,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
                                "co_cong_cu": tu_khoa and not ngoai_7}
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
+    if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
+        extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     return extra
 
 
@@ -704,7 +752,8 @@ async def _xep_bieu_mau(query: str, retrieval_service, context_builder, trace: A
 
 
 async def answer_bieu_mau(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags) -> None:
-    """Lượt biểu mẫu không stream (`POST /api/chat`): code xếp ⇒ một lần sinh **không công cụ** ⇒ kiểm như lượt có lịch (`_finish_generated`).
+    """Lượt biểu mẫu không stream (`POST /api/chat`): code xếp ⇒ một lần sinh **không công cụ** bằng agent biểu mẫu (luật lịch trong lời dặn +
+    mức suy luận thấp — V5 X1c) ⇒ kiểm như lượt có lịch (`_finish_generated`).
     Lỗi tìm / ngữ cảnh / sinh đi ra nguyên kiểu như `answer_query`."""
     if generator is None:
         raise GeneratorNotReadyError("generator is not ready")
@@ -713,7 +762,8 @@ async def answer_bieu_mau(query: str, retrieval_service, context_builder, genera
     started = time.perf_counter()
     call_log = CallLog()
     try:
-        trace.generated = await generator.generate_answer(query, context, today=today, call_log=call_log, **_history_kwargs(trace))
+        trace.generated = await generator.generate_answer(query, context, today=today, call_log=call_log, bieu_mau=True,
+                                                          **_history_kwargs(trace))
     finally:
         trace.generation_ms = elapsed_ms(started)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)
@@ -728,11 +778,8 @@ def _set_fixed(trace: AnswerTrace, text: str, outcome: str) -> None:
 
 
 async def _pick_route(query: str, generator, trace: AnswerTrace, flags: AssistantFlags) -> None:
-    """Luật khẩn cấp (code) ⇒ định tuyến (model) ⇒ câu cố định cho `khan_cap` / `ngoai_pham_vi`. Còn lại để `trace.route` cho bước sau."""
-    if flags.emergency_rule and is_emergency(query):
-        trace.route, trace.emergency_by = ROUTE_KHAN_CAP, "rule"
-        _set_fixed(trace, EMERGENCY_ANSWER, "emergency")
-        return
+    """Định tuyến (model) ⇒ câu cố định cho `ngoai_pham_vi`; `khan_cap` đi agent Huế (phương án B của bậc G, spec bản 13 §12.2: bỏ câu soạn sẵn
+    khẩn cấp, giữ 4 tuyến). Còn lại để `trace.route` cho bước sau."""
     if flags.router and generator is not None:
         started = time.perf_counter()
         call_log = CallLog()
@@ -748,9 +795,8 @@ async def _pick_route(query: str, generator, trace: AnswerTrace, flags: Assistan
         finally:
             trace.routing_ms = elapsed_ms(started)
             record_llm_calls(trace, call_log.calls, "router")
-    if trace.route == ROUTE_KHAN_CAP:
-        trace.emergency_by = "router"
-        _set_fixed(trace, EMERGENCY_ANSWER, "emergency")
+    if trace.route == ROUTE_KHAN_CAP:  # phương án B G: không câu soạn sẵn — trả lời như câu về Huế; log giữ dấu định tuyến đã chọn khẩn cấp
+        trace.route, trace.emergency_by = ROUTE_TRO_LY_HUE, "router"
     elif trace.route == ROUTE_NGOAI_PHAM_VI:
         _set_fixed(trace, OUT_OF_SCOPE_ANSWER, "out_of_scope")
 
@@ -857,10 +903,12 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     da_noi_dau = False  # D12 (a): dòng "Mình hiểu" đi liền trước chữ đầu của model
     giu_chu: str | bool | None = None  # review C M-1: None = chưa có chữ; "" / chuỗi = đang giữ; False = không giữ
     call_route = None
-    stopped_early = False
+    # Việc nhỏ (12) 08/11 — review streaming 31/10 m-1: huỷ theo "luồng model còn sống" thay vì liệt kê lỗi. Mọi cách rời vòng đọc khi luồng chưa
+    # hết (hết giờ, người dùng ngắt, lỗi trong code của mình) ⇒ `cancel()`; luồng tự hết hoặc chính luồng báo lỗi (lần chạy đã dừng) ⇒ không.
+    stream_live = False
     try:
         if not trace.bieu_mau:  # D3: lượt biểu mẫu không định tuyến
-            if flags.router and generator is not None and not (flags.emergency_rule and is_emergency(query)):
+            if flags.router and generator is not None:
                 yield "status", {"stage": "routing"}
             await _pick_route(query, generator, trace, flags)
             if trace.fixed_outcome is not None:
@@ -878,7 +926,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 yield "status", {"stage": "lich_trinh", **buoc}
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_LY_HUE
-            result, call_log = generator.start_answer_stream(query, context, today, **_history_kwargs(trace))
+            result, call_log = generator.start_answer_stream(query, context, today, bieu_mau=True, **_history_kwargs(trace))
         elif trace.route == ROUTE_TRO_CHUYEN:
             yield "status", {"stage": "generating"}
             call_route = ROUTE_TRO_CHUYEN
@@ -908,6 +956,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         started, generator_started = time.perf_counter(), time.monotonic()
         extractor = AnswerTextStream()
         events = result.stream_events()
+        stream_live = True
         deadline = asyncio.get_running_loop().time() + generator.timeout
         try:
             while True:
@@ -915,7 +964,13 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                     async with asyncio.timeout_at(deadline):
                         event = await anext(events)
                 except StopAsyncIteration:
+                    stream_live = False
                     break
+                except TimeoutError:
+                    raise
+                except Exception:
+                    stream_live = False  # lỗi của chính luồng (SDK / provider): lần chạy đã dừng, đọc nốt sẽ ném lại lỗi đó
+                    raise
                 if event.type == "raw_response_event" and event.data.type == "response.output_text.delta":
                     text = extractor.feed(event.data.delta)
                     if text:
@@ -939,6 +994,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
                     elif cong_cu == "thoi_tiet":  # B5b: "đang xem dự báo…" (không phải "đang tìm kho")
                         yield "status", {"stage": "thoi_tiet"}
+                    elif cong_cu == "ngay_lich":  # T1: tính ngày ở code, tức thì — không báo "đang tìm kho" (giữ trạng thái đang có)
+                        pass
                     else:
                         yield "status", {"stage": "searching"}
                 elif event.type == "run_item_stream_event" and event.name == "tool_output":
@@ -946,7 +1003,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         for buoc in trace.buoc_lich[da_phat_buoc:]:
                             yield "status", {"stage": "lich_trinh", **buoc}
                         da_phat_buoc = len(trace.buoc_lich)
-                    elif cong_cu != "thoi_tiet":  # B5b: kết quả dự báo không phải "đã tìm kho"
+                    elif cong_cu not in ("thoi_tiet", "ngay_lich"):  # B5b / T1: kết quả dự báo / ngày không phải "đã tìm kho"
                         yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
         except Exception:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)
@@ -973,13 +1030,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             set_notice(trace, flags)
             async for event in _web_stream(query, generator, trace, flags, tim_web):
                 yield event
-    except (asyncio.CancelledError, GeneratorExit, TimeoutError):
-        stopped_early = True
-        raise
     finally:
         if call_log is not None:
             record_llm_calls(trace, call_log.calls, call_route)
-        if result is not None and stopped_early:
+        if result is not None and stream_live:
             # dừng lần gọi model rồi đọc nốt bằng iterator mới, trong vùng che có hạn giờ (spec streaming §4.5). Không dựa `result.is_complete`.
             result.cancel()
             drain_started = time.perf_counter()
@@ -1011,19 +1065,19 @@ ROUTE_INPUTS = ("history", "truong", "search_query")
 async def answer_turn_stream_parallel(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
                                       recorder=None, tim_web=None):
     """Thí nghiệm tốc độ #6 (plan `2026-11-04-phase-9-toc-do-song-song-plan.md`). Cờ `song_song_tra_loi` tắt (hoặc định tuyến không chạy /
-    câu tìm do định tuyến viết / luật khẩn cấp bắt) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
+    câu tìm do định tuyến viết) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
     chạy cùng lúc. (ii) chính là `answer_turn_stream` với `router` tắt trên **trace phụ** (đi thẳng lần tìm đầu câu gốc + lần gọi trợ lý —
     đầu vào hai lần gọi model không phụ thuộc tuyến). Sự kiện của (ii) giữ trong hàng đợi tới khi có tuyến:
     `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
-    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0") or (
-            flags.emergency_rule and is_emergency(query)):  # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
+    if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
+        # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
             yield event
         return
 
     # B6: bản cờ của phần chạy song song / đường trò chuyện tắt cả `tra_web` (cờ này cần `router`; cổng web chạy bằng `flags` gốc sau khi gộp)
-    without_router = dataclasses.replace(flags, router=False, emergency_rule=False, tra_web=False)
+    without_router = dataclasses.replace(flags, router=False, tra_web=False)
     # B161 M-1: trace phụ mang **mọi đầu vào route đặt trước khi gọi lõi** (lịch sử B3; giá trị nút + câu gốc của lượt ghép B4b / B5) — chép
     # từng trường (không `dataclasses.replace`: sẽ dùng chung list sổ nguồn / công cụ giữa hai trace)
     spec = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
@@ -1063,7 +1117,10 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     finally:
         if not task.done():
             task.cancel()
-        await asyncio.gather(task, return_exceptions=True)  # (ii) tự ghi `llm_calls` + đọc nốt trong `finally` của nó; lỗi của (ii) bị bỏ (D3)
+        # Việc nhỏ (7) 08/11: người dùng ngắt ⇒ Starlette huỷ kiểu anyio (mọi lần chờ trong vùng bị huỷ lại) ⇒ không che thì `gather` bị huỷ, bỏ qua
+        # bước gộp dưới ⇒ `chat_metrics` mất `llm_calls` / USD của (ii) (tái tạo: `data/phase_11/viec_nho_e/do_dung_song_song.py`).
+        with anyio.CancelScope(shield=True):
+            await asyncio.gather(task, return_exceptions=True)  # (ii) tự ghi `llm_calls` + đọc nốt trong `finally` của nó; lỗi của (ii) bị bỏ (D3)
         if keep and not merged:  # lỗi / ngắt trước khi gộp xong ⇒ gộp ở đây như trước B6
             _merge_spec(trace, spec, recorder)
         elif not keep:

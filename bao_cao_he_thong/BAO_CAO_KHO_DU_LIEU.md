@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Kho dữ liệu — sửa dữ liệu và tạo lại chỉ mục (Phase 7A2 → sửa kho đợt 1, 2)
 
-**Cập nhật lần cuối: 20:06 05/11/2026 — bản 9: sửa kho nhỏ 05/11: chèn giờ mở cửa chung 07h00–17h30 (lấy từ file vé Quần thể trong kho) vào 11 file di tích ⇒ dựng lại chỉ mục **8.435 đoạn**; 1 câu Golden phạm sàn ở lượt đầu, chạy lại đạt — bạn chọn giữ.** Trước: **11:22 05/11/2026 — bản 8: **kiểm kho thiếu gì** (C189, 0 USD): câu Golden mất điểm đều do khâu tìm, không do kho thiếu; lỗ hổng thật nằm ở câu kho không có (ăn uống, giờ / vé, lễ hội theo ngày); dữ liệu mở của tỉnh chuyển vào `data/` — lấp được giờ mở cửa 13 điểm lịch trình. Kho **chưa sửa**.** Trước: 11:04 01/11/2026 — câu Golden lệch kho: bạn giữ nguyên. Bản 7 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
-Người viết: B (bản 4–6; bản 1–3: C), A (bản 7, qua sub-agent) · Review: A (bản 1–6); bản 7 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 10: sửa chỗ cũ — Qdrant có thêm collection thử ảnh; câu Golden lệch hoa / thường bạn đã giữ nguyên; đề xuất giờ mở cửa đã làm 05/11; mục "Hôm nay còn đúng không" theo phiếu build 05/11. Các bản trước: xem lịch sử git.**
+Người viết: B (bản 4–6; bản 1–3: C), A (bản 7, qua sub-agent) · Review: A (bản 1–6); bản 7 chưa review. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -18,8 +18,8 @@ Người viết: B (bản 4–6; bản 1–3: C), A (bản 7, qua sub-agent) · 
 - **Đợt nhỏ 05/11 (giờ mở cửa 11 điểm Quần thể — Đại Nội, Cung An Định, Nam Giao, Hòn Chén, 7 lăng):** chèn một dòng giờ chung 07h00–17h30 + "có thể thay đổi theo mùa / sự kiện" và một dòng nguồn — lấy từ file vé Quần thể **đã có trong kho** (không dùng giờ 2024 của dữ liệu mở, để kho không tự mâu thuẫn); 11 file, +55 dòng, 0 dòng xoá ⇒ +11 đoạn. Đo: tìm 158 câu — 148 giống hệt, 10 câu đổi đều chạm 11 file, điểm tìm giống tới 4 chữ số; an toàn 10 câu chạm: 0 lỗi mới; câu thật "mấy giờ mở cửa" trả đúng giờ có nguồn. **Giới hạn ghi trung thực:** 1 / 11 câu Golden chạm (câu nhiều nguồn) ở lượt đầu ra câu từ chối (5 ⇒ 1 điểm) — **phạm sàn ghi trước**; 10 đoạn tìm đầu giống hệt, khác ở lần model tự tìm thêm; chạy lại 2 lần đều trả lời đủ 5 / 5 ⇒ **bạn chọn giữ** ({T}), câu này vào danh sách theo dõi. Tiền ≈ 0,024 USD (trần 0,03). Report `report_agent/2026-11-05_sua_kho_gio/c192_implementation.md`.
 - **Đo "trước ↔ sau" mỗi đợt** (176 câu Golden; đợt 2 thêm 32 câu an toàn; chấm mù cùng lượt): **không làm hỏng** — 0 câu ngoài kho bị trả lời, 0 lỗi, 0 lỗi
   trích dẫn, 0 câu "nói chắc sai" mới; điểm đủ ý / đúng gần như y hệt; từ chối nhầm 12 → 13 (đợt 1), 13 → 12 (đợt 2). Bộ an toàn đợt 2: 0 câu nói sai điều kiện
-  mới, 0 câu đảo cảnh báo. Nhãn "đoạn đúng" và Golden đã cập nhật theo kho mới, phần đổi bạn đã duyệt — riêng **1 câu Golden** còn
-  keyword không khớp kho (phát hiện 31/10 khi chạy lại kiểm Golden; chờ bạn duyệt — `BAO_CAO_BO_CAU_HOI_GOLDEN.md`).
+  mới, 0 câu đảo cảnh báo. Nhãn "đoạn đúng" và Golden đã cập nhật theo kho mới, phần đổi bạn đã duyệt — riêng **1 câu Golden** có
+  keyword khác kho chỉ ở chữ hoa / thường (phát hiện 31/10; điểm không lệch) — **bạn giữ nguyên 11:04 01/11** (`BAO_CAO_BO_CAU_HOI_GOLDEN.md`).
 - **Giới hạn chính:** hai đợt làm kho **đúng hơn / thận trọng hơn** nhưng **không làm điểm tăng** — thước đo không nhạy với loại sửa này (tên phường, bỏ chi
   tiết không chắc). Vài mục vẫn chờ tra ngoài (kho đã tự rào). Kho còn thiếu vài thông tin hay được hỏi (giờ mở cửa: đã thêm giờ chung cho 11 điểm Quần thể 05/11; điểm khác — chợ, phố, chùa ngoài Quần thể — chưa có). Mã đoạn dạng
   "tên file + số thứ tự" bị dồn số khi xóa một dòng giữa file (đợt 2 đã đo bù).
@@ -59,12 +59,12 @@ Tự kiểm (không bắt buộc): hỏi chatbot một câu về một thông ti
 | Nhãn "đoạn đúng" theo kho mới | **Đã xử lý, đóng gói** | Bản 5 đang dùng (30/10): 173 / 174 trích dẫn tìm lại nguyên văn (38 dời vị trí), 1 đổi chữ ⇒ bạn duyệt. Bản 4 (28/10): 172 / 174, 2 đổi chữ ⇒ bạn duyệt. Bản cũ giữ nguyên |
 | Câu Golden lệch kho sau khi sửa | **Xử lý một phần** (31/10: kiểm Golden bắt thêm 1 câu lệch — chỉ khác hoa / thường, chấm không sai; bạn giữ nguyên 01/11) | Đợt 1: quét 59 câu ⇒ 0 câu cần sửa (bạn duyệt). Đợt 2: quét 39 câu (theo chữ + theo cụm bị bỏ + theo vị trí; 3 agent đọc, B kiểm, C quét độc lập) ⇒ **2 câu sửa đáp án mẫu** theo bạn chọn (bỏ tên phường cũ; thêm "khoảng" trước một con số), có sao lưu |
 | Tìm trong kho mà không lọt bộ đánh giá / câu kín | **Đã xử lý, đóng gói** | `scripts/grep_kb.sh`: danh sách cờ trắng, chỉ quét trong kho, loại thư mục đánh giá / meta / bản thô / tên chứa sealed; B thử phá 4 vòng ⇒ đạt |
-| Chỉ mục e5-small trên dữ liệu đã sửa | **Đã xử lý, đóng gói** (dựng lại 30/10) | **8.435 / 8.435** đoạn từ 05/11 tối (đợt giờ mở cửa: 148 / 158 câu tìm giống hệt, 10 câu đổi đều chạm 11 file). 30/10: **8.424 / 8.424** (dense + sparse), kiểm từng payload + vector mẫu; `/health` 5 / 5; kết quả tìm 158 câu: 133 giống hệt, 25 đổi danh sách 10 đoạn (11 chỉ đổi thứ tự; 24 có đoạn của file đã sửa). Đợt 1 (28/10): 8.426, 40 câu đổi |
+| Chỉ mục e5-small trên dữ liệu đã sửa | **Đã xử lý, đóng gói** (dựng lại 05/11 tối) | **8.435 / 8.435** đoạn từ 05/11 tối (đợt giờ mở cửa: 148 / 158 câu tìm giống hệt, 10 câu đổi đều chạm 11 file). 30/10: **8.424 / 8.424** (dense + sparse), kiểm từng payload + vector mẫu; `/health` 5 / 5; kết quả tìm 158 câu: 133 giống hệt, 25 đổi danh sách 10 đoạn (11 chỉ đổi thứ tự; 24 có đoạn của file đã sửa). Đợt 1 (28/10): 8.426, 40 câu đổi |
 | Phiếu build: dữ liệu lệch → từ chối khởi động | **Đã xử lý, đóng gói** | Phiếu `full_corpus_build:v3`, `complete`, 204 file / 8.435 đoạn (phiếu `9921888f2030`, dựng 05/11 tối; trước `51fb1ec63cbc` 30/10); `source_state.py:95`, `:179`; `retrieval/full_corpus.py:383–385` |
 | Một lệnh build cho mọi lần sửa dữ liệu | **Đã xử lý, đóng gói** | `full_corpus_pipeline.py:263–279` |
-| Build lại sau khi sửa kho (từ điển BM25) | **Đã xử lý** (làm thật 28/10 và 30/10) | Xóa đủ ba đích (collection + phiếu build + từ điển) rồi build, ~4–5,5 phút; từ điển 5.660 → 5.631 từ (đợt 2 giữ 5.631). Lệnh xóa bị chặn ở terminal agent ⇒ bạn chạy bằng `!`. Từ điển ghi một lần, khác kho thì build dừng: `full_corpus_pipeline.py:137–146` |
+| Build lại sau khi sửa kho (từ điển BM25) | **Đã xử lý** (làm thật 28/10, 30/10, 05/11) | Xóa đủ ba đích (collection + phiếu build + từ điển) rồi build, ~4–5,5 phút; từ điển 5.660 → 5.631 từ (đợt 2 giữ 5.631). Lệnh xóa bị chặn ở terminal agent ⇒ bạn chạy bằng `!`. Từ điển ghi một lần, khác kho thì build dừng: `full_corpus_pipeline.py:137–146` |
 | Chỉ mục Qwen3-Embedding-8B qua OpenRouter | **Đã thử, chưa áp dụng** | 7A2: lần 1 trộn 3 nhà cung cấp (vector không đồng nhất), lần 2 chỉ Nebius lỗi 504 ⇒ hoãn. 30/10: dựng được (chỉ Nebius, 0 lỗi, ~31 phút, 0,0089 USD) nhưng **kém hơn** ở tìm đoạn ⇒ giữ e5-small; collection thử đã xóa — `BAO_CAO_TIM_KIEM.md` |
-| Dọn collection cũ trong Qdrant | **Đã xử lý, đóng gói** | 16 → 3 collection (7A2) → 1 (24/10, xóa 2 collection món ăn, không sao lưu theo danh sách dọn); còn `hue_full_corpus_7a2_e5_small_384` |
+| Dọn collection cũ trong Qdrant | **Đã xử lý, đóng gói** | 16 → 3 collection (7A2) → 1 (24/10, xóa 2 collection món ăn, không sao lưu theo danh sách dọn). Nay 2: `hue_full_corpus_7a2_e5_small_384` (chatbot) + `hue_anh_siglip2` (172 điểm, thử ảnh 05/11 đã bỏ, chatbot không dùng — chờ bạn quyết xoá) |
 | Đoạn bị giữ nhỏ vì kiểm tokenizer model đã bỏ | **Đã thử, chưa áp dụng** | 6 bảng bị tách chỉ vì giới hạn HuyDang 256 (`settings.yaml:23–35`); 8.1 bỏ ràng buộc này: không đổi kết quả ⇒ chưa có lý do đổi — `BAO_CAO_CHIA_DOAN.md` |
 | Notebook 03, 04 mô tả / gọi tên cũ | **Đã xử lý, đóng gói** | Đã sửa khi dọn (commit `1832201`); Run All 0 lỗi |
 | Notebook 06 mô tả tên cũ | **Đã xử lý** | Chỉ sửa phần chữ; chưa chạy lại vì có gọi API trả phí |
@@ -79,7 +79,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 - **Golden 176 (lượt đo cuối 01/11):** 18 câu thiếu ý / từ chối nhầm ⇒ **18 / 18 là (b)** (25 ý thiếu đoạn đúng trong 10 đoạn), 0 (a), 0 (c); phần lớn câu nhiều nguồn (12) và so sánh (4). Giới hạn: Golden được soạn để kho trả lời được ⇒ không lộ lỗ hổng kho. Ở bản đang chạy (Phase 9, có tìm thêm), 5 câu trong số đó nằm trong mẫu 30 câu đã đo ⇒ cả 5 không còn bị từ chối.
 - **Lỗ hổng kho thật (nhóm a, từ bộ câu "về Huế mà kho không có" của B6, 15 câu):** ăn uống 5 · giờ / vé / giá 4 · di tích 2 · lễ hội theo ngày 1 · khác 3. Ví dụ hôm nay: "Lăng Tự Đức mở cửa mấy giờ" ⇒ file lăng không ghi giờ.
 - **Dữ liệu mở của tỉnh** (cổng dữ liệu Huế, tải 05/08/2026; trước nằm ở `backend/data/`, **chuyển sang `data/nguon_mo_huegov_2026-08-05/`** 05/11 theo bạn — không đổi chatbot): file di tích có giờ mở / đóng cửa cho 47 / 180 điểm (130 ghi "cả ngày"); trong 28 điểm lịch trình B5 có **13 điểm có giờ thật** (Đại Nội, Kinh thành, chợ Đông Ba, cung An Định, đàn Nam Giao, điện Hòn Chén, 7 lăng); lễ hội 138 bản ghi chỉ có mô tả, không có ngày; quán ăn 6.794 bản ghi có tên + địa chỉ + toạ độ (giờ / giá hầu như không có); toạ độ di tích 179 / 180 dùng được cho bản đồ (Phase 11). Có file chứa dữ liệu cá nhân (hướng dẫn viên; SĐT / email / mã số thuế cơ sở) ⇒ không đưa vào kho / báo cáo.
-- **Đề xuất (chưa làm, chờ bạn):** (1) nhóm (b) sửa ở **khâu tìm** (trợ lý tìm thêm đã giúp; backlog #13 / #14 chưa đủ căn cứ), không phải thêm kho; (2) **đợt sửa kho nhỏ:** thêm giờ mở cửa cho 13 điểm từ dữ liệu mở (ghi nguồn + ngày) — sửa đúng ví dụ lăng Tự Đức và cho lịch trình B5 giờ riêng từng điểm; cần sao lưu + dựng lại chỉ mục + đo lại, làm **sau khi B5 đo xong** để không đổi kho giữa lượt đo; (3) ăn uống / lễ hội theo ngày / lưu trú ⇒ tra web (B6) + Phase 11. Hồ sơ: `data/kiem_kho_thieu_2026-11-05/c189_ket_qua.md` (private).
+- **Đề xuất lúc đó (05/11 sáng):** (1) nhóm (b) sửa ở **khâu tìm** (trợ lý tìm thêm đã giúp; backlog #13 / #14 chưa đủ căn cứ), không phải thêm kho; (2) **đợt sửa kho nhỏ:** thêm giờ mở cửa cho 13 điểm từ dữ liệu mở (ghi nguồn + ngày) — sửa đúng ví dụ lăng Tự Đức và cho lịch trình B5 giờ riêng từng điểm; cần sao lưu + dựng lại chỉ mục + đo lại, làm **sau khi B5 đo xong** để không đổi kho giữa lượt đo — **⇒ đã làm 05/11 tối nhưng khác đề xuất:** 11 điểm Quần thể, giờ chung lấy từ file vé đã có trong kho (không dùng giờ 2024 của dữ liệu mở) — xem §1; (3) ăn uống / lễ hội theo ngày / lưu trú ⇒ tra web (B6) + Phase 11. Hồ sơ: `data/kiem_kho_thieu_2026-11-05/c189_ket_qua.md` (private).
 
 ### 30/10/2026 — Sửa kho đợt 2 + dựng lại chỉ mục + đo "trước ↔ sau" (bạn đóng 14:39 30/10, giữ sao lưu)
 - Soạn theo luật bạn đặt 29/10 (20 mục, 123 chỗ); C review 3 vòng, A duyệt; plan đo ghi tiêu chí trước. Bộ "trước" dùng lại bộ "sau" đợt 1 sau 4 kiểm "còn hiệu
@@ -113,8 +113,8 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), phiếu build (`51fb1ec63cbc`: 204 file / 8.424 đoạn, `complete`) và `session_prompt/Project_Status.md` §4
-(17:00 31/10/2026). Qdrant không chạy lúc kiểm ⇒ số điểm lấy từ phiếu build và `Project_Status.md` §4.
+Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại). Phiếu build đọc lại 10/11/2026: `9921888f2030` (dựng 05/11 tối), 204 file / 8.435 đoạn, `complete`;
+Qdrant thật 10/11/2026 (chỉ đọc): 2 collection — chỉ mục chatbot 8.435 điểm + collection thử ảnh 172 điểm.
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
@@ -125,7 +125,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), phiế
 | Model vector: e5-small chạy; Qwen3-Embedding-8B còn trong code | **còn dùng** e5-small; 8B **đã thử 30/10 — kém hơn**, không có chỉ mục | `backend/embedding/full_corpus.py:41–66` |
 | Chia đoạn giữ nguyên từ Phase 2 | **còn dùng** (8.1 thử 12 cách chia khác: không cách nào hơn) | `backend/ingestion/chunking/full_corpus_chunker.py`; `BAO_CAO_CHIA_DOAN.md` |
 | Payload 7 trường (metadata v2) | **còn dùng** | `backend/retrieval/full_corpus.py:166` (`REQUIRED_PAYLOAD_FIELDS`) |
-| Qdrant chỉ còn 1 collection | **còn đúng** | `Project_Status.md` §4 |
+| Qdrant chỉ còn 1 collection | **đã thay** 05/11 tối: thêm collection thử ảnh `hue_anh_siglip2` (172 điểm, chatbot không dùng, chờ bạn quyết xoá) | Qdrant thật 10/11/2026; `Project_Status.md` §4 |
 | 205 file / 8.459 đoạn trong chỉ mục | **đã thay** 28/10 bởi 204 / 8.426 (đợt 1), 30/10 bởi 204 / 8.424 (đợt 2), rồi 05/11 bởi **204 / 8.435** (giờ mở cửa) | phiếu build `corpus.file_count` 204, `chunk_count` 8.435 |
 | Sao lưu đợt 1 + đợt 2 | **còn giữ** (bạn chọn khi đóng mỗi đợt) | `Project_Status.md` §5 (28/10 13:26, 30/10 14:39) |
 
@@ -135,7 +135,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), phiế
 
 - **Sao lưu đợt 1 + đợt 2:** đang giữ theo bạn chọn (mỗi đợt: ảnh chụp Qdrant ~51 MB, bản gốc file kho, phiếu build + từ điển cũ); giữ thì quay lại được bất cứ
   lúc nào. Muốn xóa thì báo — không gấp.
-- Vài mục còn "tra ngoài" (kho đã tự rào); kho thiếu giờ mở cửa của một điểm tham quan lớn (cần nguồn ngoài).
+- Vài mục còn "tra ngoài" (kho đã tự rào); giờ mở cửa: 11 điểm Quần thể đã có giờ chung (05/11); điểm ngoài Quần thể (chợ, phố, chùa…) chưa có — cần nguồn ngoài.
 - Mã đoạn "file#số" không bền khi xóa dòng giữa file — lần sửa kho sau: ghi luật đo bù trước, hoặc đổi cách đặt mã (đổi chunker ⇒ cần thí nghiệm).
 - Bộ chia đoạn vẫn kiểm cả 3 tokenizer (gồm HuyDang 256 đã bỏ) → đoạn bị giữ nhỏ; 8.1 bỏ ràng buộc này "không khác" ⇒ chưa có số ủng hộ đổi.
 - Lỗi bảng giá và tổng hợp nhiều nguồn: xem `BAO_CAO_DANH_GIA.md`, `BAO_CAO_TIM_KIEM.md`.

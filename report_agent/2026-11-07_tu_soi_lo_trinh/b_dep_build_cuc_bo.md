@@ -70,3 +70,9 @@ Xoá ảnh khi không cần: `! docker rmi hue-rag-app:nhap && docker builder pr
 - **Chạy:** `compose up` với `HUE_IMAGE=hue-rag-app:nhap2` ⇒ `/health` **5 / 5** sau ~23 s (kho khớp build record ⇒ đủ đúng 204 file). Đã `down -v` + xoá thư mục chạy thử.
   - `/api/tinh_nang` 404 vì nhánh `p12-deploy-nhap` tách từ `main` trước khi merge cổng đợt 1 — merge `main` vào nhánh trước khi lên máy.
 - **Ảnh cũ** `hue-rag-app:nhap` (có 16 file `evaluation/` + 148 file `meta/`) còn trên máy User, chưa chuyển đi đâu. User xoá: `! docker image rm hue-rag-app:nhap` (giữ `nhap2`, hoặc xoá cả hai: `! docker image rm hue-rag-app:nhap hue-rag-app:nhap2 && docker builder prune -f`).
+
+## 5. Sau review vòng 2 của E (ready)
+
+- m-6: ảnh còn cache uv `/root/.cache` ~1,9 GB, trùng `.venv` (E đếm). Số "nội dung ~2,4 GB" ở §2 của B **bỏ sót** phần này; 1,44 GB nén cũng đã gồm nó.
+- Sửa nháp: `uv pip install --no-cache`. **Chưa build lại** (A: build lúc lên máy) ⇒ đo lại cỡ ảnh khi đó.
+- Nhánh `p12-deploy-nhap` = `4cfe681` (merge `main` `fb8d3d2`); `test_settings_env` + `test_cong_dot_1`: 26 đạt. Nhánh giữ riêng, chưa merge.

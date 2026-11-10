@@ -120,6 +120,7 @@ Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/M
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
+- **Mức nhẹ (User 11:20 08/11/2026):** mỗi merge chỉ ghi **1 dòng nhật ký** ngày đó + bảng `README.md`; `BAO_CAO_<KHÂU>.md` + `LUONG_HOAT_DONG_HE_THONG.md` sửa **lúc đóng đợt / kết phiên** (gộp mọi thay đổi trong đợt). Luật "luôn mới nhất" dưới đây áp ở mốc đóng đợt; chỗ sai vẫn xoá.
 - **Báo cáo cho User luôn đúng thông tin mới nhất** (User 31/10/2026 — User chỉ đọc `bao_cao_he_thong/`): (1) **mọi** thay đổi hoặc thử nghiệm
   chạm hệ thống — kể cả thử rồi **không áp dụng**, sửa kho, build lại chỉ mục, đổi thước đo — ⇒ cập nhật `BAO_CAO_<KHÂU>.md` của mọi khâu bị chạm
   (cả Tóm tắt, sơ đồ bản đang chạy, checklist) + bảng `README.md` **ngay trong đợt đó**, không đợi kết phiên; (2) chỗ **không còn đúng** thì **xoá**
@@ -185,10 +186,10 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    đầu ra) rồi nhắn session đó. Giao việc song song chỉ khi file không chồng nhau.
    **A tự kiểm B/C/E có đang làm không — không đợi User hỏi:** mỗi tin giao việc gửi kèm `notify_when_idle: true`; trước khi
    kết mỗi lượt của mình (nhất là trước khi mở hộp hỏi User hay giao việc phụ cho sub-agent) A chạy `ListAgents` — session nào
-   rảnh mà không có việc / lý do ghi ⇒ giao ngay.
-   **Session rảnh** (chờ người khác): A giao ngay việc không chồng file (viết plan, review, danh sách ứng viên, đo chỉ đọc)
-   hoặc ghi một dòng lý do để rảnh trong `CURRENT_HANDOFF.md` (25/10: User phải hỏi "đang rảnh hả"; 26/10: B rảnh được giao
-   đối chiếu, bắt lỗi mô tả trong yêu cầu ChatGPT).
+   rảnh mà còn việc **đã có trong handoff** chưa ai làm ⇒ giao ngay; mục đích là bắt session **kẹt** (chờ permission, vòng chờ hỏng), không phải lấp giờ.
+   **Session rảnh là bình thường** (User 21:11 09/11/2026: bỏ luật "rảnh phải giao việc"; vẫn mở 4 session để A điều phối khi có việc): chỉ giao việc thật
+   — việc trong handoff, review việc sắp merge, báo cáo kết phiên phải làm; **không** dựng việc phụ để khỏi rảnh. Session rảnh ghi một dòng
+   "rảnh — chờ …" trong `STATUS_<X>.md`.
    **Việc giao chạy > 30 phút** (nghiên cứu, đo, code) ⇒ A đặt mốc kiểm ngay lúc giao: Claude Code `SendMessage` kèm `notify_when_idle: true`; agent khác: xem file đầu ra sau ~30 phút
    (02/11: B đứng ~2 giờ vì vòng chờ `pgrep -f` tự khớp chính nó, C rảnh không việc — User phát hiện; S75, W47).
    **Giao việc kế cho session đang làm việc khác** ⇒ tin ghi "làm ngay sau việc hiện tại, không kết lượt ở giữa", gửi kèm `notify_when_idle: true`; nhận thông báo session đó dừng lượt ⇒ A kiểm
@@ -215,6 +216,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    chỉ nằm trên nhánh; nhánh hồ sơ ⇒ gắn tag `hoso/<tên>` trước khi xóa để không mất report / code (User 30/10). Xóa chỉ khi User duyệt (User `!`).
 7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/a_…`), không trong
    working tree chung đang có B/C làm; việc A tự làm vẫn để B/C kiểm.
+7b. **Vòng tự soi mỗi phiên** (`Session_Prompt.md` §7): A mở vòng 1 khi mỗi session đã có kết quả đầu tiên, vòng 2 ngắn trước kết phiên; ghi chốt vào `CURRENT_HANDOFF.md`. Phiên không có vòng ⇒ ghi lý do ở `STATUS_A.md`.
 8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)
    ghi vào `CURRENT_HANDOFF.md` kèm ngày và **hết hạn cuối phiên**; phiên sau A hỏi lại trong báo cáo
    mở phiên. Quyền thường trực (A commit/push; duyệt cho A = duyệt cho B/C) giữ nguyên.

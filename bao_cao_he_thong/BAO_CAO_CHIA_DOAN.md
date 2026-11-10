@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Chia tài liệu thành đoạn (Phase 2)
 
-**Cập nhật lần cuối: 20:06 05/11/2026 — cách chia không đổi; kho thêm giờ mở cửa 11 file ⇒ **8.435 đoạn**, 0 lỗi.** Trước: **17:10 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
-Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 6) · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 7: sửa số đoạn còn ghi 8.424 ở mục việc còn lại. Các bản trước: xem lịch sử git.**
+Người viết: agent con của A (bản 6) · Review: A. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -142,7 +142,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
   nhưng cũng không làm tốt lên ⇒ chỉ là lựa chọn nếu sau này build lại vì lý do khác.
 - Gộp đoạn vụn / gộp dòng bảng: 8.1 đo không giúp hoặc làm hại — không đề xuất.
 - Bảng giá khó tìm vẫn còn; gốc ở khâu tìm / xếp đoạn (`BAO_CAO_TIM_KIEM.md`).
-- Thống kê đoạn (trung vị token, đoạn vụn, số đoạn bảng, đoạn lặp, phần điều kiện) chưa đo lại trên kho 8.424 đoạn.
+- Thống kê đoạn (trung vị token, đoạn vụn, số đoạn bảng, đoạn lặp, phần điều kiện) chưa đo lại trên kho hiện tại (8.435 đoạn).
 - ID đoạn `file#số` không bền khi sửa giữa file — đã biết, chưa có kế hoạch đổi.
 
 ## Phụ lục — hồ sơ kỹ thuật

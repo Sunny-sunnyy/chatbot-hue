@@ -163,7 +163,7 @@ class MemoryGenerator:
     async def route(self, query, call_log, history=()):
         return "tro_ly_hue"
 
-    async def generate_with_tools(self, prompt, tool_fn, call_log, history=()):
+    async def generate_with_tools(self, prompt, tool_fn, call_log, history=(), **_cong_cu):  # nhận mọi công cụ theo cờ (ngay_lich_fn…) — test chỉ kiểm lịch sử
         self.seen.append(history)
         return SimpleNamespace(text="Mở cửa từ 7 giờ [1].")
 

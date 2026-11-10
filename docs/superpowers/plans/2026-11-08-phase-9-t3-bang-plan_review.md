@@ -1,0 +1,81 @@
+# Review plan T3 — bảng vé + giờ mở cửa (`tra_ve_gio`) — vòng 1
+
+Người review: sub-agent độc lập (chỉ đọc), 08/11/2026. Plan: `docs/superpowers/plans/2026-11-08-phase-9-t3-bang-plan.md` sha256 `81767d819e13` (41 dòng, khớp).
+Thước: spec Phase 9 bản 13 §12 (`docs/superpowers/specs/2026-11-02-phase-9-design.md:491-610`, gồm câu User 11:02 bỏ mốc ngày :598), `Session_Prompt.md` §6–§8,
+`skills/run-experiment`, `skills/agent-design-review` ("phép tính, luật tiền, trường bắt buộc ⇒ code"), code thật `backend/llm/assistant.py`, `backend/llm/thoi_tiet.py`,
+`backend/llm/tra_web.py`, `backend/llm/so_tien.py`, `backend/llm/generator_openai_full_corpus.py`, `backend/api/routes/chat.py`. Không mở file kín, `.env`, không grep trong kho.
+File này tracked (repo public): không chép nội dung kho / bảng; bảng nháp chỉ xem **tên trường**.
+
+## Kết luận: `changes_requested`
+
+0 blocker · 6 major · 4 minor. Khung plan đúng hướng spec (không cộng / nhân; điều kiện do code nối nguyên văn, không vào model; điểm ngoài bảng ⇒ câu cố định;
+cờ tắt; đưa công cụ theo từ khoá; kiểm cuối bằng code; phương án B đúng spec; tiền đúng §12.7; S1 / S3b / S4 có mặt). Chưa code được chắc tay ở 6 chỗ: kiểm cuối
+trên đường stream, ranh giới trường nào vào model, `max_turns`, câu từ chối + khối nối, lệch spec về nguồn `[n]`, và ma trận lượt chạy có mốc. Không thấy phần
+phòng xa / over-engineering.
+
+## Findings
+
+| Mã | Mức | Vị trí plan | Yêu cầu bị chạm | Bằng chứng | Hệ quả | Tiêu chí đóng |
+|---|---|---|---|---|---|---|
+| **M-1** | major | §1 "Kiểm cuối" (:18-19); Q2 "kiểm cuối phải bắt trước khi tới người dùng" (:27) | spec §12.2 T3 "0 số tiền / giờ trong chữ model ngoài …" (:516); §12.5 "kiểm cuối số" (:551) | Đường stream phát chữ model **ngay** (`assistant.py:956`); chỉ giữ chữ khi còn có thể là câu từ chối (`:947-950`) ⇒ khi kiểm cuối chạy (`_finish_generated` sau luồng) số sai đã hiện. Thời tiết xử vi phạm bằng `citation_error` ⇒ sự kiện `error` rút lại chữ (`assistant.py:469-470`, `chat.py:495-499`), **không** thay chữ. Bộ đếm `_chuoi_so` của `tra_web.py:166-173` đếm **mọi** chuỗi số (cả số đơn lẻ, năm), không chỉ giờ. Plan không nói kiểm cuối chạy ở lượt nào (chỉ lượt có gọi công cụ / có đưa công cụ / mọi lượt cờ bật như thời tiết `:448-449`) | Người code phải tự chọn: thay chữ trên stream cần sự kiện mới + giao diện; giữ cả chữ ⇒ chữ đầu S5 hỏng; rút lại ⇒ mất câu trả lời. Đếm mọi số ⇒ số người dùng nêu trong câu hỏi ("2 người lớn") bị coi là vi phạm ⇒ thay chữ oan. Kiểm mọi lượt ⇒ câu không về vé cũng có thể đổi chữ trả lời (Q1 chỉ đo chuỗi gửi model) | Plan ghi: (a) kiểm cuối chạy ở lượt nào; (b) tập số kiểm (mọi chuỗi số hay chỉ dạng giờ `h` / `:`) và tập cho phép có / không gồm số trong câu hỏi; (c) đường stream chọn một: rút lại như thời tiết / giữ chữ khi đã có dòng bảng (đo S5) / sự kiện thay chữ — kèm lý do; (d) test kiểm cuối có ca vi phạm trên **cả 3 đường** `/api/chat`, stream, #6 (`answer_turn_stream_parallel`); khối điều kiện vẫn hiện khi chữ bị thay |
+| **M-2** | major | §1 dòng trả cho model "đối tượng · giá · đơn vị" (:12) và "chữ điều kiện miễn giảm không vào model" (:14) | spec §12.5 T3 (a)–(b) (:551); bài học B5c (model bỏ điều kiện miễn cho trẻ nhỏ) | Bảng nháp (`data/phase_9/t3_bang_ve_gio/ve_nhap.json`, chỉ xem tên trường) có `ve[].doi_tuong`, `ve[].ghi_chu_nguyen_van`, `mien_giam[]` ở mức điểm. Plan không nói `ghi_chu_nguyen_van` đi đâu, và `doi_tuong` có thể mang chính điều kiện tuổi (spec: "giá người lớn / trẻ em (nguyên chuỗi điều kiện tuổi)") | Ranh giới "điều kiện" ↔ "đối tượng" chưa có ⇒ dòng "miễn phí cho trẻ dưới …" có thể đi vào model như một dòng giá (đúng chỗ B5c hỏng 2 lần) hoặc vào khối — hai người code ra hai hành vi; Q3 không đếm được nhất quán | Plan ghi bảng nhỏ: mỗi trường bảng → {gửi model · chỉ khối code · cả hai}; luật cho dòng giá 0 / miễn (đi khối, model chỉ thấy "có điều kiện miễn giảm — hiện bên dưới"); một test: điểm có dòng miễn cho trẻ nhỏ ⇒ chuỗi trả model không chứa chuỗi điều kiện, khối có đủ nguyên văn |
+| **M-3** | major | cả plan (không có chữ `max_turns`) | spec §12.6 §4 "plan kiểm `max_turns` đủ khi đủ 4 công cụ … plan đo `max_turns` = 0" (:566) | `ASSISTANT_MAX_TURNS = 4` "≤ 2 lần tìm + lần 3 'đã hết lượt' + 1 lượt viết" (`generator_openai_full_corpus.py:76`); `thoi_tiet` đang **bật** trên `main` (`settings.yaml:77`) và được đưa theo từ khoá (`assistant.py:694-700`); `parallel_tool_calls=False` (`generator…:288`) ⇒ câu "giờ mở cửa Đại Nội mai có mưa không" có thể: `tim_kho` ×2 + `thoi_tiet` + `tra_ve_gio` + viết = 5 lượt | Chạm trần ⇒ câu từ chối `max_turns` (`assistant.py:615-616`) dù đã có dòng bảng — Q2 / S1 âm mà không rõ vì sao | Plan ghi số `max_turns` cho lượt có `tra_ve_gio` (giữ 4 hay tăng — lý do), tiêu chí `outcome = max_turns` = 0 trên mọi lượt đo, một test chuỗi gọi `tim_kho` ×2 + `tra_ve_gio` (+ `thoi_tiet`) vẫn ra lời |
+| **M-4** | major | §1 "code nối khối điều kiện … **mỗi khi** một dòng trả về có điều kiện" (:14-15); S3b (:30) | spec §12.3 S3b "so chuỗi sau `strip()`" (:531); log không chữ / cờ `refusal` | Model có thể gọi công cụ rồi vẫn trả `INSUFFICIENT_ANSWER` / `OUT_OF_SCOPE_ANSWER`. `chu_cua_model` chỉ bóc `thoi_tiet_noi` (`assistant.py:442-445`) ⇒ cờ `refusal` (`chat.py:266`, `:493`) và đếm S3b trên `trace.answer` sẽ sai khi khối T3 bị nối sau câu từ chối. Thời tiết đã có luật riêng cho ca này (`assistant.py:457-459`, `_chu_giu_lai` `:1012-1018`) | Người dùng thấy "không đủ thông tin" rồi khối điều kiện bên dưới; S3b / tỉ lệ từ chối đếm sai ⇒ quyết giữ / gỡ dựa trên số sai | Plan ghi luật ca "có dòng bảng mà model từ chối" (thay bằng lời tối thiểu từ dòng bảng như B171, hoặc không nối khối) cho cả không-stream lẫn stream; `chu_cua_model` bóc cả khối T3 (thứ tự với khối thời tiết); test cho cả hai câu từ chối |
+| **M-5** | major | §1 "trả cho model **một nguồn** trong sổ nguồn (như công cụ thời tiết …)" (:11-12) | spec §12.5 T3 "trả dòng + `[n]` đoạn nguồn (như B5 D6)" (:551); AGENTS.md "báo chỗ đề bài lệch tài liệu" | Plan theo khuôn `_nguon_thoi_tiet` (`assistant.py:400-408`: một `PackedSource` tự dựng, `source=tt.NGUON_SOURCE`) thay vì đoạn kho thật có `[n]`; plan không ghi đây là lệch spec | Nguồn người dùng thấy là "bảng" tự dựng, không phải file kho ⇒ khó tự kiểm; tập cho phép của kiểm cuối ("số trong đoạn kho được trích") đổi nghĩa vì số bảng nằm luôn trong nguồn tự dựng | Hoặc làm đúng spec (dòng + đoạn kho thật `[n]`), hoặc ghi rõ "lệch spec §12.5" + lý do (rẻ, đã có khuôn E17) + A chấp nhận; ghi tiêu đề / `source` của nguồn bảng hiện trên giao diện (tên file kho của từng dòng) |
+| **M-6** | major | §2 Q2 (:27), §3 thứ tự + tiền (:40-41) | spec §12.2 T3 "Mốc `main` cùng lượt", "câu đúng ≥ mốc" (:516); §12.3 S1 "mới", S4 "biến thể + mốc cùng lượt" (:526, :532); §12.7 "Ước (một biến thể + mốc)" (:589, :593); `run-experiment` (mốc cùng lượt, cỡ mẫu trước) | Thứ tự chạy chỉ có biến thể "Q2 ×2 ⇒ S1 ×2 ⇒ S4 ×2"; không có lượt `main` trên bộ T3 20 / an toàn 32; Q2 thay "≥ mốc" bằng "≥ n − 1 / n" không nói. Công thức tiền (82 × 2 × 0,0006) chỉ đủ **hoặc** biến thể ×2 **hoặc** biến thể + mốc ×1; biến thể ×2 + mốc ×2 ≈ 0,20 > điểm dừng 0,15. Lượt có công cụ tốn thêm một vòng model (> 0,0006) | Không biết S1 "mới" / S4 so với gì; có thể dừng giữa chừng ở 0,15 khi chưa đo đủ sàn | Plan ghi bảng: bộ × nhánh (`main` / biến thể) × số lượt, và USD từng dòng; Q2 giữ cả "≥ mốc" (spec) lẫn "≥ n − 1 / n"; ước lại tiền sau pilot 3 câu, vượt 0,15 ⇒ nhắn A trước |
+| m-1 | minor | Q1 (:26) | §6 bằng chứng đo được | Cờ bật thì câu có từ khoá **phải** khác byte (có công cụ) ⇒ "228 / 228" chỉ đúng cho cờ tắt | Mẫu số sai ⇒ Q1 không đạt được như chữ | Q1 tách: cờ tắt 228 / 228; cờ bật = k / k câu không từ khoá, báo k và số câu Golden 176 / an toàn 32 / mẫu 30 được đưa công cụ (bài học B5c) |
+| m-2 | minor | §1 từ khoá (:16-17) | spec §12.5 "chỉ đưa công cụ khi code dò thấy dấu hiệu vé / giờ" | Từ "giờ" / "giá" / "giảm" / "miễn" trùng nhiều câu thường ("bây giờ", "bao giờ", "đánh giá", "miễn là"); thiếu "bao nhiêu tiền", "phí", "mất tiền". Thời tiết dùng regex có ranh giới từ (`thoi_tiet.py:49`, `:64-70`) | Đưa công cụ quá rộng ⇒ rủi ro S1 / S4 như B5c; thiếu ⇒ câu miễn giảm không có khối | Regex chốt trong test **trước** lượt có phí; test: mọi câu bộ T3 + 6 câu miễn giảm của bộ an toàn trúng cổng, một vài câu thường ("bây giờ…") không trúng |
+| m-3 | minor | Q2, Q3 (:27-28) | `run-experiment` (tiêu chí đo được, ghi trước) | "số đúng dòng bảng (code so)" chưa có luật một câu đạt (mọi số ∈ dòng nhãn? cần ≥ 1 số nhãn? câu từ chối tính gì? ×2 gộp thế nào); Q3 chưa nói xét trên lượt nào và sub-agent chấm theo luật nào | Hai người đếm ra hai số | Ghi một câu luật đạt cho Q2 và Q3 (phạm vi lượt + câu hỏi sub-agent trả có / không) |
+| m-4 | minor | S5 / S6 "theo dõi" (:32); §1 nạp bảng (:10) | spec §12.3 S6 là sàn (:534); repo public không có `data/` | Hạ S6 xuống "theo dõi" không kèm lý do (mốc §12.7 đã ≈ 0,0005–0,0008 / lượt). Plan không nói chỉ nạp bảng khi cờ bật (khuôn `assistant.py:109-110`) | Lệch sàn không giải thích; clone public / CI lỗi khởi động nếu nạp khi cờ tắt | Một câu lý do cho S5 / S6 (hoặc so với mốc); ghi "chỉ nạp khi cờ bật" |
+
+## Đã kiểm
+
+- sha256 plan = `81767d819e13…` (khớp đề bài).
+- Hình công cụ `tra_ve_gio(diem: list[str] ≤ 5)`, ≤ 1 lần / câu, không cộng / nhân, điểm ngoài bảng ⇒ câu cố định, điều kiện không vào model + code nối nguyên văn "mỗi
+  khi có dòng có điều kiện" — khớp spec §12.5 T3 (:551) và §12.6 (:562, :564-566). Khớp tên bằng `chuan_ten` + bí danh dùng lại được (`lich_trinh.py:90`, `:128-130`).
+- Cổng từ khoá "câu cuối / câu hỏi liền trước" có khuôn thật: `thoi_tiet.co_tu_khoa_luot` (`thoi_tiet.py:68-70`) + `_lich_extra` (`assistant.py:687-703`) — cờ tắt ⇒ `{}`.
+- Bộ đếm dùng lại có thật: `so_tien.tim_so_tien` (`so_tien.py:16-18`), `tra_web._chuoi_so` (`tra_web.py:166-173`); `capture_all.py` ra 228 dòng (Golden 176 + an toàn 32 + smoke 10 × 2 đường).
+- Đường dự phòng B171 có thật (`assistant.py:621-622`, `lt.loi_lich_toi_thieu`); sổ nguồn kiểu thời tiết (`assistant.py:400-408`).
+- Phương án B (bảng chỉ cho kiểm cuối + câu cố định "giá / giờ có thể khác — xem nguồn") đúng chữ spec §12.2 (:516); "không vòng chỉnh thứ ba" hợp luật bản 13.
+- Bộ đo không kín đúng §12.4 (:543); tiền ≈ 0,10, dừng 0,15, trong trần Phase 9 3,5 và giữ quỹ B7 0,35 — đúng §12.7 (:586-593); mốc ngày bỏ theo User (:598), plan không đặt ngày.
+- Sàn S1 (4 số + S-AT), S3b (đếm code), S4 (chấm mù với mốc) có mặt; tiêu chí ghi trước lượt có phí; nhãn bộ T3 ghi trước khi chạy.
+- Đơn giản: không thấy cơ chế phòng xa (không cache, không retry, không validator chồng); log chỉ số / nhãn — khớp §7 Session_Prompt và §12.6 "log không chữ".
+- Không chạy model, server, Qdrant hay lệnh có phí.
+
+---
+
+## Vòng 2 — plan bản 2 (sha256 `dbcd1a2f6d81`, khớp)
+
+**Kết luận: `ready_for_user_confirmation`** — 6 / 6 major đóng, 4 / 4 minor cũ đóng; còn **5 minor mới** (không chặn, sửa lúc code — `WORKFLOW.md` §5: vòng 2 chỉ còn
+minor ⇒ A duyệt). M-5: A chấp nhận lệch spec §12.5; tôi chỉ kiểm plan đã ghi rõ lệch + lý do và nguồn mở được bài gốc.
+
+### Đóng / còn
+
+| Mã | Trạng thái | Căn cứ ở bản 2 |
+|---|---|---|
+| M-1 | **đóng** | Kiểm cuối chỉ ở lượt đã gọi `tra_ve_gio`; tập kiểm = số tiền + chuỗi dạng giờ (không số đơn lẻ / năm); tập cho phép gồm số trong câu hỏi; vi phạm ⇒ rút lại như thời tiết (`citation_error`, `assistant.py:469-470`, `chat.py:495-499`) cùng một đường cho 3 đường, giữ S5; test 3 đường (plan :33-37, :63-64) |
+| M-2 | **đóng** | Bảng trường → model / khối (plan :15-21): dòng giá "miễn phí" / 0, `mien_giam[]`, `ghi_chu_nguyen_van` chỉ vào khối; test "điểm có dòng miễn cho trẻ nhỏ" (:63) |
+| M-3 | **đóng** (kèm n-1) | `max_turns` 5 khi có `tra_ve_gio`, 4 khi không (không vào thân yêu cầu ⇒ Q1 không đổi); sàn `outcome = max_turns` = 0; test chuỗi (plan :31-32, :50) |
+| M-4 | **đóng** (kèm n-2) | `INSUFFICIENT_ANSWER` ⇒ câu dẫn cố định + dòng (tất định) + khối, khuôn `CAU_DAN_DU_BAO`; `OUT_OF_SCOPE_ANSWER` ⇒ không nối khối; `chu_cua_model` bóc khối T3 ⇒ `refusal` + S3b đúng (plan :38-40, :52) |
+| M-5 | **đóng** | Ghi rõ "lệch spec §12.5" + lý do (tìm đoạn thật chỉ 10 / 12) (plan :23-26). `source` = đường dẫn file kho ⇒ `bai_id` có khi đường dẫn nằm trong tập bài (`chat.py:330-337`); kèm theo: dòng H4c "có thể thay đổi" sẽ hiện vì tiền tố `travel/tickets/` (`assistant.py:51`, `:586-589`) — hợp ý |
+| M-6 | **đóng** (kèm n-4) | Bảng lượt chạy bộ × nhánh × lượt có mốc `main` (plan :66-72); Q2 thêm "≥ mốc `main`" (:48); S1 so mốc cùng ngày (:51); ước lại sau pilot, vượt ⇒ nhắn A |
+| m-1 | **đóng** | Q1 tách cờ tắt 228 / 228 · cờ bật k / k + báo số câu được đưa công cụ (:47) |
+| m-2 | **đóng** | Regex có ranh giới từ ghi sẵn, chốt trong test trước lượt có phí; câu dương / âm (:27-30) |
+| m-3 | **đóng** | Luật một câu đạt Q2; Q3 phạm vi lượt + câu hỏi có / không cho sub-agent (:48-49) |
+| m-4 | **đóng** (kèm n-3) | Nạp chỉ khi cờ bật (:10); S5 / S6 có lý do (:54-55) |
+
+### Minor mới (sửa lúc code, không cần vòng 3)
+
+| Mã | Vị trí | Bằng chứng | Tiêu chí đóng |
+|---|---|---|---|
+| n-1 | `max_turns` (:31) | Trần 4 gốc đã tính lần gọi thứ 3 "đã hết lượt" (`generator_openai_full_corpus.py:76`); chuỗi xấu nhất có cả nó là `tim_kho` ×2 + "hết lượt" + `tra_ve_gio` + `thoi_tiet` + viết = 6 | Chọn 5 hay 6 kèm một câu lý do; sàn `max_turns` = 0 vẫn bắt nếu thiếu |
+| n-2 | stream câu từ chối (:39) | Chữ chỉ được giữ lại khi đã có khối thời tiết hoặc lịch (`assistant.py:947`); plan ghi "đang được giữ lại" nhưng chưa nêu thêm điều kiện "đã có dòng `tra_ve_gio`" vào chỗ này | Mở rộng điều kiện ở `:947` + nhánh trong `_chu_giu_lai`; test stream ca `INSUFFICIENT_ANSWER` có dòng bảng |
+| n-3 | kiểm giờ (:34) | Regex `\d{1,2}\s*(h\|giờ\|:)\s*\d{0,2}` khớp cả thời lượng ("mất 2 giờ"); "7h30" / "7:30" / "07:30" khác chuỗi | So theo cặp (giờ, phút) đã chuẩn hoá; test "7h30" ↔ "7:30" và một câu thời lượng có trong đoạn kho được trích không bị rút lại |
+| n-4 | S5 / S6 + tiền (:54-57, :70-72) | S6 ghi "sàn" nhưng không có trong danh sách "Âm"; §12.7 ghi lượt agent ≈ 0,0005–0,0008 nên mốc `main` có thể đã vượt 0,0005. S5 đo "lượt Q2 (stream)" — ghi rõ Q2 chạy qua đường stream server thật. Cộng nhẩm: S1 biến thể 64 × 0,0008 = 0,051 (plan 0,045), S4 biến thể 30 × 0,0008 = 0,024 (plan 0,021) ⇒ tổng ≈ 0,15, vẫn dưới điểm dừng 0,20 | S6 so với mốc `main` (hoặc đưa vào danh sách âm cho nhất quán); ghi đường chạy của Q2; sửa số |
+| n-5 | nguồn (:24) | `bai_id` chỉ có khi `source` trùng đúng chuỗi đường dẫn trong tập bài (`chat.py:337`) | Một test: nguồn T3 của một file vé có `bai_id` khác null |
+
+### Đã kiểm thêm ở vòng 2
+
+- Đọc toàn bộ bản 2 (74 dòng); đối chiếu lại `assistant.py:442-470`, `:586-589`, `:615-622`, `:947-956`, `:1012-1018`; `chat.py:266`, `:330-337`, `:493-499`;
+  `generator_openai_full_corpus.py:76`, `:288`; `thoi_tiet.py:37`. Không chạy model / server, không lệnh có phí.
+- Bản 2 không thêm cơ chế phòng xa: rút lại dùng đường sẵn có (không sự kiện mới), câu thay từ chối theo khuôn thời tiết, log thêm một nhãn `thay_tu_choi`.

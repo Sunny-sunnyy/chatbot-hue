@@ -1,15 +1,15 @@
 # Báo cáo cho bạn: Hỏi bằng ảnh (Phase 10)
 
-**Cập nhật lần cuối: 20:26 05/11/2026 — bản 2: thử giao diện ở khung điện thoại ⇒ thẻ ảnh che câu trả lời ⇒ sửa nhỏ giao diện (nhánh chờ review, chưa vào `main`).** Trước: 20:18 05/11/2026 — bản 1: viết mới.
-Người viết: E · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 4: sửa các chỗ còn ghi "cờ tắt / chờ bật" — đã bật 08/11; sửa giao diện điện thoại đã vào `main` 08/11. Các bản trước: xem lịch sử git.**
+Người viết: E · Review: A. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
 
 - **Làm gì:** người dùng chụp / chọn một ảnh (món ăn, công trình, cảnh ở Huế) ⇒ hệ thống đoán **1–3 tên** trong một danh sách 42 tên lấy từ kho (bạn đã duyệt) ⇒ người dùng **bấm tên đúng** ⇒ chatbot trả lời như khi gõ câu "Giới thiệu về <tên>", có nguồn như thường. Trợ lý **không bao giờ trả lời thẳng từ ảnh** — chỉ gợi tên để bấm.
-- **Đang chạy thế nào:** code đã vào `main` nhưng **đang tắt** (`anh.bat: false` trong `backend/config/settings.yaml`) ⇒ người dùng **chưa thấy** nút "Hỏi bằng ảnh". Khi bật, ảnh được gửi tới OpenAI (`gpt-6-luna`) để đoán tên.
+- **Đang chạy thế nào:** **đang bật** từ 08/11 (`anh.bat: true`) ⇒ người dùng thấy nút "Hỏi bằng ảnh" ở trang Trợ lý (máy tính: cả khung nổi). Khi bật, ảnh được gửi tới OpenAI (`gpt-6-luna`) để đoán tên.
 - **Chất lượng (bộ 33 ảnh đã thấy):** đoán đúng tên trong 3 gợi ý ở **22 / 25** ảnh Huế (đạt ngưỡng 22), nhưng có lượt gán nhầm tên Huế cho **2 / 5** ảnh không phải Huế (ngưỡng ≤ 1) ⇒ **âm theo thước gốc**. Bạn chọn (11:42 05/11) **giữ dạng gợi ý có xác nhận**: nhãn "có thể sai", luôn có nút "Không phải các tên này — tôi gõ tên"; lỗi đoán nhầm không thành câu trả lời sai vì người dùng phải bấm tên.
 - **Thử thay bằng model chạy trên máy (SigLIP 2, miễn phí):** 3 cách đều **âm** — cách tốt nhất đoán đúng 20 / 25 nhưng **không biết nói "không nhận ra"** (ảnh con mèo cũng được gợi tên Huế). Không đưa vào chatbot.
-- **Tiền / tốc độ:** ≈ **0,0004 USD / ảnh** (≈ 10 đồng) cộng câu trả lời sau khi bấm (≈ 0,0005 USD). Đoán tên mất trung vị ≈ 3 s, chậm nhất (p95) 6,3–9,1 s — **chưa đạt** mục tiêu ≤ 5 s. Tổng tiền Phase 10 tới nay **0,0984 USD** (≈ 2.500 đồng) / trần 0,15.
+- **Tiền / tốc độ:** ≈ **0,0004 USD / ảnh** (≈ 10 đồng) cộng câu trả lời sau khi bấm (≈ 0,0005 USD). Đoán tên mất trung vị ≈ 3 s (bộ 33 ảnh, 05/11; thử 5 ảnh lúc bật 08/11: 3,5 s), chậm nhất (p95) 6,3–9,1 s — **chưa đạt** mục tiêu ≤ 5 s. Tổng tiền Phase 10 tới nay **0,0984 USD** (≈ 2.500 đồng) / trần 0,15.
 - **Bạn cần quyết:** xem §6.
 
 ## 2. Hoạt động thế nào (bản trong `main`, khi cờ bật)
@@ -34,15 +34,15 @@ Danh sách 42 tên (28 điểm · 9 món · 5 di sản) do code dựng từ kho,
 
 | Tình huống | Trạng thái | Ghi chú |
 |---|---|---|
-| Ảnh công trình / cảnh / món Huế có trong danh sách | **Đã xử lý** (cờ tắt) | đúng trong 3 gợi ý 22 / 25 (cả hai lượt đo); nhầm hay gặp: các lăng / điện giống nhau, vài món ít ảnh |
+| Ảnh công trình / cảnh / món Huế có trong danh sách | **Đã xử lý** (bật 08/11) | đúng trong 3 gợi ý 22 / 25 (cả hai lượt đo); nhầm hay gặp: các lăng / điện giống nhau, vài món ít ảnh |
 | Ảnh không phải Huế (Bắc Kinh, Hà Nội, mèo, nội thất) | **Xử lý một phần** | 0–2 / 5 bị gán tên Huế tuỳ lượt; giao diện bắt người dùng xác nhận |
 | Ảnh có chữ "ra lệnh" dán thêm (đòi trả tên khác) | **Xử lý một phần** | 1 / 3 ảnh bị lừa ở mọi lượt (bảng chữ in kiểu biển chính thức) — trong ngưỡng ≤ 1 |
-| Ảnh có biển tên thật (chợ, trường) | **Đã xử lý** (cờ tắt) | 2 / 2 |
+| Ảnh có biển tên thật (chợ, trường) | **Đã xử lý** (bật 08/11) | 2 / 2 |
 | File không phải ảnh / quá 10 MB / ảnh "bom" | **Đã xử lý, đã kiểm** | trình duyệt báo lỗi trước khi gửi; server từ chối trước khi đọc ảnh, không gọi model (7 ca thử trên server thật) |
 | Trang web lạ gửi ảnh thay người dùng | **Đã xử lý, đã kiểm** | từ chối 403; khi deploy cần thêm (xem §6) |
 | Thông tin vị trí trong ảnh | **Đã xử lý, đã kiểm** | xoá trước khi gửi OpenAI (test) |
 | Giao diện trên trình duyệt (máy tính) | **Đã xử lý, đã kiểm** | thử thật bằng Playwright 05/11 tối: đủ các bước, 0 vi phạm chính sách bảo mật trang |
-| Giao diện trên điện thoại | **Đã xử lý** (sửa chờ review, chưa vào `main`) | thử thật 360×740 và 390×844: không tràn ngang, đủ các bước; bản trong `main` thẻ ảnh che gần hết câu trả lời (còn 191 px để đọc ở 360×740) ⇒ sửa: ảnh xem trước nhỏ đặt cạnh chữ ⇒ còn 322 px (§4) |
+| Giao diện trên điện thoại | **Đã xử lý** (sửa đã vào `main` 08/11, merge `3da1cb1`) | thử thật 360×740 và 390×844: không tràn ngang, đủ các bước; bản cũ thẻ ảnh che gần hết câu trả lời (còn 191 px để đọc ở 360×740) ⇒ sửa: ảnh xem trước nhỏ đặt cạnh chữ ⇒ còn 322 px (§4); chưa thử trên máy điện thoại thật / Safari |
 | Đoán tên bằng model chạy trên máy (SigLIP 2) | **Đã thử, chưa áp dụng** | âm (§4) |
 | Giới hạn số ảnh / người, nhiều ảnh cùng lúc | **Chưa thực hiện** | để Phase 12 (deploy) |
 
@@ -92,13 +92,13 @@ Rào, xử lý ảnh, một lần gọi model, test; thử một ảnh thật: �
 
 | Kết quả / quyết định | Trạng thái | Căn cứ |
 |---|---|---|
-| Code ảnh trong `main`, cờ tắt | còn dùng | `main` `2ca9937`; `backend/config/settings.yaml` `anh.bat: false` |
-| Luna v1 dạng gợi ý có xác nhận | còn dùng (chưa bật cho người dùng) | quyết định bạn 11:42 05/11 |
+| Code ảnh trong `main`, **bật** từ 08/11 | còn dùng | merge `2ca9937` (code), `3da1cb1` (giao diện), cờ `cf57309`; `backend/config/settings.yaml:82` `anh.bat: true` |
+| Luna v1 dạng gợi ý có xác nhận | còn dùng (người dùng thấy từ 08/11) | quyết định bạn 11:42 05/11 |
 | SigLIP 2 thay / ghép luna | đã bỏ | `report_agent/2026-11-05_phase_10_anh/e9_siglip_implementation.md` |
 
 ## 6. Việc còn lại / cần quyết
 
-1. **Bật "Hỏi bằng ảnh" cho người dùng chưa?** Bật ⇒ ảnh gửi OpenAI (đã có dòng báo dưới nút), ≈ 0,0004 USD / ảnh, chờ đoán tên ~3 s (chậm nhất 6–9 s, vượt mục tiêu 5 s). Chưa bật ⇒ không ai thấy tính năng. Đã thử khung điện thoại: bản sửa chờ review + merge trước khi bật.
+1. ~~Bật "Hỏi bằng ảnh" cho người dùng chưa?~~ **Bạn đã chọn bật 08/11.** Còn lại: đoán tên chậm nhất 6–9 s, vượt mục tiêu 5 s (chưa có việc sửa).
 2. **Cách miễn phí trên máy (SigLIP so ảnh mẫu)** — nếu bạn ưu tiên "ảnh không rời máy, nhanh 0,3 s": đúng 20 / 25 (luna 22) nhưng **luôn gợi tên, kể cả ảnh không phải Huế**. Không tự áp; mặc định giữ luna.
 3. **Xoá collection thử `hue_anh_siglip2`?** (172 điểm, chỉ dùng cho thí nghiệm) — mặc định giữ tới khi bạn quyết.
 4. Trước khi deploy (Phase 12): danh sách địa chỉ trang hợp lệ cố định, xử lý HTTPS sau proxy, giới hạn số ảnh xử lý cùng lúc.
@@ -108,6 +108,6 @@ Rào, xử lý ảnh, một lần gọi model, test; thử một ảnh thật: �
 
 - Spec Phase 10 bản 2 `bf67b90fb6fc` (bạn duyệt 10:28 05/11) · plan A1 bản 2 `2fc2fcea33d4`.
 - Report: `report_agent/2026-11-05_phase_10_anh/e8_a1_implementation.md` (A1, A2, Playwright) · `e8_review.md` (C198, ready 0/0/3) · `e9_siglip_implementation.md` (E9).
-- Commit: `0632e10` (code) · `973823f` (test rào thư viện mạng, C198 m-1) · merge `2ca9937` · `13c6a7a` (nhánh `p10-anh-mobile`, CSS màn hẹp — chờ review).
+- Commit: `0632e10` (code) · `973823f` (test rào thư viện mạng, C198 m-1) · merge `2ca9937` · `13c6a7a` (nhánh `p10-anh-mobile`, CSS màn hẹp — đã vào `main`) · merge `3da1cb1` (giao diện cổng) · cờ `cf57309` (bật 08/11).
 - Mã đo: Q-a đúng trong 3 gợi ý · Q-b đúng ở gợi ý đầu · Q-c ảnh ngoài bị ép tên · Q-d ảnh chữ ra lệnh bị lừa · Q-e số ảnh đổi kết quả giữa hai lượt.
 - Dữ liệu (private): `data/phase_10/anh/` (danh sách tên, A2, Playwright, E9), bộ ảnh đo `data/phase_10/bo_do_anh/`.

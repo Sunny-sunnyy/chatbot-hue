@@ -1,23 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { renderArticleHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
+import { ANH_DAU_TRANG, ANH_LINH_VUC, MAN_NHO, MOI_ANH } from "./anh.js";
 
 // Các trang của cổng đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` D9–D12), bản mẫu 2 "Sông Hương".
-// Thẻ bài chỉ hiện trường kho có (tên, loại, tóm tắt) — không sao, không "Liên hệ", không giờ / giá chung chung (D10). Chưa có ảnh được phép ⇒ khối
-// hoa văn giữ chỗ (Q-U2 (b): ảnh Commons vào sau khi User kiểm).
+// Thẻ bài chỉ hiện trường kho có (tên, loại, tóm tắt) — không sao, không "Liên hệ", không giờ / giá chung chung (D10). Ảnh (User chốt 07/11):
+// chỉ 2 ảnh đầu trang + 5 ô lĩnh vực (`anh.js`); thẻ bài / trang bài giữ khối hoa văn.
 
 // 5 lĩnh vực kho (mã = tên thư mục); thứ tự như bản mẫu.
 export const LINH_VUC = [
-  { id: "foods", ten: "Ẩm thực", mo: "Món Huế, quán ăn, cà phê, đặc sản",
-    icon: "M3 12h18a9 8 0 0 1-18 0zM8 8c0-2 2-2 2-4M13 8c0-2 2-2 2-4" },
-  { id: "heritages", ten: "Di tích", mo: "Kinh thành, lăng tẩm, chùa, di sản",
-    icon: "M2 21h20M4 21V11h16v10M1 11l11-8 11 8M9 21v-6h6v6" },
-  { id: "festivals", ten: "Lễ hội", mo: "Lễ cung đình, lễ dân gian, Festival",
-    icon: "M12 2v3M7 6h10l2 4-2 9H7l-2-9zM9 19v3M15 19v3" },
-  { id: "performing_arts", ten: "Nghệ thuật biểu diễn", mo: "Nhã nhạc, ca Huế, tuồng",
-    icon: "M12 20V5l8-2v13M12 20a3 3 0 1 1-3-3h3M20 16a3 3 0 1 1-3-3h3" },
-  { id: "travel", ten: "Đi lại và tham quan", mo: "Điểm đến, vé tham quan, dịch vụ",
-    icon: "M2 17c4-3 6 3 10 0s6 3 10 0M6 14l3-8h6l3 8" },
+  { id: "foods", ten: "Ẩm thực", mo: "Món Huế, quán ăn, cà phê, đặc sản" },
+  { id: "heritages", ten: "Di tích", mo: "Kinh thành, lăng tẩm, chùa, di sản" },
+  { id: "festivals", ten: "Lễ hội", mo: "Lễ cung đình, lễ dân gian, Festival" },
+  { id: "performing_arts", ten: "Nghệ thuật biểu diễn", mo: "Nhã nhạc, ca Huế, tuồng" },
+  { id: "travel", ten: "Đi lại và tham quan", mo: "Điểm đến, vé tham quan, dịch vụ" },
 ];
 const LOAI_CON = { restaurants: "Quán ăn", cafes: "Quán cà phê", local_specialties: "Đặc sản", heritage: "Di tích", festival: "Lễ hội",
                    arts: "Loại hình nghệ thuật", places: "Điểm đến", tickets: "Vé tham quan", services: "Dịch vụ" };
@@ -42,12 +38,13 @@ const BIEU_MAU = [
 ];
 export const CAU_BIEU_MAU = "Lên kế hoạch tham quan Huế";  // chỉ để in lại trong khung trò chuyện — server dựng câu từ giá trị nút
 
-function Icon({ d, size = 26 }) {
+// Ảnh có bản nhỏ cho điện thoại: `<source media>` chọn theo khổ màn (không theo mật độ điểm ảnh như `srcset`) ⇒ máy ≤ 760 px luôn tải bản nhỏ.
+function Anh({ a, ...props }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
-         aria-hidden="true">
-      <path d={d} />
-    </svg>
+    <picture>
+      <source media={MAN_NHO} srcSet={a.srcNho} />
+      <img src={a.src} alt="" {...props} />
+    </picture>
   );
 }
 
@@ -74,6 +71,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk }) {
   return (
     <>
       <section className="hero" aria-labelledby="hero-h">
+        <Anh a={ANH_DAU_TRANG.song} className="hero-anh" fetchpriority="high" />
         <Song className="song" />
         <div className="hero-in">
           <h1 id="hero-h" className="hero-h">Hỏi về Huế, như hỏi người bản xứ</h1>
@@ -131,7 +129,7 @@ function O5LinhVuc({ bai }) {
     <div className="kp-ds">
       {LINH_VUC.map(lv => (
         <a key={lv.id} className="kp" href={`#/kham-pha/${lv.id}`}>
-          <span className="kp-ic"><Icon d={lv.icon} /></span>
+          <Anh a={ANH_LINH_VUC[lv.id]} className="kp-anh" loading="lazy" />
           <span className="kp-ten">{lv.ten}</span>
           <span className="kp-mo">{lv.mo}</span>
           {soBai(bai, lv.id) != null && <span className="kp-so">{soBai(bai, lv.id)} bài</span>}
@@ -143,12 +141,19 @@ function O5LinhVuc({ bai }) {
 
 export function KhamPha({ bai }) {
   return (
-    <div className="khung khoi-trang">
-      <p className="vet"><a href="#/">Trang chủ</a> / Khám phá</p>
-      <h1 className="trang-h">Khám phá Huế</h1>
-      <p className="khoi-p">Năm chủ đề của kho tư liệu — đọc bài gốc mà trợ lý dùng để trả lời.</p>
-      <O5LinhVuc bai={bai} />
-    </div>
+    <>
+      <section className="kp-dau" aria-labelledby="kp-dau-h">
+        <Anh a={ANH_DAU_TRANG.ngoMon} className="hero-anh" />
+        <div className="khung kp-dau-in">
+          <p className="vet"><a href="#/">Trang chủ</a> / Khám phá</p>
+          <h1 id="kp-dau-h" className="trang-h">Khám phá Huế</h1>
+          <p className="ds-p">Năm chủ đề của kho tư liệu — đọc bài gốc mà trợ lý dùng để trả lời.</p>
+        </div>
+      </section>
+      <div className="khung khoi-trang">
+        <O5LinhVuc bai={bai} />
+      </div>
+    </>
   );
 }
 
@@ -263,9 +268,31 @@ export function Bai({ baiId, bai, onAskAbout }) {
               <ul className="ct-khac">{khac.map(b => <li key={b.id}><a href={baiHref(b.id)}>{b.tieu_de}</a></li>)}</ul>
             </>
           )}
+          <BaoSai key={data.id} baiId={data.id} />
         </aside>
       </div>
     </div>
+  );
+}
+
+// Việc nhỏ 8: "Báo thông tin chưa đúng" — server chỉ ghi mã bài (`POST /api/bao_sai`), không nhận chữ tự do. Một lần mỗi lần mở bài.
+function BaoSai({ baiId }) {
+  const [trangThai, setTrangThai] = useState("chua");  // chua · dang · xong · loi
+  async function gui() {
+    setTrangThai("dang");
+    try {
+      const r = await fetch("/api/bao_sai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ bai_id: baiId }) });
+      setTrangThai(r.ok ? "xong" : "loi");
+    } catch {
+      setTrangThai("loi");
+    }
+  }
+  return (
+    <p className="ct-bao" role="status">
+      {trangThai === "xong" ? "Cảm ơn bạn — bài này sẽ được kiểm lại."
+        : <>Thấy thông tin chưa đúng? <button type="button" onClick={gui} disabled={trangThai === "dang"}>Báo thông tin chưa đúng</button>
+            {trangThai === "loi" && " Chưa gửi được — thử lại sau."}</>}
+    </p>
   );
 }
 
@@ -307,7 +334,11 @@ export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
   );
 }
 
-export function GioiThieu() {
+export function GioiThieu({ banDo, anh, muc }) {
+  // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash — effect chạy sau khi trang đã vẽ)
+  useEffect(() => {
+    if (muc) document.getElementById(muc)?.scrollIntoView();
+  }, [muc]);
   return (
     <div className="khung khoi-trang gioi-thieu">
       <p className="vet"><a href="#/">Trang chủ</a> / Giới thiệu</p>
@@ -317,13 +348,15 @@ export function GioiThieu() {
         <li>Trả lời câu hỏi về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, đi lại và vé tham quan ở Huế.</li>
         <li>Xếp lịch tham quan theo buổi từ các điểm trong kho (khi tính năng Lên kế hoạch bật).</li>
         <li>Khi kho không có, có thể tra thêm trên web — phần đó ghi rõ “Từ web (chưa kiểm)”.</li>
+        {anh && <li>Hỏi bằng ảnh: trợ lý gợi ý tên nơi / món trong ảnh (có thể sai), bạn bấm chọn đúng tên rồi mới hỏi.</li>}
       </ul>
       <h2>Trả lời từ kho, có nguồn</h2>
       <p>Mỗi câu trả lời lấy từ kho tư liệu về Huế và ghi tên tài liệu đã dùng ở dòng “Nguồn”. Bấm tên để xem đoạn gốc hoặc đọc cả bài ở mục Khám phá.</p>
       <h2>Giới hạn</h2>
       <ul>
         <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi — hãy kiểm lại trước khi đi.</li>
-        <li>Chưa có bản đồ, nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau).</li>
+        <li>{banDo ? "Chưa có nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau). Bản đồ lịch trình chỉ ghim các điểm đã có toạ độ."
+          : "Chưa có bản đồ, nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau)."}</li>
         <li>Câu hỏi ngoài chủ đề Huế sẽ được báo là ngoài phạm vi.</li>
       </ul>
       <h2>Dữ liệu của bạn</h2>
@@ -331,6 +364,25 @@ export function GioiThieu() {
         trò chuyện. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký. Nút “Cuộc trò chuyện mới” xoá phần đã nhớ.</p>
       <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI (OpenAI); khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm. Đừng gõ thông tin cá nhân
         vào câu hỏi.</p>
+      {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ OpenStreetMap — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
+        đang xem (không nhận câu hỏi của bạn).</p>}
+      {anh && <p>Ảnh bạn gửi được thu nhỏ, bỏ thông tin vị trí, gửi tới OpenAI để đoán tên, không lưu.</p>}
+      <h2 id="nguon-anh">Nguồn ảnh</h2>
+      <ul className="nguon-anh">
+        {MOI_ANH.map(a => <li key={a.src}><GhiCong a={a} /></li>)}
+      </ul>
     </div>
+  );
+}
+
+function GhiCong({ a }) {
+  const ngoai = { target: "_blank", rel: "noopener noreferrer" };
+  return (
+    <>
+      {a.cho}. Ảnh: {a.tacGia}
+      {a.giayPhep && <> · {a.linkGiayPhep ? <a href={a.linkGiayPhep} {...ngoai}>{a.giayPhep}</a> : a.giayPhep}</>}
+      {" · "}<a href={a.nguon} {...ngoai}>{a.giayPhep ? "trang ảnh trên Wikimedia Commons" : "nguồn ảnh"}</a>
+      {a.doi && <> · đã {a.doi}</>}
+    </>
   );
 }

@@ -21,8 +21,14 @@ export function cauGhep(chu, ten) {
 export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   const [state, setState] = useState(null);  // null · {preview, phase: "dang" | "xong" | "loi", ungVien, text}
   const inputRef = useRef(null);
+  const rootRef = useRef(null);
 
   useEffect(() => () => state?.preview && URL.revokeObjectURL(state.preview), [state?.preview]);
+  // Trang trợ lý: khung nhập dính đáy màn hình (sticky) và thẻ nằm trong khung ⇒ thẻ hiện là đè lên cuối câu trả lời đang đọc
+  // (E bật ảnh 08/11, Playwright 1440 + 390). Cuộn trang xuống đáy ⇒ khung về đúng chỗ của nó, cuối cuộc trò chuyện nằm ngay trên thẻ.
+  useEffect(() => {
+    if (state && rootRef.current?.closest(".tro-ly-trang")) window.scrollTo({ top: document.documentElement.scrollHeight });
+  }, [state?.phase]);
 
   if (!bat) return null;
 
@@ -50,7 +56,7 @@ export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   }
 
   return (
-    <div className="hoi-anh">
+    <div className="hoi-anh" ref={rootRef}>
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" className="retry hoi-anh-nut" disabled={disabled || state?.phase === "dang"} onClick={() => inputRef.current?.click()}>
           Hỏi bằng ảnh

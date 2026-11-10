@@ -55,14 +55,17 @@ CAU_KHONG_XEP = {
     "toi_tre_em": "Buổi tối mình chưa xếp vì đi cùng trẻ nhỏ — lịch chỉ xếp buổi sáng và chiều.",
     "toi_lon_tuoi": "Buổi tối mình chưa xếp vì đi cùng người lớn tuổi — lịch chỉ xếp buổi sáng và chiều.",
     "toi_khong_diem": "Buổi tối mình chưa xếp vì bảng điểm của mình chưa có điểm buổi tối hợp sở thích của bạn.",
+    # việc nhỏ (4) 08/11: chưa nêu sở thích ⇒ không nói "hợp sở thích của bạn" (code xếp theo mặc định di tích, không phải sở thích người dùng)
+    "toi_chua_so_thich": "Buổi tối mình chưa xếp vì bạn chưa nêu sở thích — nói mình biết bạn thích gì để mình xếp điểm buổi tối.",
 }
-MA_TOI = ("toi_tre_em", "toi_lon_tuoi", "toi_khong_diem")
+MA_TOI = ("toi_tre_em", "toi_lon_tuoi", "toi_khong_diem", "toi_chua_so_thich")
 # Dòng khung gửi model khi code từ chối buổi tối — viết cho **người dùng đọc** (model hay chép nguyên dòng khung vào lời: B171 đo 4 / 4),
 # lý do do code chọn theo mã luật; không chứa lời dặn model (A quyết 06/11 tối)
 DONG_KHUNG_TOI = {
     "toi_tre_em": "Buổi tối: để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
     "toi_lon_tuoi": "Buổi tối: để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
     "toi_khong_diem": "Buổi tối: để trống — bảng điểm của mình chưa có điểm buổi tối hợp sở thích của bạn.",
+    "toi_chua_so_thich": "Buổi tối: để trống — bạn chưa nêu sở thích nên mình chưa xếp điểm buổi tối.",
 }
 # D4b (1) — giả định công khai khi trường không bắt buộc bị thiếu; D15 (bản 7) "Trả lời luôn" ⇒ 1 ngày tạm
 CAU_GIA_DINH = {
@@ -262,7 +265,8 @@ def xep(bang: Bang, ts: ThamSo) -> dict:
     # điểm hợp sở thích lấp được buổi ngày — chỉ điểm có đúng sở thích (review C m-2: điểm người dùng nêu không hợp sở thích không tính)
     hop_ngay = sum(so_thich in bang.theo_id[i]["loai"] and bool(set(bang.theo_id[i]["buoi"]) & {"sang", "chieu"}) for i in pool)
     if ts.hoi_toi and not any(ng["buoi"]["toi"] for ng in ngay):
-        ma = ("toi_tre_em" if ts.di_cung == "gia_dinh_tre_em" else "toi_lon_tuoi") if han_che else "toi_khong_diem"
+        ma = ("toi_tre_em" if ts.di_cung == "gia_dinh_tre_em" else "toi_lon_tuoi") if han_che else \
+            "toi_khong_diem" if ts.so_thich else "toi_chua_so_thich"
         khong_xep.append({"diem": "buổi tối", "ma_luat": ma})
     gia_dinh = (["so_ngay_tam"] if ts.so_ngay_tam else []) + (["so_ngay_4"] if ts.so_ngay == "4+" else []) + \
         [k for k in ("so_thich", "kieu_di", "di_cung") if getattr(ts, k) is None]
@@ -417,12 +421,43 @@ def kiem_ghi_chu(bang: Bang, khung: dict, khoi: str) -> list[str]:  # C191 m-3: 
 
 
 def map_url(ten: str) -> str:
-    """D11: link "mở bản đồ" dựng bằng code từ tên điểm + ", Huế" (không toạ độ, không chữ model)."""
+    """D11: link "mở bản đồ" dựng bằng code từ tên điểm + ", Huế" (không toạ độ, không chữ model). Link theo toạ độ đã thử và bỏ (A 08/11: chỉ mở ghim
+    trần, mất thẻ địa điểm của Google; vài toạ độ còn lệch) ⇒ toạ độ chỉ dùng cho bản đồ của mình."""
     return MAP_BASE + quote(f"{ten}, Huế")
 
 
-def ban_do(bang: Bang, khung: dict) -> list[dict]:
-    return [{"ten": bang.theo_id[i]["ten"], "map_url": map_url(bang.theo_id[i]["ten"])} for i in diem_trong_khung(khung)]
+# Bản đồ lịch trình (plan `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` §3): khung Huế để kiểm toạ độ lúc nạp (trình duyệt kiểm lại)
+KHUNG_HUE = ((16.0, 16.8), (107.0, 108.0))
+
+
+def nap_toa_do(path: str | Path, bang: Bang) -> dict[str, tuple[float, float]]:
+    """Toạ độ điểm (`diem_toa_do_v5.json`, dữ liệu mở Huế — C204) cho bản đồ giao diện: chỉ điểm có trong bảng lịch và có toạ độ.
+    Toạ độ không phải số / ngoài khung Huế ⇒ `ValueError` (không khởi động). Model không thấy toạ độ."""
+    toa_do = {}
+    for d in json.loads(Path(path).read_text(encoding="utf-8"))["diem"]:
+        if d["id"] not in bang.theo_id or d["vi_do"] is None:
+            continue
+        vi, kinh = d["vi_do"], d["kinh_do"]
+        (vmin, vmax), (kmin, kmax) = KHUNG_HUE
+        if not all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in (vi, kinh)) or not (vmin <= vi <= vmax and kmin <= kinh <= kmax):
+            raise ValueError(f"bảng toạ độ: {d['id']} sai toạ độ")
+        toa_do[d["id"]] = (float(vi), float(kinh))
+    return toa_do
+
+
+def ban_do(bang: Bang, khung: dict, toa_do: dict[str, tuple[float, float]] | None = None) -> list[dict]:
+    """Link "mở bản đồ" từng điểm theo thứ tự khung. Có `toa_do` (cờ `ban_do_lich`) ⇒ thêm ngày / buổi / thứ tự trong ngày (từ 1) / toạ độ
+    (`None` khi bảng không có) để giao diện vẽ ghim có số."""
+    if toa_do is None:
+        return [{"ten": bang.theo_id[i]["ten"], "map_url": map_url(bang.theo_id[i]["ten"])} for i in diem_trong_khung(khung)]
+    out = []
+    for ng in khung["ngay"]:
+        ids = [(b, id_) for b in BUOI for id_ in ng["buoi"][b]]
+        for thu_tu, (b, id_) in enumerate(ids, 1):
+            ten = bang.theo_id[id_]["ten"]
+            out.append({"ten": ten, "map_url": map_url(ten), "ngay": ng["ngay"], "buoi": b, "thu_tu": thu_tu,
+                        "toa_do": list(toa_do[id_]) if id_ in toa_do else None})
+    return out
 
 
 # ---------- D8: kiểm cuối chữ model ----------

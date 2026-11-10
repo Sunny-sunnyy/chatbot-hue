@@ -6,16 +6,32 @@ trích dẫn tới đoạn nguồn. Câu hỏi nằm ngoài kho được từ ch
 
 ## Tính năng
 
-- **Trả lời có trích dẫn.** Mỗi ý gắn số nguồn `[n]`; bấm vào số sẽ hiện đoạn nguồn tương ứng. Mọi trích dẫn được kiểm ở backend, trích dẫn không hợp lệ thì câu trả lời bị thu hồi.
+- **Trả lời có trích dẫn.** Model gắn số nguồn `[n]` cho từng ý; backend kiểm mọi trích dẫn, trích dẫn không hợp lệ thì câu trả lời bị thu hồi.
+  Giao diện không hiện số trong chữ mà hiện dòng **"Nguồn: …"** dưới câu trả lời; bấm tên nguồn để xem đoạn trích và mở cả bài.
 - **Closed-world.** Khi ngữ cảnh không đủ bằng chứng, hệ thống trả một câu từ chối cố định thay vì tự suy đoán.
 - **Phân loại câu hỏi.** Mỗi câu được phân vào một trong bốn nhóm:
   - trò chuyện thông thường;
   - câu hỏi về Huế;
-  - câu ngoài phạm vi;
+  - câu ngoài phạm vi (kèm câu gợi ý trong phạm vi);
   - tình huống khẩn cấp: trả hướng dẫn cố định kèm số 113 / 114 / 115 / 112.
+- **Tìm thêm.** Sau lần tìm đầu bằng chính câu hỏi, trợ lý được tự gọi công cụ tìm trong kho thêm tối đa 2 lần cho câu cần nhiều nguồn.
+- **Nhớ hội thoại.** Trợ lý nhớ 3 câu hỏi gần nhất của cuộc trò chuyện (trong 30 phút, lưu trong bộ nhớ máy chủ) để hiểu câu hỏi tiếp
+  như "còn chỗ kia thì sao"; không nhớ câu trả lời. Nút "Cuộc trò chuyện mới" xoá ngữ cảnh.
+- **Tra web khi kho không có.** Câu hỏi về Huế mà kho không đủ bằng chứng ⇒ một lần tìm web (Serper), kết quả hiện ở mục riêng
+  **"Từ web (chưa kiểm)"**, tách khỏi phần trả lời từ kho. Link chỉ lấy từ kết quả tìm; code kiểm số tiền / thời gian thực trong phần này.
+- **Thời tiết.** Câu hỏi về thời tiết Huế dùng dự báo Open-Meteo 7 ngày; mọi con số do code in, model chỉ viết lời. Câu về bão / lũ trả câu
+  cố định trỏ tới nguồn khí tượng chính thức và số 112.
+- **Lên kế hoạch.** Trang biểu mẫu: chọn số ngày, người đi cùng, sở thích ⇒ **code** xếp lịch theo buổi từ bảng điểm tham quan (luật xếp
+  kiểm bằng code, kèm link Google Maps từng điểm) ⇒ model chỉ viết lời quanh lịch, có nguồn.
+- **Cổng du lịch.** Trang chủ, **Khám phá** (204 bài của kho theo 5 chủ đề, đọc cả bài), **Giới thiệu** (trợ lý làm được gì, giới hạn);
+  khung **Trợ lý Huế** nổi ở mọi trang và có trang riêng.
 - **Streaming.** Câu trả lời hiển thị dần ngay khi model sinh.
 - **Cảnh báo thông tin theo thời điểm.** Câu trả lời liên quan tới vé, điểm đến, lễ hội có dòng nhắc rằng thông tin có thể đã thay đổi.
-- **Quan sát được.** Mỗi yêu cầu ghi một dòng số đo: thời gian từng khâu, token, chi phí USD của từng lần gọi model. Log không ghi nội dung hội thoại.
+- **Đánh giá 👍 / 👎** dưới mỗi câu trả lời (chỉ ghi mã lượt + đánh giá, không ghi nội dung).
+- **Quan sát được.** Mỗi yêu cầu ghi một dòng số đo: tuyến, thời gian từng khâu, token, chi phí USD của từng lần gọi model và công cụ.
+  Log không ghi nội dung hội thoại.
+- **Đang tắt / đang làm:** hỏi bằng ảnh (model gợi ý ≤ 3 tên trong danh sách, người dùng bấm xác nhận rồi mới trả lời — code có, đang tắt);
+  hỏi bằng giọng nói (đang phát triển).
 
 ## Kiến trúc
 
@@ -23,7 +39,7 @@ trích dẫn tới đoạn nguồn. Câu hỏi nằm ngoài kho được từ ch
 
 ```mermaid
 flowchart LR
-    A[Kho Markdown - 204 tệp] --> B[Chia đoạn theo cấu trúc - 8424 đoạn]
+    A[Kho Markdown - 204 tệp] --> B[Chia đoạn theo cấu trúc - 8435 đoạn]
     B --> C[Dense embedding e5-small]
     B --> D[Sparse vector BM25]
     C --> E[Qdrant]
@@ -46,8 +62,12 @@ flowchart TD
     DS --> BM[Chấm lại bằng BM25]
     BM --> RRF[Reciprocal Rank Fusion - top 10]
     RRF --> GEN[LLM sinh câu trả lời]
+    GEN -.->|công cụ, tối đa 2 lần| DS
+    GEN -.->|công cụ| WX[Dự báo Open-Meteo]
     GEN --> CIT[Kiểm trích dẫn]
     CIT --> OUT[Câu trả lời kèm nguồn]
+    CIT -->|Kho không đủ bằng chứng| WEB[Tìm web một lần - mục Từ web chưa kiểm]
+    API -->|Biểu mẫu Lên kế hoạch| PLAN[Code xếp lịch theo buổi] --> GEN
 ```
 
 | Thành phần | Công nghệ |
@@ -87,6 +107,7 @@ Số liệu đo trong tháng 10–11/2026.
 - Node.js 24
 - Docker
 - OpenAI API key
+- Serper API key (tuỳ chọn, chỉ cho tra web; dự báo Open-Meteo không cần key)
 
 ### Dữ liệu
 
@@ -135,7 +156,13 @@ mọi yêu cầu nhận mã `409`. Qdrant hoặc model tìm kiếm không sẵn 
 | Endpoint | Mô tả |
 |---|---|
 | `POST /api/chat` | Hỏi đáp, trả JSON `{answer, sources}` |
-| `POST /api/chat/stream` | Hỏi đáp dạng Server-Sent Events: `status`, `delta`, `sources`, `error`, `done` |
+| `POST /api/chat/stream` | Hỏi đáp dạng Server-Sent Events: `status`, `delta`, `sources`, `notice`, `clarify`, `lich_trinh`, `web`, `error`, `done` |
+| `POST /api/conversation/new` | Bắt đầu cuộc trò chuyện mới (xoá ngữ cảnh đang nhớ) |
+| `POST /api/feedback` | Ghi đánh giá 👍 / 👎 của một lượt |
+| `GET /api/kham_pha`, `GET /api/kham_pha/bai?id=` | Danh sách bài của kho / nội dung một bài (trang Khám phá) |
+| `GET /api/thoi_tiet` | Dự báo thời tiết Huế (Open-Meteo, cache 30 phút) |
+| `GET /api/tinh_nang` | Tính năng đang bật (giao diện đọc để ẩn / hiện) |
+| `POST /api/anh/ung_vien` | Hỏi bằng ảnh — gợi ý tên ứng viên (đang tắt ⇒ `404`) |
 | `GET /health` | Trạng thái các thành phần |
 
 ### Kiểm thử
@@ -177,4 +204,6 @@ docker-compose.yml
 - Thông tin theo thời điểm (giá vé, giờ mở cửa, lịch lễ hội) có thể đã cũ so với thực tế.
 - Câu hỏi theo ngày tương đối ("tối nay", "tuần này") thường bị từ chối.
 - Chỉ hỗ trợ tiếng Việt có dấu.
-- Mỗi lượt hỏi đáp độc lập, chưa ghi nhớ ngữ cảnh hội thoại.
+- Chỉ nhớ 3 câu hỏi gần nhất trong 30 phút, lưu trong bộ nhớ máy chủ: tải lại máy chủ là mất; không nhớ câu trả lời.
+- Phần "Từ web" chưa được kiểm như phần trả lời từ kho (chỉ kiểm link, số tiền, thời gian thực).
+- Lịch trình chỉ có từ biểu mẫu "Lên kế hoạch"; câu hỏi lịch trình gõ tự do được trả lời như câu hỏi thường.

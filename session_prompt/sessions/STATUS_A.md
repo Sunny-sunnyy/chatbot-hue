@@ -1,11 +1,43 @@
-# STATUS A — PHIÊN 07/11 (mở 11:53; cập nhật 13:07 07/11/2026 `date`)
+# STATUS A — PHIÊN 10/11 (mở 19:02; cập nhật 19:06 10/11/2026 `date`)
 
-- Terminal: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81` (cả bốn Claude Code, trực tiếp).
-- Quyền: như 06/11 + (User đi nghỉ) tiếp tục / gác việc cần duyệt / tự do nghiên cứu; vượt 1 USD được; Serper cho tra cứu. Qdrant mất container ⇒ A `docker compose up -d qdrant`.
-- User: duyệt spec cổng đợt 1 `ff3c317ec88b`; Q-U1…Q-U5 (spec §3); "biểu mẫu + bổ sung dữ liệu song song".
-- A quyết: (e) chọn đoạn nguồn dài nhất (B); thứ tự việc nặng CPU (E dò ⇒ B build ⇒ C X1c ⇒ C Q-G/Q-N).
-- Tiền tới giờ ≈ 0,05 USD (C X1+X1b 0,042 · B 0,007 · E 0,002).
-- **Bẫy / đầu vào vòng cải tiến:** (1) Q-U3 hỏi bằng chi tiết kỹ thuật ⇒ User không hiểu, hỏi lại hướng ⇒ hỏi bằng lời sản phẩm, nói bối cảnh trước. (2) Tin "đổi thứ tự D6/D7 trước" tới sau khi B đã xong S1 — gửi theo ý định cũ, chưa xem trạng thái B. (3) B report deploy ghi "0 file evaluation" từ đếm chưa đủ (chỉ gốc kho) — E bắt 16 file Golden + 148 meta trong ảnh ⇒ đề xuất: đóng gói dữ liệu private bằng **danh sách chừa** (allow-list) + đếm bên trong sản phẩm cuối, không loại dần. (4) B: dựng test trước lượt model thật đầu tiên ⇒ lỗi lộ trễ ~40 phút (B tự nêu).
+- Terminal: A `hue-rag-55` · B `hue-rag-05` · C `hue-rag-4f` · E `hue-rag-e4` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).
+- Kiểm nhanh: `main` `eada0d3` = origin, sạch; hooksPath `.githooks`; Qdrant 2 collection, 8.435 điểm; `frontend/dist/` có; RAM trống ~12 GB; spec Phase 9 sha file `01b7476a3eb1` (như 09/11). Lệch: dòng "7 nhánh chờ xoá" ở khối 09/11 dưới đã cũ (User xoá 22:40 09/11).
+- User: quyền "như 09/11 + trần Phase 9 4,2" (A ghi nhận 19:05 10/11/2026).
+- Giao (mức nhẹ, `CURRENT_HANDOFF.md` "VIỆC PHIÊN 10/11"): B xã giao song song định tuyến · E câu ngày tính sẵn · C review cả nhánh. Tiếp: hỏi User mốc đóng tính năng ⇒ W61 / W59 / W62 / W63; vòng tự soi khi B / E có kết quả đầu.
+
+# STATUS A — KẾT PHIÊN 09/11 (mở 20:09; cập nhật 22:34 09/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ hỏi mốc đóng tính năng ⇒ W61 / W59 / W62 / W63 (gom một lần) ⇒ mở vòng tự soi khi mỗi session có kết quả đầu tiên. Không còn worktree / server; 7 nhánh chờ User `!` xoá (lệnh ở handoff mục 3).
+- Xong 09/11: chốt deploy `ccc9f4f`; phương án B `3b52017`; T1 `99ea59a` + bật `7eb1f12`; tag hồ sơ G / T2 / T3 / T4; luật tự soi `fb621e0`, rảnh là bình thường `902f57d`; báo cáo khâu bản 46 + LUONG bản 33 (E viết, A đọc); TONG_HOP mục 09/11 (C nháp, A điền S5 + tiền); sổ vòng 23. Tiền A ≈ 0,003 (2 cổng). Cả phiên ≈ 0,62.
+- Chuyển luật tự soi cho 2 phiên dự án khác (User yêu cầu) — tin tới được lúc chúng còn mở.
+
+
+- Terminal: A `hue-rag-87` · B `hue-rag-99` · C `hue-rag-6a` · E `hue-rag-ea` (cả bốn Claude Code, trực tiếp).
+- Kiểm nhanh: `main` `5c982a0` = origin, sạch; hooksPath `.githooks`; Qdrant chạy sẵn (2 collection, 8.435 điểm); worktree `/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/c_t3` mất ⇒ B / C dựng lại; spec Phase 9 sha file `01b7476a3eb1` (sửa chữ `442f758` sau bản duyệt `5557f0fd7650`).
+- User: quyền phiên "như 08/11"; trần Phase 9 nâng **4,0**; T3 chọn **(a) phương án B**; khẩn cấp sau G **đóng** (giữ như 08/11, bỏ bộ quan sát).
+- Giao: B — G (rebase, S1 có ngữ cảnh, kín qua User `!`, S5 đầu tiên); C — dựng T3 + review plan T2 `921f75d64a7c` ⇒ code T3 (a); E — bộ câu ngày mới + lượt xác nhận T1.
+- Thứ tự S5: B ⇒ E ⇒ C; lúc đo ⇒ A dừng lượt có phí / việc nặng ở session khác.
+- **Bẫy A (09/11):** hỏi lại User câu khẩn cấp đã quyết 08/11 chỉ vì handoff ghi "hỏi trước khi bật" ⇒ User: "test những thứ vô nghĩa, over-engineer" (lần 6). Đã quyết rồi thì không hỏi lại; handoff kết phiên không ghi "hỏi lại" cho việc User đã chốt. W59 / W60 dồn tới kết phiên, không hỏi lẻ.
+
+# STATUS A — KẾT PHIÊN 08/11 (mở 09:16; cập nhật 12:51 08/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" + "Câu hỏi cho User" (0)–(6) ⇒ hỏi quyền phiên ⇒ hỏi tiền (nâng trần Phase 9) ⇒ cùng lượt giao B (G: S1 có ngữ cảnh, sau đó kín khi User `!`, S5, review, merge), C (T3 theo hướng User chọn), E (T1 lượt xác nhận + S5 ⇒ bật) ⇒ đợt 2 T2 / T4. User bật Docker Desktop + `docker compose up -d qdrant` trước (A đã `docker compose down` lúc kết phiên).
+
+- Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22`.
+- Xong 08/11: ảnh cổng `c9931be`; bản đồ cờ tắt `a4fde29`; hỏi bằng ảnh bật `cf57309`; việc nhỏ B / E / C (`1ff425c`, `56b8baa`, `ad21b6c`); README; spec bản 13 User duyệt `5557f0fd7650`; plan G / T1 / T3 qua review sub-agent; T1 merge cờ tắt (`e401c71`, `7ee12f1`); test cờ ảnh sửa `e7ad76f`; governance mức nhẹ `099c756` + test nhanh `f124527`; vòng cải tiến 22 (S104–S108, W59 / W60 chờ User).
+- Cách làm mới hôm nay (giữ): khi B / C / E bận ⇒ A giao review plan / nhánh cho **sub-agent ngữ cảnh mới** (chỉ dựa spec + code) — 4 lần, bắt lỗi thật (Tết tháng 1, câu từ chối phát 2 lần, công cụ đo không tra web thật); sub-agent viết bộ kín, A chỉ nhận số đếm + md5.
+- Tiền A 08/11 ≈ 0,003 USD (cổng ổn định). Cả phiên ≈ 0,98 USD.
+- **Bẫy A hôm nay:** (1) bật cờ `anh.bat` rồi chỉ chạy test không khoá ⇒ 1 test hỏng khi có khoá (lần 2 — W59); (2) gộp nhánh thêm gói npm mà quên `npm ci` (luật có sẵn); (3) suýt tính tiền Phase 9 sai (2,9 ⇒ 3,0) — cộng lại từng session trước khi ghi; (4) nhiều thông báo idle cũ tới sau tin giao việc ⇒ kiểm `ListAgents` / file đầu ra trước khi nhắn lại.
+
+# STATUS A — PHIÊN 07/11 (mở 11:53; cập nhật 15:44 07/11/2026 `date`, trước khi User mở lại 4 session — CHƯA kết phiên)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" (viết lại 15:44 07/11/2026) ⇒ xác nhận quyền phiên 07/11 bằng một câu ⇒ `ListAgents` ⇒ giao theo "Làm tiếp" ⇒ hỏi User mỗi lần một câu.
+
+- Terminal cũ (đổi khi mở lại): A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`.
+- Xong 07/11: spec cổng duyệt + 5 Q-U; S1 / S2 / S4 / S3 / X1–X1c; merge cổng `dbfc925` + thời tiết `0dab4e5` + V5 `312ad9f` + cờ biểu mẫu `a884de4` (cổng ổn định A chạy 2 lần, đạt); tự soi 4 session + TONG_HOP; thử deploy cục bộ (B) + review E 2 vòng; báo cáo User (LUONG bản 32, SINH bản 41, nhật ký 07/11); Project_Status sửa dòng hiện trạng.
+- Dự án khác của User xin máy 15:30–16:00 ⇒ A cho sau khi C đo xong; trước khi đo latency nhắn bên đó.
+- Tiền 07/11 ≈ 0,10 USD (C 0,078 · B 0,009 · E 0,002 · A 0,002).
+- **Bẫy / đầu vào vòng cải tiến:** (1) Q-U3 + F-a(4) hỏi bằng chi tiết kỹ thuật ⇒ User không hiểu 3 lần ⇒ hỏi bằng ví dụ người dùng thấy, nói bối cảnh / vì sao trước khi hỏi. (2) Tin "đổi thứ tự D6/D7" gửi khi B đã xong S1. (3) B ghi "0 file evaluation" từ đếm chưa đủ ⇒ E bắt 16 + 148 file trong ảnh ⇒ đóng gói dữ liệu private bằng danh sách chừa + đếm trong sản phẩm cuối. (4) B dựng test trước lượt model thật đầu tiên ⇒ lỗi lộ trễ ~40 phút. (5) Ảnh: E đưa ảnh "vừa" + nhãn không đối chiếu mô tả ⇒ User bắt 2 ảnh sai (bún riêu, Đại Cung môn) ⇒ nguồn có biên tập (ảnh đại diện bài vi.wiki, chỉ file Commons) + đối chiếu chú thích. (6) A bật cờ trước khi chạy test ⇒ 4 test hỏng vì đọc settings thật — A dời commit sang nhánh, B sửa; lần sau: chạy test file chạm cờ ngay sau khi đổi `settings.yaml`, trước commit. (8) **Lọt tên dự án khác vào file tracked** (STATUS_A + 1 archive, từ 05/11, 4 commit đã push) — hook chỉ có mẫu cứng cho một tên; auto mode bắt lần thứ 5 ⇒ sửa tiến (`2c83b7d`), lịch sử giữ ⇒ đề xuất: hook đọc thêm danh sách tên từ file private trong `data/`. (7) User mở HTML tải về Windows ⇒ ảnh không hiện ⇒ đưa đường dẫn `\\wsl.localhost\Ubuntu-24.04\…`.
 
 # STATUS A — KẾT PHIÊN TỐI 06/11 (mở 20:54; cập nhật 22:43 06/11/2026 `date`)
 
@@ -24,7 +56,7 @@
 
 - Terminal 06/11: A `hue-rag-f7` · B `hue-rag-85` · C `hue-rag-a4` · E `hue-rag-99` (đổi mỗi lần mở).
 - Q3 B5 cũ: 2 sub-agent chấm (khớp 15 / 15; (ii) 3 / 5 — L3 code xếp bỏ sở thích, L5 lời "được" buổi tối) ⇒ **gác** (câu kín không tự nhiên). Lý do chi tiết chỉ ở `data/phase_9/b5/kin/cham_agent_{1,2}.md` — **A không đọc** (nội dung kín). A chỉ biết mức loại lỗi (đã chuyển thành B171 L-a / L-b).
-- Máy dùng chung với dự án khác (phiên A `docker-images-src` chạy ~4–5 GB nhiều giờ 06/11) ⇒ đo latency phải nhắn bên đó trước.
+- Máy dùng chung với dự án khác (phiên A của dự án đó chạy ~4–5 GB nhiều giờ 06/11) ⇒ đo latency phải nhắn bên đó trước.
 - Tiền 06/11: A 0 (chấm + review = quota Claude); cả phiên ≈ 0,021 USD (B).
 - **Bẫy A (đầu vào vòng cải tiến — đã ghi S99, S100):** (1) giao việc trễ ~50 phút ⇒ luật mới; (2) bộ kín không tự nhiên không ai bắt ⇒ đề xuất W58; (3) hook giờ ước bắt 2 lần ("10:4x", "12:2x") — đã sửa bằng `date`.
 

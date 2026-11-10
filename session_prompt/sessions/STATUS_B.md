@@ -1,4 +1,261 @@
-# STATUS B — KẾT PHIÊN TỐI 06/11 (22:41 06/11/2026 `date`; mở 20:54) — sổ tay cho phiên sau
+# STATUS B — PHIÊN 10/11 (mở 19:02 10/11/2026, terminal `hue-rag-05`; A `hue-rag-55` · C `hue-rag-4f` · E `hue-rag-e4`)
+
+## Đang làm — xã giao chạy song song định tuyến (A giao 19:05 10/11/2026, mục "VIỆC PHIÊN 10/11")
+- Nhánh `p9-xa-giao-song-song` từ `main` `624a17b`, worktree `/tmp/b_xg` (dựng sau khi A duyệt plan). Trần ≤ 0,1 USD.
+- **Khai báo sửa:** plan `docs/superpowers/plans/2026-11-10-phase-9-xa-giao-song-song-plan.md` (working tree chung, A commit); trong worktree:
+  `backend/llm/assistant.py` — **chỉ** `AssistantFlags` (thêm cờ) + `answer_turn_stream_parallel` + `_merge_spec` (E sửa `ngay_lich_for_turn` / phần câu ngày — không đụng);
+  `backend/config/settings.yaml` (cờ `song_song_tro_chuyen`); `backend/tests/test_toc_do_song_song.py`; công cụ đo `data/phase_9/xa_giao_song_song/`;
+  report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md`; file này.
+- **Tiến độ (19:20 10/11/2026 `date`):** A duyệt plan `47009c7dc791` (AT dùng lại 4 số main). Tự soi 1 (A chốt): AN = bộ 90 của #6, S = 60 câu (bỏ câu ngày), không test ngắt mới.
+  Code + T xong (chưa commit): `test_toc_do_song_song.py` 15 đạt (31 s); `test_b6_tra_web.py` + `test_ngay_lich.py` 157 đạt (23 s).
+  **AN đạt** (`data/phase_9/xa_giao_song_song/an_r1.jsonl`, 0,042 + bỏ 0,0097 USD): 0 lượt lọt; `delta_matches_final` đúng mọi lượt. Bộ chấm chữ thô bắt 2 ca lệch không phải lọt (1 dấu cách cuối ở tuyến trò chuyện; 1 ca đánh số lại citation ở tuyến Huế — #6 cũng có 1).
+  Chờ E "đo xong" ⇒ lượt S (bật tạm cờ trong `settings.yaml` của worktree, đo xong trả `false`).
+- **XONG — CHƯA ĐẠT tiêu chí ghi trước (19:36 10/11/2026 `date`):** nhánh `p9-xa-giao-song-song` **`9ce7cfd`** (đã push; cờ `false`). S (60 câu, `s_r1.jsonl`): xã giao p50 3,46 → 1,85 s nhưng
+  p95 5,74 ✗; ngoài phạm vi p95 5,21 ✗ + 0,00056 USD / câu > 0,0005; Huế 2,28 / 4,23 ✓. Test rộng 855 đạt (4 phút). A quyết: không merge, chưa tag — A trình User;
+  User bật ⇒ C review ⇒ merge cờ false rồi bật; không ⇒ tag hồ sơ. Report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md` (working tree chung, A commit).
+  Tiền B 10/11 ≈ **0,079 USD** (AN 0,052 · S 0,027). Worktree `/tmp/b_xg` giữ cho review (server đã tắt).
+- Phiên 09/11: nhánh `p9-g-cong` / `p9-g-b` User đã xoá 22:40 09/11 (dòng "chờ User xoá" bên dưới đã cũ).
+
+# STATUS B — PHIÊN 09/11 (mở 20:14 09/11/2026, terminal `hue-rag-99`; A `hue-rag-87` · C `hue-rag-6a` · E `hue-rag-ea`)
+
+## KẾT PHIÊN 09/11 (22:28 09/11/2026 `date`) — PHIÊN SAU ĐỌC TRƯỚC
+
+- **Không việc dở.** Không server / tiến trình / worktree nào của B còn chạy (`/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/b_gb`, `/tmp/b_s5` đã gỡ). Quyền phiên 09/11 hết hạn.
+- **Xong hôm nay:** G 2 tuyến DỪNG (hồ sơ tag `hoso/p9-g-cong`) ⇒ phương án B đã merge `main` `3b52017` (A). S5 chung trên `main` `0ce6713` xong — số ở dưới, chờ A / User quyết đề xuất.
+- **S5 (1 lượt, Chromium, 65 câu, 0,0197 USD; `data/phase_9/s5_chung/`):** chữ đầu p50 / p95 — Huế 2,16 / 4,32 s ✓ · ngoài phạm vi 1,62 / 2,97 s ✓ ·
+  **xã giao 3,46 / 7,73 s** (định tuyến xong mới gọi model trò chuyện) · **ngày (5) p50 5,19 s, max 11,0 s** (3–5 lần gọi / câu, 0,00063 USD / câu). USD câu Huế không web 0,00042.
+  Đề xuất đã gửi A (chưa đo): chạy song song model trò chuyện cùng lúc định tuyến; kiểm `ngay_lich` chỉ đưa khi code dò thấy từ ngày.
+- **Lệnh đo lại S5** (server `main` từ worktree có `frontend/dist`, cổng trống): `cd data/phase_9/s5_chung/tools && uv run --project /home/minhhieu/hue_rag python s5_do.py http://127.0.0.1:<cổng> <worktree>/backend/logs/application.log ../cau_s5.jsonl ../s5_<tên>.jsonl --dung 0.075` rồi `… s5_tong.py ../s5_<tên>.jsonl`.
+- **Bẫy:** (1) S-AT đếm theo nhãn judge — đọc chữ cả hai bên trước khi sinh lại (S09: 21 / 21 câu như nhau, chênh do judge); (2) công cụ S4 01/11 dùng selector giao diện cũ — dùng `s5_do.py`;
+  (3) rule CSS nhiều dòng: xoá theo dòng dễ để sót dòng sau (`.emergency` — đã bắt trước build); (4) `do_g.py bo('rui_ro')` nạp cả phần kín B1 (đã dùng) — lọc `set`, không in.
+- **Tiền B phiên 09/11 (log):** G ≈ 0,18 · phương án B ≈ 0,037 · cổng ổn định ≈ 0,003 · S5 ≈ 0,020 ⇒ **≈ 0,24 USD**.
+- Nhánh chờ User `!` xoá: `p9-g-cong` (đã tag), `p9-g-b` (đã merge).
+- **G 2 tuyến DỪNG** (quá 3 vòng chỉnh: bản `426109d2` trượt S1 S-AT; bản `507f891e` trượt S2b đã thấy 2/44) ⇒ hồ sơ `p9-g-cong` `6956ac0` (tag `hoso/p9-g-cong`, A gắn).
+- **Phương án B** `p9-g-b` `2deec02` (đã push; worktree `/tmp/b_gb`): khan_cap ⇒ agent Huế, gỡ câu khẩn cấp soạn sẵn + luật code + phần chết giao diện. Lời dặn giống byte `main`. Test rộng 842 · cổng ổn định đạt · S2/S3/S3b 0 · S2b 1 (câu y tế bị định tuyến xếp khan_cap — A nhận là giới hạn). E review `4df9427` ready (0/0/2 minor, đã sửa).
+- Giới hạn User nhận: S2b kín G 1/20; S09 thiếu điều kiện thời tiết (21/21 lần cả G lẫn mốc không nêu — do judge). Report `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md` §0 + §4.
+- Worktree `/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/b_gb` đã gỡ (dữ liệu ở `data/` còn nguyên). Nhánh `p9-g-cong` (tag) + `p9-g-b` chờ User `!` xoá. Tiền B 09/11 ≈ 0,22 USD.
+
+## Đang làm — G phần 0 USD (A giao 20:14 09/11/2026)
+- Worktree dựng lại: `/tmp/b_g` = `p9-g-cong` `87d6798`, `/tmp/b_moc_g` = `442f758` (tách rời; symlink `data/`, `knowledge-base-hue/`).
+- **Khai báo sửa (trong `/tmp/b_g`, nhánh `p9-g-cong`):** rebase lên `main` `5c982a0` — có thể chạm `backend/llm/assistant.py`, `backend/llm/full_corpus_prompt.py`,
+  `backend/llm/generator_openai_full_corpus.py`, `backend/config/settings.yaml`, `backend/tests/test_cong_dot_1.py` (chỗ trùng với T1); report `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`; file này.
+- S4 đã xong 08/11. S1 **không chấm được bằng dữ liệu cũ** (judge cần `context`, kết quả cũ không lưu) ⇒ chờ lượt có phí ≈ 0,05 (A đang xin User).
+- Rebase xong: `p9-g-cong` = **`f8bfc69`** (từ `87d6798`, không xung đột; lời dặn giống byte bản khoá: ROUTER `6b4796f7a35c` · ANSWER `426109d21b13` · biểu mẫu `81d3040cf53f` = `main`). Test 6 file chạm (+ `test_ngay_lich`) 200 đạt, 92 s. **Chưa push** (bản trên origin vẫn `87d6798`).
+- User nâng trần Phase 9 lên 4,0 (qua A) ⇒ mức dừng G ≈ 0,87. Đang chạy S1 có ngữ cảnh: `s1_g_r1`, `s1_g_r2` (trên `/tmp/b_g` `f8bfc69`), `s1_moc_r1` (trên `/tmp/b_moc_g` `442f758`). Chấm bằng `data/phase_9/g_cong/tools/an_toan_g.py` (bản sao B2, 3 bên một lượt mù).
+- **Lệnh kín ở §1 bên dưới vẫn đúng** (trỏ worktree `/tmp/b_g`, không ghi sha) — chạy trên `f8bfc69`.
+- **Kết quả (20:34 09/11/2026):** test rộng `f8bfc69` 848 đạt (4 phút 25 giây) · cổng ổn định đạt (cổng 8873, đã tắt). S1 (`data/phase_9/g_cong/s1/`, 2 judge qua cổng cả 2 vòng): ngoài kho bị trả lời 0 ×2 · đảo cảnh báo 0 · g2 sạch · g1 S11 sai điều kiện mới (nói nguồn không nêu giấy tờ). S-AT sinh lại 3 + 3: S11 sai điều kiện G 2/3 ↔ mốc 1/3; thiếu cảnh báo S09 3↔2, S11 3↔2, S10 2↔3 ⇒ theo luật là "mới thật" ⇒ **chờ A quyết** (a nhận nhiễu / b sinh lại 10+10 / c chỉnh lời dặn; B khuyến nghị b). Tiền 09/11: S1 0,0625 + S-AT 0,0117 + cổng ổn định ≈ 0,001 ⇒ ≈ 0,075 USD.
+- **20:43 09/11/2026 — kín (User `!`):** a ×2 đạt (S3 0; xã giao⇒Huế 0/4 mỗi lượt); b r1 đạt; **b r2 trượt S2b** (`b_kin_07` ngoài phạm vi ⇒ "không đủ" ⇒ mở web; S2 vẫn 0). Mốc trên bộ S2 đã thấy (44 câu): mở web 0/44 (do cấu trúc) ⇒ lỗi mới do G. **S-AT luật 05/11 (r1–r6, 2 vòng chấm, cổng đạt): ÂM** — S11 sai điều kiện G 4/6 ↔ mốc 2/6; S11 thiếu cảnh báo 6/6 ↔ 4/6; S09 thiếu 6/6 ↔ 4/6. Đã báo A, chờ chốt (vòng chỉnh nhỏ hay phương án B spec). Tiền 09/11 ≈ 0,09 USD. Công cụ: `an_toan_g.py` (`--round main|regen|regen2`), `do_g.py` thêm bộ `an_toan:<id,…>`.
+- **Lệnh kín gộp — User chạy MỘT lệnh `!`** (thay 4 lệnh ở §1; cả r1 + r2; in 4 dòng số đếm + id, không nội dung; file ra đã có thì `do_g.py` dừng):
+```
+! cd /tmp/b_g/backend && for r in r1 r2; do for x in "tuyen kin_a_sealed a_ranh_gioi_sealed" "ca_cau kin_b_sealed b_ngoai_pham_vi_sealed"; do set -- $x; PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py $1 /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/$2_$r.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/$3.jsonl 2>&1 | tail -1; done; done
+```
+
+# STATUS B — KẾT PHIÊN 08/11 (12:50 08/11/2026 `date`; mở 09:16) — sổ tay cho phiên sau
+
+Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22` (đổi mỗi lần mở ⇒ `ListAgents`). Quyền phiên 08/11 **hết hạn**.
+Không server / tiến trình nào của B còn chạy. Tiền B 08/11 (log) ≈ **0,759 USD**: G 0,7487 · bản đồ 0,0031 · việc nhỏ lịch 0,0023 · review E 0,0053 · ảnh 0.
+
+## PHIÊN SAU ĐỌC TRƯỚC
+
+### 1. Việc dở chính — Phase 9 bậc G (cổng 2 nhóm)
+
+- Plan `docs/superpowers/plans/2026-11-08-phase-9-g-cong-plan.md` bản 2 `2513df2c6930` (A duyệt). Spec bản 13 §12 `5557f0fd7650` (User duyệt).
+- **Sha khoá:** nhánh `p9-g-cong` **`87d6798`** (đã push) · `ROUTER_INSTRUCTIONS` **`6b4796f7a35c`** · `ANSWER_SYSTEM_INSTRUCTIONS` **`426109d21b13`** · biểu mẫu `81d3040cf53f`
+  (= `main`, giống byte). Mốc: `main` `442f758` (ROUTER `164bd4a254e9`). Nhánh tách từ `442f758` ⇒ **rebase lên `main` mới trước merge** (T1 `e401c71` đã vào, chạm `assistant.py` `TOOLS`).
+- Report đủ (bảng từng vòng: sha · đổi gì · S2 / S2b / S3 / S3b / S2c / khẩn cấp / tiền): `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`.
+- **Sàn đã đạt (trên sha khoá):** S2 0 · S2b 0 · S3 0 ×2 (định tuyến, từ vòng G1 — lời dặn định tuyến không đổi sau đó) · S3b 0 · S2c 15 / 17 (= sàn ≥ mốc − 1) ·
+  S4 tụt 1 / 30 (< 3) · S6 câu Huế 0,000425 USD (≤ 0,0005) · S1 "ngoài kho bị trả lời" 0 ×2. Quan sát khẩn cấp: 0 câu ra ngoài phạm vi, 28 / 30 "không đủ thông tin" (đa số
+  có mục web) — chưa làm bảng 4 loại (cần đọc chữ).
+- **Còn (theo thứ tự) — tiền G đã 0,747 / 0,75 ⇒ A xin User nâng (≈ +0,12: kín 0,011 · S1 0,05 · S5 0,06):**
+  1. **Bộ kín** — User chạy `!` (agent không đọc `*sealed*`), N = 1 rồi đổi `_r1` ⇒ `_r2` (4 lệnh; file ra đã có thì dừng, không ghi đè):
+```
+! cd /tmp/b_g/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py tuyen /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/kin_a_sealed_r1.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/a_ranh_gioi_sealed.jsonl 2>&1 | tail -1
+! cd /tmp/b_g/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python /home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py ca_cau /home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua/kin_b_sealed_r1.jsonl /home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2/b_ngoai_pham_vi_sealed.jsonl 2>&1 | tail -1
+```
+     **Cách đọc:** dòng `tuyen` (bộ a, 8 câu): `"S3_hue_sang_xa_giao": []` bắt buộc; `"xa_giao_sang_hue"` cộng phần đã thấy (1 / 8) ≤ 2 / 16. Dòng `ca_cau` (bộ b, 10 câu):
+     `"S2_ngoai_bi_tra_loi": []` và `"S2b_ngoai_cong_web_mo": []` bắt buộc; `"S2_ngoai_tu_choi_kho"` khác rỗng ⇒ **C** đọc các câu đó (B không đọc). Cả 2 lượt đạt ⇒ kín đạt.
+  2. **S1 đủ 4 số:** `do_g.py` đã lưu `context` + trường kiểu B2 (hàm `dong`, kiểm 0 USD). Chạy (`K`, `T` như trên): trên `/tmp/b_g/backend` `… do_g.py ca_cau $K/s1_g_r1.jsonl an_toan`
+     (+ `_r2`), trên `/tmp/b_moc_g/backend` `… $K/s1_moc_r1.jsonl an_toan` (≈ 0,05). Rồi bản sao `data/phase_9/b2_chay/tools/an_toan_b2.py` trỏ `TRUOC` = `s1_moc_r1`,
+     `D/sau/answers_r1.jsonl` = `s1_g_r1` ⇒ `export` / `check` / `accept` / `compare` như B2 (2 judge mù, mỗi judge ~6 sub-agent, 15 câu đối chứng, cổng accept).
+  3. **S5** tốc độ (server thật, chữ đầu, n = 20 / loại Huế · xã giao · ngoài phạm vi, biến thể + mốc `main` 1 lượt cùng buổi) — **báo A trước** (không chồng đo với E / C).
+  4. Cổng ổn định (build giao diện, `/health`, 1 câu trong kho + 1 ngoài kho, `chat_metrics`, grep log) ⇒ rebase ⇒ test rộng 1 lần ⇒ report đủ ⇒ **review cả nhánh** ⇒ A merge.
+- **Worktree giữ:** `/tmp/b_g` = `87d6798` · `/tmp/b_moc_g` = `442f758` (tách rời). **`/tmp` mất** ⇒ `cd /home/minhhieu/hue_rag && git worktree prune && git worktree add
+  /tmp/b_g p9-g-cong && git worktree add --detach /tmp/b_moc_g 442f758`, rồi trong mỗi cái `ln -s /home/minhhieu/hue_rag/data data && ln -s /home/minhhieu/hue_rag/knowledge-base-hue
+  knowledge-base-hue` (cổng ổn định cần `cd frontend && npm ci && npm run build`).
+- Công cụ: `data/phase_9/g_cong/tools/do_g.py` (`tuyen` / `ca_cau` web thật / `dem`, in số đếm + id) — chạy từ `backend/` với `PYTHONPATH=$PWD`. Kết quả `data/phase_9/g_cong/ket_qua/`.
+
+### 2. Nháp plan T2 (tra web thành công cụ) — chờ G merge
+
+`docs/superpowers/plans/2026-11-08-phase-9-t2-web-plan.md` sha `921f75d64a7c` (chưa review). Còn chốt: **bộ hỏi kèm 10** — E20 (`data/phase_9/b5_v2/e20/cau_e20.jsonl`) phần lớn
+"xin lịch + hỏi kèm", cần cờ `lich_trinh` (đang tắt) ⇒ lọc lại hoặc người không viết mô tả công cụ viết 10 câu mới. Tiền ≈ 0,21.
+
+### 3. Việc khác đang chờ người khác
+
+- Phiếu toạ độ bản đồ (User tick): `data/phase_11/ban_do/phieu_toa_do_11_diem.md` + nháp `diem_toa_do_v6_nhap.json` (chưa trỏ settings). Cờ `ban_do_lich` tắt.
+- Nhánh đã merge chờ User xoá: `p11-anh-cong`, `p11-ban-do`, `p11-lich-nho` (local + origin).
+
+### 4. Bẫy hôm nay
+
+- Rào "bộ kín ⇒ tên file có `sealed`" ban đầu chặn cả `rui_ro` (có `tuyen_sealed` B1 **đã dùng**) ⇒ chỉ áp 2 bộ kín mới (a)(b) — đã sửa.
+- `do_g.py` chạy thẳng phải có `PYTHONPATH=$PWD` (từ `backend/`), không thì `ModuleNotFoundError: core`.
+- `uvicorn --factory --app-dir <tools>` thay thư mục import ⇒ cần `PYTHONPATH=<worktree>/backend`.
+- Test giả lập #6 (`TimedResponses.answer_fails`) làm hỏng cả lần gọi trò chuyện ⇒ chỉ làm hỏng lần gọi trợ lý (`instructions != CHAT_INSTRUCTIONS`).
+- Hằng `FORM_INSTRUCTIONS` của `test_cong_dot_1.py` dựng từ `ANSWER_SYSTEM_INSTRUCTIONS` ⇒ khi tách lời dặn biểu mẫu phải trỏ `ANSWER_BIEU_MAU_INSTRUCTIONS`.
+- Lời dặn agent "ngoài phạm vi" bản đầu làm câu nơi khác ra "không đủ thông tin" (⇒ web) **và** câu khẩn cấp / ngày không nêu nơi ra "ngoài phạm vi" ⇒ cần nói rõ cả hai chiều.
+- Mốc ngày âm lịch: không dùng `uv sync` thường (E thêm `lunar-vn`); cần thì `uv sync --inexact --frozen`.
+- Tin cho A ghi tiền bước 2 nhầm 0,107 (đúng 0,128) — cộng từ file trước khi báo.
+- `chat_metrics` mất lần gọi bị huỷ giữa chừng (SDK `cancel()` "immediate" không có usage) — có từ trước (review E m-1).
+
+### 5. Câu hỏi cho A / User
+
+- Nâng mức dừng G ≈ +0,12 USD (kín + S1 + S5) — để làm xong G.
+- Quan sát khẩn cấp sau G: 28 / 30 câu ra "không đủ thông tin", đa số có mục web — User đã chấp nhận bỏ câu soạn sẵn (spec §12.8); có cần thêm gì trước khi bật không?
+- A4 / A5 (âm lịch) nay vào agent Huế nhưng trả "không đủ thông tin" ⇒ chờ T1 (công cụ ngày) — E kiểm khi T1 + G cùng ở `main`.
+
+# (cũ) Nhật ký chi tiết phiên 08/11 — tham khảo
+
+## 0. Đang làm — B-ảnh: đưa 7 ảnh cổng vào `frontend/` (A giao 08/11, 0 USD)
+- Nhánh `p11-anh-cong` từ `main` `db6e15d`, worktree `/tmp/b_anh` (symlink `data/`, `knowledge-base-hue/`).
+- Nguồn: `data/nghien_cuu_giao_dien_2026-11-06/anh/viwiki/` (`bay_anh_dot1.json`, `danh_sach.md` "7 ảnh dùng cho đợt 1"; #5 thật ở `ngoai_git/`).
+- **File khai báo sửa (trong worktree):**
+  - `frontend/public/anh/*.jpg` (mới — 6 ảnh Commons + dự phòng lễ hội)
+  - `frontend/public/anh/rieng/` (gitignore — ảnh #5 thật, không commit) + `.gitignore`
+  - `frontend/vite.config.js` (cờ build: có ảnh #5 thật hay không)
+  - `frontend/src/pages.jsx` (ảnh đầu trang, 5 ô lĩnh vực, mục "Nguồn ảnh" ở Giới thiệu), `frontend/src/anh.js` (mới — danh sách ảnh + ghi công), `frontend/src/index.css`, `frontend/src/App.jsx` (link "Nguồn ảnh" ở chân trang)
+  - test: `backend/tests/test_static_ui.py` (nếu cần)
+  - report: `report_agent/2026-11-06_giao_dien_cong/b_anh_cong_implementation.md`
+- Ảnh: User đã chốt 17:11 07/11 (bộ vi.wikipedia, không còn bộ `commons/` cũ).
+- **Xong 09:31 08/11/2026 (`date`), chờ review C:** `p11-anh-cong` = `fb00719` (đã push). 24 test đạt; Playwright 1440 + 390: 7 ảnh tải, 0 lỗi console / CSP, cả khi có lẫn không có ảnh riêng; `git ls-files` 0 file `rieng`. Report `report_agent/2026-11-06_giao_dien_cong/b_anh_cong_implementation.md`. Tiền 0 USD. Server thử 8871 đã tắt. Worktree `/tmp/b_anh` giữ tới khi review xong.
+- Script: `data/phase_11/anh_cong/tools/dong_anh.py` (chép + thu nhỏ, chạy lại ra cùng byte), `kiem_anh.py` (Playwright tự kiểm).
+- Cần A quyết lúc deploy: ảnh #5 riêng vào `dist/` nếu máy build có file ⇒ link công khai có phục vụ ảnh này không.
+
+## 0b. Đang làm — plan "bản đồ lịch trình" (A giao 08/11, P1 đợt 2 cổng; 0 USD, chưa code)
+- File khai báo sửa: `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` (mới).
+- **Bản 1 xong 09:35 08/11/2026 (`date`), chờ review** (A chọn người). Khuyến nghị Leaflet 1.9.4 + tile OSM, cờ `ban_do_lich` tắt mặc định, CSP thêm 1 host `img-src` theo cờ; 17 / 28 điểm có toạ độ; 3 câu cần A quyết ở §10. 0 USD.
+- Ảnh cổng: A nhận `fb00719`, C review sau; deploy công khai mặc định KHÔNG kèm ảnh #5 riêng (A ghi checklist).
+
+## 0c. Đang làm — code bản đồ lịch trình (A duyệt plan `e738f6f9f3ae` 08/11; trần 0,005 USD)
+- Nhánh `p11-ban-do` từ `main` `2a2a40e`, worktree `/tmp/b_bando` (symlink `data/`, `knowledge-base-hue/`).
+- **File khai báo sửa (trong worktree):** `backend/llm/lich_trinh.py`, `backend/llm/assistant.py`, `backend/config/settings.yaml`, `backend/api/app.py`,
+  `backend/api/routes/cong.py`, `frontend/package.json` + `package-lock.json`, `frontend/src/BanDoLich.jsx` (mới), `frontend/src/chat.jsx`, `frontend/src/pages.jsx`,
+  `frontend/src/index.css`, `frontend/src/App.jsx` (nếu cần cờ), test `backend/tests/test_ban_do_lich.py` (mới) + test cũ chạm cờ / CSP;
+  report `report_agent/2026-11-06_giao_dien_cong/b_ban_do_implementation.md`; dữ liệu đo `data/phase_11/ban_do/`.
+- **Xong 09:59 08/11/2026 (`date`), chờ review:** `p11-ban-do` = `d0adf31` (đã push; rebase lên `main` `1611d34`, 355 test + kiểm 0 USD đạt). Q1 228/228 giống byte (cờ tắt + bật); test rộng 731 đạt (hỏng còn lại = test cần khoá); Playwright lượt 2: 6/6 ngày ghim đúng, 0 lỗi CSP, tile 66/66, 0 host lạ, 0 lộ chữ; cổng ổn định đạt. CSP cờ bật = `img-src 'self' blob: data: https://tile.openstreetmap.org` (A chọn (a)). Sửa test B6 hỏng sẵn (A giao). Tiền 0,00306 USD / 0,005. Server 8873 đã tắt; worktree `/tmp/b_bando` giữ tới review.
+
+## 0d. Đang làm — việc nhỏ (1) sao chép / tải lịch · (4) câu buổi tối chỉ khi có sở thích · (6) link Maps theo toạ độ (User duyệt Nhóm 1 + 2, A giao 08/11)
+- Nhánh `p11-lich-nho` xếp chồng trên `p11-ban-do` `d0adf31` (dùng bảng toạ độ của nhánh bản đồ), worktree `/tmp/b_nho`; rebase lên `main` sau khi bản đồ merge.
+- **File khai báo sửa:** `backend/llm/lich_trinh.py`, `backend/llm/assistant.py`, `backend/tests/test_ban_do_lich.py`, `backend/tests/test_b5_lich_trinh.py` (nếu chạm), `frontend/src/chat.jsx`,
+  `frontend/src/index.css`; report `report_agent/2026-11-06_giao_dien_cong/b_lich_nho_implementation.md`; dữ liệu `data/phase_11/lich_nho/`.
+- **10:47 08/11/2026 (`date`):** `p11-lich-nho` = `de08454` (rebase lên `main` `06dafb4`; 2 minor bản đồ + **bỏ (6)** theo A; 735 test; trình duyệt đạt) ⇒ A merge (E kiểm diff). Bản cũ: `098a710` (đã push). Q1 228/228; test rộng 735 đạt; trình duyệt: clipboard = file tải, 4/4 link đúng code; cổng ổn định đạt. Tiền 0,000435 USD. Cần User mở 17 link theo toạ độ (`data/phase_11/lich_nho/kiem_17_link.md`) — nghi lệch 1 điểm (Kinh thành / Ngọ Môn – Kỳ Đài). Server 8874 đã tắt; worktree `/tmp/b_nho` giữ.
+
+## 0g. Đang làm — việc G cổng 2 nhóm (spec bản 13 §12, User duyệt sha `5557f0fd7650`, A giao 08/11). Bước 1 plan: `docs/superpowers/plans/2026-11-08-phase-9-g-cong-plan.md` (mới). Code sau khi plan duyệt: nhánh `p9-g-cong`, worktree `/tmp/b_g`. B viết lời dặn ⇒ **không đọc câu kín** của bộ (a) / (b).
+- Plan **bản 2 sha `2513df2c6930` A duyệt** (review sub-agent 2 vòng). Code `p9-g-cong` = `d0849ce` (đã push; test rộng 749 đạt). Mốc: worktree `/tmp/b_moc_g` = `main` `442f758`.
+- Sha hiện tại (khoá nếu bước 3 đạt): commit `9c8a7f2` · ROUTER `6b4796f7a35c` · ANSWER `33690e611fd9` · biểu mẫu `81d3040cf53f` (giống byte bản cũ).
+- Công cụ: `data/phase_9/g_cong/tools/do_g.py` (`tuyen` / `ca_cau` web thật / `dem`); kết quả `data/phase_9/g_cong/ket_qua/`.
+- Đã chạy: 1 lượt thật (0,00072 USD) đạt. **Bước 2 xong:** mốc `main` ×2 (S3 0, xã giao ⇒ Huế 1/15); biến thể bản đầu S3 0 ×2 nhưng lượt nhắc tên B3 6/7 ⇒ Huế ⇒ **1 vòng chỉnh** lời dặn định tuyến (`9c8a7f2`, ROUTER `6b4796f7a35c`) ⇒ S3 **0 ×2**, xã giao ⇒ Huế 2/27 (lịch sử 1/7, (a) 1/8); A4 / A5 âm lịch (E) ⇒ `tro_ly_hue` ×2. File `ket_qua/tuyen_*`. Tiền bước 2 ≈ 0,128 USD (6 lượt định tuyến, cộng từ file; tin cho A ghi nhầm 0,107).
+- **Bước 3 xong (ANSWER `33690e611fd9`):** S2 0 ×2 ✓ · S2c 16 / 15 vs mốc 16 ✓ · S3b 0 ✓ · **S2b trượt 7 & 5** (câu nơi khác ⇒ agent trả "không đủ thông tin" ⇒ web) · quan sát: khẩn cấp 9/30 + A4/A5 ⇒ câu ngoài phạm vi. Tiền bước 3 0,301.
+- User (qua A): mức dừng G 0,75; chỉnh nhiều vòng trên đã thấy. **Vòng 2** `c9f2df4` (A `5d70126f`): S2b 2. **Vòng 3** `87d6798` (A `426109d21b13`): S2 0 · S2b 0 · S3b 0 · S2c 15/17 (= sàn) · khẩn cấp 0 ngoài phạm vi.
+- **SHA KHOÁ: `87d6798` · ROUTER `6b4796f7a35c` · ANSWER `426109d21b13`** (đã push). Lượt khoá: an toàn ×2 + mẫu 30 (`ket_qua/khoa_r1/r2`): S2 / S2b / S3b 0; S1 "ngoài kho bị trả lời" 0 ×2.
+- **Tiền G ≈ 0,747 / 0,75.** Report (bảng từng vòng): `report_agent/2026-11-08_phase_9_ban_13/b_g_cong_implementation.md`.
+- **Còn:** (1) kín — A chạy lệnh dưới (≈ 0,011, vượt nhẹ ⇒ A quyết); (2) chấm mù S1 (3 số) + S4 mẫu 30, 0 USD, mốc `ket_qua/cacau_moc_r1.jsonl`; (3) S5 (cần thêm tiền, báo A trước) + S6 từ `khoa_r1`; (4) cổng ổn định ⇒ review nhánh.
+- **Lệnh kín cho A** (sha khoá `87d6798`, từ `/tmp/b_g/backend`, `T=/home/minhhieu/hue_rag/data/phase_9/g_cong/tools/do_g.py`, `K=/home/minhhieu/hue_rag/data/phase_9/g_cong/ket_qua`, `D=/home/minhhieu/hue_rag/data/phase_9/dinh_tuyen_2`, `E="--env-file /home/minhhieu/hue_rag/.env"`): với N = 1, 2 — `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag $E python $T tuyen $K/kin_a_sealed_rN.jsonl $D/a_ranh_gioi_sealed.jsonl` và `… python $T ca_cau $K/kin_b_sealed_rN.jsonl $D/b_ngoai_pham_vi_sealed.jsonl` — mỗi lệnh in một dòng số đếm + id (không chữ).
+
+## 0f. Đang làm — review spec Phase 9 bản 13 (§12, sha `0845b1caefbc`, C viết; A giao 08/11). File khai báo: `docs/superpowers/specs/2026-11-02-phase-9-design_review_v13.md` (mới). Chỉ đọc spec + gói căn cứ + code / dữ liệu; không đọc STATUS_C / tin của C.
+- **Vòng 1 xong 10:53 08/11/2026 (`date`): `changes_requested`** — 2 major (M-1 outcome `out_of_scope` mất khi gỡ nhánh định tuyến; M-2 thiếu sàn S3b agent từ chối nhầm câu Huế) + 5 minor; 0 USD. Chờ C sửa ⇒ vòng 2 (diff §12). Sau khi User duyệt: B code G.
+- **Vòng 2 xong (sha `89a48ca72cbd`): `ready_for_user_confirmation`** — 7 / 7 finding vòng 1 đóng; còn 1 minor n-1 (dòng G §12.2 chưa liệt kê S3b ⇒ plan G ghi). 0 USD. Chờ A duyệt sha / User duyệt ⇒ B viết plan + code G.
+
+## 0e. Xong 08/11 — phiếu toạ độ (`data/phase_11/ban_do/phieu_toa_do_11_diem.md` + nháp `diem_toa_do_v6_nhap.json`, chờ User tick) · review `p11-viec-nho-e` (`report_agent/2026-11-06_giao_dien_cong/b_viec_nho_e_review.md`: ready, 2 minor; tiền ≈ 0,0053 USD — vượt trần 0,005 của A ~0,0003).
+
+# (cũ) STATUS B viết lại 15:43 07/11/2026
+
+## 1. Đã xong 07/11 (sha trên origin)
+
+- **S1 backend cổng đợt 1** `1c31ce4`:
+  - D3 lượt biểu mẫu (code xếp bằng giá trị nút; không định tuyến / #6 / công cụ);
+  - D4 cờ `lich_trinh_bieu_mau`;
+  - D6 `/api/kham_pha`, `/api/kham_pha/bai`, `/api/thoi_tiet`, `/api/tinh_nang` (`backend/api/routes/cong.py`);
+  - D7 `bai_id`.
+- **(e)** `_lay_nguon_lich` chọn đoạn cùng file có bằng chứng dài nhất `0cb0b0a`.
+- **S2 giao diện** (bản mẫu 2 Sông Hương, hash route, trợ lý nổi, dòng Nguồn, biểu mẫu) `f20fd28`.
+- **3 minor review S4** `27ed091` ⇒ A merge `main` `0dab4e5` (+ bật thời tiết).
+- **V5** (luật lịch trong lời dặn hệ thống + reasoning "low", chỉ lượt biểu mẫu) `632a4f7` ⇒ S3 của C đạt, User duyệt, A merge.
+- **Sửa 4 test mốc cờ tắt** sau khi bật cờ `a884de4` ⇒ A merge `main`, cổng đạt.
+- **B-dep** — nhánh `p12-deploy-nhap` = `4cfe681`, chưa merge (deploy chờ User):
+  - biến môi trường `HUE_QDRANT_URL` / `HUE_TRA_WEB`;
+  - nháp `data/phase_12/deploy_nhap/` (private): `Dockerfile` (có `--no-cache`, chưa build lại), `Dockerfile.dockerignore` **sinh bằng `dung_dockerignore.py`** (danh sách chừa 204 bài + 8 mục), `compose.yml`, `Caddyfile`;
+  - ảnh sạch `hue-rag-app:nhap2` (204 .md, 0 Golden / sealed / backup — E review vòng 2 ready).
+  - Ảnh cũ `hue-rag-app:nhap` (có file private): **User đã xoá 07/11**.
+- **Report:** `report_agent/2026-11-06_giao_dien_cong/{s1,s2,b_v5}_implementation.md`, `report_agent/2026-11-07_tu_soi_lo_trinh/{tu_soi_B,b_dep_build_cuc_bo}.md`.
+
+## 2. Đang chờ — việc kế của B
+
+1. **7 ảnh cổng** — đang làm (mục 0).
+2. **Deploy thật chờ User.** Khi lên máy:
+   - merge `main` vào `p12-deploy-nhap` ⇒ build lại ⇒ đo lại cỡ ảnh (bản trước có cache uv 1,9 GB);
+   - chạy lại `dung_dockerignore.py` nếu build record đổi;
+   - đếm trong ảnh `docker run --rm --network none … find`.
+   - Trước link công khai còn phải làm: giới hạn lượt / ngày, cookie `Secure`, tắt `/docs`.
+
+## 3. Bẫy đã gặp 07/11
+
+- Test lấy `settings.yaml` thật làm mốc "cờ tắt" ⇒ hỏng khi bật cờ ⇒ đặt rõ `OFF = flags_from(lich_trinh_bieu_mau=False)` trong test, so đúng một cờ.
+- Đếm file private trong ảnh phải đếm đủ: `find … | head` từng cho số sai "0 evaluation" ⇒ dùng danh sách chừa + `wc -l` toàn ảnh (bỏ `.venv`).
+- Đường mới có model ⇒ gọi thật 1 lượt (≤ 0,001 USD) ngay khi chạy được, trước khi viết bộ test.
+- `huggingface_hub` 1.26 + model tải một phần ⇒ `IncompleteSnapshotError` ⇒ xoá `trees/` sau khi tải (Dockerfile đã có).
+- Push từ worktree / lệnh ghép commit + push bị chặn ⇒ commit ở worktree, `git push` riêng từ repo chính. Build nhánh chưa merge: `--build-context code=<worktree>/backend`.
+- Mốc Q1 đổi khi bật cờ ⇒ luôn chụp lại trên `main` hiện tại, so cùng cờ.
+
+## 4. Tiền B 07/11 ≈ 0,0074 USD (S1 0,0041 · S2 0,0018 · B-dep 0,0011 · V5 0,0004)
+
+## 5. Lệnh cho User
+
+- Nhánh đã merge, xoá khi muốn: `p11-cong-dot-1`, `p11-bat-bieu-mau` (local + origin).
+
+---
+
+# (cũ) Chi tiết phiên 07/11 — nhật ký từng bước (tham khảo)
+
+Vai: thực thi. Terminal 07/11: A `hue-rag-7a` · B `hue-rag-10` · C `hue-rag-a0` · E `hue-rag-81`. Quyền phiên: User cấp "như 06/11" (A báo).
+
+## Tóm tắt mới nhất (13:25 07/11/2026 `date`)
+- `p11-cong-dot-1` = `632a4f7` (S1 + S2 + 3 minor S4 + V5; `27ed091` đã merge `main` `0dab4e5` bởi A). V5 chờ S3 của C + User duyệt bật cờ.
+- `p12-deploy-nhap` = `4cfe681` (biến môi trường `HUE_QDRANT_URL` / `HUE_TRA_WEB` + merge `main` `fb8d3d2`; 26 test đạt), giữ riêng, chưa merge. Nháp Dockerfile thêm `uv pip install --no-cache` (E m-6) — chưa build lại, đo lại cỡ ảnh lúc lên máy. E review B-dep vòng 2: ready.
+- Deploy cục bộ: ảnh `hue-rag-app:nhap2` sạch (204 .md, 0 Golden / sealed / backup), `/health` 5/5. Ảnh cũ `hue-rag-app:nhap` có file private ⇒ chờ User `! docker image rm hue-rag-app:nhap`. Report `report_agent/2026-11-07_tu_soi_lo_trinh/b_dep_build_cuc_bo.md`.
+- `a884de4` (sửa 4 test mốc cờ tắt) đã merge `main` (A, cổng đạt) ⇒ biểu mẫu V5 BẬT trên `main`. Worktree `/tmp/b_cong` đã gỡ; còn `/tmp/b_dep` (p12).
+- Việc chờ: User kiểm 7 ảnh Commons (2 đầu trang + 5 lĩnh vực, không ảnh thẻ bài) ⇒ B đóng ảnh vào build + dòng ghi công (`tai_ve.json`).
+- **B rảnh có lý do:** deploy thật / bật biểu mẫu V5 / ảnh Commons đều chờ User. **Lệnh cho User:** `! docker image rm hue-rag-app:nhap` (ảnh cũ có file private; giữ `nhap2`).
+- Tiền B phiên 07/11 ≈ 0,0074 USD (S1 0,0041 · S2 0,0018 · B-dep 0,0011 · V5 0,0004).
+
+## Đang làm — S1 backend cổng đợt 1 (spec duyệt `ff3c317ec88b`, User 11:56 07/11; A giao)
+- Nhánh `p11-cong-dot-1` từ `main` `eb68458`; worktree `/tmp/b_cong` (symlink `data/`, `knowledge-base-hue/`).
+- A trả lời 3 câu (07/11): (1) `bieu_mau` trường mới; giá trị nút dùng `truong`; câu `query` cố định code dựng — B quyết; (2) Q-U3 chưa chốt ⇒ ẩn "đi dày", `kieu_di` = mặc định code; (3) S1 chỉ cần duyệt spec.
+- Q-U1 = bản mẫu 2 "Sông Hương" (cho S2), không thêm font.
+- **File khai báo sửa (trong worktree `/tmp/b_cong`):**
+  - `backend/api/routes/chat.py` (`ChatRequest.bieu_mau`, `SourceResponse.bai_id`, nhánh biểu mẫu ở 2 route)
+  - `backend/llm/assistant.py` (cờ `lich_trinh_bieu_mau`, `AnswerTrace.bieu_mau`, đường biểu mẫu trong `answer_turn` / `answer_turn_stream`, bỏ qua phần song song #6)
+  - `backend/api/routes/cong.py` (mới: `/api/kham_pha`, `/api/kham_pha/bai`, `/api/thoi_tiet`, `/api/tinh_nang`)
+  - `backend/api/app.py` (đăng ký route + nạp danh sách bài lúc khởi động)
+  - `backend/config/settings.yaml` (cờ `lich_trinh_bieu_mau: false`)
+  - test: `backend/tests/test_cong_dot_1.py` (mới), `test_api_chat.py` / `test_chat_stream.py` (khuôn `sources` nếu cần)
+  - report: `report_agent/2026-11-06_giao_dien_cong/s1_implementation.md`
+- Tiền S1 dự kiến 0 USD (Q1 / Q1m chụp chuỗi, không gửi).
+
+### Tiến độ S1 (12:24 07/11/2026 `date`)
+- Commit dở `1c31ce4` trên `p11-cong-dot-1` (chưa push). D4 / D6 / D7 xong; D3 code xong nhưng **dừng chờ A** (lỗi model từ chối).
+- Đạt: Q1 228/228 giống byte (cờ tắt + cờ bật, mốc `main_eb68458.jsonl` sha `dba1f578eef1`); Q1m lượt biểu mẫu (1 lần gọi, 0 công cụ, chat = stream, tất định, chữ gõ không lọt) — `data/phase_11/cong_dot_1/q1/`; 20 test mới; test rộng 723 đạt (2 hỏng = test cần khoá); cổng ổn định đạt (cổng 8861).
+- Vướng D3: lượt thật từ chối 5/5 (server 8862) + cách (a) "lượt công cụ dựng sẵn" 3/3 (`data/phase_11/cong_dot_1/thu_cach_a/lan1.jsonl`). Nguyên nhân: đoạn chọn cho mỗi điểm (`_lay_nguon_lich`) chỉ là dòng tên ở 11/28 điểm ⇒ luật lịch đòi "ý ngắn từ tài liệu" không có ⇒ từ chối. Đề xuất A: (e) chọn đoạn nhiều bằng chứng nhất.
+- Tiền S1: 0,0028 USD.
+- Script: `data/phase_11/cong_dot_1/tools/` (`q1m_bieu_mau.py`, `app_bieu_mau.py` cho S3, `thu_cach_a.py`).
+- (e) xong (`0cb0b0a`, đã push): 0 điểm < 80 ký tự, Q1 228/228; pilot 1/3 model viết, 2/3 vẫn từ chối ⇒ dừng D3 theo A.
+
+## Đang làm — S2 frontend (A giao, bản mẫu 2 Sông Hương; tên "Huế · Trải nghiệm văn hóa & du lịch" / "Trải nghiệm Huế" / "Trợ lý Huế")
+- **File khai báo sửa (worktree `/tmp/b_cong/frontend/src/`):** `App.jsx` (khung cổng + điều hướng hash), `chat.jsx` (mới — trợ lý: hook + lượt + dòng Nguồn), `pages.jsx` (mới — trang chủ, Khám phá, bài, Lên kế hoạch, Giới thiệu), `route.js` (mới), `markdown.js` (bỏ số [n], link ngoài), `stream.js` (`bieu_mau`), `index.css` (token bản 2); `HoiBangAnh.jsx` chỉ nếu cần.
+- **S2 xong (12:45 07/11/2026 `date`), chờ review:** commit `f20fd28` (đã push). 0 lỗi console trên 11 hash × 1440 / 390; bundle 105,99 KB gzip; lượt thật: 0 `[n]` trong chữ, dòng Nguồn = sources 6/6, biểu mẫu ⇒ lịch + "Sửa" về biểu mẫu chọn sẵn. Tiền S2 0,0018 USD. Report `report_agent/2026-11-06_giao_dien_cong/s2_implementation.md`; S1: `s1_implementation.md`. Ảnh `data/phase_11/cong_dot_1/anh_s2/`.
+- Còn mở: ảnh thật (chờ User / E), D3 chờ X1 của C, server thử đã tắt. Worktree `/tmp/b_cong` giữ (nhánh `p11-cong-dot-1`).
+
+---
+
+# (cũ) STATUS B — KẾT PHIÊN TỐI 06/11 (22:41 06/11/2026 `date`; mở 20:54) — sổ tay cho phiên sau
 
 Vai: thực thi. Terminal phiên tối 06/11: A `hue-rag-cc` · B `hue-rag-1a` · C `hue-rag-42` · E `hue-rag-28` (đổi mỗi lần mở ⇒ `ListAgents`). Quyền phiên **hết hạn**. Không còn worktree `/tmp` của B. Không có code dở.
 

@@ -27,20 +27,26 @@ def _tieu_de(markdown: str, bai_id: str) -> str:
     return dong[2:].strip() if dong else Path(bai_id).stem
 
 
-def _tom_tat(markdown: str) -> str:
-    """Đoạn văn đầu sau tiêu đề (bỏ dòng tiêu đề mục, bảng, kẻ ngang), bỏ dấu đậm / nghiêng, cắt ở ranh giới chữ ≤ `TOM_TAT_MAX`."""
+def _doan_dau(markdown: str, bo_danh_sach: bool) -> list[str]:
+    """Các dòng của khối văn đầu tiên (bỏ tiêu đề mục, bảng, kẻ ngang; `bo_danh_sach` ⇒ bỏ cả dòng gạch đầu)."""
     doan: list[str] = []
     for dong in markdown.splitlines():
         dong = dong.strip()
-        if not dong:
-            if doan:
-                break
-            continue
-        if dong.startswith(("#", "|", "---")):
+        bo = dong.startswith(("#", "|", "---")) or (bo_danh_sach and dong.startswith(("- ", "* ")))
+        if not dong or bo:
             if doan:
                 break
             continue
         doan.append(dong.lstrip(">-* ").strip())
+    return doan
+
+
+def _tom_tat(markdown: str) -> str:
+    """Đoạn **văn xuôi** đầu tiên, bỏ dấu đậm / nghiêng, cắt ở ranh giới chữ ≤ `TOM_TAT_MAX`.
+
+    Bỏ dòng gạch đầu: ~100 / 204 bài mở bằng mục "Thông tin chung" dạng "- **Tên chính thức:** …" ⇒ thẻ hiện nhãn trường thay vì lời giới thiệu
+    (S2 m: CONG/s2_implementation.md). Bài chỉ có danh sách (không có đoạn văn) ⇒ lấy khối danh sách đầu như trước."""
+    doan = _doan_dau(markdown, bo_danh_sach=True) or _doan_dau(markdown, bo_danh_sach=False)
     chu = " ".join(doan).replace("*", "").replace("__", "")
     if len(chu) <= TOM_TAT_MAX:
         return chu
@@ -109,4 +115,4 @@ async def tinh_nang(request: Request):
     state = request.app.state
     flags = _flags(state)
     return {"lich_trinh_bieu_mau": flags.lich_trinh_bieu_mau, "thoi_tiet": flags.thoi_tiet, "anh": getattr(state, "anh", None) is not None,
-            "tra_web": flags.tra_web}
+            "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}

@@ -7,6 +7,7 @@ cùng một đoạn code (`_retrieval_not_ready`, `_error_response_for`) nên m�
 import asyncio
 import json
 import logging
+import os
 import time
 
 import anyio
@@ -54,6 +55,8 @@ METRIC_FIELDS = (
     "has_web_section", "web_outcome", "web_n_ket_qua", "web_n_ma", "web_kiem",
     # B5b D11: thời tiết — có đưa công cụ, có gọi API (trạng thái, mã lỗi, ms, từ cache), số ngày, số "số ngoài tập" (D8), câu bão / lũ; không chữ
     "thoi_tiet",
+    # việc nhỏ 13 (A 08/11): mã lượt ngẫu nhiên của 👍 / 👎 (`api/feedback.py`) ⇒ nối dòng `chat_feedback` với số đo của đúng lượt; không nội dung
+    "turn_id",
 )
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
@@ -110,10 +113,11 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
     )
 
 
-# B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` tắt vì chạy http://127.0.0.1
-# (bật trước khi deploy — spec §7).
+# B3 D1: cookie mã cuộc trò chuyện — HttpOnly (JS không đọc), SameSite=Strict, chỉ gửi cho /api. `Secure` theo biến môi trường
+# `HUE_COOKIE_SECURE=1` (bản https — spec §7); không đặt ⇒ tắt vì máy User chạy http://127.0.0.1 (trình duyệt không gửi cookie Secure qua http).
 CONVERSATION_COOKIE = "conversation_id"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "emergency", "refusal_no_sources", "max_turns", "hoi_lai"}
+COOKIE_SECURE_ENV = "HUE_COOKIE_SECURE"
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai"}  # phương án B G: bỏ "emergency"
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
@@ -167,7 +171,7 @@ def _new_turn_id(request: Request, trace: AnswerTrace, outcome: str | None) -> s
 def _set_cookie(response, conversation_id: str | None) -> None:
     if conversation_id is not None:
         response.set_cookie(CONVERSATION_COOKIE, conversation_id, max_age=TTL_SECONDS, path="/api", httponly=True, samesite="strict",
-                            secure=False)
+                            secure=os.getenv(COOKIE_SECURE_ENV, "").strip().lower() in {"1", "true", "yes"})
 
 
 @router.post("/api/conversation/new")
@@ -207,6 +211,7 @@ def _set_outcome(response, metrics: dict) -> None:
             metrics["outcome"] = json.loads(response.body)["error"]["code"]
     else:
         metrics["status_code"] = 200
+        metrics["turn_id"] = response.turn_id
         if metrics["refusal"] is None:  # lượt có chữ model: `_answer` đã đặt trên chữ model (review C m-1)
             metrics["refusal"] = response.answer.strip() in REFUSAL_ANSWERS
         if metrics["outcome"] is None:
@@ -463,8 +468,10 @@ class StreamEvents:
 
     def done(self, answered: bool = False) -> bytes:
         data = {"outcome": self.metrics["outcome"]}
+        if self.metrics.get("refusal") and self.metrics["outcome"] != "out_of_scope":
+            data["tu_choi_kho"] = True  # việc nhỏ (5) 08/11: kho không đủ ⇒ giao diện hiện gợi ý cách hỏi do code viết sẵn (không gọi model)
         if answered and self.new_turn_id is not None:
-            data["turn_id"] = self.new_turn_id()
+            data["turn_id"] = self.metrics["turn_id"] = self.new_turn_id()
         return sse_event("done", data)
 
     def fixed(self, trace: AnswerTrace) -> list[bytes]:

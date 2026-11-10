@@ -13,6 +13,7 @@ from PIL import Image
 from api.conversations import ConversationStore
 from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
+from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
 from api.routes.chat import router as chat_router
@@ -35,6 +36,8 @@ from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
 
 logger = logging.getLogger("api")
+TAT_DOCS_ENV = "HUE_TAT_DOCS"
+BAT = {"1", "true", "yes"}
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 # Bản build của giao diện React (`cd frontend && npm ci && npm run build`); không commit. Thiếu ⇒ API vẫn chạy, chỉ không có trang web.
@@ -46,6 +49,17 @@ FRONTEND_DIR = REPO_ROOT / "frontend" / "dist"
 # Phase 10 (spec A7, User duyệt 05/11): `img-src` thêm `blob:` — chỉ để xem trước ảnh người dùng vừa chọn (URL do chính trang tạo, không mở mạng).
 FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; "
                 "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
+# Bản đồ lịch trình (plan 2026-11-08 §5): cờ `ban_do_lich` bật ⇒ `img-src` thêm host ảnh tile + `data:`. Leaflet tải tile bằng `<img>` ⇒ không đổi
+# connect-src. `data:` (A chọn 08/11): Leaflet huỷ tile đang tải bằng cách gán GIF rỗng `data:` (`_removeTile` / `_abortLoading`); không mở mạng, và chữ
+# model không chèn được ảnh vì DOMPurify không cho thẻ `img` (`tests/test_static_ui.py::test_answer_sanitizer_is_an_allowlist_without_fetching_tags`)
+TILE_HOST = "https://tile.openstreetmap.org"
+FRONTEND_CSP_BAN_DO = FRONTEND_CSP.replace("img-src 'self' blob:;", f"img-src 'self' blob: data: {TILE_HOST};")
+
+
+def frontend_csp(app_state) -> str:
+    """CSP theo cờ — trước lifespan (chưa có cờ) ⇒ bản gốc."""
+    flags = getattr(app_state, "assistant_flags", None)
+    return FRONTEND_CSP_BAN_DO if flags is not None and flags.ban_do_lich else FRONTEND_CSP
 
 
 class FrontendStaticFiles(StaticFiles):
@@ -55,7 +69,7 @@ class FrontendStaticFiles(StaticFiles):
     async def get_response(self, path, scope):
         response = await super().get_response(path, scope)
         if response.media_type == "text/html":
-            response.headers["Content-Security-Policy"] = FRONTEND_CSP
+            response.headers["Content-Security-Policy"] = frontend_csp(scope["app"].state)
         return response
 
 
@@ -195,7 +209,10 @@ def create_app(settings=None):
                 except Exception:
                     logger.warning("Error closing generator during shutdown")
 
-    app = FastAPI(title="Hue Full-Corpus RAG API", lifespan=lifespan)
+    # Chốt trước deploy: `HUE_TAT_DOCS=1` ⇒ tắt /docs, /redoc, /openapi.json (bản công khai không lộ sơ đồ API); không đặt ⇒ như cũ
+    tat_docs = os.getenv(TAT_DOCS_ENV, "").strip().lower() in BAT
+    app = FastAPI(title="Hue Full-Corpus RAG API", lifespan=lifespan,
+                  **({"docs_url": None, "redoc_url": None, "openapi_url": None} if tat_docs else {}))
     app.state.retrieval_ready = False
     app.state.retrieval_service = None
     app.state.tokenizer_ready = False
@@ -213,14 +230,18 @@ def create_app(settings=None):
     app.include_router(cong_router)  # cổng đợt 1 D6: 4 route chỉ đọc
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 
+    tran = tran_tu_moi_truong()
+    if tran:  # chốt trước deploy: giới hạn lượt / IP / ngày (`HUE_LUOT_MOI_NGAY`); không đặt ⇒ không thêm middleware (như cũ)
+        app.add_middleware(ChanLuot, gioi_han=GioiHanLuot(tran))
+
     if not FRONTEND_DIR.is_dir():
         logger.warning("Frontend build not found at frontend/dist — run `npm ci && npm run build` in frontend/")
     else:
         app.mount("/static", FrontendStaticFiles(directory=FRONTEND_DIR), name="static")
 
         @app.get("/", include_in_schema=False)
-        async def frontend_index():
-            return FileResponse(FRONTEND_DIR / "index.html", headers={"Content-Security-Policy": FRONTEND_CSP})
+        async def frontend_index(request: Request):
+            return FileResponse(FRONTEND_DIR / "index.html", headers={"Content-Security-Policy": frontend_csp(request.app.state)})
 
     @app.exception_handler(RequestValidationError)
     async def validation_handler(request: Request, error: RequestValidationError):

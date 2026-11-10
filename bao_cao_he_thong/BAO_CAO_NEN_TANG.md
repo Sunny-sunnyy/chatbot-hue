@@ -1,8 +1,7 @@
 # Báo cáo cho bạn: Nền tảng — luật chơi và khung backend (Phase 0–1)
 
-**Cập nhật lần cuối: 17:12 31/10/2026 — bản 5: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
-Các bản trước: xem `git log` file này.
-Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 6: `settings.yaml` nay 6 nhóm; mốc test mới nhất (09/11); log xoay vòng (09/11). Các bản trước: xem lịch sử git.**
+Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -10,10 +9,11 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
   `backend/`: các gói Python, một file cấu hình, một hàm đọc cấu hình có kiểm lỗi, một cấu hình ghi log chung, một khuôn chung cho kết quả
   tìm kiếm, một bộ lớp lỗi dùng chung. Đã đóng tháng 8/2026.
 - **Đang chạy cách nào:** khung này vẫn là nền của chatbot toàn kho (204 file / 8.435 đoạn). `backend/` có **11 gói** (10 gói gốc +
-  `experiments/` thêm 24/10 cho công cụ đo Phase 8.1). File cấu hình `settings.yaml` có 4 nhóm: kho tri thức, địa chỉ Qdrant, runtime
-  (model tìm kiếm, cách tìm), sinh câu trả lời; hàm đọc cấu hình kiểm đúng các nhóm này. Cấu hình và code bản món ăn cũ đã gỡ (24/10).
-- **Đo được:** khâu nền, không có số chất lượng. Mốc bộ test ghi lại gần nhất (26/10, không nạp khoá OpenAI): **197 đạt**; 1 hỏng + 4 lỗi
-  đều là test cần khoá OpenAI (đúng thiết kế).
+  `experiments/` thêm 24/10 cho công cụ đo Phase 8.1). File cấu hình `settings.yaml` có 6 nhóm: kho tri thức, địa chỉ Qdrant, runtime
+  (model tìm kiếm, cách tìm), sinh câu trả lời, `assistant` (cờ bật / tắt từng phần trợ lý Phase 9) và `anh` (hỏi bằng ảnh, Phase 10); hàm đọc cấu hình
+  chung chỉ kiểm 3 nhóm (`full_corpus`, `runtime`, `generation`) — các nhóm còn lại do phần code dùng chúng tự đọc. Cấu hình và code bản món ăn cũ đã gỡ (24/10).
+- **Đo được:** khâu nền, không có số chất lượng. Mốc bộ test ghi lại gần nhất: **824 test đạt** (09/11, nhánh công cụ ngày trước khi vào `main`
+  — `BAO_CAO_SINH_CAU_TRA_LOI_API.md`); chưa chạy lại cho bản báo cáo này. Test cần khoá OpenAI chỉ chạy khi nạp khoá (đúng thiết kế).
 - **Giới hạn chính:** lệnh dựng chỉ mục chưa dùng cấu hình log chung (tự cấu hình log riêng); một file test còn dùng bản giả để thử nhánh
   lỗi. Cả hai chưa xử lý, chưa có lịch.
 - **Chi phí / tốc độ:** không tốn tiền.
@@ -23,7 +23,8 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 
 ```text
 settings.yaml (4 nhóm) -> load_settings() -> kiểm nhóm runtime + sinh câu trả lời + kho tri thức -> settings
-API khởi động -> setup_logging() -> ghi log ra màn hình + backend/logs/application.log (có logger "chat" ghi số đo mỗi câu)
+API khởi động -> setup_logging() -> ghi log ra màn hình + backend/logs/application.log (có logger "chat" ghi số đo mỗi câu;
+                 từ 09/11 file log xoay vòng: đầy 10 MB thì cất sang bản cũ, giữ 3 bản)
 tìm kiếm -> RetrievedDocument(id, điểm, text, metadata) -> dựng ngữ cảnh -> sinh câu trả lời
 lỗi -> một bộ lớp lỗi dùng chung (core/schema.py) -> API trả mã lỗi + lời báo tiếng Việt
 ```

@@ -167,6 +167,10 @@ def test_l_b_evening_refused_gets_reason_frame_line_and_check():
     assert lt.khung_chu(BANG, kid, nguon, "LUAT").endswith(lt.DONG_KHUNG_TOI["toi_tre_em"])
     assert {"diem": "buổi tối", "ma_luat": "toi_lon_tuoi"} in khung(di_cung="nguoi_lon_tuoi", hoi_toi=True)["khong_xep"]
     assert {"diem": "buổi tối", "ma_luat": "toi_khong_diem"} in khung(so_thich="di_tich", di_cung="mot_minh", hoi_toi=True)["khong_xep"]
+    # việc nhỏ (4): chưa nêu sở thích ⇒ không nói "hợp sở thích của bạn"
+    chua = khung(di_cung="mot_minh", hoi_toi=True)["khong_xep"]
+    assert {"diem": "buổi tối", "ma_luat": "toi_chua_so_thich"} in chua and not any(x["ma_luat"] == "toi_khong_diem" for x in chua)
+    assert "sở thích của bạn" not in lt.CAU_KHONG_XEP["toi_chua_so_thich"] + lt.DONG_KHUNG_TOI["toi_chua_so_thich"]
     food = khung(so_thich="am_thuc", di_cung="mot_minh", hoi_toi=True)  # có phố đêm hợp sở thích ⇒ buổi tối được xếp, không câu từ chối
     assert any(ng["buoi"]["toi"] for ng in food["ngay"]) and not any(x["ma_luat"] in lt.MA_TOI for x in food["khong_xep"])
     plain = khung(di_cung="gia_dinh_tre_em")  # không xin buổi tối ⇒ khung + ghi chú như trước
@@ -548,5 +552,7 @@ def test_flags_need_table_and_tool_loop():
     with pytest.raises(ValueError):
         AssistantFlags(lich_trinh=True, bang_lich=BANG)
     s = copy.deepcopy(SETTINGS)
-    s["assistant"]["lich_trinh"] = True
-    assert AssistantFlags.from_settings(s).bang_lich is not None and AssistantFlags.from_settings(SETTINGS).bang_lich is None
+    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False)
+    tat = copy.deepcopy(SETTINGS)
+    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False)  # mốc cờ tắt đặt rõ: settings.yaml bật biểu mẫu từ 07/11
+    assert AssistantFlags.from_settings(s).bang_lich is not None and AssistantFlags.from_settings(tat).bang_lich is None
