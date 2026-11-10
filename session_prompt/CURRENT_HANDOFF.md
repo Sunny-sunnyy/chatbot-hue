@@ -40,7 +40,7 @@ Nguyên văn phần đầu phiên 07/11 (11:53 → 15:43 07/11/2026): `archive/C
 5. Giới hạn biểu mẫu "Lên kế hoạch" (E / C rà 09/11, chưa thấy ở người dùng thật ⇒ chỉ ghi báo cáo): "dày lịch" gần như không tác dụng (bảng thiếu thời lượng ⇒ v7); người lớn tuổi / trẻ em không bao giờ có buổi tối; không có ô "lo mưa".
 
 ### Nhánh
-`main`; **10/11:** `p12-deploy-nhap` **đã merge** `5081e89` (đề xuất xoá — User `!`); `p9-t1-nhanh` **đã merge** `1633c18` (User "có" 20:47; cổng ổn định đạt; đề xuất xoá), `p9-xa-giao-song-song` (B, chưa đạt p95, chờ User); **đang mở cũ:** `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). 7 nhánh 09/11 đã xoá (User). Worktree `/tmp`: không còn (đã gỡ 09/11).
+`main`; **10/11:** `p12-deploy-nhap` **đã merge** `5081e89` (đề xuất xoá — User `!`); `p9-t1-nhanh` **đã merge** `1633c18` (User "có" 20:47; cổng ổn định đạt; đề xuất xoá), `p9-xa-giao-song-song` **đóng hồ sơ** (User 10/11) — tag `hoso/p9-xa-giao-song-song`, nhánh đề xuất xoá; **đang mở cũ:** `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). 7 nhánh 09/11 đã xoá (User). Worktree `/tmp`: không còn (đã gỡ 09/11).
 
 ### Mã hay gặp
 G = cổng 2 nhóm (đóng; phương án B đang chạy); T1 ngày + âm lịch (bật); T2 web thành công cụ, T3 bảng vé + giờ, T4 lịch trình câu gõ (đóng hồ sơ); S1–S6 / S2b / S2c / S3b = sàn §12.3; B0–B7 = bậc Phase 9; S / W / I = sổ `SO_CAI_TIEN_CACH_LAM.md`.
