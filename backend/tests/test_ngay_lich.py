@@ -281,6 +281,10 @@ def test_lunar_dates_in_documents_need_lunar_marker_and_are_capped():
     dong, n = nl.lich_san("Lễ hội này năm sau vào ngày nào?", tai_lieu, now)
     tl = [d.split(") — ")[0] for d in dong if d.startswith("Ngày âm trong tài liệu") and "lần sắp tới" in d]
     assert n == 3 and tl == ["Ngày âm trong tài liệu (âm lịch 10/1", "Ngày âm trong tài liệu (âm lịch 15/4", "Ngày âm trong tài liệu (âm lịch 12/2"]
+    # review C M-1: "mùng N tháng <số>" không có chữ "âm" thường là ngày dương (Quốc khánh 2/9) ⇒ không đổi; có "âm" / tháng viết chữ / "rằm" ⇒ đổi
+    assert nl.lich_san("Mùng 2 tháng 9 năm nay ở Huế có gì?", "Ngày mồng 2 tháng 9 năm 1945.", now)[1] == 0
+    assert nl.lich_san("Mùng 2 tháng 9 âm lịch là ngày nào?", "", now)[1] == 1
+    assert nl.lich_san("Rằm tháng 7 năm nay là ngày nào?", "", now)[1] == 1
     nhieu = " ".join(f"mồng {k} tháng Giêng" for k in range(1, 10)) + " mồng 1 tháng Giêng"
     assert nl.lich_san("Tết năm nay?", nhieu, now)[1] == nl.SO_NGAY_AM_TOI_DA  # Tết (câu hỏi) trước, trùng 1/1 bỏ, tối đa 6
 

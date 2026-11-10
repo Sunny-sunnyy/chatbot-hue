@@ -181,8 +181,9 @@ _SO_THANG = {"giêng": 1, "hai": 2, "ba": 3, "tư": 4, "năm": 5, "sáu": 6, "b�
              "chạp": 12}
 _THANG = r"(mười một|mười hai|mười|giêng|chạp|hai|ba|tư|năm(?!\s+(?:nay|sau|tới|ngoái))|sáu|bảy|tám|chín|\d{1,2})(?!\w)"  # "tháng năm nay" ≠ tháng Năm
 _NHUAN = r"(\s*\(?\s*nhuận\s*\)?)?"
-# "rằm / mùng / mồng … tháng …" (âm lịch ngầm hiểu) — câu hỏi và tài liệu
-_AM_TIEN_TO = re.compile(rf"(?<!\w)(?:(rằm)|(?:mùng|mồng)\s+(\d{{1,2}}))\s+tháng\s+{_THANG}{_NHUAN}", re.IGNORECASE)
+# "rằm … tháng …" và "mùng / mồng … tháng <chữ>" (âm lịch ngầm hiểu) — câu hỏi và tài liệu. Review C M-1: "mùng 2 tháng 9" thường là ngày DƯƠNG
+# (Quốc khánh) ⇒ "mùng / mồng N tháng <số>" chỉ tính khi có chữ "âm" theo sau (nhóm 5)
+_AM_TIEN_TO = re.compile(rf"(?<!\w)(?:(rằm)|(?:mùng|mồng)\s+(\d{{1,2}}))\s+tháng\s+{_THANG}{_NHUAN}(\s+âm(?!\w))?", re.IGNORECASE)
 # "ngày N (– M) tháng X âm (lịch)" và "N/N âm (lịch)" — phải có chữ "âm" theo sau
 _AM_HAU_TO = re.compile(rf"(?<!\w)ngày\s+(\d{{1,2}})(?:\s*(?:[-–]|đến|hoặc)\s*\d{{1,2}})?\s+tháng\s+{_THANG}{_NHUAN}\s+âm(?!\w)", re.IGNORECASE)
 _AM_SO = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})\s*âm(?!\w)", re.IGNORECASE)
@@ -205,6 +206,8 @@ def _ngay_am(text: str, cau_hoi: bool) -> list[tuple[int, int, bool]]:
     """(ngày, tháng, nhuận) âm lịch theo thứ tự xuất hiện. Câu hỏi thêm dạng Tết."""
     gap = []
     for m in _AM_TIEN_TO.finditer(text):
+        if not m.group(1) and m.group(3).isdigit() and not m.group(5):
+            continue
         gap.append((m.start(), 15 if m.group(1) else int(m.group(2)), _thang_so(m.group(3)), bool(m.group(4))))
     for m in _AM_HAU_TO.finditer(text):
         gap.append((m.start(), int(m.group(1)), _thang_so(m.group(2)), bool(m.group(3))))

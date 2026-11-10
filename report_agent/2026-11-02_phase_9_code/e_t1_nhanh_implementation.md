@@ -118,6 +118,10 @@ giao diện mà worktree không có (`test_static_ui` × 2, `test_ban_do_lich::t
 2. Nguồn lịch không chen khi lượt đã từ chối sẵn (`_before_model`: `trace.fixed_outcome is None`) và câu không từ chỉ ngày giống byte (Q1 ở mục 4).
 3. Bảng từng câu ở mục 4; kết quả `data/phase_9/t1_nhanh/` (`ngay_moc.jsonl`, `ngay_nhanh.jsonl`, `nam_nhanh_2.jsonl`, `an_toan_nhanh_{1,2,3}.jsonl`, `golden9_nhanh.jsonl`, `cham/`).
 
+## 7. Sau review C (`e_t1_nhanh_review.md`, changes_requested 0 / 1 / 3)
+
+- **M-1 đóng:** "mùng / mồng N tháng <số>" không có chữ "âm" theo sau ⇒ không tính là ngày âm (thường là ngày dương, vd Quốc khánh); "rằm", tháng viết chữ (Giêng, Chạp, Tư…), "… âm lịch", Tết giữ nguyên. + 3 khẳng định trong test dò kho. `test_ngay_lich.py` 82 passed. Đếm lại 0 USD trên đoạn kho thật của 19 câu: số ngày âm dò được **giống hệt** lúc đo (R11 6 · A3 3 · A4 5 · A5 4 · A10 5 · X1 3 · X8 4 · X12 5 · X3 6 · Y1 6 · Y2 3 · Y3 6 · Y4 1 · X2 4 · X5 2 · X6 1 · X9 / X13 / X14 0) ⇒ số đo mục 4 không đổi; Q1 không đổi (chỉ chạm đường câu có từ chỉ ngày). Không lượt có phí.
+
 ## Đoạn lời thường cho `bao_cao_he_thong/` (A dán khi đóng đợt)
 
 **Câu hỏi về ngày trả lời nhanh hơn (10/11, chưa merge).** Trước đây, với câu như "Tết năm nay vào ngày nào", chatbot phải hỏi model, model xin công cụ lịch,
