@@ -1,12 +1,14 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 20:06 05/11/2026 — cách tìm không đổi; chỉ mục dựng lại sau đợt giờ mở cửa — 148 / 158 câu tìm giống hệt, điểm tìm giống tới 4 chữ số.** Trước: **10:41 03/11/2026 — Phase 9 B2a: thử để model viết lại câu tìm cho câu nhiều nguồn / so sánh (3 cách) ⇒ không cách nào qua luật, giữ tìm bằng câu gốc; kho không thiếu thông tin cho các câu này (0 / 38).** Trước: 12:03 01/11/2026 — đo lại theo loại câu trên kho hiện tại (so sánh 0,527 / nhiều nguồn 0,543); câu nhiều nguồn để Phase 9.** Trước: 11:07 01/11/2026 — sửa lý do gác "chọn đoạn bằng luna" (luật số câu tụt 27/10; sàn tốc độ có sau). Bản 11 (17:14 31/10/2026): rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).** Các bản trước: xem `git log` file này.
-Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 12: thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
+Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
-- **Khâu này làm gì:** nhận câu hỏi, trả về 10 đoạn trong kho tri thức có khả năng chứa câu trả lời, xếp theo thứ tự. Bước sinh câu trả lời chỉ
-  đọc 10 đoạn này (từ 28/10; trước đó 5), nên tìm sai thì trả lời sai hoặc từ chối.
+- **Khâu này làm gì:** nhận câu hỏi, trả về 10 đoạn trong kho tri thức có khả năng chứa câu trả lời, xếp theo thứ tự. Bước sinh câu trả lời
+  đọc 10 đoạn này (từ 28/10; trước đó 5), nên tìm sai thì trả lời sai hoặc từ chối. **Từ 03/11 (trợ lý Phase 9):** trước khi tìm, một bước định tuyến xếp
+  câu vào 1 trong 4 tuyến (trò chuyện / về Huế / ngoài phạm vi / khẩn cấp) — câu về Huế (từ 09/11 cả câu khẩn cấp) mới dùng kết quả tìm trong kho;
+  sau lần tìm đầu bằng câu gốc, trợ lý được **tự tìm thêm ≤ 2 lần** bằng câu tìm nó tự viết, mỗi lần đi đúng cách tìm dưới đây.
 - **Đang chạy cách nào:** câu hỏi đổi về dạng Unicode NFC (một cách viết chuẩn của chữ có dấu) → e5-small (model biến câu thành vector, chạy trên
   máy) lấy 30 đoạn gần nghĩa nhất trong Qdrant (cơ sở dữ liệu vector) → BM25 (chấm theo khớp từ khóa) chấm lại 30 đoạn đó → RRF (cách trộn hai
   bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 05/11 tối trên kho đã sửa hai đợt + giờ mở cửa 11 điểm (204 file, 8.435 đoạn) — **cách tìm
@@ -18,7 +20,8 @@ Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (b�
   - Chạy lại cho kết quả giống hệt (tất định).
 - **Giới hạn chính:**
   - Chỗ nghẽn là **xếp hạng**: đoạn đúng phần lớn đã có trong ứng viên nhưng bị xếp thấp. Chưa cách xếp hạng lại nào được nhận (§3, §4).
-  - Yếu ở câu so sánh và câu cần nhiều nguồn — **đo lại 01/11 trên kho hiện tại** (158 câu): MRR so sánh **0,527**, nhiều nguồn **0,543** (24/10 kho cũ: 0,53 / 0,54 ⇒ gần như không đổi); câu một dữ kiện 0,80.
+  - Yếu ở câu so sánh và câu cần nhiều nguồn — **đo lại 01/11 trên kho hiện tại** (158 câu): MRR so sánh **0,527**, nhiều nguồn **0,543** (24/10 kho cũ: 0,53 / 0,54 ⇒ gần như không đổi); câu một dữ kiện 0,80. Số này là của lần tìm đầu; từ 03/11 phần tìm thêm của trợ lý
+    làm câu nhiều nguồn đủ ý hơn rõ (+1,17 — §4 03/11), thứ hạng thì không đổi.
   - Câu gõ không dấu gần như không tìm được — ngoài phạm vi (bạn quyết 25/10).
 - **Chi phí / tốc độ:** không tốn tiền API (model và Qdrant chạy trên máy); tạo vector câu hỏi 21–28 ms (p50 / p95, đo 30/10).
 - **Đã thử, không đưa vào chatbot** (chi tiết §3, §4): đổi cách trộn, lấy rộng 100 ứng viên, reranker chạy trên card đồ họa, cho `gpt-6-luna` xếp lại /
@@ -36,6 +39,9 @@ câu hỏi
  → RRF trộn hai thứ hạng (k = 60) → 10 đoạn đầu
  (không xếp hạng lại)
 ```
+
+- Từ 03/11 đường trên nằm giữa hai bước của trợ lý: **trước** là định tuyến 4 tuyến (`settings.yaml:60`), **sau** là trợ lý được gọi tìm thêm ≤ 2 lần
+  (`settings.yaml:66`; `backend/llm/assistant.py` `tim_kho`, `MODEL_SEARCH_LIMIT = 2`) — mỗi lần tìm thêm đi đúng đường này với câu tìm do model viết.
 
 - Cách đang chạy là `dense_bm25_rrf`: BM25 chỉ chấm lại **30 đoạn vector đã tìm được**.
 - Cách thứ hai có trong code, không dùng: `native_hybrid_rrf` — vector và BM25 **tìm độc lập** trong cả kho rồi mới trộn.
@@ -56,7 +62,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `BAO_C
 | Tìm gần đúng (HNSW) so với tìm chính xác | **Đã xử lý, đóng gói** | 8.1: giống hệt 108 / 108 câu ⇒ giữ HNSW |
 | Báo lỗi rõ khi Qdrant / model lỗi, không tự đổi cách | **Đã xử lý** | `backend/retrieval/full_corpus.py` |
 | Câu so sánh | **Xử lý một phần** | MRR 0,527 (01/11, kho hiện tại); chỉ 2 / 20 câu yếu ⇒ không mở thí nghiệm |
-| Câu cần nhiều nguồn | **Để Phase 9** (bạn chọn 01/11) | MRR 0,543 (01/11); 8 / 18 câu yếu, cả 8 thiếu bằng chứng ở bước tìm; 8 / 12 câu từ chối nhầm thuộc loại này ⇒ hướng: agent tách câu con (Phase 9) |
+| Câu cần nhiều nguồn | **Xử lý một phần** (Phase 9 B2b, 03/11: trợ lý tìm thêm ≤ 2 lần) | Lần tìm đầu: MRR 0,543 (01/11); 8 / 18 câu yếu, cả 8 thiếu bằng chứng ở bước tìm. Tìm thêm (vào chatbot 03/11): đủ ý câu nhiều nguồn **+1,17** (§4 03/11). Model viết lại câu tìm đầu (B2a): không qua luật |
 | Dòng trong bảng giá (giá vé, miễn giảm) | **Đã thử, chưa áp dụng** | 8.1 thử gộp dòng bảng khi chia đoạn: không khác — xem `BAO_CAO_CHIA_DOAN.md` |
 | Từ ghép tiếng Việt trong BM25 | **Đã thử, chưa áp dụng** | 8.1 thử cặp âm tiết / tách từ `pyvi`: làm rơi đoạn đúng của 1–4 câu — xem `BAO_CAO_EMBEDDING_TU_KHOA.md` |
 | Câu hỏi gõ **không dấu** | **Chưa thực hiện** — ngoài phạm vi (bạn quyết 15:15 25/10) | 8.1 (kho cũ, lúc đưa 5 đoạn; 32 câu có đoạn đúng, 88 câu keyword): chỉ 1 / 32 câu còn đủ đoạn đúng trong 5 đoạn (có dấu: 13 / 32); MRR 0,72 → 0,16 (88 câu keyword) |
@@ -125,7 +131,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), build record và `session_prompt/Project_Status.md` §4 (17:00 31/10/2026).
+Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại); dòng chỉ mục theo build record dựng 05/11 tối; dòng trợ lý theo `backend/config/settings.yaml` và `session_prompt/Project_Status.md` §4 (đọc 10/11/2026).
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
@@ -137,6 +143,7 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), build 
 | Chỉ mục tìm trên 204 file / 8.435 đoạn | **còn dùng** (dựng lại 05/11 tối; mốc tìm 158 câu mới `64656a87c109`: 148 giống hệt, MRR 0,7216 / nDCG 0,7554 giống tới 4 chữ số) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
 | "BM25 chỉ chấm lại 30 đoạn vector" là cách tốt nhất đã thử | **còn đúng** — nhưng chỉ vì các cách khác không chắc hơn; đoạn đúng hay bị xếp thấp | §3, §4 |
 | Cho `gpt-6-luna` chọn 10 trong 30 ứng viên | **gác làm hồ sơ** (bạn chốt 27/10) | §4 27/10 |
+| Định tuyến 4 tuyến trước khi tìm; trợ lý tìm thêm ≤ 2 lần sau lần tìm đầu | **còn dùng** (từ 03/11) | `backend/config/settings.yaml:60`, `:66`; `backend/llm/assistant.py:52` |
 
 ## 6. Việc còn lại / cần quyết
 
@@ -144,12 +151,12 @@ Kiểm với code trên `main` (số dòng kiểm lúc 17:14 31/10/2026), build 
 - **Chỗ yếu còn mở:** 9 / 40 câu thử có đoạn đúng trong ứng viên nhưng bị xếp ngoài 10 đầu; câu so sánh / nhiều nguồn. Các hướng đã thử đều không qua luật — kể cả model viết lại câu tìm (B2a 03/11). **B2b (03/11): cho trợ lý tìm thêm ≤ 2 lần — có lợi rõ ở câu nhiều nguồn, đã vào chatbot.**
   Hướng để ngỏ (hồ sơ, chưa lên lịch): bản "luna chọn đoạn" nhanh hơn, chỉ khi có luật nhận mới cho loại thay đổi này và vừa sàn tốc độ; sửa nhãn đoạn đúng
   để đếm cả chỗ kho viết lại cùng thông tin.
-- **Đo lại theo loại câu 01/11** (0 USD, câu trả lời đã chấm 30/10, tiêu chí ghi trước): chỉ **câu nhiều nguồn** còn lỗi lớn ⇒ để Phase 9; dòng bảng giá dài: keyword lọt top-10 80 % ↔ 90 % câu khác, Đủ ý 4,50 ↔ 4,53 ⇒ **không còn là lỗi lớn**. `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.
+- **Đo lại theo loại câu 01/11** (0 USD, câu trả lời đã chấm 30/10, tiêu chí ghi trước): chỉ **câu nhiều nguồn** còn lỗi lớn ⇒ để Phase 9 (Phase 9 đã làm: tìm thêm, 03/11); dòng bảng giá dài: keyword lọt top-10 80 % ↔ 90 % câu khác, Đủ ý 4,50 ↔ 4,53 ⇒ **không còn là lỗi lớn**. `report_agent/2026-10-31_streaming_spec/q3a_theo_loai_cau_implementation.md`.
 - Câu gõ không dấu: ngoài phạm vi (bạn quyết 25/10).
 
 ## Phụ lục — hồ sơ kỹ thuật
 
-- **Mã:** T1 = mốc kết quả tìm 158 câu (dấu vân tay `4d5bbe9e0edc` từ 30/10; `23c58c47635d` 28/10; `cefb2d1a…` suốt 8.1); K1 = lấy rộng 100 ứng viên; K2 = tìm
+- **Mã:** T1 = mốc kết quả tìm 158 câu (dấu vân tay `64656a87c109` từ 05/11 tối; `4d5bbe9e0edc` 30/10; `23c58c47635d` 28/10; `cefb2d1a…` suốt 8.1); K1 = lấy rộng 100 ứng viên; K2 = tìm
   từ khóa độc lập (NOT RUN, đã trượt ở 8.1); K3 = luna xếp đủ 30; K3b-n / K3b-m = luna chỉ trả 10 số, không suy nghĩ / suy nghĩ mặc định; B42 = phân loại lỗi;
   F2 = lỗi bảng giá; T3 = mức tụt "số câu Completeness tụt ≤ A/A + 3" (A/A = độ dao động đo bằng hai lượt cùng cấu hình); PA3 = phương án bạn chọn 28/10
   (đưa 10 đoạn + NFC vào chatbot, không chờ đọc cặp mù).

@@ -1,15 +1,20 @@
 # Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2, lượt đo cuối Phase 1–8)
 
-**Cập nhật lần cuối: 14:33 01/11/2026 — B0 (mốc người tham khảo), Phase 8 bạn đóng 14:29 01/11/2026.** Trước: 13:39 01/11/2026 — thêm lượt đo cuối Phase 1–8 (01/11: không làm hỏng; bộ kín mới: an toàn đạt, số Golden lạc quan); §1, §3, §5, §6 theo hiện trạng.** Trước: 12:03 01/11/2026 — thêm đo lại theo loại câu 01/11 (chỉ câu nhiều nguồn còn lỗi lớn ⇒ Phase 9). Trước: 11:34 01/11/2026 — câu Golden lệch kho: điểm không lệch, bạn giữ nguyên.** Trước: 17:12 31/10/2026 — bản 6: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
-Các bản trước: xem `git log` file này. Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 7: nói rõ chatbot đang chạy (Phase 9) chưa đo lại cả bộ Golden 176 (dự kiến đo ở bước so sánh cuối B7); thêm số tốc độ / tiền mới nhất (S5 09/11); câu theo ngày: công cụ bật 09/11; mốc kho / mốc tìm theo 05/11. Các bản trước: xem lịch sử git.**
+Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-## 1. Tóm tắt (đúng hiện trạng 01/11/2026)
+## 1. Tóm tắt (đúng hiện trạng 10/11/2026)
 
 - **Khâu này làm gì:** chấm chatbot tự động, lặp lại được: mọi thay đổi so với một **điểm mốc** trên cùng bộ câu, theo luật ghi **trước** khi chạy,
   rồi mới quyết giữ hay bỏ.
+- **Chatbot đang chạy là bản Phase 9** (từ 03/11: định tuyến 4 tuyến, tìm thêm ≤ 2 lần, nhớ câu hỏi; sau đó tra web sau câu từ chối, thời tiết,
+  hỏi bằng ảnh 08/11, công cụ ngày + âm lịch 09/11…). **Bản này chưa được đo lại trên cả bộ Golden 176** — dự kiến đo ở bước so sánh cuối Phase 9
+  (B7: so cả hệ với RAG 1–8; kế hoạch đang nháp). Mọi số Golden dưới đây là của **chatbot cuối Phase 8 (01/11)**. Từng tính năng Phase 9 được đo riêng
+  trên bộ câu của nó (vài bước có dùng một phần Golden để kiểm không tụt, vd tìm thêm 03/11, sửa kho 05/11: 11 câu chạm) — số ở `BAO_CAO_SINH_CAU_TRA_LOI_API.md`.
 - **Thước đang dùng:**
   - **Golden 176 câu** (md5 `6331e88fb171` từ 30/10), chia **120 câu thử** (để chọn) / **56 câu kiểm** (để xác nhận). Số chính bỏ 29 câu người thật ít hỏi.
-  - Bộ chấm đi đúng đường của API (tìm đoạn → đóng gói đoạn → `gpt-6-luna` trả lời → kiểm trích dẫn).
+  - Bộ chấm chạy đường trả lời của API (tìm đoạn → đóng gói đoạn → `gpt-6-luna` trả lời → kiểm trích dẫn). Từ Phase 9, lệnh `evaluation generate` không ghi
+    `--flags` sẽ chạy theo các cờ trong `settings.yaml` (có định tuyến, tìm thêm…); muốn đo đúng đường RAG 1–8 thuần phải truyền `--flags` rỗng.
   - Chấm câu trả lời: Claude chấm 3 điểm 1–5 (Đúng / Đủ / Trúng ý), **mù** — mốc và biến thể trộn chung một lượt, người chấm không biết câu nào của bên nào.
   - So hai cấu hình **theo cặp từng câu** (bootstrap 10.000 lần — rút lại ngẫu nhiên các câu để ước khoảng tin cậy 95 %; đếm thắng / hòa / thua; nhiều biến thể cùng lúc ⇒ hiệu
     chỉnh Holm để không nhận nhầm một biến thể chỉ "thắng may").
@@ -19,18 +24,23 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
   - **Thước lỗi nặng:** người chấm Claude tách từng ý của câu trả lời, so với chính ngữ cảnh model đọc ⇒ đếm **bịa thêm** và **sai điều kiện** (giờ, vé,
     quy định, cảnh báo). **Bộ 32 câu an toàn** tự viết (giờ, vé, miễn giảm, giấy tờ, cảnh báo sông nước…; 28 trong kho, 4 ngoài kho) là phép kiểm **bắt buộc** cho
     mọi thay đổi, kèm 15 câu đối chứng (chèn sai / chép đúng) để kiểm người chấm mỗi lượt.
-  - **Bộ 15 câu theo ngày tương đối** ("tối nay", "tháng sau"…, 30/10) — mốc cho việc Phase 9.
+  - **Bộ 15 câu theo ngày tương đối** ("tối nay", "tháng sau"…, 30/10) — mốc cho công cụ ngày + âm lịch (bật 09/11; xác nhận trên 14 câu mới: bớt 9 câu
+    từ chối nhầm, 0 câu sai ngày — `BAO_CAO_SINH_CAU_TRA_LOI_API.md`).
 - **Thước "đạt" (bạn chốt 28/10):**
   - **Thứ tự lỗi** nặng → nhẹ: sai cảnh báo an toàn / điều kiện vào khu vực > nói chắc sai / bịa > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
   - **Sàn bộ an toàn** (theo nhiễu đo 29/10): câu sai điều kiện **mới** ≤ 2, mỗi câu mới sinh lại 3 lần; **đảo cảnh báo = 0**; 0 câu ngoài kho bị trả lời.
   - **Tốc độ / tiền:** trung vị ≤ 3 s, p95 ≤ 5 s, ≤ 0,0005 USD / câu. Từ khi có streaming (01/11), sàn thời gian đo tới **chữ trả lời đầu tiên
     hiện trên trình duyệt** (bạn chốt 31/10); mục tiêu báo cáo 1,5 / 3 s (không chặn).
-- **Số của chatbot đang chạy** (lượt đo cuối Phase 1–8, 01/11 — bản đã có streaming + tính tiền giá đủ; 10 đoạn, kho sửa hai đợt; mục 4):
+- **Số của chatbot cuối Phase 8** (lượt đo cuối Phase 1–8, 01/11 — bản đã có streaming + tính tiền giá đủ; 10 đoạn, kho sửa hai đợt; mục 4; bản đang chạy
+  chưa đo lại cả bộ — xem dòng đầu):
   - Golden 176: từ chối nhầm **12 / 158**; 0 câu ngoài kho bị trả lời; 0 lỗi trích dẫn; 0 câu "nói chắc sai" mới. Điểm trung bình (số chính 129 câu)
     Đúng **4,71** · Đủ **4,58** · Trúng ý **4,72**; yếu nhất là câu cần ghép **nhiều nguồn** (Đủ 3,50 ⇒ Phase 9).
   - Tốc độ: tới **chữ trả lời đầu tiên** trên trình duyệt p50 **1,23 s** / p95 **2,61 s** (38 câu) ⇒ đạt sàn 3 / 5 s rộng, mục tiêu 1,5 / 3 s đạt sát;
     cả câu qua API (không stream) p50 2,34 / p95 3,80 s (22 câu tự viết). Một lần đo; hôm đó model gần như không suy luận trước khi viết ⇒ có thể nhanh hơn ngày thường.
   - Tiền **≈ 0,00025 USD / câu** (~6 đồng) theo giá đủ — công cụ đo tính giá đủ từ 01/11.
+  - **Tốc độ / tiền của bản đang chạy (Phase 9) — đo chung S5 09/11** (một lượt trên trình duyệt thật, 65 câu): câu về Huế tới chữ đầu p50 **2,16** /
+    p95 **4,32 s** (đạt sàn 3 / 5 s), **0,00047 USD / câu** (đạt ≤ 0,0005); câu ngoài phạm vi 1,62 / 2,97 s; **câu xã giao p95 7,73 s — vượt sàn**;
+    **câu có từ chỉ ngày** (5 câu) p50 5,19 s, **0,00063 USD / câu — vượt sàn**; bạn chọn giữ bật, tối ưu sau.
   - Bộ 32 câu an toàn: **0** đảo cảnh báo, 0 / 4 câu ngoài kho bị trả lời; câu sai điều kiện **mới 2** (cả hai "nói sai về nguồn") — **đúng ngưỡng** ≤ 2, và bản
     chatbot cũ sinh lại cũng sai y như vậy (1 / 3 mỗi bên).
   - **Bộ kín mới 40 câu (01/11, chưa ai thiết kế hệ thống thấy):** an toàn đạt (0 / 6 câu ngoài kho bị trả lời, 0 sai điều kiện); điểm **thấp hơn Golden**
@@ -55,7 +65,7 @@ Các bản trước: xem `git log` file này. Người viết: sub-agent của A
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng gói N đoạn → gpt-6-luna → kiểm trích dẫn)
+Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng gói N đoạn → gpt-6-luna → kiểm trích dẫn; cờ Phase 9 theo settings.yaml hoặc --flags)
                  → tầng tìm: từ khóa @10 (miễn phí) + đoạn đúng theo tầng: kho ứng viên → top-10 → N đoạn đưa model (nhãn bản 5)
                  → câu trả lời mốc + biến thể trộn MÙ → Claude chấm Đúng / Đủ / Trúng ý (1–5)
                  → so theo cặp từng câu: chênh, CI 95 %, thắng / hòa / thua; nhiều biến thể ⇒ Holm
@@ -96,8 +106,8 @@ Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng 
 | "Bịa thêm" và "sai điều kiện / cảnh báo" | **Đã xử lý** (từ 28/10, bạn nhận 29/10) | Golden 28/10: bịa thêm 1 / 145, sai điều kiện 0 / 65; bộ an toàn 30/10: 0 / 28 sai điều kiện, 0 bịa; nhiễu hai lượt: 2 câu dao động ⇒ sàn "mới ≤ 2 + sinh lại 3 lần"; chưa có người đọc |
 | Bộ câu an toàn | **Đã xử lý** (bắt buộc từ 29/10) | 32 câu, agent viết; đợt 2: cả 2 người chấm bắt 10 / 10 câu chèn sai |
 | Kiểm số trong câu trả lời phải có trong nguồn | **Đã thử, chưa áp dụng** | 27/10: 68 câu có số, 0 lỗi thấy được ⇒ chưa cần kiểm bằng code; chỉ dùng chọn câu đọc lại |
-| Câu hỏi theo ngày tương đối | **Đã xử lý** (đo, 30/10) | 15 câu: 0 câu đoán ngày rồi nói sai; 6 / 14 câu trong kho bị từ chối nhầm ⇒ Phase 9 |
-| Tốc độ / tiền theo yêu cầu bạn chốt | **Đã xử lý** (01/11) | tới chữ đầu trên trình duyệt 1,23 / 2,61 s ⇒ đạt sàn 3 / 5 s + mục tiêu 1,5 / 3 s (sát); cả câu qua API 2,34 / 3,80 s (theo dõi); một lần đo. Tiền ≈ 0,00025 USD / câu ⇒ đạt; `cost_usd` tính giá đủ (`full_corpus_eval.py:169`, `row_cost_usd` :176) |
+| Câu hỏi theo ngày tương đối | **Đã xử lý** (đo, 30/10) | 15 câu: 0 câu đoán ngày rồi nói sai; 6 / 14 câu trong kho bị từ chối nhầm ⇒ Phase 9: công cụ ngày + âm lịch **bật 09/11** (14 câu mới: bớt 9 từ chối nhầm, 0 sai ngày) |
+| Tốc độ / tiền theo yêu cầu bạn chốt | **Xử lý một phần** (S5 09/11: 2 loại câu vượt sàn) | **Bản đang chạy (S5 09/11, 65 câu):** câu về Huế 2,16 / 4,32 s, 0,00047 USD ⇒ đạt; câu xã giao p95 7,73 s và câu có từ chỉ ngày p50 5,19 s / 0,00063 USD ⇒ vượt sàn (bạn: giữ bật, tối ưu sau). Cuối Phase 8 (01/11): tới chữ đầu trên trình duyệt 1,23 / 2,61 s ⇒ đạt sàn 3 / 5 s + mục tiêu 1,5 / 3 s (sát); cả câu qua API 2,34 / 3,80 s (theo dõi); một lần đo. Tiền ≈ 0,00025 USD / câu ⇒ đạt; `cost_usd` tính giá đủ (`full_corpus_eval.py:169`, `row_cost_usd` :176) |
 | Thời gian "tới chữ đầu tiên" trên trình duyệt (streaming) | **Đã xử lý, đóng gói** (01/11, merge `a80e12d`; đo S4) | trình duyệt tự động trên 38 câu thử có trả lời + 21 câu từ chối báo riêng; chữ stream = chữ cuối 0 / 59 lệch; `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md` |
 | Lượt đo cuối Phase 1–8 | **Đã xử lý** (01/11) | không làm hỏng (Golden + bộ an toàn + câu theo ngày); bộ kín mới: sàn đạt, số Golden lạc quan (mục 4) |
 
@@ -138,7 +148,7 @@ S4 = `R31/s4_do_d2_implementation.md`; TLC = private `data/do_cuoi_2026-11-01/go
   ⇒ câu cần ghép nhiều nguồn vẫn yếu nhất (đoạn chứa đáp án hay bị xếp ngoài 10 đoạn) — bạn để Phase 9 (đo lại 01/11 mục dưới).
 - **Bộ 32 câu an toàn** (DB §4): 0 / 4 câu ngoài kho bị trả lời; **0** câu đảo cảnh báo / điều kiện vào; câu sai điều kiện **mới** **2** — đúng ngưỡng cho phép (≤ 2): cả hai là "nói sai về nguồn", và
   khi sinh lại 3 lần thì **bản chatbot cũ cũng sai 1 / 3 y như bản mới** ⇒ không thấy kém đi so với bản cũ (3 lần mỗi bên chỉ phát hiện được khác biệt lớn). Bịa thêm mới 2 câu — chính 2 câu đó (chỉ theo dõi, mức ≤ 2). Người chấm qua cổng đối chứng (10 / 10 câu chèn sai bị bắt, 0 / 5 báo nhầm).
-- **15 câu theo ngày tương đối** (DB §4): **0** câu đoán ngày rồi nói sai; từ chối nhầm 5 câu trong kho (30/10: 6) — vẫn để Phase 9.
+- **15 câu theo ngày tương đối** (DB §4): **0** câu đoán ngày rồi nói sai; từ chối nhầm 5 câu trong kho (30/10: 6) — vẫn để Phase 9 (⇒ công cụ ngày + âm lịch bật 09/11).
 - **Tốc độ — 3 thước** (không trộn):
 
   | Thước | Bộ câu | p50 | p95 | Nguồn |
@@ -235,15 +245,15 @@ Giới hạn còn đúng: Golden do LLM viết, người duyệt; chỉ số tì
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 01/11/2026 theo lượt đo cuối (commit đo `89c988e`, code chưa đổi tới `d8a32c0`) và `session_prompt/Project_Status.md` §4.
+Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 01/11/2026 theo lượt đo cuối (commit đo `89c988e`, code chưa đổi tới `d8a32c0`); 10/11/2026 sửa dòng kho / mốc tìm theo `session_prompt/Project_Status.md` §4 (số dòng code chưa kiểm lại).
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
 | Bộ chấm `full_corpus_eval.py`, so theo cặp | **còn dùng** | `backend/evaluation/full_corpus_eval.py:648,816–870` |
 | Prompt chấm cố định (không chấm trích dẫn) | **còn dùng** | `backend/evaluation/full_corpus_judge_prompt.md` |
 | Người chấm Claude, mù, cùng lượt | **còn dùng** | spec 8.2 §7 |
-| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 204 file / 8.424 đoạn; số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
-| Mốc kết quả tìm 158 câu | **còn dùng**: `4d5bbe9e0edc` (30/10) | `Project_Status.md` §4 |
+| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 204 file / 8.435 đoạn từ 05/11 tối (lượt đo 01/11 chạy trên 8.424); số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
+| Mốc kết quả tìm 158 câu | **còn dùng**: `64656a87c109` (từ 05/11 tối; 30/10 `4d5bbe9e0edc`) | `Project_Status.md` §4 |
 | Nhãn đoạn đúng | **bản 5 mặc định** (30/10); bản 1–4 chỉ để tái lập số cũ | `backend/experiments/phase_8_1/g1_retrieval.py:48` |
 | Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
 | Bộ 32 câu an toàn, thước lỗi nặng | **còn dùng**, bắt buộc | `do_loi_nang_implementation.md`; `sua_kho_dot2_implementation.md` |
@@ -255,10 +265,11 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 0
 ## 6. Việc còn lại / cần quyết
 
 - **B0 xong (01/11):** bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). **Phase 8 bạn đóng 14:29 01/11/2026.**
-- **Từ nhận xét B0 (đề xuất A, chờ bạn):** câu dự trù chi phí theo mức ⇒ để trợ lý hỏi lại người dùng (Phase 9); `[n]` chen trong câu khó đọc ⇒ đổi cách hiển thị nguồn ở giao diện mới (vẫn giữ `[n]` ở tầng kiểm).
+- **Từ nhận xét B0:** `[n]` chen trong câu khó đọc ⇒ **đã đổi** — giao diện cổng (07/11) hiện dòng "Nguồn" thay số `[n]` (vẫn giữ `[n]` ở tầng kiểm); câu dự trù chi phí theo mức ⇒ trợ lý hỏi lại: chưa có ở câu thường (công cụ hỏi lại đã gỡ 05/11; chỉ còn thẻ hỏi số ngày của lịch trình, cờ tắt).
 - **Tuỳ bạn:** 20 câu mẫu lỗi nặng để bạn đọc (`data/loi_nang_2026-10-28/human_sample.md`).
 - **Đã xong ở đóng gói (01/11):** streaming + thước "tới chữ đầu tiên trên trình duyệt"; `cost_usd` giá đủ; lượt đo cuối + bộ kín mới (mục 4).
-- **Sau Phase 8 / Phase 9:** câu nhiều nguồn (yếu nhất); câu theo ngày tương đối; bộ câu kín **mới nữa** cho lần kiểm tổng quát sau (bộ 01/11 đã dùng); câu an toàn do **người dùng thật** viết nếu có.
+- **Phase 9 đã làm:** câu nhiều nguồn (tìm thêm ≤ 2 lần, 03/11); câu theo ngày tương đối (công cụ ngày + âm lịch, bật 09/11).
+- **Còn:** đo lại cả hệ Phase 9 trên Golden 176 + bộ an toàn 32, so với RAG 1–8 (bước B7, kế hoạch đang nháp); bộ câu kín **mới nữa** cho lần kiểm tổng quát sau (bộ 01/11 đã dùng); câu an toàn do **người dùng thật** viết nếu có.
 - **Còn mở (A xử lý):** đếm lại "lỗi trích dẫn" lượt 10 đoạn của 8.1 (8 câu) bằng bộ kiểm hiện tại; mọi report mới ghi kèm bản nhãn khi nêu số đoạn đúng.
 - **Đề xuất còn giữ:** gắn thêm đoạn đúng cho câu thử để tăng cỡ mẫu (40 câu làm nhiều kết quả "chưa rõ").
 

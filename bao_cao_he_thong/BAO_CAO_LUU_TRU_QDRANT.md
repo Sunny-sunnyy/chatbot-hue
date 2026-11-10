@@ -1,22 +1,21 @@
 # Báo cáo cho bạn: Lưu đoạn vào Qdrant (Phase 4)
 
-**Cập nhật lần cuối: 20:06 05/11/2026 — đợt giờ mở cửa ⇒ **8.435 điểm**.** Trước: **17:13 31/10/2026 — bản 4: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
-Các bản trước: xem `git log` file này.
-Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 5: sửa số cũ — Qdrant có 2 collection (thêm collection thử ảnh), lần build mới nhất là 05/11 tối, đã build lại 3 lần. Các bản trước: xem lịch sử git.**
+Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
 - **Khâu này làm gì:** đưa các đoạn (kèm vector nghĩa và từ khoá) vào cơ sở dữ liệu vector Qdrant để chatbot tìm được, và giữ một
   "phiếu build" ghi chỉ mục được tạo từ đúng bản corpus nào. Đã đóng (Phase 4, 09/2026); đường build hiện nay có từ Phase 7A2 (24/10).
-- **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **đúng 1 collection**
-  `hue_full_corpus_7a2_e5_small_384`: **8.435 điểm** (build lại 05/11 tối sau đợt giờ mở cửa; 30/10: 8.424), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
-  trường thông tin. Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
-- **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (30/10):
-  204 file, 8.435 điểm, phiếu `9921888f2030`; A kiểm Qdrant 20:06 05/11/2026: 8.435 điểm.
-- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 2 lần: 28/10, 30/10; mỗi lần vài phút trên máy). Tắt Docker Desktop
+- **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **2 collection**: (1) `hue_full_corpus_7a2_e5_small_384` — chỉ mục chatbot dùng,
+  **8.435 điểm** (build lại 05/11 tối sau đợt giờ mở cửa; 30/10: 8.424), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
+  trường thông tin; (2) `hue_anh_siglip2` — 172 điểm của thử nghiệm hỏi bằng ảnh 05/11 (đã bỏ), chatbot **không** dùng, chờ bạn quyết xoá (`BAO_CAO_HOI_BANG_ANH.md`). Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
+- **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (05/11 tối):
+  204 file, 8.435 điểm, phiếu `9921888f2030`; kiểm Qdrant thật 19:31 10/11/2026: 2 collection, 8.435 + 172 điểm.
+- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 3 lần: 28/10, 30/10, 05/11; mỗi lần vài phút trên máy). Tắt Docker Desktop
   thì chatbot không tìm được (gặp 31/10).
 - **Chi phí / tốc độ:** không tốn tiền (Qdrant chạy trên máy).
-- **Bạn cần quyết gì:** không.
+- **Bạn cần quyết gì:** không gấp — xoá hay giữ collection thử ảnh `hue_anh_siglip2` (§6).
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -49,7 +48,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 | Không ghi đè collection hay phiếu build đã có | **Đã xử lý, đóng gói** | `vectorstore/qdrant.py:91-109`, `:135-140`; `full_corpus_pipeline.py:184-186`; `source_state.py:162-163` |
 | Collection cho model lớn Qwen3-Embedding-8B | **Đã thử, chưa áp dụng** (30/10) | collection thử 8.424 điểm, build 0 lỗi; tìm kém hơn e5-small ⇒ không chọn, **đã xoá** (`BAO_CAO_EMBEDDING_TU_KHOA.md`) |
 | Lọc theo trường thông tin (payload index) | **Chưa thực hiện** | chưa có nhu cầu; collection có index sẽ bị từ chối (`vectorstore/qdrant.py:77-80`) |
-| Notebook 04 minh hoạ nạp / kiểm Qdrant | **Xử lý một phần** | chạy hết không lỗi (bản tạm, 24/10, chỉ đọc Qdrant); phần chữ đầu notebook còn ghi số đoạn cũ 8.459 (hiện 8.424) |
+| Notebook 04 minh hoạ nạp / kiểm Qdrant | **Xử lý một phần** | chạy hết không lỗi (bản tạm, 24/10, chỉ đọc Qdrant); phần chữ đầu notebook còn ghi số đoạn cũ 8.459 (hiện 8.435) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
@@ -72,7 +71,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 5. Hôm nay còn đúng không
 
-Kiểm lại với code hiện tại (`main` `1985a81`) lúc 17:13 31/10/2026; số điểm theo phiếu build và lần A kiểm Qdrant 31/10.
+Số dòng code kiểm lúc 17:13 31/10/2026 (`main` `1985a81`, chưa kiểm lại); số điểm và danh sách collection kiểm lại bằng Qdrant thật 10/11/2026 (2 collection: 8.435 + 172 điểm).
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
@@ -93,7 +92,7 @@ Kiểm lại với code hiện tại (`main` `1985a81`) lúc 17:13 31/10/2026; s
 - Sửa corpus thì chatbot từ chối chạy cho tới khi build lại; build lại theo quy trình trong guide (gỡ collection, phiếu build, danh sách từ
   khoá cũ trước).
 - Sửa phần chữ đầu notebook 04 cho đúng số đoạn hiện tại (nhỏ, chưa có lịch).
-- Không cần bạn quyết gì ở khâu này.
+- Xoá collection thử ảnh `hue_anh_siglip2` (172 điểm, chỉ dùng cho thí nghiệm đã bỏ): chờ bạn quyết, không gấp; giữ thì không ảnh hưởng chatbot.
 
 ## Phụ lục — hồ sơ kỹ thuật
 
@@ -104,7 +103,7 @@ Kiểm lại với code hiện tại (`main` `1985a81`) lúc 17:13 31/10/2026; s
   `reports/phase_7a2_gate_2_reindex_implementation_2026_10_24.md`,
   `reports/phase_7a2_gate_3_cleanup_implementation_2026_10_24.md`.
 - Tên kỹ thuật: phiếu build = build record (`data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`); danh sách từ khoá = sparse
-  state (`data/full_corpus_builds/full_corpus_sparse_state.json`, `c8134c49a648`, 5.631 từ); thông tin điểm = payload; điểm = point.
+  state (`data/full_corpus_builds/full_corpus_sparse_state.json`, `4a8311a2dfef` từ 05/11 tối — 30/10 `c8134c49a648`; 5.631 từ); thông tin điểm = payload; điểm = point.
 - "Gate 2 / Gate 3" = hai bước build lại và dọn của Phase 7A2; "B9" = việc dọn code / collection bản món ăn (24/10, commit `1832201`).
 - Bản 1: B8, 24/10/2026. Bản 2: B10, sau B9 (`report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` §4b). Bản 3:
   31/10 (build lại hai lần, Qwen3-8B, Docker Desktop).

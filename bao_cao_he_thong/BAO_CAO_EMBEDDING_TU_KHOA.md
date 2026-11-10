@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Vector nghĩa và từ khóa — embedding + BM25 (Phase 3, thử nghiệm Phase 8)
 
-**Cập nhật lần cuối: 20:06 05/11/2026 — cách không đổi; chỉ mục dựng lại trên **8.435 đoạn** (từ điển vẫn 5.631 từ).** Trước: **17:10 31/10/2026 — bản 5: rà lại cho đúng hiện trạng, xoá phần không còn đúng (User 31/10).**
-Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 5) · Review: A. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 19:28 10/11/2026 — bản 6: ghi thêm trợ lý được tìm thêm ≤ 2 lần (từ 03/11); dấu danh sách từ khoá mới từ 05/11. Các bản trước: xem lịch sử git.**
+Người viết: agent con của A (bản 5) · Review: A. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
@@ -31,6 +31,7 @@ mọi đoạn -> chữ thường, cắt theo chữ/số -> danh sách từ + đ�
 khi hỏi: câu hỏi -> chuẩn hóa NFC -> thêm "query: " -> e5-small -> vector 384 số
          -> vector lấy 30 đoạn gần nghĩa -> BM25 chấm lại 30 đoạn đó
          -> trộn hai thứ hạng (RRF, k = 60) -> 10 đoạn đầu vào ngữ cảnh cho model trả lời
+         (từ 03/11 trợ lý có thể tìm thêm ≤ 2 lần, mỗi lần đi đúng đường này)
 ```
 
 - Danh sách từ khóa ghi một lần; build sau phải ra đúng từng byte như file đang có, nếu không build dừng ⇒ kho đổi thì phải xoá file
@@ -130,7 +131,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
 
 - Report lịch sử: `reports/user_reports/phase_3_embedding_sparse_representation_user_report.md`;
   7A2 `reports/phase_7a2_gate_2_reindex_implementation_2026_10_24.md`.
-- Tên kỹ thuật: vector nghĩa = dense; từ khóa = sparse / BM25; danh sách từ khóa = sparse state (sha `c8134c49a648` từ 30/10); model
+- Tên kỹ thuật: vector nghĩa = dense; từ khóa = sparse / BM25; danh sách từ khóa = sparse state (sha `4a8311a2dfef` từ 05/11 tối; 30/10 `c8134c49a648`); model
   8B = `qwen3-embedding-8b-4096`; model đang chạy = `e5-small-384` (`intfloat/multilingual-e5-small`); trộn thứ hạng = RRF; cách trộn
   "đang chạy" = `dense_bm25_rrf`, "mở rộng" = `native_hybrid_rrf` pool 100.
 - **Qwen3-8B (30/10, harness B92, review C88 / C95):** plan `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_plan.md` (A duyệt `d6d6c7d51584`), report
