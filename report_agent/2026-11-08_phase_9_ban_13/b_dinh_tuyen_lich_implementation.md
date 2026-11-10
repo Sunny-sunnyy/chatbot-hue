@@ -52,7 +52,8 @@ thang chấm; nhãn cũ nên sửa thành "trả lời" (file nhãn của E, kh�
 ## 3. Giới hạn
 
 - **1 / 9 câu lịch bị rút lại** (`citation_integrity_error`, giao diện báo lỗi) dù nội dung đúng — lỗi kiểm citation ở đường trả lời (có từ trước, không do lời dặn định tuyến).
-  Chưa tìm nguyên nhân (ngoài phạm vi việc này) — đề xuất: xem câu có nguồn "Lịch hệ thống" khi model trích dẫn.
+  Nguyên nhân (E review m-1): câu trả lời **không có mã `[n]` nào** ⇒ luật kiểm citation sẵn có (`backend/llm/citations.py:28-29`) rút lại — không do lời dặn định tuyến.
+  Sửa (nếu cần) là việc riêng ở đường trả lời. Nhãn cũ của câu "hôm nay âm lịch" E đã sửa (m-2).
 - Cỡ mẫu: 9 + 12 câu lịch chung; 0 / 20 câu ngoài phạm vi có từ chỉ ngày lọt — cận trên thật có thể vài phần trăm. Câu lịch thuần cần "Lịch hệ thống" + công cụ `ngay_lich`
   (đã bật). Không đo tốc độ (lời dặn dài thêm ~4 dòng ≈ +60 token vào mỗi lần định tuyến).
 - Câu "lịch nghỉ" chung (nghỉ lễ / Tết mấy ngày) theo lời dặn mới là ngoài phạm vi.
