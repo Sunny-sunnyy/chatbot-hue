@@ -116,6 +116,7 @@ report.
 ## 7. Đơn giản là mặc định; chất lượng trước tối ưu
 
 - **Xây trên nền tảng AI FDE** (User 2026-11-05, nhắc lại 2 lần; khung khoá AI FDE của User, đã chép thành skill): mọi Phase / spec / plan có agent, công cụ, nguồn dữ liệu hay đường ra mới ⇒ có **bảng rà theo khung** bằng skill `agent-design-review` + `agent-security-review` (mục · hiện trạng `file:dòng` · khớp / lệch · đề xuất); mọi thay đổi đo theo `run-experiment` (mốc rẻ nhất / có cần model không, tiêu chí ghi trước, đổi một thứ). Nguyên tắc hay quên: **phép tính, luật tiền, trường bắt buộc, thứ tự bắt buộc ⇒ code**, model chỉ đề xuất / diễn đạt (B4 05/11: dặn model "không cộng tổng" ⇒ âm). Reviewer kiểm bảng này như một tiêu chí.
+- **Đếm lỗi trước khi xây** (User duyệt 19:12 10/11/2026): trước khi viết plan cho một tính năng / bậc mới ⇒ một lượt đếm rẻ trên hệ thống đang chạy (log, bộ đã thấy; ≤ 0,02 USD) xác nhận lỗi có thật và cỡ của nó; không đủ lỗi ⇒ không xây, ghi số đếm vào report. Sửa lỗi đã đo thấy (vd sàn tốc độ trượt ở lượt đo) không cần lượt đếm thêm.
 - **Đo theo mục tiêu sản phẩm cuối cùng** (User 2026-10-26, từ khóa học AI FDE): đánh giá dự án / sản phẩm bàn giao bằng thước **càng sát
   mục tiêu cuối cùng càng tốt** (người dùng thật hỏi gì, câu trả lời "dùng được" là gì, lỗi nào tệ nhất — `Project_Status.md` §1 "Mục tiêu
   sản phẩm"); thước đó dẫn việc chọn mô hình / biến thể. **Sau đó** mới xét tốc độ, chi phí theo **yêu cầu phi chức năng ghi bằng số**. Thước
@@ -146,6 +147,7 @@ report.
 ## 8. Test và verification
 
 - **Giảm thời gian test (User duyệt 11:29 08/11/2026):** trong lúc sửa chỉ chạy file test bị chạm; **test rộng (cả `backend/tests`) một lần trước khi bàn giao / merge**; Q1 "chuỗi gửi model giống byte" chỉ khi code chạm phần dựng chuỗi gửi model / lời dặn / công cụ; Playwright chỉ khi sửa giao diện (một khổ màn nếu thay đổi không theo cỡ màn); chạy test nền song song việc khác (trừ lúc đo độ trễ); việc nhỏ đo 1 lượt. Report ghi **thời gian từng bước** (pytest, Q1, Playwright, lượt có phí) bằng số đo thật.
+- **Đổi cờ trong `settings.yaml`** (User duyệt 19:12 10/11/2026): trước commit chạy test các file chạm cờ **cả có lẫn không** `--env-file`; test khoá hành vi theo cờ tự đặt cờ trong test, không đọc `settings.yaml` thật.
 - Test chỉ khi bảo vệ behavior cần thiết, contract quan trọng hoặc bug thật có
   nguy cơ tái diễn; không đặt mục tiêu số test/coverage.
 - Chọn kiểm tra theo hành vi và phạm vi ảnh hưởng: logic thuần → kiểm tra nhỏ;
