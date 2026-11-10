@@ -1,4 +1,18 @@
-# STATUS C — kết phiên 09/11 (viết 22:28 09/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên 10/11 (viết 19:06 10/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN 10/11 (mở 19:06 10/11/2026) — C `hue-rag-4f` · A `hue-rag-55` · B `hue-rag-05` · E `hue-rag-e4`
+
+**Trạng thái: rảnh — chờ review B / E.** A giao (CURRENT_HANDOFF "VIỆC PHIÊN 10/11", `main` `624a17b`): review cả nhánh (`risk-gated-agent-review`, một vòng, chỉ plan + diff + số đo)
+(1) B `p9-xa-giao-song-song` ⇒ `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_review.md`; (2) E `p9-t1-nhanh` ⇒ `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_review.md`. Tiền 0 (chạy lại ≤ 0,01 nếu cần).
+Khai báo sửa: chỉ 2 file review trên + file này.
+**Việc xen giữa (19:19 10/11/2026, A giao, 0 USD):** nháp plan B7 ⇒ khai báo sửa thêm `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` (mới). Review B / E vẫn ưu tiên. **XONG 19:21 10/11/2026:** nháp `fe5788b63089` (untracked) đã gửi A — tag `p9-moc` đề xuất `18e8f42`; ≈ 0,30 USD; 4 câu A chốt §8. Lệch báo A: Project_Status §4 `anh.bat` false ≠ thực tế true (`cf57309`). A commit nháp + chốt Q1–Q4 (`main` `1bcc830`), tag `p9-moc` = `18e8f42` đã gắn. **(19:24 10/11/2026) Việc kế:** review phần sửa `bao_cao_he_thong/` (2 sub-agent của A, theo `data/ra_soat_bao_cao_2026-11-10/sa1_*.md` + `sa2_*.md`) khi A nhắn diff sẵn. Thứ tự: review B / E nếu tới trước. **Review sửa báo cáo `c54c932` XONG 19:36 10/11/2026:** `ready_for_user_confirmation`, 0 blocker / 0 major / 2 minor — `report_agent/2026-11-08_phase_9_ban_13/c_sua_bao_cao_1011_review.md` `daf963d9ecd9` (untracked). **Rảnh — chờ B báo report (`p9-xa-giao-song-song`, kết quả chưa đạt tiêu chí, review để sẵn), rồi E.**
+**Tự soi 1 (19:15 10/11/2026, A chốt, `main` `839ddb7`):** A nhận cả 6 ý của C. E thu D1 về các dạng có trong bộ đo. Report của B / E có các mục C xin. C chỉ review chỗ rủi ro, không chạy lại lượt đo tốc độ.
+Danh sách soi khi review: **B** — khối `finally` của `answer_turn_stream_parallel` (huỷ, gather, `n_tra_loi_bo` / `usd_bo` khi bỏ cả hai phần) · `_merge_spec` gộp trace trò chuyện · số lượt bị huỷ giữa chừng · ngắt kết nối ⇒ task không treo.
+**E** — regex dò ngày âm trong đoạn kho (dò nhầm ⇒ dòng lịch thừa / sai) · lượt đã từ chối sẵn (không có nguồn) không được chèn nguồn lịch · câu không có từ chỉ ngày giống byte · D1 chỉ gồm các dạng có trong bộ đo. Kiểm mở phiên: `main` sạch, hooksPath `.githooks`, Qdrant 2 collection / 8.435 point — khớp.
+
+---
+
+## (09/11) STATUS C — kết phiên 09/11 (viết 22:28 09/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
 ## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 22:28 09/11/2026)
 

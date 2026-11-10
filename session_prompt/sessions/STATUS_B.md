@@ -1,3 +1,21 @@
+# STATUS B — PHIÊN 10/11 (mở 19:02 10/11/2026, terminal `hue-rag-05`; A `hue-rag-55` · C `hue-rag-4f` · E `hue-rag-e4`)
+
+## Đang làm — xã giao chạy song song định tuyến (A giao 19:05 10/11/2026, mục "VIỆC PHIÊN 10/11")
+- Nhánh `p9-xa-giao-song-song` từ `main` `624a17b`, worktree `/tmp/b_xg` (dựng sau khi A duyệt plan). Trần ≤ 0,1 USD.
+- **Khai báo sửa:** plan `docs/superpowers/plans/2026-11-10-phase-9-xa-giao-song-song-plan.md` (working tree chung, A commit); trong worktree:
+  `backend/llm/assistant.py` — **chỉ** `AssistantFlags` (thêm cờ) + `answer_turn_stream_parallel` + `_merge_spec` (E sửa `ngay_lich_for_turn` / phần câu ngày — không đụng);
+  `backend/config/settings.yaml` (cờ `song_song_tro_chuyen`); `backend/tests/test_toc_do_song_song.py`; công cụ đo `data/phase_9/xa_giao_song_song/`;
+  report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md`; file này.
+- **Tiến độ (19:20 10/11/2026 `date`):** A duyệt plan `47009c7dc791` (AT dùng lại 4 số main). Tự soi 1 (A chốt): AN = bộ 90 của #6, S = 60 câu (bỏ câu ngày), không test ngắt mới.
+  Code + T xong (chưa commit): `test_toc_do_song_song.py` 15 đạt (31 s); `test_b6_tra_web.py` + `test_ngay_lich.py` 157 đạt (23 s).
+  **AN đạt** (`data/phase_9/xa_giao_song_song/an_r1.jsonl`, 0,042 + bỏ 0,0097 USD): 0 lượt lọt; `delta_matches_final` đúng mọi lượt. Bộ chấm chữ thô bắt 2 ca lệch không phải lọt (1 dấu cách cuối ở tuyến trò chuyện; 1 ca đánh số lại citation ở tuyến Huế — #6 cũng có 1).
+  Chờ E "đo xong" ⇒ lượt S (bật tạm cờ trong `settings.yaml` của worktree, đo xong trả `false`).
+- **XONG — CHƯA ĐẠT tiêu chí ghi trước (19:36 10/11/2026 `date`):** nhánh `p9-xa-giao-song-song` **`9ce7cfd`** (đã push; cờ `false`). S (60 câu, `s_r1.jsonl`): xã giao p50 3,46 → 1,85 s nhưng
+  p95 5,74 ✗; ngoài phạm vi p95 5,21 ✗ + 0,00056 USD / câu > 0,0005; Huế 2,28 / 4,23 ✓. Test rộng 855 đạt (4 phút). A quyết: không merge, chưa tag — A trình User;
+  User bật ⇒ C review ⇒ merge cờ false rồi bật; không ⇒ tag hồ sơ. Report `report_agent/2026-11-08_phase_9_ban_13/b_xa_giao_song_song_implementation.md` (working tree chung, A commit).
+  Tiền B 10/11 ≈ **0,079 USD** (AN 0,052 · S 0,027). Worktree `/tmp/b_xg` giữ cho review (server đã tắt).
+- Phiên 09/11: nhánh `p9-g-cong` / `p9-g-b` User đã xoá 22:40 09/11 (dòng "chờ User xoá" bên dưới đã cũ).
+
 # STATUS B — PHIÊN 09/11 (mở 20:14 09/11/2026, terminal `hue-rag-99`; A `hue-rag-87` · C `hue-rag-6a` · E `hue-rag-ea`)
 
 ## KẾT PHIÊN 09/11 (22:28 09/11/2026 `date`) — PHIÊN SAU ĐỌC TRƯỚC

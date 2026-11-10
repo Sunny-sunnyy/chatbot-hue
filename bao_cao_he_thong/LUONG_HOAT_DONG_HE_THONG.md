@@ -207,7 +207,7 @@ Ngoài thang đó: **tốc độ / tiền** (yêu cầu bạn chốt: p50 ≤ 3 
 - **Tiền (giá đủ, lượt 09/11):** câu về Huế ≈ **0,00047 USD / câu** ⇒ đạt trần 0,0005 nhưng sát trần; **câu có ngày 0,00063 USD ⇒ vượt**. Trước Phase 9 (01/11) ≈ 0,00025 USD / câu. Công cụ đo tính theo giá đủ từ 01/11.
 - **Nhớ có giới hạn (từ 03/11 tối):** chỉ nhớ câu hỏi 3 lượt gần nhất, không nhớ câu trả lời ⇒ "ý thứ hai bạn vừa nói…" chưa hiểu; cookie hết hạn 30 phút thì server âm thầm bắt đầu cuộc mới trong khi màn hình còn lượt cũ (chưa xử lý).
 - **Một nhà cung cấp sinh** (`gpt-6-luna`), không dự phòng: lỗi hoặc quá 45 s ⇒ báo lỗi, không tự đổi model.
-- **Chưa đưa ra ngoài:** chạy máy cá nhân. 4 chốt trước khi đưa link công khai **đã có code từ 09/11** (giới hạn số lượt hỏi / IP / ngày, cookie chỉ qua https, tắt trang `/docs`, log xoay vòng) — bật bằng biến môi trường lúc deploy, không đặt ⇒ như cũ. Còn chưa có: đăng nhập, hạn mức tiền phía nhà cung cấp (OpenAI / Serper).
+- **Chưa đưa ra ngoài:** chạy máy cá nhân. 4 chốt trước khi đưa link công khai **đã có code từ 09/11** (giới hạn số lượt hỏi / IP / ngày, cookie chỉ qua https, tắt trang `/docs` — 3 chốt này bật bằng biến môi trường lúc deploy, không đặt ⇒ như cũ; log xoay vòng 10 MB × 3 thì luôn bật). Còn chưa có: đăng nhập, hạn mức tiền phía nhà cung cấp (OpenAI / Serper).
 
 **Streaming (chạy từ 01/11)**
 
