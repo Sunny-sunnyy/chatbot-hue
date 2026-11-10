@@ -62,6 +62,8 @@ G = cổng 2 nhóm (đóng; phương án B đang chạy); T1 ngày + âm lịch 
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
+**Hỏi khi User về (User 19:18 10/11/2026: "gác lại câu hỏi cho tôi khi quay lại"):** (Q-BC) **sắp xếp lại `bao_cao_he_thong/`** để đọc theo thứ tự, hiểu hết hệ thống không cần đọc code — A chuẩn bị 2–3 phương án từ 2 sub-agent đọc thử (`data/ra_soat_bao_cao_2026-11-10/`); trong lúc chờ A chỉ **sửa chỗ sai / cũ** (luật báo cáo luôn mới nhất), không đổi cấu trúc / tên file. (Q-CO) bật 2 cờ tốc độ khi B / E đo xong.
+
 (1) ~~Quyền phiên~~ (10/11: như 09/11 + trần 4,2). (2) ~~Mốc đóng tính năng~~ — **User 19:08 10/11/2026: không chốt mốc; xong sớm đóng sớm, xong muộn đóng muộn, vẫn đảm bảo chất lượng** (A không hỏi lại; giữ mốc cứng đã biết: đóng code = chạy trên AWS ~25–30/12, nhắc User học muộn nhất ~15/12). (3) ~~Vòng cải tiến 23~~ — User 19:12 10/11/2026: duyệt **W59** + **W61** (đã vào `Session_Prompt.md` §7, §8); W62 / W63 bỏ. Cũ còn chờ (xét lúc kết phiên, không hỏi lẻ): W60 / W58 / W57 / W4 + W39. **Không gấp:** xoá collection thử `hue_anh_siglip2`; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; ảnh cũ `hue-rag-app:nhap` có file private (User `! docker image rm hue-rag-app:nhap`); báo cáo tiến độ cho giáo viên; mốc quyển báo cáo + slide + kịch bản demo. Đã đóng 09/11: tiền (trần 4,0), T3, khẩn cấp sau G, bật T1.
 
 ## Câu hỏi A còn nợ (không cần User)
