@@ -12,6 +12,8 @@ Luật chung việc này: **mức nhẹ** (`Session_Prompt.md` §7: ≤ 0,2 USD,
 | **E** `hue-rag-e4` | **Câu ngày nhanh hơn:** code tính sẵn ngày (hôm nay / đổi âm ↔ dương khi dò thấy) đưa vào ngữ cảnh thay vì model gọi công cụ `ngay_lich` 3–5 lần. Nhánh `p9-t1-nhanh`. Đọc: `backend/llm/ngay_lich.py`, `assistant.py` `ngay_lich_for_turn`; report T1 `report_agent/2026-11-02_phase_9_code/e_t1_ngay_implementation.md`; bộ câu ngày đã có | câu ngày chữ đầu p50 ≤ 3 s, p95 ≤ 5 s (S5 5,19 / max 11,0, n = 5 ⇒ đo 15–20 câu); ≤ 0,0005 USD / câu; **đúng ngày không tụt** so T1 đang bật (cùng bộ câu ngày); câu không có từ chỉ ngày ⇒ chuỗi gửi model giống byte | ≤ 0,1 USD | plan 1 trang ⇒ A; report `report_agent/2026-11-02_phase_9_code/e_t1_nhanh_implementation.md` |
 | **C** `hue-rag-4f` | **Review cả nhánh** B rồi E khi mỗi bên báo xong (`risk-gated-agent-review`, chỉ dựa plan + diff + số đo). Trước đó: rảnh (ghi "rảnh — chờ review" ở `STATUS_C.md`) | — | 0 (chạy lại ≤ 0,01 nếu cần) | `<việc>_review.md` cạnh report |
 
+- **B — A duyệt plan `docs/superpowers/plans/2026-11-10-phase-9-xa-giao-song-song-plan.md` sha `47009c7dc791` (19:10 10/11/2026)**: AT (a) dùng lại 4 số an toàn của `main`; vượt 0,0005 USD / câu ⇒ merge cờ `false`, A trình User.
+
 Điều kiện dừng: tiền dự phóng vượt 0,1 / việc ⇒ nhắn A; sàn an toàn / đúng ngày tụt ⇒ dừng, báo A (không chỉnh lời dặn vòng 2 khi chưa báo). Không làm: thêm tính năng, đổi model, đổi lời dặn ngoài phần cần cho việc.
 Nguyên văn phần đầu phiên 07/11 (11:53 → 15:43 07/11/2026): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-07.md`; 06/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-07_cong_dot_1_tu_soi.md`.
 
@@ -56,7 +58,7 @@ G = cổng 2 nhóm (đóng; phương án B đang chạy); T1 ngày + âm lịch 
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
-(1) Quyền phiên. (2) **Mốc đóng tính năng** (09/11 User chưa chốt; A đề xuất 30/11 — sau mốc chỉ sửa lỗi, đo, deploy, đóng gói; User bắt đầu học). (3) Vòng cải tiến (gom): **W61** đếm lỗi rẻ ở mốc trước khi viết plan tính năng; **W59** ⇒ `đang dùng`; cũ W60 / W58 / W57 / W4 + W39. **Không gấp:** xoá collection thử `hue_anh_siglip2`; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; ảnh cũ `hue-rag-app:nhap` có file private (User `! docker image rm hue-rag-app:nhap`); báo cáo tiến độ cho giáo viên; mốc quyển báo cáo + slide + kịch bản demo. Đã đóng 09/11: tiền (trần 4,0), T3, khẩn cấp sau G, bật T1.
+(1) ~~Quyền phiên~~ (10/11: như 09/11 + trần 4,2). (2) ~~Mốc đóng tính năng~~ — **User 19:08 10/11/2026: không chốt mốc; xong sớm đóng sớm, xong muộn đóng muộn, vẫn đảm bảo chất lượng** (A không hỏi lại; giữ mốc cứng đã biết: đóng code = chạy trên AWS ~25–30/12, nhắc User học muộn nhất ~15/12). (3) Vòng cải tiến (gom): **W61** đếm lỗi rẻ ở mốc trước khi viết plan tính năng; **W59** ⇒ `đang dùng`; cũ W60 / W58 / W57 / W4 + W39. **Không gấp:** xoá collection thử `hue_anh_siglip2`; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; ảnh cũ `hue-rag-app:nhap` có file private (User `! docker image rm hue-rag-app:nhap`); báo cáo tiến độ cho giáo viên; mốc quyển báo cáo + slide + kịch bản demo. Đã đóng 09/11: tiền (trần 4,0), T3, khẩn cấp sau G, bật T1.
 
 ## Câu hỏi A còn nợ (không cần User)
 
