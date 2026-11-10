@@ -56,7 +56,8 @@ thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riên
 | vector nghĩa | dãy 384 con số đại diện cho *ý nghĩa* một đoạn; hai đoạn cùng ý thì gần nhau (tính bằng model nhỏ e5-small, chạy ngay trên máy) |
 | BM25 | cách chấm theo **từ trùng** giữa câu hỏi và đoạn |
 | RRF | cách gộp hai bảng xếp hạng (theo nghĩa, theo từ): đoạn đứng cao ở cả hai thì lên đầu |
-| Qdrant | cơ sở dữ liệu cất các đoạn kèm vector để tìm nhanh |
+| chỉ mục | các đoạn + vector nghĩa + bảng từ khoá, dựng ra từ kho và cất trong Qdrant — thứ chatbot thật sự tìm trong đó; kho đổi thì phải dựng lại |
+| Qdrant | cơ sở dữ liệu cất chỉ mục để tìm nhanh (một "collection" = một chỉ mục trong Qdrant) |
 | ngữ cảnh | 10 đoạn tìm được, gửi cho model cùng câu hỏi |
 | model | `gpt-6-luna` của OpenAI — đọc ngữ cảnh rồi viết câu trả lời |
 | token | đơn vị chữ mà model đếm (một từ tiếng Việt ≈ 1–2 token); tiền tính theo token |
@@ -74,17 +75,18 @@ thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riên
 
 ## Thứ tự đọc (theo dòng chảy dữ liệu)
 
-| # | File | Đọc để biết |
+| Số | File | Đọc để biết |
 |---:|---|---|
-| 1 | [01_LUONG_HOAT_DONG_HE_THONG.md](01_LUONG_HOAT_DONG_HE_THONG.md) | Một câu hỏi đi qua những bước nào; một ví dụ trọn vẹn; dữ liệu người dùng gửi đi đâu |
-| 2 | [02_BAO_CAO_KHO_DU_LIEU.md](02_BAO_CAO_KHO_DU_LIEU.md) | Kho lấy từ đâu, đã sửa gì, còn thiếu gì |
-| 3 | [03_BAO_CAO_CHIA_DOAN.md](03_BAO_CAO_CHIA_DOAN.md) | Bài được cắt thành đoạn thế nào, vì sao cắt vậy |
-| 4 | [04_BAO_CAO_EMBEDDING_TU_KHOA.md](04_BAO_CAO_EMBEDDING_TU_KHOA.md) | Đoạn biến thành vector nghĩa + từ khoá ra sao, vì sao chọn model nhỏ |
-| 5 | [05_BAO_CAO_LUU_TRU_QDRANT.md](05_BAO_CAO_LUU_TRU_QDRANT.md) | Cất ở đâu, khi nào phải dựng lại |
-| 6 | [06_BAO_CAO_TIM_KIEM.md](06_BAO_CAO_TIM_KIEM.md) | Chọn 10 đoạn nào cho một câu hỏi, vì sao hay từ chối nhầm |
-| 7 | [07_BAO_CAO_SINH_CAU_TRA_LOI_API.md](07_BAO_CAO_SINH_CAU_TRA_LOI_API.md) | Trợ lý viết câu trả lời: phân loại, công cụ, kiểm nguồn, giao diện |
-| 8 | [08_BAO_CAO_HOI_BANG_ANH.md](08_BAO_CAO_HOI_BANG_ANH.md) | Hỏi bằng ảnh làm gì, đúng tới đâu |
-| 9 | [09_BAO_CAO_BO_CAU_HOI_GOLDEN.md](09_BAO_CAO_BO_CAU_HOI_GOLDEN.md) → [10_BAO_CAO_DANH_GIA.md](10_BAO_CAO_DANH_GIA.md) | Đo bằng bộ câu nào, chấm thế nào, tốt tới đâu |
+| 01 | [01_LUONG_HOAT_DONG_HE_THONG.md](01_LUONG_HOAT_DONG_HE_THONG.md) | Một câu hỏi đi qua những bước nào; một ví dụ trọn vẹn; dữ liệu người dùng gửi đi đâu |
+| 02 | [02_BAO_CAO_KHO_DU_LIEU.md](02_BAO_CAO_KHO_DU_LIEU.md) | Kho lấy từ đâu, đã sửa gì, còn thiếu gì |
+| 03 | [03_BAO_CAO_CHIA_DOAN.md](03_BAO_CAO_CHIA_DOAN.md) | Bài được cắt thành đoạn thế nào, vì sao cắt vậy |
+| 04 | [04_BAO_CAO_EMBEDDING_TU_KHOA.md](04_BAO_CAO_EMBEDDING_TU_KHOA.md) | Đoạn biến thành vector nghĩa + từ khoá ra sao, vì sao chọn model nhỏ |
+| 05 | [05_BAO_CAO_LUU_TRU_QDRANT.md](05_BAO_CAO_LUU_TRU_QDRANT.md) | Cất ở đâu, khi nào phải dựng lại |
+| 06 | [06_BAO_CAO_TIM_KIEM.md](06_BAO_CAO_TIM_KIEM.md) | Chọn 10 đoạn nào cho một câu hỏi, vì sao hay từ chối nhầm |
+| 07 | [07_BAO_CAO_SINH_CAU_TRA_LOI_API.md](07_BAO_CAO_SINH_CAU_TRA_LOI_API.md) | Trợ lý viết câu trả lời: phân loại, công cụ, kiểm nguồn, giao diện |
+| 08 | [08_BAO_CAO_HOI_BANG_ANH.md](08_BAO_CAO_HOI_BANG_ANH.md) | Hỏi bằng ảnh làm gì, đúng tới đâu |
+| 09 | [09_BAO_CAO_BO_CAU_HOI_GOLDEN.md](09_BAO_CAO_BO_CAU_HOI_GOLDEN.md) | Bộ câu chuẩn dùng để đo gồm gì, soạn thế nào |
+| 10 | [10_BAO_CAO_DANH_GIA.md](10_BAO_CAO_DANH_GIA.md) | Chấm thế nào, tốt tới đâu, yếu ở đâu |
 
 **Hồ sơ tra (ngoài đường đọc):** [91_BAO_CAO_SO_SANH_PHUONG_AN.md](91_BAO_CAO_SO_SANH_PHUONG_AN.md) (mọi cách đã thử / chọn / bỏ) ·
 [90_BAO_CAO_NEN_TANG.md](90_BAO_CAO_NEN_TANG.md) (dự án dựng trên gì) · [92_BAO_CAO_NGHIEN_CUU_PHASE_9.md](92_BAO_CAO_NGHIEN_CUU_PHASE_9.md) +
