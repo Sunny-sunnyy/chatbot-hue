@@ -70,3 +70,14 @@ M-1 chưa chạy qua model (nhận định theo nguồn gửi model). Dạng ng�
 
 **`changes_requested`** — 0 blocker, **1 major (M-1)**, 3 minor (không sửa). M-1 sửa nhỏ (regex + 1 test, 0 USD, không đổi số đo nào đã có) ⇒ E sửa, chạy lại test file chạm ⇒ C xem
 delta (chỉ phần sửa) ⇒ `ready`. Tiêu chí ghi trước 1–6: theo report + kiểm của C (Q1) — **đạt** sau lượt lại.
+
+## 7. Xem delta sau sửa M-1 (`7d6f25f..0385bcf`, 19:47 10/11/2026)
+
+- Sửa: `_AM_TIEN_TO` thêm nhóm "\s+âm" tuỳ chọn; trong `_ngay_am` bỏ khớp **không** "rằm", tháng viết bằng **số**, **không** có "âm". Rằm, tháng viết chữ (Giêng, Chạp…),
+  "… âm lịch", Tết: giữ. Áp cho cả câu hỏi lẫn tài liệu (cũng bỏ luôn 2 ngày lịch sử tháng số không "âm" của m-1).
+- Test: +3 khẳng định trong `test_lunar_dates_in_documents_need_lunar_marker_and_are_capped` — đúng tiêu chí đóng.
+- C chạy lại (0 USD): `test_ngay_lich.py` **82 passed**; probe: câu "mùng 2 tháng 9 năm nay …" ⇒ 0 ngày âm · "mồng 8 tháng 3 …" ⇒ 0 · đoạn "mồng 7 tháng 2 Âm lịch" (chữ hoa) ⇒ 1 · "mồng 10 tháng Giêng" ⇒ 1.
+- E đếm lại trên đoạn kho thật của 19 câu: số ngày âm giống lúc đo ⇒ số đo giữ (khớp với đếm của C: bộ đo 0 câu dạng này).
+- **M-1 đóng.** 3 minor giữ nguyên (m-1 nhẹ hơn sau sửa).
+
+**Decision cập nhật: `ready_for_user_confirmation`** — 0 blocker, 0 major mở, 3 minor không sửa.
