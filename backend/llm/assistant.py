@@ -79,6 +79,9 @@ class AssistantFlags:
     toa_do_lich: "dict | None" = field(default=None, compare=False, repr=False)
     # Thí nghiệm tốc độ #6 (plan 2026-11-04-phase-9-toc-do-song-song): đường stream chạy phần `tro_ly_hue` cùng lúc định tuyến; tắt = như cũ
     song_song_tra_loi: bool = False
+    # Xã giao song song (plan `2026-11-10-phase-9-xa-giao-song-song-plan.md`): trên đường của `song_song_tra_loi`, chạy thêm lần trò chuyện cùng lúc
+    # định tuyến; tắt = như cũ
+    song_song_tro_chuyen: bool = False
     # B6 (plan B6 bản 3 D10): cổng web sau câu trả lời kho — TẮT tới khi đạt luật ghi trước; cần định tuyến + vòng công cụ
     tra_web: bool = False
     # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
@@ -101,6 +104,8 @@ class AssistantFlags:
             raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
+        if self.song_song_tro_chuyen and not self.song_song_tra_loi:
+            raise ValueError("assistant.song_song_tro_chuyen needs assistant.song_song_tra_loi: true (same parallel path)")
         if self.ngay_lich and not self.tim_them:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
@@ -1067,8 +1072,10 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     """Thí nghiệm tốc độ #6 (plan `2026-11-04-phase-9-toc-do-song-song-plan.md`). Cờ `song_song_tra_loi` tắt (hoặc định tuyến không chạy /
     câu tìm do định tuyến viết) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
     chạy cùng lúc. (ii) chính là `answer_turn_stream` với `router` tắt trên **trace phụ** (đi thẳng lần tìm đầu câu gốc + lần gọi trợ lý —
-    đầu vào hai lần gọi model không phụ thuộc tuyến). Sự kiện của (ii) giữ trong hàng đợi tới khi có tuyến:
-    `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
+    đầu vào hai lần gọi model không phụ thuộc tuyến). Cờ `song_song_tro_chuyen` (plan xã giao song song 10/11) ⇒ chạy thêm (iii) lần trò chuyện
+    trên trace phụ thứ hai (tuyến đặt sẵn `tro_chuyen` — đúng đường cũ của tuyến này). Sự kiện của mỗi phần giữ trong hàng đợi riêng tới khi có tuyến:
+    tuyến có phần chạy trước ⇒ huỷ phần kia, xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ hết, bỏ trace phụ, đi đường của
+    tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
     if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
         # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
@@ -1078,57 +1085,77 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
 
     # B6: bản cờ của phần chạy song song / đường trò chuyện tắt cả `tra_web` (cờ này cần `router`; cổng web chạy bằng `flags` gốc sau khi gộp)
     without_router = dataclasses.replace(flags, router=False, tra_web=False)
-    # B161 M-1: trace phụ mang **mọi đầu vào route đặt trước khi gọi lõi** (lịch sử B3; giá trị nút + câu gốc của lượt ghép B4b / B5) — chép
-    # từng trường (không `dataclasses.replace`: sẽ dùng chung list sổ nguồn / công cụ giữa hai trace)
-    spec = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
-    queue: asyncio.Queue = asyncio.Queue()
 
-    async def run_spec() -> None:
-        try:
-            async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, spec, without_router):
-                queue.put_nowait(event)
-        finally:
-            queue.put_nowait(_SPEC_END)
+    def spec_trace(**preset) -> AnswerTrace:
+        # B161 M-1: trace phụ mang **mọi đầu vào route đặt trước khi gọi lõi** (lịch sử B3; giá trị nút + câu gốc của lượt ghép B4b / B5) — chép
+        # từng trường (không `dataclasses.replace`: sẽ dùng chung list sổ nguồn / công cụ giữa hai trace)
+        return AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS}, **preset)
+
+    def start(spec: AnswerTrace):
+        queue: asyncio.Queue = asyncio.Queue()
+
+        async def run() -> None:
+            try:
+                async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, spec, without_router):
+                    queue.put_nowait(event)
+            finally:
+                queue.put_nowait(_SPEC_END)
+        return spec, queue, asyncio.create_task(run())
 
     yield "status", {"stage": "routing"}
-    task = asyncio.create_task(run_spec())
-    keep = merged = False
-    finished_before_route = False
+    running = {ROUTE_TRO_LY_HUE: start(spec_trace())}
+    if flags.song_song_tro_chuyen:
+        running[ROUTE_TRO_CHUYEN] = start(spec_trace(route=ROUTE_TRO_CHUYEN))
+    kept = None
+    merged = False
+    done_before_route: dict[str, bool] = {}
     try:
         await _pick_route(query, generator, trace, flags)
-        keep = trace.route == ROUTE_TRO_LY_HUE and trace.fixed_outcome is None
-        if keep:
+        if trace.fixed_outcome is None and trace.route in running:
+            kept = trace.route
+        done_before_route = {route: task.done() for route, (_, _, task) in running.items()}
+        for route, (_, _, task) in running.items():
+            if route != kept:
+                task.cancel()  # huỷ ngay: lần gọi bị bỏ không giữ chữ đầu của tuyến khác (sàn KC)
+        if kept is not None:
+            spec, queue, task = running[kept]
             while (event := await queue.get()) is not _SPEC_END:
                 yield event
-            await task  # lỗi của (ii) đi ra nguyên kiểu như đường cũ
+            await task  # lỗi của phần giữ đi ra nguyên kiểu như đường cũ
             _merge_spec(trace, spec, recorder)
             merged = True
-            async for event in _web_stream(query, generator, trace, flags, tim_web):  # B6: sau khi gộp (tuyến đã chắc là `tro_ly_hue`)
-                yield event
+            if kept == ROUTE_TRO_LY_HUE:
+                async for event in _web_stream(query, generator, trace, flags, tim_web):  # B6: sau khi gộp (tuyến đã chắc là `tro_ly_hue`)
+                    yield event
             return
-        finished_before_route = task.done()
-        task.cancel()  # huỷ ngay: lần gọi bị bỏ không giữ chữ đầu của tuyến khác (sàn KC)
         if trace.fixed_outcome is not None:
             yield "delta", trace.answer
             return
-        # `tro_chuyen`: định tuyến đã xong ⇒ đường cũ của tuyến này, không định tuyến lại
+        # `tro_chuyen` khi cờ xã giao tắt: định tuyến đã xong ⇒ đường cũ của tuyến này, không định tuyến lại
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, without_router, recorder, tim_web):
             yield event
     finally:
-        if not task.done():
-            task.cancel()
+        tasks = [task for _, _, task in running.values()]
+        for task in tasks:
+            if not task.done():
+                task.cancel()
         # Việc nhỏ (7) 08/11: người dùng ngắt ⇒ Starlette huỷ kiểu anyio (mọi lần chờ trong vùng bị huỷ lại) ⇒ không che thì `gather` bị huỷ, bỏ qua
-        # bước gộp dưới ⇒ `chat_metrics` mất `llm_calls` / USD của (ii) (tái tạo: `data/phase_11/viec_nho_e/do_dung_song_song.py`).
+        # bước gộp dưới ⇒ `chat_metrics` mất `llm_calls` / USD của phần chạy trước (tái tạo: `data/phase_11/viec_nho_e/do_dung_song_song.py`).
         with anyio.CancelScope(shield=True):
-            await asyncio.gather(task, return_exceptions=True)  # (ii) tự ghi `llm_calls` + đọc nốt trong `finally` của nó; lỗi của (ii) bị bỏ (D3)
-        if keep and not merged:  # lỗi / ngắt trước khi gộp xong ⇒ gộp ở đây như trước B6
-            _merge_spec(trace, spec, recorder)
-        elif not keep:
-            usd = sum(call["usd"] for call in spec.llm_calls)
-            trace.n_tra_loi_bo, trace.bo_huy_giua = 1, not finished_before_route
-            if trace.bo_huy_giua and spec.generation_ms is not None and spec.packed is not None:
-                usd += cost_usd(spec.packed.input_tokens, 0)  # lần gọi bị huỷ không có usage ⇒ cận dưới (plan D2)
-            trace.usd_bo = usd
+            await asyncio.gather(*tasks, return_exceptions=True)  # mỗi phần tự ghi `llm_calls` + đọc nốt trong `finally` của nó; lỗi phần bỏ bị bỏ (D3)
+        if kept is not None and not merged:  # lỗi / ngắt trước khi gộp xong ⇒ gộp ở đây như trước B6
+            _merge_spec(trace, running[kept][0], recorder)
+        dropped = [route for route in running if route != kept]
+        if dropped:
+            usd, cancelled_mid = 0.0, False
+            for route in dropped:
+                spec = running[route][0]
+                usd += sum(call["usd"] for call in spec.llm_calls)
+                if not done_before_route.get(route, False):
+                    cancelled_mid = True
+                    if spec.generation_ms is not None and spec.packed is not None:
+                        usd += cost_usd(spec.packed.input_tokens, 0)  # lần gọi bị huỷ không có usage ⇒ cận dưới (plan D2); lần trò chuyện ⇒ 0
+            trace.n_tra_loi_bo, trace.bo_huy_giua, trace.usd_bo = len(dropped), cancelled_mid, usd
 
 
 def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:

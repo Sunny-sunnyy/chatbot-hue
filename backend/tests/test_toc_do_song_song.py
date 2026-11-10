@@ -17,6 +17,7 @@ from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 
 ON = AssistantFlags(router=True, tim_them=True, song_song_tra_loi=True)
 OFF = dataclasses.replace(ON, song_song_tra_loi=False)
+CHAT_ON = dataclasses.replace(ON, song_song_tro_chuyen=True)  # plan xã giao song song 10/11
 QUERY = "Giá vé tham quan Đại Nội Huế là bao nhiêu?"
 USAGE = {"input_tokens": 100, "output_tokens": 20, "total_tokens": 120,
          "input_tokens_details": {"cached_tokens": 0, "cache_write_tokens": 0}, "output_tokens_details": {"reasoning_tokens": 0}}
@@ -172,6 +173,50 @@ def test_emergency_route_keeps_early_answer(deps):
     trace, events, _ = collect(deps, answer_turn_stream_parallel, ON, route="khan_cap", router_delay=0.2, answer_delay=0)
     assert trace.route == "tro_ly_hue" and trace.emergency_by == "router" and trace.n_tra_loi_bo == 0
     assert any(k == "delta" for k, _, _ in events)
+
+
+# ---------- Xã giao song song (plan `2026-11-10-phase-9-xa-giao-song-song-plan.md`, tiêu chí T) ----------
+
+def test_chat_route_holds_chat_events_until_routed_and_sends_same_requests(deps):
+    """Trò chuyện xong trước định tuyến ⇒ không sự kiện nào ngoài `routing` ra trước khi có tuyến; chuỗi sự kiện, yêu cầu gửi model (cả lần trò
+    chuyện) và trace như đường #6 hiện tại (cờ xã giao tắt)."""
+    old_trace, old_events, old_calls = collect(deps, answer_turn_stream_parallel, ON, route="tro_chuyen", router_delay=0.4, answer_delay=0)
+    trace, events, calls = collect(deps, answer_turn_stream_parallel, CHAT_ON, route="tro_chuyen", router_delay=0.4, answer_delay=0)
+    assert events[0][:2] == ("status", {"stage": "routing"}) and all(done for _, _, done in events[1:])
+    assert [(k, d) for k, d, _ in events] == [(k, d) for k, d, _ in old_events]
+    assert _request_bytes(calls) == _request_bytes(old_calls)  # định tuyến + phần Huế bị bỏ + trò chuyện: cùng yêu cầu, chỉ khác thời điểm
+    assert trace.answer == old_trace.answer and trace.so_nguon == [] and trace.cited == () and trace.packed is None
+    assert [c["route"] for c in trace.llm_calls] == ["router", "tro_chuyen"]
+    assert trace.n_tra_loi_bo == 1 and trace.usd_bo > 0  # phần Huế bị bỏ (xong trước tuyến ⇒ usage thật)
+
+
+@pytest.mark.parametrize("router_delay, answer_delay", [(0.4, 0), (0, 0.4)])  # trò chuyện xong trước tuyến / bị huỷ giữa chừng
+def test_hue_route_never_shows_the_early_chat(deps, router_delay, answer_delay):
+    old_trace, old_events, _ = collect(deps, answer_turn_stream_parallel, ON, route="tro_ly_hue", router_delay=router_delay, answer_delay=answer_delay)
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, CHAT_ON, route="tro_ly_hue", router_delay=router_delay, answer_delay=answer_delay)
+    assert [(k, d) for k, d, _ in events] == [(k, d) for k, d, _ in old_events]
+    assert trace.answer == old_trace.answer and [s.id for s in trace.so_nguon] == [s.id for s in old_trace.so_nguon]
+    assert [c["route"] for c in trace.llm_calls] == ["router", "tro_ly_hue"]  # không lần trò chuyện nào trong trace chính
+    assert trace.n_tra_loi_bo == 1 and trace.bo_huy_giua is (answer_delay > 0)
+
+
+def test_out_of_scope_drops_both_early_answers(deps):
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, CHAT_ON, route="ngoai_pham_vi", router_delay=0.3, answer_delay=0)
+    assert [(k, d) for k, d, _ in events] == [("status", {"stage": "routing"}), ("delta", OUT_OF_SCOPE_ANSWER)]
+    assert [c["route"] for c in trace.llm_calls] == ["router"] and trace.so_nguon == [] and trace.packed is None
+    assert trace.n_tra_loi_bo == 2 and trace.bo_huy_giua is False and trace.usd_bo > 0
+
+
+def test_chat_error_goes_out_like_the_old_chat_path(deps):
+    """(iii) lỗi + tuyến `tro_chuyen` ⇒ lỗi ra như đường cũ; tuyến khác ⇒ bỏ (câu cố định không bị chạm)."""
+    errors = []
+    for flags in (ON, CHAT_ON):
+        with pytest.raises(Exception) as caught:
+            collect(deps, answer_turn_stream_parallel, flags, route="tro_chuyen", router_delay=0.2, answer_delay=0, answer_fails=True)
+        errors.append(type(caught.value))
+    assert errors[0] is errors[1]
+    trace, events, _ = collect(deps, answer_turn_stream_parallel, CHAT_ON, route="ngoai_pham_vi", router_delay=0.3, answer_delay=0, answer_fails=True)
+    assert [d for k, d, _ in events if k == "delta"] == [OUT_OF_SCOPE_ANSWER] and trace.n_tra_loi_bo == 2
 
 
 # ---------- B161 M-1: lượt mang giá trị nút (B4b / B5) — phần chạy trước nhận đủ đầu vào route đặt ----------
