@@ -1,56 +1,99 @@
-# Báo cáo hệ thống hue_rag — mục lục cho bạn
+# Báo cáo hệ thống hue_rag — bắt đầu ở đây
 
-**Cập nhật lần cuối: 19:32 10/11/2026** — sửa mọi chỗ cũ / sai so với hiện trạng 10/11 ở mục lục và 10 báo cáo khâu (bạn yêu cầu báo cáo luôn đúng); các bản trước: xem lịch sử git. Bạn chỉ cần đọc thư mục này. Báo cáo kỹ thuật của agent ở
-`report_agent/`; report cũ tới 24/10 ở `reports/` (lịch sử).
+Cập nhật 10/11/2026 (bản mẫu sắp xếp lại; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
+của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "Đọc chi tiết" trỏ sang đó. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-## Muốn biết gì ⇒ đọc file nào
+## Chatbot này là gì
 
-| Muốn biết | File | Cập nhật lần cuối |
+Trợ lý du lịch – văn hoá Huế trên một trang web (gọi là "chatbot" hay "trợ lý" đều là một hệ thống). Người dùng hỏi bằng tiếng Việt có dấu; chatbot
+**trả lời từ kho bài viết đã biên soạn** (204 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
+chỉ có ba thứ: ngày tháng và dự báo thời tiết (code tính / lấy), và mục "Từ web (chưa kiểm)" tách riêng khi kho không có. Kho không có ⇒ nói "không đủ thông
+tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng một câu cố định.
+
+**Làm được (đang chạy):**
+- Hỏi đáp về Huế; nhớ 3 câu hỏi gần nhất trong một cuộc trò chuyện (chỉ câu hỏi, không nhớ câu trả lời); chữ hiện dần; dòng "Nguồn" bấm được để đọc đoạn gốc / cả bài.
+- Trò chuyện xã giao (chào, cảm ơn, hỏi chatbot là ai).
+- Câu hỏi có ngày (hôm nay, cuối tuần, rằm, Tết, ngày âm của lễ hội): **ngày do code tính**, model chỉ diễn đạt.
+- Dự báo thời tiết Huế 7 ngày (số lấy từ Open-Meteo, code dựng câu).
+- Kho không có ⇒ tra web một lần, hiện riêng mục "Từ web (chưa kiểm)".
+- Biểu mẫu "Lên kế hoạch": chọn số ngày / người đi cùng / sở thích ⇒ code xếp lịch theo buổi từ địa điểm trong kho, model viết lời.
+- Hỏi bằng ảnh: chụp ảnh ⇒ chatbot gợi ≤ 3 tên điểm / món ⇒ người dùng bấm xác nhận mới trả lời.
+- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 204 bài, nút 👍 / 👎 dưới câu trả lời.
+
+**Chưa làm được / chưa bật:** lịch trình từ câu gõ tự do (chỉ qua biểu mẫu) · bản đồ vẽ cả lịch trình (có code, chờ bạn duyệt toạ độ) · giọng nói (chờ 40 câu
+thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · lưu trú, quán gần đây, sự kiện theo ngày · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
+chưa đưa lên mạng (đã chạy thử bản đóng gói Docker trên máy; đưa lên máy chủ AWS chờ bạn quyết + tài khoản).
+
+**Đang làm (chưa vào chatbot):** câu hỏi lịch chung không nhắc Huế (vd "rằm tháng này là ngày nào") hiện bị xếp ngoài phạm vi ⇒ đang sửa bước phân loại.
+**Bước cuối Phase 9:** đo lại cả hệ thống hiện tại so với bản cuối Phase 8 trên cùng các bộ câu (kế hoạch đang nháp).
+
+## Số chính (mỗi số chỉ ghi ở đây — file khác trỏ về)
+
+**Yêu cầu bạn chốt (28/10):** chữ đầu tiên hiện trên trình duyệt sau ≤ 3 s ở câu giữa (trung vị), ≤ 5 s ở 95 % câu; tiền ≤ 0,0005 USD / câu. **Thứ tự lỗi
+nặng → nhẹ:** sai cảnh báo an toàn > nói chắc sai > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
+
+| Đo gì | Kết quả | Đo lúc nào, trên gì |
 |---|---|---|
-| Chatbot đang chạy thế nào (toàn cảnh) | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | 20:53 10/11/2026 (bản 35: câu có ngày — code tính sẵn ngày trước lần gọi model đầu, công cụ ngày chỉ dự phòng) |
-| **Nghiên cứu rộng trước Phase 9** (thực tế triển khai, người dùng cần gì, paper, repo; Huế TRIPO) | [BAO_CAO_NGHIEN_CUU_PHASE_9.md](BAO_CAO_NGHIEN_CUU_PHASE_9.md) | 21:05 04/11/2026 (bản 5: đọc code 8 repo + paper, TRIPO vòng 3, agent ⇒ tính năng theo bậc) · 18:40 03/11/2026 (bản 4: sản phẩm thật — 15 trợ lý thế giới + Huế TRIPO vòng 2 ⇒ tính năng đáng học theo bậc) · 14:55 02/11/2026 (bản 3: đổi hướng agent có công cụ — khoá AI FDE, ChatGPT, Serper, SDK; spec duyệt) · 16:13 01/11/2026 (bản 2: ChatGPT đã kiểm, thử Huế TRIPO 10 câu, hướng Phase 9 bạn chọn, lịch đến bảo vệ) · 15:25 01/11/2026 (bản 1 sơ bộ) |
-| **Đề xuất mở rộng + lộ trình Phase 9–12** (agent nhìn thấy được, tính tiền bằng code, ảnh, giọng nói, trải nghiệm Huế, lưu trú, vận hành / AWS) — bậc 1 bạn duyệt; ý khác là backlog | [DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md](DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md) | 10:24 05/11/2026 (bản 2: chia Phase 10–12, nghiên cứu ảnh + lưu trú, backlog) · 09:27 05/11/2026 (bản 1: brainstorm 21 ý + nghiên cứu Codex 3 mạch, A kiểm 8 nguồn) |
-| **So sánh mọi phương án đã thử / chọn / bỏ** (Phase 0 → 8.2, sửa kho, Qwen3-8B) — theo khâu + theo Phase | [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md) | 14:33 01/11/2026 (bản 5: B0 — E7, S2, §6) · 11:29 01/11/2026 (bản 3: mới; 62 khối, có số đo + nhãn độ tin; 2 lượt kiểm độc lập đạt; phần streaming / đo cuối thêm sau) |
-| Chất lượng hiện tại, điểm mốc, chỗ yếu, thước đo (7B, 8.1, 8.2, đợt sửa kho 1–2) | [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | 19:32 10/11/2026 (bản 7: nói rõ chatbot Phase 9 chưa đo lại cả bộ 176 câu (đo ở B7); số tốc độ 09/11) |
-| Nền tảng dự án (Phase 0–1) | [BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) | 19:32 10/11/2026 (bản 6: 6 nhóm cấu hình, log xoay vòng) |
-| Chia tài liệu thành đoạn (Phase 2) | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | 19:32 10/11/2026 (bản 7: số đoạn 8.435) |
-| Vector nghĩa + từ khóa (Phase 3) | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | 19:32 10/11/2026 (bản 6: trợ lý tìm thêm ≤ 2 lần) |
-| Lưu vào Qdrant (Phase 4) | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | 19:32 10/11/2026 (bản 5: 2 collection (thêm collection thử ảnh), build lại 05/11) |
-| Tìm đoạn liên quan (Phase 5) | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | 19:32 10/11/2026 (bản 12: thêm bước định tuyến + tìm thêm) |
-| Sinh câu trả lời, API, giao diện (Phase 6) | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | 20:53 10/11/2026 (bản 48: **câu hỏi về ngày nhanh hơn** — chữ đầu trung vị 5,60 ⇒ 2,35 s, 0,00049 ⇒ 0,00036 USD / câu, merge `1633c18`) |
-| Bộ câu hỏi chuẩn Golden (Phase 7, 7A) | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) | 09:40 08/11/2026 (bản 9: sửa chỗ ghi sai — bộ kín mới 40 câu đã dùng 01/11, cần bộ mới nữa) · 11:04 01/11/2026 (bản 8: 1 câu keyword lệch kho chỉ ở hoa / thường — chấm không sai; **bạn giữ nguyên**) |
-| **Hỏi bằng ảnh (Phase 10)** — **bật từ 08/11** (10:31 08/11/2026); luna gợi tên + bạn xác nhận; SigLIP 2 thử âm | [BAO_CAO_HOI_BANG_ANH.md](BAO_CAO_HOI_BANG_ANH.md) | 19:32 10/11/2026 (bản 4: đã bật 08/11 — bỏ chỗ ghi "cờ tắt") |
-| Sửa kho dữ liệu, tạo lại chỉ mục (Phase 7A2 → đợt 1 28/10 → đợt 2 **đã áp** 30/10) | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | 19:32 10/11/2026 (bản 10: 2 collection, giờ mở cửa 11 điểm) |
-| Rà code: nên sửa gì (bạn duyệt 5 gói 25/10 — **đã sửa xong cả 5**, 26/10) | [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md) | 17:11 31/10/2026 (bản 3: viết lại thành "5 gói đã xong", kèm commit) |
-| Chuyện từng ngày | [nhat_ky/](nhat_ky/) — mới nhất: [10/11 — câu ngày nhanh đạt (chờ bạn), xã giao chưa đạt, báo cáo sửa cho đúng hiện trạng](nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md) | 19:48 10/11/2026 |
+| Kho | 204 bài → 8.435 đoạn | chỉ mục dựng lại 05/11 |
+| Điểm chất lượng (thang 1–5) | Đúng **4,71** · Đủ ý **4,58** · Trúng ý **4,72** | **bản cuối Phase 8** (01/11), 129 câu Golden có đáp án trong kho (đã bỏ 29 câu ít giống cách người thật hỏi) |
+| … loại câu yếu nhất | câu cần ghép nhiều nguồn: Đủ ý **3,50** (Phase 9 thêm "tìm thêm" để sửa — chưa đo lại trên cả bộ) | như trên |
+| Từ chối nhầm (kho có đáp án mà nói "không đủ thông tin") | **4–6 / 158** câu (mỗi lần chạy lại ra 4–6 vì model viết hơi khác mỗi lần); trước khi có "tìm thêm": 12 / 158 | 158 câu Golden có đáp án trong kho, 03/11 |
+| Câu ngoài kho mà phần trả lời từ kho vẫn trả lời | **0** trên mọi bộ đã đo | 18 câu Golden ngoài kho + bộ an toàn (mục web ghi riêng, không tính ở đây) |
+| An toàn (vé, giờ, quy định, cảnh báo) | 0 câu đảo cảnh báo; 2 câu nói sai điều kiện kiểu mới (vd ghi sai giờ) — đúng ngưỡng cho phép ≤ 2, bản trước sinh lại cũng sai y vậy | bộ 32 câu an toàn, lượt đo cuối Phase 8 (01/11); mỗi phần mới của Phase 9 đều đo lại bộ này trước khi bật |
+| Tốc độ tới **chữ đầu tiên** (trung vị / 95 % câu) | câu về Huế **2,16 / 4,32 s** ✓ · câu có ngày **2,35 / 4,56 s** ✓ · ngoài phạm vi 1,62 / 2,97 s ✓ · **xã giao 3,46 / 7,73 s ✗** | trình duyệt thật, chạy một lần trên 65 câu (09/11); câu có ngày: 19 câu (10/11). Thời gian tới lúc xong cả câu chưa đo chung |
+| Tiền một câu (theo bảng giá OpenAI, gồm cả phí lưu tạm) | câu về Huế **0,00047 USD** (~12 đồng, sát trần) · câu có ngày 0,00036 USD | cùng lượt trên |
+| Hỏi bằng ảnh | tên đúng nằm trong 3 gợi ý ở **22 / 25** ảnh; đoán mất ~3 s (chậm nhất 6–9 s ✗) | 05/11 |
 
-## Trạng thái ngắn
+**Bản cuối Phase 8 khác bản đang chạy ở đâu:** Phase 8 chỉ có "tìm 10 đoạn → model trả lời". Bản đang chạy thêm bước phân loại câu, tìm thêm, nhớ câu hỏi, tra web,
+thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riêng trên bộ câu của nó trước khi bật; cả hệ mới sẽ đo lại trên bộ 176 câu ở bước cuối Phase 9.
 
-| Phần | Trạng thái |
+## Từ hay gặp
+
+| Từ | Nghĩa |
 |---|---|
-| Chatbot full-corpus (204 file, 8.435 đoạn từ 05/11 tối sau đợt giờ mở cửa; e5-small + BM25, gpt-6-luna, 10 đoạn ngữ cảnh) | Đã xử lý, đóng gói |
-| Thước đo + điểm mốc 176 câu | Đã xử lý, đóng gói; mốc người B0 (01/11) chỉ tham khảo — xem dòng Phase 8.2 |
-| Từ chối nhầm, bảng giá khó tìm, đoạn vụn | Xử lý một phần: từ chối nhầm 22 / 158 câu (8.1, 5 đoạn) ⇒ 12 / 158 (30/10, 10 đoạn + kho sửa đợt 2) ⇒ **4–6 / 158** (03/11, trợ lý được tìm thêm ≤ 2 lần); bảng giá khó tìm, đoạn vụn chưa xử lý |
-| Model vector Qwen3-8B thay e5-small | **Đã thử, chưa áp dụng** (30/10): kém hơn — 3 / 40 câu thử mất đoạn đúng, bước tìm theo nghĩa chậm 0,02 ⇒ 2,2 s; chỉ mục thử đã xóa |
-| Dọn code + 2 kho món ăn cũ | Đã xử lý, đóng gói (bạn đóng 20:01) |
-| Rà 56 quyết định Phase 0–7 (Phase 8.1) | Đã xử lý, đóng gói (bạn đóng 15:27 25/10): **chỉ "10 đoạn thay vì 5" thắng** → đã áp dụng 28/10 (Phase 8.2) |
-| Phase 8.2 (áp dụng phương án thắng) | **Đã xử lý, đóng gói** (bạn đóng 10:23 28/10): **10 đoạn + NFC** vào chatbot (`510e1a8`); phép kiểm cuối 36 câu kín: đủ ý +0,82, đúng +0,70, 0 câu kém đi, câu ngoài kho vẫn từ chối 3 / 3; tốc độ khi đó chưa đạt (01/11 có streaming: đạt). B0 (01/11): bạn đọc 20 cặp mù 5 ↔ 10 đoạn — phần lớn như nhau; 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng "chưa rõ" (0 cặp quyết) ⇒ bạn chọn giữ 10. Mốc người tham khảo (kho cũ, không chọn bên theo cặp). |
-| Phase 8 (đóng gói Phase 1–8: streaming, giá đủ, lượt đo cuối, B0) | **Đã xử lý, đóng gói** — Phase 8 bạn đóng 14:29 01/11/2026; lượt đo cuối mọi sàn đạt |
-| Rà code các Phase trước | **Đã xử lý, đóng gói** — 5 gói sửa xong 26/10 (1a, 1b, 3, 4 ngày 25/10; đợt 3 = gói 2 + 5 ngày 26/10); mỗi gói review chéo + cổng ổn định; code backend 8.345 → 6.218 dòng |
-| Câu hỏi theo ngày, ngày âm lịch ("hôm nay", "rằm tháng Giêng là ngày nào") | **Đã xử lý** — công cụ ngày + âm lịch **bật 09/11**: code tính ngày, model chỉ diễn đạt; đúng ngày trên bộ đo; **còn chậm** (chữ đầu trung vị 5,2 s, sàn 3 s; 0,00063 USD / câu, trần 0,0005) ⇒ 10/11 đang làm bản nhanh (code tính sẵn ngày) |
-| Hiện chữ dần (streaming) | **Đã xử lý, đóng gói** 01/11 (merge `a80e12d`) — chữ đầu trên trình duyệt 1,23 / 2,61 s (trước định tuyến); trên cổng mới 07/11 trung vị 2,03 s (10 câu, một lần) |
-| Phase 9 (trợ lý có công cụ) | **Đang làm** (tiền đã dùng ≈ 3,6 / trần 4,2 USD). **Đang chạy:** phân loại câu hỏi 4 tuyến (trò chuyện / về Huế / ngoài phạm vi / khẩn cấp — từ 09/11 câu khẩn cấp đi thẳng trợ lý Huế, **bỏ câu soạn sẵn**), tìm thêm ≤ 2 lần, nhớ câu hỏi 3 lượt, 👍 / 👎, chạy song song câu về Huế, tra web khi kho không có ("Từ web, chưa kiểm"), thời tiết, ngày + âm lịch, cổng du lịch (trang chủ, Khám phá 204 bài), biểu mẫu "Lên kế hoạch", hỏi bằng ảnh, 4 chốt trước deploy (giới hạn lượt / ngày…, bật bằng biến môi trường). **Có code, cờ tắt:** lịch trình câu gõ tự do, bản đồ lịch trình (chờ phiếu toạ độ). **Thử rồi không áp dụng (09/11):** cổng 2 nhóm, web thành công cụ, bảng vé + giờ, lịch trình câu gõ. **Tốc độ (đo chung 09/11):** câu Huế chữ đầu 2,16 / 4,32 s ✓; xã giao chậm nhất 7,7 s ✗; câu ngày 5,2 s ✗ — 10/11 đang sửa. Còn: B7 so sánh cuối với RAG 1–8 |
-| Hỏi bằng ảnh (Phase 10) | **Đã xử lý, đang chạy** (bật 08/11): bạn chụp ảnh ⇒ model gợi ≤ 3 tên trong danh sách 42 điểm / món ⇒ bạn bấm xác nhận ⇒ mới trả lời; ảnh thu nhỏ gửi OpenAI. Đúng trong 3 gợi ý 22 / 25 ảnh |
-| Giọng nói (Phase 10), bản đồ lịch trình | Chưa thực hiện xong — giọng nói chờ bạn thu 40 câu; bản đồ có code, chờ bạn tick phiếu toạ độ |
-| Deploy AWS (Phase 12) | Chưa thực hiện — 4 chốt an toàn đã có code (09/11); deploy sau khi đóng tính năng |
-| Cách làm việc của các agent (luật, skill, hook) | 31/10 chiều áp khung AI FDE: hook giờ ước, xét lại luật đang thử (40 ⇒ 7), skill D + 2 skill agent — xem nhật ký 31/10 chiều |
-| Câu hỏi gõ không dấu | Chưa thực hiện — **ngoài phạm vi** (bạn quyết 15:15 25/10: người dùng gõ có dấu). Đã đo: tìm kiếm gần như hỏng (13/32 → 1/32 câu) |
+| kho | 204 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
+| đoạn | một mẩu của bài (một đoạn văn, một mục danh sách, một dòng bảng) — đơn vị để tìm và trích nguồn |
+| vector nghĩa | dãy 384 con số đại diện cho *ý nghĩa* một đoạn; hai đoạn cùng ý thì gần nhau (tính bằng model nhỏ e5-small, chạy ngay trên máy) |
+| BM25 | cách chấm theo **từ trùng** giữa câu hỏi và đoạn |
+| RRF | cách gộp hai bảng xếp hạng (theo nghĩa, theo từ): đoạn đứng cao ở cả hai thì lên đầu |
+| Qdrant | cơ sở dữ liệu cất các đoạn kèm vector để tìm nhanh |
+| ngữ cảnh | 10 đoạn tìm được, gửi cho model cùng câu hỏi |
+| model | `gpt-6-luna` của OpenAI — đọc ngữ cảnh rồi viết câu trả lời |
+| token | đơn vị chữ mà model đếm (một từ tiếng Việt ≈ 1–2 token); tiền tính theo token |
+| lời dặn | hướng dẫn cố định gửi kèm mọi câu cho model (cách trả lời, khi nào từ chối) |
+| phân loại câu hỏi | một lần gọi model ngắn xếp câu vào 4 loại: xã giao / về Huế / ngoài phạm vi / khẩn cấp. Khẩn cấp được trả lời như câu về Huế, chỉ đánh dấu riêng trong log để theo dõi |
+| công cụ | việc code làm khi model yêu cầu: tìm thêm trong kho, đổi ngày, lấy dự báo |
+| Golden | bộ 176 câu hỏi chuẩn có đáp án mẫu, dùng để chấm |
+| chấm mù | một model khác (Claude) chấm từng câu trả lời so với đáp án mẫu, **không biết** câu đó của bản nào. Đúng = không sai so với đáp án; Đủ ý = có đủ các ý của đáp án; Trúng ý = trả lời thẳng điều được hỏi, không lan man |
+| bộ kín | bộ câu người sửa code không được xem, chỉ mở một lần để kiểm cuối |
+| sàn | mức tối thiểu ghi **trước** khi đo; không đạt ⇒ không đưa vào chatbot |
+| cờ | công tắc bật / tắt một tính năng trong cấu hình |
+| trung vị / p95 | trung vị = câu ở giữa; p95 = 95 % câu nhanh hơn số này |
+| Docker, AWS | Docker = đóng gói chatbot thành một khối chạy được trên máy khác; AWS = dịch vụ thuê máy chủ của Amazon |
+| Phase | giai đoạn của đồ án: 0–8 dựng chatbot hỏi đáp từ kho và chọn cách làm tốt nhất; 9 trợ lý có công cụ; 10–12 ảnh, giọng nói, bản đồ, đưa lên mạng |
 
-Thang 5 mức: Đã xử lý, đóng gói · Đã xử lý · Xử lý một phần · Đã thử, chưa áp dụng · Chưa thực hiện.
+## Thứ tự đọc (theo dòng chảy dữ liệu)
 
-## Luật cập nhật (cho agent)
+| # | File | Đọc để biết |
+|---:|---|---|
+| 1 | [LUONG_HOAT_DONG_HE_THONG.md](LUONG_HOAT_DONG_HE_THONG.md) | Một câu hỏi đi qua những bước nào; một ví dụ trọn vẹn; dữ liệu người dùng gửi đi đâu |
+| 2 | [BAO_CAO_KHO_DU_LIEU.md](BAO_CAO_KHO_DU_LIEU.md) | Kho lấy từ đâu, đã sửa gì, còn thiếu gì |
+| 3 | [BAO_CAO_CHIA_DOAN.md](BAO_CAO_CHIA_DOAN.md) | Bài được cắt thành đoạn thế nào, vì sao cắt vậy |
+| 4 | [BAO_CAO_EMBEDDING_TU_KHOA.md](BAO_CAO_EMBEDDING_TU_KHOA.md) | Đoạn biến thành vector nghĩa + từ khoá ra sao, vì sao chọn model nhỏ |
+| 5 | [BAO_CAO_LUU_TRU_QDRANT.md](BAO_CAO_LUU_TRU_QDRANT.md) | Cất ở đâu, khi nào phải dựng lại |
+| 6 | [BAO_CAO_TIM_KIEM.md](BAO_CAO_TIM_KIEM.md) | Chọn 10 đoạn nào cho một câu hỏi, vì sao hay từ chối nhầm |
+| 7 | [BAO_CAO_SINH_CAU_TRA_LOI_API.md](BAO_CAO_SINH_CAU_TRA_LOI_API.md) | Trợ lý viết câu trả lời: phân loại, công cụ, kiểm nguồn, giao diện |
+| 8 | [BAO_CAO_HOI_BANG_ANH.md](BAO_CAO_HOI_BANG_ANH.md) | Hỏi bằng ảnh làm gì, đúng tới đâu |
+| 9 | [BAO_CAO_BO_CAU_HOI_GOLDEN.md](BAO_CAO_BO_CAU_HOI_GOLDEN.md) → [BAO_CAO_DANH_GIA.md](BAO_CAO_DANH_GIA.md) | Đo bằng bộ câu nào, chấm thế nào, tốt tới đâu |
 
-Mỗi thay đổi vào hệ thống đang chạy ⇒ sửa `LUONG_HOAT_DONG_HE_THONG.md`, `BAO_CAO_<KHÂU>.md` của đúng
-khâu (cả Tóm tắt), `nhat_ky/` của đợt, `session_prompt/Project_Status.md`, rồi bảng trên. Mẫu:
-`session_prompt/TEMPLATE_USER_REPORT.md`, `session_prompt/TEMPLATE_NHAT_KY.md`; quy tắc
-`session_prompt/WORKFLOW.md` §6. Giờ lấy bằng `date`.
+**Hồ sơ tra (ngoài đường đọc):** [BAO_CAO_SO_SANH_PHUONG_AN.md](BAO_CAO_SO_SANH_PHUONG_AN.md) (mọi cách đã thử / chọn / bỏ) ·
+[BAO_CAO_NEN_TANG.md](BAO_CAO_NEN_TANG.md) (dự án dựng trên gì) · [BAO_CAO_NGHIEN_CUU_PHASE_9.md](BAO_CAO_NGHIEN_CUU_PHASE_9.md) +
+[DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md](DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md) (vì sao làm Phase 9 – 12) · [DE_XUAT_SUA_CODE.md](DE_XUAT_SUA_CODE.md)
+(đợt dọn code 25–26/10) · [nhat_ky/](nhat_ky/) (chuyện từng ngày).
+
+## Luật cập nhật (cho agent — bạn bỏ qua mục này)
+
+- Thay đổi vào hệ thống đang chạy ⇒ sửa đúng file khâu bị chạm + 1 dòng nhật ký ngày đó; LUONG chỉ khi đường đi của câu hỏi đổi; số chung ⇒ **chỉ** bảng
+  "Số chính" ở trên (file khác trỏ về, không chép số). Quy tắc đủ: `session_prompt/WORKFLOW.md` §6.
+- Thân bài lời thường: không mã việc, mã commit, tên hàm, file:dòng — gom vào mục "Đọc chi tiết" cuối file. Phương án đã bỏ: 1 dòng + trỏ `BAO_CAO_SO_SANH_PHUONG_AN.md`.
+- Phần "đang chạy" của file khâu ≤ ~40 dòng; LUONG ≤ ~120 dòng. Không dòng "Trước: …", không khối "Mới ngày …" (git + nhật ký giữ lịch sử). Giờ lấy bằng `date`.
