@@ -47,3 +47,13 @@ Không build lại, không `compose up` lại, không gọi API (A giao). HTTPS 
 
 **`changes_requested`** — 0 blocker, **1 major (M-1: thêm câu cho User + chọn (a) / (b))**, 2 minor (ghi checklist). Phần còn lại đạt. Sửa nhỏ, 0 USD; không cần build lại để
 đóng M-1 nếu chọn (b) bằng ghi chú + câu cho User (build lại khi deploy thật).
+
+## 6. Xem delta sau sửa (report §5, 20:03 10/11/2026)
+
+- **M-1 (a, A chọn):** `dung_dockerignore.py` + `Dockerfile.dockerignore` chừa `data/phase_10/anh/danh_sach_ten.json`, `Dockerfile` thêm `COPY`. C đếm lại ảnh `hue-rag-app:dep10b`
+  [Chạy, `--network none`, `--rm --name c_kiem_anh3`]: `data/` đúng **4** file (thêm danh sách tên) · kho `.md` 204 · `*sealed*` 0 · `.env` 0 · `anh/rieng` 0 · `*backup*` 0.
+  B chạy: `anh: true`, route trả 415 với thân rỗng (không 404), log "Image route enabled" 1 / "startup failed" 0. Rà file runtime theo cờ bật: đủ — **đóng**.
+- **m-1:** dòng ⚠ `HUE_SITE` trong `compose.yml` (cạnh 3 biến chốt) + dòng checklist AWS — **đóng**.
+- **m-2:** `caddy:2.11.7@sha256:36c24ad91a7f…`; digest khớp ảnh trên máy (`docker image inspect` RepoDigests); B chạy lại "hết lượt + `X-Forwarded-For` giả ⇒ 429" với bản ghim — **đóng**.
+
+**Decision cập nhật: `ready_for_user_confirmation`** — 0 blocker, 0 major, 0 minor mở. Còn câu cho User ở report §3 (tra web, ảnh #5, số lượt, khoá / máy AWS / tên miền, xoá ảnh cũ).

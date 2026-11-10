@@ -50,7 +50,7 @@ IP Caddy trong mạng compose không cố định. Rủi ro còn lại: client t
 2. **Ảnh #5 lễ hội thật:** bản công khai hiện **không** có (ảnh Commons thay). Muốn có ⇒ cần quyền dùng ảnh.
 3. **Số lượt / IP / ngày:** mặc định 50 — User chọn số khác nếu muốn.
 4. Việc chỉ User làm được (đã có trong checklist): khoá OpenAI riêng có hạn mức chi tiêu; tài khoản / máy AWS; tên miền hoặc `<IP>.sslip.io`.
-5. Ảnh cũ trên máy còn file private (`hue-rag-app:nhap` đã không còn; `hue-rag-app:nhap2` sạch — 07/11). Không cần thì xoá: `! docker image rm hue-rag-app:nhap2`.
+5. Ảnh cũ trên máy: `hue-rag-app:nhap2` (07/11, sạch) và `hue-rag-app:dep10` (thiếu danh sách ảnh) — không cần thì xoá: `! docker image rm hue-rag-app:nhap2 hue-rag-app:dep10`; giữ `dep10b`.
 
 ## 4. Giới hạn
 
@@ -63,3 +63,15 @@ IP Caddy trong mạng compose không cố định. Rủi ro còn lại: client t
 Đã đóng app thành ảnh Docker theo `main` mới nhất và chạy đủ bộ (cơ sở dữ liệu + app + cổng Caddy) trên máy: trả lời được, đã tắt trang tài liệu API, chặn đúng khi hỏi
 quá số lượt (kể cả khi giả địa chỉ), log không ghi câu hỏi hay IP, ảnh không chứa dữ liệu kín. Một lỗ được bịt trước khi build: ảnh lễ hội không giấy phép suýt lọt vào ảnh
 công khai. Bước tiếp cần User: khoá OpenAI riêng, máy AWS, và quyết tra web.
+
+## 5. Sửa theo review C (`b_deploy_cuc_bo_review.md`; A quyết) — 20:01 10/11/2026 (`date`)
+
+| Finding | Sửa (nháp `data/phase_12/deploy_nhap/`) | Kiểm [Chạy] |
+|---|---|---|
+| **M-1** ảnh thiếu `data/phase_10/anh/danh_sach_ten.json` ⇒ hỏi bằng ảnh (bật trên `main`) tắt im lặng | A chọn (a): `dung_dockerignore.py` chừa file + `Dockerfile` COPY (danh sách tên, không private) | ảnh `hue-rag-app:dep10b`: `data/` = 4 file chừa; `/api/tinh_nang` `anh: true`; POST `/api/anh/ung_vien` rỗng ⇒ **415** (route chạy, không 404); log `Image route enabled` 1, `startup failed` 0 |
+| Rà file runtime (A) | theo `settings.yaml` + mã `api/`, `llm/`, `retrieval/`: cờ bật đọc kho 204 bài + `meta/full_corpus_conditions.json`, build record + sparse state, `diem_v3.json` (biểu mẫu lịch), `danh_sach_ten.json` (ảnh). `diem_toa_do_v5.json` chỉ nạp khi `ban_do_lich` bật (đang tắt); ngày âm = thư viện `lunar-vn`; thời tiết = mạng | đủ trong ảnh |
+| m-1 `HUE_SITE=:80` + cookie Secure ⇒ mất nhớ hội thoại không báo | dòng ⚠ trong `compose.yml` | — |
+| m-2 ghim Caddy + thử lại XFF giả | `caddy:2.11.7@sha256:36c24ad91a7f…` — v2.11.7 phát hành 03/10/2026 (tra `data/tra_cuu_cli/2026-11-10_caddy-ban/`, WebFetch GitHub release kiểm: 03 Oct, không pre-release; v2.11.9 = 05/11 chưa đủ 2 tuần) | stack với Caddy ghim: hết lượt + `X-Forwarded-For` giả ⇒ **429**; log 0 câu hỏi, 0 IP |
+
+Build lại 4 s (cache, chỉ thêm 1 lớp). Đếm lại ảnh: kho 204 md · `*sealed*` 0 · `*backup*` 0 · ảnh `rieng` 0 · `.env` 0. Đã `down -v`, xoá thư mục chạy thử. Tiền thêm ≈ 0,0004
+(1 câu). **Checklist AWS (thêm):** `HUE_SITE` = tên miền https hoặc `<IP>.sslip.io`, không để `:80`. Ảnh trên máy: `dep10b` (dùng), `dep10` (cũ, xoá được), `nhap2`.
