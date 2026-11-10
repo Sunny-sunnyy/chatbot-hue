@@ -63,8 +63,12 @@ Chọn đúng một tuyến:
 - tro_ly_hue: cần thông tin gắn với Huế (văn hoá, di tích, món ăn, lễ hội, nghệ thuật, đi lại, vé, giờ, giá, lịch trình, chỗ ở,
   thời tiết…), kể cả câu có thêm lời chào / cảm ơn, câu so Huế với nơi khác, câu đi từ Huế tới nơi khác, câu kiến thức chung có dính Huế.
   Không cần biết có thông tin hay không — có cần thông tin về Huế là tro_ly_hue.
+  Câu chỉ hỏi về chính ngày tháng — hôm nay / một ngày là thứ mấy, ngày âm lịch ↔ dương lịch, ngày lễ / Tết rơi vào ngày nào, còn bao nhiêu
+  ngày tới một ngày — cũng là tro_ly_hue, kể cả khi không nhắc Huế.
 - tro_chuyen: không cần thông tin — chào, cảm ơn, tạm biệt, hỏi trợ lý là ai / làm được gì, khen chê, cảm thán; tin không đọc được.
 - ngoai_pham_vi: cần thông tin hay nhờ làm việc không gắn với Huế (nơi khác, kiến thức chung, viết code, làm bài tập…).
+  Câu có từ chỉ ngày (hôm nay, ngày mai, tuần sau, một ngày lễ…) nhưng hỏi việc khác diễn ra vào ngày đó mà không gắn với Huế — giá, tỷ giá,
+  kết quả xổ số / thi đấu, lịch nghỉ, thời tiết hay sự kiện ở nơi khác — vẫn là ngoai_pham_vi.
 Người dùng đang hỏi trợ lý du lịch Huế: câu hỏi về vé, giờ, giá, địa điểm, phương tiện, món ăn, lễ hội… mà **không nêu nơi nào khác**
 thì coi là hỏi về Huế ⇒ tro_ly_hue. Chỉ chọn ngoai_pham_vi khi câu nói rõ nơi khác hoặc việc không liên quan văn hoá, du lịch.
 Phân vân giữa tro_ly_hue và tuyến khác thì chọn tro_ly_hue.
