@@ -20,8 +20,8 @@ chỉ có ở bài cần.
 | [2](02_CHUNKING.md) | Cắt sổ thành thẻ ghi chú: chunking | đã viết, chờ anh đọc |
 | [3](03_METADATA.md) | Ghi tên lên góc thẻ: metadata | đã viết, chờ anh đọc |
 | [4](04_EMBEDDING_VA_TU_KHOA.md) | Biến thẻ thành thứ tìm được: embedding và từ khoá | đã viết, chờ anh đọc |
-| 5 | Cất vào Qdrant; kho lệch thì không chạy | chưa viết |
-| 6 | Retrieval: tìm hai cách, trộn, giữ 10 đoạn | chưa viết |
+| [5](05_QDRANT.md) | Cất hộp thẻ vào tủ: Qdrant | đã viết, chờ anh đọc |
+| [6](06_RETRIEVAL.md) | Rút đúng thẻ: retrieval | đã viết, chờ anh đọc |
 | 7 | Reranking: đã thử 3 cách, vì sao không dùng | chưa viết |
 | 8 | Generation: lời dặn, ghi nguồn, câu từ chối, kiểm nguồn | chưa viết |
 
