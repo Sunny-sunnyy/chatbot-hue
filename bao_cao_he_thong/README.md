@@ -1,7 +1,6 @@
 # Báo cáo hệ thống hue_rag — bắt đầu ở đây
 
-> **Muốn hiểu hệ thống:** đọc các bài trong [hieu_he_thong/](hieu_he_thong/) theo số, bắt đầu từ bài 00 (đang viết; hiện có 00 và 01). Phần dưới đây là **sổ ghi việc**
-> để tra cứu khi cần.
+> **Đây là sổ ghi việc (quá khứ) của các agent, không phải bài học.** Muốn hiểu hệ thống: đọc [bai_hoc/](../bai_hoc/) theo số, bắt đầu từ bài 0.
 
 Cập nhật 10/11/2026 (bản mẫu sắp xếp lại; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
 của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "Đọc chi tiết" trỏ sang đó. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
