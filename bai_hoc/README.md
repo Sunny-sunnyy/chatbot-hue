@@ -31,7 +31,7 @@ chỉ có ở bài cần.
 |---|---|---|
 | [9](09_BO_CAU_HOI_MAU.md) | Đề kiểm tra: bộ câu hỏi mẫu | đã viết, chờ anh đọc |
 | [10](10_CHAM_BUOC_TIM.md) | Chấm bước tìm | đã viết, chờ anh đọc |
-| 11 | Chấm câu trả lời; mức tối thiểu; tốc độ và tiền — mỗi số tốt tới đâu | chưa viết |
+| [11](11_CHAM_CAU_TRA_LOI.md) | Chấm câu trả lời, và mỗi con số tốt tới đâu | đã viết, chờ anh đọc |
 
 **Phần 3 — Từ chatbot thành trợ lý**
 
