@@ -1,3 +1,10 @@
+# STATUS A — PHIÊN 11/11 (mở 08:18; cập nhật 08:20 11/11/2026 `date`)
+
+- Terminal A `hue-rag-96`. B / C / E hue_rag chưa mở; máy có 8 session dự án khác (RAM trống ~10 GB).
+- Kiểm nhanh: `main` `2b11660` = origin, sạch; hooksPath `.githooks`; **Qdrant tắt** (không container; `qdrant_storage/` đủ 2 collection, ảnh v1.18.3 còn) ⇒ bật khi việc cần; 4 nhánh chờ User xoá còn; `hieu_he_thong/` chưa có (VIỆC SỐ 1).
+- User: quyền "như 10/11" (08:20 11/11/2026).
+- Đang khai báo sửa (A): `bao_cao_he_thong/hieu_he_thong/` (mới), `bao_cao_he_thong/README.md`, `CURRENT_HANDOFF.md`, `STATUS_A.md`.
+
 # STATUS A — KẾT PHIÊN 10/11 (mở 19:02; cập nhật 22:44 10/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" — **VIỆC SỐ 1 = bài để hiểu cho User** (đọc trước file private `data/hoc_cung_user_2026-11-10/ghi_chu_cach_doc_cua_user.md` + memory `user-reading-style` + `WORKFLOW.md` §6 "Viết để User hiểu"); hỏi quyền phiên ⇒ 2 bài mẫu (00 cả hệ thống trong 3 phút; 01 kho = sổ tay) ⇒ User đọc ⇒ mới viết tiếp; đưa User lệnh `!` xoá 4 nhánh (handoff "Làm tiếp" 2).
