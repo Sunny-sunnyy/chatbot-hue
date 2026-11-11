@@ -1,34 +1,29 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 22:41 10/11/2026 (A, kết phiên 10/11). Trước: 22:27 09/11/2026 (A, kết phiên 09/11).
+Cập nhật: 10:43 11/11/2026 (A, kết phiên 11/11). Trước: 22:41 10/11/2026 (A, kết phiên 10/11).
 Nguyên văn handoff trong phiên 10/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-10.md`; 09/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-09.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md`.
 
-## PHIÊN SAU ĐỌC TRƯỚC (viết lại 22:41 10/11/2026, kết phiên 10/11)
+## PHIÊN SAU ĐỌC TRƯỚC (viết lại 10:43 11/11/2026, kết phiên 11/11)
 
-**Phiên 10/11 đã kết** (mở 19:02; User đi ngủ: "để các file còn lại cho session mai"). Quyền phiên 10/11 **hết hạn** ⇒ A mới hỏi lại User một câu.
+**Phiên 11/11 đã kết** (mở 08:18, chỉ A mở; User: "đọc sau"). Quyền phiên 11/11 **hết hạn** ⇒ A mới hỏi lại User một câu. **Dự án chưa xong** — Phase 9 tiếp tục.
+Khối kết phiên 10/11 nguyên văn: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-11.md`.
 
-**Hệ thống (`main` = `origin/main`):** như 09/11 + từ 10/11: **câu hỏi ngày nhanh** (`1633c18`: code tính sẵn ngày / ngày âm đưa vào ngữ cảnh trước lần gọi model đầu, công cụ `ngay_lich` chỉ còn dự phòng; chữ đầu p50 5,60 ⇒ 2,35 s, p95 10,14 ⇒ 4,56 s; 0,00049 ⇒ 0,00036 USD / câu) · **câu lịch chung không nhắc Huế đi trợ lý** (`89571d7`: chỉ đổi lời dặn định tuyến `164bd4a254e9` ⇒ `8cd30cbb359a`; câu chỉ hỏi về ngày tháng được trả lời, câu hỏi việc khác vào một ngày vẫn từ chối) · **biến môi trường cho Docker** (`5081e89`: `HUE_QDRANT_URL`, `HUE_TRA_WEB`; không đặt ⇒ như cũ). **Đóng hồ sơ:** xã giao chạy song song (p95 5,74 s > sàn 5; tag `hoso/p9-xa-giao-song-song`). Tag mốc B7 `p9-moc` = `18e8f42`. Deploy cục bộ đạt (ảnh 3,6 GB, 0 file riêng tư, 429 khi quá lượt, Caddy ghim 2.11.7) — chưa AWS.
-**Quyết định User 10/11:** quyền như 09/11 + trần Phase 9 **4,2**; **không chốt mốc đóng tính năng** ("xong sớm đóng sớm, vẫn đảm bảo chất lượng"); duyệt W59 + W61 (vào `Session_Prompt.md` §7, §8); "hạn chế test không cần, không over-engineer, đẩy nhanh; chi phí API vẫn duyệt"; câu lịch chung ⇒ giao bước phân loại (model), không luật từ khoá; **khi User vắng không đưa câu hỏi**.
-**Tiền 10/11:** ≈ 0,28 USD (B ≈ 0,25 · E ≈ 0,03 · A ≈ 0,002 · C 0). Phase 9 ≈ 3,88 / 4,2; quỹ B7 0,35 ⇒ thiếu ≈ 0,03 — hỏi User lúc chạy B7.
+**Hệ thống:** không đổi so với 10/11 (`main` chỉ thêm tài liệu). **Qdrant tắt lúc mở phiên 11/11** (không container; dữ liệu `qdrant_storage/` còn đủ) ⇒ việc cần chatbot: `docker compose up -d qdrant` trước.
+**Tiền 11/11:** 0 USD API (5 agent con chỉ đọc = quota Claude). Phase 9 ≈ 3,88 / 4,2.
 
-### VIỆC SỐ 1 — báo cáo để User hiểu được dự án (User tâm sự 10/11; quan trọng nhất)
-- **11/11 (A + User, hỏi từng câu):** thư mục **`bai_hoc/` ở gốc** (User chỉ đọc folder này; `bao_cao_he_thong/` = sổ ghi việc quá khứ, giữ); đích = **bảo vệ đồ án** (không phần dự án công ty); xương sống = **sơ đồ RAG hai giai đoạn User đã biết** (khoá Ed Donner); dàn 17 bài (`bai_hoc/README.md`); khuôn theo bài mẫu User đã khen ở một dự án khác (bảng từ đầu bài, mình / anh, Nguồn gập, "chuyện thật") — luật ở `WORKFLOW.md` §6 "Bài học cho User". Bài 0–2 viết lại theo góp ý (kể thẳng, không so "bản cơ bản", đủ chi tiết kỹ thuật) ⇒ User "ổn hơn, làm tiếp" ⇒ **đủ 17 bài (0–16) xong 10:36 11/11/2026**, chờ User đọc dần; sửa theo góp ý. Fact sheet: 5 agent con chỉ đọc (kết quả trong hội thoại A, không lưu file). Ghi chú private cách đọc của User (gồm 2 tin của A dự án khác 11/11): `data/hoc_cung_user_2026-11-10/ghi_chu_cach_doc_cua_user.md`. Các dòng dưới (10/11) về `hieu_he_thong/` đã thay bởi dòng này; `STATUS_C.md` dòng 9 cũ.
-- **User nói (tối 10/11, nguyên ý):** README + `01_LUONG…` "tạm chấp nhận, chưa dễ hiểu hẳn" (khó nhất: **từ khó / lạ**, **bảng nhiều số**); `02_BAO_CAO_KHO…` bản 10/11 "đọc không hiểu nổi" — không biết "chỉ mục", "phiếu", "vân tay" là gì; phần "đã sửa những đợt nào", "còn thiếu gì", "khi sửa kho làm gì", "đã thử, không dùng" không cần trên đường đọc. "Tôi đã không đọc code mà bạn còn viết khó hiểu như vậy, sao tôi nắm dự án được."
-- **Khó khăn chung User kể** (cả ở một dự án khác; chi tiết **private** `data/hoc_cung_user_2026-11-10/ghi_chu_cach_doc_cua_user.md` — đọc trước khi viết): agent làm hết, User chỉ đọc báo cáo ⇒ "không học được gì"; tài liệu viết như **sổ công trường** (đã làm gì, bao nhiêu, ở đâu) giả định người đọc có bức tranh lớn; một câu nhiều từ lạ / mã; "làm gì" trước "vì sao"; file gói nhiều ý + bảng số + đường dẫn; nhiều bộ tài liệu chồng nhau; **viết nhanh hơn tốc độ đọc**; sợ bị hỏi mà không trả lời được. Hiểu được khi: bài ngắn, mỗi bài một ý, vì sao trước, đi từ đơn giản nhất, giọng gần gũi + ví dụ đời thường (User học RAG qua khoá Udemy + YouTube).
-- **User chốt (A hỏi từng câu 10/11):** (1) kiểu viết **kể như giải thích** (văn xuôi ngắn, so sánh đời thường, một ví dụ — mẫu "kho = cuốn sổ tay du lịch; hỏi chùa Thiên Mụ ⇒ chatbot lật sổ tay, tìm vài đoạn, đọc rồi viết, kèm tên bài; sổ không có ⇒ nói không đủ thông tin, không bịa"); (2) mỗi bài trả lời: **nó là gì / làm gì · vì sao làm cách này · tốt tới đâu · khi nào hỏng**; (3) thuật ngữ: **lời thường trước, tên kỹ thuật một lần trong ngoặc sau** khi đã giải thích; (4) ~1 trang / 3 phút, **linh hoạt** — khâu làm kỹ thì dài hơn, không cắt ý quan trọng; (5) **hai thư mục**: `bao_cao_he_thong/hieu_he_thong/` = chuỗi bài để hiểu đánh số (bài 00 "cả hệ thống trong 3 phút", rồi 01 kho, 02 chia đoạn, … theo dòng chảy); file `01_…10_`, `9x_`, `nhat_ky/` hiện có = **sổ ghi việc** để tra. README chỉ trỏ "đọc `hieu_he_thong/` theo số". **Tránh:** câu hỏi kiểm tra, "nói lại bằng lời của bạn", áp lực sếp, mã việc / sha / đường dẫn trong bài, bảng dày số không nói số nào quan trọng / tốt hay xấu.
-- **Làm tiếp:** viết **2 bài mẫu** trước (00 + 01 kho) — một người viết cho cùng giọng (A hoặc một session, đọc file private trên + memory `user-reading-style`); mỗi bài ≤ 3 từ mới giải nghĩa tại chỗ, cuối bài "Ba điều chính"; số liệu đúng hiện trạng (README "Số chính", Project_Status §4) ⇒ **User đọc, góp ý** ⇒ mới viết tiếp; không viết hàng loạt. Chưa rõ ⇒ hỏi User từng câu có đáp án tick (User trả lời thật, chi tiết). **Còn dở:** User muốn nói rõ thêm chỗ khó ở README + 01 (đã chọn "từ khó / lạ" + "bảng nhiều số") — hỏi lại đầu phiên.
-- Luật viết cho mọi agent đã ghi ở `WORKFLOW.md` §6 "Văn phong cho User" (10/11).
+### Xong 11/11 — bài học cho User (VIỆC SỐ 1 của 10/11)
+- **`bai_hoc/` ở gốc repo, 17 bài (0–16)** + `README.md` (dàn bài + trạng thái). User **chỉ đọc folder này**; `bao_cao_he_thong/` = sổ ghi việc (quá khứ) của agent, vẫn cập nhật theo luật. Khuôn + luật: `WORKFLOW.md` §6 "Bài học cho User" (User chốt từng câu 11/11: bảo vệ đồ án, không phần dự án công ty; bám RAG 2 giai đoạn User đã biết; **kể thẳng, không so "bản cơ bản ↔ hue_rag"**; đủ chi tiết kỹ thuật; hình ảnh nền hướng dẫn viên + sổ tay; bảng từ đầu bài; mình / anh; "chuyện thật"; mỗi số kèm mốc + tốt tới đâu; mermaid khi cần).
+- Ghi chú private cách đọc của User (gồm 2 tin của A dự án khác): `data/hoc_cung_user_2026-11-10/ghi_chu_cach_doc_cua_user.md`.
 
 ### Làm tiếp (theo thứ tự)
-1. **Hỏi User quyền phiên** (một câu) ⇒ VIỆC SỐ 1 (bài mẫu 00 + 01; hỏi nốt chỗ khó README + 01).
-2. ~~User `!` xoá 4 nhánh~~ — XONG 08:35 11/11/2026 (local + origin; tag `hoso/p9-xa-giao-song-song` = `22abb2a` giữ).
-3. **User khi rảnh (không chặn):** bảng điểm v7 `data/phase_9/lich_trinh/diem_cho_user_v7.md` · phiếu toạ độ bản đồ `data/phase_11/ban_do/phieu_toa_do_11_diem.md` (⇒ bật `ban_do_lich`) · thu 40 câu giọng nói `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`.
-4. **Còn trong phạm vi trước đóng gói:** bản đồ (chờ phiếu), giọng nói (chờ 40 câu, nhánh `p10-giong-noi`), deploy AWS (câu Q-DP dưới), **B7** (nháp plan `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` + A chốt Q1–Q4; review khi gần chạy). Đợt 2 cổng (lưu trú, ăn gần, sự kiện): trước khi xây ⇒ lượt đếm rẻ theo W61.
-5. Giới hạn biết: biểu mẫu "dày lịch" gần như không tác dụng (chờ v7); người lớn tuổi / trẻ em không có buổi tối; câu lịch bị rút khi trả lời không có mã nguồn `[n]` (1 / 9 — luật cũ, đếm ≥ 20 câu trước khi sửa); log truy cập uvicorn ghi IP.
+1. **Hỏi User quyền phiên** (một câu).
+2. **Góp ý bài học:** User đọc dần ⇒ sửa ngay theo góp ý; câu sai ⇒ sửa + ghi ở mục Nguồn của bài + báo User. Không viết thêm bài khi User chưa yêu cầu. **Hệ thống đổi ⇒ sửa bài bị chạm trong `bai_hoc/` cùng đợt** với sổ ghi việc.
+3. **Phase 9 tiếp (như 10/11):** **B7** lượt đo cuối (nháp plan `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` + A chốt Q1–Q4; quỹ B7 thiếu ≈ 0,03 — hỏi User lúc chạy) · bản đồ (chờ phiếu toạ độ) · giọng nói (chờ 40 câu, nhánh `p10-giong-noi`) · deploy AWS (câu Q-DP dưới). Đợt 2 cổng (lưu trú, ăn gần, sự kiện): trước khi xây ⇒ lượt đếm rẻ (W61).
+4. **Ứng viên từ bài 16 "chỗ còn yếu"** (đề xuất, chưa duyệt — trình User khi bàn việc mới; mỗi cái cần lượt đếm rẻ trước): thử lại model xếp lại ở cấu hình 10 đoạn; kiểm số tiền / giờ trong câu trả lời kho phải có trong đoạn được trích; thu câu người dùng thật khi deploy.
+5. **User khi rảnh (không chặn):** đọc `bai_hoc/` · bảng điểm v7 `data/phase_9/lich_trinh/diem_cho_user_v7.md` · phiếu toạ độ `data/phase_11/ban_do/phieu_toa_do_11_diem.md` · thu 40 câu giọng nói `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`.
+6. Giới hạn biết (như 10/11): biểu mẫu "dày lịch" gần như không tác dụng; người lớn tuổi / trẻ em không có buổi tối; câu lịch bị rút khi thiếu `[n]` (1 / 9); log truy cập uvicorn ghi IP. Lệch nhỏ fact sheet thấy 11/11 (sửa khi chạm): chú thích `settings.yaml` cạnh `ngay_lich: true` và `anh.bat: true` còn ghi "TẮT tới khi đạt"; `07_BAO_CAO…` checklist còn dòng "câu lịch thuần ⇒ ngoài phạm vi" (sai từ 10/11); vài số dòng `file:dòng` cũ trong 05 / 06 / 07 / 10.
 
-**B kết phiên (B báo A; auto mode phiên B chặn B ghi `STATUS_B.md` ⇒ STATUS_B cũ — B đầu phiên sau tự viết lại):** không việc dở, không worktree / server / container; tiền B 10/11 ≈ 0,25 USD (xã giao 0,08 · deploy 0,001 · định tuyến lịch 0,169). Tự soi B: sàn p95 trên nhóm 20 câu = câu chậm thứ 2 ⇒ tính trước trước khi đặt sàn p95 nhóm nhỏ; plan nên ước cả mốc + vòng 2 (tiền thật ≈ 1,5× ước); giữ review deploy + rà danh sách chừa + bộ giữ mù (bắt lỗi thật).
-
-**Vòng tự soi 10/11:** vòng 1 (19:14) cắt bộ đo B / E; vòng 2 (22:42 10/11/2026) — chốt: ghi vào sổ vòng 24 (không luật mới ngoài W64 đề xuất); C: gửi review 1 tin; B: tính trước sàn p95 nhóm nhỏ.
+**Vòng tự soi 11/11:** chỉ A ⇒ tự soi một mình (STATUS_A): không test / đo nào chạy; agent con lập fact sheet đáng (bắt 3 câu sai). Sổ vòng 25 (S118–S120), không luật mới.
 
 ### Nhánh
 `main`; 4 nhánh 10/11 User xoá 08:35 11/11/2026. Đang mở cũ: `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). Worktree `/tmp`: không còn. Ảnh docker cục bộ: `hue-rag-app:dep10b` (đạt), `dep10`, `nhap2` (cũ, xoá được).
@@ -54,7 +49,7 @@ G = cổng 2 nhóm (đóng); T1 ngày + âm lịch (bật, bản nhanh 10/11); T
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu)
 
-(1) Quyền phiên. (2) VIỆC SỐ 1 (bài mẫu + chỗ khó README / 01). (Q-DP, **khi tới deploy AWS** — không hỏi sớm): tra web trên bản công khai · ảnh #5 riêng (mặc định không lên) · số lượt / IP / ngày (mặc định 50) · khoá OpenAI riêng + tài khoản AWS + tên miền (HUE_SITE phải là tên miền https, không thì cookie Secure làm mất nhớ hội thoại) · log truy cập uvicorn ghi IP ⇒ `--no-access-log`? · xoá ảnh docker cũ — report `report_agent/2026-11-08_phase_9_ban_13/b_deploy_cuc_bo_implementation.md` §3. (B7) quỹ thiếu ≈ 0,03 USD. **Vòng cải tiến cũ còn chờ** (gom một lần, không hỏi lẻ): W60 / W58 / W57 / W4 + W39 + vòng 24 (sổ). **Không gấp:** xoá collection thử `hue_anh_siglip2`; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; ảnh `hue-rag-app:nhap` có file private (User `! docker image rm hue-rag-app:nhap`); báo cáo tiến độ cho giáo viên; mốc quyển báo cáo + slide + kịch bản demo; nhãn cũ câu "hôm nay âm lịch" trong bộ 30/10 (`data/ngay_hien_tai_2026-10-30/questions.jsonl`) còn ghi từ chối.
+(1) Quyền phiên. (2) Góp ý `bai_hoc/` (khi User đã đọc). (Q-DP, **khi tới deploy AWS** — không hỏi sớm): tra web trên bản công khai · ảnh #5 riêng (mặc định không lên) · số lượt / IP / ngày (mặc định 50) · khoá OpenAI riêng + tài khoản AWS + tên miền (HUE_SITE phải là tên miền https, không thì cookie Secure làm mất nhớ hội thoại) · log truy cập uvicorn ghi IP ⇒ `--no-access-log`? · xoá ảnh docker cũ — report `report_agent/2026-11-08_phase_9_ban_13/b_deploy_cuc_bo_implementation.md` §3. (B7) quỹ thiếu ≈ 0,03 USD. **Vòng cải tiến cũ còn chờ** (gom một lần, không hỏi lẻ): W60 / W58 / W57 / W4 + W39 + vòng 24 (sổ). **Không gấp:** xoá collection thử `hue_anh_siglip2`; vị trí Bảo tàng Cổ vật kho tự mâu thuẫn (C204); 4 worktree AGY cũ; xoá sao lưu kho đợt 1 + 2; ảnh `hue-rag-app:nhap` có file private (User `! docker image rm hue-rag-app:nhap`); báo cáo tiến độ cho giáo viên; mốc quyển báo cáo + slide + kịch bản demo; nhãn cũ câu "hôm nay âm lịch" trong bộ 30/10 (`data/ngay_hien_tai_2026-10-30/questions.jsonl`) còn ghi từ chối.
 
 ## Câu hỏi A còn nợ (không cần User)
 
@@ -63,6 +58,8 @@ G = cổng 2 nhóm (đóng); T1 ngày + âm lịch (bật, bản nhanh 10/11); T
 - **Cũ còn mở:** E20 Sửa 1 / Sửa 2 + C210 (khi xét bật lịch trình câu tự do — giờ là T4); giờ tới / về bị bỏ qua im lặng; quan sát "model gọi `thoi_tiet` 2 lần rồi từ chối"; "đi dày" ít tác dụng (bảng thiếu thời lượng — phiếu v7); `do_so_ngay` không dò "4n3d" / "2 hôm" / "cuối tuần"; `p9-sua-lich` phải tôn trọng `hoi_toi` + `chon_sang` khi merge; chữ đầu mục web p50 ~13 s; B5b "tuần sau" không có số dự báo; `_token_count` chênh ~900 token; ghi đệm OpenAI giữ như cũ; bảng sổ S41–S44 thiếu 1 cột; B7: dự phòng demo mất mạng + đề cương + ý #15–#17; theo dõi case Golden 67 từ chối ngẫu nhiên.
 
 ## Session
+
+**Phiên 11/11 (mở 08:18 11/11/2026):** A `hue-rag-96` — chỉ A (B / C / E không mở). Qdrant tắt lúc mở.
 
 **Phiên 10/11 (mở 19:02 10/11/2026):** A `hue-rag-55` · B `hue-rag-05` · C `hue-rag-4f` · E `hue-rag-e4` — cả bốn Claude Code, trực tiếp (B / C / E tự báo). Qdrant chạy sẵn (2 collection, 8.435 điểm); không worktree `/tmp`.
 
@@ -78,6 +75,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C / E lúc mở phiên 
 
 ## Quyền
 
+- **Quyền phiên 11/11 HẾT HẠN (10:43 11/11/2026, kết phiên).**
 - **Phiên 11/11 (User chọn "như 10/11", A ghi nhận 08:20 11/11/2026):** như 10/11 dưới đây (A tự điều phối, tự commit / push, B / C / E push nhánh riêng, trần Phase 9 4,2, việc cần User duyệt thì gác, không hỏi khi User vắng). Hết hạn cuối phiên.
 - **Phiên 10/11 (User chọn "như 09/11 + trần 4,2", A ghi nhận 19:05 10/11/2026):** như 09/11 dưới đây (A tự điều phối, giao ngay việc có sẵn, A tự commit / push, B / C / E push nhánh riêng, vượt 1 USD / phiên được, việc cần User duyệt thì gác; tiền API thoải mái nhưng ưu tiên tốc độ, không test vô nghĩa). **Trần Phase 9 nâng 4,0 ⇒ 4,2 USD** (cho 2 việc tốc độ, quỹ B7 0,35 giữ riêng). Hết hạn cuối phiên.
   **Thêm (19:12 10/11/2026) User:** "hạn chế test các phần không cần thiết, không over-engineer, muốn đẩy nhanh quá trình; chi phí API vẫn duyệt; các session cùng trao đổi, thảo luận để đề xuất, chốt phương án" ⇒ A mở vòng tự soi 1 ngay (plan B / E là kết quả đầu); tiền không còn là lý do giữ bộ đo — thời gian là thước.

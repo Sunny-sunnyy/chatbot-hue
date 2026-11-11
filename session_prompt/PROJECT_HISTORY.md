@@ -1062,3 +1062,6 @@ Vào `main`: 4 chốt deploy `ccc9f4f`, định tuyến phương án B `3b52017`
 
 Vào `main`: câu ngày nhanh `1633c18` (code tính sẵn ngày; p50 5,60 ⇒ 2,35 s), câu lịch chung đi trợ lý `89571d7` (lời dặn định tuyến; bộ giữ mù 12/12 · 0/10 lọt · 3/3), biến môi trường Docker `5081e89`; xã giao song song chưa đạt p95 ⇒ hồ sơ `hoso/p9-xa-giao-song-song`; tag `p9-moc`; nháp plan B7; sửa ~60 chỗ cũ ở báo cáo + đánh số file; User chốt hướng "bài để hiểu" (`hieu_he_thong/`, chưa viết). Tiền ≈ 0,28 USD; Phase 9 ≈ 3,88 / 4,2. Chi tiết: `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC", nhật ký `bao_cao_he_thong/nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md`, sổ vòng 24.
 
+## 11/11/2026 — bài học cho User (A, 10:43 11/11/2026)
+
+Chỉ A mở. User chốt từng câu cách viết bài học (bảo vệ đồ án; bám RAG 2 giai đoạn User đã biết; kể thẳng; đủ chi tiết kỹ thuật) ⇒ `bai_hoc/` 17 bài (0–16), 5 agent con chỉ đọc lập fact sheet, A kiểm từng bài; luật `WORKFLOW.md` §6 "Bài học cho User"; `bao_cao_he_thong/` thành sổ ghi việc. Hệ thống không đổi; 0 USD API. Chi tiết: `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC", nhật ký `bao_cao_he_thong/nhat_ky/2026-11-11_bai_hoc.md`, sổ vòng 25.
