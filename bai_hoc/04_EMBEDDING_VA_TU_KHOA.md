@@ -1,6 +1,6 @@
 # Bài 4 — Biến thẻ thành thứ tìm được: embedding và từ khoá
 
-*Cập nhật lần cuối: 10:17, ngày 11/11/2026 · bài mới.*
+*Cập nhật lần cuối: 14:41, ngày 11/11/2026 · sửa cỡ model Qwen3-8B (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -69,7 +69,7 @@ vậy từ điển không bao giờ lệch với kho mà không ai biết.
 Cả hai dạng được cất vào Qdrant trên cùng một điểm (bài 5). Lúc trả lời, tìm theo nghĩa lấy ra 30 đoạn trước. Rồi BM25 **chấm lại đúng 30 đoạn đó** theo từ
 khoá, và hai bảng xếp hạng được trộn lại (bài 6). Tức là: **nghĩa chọn ứng viên, từ khoá giúp xếp lại cho đúng tên riêng và con số**.
 
-## Một chuyện thật: model lớn hơn 10 lần mà lại thua
+## Một chuyện thật: model lớn hơn khoảng 70 lần mà lại thua
 
 Ngày 30/10, mình thử thay e5-small bằng **Qwen3-Embedding-8B**: một model lớn hơn rất nhiều, vector 4.096 con số thay vì 384, phải gọi qua mạng. Ý tưởng nghe
 rất hợp lý: model to hơn thì hiểu nghĩa tốt hơn.
@@ -105,7 +105,7 @@ không cách nào tốt hơn.
 1. Mỗi đoạn có **hai dạng để tìm**: **vector nghĩa** 384 con số từ e5-small (chạy trên máy, 0 đồng, khoảng 21 mili giây) và **bảng từ khoá BM25** (tách theo
    âm tiết, từ điển 5.631 từ).
 2. **Nghĩa chọn ứng viên, từ khoá xếp lại** cho đúng tên riêng và con số. Mỗi cách bù chỗ hỏng của cách kia.
-3. Model lớn hơn 10 lần (Qwen3-8B) **mất đoạn đúng ở 3 câu và chậm khoảng 100 lần**, nên giữ e5-small. Chỗ thiếu thật là **xếp hạng**, không phải hiểu nghĩa.
+3. Model lớn hơn khoảng 70 lần (Qwen3-8B) **mất đoạn đúng ở 3 câu và chậm khoảng 100 lần**, nên giữ e5-small. Chỗ thiếu thật là **xếp hạng**, không phải hiểu nghĩa.
 
 **Bài sau:** Bài 5 — Cất hộp thẻ vào tủ (Qdrant): cất ở đâu, phiếu chuẩn bị kiểm những gì, và vì sao chatbot thà không chạy còn hơn chạy trên kho lệch.
 
@@ -124,5 +124,7 @@ không cách nào tốt hơn.
 - Qwen3-8B (30/10): 2 / 35 / 3 trên 40 câu thử, 2 / 10 / 3 trên 15 câu kiểm; 2.228 / 6.487 ms; p95 cả câu ước khoảng 11,4 s; 0,0089 USD; 9 / 40 câu có đoạn đúng trong 30 ứng viên nhưng ngoài 10: `qwen3_8b_implementation.md` [đã chạy]
 - Tách từ ghép / `pyvi` / đổi hằng số BM25 (25/10, 32 câu, kho cũ); không dấu 1 / 32 ↔ 13 / 32: `phase_8_1_g4_keyword_implementation.md` qua 91 thẻ N2-11 [đã chạy]
 - "vé 200.000 đồng", "hoàng hôn" là ví dụ tự đặt để minh hoạ, không phải câu trong bộ chấm.
+
+- **Sửa 14:41 11/11/2026:** bản trước ghi Qwen3-8B "lớn hơn 10 lần" — số 10 là tỉ lệ số chiều vector (4.096 / 384); về cỡ model: 8 tỉ tham số ↔ e5-small khoảng 118 triệu ⇒ khoảng 70 lần [kiến thức công khai, chưa tra lại trong phiên].
 
 </details>

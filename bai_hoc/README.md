@@ -1,6 +1,6 @@
 # Bài học hue_rag — đọc theo thứ tự
 
-*Cập nhật lần cuối: 10:36, ngày 11/11/2026 · đủ 17 bài (0–16), chờ anh đọc dần và góp ý.*
+*Cập nhật lần cuối: 14:28, ngày 11/11/2026 · đủ 20 bài (0–19), chờ anh đọc dần và góp ý.*
 
 Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: dễ hiểu, đủ nội dung, mỗi bài
 một ý, nói "vì sao" trước, đi theo đúng hai giai đoạn của RAG, giữ đủ chi tiết kỹ thuật quan trọng. Mỗi bài chỉ dựa vào bài trước nó. Gần cuối mỗi bài
@@ -43,4 +43,12 @@ chỉ có ở bài cần.
 | [15](15_TRA_WEB_VA_HOI_BANG_ANH.md) | Khi sổ không có: tra web, và hỏi bằng ảnh | đã viết, chờ anh đọc |
 | [16](16_KE_DO_AN_VA_CHO_CON_YEU.md) | Kể đồ án trong 2–3 phút, và chỗ còn yếu | đã viết, chờ anh đọc |
 
-Nhịp: đã viết đủ 17 bài (11/11). Anh đọc dần theo số, góp ý lúc nào thì mình sửa lúc đó; thấy câu nào sai thì mình sửa ngay và ghi ở mục Nguồn của bài.
+**Phần 4 — Phần người dùng thấy, đưa lên mạng, và tra cứu** (bù phần đã làm mà bài 0–16 chỉ nhắc qua; thêm 11/11 chiều)
+
+| Bài | Nội dung | Trạng thái |
+|---|---|---|
+| [17](17_GIAO_DIEN_VA_TOC_DO.md) | Trang người dùng thấy, và chờ bao lâu: giao diện và tốc độ | đã viết, chờ anh đọc |
+| [18](18_DONG_GOI_DOCKER.md) | Mang cả chatbot sang máy khác: đóng gói Docker | đã viết, chờ anh đọc |
+| [19](19_BANG_TONG_CAC_LAN_SO_SANH.md) | Bảng tổng các lần so sánh (trang tra cứu, đọc sau cùng) | đã viết, chờ anh đọc |
+
+Nhịp: đã viết đủ 17 bài (sáng 11/11), thêm bài 17–19 (chiều 11/11) theo yêu cầu của anh. Đã sửa các câu sai / chưa rõ ở bài 4, 8, 11, 14 (ghi ở Nguồn từng bài); bài 17–19 đã qua một lượt kiểm độc lập. Anh đọc dần theo số, góp ý lúc nào thì mình sửa lúc đó; thấy câu nào sai thì mình sửa ngay và ghi ở mục Nguồn của bài.

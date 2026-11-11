@@ -1,6 +1,6 @@
 # Bài 11 — Chấm câu trả lời, và mỗi con số tốt tới đâu
 
-*Cập nhật lần cuối: 10:27, ngày 11/11/2026 · bài mới; bài dài hơn vì gom mọi con số chính của đồ án.*
+*Cập nhật lần cuối: 14:04, ngày 11/11/2026 · sửa một câu sai ở "Một chuyện thật" (ghi ở Nguồn); bài dài hơn vì gom mọi con số chính của đồ án.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -112,8 +112,10 @@ thực tế 0 cặp, nên kết quả là "chưa rõ". Anh chọn **giữ 10 đo
 
 ## Một chuyện thật: trung bình tốt mà vẫn bị loại
 
-Ngày 03/11, phần "nhớ câu hỏi trong cuộc trò chuyện" (bài 13) được đo vòng 1. Điểm câu hỏi tiếp theo tốt lên, nhưng **từ chối nhầm lên 7**, vượt mức cho phép 5.
-Theo luật "không làm hỏng", bản đó **bị loại** dù có cải thiện. Sửa lời dặn cho hẹp lại, đo vòng 2: từ chối nhầm còn 4, qua luật, rồi mới bật.
+Ngày 03/11, mình thêm một câu dặn mới để sửa một lỗi an toàn: model hay tự thêm lời khuyên chung mà nguồn không nêu. Bản 1 dặn rộng ("chỉ nêu điều có
+trong bằng chứng, không thêm lời khuyên chung"). Lỗi an toàn hết, nhưng **từ chối nhầm lên 7**, vượt mức cho phép 5.
+Theo luật "không làm hỏng", bản đó **bị loại** dù đã sửa được lỗi. Bản 2 dặn hẹp lại (chỉ chặn lời khuyên an toàn không có nguồn, giữ lời khuyên có nguồn): từ chối
+nhầm còn 4, qua đủ luật, rồi mới giữ.
 
 Chuyện tương tự ở bài 7: bản để luna tự chọn đoạn tốt hơn ở trung bình nhưng có 5 câu tụt, nên cũng bị loại. Bài học: **luật ghi trước, áp đúng như đã ghi**,
 kể cả khi kết quả trông hấp dẫn. Nếu nới luật sau khi thấy số, mọi phép đo đều mất giá trị.
@@ -155,6 +157,7 @@ kể cả khi kết quả trông hấp dẫn. Nếu nới luật sau khi thấy 
 - Bộ an toàn 01/11; giới hạn dưới khoảng 10–12 %: `do_cuoi_b_an_toan_ngay.md`, `10_BAO_CAO_DANH_GIA.md` [đã chạy]
 - Tốc độ / tiền 09/11 và 10/11: `bao_cao_he_thong/README.md` "Số chính", `07_…` [đã chạy]
 - Mốc người B0 (01/11, 20 cặp): `10_BAO_CAO_DANH_GIA.md`, `data/phase_8_2/b0/` (riêng tư) [đã chạy]
-- B3 vòng 1 từ chối nhầm 7 > 5, vòng 2 còn 4 (03/11): `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` [đã chạy]
+- Câu dặn chống "thêm lời khuyên chung" (B3, 03/11): bản 1 từ chối nhầm 7 > 5, bản hẹp còn 4: `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md` (bảng Q2), `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 03/11 chiều [đã chạy]
+- **Sửa 14:03 11/11/2026:** bản trước ghi nhầm số 7 → 4 là của phần "nhớ câu hỏi"; thật ra là của câu dặn trên (phần nhớ câu hỏi trượt vì lý do khác — bài 13).
 
 </details>

@@ -1,6 +1,6 @@
 # Bài 8 — Đọc thẻ rồi trả lời: generation
 
-*Cập nhật lần cuối: 10:22, ngày 11/11/2026 · bài mới.*
+*Cập nhật lần cuối: 14:28, ngày 11/11/2026 · nói rõ hơn mức chậm thêm của phần trợ lý (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -93,7 +93,7 @@ Vài chi tiết:
 
 Tốc độ tới chữ đầu tiên trên trình duyệt, câu về Huế: trung vị **2,16 giây**, câu chậm (95 %) **4,32 giây**. Mức anh đặt là 3 / 5 giây ⇒ đạt. Mốc so sánh:
 trước khi có streaming, phải chờ **cả câu**: 3,1 / 6,0 giây. Trước khi thêm phần trợ lý (bài 12), chữ đầu chỉ 1,23 / 2,61 giây. Phần trợ lý thêm khoảng
-1 giây nhưng vẫn trong mức cho phép.
+1 giây ở trung vị, 1,7 giây ở câu chậm, nhưng vẫn trong mức cho phép (đo khác ngày, khác bộ câu; chuỗi đầy đủ ở bài 17).
 
 ## Tiền và nhật ký
 
@@ -150,5 +150,7 @@ dặn model.
 - `[Nguồn n]` 24 / 465 (8.1 G2); lỗi trích dẫn 69 → 14 / 1.600 câu, 0 câu đạt bị đổi (sửa `9e6d371`, 25/10): `session_prompt/Project_Status.md` §8, 91 [đã chạy]
 - Câu lịch thiếu nguồn bị rút (10/11, 1 / 9): `session_prompt/CURRENT_HANDOFF.md` [đã chạy]
 - Ví dụ "miễn vé cho trẻ dưới 1m2" là ví dụ tự đặt.
+
+- **Sửa 14:28 11/11/2026:** "phần trợ lý thêm khoảng 1 giây" chỉ đúng ở trung vị (1,23 → 2,16 s); câu chậm thêm 1,7 s (2,61 → 4,32 s); hai lượt khác ngày, khác bộ câu (agent con đối chiếu `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md` và lượt đo 09/11).
 
 </details>

@@ -1,6 +1,6 @@
 # Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình
 
-*Cập nhật lần cuối: 10:32, ngày 11/11/2026 · bài mới.*
+*Cập nhật lần cuối: 14:04, ngày 11/11/2026 · sửa hai câu sai (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -41,8 +41,8 @@ một ngày. Câu kiểu "rằm tháng Giêng năm nay" còn phải biết "năm
 - Câu nói một ngày âm mà **không nêu năm**, hoặc nói "năm nay" ⇒ code nêu cả **lần đã qua và lần sắp tới**, để người dùng không bị nhầm năm.
 
 **Lịch tính sẵn (từ 10/11).** Ban đầu, ngày là một **công cụ**: model tự quyết gọi, đợi code tính, rồi mới viết. Mỗi lần gọi công cụ là một vòng qua lại, nên câu
-có ngày rất chậm. Nay khi code **dò thấy từ chỉ ngày** trong câu ("hôm nay", "mai", "cuối tuần", "rằm", "Tết"…), nó **tính sẵn** hôm nay, mai, ngày kia, các ngày
-trong tuần, cộng với các ngày âm nêu trong câu hoặc trong 10 đoạn kho, rồi thêm thành một nguồn tên **"Lịch hệ thống"** vào ngữ cảnh **trước** lần gọi model
+có ngày rất chậm. Nay khi code **dò thấy từ chỉ ngày** trong câu ("hôm nay", "mai", "cuối tuần", "rằm", "Tết"…), nó **tính sẵn** hôm nay, mai, 7 ngày của tuần này
+hoặc tuần sau (khi câu nói tới), rằm tháng này / tháng tới, cộng với các ngày âm nêu trong câu hoặc trong 10 đoạn kho, rồi thêm thành một nguồn tên **"Lịch hệ thống"** vào ngữ cảnh **trước** lần gọi model
 đầu. Công cụ ngày vẫn còn, nhưng chỉ làm dự phòng.
 
 | Đo gì (19 câu có ngày, 10/11) | Trước (gọi công cụ) | Sau (tính sẵn) | Nghĩa là |
@@ -85,7 +85,8 @@ Kết quả (07/11): sàn kiểm bằng code **24 / 24**; lời khớp khung **1
 ## Một chuyện thật: dặn model "đừng cộng tổng" không đủ
 
 Ngày 05/11, thử để trợ lý ước chi phí chuyến đi. Cách đầu tiên: **dặn rõ trong lời dặn** "không tự cộng tổng tiền, không nhân giá theo số người, số ngày". Chạy
-bộ câu kín: ở **1 trên 2 câu**, model vẫn **tự viết thêm một dòng "Tổng"**, và con số đó không đúng. Kết quả âm.
+bộ câu kín: ở **1 trên 2 câu**, model vẫn **tự viết thêm một dòng "Tổng"** bằng phép tính của chính nó. Phép tính lần đó tình cờ khớp, nhưng luật ghi
+trước cấm model tự đưa con số tổng (lần sau nó có thể tính sai mà không ai chặn). Kết quả âm.
 
 Cách thứ hai: để **code tính tiền**. Code đúng **8 / 8** phép tính. Nhưng lại lộ một lỗi khác: ở câu về miễn vé, model **bỏ mất điều kiện** miễn vé cả 3 / 3 lần
 (bản đang chạy chỉ 1 / 3). Thêm công cụ làm đổi cách model trả lời cả phần không liên quan. Bản này cũng dừng.
@@ -130,5 +131,6 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - B4 (dặn không cộng tổng: 1 / 2 câu kín tự ghi dòng "Tổng") và B5c (code tính tiền 8 / 8; miễn vé bỏ điều kiện 3 / 3 ↔ 1 / 3), 05/11: `07_…`, `session_prompt/Session_Prompt.md` §7 [đã chạy]
 - Giới hạn "đi dày", không ô mưa / giờ tới về: `session_prompt/CURRENT_HANDOFF.md` [tài liệu]
 - Các câu ví dụ là câu tự đặt.
+- **Sửa 14:03 11/11/2026:** (1) bản trước ghi code tính sẵn cả "ngày kia" — sai: "ngày kia" chỉ được dò thấy, rồi model vẫn gọi công cụ (`lich_san`, chú thích đầu hàm); (2) bản trước ghi dòng "Tổng" có "con số không đúng" — sai: phép nhân khớp luật kho, bị tính là lỗi vì luật đo cấm con số tổng (`07_…` mục B4 vòng 1).
 
 </details>

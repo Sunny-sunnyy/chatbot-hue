@@ -1,3 +1,11 @@
+# STATUS A — PHIÊN CHIỀU 11/11 (mở 13:39; cập nhật 13:53 11/11/2026 `date`)
+
+- Terminal A `hue-rag-2f`; chỉ A (8 terminal khác là dự án khác). Kiểm nhanh: `main` `dd1e6e4` sạch, hooksPath `.githooks`, Qdrant tắt, RAM trống ~5 GB.
+- User: quyền "như sáng 11/11" (13:41). User hỏi `bai_hoc/` có gồm việc đã xây / so sánh / đánh giá / triển khai không ⇒ A trả lời có (mỗi bài 1 "chuyện thật"), chỉ ra chỗ mỏng ⇒ User chọn bù cả 3: **trang tổng mọi so sánh · bài 17 giao diện + tốc độ · bài 18 đóng gói Docker**. A hứa đưa **dàn trước**, User xem rồi mới viết.
+- 3 agent con chỉ đọc đang lập fact sheet ⇒ `data/hoc_cung_user_2026-11-10/fact_{trang_tong_so_sanh,bai_17_giao_dien_toc_do,bai_18_dong_goi_docker}.md`.
+- Khai báo sửa: `bai_hoc/` (file mới + README), `CURRENT_HANDOFF.md`, `STATUS_A.md`; sổ ghi việc khi đóng đợt.
+- (14:29 11/11/2026) User duyệt dàn ⇒ viết bài 17, 18, 19 + README; sửa câu sai bài 11 (số 7 là của câu dặn, không phải nhớ câu hỏi), 14 ("ngày kia" không tính sẵn; dòng "Tổng" không sai số), làm rõ bài 8; bài 0 / 16 trỏ sang 17–19. Agent con review độc lập 3 bài mới đang chạy ⇒ sửa theo finding ⇒ commit / push. Nhật ký 11/11 thêm 1 dòng. Tiền 0 USD.
+
 # STATUS A — KẾT PHIÊN 11/11 (mở 08:18; cập nhật 10:44 11/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ góp ý `bai_hoc/` (nếu User đã đọc) ⇒ Phase 9 tiếp (B7, bản đồ, giọng nói, AWS). Qdrant tắt từ đầu 11/11 ⇒ `docker compose up -d qdrant` khi cần chatbot. Không worktree / server / container của phiên. Tiền 0 USD.

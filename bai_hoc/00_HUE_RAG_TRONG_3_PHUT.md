@@ -1,6 +1,6 @@
 # Bài 0 — hue_rag trong 3 phút
 
-*Cập nhật lần cuối: 09:55, ngày 11/11/2026 · viết lại: kể thẳng từ đầu, một hình ảnh xuyên suốt (người hướng dẫn viên và cuốn sổ tay).*
+*Cập nhật lần cuối: 14:28, ngày 11/11/2026 · thêm mục 5 ở "Đồ án đã làm những gì" (bài 17–19 mới).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -115,6 +115,8 @@ Tốc độ: chữ đầu tiên hiện sau khoảng **2,2 giây** với câu v�
 3. **Dựng cách chấm**: bộ 176 câu hỏi mẫu, một bộ câu kín để kiểm cuối, chấm riêng bước tìm và câu trả lời (bài 9–11).
 4. **Nâng chatbot thành trợ lý**: xếp loại câu, tìm thêm, nhớ 3 câu hỏi gần nhất, ngày âm lịch, thời tiết, tra web khi kho không có, biểu mẫu lên lịch trình,
    hỏi bằng ảnh, trên một trang cổng du lịch (bài 12–15).
+5. **Trang cổng, tốc độ, đóng gói để đưa lên mạng**: giao diện nhiều mục, chữ hiện dần, chạy song song cho đỡ chờ; gói Docker không mang theo dữ liệu kín (bài 17–18).
+   Bảng tổng mọi lần so sánh ở bài 19.
 
 ## Một chuyện thật: 5 đoạn hay 10 đoạn
 
