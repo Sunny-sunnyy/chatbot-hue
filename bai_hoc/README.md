@@ -37,8 +37,8 @@ chỉ có ở bài cần.
 
 | Bài | Nội dung | Trạng thái |
 |---|---|---|
-| 12 | Vì sao cần trợ lý: xếp loại câu và công cụ | chưa viết |
-| 13 | Tìm thêm và nhớ câu hỏi | chưa viết |
+| [12](12_VI_SAO_CAN_TRO_LY.md) | Từ chatbot thành trợ lý: xếp loại câu và công cụ | đã viết, chờ anh đọc |
+| [13](13_TIM_THEM_VA_NHO_CAU_HOI.md) | Rút thêm thẻ và nhớ câu hỏi | đã viết, chờ anh đọc |
 | 14 | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình | chưa viết |
 | 15 | Tra web và hỏi bằng ảnh | chưa viết |
 | 16 | Đoạn kể 2–3 phút bản đủ + chỗ còn yếu và hướng sửa | chưa viết |
