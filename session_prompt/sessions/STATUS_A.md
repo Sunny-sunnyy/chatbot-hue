@@ -4,6 +4,9 @@
 - Kiểm nhanh: `main` `2b11660` = origin, sạch; hooksPath `.githooks`; **Qdrant tắt** (không container; `qdrant_storage/` đủ 2 collection, ảnh v1.18.3 còn) ⇒ bật khi việc cần; 4 nhánh chờ User xoá còn; `hieu_he_thong/` chưa có (VIỆC SỐ 1).
 - User: quyền "như 10/11" (08:20 11/11/2026).
 - Đang khai báo sửa (A): `bao_cao_he_thong/hieu_he_thong/` (mới), `bao_cao_he_thong/README.md`, `CURRENT_HANDOFF.md`, `STATUS_A.md`.
+- (10:37 11/11/2026) Xong: `bai_hoc/` 17 bài (0–16) theo khuôn User chốt từng câu (bảo vệ đồ án; bám RAG 2 giai đoạn; kể thẳng, không so "bản cơ bản"; đủ chi tiết kỹ thuật; hướng dẫn viên + sổ tay; chuyện thật; số kèm mốc). User duyệt nhịp "viết liền" sau bài 0–2 bản 2. 5 agent con chỉ đọc lập fact sheet; A kiểm 2–3 ý mỗi bài trong code / report; sửa 3 câu sai bài đã đọc (ghi ở Nguồn). 4 nhánh User xoá. 0 USD API.
+- Bẫy A (11/11): (1) tự nối "bám sơ đồ" thành "so với bản cơ bản" — User không yêu cầu ⇒ phải viết lại 0–2; (2) gõ giờ tay "10:12" ở README (sed hỏng, commit lọt) ⇒ sửa bằng `date` commit sau; (3) fact sheet sub-agent bắt câu "mất 7–8 câu = tệ rõ" (thật ra 3–4 câu tốt lên, chưa có ý nghĩa thống kê) — kiểm report gốc trước khi viết số.
+- Vòng tự soi: phiên chỉ có A (B / C / E không mở) ⇒ tự soi một mình: không test / đo nào chạy; 5 agent con thay vì đọc ~15 file trực tiếp (giữ ngữ cảnh) — đáng; không thêm luật mới ngoài WORKFLOW §6 "Bài học cho User".
 
 # STATUS A — KẾT PHIÊN 10/11 (mở 19:02; cập nhật 22:44 10/11/2026 `date`)
 
