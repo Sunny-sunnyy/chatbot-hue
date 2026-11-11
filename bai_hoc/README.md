@@ -1,6 +1,6 @@
 # Bài học hue_rag — đọc theo thứ tự
 
-*Cập nhật lần cuối: 10:19, ngày 11/11/2026 · đang viết liền bài 3–16 (anh chốt nhịp 11/11).*
+*Cập nhật lần cuối: 10:36, ngày 11/11/2026 · đủ 17 bài (0–16), chờ anh đọc dần và góp ý.*
 
 Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: dễ hiểu, đủ nội dung, mỗi bài
 một ý, nói "vì sao" trước, đi theo đúng hai giai đoạn của RAG, giữ đủ chi tiết kỹ thuật quan trọng. Mỗi bài chỉ dựa vào bài trước nó. Gần cuối mỗi bài
@@ -41,6 +41,6 @@ chỉ có ở bài cần.
 | [13](13_TIM_THEM_VA_NHO_CAU_HOI.md) | Rút thêm thẻ và nhớ câu hỏi | đã viết, chờ anh đọc |
 | [14](14_VIEC_DE_NHAM_THI_CODE_LAM.md) | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình | đã viết, chờ anh đọc |
 | [15](15_TRA_WEB_VA_HOI_BANG_ANH.md) | Khi sổ không có: tra web, và hỏi bằng ảnh | đã viết, chờ anh đọc |
-| 16 | Đoạn kể 2–3 phút bản đủ + chỗ còn yếu và hướng sửa | chưa viết |
+| [16](16_KE_DO_AN_VA_CHO_CON_YEU.md) | Kể đồ án trong 2–3 phút, và chỗ còn yếu | đã viết, chờ anh đọc |
 
-Nhịp viết: bài 0–2 viết trước, chờ anh đọc. Anh thấy dễ hiểu thì mình viết liền tới bài 16, báo anh sau mỗi 2 bài. Anh góp ý lúc nào thì mình sửa lúc đó.
+Nhịp: đã viết đủ 17 bài (11/11). Anh đọc dần theo số, góp ý lúc nào thì mình sửa lúc đó; thấy câu nào sai thì mình sửa ngay và ghi ở mục Nguồn của bài.
