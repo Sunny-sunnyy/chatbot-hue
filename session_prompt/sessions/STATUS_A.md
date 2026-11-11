@@ -1,4 +1,8 @@
-# STATUS A — PHIÊN CHIỀU 11/11 (mở 13:39; cập nhật 13:53 11/11/2026 `date`)
+# STATUS A — KẾT PHIÊN CHIỀU 11/11 (mở 13:39; cập nhật 16:25 11/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ góp ý `bai_hoc/` ⇒ Phase 9 tiếp. Qdrant tắt. Không worktree / server / container của phiên. Tiền 0 USD.
+- Bẫy A (chiều 11/11): (1) viết bài từ fact sheet mà chưa review độc lập ⇒ review bắt 6 sai + 15 hiểu nhầm (W65 đang thử); (2) script sửa nhiều chỗ bằng `assert` dừng giữa chừng — an toàn vì ghi file cuối, nhưng phải đọc đúng chữ trước khi viết mẫu; (3) câu "log truy cập ghi IP" nằm trong handoff từ 08/11 chưa probe (luật 4b).
+- Vòng tự soi: chỉ A ⇒ tự soi một mình (ghi ở handoff).
 
 - Terminal A `hue-rag-2f`; chỉ A (8 terminal khác là dự án khác). Kiểm nhanh: `main` `dd1e6e4` sạch, hooksPath `.githooks`, Qdrant tắt, RAM trống ~5 GB.
 - User: quyền "như sáng 11/11" (13:41). User hỏi `bai_hoc/` có gồm việc đã xây / so sánh / đánh giá / triển khai không ⇒ A trả lời có (mỗi bài 1 "chuyện thật"), chỉ ra chỗ mỏng ⇒ User chọn bù cả 3: **trang tổng mọi so sánh · bài 17 giao diện + tốc độ · bài 18 đóng gói Docker**. A hứa đưa **dàn trước**, User xem rồi mới viết.

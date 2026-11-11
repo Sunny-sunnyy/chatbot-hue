@@ -1065,3 +1065,7 @@ Vào `main`: câu ngày nhanh `1633c18` (code tính sẵn ngày; p50 5,60 ⇒ 2,
 ## 11/11/2026 — bài học cho User (A, 10:43 11/11/2026)
 
 Chỉ A mở. User chốt từng câu cách viết bài học (bảo vệ đồ án; bám RAG 2 giai đoạn User đã biết; kể thẳng; đủ chi tiết kỹ thuật) ⇒ `bai_hoc/` 17 bài (0–16), 5 agent con chỉ đọc lập fact sheet, A kiểm từng bài; luật `WORKFLOW.md` §6 "Bài học cho User"; `bao_cao_he_thong/` thành sổ ghi việc. Hệ thống không đổi; 0 USD API. Chi tiết: `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC", nhật ký `bao_cao_he_thong/nhat_ky/2026-11-11_bai_hoc.md`, sổ vòng 25.
+
+## 11/11/2026 chiều — bài học bù đủ việc đã làm (A, 16:25 11/11/2026)
+
+Chỉ A mở. User hỏi `bai_hoc/` đã gồm việc đã xây / so sánh / triển khai chưa ⇒ thêm bài 17 (giao diện + tốc độ), 18 (đóng gói Docker), 19 (bảng tổng 34 lần so sánh); User chốt luật "chỉ việc đã xong" ⇒ rà độ phủ (111 việc, 37 thiếu) ⇒ bài 20 (làm đồ án thế nào), 21 (dữ liệu + bảo mật), bổ sung bài 0 / 12; gỡ phần chưa xong ở 15–18. 9 agent con chỉ đọc (fact sheet, rà độ phủ, 2 review độc lập bắt 6 sai + 15 hiểu nhầm). Sửa 5 câu sai ở bài đã commit. Probe 0 USD: log truy cập uvicorn bị cấu hình log của app tắt. W65 đang thử. Commit `f892528`, `02405c9` + kết phiên. 0 USD API. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-11_bai_hoc.md`.
