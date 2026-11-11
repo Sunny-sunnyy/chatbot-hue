@@ -22,8 +22,8 @@ chỉ có ở bài cần.
 | [4](04_EMBEDDING_VA_TU_KHOA.md) | Biến thẻ thành thứ tìm được: embedding và từ khoá | đã viết, chờ anh đọc |
 | [5](05_QDRANT.md) | Cất hộp thẻ vào tủ: Qdrant | đã viết, chờ anh đọc |
 | [6](06_RETRIEVAL.md) | Rút đúng thẻ: retrieval | đã viết, chờ anh đọc |
-| 7 | Reranking: đã thử 3 cách, vì sao không dùng | chưa viết |
-| 8 | Generation: lời dặn, ghi nguồn, câu từ chối, kiểm nguồn | chưa viết |
+| [7](07_RERANKING.md) | Xếp lại thẻ: reranking (đã thử, không dùng) | đã viết, chờ anh đọc |
+| [8](08_GENERATION.md) | Đọc thẻ rồi trả lời: generation | đã viết, chờ anh đọc |
 
 **Phần 2 — Đánh giá** (hai giai đoạn, như anh học của Ed Donner)
 
