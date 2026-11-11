@@ -1,6 +1,6 @@
 # Bài 19 — Bảng tổng các lần so sánh
 
-*Cập nhật lần cuối: 14:41, ngày 11/11/2026 · bài mới; trang tra cứu, đọc sau cùng; đã qua một lượt kiểm độc lập.*
+*Cập nhật lần cuối: 15:03, ngày 11/11/2026 · bài mới; trang tra cứu; đã qua một lượt kiểm độc lập; thêm dòng 30–34.*
 
 ## Bảng từ
 
@@ -57,7 +57,7 @@ không được làm tụt (bài 9, 11).
 | 16 | Câu dặn chống **tự thêm lời khuyên chung** | không có câu dặn | dặn rộng: từ chối nhầm **7** (ngưỡng 5) ⇒ bỏ; dặn hẹp: 4, lỗi an toàn hết ⇒ giữ | **giữ bản hẹp** | 11 |
 | 17 | **Nhớ hội thoại** | không nhớ | nhớ cả câu trả lời: 1 / 2 lượt kín câu ngoài kho bị trả lời ⇒ tắt. **Chỉ nhớ câu hỏi**: câu hỏi tiếp **+0,80 [+0,25; +1,50]**, câu bẫy từ chối đúng 6 / 6 (không nhớ: 3 / 6) | **giữ "chỉ nhớ câu hỏi"** | 13 |
 | 18 | **Tắt lưu tạm** để đỡ tiền ghi | lưu tạm tự động | 45 % câu gọi model ≥ 2 lần và đọc lại phần đã lưu ⇒ tắt thì phần tiền gửi vào **đắt hơn khoảng 21 %** (ước từ số token đã đo) | bỏ | 13 |
-| 19 | **Hỏi lại bằng nút** (số ngày, số người) | không hỏi lại | model vẫn tự viết dòng "Tổng" (luật cấm); vòng 2 có 2 câu an toàn mới thiếu cảnh báo (ngưỡng ≤ 1) | bỏ | 14 |
+| 19 | **Hỏi lại bằng nút** (số ngày, số người) | không hỏi lại | model vẫn tự viết dòng "Tổng" (luật cấm); vòng 2 có 2 câu an toàn mới thiếu cảnh báo (ngưỡng ≤ 1) | bỏ phần model tự hỏi lại; thẻ hỏi lại do code giữ trong lịch trình (chưa bật) | 14 |
 | 20 | **Code tính tiền chuyến đi** | liệt kê giá có nguồn | phép tính đúng **8 / 8**, nhưng câu miễn vé bỏ mất điều kiện **3 / 3** lần (bản đang chạy: 1 / 3) | bỏ | 14 |
 | 21 | **Biểu mẫu "Lên kế hoạch"**: nút chọn ⇒ code xếp lịch | — | sàn của code **24 / 24**; câu chậm 4,25 giây | **giữ** | 14 |
 | 22 | Lịch trình từ **câu gõ tự do** (2 lần) | biểu mẫu | lần 2: 27 / 27 câu có lịch, nhưng "hợp người đi cùng" chỉ 21 và 15 / 27 (cần ≥ 26) | chưa bật | 14 |
@@ -66,8 +66,13 @@ không được làm tụt (bài 9, 11).
 | 25 | **Hỏi bằng ảnh**: luna gợi 3 tên, người dùng bấm xác nhận | — | đúng trong 3 gợi ý **22 / 25** (ngưỡng 22); gán tên Huế cho **2 / 5** ảnh không phải Huế (ngưỡng ≤ 1) ⇒ âm theo thước | **giữ dạng chờ xác nhận** | 15 |
 | 26 | Model nhận ảnh **chạy trên máy** (SigLIP 2) | luna | 20 / 25, nhưng gán tên Huế cho **5 / 5** ảnh không phải Huế | bỏ | 15 |
 | 27 | **Chạy song song** câu về Huế với xếp loại | chạy nối tiếp | chữ đầu nhanh hơn **1,37 giây [0,34; 2,14]**; 90 lượt an toàn 0 lỗi | **giữ** | 12, 17 |
-| 28 | **Tắt phần "nghĩ"** ở bước xếp loại | mức mặc định | nhanh hơn 0,2–0,35 giây, nhưng **2 câu an toàn** bị xếp "ngoài phạm vi" | bỏ | 17 |
+| 28 | **Tắt phần "nghĩ"** ở bước xếp loại | mức mặc định | riêng bước xếp loại nhanh hơn 0,2–0,35 giây, nhưng **2 câu an toàn** bị xếp "ngoài phạm vi" | bỏ | 17 |
 | 29 | Chạy song song cả **câu chào hỏi** | lượt đo 09/11 | trung vị 3,46 ⇒ 1,85 giây, nhưng câu chậm vẫn **5,74 giây** | bỏ | 17 |
+| 30 | **Để trợ lý tự quyết khi nào tra web** | cổng web (chỉ khi kho từ chối) | câu hỏi kèm có phần web **4 / 10, bằng mốc** (cần ít nhất 6 / 10); 26 / 29 lần model đòi tra web rơi đúng vào lượt kho đã từ chối, tức cổng cũ đã mở rồi | bỏ | chỉ ở bài này |
+| 31 | **Bảng vé + giờ có cấu trúc** (60 điểm) | trả lời từ đoạn kho | vòng 3 đúng **19 / 20**, nhưng sàn "model không tự nêu điều kiện ngoài phần code nối" trượt **6 / 10**; bản chỉ dùng bảng để kiểm số: 52 câu thật, **không bắt được số sai nào** | bỏ: lợi gần 0, thêm khoảng 120 dòng code và một bảng phải giữ khớp kho | chỉ ở bài này |
+| 32 | **Luật từ khoá** cho câu khẩn cấp | chỉ model xếp loại | **14 / 14** câu đã thấy, nhưng câu kín **0 / 8** và chặn nhầm 2 / 8 ⇒ học thuộc câu đã thấy | bỏ | 12 |
+| 33 | Thêm dòng "hôm nay là ngày …" vào lời dặn | không có | từ chối nhầm 5,0 ⇒ 4,5 (cần giảm ít nhất 3) | bỏ (sau đó ngày do code tính, dòng 23) | chỉ ở bài này |
+| 34 | **Model viết lại câu tìm** trước lần tìm đầu (3 cách) | tìm bằng câu gốc | không cách nào qua luật: chỉ thêm 0–1 / 12 câu đủ từ khoá (cần ít nhất 3) | bỏ | 13 |
 
 ## Nhìn cả bảng thấy gì
 
@@ -79,9 +84,9 @@ không được làm tụt (bài 9, 11).
    dùng lại số cũ.
 4. **Còn đáng thử lại:** dòng 8 mới thử khi còn 5 đoạn; dòng 9 đã thử ở 10 đoạn nhưng trên kho cũ và chậm, cần một cách để luna chọn đoạn nhanh hơn (bài 16).
 
-Ngoài 29 dòng này còn khoảng 60 lần thử nhỏ hơn: đổi hằng số, sửa kho, đổi cách đo. Chúng nằm trong sổ ghi việc của các agent. Anh không cần đọc để kể đồ án.
+Ngoài 34 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số, sửa kho, đổi cách đo. Chúng nằm trong sổ ghi việc của các agent. Anh không cần đọc để kể đồ án.
 
-**Hết bộ bài.** Muốn hiểu kỹ một dòng, mở bài ghi ở cột cuối.
+**Bài sau:** Bài 20 — Làm đồ án thế nào. Muốn hiểu kỹ một dòng ở trên, mở bài ghi ở cột cuối.
 
 ---
 
@@ -96,5 +101,9 @@ Ngoài 29 dòng này còn khoảng 60 lần thử nhỏ hơn: đổi hằng số
 - Phần "Nhìn cả bảng thấy gì" là nhận xét của mình từ bảng, không phải số đo riêng.
 - Qwen3-Embedding-8B 8 tỉ tham số (theo tên model); multilingual-e5-small khoảng 118 triệu ⇒ khoảng 70 lần [kiến thức công khai, chưa tra lại trong phiên]
 - **Sửa 14:41 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn): dòng 9 (luna chọn đoạn) đã so với mốc 10 đoạn + NFC (`91` T3-09) — bản trước ghi "mới thử ở 5 đoạn"; lần thử chạy song song / xã giao song song dùng lại số an toàn khi chuỗi gửi model không đổi (`c172`) — bản trước ghi "mọi lần thử chạy lại bộ 32 câu"; 21 % là phần tiền gửi vào, ước (`c202` §4). Biên bản kiểm: `data/hoc_cung_user_2026-11-10/review_bai_17_19.md` (riêng tư).
+
+- Dòng 30–34 (thêm 15:03 11/11/2026): `report_agent/2026-11-08_phase_9_ban_13/e_t2_web_implementation.md` (dòng 30), `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (dòng 31), `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 02/11 (dòng 32, 33) và mục 03/11, `06_BAO_CAO_TIM_KIEM.md` (dòng 34) [đã chạy]
+
+- **Sửa 15:17 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn; biên bản `data/hoc_cung_user_2026-11-10/review_bai_20_21.md`, riêng tư): dòng 30 cần ≥ 6 / 10 (`e_t2_web_implementation.md` §4); dòng 30, 31, 33 không có bài riêng kể kỹ ⇒ "chỉ ở bài này".
 
 </details>

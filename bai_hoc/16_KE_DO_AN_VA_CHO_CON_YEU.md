@@ -1,6 +1,6 @@
 # Bài 16 — Kể đồ án trong 2–3 phút, và chỗ còn yếu
 
-*Cập nhật lần cuối: 14:28, ngày 11/11/2026 · gom lại bài 0–15; bổ sung việc anh cần quyết lúc lên AWS (chi tiết ở bài 18), trỏ sang bài 17–19.*
+*Cập nhật lần cuối: 14:48, ngày 11/11/2026 · gom lại bài 0–15; gỡ phần chưa làm xong (bản đồ, giọng nói, các bước lên AWS); trỏ sang bài 17–19.*
 
 ## Bảng từ
 
@@ -76,14 +76,14 @@ Xếp theo thứ tự anh nên biết trước. Cột "hướng sửa" là **đ�
 |---|---|---|---|
 | **Từ chối nhầm khoảng 3 %**, dồn ở câu nhiều nguồn, so sánh | đoạn đúng ở hạng 11–30, hoặc ngoài cả 30 ứng viên (bài 6) | thử lại model xếp lại ở cấu hình 10 đoạn (các lần thử cũ làm ở 5 đoạn); hoặc một cách để luna chọn đoạn đủ nhanh. **Chưa đo** | nhãn đoạn đúng + luật "không làm hỏng" (bài 10, 11) |
 | **Kiểm nguồn chỉ kiểm số, chưa kiểm nghĩa** | code biết `[3]` có thật, chưa biết đoạn 3 có nói điều đó (bài 8) | mở rộng luật đã có ở mục web: số tiền, giờ trong câu trả lời phải có trong đoạn được trích. **Chưa đo** | bộ an toàn 32 câu + đếm số "lạ" trên 176 câu |
-| **Bản đang chạy chưa chấm lại trên cả 176 câu** | mỗi phần trợ lý chỉ đo trên bộ riêng trước khi bật (bài 11) | lượt đo cuối Phase 9 (đã có kế hoạch nháp) | cùng thước với lượt đo cuối Phase 8 |
+| **Bản đang chạy chưa chấm lại trên cả 176 câu** | mỗi phần trợ lý chỉ đo trên bộ riêng trước khi bật (bài 11) | một lượt đo cuối trên cả bộ | cùng thước với lượt đo cuối Phase 8 |
 | **Đề chưa có câu người dùng thật**, bộ quen lạc quan | mọi câu do AI soạn; bộ kín thấp hơn khoảng 0,4 (bài 9) | thu câu thật khi đưa lên mạng (không ghi nội dung vào log, cần cách thu có đồng ý) | bộ câu thật mới, giữ kín |
 | **Câu chào hỏi chậm** (câu chậm 7,73 s), **ảnh** chậm (6–9 s), **mục web** chậm (khoảng 13 s) | chờ xếp loại; model nhìn ảnh chậm; tra web thêm một vòng | chạy song song cho câu chào hỏi đã thử và chưa đạt (bài 12); các phần khác chưa thử | đo chữ đầu tiên trên trình duyệt thật |
 | **Tiền sát trần** (0,00047 / 0,0005 USD) | phần trợ lý gần gấp đôi tiền (bài 8) | theo dõi; chưa cần sửa khi còn dưới trần | log tiền mỗi câu |
 | **Không nhớ câu trả lời** ("quán thứ hai bạn vừa kể") | lựa chọn an toàn (bài 13) | nhớ câu trả lời kèm kiểm đúng đối tượng; cần bộ câu hỏi tiếp lớn hơn 6 câu bẫy. **Chưa đo** | điểm câu hỏi tiếp + câu bẫy |
 | **Kho thiếu**: chỗ ở, chợ / chùa ngoài khu di tích, sự kiện theo ngày | chưa soạn (bài 1) | thêm vào kho theo luật sửa kho; chỗ ở thì gợi khu nên ở + link tìm phòng do code dựng (đã đưa vào việc để sau) | đếm câu "về Huế mà kho không có" |
-| **Một nhà cung cấp model, chưa đưa lên mạng** | chạy trên máy anh; bản đóng gói Docker đã chạy thử | đưa lên máy chủ (AWS) khi anh quyết tài khoản, tên miền HTTPS, khoá OpenAI riêng có hạn mức, tra web và hỏi bằng ảnh bật hay tắt, số lượt mỗi IP, log truy cập (đủ danh sách ở bài 18) | kiểm sau khi đưa lên |
-| **Chưa bật**: lịch trình từ câu gõ tự do, bản đồ cả lịch trình, giọng nói | chưa qua luật, hoặc chờ anh (toạ độ, thu 40 câu giọng nói) | làm tiếp khi có dữ liệu anh duyệt | luật ghi trước của từng phần |
+| **Một nhà cung cấp model, chưa đưa lên mạng** | chạy trên máy anh; bản đóng gói Docker đã chạy thử (bài 18) | đưa lên máy chủ thật | kiểm sau khi đưa lên |
+| **Lịch trình từ câu gõ tự do chưa đạt** | thử 2 lần, "hợp người đi cùng" chưa đủ mức ghi trước (bài 14, 19) | hiện chỉ dùng qua biểu mẫu nút | luật ghi trước của lịch trình |
 | **Câu gõ không dấu** | ngoài phạm vi (anh chốt 25/10) | không làm trong đồ án | — |
 
 ## Đồ án làm tốt nhất ở đâu
@@ -102,8 +102,8 @@ Nếu chỉ được nói ba điều đáng tự hào:
 2. Chỗ yếu lớn nhất: **từ chối nhầm khoảng 3 %** ở câu nhiều nguồn, **kiểm nguồn chưa kiểm nghĩa**, và **bản đang chạy chưa chấm lại trên cả bộ**.
 3. Điểm mạnh nhất: **không bịa**, **đo mọi lựa chọn**, **code giữ những việc không được sai**.
 
-**Bài sau:** Bài 17 — Giao diện và tốc độ. Ba bài cuối (17–19) bù phần đã làm mà bài 0–16 chỉ nhắc qua: trang người dùng thấy, đóng gói Docker, và bảng tổng mọi
-lần so sánh. Muốn hiểu kỹ một bước, quay lại đúng bài đó theo bảng "Mỗi lựa chọn chính trong một câu".
+**Bài sau:** Bài 17 — Giao diện và tốc độ. Các bài 17–21 bù phần đã làm mà bài 0–16 chỉ nhắc qua: trang người dùng thấy, đóng gói Docker, bảng tổng mọi lần so sánh,
+đồ án được làm thế nào, và dữ liệu người dùng + bảo mật. Muốn hiểu kỹ một bước, quay lại đúng bài đó theo bảng "Mỗi lựa chọn chính trong một câu".
 
 ---
 
@@ -111,9 +111,9 @@ lần so sánh. Muốn hiểu kỹ một bước, quay lại đúng bài đó th
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Mọi số trong bài lấy từ bài 0–15, mỗi bài có mục Nguồn riêng.
-- Các việc chưa bật hoặc đang chờ (bản đồ, giọng nói, AWS, lượt đo cuối Phase 9): `session_prompt/CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" [tài liệu, 10/11]
 - Chỗ ở: việc để sau ở Phase 11: `session_prompt/Project_Status.md` §5 (05/11) [quyết định của anh]
-- Dòng "chưa đưa lên mạng": bổ sung 11/11 chiều theo bài 18 (bản trước thiếu khoá riêng, số lượt, log truy cập, hỏi bằng ảnh) [tài liệu]
 - Các "hướng sửa" là đề xuất của mình, chưa có bằng chứng đo, trừ các mục ghi rõ "đã thử".
+
+- **Sửa 14:48 11/11/2026:** theo luật anh chốt ("phần chưa xong thì không đưa vào bài học"), gỡ đoạn tả việc chưa làm xong: dòng "Chưa bật: bản đồ, giọng nói" (đang làm dở) và chi tiết các câu anh cần quyết lúc lên AWS; dòng lịch trình câu gõ tự do giữ vì đã thử xong (chưa đạt).
 
 </details>

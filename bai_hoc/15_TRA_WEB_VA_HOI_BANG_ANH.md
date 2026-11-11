@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 10:34, ngày 11/11/2026 · bài mới.*
+*Cập nhật lần cuối: 14:48, ngày 11/11/2026 · sửa một câu nói về việc chưa làm (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -96,7 +96,7 @@ thêm một lý do để **không trả lời khi người dùng chưa xác nh�
 - **Mục web chậm** (khoảng 13 giây).
 - **Luật "ngay lúc này" có thể chặn nhầm** nếu dò quá rộng (ví dụ chữ "đang").
 - **Ảnh:** các lăng, các điện trông giống nhau dễ nhầm; ảnh có chữ lừa có thể đánh lừa model; chưa giới hạn số ảnh mỗi người; câu chậm chưa đạt 5 giây.
-- Khi đưa lên mạng thật, **tra web có thể tắt** trên bản công khai (đang chờ anh quyết lúc deploy).
+- Bản đóng gói để đưa lên mạng (bài 18) đặt tra web **tắt**.
 
 ## Ba điều chính
 
@@ -120,5 +120,7 @@ thêm một lý do để **không trả lời khi người dùng chưa xác nh�
 - Hỏi bằng ảnh: `backend/api/routes/anh.py` (kiểu ảnh, 10 MB `max_bytes`, kiểm trước khi đọc, Origin), `backend/llm/nhan_anh.py` (danh sách tên, ≤ 3 mã / `khong_nhan_ra`, kiểm lại mã, thu nhỏ `canh_dai`, xoá EXIF) [code, xem 11/11]; danh sách 42 mục: `data/phase_10/anh/danh_sach_ten.json` (riêng tư; đếm 11/11) [đã chạy]
 - Ảnh: 22 / 25 trong 3 gợi ý, ảnh ngoài Huế 2 / 5; SigLIP 2 20 / 25 và 5 / 5; ảnh chữ lừa 1 / 3; khoảng 3 s, câu chậm 6–9 s; khoảng 0,0004 USD / ảnh: `bao_cao_he_thong/08_BAO_CAO_HOI_BANG_ANH.md` (05/11) [đã chạy]
 - "Khách sạn gần cầu Trường Tiền" là câu tự đặt.
+
+- **Sửa 14:48 11/11/2026:** theo luật anh chốt ("phần chưa xong thì không đưa vào bài học"), gỡ đoạn tả việc chưa làm xong: câu "đang chờ anh quyết lúc deploy" → tả đúng bản đóng gói đã dựng (`HUE_TRA_WEB` "false" trong `data/phase_12/deploy_nhap/compose.yml`).
 
 </details>

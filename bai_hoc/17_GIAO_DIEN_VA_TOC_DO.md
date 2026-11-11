@@ -118,7 +118,7 @@ thì phải xem lại cách đơn giản hơn. Agent làm việc này khuyên gi
   chạy song song (bản đang dùng) cũng 3,53 / 7,72 giây, đều vượt mốc.
 - **Câu đầu tiên sau khi bật máy chủ** chậm hơn (một lần thấy 5,1 giây so với 2,8 giây lần sau).
 - **Máy đông việc:** đo khi máy đang chạy việc nặng khác thì số không dùng được. Vì vậy lúc đo tốc độ, các session khác phải dừng việc nặng.
-- **Đưa lên mạng thật:** chưa đo trên máy AWS (bài 18).
+- Mọi số đo ở trên là trên máy anh; chưa đo trên máy chủ thật.
 
 ## Ba điều chính
 

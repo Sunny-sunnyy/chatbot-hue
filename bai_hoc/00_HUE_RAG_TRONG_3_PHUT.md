@@ -1,6 +1,6 @@
 # Bài 0 — hue_rag trong 3 phút
 
-*Cập nhật lần cuối: 14:28, ngày 11/11/2026 · thêm mục 5 ở "Đồ án đã làm những gì" (bài 17–19 mới).*
+*Cập nhật lần cuối: 14:49, ngày 11/11/2026 · thêm tên đề tài, người dùng mục tiêu; mục 5 ở "Đồ án đã làm những gì".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -34,6 +34,12 @@ Anh hỏi: *"Chùa Thiên Mụ mở cửa mấy giờ?"*. Họ không trả lờ
 Giữ hình ảnh này trong đầu. Cả bộ bài học sẽ quay lại người hướng dẫn viên này.
 
 ## hue_rag là gì
+
+**Tên đề tài** (đã chốt với giảng viên): *"Xây dựng ứng dụng hỗ trợ trải nghiệm văn hóa và du lịch Huế dựa trên Retrieval-Augmented Generation"*
+(tiếng Anh: *Developing a Retrieval-Augmented Generation-Based Application for Cultural and Tourism Experiences in Hue*).
+
+**Cho ai:** du khách, người dân Huế, và chính anh. Đồ án được làm và đánh giá **như một sản phẩm thật** đem ra cho người dùng, không chỉ là bản thử. Thứ tự
+ưu tiên anh chốt: **chất lượng trước** (đúng, có nguồn, từ chối đúng câu ngoài kho, không bịa), rồi mới tới tốc độ và tiền (bài 11, 17).
 
 hue_rag là **chatbot trợ lý du lịch và văn hoá Huế** chạy trên một trang web. Người dùng gõ câu hỏi bằng tiếng Việt có dấu. Chatbot trả lời **chỉ từ một kho
 204 bài viết** đã soạn sẵn, và dưới mỗi câu trả lời có dòng "Nguồn" để bấm vào đọc lại bài gốc.
@@ -116,7 +122,7 @@ Tốc độ: chữ đầu tiên hiện sau khoảng **2,2 giây** với câu v�
 4. **Nâng chatbot thành trợ lý**: xếp loại câu, tìm thêm, nhớ 3 câu hỏi gần nhất, ngày âm lịch, thời tiết, tra web khi kho không có, biểu mẫu lên lịch trình,
    hỏi bằng ảnh, trên một trang cổng du lịch (bài 12–15).
 5. **Trang cổng, tốc độ, đóng gói để đưa lên mạng**: giao diện nhiều mục, chữ hiện dần, chạy song song cho đỡ chờ; gói Docker không mang theo dữ liệu kín (bài 17–18).
-   Bảng tổng mọi lần so sánh ở bài 19.
+   Bảng tổng mọi lần so sánh ở bài 19; đồ án được làm thế nào ở bài 20; dữ liệu người dùng và bảo mật ở bài 21.
 
 ## Một chuyện thật: 5 đoạn hay 10 đoạn
 
@@ -167,5 +173,7 @@ thay đổi duy nhất thắng rõ, và chatbot dùng 10 đoạn từ cuối th�
 - Từ chối nhầm 4–6 / 158 (03/11; trước "tìm thêm": 12); 0 câu ngoài kho bị trả lời; chữ đầu tiên 2,16 giây (09/11): `bao_cao_he_thong/README.md` "Số chính" [đã chạy]
 - 5 → 10 đoạn (Phase 8.1: Đủ ý +0,26 trên nhóm thử, lợi nhất ở câu nhiều nguồn / so sánh; vào chatbot 28/10): `session_prompt/Project_Status.md` §2 [đã chạy]
 - Tên gốc trong bảng từ: `router` / định tuyến trong `assistant.py`; `chunk` trong `backend/ingestion/chunking/`; Golden ở `knowledge-base-hue/evaluation/` (riêng tư) [code]
+
+- Tên đề tài chốt với giảng viên (01/11), người dùng = du khách, người dân, anh; "xem như sản phẩm kinh doanh thật" (27/10); chất lượng trước rồi tốc độ / tiền (26/10): `session_prompt/Project_Status.md` §1 "Mục tiêu sản phẩm", §5 [quyết định của anh] (thêm 14:49 11/11/2026)
 
 </details>

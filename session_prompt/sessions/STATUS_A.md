@@ -5,6 +5,7 @@
 - 3 agent con chỉ đọc đang lập fact sheet ⇒ `data/hoc_cung_user_2026-11-10/fact_{trang_tong_so_sanh,bai_17_giao_dien_toc_do,bai_18_dong_goi_docker}.md`.
 - Khai báo sửa: `bai_hoc/` (file mới + README), `CURRENT_HANDOFF.md`, `STATUS_A.md`; sổ ghi việc khi đóng đợt.
 - (14:29 11/11/2026) User duyệt dàn ⇒ viết bài 17, 18, 19 + README; sửa câu sai bài 11 (số 7 là của câu dặn, không phải nhớ câu hỏi), 14 ("ngày kia" không tính sẵn; dòng "Tổng" không sai số), làm rõ bài 8; bài 0 / 16 trỏ sang 17–19. Agent con review độc lập 3 bài mới đang chạy ⇒ sửa theo finding ⇒ commit / push. Nhật ký 11/11 thêm 1 dòng. Tiền 0 USD.
+- (15:18 11/11/2026) Commit `f892528` (bài 17–19 + sửa câu sai) đã push. Sau đó User chốt: bài học chứa **mọi việc đã làm xong**, phần chưa xong không đưa vào (WORKFLOW §6 + memory). Rà độ phủ (agent con: 111 việc, 37 thiếu) ⇒ User chọn: bài 20 (làm đồ án thế nào), bài 21 (dữ liệu + bảo mật), bổ sung bài 0 / 12 / 19; không làm bảng "đang làm". Gỡ phần chưa xong ở bài 15–18. Review độc lập bài 20–21 (1 sai, 9 hiểu nhầm, 13 nhỏ) ⇒ sửa hết. Probe 0 USD: `setup_logging()` tắt `uvicorn.access` ⇒ câu "log truy cập ghi IP" nhiều khả năng sai (sửa `01_LUONG`, handoff Q-DP). Câu mới cho User: tên công ty trong 11 file tracked cũ. Tiền 0 USD.
 
 # STATUS A — KẾT PHIÊN 11/11 (mở 08:18; cập nhật 10:44 11/11/2026 `date`)
 

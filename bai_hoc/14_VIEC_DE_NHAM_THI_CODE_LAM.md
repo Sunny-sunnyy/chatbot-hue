@@ -104,7 +104,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - **Dạng ngày ít gặp** ("tháng tới", "ngày kia của tuần sau"…) vẫn đi đường cũ, model tự cộng ngày.
 - **Câu có ngày đúng nhưng thiếu `[n]`** thì bị rút lại (1 / 9 câu lịch ngày 10/11, bài 8).
 - **Thời tiết "tuần sau"** không có số dự báo (ngoài 7 ngày), chỉ có câu cố định.
-- **Biểu mẫu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng (chờ anh duyệt bảng mới). Không có ô "lo trời mưa", không có ô giờ
+- **Biểu mẫu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng. Không có ô "lo trời mưa", không có ô giờ
   tới / giờ về.
 - **Lịch trình từ câu gõ tự do chưa bật.**
 

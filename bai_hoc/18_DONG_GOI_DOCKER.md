@@ -1,6 +1,6 @@
 # Bài 18 — Mang cả chatbot sang máy khác: đóng gói Docker
 
-*Cập nhật lần cuối: 14:41, ngày 11/11/2026 · bài mới (bù phần đã làm mà bài 0–16 chưa kể kỹ); đã qua một lượt kiểm độc lập.*
+*Cập nhật lần cuối: 14:48, ngày 11/11/2026 · bài mới; đã qua một lượt kiểm độc lập; gỡ phần chưa làm (lên AWS).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -17,8 +17,8 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 
 ---
 
-*Bài 5 kể Qdrant chạy trong Docker trên máy anh. Bài 17 kể trang web và tốc độ. Bài này kể bước chuẩn bị để đưa **cả chatbot** lên một máy chủ trên mạng
-(dự kiến AWS): đóng gói ra sao, và vì sao phần khó nhất lại là **không mang theo** những thứ không được mang.*
+*Bài 5 kể Qdrant chạy trong Docker trên máy anh. Bài 17 kể trang web và tốc độ. Bài này kể bước đã làm để chuẩn bị đưa **cả chatbot** lên một máy chủ trên
+mạng: đóng gói ra sao, và vì sao phần khó nhất lại là **không mang theo** những thứ không được mang.*
 
 ## Quay lại người hướng dẫn viên
 
@@ -113,28 +113,15 @@ Caddy ghi kèm, nếu không thì **cả nước chung một sổ đếm lượt
 
 Người kiểm đọc lại cả việc: vòng 1 ra 1 lỗi đáng sửa (hỏi bằng ảnh tự tắt, ở trên) và 2 chỗ nhỏ, vòng 2 đạt.
 
-Chưa thử: HTTPS thật (trên máy anh chỉ có http), tốc độ trên máy AWS.
-
-## Còn thiếu để lên AWS
-
-**Anh cần quyết** (mình chưa hỏi, đợi tới lúc lên AWS):
-- tài khoản AWS và máy (gợi ý cũ: máy 4 GB RAM; máy 2 GB có thể không đủ: đo 07/11 ngoài Docker, app + Qdrant gần 1,9 GB; lần 10/11 trong Docker thấy
-  khoảng 1,2 GB vì cách đếm khác; chưa tính phần hệ điều hành);
-- **tên miền HTTPS** (hoặc một tên miền tạm miễn phí theo IP), vì chốt cookie cần nó;
-- **khoá OpenAI riêng** cho bản lên mạng, đặt hạn mức chi tiêu. Đây mới là **trần tiền thật**: giới hạn theo IP không chặn được nhiều người cộng dồn;
-- tra web bật hay tắt; bật "hỏi bằng ảnh" trên bản công khai không (ảnh người dùng gửi sang OpenAI);
-- số lượt mỗi IP (mặc định 50). Lưu ý: nhiều người chung một wifi, ví dụ cả phòng chấm, là **chung một IP**, tức chung 50 lượt;
-- ảnh lễ hội thật có lên không (mặc định không, dùng ảnh giấy phép mở);
-- **log truy cập** của máy chủ web mặc định vẫn ghi địa chỉ IP người dùng. Log của chatbot thì không ghi. Có tắt log truy cập không?
-
-**Việc kỹ thuật còn lại:** mở cổng 80 và 443 trên máy, chép bản Qdrant lên, dựng gói ngay trên máy, rồi chạy lại kiểm sức khoẻ, 1 câu trong kho, 1 câu ngoài
-kho, 10 câu đo tốc độ trên máy thật, và thử HTTPS thật.
+Chưa thử được trên máy anh: HTTPS thật (máy anh chỉ có http). Việc đưa lên máy chủ thật chưa làm; khi làm xong sẽ viết bổ sung vào bài này.
 
 ## Khi nào hỏng
 
 - **Quên đặt tên miền HTTPS** mà cookie vẫn bật ⇒ mất nhớ hội thoại, không báo lỗi.
 - **Ai đó mở cổng cho app** ra ngoài, đi vòng qua Caddy ⇒ người dùng tự khai địa chỉ IP giả để lách giới hạn được.
 - **Khởi động lại app** ⇒ sổ đếm lượt (nằm trong bộ nhớ) bị xoá, mọi người có lại đủ lượt.
+- **Nhiều người chung một wifi** là chung một IP, tức chung số lượt mỗi ngày.
+- Giới hạn theo IP **không phải trần tiền tổng**: nhiều IP vẫn cộng dồn. Trần tiền thật phải đặt ở hạn mức chi tiêu của khoá OpenAI.
 - **Kho đổi** mà quên sinh lại danh sách cho phép ⇒ app thấy bài lệch phiếu, không chạy. Tình huống này an toàn nhưng phải để ý.
 - Gói lọt ra ngoài là lọt kho bài ⇒ không đẩy lên kho ảnh công khai.
 
@@ -144,7 +131,7 @@ kho, 10 câu đo tốc độ trên máy thật, và thử HTTPS thật.
 2. **Danh sách cho phép, sinh tự động, rồi đếm trong gói cuối.** Chuyện thật: danh sách chặn đã lọt 16 file đánh giá và 148 file ghi chú, sao lưu, vì lệnh kiểm chỉ
    nhìn 3 dòng đầu. Đếm lại: 204 bài, 0 câu kín.
 3. **Bốn chốt trước khi lên mạng** (50 lượt / IP / ngày, cookie HTTPS, tắt tài liệu API, log xoay vòng) đã có trong mã; trên máy anh đã thử đạt giới hạn
-   lượt và tắt tài liệu API, cookie HTTPS chờ HTTPS thật. Còn chờ anh quyết tài khoản, tên miền, khoá riêng có hạn mức, tra web, ảnh, log truy cập.
+   lượt và tắt tài liệu API, cookie HTTPS chờ HTTPS thật.
 
 **Bài sau:** Bài 19 — Bảng tổng các lần so sánh: mọi lựa chọn chính trên một trang, để tra lại nhanh.
 
@@ -159,10 +146,11 @@ kho, 10 câu đo tốc độ trên máy thật, và thử HTTPS thật.
 - Sự cố 07/11 (16 + 148 file, 7 thư mục lồng, lệnh chỉ in 3 dòng): `report_agent/2026-11-07_tu_soi_lo_trinh/e_review_b_dep.md` §3, `b_dep_build_cuc_bo.md` [đã chạy]
 - Lần chạy 10/11 (191 s, 3,57 GB, 5 / 5 sau 10 s, 429 kể cả IP giả, đếm 204 / 0, RAM), review vòng 1 (hỏi bằng ảnh tự tắt) + vòng 2 đạt: `report_agent/2026-11-08_phase_9_ban_13/b_deploy_cuc_bo_implementation.md` §2, §5, `b_deploy_cuc_bo_review.md` [đã chạy]
 - Bốn chốt: giới hạn lượt `backend/api/gioi_han.py` (`HUE_LUOT_MOI_NGAY`, không đặt ⇒ tắt, 3 đường gọi model chung sổ, 429, đếm trong RAM), gắn ở `backend/api/app.py`; `HUE_TAT_DOCS` `app.py`; `HUE_COOKIE_SECURE` `backend/api/routes/chat.py`; log xoay vòng `backend/config/logging.yaml`; `HUE_TRA_WEB`, `HUE_QDRANT_URL`: `backend/core/settings_loader.py` [code, xem 11/11]
-- Câu anh cần quyết lúc lên AWS: `session_prompt/CURRENT_HANDOFF.md` "Câu hỏi cho User" (Q-DP); máy 4 GB, 2 GB không đủ: `report_agent/2026-11-07_tu_soi_lo_trinh/e_dep_chuan_bi_deploy.md` [tài liệu]
-- "Log truy cập ghi IP": lệnh chạy không có `--no-access-log` (`Dockerfile`, dòng cuối) [code]; "chung wifi = chung lượt", "khởi động lại xoá sổ": suy ra từ cách đếm trong RAM theo IP (`gioi_han.py`) [suy ra, chưa chạy]
+- "Chung wifi = chung lượt", "khởi động lại xoá sổ": suy ra từ cách đếm trong RAM theo IP (`gioi_han.py`) [suy ra, chưa chạy]. (Câu cũ "log truy cập ghi IP" đã bỏ: phép thử 11/11 cho thấy cấu hình log của chatbot tắt log truy cập của uvicorn — bài 21.)
 - Bản ghi số liệu cho bài này (agent con, chỉ đọc, 11/11): `data/hoc_cung_user_2026-11-10/fact_bai_18_dong_goi_docker.md` (riêng tư)
 - Ví dụ vali là ví dụ tự đặt.
 - **Sửa 14:41 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn): lần thử 10/11 đặt `HUE_COOKIE_SECURE=0` (`b_deploy_cuc_bo_implementation.md` §2) nên chốt cookie chưa thử — bản trước ghi "bốn chốt đã thử đạt"; 1,9 GB (07/11, ngoài Docker) ↔ ~1,2 GB (10/11, `docker stats`) khác cách đếm; log xoay vòng bật mọi máy (`ccc9f4f`). Biên bản kiểm: `data/hoc_cung_user_2026-11-10/review_bai_17_19.md` (riêng tư).
+
+- **Sửa 14:48 11/11/2026:** theo luật anh chốt ("phần chưa xong thì không đưa vào bài học"), gỡ đoạn tả việc chưa làm xong: mục "Còn thiếu để lên AWS" (việc lên máy chủ chưa làm; các câu anh cần quyết vẫn ở `session_prompt/CURRENT_HANDOFF.md` "Câu hỏi cho User"). Giữ lại phần thuộc gói đã dựng (chung wifi chung lượt, trần tiền thật ở khoá OpenAI).
 
 </details>

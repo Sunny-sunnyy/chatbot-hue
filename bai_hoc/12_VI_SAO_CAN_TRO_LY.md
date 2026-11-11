@@ -1,6 +1,6 @@
 # Bài 12 — Từ chatbot thành trợ lý: xếp loại câu và công cụ
 
-*Cập nhật lần cuối: 10:29, ngày 11/11/2026 · bài mới; mở đầu Phần 3 (trợ lý).*
+*Cập nhật lần cuối: 15:03, ngày 11/11/2026 · thêm mục "Vì sao chọn đúng những tính năng này" và danh sách đã cân mà không làm.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -46,6 +46,42 @@ Sau Phase 8, chatbot hỏi đáp từ kho đã khá tốt (Phần 2). Nhưng cò
 - **câu chào hỏi, câu ngoài chủ đề** đi qua cả bước tìm và viết, vừa tốn tiền vừa trả lời gượng.
 
 Anh nói lúc mở Phase 9: *"lên trợ lý mà không khác RAG mức 1 thì cần gì trợ lý"*. Nên Phase 9 làm trợ lý có công cụ thật, mỗi công cụ chữa đúng một chỗ ở trên.
+
+## Vì sao chọn đúng những tính năng này
+
+Trước khi xây, mình nghiên cứu năm đợt (01–05/11; phần nghiên cứu 0 USD API):
+- **thử tận tay một trợ lý du lịch Huế đang chạy công khai**, 3 vòng. Nó xếp điểm vào sau giờ đóng cửa, trả lời câu an toàn không có nguồn, nói ngược tài liệu ở
+  câu điều kiện, chặn cả câu "Xin chào" là "không liên quan", và mất 14–36 giây một câu;
+- quét **15 trợ lý du lịch, di sản** đang chạy để xem cái gì đáng học;
+- đọc code 8 dự án mẫu, khoá AI FDE, và nghiên cứu sâu qua ChatGPT.
+
+Mọi nguồn cùng chỉ về một hướng: **"model đề xuất, code kiểm"**. Việc luôn phải đúng (tính ngày, xếp giờ, luật an toàn, link) thì code làm; model chỉ quyết phần
+cần phán đoán và diễn đạt. Một ví dụ: theo một nghiên cứu, 52 % lịch trình do ChatGPT-3.5 xếp có điểm đến vào giờ đóng cửa.
+
+| Tính năng đang chạy | Vì sao chọn / bằng chứng thêm về sau |
+|---|---|
+| Xếp loại câu | chọn 02/11 để câu chào, câu ngoài chủ đề khỏi đi qua bước tìm (đầu bài). Về sau thấy thêm: trợ lý đã thử chặn cả câu chào; một dự án mẫu ghi nhét sẵn nhiều đoạn thì model không chịu gọi công cụ |
+| Tìm thêm ≤ 2 lần | câu nhiều nguồn chỉ 3,50 điểm (bài 11) |
+| Nhớ 3 câu hỏi, 30 phút | bản cũ không nhớ, trong khi trợ lý đã thử thì nhớ; phiên ngắn, không hỏi tên hay số điện thoại để giữ dữ liệu cá nhân ít nhất |
+| Ngày, âm lịch, thời tiết do code | chọn 02/11 theo hướng "model đề xuất, code kiểm" (model hay tính sai ngày). Về sau thấy thêm: trợ lý đã thử có dữ liệu theo ngày trên trang nhưng khung chat nói "không có dữ liệu thời gian thực" |
+| Biểu mẫu "Lên kế hoạch" | "model đề xuất, code kiểm"; chọn bằng nút thì không phải đoán ý (bài 14) |
+| 👍 / 👎, câu ngoài chủ đề kèm gợi ý | học từ hai trợ lý đang chạy (một trợ lý ở Tokyo có nút báo sai) |
+| Tra web khi kho từ chối | anh chọn 02/11; mục riêng "chưa kiểm" (bài 15) |
+| Hỏi bằng ảnh | lúc đầu (03/11) để ngoài phạm vi; 05/11 anh thêm vào. gpt-6-luna nhận ảnh cùng giá, không cần model mới; dễ thấy khi xem thử. Vì có thể nhận sai nên chỉ gợi ý, chờ xác nhận |
+
+**Đã cân mà không làm** (mỗi cái một lý do):
+
+| Ý | Vì sao không làm |
+|---|---|
+| Gợi ý kiểu "người giống bạn cũng thích" (lọc cộng tác), xếp theo sao đánh giá | cần dữ liệu điểm của nhiều người dùng, kho **không có**; tự tạo điểm là bịa dữ liệu. Chỉ 13 bài có dạng sao, nguồn không rõ |
+| Gợi ý theo hồ sơ người dùng, đăng nhập | trái nguyên tắc không giữ dữ liệu cá nhân ngoài phiên |
+| Tối ưu quãng đường (bài toán người du lịch) | kho chỉ 9 bài có toạ độ, 4 / 28 điểm có thời lượng, nên phải tự đặt số không nguồn |
+| GraphRAG | kho là văn bản, không có đồ thị quan hệ; cách làm trong dự án mẫu không trích dẫn được nguồn |
+| Xếp loại câu bằng danh sách từ khoá | danh sách cố định luôn thua cách viết chưa liệt kê; đã đo: luật từ khoá cho câu khẩn cấp đúng 14 / 14 câu đã thấy nhưng **0 / 8** câu kín (bài 19) |
+| Bảng giá dạng cơ sở dữ liệu (hỏi bằng SQL) | không cần; sau đó "code tính tiền" đã thử và âm (bài 19) |
+| Nhiều agent chuyên môn | tốn token, dễ "tam sao thất bản"; giữ một trợ lý với công cụ rõ tên |
+| Kể chuyện nhập vai, câu đố, thực tế ảo tăng cường | nhập vai dễ thành bịa lịch sử; câu đố / check-in thì Huế đã có ứng dụng làm việc này; thực tế ảo vướng quyền dùng ảnh |
+| Ưu tiên theo lĩnh vực (ý của anh) | đếm 0 USD trước: chỉ cứu được 2 / 4 câu, dưới mức 3 / 4 ghi trước, nên không mở thí nghiệm |
 
 ## Thứ nhất: xếp loại câu (định tuyến)
 
@@ -149,5 +185,9 @@ Hai thử nghiệm tốc độ ở bước xếp loại đã bị bỏ:
 - Dao động 2 câu đổi tuyến; 1 / 246 lần quá giờ: `07_…` [đã chạy]
 - Câu anh nói khi mở Phase 9: `session_prompt/Project_Status.md` §5 (02/11)
 - Các câu ví dụ là câu tự đặt.
+
+- Mục "Vì sao chọn" (thêm 15:03 11/11/2026): nghiên cứu 01–05/11, trợ lý Huế đang chạy thử 3 vòng, 15 trợ lý, 8 dự án mẫu, "model đề xuất, code kiểm", 52 % lịch ChatGPT-3.5: `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md`, `bao_cao_he_thong/93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md`; danh sách không làm + lý do: `session_prompt/CURRENT_HANDOFF.md` bảng 04/11, `data/nghien_cuu_tinh_nang_2026-11-04/sa1_github.md` (riêng tư) [tài liệu]; bản ghi `data/hoc_cung_user_2026-11-10/fact_bao_mat_va_tinh_nang.md` mục B4 (riêng tư)
+
+- **Sửa 15:17 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn; biên bản `data/hoc_cung_user_2026-11-10/review_bai_20_21.md`, riêng tư): định tuyến và "code giữ ngày" chốt 02/11 (`docs/superpowers/specs/2026-11-02-phase-9-design.md`); quan sát trợ lý đã thử và ghi chú dự án mẫu có sau đó (03–04/11, `92_…`) ⇒ cột đổi thành "vì sao chọn / bằng chứng thêm về sau".
 
 </details>

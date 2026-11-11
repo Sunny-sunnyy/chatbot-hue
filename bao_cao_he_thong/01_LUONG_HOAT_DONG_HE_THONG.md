@@ -99,7 +99,7 @@ chặn link / số tiền lạ ở mục web · câu bão lũ · giới hạn s�
 | Máy chủ (RAM) | 3 câu hỏi gần nhất của cuộc trò chuyện, xoá sau 30 phút không hỏi hoặc khi bấm "Cuộc trò chuyện mới"; ảnh **không** lưu | — |
 | Trình duyệt (cookie) | một mã cuộc trò chuyện ngẫu nhiên, 30 phút, trang web không đọc được | — |
 | Log của chatbot (file trên máy chủ) | số đo, loại câu, tiền, đánh giá 👍 / 👎 — **không** chữ câu hỏi / câu trả lời, không IP; file xoay vòng (≤ 10 MB × 3) | mọi câu |
-| Log truy cập của máy chủ web (màn hình; bản Docker: log của container) | IP + đường dẫn + mã kết quả của mỗi lần gọi (mặc định của máy chủ web) — không chữ câu hỏi; trên máy cá nhân chỉ hiện màn hình, bản Docker giữ tới khi log xoay vòng (≤ 10 MB × 3) | mọi lần gọi |
+| Log truy cập của máy chủ web | phép thử 15:04 11/11/2026: cấu hình log của chatbot (nạp lúc khởi động) **tắt** log truy cập mặc định của uvicorn ⇒ nhiều khả năng **không** in IP; chưa kiểm trên máy chủ thật đang chạy | — |
 
 ## Khi có lỗi, người dùng thấy gì
 
@@ -110,9 +110,9 @@ lại) · Qdrant tắt ⇒ báo lỗi tạm thời · khi đưa lên mạng có 
 
 - Chỉ một nhà cung cấp model, không dự phòng. Không đăng nhập. Chưa có câu hỏi của người dùng thật — mọi số đo trên câu tự viết / Golden.
 - Kiểm nguồn chỉ kiểm **số nguồn có thật**, không kiểm câu chữ có đúng với nguồn — "có nguồn" chưa phải "đã kiểm nghĩa".
-- Từ chối nhầm còn là lỗi nhiều nhất: đoạn chứa đáp án có trong 30 đoạn tìm được nhưng xếp hạng 11–30, không lọt vào 10 đoạn đưa model ⇒ model không thấy nên nói "không đủ thông tin".
+- Từ chối nhầm còn là lỗi nhiều nhất: đoạn chứa đáp án xếp hạng 11–30 (không lọt vào 10 đoạn đưa model), hoặc nằm ngoài cả 30 ứng viên (khoảng một nửa số ca) ⇒ model không thấy nên nói "không đủ thông tin".
 - Câu xã giao chờ phân loại xong mới viết ⇒ có lúc chậm (cách chạy song song đã thử 10/11, chưa đạt — không áp dụng).
-- Câu lịch chung không nhắc Huế đang bị từ chối (đang sửa). Mục web có thể cũ / sai dù đã ghi "chưa kiểm".
+- Mục web có thể cũ / sai dù đã ghi "chưa kiểm".
 
 ## Đọc chi tiết (báo cáo kỹ thuật)
 
