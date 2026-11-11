@@ -90,17 +90,20 @@ Chỉ cần **một lỗi là cả bước chuẩn bị dừng lại**, không c
 Trong đợt rà lại mọi lựa chọn cũ (cuối tháng 10), mình thử **12 cách cắt khác** trên 32 câu hỏi đã biết chắc đáp án nằm ở đâu trong kho. Ví dụ: gộp đoạn ngắn
 thành đoạn 128, 256, 384 hay 512 token; sau khi tìm thì mở rộng ra cả mục chứa đoạn đó; gộp các dòng bảng liền nhau; bỏ tên bài và tiêu đề khỏi chữ để tìm.
 
-Thước đo là: đoạn chứa đáp án có còn nằm trong phần đưa người viết không. Để so cho công bằng, mọi cách đều chỉ được đưa **cùng một lượng chữ** cho người viết.
-Giống như xếp đồ vào cùng một chiếc vali: được mang 9 món nhỏ, hay 4 món to. Nếu không giữ chung một cỡ vali, đoạn to sẽ "tự thắng" chỉ vì chở được nhiều chữ hơn.
+Thước đo là: đoạn chứa đáp án có còn nằm trong phần đưa người viết không. Để so cho công bằng, mọi cách đều chỉ được đưa **cùng một lượng chữ** cho người viết
+(750 token). Giống như xếp đồ vào cùng một chiếc vali: được mang 9 món nhỏ, hay 4 món to. Nếu không giữ chung một cỡ vali, đoạn to sẽ "tự thắng" chỉ vì chở
+được nhiều chữ hơn. Luật ghi **trước** khi chạy: cách mới chỉ được nhận nếu **không làm câu nào mất đáp án**.
 
-Kết quả trên 32 câu:
+Kết quả trên 32 câu, so với cách đang dùng:
 
-| Cách thử | Số câu mất đáp án | Nghĩa là |
-|---|---:|---|
-| Gộp nhỏ tới 128 token; gộp dòng bảng | 0 | không khác cách đang dùng ⇒ đổi cũng không được gì |
-| Gộp tới 256 / 384 / 512 token | 4 / 6 / 6 | **tệ hơn**: cứ khoảng 6 câu thì 1 câu người viết không còn thấy đáp án |
-| Mở rộng ra cả mục sau khi tìm | 8 | **tệ hơn** rõ |
-| Bỏ tên bài + tiêu đề (hoặc chỉ giữ tiêu đề gần nhất) | 8 / 7 | **tệ hơn** rõ (bài 3 kể vì sao) |
+| Cách thử | Câu tốt lên / câu mất đáp án | Nghĩa là |
+|---|---|---|
+| Gộp nhỏ tới 128 token; gộp dòng bảng | 0 / 0 | không khác ⇒ đổi cũng không được gì |
+| Gộp tới 256 token | 0 / 4 | không câu nào tốt lên, 4 câu mất ⇒ bỏ |
+| Gộp tới 384 token | 1 / 6 | được 1 mất 6 ⇒ bỏ |
+| Gộp tới 512 token | 0 / 6 | mất 6 câu, và ở mức này phép thử thống kê cũng xác nhận là tụt thật, không phải may rủi |
+| Mở rộng ra cả mục sau khi tìm | 0 / 8 | tệ hơn rõ: các đoạn "anh em" của 1–2 đoạn đầu chiếm gần hết vali |
+| Bỏ tên bài + tiêu đề, hoặc chỉ giữ tiêu đề gần nhất | 3–4 / 7–8 | có câu tốt lên nhưng mất nhiều hơn ⇒ bỏ theo luật "không câu nào mất" (bài 3 kể kỹ) |
 
 Vì sao đoạn to lại tệ? Đoạn to quả thật **chứa được đáp án nhiều hơn**. Nhưng mỗi đoạn chiếm nhiều chỗ, nên chỉ khoảng 4–5 đoạn vừa vali, thay vì khoảng 9
 đoạn nhỏ trỏ tới 9 chỗ khác nhau trong kho. Câu hỏi nào cần ghép thông tin từ nhiều chỗ thì đoạn to thua.
@@ -108,8 +111,8 @@ Vì sao đoạn to lại tệ? Đoạn to quả thật **chứa được đáp �
 Điều rút ra lớn hơn chuyện cắt đoạn: thứ giúp thật là **cho người viết thấy nhiều chỗ hơn**, không phải cho mỗi chỗ to hơn. Cũng chính đợt rà này dẫn tới quyết
 định đưa 10 đoạn thay vì 5 (bài 0).
 
-Một lưu ý về độ chắc: 32 câu là mẫu nhỏ. Kết luận "đoạn to tệ hơn" đủ chắc, vì chênh lệch rõ và cùng chiều ở nhiều cách thử. Còn "gộp nhỏ không khác" chỉ có
-nghĩa là trên 32 câu này chưa thấy khác.
+Một lưu ý về độ chắc: 32 câu là mẫu nhỏ. Với đoạn to, kết luận đủ chắc: cả bốn mức gộp đều cùng chiều (gần như không câu nào tốt lên, 4–6 câu mất), và ở mức
+512 token phép thử thống kê xác nhận. Còn "gộp nhỏ không khác" chỉ có nghĩa là trên 32 câu này chưa thấy khác.
 
 ## Khi nào hỏng
 
@@ -129,8 +132,8 @@ nghĩa là trên 32 câu này chưa thấy khác.
    dừng**. Hiện nay: 8.435 đoạn, 0 lỗi.
 3. Đã thử 12 cách khác với **cùng một lượng chữ** đưa người viết. **Đoạn to tệ hơn**, vì người viết thấy ít chỗ hơn. Điều giúp thật là **thấy nhiều chỗ hơn**.
 
-**Bài sau:** Bài 3 — Ghi tên lên góc thẻ (metadata): mỗi đoạn mang theo tên bài và đường tiêu đề, ví dụ "Bún bò Huế > Quán nổi tiếng". Bỏ phần này đi thì mất
-đáp án ở 7–8 trên 32 câu.
+**Bài sau:** Bài 3 — Ghi tên lên góc thẻ (metadata): mỗi đoạn mang theo tên bài và đường tiêu đề, ví dụ "Bún bò Huế > Quán nổi tiếng". Thử bỏ phần này đi: 3–4 câu
+tốt lên nhưng 7–8 câu mất đáp án.
 
 ---
 

@@ -101,7 +101,7 @@ khác là Claude chấm từng câu so với đáp án mẫu, không biết câu
 
 - **Điểm "đúng" 4,7 trên 5**, ở lần chấm đầy đủ gần nhất (01/11, khoảng 130 câu hỏi mẫu có đáp án trong kho). Vì sao gọi là tốt: nếu chỉ tính những câu
   chatbot thật sự trả lời thì điểm lên **4,96**, gần như tuyệt đối. Nghĩa là khi đã trả lời thì chatbot gần như không nói sai. Phần điểm bị trừ chủ yếu đến
-  từ những câu nó từ chối dù kho có đáp án.
+  từ những câu nó từ chối dù kho có đáp án: người chấm coi câu từ chối như vậy là "không có nội dung để chấm", nên điểm rất thấp và kéo trung bình xuống.
 - **Từ chối nhầm khoảng 4–6 trên 158 câu**, tức khoảng 3 %. Trước khi chatbot có bước "tìm thêm" (bài 13), con số này là 12. Đây là lỗi còn nhiều nhất.
 - **0 câu ngoài kho bị trả lời** trên mọi bộ đã đo. Đây là mức tối thiểu đặt ra từ đầu, và chưa lần nào bị vượt qua.
 
@@ -124,7 +124,8 @@ thay đổi duy nhất thắng rõ, và chatbot dùng 10 đoạn từ cuối th�
 
 ## Khi nào hỏng
 
-- **Kho có mà tìm không ra.** Đoạn có đáp án nằm ở hạng 11–30 trong kết quả tìm, không lọt vào 10 đoạn đưa người viết, nên chatbot nói "không đủ thông tin".
+- **Kho có mà tìm không ra.** Đoạn có đáp án không lọt vào 10 đoạn đưa người viết, nên chatbot nói "không đủ thông tin". Khi rà kỹ các câu bị như vậy, khoảng
+  một nửa có đoạn đúng nằm ở hạng 11–30, nửa còn lại nằm ngoài cả 30 đoạn ứng viên (bài 6).
 - **Kho cũ.** Giá, giờ có thể đổi mà kho chưa sửa. Câu trả lời về vé, điểm tham quan và lễ hội luôn kèm dòng "thông tin có thể đã thay đổi".
 - **Kiểm nguồn mới kiểm được số nguồn.** Code kiểm được rằng nguồn được ghi là có thật, chưa kiểm được câu viết ra có khớp từng chữ với nguồn hay không.
 
@@ -159,7 +160,8 @@ thay đổi duy nhất thắng rõ, và chatbot dùng 10 đoạn từ cuối th�
 - Câu từ chối cố định: `backend/llm/full_corpus_prompt.py` [code] · ngày do code tính: `backend/llm/ngay_lich.py` hàm `lich_san` [code]
 - 8.435 đoạn từ 204 bài: build record `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (05/11) [đã chạy]
 - Ví dụ "bún bò cuối tuần": câu tự đặt, theo ví dụ trong sổ ghi việc `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` [ví dụ tự đặt]
-- Điểm Đúng 4,71 (129 câu, 01/11); 4,96 khi chỉ tính câu được trả lời: `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` [đã chạy]
+- Điểm Đúng 4,71 (129 câu, 01/11); 4,96 khi chỉ tính câu được trả lời (121 câu): `report_agent/2026-10-31_streaming_spec/do_cuoi_b_bo_kin.md`, `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` [đã chạy]. Cách chấm câu từ chối nhầm: `backend/evaluation/full_corpus_judge_prompt.md` [code]
+- **Sửa 11/11:** bản trước ghi "đoạn đúng nằm ở hạng 11–30" cho mọi câu từ chối nhầm — chưa đủ: khoảng một nửa nằm ngoài cả 30 ứng viên (`bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md`, rà 8.1 / B42) [đã chạy]
 - Từ chối nhầm 4–6 / 158 (03/11; trước "tìm thêm": 12); 0 câu ngoài kho bị trả lời; chữ đầu tiên 2,16 giây (09/11): `bao_cao_he_thong/README.md` "Số chính" [đã chạy]
 - 5 → 10 đoạn (Phase 8.1: Đủ ý +0,26 trên nhóm thử, lợi nhất ở câu nhiều nguồn / so sánh; vào chatbot 28/10): `session_prompt/Project_Status.md` §2 [đã chạy]
 - Tên gốc trong bảng từ: `router` / định tuyến trong `assistant.py`; `chunk` trong `backend/ingestion/chunking/`; Golden ở `knowledge-base-hue/evaluation/` (riêng tư) [code]

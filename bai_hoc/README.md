@@ -1,6 +1,6 @@
 # Bài học hue_rag — đọc theo thứ tự
 
-*Cập nhật lần cuối: 09:59, ngày 11/11/2026 · bài 0–2 viết lại: kể thẳng từ đầu, hình ảnh xuyên suốt "người hướng dẫn viên và cuốn sổ tay".*
+*Cập nhật lần cuối: 10:19, ngày 11/11/2026 · đang viết liền bài 3–16 (anh chốt nhịp 11/11).*
 
 Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: dễ hiểu, đủ nội dung, mỗi bài
 một ý, nói "vì sao" trước, đi theo đúng hai giai đoạn của RAG, giữ đủ chi tiết kỹ thuật quan trọng. Mỗi bài chỉ dựa vào bài trước nó. Gần cuối mỗi bài
@@ -18,8 +18,8 @@ chỉ có ở bài cần.
 | [0](00_HUE_RAG_TRONG_3_PHUT.md) | hue_rag trong 3 phút: người hướng dẫn viên tra sổ tay; hai giai đoạn; đoạn kể 3 phút | đã viết, chờ anh đọc |
 | [1](01_KHO_DU_LIEU.md) | Cuốn sổ tay: kho dữ liệu | đã viết, chờ anh đọc |
 | [2](02_CHUNKING.md) | Cắt sổ thành thẻ ghi chú: chunking | đã viết, chờ anh đọc |
-| 3 | Ghi tên lên góc thẻ: metadata | chưa viết |
-| 4 | Embedding: model nhỏ chạy trên máy + từ khoá BM25 | chưa viết |
+| [3](03_METADATA.md) | Ghi tên lên góc thẻ: metadata | đã viết, chờ anh đọc |
+| [4](04_EMBEDDING_VA_TU_KHOA.md) | Biến thẻ thành thứ tìm được: embedding và từ khoá | đã viết, chờ anh đọc |
 | 5 | Cất vào Qdrant; kho lệch thì không chạy | chưa viết |
 | 6 | Retrieval: tìm hai cách, trộn, giữ 10 đoạn | chưa viết |
 | 7 | Reranking: đã thử 3 cách, vì sao không dùng | chưa viết |
