@@ -1,8 +1,8 @@
 # Bài học hue_rag — đọc theo thứ tự
 
-*Cập nhật lần cuối: 10:12, ngày 11/11/2026 · bài 0–2 viết lại: kể thẳng từ đầu, hình ảnh xuyên suốt "người hướng dẫn viên và cuốn sổ tay".*
+*Cập nhật lần cuối: 09:59, ngày 11/11/2026 · bài 0–2 viết lại: kể thẳng từ đầu, hình ảnh xuyên suốt "người hướng dẫn viên và cuốn sổ tay".*
 
-Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: ngắn, mỗi bài
+Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: dễ hiểu, đủ nội dung, mỗi bài
 một ý, nói "vì sao" trước, đi theo đúng hai giai đoạn của RAG, giữ đủ chi tiết kỹ thuật quan trọng. Mỗi bài chỉ dựa vào bài trước nó. Gần cuối mỗi bài
 có một "chuyện thật": mình đã thử cách khác ra sao, vì sao giữ cách đang dùng.
 
