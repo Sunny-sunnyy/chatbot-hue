@@ -1,9 +1,10 @@
 # Bài học hue_rag — đọc theo thứ tự
 
-*Cập nhật lần cuối: 09:40, ngày 11/11/2026 · dàn bài 17 bài, anh chốt 11/11.*
+*Cập nhật lần cuối: 10:12, ngày 11/11/2026 · bài 0–2 viết lại: kể thẳng từ đầu, hình ảnh xuyên suốt "người hướng dẫn viên và cuốn sổ tay".*
 
 Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: ngắn, mỗi bài
-một ý, nói "vì sao" trước, bám sơ đồ RAG hai giai đoạn anh đã biết. Mỗi bài chỉ dựa vào bài trước nó.
+một ý, nói "vì sao" trước, đi theo đúng hai giai đoạn của RAG, giữ đủ chi tiết kỹ thuật quan trọng. Mỗi bài chỉ dựa vào bài trước nó. Gần cuối mỗi bài
+có một "chuyện thật": mình đã thử cách khác ra sao, vì sao giữ cách đang dùng.
 
 Khác với `bao_cao_he_thong/`: đó là **sổ ghi việc** (quá khứ) của các agent, anh không cần đọc để hiểu.
 
@@ -14,10 +15,10 @@ chỉ có ở bài cần.
 
 | Bài | Nội dung | Trạng thái |
 |---|---|---|
-| [0](00_HUE_RAG_TRONG_3_PHUT.md) | hue_rag trong 3 phút: hai giai đoạn, chỗ hue_rag đi khác | đã viết, chờ anh đọc |
-| [1](01_DU_LIEU_VAO.md) | Dữ liệu vào: vì sao không cần loader | đã viết, chờ anh đọc |
-| [2](02_CHUNKING.md) | Chunking: cắt theo cấu trúc bài | đã viết, chờ anh đọc |
-| 3 | Metadata: tên bài + đường tiêu đề đi kèm đoạn | chưa viết |
+| [0](00_HUE_RAG_TRONG_3_PHUT.md) | hue_rag trong 3 phút: người hướng dẫn viên tra sổ tay; hai giai đoạn; đoạn kể 3 phút | đã viết, chờ anh đọc |
+| [1](01_KHO_DU_LIEU.md) | Cuốn sổ tay: kho dữ liệu | đã viết, chờ anh đọc |
+| [2](02_CHUNKING.md) | Cắt sổ thành thẻ ghi chú: chunking | đã viết, chờ anh đọc |
+| 3 | Ghi tên lên góc thẻ: metadata | chưa viết |
 | 4 | Embedding: model nhỏ chạy trên máy + từ khoá BM25 | chưa viết |
 | 5 | Cất vào Qdrant; kho lệch thì không chạy | chưa viết |
 | 6 | Retrieval: tìm hai cách, trộn, giữ 10 đoạn | chưa viết |
