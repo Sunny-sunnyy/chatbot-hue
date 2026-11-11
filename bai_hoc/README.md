@@ -39,8 +39,8 @@ chỉ có ở bài cần.
 |---|---|---|
 | [12](12_VI_SAO_CAN_TRO_LY.md) | Từ chatbot thành trợ lý: xếp loại câu và công cụ | đã viết, chờ anh đọc |
 | [13](13_TIM_THEM_VA_NHO_CAU_HOI.md) | Rút thêm thẻ và nhớ câu hỏi | đã viết, chờ anh đọc |
-| 14 | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình | chưa viết |
-| 15 | Tra web và hỏi bằng ảnh | chưa viết |
+| [14](14_VIEC_DE_NHAM_THI_CODE_LAM.md) | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình | đã viết, chờ anh đọc |
+| [15](15_TRA_WEB_VA_HOI_BANG_ANH.md) | Khi sổ không có: tra web, và hỏi bằng ảnh | đã viết, chờ anh đọc |
 | 16 | Đoạn kể 2–3 phút bản đủ + chỗ còn yếu và hướng sửa | chưa viết |
 
 Nhịp viết: bài 0–2 viết trước, chờ anh đọc. Anh thấy dễ hiểu thì mình viết liền tới bài 16, báo anh sau mỗi 2 bài. Anh góp ý lúc nào thì mình sửa lúc đó.
