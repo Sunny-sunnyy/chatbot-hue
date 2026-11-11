@@ -20,7 +20,7 @@ Nguyên văn handoff trong phiên 10/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-1
 
 ### Làm tiếp (theo thứ tự)
 1. **Hỏi User quyền phiên** (một câu) ⇒ VIỆC SỐ 1 (bài mẫu 00 + 01; hỏi nốt chỗ khó README + 01).
-2. **User `!` xoá 4 nhánh** (đã kiểm: 3 đã merge, 1 có tag hồ sơ cùng commit): `git branch -d p12-deploy-nhap p9-t1-nhanh p9-dinh-tuyen-lich && git branch -D p9-xa-giao-song-song && git push -q origin --delete p12-deploy-nhap p9-t1-nhanh p9-dinh-tuyen-lich p9-xa-giao-song-song`.
+2. ~~User `!` xoá 4 nhánh~~ — XONG 08:35 11/11/2026 (local + origin; tag `hoso/p9-xa-giao-song-song` = `22abb2a` giữ).
 3. **User khi rảnh (không chặn):** bảng điểm v7 `data/phase_9/lich_trinh/diem_cho_user_v7.md` · phiếu toạ độ bản đồ `data/phase_11/ban_do/phieu_toa_do_11_diem.md` (⇒ bật `ban_do_lich`) · thu 40 câu giọng nói `data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`.
 4. **Còn trong phạm vi trước đóng gói:** bản đồ (chờ phiếu), giọng nói (chờ 40 câu, nhánh `p10-giong-noi`), deploy AWS (câu Q-DP dưới), **B7** (nháp plan `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` + A chốt Q1–Q4; review khi gần chạy). Đợt 2 cổng (lưu trú, ăn gần, sự kiện): trước khi xây ⇒ lượt đếm rẻ theo W61.
 5. Giới hạn biết: biểu mẫu "dày lịch" gần như không tác dụng (chờ v7); người lớn tuổi / trẻ em không có buổi tối; câu lịch bị rút khi trả lời không có mã nguồn `[n]` (1 / 9 — luật cũ, đếm ≥ 20 câu trước khi sửa); log truy cập uvicorn ghi IP.
@@ -30,7 +30,7 @@ Nguyên văn handoff trong phiên 10/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-1
 **Vòng tự soi 10/11:** vòng 1 (19:14) cắt bộ đo B / E; vòng 2 (22:42 10/11/2026) — chốt: ghi vào sổ vòng 24 (không luật mới ngoài W64 đề xuất); C: gửi review 1 tin; B: tính trước sàn p95 nhóm nhỏ.
 
 ### Nhánh
-`main`; đã merge 10/11, chờ User xoá: `p12-deploy-nhap`, `p9-t1-nhanh`, `p9-dinh-tuyen-lich`; hồ sơ (tag) chờ xoá: `p9-xa-giao-song-song`. Đang mở cũ: `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). Worktree `/tmp`: không còn. Ảnh docker cục bộ: `hue-rag-app:dep10b` (đạt), `dep10`, `nhap2` (cũ, xoá được).
+`main`; 4 nhánh 10/11 User xoá 08:35 11/11/2026. Đang mở cũ: `p9-sua-lich` (hoãn), `p10-giong-noi` (E), `p9-b5c` + `p9-toc-do-6` (hồ sơ). Worktree `/tmp`: không còn. Ảnh docker cục bộ: `hue-rag-app:dep10b` (đạt), `dep10`, `nhap2` (cũ, xoá được).
 
 ### Mã hay gặp
 G = cổng 2 nhóm (đóng); T1 ngày + âm lịch (bật, bản nhanh 10/11); T2 / T3 / T4 đóng hồ sơ 09/11; S1–S6 / S2b = sàn §12.3; B0–B7 = bậc Phase 9; S / W / I = sổ `SO_CAI_TIEN_CACH_LAM.md`.
