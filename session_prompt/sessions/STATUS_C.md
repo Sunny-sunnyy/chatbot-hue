@@ -7,6 +7,12 @@ Khai báo sửa: `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementat
 
 **Đếm đợt 2 — DỞ (18:53 12/11/2026):** đã gửi 13 / 18 câu tự viết (6 lưu trú · 6 ăn gần · 1 sự kiện), 0,018295 USD (trần 0,02) ⇒ kết quả `data/phase_11/dot_2_dem/ket_qua_lan_1.jsonl`; 5 câu sự kiện S2–S6 (`cau_18.jsonl`) CHƯA gửi (hết quỹ — đã xin A ≈ 0,01). Công cụ: `data/phase_11/dot_2_dem/tools/` (`gui_cau.py` có phí · `quet_bo.py`, `log_tien.py` 0 USD). Server 8871 đã tắt. Còn lại: đọc + phân loại 13 câu, đối chiếu kho, viết report.
 **Việc chen (18:53 12/11/2026, A giao, đường găng):** plan B7 bản 2 theo review vòng 1 của E (`docs/superpowers/plans/2026-11-10-phase-9-b7-plan_review.md`: 3 major, 6 minor). Khai báo sửa thêm: `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md`. Xong ⇒ nhắn E + A ⇒ quay lại đếm đợt 2.
+**Plan B7 bản 2 XONG (18:59 12/11/2026):** `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` sha256 `da7bff5d0c4e` (chưa commit — A commit) — lượt hôm nay = đo giữa kỳ, `KIN_NGAY` TẮT, `MAX_DROP` 4, ≈ 0,31 USD; đã nhắn E (vòng 2) + A.
+**Việc kế (A giao):** (1) đếm đợt 2: gửi nốt 5 câu sự kiện (trần nâng 0,032, nhắn B trước khi chạy server) ⇒ report; (2) rà "phần nào chưa ổn" — `CURRENT_HANDOFF.md` mục "Đợt rà khoảng cách" dòng C ⇒ `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` (chỉ đọc, 0 USD).
+**Đếm đợt 2 XONG — chờ review (19:06 12/11/2026):** report `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementation.md` (chưa commit). 18 câu, **0,024691 USD** (trần 0,032). Kết luận: ăn gần đủ lỗi (dữ liệu định vị quán) · lưu trú đủ lỗi phần nhỏ · sự kiện không đủ lỗi. Server đã tắt.
+**Plan B7 bản 2:** E vòng 2 READY; sửa chữ n-3 ⇒ sha mới `2ca3f63ce45b` (không đổi tiêu chí). 5 minor còn lại là việc người chạy (B).
+**ĐANG LÀM:** rà "phần nào chưa ổn" ⇒ `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` (chỉ đọc, 0 USD). Đã có: `data/phase_11/dot_2_dem/tools/log_tong.py` (tổng hợp log).
+**Tiền C 12/11:** 0,024691 USD.
 
 ---
 
