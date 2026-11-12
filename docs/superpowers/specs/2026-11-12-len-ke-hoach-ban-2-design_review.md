@@ -1,6 +1,6 @@
 # Review: Spec "Lên kế hoạch" bản 2 (nháp bản 1) — vòng 1
 
-Decision: **changes_requested** (0 blocker, 2 major, 6 minor) — sửa chữ là đủ; vòng 2 chỉ xem hai chỗ major.
+Decision: **ready_for_user_confirmation** sau vòng 2 (21:26 12/11/2026; bản 2 sha `8969c7275346`: 0 major, 1 ghi chú). Vòng 1: changes_requested (0 blocker, 2 major, 6 minor) — sửa chữ là đủ; vòng 2 chỉ xem hai chỗ major.
 Người kiểm: E (Claude Code — Fable 5.2, `hue-rag-33`) · Date: 21:19 12/11/2026 (`date`)
 Bản được review: `docs/superpowers/specs/2026-11-12-len-ke-hoach-ban-2-design.md` sha256 `aeac8c589822` (người viết: C)
 
@@ -46,3 +46,17 @@ Không chạy mô phỏng nào; không mở phiếu gộp và file recon TRIPO; 
 
 ## 6. Decision và bước tiếp theo
 **changes_requested.** C sửa M-1, M-2 (và minor nếu tiện) thành bản 2; E xem lại riêng hai chỗ major (vòng cuối). E sẽ sửa plan lưu trú (L7) cho khớp sau khi A đồng ý đường kích hoạt thứ hai.
+
+---
+
+# Vòng 2 — bản 2 sha256 `8969c7275346` (21:26 12/11/2026, `date`) — vòng cuối
+
+Decision: **ready_for_user_confirmation** (trình User duyệt spec + 4 câu ở mục 8). Chỉ kiểm hai chỗ major + bảng "Chỗ đổi".
+
+| Finding | Kiểm | Trạng thái |
+|---|---|---|
+| **M-1** ngưỡng chưa ghi trước | mục 3 có đoạn "Cách đọc cột Tiêu chí": lớp **bất biến 100 %** ghi ngay ở từng dòng (các câu "Luôn"), lớp **sàn sản phẩm** 70 / 60 / 50 % "chỉ được nâng, không được hạ; dưới sàn ⇒ ô không hiện"; mô phỏng trước code chỉ để đếm dữ liệu và **đã có số đếm** trong spec | **đóng** |
+| **M-2** lệch plan lưu trú + spec kho 3 | dòng "Lưu trú": đường kích hoạt thứ hai, nêu rõ là sửa plan lưu trú (E đã sửa L7 — plan `b24020ed9dc9`, A đồng ý); dòng "Bữa ăn": hai mức theo Q3 / Q4 của spec kho 3, không đủ cụm ⇒ không hiện; dòng "Đi lại": code chỉ nối khoảng cách, lời khuyên trích kho; mục 4 + 9.3 trỏ đúng file spec kho 3 và điều kiện "User đã trả lời Q1–Q5" | **đóng** |
+| m-1 … m-6 | có trong bảng "Chỗ đổi"; E xem lướt các dòng tương ứng, không kiểm sâu | nhận |
+
+**Ghi chú (không chặn, để plan đợt 1 lưu ý):** số đếm C vừa thêm cho thấy 3 / 8 cụm **không có điểm "ngắn" nào** và chỉ 4 / 8 cụm có ≥ 2 điểm ngắn ⇒ ô "kiểu đi 3 mức" có nguy cơ **dưới sàn 70 %** ở các lịch rơi vào cụm đó. Theo luật vừa ghi thì khi ấy ô không hiện — nên plan đợt 1 đếm điều này **đầu tiên** (trước khi code giao diện cho ô đó).
