@@ -123,3 +123,9 @@ Chạy 21:01–21:09 12/11/2026, cùng buổi, 42 câu mỗi bên, một lượt
 - Tài liệu Exa không có tham số ngôn ngữ, không lọc theo đuôi `.vn` (ghi ở 5b).
 
 **Giới hạn:** một lượt mỗi bên, một buổi (kết quả tìm đổi theo ngày); 42 câu **tự viết**, không phải câu người dùng thật; người chấm là agent con, không tra web nên "có căn cứ" = khớp đoạn trích, **không phải đúng ngoài đời**; đoạn trích dài / ngắn làm người chấm đoán được bên (mù không hoàn toàn); chưa đo qua server thật (chữ đầu mục web tới người dùng).
+
+### 6b. Bổ sung sau review của C (21:25 12/11/2026, `date`) — độ nhạy của kết quả (C tìm ra, E đếm lại khớp)
+- **7 / 109 nguồn được trích ở bên Exa là trang của chính Exa** (tên miền `exa.ai` — trang tổng hợp địa điểm do Exa dựng, không ghi nguồn dữ liệu gốc); bên Exa có lọc: 5 / 90; Serper: 0. Dòng "mạng xã hội 0 / 109" ở bảng mục 6 **không** có nghĩa mọi nguồn Exa là trang gốc.
+- **5 / 25 mục đạt của Exa có trích loại nguồn này** (không mục nào chỉ dựa riêng nó). Nếu coi cả 5 mục đó là không đạt ⇒ Exa còn **20 < ngưỡng 22** ⇒ kết luận "Exa hơn" **nhạy với việc có chấp nhận nguồn tổng hợp của Exa hay không**. Theo luật ghi trước (không có điều kiện về loại nguồn) kết quả vẫn là đạt; đây là giới hạn phải nói rõ với User.
+- Hệ quả cho plan: danh sách tên miền loại trừ là **tham số** (mặc định rỗng = đúng cấu hình đã đo); muốn loại `exa.ai` thì **đo lại 42 câu** với cấu hình đó trước khi bật (A chốt tạm).
+- Lệch thủ tục (C nêu, E nhận): cấu hình mục 5 / 5b được ghi vào file **trước** lượt chính nhưng chỉ vào git **sau** khi có kết quả; lần sau commit phần ghi trước trước lượt có phí.

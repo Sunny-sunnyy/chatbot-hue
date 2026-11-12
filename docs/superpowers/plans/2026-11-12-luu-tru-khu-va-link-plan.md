@@ -48,7 +48,7 @@ Câu "nên ở khu nào": kho trả lời đủ dùng 2 / 2. Câu hỏi **cơ s�
 | L4 | Link | mọi thẻ sinh ra + test ca chữ lạ (`../`, `?`, `&`, có dấu) | 100 % đúng gốc Maps; 0 ký tự từ câu hỏi trong URL; 0 số tiền trong thẻ |
 | L5 | Chuỗi gửi model | Q1 hiện có | giống byte cả khi cờ **bật** lẫn tắt ⇒ **không** chạy lại Golden / an toàn có phí (luật spec §4: chuỗi không đổi ⇒ dùng lại số) |
 | L6 | Lượt thật qua server, cờ bật | 12 câu, **một trạng thái** (chuỗi gửi model giống byte ⇒ so bật ↔ tắt chỉ đo nhiễu model) | sự kiện `luu_tru` đến sau `sources` / `web`; thẻ đúng L4; 0 lỗi; `chat_metrics.co_the_luu_tru` = số thẻ |
-| L7 | Test theo **loại lượt** (0 USD) | 5 ca: kho trả lời có trích mục lưu trú · kho từ chối + web có mục · kho từ chối + web không mục · câu ngoài phạm vi · lượt biểu mẫu lịch trình | thẻ: có · có · có · không · không |
+| L7 | Test theo **loại lượt** (0 USD) | 5 ca: kho trả lời có trích mục lưu trú · kho từ chối + web có mục · kho từ chối + web không mục · câu ngoài phạm vi · lượt biểu mẫu lịch trình **1 ngày** · lượt biểu mẫu lịch trình **≥ 2 ngày** | thẻ: có · có · có · không · không · **có** |
 
 ## 7. Rà khung AI FDE (ngắn)
 | Mục | Hiện trạng / thiết kế | Khớp? |
@@ -92,3 +92,5 @@ Danh sách cơ sở lưu trú trong kho (chờ quyết định nguồn dữ li�
 | 5 ca test theo loại lượt | L7 |
 | 8b (b) mâu thuẫn mục 9 | 8b: chọn (b) ⇒ tách việc |
 | thẻ kèm dòng nguồn | mục 3 (`bai_id`) |
+
+**Sửa sau duyệt (21:20 12/11/2026, A quyết):** thêm **đường kích hoạt thứ hai** — lượt biểu mẫu lịch trình từ **2 ngày** trở lên ⇒ code gắn thẻ (quyết theo số ngày của biểu mẫu, không qua nguồn kho / từ khoá); lịch 1 ngày không thẻ. Đổi L7 (5 ca ⇒ 6 ca). Không đổi tiền, không đổi tiêu chí khác ⇒ không duyệt lại.
