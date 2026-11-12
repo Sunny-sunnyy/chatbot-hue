@@ -77,6 +77,8 @@ API công khai thấy khi tải trang (chỉ đọc, không gọi thêm): danh s
 | **Tra web sau từ chối chậm (13–21 s cả câu)** | 5 / 5 câu đi đường web | đã biết (chữ đầu mục web p50 ~13 s) — thêm một điểm dữ liệu |
 | **Giờ mở cửa lệch 30 phút với TRIPO ở một di tích lớn** | 1 câu | nên kiểm với nguồn chính thức trước khi kết luận bên nào đúng (việc sửa kho, cần User duyệt phạm vi) |
 
+**Đối chiếu với lượt đếm rẻ thứ hai của C (20:17 12/11/2026; 17 câu tự viết khác, chi tiết `c_phan_chua_on.md` mục 3e):** thuê xe / giá dịch vụ — khớp (2 / 2 không nơi nào trả lời); việc gấp — khớp (0 / 6 câu có ý báo cơ quan chức năng / số khẩn cấp); **tiếng Anh — KHÔNG khớp với 1 câu của B:** 5 / 5 câu tiếng Anh của C kho trả lời được, đúng nội dung nhưng **bằng tiếng Việt** ⇒ khoảng cách thật là "trả lời sai ngôn ngữ", không phải "kho từ chối câu tiếng Anh"; câu của B bị từ chối nhiều khả năng vì hỏi gộp giờ + vé của một nơi kho thiếu thông tin vé (giả thuyết của C, chưa kiểm).
+
 **Chỗ hue_rag đã khác được và nên giữ:** biết ngày âm / dương bằng code; thời tiết bằng công cụ có nguồn; lượt hỏi tiếp vẫn tra kho; từ chối đúng phạm vi; nguồn theo từng ý.
 
 ## 5. Giới hạn
