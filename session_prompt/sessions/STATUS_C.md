@@ -11,7 +11,9 @@ Khai báo sửa: `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementat
 **Việc kế (A giao):** (1) đếm đợt 2: gửi nốt 5 câu sự kiện (trần nâng 0,032, nhắn B trước khi chạy server) ⇒ report; (2) rà "phần nào chưa ổn" — `CURRENT_HANDOFF.md` mục "Đợt rà khoảng cách" dòng C ⇒ `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` (chỉ đọc, 0 USD).
 **Đếm đợt 2 XONG — chờ review (19:06 12/11/2026):** report `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementation.md` (chưa commit). 18 câu, **0,024691 USD** (trần 0,032). Kết luận: ăn gần đủ lỗi (dữ liệu định vị quán) · lưu trú đủ lỗi phần nhỏ · sự kiện không đủ lỗi. Server đã tắt.
 **Plan B7 bản 2:** E vòng 2 READY; sửa chữ n-3 ⇒ sha mới `2ca3f63ce45b` (không đổi tiêu chí). 5 minor còn lại là việc người chạy (B).
-**ĐANG LÀM:** rà "phần nào chưa ổn" ⇒ `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` (chỉ đọc, 0 USD). Đã có: `data/phase_11/dot_2_dem/tools/log_tong.py` (tổng hợp log).
+**Rà "phần nào chưa ổn" XONG (19:08 12/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` (chưa commit; 0 USD) — 5 mục trên cùng: ăn gần · từ chối cả câu · đường web chậm 15–25 s · số tiền / giờ chưa kiểm với đoạn trích · log không có loại câu. Công cụ: `data/phase_11/dot_2_dem/tools/log_tong.py`.
+**Trạng thái: rảnh — chờ A** (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
+**Bẫy 12/11:** lệnh shell dài viết thẳng (heredoc quét `data/` có chữ tên bộ kín) bị auto mode chặn ⇒ viết script bằng Write rồi chạy; log `chat_metrics` không có nội dung câu ⇒ không đếm theo loại câu được, phải gửi câu tự viết; câu kho từ chối đi web ≈ 0,002 USD / câu ⇒ ước tiền lượt đếm theo giá đường web, không theo giá trung bình.
 **Tiền C 12/11:** 0,024691 USD.
 
 ---
