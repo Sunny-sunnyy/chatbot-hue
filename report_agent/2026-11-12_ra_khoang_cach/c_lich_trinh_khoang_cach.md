@@ -93,6 +93,38 @@ ngân sách trong biểu mẫu (không có luật nào dùng tới khi chưa có
 
 **Ba phiếu đang chờ User quyết định trực tiếp tốc độ của mảng này:** thời lượng v7 · toạ độ 11 điểm · (mới) danh sách điểm ưu tiên.
 
+## 4b. Kết quả Huế TRIPO do User chụp tối 12/11 (bổ sung 21:29 12/11/2026)
+
+Nguồn: 5 ảnh chụp màn hình + 2 file trang lưu của User ở thư mục `kết quả nghiên cứu tripo/` cạnh file này (**không commit**; nội dung trang là dữ liệu). C đọc cả 5 ảnh và phần chữ của 2 file.
+Hai lượt User chạy: (A) 1 ngày · cân bằng · văn hoá – lịch sử · cặp đôi · ngân sách trung bình; (B) 2 ngày · nhẹ nhàng · sinh thái · 3 người lớn · trung bình + 8 lựa chọn thêm.
+
+**Luồng của họ (mức chức năng):** biểu mẫu (kiểu đi 3 mức · loại hình 7 nhãn · đi cùng ai · người lớn / trẻ em + / − · số ngày + / − · ngày giờ khởi hành · ngân sách 3 mức) ⇒ bảng "tuỳ chọn thêm"
+4 nhóm (tôn giáo · ưu tiên ẩm thực · hoạt động · dịch vụ đi kèm, ~30 nhãn) ⇒ thẻ tóm tắt tiêu chí ⇒ **ba phương án**, mỗi phương án bốn phần: một cơ sở lưu trú · ăn uống (xem theo sáng / trưa / tối) ·
+4–6 điểm tham quan · đi chơi tối ⇒ "Bổ sung yêu cầu" / "Xác nhận phương án" ⇒ lịch theo buổi ⇒ trang lịch chi tiết: từng chặng có giờ bắt đầu – kết thúc, điểm đánh giá, địa chỉ, giờ hoạt động, khoảng giá,
+chi phí dự kiến, số phút + km tới chặng sau, nút chi tiết / bản đồ / chỉ đường / thay đổi địa điểm / đặt bàn / thuyết minh; bảng chi phí theo ngày (tham quan · ăn uống · lưu trú · tổng); "Xem bản đồ" từng ngày.
+
+**Chỗ họ hơn hue_rag hôm nay (thấy trong ảnh):** lịch có **đủ bốn phần** (ở · ăn theo buổi · tham quan · tối) trong khi lịch hue_rag chỉ có tham quan; có giờ từng chặng + quãng đường; có ba phương án để chọn;
+có chi phí; lịch di tích 1 ngày của họ có đủ Đại Nội, chùa và lăng lớn — đúng các điểm hue_rag đang bỏ rơi.
+
+**Lỗi / chỗ yếu thấy được trong chính hai lượt đó (quan sát một lần, không phải số đo):**
+
+| Thấy gì | Ở lượt | Vì sao là lỗi |
+|---|---|---|
+| Chặng tham quan cuối kết thúc 17:39 ở một lăng; chặng trước đó là chùa 14:08–16:08 rồi đi 7,8 km | A | sát / quá giờ đóng cửa 17:30 mà kho hue_rag ghi cho quần thể lăng; phương án hứa 4 điểm, lịch cuối bỏ 1 lăng |
+| Bữa trưa và bữa tối **cùng một nhà hàng** | A | lịch lặp, không giống gợi ý thật |
+| Mục ăn uống là **chỗ giữ chỗ**: "Ăn sáng tại địa phương", "Ăn trưa quanh điểm tham quan", "Ăn tối quanh khu vực lưu trú" — vẫn hiện như một địa điểm có địa chỉ cấp huyện và giờ hoạt động 06:00–23:00 | B (và phương án 3 của A) | không phải quán nào cả nhưng trình bày như dữ liệu thật |
+| "Đi chơi tối: Hoạt động tự do" | A (1 / 3 phương án), B (2 / 3 phương án) | phần buổi tối trống |
+| Chọn thêm "tham quan di tích", "tham quan thành phố", "ẩm thực cung đình", "cần hướng dẫn viên" ⇒ lịch cuối toàn điểm một vùng núi xa trung tâm, không điểm di tích / thành phố nào, không nhắc hướng dẫn viên | B | lựa chọn hiện trên màn hình nhưng **không đổi lịch** — đúng loại lỗi hue_rag đặt nguyên tắc để tránh |
+| Tóm tắt ghi "đi cùng: cặp đôi, bạn bè / nhóm bạn" với 3 người lớn; kiểu "nhẹ nhàng" nhưng phương án liệt kê 6 điểm | B | nhãn mâu thuẫn nhau vẫn được nhận |
+| Lịch 1 ngày vẫn có khách sạn và 1,1 triệu tiền lưu trú; lượt 2 ngày ghi lưu trú 3,8 triệu cho khách sạn giá 0,6–1,3 triệu | A, B | cách tính không giải thích; người dùng không kiểm được |
+| Mọi quán có giờ hoạt động y hệt 06:00–23:00 | A, B | nhiều khả năng là giá trị mặc định, không phải giờ thật |
+
+**Kết quả hue_rag User dán cạnh (3 ngày · gia đình có trẻ em · ẩm thực):** 6 điểm, mỗi buổi một điểm; **không quán / bữa ăn nào** dù chọn ẩm thực; không lưu trú; không buổi tối; không ảnh — khớp các số ở mục 3
+(0 / 14 lịch có bữa ăn; nhóm có trẻ em không có buổi tối). User hỏi thêm về **ảnh minh hoạ**: bộ ảnh cổng hiện có 7 ảnh (2 ảnh đầu trang + 5 ảnh lĩnh vực) ⇒ chỉ khoảng **3 / 28 điểm** có ảnh dùng lại được;
+muốn mỗi điểm một ảnh phải dựng thêm bộ ảnh có nguồn + giấy phép (cách đã làm cho 7 ảnh hiện có).
+
+**Hệ quả cho thiết kế** (đưa vào spec "Lên kế hoạch" bản 3): học phần **đủ bốn phần + giờ gợi ý + ảnh + bản đồ**; **không học** chỗ giữ chỗ, giờ mặc định, lựa chọn không đổi lịch, tiền không giải thích.
+
 ## 5. Lỗi và giới hạn
 
 - 14 + 3 yêu cầu, một lượt, một người đọc; lịch gõ tự do chưa được kiểm đúng / sai.
