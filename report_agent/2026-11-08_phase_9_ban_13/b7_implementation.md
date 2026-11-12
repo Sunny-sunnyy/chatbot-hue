@@ -87,3 +87,13 @@ Thời gian thật: sinh ≈ 30 phút, chấm ≈ 25 phút (sub-agent chạy son
 - Chạy lại rẻ nhất (0 USD): `do_cuoi_b7.py check-judge`; `holm.py holm_dau_vao_da_thay.json`; `do_g.py dem <file>` cho S / W / T; `an_toan_b7.py accept --judge k`.
 - Việc của A: quyết hai sàn phạm (sửa trước lượt cuối hay nhận giới hạn — hỏi User nếu đổi phạm vi); đưa User lệnh `chay_kin_chuoi.sh`; S kín + T kín để lượt cuối (A chốt).
 - Giải thích ngắn cho User: trên các bộ câu đã có, trợ lý trả lời đủ ý hơn bản RAG cũ ở cả ba nhóm (câu nhiều nguồn, câu theo ngày, câu hỏi tiếp), ít từ chối nhầm hơn và không làm hỏng câu thường; còn hai chỗ chưa đạt: hai câu ngoài phạm vi vẫn kích tra web, và một câu về miễn / giảm vé trợ lý hay bỏ sót một điều kiện hơn bản cũ.
+
+## 7. Bổ sung 20:09 12/11/2026 — ba trường thêm cho lượt cuối (A giao sau vòng tự soi 1; 0 USD; không sửa công cụ gốc / `backend/`)
+
+Lý do (C nêu khi chẩn đoán hai sàn phạm): file sinh của lượt giữa kỳ không đủ để đếm đường web và kiểm "số nằm ngoài 10 đoạn đầu". Thêm ở bản sao `data/phase_9/b7/tools/`:
+
+- `them_truong.py` — lấy từ vết của mỗi lượt: công cụ đã chạy + số lần model gọi tìm kho + lượt có chạm trần vòng không; thời gian từng lần gọi model; id 10 đoạn đầu của lần tìm đầu và id các đoạn vào ngữ cảnh do model tìm thêm. Không chứa chữ câu hỏi / câu trả lời / câu tìm.
+- `do_g_b7.py` — nạp `do_g.py` gốc rồi bọc hàm dựng dòng kết quả (lượt cả hệ: an toàn, ngoài phạm vi, web, trò chuyện); cách dùng y như bản gốc.
+- `sinh_golden_b7.py` — chạy đúng lệnh `evaluation.full_corpus_eval generate` / `chuoi` nhưng bọc lời gọi lõi để ghi file phụ (biến môi trường `B7_THEM`), ghép với Golden bằng mã băm câu hỏi. (Dòng `generate` vốn đã có công cụ + thời gian từng lần gọi; phần thiếu là id đoạn tìm thêm và số lần tìm.)
+
+**[Chạy] thử 0 USD trên vết giả (không gọi model):** `do_g_b7` ra đủ trường gốc + ba nhóm mới, `dem` vẫn chạy; hàm bọc của `sinh_golden_b7` ghi đúng một dòng file phụ kể cả khi lượt chạm trần vòng; `generate --help` chạy qua lớp bọc. **[Chưa chạy]** với model thật — lần đầu sẽ là pilot của lượt cuối (so `usd` + số dòng với lệnh gốc trên 10 câu trước khi chạy đủ). File phụ ghi theo thứ tự xong, không theo thứ tự câu ⇒ ghép bằng mã băm.

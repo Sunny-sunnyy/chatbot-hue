@@ -17,7 +17,7 @@
 - **Đang giữ:** worktree `/tmp/b7_moc`; không server nào chạy (8881–8885 đã tắt).
 - **Bẫy:** `chay_t1.py` bộ `ngay` + `chon:U1` không ra câu U1 (bị loại sẵn) ⇒ dùng `file:`; `ten_khong_trong_truy_van` là chuỗi, không phải danh sách; `an_toan_g.py` bản sao phải đổi cả `REGEN2`.
 
-## XONG (20:06 12/11/2026), chờ A đọc — Huế TRIPO vòng 5: report `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v5.md`; hồ sơ `data/tripo_v5_2026-11-12/`; tiền hue_rag 0,0173 USD. **Việc kế (A giao, 0 USD):** bọc 3 trường (tools / số lần tìm + hết lượt, ms từng lần gọi model, id đoạn tìm thêm) vào bản sao harness `data/phase_9/b7/tools/`, chạy thử, ghi report.
+## XONG (20:06 12/11/2026), chờ A đọc — Huế TRIPO vòng 5: report `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v5.md`; hồ sơ `data/tripo_v5_2026-11-12/`; tiền hue_rag 0,0173 USD. **20:09 12/11/2026: bọc 3 trường XONG** (`them_truong.py`, `do_g_b7.py`, `sinh_golden_b7.py`; thử trên vết giả đạt; chưa chạy với model thật — pilot lượt cuối) — report B7 §7. **B rảnh — chờ:** User chạy `chay_kin_chuoi.sh` (A đưa) ⇒ B chấm + analyze + Holm lại; việc A giao tiếp.
 
 ## (cũ) Huế TRIPO vòng 5 bằng Playwright (A giao 19:00 12/11/2026, handoff "Đợt rà khoảng cách" dòng B; làm trong lúc chờ plan B7 bản 2 — A báo sha ⇒ dừng TRIPO, chạy B7 trước)
 - **Khai báo tạo:** `data/tripo_v5_2026-11-12/` (private: `tools/`, `anh/`, kết quả); `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v5.md`. Không sửa `backend/`.
