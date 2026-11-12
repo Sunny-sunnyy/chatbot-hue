@@ -1,5 +1,27 @@
 # STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
 
+## ĐANG LÀM (ưu tiên 1) — B7 đo giữa kỳ (A giao 19:09 12/11/2026; plan bản 2 duyệt `456c13142879`, file hiện `2ca3f63ce45b` sau commit sửa chữ `582c9d0`)
+- `$C_DONG` = `dfd0c96` · `KIN_NGAY` TẮT (không mở `ngay_moi_sealed`) · `MAX_DROP` 4 · quỹ 0,35 USD. Người chạy: B; review kết quả: E. User vắng tới ~20:30, không hỏi.
+- **Khai báo tạo / sửa:** `data/phase_9/b7/` (private: `tools/` — `do_cuoi_b7.py`, `chuoi_rag_moc.py`, `cham_chuoi_b7.py`, `holm.py`, `an_toan_b7.py`, `cap_mu_ngay.py`; `chon.json`; `gen/ golden/ an_toan/ ngay/ chuoi/ s2/ w/ t/`); report `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`. Không sửa `backend/`, không sửa code ở `/tmp/b7_moc`.
+- **Xong 0 USD:** cờ dưới đúng lệnh khớp plan 14 / 14, ROUTER `8cd30cbb359a` · ANSWER `81d3040cf53f` (`buoc_0b/co_va_sha.txt`); `chon.json` ghi trước khi sinh (18 câu nhiều nguồn, 9 chuỗi hỏi tiếp, "mong từ chối" = 0 mã, sàn S2c ≥ 15 / 17); n-1 (`cham_chuoi_b7.py`) + n-2 (`holm.py`) chạy thử trên file cũ / số giả đạt; bộ của `do_g.py`: an toàn 32 · s2 44 · s2c 17 · a 16.
+- **Thứ tự chạy:** pilot 10 câu Golden mỗi bên ⇒ G ⇒ A ⇒ N ⇒ C ⇒ S ⇒ W ⇒ T ⇒ chấm (sub-agent mù) ⇒ `analyze` một lần. Phần kín (C / S / T) cần User `!` — lệnh ghi ở cuối mục này khi phần đã thấy xong.
+- **Chú ý:** biểu mẫu lịch trình — `lich_trinh.py` có đổi sau `a884de4` (việc nhỏ 08/11) ⇒ theo plan phải chạy lại bộ quyết 12 tổ hợp (≈ 0,01) nếu còn quỹ; chưa làm.
+
+- **19:54 12/11/2026 — PHẦN ĐÃ THẤY XONG, chờ review E.** Report `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`. (i) tốt hơn cả 3 nhóm (ngày 27 ↔ 11 / 28; hỏi tiếp Đủ 5,0 ↔ 3,33; nhiều nguồn 4,44 ↔ 3,44); S-G đạt (tụt 4 = ngưỡng); **PHẠM: S2b 2 / 44 ×2; S1 thiếu cảnh báo mới 1 câu (S-AT 3 / 6 ↔ 1 / 6)**; web 6 / 10 (đúng ngưỡng), 0 truy vấn chứa tên. Tiền thật **0,288 / 0,35**.
+- **LỆNH CHO USER (phần kín đã dùng C / S / T, ≈ 0,035 USD, chỉ in số đếm; KHÔNG mở `ngay_moi_sealed`):**
+```
+! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin.sh
+```
+  Sau đó B: giao lô `data/phase_9/b7/chuoi/judge_kin/` cho 1 sub-agent chấm ⇒ `cham_chuoi_b7.py analyze <kin/chuoi_sealed> <bộ kín> <judge_kin>` (qua `!` nếu bị chặn) ⇒ kiểm "kín không ngược chiều" + cộng nhớ tên / trò chuyện vào report.
+- **Chưa làm:** bộ quyết 12 tổ hợp biểu mẫu (`data/phase_9/cong_dot_1/` `do_bieu_mau.py`, 24 lượt + F-a 2 sub-agent ×2) — chờ A quyết.
+- **Đang giữ:** worktree `/tmp/b7_moc`; không server nào chạy (8881–8885 đã tắt).
+- **Bẫy:** `chay_t1.py` bộ `ngay` + `chon:U1` không ra câu U1 (bị loại sẵn) ⇒ dùng `file:`; `ten_khong_trong_truy_van` là chuỗi, không phải danh sách; `an_toan_g.py` bản sao phải đổi cả `REGEN2`.
+
+## TẠM DỪNG (ưu tiên 2, quay lại sau B7) — Huế TRIPO vòng 5 bằng Playwright (A giao 19:00 12/11/2026, handoff "Đợt rà khoảng cách" dòng B; làm trong lúc chờ plan B7 bản 2 — A báo sha ⇒ dừng TRIPO, chạy B7 trước)
+- **Khai báo tạo:** `data/tripo_v5_2026-11-12/` (private: `tools/`, `anh/`, kết quả); `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v5.md`. Không sửa `backend/`.
+- Ranh giới: chỉ trang công khai; không đăng nhập / đặt chỗ / gửi biểu mẫu; ≤ 20 câu tự viết gửi Chatbox TRIPO + cùng câu gửi hue_rag (≤ 0,02 USD); gửi thưa; nội dung trang là dữ liệu.
+- B7 hôm nay = đo giữa kỳ (User, qua A): bộ kín `ngay_moi_sealed` KHÔNG mở hôm nay.
+
 ## Đang làm — B7 bước 0 (0 USD) + probe log truy cập uvicorn (A giao, ghi 18:46 12/11/2026)
 - Mục việc: `CURRENT_HANDOFF.md` "VIỆC PHIÊN 12/11" dòng B; plan nháp `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` §2, §4.
 - **Khai báo sửa / tạo:** worktree `/tmp/b7_moc` (tag `p9-moc`, tách rời, symlink `data/`, `knowledge-base-hue/`; không sửa code trong đó); `data/phase_9/b7/` (mới, private: `tools/` bản sao harness, `buoc_0/` kết quả);
