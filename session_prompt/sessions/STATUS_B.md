@@ -13,7 +13,7 @@
 ! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin.sh
 ```
   Sau đó B: giao lô `data/phase_9/b7/chuoi/judge_kin/` cho 1 sub-agent chấm ⇒ `cham_chuoi_b7.py analyze <kin/chuoi_sealed> <bộ kín> <judge_kin>` (qua `!` nếu bị chặn) ⇒ kiểm "kín không ngược chiều" + cộng nhớ tên / trò chuyện vào report.
-- **Chưa làm:** bộ quyết 12 tổ hợp biểu mẫu (`data/phase_9/cong_dot_1/` `do_bieu_mau.py`, 24 lượt + F-a 2 sub-agent ×2) — chờ A quyết.
+- **20:04 12/11/2026: biểu mẫu 12 tổ hợp ×2 chạy lại XONG — Q-F đạt** (sàn code 12 / 12 ×2; F-a 12 / 12 ×2, 0 bất đồng; 0,0091 USD; `data/phase_9/b7/bieu_mau/`). **E review B7: READY** (0 major; minor đã sửa vào report). Tiền B7 **0,297 / 0,35**. Còn: phần kín (User `!`). TRIPO phía hue_rag 18 câu đã chạy (0,0173 USD) — còn viết báo cáo.
 - **Đang giữ:** worktree `/tmp/b7_moc`; không server nào chạy (8881–8885 đã tắt).
 - **Bẫy:** `chay_t1.py` bộ `ngay` + `chon:U1` không ra câu U1 (bị loại sẵn) ⇒ dùng `file:`; `ten_khong_trong_truy_van` là chuỗi, không phải danh sách; `an_toan_g.py` bản sao phải đổi cả `REGEN2`.
 

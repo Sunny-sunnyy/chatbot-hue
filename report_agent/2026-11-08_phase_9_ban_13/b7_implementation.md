@@ -10,7 +10,7 @@ Tham số: `$C_DONG` = `dfd0c96` · `KIN_NGAY` TẮT (7 câu ngày kín **không
 ## 1. Phạm vi
 
 Đã chạy đủ các lượt G, A, N, C, S, W, T của plan §4 trên **phần đã thấy**. **Phần kín đã dùng** của C / S / T (cần User chạy lệnh `!`): **NOT RUN** lúc viết report — lệnh soạn sẵn `data/phase_9/b7/tools/chay_kin.sh` (ghi ở `STATUS_B.md`). Bước K (câu ngày kín): không chạy theo công tắc.
-**Lệch plan (B tự quyết, nêu để A xét):** (1) **bộ quyết 12 tổ hợp biểu mẫu chưa chạy lại** dù `lich_trinh.py` có đổi sau `a884de4` (plan §5 yêu cầu chạy lại) — cần 24 lượt + 4 lượt chấm, B để sau phần kín, quỹ còn đủ; (2) bộ ngoài phạm vi đã thấy có **44** câu (plan ghi ≈ 48); (3) câu thứ 28 của bộ ngày (`U1`) công cụ cũ loại sẵn ⇒ chạy bù bằng `file:` ngay sau lượt chính, cùng buổi; (4) sàn S2c lấy ≥ 15 / 17 (mốc `main` 16 trong report G) — ghi vào `chon.json` trước khi chạy.
+**Lệch plan (B tự quyết, nêu để A xét):** (1) bộ quyết 12 tổ hợp biểu mẫu chạy **sau** các lượt khác (A yêu cầu chạy ngay khi B báo chưa chạy — kết quả §4.5); (2) bộ ngoài phạm vi đã thấy có **44** câu (plan ghi ≈ 48); (3) câu thứ 28 của bộ ngày (`U1`) công cụ cũ loại sẵn ⇒ chạy bù bằng `file:` ngay sau lượt chính, cùng buổi; (4) sàn S2c lấy ≥ 15 / 17 (mốc `main` 16 trong report G) — ghi vào `chon.json` trước khi chạy; (5) thủ tục S-AT: plan chỉ ghi "sinh lại 3 lần hai bên"; B chạy thêm vòng 3 + 3 thứ hai cho một câu theo luật S-AT 05/11 (chênh đúng 1 ⇒ thêm 3 + 3) — review E m-2: nêu rõ đây là bước ngoài chữ plan (≈ 0,003 USD, 14 lượt chấm).
 
 ## 2. Thay đổi chính (chỉ công cụ đo, private `data/phase_9/b7/tools/`; không sửa `backend/`, không sửa code ở `p9-moc`)
 
@@ -48,7 +48,7 @@ Ghi trước khi sinh: `data/phase_9/b7/chon.json` (18 câu nhiều nguồn, 9 c
 |---|---:|---|---:|---|---|
 | Câu theo ngày ("dùng được" 0 / 1; 2 người chấm khớp 28 / 28) | 28 | 27 ↔ 11 câu dùng được; từ chối 1 ↔ 17 | +0,571 | [+0,357; +0,786] (98,33 %) | **tốt hơn** |
 | Câu hỏi tiếp (Đủ 1–5) | 9 lượt | 5,00 ↔ 3,33; thắng / hoà / thua 5 / 4 / 0 | +1,667 | [+0,444; +3,0] (97,5 %) | **tốt hơn** — phần kín 5 chuỗi chưa chạy ⇒ chưa kiểm "kín không ngược chiều" |
-| Câu nhiều nguồn (Đủ 1–5) | 18 | 4,44 ↔ 3,44; thắng / hoà / thua 5 / 12 / 1 | +1,0 | [+0,278; +1,833] (95 %) | **tốt hơn** (4 câu nhóm kiểm báo kèm: +2, 0, 0, −1) |
+| Câu nhiều nguồn (Đủ 1–5) | 18 | 4,44 ↔ 3,44; thắng / hoà / thua 6 / 11 / 1 | +1,0 | [+0,278; +1,833] (95 %) | **tốt hơn** (4 câu nhóm kiểm báo kèm: +2, 0, 0, −1) |
 
 ### 4.3 Kết luận (ii) — việc mới (trên bộ đã dùng để quyết bật — giới hạn A đã chốt)
 
@@ -60,7 +60,13 @@ Ghi trước khi sinh: `data/phase_9/b7/chon.json` (18 câu nhiều nguồn, 9 c
 
 Quan sát ngoài tiêu chí (người đọc nêu, B chưa kiểm thêm): một câu xã giao đi tuyến trợ lý Huế nên câu đáp có số trích dẫn; một câu hỏi danh tính được đáp bằng tên model / hãng của nhà cung cấp thay vì tên trợ lý.
 
-### 4.4 Tiền (thật, từ trường `usd` / log) — **0,288 / 0,35 USD**
+### 4.5 Biểu mẫu lịch trình — bộ quyết 12 tổ hợp ×2 (bổ sung 20:04 12/11/2026; chạy lại vì `lich_trinh.py` đổi sau `a884de4`)
+
+Bộ `to_hop_chinh_thuc.jsonl` md5 `792a3cbe3fe5` (không đổi), công cụ `data/phase_9/cong_dot_1/tools/do_bieu_mau.py` (không sửa), trên `dfd0c96`. `kiem` 0 USD: 12 / 12 khung, ca phá 9 / 9.
+**Sàn code: 12 / 12 ở cả hai lần** (0 từ chối thay lịch, 0 lỗi kiểm cuối, 0 rút lại, khung 0 lỗi, tham số = nút, 0 thẻ hỏi lại, 1 lần gọi model / lượt). **F-a "lời khớp khung": 12 / 12 ×2 theo cả hai người chấm, 0 bất đồng** (ngưỡng ≥ 11 / 12) ⇒ **Q-F đạt** như 07/11. Người chấm lại tự nêu: chữ model trung tính, không nhắc người đi cùng (cùng cách hiểu tiêu chí (4) như 07/11).
+Theo dõi (không quyết): 0,00038 USD / lượt; chữ đầu p50 / p95 lần 1 2,5 / 3,6 s, lần 2 5,7 / 9,8 s (lần 2 chạy cùng lúc nhiều sub-agent chấm ⇒ không dùng làm số tốc độ). Tiền 0,0091 USD.
+
+### 4.4 Tiền (thật, từ trường `usd` / log) — **0,297 / 0,35 USD** (0,288 các lượt chính + 0,009 biểu mẫu)
 
 Golden 0,072 + 0,044 · an toàn 0,045 + 0,008 · S2 ×2 0,017 · web / S2c 0,030 · trò chuyện 0,008 · chuỗi 0,023 + 0,005 · câu ngày + chuỗi nêu tên (server) 0,023 · câu ngày mốc 0,007 · S-AT 0,005 + 0,002. Chi tiết `data/phase_9/b7/tien.json`. An toàn đắt hơn ước (≈ 0,0007 USD / câu vì có đường web). Judge: 0 USD API.
 Thời gian thật: sinh ≈ 30 phút, chấm ≈ 25 phút (sub-agent chạy song song).
@@ -69,8 +75,9 @@ Thời gian thật: sinh ≈ 30 phút, chấm ≈ 25 phút (sub-agent chạy son
 
 - **Hai sàn phạm (giữa kỳ ⇒ việc phải sửa / quyết trước lượt cuối):** S2b (2 câu ngoài phạm vi mở cổng web — cùng loại giới hạn User đã nhận 1 câu ở phương án B, nay 2 câu) và S1 "thiếu cảnh báo mới" ở 1 câu loại miễn / giảm (agent 3 / 6 ↔ mốc 1 / 6). Ở chính câu đó mốc lại có 1 / 6 "sai điều kiện", agent 0 / 6.
 - Số câu tụt Golden = 4, **đúng ngưỡng**; web 6 / 10 **đúng ngưỡng** ⇒ hai chỗ không còn biên.
-- Phần kín C / S / T chưa chạy ⇒ (ii) nhớ tên, trò chuyện và vế "kín không ngược chiều" của nhóm hỏi tiếp **chưa kết luận**. Biểu mẫu 12 tổ hợp chưa chạy lại.
+- Phần kín C / S / T chưa chạy ⇒ (ii) nhớ tên, trò chuyện và vế "kín không ngược chiều" của nhóm hỏi tiếp **chưa kết luận**.
 - Cỡ mẫu nhỏ (18 · 28 · 9); judge là Claude, chưa có mốc người; mọi bộ ở đây đã thấy / đã dùng ⇒ không chứng minh tổng quát hoá. Tới lượt cuối, mọi bộ (trừ 7 câu ngày kín) đã đi qua harness này một lần (n-4).
+- 6 câu trả lời phía mốc còn dạng trích dẫn "[Nguồn n]" trong lô chấm mù (lộ bên ở mức nhỏ) ⇒ lượt cuối chuẩn hoá về `[n]` trước khi xuất lô (review E m-4). Nhóm hỏi tiếp: kết luận dựa trên 5 lượt có chênh trong 9 lượt. Ở câu S-AT phạm, phía mốc có lỗi nặng loại khác (sai điều kiện 1 / 6) — "thiếu cảnh báo mới" không có nghĩa agent tệ hơn mốc về tổng thể ở câu đó (m-5).
 - Người chấm Golden coi câu từ chối "chỉ hỗ trợ thông tin về Huế" là tương đương câu từ chối chuẩn ở câu ngoài kho (không vào phép so 129 câu).
 - Phía agent của Golden / chuỗi là đường chỉ-kho (không web) theo plan §2; lượt An toàn / S / W / T / N là cả hệ.
 
@@ -78,5 +85,5 @@ Thời gian thật: sinh ≈ 30 phút, chấm ≈ 25 phút (sub-agent chạy son
 
 - Đọc: `data/phase_9/b7/` — `chon.json`, `golden/analyze.json`, `an_toan/cham/compare.out` + `compare_regen.out` + `compare_regen_tong.json`, `ngay/cham_b7_nguoi_*.jsonl` + `khoa.json`, `chuoi/analyze_da_thay.json`, `holm_da_thay.json`, `gen/luot_khong_server.log`, `w/neu_ten.jsonl`, `tien.json`.
 - Chạy lại rẻ nhất (0 USD): `do_cuoi_b7.py check-judge`; `holm.py holm_dau_vao_da_thay.json`; `do_g.py dem <file>` cho S / W / T; `an_toan_b7.py accept --judge k`.
-- Việc của A: quyết hai sàn phạm (sửa trước lượt cuối hay nhận giới hạn — hỏi User nếu đổi phạm vi); cho chạy `chay_kin.sh` (User `!`); quyết bộ 12 tổ hợp biểu mẫu.
+- Việc của A: quyết hai sàn phạm (sửa trước lượt cuối hay nhận giới hạn — hỏi User nếu đổi phạm vi); cho chạy `chay_kin.sh` (User `!`).
 - Giải thích ngắn cho User: trên các bộ câu đã có, trợ lý trả lời đủ ý hơn bản RAG cũ ở cả ba nhóm (câu nhiều nguồn, câu theo ngày, câu hỏi tiếp), ít từ chối nhầm hơn và không làm hỏng câu thường; còn hai chỗ chưa đạt: hai câu ngoài phạm vi vẫn kích tra web, và một câu về miễn / giảm vé trợ lý hay bỏ sót một điều kiện hơn bản cũ.
