@@ -72,3 +72,29 @@ Decision: **ready_for_user_confirmation** (0 major; 3 sửa chữ nhỏ để kh
 - **c-2 (sửa chữ):** bất biến "≤ 1,5 km điểm / khu của buổi đó" chỉ kiểm được với toạ độ chắc / vừa; quán toạ độ ước ⇒ điều kiện là **"cùng cụm"** (không so mét) — viết thành hai vế.
 - **c-3 (đã có chủ):** bảng ánh xạ 8 cụm ⇒ 3 khu cho khối "Ở đâu": E giữ trong `khu_v1.json` (trường `cum`) của plan lưu trú; spec chỉ cần trỏ tới đó.
 - Ghi chú cỡ việc (không phải finding): bản 3 bỏ điểm dừng giữa các đợt theo chốt của A; đợt 3 (ăn uống + lưu trú) phụ thuộc đợt bổ sung kho 3 đã vào kho ⇒ thứ tự cắt nếu trễ nên đặt đợt 3 cắt trước đợt 2.
+
+---
+
+# Kiểm mục 5c + "Chỗ đổi bản 3.2" — sha256 `3ea9bcb8bc10` (21:59 12/11/2026, `date`) — A giao: một vòng
+
+Decision: **changes_requested — sửa chữ / số, không cần vòng nữa** (0 blocker; 2 chỗ **mâu thuẫn số** phải sửa trước khi B code; 4 ghi chú). E đọc 5c.1–5c.8, đối chiếu `backend/llm/lich_trinh.py` (`CUM_KE`, `CUM_XA`, `HAN_CHE`), `backend/llm/thoi_tiet.py` (`NGUONG_MUA`); không chạy mô phỏng.
+
+## Mâu thuẫn phải sửa
+- **S-1 — "tối đa 3 điểm / buổi" không bao giờ xảy ra với chính các con số của 5c.3.** 3 điểm ngắn cùng cụm = 75 × 3 + 15 × 2 = **255 phút > quỹ 240** (spec tự tính và ghi "không vừa — đúng ý: không nhồi"). Vậy trần thật là **2 điểm / buổi = 4 điểm / ngày** (mô phỏng: trung bình 3,24). Ba chỗ khác trong spec còn nói theo trần 3: dòng giải thích trên nút ở mục 5 ("~2 / ~4 / ~6 điểm một ngày"), mục 3 dòng "kiểu đi" ("khám phá nhiều tới 3 điểm ngắn / buổi"), và **định nghĩa chấm (3) ở 5c.7 ("khám phá 3–6")**. Tiêu chí đóng: chọn một — (a) giữ số phút, sửa chữ thành "tối đa 2 điểm / buổi", nút ghi "~2 / ~3 / ~4 điểm một ngày", định nghĩa (3) "khám phá 2–4"; hoặc (b) nới quỹ khám phá lên 255 nếu thật sự muốn 3 điểm ngắn (khi đó chiều kết thúc 17:45 > giờ đóng 17:30 ⇒ không khả thi buổi chiều). **E khuyến nghị (a).**
+- **S-2 — định nghĩa chấm (3) và (4) ở 5c.7 không đạt được ở một số lịch hợp lệ** (E là người viết bộ đo nên phải nêu trước): (3) "khám phá 3–6 điểm / ngày" — số đếm của chính spec cho thấy 3 / 8 cụm **không có điểm ngắn** ⇒ ngày rơi vào cụm đó chỉ có 2 điểm dù chọn "khám phá"; (4) "mỗi sở thích có ≥ 1 điểm ưu tiên trong lịch" — lịch 1–2 ngày không được vào cụm xa (luật cũ, giữ) ⇒ sở thích nào có điểm ưu tiên **chỉ ở cụm xa** sẽ luôn trượt; nhóm hạn chế 1 ngày + 2 sở thích chỉ có 2 suất. Tiêu chí đóng: (3) đổi thành phép **đếm bằng code theo cặp** — "số điểm cả lịch: nhẹ nhàng ≤ cân bằng ≤ khám phá, và khám phá > nhẹ nhàng" (đã là bất biến của mục 3), người chấm không chấm ý này; (4) thêm ngoại lệ ghi rõ: "trừ khi mọi điểm ưu tiên của sở thích đó không xếp được theo luật cứng (cụm xa với lịch < 3 ngày, điểm bị bỏ theo mùa, hết suất của nhóm hạn chế) — khi đó lịch phải có ghi chú `thieu_so_thich`". **E sẽ viết bộ đo theo bản đã sửa này** (ghi rõ trong file bộ đo); C / A không đồng ý thì báo trước khi B code bước (b).
+
+## Bất biến chưa đo được bằng mô phỏng đã chạy (180 lịch) — và cách đo
+| Bất biến / sàn | Vì sao chưa đo | Cách đo (0 USD) |
+|---|---|---|
+| Mùa / mưa đổi khung hoặc ghi chú ≥ 60 % | 180 lịch **không có chiều "ngày đi"**; cột `mua_luu_y`, `ngay_hoat_dong` chưa có (v9) | mô phỏng 3.840 tổ hợp của 5c.7 sau khi có v9; **mưa** không mô phỏng được bằng dự báo thật ⇒ truyền hàm dự báo ghi sẵn (code đã nhận hàm dự báo làm tham số): 3 kịch bản — không mưa · mưa ngày 1 · mưa mọi ngày |
+| 0 hoạt động tối sai thứ / sai giờ | cần v9 | cùng mô phỏng; đếm theo `thu` của từng ngày |
+| Giờ in không vượt giờ đóng, các điểm trong buổi không chồng giờ | spec không nói 180 lịch đã kiểm | kiểm bằng code trên mọi tổ hợp: giờ kết thúc ≤ giờ đóng của bảng; giờ bắt đầu điểm sau ≥ giờ kết thúc điểm trước + phút đi |
+| **"Điểm ưu tiên ở cụm xa xếp ngày 2" (C chưa mô phỏng; bản thử đang đặt ngày 1)** | luật mới | ba phép đếm trên mọi tổ hợp ≥ 3 ngày: (i) ngày 1 không có điểm cụm xa — 100 %; (ii) với sở thích có điểm ưu tiên ở cụm xa: điểm đó có mặt đúng **một** ngày trong {2…n} — đếm tỉ lệ, kỳ vọng 100 % trừ ngày bị bỏ theo mùa; (iii) **0 ngày rỗng** sau khi dời (ngày 1 phải được lấp bằng cụm gần) — so số điểm cả lịch trước / sau khi sửa luật, không được giảm |
+| Sàn ≥ 80 % tối có hoạt động | cần v9 + phiếu nhỏ | mô phỏng theo hai phương án phiếu (User giữ đề xuất / User siết) — spec đã ước, cần số thật |
+
+## Ghi chú (không chặn)
+- **g-1 — hai luật mùa có thể đụng nhau:** (iii) "điểm ưu tiên không bị hạ" và (i) "`bo_khoi_lich: true` ⇒ không xếp". Điểm vừa ưu tiên vừa tạm dừng theo mùa ⇒ phải ghi rõ **(i) thắng** (không xếp điểm đang đóng) + ghi chú do code.
+- **g-2 — "8:00 – 11:30 / 14:00 – 17:30" khớp nhau** (E tính lại: cân bằng 8:00 + 210 = 11:30; khám phá 7:30 + 240 = 11:30; chiều kết thúc 17:30). Lưu ý dữ liệu: kho ghi quần thể di tích mở 07h00 – 17h30 nhưng **không ghi giờ ngừng bán vé** ⇒ xếp tham quan kết thúc đúng 17:30 là sát; nên trừ 30 phút cho điểm cuối buổi chiều ở quần thể, hoặc ghi vào giới hạn.
+- **g-3 — tốc độ:** sự kiện `lich_khung` đi trước lần gọi model ⇒ số "chữ đầu" trong `chat_metrics` đổi nghĩa ở lượt biểu mẫu; ghi rõ lượt biểu mẫu đo bằng hai mốc mới (khung · đủ câu) và không so với số chữ đầu cũ.
+- **g-4 — kiểm "câu không chứa tên điểm khác":** cần danh sách tên + tên khác của mọi điểm; tên con nằm trong điểm lớn (một điện trong quần thể) sẽ bị bắt nhầm ⇒ lượt thử có phí sớm đếm thêm **tỉ lệ câu bị thay nhầm**, không chỉ thiếu / lặp / gộp.
+- Khớp code hiện tại: ngưỡng mưa 60 % = `NGUONG_MUA`; ≤ 2 cụm kề / ngày và cụm xa từ 3 ngày = luật đang chạy; 3.840 tổ hợp = 5 × 2 × 2 × 3 × 16 × 4 (đúng).
