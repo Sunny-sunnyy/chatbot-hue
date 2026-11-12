@@ -22,6 +22,12 @@ from llm.so_tien import tim_so_tien
 SERPER_URL = "https://google.serper.dev/search"
 SERPER_API_KEY_ENV = "SERPER_API_KEY"
 SERPER_USD_PER_CALL = 0.001  # gói rẻ nhất (B122); còn lượt dùng thử thì thực tế 0 — probe bước 3 của plan ghi lại cách tính
+# Exa (plan `docs/superpowers/plans/2026-11-12-tra-web-exa-plan.md`; thí nghiệm 12/11: mục đúng + trả lời được 25 ↔ Serper 17 / 42 câu). Cấu hình = đúng
+# cấu hình đã đo: loại "auto", 5 kết quả, vị trí VN, đoạn trích nguyên văn (highlights) ≤ 400 ký tự / kết quả; KHÔNG lọc tên miền (cấu hình có lọc kém hơn).
+EXA_URL = "https://api.exa.ai/search"
+EXA_API_KEY_ENV = "EXA_API_KEY"
+NGUON_WEB = ("serper", "exa")  # giá trị hợp lệ của `assistant.tra_web_nguon`
+DU_PHONG_TOI_THIEU_S = 0.5  # còn ít hơn chừng này giây của hạn tra ⇒ không gọi dự phòng Serper nữa
 MAX_RESULTS = 5
 MAX_QUERY_CHARS = 120
 MAX_TITLE_CHARS = 200
@@ -99,6 +105,7 @@ class KetQuaWeb:
     loi: str | None = None
     ms: float = 0.0
     usd: float = 0.0
+    nguon: str = "serper"  # nơi đã trả sổ: "serper" · "exa" · "exa>serper" (Exa hỏng / rỗng ⇒ đã gọi dự phòng Serper)
 
 
 def doc_ket_qua(data) -> list[dict] | None:
@@ -147,6 +154,76 @@ async def tim_web(cau: str, *, api_key: str | None, timeout: float, transport: h
     if so_web is None:
         return xong(trang_thai="loi", loi="schema", usd=SERPER_USD_PER_CALL)
     return xong(trang_thai="ok" if so_web else "rong", so_web=so_web, usd=SERPER_USD_PER_CALL)
+
+
+def doc_ket_qua_exa(data) -> list[dict] | None:
+    """Phản hồi Exa ⇒ sổ web **cùng khuôn** với Serper (≤ 5; đoạn trích = các highlights nối lại, cắt `MAX_SNIPPET_CHARS`). Sai schema (không có danh sách
+    `results`) ⇒ None. Mục thiếu tiêu đề / không có đoạn trích / link không hợp lệ ⇒ bỏ mục."""
+    results = data.get("results") if isinstance(data, dict) else None
+    if not isinstance(results, list):
+        return None
+    so_web = []
+    for item in results:
+        if len(so_web) == MAX_RESULTS:
+            break
+        if not isinstance(item, dict) or not isinstance(item.get("title"), str) or not isinstance(item.get("url"), str):
+            continue
+        doan = item.get("highlights")
+        snippet = " ".join(" ".join(d for d in doan if isinstance(d, str)).split())[:MAX_SNIPPET_CHARS] if isinstance(doan, list) else ""
+        link = _link_sach(item["url"])
+        if link is None or not snippet:
+            continue
+        so_web.append({"id": len(so_web) + 1, "title": " ".join(item["title"].split())[:MAX_TITLE_CHARS], "snippet": snippet, "link": link,
+                       "domain": _ten_mien(link)})
+    return so_web
+
+
+async def tim_web_exa(cau: str, *, api_key: str | None, timeout: float, loai_ten_mien: tuple[str, ...] = (),
+                      transport: httpx.AsyncBaseTransport | None = None) -> KetQuaWeb:
+    """Một lần gọi Exa, không thử lại; lỗi xử như Serper (thiếu khoá ⇒ không mở kết nối; hết giờ / HTTP ≠ 200 — gồm 402 hết tín dụng, 429 quá tốc độ —
+    / JSON hỏng / sai schema ⇒ "loi"). Tiền lấy từ `costDollars.total` của phản hồi (không có ⇒ 0). `loai_ten_mien`: tên miền Exa không được trả (mặc định
+    rỗng = cấu hình đã đo 12/11; đổi ⇒ phải đo lại trước khi bật). `transport`: chỉ test truyền."""
+    if not api_key:
+        return KetQuaWeb("loi", loi="thieu_khoa", nguon="exa")
+    started = time.perf_counter()
+
+    def xong(**kwargs) -> KetQuaWeb:
+        return KetQuaWeb(ms=round((time.perf_counter() - started) * 1000, 1), nguon="exa", **kwargs)
+
+    try:
+        async with httpx.AsyncClient(timeout=timeout, transport=transport) as client:
+            response = await client.post(EXA_URL, headers={"x-api-key": api_key},
+                                         json={"query": cau, "type": "auto", "numResults": MAX_RESULTS, "userLocation": "VN",
+                                               "contents": {"highlights": {"maxCharacters": MAX_SNIPPET_CHARS}},
+                                               **({"excludeDomains": list(loai_ten_mien)} if loai_ten_mien else {})})
+    except httpx.TimeoutException:
+        return xong(trang_thai="loi", loi="het_gio")
+    except httpx.HTTPError:
+        return xong(trang_thai="loi", loi="mang")
+    if response.status_code != 200:
+        return xong(trang_thai="loi", loi=f"http_{response.status_code}")
+    try:
+        data = response.json()
+        so_web = doc_ket_qua_exa(data)
+    except ValueError:
+        data, so_web = None, None
+    if so_web is None:
+        return xong(trang_thai="loi", loi="schema")
+    cost = (data.get("costDollars") or {}).get("total")
+    return xong(trang_thai="ok" if so_web else "rong", so_web=so_web, usd=float(cost) if isinstance(cost, (int, float)) else 0.0)
+
+
+async def tim_web_exa_truoc(cau: str, *, exa_key: str | None, serper_key: str | None, timeout: float, exa_timeout: float,
+                            loai_ten_mien: tuple[str, ...] = (), transport: httpx.AsyncBaseTransport | None = None) -> KetQuaWeb:
+    """Exa trước với **hạn riêng** `exa_timeout` (< `timeout`, để Exa hết giờ thì Serper còn thời gian — review C M-1); Exa lỗi / hết giờ / 0 kết quả ⇒ **một**
+    lần Serper với phần còn lại của hạn chung `timeout` (còn < `DU_PHONG_TOI_THIEU_S` ⇒ trả luôn kết quả Exa). Kết quả dự phòng ghi `nguon="exa>serper"`,
+    `ms` = tổng hai lần, `usd` = tổng."""
+    exa = await tim_web_exa(cau, api_key=exa_key, timeout=min(exa_timeout, timeout), loai_ten_mien=loai_ten_mien, transport=transport)
+    con_lai = timeout - exa.ms / 1000
+    if exa.trang_thai == "ok" or con_lai < DU_PHONG_TOI_THIEU_S:
+        return exa
+    serper = await tim_web(cau, api_key=serper_key, timeout=con_lai, transport=transport)
+    return KetQuaWeb(serper.trang_thai, so_web=serper.so_web, loi=serper.loi, ms=round(exa.ms + serper.ms, 1), usd=exa.usd + serper.usd, nguon="exa>serper")
 
 
 def dau_vao_model(cau_hoi: str, so_web: list[dict]) -> str:

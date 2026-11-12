@@ -25,6 +25,7 @@ def load_settings(validate_private_paths: bool = True):
 
 # Phase 12 (bản deploy chạy Docker): hai giá trị đổi theo máy chạy, đọc từ biến môi trường ở rìa — không đặt ⇒ đúng `settings.yaml` (máy User).
 #   HUE_QDRANT_URL  ⇒ vector_database.url (trong compose: http://qdrant:6333 — cổng gốc của Qdrant — thay vì localhost:6335)
+#   HUE_TRA_WEB_NGUON ⇒ assistant.tra_web_nguon ("serper" / "exa")
 #   HUE_TRA_WEB     ⇒ assistant.tra_web ("true" / "false"; bản công khai tắt tới khi User quyết — review spec Phase 9 v10 M-1)
 def apply_env_overrides(settings: dict, env) -> None:
     url = env.get("HUE_QDRANT_URL")
@@ -35,6 +36,11 @@ def apply_env_overrides(settings: dict, env) -> None:
         if tra_web not in ("true", "false"):
             raise ValueError("HUE_TRA_WEB must be 'true' or 'false'")
         settings["assistant"]["tra_web"] = tra_web == "true"
+    nguon = env.get("HUE_TRA_WEB_NGUON")  # "serper" / "exa" (plan 2026-11-12-tra-web-exa); không đặt ⇒ như `settings.yaml`
+    if nguon is not None:
+        if nguon not in ("serper", "exa"):
+            raise ValueError("HUE_TRA_WEB_NGUON must be 'serper' or 'exa'")
+        settings["assistant"]["tra_web_nguon"] = nguon
 
 
 def validate_phase6_settings(settings: dict) -> None:

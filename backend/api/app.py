@@ -2,6 +2,7 @@
 from contextlib import asynccontextmanager
 import logging
 import os
+from datetime import date
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -30,7 +31,7 @@ from ingestion.source_state import discover_full_corpus_files
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 from llm.assistant import AssistantFlags
 from llm.nhan_anh import nap_danh_sach, tao_agent
-from llm.tra_web import SERPER_API_KEY_ENV, tim_web
+from llm.tra_web import EXA_API_KEY_ENV, NGUON_WEB, SERPER_API_KEY_ENV, tim_web, tim_web_exa_truoc
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
 from retrieval.full_corpus_context import FullCorpusContextBuilder
@@ -74,11 +75,32 @@ class FrontendStaticFiles(StaticFiles):
 
 
 def _tim_web_server(settings: dict):
-    """B6: hàm tra web của server. Khoá đọc **trong** hàm mỗi lần tra (review E13 m-1: `functools.partial(api_key=…)` để lộ khoá trong `repr`)."""
-    timeout = float((settings.get("assistant") or {}).get("tra_web_timeout_seconds", 5))
+    """B6: hàm tra web của server. Khoá đọc **trong** hàm mỗi lần tra (review E13 m-1: `functools.partial(api_key=…)` để lộ khoá trong `repr`).
+    `assistant.tra_web_nguon` (mặc định "serper" = như cũ): "exa" ⇒ Exa trước (hạn riêng `tra_web_exa_timeout_seconds`), Serper dự phòng trong phần còn lại của hạn
+    chung (plan 2026-11-12-tra-web-exa); quá `tra_web_exa_moi_ngay` lượt Exa trong một ngày (đếm trong RAM của tiến trình) ⇒ các lượt sau đi thẳng Serper."""
+    config = settings.get("assistant") or {}
+    timeout = float(config.get("tra_web_timeout_seconds", 5))
+    nguon = config.get("tra_web_nguon", "serper")
+    if nguon not in NGUON_WEB:
+        raise ValueError(f"assistant.tra_web_nguon must be one of {NGUON_WEB}")
+    tran_exa = int(config.get("tra_web_exa_moi_ngay", 40))
+    exa_timeout = float(config.get("tra_web_exa_timeout_seconds", 3))
+    loai_ten_mien = tuple(config.get("tra_web_exa_loai_ten_mien") or ())
+    dem_exa = {"ngay": None, "luot": 0}
+
+    def khoa(ten: str) -> str | None:
+        return os.getenv(ten, "").strip() or None
 
     async def tim(cau: str):
-        return await tim_web(cau, api_key=os.getenv(SERPER_API_KEY_ENV, "").strip() or None, timeout=timeout)
+        if nguon == "exa":
+            hom_nay = date.today()
+            if dem_exa["ngay"] != hom_nay:
+                dem_exa.update(ngay=hom_nay, luot=0)
+            if dem_exa["luot"] < tran_exa:
+                dem_exa["luot"] += 1
+                return await tim_web_exa_truoc(cau, exa_key=khoa(EXA_API_KEY_ENV), serper_key=khoa(SERPER_API_KEY_ENV), timeout=timeout,
+                                               exa_timeout=exa_timeout, loai_ten_mien=loai_ten_mien)
+        return await tim_web(cau, api_key=khoa(SERPER_API_KEY_ENV), timeout=timeout)
 
     return tim
 

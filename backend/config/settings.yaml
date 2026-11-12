@@ -73,6 +73,10 @@ assistant:
   lich_trinh_bieu_mau: true      # cổng đợt 1 (spec D3 / D4): lượt từ biểu mẫu "Lên kế hoạch" — code xếp bằng giá trị nút, sinh không công cụ (V5: luật lịch trong lời dặn + suy luận low). BẬT 07/11/2026 (User; S3 Q-F bộ quyết đạt 24/24, F-a 12/12 ×2)
   tra_web: true                  # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — BẬT 05/11/2026 tối (đạt luật ghi trước + kín ×2 + review; User duyệt); cần router + tim_them
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại
+  tra_web_nguon: serper          # "serper" (như cũ) | "exa" = Exa trước, Serper dự phòng trong cùng hạn (plan 2026-11-12-tra-web-exa; thí nghiệm 12/11: 25 ↔ 17 / 42)
+  tra_web_exa_moi_ngay: 40       # trần lượt Exa / ngày (đếm trong RAM; 40 nằm trong tín dụng miễn phí ~47 lượt / ngày); vượt ⇒ lượt sau đi thẳng Serper
+  tra_web_exa_timeout_seconds: 3 # hạn riêng của Exa (đo 12/11: p95 2,2 s) — Exa hết giờ thì Serper còn ~2 s của hạn chung 5 s
+  tra_web_exa_loai_ten_mien: []  # tên miền Exa không được trả; rỗng = cấu hình đã đo. Đổi ⇒ đo lại 42 câu trước khi bật
   thoi_tiet: true                # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — BẬT 07/11/2026 (User Q-U4 spec cổng đợt 1: bật khi merge đợt 1; B5b đạt luật ghi trước); cần tim_them
   ngay_lich: true                # Phase 9 T1 (plan 2026-11-08-phase-9-t1-ngay-plan.md): công cụ ngày + âm lịch Việt Nam (code tính) — chỉ đưa khi câu có từ chỉ ngày; TẮT tới khi đạt §1; cần tim_them
   het_luot_bo_cong_cu: false     # 12/11 (plan 2026-11-12-het-luot-tim-plan.md): hết 2 lần tìm thật ⇒ lượt gọi model kế không còn công cụ tim_kho — TẮT tới khi đo đạt

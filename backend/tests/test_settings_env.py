@@ -14,6 +14,7 @@ def from_file() -> dict:
 def test_no_env_keeps_file_values(monkeypatch):
     monkeypatch.delenv("HUE_QDRANT_URL", raising=False)
     monkeypatch.delenv("HUE_TRA_WEB", raising=False)
+    monkeypatch.delenv("HUE_TRA_WEB_NGUON", raising=False)
     assert load_settings(validate_private_paths=False) == from_file()
 
 
@@ -30,3 +31,12 @@ def test_env_overrides_only_the_two_values():
 def test_bad_web_flag_fails_closed(value):
     with pytest.raises(ValueError):
         apply_env_overrides(from_file(), {"HUE_TRA_WEB": value})
+
+
+def test_web_source_env_override_and_bad_value():  # plan 2026-11-12-tra-web-exa: nguồn tra web đổi được bằng biến môi trường; giá trị lạ ⇒ dừng
+    got = from_file()
+    assert got["assistant"]["tra_web_nguon"] == "serper"  # mặc định trong file = như trước khi có Exa
+    apply_env_overrides(got, {"HUE_TRA_WEB_NGUON": "exa"})
+    assert got["assistant"]["tra_web_nguon"] == "exa"
+    with pytest.raises(ValueError):
+        apply_env_overrides(from_file(), {"HUE_TRA_WEB_NGUON": "google"})
