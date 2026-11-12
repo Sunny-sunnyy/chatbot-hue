@@ -28,7 +28,7 @@ theo câu · ngày đi (thứ, mùa, dự báo) · buổi tối + giờ gợi ý
 | P1 | User **chưa liếc** danh sách ưu tiên theo sở thích (bảng v8) | dùng giá trị đề xuất làm mặc định; ưu tiên nằm ở **cột `uu_tien` của bảng** ⇒ User đổi = sửa bảng, **không đổi code**; test không khoá tên điểm cụ thể, chỉ khoá luật |
 | P2 | ~~phiếu nhỏ đợt 1~~ — **User đã trả lời (12/11):** phố quán bờ nam xếp mọi tối + ghi chú ngày cấm xe · điểm tạm dừng theo mùa bỏ hẳn khỏi lịch trong mùa dừng · chỉ một dòng nhắc mưa chung khi đi tháng 9–12 | đã vào bảng đề xuất + spec 5c.2. Còn một ô User chưa điền: giờ + thứ của phố đêm cạnh Kinh thành ⇒ **không thêm** điểm đó (thêm sau = sửa bảng) |
 | P3 | ~~E kiểm mục 5c~~ — **xong**, đã sửa: trần 2 điểm / buổi · chiều bắt đầu sớm 30 phút · định nghĩa chấm (3), (4) · điểm tạm dừng thắng ưu tiên | — |
-| P4 | Bộ đo 20 + 12 của E **chưa xong** | phải xong + ghi mã băm vào mục 6 **trước khi B bắt đầu bước (b)**; B không đọc bộ quyết 12 tổ hợp trước khi chạy |
+| P4 | ~~bộ đo 20 + 12 của E~~ — **xong**, mã băm ở mục 5 | B không đọc bộ quyết 12 tổ hợp trước khi chạy nghiệm thu |
 | P5 | Luật "điểm ưu tiên cụm xa xếp ngày 2" | **đã mô phỏng** (21:57 12/11, bản thử): 0 / 180 lịch có điểm cụm xa ở ngày 1; sở thích thiên nhiên từ 3 ngày: điểm ưu tiên số 1 nằm đúng ngày 2 ở 18 / 18; các số khác không đổi (80 % · 1 điểm ban ngày không bao giờ xếp). Luật thử = "ngày 1 không xét điểm cụm xa" |
 | P6 | Báo cáo B thử đủ luồng lập kế hoạch của trang kia | đầu vào cho mục 2 của spec; nếu thêm bất biến mới ⇒ C sửa plan trước bước (c) |
 
@@ -120,7 +120,7 @@ Quy ước mỗi bước: **test viết trước** (đỏ rồi mới code) · m
 | Playwright 2 khổ màn trên bản build do FastAPI phục vụ | biểu mẫu dùng được bằng bàn phím; khung hiện trước câu; 0 lỗi console; 0 yêu cầu mạng ngoài danh sách CSP | 0 |
 | Review cả nhánh (một vòng; phần luật xếp review riêng) | 0 blocker / major còn mở | 0 |
 
-Bộ đo: `data/phase_9/lich_trinh/bo_do_v2/` — mã băm hai file: *(E điền khi xong — P4)*. Giữ / gỡ: đạt hết ⇒ A bật cờ (sau D4); trượt một sàn của ô ⇒ ô đó ẩn, phần còn lại vẫn bật được; trượt "Luôn" hoặc bộ quyết ⇒ không bật.
+Bộ đo: `data/phase_9/lich_trinh/bo_do_v2/` — mã băm (E gửi 12/11, 12 ký tự đầu): `yeu_cau_20.jsonl` `8f89c1b341ca` · `bo_quyet_12.jsonl` `f715aac06ddc` · `dinh_nghia_cham.md` `253d6d9f9910` (theo spec 3.3). **B không mở `bo_quyet_12.jsonl` trước lượt chạy nghiệm thu.** Giữ / gỡ: đạt hết ⇒ A bật cờ (sau D4); trượt một sàn của ô ⇒ ô đó ẩn, phần còn lại vẫn bật được; trượt "Luôn" hoặc bộ quyết ⇒ không bật.
 
 ## 6. Tiền · giờ
 

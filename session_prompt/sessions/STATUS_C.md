@@ -45,6 +45,8 @@ Không server / worktree / nhánh / container của C. (Tiền: xem dòng "Tiề
 
 - **Plan đợt 1 "Lên kế hoạch" NHÁP bản 1** (21:57 12/11/2026 `date`, 0 USD, chưa commit): `docs/superpowers/plans/2026-11-12-len-ke-hoach-dot-1-plan.md` — bước (a)–(e), tiêu chí Luôn / Sàn, lượt thử sớm, điểm dừng D1–D4. Luật "cụm xa không ở ngày 1" đã mô phỏng (0 / 180; 18 / 18). Chờ: B đọc trước, A duyệt; E kiểm spec 5c ⇒ C sửa plan một lần.
 
+- **22:09 12/11/2026 (`date`), 0 USD (2 lượt tra Codex):** spec "Lên kế hoạch" **bản 3.3** `8c521ecdc80d` (nhận kết quả E kiểm 5c + User trả lời phiếu nhỏ) · plan đợt 1 **bản 2** `82ea67f6e17d` (đã có mã băm bộ đo của E; chờ B đọc, A duyệt) · bảng đề xuất 34 dòng md5 `0cbd845ede30` (cột thứ / giờ tối / mùa + dòng hoạt động tối) · **rà lời dặn XONG:** `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan.md` (7 vai, 9 điểm đối chiếu hướng dẫn chính thức, 5 đề xuất, khung lời dặn vai mới của lịch; chỉ đọc).
+
 **Trạng thái: rảnh — chờ A** (không server / worktree / nhánh / container của C; việc dở: không) (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
 **Bẫy 12/11:** lệnh shell dài viết thẳng (heredoc quét `data/` có chữ tên bộ kín) bị auto mode chặn ⇒ viết script bằng Write rồi chạy; log `chat_metrics` không có nội dung câu ⇒ không đếm theo loại câu được, phải gửi câu tự viết; câu kho từ chối đi web ≈ 0,002 USD / câu ⇒ ước tiền lượt đếm theo giá đường web, không theo giá trung bình.
 (Tiền tới lúc đó 0,024691 USD — số cuối phiên ở dòng "Tiền C 12/11 (mới)".)
