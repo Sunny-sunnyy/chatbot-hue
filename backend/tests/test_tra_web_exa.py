@@ -4,6 +4,7 @@ Exa thật trả đúng — phần đó là thí nghiệm có phí. Câu / đo�
 import asyncio
 import json
 import time
+from pathlib import Path
 
 import httpx
 import pytest
@@ -147,3 +148,18 @@ def test_exa_source_respects_daily_cap_then_goes_to_serper(monkeypatch):
 def test_unknown_source_fails_at_startup():
     with pytest.raises(ValueError):
         _tim_web_server({"assistant": {"tra_web_nguon": "google"}})
+
+
+def test_only_the_web_module_knows_the_exa_address():  # ranh giới (review B m-1): mọi lời gọi Exa đi qua `llm/tra_web.py`
+    backend = Path(__file__).resolve().parents[1]
+    co = sorted(str(p.relative_to(backend)) for p in backend.rglob("*.py")
+                if ".venv" not in p.parts and "tests" not in p.parts and "api.exa.ai" in p.read_text(encoding="utf-8"))
+    assert co == ["llm/tra_web.py"]
+
+
+def test_exa_total_time_is_capped_even_if_each_phase_is_fast():  # review B m-4: hạn tổng, không chỉ hạn từng pha của httpx
+    async def cham(request):
+        await asyncio.sleep(0.4)
+        return httpx.Response(200, json=EXA_OK)
+    kq = run(tw.tim_web_exa(CAU, api_key="k", timeout=0.15, transport=httpx.MockTransport(cham)))
+    assert (kq.trang_thai, kq.loi) == ("loi", "het_gio") and kq.ms < 350

@@ -9,6 +9,7 @@ mở cổng (D1) và gọi model viết mục web; module này chỉ làm phần
 
 Chữ web là **dữ liệu không tin cậy**: không có công cụ nào để nó lái; mọi thứ hiện cho người dùng (link, nhãn) do code dựng từ sổ.
 """
+import asyncio
 import re
 import time
 import unicodedata
@@ -181,7 +182,7 @@ def doc_ket_qua_exa(data) -> list[dict] | None:
 async def tim_web_exa(cau: str, *, api_key: str | None, timeout: float, loai_ten_mien: tuple[str, ...] = (),
                       transport: httpx.AsyncBaseTransport | None = None) -> KetQuaWeb:
     """Một lần gọi Exa, không thử lại; lỗi xử như Serper (thiếu khoá ⇒ không mở kết nối; hết giờ / HTTP ≠ 200 — gồm 402 hết tín dụng, 429 quá tốc độ —
-    / JSON hỏng / sai schema ⇒ "loi"). Tiền lấy từ `costDollars.total` của phản hồi (không có ⇒ 0). `loai_ten_mien`: tên miền Exa không được trả (mặc định
+    / JSON hỏng / sai schema ⇒ "loi"). Tiền lấy từ `costDollars.total` của phản hồi (không có ⇒ 0; Exa báo số này cả khi lượt nằm trong tín dụng miễn phí ⇒ `usd` trong log là **giá niêm yết**, không phải tiền đã trả — review B m-6). `loai_ten_mien`: tên miền Exa không được trả (mặc định
     rỗng = cấu hình đã đo 12/11; đổi ⇒ phải đo lại trước khi bật). `transport`: chỉ test truyền."""
     if not api_key:
         return KetQuaWeb("loi", loi="thieu_khoa", nguon="exa")
@@ -191,12 +192,13 @@ async def tim_web_exa(cau: str, *, api_key: str | None, timeout: float, loai_ten
         return KetQuaWeb(ms=round((time.perf_counter() - started) * 1000, 1), nguon="exa", **kwargs)
 
     try:
-        async with httpx.AsyncClient(timeout=timeout, transport=transport) as client:
+        # hạn giờ của httpx tính theo TỪNG pha (kết nối / đọc…) ⇒ bọc thêm hạn TỔNG để Exa không ăn quá `timeout` giây của hạn chung (review B m-4)
+        async with asyncio.timeout(timeout), httpx.AsyncClient(timeout=timeout, transport=transport) as client:
             response = await client.post(EXA_URL, headers={"x-api-key": api_key},
                                          json={"query": cau, "type": "auto", "numResults": MAX_RESULTS, "userLocation": "VN",
                                                "contents": {"highlights": {"maxCharacters": MAX_SNIPPET_CHARS}},
                                                **({"excludeDomains": list(loai_ten_mien)} if loai_ten_mien else {})})
-    except httpx.TimeoutException:
+    except (httpx.TimeoutException, TimeoutError):
         return xong(trang_thai="loi", loi="het_gio")
     except httpx.HTTPError:
         return xong(trang_thai="loi", loi="mang")

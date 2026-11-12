@@ -850,7 +850,7 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
     (không đoán, không thử lại). Lần tra ghi một mục `tools` (ms, trạng thái, số kết quả, USD — không chữ)."""
     kq = await tim_web(tw.cau_tim_web(query))
     trace.tools.append({"name": "tra_web", "ms": kq.ms, "trang_thai": kq.trang_thai, "loi": kq.loi, "n_ket_qua": len(kq.so_web),
-                        "usd": kq.usd})
+                        "usd": kq.usd, "nguon": kq.nguon})  # `nguon`: serper · exa · exa>serper (plan 2026-11-12-tra-web-exa)
     web = {"outcome": "web_loi", "text": tw.WEB_LOI_TEXT, "nguon": [], "n_ket_qua": len(kq.so_web), "n_ma": 0, "kiem": None,
            "usd_serper": kq.usd}
     trace.web = web

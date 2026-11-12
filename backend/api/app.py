@@ -77,7 +77,9 @@ class FrontendStaticFiles(StaticFiles):
 def _tim_web_server(settings: dict):
     """B6: hàm tra web của server. Khoá đọc **trong** hàm mỗi lần tra (review E13 m-1: `functools.partial(api_key=…)` để lộ khoá trong `repr`).
     `assistant.tra_web_nguon` (mặc định "serper" = như cũ): "exa" ⇒ Exa trước (hạn riêng `tra_web_exa_timeout_seconds`), Serper dự phòng trong phần còn lại của hạn
-    chung (plan 2026-11-12-tra-web-exa); quá `tra_web_exa_moi_ngay` lượt Exa trong một ngày (đếm trong RAM của tiến trình) ⇒ các lượt sau đi thẳng Serper."""
+    chung (plan 2026-11-12-tra-web-exa); quá `tra_web_exa_moi_ngay` lượt Exa trong một ngày (đếm trong RAM của tiến trình) ⇒ các lượt sau đi thẳng Serper.
+    Trần đếm số lượt **thử** gọi Exa (kể cả lượt lỗi), theo **ngày của máy chạy** (Docker thường là UTC), **riêng từng tiến trình** và mất khi khởi động lại
+    (review B m-3) — đủ làm chốt chặn tiền, không phải bộ đếm chính xác."""
     config = settings.get("assistant") or {}
     timeout = float(config.get("tra_web_timeout_seconds", 5))
     nguon = config.get("tra_web_nguon", "serper")
