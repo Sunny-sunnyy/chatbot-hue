@@ -1,6 +1,11 @@
 # STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
 
-## ĐANG LÀM (ưu tiên 1) — B7 đo giữa kỳ (A giao 19:09 12/11/2026; plan bản 2 duyệt `456c13142879`, file hiện `2ca3f63ce45b` sau commit sửa chữ `582c9d0`)
+## ĐANG LÀM — "hết lượt tìm thì dừng" (A giao 20:38 12/11/2026; handoff "VIỆC ĐỢT 2 PHIÊN 12/11" dòng B; plan `docs/superpowers/plans/2026-11-12-het-luot-tim-plan.md` A duyệt mức nhẹ; trần 0,09 USD)
+- Nhánh `p9-het-luot-tim` từ `main` `0ab78f8`, worktree `/tmp/b_hlt` (symlink `data/`, `knowledge-base-hue/`).
+- **Khai báo sửa (trong worktree):** `backend/llm/generator_openai_full_corpus.py` (công cụ `tim_kho` bật / tắt theo số lần đã tìm; bắt lỗi "công cụ không còn"), `backend/llm/assistant.py` (cờ `het_luot_bo_cong_cu`), `backend/config/settings.yaml` (cờ, tắt), `backend/tests/test_het_luot_tim.py` (mới) + test cũ nếu chạm cờ; đo `data/het_luot_tim_2026-11-12/`; report `report_agent/2026-11-12_ra_khoang_cach/b_het_luot_tim_implementation.md`.
+- Lúc đo giây: nhắn C + E "đang đo" / "đo xong".
+
+## (XONG cả phần chuỗi kín 20:42 12/11/2026) — B7 đo giữa kỳ: nhớ tên 10 / 10 đạt; hỏi tiếp gộp kín 14 lượt +1,64 vẫn tốt hơn, kín không ngược chiều; **sàn chuỗi phạm 1 mã `K-N2`** (cùng mã 03/11, không phải bắt nhầm — cần người được giao đọc); B7 0,313 / 0,35 — report §8 (A giao 19:09 12/11/2026; plan bản 2 duyệt `456c13142879`, file hiện `2ca3f63ce45b` sau commit sửa chữ `582c9d0`)
 - `$C_DONG` = `dfd0c96` · `KIN_NGAY` TẮT (không mở `ngay_moi_sealed`) · `MAX_DROP` 4 · quỹ 0,35 USD. Người chạy: B; review kết quả: E. User vắng tới ~20:30, không hỏi.
 - **Khai báo tạo / sửa:** `data/phase_9/b7/` (private: `tools/` — `do_cuoi_b7.py`, `chuoi_rag_moc.py`, `cham_chuoi_b7.py`, `holm.py`, `an_toan_b7.py`, `cap_mu_ngay.py`; `chon.json`; `gen/ golden/ an_toan/ ngay/ chuoi/ s2/ w/ t/`); report `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`. Không sửa `backend/`, không sửa code ở `/tmp/b7_moc`.
 - **Xong 0 USD:** cờ dưới đúng lệnh khớp plan 14 / 14, ROUTER `8cd30cbb359a` · ANSWER `81d3040cf53f` (`buoc_0b/co_va_sha.txt`); `chon.json` ghi trước khi sinh (18 câu nhiều nguồn, 9 chuỗi hỏi tiếp, "mong từ chối" = 0 mã, sàn S2c ≥ 15 / 17); n-1 (`cham_chuoi_b7.py`) + n-2 (`holm.py`) chạy thử trên file cũ / số giả đạt; bộ của `do_g.py`: an toàn 32 · s2 44 · s2c 17 · a 16.

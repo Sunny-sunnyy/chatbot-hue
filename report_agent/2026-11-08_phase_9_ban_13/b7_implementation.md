@@ -97,3 +97,18 @@ Lý do (C nêu khi chẩn đoán hai sàn phạm): file sinh của lượt giữ
 - `sinh_golden_b7.py` — chạy đúng lệnh `evaluation.full_corpus_eval generate` / `chuoi` nhưng bọc lời gọi lõi để ghi file phụ (biến môi trường `B7_THEM`), ghép với Golden bằng mã băm câu hỏi. (Dòng `generate` vốn đã có công cụ + thời gian từng lần gọi; phần thiếu là id đoạn tìm thêm và số lần tìm.)
 
 **[Chạy] thử 0 USD trên vết giả (không gọi model):** `do_g_b7` ra đủ trường gốc + ba nhóm mới, `dem` vẫn chạy; hàm bọc của `sinh_golden_b7` ghi đúng một dòng file phụ kể cả khi lượt chạm trần vòng; `generate --help` chạy qua lớp bọc. **[Chưa chạy]** với model thật — lần đầu sẽ là pilot của lượt cuối (so `usd` + số dòng với lệnh gốc trên 10 câu trước khi chạy đủ). File phụ ghi theo thứ tự xong, không theo thứ tự câu ⇒ ghép bằng mã băm.
+
+## 8. Bổ sung 20:42 12/11/2026 — phần CHUỖI KÍN (đã dùng 03/11) sau khi User chạy `chay_kin_chuoi.sh`
+
+Số đếm do lệnh in (A chuyển) + B tính tiếp bằng công cụ chỉ in số đếm / mã chuỗi (B không đọc chữ của bộ kín). Tiền: agent 0,0130 + mốc 0,0029 = **0,0158 USD** ⇒ B7 cộng dồn **0,313 / 0,35**.
+
+| Mục | Kết quả phần kín | Gộp với phần đã thấy | Kết luận |
+|---|---|---|---|
+| (ii) Nhớ tên | 4 / 4 chuỗi | **10 / 10** (ngưỡng ≥ 9 / 10) | **đạt** |
+| (i) Hỏi tiếp — Đủ (1 người chấm mù, 10 mục) | 5 lượt: agent 5,00 ↔ mốc 3,40; chênh TB **+1,6**, thắng / hoà / thua 2 / 3 / 0 | 14 lượt: chênh TB +1,643; Holm (thứ 2, mức 97,5 %) CI [+0,643; +2,714] | **tốt hơn; phần kín không ngược chiều** ⇒ kết luận (i) nhóm hỏi tiếp không còn chỉ "trên phần đã thấy" |
+| Tuyến sai · câu Huế bị coi là xã giao · lỗi trích dẫn · lỗi kỹ thuật | 0 · 0 · 0 · 0 (33 lượt agent, 10 lượt mốc) | | đạt |
+| **Sàn "hỏi tiếp ngoài kho bị trả lời"** | **1 mã (`K-N2`)** | đã thấy 0 | **PHẠM theo bộ đếm** |
+
+Hai nhóm còn lại của Holm không đổi (theo ngày thứ 1, nhiều nguồn thứ 3; cả ba "tốt hơn"). File: `data/phase_9/b7/holm_gop_kin.json`, `chuoi/judge_kin/`.
+
+**Về mã `K-N2` (kiểm bằng cờ / độ dài, không đọc chữ):** lượt bị đếm là lượt 2 của một chuỗi loại "hỏi tiếp ngoài kho" (mong từ chối). Câu trả lời của agent **không phải** câu từ chối kho, **không phải** câu "ngoài phạm vi", không chứa câu từ chối; dài 148 ký tự, có 2 trích dẫn, sau **2 lần model tìm thêm**, đi đúng tuyến trợ lý Huế, không lỗi trích dẫn ⇒ **không phải bộ đếm bắt nhầm câu từ chối** — model đã viết một câu trả lời có nguồn. Đây là **cùng mã đã phạm ở lượt kín 03/11** (hồ sơ B3: khi đó người được giao đọc kết luận "đoạn tìm được nói về đúng đối tượng nhưng không có ý trả lời câu hỏi ⇒ lẽ ra từ chối"; ca dò tự viết không tái hiện được). Nội dung lần này đúng / sai ra sao cần **người được giao mở bộ kín** đọc (như C ở 03/11) — B không đọc. Ghi nhận: lỗi **lặp lại ở cùng một mã qua hai lượt cách 9 ngày**, 1 / 4 chuỗi loại này ở phần kín, 0 / 4 ở phần đã thấy.
