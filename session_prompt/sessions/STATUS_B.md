@@ -1,9 +1,12 @@
 # STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
 
-## ĐANG LÀM — "hết lượt tìm thì dừng" (A giao 20:38 12/11/2026; handoff "VIỆC ĐỢT 2 PHIÊN 12/11" dòng B; plan `docs/superpowers/plans/2026-11-12-het-luot-tim-plan.md` A duyệt mức nhẹ; trần 0,09 USD)
+## XONG ĐO (21:29 12/11/2026), chờ E review — "hết lượt tìm thì dừng": S-AT vòng cuối KHÔNG âm (S11 dao động ở cả hai trạng thái cờ — vấn đề có sẵn); tiền 0,146 / 0,15; cờ TẮT; nhánh `p9-het-luot-tim` `ab66f5e` đã push; report §7. Không đo thêm.
+
+## (chi tiết) "hết lượt tìm thì dừng" (A giao 20:38 12/11/2026; handoff "VIỆC ĐỢT 2 PHIÊN 12/11" dòng B; plan `docs/superpowers/plans/2026-11-12-het-luot-tim-plan.md` A duyệt mức nhẹ; trần 0,09 USD)
 - Nhánh `p9-het-luot-tim` từ `main` `0ab78f8`, worktree `/tmp/b_hlt` (symlink `data/`, `knowledge-base-hue/`).
 - **Khai báo sửa (trong worktree):** `backend/llm/generator_openai_full_corpus.py` (công cụ `tim_kho` bật / tắt theo số lần đã tìm; bắt lỗi "công cụ không còn"), `backend/llm/assistant.py` (cờ `het_luot_bo_cong_cu`), `backend/config/settings.yaml` (cờ, tắt), `backend/tests/test_het_luot_tim.py` (mới) + test cũ nếu chạm cờ; đo `data/het_luot_tim_2026-11-12/`; report `report_agent/2026-11-12_ra_khoang_cach/b_het_luot_tim_implementation.md`.
 - Lúc đo giây: nhắn C + E "đang đo" / "đo xong".
+- **21:21 12/11/2026:** nhánh `ab66f5e` đã push; report `report_agent/2026-11-12_ra_khoang_cach/b_het_luot_tim_implementation.md`. Quyết ĐẠT (8 / 8; −6,7 s); Golden phạm theo chữ nhưng A/A thoả luật ghi trước; S2 đạt; **an toàn chưa kết luận — chờ A chốt S-AT** (3 câu × 3 × 2 cờ, ≈ 0,013, bản bọc có số lần tìm); đọc mù 6 câu trả lời có trích dẫn: 0 bịa. Tiền 0,134 / 0,145. Cờ TẮT. Worktree `/tmp/b_hlt` giữ.
 
 ## (XONG cả phần chuỗi kín 20:42 12/11/2026) — B7 đo giữa kỳ: nhớ tên 10 / 10 đạt; hỏi tiếp gộp kín 14 lượt +1,64 vẫn tốt hơn, kín không ngược chiều; **sàn chuỗi phạm 1 mã `K-N2`** (cùng mã 03/11, không phải bắt nhầm — cần người được giao đọc); B7 0,313 / 0,35 — report §8 (A giao 19:09 12/11/2026; plan bản 2 duyệt `456c13142879`, file hiện `2ca3f63ce45b` sau commit sửa chữ `582c9d0`)
 - `$C_DONG` = `dfd0c96` · `KIN_NGAY` TẮT (không mở `ngay_moi_sealed`) · `MAX_DROP` 4 · quỹ 0,35 USD. Người chạy: B; review kết quả: E. User vắng tới ~20:30, không hỏi.
