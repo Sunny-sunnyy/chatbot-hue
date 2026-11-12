@@ -123,6 +123,8 @@ Lịch cần điểm / hoạt động buổi tối; bảng lịch trình hiện 
 
 **Sửa chữ sau vòng 2 của C (21:37 12/11/2026; không đổi tiêu chí dừng K1 / K3, tiền, phạm vi):** bước 6 + K3 — "số câu đổi 10 đoạn đầu không do đoạn mới" là số theo dõi, không phải điều kiện dừng. **Bảng ánh xạ 8 cụm của bảng điểm ⇒ 3 khu nên ở** (cho khối "Ở đâu" của lịch và cho bài lưu trú theo khu): E giữ, đặt trong bảng khu của plan lưu trú (`khu_v1.json`, trường `cum`), User xem cùng phiếu.
 
+**Sửa sau duyệt (21:44 12/11/2026, A quyết — đổi CÁCH gán khu, không đổi tiêu chí chất lượng / tiền):** bước 0 đã chạy (`data/luu_tru_2026-11-12/buoc_0_gan_khu.md`): cách ghi ở §3 (a) (ước theo số nhà kề) chỉ gán được **40 / 151 (26 %)**. Cách dùng từ nay: (A) địa chỉ có phường / huyện ⇒ khu theo bảng **phường ⇒ khu**; (B) còn lại ⇒ trung vị toạ độ mọi bản ghi dữ liệu mở trên cùng con đường ⇒ cụm của điểm tham quan gần nhất ⇒ khu; (C) **bảng tay "đường ⇒ khu" ~10 dòng** cho các đường trung tâm dữ liệu mở thiếu bản ghi — cả ba bảng vào phiếu User xem lướt. Số thật: **108 / 151 (71 %)** trước bảng tay; số sau bảng tay ghi khi có. Vị trí kiểu này ở mức **con đường** ⇒ chỉ dùng tới **KHU**, không ghi khoảng cách; **khối "Ở đâu" của lịch chọn theo 3 KHU, không theo cụm** (spec biểu mẫu của C khớp theo). Cơ sở "chưa xác định khu" vẫn vào bài tổng theo hạng. Ngưỡng 70 % giữ là mốc báo.
+
 ## Chỗ đổi bản 2
 | Nguồn | Sửa ở |
 |---|---|

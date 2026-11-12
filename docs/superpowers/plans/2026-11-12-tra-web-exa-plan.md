@@ -58,3 +58,12 @@ Code + test ~1,5 giờ · đo + chấm ~1 giờ. Làm sau khi nhánh "hết lư�
 
 ## Trạng thái code (21:25 12/11/2026)
 Nhánh `p9-tra-web-exa` (worktree `/tmp/e_exa`, từ `main` `547a405`), **phần 0 USD đã xong, chưa đo có phí, chưa merge**: `backend/llm/tra_web.py` (Exa + Exa-trước-Serper-dự-phòng), `backend/api/app.py` (`_tim_web_server` chọn nguồn + trần / ngày), `core/settings_loader.py` (`HUE_TRA_WEB_NGUON`), `config/settings.yaml` (+4 dòng — **sẽ chồng với nhánh "hết lượt tìm" nếu nhánh đó cũng sửa khối `assistant:`; rebase sau khi nhánh đó merge**), test `tests/test_tra_web_exa.py` (mới) + `tests/test_settings_env.py`. Chưa làm: trường `nguon` trong log (chờ `assistant.py`), X2–X6.
+
+## Sửa sau duyệt — GHI TRƯỚC lượt có phí X2–X6 (21:45 12/11/2026, `date`; A duyệt trần)
+- **Tiền: ước của bản 2 thiếu** (0,05 ⇒ **≈ 0,18 USD**; A duyệt **trần 0,20** + tín dụng Exa): plan đòi đo qua server thật = cả lượt (định tuyến + trả lời + mục web ≈ 0,0013 USD / câu), không chỉ bước tra. Tiêu chí X1–X6 **không đổi**.
+- **Cách chạy (ghi trước):** nhánh `p9-tra-web-exa` `76e976e`; server của worktree, cổng 8891, **mỗi lúc một server**: lượt 1 biến môi trường `HUE_TRA_WEB_NGUON=exa` (42 câu của thí nghiệm ⇒ số cho X2, X4, nhánh Exa của X6), tắt; lượt 2 không đặt biến (Serper, cùng 42 câu ⇒ nhánh Serper của X6 + mốc X4). Mỗi câu một kết nối mới, không cookie. Ghép `chat_metrics` theo `turn_id` (log của worktree).
+- **X6 chấm:** các lượt có mục web (`co_muc`) của hai nhánh vào một lô xáo, 2 người chấm mù, cùng đề chấm của thí nghiệm; đạt khi cả hai cùng gắn; **Exa ≥ Serper + 3**.
+- **X2 đếm bằng code trên lượt 1:** mọi mục web lọt ra có `web_kiem` rỗng; câu lưu trú 0 số tiền; 0 link trong chữ. Các vế "câu ngoài Huế 0 mục web" và "0 truy vấn chứa tên" **không phụ thuộc nhà cung cấp** (cổng mở và cách dựng truy vấn không đổi — test hiện có khoá) ⇒ dùng lại, không chạy thêm.
+- **X3 làm rõ cách đo:** chuỗi gửi model của phần trả lời kho không đổi ⇒ phần kho dùng lại số an toàn hiện có; chạy an toàn 32 ×1 với cờ `exa` và **chấm phần MỤC WEB** của các câu có mục: 2 người chấm, 0 mục web nói ngược hoặc bỏ điều kiện / cảnh báo **có trong đoạn trích**; đếm bằng code: 0 mục lọt có lỗi kiểm.
+- **X5:** một lượt thật với `EXA_API_KEY` sai đặt riêng cho tiến trình thử ⇒ có mục web từ Serper, log `nguon: exa>serper`.
+- **Nợ ghi nhận (không thuộc việc này):** ca "model vẫn xin `tim_kho` đã ẩn" (nhánh hết-lượt-tìm) nên có dấu riêng trong log để đếm.
