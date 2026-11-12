@@ -27,6 +27,7 @@
   - Plan lưu trú `8a8601518f27` (đã duyệt + 2 sửa sau duyệt); code chưa làm.
   - Tiền E hôm nay (thật): thí nghiệm Exa 0,069 + lượt server Exa (chưa cộng) — cộng lại ở report.
 - 22:16 12/11/2026 — **Exa X2–X6 XONG — X6 KHÔNG ĐẠT (Exa 14 ↔ Serper 13 qua server thật; cần +3) ⇒ không bật Exa.** X1, X2, X4, X5 đạt; X3 một phần. Tiền thật X2–X6 ≈ 0,126 (cả việc Exa ≈ 0,195 + ≈ 0,82 tín dụng Exa). Report mục 7 `e_tim_web_serper_exa.md`. Nhánh `p9-tra-web-exa` `76e976e` đã push (cờ mặc định Serper) — merge sau cờ hay lưu hồ sơ: A / User quyết. Server 8891 đã tắt. Worktree `/tmp/e_exa` còn (gỡ khi A quyết: `rm` 2 symlink + `git worktree remove`). Mã băm mới của `dinh_nghia_cham.md`: `253d6d9f9910`.
+- 22:20 12/11/2026 — Exa: A quyết LƯU HỒ SƠ (tag `hoso/p9-tra-web-exa`), worktree `/tmp/e_exa` đã gỡ. **Kho 3:** ĐÍNH CHÍNH tỉ lệ gán khu = **54 %** (71 % sai vì dữ liệu mở lặp dòng — C phát hiện); phiếu `data/luu_tru_2026-11-12/phieu_khu_luu_tru_cho_user.md` (3 bảng, 22 đường) chờ User; C làm xong phần (c) (`data/sua_kho_2026-11-12_an_gan/`); Codex đi lại đã đọc + E kiểm 3 ý (xe buýt sân bay dừng 01/04/2024; luật GPLX 36/2024 Điều 57, 59, hiệu lực 01/01/2025). **Còn:** bài nháp đi lại + bài nháp lưu trú (sau khi User xem phiếu) trong `data/sua_kho_2026-11-12_dot_3/`; rồi báo A xếp lịch ghi kho. Bẫy: đếm trên dữ liệu mở phải bỏ dòng lặp trước.
 
 # (lịch sử) STATUS E — KẾT PHIÊN 22:40 10/11/2026 (`date`) · terminal `hue-rag-e4` (A `hue-rag-55`, B `hue-rag-05`, C `hue-rag-4f`) · Claude Opus 5.5 · vai thực thi
 

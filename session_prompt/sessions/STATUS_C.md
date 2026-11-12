@@ -47,6 +47,8 @@ Không server / worktree / nhánh / container của C. (Tiền: xem dòng "Tiề
 
 - **22:09 12/11/2026 (`date`), 0 USD (2 lượt tra Codex):** spec "Lên kế hoạch" **bản 3.3** `8c521ecdc80d` (nhận kết quả E kiểm 5c + User trả lời phiếu nhỏ) · plan đợt 1 **bản 2** `82ea67f6e17d` (đã có mã băm bộ đo của E; chờ B đọc, A duyệt) · bảng đề xuất 34 dòng md5 `0cbd845ede30` (cột thứ / giờ tối / mùa + dòng hoạt động tối) · **rà lời dặn XONG:** `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan.md` (7 vai, 9 điểm đối chiếu hướng dẫn chính thức, 5 đề xuất, khung lời dặn vai mới của lịch; chỉ đọc).
 
+- **22:17 12/11/2026 (`date`), 0 USD:** plan đợt 1 **bản 3** `27919be11ef6` (gộp 6 ý của B) · **kho 3 phần (c) ăn gần — bước chuẩn bị XONG, chưa chạm kho** (private, `data/sua_kho_2026-11-12_an_gan/`): `quan_theo_cum.json` (md5 `b4f1661e95fd`) · `phieu_quan_va_moc_2026-11-12.md` · `bai_nhap_an_gi_gan_diem_tham_quan.md` · `tools/dung_quan_theo_cum.py`. Số: 22 / 29 quán kho gán được cụm; quán dữ liệu mở chọn 6 + 3 + 1; 4 / 8 cụm 0 quán; 3 mốc. **Sửa số:** dữ liệu mở 6.794 dòng nhưng chỉ 208 tên khác nhau ⇒ "276 / 174 cơ sở" ở tài liệu trước là số dòng lặp. Chờ E khớp trường + ghi kho.
+
 **Trạng thái: rảnh — chờ A** (không server / worktree / nhánh / container của C; việc dở: không) (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
 **Bẫy 12/11:** lệnh shell dài viết thẳng (heredoc quét `data/` có chữ tên bộ kín) bị auto mode chặn ⇒ viết script bằng Write rồi chạy; log `chat_metrics` không có nội dung câu ⇒ không đếm theo loại câu được, phải gửi câu tự viết; câu kho từ chối đi web ≈ 0,002 USD / câu ⇒ ước tiền lượt đếm theo giá đường web, không theo giá trung bình.
 (Tiền tới lúc đó 0,024691 USD — số cuối phiên ở dòng "Tiền C 12/11 (mới)".)
