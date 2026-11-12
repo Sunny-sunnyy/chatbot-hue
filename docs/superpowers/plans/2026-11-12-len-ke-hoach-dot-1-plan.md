@@ -1,4 +1,4 @@
-# Plan — "Lên kế hoạch" đợt 1: khung lịch tốt + biểu mẫu đủ · NHÁP bản 2
+# Plan — "Lên kế hoạch" đợt 1: khung lịch tốt + biểu mẫu đủ · NHÁP bản 3
 
 Người viết: C · bản 1 21:57, **bản 2 22:02 12/11/2026** (`date`; bản 2 = sau khi E kiểm xong mục 5c của spec + User trả lời phiếu nhỏ đợt 1) · Người code: B · Người đọc plan trước: B (người code) · Người duyệt: A · Mức rủi ro: **cao** (luật xếp + đổi khuôn trả lời)
 Chưa code. Plan này chỉ làm **đợt 1** của spec; đợt 2 (ảnh, bản đồ) và đợt 3 (ăn uống, lưu trú) có plan riêng.
@@ -101,6 +101,19 @@ Quy ước mỗi bước: **test viết trước** (đỏ rồi mới code) · m
 - **Test viết trước:** bảng ca giờ (2 ngắn cùng cụm · ngắn + ngắn cụm kề · nửa buổi + ngắn · điểm mở muộn · điểm đóng sớm) so đúng chuỗi giờ · mỗi thứ trong tuần × 5 số ngày: 0 hoạt động sai thứ · ngày cụm xa không có tối.
 - **Tiêu chí:** *Luôn* — 0 khung giờ ngoài giờ mở cửa (giờ kết thúc ≤ giờ đóng của bảng, kiểm bằng code trên mọi tổ hợp) · giờ các mục trong một buổi không chồng nhau, tăng dần · 0 hoạt động tối sai thứ · có trẻ em ⇒ 0 mục sau 21:00. *Sàn* — **≥ 80 %** số tối (không tính ngày cụm xa) của lịch
   nhóm không hạn chế có hoạt động. Dưới sàn (vd User siết thứ ở phiếu nhỏ) ⇒ phần buổi tối chỉ hiện khi ngày đi có đủ hoạt động, báo A. **0 USD.**
+
+### Ghi thêm theo góp ý của B (người code đọc plan, 12/11 — 6 ý, đều là làm rõ, không đổi tiêu chí)
+
+1. **(a) Khuôn "danh sách ô hiện":** `/api/tinh_nang` thêm đúng một khoá khi cờ bật: `"len_ke_hoach_v2": {"o_hien": ["so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di"]}` (chỉ các ô đang hiện).
+   **Cờ tắt ⇒ khoá này vắng hẳn** (không phải `null`, không phải danh sách rỗng) — test giống byte dựa vào điều đó.
+2. **(b) Cấu hình bảng mới:** khoá `assistant.lich_trinh_bang_v2` trong `settings.yaml` (bảng cũ giữ khoá cũ). Thêm vào **danh sách test của (b)**: cờ `len_ke_hoach_v2` bật mà thiếu khoá / thiếu file / thiếu cột bắt buộc ⇒
+   **lỗi khởi động rõ** (như cờ biểu mẫu cũ). "Chạm" thêm: script dựng danh sách chừa Docker (private, `data/phase_12/deploy_nhap/dung_dockerignore.py`).
+3. **(b) Bậc "điểm người dùng nêu":** lượt biểu mẫu không có chữ tự do ⇒ bậc này **rỗng ở v2**; không viết test cho nó. Thứ tự xét của v2 bắt đầu từ điểm ưu tiên của sở thích.
+4. **(c) Lược đồ + lời dặn:** đầu ra của model là mảng cố định `[{id_muc: chuỗi, cau: chuỗi}]` — lược đồ **không** ràng buộc giá trị `id_muc` (code kiểm); mức suy luận giữ `low` như lượt biểu mẫu hôm nay. Lời dặn mới
+   (khung ≈ 190 token ở `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan.md` mục 7) **thay** khối "lời dặn trả lời + luật lịch" **chỉ ở nhánh v2**. Hai test không mâu thuẫn vì tách theo cờ: cờ tắt ⇒ chuỗi gửi model
+   giống byte hôm nay; cờ bật ⇒ chuỗi gửi đúng khuôn mới (lời dặn mới + danh sách mục + tài liệu từng điểm). Chữ cuối cùng của lời dặn chốt sau lượt thử sớm (sửa chữ ≤ 1 vòng, ghi vào report).
+5. **(c) 1,5 ngày là sát** (gồm viết lại thẻ lịch, 3 sự kiện, đường không hiện dần): trễ ⇒ B báo ở D3, **không cắt test**; ước cả đợt chấp nhận 5–5,5 ngày.
+6. **Nghiệm thu — lượt mốc trên `main` cùng buổi** (20 yêu cầu đường biểu mẫu cũ, để so tốc độ): ≈ 0,01 USD, **đã tính trong trần 0,20** (ước mới ≈ 0,135; mốc báo A vẫn 0,15).
 
 ## 4. Sàn chung (mọi bước, ghi trước)
 
