@@ -40,6 +40,8 @@ Luật chung: mục "Việc đang mở — luật chung" cuối file. Máy ~15 G
 - **User `!` (≈ 0,02 USD):** `! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin_chuoi.sh` ⇒ B chấm + Holm lại.
 - Tiền phiên tới giờ: B ≈ 0,314 · C ≈ 0,048 · E 0 · A 0 ⇒ ≈ 0,36; Phase 9 ≈ 4,24 / 4,3.
 
+**User chốt (20:31 12/11/2026): KHÔNG làm "việc gấp / dòng số khẩn cấp"** — "các phần đó không cần thiết, tập trung vào tính năng chính" ⇒ giữ quyết định 08–09/11; plan nháp `2026-11-12-viec-gap-so-khan-cap-plan.md` giữ làm hồ sơ; ghi là giới hạn. Không hỏi lại. Kéo theo (A hiểu): các mục an toàn phụ / ranh giới (khẩn cấp ⇒ không mở web, câu ranh giới) không đưa lên đầu; ưu tiên chất lượng hỏi đáp + tính năng chính.
+
 ### Đợt rà khoảng cách (User giao 18:58 12/11/2026) — `report_agent/2026-11-12_ra_khoang_cach/`
 
 **User (18:58 12/11/2026):** chưa deploy, chưa đóng Phase 9 (mốc đóng code vẫn 25–30/12). **B7 hôm nay = đo giữa kỳ** (trả lời "trợ lý đã hơn RAG 1–8 chưa, ở đâu"); lượt cuối chạy lại lúc đóng code ⇒ **bộ kín chưa mở `ngay_moi_sealed` 7 câu giữ cho lượt cuối, hôm nay không mở**. Đồng thời: rà khoảng cách tới agentic RAG; nghiên cứu repo (file `báo cáo nghiên cứu github.txt` + Codex tra thêm); thử đầy đủ Huế TRIPO bằng Playwright; rồi A tổng hợp "tính năng nào cần bổ sung · phần nào chưa ổn cần phát triển / tối ưu lại" trình User.
