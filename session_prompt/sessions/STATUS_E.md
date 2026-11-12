@@ -1,4 +1,9 @@
-# STATUS E — KẾT PHIÊN 22:40 10/11/2026 (`date`) · terminal `hue-rag-e4` (A `hue-rag-55`, B `hue-rag-05`, C `hue-rag-4f`) · Claude Opus 5.5 · vai thực thi
+# STATUS E — PHIÊN 12/11 (mở 18:40 12/11/2026, `date`) · terminal `hue-rag-33` (A `hue-rag-7d`, B `hue-rag-1b`, C `hue-rag-e1`) · Claude Fable 5.2 · vai thực thi
+
+- 18:45 12/11/2026 — A giao: **review plan B7 nháp** (người viết C), 0 USD, chỉ đọc. **Vòng 1 XONG 18:49 12/11/2026 — changes_requested** (plan sha `5413ae469c5e`): M-1 bản sao `do_cuoi.py` "chỉ đổi hằng số" không chạy được (tool dựng cho 3 bên cố định, bên mốc chép từ file 30/10, cần bên A/A; `generate` ở `p9-moc` không nhận file câu tuỳ ý) · M-2 kết luận (i) chưa ghi chỉ số / đơn vị / cách tính CI · M-3 S2 / S2b + vế "0 truy vấn chứa tên" không có lượt đo, Golden qua `generate` không đi cổng web · 6 minor (đề xuất cắt 3 lượt phía RAG). Cờ plan §2 ↔ `settings.yaml` hôm nay: khớp 14 / 14. File: `docs/superpowers/plans/2026-11-10-phase-9-b7-plan_review.md` (mới), file này, dòng E trong `CURRENT_HANDOFF.md`. Tiền: 0 USD. **Chờ:** C sửa bản 2 ⇒ E kiểm vòng 2 (vòng cuối).
+- Bẫy / đã học 12/11: kiểm "harness dùng lại được" phải mở xem nó dựng cho mấy bên và nhận đầu vào gì ở **cả hai** bản code, không chỉ kiểm file tồn tại.
+
+# (lịch sử) STATUS E — KẾT PHIÊN 22:40 10/11/2026 (`date`) · terminal `hue-rag-e4` (A `hue-rag-55`, B `hue-rag-05`, C `hue-rag-4f`) · Claude Opus 5.5 · vai thực thi
 
 ## PHIÊN SAU ĐỌC TRƯỚC (viết 22:40 10/11/2026)
 

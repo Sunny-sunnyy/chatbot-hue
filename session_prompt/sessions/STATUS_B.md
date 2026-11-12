@@ -1,3 +1,16 @@
+# STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
+
+## Đang làm — B7 bước 0 (0 USD) + probe log truy cập uvicorn (A giao, ghi 18:46 12/11/2026)
+- Mục việc: `CURRENT_HANDOFF.md` "VIỆC PHIÊN 12/11" dòng B; plan nháp `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` §2, §4.
+- **Khai báo sửa / tạo:** worktree `/tmp/b7_moc` (tag `p9-moc`, tách rời, symlink `data/`, `knowledge-base-hue/`; không sửa code trong đó); `data/phase_9/b7/` (mới, private: `tools/` bản sao harness, `buoc_0/` kết quả);
+  `report_agent/2026-11-08_phase_9_ban_13/b7_buoc_0_implementation.md` (mới); dòng B trong `CURRENT_HANDOFF.md`; file này. Không sửa `backend/`.
+- **XONG, chờ review (18:50 12/11/2026) — 0 USD:** code mốc `p9-moc` khởi động với build record hiện tại, `/health` 5 / 5; T1 158 câu giống byte mốc `64656a87c109` (21 s); bản sao harness `data/phase_9/b7/tools/do_cuoi_b7.py` `preflight` đạt ở cả `main` lẫn code mốc; server `main` không in dòng truy cập / IP. Report `report_agent/2026-11-08_phase_9_ban_13/b7_buoc_0_implementation.md`.
+- **18:55 12/11/2026 — harness hai bên XONG (A giao sau review E M-1), 0 USD:** `do_cuoi_b7.py` (truoc = RAG `p9-moc`, sau = agent; `nhap` thay `run`; `analyze --max-drop N` bắt buộc) + `chuoi_rag_moc.py`; chạy thử trên `buoc_0/thu_hai_ben/` (điểm GIẢ, không phải kết quả) đạt; danh sách sửa đã gửi C cho plan bản 2. **B là người chạy B7** (User chốt chạy phiên này, trần Phase 9 4,3 — theo A). **Không chạy lượt có phí tới khi A báo đã duyệt sha plan bản 2.** Report §7.
+- (cũ, đã xử lý ở dòng trên) Còn mở cho B7 (chờ A): harness gắn cứng 3 bên `truoc` / `sau` / `aa` + khuôn file `evaluation generate` ↔ `check` chưa kiểm (report §5). Chưa kiểm log Caddy / đường 429 có ghi IP.
+- **Đang giữ:** worktree `/tmp/b7_moc` (cho B7; `/tmp` mất ⇒ `git worktree prune && git worktree add --detach /tmp/b7_moc p9-moc` + 2 symlink). Không server nào chạy (8881 / 8882 đã tắt).
+- **Bẫy:** vòng `curl` thử lại không nghỉ kết thúc ngay khi server chưa nghe cổng ⇒ dùng `curl --retry 30 --retry-delay 2 --retry-connrefused`. Tiền B 12/11: 0 USD.
+- Phiên 10/11 bên dưới: mọi việc đã đóng (câu lịch chung merge `89571d7`; xã giao song song đóng hồ sơ; deploy cục bộ merge `5081e89`).
+
 # STATUS B — PHIÊN 10/11 (mở 19:02 10/11/2026, terminal `hue-rag-05`; A `hue-rag-55` · C `hue-rag-4f` · E `hue-rag-e4`)
 
 ## Đang làm — định tuyến câu lịch chung (A giao 21:00 10/11/2026, quy trình đủ) — cập nhật 21:04 10/11/2026

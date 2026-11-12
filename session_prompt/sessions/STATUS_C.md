@@ -1,4 +1,16 @@
-# STATUS C — kết phiên 10/11 (viết 22:41 10/11/2026 — `date`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên 12/11 (mở 18:40 12/11/2026). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN 12/11 — C `hue-rag-e1` · A `hue-rag-7d` · B `hue-rag-1b` · E `hue-rag-33`
+
+**ĐANG LÀM (18:45 12/11/2026, A giao; User: việc A giao = "làm đi"):** đợt 2 cổng — lượt đếm rẻ trước khi xây (lưu trú · ăn gần · sự kiện theo ngày), trần 0,02 USD, không spec / code, không `*sealed*`.
+Khai báo sửa: `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementation.md` (mới) · file này · dòng C trong `CURRENT_HANDOFF.md`. Dữ liệu chạy: `data/phase_11/dot_2_dem/` (private). Cần server ⇒ nhắn B trước (một session chạy server / model một lúc).
+
+**Đếm đợt 2 — DỞ (18:53 12/11/2026):** đã gửi 13 / 18 câu tự viết (6 lưu trú · 6 ăn gần · 1 sự kiện), 0,018295 USD (trần 0,02) ⇒ kết quả `data/phase_11/dot_2_dem/ket_qua_lan_1.jsonl`; 5 câu sự kiện S2–S6 (`cau_18.jsonl`) CHƯA gửi (hết quỹ — đã xin A ≈ 0,01). Công cụ: `data/phase_11/dot_2_dem/tools/` (`gui_cau.py` có phí · `quet_bo.py`, `log_tien.py` 0 USD). Server 8871 đã tắt. Còn lại: đọc + phân loại 13 câu, đối chiếu kho, viết report.
+**Việc chen (18:53 12/11/2026, A giao, đường găng):** plan B7 bản 2 theo review vòng 1 của E (`docs/superpowers/plans/2026-11-10-phase-9-b7-plan_review.md`: 3 major, 6 minor). Khai báo sửa thêm: `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md`. Xong ⇒ nhắn E + A ⇒ quay lại đếm đợt 2.
+
+---
+
+## (10/11) kết phiên — chỉ tra cứu
 
 ## PHIÊN SAU ĐỌC TRƯỚC (C mới bắt đầu ở đây — viết 22:41 10/11/2026)
 
