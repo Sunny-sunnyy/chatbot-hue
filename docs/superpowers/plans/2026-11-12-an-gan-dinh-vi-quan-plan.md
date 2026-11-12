@@ -32,6 +32,11 @@ Phạm vi chạm: tối đa **53 bài** (có địa chỉ, chưa có câu địn
 
 Vì sao khuyến nghị B: khoảng cách là **phép tính ⇒ code làm**, kiểm lại được, không nhờ model suy. Sai khi: tỉ lệ khớp tên thấp (< 20 bài) ⇒ dừng, báo A, không ép.
 
+**Sửa số (21:03 12/11/2026, C — sau khi chạy thật bước dò khớp, `data/sua_kho_2026-11-12_an_gan/`):** ước "30–45 / 53 bài" của cách B ở bảng trên **sai**. Bộ dữ liệu mở chỉ chứa **7 / 81** bài quán của kho
+(5 khớp chắc). Bù bằng cách **ước toạ độ từ số nhà kề trên cùng đường** (cũng từ bộ đó; sai số đo "bỏ một ra": trung vị 107 m, 90 % ≤ 227 m) được thêm 22 bài ⇒ **29 / 81 bài có toạ độ**,
+27 bài trong số đó chưa có câu định vị. 52 bài còn lại (18 không địa chỉ, 34 ở kiệt / đường không có mốc) cần nguồn khác (vd tra địa chỉ trên OpenStreetMap — là gửi địa chỉ ra ngoài, chờ A / User).
+Hệ quả cho tiêu chí mục 4: với 29 bài, mốc "≥ 8 / 12 câu ăn gần đủ dùng" khó đạt ở các điểm xa trung tâm — đo trước bằng mô phỏng tầng tìm rồi mới quyết.
+
 ## 3. Các bước (theo luật sửa kho; mỗi bước dừng được)
 
 1. **Dò khớp, chưa ghi (0 USD):** script khớp ⇒ bảng "bài quán · điểm gần nhất · khoảng cách · căn cứ khớp" ở `data/sua_kho_2026-11-12_an_gan/` (private). In số bài khớp.
