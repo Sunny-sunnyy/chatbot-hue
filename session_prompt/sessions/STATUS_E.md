@@ -16,6 +16,7 @@
 - 21:16 12/11/2026 — **Spec đợt bổ sung kho 3 nháp bản 1 XONG:** `docs/superpowers/specs/2026-11-12-bo-sung-kho-dot-3-design.md` — chờ C review + User duyệt (5 câu Q1–Q5).
 - 21:16 12/11/2026 — Plan lưu trú bản 2 `d2b4bc486480` A đã duyệt; code chờ nhánh `p9-het-luot-tim` merge. **Chưa làm:** review nhánh B (chờ push); việc tra toạ độ quán bằng Photon (xem "Câu hỏi cho A").
 - Bẫy / đã học thêm 12/11: trường `turn_usd` của trace = tiền cả lượt (model + tra) — tách trước khi báo; trang chi tiết của nguồn lưu trú không có thêm trường, loại / hạng lấy qua bộ lọc.
+- 21:17 12/11/2026 — A giao (qua handoff, C nhắn): **review spec "Lên kế hoạch bản 2"** của C (`aeac8c589822`), 0 USD, chỉ đọc. **Vòng 1 XONG 21:19 12/11/2026 — changes_requested** (2 major: ngưỡng "đổi lịch" chốt sau khi code không phải ghi trước; đợt 2 lệch plan lưu trú + spec kho 3; 6 minor). File sẽ ghi: `docs/superpowers/specs/2026-11-12-len-ke-hoach-ban-2-design_review.md` (mới).
 
 # (lịch sử) STATUS E — KẾT PHIÊN 22:40 10/11/2026 (`date`) · terminal `hue-rag-e4` (A `hue-rag-55`, B `hue-rag-05`, C `hue-rag-4f`) · Claude Opus 5.5 · vai thực thi
 
