@@ -147,10 +147,17 @@ Hai nguồn: lượt web của B7 (17 câu, chạy trong tiến trình — file 
 ### (d) Độ ổn định giữa 2 lượt (bên trợ lý)
 
 - **An toàn 32 câu × 2 lượt: 0 câu đổi kết luận** trả lời ↔ từ chối (28 trả lời, 4 từ chối + mở web ở cả hai lượt; tuyến, cổng web, lỗi trích dẫn đều giống nhau).
-  Chữ câu trả lời giống hệt ở 5 / 32 câu — khác chữ là bình thường; **"có ↔ không cảnh báo" cần nhãn của người chấm ⇒ CHỜ lượt chấm an toàn của B.**
+  Chữ câu trả lời giống hệt ở 5 / 32 câu — khác chữ là bình thường.
+- **"Có ↔ không cảnh báo" giữa 2 lượt an toàn (bổ sung 19:55 12/11/2026, sau khi B chấm mù xong; đọc `compare` của B, 27 câu có cảnh báo cần giữ):** đảo cảnh báo 0 / 0 và sai điều kiện
+  0 / 0 ở cả hai lượt (ổn định). Nhãn **"thiếu cảnh báo" đổi ở 4 / 27 câu** giữa hai lượt (lượt 1 có 8 câu thiếu, lượt 2 có 6 câu; 3 câu chỉ thiếu ở lượt 1, 1 câu chỉ thiếu ở lượt 2);
+  5 câu thiếu ở cả hai lượt. Bên RAG mốc (1 lượt) cũng thiếu 8 câu. Ở 1 câu loại miễn / giảm, sinh lại cho thấy trợ lý thiếu 3 / 6 lần so với mốc 1 / 6 (B đã ghi là sàn phạm).
+  ⇒ **vượt ngưỡng E ghi trước (≥ 3 câu đổi)**: việc "có nhắc cảnh báo hay không" **không ổn định** giữa các lần hỏi cùng một câu. Chưa tách được dao động của model với
+  dao động của người chấm (mỗi lượt là chữ khác nhau, chấm riêng).
 - **Ngoài phạm vi (S2) 44 câu × 2 lượt (bổ sung 19:28 12/11/2026): 0 câu đổi kết luận** — 42 câu nhận câu "ngoài phạm vi", 2 câu nhận câu "kho không đủ thông tin" và **mở cổng web** ở cả
   hai lượt (web trả "không tin cậy" nên không hiện nội dung). Ổn định, nhưng 2 câu này là việc của sàn "ngoài phạm vi có mục web" — B / E xét trong report B7, C chỉ ghi nhận.
-- **Kết luận độ ổn định: 0 / 76 câu đổi kết luận giữa 2 lượt ⇒ dưới ngưỡng E ghi trước (≥ 3 câu) ⇒ không cần chạy lần 3.**
+- **Kết luận độ ổn định:** trả lời ↔ từ chối **0 / 76 câu đổi** (ổn định); nhắc cảnh báo **4 / 27 câu đổi** ⇒ **đủ lỗi để xem tiếp**: trước khi xây gì, một lượt đếm rẻ theo
+  đề xuất của E — sinh thêm lần 3 cho bộ an toàn (≈ 0,02 USD) và chấm cả 3 lần trong **cùng một lô mù** để tách dao động model ↔ người chấm; 5 câu thiếu ở cả hai lượt là
+  nơi nên đọc trước (thiếu ổn định = lỗi thật, không phải nhiễu).
 
 ### (e) Bốn câu trợ lý tụt Đủ ý so với RAG mốc (A hỏi thêm; số tụt đúng bằng ngưỡng 4)
 
@@ -176,7 +183,7 @@ Hai nguồn: lượt web của B7 (17 câu, chạy trong tiến trình — file 
 | (2) từ chối cả câu | **hạ**: trên Golden chỉ còn 3 câu từ chối + 5 câu thiếu ý, tất cả do tìm trượt; 0 câu "có đủ đoạn đúng mà từ chối / thiếu ý" |
 | (3) đường web / tìm nhiều lần chậm | **giữ, thu hẹp thành một sửa nhỏ**: tìm thêm có ích trên Golden (cứu 10 câu) ⇒ không cắt; chỉ cắt lượt xin tìm lần ba bị chặn (6 / 8 câu đi web) |
 | (4) số tiền / giờ chưa kiểm với đoạn trích | **hạ**: 0 ca sai trên 155 câu ⇒ không xây |
-| độ ổn định | 0 / 76 câu đổi kết luận (an toàn 32 + ngoài phạm vi 44) ⇒ không chạy lần 3; nhãn "có ↔ không cảnh báo" chờ lượt chấm an toàn của B |
+| độ ổn định | trả lời ↔ từ chối 0 / 76 câu đổi; **nhắc cảnh báo 4 / 27 câu đổi + 5 câu thiếu ở cả hai lượt ⇒ mục mới, xếp cao** (thiếu cảnh báo là loại lỗi nặng nhất theo thứ tự lỗi) |
 | 4 câu tụt Đủ ý | chung gốc "cùng ngữ cảnh, viết ngắn hơn"; không phải tìm / định tuyến; không đủ lỗi để sửa |
 
 ## 4. Giới hạn của bản rà này
