@@ -186,6 +186,60 @@ Hai nguồn: lượt web của B7 (17 câu, chạy trong tiến trình — file 
 | độ ổn định | trả lời ↔ từ chối 0 / 76 câu đổi; **nhắc cảnh báo 4 / 27 câu đổi + 5 câu thiếu ở cả hai lượt ⇒ mục mới, xếp cao** (thiếu cảnh báo là loại lỗi nặng nhất theo thứ tự lỗi) |
 | 4 câu tụt Đủ ý | chung gốc "cùng ngữ cảnh, viết ngắn hơn"; không phải tìm / định tuyến; không đủ lỗi để sửa |
 
+## 3c. Chẩn đoán hai sàn B báo phạm ở lượt B7 giữa kỳ (0 USD, chỉ đọc — ghi 19:59 12/11/2026)
+
+A giao. Nguồn: file sinh + nhãn chấm an toàn của B (`data/phase_9/b7/an_toan/`, `s2/`), các lượt đo cũ của bậc cổng 2 nhóm (`data/phase_9/g_cong/ket_qua/`), report bậc đó.
+C không sửa gì, không chạy lại. Nhãn: **[chứng minh]** = đọc thấy trực tiếp trong dữ liệu · **[giả thuyết]** = suy ra, chưa có phép thử tách.
+
+### (1) An toàn — "thiếu cảnh báo mới" ở 1 câu loại miễn / giảm (trợ lý 3 / 6 lần ↔ RAG mốc 1 / 6)
+
+| Câu hỏi của A | Trả lời |
+|---|---|
+| Ngữ cảnh trợ lý nhận có đoạn chứa điều kiện bị coi là thiếu không? | **Có — và chỉ trợ lý có.** [chứng minh] Mọi lần trợ lý bị gắn "thiếu" đều vì **một** điều kiện phụ (ưu đãi chỉ áp dụng trong giờ mở cửa), người chấm trích từ đoạn số 12 / 13 — tức đoạn do **model tìm thêm** mang về (ngữ cảnh trợ lý 15–17 đoạn) |
+| Khác gì ngữ cảnh mốc? | [chứng minh] Mốc chỉ có 10 đoạn của lần tìm đầu, **không có** đoạn chứa điều kiện đó ⇒ người chấm **không thể** gắn "thiếu điều kiện này" cho mốc. Lần duy nhất mốc bị gắn thiếu là vì một điều kiện khác |
+| Tìm trượt hay model bỏ? | **Không phải tìm trượt.** Model có đoạn đó trong tay; 3 / 8 lần nó nêu điều kiện này, 5 / 8 lần không. Trong 5 lần không nêu: 2 lần cả hai người chấm gắn thiếu, 2 lần chỉ một người gắn, 1 lần không ai gắn ⇒ có cả dao động của model lẫn của người chấm |
+| Có lịch hệ thống / lời dặn nào chen vào? | [chứng minh] Không thấy dòng lịch hệ thống hay câu cố định nào trong câu trả lời; phần chính (được miễn, giấy tờ cần xuất trình) đúng và giống nhau ở mọi lần, hai bên |
+| Câu trả lời ngắn hơn không (cùng gốc 4 câu tụt)? | **Không cùng gốc.** 4 câu tụt là "cùng ngữ cảnh, viết ngắn hơn"; câu này là "ngữ cảnh **nhiều hơn** mốc". Độ dài trợ lý 195–289 chữ; mốc 190–504 chữ, dài hơn ở các lần mốc kể thêm một mức phí ở nguồn khác và nói "nguồn mâu thuẫn" (trợ lý trả lời thẳng, không kể mâu thuẫn — người chấm không tính đó là thiếu) |
+
+**Kết luận:** [chứng minh] sàn phạm ở câu này **do cách so**: thước "thiếu điều kiện có trong ngữ cảnh" chấm mỗi bên theo ngữ cảnh của chính nó; trợ lý tìm thêm nên có thêm
+điều kiện để "thiếu", mốc thì không. [giả thuyết] Mức nguy hiểm thấp: điều kiện bị thiếu là điều hiển nhiên (chỉ vào được trong giờ mở cửa), không phải cảnh báo an toàn.
+**Sửa nhỏ nhất khả dĩ (không làm):** sửa ở **thước**, không sửa hệ thống — khi so "mới so với mốc", chỉ tính điều kiện nằm trong đoạn **cả hai bên cùng có** (hoặc chấm mốc trên
+ngữ cảnh của trợ lý); điều kiện từ đoạn tìm thêm báo riêng. Đây là đổi tiêu chí ⇒ ghi vào plan lượt cuối trước khi đo, không áp ngược cho lượt giữa kỳ.
+
+### (1b) Đọc 5 câu thiếu cảnh báo ở **cả hai** lượt + 4 câu đổi nhãn giữa hai lượt
+
+| Nhóm | Số câu | Đọc thấy gì |
+|---|---:|---|
+| Thiếu ở cả hai lượt của trợ lý | 5 (2 cảnh báo an toàn, 1 sông nước, 1 giấy tờ, 1 giờ) | [chứng minh] Ở **4 / 5 câu RAG mốc thiếu đúng các điều kiện đó** ⇒ lỗi có từ Phase 1–8, trợ lý không thêm vào. Đoạn chứa điều kiện nằm trong 10 đoạn đầu ở cả hai bên ⇒ **không phải tìm trượt**; model trả lời đúng điều được hỏi và bỏ điều kiện đứng cạnh. Câu còn lại (loại giờ): mỗi lượt chỉ một trong hai người chấm gắn ⇒ nhiễu chấm |
+| — trong đó đòi hợp lý | 2–3 | câu hỏi về một dịch vụ dưới nước mà câu trả lời không nhắc "không xuống nước khi mưa lớn / mùa lũ có thể tạm ngừng"; câu hỏi giấy tờ mà chỉ trả lời một trường hợp ⇒ thiếu thật |
+| — trong đó thước đòi nhiều | 2 | câu trả lời đã nêu 4–5 cảnh báo chính, bị gắn thiếu vì chưa kể hết mọi cảnh báo phụ có trong đoạn |
+| Đổi nhãn giữa hai lượt | 4 | 2 câu chỉ **một** người chấm gắn (nhiễu chấm) · 1 câu điều kiện đến từ đoạn tìm thêm (cùng cơ chế mục (1)) · 1 câu model lúc nêu lúc không (dao động thật; sinh lại: trợ lý 3 / 3 ↔ mốc 3 / 3 theo luật "một trong hai người chấm") |
+
+**Kết luận (1b):** gốc ở **khâu viết**, không ở khâu tìm; phần lớn là lỗi cũ chung với RAG mốc. Trong 14 lần gắn "thiếu" của hai lượt trợ lý, 4 lần chỉ một người chấm gắn.
+**Vì vậy C đề xuất KHÔNG chạy lượt 3 an toàn (≈ 0,02 USD)**: việc đọc 0 USD đã tách được 4 câu đổi nhãn (2 nhiễu chấm · 1 do đoạn tìm thêm · 1 dao động model); lượt 3 không
+đổi kết luận nào ở trên. Việc đáng làm hơn nếu User muốn giảm "thiếu cảnh báo": một câu trong lời dặn trả lời kiểu "bằng chứng có cảnh báo an toàn gắn trực tiếp với việc người
+hỏi sắp làm thì nêu kèm một câu" — là đổi lời dặn ⇒ một bậc đo đủ (an toàn ×2 + Golden), có rủi ro câu trả lời dài ra; chưa có plan.
+
+### (2) Ngoài phạm vi có mở cổng web — 2 / 44 câu, ở cả hai lượt
+
+| | Câu thứ nhất (loại y tế chung) | Câu thứ hai (loại "có nhắc Huế nhưng việc là soạn văn bản") |
+|---|---|---|
+| Đường đi hôm nay | định tuyến đưa vào trợ lý ⇒ trợ lý trả câu "kho không đủ thông tin" (không phải câu "ngoài phạm vi") ⇒ code mở cổng web ⇒ web bị lọc "không tin cậy" | như bên trái |
+| Người dùng thấy | chỉ câu từ chối + dòng "chưa tra được thông tin đáng tin"; **không có nội dung sai** | như bên trái |
+| Tốn | ≈ 0,002 USD / câu + **câu hỏi được gửi tới dịch vụ tìm web** (đường ra ngoài) | như bên trái |
+| Lịch sử [chứng minh] | Đúng câu này, đúng đường này ở lượt khoá phương án B tối 09/11 — là **1 câu User đã nhận làm giới hạn** | Ở lượt khoá phương án B và lượt tốc độ chung 09/11 trên `main`: bị chặn đúng ở định tuyến. Nhưng ở 2 lượt đo khác tối 09/11 và 10/11 (nhánh khác, lời dặn định tuyến chưa đổi) nó **đã** đi vào trợ lý; 08/11 có lượt vào trợ lý nhưng trợ lý dùng đúng câu "ngoài phạm vi" |
+| Xếp loại | **Giới hạn đã nhận** — không mới | **Cùng cơ chế, khác cửa vào ⇒ tính là loại mới so với cái User đã nhận** (User nhận ca "định tuyến xếp nhầm khẩn cấp"; ca này là "câu ranh giới có chữ Huế, định tuyến dao động giữa các lần + trợ lý chọn nhầm câu từ chối") |
+
+- [chứng minh] Câu thứ hai dao động từ trước khi đổi lời dặn định tuyến ngày 10/11 ⇒ **không quy được** cho thay đổi "câu lịch chung"; [giả thuyết] thay đổi đó có thể làm
+  nó nghiêng hẳn về phía trợ lý (hôm nay 2 / 2) vì câu có nhắc số ngày — muốn biết phải chạy câu đó vài lần trên bản trước 10/11 (≈ 0,002 USD), chưa làm.
+- Hai lớp cùng trượt mới ra lỗi: (a) định tuyến cho câu ngoài phạm vi vào trợ lý; (b) trợ lý trả câu "không đủ thông tin" thay vì câu "ngoài phạm vi". Lớp (b) chính là rủi ro
+  spec đã ghi trước ("model chọn nhầm câu").
+- **Sửa nhỏ nhất khả dĩ (không làm):** (i) cho câu loại y tế: khi định tuyến đã xếp "khẩn cấp" thì code **không mở cổng web** cho lượt đó — một điều kiện ở chỗ mở cổng, tất
+  định, không đổi lời dặn; chặn đúng ca User đã nhận; (ii) cho câu ranh giới "có chữ Huế": không có tín hiệu code nào ⇒ hoặc nhận thêm giới hạn này (hậu quả: người dùng thấy câu
+  từ chối, tốn ≈ 0,002 USD, câu hỏi đi ra dịch vụ tìm web), hoặc chỉnh lời dặn — là một bậc đo đủ. C nghiêng về (i) + nhận (ii) ở lượt giữa kỳ, quyết lại ở lượt cuối.
+- Giới hạn: file lượt S2 không ghi trường "định tuyến xếp khẩn cấp" ⇒ việc câu thứ nhất hôm nay vẫn đi qua nhãn khẩn cấp là suy từ lượt 09/11 [giả thuyết]; kiểm bằng một lần
+  gửi câu đó qua server và đọc log (≈ 0,002 USD).
+
 ## 4. Giới hạn của bản rà này
 
 - C không chạy lại lượt đo nào; số [đo] lấy từ handoff, `Project_Status.md`, bài học và STATUS của C — chưa mở lại từng report gốc.
