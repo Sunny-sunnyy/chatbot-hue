@@ -1,4 +1,6 @@
-# Đợt bổ sung kho 3 — lưu trú · đi lại · ăn gần — tài liệu thiết kế (NHÁP bản 2, chờ User duyệt một lần)
+# Đợt bổ sung kho 3 — lưu trú · đi lại · ăn gần — tài liệu thiết kế (bản 2 — ĐÃ DUYỆT 12/11/2026)
+
+**Trạng thái (A ghi 22:31 12/11/2026):** User chốt 5 quyết định Q1–Q5 theo cả 5 khuyến nghị tối 12/11/2026; C review 2 vòng — ready; A duyệt. Sửa sau duyệt (không đổi tiêu chí / tiền): cách gán khu, mục "Đính chính số". CHƯA chạm kho. Còn phải hỏi User trước khi ghi kho: có đưa quán lấy từ OpenStreetMap vào không (mở rộng Q3) + xem lướt 2 phiếu; A chốt lại ngưỡng K6 sau khi có số quán OSM. Câu "A đang lo phần tra địa chỉ ngoài" ở Q4: Photon không trả lời 12/11 — dữ liệu OSM tải qua Overpass thay.
 
 Người viết: E · 21:13 12/11/2026 (`date`) · A giao sau khi User chốt 20:54 12/11/2026: "chỗ nào Huế TRIPO hơn thì học; phần nào cần dữ liệu thì tìm, cào, bổ sung". Review: C.
 Khuôn theo spec sửa kho cũ `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md` và đợt giờ mở cửa 05/11 (`data/sua_kho_2026-11-05_gio/tools/chay.sh`).

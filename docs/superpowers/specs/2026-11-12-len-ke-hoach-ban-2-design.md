@@ -1,4 +1,6 @@
-# Spec — "Lên kế hoạch" bản 2 của tính năng: một lịch đủ bốn phần, biểu mẫu đầy đủ, ảnh và bản đồ · NHÁP bản 3.3
+# Spec — "Lên kế hoạch" bản 2 của tính năng: một lịch đủ bốn phần, biểu mẫu đầy đủ, ảnh và bản đồ · bản 3.3 — ĐÃ DUYỆT 12/11/2026
+
+**Trạng thái (A ghi 22:31 12/11/2026):** User chốt mức "đủ 4 phần, 1 lịch" + 4 quyết định theo khuyến nghị + phiếu gộp + phiếu nhỏ tối 12/11/2026; E review 2 vòng + kiểm mục 5c; A duyệt bản 3.3 (`8c521ecdc80d` lúc duyệt). Còn mở không chặn code: User liếc danh sách ưu tiên theo sở thích trước khi bật cờ.
 
 Người viết: C. Bản 1 21:13, bản 2 21:22, **bản 3 21:32 12/11/2026** (`date`). Bản 3 = bản 2 (E đã `ready` ở vòng 2, sha `8969c7275346`) + **đổi phạm vi theo mức User chốt tối 12/11** sau khi User tự thử
 hai hệ thống ("muốn hệ thống chúng ta làm tốt như Huế TRIPO"). E chỉ kiểm phần đổi (bảng cuối file). Chưa code. B code sau khi User duyệt.

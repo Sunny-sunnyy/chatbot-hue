@@ -1,4 +1,4 @@
-# Plan — "Lên kế hoạch" đợt 1: khung lịch tốt + biểu mẫu đủ · NHÁP bản 3
+# Plan — "Lên kế hoạch" đợt 1: khung lịch tốt + biểu mẫu đủ · bản 3 — A ĐÃ DUYỆT 12/11/2026
 
 Người viết: C · bản 1 21:57, **bản 2 22:02 12/11/2026** (`date`; bản 2 = sau khi E kiểm xong mục 5c của spec + User trả lời phiếu nhỏ đợt 1) · Người code: B · Người đọc plan trước: B (người code) · Người duyệt: A · Mức rủi ro: **cao** (luật xếp + đổi khuôn trả lời)
 Chưa code. Plan này chỉ làm **đợt 1** của spec; đợt 2 (ảnh, bản đồ) và đợt 3 (ăn uống, lưu trú) có plan riêng.
@@ -102,6 +102,8 @@ Quy ước mỗi bước: **test viết trước** (đỏ rồi mới code) · m
 - **Tiêu chí:** *Luôn* — 0 khung giờ ngoài giờ mở cửa (giờ kết thúc ≤ giờ đóng của bảng, kiểm bằng code trên mọi tổ hợp) · giờ các mục trong một buổi không chồng nhau, tăng dần · 0 hoạt động tối sai thứ · có trẻ em ⇒ 0 mục sau 21:00. *Sàn* — **≥ 80 %** số tối (không tính ngày cụm xa) của lịch
   nhóm không hạn chế có hoạt động. Dưới sàn (vd User siết thứ ở phiếu nhỏ) ⇒ phần buổi tối chỉ hiện khi ngày đi có đủ hoạt động, báo A. **0 USD.**
 
+**Trạng thái (A ghi 22:31 12/11/2026):** A duyệt bản 3 (`27919be11ef6` lúc duyệt; dòng này + ý 7 dưới đây thêm sau duyệt, sửa chữ, không đổi tiêu chí / tiền). Người code: B — **chưa có dòng code nào** lúc kết phiên 12/11 (nhánh `p9-len-ke-hoach-v2` rỗng, chưa push). Nghiệm thu: B chạy bộ 20 + bộ quyết 12 của E sau bước (e); E (người viết bộ đo) review kết quả.
+
 ### Ghi thêm theo góp ý của B (người code đọc plan, 12/11 — 6 ý, đều là làm rõ, không đổi tiêu chí)
 
 1. **(a) Khuôn "danh sách ô hiện":** `/api/tinh_nang` thêm đúng một khoá khi cờ bật: `"len_ke_hoach_v2": {"o_hien": ["so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di"]}` (chỉ các ô đang hiện).
@@ -114,6 +116,7 @@ Quy ước mỗi bước: **test viết trước** (đỏ rồi mới code) · m
    giống byte hôm nay; cờ bật ⇒ chuỗi gửi đúng khuôn mới (lời dặn mới + danh sách mục + tài liệu từng điểm). Chữ cuối cùng của lời dặn chốt sau lượt thử sớm (sửa chữ ≤ 1 vòng, ghi vào report).
 5. **(c) 1,5 ngày là sát** (gồm viết lại thẻ lịch, 3 sự kiện, đường không hiện dần): trễ ⇒ B báo ở D3, **không cắt test**; ước cả đợt chấp nhận 5–5,5 ngày.
 6. **Nghiệm thu — lượt mốc trên `main` cùng buổi** (20 yêu cầu đường biểu mẫu cũ, để so tốc độ): ≈ 0,01 USD, **đã tính trong trần 0,20** (ước mới ≈ 0,135; mốc báo A vẫn 0,15).
+- (7) (A đồng ý đề xuất của B lúc kết phiên 12/11) Ở bước (a) bộ xếp cũ chỉ tới 4 ngày ⇒ `/api/tinh_nang` trả thêm `so_ngay_toi_da: 4` trong khoá `len_ke_hoach_v2` và server trả 422 cho `so_ngay` "5"; tới khi xong bước (b) thì đổi thành 5.
 
 ## 4. Sàn chung (mọi bước, ghi trước)
 
