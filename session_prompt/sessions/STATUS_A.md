@@ -1,3 +1,13 @@
+# STATUS A — KẾT PHIÊN 12/11 (mở 18:40; cập nhật 22:26 12/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" + "Câu hỏi cho User" (11 câu mới, hỏi theo thứ tự, mỗi lần một câu) ⇒ hỏi quyền phiên + trần tiền Phase 9 (đã ≈ 4,61) ⇒ cùng lượt giao: B code lịch trình đợt 1 (plan đã duyệt), C + E kho 3 (dữ liệu OSM đã tải sẵn), một session rảnh làm nốt TRIPO vòng 6 ⇒ **trả nợ tài liệu trước khi thêm việc**: `bai_hoc/` chưa có việc của 12/11 (B7 giữa kỳ, Exa thử rồi bỏ, đếm lỗi trước khi xây — qua agent con kiểm độc lập), `bao_cao_he_thong/07_…` chưa ghi cờ `het_luot_bo_cong_cu`. Vòng cải tiến 27 (W66–W68) chờ User duyệt.
+- Terminal 12/11: A `hue-rag-7d` · B `hue-rag-1b` · C `hue-rag-e1` · E `hue-rag-33`.
+- Xong 12/11 (A): điều phối cả phiên; duyệt plan B7 bản 2, plan hết lượt tìm, plan Exa, spec kho 3, spec + plan lịch trình; merge `cd1f6ef` (cờ tắt) + cổng ổn định (test file chạm có / không khoá, server thật 1 câu kho + 1 câu ngoài kho, 2 dòng số đo, 0 chữ câu hỏi trong log; ≈ 0,001 USD); tag `hoso/p9-tra-web-exa`; mở server giao diện cho User (8010, đã tắt lúc kết phiên); script `data/sua_kho_2026-11-12_an_gan/tools/tra_photon.py` (Photon không trả lời — 4 lần hết giờ; chỉ ghi được 1 dòng thử); handoff viết lại + archive; Project_Status; lịch sử; nhật ký; sổ vòng 27; memory `thesis-writeup-not-a-constraint`.
+- Tiền phiên ≈ 0,73 USD thật (B 0,479 · E 0,195 · C 0,059 · A 0,001) + ≈ 0,82 tín dụng Exa. Phase 9 ≈ 4,61.
+- **Bẫy A (12/11) — đầu vào vòng 27:** (1) khuyến nghị "đóng Phase 9 ⇒ deploy" trái mốc 25–30/12 và lấy "viết báo cáo" làm lý do giới hạn phạm vi — User phản đối hai lần (đã lưu memory); (2) brief TRIPO "không gửi biểu mẫu" ⇒ các vòng thử bỏ sót đúng phần lập kế hoạch — User tự thử rồi phê bình; (3) chuyển 5 con số chưa qua kiểm cho User rồi đính chính; (4) chốt vòng tự soi 1 trước khi B góp ý, phải sửa chốt; (5) giao B hai việc song song lúc gần kết phiên ⇒ bước (a) không ra dòng code nào; (6) nâng trần thí nghiệm Exa lên 0,20 theo số E đọc nhầm; (7) hook cảnh báo một giờ ước (dạng giờ thiếu chữ số phút) trong handoff — sửa ngay.
+- Vòng tự soi: vòng 1 (20:04) + vòng 2 (kết phiên) — chốt ghi ở handoff / archive.
+- **Chưa làm (nợ):** `bai_hoc/` + `bao_cao_he_thong/07_…`, `01_LUONG…` (không đổi hành vi người dùng ⇒ không cần); TONG_HOP của đợt `2026-11-12_ra_khoang_cach` (đợt còn mở); `bao_cao_he_thong/README.md` chưa có dòng 12/11 (mục lục không liệt kê từng nhật ký).
+
 # STATUS A — PHIÊN 12/11 (mở 18:40; cập nhật 18:45 12/11/2026 `date`)
 
 - Terminal: A `hue-rag-7d` · B `hue-rag-1b` · C `hue-rag-e1` · E `hue-rag-33` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).

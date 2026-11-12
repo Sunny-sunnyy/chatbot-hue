@@ -1,5 +1,35 @@
 # STATUS C — phiên 12/11 (mở 18:40 12/11/2026). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên, 22:22 12/11/2026 `date`)
+
+**Việc dở của C (đều 0 USD, chưa chạm kho, chưa code):**
+1. **Quán từ OpenStreetMap — làm dở.** Đã tải + làm sạch + đếm: `data/osm_quan_2026-11-12/` (`tho_overpass.json`, `osm_quan.json` 581 quán có tên, `bien_ban.md` — đọc mục "Tới đâu khi kết phiên"). **Bảng khớp 22 bài kho
+   (`khop_bai_kho.json`) CHƯA dùng được** — ≥ 3 dòng khớp sai rõ, luật còn lỏng ⇒ siết luật + xem tay. Chưa đưa nguồn OSM vào `data/sua_kho_2026-11-12_an_gan/tools/dung_quan_theo_cum.py`, chưa cập nhật phiếu quán + bảng D.
+   Không cần tải lại (script: `data/osm_quan_2026-11-12/tools/tai_overpass.py`; tra địa chỉ dự phòng: `data/sua_kho_2026-11-12_an_gan/tools/tra_photon.py` — máy chủ đó hôm nay không trả lời).
+2. **Bài nháp "ăn gì gần điểm tham quan":** E chia đoạn thử 21 đoạn 0 lỗi nhưng tiêu đề mục dài tới 305 ký tự ⇒ rút còn tên cụm ngắn, tên phường đưa vào câu đầu đoạn (sửa trong `dung_quan_theo_cum.py`).
+3. **Sửa số ở report cũ:** "6.794 cơ sở" là 6.794 dòng / 208 tên — A nhận ghi dòng "Sửa số"; nếu A chưa làm: `c_dot_2_dem_implementation.md`, `c_phan_chua_on.md`, plan ăn gần.
+
+**Sản phẩm phiên này + đường dẫn:**
+- Phiếu cho User (private): `data/phase_9/lich_trinh/phieu_gop_cho_user_2026-11-12.md` (User đã trả lời 3 câu, không sửa ô) · `…/phieu_nho_dot_1_2026-11-12.md` (User đã trả lời 3 câu) · `…/phieu_anh_2026-11-12.md` (chưa xem;
+  7 điểm chưa có ảnh) · `data/sua_kho_2026-11-12_an_gan/phieu_quan_va_moc_2026-11-12.md` (chưa xem).
+- Bảng: `data/phase_9/lich_trinh/diem_v8_de_xuat.json` (34 dòng, md5 `0cbd845ede30`, CHƯA thay bảng chạy; dựng bằng `tools/dung_v8.py`) · `data/sua_kho_2026-11-12_an_gan/quan_theo_cum.json` (md5 `b4f1661e95fd`).
+- Mô phỏng 0 USD: `data/phase_9/lich_trinh/tools/mo_phong_v8.py` (bộ xếp thật, 360 tổ hợp) · `…/mo_phong_kieu_di.py` (bản thử luật phút + ưu tiên + cụm xa — KHÔNG phải code sản phẩm).
+- Tài liệu tracked: spec "Lên kế hoạch" bản 3.3 `8c521ecdc80d` · plan đợt 1 bản 3 `27919be11ef6` (B đã đọc, đồng ý; B làm bước (a)) · `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan.md` (rà lời dặn, 5 đề xuất chưa làm).
+
+**Chờ User:** liếc danh sách điểm ưu tiên theo sở thích (trong bảng v8) · phiếu ảnh · phiếu quán + mốc (giữ / bỏ từng quán dữ liệu mở) · có cho đưa quán OpenStreetMap vào kho không (mở rộng Q3) · giờ + thứ của phố đêm cạnh
+Kinh thành (tuỳ chọn) · chọn có làm đề xuất Đ2–Đ4 của report lời dặn không.
+
+**Bẫy gặp hôm nay (đừng lặp):**
+- **Đếm dòng thay vì đếm cơ sở:** dữ liệu mở có dòng lặp (6.794 dòng = 208 tên) ⇒ mọi phép đếm trên dữ liệu ngoài phải khử trùng trước khi ghi số.
+- **Xếp hạng / ước độ phủ trước khi đếm:** bảng "phần chưa ổn" phải hạ 2 / 5 mục đầu sau khi đếm; plan ăn gần ước 30–45 bài khớp, thật 7; spec ghi "3–5 hoạt động tối", kho chỉ có 1. ⇒ chạy bước dò rẻ TRƯỚC khi ghi con số vào plan / spec.
+- **Khớp tên tự động phải xem tay:** luật khớp OSM gắn "chắc" cho dòng sai — không nhận bảng khớp khi chưa đọc từng dòng.
+- **Auto mode chặn lệnh kiểm DNS qua máy chủ ngoài** (lúc máy không phân giải được tên miền bản đồ) và dặn không lách ⇒ không lách, báo A; việc tải sau đó dùng máy chủ khác phân giải bình thường.
+- Hook báo "giờ ước" khi ghi giờ chưa tới hoặc chép giờ khuyết phút ⇒ luôn lấy `date` ngay trước khi ghi.
+
+**Tiền C cả phiên 12/11: 0,058691 USD** (3 lượt đếm có phí buổi tối sớm; từ 20:47 trở đi mọi việc 0 USD — 4 lượt tra Codex, WebFetch, 1 truy vấn Overpass).
+**Không server / worktree / nhánh / container của C.** (Lúc kết phiên có một uvicorn cổng 8010 đang chạy — không phải C khởi động trong đợt việc tối; C không đụng.)
+**Vòng tự soi 2 (đã gửi nhóm):** tốn mà lợi ít = bảng khớp OSM làm vội cuối phiên + phiếu ảnh khi chưa nhìn được ảnh; phiên sau: dò rẻ trước khi viết số, khử trùng dữ liệu ngoài, phiếu nào cần mắt người thì giao cho session có trình duyệt.
+
 ## PHIÊN 12/11 — C `hue-rag-e1` · A `hue-rag-7d` · B `hue-rag-1b` · E `hue-rag-33`
 
 **ĐANG LÀM (18:45 12/11/2026, A giao; User: việc A giao = "làm đi"):** đợt 2 cổng — lượt đếm rẻ trước khi xây (lưu trú · ăn gần · sự kiện theo ngày), trần 0,02 USD, không spec / code, không `*sealed*`.

@@ -1,4 +1,44 @@
-# STATUS E — PHIÊN 12/11 (mở 18:40 12/11/2026, `date`) · terminal `hue-rag-33` (A `hue-rag-7d`, B `hue-rag-1b`, C `hue-rag-e1`) · Claude Fable 5.2 · vai thực thi
+# STATUS E — KẾT PHIÊN 22:23 12/11/2026 (`date`) · terminal `hue-rag-33` (A `hue-rag-7d`, B `hue-rag-1b`, C `hue-rag-e1`) · Claude Fable 5.2 · vai thực thi
+
+## PHIÊN SAU ĐỌC TRƯỚC (viết 22:23 12/11/2026)
+
+**E không còn tiến trình, server, worktree nào.** File tạm `/tmp/e_*` đã xoá. Nhánh Exa lưu ở tag `hoso/p9-tra-web-exa` (`76e976e`).
+
+### Việc dở của E (theo thứ tự làm tiếp)
+1. **Đợt bổ sung kho 3 — phần (a) lưu trú + (b) đi lại** (spec `docs/superpowers/specs/2026-11-12-bo-sung-kho-dot-3-design.md`, A đã ghi duyệt; User chốt Q1–Q5 theo khuyến nghị; trần 0,35 USD). **Chưa chạm kho.**
+   - Đã có (private): `data/luu_tru_2026-11-12/` — `co_so_luu_tru_hue.csv` (316 cơ sở; 151 có hạng / đạt chuẩn), `bien_ban.json`, `html_tho/` (73 trang), `luu_tru_theo_cum_nhap.json` (bảng nháp), `buoc_0_gan_khu.md`, `tools/gan_khu_v2.py`, `osm/duong_co_ten_hue.json` (1.652 đoạn đường có tên, tải 22:22 12/11 — **chưa dùng**), `phieu_khu_luu_tru_cho_user.md` (**chưa đưa User**).
+   - **Bước kế:** dùng file OSM gán khu cho các tên đường (toạ độ giữa đường ⇒ điểm tham quan gần nhất ⇒ cụm ⇒ khu; đường cắt hai khu ⇒ "cần xem") ⇒ cập nhật bảng C của phiếu (User chỉ xem dòng "cần xem") ⇒ báo A tỉ lệ gán (hiện **54 % = 83 / 151**) ⇒ User xem phiếu ⇒ sinh bài lưu trú nháp bằng script (đoạn văn ≤ 6 cơ sở / đoạn, đặt trong `travel/services/`, không giá / liên hệ) + `luu_tru_theo_cum.json`.
+   - (b) Đi lại: `data/sua_kho_2026-11-12_dot_3/bai_nhap_di_lai_o_hue_DANG_DO.md` = **mới có bảng dữ kiện có nguồn + dàn ý**, chưa viết bài. Nguồn tra `data/tra_cuu_cli/2026-11-12_e-di-lai-hue/`.
+   - (c) Ăn gần: C đã làm tới trước bước ghi kho (`data/sua_kho_2026-11-12_an_gan/`); E đề nghị C rút ngắn tiêu đề mục (dài tới 305 ký tự).
+   - Ghi kho + dựng lại chỉ mục: **chờ A xếp lịch** sau khi User xem phiếu (quán / mốc của C + khu lưu trú của E). Trước khi ghi kho: A chốt lại ngưỡng K6.
+2. **Plan lưu trú "khu nên ở + link"** (`docs/superpowers/plans/2026-11-12-luu-tru-khu-va-link-plan.md`, A duyệt; có 2 mục "sửa sau duyệt"): **code chưa làm**; bước 0 đếm (theo nguồn · từ khoá · hợp) chưa chạy; bảng `khu_v1.json` chưa lập (lấy từ bảng A + B của phiếu khi User xác nhận).
+3. **Biểu mẫu "Lên kế hoạch"**: bộ đo đợt 1 xong — `data/phase_9/lich_trinh/bo_do_v2/`: `yeu_cau_20.jsonl` `8f89c1b341ca` · `bo_quyet_12.jsonl` `f715aac06ddc` · `dinh_nghia_cham.md` **`253d6d9f9910`** (mã `b837…` đã gửi A / B lúc đầu là mã CŨ). E là người viết bộ đo ⇒ **không** code đợt 1; có thể review.
+
+### Việc chờ User / A
+- User: xem phiếu khu lưu trú (sau khi E gán bằng OSM); câu "bỏ câu chứa số sai thay vì bỏ cả mục web" (A ghi danh sách chờ); bật cờ `het_luot_bo_cong_cu` (E khuyến nghị bật kèm phép theo dõi).
+- Tra toạ độ quán bằng Photon: E **không làm** (việc C bị chặn + nơi nhận mới); A báo máy chủ Photon không trả lời.
+
+### Kết quả phiên 12/11 (E)
+- Review: plan B7 (2 vòng) · kết quả B7 giữa kỳ (+ kiểm chẩn đoán S1 của C) · nhánh `p9-het-luot-tim` (ready, đã merge) · spec biểu mẫu của C (bản 1 → 3.2, 4 lượt).
+- Báo cáo: khoảng cách agentic RAG (`e_khoang_cach_agentic.md`) · tìm web Serper ↔ Exa (`e_tim_web_serper_exa.md`, mục 1–7) · nguồn lưu trú (`e_nguon_luu_tru.md`) · bộ đo biểu mẫu (`e_bo_do_len_ke_hoach.md`) · kiểm giờ mở cửa Đại Nội (`data/tripo_v5_2026-11-12/kiem_gio_mo_cua.md` — kết luận chưa rõ).
+- **Exa: KHÔNG bật.** Thí nghiệm chỉ-bước-tra: Exa 25 ↔ Serper 17 / 42 (đạt luật); đo qua server thật: **14 ↔ 13** (không đạt +3). Hồ sơ `data/exa_2026-11-12/`, plan `2026-11-12-tra-web-exa-plan.md`, tag `hoso/p9-tra-web-exa`.
+
+### Tiền E phiên 12/11 (thật, từ log / trường tiền)
+Thí nghiệm Exa 0,069 + X2–X6 ≈ 0,126 ⇒ **≈ 0,195 USD thật**; tín dụng miễn phí Exa đã dùng ≈ 0,82 USD (không phải tiền thật). Mọi việc khác 0 USD API (Codex 6 lượt, agent con chấm 6 lượt, WebFetch = quota).
+
+### Bẫy / đã học phiên 12/11
+- **Đọc nhầm trường tiền:** `turn_usd` của trace = tiền cả lượt (model + tra) — E báo "0,049 / bên" là tiền model, xin nâng trần không cần. Tách tiền tra ↔ model trước khi báo.
+- **Ước tiền thiếu:** plan ghi 0,05 cho lượt "qua server thật" trong khi mỗi câu qua server là cả lượt (≈ 0,0013) ⇒ thật ≈ 0,13. Ước theo đường đo thật, không theo bước con.
+- **Đếm trên dòng lặp:** dữ liệu mở 6.794 dòng chỉ có 208 dòng khác nhau ⇒ E báo tỉ lệ gán khu 71 %, thật là 54 % (C bắt). Bỏ trùng trước mọi phép đếm trên dữ liệu ngoài.
+- **Kết quả ở bước con không chuyển sang đường thật:** Exa hơn rõ khi chỉ đo bước tra, mất lợi thế khi qua cổng thật + luật kiểm ⇒ thí nghiệm chọn nhà cung cấp phải đo trên đường người dùng đi ngay từ đầu.
+- **Ghi trước phải vào git trước lượt có phí** (C nêu: cấu hình Exa vào git sau khi có kết quả).
+- Review plan so hai bên: hỏi "mỗi sàn 'mới so với mốc' có cùng mẫu số ở hai bên không" (bỏ sót ở plan B7). Kiểm "harness dùng lại được" phải mở xem nó dựng cho mấy bên ở cả hai bản code.
+- Log `application.log` trộn pytest ⇒ lọc lượt thành công có `usd`; ghép theo `turn_id`.
+- Script sửa file bằng heredoc Python: `\`` trong chuỗi thường thành `\\`` thừa — kiểm `grep` sau khi ghi.
+
+---
+
+# (nhật ký trong phiên) STATUS E — PHIÊN 12/11 (mở 18:40 12/11/2026, `date`) · terminal `hue-rag-33` (A `hue-rag-7d`, B `hue-rag-1b`, C `hue-rag-e1`) · Claude Fable 5.2 · vai thực thi
 
 - 18:45 12/11/2026 — A giao: **review plan B7 nháp** (người viết C), 0 USD, chỉ đọc. **Vòng 1 XONG 18:49 12/11/2026 — changes_requested** (plan sha `5413ae469c5e`): M-1 bản sao `do_cuoi.py` "chỉ đổi hằng số" không chạy được (tool dựng cho 3 bên cố định, bên mốc chép từ file 30/10, cần bên A/A; `generate` ở `p9-moc` không nhận file câu tuỳ ý) · M-2 kết luận (i) chưa ghi chỉ số / đơn vị / cách tính CI · M-3 S2 / S2b + vế "0 truy vấn chứa tên" không có lượt đo, Golden qua `generate` không đi cổng web · 6 minor (đề xuất cắt 3 lượt phía RAG). Cờ plan §2 ↔ `settings.yaml` hôm nay: khớp 14 / 14. File: `docs/superpowers/plans/2026-11-10-phase-9-b7-plan_review.md` (mới), file này, dòng E trong `CURRENT_HANDOFF.md`. Tiền: 0 USD. **Vòng 2 XONG 19:02 12/11/2026 — ready** (bản 2 sha `da7bff5d0c4e`: 0 major, 5 minor n-1…n-5; `ngay_moi_sealed` không mở ở lượt giữa kỳ — đạt). Chờ A duyệt sha.
 - Bẫy / đã học 12/11: log `application.log` trộn pytest (outcome lỗi) ⇒ đếm phải lọc lượt thành công có `usd`; Codex trích câu "nguyên văn" không có trong tóm tắt bài (kiểm ra) ⇒ câu trích luôn mở trang đối chiếu.
