@@ -68,6 +68,8 @@ Tiền: User "vẫn duyệt chi phí API" (19:01) ⇒ A ghi **trần Phase 9 t�
 
 **User (21:27 12/11/2026):** "viết báo cáo và slide là chuyện nhỏ, không cần đặt nặng" ⇒ không lấy thời gian viết báo cáo / slide làm lý do cắt hay làm vội tính năng; mốc đóng code 25–30/12 vẫn giữ.
 
+**User chốt 5 quyết định spec "đợt bổ sung kho 3" (21:34 12/11/2026): theo cả 5 khuyến nghị** — Q1 bài theo khu + bảng cho lịch · Q2 151 cơ sở có hạng sao / đạt chuẩn · Q3 thêm quán từ dữ liệu mở cho cụm thiếu (≤ 6 / cụm, nhãn "chưa kiểm", User xem lướt) · Q4 toạ độ chắc ghi khoảng cách, toạ độ ước chỉ "thuộc khu" · Q5 không ghi mức giá; trần 0,35 USD. Spec bản 2 sha file `fd152810627b`; còn bước kiểm phần sửa 3 major (người khác E) rồi A ghi duyệt sha; E bắt đầu các bước 0 USD không chạm kho.
+
 ### Đợt rà khoảng cách (User giao 18:58 12/11/2026) — `report_agent/2026-11-12_ra_khoang_cach/`
 
 **User (18:58 12/11/2026):** chưa deploy, chưa đóng Phase 9 (mốc đóng code vẫn 25–30/12). **B7 hôm nay = đo giữa kỳ** (trả lời "trợ lý đã hơn RAG 1–8 chưa, ở đâu"); lượt cuối chạy lại lúc đóng code ⇒ **bộ kín chưa mở `ngay_moi_sealed` 7 câu giữ cho lượt cuối, hôm nay không mở**. Đồng thời: rà khoảng cách tới agentic RAG; nghiên cứu repo (file `báo cáo nghiên cứu github.txt` + Codex tra thêm); thử đầy đủ Huế TRIPO bằng Playwright; rồi A tổng hợp "tính năng nào cần bổ sung · phần nào chưa ổn cần phát triển / tối ưu lại" trình User.
