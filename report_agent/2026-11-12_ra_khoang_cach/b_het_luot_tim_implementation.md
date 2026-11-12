@@ -44,11 +44,11 @@ Giải thích cho User: trước đây trợ lý được tra sổ 2 lần; xin 
 | Giống byte khi cờ tắt | 228 / 228 | 228 / 228 | **đạt** |
 | Test theo loại lượt | như plan | 7 test đạt: có · có · **không** `tim_kho` sau 2 lần tìm; 0 / 1 lần tìm gửi giống byte cờ tắt; lượt có lịch sử; lượt biểu mẫu giống byte; model xin công cụ đã ẩn ⇒ câu từ chối cố định (thường + stream), không lỗi 500; lỗi model khác vẫn là lỗi | **đạt** |
 
-### 4.1 A/A cho sàn Golden (luật đọc do A ghi trước khi chạy)
+### 4.1 A/A cho sàn Golden (luật đọc do A ghi **trước khi chạy A/A nhưng SAU khi đã thấy sàn Golden phạm** — không phải tiêu chí ghi trước của plan; review E m-2)
 
 Cùng 33 câu, cùng nhánh, cờ **tắt**, 1 lượt (0,0181 USD): so với B7 cũng có **3 câu trả lời ⇒ từ chối**, 0 câu ngược lại; số câu từ chối B7 10 · A/A tắt 13 · cờ bật 12; đoạn mới 107 · 100 · 89.
 Luật: "không phạm do cờ" chỉ khi (i) lượt cờ tắt có ≥ 2 câu đổi chiều — **có 3**; (ii) trong các câu đi tới lượt gọi sau lần tìm thứ hai ở lượt cờ bật (7 / 33 câu) có 0 câu trả lời ⇒ từ chối — **0** (1 câu từ chối ⇒ trả lời). ⇒ **thoả cả hai**. Cả 3 câu chuyển sang từ chối ở lượt cờ bật đều chỉ có 1 lần model tìm — không đi tới chỗ duy nhất cờ đổi chuỗi gửi model (test khoá phần "0 / 1 lần tìm giống byte"). 2 / 3 câu đó bản RAG mốc vốn cũng từ chối.
-Vế "số đoạn mới không giảm": 107 ⇒ 89 trong khi A/A tắt 100 — cờ không thể làm giảm số lần tìm (trần vẫn là 2), chênh giữa hai lượt cùng cờ tắt đã là 7; B **không** tách được phần còn lại với nhiễu bằng 1 lượt.
+Vế "số đoạn mới không giảm" **cũng phạm theo chữ** (review E m-3) và là tiêu chí không đo được bằng một lượt: 107 ⇒ 89 trong khi A/A tắt 100 — cờ không thể làm giảm số lần tìm (trần vẫn là 2), chênh giữa hai lượt cùng cờ tắt đã là 7; B **không** tách được phần còn lại với nhiễu bằng 1 lượt.
 
 ### 4.2 Đổi hành vi ngoài mục tiêu: bớt từ chối ở câu kho thiếu (A yêu cầu mục riêng)
 

@@ -60,3 +60,15 @@ Decision: **ready_for_user_confirmation** (trình User duyệt spec + 4 câu ở
 | m-1 … m-6 | có trong bảng "Chỗ đổi"; E xem lướt các dòng tương ứng, không kiểm sâu | nhận |
 
 **Ghi chú (không chặn, để plan đợt 1 lưu ý):** số đếm C vừa thêm cho thấy 3 / 8 cụm **không có điểm "ngắn" nào** và chỉ 4 / 8 cụm có ≥ 2 điểm ngắn ⇒ ô "kiểu đi 3 mức" có nguy cơ **dưới sàn 70 %** ở các lịch rơi vào cụm đó. Theo luật vừa ghi thì khi ấy ô không hiện — nên plan đợt 1 đếm điều này **đầu tiên** (trước khi code giao diện cho ô đó).
+
+---
+
+# Kiểm phần đổi của bản 3 — sha256 `16e9f7f4fa19` (21:38 12/11/2026, `date`) — A giao: chỉ bảng "Chỗ đổi so với bản 2"
+
+Decision: **ready_for_user_confirmation** (0 major; 3 sửa chữ nhỏ để khớp spec kho 3 mà User đã chốt Q1–Q5). E đọc bảng "Chỗ đổi" + các dòng buổi tối / ăn uống / lưu trú của mục 3.2; không đọc lại phần giữ nguyên.
+
+- **Khớp với spec kho 3 bản 2:** tên hai bảng và tên trường (`quan_theo_cum.json`, `luu_tru_theo_cum.json`), nhãn "chưa kiểm" cho quán dữ liệu mở, toạ độ ước chỉ mức "cùng cụm", 0 homestay được nói rõ, thẻ / khối lưu trú là đường kích hoạt thứ hai, buổi tối lấy từ bài kho đã có (không cần thêm kho).
+- **c-1 (sửa chữ):** User đã chọn Q3 (thêm quán dữ liệu mở) + Q4 (hai mức toạ độ) ⇒ sàn ăn uống áp **mức B**; bỏ nhánh "mức A" hoặc ghi "không áp". Và ghi **danh sách "cụm trung tâm"** được tính sàn 80 %; **các cụm lăng** (dữ liệu mở cũng 0 quán) không tính — ngày ở cụm đó dùng dòng nói thật.
+- **c-2 (sửa chữ):** bất biến "≤ 1,5 km điểm / khu của buổi đó" chỉ kiểm được với toạ độ chắc / vừa; quán toạ độ ước ⇒ điều kiện là **"cùng cụm"** (không so mét) — viết thành hai vế.
+- **c-3 (đã có chủ):** bảng ánh xạ 8 cụm ⇒ 3 khu cho khối "Ở đâu": E giữ trong `khu_v1.json` (trường `cum`) của plan lưu trú; spec chỉ cần trỏ tới đó.
+- Ghi chú cỡ việc (không phải finding): bản 3 bỏ điểm dừng giữa các đợt theo chốt của A; đợt 3 (ăn uống + lưu trú) phụ thuộc đợt bổ sung kho 3 đã vào kho ⇒ thứ tự cắt nếu trễ nên đặt đợt 3 cắt trước đợt 2.
