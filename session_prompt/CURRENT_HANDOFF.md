@@ -31,6 +31,15 @@ Luật chung: mục "Việc đang mở — luật chung" cuối file. Máy ~15 G
 - **Sửa chốt (20:05 12/11/2026, sau ý B + phản biện E):** phần kín giữa kỳ: **chỉ chạy phần chuỗi** (hỏi tiếp + nhớ tên, ≈ 0,02 USD — vế "kín không ngược chiều" của kết luận (i) và ngưỡng nhớ tên) khi User về chạy một lệnh `!`; bộ kín ngoài phạm vi + trò chuyện bỏ ở giữa kỳ. Vòng sinh lại S-AT **giữ 2 người chấm**, tính "thiếu" khi cả hai cùng gắn; cổng đối chứng 15 câu còn 1 lần / phiên chấm.
 - **Rút kinh nghiệm:** xếp hạng sau khi đếm, không trước; tra repo / paper theo câu hỏi cụ thể, không theo hạn mức số mục; báo User chỗ "đúng ngưỡng, hết biên" (4 câu tụt; web 6 / 10) tách khỏi chữ "đạt". Đề xuất cho vòng cải tiến kết phiên: skill review thêm câu "sàn kiểu 'mới so với mốc' phải cùng mẫu số ở hai bên".
 
+**Kết quả đợt rà (20:17 12/11/2026) — chờ User chọn (A hỏi mỗi lần một câu); bảng đầy đủ `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` mục 3d:**
+- **Việc gấp (mới, nặng nhất):** 0 / 6 câu việc gấp nêu số khẩn cấp; 3 / 6 kho từ chối ⇒ web không ra hướng dẫn (chờ 18–25 s). Sửa nhỏ nhất: code nối dòng số khẩn cấp cố định khi định tuyến xếp khẩn cấp + không mở cổng web — **đảo một phần quyết định bỏ khẩn cấp 08–09/11 ⇒ User quyết**; plan nháp C đang viết.
+- Khâu viết bỏ cảnh báo / điều kiện (5 / 27, từ Phase 1–8; dễ âm) · ăn gần (5 / 6; sửa kho) · di chuyển / thuê xe (4 / 6 kho từ chối; thêm bài vào kho từ nguồn ngoài) · hết lượt tìm (6 / 8) · nhãn loại câu trong log · lưu trú khu nên ở + link · tiếng Anh (5 / 5 trả lời đúng nhưng bằng tiếng Việt — câu hỏi phạm vi) · thước "thiếu cảnh báo mới" cho lượt cuối.
+- TRIPO vòng 5 (`b_tripo_v5.md`): trang không có tính năng mới; 18 câu: hue_rag hơn 6 · TRIPO hơn 5 · ngang 6 · cả hai yếu 1 (B chấm một mình, không mù).
+- Agentic RAG (`e_khoang_cach_agentic.md`): có "dùng công cụ" + một phần "tự soát"; không có "model lập kế hoạch", "nhiều agent" — chưa có lỗi đo được nào đòi.
+- Giờ mở cửa Đại Nội: kho 07h00 ↔ TRIPO 7:30 — chưa rõ, nghiêng kho không sai; trang đơn vị quản lý không mở được ⇒ nhờ User mở bằng trình duyệt (không gấp).
+- **User `!` (≈ 0,02 USD):** `! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin_chuoi.sh` ⇒ B chấm + Holm lại.
+- Tiền phiên tới giờ: B ≈ 0,314 · C ≈ 0,048 · E 0 · A 0 ⇒ ≈ 0,36; Phase 9 ≈ 4,24 / 4,3.
+
 ### Đợt rà khoảng cách (User giao 18:58 12/11/2026) — `report_agent/2026-11-12_ra_khoang_cach/`
 
 **User (18:58 12/11/2026):** chưa deploy, chưa đóng Phase 9 (mốc đóng code vẫn 25–30/12). **B7 hôm nay = đo giữa kỳ** (trả lời "trợ lý đã hơn RAG 1–8 chưa, ở đâu"); lượt cuối chạy lại lúc đóng code ⇒ **bộ kín chưa mở `ngay_moi_sealed` 7 câu giữ cho lượt cuối, hôm nay không mở**. Đồng thời: rà khoảng cách tới agentic RAG; nghiên cứu repo (file `báo cáo nghiên cứu github.txt` + Codex tra thêm); thử đầy đủ Huế TRIPO bằng Playwright; rồi A tổng hợp "tính năng nào cần bổ sung · phần nào chưa ổn cần phát triển / tối ưu lại" trình User.

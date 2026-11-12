@@ -19,11 +19,13 @@ Khai báo sửa: `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementat
 **Bổ sung cuối (19:55 12/11/2026):** sửa số 12 / 81 trong report đếm · probe `is_enabled` [Chạy] ghi vào plan hết lượt tìm (xét lại mỗi lượt, cả stream; model xin công cụ đã tắt ⇒ `ModelBehaviorError` phải bắt) · mục 3b (d): nhãn "thiếu cảnh báo" đổi 4 / 27 câu giữa 2 lượt an toàn, 5 câu thiếu ở cả hai ⇒ đã báo A là mục mới xếp cao.
 **Chẩn đoán 2 sàn phạm B7 XONG (19:59 12/11/2026, 0 USD):** mục "3c" trong `c_phan_chua_on.md` — (1) thiếu cảnh báo câu miễn / giảm = do cách so (điều kiện nằm ở đoạn model tìm thêm, mốc không có đoạn đó); 5 câu thiếu ở cả hai lượt = lỗi khâu viết có từ RAG mốc; (2) S2b: 1 câu = giới hạn User đã nhận 09/11, 1 câu = loại mới (câu ranh giới có chữ Huế, định tuyến dao động từ trước 10/11). **C đề xuất A bỏ lượt 3 an toàn (0,02 USD)** — chờ A trả lời; chưa chạy gì có phí.
 **A quyết bỏ lượt 3 an toàn. Bảng "Danh sách sau khi đếm" XONG (20:01 12/11/2026):** mục "3d" trong `c_phan_chua_on.md` (7 việc đáng làm + 7 mục nhận giới hạn / không làm); đã nhắn A.
-**Tiền C 12/11:** 0,024691 USD (không đổi). Không server / worktree / nhánh / container của C.
+Không server / worktree / nhánh / container của C. (Tiền: xem dòng "Tiền C 12/11 (mới)".)
 **Vòng tự soi 1 (20:04 12/11/2026):** đã gửi A / B / E. Tự nhận: xếp hạng "chưa ổn" trước khi đếm (2 / 5 mục đầu phải hạ); thước "thiếu cảnh báo mới" trong plan B7 của C chấm hai bên theo ngữ cảnh riêng (lỗ không ai thấy ở review). Nhận phản biện E: câu miễn / giảm "do cách so" chỉ một nửa — đã sửa mục 3c. Đề xuất tới lượt cuối: bỏ phần kín giữa kỳ, S2 ×1, harness ghi thêm tools / ms / id đoạn tìm thêm.
+**Lượt đếm rẻ thứ hai XONG (20:16 12/11/2026):** 17 câu (di chuyển 6 · tiếng Anh 5 · việc gấp 6), **0,023453 USD** (trần 0,03) ⇒ mục "3e" + bảng 3d cập nhật trong `c_phan_chua_on.md`. Việc gấp: 3 / 6 không có hướng dẫn, 0 / 6 có số khẩn cấp ⇒ đề xuất code nối dòng số cố định khi định tuyến xếp khẩn cấp (cần User — đảo một phần "bỏ khẩn cấp"); di chuyển 4 / 6 kho từ chối ⇒ bổ sung kho; tiếng Anh 5 / 5 đúng nội dung nhưng trả lời tiếng Việt ⇒ chuyện phạm vi. Server đã tắt.
+**Tiền C 12/11 (mới):** 0,024691 + 0,023453 = **0,048144 USD**.
 **Trạng thái: rảnh — chờ A** (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
 **Bẫy 12/11:** lệnh shell dài viết thẳng (heredoc quét `data/` có chữ tên bộ kín) bị auto mode chặn ⇒ viết script bằng Write rồi chạy; log `chat_metrics` không có nội dung câu ⇒ không đếm theo loại câu được, phải gửi câu tự viết; câu kho từ chối đi web ≈ 0,002 USD / câu ⇒ ước tiền lượt đếm theo giá đường web, không theo giá trung bình.
-**Tiền C 12/11:** 0,024691 USD.
+(Tiền tới lúc đó 0,024691 USD — số cuối phiên ở dòng "Tiền C 12/11 (mới)".)
 
 ---
 
