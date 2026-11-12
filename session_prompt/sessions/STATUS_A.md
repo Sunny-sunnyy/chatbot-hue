@@ -5,7 +5,10 @@
 - User: quyền "như 10/11" (18:45 12/11/2026).
 - Giao (`CURRENT_HANDOFF.md` "VIỆC PHIÊN 12/11"): B — B7 bước 0 + probe log truy cập · E — review plan B7 · C — đợt 2 cổng, lượt đếm rẻ.
 - Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`.
-- Tiếp: hỏi User (mỗi lần một câu) đóng tính năng để chạy B7 ⇒ quỹ B7 ⇒ góp ý `bai_hoc/`; vòng tự soi 1 khi B / C / E có kết quả đầu.
+- (20:20 12/11/2026) User: chưa deploy / chưa đóng Phase 9; B7 = đo giữa kỳ (trần 4,3); giao đợt rà khoảng cách; User nghỉ 19:01 – ~20:30, dặn không hỏi. Xong trong lúc User vắng: B7 giữa kỳ phần đã thấy (E review ready; 2 sàn phạm giữ chữ PHẠM), 3 báo cáo rà (E agentic + repo / paper, B TRIPO v5, C phần chưa ổn + 2 lượt đếm rẻ), 4 plan nháp chờ User, vòng tự soi 1 chốt. Chi tiết: handoff "Kết quả đợt rà" + "Vòng tự soi 1". B / C / E rảnh chờ User. Tiền phiên ≈ 0,36; Phase 9 ≈ 4,24 / 4,3.
+- Khi User về: (1) đưa `! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin_chuoi.sh`; (2) hỏi từng câu: việc gấp (plan nháp, đảo một phần quyết định 08–09/11) ⇒ nâng trần ⇒ các việc còn lại ở bảng 3d ⇒ thước "thiếu cảnh báo mới" cho lượt cuối; (3) báo đính chính: 15 ⇒ 12 / 81 bài quán; nhóm nhiều nguồn 6 / 11 / 1.
+- Bẫy A (12/11): (1) khuyến nghị "đóng Phase 9 ⇒ deploy" ở 12/11 khi mốc User là 25–30/12 — User phản đối; đọc mốc đã chốt trước khi đề xuất đóng; (2) chuyển tiếp 2 số chưa qua review cho User (15 / 81, 5 / 12 / 1) rồi phải đính chính ⇒ ghi "chưa review" cạnh số hoặc chờ review; (3) chốt "bỏ hết phần kín" trước khi B góp ý, phải sửa chốt.
+- Tiếp (cũ): hỏi User (mỗi lần một câu) đóng tính năng để chạy B7 ⇒ quỹ B7 ⇒ góp ý `bai_hoc/`; vòng tự soi 1 khi B / C / E có kết quả đầu.
 
 # STATUS A — KẾT PHIÊN CHIỀU 11/11 (mở 13:39; cập nhật 16:25 11/11/2026 `date`)
 
