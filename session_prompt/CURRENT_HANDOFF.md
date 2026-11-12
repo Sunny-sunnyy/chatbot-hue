@@ -28,6 +28,7 @@ Luật chung: mục "Việc đang mở — luật chung" cuối file. Máy ~15 G
 - **Thước "thiếu cảnh báo mới" cho lượt cuối** (ghi trước khi sinh; User duyệt): đếm trên điều kiện có ở ngữ cảnh cả hai bên; "đổi nhãn" chỉ tính khi cả hai người chấm cùng gắn; điều kiện từ đoạn tìm thêm báo riêng, không dùng để hạ sàn. Kết quả giữa kỳ giữ chữ PHẠM.
 - **Sửa harness trước lượt cuối (nhỏ, 0 USD):** file sinh ghi thêm số lần tìm / hết lượt, ms từng lượt gọi model, id đoạn tìm thêm.
 - **Giữ (đã bắt lỗi thật hôm nay):** review plan trước lượt có phí · bước 0 chạy thử 0 USD · đếm lỗi trước khi xây (hạ 3 ứng viên, đổi đợt 2 thành việc dữ liệu) · tính lại độc lập số quyết · hai người chấm · mở trang gốc kiểm lời Codex · đọc từng ca thay vì tin số đếm.
+- **Sửa chốt (20:05 12/11/2026, sau ý B + phản biện E):** phần kín giữa kỳ: **chỉ chạy phần chuỗi** (hỏi tiếp + nhớ tên, ≈ 0,02 USD — vế "kín không ngược chiều" của kết luận (i) và ngưỡng nhớ tên) khi User về chạy một lệnh `!`; bộ kín ngoài phạm vi + trò chuyện bỏ ở giữa kỳ. Vòng sinh lại S-AT **giữ 2 người chấm**, tính "thiếu" khi cả hai cùng gắn; cổng đối chứng 15 câu còn 1 lần / phiên chấm.
 - **Rút kinh nghiệm:** xếp hạng sau khi đếm, không trước; tra repo / paper theo câu hỏi cụ thể, không theo hạn mức số mục; báo User chỗ "đúng ngưỡng, hết biên" (4 câu tụt; web 6 / 10) tách khỏi chữ "đạt". Đề xuất cho vòng cải tiến kết phiên: skill review thêm câu "sàn kiểu 'mới so với mốc' phải cùng mẫu số ở hai bên".
 
 ### Đợt rà khoảng cách (User giao 18:58 12/11/2026) — `report_agent/2026-11-12_ra_khoang_cach/`
