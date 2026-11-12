@@ -1,4 +1,4 @@
-# Spec — "Lên kế hoạch" bản 2 của tính năng: một lịch đủ bốn phần, biểu mẫu đầy đủ, ảnh và bản đồ · NHÁP bản 3.2
+# Spec — "Lên kế hoạch" bản 2 của tính năng: một lịch đủ bốn phần, biểu mẫu đầy đủ, ảnh và bản đồ · NHÁP bản 3.3
 
 Người viết: C. Bản 1 21:13, bản 2 21:22, **bản 3 21:32 12/11/2026** (`date`). Bản 3 = bản 2 (E đã `ready` ở vòng 2, sha `8969c7275346`) + **đổi phạm vi theo mức User chốt tối 12/11** sau khi User tự thử
 hai hệ thống ("muốn hệ thống chúng ta làm tốt như Huế TRIPO"). E chỉ kiểm phần đổi (bảng cuối file). Chưa code. B code sau khi User duyệt.
@@ -75,9 +75,9 @@ Chỗ TRIPO hơn mà mốc này **chưa** đuổi: ba phương án, chi phí, h�
 | Trẻ em (`tre_em`) | 0–6 | ≥ 1 ⇒ luật nhóm hạn chế (không tối muộn, ≤ 2 suất tham quan / ngày) + tránh điểm "nhiều bậc thang" khi cùng cụm có điểm thay | cột bậc thang (phiếu gộp) | **Luôn:** có trẻ em ⇒ 0 điểm tham quan buổi tối. **Sàn:** số điểm nhiều bậc thang giảm ở ≥ 50 % tổ hợp so với 0 trẻ em |
 | Có người lớn tuổi (`lon_tuoi`) | có / không | như trẻ em + ưu tiên điểm không nhiều bậc thang trong cùng mức ưu tiên | như trên | như trên; điểm mức 1 bị thay vì bậc thang ⇒ có dòng ghi chú do code nối |
 | Người lớn (`nguoi_lon`) | 1–10 | chỉ vào dòng "Mình hiểu" và lời văn (một mình / đi nhóm). **Ngoại lệ có chủ ý của N1** — User đã chốt biểu mẫu có số người; ô này sẽ có tác dụng khi làm chi phí (sau mốc) | — | **Luôn:** đổi `nguoi_lon` ⇒ khung giống hệt, chỉ dòng "Mình hiểu" khác |
-| Kiểu đi (`kieu_di`) | nhẹ nhàng · cân bằng · khám phá nhiều | số điểm mỗi buổi tính **bằng phút** theo mục 5c.3 (nhẹ nhàng 1 điểm; cân bằng quỹ 210 phút; khám phá nhiều quỹ 240 phút; tối đa 3 điểm / buổi). Nhóm hạn chế: trần là "nhẹ nhàng" (ghi chú do code) | **thời lượng** (phiếu gộp) | **Luôn:** **tổng** số điểm của cả lịch nhẹ nhàng ≤ cân bằng ≤ khám phá nhiều (theo từng ngày thì không giữ được: mức dày dùng hết điểm cùng cụm sớm hơn — mô phỏng 5 / 60 nhóm); nhóm hạn chế không vượt trần. **Sàn:** 3 mức cho 3 khung khác nhau ở ≥ 70 % nhóm không hạn chế |
+| Kiểu đi (`kieu_di`) | nhẹ nhàng · cân bằng · khám phá nhiều | số điểm mỗi buổi tính **bằng phút** theo mục 5c.3 (nhẹ nhàng 1 điểm; cân bằng quỹ 210 phút; khám phá nhiều quỹ 240 phút; tối đa **2 điểm / buổi, 4 điểm / ngày**). Nhóm hạn chế: trần là "nhẹ nhàng" (ghi chú do code) | **thời lượng** (phiếu gộp) | **Luôn:** **tổng** số điểm của cả lịch nhẹ nhàng ≤ cân bằng ≤ khám phá nhiều (theo từng ngày thì không giữ được: mức dày dùng hết điểm cùng cụm sớm hơn — mô phỏng 5 / 60 nhóm); nhóm hạn chế không vượt trần. **Sàn:** 3 mức cho 3 khung khác nhau ở ≥ 70 % nhóm không hạn chế |
 | Thích gì (`so_thich`) | tối đa 2 trong các loại đủ điểm | điểm hợp loại được chọn trước (sau điểm ưu tiên), xen kẽ hai loại; chọn "ẩm thực" ⇒ phần ăn uống (3.3) thêm một bữa xế / món đặc sản mỗi ngày | nhãn loại của bảng | **Luôn:** chọn 2 loại ⇒ cả hai có mặt trong lịch từ 2 ngày; loại dưới 4 điểm không hiện (tính theo bảng lúc khởi động; có test). **Sàn:** mỗi loại chiếm ≥ 50 % suất sáng / chiều của lịch 2 ngày |
-| Ngày đi (`ngay_di`) | ngày, không bắt buộc, hôm nay tới + 180 ngày | (a) thứ trong tuần ⇒ điểm buổi tối chỉ xếp đúng tối hoạt động; (b) tháng ⇒ điểm có lưu ý mùa bị hạ ưu tiên + dòng lưu ý; (c) trong 7 ngày tới ⇒ gọi dự báo (code đã có), ngày mưa ⇒ ưu tiên điểm trong nhà / cả hai | cột `ngay_hoat_dong` (3 điểm tối — 3 bài kho ghi thứ hoạt động) · cột `mua_luu_y` theo tháng (dựng từ kho, **đưa vào phiếu User**) · cột trong nhà (phiếu gộp) | **Luôn:** 0 điểm tối sai thứ; ngoài 7 ngày ⇒ không có dòng dự báo; điểm có lưu ý mùa trùng tháng mà vẫn xếp ⇒ có dòng lưu ý. **Sàn:** đổi ngày giữa "mùa khô, giữa tuần" ↔ "mùa mưa, cuối tuần" ⇒ khung hoặc ghi chú khác ở ≥ 60 % tổ hợp có điểm ngoài trời / buổi tối |
+| Ngày đi (`ngay_di`) | ngày, không bắt buộc, hôm nay tới + 180 ngày | (a) thứ trong tuần ⇒ điểm buổi tối chỉ xếp đúng tối hoạt động; (b) tháng ⇒ điểm tạm dừng đón khách theo mùa không được xếp + một dòng nhắc mưa chung khi đi tháng 9–12 (mục 5c.2); (c) trong 7 ngày tới ⇒ gọi dự báo (code đã có), ngày mưa ⇒ ưu tiên điểm trong nhà / cả hai | cột `ngay_hoat_dong` (3 điểm tối — 3 bài kho ghi thứ hoạt động) · cột `mua_luu_y` theo tháng (dựng từ kho, **đưa vào phiếu User**) · cột trong nhà (phiếu gộp) | **Luôn:** 0 điểm tối sai thứ; ngoài 7 ngày ⇒ không có dòng dự báo; 0 điểm tạm dừng theo mùa được xếp trong tháng dừng; đi tháng 9–12 ⇒ có đúng một dòng nhắc mưa. **Sàn:** đổi ngày giữa "mùa khô, giữa tuần" ↔ "mùa mưa, cuối tuần" ⇒ khung hoặc ghi chú khác ở ≥ 60 % tổ hợp có điểm ngoài trời / buổi tối |
 | Điểm ưu tiên (không phải ô) | cột `uu_tien` của bảng — **theo từng sở thích** (User chốt 12/11: "thích di tích thì gợi ý Đại Nội, thích thiên nhiên thì Bạch Mã"): mỗi loại 3–4 điểm "phải có" xếp thứ tự; không chọn sở thích ⇒ nhóm nổi tiếng chung | điểm ưu tiên của sở thích được chọn đứng đầu thứ tự xét (mục 5c.1, 5c.4) | bảng đề xuất v8 (private) | **Luôn:** điểm ưu tiên số 1 của sở thích có mặt trong lịch (trừ điểm cụm xa khi đi < 3 ngày); 0 lỗi khung. Mô phỏng trên v8: 30 / 30 nhóm ở cả 6 lựa chọn sở thích |
 
 ### 3.2 Bốn phần của một ngày trong lịch
@@ -114,7 +114,7 @@ Mỗi đợt một plan riêng (viết ngay sau khi User duyệt spec), một nh
 ## 5. Giao diện + hợp đồng dữ liệu
 
 - **Biểu mẫu — một trang, bốn nhóm theo câu hỏi người đi tự đặt:** "Ai đi?" (người lớn, trẻ em bằng nút + / −; ô đánh dấu "có người lớn tuổi") · "Đi bao lâu, khi nào?" (số ngày + / −; ô chọn ngày
-  của trình duyệt, để trống được) · "Đi kiểu nào?" (3 nút, mỗi nút một dòng giải thích bằng số điểm một ngày) · "Thích gì?" (chọn tối đa 2). Dưới cùng: dòng tóm tắt + nút xếp lịch. Lựa chọn nào
+  của trình duyệt, để trống được) · "Đi kiểu nào?" (3 nút, mỗi nút một dòng giải thích bằng số điểm một ngày: khoảng 2 / khoảng 3 / tới 4) · "Thích gì?" (chọn tối đa 2). Dưới cùng: dòng tóm tắt + nút xếp lịch. Lựa chọn nào
   không có tác dụng với tổ hợp hiện tại (vd "khám phá nhiều" khi có trẻ em) ⇒ hiện dòng nhỏ nói rõ.
 - **Lịch — mỗi ngày một khối:** hàng trên là các buổi (sáng · trưa · chiều · tối) theo thứ tự thời gian, mỗi mục: giờ gợi ý — tên — một câu — mã nguồn — ảnh nhỏ (tham quan); khối "Ở đâu" một lần cho
   cả lịch; bản đồ dưới lịch, chọn theo ngày; khối "Ghi chú của lịch" (đang có) gom lưu ý mùa, dự báo, phần thiếu dữ liệu. Giữ nút "Sửa — điền lại biểu mẫu".
@@ -134,7 +134,7 @@ Mỗi đợt một plan riêng (viết ngay sau khi User duyệt spec), một nh
 2. **Giờ mở cửa + thứ hoạt động** của điểm (không xếp điểm đóng cửa / sai tối).
 3. **Cụm kề** (≤ 2 cụm một ngày, không ghép cụm không kề; cụm xa chỉ từ 3 ngày).
 4. **Điểm ưu tiên** (mức 1 rồi mức 2).
-5. **Mùa / dự báo mưa** (hạ ưu tiên điểm ngoài trời có lưu ý; không loại hẳn điểm ưu tiên — chỉ thêm dòng lưu ý).
+5. **Dự báo mưa** (ngày mưa: điểm không ưu tiên xét trong nhà trước; không loại điểm ưu tiên — chỉ thêm dòng "nếu mưa"). Điểm **tạm dừng theo mùa** thuộc bậc 2 (như điểm đóng cửa).
 6. **Sở thích** (≤ 2 loại, xen kẽ).
 7. **Kiểu đi** (số suất mỗi buổi theo thời lượng).
 8. Phần phụ thuộc khung tham quan: buổi tối ⇒ ăn uống ⇒ khối "Ở đâu" (chọn **sau** khi khung tham quan đã chốt, không làm đổi khung tham quan).
@@ -168,11 +168,11 @@ Mọi con số dưới đây là **giá trị ghi trước**; số nào đã có
 ### 5c.2 Luật mùa và luật mưa
 
 - **Xét theo từng NGÀY của lịch** (không theo buổi — dự báo đang dùng trả số theo ngày), lịch vắt qua hai tháng thì mỗi ngày xét tháng của ngày đó.
-- **Mùa** (chỉ cần `ngay_di`, không gọi mạng): điểm có `mua_luu_y.thang` chứa tháng của ngày đang xếp —
-  (i) `bo_khoi_lich: true` (điểm tạm dừng đón khách theo mùa) ⇒ **không xếp** ngày đó;
-  (ii) còn lại ⇒ **"hạ" = chuyển xuống cuối thứ tự xét**, sau mọi điểm cùng sở thích không có lưu ý; vẫn được xếp nếu không còn điểm khác hợp cụm, và khi xếp thì code nối dòng lưu ý;
-  (iii) điểm **ưu tiên** (`uu_tien` của sở thích đang xét) **không bị hạ** — chỉ nối dòng lưu ý (mục 5b bậc 4 trên bậc 5).
-  Ngày đi rơi vào tháng 9–12 ⇒ một dòng nhắc mùa mưa chung ở khối ghi chú (chữ theo câu 3 của phiếu nhỏ, User duyệt).
+- **Mùa** (chỉ cần `ngay_di`, không gọi mạng) — **theo câu trả lời của User cho phiếu nhỏ đợt 1 (12/11):**
+  (i) điểm có `mua_luu_y.bo_khoi_lich: true` và tháng của ngày đang xếp nằm trong `mua_luu_y.thang` (điểm **tạm dừng đón khách** theo mùa) ⇒ **không xếp** ngày đó. Luật này **thắng** mọi luật ưu tiên: điểm đang đóng
+  thì không xếp dù là điểm ưu tiên; khi đó code nối một ghi chú (mã `tam_dung_mua`);
+  (ii) **không in lưu ý mùa theo từng điểm và không "hạ" điểm theo mùa** (User chọn: chỉ một dòng chung);
+  (iii) lịch có ít nhất một ngày rơi vào **tháng 9–12** ⇒ đúng **một dòng** ở đầu khối ghi chú: "Huế đang mùa mưa — nên mang áo mưa, lịch ngoài trời có thể phải đổi" (chữ User duyệt, do code in).
 - **Mưa theo dự báo** (chỉ khi ngày đó nằm trong 7 ngày tới): ngưỡng **khả năng mưa ≥ 60 %** (đúng ngưỡng `NGUONG_MUA` đang chạy — không thêm ngưỡng mới). Ngày mưa ⇒ thứ tự xét của **điểm không ưu tiên**
   đổi thành: trong nhà ⇒ cả hai ⇒ ngoài trời (trong mỗi nhóm giữ thứ tự cũ); điểm ưu tiên giữ chỗ + dòng "nếu mưa" đang có. Dự báo lỗi / hết hạn ⇒ xếp như không có dự báo, không có dòng dự báo.
 - **Sàn** (giữ như mục 3.1): đổi ngày "mùa khô, giữa tuần" ↔ "mùa mưa, cuối tuần" ⇒ khung hoặc ghi chú khác ở ≥ 60 % tổ hợp có điểm ngoài trời.
@@ -183,8 +183,8 @@ Mọi con số dưới đây là **giá trị ghi trước**; số nào đã có
 |---|---|
 | Phút tham quan | `ngan` = **75 phút** · `nua_buoi` = **150 phút** |
 | Đi giữa hai điểm trong một buổi | cùng cụm **15 phút** · cụm kề **30 phút** · khác ⇒ không ghép trong một buổi |
-| Quỹ một buổi sáng / chiều | nhẹ nhàng: 1 điểm · cân bằng: **210 phút** · khám phá nhiều: **240 phút** · tối đa **3 điểm / buổi** |
-| Giờ bắt đầu | sáng **8:00** (khám phá nhiều 7:30) · chiều **14:00** (khám phá nhiều 13:30) |
+| Quỹ một buổi sáng / chiều | nhẹ nhàng: 1 điểm · cân bằng: **210 phút** · khám phá nhiều: **240 phút** · tối đa **2 điểm / buổi** (4 điểm / ngày) |
+| Giờ bắt đầu | sáng **8:00** (khám phá nhiều 7:30) · chiều **13:30** (khám phá nhiều 13:00) — sớm hơn 30 phút để điểm cuối buổi chiều xong trước giờ đóng 30 phút (kho không ghi giờ ngừng bán vé) |
 | Điểm thêm trong buổi | lấy theo thứ tự xét (ưu tiên ⇒ hợp sở thích ⇒ di tích lấp), chưa dùng, hợp buổi, cùng cụm / cụm kề với **điểm đứng ngay trước**, không làm ngày vượt 2 cụm, tổng phút + phút đi ≤ quỹ |
 | Giờ in ra | điểm đầu: giờ bắt đầu ⇒ + phút tham quan; điểm sau: + phút đi ⇒ + phút tham quan. Mọi số là bội của 15 phút ⇒ không cần làm tròn. Dạng "8:00 – 10:30" |
 | Giờ mở cửa | điểm có giờ mở muộn hơn giờ bắt đầu ⇒ dời cả buổi tới giờ mở; giờ kết thúc vượt giờ đóng ⇒ **không thêm** điểm đó (điểm đầu của buổi mà vượt ⇒ chọn điểm khác) |
@@ -192,7 +192,7 @@ Mọi con số dưới đây là **giá trị ghi trước**; số nào đã có
 | Nhóm hạn chế | luôn 1 điểm / buổi, 2 buổi / ngày, giờ như "nhẹ nhàng" |
 
 Kiểm số: 2 điểm ngắn cùng cụm 165 phút, cụm kề 180 ⇒ vừa "cân bằng"; nửa buổi + ngắn cùng cụm 240 ⇒ chỉ vừa "khám phá nhiều"; 3 điểm ngắn cùng cụm 255 ⇒ không vừa (đúng ý: không nhồi).
-Chiều "khám phá nhiều" kết thúc muộn nhất 17:30 = giờ đóng của Quần thể di tích.
+Buổi chiều kết thúc muộn nhất **17:00** (cả "cân bằng" 13:30 + 210 và "khám phá nhiều" 13:00 + 240) = trước giờ đóng 17:30 của Quần thể di tích 30 phút. Trần thật là 2 điểm / buổi vì 3 điểm ngắn không vừa quỹ.
 **Mô phỏng bản thử trên v8 (5 mức số ngày × 2 nhóm × 6 sở thích × 3 kiểu đi = 180 lịch, 0 USD):** 0 điểm lặp · 0 ngày rỗng · 0 ngày quá 2 cụm · tổng số điểm tăng dần theo kiểu đi ở 60 / 60 nhóm ·
 **ba mức cho ba khung khác nhau ở 24 / 30 nhóm không hạn chế (80 % ≥ sàn 70 %)** · trung bình 2,00 / 2,76 / 3,24 điểm một ngày (sáng + chiều) · điểm ban ngày không bao giờ được xếp: **1 / 30**
 (một lăng xa; ≤ 3 theo mục 6). Luật cũ "đi dày" (chỉ ghép khi điểm đầu là ngắn) trên cùng bảng: khác "thong thả" ở 3 / 120 cặp ⇒ **bỏ luật cũ**, tên cũ `thong_tha` ⇒ `nhe_nhang`, `day_lich` ⇒ `kham_pha`.
@@ -246,8 +246,8 @@ lich = {
 
 - **20 yêu cầu của bộ lịch thật + 12 tổ hợp của bộ quyết:** do **E viết** (không phải B — người code; không phải C — người viết spec và bản thử luật), **xong trước khi B bắt đầu bước (b)** của thứ tự merge;
   lưu private trong `data/`, mã băm của hai file ghi vào plan đợt 1. Phân bổ 20 yêu cầu: như mục 6 (5 mức số ngày · có / không trẻ em · có / không lớn tuổi · 3 kiểu đi · 1 và 2 sở thích · 4 kiểu ngày đi).
-- **Định nghĩa "lịch khớp điều đã chọn"** cho người chấm (ghi trước): (1) đúng số ngày; (2) nhóm hạn chế không có tham quan buổi tối; (3) số điểm mỗi ngày hợp kiểu đi (nhẹ nhàng 2 · cân bằng 2–4 · khám phá 3–6, tính sáng + chiều);
-  (4) mỗi sở thích đã chọn có ≥ 1 điểm ưu tiên của nó trong lịch; (5) điểm buổi tối đúng thứ; (6) có ngày đi mùa mưa ⇒ có dòng nhắc. Đủ 6 ⇒ đạt.
+- **Định nghĩa "lịch khớp điều đã chọn"** cho người chấm (ghi trước): (1) đúng số ngày; (2) nhóm hạn chế không có tham quan buổi tối; (3) kiểu đi — **không do người chấm chấm**: code đếm theo cặp trên cùng yêu cầu (tổng điểm nhẹ nhàng ≤ cân bằng ≤ khám phá nhiều, và khám phá nhiều > nhẹ nhàng; mỗi ngày nhẹ nhàng 2 · cân bằng 2–4 · khám phá nhiều 2–4);
+  (4) mỗi sở thích đã chọn có ≥ 1 điểm ưu tiên của nó trong lịch — **ngoại lệ:** điểm ưu tiên không xếp được vì luật cứng (cụm xa khi < 3 ngày, nhóm hạn chế hết suất, điểm tạm dừng theo mùa) ⇒ lịch phải có ghi chú thiếu sở thích do code; (5) điểm buổi tối đúng thứ; (6) có ngày đi mùa mưa ⇒ có dòng nhắc. Đủ 6 ⇒ đạt.
 - Mô phỏng 0 USD: B chạy trên **toàn bộ tổ hợp của biểu mẫu mới** (5 số ngày × trẻ em 0 / ≥ 1 × lớn tuổi có / không × 3 kiểu đi × 16 lựa chọn sở thích [không chọn, 5 đơn, 10 cặp] × 4 kiểu ngày đi = 3.840 tổ hợp).
 
 ### 5c.8 Cờ và mốc cũ
@@ -354,3 +354,16 @@ kèm đối chiếu từng dòng của bảng mục 2.
 | Buổi tối: đúng số thật của kho (1 hoạt động thêm chắc + 1 chờ User), ghi giới hạn đa dạng; cách tính sàn 80 % | mục 3.2 dòng "Buổi tối", 5c.4 | phiếu nhỏ đợt 1 |
 | Tám quyết định để code: cột bảng · mùa / mưa · công thức giờ · đếm cụm · khuôn dữ liệu · model trả mảng theo id · ai viết bộ đo · cờ + mốc cũ | **mục 5c (mới)** | B nêu; A giao |
 | B đã xác nhận cách hiện dần với đầu ra có cấu trúc (5c.6 — phát nguyên câu từng mục). Còn mở (không chặn duyệt spec): báo cáo B thử đủ luồng lập kế hoạch của trang kia (đầu vào cuối, có thể thêm dòng vào mục 2) | 5c.6, mục 2 | — |
+
+## Chỗ đổi của bản 3.3 (22:01 12/11/2026, `date`) — E kiểm mục 5c (sửa chữ / số, không cần vòng nữa) + User trả lời phiếu nhỏ đợt 1
+
+| Đổi gì | Ở đâu | Vì sao |
+|---|---|---|
+| Trần **2 điểm / buổi, 4 điểm / ngày** (bỏ chữ "3 điểm / buổi"); dòng giải thích trên nút: khoảng 2 / khoảng 3 / tới 4 | 3.1, 5, 5c.3 | E S-1: 3 điểm ngắn = 255 phút không vừa quỹ 240 |
+| Định nghĩa chấm: (3) thành phép đếm bằng code theo cặp; (4) thêm ngoại lệ luật cứng + ghi chú | 5c.7 | E S-2 |
+| Buổi chiều bắt đầu 13:30 (khám phá nhiều 13:00) ⇒ xong muộn nhất 17:00 | 5c.3 | E g-2: kho không ghi giờ ngừng bán vé |
+| Luật mùa: chỉ còn "điểm tạm dừng theo mùa ⇒ không xếp" (thắng luật ưu tiên, có ghi chú) + **một dòng nhắc mưa chung tháng 9–12**; bỏ "hạ" và bỏ lưu ý mùa theo từng điểm | 5b bậc 5, 5c.2 | User trả lời câu 2, 3 của phiếu nhỏ; E g-1 |
+| Phố quán bờ nam xếp **mọi tối** kèm ghi chú ngày cấm xe (cột `ngay_hoat_dong` rỗng + `luu_y`) | bảng đề xuất (private) | User trả lời câu 1 |
+| Luật "điểm ưu tiên cụm xa không ở ngày 1" **đã mô phỏng** (bản thử, 180 lịch): ngày 1 có điểm cụm xa 0 / 180 · điểm ưu tiên cụm xa nằm ngày 2 ở 18 / 18 · 0 ngày rỗng · số điểm trung bình mỗi ngày không đổi (2,00 / 2,76 / 3,24) | 5c.4 | A giao; cách đo theo E |
+| Lượt biểu mẫu đo tốc độ bằng hai mốc mới (khung hiện · đủ câu), **không so với số "chữ đầu" cũ**; lượt thử sớm đếm thêm **tỉ lệ câu bị thay nhầm** do luật "tên điểm khác" (tên con nằm trong điểm lớn) | 5c.6 | E g-3, g-4 |
+| Chưa đo được bằng 180 lịch (đo ở bước code, cách đo theo bảng của E trong file review): mùa / mưa (3 kịch bản dự báo ghi sẵn) · tối đúng thứ · giờ không vượt giờ đóng · sàn 80 % buổi tối | plan đợt 1 | E |

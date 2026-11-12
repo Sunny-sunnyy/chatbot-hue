@@ -43,6 +43,8 @@ Không server / worktree / nhánh / container của C. (Tiền: xem dòng "Tiề
 - **Spec "Lên kế hoạch" bản 3.2** sha256 `3ea9bcb8bc10` (chưa commit): 3 sửa chữ của E · số thật buổi tối · ưu tiên theo sở thích · **mục 5c — 8 quyết định để code** (B đã xác nhận model trả mảng theo id mục, hiện nguyên câu từng mục).
 - **Phiếu ảnh XONG 21:56 12/11/2026 (`date`)** (private): `data/phase_9/lich_trinh/phieu_anh_2026-11-12.md` — 27 dòng ảnh (23 mới + 4 dùng lại bộ cổng), 5 dòng cần xem, **7 điểm chưa có ảnh** (phố Tây, phố Hai Bà Trưng, đồi Thiên An, thác Nhị Hồ, 2 điểm Lê Bá Đảng, Bảo tàng Hồ Chí Minh). C chưa nhìn thấy ảnh (công cụ chỉ trả chữ) ⇒ User / session đợt 2 phải xem. Dựng bằng `tools/dung_phieu_anh.py`.
 
+- **Plan đợt 1 "Lên kế hoạch" NHÁP bản 1** (21:57 12/11/2026 `date`, 0 USD, chưa commit): `docs/superpowers/plans/2026-11-12-len-ke-hoach-dot-1-plan.md` — bước (a)–(e), tiêu chí Luôn / Sàn, lượt thử sớm, điểm dừng D1–D4. Luật "cụm xa không ở ngày 1" đã mô phỏng (0 / 180; 18 / 18). Chờ: B đọc trước, A duyệt; E kiểm spec 5c ⇒ C sửa plan một lần.
+
 **Trạng thái: rảnh — chờ A** (không server / worktree / nhánh / container của C; việc dở: không) (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
 **Bẫy 12/11:** lệnh shell dài viết thẳng (heredoc quét `data/` có chữ tên bộ kín) bị auto mode chặn ⇒ viết script bằng Write rồi chạy; log `chat_metrics` không có nội dung câu ⇒ không đếm theo loại câu được, phải gửi câu tự viết; câu kho từ chối đi web ≈ 0,002 USD / câu ⇒ ước tiền lượt đếm theo giá đường web, không theo giá trung bình.
 (Tiền tới lúc đó 0,024691 USD — số cuối phiên ở dòng "Tiền C 12/11 (mới)".)
