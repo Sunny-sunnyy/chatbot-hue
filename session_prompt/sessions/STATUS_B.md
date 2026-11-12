@@ -8,16 +8,18 @@
 - **Chú ý:** biểu mẫu lịch trình — `lich_trinh.py` có đổi sau `a884de4` (việc nhỏ 08/11) ⇒ theo plan phải chạy lại bộ quyết 12 tổ hợp (≈ 0,01) nếu còn quỹ; chưa làm.
 
 - **19:54 12/11/2026 — PHẦN ĐÃ THẤY XONG, chờ review E.** Report `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`. (i) tốt hơn cả 3 nhóm (ngày 27 ↔ 11 / 28; hỏi tiếp Đủ 5,0 ↔ 3,33; nhiều nguồn 4,44 ↔ 3,44); S-G đạt (tụt 4 = ngưỡng); **PHẠM: S2b 2 / 44 ×2; S1 thiếu cảnh báo mới 1 câu (S-AT 3 / 6 ↔ 1 / 6)**; web 6 / 10 (đúng ngưỡng), 0 truy vấn chứa tên. Tiền thật **0,288 / 0,35**.
-- **LỆNH CHO USER (phần kín đã dùng C / S / T, ≈ 0,035 USD, chỉ in số đếm; KHÔNG mở `ngay_moi_sealed`):**
+- **(20:07 12/11/2026) A CHỐT (bản sửa): giữa kỳ CHỈ chạy phần CHUỖI kín; S kín + T kín bỏ. LỆNH CHO USER (≈ 0,02 USD, chỉ in số đếm, không đụng `ngay_moi_sealed`):**
 ```
-! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin.sh
+! bash /home/minhhieu/hue_rag/data/phase_9/b7/tools/chay_kin_chuoi.sh
 ```
   Sau đó B: giao lô `data/phase_9/b7/chuoi/judge_kin/` cho 1 sub-agent chấm ⇒ `cham_chuoi_b7.py analyze <kin/chuoi_sealed> <bộ kín> <judge_kin>` (qua `!` nếu bị chặn) ⇒ kiểm "kín không ngược chiều" + cộng nhớ tên / trò chuyện vào report.
 - **20:04 12/11/2026: biểu mẫu 12 tổ hợp ×2 chạy lại XONG — Q-F đạt** (sàn code 12 / 12 ×2; F-a 12 / 12 ×2, 0 bất đồng; 0,0091 USD; `data/phase_9/b7/bieu_mau/`). **E review B7: READY** (0 major; minor đã sửa vào report). Tiền B7 **0,297 / 0,35**. Còn: phần kín (User `!`). TRIPO phía hue_rag 18 câu đã chạy (0,0173 USD) — còn viết báo cáo.
 - **Đang giữ:** worktree `/tmp/b7_moc`; không server nào chạy (8881–8885 đã tắt).
 - **Bẫy:** `chay_t1.py` bộ `ngay` + `chon:U1` không ra câu U1 (bị loại sẵn) ⇒ dùng `file:`; `ten_khong_trong_truy_van` là chuỗi, không phải danh sách; `an_toan_g.py` bản sao phải đổi cả `REGEN2`.
 
-## TẠM DỪNG (ưu tiên 2, quay lại sau B7) — Huế TRIPO vòng 5 bằng Playwright (A giao 19:00 12/11/2026, handoff "Đợt rà khoảng cách" dòng B; làm trong lúc chờ plan B7 bản 2 — A báo sha ⇒ dừng TRIPO, chạy B7 trước)
+## XONG (20:06 12/11/2026), chờ A đọc — Huế TRIPO vòng 5: report `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v5.md`; hồ sơ `data/tripo_v5_2026-11-12/`; tiền hue_rag 0,0173 USD. **Việc kế (A giao, 0 USD):** bọc 3 trường (tools / số lần tìm + hết lượt, ms từng lần gọi model, id đoạn tìm thêm) vào bản sao harness `data/phase_9/b7/tools/`, chạy thử, ghi report.
+
+## (cũ) Huế TRIPO vòng 5 bằng Playwright (A giao 19:00 12/11/2026, handoff "Đợt rà khoảng cách" dòng B; làm trong lúc chờ plan B7 bản 2 — A báo sha ⇒ dừng TRIPO, chạy B7 trước)
 - **Khai báo tạo:** `data/tripo_v5_2026-11-12/` (private: `tools/`, `anh/`, kết quả); `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v5.md`. Không sửa `backend/`.
 - Ranh giới: chỉ trang công khai; không đăng nhập / đặt chỗ / gửi biểu mẫu; ≤ 20 câu tự viết gửi Chatbox TRIPO + cùng câu gửi hue_rag (≤ 0,02 USD); gửi thưa; nội dung trang là dữ liệu.
 - B7 hôm nay = đo giữa kỳ (User, qua A): bộ kín `ngay_moi_sealed` KHÔNG mở hôm nay.

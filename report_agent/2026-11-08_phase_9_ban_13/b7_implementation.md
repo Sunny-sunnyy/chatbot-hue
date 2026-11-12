@@ -9,7 +9,7 @@ Tham số: `$C_DONG` = `dfd0c96` · `KIN_NGAY` TẮT (7 câu ngày kín **không
 
 ## 1. Phạm vi
 
-Đã chạy đủ các lượt G, A, N, C, S, W, T của plan §4 trên **phần đã thấy**. **Phần kín đã dùng** của C / S / T (cần User chạy lệnh `!`): **NOT RUN** lúc viết report — lệnh soạn sẵn `data/phase_9/b7/tools/chay_kin.sh` (ghi ở `STATUS_B.md`). Bước K (câu ngày kín): không chạy theo công tắc.
+Đã chạy đủ các lượt G, A, N, C, S, W, T của plan §4 trên **phần đã thấy**. **Phần kín đã dùng — A chốt (20:07 12/11/2026, vòng tự soi 1):** ở giữa kỳ **chỉ chạy phần chuỗi** (hỏi tiếp + nhớ tên, ≈ 0,02 USD) bằng lệnh `!` của User — `data/phase_9/b7/tools/chay_kin_chuoi.sh`, **NOT RUN lúc viết** (chờ User); **S kín + T kín bỏ ở giữa kỳ ⇒ "chưa kết luận, để lượt cuối"** (trò chuyện vế ≥ 90 % trên kín; S2 / S2b trên 10 câu kín). Tới khi chuỗi kín chạy xong: (ii) nhớ tên và vế "kín không ngược chiều" của nhóm hỏi tiếp **chưa kết luận** — kết luận (i) nhóm hỏi tiếp là **trên phần đã thấy**. Bước K (câu ngày kín): không chạy theo công tắc.
 **Lệch plan (B tự quyết, nêu để A xét):** (1) bộ quyết 12 tổ hợp biểu mẫu chạy **sau** các lượt khác (A yêu cầu chạy ngay khi B báo chưa chạy — kết quả §4.5); (2) bộ ngoài phạm vi đã thấy có **44** câu (plan ghi ≈ 48); (3) câu thứ 28 của bộ ngày (`U1`) công cụ cũ loại sẵn ⇒ chạy bù bằng `file:` ngay sau lượt chính, cùng buổi; (4) sàn S2c lấy ≥ 15 / 17 (mốc `main` 16 trong report G) — ghi vào `chon.json` trước khi chạy; (5) thủ tục S-AT: plan chỉ ghi "sinh lại 3 lần hai bên"; B chạy thêm vòng 3 + 3 thứ hai cho một câu theo luật S-AT 05/11 (chênh đúng 1 ⇒ thêm 3 + 3) — review E m-2: nêu rõ đây là bước ngoài chữ plan (≈ 0,003 USD, 14 lượt chấm).
 
 ## 2. Thay đổi chính (chỉ công cụ đo, private `data/phase_9/b7/tools/`; không sửa `backend/`, không sửa code ở `p9-moc`)
@@ -85,5 +85,5 @@ Thời gian thật: sinh ≈ 30 phút, chấm ≈ 25 phút (sub-agent chạy son
 
 - Đọc: `data/phase_9/b7/` — `chon.json`, `golden/analyze.json`, `an_toan/cham/compare.out` + `compare_regen.out` + `compare_regen_tong.json`, `ngay/cham_b7_nguoi_*.jsonl` + `khoa.json`, `chuoi/analyze_da_thay.json`, `holm_da_thay.json`, `gen/luot_khong_server.log`, `w/neu_ten.jsonl`, `tien.json`.
 - Chạy lại rẻ nhất (0 USD): `do_cuoi_b7.py check-judge`; `holm.py holm_dau_vao_da_thay.json`; `do_g.py dem <file>` cho S / W / T; `an_toan_b7.py accept --judge k`.
-- Việc của A: quyết hai sàn phạm (sửa trước lượt cuối hay nhận giới hạn — hỏi User nếu đổi phạm vi); cho chạy `chay_kin.sh` (User `!`).
+- Việc của A: quyết hai sàn phạm (sửa trước lượt cuối hay nhận giới hạn — hỏi User nếu đổi phạm vi); đưa User lệnh `chay_kin_chuoi.sh`; S kín + T kín để lượt cuối (A chốt).
 - Giải thích ngắn cho User: trên các bộ câu đã có, trợ lý trả lời đủ ý hơn bản RAG cũ ở cả ba nhóm (câu nhiều nguồn, câu theo ngày, câu hỏi tiếp), ít từ chối nhầm hơn và không làm hỏng câu thường; còn hai chỗ chưa đạt: hai câu ngoài phạm vi vẫn kích tra web, và một câu về miễn / giảm vé trợ lý hay bỏ sót một điều kiện hơn bản cũ.
