@@ -86,6 +86,9 @@ class AssistantFlags:
     thoi_tiet: bool = False
     # Phase 9 T1 (plan `2026-11-08-phase-9-t1-ngay-plan.md`): công cụ `ngay_lich` (code tính ngày + đổi âm ↔ dương) — chỉ đưa khi câu có từ chỉ ngày
     ngay_lich: bool = False
+    # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
+    # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
+    het_luot_bo_cong_cu: bool = False
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -756,6 +759,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
+    if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
+        extra["con_luot_fn"] = lambda: trace.model_searches < MODEL_SEARCH_LIMIT
     return extra
 
 
@@ -1025,10 +1030,12 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         da_phat_buoc = len(trace.buoc_lich)
                     elif cong_cu not in ("thoi_tiet", "ngay_lich"):  # B5b / T1: kết quả dự báo / ngày không phải "đã tìm kho"
                         yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
-        except Exception:
+        except Exception as exc:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)
                 raise trace.tool_error from None
-            raise
+            # hết lượt tìm (cờ `het_luot_bo_cong_cu`): model vẫn xin `tim_kho` đã ẩn ⇒ không phải lỗi 500 — câu từ chối cố định như chạm `max_turns`
+            if tool_state is None or not generator.xin_cong_cu_da_an(exc, tool_state):
+                raise
         finally:
             trace.generation_ms = elapsed_ms(started)
 

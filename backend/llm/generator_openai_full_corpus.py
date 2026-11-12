@@ -18,7 +18,7 @@ from agents import (
     function_tool,
 )
 from agents.agent import ToolsToFinalOutputResult
-from agents.exceptions import AgentsException
+from agents.exceptions import AgentsException, ModelBehaviorError
 from openai import AsyncOpenAI, OpenAIError
 from openai.types.shared import Reasoning
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
@@ -398,17 +398,21 @@ class OpenAIFullCorpusGenerator:
         queries = [parsed.cau_tim] if isinstance(parsed.cau_tim, str) else list(parsed.cau_tim)
         return parsed.route, queries
 
-    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None) -> tuple[Agent, dict, dict]:
+    def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
+                       con_luot_fn=None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
-        state = {"hit_max_turns": False}
+        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn}
 
         def on_max_turns(_input) -> AnswerOutput:
             state["hit_max_turns"] = True
             return AnswerOutput(answer=INSUFFICIENT_ANSWER)
 
-        tools = [function_tool(tool_fn, name_override="tim_kho", failure_error_function=None)]
+        # Hết lượt tìm (plan 12/11): `con_luot_fn` có ⇒ SDK hỏi lại hàm này trước MỖI lượt gọi model; trả False ⇒ lượt đó không gửi `tim_kho`
+        # (model phải viết ngay). Không truyền ⇒ dựng công cụ y như trước (chuỗi gửi model giống byte).
+        con_tim = {} if con_luot_fn is None else {"is_enabled": lambda _context, _agent: con_luot_fn()}
+        tools = [function_tool(tool_fn, name_override="tim_kho", failure_error_function=None, **con_tim)]
         extra = {"tool_use_behavior": "stop_on_first_tool"} if stop_on_first_tool else {}
         base = self.assistant_history_agent if history else self.assistant_agent
         if lich_trinh_fn is not None:  # B5 D1: công cụ thứ hai; mô tả ngắn, không đổi lời dặn (D7); dừng lượt chỉ khi code trả thẻ hỏi lại (D15)
@@ -421,28 +425,49 @@ class OpenAIFullCorpusGenerator:
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
-                                  thoi_tiet_fn=None, ngay_lich_fn=None) -> GeneratedText:
+                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn)
-        result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn),
-                                 error_handlers=handlers)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
+                                                     con_luot_fn=con_luot_fn)
+        try:
+            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn),
+                                     error_handlers=handlers)
+        except GenerationError as exc:
+            if not self.xin_cong_cu_da_an(exc.__cause__, state):
+                raise
+            result = None
         return self._tools_result(result, started, call_log, state)
+
+    @staticmethod
+    def xin_cong_cu_da_an(exc: BaseException | None, state: dict) -> bool:
+        """Model xin `tim_kho` ở lượt công cụ đã ẩn vì hết lượt tìm ⇒ SDK ném `ModelBehaviorError` ("Tool tim_kho not found"; probe 12/11, cả đường
+        thường lẫn stream). Đúng ca đó ⇒ đánh dấu lượt và trả True: nơi gọi không coi là lỗi, `_tools_result` trả câu từ chối cố định như nhánh chạm
+        `max_turns`. Lỗi hành vi model khác, hoặc công cụ chưa bị ẩn ⇒ False (vẫn là lỗi)."""
+        con_luot_fn = state.get("con_luot_fn")
+        if isinstance(exc, ModelBehaviorError) and con_luot_fn is not None and not con_luot_fn() and "tim_kho" in str(exc):
+            state["xin_cong_cu_da_an"] = True
+            return True
+        return False
 
     def _tools_result(self, result, started: float, call_log: "CallLog", state: dict) -> GeneratedText:
         """Kết quả lượt trợ lý có công cụ. Dừng ở thẻ hỏi lại (B5 D15, đường B4 D8) ⇒ `final_output` là dict công cụ trả ⇒ đọc **trước** khi ép
         `AnswerOutput`."""
+        if state.get("xin_cong_cu_da_an"):  # hết lượt tìm mà model vẫn xin `tim_kho`: không có chữ model ⇒ câu từ chối cố định (như `max_turns`)
+            return dataclasses.replace(self._generated_text(result, INSUFFICIENT_ANSWER, started, call_log), hit_max_turns=True)
         output = getattr(result, "final_output", None)
         if isinstance(output, dict) and "loai" in output:
             return dataclasses.replace(self._generated_text(result, "", started, call_log), clarify=output)
         text = parse_structured_output(output, AnswerOutput)
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
-    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
+    def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
+                           con_luot_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
-        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn)
+        agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
+                                                     con_luot_fn=con_luot_fn)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn), run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
