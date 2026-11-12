@@ -94,3 +94,5 @@ Danh sách cơ sở lưu trú trong kho (chờ quyết định nguồn dữ li�
 | thẻ kèm dòng nguồn | mục 3 (`bai_id`) |
 
 **Sửa sau duyệt (21:20 12/11/2026, A quyết):** thêm **đường kích hoạt thứ hai** — lượt biểu mẫu lịch trình từ **2 ngày** trở lên ⇒ code gắn thẻ (quyết theo số ngày của biểu mẫu, không qua nguồn kho / từ khoá); lịch 1 ngày không thẻ. Đổi L7 (5 ca ⇒ 6 ca). Không đổi tiền, không đổi tiêu chí khác ⇒ không duyệt lại.
+
+**Sửa sau duyệt (21:37 12/11/2026):** bảng `khu_v1.json` thêm trường `cum` cho mỗi khu = danh sách cụm của bảng điểm thuộc khu đó (ánh xạ 8 cụm ⇒ 3 khu, dùng chung cho thẻ dưới lịch — spec biểu mẫu của C — và bài lưu trú theo khu — spec kho 3). User duyệt cùng bảng. Không đổi tiêu chí, tiền.

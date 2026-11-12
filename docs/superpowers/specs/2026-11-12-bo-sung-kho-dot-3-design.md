@@ -68,7 +68,7 @@ Lịch cần điểm / hoạt động buổi tối; bảng lịch trình hiện 
 3. **Sao lưu:** file quán bị sửa ⇒ `knowledge-base-hue/meta/backup_dot_3_2026-11-12/`; snapshot Qdrant; chép build record + sparse state ra `data/sua_kho_2026-11-12_dot_3/backup/`.
 4. **Ghi kho** + **chia đoạn thử, chỉ đọc**: 0 lỗi, mỗi đoạn vừa 3 tokenizer; test mẫu chunker (không file mẫu nào bị chạm — xác nhận).
 5. **Dựng lại tại chỗ:** xoá đủ ba đích (collection, build record, sparse state) rồi build (CPU, ~vài chục phút); script có bước 0 kiểm khoá + tự lùi như `chay.sh` 05/11.
-6. **Kiểm sau build:** `/health` 5 / 5; cổng ổn định; **đếm đoạn theo nguồn trong chỉ mục: số đoạn của mỗi file mới = số đoạn chia thử, và ≠ 0** (bắt lỗi "file không được quét"); **T1 mới** (158 câu) ⇒ so từng câu với T1 cũ `64656a87c109`, tách hai nhóm: câu có đoạn mới lọt vào 10 đoạn đầu · câu đổi 10 đoạn đầu **không** do đoạn mới (phải bằng 0 — khác 0 ⇒ dừng, tìm nguyên nhân).
+6. **Kiểm sau build:** `/health` 5 / 5; cổng ổn định; **đếm đoạn theo nguồn trong chỉ mục: số đoạn của mỗi file mới = số đoạn chia thử, và ≠ 0** (bắt lỗi "file không được quét"); **T1 mới** (158 câu) ⇒ so từng câu với T1 cũ `64656a87c109`, tách hai nhóm: câu có đoạn mới lọt vào 10 đoạn đầu · câu đổi 10 đoạn đầu **không** do đoạn mới — **chỉ theo dõi, không phải điều kiện dừng** (thêm đoạn + dựng lại bảng từ khoá làm xê dịch thứ hạng cả kho: đợt 05/11 sửa 11 bài đã đổi 10 / 158 câu); điều kiện dừng là K3 "0 câu mất đoạn đúng" + K1.
 7. **Nhãn đoạn đúng v6:** chỉ thêm dòng / thêm file ⇒ trích dẫn cũ tìm lại nguyên văn; `chunk_id` dồn ở file quán bị thêm dòng ⇒ dựng v6 bằng công cụ có sẵn, 0 trích dẫn mất.
 8. **Đo "sau"** (§6) ⇒ chấm cùng lượt mù với "trước".
 9. **Báo cáo + bài học:** sổ ghi việc (khâu kho, chia đoạn, tìm), `bai_hoc/` bài 1 + bảng tổng bài 19, `Project_Status.md` §4 (số file, số đoạn, sha).
@@ -84,7 +84,7 @@ Lịch cần điểm / hoạt động buổi tối; bảng lịch trình hiện 
 |---|---|---|---|
 | K1 | Không làm hỏng câu cũ | Golden 176 trước ↔ sau, chấm cùng lượt mù | Đủ / Đúng TB theo cặp ≥ −0,1; câu tụt ≤ 4; từ chối nhầm ≤ trước + 1; 0 câu ngoài kho bị trả lời; 0 lỗi kỹ thuật / trích dẫn mới |
 | K2 | An toàn | 32 câu ×1 (ca mới ⇒ thủ tục sinh lại 3 lần, hai người chấm cùng gắn) | 4 số như mọi bậc |
-| K3 | Tầng tìm câu cũ không bị đoạn mới chen | T1 158 câu: số câu có **đoạn mới** (lưu trú / quán dữ liệu mở / đi lại) lọt vào 10 đoạn đầu; số câu đổi 10 đoạn đầu không do đoạn mới | ≤ 5 câu, 0 câu mất đoạn đúng (nhãn v6) vì bị chen; nhóm thứ hai = 0 |
+| K3 | Tầng tìm câu cũ không bị đoạn mới chen | T1 158 câu: số câu có **đoạn mới** (lưu trú / quán dữ liệu mở / đi lại) lọt vào 10 đoạn đầu; số câu đổi 10 đoạn đầu không do đoạn mới | ≤ 5 câu có đoạn mới chen, **0 câu mất đoạn đúng (nhãn v6)**; nhóm thứ hai chỉ báo số (theo dõi) |
 | K4a | Lưu trú — **câu danh sách theo hạng / khu** ("khách sạn 4–5 sao nào", "khách sạn ở khu …") | 6 câu (2 câu cơ sở cụ thể đã đếm thuộc loại này + 4 mới) | kho trả lời có trích dẫn, tên nêu ra đều có trong bài: ≥ 5 / 6 |
 | K4b | Lưu trú — **câu "gần điểm X"** | 4 câu (2 đã đếm + 2 mới) | ≥ 2 / 4 trả lời đúng khu của điểm X (phụ thuộc tỉ lệ gán cụm — ngưỡng thấp có chủ ý) |
 | K4c | Lưu trú — câu "giá rẻ" · câu homestay · mọi câu | 2 câu + cả bộ | đúng kết cục ghi trước ở §3 (a); **0 câu nêu giá phòng**; 0 cơ sở ngoài bài |
@@ -120,6 +120,8 @@ Lịch cần điểm / hoạt động buổi tối; bảng lịch trình hiện 
 | Câu định vị sai vì toạ độ ước | Q4 (a) chỉ dùng toạ độ chắc |
 | Bài đi lại lệch thực tế (tuyến xe đổi) | chỉ ý có ≥ 1 nguồn chính thức; không giá, không số điện thoại; ghi ngày |
 | Trộn ba phần vào một lần dựng ⇒ khó biết phần nào gây lỗi | K3 đếm theo nguồn đoạn; lùi theo phần |
+
+**Sửa chữ sau vòng 2 của C (21:37 12/11/2026; không đổi tiêu chí dừng K1 / K3, tiền, phạm vi):** bước 6 + K3 — "số câu đổi 10 đoạn đầu không do đoạn mới" là số theo dõi, không phải điều kiện dừng. **Bảng ánh xạ 8 cụm của bảng điểm ⇒ 3 khu nên ở** (cho khối "Ở đâu" của lịch và cho bài lưu trú theo khu): E giữ, đặt trong bảng khu của plan lưu trú (`khu_v1.json`, trường `cum`), User xem cùng phiếu.
 
 ## Chỗ đổi bản 2
 | Nguồn | Sửa ở |

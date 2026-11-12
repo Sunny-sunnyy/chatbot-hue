@@ -1,5 +1,7 @@
 # STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
 
+## TRẠNG THÁI (21:37 12/11/2026): rảnh — chờ User duyệt spec "Lên kế hoạch" bản 3 (`16e9f7f4fa19`) + phiếu gộp ⇒ B code đợt 1 (đã gửi A 8 chỗ spec còn thiếu trước khi code; bước (a) hợp đồng `truong` + biểu mẫu bắt đầu được ngay khi duyệt). **Xong:** review code nhánh `p9-tra-web-exa` `4b37051` = ready, 0 major / 6 minor (`report_agent/2026-11-12_ra_khoang_cach/e_exa_code_review.md`, chờ A commit). Đang giữ worktree `/tmp/b_hlt` (chờ E review nhánh hết lượt tìm), `/tmp/b7_moc` (lượt B7 cuối); worktree review `/tmp/b_exa_rv` đã gỡ. Tiền B phiên 12/11 ≈ 0,476 USD (B7 0,313 · TRIPO 0,017 · hết lượt tìm 0,146); review Exa 0 USD.
+
 ## XONG ĐO (21:29 12/11/2026), chờ E review — "hết lượt tìm thì dừng": S-AT vòng cuối KHÔNG âm (S11 dao động ở cả hai trạng thái cờ — vấn đề có sẵn); tiền 0,146 / 0,15; cờ TẮT; nhánh `p9-het-luot-tim` `ab66f5e` đã push; report §7. Không đo thêm.
 
 ## (chi tiết) "hết lượt tìm thì dừng" (A giao 20:38 12/11/2026; handoff "VIỆC ĐỢT 2 PHIÊN 12/11" dòng B; plan `docs/superpowers/plans/2026-11-12-het-luot-tim-plan.md` A duyệt mức nhẹ; trần 0,09 USD)
