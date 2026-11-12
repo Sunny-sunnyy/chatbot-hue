@@ -75,6 +75,8 @@ Tiền: User "vẫn duyệt chi phí API" (19:01) ⇒ A ghi **trần Phase 9 t�
 
 **User (21:47 12/11/2026): "Cho dùng Photon"** — cho phép gửi tên + địa chỉ quán (và cơ sở lưu trú chưa gán khu) tới photon.komoot.io để lấy toạ độ; A tự chạy trong terminal A (≤ 1 lượt / giây), chưa sửa kho. User cũng yêu cầu B thử ĐẦY ĐỦ mọi tính năng TRIPO (không chỉ lập kế hoạch), lưu ảnh + HTML.
 
+**User trả lời phiếu nhỏ đợt 1 (21:58 12/11/2026):** phố Tây xếp MỌI tối, kèm ghi chú "tối thứ Sáu – Chủ nhật mới cấm xe" · thác Nhị Hồ mùa tạm dừng (cuối tháng 9 – tháng 2): BỎ HẲN khỏi lịch · nhắc mưa: KHÔNG in theo từng điểm, chỉ MỘT dòng đầu lịch khi ngày đi rơi vào tháng 9 – 12. **User hỏi (21:58 12/11/2026):** đã nghiên cứu cách viết lời dặn (system prompt) cho trợ lý / agent chưa; nên chia nhiều agent hay gộp một ⇒ A trả lời + giao C rà lời dặn theo skill `agent-design-review` (chỉ đọc).
+
 ### Đợt rà khoảng cách (User giao 18:58 12/11/2026) — `report_agent/2026-11-12_ra_khoang_cach/`
 
 **User (18:58 12/11/2026):** chưa deploy, chưa đóng Phase 9 (mốc đóng code vẫn 25–30/12). **B7 hôm nay = đo giữa kỳ** (trả lời "trợ lý đã hơn RAG 1–8 chưa, ở đâu"); lượt cuối chạy lại lúc đóng code ⇒ **bộ kín chưa mở `ngay_moi_sealed` 7 câu giữ cho lượt cuối, hôm nay không mở**. Đồng thời: rà khoảng cách tới agentic RAG; nghiên cứu repo (file `báo cáo nghiên cứu github.txt` + Codex tra thêm); thử đầy đủ Huế TRIPO bằng Playwright; rồi A tổng hợp "tính năng nào cần bổ sung · phần nào chưa ổn cần phát triển / tối ưu lại" trình User.
