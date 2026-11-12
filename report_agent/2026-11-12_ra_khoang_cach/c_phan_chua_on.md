@@ -201,8 +201,10 @@ C không sửa gì, không chạy lại. Nhãn: **[chứng minh]** = đọc th�
 | Có lịch hệ thống / lời dặn nào chen vào? | [chứng minh] Không thấy dòng lịch hệ thống hay câu cố định nào trong câu trả lời; phần chính (được miễn, giấy tờ cần xuất trình) đúng và giống nhau ở mọi lần, hai bên |
 | Câu trả lời ngắn hơn không (cùng gốc 4 câu tụt)? | **Không cùng gốc.** 4 câu tụt là "cùng ngữ cảnh, viết ngắn hơn"; câu này là "ngữ cảnh **nhiều hơn** mốc". Độ dài trợ lý 195–289 chữ; mốc 190–504 chữ, dài hơn ở các lần mốc kể thêm một mức phí ở nguồn khác và nói "nguồn mâu thuẫn" (trợ lý trả lời thẳng, không kể mâu thuẫn — người chấm không tính đó là thiếu) |
 
-**Kết luận:** [chứng minh] sàn phạm ở câu này **do cách so**: thước "thiếu điều kiện có trong ngữ cảnh" chấm mỗi bên theo ngữ cảnh của chính nó; trợ lý tìm thêm nên có thêm
-điều kiện để "thiếu", mốc thì không. [giả thuyết] Mức nguy hiểm thấp: điều kiện bị thiếu là điều hiển nhiên (chỉ vào được trong giờ mở cửa), không phải cảnh báo an toàn.
+**Kết luận (sửa 20:04 12/11/2026 sau phản biện của E trong vòng tự soi; E kiểm độc lập: đoạn có ở 8 / 8 lần của trợ lý, 0 / 7 lần của mốc):** sàn phạm ở câu này có **hai nửa**.
+[chứng minh] Nửa thứ nhất **do cách so**: thước "thiếu điều kiện có trong ngữ cảnh" chấm mỗi bên theo ngữ cảnh của chính nó; trợ lý tìm thêm nên có thêm điều kiện để "thiếu",
+mốc thì không. [chứng minh] Nửa thứ hai **là lỗi thật của khâu viết**: trợ lý có đoạn trong tay mà không nêu điều kiện ở 5 / 8 lần — cùng gốc với mục (1b). Việc đổi thước
+**không** dùng để hạ sàn: điều kiện từ đoạn tìm thêm vẫn phải báo (báo riêng), và thước mới phải ghi trước khi sinh lượt cuối. [giả thuyết] Mức nguy hiểm thấp: điều kiện bị thiếu là điều hiển nhiên (chỉ vào được trong giờ mở cửa), không phải cảnh báo an toàn.
 **Sửa nhỏ nhất khả dĩ (không làm):** sửa ở **thước**, không sửa hệ thống — khi so "mới so với mốc", chỉ tính điều kiện nằm trong đoạn **cả hai bên cùng có** (hoặc chấm mốc trên
 ngữ cảnh của trợ lý); điều kiện từ đoạn tìm thêm báo riêng. Đây là đổi tiêu chí ⇒ ghi vào plan lượt cuối trước khi đo, không áp ngược cho lượt giữa kỳ.
 
