@@ -240,6 +240,38 @@ hỏi sắp làm thì nêu kèm một câu" — là đổi lời dặn ⇒ một
 - Giới hạn: file lượt S2 không ghi trường "định tuyến xếp khẩn cấp" ⇒ việc câu thứ nhất hôm nay vẫn đi qua nhãn khẩn cấp là suy từ lượt 09/11 [giả thuyết]; kiểm bằng một lần
   gửi câu đó qua server và đọc log (≈ 0,002 USD).
 
+## 3d. Danh sách sau khi đếm (xếp lại theo bằng chứng 12/11 — ghi 20:01 12/11/2026; thay thứ tự ở mục 3)
+
+Thứ tự lỗi User đã chốt (nặng ⇒ nhẹ): sai / thiếu cảnh báo an toàn, điều kiện vào khu vực › nói chắc sai › trả lời câu ngoài kho › thiếu ý › từ chối nhầm.
+Mọi dòng là **đề xuất**, chưa làm gì. Giờ = giờ agent; tiền = USD API ước.
+
+### Đáng làm (xếp theo mức nặng × độ chắc của bằng chứng)
+
+| # | Việc | Lỗi đếm được hôm nay | Mức nặng | Sửa nhỏ nhất khả dĩ · cách đo | Giờ / tiền | Cần User quyết |
+|---|---|---|---|---|---|---|
+| 1 | **Khâu viết bỏ cảnh báo / điều kiện dù đoạn có trong ngữ cảnh** | 5 / 27 câu an toàn thiếu ở **cả hai** lượt (2–3 câu thiếu thật, 2 câu do thước đòi nhiều); 4 / 5 câu RAG mốc cũng thiếu ⇒ lỗi có từ Phase 1–8 (mục 3c 1b) | **nặng nhất** (thiếu cảnh báo an toàn) — nhưng không phải lỗi mới | Một câu trong lời dặn trả lời: bằng chứng có cảnh báo an toàn gắn trực tiếp với việc người hỏi sắp làm ⇒ nêu kèm một câu. Đo: an toàn 32 ×2 (thiếu cảnh báo giảm ở ≥ 2 trong 3 câu thiếu thật, 0 lỗi mới ở 3 số còn lại) + Golden 176 (không tụt; câu trả lời không dài ra quá mức ghi trước) + S2. **Đã thử gần giống 1 lần:** vòng chỉnh lời dặn của bậc cổng 2 nhóm 09/11 sửa được "sai điều kiện" nhưng thiếu cảnh báo mưa lũ **không đổi** và làm trượt sàn ngoài phạm vi (2 / 44) ⇒ phải bỏ. Phase 8 cũng có một lần đổi lời dặn "trả lời một phần" phạm sàn ngoài kho ⇒ đây là việc **dễ âm** | ~4 giờ · ≤ 0,15 (là bậc đo đủ, không phải mức nhẹ) | có mở một bậc chỉnh lời dặn trước lượt cuối không; nhận trước là có thể âm |
+| 2 | **Ăn gần điểm X** — thêm dòng định vị cho bài quán (plan nháp `2026-11-12-an-gan-dinh-vi-quan-plan.md`) | 5 / 6 câu không đủ dùng từ kho; 12 / 81 bài quán có câu định vị | thiếu ý + từ chối nhầm (nhẹ) — nhưng **tần suất cao nhất** đo được và là câu khách hỏi tự nhiên | sửa kho ≤ 53 bài, build lại chỉ mục; 12 câu ăn gần ≥ 8 đủ dùng + an toàn ×2 + tìm 158 câu | 3–4 giờ · ≤ 0,08 | làm / không; cách A (chỉ từ kho) hay B (toạ độ dữ liệu mở, C khuyến nghị) |
+| 3 | **Định tuyến đã xếp "khẩn cấp" ⇒ code không mở cổng web** | 1 / 44 câu ngoài phạm vi (loại y tế), 2 / 2 lượt; đúng ca User nhận làm giới hạn 09/11 (mục 3c (2)) | thấp về nội dung (người dùng chỉ thấy câu từ chối) · có **đường ra**: câu hỏi y tế gửi tới dịch vụ tìm web + ≈ 0,002 USD / câu | một điều kiện tất định ở chỗ mở cổng web; test: lượt có nhãn khẩn cấp ⇒ không gọi web; chạy lại 44 câu ngoài phạm vi ×1 + 30 câu quan sát khẩn cấp (không câu nào mất mục web **đáng có**) | ~45 phút · ≈ 0,01 | không cần hỏi nếu A coi là siết một giới hạn đã nhận; lưu ý: câu khẩn cấp thật về Huế mà kho thiếu cũng sẽ không còn mục web |
+| 4 | **Hết lượt tìm thì không cho model xin tìm nữa** (plan nháp `…-het-luot-tim-plan.md`; probe thư viện [Chạy] đạt) | 6 / 8 câu kho thiếu tốn một lượt gọi model vô ích; cả câu trung vị 22,9 s | không thuộc thang lỗi chất lượng — tốc độ + tiền ở đúng loại câu kho thiếu | bỏ công cụ tìm sau 2 lần tìm thật; 16 câu kho thiếu + 26 câu Golden có tìm thêm + an toàn ×2 + ngoài phạm vi 44 | ~2 giờ · ≤ 0,09 | làm / không |
+| 5 | **Nhãn loại câu trong log** (plan nháp `…-nhan-loai-cau-plan.md`) | hôm nay không đếm được theo loại câu từ log | không phải lỗi chất lượng — thiếu dữ liệu để xếp ưu tiên | trường nhãn do code dò từ khoá, chỉ ghi tên nhãn | ~1 giờ · ≈ 0,001 | đồng ý ghi nhãn loại câu (không nội dung) vào log khi đưa lên mạng |
+| 6 | **Câu hỏi cơ sở lưu trú cụ thể** ⇒ "khu nên ở + link tìm phòng do code dựng" | 3 / 4 câu kho từ chối; web cứu 2 / 3 | từ chối nhầm (nhẹ nhất) | đã nằm trong backlog Phase 11; chưa có plan | ~3 giờ · ≤ 0,05 (ước thô) | làm trước hay sau lượt cuối |
+| 7 | **Sửa thước "thiếu cảnh báo mới" cho lượt cuối** (so trên đoạn cả hai bên cùng có; điều kiện từ đoạn tìm thêm báo riêng) | sàn an toàn phạm ở 1 câu chủ yếu do cách so (mục 3c (1)); E đang kiểm độc lập | ảnh hưởng **kết luận** của lượt cuối, không đổi hệ thống | sửa plan B7 trước lượt cuối; **không** sửa ngược kết quả giữa kỳ (vẫn ghi "phạm") | ~30 phút · 0 | duyệt đổi tiêu chí (sau khi người khác review) |
+
+### Nhận làm giới hạn / không làm (có số đếm)
+
+| Việc | Số đếm | Vì sao không làm |
+|---|---|---|
+| Câu ranh giới "có chữ Huế nhưng việc không phải hỏi về Huế" mở cổng web | 1 / 44, 2 / 2 lượt; dao động định tuyến đã có từ trước 10/11 | không có tín hiệu code; chỉnh lời dặn định tuyến là một bậc đo đủ cho 1 câu ⇒ đề xuất nhận thêm giới hạn này ở giữa kỳ, quyết lại ở lượt cuối |
+| Sửa lời dặn để "bớt từ chối cả câu" | 3 / 158 câu từ chối + 5 câu thiếu ý, **tất cả do tìm trượt**; 0 câu đủ đoạn đúng mà bị từ chối | lỗi không nằm ở lời dặn. Phần tìm trượt (8 câu, đa số nhiều nguồn) chỉ có một ứng viên cũ chưa đo: thử lại xếp lại ở 10 đoạn |
+| Bộ kiểm số tiền / giờ với đoạn trích | 0 số sai nguồn / 155 câu | dưới ngưỡng ghi trước (≥ 3) |
+| Sửa 4 câu tụt Đủ ý | 4 câu, cùng ngữ cảnh, viết ngắn hơn; đối lại 10 câu tăng | khớp dao động lời văn + nhiễu chấm; xem lại ở lượt cuối |
+| Chạy lần 3 bộ an toàn | — | A quyết bỏ: không đổi quyết định nào |
+| Trang / lịch sự kiện theo ngày | 4 / 6 câu kho trả lời đủ dùng | không đủ lỗi; không nguồn nào có lịch sự kiện của tuần |
+| Cắt bớt số lần tìm thêm | tìm thêm cứu 10 / 10 câu so với mốc | đang có ích |
+
+**Gợi ý thứ tự làm nếu User chỉ chọn vài việc:** 3 và 5 (rẻ, chắc, làm ngay được) ⇒ 2 (lợi rõ nhất cho người dùng) ⇒ 4 ⇒ rồi mới cân 1 (nặng nhất nhưng dễ âm và là lỗi cũ).
+Việc 7 phải xong trước lượt cuối dù chọn gì.
+
 ## 4. Giới hạn của bản rà này
 
 - C không chạy lại lượt đo nào; số [đo] lấy từ handoff, `Project_Status.md`, bài học và STATUS của C — chưa mở lại từng report gốc.
