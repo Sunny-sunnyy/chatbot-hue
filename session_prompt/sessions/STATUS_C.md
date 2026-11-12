@@ -41,9 +41,9 @@ Không server / worktree / nhánh / container của C. (Tiền: xem dòng "Tiề
   (33 điểm, md5 `695c0d71f072`, CHƯA thay bảng chạy; `tools/dung_v8.py`, nguồn tra thêm `tools/tl_tra_them.json`, kết quả tra `data/tra_cuu_cli/2026-11-12_c-o-chua-chac-v8/`).
 - **Mô phỏng 0 USD:** `tools/mo_phong_v8.py` (360 tổ hợp, bộ xếp thật: ưu tiên số 1 có mặt 60 / 60 mọi sở thích; luật "đi dày" cũ chỉ 3 / 120) · `tools/mo_phong_kieu_di.py` (bản thử luật kiểu đi bằng phút: 3 mức khác nhau 24 / 30 = 80 %).
 - **Spec "Lên kế hoạch" bản 3.2** sha256 `3ea9bcb8bc10` (chưa commit): 3 sửa chữ của E · số thật buổi tối · ưu tiên theo sở thích · **mục 5c — 8 quyết định để code** (B đã xác nhận model trả mảng theo id mục, hiện nguyên câu từng mục).
-- **Còn nợ:** phiếu ảnh (đã thử được cách tra: API tìm ảnh của kho ảnh mở qua WebFetch trả tác giả + giấy phép).
+- **Phiếu ảnh XONG 21:56 12/11/2026 (`date`)** (private): `data/phase_9/lich_trinh/phieu_anh_2026-11-12.md` — 27 dòng ảnh (23 mới + 4 dùng lại bộ cổng), 5 dòng cần xem, **7 điểm chưa có ảnh** (phố Tây, phố Hai Bà Trưng, đồi Thiên An, thác Nhị Hồ, 2 điểm Lê Bá Đảng, Bảo tàng Hồ Chí Minh). C chưa nhìn thấy ảnh (công cụ chỉ trả chữ) ⇒ User / session đợt 2 phải xem. Dựng bằng `tools/dung_phieu_anh.py`.
 
-**Trạng thái: đang làm phiếu ảnh** (A giao sau khi xong v8 + spec) (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
+**Trạng thái: rảnh — chờ A** (không server / worktree / nhánh / container của C; việc dở: không) (review kết quả B7 nếu A giao; không server / worktree / nhánh / container của C).
 **Bẫy 12/11:** lệnh shell dài viết thẳng (heredoc quét `data/` có chữ tên bộ kín) bị auto mode chặn ⇒ viết script bằng Write rồi chạy; log `chat_metrics` không có nội dung câu ⇒ không đếm theo loại câu được, phải gửi câu tự viết; câu kho từ chối đi web ≈ 0,002 USD / câu ⇒ ước tiền lượt đếm theo giá đường web, không theo giá trung bình.
 (Tiền tới lúc đó 0,024691 USD — số cuối phiên ở dòng "Tiền C 12/11 (mới)".)
 
