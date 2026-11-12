@@ -1,6 +1,6 @@
 # Review: Plan B7 — so cả hệ (agent trên `main`) với RAG 1–8 · nháp bản 1 · vòng 1
 
-Decision: **changes_requested** (3 major, 6 minor; 0 blocker)
+Decision: **ready_for_user_confirmation** sau vòng 2 (19:02 12/11/2026; bản 2 sha `da7bff5d0c4e`: 0 blocker / 0 major / 5 minor — A duyệt sha, minor sửa lúc chạy). Vòng 1: changes_requested (3 major, 6 minor; 0 blocker)
 Người kiểm: E (`hue-rag-33`, Claude Code — Fable 5.2)
 Date: 18:48 12/11/2026 (`date`)
 Bản được review: `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` sha256 `5413ae469c5e` (người viết: C), `main` `a83defd`
@@ -92,3 +92,48 @@ Ghi thêm về cờ: từ `e57231a` tới nay không cờ nào đổi, nhưng h�
 
 **changes_requested.** Người viết (C) sửa plan thành bản 2 trong một lượt: M-1, M-2, M-3 theo tiêu chí đóng; minor sửa cùng lượt nếu tiện. Giữ nguyên: mục tiêu §1, hai bên §2, tag mốc, danh sách bộ §3, các quyết định A đã chốt Q1–Q4. E kiểm phần sửa ở vòng 2 (vòng cuối theo luật 2 vòng); vòng 2 chỉ còn minor ⇒ A duyệt sha.
 Việc bước 0 của B: phần "bản sao harness chỉ đổi hằng số" nên chờ danh sách sửa của M-1 (phần khởi động `p9-moc` + T1 158 câu không bị ảnh hưởng).
+
+---
+
+# Vòng 2 — plan bản 2 sha256 `da7bff5d0c4e` (19:02 12/11/2026, `date`)
+
+Decision vòng 2: **ready_for_user_confirmation** — 0 blocker, 0 major, 5 minor. Theo luật 2 vòng: A duyệt sha; minor sửa lúc chạy / ghi vào report. Đây là vòng cuối.
+
+## V2.1 Phạm vi
+
+Đọc hết bản 2; đối chiếu bảng "Chỗ đổi" với từng finding vòng 1; đọc (chỉ đọc, 0 USD) `data/phase_9/b7/tools/do_cuoi_b7.py`, `chuoi_rag_moc.py`, report bước 0 của B (§4, §7), `do_g.py`, `chay_t1.py`, `an_toan_run.py`, `cham_chuoi.py`, `data/do_cuoi_2026-11-01/golden/analyze.json`, `data/phase_9/b2/bo_cau_b2.json`; đếm trường / loại của các bộ đã thấy. Không mở nội dung kín.
+
+## V2.2 Finding vòng 1 — trạng thái
+
+| Finding | Kết quả kiểm | Trạng thái |
+|---|---|---|
+| **M-1** harness | `do_cuoi_b7.py` còn hai bên (`ARMS = ("truoc", "sau")`), có `nhap`, `analyze --max-drop` bắt buộc (thiếu ⇒ dừng); `chuoi_rag_moc.py` có `--thu`; B đã chạy thử 0 USD đủ chuỗi lệnh Golden + 56 / 56 lượt chuỗi (report bước 0 §7); plan §4 liệt kê phần chạy thử còn lại trước lượt có phí. `MAX_DROP` = 4 có nguồn: A/A 01/11 Completeness thắng / hoà / thua = 0 / 128 / 1 | **đóng** |
+| **M-2** cách tính (i) | §3 có bảng 3 nhóm đủ: bộ + đường dẫn, đơn vị, chỉ số, bootstrap theo cặp 10.000 vòng seed 20261024, Holm, gộp / tách kín, cỡ mẫu. Kiểm: `bo_cau_b2.json` có đúng 18 câu `multi_source` (14 nhóm thử + 4 nhóm kiểm); bộ chuỗi đã thấy có đúng 9 lượt hỏi tiếp theo định nghĩa; `cham_chuoi.py` có `FOLLOW_UP`, `scored_turns`, seed khớp | **đóng** |
+| **M-3** sàn ⇒ lượt | §5 phủ S-G, S1 / S-AT, S2, S2b, S2c, S3, S3b, trích dẫn, S6 và 3 việc (ii), có tiền; mục "không đo ở B7" có lý do; §2 tách đường chỉ-kho ↔ cả hệ; vế "0 truy vấn chứa tên" có lượt (3 chuỗi nêu tên). Kiểm: `do_g.py` có bộ `s2`, `s2c`, `a`, `an_toan:<qid>` và các khoá đếm `S2_ngoai_bi_tra_loi`, `S2b_ngoai_cong_web_mo`, `S2c_cong_web_mo`; dòng `generate` ghi `route` ⇒ S3 đếm được | **đóng** |
+| m-1 … m-6 | đã sửa đủ (§6 cắt; danh sách "mong từ chối" ghi trước khi sinh; "cùng ngày, liền nhau"; in cờ dưới đúng lệnh; tiền còn lại thật ≈ 0,39 ≥ 0,35; dòng chờ A ở §9) | **đóng** |
+
+## V2.3 Điểm A giao thêm: bộ kín câu ngày không mở ở lượt giữa kỳ
+
+**Đạt.** `ngay_moi_sealed` chỉ xuất hiện ở §0 (công tắc `KIN_NGAY` = TẮT hôm nay) và bước K (§4, chỉ chạy khi BẬT). Lượt N dùng `chay_t1.py … ngay` + `chon:U1` — đọc code: chế độ `ngay` chỉ nạp 3 file đã thấy (15 + 3 + 10), không có đường nào tự nạp file kín; file kín chỉ vào được qua `file:<đường dẫn>` của bước K. Các file kín khác mà lượt C / S / T mở đều là bộ **đã dùng** (plan ghi rõ, qua lệnh `!` chỉ in số đếm).
+
+## V2.4 Ba chỗ C tự quyết (C nhờ soi)
+
+- **(a) Phía RAG của chuỗi chỉ chạy 14 chuỗi hỏi tiếp:** đồng ý — các loại chuỗi khác chỉ có sàn / ngưỡng phía agent, số của mốc không vào luật nào.
+- **(b) S2 chỉ agent ×2; web / trò chuyện ×1:** đồng ý — S2 ×2 đúng §12.3; ngưỡng (ii) của spec không đòi 2 lượt.
+- **(c) Vế "0 câu chứa thông tin Huế" của trò chuyện đọc trên phần đã thấy:** chấp nhận như **giới hạn ghi rõ** (không lách rào đọc file kín); report phải ghi vế này "trên 16 câu đã thấy", không gộp với số 90 % trên kín. Cần dòng đồng ý của A (đã nằm ở §9).
+
+## V2.5 Minor mới (không chặn)
+
+- **n-1 — bản sao `cham_chuoi.py`:** không chỉ đổi `SIDES`; hàm `analyze` gọi cứng cặp `"nho"` ↔ `"doc_lap"` / `"tran"` (và Q6) ⇒ bản sao phải đổi cặp thành `"nho"` ↔ `"rag"` và bỏ phần không dùng. Lượt chạy thử 0 USD đã ghi ở §4 sẽ bắt — làm nó **trước** lượt C.
+- **n-2 — Holm trên CI:** `bootstrap` của `cham_chuoi.py` (và số `ci95` của harness Golden) chỉ trả CI 95 %; §3 cần CI 98,33 % / 97,5 % và p của bootstrap ⇒ cần một đoạn tính nhỏ dùng chung cho 3 nhóm (cùng seed). Ghi tên script + chạy thử trên số giả trước khi chấm xong.
+- **n-3 — chữ ở §0:** A/A 01/11 có 1 câu khác ở Completeness (tụt) **và** 1 câu khác ở Accuracy (tăng), không phải "0 câu Accuracy"; số câu **tụt** là 1 / 0 ⇒ ngưỡng 4 không đổi. Sửa chữ.
+- **n-4 — giới hạn của lượt cuối:** vì có lượt giữa kỳ, tới lượt cuối mọi bộ (trừ 7 câu ngày kín) đã chạy qua đúng harness này một lần và được phép sửa lỗi ở giữa ⇒ report lượt cuối ghi giới hạn đó; số "chưa ai thấy" chỉ còn 7 câu.
+- **n-5 — danh sách "mong từ chối":** theo trường của bộ, hiện chỉ có 1 ứng viên ở bộ 15 câu cũ (`in_kho: false`); 10 câu âm lịch đều `tra_loi_duoc_bang_ngay: true` ⇒ danh sách có 0 hoặc 1 mã — ghi rõ con số vào `chon.json` để người chấm không phải suy.
+
+## V2.6 Giới hạn
+
+Không chạy harness (kể cả 0 USD) — dựa trên đọc code + report chạy thử của B. Không kiểm được số lượt / số câu của phần kín (plan tự ghi "in bằng code"). Phía `p9-moc` chưa sinh thật câu nào — pilot 10 câu của B7 là phép thử đầu.
+
+## V2.7 Bước tiếp
+
+A ghi `$C_DONG` + ba dòng đồng ý ở §9 rồi duyệt sha (sửa chữ n-3 không đổi tiêu chí ⇒ không cần review lại). Người chạy (B) làm n-1, n-2 trong phần chạy thử 0 USD trước lượt có phí.
