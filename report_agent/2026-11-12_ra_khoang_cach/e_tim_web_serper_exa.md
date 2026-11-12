@@ -129,3 +129,31 @@ Chạy 21:01–21:09 12/11/2026, cùng buổi, 42 câu mỗi bên, một lượt
 - **5 / 25 mục đạt của Exa có trích loại nguồn này** (không mục nào chỉ dựa riêng nó). Nếu coi cả 5 mục đó là không đạt ⇒ Exa còn **20 < ngưỡng 22** ⇒ kết luận "Exa hơn" **nhạy với việc có chấp nhận nguồn tổng hợp của Exa hay không**. Theo luật ghi trước (không có điều kiện về loại nguồn) kết quả vẫn là đạt; đây là giới hạn phải nói rõ với User.
 - Hệ quả cho plan: danh sách tên miền loại trừ là **tham số** (mặc định rỗng = đúng cấu hình đã đo); muốn loại `exa.ai` thì **đo lại 42 câu** với cấu hình đó trước khi bật (A chốt tạm).
 - Lệch thủ tục (C nêu, E nhận): cấu hình mục 5 / 5b được ghi vào file **trước** lượt chính nhưng chỉ vào git **sau** khi có kết quả; lần sau commit phần ghi trước trước lượt có phí.
+
+---
+
+## 7. Đo qua server thật (X2–X6 của plan Exa) — 22:16 12/11/2026 (`date`) — **X6 KHÔNG ĐẠT ⇒ không bật Exa**
+
+Nhánh `p9-tra-web-exa` `76e976e` (rebase lên `main` có nhánh "hết lượt tìm"; cờ mặc định Serper). Ghi trước: cuối plan `docs/superpowers/plans/2026-11-12-tra-web-exa-plan.md` (mục "Sửa sau duyệt", viết trước lượt có phí). Chạy 21:46–22:09 12/11/2026, server của worktree cổng 8891, mỗi lúc một server, 42 câu mỗi nhánh, mỗi câu một kết nối mới; ghép log theo `turn_id` 42 / 42 cả hai nhánh. Dữ liệu private `data/exa_2026-11-12/server/`, `cham_x6/`.
+
+| Tiêu chí | Mức | Kết quả | |
+|---|---|---|---|
+| X1 cờ mặc định ⇒ không đổi | giống byte; lượt web gọi Serper | B kiểm 228 / 228 giống byte; nhánh Serper của lượt này: 29 / 29 lần tra có `nguon: serper` | **đạt** |
+| X2 sàn mục web (code, nhánh Exa) | 0 lỗi lọt | 15 mục lọt: 0 mục có lỗi kiểm · 0 link trong chữ · câu lưu trú 0 số tiền. (Vế "ngoài Huế 0 mục web", "0 truy vấn chứa tên" không phụ thuộc nhà cung cấp — dùng lại, như ghi trước) | **đạt** |
+| X3 an toàn 32 ×1, cờ exa | 0 mục web nói ngược / bỏ cảnh báo; 0 lỗi lọt | 32 câu, 0 lỗi; 4 câu (nhóm ngoài kho) có mục web, 0 lỗi kiểm. **Công cụ chạy không lưu chữ mục web ⇒ phần người chấm NOT RUN** | **một phần** |
+| X4 tốc độ | tra p95 ≤ 5 s; tới sự kiện web không chậm hơn Serper quá 1 s | tra Exa p50 1,62 / p95 2,26 s (Serper 2,13 / 2,82 s); tới sự kiện `web` trung vị 16,9 s (Serper 17,9 s) | **đạt** |
+| X5 dự phòng | khoá Exa sai ⇒ mục từ Serper, `exa>serper` | một lần tra thật với khoá sai đặt riêng cho tiến trình: 5 kết quả, `nguon: exa>serper`, 2,6 s | **đạt** |
+| **X6 lặp lại lợi ích** | **Exa ≥ Serper + 3** (2 người chấm cùng gắn) | **Exa 14 ↔ Serper 13** (2 người khớp 32 / 32 mục) | **KHÔNG ĐẠT** |
+
+**Số đếm hai nhánh (42 câu mỗi nhánh):** có mục web Exa 15 · Serper 17; "không tin cậy" 13 · 10; "chưa xác minh" 2 · 2; không tra (kho trả lời / ngoài phạm vi) 12 · 13. Mã kiểm hỏng: Exa số ngoài trích 8 + tiền ngoài trích 6 + số thời gian thực 3; Serper 5 + 4 + 3 + giá phòng 1. Câu chỉ một bên đạt: Exa 4 · Serper 3 · cả hai 10. Theo bộ: B6 8 ↔ 6 · hỏi kèm 2 ↔ 3 · lưu trú / ăn gần 4 ↔ 4. Nguồn `exa.ai` trong mục lọt của Exa: 5 / 51.
+
+**Vì sao khác thí nghiệm mục 6 (25 ↔ 17)? — quan sát + giả thuyết:**
+- (quan sát) Ở thí nghiệm, **mọi** câu đều đi bước tra; qua server chỉ câu **kho từ chối** mới tra (≈ 30 / 42), và 12–13 câu được kho trả lời nên không có mục web ở cả hai bên ⇒ số câu "có thể hơn" ít đi.
+- (quan sát) Ở đường thật, Exa bị luật kiểm bỏ mục **nhiều hơn** Serper (13 ↔ 10): đoạn trích dài ⇒ model viết nhiều con số hơn ⇒ dễ có số / tiền không khớp nguyên văn ⇒ cả mục bị bỏ.
+- (giả thuyết) Một lượt mỗi nhánh; chênh 8 câu ở thí nghiệm và 1 câu ở đây đều chịu nhiễu ngày chạy. Chưa có phép thử tách.
+
+**Kết luận theo luật ghi trước:** lợi ích của Exa **không lặp lại được** ở đường người dùng thật ⇒ **không bật**; giữ Serper. Nhánh code giữ được sau cờ (mặc định Serper, không đổi hành vi) hoặc lưu làm hồ sơ — A / User quyết. Điều đáng làm tiếp nếu còn muốn cải thiện mục web (đề xuất, chưa đo): thay vì đổi nhà cung cấp, sửa chỗ **"một số sai ⇒ bỏ cả mục"** thành "bỏ câu chứa số sai, giữ phần còn lại" — vì ở cả hai nhánh ~1 / 3 lượt tra mất mục do luật này (13 / 30 và 10 / 29).
+
+**Tiền thật X2–X6: ≈ 0,126 USD** (trần 0,20): nhánh Exa 0,040 (model; tra 0,210 nằm trong tín dụng miễn phí) · nhánh Serper 0,066 (gồm tra 0,029) · an toàn ≈ 0,019 (+ 0,028 tín dụng Exa) · X5 0,001. Cả việc Exa hôm nay: **≈ 0,195 USD thật** + ≈ 0,82 USD tín dụng miễn phí của Exa. Chấm: agent con, 0 USD API.
+
+**Lệch / giới hạn:** (1) lô chấm X6 **không có đoạn trích** (server chỉ trả tiêu đề + tên miền của nguồn) ⇒ người chấm chỉ gắn "trả lời được", không gắn "có căn cứ" như thí nghiệm — áp như nhau cho hai nhánh; (2) X3 phần người chấm NOT RUN (không lưu chữ mục web); không chạy lại vì X6 đã không đạt; (3) một lượt, 42 câu tự viết; (4) lượt Serper có 1 câu lỗi kết nối phía công cụ gửi (không phải server), tính là không có mục.

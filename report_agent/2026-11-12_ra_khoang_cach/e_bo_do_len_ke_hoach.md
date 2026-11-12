@@ -1,7 +1,7 @@
 # Bộ đo "Lên kế hoạch" bản 2 — đợt 1 (mô tả mức loại) — phần của E
 
 Người viết: E · 22:02 12/11/2026 (`date`) · A giao · 0 USD. E không code tính năng, không viết spec / bản thử luật ⇒ bộ đo viết **trước** khi B code bước (b).
-Dữ liệu private: `data/phase_9/lich_trinh/bo_do_v2/` — `yeu_cau_20.jsonl` sha256 `8f89c1b341ca` · `bo_quyet_12.jsonl` `f715aac06ddc` · `dinh_nghia_cham.md` `b837ecbb044e` (ghi ba mã này vào plan đợt 1).
+Dữ liệu private: `data/phase_9/lich_trinh/bo_do_v2/` — `yeu_cau_20.jsonl` sha256 `8f89c1b341ca` · `bo_quyet_12.jsonl` `f715aac06ddc` · `dinh_nghia_cham.md` `253d6d9f9910` (cập nhật theo spec 3.3: luật mùa rút gọn) (ghi ba mã này vào plan đợt 1).
 
 ## Có gì
 | Bộ | Số dòng | Dùng cho | Chạy |
