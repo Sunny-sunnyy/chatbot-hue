@@ -1,7 +1,21 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 16:24 11/11/2026 (A, kết phiên chiều 11/11). Trước: 10:43 11/11/2026 (A, kết phiên sáng 11/11).
+Cập nhật: 18:45 12/11/2026 (A, mở phiên 12/11 — giao việc). Trước: 16:24 11/11/2026 (A, kết phiên chiều 11/11). Trước: 10:43 11/11/2026 (A, kết phiên sáng 11/11).
 Nguyên văn handoff trong phiên 10/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-10.md`; 09/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-09.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md`.
+
+## VIỆC PHIÊN 12/11 (A giao 18:45 12/11/2026; quyền "như 10/11")
+
+Terminal: A `hue-rag-7d` · B `hue-rag-1b` · C `hue-rag-e1` · E `hue-rag-33` (cả bốn Claude Code, trực tiếp; mọi session phiên này chạy Fable 5.2). Qdrant **đang chạy** (2 collection, 8.435 điểm) — dòng "Qdrant tắt" bên dưới đã cũ.
+Luật chung: mục "Việc đang mở — luật chung" cuối file. Máy ~15 GB RAM ⇒ **mỗi lúc chỉ một session chạy server / model** (B trước; C cần server thì nhắn B). Không ai đo tốc độ phiên này.
+
+| Session | Việc | Đọc | Làm / không làm | Tiền | Đầu ra | Trạng thái |
+|---|---|---|---|---|---|---|
+| **B** | **B7 bước 0** (kiểm trước lượt có phí) + probe log truy cập | plan nháp `docs/superpowers/plans/2026-11-10-phase-9-b7-plan.md` §2, §4 (full-read); "Câu hỏi cho User" Q-DP ý log uvicorn | (1) worktree `/tmp/b7_moc` ở tag `p9-moc`: khởi động được với build record hiện tại, `/health` 5 / 5, T1 158 câu = mốc `64656a87c109`; khác ⇒ dừng, báo A, không sửa code cũ. (2) bản sao harness vào `data/phase_9/b7/tools/` (chỉ đổi hằng số build record / số điểm). (3) một lần chạy server `main` thật: log truy cập uvicorn có in IP không (chỉ `/health`). **Không** chạy lượt có phí, không mở `*sealed*`, không sửa code `backend/` | 0 USD | `report_agent/2026-11-08_phase_9_ban_13/b7_buoc_0_implementation.md` | đã giao |
+| **E** | **Review plan B7** (người viết là C) | plan nháp (full-read) + căn cứ ghi ở đầu plan (spec Phase 9 §4, §5 B7, §8, §11.5, §12.3, §12.4 — targeted) | review theo `risk-gated-agent-review`, chỉ dựa plan + spec + lệnh chỉ đọc; xét cả "lượt nào không giữ sàn nào ⇒ cắt"; cờ ở `main` hôm nay so với danh sách cờ trong plan §2. Không đọc STATUS_C | 0 USD | `docs/superpowers/plans/2026-11-10-phase-9-b7-plan_review.md` | đã giao |
+| **C** | **Đợt 2 cổng — lượt đếm rẻ trước khi xây** (lưu trú · ăn gần · sự kiện theo ngày) | spec cổng đợt 1 D2 + §4 "Ngoài"; nghiên cứu đợt 2 cũ của C (C209); `Session_Prompt.md` §7 "Đếm lỗi trước khi xây" | với **mỗi** ý trong 3 ý: trên hệ thống đang chạy (log `chat_metrics` / `chat_feedback`, bộ đã thấy, kho qua `scripts/grep_kb.sh`) đếm người hỏi loại câu đó thì hôm nay ra sao (trả lời được từ kho · từ chối ⇒ web · sai) ⇒ kết luận "đủ lỗi để xây / không xây" kèm số đếm. Ưu tiên dữ liệu có sẵn; cần gửi câu mới thì ≤ 30 câu tự viết. **Không** viết spec / code, không mở `*sealed*` | ≤ 0,02 USD | `report_agent/2026-11-08_phase_9_ban_13/c_dot_2_dem_implementation.md` (mức loại câu, không chép câu / kho) | đã giao |
+
+**Chờ User (A hỏi mỗi lần một câu):** đóng tính năng để chạy B7 hay chờ bản đồ / giọng nói · quỹ B7 thiếu ≈ 0,03 USD · góp ý `bai_hoc/`.
+**Lệch ghi nhận lúc mở:** `Project_Status.md` §1 còn ghi "mọi session Claude Opus 5.5" (sửa ở kết phiên).
 
 ## PHIÊN SAU ĐỌC TRƯỚC (viết lại 16:24 11/11/2026, kết phiên chiều 11/11)
 
@@ -60,6 +74,8 @@ G = cổng 2 nhóm (đóng); T1 ngày + âm lịch (bật, bản nhanh 10/11); T
 
 ## Session
 
+**Phiên 12/11 (mở 18:40 12/11/2026):** A `hue-rag-7d` · B `hue-rag-1b` · C `hue-rag-e1` · E `hue-rag-33` — cả bốn Claude Code, trực tiếp (B / C / E tự báo). Qdrant chạy sẵn (2 collection, 8.435 điểm); không worktree `/tmp`.
+
 **Phiên chiều 11/11 (mở 13:39 11/11/2026):** A `hue-rag-2f` — chỉ A (B / C / E không mở; 8 terminal khác là dự án khác). Qdrant tắt. Việc: bàn `bai_hoc/` với User.
 
 **Phiên 11/11 (mở 08:18 11/11/2026):** A `hue-rag-96` — chỉ A (B / C / E không mở). Qdrant tắt lúc mở.
@@ -78,6 +94,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C / E lúc mở phiên 
 
 ## Quyền
 
+- **Phiên 12/11 (User chọn "như 10/11", A ghi nhận 18:45 12/11/2026):** A tự điều phối, giao ngay việc có sẵn trong handoff, A tự commit / push, B / C / E push nhánh riêng, trần Phase 9 4,2 (≈ 3,88 đã dùng), việc cần User duyệt thì gác. Hết hạn cuối phiên.
 - **Quyền phiên chiều 11/11 HẾT HẠN (16:24 11/11/2026, kết phiên).**
 - **Phiên chiều 11/11 (User chọn "như sáng 11/11", A ghi nhận 13:41 11/11/2026):** A sửa `bai_hoc/` theo góp ý, tự commit / push; trần Phase 9 4,2; việc cần User duyệt thì gác. Hết hạn cuối phiên.
 - **Quyền phiên 11/11 (sáng) HẾT HẠN (10:43 11/11/2026, kết phiên).**

@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN 12/11 (mở 18:40; cập nhật 18:45 12/11/2026 `date`)
+
+- Terminal: A `hue-rag-7d` · B `hue-rag-1b` · C `hue-rag-e1` · E `hue-rag-33` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).
+- Kiểm nhanh: `main` `e5d90c4` = origin, sạch; hooksPath `.githooks`; Qdrant **đang chạy** (2 collection, 8.435 điểm — handoff ghi tắt); RAM trống ~12 GB; 4 worktree AGY cũ còn.
+- User: quyền "như 10/11" (18:45 12/11/2026).
+- Giao (`CURRENT_HANDOFF.md` "VIỆC PHIÊN 12/11"): B — B7 bước 0 + probe log truy cập · E — review plan B7 · C — đợt 2 cổng, lượt đếm rẻ.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`.
+- Tiếp: hỏi User (mỗi lần một câu) đóng tính năng để chạy B7 ⇒ quỹ B7 ⇒ góp ý `bai_hoc/`; vòng tự soi 1 khi B / C / E có kết quả đầu.
+
 # STATUS A — KẾT PHIÊN CHIỀU 11/11 (mở 13:39; cập nhật 16:25 11/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ góp ý `bai_hoc/` ⇒ Phase 9 tiếp. Qdrant tắt. Không worktree / server / container của phiên. Tiền 0 USD.
