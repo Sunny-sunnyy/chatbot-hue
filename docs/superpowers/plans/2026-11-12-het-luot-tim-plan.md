@@ -19,7 +19,10 @@ Hôm nay model được tìm kho thật 2 lần; xin lần thứ ba thì code tr
 Khi model đã dùng hết 2 lần tìm thật, **lượt gọi model kế tiếp không còn công cụ `tim_kho`** ⇒ model buộc phải viết câu trả lời / câu từ chối ngay. Bớt đúng một lượt gọi model ở các câu trên.
 
 - **Chỗ sửa:** `generator_openai_full_corpus.py`, nơi bọc `tim_kho` thành công cụ — thêm điều kiện bật / tắt theo số lần đã tìm (`trace.model_searches < MODEL_SEARCH_LIMIT`), đọc từ `assistant.py`. `ASSISTANT_MAX_TURNS` giảm tương ứng nếu probe cho thấy an toàn. `TOOL_LIMIT_TEXT` giữ làm dự phòng.
-- **Probe 0 USD trước khi code** (bắt buộc — đây là khẳng định về hành vi thư viện): thư viện agent đang dùng (bản 0.19.4) có trường `is_enabled` trên công cụ; cần xác nhận nó được xét lại **mỗi lượt** trong một lần chạy, và ở đường stream. Không được ⇒ phương án 2: dừng vòng bằng `tool_use_behavior` dạng hàm (đã dùng cho thẻ hỏi lại) — ghi vào report, không tự mở rộng.
+- **Probe 0 USD — [Chạy] 19:34 12/11/2026** (`data/ra_khoang_cach_2026-11-12/tools/probe_is_enabled.py`; thư viện agent 0.19.4, model giả theo kịch bản của test sẵn có, không gọi API, không sửa `backend/`):
+  - `is_enabled` dạng hàm **được xét lại mỗi lượt gọi model**, ở **cả đường thường lẫn đường stream**: danh sách công cụ gửi model qua 3 lượt là có · có · **không**; 2 lần tìm thật; lượt 3 model viết câu trả lời ⇒ cách sửa ở mục này **làm được**, không cần phương án 2.
+  - Ca xấu đã thử: model **vẫn** xin `tim_kho` ở lượt công cụ đã tắt ⇒ thư viện ném `ModelBehaviorError` ("Tool tim_kho not found") ở cả hai đường ⇒ code **phải bắt lỗi này** và trả câu từ chối cố định như nhánh chạm `max_turns` hôm nay (thêm 1 test). Model thật khó gọi công cụ không có trong danh sách, nhưng không được để thành lỗi 500.
+  - Probe chỉ chứng minh hành vi thư viện với model giả; hành vi của model thật khi mất công cụ (viết "cố" hay từ chối) vẫn phải đo bằng lượt có phí ở mục 3.
 - **Cờ:** `assistant.het_luot_bo_cong_cu` (mặc định tắt cho tới khi đo đạt).
 - **Chuỗi gửi model đổi ở đâu:** chỉ ở lượt gọi **sau lần tìm thật thứ hai** — danh sách công cụ thiếu `tim_kho`. Mọi lượt trước đó, lời dặn, mô tả công cụ: giống byte. Câu không tìm thêm hoặc tìm thêm 1 lần: giống byte hoàn toàn. Lượt có lịch trình / thời tiết / ngày: các công cụ đó không đổi.
 
@@ -32,7 +35,7 @@ Khi model đã dùng hết 2 lần tìm thật, **lượt gọi model kế tiế
 | Sàn an toàn 32 ×2 | 4 số như mọi bậc (0 / 0 mới / 0 mới / 0) | bộ an toàn |
 | Sàn ngoài phạm vi | 0 câu ngoài phạm vi bị trả lời; cổng web không mở thêm ở câu ngoài phạm vi | 44 câu S2 ×1 (có số "trước" từ B7) |
 | Giống byte khi cờ tắt | 228 / 228 | Q1 sẵn có |
-| Test theo loại lượt | lượt đầu · lượt sau 1 lần tìm · lượt sau 2 lần tìm · lượt có lịch sử · lượt biểu mẫu: chuỗi gửi model có / không có `tim_kho` đúng như mục 2 | test mới (0 USD) |
+| Test theo loại lượt | lượt đầu · lượt sau 1 lần tìm · lượt sau 2 lần tìm · lượt có lịch sử · lượt biểu mẫu: chuỗi gửi model có / không có `tim_kho` đúng như mục 2; model xin công cụ đã tắt ⇒ câu từ chối cố định, không lỗi 500 | test mới (0 USD) |
 
 Không đạt "quyết" hoặc phạm sàn ⇒ cờ tắt, tag hồ sơ, không chỉnh rồi đo lại quá 1 vòng.
 

@@ -67,7 +67,7 @@ kiểm đúng / sai ngoài đời — hệ thống đã gắn nhãn "Từ web (c
 | Loại | Kho có | Kho thiếu |
 |---|---|---|
 | Lưu trú | 1 bài cẩm nang có mục "khu nên ở"; 6 / 47 bài `travel/` có nêu tên một vài cơ sở lưu trú | không có danh sách cơ sở, không có bài riêng cho cơ sở nào |
-| Ăn gần | **81 bài riêng cho quán ăn (57) + cà phê (24)**; 63 / 81 có dòng địa chỉ | chỉ **15 / 81** bài có câu định vị theo một điểm tham quan ("gần / cạnh / đối diện …"); 4 / 81 có toạ độ. Số bài quán nhắc tới từng điểm lớn: 0–8 bài mỗi điểm (có điểm lớn không bài quán nào nhắc) |
+| Ăn gần | **81 bài riêng cho quán ăn (57) + cà phê (24)**; 63 / 81 có dòng địa chỉ | chỉ **12 / 81** bài có câu định vị theo một điểm tham quan ("gần / cạnh / đối diện …"); 4 / 81 có toạ độ. Số bài quán nhắc tới từng điểm lớn: 0–8 bài mỗi điểm (có điểm lớn không bài quán nào nhắc) |
 | Sự kiện | 26 bài lễ hội, 20 có ngày (dương hoặc âm); 11 / 13 bài nghệ thuật biểu diễn + 6 / 6 bài vé có giờ diễn định kỳ; code tính ngày (lịch hệ thống, âm ↔ dương) đã chạy | lịch sự kiện **của đúng tuần / tháng này** (5 / 26 bài nhắc năm 2026–2027); nghiên cứu 06/11 đã ghi: không nguồn chính thức nào có RSS / API cho lịch sự kiện |
 
 ### 4.3 Số theo dõi (không phải lượt đo tốc độ)
@@ -102,3 +102,5 @@ Bản đồ (ý thứ tư của đợt 2) không nằm trong lượt đếm này
   `tools/quet_bo.py`, `tools/log_tien.py`, `tools/log_tong.py` (0 USD).
 - Kiểm lại nhanh (0 USD): đếm `refusal` / `web_outcome` trong hai file kết quả; chạy lại các lệnh đếm kho ở §4.2 bằng `scripts/grep_kb.sh --dir foods -l …`.
 - Việc cần A: trình User bảng §5 (hai ý "đủ lỗi" đều là việc **dữ liệu / lời trả lời**, không phải giao diện đợt 2 như hình dung ban đầu).
+
+**Sửa số (19:34 12/11/2026, C):** §4.2 dòng "Ăn gần" ghi "15 / 81 bài có câu định vị theo một điểm tham quan" ⇒ đúng là **12 / 81** (15 là đếm cả thư mục món ăn, gồm 3 bài không phải bài quán / cà phê). Kết luận §5 không đổi.
