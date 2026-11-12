@@ -94,3 +94,23 @@ Không chạy chunker, không mở dữ liệu lưu trú đã tải, không ki�
 
 **changes_requested.** E sửa M-1, M-2, M-3 (kèm hai phép thử 0 USD: chunker trên bài mẫu · số quán mỗi mục của bài tổng hợp) thành bản 2; C xem lại riêng ba chỗ major (vòng cuối). Sau đó A hỏi
 User Q1–Q5 — nên hỏi **sau** khi có kết quả tra toạ độ quán bổ sung, vì nó đổi số của Q3 / Q4.
+
+## Vòng 2 (vòng cuối) — 21:35 12/11/2026 — bản 2 sha256 `fd152810627b`
+
+Decision: **ready_for_user_confirmation** (3 major đóng; 1 ghi chú nên sửa chữ trước khi A trình User, không cần review lại)
+
+| Finding vòng 1 | Bản 2 | Kết quả |
+|---|---|---|
+| M-1 thư mục mới không được quét | bài lưu trú đặt trong thư mục đã quét (`travel/services/`), không sửa cấu hình; bước 6 đếm "số đoạn của mỗi file mới trong chỉ mục = số đoạn chia thử, ≠ 0" | **đóng** |
+| M-2 dạng bài chưa thử | E đã chạy thử bộ chia đoạn (chỉ đọc): danh sách ⇒ mỗi dòng một đoạn (kém cho câu danh sách); đoạn văn 8 cơ sở vừa, 14 cơ sở lỗi ⇒ chọn đoạn văn ≤ 6 cơ sở + bài tổng theo hạng; K4 tách a / b / c với kết cục ghi trước cho câu giá rẻ và homestay | **đóng** |
+| M-3 dữ liệu ăn gần + câu không nguồn | toạ độ ước chỉ dùng mức "cùng cụm" (trừ sai số, sát ranh không gán), không ghi mét; thêm 3–5 mốc; câu nhận định thay bằng dữ kiện; chạy thử số quán mỗi mục trước khi chốt K6; Q3 / Q4 chốt sau lượt tra toạ độ bổ sung | **đóng** |
+| Minor m-1…m-7 | đếm lại nhãn nguồn nhập; gán cụm bằng ước toạ độ (địa chỉ danh mục gần như không có phường) + bước đếm tỉ lệ gán; dòng code dòng nhắc; bộ "trước" chạy lại, tiền 0,26 / trần 0,35 | nhận |
+
+**Ghi chú (sửa chữ, không chặn):** bước 6 ghi "số câu đổi 10 đoạn đầu **không** do đoạn mới phải bằng 0 — khác 0 ⇒ dừng". Ngưỡng này **quá chặt và sẽ dừng nhầm**: thêm vài trăm đoạn + dựng lại bảng từ khoá
+làm đổi trọng số từ của **cả kho**, nên thứ hạng ở vài câu có thể xê dịch dù không đoạn mới nào chen vào (đợt 05/11 chỉ sửa 11 bài mà 10 / 158 câu đã đổi 10 đoạn đầu). Đề nghị: số này là **theo dõi**
+(ghi vào report); điều kiện dừng giữ ở K3 — "0 câu mất đoạn đúng theo nhãn v6" — và K1.
+
+**Điều C cần từ spec này cho spec biểu mẫu bản 3 (đã khớp):** tên trường của `quan_theo_cum.json` và `luu_tru_theo_cum.json`; tên cụm = tên cụm của bảng điểm; quán nguồn dữ liệu mở mang nhãn "chưa kiểm";
+buổi tối không thêm kho (thuộc bảng điểm). Còn một chỗ hai spec cùng cần mà **chưa ai giữ**: bảng ánh xạ **cụm (8) ⇒ khu nên ở (3)** cho khối "Ở đâu" — đề nghị đặt trong bảng khu của plan lưu trú.
+
+Bước tiếp: A hỏi User Q1–Q5 (Q3 / Q4 sau khi có kết quả tra toạ độ bổ sung).
