@@ -621,6 +621,26 @@ class FullCorpusRetrievalService:
         )
         return RetrievalResult(documents=documents, trace=trace)
 
+    def lay_doan(self, chunk_ids: Sequence[str]) -> dict[str, RetrievedDocument]:
+        """Lấy đoạn theo mã `chunk_id` (đọc Qdrant, lọc payload; không tìm, không điểm số) — mã không có trong chỉ mục ⇒ vắng trong kết quả.
+        Dùng cho cột "đoạn mô tả" chọn sẵn của bảng điểm lịch ("Lên kế hoạch" bản 2)."""
+        ids = sorted(set(chunk_ids))
+        if not ids:
+            return {}
+        try:
+            points, _ = self.client.scroll(
+                collection_name=self.candidate.collection_name,
+                scroll_filter=models.Filter(must=[models.FieldCondition(key="chunk_id", match=models.MatchAny(any=ids))]),
+                limit=len(ids) + 1, with_payload=True, with_vectors=False,
+            )
+        except Exception as exc:
+            raise RetrievalDependencyError(f"Qdrant lookup by chunk_id failed: {type(exc).__name__}") from exc
+        out = {}
+        for p in points:
+            payload = validate_point_payload(str(p.id), p.payload)
+            out[payload["chunk_id"]] = build_retrieved_document(payload, 0.0)
+        return out
+
     def search_many(self, queries: Sequence[str]) -> RetrievalResult:
         """Phase 9 B2 V3 (plan D4): tìm từng câu nhỏ bằng `search` rồi trộn RRF lần hai (cùng `rrf_k`, giữ `candidate_pool`) — thứ hạng chung,
         không ưu tiên câu đầu, tất định. Một câu ⇒ đúng `search` (giống byte). Trace = trace câu đầu, thời gian cộng của mọi câu."""

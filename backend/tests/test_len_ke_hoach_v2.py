@@ -12,6 +12,7 @@ import dataclasses
 import json
 import datetime as dt
 import itertools
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -21,9 +22,10 @@ from llm.assistant import AnswerTrace, AssistantFlags
 from llm.hoi_lai import GIA_TRI, NGAY_DI_TOI_DA, TruongInput, co_gia_tri_moi, doi_sang_cu, doi_sang_moi, loi_v2
 from test_api_chat import chat_log_records, metric_lines
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (fixture `deps` dùng chung)
-from test_cong_dot_1 import FORM, OFF, _restore, _with, app_client, chu_gui, flags_from, viet_theo_khung  # noqa: F401  (fixture `app_client`)
+from test_cong_dot_1 import SETTINGS, FORM, OFF, _restore, _with, app_client, chu_gui, flags_from, viet_theo_khung  # noqa: F401  (fixture `app_client`)
 
 V2 = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True)
+V2_BANG_PATH = Path(__file__).resolve().parents[1] / SETTINGS["assistant"]["lich_trinh_bang_v2"]
 HOM_NAY = dt.date(2026, 11, 13)
 
 
@@ -784,3 +786,47 @@ def test_daytime_closed_weekday(tmp_path):
     assert v2.diem_v2(k)[0] == "bt" and v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang")))[0] == "bt"
     assert "sai_thu" in v2.kiem_khung_v2(b, dict(k, ngay_thang=[thu2.isoformat()]))
     assert V2.bang_lich_v2.theo_id["kg_le_ba_dang"]["dong_cua_thu"] == [0]
+
+
+# =====================================================================================================================================
+# Cột "đoạn mô tả" chọn sẵn (vòng sửa bằng dữ liệu, User duyệt 13/11) — đọc Qdrant thật, 0 USD
+# =====================================================================================================================================
+
+def test_lay_doan_by_chunk_id(deps):
+    service, _ = deps
+    some = service.search("Đại Nội Huế").documents[:2]
+    got = service.lay_doan([d.id for d in some] + ["khong/co.md#1"])
+    assert set(got) == {d.id for d in some} and all(got[d.id].text == d.text and got[d.id].metadata["source"] == d.metadata["source"] for d in some)
+    assert service.lay_doan([]) == {}
+
+
+def test_doan_mo_ta_table_and_startup_checks(tmp_path, deps):
+    service, _ = deps
+    with pytest.raises(ValueError, match="doan_mo_ta"):
+        _bang(tmp_path, [dict(_diem("a", "kinh_thanh"), doan_mo_ta="file/khac.md#3")])  # phải là đoạn của chính file nguồn
+    that = service.search("Đại Nội Huế").documents[0]
+    ok = _bang(tmp_path, [dict(_diem("a", "kinh_thanh"), nguon=that.metadata["source"], doan_mo_ta=that.id), _diem("b", "kinh_thanh")])
+    v2.kiem_doan_mo_ta(ok, service.lay_doan)  # có trong chỉ mục ⇒ không lỗi
+    thieu = _bang(tmp_path, [dict(_diem("a", "kinh_thanh"), nguon=that.metadata["source"], doan_mo_ta=that.metadata["source"] + "#99999")])
+    with pytest.raises(ValueError, match="1 doan_mo_ta không có trong chỉ mục"):
+        v2.kiem_doan_mo_ta(thieu, service.lay_doan)
+
+
+def test_v2_turn_uses_chosen_passage(deps, tmp_path):
+    """Điểm có `doan_mo_ta` ⇒ lịch dùng đúng đoạn đó (vào sổ nguồn, mã [n] của mục trỏ tới nó); điểm khác ⇒ luật tìm như trước."""
+    service, cb = deps
+    b = V2.bang_lich_v2
+    truong = {"so_ngay": "1", "kieu_di": "nhe_nhang", "so_thich": ["di_tich"]}
+    dau = v2.diem_ban_ngay(v2.xep_v2(b, v2.tu_truong(truong)))[0]
+    d = b.theo_id[dau]
+    chon = [x for x in service.search(d["ten"] + " lịch sử").documents if x.metadata["source"] == d["nguon"]][-1]
+    rows = json.loads(Path(V2_BANG_PATH).read_text(encoding="utf-8"))
+    for r in rows["diem"]:
+        if r["id"] == dau:
+            r["doan_mo_ta"] = chon.id
+    p = tmp_path / "v8_chon.json"
+    p.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
+    trace = AnswerTrace(truong=dict(truong), bieu_mau=True, search_query="x")
+    asyncio.run(lkh.chuan_bi("x", service, cb, trace, dataclasses.replace(V2, bang_lich_v2=v2.nap_bang_v2(p)), None))
+    muc = next(m for m in v2.moi_muc(trace.lich_v2["lich"]) if m["id_diem"] == dau)
+    assert trace.seen_ids[muc["nguon"] - 1] == chon.id  # mã [n] của mục trỏ đúng đoạn chọn sẵn

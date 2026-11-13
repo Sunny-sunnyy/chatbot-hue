@@ -69,8 +69,11 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
     mua = None if db is None else {k: v["xs"] for k, v in db["ngay"].items() if v["xs"] is not None}
     khung = lt2.xep_v2(bang, ts, ngay_bat_dau=bat_dau, mua=mua)
     nhap = lt2.tin_nhan_model(lt2.dung_lich(bang, khung, dict.fromkeys(lt2.diem_v2(khung), 0)), "")  # đếm ngân sách bằng bản nháp
+    chon = {j: bang.theo_id[j]["doan_mo_ta"] for j in dict.fromkeys(lt2.diem_v2(khung)) if bang.theo_id[j].get("doan_mo_ta")}
+    co = await asyncio.to_thread(retrieval_service.lay_doan, list(chon.values())) if chon else {}
+    doan_chon = {j: co[c] for j, c in chon.items() if c in co}  # khởi động đã kiểm đủ; vắng (không nên xảy ra) ⇒ luật tìm
     packed, nguon, _ = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, None, nhap=nhap, lay_ve=False,
-                                             max_doan=MAX_DOAN, tim_mo_ta=TIM_MO_TA)
+                                             max_doan=MAX_DOAN, tim_mo_ta=TIM_MO_TA, doan_chon=doan_chon)
     lich = lt2.dung_lich(bang, khung, nguon, trace.truong.get("ngay_di"), dong_du_bao(bang, khung, db))
     trace.lich_v2 = {"lich": lich, "loi_khung": lt2.kiem_khung_v2(bang, khung), "cau": None, "loi_cau": None}
     trace.buoc_lich += [{"buoc": "xep_xong", "n_diem": len(lt2.diem_v2(khung))}, {"buoc": "lay_nguon", "n_doan": len(packed.sources)}]

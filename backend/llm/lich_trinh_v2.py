@@ -59,6 +59,8 @@ def nap_bang_v2(path: str | Path) -> BangV2:
         if d["id"] in theo_id or d["cum"] not in cum or not d["loai"] or not set(d["loai"]) <= LOAI_DIEM or d["thoi_luong"] not in PHUT \
                 or d["trong_nha"] not in TRONG_NHA or d["bac_thang"] not in ("nhieu", None) or not d["buoi"] or not set(d["buoi"]) <= set(BUOI):
             raise ValueError(f"bảng điểm v2: {d['id']} sai giá trị")
+        if d.get("doan_mo_ta") is not None and not (isinstance(d["doan_mo_ta"], str) and d["doan_mo_ta"].startswith(d["nguon"] + "#")):
+            raise ValueError(f"bảng điểm v2: {d['id']} doan_mo_ta phải là chunk_id của chính file nguồn ({d['nguon']}#<số>)")
         theo_id[d["id"]] = d
     uu_tien = data["uu_tien_theo_so_thich"]
     for khoa, ids in uu_tien.items():
@@ -315,6 +317,16 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
         ng["buoi"]["toi"].append(chon)
         da_toi.append(chon)
     return nghi
+
+
+def kiem_doan_mo_ta(bang: BangV2, lay_doan) -> None:
+    """Lúc khởi động (cờ bản 2 bật): mọi `doan_mo_ta` của bảng phải có trong chỉ mục đang chạy — chunk_id đổi khi dựng lại chỉ mục / sửa kho.
+    Thiếu ⇒ `ValueError` nêu rõ mã thiếu (server không khởi động; không lặng lẽ quay về đoạn kém). `lay_doan` = `retrieval_service.lay_doan`."""
+    can = {d["id"]: d["doan_mo_ta"] for d in bang.diem if d.get("doan_mo_ta")}
+    co = lay_doan(list(can.values()))
+    thieu = sorted(f"{i}: {c}" for i, c in can.items() if c not in co)
+    if thieu:
+        raise ValueError(f"bảng điểm v2: {len(thieu)} doan_mo_ta không có trong chỉ mục (dựng lại chỉ mục ⇒ cập nhật bảng): {'; '.join(thieu)}")
 
 
 def diem_v2(khung: dict) -> list[str]:

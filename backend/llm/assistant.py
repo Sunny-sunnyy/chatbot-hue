@@ -563,7 +563,7 @@ def _do_dai_bang_chung(doc: RetrievedDocument) -> int:
 
 async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
                           instructions: str, nhap: str | None = None, lay_ve: bool = True, max_doan: int | None = None,
-                          tim_mo_ta: str | None = None):
+                          tim_mo_ta: str | None = None, doan_chon: dict | None = None):
     """D6: mỗi điểm trong khung — `retrieval_service.search(<tên điểm>)` (đọc Qdrant, không ghi), chọn **đúng 1 đoạn** = đoạn có bằng chứng dài
     nhất trong top-10 có `source` = file nguồn của điểm (cổng đợt 1 S1, A chốt: "đoạn đầu" hay chỉ là dòng tên — 11/28 điểm < 80 ký tự — nên
     luật "kèm một ý ngắn lấy từ tài liệu" không viết được ⇒ model từ chối; bằng nhau ⇒ đoạn đứng trước); đoạn đã có trong sổ nguồn ⇒ dùng lại số [n] cũ; không có đoạn đúng file ⇒ bỏ điểm (mã `khong_co_doan_nguon`).
@@ -591,7 +591,8 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
 
         for id_ in dict.fromkeys(lt.diem_trong_khung(khung)):  # hoạt động tối lặp lại ⇒ tìm một lần
             d = bang.theo_id[id_]
-            doc = (await doan_mo_ta(d) if tim_mo_ta else None) or await chon_doan(d["ten"], d["nguon"])
+            # bản 2: đoạn mô tả chọn sẵn trong bảng (cột `doan_mo_ta`) đứng trước; không có ⇒ đoạn tả điểm tìm được ⇒ luật cũ
+            doc = (doan_chon or {}).get(id_) or (await doan_mo_ta(d) if tim_mo_ta else None) or await chon_doan(d["ten"], d["nguon"])
             if doc is None:
                 lt.bo_diem(khung, id_, d["ten"], "khong_co_doan_nguon")
             elif doc.id in da_co:

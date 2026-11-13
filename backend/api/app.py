@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
 from api.conversations import ConversationStore
+from llm import lich_trinh_v2 as lt2
 from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
 from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
@@ -143,6 +144,11 @@ def create_app(settings=None):
             app.state.retrieval_error_message = (
                 "Hệ thống tra cứu tạm thời không khả dụng."
             )
+
+        # "Lên kế hoạch" bản 2: đoạn mô tả chọn sẵn của bảng điểm phải có trong chỉ mục đang chạy — NGOÀI khối bắt lỗi trên: thiếu ⇒ server không khởi
+        # động, lỗi nêu đúng mã thiếu (như lỗi cấu hình cờ), không biến thành "tra cứu không khả dụng" của cả chatbot
+        if app.state.retrieval_ready and app.state.assistant_flags.len_ke_hoach_v2:
+            lt2.kiem_doan_mo_ta(app.state.assistant_flags.bang_lich_v2, app.state.retrieval_service.lay_doan)
 
         # 1b. Cổng đợt 1 D6: bài kho cho trang Khám phá — chỉ khi bước 1 đã kiểm danh sách + hash file khớp build record; lỗi ⇒ route 503
         if app.state.retrieval_ready:
