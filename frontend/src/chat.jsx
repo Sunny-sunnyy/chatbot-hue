@@ -313,7 +313,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
       {turn.phase === "done" && turn.lich && (
-        <LichExtras lich={turn.lich} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
+        <LichExtras lich={turn.lich} truong={turn.truong} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
                     getText={() => vanBanLich(turn, answerRef.current?.innerText ?? "", turn.lich.ban_do || [])} />
       )}
       {turn.phase === "done" && turn.outcome === "out_of_scope" && (
@@ -438,7 +438,7 @@ function Feedback({ turnId }) {
 
 // B5 D11 + D12 (a): link "mở bản đồ" từng điểm (code dựng, chỉ đúng gốc Google Maps) + nút "Sửa": lịch từ câu gõ ⇒ mở lại thẻ hỏi lại; lịch từ
 // biểu mẫu ⇒ quay lại biểu mẫu với lựa chọn đang dùng (cổng D3).
-function LichExtras({ lich, onAsk, onEditPlan, getText }) {
+function LichExtras({ lich, truong, onAsk, onEditPlan, getText }) {
   const [editing, setEditing] = useState(false);
   const links = (lich.ban_do || []).filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
   return (
@@ -448,7 +448,7 @@ function LichExtras({ lich, onAsk, onEditPlan, getText }) {
       ) : links.length > 0 && <MapLinks links={links} />}
       <LuuLich getText={getText} />
       {lich.sua && onEditPlan && (
-        <button type="button" className="retry" onClick={() => onEditPlan(lich.sua.chon)}>Sửa — điền lại biểu mẫu</button>
+        <button type="button" className="retry" onClick={() => onEditPlan(lich.sua.chon, truong)}>Sửa — điền lại biểu mẫu</button>
       )}
       {lich.sua && !onEditPlan && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
       {lich.sua && !onEditPlan && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}

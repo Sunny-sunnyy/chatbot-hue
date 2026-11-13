@@ -154,6 +154,10 @@ picture { display: contents; }
 .lc-ten { float: left; font-weight: 600; font-size: 15px; padding-top: 8px; }
 .lc-chip { display: flex; flex-wrap: wrap; gap: 8px; }
 .lc-nut { justify-self: start; }
+.lc-dem { display: inline-flex; align-items: center; gap: 8px; margin-right: 16px; }
+.lc-dem output { min-width: 2ch; text-align: center; font-weight: 600; }
+.lc-hop { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; }
+.lc-tom { margin: 0; color: var(--color-muted, inherit); }
 
 .gioi-thieu h2 { margin-top: 28px; font-size: 22px; font-weight: 700; }
 .gioi-thieu p, .gioi-thieu ul { margin-top: 8px; max-width: 68ch; }

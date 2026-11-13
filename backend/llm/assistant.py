@@ -54,6 +54,10 @@ SEARCH_VARIANTS = ("v0", "v1", "v2", "v3")  # B2a: lần tìm đầu (plan D1)
 STREAM_DRAIN_SECONDS = 0.5  # ngắt giữa chừng: sau `result.cancel()` đọc nốt tối đa chừng này giây (spec streaming §4.5 bước 3)
 
 
+# Các ô của biểu mẫu "Lên kế hoạch" bản 2 (spec §3.1); thứ tự = thứ tự trên biểu mẫu
+O_BIEU_MAU_V2 = ("so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di")
+
+
 @dataclass(frozen=True)
 class AssistantFlags:
     """Cờ từng phần B1 (plan D9, `settings.yaml` khối `assistant:`); tắt cả 4 ⇒ chuỗi gửi model như B0.
@@ -89,6 +93,11 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    # "Lên kế hoạch" đợt 1 (plan `2026-11-12-len-ke-hoach-dot-1-plan.md`, spec bản 3.3 §5c.8): biểu mẫu bốn nhóm + hợp đồng `truong` mới — một cờ cho
+    # cả đợt, TẮT tới khi đạt nghiệm thu; cần `lich_trinh_bieu_mau`. `len_ke_hoach_o_hien` = các ô biểu mẫu hiện (`/api/tinh_nang`): ô chưa có tác
+    # dụng với bộ xếp đang dùng thì chưa hiện (spec N1)
+    len_ke_hoach_v2: bool = False
+    len_ke_hoach_o_hien: tuple[str, ...] = ()
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -108,6 +117,10 @@ class AssistantFlags:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
+        if self.len_ke_hoach_v2 and not self.lich_trinh_bieu_mau:
+            raise ValueError("assistant.len_ke_hoach_v2 needs assistant.lich_trinh_bieu_mau: true")
+        if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
+            raise ValueError(f"assistant.len_ke_hoach_o_hien must be a subset of {O_BIEU_MAU_V2}")
 
     @classmethod
     def from_settings(cls, settings: dict) -> "AssistantFlags":
@@ -117,7 +130,8 @@ class AssistantFlags:
         bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
-                   du_bao=tt.lay_du_bao if values["thoi_tiet"] else None)
+                   du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
+                   len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()))
 
     @property
     def uses_tools(self) -> bool:
@@ -133,7 +147,8 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
     return lt.nap_bang(BACKEND_DIR / settings["assistant"]["lich_trinh_bang"])
 
 
-BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__ if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao"))
+BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
+                    if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien"))
 
 
 def elapsed_ms(started: float) -> float:

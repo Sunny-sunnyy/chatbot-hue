@@ -11,6 +11,7 @@ from fastapi import APIRouter, Query, Request
 from api.routes.chat import _flags, error_response
 from ingestion.source_state import read_source_lf
 from llm import thoi_tiet as tt
+from llm.hoi_lai import SO_NGAY_TOI_DA, SO_THICH_TOI_DA
 
 router = APIRouter()
 
@@ -111,8 +112,12 @@ async def thoi_tiet(request: Request):
 
 @router.get("/api/tinh_nang")
 async def tinh_nang(request: Request):
-    """Cờ tính năng giao diện cần để ẩn / hiện mục (một lần gọi lúc tải trang). Chỉ boolean."""
+    """Cờ tính năng giao diện cần để ẩn / hiện mục (một lần gọi lúc tải trang). Chỉ boolean — trừ khoá `len_ke_hoach_v2`: **chỉ có khi cờ bật**
+    (cờ tắt ⇒ khoá vắng hẳn, phản hồi giống hôm nay — plan đợt 1 ý 1), mang các ô biểu mẫu hiện + giới hạn của bộ xếp đang dùng (ý 7)."""
     state = request.app.state
     flags = _flags(state)
-    return {"lich_trinh_bieu_mau": flags.lich_trinh_bieu_mau, "thoi_tiet": flags.thoi_tiet, "anh": getattr(state, "anh", None) is not None,
-            "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}
+    co = {"lich_trinh_bieu_mau": flags.lich_trinh_bieu_mau, "thoi_tiet": flags.thoi_tiet, "anh": getattr(state, "anh", None) is not None,
+          "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}
+    if flags.len_ke_hoach_v2:
+        co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA}
+    return co

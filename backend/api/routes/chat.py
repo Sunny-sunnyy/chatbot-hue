@@ -13,6 +13,7 @@ import time
 import anyio
 from agents.exceptions import AgentsException
 from fastapi import APIRouter, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.sse import format_sse_event
 from openai import OpenAIError
@@ -27,7 +28,8 @@ from core.schema import (
 from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
-from llm.hoi_lai import TruongInput, ghep_cau
+from llm import ngay_lich as nl
+from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_cu, ghep_cau, loi_v2
 from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, elapsed_ms, lich_cho_giao_dien, turn_usd
 
@@ -138,16 +140,34 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
         request.app.state.conversations.append(conversation_id, query, trace.answer)
 
 
-def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict) -> str:
+def _kiem_truong_v2(body: "ChatRequest", state) -> None:
+    """"Lên kế hoạch" bước (a): giá trị mới của `truong` chỉ nhận ở lượt biểu mẫu khi cờ `len_ke_hoach_v2` bật; ngày đi / giới hạn bộ xếp kiểm theo
+    ngày Việt Nam. Sai ⇒ đúng lỗi 422 + dòng log như khi thân yêu cầu sai khuôn (handler `api/app.py`) ⇒ cờ tắt không đổi gì với yêu cầu cũ.
+    Gọi ở dòng đầu của route, trước khi mở số đo (thân sai khuôn hôm nay cũng không có dòng `chat_metrics`)."""
+    if body.truong is None or not co_gia_tri_moi(body.truong):
+        return
+    if not (body.bieu_mau and _flags(state).len_ke_hoach_v2) or loi_v2(body.truong, nl.hom_nay()) is not None:
+        raise RequestValidationError([{"type": "value_error", "loc": ("body", "truong"), "msg": "truong value not accepted", "input": None}])
+
+
+def _truong_cho_bo_xep(body: "ChatRequest", state) -> TruongInput:
+    """Bước (a): bộ xếp cũ ⇒ cờ `len_ke_hoach_v2` bật thì lượt biểu mẫu đổi giá trị mới về bốn trường cũ (`doi_sang_cu`); còn lại giữ nguyên."""
+    if body.bieu_mau and _flags(state).len_ke_hoach_v2:
+        return TruongInput(**doi_sang_cu(body.truong.model_dump(exclude_none=True)))
+    return body.truong
+
+
+def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict, state) -> str:
     """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc.
     Cổng D3: lượt biểu mẫu ⇒ câu gốc là `CAU_BIEU_MAU` (bỏ chữ `query` của trình duyệt); câu này vào lịch sử như câu người dùng."""
     if body.truong is None:
         return query
     if body.bieu_mau:
         trace.bieu_mau, query = True, CAU_BIEU_MAU
-    trace.truong, trace.search_query = body.truong.model_dump(exclude_none=True), query
-    metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))
-    return ghep_cau(query, body.truong)
+    truong = _truong_cho_bo_xep(body, state)
+    trace.truong, trace.search_query = truong.model_dump(exclude_none=True), query
+    metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))  # số trường người dùng gửi (không giá trị)
+    return ghep_cau(query, truong)
 
 
 def _web_payload(trace: AnswerTrace) -> dict | None:
@@ -188,6 +208,7 @@ async def new_conversation(request: Request):
 async def chat(body: ChatRequest, request: Request, response: Response):
     """Điểm ghi số đo duy nhất: mọi nhánh của `_answer`, kể cả exception đi tới handler 500 chung (`api/app.py`), đều có đúng một dòng log.
     Phần suy `outcome` chỉ đọc giá trị kiểu thường; log không được đổi phản hồi."""
+    _kiem_truong_v2(body, request.app.state)
     started = time.perf_counter()
     metrics = dict.fromkeys(METRIC_FIELDS)
     try:
@@ -234,7 +255,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
 
     trace = AnswerTrace()
     conversation_id = _start_conversation(request, trace, metrics)
-    query = _model_query(body, query, trace, metrics)
+    query = _model_query(body, query, trace, metrics, state)
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
@@ -383,6 +404,7 @@ async def chat_stream(body: ChatRequest, request: Request):
     """Lỗi trước luồng: chỉ còn "chưa sẵn sàng" (tìm kho / generator) ⇒ JSON mã + thân như `/api/chat`, dòng log ghi ở đây. Qua hết ⇒ mở
     luồng SSE; định tuyến + tìm kho chạy **trong** luồng (Phase 9 B1 D6 — đổi cố ý: lỗi Qdrant giữa lượt ⇒ sự kiện `error` mang đúng câu 503 cũ).
     `_answer_events` tự ghi dòng log ở `finally` của nó ⇒ vẫn đúng một dòng mỗi lần gọi."""
+    _kiem_truong_v2(body, request.app.state)
     started = time.perf_counter()
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream_opened = False
@@ -411,7 +433,7 @@ async def chat_stream(body: ChatRequest, request: Request):
 
         trace = AnswerTrace()
         conversation_id = _start_conversation(request, trace, metrics)
-        query = _model_query(body, query, trace, metrics)
+        query = _model_query(body, query, trace, metrics, state)
         turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder,
                                            _tim_web(state))
         cau_goc = trace.search_query or query

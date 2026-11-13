@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChatView, useChat } from "./chat.jsx";
-import { Bai, CAU_BIEU_MAU, GioiThieu, GOI_Y, KhamPha, LenKeHoach, LinhVuc, TrangChu } from "./pages.jsx";
+import { Bai, CAU_BIEU_MAU, GioiThieu, GOI_Y, KhamPha, LenKeHoach, LenKeHoachV2, LinhVuc, TrangChu } from "./pages.jsx";
 import { useRoute } from "./route.js";
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
@@ -60,8 +60,9 @@ export default function App() {
     window.location.hash = "#/tro-ly";
   }
 
-  function editPlan(chon) {
-    setPlanPrefill({ ...chon });
+  // `chon` = lựa chọn bộ xếp đã dùng (biểu mẫu cũ); `truong` = giá trị đã gửi — biểu mẫu bản 2 điền lại từ đây (server đổi giá trị mới về trường cũ)
+  function editPlan(chon, truong) {
+    setPlanPrefill({ ...(tinhNang.len_ke_hoach_v2 && truong ? truong : chon) });
     setPanelOpen(false);
     window.location.hash = "#/len-ke-hoach";
   }
@@ -101,7 +102,9 @@ export default function App() {
         {route.page === "linh-vuc" && <LinhVuc linhVuc={route.linhVuc} bai={bai} loi={baiLoi} />}
         {route.page === "bai" && <Bai baiId={route.baiId} bai={bai} onAskAbout={askAbout} />}
         {route.page === "len-ke-hoach" && (
-          <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
+          tinhNang.len_ke_hoach_v2
+            ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
+            : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} anh={tinhNang.anh} muc={route.muc} />}
         {onTroLy && (
