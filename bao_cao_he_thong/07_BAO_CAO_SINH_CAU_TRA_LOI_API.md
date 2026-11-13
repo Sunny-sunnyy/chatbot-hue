@@ -3,7 +3,7 @@
 **Cập nhật lần cuối: 21:49 10/11/2026 — bản 49:** câu chỉ hỏi về ngày tháng nay được trả lời dù không nhắc Huế (bước phân loại câu được dặn thêm). Bản 48: câu về ngày trả lời nhanh hơn.
 Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
-## 1. Tóm tắt (đúng hiện trạng 10/11/2026)
+## 1. Tóm tắt (đúng hiện trạng 10/11/2026; thêm 20:14 13/11/2026: cờ "hết lượt tìm thì dừng" bật — bảng cuối file)
 
 - **Mới 10/11 — người dùng thấy: câu chỉ hỏi về ngày tháng được trả lời dù không nhắc Huế** (bạn đồng ý 21:43 10/11/2026; review E đạt).
   - Câu như "hôm nay là ngày mấy âm lịch", "Tết năm sau là thứ mấy", "còn bao nhiêu ngày tới rằm" trước bị bước phân loại câu coi là "không liên quan Huế" và từ chối.
@@ -397,6 +397,7 @@ Bảng lập 31/10 (code `main` `1985a81`), thêm dòng tới 09/11. **Cờ, rou
 | Ghi `chat_metrics` mỗi câu, không ghi nội dung | **còn dùng** (từ 27/10); **từ B0 02/11 ghi thêm** `route`, `usd`, `n_llm_calls`, `llm_calls`, `tools` (trước đó không ghi USD) | `chat.py:38–45,216`; `generator_openai_full_corpus.py` `CallLog` |
 | Câu bị ngắt giữa stream, hoặc `/api/chat` lỗi sau khi model đã trả lời: `usd` ghi rỗng (có tốn tiền thật) | **sửa ở B1** (03/11): log ghi sau khi đóng lõi, có `llm_calls`; lần gọi bị huỷ giữa chừng vẫn không có usage ⇒ `usd` lượt đó hơi thấp hơn thật | `b127_review.md`, `b129_review.md` |
 | Trợ lý tự gọi tìm thêm ≤ 2 lần (`tim_them`) | **còn dùng** (từ 03/11 trưa, merge `00d670e`); câu tìm đầu vẫn là câu gốc | `backend/llm/assistant.py` `tool_for_turn`; `settings.yaml` `tim_them` |
+| Hết lượt tìm thì dừng (`het_luot_bo_cong_cu`) | **còn dùng — BẬT từ 13/11** (merge `cd1f6ef` 12/11 cờ tắt; bật `9d6a0f7`, User: bật kèm theo dõi câu kho thiếu bị trả lời bằng kho, ≥ 1 câu bịa ⇒ tắt): sau 2 lần model tìm thật, lượt gọi kế không còn `tim_kho`; đo 12/11: 8 / 8 câu kho thiếu bớt ≥ 1 lượt gọi, trung vị cả câu 22,85 ⇒ 16,15 s; 3 câu bớt từ chối, 0 / 6 bịa (mẫu nhỏ) | `backend/llm/assistant.py`, `llm/generator_openai_full_corpus.py`; `report_agent/2026-11-12_ra_khoang_cach/b_het_luot_tim_implementation.md`, `c_review_bat_co_het_luot.md` |
 | Công cụ hỏi lại `hoi_lai` cho model + thẻ nút | **công cụ đã gỡ** ở B5 (05/11; B4 âm hai vòng) — `settings.yaml` không còn khoá `hoi_lai`; chỉ còn thẻ nút do **code** bật khi lịch trình câu gõ thiếu số ngày (cờ `lich_trinh` tắt ⇒ người dùng không thấy) | `backend/llm/hoi_lai.py` (danh sách trường + dữ liệu nút); `settings.yaml` dòng `lich_trinh` |
 | Giao diện hiện số `[n]` bấm được trong chữ | **đã thay** 07/11 bởi dòng "Nguồn" (cổng đợt 1, merge `dbfc925`) | `frontend/src/markdown.js` `renderAnswerHtml`, `chat.jsx` `SourceLine` |
 | Công cụ thời tiết `thoi_tiet` | **còn dùng — BẬT từ 07/11** (`0dab4e5`) | `settings.yaml` `thoi_tiet: true`; `backend/llm/thoi_tiet.py` |

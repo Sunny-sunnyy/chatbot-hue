@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN 13/11 (mở 19:46; cập nhật 19:49 13/11/2026 `date`)
+
+- Terminal: A `hue-rag-43` · B `hue-rag-83` · C `hue-rag-eb` · E `hue-rag-e8` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).
+- Kiểm nhanh: `main` `d5ea552` = origin, sạch; hooksPath `.githooks`; Qdrant 2 collection, 8.435 điểm; RAM trống ~12 GB; `/tmp` mất ⇒ worktree `/tmp/b_lkh`, `/tmp/b7_moc` prunable (B dựng lại); 4 worktree AGY cũ còn.
+- User: "A tự điều phối" + trần Phase 9 **6,0** (A ghi 19:49 13/11/2026).
+- Giao (`CURRENT_HANDOFF.md` "VIỆC PHIÊN 13/11"): B lịch trình đợt 1 · C kho 3 ăn uống · E kho 3 lưu trú + đi lại ⇒ TRIPO vòng 6.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; sau: `bai_hoc/`, `bao_cao_he_thong/07_…`.
+- Tiếp: hỏi User câu 2–11 mỗi lần một câu; Photon; nợ `bai_hoc/`; vòng tự soi 1.
+
 # STATUS A — KẾT PHIÊN 12/11 (mở 18:40; cập nhật 22:26 12/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" + "Câu hỏi cho User" (11 câu mới, hỏi theo thứ tự, mỗi lần một câu) ⇒ hỏi quyền phiên + trần tiền Phase 9 (đã ≈ 4,61) ⇒ cùng lượt giao: B code lịch trình đợt 1 (plan đã duyệt), C + E kho 3 (dữ liệu OSM đã tải sẵn), một session rảnh làm nốt TRIPO vòng 6 ⇒ **trả nợ tài liệu trước khi thêm việc**: `bai_hoc/` chưa có việc của 12/11 (B7 giữa kỳ, Exa thử rồi bỏ, đếm lỗi trước khi xây — qua agent con kiểm độc lập), `bao_cao_he_thong/07_…` chưa ghi cờ `het_luot_bo_cong_cu`. Vòng cải tiến 27 (W66–W68) chờ User duyệt.

@@ -3,6 +3,20 @@
 Cập nhật: 22:23 12/11/2026 (A, kết phiên 12/11). Trước: 18:45 12/11/2026 (A, mở phiên 12/11 — giao việc). Trước: 16:24 11/11/2026 (A, kết phiên chiều 11/11). Trước: 10:43 11/11/2026 (A, kết phiên sáng 11/11).
 Nguyên văn handoff trong phiên 10/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-10.md`; 09/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-09.md`. Nhật ký User: `bao_cao_he_thong/nhat_ky/2026-11-10_toc_do_xa_giao_cau_ngay.md`.
 
+## VIỆC PHIÊN 13/11 (mở 19:46 13/11/2026; A ghi 19:49 13/11/2026)
+
+**Session:** A `hue-rag-43` · B `hue-rag-83` · C `hue-rag-eb` · E `hue-rag-e8` — cả bốn Claude Code, trực tiếp (B / C / E tự báo). `main` `d5ea552` = origin, sạch; Qdrant 2 collection, 8.435 điểm. `/tmp` mất (máy khởi động lại) ⇒ worktree `/tmp/b_lkh`, `/tmp/b7_moc` prunable — B dựng lại (nhánh `p9-len-ke-hoach-v2` + tag `p9-moc` còn).
+**Quyền phiên (User, A ghi 19:49 13/11/2026):** "A tự điều phối" như 12/11; **trần Phase 9 = 6,0 USD** (đã ≈ 4,61); phiên này ≤ 1 USD. Hết hạn cuối phiên.
+**Giao (việc đã có trong handoff — đoạn "Việc theo session" dưới):**
+- **B:** code lịch trình đợt 1 bước (a)–(e), plan + spec đã duyệt; rebase / tạo lại nhánh từ `main` hiện tại; `so_ngay_toi_da: 4` + 422 cho 5 ngày tới bước (b) — A đã đồng ý. Trần đợt 1 0,20 USD. Lúc B đo latency ⇒ C / E không chạy việc nặng / có phí.
+- **C:** kho 3 ăn uống (0 USD, không chạm kho): siết luật khớp tên + đọc tay `khop_bai_kho.json`, OSM vào `dung_quan_theo_cum.py`, rút tiêu đề bài nháp, cập nhật phiếu quán + mốc. Ghi quán OSM vào kho **chờ User trả lời câu 5**. **→ C XONG 19:55 13/11/2026, chờ A** (0 USD; chi tiết `sessions/STATUS_C.md`).
+- **E:** kho 3 lưu trú (22 tên đường ⇒ khu) + bài "Đi lại ở Huế" ⇒ rồi TRIPO vòng 6 (dò tay có ảnh trước; Playwright = việc nặng, không chạy trùng lượt đo của B); review nghiệm thu đợt 1 khi B xong.
+- **A:** hỏi User câu 2–11 (mỗi lần một câu); Photon thử lại 1 lượt; nợ `bai_hoc/` + `bao_cao_he_thong/07_…`; vòng tự soi 1 khi mỗi session có kết quả đầu.
+**User trả lời (A ghi 20:02 13/11/2026):** câu 2 — **bật cờ `het_luot_bo_cong_cu` kèm theo dõi** (lượt đo kế + B7 cuối đếm riêng câu kho thiếu mà trợ lý trả lời bằng kho; ≥ 1 câu bịa ⇒ tắt) — A đang làm, cần C review · câu 3 — **giữ cả 5 điểm ưu tiên C đề xuất** (Nguyễn Đình Chiểu, Vọng Cảnh, Hòn Chén, Duyệt Thị Đường, TT Lê Bá Đảng); câu thác Nhị Hồ tháng 3 chưa hỏi.
+**User trả lời tiếp (A ghi 20:10 13/11/2026):** câu 3b — thác Nhị Hồ chỉ bỏ cuối tháng 9 – hết tháng 2, **tháng 3 vẫn xếp** (B sửa ở bước (b)) · câu 5 — **đưa HẾT 581 quán OpenStreetMap vào kho** (không theo khuyến nghị "chỉ cụm thiếu"; mở rộng Q3 spec kho 3) ⇒ C viết phụ lục spec: dạng bài, lọc tự động thay đọc tay từng quán, đo chen tầng tìm theo K1–K8 · Photon chạy lại được: 74 bài, chỉ 2 toạ độ mới (7 trùng OSM) · cờ hết lượt tìm commit `9d6a0f7` (cục bộ, C review rồi mới push).
+**User vắng từ 20:13 13/11/2026:** "câu hỏi nào cần hỏi thì gác lại, tiếp tục điều phối, nghiên cứu, tối ưu, triển khai, phát triển; tí quay lại; không hỏi lúc này" ⇒ A KHÔNG mở hộp hỏi tới khi User nhắn. **Câu chờ User (gom lại):** (i) quán OSM để đâu — bảng riêng cho code (A khuyến nghị) / collection riêng / kho chính (User đã chọn "kho chính" ở câu 5 rồi hỏi lại "kho riêng?" ⇒ chưa chốt, C dừng phụ lục) · (ii) phiếu khu lưu trú (2 cơ sở bảng D + 2 cặp tên bảng E) · (iii) lệch Ga Huế số 2 (kho) ↔ số 1 (Wikipedia) · (iv) phiếu ảnh (agent con đang nhìn ảnh) · câu 6–11 cũ · 4 worktree AGY cũ.
+**Kết quả trong phiên:** E gán khu lưu trú 149 / 151 + bài nháp "Đi lại ở Huế" (C đang review) · C kho 3 ăn uống xong, E review ready (3 minor ⇒ C sửa; m-2 A chọn: giữ ba mức của spec, tách trường `nguon_toa_do`).
+
 ## PHIÊN SAU ĐỌC TRƯỚC (viết lại 22:23 12/11/2026, kết phiên 12/11)
 
 **Phiên 12/11 đã kết** (mở 18:40; A `hue-rag-7d` · B `hue-rag-1b` · C `hue-rag-e1` · E `hue-rag-33`, cả bốn Claude Code, model Fable 5.2). Quyền phiên **hết hạn** ⇒ A mới hỏi lại User một câu. **Dự án chưa xong.**

@@ -1,3 +1,20 @@
+# STATUS B — PHIÊN 13/11 (mở 19:47 13/11/2026, terminal `hue-rag-83`; A `hue-rag-43` · C `hue-rag-eb` · E `hue-rag-e8`)
+
+## Đang làm — "Lên kế hoạch" đợt 1 (A giao 19:49 13/11/2026; plan bản 3, spec 3.3; trần 0,20 USD)
+- Worktree `/tmp/b_lkh`, nhánh `p9-len-ke-hoach-v2` từ `main` `d5ea552` (symlink `data/`, `knowledge-base-hue/`). **Chưa commit / push** (chờ A trả lời quyền commit nhánh).
+- **Khai báo sửa (trong worktree):** `backend/llm/hoi_lai.py`, `backend/llm/assistant.py` (`AssistantFlags`), `backend/api/routes/chat.py`, `backend/api/routes/cong.py`, `backend/config/settings.yaml`,
+  `backend/tests/test_len_ke_hoach_v2.py` (mới), `frontend/src/pages.jsx`, `App.jsx`, `chat.jsx`, `index.css`; bước (b)+ thêm `backend/llm/lich_trinh.py`, `answer_stream.py`, `ngay_lich.py`, bảng `data/phase_9/lich_trinh/diem_v8.json` / `v9`, `data/phase_12/deploy_nhap/dung_dockerignore.py`.
+  Số đo / công cụ: `data/len_ke_hoach_v2_2026-11-13/`. Report: `report_agent/2026-11-12_ra_khoang_cach/b_len_ke_hoach_dot_1_implementation.md` (viết cuối đợt).
+- **Bước (a) XONG (20:08 13/11/2026), 0 USD:** test mới 47 đạt (14,6 s); test rộng không khoá 915 đạt / 1 failed + 4 error = đúng 5 test cần khoá (4 phút 44); file chạm cờ có `--env-file` 336 đạt (1 phút 48);
+  Q1 228 / 228 giống byte `main` ↔ nhánh (sha tệp `79d8fd408f50`, 41 + 32 s); `mo_phong_v8.py` cấu hình A `kiem_khung` 0 / 360; Playwright 1440 + 390 trên bản build (cờ bật tạm, yêu cầu chặn ở trình duyệt): ô ẩn không có trong DOM, điền bằng bàn phím, `truong` gửi đúng, 0 lỗi console — **DAT**.
+  Quyết trong phạm vi: ô hiện ở (a) = so_ngay, nguoi_lon, tre_em, lon_tuoi, so_thich (ẩn `kieu_di` vì bộ xếp cũ đổi khung 0 / 120, ẩn `ngay_di` vì chưa dùng); thêm `so_thich_toi_da: 1` cạnh `so_ngay_toi_da: 4` (bộ xếp cũ một sở thích ⇒ 2 sở thích bị 422 tới bước (b)).
+  Server tạm 8891 đã tắt; cờ trong worktree đã trả `false`.
+
+## Mở phiên 19:47 13/11/2026 — chờ A giao việc
+- Việc theo handoff: **chỉ một** — code "Lên kế hoạch" đợt 1 bước (a)–(e), nhánh `p9-len-ke-hoach-v2` (thiết kế (a) ở mục 12/11 dưới). TRIPO vòng 6 đã chuyển cho E.
+- Kiểm nhanh: `main` `d5ea552` sạch; hook `.githooks`; Qdrant 2 collection, 8.435 điểm. Worktree `/tmp/b_lkh` + `/tmp/b7_moc` **mất** (máy khởi động lại, git báo prunable) ⇒ khi được giao: `git worktree prune` rồi dựng lại (nhánh `p9-len-ke-hoach-v2` còn cục bộ ở `6139bf0`, rỗng).
+- Chưa sửa file nào khác, chưa chạy lượt có phí. Tiền B 13/11: 0 USD.
+
 # STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
 
 ## PHIÊN SAU ĐỌC TRƯỚC (B viết 22:23 12/11/2026, lúc kết phiên 12/11)

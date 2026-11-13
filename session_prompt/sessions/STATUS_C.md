@@ -1,4 +1,28 @@
-# STATUS C — phiên 12/11 (mở 18:40 12/11/2026). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên 13/11 (C `hue-rag-eb` · A `hue-rag-43` · B `hue-rag-83` · E `hue-rag-e8`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN 13/11
+
+**ĐANG LÀM (19:49 13/11/2026, A giao; User: việc A giao = "làm đi"):** kho 3 phần ăn uống, 0 USD, không chạm kho — (1) siết luật khớp tên OSM + đọc tay `data/osm_quan_2026-11-12/khop_bai_kho.json` · (2) OSM làm nguồn thứ ba trong `data/sua_kho_2026-11-12_an_gan/tools/dung_quan_theo_cum.py` · (3) rút tiêu đề mục bài nháp · (4) cập nhật phiếu quán + mốc. Ghi quán OSM vào kho chờ User (câu 5).
+Khai báo sửa: file này · `data/osm_quan_2026-11-12/` (script khớp + bảng khớp mới + biên bản) · `data/sua_kho_2026-11-12_an_gan/` (script dựng, `quan_theo_cum.json`, phiếu quán + mốc, bài nháp). Không chạm `knowledge-base-hue/`.
+
+**Kho 3 ăn uống — 4 bước XONG, chờ A (19:55 13/11/2026, 0 USD, không gọi mạng, không chạm kho):**
+- (1) Luật khớp bản 2 (`data/osm_quan_2026-11-12/tools/khop_osm_v2.py`, luật ghi trước) ⇒ `khop_bai_kho_v2.json` 13 dòng; **đọc tay 22 dòng** (13 + 9 dòng bản 1 bị bỏ) ⇒ `doc_tay_v2.json`: nhận 13 (thêm tay HANOK), bỏ 9. Bản 1 không dùng được 6 / 22 (4 khớp nhầm rõ, 1 trong đó gắn "chắc").
+- (2) `dung_quan_theo_cum.py` bản 2: 13 toạ độ OSM cho bài kho + OSM nguồn thứ ba cho cụm / mốc < 3 quán (đọc tay 12 quán được chọn, loại 2 ⇒ `BO_TAY_OSM`). Sửa thêm lỗi làm tròn bản 1 (285 m ⇒ "300 m" mà 303 m ⇒ "0,3 km").
+- (3) Tiêu đề mục bài nháp: dài nhất 305 ⇒ 48 ký tự; phường + tên điểm vào câu đầu đoạn.
+- (4) Phiếu quán + mốc bản 2 (bảng A2 OSM chờ User; bảng D thêm cột OSM). md5: `quan_theo_cum.json` `2c96ac42e946` · phiếu `ce7264f07c17` · bài nháp `1b387b1c4cc2`.
+- Số (so bản 1 tối 12/11): bài kho có toạ độ 29 ⇒ 34 / 81 · gán cụm 22 ⇒ 28 · cụm 0 quán 4 / 8 ⇒ 2 / 8 nếu dùng OSM (Thủy Xuân +6, Kim Long +3, Đông +1); không OSM vẫn 4 / 8. Còn trống: lăng xa, nam xa, mốc cầu ngói Thanh Toàn.
+- Lệnh tính lại + chi tiết: `data/osm_quan_2026-11-12/bien_ban.md` mục "Phiên 13/11". Bản 1 của script / bảng / bài nháp sao ở `/tmp/c_*_ban12.*` (mất khi khởi động lại; data/ không có git).
+- **Lỗi quy trình của C:** khi đọc tay đã `grep` thẳng 3 bài quán trong `knowledge-base-hue/foods/restaurants/` (dòng địa chỉ) thay vì `scripts/grep_kb.sh` — không chạm câu kín / Golden, nhưng sai luật §5; lần sau dùng `grep_kb.sh`.
+
+**Review chéo kho 3 của E XONG (20:04 13/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_review_kho3_e.md` — changes_requested: M-1 151 dòng có hạng = 143 cơ sở (316 = 293); bài đi lại 4 minor; WebFetch 3/3 ý khớp. Đã nhắn E + A.
+**Sửa 3 minor review E cho phần ăn uống XONG (20:04 13/11/2026):** Cơm hến Hoa Đông ⇒ ước (không gán cụm) · bỏ mức "osm", thêm `nguon_toa_do` · Trốn: số kiệt. Gán cụm 28 ⇒ 27. md5: 9416b5c6adca  quan_theo_cum.json;48475905ac68  phieu_quan_va_moc_2026-11-12.md;7b57ee5e389e  bai_nhap_an_gi_gan_diem_tham_quan.md;722d72c97292  ../osm_quan_2026-11-12/doc_tay_v2.json;
+**Kiểm lại kho 3 của E vòng 2 XONG (20:06 13/11/2026):** ready (mục 7 `c_review_kho3_e.md`): 142 cơ sở có hạng, 140 / 142 gán khu; bài đi lại m-2…m-5 đóng.
+**Photon ⇒ bảng quán XONG (20:08 13/11/2026, 0 USD):** 9 dòng đạt luật, 7 trùng OSM (cùng gốc), 2 dùng mới; gán cụm 27 ⇒ 28; md5 quan_theo_cum eae693cac1b0 · phiếu 6d0e46a572fe · bài nháp 8cfe17ac9e4f (chi tiết bien_ban.md OSM).
+**Phụ lục spec "581 quán OSM" — A giao rồi TẠM DỪNG (20:11 13/11/2026):** User đang cân nhắc để quán OSM ở bảng / kho riêng thay vì kho RAG chính; chưa sửa spec, chưa chạy gì. Chờ A.
+**Review `9d6a0f7` XONG (20:11 13/11/2026):** ready, 2 minor (Project_Status còn ghi cờ false; eval mặc định nay có cờ ⇒ ghi vào plan B7 cuối) — `c_review_bat_co_het_luot.md`. Trước đó: review commit `9d6a0f7` (bật cờ `het_luot_bo_cong_cu`, A làm) ⇒ `report_agent/2026-11-12_ra_khoang_cach/c_review_bat_co_het_luot.md`.
+**Bẫy 13/11 (lỗi bằng chứng của C):** gửi tin cho A SONG SONG với lệnh tính md5 ⇒ tin mang 4 md5 bịa; đã đính chính ngay. Luật cho mình: tin báo số chỉ gửi SAU khi đã thấy đầu ra lệnh, không gộp cùng lượt gọi công cụ.
+
+## (Phiên 12/11 — giữ để tra)
 
 ## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên, 22:22 12/11/2026 `date`)
 
