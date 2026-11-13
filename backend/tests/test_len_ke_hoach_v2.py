@@ -6,6 +6,7 @@ Kiểm: bảng giá trị hợp lệ / không hợp lệ từng trường · đ�
 client giả có kịch bản (không mạng) + Qdrant thật (đọc) + bảng điểm thật (private) — như `test_cong_dot_1.py`. “Cờ tắt giống byte” của chuỗi gửi
 model đo thêm bằng Q1 (`capture_all.py`, report).
 """
+import asyncio
 import copy
 import dataclasses
 import json
@@ -16,7 +17,7 @@ import pytest
 from pydantic import ValidationError
 
 from llm import ngay_lich as nl
-from llm.assistant import AssistantFlags
+from llm.assistant import AnswerTrace, AssistantFlags
 from llm.hoi_lai import GIA_TRI, NGAY_DI_TOI_DA, TruongInput, co_gia_tri_moi, doi_sang_cu, doi_sang_moi, loi_v2
 from test_api_chat import chat_log_records, metric_lines
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (fixture `deps` dùng chung)
@@ -538,3 +539,124 @@ def test_cau_stream_emits_each_closed_item():
     raw = json.dumps({"cau": [{"id_muc": "n1-sang-1", "cau": "a {b} \"c\" [1]."}, {"id_muc": "n1-chieu-1", "cau": "d [2]."}]}, ensure_ascii=False)
     out = [x for i in range(0, len(raw), 5) for x in s.feed(raw[i:i + 5])]
     assert out == json.loads(raw)["cau"]
+
+
+# =====================================================================================================================================
+# Bước (d): ngày đi — thứ, mùa, dự báo (plan §3 (d), spec 5c.2) — ngày cố định, dự báo ghi sẵn, 0 USD, không mạng
+# =====================================================================================================================================
+
+from llm import len_ke_hoach as lkh  # noqa: E402
+from llm import thoi_tiet as tt  # noqa: E402
+
+D = dt.date
+
+
+def _mua_luu_y(thang):
+    return {"thang": list(thang), "cau": "x", "bo_khoi_lich": True}
+
+
+def test_rule_season_closure_beats_priority_by_day(tmp_path):
+    """5c.2 (i): điểm tạm dừng theo mùa không xếp đúng NGÀY rơi vào tháng dừng, kể cả điểm ưu tiên ⇒ ghi chú; lịch vắt hai tháng xét từng ngày."""
+    b = _bang(tmp_path, [dict(_diem("thac", "bo_nam", loai=("thien_nhien",)), mua_luu_y=_mua_luu_y((9, 10, 11, 12, 1, 2))),
+                         *[_diem(f"t{i}", "bo_nam", loai=("thien_nhien",)) for i in range(6)]], {"chung": ["t0"], "thien_nhien": ["thac", "t0"]})
+    s = ("thien_nhien",)
+    dong = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=s), ngay_bat_dau=D(2026, 12, 20))
+    assert "thac" not in v2.diem_v2(dong) and dong["tam_dung_mua"] == ["thac"] and v2.kiem_khung_v2(b, dong) == []
+    mo = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=s), ngay_bat_dau=D(2027, 3, 1))
+    assert v2.diem_v2(mo)[0] == "thac" and mo["tam_dung_mua"] == []
+    vat = v2.xep_v2(b, ts(3, kieu_di="nhe_nhang", so_thich=s), ngay_bat_dau=D(2027, 2, 27))  # 27/2, 28/2 dừng · 1/3 mở
+    assert [("thac" in v2.diem_v2({"ngay": [ng]})) for ng in vat["ngay"]] == [False, False, True] and v2.kiem_khung_v2(b, vat) == []
+    assert v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=s)))[0] == "thac"  # không ngày đi ⇒ luật mùa không áp (không đoán tháng)
+    assert "tam_dung_mua" in v2.kiem_khung_v2(b, dict(dong, ngay=[{"ngay": 1, "buoi": {"sang": ["thac"], "chieu": [], "toi": []}}]))
+
+
+def test_rule_weekday_only_points(tmp_path):
+    b = _bang(tmp_path, [dict(_diem("thu7", "kinh_thanh"), ngay_hoat_dong=[5]), _diem("a", "kinh_thanh"), _diem("c", "kinh_thanh")],
+              {"chung": ["thu7", "a"], "di_tich": ["thu7", "a"]})
+    sat, sun = D(2026, 11, 21), D(2026, 11, 22)
+    assert sat.weekday() == 5 and "thu7" in v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang"), ngay_bat_dau=sat))
+    assert "thu7" not in v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang"), ngay_bat_dau=sun))
+    assert "thu7" not in v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang")))  # không biết thứ ⇒ không xếp điểm chỉ mở vài ngày
+
+
+def test_rule_rain_day_prefers_indoor_but_keeps_priority(tmp_path):
+    """5c.2: ngày mưa (≥ 60 %) ⇒ điểm không ưu tiên xét trong nhà ⇒ cả hai ⇒ ngoài trời; điểm ưu tiên giữ chỗ (+ dòng "nếu mưa")."""
+    rows = [_diem("uu", "bo_nam"), _diem("ngoai", "bo_nam"), dict(_diem("ca", "bo_nam"), trong_nha="ca_hai"), dict(_diem("trong", "bo_nam"), trong_nha="trong_nha")]
+    b = _bang(tmp_path, rows, {"chung": ["uu"], "di_tich": ["uu"]})
+    hom = D(2026, 11, 13)
+    kho = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich",)), ngay_bat_dau=hom, mua={hom: 20})
+    ua = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich",)), ngay_bat_dau=hom, mua={hom: 60})
+    assert v2.diem_v2(kho) == ["uu", "ngoai"] and v2.diem_v2(ua) == ["uu", "trong"]
+    db = {"ngay": {hom: {"ngay": hom, "tmax": 25, "tmin": 20, "xs": 60, "mua": 5.0}}, "nguon": "nguồn"}
+    dong = lkh.dong_du_bao(b, ua, db)
+    assert dong[0].startswith("Ngày 1 — ") and dong[1] == "Nếu mưa ngày 1: có thể thay uu bằng ca (trong nhà)." and dong[-1] == "nguồn"
+    assert lkh.dong_du_bao(b, ua, None) == []
+
+
+@pytest.mark.parametrize("kich_ban", ["khong_mua", "mua_ngay_1", "mua_moi_ngay"])
+def test_forecast_scenarios_and_no_call_outside_7_days(kich_ban):
+    """Ba kịch bản dự báo ghi sẵn (cách đo của E): chỉ ngày mưa đổi thứ tự xét; ngày ngoài 7 ngày ⇒ 0 lần gọi, 0 dòng dự báo; lỗi ⇒ như không có."""
+    hom = D(2026, 11, 13)
+    xs = {"khong_mua": [10] * 7, "mua_ngay_1": [80] + [10] * 6, "mua_moi_ngay": [80] * 7}[kich_ban]
+    goi = []
+
+    async def du_bao():
+        goi.append(1)
+        return tt.DuBao(trang_thai="ok", ngay=[{"ngay": hom + dt.timedelta(days=k), "tmax": 25, "tmin": 20, "xs": x, "mua": 1.0}
+                                               for k, x in enumerate(xs)], cap_nhat="09:00 13/11")
+    flags = dataclasses.replace(V2, thoi_tiet=True, du_bao=du_bao)
+    trace = AnswerTrace()
+    db = asyncio.run(lkh.du_bao_lich(flags, hom, 3, trace, hom))
+    assert len(goi) == 1 and db is not None and trace.tools[-1]["name"] == "thoi_tiet"
+    b = V2.bang_lich_v2
+    k = v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua={d: v["xs"] for d, v in db["ngay"].items()})
+    assert v2.kiem_khung_v2(b, k) == []
+    dong = lkh.dong_du_bao(b, k, db)
+    assert sum(x.startswith("Ngày ") for x in dong) == 3 and dong[-1].startswith(tt.GHI_CONG)
+    assert asyncio.run(lkh.du_bao_lich(flags, hom + dt.timedelta(days=7), 5, AnswerTrace(), hom)) is None and len(goi) == 1
+    assert asyncio.run(lkh.du_bao_lich(flags, None, 5, AnswerTrace(), hom)) is None and len(goi) == 1
+
+    async def loi():
+        return tt.DuBao(trang_thai="loi", loi="http_500")
+    assert asyncio.run(lkh.du_bao_lich(dataclasses.replace(flags, du_bao=loi), hom, 3, AnswerTrace(), hom)) is None
+
+
+KIEU_NGAY = {"khong": (None, None), "kho_giua_tuan": (D(2027, 4, 7), None), "mua_cuoi_tuan": (D(2026, 11, 21), None),
+             "trong_7_ngay_mua": (D(2026, 11, 13), "mua")}
+
+
+@pytest.fixture(scope="module")
+def mo_phong_ngay():
+    b = V2.bang_lich_v2
+    kq = {}
+    for key in itertools.product(range(1, 6), (0, 1), (False, True), KIEU, ST_16, KIEU_NGAY):
+        bat_dau, mua = KIEU_NGAY[key[5]]
+        mua = None if mua is None else {bat_dau + dt.timedelta(days=k): 80 for k in range(7)}
+        kq[key] = v2.xep_v2(b, v2.ThamSoV2(*key[:4], so_thich=key[4]), ngay_bat_dau=bat_dau, mua=mua)
+    assert len(kq) == 3840
+    return b, kq
+
+
+def test_simulation_dates_always_rules(mo_phong_ngay):
+    b, kq = mo_phong_ngay
+    T = b.theo_id
+    assert {key: v2.kiem_khung_v2(b, k) for key, k in kq.items() if v2.kiem_khung_v2(b, k)} == {}  # gồm 0 điểm tạm dừng trong tháng dừng
+    for key, k in kq.items():
+        bat_dau = KIEU_NGAY[key[5]][0]
+        thang = {(bat_dau + dt.timedelta(days=i)).month for i in range(key[0])} if bat_dau else set()
+        assert k["mua_mua"] == bool(thang & {9, 10, 11, 12})  # đúng một dòng nhắc khi có ngày tháng 9–12 (dòng dựng ở `dung_lich`)
+        lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
+        assert sum(g["ma"] == "mua_mua" for g in lich["ghi_chu"]) == (1 if k["mua_mua"] else 0)
+        for s in key[4] or ("chung",):  # ưu tiên số 1 có mặt — trừ cụm xa < 3 ngày và điểm đang tạm dừng (có ghi chú)
+            dau = next(i for i in b.uu_tien[s] if T[i]["cum"] != v2.CUM_XA or key[0] >= 3)
+            assert dau in v2.diem_v2(k) or dau in k["tam_dung_mua"], (key, s)
+
+
+def test_simulation_dates_floor(mo_phong_ngay):
+    """Sàn (plan (d)): đổi "mùa khô, giữa tuần" ↔ "mùa mưa, cuối tuần" ⇒ khung hoặc ghi chú khác ở ≥ 60 % tổ hợp có điểm ngoài trời."""
+    b, kq = mo_phong_ngay
+    T = b.theo_id
+    cap = [(k, kq[key[:5] + ("mua_cuoi_tuan",)]) for key, k in kq.items() if key[5] == "kho_giua_tuan"
+           and any(T[i]["trong_nha"] != "trong_nha" for i in v2.diem_v2(k))]
+    khac = sum(a["ngay"] != c["ngay"] or a["mua_mua"] != c["mua_mua"] or a["tam_dung_mua"] != c["tam_dung_mua"] for a, c in cap)
+    assert khac / len(cap) >= 0.60

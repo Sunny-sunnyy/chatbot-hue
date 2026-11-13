@@ -472,6 +472,7 @@ function LichExtras({ lich, truong, onAsk, onEditPlan, getText }) {
 // "đang viết…". Loại mục chưa biết (đợt sau: ăn uống…) ⇒ bỏ qua, không lỗi. Nút "Sửa" điền lại biểu mẫu bằng đúng giá trị đã gửi.
 const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
 const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
+const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
 
 function LichV2({ turn, onEditPlan }) {
   const lich = turn.lichV2;
@@ -482,7 +483,7 @@ function LichV2({ turn, onEditPlan }) {
       <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
       {lich.ngay.map(ng => (
         <section key={ng.ngay} className="lich-ngay" aria-label={`Ngày ${ng.ngay}`}>
-          <h3>Ngày {ng.ngay}</h3>
+          <h3>Ngày {ng.ngay}{ng.ngay_thang ? ` · ${THU_V2[ng.thu]} ${ng.ngay_thang.split("-").reverse().join("/")}` : ""}</h3>
           <ul>
             {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => (
               <li key={m.id_muc}>

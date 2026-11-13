@@ -10,6 +10,7 @@ Luật (thứ tự ưu tiên khi kéo ngược nhau, spec 5b — luật thấp c
 7. kiểu đi: số điểm mỗi buổi tính bằng phút (nhẹ nhàng 1 điểm; cân bằng quỹ 210; khám phá nhiều quỹ 240; tối đa 2 điểm / buổi).
 Số người lớn không vào bộ xếp (spec 3.1: ngoại lệ có chủ ý của N1). Buổi tối xếp ở bước (e), sau khi khung tham quan chốt.
 """
+import datetime as dt
 import json
 import re
 from dataclasses import dataclass
@@ -121,9 +122,29 @@ def _phut_di(a: dict, b: dict) -> int | None:
     return DI_CUM_KE if b["cum"] in CUM_KE.get(a["cum"], ()) else None
 
 
-def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True) -> dict:
-    """Khung tham quan sáng / chiều theo luật ở đầu module. `ngay_1_khong_xa=False` chỉ để mô phỏng so "có / không luật cụm xa ngày 1"."""
+NGUONG_MUA = 60  # = `thoi_tiet.NGUONG_MUA` (không thêm ngưỡng mới — spec 5c.2); giữ ở đây để module thuần không import phần gọi mạng
+THU_TU_MUA = {"trong_nha": 0, "ca_hai": 1, "ngoai_troi": 2}  # ngày mưa: điểm không ưu tiên xét trong nhà ⇒ cả hai ⇒ ngoài trời
+
+
+def tam_dung(d: dict, ngay: dt.date | None) -> bool:
+    """5c.2 (i): điểm tạm dừng đón khách theo mùa, ngày đó rơi vào tháng dừng."""
+    m = d.get("mua_luu_y") or {}
+    return ngay is not None and bool(m.get("bo_khoi_lich")) and ngay.month in m.get("thang", ())
+
+
+def dung_thu(d: dict, ngay: dt.date | None) -> bool:
+    """Thứ hoạt động (`ngay_hoat_dong`, thứ Hai = 0): rỗng = mọi ngày; chưa có ngày đi ⇒ không biết thứ ⇒ chỉ điểm mọi ngày (không đoán)."""
+    thu = d.get("ngay_hoat_dong") or []
+    return not thu or (ngay is not None and ngay.weekday() in thu)
+
+
+def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_dau: dt.date | None = None,
+           mua: dict | None = None) -> dict:
+    """Khung tham quan sáng / chiều theo luật ở đầu module. `ngay_1_khong_xa=False` chỉ để mô phỏng so "có / không luật cụm xa ngày 1".
+    Bước (d): `ngay_bat_dau` (ngày đi) ⇒ mỗi ngày lịch có ngày thật ⇒ luật mùa + thứ xét theo NGÀY (lịch vắt hai tháng xét từng ngày);
+    `mua` = {ngày: khả năng mưa %} (chỉ các ngày có dự báo) ⇒ ngày ≥ `NGUONG_MUA` đổi thứ tự xét của điểm không ưu tiên."""
     n = ts.so_ngay
+    ngay_cua = (lambda i: None) if ngay_bat_dau is None else (lambda i: ngay_bat_dau + dt.timedelta(days=i - 1))
     kieu = ts.kieu_di or KIEU_DI_MAC_DINH
     quy = None if ts.han_che else QUY[kieu]  # nhóm hạn chế: trần là "nhẹ nhàng" (spec 3.1)
     bo = {d["id"] for d in bang.diem if d["cum"] == CUM_XA} if n < 3 else set()
@@ -137,6 +158,8 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True) -> dict:
     def dung_duoc(id_: str, ngay_i: int, buoi: str, cums: list[str]) -> bool:
         d = T[id_]
         if id_ in used or buoi not in d["buoi"] or not _cum_hop(d["cum"], cums):
+            return False
+        if tam_dung(d, ngay_cua(ngay_i)) or not dung_thu(d, ngay_cua(ngay_i)):  # bậc 2 (5b): thắng cả ưu tiên
             return False
         return d["cum"] != CUM_XA or (n >= 3 and (ngay_i > 1 or not ngay_1_khong_xa))
 
@@ -171,8 +194,14 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True) -> dict:
             if T[id_]["cum"] not in cums:
                 cums.append(T[id_]["cum"])
 
+    pool_goc, lap_goc = pool, lap
     ngay = []
     for i in range(1, n + 1):
+        if mua and (mua.get(ngay_cua(i)) or 0) >= NGUONG_MUA:  # ngày mưa: điểm ưu tiên giữ chỗ, phần còn lại xét trong nhà trước (sort ổn định)
+            pool = [j for j in pool_goc if j in uu] + sorted([j for j in pool_goc if j not in uu], key=lambda j: THU_TU_MUA[T[j]["trong_nha"]])
+            lap = sorted(lap_goc, key=lambda j: THU_TU_MUA[T[j]["trong_nha"]])
+        else:
+            pool, lap = pool_goc, lap_goc
         cums: list[str] = []
         slots: dict[str, list[str]] = {b: [] for b in BUOI}
         tn_hom_nay = False
@@ -203,11 +232,16 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True) -> dict:
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
     gia_dinh = (["kieu_di"] if ts.kieu_di is None else []) + (["han_che"] if ts.han_che and kieu != "nhe_nhang" else []) + \
         (["so_thich"] if not ts.so_thich else [])
+    ngays = [ngay_cua(i) for i in range(1, n + 1)]
+    # 5c.2 (i): điểm ưu tiên không xếp vì đang tạm dừng theo mùa ⇒ ghi chú (mã `tam_dung_mua`)
+    tam_dung_uu = [j for j in uu if j not in da_xep and any(tam_dung(T[j], x) for x in ngays)]
     return {"phien_ban": 2,
             "tham_so": {"so_ngay": n, "nguoi_lon": ts.nguoi_lon, "tre_em": ts.tre_em, "lon_tuoi": ts.lon_tuoi, "kieu_di": kieu,
                         "so_thich": list(ts.so_thich)},
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
             "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
+            "ngay_thang": [None if x is None else x.isoformat() for x in ngays], "tam_dung_mua": tam_dung_uu,
+            "mua_mua": bool(bang.nhac_mua_chung) and any(x is not None and x.month in bang.nhac_mua_chung["thang"] for x in ngays),
             "khong_xep": []}  # `lich_trinh.bo_diem` / `cat_ngay_cuoi` ghi vào đây khi lấy đoạn kho (dùng lại phần lấy nguồn của đường cũ)
 
 
@@ -258,6 +292,13 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
             loi.append("cum_khong_ke")
         if han_che and so > 2:
             loi.append("han_che_qua_day")
+        ngay_that = khung.get("ngay_thang", [None] * n)[ng["ngay"] - 1] if khung.get("ngay_thang") else None
+        ngay_that = None if ngay_that is None else dt.date.fromisoformat(ngay_that)
+        for id_ in (j for b in BUOI for j in ng["buoi"][b]):
+            if tam_dung(T[id_], ngay_that):
+                loi.append("tam_dung_mua")
+            if not dung_thu(T[id_], ngay_that):
+                loi.append("sai_thu")
     da_xep = diem_v2(khung)
     if len(da_xep) != len(set(da_xep)):
         loi.append("trung_diem")
@@ -284,6 +325,7 @@ CAU_GHI_CHU = {
     "so_thich": "Chưa chọn sở thích nên mình gợi ý điểm tiêu biểu, thêm một điểm thiên nhiên mỗi ngày.",
     "thay_bac_thang": "{diem} có nhiều bậc thang (theo kho) nên mình xếp {thay} cùng khu thay vào.",
     "thieu_uu_tien": "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích {so_thich} — thêm ngày thì mình xếp được nhiều điểm hơn.",
+    "tam_dung_mua": "{diem} đang tạm dừng đón khách vào thời gian này trong năm (theo kho) nên mình chưa xếp.",
 }
 # 5c.6: câu model không được chứa giờ / thời lượng / tiền / đường dẫn (code in những thứ đó)
 _GIO = re.compile(r"(?<!\w)\d{1,2}\s*(?:[:hg]\s*\d{2}|h(?!\w)|giờ|tiếng|phút)", re.IGNORECASE)
@@ -295,11 +337,12 @@ def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
 
-def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None) -> dict:
+def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[str] = ()) -> dict:
     """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `id_muc` = `n<ngày>-<buổi>-<thứ tự>` (khoá ổn định cho câu của model). Giờ gợi ý,
     ảnh, toạ độ, ngày tháng / thứ: các bước sau (d), (e), đợt 2 — ở đây để null."""
     ngay = []
     for ng in khung["ngay"]:
+        ngay_that = (khung.get("ngay_thang") or [None] * len(khung["ngay"]))[ng["ngay"] - 1]
         muc = []
         for b in BUOI:
             for k, id_ in enumerate(ng["buoi"][b], start=1):
@@ -308,9 +351,13 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                             "nguon": nguon.get(id_), "anh": None, "toa_do": None,
                             "nhan": ["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else [],
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
-        ngay.append({"ngay": ng["ngay"], "ngay_thang": None, "thu": None, "muc": muc})
+        ngay.append({"ngay": ng["ngay"], "ngay_thang": ngay_that,
+                     "thu": None if ngay_that is None else dt.date.fromisoformat(ngay_that).weekday(), "muc": muc})
     ts = khung["tham_so"]
-    ghi_chu = [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
+    ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    ghi_chu += [{"ma": "tam_dung_mua", "cau": CAU_GHI_CHU["tam_dung_mua"].format(diem=bang.theo_id[j]["ten"])} for j in khung.get("tam_dung_mua", [])]
+    ghi_chu += [{"ma": "du_bao", "cau": c} for c in them_ghi_chu]
     ghi_chu += [{"ma": "thay_bac_thang", "cau": CAU_GHI_CHU["thay_bac_thang"].format(diem=bang.theo_id[x["diem"]]["ten"],
                                                                                         thay=bang.theo_id[x["thay"]]["ten"])}
                 for x in khung["thay_bac_thang"]]

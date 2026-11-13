@@ -7,6 +7,7 @@ của riêng mục đó ⇒ code ghép chữ thuần `answer` (lịch sử, nút
 mọi mục dùng câu dự phòng (không rút cả lịch — khác đường cũ). Lõi (`assistant.py`) gọi vào đây khi cờ bật; cờ tắt ⇒ không chạm module này.
 """
 import asyncio
+import datetime as dt
 import time
 from collections import Counter
 
@@ -15,20 +16,59 @@ from agents.exceptions import AgentsException
 from openai import OpenAIError
 
 from llm import lich_trinh_v2 as lt2
+from llm import thoi_tiet as tt
 from llm.assistant import (STREAM_DRAIN_SECONDS, AnswerTrace, AssistantFlags, CallLog, GenerationError, GeneratorNotReadyError, ROUTE_TRO_LY_HUE,
                            _lay_nguon_lich, check_citations, elapsed_ms, record_llm_calls)
 
 LOI_MODEL = (GenerationError, TimeoutError, AgentsException, OpenAIError)  # lỗi của lần gọi viết câu ⇒ câu dự phòng, lịch vẫn hiện
 
 
+async def du_bao_lich(flags: AssistantFlags, bat_dau: dt.date | None, n: int, trace: AnswerTrace, hom_nay: dt.date) -> dict | None:
+    """5c.2: ngày đi có ít nhất một ngày trong 7 ngày tới (dự báo đang dùng) ⇒ MỘT lần lấy dự báo (cache 30 phút) ⇒ {ngày: dict ngày}; không
+    ngày đi / mọi ngày ngoài 7 ngày ⇒ không gọi mạng; lỗi / tắt ⇒ None (xếp như không có dự báo, không dòng dự báo)."""
+    if bat_dau is None or not flags.thoi_tiet or flags.du_bao is None:
+        return None
+    if not any(0 <= (bat_dau + dt.timedelta(days=k) - hom_nay).days < tt.SO_NGAY for k in range(n)):
+        return None
+    kq = await flags.du_bao()
+    trace.tools.append({"name": "thoi_tiet", "ms": kq.ms, "by": "code", "trang_thai": kq.trang_thai, "loi": kq.loi})
+    if kq.trang_thai != "ok":
+        return None
+    return {"ngay": {d["ngay"]: d for d in kq.ngay}, "nguon": tt.dong_nguon(kq)}
+
+
+def dong_du_bao(bang, khung: dict, db: dict | None) -> list[str]:
+    """Dòng dự báo theo ngày của lịch (số do code in) + "Nếu mưa" cho điểm ưu tiên ngoài trời đã giữ chỗ (5c.2) + dòng nguồn."""
+    if db is None:
+        return []
+    dong, T = [], bang.theo_id
+    for ng, ngay in zip(khung["ngay"], khung["ngay_thang"]):
+        d = db["ngay"].get(dt.date.fromisoformat(ngay)) if ngay else None
+        if d is None:
+            continue
+        dong.append(f"Ngày {ng['ngay']} — {tt.dong_ngay(d)}.")
+        if d["xs"] is not None and d["xs"] >= lt2.NGUONG_MUA:
+            ids = [j for b in lt2.BUOI_NGAY for j in ng["buoi"][b]]
+            for j in (x for x in ids if T[x]["trong_nha"] == "ngoai_troi"):
+                thay = next((x["id"] for x in bang.diem if x["trong_nha"] in ("trong_nha", "ca_hai") and x["cum"] == T[j]["cum"]
+                             and x["id"] not in lt2.diem_v2(khung) and set(x["buoi"]) & set(lt2.BUOI_NGAY)), None)
+                if thay is not None:
+                    dong.append(f"Nếu mưa ngày {ng['ngay']}: có thể thay {T[j]['ten']} bằng {T[thay]['ten']} (trong nhà).")
+                    break
+    return dong + [db["nguon"]] if dong else []
+
+
 async def chuan_bi(query: str, retrieval_service, context_builder, trace: AnswerTrace, flags: AssistantFlags, today: str | None) -> str:
     """Xếp + lấy nguồn + dựng `lich` (lưu ở `trace.lich_v2`); trả tin nhắn gửi model. Lỗi tìm / ngữ cảnh đi ra nguyên kiểu như đường cũ."""
     bang = flags.bang_lich_v2
     ts = lt2.tu_truong(trace.truong)
-    khung = lt2.xep_v2(bang, ts)
+    bat_dau = dt.date.fromisoformat(trace.truong["ngay_di"]) if trace.truong.get("ngay_di") else None
+    db = await du_bao_lich(flags, bat_dau, ts.so_ngay, trace, tt.hom_nay_vn())
+    mua = None if db is None else {k: v["xs"] for k, v in db["ngay"].items() if v["xs"] is not None}
+    khung = lt2.xep_v2(bang, ts, ngay_bat_dau=bat_dau, mua=mua)
     nhap = lt2.tin_nhan_model(lt2.dung_lich(bang, khung, dict.fromkeys(lt2.diem_v2(khung), 0)), "")  # đếm ngân sách bằng bản nháp
     packed, nguon, _ = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, None, nhap=nhap, lay_ve=False)
-    lich = lt2.dung_lich(bang, khung, nguon, trace.truong.get("ngay_di"))
+    lich = lt2.dung_lich(bang, khung, nguon, trace.truong.get("ngay_di"), dong_du_bao(bang, khung, db))
     trace.lich_v2 = {"lich": lich, "loi_khung": lt2.kiem_khung_v2(bang, khung), "cau": None, "loi_cau": None}
     trace.buoc_lich += [{"buoc": "xep_xong", "n_diem": len(lt2.diem_v2(khung))}, {"buoc": "lay_nguon", "n_doan": len(packed.sources)}]
     return lt2.tin_nhan_model(lich, packed.text)
