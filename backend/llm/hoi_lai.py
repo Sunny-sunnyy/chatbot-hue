@@ -77,9 +77,9 @@ DI_CUNG_MOI = {"mot_minh": {"nguoi_lon": 1}, "cap_doi": {"nguoi_lon": 2}, "gia_d
                "nguoi_lon_tuoi": {"nguoi_lon": 2, "lon_tuoi": True}, "nhom_ban": {"nguoi_lon": 4}}
 TRUONG_CHI_MOI = ("nguoi_lon", "tre_em", "lon_tuoi", "ngay_di")
 NGAY_DI_TOI_DA = 180  # spec §5: ngày đi từ hôm nay tới + 180 ngày
-# Giới hạn của **bộ xếp cũ** mà bước (a) còn dùng (A đồng ý 12/11): biểu mẫu chưa cho chọn quá mức này; bước (b) nâng lên 5 ngày / 2 sở thích
-SO_NGAY_TOI_DA = 4
-SO_THICH_TOI_DA = 1
+# Giới hạn biểu mẫu báo ở `/api/tinh_nang` (bước (a) là 4 / 1 cho bộ xếp cũ; từ bước (c) bộ xếp mới nhận đủ khuôn trường: 5 ngày / 2 sở thích)
+SO_NGAY_TOI_DA = 5
+SO_THICH_TOI_DA = 2
 
 
 def co_gia_tri_moi(truong: TruongInput) -> bool:
@@ -93,10 +93,6 @@ def loi_v2(truong: TruongInput, hom_nay: dt.date, so_thich_hien: tuple[str, ...]
     (mã lỗi chỉ để test đọc)."""
     if truong.ngay_di is not None and not hom_nay <= truong.ngay_di <= hom_nay + dt.timedelta(days=NGAY_DI_TOI_DA):
         return "ngay_di"
-    if truong.so_ngay is not None and truong.so_ngay != "4+" and int(truong.so_ngay) > SO_NGAY_TOI_DA:
-        return "so_ngay"
-    if isinstance(truong.so_thich, list) and len(truong.so_thich) > SO_THICH_TOI_DA:
-        return "so_thich"
     if so_thich_hien is not None and isinstance(truong.so_thich, list) and not set(truong.so_thich) <= set(so_thich_hien):
         return "so_thich_an"
     return None
@@ -114,6 +110,23 @@ def doi_sang_moi(cu: dict) -> dict:
     if cu.get("di_cung"):
         moi.update(DI_CUNG_MOI[cu["di_cung"]])
     return moi
+
+
+def ghep_cau_v2(cau_goc: str, moi: dict) -> str:
+    """Câu người dùng của lượt biểu mẫu bản 2 (vào lịch sử hội thoại như câu ghép cũ) — chữ cố định từ giá trị đã kiểm, tất định."""
+    chon = [f"{moi['so_ngay']} ngày"]
+    if moi.get("nguoi_lon"):
+        chon.append(f"{moi['nguoi_lon']} người lớn")
+    if moi.get("tre_em"):
+        chon.append(f"{moi['tre_em']} trẻ em")
+    if moi.get("lon_tuoi"):
+        chon.append("có người lớn tuổi")
+    if moi.get("kieu_di"):
+        chon.append({"nhe_nhang": "đi nhẹ nhàng", "can_bang": "đi cân bằng", "kham_pha": "đi khám phá nhiều"}[moi["kieu_di"]])
+    chon += [GIA_TRI["so_thich"][s] for s in moi.get("so_thich") or ()]
+    if moi.get("ngay_di"):
+        chon.append(f"đi từ ngày {moi['ngay_di']}")
+    return f"{cau_goc.strip()} (Thông tin thêm: {'; '.join(chon)}.)"
 
 
 def doi_sang_cu(moi: dict) -> dict:

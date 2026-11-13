@@ -46,6 +46,11 @@ function withSafeLinks(html) {
 }
 
 // Markdown của câu trả lời ⇒ HTML đã lọc, bỏ số [n] (D1). Bỏ trên chữ thô trước khi dựng (chữ trong code cũng mất số — không hại).
+// "Lên kế hoạch" bản 2: câu của từng mục là chữ thường (không Markdown) — chỉ bỏ mã trích dẫn như chữ trả lời; React tự thoát ký tự HTML.
+export function boMaTrichDan(text) {
+  return text.replace(CITATION_SHOWN, "").replace(CITATION_TAIL, "");
+}
+
 export function renderAnswerHtml(raw) {
   const text = raw.replace(CITATION_SHOWN, "").replace(CITATION_TAIL, "");
   return withSafeLinks(DOMPurify.sanitize(marked.parse(text), SANITIZE_OPTIONS));

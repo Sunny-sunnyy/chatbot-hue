@@ -11,10 +11,14 @@ Luật (thứ tự ưu tiên khi kéo ngược nhau, spec 5b — luật thấp c
 Số người lớn không vào bộ xếp (spec 3.1: ngoại lệ có chủ ý của N1). Buổi tối xếp ở bước (e), sau khi khung tham quan chốt.
 """
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import quote
 
-from llm.lich_trinh import BUOI, CUM_KE, CUM_XA, LOAI_DIEM, _cum_hop
+from llm.citations import CITATION_PATTERN
+from llm.lich_trinh import BUOI, CAU_KHONG_XEP, CUM_KE, CUM_XA, LOAI_DIEM, MAP_BASE, TIEU_DE_GHI_CHU, _cum_hop, chuan_ten
+from llm.so_tien import tim_so_tien
 
 BUOI_NGAY = ("sang", "chieu")
 PHUT = {"ngan": 75, "nua_buoi": 150}  # 5c.3: phút tham quan
@@ -203,7 +207,8 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True) -> dict:
             "tham_so": {"so_ngay": n, "nguoi_lon": ts.nguoi_lon, "tre_em": ts.tre_em, "lon_tuoi": ts.lon_tuoi, "kieu_di": kieu,
                         "so_thich": list(ts.so_thich)},
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
-            "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh}
+            "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
+            "khong_xep": []}  # `lich_trinh.bo_diem` / `cat_ngay_cuoi` ghi vào đây khi lấy đoạn kho (dùng lại phần lấy nguồn của đường cũ)
 
 
 def diem_v2(khung: dict) -> list[str]:
@@ -261,3 +266,180 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
         if ngoai != set(khung["ngoai_so_thich"]):
             loi.append("lap_khong_nhan")
     return loi
+
+
+# =====================================================================================================================================
+# Bước (c): khuôn `lich` phiên bản 2 (spec 5c.5) + model chỉ viết một câu cho mỗi mục (5c.6) + kiểm từng câu — code thuần
+# =====================================================================================================================================
+
+NHAN_LOAI = {"di_tich": "di tích", "am_thuc": "ẩm thực", "thien_nhien": "thiên nhiên", "le_hoi_nghe_thuat": "lễ hội, nghệ thuật",
+             "chup_anh": "chụp ảnh"}
+NHAN_BUOI = {"sang": "Sáng", "trua": "Trưa", "chieu": "Chiều", "toi": "Tối"}
+NHAN_KIEU_DI = {"nhe_nhang": "nhẹ nhàng", "can_bang": "cân bằng", "kham_pha": "khám phá nhiều"}
+CAU_MUC_TOI_DA = 30  # từ / câu (5c.6) — chỉ đếm để báo, không thay câu (lời dặn đã giới hạn; cắt chữ model là sửa chữ người khác viết)
+# Ghi chú do code viết (model không viết lý do) — mã ⇒ câu
+CAU_GHI_CHU = {
+    "kieu_di": "Chưa chọn kiểu đi nên mình xếp mức cân bằng.",
+    "han_che": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm, không xếp buổi tối.",
+    "so_thich": "Chưa chọn sở thích nên mình gợi ý điểm tiêu biểu, thêm một điểm thiên nhiên mỗi ngày.",
+    "thay_bac_thang": "{diem} có nhiều bậc thang (theo kho) nên mình xếp {thay} cùng khu thay vào.",
+    "thieu_uu_tien": "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích {so_thich} — thêm ngày thì mình xếp được nhiều điểm hơn.",
+}
+# 5c.6: câu model không được chứa giờ / thời lượng / tiền / đường dẫn (code in những thứ đó)
+_GIO = re.compile(r"(?<!\w)\d{1,2}\s*(?:[:hg]\s*\d{2}|h(?!\w)|giờ|tiếng|phút)", re.IGNORECASE)
+_THOI_LUONG = re.compile(r"(?<!\w)(?:\d+|một|hai|ba|nửa)\s*(?:giờ|tiếng|phút|ngày)(?!\w)", re.IGNORECASE)
+_LINK = re.compile(r"https?://|www\.|\.(?:vn|com|net|org)(?!\w)", re.IGNORECASE)
+
+
+def ten_cua(diem: dict) -> list[str]:
+    return [diem["ten"], *diem["ten_khac"]]
+
+
+def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None) -> dict:
+    """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `id_muc` = `n<ngày>-<buổi>-<thứ tự>` (khoá ổn định cho câu của model). Giờ gợi ý,
+    ảnh, toạ độ, ngày tháng / thứ: các bước sau (d), (e), đợt 2 — ở đây để null."""
+    ngay = []
+    for ng in khung["ngay"]:
+        muc = []
+        for b in BUOI:
+            for k, id_ in enumerate(ng["buoi"][b], start=1):
+                d = bang.theo_id[id_]
+                muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "tham_quan", "id_diem": id_, "ten": d["ten"], "gio": None,
+                            "nguon": nguon.get(id_), "anh": None, "toa_do": None,
+                            "nhan": ["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else [],
+                            "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
+        ngay.append({"ngay": ng["ngay"], "ngay_thang": None, "thu": None, "muc": muc})
+    ts = khung["tham_so"]
+    ghi_chu = [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    ghi_chu += [{"ma": "thay_bac_thang", "cau": CAU_GHI_CHU["thay_bac_thang"].format(diem=bang.theo_id[x["diem"]]["ten"],
+                                                                                        thay=bang.theo_id[x["thay"]]["ten"])}
+                for x in khung["thay_bac_thang"]]
+    ghi_chu += [{"ma": "thieu_uu_tien", "cau": CAU_GHI_CHU["thieu_uu_tien"].format(so_thich=NHAN_LOAI[s])} for s in khung["thieu_uu_tien"]]
+    ghi_chu += [{"ma": k["ma_luat"], "cau": CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"])} for k in khung["khong_xep"]]
+    return {"phien_ban": 2, "tham_so": {**ts, "ngay_di": ngay_di}, "minh_hieu": dong_minh_hieu_v2(ts, ngay_di), "ngay": ngay,
+            "o_dau": None, "ghi_chu": ghi_chu}
+
+
+def moi_muc(lich: dict) -> list[dict]:
+    return [m for ng in lich["ngay"] for m in ng["muc"]]
+
+
+def dong_minh_hieu_v2(ts: dict, ngay_di: str | None) -> str:
+    """Dòng đầu lịch, dựng từ **tham số thật** (không chữ model): số ngày · người · kiểu đi · sở thích · ngày đi."""
+    phan = [f"{ts['so_ngay']} ngày"]
+    if ts.get("nguoi_lon"):
+        phan.append(f"{ts['nguoi_lon']} người lớn")
+    if ts.get("tre_em"):
+        phan.append(f"{ts['tre_em']} trẻ em")
+    if ts.get("lon_tuoi"):
+        phan.append("có người lớn tuổi")
+    phan.append(f"đi {NHAN_KIEU_DI[ts['kieu_di']]}")
+    if ts.get("so_thich"):
+        phan.append("thích " + ", ".join(NHAN_LOAI[s] for s in ts["so_thich"]))
+    if ngay_di:
+        phan.append("đi từ " + "/".join(reversed(ngay_di.split("-"))))
+    return "Mình hiểu: " + " · ".join(phan) + " — sai thì bấm **Sửa**."
+
+
+def tin_nhan_model(lich: dict, tai_lieu: str) -> str:
+    """Tin nhắn user của lần gọi viết câu (5c.6): danh sách mục (id_muc, tên điểm, mã tài liệu của điểm) + tài liệu từng điểm. Không chữ người
+    dùng nào vào đây (chỉ giá trị biểu mẫu đã thành khung)."""
+    dong = ["Danh sách mục:"]
+    dong += [f"- {m['id_muc']}: {m['ten']} (tài liệu [{m['nguon']}])" for m in moi_muc(lich)]
+    return "\n".join(dong) + "\n\nTài liệu:\n" + tai_lieu.strip()
+
+
+def kiem_cau(bang: BangV2, muc: dict, cau: str) -> str | None:
+    """Kiểm cuối MỘT câu (5c.6) ⇒ mã lỗi hoặc None. Lỗi ⇒ câu dự phòng cho riêng mục đó (không rút cả lịch)."""
+    cau = cau.strip()
+    if not cau:
+        return "rong"
+    ma = [int(x) for x in CITATION_PATTERN.findall(cau)]
+    if not ma:
+        return "khong_ma"
+    if any(x != muc["nguon"] for x in ma):
+        return "ma_ngoai_nguon"
+    if _GIO.search(cau) or _THOI_LUONG.search(cau):
+        return "gio"
+    if tim_so_tien(cau):
+        return "tien"
+    if _LINK.search(cau):
+        return "link"
+    chu = chuan_ten(cau)
+    cua_minh = [chuan_ten(t) for t in ten_cua(bang.theo_id[muc["id_diem"]])]
+    for d in bang.diem:
+        if d["id"] == muc["id_diem"]:
+            continue
+        for t in ten_cua(d):
+            k = chuan_ten(t)
+            # tên điểm khác nằm trong câu — trừ khi chính tên đó là một phần tên của điểm này (tên con nằm trong điểm lớn: plan (c) đếm ca này)
+            if re.search(rf"(?<!\w){re.escape(k)}(?!\w)", chu) and not any(k in m for m in cua_minh):
+                return "ten_khac"
+    return None
+
+
+def cau_du_phong(bang: BangV2, muc: dict) -> str:
+    """Câu do code khi câu model thiếu / lỗi: tên + loại điểm, không mô tả, kèm mã nguồn của điểm (5c.6)."""
+    loai = ", ".join(NHAN_LOAI[x] for x in bang.theo_id[muc["id_diem"]]["loai"])
+    return f"{muc['ten']} — điểm {loai} [{muc['nguon']}]."
+
+
+def chon_cau(bang: BangV2, lich: dict, tu_model: list[dict]) -> tuple[dict[str, str], dict[str, str]]:
+    """Mảng `{id_muc, cau}` của model ⇒ (câu cuối theo id_muc, mã lỗi theo id_muc). Lặp id ⇒ lấy phần tử đầu; id lạ ⇒ bỏ; thiếu ⇒ dự phòng."""
+    muc = {m["id_muc"]: m for m in moi_muc(lich)}
+    dau: dict[str, str] = {}
+    for x in tu_model:
+        if x.get("id_muc") in muc and x["id_muc"] not in dau:
+            dau[x["id_muc"]] = x.get("cau") or ""
+    cau, loi = {}, {}
+    for id_muc, m in muc.items():
+        ma = "thieu" if id_muc not in dau else kiem_cau(bang, m, dau[id_muc])
+        cau[id_muc] = cau_du_phong(bang, m) if ma else dau[id_muc].strip()
+        if ma:
+            loi[id_muc] = ma
+    return cau, loi
+
+
+def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
+    """Trường `answer` chữ thuần (lịch sử chat, nút chép, giao diện cũ) — code ghép từ khung + câu; mỗi mục mang mã nguồn của điểm."""
+    dong = [lich["minh_hieu"]]
+    for ng in lich["ngay"]:
+        dong += ["", f"**Ngày {ng['ngay']}**"]
+        for m in ng["muc"]:
+            gio = f" ({m['gio']})" if m["gio"] else ""
+            dong.append(f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']} — {cau[m['id_muc']]}")
+    if lich["ghi_chu"]:
+        dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
+    return "\n".join(dong)
+
+
+class CauStream:
+    """Bóc các phần tử `{id_muc, cau}` ĐÃ ĐÓNG từ luồng JSON `{"cau": [...]}` đang stream (5c.6: một sự kiện mỗi khi một phần tử đóng ngoặc).
+    Chữ cuối vẫn do lần đọc đầu ra có cấu trúc quyết; đây chỉ để hiện câu sớm."""
+
+    def __init__(self) -> None:
+        self.raw = ""
+        self.pos = None  # vị trí sau dấu `[` của mảng
+        self.ra = 0
+
+    def feed(self, delta: str) -> list[dict]:
+        self.raw += delta
+        if self.pos is None:
+            m = re.match(r'\s*\{\s*"cau"\s*:\s*\[', self.raw)
+            if m is None:
+                return []
+            self.pos = m.end()
+        out = []
+        dec = json.JSONDecoder()
+        while True:
+            m = re.match(r"\s*,?\s*", self.raw[self.pos:])
+            start = self.pos + m.end()
+            if start >= len(self.raw) or self.raw[start] != "{":
+                return out
+            try:
+                obj, end = dec.raw_decode(self.raw, start)
+            except json.JSONDecodeError:
+                return out
+            self.pos = end
+            if isinstance(obj, dict):
+                out.append(obj)

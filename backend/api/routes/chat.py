@@ -28,8 +28,9 @@ from core.schema import (
 from llm.citations import normalize_citations
 from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
+from llm import lich_trinh_v2 as lt2
 from llm import ngay_lich as nl
-from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_cu, ghep_cau, loi_v2
+from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, elapsed_ms, lich_cho_giao_dien, turn_usd
 
@@ -151,13 +152,6 @@ def _kiem_truong_v2(body: "ChatRequest", state) -> None:
         raise RequestValidationError([{"type": "value_error", "loc": ("body", "truong"), "msg": "truong value not accepted", "input": None}])
 
 
-def _truong_cho_bo_xep(body: "ChatRequest", state) -> TruongInput:
-    """Bước (a): bộ xếp cũ ⇒ cờ `len_ke_hoach_v2` bật thì lượt biểu mẫu đổi giá trị mới về bốn trường cũ (`doi_sang_cu`); còn lại giữ nguyên."""
-    if body.bieu_mau and _flags(state).len_ke_hoach_v2:
-        return TruongInput(**doi_sang_cu(body.truong.model_dump(exclude_none=True)))
-    return body.truong
-
-
 def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict, state) -> str:
     """B4 D4: có giá trị trường ⇒ câu ghép đủ ý gửi model (không hỏi lại lần hai); lần tìm đầu vẫn bằng câu gốc (m-3). Không ⇒ câu gốc.
     Cổng D3: lượt biểu mẫu ⇒ câu gốc là `CAU_BIEU_MAU` (bỏ chữ `query` của trình duyệt); câu này vào lịch sử như câu người dùng."""
@@ -165,10 +159,12 @@ def _model_query(body: "ChatRequest", query: str, trace: AnswerTrace, metrics: d
         return query
     if body.bieu_mau:
         trace.bieu_mau, query = True, CAU_BIEU_MAU
-    truong = _truong_cho_bo_xep(body, state)
-    trace.truong, trace.search_query = truong.model_dump(exclude_none=True), query
     metrics["co_truong"] = len(body.truong.model_dump(exclude_none=True))  # số trường người dùng gửi (không giá trị)
-    return ghep_cau(query, truong)
+    if body.bieu_mau and _flags(state).len_ke_hoach_v2:  # bản 2: giá trị cũ (giao diện cũ trong bộ đệm) đổi sang khuôn mới; ngày đi dạng ISO
+        trace.truong, trace.search_query = doi_sang_moi(body.truong.model_dump(exclude_none=True, mode="json")), query
+        return ghep_cau_v2(query, trace.truong)
+    trace.truong, trace.search_query = body.truong.model_dump(exclude_none=True), query
+    return ghep_cau(query, body.truong)
 
 
 def _web_payload(trace: AnswerTrace) -> dict | None:
@@ -392,6 +388,11 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
         thoi_tiet=_thoi_tiet_metrics(trace),
     )
+    if trace.lich_v2 is not None:  # "Lên kế hoạch" bản 2: khoá chỉ có ở lượt bản 2 (cờ tắt ⇒ dòng log như cũ); chỉ số đếm, không chữ
+        v = trace.lich_v2
+        metrics.update(lich_trinh_ok=not v["loi_khung"] and trace.citation_error is None, lich_trinh_so_diem=len(lt2.moi_muc(v["lich"])),
+                       lich_trinh_kiem=v["loi_khung"], lich_v2={"so_cau_du_phong": v.get("so_cau_du_phong"), "loi_cau": v.get("loi_cau"),
+                                                              "loi_model": v.get("loi_model"), "co_ngay_di": bool(v["lich"]["tham_so"]["ngay_di"])})
     if trace.generated is not None:
         # getattr như EvidenceRecorder: route chỉ đòi `generated.text`; thiếu trường usage thì log None, không đổi phản hồi (B68 m-4)
         metrics.update({field: getattr(trace.generated, field, None)
@@ -489,6 +490,12 @@ class StreamEvents:
         self.seq += 1
         return sse_event("delta", {"seq": self.seq, "text": text})
 
+    def lich_v2(self, kind: str, data: dict) -> bytes:
+        """"Lên kế hoạch" bản 2: `lich_khung` / `lich_cau` / `lich_xong` — mốc ms của khung hiện và đủ câu (plan đợt 1 §5: đo bằng hai mốc mới)."""
+        if kind in ("lich_khung", "lich_xong"):
+            self.metrics[f"{kind}_ms"] = elapsed_ms(self.started)
+        return sse_event(kind, data)
+
     def done(self, answered: bool = False) -> bytes:
         data = {"outcome": self.metrics["outcome"]}
         if self.metrics.get("refusal") and self.metrics["outcome"] != "out_of_scope":
@@ -561,7 +568,7 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
     stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids)
     try:
         async for kind, data in turn:
-            yield stream.status(data) if kind == "status" else stream.delta(data)
+            yield stream.status(data) if kind == "status" else stream.delta(data) if kind == "delta" else stream.lich_v2(kind, data)
         for event in (stream.fixed(trace) if trace.fixed_outcome is not None else stream.finish(trace)):
             yield event
     except (asyncio.CancelledError, GeneratorExit):

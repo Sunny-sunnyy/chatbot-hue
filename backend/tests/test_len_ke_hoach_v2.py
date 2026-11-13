@@ -63,14 +63,13 @@ def test_old_values_are_not_new_and_new_values_are():
         assert co_gia_tri_moi(TruongInput(**moi)), moi
 
 
-def test_v2_limits_by_vietnam_day_and_old_scheduler():
+def test_v2_limits_by_vietnam_day_and_shown_interests():
     def loi(**t):
         return loi_v2(TruongInput(**t), HOM_NAY)
     assert loi(ngay_di=HOM_NAY) is None and loi(ngay_di=HOM_NAY + dt.timedelta(days=NGAY_DI_TOI_DA)) is None
     assert loi(ngay_di=HOM_NAY - dt.timedelta(days=1)) == "ngay_di"
     assert loi(ngay_di=HOM_NAY + dt.timedelta(days=NGAY_DI_TOI_DA + 1)) == "ngay_di"
-    assert loi(so_ngay="4") is None and loi(so_ngay="4+") is None and loi(so_ngay="5") == "so_ngay"  # bộ xếp cũ tới 4 ngày (ý 7)
-    assert loi(so_thich=["di_tich"]) is None and loi(so_thich=["di_tich", "am_thuc"]) == "so_thich"  # bộ xếp cũ một sở thích
+    assert loi(so_ngay="5") is None and loi(so_thich=["di_tich", "am_thuc"]) is None  # bộ xếp mới (từ bước (c)) nhận đủ khuôn trường
     assert loi_v2(TruongInput(so_thich=["chup_anh"]), HOM_NAY, ("di_tich",)) == "so_thich_an"
     assert loi_v2(TruongInput(so_thich="chup_anh"), HOM_NAY, ("di_tich",)) is None  # giá trị cũ (chuỗi) không qua kiểm bản 2
 
@@ -150,41 +149,18 @@ def test_new_values_rejected_like_bad_body_when_flag_off(app_client, caplog, pat
 
 
 @pytest.mark.parametrize("path", ["/api/chat", "/api/chat/stream"])
-def test_flag_on_limits_rejected(app_client, path):
+def test_flag_on_date_limits_rejected(app_client, path):
     app, client = app_client
     hom = nl.hom_nay()
     original = _with(app, V2, generator(lambda n, kw: [answer("x")]))
     try:
         rs = [_post(client, path, t) for t in (
-            {"so_ngay": "5"}, {"so_ngay": "2", "so_thich": ["di_tich", "am_thuc"]},
             {"so_ngay": "2", "ngay_di": (hom - dt.timedelta(days=1)).isoformat()},
-            {"so_ngay": "2", "ngay_di": (hom + dt.timedelta(days=NGAY_DI_TOI_DA + 1)).isoformat()})]
+            {"so_ngay": "2", "ngay_di": (hom + dt.timedelta(days=NGAY_DI_TOI_DA + 1)).isoformat()},
+            {"so_ngay": "2", "so_thich": ["di_tich", "am_thuc", "chup_anh"]})]
     finally:
         _restore(app, original)
-    assert [r.status_code for r in rs] == [422] * 4
-
-
-@pytest.mark.parametrize("path", ["/api/chat", "/api/chat/stream"])
-def test_flag_on_new_form_sends_same_model_text_as_old_values(app_client, caplog, path):
-    """Bước (a) dùng bộ xếp cũ ⇒ giá trị mới đổi về bốn trường cũ: chuỗi gửi model (lời dặn + tin nhắn) đúng như biểu mẫu cũ cùng nghĩa; log chỉ
-    thêm số đếm. Ngày đi hợp lệ được nhận (chưa dùng ở bước này)."""
-    app, client = app_client
-    sent = {}
-    for name, flags, truong in (("cu", FORM, OLD_SAME), ("moi", V2, {**NEW_FORM, "ngay_di": nl.hom_nay().isoformat()})):
-        gen = generator(lambda n, kw: [answer(viet_theo_khung(kw))])
-        original = _with(app, flags, gen)
-        client.cookies.clear()  # lượt mới, không lịch sử hội thoại của lượt trước
-        try:
-            with chat_log_records(caplog) as records:
-                r = _post(client, path, truong)
-        finally:
-            _restore(app, original)
-        (call,) = gen.client.responses.calls
-        line = metric_lines(records)[-1]  # `caplog.records` cộng dồn trong một test
-        assert r.status_code == 200 and line["outcome"] == "success" and line["lich_trinh_ok"] is True
-        sent[name] = (call["instructions"], chu_gui(call), line["co_truong"])
-    assert sent["moi"][:2] == sent["cu"][:2]
-    assert (sent["cu"][2], sent["moi"][2]) == (3, 6)
+    assert [r.status_code for r in rs] == [422] * 3
 
 
 def test_feature_flags_key_only_when_flag_on(app_client):
@@ -200,7 +176,7 @@ def test_feature_flags_key_only_when_flag_on(app_client):
         app.state.anh = anh_goc
     co_cu = {"lich_trinh_bieu_mau": True, "thoi_tiet": FORM.thoi_tiet, "anh": False, "tra_web": FORM.tra_web, "ban_do_lich": FORM.ban_do_lich}
     assert off == co_cu  # cờ tắt: khoá mới vắng hẳn (không null, không rỗng)
-    assert on == {**co_cu, "len_ke_hoach_v2": {"o_hien": list(V2.len_ke_hoach_o_hien), "so_ngay_toi_da": 4, "so_thich_toi_da": 1,
+    assert on == {**co_cu, "len_ke_hoach_v2": {"o_hien": list(V2.len_ke_hoach_o_hien), "so_ngay_toi_da": 5, "so_thich_toi_da": 2,
                                                "so_thich_hien": list(V2.so_thich_hien)}}
     assert set(V2.so_thich_hien) == set(V2.bang_lich_v2.loai_hien) - set(V2.len_ke_hoach_so_thich_an)
 
@@ -398,3 +374,167 @@ def test_simulation_floors(mo_phong):
     duoi = {s for s in v2.LOAI_DIEM_THU_TU for te, lt_, kieu in itertools.product((0, 1), (False, True), KIEU)
             if (lambda ids: sum(s in T[i]["loai"] for i in ids) / len(ids))(v2.diem_v2(kq[(2, te, lt_, kieu, (s,))])) < 0.50}
     assert duoi == set(V2.len_ke_hoach_so_thich_an)
+
+
+# =====================================================================================================================================
+# Bước (c): khuôn `lich` bản 2 + model trả mảng {id_muc, cau} + kiểm từng câu + sự kiện lich_khung / lich_cau / lich_xong — model giả, 0 USD
+# =====================================================================================================================================
+
+import re as _re  # noqa: E402
+
+from llm.full_corpus_prompt import LICH_V2_LOI_DAN  # noqa: E402
+
+_MUC = _re.compile(r"^- (n\d+-\w+-\d+): .+ \(tài liệu \[(\d+)\]\)$", _re.M)
+
+
+def cau_json(items) -> dict:
+    """Mục đầu ra của model giả cho lần gọi viết câu: đúng khuôn `{cau: [...]}`."""
+    return {"type": "message", "id": f"msg_v2_{id(items)}", "role": "assistant", "status": "completed",
+            "content": [{"type": "output_text", "text": json.dumps({"cau": items}, ensure_ascii=False), "annotations": []}]}
+
+
+def viet_dung(kw, sua=None):
+    """Model giả "đúng luật": một câu cho mỗi id_muc trong tin nhắn, mã nguồn đúng. `sua(items)` để làm hỏng có chủ đích."""
+    items = [{"id_muc": i, "cau": f"Ở đây có nhiều thứ đáng xem [{n}]."} for i, n in _MUC.findall(chu_gui(kw))]
+    return [cau_json(sua(items) if sua else items)]
+
+
+def _sse(r):
+    from test_chat_stream import parse_sse
+    return parse_sse([f"{block}\n\n".encode() for block in r.text.strip("\n").split("\n\n")])
+
+
+V2_FORM = {"so_ngay": "3", "nguoi_lon": 2, "kieu_di": "kham_pha", "so_thich": ["di_tich", "thien_nhien"]}
+
+
+@pytest.mark.parametrize("path", ["/api/chat", "/api/chat/stream"])
+def test_v2_turn_frame_first_then_sentences(app_client, caplog, path):
+    app, client = app_client
+    gen = generator(lambda n, kw: viet_dung(kw))
+    original = _with(app, V2, gen)
+    client.cookies.clear()
+    typed = "chữ tự do lạ không được tới model"
+    try:
+        with chat_log_records(caplog) as records:
+            r = client.post(path, json={"query": typed, "bieu_mau": True, "truong": V2_FORM})
+    finally:
+        _restore(app, original)
+    (call,) = gen.client.responses.calls
+    assert call["instructions"] == LICH_V2_LOI_DAN and not call.get("tools") and getattr(call.get("reasoning"), "effort", None) == "low"
+    assert typed not in chu_gui(call)
+    if path == "/api/chat":
+        body = r.json()
+        v2_ = body["lich_trinh"]
+        answer_text = body["answer"]
+    else:
+        events = _sse(r)
+        kinds = [k for k, _ in events]
+        khung = next(d for k, d in events if k == "lich_khung")
+        cau = [d for k, d in events if k == "lich_cau"]
+        assert kinds.index("lich_khung") < kinds.index("lich_cau") and kinds.index("lich_xong") > max(i for i, k in enumerate(kinds) if k == "lich_cau")
+        assert kinds.index("lich_xong") < kinds.index("delta") < kinds.index("sources") < kinds.index("lich_trinh") < kinds.index("done")
+        assert [c["id_muc"] for c in cau] == [m["id_muc"] for m in v2.moi_muc(khung)]
+        v2_ = next(d for k, d in events if k == "lich_trinh")
+        assert v2_["lich"] == khung
+        answer_text = "".join(d["text"] for k, d in events if k == "delta")
+    lich = v2_["lich"]
+    ids = [m["id_muc"] for m in v2.moi_muc(lich)]
+    assert r.status_code == 200 and v2_["phien_ban"] == 2 and v2_["so_cau_du_phong"] == 0 and set(v2_["cau"]) == set(ids)
+    assert len(lich["ngay"]) == 3 and lich["tham_so"]["kieu_di"] == "kham_pha" and lich["tham_so"]["so_thich"] == ["di_tich", "thien_nhien"]
+    assert answer_text.startswith("Mình hiểu: 3 ngày · 2 người lớn · đi khám phá nhiều") and all(m["ten"] in answer_text for m in v2.moi_muc(lich))
+    line = metric_lines(records)[-1]
+    assert line["outcome"] == "success" and line["lich_trinh_ok"] is True and line["lich_v2"]["so_cau_du_phong"] == 0
+    assert typed not in json.dumps(line, ensure_ascii=False)
+    if path == "/api/chat/stream":
+        assert line["lich_khung_ms"] <= line["lich_xong_ms"]
+
+
+def test_v2_sentence_checks(app_client):
+    """5c.6: thiếu ⇒ dự phòng · lặp ⇒ phần tử đầu · id lạ ⇒ bỏ · giờ / thời lượng / tiền / link / tên điểm khác / mã ngoài nguồn / không mã ⇒
+    dự phòng riêng mục đó; câu đúng giữ nguyên."""
+    b = V2.bang_lich_v2
+    k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="nhe_nhang", so_thich=("di_tich",)))
+    lich = v2.dung_lich(b, k, {i: n for n, i in enumerate(v2.diem_v2(k), start=1)})
+    m = v2.moi_muc(lich)
+    assert len(m) == 4
+    khac = next(d["ten"] for d in b.diem if d["id"] not in v2.diem_v2(k) and not any(
+        v2.chuan_ten(d["ten"]) in v2.chuan_ten(t) for x in v2.diem_v2(k) for t in v2.ten_cua(b.theo_id[x])))
+    hong = {m[0]["id_muc"]: f"Mở cửa lúc 8:00 [{m[0]['nguon']}].", m[1]["id_muc"]: f"Vé 50.000 đồng [{m[1]['nguon']}].",
+            m[2]["id_muc"]: f"Gần {khac} [{m[2]['nguon']}]."}
+    for sai, ma in ((f"Nên ở đây 2 tiếng [{m[0]['nguon']}].", "gio"), (f"Xem tại https://x.vn [{m[0]['nguon']}].", "link"),
+                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong")):
+        assert v2.kiem_cau(b, m[0], sai) == ma
+    tu_model = [{"id_muc": i, "cau": c} for i, c in hong.items()] + [{"id_muc": m[0]["id_muc"], "cau": f"Câu sau bị bỏ [{m[0]['nguon']}]."},
+                                                                     {"id_muc": "n9-sang-1", "cau": "id lạ [1]."}]
+    cau, loi = v2.chon_cau(b, lich, tu_model)
+    assert loi == {m[0]["id_muc"]: "gio", m[1]["id_muc"]: "tien", m[2]["id_muc"]: "ten_khac", m[3]["id_muc"]: "thieu"}
+    assert all(cau[x["id_muc"]] == v2.cau_du_phong(b, x) for x in m) and "n9-sang-1" not in cau
+    tot = f"Ở đây có kiến trúc đẹp [{m[3]['nguon']}]."
+    assert v2.chon_cau(b, lich, [{"id_muc": m[3]["id_muc"], "cau": tot}])[0][m[3]["id_muc"]] == tot
+
+
+def test_v2_sub_name_inside_own_name_is_not_another_place(tmp_path):
+    """Tên một điểm khác nằm trong chính tên điểm này (tên con trong điểm lớn) ⇒ không thay câu — ca plan (c) dặn đếm."""
+    b = _bang(tmp_path, [_diem("lon", "kinh_thanh"), _diem("con", "kinh_thanh"), _diem("xa", "bo_nam")])
+    b.theo_id["lon"]["ten"], b.theo_id["con"]["ten"], b.theo_id["xa"]["ten"] = "Kinh thành Huế (Ngọ Môn)", "Ngọ Môn", "Chợ Đông Ba"
+    muc = {"id_diem": "lon", "nguon": 1, "ten": "Kinh thành Huế (Ngọ Môn)"}
+    assert v2.kiem_cau(b, muc, "Đứng trước Ngọ Môn ngắm cổng [1].") is None
+    assert v2.kiem_cau(b, muc, "Rồi ghé Chợ Đông Ba [1].") == "ten_khac"
+
+
+@pytest.mark.parametrize("hong", ["sai_khuon", "loi_model"])
+def test_v2_model_failure_keeps_full_frame(app_client, hong):
+    """Model lỗi / sai khuôn ⇒ lịch vẫn đủ khung, mọi mục câu dự phòng, không rút cả lịch (5c.6), log ghi loại lỗi (không chữ)."""
+    app, client = app_client
+
+    def script(n, kw):
+        if hong == "loi_model":
+            import httpx
+            from openai import APIConnectionError
+            raise APIConnectionError(request=httpx.Request("POST", "https://api.openai.com/v1/responses"))  # lỗi nhà cung cấp như thật
+        return [{"type": "message", "id": "msg_x", "role": "assistant", "status": "completed",
+                 "content": [{"type": "output_text", "text": '{"answer": "không đúng khuôn"}', "annotations": []}]}]
+    original = _with(app, V2, generator(script))
+    client.cookies.clear()
+    try:
+        r = client.post("/api/chat/stream", json={"query": "x", "bieu_mau": True, "truong": {"so_ngay": "2"}})
+    finally:
+        _restore(app, original)
+    events = _sse(r)
+    khung = next(d for k, d in events if k == "lich_khung")
+    n = len(v2.moi_muc(khung))
+    assert n >= 2 and next(d for k, d in events if k == "lich_xong") == {"so_cau_du_phong": n}
+    assert len([1 for k, _ in events if k == "lich_cau"]) == n and "error" not in [k for k, _ in events]
+    assert next(d for k, d in events if k == "done")["outcome"] == "success"
+
+
+def test_v2_old_values_and_long_limits(app_client):
+    """Giá trị cũ (giao diện cũ trong bộ đệm) vẫn chạy ở bản 2; 5 ngày + 2 sở thích nhận được (bộ xếp mới)."""
+    app, client = app_client
+    out = []
+    for truong in (OLD_SAME, {"so_ngay": "5", "so_thich": ["am_thuc", "chup_anh"], "kieu_di": "nhe_nhang"}):
+        gen = generator(lambda n, kw: viet_dung(kw))
+        original = _with(app, V2, gen)
+        client.cookies.clear()
+        try:
+            out.append(client.post("/api/chat", json={"query": "x", "bieu_mau": True, "truong": truong}).json()["lich_trinh"]["lich"])
+        finally:
+            _restore(app, original)
+    assert out[0]["tham_so"] | {"ngay_di": None} == {"so_ngay": 2, "nguoi_lon": 2, "tre_em": 1, "lon_tuoi": False, "kieu_di": "can_bang",
+                                                    "so_thich": ["di_tich"], "ngay_di": None}
+    assert len(out[1]["ngay"]) == 5 and out[1]["tham_so"]["so_thich"] == ["am_thuc", "chup_anh"]
+
+
+def test_v2_plain_answer_is_built_from_frame():
+    lich = {"minh_hieu": "Mình hiểu: x", "ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "ten": "A", "gio": None},
+                                                                      {"id_muc": "n1-chieu-1", "buoi": "chieu", "ten": "B", "gio": "13:30 – 14:45"}]}],
+            "ghi_chu": [{"ma": "kieu_di", "cau": "Chưa chọn kiểu đi."}]}
+    assert v2.ghep_chu(lich, {"n1-sang-1": "câu a [1].", "n1-chieu-1": "câu b [2]."}) == (
+        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
+
+
+def test_cau_stream_emits_each_closed_item():
+    s = v2.CauStream()
+    raw = json.dumps({"cau": [{"id_muc": "n1-sang-1", "cau": "a {b} \"c\" [1]."}, {"id_muc": "n1-chieu-1", "cau": "d [2]."}]}, ensure_ascii=False)
+    out = [x for i in range(0, len(raw), 5) for x in s.feed(raw[i:i + 5])]
+    assert out == json.loads(raw)["cau"]

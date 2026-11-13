@@ -437,6 +437,9 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit }) {
                         onClick={() => doi("kieu_di", chon.kieu_di === v ? null : v)}>{nhan} — {giai}</button>
               ))}
             </div>
+            {chon.kieu_di && chon.kieu_di !== "nhe_nhang" && (chon.tre_em > 0 || chon.lon_tuoi) && (
+              <p className="lc-tom">Có trẻ em hoặc người lớn tuổi: lịch giữ mức nhẹ nhàng, mỗi buổi một điểm.</p>
+            )}
           </fieldset>
         )}
         {hien.has("so_thich") && (

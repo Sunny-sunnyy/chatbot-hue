@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
-import { displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
+import { boMaTrichDan, displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
 import { streamAnswer } from "./stream.js";
 import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
@@ -93,6 +93,7 @@ export function useChat() {
     const key = ++keyRef.current;
     const update = patch => setTurns(all => all.map(turn => (turn.key === key ? { ...turn, ...patch } : turn)));
     const progress = [];  // B5 D14: các bước lịch đã nhận của lượt này, đúng thứ tự server gửi
+    const cauV2 = {};  // "Lên kế hoạch" bản 2: câu theo id_muc của lượt này
     // "Thử lại" thay lượt lỗi (server không nhớ lượt lỗi — plan B3 D2) bằng lượt mới cùng câu hỏi.
     setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary, bieuMau)]);
     setResetError("");
@@ -128,6 +129,13 @@ export function useChat() {
             update({ notice: data.text });
           } else if (name === "clarify") {
             update({ clarify: data });  // B4 D8: thẻ hỏi lại — code dựng nút từ danh sách trường
+          } else if (name === "lich_khung") {
+            update({ lichV2: data, cauV2: {} });  // "Lên kế hoạch" bản 2: khung do code dựng hiện ngay, trước lần gọi model
+          } else if (name === "lich_cau") {
+            cauV2[data.id_muc] = data.cau;  // câu đã qua kiểm (hoặc câu dự phòng) của đúng một mục — đổ vào theo id
+            update({ cauV2: { ...cauV2 } });
+          } else if (name === "lich_xong") {
+            update({ soDuPhong: data.so_cau_du_phong });
           } else if (name === "lich_trinh") {
             update({ lich: data });  // B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code)
           } else if (name === "web") {
@@ -145,13 +153,14 @@ export function useChat() {
         // Server thấy ngắt ⇒ huỷ lần gọi model, không nhớ lượt này (`client_disconnected` ∉ REMEMBERED_OUTCOMES). Rời trang ⇒ không còn ai xem.
         if (stoppedRef.current === controller) {
           stopFrame();
-          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", web: null, clarify: null, lich: null, progress: [] });
+          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", web: null, clarify: null, lich: null, progress: [],
+                   lichV2: null, cauV2: null });
         }
         return true;
       }
       // D3: kiểm cuối hỏng (rút lại) hoặc lỗi / đứt giữa chừng (xoá hết) — xoá chữ + nguồn đã hiện, hiện lời báo + "Thử lại" (yêu cầu 10, 11).
       stopFrame();
-      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", web: null, error: failure.message });
+      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", web: null, error: failure.message, lichV2: null, cauV2: null });
     }
     return true;
   }
@@ -291,7 +300,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
           <button type="button" onClick={onRetry} className="retry">Hỏi lại</button>
         </div>
       )}
-      {turn.text && turn.phase !== "error" && (
+      {turn.lichV2 && turn.phase !== "error" && (
+        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} />
+      )}
+      {turn.text && !turn.lichV2 && turn.phase !== "error" && (
         <div className="bubble">
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
@@ -312,7 +324,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
-      {turn.phase === "done" && turn.lich && (
+      {turn.phase === "done" && turn.lich && !turn.lichV2 && (
         <LichExtras lich={turn.lich} truong={turn.truong} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
                     getText={() => vanBanLich(turn, answerRef.current?.innerText ?? "", turn.lich.ban_do || [])} />
       )}
@@ -452,6 +464,50 @@ function LichExtras({ lich, truong, onAsk, onEditPlan, getText }) {
       )}
       {lich.sua && !onEditPlan && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
       {lich.sua && !onEditPlan && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}
+    </div>
+  );
+}
+
+// "Lên kế hoạch" bản 2 (spec 5c.5): thẻ lịch vẽ TỪ KHUNG do code dựng (tên, buổi, giờ, ghi chú); câu model đổ vào theo `id_muc`, chưa tới ⇒
+// "đang viết…". Loại mục chưa biết (đợt sau: ăn uống…) ⇒ bỏ qua, không lỗi. Nút "Sửa" điền lại biểu mẫu bằng đúng giá trị đã gửi.
+const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
+const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
+
+function LichV2({ turn, onEditPlan }) {
+  const lich = turn.lichV2;
+  const cau = turn.cauV2 || {};
+  const xong = turn.phase === "done";
+  return (
+    <div className="bubble lich-v2">
+      <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
+      {lich.ngay.map(ng => (
+        <section key={ng.ngay} className="lich-ngay" aria-label={`Ngày ${ng.ngay}`}>
+          <h3>Ngày {ng.ngay}</h3>
+          <ul>
+            {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => (
+              <li key={m.id_muc}>
+                <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
+                <span className="lich-ten">{m.ten}</span>
+                <span className="lich-cau">{cau[m.id_muc] != null ? boMaTrichDan(cau[m.id_muc]) : (xong ? "" : "đang viết…")}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      {lich.ghi_chu.length > 0 && (
+        <div className="lich-ghi-chu">
+          <p className="font-semibold">Ghi chú của lịch</p>
+          <ul>{lich.ghi_chu.map((g, i) => <li key={i}>{g.cau}</li>)}</ul>
+        </div>
+      )}
+      {turn.sources?.length > 0 && <SourceLine turn={turn} />}
+      {turn.notice && <p className="notice">{turn.notice}</p>}
+      {xong && (
+        <div className="lich">
+          <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
+          {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
+        </div>
+      )}
     </div>
   );
 }

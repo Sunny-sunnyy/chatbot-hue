@@ -34,6 +34,7 @@ from llm.full_corpus_prompt import (
     CHAT_INSTRUCTIONS,
     INSUFFICIENT_ANSWER,
     LICH_TRINH_LUAT,
+    LICH_V2_LOI_DAN,
     ROUTER_INSTRUCTIONS,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
@@ -51,6 +52,28 @@ BIEU_MAU_REASONING = "low"
 class AnswerOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     answer: str
+
+
+class CauMuc(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id_muc: str  # không ràng buộc giá trị ở khuôn — code kiểm (plan đợt 1 ý 4)
+    cau: str
+
+
+class CauLichOutput(BaseModel):
+    """"Lên kế hoạch" bản 2 (5c.6): mảng câu theo mục của khung code đã xếp."""
+    model_config = ConfigDict(extra="forbid")
+    cau: list[CauMuc]
+
+
+def parse_cau_lich(final_output: Any) -> list[dict]:
+    """Đầu ra của lần gọi viết câu ⇒ danh sách `{id_muc, cau}`; sai khuôn ⇒ `GenerationError` (lịch vẫn hiện đủ khung bằng câu dự phòng)."""
+    try:
+        parsed = final_output if isinstance(final_output, CauLichOutput) else (
+            CauLichOutput.model_validate_json(final_output) if isinstance(final_output, str) else CauLichOutput.model_validate(final_output))
+    except Exception as exc:
+        raise GenerationError("Invalid itinerary sentences from OpenAI agent") from exc
+    return [x.model_dump() for x in parsed.cau]
 
 
 class RouteOutput(BaseModel):
@@ -302,6 +325,15 @@ class OpenAIFullCorpusGenerator:
         self.bieu_mau_agent = self.answer_agent.clone(
             instructions=f"{answer_instructions}\n\n{LICH_TRINH_LUAT}",
             model_settings=dataclasses.replace(self.answer_agent.model_settings, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
+        )
+        # "Lên kế hoạch" bản 2 (c): vai riêng viết câu cho từng mục của khung — không công cụ, không lịch sử, suy luận như lượt biểu mẫu
+        self.lich_v2_agent = Agent(
+            name="hue_lich_v2",
+            instructions=LICH_V2_LOI_DAN,
+            model=self.responses_model,
+            model_settings=ModelSettings(max_tokens=self.answer_max_output_tokens, include_usage=True, store=False,
+                                         reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
+            output_type=CauLichOutput,
         )
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.
         self.web_agent = Agent(
@@ -577,6 +609,19 @@ class OpenAIFullCorpusGenerator:
             return self._tools_result(result, started, call_log, state)
         text = parse_structured_output(getattr(result, "final_output", None), AnswerOutput)
         return self._generated_text(result, text, started, call_log)
+
+    async def generate_lich_v2(self, prompt: str, call_log: "CallLog | None" = None) -> tuple[GeneratedText, list[dict]]:
+        """Lần gọi viết câu của lịch bản 2, không stream ⇒ (usage, mảng `{id_muc, cau}`)."""
+        started = time.monotonic()
+        call_log = call_log if call_log is not None else CallLog()
+        result = await self._run(self.lich_v2_agent, prompt, call_log, self.timeout)
+        return self._generated_text(result, "", started, call_log), parse_cau_lich(getattr(result, "final_output", None))
+
+    def start_lich_v2_stream(self, prompt: str) -> tuple[RunResultStreaming, CallLog]:
+        return self._start_stream(self.lich_v2_agent, prompt)
+
+    def finish_lich_v2_stream(self, result: RunResultStreaming, call_log: CallLog, started: float) -> tuple[GeneratedText, list[dict]]:
+        return self._generated_text(result, "", started, call_log), parse_cau_lich(getattr(result, "final_output", None))
 
     async def aclose(self) -> None:
         """Close AsyncOpenAI client connection."""

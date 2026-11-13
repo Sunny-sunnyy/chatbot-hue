@@ -220,6 +220,8 @@ class AnswerTrace:
     lich: dict | None = None
     buoc_lich: list[dict] = field(default_factory=list)
     lich_kiem: list[str] | None = None
+    # "Lên kế hoạch" bản 2 (`llm/len_ke_hoach.py`): {"lich", "loi_khung", "cau", "loi_cau", "so_cau_du_phong", "loi_model"?}; None = không phải lượt bản 2
+    lich_v2: dict | None = None
     # #6 (plan D2): phần `tro_ly_hue` chạy trước định tuyến rồi bị bỏ vì tuyến khác — số lần, USD (lần gọi xong = usage thật; lần bị huỷ
     # giữa chừng không có usage ⇒ cộng token vào bộ dựng đếm × giá vào = cận dưới), cờ bị huỷ giữa chừng. Chỉ số đếm, không chữ.
     n_tra_loi_bo: int = 0
@@ -560,12 +562,13 @@ def _do_dai_bang_chung(doc: RetrievedDocument) -> int:
 
 
 async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
-                          instructions: str):
+                          instructions: str, nhap: str | None = None, lay_ve: bool = True):
     """D6: mỗi điểm trong khung — `retrieval_service.search(<tên điểm>)` (đọc Qdrant, không ghi), chọn **đúng 1 đoạn** = đoạn có bằng chứng dài
     nhất trong top-10 có `source` = file nguồn của điểm (cổng đợt 1 S1, A chốt: "đoạn đầu" hay chỉ là dòng tên — 11/28 điểm < 80 ký tự — nên
     luật "kèm một ý ngắn lấy từ tài liệu" không viết được ⇒ model từ chối; bằng nhau ⇒ đoạn đứng trước); đoạn đã có trong sổ nguồn ⇒ dùng lại số [n] cũ; không có đoạn đúng file ⇒ bỏ điểm (mã `khong_co_doan_nguon`).
     Có điểm Quần thể ⇒ thêm 1 đoạn file vé chứa khung giờ (D5 (a)). Đoạn mới dựng ngữ cảnh nối sổ nguồn; vượt ngân sách ⇒ bớt ngày cuối (iii).
-    Lỗi tìm / ngữ cảnh ⇒ `trace.tool_error` rồi ném (như `tim_kho`)."""
+    Lỗi tìm / ngữ cảnh ⇒ `trace.tool_error` rồi ném (như `tim_kho`). Lịch bản 2: `nhap` = bản nháp tin nhắn của nó (đếm ngân sách), `lay_ve=False`
+    (giờ gợi ý do code in — không cần đoạn file vé); mặc định ⇒ đúng như đường cũ."""
     try:
         da_co = {doc_id: i + 1 for i, doc_id in enumerate(trace.seen_ids)}  # sổ nguồn đánh số liền từ 1, song song `seen_ids`
         cho: dict[str, list[str]] = {}  # chunk_id mới ⇒ điểm dùng đoạn đó
@@ -589,12 +592,13 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
                     moi.append(doc)
                 cho.setdefault(doc.id, []).append(id_)
         ve = None
-        if any(bang.theo_id[i]["quan_the"] for i in lt.diem_trong_khung(khung)):
+        if lay_ve and any(bang.theo_id[i]["quan_the"] for i in lt.diem_trong_khung(khung)):
             ve = await chon_doan(lt.VE_CAU_TIM, lt.VE_NGUON, chua="17h30")
             if ve is not None and ve.id not in da_co and ve.id not in cho:
                 moi.append(ve)
         # chữ khung cũng vào model ⇒ đếm vào ngân sách bằng bản nháp (số nguồn tạm) — D6 (iii)
-        nhap = lt.khung_chu(bang, khung, dict.fromkeys(lt.diem_trong_khung(khung), 0), LICH_TRINH_LUAT, 0)
+        if nhap is None:
+            nhap = lt.khung_chu(bang, khung, dict.fromkeys(lt.diem_trong_khung(khung), 0), LICH_TRINH_LUAT, 0)
         packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1,
                                        prior_context="\n\n".join([*trace.context_parts, nhap]),
                                        skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
@@ -727,7 +731,10 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
 
 def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) -> dict | None:
     """D11 + D12 (a): dữ liệu có cấu trúc cho giao diện khi lượt có lịch — link bản đồ (code dựng) + thẻ "Sửa" chọn sẵn tham số đã dùng
-    (`cau_goc` = câu người dùng gõ, không phải câu ghép; "Gửi" của thẻ = câu ghép B4 D4)."""
+    (`cau_goc` = câu người dùng gõ, không phải câu ghép; "Gửi" của thẻ = câu ghép B4 D4). Lịch bản 2 ⇒ khung + câu cuối (giao diện vẽ từ khung)."""
+    if trace.lich_v2 is not None:
+        v = trace.lich_v2
+        return {"phien_ban": 2, "lich": v["lich"], "cau": v["cau"], "so_cau_du_phong": v.get("so_cau_du_phong")}
     if trace.lich is None:
         return None
     khung = trace.lich["khung"]
@@ -812,6 +819,11 @@ async def answer_bieu_mau(query: str, retrieval_service, context_builder, genera
     if generator is None:
         raise GeneratorNotReadyError("generator is not ready")
     today = _today(flags, trace)
+    if flags.len_ke_hoach_v2:  # bản 2: khung + câu theo mục (`llm/len_ke_hoach.py`); cờ tắt ⇒ đường dưới y như cũ
+        from llm import len_ke_hoach  # import muộn: module đó import lõi này
+        await len_ke_hoach.answer_v2(query, retrieval_service, context_builder, generator, trace, flags, today)
+        set_notice(trace, flags)
+        return
     context = await _xep_bieu_mau(query, retrieval_service, context_builder, trace, flags, today)
     started = time.perf_counter()
     call_log = CallLog()
@@ -973,6 +985,12 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             # (giữ chữ khi còn có thể là câu từ chối, dòng "Mình hiểu", kiểm cuối, khối ghi chú)
             if generator is None:
                 raise GeneratorNotReadyError("generator is not ready")
+            if flags.len_ke_hoach_v2:  # bản 2: sự kiện lich_khung / lich_cau / lich_xong (`llm/len_ke_hoach.py`); cờ tắt ⇒ y như cũ
+                from llm import len_ke_hoach
+                async for event in len_ke_hoach.stream_v2(query, retrieval_service, context_builder, generator, trace, flags, _today(flags, trace)):
+                    yield event
+                set_notice(trace, flags)
+                return
             yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
             today = _today(flags, trace)
             context = await _xep_bieu_mau(query, retrieval_service, context_builder, trace, flags, today)
