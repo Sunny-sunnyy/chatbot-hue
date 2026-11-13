@@ -1,4 +1,37 @@
-# STATUS E — PHIÊN 13/11 (mở 19:47 13/11/2026, `date`) · terminal `hue-rag-e8` · Claude Opus 5.5 · vai thực thi
+# STATUS E — KẾT PHIÊN 22:39 13/11/2026 (`date`) · terminal `hue-rag-e8` (A `hue-rag-43`, B `hue-rag-83`, C `hue-rag-eb`) · Claude Opus 5.5 · vai thực thi
+
+## PHIÊN SAU ĐỌC TRƯỚC (viết 22:39 13/11/2026)
+
+**E không còn tiến trình, server, trình duyệt nào.** File tạm `/tmp/e_*` (xoá được). Không worktree của E.
+
+### Việc của E phiên sau (theo thứ tự)
+1. **GÓI GHI KHO một lần** (User duyệt 13/11; A ghi ở handoff "User duyệt gói 10 câu" + mục ghi kho): 2 bài `data/sua_kho_2026-11-13_diem_mong/` (⇒ `heritages/heritage/`, `travel/places/`; C review ready) + bài `data/sua_kho_2026-11-12_dot_3/bai_nhap_di_lai_o_hue.md` (⇒ `travel/services/`; C review ready) + **bài lưu trú nếu xong + C review kịp** + sửa 3 chỗ kho: người lập không gian lưu niệm (theo trang chính thức) · số nhà khu Lê Bá Đảng trên Lê Lợi (theo Sở Du lịch) · bài vé gộp: bảo tàng không thuộc "Nam sông Hương"; Ga Huế GIỮ. **Thứ tự:** mốc "trước" K1 Golden 176 + K2 an toàn 32 trên kho hiện tại (TRƯỚC khi ghi) ⇒ sao lưu file sửa vào `knowledge-base-hue/meta/` + build record + sparse state ⇒ ghi + chia đoạn thử ⇒ xoá sparse state cũ, dựng lại tại chỗ (`guides/full_corpus_rag.md` "Build lại index") ⇒ `/health` ⇒ đếm đoạn mỗi file mới = số chia thử (bảo tàng 12 · không gian lưu niệm 15 · đi lại 12) ⇒ T1 158 so `64656a87c109` ⇒ K1 / K2 "sau", chấm cùng lượt mù. Trần 0,15 USD. A báo B / C dừng có phí + server. Report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md` (không tên cơ sở). Dừng nếu dựng lỗi / K1 / K2 vỡ ⇒ báo A, không tự lùi.
+2. **Bài lưu trú nháp — DỞ:** `data/sua_kho_2026-11-13_luu_tru/BIEN_BAN_DANG_DO.md` (phiếu User đã áp, số thật 141 cơ sở có hạng / 100 % gán khu; chưa viết script sinh bài). Nếu không kịp gói 1 ⇒ ghi ở lần ghi kho sau.
+3. **Sau K1 / K2:** đếm lại 6 câu "ăn gì gần X" (mốc 1 / 6, lượt đếm 12/11) + vài câu cụm Thủy Xuân / Kim Long (≈ 0,01 USD) ⇒ còn hỏng ở cụm OSM phủ ⇒ báo A (lần ghi sau thêm bản nhẹ quán OSM, rào C gộp); hỏng ở cụm OSM không phủ ⇒ cần nguồn khác (A chốt "Quán OSM — chốt").
+4. Bảng tra cho người chấm bộ quyết 12 (`/tmp/e_cham/bang_tra.md` — mất khi khởi động lại; dựng lại từ `diem_v8.json`): **sửa** thêm điểm có buổi tối mà không ghi giờ (vd chợ có phố ẩm thực đêm) trước khi dùng.
+
+### Kết quả phiên 13/11 (E)
+- Kho 3 lưu trú: gán khu bằng OSM 54 % ⇒ 98 %; ĐÍNH CHÍNH đếm theo cơ sở (151 dòng = 142 ⇒ sau phiếu 141); bài nháp "Đi lại ở Huế" (C ready).
+- Review: kho 3 ăn uống của C (ready, 3 minor) · nghiệm thu đợt 1 lịch trình của B (ready cho "trượt, không bật"; 4 minor; ca dò 13.176 khung) — `e_review_len_ke_hoach_dot_1.md`.
+- TRIPO vòng 6 XONG (k3–k6 + mọi tính năng; report mục 5 `b_tripo_v6_lap_ke_hoach.md`).
+- 13 ca phụ nghiệm thu (`bo_do_v2/ca_phu_13_11.jsonl` `223b8768fa68`) — cặp D4 thiết kế sai (có trẻ em).
+- 2 bài kho nháp cho điểm mỏng (C ready).
+- Bàn nhóm quán OSM: A chốt theo "đổi một thứ" của E.
+
+### Tiền E phiên 13/11
+**0 USD API** (Codex 1 lượt tra web, WebFetch, Playwright TRIPO, agent con 0).
+
+### Bẫy / đã học phiên 13/11
+- **Đếm theo dòng lần thứ 3** (151 dòng ⇒ 142 cơ sở; C bắt): khử trùng là bước ĐẦU của mọi phép đếm trên danh mục ngoài, kể cả danh mục chính thức. Gộp trùng phải giữ dòng hạng cao nhất (E tự bắt lỗi giữ dòng không hạng).
+- **Tên quán + địa chỉ từ kho lọt vào report tracked đã push** (`e_review_kho3_c.md`, commit `e74c6df`): repo public ⇒ trong report dùng nhãn (Q-a…), tên / địa chỉ để ở `data/`. Hook không bắt (chỉ bắt chép ≥ 40 ký tự).
+- Script thử trang ngoài: dò một lượt TRƯỚC (k3 cần 101,8 s, vượt mức 85 s ghi hôm trước); 3 tab TRIPO không có ô gõ tự do — đọc DOM trước khi viết thao tác.
+- Đếm câu dự phòng / khung bằng cách KHÁC người làm (mẫu câu, không dùng `tom_tat`); ca dò bất biến trên hàng nghìn khung rẻ hơn đọc code.
+- Thiết kế ca kiểm: kiểm xem ràng buộc khác (nhóm hạn chế) có khoá kết quả không trước khi ghi kỳ vọng (cặp D4).
+- Mâu thuẫn kho ↔ nguồn ngoài: ghi cả hai + báo A; không tự sửa kho.
+
+---
+
+# (nhật ký trong phiên) STATUS E — PHIÊN 13/11 (mở 19:47 13/11/2026, `date`) · terminal `hue-rag-e8` · Claude Opus 5.5 · vai thực thi
 
 - 19:47 13/11/2026 — mở phiên, kiểm nhanh xong (main `d5ea552`, sạch, hooksPath `.githooks`, Qdrant 2 collection / 8.435 điểm). Worktree `/tmp/b7_moc`, `/tmp/b_lkh` báo prunable (thư mục `/tmp` đã mất). **Chờ A giao việc**; việc theo handoff: kho 3 lưu trú (gán khu 22 đường bằng OSM) + bài "Đi lại ở Huế" ⇒ rồi TRIPO vòng 6. Chưa sửa file nào khác.
 - 19:49 13/11/2026 — A giao (User: việc A giao = "làm đi"): kho 3 lưu trú + bài đi lại ⇒ TRIPO vòng 6. **Đang làm: gán khu 22 đường bằng OSM.** File sẽ ghi: `data/luu_tru_2026-11-12/tools/gan_khu_v3.py` (mới), `data/luu_tru_2026-11-12/luu_tru_theo_cum_nhap_v3.json` (mới), `data/luu_tru_2026-11-12/phieu_khu_luu_tru_cho_user.md`, file này. Luật ghi TRƯỚC khi chạy: mỗi đoạn đường OSM cùng tên (trong khung Huế) ⇒ điểm tham quan gần nhất ≤ 2 km ⇒ cụm ⇒ khu; mọi đoạn có khu cùng một khu ⇒ gán; khác khu ⇒ "cần xem"; không đoạn nào ≤ 2 km / không có tên trong OSM ⇒ không gán.
@@ -20,9 +53,9 @@
 
 ---
 
-# STATUS E — KẾT PHIÊN 22:23 12/11/2026 (`date`) · terminal `hue-rag-33` (A `hue-rag-7d`, B `hue-rag-1b`, C `hue-rag-e1`) · Claude Fable 5.2 · vai thực thi
+# (lịch sử) STATUS E — KẾT PHIÊN 22:23 12/11/2026 (`date`) · terminal `hue-rag-33` (A `hue-rag-7d`, B `hue-rag-1b`, C `hue-rag-e1`) · Claude Fable 5.2 · vai thực thi
 
-## PHIÊN SAU ĐỌC TRƯỚC (viết 22:23 12/11/2026)
+## (cũ) PHIÊN SAU ĐỌC TRƯỚC (viết 22:23 12/11/2026)
 
 **E không còn tiến trình, server, worktree nào.** File tạm `/tmp/e_*` đã xoá. Nhánh Exa lưu ở tag `hoso/p9-tra-web-exa` (`76e976e`).
 

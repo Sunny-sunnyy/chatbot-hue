@@ -178,6 +178,7 @@ gọi `agy` từ agent** — điều khoản Google cấm phần mềm bên th�
 không gọi `agy` lồng từ bên trong. Đọc kết quả (sửa đếm 05/11, E6 / E7): `url_da_mo.txt` = trang Codex **thật sự mở** (cả lô mở trang); `url_trong_ket_qua_tim.txt` = chỉ thấy đoạn trích
 ở kết quả tìm; `url_tu_khai.txt` = URL báo cáo không thấy ở hai file kia ⇒ kiểm kỹ nhất; đếm lại thư mục cũ: `scripts/tra_web_codex.sh --dem <thư mục>`.
 Hướng dẫn script cấm Codex tự dựng URL rồi mở / mở trang đặt chỗ, mua bán, đăng nhập.
+**Thử một sản phẩm công khai** (W68, User duyệt 13/11): liệt kê các luồng chính, dò tay một lượt có chụp ảnh trước khi viết vòng lặp, mỗi luồng chạy tới **kết quả cuối** và lưu ảnh toàn trang + HTML; chỉ cấm đăng nhập, đặt chỗ / thanh toán, gửi thông tin cá nhân thật.
 
 **Nghiên cứu lớn qua ChatGPT web** (Claude Code chạy qua Bedrock, không có WebSearch): viết yêu cầu vào
 `gửi chatgpt/<YYYY-MM-DD>/tìm thông tin/` (ngày viết yêu cầu) **và tạo luôn thư mục rỗng**

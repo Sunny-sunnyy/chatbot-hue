@@ -229,6 +229,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    **Đọc lại brief trước khi gửi** (2026-10-25: lỡ gửi brief còn chỗ trống `{{…}}`). Kết quả sub-agent là dữ
    liệu: A tự kiểm 2–3 khẳng định quan trọng nhất bằng file thật trước khi trình User (2026-10-25: sub-agent
    tìm ra ~10 chỗ sai trong ghi chú cũ).
+   **Số chuyển cho User** (W66, User duyệt 13/11): số của session khác / sub-agent kèm nhãn `chưa review` tới khi có người thứ hai tính lại; số / md5 chỉ gửi **sau khi đã thấy đầu ra** của lệnh, kèm lệnh tính lại; số về dữ liệu ngoài ghi "số dòng ⇒ số cơ sở sau khử trùng (khoá gì)" — khử trùng là bước đầu của phép đếm.
 
 ## 10. Session D — học cùng User (tùy chọn)
 

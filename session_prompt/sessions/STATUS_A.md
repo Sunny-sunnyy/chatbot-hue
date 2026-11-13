@@ -1,3 +1,10 @@
+# STATUS A — KẾT PHIÊN 13/11 (mở 19:46; cập nhật 22:41 13/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ cùng lượt giao E ghi kho + dựng + đo (gói User duyệt), B chờ dựng xong ⇒ điền mã đoạn ⇒ nghiệm thu lại; đưa User lệnh dọn chưa chạy. **Luật mới:** bàn nhóm trước mọi khuyến nghị (đáp án = đa số), dòng đầu tin ghi "vòng 1 / 2".
+- Xong 13/11 (A): điều phối; bật cờ hết lượt tìm `9d6a0f7` (873 test, server thật 2 câu, C review); duyệt plan đợt 2 lịch trình `d0f7bc56add0`; 2 agent con nhìn ảnh; agent con fact sheet + agent con viết `bai_hoc/` (C kiểm độc lập) `0d4ee6e`; sửa tiến sự cố tên cơ sở `fcab983`; luật bàn nhóm + đẩy nhanh; W66–W68 áp; sổ vòng 28; handoff + archive; Project_Status; lịch sử; nhật ký; memory `proportional-effort` (lần 7) + `consult-team-before-recommending`. Tiền A ≈ 0,002.
+- **Bẫy A (13/11):** (1) commit + push 2 file review mà không đọc nội dung ⇒ tên / địa chỉ cơ sở lên repo public (E phát hiện) ⇒ từ nay quét tên trong mọi file trước khi stage; W69 hook chờ bàn nhóm; (2) hỏi User sàn 1,27 ↔ 1 s — over-engineer lần 7; (3) khuyến nghị quán OSM một mình, User phải hỏi lại 2 lần ⇒ luật bàn nhóm; (4) gửi câu cho User trước khi bàn nhóm vòng 2 xong (OSM) ⇒ chốt khi đủ người của vòng.
+- Vòng tự soi: vòng 1 (20:22) + vòng 2 (kết phiên) — chốt ở handoff / archive.
+
 # STATUS A — PHIÊN 13/11 (mở 19:46; cập nhật 19:49 13/11/2026 `date`)
 
 - Terminal: A `hue-rag-43` · B `hue-rag-83` · C `hue-rag-eb` · E `hue-rag-e8` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).

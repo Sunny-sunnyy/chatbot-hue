@@ -1,5 +1,26 @@
 # STATUS C — phiên 13/11 (C `hue-rag-eb` · A `hue-rag-43` · B `hue-rag-83` · E `hue-rag-e8`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên, 22:39 13/11/2026 `date`)
+
+*Tên quán / cơ sở trong file tracked ghi bằng nhãn; bảng nhãn ở `data/` (private). Report tracked tả quán / cơ sở ở MỨC LOẠI ngay khi viết.*
+
+**Việc đầu phiên sau (theo thứ tự; A giao lại khi mở phiên):**
+1. **Rà lời dặn bản 2 — DỞ:** `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan_ban2.md` md5 `ad661b94415b` — đã có số hành vi từ log (407 lượt; model tự gọi tìm kho lần 3 ở 37 câu; công cụ thời tiết dùng 2 / 403, ngày 12 / 403). **Còn:** đối chiếu từng câu dặn với lượt đo ở `data/` (B7, hết lượt tìm, lịch trình), đếm câu ngoài phạm vi, ≤ 5 đề xuất theo lợi / công ⇒ gửi cả nhóm. Script: `data/ra_khoang_cach_2026-11-12/tools/dem_log_chat_metrics.py`. B rà harness song song (`b_ra_harness_tro_ly.md`) — không chồng.
+2. **Review diff kho** với bản sao ở `knowledge-base-hue/meta/` khi E ghi kho 3 (2 bài điểm mỏng + bài Đi lại + 3 chỗ sửa) — đo đã dời sang phiên sau theo lời User. Không đọc `evaluation/`, `*sealed*`.
+3. **Khi A giao:** bảng quán OSM riêng cho lịch (A chốt 13/11) — đọc tay ~110 dòng bị lọc trước khi dựng (`data/osm_quan_2026-11-12/dem_cho_cau_kho_rieng.md`); bản nhẹ ~10 quán vào bài "ăn gì gần" chỉ SAU khi ghi kho 3 + đếm lại. Phần (B) ảnh của plan đợt 2: chờ User duyệt phiếu ảnh bản 2 (tối đa 24 / 34 = đúng sàn, 0 biên) ⇒ C dựng `bang_anh_v1.json` (tải Commons CHẬM, ≥ 10 s / yêu cầu).
+
+**Sản phẩm phiên 13/11 (đều 0 USD API):** khớp OSM bản 2 + Photon (bài kho có toạ độ 29 ⇒ 34 / 81) · đếm OSM cho câu "bảng riêng / kho chính" · toạ độ v7 (`data/phase_9/lich_trinh/diem_toa_do_v7.json` `158e184154de`, 33 / 34) · plan đợt 2 (`docs/superpowers/plans/2026-11-13-len-ke-hoach-dot-2-plan.md`, A duyệt) · phiếu ảnh bản 2 · điểm lễ hội ban ngày · review: kho 3 của E (2 vòng), bật cờ hết lượt tìm (`9d6a0f7`), bài kho điểm mỏng, kiểm độc lập `bai_hoc/`, so mốc bước (b) (khớp 4 / 4).
+**Tiền C phiên 13/11: 0 USD API** (gửi ra ngoài: Overpass 2 truy vấn, Photon 2, Commons ~13 có 1 lần bị 429, WebFetch ~10 trang — chỉ thông tin công khai).
+**Không server / worktree / nhánh / container của C.** File tạm `/tmp` đã xoá.
+
+**Bẫy phiên 13/11 (đừng lặp):**
+- **Gửi số trước khi lệnh chạy xong** (gộp SendMessage cùng lượt với lệnh tính md5) ⇒ tin mang 4 md5 bịa. Số / md5 chỉ gửi SAU khi thấy đầu ra.
+- **Report tracked chép tên / địa chỉ cơ sở từ `data/`** (sự cố e74c6df) ⇒ viết ở mức loại ngay từ đầu, cả review và STATUS.
+- **Grep thẳng kho** thay vì `scripts/grep_kb.sh` (1 lần, lúc đọc tay khớp quán).
+- **Luật chữ dò trên chữ bỏ dấu** ("Quán" ↔ "quận", "Làng" ↔ "lăng") ⇒ dò tên tiếng Việt trên chữ còn dấu.
+- **Gửi dồn ~11 truy vấn Commons** ⇒ 429 ⇒ luôn chờ + cách ≥ 10 s.
+- Script cũ có sẵn biến trùng tên với biến mới chèn (`BANG`) ⇒ grep tên trước khi thêm.
+
 ## PHIÊN 13/11
 
 *Tên quán / cơ sở lấy từ kho hoặc `data/` ghi bằng nhãn (Q-…, L-…); bảng nhãn ở `data/osm_quan_2026-11-12/nhan_status_c_13_11.md` và `data/luu_tru_2026-11-12/nhan_review_c_13_11.md` (private).*

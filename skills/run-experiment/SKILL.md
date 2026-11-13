@@ -16,6 +16,7 @@ Code theo `practical-project-coding` ("Ranh giới theo khâu pipeline": gọi c
 Kế hoạch có mục **"Căn cứ để review"** và được một session khác review trước khi A duyệt sha (`WORKFLOW.md` §9 mục 1).
 
 
+0. **So hai bên / chọn nhà cung cấp** (W67, User duyệt 13/11): tiêu chí kiểu "mới so với mốc" / "0 câu đổi" ghi trước mốc A/A và kiểm hai bên **cùng mẫu số**; chọn nhà cung cấp / tham số ⇒ lượt đầu đo trên **đường người dùng thật** (qua server), không chỉ một bước tách riêng; ước tiền lượt qua server = số câu × USD / câu thật của lượt gần nhất.
 1. **Lớp bài toán**, không phải một câu: "dòng bảng giá bị tách nên tìm không ra", không phải "câu số 81 sai".
 2. **Một thay đổi mỗi biến thể** (H1, H1b…); ghi giả định của nó và **kiểm giả định bằng máy trước khi code**
    (ví dụ đếm xem đúng là có bao nhiêu bảng bị tách vì tokenizer cũ).

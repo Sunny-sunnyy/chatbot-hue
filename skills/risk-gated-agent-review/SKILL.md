@@ -30,6 +30,7 @@ Không trình bày giá trị mong đợi hay kết quả cũ như kết quả m
 
 ### Cổng tối thiểu
 
+0. Tiêu chí so hai bên ("mới so với mốc", "0 câu đổi"): kiểm có mốc A/A ghi trước và hai bên cùng mẫu số; không có ⇒ finding (W67).
 1. Xác nhận trạng thái Git (commit gốc, worktree) khớp report.
 2. Liệt kê mọi đường dẫn đổi, kể cả untracked.
 3. Đọc exact diff.
