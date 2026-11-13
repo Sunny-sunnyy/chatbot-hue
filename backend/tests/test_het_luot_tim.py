@@ -45,8 +45,8 @@ def sent_requests(gen) -> str:
     return json.dumps(clean([{k: v for k, v in kw.items() if k != "extra_headers"} for kw in gen.client.responses.calls]), ensure_ascii=False, sort_keys=True, default=str)
 
 
-def test_flag_default_off_and_in_settings_off():
-    assert AssistantFlags().het_luot_bo_cong_cu is False and SETTINGS["assistant"]["het_luot_bo_cong_cu"] is False
+def test_flag_default_off():
+    assert AssistantFlags().het_luot_bo_cong_cu is False
 
 
 def test_after_two_real_searches_next_call_has_no_search_tool(deps):

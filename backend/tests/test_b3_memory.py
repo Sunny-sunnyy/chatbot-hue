@@ -195,7 +195,7 @@ def test_api_cookie_carries_history_and_new_conversation_clears_it(caplog):
 
 
 class FailingGenerator(MemoryGenerator):
-    async def generate_with_tools(self, prompt, tool_fn, call_log, history=()):
+    async def generate_with_tools(self, prompt, tool_fn, call_log, history=(), **_cong_cu):  # nhận công cụ theo cờ (con_luot_fn…) như MemoryGenerator
         raise GenerationError("x")
 
 
