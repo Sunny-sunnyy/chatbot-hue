@@ -270,7 +270,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     ngoai = [j for j in da_xep if ts.so_thich and not set(ts.so_thich) & set(T[j]["loai"]) and j not in
              [x for ng in ngay for x in ng["buoi"]["toi"]]]  # hoạt động tối không phải "điểm lấp ngoài sở thích"
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
-    gia_dinh = (["kieu_di"] if ts.kieu_di is None else []) + (["han_che"] if ts.han_che and kieu != "nhe_nhang" else []) + \
+    gia_dinh = (["kieu_di"] if ts.kieu_di is None else []) + (["han_che"] if ts.han_che else []) + \
         (["so_thich"] if not ts.so_thich else [])
     ngays = [ngay_cua(i) for i in range(1, n + 1)]
     # 5c.2 (i): điểm ưu tiên không xếp vì đang tạm dừng theo mùa ⇒ ghi chú (mã `tam_dung_mua`)
@@ -415,6 +415,7 @@ NHAN_LOAI = {"di_tich": "di tích", "am_thuc": "ẩm thực", "thien_nhien": "th
              "chup_anh": "chụp ảnh"}
 NHAN_BUOI = {"sang": "Sáng", "trua": "Trưa", "chieu": "Chiều", "toi": "Tối"}
 NHAN_KIEU_DI = {"nhe_nhang": "nhẹ nhàng", "can_bang": "cân bằng", "kham_pha": "khám phá nhiều"}
+NHAN_MUC = {"co_the_di_lai": "có thể đi lại", "kiem_lich_dien": "kiểm lịch diễn trước khi đi"}  # nhãn mục hiện cho người dùng (code viết)
 CAU_MUC_TOI_DA = 30  # từ / câu (5c.6) — chỉ đếm để báo, không thay câu (lời dặn đã giới hạn; cắt chữ model là sửa chữ người khác viết)
 # Ghi chú do code viết (model không viết lý do) — mã ⇒ câu
 CAU_GHI_CHU = {
@@ -424,6 +425,7 @@ CAU_GHI_CHU = {
     "thay_bac_thang": "{diem} có nhiều bậc thang (theo kho) nên mình xếp {thay} cùng khu thay vào.",
     "thieu_uu_tien": "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích {so_thich} — thêm ngày thì mình xếp được nhiều điểm hơn.",
     "tam_dung_mua": "{diem} đang tạm dừng đón khách vào thời gian này trong năm (theo kho) nên mình chưa xếp.",
+    "bac_thang": "{diem} có nhiều bậc thang (theo kho) — cân nhắc khi đi cùng trẻ nhỏ hoặc người lớn tuổi.",
 }
 # 5c.6: câu model không được chứa giờ / thời lượng / tiền / đường dẫn (code in những thứ đó)
 _GIO = re.compile(r"(?<!\w)\d{1,2}\s*(?:[:hg]\s*\d{2}|h(?!\w)|giờ|tiếng|phút)", re.IGNORECASE)
@@ -450,7 +452,8 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
                             "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
                             "nguon": nguon.get(id_), "anh": None, "toa_do": None,
-                            "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else []),
+                            "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
+                                    + (["kiem_lich_dien"] if toi and ngay_that is None else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
@@ -460,6 +463,9 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
     ts = khung["tham_so"]
     ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
     ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    if ts["tre_em"] or ts["lon_tuoi"]:  # bộ đo ý 2: nhóm hạn chế + điểm nhiều bậc thang còn trong lịch (không có điểm thay cùng khu) ⇒ ghi chú
+        ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
+                    for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]
     ghi_chu += [{"ma": "tam_dung_mua", "cau": CAU_GHI_CHU["tam_dung_mua"].format(diem=bang.theo_id[j]["ten"])} for j in khung.get("tam_dung_mua", [])]
     ghi_chu += [{"ma": "du_bao", "cau": c} for c in them_ghi_chu]
     ghi_chu += [{"ma": "thay_bac_thang", "cau": CAU_GHI_CHU["thay_bac_thang"].format(diem=bang.theo_id[x["diem"]]["ten"],
@@ -561,8 +567,9 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
         dong += ["", f"**Ngày {ng['ngay']}**"]
         for m in ng["muc"]:
             gio = f" ({m['gio']})" if m["gio"] else ""
+            them = "".join(f" ({NHAN_MUC[x]})" for x in m.get("nhan", ()) if x in NHAN_MUC)
             dong.append(f"- {NHAN_BUOI[m['buoi']]}: {m['ten']}" if m["loai"] == "nghi" else
-                        f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']} — {cau[m['id_muc']]}")
+                        f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
     if lich["ghi_chu"]:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
     return "\n".join(dong)

@@ -472,6 +472,7 @@ function LichExtras({ lich, truong, onAsk, onEditPlan, getText }) {
 // "đang viết…". Loại mục chưa biết (đợt sau: ăn uống…) ⇒ bỏ qua, không lỗi. Nút "Sửa" điền lại biểu mẫu bằng đúng giá trị đã gửi.
 const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
 const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
+const NHAN_MUC_V2 = { co_the_di_lai: "có thể đi lại", kiem_lich_dien: "kiểm lịch diễn trước khi đi" };  // cùng chữ với server (`NHAN_MUC`)
 const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
 
 function LichV2({ turn, onEditPlan }) {
@@ -488,7 +489,7 @@ function LichV2({ turn, onEditPlan }) {
             {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => (
               <li key={m.id_muc}>
                 <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
-                <span className="lich-ten">{m.ten}</span>
+                <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}> · {NHAN_MUC_V2[x]}</small>)}</span>
                 {m.loai !== "nghi" && (
                   <span className="lich-cau">{cau[m.id_muc] != null ? boMaTrichDan(cau[m.id_muc]) : (xong ? "" : "đang viết…")}</span>
                 )}

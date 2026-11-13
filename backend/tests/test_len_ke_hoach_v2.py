@@ -746,3 +746,26 @@ def test_simulation_evening_floor_and_times(mo_phong_ngay):
             toi += 1
             co += bool(ng["buoi"]["toi"])
     assert co / toi >= 0.80
+
+
+def test_notes_required_by_scoring_definition():
+    """Định nghĩa chấm của E (`dinh_nghia_cham.md`): ý 2 nhóm hạn chế + điểm nhiều bậc thang còn trong lịch ⇒ dòng ghi chú; ý 3 nhóm hạn chế ⇒
+    luôn có dòng "giữ mức nhẹ nhàng"; ý 5 không có ngày đi ⇒ hoạt động tối có nhãn "kiểm lịch diễn" (chữ thuần cũng có)."""
+    b = V2.bang_lich_v2
+    for n, te, lt_ in itertools.product(range(1, 6), (0, 1), (False, True)):
+        if not (te or lt_):
+            continue
+        k = v2.xep_v2(b, v2.ThamSoV2(n, te, lt_, "nhe_nhang", ("di_tich",)))
+        lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
+        ma = [g["ma"] for g in lich["ghi_chu"]]
+        assert "han_che" in ma
+        bt = {j for j in v2.diem_ban_ngay(k) if b.theo_id[j]["bac_thang"] == "nhieu"}
+        assert ma.count("bac_thang") == len(bt)
+    k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="can_bang"))
+    lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
+    toi = [m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi"]
+    assert toi and all("kiem_lich_dien" in m["nhan"] for m in toi)
+    assert "(kiểm lịch diễn trước khi đi)" in v2.ghep_chu(lich, {m["id_muc"]: "x [1]." for m in v2.moi_muc(lich)})
+    k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="can_bang"), ngay_bat_dau=D(2026, 11, 21))
+    lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
+    assert not any("kiem_lich_dien" in m["nhan"] for ng in lich["ngay"] for m in ng["muc"])
