@@ -443,7 +443,7 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit }) {
           <fieldset className="lc-nhom">
             <legend className="lc-ten">Thích gì? {cauHinh.so_thich_toi_da > 1 ? `(tối đa ${cauHinh.so_thich_toi_da})` : "(chọn một)"}</legend>
             <div className="lc-chip">
-              {SO_THICH.map(([v, nhan]) => (
+              {SO_THICH.filter(([v]) => cauHinh.so_thich_hien.includes(v)).map(([v, nhan]) => (
                 <button key={v} type="button" className="chip chip-sm" aria-pressed={chon.so_thich.includes(v)} onClick={() => bamSoThich(v)}>{nhan}</button>
               ))}
             </div>

@@ -88,14 +88,17 @@ def co_gia_tri_moi(truong: TruongInput) -> bool:
             or any(getattr(truong, ten) is not None for ten in TRUONG_CHI_MOI))
 
 
-def loi_v2(truong: TruongInput, hom_nay: dt.date) -> str | None:
-    """Kiểm giá trị biểu mẫu mới theo ngày Việt Nam + giới hạn của bộ xếp đang dùng; None = hợp lệ (mã lỗi chỉ để test đọc)."""
+def loi_v2(truong: TruongInput, hom_nay: dt.date, so_thich_hien: tuple[str, ...] | None = None) -> str | None:
+    """Kiểm giá trị biểu mẫu mới theo ngày Việt Nam + giới hạn của bộ xếp đang dùng + sở thích đang hiện (ô ẩn thì không gửi được); None = hợp lệ
+    (mã lỗi chỉ để test đọc)."""
     if truong.ngay_di is not None and not hom_nay <= truong.ngay_di <= hom_nay + dt.timedelta(days=NGAY_DI_TOI_DA):
         return "ngay_di"
     if truong.so_ngay is not None and truong.so_ngay != "4+" and int(truong.so_ngay) > SO_NGAY_TOI_DA:
         return "so_ngay"
     if isinstance(truong.so_thich, list) and len(truong.so_thich) > SO_THICH_TOI_DA:
         return "so_thich"
+    if so_thich_hien is not None and isinstance(truong.so_thich, list) and not set(truong.so_thich) <= set(so_thich_hien):
+        return "so_thich_an"
     return None
 
 

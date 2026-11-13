@@ -29,6 +29,7 @@ from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationE
 from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
 from llm import lich_trinh as lt
+from llm import lich_trinh_v2 as lt2
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
@@ -98,6 +99,9 @@ class AssistantFlags:
     # dụng với bộ xếp đang dùng thì chưa hiện (spec N1)
     len_ke_hoach_v2: bool = False
     len_ke_hoach_o_hien: tuple[str, ...] = ()
+    bang_lich_v2: "lt2.BangV2 | None" = field(default=None, compare=False, repr=False)  # bảng v8 (`assistant.lich_trinh_bang_v2`), nạp khi cờ bật
+    # sở thích dưới sàn "có tác dụng" của mô phỏng (plan §3 (b)) ⇒ ô ẩn; test khoá danh sách này khớp kết quả mô phỏng trên bảng đang dùng
+    len_ke_hoach_so_thich_an: tuple[str, ...] = ()
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -117,8 +121,8 @@ class AssistantFlags:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
-        if self.len_ke_hoach_v2 and not self.lich_trinh_bieu_mau:
-            raise ValueError("assistant.len_ke_hoach_v2 needs assistant.lich_trinh_bieu_mau: true")
+        if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
+            raise ValueError("assistant.len_ke_hoach_v2 needs assistant.lich_trinh_bieu_mau: true and the v2 table (assistant.lich_trinh_bang_v2)")
         if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
             raise ValueError(f"assistant.len_ke_hoach_o_hien must be a subset of {O_BIEU_MAU_V2}")
 
@@ -131,7 +135,16 @@ class AssistantFlags:
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
-                   len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()))
+                   len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
+                   len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
+                   bang_lich_v2=lt2.nap_bang_v2(BACKEND_DIR / config["lich_trinh_bang_v2"]) if values["len_ke_hoach_v2"] else None)
+
+    @property
+    def so_thich_hien(self) -> tuple[str, ...]:
+        """Sở thích hiện trên biểu mẫu bản 2: loại đủ điểm trong bảng (≥ 4) trừ loại dưới sàn mô phỏng."""
+        if self.bang_lich_v2 is None:
+            return ()
+        return tuple(s for s in self.bang_lich_v2.loai_hien if s not in self.len_ke_hoach_so_thich_an)
 
     @property
     def uses_tools(self) -> bool:
@@ -148,7 +161,8 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien"))
+                    if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                                     "len_ke_hoach_so_thich_an"))
 
 
 def elapsed_ms(started: float) -> float:

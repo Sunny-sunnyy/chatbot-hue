@@ -146,7 +146,8 @@ def _kiem_truong_v2(body: "ChatRequest", state) -> None:
     Gọi ở dòng đầu của route, trước khi mở số đo (thân sai khuôn hôm nay cũng không có dòng `chat_metrics`)."""
     if body.truong is None or not co_gia_tri_moi(body.truong):
         return
-    if not (body.bieu_mau and _flags(state).len_ke_hoach_v2) or loi_v2(body.truong, nl.hom_nay()) is not None:
+    flags = _flags(state)
+    if not (body.bieu_mau and flags.len_ke_hoach_v2) or loi_v2(body.truong, nl.hom_nay(), flags.so_thich_hien) is not None:
         raise RequestValidationError([{"type": "value_error", "loc": ("body", "truong"), "msg": "truong value not accepted", "input": None}])
 
 

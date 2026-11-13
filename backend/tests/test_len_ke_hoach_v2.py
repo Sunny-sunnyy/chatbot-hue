@@ -6,6 +6,7 @@ Kiểm: bảng giá trị hợp lệ / không hợp lệ từng trường · đ�
 client giả có kịch bản (không mạng) + Qdrant thật (đọc) + bảng điểm thật (private) — như `test_cong_dot_1.py`. “Cờ tắt giống byte” của chuỗi gửi
 model đo thêm bằng Q1 (`capture_all.py`, report).
 """
+import copy
 import dataclasses
 import json
 import datetime as dt
@@ -70,6 +71,8 @@ def test_v2_limits_by_vietnam_day_and_old_scheduler():
     assert loi(ngay_di=HOM_NAY + dt.timedelta(days=NGAY_DI_TOI_DA + 1)) == "ngay_di"
     assert loi(so_ngay="4") is None and loi(so_ngay="4+") is None and loi(so_ngay="5") == "so_ngay"  # bộ xếp cũ tới 4 ngày (ý 7)
     assert loi(so_thich=["di_tich"]) is None and loi(so_thich=["di_tich", "am_thuc"]) == "so_thich"  # bộ xếp cũ một sở thích
+    assert loi_v2(TruongInput(so_thich=["chup_anh"]), HOM_NAY, ("di_tich",)) == "so_thich_an"
+    assert loi_v2(TruongInput(so_thich="chup_anh"), HOM_NAY, ("di_tich",)) is None  # giá trị cũ (chuỗi) không qua kiểm bản 2
 
 
 # ---------- đổi giá trị cũ ⇔ mới ----------
@@ -197,4 +200,201 @@ def test_feature_flags_key_only_when_flag_on(app_client):
         app.state.anh = anh_goc
     co_cu = {"lich_trinh_bieu_mau": True, "thoi_tiet": FORM.thoi_tiet, "anh": False, "tra_web": FORM.tra_web, "ban_do_lich": FORM.ban_do_lich}
     assert off == co_cu  # cờ tắt: khoá mới vắng hẳn (không null, không rỗng)
-    assert on == {**co_cu, "len_ke_hoach_v2": {"o_hien": list(V2.len_ke_hoach_o_hien), "so_ngay_toi_da": 4, "so_thich_toi_da": 1}}
+    assert on == {**co_cu, "len_ke_hoach_v2": {"o_hien": list(V2.len_ke_hoach_o_hien), "so_ngay_toi_da": 4, "so_thich_toi_da": 1,
+                                               "so_thich_hien": list(V2.so_thich_hien)}}
+    assert set(V2.so_thich_hien) == set(V2.bang_lich_v2.loai_hien) - set(V2.len_ke_hoach_so_thich_an)
+
+
+# =====================================================================================================================================
+# Bước (b): bảng v8 + bộ xếp mới `xep_v2` + mô phỏng toàn tổ hợp (plan §3 (b), spec 5b / 5c.1 / 5c.3 / 5c.4) — 0 USD, không model
+# =====================================================================================================================================
+
+from llm import lich_trinh_v2 as v2  # noqa: E402
+
+def _diem(id_, cum, loai=("di_tich",), thoi_luong="ngan", bac_thang=None, buoi=("sang", "chieu")):
+    return {"id": id_, "ten": id_, "cum": cum, "loai": list(loai), "thoi_luong": thoi_luong, "gio_mo_cua": None, "nguon": f"x/{id_}.md",
+            "buoi": list(buoi), "quan_the": False, "luu_y": None, "ten_khac": [], "trong_nha": "ngoai_troi", "bac_thang": bac_thang, "uu_tien": {}}
+
+
+def _bang(tmp_path, diem, uu_tien=None, ten="b.json"):
+    cum = {c: c for c in ("kinh_thanh", "bo_nam", "an_cuu", "thuy_xuan", "kim_long", "lang_xa", "dong_bien", "nam_xa")}
+    p = tmp_path / ten
+    p.write_text(json.dumps({"cum": cum, "diem": diem, "uu_tien_theo_so_thich": uu_tien or {"chung": [diem[0]["id"]]}}), encoding="utf-8")
+    return v2.nap_bang_v2(p)
+
+
+def test_v2_table_load_checks(tmp_path):
+    ok = [_diem("a", "kinh_thanh"), _diem("b", "bo_nam", loai=("thien_nhien",))]
+    assert _bang(tmp_path, ok).loai_hien == ()  # < 4 điểm mỗi loại ⇒ không loại nào hiện
+    for sai, uu in ((dict(ok[0], thoi_luong=None), None), ({k: v for k, v in ok[0].items() if k != "trong_nha"}, None),
+                    (dict(ok[0], bac_thang="it"), None), (ok[0], {"chung": ["khong_co"]}), (ok[0], {"thien_nhien": ["a"], "chung": ["a"]}),
+                    (ok[0], {"di_tich": ["a"]})):
+        with pytest.raises(ValueError):
+            _bang(tmp_path, [sai, ok[1]], uu)
+    bon = [_diem(f"t{i}", "bo_nam", loai=("thien_nhien",)) for i in range(4)]
+    assert _bang(tmp_path, [ok[0], *bon]).loai_hien == ("thien_nhien",)
+
+
+def test_v2_flag_needs_table_and_fails_loudly(tmp_path):
+    with pytest.raises(ValueError, match="lich_trinh_bang_v2"):
+        dataclasses.replace(V2, bang_lich_v2=None)
+    with pytest.raises(FileNotFoundError):
+        flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, lich_trinh_bang_v2=str(tmp_path / "khong_co.json"))
+    assert V2.bang_lich_v2 is not None and FORM.bang_lich_v2 is None  # cờ tắt ⇒ không nạp (clone không có data/ vẫn chạy)
+
+
+def ts(n, **kw):
+    return v2.ThamSoV2(n, **kw)
+
+
+def test_rule_minutes_per_session(tmp_path):
+    """5c.3: 2 ngắn cùng cụm = 165 phút ⇒ vừa cân bằng; nửa buổi + ngắn = 240 ⇒ chỉ khám phá nhiều; nhẹ nhàng / nhóm hạn chế luôn 1 điểm / buổi."""
+    b = _bang(tmp_path, [_diem("n1", "kinh_thanh"), _diem("n2", "kinh_thanh"), _diem("n3", "kinh_thanh"), _diem("n4", "kinh_thanh")])
+    # điểm đầu của sáng rồi chiều chọn trước, điểm thêm sau (5b: kiểu đi là bậc thấp nhất)
+    assert v2.xep_v2(b, ts(1, kieu_di="can_bang"))["ngay"][0]["buoi"] == {"sang": ["n1", "n3"], "chieu": ["n2", "n4"], "toi": []}
+    assert v2.xep_v2(b, ts(1, kieu_di="nhe_nhang"))["ngay"][0]["buoi"] == {"sang": ["n1"], "chieu": ["n2"], "toi": []}
+    assert v2.xep_v2(b, ts(1, kieu_di="kham_pha", tre_em=1))["ngay"][0]["buoi"] == {"sang": ["n1"], "chieu": ["n2"], "toi": []}
+    b = _bang(tmp_path, [_diem("h", "kinh_thanh", thoi_luong="nua_buoi"), _diem("n", "kinh_thanh"), _diem("n2", "kinh_thanh")])
+    assert v2.xep_v2(b, ts(1, kieu_di="can_bang"))["ngay"][0]["buoi"]["sang"] == ["h"]  # 150 + 15 + 75 = 240 > 210
+    assert v2.xep_v2(b, ts(1, kieu_di="kham_pha"))["ngay"][0]["buoi"]["sang"] == ["h", "n2"]  # = 240 ⇒ vừa
+    b = _bang(tmp_path, [_diem("a", "kinh_thanh"), _diem("b", "an_cuu")])  # khác cụm, không kề ⇒ không ghép trong một buổi
+    assert v2.xep_v2(b, ts(1, kieu_di="kham_pha"))["ngay"][0]["buoi"]["sang"] == ["a"]
+
+
+def test_rule_far_cluster_only_from_day_2_of_3(tmp_path):
+    b = _bang(tmp_path, [_diem("xa", "nam_xa", loai=("thien_nhien",)), _diem("xa2", "nam_xa", loai=("thien_nhien",)),
+                         *[_diem(f"d{i}", "kinh_thanh") for i in range(8)]], {"chung": ["d0"], "thien_nhien": ["xa"]})
+    for n in (1, 2):
+        assert "xa" not in v2.diem_v2(v2.xep_v2(b, ts(n, so_thich=("thien_nhien",))))
+    k = v2.xep_v2(b, ts(3, so_thich=("thien_nhien",)))
+    assert "xa" not in v2.diem_v2({"ngay": k["ngay"][:1]}) and "xa" in k["ngay"][1]["buoi"]["sang"] + k["ngay"][1]["buoi"]["chieu"]
+    assert v2.kiem_khung_v2(b, k) == []
+
+
+def test_rule_priority_first_and_two_interests_interleave(tmp_path):
+    b = _bang(tmp_path, [_diem("a1", "kinh_thanh"), _diem("a2", "kinh_thanh"), _diem("b1", "bo_nam", loai=("am_thuc",)),
+                         _diem("b2", "bo_nam", loai=("am_thuc",)), _diem("a3", "kinh_thanh")],
+              {"chung": ["a1"], "di_tich": ["a3", "a1"], "am_thuc": ["b2"]})
+    pool, _, uu = v2.thu_tu_xet(b, ("di_tich", "am_thuc"))
+    assert pool[:3] == ["a3", "b2", "a1"] and uu == {"a3", "b2", "a1"}  # A1, B1, A2 rồi điểm hợp sở thích theo bảng
+    k = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich", "am_thuc")))
+    assert k["ngay"][0]["buoi"] == {"sang": ["a3"], "chieu": ["b2"], "toi": []}
+
+
+def test_pair_unusable_priority_does_not_take_the_other_interest_turn(tmp_path):
+    """Lỗi bắt được ở mô phỏng: ưu tiên cụm xa (bị loại khi < 3 ngày) vẫn giữ chỗ khi xen kẽ ⇒ lượt của sở thích đó rơi sang điểm sở thích kia."""
+    b = _bang(tmp_path, [_diem("a1", "kinh_thanh"), _diem("a2", "kinh_thanh"), _diem("xa", "nam_xa", loai=("thien_nhien",)),
+                         _diem("t2", "dong_bien", loai=("thien_nhien",))], {"chung": ["a1"], "di_tich": ["a1", "a2"], "thien_nhien": ["xa", "t2"]})
+    k = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich", "thien_nhien")))
+    assert v2.diem_v2(k) == ["a1", "t2"] and k["thieu_uu_tien"] == []
+
+
+def test_pair_extra_point_does_not_block_priority_of_afternoon(tmp_path):
+    """Lỗi bắt được ở mô phỏng (thứ tự 5b: ưu tiên bậc 4 > kiểu đi bậc 7): điểm thêm của buổi sáng không được chiếm suất cụm thứ hai của ngày
+    khi điểm ưu tiên buổi chiều cần nó."""
+    b = _bang(tmp_path, [_diem("l1", "kinh_thanh", loai=("le_hoi_nghe_thuat",)), _diem("l2", "kim_long", loai=("le_hoi_nghe_thuat",)),
+                         _diem("c1", "dong_bien", loai=("chup_anh",), thoi_luong="nua_buoi")],
+              {"chung": ["l1"], "le_hoi_nghe_thuat": ["l1", "l2"], "chup_anh": ["c1"]})
+    k = v2.xep_v2(b, ts(1, kieu_di="kham_pha", so_thich=("le_hoi_nghe_thuat", "chup_anh")))
+    assert "c1" in v2.diem_v2(k) and v2.kiem_khung_v2(b, k) == []
+
+
+def test_pair_stairs_vs_priority_and_cluster(tmp_path):
+    """Bậc 1 (nhóm hạn chế tránh bậc thang) thắng bậc 4 (ưu tiên): điểm ưu tiên nhiều bậc thang bị thay bằng điểm cùng cụm ⇒ ghi chú do code.
+    Điểm thay phải cùng cụm (không kéo ngày sang cụm khác); không có điểm thay cùng cụm ⇒ giữ điểm ưu tiên."""
+    b = _bang(tmp_path, [_diem("p", "kinh_thanh", bac_thang="nhieu"), _diem("q", "kinh_thanh"), _diem("q2", "kinh_thanh"), _diem("r", "bo_nam"),
+                         _diem("s", "an_cuu", bac_thang="nhieu")], {"chung": ["p", "s"], "di_tich": ["p", "s"]})
+    k = v2.xep_v2(b, ts(1, lon_tuoi=True, so_thich=("di_tich",)))
+    assert v2.diem_v2(k) == ["q", "q2"] and k["thay_bac_thang"] == [{"diem": "p", "thay": "q"}]
+    b2 = _bang(tmp_path, [_diem("p", "kinh_thanh", bac_thang="nhieu"), _diem("q", "kinh_thanh")], {"chung": ["p"], "di_tich": ["p"]})
+    k = v2.xep_v2(b2, ts(1, lon_tuoi=True, so_thich=("di_tich",)))  # hết điểm thay cùng cụm ở buổi chiều ⇒ giữ điểm ưu tiên, không ghi chú
+    assert v2.diem_v2(k) == ["q", "p"] and k["thay_bac_thang"] == []
+    k0 = v2.xep_v2(b, ts(1, so_thich=("di_tich",)))
+    assert "p" in v2.diem_v2(k0) and k0["thay_bac_thang"] == []
+    b = _bang(tmp_path, [_diem("p", "kinh_thanh", bac_thang="nhieu"), _diem("r", "bo_nam")], {"chung": ["p"], "di_tich": ["p"]})
+    assert v2.diem_v2(v2.xep_v2(b, ts(1, tre_em=2, so_thich=("di_tich",))))[0] == "p"
+
+
+def test_kiem_khung_v2_catches_violations(tmp_path):
+    b = _bang(tmp_path, [_diem("a", "kinh_thanh"), _diem("b", "kinh_thanh", thoi_luong="nua_buoi"), _diem("c", "an_cuu"),
+                         _diem("x", "nam_xa"), _diem("t", "bo_nam", loai=("thien_nhien",))])
+    good = v2.xep_v2(b, ts(1, kieu_di="can_bang"))
+    assert v2.kiem_khung_v2(b, good) == []
+
+    def sai(sang, chieu=(), **tham):
+        k = copy.deepcopy(good)
+        k["ngay"][0]["buoi"].update(sang=list(sang), chieu=list(chieu))
+        k["tham_so"].update(tham)
+        k["ngoai_so_thich"] = [i for i in (*sang, *chieu) if k["tham_so"]["so_thich"] and b.theo_id[i]["loai"] == ["di_tich"]]
+        return v2.kiem_khung_v2(b, k)
+    assert "vuot_quy" in sai(["a", "b"])  # 75 + 15 + 150 > 210
+    assert "ghep_khong_ke" in sai(["a", "c"], kieu_di="kham_pha")
+    assert "cum_xa" in sai(["x"])
+    assert "qua_day_buoi" in sai(["a", "t"], tre_em=1)
+    assert "trung_diem" in sai(["a"], ["a"])
+    assert "ngay_rong" in sai([])
+    assert "lap_khong_nhan" in v2.kiem_khung_v2(b, dict(good, tham_so=dict(good["tham_so"], so_thich=["thien_nhien"])))
+
+
+# ---------- mô phỏng toàn tổ hợp trên bảng v8 thật (private) ----------
+
+ST_16 = [()] + [(s,) for s in v2.LOAI_DIEM_THU_TU] + list(itertools.combinations(v2.LOAI_DIEM_THU_TU, 2))
+KIEU = ("nhe_nhang", "can_bang", "kham_pha")
+
+
+@pytest.fixture(scope="module")
+def mo_phong():
+    b = V2.bang_lich_v2
+    kq = {key: v2.xep_v2(b, v2.ThamSoV2(*key[:4], so_thich=key[4]))
+          for key in itertools.product(range(1, 6), (0, 1), (False, True), KIEU, ST_16)}
+    assert len(kq) == 960
+    return b, kq
+
+
+def test_simulation_always_rules(mo_phong):
+    b, kq = mo_phong
+    T = b.theo_id
+    loi = {key: v2.kiem_khung_v2(b, k) for key, k in kq.items() if v2.kiem_khung_v2(b, k)}
+    assert loi == {}  # 0 lỗi khung · 0 điểm lặp · 0 ngày rỗng · ≤ 2 cụm kề · đúng n ngày
+    for (n, te, lt_, kieu, st), k in kq.items():
+        ids = v2.diem_v2(k)
+        for s in st or ("chung",):  # điểm ưu tiên số 1 có mặt (trừ cụm xa khi < 3 ngày)
+            dau = next(i for i in b.uu_tien[s] if T[i]["cum"] != v2.CUM_XA or n >= 3)
+            assert dau in ids, (n, te, lt_, kieu, st, s)
+        assert not any(T[i]["cum"] == v2.CUM_XA for b_ in v2.BUOI_NGAY for i in k["ngay"][0]["buoi"][b_])
+        if n >= 3:
+            for s in st:
+                for u in b.uu_tien[s]:
+                    if T[u]["cum"] == v2.CUM_XA:
+                        assert sum(u in v2.diem_v2({"ngay": [ng]}) for ng in k["ngay"][1:]) == 1
+            assert len(v2.diem_v2(v2.xep_v2(b, v2.ThamSoV2(n, te, lt_, kieu, st), ngay_1_khong_xa=False))) <= len(ids)
+        if te or lt_:
+            assert all(len(v2.diem_v2({"ngay": [ng]})) <= 2 and not ng["buoi"]["toi"] for ng in k["ngay"])
+        if len(st) == 2 and n >= 2:
+            assert all(any(s in T[i]["loai"] for i in ids) for s in st)
+    for n, te, lt_, st in itertools.product(range(1, 6), (0, 1), (False, True), ST_16):
+        so = [len(v2.diem_v2(kq[(n, te, lt_, k, st)])) for k in KIEU]
+        assert so[0] <= so[1] <= so[2]
+        if te or lt_:  # nhóm hạn chế: ba mức cho cùng một khung
+            assert kq[(n, te, lt_, "nhe_nhang", st)]["ngay"] == kq[(n, te, lt_, "kham_pha", st)]["ngay"]
+    assert {json.dumps(v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",), nguoi_lon=a))["ngay"]) for a in range(1, 11)} == {
+        json.dumps(kq[(3, 0, False, "can_bang", ("di_tich",))]["ngay"])}  # đổi số người lớn ⇒ khung giống hệt (kiểu đi mặc định = cân bằng)
+
+
+def test_simulation_floors(mo_phong):
+    """Sàn ghi trước (plan §3 (b)); số đo 13/11 (bảng v8 `6335b21eb243`): kiểu đi 65 / 80 = 81 % · bậc thang giảm 420 / 720 = 58 % · không bao giờ
+    xếp 1 · sở thích thấp nhất: chụp ảnh / lễ hội 50 % (lễ hội 43 % trước khi gắn nhãn Cung An Định — A quyết)."""
+    b, kq = mo_phong
+    T = b.theo_id
+    nhom = list(itertools.product(range(1, 6), ST_16))
+    khac3 = sum(len({json.dumps(kq[(n, 0, False, k, st)]["ngay"]) for k in KIEU}) == 3 for n, st in nhom)
+    assert khac3 / len(nhom) >= 0.70
+    bt = lambda k: sum(T[i]["bac_thang"] == "nhieu" for i in v2.diem_v2(k))  # noqa: E731
+    cap = [(k, kq[(n, 0, False, kieu, st)]) for (n, te, lt_, kieu, st), k in kq.items() if te or lt_]
+    assert sum(bt(a) < bt(c) for a, c in cap) / len(cap) >= 0.50 and not any(bt(a) > bt(c) for a, c in cap)
+    ban_ngay = {d["id"] for d in b.diem if set(d["buoi"]) & set(v2.BUOI_NGAY)}
+    assert len(ban_ngay - {i for k in kq.values() for i in v2.diem_v2(k)}) <= 3
+    # mỗi sở thích ≥ 50 % suất sáng / chiều của TỪNG lịch 2 ngày (A quyết 13/11: đọc theo từng tổ hợp) — dưới sàn ⇒ ô ẩn bằng cấu hình
+    duoi = {s for s in v2.LOAI_DIEM_THU_TU for te, lt_, kieu in itertools.product((0, 1), (False, True), KIEU)
+            if (lambda ids: sum(s in T[i]["loai"] for i in ids) / len(ids))(v2.diem_v2(kq[(2, te, lt_, kieu, (s,))])) < 0.50}
+    assert duoi == set(V2.len_ke_hoach_so_thich_an)
