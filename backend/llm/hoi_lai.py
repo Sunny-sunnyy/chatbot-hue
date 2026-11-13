@@ -53,7 +53,7 @@ class TruongInput(BaseModel):
     so_ngay: Literal["1", "2", "3", "4", "5", "4+"] | None = None
     di_cung: Literal["mot_minh", "cap_doi", "gia_dinh_tre_em", "nguoi_lon_tuoi", "nhom_ban"] | None = None
     kieu_di: Literal["thong_tha", "day_lich", "nhe_nhang", "can_bang", "kham_pha"] | None = None
-    so_thich: SoThich | Annotated[list[SoThich], Field(min_length=1, max_length=2)] | None = None
+    so_thich: SoThich | Annotated[list[SoThich], Field(max_length=2)] | None = None  # spec §5 "danh sách ≤ 2": [] = không chọn sở thích
     nguoi_lon: Annotated[int, Field(strict=True, ge=1, le=10)] | None = None
     tre_em: Annotated[int, Field(strict=True, ge=0, le=6)] | None = None
     lon_tuoi: Annotated[bool, Field(strict=True)] | None = None

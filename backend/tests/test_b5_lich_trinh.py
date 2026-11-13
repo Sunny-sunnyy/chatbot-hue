@@ -552,7 +552,7 @@ def test_flags_need_table_and_tool_loop():
     with pytest.raises(ValueError):
         AssistantFlags(lich_trinh=True, bang_lich=BANG)
     s = copy.deepcopy(SETTINGS)
-    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False)
+    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False)
     tat = copy.deepcopy(SETTINGS)
-    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False)  # mốc cờ tắt đặt rõ: settings.yaml bật biểu mẫu từ 07/11
+    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False)  # cờ tắt đặt rõ: không theo settings.yaml
     assert AssistantFlags.from_settings(s).bang_lich is not None and AssistantFlags.from_settings(tat).bang_lich is None

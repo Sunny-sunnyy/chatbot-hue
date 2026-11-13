@@ -43,8 +43,8 @@ def flags_from(**assistant) -> AssistantFlags:
 
 
 # settings.yaml bật biểu mẫu + thời tiết từ 07/11 ⇒ mốc "cờ biểu mẫu tắt" đặt rõ; mọi cờ khác như đang chạy (định tuyến, #6, tra web…) ⇒ so đúng một cờ
-OFF = flags_from(lich_trinh_bieu_mau=False)
-FORM = flags_from(lich_trinh_bieu_mau=True)
+OFF = flags_from(lich_trinh_bieu_mau=False, len_ke_hoach_v2=False)  # "Lên kế hoạch" bản 2 đặt rõ tắt: test không đọc cờ của settings.yaml
+FORM = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=False)
 TRUONG = ("so_ngay", "di_cung", "kieu_di", "so_thich")
 FORM_INSTRUCTIONS = f"{ANSWER_SYSTEM_INSTRUCTIONS}\n\n{LICH_TRINH_LUAT}"  # V5 (X1c của C): luật lịch trong lời dặn hệ thống của lượt biểu mẫu
 
