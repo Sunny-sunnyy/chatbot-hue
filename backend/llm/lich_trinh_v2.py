@@ -163,7 +163,10 @@ def tam_dung(d: dict, ngay: dt.date | None) -> bool:
 
 
 def dung_thu(d: dict, ngay: dt.date | None) -> bool:
-    """Thứ hoạt động (`ngay_hoat_dong`, thứ Hai = 0): rỗng = mọi ngày; chưa có ngày đi ⇒ không biết thứ ⇒ chỉ điểm mọi ngày (không đoán)."""
+    """Thứ hoạt động (`ngay_hoat_dong`, thứ Hai = 0): rỗng = mọi ngày; chưa có ngày đi ⇒ không biết thứ ⇒ chỉ điểm mọi ngày (không đoán).
+    Thứ đóng cửa của điểm ban ngày (`dong_cua_thu`): biết ngày ⇒ không xếp vào thứ đó; chưa có ngày ⇒ vẫn xếp (đa số ngày mở cửa)."""
+    if ngay is not None and ngay.weekday() in (d.get("dong_cua_thu") or ()):
+        return False
     thu = d.get("ngay_hoat_dong") or []
     return not thu or (ngay is not None and ngay.weekday() in thu)
 

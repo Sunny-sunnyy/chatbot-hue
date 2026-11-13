@@ -769,3 +769,15 @@ def test_notes_required_by_scoring_definition():
     k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="can_bang"), ngay_bat_dau=D(2026, 11, 21))
     lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
     assert not any("kiem_lich_dien" in m["nhan"] for ng in lich["ngay"] for m in ng["muc"])
+
+
+def test_daytime_closed_weekday(tmp_path):
+    """Điểm ban ngày đóng một thứ (cột `dong_cua_thu`): biết ngày ⇒ không xếp ngày đó (kiểm cũng bắt); không ngày ⇒ vẫn xếp."""
+    b = _bang(tmp_path, [dict(_diem("bt", "kinh_thanh"), dong_cua_thu=[0]), _diem("a", "kinh_thanh"), _diem("c", "kinh_thanh")],
+              {"chung": ["bt", "a"], "di_tich": ["bt", "a"]})
+    thu2, thu3 = D(2026, 11, 16), D(2026, 11, 17)
+    assert "bt" not in v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang"), ngay_bat_dau=thu2))
+    k = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang"), ngay_bat_dau=thu3)
+    assert v2.diem_v2(k)[0] == "bt" and v2.diem_v2(v2.xep_v2(b, ts(1, kieu_di="nhe_nhang")))[0] == "bt"
+    assert "sai_thu" in v2.kiem_khung_v2(b, dict(k, ngay_thang=[thu2.isoformat()]))
+    assert V2.bang_lich_v2.theo_id["kg_le_ba_dang"]["dong_cua_thu"] == [0]
