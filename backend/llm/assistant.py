@@ -562,7 +562,7 @@ def _do_dai_bang_chung(doc: RetrievedDocument) -> int:
 
 
 async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
-                          instructions: str, nhap: str | None = None, lay_ve: bool = True):
+                          instructions: str, nhap: str | None = None, lay_ve: bool = True, max_doan: int | None = None):
     """D6: mỗi điểm trong khung — `retrieval_service.search(<tên điểm>)` (đọc Qdrant, không ghi), chọn **đúng 1 đoạn** = đoạn có bằng chứng dài
     nhất trong top-10 có `source` = file nguồn của điểm (cổng đợt 1 S1, A chốt: "đoạn đầu" hay chỉ là dòng tên — 11/28 điểm < 80 ký tự — nên
     luật "kèm một ý ngắn lấy từ tài liệu" không viết được ⇒ model từ chối; bằng nhau ⇒ đoạn đứng trước); đoạn đã có trong sổ nguồn ⇒ dùng lại số [n] cũ; không có đoạn đúng file ⇒ bỏ điểm (mã `khong_co_doan_nguon`).
@@ -602,7 +602,8 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
         packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1,
                                        prior_context="\n\n".join([*trace.context_parts, nhap]),
                                        skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
-                                       n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD)
+                                       n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD,
+                                       max_documents=max_doan)
     except (RetrievalDependencyError, ContextBudgetError) as exc:
         trace.tool_error = exc
         raise

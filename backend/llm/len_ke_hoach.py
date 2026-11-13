@@ -20,6 +20,7 @@ from llm import thoi_tiet as tt
 from llm.assistant import (STREAM_DRAIN_SECONDS, AnswerTrace, AssistantFlags, CallLog, GenerationError, GeneratorNotReadyError, ROUTE_TRO_LY_HUE,
                            _lay_nguon_lich, check_citations, elapsed_ms, record_llm_calls)
 
+MAX_DOAN = lt2.TOI_DA_BUOI * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA  # một đoạn mỗi điểm: ≤ 4 điểm ban ngày + 1 tối × 5 ngày = 25
 LOI_MODEL = (GenerationError, TimeoutError, AgentsException, OpenAIError)  # lỗi của lần gọi viết câu ⇒ câu dự phòng, lịch vẫn hiện
 
 
@@ -67,7 +68,8 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
     mua = None if db is None else {k: v["xs"] for k, v in db["ngay"].items() if v["xs"] is not None}
     khung = lt2.xep_v2(bang, ts, ngay_bat_dau=bat_dau, mua=mua)
     nhap = lt2.tin_nhan_model(lt2.dung_lich(bang, khung, dict.fromkeys(lt2.diem_v2(khung), 0)), "")  # đếm ngân sách bằng bản nháp
-    packed, nguon, _ = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, None, nhap=nhap, lay_ve=False)
+    packed, nguon, _ = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, None, nhap=nhap, lay_ve=False,
+                                             max_doan=MAX_DOAN)
     lich = lt2.dung_lich(bang, khung, nguon, trace.truong.get("ngay_di"), dong_du_bao(bang, khung, db))
     trace.lich_v2 = {"lich": lich, "loi_khung": lt2.kiem_khung_v2(bang, khung), "cau": None, "loi_cau": None}
     trace.buoc_lich += [{"buoc": "xep_xong", "n_diem": len(lt2.diem_v2(khung))}, {"buoc": "lay_nguon", "n_doan": len(packed.sources)}]

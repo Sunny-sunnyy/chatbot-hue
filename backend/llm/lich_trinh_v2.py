@@ -18,7 +18,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from llm.citations import CITATION_PATTERN
-from llm.lich_trinh import BUOI, CAU_KHONG_XEP, CUM_KE, CUM_XA, LOAI_DIEM, MAP_BASE, TIEU_DE_GHI_CHU, _cum_hop, chuan_ten
+from llm.lich_trinh import BUOI, CAU_CO_THE_DOI, CAU_KHONG_XEP, CUM_KE, CUM_XA, LOAI_DIEM, MAP_BASE, TIEU_DE_GHI_CHU, _cum_hop, chuan_ten
 from llm.so_tien import tim_so_tien
 
 BUOI_NGAY = ("sang", "chieu")
@@ -122,6 +122,36 @@ def _phut_di(a: dict, b: dict) -> int | None:
     return DI_CUM_KE if b["cum"] in CUM_KE.get(a["cum"], ()) else None
 
 
+# 5c.3 giờ gợi ý (phút từ 0:00): sáng 8:00 · chiều 13:30; khám phá nhiều 7:30 · 13:00; nhóm hạn chế giờ như nhẹ nhàng
+GIO_BAT_DAU = {"kham_pha": {"sang": 450, "chieu": 780}, "khac": {"sang": 480, "chieu": 810}}
+CUM_TOI = ("bo_nam", "kinh_thanh")  # 5c.4: hoạt động tối chỉ ở hai cụm trung tâm (khách đã về khu trung tâm)
+CAU_TOI = {"xa": "Tối nghỉ sau chuyến đi xa.", "tre_em": "Để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
+           "lon_tuoi": "Để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
+           "khong_co": "Tối tự do — kho chưa có hoạt động buổi tối hợp ngày này."}
+
+
+def ra_phut(hhmm: str) -> int:
+    h, m = hhmm.split(":")
+    return int(h) * 60 + int(m)
+
+
+def in_gio(a: int, b: int) -> str:
+    return f"{a // 60}:{a % 60:02d} – {b // 60}:{b % 60:02d}"
+
+
+def dat_gio(d: dict, t: int) -> tuple[int, int] | None:
+    """Lần ghé bắt đầu sớm nhất lúc `t` ⇒ (bắt đầu, kết thúc) nằm gọn trong một khung `gio_mo` (mở muộn ⇒ dời tới giờ mở); vượt giờ đóng mọi
+    khung ⇒ None. Điểm không có `gio_mo` (kho không ghi giờ) ⇒ không ràng buộc."""
+    dai = PHUT[d["thoi_luong"]]
+    if not d.get("gio_mo"):
+        return t, t + dai
+    for mo, dong in d["gio_mo"]:
+        s = max(t, ra_phut(mo))
+        if s + dai <= ra_phut(dong):
+            return s, s + dai
+    return None
+
+
 NGUONG_MUA = 60  # = `thoi_tiet.NGUONG_MUA` (không thêm ngưỡng mới — spec 5c.2); giữ ở đây để module thuần không import phần gọi mạng
 THU_TU_MUA = {"trong_nha": 0, "ca_hai": 1, "ngoai_troi": 2}  # ngày mưa: điểm không ưu tiên xét trong nhà ⇒ cả hai ⇒ ngoài trời
 
@@ -155,9 +185,14 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     used: set[str] = set()
     bi_thay: dict[str, str] = {}  # điểm ưu tiên bị thay vì bậc thang ⇒ điểm thay (ghi chú do code nếu cuối cùng vẫn không xếp)
 
-    def dung_duoc(id_: str, ngay_i: int, buoi: str, cums: list[str]) -> bool:
+    bat_dau = GIO_BAT_DAU["kham_pha" if kieu == "kham_pha" and not ts.han_che else "khac"]
+    gio: dict[str, tuple[int, int]] = {}
+
+    def dung_duoc(id_: str, ngay_i: int, buoi: str, cums: list[str], t: int | None = None) -> bool:
         d = T[id_]
         if id_ in used or buoi not in d["buoi"] or not _cum_hop(d["cum"], cums):
+            return False
+        if dat_gio(d, bat_dau[buoi] if t is None else t) is None:  # bậc 2 (5b): vượt giờ đóng ⇒ không xếp
             return False
         if tam_dung(d, ngay_cua(ngay_i)) or not dung_thu(d, ngay_cua(ngay_i)):  # bậc 2 (5b): thắng cả ưu tiên
             return False
@@ -212,23 +247,28 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             tn_hom_nay = tn_hom_nay or "thien_nhien" in T[dau]["loai"]
             them([dau], cums)
             slots[buoi].append(dau)
+            gio[dau] = dat_gio(T[dau], bat_dau[buoi])
         for buoi in BUOI_NGAY:
             if not slots[buoi]:
                 continue
             tong = PHUT[T[slots[buoi][0]]["thoi_luong"]]
             while quy is not None and len(slots[buoi]) < TOI_DA_BUOI:  # 5c.3: điểm thêm cùng cụm / cụm kề với điểm ngay trước, vừa quỹ phút
                 truoc = T[slots[buoi][-1]]
-                tiep = next((j for j in pool + lap if dung_duoc(j, i, buoi, cums) and _phut_di(truoc, T[j]) is not None
+                t_den = gio[slots[buoi][-1]][1]  # điểm thêm bắt đầu sau điểm trước + phút đi (5c.3); phải vừa giờ mở cửa của nó
+                tiep = next((j for j in pool + lap if _phut_di(truoc, T[j]) is not None and dung_duoc(j, i, buoi, cums, t_den + _phut_di(truoc, T[j]))
                              and tong + _phut_di(truoc, T[j]) + PHUT[T[j]["thoi_luong"]] <= quy), None)
                 if tiep is None:
                     break
                 tong += _phut_di(truoc, T[tiep]) + PHUT[T[tiep]["thoi_luong"]]
+                gio[tiep] = dat_gio(T[tiep], t_den + _phut_di(truoc, T[tiep]))
                 them([tiep], cums)
                 slots[buoi].append(tiep)
         ngay.append({"ngay": i, "buoi": slots})
 
+    toi_nghi = _xep_toi(bang, ts, ngay, [ngay_cua(i) for i in range(1, n + 1)], set(used))
     da_xep = [j for ng in ngay for b in BUOI for j in ng["buoi"][b]]
-    ngoai = [j for j in da_xep if ts.so_thich and not set(ts.so_thich) & set(T[j]["loai"])]
+    ngoai = [j for j in da_xep if ts.so_thich and not set(ts.so_thich) & set(T[j]["loai"]) and j not in
+             [x for ng in ngay for x in ng["buoi"]["toi"]]]  # hoạt động tối không phải "điểm lấp ngoài sở thích"
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
     gia_dinh = (["kieu_di"] if ts.kieu_di is None else []) + (["han_che"] if ts.han_che and kieu != "nhe_nhang" else []) + \
         (["so_thich"] if not ts.so_thich else [])
@@ -241,12 +281,46 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
             "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
             "ngay_thang": [None if x is None else x.isoformat() for x in ngays], "tam_dung_mua": tam_dung_uu,
+            "gio": {j: in_gio(*gio[j]) for j in gio}, "toi_nghi": toi_nghi,
             "mua_mua": bool(bang.nhac_mua_chung) and any(x is not None and x.month in bang.nhac_mua_chung["thang"] for x in ngays),
             "khong_xep": []}  # `lich_trinh.bo_diem` / `cat_ngay_cuoi` ghi vào đây khi lấy đoạn kho (dùng lại phần lấy nguồn của đường cũ)
 
 
+def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung: set[str]) -> dict[int, str]:
+    """Bước (e), chọn SAU khi khung tham quan đã chốt (không làm đổi khung — spec 5b bậc 8): nhóm không hạn chế ⇒ mỗi tối một hoạt động đúng thứ,
+    chỉ ở hai cụm trung tâm, không trùng điểm ban ngày, không lặp tới khi hết (hết ⇒ lặp hoạt động diễn mọi tối, nhãn "có thể đi lại");
+    ngày có điểm cụm xa ⇒ tối nghỉ; nhóm hạn chế ⇒ tối để trống (lý do). Trả {ngày: mã tối nghỉ} (ngày có hoạt động không có mặt)."""
+    T, nghi = bang.theo_id, {}
+    so_thich = set(ts.so_thich)
+    ung_vien = sorted((d for d in bang.diem if "toi" in d["buoi"] and d["cum"] in CUM_TOI and d["id"] not in da_dung),
+                      key=lambda d: not (so_thich & set(d["loai"])))  # hợp sở thích trước, rồi thứ tự bảng (sort ổn định)
+    da_toi: list[str] = []
+    for ng, ngay_that in zip(ngay, ngays):
+        if ts.han_che:
+            nghi[ng["ngay"]] = "tre_em" if ts.tre_em else "lon_tuoi"
+            continue
+        if any(T[j]["cum"] == CUM_XA for b in BUOI_NGAY for j in ng["buoi"][b]):
+            nghi[ng["ngay"]] = "xa"
+            continue
+        hop = [d["id"] for d in ung_vien if dung_thu(d, ngay_that) and not tam_dung(d, ngay_that)]
+        moi = [j for j in hop if j not in da_toi]
+        lai = [j for j in hop if not T[j].get("ngay_hoat_dong")]  # diễn mọi tối ⇒ đi lại được
+        chon = moi[0] if moi else (lai[0] if lai else None)
+        if chon is None:
+            nghi[ng["ngay"]] = "khong_co"
+            continue
+        ng["buoi"]["toi"].append(chon)
+        da_toi.append(chon)
+    return nghi
+
+
 def diem_v2(khung: dict) -> list[str]:
     return [j for ng in khung["ngay"] for b in BUOI for j in ng["buoi"][b]]
+
+
+def diem_ban_ngay(khung: dict) -> list[str]:
+    """Điểm tham quan sáng / chiều (không gồm hoạt động tối) — đơn vị của các sàn "suất sáng / chiều"."""
+    return [j for ng in khung["ngay"] for b in BUOI_NGAY for j in ng["buoi"][b]]
 
 
 def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
@@ -259,8 +333,29 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
     for ng in khung["ngay"]:
         cums: list[str] = []
         so = 0
-        if ng["buoi"].get("toi"):
-            loi.append("toi_o_buoc_b")  # buổi tối chỉ xếp ở bước (e)
+        toi = ng["buoi"].get("toi") or []
+        if len(toi) > 1 or (toi and han_che):
+            loi.append("toi_qua_day")
+        for j in toi:
+            if "toi" not in T[j]["buoi"] or T[j]["cum"] not in CUM_TOI:
+                loi.append("toi_sai_diem")
+            if any(T[x]["cum"] == CUM_XA for b in BUOI_NGAY for x in ng["buoi"][b]):
+                loi.append("toi_ngay_xa")
+        gio_k = khung.get("gio", {})
+        for b in BUOI_NGAY:  # 5c.3: giờ do code in — đúng thời lượng, trong giờ mở cửa, tăng dần, cách nhau ≥ phút đi; buổi chiều không trước 13:00
+            truoc = None
+            for j in ng["buoi"][b]:
+                if j not in gio_k:
+                    loi.append("thieu_gio")
+                    continue
+                s, e = (ra_phut(x.strip()) for x in gio_k[j].split("–"))
+                if e - s != PHUT[T[j]["thoi_luong"]] or (T[j].get("gio_mo") and not any(ra_phut(o) <= s and e <= ra_phut(c) for o, c in T[j]["gio_mo"])):
+                    loi.append("ngoai_gio_mo")
+                if b == "chieu" and s < GIO_BAT_DAU["kham_pha"]["chieu"]:
+                    loi.append("gio_buoi_sai")
+                if truoc is not None and s < truoc[1] + (_phut_di(T[truoc[0]], T[j]) or 0):
+                    loi.append("gio_chong")
+                truoc = (j, e)
         for b in BUOI_NGAY:
             ids = ng["buoi"][b]
             so += len(ids)
@@ -299,11 +394,14 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                 loi.append("tam_dung_mua")
             if not dung_thu(T[id_], ngay_that):
                 loi.append("sai_thu")
-    da_xep = diem_v2(khung)
-    if len(da_xep) != len(set(da_xep)):
+    ban_ngay = [j for ng in khung["ngay"] for b in BUOI_NGAY for j in ng["buoi"][b]]
+    toi_all = [j for ng in khung["ngay"] for j in ng["buoi"].get("toi") or []]
+    if len(ban_ngay) != len(set(ban_ngay)) or set(ban_ngay) & set(toi_all):
         loi.append("trung_diem")
-    if ts["so_thich"]:
-        ngoai = {j for j in da_xep if not set(ts["so_thich"]) & set(T[j]["loai"])}
+    if any(toi_all.count(j) > 1 and T[j].get("ngay_hoat_dong") for j in set(toi_all)):  # chỉ hoạt động diễn mọi tối mới được lặp
+        loi.append("toi_lap_sai")
+    if ts["so_thich"]:  # điểm lấp ngoài sở thích chỉ tính sáng / chiều (hoạt động tối chọn theo thứ, không phải "lấp")
+        ngoai = {j for ng in khung["ngay"] for b in BUOI_NGAY for j in ng["buoi"][b] if not set(ts["so_thich"]) & set(T[j]["loai"])}
         if ngoai != set(khung["ngoai_so_thich"]):
             loi.append("lap_khong_nhan")
     return loi
@@ -347,10 +445,16 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
         for b in BUOI:
             for k, id_ in enumerate(ng["buoi"][b], start=1):
                 d = bang.theo_id[id_]
-                muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "tham_quan", "id_diem": id_, "ten": d["ten"], "gio": None,
+                toi = b == "toi"
+                lap_lai = toi and id_ in [x for ng0 in khung["ngay"] if ng0["ngay"] < ng["ngay"] for x in ng0["buoi"]["toi"]]
+                muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
+                            "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
                             "nguon": nguon.get(id_), "anh": None, "toa_do": None,
-                            "nhan": ["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else [],
+                            "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else []),
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
+        if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
+            muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
+                        "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
         ngay.append({"ngay": ng["ngay"], "ngay_thang": ngay_that,
                      "thu": None if ngay_that is None else dt.date.fromisoformat(ngay_that).weekday(), "muc": muc})
     ts = khung["tham_so"]
@@ -363,12 +467,15 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 for x in khung["thay_bac_thang"]]
     ghi_chu += [{"ma": "thieu_uu_tien", "cau": CAU_GHI_CHU["thieu_uu_tien"].format(so_thich=NHAN_LOAI[s])} for s in khung["thieu_uu_tien"]]
     ghi_chu += [{"ma": k["ma_luat"], "cau": CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"])} for k in khung["khong_xep"]]
+    if khung.get("gio"):
+        ghi_chu.append({"ma": "gio_goi_y", "cau": "Giờ trong lịch là giờ gợi ý theo thời lượng tham quan thường gặp. " + CAU_CO_THE_DOI})
     return {"phien_ban": 2, "tham_so": {**ts, "ngay_di": ngay_di}, "minh_hieu": dong_minh_hieu_v2(ts, ngay_di), "ngay": ngay,
             "o_dau": None, "ghi_chu": ghi_chu}
 
 
 def moi_muc(lich: dict) -> list[dict]:
-    return [m for ng in lich["ngay"] for m in ng["muc"]]
+    """Mục model viết câu (tham quan, hoạt động tối); mục "nghỉ" là dòng do code, không vào model."""
+    return [m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] != "nghi"]
 
 
 def dong_minh_hieu_v2(ts: dict, ngay_di: str | None) -> str:
@@ -454,7 +561,8 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
         dong += ["", f"**Ngày {ng['ngay']}**"]
         for m in ng["muc"]:
             gio = f" ({m['gio']})" if m["gio"] else ""
-            dong.append(f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']} — {cau[m['id_muc']]}")
+            dong.append(f"- {NHAN_BUOI[m['buoi']]}: {m['ten']}" if m["loai"] == "nghi" else
+                        f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']} — {cau[m['id_muc']]}")
     if lich["ghi_chu"]:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
     return "\n".join(dong)

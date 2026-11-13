@@ -366,14 +366,14 @@ def test_simulation_floors(mo_phong):
     nhom = list(itertools.product(range(1, 6), ST_16))
     khac3 = sum(len({json.dumps(kq[(n, 0, False, k, st)]["ngay"]) for k in KIEU}) == 3 for n, st in nhom)
     assert khac3 / len(nhom) >= 0.70
-    bt = lambda k: sum(T[i]["bac_thang"] == "nhieu" for i in v2.diem_v2(k))  # noqa: E731
+    bt = lambda k: sum(T[i]["bac_thang"] == "nhieu" for i in v2.diem_ban_ngay(k))  # noqa: E731
     cap = [(k, kq[(n, 0, False, kieu, st)]) for (n, te, lt_, kieu, st), k in kq.items() if te or lt_]
     assert sum(bt(a) < bt(c) for a, c in cap) / len(cap) >= 0.50 and not any(bt(a) > bt(c) for a, c in cap)
     ban_ngay = {d["id"] for d in b.diem if set(d["buoi"]) & set(v2.BUOI_NGAY)}
     assert len(ban_ngay - {i for k in kq.values() for i in v2.diem_v2(k)}) <= 3
     # mỗi sở thích ≥ 50 % suất sáng / chiều của TỪNG lịch 2 ngày (A quyết 13/11: đọc theo từng tổ hợp) — dưới sàn ⇒ ô ẩn bằng cấu hình
     duoi = {s for s in v2.LOAI_DIEM_THU_TU for te, lt_, kieu in itertools.product((0, 1), (False, True), KIEU)
-            if (lambda ids: sum(s in T[i]["loai"] for i in ids) / len(ids))(v2.diem_v2(kq[(2, te, lt_, kieu, (s,))])) < 0.50}
+            if (lambda ids: sum(s in T[i]["loai"] for i in ids) / len(ids))(v2.diem_ban_ngay(kq[(2, te, lt_, kieu, (s,))])) < 0.50}
     assert duoi == set(V2.len_ke_hoach_so_thich_an)
 
 
@@ -456,7 +456,7 @@ def test_v2_sentence_checks(app_client):
     b = V2.bang_lich_v2
     k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="nhe_nhang", so_thich=("di_tich",)))
     lich = v2.dung_lich(b, k, {i: n for n, i in enumerate(v2.diem_v2(k), start=1)})
-    m = v2.moi_muc(lich)
+    m = [x for x in v2.moi_muc(lich) if x["loai"] == "tham_quan"]
     assert len(m) == 4
     khac = next(d["ten"] for d in b.diem if d["id"] not in v2.diem_v2(k) and not any(
         v2.chuan_ten(d["ten"]) in v2.chuan_ten(t) for x in v2.diem_v2(k) for t in v2.ten_cua(b.theo_id[x])))
@@ -468,7 +468,8 @@ def test_v2_sentence_checks(app_client):
     tu_model = [{"id_muc": i, "cau": c} for i, c in hong.items()] + [{"id_muc": m[0]["id_muc"], "cau": f"Câu sau bị bỏ [{m[0]['nguon']}]."},
                                                                      {"id_muc": "n9-sang-1", "cau": "id lạ [1]."}]
     cau, loi = v2.chon_cau(b, lich, tu_model)
-    assert loi == {m[0]["id_muc"]: "gio", m[1]["id_muc"]: "tien", m[2]["id_muc"]: "ten_khac", m[3]["id_muc"]: "thieu"}
+    toi = [x["id_muc"] for x in v2.moi_muc(lich) if x["loai"] == "hoat_dong_toi"]
+    assert loi == {m[0]["id_muc"]: "gio", m[1]["id_muc"]: "tien", m[2]["id_muc"]: "ten_khac", m[3]["id_muc"]: "thieu", **dict.fromkeys(toi, "thieu")}
     assert all(cau[x["id_muc"]] == v2.cau_du_phong(b, x) for x in m) and "n9-sang-1" not in cau
     tot = f"Ở đây có kiến trúc đẹp [{m[3]['nguon']}]."
     assert v2.chon_cau(b, lich, [{"id_muc": m[3]["id_muc"], "cau": tot}])[0][m[3]["id_muc"]] == tot
@@ -527,11 +528,13 @@ def test_v2_old_values_and_long_limits(app_client):
 
 
 def test_v2_plain_answer_is_built_from_frame():
-    lich = {"minh_hieu": "Mình hiểu: x", "ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "ten": "A", "gio": None},
-                                                                      {"id_muc": "n1-chieu-1", "buoi": "chieu", "ten": "B", "gio": "13:30 – 14:45"}]}],
+    lich = {"minh_hieu": "Mình hiểu: x", "ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "loai": "tham_quan", "ten": "A", "gio": None},
+                                                                      {"id_muc": "n1-chieu-1", "buoi": "chieu", "loai": "tham_quan", "ten": "B",
+                                                                       "gio": "13:30 – 14:45"},
+                                                                      {"id_muc": "n1-toi-1", "buoi": "toi", "loai": "nghi", "ten": "Tối nghỉ.", "gio": None}]}],
             "ghi_chu": [{"ma": "kieu_di", "cau": "Chưa chọn kiểu đi."}]}
     assert v2.ghep_chu(lich, {"n1-sang-1": "câu a [1].", "n1-chieu-1": "câu b [2]."}) == (
-        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
+        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n- Tối: Tối nghỉ.\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
 
 
 def test_cau_stream_emits_each_closed_item():
@@ -660,3 +663,86 @@ def test_simulation_dates_floor(mo_phong_ngay):
            and any(T[i]["trong_nha"] != "trong_nha" for i in v2.diem_v2(k))]
     khac = sum(a["ngay"] != c["ngay"] or a["mua_mua"] != c["mua_mua"] or a["tam_dung_mua"] != c["tam_dung_mua"] for a, c in cap)
     assert khac / len(cap) >= 0.60
+
+
+# =====================================================================================================================================
+# Bước (e): giờ gợi ý + buổi tối (plan §3 (e), spec 5c.3 / 5c.4) — 0 USD
+# =====================================================================================================================================
+
+def _gio(k, *ids):
+    return [k["gio"][i] for i in ids]
+
+
+def test_time_table_cases(tmp_path):
+    """5c.3: bảng ca giờ — mọi số là bội 15 phút; điểm sau = điểm trước + phút đi; mở muộn ⇒ dời buổi; vượt giờ đóng ⇒ không xếp."""
+    b = _bang(tmp_path, [_diem("a", "kinh_thanh"), _diem("b", "kinh_thanh"), _diem("c", "kinh_thanh"), _diem("d", "kinh_thanh")])
+    k = v2.xep_v2(b, ts(1, kieu_di="can_bang"))
+    assert _gio(k, "a", "c", "b", "d") == ["8:00 – 9:15", "9:30 – 10:45", "13:30 – 14:45", "15:00 – 16:15"]  # 2 ngắn cùng cụm
+    b = _bang(tmp_path, [_diem("a", "kinh_thanh"), _diem("x", "bo_nam"), _diem("y", "bo_nam")])
+    k = v2.xep_v2(b, ts(1, kieu_di="can_bang"))
+    assert k["ngay"][0]["buoi"]["sang"] == ["a", "y"] and _gio(k, "a", "y") == ["8:00 – 9:15", "9:45 – 11:00"]  # cụm kề: 30 phút đi
+    b = _bang(tmp_path, [_diem("h", "kinh_thanh", thoi_luong="nua_buoi"), _diem("c", "kinh_thanh"), _diem("n", "kinh_thanh")])
+    k = v2.xep_v2(b, ts(1, kieu_di="kham_pha"))
+    assert _gio(k, "h", "n", "c") == ["7:30 – 10:00", "10:15 – 11:30", "13:00 – 14:15"]  # nửa buổi + ngắn; khám phá nhiều bắt đầu 7:30 / 13:00
+    b = _bang(tmp_path, [dict(_diem("muon", "kinh_thanh"), gio_mo=[["09:00", "17:00"]]), dict(_diem("som", "kinh_thanh"), gio_mo=[["07:00", "09:00"]]),
+                         _diem("z", "kinh_thanh")], {"chung": ["muon", "som"], "di_tich": ["muon", "som"]})
+    k = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich",)))
+    assert k["ngay"][0]["buoi"]["sang"] == ["muon"] and _gio(k, "muon") == ["9:00 – 10:15"]  # mở muộn ⇒ dời cả buổi
+    assert "som" not in v2.diem_v2(k) and v2.kiem_khung_v2(b, k) == []  # 8:00 + 75 phút > đóng 9:00 ⇒ không xếp (chọn điểm khác)
+    bad = copy.deepcopy(k)
+    bad["gio"]["muon"] = "8:00 – 9:15"
+    assert "ngoai_gio_mo" in v2.kiem_khung_v2(b, bad)
+    bad["gio"]["muon"] = "13:30 – 14:30"
+    assert "ngoai_gio_mo" in v2.kiem_khung_v2(b, bad)  # sai thời lượng
+
+
+def _bang_toi(tmp_path):
+    return _bang(tmp_path, [*[_diem(f"d{i}", "kinh_thanh") for i in range(10)], _diem("xa", "nam_xa"), _diem("xa2", "nam_xa"),
+                            dict(_diem("pho", "bo_nam", buoi=("toi",)), gio_toi="18:00 – 22:00"),
+                            dict(_diem("cuoi_tuan", "bo_nam", buoi=("toi",)), ngay_hoat_dong=[4, 5, 6], gio_toi="19:30 – 22:30"),
+                            dict(_diem("ngoai_tt", "thuy_xuan", buoi=("toi",)), gio_toi="19:00 – 20:00")],
+                 {"chung": ["d0", "xa"], "di_tich": ["d0", "xa"]})
+
+
+def test_evening_weekday_center_and_far_days(tmp_path):
+    b = _bang_toi(tmp_path)
+    for thu in range(7):
+        bat_dau = D(2026, 11, 16) + dt.timedelta(days=thu)  # 16/11/2026 là thứ Hai
+        for n in range(1, 6):
+            k = v2.xep_v2(b, ts(n, kieu_di="nhe_nhang"), ngay_bat_dau=bat_dau)
+            assert v2.kiem_khung_v2(b, k) == []
+            for ng, ngay in zip(k["ngay"], k["ngay_thang"]):
+                toi = ng["buoi"]["toi"]
+                assert "ngoai_tt" not in toi  # chỉ hai cụm trung tâm
+                if "cuoi_tuan" in toi:
+                    assert D.fromisoformat(ngay).weekday() in (4, 5, 6)
+                co_xa = any(b.theo_id[j]["cum"] == "nam_xa" for x in ("sang", "chieu") for j in ng["buoi"][x])
+                assert (not toi and k["toi_nghi"][ng["ngay"]] == "xa") if co_xa else bool(toi)
+    k = v2.xep_v2(b, ts(3, kieu_di="nhe_nhang"))  # không ngày đi ⇒ chỉ hoạt động diễn mọi tối; hết ⇒ lặp, có nhãn
+    lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
+    toi = [m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi"]
+    assert {m["id_diem"] for m in toi} == {"pho"} and [("co_the_di_lai" in m["nhan"]) for m in toi] == [False] + [True] * (len(toi) - 1)
+    assert toi[0]["gio"] == "18:00 – 22:00"
+    for te, lt_, ma in ((1, False, "tre_em"), (0, True, "lon_tuoi")):
+        k = v2.xep_v2(b, ts(2, tre_em=te, lon_tuoi=lt_))
+        assert all(not ng["buoi"]["toi"] for ng in k["ngay"]) and set(k["toi_nghi"].values()) == {ma}
+        nghi = [m for ng in v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))["ngay"] for m in ng["muc"] if m["loai"] == "nghi"]
+        assert len(nghi) == 2 and nghi[0]["ten"] == v2.CAU_TOI[ma]
+
+
+def test_simulation_evening_floor_and_times(mo_phong_ngay):
+    """Sàn (e): ≥ 80 % số tối (không tính ngày cụm xa) của lịch nhóm không hạn chế có hoạt động. Luôn: giờ trong giờ mở cửa, tăng dần (kiểm
+    ở `kiem_khung_v2` — 0 lỗi trên 3.840 khung ở test ngày đi); nhóm có trẻ em ⇒ 0 mục buổi tối."""
+    b, kq = mo_phong_ngay
+    T = b.theo_id
+    toi = co = 0
+    for key, k in kq.items():
+        if key[1] or key[2]:
+            assert all(not ng["buoi"]["toi"] for ng in k["ngay"])
+            continue
+        for ng in k["ngay"]:
+            if any(T[j]["cum"] == v2.CUM_XA for x in v2.BUOI_NGAY for j in ng["buoi"][x]):
+                continue
+            toi += 1
+            co += bool(ng["buoi"]["toi"])
+    assert co / toi >= 0.80

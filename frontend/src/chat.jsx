@@ -489,7 +489,9 @@ function LichV2({ turn, onEditPlan }) {
               <li key={m.id_muc}>
                 <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
                 <span className="lich-ten">{m.ten}</span>
-                <span className="lich-cau">{cau[m.id_muc] != null ? boMaTrichDan(cau[m.id_muc]) : (xong ? "" : "đang viết…")}</span>
+                {m.loai !== "nghi" && (
+                  <span className="lich-cau">{cau[m.id_muc] != null ? boMaTrichDan(cau[m.id_muc]) : (xong ? "" : "đang viết…")}</span>
+                )}
               </li>
             ))}
           </ul>

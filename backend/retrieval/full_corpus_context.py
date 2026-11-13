@@ -104,12 +104,13 @@ class FullCorpusContextBuilder:
     def build(
         self, query: str, documents: Sequence[RetrievedDocument], today: str | None = None, *,
         first_id: int = 1, prior_context: str = "", skip_ids: frozenset[str] = frozenset(), instructions: str | None = None,
-        history=(), n_tool_items: int = 0, extra_tool_tokens: int = 0,
+        history=(), n_tool_items: int = 0, extra_tool_tokens: int = 0, max_documents: int | None = None,
     ) -> PackedContext:
         """`today`: dòng ngày sẽ đứng đầu tin nhắn gửi model (B1 D7) — đếm cùng một chuỗi với chuỗi gửi đi.
         Lần tìm thêm trong một lượt (Phase 9 B2 D5): đánh số từ `first_id`, bỏ đoạn `skip_ids` đã có, và đếm ngân sách **chung** —
         `prior_context` (ngữ cảnh các lần trước) + khối mới, bằng `instructions` của trợ lý. Hết ngân sách ở lần tìm thêm ⇒ ít / 0 đoạn,
-        không lỗi (chỉ lần đầu mới `ContextBudgetError`). Mặc định = một lần tìm như B1 (giống byte)."""
+        không lỗi (chỉ lần đầu mới `ContextBudgetError`). Mặc định = một lần tìm như B1 (giống byte). `max_documents`: trần số đoạn của RIÊNG lần
+        dựng này (lịch "Lên kế hoạch" bản 2: một đoạn mỗi điểm); None ⇒ trần của settings."""
         blocks: list[str] = []
         sources: list[PackedSource] = []
         ids: list[str] = []
@@ -120,7 +121,7 @@ class FullCorpusContextBuilder:
 
         input_tokens = counted("")
         for document in documents:
-            if len(sources) >= self._max_documents:
+            if len(sources) >= (self._max_documents if max_documents is None else max_documents):
                 break
             if document.id in skip_ids:
                 continue
