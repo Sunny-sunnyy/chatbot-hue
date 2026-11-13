@@ -2,7 +2,9 @@
 
 ## PHIÊN 13/11
 
-**ĐANG LÀM (19:49 13/11/2026, A giao; User: việc A giao = "làm đi"):** kho 3 phần ăn uống, 0 USD, không chạm kho — (1) siết luật khớp tên OSM + đọc tay `data/osm_quan_2026-11-12/khop_bai_kho.json` · (2) OSM làm nguồn thứ ba trong `data/sua_kho_2026-11-12_an_gan/tools/dung_quan_theo_cum.py` · (3) rút tiêu đề mục bài nháp · (4) cập nhật phiếu quán + mốc. Ghi quán OSM vào kho chờ User (câu 5).
+**Phiếu ảnh bản 2 XONG:** `data/phase_9/lich_trinh/phieu_anh_2026-11-13_ban2.md` (4 ảnh mới CHƯA AI NHÌN; #6, #16 không có ảnh thay ⇒ thẻ không ảnh). Commons 429 khi gửi dồn ⇒ chạy chậm.
+**So mốc bước (b) XONG (20:27 13/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_so_moc_buoc_b.md` — khớp 4 / 4 sàn của B (81 % · 58 % · 1 · 50 %); script `tools/dem_lai_buoc_b.py`; `mo_phong_*.py` nhận biến BANG. Lễ hội / chụp ảnh đúng ngưỡng 50 %.
+**Kiểm độc lập bai_hoc/ XONG (20:36 13/11/2026):** `data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md` — 0 sai số; 2 hiểu nhầm ("xử lý trước lượt cuối" ⇒ "sửa hoặc nhận giới hạn"; bài 19 dòng 35 thiếu "phạm theo chữ") + 6 nhỏ; 5 chỗ chưa chắc của người viết đã trả lời. Đã nhắn A. **Rảnh — chờ việc.**
 Khai báo sửa: file này · `data/osm_quan_2026-11-12/` (script khớp + bảng khớp mới + biên bản) · `data/sua_kho_2026-11-12_an_gan/` (script dựng, `quan_theo_cum.json`, phiếu quán + mốc, bài nháp). Không chạm `knowledge-base-hue/`.
 
 **Kho 3 ăn uống — 4 bước XONG, chờ A (19:55 13/11/2026, 0 USD, không gọi mạng, không chạm kho):**
@@ -18,6 +20,10 @@ Khai báo sửa: file này · `data/osm_quan_2026-11-12/` (script khớp + bản
 **Sửa 3 minor review E cho phần ăn uống XONG (20:04 13/11/2026):** Cơm hến Hoa Đông ⇒ ước (không gán cụm) · bỏ mức "osm", thêm `nguon_toa_do` · Trốn: số kiệt. Gán cụm 28 ⇒ 27. md5: 9416b5c6adca  quan_theo_cum.json;48475905ac68  phieu_quan_va_moc_2026-11-12.md;7b57ee5e389e  bai_nhap_an_gi_gan_diem_tham_quan.md;722d72c97292  ../osm_quan_2026-11-12/doc_tay_v2.json;
 **Kiểm lại kho 3 của E vòng 2 XONG (20:06 13/11/2026):** ready (mục 7 `c_review_kho3_e.md`): 142 cơ sở có hạng, 140 / 142 gán khu; bài đi lại m-2…m-5 đóng.
 **Photon ⇒ bảng quán XONG (20:08 13/11/2026, 0 USD):** 9 dòng đạt luật, 7 trùng OSM (cùng gốc), 2 dùng mới; gán cụm 27 ⇒ 28; md5 quan_theo_cum eae693cac1b0 · phiếu 6d0e46a572fe · bài nháp 8cfe17ac9e4f (chi tiết bien_ban.md OSM).
+**Đếm cho câu "OSM bảng riêng / kho chính" XONG:** `data/osm_quan_2026-11-12/dem_cho_cau_kho_rieng.md` (giữ 471, lọc tự động bỏ nhầm ~32 % — cần đọc tay; +91 đoạn = +1,1 %; 5 / 8 cụm ≥ 3 quán).
+**Điểm lễ hội ban ngày XONG:** `data/phase_9/lich_trinh/de_xuat_them_le_hoi_ban_ngay.md` (2 gắn nhãn điểm sẵn có + 1 có điều kiện; không có điểm mới đủ căn cứ).
+**Vòng tự soi 1:** đã gửi A / B / E.
+**ĐANG LÀM (20:20 13/11/2026):** tìm ảnh Commons thay 4 dòng "đổi" + phương án #16, #27 ⇒ phiếu ảnh bản 2 (C KHÔNG nhìn được ảnh ⇒ ảnh mới ghi "CHƯA ai nhìn"). Commons trả 429 khi C gửi ~11 truy vấn liền ⇒ chạy lại chậm (chờ 90 s, cách 10 s / yêu cầu, gộp file).
 **Phụ lục spec "581 quán OSM" — A giao rồi TẠM DỪNG (20:11 13/11/2026):** User đang cân nhắc để quán OSM ở bảng / kho riêng thay vì kho RAG chính; chưa sửa spec, chưa chạy gì. Chờ A.
 **Review `9d6a0f7` XONG (20:11 13/11/2026):** ready, 2 minor (Project_Status còn ghi cờ false; eval mặc định nay có cờ ⇒ ghi vào plan B7 cuối) — `c_review_bat_co_het_luot.md`. Trước đó: review commit `9d6a0f7` (bật cờ `het_luot_bo_cong_cu`, A làm) ⇒ `report_agent/2026-11-12_ra_khoang_cach/c_review_bat_co_het_luot.md`.
 **Bẫy 13/11 (lỗi bằng chứng của C):** gửi tin cho A SONG SONG với lệnh tính md5 ⇒ tin mang 4 md5 bịa; đã đính chính ngay. Luật cho mình: tin báo số chỉ gửi SAU khi đã thấy đầu ra lệnh, không gộp cùng lượt gọi công cụ.

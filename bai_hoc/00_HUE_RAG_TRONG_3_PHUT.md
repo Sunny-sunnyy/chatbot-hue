@@ -1,6 +1,6 @@
 # Bài 0 — hue_rag trong 3 phút
 
-*Cập nhật lần cuối: 14:49, ngày 11/11/2026 · thêm tên đề tài, người dùng mục tiêu; mục 5 ở "Đồ án đã làm những gì".*
+*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; sửa số từ chối nhầm và câu "0 câu ngoài kho bị trả lời" theo lượt đo giữa kỳ 12/11 (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -105,11 +105,16 @@ Khi chatbot biết tự nhờ code những việc như vậy, mình gọi nó l�
 Chatbot được chấm ở hai chỗ, đúng như cách đánh giá anh đã học: chấm **bước tìm** (đoạn có đáp án có lọt vào 10 đoạn không) và chấm **câu trả lời** (một model
 khác là Claude chấm từng câu so với đáp án mẫu, không biết câu đó của bản nào). Ba con số anh cần nhớ:
 
-- **Điểm "đúng" 4,7 trên 5**, ở lần chấm đầy đủ gần nhất (01/11, khoảng 130 câu hỏi mẫu có đáp án trong kho). Vì sao gọi là tốt: nếu chỉ tính những câu
+- **Điểm "đúng" 4,7 trên 5**, ở lần chấm đầy đủ của bản RAG Phase 1–8 (01/11, khoảng 130 câu hỏi mẫu có đáp án trong kho). Lượt đo giữa kỳ 12/11 cho thấy bản
+  trợ lý đang chạy còn nhỉnh hơn bản đó trên cùng bộ câu (bài 16). Vì sao gọi là tốt: nếu chỉ tính những câu
   chatbot thật sự trả lời thì điểm lên **4,96**, gần như tuyệt đối. Nghĩa là khi đã trả lời thì chatbot gần như không nói sai. Phần điểm bị trừ chủ yếu đến
   từ những câu nó từ chối dù kho có đáp án: người chấm coi câu từ chối như vậy là "không có nội dung để chấm", nên điểm rất thấp và kéo trung bình xuống.
-- **Từ chối nhầm khoảng 4–6 trên 158 câu**, tức khoảng 3 %. Trước khi chatbot có bước "tìm thêm" (bài 13), con số này là 12. Đây là lỗi còn nhiều nhất.
-- **0 câu ngoài kho bị trả lời** trên mọi bộ đã đo. Đây là mức tối thiểu đặt ra từ đầu, và chưa lần nào bị vượt qua.
+- **Từ chối nhầm 3 trên 158 câu**, tức khoảng 2 %, ở lượt đo giữa kỳ 12/11. Trước khi chatbot có bước "tìm thêm" (bài 13), con số này là 12; bản RAG ban đầu chạy
+  cùng lượt đo là 13. Đây là lỗi còn nhiều nhất.
+- **Câu ngoài kho hỏi đơn lẻ: 0 câu bị trả lời.** Đây là mức tối thiểu đặt ra từ đầu. Nhưng lượt đo giữa kỳ còn **3 chỗ phạm mức tối thiểu**: 2 câu ngoài chủ đề
+  bị đem đi tra web (người dùng không thấy chữ sai, nhưng câu hỏi đã bị gửi ra ngoài), 1 câu an toàn thiếu một điều kiện cảnh báo, và 1 lượt hỏi tiếp trong bộ câu kín bị
+  máy đếm là trả lời câu ngoài kho (chưa ai đọc nên chưa biết sai thật hay không). Cả ba được ghi nguyên; trước lượt đo cuối, anh quyết từng chỗ là sửa hay nhận là giới
+  hạn (bài 16).
 
 Tốc độ: chữ đầu tiên hiện sau khoảng **2,2 giây** với câu về Huế. Yêu cầu anh đặt là dưới 3 giây, nên đạt.
 
@@ -146,9 +151,9 @@ thay đổi duy nhất thắng rõ, và chatbot dùng 10 đoạn từ cuối th�
 > Qdrant. Giai đoạn trả lời xếp loại câu hỏi, tìm 10 đoạn hợp nhất, để model gpt-6-luna đọc và viết câu trả lời, rồi code kiểm nguồn trước khi hiện. Những
 > việc dễ nhầm như tính ngày âm lịch hay lấy dự báo thời tiết thì code làm, model chỉ diễn đạt.
 >
-> Ở mỗi bước, em thử nhiều cách và giữ cách đo ra tốt nhất. Kết quả: điểm đúng 4,7 trên 5, và khi đã trả lời thì gần như không sai; chưa câu ngoài kho nào
-> bị trả lời; chữ đầu tiên hiện sau khoảng 2 giây. Chỗ yếu còn lại là đôi khi kho có đáp án mà bước tìm không đưa ra được, nên chatbot từ chối nhầm, khoảng
-> 3 % số câu.
+> Ở mỗi bước, em thử nhiều cách và giữ cách đo ra tốt nhất. Kết quả: điểm đúng 4,7 trên 5, và khi đã trả lời thì gần như không sai; câu ngoài kho hỏi đơn lẻ
+> đều được từ chối; chữ đầu tiên hiện sau khoảng 2 giây. Chỗ yếu còn lại là đôi khi kho có đáp án mà bước tìm không đưa ra được, nên chatbot từ chối nhầm, khoảng
+> 2 % số câu.
 
 ## Ba điều chính
 
@@ -170,10 +175,13 @@ thay đổi duy nhất thắng rõ, và chatbot dùng 10 đoạn từ cuối th�
 - Ví dụ "bún bò cuối tuần": câu tự đặt, theo ví dụ trong sổ ghi việc `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` [ví dụ tự đặt]
 - Điểm Đúng 4,71 (129 câu, 01/11); 4,96 khi chỉ tính câu được trả lời (121 câu): `report_agent/2026-10-31_streaming_spec/do_cuoi_b_bo_kin.md`, `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` [đã chạy]. Cách chấm câu từ chối nhầm: `backend/evaluation/full_corpus_judge_prompt.md` [code]
 - **Sửa 11/11:** bản trước ghi "đoạn đúng nằm ở hạng 11–30" cho mọi câu từ chối nhầm — chưa đủ: khoảng một nửa nằm ngoài cả 30 ứng viên (`bao_cao_he_thong/06_BAO_CAO_TIM_KIEM.md`, rà 8.1 / B42) [đã chạy]
-- Từ chối nhầm 4–6 / 158 (03/11; trước "tìm thêm": 12); 0 câu ngoài kho bị trả lời; chữ đầu tiên 2,16 giây (09/11): `bao_cao_he_thong/README.md` "Số chính" [đã chạy]
+- Từ chối nhầm 4–6 / 158 (03/11; trước "tìm thêm": 12); chữ đầu tiên 2,16 giây (09/11): `bao_cao_he_thong/README.md` "Số chính" [đã chạy]
+- Lượt đo giữa kỳ 12/11: từ chối nhầm 3 ↔ mốc 13; Đúng theo cặp +0,194 [+0,062; +0,357]; 18 / 18 câu ngoài kho từ chối; 3 sàn phạm (ngoài phạm vi mở cổng web 2 / 44, an toàn thiếu một điều kiện cảnh báo 1 câu (tên trong report: "thiếu cảnh báo mới"), chuỗi kín 1 mã): `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md` §4.1, §8 [đã chạy]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
+- **Sửa 20:22 13/11/2026:** "0 câu ngoài kho bị trả lời trên mọi bộ đã đo … chưa lần nào bị vượt qua" sai (chuỗi kín ở lượt giữa kỳ, và cùng chuỗi đó ở lượt kín 03/11, bị máy đếm là trả lời) ⇒ nói đúng câu đơn / 3 chỗ phạm; từ chối nhầm 4–6 ⇒ 3 / 158; "lần chấm đầy đủ gần nhất (01/11)" ⇒ của bản RAG 1–8, vì lượt 12/11 mới hơn.
 - 5 → 10 đoạn (Phase 8.1: Đủ ý +0,26 trên nhóm thử, lợi nhất ở câu nhiều nguồn / so sánh; vào chatbot 28/10): `session_prompt/Project_Status.md` §2 [đã chạy]
 - Tên gốc trong bảng từ: `router` / định tuyến trong `assistant.py`; `chunk` trong `backend/ingestion/chunking/`; Golden ở `knowledge-base-hue/evaluation/` (riêng tư) [code]
 
 - Tên đề tài chốt với giảng viên (01/11), người dùng = du khách, người dân, anh; "xem như sản phẩm kinh doanh thật" (27/10); chất lượng trước rồi tốc độ / tiền (26/10): `session_prompt/Project_Status.md` §1 "Mục tiêu sản phẩm", §5 [quyết định của anh] (thêm 14:49 11/11/2026)
+- **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): sàn phạm: "xử lý trước lượt cuối" ⇒ "anh quyết sửa hay nhận là giới hạn" (B7i §6); thống nhất tên lỗi an toàn "thiếu một điều kiện cảnh báo".
 
 </details>

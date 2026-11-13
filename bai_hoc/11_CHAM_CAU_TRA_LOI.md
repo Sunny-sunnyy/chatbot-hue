@@ -1,6 +1,6 @@
 # Bài 11 — Chấm câu trả lời, và mỗi con số tốt tới đâu
 
-*Cập nhật lần cuối: 14:04, ngày 11/11/2026 · sửa một câu sai ở "Một chuyện thật" (ghi ở Nguồn); bài dài hơn vì gom mọi con số chính của đồ án.*
+*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; sửa các câu đã sai sau lượt đo giữa kỳ 12/11: câu ngoài kho, từ chối nhầm, "chưa chấm lại cả bộ" (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -95,9 +95,10 @@ ngoài kho bị trả lời, tức lỗi nặng hơn.
 | Điểm **Đủ ý** | **4,58** | bản đầu 4,28; chỉ tính câu được trả lời 4,82 | tốt; phần mất chủ yếu ở câu nhiều nguồn và từ chối nhầm |
 | Điểm **Trúng ý** | **4,72** | bản đầu 4,45 | tốt |
 | Đủ ý, **câu nhiều nguồn** | **3,50** | bản đầu 3,00; loại khác: một dữ kiện 4,91 · có điều kiện 4,68 · so sánh 4,35 | **yếu nhất**; chính là lý do làm phần trợ lý "tìm thêm" (bài 13) |
-| **Từ chối nhầm** (158 câu) | **4–6** (03/11) | 22 (5 đoạn) → 12 (10 đoạn) → 4–6 (tìm thêm) | khoảng 3 %; còn là lỗi nhiều nhất, nhưng là lỗi **nhẹ nhất** theo thứ tự lỗi |
-| **Câu ngoài kho bị trả lời** | **0** | sàn = 0 | đạt trên mọi bộ đã đo |
-| **Bộ an toàn** (01/11) | 0 đảo cảnh báo · 0 / 4 ngoài kho · 2 sai điều kiện | sàn: 0 · 0 · tối đa 2 | đạt, nhưng sát mức ở số thứ ba |
+| **Từ chối nhầm** (158 câu) | **3** (12/11, lượt đo giữa kỳ) | 22 (5 đoạn) → 12 (10 đoạn) → 4–6 (tìm thêm, 03/11) → 3; bản RAG 1–8 chạy cùng lượt: 13 | khoảng 2 %; còn là lỗi nhiều nhất, nhưng là lỗi **nhẹ nhất** theo thứ tự lỗi |
+| **Câu ngoài kho bị trả lời** | câu hỏi đơn lẻ: **0** (18 / 18 câu ngoài kho được từ chối, 12/11); chuỗi hỏi tiếp trong bộ kín: **1 lượt** bị máy đếm | sàn = 0 | câu đơn **đạt**; lượt hỏi tiếp kia **phạm theo máy đếm**, chưa ai đọc nên chưa biết sai thật hay không (bài 16) |
+| **Bộ an toàn**, bản RAG 1–8 (01/11) | 0 đảo cảnh báo · 0 / 4 ngoài kho · 2 sai điều kiện | sàn: 0 · 0 · tối đa 2 | đạt, nhưng sát mức ở số thứ ba |
+| **Bộ an toàn**, cả trợ lý (12/11, chạy 2 lượt) | 0 đảo cảnh báo · 0 ngoài kho · 0 sai điều kiện mới; **1 câu thiếu một điều kiện cảnh báo** | sàn: 0 ở mọi số | **phạm ở 1 câu**; một nửa do cách so, một nửa lỗi thật của khâu viết (bài 16) |
 | **Bộ kín 40 câu** (01/11), đủ ý | **4,18** | bộ quen 4,58 | thấp hơn khoảng 0,4: số trên bộ quen lạc quan (bài 9) |
 | **Chữ đầu tiên**, câu về Huế (09/11) | **2,16 / 4,32 s** (trung vị / 95 %) | yêu cầu 3 / 5 s | đạt |
 | Chữ đầu tiên, câu có ngày (10/11) | 2,35 / 4,56 s | yêu cầu 3 / 5 s; trước khi tối ưu 5,60 / 10,14 s | đạt sau khi tối ưu (bài 14) |
@@ -127,8 +128,8 @@ kể cả khi kết quả trông hấp dẫn. Nếu nới luật sau khi thấy 
 - **Luật "không làm hỏng" chỉ bắt được tụt lan rộng.** Tụt nhỏ dồn vào một loại câu ít (ví dụ 2–3 câu so sánh) có thể lọt.
 - **Bộ an toàn nhỏ.** 0 lỗi trên 28 câu trong kho chỉ chứng minh được tỉ lệ sai điều kiện **dưới khoảng 10–12 %**, chưa chứng minh được là rất thấp.
 - **Máy nhận câu từ chối bằng cách so khớp đúng nguyên câu.** Lời từ chối viết khác câu chuẩn sẽ không được đếm là từ chối.
-- **Bản đang chạy (có phần trợ lý) chưa được chấm lại trên cả 176 câu.** Mỗi phần mới chỉ được đo trên bộ câu riêng của nó trước khi bật. Lượt chấm lại cả bộ
-  là bước cuối của Phase 9.
+- **Bản đang chạy (có phần trợ lý) mới được chấm lại cả 176 câu một lần**, ở lượt đo giữa kỳ 12/11, so với bản RAG 1–8 (kết quả và 3 chỗ phạm sàn ở bài 16).
+  Ở lượt đó, số câu tụt vừa đúng ngưỡng (4 / 4). Lượt chấm cuối chạy lại khi đóng code.
 
 ## Ba điều chính
 
@@ -136,8 +137,8 @@ kể cả khi kết quả trông hấp dẫn. Nếu nới luật sau khi thấy 
    hai lần chỉ 1–2 câu đổi).
 2. Có **mức tối thiểu không được phạm** (0 câu ngoài kho bị trả lời, bộ an toàn) và **thứ tự lỗi**: sai cảnh báo > nói chắc sai > trả lời ngoài kho > thiếu ý > từ
    chối nhầm.
-3. Số chính: **Đúng 4,71** (4,96 khi đã trả lời), **Đủ ý 4,58** (yếu nhất ở câu nhiều nguồn 3,50), **từ chối nhầm khoảng 3 %**, **chữ đầu 2,2 giây**, **12 đồng /
-   câu**. Bộ kín cho thấy số thật thấp hơn khoảng 0,4 điểm đủ ý.
+3. Số chính: **Đúng 4,71** (4,96 khi đã trả lời), **Đủ ý 4,58** (yếu nhất ở câu nhiều nguồn 3,50) của bản RAG 1–8; **từ chối nhầm 3 / 158** ở bản đang chạy,
+   **chữ đầu 2,2 giây**, **12 đồng / câu**. Bộ kín cho thấy số thật thấp hơn khoảng 0,4 điểm đủ ý.
 
 **Bài sau:** Bài 12 — Từ chatbot thành trợ lý: vì sao cần một bước xếp loại câu hỏi, và "công cụ" là gì.
 
@@ -158,6 +159,9 @@ kể cả khi kết quả trông hấp dẫn. Nếu nới luật sau khi thấy 
 - Tốc độ / tiền 09/11 và 10/11: `bao_cao_he_thong/README.md` "Số chính", `07_…` [đã chạy]
 - Mốc người B0 (01/11, 20 cặp): `10_BAO_CAO_DANH_GIA.md`, `data/phase_8_2/b0/` (riêng tư) [đã chạy]
 - Câu dặn chống "thêm lời khuyên chung" (B3, 03/11): bản 1 từ chối nhầm 7 > 5, bản hẹp còn 4: `report_agent/2026-11-02_phase_9_code/b136_b3_implementation.md` (bảng Q2), `07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 03/11 chiều [đã chạy]
+- Lượt đo giữa kỳ 12/11 (từ chối nhầm 3 ↔ 13; F1 0, 18 / 18; an toàn 0 · 0 · 0 + 1 câu thiếu cảnh báo mới PHẠM; chuỗi kín 1 mã PHẠM theo bộ đếm; câu tụt 4 = ngưỡng 4): `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md` §4.1, §8 [đã chạy]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
+- **Sửa 20:22 13/11/2026:** dòng "câu ngoài kho bị trả lời: 0, đạt trên mọi bộ đã đo" sai từ lượt đo giữa kỳ (chuỗi kín có 1 lượt phạm theo máy đếm) ⇒ tách câu đơn / chuỗi kín; "bản đang chạy chưa được chấm lại trên cả 176 câu" sai ⇒ đã chấm một lần ở lượt giữa kỳ; từ chối nhầm 4–6 ⇒ thêm số 3 / 158 của bản đang chạy; thêm dòng bộ an toàn của trợ lý.
 - **Sửa 14:03 11/11/2026:** bản trước ghi nhầm số 7 → 4 là của phần "nhớ câu hỏi"; thật ra là của câu dặn trên (phần nhớ câu hỏi trượt vì lý do khác — bài 13).
+- **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): thống nhất tên lỗi an toàn "thiếu một điều kiện cảnh báo" (report gọi "thiếu cảnh báo mới").
 
 </details>

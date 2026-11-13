@@ -1,6 +1,6 @@
 # Bài 19 — Bảng tổng các lần so sánh
 
-*Cập nhật lần cuối: 15:03, ngày 11/11/2026 · bài mới; trang tra cứu; đã qua một lượt kiểm độc lập; thêm dòng 30–34.*
+*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm dòng 35–37 (hết lượt tìm thì dừng, thử Exa, lượt đo giữa kỳ) và ý "đếm lỗi trước khi xây".*
 
 ## Bảng từ
 
@@ -20,7 +20,8 @@ gì" thì không phải lật lại cả bộ. Muốn hiểu kỹ dòng nào, m�
 ## Đọc bảng thế nào
 
 - **Luật ghi trước.** Mỗi lần thử ghi trước khi chạy: thước nào, mốc nào, thế nào là "tốt hơn", và các **sàn không được vỡ** (ví dụ "không câu nào đang tìm đủ
-  đoạn đúng thì nay thiếu", "0 câu ngoài kho bị trả lời", "câu an toàn không sai thêm"). Vỡ sàn thì **bỏ**, dù trung bình tốt hơn.
+  đoạn đúng thì nay thiếu", "0 câu ngoài kho bị trả lời", "câu an toàn không sai thêm"). Vỡ sàn thì **bỏ**, dù trung bình tốt hơn. Ngoại lệ duy nhất (dòng 35):
+  chỗ vỡ được chứng minh là không do thay đổi, và bảng ghi rõ điều đó.
 - **Kết quả âm cũng là kết quả.** Hơn một nửa số dòng dưới là "bỏ". Đó là lý do giải thích được vì sao bước nào cũng đang dùng cách hiện tại.
 - **Bối cảnh.** Phần lớn thử nghiệm ở bước tìm và xếp lại (24–27/10) chạy trên kho **trước hai đợt sửa** và lúc chatbot còn đưa **5 đoạn**. Nếu một dòng có thể
   khác đi ở cấu hình hiện nay, cột kết quả ghi rõ.
@@ -52,7 +53,7 @@ không được làm tụt (bài 9, 11).
 | # | Thử gì | So với | Kết quả | Giữ / bỏ | Bài |
 |---|---|---|---|---|---|
 | 13 | **Xếp loại câu** 4 đường (trò chuyện / về Huế / ngoài phạm vi / khẩn cấp) | không xếp loại | xếp đúng **253 / 253** câu đã thấy, **20 / 20** câu kín; chậm thêm (bài 17) | **giữ** | 12 |
-| 14 | Cổng "2 nhóm" (bỏ đường khẩn cấp và ngoài phạm vi) | 4 đường | 2 / 44 câu ngoài phạm vi có mục web ⇒ vỡ sàn. Chuyển sang **phương án B** (giữ 4 đường, bỏ câu khẩn cấp soạn sẵn): 0 câu ngoài phạm vi bị trả lời | bỏ G, **giữ B** | 12 |
+| 14 | Cổng "2 nhóm" (bỏ đường khẩn cấp và ngoài phạm vi) | 4 đường | 2 / 44 câu ngoài phạm vi có mục web ⇒ vỡ sàn. Chuyển sang **phương án B** (giữ 4 đường, bỏ câu khẩn cấp soạn sẵn): 0 câu ngoài phạm vi bị trả lời (lượt đo giữa kỳ 12/11 thấy 2 / 44 câu vẫn bị đem đi tra web, người dùng chỉ thấy câu cố định; xem dòng 37, bài 16) | bỏ G, **giữ B** | 12 |
 | 15 | **Tìm thêm ≤ 2 lần** | một lần tìm | câu nhiều nguồn Đủ ý **+1,17 [+0,44; +2,00]** (18 câu); từ chối nhầm 12 ⇒ 4–6 / 158; nhưng có 1 câu an toàn sai mới (sửa ở dòng 16) | **giữ** | 13 |
 | 16 | Câu dặn chống **tự thêm lời khuyên chung** | không có câu dặn | dặn rộng: từ chối nhầm **7** (ngưỡng 5) ⇒ bỏ; dặn hẹp: 4, lỗi an toàn hết ⇒ giữ | **giữ bản hẹp** | 11 |
 | 17 | **Nhớ hội thoại** | không nhớ | nhớ cả câu trả lời: 1 / 2 lượt kín câu ngoài kho bị trả lời ⇒ tắt. **Chỉ nhớ câu hỏi**: câu hỏi tiếp **+0,80 [+0,25; +1,50]**, câu bẫy từ chối đúng 6 / 6 (không nhớ: 3 / 6) | **giữ "chỉ nhớ câu hỏi"** | 13 |
@@ -73,6 +74,9 @@ không được làm tụt (bài 9, 11).
 | 32 | **Luật từ khoá** cho câu khẩn cấp | chỉ model xếp loại | **14 / 14** câu đã thấy, nhưng câu kín **0 / 8** và chặn nhầm 2 / 8 ⇒ học thuộc câu đã thấy | bỏ | 12 |
 | 33 | Thêm dòng "hôm nay là ngày …" vào lời dặn | không có | từ chối nhầm 5,0 ⇒ 4,5 (cần giảm ít nhất 3) | bỏ (sau đó ngày do code tính, dòng 23) | chỉ ở bài này |
 | 34 | **Model viết lại câu tìm** trước lần tìm đầu (3 cách) | tìm bằng câu gốc | không cách nào qua luật: chỉ thêm 0–1 / 12 câu đủ từ khoá (cần ít nhất 3) | bỏ | 13 |
+| 35 | **Hết lượt tìm thì dừng**: sau 2 lần tìm thêm, code cất công cụ tìm kho | lần xin thứ ba nhận "đã hết lượt" | 8 câu kho thiếu: **8 / 8** bớt lượt gọi model (cần 5), trung vị cả câu **22,85 ⇒ 16,15 giây**, tiền không tăng; sàn bộ câu mẫu **phạm theo chữ** (3 câu đổi sang từ chối); vẫn giữ vì chạy lại bản cờ tắt cũng đổi chiều đúng 3 câu, và cả 3 chỉ tìm 1 lần nên không chạm chỗ cờ; người kiểm độc lập đồng ý | **giữ kèm theo dõi** (bật 13/11; thấy 1 câu bịa thì tắt) | 13 |
+| 36 | **Exa trước, Serper dự phòng** cho tra web | Serper | đo riêng bước tra (42 câu, 2 người chấm cùng gắn): Exa **25**, Serper **17** (cần 22) ⇒ đạt, nhưng bỏ 5 mục trích trang tổng hợp của Exa thì còn 20; qua máy chủ thật: Exa **14**, Serper **13** (cần 16) | bỏ (giữ hồ sơ) | 15 |
+| 37 | **Lượt đo giữa kỳ**: cả trợ lý | bản RAG Phase 1–8, cùng bộ câu, cùng kho | tốt hơn ở **3 / 3 nhóm**: câu nhiều nguồn +1,0 [+0,28; +1,83], câu theo ngày dùng được 27 so với 11, câu hỏi tiếp +1,64 [+0,64; +2,71]; bộ câu mẫu tụt **4** câu (ngưỡng 4); từ chối nhầm 13 ⇒ 3 / 158; **3 chỗ phạm sàn** | không phải giữ / bỏ: số đo của bản đang chạy; trước lượt cuối anh quyết từng sàn phạm là sửa hay nhận là giới hạn | 16 |
 
 ## Nhìn cả bảng thấy gì
 
@@ -83,8 +87,11 @@ không được làm tụt (bài 9, 11).
 3. **Mỗi thứ thêm vào lời dặn hay công cụ đều có thể làm hỏng câu an toàn ở chỗ khác** (dòng 15, 19, 20). Vì vậy ở phần trợ lý, mọi lần thử đều có tầng an toàn: chạy lại bộ 32 câu an toàn, hoặc chứng minh chuỗi gửi model không đổi rồi
    dùng lại số cũ.
 4. **Còn đáng thử lại:** dòng 8 mới thử khi còn 5 đoạn; dòng 9 đã thử ở 10 đoạn nhưng trên kho cũ và chậm, cần một cách để luna chọn đoạn nhanh hơn (bài 16).
+5. **Đo riêng một bước có thể đánh lừa.** Dòng 36 đạt khi đo riêng bước tra, nhưng qua đường người dùng thật (cổng web, luật kiểm phía sau) thì lợi biến mất.
+6. **Có những thứ không cần thử.** Ngày 12/11, ba ý tưởng bị hạ ngay ở bước **đếm lỗi trước khi xây**: đếm trên kết quả đã có thì lỗi tưởng có không đủ nhiều
+   (bài 20). Vì không chạy thử nên chúng không có dòng trong bảng.
 
-Ngoài 34 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số, sửa kho, đổi cách đo. Chúng nằm trong sổ ghi việc của các agent. Anh không cần đọc để kể đồ án.
+Ngoài 37 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số, sửa kho, đổi cách đo. Chúng nằm trong sổ ghi việc của các agent. Anh không cần đọc để kể đồ án.
 
 **Bài sau:** Bài 20 — Làm đồ án thế nào. Muốn hiểu kỹ một dòng ở trên, mở bài ghi ở cột cuối.
 
@@ -102,8 +109,12 @@ Ngoài 34 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số
 - Qwen3-Embedding-8B 8 tỉ tham số (theo tên model); multilingual-e5-small khoảng 118 triệu ⇒ khoảng 70 lần [kiến thức công khai, chưa tra lại trong phiên]
 - **Sửa 14:41 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn): dòng 9 (luna chọn đoạn) đã so với mốc 10 đoạn + NFC (`91` T3-09) — bản trước ghi "mới thử ở 5 đoạn"; lần thử chạy song song / xã giao song song dùng lại số an toàn khi chuỗi gửi model không đổi (`c172`) — bản trước ghi "mọi lần thử chạy lại bộ 32 câu"; 21 % là phần tiền gửi vào, ước (`c202` §4). Biên bản kiểm: `data/hoc_cung_user_2026-11-10/review_bai_17_19.md` (riêng tư).
 
+- Dòng 35 (thêm 20:22 13/11/2026): `report_agent/2026-11-12_ra_khoang_cach/b_het_luot_tim_implementation.md` §4, §4.1; `b_het_luot_tim_review.md`; bật: `c_review_bat_co_het_luot.md` [đã chạy]
+- Dòng 36: `report_agent/2026-11-12_ra_khoang_cach/e_tim_web_serper_exa.md` §6, §6b, §7; `e_exa_review.md` [đã chạy]
+- Dòng 37 (và ghi chú thêm ở dòng 14): `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md` §4, §8; `b7_review.md` [đã chạy]; ý 6: `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` §3b, §3d [đã chạy]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
 - Dòng 30–34 (thêm 15:03 11/11/2026): `report_agent/2026-11-08_phase_9_ban_13/e_t2_web_implementation.md` (dòng 30), `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (dòng 31), `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 02/11 (dòng 32, 33) và mục 03/11, `06_BAO_CAO_TIM_KIEM.md` (dòng 34) [đã chạy]
 
 - **Sửa 15:17 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn; biên bản `data/hoc_cung_user_2026-11-10/review_bai_20_21.md`, riêng tư): dòng 30 cần ≥ 6 / 10 (`e_t2_web_implementation.md` §4); dòng 30, 31, 33 không có bài riêng kể kỹ ⇒ "chỉ ở bài này".
+- **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): dòng 35 ghi rõ sàn bộ câu mẫu phạm theo chữ và vì sao vẫn giữ kèm theo dõi (HLi §4, §4.1; HLr §5); "Đọc bảng thế nào" thêm ngoại lệ đó; dòng 37: sàn phạm do anh quyết sửa hay nhận giới hạn.
 
 </details>

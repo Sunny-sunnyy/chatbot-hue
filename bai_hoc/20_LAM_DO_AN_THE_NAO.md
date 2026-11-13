@@ -1,6 +1,6 @@
 # Bài 20 — Làm đồ án thế nào: dòng thời gian, nhiều agent, rào bằng máy
 
-*Cập nhật lần cuối: 15:17, ngày 11/11/2026 · bài mới; chỉ kể phần đã làm xong; đã qua một lượt kiểm độc lập.*
+*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm ví dụ thật của "đếm lỗi trước khi xây" (12/11), dòng thời gian 12–13/11, tiền tới hết 12/11.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -14,6 +14,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Rào bằng máy — **mới** | hook git (`.githooks/pre-commit`, `pre-push`) | Đoạn mã tự chạy mỗi lần ghi hay đẩy code lên GitHub, chặn dữ liệu riêng tư. |
 | Cổng kiểm | "cổng ổn định" | Danh sách kiểm phải qua trước khi một thay đổi vào bản chính (`main`). |
 | Luật ghi trước | tiêu chí ghi trước (`run-experiment`) | Viết sẵn thước, mốc, sàn trước khi đo (bài 11, 19). |
+| Đếm lỗi trước khi xây — **mới** | luật chung của dự án (chỗ ghi ở Nguồn) | Trước khi lên kế hoạch một tính năng, đếm rẻ trên hệ thống đang chạy xem lỗi có thật và nhiều cỡ nào; không đủ lỗi thì không xây. |
 
 ---
 
@@ -39,6 +40,7 @@ agent) soạn, thử, đo. Có ba nếp làm việc: bài một người soạn 
 | 28 – 30/10 | Hai đợt sửa kho, mỗi đợt 123 chỗ (bài 1); thử Qwen3-8B rồi bỏ (bài 4) | Claude |
 | 31/10 – 01/11 | Chữ hiện dần, lượt đo cuối Phase 1–8, anh tự đọc 20 cặp câu trả lời; anh đóng Phase 8 | Claude A / B / C |
 | 02/11 – nay | Phase 9 (còn mở), các phần đã bật: trợ lý (bài 12–15), trang cổng (bài 17), đóng gói Docker (bài 18). Phase 10: hỏi bằng ảnh (bài 15) | Claude A / B / C / E |
+| 12 – 13/11 | Lượt đo giữa kỳ cả trợ lý so với RAG 1–8 (bài 16); đếm lỗi trước khi xây, hạ 3 ý tưởng (mục dưới); "hết lượt tìm thì dừng", bật 13/11 (bài 13); thử Exa cho tra web rồi giữ Serper (bài 15) | Claude A / B / C / E |
 
 **Vì sao có Phase 8.1.** Khi rà, mình đếm được 56 quyết định kỹ thuật của Phase 0–7, phần lớn do hai agent trước chọn. Chỉ **2 / 56** từng được so trên toàn kho,
 **29** chưa từng so, **16** là mặc định không ghi lý do. Anh chốt một nguyên tắc từ đó: **luôn thử và so với mốc trước khi chọn**. Phase 8.1 đo lại **10 quyết định
@@ -116,8 +118,27 @@ có khoá). Lỗ hổng nằm ngay trong rào chống lộ dữ liệu, và đư
 
 Cuối mỗi phiên, A gom các sự cố có bằng chứng (mất giờ, mất tiền, anh phải nhắc lại) thành tối đa 3 đề xuất sửa luật hay thêm rào, anh duyệt rồi mới áp; luật
 nào thành thừa thì gỡ. Tới 11/11: **25 vòng**, **120 sự cố** được ghi (gồm cả việc làm đúng đáng giữ). Hầu hết các luật trong bài này ra đời từ đó: giờ ghi
-trong tài liệu phải lấy từ máy, không gõ tay (đã lọt ít nhất 11 lần; rào chỉ cảnh báo nên 11/11 vẫn lọt một lần); "đếm lỗi rẻ trước khi xây tính năng" (sau khi 4 tính năng thử đều âm, tốn
+trong tài liệu phải lấy từ máy, không gõ tay (đã lọt ít nhất 11 lần; rào chỉ cảnh báo nên 11/11 vẫn lọt một lần); "đếm lỗi rẻ trước khi xây tính năng" (sau khi một loạt tính năng thử ra âm hoặc phải quay về phương án cũ, tốn
 khoảng 0,6 USD).
+
+## Một ví dụ thật: đếm lỗi trước khi xây hạ 3 ý tưởng (12/11)
+
+Luật này anh duyệt ngày 10/11, sau khi một loạt tính năng thử (09/11) ra âm hoặc phải quay về phương án cũ. Nội dung: trước khi viết kế hoạch cho một tính năng mới, làm **một lượt đếm rẻ** trên hệ
+thống đang chạy (log, các bộ câu đã thấy, tối đa khoảng 0,02 USD) để xem lỗi định sửa **có thật không và nhiều cỡ nào**; không đủ lỗi thì không xây, ghi số đếm lại.
+
+Ngày 12/11, sau lượt đo giữa kỳ (bài 16), có một danh sách ý tưởng cải tiến. Ba ý tưởng được đếm ngay trên kết quả của lượt đo đó, bằng code đọc file, **0 USD**:
+
+| Ý tưởng | Lỗi tưởng có | Đếm ra | Vì sao không xây |
+|---|---|---|---|
+| **Sửa lời dặn để bớt từ chối cả câu** | model có đủ đoạn đúng trong tay mà vẫn từ chối hoặc viết thiếu | trợ lý từ chối 3 / 158 câu, và bản RAG cũ cũng từ chối cả 3; ở cả 3, lần tìm đầu chỉ mang về 1 / 2, 1 / 2 và 0 / 2 ý cần có. Trên 55 câu có nhãn đoạn đúng: 32 câu lần tìm đầu đủ đoạn thì **0** câu bị từ chối, **0** câu Đủ ý ≤ 3; 5 câu Đủ ý ≤ 3 đều thuộc nhóm tìm thiếu | lỗi nằm ở **bước tìm**, không ở lời dặn; sửa lời dặn không chữa được gì |
+| **Bộ kiểm số tiền, giờ, ngày**: số trong câu trả lời phải có trong đoạn được trích | model tự thêm con số không có nguồn | trên 155 câu trợ lý đã trả lời: số tiền nằm trong 10 đoạn đầu 32 lần, ở đoạn khác của kho 2 lần, **không ở đoạn nào 0 lần**; các số khác 131 · 10 · **0**. Có 11 câu có số không nằm trong 10 đoạn đầu: 7 / 11 câu xem tay đều giải thích được (4 lấy từ câu hỏi, 1 năm viết liền, 1 câu cố định của code, 1 phép trừ đúng); 4 câu còn lại không kiểm được vì không ghi đoạn tìm thêm, nhưng số có trong đoạn khác của kho, nhiều khả năng từ lần tìm thêm | **0** số sai nguồn, ngưỡng ghi trước là ít nhất 3 |
+| **Sửa 4 câu tụt Đủ ý** (con số vừa đúng ngưỡng ở lượt giữa kỳ) | có một lỗi chung làm trợ lý viết kém hơn bản cũ | cả 4 câu tụt từ 5 xuống 4, điểm Đúng vẫn 5; không câu nào tìm thêm, 10 đoạn **giống hệt** bản cũ; câu trả lời ngắn hơn (37–84 % số chữ). Nhưng trên 132 câu cùng 10 đoạn, độ dài trung vị hai bên bằng nhau, và có 10 câu tăng Đủ ý | khớp với dao động lời văn và nhiễu người chấm, không có lỗi chung để sửa; xem lại nếu lượt cuối lại có ít nhất 4 câu cùng kiểu |
+
+Một ý tưởng thứ tư, "đường tra web chậm", không bị hạ mà **thu hẹp**: đếm cho thấy tìm thêm đang có ích nên không cắt, chỉ cắt đúng lượt xin tìm thứ ba vô ích.
+Đó là "hết lượt tìm thì dừng" (bài 13), đo đạt và đã bật.
+
+Giới hạn của các phép đếm: đếm theo dãy chữ số, không theo nghĩa (số đúng nhưng gắn nhầm đối tượng thì không bắt được); mới đếm trên bộ câu mẫu, chưa đếm bộ
+an toàn; mỗi câu chỉ một lượt nên 4 câu tụt không tách được khỏi nhiễu người chấm.
 
 ## Tiền làm đồ án
 
@@ -127,11 +148,11 @@ khoảng 0,6 USD).
 | Phase 8.2 (áp phương án thắng + cải tiến từng khâu) | 0,23 |
 | Hai đợt sửa kho | 0,12 |
 | Đóng gói Phase 1–8 (chữ hiện dần, đo cuối) | 0,15 |
-| Phase 9 (trợ lý, giao diện, đóng gói), tính tới 11/11 | 3,88 |
+| Phase 9 (trợ lý, giao diện, đóng gói, lượt đo giữa kỳ), tính tới hết 12/11 | khoảng 4,61 |
 | Hỏi bằng ảnh, tính tới 07/11 | 0,10 |
-| **Cộng từ 24/10 tới 11/11** | **khoảng 4,7 USD ≈ 118.000 đồng** |
+| **Cộng từ 24/10 tới hết 12/11** | **khoảng 5,38 USD ≈ 135.000 đồng** (tới hết 12/11) |
 
-Phase 0–6 (08–10/2026) không có số tiền trong tài liệu; ngày 24/10 (công cụ chấm + điểm mốc) khoảng 0,09 USD. Phần agent đọc, viết, kiểm dùng gói thuê bao Claude, không tính vào bảng. Phần lớn tiền (khoảng 82 %)
+Phase 0–6 (08–10/2026) không có số tiền trong tài liệu; ngày 24/10 (công cụ chấm + điểm mốc) khoảng 0,09 USD. Phần agent đọc, viết, kiểm dùng gói thuê bao Claude, không tính vào bảng. Phần lớn tiền (khoảng 86 %)
 nằm ở Phase 9, gồm cả lượt đo của những tính năng thử rồi bỏ. Mỗi phiên có trần tiền, ban đầu ≤ 1 USD / phiên; từ 07/11 anh cho vượt khi cần, nhưng mỗi việc
 vẫn ghi tiền thật từ log.
 
@@ -150,7 +171,7 @@ vẫn ghi tiền thật từ log.
 2. **Anh quyết** phạm vi, tiền, dữ liệu, hướng sản phẩm; **agent làm** và **kiểm chéo nhau**. Luật ghi trước, giữ hồ sơ kết quả âm, cổng kiểm trước khi vào
    bản chính, vòng tự soi.
 3. **Rào bằng máy** chặn dữ liệu riêng tư trước khi lên GitHub công khai. Chuyện thật: "nhớ quét" bị lọt 2 lần ⇒ đưa vào hook ⇒ chặn đúng ít nhất 4 lần;
-   những gì hook kiểm được thì chưa lần nào lọt. Tiền API cả giai đoạn từ 24/10: khoảng 4,7 USD.
+   những gì hook kiểm được thì chưa lần nào lọt. Tiền API cả giai đoạn từ 24/10 tới hết 12/11: khoảng 5,38 USD ≈ 135.000 đồng.
 
 **Bài sau:** Bài 21 — Dữ liệu người dùng đi đâu, và bảo mật.
 
@@ -174,8 +195,11 @@ vẫn ghi tiền thật từ log.
 - Sổ cải tiến 25 vòng, 120 sự cố; giờ ước lọt ≥ 11 lần; 4 tính năng âm ≈ 0,6 USD (S110): `session_prompt/SO_CAI_TIEN_CACH_LAM.md` [tài liệu]
 - Tiền: `session_prompt/Project_Status.md` §2, §3, §5; `session_prompt/PROJECT_HISTORY.md`; tổng ≈ 4,7 USD là cộng tay của agent con, có thể lệch nhẹ (một số ngày không tách tiền) [suy ra]
 - Bản ghi số liệu (agent con, chỉ đọc, 11/11): `data/hoc_cung_user_2026-11-10/fact_bai_20_lam_do_an.md` (riêng tư)
+- Luật "Đếm lỗi trước khi xây" (anh duyệt 19:12 10/11/2026): `session_prompt/Session_Prompt.md` §7 [quyết định của anh]; "một loạt tính năng thử 09/11 ra âm hoặc quay về phương án cũ" (G hơn 4 vòng chỉnh rồi về phương án B; T2, T3, T4 âm): `session_prompt/SO_CAI_TIEN_CACH_LAM.md` S110 [tài liệu]; ba ý tưởng bị hạ: `bao_cao_he_thong/nhat_ky/2026-11-12_do_giua_ky_lich_trinh.md`; số đếm (3 / 158, 1/2 · 1/2 · 0/2, 55 / 32 / 0 / 0 / 5; 155 câu 32 · 2 · 0, 131 · 10 · 0, 11 câu số ngoài 10 đoạn đầu: 7 xem tay giải thích được + 4 có tìm thêm không kiểm được; 4 câu 5 → 4, 0 / 4 tìm thêm, 37–84 %, 132 câu tỉ lệ 1,00, 10 câu tăng; ngưỡng ≥ 3 do E ghi trước; thu hẹp "đường web chậm"): `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` §3b (a), (b), (c), (e), §3d; `…/e_khoang_cach_agentic.md` §4 [đã chạy]
+- Phase 9 ≈ 4,61 USD tới hết 12/11: `session_prompt/Project_Status.md` (dòng "Bây giờ" 22:26 12/11 và bảng Phase); `session_prompt/PROJECT_HISTORY.md` mục 12/11 [đã chạy]; tổng ≈ 5,38 = 0,17 + 0,23 + 0,12 + 0,15 + 4,61 + 0,10, cộng tay [suy ra]. Bản ghi số liệu 12–13/11: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
 - Ví dụ văn phòng du lịch là ví dụ tự đặt.
 
 - **Sửa 15:17 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn; biên bản `data/hoc_cung_user_2026-11-10/review_bai_20_21.md`, riêng tư): "[Nguồn 2]" là kiểu model viết (bản trước ghi ngược); 8.1 đo 10 quyết định quan trọng nhất, không phải cả 56 (`report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`); 4 lần chặn = 1 quét trùng + 3 tên dự án khác; mô tả câu quá cụ thể đã lọt ≥ 4 lần (sổ cải tiến S40); giờ ước vẫn lọt sau rào (W37, S119); đổi model 23/10 và 7A–7B do Claude; hỏi bằng ảnh là Phase 10; 24/10 ≈ 0,087 USD (`session_prompt/PROJECT_HISTORY.md`); 80 báo cáo cũ còn trích kho (`94_…` §2); `scripts/grep_kb.sh` loại `evaluation/`, `meta/`, `_source-dumps/`, `*sealed*`.
+- **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): bộ kiểm số: 11 câu có số ngoài 10 đoạn đầu, 7 xem tay giải thích được, 4 không kiểm được (CPO §3b (c)); "4 tính năng đều âm" ⇒ "một loạt tính năng thử 09/11 ra âm hoặc quay về phương án cũ" (S110), sửa ở cả hai chỗ; tổng 5,38 USD tới hết 12/11; bảng từ bỏ đường dẫn.
 
 </details>

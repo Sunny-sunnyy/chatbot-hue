@@ -1,7 +1,14 @@
 # STATUS B — PHIÊN 13/11 (mở 19:47 13/11/2026, terminal `hue-rag-83`; A `hue-rag-43` · C `hue-rag-eb` · E `hue-rag-e8`)
 
 ## Đang làm — "Lên kế hoạch" đợt 1 (A giao 19:49 13/11/2026; plan bản 3, spec 3.3; trần 0,20 USD)
-- Worktree `/tmp/b_lkh`, nhánh `p9-len-ke-hoach-v2` từ `main` `d5ea552` (symlink `data/`, `knowledge-base-hue/`). **Chưa commit / push** (chờ A trả lời quyền commit nhánh).
+- Worktree `/tmp/b_lkh`, nhánh `p9-len-ke-hoach-v2` từ `main` `d5ea552` (symlink `data/`, `knowledge-base-hue/`). A cho commit + push nhánh sau mỗi bước: (a) `b6dfd96` · (b) `edbeefb` (đã push). `main` có `9d6a0f7` (bật cờ hết lượt tìm) ⇒ rebase trước merge.
+- **Bước (c) XONG (20:37 13/11/2026) — commit `be347d9` (push):** `llm/len_ke_hoach.py` (lượt bản 2: khung ⇒ nguồn ⇒ `lich_khung` trước lần gọi model ⇒ `{cau: [{id_muc, cau}]}` ⇒ kiểm từng câu ⇒ dự phòng theo mục); agent `lich_v2_agent` + lời dặn `LICH_V2_LOI_DAN` (khung C, không sửa chữ);
+  thẻ `LichV2` ở giao diện. Thử sớm 6 khung **0,00264 USD** (`data/len_ke_hoach_v2_2026-11-13/thu_som_c.json`): 38 / 38 mục, 0 thiếu / lặp / id lạ, dự phòng 2 / 38 (câu rỗng), thay nhầm 0, khung 49–360 ms, đủ câu trung vị ≈ 5,2 s — D3 không chạm.
+  Test mới 65 đạt; chạm có `--env-file` 381 đạt; Q1 228 / 228. Tiền đợt 1: **0,00264 / 0,20**. Ca kiểm phụ của E cho nghiệm thu: `data/phase_9/lich_trinh/bo_do_v2/ca_phu_13_11.jsonl` (báo riêng, không vào luật đạt).
+- **Bước (b) XONG (20:22 13/11/2026), 0 USD:** `llm/lich_trinh_v2.py` (nap_bang_v2, xep_v2, kiem_khung_v2); bảng `data/phase_9/lich_trinh/diem_v8.json` md5 `6335b21eb243` (Nhị Hồ tháng 9–2; Cung An Định thêm nhãn lễ hội — A quyết SAU khi sàn trượt 43 %);
+  mô phỏng 960 khung trong pytest: 0 lỗi, mọi "Luôn" đạt; sàn kiểu đi 81 % · bậc thang 58 % · không bao giờ xếp 1 · sở thích thấp nhất 50 % (từng tổ hợp, A chốt cách đọc) ⇒ `len_ke_hoach_so_thich_an: []`.
+  2 lỗi luật mô phỏng bắt được, đã sửa + test. Test mới 58 đạt; chạm cờ có `--env-file` 347 đạt; Q1 228 / 228. Số in: `data/len_ke_hoach_v2_2026-11-13/mo_phong_b_sau_an_dinh.txt`.
+  Giới hạn 4 ngày / 1 sở thích giữ tới (c) (bộ xếp mới nối vào đường gọi model ở (c)). Danh sách Docker thêm `diem_v8.json` (bản cũ `/tmp/dung_dockerignore.py.bak`).
 - **Khai báo sửa (trong worktree):** `backend/llm/hoi_lai.py`, `backend/llm/assistant.py` (`AssistantFlags`), `backend/api/routes/chat.py`, `backend/api/routes/cong.py`, `backend/config/settings.yaml`,
   `backend/tests/test_len_ke_hoach_v2.py` (mới), `frontend/src/pages.jsx`, `App.jsx`, `chat.jsx`, `index.css`; bước (b)+ thêm `backend/llm/lich_trinh.py`, `answer_stream.py`, `ngay_lich.py`, bảng `data/phase_9/lich_trinh/diem_v8.json` / `v9`, `data/phase_12/deploy_nhap/dung_dockerignore.py`.
   Số đo / công cụ: `data/len_ke_hoach_v2_2026-11-13/`. Report: `report_agent/2026-11-12_ra_khoang_cach/b_len_ke_hoach_dot_1_implementation.md` (viết cuối đợt).
