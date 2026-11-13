@@ -2,6 +2,12 @@
 
 ## Đang làm — "Lên kế hoạch" đợt 1 (A giao 19:49 13/11/2026; plan bản 3, spec 3.3; trần 0,20 USD)
 - Worktree `/tmp/b_lkh`, nhánh `p9-len-ke-hoach-v2` từ `main` `d5ea552` (symlink `data/`, `knowledge-base-hue/`). A cho commit + push nhánh sau mỗi bước: (a) `b6dfd96` · (b) `edbeefb` (đã push). `main` có `9d6a0f7` (bật cờ hết lượt tìm) ⇒ rebase trước merge.
+- **21:23 13/11/2026 — ĐO XONG, đợt 1 TRƯỢT (A quyết không bật cờ; bộ quyết 12 CHƯA MỞ, để dành; Playwright nghiệm thu dời).** Report `report_agent/2026-11-12_ra_khoang_cach/b_len_ke_hoach_dot_1_implementation.md`;
+  bảng đề xuất cột "đoạn mô tả" (0 USD, chưa nối code) `data/len_ke_hoach_v2_2026-11-13/de_xuat_doan_mo_ta.md` — 8 điểm có chunk_id, 2 điểm cần bổ sung kho. Server 8893 đã tắt; cờ worktree tắt; cây `/tmp/b_lkh` sạch (head `49daaa7`).
+- **NGHIỆM THU (21:19 13/11/2026) — đang chờ A:** (d) `fe91807`→rebase, (e) + sửa theo định nghĩa chấm + `dong_cua_thu` + `so_thich []` + vòng chỉnh chọn đoạn ⇒ head **`49daaa7`** (push, rebase lên main `0d4ee6e`). Test rộng có khoá 930 / 930 (trước vòng chỉnh); Q1 228 / 228 so main `0d4ee6e`.
+  Mốc main cùng buổi: cả câu trung vị 5,07 s (0,0089 USD + lượt dở 0,0065). Bộ 20 lượt 1: dự phòng ≤ 1 ở 16 / 20 ✗ (Y07 ModelBehaviorError) ⇒ A chọn vòng chỉnh (a) chọn đoạn tả điểm ⇒ lượt 2: **17 / 20 ✗**, 1 lịch > 30 % ✗; ý 1–6 20 / 20 ✓; đủ câu 5,43 s ✓; khung > 1 s 1 / 20 (dự báo lạnh) ✗.
+  ⇒ theo A: KHÔNG bật cờ, không vòng nữa. Hỏi A: có chạy bộ quyết 12 ×2 (+ người chấm của E) + Playwright để đủ hồ sơ D4 không. Tiền đợt 1 ≈ 0,037 / 0,20. Server nhánh 8893 (cờ bật TẠM trong worktree `settings.yaml`, chưa commit) đang chạy.
+  Hồ sơ: `data/len_ke_hoach_v2_2026-11-13/nghiem_thu/` (moc_main, v2_20, v2_20_luot2), `do_doan/`, công cụ `tools/nghiem_thu.py`, `xuat_mu.py`, `tien_log.py`.
 - **Bước (c) XONG (20:37 13/11/2026) — commit `be347d9` (push):** `llm/len_ke_hoach.py` (lượt bản 2: khung ⇒ nguồn ⇒ `lich_khung` trước lần gọi model ⇒ `{cau: [{id_muc, cau}]}` ⇒ kiểm từng câu ⇒ dự phòng theo mục); agent `lich_v2_agent` + lời dặn `LICH_V2_LOI_DAN` (khung C, không sửa chữ);
   thẻ `LichV2` ở giao diện. Thử sớm 6 khung **0,00264 USD** (`data/len_ke_hoach_v2_2026-11-13/thu_som_c.json`): 38 / 38 mục, 0 thiếu / lặp / id lạ, dự phòng 2 / 38 (câu rỗng), thay nhầm 0, khung 49–360 ms, đủ câu trung vị ≈ 5,2 s — D3 không chạm.
   Test mới 65 đạt; chạm có `--env-file` 381 đạt; Q1 228 / 228. Tiền đợt 1: **0,00264 / 0,20**. Ca kiểm phụ của E cho nghiệm thu: `data/phase_9/lich_trinh/bo_do_v2/ca_phu_13_11.jsonl` (báo riêng, không vào luật đạt).

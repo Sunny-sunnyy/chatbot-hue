@@ -2,13 +2,16 @@
 
 ## PHIÊN 13/11
 
+*Tên quán / cơ sở lấy từ kho hoặc `data/` ghi bằng nhãn (Q-…, L-…); bảng nhãn ở `data/osm_quan_2026-11-12/nhan_status_c_13_11.md` và `data/luu_tru_2026-11-12/nhan_review_c_13_11.md` (private).*
+
 **Phiếu ảnh bản 2 XONG:** `data/phase_9/lich_trinh/phieu_anh_2026-11-13_ban2.md` (4 ảnh mới CHƯA AI NHÌN; #6, #16 không có ảnh thay ⇒ thẻ không ảnh). Commons 429 khi gửi dồn ⇒ chạy chậm.
 **So mốc bước (b) XONG (20:27 13/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_so_moc_buoc_b.md` — khớp 4 / 4 sàn của B (81 % · 58 % · 1 · 50 %); script `tools/dem_lai_buoc_b.py`; `mo_phong_*.py` nhận biến BANG. Lễ hội / chụp ảnh đúng ngưỡng 50 %.
-**Kiểm độc lập bai_hoc/ XONG (20:36 13/11/2026):** `data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md` — 0 sai số; 2 hiểu nhầm ("xử lý trước lượt cuối" ⇒ "sửa hoặc nhận giới hạn"; bài 19 dòng 35 thiếu "phạm theo chữ") + 6 nhỏ; 5 chỗ chưa chắc của người viết đã trả lời. Đã nhắn A. **Rảnh — chờ việc.**
+**Kiểm độc lập bai_hoc/ XONG (20:36 13/11/2026):** `data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md` — 0 sai số; 2 hiểu nhầm ("xử lý trước lượt cuối" ⇒ "sửa hoặc nhận giới hạn"; bài 19 dòng 35 thiếu "phạm theo chữ") + 6 nhỏ; 5 chỗ chưa chắc của người viết đã trả lời. Đã nhắn A. **Rảnh — chờ việc** (21:20 13/11/2026): B đo xong, chạy việc nặng lại được; C không có việc mở (kho 3 chờ User).
+**Gỡ tên / địa chỉ khỏi file tracked XONG (21:33 13/11/2026, A giao — sự cố e74c6df):** `c_review_kho3_e.md` (nhãn L-a…L-e) + file này (nhãn Q-a…Q-c); bảng nhãn ở `data/` (private). Lịch sử git còn tên — A / User quyết. **Bẫy cho C:** report tracked tả cơ sở / quán ở mức loại ngay khi viết, kể cả trong review và STATUS.
 Khai báo sửa: file này · `data/osm_quan_2026-11-12/` (script khớp + bảng khớp mới + biên bản) · `data/sua_kho_2026-11-12_an_gan/` (script dựng, `quan_theo_cum.json`, phiếu quán + mốc, bài nháp). Không chạm `knowledge-base-hue/`.
 
 **Kho 3 ăn uống — 4 bước XONG, chờ A (19:55 13/11/2026, 0 USD, không gọi mạng, không chạm kho):**
-- (1) Luật khớp bản 2 (`data/osm_quan_2026-11-12/tools/khop_osm_v2.py`, luật ghi trước) ⇒ `khop_bai_kho_v2.json` 13 dòng; **đọc tay 22 dòng** (13 + 9 dòng bản 1 bị bỏ) ⇒ `doc_tay_v2.json`: nhận 13 (thêm tay HANOK), bỏ 9. Bản 1 không dùng được 6 / 22 (4 khớp nhầm rõ, 1 trong đó gắn "chắc").
+- (1) Luật khớp bản 2 (`data/osm_quan_2026-11-12/tools/khop_osm_v2.py`, luật ghi trước) ⇒ `khop_bai_kho_v2.json` 13 dòng; **đọc tay 22 dòng** (13 + 9 dòng bản 1 bị bỏ) ⇒ `doc_tay_v2.json`: nhận 13 (thêm tay 1 dòng — Q-a), bỏ 9. Bản 1 không dùng được 6 / 22 (4 khớp nhầm rõ, 1 trong đó gắn "chắc").
 - (2) `dung_quan_theo_cum.py` bản 2: 13 toạ độ OSM cho bài kho + OSM nguồn thứ ba cho cụm / mốc < 3 quán (đọc tay 12 quán được chọn, loại 2 ⇒ `BO_TAY_OSM`). Sửa thêm lỗi làm tròn bản 1 (285 m ⇒ "300 m" mà 303 m ⇒ "0,3 km").
 - (3) Tiêu đề mục bài nháp: dài nhất 305 ⇒ 48 ký tự; phường + tên điểm vào câu đầu đoạn.
 - (4) Phiếu quán + mốc bản 2 (bảng A2 OSM chờ User; bảng D thêm cột OSM). md5: `quan_theo_cum.json` `2c96ac42e946` · phiếu `ce7264f07c17` · bài nháp `1b387b1c4cc2`.
@@ -17,7 +20,7 @@ Khai báo sửa: file này · `data/osm_quan_2026-11-12/` (script khớp + bản
 - **Lỗi quy trình của C:** khi đọc tay đã `grep` thẳng 3 bài quán trong `knowledge-base-hue/foods/restaurants/` (dòng địa chỉ) thay vì `scripts/grep_kb.sh` — không chạm câu kín / Golden, nhưng sai luật §5; lần sau dùng `grep_kb.sh`.
 
 **Review chéo kho 3 của E XONG (20:04 13/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_review_kho3_e.md` — changes_requested: M-1 151 dòng có hạng = 143 cơ sở (316 = 293); bài đi lại 4 minor; WebFetch 3/3 ý khớp. Đã nhắn E + A.
-**Sửa 3 minor review E cho phần ăn uống XONG (20:04 13/11/2026):** Cơm hến Hoa Đông ⇒ ước (không gán cụm) · bỏ mức "osm", thêm `nguon_toa_do` · Trốn: số kiệt. Gán cụm 28 ⇒ 27. md5: 9416b5c6adca  quan_theo_cum.json;48475905ac68  phieu_quan_va_moc_2026-11-12.md;7b57ee5e389e  bai_nhap_an_gi_gan_diem_tham_quan.md;722d72c97292  ../osm_quan_2026-11-12/doc_tay_v2.json;
+**Sửa 3 minor review E cho phần ăn uống XONG (20:04 13/11/2026):** quán Q-b ⇒ ước (không gán cụm) · bỏ mức "osm", thêm `nguon_toa_do` · quán Q-c: số kiệt. Gán cụm 28 ⇒ 27. md5: 9416b5c6adca  quan_theo_cum.json;48475905ac68  phieu_quan_va_moc_2026-11-12.md;7b57ee5e389e  bai_nhap_an_gi_gan_diem_tham_quan.md;722d72c97292  ../osm_quan_2026-11-12/doc_tay_v2.json;
 **Kiểm lại kho 3 của E vòng 2 XONG (20:06 13/11/2026):** ready (mục 7 `c_review_kho3_e.md`): 142 cơ sở có hạng, 140 / 142 gán khu; bài đi lại m-2…m-5 đóng.
 **Photon ⇒ bảng quán XONG (20:08 13/11/2026, 0 USD):** 9 dòng đạt luật, 7 trùng OSM (cùng gốc), 2 dùng mới; gán cụm 27 ⇒ 28; md5 quan_theo_cum eae693cac1b0 · phiếu 6d0e46a572fe · bài nháp 8cfe17ac9e4f (chi tiết bien_ban.md OSM).
 **Đếm cho câu "OSM bảng riêng / kho chính" XONG:** `data/osm_quan_2026-11-12/dem_cho_cau_kho_rieng.md` (giữ 471, lọc tự động bỏ nhầm ~32 % — cần đọc tay; +91 đoạn = +1,1 %; 5 / 8 cụm ≥ 3 quán).
