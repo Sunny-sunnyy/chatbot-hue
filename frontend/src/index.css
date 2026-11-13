@@ -260,6 +260,11 @@ picture { display: contents; }
 .bd-khung { height: 260px; width: 100%; border-radius: 12px; border: 1px solid var(--color-line); z-index: 0; }
 .ghim { display: flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-accent); color: #fff;
         font-size: 14px; font-weight: 600; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .35); }
+/* Đợt 2 "Lên kế hoạch": mỗi ngày một màu ghim (chữ trắng, tương phản ≥ 4,5 : 1); ngày 1 = màu chính như cũ */
+.ghim.ghim-ngay-1 { background: #9A3412; }
+.ghim.ghim-ngay-2 { background: #6D28D9; }
+.ghim.ghim-ngay-3 { background: #0E7490; }
+.ghim.ghim-ngay-4 { background: #4D7C0F; }
 .bd-ds { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 15px; }
 .bd-ds a { color: var(--color-accent); text-decoration: underline; }
 .bd-so { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 999px;

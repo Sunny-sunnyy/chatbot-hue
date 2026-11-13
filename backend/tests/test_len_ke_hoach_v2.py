@@ -830,3 +830,51 @@ def test_v2_turn_uses_chosen_passage(deps, tmp_path):
     asyncio.run(lkh.chuan_bi("x", service, cb, trace, dataclasses.replace(V2, bang_lich_v2=v2.nap_bang_v2(p)), None))
     muc = next(m for m in v2.moi_muc(trace.lich_v2["lich"]) if m["id_diem"] == dau)
     assert trace.seen_ids[muc["nguon"] - 1] == chon.id  # mã [n] của mục trỏ đúng đoạn chọn sẵn
+
+
+# =====================================================================================================================================
+# Đợt 2 phần (A): bản đồ trong lịch bản 2 (plan `2026-11-13-len-ke-hoach-dot-2-plan.md` bước A1) — 0 USD
+# =====================================================================================================================================
+
+V2_BD = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, ban_do_lich=True)
+
+
+def test_map_table_coverage_floor():
+    """Sàn A: điểm của bảng v8 thiếu toạ độ ≤ 3 (mỗi điểm có lý do ở biên bản A0 của C); bảng toạ độ nạp theo bảng v8 khi cờ bản 2 bật."""
+    ids = set(V2_BD.bang_lich_v2.theo_id)
+    assert set(V2_BD.toa_do_lich) <= ids and 0 < len(ids - set(V2_BD.toa_do_lich)) <= 3  # có điểm null ⇒ đường "chưa có trên bản đồ" được thử
+    assert V2.toa_do_lich is None or not V2.ban_do_lich  # cờ bản đồ tắt ⇒ không nạp
+
+
+def test_map_always_rules_on_960_frames(mo_phong):
+    """Luôn: mọi toạ độ = đúng dòng bảng theo id_diem; mục thiếu ⇒ null (không ghim đoán); mục "nghỉ" không toạ độ; cờ tắt ⇒ `lich` giống hệt đợt 1;
+    toạ độ không vào tin nhắn gửi model."""
+    b, kq = mo_phong
+    td = V2_BD.toa_do_lich
+    for k in kq.values():
+        nguon = dict.fromkeys(v2.diem_v2(k), 1)
+        tat, bat = v2.dung_lich(b, k, nguon), v2.dung_lich(b, k, nguon, toa_do=td)
+        assert all(m["toa_do"] is None for ng in tat["ngay"] for m in ng["muc"])
+        for ng_t, ng_b in zip(tat["ngay"], bat["ngay"]):
+            for mt, mb in zip(ng_t["muc"], ng_b["muc"]):
+                assert {**mb, "toa_do": None} == mt  # chỉ khác trường toạ độ
+                assert mb["toa_do"] == (list(td[mb["id_diem"]]) if mb["id_diem"] in td else None)
+        assert v2.tin_nhan_model(tat, "tl") == v2.tin_nhan_model(bat, "tl")
+
+
+def test_map_flag_on_turn_sends_same_model_text(app_client):
+    app, client = app_client
+    sent = {}
+    for name, flags in (("tat", V2), ("bat", V2_BD)):
+        gen = generator(lambda n, kw: viet_dung(kw))
+        original = _with(app, flags, gen)
+        client.cookies.clear()
+        try:
+            body = client.post("/api/chat", json={"query": "x", "bieu_mau": True, "truong": {"so_ngay": "2", "kieu_di": "can_bang"}}).json()
+        finally:
+            _restore(app, original)
+        (call,) = gen.client.responses.calls
+        sent[name] = (call["instructions"], chu_gui(call), body["lich_trinh"]["lich"])
+    assert sent["tat"][:2] == sent["bat"][:2]
+    muc = [m for ng in sent["bat"][2]["ngay"] for m in ng["muc"] if m["loai"] != "nghi"]
+    assert any(m["toa_do"] for m in muc) and all(m["toa_do"] is None for ng in sent["tat"][2]["ngay"] for m in ng["muc"])

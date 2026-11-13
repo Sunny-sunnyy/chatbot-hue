@@ -42,7 +42,7 @@ export default function BanDoLich({ items }) {
     const map = L.map(khung.current, { scrollWheelZoom: false });
     L.tileLayer(TILE, { maxZoom: 18, attribution: GHI_CONG }).addTo(map);
     for (const item of coToaDo) {
-      const icon = L.divIcon({ className: "ghim", html: String(item.thu_tu), iconSize: [30, 30] });
+      const icon = L.divIcon({ className: `ghim ghim-ngay-${(item.ngay - 1) % 5}`, html: String(item.thu_tu), iconSize: [30, 30] });  // màu theo ngày (đợt 2)
       L.marker(item.toa_do, { icon, title: item.ten, alt: item.ten, keyboard: true }).bindPopup(oGhim(item)).addTo(map);
     }
     map.fitBounds(L.latLngBounds(coToaDo.map(i => i.toa_do)), { padding: [28, 28], maxZoom: 15 });

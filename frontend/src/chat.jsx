@@ -479,6 +479,13 @@ function LichV2({ turn, onEditPlan }) {
   const lich = turn.lichV2;
   const cau = turn.cauV2 || {};
   const xong = turn.phase === "done";
+  // đợt 2: bản đồ chỉ khi server gắn toạ độ (cờ `ban_do_lich`); thứ tự ghim = thứ tự mục trong ngày, mục "nghỉ" không ghim; thiếu toạ độ ⇒ danh sách
+  // ghi "chưa có trên bản đồ" (BanDoLich), không ghim đoán
+  const banDo = lich.ngay.some(ng => ng.muc.some(m => toaDoHopLe(m.toa_do)))
+    ? lich.ngay.flatMap(ng => ng.muc.filter(m => m.loai === "tham_quan" || m.loai === "hoat_dong_toi")
+        .filter(m => typeof m.map_url === "string" && m.map_url.startsWith(MAP_PREFIX))
+        .map((m, i) => ({ ten: m.ten, map_url: m.map_url, ngay: ng.ngay, buoi: m.buoi, thu_tu: i + 1, toa_do: m.toa_do })))
+    : [];
   return (
     <div className="bubble lich-v2">
       <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
@@ -506,6 +513,7 @@ function LichV2({ turn, onEditPlan }) {
       )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
       {turn.notice && <p className="notice">{turn.notice}</p>}
+      {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} /></Suspense>}
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />

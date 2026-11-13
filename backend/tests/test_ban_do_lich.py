@@ -25,7 +25,7 @@ def test_coordinates_loaded_only_for_itinerary_points_that_have_them():
     raw = json.loads(TOA_DO_PATH.read_text(encoding="utf-8"))["diem"]
     expected = {d["id"]: (d["vi_do"], d["kinh_do"]) for d in raw if d["id"] in BANG.theo_id and d["vi_do"] is not None}
     assert TOA_DO == expected
-    assert 0 < len(TOA_DO) < len(BANG.diem)  # có điểm thiếu toạ độ ⇒ giao diện phải xử lý `None`
+    assert 0 < len(TOA_DO) <= len(BANG.diem)  # bảng v7 (13/11) phủ đủ 28 điểm v3; ca "thiếu toạ độ" giữ ở test bản 2 (bảng v8 có điểm null)
 
 
 def test_map_items_follow_the_plan_order_with_per_day_numbers():

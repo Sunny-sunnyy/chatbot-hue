@@ -132,12 +132,15 @@ class AssistantFlags:
         values = {name: bool(config.get(name, cls.__dataclass_fields__[name].default)) for name in BOOL_FIELDS}
         # chỉ nạp khi một trong hai cờ lịch bật (clone không có `data/` vẫn chạy cờ tắt)
         bang = nap_bang_lich(settings) if values["lich_trinh"] or values["lich_trinh_bieu_mau"] else None
-        toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang) if values["ban_do_lich"] and bang is not None else None
+        bang_v2 = lt2.nap_bang_v2(BACKEND_DIR / config["lich_trinh_bang_v2"]) if values["len_ke_hoach_v2"] else None
+        # toạ độ nạp theo bảng rộng nhất đang dùng: bảng v8 (bản 2, chứa mọi id của v3) khi cờ bản 2 bật, không thì bảng v3 — một dict theo id
+        bang_toa_do = bang_v2 or bang
+        toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_toa_do) if values["ban_do_lich"] and bang_toa_do is not None else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
-                   bang_lich_v2=lt2.nap_bang_v2(BACKEND_DIR / config["lich_trinh_bang_v2"]) if values["len_ke_hoach_v2"] else None)
+                   bang_lich_v2=bang_v2)
 
     @property
     def so_thich_hien(self) -> tuple[str, ...]:

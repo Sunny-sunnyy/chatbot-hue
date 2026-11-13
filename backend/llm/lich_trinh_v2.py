@@ -452,8 +452,10 @@ def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
 
-def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[str] = ()) -> dict:
-    """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `id_muc` = `n<ngày>-<buổi>-<thứ tự>` (khoá ổn định cho câu của model). Giờ gợi ý,
+def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[str] = (),
+              toa_do: dict | None = None) -> dict:
+    """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `toa_do` (cờ `ban_do_lich`, đợt 2): {id: (vĩ, kinh)} của bảng toạ độ ⇒ mỗi mục mang đúng
+    dòng bảng theo `id_diem`; điểm thiếu ⇒ null (không ghim đoán); None ⇒ mọi mục null như đợt 1. Toạ độ không vào tin nhắn gửi model. `id_muc` = `n<ngày>-<buổi>-<thứ tự>` (khoá ổn định cho câu của model). Giờ gợi ý,
     ảnh, toạ độ, ngày tháng / thứ: các bước sau (d), (e), đợt 2 — ở đây để null."""
     ngay = []
     for ng in khung["ngay"]:
@@ -466,7 +468,8 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 lap_lai = toi and id_ in [x for ng0 in khung["ngay"] if ng0["ngay"] < ng["ngay"] for x in ng0["buoi"]["toi"]]
                 muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
                             "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
-                            "nguon": nguon.get(id_), "anh": None, "toa_do": None,
+                            "nguon": nguon.get(id_), "anh": None,
+                            "toa_do": list(toa_do[id_]) if toa_do and id_ in toa_do else None,
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
                                     + (["kiem_lich_dien"] if toi and ngay_that is None else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
