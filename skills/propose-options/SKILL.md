@@ -46,6 +46,7 @@ Thêm phương án "không làm / giữ như cũ" khi đó là lựa chọn th�
 
 ## 3. Khuyến nghị
 
+- **Bàn với cả nhóm trước khi khuyến nghị** (User 22:23 13/11/2026, áp mọi phiên): User thường chọn đúng phương án khuyến nghị ⇒ khuyến nghị gần như là quyết định. Với lựa chọn thật (dữ liệu để đâu, kiến trúc, phạm vi, tiền, hướng sản phẩm) A gửi câu + các phương án cho các session đang mở (B, C, E — agent khác qua User), mỗi người ≤ 10 dòng gửi cả nhóm: chọn gì, phản biện, rủi ro chưa ai nêu; A chốt sau tối đa 2 vòng (tin đi chéo ⇒ A chốt theo nội dung, không theo người nói sau cùng) rồi trình User **một** khuyến nghị, ghi chỗ nhóm không đồng ý. Không áp cho núm nhỏ / chênh người dùng không cảm nhận được (A tự quyết, ghi report).
 - Nói **lý do**, và **thông tin nào nếu có sẽ làm đảo khuyến nghị**.
 - Tách rõ: **đã đo / có trong code** ↔ **ước lượng** ↔ **giả thuyết**.
 - Phản biện cả phương án mình khuyến nghị: khi nào nó thất bại.

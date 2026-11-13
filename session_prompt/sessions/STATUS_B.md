@@ -1,7 +1,17 @@
 # STATUS B — PHIÊN 13/11 (mở 19:47 13/11/2026, terminal `hue-rag-83`; A `hue-rag-43` · C `hue-rag-eb` · E `hue-rag-e8`)
 
+## PHIÊN SAU ĐỌC TRƯỚC (B viết 22:02 13/11/2026, User dặn đo để mai)
+
+- **Nhánh `p9-len-ke-hoach-v2` head `2d34e9e`** (push; rebase trên `main` `0d4ee6e`; cờ `len_ke_hoach_v2` + `ban_do_lich` TẮT). Worktree `/tmp/b_lkh` (cây sạch; `/tmp` mất khi máy khởi động lại ⇒ `git worktree prune && git worktree add /tmp/b_lkh p9-len-ke-hoach-v2` + symlink `data/`, `knowledge-base-hue/`; `cd frontend && npm ci && npm run build`).
+- **Việc đầu phiên sau (chờ A báo):** E ghi 2 bài kho + dựng lại chỉ mục (chunk_id đổi) ⇒ B điền cột `doan_mo_ta` trong `data/phase_9/lich_trinh/diem_v8.json` theo chunk_id MỚI (chọn lại theo `data/len_ke_hoach_v2_2026-11-13/de_xuat_doan_mo_ta.md` + 2 điểm có bài mới; công cụ `tools/ung_vien_doan.py`; khởi động khi bật cờ tự kiểm mã) ⇒ **nghiệm thu lại: bộ 20 + MỞ bộ quyết 12 ×2 (E giao 2 người chấm mù; B xuất file bằng `tools/xuat_mu.py`, bảng khoá để thư mục riêng) + Playwright 2 khổ màn** ⇒ E review cả nhánh.
+- Đã xong phiên 13/11: đợt 1 (a)–(e) code + nghiệm thu (TRƯỢT sàn câu dự phòng, A quyết không bật) · cột `doan_mo_ta` (code `3d5cc01`, chưa điền) · bản đồ A1 đợt 2 (`2d34e9e`; "0 lỗi console" chưa kiểm được — DNS host tile, A kiểm trên trình duyệt User). Report `report_agent/2026-11-12_ra_khoang_cach/b_len_ke_hoach_dot_1_implementation.md` §0–§8; E review đợt 1 ready.
+- Ghi nhớ khi nghiệm thu lại: bật cờ TẠM trong worktree (không commit `settings.yaml`); báo A trước khi chạy server; tiền: `tools/tien_log.py`; mốc main cùng buổi bằng `tools/nghiem_thu.py moc`.
+- Tiền B phiên 13/11 ≈ **0,045 USD** (đợt 1 ≈ 0,037 + bản đồ 0,0041 + mốc lượt dở). Không server / container nào của B đang chạy.
+
 ## Đang làm — "Lên kế hoạch" đợt 1 (A giao 19:49 13/11/2026; plan bản 3, spec 3.3; trần 0,20 USD)
 - Worktree `/tmp/b_lkh`, nhánh `p9-len-ke-hoach-v2` từ `main` `d5ea552` (symlink `data/`, `knowledge-base-hue/`). A cho commit + push nhánh sau mỗi bước: (a) `b6dfd96` · (b) `edbeefb` (đã push). `main` có `9d6a0f7` (bật cờ hết lượt tìm) ⇒ rebase trước merge.
+- **21:59 13/11/2026 — bản đồ A1 đợt 2 XONG `2d34e9e`** (report §8; 0 lỗi console CHƯA KIỂM ĐƯỢC vì máy không phân giải DNS host tile). Chờ: dựng lại chỉ mục ⇒ điền `doan_mo_ta`.
+- **21:47 13/11/2026 — cột "đoạn mô tả" (code) XONG `3d5cc01`, chờ dựng lại chỉ mục để điền mã.** Kế tiếp: bản đồ A1 đợt 2 (C xong toạ độ v7 `158e184154de`) — làm sau khi điền xong mã (A: một việc xong rồi mới mở việc kia).
 - **21:23 13/11/2026 — ĐO XONG, đợt 1 TRƯỢT (A quyết không bật cờ; bộ quyết 12 CHƯA MỞ, để dành; Playwright nghiệm thu dời).** Report `report_agent/2026-11-12_ra_khoang_cach/b_len_ke_hoach_dot_1_implementation.md`;
   bảng đề xuất cột "đoạn mô tả" (0 USD, chưa nối code) `data/len_ke_hoach_v2_2026-11-13/de_xuat_doan_mo_ta.md` — 8 điểm có chunk_id, 2 điểm cần bổ sung kho. Server 8893 đã tắt; cờ worktree tắt; cây `/tmp/b_lkh` sạch (head `49daaa7`).
 - **NGHIỆM THU (21:19 13/11/2026) — đang chờ A:** (d) `fe91807`→rebase, (e) + sửa theo định nghĩa chấm + `dong_cua_thu` + `so_thich []` + vòng chỉnh chọn đoạn ⇒ head **`49daaa7`** (push, rebase lên main `0d4ee6e`). Test rộng có khoá 930 / 930 (trước vòng chỉnh); Q1 228 / 228 so main `0d4ee6e`.

@@ -127,7 +127,7 @@ không nằm trong danh sách ưu tiên nên bị loại im lặng. E ghi mục 
 ## 5. Lỗi và giới hạn
 
 - **Trượt sàn câu dự phòng** (§0) — gốc là đoạn kho từng điểm. Không bật cờ.
-- **Khung > 1 s ở lượt có dự báo lạnh** (1 / 20): code chờ dự báo rồi mới xếp (ngày mưa đổi thứ tự điểm). Chỉ lượt đầu mỗi 30 phút (cache); lượt nóng ≤ 0,45 s. Cách sửa (chưa làm, A trình User ở D4): (i) gửi khung xếp **không** dự báo trước, rồi gửi lại khung nếu ngày mưa làm đổi thứ tự (~0,5 ngày, cần giao diện chịu được khung đổi) · (ii) làm ấm bộ đệm dự báo khi server khởi động + mỗi 30 phút (~1–2 giờ, thêm một tác vụ nền gọi mạng).
+- **Khung > 1 s ở lượt có dự báo lạnh** (1 / 20) — **User quyết 13/11 (qua A): NHẬN GIỚI HẠN**, không sửa (người dùng không cảm nhận khác 1 s): code chờ dự báo rồi mới xếp (ngày mưa đổi thứ tự điểm). Chỉ lượt đầu mỗi 30 phút (cache); lượt nóng ≤ 0,45 s. Cách sửa (chưa làm, A trình User ở D4): (i) gửi khung xếp **không** dự báo trước, rồi gửi lại khung nếu ngày mưa làm đổi thứ tự (~0,5 ngày, cần giao diện chịu được khung đổi) · (ii) làm ấm bộ đệm dự báo khi server khởi động + mỗi 30 phút (~1–2 giờ, thêm một tác vụ nền gọi mạng).
 - `ModelBehaviorError` 1 / 40 lượt bản 2 (lượt 1) — lịch vẫn đủ khung; lần gọi lỗi không có số token ⇒ USD của lượt đó không đếm được (như đường cũ).
 - Sàn sở thích đứng đúng 50 % ở 2 loại — không có biên.
 - Buổi tối ít đa dạng (kho ít hoạt động có lịch cố định) ⇒ lặp hoạt động diễn mọi tối, có nhãn.
@@ -143,3 +143,27 @@ không nằm trong danh sách ưu tiên nên bị loại im lặng. E ghi mục 
 - **Việc sau từ review E** (minor, sửa ở vòng sau, không mở vòng riêng): (1) `tools/nghiem_thu.py` `cham_code` chưa có điều kiện loại ngay "tên ngoài bảng" (E dò từ khoá: 0 / 330 câu); (2) 3 / 80 tổ hợp lịch 1 ngày + sở thích thiên nhiên / chụp ảnh ra cùng khung ở cả ba kiểu đi mà không có ghi chú giải thích; (3) ghi chú bậc thang lặp từng điểm (một lịch 5 dòng) ⇒ gộp một dòng.
 - **Việc sau** (chưa làm, A 13/11): ghi chú `tam_dung_mua` cho MỌI điểm bị loại theo mùa (hiện chỉ điểm ưu tiên) — một dòng code + test; người dùng mới biết vì sao điểm đó vắng.
 - Worktree `/tmp/b_lkh` giữ (cây sạch, cờ tắt). Không server nào của B đang chạy.
+
+## 7. Vòng sửa bằng dữ liệu — phần code cột "đoạn mô tả" (B, 21:47 13/11/2026; User duyệt mở vòng, A giao)
+
+Commit `3d5cc01` (push, cờ tắt). Giá trị thật **chưa điền** — chờ E viết 2 bài kho ⇒ C review ⇒ ghi kho + dựng lại chỉ mục (chunk_id đổi) ⇒ B điền từ bảng đề xuất `data/len_ke_hoach_v2_2026-11-13/de_xuat_doan_mo_ta.md` (chọn lại mã sau khi dựng lại).
+- Bảng: cột không bắt buộc `doan_mo_ta` = chunk_id; lúc nạp bảng phải là đoạn của **chính file nguồn** của điểm (`<nguon>#<số>`).
+- Lúc khởi động (chỉ khi cờ bản 2 bật): một lần hỏi Qdrant (`retrieval_service.lay_doan`, lọc payload, chỉ đọc). **Chọn: báo lỗi rõ, không bỏ qua** — thiếu mã ⇒ server không khởi động, lỗi nêu đúng mã thiếu. Vì sao: chunk_id đổi sau mỗi lần dựng lại chỉ mục; bỏ qua có log thì lịch lặng lẽ quay về đoạn kém mà không ai thấy (bài học 10/11 "tính năng tắt im lặng"). Kiểm đặt NGOÀI khối bắt lỗi của bước tra cứu (đặt trong đó thì lỗi bị nuốt thành "tra cứu không khả dụng" cho cả chatbot — B thấy khi đọc lại, sửa trước commit).
+- Lượt bản 2: đoạn chọn sẵn ⇒ đoạn tả điểm tìm được (vòng chỉnh 13/11) ⇒ luật cũ.
+- Kiểm: test mới 81 đạt (gồm `lay_doan` trên Qdrant thật, bảng sai khuôn, mã thiếu, lịch dùng đúng đoạn chọn); file chạm có khoá 389 / 389; Q1 228 / 228; thử khởi động thật khi bật cờ: bảng hiện tại ⇒ `/health` 200; bảng có một mã sai ⇒ không khởi động, lỗi nêu mã.
+
+## 8. Đợt 2 phần (A) — bản đồ trong lịch bản 2 (B, 21:59 13/11/2026; plan `docs/superpowers/plans/2026-11-13-len-ke-hoach-dot-2-plan.md` `d0f7bc56add0`, A duyệt)
+
+Commit `2d34e9e` (push, cờ `ban_do_lich` + `len_ke_hoach_v2` tắt). Bảng toạ độ v7 của C (`diem_toa_do_v7.json` md5 `158e184154de`, 33 / 34 điểm bảng v8).
+| Tiêu chí ghi trước (plan đợt 2, phần A) | Kết quả | |
+|---|---|---|
+| Luôn (960 khung): toạ độ = đúng dòng bảng theo `id_diem` · thiếu ⇒ null · mục "nghỉ" không toạ độ · cờ tắt ⇒ `lich` giống hệt · chuỗi gửi model giống khi bật / tắt | đúng ở 960 / 960 (pytest) + test qua route | ĐẠT |
+| Sàn: điểm thiếu toạ độ ≤ 3 | 1 (lý do ở biên bản A0 của C) | ĐẠT |
+| Hệ thống thật, Playwright 1440 + 390, 3 lịch (1 · 3 · 5 ngày): đủ ghim đúng thứ tự mỗi ngày, màu theo ngày | 9 ngày × 2 khổ màn: số trên ghim = số thứ tự các mục có toạ độ; mỗi ngày đúng một màu, 5 ngày 5 màu | ĐẠT |
+| Chỉ host tile; chữ câu hỏi không có trong URL / header gửi host tile | host ngoài duy nhất `tile.openstreetmap.org`; 0 yêu cầu tile chứa chữ câu hỏi | ĐẠT |
+| Câu không lịch ⇒ 0 yêu cầu tile, chunk bản đồ không tải | 0 tile, không tải chunk, không có khối bản đồ (2 khổ màn; chạy lại cho tới hết lượt — lần đầu script chuyển trang sớm, lượt ghi `client_disconnected`) | ĐẠT |
+| 0 lỗi CSP / console | **CHƯA KIỂM ĐƯỢC**: máy đo không phân giải được tên máy chủ tile (`getent` thất bại) ⇒ mọi lỗi console (72 + 44) là `ERR_NAME_NOT_RESOLVED` của ảnh tile; không có lỗi loại khác. Cần một lượt trên máy có mạng phân giải được (vd trình duyệt của User) | NOT VERIFIED |
+| Cỡ: bundle chính ≤ +3 KB gzip; chunk bản đồ ≤ +2 KB | +102 B · +18 B | ĐẠT |
+- Test: file chạm có khoá 384 / 384; một test cũ (`test_ban_do_lich.py`) khẳng định "bảng v3 có điểm thiếu toạ độ" — v7 phủ đủ 28 điểm v3 ⇒ sửa điều kiện; ca "thiếu toạ độ" giữ ở test bản 2. Q1 không chạy (không chạm phần dựng chuỗi — test so chuỗi gửi model bật / tắt cờ thay thế, như plan ghi).
+- Tiền: 0,0041 USD (8 lượt Playwright 0,0032 + 2 lượt câu thường chạy lại 0,0009). Ảnh chụp + số: `data/len_ke_hoach_v2_2026-11-13/ban_do_a1/`.
+- Đổi kèm: khoá `lich_trinh_toa_do` dùng chung với đường lịch cũ ⇒ đường cũ (câu tự do) cũng có thêm toạ độ khi bật cờ bản đồ (đã ghi ở biên bản A0).
