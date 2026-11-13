@@ -562,13 +562,16 @@ def _do_dai_bang_chung(doc: RetrievedDocument) -> int:
 
 
 async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None,
-                          instructions: str, nhap: str | None = None, lay_ve: bool = True, max_doan: int | None = None):
+                          instructions: str, nhap: str | None = None, lay_ve: bool = True, max_doan: int | None = None,
+                          tim_mo_ta: str | None = None):
     """D6: mỗi điểm trong khung — `retrieval_service.search(<tên điểm>)` (đọc Qdrant, không ghi), chọn **đúng 1 đoạn** = đoạn có bằng chứng dài
     nhất trong top-10 có `source` = file nguồn của điểm (cổng đợt 1 S1, A chốt: "đoạn đầu" hay chỉ là dòng tên — 11/28 điểm < 80 ký tự — nên
     luật "kèm một ý ngắn lấy từ tài liệu" không viết được ⇒ model từ chối; bằng nhau ⇒ đoạn đứng trước); đoạn đã có trong sổ nguồn ⇒ dùng lại số [n] cũ; không có đoạn đúng file ⇒ bỏ điểm (mã `khong_co_doan_nguon`).
     Có điểm Quần thể ⇒ thêm 1 đoạn file vé chứa khung giờ (D5 (a)). Đoạn mới dựng ngữ cảnh nối sổ nguồn; vượt ngân sách ⇒ bớt ngày cuối (iii).
     Lỗi tìm / ngữ cảnh ⇒ `trace.tool_error` rồi ném (như `tim_kho`). Lịch bản 2: `nhap` = bản nháp tin nhắn của nó (đếm ngân sách), `lay_ve=False`
-    (giờ gợi ý do code in — không cần đoạn file vé); mặc định ⇒ đúng như đường cũ."""
+    (giờ gợi ý do code in — không cần đoạn file vé); mặc định ⇒ đúng như đường cũ. `tim_mo_ta` (lịch bản 2, vòng chỉnh nghiệm thu 13/11): tìm bằng
+    "<tên> <tim_mo_ta>", lấy đoạn xếp hạng cao nhất cùng file NẾU đoạn đó nhắc tên điểm (đoạn tả điểm — luật cũ hay chọn đoạn "bằng chứng" như lăng
+    lân cận / quy tắc ứng xử ⇒ model trả câu rỗng); không có ⇒ luật cũ."""
     try:
         da_co = {doc_id: i + 1 for i, doc_id in enumerate(trace.seen_ids)}  # sổ nguồn đánh số liền từ 1, song song `seen_ids`
         cho: dict[str, list[str]] = {}  # chunk_id mới ⇒ điểm dùng đoạn đó
@@ -580,9 +583,15 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
             cung_file = [d for d in result.documents[:10] if d.metadata.get("source") == source and (chua is None or chua in d.text)]
             return max(cung_file, key=_do_dai_bang_chung, default=None)
 
-        for id_ in lt.diem_trong_khung(khung):
+        async def doan_mo_ta(d: dict) -> RetrievedDocument | None:
+            result = await asyncio.to_thread(retrieval_service.search, f"{d['ten']} {tim_mo_ta}")
+            ten = [lt.chuan_ten(t) for t in (d["ten"], *d["ten_khac"])]
+            return next((x for x in result.documents[:10] if x.metadata.get("source") == d["nguon"]
+                         and any(t in lt.chuan_ten(x.text) for t in ten)), None)
+
+        for id_ in dict.fromkeys(lt.diem_trong_khung(khung)):  # hoạt động tối lặp lại ⇒ tìm một lần
             d = bang.theo_id[id_]
-            doc = await chon_doan(d["ten"], d["nguon"])
+            doc = (await doan_mo_ta(d) if tim_mo_ta else None) or await chon_doan(d["ten"], d["nguon"])
             if doc is None:
                 lt.bo_diem(khung, id_, d["ten"], "khong_co_doan_nguon")
             elif doc.id in da_co:
