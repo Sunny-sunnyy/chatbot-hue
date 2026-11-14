@@ -140,3 +140,18 @@ def test_q1_lodging_not_in_model_message_and_off_text_unchanged(mo_phong):
     cau = {m["id_muc"]: "Câu." for m in v2.moi_muc(lich)}
     tat, bat = v2.ghep_chu(lich, cau), v2.ghep_chu(co, cau)
     assert bat.startswith(tat) and "Nơi ở gợi ý" in bat[len(tat):] and "Nơi ở" not in tat
+
+
+def test_evening_outside_center_falls_back_to_day_rule(mo_phong):
+    """Review E m-1: luật "có buổi tối ⇒ trung tâm" chỉ áp khi MỌI điểm tối thuộc khu trung tâm (code kiểm bằng bảng khu, không giả định)."""
+    from llm import len_ke_hoach as lkh
+    flags = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, anh_lich=False, luu_tru_lich=True)
+    khung = copy.deepcopy(next(k for key, k in mo_phong.items() if key[0] >= 2 and any(ng["buoi"]["toi"] for ng in k["ngay"])))
+    lich = {}
+    lkh.gan_o_an(lich, BANG_V2, khung, flags)
+    assert "buổi tối" in lich["o_dau"]["ly_do"]  # mọi điểm tối ở trung tâm ⇒ luật buổi tối
+    tay = next(j for j, d in BANG_V2.theo_id.items() if BANG_LT["cum_ve_khu"][d["cum"]] != ltl.KHU_LOI)  # dữ liệu giả: một điểm tối ngoài trung tâm
+    next(ng for ng in khung["ngay"] if ng["buoi"]["toi"])["buoi"]["toi"][0] = tay
+    lich = {}
+    lkh.gan_o_an(lich, BANG_V2, khung, flags)
+    assert "buổi tối" not in lich["o_dau"]["ly_do"]  # ⇒ về luật cũ theo điểm ngày
