@@ -1,20 +1,46 @@
-# Rà lời dặn bản 2 — theo HÀNH VI THẬT (DỞ — dừng vì kết phiên 22:38 13/11/2026, `date`)
+# Rà lời dặn bản 2 — theo HÀNH VI THẬT (XONG 09:51 14/11/2026, `date`)
 
-Người rà: C (`hue-rag-eb`) · A giao 13/11 (hướng thường trực User: nghiên cứu khả năng trợ lý, lời dặn, harness, hành vi) · skill `agent-design-review` · **chỉ đọc, 0 USD, không sửa code / lời dặn**.
-Bản 1: `c_ra_loi_dan.md` (12/11, rà bằng đọc code). B rà harness song song (`b_ra_harness_tro_ly.md`) — không chồng.
+Người rà: C (`hue-rag-b4`; bắt đầu 13/11 ở `hue-rag-eb`) · A giao (hướng thường trực User: rà khả năng trợ lý) · skill `agent-design-review` · **chỉ đọc, 0 USD, không sửa code / lời dặn**.
+Bản 1: `c_ra_loi_dan.md` (12/11, rà bằng đọc code, 5 đề xuất Đ1–Đ5). B rà harness song song (`b_ra_harness_tro_ly.md`) — không chồng.
 
-## Đã làm tới đâu
-1. **Lời dặn hiện tại** (`backend/llm/full_corpus_prompt.py` trên `main` `73c66b4`): KHÔNG đổi so với bản 1, trừ nhánh `p9-len-ke-hoach-v2` thêm vai mới `LICH_V2_LOI_DAN` (đúng khung bản 1 mục 7, chưa merge). Token từng vai: dùng lại số bản 1 (chưa đếm lại — chuỗi không đổi).
-2. **Hành vi thật từ log `chat_metrics`** (`backend/logs/application.log`, không chứa chữ câu hỏi; chỉ lấy dòng có model + tiền ⇒ bỏ dòng pytest): **407 lượt, 03/11 18:29 → 13/11 21:05**. Phần lớn là **lượt đo của agent**, không phải người dùng thật ⇒ tỉ lệ dưới đây là của các bộ đo, không phải của người dùng.
-   - Tuyến: `tro_ly_hue` 403 · `tro_chuyen` 4 (câu ngoài phạm vi trả câu cố định không qua model ⇒ không lọt bộ lọc "có model" — **chưa đếm**).
-   - Câu `tro_ly_hue`: token vào trung vị **2.057** (p90 9.633) · ra 186 · suy luận 56 · lần gọi model trung vị 2 (p90 5) · **0,00047 USD** (p90 0,0018) · cả câu 4,5 s (p90 14,9 s).
-   - **Model tự gọi `tim_kho`**: 0 lần 301 câu · 1 lần 39 · 2 lần 26 · **3 lần 37** (lần thứ 3 bị chặn "hết lượt" — 37 dòng có dấu `het_luot`) ⇒ khớp số đếm 12/11 (6 / 8 câu kho thiếu): lượt xin thứ ba là lượt thừa — nay cờ "hết lượt tìm thì dừng" đã bật (13/11).
-   - **Công cụ ít dùng mà mô tả gửi kèm**: `thoi_tiet` được gọi ở **2 / 403** câu; `ngay_lich` ở **12 / 403** (lịch tính sẵn `lich_san` 40 lần — đường chính của câu ngày đúng như thiết kế); `lich_trinh` 166 (biểu mẫu). Mô tả `thoi_tiet` (168 token) đi kèm mọi lượt có cờ ⇒ **củng cố đề xuất Đ3 của bản 1** (chuyển luật viết khỏi mô tả); cần đếm: `thoi_tiet` có trong danh sách công cụ ở bao nhiêu lượt (log chưa ghi danh sách công cụ đưa, chỉ ghi công cụ đã chạy).
-   - Kết cục: success 389 · hỏi lại 17 · ngắt kết nối 1.
-3. Script đếm (0 USD): `data/ra_khoang_cach_2026-11-12/tools/dem_log_chat_metrics.py` — chạy `python3 -I <file>` (đọc dòng `chat_metrics {json}`, lọc `model` + `usd`).
+**Kết luận ngắn:** hành vi thật trong log không cho thấy lỗi mới nào do lời dặn. **Không cần sửa lời dặn đang chạy lúc này.** Giữ Đ1 (lời dặn riêng cho vai lịch mới — đang nằm trên nhánh đợt 1 của B) và Đ5 (ghi 3 luật vào tài liệu, 0 USD).
+**Bỏ Đ3**, vì bản 1 tính sai giả định (mục 2). **Không làm Đ4**, vì lợi quá nhỏ. Đ2 giữ đúng thứ tự handoff: chỉ làm khi lượt đếm thấy lỗi.
 
-## CÒN LẠI (phiên sau)
-- Đối chiếu từng câu dặn (định tuyến, trả lời, ghi chú công cụ, lịch sử, mô tả 4 công cụ, biểu mẫu, Từ web, trò chuyện) với: lượt đo đã lưu ở `data/` (B7 `data/phase_9/b7/`, hết lượt tìm `data/het_luot_tim_2026-11-12/`, lịch trình `data/phase_9/lich_trinh/bo_do_v2/` + nghiệm thu đợt 1) ⇒ mỗi câu: giữ sàn nào · đã bắt lỗi gì · thừa / mâu thuẫn / dài vô ích.
-- Đếm câu ngoài phạm vi (tuyến không qua model) + `n_llm_calls` theo tuyến; khoá trường `llm_calls` (trường loại lần gọi không phải `loai` — xem khuôn trước khi đếm).
-- Hai câu dặn kéo ngược nhau (bản 1: :19 ↔ :97 ↔ `TOOL_LIMIT_TEXT`): đếm trên B7 số câu nhiều ý bị từ chối cả câu.
-- Đầu ra: ≤ 5 đề xuất xếp theo lợi / công, mỗi cái kèm số lần lỗi đã thấy; gửi cả nhóm.
+## 1. Hành vi thật từ log `chat_metrics` (không chứa chữ câu hỏi)
+
+Nguồn: `backend/logs/application.log`, 1.152 dòng có trường tuyến (02/11 19:45 → 13/11 21:05). Phần lớn là **lượt đo của agent**, không phải người dùng thật ⇒ tỉ lệ là của các bộ đo.
+
+| Quan sát | Số | Đọc |
+|---|---|---|
+| Tuyến (mọi dòng có tuyến) | trợ lý Huế 1.090 · ngoài phạm vi 55 · khẩn cấp 3 (+ 7 dòng `emergency_by=router` từ 09/11, đi đường trợ lý Huế) · trò chuyện 4 | 687 dòng trợ lý Huế không có model / USD = lỗi trước model (`generation_failed` 285 · `internal_error` 276); suy luận: phần lớn là pytest, vì log dùng chung cho pytest và server (`Project_Status.md` §8) — không phải hành vi model |
+| Câu trợ lý Huế có model (403) | token vào trung vị 2.057 (p90 9.633) · lần gọi model trung vị 2 (p90 5) · 0,00047 USD · cả câu 4,5 s | khớp số bản 1 |
+| Model tự gọi `tim_kho` / câu | 0 lần: 301 · 1: 39 · 2: 26 · **3: 37** (lần 3 bị chặn "hết lượt") | lượt xin thứ ba là lượt thừa ⇒ đã chữa bằng **code** (cờ "hết lượt tìm thì dừng", bật 13/11), không bằng chữ ✔ |
+| Câu ngoài phạm vi (55) | đúng 1 lần gọi model (định tuyến) · trung vị 2,06 s · 0,000105 USD · 0 lần tra web | đường rẻ nhất; không có gì cần sửa |
+| Công cụ ít dùng | `thoi_tiet` 2 / 403 câu · `ngay_lich` 12 / 403 (lịch tính sẵn 40 lần — đường chính của câu hỏi ngày, đúng như thiết kế) · `lich_trinh` 166 (biểu mẫu) | xem mục 2 |
+| Kết cục | thành công 389 · hỏi lại 17 · ngắt kết nối 1 | — |
+
+Script đếm (0 USD): `data/ra_khoang_cach_2026-11-12/tools/dem_log_chat_metrics.py` (chạy `python3 -I`). Khuôn `llm_calls[i]` có trường `kind` = **danh sách loại đầu ra** (`reasoning` / `message` / `function_call`), không phải tên vai ⇒ muốn đếm theo vai phải dùng trường `route` của từng lần gọi.
+
+## 2. Sửa số bản 1 — Đ3 dựa trên giả định sai
+
+Bản 1 (mục 5, Đ3) và bản nháp 2 đều viết: mô tả `thoi_tiet` (168 token) và `ngay_lich` (211 token) "đọc ở mọi lượt". **Sai.** Code chỉ đưa hai công cụ này khi câu cuối hoặc câu hỏi liền trước có từ khoá:
+`assistant.py` `_lich_extra` (`co_cong_cu = tu_khoa and not ngoai_7` cho thời tiết; `nl.co_tu_ngay_luot(...)` cho ngày). Ở các lượt khác, danh sách công cụ không có hai công cụ này.
+⇒ Lợi của Đ3 chỉ còn ở số ít câu có từ khoá. Hai công cụ dùng 14 / 403 lần, chưa thấy lỗi nào do luật viết nằm trong mô tả ⇒ **bỏ Đ3**. Lỗi này của bản 1 do C đọc mô tả mà không đọc điều kiện đưa công cụ.
+
+## 3. Đề xuất sau khi có số (≤ 5, xếp theo lợi / công)
+
+| # | Đề xuất | Lợi đã thấy | Công | Kết luận |
+|---|---|---|---|---|
+| Đ1 | Lời dặn riêng, ngắn cho vai lịch mới (một câu cho mỗi điểm trong lịch) | lịch biểu mẫu đang dùng lại lời dặn trả lời (chữ thừa, sai từ) | đã có trên nhánh `p9-len-ke-hoach-v2`; đo trong lượt nghiệm thu lại đợt 1 | **giữ — đang làm (B)** |
+| Đ5 | Ghi 3 luật vào `skills/agent-design-review`: việc mới ⇒ lần gọi hẹp hoặc công cụ có luật **trong kết quả**; luật kiểm được ⇒ code; sửa một câu dặn = một bậc đo có sàn an toàn + ngoài phạm vi | 4 lần gộp việc vào vai chính ⇒ 4 lần tụt sàn (bản 1 mục 3); lần thứ 5 (gọi tìm kho thừa) cũng chữa bằng code | 0 USD, A sửa tài liệu | **nên làm** — thêm một vế: "trước khi ước lợi của mô tả công cụ, đọc điều kiện đưa công cụ" |
+| Đ2 | Nói rõ cách trả lời câu nhiều ý | đã đếm 3 / 4 ở bộ câu hỏi kèm (12/11) | ≈ 0,10 USD; rủi ro sàn ngoài phạm vi (Phase 8.1 đã phạm) | **theo handoff mục 6**: sau đợt 1 lịch trình, chỉ làm khi lượt đếm thấy lỗi |
+| Đ4 | Gộp tuyến khẩn cấp vào tuyến trợ lý Huế trong lời dặn định tuyến | ≈ 120 token / lượt định tuyến; tuyến khẩn cấp chỉ còn đổi một trường log (10 / 1.152 dòng) | phải đo lại bộ an toàn 32 | **không làm**: người dùng không cảm nhận được (dưới 1 % tiền một câu), mà chạm vào phần an toàn |
+| Đ3 | Dời luật viết của `thoi_tiet` / `ngay_lich` từ mô tả sang kết quả công cụ | ~0 (mục 2) | ≈ 0,05 USD | **bỏ** |
+
+**Không đề xuất:** viết lại lời dặn theo khuôn có tiêu đề; thêm ví dụ mẫu; tách trợ lý chính thành nhiều agent theo chủ đề (bản 1 mục 1 và 4 vẫn đúng; log không cho thấy chọn sai công cụ).
+
+## 4. Đã kiểm ↔ suy luận ↔ chưa làm
+
+- **Đã kiểm (0 USD):** số mục 1 (đếm log, đã thấy đầu ra); điều kiện đưa công cụ thời tiết / ngày (`assistant.py` `_lich_extra`, `thoi_tiet.co_tu_khoa_luot`, `ngay_lich.co_tu_ngay_luot`); tuyến khẩn cấp đi đường trợ lý Huế (`assistant.py` `ROUTE_KHAN_CAP`).
+- **Suy luận:** "dưới 1 % tiền một câu" của Đ4 (120 token định tuyến so với ~2.000 token vào của một câu, chưa tính theo giá); tỉ lệ ở mục 1 là của các bộ đo, không phải của người dùng.
+- **Chưa làm (cố ý, theo mức lợi):** đối chiếu từng câu dặn với từng lượt đo trong `data/`. Lượt đo của từng bậc đã giữ sàn khi bậc đó bật, nên lượt đối chiếu này không bảo vệ sàn nào mới. Chưa đếm câu nhiều ý trên B7 (để cho lượt đếm của Đ2 ở handoff mục 6). Log không ghi danh sách công cụ đã đưa, chỉ ghi công cụ đã chạy.

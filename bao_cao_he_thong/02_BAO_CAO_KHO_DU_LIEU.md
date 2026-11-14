@@ -57,7 +57,7 @@ sửa, và đáp án mẫu hầu như không hỏi đúng tên phường hay chi
 1. Sao lưu bài gốc (và chỉ mục cũ nếu còn giá trị).
 2. Ghi **sàn** trước khi sửa (luật "không làm hỏng": không thêm câu ngoài kho bị trả lời, không thêm lỗi an toàn…) và bộ câu sẽ đo.
 3. Sửa bằng máy: mỗi câu cũ phải xuất hiện **đúng một lần** trong bài thì máy mới thay — để không sửa nhầm chỗ khác; người khác đối chiếu từng chỗ với bản sao lưu.
-4. Xoá chỉ mục cũ rồi dựng lại (vài phút). Lệnh xoá do bạn tự chạy — agent không được tự xoá dữ liệu.
+4. Xoá chỉ mục cũ rồi dựng lại (vài phút). Dựng lại chỉ mục nằm trong gói bạn đã duyệt ⇒ kịch bản của agent tự xoá chỉ mục cũ và dựng lại (lần 14/11 làm vậy); xoá file / collection **ngoài** gói đã duyệt ⇒ bạn tự chạy lệnh.
 5. Đo lại "trước ↔ sau", ghi kết quả — kể cả kết quả xấu.
 6. Đáp án mẫu Golden nào nhắc chỗ vừa sửa ⇒ sửa theo, bạn duyệt phần đổi.
 
