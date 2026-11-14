@@ -32,7 +32,7 @@ A giao theo ưu tiên mới của User (17:50 14/11/2026: dữ liệu, ảnh kh�
 | UI (Playwright 1440 + 390, server nhánh, xếp lịch thật) | **ĐẠT**: thẻ 5 cơ sở, 4 ảnh tải được (480 px), 10 / 10 link đúng gốc + `_blank` + `noopener`, 0 chữ ghi công, 0 lỗi console, 0 yêu cầu ra ngoài lúc tải. Ảnh `data/khach_san_2026-11-14/anh_pw/`, script `tools/pw_khach_san.py` |
 | Test rộng `backend/tests` (3 phút 48) | 1.039 đạt; 5 hỏng / lỗi chỉ vì chạy không `--env-file` (cần khoá OpenAI) ⇒ chạy lại 5 test đó có `--env-file`: 5 / 5 đạt |
 
-## Lượt 2 ảnh (A giao 18:4x 14/11/2026 — User "đầy đủ"; C phản biện "phần lớn không ai thấy", A chọn làm đủ, trần 30 phút)
+## Lượt 2 ảnh (A giao tối 14/11/2026 — User "đầy đủ"; C phản biện "phần lớn không ai thấy", A chọn làm đủ, trần 30 phút)
 - 74 cơ sở chưa có ảnh chắc (40 `kc` + 34 trống). Codex (gói ChatGPT, 0 USD API) 3 lô song song, 7–9 phút / lô, 0 lệnh shell: tìm trang công khai có ảnh (không mở trang đặt phòng). Script mở trang Codex nêu, lấy `<img>` có tên cơ sở trong alt / tên file + URL ảnh Codex ghi ⇒ **27 / 74 cơ sở có ứng viên** (nhiều trang Tripadvisor chặn tải tự động).
 - 1 agent con chọn: 20 / 27 có ảnh (6 "cao", 14 "vừa" ⇒ `kc`). B nhìn lại 6 "cao": 5 nhận (4 biển tên + 1 trang chính thức), 1 hạ `kc` (ảnh sảnh trông như ảnh dựng máy tính).
 - **Sau lượt 2: 71 / 140 cơ sở có ảnh** (bảng md5 `039c3adebb9b`); ô hiện ra có ảnh không đổi 14.924 / 15.288 (5 ảnh mới đều là cơ sở chưa từng hiện — đúng như C dự báo). Dừng: không còn nguồn ảnh mới cho 69 cơ sở còn lại trong 30 phút.
