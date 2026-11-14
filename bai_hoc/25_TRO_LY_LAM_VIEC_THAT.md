@@ -1,6 +1,6 @@
-# Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, ảnh dưới câu trả lời
+# Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · bài mới; nối tiếp bài 23 và 15. Sửa chiều 14/11: số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -14,11 +14,13 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Đạt cả hai lần — **mới** | **pass^2** | Một chuỗi câu chỉ tính là đạt khi chạy hai lần đều đúng. Model mỗi lần trả lời hơi khác, nên đạt một lần chưa đủ. |
 | Bộ nhớ đệm lời nhắc — **mới** | **prompt cache** (`prompt_cache_key`) | Phần đầu giống hệt nhau của các lần gọi được nhà cung cấp nhớ lại, tính rẻ hơn. |
 | Cờ | flag trong `settings.yaml` | Công tắc bật / tắt từng tính năng, không cần sửa code. |
+| Mô phỏng toàn tổ hợp | 3.840 khung (mọi tổ hợp biểu mẫu) | Chạy bộ xếp lịch trên mọi cách điền biểu mẫu rồi đếm bằng code, 0 USD. |
+| Bản đồ mở — **mới** | **OpenStreetMap (OSM)** | Bản đồ do cộng đồng tự đóng góp; có tên và toạ độ quán, nhưng mình chưa kiểm và dữ liệu không ghi ngày kiểm, nên gắn nhãn "chưa kiểm". |
 
 ---
 
-*Bài 23 kể lịch "Lên kế hoạch" bản 2: code xếp, model chỉ viết câu tả. Bài 15 kể chuyện tra web khi sổ không có. Bài này kể bốn việc xong chiều 14/11,
-đều theo hướng anh chọn: **trợ lý làm được việc**, không chỉ trả lời một câu. Cả bốn giữ một nguyên tắc từ bài 14: **việc dễ nhầm thì code làm**, model
+*Bài 23 kể lịch "Lên kế hoạch" bản 2: code xếp, model chỉ viết câu tả. Bài 15 kể chuyện tra web khi sổ không có. Bài này kể các việc xong chiều 14/11,
+đều theo hướng anh chọn: **trợ lý làm được việc**, không chỉ trả lời một câu. Tất cả giữ một nguyên tắc từ bài 14: **việc dễ nhầm thì code làm**, model
 chỉ đọc hiểu và diễn đạt.*
 
 ## Quay lại người hướng dẫn viên
@@ -27,7 +29,7 @@ Khách nói "bỏ chợ tối nay đi, mình mệt rồi". Một người hướ
 và nói rõ đã đổi gì. Khách hỏi một câu gồm hai việc, trong đó sổ tay chỉ có một: người giỏi trả lời phần biết, nói thẳng phần chưa biết, chứ không từ
 chối cả câu. Khách đi ba ngày thì cần biết nên ở khu nào. Và khi kể về một nơi, đưa khách xem một tấm ảnh thì dễ hình dung hơn mười câu tả.
 
-Bốn việc dưới đây dạy trợ lý làm đúng bốn thói quen đó.
+Các việc dưới đây dạy trợ lý làm đúng những thói quen đó, cộng thêm việc gợi ý chỗ ăn trên đường đi.
 
 ## 1. Sửa lịch bằng lời
 
@@ -101,9 +103,10 @@ Lịch từ 2 ngày có thêm thẻ **"Nơi ở gợi ý"** ở cuối: một kh
 nút "Tìm phòng" mở trang tìm kiếm của Booking. Thẻ **không có giá, không báo còn phòng**, và ghi rõ "chưa kiểm giá, phòng trống" cùng nguồn danh mục.
 
 **Mọi thứ do code chọn**, model không chọn khách sạn nào:
-- **Chọn khu** bằng cách đếm các điểm tham quan ban ngày của lịch theo khu. Mặc định là trung tâm hai bờ sông Hương.
-  - Phía tây (Kim Long, Thủy Xuân) chỉ khi hơn một nửa số điểm ở đó **và** đoàn không có trẻ em / người lớn tuổi.
-  - Ven biển chỉ khi ≥ 60 % số điểm ở ven biển.
+- **Chọn khu.** Lịch có hoạt động buổi tối, và mọi điểm buổi tối đều ở trung tâm ⇒ ở **trung tâm**, vì tối nào khách cũng về đó (luật thêm cuối chiều
+  14/11, xem chuyện thật thứ hai). Lịch không có buổi tối, hoặc có điểm tối ngoài trung tâm, thì đếm các điểm tham quan ban ngày theo khu; mặc định vẫn là trung tâm hai bờ sông Hương:
+  - phía tây (Kim Long, Thủy Xuân) chỉ khi hơn một nửa số điểm ở đó **và** đoàn không có trẻ em / người lớn tuổi;
+  - ven biển chỉ khi ≥ 60 % số điểm ở ven biển.
 - **Chọn khách sạn** trong khu: tối đa 2 cơ sở 4–5 sao, 2 cơ sở 2–3 sao, 1 cơ sở 1 sao hoặc đạt chuẩn. Danh mục có 140 cơ sở: 139 từ danh mục công khai
   của Cục Du lịch Quốc gia, 1 từ tin ngành du lịch thành phố; mỗi cơ sở có hạng và khu.
 
@@ -120,7 +123,65 @@ nút "Tìm phòng" mở trang tìm kiếm của Booking. Thẻ **không có giá
 
 Tiền ≈ 0,0025 USD (4 lượt xếp lịch thật cho trình duyệt).
 
-## 4. Ảnh dưới câu trả lời
+## 4. Quán ăn trong lịch
+
+Mỗi ngày của lịch có tối đa hai dòng **"Ăn trưa gần …"** và **"Ăn tối gần …"**, mỗi dòng 1–2 quán. Quán có bài trong kho thì bấm mở bài; quán lấy từ bản
+đồ mở thì có nhãn **"từ bản đồ mở, chưa kiểm"** và link bản đồ. Không có giờ, giá hay điện thoại, vì các nguồn này không ghi ngày kiểm.
+
+**Đếm trước khi xây.** Câu hỏi đầu tiên: có đủ quán để gợi ý không? Mô phỏng 3.840 khung lịch cho **22.680 bữa**; mức đạt ghi trước là ≥ 50 % số bữa có ít
+nhất 2 quán cùng cụm.
+- Bản đếm đầu ghi quán kho phủ **74,7 %** và cộng bản đồ mở thì **95,2 %**. Người đếm tự bắt lỗi: file quán "kho" thật ra trộn ba nguồn, chỉ **28** quán
+  là quán kho.
+- Đếm lại: chỉ quán kho **33,5 %** (dưới mức), quán kho cộng bản đồ mở **74,7 %** (đạt). Vì vậy mới xây, và dùng cả bản đồ mở có nhãn.
+
+**Code chọn quán** theo luật: cùng cụm với điểm, **trong vòng 2 km**, quán kho trước, quán ăn trước cà phê, gần trước, không lặp quán trong cả chuyến.
+Ba luật này đều do lượt đo bắt:
+- **Trần 2 km:** mô phỏng đầu có 5 % số dòng "ăn gần X" mà quán cách xa hơn 9,3 km (cụm rộng như phá, biển, lăng xa), nghe như sai nghĩa.
+- **Bữa tối gần điểm buổi tối:** trình duyệt lần đầu hiện "ăn tối gần Đầm Chuồn" trong khi tối hôm đó khách ở chợ Đông Ba.
+- **Tên có chữ cà phê thì là cà phê:** người xem bắt 2 tiệm cà phê bị ghi "quán ăn".
+
+**Đo** (0 USD, trừ ≈ 0,0013 USD cho 2 lượt xếp lịch thật): 80,7 % số bữa có dòng; quán cách điểm trung vị 0,78 km, xa nhất 1,99 km; 0 quán ngoài bảng, 0 khác
+cụm, 0 lặp. Người xem độc lập 10 lịch (8 lịch có buổi ở Thủy Xuân / Kim Long): **10 / 10** đạt cả ba câu (hợp chỗ, nhãn đúng nguồn, không số lạ).
+
+**Chỗ yếu, nói thẳng:** quán kho chỉ có ở ba cụm trung tâm. Ở Thủy Xuân, Kim Long gần như chỉ có quán bản đồ mở, tên hay viết không dấu hoặc chung chung,
+khách có ít lý do để chọn. Phá Tam Giang, biển Thuận An, Bạch Mã không có dòng ăn (xa quán quá 2 km hoặc không có quán).
+
+## 5. Lịch mẫu "Ví dụ" đủ đi – ăn – ở
+
+Trang Lên kế hoạch lúc chưa xếp có một lịch mẫu 2 ngày (bài 23). Khi bật chỗ ở và quán ăn, lịch mẫu vẫn chỉ có điểm tham quan, vì nó không đi qua bước gắn
+hai khối đó. Mình tách bước gắn chỗ ở + quán của lịch thật thành **một hàm dùng chung**, rồi cho lịch mẫu gọi đúng hàm đó; vẫn không gọi model.
+
+Người review góp hai ý, cả hai đã làm:
+- lịch mẫu là thứ khách thấy đầu tiên, nên **chỉ hiện quán có bài trong kho** (không hiện tên bản đồ mở). Còn 3 bữa; bữa trưa gần lăng Tự Đức không có quán
+  kho trong 2 km nên bỏ, không đoán;
+- lịch mẫu bị gợi ý **ở khu phía tây** dù cả hai tối đều ở trung tâm ⇒ đó là lỗi của luật chọn khu, sửa ở luật (chuyện thật thứ hai).
+
+Lịch mẫu bây giờ: khu ở trung tâm hai bờ sông Hương, 5 khách sạn, 3 bữa có quán kho.
+
+## 6. Mục "Từ web": so số tiền theo giá trị
+
+Mục web có luật bằng code: **mọi số tiền trong mục phải có trong đoạn trích web** (bài 15). Đếm trên 76 mục web đã lưu (0 USD), luật này chặn **16** mục, phần
+lớn vì cách viết: trang web ghi "100.000 VNĐ", model chép "100.000 đồng"; "65.000đ" với "65.000 đồng"; "594,000" với "594.000". Code cũ so **nguyên chuỗi**
+nên coi là khác nhau và thay cả mục bằng câu "chưa tra được tin đáng tin".
+
+Sửa: đổi số tiền ra **giá trị bằng đồng** rồi mới so; luật không nới. Cách viết mơ hồ thì không đoán, vẫn so nguyên chuỗi như cũ (ví dụ "1.500 triệu" là
+1,5 tỷ hay 1.500 triệu?). Người review thử thêm và bắt ba chỗ, sửa hai: "2 triệu rưỡi" từng bị đọc thành 2 triệu (nay là 2.500.000); "150K" chữ hoa từng
+không được nhận là tiền. Chỗ thứ ba giữ nguyên, ghi ở "Khi nào hỏng".
+
+**Đo:** mục web được hiện **43 ⇒ 51 / 76**. Một số bịa thật (220.000 đồng, đoạn trích chỉ có 160, 170, 200, 250 nghìn) vẫn bị chặn **4 / 4** lần. 8 mục mới
+được hiện: người làm và người review đều kiểm từng số tiền, tất cả có trong đoạn trích.
+
+## 7. Thử rồi bỏ, đếm rồi không làm
+
+- **Cho lần viết mục web "nghĩ ít" (mức suy luận low).** Mục tiêu là nhanh hơn; mức đạt ghi trước là nhanh hơn ≥ 1,5 s. Đo 76 lần gọi, xen kẽ hai bản:
+  nhanh hơn **0,87 s** (2,95 ⇒ 2,08 s trung vị), chất lượng không tụt, tiền lần viết giảm 32 %. **Trượt mức nhanh ⇒ bỏ**, không đo tiếp phần chấm tay.
+  Mức 1,5 s đặt theo số đếm từ log (4,94 s mỗi lần viết), cao hơn hẳn số đo lần này; lý do chưa chứng minh (có thể lúc đó máy chạy nhiều lượt đo cùng lúc).
+  Lượt đo này lại là nơi phát hiện lỗi so tiền ở mục 6.
+- **Đổi cách tìm web cho dòng ý thiếu.** Hiện mục web có thông tin dùng được ở **3 / 16** lượt. Cách tìm tốt nhất mình thử được cho **6 / 16**, chỉ vừa chạm mức
+  ghi trước, mà lại phải gửi chữ do model viết ra ngoài (luật hiện tại chỉ gửi chữ người dùng). Mức "bỏ hẳn tra web" là dưới 3 / 16, cũng không chạm. ⇒ **Giữ
+  nguyên**, không xây. Tốn 0,016 USD cho 16 lượt tìm.
+
+## 8. Ảnh dưới câu trả lời
 
 Hỏi trợ lý về một nơi hay một món, câu trả lời giờ có **một ảnh** ở dưới. Bấm vào ảnh thì mở bài trong Khám phá. Ảnh lấy từ bộ ảnh đã có của Khám phá
 (nay 184 / 216 bài có ảnh, bài 24).
@@ -153,6 +214,21 @@ Hai nhóm chậm hơn lần đo trước ≈ 0,3 s vì máy và API dao động,
 
 Bài học: **qua phép đo đúng sai chưa phải là xong**, độ trễ cũng là một sàn. Và khi một số vừa trượt, đừng chạy thêm cho tới khi nó đạt.
 
+## Chuyện thật thứ hai: người xem chấm 10 / 10 mà vẫn sai
+
+Luật chọn khu ở đã qua hai lượt người xem độc lập (9 / 10 rồi 10 / 10). Nhưng khi lịch mẫu có chỗ ở, người review thấy ngay: lịch được gợi ý **ở khu phía tây**
+(3 / 5 điểm ban ngày ở phía tây), trong khi **cả hai tối** khách ở chợ Đông Ba và phố đi bộ, tức là phải đi về mỗi tối. Vì sao người xem không bắt? Bảng đưa cho
+người xem **không có cột buổi tối**. Người xem chỉ chấm được thứ họ nhìn thấy.
+
+Sửa hai lần, cùng một thước:
+- **Thử 1:** đếm điểm buổi tối như điểm ban ngày. Người xem mới, bảng có buổi tối: **8 / 10**, dưới mức 9 ⇒ bỏ.
+- **Thử 2:** lịch có buổi tối và mọi điểm tối ở trung tâm ⇒ ở trung tâm. Người xem mới khác, cùng 10 lịch: **10 / 10** ⇒ giữ. Người review đề nghị code tự
+  kiểm "mọi điểm tối ở trung tâm" bằng bảng khu, thay vì tin rằng bộ xếp luôn đặt buổi tối ở trung tâm; đã sửa.
+
+Hệ quả nói rõ để anh biết: trong 3.840 khung mô phỏng, **không lịch nào còn được gợi ý khu phía tây**, vì lịch người lớn nào cũng có buổi tối ở trung tâm.
+
+Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng tới quyết định**, không thì điểm cao cũng không nói lên gì.
+
 ## Khi nào hỏng
 
 - **Sửa lịch** chưa thêm hay đổi được hoạt động buổi tối, chỉ bỏ được. Tên điểm lạ ⇒ "Không đổi được" chứ không đoán. Câu chỉ chỗ bằng ngày / buổi ("bớt
@@ -161,19 +237,24 @@ Bài học: **qua phép đo đúng sai chưa phải là xong**, độ trễ cũn
   cả câu). Chữ "với" dùng như giới từ ("mua gì làm quà với giá bao nhiêu") có thể bị đếm thừa một vế. Hậu quả nhỏ, nhưng có.
 - **Mục web** chọn vế theo số từ chung với dòng ý thiếu, sau khi bỏ các từ đã có ở phần trả lời (vd tên nơi). Nếu vẫn hoà hoặc không có từ chung ⇒ mục
   web viết cho cả câu như trước.
-- **Chỗ ở** được chọn theo số điểm, không theo số ngày: một ngày đi nhiều lăng có thể kéo cả chuyến sang khu phía tây. Trong cùng mức hạng, cơ sở
-  gần cụm có nhiều điểm nhất đứng trước, còn lại xếp theo tên, nên nhiều lịch trung tâm ra cùng 5 khách sạn. Phía tây chỉ có 5 cơ sở trong danh mục. Không có giá, không có điểm đánh giá.
+- **Chỗ ở:** lịch có buổi tối luôn ra trung tâm; trong 3.840 khung mô phỏng không lịch nào còn ra khu phía tây. Trong cùng mức hạng, cơ sở gần cụm có nhiều điểm nhất đứng
+  trước, còn lại xếp theo tên, nên nhiều lịch trung tâm ra cùng 5 khách sạn. Không có giá, không có điểm đánh giá.
+- **Quán ăn** ngoài trung tâm gần như chỉ có quán bản đồ mở, chưa kiểm. Không có dòng ăn ở phá, biển, Bạch Mã.
+- **So tiền mục web:** "1,500 đ" được đọc là 1.500 đồng (dấu phẩy ngăn nghìn kiểu tiếng Anh); "10K bước" bị nhận là tiền, nên có thể bị chặn nhầm (hướng
+  an toàn).
 - **Ảnh** chỉ hiện khi mọi nguồn thuộc một bài, nên câu so sánh hai nơi không có ảnh. 40 bài chưa có ảnh nào.
 
 ## Ba điều chính
 
-1. Cả bốn việc giữ một cách chia: **model đọc hiểu / diễn đạt, code quyết và kiểm**. Model hiểu ý sửa, code áp bằng đúng bộ xếp. Code đếm vế hỏi và chọn vế
-   cho mục web. Code chọn khu ở, khách sạn, và có hiện ảnh hay không.
+1. Mọi việc giữ một cách chia: **model đọc hiểu / diễn đạt, code quyết và kiểm**. Model hiểu ý sửa, code áp bằng đúng bộ xếp. Code đếm vế hỏi và chọn vế
+   cho mục web. Code chọn khu ở, khách sạn, quán ăn, và có hiện ảnh hay không.
 2. Mỗi việc **đo đúng chỗ đổi** rồi mới bật:
    - sửa lịch: ~15.000 lần áp 0 vi phạm, hiểu ý 9 / 10 + kín 4 / 5, an toàn 0 / 64;
    - câu nhiều ý: vòng 1 trượt ⇒ vòng 2 bằng code đạt, sửa "và", mục web nhắc lại ý kho 4 / 4 ⇒ 0 / 11;
-   - chỗ ở: 3.840 khung + người xem 9 / 10 ⇒ sửa 2 lỗi ⇒ 10 / 10.
-3. Chuyện thật: sửa lịch qua đo đúng sai nhưng **phạm sàn tốc độ** (4,17 s) ⇒ tắt ⇒ cho chạy song song ⇒ đo lại với cỡ mẫu chốt trước: 2,65 so với 2,58 s.
+   - chỗ ở: 3.840 khung + người xem 9 / 10 ⇒ sửa 2 lỗi ⇒ 10 / 10; thêm luật buổi tối (thử 1 bỏ 8 / 10, thử 2 giữ 10 / 10);
+   - quán ăn: đếm trước (sửa 95,2 ⇒ 74,7 %) rồi mới xây; mục web: so tiền theo giá trị, 43 ⇒ 51 / 76, số bịa vẫn chặn.
+3. Hai chuyện thật: sửa lịch qua đo đúng sai nhưng **phạm sàn tốc độ** ⇒ tắt, sửa, đo lại với cỡ mẫu chốt trước; người xem chấm 10 / 10 mà vẫn sai vì bảng
+   thiếu buổi tối. Cùng ngày có hai việc **thử rồi bỏ / đếm rồi không làm** (suy luận low −0,87 s < 1,5 s; đổi cách tìm web 6 / 16 vừa chạm mức).
 
 **Bài sau:** chưa có.
 
@@ -188,6 +269,13 @@ Bài học: **qua phép đo đúng sai chưa phải là xong**, độ trễ cũn
 - Ảnh dưới câu trả lời: điều kiện, 29 ảnh `kc` (nay 38), backend không đổi: `report_agent/…/c_review_anh_tra_loi.md`, merge `4be483e` [code]; 184 / 216: bài 24.
 - Câu "Đại Nội … và gần đó có quán karaoke…" là câu người điều phối thử thật, có trong report sửa "và" và ca test [đã chạy].
 - Giờ bật / tắt / bật lại sửa lịch (14:04 · 14:14 · 15:08): commit `e0cb02e`, `3985816`, `69def87` [code]. Tiền đệm 0,00007 / lần: `e_review_sua_lich_v2.md` [đã chạy]. 139 + 1 cơ sở: trường `nguon` của bảng lưu trú [đã chạy]. 7 loại bài có ảnh: `frontend/src/anhTraLoi.js` [code].
+- Quán ăn: đếm 22.680 bữa, 28 quán kho, 33,5 / 74,7 % (bản đầu 74,7 / 95,2 sai), 16 lượt Serper 0,016 USD (đếm web ý thiếu 3 / 16, tốt nhất 6 / 16): `report_agent/2026-11-12_ra_khoang_cach/c_dem_truoc_khi_xay.md` [đã chạy]; 2 km (p95 9,3 km), bữa tối gần điểm tối, cà phê, 80,7 %, 0,78 / 1,94 / 1,99 km, người xem 10 / 10, 0,0013 USD, giới hạn: `c_quan_lich_implementation.md`, review `b_review_quan_lich.md` [đã chạy]
+- Khu ở theo buổi tối (thử 1 8 / 10, thử 2 10 / 10, phía tây 0 / 3.840): mục cuối `b_luu_tru_lich_implementation.md`; review `e_review_o_toi.md` (m-1 kiểm bằng bảng khu, đã sửa) [đã chạy]
+- Lịch mẫu đi – ăn – ở, chỉ quán kho, 3 bữa, khu trung tâm: `b_review_lich_mau_an_o.md`, `b_review_lich_mau_quan_kho.md`; ảnh `data/ui_mau_2026-11-14/anh_chup/lich_mau_cuoi_1411/` [đã chạy]
+- So tiền theo giá trị (16 ⇒ 4 chặn vì tiền, 43 ⇒ 51 / 76, 220.000 4 / 4, 8 mục mới qua, "2 triệu rưỡi", "150K"): `b_tien_web_chuan_hoa_implementation.md`, `e_review_tien_web.md` [đã chạy]
+- Suy luận low (2,95 ⇒ 2,08 s, sàn 1,5 s, −32 % tiền lần viết, log 4,94 s): `b_web_suy_luan_thap_implementation.md` [đã chạy]
+- Kiểm độc lập phần chiều (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_chieu.md`): 57 mục — 52 đúng, 0 sai, 5 dễ hiểu nhầm; đã sửa cả 5 + 3 chỗ tuỳ chọn.
+- Cập nhật 17:13, ngày 14/11/2026: thêm mục 4–7, chuyện thật thứ hai, sửa mục chỗ ở, Khi nào hỏng, Ba điều chính; mục ảnh thành mục 8.
 - **Sửa 16:05 14/11/2026 theo kiểm độc lập** (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25.md`, 135 khẳng định: 1 sai, 9 dễ hiểu nhầm): sửa câu "hoà điểm" của mục web (lỗi đã sửa trước khi merge); loại hành động thứ 6; 8 kiểu thử; 0 / 16 không đo số khẩn cấp; 139 + 1 cơ sở; thứ tự khách sạn; loại bài có ảnh; giờ bật.
 
 </details>

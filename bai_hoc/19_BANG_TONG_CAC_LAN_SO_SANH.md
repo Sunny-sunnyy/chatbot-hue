@@ -1,6 +1,6 @@
 # Bài 19 — Bảng tổng các lần so sánh
 
-*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm dòng 35–37 (hết lượt tìm thì dừng, thử Exa, lượt đo giữa kỳ) và ý "đếm lỗi trước khi xây".*
+*Cập nhật lần cuối: 17:14, ngày 14/11/2026 · thêm dòng 38–42 (suy luận low cho mục web, so tiền theo giá trị, khu ở theo buổi tối hai lần thử, quán ăn trong lịch) và ý 7. Trước: 20:37 13/11/2026.*
 
 ## Bảng từ
 
@@ -77,6 +77,11 @@ không được làm tụt (bài 9, 11).
 | 35 | **Hết lượt tìm thì dừng**: sau 2 lần tìm thêm, code cất công cụ tìm kho | lần xin thứ ba nhận "đã hết lượt" | 8 câu kho thiếu: **8 / 8** bớt lượt gọi model (cần 5), trung vị cả câu **22,85 ⇒ 16,15 giây**, tiền không tăng; sàn bộ câu mẫu **phạm theo chữ** (3 câu đổi sang từ chối); vẫn giữ vì chạy lại bản cờ tắt cũng đổi chiều đúng 3 câu, và cả 3 chỉ tìm 1 lần nên không chạm chỗ cờ; người kiểm độc lập đồng ý | **giữ kèm theo dõi** (bật 13/11; thấy 1 câu bịa thì tắt) | 13 |
 | 36 | **Exa trước, Serper dự phòng** cho tra web | Serper | đo riêng bước tra (42 câu, 2 người chấm cùng gắn): Exa **25**, Serper **17** (cần 22) ⇒ đạt, nhưng bỏ 5 mục trích trang tổng hợp của Exa thì còn 20; qua máy chủ thật: Exa **14**, Serper **13** (cần 16) | bỏ (giữ hồ sơ) | 15 |
 | 37 | **Lượt đo giữa kỳ**: cả trợ lý | bản RAG Phase 1–8, cùng bộ câu, cùng kho | tốt hơn ở **3 / 3 nhóm**: câu nhiều nguồn +1,0 [+0,28; +1,83], câu theo ngày dùng được 27 so với 11, câu hỏi tiếp +1,64 [+0,64; +2,71]; bộ câu mẫu tụt **4** câu (ngưỡng 4); từ chối nhầm 13 ⇒ 3 / 158; **3 chỗ phạm sàn** | không phải giữ / bỏ: số đo của bản đang chạy; trước lượt cuối anh quyết từng sàn phạm là sửa hay nhận là giới hạn | 16 |
+| 38 | **Lần viết mục web "nghĩ ít"** (mức suy luận low) | mức mặc định | nhanh hơn **0,87 giây** (2,95 ⇒ 2,08 trung vị), cần ≥ 1,5; chất lượng không tụt, tiền lần viết −32 % | bỏ | 25 |
+| 39 | **So số tiền mục web theo giá trị** ("100.000 VNĐ" = "100.000 đồng") | so nguyên chuỗi | mục web được hiện **43 ⇒ 51 / 76** (đo trên mục đã lưu, 0 USD); số bịa 220.000 vẫn chặn **4 / 4** | giữ | 25 |
+| 40 | **Khu ở theo buổi tối** — thử 1: đếm điểm tối như điểm ngày | chỉ đếm điểm ban ngày | người xem mới (bảng có buổi tối): **8 / 10**, cần 9 | bỏ | 25 |
+| 41 | **Khu ở theo buổi tối** — thử 2: có buổi tối ở trung tâm ⇒ ở trung tâm | chỉ đếm điểm ban ngày (luật cũ, như dòng 40) | người xem mới khác, cùng 10 lịch: **10 / 10**; mô phỏng 3.840 khung không còn lịch nào ra khu phía tây | giữ | 25 |
+| 42 | **Quán ăn trong lịch** (quán kho + bản đồ mở có nhãn "chưa kiểm", ≤ 2 km) | không có | 80,7 % số bữa có dòng; trung vị 0,78 km; người xem **10 / 10**; đếm trước khi xây: bản đầu ghi sai 95,2 %, đếm lại 74,7 % (mức ≥ 50 %) | giữ | 25 |
 
 ## Nhìn cả bảng thấy gì
 
@@ -89,9 +94,11 @@ không được làm tụt (bài 9, 11).
 4. **Còn đáng thử lại:** dòng 8 mới thử khi còn 5 đoạn; dòng 9 đã thử ở 10 đoạn nhưng trên kho cũ và chậm, cần một cách để luna chọn đoạn nhanh hơn (bài 16).
 5. **Đo riêng một bước có thể đánh lừa.** Dòng 36 đạt khi đo riêng bước tra, nhưng qua đường người dùng thật (cổng web, luật kiểm phía sau) thì lợi biến mất.
 6. **Có những thứ không cần thử.** Ngày 12/11, ba ý tưởng bị hạ ngay ở bước **đếm lỗi trước khi xây**: đếm trên kết quả đã có thì lỗi tưởng có không đủ nhiều
-   (bài 20). Vì không chạy thử nên chúng không có dòng trong bảng.
+   (bài 20). Vì không chạy thử nên chúng không có dòng trong bảng. Ngày 14/11 thêm một lần như vậy: đổi cách tìm web cho phần câu kho không có — cách tốt
+   nhất chỉ cho 6 / 16 lượt có ích, vừa chạm mức, lại phải gửi chữ do model viết ra ngoài ⇒ giữ nguyên (bài 25).
+7. **Người chấm chỉ chấm được thứ họ thấy.** Dòng 40–41: luật khu ở đã được chấm 10 / 10, nhưng bảng đưa người chấm thiếu buổi tối; người review lịch mẫu mới bắt được lỗi, và các lượt chấm sau phải thêm cột đó.
 
-Ngoài 37 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số, sửa kho, đổi cách đo. Chúng nằm trong sổ ghi việc của các agent. Anh không cần đọc để kể đồ án.
+Ngoài 42 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số, sửa kho, đổi cách đo. Chúng nằm trong sổ ghi việc của các agent. Anh không cần đọc để kể đồ án.
 
 **Bài sau:** Bài 20 — Làm đồ án thế nào. Muốn hiểu kỹ một dòng ở trên, mở bài ghi ở cột cuối.
 
@@ -110,6 +117,7 @@ Ngoài 37 dòng này còn khoảng 55 lần thử nhỏ hơn: đổi hằng số
 - **Sửa 14:41 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn): dòng 9 (luna chọn đoạn) đã so với mốc 10 đoạn + NFC (`91` T3-09) — bản trước ghi "mới thử ở 5 đoạn"; lần thử chạy song song / xã giao song song dùng lại số an toàn khi chuỗi gửi model không đổi (`c172`) — bản trước ghi "mọi lần thử chạy lại bộ 32 câu"; 21 % là phần tiền gửi vào, ước (`c202` §4). Biên bản kiểm: `data/hoc_cung_user_2026-11-10/review_bai_17_19.md` (riêng tư).
 
 - Dòng 35 (thêm 20:22 13/11/2026): `report_agent/2026-11-12_ra_khoang_cach/b_het_luot_tim_implementation.md` §4, §4.1; `b_het_luot_tim_review.md`; bật: `c_review_bat_co_het_luot.md` [đã chạy]
+- Dòng 38–42 (thêm chiều 14/11): `report_agent/2026-11-12_ra_khoang_cach/b_web_suy_luan_thap_implementation.md` (38), `b_tien_web_chuan_hoa_implementation.md` + `e_review_tien_web.md` (39), mục cuối `b_luu_tru_lich_implementation.md` + `e_review_o_toi.md` (40–41), `c_dem_truoc_khi_xay.md` + `c_quan_lich_implementation.md` (42); ý 6 thêm: `c_dem_truoc_khi_xay.md` §(1) [đã chạy]
 - Dòng 36: `report_agent/2026-11-12_ra_khoang_cach/e_tim_web_serper_exa.md` §6, §6b, §7; `e_exa_review.md` [đã chạy]
 - Dòng 37 (và ghi chú thêm ở dòng 14): `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md` §4, §8; `b7_review.md` [đã chạy]; ý 6: `report_agent/2026-11-12_ra_khoang_cach/c_phan_chua_on.md` §3b, §3d [đã chạy]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
 - Dòng 30–34 (thêm 15:03 11/11/2026): `report_agent/2026-11-08_phase_9_ban_13/e_t2_web_implementation.md` (dòng 30), `report_agent/2026-11-06_giao_dien_cong/c_t3_bang_implementation.md` (dòng 31), `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` mục 02/11 (dòng 32, 33) và mục 03/11, `06_BAO_CAO_TIM_KIEM.md` (dòng 34) [đã chạy]
