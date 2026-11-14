@@ -48,3 +48,18 @@ Kết quả chạy lại sau khi trả cờ và test rộng ghi ở mục cuối
 - File test bị chạm, không khoá: **116 đạt** (2 phút 01).
 - File test bị chạm, có khoá: **124 đạt** (1 phút 17).
 - **Test rộng** cả `backend/tests` có khoá trên `9624215`: **1.001 đạt, 0 trượt** (12 phút 11; chạy song song với việc khác nên chậm hơn thường).
+
+## Sửa luật khu theo buổi tối — nhánh `p9-o-toi` (B, 17:04 14/11/2026, 0 USD; A giao sau review lịch mẫu)
+- **Lỗi:** lịch mẫu "Ví dụ" bị gợi ý khu "phía tây" (3 / 5 điểm ngày ở phía tây) trong khi **cả hai buổi tối** ở trung tâm. Bộ xếp chỉ đặt hoạt động tối ở trung tâm, nên khách phải đi về mỗi tối.
+  - Mô phỏng và hai lượt người xem trước không bắt được, vì bảng xem không ghi buổi tối. **Bài học:** bảng cho người xem phải có đủ thứ ảnh hưởng tới quyết định.
+- **Thử 1 — đếm cả điểm buổi tối như điểm ngày:**
+  - người xem mới (bảng có buổi tối, 10 lịch, trong đó 3 lịch từng ra "phía tây") chấm **8 / 10**, dưới sàn 9 / 10;
+  - 2 lịch vẫn ra phía tây vì điểm tây ban ngày vẫn chiếm đa số;
+  - câu lý do ghi "gồm cả buổi tối" ở cả lịch không có buổi tối.
+  - ⇒ bỏ cách này.
+- **Thử 2 (giữ):** lịch **có hoạt động buổi tối ⇒ ở trung tâm**, lý do "các buổi tối của lịch đều ở trung tâm, về chỗ ở gần". Lịch không có buổi tối (vd có trẻ em) ⇒ luật cũ theo điểm ngày.
+  - Người xem mới khác, cùng 10 lịch: **10 / 10**. File `data/luu_tru_lich_2026-11-14/xem_10_v3.md` (thử 1), `xem_10_v4.md` (thử 2), khoá `xem_10_v3_khoa.json`.
+- **Mô phỏng 3.840 khung:** mọi tiêu chí "Luôn" vẫn đạt. Khu được chọn: trung tâm 3.036 · ven biển 36 · **phía tây 0**.
+  - Lịch người lớn nào cũng có buổi tối ở trung tâm, nên khu phía tây nay chỉ còn trên lý thuyết. Ghi để User biết.
+- **Test:** `test_luu_tru_lich.py` 7 đạt (thêm ca "có buổi tối ⇒ trung tâm, lý do nhắc buổi tối; không buổi tối ⇒ không nhắc"). File chạm 133 đạt cả không khoá lẫn có khoá.
+- **Còn (người xem nêu, không sửa):** 7 / 10 lịch trung tâm ra cùng 5 cơ sở; địa chỉ ven biển ghi "Huyện Phú Vang" (tên hành chính cũ trong danh mục).
