@@ -64,6 +64,8 @@ def test_intent_message_and_name_matching():
     tin = s.tin_nhan_hieu(B, luu, "  bỏ điểm đầu  ")
     assert tin.endswith("Câu người dùng: bỏ điểm đầu") and "Ngày 1" in tin
     assert s.khop_ten(B, "Đại Nội Huế") == "dai_noi" and s.khop_ten(B, "đại nội") == "dai_noi" and s.khop_ten(B, "Đại") is None
+    assert s.khop_ten(B, "Quốc Học") == "quoc_hoc" and s.khop_ten(B, "Lăng") is None  # tên ngắn chỉ nhận khi nằm trong đúng một điểm
+    assert "Các điểm có thể xếp" in tin
 
 
 def test_flag_needs_v2():

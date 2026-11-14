@@ -38,7 +38,7 @@ BUILD_RECORD = Path(__file__).resolve().parents[2] / "data/full_corpus_builds/hu
 
 def flags_from(**assistant) -> AssistantFlags:
     s = copy.deepcopy(SETTINGS)
-    s["assistant"].update(assistant)
+    s["assistant"].update({"sua_lich_v2": False, **assistant})  # sửa lịch bản 2: test không đọc cờ thật (bật tạm khi đo trong worktree)
     return AssistantFlags.from_settings(s)
 
 

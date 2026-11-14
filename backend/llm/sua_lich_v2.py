@@ -62,7 +62,12 @@ def khop_ten(bang: v2.BangV2, ten: str | None) -> str | None:
     if ten in bang.theo_id:
         return ten
     t = chuan_ten(ten)
-    return next((d["id"] for d in bang.diem if t in (chuan_ten(x) for x in v2.ten_cua(d))), None)
+    dung = next((d["id"] for d in bang.diem if t in (chuan_ten(x) for x in v2.ten_cua(d))), None)
+    if dung is not None or len(t.split()) < 2:
+        return dung
+    # tên ngắn ("Quốc Học" ⇒ "Trường Quốc Học Huế"): nhận khi nằm trong ĐÚNG MỘT điểm của bảng (≥ 2 chữ — Q3 pilot 14/11); nhiều điểm ⇒ không đoán
+    gan = {d["id"] for d in bang.diem for x in v2.ten_cua(d) if f" {t} " in f" {chuan_ten(x)} "}
+    return gan.pop() if len(gan) == 1 else None
 
 
 def luu_tu_lich(khung: dict, ngay_di: str | None, mua: dict | None) -> dict:
@@ -290,6 +295,7 @@ def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
             ten = [ten_cua_diem(bang, j) for j in ng["buoi"][b]]
             if ten:
                 dong.append(f"- Ngày {ng['ngay']} · {({'sang': 'sáng', 'chieu': 'chiều', 'toi': 'tối'})[b]}: {'; '.join(ten)}")
+    dong += ["", "Các điểm có thể xếp (chép đúng tên khi điền ten / ten_moi): " + "; ".join(d["ten"] for d in bang.diem)]
     return "\n".join(dong) + "\n\nCâu người dùng: " + cau.strip()
 
 

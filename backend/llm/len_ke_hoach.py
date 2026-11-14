@@ -212,7 +212,7 @@ async def stream_v2(query: str, retrieval_service, context_builder, generator, t
 
 async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: AssistantFlags) -> dict | None:
     """Câu người dùng ⇒ (một lần gọi hiểu ý) hành động có tên ⇒ code áp trên lịch đã lưu. Bấm nút thẻ chọn ⇒ không gọi model.
-    Trả None khi không có gì để làm (danh sách rỗng, model lỗi, hoặc mọi hành động trượt vì tên lạ / không có trong lịch) ⇒ lõi đi đường thường."""
+    Trả None khi model trả danh sách rỗng / lỗi ⇒ lõi đi đường thường."""
     bang, luu = flags.bang_lich_v2, trace.lich_luu
     if trace.sua_chon is not None:
         kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon)
@@ -230,8 +230,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         kq = sl.ap(bang, luu, hanh_dong)
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
                  "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None}
-    if not kq["da_ap"] and kq["the"] is None and all(k["ma_luat"] in ("ngoai_bang", "khong_co_trong_lich") for k in kq["khong_doi"]):
-        return None  # không chạm được gì trong lịch ⇒ có thể không phải câu sửa lịch
+    # model đã hiểu là câu sửa ⇒ luôn là lượt sửa, kể cả khi mọi hành động trượt (báo "Không đổi được: X không có trong lịch" thay vì trả lời
+    # lạc đề — Q3 pilot 14/11). Câu không phải sửa ⇒ model trả danh sách rỗng ⇒ None ở trên (Q5: 0 / 64 câu an toàn ra hành động).
     return kq
 
 
