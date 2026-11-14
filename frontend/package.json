@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@fontsource/be-vietnam-pro": "5.3.0",
+    "@fontsource/noto-serif-display": "5.2.5",
     "dompurify": "3.4.17",
     "leaflet": "1.9.4",
     "marked": "18.1.1",

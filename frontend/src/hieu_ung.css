@@ -1,0 +1,63 @@
+/* Lớp hiệu ứng H1 "Sông Hương" (bản mẫu `data/ui_mau_2026-11-14/chung/hieu_ung.css` bản 2, User duyệt 14/11).
+   Mọi chuyển động chỉ chạy khi <html> có lớp .hieu-ung — `hieuUng.js` gắn khi máy KHÔNG bật giảm chuyển động.
+   Lớp: .vao (+ --n) hiện lần lượt lúc tải · .anh-troi · .troi-cuon · .song-lop · .hd-cuon · .hien (+ --n) · .nang (+ .lop-mau) · .nhan-nut. Chỉ transform / opacity (không xê dịch bố cục). Không vòng lặp > 5 s (WCAG 2.2.2). */
+
+@view-transition { navigation: auto; }
+
+.hieu-ung ::view-transition-old(root) { animation: vt-ra .3s ease both; }
+.hieu-ung ::view-transition-new(root) { animation: vt-vao .5s cubic-bezier(.16,1,.3,1) both; }
+@keyframes vt-ra { to { opacity: 0; transform: translateY(-12px) scale(.99); } }
+@keyframes vt-vao { from { opacity: 0; transform: translateY(24px); } }
+
+/* 1. Lúc tải: tiêu đề → câu phụ → ô hỏi → từng chip hiện lần lượt */
+.hieu-ung .vao { animation: vao .9s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--n, 0) * 110ms + 150ms); }
+@keyframes vao { from { opacity: 0; transform: translateY(30px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* 2. Ảnh đầu trang: phóng rõ (1 ⇒ 1,12, 14 s, một lần) + trôi chậm hơn trang khi cuộn (parallax, chỉ transform) */
+.hieu-ung .anh-troi { animation: troi 14s cubic-bezier(.2,.6,.3,1) both; transform-origin: 62% 45%; }
+@keyframes troi { from { transform: scale(1.0); } to { transform: scale(1.12); } }
+@supports (animation-timeline: scroll()) {
+  .hieu-ung .troi-cuon { animation: thi-sai linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+  @keyframes thi-sai { to { transform: translateY(22vh); } }
+}
+
+/* Sóng mép hero: hai lớp dâng một lần */
+.hieu-ung .song-lop { animation: dang 2.2s cubic-bezier(.16,1,.3,1) both; }
+.hieu-ung .song-lop.sau { animation-duration: 3s; animation-delay: .2s; }
+@keyframes dang { from { transform: translate3d(-8%, 30px, 0); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 3. Thanh menu đổi nền khi cuộn qua hero */
+@supports (animation-timeline: scroll()) {
+  .hieu-ung .hd-cuon { animation: hd-dac linear both; animation-timeline: scroll(root); animation-range: 0 220px; }
+  @keyframes hd-dac { from { background-color: rgba(10,61,64,.9); box-shadow: none; } to { background-color: rgba(10,61,64,.98); box-shadow: 0 8px 24px rgba(4,30,32,.25); } }
+}
+.hieu-ung .hd-cuon.da-cuon { background-color: rgba(10,61,64,.98); box-shadow: 0 8px 24px rgba(4,30,32,.25); }
+
+/* 4. Khối hiện dần khi cuộn: trượt 40 px + mờ ⇒ rõ, lệch nhịp trong lưới (--n) */
+@supports (animation-timeline: view()) {
+  .hieu-ung .hien { animation: hien linear both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+  .hieu-ung .hien[style*="--n"] { animation-range: entry calc(var(--n) * 4%) cover calc(30% + var(--n) * 4%); }
+}
+@supports not (animation-timeline: view()) {
+  .hieu-ung .hien { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1); transition-delay: calc(var(--n, 0) * 90ms); }
+  .hieu-ung .hien.da-hien { opacity: 1; transform: none; }
+}
+@keyframes hien { from { opacity: 0; transform: translateY(40px) scale(.98); } to { opacity: 1; transform: none; } }
+
+/* 5. Thẻ: rê chuột / Tab tới ⇒ nhấc, ảnh phóng 1,08, nhãn nhấc lên, lớp màu trượt từ dưới */
+.hieu-ung .nang { transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease; }
+.hieu-ung .nang:hover, .hieu-ung .nang:focus-visible { transform: translateY(-6px); box-shadow: 0 22px 40px rgba(10,61,64,.22); }
+.hieu-ung .nang img { transition: transform .7s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .nang:hover img, .hieu-ung .nang:focus-visible img { transform: scale(1.08); }
+.hieu-ung .nang .nhan { transition: transform .45s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .nang:hover .nhan, .hieu-ung .nang:focus-visible .nhan { transform: translateY(-8px); }
+.nang.lop-mau { position: relative; overflow: hidden; }
+.nang.lop-mau::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(14,107,102,.55), rgba(14,107,102,0) 60%); opacity: 0; transform: translateY(30%); pointer-events: none; }
+.hieu-ung .nang.lop-mau::after { transition: opacity .45s ease, transform .6s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .nang.lop-mau:hover::after, .hieu-ung .nang.lop-mau:focus-visible::after { opacity: 1; transform: none; }
+.nang.lop-mau .nhan { z-index: 1; }
+
+/* 6. Nhấn nút / chip: lún nhẹ */
+.hieu-ung .nhan-nut { transition: transform .15s ease, background-color .2s ease, box-shadow .2s ease; }
+.hieu-ung .nhan-nut:active { transform: scale(.96); }
+.hieu-ung .nhan-nut:hover { box-shadow: 0 6px 16px rgba(10,61,64,.18); }

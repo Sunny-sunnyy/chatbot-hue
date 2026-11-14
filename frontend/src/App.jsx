@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { ChatView, useChat } from "./chat.jsx";
-import { Bai, CAU_BIEU_MAU, GioiThieu, GOI_Y, KhamPha, LenKeHoach, LenKeHoachV2, LinhVuc, TrangChu } from "./pages.jsx";
+import { CAU_BIEU_MAU, GOI_Y } from "./chung.jsx";
+import { TrangChu } from "./TrangChu.jsx";
+import { Bai, KhamPha, LinhVuc } from "./KhamPha.jsx";
+import { LenKeHoach, LenKeHoachV2 } from "./LenKeHoach.jsx";
+import { GioiThieu } from "./GioiThieu.jsx";
 import { useRoute } from "./route.js";
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
@@ -77,13 +81,13 @@ export default function App() {
 
   return (
     <div className={`cong ${panelOpen ? "chat-mo" : ""}`}>
-      <header className="hd">
+      <header className="hd hd-cuon">
         <div className="hd-in">
           <a className="brand" href="#/">
             <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
-              <circle cx="16" cy="16" r="15" fill="#0A3D40" />
-              <path d="M5 19c4-3 7 3 11 0s7 3 11 0" fill="none" stroke="#CFE7E2" strokeWidth="2" strokeLinecap="round" />
-              <path d="M9 14l7-6 7 6" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="16" cy="16" r="15" fill="#FFFFFF" />
+              <path d="M5 19c4-3 7 3 11 0s7 3 11 0" fill="none" stroke="#0E6B66" strokeWidth="2" strokeLinecap="round" />
+              <path d="M9 14l7-6 7 6" fill="none" stroke="#0A3D40" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className="brand-dai">{TEN_DAY_DU}</span>
             <span className="brand-ngan">{TEN_NGAN}</span>

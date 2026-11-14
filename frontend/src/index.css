@@ -21,6 +21,7 @@
   --color-error: #A4262C;
   --color-error-soft: #FBEDEE;
   --font-sans: "Be Vietnam Pro", system-ui, "Segoe UI", sans-serif;
+  --font-serif: "Noto Serif Display", Georgia, serif;   /* H1 "Sông Hương" (User chọn 14/11): chỉ cho tiêu đề, một độ đậm 600 */
 }
 
 body { background: var(--color-page); color: var(--color-ink); font-family: var(--font-sans); font-size: 17px; line-height: 1.6; }
@@ -33,14 +34,16 @@ a { color: inherit; }
 .loi { margin: 16px 0; padding: 12px; border-radius: 8px; background: var(--color-error-soft); color: var(--color-error); }
 
 /* Đầu trang */
-.hd { position: sticky; top: 0; z-index: 20; background: var(--color-surface); border-bottom: 1px solid var(--color-line); }
+/* H1: đầu trang nền nước sâu, chữ trắng; khi cuộn đậm thêm + bóng (hieu_ung.css `.hd-cuon`) */
+.hd { position: sticky; top: 0; z-index: 20; background: rgba(10, 61, 64, .96); color: #fff; }
 .hd-in { max-width: 1200px; margin: 0 auto; padding: 0 32px; height: 68px; display: flex; align-items: center; gap: 28px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: -.01em; white-space: nowrap; }
 .brand-ngan { display: none; }
 .nav { display: flex; gap: 2px; margin-left: auto; }
 .nav-a { text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 16px; font-weight: 500; white-space: nowrap; }
-.nav-a:hover { background: var(--color-accent-soft); }
-.nav-a[aria-current="page"] { box-shadow: inset 0 -3px 0 var(--color-accent); }
+.nav-a { color: #fff; border-radius: 999px; }
+.nav-a:hover { background: rgba(255, 255, 255, .14); }
+.nav-a[aria-current="page"] { background: #fff; color: var(--color-river); }
 
 /* Nút, chip */
 .nut { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 22px; border-radius: 999px; font-weight: 600;
@@ -70,7 +73,7 @@ picture { display: contents; }
 .kp-dau .vet { color: var(--color-river-muted); }
 .hero-in { position: relative; max-width: 1200px; margin: 0 auto; padding: 84px 32px 120px; display: flex; flex-direction: column; align-items: center;
            text-align: center; }
-.hero-h { font-size: 52px; line-height: 1.1; font-weight: 600; letter-spacing: -.02em; max-width: 18ch; }
+.hero-h { font-family: var(--font-serif); font-size: 52px; line-height: 1.1; font-weight: 600; letter-spacing: -.015em; max-width: 18ch; }
 .hero-p { margin-top: 16px; font-size: 19px; max-width: 46ch; color: var(--color-river-muted); }
 .hoi { margin-top: 28px; display: flex; gap: 8px; width: 100%; max-width: 640px; padding: 8px; background: var(--color-surface); border-radius: 999px;
        box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
@@ -89,8 +92,8 @@ picture { display: contents; }
 
 .khoi { padding: 64px 0 0; }
 .khoi-trang { padding-top: 32px; padding-bottom: 72px; }
-.khoi-h { font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -.015em; }
-.trang-h { font-size: 40px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; margin-top: 8px; }
+.khoi-h { font-family: var(--font-serif); font-size: 32px; line-height: 1.15; font-weight: 600; letter-spacing: -.01em; }
+.trang-h { font-family: var(--font-serif); font-size: 42px; line-height: 1.12; font-weight: 600; letter-spacing: -.01em; margin-top: 8px; }
 .khoi-p { margin-top: 8px; color: var(--color-muted); max-width: 62ch; }
 .khoi-p a, .dai-bao a, .vet a { text-decoration: underline; text-underline-offset: 3px; }
 .vet { font-size: 14px; color: var(--color-muted); }
@@ -176,8 +179,8 @@ picture { display: contents; }
 .gioi-thieu ul { padding-left: 22px; list-style: disc; }
 .gioi-thieu li + li { margin-top: 4px; }
 
-.ft { border-top: 1px solid var(--color-line); padding: 24px 0 96px; font-size: 14px; color: var(--color-muted); }
-.ft a { text-decoration: underline; text-underline-offset: 3px; }
+.ft { background: var(--color-river); padding: 32px 0 96px; font-size: 15px; color: var(--color-river-muted); }
+.ft a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Trợ lý: nút nổi + khung nổi (laptop góc phải, không rời trang) + trang đầy đủ */
 .noi { position: fixed; right: 24px; bottom: 24px; z-index: 30; display: inline-flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 22px 0 18px;

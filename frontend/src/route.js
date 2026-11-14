@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
+import { giamChuyenDong } from "./hieuUng.js";
 
 // Điều hướng bằng hash (spec cổng đợt 1 D5): 0 gói router, server chỉ phục vụ `/` ⇒ tải lại / chia sẻ link vẫn đúng trang.
 //   #/                       trang chủ
@@ -33,10 +35,12 @@ export function baiHref(id) {
 export function useRoute() {
   const [route, setRoute] = useState(() => parseHash(window.location.hash));
   useEffect(() => {
-    const onChange = () => {
-      setRoute(parseHash(window.location.hash));
+    // H1: chuyển trang mượt bằng View Transitions khi trình duyệt có + máy không giảm chuyển động; không có ⇒ đổi trang như cũ
+    const doi = () => {
+      flushSync(() => setRoute(parseHash(window.location.hash)));
       window.scrollTo(0, 0);
     };
+    const onChange = () => (document.startViewTransition && !giamChuyenDong() ? document.startViewTransition(doi) : doi());
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
