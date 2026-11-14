@@ -1,3 +1,17 @@
+# STATUS A — KẾT PHIÊN 14/11 (viết 17:42 14/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên (một câu; nhắc trần Phase 9 ≈ 6,35 / 6,0) ⇒ cùng lượt giao B ghi kho 4 (8 quán, gói `data/sua_kho_2026-11-14_ghi_kho_4/` sẵn) ⇒ trình vòng cải tiến 30 (W73–W75), mỗi lần một câu ⇒ đưa User lệnh dọn nhánh. Server 8010 đã tắt khi A đóng.
+- Xong chiều 14/11 (A): ~25 lần merge + cổng ổn định; bật `sua_lich_v2`, `cau_nhieu_y`, `luu_tru_lich`, `quan_lich`; áp W70–W72; Codex mặc định gpt-6.1-sol; 2 test đọc cờ thật ⇒ tự đặt cờ; bẫy worktree vào `Project_Status.md` §8; kết phiên: handoff viết lại + archive `CURRENT_HANDOFF_LICH_SU_2026-11-14.md`, Project_Status (header, Bây giờ, §3, §4, §5), PROJECT_HISTORY, nhật ký, sổ cải tiến vòng 30.
+- Bẫy A (chiều): worktree ghép lệnh rơi xuống cây chung; báo "đã commit" trước khi đọc kết quả (3 lần trong ngày); chuyển số chưa review cho User (quán 95 % ⇒ 74,7 %).
+- Vòng tự soi: vòng 1 (14:12) + vòng 2 (kết phiên, B / C / E đều gửi) — chốt ở handoff + sổ vòng 30.
+- Tiền A ≈ 0,01 USD (cổng ổn định + câu thử).
+
+# STATUS A — MỞ LẠI LẦN 2 14/11 (viết 17:39 14/11/2026 `date`, trước khi User đóng / mở lại 4 phiên)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` mục "MỞ LẠI LẦN 2 — 14/11" (quyền, hệ thống, việc dở theo thứ tự). Xác nhận quyền bằng một câu. Server 8010 mất khi A đóng ⇒ mở lại khi User cần xem.
+- Xong chiều (A): ~20 lần merge + cổng ổn định (test file chạm có / không khoá, build, server thật, khởi động lại 8010); bật 4 cờ (`sua_lich_v2`, `cau_nhieu_y`, `luu_tru_lich`, `quan_lich`); áp W70–W72; Codex mặc định gpt-6.1-sol; 2 test đọc cờ thật ⇒ tự đặt cờ; sổ ghi việc + bài học qua session (commit); dọn: chờ User chạy lệnh `!`.
+- Bẫy A (chiều): worktree ghép lệnh rơi xuống cây chung (đã hoàn); báo "đã commit" trước khi đọc kết quả (3 lần trong ngày); số chưa review chuyển User (quán 95 % — C sửa 74,7 %) ⇒ ghi "chưa review" cạnh số của người khác.
+
 # STATUS A — MỞ LẠI CHIỀU 14/11 (cập nhật 14:58 14/11/2026 `date`)
 
 - Terminal: A `hue-rag-ad` · B `hue-rag-6b` · C `hue-rag-c1` · E `hue-rag-14`. User: quyền giữ như sáng. Giao theo handoff mục "MỞ LẠI 14/11".

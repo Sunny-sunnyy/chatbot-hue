@@ -1,6 +1,39 @@
 # STATUS E — PHIÊN 14/11 (mở 09:43 14/11/2026, `date`) · terminal `hue-rag-c4` · Claude Opus 5.5 · vai thực thi
 
-## PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11, ghi 14:50 14/11/2026 — `date`; KẾT PHIÊN 14/11)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 14/11 — ghi 17:40 14/11/2026, `date`)
+
+**Quyền phiên 14/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A ⇒ chờ A giao (A hỏi lại User quyền / tiền). E không còn server, lượt đo, agent con, worktree `/tmp/e_*` nào.
+
+### Hệ thống lúc kết phiên (E đã chạm)
+- Kho: **216 file / 8.603 đoạn**, record `82abd97169cd`, sparse `3404406926f2`, T1 `652da5944fe7` (ghi kho lần 3 của E: cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên + giờ Đại Nội theo mùa). Sao lưu `knowledge-base-hue/meta/backup_ghi_kho_2026-11-14_lan_{1,2,3}/`.
+- Giao diện trên main: không còn chữ ghi công ảnh; lịch mẫu "Ví dụ" (`/api/lich_mau`, `xep_v2` cố định, đủ đi – ăn – ở, chỉ quán kho); sông vẽ qua từng điểm + tên chặng + màu loại; ảnh dưới câu trả lời (`frontend/src/anhTraLoi.js`, 38 ảnh `kc` không hiện); `anh.js` chỉ còn đường ảnh.
+- Kiểm tổng giao diện cuối ngày ĐẠT (5 trang × 1440 / 390, 2 câu Trợ lý, lịch 3 ngày; ảnh `data/ui_mau_2026-11-14/anh_chup/tong_1411/`).
+
+### Việc E đã làm hôm nay (đều vào main; report trong `report_agent/2026-11-12_ra_khoang_cach/e_*`)
+- Sáng: ghi kho lần 1 + 2; giao diện H1 (trang chủ, Lên kế hoạch, lớp hiệu ứng); .ics; bài lưu trú + bảng 140 cơ sở cho lịch; kiểm khẩn cấp trên main; bài học 22–24; sổ ghi việc 14/11; nhiều review (B / C).
+- Chiều: kiểm `p9-sua-lich-tre`, review câu nhiều ý; bỏ ghi công + lịch mẫu; điểm nhấn Lên kế hoạch; ảnh dưới câu trả lời; ghi kho lần 3; bài học 01 / 19 / 22 / 24 / 25; lịch mẫu đi – ăn – ở + chỉ quán kho; review tiền web theo giá trị (+ "rưỡi" / "150K"), khu ở theo buổi tối, ảnh lịch 33 / 34, +7 quán kho; kiểm tổng giao diện.
+
+### Nợ / việc chờ
+- **Lần ghi kho kế (A ghi handoff):** dòng nguồn giờ Đại Nội trong bài Đại Nội bỏ cụm "dẫn quy định của Trung tâm Bảo tồn Di tích" (C: trang Vinpearl không nói vậy). Gộp với lần ghi kế, không dựng riêng. Công cụ mẫu: `data/sua_kho_2026-11-14_ghi_kho_3/tools/` (nhớ đổi khoá bước 0 sang record / sparse / số điểm hiện hành).
+- Gợi ý từ review (chưa giao): ảnh "đồi Thiên An" là hồ Thủy Tiên ⇒ thêm `chu_thich` hoặc đổi ảnh (C); trang nguồn 2 ảnh web lịch chỉ là trang chủ tên miền (C).
+- Không việc nào đang dở của E.
+
+### Tiền E hôm nay (API OpenAI; Codex = gói ChatGPT; agent con = quota Claude)
+- Trước mở lại lần 1: ≈ 0,50 USD (ghi kho 1 0,229 · ghi kho 2 0,225 · khẩn cấp 0,027 · lặt vặt).
+- Từ 14:55: ≈ 0,069 USD (ghi kho 3 ≈ 0,030 · đo tiền sửa lịch ≈ 0,017, trong đó ≈ 0,009 lỡ gửi vào server C · kiểm tổng 0,0038 · lặt vặt).
+- **Tổng E 14/11 ≈ 0,57 USD.**
+
+### Bẫy hôm nay (chi tiết ở mục "Bẫy / đã học phiên 14/11" dưới)
+- Mở server tạm: kiểm cổng trống (`ss -ltn`) và `readlink /proc/<pid>/cwd` = worktree của mình **trước** khi gửi lượt có phí (14/11: 18 lượt đo chạy nhầm vào server của C).
+- `git switch -c` lỡ chạy ở cây chung khi tạo nhánh ⇒ tạo nhánh trong worktree riêng, không ở cây chung.
+- Bước kiểm "máy rảnh" bằng `pgrep -f uvicorn` dính tiến trình zombie ⇒ lọc `stat` Z.
+- Bài học viết lại lời của bài, không chép câu kho (hook chặn trùng ≥ 40 ký tự; quét trước bằng `.githooks/overlap_scan.py`).
+- Giữ: không grep thư mục có `*sealed*`; giờ ghi file luôn lấy `date`.
+
+### Câu hỏi
+- Không có câu hỏi treo của E.
+
+## LỊCH SỬ — mục đọc trước lúc mở lại lần 1 (ghi 14:50 14/11/2026 — `date`; KẾT PHIÊN 14/11)
 
 **E không còn server, lượt đo hay agent con nào đang chạy.** Server cổng 8010 không phải của E. Worktree của E: `/tmp/e_gd` (nhánh `p9-gd-h1`, đã merge) — xoá được (`git worktree remove /tmp/e_gd`). File tạm `/tmp/e_rv/*` xoá được. Không chạy lượt có phí mới khi chưa được giao; quyền / ngân sách mở lại phải hỏi lại (memory "autonomy / budget per session").
 
@@ -82,6 +115,12 @@
 - 16:15 14/11/2026 — **Ghi kho lần 3 XONG, ĐẠT**: 4 bài (cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên) + giờ Đại Nội theo mùa (chỉ bài Đại Nội). 216 file / **8.603 đoạn**, record `82abd97169cd`, sparse `3404406926f2`, T1 `652da5944fe7`; sao lưu `meta/backup_ghi_kho_2026-11-14_lan_3/`. Đo: Golden câu chạm 2 + ngoài kho 18 (0 bị trả lời), an toàn 32 (0 đổi lớp), 7 câu thử đạt. Report `e_ghi_kho_3_implementation.md`. Main có p9-lkh-nhan + p9-anh-tra-loi (A merge). Tiền từ mở lại ≈ 0,065 USD. Không server nào của E chạy. Worktree `/tmp/e_anh` (p9-lkh-nhan, đã merge), `/tmp/e_atl` (p9-anh-tra-loi, đã merge) — xoá được.
 
 - 16:23 14/11/2026 — bai_hoc 01/22/24/25/README (lần ghi kho 3 + ảnh 184/216) đã commit (A). Kiểm độc lập 40 mục ⇒ sửa 8 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan3.md`). Nợ (A ghi handoff): dòng nguồn giờ Đại Nội trong kho bỏ cụm "dẫn quy định của Trung tâm" ở lần ghi kho kế. **Rảnh — chờ**: phản biện khi B / C có số đếm (web ý thiếu, quán trong lịch, tiền chặn nhầm). Không server / lượt đo nào của E chạy.
+
+- 17:10 14/11/2026 — Xong và đã vào main: review `p9-tien-web` + `p9-tien-ruoi` (tiền mục web theo giá trị; `e_review_tien_web.md`), lịch mẫu có ăn + ở (`p9-lich-mau-an-o`, hàm chung `gan_o_an`) + chỉ quán kho (`p9-lich-mau-quan-kho`), review `p9-o-toi` (khu ở theo buổi tối; `e_review_o_toi.md`, m-1 B sửa). Ảnh lịch mẫu cuối: `data/ui_mau_2026-11-14/anh_chup/lich_mau_cuoi_1411/` (trung tâm, 3 bữa quán kho). **Rảnh — chờ.** Không server / lượt đo / agent con nào của E chạy; worktree /tmp/e_* đã gỡ. Tiền từ mở lại ≈ 0,065 USD (các việc sau ghi kho 3 đều 0 USD).
+
+- 17:18 14/11/2026 — bai_hoc 19 / 25 / README cho việc chiều 14/11 đã commit (A, `3264478`); kiểm độc lập 57 mục, sửa 5 + 3 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_chieu.md`). **Rảnh — chờ.** Không server / lượt đo / agent con nào của E chạy.
+
+- 17:36 14/11/2026 — Review `p9-anh-lich-thieu` (ảnh lịch 33/34; `e_review_anh_lich_thieu.md`) + `p9-quan-kho-cum` (+7 quán kho; `e_review_quan_kho_cum.md`) ready. **Kiểm tổng giao diện trên 8010 (main 1800244) ĐẠT:** 5 trang × 1440/390 0 lỗi console / 0 HTTP ≥ 400 / 0 ảnh hỏng / 0 cuộn ngang; Trợ lý câu một nơi ⇒ 1 ảnh, câu nhiều ý ⇒ dòng ý thiếu + mục web; lịch 3 ngày 6 bữa + nơi ở + sông 3/3; 0,00384 USD; ảnh `data/ui_mau_2026-11-14/anh_chup/tong_1411/`. **Rảnh — chờ.** Tiền từ mở lại ≈ 0,069 USD.
 
 ### Bẫy / đã học phiên 14/11
 - **Kiểm cổng trống trước khi mở server** (`ss -ltn | grep :<cổng>`; sau khi mở, `readlink /proc/<pid>/cwd` phải là worktree của mình): 14/11 E mở server cổng 8873 trùng server của C ⇒ server E chết, 18 lượt đo có phí chạy vào server C (≈ 0,009 USD phí oan, số bỏ).

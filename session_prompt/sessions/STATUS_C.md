@@ -1,50 +1,42 @@
 # STATUS C — phiên 14/11 (C `hue-rag-b4` · A `hue-rag-7b` · B `hue-rag-22` · E `hue-rag-c4`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11, ghi 14:43 14/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên 14/11, 17:40 14/11/2026 `date`)
 
-- **Việc dở — câu nhiều ý:** User chọn BẬT vòng 2 (lệch Golden 161 là nhiễu; sàn tính trên câu đi qua luật mới).
-  - Bước kế: **E review** nhánh `p9-cau-nhieu-y` head **`2c99534`** (đã push) ⇒ **A merge + bật cờ** `cau_nhieu_y` trong `settings.yaml`.
-  - C không tự merge / bật.
-  - Report: `report_agent/2026-11-12_ra_khoang_cach/c_cau_nhieu_y_do_v2.md` (vòng 1: `c_cau_nhieu_y_do.md`); plan v2 `docs/superpowers/plans/2026-11-14-cau-nhieu-y-v2-plan.md`.
-  - E review mà có sửa ⇒ C sửa trên nhánh, chạy `pytest tests/test_cau_nhieu_y.py` (25) + bộ liên quan (545). Chỉ đo có phí lại khi A giao.
-- **Việc dở 2 — report `report_agent/2026-11-12_ra_khoang_cach/c_review_bai_luu_tru.md`** (chưa commit, A báo):
-  - hook `.githooks/pre-commit` chặn dòng 20 (chữ trùng ≥ 40 ký tự với kho);
-  - sửa: viết lại dòng đó theo kiểu (tả loại, không chép câu kho), chạy lại hook (`git add` file đó rồi `git commit --dry-run` / chạy `.githooks/overlap_scan.py`) cho tới khi 0 trùng;
-  - giao lại A commit.
-- **Việc MỚI User giao (A chuyển, kết phiên 14/11) — chưa bắt đầu, chưa có plan:**
-  - (1) **Bỏ dòng ghi công dưới ảnh** ở thẻ / trang bài Khám phá (`frontend/src/KhamPha.jsx` `GhiCongAnh`, figcaption ở `kp2-ben-anh`) và ở Giới thiệu.
-    Gom mọi ghi công về **một chỗ thu gọn** (mục `#nguon-anh` ở Giới thiệu đã có — `GioiThieu.jsx` `<details id="nguon-anh">`).
-    Lưu ý giấy phép CC BY của ảnh Commons vẫn cần ghi công ở đâu đó, kèm link ⇒ một chỗ thu gọn là đủ, phải giữ đủ trường.
-    Đo lại CLS trang bài (bỏ figcaption ⇒ đổi chiều cao cột bên).
-  - (2) **Giới thiệu "vẫn đơn giản"** (User): so code `frontend/src/GioiThieu.jsx` + `gt.css` với bản mẫu `data/ui_mau_2026-11-14/h1/gioi_thieu.html`, liệt kê chỗ lệch.
-    Kiểm khối hiện dần (`.hien` / `.vao` dưới `html.hieu-ung`) có bị KẸT MỜ không: opacity không về 1 khi cuộn tới, hoặc mở thẳng `#/gioi-thieu/nguon-anh`.
-    Đo bằng Playwright trên bản build thật (chụp sau cuộn + đọc `getComputedStyle(...).opacity`).
-  - Bước đầu phiên sau: đọc 2 việc này với A ⇒ plan nhẹ / làm theo thứ tự A giao.
-- **Xong hôm nay** (không còn việc):
-  - nhánh ảnh Khám phá — A merge `ef8bc46`;
-  - nhãn bộ sửa lịch theo lịch bản 2 — đã thấy `2923d432da9b`, kín `1165ecfa6367`, đã báo B lỗi `khong_doi` trong `q3_sua_lich.py`;
-  - review ghi kho 2 của E — ready.
-- **Tiền thật C hôm nay (OpenAI + Serper):**
-  - vòng 1 = **0,1601 USD** (tổng trường `usd` 5 file kết quả) + 1 lần chạy lại X01 ≈ 0,001;
-  - vòng 2 = **0,1635 USD** có ghi (hỏi kèm 0,0195 · kín E 0,021 · an toàn 0,0458 · Golden 0,0752 · 161 cờ tắt ×3);
-  - các lần dò câu 161 / NK06 / NK07 KHÔNG ghi file — ước ≈ 0,02–0,03;
-  - **tổng ≈ 0,35 USD.**
-  - Agent con chấm (16 lượt judge) = quota Claude, 0 USD. Không có lượt có phí nào đang chạy.
-- **Câu hỏi còn mở (chờ A / User):**
-  - (a) Luật S-AT theo chữ: S11 lượt 2 chênh 1 ⇒ "sinh thêm 3+3" — chưa chạy (câu không đi vào luật mới). User muốn thì ≈ 0,01 USD.
-  - (b) Đề xuất tự soi của C (gửi cả nhóm): đếm câu chạm đường đổi trước lượt có phí; sàn chỉ tính câu có yêu cầu gửi model khác; judge chỉ sau khi sàn máy đạt; mốc cùng số lượt với nhánh. Chờ A gộp.
-  - (c) Câu kiểu NK07 (2 ý, không dấu phẩy) luật đếm vế bỏ sót ⇒ vẫn bị từ chối cả câu như main. Muốn bắt thì cần dữ liệu mới + luật khác.
-- **Máy:** không server nào của C. Worktree còn:
-  - `/tmp/c_ny` (nhánh câu nhiều ý; cờ trong file = `false`);
-  - `/tmp/c_sl` (bản đọc của `p9-sua-lich-v2` cho mô phỏng nhãn);
-  - `/tmp/c_gd` (cũ, có thể gỡ).
-- **Bẫy:**
-  - (1) worktree cần symlink `data/` + `knowledge-base-hue/`, không có thì server không khởi động;
-  - (2) `( … &)` trong lệnh Bash bị chuyển nền sẽ chết theo ⇒ chạy server bằng `run_in_background`;
-  - (3) trường `context_sources` của Golden là SỐ nguồn, tên đoạn ở `top_chunk_ids`;
-  - (4) trước lượt có phí: đếm câu chạm đường đổi (0 USD), Golden 0/176 câu đi vào luật mới vẫn bị chạy;
-  - (5) bộ kín NK của E: C không mở; dò bằng `tools/do_kin_mot.py` (chỉ in số);
-  - (6) X01 `TypeError` / NK06 `GenerationError` chập chờn, `do_g.py` giờ ghi `loi_vet`.
+- **Việc kế (đang dở):** 8 bài quán mới của B cho Kim Long / Thủy Xuân / Đầm Chuồn.
+  - C đã review: ready sau 5 minor (sửa chữ). Biên bản private `data/quan_kho_them_2026-11-14/c_review_8_bai.md`. Nháp ở `data/quan_kho_them_2026-11-14/nhap/`.
+  - **Chờ B** sửa minor ⇒ ghi kho ⇒ dựng chỉ mục (B báo cả nhóm).
+  - **Sau đó C** dựng lại bảng quán lịch:
+    1. `uv run python data/quan_lich_2026-11-14/tools/dung_bang.py` ⇒ `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (hiện md5 `e7b239019f22`, 467 quán = kho 35 + dữ liệu mở 4 + OSM 428).
+       Cần sửa script trước khi chạy:
+       - thêm 8 quán mới;
+       - **khử trùng** quán kho mới ↔ dòng OSM cùng quán (tên gần giống + ≤ 200 m), vd Đầm Chuồn Hương Quán có cả hai;
+       - chép `muc_toa_do`.
+    2. Toạ độ:
+       - Thu Sương (86 Kim Long), O Lé (kiệt 104 Kim Long), ECO (107 Minh Mạng), Không Gian Xưa (98 Minh Mạng), Maison Trang 2 (94 Huyền Trân Công Chúa): Photon theo địa chỉ, không ra số ⇒ ước theo số kề cùng đường (như Bánh ép Huệ, xem `data/quan_lich_2026-11-14/photon_banh_ep_hue.json`), mức "uoc";
+       - An Phú: giải Plus Code GJ8V+VH2 (mức "vua");
+       - Hương Quán: lấy toạ độ dòng OSM cùng tên;
+       - Hội Quán: chỉ có "thôn Định Cư" ⇒ để ngoài bảng.
+    3. `uv run python data/quan_lich_2026-11-14/tools/dem_theo_cum.py backend data/quan_lich_2026-11-14/dem_theo_cum_<lần>.json` ⇒ gửi B / A số "bữa có ≥ 1 quán kho theo cụm". Mốc hiện tại: tổng 49,3 %; Thủy Xuân 33,6 %; Kim Long 0 %; biển / đầm phá 0 %; nam xa 0 quán.
+    4. `tools/mo_phong.py backend` (sàn: 0 ngoài bảng / khác cụm / lặp; ≤ 2 km). `pytest tests/test_quan_lich.py`. Nhánh nhỏ đổi md5 trong comment `settings.yaml` (`lich_trinh_bang_quan`) ⇒ E review ⇒ A merge.
+- **Đang chạy trên main (C làm chiều 14/11):**
+  - quán ăn trong lịch: cờ `quan_lich: true`; bữa chính chỉ quán ăn; ≤ 2 quán cùng cụm ≤ 2 km; không giờ / giá / điện thoại; không vào model;
+  - ảnh lịch 33 / 34 (`bang_anh_v2.json` md5 `6fe592114d2b`; Thuận An trống);
+  - ảnh Khám phá 184 / 216;
+  - câu nhiều ý: so_y "và / còn / với" + mục web chỉ viết ý thiếu + log `nhieu_y` / `chi_y_thieu`;
+  - Giới thiệu mới; bỏ mọi chữ ghi công.
+- **Giới hạn đã ghi (không làm thêm nếu không được giao):**
+  - ngoài 3 cụm trung tâm, quán gần như chỉ OSM "chưa kiểm", tên mỏng;
+  - không có dòng ăn ở phá / biển Thuận An / Hòn Chén / Gia Long / Bạch Mã;
+  - câu hai ý không dấu phẩy / không từ hỏi / "A hay B" ⇒ vẫn từ chối cả câu; "với" giới từ có thể đếm thừa;
+  - mục web cho ý thiếu ít giá trị: đếm 3 / 16 có ích, mức tốt nhất 6 / 16 ⇒ giữ nguyên.
+- **Bẫy gặp hôm nay:**
+  - `git worktree add -b <tên>` trùng tên nhánh có sẵn ⇒ lệnh hỏng ⇒ lệnh sau chạy ở cây chung. Hôm nay C lỡ sửa 1 dòng `settings.yaml` rồi hoàn lại. ⇒ Kiểm tên nhánh trước, nối bằng `&&`.
+  - `quan_theo_cum.json` trộn 3 nguồn (kho / OSM / dữ liệu mở): lọc `nguon == "kho"`. Hôm nay C đếm nhầm 42 là quán kho (đúng 28), đã sửa.
+  - Worktree không có `frontend/dist` ⇒ `test_ban_do_lich` trượt (môi trường) ⇒ `npm ci && npm run build` trước test rộng.
+  - RAM: 2 bộ test rộng cùng lúc ⇒ 0 GB trống. Luật A: chỉ A chạy test rộng; mỗi người ≤ 1 server tạm.
+- **Tiền C 14/11 ≈ 0,47 USD:** sáng ≈ 0,35 (câu nhiều ý v1 + v2) · chiều ≈ 0,12 (so_y 0,015 · web ý thiếu 0,035 · ảnh Khám phá 0,035 · đếm web 0,016 · ảnh lịch 0,004 · quán lịch 0,0013 · ví dụ 0,0004).
+- **Câu hỏi còn mở (chờ A / User):** không có câu mới. Câu cũ "dòng © OSM": A đã chốt không hiện, ghi ở "Câu hỏi cho User" dạng BÁO.
+- **Máy:** 0 server, 0 pytest của C. Mọi worktree `/tmp/c_*` của C đã gỡ (`/tmp/c_yc2` không phải worktree ⇒ để nguyên).
 
 ## PHIÊN 14/11
 
