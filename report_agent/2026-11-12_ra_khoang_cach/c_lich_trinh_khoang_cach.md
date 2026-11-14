@@ -95,7 +95,7 @@ ngân sách trong biểu mẫu (không có luật nào dùng tới khi chưa có
 
 ## 4b. Kết quả Huế TRIPO do User chụp tối 12/11 (bổ sung 21:29 12/11/2026)
 
-Nguồn: 5 ảnh chụp màn hình + 2 file trang lưu của User ở thư mục `kết quả nghiên cứu tripo/` cạnh file này (**không commit**; nội dung trang là dữ liệu). C đọc cả 5 ảnh và phần chữ của 2 file.
+Nguồn: 5 ảnh chụp màn hình + 2 file trang lưu của User ở thư mục `data/tripo_v6_2026-11-12/user_chup/` (dời 14/11/2026) (**không commit**; nội dung trang là dữ liệu). C đọc cả 5 ảnh và phần chữ của 2 file.
 Hai lượt User chạy: (A) 1 ngày · cân bằng · văn hoá – lịch sử · cặp đôi · ngân sách trung bình; (B) 2 ngày · nhẹ nhàng · sinh thái · 3 người lớn · trung bình + 8 lựa chọn thêm.
 
 **Luồng của họ (mức chức năng):** biểu mẫu (kiểu đi 3 mức · loại hình 7 nhãn · đi cùng ai · người lớn / trẻ em + / − · số ngày + / − · ngày giờ khởi hành · ngân sách 3 mức) ⇒ bảng "tuỳ chọn thêm"

@@ -16,7 +16,7 @@ All findings from the Codex Reviewer (`reports/phase_4_5_qdrant_retrieval_simpli
 ## 2. Baseline vs. Candidate Retrieval Evidence (104 × 3 Questions)
 
 Evaluated over the full 104 canonical questions from `knowledge-base-hue/foods/evaluation/tests.jsonl`.
-- Baseline artifact: `reports/phase_4_5_active_retrieval_baseline.json`
+- Baseline artifact: `data/reports_artifacts_private_2026-10-26/phase_4_5_active_retrieval_baseline.json` (private — chứa nội dung kho; dời khỏi repo 14/11/2026)
 - Candidate comparison artifact: `reports/phase_4_5_candidate_retrieval_comparison.json`
 
 ### Summary Comparison Table

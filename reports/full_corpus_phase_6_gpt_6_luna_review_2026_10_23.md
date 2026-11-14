@@ -75,7 +75,7 @@ gồm giá trị model/URL và các guard tương ứng.
 git diff --check                                   # exit 0
 sha256sum -c <15-file fingerprint>                 # 15/15 OK (trước và sau run)
 curl http://localhost:6335/collections             # 15 hue collections
-curl http://localhost:6333/                        # Mekong HTTP 200
+curl http://localhost:6333/                        # một dự án khác của User HTTP 200
 cd backend && HF_HUB_OFFLINE=1 uv run --env-file ../.env python -m pytest \
   <9 focused files như report 2026-10-01 §4> -q   # 141 passed, 1 warning in 47.57s
 # Read-only retrieval probe (script ngoài repo /tmp/hue_review/): production
@@ -96,7 +96,7 @@ Không gọi OpenAI, không mutate Qdrant, không commit.
 | Artifact | 5 attempts, model `gpt-6-luna` ở cả 5 call, overrides null, 4 PASS / 1 FAIL | fresh Reviewer đọc artifact |
 | direct_fact citation audit | Các claim [1], [2][3] đúng với excerpt (Reviewer spot-check); [5] theo audit của Implementer | fresh + reuse |
 | out_of_scope | Trả đúng exact fallback, 0 sources | artifact |
-| Mekong không bị ảnh hưởng | Container và port 6333 nguyên vẹn | fresh Reviewer |
+| một dự án khác của User không bị ảnh hưởng | Container và port 6333 nguyên vẹn | fresh Reviewer |
 
 Ý nghĩa: chuyển sang `gpt-6-luna` hoạt động end-to-end: API, citation integrity,
 fallback, an toàn dữ liệu. Lỗi 502 cũ của `direct_fact` không tái diễn. Hai hành

@@ -156,12 +156,12 @@ cải tiến + B40 đối chiếu với code. Chi tiết: `report_agent/2026-10-
   rerank bằng luna; bộ chấm 120/56 + câu kín; thư viện thừa giữ nguyên; luôn thử và so sánh (thường trực).
 - Bẫy: repo `chatbot-hue` PUBLIC — nội dung dự án khác của User giữ private ở `data/phase_8_1/`.
 
-## 2026-10-24 (17:10) — Báo cáo cho User ở `bao_cao_he_thong/`; cách làm MekongAI; dọn Foods (dở)
+## 2026-10-24 (17:10) — Báo cáo cho User ở `bao_cao_he_thong/`; cách làm của một dự án khác của User; dọn Foods (dở)
 
 - Báo cáo cho User gom về `bao_cao_he_thong/` (README mục lục, `01_LUONG_HOAT_DONG_HE_THONG.md`, 9
   `BAO_CAO_<khâu>.md` cho Phase 0–7B, `nhat_ky/`); viết lại + kiểm "hôm nay còn đúng không" (B 0–4,
   C 5–7A2, A 7B + luồng), review chéo đạt. Lệch tìm thấy ghi `Project_Status.md` §4/§8.
-- Cách làm việc học MekongAI (`0a709db`): `WORKFLOW.md` §6/§8/§9.6–9.8, mẫu báo cáo khâu sống + nhật ký.
+- Cách làm việc học từ một dự án khác của User (`0a709db`): `WORKFLOW.md` §6/§8/§9.6–9.8, mẫu báo cáo khâu sống + nhật ký.
 - B9 dọn Foods (User duyệt) đang làm, chưa commit; phiên sau C review rồi A commit.
 - Chi tiết: `report_agent/2026-10-24_to_chuc_bao_cao/TONG_HOP.md`. Phiên sau: brainstorm Phase 8.
 
@@ -170,9 +170,9 @@ cải tiến + B40 đối chiếu với code. Chi tiết: `report_agent/2026-10-
 - User quyết bỏ chấm tay 20 case ("các câu hỏi đã ổn"), đóng 7B với Claude là judge chính; giới hạn
   "chưa có mốc người" ghi trong guide + Project_Status. Guide `guides/full_corpus_rag.md` có mục
   "Cập nhật Phase 7B" (baseline + bài học đo cho Phase 8 từ nghiên cứu ChatGPT).
-- User: report mới theo đợt `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (kiểu MekongAI), `reports/` thành
+- User: report mới theo đợt `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (kiểu một dự án khác của User), `reports/` thành
   lịch sử; user report viết lại theo Phase + tổng quan ở `report_agent/user_reports/`;
-  `gửi chatgpt/<YYYY-MM-DD>/` (đã chuyển file 23–24/10). Prompt hỏi cách làm của MekongAI chờ User gửi.
+  `gửi chatgpt/<YYYY-MM-DD>/` (đã chuyển file 23–24/10). Prompt hỏi cách làm của dự án đó chờ User gửi.
 
 ## 2026-10-24 (tối) — Phase 7B: evaluator + baseline 176 case (chờ User chấm mẫu)
 
@@ -349,7 +349,7 @@ replacement invocation tối đa 5 attempted calls, nhưng yêu cầu hoãn exec
 **Cập nhật 2026-10-23:** sau ba tuần tạm dừng, User quyết định đổi toàn bộ model
 OpenAI (Phase 6 generation, Foods answer, evaluation answer/judge) sang
 `gpt-6-luna` và đổi host port Qdrant hue sang `127.0.0.1:6335/6336` để chạy song
-song `mekongai-template`. Paid authority `gpt-5.4-nano` ngày 2026-10-01 chưa bị
+song một dự án khác của User. Paid authority `gpt-5.4-nano` ngày 2026-10-01 chưa bị
 tiêu thụ (0 calls) và đã bị thay. Cả Reviewer và Implementer hiện là Claude Opus
 5.5; quy trình giữ nguyên. Delta tại
 `docs/superpowers/specs/2026-10-23-phase-6-gpt-6-luna-amendment.md`.

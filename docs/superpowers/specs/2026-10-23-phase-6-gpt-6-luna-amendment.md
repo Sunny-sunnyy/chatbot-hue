@@ -28,7 +28,7 @@ User trực tiếp quyết định trong phiên Reviewer:
    generation, Foods `llm.answer_model`, `evaluation.answer_model` và
    `evaluation.judge_model`. Lý do User nêu: rẻ hơn và mạnh hơn
    `gpt-5.4-nano`/`gpt-5.4-mini`.
-2. Đổi host port Qdrant của hue_rag để chạy song song với `mekongai-template`
+2. Đổi host port Qdrant của hue_rag để chạy song song với (dự án khác của User)
    (đang giữ `127.0.0.1:6333-6334`).
 3. Cho phép gọi API có phí cho live run Phase 6 trên `gpt-6-luna`.
 4. Không cần trình duyệt riêng spec/plan cho delta này: Reviewer viết tài liệu,
@@ -67,7 +67,7 @@ backend/config/settings.yaml database.url: http://localhost:6335
 
 Port trong container giữ 6333/6334; volume `./qdrant_storage` không đổi nên dữ
 liệu không bị ảnh hưởng. Bind `127.0.0.1` vẫn mở được bằng
-`http://localhost:6335/dashboard` (cùng cơ chế Mekong đang dùng ở 6333) và không
+`http://localhost:6335/dashboard` (cùng cơ chế một dự án khác của User đang dùng ở 6333) và không
 lộ Qdrant không có API key ra LAN. Guide/report lịch sử ghi 6333 giữ nguyên.
 
 ## 4. Exact implementation scope
@@ -86,7 +86,7 @@ Implementer chỉ sửa:
 | `notebooks/06_generation_and_api.ipynb`, `notebooks/07_evaluation.ipynb` | đổi 5 chuỗi model trong Markdown mô tả cấu hình hiện hành (NB06 3, NB07 2) sang `gpt-6-luna`; không sửa code cell; outputs rỗng, `execution_count: null` (Reviewer chốt 2026-10-23 sau feasibility comment của Implementer) |
 
 Không sửa prompt, cases, retrieval, context packer, citations, API/UI, runner
-logic, dependencies hoặc Qdrant data. Không xóa container/volume Mekong.
+logic, dependencies hoặc Qdrant data. Không xóa container/volume một dự án khác của User.
 
 ## 5. Rủi ro đã biết
 
@@ -128,7 +128,7 @@ Non-paid gate của Implementer (phải PASS hết trước paid run):
 
 1. `git diff --check` exit 0; diff chỉ chứa paths ở §4.
 2. Hue Qdrant chạy trên 6335 (`docker compose up -d` tại repo root);
-   `curl http://localhost:6335/collections` thấy collections hue; Mekong trên
+   `curl http://localhost:6335/collections` thấy collections hue; một dự án khác của User trên
    6333 vẫn chạy.
 3. Metadata v2 complete verify `VERIFIED` đủ 33.840 points trên 6335.
 4. Focused suite như Check 1 trong implementation report 2026-10-01 PASS.

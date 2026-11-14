@@ -36,7 +36,7 @@
 - `backend/vectorstore/points.py`: deterministic UUID5, chunk/vector validation and dense `PointStruct` construction.
 - `backend/reranking/cross_encoder.py`: the single concrete MiniLM reranker.
 - `backend/evaluation/retrieval_comparison.py`: retrieval-only active/candidate evidence with per-query IDs, scores, latency and summaries.
-- `reports/phase_4_5_active_retrieval_baseline.json`: fresh pre-refactor 104 × 3 active evidence.
+- `data/reports_artifacts_private_2026-10-26/phase_4_5_active_retrieval_baseline.json` (private — chứa nội dung kho; dời khỏi repo 14/11/2026): fresh pre-refactor 104 × 3 active evidence.
 - `reports/phase_4_5_dense_candidate_comparison.json`: post-refactor active/candidate comparison.
 - `reports/phase_4_5_qdrant_retrieval_simplicity_implementation.md`: implementation and real-verification report.
 
@@ -87,7 +87,7 @@ The listed test files are deletion candidates, not a mechanical deletion instruc
 **Files:**
 - Create: `backend/evaluation/retrieval_comparison.py`
 - Modify: `backend/tests/test_evaluation.py`
-- Create: `reports/phase_4_5_active_retrieval_baseline.json`
+- Create: `data/reports_artifacts_private_2026-10-26/phase_4_5_active_retrieval_baseline.json` (private — chứa nội dung kho; dời khỏi repo 14/11/2026)
 
 **Interfaces:**
 - Consumes: `load_tests(path)`, `build_service(settings)`, `score_retrieval(keywords, texts)`.

@@ -40,3 +40,6 @@ frontend/public/anh/rieng/
 
 # Private: yêu cầu/kết quả nghiên cứu gửi ChatGPT
 gửi chatgpt/
+
+# chứa nội dung kho — bản riêng ở data/reports_artifacts_private_2026-10-26/ (14/11/2026)
+reports/phase_4_5_active_retrieval_baseline.json

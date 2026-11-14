@@ -10,7 +10,7 @@ smoke của B9 nếu có (xem `report_agent/2026-10-24_to_chuc_bao_cao/phase_7_c
 - Điểm yếu lớn nhất: bot **từ chối nhầm 22/158 câu** kho có đáp án (câu ghép nhiều nguồn, câu so sánh).
 - Báo cáo cho bạn gom về **`bao_cao_he_thong/`**, mỗi khâu một file, đã viết lại cho Phase 0 → 7B và
   kiểm lại với code: không có lỗi làm hỏng chatbot, vài tài liệu/test cũ lệch (đã ghi).
-- Cách làm việc của A/B/C cập nhật theo kinh nghiệm MekongAI.
+- Cách làm việc của A/B/C cập nhật theo kinh nghiệm một dự án khác của User.
 - Đang dọn code/test/notebook Foods cũ và 2 collection Foods (B làm, phiên sau C kiểm).
 
 ## Bạn cần làm gì

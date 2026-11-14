@@ -5,7 +5,7 @@ description: Dùng mỗi khi cần User quyết định hoặc chọn hướng t
 
 # Đề xuất để User chọn — A, B, C
 
-Nguồn: skill cùng tên của dự án MekongAI (User 2026-10-24), chỉnh cho hue_rag.
+Nguồn: skill cùng tên của một dự án khác của User (User 2026-10-24), chỉnh cho hue_rag.
 
 ## Vì sao
 

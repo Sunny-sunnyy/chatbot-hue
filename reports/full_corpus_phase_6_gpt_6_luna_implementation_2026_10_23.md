@@ -20,14 +20,14 @@ Paid-call authorization: **consumed**. Đã chạy đúng một runner invocatio
 
 Scope được duyệt (amendment §4, User ngày 2026-10-23) gồm hai thay đổi: đổi mọi
 model OpenAI sang `gpt-6-luna`, và đổi host port Qdrant của hue_rag sang
-`127.0.0.1:6335/6336` để chạy song song với `mekongai-template` đang giữ
+`127.0.0.1:6335/6336` để chạy song song với (dự án khác của User) đang giữ
 6333/6334. Thứ tự đã thực hiện:
 
 1. Gửi nhận xét khả thi cho Reviewer. Reviewer chấp nhận và chốt Q2 là (a):
    cập nhật 5 chuỗi Markdown trong notebook.
 2. Sửa đúng các path trong §4.
 3. Chạy `docker compose up -d` cho hue Qdrant trên 6335, không đụng container
-   Mekong.
+   một dự án khác của User.
 4. Chạy non-paid gate §7 bước 1–8: đều PASS.
 5. Reviewer gửi `GO` và ghi fingerprint vào `CURRENT_HANDOFF.md` §4. User xác
    nhận trong session Implementer. Tôi tính lại `sha256sum -c` (15/15 OK) ngay
@@ -73,7 +73,7 @@ Secrets được nạp qua `--env-file`; không giá trị secret nào bị in r
 | G1 | `git diff --check` (chạy trước gate và sau bước 8) | exit 0 cả hai lần |
 | G2 | `docker compose up -d` | tạo `hue_rag-qdrant-1`, digest `0bd98fa7…` (Qdrant 1.18.3), `127.0.0.1:6335->6333`, `127.0.0.1:6336->6334` |
 | G2 | `curl http://localhost:6335/collections` | `ok`, 15 hue collections |
-| G2 | `curl http://localhost:6333/` | HTTP 200 (Mekong vẫn chạy, không bị đụng) |
+| G2 | `curl http://localhost:6333/` | HTTP 200 (một dự án khác của User vẫn chạy, không bị đụng) |
 | G3 | `UV_CACHE_DIR=/tmp/hue-rag-phase6-review-verify-uv-cache uv run --env-file .env python -m backend.ingestion.full_corpus_metadata_v2 verify` | `Verification status: VERIFIED`, exit 0 |
 | G3 | exact count `POST /collections/<name>/points/count` × 4 metadata-v2 targets trên 6335 | 8460 × 4 = 33.840 |
 | G4 | Check 1 focused suite từ `backend/` (cùng 9 file test như report 2026-10-01 §4) | `141 passed, 1 warning in 58.28s` |

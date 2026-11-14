@@ -97,7 +97,7 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 
 ## 6. Report
 
-Học từ MekongAI (User 2026-10-24, `report_agent/2026-10-24_to_chuc_bao_cao/MO_TA_CACH_LAM_VIEC_MEKONGAI.md`).
+Học từ một dự án khác của User (User 2026-10-24; bản mô tả cách làm để ở `data/`, private).
 
 | Loại | Nơi | Ai | Khi nào |
 |---|---|---|---|

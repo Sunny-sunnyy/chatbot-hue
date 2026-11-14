@@ -15,7 +15,7 @@ thay vì bịa.
 
 Qdrant của dự án giờ chạy ở cổng riêng `localhost:6335`
 (dashboard: `http://localhost:6335/dashboard`), nên chạy song song được với
-mekongai-template ở cổng 6333.
+(dự án khác của User) ở cổng 6333.
 
 ## 2. Hệ thống hoạt động như thế nào
 
@@ -39,7 +39,7 @@ giờ đều là `gpt-6-luna`.
 | Câu hỏi ngoài phạm vi (tàu điện TP.HCM) | Đạt, từ chối đúng | Không bịa thông tin |
 | Câu hỏi tổng hợp (công trình hoàng gia) | Đạt nhưng chỉ dùng 1 nguồn | Chưa chứng minh tổng hợp nhiều nguồn |
 | Câu hỏi giá vé + miễn giảm Đại Nội | Không đạt | Bước tìm kiếm không thấy bảng giá vé |
-| Mekong | Không bị ảnh hưởng | Hai dự án chạy song song được |
+| một dự án khác của User | Không bị ảnh hưởng | Hai dự án chạy song song được |
 
 ## 4. Cách bạn kiểm tra thêm nếu cần
 

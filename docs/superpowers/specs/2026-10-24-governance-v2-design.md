@@ -29,7 +29,7 @@ Quan sát ngày 2026-10-24:
    không xóa); đặt quy tắc viết status.
 4. Mỗi session có file ngữ cảnh riêng; vẫn giữ report agent và report cho User;
    giữ `reports/`.
-5. Mang skill `propose-options` từ Mekong sang, chỉnh cho hue_rag; xóa
+5. Mang skill `propose-options` từ một dự án khác của User sang, chỉnh cho hue_rag; xóa
    `karpathy-guidelines`.
 6. Duyệt chi phí/dữ liệu cho A đồng nghĩa duyệt cho B, C.
 7. A, B, C được tự cải tiến, tự tối ưu, tự đóng gói trong phạm vi đã duyệt.
@@ -105,7 +105,7 @@ lâu dài, không ghi trạng thái việc (trạng thái nằm ở STATUS/HANDO
 |---|---|
 | `practical-project-coding` | Giữ; bỏ phần lặp với `Session_Prompt` (thứ tự nguồn sự thật), giữ phương pháp code/test |
 | `risk-gated-agent-review` | Viết lại gọn theo review chéo A/B/C (người làm / người kiểm), bỏ handoff field và quy định Reviewer–Implementer cũ; giữ tên thư mục để không gãy link |
-| `propose-options` (mới) | Từ Mekong: phương án bằng lời thường + đổi gì, tốn gì, khi nào sai, chọn khác mất gì, câu tự kiểm; brainstorm mỗi lần một câu có đáp án. Bỏ phần CEO/intern; thay `session_prompt/brainstorming.md` (thành dòng trỏ) |
+| `propose-options` (mới) | Từ một dự án khác của User: phương án bằng lời thường + đổi gì, tốn gì, khi nào sai, chọn khác mất gì, câu tự kiểm; brainstorm mỗi lần một câu có đáp án. Bỏ phần CEO/intern; thay `session_prompt/brainstorming.md` (thành dòng trỏ) |
 | `karpathy-guidelines` | Xóa (trùng `practical-project-coding`, không workflow nào dùng) |
 
 Đặt skill dự án trong `skills/`, symlink vào `.claude/skills/` (đã có cho hai
@@ -160,4 +160,4 @@ Không đổi trong đợt này: code, dữ liệu, spec/plan/report cũ, `hando
 | Rút gọn làm mất quy tắc quan trọng | Tiêu chí 2–3; B kiểm diff từng quy tắc bị bỏ: chuyển chỗ hay bỏ có chủ đích |
 | Đổi quy trình giữa Gate 3 | Gate 3 chạy theo handoff hiện tại; áp dụng v2 từ việc kế tiếp |
 | Ba session sửa cùng file | Khai báo file trong STATUS; tài liệu governance chỉ A sửa |
-| `CURRENT_HANDOFF.md` phình như Mekong (707 dòng) | Việc xong chuyển sang HISTORY ngay khi đóng |
+| `CURRENT_HANDOFF.md` phình như một dự án khác của User (707 dòng) | Việc xong chuyển sang HISTORY ngay khi đóng |
