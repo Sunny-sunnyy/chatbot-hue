@@ -458,7 +458,8 @@ _LINK = re.compile(r"https?://|www\.|\.(?:vn|com|net|org)(?!\w)", re.IGNORECASE)
 
 # review 14/11 M-2: câu nói về tài liệu / nguồn thay vì tả điểm ("tài liệu không cung cấp thông tin về …") ⇒ câu dự phòng. Thử trên 1.068 câu
 # model đã lưu của nghiệm thu: trúng đúng 1 câu lỗi, 0 câu tốt bị chặn.
-_NOI_VE_TAI_LIEU = re.compile(r"tài liệu|đoạn trích|văn bản|nguồn (?:này |trên )?(?:không|chưa)|không (?:cung cấp|đề cập|nhắc(?: đến| tới)?|có thông tin|nêu)"
+# Không bắt "tài liệu" / "văn bản" đứng một mình: điểm bảo tàng có thể "trưng bày tài liệu, văn bản cổ" (review E m-3).
+_NOI_VE_TAI_LIEU = re.compile(r"(?:theo|trong) tài liệu|tài liệu (?:không|chưa|chỉ|được cung cấp)|đoạn trích|nguồn (?:này |trên )?(?:không|chưa)|không (?:cung cấp|đề cập|nhắc(?: đến| tới)?|có thông tin|nêu)"
                               r"|nội dung (?:chỉ|không)|chỉ (?:mô tả|nói về)|thông tin (?:về .{0,40} )?(?:không|chưa) có", re.IGNORECASE)
 
 

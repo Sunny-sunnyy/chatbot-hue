@@ -475,6 +475,8 @@ def test_v2_sentence_checks(app_client):
                     (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong"),
                     (f"Tài liệu không cung cấp thông tin về điểm này; nội dung chỉ mô tả nơi khác. [{m[0]['nguon']}]", "noi_ve_tai_lieu")):
         assert v2.kiem_cau(b, m[0], sai) == ma
+    for tot in ("Trưng bày nhiều tài liệu, hiện vật quý", "Xem văn bản cổ và châu bản"):  # m-3: câu tả bảo tàng không bị chặn nhầm
+        assert v2.kiem_cau(b, m[0], f"{tot} [{m[0]['nguon']}].") != "noi_ve_tai_lieu"
     tu_model = [{"id_muc": i, "cau": c} for i, c in hong.items()] + [{"id_muc": m[0]["id_muc"], "cau": f"Câu sau bị bỏ [{m[0]['nguon']}]."},
                                                                      {"id_muc": "n9-sang-1", "cau": "id lạ [1]."}]
     cau, loi = v2.chon_cau(b, lich, tu_model)
