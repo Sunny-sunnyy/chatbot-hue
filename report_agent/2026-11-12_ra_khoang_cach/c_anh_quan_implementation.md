@@ -19,3 +19,7 @@ Nhánh `p9-anh-quan` @ `496206d` (từ `origin/main` `7da2ea7`). Tiêu chí ghi 
 - [Chạy] `tests/test_quan_lich.py` 15 passed (thêm 1: luật trường `anh` + mọi ảnh bảng nhắc tới có file thật); 4 file test chạm lịch / quán: 372 passed (65 s); `test_static_ui.py` 4 passed. `npm ci && npm run build` ok.
 - [Chạy] Playwright thật (server worktree cổng 8031, cờ như main), lịch 5 ngày: khổ 1440 — 14 ảnh tải được (13 kho + 1 OSM), 0 lỗi console, 0 yêu cầu ra ngoài, không tràn ngang ⇒ ĐẠT; khổ 390 — lần 1 KHÔNG ĐẠT do script đo ảnh `loading="lazy"` chưa cuộn tới (w = 0), sửa script cuộn từng ảnh ⇒ ĐẠT 14 / 14. Ảnh: `data/anh_quan_2026-11-14/anh_chup/`. 5 dòng `chat_metrics` = 5 lượt xếp lịch. Server đã tắt (TaskStop).
 - Giới hạn: 9 / 15 quán ngoài kho chưa có ảnh (ảnh tìm được không chắc đúng quán); bảng đổi ⇒ chạy lại `dem_quan_hien.py` để biết quán nào cần ảnh.
+
+## Sau review E (m-1) — 18:19 14/11/2026
+- Ảnh `kc` không hiện cạnh tên quán ở thẻ bữa (ảnh cạnh tên = "đây là quán đó"): quán kho bỏ ảnh `kc` (`LichV2.jsx` `anhQuan`); ngoài kho bỏ Junrei (không biển tên). Bà Tý + DeChill C xét lại là chắc (biển đúng tên; Bà Tý địa chỉ khớp nguồn Codex).
+- Bản cuối: **5** ảnh ngoài kho = **32,3 %** lượt hiện quán ngoài kho (thay cho 6 ảnh / 48 % ở trên). Bảng md5 `ab481586d46f`. Rebase lên `7784385`; nhánh @ `815ab2e`; build + `test_quan_lich` + `test_static_ui` 19 passed.

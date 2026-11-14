@@ -18,3 +18,11 @@
 - **m-1:** khu biển: 36 lịch gợi ý cùng lúc "Khách sạn nghỉ dưỡng Villa Louise" (Hòa Duân) + "Khu nghỉ dưỡng Villa Louise Beach" (Phú Thuận) — địa chỉ khác nhau nên chưa chắc trùng; nếu là một nơi thì khách thấy lặp. Kiểm khi gộp dòng trùng (B đã ghi việc sau).
 - **m-2:** tiêu chí plan "B mở xem 10 ảnh ngẫu nhiên" đã được thay bằng nhìn lại 100 % ảnh "cao" (chặt hơn) — ghi rõ trong report là thay tiêu chí.
 - **m-3 (lượt 2 ảnh, chưa có trong nhánh):** theo chốt vòng tự soi ("đếm người dùng thấy gì trước") — chỉ 12 / 140 cơ sở từng hiện và 97,6 % ô cơ sở hiện ra đã có ảnh. Ảnh cho 74 cơ sở còn lại phần lớn không ai thấy ⇒ đề xuất lượt 2 chỉ làm cơ sở **từng hiện** mà thiếu ảnh (report nói chủ yếu một cơ sở 1 sao), trừ khi 140 cơ sở được dùng ở chỗ khác (nêu rõ chỗ đó).
+
+## Nhánh `p9-khach-san-anh2` (lượt 2 ảnh, B) @ `0977a16` — C · 19:01 14/11/2026
+**Kết luận: `ready_for_user_confirmation`** — 0 blocker · 0 major · 1 minor.
+- Diff: 5 jpg mới + report; code không đổi. `git diff --check` sạch. Bảng `bang_luu_tru_lich_v2.json` md5 `039c3adebb9b` khớp; 71 dòng có ảnh = 71 file trên nhánh, 0 thiếu, 0 mồ côi.
+- C mở cả 5 ảnh mới (`/tmp/c_photon/ks2.jpg`): 4 có biển tên đọc được (Holiday Diamond, Khánh Trang, Carnosa, Hồng Thiện I), La Vela từ website riêng của khách sạn; 0 mặt người rõ, 0 trẻ em, 0 số điện thoại đọc được.
+- m-1 / m-2 vòng trước: đã ghi trong report — đóng.
+- **Main trước khi merge (A hỏi):** [Chạy] `nap_bang_luu_tru` với code main + bảng dùng chung đã sửa: nạp được (140 cơ sở) — luật nạp chỉ kiểm gốc đường ảnh, không kiểm file ⇒ server **không vỡ**; 5 đường ảnh thiếu file trên main ⇒ chỉ thành ảnh hỏng nếu cơ sở đó hiện, mà cả 5 chưa từng hiện trong 3.840 khung (B đếm: ô có ảnh không đổi). Hết khi merge.
+- **m-1:** bảng dùng chung trong `data/` sửa tại chỗ trước merge ⇒ main và nhánh lệch nhau một lúc. Đề xuất rẻ: một test như `test_quan_lich` (mọi đường `anh` của bảng có file trong `frontend/public`) — lần sau lệch sẽ đỏ ngay ở main.

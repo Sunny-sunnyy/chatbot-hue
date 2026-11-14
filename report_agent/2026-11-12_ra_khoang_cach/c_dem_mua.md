@@ -55,3 +55,4 @@ Script `data/dem_mua_2026-11-14/dem_nguong.py` ⇒ `dem_nguong.json`; cùng dữ
 
 - Giới hạn: historical forecast ghép các bản dự báo tầm ngắn nhất; người dùng xếp lịch trước 1–7 ngày ⇒ dự báo thật kém hơn bảng này. ERA5 thô ⇒ mưa cục bộ có thể lệch.
 - Đọc: hiện hành gần như không bỏ sót nhưng gần 1 / 2 lần báo là thừa; ≥ 5 mm: báo đúng 86 %, bỏ sót ~1 / 4 ngày mưa vừa.
+- **Phương án 3** (B, C, E đồng ý — chờ User): xếp lại lịch khi ≥ 60 % VÀ ≥ 5 mm; dòng "Nếu mưa" vẫn hiện từ ≥ 60 %. Kiểm [Chạy]: 29 ngày mưa thật (ERA5 ≥ 5 mm) mà ngưỡng 5 mm bỏ sót ⇒ **27 / 29 vẫn có dòng "Nếu mưa"**; còn 2 ngày không nhắc (= mức bỏ sót của luật hiện hành).
