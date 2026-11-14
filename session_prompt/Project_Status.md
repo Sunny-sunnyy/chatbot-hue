@@ -313,6 +313,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   "lỗi citation" trước commit này đếm theo định nghĩa cũ) ⇒ code xử lý / đếm / đánh số lại citation phải bắt
   cả hai dạng (25/10 B24: file đọc cặp mù lộ bên vì chỉ bắt `[n]`).
 - Memory Claude dùng chung cho cả ba session (cùng thư mục dự án).
+- **Lệnh ghép `git worktree add … ; cd /tmp/x ; <sửa / merge>` (14/11, 2 lần: A, C):** worktree lỗi (nhánh đã dùng / trùng tên) ⇒ `cd` hỏng ⇒ lệnh sau chạy trên **cây chung** (A: 2 merge chưa review vào `main` máy; C: sửa 1 dòng `settings.yaml`) ⇒ luôn `git worktree add -b <nhánh mới> /tmp/x origin/main && cd /tmp/x || exit 1` rồi mới sửa; đọc `git status` cây chung sau khi lỡ.
 - **Worktree `/tmp/…` (26/10):** chạy Python trong worktree bằng `uv run --project /home/minhhieu/hue_rag …` (không thì `uv` tạo `.venv` lạ ở đó);
   symlink `data/`, `knowledge-base-hue/` hiện untracked ⇒ gỡ khi xong; worktree giữ nhánh `main` thì session khác không `git switch main` được ⇒
   gỡ (`git worktree remove`) trước khi người kia chuyển nhánh; `git push` từ worktree bị auto mode chặn ⇒ push từ working tree chung hoặc User `!`.
