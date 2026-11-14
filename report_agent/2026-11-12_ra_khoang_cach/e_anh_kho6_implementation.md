@@ -6,9 +6,9 @@
 ## Kết quả
 | | Main (sau ghi kho 6) | Nhánh này |
 |---|---|---|
-| Bài Khám phá có ảnh | 238 / 263 | **248 / 263** |
+| Bài Khám phá có ảnh | 238 / 263 | **249 / 263** |
 | Ảnh hiện được cạnh câu trả lời | 188 | **196** |
-| Ảnh `kc` | 50 | 52 |
+| Ảnh `kc` | 50 | 53 |
 
 - **Cách chọn:**
   - 1 agent con chọn theo `BRIEF_CHON.md`, có luật riêng cho 3 loại bài:
@@ -18,11 +18,11 @@
   - E nhìn cả 12 ảnh agent chọn.
 - **Kết quả nhận:**
   - 8 ảnh không `kc`: mỗi ảnh có công trình nhận ra được hoặc tiêu đề trang khớp đúng lễ và nơi.
-  - 2 ảnh `kc`:
+  - 3 ảnh `kc`:
     - 2 ảnh nhóm diễn ca Huế, cho hai bài về hai loại hình hát; chỉ dựa vào tiêu đề trang để biết đúng loại;
-    - (1 ảnh lễ của đồng bào miền núi đã gỡ theo review C m-1: có thể có trẻ em ở tiền cảnh ⇒ bài để trống.)
+    - 1 ảnh lễ của đồng bào miền núi, không chắc chụp ở Huế. Theo review C m-1 (có thể có trẻ em ở tiền cảnh), ảnh được cắt chỉ giữ 50 % phía trên: bãi lễ, cây nêu, đám đông ở xa. E đã xem lại ảnh sau khi cắt.
   - E bác 1 ảnh: 3 diễn viên chụp gần, mặt rõ là trọng tâm ⇒ bài đó để trống.
-- **6 bài vẫn trống** (gồm bài gỡ theo review C): ứng viên là lễ cùng tên ở vùng khác (Nam Bộ, Hà Nội), là một lễ khác, là poster, hoặc không có ảnh nào chắc đúng lễ.
+- **5 bài vẫn trống:** ứng viên là lễ cùng tên ở vùng khác (Nam Bộ, Hà Nội), là một lễ khác, là poster, hoặc không có ảnh nào chắc đúng lễ.
 
 ## Sửa script dựng
 `dung_anh_bai_js.py` (private, `data/`):
@@ -31,7 +31,7 @@
 - Trang nguồn chỉ nằm trong file ghi công private. `anhBai.js` chỉ chứa đường ảnh và cờ `kc`.
 
 ## Kiểm [Chạy]
-- Script sinh `anhBai.js`: 248 ảnh, 52 `kc`; `anhBai.js` chỉ thêm 10 dòng, 0 dòng cũ đổi.
+- Script sinh `anhBai.js`: 249 ảnh, 53 `kc`; `anhBai.js` chỉ thêm 11 dòng, 0 dòng cũ đổi.
 - 0 file ảnh mồ côi.
 - `npm run build` đạt.
 - pytest `test_cong_dot_1` + `test_static_ui` + `test_anh_tra_loi` đạt.
