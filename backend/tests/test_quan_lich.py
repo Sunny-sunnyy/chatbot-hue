@@ -94,3 +94,21 @@ def test_q1_restaurants_not_in_model_message_and_off_text_unchanged():
     cau = {m["id_muc"]: "Câu." for m in v2.moi_muc(lich)}
     tat, bat = v2.ghep_chu(lich, cau), v2.ghep_chu(co, cau)
     assert bat.startswith(tat) and "Ăn uống gợi ý" in bat[len(tat):] and "Ăn uống" not in tat
+
+
+def test_restaurant_photo_field_is_checked_at_load_and_every_photo_file_exists(tmp_path):
+    # (C 14/11 tối) ảnh quán ngoài kho: chỉ tên file dưới anh/quan/; quán kho không mang trường ảnh (giao diện dùng ảnh Khám phá theo mã bài)
+    co_anh = [q for ds in QUAN.values() for q in ds if q.get("anh")]
+    assert co_anh and all(q["nguon"] != "kho" for q in co_anh)
+    for q in co_anh:  # bảng nhắc tới ảnh nào thì file đó phải có trong frontend/public (thiếu ⇒ thẻ bữa hiện ảnh vỡ)
+        assert (BACKEND.parent / "frontend/public/anh" / f"{q['anh']}.jpg").is_file(), q["anh"]
+    mau = next(q for q in co_anh)
+    for xau in ("../x", "quan/a.jpg", "https://x/y", "kp/k1"):
+        p = tmp_path / "b.json"; p.write_text(json.dumps({"quan": [{**mau, "anh": xau}]}), encoding="utf-8")
+        with pytest.raises(ValueError):
+            ql.nap_bang_quan(p, BANG_V2.cum)
+    kho = next(q for ds in QUAN.values() for q in ds if q["nguon"] == "kho")
+    p = tmp_path / "k.json"; p.write_text(json.dumps({"quan": [{**kho, "anh": "quan/x"}]}), encoding="utf-8")
+    with pytest.raises(ValueError):
+        ql.nap_bang_quan(p, BANG_V2.cum)
+    assert ql._hien(mau)["anh"] == mau["anh"] and ql._hien(kho)["anh"] is None
