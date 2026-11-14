@@ -4,6 +4,7 @@ import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
 import { dungIcs } from "./lich_ics.js";
 import { baiHref } from "./route.js";
+import { anhCuaBai } from "./anhBai.js";
 
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 
@@ -188,6 +189,15 @@ export function LichV2({ turn, onEditPlan }) {
 const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
 // Quán ăn gợi ý (cờ `quan_lich`, code chọn ≤ 2 quán cùng cụm ≤ 2 km): quán kho ⇒ "Đọc bài"; nguồn mở ⇒ nhãn "chưa kiểm" + link bản đồ.
 // Link chỉ nhận đúng gốc bản đồ của lịch (như link điểm); không giờ / giá / điện thoại.
+// Ảnh nhỏ cạnh tên quán (C 14/11 tối): quán kho ⇒ ảnh Khám phá của bài (`anhBai.js`, bỏ ảnh `kc`); quán ngoài kho ⇒ ảnh tự host `anh/quan/<mã>` do server gửi
+// (chỉ nhận đúng mẫu tên đó). Không ảnh ⇒ không vẽ gì; không ghi công (User 14/11).
+const ANH_QUAN = /^quan\/[a-z0-9_]{1,40}$/;
+function anhQuan(q) {
+  // ảnh cạnh tên quán = "đây là quán đó" ⇒ ảnh kho `kc` (người nhìn không chắc đúng quán) không hiện ở đây (review E m-1), như cạnh câu trả lời
+  if (typeof q.bai_id === "string") { const a = anhCuaBai(q.bai_id); return a && !a.kc ? a.anh : null; }
+  return typeof q.anh === "string" && ANH_QUAN.test(q.anh) ? q.anh : null;
+}
+
 function AnUong({ an }) {
   return (
     <ul className="lkh-an" aria-label="Ăn uống gợi ý">
@@ -196,6 +206,7 @@ function AnUong({ an }) {
           <span className="lkh-an-h">{a.bua === "trua" ? "Ăn trưa" : "Ăn tối"} gần {a.gan}</span>
           {a.quan.map(q => (
             <span key={q.ten} className="lkh-an-q">
+              {anhQuan(q) && <img className="lkh-an-anh" src={`${import.meta.env.BASE_URL}anh/${anhQuan(q)}.jpg`} alt="" loading="lazy" decoding="async" />}
               {typeof q.bai_id === "string" ? <a href={baiHref(q.bai_id)}>{q.ten}</a>
                 : typeof q.map_url === "string" && q.map_url.startsWith(MAP_PREFIX)
                   ? <a href={q.map_url} target="_blank" rel="noopener noreferrer">{q.ten}</a> : q.ten}

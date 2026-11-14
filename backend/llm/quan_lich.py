@@ -27,6 +27,8 @@ KM_TOI_DA = 2.0
 TEN_TOI_DA = 80
 # tên từ nguồn mở là dữ liệu người khác viết: chặn ký tự điều khiển / ký tự định dạng vô hình (Cf: đảo chiều U+202E, U+200B…) / link / thẻ / cú pháp
 # link Markdown (review B m-1)
+# Ảnh quán ngoài kho (C 14/11 tối): tên file tự host dưới `frontend/public/anh/quan/` (quán kho dùng ảnh Khám phá theo mã bài ở giao diện).
+_ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
 
 
@@ -45,7 +47,8 @@ def nap_bang_quan(path: str | Path, cum_diem) -> dict:
               and q.get("cum") in cum_diem and q.get("nguon") in NGUON and isinstance(q.get("toa"), list) and len(q["toa"]) == 2
               and all(isinstance(x, (int, float)) for x in q["toa"])
               and (q["nguon"] != "kho" or isinstance(q.get("bai_id"), str))
-              and (q["nguon"] != "osm" or str(q.get("link", "")).startswith("https://www.openstreetmap.org/")))
+              and (q["nguon"] != "osm" or str(q.get("link", "")).startswith("https://www.openstreetmap.org/"))
+              and (q.get("anh") is None or (q["nguon"] != "kho" and isinstance(q["anh"], str) and _ANH.fullmatch(q["anh"]))))
         if not ok:
             raise ValueError(f"bảng quán lịch: dòng không hợp lệ ({str(ten)[:40]!r})")
         theo_cum.setdefault(q["cum"], []).append(q)
@@ -71,7 +74,7 @@ def _chon(ds: list[dict], toa_diem, da_dung: set) -> list[dict]:
 
 def _hien(q: dict) -> dict:
     return {"ten": q["ten"], "loai": LOAI[q["loai"]], "nhan": NHAN.get(q["nguon"]), "bai_id": q.get("bai_id"),
-            "map_url": MAP_BASE + quote(f"{q['toa'][0]},{q['toa'][1]}")}
+            "anh": q.get("anh"), "map_url": MAP_BASE + quote(f"{q['toa'][0]},{q['toa'][1]}")}
 
 
 def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict]:
