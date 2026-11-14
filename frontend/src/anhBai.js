@@ -190,6 +190,7 @@ const ANH = {
   kmv6xvm: {"anh": "kp/kmv6xvm"},
   kf86z0k: {"anh": "kp/kf86z0k"},
   k1jkmeq3: {"anh": "kp/k1jkmeq3"},
+  k11jf7c3: {"anh": "kp/k11jf7c3", "kc": 1},
   k1f6qcze: {"anh": "kp/k1f6qcze", "kc": 1},
 };
 
