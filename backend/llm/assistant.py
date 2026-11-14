@@ -31,6 +31,7 @@ from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
 from llm import lich_trinh as lt
 from llm import lich_trinh_v2 as lt2
+from llm import luu_tru_lich as ltl
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
@@ -111,6 +112,10 @@ class AssistantFlags:
     # Sửa lịch bằng lời trên lịch bản 2 (plan `2026-11-14-sua-lich-v2-plan.md`): cuộc có lịch đã lưu + câu có từ sửa ⇒ một lần gọi hiểu ý ⇒ code áp.
     # TẮT tới khi đạt Q3 + Q5; cần cờ bản 2. Tắt ⇒ không chạm (chuỗi gửi model giống byte).
     sua_lich_v2: bool = False
+    # Gợi ý nơi ở trong lịch bản 2 (plan `2026-11-14-luu-tru-trong-lich-plan.md`): khu cả chuyến + ≤ 5 cơ sở do code chọn, `lich["o_dau"]`
+    # (không vào tin nhắn gửi model). TẮT tới khi đạt; cần cờ bản 2 + bảng lưu trú (`assistant.lich_trinh_bang_luu_tru`, kiểm lúc khởi động)
+    luu_tru_lich: bool = False
+    luu_tru_bang: "dict | None" = field(default=None, compare=False, repr=False)
     anh_lich_bang: "dict | None" = field(default=None, compare=False, repr=False)
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
@@ -137,6 +142,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_v2 needs assistant.len_ke_hoach_v2: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
             raise ValueError("assistant.anh_lich needs assistant.len_ke_hoach_v2: true and the photo table (assistant.lich_trinh_bang_anh)")
+        if self.luu_tru_lich and (not self.len_ke_hoach_v2 or self.luu_tru_bang is None):
+            raise ValueError("assistant.luu_tru_lich needs assistant.len_ke_hoach_v2: true and the lodging table (assistant.lich_trinh_bang_luu_tru)")
         if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
             raise ValueError(f"assistant.len_ke_hoach_o_hien must be a subset of {O_BIEU_MAU_V2}")
 
@@ -155,7 +162,9 @@ class AssistantFlags:
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
                    bang_lich_v2=bang_v2,
-                   anh_lich_bang=lt2.nap_bang_anh(BACKEND_DIR / config["lich_trinh_bang_anh"], bang_v2) if values["anh_lich"] and bang_v2 else None)
+                   anh_lich_bang=lt2.nap_bang_anh(BACKEND_DIR / config["lich_trinh_bang_anh"], bang_v2) if values["anh_lich"] and bang_v2 else None,
+                   luu_tru_bang=ltl.nap_bang_luu_tru(BACKEND_DIR / config["lich_trinh_bang_luu_tru"], bang_v2.cum)
+                   if values["luu_tru_lich"] and bang_v2 else None)
 
     @property
     def so_thich_hien(self) -> tuple[str, ...]:
@@ -180,7 +189,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
                     if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
-                                     "len_ke_hoach_so_thich_an", "anh_lich_bang"))
+                                     "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang"))
 
 
 def elapsed_ms(started: float) -> float:

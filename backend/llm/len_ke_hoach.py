@@ -16,6 +16,7 @@ from agents.exceptions import AgentsException
 from openai import OpenAIError
 
 from llm import lich_trinh_v2 as lt2
+from llm import luu_tru_lich as ltl
 from llm import sua_lich_v2 as sl
 from llm import thoi_tiet as tt
 from llm.citations import CITATION_PATTERN
@@ -94,6 +95,10 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
                                              max_doan=MAX_DOAN, tim_mo_ta=TIM_MO_TA, doan_chon=doan_chon)
     lich = lt2.dung_lich(bang, khung, nguon, ngay_di, dong_du_bao(bang, khung, db),
                          flags.toa_do_lich if flags.ban_do_lich else None, flags.anh_lich_bang if flags.anh_lich else None)
+    if flags.luu_tru_lich:  # khu cả chuyến + cơ sở do code chọn (không vào tin nhắn gửi model — `tin_nhan_model` không đọc `o_dau`)
+        ts_k = khung["tham_so"]
+        lich["o_dau"] = ltl.o_dau(flags.luu_tru_bang, [bang.theo_id[j]["cum"] for j in lt2.diem_ban_ngay(khung)], len(khung["ngay"]),
+                                  bool(ts_k["tre_em"] or ts_k["lon_tuoi"]))
     giu_cau: dict[str, str] = {}
     if sua:
         lich["thay_doi"] = sua["thay_doi"]  # giao diện H1: khối "Đã đổi / Không đổi được" đầu thẻ (câu do code)

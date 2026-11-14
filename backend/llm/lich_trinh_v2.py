@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote
 
+from llm import luu_tru_lich as ltl
+
 from llm.citations import CITATION_PATTERN
 from llm.lich_trinh import BUOI, CAU_CO_THE_DOI, CAU_KHONG_XEP, CUM_KE, CUM_XA, LOAI_DIEM, MAP_BASE, TIEU_DE_GHI_CHU, _cum_hop, chuan_ten
 from llm.so_tien import tim_so_tien
@@ -658,6 +660,8 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
                         f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
     if lich["ghi_chu"]:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
+    if lich.get("o_dau"):  # cờ `luu_tru_lich` (cờ tắt ⇒ None ⇒ chữ giống bản trước)
+        dong += ltl.dong_chu(lich["o_dau"])
     return "\n".join(dong)
 
 

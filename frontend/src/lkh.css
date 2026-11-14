@@ -142,3 +142,15 @@
 .lkh-ics { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .lkh-ics-nhac { font-size: 14px; color: var(--color-muted); }
 .lkh-cho { min-height: 100vh; }   /* giữ chỗ lúc chờ /api/tinh_nang — chân trang không bị đẩy */
+
+/* Gợi ý nơi ở (B, cờ `luu_tru_lich`) — thẻ cuối lịch, cùng kiểu khung với "Ghi chú của lịch" */
+.lich-v2 .lkh-o { margin-top: 14px; padding: 18px 22px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 20px; font-size: 15.5px; }
+.lkh-o-h { margin: 0; font-family: var(--font-serif); font-weight: 600; font-size: 21px; color: var(--color-accent-deep); }
+.lkh-o-ly { margin: 4px 0 10px; color: var(--color-muted); }
+.lkh-o ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lkh-o li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 10px 14px; border-radius: 14px; background: var(--color-accent-soft); }
+.lkh-o-ten { font-weight: 600; }
+.lkh-o li small { color: var(--color-muted); }
+.lkh-o-dc { flex-basis: 100%; color: var(--color-muted); font-size: 14.5px; }
+.lkh-o li a { margin-left: auto; color: var(--color-accent-deep); font-weight: 600; }
+.lkh-o-nhan { margin: 10px 0 0; color: var(--color-muted); font-size: 14px; }
