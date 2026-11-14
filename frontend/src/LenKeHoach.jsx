@@ -104,7 +104,7 @@ function LichMau() {
       <p className="lkh-mau-dau"><span className="lkh-mau-nhan">Ví dụ</span> Lịch 2 ngày · 2 người lớn · thích di tích — bộ xếp lịch tạo sẵn.
         Lịch của bạn có thêm câu tả từng điểm lấy từ kho, kèm nguồn.</p>
       {/* ví dụ không có nút Sửa ⇒ bỏ đuôi "sai thì bấm Sửa" của dòng "Mình hiểu" */}
-      <LichV2 turn={{ key: "mau", lichV2: { ...mau.lich, minh_hieu: mau.lich.minh_hieu.replace(/\s*—\s*sai thì bấm Sửa\.?$/, ".") }, cauV2: mau.cau, phase: "mau" }} />
+      <LichV2 turn={{ key: "mau", lichV2: { ...mau.lich, minh_hieu: mau.lich.minh_hieu.replace(/\s*—\s*sai thì bấm \*{0,2}Sửa\*{0,2}\.?$/, ".") }, cauV2: mau.cau, phase: "mau" }} />
     </div>
   );
 }
