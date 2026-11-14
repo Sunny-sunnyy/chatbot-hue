@@ -47,3 +47,7 @@ Không giờ, không giá, không điện thoại. Chữ chép / tải có thêm
 - **Không có dòng ăn** ở phá Tam Giang, biển Thuận An, điện Hòn Chén, lăng Gia Long (> 2 km tới quán gần nhất cùng cụm), Bạch Mã / Nhị Hồ (0 quán), và điểm không có toạ độ.
 - **Quán kho được ưu tiên dù xa hơn quán OSM** (vẫn ≤ 2 km), và quán ăn đứng trước cà phê — cố ý: quán kho có bài để đọc.
 - Lịch mẫu "Ví dụ" chưa có dòng ăn (`/api/lich_mau` không gọi phần này) — làm thêm được nếu muốn.
+
+## Sau review B (ready, 2 minor — đã sửa `3133c23`)
+- m-1: tên quán bị chặn thêm ký tự định dạng vô hình (Unicode Cf, vd ký tự đảo chiều, ký tự không độ rộng), "//" và cú pháp link Markdown "](". Thêm 4 ca test (14 đạt). Bảng thật vẫn nạp được (0 dòng bị chặn).
+- m-2: an toàn "tên quán OSM không vào model" còn dựa vào cờ `nho_cau_tra_loi: false`. Nếu sau này bật nhớ câu trả lời thì chữ lịch (cả tên quán) sẽ vào lịch sử gửi model ⇒ phải xem lại trước khi bật. Đã ghi ở đầu `quan_lich.py`.
