@@ -394,10 +394,11 @@ def test_numbers_must_come_from_snippets(text, loi):
 
 
 def test_numbers_typed_in_question_pass_but_money_stays_strict():
-    # (A 14/11 tối) năm / ngày người dùng gõ được nhắc lại; số model tự thêm vẫn chặn; tiền người dùng gõ vẫn phải có trong đoạn trích
-    hoi = "Lễ hội tháng 6/2026 ở Huế có gì, vé 300.000đ phải không?"
-    assert tw.kiem_muc_web("Chưa xác minh được lịch tháng 6/2026 [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == []
-    assert tw.kiem_muc_web("Chưa xác minh được lịch tháng 6/2026 [w1].", SO_SO, luu_tru=False) == ["so_ngoai_trich"]
+    # (A 14/11 tối, C review M-1) chỉ NĂM người dùng gõ được nhắc lại; giờ / ngày người dùng gõ, số model tự thêm, tiền vẫn chặn
+    hoi = "Lễ hội năm 2026 ở Huế mở 19:30 phải không, vé 300.000đ?"
+    assert tw.kiem_muc_web("Chưa xác minh được lịch năm 2026 [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == []
+    assert tw.kiem_muc_web("Chưa xác minh được lịch năm 2026 [w1].", SO_SO, luu_tru=False) == ["so_ngoai_trich"]
+    assert tw.kiem_muc_web("Lễ hội mở 19:30 [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == ["so_ngoai_trich"]
     assert tw.kiem_muc_web("Lễ hội 2026 có 39 tiết mục [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == ["so_ngoai_trich"]
     assert tw.kiem_muc_web("Vé 300.000đ [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == ["tien_ngoai_trich"]
 

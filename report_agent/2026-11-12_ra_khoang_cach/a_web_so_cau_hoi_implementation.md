@@ -13,4 +13,4 @@ Nhánh `p9-web-so-cau-hoi`. 0 USD (không gọi model / Serper / Qdrant). Căn c
 - E dự kiến 21 ⇒ 5; thật 21 ⇒ 10 vì 4 mục trên — E đếm theo luật cũ cả số không đến từ câu hỏi.
 
 ## Rủi ro
-Người dùng gõ số sai (vd ngày) ⇒ model có thể nhắc lại số đó trong mục web. Đã thấy: model dùng số câu hỏi trong câu "chưa xác minh được …". Tiền không nới.
+Bản 1 miễn mọi chuỗi số trong câu hỏi ⇒ C review M-1: tiền đề sai (giờ / ngày / số nhà) người dùng gõ có thể thành "nói chắc sai", trong khi cả 11 mục cứu được chỉ nhờ năm. **Bản 2 (sửa theo review): chỉ miễn năm 19xx / 20xx đứng riêng**; giờ / ngày / số nhà / tiền người dùng gõ vẫn phải có trong đoạn trích. Chấp nhận phần còn lại vì một năm lặp lại từ câu hỏi chỉ đi với "chưa xác minh được …" hoặc nói về năm người dùng hỏi.
