@@ -63,7 +63,8 @@ def test_far_or_unknown_point_gets_no_row():
 
 @pytest.mark.parametrize("sua, loi", [
     ({"ten": "Quán <b>x</b>"}, "không hợp lệ"), ({"ten": "x" * 81}, "không hợp lệ"), ({"ten": "Ăn ở https://a.vn"}, "không hợp lệ"),
-    ({"ten": "a\u0007b"}, "không hợp lệ"), ({"cum": "khong_co"}, "không hợp lệ"), ({"link": "https://evil.example/x"}, "không hợp lệ"),
+    ({"ten": "a\u0007b"}, "không hợp lệ"), ({"ten": "Qu\u202eán"}, "không hợp lệ"), ({"ten": "Quán\u200bA"}, "không hợp lệ"),
+    ({"ten": "[Quán](x)"}, "không hợp lệ"), ({"ten": "Quán //x"}, "không hợp lệ"), ({"cum": "khong_co"}, "không hợp lệ"), ({"link": "https://evil.example/x"}, "không hợp lệ"),
 ])
 def test_table_load_rejects_bad_rows(tmp_path, sua, loi):
     p = tmp_path / "q.json"

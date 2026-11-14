@@ -3,13 +3,15 @@
 Mọi thứ do code: mỗi ngày, bữa trưa gần điểm cuối buổi sáng (không có sáng ⇒ điểm đầu buổi chiều), bữa tối gần điểm buổi tối (không có ⇒
 điểm cuối buổi chiều);
 ≤ 2 quán CÙNG CỤM với điểm đó và ≤ 2 km tới điểm, quán kho trước rồi tới nguồn chưa kiểm, gần điểm nhất, không lặp quán trong cả chuyến.
-Model không chọn, không thấy tên quán (khối này không vào tin nhắn gửi model). Không giờ / giá / điện thoại (nguồn mở không có ngày kiểm).
+Model không chọn, không thấy tên quán (khối này không vào tin nhắn gửi model; an toàn này dựa cả vào `nho_cau_tra_loi: false` — bật nhớ câu trả
+lời thì chữ lịch, kể cả tên quán OSM, sẽ vào lịch sử gửi model ⇒ xem lại trước khi bật, review B m-2). Không giờ / giá / điện thoại (nguồn mở không có ngày kiểm).
 Bảng: `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (quán kho + dữ liệu mở thành phố + OpenStreetMap; dựng bằng script, private).
 Cụm thiếu quán ⇒ không có dòng (không đoán, không lấy cụm khác).
 """
 import json
 import math
 import re
+import unicodedata
 from pathlib import Path
 from urllib.parse import quote
 
@@ -22,7 +24,13 @@ SO_QUAN = 2
 # sai nghĩa. Điểm không có toạ độ ⇒ không kiểm được ⇒ không dòng.
 KM_TOI_DA = 2.0
 TEN_TOI_DA = 80
-_BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|[<>]")  # tên từ nguồn mở là dữ liệu người khác viết: chặn ký tự điều khiển / link / thẻ
+# tên từ nguồn mở là dữ liệu người khác viết: chặn ký tự điều khiển / ký tự định dạng vô hình (Cf: đảo chiều U+202E, U+200B…) / link / thẻ / cú pháp
+# link Markdown (review B m-1)
+_BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
+
+
+def _ten_sach(ten: str) -> bool:
+    return not _BAN.search(ten) and not any(unicodedata.category(ch) == "Cf" for ch in ten)
 
 
 def nap_bang_quan(path: str | Path, cum_diem) -> dict:
@@ -32,7 +40,7 @@ def nap_bang_quan(path: str | Path, cum_diem) -> dict:
     theo_cum: dict[str, list[dict]] = {}
     for q in rows:
         ten = q.get("ten")
-        ok = (isinstance(ten, str) and 0 < len(ten.strip()) <= TEN_TOI_DA and not _BAN.search(ten) and q.get("loai") in LOAI
+        ok = (isinstance(ten, str) and 0 < len(ten.strip()) <= TEN_TOI_DA and _ten_sach(ten) and q.get("loai") in LOAI
               and q.get("cum") in cum_diem and q.get("nguon") in NGUON and isinstance(q.get("toa"), list) and len(q["toa"]) == 2
               and all(isinstance(x, (int, float)) for x in q["toa"])
               and (q["nguon"] != "kho" or isinstance(q.get("bai_id"), str))
