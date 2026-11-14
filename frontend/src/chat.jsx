@@ -6,6 +6,8 @@ import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (g�
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
+import { anhTraLoi } from "./anhTraLoi.js";
+import { baiHref } from "./route.js";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
 import { LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
@@ -403,6 +405,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         <div className="bubble">
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
+          <AnhTraLoi turn={turn} />
           {turn.sources?.length > 0 && <SourceLine turn={turn} />}
           {turn.notice && (
             <p className="notice">
@@ -608,5 +611,16 @@ function Thumb({ down = false }) {
         <path d="M6.5 10.5 10.5 3c1.6 0 2.6 1.1 2.4 2.7L12.4 9.5h6.1a2 2 0 0 1 2 2.4l-1.5 7a2 2 0 0 1-2 1.6H6.5" />
       </g>
     </svg>
+  );
+}
+
+// Ảnh dưới câu trả lời (luật ở `anhTraLoi.js`, code quyết): một ảnh của bài nguồn, bấm mở bài; khung tỉ lệ cố định ⇒ không xô lệch khi ảnh tải.
+function AnhTraLoi({ turn }) {
+  const a = anhTraLoi(turn);
+  if (!a) return null;
+  return (
+    <a className="anh-tra-loi" href={baiHref(a.baiId)} aria-label={`Đọc bài “${a.ten}”`}>
+      <img src={`${import.meta.env.BASE_URL}anh/${a.anh}.jpg`} alt={a.ten} loading="lazy" decoding="async" />
+    </a>
   );
 }
