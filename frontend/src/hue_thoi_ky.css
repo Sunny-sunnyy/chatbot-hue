@@ -31,7 +31,7 @@
 .hieu-ung .tk-cot .tk-buoc { transition: opacity .4s ease; }
 
 @media (min-width: 900px) {
-  .hieu-ung .tk-cot .tk-buoc:not(.tk-dang) { opacity: .42; }
+  .hieu-ung .tk-cot .tk-buoc:not(.tk-dang) { opacity: .55; }
   /* Màn rộng: mốc nhạt / rõ do .tk-dang quyết, không chồng hiệu ứng .hien (tránh hai lớp opacity giành nhau) */
   .hieu-ung .tk-cot .tk-buoc.hien { animation: none; }
 }
