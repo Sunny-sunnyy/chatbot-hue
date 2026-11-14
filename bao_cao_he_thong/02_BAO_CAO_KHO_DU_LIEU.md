@@ -1,25 +1,25 @@
 # 02 — Kho dữ liệu: chatbot biết những gì
 
-Cập nhật 10/11/2026 (bản mẫu sắp xếp lại; bản cũ xem trong lịch sử phiên bản — git). Tả kho **đang dùng**. Số chung (số đoạn, điểm chất lượng, từ chối nhầm)
+Cập nhật 10:30 14/11/2026: thêm lần ghi kho 14/11 (3 bài mới, 4 chỗ sửa theo nguồn). Bản cũ xem trong lịch sử phiên bản — git. Tả kho **đang dùng**. Số chung (số đoạn, điểm chất lượng, từ chối nhầm)
 ở bảng "Số chính" của [README](README.md); từ khó (chỉ mục, sàn, Golden…) ở "Từ hay gặp" cùng chỗ. Bước trước: [01 — luồng chạy](01_LUONG_HOAT_DONG_HE_THONG.md) ·
 bước sau: [03 — chia đoạn](03_BAO_CAO_CHIA_DOAN.md).
 
 ## Kho gồm gì
 
-**204 bài Markdown tiếng Việt** — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
+**207 bài Markdown tiếng Việt** — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
 
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
 | Món ăn | 91 | đặc sản Huế, nhà hàng / quán, quán cà phê, một bài hướng dẫn chung |
-| Di tích | 29 | Đại Nội, Kinh thành, các lăng, chùa, đàn tế, di sản (Nhã nhạc, Mộc bản…) |
+| Di tích | 30 | Đại Nội, Kinh thành, các lăng, chùa, đàn tế, di sản (Nhã nhạc, Mộc bản…) |
 | Lễ hội | 27 | lễ hội, ngày hội, lễ tế theo năm |
 | Nghệ thuật biểu diễn | 12 | chương trình biểu diễn, ca Huế, đêm nhạc |
-| Du lịch | 45 | địa điểm (biển, đầm phá, chợ, phố đi bộ, suối, đèo), lịch trình mẫu, chi phí, vé |
+| Du lịch | 47 | địa điểm (biển, đầm phá, chợ, phố đi bộ, suối, đèo, không gian nghệ thuật), lịch trình mẫu, chi phí, vé, đi lại |
 
 - Mỗi bài viết theo **mẫu riêng của chủ đề** (vd bài món ăn có mô tả, nơi ăn, giá, giờ), câu văn tự nhiên, đọc riêng một bài vẫn hiểu.
 - Phần lớn bài có mục "Nguồn dữ liệu" ghi nơi lấy thông tin — trang công khai: cổng thông tin của tỉnh, báo, trang du lịch, văn bản pháp luật… (khoảng 76 trang web khác nhau).
 - Kho **không** đưa lên kho mã công khai (GitHub) — nội dung giữ riêng trên máy; vì vậy sửa bài nào cũng phải sao lưu bản gốc trước.
-- Ngoài 204 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
+- Ngoài 207 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
   vd câu lưu ý chung đầu một bài vé được gắn kèm vào mọi đoạn giá của bài đó, để đoạn nào được tìm ra cũng mang theo lưu ý.
 
 ## Chatbot chỉ chạy khi chỉ mục khớp kho
@@ -37,6 +37,7 @@ Mỗi điểm có thể phải sửa ở nhiều chỗ (vd một tên phường 
 | Đợt 1 (28/10) | 51 điểm ⇒ 123 chỗ / 65 bài — chủ yếu tên phường mới sau sắp xếp hành chính 01/07/2025 (giữ tên cũ trong ngoặc), vài con số mâu thuẫn giữa hai bài | chỉ sửa khi **ngay trong kho có căn cứ** | không làm hỏng; điểm Đủ ý −0,008, Đúng không đổi |
 | Đợt 2 (30/10) | 20 điểm ⇒ 123 chỗ / 40 bài — bỏ cấp "quận"; sửa theo nguồn ngoài **bạn cho phép tra** (đọc nguyên văn, một agent khác đọc lại khớp); **làm yếu** câu không chắc (bỏ con số / chi tiết); không thêm khẳng định mới, không xoá câu cảnh báo | luật bạn đặt 29/10 cho điểm không đủ căn cứ trong kho | không làm hỏng; Đủ ý +0,008, Đúng không đổi; bộ an toàn không có lỗi mới |
 | Giờ mở cửa (05/11) | thêm một dòng giờ chung + "có thể thay đổi theo mùa" vào 11 bài điểm tham quan của Quần thể Cố đô | câu "mấy giờ mở cửa" hay bị hỏi mà kho thiếu; giờ lấy từ bài vé **đã có trong kho** | trả đúng giờ có nguồn; 1 câu Golden lần đầu từ chối, chạy lại 2 lần đều đúng ⇒ bạn chọn giữ, theo dõi |
+| Ghi kho (14/11) | thêm **3 bài**: bảo tàng cổ vật cung đình, không gian lưu niệm họa sĩ Lê Bá Đảng, "Đi lại ở Huế" (sân bay, ga, bến xe, đi trong nội thành, đi lăng, bằng lái xe máy, tàu Huế – Đà Nẵng, mùa mưa); **sửa 4 chỗ** theo nguồn ở 3 bài cũ (người lập không gian lưu niệm; số nhà khu trưng bày trên đường Lê Lợi — sửa ở cả hai bài nhắc tới, để kho không tự mâu thuẫn; bảo tàng nằm bờ Bắc, không thuộc "Nam sông Hương") | 2 điểm trong lịch trình có bài quá mỏng; câu hỏi đi lại hay gặp mà kho thiếu | không làm hỏng ⇒ bạn chọn giữ: Đủ ý +0,03, Đúng +0,04; từ chối nhầm 3 ⇒ 5, nhưng hai câu thêm có lần tìm giống hệt trước và chạy lại gần như luôn trả lời (do model viết khác mỗi lần); bộ an toàn không tệ đi; 6 câu đi lại đếm 12/11 dùng được 2 ⇒ 4 |
 
 (Hai đợt trùng con số 123 chỗ là ngẫu nhiên — đếm riêng từng đợt.) Kho **đúng hơn, thận trọng hơn**, nhưng điểm chấm **không tăng**: chỉ khoảng 1 / 6 câu Golden chạm chỗ
 sửa, và đáp án mẫu hầu như không hỏi đúng tên phường hay chi tiết đã bỏ.
@@ -71,5 +72,6 @@ sửa, và đáp án mẫu hầu như không hỏi đúng tên phường hay chi
 - Thiết kế sửa kho + dựng lại chỉ mục: `docs/superpowers/specs/2026-10-27-sua-kho-build-lai-index-design.md`
 - Đợt 1, đợt 2, Qwen3-8B: `report_agent/2026-10-27_phan_ton_phase_cu/TONG_HOP.md` (đợt 2: `sua_kho_dot2_implementation.md`; đợt 1: `sua_kho_b9_implementation.md`)
 - Rà toàn kho 25/10: `report_agent/2026-10-25_ra_soat_noi_dung_kho/` · giờ mở cửa 05/11: `report_agent/2026-11-05_sua_kho_gio/c192_implementation.md`
+- Ghi kho 14/11: `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md` (review: `c_review_ghi_kho_14_11.md`, `c_review_e_ghi_kho_report.md` cùng thư mục)
 - Dựng lại chỉ mục (lệnh, bẫy): `guides/full_corpus_rag.md` mục "Build lại index". Cho người sửa sau: mã đoạn đánh số theo thứ tự trong bài ⇒ xoá một dòng giữa bài làm
   số dồn lại (đợt 2 đã phải đo bù); agent chỉ tìm trong kho qua `scripts/grep_kb.sh` (không đọc lọt bộ câu đánh giá nằm cạnh kho).

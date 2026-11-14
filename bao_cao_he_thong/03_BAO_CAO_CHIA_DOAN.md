@@ -1,17 +1,17 @@
 # Báo cáo cho bạn: Chia tài liệu thành đoạn (Phase 2)
 
-**Cập nhật lần cuối: 19:28 10/11/2026 — bản 7: sửa số đoạn còn ghi 8.424 ở mục việc còn lại. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 10:30 14/11/2026 — bản 8: kho 207 file / 8.474 đoạn sau lần ghi kho 14/11 (cách chia không đổi). Các bản trước: xem lịch sử git.**
 Người viết: agent con của A (bản 6) · Review: A. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
-- **Khâu này làm gì:** chatbot không tìm trên cả file dài mà trên các đoạn nhỏ, mỗi đoạn một ý. Khâu này chia **204 file
+- **Khâu này làm gì:** chatbot không tìm trên cả file dài mà trên các đoạn nhỏ, mỗi đoạn một ý. Khâu này chia **207 file
   Markdown** của kho thành đoạn và ghi chính xác vị trí từng phần trong file gốc, để câu trả lời trích dẫn được đúng chỗ.
-  Đã đóng từ 12/09/2026; **cách chia không đổi từ đó** (hai đợt sửa kho 28/10 và 30/10 chỉ đổi nội dung kho; đợt rà code 26/10
+  Đã đóng từ 12/09/2026; **cách chia không đổi từ đó** (các lần sửa kho 28/10, 30/10, 05/11, 14/11 chỉ đổi nội dung kho; đợt rà code 26/10
   chỉ thêm kiểm, không đổi đoạn nào).
 - **Đang chạy cách nào:** chia theo cấu trúc Markdown (tiêu đề, đoạn văn, bảng, danh sách, trích dẫn), không cắt theo số ký
   tự, không gối đầu có chủ đích. Khối quá dài thì bảng tách từng hàng (kèm dòng tiêu đề bảng), danh sách tách từng mục, đoạn
-  văn tách ở ranh giới câu. **Hôm nay** (kho sau hai đợt sửa + giờ mở cửa 05/11): 204 file → **8.435 đoạn**, 0 lỗi, đúng bằng số đoạn trong
+  văn tách ở ranh giới câu. **Hôm nay** (kho sau lần ghi kho 14/11): 207 file → **8.474 đoạn**, 0 lỗi, đúng bằng số đoạn trong
   chỉ mục đang chạy.
 - **Đo được:** chạy lại ra cùng đoạn, cùng ID (test so với bản ghi build đang chạy — đạt sau build lại 30/10); mọi đoạn vừa
   giới hạn token của cả 3 tokenizer — dài nhất 366 / 512, 366 / 512, 255 / 256 (đo 30/10). Trung vị 85 token và 1.787 đoạn
@@ -30,7 +30,7 @@ Người viết: agent con của A (bản 6) · Review: A. Bản 10/11: agent co
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-204 file Markdown (danh sách file + file loại trừ trong cấu hình)
+207 file Markdown (danh sách file + file loại trừ trong cấu hình)
 -> đọc theo cấu trúc (tiêu đề, đoạn văn, bảng, danh sách, trích dẫn)
 -> mỗi khối thành một đoạn nếu vừa giới hạn token
 -> khối quá dài: bảng tách từng hàng (kèm dòng tiêu đề bảng), danh sách tách từng mục con,
@@ -56,7 +56,7 @@ Người viết: agent con của A (bản 6) · Review: A. Bản 10/11: agent co
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Đoạn văn, tiêu đề thường | **Đã xử lý, đóng gói** | 8.435 đoạn (05/11 tối; 30/10: 8.424), 0 lỗi; chỉ mục đang chạy dùng đúng các đoạn này |
+| Đoạn văn, tiêu đề thường | **Đã xử lý, đóng gói** | 8.474 đoạn (14/11; 05/11: 8.435), 0 lỗi; chỉ mục đang chạy dùng đúng các đoạn này |
 | Đoạn văn quá dài | **Đã xử lý, đóng gói** | tách ở ranh giới câu; `full_corpus_chunker.py:482` |
 | Bảng (bảng giá, lịch) | **Xử lý một phần** | bảng dài tách từng hàng kèm dòng tiêu đề (`full_corpus_chunker.py:400`); dòng giá đứng riêng nên khó tìm — xem `06_BAO_CAO_TIM_KIEM.md`. 144 đoạn là bảng (đếm 26/10 trên kho cũ). 8.1 thử gộp các dòng liền nhau của cùng bảng: **không khác** |
 | Danh sách dài | **Đã xử lý, đóng gói** | tách từng mục con; `full_corpus_chunker.py:450` |
@@ -74,6 +74,10 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 14/11/2026 — Ghi kho 3 bài mới (cách chia không đổi)
+3 bài mới chia thử trước khi ghi ra 12 / 15 / 12 đoạn, 0 lỗi; sau khi dựng lại, Qdrant đếm đúng các số đó. 4 chỗ sửa ở 3 bài cũ không đổi số đoạn bài nào ⇒
+8.435 + 39 = **8.474 đoạn**, 207 file. Report: `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md`.
 
 ### 28/10 và 30/10/2026 — Hai đợt sửa kho (cách chia không đổi)
 Đợt 1 (28/10): sửa nội dung 65 file + loại file danh mục nghệ thuật biểu diễn ⇒ 205 → 204 file, 8.459 → 8.426 đoạn. Đợt 2 (30/10):
@@ -128,7 +132,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
 |---|---|---|
 | Bộ chia đoạn toàn kho là đường build duy nhất của chỉ mục | **còn dùng** | `backend/ingestion/full_corpus_pipeline.py:29`, `:126` |
 | Chia theo cấu trúc, tách bảng / danh sách / câu khi quá dài; "không gộp đoạn" | **còn dùng**; 8.1: 12 cách khác không cách nào tốt hơn | `full_corpus_chunker.py:400`, `:450`, `:482` |
-| Số đoạn | **8.435** từ 05/11 tối (+11 đoạn giờ mở cửa; trước: 8.424 từ 30/10, 8.426 từ 28/10, 8.459 từ 24/10, 8.460 ngày 12/09) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.chunk_count`, `file_count` 204) |
+| Số đoạn | **8.474** từ 14/11 (+39 đoạn của 3 bài mới; trước: 8.435 từ 05/11, 8.424 từ 30/10, 8.426 từ 28/10, 8.459 từ 24/10, 8.460 ngày 12/09) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.chunk_count`, `file_count` 207) |
 | 3 quy tắc điều kiện, khớp đúng một chỗ | **còn dùng** | `knowledge-base-hue/meta/full_corpus_conditions.json` (private); `full_corpus_chunker.py:157-209` |
 | Ràng buộc 3 tokenizer (e5 512, huydang 256) | **còn dùng** trong code, dù chatbot chỉ dùng e5-small | `backend/config/settings.yaml:23-35`; `full_corpus_chunker.py:288-324`, `:550` |
 | Phần bằng chứng có vị trí chính xác; ID điểm suy từ ID đoạn | **còn dùng** | `backend/core/schema.py:49-51`, `:89`, `:107` |
@@ -142,7 +146,7 @@ Kiểm với code `main` (commit `1985a81`) ngày 31/10/2026.
   nhưng cũng không làm tốt lên ⇒ chỉ là lựa chọn nếu sau này build lại vì lý do khác.
 - Gộp đoạn vụn / gộp dòng bảng: 8.1 đo không giúp hoặc làm hại — không đề xuất.
 - Bảng giá khó tìm vẫn còn; gốc ở khâu tìm / xếp đoạn (`06_BAO_CAO_TIM_KIEM.md`).
-- Thống kê đoạn (trung vị token, đoạn vụn, số đoạn bảng, đoạn lặp, phần điều kiện) chưa đo lại trên kho hiện tại (8.435 đoạn).
+- Thống kê đoạn (trung vị token, đoạn vụn, số đoạn bảng, đoạn lặp, phần điều kiện) chưa đo lại trên kho hiện tại (8.474 đoạn).
 - ID đoạn `file#số` không bền khi sửa giữa file — đã biết, chưa có kế hoạch đổi.
 
 ## Phụ lục — hồ sơ kỹ thuật

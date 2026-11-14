@@ -2,13 +2,13 @@
 
 > **Đây là sổ ghi việc (quá khứ) của các agent, không phải bài học.** Muốn hiểu hệ thống: đọc [bai_hoc/](../bai_hoc/) theo số, bắt đầu từ bài 0.
 
-Cập nhật 10/11/2026 (bản mẫu sắp xếp lại; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
+Cập nhật 10:30 14/11/2026 (số kho sau lần ghi kho 14/11; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
 của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "Đọc chi tiết" trỏ sang đó. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## Chatbot này là gì
 
 Trợ lý du lịch – văn hoá Huế trên một trang web (gọi là "chatbot" hay "trợ lý" đều là một hệ thống). Người dùng hỏi bằng tiếng Việt có dấu; chatbot
-**trả lời từ kho bài viết đã biên soạn** (204 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
+**trả lời từ kho bài viết đã biên soạn** (207 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
 chỉ có ba thứ: ngày tháng và dự báo thời tiết (code tính / lấy), và mục "Từ web (chưa kiểm)" tách riêng khi kho không có. Kho không có ⇒ nói "không đủ thông
 tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng một câu cố định.
 
@@ -21,7 +21,7 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 - Kho không có ⇒ tra web một lần, hiện riêng mục "Từ web (chưa kiểm)".
 - Biểu mẫu "Lên kế hoạch": chọn số ngày / người đi cùng / sở thích ⇒ code xếp lịch theo buổi từ địa điểm trong kho, model viết lời.
 - Hỏi bằng ảnh: chụp ảnh ⇒ chatbot gợi ≤ 3 tên điểm / món ⇒ người dùng bấm xác nhận mới trả lời.
-- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 204 bài, nút 👍 / 👎 dưới câu trả lời.
+- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 207 bài, nút 👍 / 👎 dưới câu trả lời.
 
 **Chưa làm được / chưa bật:** lịch trình từ câu gõ tự do (chỉ qua biểu mẫu) · bản đồ vẽ cả lịch trình (có code, chờ bạn duyệt toạ độ) · giọng nói (chờ 40 câu
 thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · lưu trú, quán gần đây, sự kiện theo ngày · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
@@ -36,7 +36,7 @@ nặng → nhẹ:** sai cảnh báo an toàn > nói chắc sai > trả lời câ
 
 | Đo gì | Kết quả | Đo lúc nào, trên gì |
 |---|---|---|
-| Kho | 204 bài → 8.435 đoạn | chỉ mục dựng lại 05/11 |
+| Kho | 207 bài → 8.474 đoạn | chỉ mục dựng lại 14/11 |
 | Điểm chất lượng (thang 1–5) | Đúng **4,71** · Đủ ý **4,58** · Trúng ý **4,72** | **bản cuối Phase 8** (01/11), 129 câu Golden có đáp án trong kho (đã bỏ 29 câu ít giống cách người thật hỏi) |
 | … loại câu yếu nhất | câu cần ghép nhiều nguồn: Đủ ý **3,50** (Phase 9 thêm "tìm thêm" để sửa — chưa đo lại trên cả bộ) | như trên |
 | Từ chối nhầm (kho có đáp án mà nói "không đủ thông tin") | **4–6 / 158** câu (mỗi lần chạy lại ra 4–6 vì model viết hơi khác mỗi lần); trước khi có "tìm thêm": 12 / 158 | 158 câu Golden có đáp án trong kho, 03/11 |
@@ -53,7 +53,7 @@ thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riên
 
 | Từ | Nghĩa |
 |---|---|
-| kho | 204 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
+| kho | 207 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
 | đoạn | một mẩu của bài (một đoạn văn, một mục danh sách, một dòng bảng) — đơn vị để tìm và trích nguồn |
 | vector nghĩa | dãy 384 con số đại diện cho *ý nghĩa* một đoạn; hai đoạn cùng ý thì gần nhau (tính bằng model nhỏ e5-small, chạy ngay trên máy) |
 | BM25 | cách chấm theo **từ trùng** giữa câu hỏi và đoạn |

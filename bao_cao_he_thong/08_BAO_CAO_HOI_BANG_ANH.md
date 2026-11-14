@@ -71,7 +71,7 @@ Model `google/siglip2-base-patch16-224` (1,5 GB, chạy CPU, ~0,3 s / ảnh, RAM
 | So ảnh với ảnh mẫu (tìm ảnh giống nhất) | 20 | 5 | 0 | FAIL — điểm giống của ảnh ngoài Huế chồng lên ảnh Huế ⇒ không có ngưỡng nào tách được |
 | Ảnh mẫu lọc 5 tên ⇒ luna chọn | 21 · 19 | 1 · 3 | 0,0157 USD | FAIL — 5 tên lọc trước chỉ chứa tên đúng ở 22 / 25 ảnh, luna đổi ý giữa hai lượt ở 12 / 33 ảnh |
 
-Không chỉnh thêm vì số đo cho thấy chỉnh ngưỡng / lời dặn không qua được ngưỡng. **Bỏ**, giữ luna. Collection thử `hue_anh_siglip2` (172 điểm) còn trong Qdrant chờ bạn quyết.
+Không chỉnh thêm vì số đo cho thấy chỉnh ngưỡng / lời dặn không qua được ngưỡng. **Bỏ**, giữ luna. Collection thử `hue_anh_siglip2` (172 điểm) đã xoá (kiểm Qdrant 14/11).
 
 ### 05/11/2026 tối — thử giao diện trên trình duyệt (Playwright, server thật)
 Tắt ⇒ không có nút. Bật tạm ⇒ file sai kiểu / quá lớn bị chặn trước khi gửi; ảnh chùa ⇒ gợi ý đúng tên ⇒ bấm ⇒ câu trả lời 7 nguồn; ảnh con mèo ⇒ "Mình chưa nhận ra ảnh này" ⇒ "Gõ tên" ⇒ con trỏ về ô gõ, không hỏi chatbot. 0 vi phạm chính sách bảo mật trang, 0 kết nối ra ngoài. **PASS** · 0,0016 USD.
@@ -100,7 +100,7 @@ Rào, xử lý ảnh, một lần gọi model, test; thử một ảnh thật: �
 
 1. ~~Bật "Hỏi bằng ảnh" cho người dùng chưa?~~ **Bạn đã chọn bật 08/11.** Còn lại: đoán tên chậm nhất 6–9 s, vượt mục tiêu 5 s (chưa có việc sửa).
 2. **Cách miễn phí trên máy (SigLIP so ảnh mẫu)** — nếu bạn ưu tiên "ảnh không rời máy, nhanh 0,3 s": đúng 20 / 25 (luna 22) nhưng **luôn gợi tên, kể cả ảnh không phải Huế**. Không tự áp; mặc định giữ luna.
-3. **Xoá collection thử `hue_anh_siglip2`?** (172 điểm, chỉ dùng cho thí nghiệm) — mặc định giữ tới khi bạn quyết.
+3. ~~Xoá collection thử `hue_anh_siglip2`?~~ **Đã xoá** (kiểm Qdrant 14/11).
 4. Trước khi deploy (Phase 12): danh sách địa chỉ trang hợp lệ cố định, xử lý HTTPS sau proxy, giới hạn số ảnh xử lý cùng lúc.
 5. Giọng nói (cũng thuộc Phase 10): nghiên cứu đang tạm dừng theo bạn.
 

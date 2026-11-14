@@ -6,7 +6,7 @@ Cập nhật 10/11/2026 (bản mẫu sắp xếp lại; bản cũ xem trong lị
 Hệ thống có hai phần: **chuẩn bị kho** (chạy một lần, mỗi khi kho đổi) và **trả lời** (mỗi câu hỏi).
 
 ```text
-CHUẨN BỊ (một lần):  204 bài ─► cắt thành đoạn ─► mỗi đoạn: vector nghĩa + từ khoá ─► cất vào Qdrant (kèm "phiếu" ghi dấu từng bài)
+CHUẨN BỊ (một lần):  207 bài ─► cắt thành đoạn ─► mỗi đoạn: vector nghĩa + từ khoá ─► cất vào Qdrant (kèm "phiếu" ghi dấu từng bài)
 
 TRẢ LỜI (mỗi câu):
   câu hỏi ─► phân loại (model, một lần gọi ngắn) ──┬─ xã giao ───────► model đáp ngắn, không tìm kho
@@ -26,7 +26,7 @@ TRẢ LỜI (mỗi câu):
 
 ## Chuẩn bị kho
 
-1. **Kho** là 204 bài Markdown tiếng Việt (5 chủ đề) đã được biên soạn và sửa tay qua hai đợt; chatbot không đọc gì ngoài kho (trừ web, thời tiết — dưới).
+1. **Kho** là 207 bài Markdown tiếng Việt (5 chủ đề) đã được biên soạn và sửa qua nhiều đợt (lần gần nhất 14/11); chatbot không đọc gì ngoài kho (trừ web, thời tiết — dưới).
 2. **Cắt đoạn** theo cấu trúc bài: mỗi đoạn văn, mỗi mục danh sách, mỗi dòng bảng (kèm hàng tiêu đề) là một đoạn. Đoạn mang theo tên bài và đường tiêu đề
    (vd "Bún bò Huế > Quán nổi tiếng") để dễ tìm.
 3. Mỗi đoạn được tính **vector nghĩa** (model e5-small chạy ngay trên máy, không tốn tiền) và **từ khoá** (BM25), rồi cất vào **Qdrant**.

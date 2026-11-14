@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2, lượt đo cuối Phase 1–8)
 
-**Cập nhật lần cuối: 19:28 10/11/2026 — bản 7: nói rõ chatbot đang chạy (Phase 9) chưa đo lại cả bộ Golden 176 (dự kiến đo ở bước so sánh cuối B7); thêm số tốc độ / tiền mới nhất (S5 09/11); câu theo ngày: công cụ bật 09/11; mốc kho / mốc tìm theo 05/11. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 10:30 14/11/2026 — bản 8: mốc kho / mốc tìm sau lần ghi kho 14/11; một câu bộ an toàn đổi nhãn "ngoài kho" ⇒ "trong kho".** Bản 7 (19:28 10/11/2026): nói rõ chatbot đang chạy (Phase 9) chưa đo lại cả bộ Golden 176 (dự kiến đo ở bước so sánh cuối B7); thêm số tốc độ / tiền mới nhất (S5 09/11); câu theo ngày: công cụ bật 09/11; mốc kho / mốc tìm theo 05/11. Các bản trước: xem lịch sử git.**
 Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 10/11/2026)
@@ -252,8 +252,9 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 0
 | Bộ chấm `full_corpus_eval.py`, so theo cặp | **còn dùng** | `backend/evaluation/full_corpus_eval.py:648,816–870` |
 | Prompt chấm cố định (không chấm trích dẫn) | **còn dùng** | `backend/evaluation/full_corpus_judge_prompt.md` |
 | Người chấm Claude, mù, cùng lượt | **còn dùng** | spec 8.2 §7 |
-| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 204 file / 8.435 đoạn từ 05/11 tối (lượt đo 01/11 chạy trên 8.424); số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
-| Mốc kết quả tìm 158 câu | **còn dùng**: `64656a87c109` (từ 05/11 tối; 30/10 `4d5bbe9e0edc`) | `Project_Status.md` §4 |
+| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 207 file / 8.474 đoạn từ 14/11 (lượt đo 01/11 chạy trên 8.424); số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
+| Mốc kết quả tìm 158 câu | **còn dùng**: `a105229f1902` (từ 14/11; 05/11 `64656a87c109`; 30/10 `4d5bbe9e0edc`) |
+| Nhãn câu bộ an toàn X03 | **đổi từ 14/11**: "ngoài kho" ⇒ "trong kho" — kho nay có bài trả lời đúng câu này; người khác kiểm câu trả lời: mọi ý / số nằm trong đoạn được trích | `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md` | `Project_Status.md` §4 |
 | Nhãn đoạn đúng | **bản 5 mặc định** (30/10); bản 1–4 chỉ để tái lập số cũ | `backend/experiments/phase_8_1/g1_retrieval.py:48` |
 | Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
 | Bộ 32 câu an toàn, thước lỗi nặng | **còn dùng**, bắt buộc | `do_loi_nang_implementation.md`; `sua_kho_dot2_implementation.md` |

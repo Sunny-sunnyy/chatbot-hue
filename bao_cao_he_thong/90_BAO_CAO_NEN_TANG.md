@@ -8,7 +8,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 - **Khâu này làm gì:** đặt luật chơi cho cả dự án ("đơn giản là mặc định"; không dùng dữ liệu giả làm bằng chứng) và dựng khung
   `backend/`: các gói Python, một file cấu hình, một hàm đọc cấu hình có kiểm lỗi, một cấu hình ghi log chung, một khuôn chung cho kết quả
   tìm kiếm, một bộ lớp lỗi dùng chung. Đã đóng tháng 8/2026.
-- **Đang chạy cách nào:** khung này vẫn là nền của chatbot toàn kho (204 file / 8.435 đoạn). `backend/` có **11 gói** (10 gói gốc +
+- **Đang chạy cách nào:** khung này vẫn là nền của chatbot toàn kho (207 file / 8.474 đoạn). `backend/` có **11 gói** (10 gói gốc +
   `experiments/` thêm 24/10 cho công cụ đo Phase 8.1). File cấu hình `settings.yaml` có 6 nhóm: kho tri thức, địa chỉ Qdrant, runtime
   (model tìm kiếm, cách tìm), sinh câu trả lời, `assistant` (cờ bật / tắt từng phần trợ lý Phase 9) và `anh` (hỏi bằng ảnh, Phase 10); hàm đọc cấu hình
   chung chỉ kiểm 3 nhóm (`full_corpus`, `runtime`, `generation`) — các nhóm còn lại do phần code dùng chúng tự đọc. Cấu hình và code bản món ăn cũ đã gỡ (24/10).

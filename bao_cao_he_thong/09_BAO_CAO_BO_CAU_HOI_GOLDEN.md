@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Bộ câu hỏi chuẩn Golden (Phase 7A, 8.1, sửa kho đợt 1–2)
 
-**Cập nhật lần cuối: 09:40 08/11/2026 — bản 9: sửa chỗ ghi sai "bộ câu kín mới chưa làm" — bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (khớp `10_BAO_CAO_DANH_GIA.md`); lần kiểm tổng quát sau cần bộ mới nữa.** Bản 8: 11:04 01/11/2026 (câu Golden lệch kho đã rõ nguyên nhân; bạn chọn giữ nguyên). Bản 7: 17:19 31/10/2026.
+**Cập nhật lần cuối: 10:30 14/11/2026 — bản 10: nhãn đoạn đúng bản 6 cho kho sau lần ghi kho 14/11.** Bản 9 (09:40 08/11/2026): sửa chỗ ghi sai "bộ câu kín mới chưa làm" — bộ kín mới 40 câu đã làm và đã dùng ở lượt đo cuối 01/11 (khớp `10_BAO_CAO_DANH_GIA.md`); lần kiểm tổng quát sau cần bộ mới nữa.** Bản 8: 11:04 01/11/2026 (câu Golden lệch kho đã rõ nguyên nhân; bạn chọn giữ nguyên). Bản 7: 17:19 31/10/2026.
 Các bản trước: xem `git log` file này. Người viết: agent con của A (bản 7) · Review: agent con ngữ cảnh mới (31/10). Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
@@ -110,7 +110,8 @@ Kiểm 31/10/2026 với code (commit `1985a81`) và `session_prompt/Project_Stat
 | Chia đề 120 thử / 56 kiểm | **còn dùng** | `knowledge-base-hue/evaluation/phase_8_1/split.json` (private) |
 | Số chính bỏ 29 câu không tự nhiên | **còn dùng** | `data/phase_8_1/golden_realism_final.jsonl` (private) |
 | Golden md5 `6331e88fb171` | **còn dùng** (từ 30/10); bản trước sao lưu | `knowledge-base-hue/meta/golden_backup_dot2_2026-10-30/` (private) |
-| Nhãn đoạn đúng bản 5 | **còn dùng** (từ 30/10) | `data/phase_8_1/gold/gold_v5.jsonl` (private) |
+| Nhãn đoạn đúng bản 6 | **dùng cho kho từ 14/11** — bằng bản 5, chỉ dời 2 trích dẫn ở một bài vé bị sửa (chữ giống hệt, người khác kiểm); chưa thêm 3 bài mới làm bằng chứng | `data/phase_8_1/gold/gold_v6.jsonl` (private) |
+| Nhãn đoạn đúng bản 5 | **đã thay** bởi bản 6 (14/11); dùng từ 30/10 | `data/phase_8_1/gold/gold_v5.jsonl` (private) |
 | Bộ 36 câu kín là bộ "chưa ai thấy" | **đã thay** 28/10: đã dùng ở lần chấm cuối 8.2 ⇒ bộ hồi quy | `report_agent/2026-10-25_phase_8_2_ap_dung/TONG_HOP.md` |
 | Bộ chấm món ăn Phase 7 và notebook 07 | **đã gỡ** (24/10), thay bởi `full_corpus_eval.py` | commit `1832201` |
 

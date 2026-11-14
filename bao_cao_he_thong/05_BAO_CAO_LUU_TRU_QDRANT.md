@@ -1,26 +1,26 @@
 # Báo cáo cho bạn: Lưu đoạn vào Qdrant (Phase 4)
 
-**Cập nhật lần cuối: 19:28 10/11/2026 — bản 5: sửa số cũ — Qdrant có 2 collection (thêm collection thử ảnh), lần build mới nhất là 05/11 tối, đã build lại 3 lần. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 10:30 14/11/2026 — bản 6: dựng lại 14/11 sau ghi kho (8.474 điểm); collection thử ảnh đã xoá (Qdrant còn 1 collection).** Bản 5 (19:28 10/11/2026): sửa số cũ — Qdrant có 2 collection (thêm collection thử ảnh), lần build mới nhất là 05/11 tối, đã build lại 3 lần. Các bản trước: xem lịch sử git.**
 Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
 
 - **Khâu này làm gì:** đưa các đoạn (kèm vector nghĩa và từ khoá) vào cơ sở dữ liệu vector Qdrant để chatbot tìm được, và giữ một
   "phiếu build" ghi chỉ mục được tạo từ đúng bản corpus nào. Đã đóng (Phase 4, 09/2026); đường build hiện nay có từ Phase 7A2 (24/10).
-- **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **2 collection**: (1) `hue_full_corpus_7a2_e5_small_384` — chỉ mục chatbot dùng,
-  **8.435 điểm** (build lại 05/11 tối sau đợt giờ mở cửa; 30/10: 8.424), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
-  trường thông tin; (2) `hue_anh_siglip2` — 172 điểm của thử nghiệm hỏi bằng ảnh 05/11 (đã bỏ), chatbot **không** dùng, chờ bạn quyết xoá (`08_BAO_CAO_HOI_BANG_ANH.md`). Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
-- **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (05/11 tối):
-  204 file, 8.435 điểm, phiếu `9921888f2030`; kiểm Qdrant thật 19:31 10/11/2026: 2 collection, 8.435 + 172 điểm.
-- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 3 lần: 28/10, 30/10, 05/11; mỗi lần vài phút trên máy). Tắt Docker Desktop
+- **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **1 collection**: `hue_full_corpus_7a2_e5_small_384` — chỉ mục chatbot dùng,
+  **8.474 điểm** (dựng lại 14/11 sau lần ghi kho 3 bài; 05/11: 8.435), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
+  trường thông tin. Collection thử ảnh `hue_anh_siglip2` (thử nghiệm đã bỏ) **đã xoá** — Qdrant hôm nay chỉ còn chỉ mục chatbot. Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
+- **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (14/11):
+  207 file, 8.474 điểm, phiếu `efbf748c2195`, kiểm sức khoẻ 5 / 5; kiểm Qdrant thật 10:30 14/11/2026: 1 collection, 8.474 điểm.
+- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 4 lần: 28/10, 30/10, 05/11, 14/11; mỗi lần vài phút trên máy). Tắt Docker Desktop
   thì chatbot không tìm được (gặp 31/10).
 - **Chi phí / tốc độ:** không tốn tiền (Qdrant chạy trên máy).
-- **Bạn cần quyết gì:** không gấp — xoá hay giữ collection thử ảnh `hue_anh_siglip2` (§6).
+- **Bạn cần quyết gì:** không có.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-204 file Markdown -> chia đoạn -> 8.435 đoạn
+207 file Markdown -> chia đoạn -> 8.474 đoạn
   -> vector nghĩa (e5-small, 384 số) + từ khoá (BM25)
   -> mỗi đoạn một điểm: ID suy từ ID đoạn, 7 trường thông tin
   -> ghi từng lô 64 điểm vào collection mới
@@ -41,7 +41,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.435 điểm (build 05/11 tối, phiếu `9921888f2030`); chatbot đang dùng |
+| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.474 điểm (build 14/11, phiếu `efbf748c2195`); chatbot đang dùng |
 | Phiếu build ghi chỉ mục khớp corpus nào | **Đã xử lý, đóng gói** | `source_state.py:95`, `:99-150` (tạo), `:159-176` (ghi, không ghi đè) |
 | Chatbot từ chối chạy khi corpus đổi mà chưa build lại | **Đã xử lý, đóng gói** | `source_state.py:179-196`; `retrieval/full_corpus.py:383-385`, `:685` |
 | Kiểm cấu trúc collection và số điểm khi khởi động | **Đã xử lý, đóng gói** | `retrieval/full_corpus.py:707-720`; `vectorstore/qdrant.py:75-80` |
@@ -55,6 +55,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
+- **14/11/2026 — Dựng lại sau lần ghi kho (3 bài mới + 4 chỗ sửa):** 8.435 ⇒ **8.474 điểm** (+39 đoạn), phiếu `efbf748c2195`, ~5 phút. Kịch bản của agent (gói bạn duyệt 13/11) tự kiểm máy rảnh ⇒ sao lưu ⇒ ghi kho ⇒ chia thử ⇒ xoá chỉ mục cũ + phiếu + danh sách từ khoá ⇒ dựng lại ⇒ đo tìm; lỗi thì tự lùi. Bản sao phiếu / từ điển cũ trong `data/sua_kho_2026-11-14_ghi_kho/backup/`; không chụp snapshot Qdrant (lùi = chép lại kho + dựng lại).
 - **05/11/2026 tối — Build lại sau đợt giờ mở cửa (11 file Quần thể):** 8.424 ⇒ **8.435 điểm** (+11 đoạn), phiếu `9921888f2030`, ~4 phút; xoá collection do bạn chạy lệnh `!` (rào quyền chặn agent); bản sao phiếu / từ điển cũ trong `data/sua_kho_2026-11-05_gio/backup/`.
 - **30/10/2026 — Build lại sau sửa kho đợt 2:** 8.426 ⇒ **8.424 điểm** (hai dòng kho bị xoá), phiếu `51fb1ec63cbc`; đo trước ↔ sau trên 176
   câu Golden + 32 câu an toàn: không làm hỏng · giữ (`02_BAO_CAO_KHO_DU_LIEU.md`).
@@ -71,7 +72,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 5. Hôm nay còn đúng không
 
-Số dòng code kiểm lúc 17:13 31/10/2026 (`main` `1985a81`, chưa kiểm lại); số điểm và danh sách collection kiểm lại bằng Qdrant thật 10/11/2026 (2 collection: 8.435 + 172 điểm).
+Số dòng code kiểm lúc 17:13 31/10/2026 (`main` `1985a81`, chưa kiểm lại); số điểm và danh sách collection kiểm lại bằng Qdrant thật 10:30 14/11/2026 (1 collection: 8.474 điểm).
 
 | Kết quả / quyết định | Trạng thái | Căn cứ (file:dòng) |
 |---|---|---|
@@ -92,7 +93,6 @@ Số dòng code kiểm lúc 17:13 31/10/2026 (`main` `1985a81`, chưa kiểm l�
 - Sửa corpus thì chatbot từ chối chạy cho tới khi build lại; build lại theo quy trình trong guide (gỡ collection, phiếu build, danh sách từ
   khoá cũ trước).
 - Sửa phần chữ đầu notebook 04 cho đúng số đoạn hiện tại (nhỏ, chưa có lịch).
-- Xoá collection thử ảnh `hue_anh_siglip2` (172 điểm, chỉ dùng cho thí nghiệm đã bỏ): chờ bạn quyết, không gấp; giữ thì không ảnh hưởng chatbot.
 
 ## Phụ lục — hồ sơ kỹ thuật
 
@@ -103,7 +103,7 @@ Số dòng code kiểm lúc 17:13 31/10/2026 (`main` `1985a81`, chưa kiểm l�
   `reports/phase_7a2_gate_2_reindex_implementation_2026_10_24.md`,
   `reports/phase_7a2_gate_3_cleanup_implementation_2026_10_24.md`.
 - Tên kỹ thuật: phiếu build = build record (`data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`); danh sách từ khoá = sparse
-  state (`data/full_corpus_builds/full_corpus_sparse_state.json`, `4a8311a2dfef` từ 05/11 tối — 30/10 `c8134c49a648`; 5.631 từ); thông tin điểm = payload; điểm = point.
+  state (`data/full_corpus_builds/full_corpus_sparse_state.json`, `79aa34a6a68d` từ 14/11 — 05/11 `4a8311a2dfef`; 5.640 từ); thông tin điểm = payload; điểm = point.
 - "Gate 2 / Gate 3" = hai bước build lại và dọn của Phase 7A2; "B9" = việc dọn code / collection bản món ăn (24/10, commit `1832201`).
 - Bản 1: B8, 24/10/2026. Bản 2: B10, sau B9 (`report_agent/2026-10-24_to_chuc_bao_cao/phase_7_cleanup_implementation.md` §4b). Bản 3:
   31/10 (build lại hai lần, Qwen3-8B, Docker Desktop).
