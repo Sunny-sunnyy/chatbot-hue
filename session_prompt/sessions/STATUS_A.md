@@ -1,3 +1,11 @@
+# STATUS A — PHIÊN TỐI 14/11, TIẾN ĐỘ (20:47 14/11/2026 `date`)
+
+- User vắng từ 17:49 ("tiếp tục phát triển; câu cần User gác lại"); ưu tiên User 17:50: ảnh + dữ liệu đầy đủ (khách sạn, mọi nơi / món / di tích).
+- Xong tối nay (merge + push, cổng ổn định mỗi lần): ghi kho 4 (8 quán) · 5 (10 món + 13 địa điểm) · 6 (16 lễ hội / nghệ thuật) ⇒ kho **263 bài / 9.425 đoạn**; bảng quán lịch 69,1 % + bỏ quán đã đóng; ảnh Khám phá 184 ⇒ **249 / 263**, hiện cạnh câu trả lời 146 ⇒ **196**; ảnh quán ở thẻ bữa; khách sạn hạng cao trước + ảnh 71 / 140 + link bản đồ; mục web cho qua năm (21 ⇒ 10 / 76); mưa: đếm, không xây; W73–W75 áp; vòng tự soi 1; bài học 22 (lần 4–6), 24, 25, 01 + sổ 02 / 07 / 01 / README / nhật ký — mỗi lần kiểm độc lập trước commit.
+- Câu chờ User (handoff "PHIÊN TỐI 14/11"): ngưỡng mưa (khuyến nghị phương án 3) · trang / danh sách khách sạn theo khu · giới hạn lượt Codex cho agent (gói ChatGPT hết 19:12) · luật quét trùng bài nháp trước ghi kho · luật test file chạm cho nhánh một hàm thuần · đợt agent kế (nhớ sở thích) · dọn nhánh + 4 worktree AGY.
+- Tiền tối nay (ước, cộng tin báo, chưa review): B ≈ 0,45 · E ≈ 0,18 · C ≈ 0,1 · A ≈ 0,01 ⇒ ≈ 0,75 USD.
+- Bẫy A: gửi sha đoán trước khi đọc kết quả (lần 4 trong ngày); `git add` với file không tồn tại làm hỏng cả lệnh (commit rỗng, phát hiện ngay).
+
 # STATUS A — PHIÊN TỐI 14/11 (mở 17:45; cập nhật 17:48 14/11/2026 `date`)
 
 - Terminal: A `hue-rag-fb` · B `hue-rag-62` · C `hue-rag-eb` · E `hue-rag-1f` (Claude Code, trực tiếp).

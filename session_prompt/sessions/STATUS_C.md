@@ -1,5 +1,18 @@
 # STATUS C — phiên 14/11 (C `hue-rag-b4` · A `hue-rag-7b` · B `hue-rag-22` · E `hue-rag-c4`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+**Phiên mở 17:45 14/11/2026:** C `hue-rag-eb` · B `hue-rag-62` · E `hue-rag-1f` · A `hue-rag-fb`. Kiểm nhanh khớp handoff; kho chưa ghi 8 quán; chờ A giao việc.
+**A giao (phiên tối):** bảng quán lịch + đếm lại sau khi B dựng chỉ mục; review nhánh ảnh của E. **Khai báo sửa:** `data/quan_lich_2026-11-14/` (tools/dung_bang.py, photon_quan_them.json, biên bản) · `data/phase_9/lich_trinh/bang_quan_lich_v1.json` · nhánh `p9-quan-kho-them-bang` (chỉ md5 trong comment `settings.yaml`).
+**Thêm (A, phiên tối):** ảnh mọi quán bảng quán lịch ⇒ khai báo thêm `data/anh_quan_2026-11-14/` · `frontend/src/LichV2.jsx` + file ảnh quán (nhánh riêng `p9-anh-quan`).
+**Bảng quán lịch sau ghi kho 4 XONG (17:54 14/11/2026):** 469 quán md5 `580881638793`; bữa có quán kho 49,3 ⇒ 69,1 %; mô phỏng 0/0/0; nhánh `p9-quan-kho4-bang` `26505d6` chờ E review (worktree `/tmp/c_qb`). Biên bản `data/quan_lich_2026-11-14/bien_ban_quan_kho_them.md`. Ảnh: E làm mọi bài Khám phá; C làm ảnh quán OSM + thẻ bữa (`data/anh_quan_2026-11-14/TIEU_CHI.md`).
+**Ảnh quán OSM (18:04 14/11/2026):** thử 30 ⇒ 11/30 đạt; chỉ 15 quán ngoài kho từng hiện trong lịch ⇒ chỉ làm 15 (2 agent con đang chọn). Bỏ Huế An (đã đóng, hiện 324 lịch) ⇒ nhánh `p9-quan-bo-da-dong` `f9119d1` chờ E (worktree `/tmp/c_qd`). Review A `p9-web-so-cau-hoi` xong (vòng 2 ready). Tiền C phiên tối ≈ 0,045 USD Serper.
+**Ảnh quán ở thẻ bữa (18:13 14/11/2026):** nhánh `p9-anh-quan` `496206d` chờ E review (worktree `/tmp/c_aq`); report `report_agent/2026-11-12_ra_khoang_cach/c_anh_quan_implementation.md`. 6/15 quán ngoài kho có ảnh (48 % lượt hiện); 15 quán: 0 đã đóng (Codex + WebFetch 3). Tiền C phiên tối ≈ 0,05 USD.
+**Sau review E (18:19 14/11/2026):** `p9-anh-quan` @ `815ab2e` (ẩn ảnh kc ở thẻ bữa, 5 ảnh ngoài kho = 32,3 % lượt hiện) — A merge. Review `p9-anh-v4` E: ready 0/0/3 (`c_review_anh_v4.md`). Đếm mưa XONG (`c_dem_mua.md`): đề xuất không thêm điểm trong nhà; nếu làm tiếp thì đổi ngày bằng code. Chờ B: review `p9-khach-san`.
+**Đếm đổi ngày khi mưa XONG (18:20 14/11/2026, 0 USD):** cứu cận trên 13,7 % chuyến, mùa mưa 8–21 % số chuyến kẹt ⇒ đề xuất không xây (`c_dem_mua.md` phần 2). Chờ B: review `p9-khach-san`.
+**Review phiên tối (18:47 14/11/2026):** `p9-khach-san` ready 0/0/3 · `p9-anh-v4b` vòng 2 ready · `p9-anh-kc` changes_requested (10/13 ảnh nâng bằng luật nguồn không nhận ra nơi; dự kiến hiện được 161 ⇒ 169).
+**(19:02 14/11/2026)** `p9-khach-san-anh2` review ready — A merge. Việc kế: review bài nháp ghi kho 5 khi E (địa điểm / di tích) và B (món / đặc sản) nhắn (cách kho 3 / 4). Đang rảnh.
+**Ghi kho 6 bước 1 XONG (19:47 14/11/2026, 0,0178 USD):** `data/bai_kho_6_le_hoi/BUOC_1_DEM.md` — 24 mục chưa có bài: từ chối 9 · mỏng 7 · đủ 8; danh sách viết 16 (đợt 1 = 10). Chưa viết bài, chờ A. Review ghi kho 5 xong (B 10 + E 13 ready). Tiền C phiên tối ≈ 0,07 USD.
+**Ghi kho 6 XONG (20:30 14/11/2026, B ghi):** 263 file / 9.425 đoạn; 8 bài của C (Tết, Âm hồn, Trung thu, Vu Lan, Đoan Ngọ, Truyền Lô, Hò Huế, Lý Huế) — câu thử trích đúng bài mới. C review 8 bài B + B review 8 bài C xong. Rảnh.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên 14/11, 17:40 14/11/2026 `date`)
 
 - **Việc kế (đang dở):** 8 bài quán mới của B cho Kim Long / Thủy Xuân / Đầm Chuồn.
