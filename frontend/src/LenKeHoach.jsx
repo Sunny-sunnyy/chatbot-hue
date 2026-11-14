@@ -82,7 +82,7 @@ const SO_CHAM = { nhe_nhang: 2, can_bang: 3, kham_pha: 4 };
 // Cột phải: lượt lịch mới nhất của cuộc trò chuyện (cùng dữ liệu với khung trợ lý). Chưa có ⇒ lịch MẪU có nhãn "Ví dụ" (User 14/11: trang trống
 // quá) — `/api/lich_mau` do chính bộ xếp dựng từ tổ hợp cố định, câu mỗi điểm do code; tải lỗi ⇒ ô xem trước chữ như cũ.
 let taiMau = null;
-function LichMau() {
+function LichMau({ onXep, pending }) {
   const [mau, setMau] = useState(null);
   useEffect(() => {
     let song = true;
@@ -100,17 +100,21 @@ function LichMau() {
     );
   }
   return (
-    <div className="lkh-mau" aria-label="Lịch ví dụ">
+    <div className="lkh-mau" id="lich-mau" aria-label="Lịch ví dụ">
       <p className="lkh-mau-dau"><span className="lkh-mau-nhan">Ví dụ</span> Lịch 2 ngày · 2 người lớn · thích di tích — bộ xếp lịch tạo sẵn.
         Lịch của bạn có thêm câu tả từng điểm lấy từ kho, kèm nguồn.</p>
+      {mau.truong && onXep && (
+        <button type="button" className="nut nut-phu nhan-nut lkh-mau-nut" disabled={pending}
+                onClick={() => onXep(mau.truong, "2 ngày · 2 người lớn · cân bằng · thích di tích")}>Xếp lịch như ví dụ</button>
+      )}
       {/* ví dụ không có nút Sửa ⇒ bỏ đuôi "sai thì bấm Sửa" của dòng "Mình hiểu" */}
       <LichV2 turn={{ key: "mau", lichV2: { ...mau.lich, minh_hieu: mau.lich.minh_hieu.replace(/\s*—\s*sai thì bấm \*{0,2}Sửa\*{0,2}\.?$/, ".") }, cauV2: mau.cau, phase: "mau" }} />
     </div>
   );
 }
 
-function CotLich({ lichTurn, onEditPlan }) {
-  if (!lichTurn) return <LichMau />;
+function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
+  if (!lichTurn) return <LichMau onXep={onXep} pending={pending} />;
   const t = lichTurn;
   const dangChay = !["done", "error", "stopped"].includes(t.phase);
   return (
@@ -169,6 +173,9 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
       </div>
     </section>
     <div className="khung lkh-cot">
+      {/* màn hẹp: lịch ví dụ nằm dưới biểu mẫu ⇒ dải nhảy xuống ngay đầu trang (chỉ khi chưa có lịch) */}
+      {!lichTurn && <button type="button" className="lkh-toi-mau" onClick={() => document.getElementById("lich-mau")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+        <span>Xem một lịch ví dụ 2 ngày</span><span aria-hidden="true">↓</span></button>}
       <form className="lc" onSubmit={e => { e.preventDefault(); if (!pending) onSubmit(truong, tomTat); }}>
         {(hien.has("nguoi_lon") || hien.has("tre_em") || hien.has("lon_tuoi")) && (
           <fieldset className="lc-nhom">
@@ -225,7 +232,7 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
         <p className="lc-tom" aria-live="polite">{tomTat}</p>
         <button className="nut nut-chinh lc-nut" type="submit" disabled={pending}>{pending ? "Trợ lý đang trả lời…" : `Xếp lịch ${soNgay} ngày`}</button>
       </form>
-      <CotLich lichTurn={lichTurn} onEditPlan={onEditPlan} />
+      <CotLich lichTurn={lichTurn} onEditPlan={onEditPlan} onXep={onSubmit} pending={pending} />
     </div>
     </>
   );

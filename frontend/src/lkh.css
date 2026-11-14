@@ -127,18 +127,45 @@
 .lkh-doi-duoc { background: var(--color-accent-soft); color: var(--color-accent-deep); }
 .lkh-doi-khong { background: #FBEDEE; color: var(--color-error); }
 
-/* Dòng sông vẽ dần theo cuộn nối các ngày (khoảnh khắc chính của trang) */
-.lkh-ngay-ds { position: relative; padding-left: 44px; }
-.lkh-song-ve { position: absolute; left: 0; top: 24px; bottom: 24px; width: 40px; height: calc(100% - 48px); overflow: visible; }
-.lkh-song-ve path { fill: none; stroke: var(--color-accent); stroke-width: 4; stroke-linecap: round; vector-effect: non-scaling-stroke;
-                    stroke-dasharray: 1; stroke-dashoffset: 0; opacity: .55; }
+/* Điểm nhấn 14/11 — khoảnh khắc chính: mỗi ngày một dòng sông vẽ dần QUA từng điểm (LichV2 `SongNgay` đo toạ độ). Hiện sẵn đủ khi giảm chuyển động. */
+.lkh-dong-khung { position: relative; }
+.lkh-song-ngay { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.lkh-song-ngay path { fill: none; stroke: var(--color-accent); stroke-width: 5; stroke-linecap: round; opacity: .5; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.lkh-dong-khung:has(.lkh-song-ngay) .lkh-dong::before { display: none; }   /* có sông ⇒ bỏ vạch thẳng cũ */
+.lich-v2 .lkh-muc > * { position: relative; z-index: 1; }
 @supports (animation-timeline: view()) {
-  .hieu-ung .lkh-song-ve path { animation: lkh-ve linear both; animation-timeline: view(); animation-range: entry 10% exit 60%; }
+  .hieu-ung .lkh-song-ngay path { animation: lkh-ve linear both; animation-timeline: view(); animation-range: entry 15% cover 55%; }
+  /* ảnh lộ dần qua mặt nạ (mẫu 4), lệch nhịp theo thứ tự trong ngày */
+  .hieu-ung .lich-v2 .lich-anh img { animation: lkh-lo linear both; animation-timeline: view(); animation-range: entry calc(5% + var(--k, 0) * 3%) cover 30%; }
+}
+@supports not (animation-timeline: view()) {
+  .hieu-ung .lkh-song-ngay path { animation: lkh-ve 1.6s cubic-bezier(.4,0,.2,1) .2s both; }
 }
 @keyframes lkh-ve { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@media (max-width: 980px) { .lkh-ngay-ds { padding-left: 0; } .lkh-song-ve { display: none; } }
-.chat .lkh-ngay-ds { padding-left: 0; }
-.chat .lkh-song-ve { display: none; }
+@keyframes lkh-lo { from { clip-path: inset(0 100% 0 0 round 16px); } to { clip-path: inset(0 0 0 0 round 16px); } }
+/* tên chặng của ngày (cụm điểm theo thứ tự đi) */
+.lkh-chang { display: block; margin-top: 2px; font-family: var(--font-sans, inherit); font-size: 15px; font-weight: 500; color: var(--color-muted); }
+/* nhãn + màu theo loại điểm: viền chấm buổi + chip chữ (màu không đứng một mình) */
+.lkh-l-di_tich { --mau-loai: #9B2C2C; --mau-loai-nen: #FBE9E7; }
+.lkh-l-am_thuc { --mau-loai: #9A4A07; --mau-loai-nen: #FDF0DF; }
+.lkh-l-thien_nhien { --mau-loai: #2F6B2F; --mau-loai-nen: #E7F3E3; }
+.lkh-l-le_hoi_nghe_thuat { --mau-loai: #5B3A8C; --mau-loai-nen: #EFE8F8; }
+.lkh-l-chup_anh { --mau-loai: #1F5A8A; --mau-loai-nen: #E4EEF8; }
+.lkh-muc[class*="lkh-l-"] .lkh-cham-buoi { box-shadow: 0 0 0 3px var(--mau-loai); }
+.lkh-loai { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.lkh-loai small { padding: 1px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+.lkh-loai-di_tich { background: #FBE9E7; color: #9B2C2C; }
+.lkh-loai-am_thuc { background: #FDF0DF; color: #9A4A07; }
+.lkh-loai-thien_nhien { background: #E7F3E3; color: #2F6B2F; }
+.lkh-loai-le_hoi_nghe_thuat { background: #EFE8F8; color: #5B3A8C; }
+.lkh-loai-chup_anh { background: #E4EEF8; color: #1F5A8A; }
+/* Lịch ví dụ: màn hẹp có dải nhảy xuống ví dụ + nút xếp đúng tổ hợp ví dụ */
+.lkh-toi-mau { display: none; }
+@media (max-width: 980px) {
+  .lkh-toi-mau { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 4px; padding: 12px 16px; border-radius: 16px;
+                 background: var(--color-accent-soft); color: var(--color-accent-deep); font-weight: 600; text-decoration: none; }
+}
+.lkh-mau-nut { margin: 0 0 14px; }
 .lkh-ics { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .lkh-ics-nhac { font-size: 14px; color: var(--color-muted); }
 .lkh-cho { min-height: 100vh; }   /* giữ chỗ lúc chờ /api/tinh_nang — chân trang không bị đẩy */

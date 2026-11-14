@@ -513,6 +513,11 @@ def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
 
+# Tên chặng ngắn cho tiêu đề ngày (giao diện) — theo mã cụm cố định của bảng; cụm lạ ⇒ tên cụm của bảng bỏ phần trong ngoặc
+TEN_CHANG = {"kinh_thanh": "Kinh thành", "bo_nam": "Bờ nam sông Hương", "an_cuu": "An Cựu", "thuy_xuan": "Thủy Xuân — lăng và đồi thông",
+             "kim_long": "Kim Long", "lang_xa": "Lăng xa thượng nguồn", "dong_bien": "Đầm phá và biển", "nam_xa": "Phía nam xa"}
+
+
 def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[dict] = (),
               toa_do: dict | None = None, anh: dict | None = None) -> dict:
     """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `toa_do` (cờ `ban_do_lich`, đợt 2): {id: (vĩ, kinh)} của bảng toạ độ ⇒ mỗi mục mang đúng
@@ -533,7 +538,8 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                             "toa_do": list(toa_do[id_]) if toa_do and id_ in toa_do else None,
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
                                     + (["kiem_lich_dien"] if toi and ngay_that is None and co_suat_dien(d) else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
-                            "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
+                            "map_url": MAP_BASE + quote(f"{d['ten']}, Huế"),
+                            "loai_diem": list(d["loai"])})  # giao diện: màu + nhãn theo loại điểm (không vào tin nhắn gửi model)
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
@@ -544,7 +550,10 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 phut = _phut_di(bang.theo_id[a["id_diem"]], bang.theo_id[c["id_diem"]])
                 if phut is not None:
                     c["phut_di"] = phut
-        ngay.append({"ngay": ng["ngay"], "ngay_thang": ngay_that,
+        # giao diện: "tên chặng" của ngày = các cụm của điểm ban ngày theo thứ tự đi (tên cụm của bảng, bỏ phần trong ngoặc); không vào model
+        chang = list(dict.fromkeys(TEN_CHANG.get(c, bang.cum[c].split(" (")[0])
+                                   for c in (bang.theo_id[m["id_diem"]]["cum"] for m in muc if m["id_diem"] and m["buoi"] != "toi")))
+        ngay.append({"ngay": ng["ngay"], "ngay_thang": ngay_that, "chang": chang,
                      "thu": None if ngay_that is None else dt.date.fromisoformat(ngay_that).weekday(), "muc": muc})
     ts = khung["tham_so"]
     ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
