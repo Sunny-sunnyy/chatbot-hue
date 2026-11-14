@@ -28,6 +28,9 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 
 **User (15:37 14/11/2026) — đi vắng một lúc; duyệt ghi kho đợt mới khi vắng:** bài cầu Trường Tiền + vài nơi hay được nhắc chưa có bài (kèm ảnh, E thu từ web) + giờ Đại Nội theo mùa ⇒ quy trình như 2 lần ghi 14/11 (sao lưu `meta/`, C review diff + từng số có trang nguồn, dựng lại chỉ mục, đo theo W70: câu chạm + an toàn), ≈ 0,05–0,2 USD. Đang dựng chỉ mục ⇒ không lượt có phí / việc nặng song song. Không hỏi User tới khi User nhắn.
 
+**User (15:49 14/11/2026) — ĐI VẮNG, quyền rộng:** "đẹp hơn rồi"; A tiếp tục điều phối, cả nhóm trao đổi / phản biện để phát triển, nghiên cứu, tối ưu; **KHÔNG hỏi User khi vắng** — câu cần User ghi "Câu hỏi cho User", User về sẽ nhắn; tự tra (Codex / MCP web-search), nghiên cứu sâu, tự cào / thu dữ liệu; **được ingest Qdrant / tạo collection mới**; được thử nghiệm, so sánh, đánh giá, phát triển, tối ưu; **ghi báo cáo + `bai_hoc/`** cho User. Giữ: sàn chất lượng / an toàn, luật sửa kho, W70–W72, luật RAM (một việc nặng một lúc), tiền dùng hiệu quả.
+**Tiến độ (15:49 14/11/2026):** main `51860b6`: khách sạn trong lịch BẬT (`luu_tru_lich`), Giới thiệu sông dọc 3 bến; test rộng 1005 / 1006 (1 test đọc cờ thật ⇒ sửa, file chạm đạt).
+
 **Việc kế — theo thứ tự:**
 1. **E:** kiểm nhanh nhánh `p9-sua-lich-tre` (`3aef0ca` m-1 / m-2 + `c59e090` khoá đệm cố định; B đo n = 20 chốt trước: câu thường có lịch chữ đầu p50 2,65 / p95 4,01 s ↔ không lịch 2,58 / 4,14; lượt sửa 2,30 / 2,59; tiền / câu có lịch ~0,0007 ⇒ ước ~0,00055 sau đệm — tiền Phase 9 chỉ theo dõi) ⇒ **A merge + BẬT `sua_lich_v2`** (test file chạm có / không khoá + server thật).
 2. **E:** review nhánh câu nhiều ý `p9-cau-nhieu-y` `2c99534` — **User chọn BẬT (14:44 14/11/2026)**: lệch Golden 161 là nhiễu (yêu cầu gửi model giống byte), sàn tính trên câu đi qua luật mới ⇒ A merge + bật cờ `cau_nhieu_y`.
