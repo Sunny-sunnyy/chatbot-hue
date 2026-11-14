@@ -25,9 +25,9 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 - Quán ăn trong lịch (cuối chiều 14/11): mỗi bữa **code** gợi ≤ 2 quán ăn trong 2 km (quán có bài kho trước, quán bản đồ mở ghi "chưa kiểm"; cà phê chỉ khi không có quán ăn); không giá / giờ; bữa có quán kho 49,3 %. Nơi ở: lịch có buổi tối ở trung tâm ⇒ ở trung tâm. Lịch mẫu cũng có nơi ở + quán.
 - Câu hỏi nhiều ý (14/11 chiều): câu có ≥ 2 vế hỏi ⇒ trả lời vế kho có, vế thiếu ghi "Tư liệu chưa có thông tin về: …" và tra web riêng cho vế đó (trước: từ chối cả câu).
 - Ảnh dưới câu trả lời (14/11 chiều): câu trả lời từ một bài về một nơi / món ⇒ code hiện một ảnh của bài, bấm mở bài.
-- Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 184 / 216 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.
+- Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 218 / 224 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.
 - Hỏi bằng ảnh: chụp ảnh ⇒ chatbot gợi ≤ 3 tên điểm / món ⇒ người dùng bấm xác nhận mới trả lời.
-- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 224 bài (ảnh 184 bài), nút 👍 / 👎 dưới câu trả lời.
+- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 224 bài (ảnh 218 bài), nút 👍 / 👎 dưới câu trả lời.
 
 **Chưa làm được / chưa bật:** lịch trình từ câu gõ tự do (chỉ qua biểu mẫu) · bản đồ vẽ cả lịch trình (có code, chờ bạn duyệt toạ độ) · giọng nói (chờ 40 câu
 thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · quán ăn **trong lịch** (nơi ở đã có từ 14/11), quán gần đây, sự kiện theo ngày · câu hai ý mà code chỉ đếm được một vế (vẫn từ chối cả câu) · số gọi khẩn cấp trong câu trả lời khẩn cấp (giới hạn bạn đã nhận) · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
