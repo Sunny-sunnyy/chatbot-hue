@@ -1177,13 +1177,22 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
     if flags.sua_lich_v2 and trace.lich_luu is not None and not trace.bieu_mau and generator is not None:
         from llm import len_ke_hoach  # import muộn: module đó import lõi này
-        # cuộc có lịch đã lưu ⇒ mọi lượt qua lần "hiểu ý sửa" (cổng từ khoá đã thử và bỏ — `sua_lich_v2.py`)
-        yield "status", {"stage": "sua_lich"}
-        kq = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags)
-        if kq is not None:  # có hành động áp được / thẻ chọn ⇒ lượt sửa; không ⇒ đường trả lời thường (gồm định tuyến khẩn cấp)
+        # cuộc có lịch đã lưu ⇒ mọi lượt qua lần "hiểu ý sửa" (cổng từ khoá đã thử và bỏ — `sua_lich_v2.py`), chạy SONG SONG với định tuyến
+        # (review E B-1): định tuyến thấy khẩn cấp ⇒ khẩn cấp thắng, đi đường thường (định tuyến lại ở đó — chỉ tốn thêm ở câu khẩn cấp).
+        # Lượt bấm nút thẻ chọn không cần định tuyến.
+        if trace.sua_chon is not None:
+            kq, khan_cap = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags), False
+        else:
+            dinh_tuyen = AnswerTrace(history=trace.history)
+            kq, _ = await asyncio.gather(len_ke_hoach.hieu_va_ap(query, generator, trace, flags), _pick_route(query, generator, dinh_tuyen, flags))
+            trace.llm_calls += dinh_tuyen.llm_calls
+            khan_cap = dinh_tuyen.emergency_by == "router"
+        if kq is not None and not khan_cap:  # lượt sửa; không ⇒ đường trả lời thường (giữ nguyên, gồm định tuyến khẩn cấp)
+            yield "status", {"stage": "sua_lich"}  # review E m-1: chỉ hiện khi đúng là lượt sửa
             async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
                 yield event
             return
+        trace.sua = {**(trace.sua or {}), "khan_cap": khan_cap} if trace.sua is not None or khan_cap else None
     if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
         # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
@@ -1247,7 +1256,7 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
 
 def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
     """Tuyến `tro_ly_hue` ⇒ trace chính nhận mọi thứ (ii) đã làm; giữ phần định tuyến của trace chính; `llm_calls` = định tuyến rồi trả lời."""
-    keep_own = {"route", "route_error", "routing_ms", "emergency_by", "llm_calls", *ROUTE_INPUTS}
+    keep_own = {"route", "route_error", "routing_ms", "emergency_by", "llm_calls", "sua", *ROUTE_INPUTS}  # `sua`: số đếm lần hiểu ý sửa lịch
     for item in dataclasses.fields(AnswerTrace):
         if item.name not in keep_own:
             setattr(trace, item.name, getattr(spec, item.name))

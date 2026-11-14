@@ -72,3 +72,14 @@ def test_flag_needs_v2():
     import pytest
     with pytest.raises(ValueError):
         AssistantFlags(sua_lich_v2=True)
+
+
+def test_card_turn_applies_nothing_else_and_lists_the_rest_as_not_done():
+    """Review E M-1: lượt có "thay" không nói điểm ⇒ chỉ thẻ chọn; hành động khác (trước hay sau) vào "Chưa làm", khung không đổi, không báo "Đã"."""
+    k, luu = _lich()
+    a, b = sorted(s._vi_tri(k))[:2]
+    for thu_tu in ([s.HanhDong(loai="bo_diem", ten=a), s.HanhDong(loai="thay_diem", ten=b)],
+                   [s.HanhDong(loai="thay_diem", ten=b), s.HanhDong(loai="bo_diem", ten=a)]):
+        kq = s.ap(B, luu, thu_tu)
+        assert kq["the"]["cu"] == b and kq["da_ap"] == [] and kq["chua_lam"] == ["bo_diem"] and kq["khung"] == k
+        assert not any(d["duoc"] for d in s.thay_doi(B, kq)) and any(d["cau"].startswith("Chưa làm") for d in s.thay_doi(B, kq))

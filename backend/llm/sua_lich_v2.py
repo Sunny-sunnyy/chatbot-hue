@@ -141,6 +141,19 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
         hanh_dong = [HanhDong(loai="bo_diem", ten=sua_chon["cu"])] if sua_chon["moi"] == "bo" else \
             [HanhDong(loai="thay_diem", ten=sua_chon["cu"], ten_moi=sua_chon["moi"])]
     hanh_dong = list(hanh_dong)[:MAX_HANH_DONG]
+    # review E M-1: "thay" không nói thay bằng gì ⇒ lượt chỉ dừng ở thẻ chọn; mọi hành động khác của lượt vào "Chưa làm" (không áp nửa chừng
+    # rồi mất khi thẻ trả khung cũ). Không có điểm thay ⇒ "Không đổi được" và các hành động khác đi tiếp như thường.
+    if sua_chon is None:
+        for h in hanh_dong:
+            i = khop_ten(bang, h.ten)
+            if h.loai == "thay_diem" and h.ten_moi is None and i is not None and i in _vi_tri(khung):
+                lua_chon = _lua_chon_thay(bang, luu, ts, khung, loai, i)
+                if lua_chon:
+                    kq["the"] = {"cu": i, "ten_cu": ten_cua_diem(bang, i),
+                                 "lua_chon": [{"gia_tri": j, "nhan": ten_cua_diem(bang, j)} for j in lua_chon] + [{"gia_tri": "bo", "nhan": "Bỏ điểm này, không thay"}]}
+                    kq["chua_lam"] = [x.loai for x in hanh_dong if x is not h]
+                    return {**kq, "khung": copy.deepcopy(luu["khung"]), "luu": luu}
+                break
     kq["chua_lam"] = [h.loai for h in hanh_dong[MAX_AP:]]
 
     def khong(ten: str | None, ma: str) -> None:
