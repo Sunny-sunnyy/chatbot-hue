@@ -133,9 +133,13 @@ TRUONG_MAU = {"so_ngay": "2", "nguoi_lon": 2, "kieu_di": "can_bang", "so_thich":
 _mau: dict[int, dict] = {}
 
 
-def dung_lich_mau(bang, anh: dict | None) -> dict:
+def dung_lich_mau(flags) -> dict:
+    """Cùng các bước của lịch thật trừ phần cần model / kho: xếp ⇒ dựng ⇒ gắn nơi ở + quán theo cờ (`len_ke_hoach.gan_o_an`)."""
+    from llm.len_ke_hoach import gan_o_an  # import muộn như các route khác dùng lõi trợ lý
+    bang = flags.bang_lich_v2
     khung = lt2.xep_v2(bang, lt2.tu_truong(TRUONG_MAU))
-    lich = lt2.dung_lich(bang, khung, {}, None, (), None, anh)
+    lich = lt2.dung_lich(bang, khung, {}, None, (), None, flags.anh_lich_bang if flags.anh_lich else None)
+    gan_o_an(lich, bang, khung, flags)
     cau = {m["id_muc"]: "" for m in lt2.moi_muc(lich)}  # nhãn loại điểm đã hiện trên thẻ ⇒ không câu lặp; "" = đã xong (không vẽ "đang viết…")
     return {"lich": lich, "cau": cau, "truong": TRUONG_MAU}  # `truong`: nút "Xếp lịch như ví dụ" gửi đúng tổ hợp này
 
@@ -146,7 +150,6 @@ async def lich_mau(request: Request):
     flags = _flags(request.app.state)
     if not flags.len_ke_hoach_v2:
         return _khong_thay()
-    bang = flags.bang_lich_v2
-    if id(bang) not in _mau:
-        _mau[id(bang)] = dung_lich_mau(bang, flags.anh_lich_bang if flags.anh_lich else None)
-    return _mau[id(bang)]
+    if id(flags) not in _mau:  # cờ + bảng nạp một lần lúc khởi động ⇒ dựng một lần cho bộ cờ đó
+        _mau[id(flags)] = dung_lich_mau(flags)
+    return _mau[id(flags)]
