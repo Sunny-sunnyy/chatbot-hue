@@ -129,6 +129,7 @@ export function LichV2({ turn, onEditPlan }) {
           <ul>{chung.map((g, i) => <li key={i} className={`lkh-gc-${g.ma || "khac"}`}>{g.cau}</li>)}</ul>
         </div>
       )}
+      {lich.o_dau && <NoiO o={lich.o_dau} />}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
       {turn.notice && <p className="notice">{turn.notice}</p>}
       {xong && (
@@ -139,6 +140,29 @@ export function LichV2({ turn, onEditPlan }) {
         </div>
       )}
     </div>
+  );
+}
+
+// Gợi ý nơi ở (B, cờ `luu_tru_lich`): khối do CODE chọn (khu cả chuyến, ≤ 5 cơ sở, lý do, nhãn "chưa kiểm giá"). Link tìm phòng chỉ nhận đúng gốc
+// LINK_TIM_PHONG (kiểm cả phía trình duyệt như link bản đồ), mở tab mới khi bấm; không giá, không "còn phòng".
+const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
+function NoiO({ o }) {
+  const ds = (o.co_so || []).filter(c => c.ten);
+  if (!ds.length) return null;
+  return (
+    <section className="lkh-o" aria-label="Nơi ở gợi ý">
+      <p className="lkh-o-h">Nơi ở gợi ý: khu {o.ten_khu}</p>
+      <p className="lkh-o-ly">{o.ly_do}</p>
+      <ul>{ds.map(c => (
+        <li key={c.ten}>
+          <span className="lkh-o-ten">{c.ten}</span> <small>{c.xep_hang}</small>
+          {c.dia_chi && <span className="lkh-o-dc">{c.dia_chi}</span>}
+          {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) &&
+            <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+        </li>
+      ))}</ul>
+      <p className="lkh-o-nhan">{o.nhan} Nguồn: {o.nguon}.</p>
+    </section>
   );
 }
 
