@@ -108,7 +108,7 @@ const ANH = {
   kpnhg93: {"anh": "kp/kpnhg93"},
   k9z4ycj: {"anh": "kp/k9z4ycj"},
   kfyciie: {"anh": "kp/kfyciie", "kc": 1},
-  kx8lenu: {"anh": "kp/kx8lenu"},
+  kx8lenu: {"anh": "kp/kx8lenu", "kc": 1},
   k1l1de7u: {"anh": "kp/k1l1de7u"},
   kp8bylm: {"anh": "kp/kp8bylm"},
   kdti8n6: {"anh": "kp/kdti8n6", "kc": 1},
@@ -172,7 +172,7 @@ const ANH = {
   kkwsvf8: {"anh": "kp/kkwsvf8"},
   ksxmz65: {"anh": "kp/ksxmz65"},
   k1yy22en: {"anh": "kp/k1yy22en"},
-  k1epaqnr: {"anh": "kp/k1epaqnr"},
+  k1epaqnr: {"anh": "kp/k1epaqnr", "kc": 1},
   k11b5myx: {"anh": "kp/k11b5myx"},
   kf9vv8j: {"anh": "kp/kf9vv8j"},
   k1lf0r44: {"anh": "kp/k1lf0r44", "kc": 1},
@@ -220,6 +220,12 @@ const ANH = {
   k1fbbe4d: {"anh": "kp/k1fbbe4d", "kc": 1},
   k1ax4i79: {"anh": "kp/k1ax4i79", "kc": 1},
   k4xm3rg: {"anh": "kp/k4xm3rg", "kc": 1},
+  k16ejoay: {"anh": "kp/k16ejoay", "kc": 1},
+  k1wxix1r: {"anh": "kp/k1wxix1r", "kc": 1},
+  k10dyt73: {"anh": "kp/k10dyt73", "kc": 1},
+  kxfo997: {"anh": "kp/kxfo997", "kc": 1},
+  kp47rxj: {"anh": "kp/kp47rxj", "kc": 1},
+  keky76t: {"anh": "kp/keky76t"},
 };
 
 export function anhCuaBai(id) {
