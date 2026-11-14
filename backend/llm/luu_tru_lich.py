@@ -4,6 +4,7 @@ Mọi thứ do code: chọn MỘT khu cho cả chuyến theo cụm của các đ
 dựng link tìm phòng. Model không chọn, không viết tên cơ sở; khối này không vào tin nhắn gửi model. Không giá, không "còn phòng".
 Bảng: `bang_luu_tru_lich.json` của E (danh mục công khai, có nguồn + ngày; khu theo `cum_ve_khu` của C).
 """
+import itertools
 import json
 from collections import Counter
 from pathlib import Path
@@ -60,13 +61,18 @@ def chon_khu(bang_luu_tru: dict, cum_cac_diem: list[str], han_che: bool) -> tupl
 
 
 def chon_co_so(bang_luu_tru: dict, khu: str, cum_dau: str | None) -> list[dict]:
-    """≤ 5 cơ sở trong khu, trải theo mức hạng (SO_THEO_MUC); trong một mức: gần cụm có nhiều điểm nhất trước, rồi theo tên (tất định)."""
+    """≤ 5 cơ sở trong khu, trải theo mức hạng (SO_THEO_MUC). Trong một mức lấy lần lượt từng hạng, hạng cao trước (vd 1 × 5 sao + 1 × 4 sao) —
+    xếp theo tên trong cả mức từng làm 5 sao không bao giờ hiện (mô phỏng 3.840 khung 14/11: 0 / 6.108). Cùng hạng: gần cụm có nhiều điểm
+    nhất trước ⇒ có ảnh trước ⇒ theo tên (tất định)."""
     out = []
     for muc, so in enumerate(SO_THEO_MUC):
-        ds = [c for c in bang_luu_tru["co_so"] if c["khu"] == khu and MUC_HANG[c["xep_hang"]] == muc
-              and (khu != KHU_BIEN or any(t in (c.get("dia_chi") or "") for t in PHIA_BIEN.get(cum_dau, ())))]
-        ds.sort(key=lambda c: (c.get("cum_gan") != cum_dau, c["ten"]))
-        out += ds[:so]
+        nhom = {}  # hạng ⇒ cơ sở, theo thứ tự hạng của MUC_HANG (cao trước)
+        for hang in (h for h, m in MUC_HANG.items() if m == muc):
+            ds = [c for c in bang_luu_tru["co_so"] if c["khu"] == khu and c["xep_hang"] == hang
+                  and (khu != KHU_BIEN or any(t in (c.get("dia_chi") or "") for t in PHIA_BIEN.get(cum_dau, ())))]
+            nhom[hang] = sorted(ds, key=lambda c: (c.get("cum_gan") != cum_dau, not c.get("anh"), c["ten"]))
+        lay = [c for vong in itertools.zip_longest(*nhom.values()) for c in vong if c]  # vòng 1: đầu mỗi hạng; vòng 2: thứ hai…
+        out += lay[:so]
     return [{"ten": c["ten"], "xep_hang": c["xep_hang"], "dia_chi": c.get("dia_chi"), "link": LINK_TIM + quote(f"{c['ten']}, Huế"),
              "nguon": c["nguon"]} for c in out]
 
