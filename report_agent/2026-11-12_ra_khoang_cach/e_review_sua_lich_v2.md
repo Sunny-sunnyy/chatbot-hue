@@ -70,3 +70,12 @@ Ngoài lề nhỏ: `dời buổi` cho điểm không có trong lịch không áp
 - Nit (không chặn): câu có 2 lệnh "thay" không nói điểm, mà lệnh đầu không có điểm thay ⇒ lệnh thứ hai vẫn rơi vào nhánh return cũ trong vòng lặp. Rất hiếm.
 - Q5b: E viết 8 câu trộn "sửa + khẩn cấp / an toàn" (`data/len_ke_hoach_v2_2026-11-13/q5b_cau_tron_e.jsonl`, md5 `ab1eab81e9a4`); sàn 0 / 8 thành lượt sửa — B đo.
 - **Kết luận: `ready_for_user_confirmation`** (còn Q3 + Q5b + đo độ trễ của B).
+
+## Kiểm vòng chỉnh lời dặn hiểu ý `0501094` (13:56 14/11/2026)
+- **Phạm vi:** so với `2bc020d` chỉ đổi `SUA_LICH_LOI_DAN` (+6 / −1 dòng).
+- **Không có:** tên điểm, luật tính toán (giờ, phút, cụm vẫn do code). Câu "câu không phải sửa lịch / khẩn cấp ⇒ danh sách rỗng" giữ nguyên. Lời dặn này chỉ dùng cho `sua_lich_agent`, chạy khi cờ bật ⇒ cờ tắt vẫn giống byte.
+- **Khớp bộ đã thấy:** so cụm 3 từ với 69 câu của `chuoi_da_thay.jsonl`: trùng 3 cụm ("cho mình đi", "nữa cho mình", "thích ăn uống"). Mẫu "Không cần X nữa, cho mình đi Y" lấy từ một chuỗi đã thấy, nhưng đã thay bằng X / Y, không chép tên điểm. Bộ kín 4 / 5 chạy SAU vòng chỉnh, đúng thứ tự ⇒ chấp nhận. **minor:** khớp nhẹ bộ đã thấy; bộ kín đạt đúng sàn, không có biên.
+- **Nguyên tắc:** câu chỉ chỗ bằng ngày / buổi ("bớt một chỗ ở ngày 2") giờ cho **model chọn** điểm nào bị bỏ. Đây là lệch nhẹ khỏi "code quyết". Khối "Đã bỏ X" vẫn cho người dùng thấy điểm nào bị bỏ. **minor / gợi ý:** sau này dùng thẻ chọn như "thay" không có điểm đích.
+- **An toàn:** E tính lại từ file của B: Q5 0 / 64, Q5b 0 / 16 thành lượt sửa. Khớp số B báo.
+- **Công cụ chấm:** `ky_cham` (nhãn `khong_doi` không bắt phải áp) theo luật A 06/11, C bắt trước lượt có phí. Đúng.
+- **Kết luận: `ready_for_user_confirmation`** (2 minor theo dõi). A merge được, cờ để tắt.
