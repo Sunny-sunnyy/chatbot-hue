@@ -3,9 +3,11 @@
 /* global __CO_ANH_LE_HOI_RIENG__ */
 
 const GOC = `${import.meta.env.BASE_URL}anh/`;
-const GP = {
+export const GP = {  // cũng dùng cho ghi công ảnh lịch (`chat.jsx` `AnhLich`)
   "CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/",
   "CC BY 3.0": "https://creativecommons.org/licenses/by/3.0/",
+  "CC BY 2.0": "https://creativecommons.org/licenses/by/2.0/",
+  "CC BY-SA 4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
   "CC BY-SA 3.0": "https://creativecommons.org/licenses/by-sa/3.0/",
   "CC0": "https://creativecommons.org/publicdomain/zero/1.0/",
 };

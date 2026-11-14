@@ -340,7 +340,7 @@ def nap_bang_anh(path: str | Path, bang: BangV2) -> dict[str, dict]:
             raise ValueError(f"bảng ảnh: {id_} src phải là file có thật dưới {ANH_SRC}")
         if not (a.get("tac_gia") and a.get("giay_phep") and str(a.get("trang", "")).startswith(ANH_TRANG)):
             raise ValueError(f"bảng ảnh: {id_} thiếu tác giả / giấy phép / trang ảnh Commons")
-        out[id_] = {k: a[k] for k in ("src", "tac_gia", "giay_phep", "trang", "chu_thich") if a.get(k)}
+        out[id_] = {k: a[k] for k in ("src", "tac_gia", "giay_phep", "trang", "chu_thich", "doi") if a.get(k)}  # `doi`: chỉnh khác thu nhỏ (vd cắt)
     return out
 
 

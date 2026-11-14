@@ -941,8 +941,10 @@ def test_photo_table_loads_and_maps_by_point_id():
     """Bảng ảnh thật (B0 của C): ≥ 24 / 34 điểm (sàn plan) · mỗi ảnh đúng `id_diem`, `src` dưới /anh/lich/ + file có thật, đủ ghi công. Cờ bật ⇒
     mục có ảnh khi điểm có dòng, không ảnh thay; cờ tắt ⇒ mọi `anh` null; chuỗi gửi model không đổi."""
     b = V2.bang_lich_v2
+    assert BANG_ANH.is_file(), f"thiếu bảng ảnh private: {BANG_ANH} (clone không có data/ ⇒ test này không chạy được — đúng thiết kế)"
     anh = v2.nap_bang_anh(BANG_ANH, b)
     assert len(anh) >= 24 and all(a["src"] == f"/anh/lich/{i}.jpg" for i, a in anh.items())
+    assert any("cắt" in a.get("doi", "") for a in anh.values())  # review C m-1: ảnh có chỉnh khác thu nhỏ mang `doi` tới giao diện
     k = v2.xep_v2(b, v2.ThamSoV2(3, kieu_di="kham_pha", so_thich=("di_tich",)))
     nguon = {i: n for n, i in enumerate(v2.diem_v2(k), start=1)}
     tat, bat = v2.dung_lich(b, k, nguon), v2.dung_lich(b, k, nguon, anh=anh)

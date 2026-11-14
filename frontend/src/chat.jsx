@@ -6,6 +6,7 @@ import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (g�
 // Bản đồ lịch trình (plan 2026-11-08): chunk riêng — chỉ tải khi lịch có ≥ 1 toạ độ hợp lệ (server chỉ gửi `toa_do` khi cờ `ban_do_lich` bật)
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
+import { GP } from "./anh.js";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -477,7 +478,8 @@ const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu"
 
 // Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ và trang ảnh là Wikimedia Commons (kiểm cả phía trình
 // duyệt như link bản đồ); điểm không có ảnh ⇒ không vẽ gì (không ảnh thay). Dòng ghi công: tác giả · giấy phép · trang ảnh (điều kiện CC BY).
-// `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`).
+// `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`). Ghi công như ảnh cổng: link giấy phép + "đã thu
+// nhỏ" (CC BY / BY-SA đòi ghi thay đổi; `doi` của bảng khi có chỉnh khác, vd cắt).
 const ANH_LICH = "/anh/lich/";
 const TRANG_COMMONS = "https://commons.wikimedia.org/";
 function anhHopLe(a) {
@@ -490,8 +492,9 @@ function AnhLich({ anh, ten }) {
     <figure className="lich-anh">
       <img src={`${import.meta.env.BASE_URL}${anh.src.slice(1)}`} alt={anh.chu_thich ? `${ten} — ${anh.chu_thich}` : ten} loading="lazy" decoding="async" />
       <figcaption>
-        {anh.chu_thich && <>{anh.chu_thich}. </>}Ảnh: {anh.tac_gia} · {anh.giay_phep} ·{" "}
-        <a href={anh.trang} target="_blank" rel="noopener noreferrer">trang ảnh trên Wikimedia Commons</a>
+        {anh.chu_thich && <>{anh.chu_thich}. </>}Ảnh: {anh.tac_gia} ·{" "}
+        {GP[anh.giay_phep] ? <a href={GP[anh.giay_phep]} target="_blank" rel="noopener noreferrer">{anh.giay_phep}</a> : anh.giay_phep} ·{" "}
+        <a href={anh.trang} target="_blank" rel="noopener noreferrer">trang ảnh trên Wikimedia Commons</a> · đã {anh.doi || "thu nhỏ"}
       </figcaption>
     </figure>
   );
