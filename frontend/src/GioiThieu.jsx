@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ANH_DAU_TRANG } from "./anh.js";
 import { Anh, LINH_VUC, soBai } from "./chung.jsx";
+import { HueQuaCacThoiKy } from "./HueQuaCacThoiKy.jsx";
 import "./gt.css";
 
 // Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026; mẫu `data/ui_mau_2026-11-14/h1/gioi_thieu.html`, bàn nhóm C / E vòng 1).
@@ -75,6 +76,8 @@ export function GioiThieu({ tinhNang, daCo, bai, muc }) {
             ))}
           </ul>
         </section>
+
+        <HueQuaCacThoiKy />
 
         {/* dải "kho tư liệu": số bài đếm từ /api/kham_pha (không gõ tay) — khác khối ảnh 5 chủ đề của trang chủ; lỗi tải danh sách ⇒ không hiện */}
         {bai && (
