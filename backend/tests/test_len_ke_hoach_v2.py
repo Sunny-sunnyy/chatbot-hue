@@ -979,7 +979,7 @@ def test_photo_flag_needs_v2_and_table():
 
 def test_sample_itinerary_is_built_by_the_real_scheduler_without_model():
     """Lịch mẫu "Ví dụ" (trang Lên kế hoạch lúc chưa xếp, User 14/11): đúng khung `xep_v2` của tổ hợp cố định — không viết tay, không gọi model,
-    không nguồn; mỗi mục có câu do code; khung qua kiểm của bộ xếp."""
+    không nguồn, không câu tả; mỗi ngày có tên chặng, mỗi mục có loại điểm; khung qua kiểm của bộ xếp."""
     from api.routes import cong
     kq = cong.dung_lich_mau(V2.bang_lich_v2, None)
     lich, cau = kq["lich"], kq["cau"]
@@ -988,4 +988,5 @@ def test_sample_itinerary_is_built_by_the_real_scheduler_without_model():
         [j for b in v2.BUOI for j in ng["buoi"][b]] for ng in khung["ngay"]]
     assert len(lich["ngay"]) == 2 and lich["tham_so"]["ngay_di"] is None and v2.kiem_khung_v2(V2.bang_lich_v2, khung) == []
     assert set(cau) == {m["id_muc"] for m in v2.moi_muc(lich)} and all(m["nguon"] is None for m in v2.moi_muc(lich))
-    assert all(c.startswith("Điểm ") and "[" not in c for c in cau.values())
+    assert all(c == "" for c in cau.values())  # không câu tả, không mã nguồn
+    assert all(ng["chang"] for ng in lich["ngay"]) and all(m["loai_diem"] for m in v2.moi_muc(lich))

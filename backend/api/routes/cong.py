@@ -127,7 +127,7 @@ async def tinh_nang(request: Request):
 
 # Lịch mẫu "Ví dụ" (User 14/11: trang Lên kế hoạch lúc chưa xếp quá trống). Tổ hợp cố định A chốt: 2 ngày · 2 người lớn · cân bằng · thích di
 # tích; không ngày đi (không dự báo, không đoán thứ). Do CHÍNH bộ xếp đang chạy dựng (`xep_v2` + `dung_lich`) ⇒ ví dụ không hứa điều bộ xếp không
-# làm. Câu mỗi điểm do code (loại điểm), không gọi model, không nguồn — câu tả từ kho chỉ có ở lịch thật. Bảng nạp một lần lúc khởi động ⇒ dựng một
+# làm. Không câu tả (thẻ đã có nhãn loại điểm), không gọi model, không nguồn — câu tả từ kho chỉ có ở lịch thật. Bảng nạp một lần lúc khởi động ⇒ dựng một
 # lần rồi giữ (khoá theo id bảng).
 TRUONG_MAU = {"so_ngay": "2", "nguoi_lon": 2, "kieu_di": "can_bang", "so_thich": ["di_tich"]}
 _mau: dict[int, dict] = {}
@@ -136,9 +136,8 @@ _mau: dict[int, dict] = {}
 def dung_lich_mau(bang, anh: dict | None) -> dict:
     khung = lt2.xep_v2(bang, lt2.tu_truong(TRUONG_MAU))
     lich = lt2.dung_lich(bang, khung, {}, None, (), None, anh)
-    cau = {m["id_muc"]: f"Điểm {', '.join(lt2.NHAN_LOAI[x] for x in bang.theo_id[m['id_diem']]['loai'])}."
-           for m in lt2.moi_muc(lich)}
-    return {"lich": lich, "cau": cau}
+    cau = {m["id_muc"]: "" for m in lt2.moi_muc(lich)}  # nhãn loại điểm đã hiện trên thẻ ⇒ không câu lặp; "" = đã xong (không vẽ "đang viết…")
+    return {"lich": lich, "cau": cau, "truong": TRUONG_MAU}  # `truong`: nút "Xếp lịch như ví dụ" gửi đúng tổ hợp này
 
 
 @router.get("/api/lich_mau")

@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { boMaTrichDan } from "./markdown.js";
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
@@ -14,6 +14,81 @@ export const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ 
 const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
 const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
 const NHAN_MUC_V2 = { co_the_di_lai: "có thể đi lại", kiem_lich_dien: "kiểm lịch diễn trước khi đi" };  // cùng chữ với server (`NHAN_MUC`)
+// Điểm nhấn 14/11 (User: Lên kế hoạch "đơn điệu"): nhãn + màu theo loại điểm (`loai_diem` của server, lấy từ bảng điểm) — màu luôn đi kèm chữ.
+const NHAN_LOAI_DIEM = { di_tich: "Di tích", am_thuc: "Ẩm thực", thien_nhien: "Thiên nhiên", le_hoi_nghe_thuat: "Lễ hội, nghệ thuật", chup_anh: "Chụp ảnh" };
+
+// Khoảnh khắc chính (mẫu 16, `c_nghien_cuu_wow.md`): mỗi ngày một dòng sông Hương đi QUA từng điểm theo thứ tự trong ngày, vẽ dần khi cuộn
+// (lkh.css, chỉ dưới html.hieu-ung; giảm chuyển động ⇒ hiện sẵn cả đường). Toạ độ = tâm chấm buổi (màn rộng) hoặc tâm ảnh (màn hẹp), đo lại khi
+// khung đổi cỡ (ảnh tải xong, đổi khổ). Trang trí: aria-hidden, không chặn bấm.
+function SongNgay({ dongRef, khoa }) {
+  const [d, setD] = useState("");
+  useEffect(() => {  // useEffect (không layout): ref của <ul> anh em đứng SAU thành phần này mới chắc đã gắn
+    const ul = dongRef.current;
+    if (!ul || typeof ResizeObserver === "undefined") return undefined;
+    const ve = () => {
+      const goc = ul.getBoundingClientRect();
+      const diem = [...ul.querySelectorAll(":scope > .lkh-muc")].map(li => [".lkh-cham-buoi", ".lich-anh img", ".lkh-khong-anh"]
+        .map(c => li.querySelector(c)).find(e => e && e.offsetParent !== null)).filter(Boolean).map(e => {
+          const b = e.getBoundingClientRect();
+          return [Math.round(b.left + b.width / 2 - goc.left), Math.round(b.top + b.height / 2 - goc.top)];
+        });
+      if (diem.length < 2) { setD(""); return; }
+      let p = `M${diem[0][0]} ${diem[0][1]}`;
+      diem.slice(1).forEach(([x, y], i) => {
+        const [px, py] = diem[i], w = (i % 2 ? -1 : 1) * 22, dy = y - py;  // uốn trái / phải xen kẽ như khúc sông
+        p += ` C${px + w} ${py + dy / 3}, ${x + w} ${y - dy / 3}, ${x} ${y}`;
+      });
+      setD(p);
+    };
+    ve();
+    const ro = new ResizeObserver(ve);
+    ro.observe(ul);
+    return () => ro.disconnect();
+  }, [dongRef, khoa]);
+  if (!d) return null;
+  return <svg className="lkh-song-ngay" aria-hidden="true"><path d={d} pathLength="1" /></svg>;
+}
+
+function NgayLich({ ng, turnKey, cau, xong, theoNgay, i }) {
+  const dongRef = useRef(null);
+  const muc = ng.muc.filter(m => LOAI_MUC_V2.has(m.loai));
+  return (
+    <section id={`ngay-${turnKey}-${ng.ngay}`} className="lich-ngay hien" style={{ "--n": i }} aria-label={`Ngày ${ng.ngay}`}>
+      <h3>Ngày {ng.ngay}{ng.ngay_thang ? ` · ${THU_V2[ng.thu]} ${ng.ngay_thang.split("-").reverse().join("/")}` : ""}
+        {ng.chang?.length > 0 && <span className="lkh-chang">{ng.chang.join(" → ")}</span>}</h3>
+      <div className="lkh-dong-khung">
+        <SongNgay dongRef={dongRef} khoa={muc.map(m => m.id_muc).join(",")} />
+        <ul className="lkh-dong" ref={dongRef}>
+          {muc.map((m, k) => {
+            const loai = (m.loai_diem || []).filter(x => NHAN_LOAI_DIEM[x]);
+            return [
+              m.phut_di != null && <li key={`${m.id_muc}-di`} className="lkh-di">khoảng {m.phut_di} phút đi</li>,
+              <li key={m.id_muc} className={`lkh-muc lkh-${MAU_BUOI[m.buoi] || "sang"} ${m.loai === "nghi" ? "lkh-nghi" : ""} ${loai[0] ? `lkh-l-${loai[0]}` : ""}`}
+                  style={{ "--k": k }}>
+                <span className="lkh-cham-buoi" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={IC_BUOI[m.buoi] || IC_BUOI.sang} /></svg>
+                </span>
+                {anhHopLe(m.anh) ? <AnhLich anh={m.anh} ten={m.ten} /> : <span className="lkh-khong-anh" aria-hidden="true" />}
+                <div className="lkh-than">
+                  <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
+                  <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
+                  {loai.length > 0 && <span className="lkh-loai">{loai.map(x => <small key={x} className={`lkh-loai-${x}`}>{NHAN_LOAI_DIEM[x]}</small>)}</span>}
+                  {m.loai !== "nghi" && (
+                    <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
+                      : !xong && <><span className="sr-only">đang viết…</span><span className="lkh-xuong" aria-hidden="true" /><span className="lkh-xuong lkh-ngan" aria-hidden="true" /></>}
+                    </span>
+                  )}
+                </div>
+              </li>,
+            ];
+          })}
+        </ul>
+      </div>
+      {theoNgay(ng.ngay).length > 0 && <ul className="lkh-du-bao">{theoNgay(ng.ngay).map((g, j) => <li key={j}>{g.cau}</li>)}</ul>}
+    </section>
+  );
+}
 const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
 
 // Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ và trang ảnh là Wikimedia Commons (kiểm cả phía trình
@@ -83,37 +158,7 @@ export function LichV2({ turn, onEditPlan }) {
         ))}</ol>
       </section>
       <div className="lkh-ngay-ds">
-      {/* Khoảnh khắc chính (C, c_nghien_cuu_wow.md): dòng sông vẽ dần theo cuộn nối các ngày — chỉ CSS trên SVG có sẵn, không làm trễ khung */}
-      <svg className="lkh-song-ve" viewBox="0 0 40 1000" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M20 0 C 36 80, 4 160, 20 250 S 36 420, 20 500 S 4 670, 20 750 S 36 920, 20 1000" pathLength="1" />
-      </svg>
-      {lich.ngay.map(ng => (
-        <section key={ng.ngay} id={`ngay-${turn.key}-${ng.ngay}`} className="lich-ngay hien" aria-label={`Ngày ${ng.ngay}`}>
-          <h3>Ngày {ng.ngay}{ng.ngay_thang ? ` · ${THU_V2[ng.thu]} ${ng.ngay_thang.split("-").reverse().join("/")}` : ""}</h3>
-          <ul className="lkh-dong">
-            {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => [
-              m.phut_di != null && <li key={`${m.id_muc}-di`} className="lkh-di">khoảng {m.phut_di} phút đi</li>,
-              <li key={m.id_muc} className={`lkh-muc lkh-${MAU_BUOI[m.buoi] || "sang"} ${m.loai === "nghi" ? "lkh-nghi" : ""}`}>
-                <span className="lkh-cham-buoi" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={IC_BUOI[m.buoi] || IC_BUOI.sang} /></svg>
-                </span>
-                {anhHopLe(m.anh) ? <AnhLich anh={m.anh} ten={m.ten} /> : <span className="lkh-khong-anh" aria-hidden="true" />}
-                <div className="lkh-than">
-                  <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
-                  <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
-                  {m.loai !== "nghi" && (
-                    <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
-                      : !xong && <><span className="sr-only">đang viết…</span><span className="lkh-xuong" aria-hidden="true" /><span className="lkh-xuong lkh-ngan" aria-hidden="true" /></>}
-                    </span>
-                  )}
-                </div>
-              </li>,
-            ])}
-          </ul>
-          {theoNgay(ng.ngay).length > 0 && <ul className="lkh-du-bao">{theoNgay(ng.ngay).map((g, i) => <li key={i}>{g.cau}</li>)}</ul>}
-        </section>
-      ))}
+        {lich.ngay.map((ng, i) => <NgayLich key={ng.ngay} ng={ng} turnKey={turn.key} cau={cau} xong={xong} theoNgay={theoNgay} i={i} />)}
       </div>
       {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} /></Suspense>}
       {chung.length > 0 && (
