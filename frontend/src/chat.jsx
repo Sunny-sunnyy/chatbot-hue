@@ -6,6 +6,8 @@ import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (g�
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
+import "./tl.css";
+import { GOI_Y } from "./chung.jsx";
 import { LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
@@ -30,6 +32,21 @@ const LICH_BUOC = {
   lay_nguon: d => `Đã lấy tài liệu cho từng điểm (${d.n_doan} đoạn mới)`,
 };
 const PENDING = new Set(Object.keys(STATUS_TEXT));
+// Giao diện H1 (đợt 1): bước công cụ THẬT của lượt — chỉ những sự kiện `status` server đã gửi, đúng thứ tự; bước cũ hiện "đã xong" (không đoán thêm bước).
+const BUOC_XONG = {
+  routing: () => "hiểu câu hỏi",
+  searching: lan => (lan > 1 ? "tìm thêm trong kho" : "tìm trong kho tư liệu"),
+  searched: (lan, n) => (n > 0 ? (lan > 1 ? `có tổng ${n} đoạn tư liệu` : `tìm thấy ${n} đoạn tư liệu`) : "tìm trong kho"),
+  generating: () => "viết câu trả lời",
+  lich_trinh: () => "xếp lịch",
+  tra_web: () => "tra web (kho chưa có)",
+  thoi_tiet: () => "xem dự báo thời tiết",
+};
+// nhãn từng bước theo thứ tự: lần tìm thứ 2 trở đi ⇒ "tìm thêm"; `n_sources` của server là số cộng dồn ⇒ "có tổng N đoạn"
+function nhanBuoc(buoc) {
+  const lan = {};
+  return buoc.map(b => { lan[b.stage] = (lan[b.stage] || 0) + 1; return BUOC_XONG[b.stage]?.(lan[b.stage], b.n) ?? STATUS_TEXT[b.stage]; });
+}
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
 // B142: câu ngoài phạm vi kèm 3 câu gợi ý cố định (đã kiểm có trong kho bằng `scripts/grep_kb.sh`) — bấm là hỏi luôn.
 const OUT_OF_SCOPE_SUGGESTIONS = ["Vào Đại Nội nên mặc thế nào?", "Lễ hội Điện Huệ Nam diễn ra khi nào?", "Nhã nhạc cung đình diễn lúc nào?"];
@@ -49,7 +66,7 @@ function reducedMotion() {
 function newTurn(key, question, truong, summary, bieuMau) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false };
+           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
 export function useChat() {
@@ -93,6 +110,12 @@ export function useChat() {
     const key = ++keyRef.current;
     const update = patch => setTurns(all => all.map(turn => (turn.key === key ? { ...turn, ...patch } : turn)));
     const progress = [];  // B5 D14: các bước lịch đã nhận của lượt này, đúng thứ tự server gửi
+    const buoc = [];  // H1: bước công cụ thật (`status`), gộp bước lặp liền nhau
+    const themBuoc = (stage, n) => {
+      const cuoi = buoc[buoc.length - 1];
+      if (cuoi && cuoi.stage === stage) { if (n != null) cuoi.n = n; } else buoc.push({ stage, n });
+      return buoc.map(b => ({ ...b }));
+    };
     const cauV2 = {};  // "Lên kế hoạch" bản 2: câu theo id_muc của lượt này
     // "Thử lại" thay lượt lỗi (server không nhớ lượt lỗi — plan B3 D2) bằng lượt mới cùng câu hỏi.
     setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary, bieuMau)]);
@@ -106,10 +129,11 @@ export function useChat() {
           if (name === "status" && data.stage === "lich_trinh") {
             const text = LICH_BUOC[data.buoc]?.(data);  // "dang_xep" chỉ là nhãn trạng thái, không vào danh sách bước (C191 m-1)
             if (text) progress.push(text);
-            update({ phase: "lich_trinh", progress: [...progress] });
+            update({ phase: "lich_trinh", progress: [...progress], buoc: themBuoc("lich_trinh") });
           } else if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
-            update({ phase: data.stage in STATUS_TEXT ? data.stage : "searched", ...(data.n_sources != null && { nSources: data.n_sources }) });
+            const stage = data.stage in STATUS_TEXT ? data.stage : "searched";
+            update({ phase: stage, ...(data.n_sources != null && { nSources: data.n_sources }), buoc: themBuoc(stage, data.n_sources) });
           } else if (name === "delta") {
             // Chữ hiện dần: gom mảnh vào buffer, vẽ lại CẢ buffer tối đa một lần mỗi khung hình (yêu cầu 8); chỉ nối mảnh có `seq` mới (yêu cầu 4).
             if (data.seq <= lastSeqRef.current) return;
@@ -190,6 +214,64 @@ export function useChat() {
   }
 
   return { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation };
+}
+
+// Trang `#/tro-ly` (H1, đợt 1): cột trái = câu gợi ý theo chủ đề + trợ lý làm được gì + lưu ý; phải = khung chat (cùng `ChatView` với khung nổi).
+// Câu gợi ý = `GOI_Y` (chung.jsx) — mỗi câu một biểu tượng / màu theo chủ đề; điện thoại ẩn cột trái (lời chào trong khung vẫn có gợi ý).
+const CHU_DE = [
+  { mau: ["#FBE7DC", "#9A3412"], d: "M3 11h18M5 11a7 7 0 0 0 14 0M12 4v3" },        // ăn uống
+  { mau: ["#E3F0ED", "#0A4E4A"], d: "M3 21h18M5 21V10l7-5 7 5v11" },                 // di tích
+  { mau: ["#F6E3EA", "#7E1F3E"], d: "M8 2v4M16 2v4M3 9h18M5 5h14v16H5z" },           // lễ hội
+  { mau: ["#E9E6F7", "#3B2F7A"], d: "M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0" },  // ca Huế
+  { mau: ["#E1ECF7", "#1E4E8C"], d: "M5 17h14M7 17l1-6h8l1 6M9 11V7h6v4" },          // đi lại
+];
+
+export function TrangTroLy({ chat, onEditPlan, anh }) {
+  return (
+    <div className="khung tro-ly-trang">
+      <h1 className="sr-only">Trợ lý Huế</h1>
+      <div className="tl-cot">
+        <aside className="tl-ben" aria-label="Gợi ý">
+          <section className="tl-hop">
+            <h2>Hỏi gì cũng được về Huế</h2>
+            <div className="tl-chu-de" aria-label="Câu gợi ý">
+              {GOI_Y.map((cau, i) => (
+                <button key={cau} type="button" className="nhan-nut" disabled={chat.pending || chat.resetting} onClick={() => chat.ask(cau)}>
+                  <span className="bt" style={{ background: CHU_DE[i % CHU_DE.length].mau[0], color: CHU_DE[i % CHU_DE.length].mau[1] }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                         strokeLinejoin="round" aria-hidden="true"><path d={CHU_DE[i % CHU_DE.length].d} /></svg>
+                  </span>
+                  {cau}
+                </button>
+              ))}
+            </div>
+          </section>
+          <section className="tl-hop">
+            <h2>Trợ lý làm được gì</h2>
+            <ul className="tl-lam">
+              <li>Trả lời từ kho tư liệu, ghi nguồn để bạn xem lại.</li>
+              <li><a href="#/len-ke-hoach">Xếp lịch</a> theo số ngày và sở thích.</li>
+              <li>Xem dự báo thời tiết Huế 7 ngày tới.</li>
+              {anh && <li>Đoán tên món / công trình từ ảnh — bạn bấm xác nhận.</li>}
+              <li>Kho chưa có ⇒ tra web, tách riêng "chưa kiểm".</li>
+            </ul>
+          </section>
+          <p className="tl-hop" style={{ fontSize: 14, color: "var(--color-muted)" }}>
+            Trợ lý có thể sai. Đừng gõ thông tin cá nhân (số điện thoại, địa chỉ nhà).
+          </p>
+        </aside>
+        <section className="tl-chat" aria-label="Khung trò chuyện">
+          <div className="tl-chat-dau">
+            <span className="tra-av" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 34 34"><path d="M6 19c3-3 6-3 9 0s6 3 9 0 4-2 4-2M6 24c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /></svg>
+            </span>
+            <span><b>Trợ lý Huế</b><small>Trả lời từ kho tư liệu về Huế, có nguồn</small></span>
+          </div>
+          <ChatView chat={chat} idPrefix="trang" suggestions={GOI_Y} onEditPlan={onEditPlan} anh={anh} />
+        </section>
+      </div>
+    </div>
+  );
 }
 
 // Khung trò chuyện (dùng ở khung nổi và trang trợ lý). `onEditPlan(chon)`: "Sửa" của lịch từ biểu mẫu ⇒ quay lại biểu mẫu (D3: sửa lịch bằng chat
@@ -279,14 +361,20 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   return (
     <article className="turn" ref={turnRef} data-turn={turn.key}>
       <h2 className="ask">{turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
+      <div className="tra">
+      <span className="tra-av" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 34 34"><path d="M6 19c3-3 6-3 9 0s6 3 9 0 4-2 4-2M6 24c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /></svg>
+      </span>
+      <div className="tra-noi">
       {pending && !turn.text && (
         <div className="searching" role="status">
-          <svg className="wave" viewBox="0 0 46 24" aria-hidden="true"><path d="M2 12c6-8 10 8 16 0s10 8 16 0 8-6 10-2" /></svg>
-          <div>
-            <div className="font-semibold text-accent">{STATUS_TEXT[turn.phase]}</div>
-            {turn.nSources > 0 && <div className="text-sm text-muted">{turn.nSources} đoạn tư liệu đã tìm được</div>}
-          </div>
+          <BuocCongCu buoc={turn.buoc} phase={turn.phase} />
+          <span className="go" aria-hidden="true"><i /><i /><i /></span>
+          <span className="sr-only">{STATUS_TEXT[turn.phase]}</span>
         </div>
+      )}
+      {!pending && turn.buoc.length > 1 && turn.phase === "done" && (
+        <p className="buoc-gon">Các bước: {nhanBuoc(turn.buoc).join(" · ")}</p>
       )}
       {turn.phase === "error" && (
         <div className="bubble bubble-error" role="alert">
@@ -345,6 +433,8 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         </div>
       )}
       {turn.phase === "done" && turn.turnId && <Feedback turnId={turn.turnId} />}
+      </div>
+      </div>
     </article>
   );
 }
@@ -353,6 +443,19 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
 // (`bai_id`) ⇒ link sang trang bài Khám phá. Việc nhỏ 08/11: nhiều đoạn của CÙNG một bài ⇒ một tên (trước: một câu ra 8 lần cùng tên bài);
 // bấm tên ⇒ hiện mọi đoạn được trích của bài đó.
 // B6 D6: khối riêng sau câu từ chối của kho. Nhãn "chưa kiểm" cố định; chữ + nguồn từ sự kiện `web` (server đã kiểm mã, link, số tiền).
+// H1: danh sách bước công cụ thật — bước đã qua có ✓, bước đang chạy ở cuối (nhãn đang làm của STATUS_TEXT).
+function BuocCongCu({ buoc, phase }) {
+  if (buoc.length === 0) return <div className="font-semibold text-accent">{STATUS_TEXT[phase]}</div>;
+  const nhan = nhanBuoc(buoc);
+  return (
+    <ol className="buoc" aria-label="Các bước trợ lý đang làm">
+      {buoc.map((b, i) => (i < buoc.length - 1
+        ? <li key={i} className="xong">{nhan[i]}</li>
+        : <li key={i} className="dang">{STATUS_TEXT[b.stage]}{b.n > 0 ? ` (${b.n} đoạn)` : ""}</li>))}
+    </ol>
+  );
+}
+
 function WebSection({ web, turnKey }) {
   const sources = web.sources.filter(source => WEB_LINK.test(source.link));
   const html = useMemo(() => renderWebHtml(web.text), [web.text]);

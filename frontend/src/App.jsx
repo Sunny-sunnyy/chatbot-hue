@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChatView, useChat } from "./chat.jsx";
+import { ChatView, TrangTroLy, useChat } from "./chat.jsx";
 import { CAU_BIEU_MAU, GOI_Y } from "./chung.jsx";
 import { TrangChu } from "./TrangChu.jsx";
 import { Bai, KhamPha, LinhVuc } from "./KhamPha.jsx";
@@ -115,12 +115,7 @@ export default function App() {
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} anh={tinhNang.anh} muc={route.muc} />}
-        {onTroLy && (
-          <div className="khung tro-ly-trang">
-            <h1 className="trang-h">{TEN_TRO_LY}</h1>
-            <ChatView chat={chat} idPrefix="trang" suggestions={GOI_Y} onEditPlan={editPlan} anh={tinhNang.anh} />
-          </div>
-        )}
+        {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} anh={tinhNang.anh} />}
       </main>
 
       {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.
