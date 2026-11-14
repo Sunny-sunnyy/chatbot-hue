@@ -39,13 +39,27 @@
 .gt-kho-lv a:hover, .gt-kho-lv a:focus-visible { background: rgba(255, 255, 255, .12); }
 .gt-kho-lv b { font-weight: 700; color: var(--color-river-muted); }
 
-.gt-song { display: block; width: 100%; height: 56px; margin: -6px 0 -10px; overflow: visible; }
-.gt-song path { fill: none; stroke: var(--color-accent); stroke-width: 3; stroke-linecap: round; opacity: .6; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.gt-buoc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-.gt-so { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-river); color: #fff;
-  font-weight: 600; margin-bottom: 14px; }
-.gt-buoc h3 { font-size: 19px; font-weight: 600; }
-.gt-buoc p { margin-top: 6px; color: var(--color-muted); }
+/* Ba bến dọc sông: sông SVG chạy dọc bên trái, mỗi bước là một bến (số tròn nằm trên sông) + thẻ "Ví dụ" của một lần chạy thật */
+.gt-buoc-dan { margin-top: -12px; color: var(--color-muted); }
+.gt-dong { position: relative; margin-top: 20px; padding-left: 92px; }
+.gt-song-doc { position: absolute; left: 14px; top: 0; width: 60px; height: 100%; overflow: visible; }
+.gt-song-doc path { fill: none; stroke: var(--color-accent); stroke-width: 6; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .5;
+  stroke-dasharray: 1; stroke-dashoffset: 0; }
+.gt-buoc { list-style: none; margin: 0; padding: 28px 0; display: grid; gap: 64px; }
+.gt-ben { position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 36px; align-items: center; }
+.gt-so { position: absolute; left: -70px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 48px; height: 48px;
+  border-radius: 50%; background: var(--color-river); color: #fff; font-weight: 600; font-size: 19px; box-shadow: 0 0 0 6px var(--color-page); }
+.gt-ben-chu h3 { font-family: var(--font-serif); font-size: 28px; font-weight: 600; line-height: 1.2; color: var(--color-accent-deep); }
+.gt-ben-chu p { margin-top: 8px; color: var(--color-muted); max-width: 40ch; }
+.gt-vd { position: relative; background: var(--color-surface); border-radius: 20px; padding: 34px 24px 20px; box-shadow: 0 10px 30px rgba(10, 61, 64, .08); }
+.gt-vd-nhan { position: absolute; top: 12px; left: 24px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--color-lotus); }
+.gt-vd-hoi { display: inline-block; background: var(--color-accent); color: var(--color-on-accent); border-radius: 18px 18px 4px 18px;
+  padding: 10px 16px; font-weight: 500; }
+.gt-vd a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+.gt-vd-so { color: var(--color-accent); font-weight: 700; }
+.gt-vd-nguon { margin-top: 8px; font-size: 14px; color: var(--color-muted); }
+.gt-vd-nut { margin-top: 14px; }
 
 .gt-doi { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
 .gt-h2 { font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 1.2; margin-bottom: 12px; }
@@ -62,12 +76,26 @@
   .gt-lam, .gt-buoc, .gt-doi { grid-template-columns: 1fr; }
   .gt-kho { padding: 28px 22px; border-radius: 18px; }
   .gt-kho-n { font-size: 56px; }
-  .gt-song { display: none; }
+  .gt-dong { padding-left: 52px; }
+  .gt-song-doc { left: 0; width: 40px; }
+  .gt-ben { grid-template-columns: 1fr; gap: 16px; }
+  .gt-so { left: -50px; top: 0; transform: none; width: 40px; height: 40px; font-size: 17px; }
+  .gt-buoc { gap: 44px; padding-top: 4px; }
+  .gt-ben-chu h3 { font-size: 24px; }
   .gt-khoi { padding-top: 48px; }
 }
 
-/* Đường sông vẽ dần khi dải ba bước cuộn vào (CSS theo cuộn; trình duyệt chưa hỗ trợ ⇒ đường hiện sẵn) */
+/* Sông dọc vẽ dần khi dải ba bến cuộn qua (CSS theo cuộn; trình duyệt chưa hỗ trợ ⇒ đường hiện sẵn) */
 @supports (animation-timeline: view()) {
-  .hieu-ung .gt-song path { animation: gt-ve linear both; animation-timeline: view(); animation-range: entry 10% cover 45%; }
+  .hieu-ung .gt-song-doc path { animation: gt-ve linear both; animation-timeline: view(); animation-range: entry 15% cover 75%; }
 }
 @keyframes gt-ve { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* Ảnh "Huế qua các thời kỳ" lộ dần qua mặt nạ khi cuộn tới (mẫu 4 của nghiên cứu "wow"; A duyệt 14/11). Đặt ở trang Giới thiệu vì là hiệu ứng của
+   trang, không đổi thành phần của B; chỉ ảnh từng mốc ở khổ hẹp. Giảm chuyển động / trình duyệt chưa hỗ trợ ⇒ ảnh hiện đủ ngay. */
+@supports (animation-timeline: view()) {
+  /* chỉ ảnh từng mốc ở khổ hẹp: khung ảnh ghim (sticky) ở khổ rộng dừng timeline khi ghim ⇒ mặt nạ kẹt giữa chừng, cắt số năm (review B M-1) */
+  .hieu-ung .gt-than .tk-anh-nho {
+    animation: gt-lo linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+}
+@keyframes gt-lo { from { clip-path: inset(14% 14% 14% 14% round 28px); } to { clip-path: inset(0 round 20px); } }
