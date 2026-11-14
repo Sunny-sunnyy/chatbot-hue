@@ -208,6 +208,8 @@ def test_stream_never_shows_missing_only_text(deps, parallel):
     ("Đại Nội Huế mở cửa mấy giờ và gần đó có quán karaoke nào giá rẻ không?",
      f"Đại Nội mở từ 7 giờ [1].\n{CAU_Y_THIEU} quán karaoke giá rẻ gần Đại Nội Huế.", "gần đó có quán karaoke nào giá rẻ không"),
     (CAU_HAI_Y, TRA_LOI, "dịp Tết năm tới có chương trình gì"),
+    ("Chùa Thiên Mụ ở đâu và có chỗ gửi xe máy không?",                                         # tên nơi ở cả hai vế (review B m-1)
+     f"Chùa Thiên Mụ nằm trên đồi Hà Khê [1].\n{CAU_Y_THIEU} chỗ gửi xe máy ở chùa Thiên Mụ.", "có chỗ gửi xe máy không"),
     (CAU_HAI_Y, "Vé lẻ người lớn 200.000 đồng [1].", ""),                                    # không có dòng ý thiếu ⇒ cả câu như cũ
     ("Vé vào Đại Nội giá bao nhiêu?", f"{CAU_Y_THIEU} giá vé", ""),                            # một vế ⇒ cả câu
     (CAU_HAI_Y, f"{CAU_Y_THIEU} vé lẻ Đại Nội.\n{CAU_Y_THIEU} chương trình Tết.", ""),         # thiếu cả hai vế ⇒ cả câu

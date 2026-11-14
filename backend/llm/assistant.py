@@ -950,9 +950,12 @@ def ve_y_thieu(query: str, answer: str) -> str:
     thieu = [d[len(CAU_Y_THIEU):] for d in map(_dong_y_thieu, answer.splitlines()) if d.startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d)]
     ve = [p.strip() for v in re.split(r"[,;?]", query) if v.strip() for p in _LIEN_TU.split(v) if _la_ve_hoi(p)]
     tu = lambda t: set(re.findall(r"\w+", t.casefold()))
+    # từ đã có ở phần trả lời (dòng không phải ý thiếu, vd tên nơi) không tính ⇒ dòng ý thiếu nhắc lại tên nơi không làm hoà điểm (review B m-1)
+    da_tra_loi = tu(" ".join(d for d in answer.splitlines() if not _dong_y_thieu(d).startswith(CAU_Y_THIEU)))
     chon = set()
     for t in thieu:
-        diem = [len(tu(v) & tu(t)) for v in ve]
+        tu_thieu = (tu(t) - da_tra_loi) or tu(t)
+        diem = [len(tu(v) & tu_thieu) for v in ve]
         if diem and max(diem) > 0 and diem.count(max(diem)) == 1:
             chon.add(diem.index(max(diem)))
     if len(ve) < 2 or not chon or len(chon) == len(ve):
