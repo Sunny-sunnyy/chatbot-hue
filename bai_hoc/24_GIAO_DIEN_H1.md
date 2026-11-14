@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
+*Cập nhật lần cuối: 18:50, ngày 14/11/2026 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -96,7 +96,7 @@ bản mẫu HTML lúc chọn hướng:
 **Cái giá:** gói JS tăng **+10,5 KB** (112 ⇒ 122,6 KB sau nén), vượt mức 8 KB của kế hoạch. Phần lớn nhất là trang Khám phá (bảng ghi công ảnh). Mình
 không thêm thư viện nào. Mức 8 KB là mức "phải ghi lý do"; lý do đã ghi, người điều phối nhận.
 
-**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 184 / 216, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
+**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 218 / 224, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
 từng ảnh. 29 ảnh từng có nhãn **"Ảnh minh hoạ"**, vì người xem không chắc ảnh chụp đúng chính nơi đó. Bài không có ảnh vẫn là ô màu, không mượn ảnh bài
 khác. **Từ chiều 14/11** trang không hiện dòng ghi công hay nhãn nào dưới ảnh nữa (anh yêu cầu); nguồn ảnh vẫn giữ trong bảng dữ liệu.
 Lúc đó bảng ghi công 167 ảnh được tách ra một file riêng, chỉ tải khi mở trang bài hoặc Giới thiệu, nên gói JS chỉ còn **123,5 KB**. Chiều 14/11 bảng này
@@ -106,7 +106,24 @@ bỏ hẳn khỏi trang (nguồn ảnh giữ trong thư mục dữ liệu riêng
 **Thêm ảnh chiều 14/11: 167 ⇒ 184 / 216 bài.** Thêm 13 ảnh cho những bài về một nơi hoặc một quán còn trống: hai agent con chọn ảnh **độc lập**, chỉ giữ ảnh
 mà cả hai cùng chọn; 7 ảnh trong số đó bị đánh "không chắc". Rồi thêm ảnh cho ba trong bốn bài kho mới (bài 22): cầu, nhà ga, nhà vườn (nhà vườn "không chắc").
 Bài chùa thì hai người chọn hai ảnh khác nhau, cả hai đều là cổng chùa thật; người làm chọn ảnh rõ hơn theo luật người điều phối đặt và đánh "không chắc".
-Nay có **38 ảnh "không chắc"**: chúng vẫn hiện ở Khám phá, nhưng **không hiện cạnh câu trả lời** của trợ lý (bài 25).
+Lúc đó có **38 ảnh "không chắc"**: chúng vẫn hiện ở Khám phá, nhưng **không hiện cạnh câu trả lời** của trợ lý (bài 25).
+
+**Thêm ảnh tối 14/11: 184 ⇒ 218 / 224 bài** (anh dặn ảnh ở mọi địa điểm, món ăn, di tích phải tìm đầy đủ). Kho lúc này có 224 bài (bài 22). Làm ba lượt:
+- **Lượt chính:** bài về một nơi, một món đang trống được 9 ảnh. 19 bài chủ đề (vé, đi lại, lưu trú theo khu, cẩm nang) trước để ô màu, nay có **ảnh minh hoạ
+  đúng chủ đề ở Huế** (ví dụ quầy vé cho bài vé), luôn gắn "không chắc" nên không bao giờ hiện cạnh câu trả lời. Xem lại 38 ảnh "không chắc": 11 bài được nâng
+  lên "chắc" (6 thay ảnh có biển tên đọc được, 5 giữ ảnh cũ đã xem tay).
+- **Lượt bổ sung:** tra thêm cho những quán còn trống; còn **6 bài trống** (đều là quán), có lý do từng bài — ảnh dính dấu nước lớn, chỉ có ảnh ghép, trang lỗi, hoặc
+  không tìm ra trang nào, hay ảnh tìm được không chắc là đúng quán.
+- **Lượt nâng "không chắc":** 8 / 37 bài một nơi được nâng lên "chắc".
+
+Số ảnh **hiện được cạnh câu trả lời** (có ảnh, không "không chắc"): **146 ⇒ 169**. Ảnh "không chắc" nay là 49 (38 lúc chiều): 20 ảnh bài chủ đề, 29 ảnh bài một nơi. Tốn khoảng 0,1 USD tiền tìm ảnh (Serper — dịch vụ tìm trên Google, trả
+tiền theo lượt); tra trang bằng Codex (một trợ lý AI khác, tự mở trang công khai) tính vào gói ChatGPT.
+
+**Người làm nhìn trước, người review nhìn lại mọi ảnh sẽ hiện** — bước này bắt nhiều lỗi nhất. Ba ảnh mà **cả hai** agent con đều chấm "chắc" vẫn bị người làm bác khi nhìn lại: múa lân
+không rõ làng nào, hai quán cà phê không thấy biển tên. Ảnh duy nhất trên kho ảnh mở ghi đúng tên biển Thuận An có trẻ nhỏ mặc đồ bơi ở giữa khung, trái luật chọn ảnh ⇒ người
+review bắt, bài Thuận An giữ ảnh "không chắc" cũ và lịch vẫn **33 / 34** điểm có ảnh. Ở lượt nâng, 10 ảnh được nâng chỉ vì "lấy từ trang chính thức" bị người review trả lại:
+9 ảnh món hay ly nước chung chung, không nhìn ra quán nào, và 1 ảnh múa lân không rõ làng. Luật rút ra: nguồn chính thức chỉ đủ khi **chính tấm ảnh** nhận ra được nơi đó; bài về một món thì đúng
+món là đủ.
 
 ## Một chuyện thật: thẻ "Thông tin nhanh" lặng lẽ xoá mất giờ mở cửa
 
@@ -163,4 +180,6 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 - Gói JS 112,08 ⇒ 122,61 KB, theo từng trang: `report_agent/…/e_giao_dien_h1_implementation.md` [đã chạy]
 - Thông tin nhanh 51 / 207, 29 bài bị cắt ⇒ 28 bài có thẻ, 0 mất dòng; trang hứa không theo cờ: `report_agent/…/e_review_gd_h1_dot1_c.md`, `e_review_gd_h1_tro_ly_b.md` [đã chạy]
 
+- Ảnh tối 14/11: lượt chính 184 ⇒ 212 / 224, hiện được 146 ⇒ 162, 19 ảnh chủ đề, người xem lại bác 3 / 19, Serper ≈ 0,095 USD: `report_agent/2026-11-12_ra_khoang_cach/e_anh_v4_implementation.md`, review `c_review_anh_v4.md`; lượt bổ sung 218 / 224, Thuận An bị bác (trẻ em), lịch 33 / 34: `e_anh_v4b_implementation.md`, `c_review_anh_v4b.md`; nâng kc 8 / 37, hiện được 161 ⇒ 169, 10 ảnh "luật nguồn" trả lại: `e_anh_nang_kc_implementation.md`, `c_review_anh_kc.md` [đã chạy]
+- Kiểm độc lập phần tối 14/11 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_24_25_toi_1411.md`): 77 ý — 58 đúng, 6 sai, 10 dễ hiểu nhầm, 3 không kiểm được; đã sửa cả 16 + bỏ ngoặc kép câu dặn không nguyên văn.
 </details>
