@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { renderArticleHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
-import { ANH_DAU_TRANG, GP } from "./anh.js";
-import { anhCuaBai, khoaBai, taiGhiCong } from "./anhBai.js";
+import { ANH_DAU_TRANG } from "./anh.js";
+import { anhCuaBai, khoaBai } from "./anhBai.js";
 import { Anh, LINH_VUC, LOAI_CON, TRANG, loaiCua } from "./chung.jsx";
 import "./kp.css";
 
@@ -30,16 +30,6 @@ function IconLv({ lv, lon }) {
 
 // tên chuyển cảnh: cùng một tên ở thẻ và ở ảnh đầu bài ⇒ trình duyệt "bay" ảnh sang trang mới (phải là tên CSS hợp lệ, duy nhất trên trang)
 const tenChuyenCanh = id => `kp-anh-${khoaBai(id)}`;
-
-function GhiCongAnh({ a }) {
-  const ngoai = { target: "_blank", rel: "noopener noreferrer" };
-  // ảnh web (User nới luật ảnh 14/11): chỉ có tên miền + trang chứa ảnh; minhHoa ⇒ người kiểm không chắc ảnh chụp đúng chính nơi này
-  if (a.nguon) return <>{a.minhHoa && "Ảnh minh hoạ · "}Nguồn ảnh: <a href={a.trang} {...ngoai}>{a.nguon}</a></>;
-  return (
-    <>Ảnh: {a.tacGia} · {GP[a.giayPhep] ? <a href={GP[a.giayPhep]} {...ngoai}>{a.giayPhep}</a> : a.giayPhep} ·{" "}
-      <a href={a.trang} {...ngoai}>trang ảnh trên Wikimedia Commons</a> · đã {a.doi}</>
-  );
-}
 
 function bo(s) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
@@ -109,7 +99,7 @@ function DanhSach({ bai, loi, linhVuc }) {
             <button className="nut nut-phu nhan-nut" type="button" onClick={() => setSoHien(n => n + TRANG)}>Xem thêm {Math.min(TRANG, loc.length - soHien)} bài</button>
           </p>
         )}
-        <p className="ds-ghi">Thẻ chỉ hiện điều kho có. Không có sao đánh giá hay giá chung chung vì không có dữ liệu thật. Ảnh lấy từ Wikimedia Commons và các trang web, ghi nguồn từng ảnh ở trang bài và ở Giới thiệu.</p>
+        <p className="ds-ghi">Thẻ chỉ hiện điều kho có. Không có sao đánh giá hay giá chung chung vì không có dữ liệu thật.</p>
       </div>
     </>
   );
@@ -140,7 +130,6 @@ function TheBai({ b, n }) {
         {a ? <img src={`${ANH_GOC}${a.anh}.jpg`} alt="" loading="lazy" decoding="async" style={{ viewTransitionName: tenChuyenCanh(b.id) }} />
           : <IconLv lv={b.linh_vuc} lon />}
         <span className="nhan kp2-nhan"><IconLv lv={b.linh_vuc} />{LOAI_CON[b.loai_con] ?? lv?.ten ?? "Tổng quan"}</span>
-        {a?.minhHoa && <span className="kp2-minh-hoa">Ảnh minh hoạ</span>}
       </div>
       <div className="kp2-the-than">
         <h3 className="kp2-the-ten">{b.tieu_de}</h3>
@@ -168,20 +157,19 @@ function tachThongTin(md) {
 }
 
 export function Bai({ baiId, bai, onAskAbout }) {
-  const [trang, setTrang] = useState({ id: null, data: null, gc: {}, loi: "" });
+  const [trang, setTrang] = useState({ id: null, data: null, loi: "" });
   const coTrongDs = bai === null ? null : bai.some(b => b.id === baiId);  // null = danh sách chưa tải
   useEffect(() => {
     let huy = false;
-    setTrang({ id: baiId, data: null, gc: {}, loi: "" });
+    setTrang({ id: baiId, data: null, loi: "" });
     if (coTrongDs === null) return undefined;
     if (!coTrongDs) {  // mã không có trong danh sách ⇒ báo ngay, không gọi server (server cũng trả 404 — `api/routes/cong.py`)
-      setTrang({ id: baiId, data: null, gc: {}, loi: "Không tìm thấy bài này." });
+      setTrang({ id: baiId, data: null, loi: "Không tìm thấy bài này." });
       return undefined;
     }
-    // ghi công ảnh (JSON tĩnh, tải một lần) cùng lúc với bài ⇒ chú thích ảnh có ngay khi vẽ bài, không đẩy cột bên (CLS)
-    Promise.all([fetch(`/api/kham_pha/bai?id=${encodeURIComponent(baiId)}`).then(r => (r.ok ? r.json() : Promise.reject(r.status))), taiGhiCong()])
-      .then(([data, gc]) => !huy && setTrang({ id: baiId, data, gc, loi: "" }))
-      .catch(status => !huy && setTrang({ id: baiId, data: null, gc: {}, loi: status === 404 ? "Không tìm thấy bài này." : "Chưa tải được bài — thử lại sau." }));
+    fetch(`/api/kham_pha/bai?id=${encodeURIComponent(baiId)}`).then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(data => !huy && setTrang({ id: baiId, data, loi: "" }))
+      .catch(status => !huy && setTrang({ id: baiId, data: null, loi: status === 404 ? "Không tìm thấy bài này." : "Chưa tải được bài — thử lại sau." }));
     return () => { huy = true; };
   }, [baiId, coTrongDs]);
   const data = trang.id === baiId ? trang.data : null;
@@ -191,8 +179,8 @@ export function Bai({ baiId, bai, onAskAbout }) {
   const khac = data && bai ? bai.filter(b => b.linh_vuc === data.linh_vuc && b.loai_con === data.loai_con && b.id !== data.id) : [];
   // bài liên quan: bài cùng loại có ảnh trước (thẻ đẹp hơn), tối đa 3
   const lienQuan = [...khac.filter(b => anhCuaBai(b.id)), ...khac.filter(b => !anhCuaBai(b.id))].slice(0, 3);
-  const the = data ? anhCuaBai(data.id) : null;
-  const a = the && trang.gc[the.khoa] ? { ...the, ...trang.gc[the.khoa] } : null;  // không tải được ghi công ⇒ không hiện ảnh (ảnh nào cũng phải ghi nguồn)
+  // không hiện dòng ghi công ảnh ở đâu trên giao diện (User 14/11: đồ án trình bày, chữ ghi công làm rối); URL nguồn chỉ giữ ở bảng dữ liệu
+  const a = data ? anhCuaBai(data.id) : null;
   const diaDiem = tach.nhanh.find(([k]) => /^(Địa điểm|Địa chỉ)/i.test(k))?.[1];
   if (trang.loi) {
     return (
@@ -239,7 +227,6 @@ export function Bai({ baiId, bai, onAskAbout }) {
           {a && (
             <figure className="kp2-ben-anh">
               <img src={`${ANH_GOC}${a.anh}.jpg`} alt={data.tieu_de} decoding="async" style={{ viewTransitionName: tenChuyenCanh(data.id) }} />
-              <figcaption><GhiCongAnh a={a} /></figcaption>
             </figure>
           )}
           <div className="kp2-nhanh">
