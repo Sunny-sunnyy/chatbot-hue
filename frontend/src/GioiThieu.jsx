@@ -13,6 +13,7 @@ const IC = {
   lich: "M4 5h16v15H4zM4 10h16M9 3v4M15 3v4M8 14h3M8 17h6",
   web: "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16",
   anh: "M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",
+  troi: "M7 17h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 10 3.5 3.5 0 0 0 7 17zM9 20l-1 2M13 20l-1 2M17 20l-1 2",
 };
 
 function Ic({ d }) {
@@ -38,8 +39,11 @@ export function GioiThieu({ tinhNang, daCo, muc }) {
   const lam = [
     [IC.hoi, "Hỏi về Huế", "Món ăn, di tích, lễ hội, nghệ thuật biểu diễn, đi lại và vé tham quan — trả lời bằng tiếng Việt, kèm nguồn."],
     // mỗi dòng theo cờ server như bản cũ (review E M-2): tính năng tắt thì không hứa
-    ...(tinhNang?.lich_trinh_bieu_mau ? [[IC.lich, "Lên kế hoạch", "Chọn số ngày, người đi cùng, sở thích; trợ lý xếp lịch theo buổi từ các điểm có trong kho."]] : []),
+    ...(tinhNang?.lich_trinh_bieu_mau ? [[IC.lich, "Lên kế hoạch", "Chọn số ngày, người đi cùng, sở thích; trợ lý xếp lịch theo buổi từ các điểm có trong kho."
+      // .ics nằm trong lịch bản 2 (`LichV2.jsx`) ⇒ chỉ hứa khi server bật lịch bản 2
+      + (tinhNang?.len_ke_hoach_v2 ? " Đã chọn ngày đi thì tải lịch về lịch điện thoại (.ics)." : "")]] : []),
     ...(tinhNang?.tra_web ? [[IC.web, "Tra thêm trên web", "Khi kho không có, trợ lý tra web một lần và để riêng phần đó dưới nhãn “Từ web (chưa kiểm)”."]] : []),
+    ...(tinhNang?.thoi_tiet ? [[IC.troi, "Thời tiết Huế", "Dự báo 7 ngày tới ở trang chủ; hỏi trợ lý “mai trời thế nào” để có số liệu kèm nguồn."]] : []),
     ...(anh ? [[IC.anh, "Hỏi bằng ảnh", "Gửi ảnh, trợ lý gợi ý tên nơi hoặc món (có thể sai); bạn bấm chọn đúng tên rồi mới hỏi."]] : []),
   ];
   const buoc = [
@@ -90,8 +94,8 @@ export function GioiThieu({ tinhNang, daCo, muc }) {
             <h2 className="gt-h2">Giới hạn</h2>
             <ul>
               <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã đổi — kiểm lại trước khi đi.</li>
-              <li>{banDo ? "Chưa có nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau). Bản đồ lịch trình chỉ ghim các điểm đã có toạ độ."
-                : "Chưa có bản đồ, nơi lưu trú, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau)."}</li>
+              <li>{banDo ? "Chưa có quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau). Bản đồ lịch trình chỉ ghim các điểm đã có toạ độ."
+                : "Chưa có bản đồ, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau)."}</li>
               <li>Câu hỏi ngoài chủ đề Huế được báo là ngoài phạm vi.</li>
             </ul>
           </div>

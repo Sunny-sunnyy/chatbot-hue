@@ -19,6 +19,8 @@
 .gt-khoi { padding-top: 64px; }
 .gt-khoi > .khoi-h { margin-bottom: 24px; }
 .gt-lam { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+/* số thẻ lẻ (thẻ theo cờ server) ⇒ thẻ đầu "Hỏi về Huế" — việc chính — trải cả hàng, không để một thẻ lẻ cuối lưới */
+.gt-lam > :first-child:nth-last-child(odd) { grid-column: 1 / -1; }
 .gt-the { background: var(--color-surface); border-radius: 18px; padding: 24px 26px; display: grid; grid-template-columns: 52px 1fr; column-gap: 18px; }
 .gt-ic { grid-row: span 2; width: 52px; height: 52px; border-radius: 50%; background: var(--color-accent-soft); color: var(--color-accent-deep);
   display: grid; place-items: center; }
