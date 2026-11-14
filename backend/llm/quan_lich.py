@@ -2,7 +2,8 @@
 
 Mọi thứ do code: mỗi ngày, bữa trưa gần điểm cuối buổi sáng (không có sáng ⇒ điểm đầu buổi chiều), bữa tối gần điểm buổi tối (không có ⇒
 điểm cuối buổi chiều);
-≤ 2 quán CÙNG CỤM với điểm đó và ≤ 2 km tới điểm, quán kho trước rồi tới nguồn chưa kiểm, gần điểm nhất, không lặp quán trong cả chuyến.
+≤ 2 quán CÙNG CỤM với điểm đó và ≤ 2 km tới điểm, quán ăn trước cà phê, trong cùng loại quán kho trước rồi tới nguồn chưa kiểm, gần điểm nhất,
+không lặp quán trong cả chuyến.
 Model không chọn, không thấy tên quán (khối này không vào tin nhắn gửi model; an toàn này dựa cả vào `nho_cau_tra_loi: false` — bật nhớ câu trả
 lời thì chữ lịch, kể cả tên quán OSM, sẽ vào lịch sử gửi model ⇒ xem lại trước khi bật, review B m-2). Không giờ / giá / điện thoại (nguồn mở không có ngày kiểm).
 Bảng: `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (quán kho + dữ liệu mở thành phố + OpenStreetMap; dựng bằng script, private).
@@ -59,10 +60,13 @@ def _km(a, b) -> float:
 
 
 def _chon(ds: list[dict], toa_diem, da_dung: set) -> list[dict]:
-    # chỉ quán ≤ KM_TOI_DA; quán kho trước; bữa ăn ⇒ quán ăn trước cà phê; rồi gần điểm nhất
+    # chỉ quán ≤ KM_TOI_DA; bữa chính ⇒ chỉ quán ăn, cà phê chỉ khi không có quán ăn nào (A 14/11: bữa tối từng gợi ý một quán cà phê có bài kho
+    # trước quán ăn OSM); trong cùng loại: quán kho trước, rồi gần điểm nhất
     gan = [(q, _km(toa_diem, q["toa"])) for q in ds if (q["ten"], tuple(q["toa"])) not in da_dung]
     gan = [(q, km) for q, km in gan if km <= KM_TOI_DA]
-    return [q for q, km in sorted(gan, key=lambda x: (NGUON.index(x[0]["nguon"]), x[0]["loai"] != "quan_an", x[1]))][:SO_QUAN]
+    xep = [q for q, km in sorted(gan, key=lambda x: (x[0]["loai"] != "quan_an", NGUON.index(x[0]["nguon"]), x[1]))]
+    an = [q for q in xep if q["loai"] == "quan_an"]
+    return (an or xep)[:SO_QUAN]  # có quán ăn ⇒ chỉ quán ăn (1–2); không có quán ăn nào trong 2 km ⇒ mới gợi ý cà phê
 
 
 def _hien(q: dict) -> dict:

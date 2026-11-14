@@ -28,7 +28,7 @@ def _toa_tu_link(url: str) -> tuple:
 
 
 def test_simulation_floor():
-    """Mọi quán có trong bảng, cùng cụm với điểm, ≤ 2 km, không lặp trong chuyến; quán kho đứng trước; ≤ 2 quán / bữa; bữa có dòng ≥ 75 %."""
+    """Mọi quán có trong bảng, cùng cụm với điểm, ≤ 2 km, không lặp trong chuyến; quán ăn trước cà phê, trong cùng loại quán kho trước; ≤ 2 quán / bữa; bữa có dòng ≥ 75 %."""
     bua = co = 0
     for key in itertools.product(range(1, 6), (0, 1), (False, True), ("nhe_nhang", "can_bang", "kham_pha"), ST_16, NGAY):
         k = v2.xep_v2(BANG_V2, v2.ThamSoV2(*key[:4], so_thich=key[4]), ngay_bat_dau=key[5])
@@ -46,8 +46,9 @@ def test_simulation_floor():
                 assert (q["ten"], q["map_url"]) not in thay
                 thay.add((q["ten"], q["map_url"]))
                 assert (q["nhan"] is None) == (goc["nguon"] == "kho") and (q["bai_id"] is not None) == (goc["nguon"] == "kho")
-                nguon.append(ql.NGUON.index(goc["nguon"]))
-            assert nguon == sorted(nguon)
+                nguon.append((goc["loai"] != "quan_an", ql.NGUON.index(goc["nguon"])))
+            assert nguon == sorted(nguon)  # trong cùng loại quán kho trước
+            assert len({l for l, _ in nguon}) == 1  # bữa có quán ăn ⇒ không kèm cà phê (cà phê chỉ khi không có quán ăn nào)
     assert co / bua >= 0.75
 
 
