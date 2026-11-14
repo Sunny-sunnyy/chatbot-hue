@@ -24,7 +24,8 @@ function Ic({ d }) {
   );
 }
 
-export function GioiThieu({ banDo, anh, muc }) {
+export function GioiThieu({ tinhNang, muc }) {
+  const banDo = !!tinhNang?.ban_do_lich, anh = !!tinhNang?.anh;
   const nguonAnh = useRef(null);
   // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash); mục "Nguồn ảnh" thu gọn ⇒ mở ra trước
   useEffect(() => {
@@ -38,8 +39,9 @@ export function GioiThieu({ banDo, anh, muc }) {
   }, [muc]);
   const lam = [
     [IC.hoi, "Hỏi về Huế", "Món ăn, di tích, lễ hội, nghệ thuật biểu diễn, đi lại và vé tham quan — trả lời bằng tiếng Việt, kèm nguồn."],
-    [IC.lich, "Lên kế hoạch", "Chọn số ngày, người đi cùng, sở thích; trợ lý xếp lịch theo buổi từ các điểm có trong kho."],
-    [IC.web, "Tra thêm trên web", "Khi kho không có, trợ lý tra web một lần và để riêng phần đó dưới nhãn “Từ web (chưa kiểm)”."],
+    // mỗi dòng theo cờ server như bản cũ (review E M-2): tính năng tắt thì không hứa
+    ...(tinhNang?.lich_trinh_bieu_mau ? [[IC.lich, "Lên kế hoạch", "Chọn số ngày, người đi cùng, sở thích; trợ lý xếp lịch theo buổi từ các điểm có trong kho."]] : []),
+    ...(tinhNang?.tra_web ? [[IC.web, "Tra thêm trên web", "Khi kho không có, trợ lý tra web một lần và để riêng phần đó dưới nhãn “Từ web (chưa kiểm)”."]] : []),
     ...(anh ? [[IC.anh, "Hỏi bằng ảnh", "Gửi ảnh, trợ lý gợi ý tên nơi hoặc món (có thể sai); bạn bấm chọn đúng tên rồi mới hỏi."]] : []),
   ];
   const buoc = [

@@ -74,8 +74,6 @@
 .kp2-luu { margin-top: 14px; font-size: 14px; color: var(--color-muted); }
 .kp2-lien { padding: 56px 0 24px; }
 .kp2-cho-bai { min-height: 80vh; color: var(--color-muted); }
-.kp2-cho-anh { aspect-ratio: 4 / 3; background: #DCEBE7; }
-.kp2-an { display: none; }
 
 @media (max-width: 1060px) {
   .kp2-luoi { grid-template-columns: repeat(2, 1fr); }

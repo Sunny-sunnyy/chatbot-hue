@@ -106,7 +106,7 @@ export default function App() {
 
       <main className="noi-dung">
         {route.page === "trang-chu" && <TrangChu bai={bai} tinhNang={tinhNang} thoiTiet={thoiTiet} onAsk={askAnywhere} onAskAbout={askAbout} />}
-        {route.page === "kham-pha" && <KhamPha bai={bai} />}
+        {route.page === "kham-pha" && <KhamPha bai={bai} loi={baiLoi} />}
         {route.page === "linh-vuc" && <LinhVuc linhVuc={route.linhVuc} bai={bai} loi={baiLoi} />}
         {route.page === "bai" && <Bai baiId={route.baiId} bai={bai} onAskAbout={askAbout} />}
         {route.page === "len-ke-hoach" && !daCoTinhNang && <div className="lkh-cho" aria-busy="true" />}
@@ -116,7 +116,7 @@ export default function App() {
                             lichTurn={lichTurn} onEditPlan={editPlan} />
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
-        {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} anh={tinhNang.anh} muc={route.muc} />}
+        {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} muc={route.muc} />}
         {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 

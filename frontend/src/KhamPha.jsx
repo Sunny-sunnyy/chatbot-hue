@@ -156,9 +156,12 @@ function tachThongTin(md) {
   if (dau < 0) return { nhanh: [], md };
   let cuoi = dau + 1;
   while (cuoi < dong.length && !/^#{1,3}\s/.test(dong[cuoi])) cuoi++;
-  const nhanh = dong.slice(dau + 1, cuoi).map(l => l.match(/^-\s+\*\*(.+?):\*\*\s*(.+)$/)).filter(Boolean).map(m => [m[1], m[2]]);
-  if (nhanh.length < 2) return { nhanh: [], md };
-  return { nhanh: nhanh.slice(0, 7), md: [...dong.slice(0, dau), ...dong.slice(cuoi)].join("\n") };
+  // chỉ tách khi MỌI dòng của mục là `- **Tên:** giá trị` (không dòng con, không giá trị trống) và 2–7 dòng; khác ⇒ giữ nguyên mục trong thân
+  // bài, không thẻ — không làm mất dòng nào (review E M-1: 51 / 207 bài có dòng con / dòng trống, 29 bài > 7 dòng)
+  const muc = dong.slice(dau + 1, cuoi).filter(l => l.trim());
+  const nhanh = muc.map(l => l.match(/^-\s+\*\*([^*]+?):\*\*\s*(\S.*)$/));
+  if (nhanh.length < 2 || nhanh.length > 7 || nhanh.some(m => !m)) return { nhanh: [], md };
+  return { nhanh: nhanh.map(m => [m[1], m[2]]), md: [...dong.slice(0, dau), ...dong.slice(cuoi)].join("\n") };
 }
 
 export function Bai({ baiId, bai, onAskAbout }) {
@@ -207,7 +210,10 @@ export function Bai({ baiId, bai, onAskAbout }) {
         </div></section>
         <div className="khung kp2-hai-cot">
           <div className="kp2-bai-than kp2-cho-bai" role="status">Đang tải bài…</div>
-          <div className="kp2-ben"><div className={`kp2-ben-anh kp2-cho-anh ${anhCuaBai(baiId) ? "" : "kp2-an"}`} /></div>
+          {/* ảnh có sẵn ngay từ bảng ⇒ vẽ luôn trong khung chờ, cùng tên chuyển cảnh ⇒ ảnh thẻ "bay" sang được (review E m-1) */}
+          <div className="kp2-ben">{anhCuaBai(baiId) && (
+            <figure className="kp2-ben-anh"><img src={`${ANH_GOC}${anhCuaBai(baiId).anh}.jpg`} alt="" decoding="async"
+                                                 style={{ viewTransitionName: tenChuyenCanh(baiId) }} /></figure>)}</div>
         </div>
       </div>
     );
