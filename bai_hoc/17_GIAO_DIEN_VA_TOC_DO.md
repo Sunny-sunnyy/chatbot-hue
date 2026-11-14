@@ -1,6 +1,6 @@
 # Bài 17 — Trang người dùng thấy, và chờ bao lâu: giao diện và tốc độ
 
-*Cập nhật lần cuối: 14:41, ngày 11/11/2026 · bài mới (bù phần đã làm mà bài 0–16 chưa kể kỹ); đã qua một lượt kiểm độc lập.*
+*Cập nhật lần cuối: 13:45, ngày 14/11/2026 · Phần 1 tả trang cổng bản đầu; ngày 14/11 giao diện được làm lại (bài 24).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -28,6 +28,8 @@ tờ gợi ý theo chủ đề, nút "nhờ lên lịch" thì khách thấy ngay
 không im lặng mười giây rồi mới đọc một mạch. Khách chờ cùng một lúc, nhưng thấy người kia đang trả lời thì đỡ sốt ruột hơn nhiều.
 
 ## Phần 1: trang cổng du lịch
+
+*Phần này tả **bản đầu** (07/11). Ngày 14/11 cả 5 trang được làm lại theo hướng "Sông Hương" mới, có hiệu ứng và đo tương phản / độ xô lệch: xem bài 24. Trang Khám phá nay có ảnh cho 167 / 207 bài. Gói JS nay khoảng 123,5 KB (đã nén), không còn 107 KB như dưới đây.*
 
 **Vì sao không chỉ là một khung chat.** Đề tài là ứng dụng hỗ trợ trải nghiệm Huế. Nếu chỉ có khung chat, người xem không biết trợ lý làm được gì (5 chủ đề
 trong kho, lên lịch trình, thời tiết, hỏi bằng ảnh, tra web) cho tới khi gõ đúng câu. Nên giao diện được làm thành một **trang cổng**:

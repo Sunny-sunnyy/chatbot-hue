@@ -1,6 +1,6 @@
 # Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình
 
-*Cập nhật lần cuối: 14:04, ngày 11/11/2026 · sửa hai câu sai (ghi ở Nguồn).*
+*Cập nhật lần cuối: 13:45, ngày 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -70,6 +70,8 @@ Trang chủ của cổng du lịch cũng có một ô thời tiết đọc thẳ
 
 ## Biểu mẫu "Lên kế hoạch"
 
+*Mục này tả **bản đầu** (07/11). Từ 14/11, chatbot chạy **bản 2**: biểu mẫu bốn nhóm, code xếp theo chuỗi luật có giờ gợi ý, quỹ phút, mưa, ảnh từng điểm. Xem bài 23.*
+
 Người dùng điền biểu mẫu bằng nút: **số ngày**, **đi cùng ai** (một mình, bạn bè, gia đình có trẻ em, người lớn tuổi…), **sở thích**. Rồi:
 1. Lượt này **không qua bước xếp loại**. Code gọi thẳng phần xếp lịch với **đúng giá trị các nút**.
 2. **Code xếp lịch theo buổi** (sáng, chiều, tối) từ **một bảng điểm anh đã duyệt**. Bảng ghi điểm nào hợp buổi nào, hợp ai, có trong nhà không. Buổi sáng ưu
@@ -104,8 +106,8 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - **Dạng ngày ít gặp** ("tháng tới", "ngày kia của tuần sau"…) vẫn đi đường cũ, model tự cộng ngày.
 - **Câu có ngày đúng nhưng thiếu `[n]`** thì bị rút lại (1 / 9 câu lịch ngày 10/11, bài 8).
 - **Thời tiết "tuần sau"** không có số dự báo (ngoài 7 ngày), chỉ có câu cố định.
-- **Biểu mẫu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng. Không có ô "lo trời mưa", không có ô giờ
-  tới / giờ về.
+- **Biểu mẫu bản đầu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng; không xét mưa. Bản 2 (bài 23) đã sửa hai chỗ này.
+  Cả hai bản đều **chưa có ô giờ tới / giờ về**.
 - **Lịch trình từ câu gõ tự do chưa bật.**
 
 ## Ba điều chính
