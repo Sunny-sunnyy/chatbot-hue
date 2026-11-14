@@ -7,11 +7,33 @@
   - C không tự merge / bật.
   - Report: `report_agent/2026-11-12_ra_khoang_cach/c_cau_nhieu_y_do_v2.md` (vòng 1: `c_cau_nhieu_y_do.md`); plan v2 `docs/superpowers/plans/2026-11-14-cau-nhieu-y-v2-plan.md`.
   - E review mà có sửa ⇒ C sửa trên nhánh, chạy `pytest tests/test_cau_nhieu_y.py` (25) + bộ liên quan (545). Chỉ đo có phí lại khi A giao.
+- **Việc dở 2 — report `report_agent/2026-11-12_ra_khoang_cach/c_review_bai_luu_tru.md`** (chưa commit, A báo):
+  - hook `.githooks/pre-commit` chặn dòng 20 (chữ trùng ≥ 40 ký tự với kho);
+  - sửa: viết lại dòng đó theo kiểu (tả loại, không chép câu kho), chạy lại hook (`git add` file đó rồi `git commit --dry-run` / chạy `.githooks/overlap_scan.py`) cho tới khi 0 trùng;
+  - giao lại A commit.
+- **Việc MỚI User giao (A chuyển, kết phiên 14/11) — chưa bắt đầu, chưa có plan:**
+  - (1) **Bỏ dòng ghi công dưới ảnh** ở thẻ / trang bài Khám phá (`frontend/src/KhamPha.jsx` `GhiCongAnh`, figcaption ở `kp2-ben-anh`) và ở Giới thiệu.
+    Gom mọi ghi công về **một chỗ thu gọn** (mục `#nguon-anh` ở Giới thiệu đã có — `GioiThieu.jsx` `<details id="nguon-anh">`).
+    Lưu ý giấy phép CC BY của ảnh Commons vẫn cần ghi công ở đâu đó, kèm link ⇒ một chỗ thu gọn là đủ, phải giữ đủ trường.
+    Đo lại CLS trang bài (bỏ figcaption ⇒ đổi chiều cao cột bên).
+  - (2) **Giới thiệu "vẫn đơn giản"** (User): so code `frontend/src/GioiThieu.jsx` + `gt.css` với bản mẫu `data/ui_mau_2026-11-14/h1/gioi_thieu.html`, liệt kê chỗ lệch.
+    Kiểm khối hiện dần (`.hien` / `.vao` dưới `html.hieu-ung`) có bị KẸT MỜ không: opacity không về 1 khi cuộn tới, hoặc mở thẳng `#/gioi-thieu/nguon-anh`.
+    Đo bằng Playwright trên bản build thật (chụp sau cuộn + đọc `getComputedStyle(...).opacity`).
+  - Bước đầu phiên sau: đọc 2 việc này với A ⇒ plan nhẹ / làm theo thứ tự A giao.
 - **Xong hôm nay** (không còn việc):
   - nhánh ảnh Khám phá — A merge `ef8bc46`;
   - nhãn bộ sửa lịch theo lịch bản 2 — đã thấy `2923d432da9b`, kín `1165ecfa6367`, đã báo B lỗi `khong_doi` trong `q3_sua_lich.py`;
   - review ghi kho 2 của E — ready.
-- **Tiền C hôm nay:** câu nhiều ý vòng 1 0,160 + vòng 2 ≈ 0,19 (có ghi 0,1635 + dò ≈ 0,02–0,03) ⇒ **≈ 0,35 USD**. Không có lượt có phí nào đang chạy.
+- **Tiền thật C hôm nay (OpenAI + Serper):**
+  - vòng 1 = **0,1601 USD** (tổng trường `usd` 5 file kết quả) + 1 lần chạy lại X01 ≈ 0,001;
+  - vòng 2 = **0,1635 USD** có ghi (hỏi kèm 0,0195 · kín E 0,021 · an toàn 0,0458 · Golden 0,0752 · 161 cờ tắt ×3);
+  - các lần dò câu 161 / NK06 / NK07 KHÔNG ghi file — ước ≈ 0,02–0,03;
+  - **tổng ≈ 0,35 USD.**
+  - Agent con chấm (16 lượt judge) = quota Claude, 0 USD. Không có lượt có phí nào đang chạy.
+- **Câu hỏi còn mở (chờ A / User):**
+  - (a) Luật S-AT theo chữ: S11 lượt 2 chênh 1 ⇒ "sinh thêm 3+3" — chưa chạy (câu không đi vào luật mới). User muốn thì ≈ 0,01 USD.
+  - (b) Đề xuất tự soi của C (gửi cả nhóm): đếm câu chạm đường đổi trước lượt có phí; sàn chỉ tính câu có yêu cầu gửi model khác; judge chỉ sau khi sàn máy đạt; mốc cùng số lượt với nhánh. Chờ A gộp.
+  - (c) Câu kiểu NK07 (2 ý, không dấu phẩy) luật đếm vế bỏ sót ⇒ vẫn bị từ chối cả câu như main. Muốn bắt thì cần dữ liệu mới + luật khác.
 - **Máy:** không server nào của C. Worktree còn:
   - `/tmp/c_ny` (nhánh câu nhiều ý; cờ trong file = `false`);
   - `/tmp/c_sl` (bản đọc của `p9-sua-lich-v2` cho mô phỏng nhãn);

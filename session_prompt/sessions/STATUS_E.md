@@ -1,27 +1,47 @@
 # STATUS E — PHIÊN 14/11 (mở 09:43 14/11/2026, `date`) · terminal `hue-rag-c4` · Claude Opus 5.5 · vai thực thi
 
-## PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11, ghi 14:43 14/11/2026 — `date`)
+## PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11, ghi 14:50 14/11/2026 — `date`; KẾT PHIÊN 14/11)
 
-**E không còn server, lượt đo hay agent con nào đang chạy.** Server cổng 8010 không phải của E. Worktree của E: `/tmp/e_gd` (nhánh `p9-gd-h1`, đã merge) — xoá được (`git worktree remove /tmp/e_gd`). File tạm `/tmp/e_rv/*` xoá được. Không chạy lượt có phí mới khi chưa được giao.
+**E không còn server, lượt đo hay agent con nào đang chạy.** Server cổng 8010 không phải của E. Worktree của E: `/tmp/e_gd` (nhánh `p9-gd-h1`, đã merge) — xoá được (`git worktree remove /tmp/e_gd`). File tạm `/tmp/e_rv/*` xoá được. Không chạy lượt có phí mới khi chưa được giao; quyền / ngân sách mở lại phải hỏi lại (memory "autonomy / budget per session").
 
-### Việc chờ E (A giao trước 14:43 14/11/2026), làm theo thứ tự
-1. **Kiểm nhanh nhánh `p9-sua-lich-tre`:**
-   - commit `3aef0ca`: sửa m-1 / m-2 của review độ trễ. m-1 = chặn Serper ở trace phụ khi là lượt sửa; m-2 = B đo usd p50 / câu thường có lịch, sàn ≤ 0,0005.
-   - commit `c59e090`: khoá đệm cố định.
-   - Đọc diff + số đo của B ⇒ ghi cuối `report_agent/2026-11-12_ra_khoang_cach/e_review_sua_lich_v2.md` ⇒ báo A: A merge + bật `sua_lich_v2`. Cờ đang TẮT trên main (A tắt tạm vì p95 7,16 s).
-2. **Review nhánh câu nhiều ý `p9-cau-nhieu-y` `2c99534` của C.** User vừa chọn BẬT ⇒ review xong thì A merge + bật.
-   - Đã biết từ bộ kín ngoài kho của E (`data/cau_nhieu_y_2026-11-14/ket_qua_v2/cham_bo_kin_e.md`; file câu `ngoai_kho_vong2_sealed.jsonl` — KÍN, C không xem): 0 / 10 bị trả lời sai, 0 bịa; câu "kho có + ngoài phạm vi" 0 / 2 (NK06 GenerationError, NK07 từ chối cả câu).
-   - C đang chạy NK06 / NK07 ×2 cờ bật / tắt để tách lỗi. Hỏi C kết quả trước khi kết luận.
+### Việc chờ E — theo thứ tự
+1. **Review nhanh nhánh `p9-sua-lich-tre`** ⇒ A merge + bật `sua_lich_v2` (cờ đang TẮT trên main, A tắt tạm vì câu thường có lịch p95 7,16 s).
+   - Phần đã review: `80648f0` ready, 2 minor.
+   - Còn kiểm: `3aef0ca` (sửa m-1: chặn Serper ở trace phụ khi là lượt sửa; m-2: B đo usd p50 / câu thường có lịch, sàn ≤ 0,0005) và `c59e090` (khoá đệm cố định).
+   - Ghi cuối `report_agent/2026-11-12_ra_khoang_cach/e_review_sua_lich_v2.md`.
+2. **Review nhánh câu nhiều ý `p9-cau-nhieu-y` `2c99534` của C** (User đã chọn BẬT) ⇒ A merge + bật.
+   - Bộ kín ngoài kho của E: `data/cau_nhieu_y_2026-11-14/ket_qua_v2/cham_bo_kin_e.md`; file câu `ngoai_kho_vong2_sealed.jsonl` là KÍN, C không xem.
+   - Kết quả bộ kín: 0 / 10 bị trả lời sai, 0 bịa; câu "kho có + ngoài phạm vi" 0 / 2 (NK06 GenerationError; NK07 từ chối cả câu — nghi chốt (a) "chỉ dòng ý thiếu ⇒ câu từ chối" nuốt ý kho có).
+   - C đã chạy lại NK06 / NK07 ×2 cờ bật / tắt, có in vết. **Hỏi C kết quả trước khi kết luận.**
    - Plan `docs/superpowers/plans/2026-11-14-cau-nhieu-y-plan.md`, hồ sơ `data/cau_nhieu_y_2026-11-14/`.
+3. **Việc mới User giao (qua A, cuối phiên 14/11):**
+   - (a) **Bỏ dòng ghi công dưới ảnh** ở trang chủ, Lên kế hoạch, thẻ lịch, ô sở thích.
+     - ⚠ Câu hỏi trước khi làm: ảnh Commons CC BY / CC BY-SA **bắt buộc ghi công**. Đề xuất giữ ghi công ở nơi xem được: một nút "ⓘ / Nguồn ảnh" nhỏ trên ảnh mở chú thích, cộng trang Giới thiệu › Nguồn ảnh (đã có đủ, ảnh Khám phá ở `public/anh/kp/ghi_cong.json`).
+     - Hỏi A / User chọn cách. Không xoá hẳn ghi công.
+   - (b) **Lên kế hoạch "vẫn đơn giản"** ⇒ khi chưa xếp lịch, hiện một **lịch MẪU có nhãn "Ví dụ"**. Lịch mẫu phải do code xếp thật từ một tổ hợp cố định, không viết tay, để không hứa điều bộ xếp không làm. Kèm so code đang chạy ↔ bản mẫu `data/ui_mau_2026-11-14/h1/len_ke_hoach.html`: chụp Playwright 1440 + 390 cả hai, liệt kê chỗ code còn thiếu.
+4. **Giờ Đại Nội theo mùa — chờ User.** Số User chép (hè 06:30–17:30, đông 07:00–17:00) có thể là **giờ bán vé**; trích Codex cho giờ mở cửa hè 06h30–18h00, đông 07h00–17h30 (trang Vinpearl 10/06/2025, E không mở được — 403). User xác nhận ⇒ ghi kho lần sau: sửa chuỗi khung chung ở 12 bài + dựng lại (~5 phút) + T1.
 
-### Trạng thái hôm nay (đã xong, chi tiết ở các mốc bên dưới)
-- Giao diện H1 + ảnh Khám phá trên main.
+### Tiền thật E hôm nay (API OpenAI; Codex = gói ChatGPT, agent con = quota Claude)
+- Ghi kho 1: 0,2288 USD.
+- Ghi kho 2: 0,2249 USD.
+- Kiểm khẩn cấp trên main: 0,0266 USD.
+- Chạy thật giao diện / lịch: ≈ 0,006 USD.
+- Thử câu trộn khẩn cấp trên 8899 (3 lần): ≈ 0,01 USD (ước theo cỡ lượt, chưa đếm log).
+- **Tổng E ≈ 0,50 USD.**
+- Bộ kín ngoài kho 0,021 USD chạy trên máy C (tính vào C).
+
+### Bẫy / câu hỏi
+- Bẫy hôm nay: mục "Bẫy / đã học phiên 14/11" bên dưới (grep thư mục có file kín, giờ gõ tay, sửa code trên cây main chung, đo cả 207 bài, Codex trích ≠ số User).
+- Luật nhóm đề xuất ở vòng tự soi 1, chờ A ghi vào WORKFLOW: trước lượt có phí, đếm câu chạm đường đổi (0 USD); chỉ đo câu chạm + an toàn; harness có phí phải qua mô phỏng 0 USD trước.
+- Câu hỏi treo: (a) ghi công ảnh (mục 3a); (b) lịch mẫu do code xếp từ tổ hợp nào (gợi ý: 2 ngày · 2 người lớn · cân bằng · di tích — tổ hợp phổ biến nhất).
+
+### Trạng thái hôm nay (đã xong)
+- Giao diện H1 + ảnh Khám phá (167 bài) trên main.
 - "Lên kế hoạch" bản 2 BẬT.
-- Ghi kho 2 lần: 212 file / 8.522 đoạn, record `38b3ca3eb323`.
-- bai_hoc 22–24 đã commit.
+- Ghi kho 2 lần: 212 file / 8.522 đoạn, record `38b3ca3eb323`, T1 `356a742f09a1`.
+- bai_hoc 22–24 đã commit (`51d33fb`).
 - Sổ ghi việc cập nhật (`d7ccf73`).
 - Bảng lưu trú cho lịch (`data/luu_tru_2026-11-14_lich/`) đã gửi B.
-- Giờ Đại Nội theo mùa: chờ User xác nhận đó là giờ mở cửa hay giờ bán vé.
 - Ảnh web vào repo public: A chốt push và báo User.
 
 - 09:43 14/11/2026 — mở phiên, kiểm nhanh xong (main `a400f7f`, sạch, hooksPath `.githooks`, Qdrant 2 collection / 8.435 điểm; `/tmp/b_lkh` prunable; `/tmp/e_*` không còn ⇒ bảng tra người chấm phải dựng lại). Lệnh dọn của User chưa chạy (`hue_anh_siglip2` còn, 4 worktree Antigravity còn). **Chờ A giao việc**; việc theo handoff: gói ghi kho một lần (K1 + K2 trước ⇒ sao lưu ⇒ ghi ⇒ dựng lại ⇒ T1 ⇒ K1 / K2 sau). Chưa sửa file nào khác.

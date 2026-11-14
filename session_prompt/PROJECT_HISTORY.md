@@ -4,6 +4,10 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-11-14 (14:50 14/11/2026) — Giao diện H1 + ảnh; lịch bản 2 bật; 2 lần ghi kho; sửa lịch bằng lời (cờ tắt tạm); hướng "trợ lý / agent"
+
+Phiên 14/11 (A `hue-rag-7b` · B `hue-rag-22` · C `hue-rag-b4` · E `hue-rag-c4`): xem `CURRENT_HANDOFF.md` mục "MỞ LẠI 14/11" + "PHIÊN 14/11", `bao_cao_he_thong/nhat_ky/2026-11-14_ghi_kho_3_bai.md`, `bai_hoc/22–24`. ≈ 1,45 USD.
+
 ## 2026-11-01 (14:29) — **Đóng Phase 8** (User); B0 mốc người ⇒ giữ 10 đoạn
 
 - B0: User đọc 20 cặp mù (5 ↔ 10 đoạn), nhận xét chung — phần lớn như nhau; đối chiếu khoá: 3 cặp bản 5 đoạn từ chối nhầm, bản 10 trả lời được; luật dừng

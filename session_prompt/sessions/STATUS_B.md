@@ -1,4 +1,4 @@
-# PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11) — B viết 14:44 14/11/2026
+# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 14/11) — B viết 14:44, bổ sung 14:50 14/11/2026
 - **Việc đang dở 1 — sửa lịch bản 2, phần độ trễ: XONG, CHỜ E kiểm** `3aef0ca` (m-1 trạng thái "sửa lịch" chỉ ở lượt sửa; m-2 dùng lại định tuyến của đường thường) + `c59e090` (khoá đệm cố định `hue_sua_lich_v1` cho lần hiểu ý). Sau E ⇒ A merge `p9-sua-lich-tre` vào `main` + bật lại `sua_lich_v2` (trên `main` đang `false`, commit `3985816`).
   - Số đã đo (n = 20 chốt trước): câu thường có lịch chữ đầu p50 2,65 s vs không lịch 2,58 s (+0,07 ĐẠT sàn 3 s / +0,3 s); lượt sửa khung p50 2,30 s, 20/20. Tiền / câu B 0,0007 USD; đệm: lần hiểu ý 0,00024 ⇒ ≈ 0,0001 (chưa đo lại cả lượt). Chi tiết: mục cuối `report_agent/2026-11-12_ra_khoang_cach/b_sua_lich_v2_implementation.md`.
 - **Việc đang dở 2 — (c) lưu trú trong lịch: CHƯA BẮT ĐẦU.** Plan `docs/superpowers/plans/2026-11-14-luu-tru-trong-lich-plan.md` A duyệt (sha `15529d97b6c7`); dữ liệu bảng E `data/luu_tru_2026-11-14_lich/bang_luu_tru_lich.json` (md5 `a4c97df36c7c`). Bước kế: đọc plan ⇒ nhánh mới từ `main` (sau khi A merge sửa lịch, tránh xung đột `len_ke_hoach.py`) ⇒ code + test 0 USD trước.
@@ -6,7 +6,15 @@
 - **Cờ tạm:** KHÔNG còn — `settings.yaml` của worktree đã trả `sua_lich_v2: false` (git checkout). Bật tạm lần sau: chỉ trong worktree, không commit, trả lại khi xong.
 - **Server:** của B đều đã tắt (8899 TaskStop; 8893 / 8894 / 8896 tắt từ trước). Cổng 8895 (`http.server` phục vụ `data/ui_mau_2026-11-14`, PID 150444) KHÔNG phải của B ⇒ không đụng.
 - **Chưa commit trên `main` (bản ghi việc của B, A commit):** `b_sua_lich_v2_implementation.md`, `b_anh_lich_implementation.md`, `b_hieu_ung_tham_khao.md`, `STATUS_B.md`, plan `2026-11-14-sua-lich-v2-plan.md` + `2026-11-14-luu-tru-trong-lich-plan.md`.
-- **Tiền B hôm nay:** ≈ 0,46 USD (nghiệm thu + sửa lịch ≈ 0,25 + đo trễ ≈ 0,13 + đệm / lặt vặt). Không có lượt có phí nào đang chạy.
+- **Tiền B hôm nay:** ≈ 0,46 USD — **ước**, cộng từ số ghi sau từng lượt (nghiệm thu đợt 1 ≈ 0,09 · sửa lịch Q3 / Q5 / Q5b / giao diện ≈ 0,25 · đo trễ 3 lượt ≈ 0,13 · đệm ≈ 0,002). Soát log: chỉ 2 file kết quả của B ghi `usd` (Q5 ×2 = 0,026 USD); các lượt chạy qua server không ghi tổng tiền ra file ⇒ chưa có số thật từ log. Bảng giá OpenAI của tài khoản là nguồn đúng nếu cần. Không có lượt có phí nào đang chạy.
+- **Yêu cầu MỚI của User (14:46, handoff) — phần chạm việc B, CHƯA làm (chờ A giao):**
+  - Bỏ dòng ghi công dưới ảnh: phía B có `frontend/src/LichV2.jsx:36` (ảnh lịch: "Ảnh: tác giả · giấy phép…"); các chỗ khác (`TrangChu.jsx:138`, `KhamPha.jsx:39`, `GioiThieu.jsx:125/139`) do người làm giao diện H1. Ghi công gom về MỘT chỗ thu gọn ở trang Giới thiệu — giữ dữ liệu `tac_gia` / giấy phép trong bảng ảnh (giấy phép CC BY-SA vẫn cần ghi công ở đâu đó).
+  - Lên kế hoạch "vẫn đơn giản" ⇒ lịch mẫu khi chưa xếp: nếu A giao B, dựng lịch mẫu bằng chính `xep_v2` (tham số cố định, 0 USD, không gọi model) thay khung nét đứt — so code ↔ bản mẫu H1.
+- **Câu hỏi / thắc mắc còn mở:**
+  - Có đo lại tiền cả lượt B (câu thường có lịch) sau khoá đệm không? (≈ 0,01 USD, 20 câu) — để A quyết, B không tự chạy.
+  - (c) lưu trú: tạo nhánh từ `main` SAU khi A merge `p9-sua-lich-tre` (cùng chạm `len_ke_hoach.py` / `lich_trinh_v2.py`) — đúng thứ tự A muốn?
+  - Ý nhỏ của E còn treo: chỉ theo ngày / buổi ("thay điểm buổi sáng ngày 2") ⇒ đưa thẻ chọn thay vì đoán điểm — để sau Phase 9 hay làm cùng (c)?
+  - Sửa lịch bản 2: giới hạn đã nhận (chỉ BỎ được buổi tối, chưa thêm / đổi buổi tối) — ghi trong report, không làm thêm khi chưa giao.
 - **Bẫy đã gặp:** (1) SDK Agents tự sinh `prompt_cache_key` mỗi lần chạy ⇒ đệm 0 dù tiền tố giống — phải đặt khoá cố định qua `extra_args`; (2) đo thêm sau khi thấy số trượt = "đo tới khi đạt" ⇒ luôn chốt n trước; (3) heredoc / chuỗi Python có dấu backtick ⇒ ra `\``, soát sau khi ghi; (4) test đọc cờ thật trong `settings.yaml` ⇒ ghim cờ trong test; (5) `main` thêm gói font ⇒ `npm ci` trước khi build frontend; (6) cổng 8897 của session khác ⇒ dùng cổng trống.
 
 # STATUS B — PHIÊN 14/11 (ghi lúc 09:51 14/11/2026, terminal `hue-rag-22`; A `hue-rag-7b` · C `hue-rag-b4` · E `hue-rag-c4`)
