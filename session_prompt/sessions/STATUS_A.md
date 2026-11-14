@@ -1,3 +1,11 @@
+# STATUS A — KẾT PHIÊN TỐI 14/11 (viết 22:38 14/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên (một câu) ⇒ cùng lượt giao **B đo bù 65 câu** (mục 0, không cần User) ⇒ hỏi User các câu (a)–(f) mỗi lần một câu ⇒ theo câu trả lời giao C (ngưỡng mưa) / bàn nhóm (trang khách sạn).
+- Xong tối 14/11 (A): điều phối; merge + cổng ổn định ~15 nhánh (bảng quán kho 4, web năm, bỏ quán đóng, ảnh v4 / v4b / kc / kho5 / kho6, ảnh quán, khách sạn ×2 + test); tự sửa mục web (`p9-web-so-cau-hoi`, C review bắt nới quá rộng ⇒ chỉ năm); review ảnh kho 5; bài học 01 / 22 / 24 / 25 (4 lượt agent con kiểm độc lập: 2+6, 6+10, 2+6, 1+6 lỗi — đã sửa); sổ 02 / 07 / 01 / README / nhật ký; quét overlap 47 bài kho; vòng tự soi 1 + 2; sổ cải tiến vòng 31 (W76–W78 chờ User); handoff viết lại + archive `_toi`; Project_Status; PROJECT_HISTORY.
+- Bẫy A: gửi sha đoán trước khi đọc kết quả (lần 4 trong ngày; đính chính ngay); `git add` có file không tồn tại ⇒ commit hỏng (phát hiện ngay); TIEU_CHI kho 4–6 thu hẹp câu chạm mà A không bắt khi duyệt / merge (B tự bắt lúc kết phiên).
+- Server / worktree của A: không còn (đã gỡ `/tmp/a_websq`; `/tmp/a_dem`, `/tmp/a_rv` chỉ file tạm).
+- Tiền A ≈ 0,01 USD (cổng ổn định 4 lần + đếm mục web).
+
 # STATUS A — PHIÊN TỐI 14/11, TIẾN ĐỘ (20:47 14/11/2026 `date`)
 
 - User vắng từ 17:49 ("tiếp tục phát triển; câu cần User gác lại"); ưu tiên User 17:50: ảnh + dữ liệu đầy đủ (khách sạn, mọi nơi / món / di tích).

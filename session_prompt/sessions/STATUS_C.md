@@ -1,5 +1,30 @@
-# STATUS C — phiên 14/11 (C `hue-rag-b4` · A `hue-rag-7b` · B `hue-rag-22` · E `hue-rag-c4`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên tối 14/11 (C `hue-rag-eb` · A `hue-rag-fb` · B `hue-rag-62` · E `hue-rag-1f`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
+
+- **Trạng thái:** mọi việc C nhận tối 14/11 đã xong và merge. Máy: 0 worktree `/tmp/c_*`, 0 server, 0 tiến trình nền của C.
+- **Đã làm tối 14/11 (file / dữ liệu ở đâu):**
+  - **Bảng quán lịch sau ghi kho 4:** +7 quán kho (Hội Quán ngoài bảng: thiếu toạ độ), khử trùng kho ↔ OSM (5 dòng), bữa có quán kho **49,3 ⇒ 69,1 %** (Kim Long 0 ⇒ 57,2; biển / đầm 0 ⇒ 48,5; Thủy Xuân 33,6 ⇒ 62,6; nam xa vẫn 0). Script `data/quan_lich_2026-11-14/tools/dung_bang.py` (`QUAN_KHO_4`, `_trung`, `DA_DONG`, ảnh); biên bản `data/quan_lich_2026-11-14/bien_ban_quan_kho_them.md`.
+  - **Bỏ quán đã đóng** (Nhà hàng chay Huế An, hiện ở 324 / 3.840 lịch) — `DA_DONG` trong `dung_bang.py`.
+  - **Ảnh quán ở thẻ bữa** (`LichV2.jsx` `anhQuan`; `quan_lich.py` trường `anh` kiểm lúc nạp): quán kho dùng ảnh Khám phá trừ `kc`; ngoài kho chỉ làm 15 quán TỪNG HIỆN (`data/anh_quan_2026-11-14/tools/dem_quan_hien.py`) ⇒ 5 ảnh = 32,3 % lượt hiện quán ngoài kho. Hồ sơ `data/anh_quan_2026-11-14/` (TIEU_CHI, bảng ảnh, tra "còn mở" Codex: 0 đóng / 8 mở / 7 không rõ). Report `report_agent/2026-11-12_ra_khoang_cach/c_anh_quan_implementation.md`.
+  - **Đếm mưa 4 phần** (`report_agent/2026-11-12_ra_khoang_cach/c_dem_mua.md`; script + dữ liệu `data/dem_mua_2026-11-14/`): (1) lịch đã có luật mưa + dòng "Nếu mưa"; 33 % ngày mưa "không thay được", 81 % là ngày phá / đầm / Bạch Mã ⇒ KHÔNG thêm điểm trong nhà; (2) đổi ngày bằng code cứu ≤ 13,7 % chuyến (mùa mưa 8–21 % số chuyến kẹt) ⇒ KHÔNG xây; (3) ngưỡng: 222 / 365 ngày ≥ 60 %, chỉ 115 ngày ≥ 5 mm; (4) so ERA5: hiện hành đúng 56 % (thừa 96), ≥ 5 mm đúng 86 % (thừa 16, sót 23 %). **Phương án 3** (B, C đồng ý; E chọn ≥ 5 mm): xếp lại khi ≥ 60 % VÀ ≥ 5 mm, dòng "Nếu mưa" vẫn từ ≥ 60 % (27 / 29 ngày bị sót vẫn có nhắc) — **chờ User** (ngưỡng 60 % là luật spec User duyệt).
+  - **Ghi kho 6 (lễ hội + nghệ thuật):** bước 1 đếm `data/bai_kho_6_le_hoi/BUOC_1_DEM.md` (24 mục chưa có bài: từ chối 9 · mỏng 7 · đủ 8; 0,0178 USD); C viết 8 bài (Tết Nguyên đán, Âm hồn, Trung thu, Vu Lan, Đoan Ngọ, Truyền Lô, Hò Huế, Lý Huế — nháp `data/bai_kho_6_le_hoi/nhap/`, bàn giao `BAN_GIAO_C.md`, brief viết `BRIEF_VIET.md`, nguồn `nguon/`); B review + C sửa ⇒ B ghi kho 6 (263 file / 9.425 đoạn).
+  - **Review:** `p9-web-so-cau-hoi` (A; M-1 chỉ miễn năm), `p9-khach-san` + `p9-khach-san-anh2` (B), `p9-anh-v4` / `v4b` (Thuận An có trẻ em đồ bơi ⇒ trống) / `p9-anh-kc` (10 / 13 ảnh nâng chỉ bằng nguồn ⇒ giữ kc) / `p9-anh-kho5` / `p9-anh-kho6` (E), 23 bài ghi kho 5 (B 10 món · E 13 địa điểm; Lục Bộ nằm TRONG Kinh thành), 8 bài ghi kho 6 của B (Ca kịch Huế trùng câu Golden ngắn ⇒ sửa). Biên bản ở `report_agent/2026-11-12_ra_khoang_cach/c_review_*.md` và `data/<đợt>/c_review_*.md`.
+- **Việc dở / gợi ý việc kế:**
+  - Khi User chọn ngưỡng mưa: nhánh nhỏ đổi `lich_trinh_v2.py` (thêm điều kiện `precipitation_sum` ≥ 5 mm cho luật xếp; `len_ke_hoach.dong_neu_mua` giữ ≥ 60 %) + chạy lại `data/dem_mua_2026-11-14/dem_mua.py` / `dem_nguong.py` làm số "sau".
+  - 9 / 15 quán ngoài kho hay hiện chưa có ảnh (Truong Son, Phong Nha, Quán 171 Bún hến…); 7 quán "không rõ còn mở" — làm khi có nguồn ảnh / tra mới. Bảng quán đổi ⇒ chạy lại `dem_quan_hien.py`.
+  - Lỗi thật thấy khi đếm kho 6: hỏi "Ca kịch Huế" từng được trả lời bằng tư liệu Ca Huế (sai chủ thể, không báo) — nay có bài riêng; loại lỗi "gần tên" có thể còn ở chỗ khác.
+- **Bẫy gặp tối nay:**
+  - `uv run` trong worktree tự tạo `.venv` mới (Python 3.14) ⇒ chạy bằng `/home/minhhieu/hue_rag/.venv/bin/python` + `PYTHONPATH=<worktree>/backend`; worktree thiếu `data/` ⇒ trỏ tạm `data/` + `knowledge-base-hue/` rồi gỡ trước commit.
+  - Open-Meteo `archive-api` mặc định trả **đúng số historical forecast** (365 / 365) ⇒ so "mưa thật" phải dùng `models=era5`.
+  - Hook commit KHÔNG quét bài kho (kho không tracked) ⇒ chạy `.githooks/overlap_scan.py <file nháp>` trước mọi lần ghi kho (bắt được cụm Golden ở bài Ca kịch).
+  - Ảnh có thể chứa số điện thoại / bảng giá / trẻ em dù 2 agent cùng chọn ⇒ người giao nhìn lại 100 % ảnh sẽ hiện.
+  - Lấy mẫu ngẫu nhiên trước khi đếm "người dùng thấy gì" ⇒ phí (30 quán thử 0 / 30 trùng quán hiện).
+  - Tin chia việc gửi chéo nhau 3 lần với E ⇒ một người đề xuất, người kia chỉ đồng ý / sửa.
+- **Câu hỏi cho A / User:** (1) ngưỡng mưa — phương án 3 hay giữ 60 % hay ≥ 5 mm thuần (số ở `c_dem_mua.md` phần 3–4); (2) không câu mới khác.
+- **Tiền C tối 14/11 ≈ 0,09 USD:** Serper ≈ 0,061 (ảnh quán 45 · tra kho 6 16) · hỏi thử kho 6 0,0178 · lượt xếp lịch Playwright 0,0043 · Photon / Open-Meteo / WebFetch 0 · Codex (gói ChatGPT User) 1 lượt.
+
+## PHIÊN TỐI 14/11 — nhật ký (giữ để tra)
 **Phiên mở 17:45 14/11/2026:** C `hue-rag-eb` · B `hue-rag-62` · E `hue-rag-1f` · A `hue-rag-fb`. Kiểm nhanh khớp handoff; kho chưa ghi 8 quán; chờ A giao việc.
 **A giao (phiên tối):** bảng quán lịch + đếm lại sau khi B dựng chỉ mục; review nhánh ảnh của E. **Khai báo sửa:** `data/quan_lich_2026-11-14/` (tools/dung_bang.py, photon_quan_them.json, biên bản) · `data/phase_9/lich_trinh/bang_quan_lich_v1.json` · nhánh `p9-quan-kho-them-bang` (chỉ md5 trong comment `settings.yaml`).
 **Thêm (A, phiên tối):** ảnh mọi quán bảng quán lịch ⇒ khai báo thêm `data/anh_quan_2026-11-14/` · `frontend/src/LichV2.jsx` + file ảnh quán (nhánh riêng `p9-anh-quan`).
@@ -13,7 +38,7 @@
 **Ghi kho 6 bước 1 XONG (19:47 14/11/2026, 0,0178 USD):** `data/bai_kho_6_le_hoi/BUOC_1_DEM.md` — 24 mục chưa có bài: từ chối 9 · mỏng 7 · đủ 8; danh sách viết 16 (đợt 1 = 10). Chưa viết bài, chờ A. Review ghi kho 5 xong (B 10 + E 13 ready). Tiền C phiên tối ≈ 0,07 USD.
 **Ghi kho 6 XONG (20:30 14/11/2026, B ghi):** 263 file / 9.425 đoạn; 8 bài của C (Tết, Âm hồn, Trung thu, Vu Lan, Đoan Ngọ, Truyền Lô, Hò Huế, Lý Huế) — câu thử trích đúng bài mới. C review 8 bài B + B review 8 bài C xong. Rảnh.
 
-## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên 14/11, 17:40 14/11/2026 `date`)
+## (Kết phiên chiều 14/11 — CŨ, giữ để tra) PHIÊN SAU ĐỌC TRƯỚC (C viết 17:40 14/11/2026 `date`)
 
 - **Việc kế (đang dở):** 8 bài quán mới của B cho Kim Long / Thủy Xuân / Đầm Chuồn.
   - C đã review: ready sau 5 minor (sửa chữ). Biên bản private `data/quan_kho_them_2026-11-14/c_review_8_bai.md`. Nháp ở `data/quan_kho_them_2026-11-14/nhap/`.

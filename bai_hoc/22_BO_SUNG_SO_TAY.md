@@ -167,7 +167,7 @@ thành" trong khi chính kho cho thấy nó nằm **trong** Kinh thành. Cả ha
 
 - Kho: **224 ⇒ 247 bài, 8.644 ⇒ 9.032 đoạn** (+388 đoạn). Không sửa bài cũ nào.
 
-**Đo.** 35 / 158 câu đổi top 10 — nhiều hơn các lần trước, phần lớn vì thêm 388 đoạn làm đổi độ "hiếm" của từng chữ trong cả kho (chữ càng hiếm, điểm từ khoá càng cao — bài 04) — nhưng chỉ **3 câu** thật sự gặp đoạn bài mới.
+**Đo.** (Giới hạn, ghi lúc kết phiên: các câu đổi top 10 mà không có đoạn bài mới ở lần 4, 5, 6 chưa được chạy lại — ngữ cảnh gửi model của chúng có khác, nên kết luận "không tụt" dưới đây mới đúng trên câu có đoạn bài mới; lượt đo bù làm ở phiên sau.) 35 / 158 câu đổi top 10 — nhiều hơn các lần trước, phần lớn vì thêm 388 đoạn làm đổi độ "hiếm" của từng chữ trong cả kho (chữ càng hiếm, điểm từ khoá càng cao — bài 04) — nhưng chỉ **3 câu** thật sự gặp đoạn bài mới.
 
 | Đo gì | Kết quả | Vì sao ổn |
 |---|---|---|

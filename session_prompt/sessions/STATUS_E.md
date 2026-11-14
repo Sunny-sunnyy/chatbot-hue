@@ -1,6 +1,86 @@
-# STATUS E — PHIÊN TỐI 14/11 (mở 17:45 14/11/2026, `date`) · terminal `hue-rag-1f` · Claude Opus 5.5 · vai thực thi
+# STATUS E — KẾT PHIÊN TỐI 14/11 (mở 17:45, kết 22:35 14/11/2026, `date`) · terminal `hue-rag-1f` · Claude Opus 5.5 · vai thực thi
 
-## PHIÊN NÀY
+## PHIÊN SAU ĐỌC TRƯỚC (ghi 22:35 14/11/2026, `date`)
+
+**Quyền phiên tối 14/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A ⇒ chờ A giao. E **không còn** server, worktree `/tmp/e_*`, agent con hay tiến trình nền nào.
+
+### Hệ thống lúc kết phiên (E đã chạm; main `3d10204`)
+- Khám phá: **249 / 263 bài có ảnh**, 53 `kc`, **196 ảnh hiện được cạnh câu trả lời** (mở phiên: 184 / 224, 146).
+- Kho: 263 file / 9.425 đoạn (B ghi kho 5 + 6). Trong đó **13 bài địa điểm / di tích của E** (8 `heritages/heritage/`, 5 `travel/places/`). Hỏi thử "sau": 13 / 13 trích đúng bài mới.
+- Ảnh lịch: vẫn **33 / 34** (biển Thuận An trống — không có ảnh chắc mà không có trẻ em).
+
+### Việc E đã làm tối nay (đều đã merge; report ở `report_agent/2026-11-12_ra_khoang_cach/e_*`)
+- Đếm mục web bị thay câu cố định (`e_dem_web_thay_cau.md`): 21 / 76; 16 / 21 chặn nhầm năm có trong câu hỏi ⇒ A sửa.
+- Ảnh v4 (184 ⇒ 212) · v4b (⇒ 218) · nâng kc (kc 57 ⇒ 49) · kho 5 (⇒ 238) · kho 6 (⇒ 249).
+- Ghi kho 5 phần địa điểm: đếm 92 nơi ⇒ hỏi thử 42 ⇒ 14 bài từ chối / mỏng ⇒ 13 bài nháp (bỏ chợ Kim Long) ⇒ C review ⇒ B ghi.
+- Review C: `p9-quan-kho4-bang`, `p9-quan-bo-da-dong`, `p9-anh-quan`. Kiểm 2 lỗi ảnh lịch cũ (đã đóng sẵn).
+
+### File / dữ liệu (private, `data/`)
+- Bảng ảnh Khám phá theo đợt (cùng khuôn `anh` / `bo_kc` / `them_kc`):
+  - `data/anh_day_du_2026-11-14/bang_anh_kham_pha_v4.json` (v4 + v4b);
+  - `data/anh_nang_kc_2026-11-14/bang_anh_kham_pha_v5.json`;
+  - `data/anh_kho5_2026-11-14/bang_anh_kham_pha_v6.json`;
+  - `data/anh_kho6_2026-11-14/bang_anh_kham_pha_v7.json`.
+- Script dựng: `data/anh_kham_pha_2026-11-14/tools/dung_anh_bai_js.py`.
+  - Đọc v1 – v7 theo thứ tự.
+  - Có bước đổi trang nguồn trùng kho về trang chủ.
+  - Lệnh: `uv run python data/anh_kham_pha_2026-11-14/tools/dung_anh_bai_js.py <frontend>`.
+- Đếm độ phủ: `data/anh_day_du_2026-11-14/tools/dem_phu.py [--ds]`.
+- Tìm ứng viên cho bài mới (Commons + Serper, chờ khi gặp 429, chạy tiếp được): `data/anh_kho6_2026-11-14/tools/tim.py`. Đổi đường danh sách của gói ghi kho là dùng lại được.
+- Kho 5 địa điểm: `data/bai_kho_5_dia_danh/` (`TIEU_CHI.md`, `dem.json`, `hoi_thu_truoc.jsonl`, `nhap/`, `nguon/`, `BAN_GIAO.md`, `c_review_13_bai.md`). Script tra nguồn bằng Serper: `tools/tra.py`.
+
+### 14 bài Khám phá còn trống + lý do
+- **6 quán:**
+  - Momiji: mọi ảnh có dấu nước to.
+  - Hoa Từ Tâm: chỉ có ảnh ghép 4 ô.
+  - Hủ tiếu Nam Vang Trần Phú: trang nguồn lỗi SSL.
+  - O Hằng, O Nhơn: không trang nào có ảnh đúng quán.
+  - Đầm Chuồn Hội Quán: ảnh là chỗ thuê ván chèo, không chắc là quán.
+- **3 nơi:**
+  - Thành Lồi: chỉ có bản đồ, giấy tờ.
+  - Cồn Hến: ảnh trên cao không có tên, dễ nhầm với cồn Dã Viên.
+  - Làng nón Tây Hồ: chỉ có nón chung chung, người rõ mặt.
+- **5 bài lễ hội / nghệ thuật:**
+  - Kỳ yên đình làng: ứng viên là lễ Nam Bộ.
+  - Tiến Xuân ngưu: ứng viên là buổi tái hiện ở Hà Nội.
+  - Thai Dương phu nhân: ảnh lễ khác hoặc poster.
+  - Chẩn tế cô hồn: không ảnh nào chắc đúng lễ.
+  - Ca kịch: diễn viên rõ mặt là trọng tâm.
+- Hướng làm tiếp nếu User muốn 100 %: tìm tay từng nơi, hoặc chụp thật. Serper / Commons đã thử hết.
+
+### Luật ảnh đã rút ra (A cân nhắc đưa vào luật)
+- Ảnh hiện cạnh câu trả lời (không `kc`) phải **tự nhận ra được** quán / nơi: biển tên, công trình đặc trưng, hoặc chú thích của chính tác giả trên Commons.
+  - Nguồn chính thức hay trang bán hàng KHÔNG đủ nếu chính ảnh không nhận ra được nơi.
+  - Riêng bài MÓN: đúng món là đủ.
+- Bỏ ảnh có trẻ em (mọi trang phục), người rõ mặt là trọng tâm, số điện thoại / bảng giá. Người nhìn đọc LẠI cả danh sách luật bỏ trước mỗi lần duyệt.
+- Phong tục chung: ảnh phải là ở Huế. Lễ của một làng: ảnh phải đúng lễ + đúng làng.
+- Ảnh chủ đề (vé, dịch vụ, cẩm nang) luôn `kc`; chỉ cần 1 lượt agent con.
+
+### Bẫy tối nay
+- Commons API trả **429** khi gọi dồn ⇒ script chờ 30 s, chạy tiếp từ bài chưa xong.
+- Kho lớn dần ⇒ **trang nguồn của ảnh CŨ trùng nguồn bài kho mới** ⇒ assert của script dựng chặn ⇒ đã thêm bước đổi về trang chủ.
+- Hỏi thử qua lõi trợ lý ≈ **0,0006 USD / câu** (định tuyến + tìm thêm) ⇒ chạy 3 câu ước tiền trước. Tối nay 42 câu = 0,024 USD, vượt trần 0,01 (A nhận).
+- Codex (gói ChatGPT của User) **hết hạn mức** lúc 19:12 ⇒ dùng Serper + tự đọc trang. A: không dồn gọi Codex khi hạn mức mở lại.
+- Tin chia việc với B / C gửi chéo nhiều lần ⇒ một người đề xuất, người kia chỉ "đồng ý / sửa".
+- E quên luật trẻ em khi nhìn ảnh Thuận An; nâng 10 ảnh món / ly chung là "chắc". C bắt cả hai.
+
+### Câu hỏi
+- Cho User (qua A): 14 bài còn trống — chấp nhận ô màu, hay muốn tìm tay hoặc chụp thật?
+- Cho A: ghi các luật ảnh trên vào luật chung (vd skill hoặc `WORKFLOW.md`) hay để trong brief?
+
+### Nhánh E trên origin (đều đã merge, xoá được)
+`p9-anh-v4`, `p9-anh-v4b`, `p9-anh-kc`, `p9-anh-kho5`, `p9-anh-kho6`.
+
+### Tiền E phiên tối 14/11 ≈ 0,18 USD
+- Serper ảnh: 0,095 (v4) + 0,023 (kho 5) + 0,016 (kho 6).
+- Serper tra nguồn kho 5: 0,025.
+- Hỏi thử địa điểm: 0,024.
+- Codex = gói ChatGPT; agent con = quota Claude.
+
+## LỊCH SỬ — PHIÊN TỐI 14/11 (tiến độ theo giờ)
+
+### PHIÊN NÀY (tiến độ)
+- **20:47 14/11/2026: đợt tối xong, E rảnh — chờ vòng tự soi 2 khi User về.** Không còn worktree `/tmp/e_*`, server hay agent con nào của E đang chạy. Tiền E phiên tối ≈ 0,18 USD (ghi ở dòng tiền dưới).
 - Mở phiên: đã đọc + kiểm nhanh (main `2496847`, sạch; hooksPath `.githooks`; Qdrant 1 collection 8.603 điểm — khớp handoff). Terminal: B `hue-rag-62`, C `hue-rag-eb` (tự báo); A suy ra `hue-rag-fb` (chưa tự báo). Chờ A giao việc. Chưa sửa file nào khác, chưa chạy lượt có phí.
 - **Việc A giao: 2 lỗi ảnh (m-1 / m-2 của review `e_review_anh_lich_thieu.md`)** — kiểm xong 17:47 14/11/2026: **cả hai đã đóng trên main** (C sửa trong `data/anh_lich_thieu_2026-11-14/dung.py` trước merge; bảng `bang_anh_v2.json` md5 `6fe592114d2b`): đồi Thiên An có `chu_thich` "Hồ Thủy Tiên dưới chân đồi" ⇒ `alt` đúng (`frontend/src/LichV2.jsx:108`); đồi Vọng Cảnh / thác Nhị Hồ có `trang` là bài chứa ảnh, không phải trang chủ. Đổi ảnh: Commons tìm 5 cụm (Thiên An / đan viện / hồ Thủy Tiên) ⇒ 0 ảnh đúng; lúc chọn ảnh Khám phá 2 ứng viên kia là đường thông chung chung + cảnh sông giống Vọng Cảnh ⇒ giữ ảnh. Không mở nhánh, 0 USD. Còn lại (chưa làm, chờ A): chú thích chỉ ở `alt`, người xem không thấy; trang Khám phá dùng cùng ảnh cho bài đồi Thiên An, không chú thích.
 - **Đếm mục web bị thay câu cố định** (A giao) — xong: `report_agent/2026-11-12_ra_khoang_cach/e_dem_web_thay_cau.md` (21/76 = 27,6 %, 16/21 chặn nhầm năm trong câu hỏi ⇒ A sửa nhánh `p9-web-so-cau-hoi`). 0 USD.
@@ -9,7 +89,7 @@
 - `p9-anh-v4` ĐÃ merge (`7784385`, C review ready). **Lượt bổ sung — C vòng 1 changes_requested (Thuận An có trẻ em đồ bơi ⇒ bỏ, lịch 33/34; Hội Quán ⇒ trống) ⇒ sửa `179fc0f`, **C vòng 2 READY — chờ A merge** (18:24 14/11/2026):** `p9-anh-v4b` (worktree `/tmp/e_v4b`): 218/224, ảnh lịch 33/34, 6 bài vẫn trống; `bang_anh_v3.json` không dùng (lý do trong report `e_anh_v4b_implementation.md`). 0 USD.
 - **Review `p9-anh-quan` (C)** — ready, 1 minor (ẩn ảnh kc ở thẻ bữa): `e_review_anh_quan.md`. Phiếu ngưỡng mưa: ≥ 5 mm.
 - **Ảnh 23 bài ghi kho 5 — ĐÃ MERGE (A review + C review ready; worktree đã gỡ) (19:52 14/11/2026):** `p9-anh-kho5` `280ef8a` (worktree `/tmp/e_ak5`): 10 món (B) + 10/13 địa điểm (E); 238/247; hiện được 169 ⇒ 188. Hồ sơ `data/anh_kho5_2026-11-14/`; `dung_anh_bai_js.py` đọc thêm v6. Serper 23 lượt ≈ 0,023 USD. Bẫy: Commons API trả 429 khi gọi dồn ⇒ script chờ 30 s + chạy tiếp từ bài chưa xong.
-- **Ảnh 16 bài ghi kho 6 — C ready (m-1: Ariêu Ping cắt 50 % trên, `3e61ac5`), CHỜ A MERGE (20:42 14/11/2026):** `p9-anh-kho6` `18b2436` (worktree `/tmp/e_ak6`): 11/16 (8 chắc + 3 kc), 249/263, hiện được 188 ⇒ 196; Serper 16 lượt ≈ 0,016 USD. Hồ sơ `data/anh_kho6_2026-11-14/`. Bẫy: trang nguồn ảnh cũ trùng nguồn bài kho mới ⇒ assert chặn ⇒ đã thêm bước đổi về trang chủ trong `dung_anh_bai_js.py`.
+- **Ảnh 16 bài ghi kho 6 — C ready (m-1: Ariêu Ping cắt 50 % trên, `3e61ac5`), ĐÃ MERGE (worktree đã gỡ) (20:42 14/11/2026):** `p9-anh-kho6` `18b2436` (worktree `/tmp/e_ak6`): 11/16 (8 chắc + 3 kc), 249/263, hiện được 188 ⇒ 196; Serper 16 lượt ≈ 0,016 USD. Hồ sơ `data/anh_kho6_2026-11-14/`. Bẫy: trang nguồn ảnh cũ trùng nguồn bài kho mới ⇒ assert chặn ⇒ đã thêm bước đổi về trang chủ trong `dung_anh_bai_js.py`.
 - `p9-anh-kc` ĐÃ merge, worktree `/tmp/e_kc` đã gỡ. **Ghi kho 5 — địa điểm (19:10 14/11/2026):** bước 1 xong, `data/bai_kho_5_dia_danh/` (`TIEU_CHI.md`, `dem.json`, `hoi_thu_truoc.jsonl`, `ket_qua_buoc1.json`). 42 câu hỏi thử: từ chối 9 / mỏng 5 / đủ 28. **Tiền 0,0244 USD — vượt trần 0,01** (đã báo A). A đồng ý 14 bài (8 + 6, nơi nào nguồn không đủ thì bỏ, có lý do). **Nháp: C review ready sau 1 major (Lục Bộ "sát bên" ⇒ "trong Kinh thành", E đã sửa); đã giao B gom gói ghi kho 5:** 13 bài `data/bai_kho_5_dia_danh/nhap/` (bàn giao `BAN_GIAO.md`), bỏ chợ Kim Long; Codex hết hạn mức tới 20:38 ⇒ tra bằng Serper 25 lượt (A: không gọi Codex tối nay). **Bẫy (A ghi):** hỏi thử qua lõi trợ lý ≈ 0,0006 USD / câu (định tuyến + tìm thêm) ⇒ chạy 3 câu, ước tiền rồi mới chạy cả lô. Không ghi kho riêng — gộp với B (ghi kho 5).
 - `p9-anh-v4b` ĐÃ merge (`0ebdd38`). **Nâng ảnh kc — C vòng 1 changes_requested (10 ảnh món / ly chung ⇒ giữ kc) ⇒ sửa `702fcf3`, **C vòng 2 READY — chờ A merge** (18:45 14/11/2026):** `p9-anh-kc` `ea055a0` (worktree `/tmp/e_kc`): 8/37 bài kc một nơi ⇒ chắc; kc 57 ⇒ 49; hiện được 161 ⇒ 169; 0 USD. Report `e_anh_nang_kc_implementation.md`; hồ sơ `data/anh_nang_kc_2026-11-14/`; `dung_anh_bai_js.py` đọc thêm v5.
 - **Review `p9-quan-bo-da-dong` (C)** — ready, 0 finding: `e_review_quan_bo_da_dong.md`.
