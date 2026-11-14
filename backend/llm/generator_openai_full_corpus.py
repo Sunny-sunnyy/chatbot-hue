@@ -347,8 +347,10 @@ class OpenAIFullCorpusGenerator:
             name="hue_sua_lich",
             instructions=SUA_LICH_LOI_DAN,
             model=self.responses_model,
+            # khoá đệm CỐ ĐỊNH (đo 14/11): SDK tự sinh khoá riêng mỗi lần chạy ⇒ 0 token trúng đệm; khoá cố định ⇒ ~1.244 token đầu (lời dặn +
+            # khuôn đầu ra, giống nhau mọi lượt) trúng đệm, lần hiểu ý 0,00024 ⇒ ~0,0001 USD. Đệm chỉ là phần cố định; chữ người dùng ở cuối tin nhắn
             model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False,
-                                         reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
+                                         reasoning=Reasoning(effort=BIEU_MAU_REASONING), extra_args={"prompt_cache_key": "hue_sua_lich_v1"}),
             output_type=SuaLichOutput,
         )
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.

@@ -308,7 +308,9 @@ def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
             ten = [ten_cua_diem(bang, j) for j in ng["buoi"][b]]
             if ten:
                 dong.append(f"- Ngày {ng['ngay']} · {({'sang': 'sáng', 'chieu': 'chiều', 'toi': 'tối'})[b]}: {'; '.join(ten)}")
-    dong += ["", "Các điểm có thể xếp (chép đúng tên khi điền ten / ten_moi): " + "; ".join(d["ten"] for d in bang.diem)]
+    trong = {j for ng in k["ngay"] for b in v2.BUOI for j in ng["buoi"][b]}
+    dong += ["", "Điểm khác có thể thêm / thay vào (chép đúng tên khi điền ten / ten_moi): "
+             + "; ".join(d["ten"] for d in bang.diem if d["id"] not in trong)]  # điểm trong lịch đã có tên ở trên ⇒ không lặp (bớt token)
     return "\n".join(dong) + "\n\nCâu người dùng: " + cau.strip()
 
 
