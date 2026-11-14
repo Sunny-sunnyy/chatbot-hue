@@ -981,7 +981,7 @@ def test_sample_itinerary_is_built_by_the_real_scheduler_without_model():
     """Lịch mẫu "Ví dụ" (trang Lên kế hoạch lúc chưa xếp, User 14/11): đúng khung `xep_v2` của tổ hợp cố định — không viết tay, không gọi model,
     không nguồn, không câu tả; mỗi ngày có tên chặng, mỗi mục có loại điểm; khung qua kiểm của bộ xếp."""
     from api.routes import cong
-    kq = cong.dung_lich_mau(V2.bang_lich_v2, None)
+    kq = cong.dung_lich_mau(V2)
     lich, cau = kq["lich"], kq["cau"]
     khung = v2.xep_v2(V2.bang_lich_v2, v2.tu_truong(cong.TRUONG_MAU))
     assert [[m["id_diem"] for m in ng["muc"] if m["id_diem"]] for ng in lich["ngay"]] == [
@@ -990,3 +990,18 @@ def test_sample_itinerary_is_built_by_the_real_scheduler_without_model():
     assert set(cau) == {m["id_muc"] for m in v2.moi_muc(lich)} and all(m["nguon"] is None for m in v2.moi_muc(lich))
     assert all(c == "" for c in cau.values())  # không câu tả, không mã nguồn
     assert all(ng["chang"] for ng in lich["ngay"]) and all(m["loai_diem"] for m in v2.moi_muc(lich))
+
+
+def test_sample_itinerary_gets_lodging_and_food_by_the_same_step_as_real_plans():
+    """Lịch mẫu đi qua đúng bước gắn nơi ở + quán của lịch thật (`len_ke_hoach.gan_o_an`), theo cờ; cờ tắt ⇒ không có hai khối (như lịch thật)."""
+    from api.routes import cong
+    from llm import len_ke_hoach as lkh
+    tat = cong.dung_lich_mau(V2)["lich"]
+    assert tat.get("o_dau") is None and "an" not in tat
+    bat = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, anh_lich=False, luu_tru_lich=True, quan_lich=True)
+    lich = cong.dung_lich_mau(bat)["lich"]
+    assert lich["o_dau"] and lich["o_dau"]["co_so"] and lich["an"]
+    khung = v2.xep_v2(bat.bang_lich_v2, v2.tu_truong(cong.TRUONG_MAU))
+    mau = v2.dung_lich(bat.bang_lich_v2, khung, {}, None, (), None, None)
+    lkh.gan_o_an(mau, bat.bang_lich_v2, khung, bat)
+    assert lich["o_dau"] == mau["o_dau"] and lich["an"] == mau["an"]
