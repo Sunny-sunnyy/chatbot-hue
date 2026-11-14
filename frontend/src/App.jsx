@@ -24,6 +24,7 @@ export default function App() {
   const route = useRoute();
   const chat = useChat();
   const [tinhNang, setTinhNang] = useState(TINH_NANG_TAT);
+  const [daCoTinhNang, setDaCoTinhNang] = useState(false);  // H1: chưa biết cờ ⇒ trang Lên kế hoạch giữ chỗ (không vẽ biểu mẫu cũ rồi đổi — C đo CLS 0,22)
   const [bai, setBai] = useState(null);
   const [baiLoi, setBaiLoi] = useState("");
   const [thoiTiet, setThoiTiet] = useState(null);
@@ -32,7 +33,7 @@ export default function App() {
   const onTroLy = route.page === "tro-ly";
 
   useEffect(() => {
-    getJson("/api/tinh_nang").then(setTinhNang).catch(() => setTinhNang(TINH_NANG_TAT));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
+    getJson("/api/tinh_nang").then(setTinhNang).catch(() => setTinhNang(TINH_NANG_TAT)).finally(() => setDaCoTinhNang(true));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
     getJson("/api/kham_pha").then(data => setBai(data.bai)).catch(() => setBaiLoi("Chưa tải được danh sách bài — thử tải lại trang."));
   }, []);
   useEffect(() => {
@@ -108,7 +109,8 @@ export default function App() {
         {route.page === "kham-pha" && <KhamPha bai={bai} />}
         {route.page === "linh-vuc" && <LinhVuc linhVuc={route.linhVuc} bai={bai} loi={baiLoi} />}
         {route.page === "bai" && <Bai baiId={route.baiId} bai={bai} onAskAbout={askAbout} />}
-        {route.page === "len-ke-hoach" && (
+        {route.page === "len-ke-hoach" && !daCoTinhNang && <div className="lkh-cho" aria-busy="true" />}
+        {route.page === "len-ke-hoach" && daCoTinhNang && (
           tinhNang.len_ke_hoach_v2
             ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan}
                             lichTurn={lichTurn} onEditPlan={editPlan} />

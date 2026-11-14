@@ -96,7 +96,10 @@ html:not(.hieu-ung) .tc-dung-nut { display: none; }   /* giảm chuyển động
   .tc-hero { min-height: 0; }
   .tc-hero::before { background: linear-gradient(0deg, rgba(10, 61, 64, .95) 0%, rgba(10, 61, 64, .78) 55%, rgba(10, 61, 64, .45) 100%); }
   .tc-hero-in { padding: 24px 16px 104px; }
-  .tc-hero .tt-hop { position: static; width: auto; margin: 16px 16px 0; }
+  /* ô thời tiết về sau trang ⇒ đặt nổi ở góc trên, chừa sẵn chỗ (không đẩy khối chữ — C đo CLS 0,137) */
+  .tc-hero .tt-hop { position: absolute; top: 12px; left: 16px; right: 16px; width: auto; padding: 8px 12px; }
+  .tc-hero .tt-chu { font-size: 12.5px; margin-top: 2px; }   /* ghi công Open-Meteo (CC BY 4.0) — bắt buộc, không ẩn */
+  .tc-hero .tc-hero-in { padding-top: 156px; }
   .tc-hero .goi-y { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
   .tc-hero .goi-y .chip { flex: none; scroll-snap-align: start; }
   .tc-dung-nut { left: 16px; bottom: 72px; }

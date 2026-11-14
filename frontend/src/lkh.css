@@ -141,3 +141,4 @@
 .chat .lkh-song-ve { display: none; }
 .lkh-ics { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .lkh-ics-nhac { font-size: 14px; color: var(--color-muted); }
+.lkh-cho { min-height: 100vh; }   /* giữ chỗ lúc chờ /api/tinh_nang — chân trang không bị đẩy */
