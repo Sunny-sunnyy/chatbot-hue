@@ -393,6 +393,15 @@ def test_numbers_must_come_from_snippets(text, loi):
     assert tw.kiem_muc_web(text, SO_SO, luu_tru=False) == loi
 
 
+def test_numbers_typed_in_question_pass_but_money_stays_strict():
+    # (A 14/11 tối) năm / ngày người dùng gõ được nhắc lại; số model tự thêm vẫn chặn; tiền người dùng gõ vẫn phải có trong đoạn trích
+    hoi = "Lễ hội tháng 6/2026 ở Huế có gì, vé 300.000đ phải không?"
+    assert tw.kiem_muc_web("Chưa xác minh được lịch tháng 6/2026 [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == []
+    assert tw.kiem_muc_web("Chưa xác minh được lịch tháng 6/2026 [w1].", SO_SO, luu_tru=False) == ["so_ngoai_trich"]
+    assert tw.kiem_muc_web("Lễ hội 2026 có 39 tiết mục [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == ["so_ngoai_trich"]
+    assert tw.kiem_muc_web("Vé 300.000đ [w1].", SO_SO, luu_tru=False, cau_hoi=hoi) == ["tien_ngoai_trich"]
+
+
 def test_number_rule_keeps_money_and_realtime_codes_single():
     assert tw.kiem_muc_web("Vé tháng 250.000đ [w1].", SO, luu_tru=False) == ["tien_ngoai_trich"]   # tiền bịa: chỉ mã tiền
     assert tw.kiem_muc_web("Hôm nay mở 9h [w1].", SO_SO, luu_tru=False, thoi_gian_thuc=True) == ["so_thoi_gian_thuc"]  # giữ đường "chưa xác minh"
