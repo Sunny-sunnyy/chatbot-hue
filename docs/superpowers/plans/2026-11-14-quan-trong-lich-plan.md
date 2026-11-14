@@ -1,6 +1,6 @@
 # Plan (mức nhẹ): quán ăn gợi ý trong lịch bản 2 — C
 
-Cập nhật: 16:26 14/11/2026 (C). Đếm trước khi xây **đạt**: `report_agent/2026-11-12_ra_khoang_cach/c_dem_truoc_khi_xay.md` (2) — 95,2 % bữa có ≥ 2 quán cùng cụm (kho + OSM), 74,7 % chỉ quán kho.
+Cập nhật: 16:26 14/11/2026 (C). Đếm trước khi xây **đạt** (số sửa 16:28 14/11/2026): `report_agent/2026-11-12_ra_khoang_cach/c_dem_truoc_khi_xay.md` (2) — **74,7 %** bữa có ≥ 2 quán cùng cụm (kho + OSM), **33,5 %** chỉ quán kho (quán kho chỉ có ở 3 cụm trung tâm; Thủy Xuân / Kim Long chỉ có OSM). Bản đầu ghi 95,2 / 74,7 % là sai (đếm nhầm 14 dòng OSM / dữ liệu mở là quán kho).
 Theo chốt của User 13/11: quán cho lịch lấy từ **bảng JSON riêng** (quán kho đứng trước, OSM lấp chỗ), dòng quán **do code viết**, không Qdrant, không vào kho chính.
 Mức nhẹ: ≤ 0,05 USD, không đổi kiến trúc (cùng khuôn với "nơi ở gợi ý" đã chạy) ⇒ A đọc rồi duyệt, một review cả nhánh.
 
@@ -16,7 +16,7 @@ Cách hiện mỗi quán:
 - Cụm không đủ 1 quán ⇒ không có dòng. Không đoán, không lấy quán cụm khác.
 
 ## Đổi gì
-- `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (private): gộp 42 quán kho có toạ độ + 428 quán OSM trong cụm. Mỗi quán: tên, loại, cụm, toạ độ, nguồn (mã bài kho | link OSM). Dựng bằng script từ hai bảng có sẵn, không gõ tay.
+- `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (private): gộp 28 quán kho có toạ độ + 4 quán dữ liệu mở thành phố (nhãn riêng của nguồn đó) + 428 quán OSM trong cụm. Mỗi quán: tên, loại, cụm, toạ độ, nguồn (mã bài kho | link OSM). Dựng bằng script từ hai bảng có sẵn, không gõ tay.
 - `backend/llm/quan_lich.py` (mới):
   - **nạp + kiểm lúc khởi động** (chặn tên > 80 ký tự / ký tự điều khiển / link trong tên — như chốt 13/11);
   - **chọn quán:** ≤ 2 quán cùng cụm cho mỗi bữa, gần điểm nhất theo toạ độ, quán kho trước, không lặp một quán trong cả chuyến;

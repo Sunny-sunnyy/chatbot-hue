@@ -19,12 +19,14 @@ A duyệt cả hai lượt đếm, ngưỡng ghi trước trong tin của C. Ti�
   - Bữa trưa = cụm của điểm cuối buổi sáng; bữa tối = cụm của điểm cuối buổi chiều.
   - Script: `data/dem_quan_lich_2026-11-14/dem.py`; kết quả: `ket_qua.json`.
 - **Nguồn quán:**
-  - (a) bài kho có toạ độ đã gán cụm (`data/sua_kho_2026-11-12_an_gan/quan_theo_cum.json`, 42 quán);
+  - (a) quán kho có toạ độ đã gán cụm (`data/sua_kho_2026-11-12_an_gan/quan_theo_cum.json`). **Sửa 16:28 14/11/2026 (C tự bắt):** file này trộn 3 nguồn ⇒ chỉ **28** dòng `nguon == "kho"` là quán kho (bản đầu đếm cả 42 dòng là kho — sai). 4 dòng dữ liệu mở thành phố tính riêng; 10 dòng OSM bỏ, vì đã có trong bảng (b).
   - (b) bảng OpenStreetMap riêng cho lịch (`data/osm_quan_2026-11-12/bang_quan_osm_v1.json`, 428 quán trong cụm). Đây là bảng User chốt 13/11: JSON riêng, dòng do code viết, nhãn "chưa kiểm".
-- **Kết quả** (bữa có ≥ 2 quán cùng cụm):
-  - chỉ quán kho: **74,7 %**;
-  - kho + OSM: **95,2 %** (ngưỡng ≥ 50 %).
+- **Kết quả** (bữa có ≥ 2 quán cùng cụm; số đã sửa):
+  - chỉ quán kho: **33,5 %**;
+  - kho + OSM: **74,7 %** (ngưỡng ≥ 50 % ⇒ vẫn đạt); thêm dữ liệu mở: 74,7 %.
+  - Bản đầu ghi 74,7 % / 95,2 % là sai.
 - **Chỗ yếu:**
-  - cụm "đông — đầm phá, biển" chiếm 20 % số bữa, nhưng chỉ có 1 quán kho + 1 quán OSM;
-  - cụm "nam xa" (Bạch Mã…) có 1.080 bữa, 0 quán;
-  - cụm Kinh thành có 5 quán kho (OSM có 103).
+  - quán kho chỉ có ở 3 cụm trung tâm: bờ nam 22, Kinh thành 5, An Cựu 1;
+  - Thủy Xuân (27 % số bữa) và Kim Long chỉ có quán OSM (16 và 4 quán);
+  - "đông — biển, đầm phá" (20 % số bữa) có 1 quán OSM ⇒ không đủ 2 quán; "nam xa" 0 quán.
+  - ⇒ Ngoài trung tâm, quán gợi ý gần như toàn là quán OSM "chưa kiểm".
