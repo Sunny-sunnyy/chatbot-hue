@@ -1,6 +1,6 @@
 # Bài 1 — Cuốn sổ tay: kho dữ liệu
 
-*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · thêm ghi chú: ngày 14/11 kho có thêm 12 bài qua ba lần ghi, nay 216 bài (bài 22); số 204 trong bài là lúc viết 11/11.*
+*Cập nhật lần cuối: 18:06, ngày 14/11/2026 · thêm ghi chú: ngày 14/11 kho có thêm 20 bài qua bốn lần ghi, nay 224 bài (bài 22); số 204 trong bài là lúc viết 11/11.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -29,7 +29,7 @@ Kho của hue_rag chính là cuốn sổ đó.
 
 ## Kho gồm những gì
 
-Kho có **204 bài viết tiếng Việt** (lúc viết bài này, 11/11; ngày 14/11 thêm 12 bài nữa thành **216**, xem bài 22), mỗi bài là **một file Markdown**, chia làm năm thư mục theo chủ đề:
+Kho có **204 bài viết tiếng Việt** (lúc viết bài này, 11/11; ngày 14/11 thêm 20 bài nữa thành **224**, xem bài 22), mỗi bài là **một file Markdown**, chia làm năm thư mục theo chủ đề:
 
 | Chủ đề (thư mục) | Số bài | Gồm |
 |---|---:|---|
