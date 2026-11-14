@@ -1177,14 +1177,13 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
     if flags.sua_lich_v2 and trace.lich_luu is not None and not trace.bieu_mau and generator is not None:
         from llm import len_ke_hoach  # import muộn: module đó import lõi này
-        from llm.sua_lich_v2 import co_tu_sua
-        if trace.sua_chon is not None or co_tu_sua(query):
-            yield "status", {"stage": "sua_lich"}
-            kq = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags)
-            if kq is not None:  # có hành động áp được / thẻ chọn ⇒ lượt sửa; không ⇒ đường trả lời thường (gồm định tuyến khẩn cấp)
-                async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
-                    yield event
-                return
+        # cuộc có lịch đã lưu ⇒ mọi lượt qua lần "hiểu ý sửa" (cổng từ khoá đã thử và bỏ — `sua_lich_v2.py`)
+        yield "status", {"stage": "sua_lich"}
+        kq = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags)
+        if kq is not None:  # có hành động áp được / thẻ chọn ⇒ lượt sửa; không ⇒ đường trả lời thường (gồm định tuyến khẩn cấp)
+            async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
+                yield event
+            return
     if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
         # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):

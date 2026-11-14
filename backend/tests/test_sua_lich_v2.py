@@ -59,9 +59,7 @@ def test_change_days_keeps_points_that_still_fit():
     assert all(s._vi_tri(kq["khung"]).get(j) == v for j, v in giu.items()) or v2.kiem_khung_v2(B, kq["khung"]) == []
 
 
-def test_edit_words_gate_and_intent_message():
-    assert s.co_tu_sua("Bỏ lăng Tự Đức đi") and s.co_tu_sua("Ngày 2 cho Bao Vinh sang buổi chiều") and s.co_tu_sua("Mình không muốn đi chùa nữa")
-    assert not s.co_tu_sua("Lăng Tự Đức mở cửa mấy giờ?") and not s.co_tu_sua("Cảm ơn nhé") and not s.co_tu_sua("Bị cướp điện thoại thì làm sao")
+def test_intent_message_and_name_matching():
     k, luu = _lich(n=1)
     tin = s.tin_nhan_hieu(B, luu, "  bỏ điểm đầu  ")
     assert tin.endswith("Câu người dùng: bỏ điểm đầu") and "Ngày 1" in tin

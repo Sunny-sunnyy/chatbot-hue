@@ -97,6 +97,7 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
     giu_cau: dict[str, str] = {}
     if sua:
         lich["thay_doi"] = sua["thay_doi"]  # giao diện H1: khối "Đã đổi / Không đổi được" đầu thẻ (câu do code)
+        lich["sua_ap"] = sua["sua_ap"]  # dữ liệu code (id, mã luật) — bộ đo so nhãn; không vào tin nhắn gửi model
         for m in lt2.moi_muc(lich):  # câu cũ đã kiểm của cùng điểm ⇒ giữ, chỉ đổi mã nguồn sang số mới của điểm đó
             cu = sua["cau_cu"].get(m["id_diem"])
             if cu and m["nguon"] is not None:
@@ -240,11 +241,12 @@ async def stream_sua(query: str, retrieval_service, context_builder, generator, 
     if kq["the"] is not None:
         trace.answer = f"Bạn muốn thay {kq['the']['ten_cu']} bằng điểm nào?"
         trace.fixed_outcome = "sua_the"
-        yield "sua_the", {**kq["the"], "thay_doi": sl.thay_doi(bang, kq)}
+        yield "sua_the", {**kq["the"], "thay_doi": sl.thay_doi(bang, kq), "sua_ap": sl.sua_ap(kq)}
         yield "delta", trace.answer
         return
     luu = trace.lich_luu
-    sua = {"khung": kq["khung"], "ngay_di": luu["ngay_di"], "thay_doi": sl.thay_doi(bang, kq), "cau_cu": dict(luu.get("cau") or {})}
+    sua = {"khung": kq["khung"], "ngay_di": luu["ngay_di"], "thay_doi": sl.thay_doi(bang, kq), "cau_cu": dict(luu.get("cau") or {}),
+           "sua_ap": sl.sua_ap(kq)}
     async for event in stream_v2(query, retrieval_service, context_builder, generator, trace, flags, _today_v2(flags, trace), sua):
         yield event
     trace.lich_v2["loai"] = kq["luu"]["loai"]

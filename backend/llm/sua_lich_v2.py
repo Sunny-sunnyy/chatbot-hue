@@ -7,8 +7,6 @@ không SDK. Trạng thái lưu của cuộc (`luu`): {tham_so, ngay_di, mua, khu
 """
 import copy
 import datetime as dt
-import re
-import unicodedata
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -34,6 +32,8 @@ class HanhDong(BaseModel):
     so_ngay: int | None = Field(default=None, ge=1, le=5)
     kieu_di: Literal["nhe_nhang", "can_bang", "kham_pha"] | None = None
     so_thich: list[SoThich] | None = Field(default=None, max_length=2)
+    tre_em: int | None = Field(default=None, ge=0, le=6)  # "đi cùng trẻ nhỏ" ⇒ ≥ 1; "không có trẻ em" ⇒ 0
+    lon_tuoi: bool | None = None  # "có người lớn tuổi"
 
 
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
@@ -145,7 +145,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
         vt = _vi_tri(khung)
         i = khop_ten(bang, h.ten)
         if h.loai in ("doi_so_ngay", "doi_tham_so"):
-            moi = {"so_ngay": h.so_ngay, "kieu_di": h.kieu_di, "so_thich": None if h.so_thich is None else tuple(h.so_thich)}
+            moi = {"so_ngay": h.so_ngay, "kieu_di": h.kieu_di, "so_thich": None if h.so_thich is None else tuple(h.so_thich),
+                   "tre_em": h.tre_em, "lon_tuoi": h.lon_tuoi}
             doi = {f: v for f, v in moi.items() if v is not None and v != getattr(ts, f)}  # chỉ trường khác giá trị đang dùng
             if not doi:
                 continue
@@ -242,6 +243,10 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
 
 
 def _gia_tri(f: str, v) -> str:
+    if f == "tre_em":
+        return f"{v} trẻ em"
+    if f == "lon_tuoi":
+        return "có" if v else "không"
     if f == "so_ngay":
         return f"{v} ngày"
     if f == "kieu_di":
@@ -263,7 +268,8 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}.")
         elif t == "thay_diem":
             out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}.")
-    out += [f"Đã đổi {({'so_ngay': 'số ngày', 'kieu_di': 'kiểu đi', 'so_thich': 'sở thích'})[f]}: {_gia_tri(f, cu)} → {_gia_tri(f, moi)}."
+    out += [f"Đã đổi {({'so_ngay': 'số ngày', 'kieu_di': 'kiểu đi', 'so_thich': 'sở thích', 'tre_em': 'số trẻ em', 'lon_tuoi': 'người lớn tuổi'})[f]}: "
+            f"{_gia_tri(f, cu)} → {_gia_tri(f, moi)}."
             for f, cu, moi in kq["doi_truong"]]
     dong = [{"cau": c, "duoc": True} for c in out]
     dong += [{"cau": CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"]), "duoc": False} for k in kq["khong_doi"]]
@@ -271,14 +277,8 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
     return dong
 
 
-# Chỉ gọi lần "hiểu ý sửa" khi cuộc đang có lịch đã lưu VÀ câu có từ chỉ việc sửa (như cách gắn công cụ thời tiết / ngày) ⇒ lượt chat thường không
-# tốn thêm lần gọi nào. Từ thiếu ⇒ câu đi đường trả lời thường (lịch không đổi — bộ chuỗi đo được chỗ sót).
-TU_SUA = re.compile(r"\b(bỏ|bớt|thêm|thay|đổi|dời|chuyển|đưa|cho\s+\S+\s+sang|sang buổi|không (muốn|cần|đi)|khỏi|xoá|xóa|kéo dài|rút|giảm|tăng|"
-                    r"nhẹ (hơn|nhàng)|dày hơn|ít (điểm|đi bộ)|nhiều (điểm|hơn)|thôi)\b", re.IGNORECASE)
-
-
-def co_tu_sua(cau: str) -> bool:
-    return bool(TU_SUA.search(unicodedata.normalize("NFC", cau)))
+# Cổng từ khoá đã thử và BỎ (đo 14/11, `tools/do_cong_tu_sua.py`): bộ chuỗi đã thấy 17 / 19 câu sửa qua cổng, câu diễn đạt lạ 3 / 10 (sàn A
+# đặt 8 / 10) ⇒ khi cuộc có lịch đã lưu, lượt nào cũng qua lần "hiểu ý sửa" (rỗng ⇒ đường trả lời thường).
 
 
 def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
@@ -291,3 +291,9 @@ def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
             if ten:
                 dong.append(f"- Ngày {ng['ngay']} · {({'sang': 'sáng', 'chieu': 'chiều', 'toi': 'tối'})[b]}: {'; '.join(ten)}")
     return "\n".join(dong) + "\n\nCâu người dùng: " + cau.strip()
+
+
+def sua_ap(kq: dict) -> dict:
+    """Dữ liệu code của lượt sửa (id điểm, mã luật — không chữ): cho bộ đo so với nhãn và cho log."""
+    return {"da_ap": kq["da_ap"], "doi_truong": [[f, cu, moi] for f, cu, moi in kq["doi_truong"]],
+            "khong_doi": kq["khong_doi"], "chua_lam": kq["chua_lam"], "the": None if kq["the"] is None else kq["the"]["cu"]}
