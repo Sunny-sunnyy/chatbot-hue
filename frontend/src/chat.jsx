@@ -399,7 +399,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
       {turn.lichV2 && turn.phase !== "error" && (
         <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} />
       )}
-      {turn.text && !turn.lichV2 && turn.phase !== "error" && (
+      {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
         <div className="bubble">
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
