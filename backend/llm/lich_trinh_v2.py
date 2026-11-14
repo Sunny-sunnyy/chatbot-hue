@@ -463,6 +463,12 @@ _NOI_VE_TAI_LIEU = re.compile(r"(?:theo|trong) tài liệu|tài liệu (?:không
                               r"|nội dung (?:chỉ|không)|chỉ (?:mô tả|nói về)|thông tin (?:về .{0,40} )?(?:không|chưa) có", re.IGNORECASE)
 
 
+def co_suat_dien(diem: dict) -> bool:
+    """Điểm tối là buổi diễn (loại lễ hội – nghệ thuật) ⇒ cần nhãn "kiểm lịch diễn" khi chưa có ngày đi. Chợ / phố đêm không có suất diễn ⇒ không
+    nhãn (lượt thật 14/11: chợ bị gắn nhãn này). Điểm chỉ mở vài tối trong tuần không được xếp khi chưa có ngày (`dung_thu`) nên không cần nhãn khác."""
+    return "le_hoi_nghe_thuat" in diem["loai"]
+
+
 def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
@@ -486,7 +492,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                             "nguon": nguon.get(id_), "anh": None,
                             "toa_do": list(toa_do[id_]) if toa_do and id_ in toa_do else None,
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
-                                    + (["kiem_lich_dien"] if toi and ngay_that is None else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
+                                    + (["kiem_lich_dien"] if toi and ngay_that is None and co_suat_dien(d) else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế")})
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,

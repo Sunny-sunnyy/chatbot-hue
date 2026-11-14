@@ -790,11 +790,17 @@ def test_notes_required_by_scoring_definition():
         assert "han_che" in ma
         bt = {j for j in v2.diem_ban_ngay(k) if b.theo_id[j]["bac_thang"] == "nhieu"}
         assert ma.count("bac_thang") == len(bt)
-    k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="can_bang"))
-    lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
-    toi = [m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi"]
-    assert toi and all("kiem_lich_dien" in m["nhan"] for m in toi)
-    assert "(kiểm lịch diễn trước khi đi)" in v2.ghep_chu(lich, {m["id_muc"]: "x [1]." for m in v2.moi_muc(lich)})
+    # không ngày đi ⇒ nhãn "kiểm lịch diễn" CHỈ cho điểm tối có suất diễn (lượt thật 14/11: chợ / phố đêm bị gắn nhãn này)
+    thay = {True: 0, False: 0}
+    for n, st in itertools.product(range(2, 6), [(), ("am_thuc",), ("le_hoi_nghe_thuat",), ("le_hoi_nghe_thuat", "am_thuc")]):
+        lich = v2.dung_lich(b, (k := v2.xep_v2(b, v2.ThamSoV2(n, kieu_di="can_bang", so_thich=st))), dict.fromkeys(v2.diem_v2(k), 1))
+        for m in (m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi"):
+            dien = v2.co_suat_dien(b.theo_id[m["id_diem"]])
+            assert ("kiem_lich_dien" in m["nhan"]) == dien
+            thay[dien] += 1
+            if dien:
+                assert "(kiểm lịch diễn trước khi đi)" in v2.ghep_chu(lich, {x["id_muc"]: "x [1]." for x in v2.moi_muc(lich)})
+    assert thay[True] and thay[False]  # bộ thử có cả điểm diễn lẫn chợ / phố đêm
     k = v2.xep_v2(b, v2.ThamSoV2(2, kieu_di="can_bang"), ngay_bat_dau=D(2026, 11, 21))
     lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
     assert not any("kiem_lich_dien" in m["nhan"] for ng in lich["ngay"] for m in ng["muc"])
