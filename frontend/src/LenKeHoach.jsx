@@ -79,9 +79,18 @@ const ANH_THICH = { di_tich: "dai_noi", am_thuc: "cho_dong_ba", thien_nhien: "ba
 const ANH_LICH = `${import.meta.env.BASE_URL}anh/lich/`;
 const SO_CHAM = { nhe_nhang: 2, can_bang: 3, kham_pha: 4 };
 
-// Cột phải: lượt lịch mới nhất của cuộc trò chuyện (cùng dữ liệu với khung trợ lý; không gọi API thêm). Chưa có ⇒ ô xem trước.
-function CotLich({ lichTurn, onEditPlan }) {
-  if (!lichTurn) {
+// Cột phải: lượt lịch mới nhất của cuộc trò chuyện (cùng dữ liệu với khung trợ lý). Chưa có ⇒ lịch MẪU có nhãn "Ví dụ" (User 14/11: trang trống
+// quá) — `/api/lich_mau` do chính bộ xếp dựng từ tổ hợp cố định, câu mỗi điểm do code; tải lỗi ⇒ ô xem trước chữ như cũ.
+let taiMau = null;
+function LichMau() {
+  const [mau, setMau] = useState(null);
+  useEffect(() => {
+    let song = true;
+    taiMau ??= fetch("/api/lich_mau").then(r => (r.ok ? r.json() : null)).catch(() => null);
+    taiMau.then(kq => { if (song) setMau(kq); });
+    return () => { song = false; };
+  }, []);
+  if (!mau?.lich) {
     return (
       <div className="lkh-trong">
         <p className="lkh-trong-h">Lịch của bạn sẽ hiện ở đây</p>
@@ -90,6 +99,18 @@ function CotLich({ lichTurn, onEditPlan }) {
       </div>
     );
   }
+  return (
+    <div className="lkh-mau" aria-label="Lịch ví dụ">
+      <p className="lkh-mau-dau"><span className="lkh-mau-nhan">Ví dụ</span> Lịch 2 ngày · 2 người lớn · thích di tích — bộ xếp lịch tạo sẵn.
+        Lịch của bạn có thêm câu tả từng điểm lấy từ kho, kèm nguồn.</p>
+      {/* ví dụ không có nút Sửa ⇒ bỏ đuôi "sai thì bấm Sửa" của dòng "Mình hiểu" */}
+      <LichV2 turn={{ key: "mau", lichV2: { ...mau.lich, minh_hieu: mau.lich.minh_hieu.replace(/\s*—\s*sai thì bấm Sửa\.?$/, ".") }, cauV2: mau.cau, phase: "mau" }} />
+    </div>
+  );
+}
+
+function CotLich({ lichTurn, onEditPlan }) {
+  if (!lichTurn) return <LichMau />;
   const t = lichTurn;
   const dangChay = !["done", "error", "stopped"].includes(t.phase);
   return (
