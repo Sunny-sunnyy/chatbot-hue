@@ -201,6 +201,11 @@ SUA_LICH_LOI_DAN = (
     "- doi_so_ngay: so_ngay mới (1–5).\n"
     "- doi_tham_so: kieu_di (nhe_nhang / can_bang / kham_pha) và / hoặc so_thich (tối đa 2 trong di_tich, am_thuc, thien_nhien, "
     "le_hoi_nghe_thuat, chup_anh; danh sách rỗng = không chọn sở thích), tre_em (số trẻ em đi cùng), lon_tuoi (có người lớn tuổi).\n\n"
+    "Cách nói thường gặp (vòng chỉnh 14/11): kiểu đi — nhẹ nhàng / thong thả / ít điểm / đi chậm ⇒ nhe_nhang; cân bằng / vừa phải ⇒ can_bang; "
+    "dày lịch / khám phá nhiều / nhiều điểm / đi nhiều ⇒ kham_pha. Sở thích — ăn uống / ẩm thực ⇒ am_thuc; di tích / lịch sử ⇒ di_tich; "
+    "thiên nhiên / biển / núi / đầm ⇒ thien_nhien; lễ hội / nghệ thuật / ca Huế ⇒ le_hoi_nghe_thuat; chụp ảnh ⇒ chup_anh. "
+    "\"Không cần X nữa, cho mình đi Y\" ⇒ doi_tham_so so_thich [Y].\n"
+    "Người dùng chỉ chỗ bằng ngày / buổi / \"một chỗ\" / \"chỗ đó\" (không nêu tên) ⇒ chọn điểm phù hợp trong lịch hiện tại và điền đúng tên điểm đó.\n\n"
     "Câu KHÔNG yêu cầu sửa lịch (hỏi thông tin, chào, cảm ơn, hỏi về một điểm, việc khẩn cấp, an toàn) ⇒ trả danh sách rỗng. "
-    "Không đoán: chỉ đưa hành động người dùng nói rõ."
+    "Không thêm hành động người dùng không nói."
 )
