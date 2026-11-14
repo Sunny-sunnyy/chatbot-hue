@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ANH_DAU_TRANG } from "./anh.js";
-import { Anh } from "./chung.jsx";
+import { Anh, LINH_VUC, soBai } from "./chung.jsx";
 import "./gt.css";
 
 // Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026; mẫu `data/ui_mau_2026-11-14/h1/gioi_thieu.html`, bàn nhóm C / E vòng 1).
@@ -24,7 +24,7 @@ function Ic({ d }) {
   );
 }
 
-export function GioiThieu({ tinhNang, daCo, muc }) {
+export function GioiThieu({ tinhNang, daCo, bai, muc }) {
   const banDo = !!tinhNang?.ban_do_lich, anh = !!tinhNang?.anh;
   // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục có id đó (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash).
   // chưa biết cờ ⇒ chưa vẽ thân trang (thẻ "làm được gì" theo cờ nở ra lúc cờ về ⇒ đẩy cả trang: CLS 0,17–0,66 đo ở 390, 14/11) và chưa cuộn
@@ -75,6 +75,19 @@ export function GioiThieu({ tinhNang, daCo, muc }) {
             ))}
           </ul>
         </section>
+
+        {/* dải "kho tư liệu": số bài đếm từ /api/kham_pha (không gõ tay) — khác khối ảnh 5 chủ đề của trang chủ; lỗi tải danh sách ⇒ không hiện */}
+        {bai && (
+          <section className="gt-kho hien" aria-labelledby="gt-kho-h">
+            <p className="gt-kho-so"><span className="gt-kho-n">{bai.length}</span> <span id="gt-kho-h">bài trong kho tư liệu về Huế</span></p>
+            <p className="gt-kho-p">Trợ lý trả lời từ các bài này; mỗi ý có số [n] dẫn về đúng bài gốc. Bấm một chủ đề để đọc.</p>
+            <ul className="gt-kho-lv">
+              {LINH_VUC.map(lv => (
+                <li key={lv.id}><a href={`#/kham-pha/${lv.id}`}>{lv.ten} <b>{soBai(bai, lv.id)}</b></a></li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="gt-khoi gt-buoc-khoi" aria-labelledby="gt-buoc">
           <h2 id="gt-buoc" className="khoi-h">Một câu hỏi đi qua ba bước</h2>

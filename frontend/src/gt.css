@@ -28,6 +28,17 @@
 .gt-the h3 { font-size: 19px; font-weight: 600; line-height: 1.35; }
 .gt-the p { margin-top: 6px; color: var(--color-muted); }
 
+/* dải kho tư liệu: nền sông sâu như đầu trang ⇒ một điểm nhấn tối giữa các khối sáng */
+.gt-kho { margin-top: 64px; background: var(--color-river); color: var(--color-on-accent); border-radius: 24px; padding: 40px 44px; }
+.gt-kho-so { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; font-size: 22px; font-weight: 600; }
+.gt-kho-n { font-family: var(--font-serif); font-size: 72px; line-height: 1; font-weight: 600; }
+.gt-kho-p { margin-top: 10px; max-width: 62ch; color: var(--color-river-muted); }
+.gt-kho-lv { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
+.gt-kho-lv a { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35);
+  color: inherit; text-decoration: none; }
+.gt-kho-lv a:hover, .gt-kho-lv a:focus-visible { background: rgba(255, 255, 255, .12); }
+.gt-kho-lv b { font-weight: 700; color: var(--color-river-muted); }
+
 .gt-song { display: block; width: 100%; height: 56px; margin: -6px 0 -10px; overflow: visible; }
 .gt-song path { fill: none; stroke: var(--color-accent); stroke-width: 3; stroke-linecap: round; opacity: .6; stroke-dasharray: 1; stroke-dashoffset: 0; }
 .gt-buoc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
@@ -49,6 +60,8 @@
   .gt-dau { min-height: 360px; }
   .gt-dau::before { background: linear-gradient(0deg, rgba(10, 61, 64, .97) 0, rgba(10, 61, 64, .9) 55%, rgba(10, 61, 64, .4) 100%); }
   .gt-lam, .gt-buoc, .gt-doi { grid-template-columns: 1fr; }
+  .gt-kho { padding: 28px 22px; border-radius: 18px; }
+  .gt-kho-n { font-size: 56px; }
   .gt-song { display: none; }
   .gt-khoi { padding-top: 48px; }
 }
