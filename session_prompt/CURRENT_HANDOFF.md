@@ -3,6 +3,14 @@
 Cập nhật: 17:40 14/11/2026 (A, kết phiên 14/11). Trước: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
 
+## PHIÊN TỐI 14/11 (mở 17:45; A ghi 17:46 14/11/2026)
+
+- Terminal: A `hue-rag-fb` · B `hue-rag-62` · C `hue-rag-eb` · E `hue-rag-1f` — cả bốn Claude Code, trực tiếp (B / C / E tự báo).
+- **Quyền (User chọn "như 14/11", A ghi 17:46 14/11/2026):** A tự điều phối, A commit / push, B / C / E push nhánh riêng, tự tra / cào / ghi kho / ingest, không hỏi khi User vắng; **tiền không trần cứng nhưng dùng hiệu quả** (Phase 9 ≈ 6,35 ước). Hết hạn cuối phiên.
+- Giao: **B** mục 2 dưới (ghi kho 4: 8 quán + dòng nguồn giờ Đại Nội ⇒ dựng chỉ mục ⇒ đo W70) · **C** chờ B dựng xong ⇒ bảng quán lịch + đếm lại % bữa có quán kho ⇒ nhánh ⇒ E review · **E** sửa 2 lỗi ảnh C bắt ở review (ảnh "đồi Thiên An" thật là hồ Thủy Tiên ⇒ `chu_thich` hoặc đổi ảnh; 2 ảnh web lịch trang nguồn chỉ là trang chủ tên miền ⇒ tìm trang nguồn đúng), 0 USD, nhánh riêng ⇒ C review; rồi review nhánh bảng quán của C. Server 8010 không chạy (0 cổng 80xx) ⇒ B dựng chỉ mục không cần tắt gì; khi B dựng: không ai chạy lượt có phí / server / Qdrant.
+- **User duyệt W73–W75 (17:48 14/11/2026)** ⇒ đã áp (worktree nhánh mới + `|| exit 1`; kiểm server đích trước lượt có phí + sàn tốc độ từ ≥ 5 lượt sạch; bài học thêm 1–2 số ⇒ tự đối chiếu; ảnh chụp sau nhánh cuối; nhánh chỉ test ⇒ merge thẳng). User sắp vắng ⇒ không mở hộp hỏi; để khi User về: đợt agent kế (bàn nhóm trước), lệnh dọn nhánh (`!`), 4 worktree AGY.
+- Lệch: 4 worktree antigravity-cli (`~/.gemini/antigravity-cli/.../worktrees/subagent-Monuments-Reviewer-*`, `c725987`) trong `git worktree list` — của User dùng AGY trước đây; không ai đụng, A hỏi User khi dọn nhánh.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 17:40 14/11/2026, KẾT PHIÊN 14/11 — User: "việc còn lại làm ở phiên sau")
 
 **Phiên 14/11 đã kết** (mở 09:42; mở lại 2 lần trong ngày). Lần cuối: A `hue-rag-ad` · B `hue-rag-6b` · C `hue-rag-c1` · E `hue-rag-14`, cả bốn Claude Code (Opus 5.5), trực tiếp. **Quyền phiên HẾT HẠN** ⇒ A mới hỏi lại User một câu (14/11 có: A tự điều phối, A commit / push, B / C / E push nhánh riêng, tiền không trần cứng nhưng dùng hiệu quả, tự tra / cào / ghi kho / ingest, không hỏi khi User vắng). Mỗi session: đọc mục đầu `sessions/STATUS_<X>.md` "PHIÊN SAU ĐỌC TRƯỚC". D (học cùng User): chưa mở phiên nào hôm nay; mở khi User muốn hiểu một việc — gợi ý bài để giảng: `bai_hoc/25` (trợ lý làm việc thật), `bai_hoc/22` lần 3 (ghi kho theo câu chạm).
