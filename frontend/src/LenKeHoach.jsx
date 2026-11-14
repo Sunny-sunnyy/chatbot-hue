@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { BIEU_MAU } from "./chung.jsx";
+import { GP } from "./anh.js";
+import { LichV2 } from "./LichV2.jsx";
+import { Feedback } from "./chat.jsx";
+import "./lkh.css";
 
 export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
   const [chon, setChon] = useState(prefill || {});
@@ -71,7 +75,43 @@ function SoDem({ id, nhan, giaTri, min, max, onDoi }) {
   );
 }
 
-export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit }) {
+// H1 (14/11): ô "Thích gì" có ảnh (bảng ảnh của C, Wikimedia Commons; ghi công ở mục thu gọn dưới ô).
+const ANH_THICH = { di_tich: "dai_noi", am_thuc: "cho_dong_ba", thien_nhien: "bach_ma", le_hoi_nghe_thuat: "duyet_thi_duong", chup_anh: "pha_tam_giang" };
+const CONG_THICH = [["Di tích", "Lưu Ly", "Phạm vi công cộng", "Dien_Thai_Hoa.jpg"],
+  ["Ẩm thực", "Chainwit", "CC BY 4.0", "Dong_Ba_Market_(Hue)_-_Ch%E1%BB%A3_%C4%90%C3%B4ng_Ba_Hu%E1%BA%BF_(July_2024)_-_img_02.jpg"],
+  ["Thiên nhiên", "Andre Hospers", "CC BY 4.0", "Bach_Ma_Natinal_Park_Franse_villa.jpg"],
+  ["Lễ hội, nghệ thuật", "Francisco Anzola", "CC BY 2.0", "Duy%E1%BB%87t_Th%E1%BB%8B_%C4%90%C6%B0%E1%BB%9Dng_(ho%C3%A0ng_th%C3%A0nh_Hu%E1%BA%BF).jpg"],
+  ["Chụp ảnh", "Christophe95", "CC BY-SA 4.0", "Aerial_view_of_the_Tam_Giang_Lagoon.jpg"]];
+const ANH_LICH = `${import.meta.env.BASE_URL}anh/lich/`;
+const SO_CHAM = { nhe_nhang: 2, can_bang: 3, kham_pha: 4 };
+
+// Cột phải: lượt lịch mới nhất của cuộc trò chuyện (cùng dữ liệu với khung trợ lý; không gọi API thêm). Chưa có ⇒ ô xem trước.
+function CotLich({ lichTurn, onEditPlan }) {
+  if (!lichTurn) {
+    return (
+      <div className="lkh-trong">
+        <p className="lkh-trong-h">Lịch của bạn sẽ hiện ở đây</p>
+        <ul><li>Mỗi ngày chia sáng · chiều · tối, có giờ gợi ý</li><li>Mỗi điểm có một câu tả lấy từ bài trong kho, kèm nguồn</li>
+          <li>Ghi chú mùa mưa, thời tiết (khi có ngày đi trong 7 ngày tới)</li></ul>
+      </div>
+    );
+  }
+  const t = lichTurn;
+  const dangChay = !["done", "error", "stopped"].includes(t.phase);
+  return (
+    <div className="lkh-lich">
+      {!t.lichV2 && t.progress?.length > 0 && (
+        <ul className="progress" aria-label="Các bước xếp lịch">{t.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
+      )}
+      {!t.lichV2 && dangChay && <span className="lkh-go" role="status" aria-label="đang xếp lịch"><i /><i /><i /></span>}
+      {t.error && <p className="loi" role="alert">{t.error}</p>}
+      {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} />}
+      {t.phase === "done" && t.turnId && <Feedback turnId={t.turnId} />}
+    </div>
+  );
+}
+
+export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, onEditPlan }) {
   const [chon, setChon] = useState(() => tuTruong(prefill));
   useEffect(() => { if (prefill) setChon(tuTruong(prefill)); }, [prefill]);
   const hien = new Set(cauHinh.o_hien);
@@ -105,10 +145,15 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit }) {
   }
 
   return (
-    <div className="khung khoi-trang">
-      <p className="vet"><a href="#/">Trang chủ</a> / Lên kế hoạch</p>
-      <h1 className="trang-h">Lên kế hoạch đi Huế</h1>
-      <p className="khoi-p">Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch thì quay lại đây điền lại.</p>
+    <>
+    <section className="lkh-dau">
+      <div className="khung">
+        <p className="vet"><a href="#/">Trang chủ</a> / Lên kế hoạch</p>
+        <h1 className="trang-h vao" style={{ "--n": 0 }}>Lên kế hoạch đi Huế</h1>
+        <p className="khoi-p vao" style={{ "--n": 1 }}>Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch thì điền lại biểu mẫu.</p>
+      </div>
+    </section>
+    <div className="khung lkh-cot">
       <form className="lc" onSubmit={e => { e.preventDefault(); if (!pending) onSubmit(truong, tomTat); }}>
         {(hien.has("nguoi_lon") || hien.has("tre_em") || hien.has("lon_tuoi")) && (
           <fieldset className="lc-nhom">
@@ -138,8 +183,11 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit }) {
             <legend className="lc-ten">Đi kiểu nào? (không bắt buộc)</legend>
             <div className="lc-chip">
               {KIEU_DI.map(([v, nhan, giai]) => (
-                <button key={v} type="button" className="chip chip-sm" aria-pressed={chon.kieu_di === v}
-                        onClick={() => doi("kieu_di", chon.kieu_di === v ? null : v)}>{nhan} — {giai}</button>
+                <button key={v} type="button" className="chip chip-sm lkh-kieu" aria-pressed={chon.kieu_di === v}
+                        onClick={() => doi("kieu_di", chon.kieu_di === v ? null : v)}>
+                  <span className="lkh-cham" aria-hidden="true">{Array.from({ length: SO_CHAM[v] }, (_, i) => <i key={i} />)}</span>
+                  <b>{nhan}</b> <span>{giai}</span>
+                </button>
               ))}
             </div>
             {chon.kieu_di && chon.kieu_di !== "nhe_nhang" && (chon.tre_em > 0 || chon.lon_tuoi) && (
@@ -152,14 +200,25 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit }) {
             <legend className="lc-ten">Thích gì? {cauHinh.so_thich_toi_da > 1 ? `(tối đa ${cauHinh.so_thich_toi_da})` : "(chọn một)"}</legend>
             <div className="lc-chip">
               {SO_THICH.filter(([v]) => cauHinh.so_thich_hien.includes(v)).map(([v, nhan]) => (
-                <button key={v} type="button" className="chip chip-sm" aria-pressed={chon.so_thich.includes(v)} onClick={() => bamSoThich(v)}>{nhan}</button>
+                <button key={v} type="button" className="chip chip-sm lkh-thich" aria-pressed={chon.so_thich.includes(v)} onClick={() => bamSoThich(v)}>
+                  {ANH_THICH[v] && <img src={`${ANH_LICH}${ANH_THICH[v]}.jpg`} alt="" loading="lazy" />}<span>{nhan}</span>
+                </button>
               ))}
             </div>
+            <details className="lkh-cong">
+              <summary>Nguồn ảnh của các ô</summary>
+              <ul>{CONG_THICH.map(([o, tg, gp, f]) => (
+                <li key={o}>{o}: {tg} · {GP[gp] ? <a href={GP[gp]} target="_blank" rel="noopener noreferrer">{gp}</a> : gp} ·{" "}
+                  <a href={`https://commons.wikimedia.org/wiki/File:${f}`} target="_blank" rel="noopener noreferrer">Commons</a> · đã thu nhỏ</li>
+              ))}</ul>
+            </details>
           </fieldset>
         )}
         <p className="lc-tom" aria-live="polite">{tomTat}</p>
         <button className="nut nut-chinh lc-nut" type="submit" disabled={pending}>{pending ? "Trợ lý đang trả lời…" : `Xếp lịch ${soNgay} ngày`}</button>
       </form>
+      <CotLich lichTurn={lichTurn} onEditPlan={onEditPlan} />
     </div>
+    </>
   );
 }

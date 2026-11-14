@@ -59,10 +59,13 @@ export default function App() {
     if (!onTroLy) setPanelOpen(true);
   }
 
+  // H1 (14/11, A chốt): biểu mẫu bản 2 ⇒ lịch hiện ngay cột phải trang Lên kế hoạch (cùng lượt trong cuộc trò chuyện) — không chuyển trang;
+  // biểu mẫu cũ (cờ bản 2 tắt) giữ đường cũ sang trang trợ lý
   function submitPlan(truong, summary) {
     chat.ask(CAU_BIEU_MAU, { truong, summary, bieuMau: true });
-    window.location.hash = "#/tro-ly";
+    if (!tinhNang.len_ke_hoach_v2) window.location.hash = "#/tro-ly";
   }
+  const lichTurn = [...chat.turns].reverse().find(t => t.bieuMau) || null;
 
   // `chon` = lựa chọn bộ xếp đã dùng (biểu mẫu cũ); `truong` = giá trị đã gửi — biểu mẫu bản 2 điền lại từ đây (server đổi giá trị mới về trường cũ)
   function editPlan(chon, truong) {
@@ -107,7 +110,8 @@ export default function App() {
         {route.page === "bai" && <Bai baiId={route.baiId} bai={bai} onAskAbout={askAbout} />}
         {route.page === "len-ke-hoach" && (
           tinhNang.len_ke_hoach_v2
-            ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
+            ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan}
+                            lichTurn={lichTurn} onEditPlan={editPlan} />
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} anh={tinhNang.anh} muc={route.muc} />}

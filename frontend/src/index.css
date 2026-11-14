@@ -40,8 +40,7 @@ a { color: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: -.01em; white-space: nowrap; }
 .brand-ngan { display: none; }
 .nav { display: flex; gap: 2px; margin-left: auto; }
-.nav-a { text-decoration: none; padding: 8px 12px; border-radius: 8px; font-size: 16px; font-weight: 500; white-space: nowrap; }
-.nav-a { color: #fff; border-radius: 999px; }
+.nav-a { text-decoration: none; padding: 8px 12px; border-radius: 999px; font-size: 16px; font-weight: 500; white-space: nowrap; color: #fff; }
 .nav-a:hover { background: rgba(255, 255, 255, .14); }
 .nav-a[aria-current="page"] { background: #fff; color: var(--color-river); }
 

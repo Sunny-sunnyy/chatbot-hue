@@ -108,7 +108,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
         </nav>
 
         <section className="khoi" aria-labelledby="kp-h">
-          <h2 id="kp-h" className="khoi-h">Khám phá theo chủ đề</h2>
+          <h2 id="kp-h" className="khoi-h chu-hien">Khám phá theo chủ đề</h2>
           <p className="khoi-p">Mỗi chủ đề là các bài trong kho mà trợ lý dùng để trả lời. Bấm để đọc cả bài.</p>
           <div className="tc-kham">
             {LINH_VUC.map((lv, i) => {
@@ -128,7 +128,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
       <div className="tc-dai-nen">
         <div className="khung">
           <section className="khoi" aria-labelledby="dn-h">
-            <h2 id="dn-h" className="khoi-h">Điểm nên đến</h2>
+            <h2 id="dn-h" className="khoi-h chu-hien">Điểm nên đến</h2>
             <p className="khoi-p">Một vài điểm trong kho — mỗi điểm có bài để đọc và có thể hỏi trợ lý thêm.</p>
             <div className="tc-dai-the">
               {DIEM.map((d, i) => (
@@ -167,7 +167,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
         )}
 
         <section className="khoi" aria-labelledby="tl-h">
-          <h2 id="tl-h" className="khoi-h">Trợ lý trả lời thế nào</h2>
+          <h2 id="tl-h" className="khoi-h chu-hien">Trợ lý trả lời thế nào</h2>
           <p className="khoi-p">Mỗi câu trả lời đi qua ba bước, để bạn biết thông tin đến từ đâu.</p>
           <ol className="tc-buoc hien">
             <li><b>Bạn hỏi</b><p>Gõ câu hỏi bằng tiếng Việt{tinhNang.anh ? ", hoặc gửi ảnh một món ăn, một công trình" : ""}.</p></li>

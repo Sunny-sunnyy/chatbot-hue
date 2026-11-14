@@ -24,7 +24,7 @@ from test_api_chat import chat_log_records, metric_lines
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (fixture `deps` dùng chung)
 from test_cong_dot_1 import SETTINGS, FORM, OFF, _restore, _with, app_client, chu_gui, flags_from, viet_theo_khung  # noqa: F401  (fixture `app_client`)
 
-V2 = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True)
+V2 = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, anh_lich=False)  # cờ ảnh tự đặt (settings.yaml bật từ 14/11)
 V2_BANG_PATH = Path(__file__).resolve().parents[1] / SETTINGS["assistant"]["lich_trinh_bang_v2"]
 HOM_NAY = dt.date(2026, 11, 13)
 
@@ -866,7 +866,7 @@ def test_v2_turn_uses_chosen_passage(deps, tmp_path):
 # Đợt 2 phần (A): bản đồ trong lịch bản 2 (plan `2026-11-13-len-ke-hoach-dot-2-plan.md` bước A1) — 0 USD
 # =====================================================================================================================================
 
-V2_BD = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, ban_do_lich=True)
+V2_BD = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, ban_do_lich=True, anh_lich=False)
 
 
 def test_map_table_coverage_floor():

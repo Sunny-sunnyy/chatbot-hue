@@ -375,7 +375,7 @@ function WebSection({ web, turnKey }) {
 }
 
 // B142: 👍 / 👎 dưới câu trả lời — server chỉ lưu đánh giá + số đếm của lượt. Đổi ý được (bấm nút kia); lỗi ⇒ báo nhẹ, giữ lựa chọn cũ.
-function Feedback({ turnId }) {
+export function Feedback({ turnId }) {
   const [rating, setRating] = useState(null);
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
