@@ -6,6 +6,8 @@
 - Giao: B ghi kho 4 (đang dựng) · C bảng quán sau B · E: 2 lỗi ảnh đã có trên main (0 việc), A đồng ý không thêm chú thích giao diện ⇒ E chờ review nhánh C.
 - User sắp vắng ⇒ không mở hộp hỏi. Tiếp: merge + cổng ổn định khi B / C xong ⇒ `bai_hoc/` + sổ khâu 07 / 02 ⇒ vòng tự soi 1 khi mọi session có kết quả đầu ⇒ bàn nhóm đợt agent kế.
 - Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`, governance; sau: `bai_hoc/`, `bao_cao_he_thong/`.
+- (18:00 14/11/2026) Plan khách sạn B duyệt: bản 1 `9e713a05959e`, bản 2 `067fc664c753` (bỏ sàn ≥ 25 cơ sở trước khi đo). Nhánh A `p9-web-so-cau-hoi` `f919b95` (sửa M-1 C: chỉ miễn năm) chờ C kiểm. Bài 22 lần 4 viết, agent con kiểm độc lập đang chạy.
+- **Bẫy A (18:00 14/11/2026):** gửi B sha `1bf35a0a6c28` gõ sẵn trong cùng lượt với lệnh tính sha (gọi song song) — sha thật `067fc664c753`, đính chính ngay. Lần 4 của loại "báo trước khi đọc kết quả" ⇒ lệnh tính số và tin nhắn chứa số KHÔNG gửi song song.
 
 # STATUS A — KẾT PHIÊN 14/11 (viết 17:42 14/11/2026 `date`)
 
