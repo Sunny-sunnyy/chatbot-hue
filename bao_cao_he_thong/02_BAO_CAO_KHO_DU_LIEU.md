@@ -6,7 +6,7 @@ bước sau: [03 — chia đoạn](03_BAO_CAO_CHIA_DOAN.md).
 
 ## Kho gồm gì
 
-**207 bài Markdown tiếng Việt** — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
+**212 bài Markdown tiếng Việt** (từ 14:05 14/11/2026: thêm 5 bài lưu trú — lần ghi kho 2 (12:45–12:50 14/11): +5 bài lưu trú ở `travel/services/` (danh mục Cục Du lịch Quốc gia 139 cơ sở + 1 theo tin thành phố) + 1 câu ở bài Bảo tàng Cổ vật; report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_luu_tru_implementation.md`) — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
 
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
@@ -19,7 +19,7 @@ bước sau: [03 — chia đoạn](03_BAO_CAO_CHIA_DOAN.md).
 - Mỗi bài viết theo **mẫu riêng của chủ đề** (vd bài món ăn có mô tả, nơi ăn, giá, giờ), câu văn tự nhiên, đọc riêng một bài vẫn hiểu.
 - Phần lớn bài có mục "Nguồn dữ liệu" ghi nơi lấy thông tin — trang công khai: cổng thông tin của tỉnh, báo, trang du lịch, văn bản pháp luật… (khoảng 76 trang web khác nhau).
 - Kho **không** đưa lên kho mã công khai (GitHub) — nội dung giữ riêng trên máy; vì vậy sửa bài nào cũng phải sao lưu bản gốc trước.
-- Ngoài 207 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
+- Ngoài 212 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
   vd câu lưu ý chung đầu một bài vé được gắn kèm vào mọi đoạn giá của bài đó, để đoạn nào được tìm ra cũng mang theo lưu ý.
 
 ## Chatbot chỉ chạy khi chỉ mục khớp kho

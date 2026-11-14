@@ -252,8 +252,8 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 0
 | Bộ chấm `full_corpus_eval.py`, so theo cặp | **còn dùng** | `backend/evaluation/full_corpus_eval.py:648,816–870` |
 | Prompt chấm cố định (không chấm trích dẫn) | **còn dùng** | `backend/evaluation/full_corpus_judge_prompt.md` |
 | Người chấm Claude, mù, cùng lượt | **còn dùng** | spec 8.2 §7 |
-| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 207 file / 8.474 đoạn từ 14/11 (lượt đo 01/11 chạy trên 8.424); số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
-| Mốc kết quả tìm 158 câu | **còn dùng**: `a105229f1902` (từ 14/11; 05/11 `64656a87c109`; 30/10 `4d5bbe9e0edc`) |
+| Mốc so sánh chatbot | **còn dùng**: 10 đoạn + chuẩn hóa dấu, kho 212 file / 8.522 đoạn từ 12:50 14/11 (lần ghi kho 2; đo trước ↔ sau: K1 / K2 / K4 đạt — `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_luu_tru_implementation.md`) (lượt đo 01/11 chạy trên 8.424); số cuối Phase 1–8 = lượt đo cuối 01/11 (`89c988e`, so với bộ "sau" đợt 2 30/10) | `backend/config/settings.yaml:56`; `do_cuoi_implementation.md` |
+| Mốc kết quả tìm 158 câu | **còn dùng**: `356a742f09a1` (từ 12:50 14/11; `a105229f1902` 10:24 14/11; 05/11 `64656a87c109`; 30/10 `4d5bbe9e0edc`) |
 | Nhãn câu bộ an toàn X03 | **đổi từ 14/11**: "ngoài kho" ⇒ "trong kho" — kho nay có bài trả lời đúng câu này; người khác kiểm câu trả lời: mọi ý / số nằm trong đoạn được trích | `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md` | `Project_Status.md` §4 |
 | Nhãn đoạn đúng | **bản 5 mặc định** (30/10); bản 1–4 chỉ để tái lập số cũ | `backend/experiments/phase_8_1/g1_retrieval.py:48` |
 | Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` |

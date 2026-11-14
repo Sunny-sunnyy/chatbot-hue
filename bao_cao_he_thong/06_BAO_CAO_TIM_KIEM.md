@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 10:30 14/11/2026 — bản 13: chỉ mục dựng lại 14/11 sau lần ghi kho 3 bài; mốc tìm mới `a105229f1902`; nhãn đoạn đúng bản 6.** Bản 12 (19:28 10/11/2026): thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 14:05 14/11/2026 — bản 14: dựng lại sau lần ghi kho 2 (5 bài lưu trú); mốc tìm mới `356a742f09a1`.** Bản 13 (10:30 14/11): lần ghi kho 1, mốc `a105229f1902`, nhãn đoạn đúng bản 6. Bản 12 (19:28 10/11/2026): thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
 Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -11,7 +11,7 @@ Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (b�
   sau lần tìm đầu bằng câu gốc, trợ lý được **tự tìm thêm ≤ 2 lần** bằng câu tìm nó tự viết, mỗi lần đi đúng cách tìm dưới đây.
 - **Đang chạy cách nào:** câu hỏi đổi về dạng Unicode NFC (một cách viết chuẩn của chữ có dấu) → e5-small (model biến câu thành vector, chạy trên
   máy) lấy 30 đoạn gần nghĩa nhất trong Qdrant (cơ sở dữ liệu vector) → BM25 (chấm theo khớp từ khóa) chấm lại 30 đoạn đó → RRF (cách trộn hai
-  bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 14/11 sau lần ghi kho thêm 3 bài (207 file, 8.474 đoạn) — **cách tìm
+  bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 12:50 14/11 sau lần ghi kho 2 thêm 5 bài lưu trú (212 file, 8.522 đoạn) — **cách tìm
   không đổi**.
 - **Đo được trên kho hiện tại** (30/10, nhãn "đoạn đúng" bản 5 — vị trí đáp án trong file nguồn, gắn tay cho 40 câu thử + 15 câu kiểm):
   - **24 / 40** câu thử có đủ đoạn đúng trong 10 đoạn đưa model; **33 / 40** có đủ trong 30 ứng viên ⇒ 9 câu có đoạn đúng trong ứng viên nhưng bị xếp
@@ -140,7 +140,7 @@ Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại); dòng chỉ m
 | Chuẩn hóa NFC câu hỏi trước khi tìm | **còn dùng** (từ 28/10) | `backend/retrieval/full_corpus.py:97–102`, `:420` |
 | Không xếp hạng lại | **còn dùng** (MiniLM đã gỡ khỏi chatbot 26/10) | `backend/config/settings.yaml:44` |
 | Model vector e5-small | **còn dùng**; Qwen3-8B đã thử 30/10 — kém hơn, chỉ mục thử đã xoá | `backend/embedding/full_corpus.py:41–66` |
-| Chỉ mục tìm trên 207 file / 8.474 đoạn | **còn dùng** (dựng lại 14/11; mốc tìm 158 câu mới `a105229f1902`: 150 câu giữ nguyên 10 đoạn đầu; 5 câu có đoạn bài mới chen vào (đúng ngưỡng ≤ 5 ghi trước); 1 câu mất 1 / 2 đoạn đúng theo nhãn, nhưng ý đó có trong đoạn bài mới được tìm ra và câu trả lời vẫn đạt điểm tối đa ⇒ bạn chọn giữ; MRR 0,7216 ⇒ 0,7203, nDCG 0,7554 ⇒ 0,7545) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
+| Chỉ mục tìm trên 212 file / 8.522 đoạn | **còn dùng** (dựng lại 12:50 14/11; mốc tìm 158 câu `356a742f09a1`: MRR 0,7203 ⇒ 0,7188, nDCG 0,7545 ⇒ 0,7534, độ phủ từ khoá 92,04 không đổi; 13 câu đổi top 10, 2 câu (hỏi chi phí ở) có đoạn lưu trú, 1 câu bài chi phí hạng 2 ⇒ 4 vẫn trong top 10. Lần 1 `a105229f1902`: 150 câu giữ nguyên 10 đoạn đầu; 5 câu có đoạn bài mới chen vào (đúng ngưỡng ≤ 5 ghi trước); 1 câu mất 1 / 2 đoạn đúng theo nhãn, nhưng ý đó có trong đoạn bài mới được tìm ra và câu trả lời vẫn đạt điểm tối đa ⇒ bạn chọn giữ; MRR 0,7216 ⇒ 0,7203, nDCG 0,7554 ⇒ 0,7545) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
 | "BM25 chỉ chấm lại 30 đoạn vector" là cách tốt nhất đã thử | **còn đúng** — nhưng chỉ vì các cách khác không chắc hơn; đoạn đúng hay bị xếp thấp | §3, §4 |
 | Cho `gpt-6-luna` chọn 10 trong 30 ứng viên | **gác làm hồ sơ** (bạn chốt 27/10) | §4 27/10 |
 | Định tuyến 4 tuyến trước khi tìm; trợ lý tìm thêm ≤ 2 lần sau lần tìm đầu | **còn dùng** (từ 03/11) | `backend/config/settings.yaml:60`, `:66`; `backend/llm/assistant.py:52` |
@@ -156,7 +156,7 @@ Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại); dòng chỉ m
 
 ## Phụ lục — hồ sơ kỹ thuật
 
-- **Mã:** T1 = mốc kết quả tìm 158 câu (dấu vân tay `a105229f1902` từ 14/11; `64656a87c109` 05/11; `4d5bbe9e0edc` 30/10; `23c58c47635d` 28/10; `cefb2d1a…` suốt 8.1); K1 = lấy rộng 100 ứng viên; K2 = tìm
+- **Mã:** T1 = mốc kết quả tìm 158 câu (dấu vân tay `356a742f09a1` từ 12:50 14/11; `a105229f1902` 10:24 14/11; `64656a87c109` 05/11; `4d5bbe9e0edc` 30/10; `23c58c47635d` 28/10; `cefb2d1a…` suốt 8.1); K1 = lấy rộng 100 ứng viên; K2 = tìm
   từ khóa độc lập (NOT RUN, đã trượt ở 8.1); K3 = luna xếp đủ 30; K3b-n / K3b-m = luna chỉ trả 10 số, không suy nghĩ / suy nghĩ mặc định; B42 = phân loại lỗi;
   F2 = lỗi bảng giá; T3 = mức tụt "số câu Completeness tụt ≤ A/A + 3" (A/A = độ dao động đo bằng hai lượt cùng cấu hình); PA3 = phương án bạn chọn 28/10
   (đưa 10 đoạn + NFC vào chatbot, không chờ đọc cặp mù).
