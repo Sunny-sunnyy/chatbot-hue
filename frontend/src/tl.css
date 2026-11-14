@@ -70,3 +70,9 @@
   .tl-chat .chat-turns { padding: 18px 14px; }
   .tra-av { display: none; }
 }
+
+/* Ảnh dưới câu trả lời (anhTraLoi.js): một ảnh bài nguồn, khung tỉ lệ cố định (không xô lệch), bấm mở bài */
+.anh-tra-loi { display: block; margin: 12px 0 6px; max-width: 360px; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: var(--color-accent-soft); }
+.anh-tra-loi img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .anh-tra-loi:hover img, .hieu-ung .anh-tra-loi:focus-visible img { transform: scale(1.05); }
+.chat .anh-tra-loi { max-width: 100%; }
