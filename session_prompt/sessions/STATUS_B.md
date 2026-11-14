@@ -7,8 +7,9 @@
   - **Ghi kho 6** — 8 bài lễ hội / nghệ thuật (B) + 8 (C), review chéo. **263 file / 9.425 đoạn**, record `af5e225c497e`, sparse `4888dc70d01f`, T1 `aa34d4215f15`. Report `b_ghi_kho_6_implementation.md`; nháp B `data/bai_kho_6_le_hoi/nhap_b/`; biên bản B về bài C `data/bai_kho_6_le_hoi/b_kiem_8_bai_c.md`.
   - Mỗi lần ghi kho: 0 câu chạm tụt, 0 / 18 ngoài kho bị trả lời, an toàn 32 không đổi lớp, câu thử từ chối ⇒ 0.
 - **VIỆC ĐẦU PHIÊN SAU (A giao, không cần User) — đo bù ghi kho 4 / 5 / 6:** luật "đo đúng chỗ đổi" (User 15:03 14/11) tính câu chạm = MỌI câu đổi top-10 T1 khi ghi kho; TIEU_CHI kho 4 / 5 / 6 của B (chép kho 3) chỉ chạy câu có đoạn bài mới ⇒ bỏ sót: **kho 4 đổi 9 chạy 3 · kho 5 đổi 35 chạy 3 · kho 6 đổi 42 chạy 2** ⇒ kết luận "không tụt" chỉ đúng trên tập đã chạy (C phản biện ở vòng tự soi 2, B tự bắt).
-  - Làm: lượt Golden ×1 trên hợp mọi câu đổi top 10 — đã đếm 0 USD: **65 / 158 câu** có top 10 hiện tại (T1 kho 6 `aa34d4215f15`) khác lượt đủ 176 câu sau ghi kho 2 (62 nếu so T1 sau kho 3); 0 câu ngoài kho trong tập; danh sách `data/sua_kho_2026-11-14_ghi_kho_6/bu_doi.json`. Lệnh mẫu: `tools/do_sau.sh` của kho 6 với `--cases` = danh sách đó (bỏ an toàn / câu thử). ≈ 0,02 USD, ~3 phút, 0 server.
-  - Mốc: câu trả lời lượt đủ sau ghi kho 2 (`data/sua_kho_2026-11-14_ghi_kho_2/sau/golden.jsonl`). Sàn như TIEU_CHI: 0 lỗi kỹ thuật, từ chối nhầm ≤ mốc + 1, 0 lỗi trích dẫn mới; câu trả lời đổi nghĩa ⇒ 1 agent con chấm mù. Không đạt ⇒ báo A.
+  - Làm: lượt Golden ×1 CHỈ trên **65 / 158 câu** có top 10 hiện tại (T1 kho 6 `aa34d4215f15`) khác lượt đủ 176 câu sau ghi kho 2 (62 nếu so T1 sau kho 3); 0 câu ngoài kho trong tập; danh sách `data/sua_kho_2026-11-14_ghi_kho_6/bu_doi.json` (khoá `doi_so_kho2`). An toàn 32 + 18 ngoài kho đã chạy trên đúng kho 6 ⇒ KHÔNG chạy lại. ≈ 0,02 USD, ~3 phút, 0 server.
+  - Lệnh: KHÔNG dùng `tools/do_sau.sh` kho 6 (script đó không nhận `--cases`, lấy câu từ `cau_cham.json` và GHI ĐÈ `ghi_kho_6/sau/`). Viết lệnh mới, kết quả vào thư mục MỚI `data/sua_kho_2026-11-14_do_bu/`, vd (từ `backend/`): `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python -m evaluation.full_corpus_eval generate --golden full --cases <65 số trong bu_doi.json> --out ../data/sua_kho_2026-11-14_do_bu/golden.jsonl`.
+  - Mốc: câu trả lời lượt đủ sau ghi kho 2 (`data/sua_kho_2026-11-14_ghi_kho_2/sau/golden.jsonl`) — gồm cả đổi do ghi kho 3 (cố ý: kho 3 cũng chỉ chạy 2 câu chạm). Sàn như TIEU_CHI: 0 lỗi kỹ thuật, từ chối nhầm ≤ mốc + 1, 0 lỗi trích dẫn mới. "Câu đổi" = chữ trả lời khác mốc ⇒ 1 agent con chấm mù cùng ý / khác ý (khác ý ⇒ đọc tay). Không đạt ⇒ báo A (lùi = gỡ bài gây tụt + dựng lại chỉ mục).
   - Sửa luôn mẫu TIEU_CHI ghi kho (gói `data/sua_kho_…/TIEU_CHI.md` + `tools/cau_cham.py`): câu chạm = mọi câu đổi top 10 (không chỉ câu có đoạn mới).
 - **Việc dở / gợi ý kế (chưa ai giao):**
   - Khách sạn: 69 / 140 chưa có ảnh chắc (đa số 1–2 sao, ít khi hiện); bảng có dòng trùng (La Perle, Như Phú, 2 dòng Villa Louise cùng hiện ở 36 lịch biển) ⇒ gộp trùng khi sửa bảng (làm bảng v3 trên nhánh, KHÔNG sửa v2 tại chỗ).
@@ -31,7 +32,7 @@
 - 19:45 14/11/2026 — Ảnh 10 bài món kho 5 XONG (A chia: B món, E địa điểm + gộp anhBai.js): `data/mon_an_2026-11-14/anh/anh_mon_kho5.json`, 10 / 10, B nhìn 100 %; Serper ≈ 0,01 USD ⇒ đã gửi E. B rảnh, chờ việc.
 - 20:30 14/11/2026 — **Ghi kho 6 XONG, ĐẠT**: 263 file / 9.425 đoạn, record `af5e225c497e`, sparse `4888dc70d01f`, T1 `aa34d4215f15`. 16 bài (8 C + 8 B). Câu chạm 2 không tụt · ngoài kho 0/18 · an toàn 0 đổi lớp · 24 câu thử 0 từ chối (trước 10). ≈ 0,045 USD (+ Serper viết 0,024). Report `b_ghi_kho_6_implementation.md`. 0 server.
 
-# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 14/11) — B viết 17:40 14/11/2026, terminal `hue-rag-6b`
+# CŨ — PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 14/11) — B viết 17:40 14/11/2026, terminal `hue-rag-6b`
 - **Việc dở — quán có bài kho cho vùng thiếu quán trong lịch (A giao; User đã cho thu dữ liệu + ghi kho khi vắng; quyền phiên đã HẾT ⇒ phiên sau A xác nhận lại trước khi ghi kho).**
   - **Vì sao:** đếm 0 USD trên 3.840 khung — bữa chưa có quán kho: Thủy Xuân 27 %, Đầm Chuồn 10 %, Kinh thành (Bao Vinh) 8 %, Kim Long 5 %. Sau khi C gán lại 6 quán kho + Bánh ép Huệ: tổng 38,3 ⇒ 49,3 % bữa có quán kho; Thủy Xuân 33,6 %, Kim Long 0 %, biển / đầm phá 0 % (`data/quan_lich_2026-11-14/bien_ban_quan_kho_them.md`, C).
   - **8 quán đã chọn** (A đồng ý), nguồn ở `data/tra_cuu_cli/2026-11-14_quan-thuy-xuan-dam-chuon/` và `…_quan-kim-long-thuan-an/` (Codex gpt-6.1-sol), bảng nguồn `data/quan_kho_them_2026-11-14/nguon.md`:
@@ -61,7 +62,7 @@
 - 16:28 14/11/2026 — Kiểm tiền mục web theo giá trị XONG (A duyệt `e34fa9cc0ff0`, không cờ): nhánh `p9-tien-web` `4656d91` (push), worktree `/tmp/b_lkh`. V 43⇒51/76 · L 8/8 · số bịa chặn · test có khoá 582. CHỜ E review ⇒ A merge. Nhánh hồ sơ `p9-web-suy-luan` `f2428f0` (push). Report `b_tien_web_chuan_hoa_implementation.md`. 0 server, 0 tiến trình nền.
 - 16:28 14/11/2026 — A commit report tiền + STATUS_B. Kế: review nhánh quán-trong-lịch của C khi C báo (plan `d1d7370cea3a`). Đang rảnh, chờ.
 
-# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 14/11) — B viết 14:44, bổ sung 14:50 14/11/2026
+# CŨ — PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 14/11) — B viết 14:44, bổ sung 14:50 14/11/2026
 - **Việc đang dở 1 — sửa lịch bản 2, phần độ trễ: XONG, CHỜ E kiểm** `3aef0ca` (m-1 trạng thái "sửa lịch" chỉ ở lượt sửa; m-2 dùng lại định tuyến của đường thường) + `c59e090` (khoá đệm cố định `hue_sua_lich_v1` cho lần hiểu ý). Sau E ⇒ A merge `p9-sua-lich-tre` vào `main` + bật lại `sua_lich_v2` (trên `main` đang `false`, commit `3985816`).
   - Số đã đo (n = 20 chốt trước): câu thường có lịch chữ đầu p50 2,65 s vs không lịch 2,58 s (+0,07 ĐẠT sàn 3 s / +0,3 s); lượt sửa khung p50 2,30 s, 20/20. Tiền / câu B 0,0007 USD; đệm: lần hiểu ý 0,00024 ⇒ ≈ 0,0001 (chưa đo lại cả lượt). Chi tiết: mục cuối `report_agent/2026-11-12_ra_khoang_cach/b_sua_lich_v2_implementation.md`.
 - **Việc đang dở 2 — (c) lưu trú trong lịch: CHƯA BẮT ĐẦU.** Plan `docs/superpowers/plans/2026-11-14-luu-tru-trong-lich-plan.md` A duyệt (sha `15529d97b6c7`); dữ liệu bảng E `data/luu_tru_2026-11-14_lich/bang_luu_tru_lich.json` (md5 `a4c97df36c7c`). Bước kế: đọc plan ⇒ nhánh mới từ `main` (sau khi A merge sửa lịch, tránh xung đột `len_ke_hoach.py`) ⇒ code + test 0 USD trước.
@@ -107,7 +108,7 @@
 
 # STATUS B — PHIÊN 13/11 (mở 19:47 13/11/2026, terminal `hue-rag-83`; A `hue-rag-43` · C `hue-rag-eb` · E `hue-rag-e8`)
 
-## PHIÊN SAU ĐỌC TRƯỚC (B viết 22:39 13/11/2026, KẾT PHIÊN 13/11)
+## CŨ — PHIÊN SAU ĐỌC TRƯỚC (B viết 22:39 13/11/2026, KẾT PHIÊN 13/11)
 
 - **Nhánh `p9-len-ke-hoach-v2` head `2d34e9e`** (push; rebase trên `main` `0d4ee6e`; cờ `len_ke_hoach_v2` + `ban_do_lich` TẮT). Worktree `/tmp/b_lkh` (sạch; `/tmp` mất khi khởi động lại ⇒ `git worktree prune && git worktree add /tmp/b_lkh p9-len-ke-hoach-v2` + symlink `data/`, `knowledge-base-hue/` + `cd frontend && npm ci && npm run build`). `main` có thể đã đi tiếp ⇒ rebase trước nghiệm thu.
 - **Việc đầu phiên sau (theo thứ tự, chờ A báo):** (1) E ghi 2 bài kho + dựng lại chỉ mục ⇒ B điền cột `doan_mo_ta` của `data/phase_9/lich_trinh/diem_v8.json` theo chunk_id MỚI (`data/len_ke_hoach_v2_2026-11-13/de_xuat_doan_mo_ta.md` + 2 điểm có bài mới; `tools/ung_vien_doan.py`; bật cờ thì khởi động tự kiểm mã) ⇒ (2) nghiệm thu lại đợt 1: bộ 20 + **MỞ bộ quyết 12 ×2** (E giao 2 người chấm mù; B xuất bằng `tools/xuat_mu.py`, bảng khoá thư mục riêng) + Playwright 2 khổ màn ⇒ E review cả nhánh ⇒ bài `bai_hoc/` khi bật (luật mới). (3) Đợt 3 (quán OSM vào lịch: bảng riêng, dòng quán do CODE viết, nguồn OSM do code dựng — A chốt "Quán OSM" trong handoff). (4) Việc dở: rà harness `report_agent/2026-11-12_ra_khoang_cach/b_ra_harness_tro_ly.md` (DỞ — mục 2 ghi còn gì).
@@ -147,7 +148,7 @@
 
 # STATUS B — PHIÊN 12/11 (mở 18:40 12/11/2026, terminal `hue-rag-1b`; A `hue-rag-7d` · C `hue-rag-e1` · E `hue-rag-33`)
 
-## PHIÊN SAU ĐỌC TRƯỚC (B viết 22:23 12/11/2026, lúc kết phiên 12/11)
+## CŨ — PHIÊN SAU ĐỌC TRƯỚC (B viết 22:23 12/11/2026, lúc kết phiên 12/11)
 
 **Đang dở 2 việc:**
 1. **"Lên kế hoạch" đợt 1, bước (a)** (plan bản 3 `docs/superpowers/plans/2026-11-12-len-ke-hoach-dot-1-plan.md`, A đã duyệt; spec 3.3). Nhánh `p9-len-ke-hoach-v2` tạo từ `main` `6139bf0`, worktree `/tmp/b_lkh` — **CHƯA có dòng code / test nào, chưa commit, chưa push** (mới đọc spec + code). `/tmp` mất khi máy khởi động lại ⇒ tạo lại: `git worktree add -b p9-len-ke-hoach-v2 /tmp/b_lkh main` (nhánh đã có thì bỏ `-b`) + symlink `data/`, `knowledge-base-hue/`. Thiết kế B đã nghĩ xong cho (a) (chưa ai duyệt, làm theo thì báo C chỗ lệch):
@@ -240,7 +241,7 @@
 
 # STATUS B — PHIÊN 09/11 (mở 20:14 09/11/2026, terminal `hue-rag-99`; A `hue-rag-87` · C `hue-rag-6a` · E `hue-rag-ea`)
 
-## KẾT PHIÊN 09/11 (22:28 09/11/2026 `date`) — PHIÊN SAU ĐỌC TRƯỚC
+## CŨ — KẾT PHIÊN 09/11 (22:28 09/11/2026 `date`) — PHIÊN SAU ĐỌC TRƯỚC
 
 - **Không việc dở.** Không server / tiến trình / worktree nào của B còn chạy (`/tmp/b_g`, `/tmp/b_moc_g`, `/tmp/b_gb`, `/tmp/b_s5` đã gỡ). Quyền phiên 09/11 hết hạn.
 - **Xong hôm nay:** G 2 tuyến DỪNG (hồ sơ tag `hoso/p9-g-cong`) ⇒ phương án B đã merge `main` `3b52017` (A). S5 chung trên `main` `0ce6713` xong — số ở dưới, chờ A / User quyết đề xuất.
@@ -277,7 +278,7 @@
 Vai: thực thi. Terminal 08/11: A `hue-rag-a8` · B `hue-rag-a1` · C `hue-rag-e9` · E `hue-rag-22` (đổi mỗi lần mở ⇒ `ListAgents`). Quyền phiên 08/11 **hết hạn**.
 Không server / tiến trình nào của B còn chạy. Tiền B 08/11 (log) ≈ **0,759 USD**: G 0,7487 · bản đồ 0,0031 · việc nhỏ lịch 0,0023 · review E 0,0053 · ảnh 0.
 
-## PHIÊN SAU ĐỌC TRƯỚC
+## CŨ — PHIÊN SAU ĐỌC TRƯỚC
 
 ### 1. Việc dở chính — Phase 9 bậc G (cổng 2 nhóm)
 
