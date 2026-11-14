@@ -943,6 +943,23 @@ def co_y_thieu(answer: str) -> bool:
     return False
 
 
+def ve_y_thieu(query: str, answer: str) -> str:
+    """Vế của câu người dùng ứng với các dòng "Tư liệu chưa có thông tin về: …": mỗi dòng ⇒ vế có nhiều từ chung nhất (hoà / 0 từ chung ⇒ bỏ qua
+    dòng đó). Ghép các vế chọn được theo thứ tự trong câu; không chọn được / chọn hết ⇒ "" (mục web viết cho cả câu như trước). Chỉ trả chữ của
+    người dùng."""
+    thieu = [d[len(CAU_Y_THIEU):] for d in map(_dong_y_thieu, answer.splitlines()) if d.startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d)]
+    ve = [p.strip() for v in re.split(r"[,;?]", query) if v.strip() for p in _LIEN_TU.split(v) if _la_ve_hoi(p)]
+    tu = lambda t: set(re.findall(r"\w+", t.casefold()))
+    chon = set()
+    for t in thieu:
+        diem = [len(tu(v) & tu(t)) for v in ve]
+        if diem and max(diem) > 0 and diem.count(max(diem)) == 1:
+            chon.add(diem.index(max(diem)))
+    if len(ve) < 2 or not chon or len(chon) == len(ve):
+        return ""
+    return "; ".join(ve[i].rstrip("?").strip() for i in sorted(chon))
+
+
 def _dong_y_thieu(d: str) -> str:
     return d.strip().lstrip("-*•").strip()
 
@@ -993,8 +1010,11 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
         web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=list(kq.so_web))
         return
     call_log = CallLog()
+    # câu nhiều ý: model viết mục web cho đúng vế ý thiếu (không viết lại ý kho đã trả lời — 14/11: số giờ web khác kho); Serper vẫn nhận cả câu
+    ve = ve_y_thieu(query, trace.answer or "") if trace.nhieu_y else ""
+    hoi_web = f"{query} (chỉ viết cho phần: {ve} — phần còn lại đã có câu trả lời từ kho)" if ve else query
     try:
-        generated = await generator.generate_web_section(tw.dau_vao_model(query, kq.so_web), call_log)
+        generated = await generator.generate_web_section(tw.dau_vao_model(hoi_web, kq.so_web), call_log)
     except GenerationError:
         web["kiem"] = ["model_loi"]
         return
