@@ -33,6 +33,8 @@ const tenChuyenCanh = id => `kp-anh-${khoaBai(id)}`;
 
 function GhiCongAnh({ a }) {
   const ngoai = { target: "_blank", rel: "noopener noreferrer" };
+  // ảnh web (User nới luật ảnh 14/11): chỉ có tên miền + trang chứa ảnh; minhHoa ⇒ người kiểm không chắc ảnh chụp đúng chính nơi này
+  if (a.nguon) return <>{a.minhHoa && "Ảnh minh hoạ · "}Nguồn ảnh: <a href={a.trang} {...ngoai}>{a.nguon}</a></>;
   return (
     <>Ảnh: {a.tacGia} · {GP[a.giayPhep] ? <a href={GP[a.giayPhep]} {...ngoai}>{a.giayPhep}</a> : a.giayPhep} ·{" "}
       <a href={a.trang} {...ngoai}>trang ảnh trên Wikimedia Commons</a> · đã {a.doi}</>
@@ -138,6 +140,7 @@ function TheBai({ b, n }) {
         {a ? <img src={`${ANH_GOC}${a.anh}.jpg`} alt="" loading="lazy" decoding="async" style={{ viewTransitionName: tenChuyenCanh(b.id) }} />
           : <IconLv lv={b.linh_vuc} lon />}
         <span className="nhan kp2-nhan"><IconLv lv={b.linh_vuc} />{LOAI_CON[b.loai_con] ?? lv?.ten ?? "Tổng quan"}</span>
+        {a?.minhHoa && <span className="kp2-minh-hoa">Ảnh minh hoạ</span>}
       </div>
       <div className="kp2-the-than">
         <h3 className="kp2-the-ten">{b.tieu_de}</h3>
