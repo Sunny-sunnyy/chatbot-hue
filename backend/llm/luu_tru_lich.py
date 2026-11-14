@@ -71,11 +71,13 @@ def chon_co_so(bang_luu_tru: dict, khu: str, cum_dau: str | None) -> list[dict]:
              "nguon": c["nguon"]} for c in out]
 
 
-def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bool) -> dict | None:
-    """Khối `lich["o_dau"]`; lịch 1 ngày ⇒ None (không có đêm nào)."""
+def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bool, co_toi: bool = False) -> dict | None:
+    """Khối `lich["o_dau"]`; lịch 1 ngày ⇒ None (không có đêm nào). `co_toi`: lịch có hoạt động buổi tối — bộ xếp chỉ đặt buổi tối ở trung tâm, nên
+    khách về trung tâm mỗi tối ⇒ ở trung tâm (người xem 14/11: "3 / 5 điểm ngày ở phía tây + mọi tối ở trung tâm" mà gợi ý phía tây là sai)."""
     if so_ngay < 2 or not cum_cac_diem:
         return None
-    khu, ly_do = chon_khu(bang_luu_tru, cum_cac_diem, han_che)
+    khu, ly_do = (KHU_LOI, "Khu trung tâm — các buổi tối của lịch đều ở trung tâm, về chỗ ở gần.") if co_toi \
+        else chon_khu(bang_luu_tru, cum_cac_diem, han_che)
     cum_trong_khu = [c for c in cum_cac_diem if bang_luu_tru["cum_ve_khu"][c] == khu]
     cum_dau = Counter(cum_trong_khu).most_common(1)[0][0] if cum_trong_khu else None
     co_so = chon_co_so(bang_luu_tru, khu, cum_dau)

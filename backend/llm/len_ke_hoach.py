@@ -117,8 +117,10 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
     không đọc hai khoá này). Dùng chung cho lịch thật (`chuan_bi`) và lịch mẫu "Ví dụ" (`api/routes/cong.py`)."""
     if flags.luu_tru_lich:
         ts_k = khung["tham_so"]
+        # có hoạt động buổi tối (bộ xếp chỉ đặt buổi tối ở trung tâm) ⇒ khách về trung tâm mỗi tối ⇒ ở trung tâm (review B 14/11, người xem v3)
+        co_toi = any(j in bang.theo_id for ng in khung["ngay"] for j in ng["buoi"]["toi"])
         lich["o_dau"] = ltl.o_dau(flags.luu_tru_bang, [bang.theo_id[j]["cum"] for j in lt2.diem_ban_ngay(khung)], len(khung["ngay"]),
-                                  bool(ts_k["tre_em"] or ts_k["lon_tuoi"]))
+                                  bool(ts_k["tre_em"] or ts_k["lon_tuoi"]), co_toi)
     if flags.quan_lich:
         lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
 

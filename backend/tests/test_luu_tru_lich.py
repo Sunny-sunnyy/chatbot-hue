@@ -23,7 +23,9 @@ NGAY = (None, v2.dt.date(2027, 4, 7), v2.dt.date(2026, 11, 21), v2.dt.date(2026,
 
 def _o_dau(khung):
     ts = khung["tham_so"]
-    return ltl.o_dau(BANG_LT, [BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)], len(khung["ngay"]), bool(ts["tre_em"] or ts["lon_tuoi"]))
+    co_toi = any(j in BANG_V2.theo_id for ng in khung["ngay"] for j in ng["buoi"]["toi"])
+    return ltl.o_dau(BANG_LT, [BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)], len(khung["ngay"]),
+                     bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi)
 
 
 @pytest.fixture(scope="module")
@@ -49,7 +51,9 @@ def test_simulation_always_rules(mo_phong):
         khu = [None if BANG_V2.theo_id[j]["cum"] in ltl.CUM_DI_TRONG_NGAY else BANG_LT["cum_ve_khu"][BANG_V2.theo_id[j]["cum"]]
                for j in v2.diem_ban_ngay(khung)]
         n, dem, han_che = len(khu), Counter(khu), bool(key[1] or key[2])
-        mong = ltl.KHU_BIEN if dem[ltl.KHU_BIEN] >= 0.6 * n else ltl.KHU_TAY if dem[ltl.KHU_TAY] > 0.5 * n and not han_che else ltl.KHU_LOI
+        co_toi = any(j in BANG_V2.theo_id for ng in khung["ngay"] for j in ng["buoi"]["toi"])
+        mong = ltl.KHU_LOI if co_toi else ltl.KHU_BIEN if dem[ltl.KHU_BIEN] >= 0.6 * n else ltl.KHU_TAY if dem[ltl.KHU_TAY] > 0.5 * n and not han_che \
+            else ltl.KHU_LOI
         assert o["khu"] == mong or (mong == ltl.KHU_BIEN and o["ly_do"].startswith("Khu trung tâm — ven biển")), key
         if o["khu"] == ltl.KHU_BIEN:  # cơ sở cùng phía với cụm ven biển nhiều điểm nhất (không gợi ý Lăng Cô cho lịch Thuận An)
             cum = Counter(c for c in (BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)) if c in ltl.PHIA_BIEN).most_common(1)[0][0]
@@ -84,6 +88,16 @@ def test_rule_zone_choice():
     assert ltl.chon_khu(b, ["dong_bien"] * 1 + ["kim_long"] * 1, False)[1].startswith("Khu trung tâm — các điểm của lịch rải")
     b["cum_ve_khu"]["nam_xa"] = ltl.KHU_BIEN  # Bạch Mã / Nhị Hồ: đi trong ngày, không kéo khu ở ra biển
     assert ltl.chon_khu(b, ["dong_bien"] * 2 + ["nam_xa"] * 2 + ["kinh_thanh"] * 2, False)[0] == ltl.KHU_LOI
+
+
+def test_evening_activity_means_central_stay():
+    """Người xem 14/11 (bản 3): lịch có buổi tối (luôn ở trung tâm) mà gợi ý phía tây ⇒ khách đi về mỗi tối ⇒ có buổi tối thì ở trung tâm."""
+    b = _bang()
+    cum = ["kim_long", "kim_long", "kim_long", "kinh_thanh"]
+    assert ltl.o_dau(b, cum, 2, False)["khu"] == ltl.KHU_TAY
+    o = ltl.o_dau(b, cum, 2, False, co_toi=True)
+    assert o["khu"] == ltl.KHU_LOI and "buổi tối" in o["ly_do"]
+    assert "buổi tối" not in ltl.o_dau(b, ["dong_bien"] * 3, 2, False)["ly_do"]  # không có buổi tối ⇒ lý do không nhắc buổi tối
 
 
 def test_rule_spread_by_rank_and_near_cluster_first():
