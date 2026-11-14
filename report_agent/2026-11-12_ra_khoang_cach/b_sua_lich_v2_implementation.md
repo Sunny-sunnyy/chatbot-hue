@@ -101,3 +101,47 @@ Một lượt pilot gặp `APIError` của nhà cung cấp, ghi là quan sát.
 - **Minor theo dõi:**
   - (1) mẫu "Không cần X nữa, cho mình đi Y" khớp nhẹ với bộ đã thấy — bộ kín đạt đúng sàn 4 / 5;
   - (2) câu chỉ chỗ bằng ngày / buổi giờ để model chọn điểm bị bỏ ⇒ về sau có thể đưa thẻ chọn cho đúng nguyên tắc "code quyết".
+
+## Độ trễ chính — phạm sàn sau khi bật, đã sửa (14:23 14/11/2026; nhánh `p9-sua-lich-tre` commit `80648f0`)
+Đo bằng `data/len_ke_hoach_v2_2026-11-13/tools/do_tre_sua_lich.py`, máy rảnh, tuần tự. Ba nhóm:
+- (A) câu thường, cuộc chưa có lịch;
+- (B) câu thường, cuộc đã có lịch (biểu mẫu rồi câu);
+- (C) lượt sửa.
+
+| Nhóm | Trước sửa (`main` `e0cb02e`, n = 10): chữ đầu p50 / p95 · xong p50 / p95 | Sau sửa (n = 20, hai lượt gộp): chữ đầu p50 / p95 · xong p50 / p95 |
+|---|---|---|
+| A — chưa có lịch | 2,23 / 5,20 · 3,82 / 7,12 s | 2,22 / 4,04 · 3,30 / 6,91 s |
+| B — đã có lịch | **4,17** / 7,16 · 5,32 / 8,72 s | **2,37** / 4,29 · 3,19 / 6,69 s |
+| C — lượt sửa (khung hiện) | khung 2,28 / 3,62 · xong 2,90 / 6,47 s; sửa 10 / 10 | khung 2,15 / 2,53 · xong 2,49 / 5,86 s; sửa 20 / 20 |
+
+- **Gốc:** đường trả lời thường ĐỢI lần hiểu ý + định tuyến xong mới chạy ⇒ +1,9 s chữ đầu, phạm sàn User đã chốt (p50 ≤ 3 s). A tắt tạm cờ trên `main`.
+- **Sửa** (`_sua_song_song`):
+  - đường thường (gồm #6) chạy NGAY, song song với hiểu ý + định tuyến; sự kiện giữ trong hàng đợi tới khi biết kết quả;
+  - câu sửa (không khẩn cấp) ⇒ huỷ đường thường, ghi tiền phần bị huỷ (`usd_bo`, trung bình ≈ 0,0001 USD / lượt sửa); còn lại ⇒ xả hàng đợi + gộp trace;
+  - khẩn cấp vẫn thắng; lượt bấm nút không chạy đường thường.
+- **Sàn A đặt:** nhóm B chữ đầu p50 ≤ 3 s ⇒ **2,37 s ĐẠT**; không tệ hơn A quá +0,3 s ⇒ **+0,16 s ĐẠT** (n = 20).
+  - **Ghi trung thực:** lượt đo đầu sau sửa (n = 10) ra **+0,31 s — vượt** ngưỡng phụ +0,3 s. B chạy thêm 10 lượt SAU khi thấy số đó rồi gộp (n = 20 ⇒ +0,16 s). Đây là "đo thêm tới khi đạt" — đúng ra phải ghi cỡ mẫu trước khi đo.
+  - +0,3 s là ngưỡng phụ A đặt tạm; sàn chính (p50 ≤ 3 s) đạt ở cả hai lượt (2,29 s · 2,20 s). A chấp nhận vì sàn chính đạt và chênh cỡ nhiễu (A 14/11).
+- **Test:** `test_sua_lich_v2.py`, `test_len_ke_hoach_v2.py`, `test_cong_dot_1.py`, `test_b6_tra_web.py`, `test_ngay_lich.py`, `test_toc_do_song_song.py` — 294 đạt.
+- **Tiền đo độ trễ:** ≈ 0,08 USD (ba lượt × 30 câu).
+
+## Đo lại với cỡ mẫu chốt trước + tiền + đệm (14:40 14/11/2026; nhánh `p9-sua-lich-tre`, `3aef0ca` đo · `c59e090` khoá đệm)
+Sau sửa review (m-1 trạng thái chỉ hiện ở lượt sửa, m-2 dùng lại định tuyến của đường thường), B đo lại một lần, **n = 20 ghi trước khi chạy**, không đo thêm.
+
+| Nhóm | Chữ đầu p50 / p95 | Ghi chú |
+|---|---|---|
+| A — chưa có lịch | 2,58 / 4,14 s | mốc |
+| B — đã có lịch | 2,65 / 4,01 s | +0,07 s so với A; sàn 3 s ⇒ ĐẠT; ngưỡng phụ +0,3 s ⇒ ĐẠT |
+| C — lượt sửa | khung 2,30 / 2,59 s | sửa được 20 / 20 |
+
+(A và B chậm hơn lượt 14:23 ≈ 0,3 s ở cả hai nhóm — máy / API dao động; chênh B − A mới là số quyết.)
+
+**Tiền / câu (trung bình, USD):** A 0,000456 · B 0,0007 (hiểu ý 0,000211 + định tuyến 0,000104 + trả lời 0,000386) · C ≈ 0,00035. Theo A: tiền không chặn ở Phase 9, chỉ là **mục theo dõi**.
+
+**Đệm lời nhắc (prompt cache) cho lần hiểu ý** — lời dặn + khuôn đầu ra ≈ 1.244 token giống nhau mọi lượt:
+- Thử 1: đưa phần cố định (danh sách tên điểm) lên đầu tin nhắn ⇒ cached_tokens **0**. Gốc: SDK tự sinh `prompt_cache_key` riêng mỗi lần chạy, nên OpenAI không ghép lượt này với lượt trước.
+- Thử 2 (giữ nguyên chữ và thứ tự tin nhắn): khoá cố định `prompt_cache_key = "hue_sua_lich_v1"` qua `ModelSettings.extra_args` ⇒ lần 1 cached 0 / 1.620 token, **lần 2–6 cached 1.244**; tiền lần hiểu ý 0,00024 ⇒ ≈ 0,0001 USD.
+- Đã đưa vào code `c59e090` (1 dòng); `test_sua_lich_v2.py` 8 đạt. **Chưa đo lại cả lượt B** — ước ≈ 0,00055 USD / câu; đo lần dùng thật kế tiếp.
+- Khi nào sai: đệm OpenAI hết hạn sau vài phút không dùng ⇒ lượt đầu sau lúc vắng trả giá đầy đủ; đổi chữ lời dặn ⇒ đệm cũ mất (không sao, tự dựng lại).
+
+**Tiền đo lượt này:** ≈ 0,05 USD (60 câu thật + 8 lần gọi thử đệm). Cờ trong worktree đã trả `false`, server 8899 đã tắt.

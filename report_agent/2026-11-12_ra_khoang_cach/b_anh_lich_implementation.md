@@ -38,3 +38,12 @@ Nhánh `p9-anh-lich` (từ `p9-lich-truong-gd` `3ba7e9b`), commit **`6c779ff`** 
 - 10 / 34 điểm không có ảnh (phiếu ảnh của User) ⇒ thêm ảnh = thêm dòng vào bảng + file, không sửa code.
 - Giao diện mới của E (H1) sẽ thay `LichV2`; đã dặn E dùng đúng trường `anh` + ghi công.
 - Nhánh dựng trên `p9-lich-truong-gd` ⇒ rebase lên `main` khi merge. Bật cờ = A trình User.
+
+## Sau review C (`c_review_anh_lich.md`: ready, 3 minor) — 11:17 14/11/2026
+- **m-1 (giấy phép):** dòng ghi công giờ là "Ảnh: tác giả · <giấy phép có link> · trang ảnh trên Wikimedia Commons · đã thu nhỏ", như ảnh cổng (CC BY / BY-SA đòi ghi có chỉnh sửa).
+  - Bảng link giấy phép (`anh.js` `GP`) thêm CC BY-SA 4.0 + CC BY 2.0, đủ cho mọi giấy phép có trong bảng.
+  - Ảnh Cung An Định có `doi: "thu nhỏ, cắt dải đáy"` trong bảng ảnh (`bang_anh_v1.json` md5 `4e924b717c16`; bản trước `bang_anh_v1_truoc_doi.json`).
+- **m-2:** chữ ghi công 12 ⇒ 14 px.
+- **m-3:** test giữ đọc bảng private, nhưng thiếu file thì báo rõ tên file.
+- **Kiểm:** `test_len_ke_hoach_v2.py` + `test_static_ui.py` 92 đạt. Playwright thật 1440 + 390 đạt: 7 ảnh, ghi công đủ cả chữ "đã …", 0 lỗi console, 0 yêu cầu ra ngoài (≈ 0,001 USD).
+- **Commit:** `a192843`. Nhánh rebase lên `main` `4634e1b` ⇒ `b979846` + `a192843`, đã push. Cờ `anh_lich` TẮT — bật cùng đợt giao diện mới (A).

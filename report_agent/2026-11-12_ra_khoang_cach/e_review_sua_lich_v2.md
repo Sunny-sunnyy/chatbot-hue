@@ -79,3 +79,20 @@ Ngoài lề nhỏ: `dời buổi` cho điểm không có trong lịch không áp
 - **An toàn:** E tính lại từ file của B: Q5 0 / 64, Q5b 0 / 16 thành lượt sửa. Khớp số B báo.
 - **Công cụ chấm:** `ky_cham` (nhãn `khong_doi` không bắt phải áp) theo luật A 06/11, C bắt trước lượt có phí. Đúng.
 - **Kết luận: `ready_for_user_confirmation`** (2 minor theo dõi). A merge được, cờ để tắt.
+
+## Kiểm phần sửa độ trễ `80648f0` (nhánh `p9-sua-lich-tre`, 14:24 14/11/2026)
+- **Cách sửa:** đường trả lời thường (gồm #6) chạy ngay trong task riêng, trên trace phụ; sự kiện của nó giữ trong hàng đợi. Cùng lúc chạy hiểu ý + định tuyến.
+  - Câu sửa, không khẩn cấp ⇒ huỷ task, ghi `llm_calls` + `usd_bo`.
+  - Còn lại ⇒ xả hàng đợi rồi gộp trace phụ.
+  - Lượt bấm nút thẻ chọn ⇒ không chạy đường thường.
+- **Ba câu B nhờ soi:**
+  - (1) Huỷ task khi đường thường đang stream: CancelledError ném ra bên trong khung của generator con, nên các `finally` của nó (đóng luồng model) vẫn chạy. Đúng.
+  - (2) Người dùng ngắt lúc đang xả hàng đợi: `finally` của `_sua_song_song` chạy `huy()` (chỉ await, không yield) rồi gộp. Đúng.
+  - (3) Khẩn cấp vẫn thắng: điều kiện `kq is not None and not khan_cap` giữ nguyên. Đúng. Định tuyến lỗi không ném lỗi, nên `gather` an toàn.
+- **Số đo**, E tính lại từ `do_tre_sua_lich_1411_sau*.json` (2 lượt × 10 câu mỗi nhóm):
+  - Câu thường trong cuộc đã có lịch: chữ đầu p50 2,40 / 2,29 s, p95 2,78 / 4,29 s. Đạt sàn 3 s / 5 s; trước sửa p95 7,16 s.
+  - Mốc không có lịch: p50 2,00 / 2,22 s.
+  - Lượt sửa: khung lịch hiện sau 2,08 / 2,18 s.
+- **m-1 (theo dõi):** ở một lượt sửa, đường thường bị huỷ vẫn có thể đã tới cổng tra web và gửi chữ người dùng tới Serper, nếu cổng web tới trước khi biết kết quả hiểu ý. Theo thời gian đo (hiểu ý ~1,2 s; cổng web chỉ chạy sau khi viết xong câu trả lời từ kho, ~3 s) thì hiếm. Sửa nhẹ: bọc `tim_web` của trace phụ để chờ kết quả hiểu ý; là lượt sửa ⇒ không gọi.
+- **m-2 (đo):** sau khi có lịch, mỗi câu thường có 2 lần định tuyến (một để xét khẩn cấp, một trong #6) + 1 lần hiểu ý. Tiền / câu chưa đo ⇒ B đo p50 `usd` trên nhóm câu thường có lịch, sàn ≤ 0,0005 USD.
+- **Kết luận: `ready_for_user_confirmation`** (2 minor). Bật lại cờ = A chốt sau khi có số tiền / câu.

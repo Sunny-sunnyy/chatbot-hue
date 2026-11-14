@@ -1,5 +1,29 @@
 # STATUS E — PHIÊN 14/11 (mở 09:43 14/11/2026, `date`) · terminal `hue-rag-c4` · Claude Opus 5.5 · vai thực thi
 
+## PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11, ghi 14:43 14/11/2026 — `date`)
+
+**E không còn server, lượt đo hay agent con nào đang chạy.** Server cổng 8010 không phải của E. Worktree của E: `/tmp/e_gd` (nhánh `p9-gd-h1`, đã merge) — xoá được (`git worktree remove /tmp/e_gd`). File tạm `/tmp/e_rv/*` xoá được. Không chạy lượt có phí mới khi chưa được giao.
+
+### Việc chờ E (A giao trước 14:43 14/11/2026), làm theo thứ tự
+1. **Kiểm nhanh nhánh `p9-sua-lich-tre`:**
+   - commit `3aef0ca`: sửa m-1 / m-2 của review độ trễ. m-1 = chặn Serper ở trace phụ khi là lượt sửa; m-2 = B đo usd p50 / câu thường có lịch, sàn ≤ 0,0005.
+   - commit `c59e090`: khoá đệm cố định.
+   - Đọc diff + số đo của B ⇒ ghi cuối `report_agent/2026-11-12_ra_khoang_cach/e_review_sua_lich_v2.md` ⇒ báo A: A merge + bật `sua_lich_v2`. Cờ đang TẮT trên main (A tắt tạm vì p95 7,16 s).
+2. **Review nhánh câu nhiều ý `p9-cau-nhieu-y` `2c99534` của C.** User vừa chọn BẬT ⇒ review xong thì A merge + bật.
+   - Đã biết từ bộ kín ngoài kho của E (`data/cau_nhieu_y_2026-11-14/ket_qua_v2/cham_bo_kin_e.md`; file câu `ngoai_kho_vong2_sealed.jsonl` — KÍN, C không xem): 0 / 10 bị trả lời sai, 0 bịa; câu "kho có + ngoài phạm vi" 0 / 2 (NK06 GenerationError, NK07 từ chối cả câu).
+   - C đang chạy NK06 / NK07 ×2 cờ bật / tắt để tách lỗi. Hỏi C kết quả trước khi kết luận.
+   - Plan `docs/superpowers/plans/2026-11-14-cau-nhieu-y-plan.md`, hồ sơ `data/cau_nhieu_y_2026-11-14/`.
+
+### Trạng thái hôm nay (đã xong, chi tiết ở các mốc bên dưới)
+- Giao diện H1 + ảnh Khám phá trên main.
+- "Lên kế hoạch" bản 2 BẬT.
+- Ghi kho 2 lần: 212 file / 8.522 đoạn, record `38b3ca3eb323`.
+- bai_hoc 22–24 đã commit.
+- Sổ ghi việc cập nhật (`d7ccf73`).
+- Bảng lưu trú cho lịch (`data/luu_tru_2026-11-14_lich/`) đã gửi B.
+- Giờ Đại Nội theo mùa: chờ User xác nhận đó là giờ mở cửa hay giờ bán vé.
+- Ảnh web vào repo public: A chốt push và báo User.
+
 - 09:43 14/11/2026 — mở phiên, kiểm nhanh xong (main `a400f7f`, sạch, hooksPath `.githooks`, Qdrant 2 collection / 8.435 điểm; `/tmp/b_lkh` prunable; `/tmp/e_*` không còn ⇒ bảng tra người chấm phải dựng lại). Lệnh dọn của User chưa chạy (`hue_anh_siglip2` còn, 4 worktree Antigravity còn). **Chờ A giao việc**; việc theo handoff: gói ghi kho một lần (K1 + K2 trước ⇒ sao lưu ⇒ ghi ⇒ dựng lại ⇒ T1 ⇒ K1 / K2 sau). Chưa sửa file nào khác.
 - 09:53 14/11/2026 — A giao gói ghi kho (A tự điều phối; **trần gói 0,22 USD** — A sửa từ 0,15; không bài lưu trú). Pilot Golden 10 câu 0,0021 USD (đường trợ lý thật) ⇒ đang chạy nền K1 Golden 166 còn lại + K2 an toàn 32 "trước". Đã dựng (chưa ghi kho): `data/sua_kho_2026-11-14_ghi_kho/` — `tools/ghi_kho.py` (diff / backup / write / lui), `kho.diff`, `tools/chay.sh` (bước 0 khoá ⇒ sao lưu ⇒ ghi ⇒ chia thử ⇒ xoá 3 đích ⇒ build ⇒ T1; lỗi ⇒ tự lùi). C đang review diff. File sẽ ghi: thư mục trên, `knowledge-base-hue/` (2 bài vé + 3 bài mới, sau khi C ok), chỉ mục Qdrant, `data/full_corpus_builds/`, report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md`, file này. W69 vòng 1: E phiếu "hook chỉ cảnh báo + câu brief".
 - 09:56 14/11/2026 — Mốc "trước" XONG (Golden 176 + an toàn 32, 0 lỗi, 0,096 USD). C ready diff (thêm sửa 15A ⇒ 17 bài phố đi bộ, C M-1). Đã báo cả nhóm; **đang chạy `chay.sh`** (sao lưu 3 file ⇒ ghi kho ⇒ chia thử ⇒ dựng ⇒ T1). W69: User BỎ (A báo).
@@ -19,11 +43,21 @@
 - 12:22 14/11/2026 — Đo của C chỉ ra CLS 390 + bộ chọn VT ⇒ sửa `6f37756` (ô thời tiết absolute + chừa chỗ, giữ ghi công Open-Meteo; khung giữ chỗ Lên kế hoạch tới khi có cờ) ⇒ C đo lại ĐẠT. **Review đợt 1 của C** (`d72e7f0`, `e_review_gd_h1_dot1_c.md`): 2 major (thẻ Thông tin nhanh làm mất dòng ở 51/207 bài; Giới thiệu không theo cờ) + 2 minor (ảnh không bay khi chuyển trang; Khám phá thiếu loi) ⇒ C sửa `ff2ebe9` ⇒ E kiểm lại: 0 mất dòng, VT có 1 ảnh mang tên ⇒ **ready**. **Bài lưu trú nháp sửa theo review C**: gộp 2 cặp trùng (141 ⇒ 139, luật `BO_TRUNG`, trang chi tiết danh mục ở `trang_chi_tiet/`), thêm câu về địa chỉ trước 07/2025, tiêu đề = tên file; đối chiếu tin thành phố: 5 sao khớp 10/10, 4 sao khớp 10 (thành phố có 1 cơ sở mới 23/01/2026 mà danh mục không có, danh mục có 3 cơ sở tin không nêu) ⇒ chờ C kiểm lại; thêm cơ sở mới hay không = A chọn. 48 đoạn, 0 lỗi. Chưa ghi kho.
 - 12:59 14/11/2026 — **GHI KHO LẦN 2 XONG (bài lưu trú)**: 212 file / **8.522 đoạn**, record `38b3ca3eb323`, sparse `47f4b88b1309`, T1 `356a742f09a1`. Thêm 1 khách sạn 4 sao theo tin thành phố (A chốt (b)). Bảo tàng Cổ vật thêm câu giờ đổi theo mùa. Giờ Đại Nội theo mùa GIỮ LẠI (số User chép có thể là giờ bán vé; A hỏi User). Đo theo `data/sua_kho_2026-11-14_ghi_kho_2/TIEU_CHI.md`: K1 từ chối 23 = 23 (8 câu đổi là nhiễu), 2 câu có đoạn mới chấm mù 5/5 cả hai bên; K2 0 câu chạm đoạn mới; K4 trả lời 4 ⇒ 11/12, 0 giá, 0 tên bịa (minor: câu homestay chưa nói không gồm homestay). 0,225 USD. Report `e_ghi_kho_luu_tru_implementation.md`; JS +10,5 KB theo trang ở `e_giao_dien_h1_implementation.md`. **Chờ A cho commit**: `backend/llm/assistant.py` + `backend/tests/test_assistant.py` (chưa commit, ở cây main) + 3 report + STATUS_E.
 - 13:00 14/11/2026 — A commit + push gói ghi kho lần 2 (code + 4 report). JS +10,5 KB: A nhận (ngưỡng 8 KB = ngưỡng phải ghi lý do, đã ghi). Số K1/K2/K4 = "chưa review" tới khi C tính lại. **Tiếp:** review nhánh ảnh Khám phá của C (khi C báo) + review câu nhiều ý.
+- 13:12 14/11/2026 — **Review nhánh sửa lịch v2 của B** (`fcfc07b`, `e_review_sua_lich_v2.md`): changes_requested. B-1 blocker cho bật cờ: câu trộn sửa + khẩn cấp ⇒ lượt sửa, mất phần khẩn cấp (đo thật 2/2 trên 8899). M-1: thẻ chọn làm mất hành động khác cùng lượt. m-1: bước 'hiểu ý' hiện ở mọi lượt. Ngoài nhánh, đã báo A: câu khẩn cấp thuần bị trả lời 'không tìm thấy đủ thông tin' (1 lần, chưa so main). ≈ 0,005 USD. Chờ B sửa ⇒ E kiểm lại.
+- 13:17 14/11/2026 — **LỖI AN TOÀN TRÊN MAIN** (A giao kiểm): 6 câu khẩn cấp × 2 trên `cfb5d99` ⇒ định tuyến khan_cap 12/12, nhưng **từ chối 10/12, có số 112–115 0/12** (đường khẩn cấp đi agent Huế, kho không có bài khẩn cấp; bộ an toàn 32 không có câu khẩn cấp). Report `e_kiem_khan_cap_main.md`, dữ liệu `data/khan_cap_2026-11-14/`. 0,027 USD. Đã báo A / B / C. **A: giới hạn đã nhận** (User chốt 12/11 20:31 không làm việc gấp / số khẩn cấp, không hỏi lại) ⇒ không làm; report ghi lại. B-1 của sửa lịch vẫn phải sửa (lượt sửa không được tệ hơn main).
+- 13:23 14/11/2026 — Kiểm phần sửa sửa lịch v2 (`2bc020d`): B-1 / M-1 / m-1 ĐÓNG ⇒ ready (chạy thật câu trộn 0/2 thành lượt sửa). Viết 8 câu Q5b cho B (md5 `ab1eab81e9a4`). **Review ảnh Khám phá của C** (`7351bb0`, `e_review_anh_kham_pha.md`): 3 minor (câu 'giấy phép mở' sai; bundle +6,5 KB; 33 link nguồn về trang chủ tên miền) + câu hỏi User: 132 ảnh web vào repo public? (E nghiêng giữ ngoài repo).
+- 13:29 14/11/2026 — **bai_hoc/ cho việc xong 14/11**: bài mới 22 (hai lần ghi kho), 23 (Lên kế hoạch bản 2), 24 (giao diện H1); ghi chú ở bài 1 / 14 / 17; README Phần 5. Hook 0 trùng. Chưa commit — chờ A giao agent con kiểm độc lập. Kiểm phần sửa ảnh Khám phá `3c5350f`: 0 finding mở ⇒ ready (JS 123,42 KB).
+- 13:34 14/11/2026 — **Bảng lưu trú cho lịch** (A giao, cho B): `data/luu_tru_2026-11-14_lich/` (`bang_luu_tru_lich.json` md5 `a4c97df36c7c`, BIEN_BAN, tools). 140 cơ sở, 117 có toạ độ ước mức con đường, 0 cụm gần lệch khu đã duyệt; mặc định một khu cả chuyến. 0 USD. Đã báo B + A. Rảnh — chờ kiểm bai_hoc / việc kế.
+- 13:36 14/11/2026 — **Nợ tài liệu (A giao)** xong, chưa commit — A commit: baseline JSON phase 4.5 ⇒ `data/reports_artifacts_private_2026-10-26/` (git rm --cached + .gitignore); tên dự án khác ở 9 file ⇒ 'một dự án khác của User', 2 file mô tả / prompt của dự án đó ⇒ `data/du_an_khac_2026-10-24/` (git rm); ảnh TRIPO ⇒ `data/tripo_v6_2026-11-12/user_chup/`. git grep mẫu hook ngoài session_prompt = 0. session_prompt/ A tự sửa.
+- 13:42 14/11/2026 — Sửa bai_hoc 22–24 + 1/14/17/README theo kiểm độc lập (5 sai + 14 hiểu nhầm + 4 không kiểm được; lưu số CLS 390 vào `data/ui_mau_2026-11-14/do_cls_390_lan_sua_1411.md`; thêm ảnh Khám phá) ⇒ chờ A đối chiếu + commit. Viết 10 câu ngoài kho KÍN cho C (`data/cau_nhieu_y_2026-11-14/ngoai_kho_vong2_sealed.jsonl`, md5 `5200859364af`); chờ C chọn cách chạy (E chạy, chỉ gửi số đếm).
+- 14:09 14/11/2026 — Chấm bộ kín ngoài kho cho C (`ket_qua_v2/cham_bo_kin_e.md`): 0 / 10 bị trả lời sai, 0 bịa; câu 'kho có + ngoài phạm vi' 0 / 2 (1 GenerationError, 1 từ chối cả câu) ⇒ C chạy lại cờ bật / tắt. Kiểm nhẹ `0501094` (lời dặn hiểu ý) ready, 2 minor ⇒ A merge + bật `e0cb02e`. **Sổ ghi việc bao_cao_he_thong/ cập nhật cho mọi thay đổi 14/11** (10 file) ⇒ chờ A đọc + commit.
+- 14:15 14/11/2026 — Vòng tự soi 1: gửi cả nhóm 8 ý (giữ đo toàn dữ liệu / câu trộn / kiểm độc lập; thừa: Golden đủ cho ghi kho chỉ thêm bài, đo lại giới hạn đã quyết, build JS 10 commit, 07 dài; đề xuất gộp với C-1 thành luật 'đếm câu chạm đường đổi trước lượt có phí'). B đo sửa lịch làm câu thường +1,9 s (p95 7,16 s) ⇒ A **tắt tạm `sua_lich_v2`**; B sửa song song trên `p9-sua-lich-tre` ⇒ **E kiểm khi B báo**.
 
 ### Bẫy / đã học phiên 14/11
 - **Không grep cả thư mục có file `*sealed*`** (14/11: grep `data/phase_9/dinh_tuyen_2/*.jsonl` để xem khuôn bộ câu ⇒ lỡ in 2 dòng bị cắt của `a_ranh_gioi_sealed.jsonl`; không dùng, đã báo A). Tìm trong kho: `scripts/grep_kb.sh`; thư mục khác: `ls` xem tên file trước, loại `*sealed*` rồi mới đọc.
 - Codex trích "nguyên văn" giờ mở cửa khác số User chép (giờ mở cửa ↔ giờ bán vé) ⇒ số giờ ghi kho phải mở trang gốc đọc; trang chặn (Cloudflare 403) ⇒ giữ lại, hỏi User.
 - Sửa code / test thì làm trên nhánh / worktree riêng, không trên cây main chung (14/11: 2 file sửa ở main suýt lẫn vào commit merge giao diện của A; A nhắc).
+- Giờ ghi vào tài liệu phải chạy `date` ngay lúc ghi — 14/11 E gõ tay '14:00 / 14:05 / 14:10' khi thật là 13:40 (hook cảnh báo).
 - Thẻ / khối UI rút gọn nội dung bài ("Thông tin nhanh") phải đo trên đủ 207 bài qua API thật: mẫu 2–3 bài không lộ dòng con bị mất.
 
 ---

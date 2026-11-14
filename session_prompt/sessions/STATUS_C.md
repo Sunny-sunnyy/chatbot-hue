@@ -1,4 +1,62 @@
-# STATUS C — phiên 13/11 (C `hue-rag-eb` · A `hue-rag-43` · B `hue-rag-83` · E `hue-rag-e8`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên 14/11 (C `hue-rag-b4` · A `hue-rag-7b` · B `hue-rag-22` · E `hue-rag-c4`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN SAU ĐỌC TRƯỚC (mở lại 14/11, ghi 14:43 14/11/2026)
+
+- **Việc dở — câu nhiều ý:** User chọn BẬT vòng 2 (lệch Golden 161 là nhiễu; sàn tính trên câu đi qua luật mới).
+  - Bước kế: **E review** nhánh `p9-cau-nhieu-y` head **`2c99534`** (đã push) ⇒ **A merge + bật cờ** `cau_nhieu_y` trong `settings.yaml`.
+  - C không tự merge / bật.
+  - Report: `report_agent/2026-11-12_ra_khoang_cach/c_cau_nhieu_y_do_v2.md` (vòng 1: `c_cau_nhieu_y_do.md`); plan v2 `docs/superpowers/plans/2026-11-14-cau-nhieu-y-v2-plan.md`.
+  - E review mà có sửa ⇒ C sửa trên nhánh, chạy `pytest tests/test_cau_nhieu_y.py` (25) + bộ liên quan (545). Chỉ đo có phí lại khi A giao.
+- **Xong hôm nay** (không còn việc):
+  - nhánh ảnh Khám phá — A merge `ef8bc46`;
+  - nhãn bộ sửa lịch theo lịch bản 2 — đã thấy `2923d432da9b`, kín `1165ecfa6367`, đã báo B lỗi `khong_doi` trong `q3_sua_lich.py`;
+  - review ghi kho 2 của E — ready.
+- **Tiền C hôm nay:** câu nhiều ý vòng 1 0,160 + vòng 2 ≈ 0,19 (có ghi 0,1635 + dò ≈ 0,02–0,03) ⇒ **≈ 0,35 USD**. Không có lượt có phí nào đang chạy.
+- **Máy:** không server nào của C. Worktree còn:
+  - `/tmp/c_ny` (nhánh câu nhiều ý; cờ trong file = `false`);
+  - `/tmp/c_sl` (bản đọc của `p9-sua-lich-v2` cho mô phỏng nhãn);
+  - `/tmp/c_gd` (cũ, có thể gỡ).
+- **Bẫy:**
+  - (1) worktree cần symlink `data/` + `knowledge-base-hue/`, không có thì server không khởi động;
+  - (2) `( … &)` trong lệnh Bash bị chuyển nền sẽ chết theo ⇒ chạy server bằng `run_in_background`;
+  - (3) trường `context_sources` của Golden là SỐ nguồn, tên đoạn ở `top_chunk_ids`;
+  - (4) trước lượt có phí: đếm câu chạm đường đổi (0 USD), Golden 0/176 câu đi vào luật mới vẫn bị chạy;
+  - (5) bộ kín NK của E: C không mở; dò bằng `tools/do_kin_mot.py` (chỉ in số);
+  - (6) X01 `TypeError` / NK06 `GenerationError` chập chờn, `do_g.py` giờ ghi `loi_vet`.
+
+## PHIÊN 14/11
+
+**A giao (09:46 14/11/2026):** (1) rà lời dặn bản 2 (0 USD) · (2) B0 bảng ảnh đợt 2 — 24 / 34 User chốt 13/11 (tải Commons nền, chậm) · (3) E báo đã ghi kho ⇒ dừng, review diff kho với `meta/` trước khi E dựng chỉ mục · (4) góp ý W69 ≤ 5 dòng cùng kết quả rà gửi cả nhóm. Bài lưu trú: lần này không ghi.
+**Khai báo sửa:** file này · `data/anh_kham_pha_2026-11-14/` (A giao 14/11: ảnh Khám phá + 10 điểm lịch) · `report_agent/2026-11-12_ra_khoang_cach/c_nghien_cuu_wow.md` · `data/ui_mau_2026-11-14/` (tools/, c/, h*/gioi_thieu.html) · `bao_cao_he_thong/` 02–07, 09, 10, 90, README + `nhat_ky/2026-11-14_ghi_kho_3_bai.md` (A giao 14/11, ghi kho) · `data/osm_quan_2026-11-12/` (script + bảng + biên bản mới) · `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan_ban2.md` · `data/phase_9/lich_trinh/tools/dung_bang_anh.py` + `data/phase_9/lich_trinh/bang_anh_v1.json` + `data/phase_9/lich_trinh/anh_lich_v1/` (ảnh tải về) · `data/ra_khoang_cach_2026-11-12/` (script đếm). Không chạm `knowledge-base-hue/`, code `backend/` / `frontend/`.
+
+**Rà lời dặn bản 2 XONG (09:55 14/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_ra_loi_dan_ban2.md` — log không cho thấy lỗi mới do lời dặn; giữ Đ1 (nhánh B) + Đ5 (skill, A); **bỏ Đ3** (bản 1 sai giả định: mô tả thời tiết / ngày chỉ đưa khi có từ khoá); không làm Đ4. Đã gửi bàn nhóm vòng 1 cùng W69 (đồng ý hook chỉ cảnh báo + lọc tên trùng món / điểm từ đầu). B đồng ý.
+**Review gói ghi kho 14/11 của E XONG (09:55 14/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_review_ghi_kho_14_11.md` — M-1 (kho tự mâu thuẫn số nhà 15A ↔ 17 ở bài phố đi bộ) ⇒ E sửa, A chốt cùng mục ② ⇒ **ready**, E ghi được.
+**B0 bảng ảnh XONG (09:58 14/11/2026, 0 USD):** `data/phase_9/lich_trinh/bang_anh_v1.json` md5 `a5e210e5a1f0` — 24 / 34 (đúng sàn), ảnh `anh_lich_v1/` ≤ 80 KB mỗi ảnh, tổng 1.769 KB; tác giả / giấy phép 0 lệch so với Commons; C nhìn 24 / 24 đúng điểm, ảnh #7 đã cắt. Biên bản `bien_ban_bang_anh_v1.md`. Đã nhắn B (B1) + A.
+**W69:** User BỎ (A báo). Rà lời dặn: A chốt theo C.
+**Bảng quán OSM riêng cho lịch v1 XONG (10:01 14/11/2026, A giao, 0 USD):** `data/osm_quan_2026-11-12/bang_quan_osm_v1.json` md5 `8563a685723a` — 488 quán (581 ⇒ lọc tự động 471 ⇒ đọc tay cả 110 bỏ +44 và cả 471 giữ −20 ⇒ gộp trùng ≤ 150 m −8); 5 / 8 cụm ≥ 3 quán. Biên bản `bien_ban_bang_quan_v1.md`. Chờ E review. Chưa code (đợt 3).
+**Kiểm X03 + gold_v6 XONG (10:18 14/11/2026, A giao, 0 USD):** X03 sau ghi kho trả lời đúng theo đoạn bài đi lại, 0 số ngoài đoạn, thiếu câu nhắc mũ bảo hiểm / rượu bia (minor) ⇒ đồng ý đổi nhãn "trong kho"; gold_v6 chỉ dời 2 trích dẫn (case 167), chữ giống hệt. Đã gửi A + E.
+**Review report ghi kho của E XONG (10:26 14/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_review_e_ghi_kho_report.md` — ready, 2 minor ("nguyên văn" case 154 ⇒ 5 / 9 dãy 4 từ; tên thông tin cạnh case_index). Mọi số mục 4 tính lại khớp.
+**Sổ ghi việc cho ghi kho 14/11 XONG (10:31 14/11/2026, A giao):** `bao_cao_he_thong/` 01–10, 90, README (207 bài / 8.474 đoạn, record / sparse / T1 / nhãn v6, X03, Qdrant còn 1 collection) + `nhat_ky/2026-11-14_ghi_kho_3_bai.md` — chưa commit, chờ A đọc.
+**Bảng quán OSM: E review ready (0/0/2) ⇒ C sửa 2 minor (10:31 14/11/2026)** — bảng không đổi.
+**Bản mẫu Giới thiệu × 3 hướng XONG (10:43 14/11/2026, A giao, 0 USD, không chạm repo):** `data/ui_mau_2026-11-14/h{1,2,3}/gioi_thieu.html` + ảnh `c/` + `c/BIEN_BAN_GIOI_THIEU.md`; công cụ `tools/kiem_tuong_phan.py` (0 trượt / 6). Chờ trang chủ của E ⇒ kiểm tương phản + 390 cả 3; sau User chọn: Giới thiệu + Khám phá.
+**Đầu vào cho mẫu Khám phá (B, TRIPO v7):** `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v7_giao_dien.md` §2 — thẻ bài có ảnh + nhãn lĩnh vực ở góc; trang bài hai cột (nội dung trái, thẻ "thông tin nhanh" phải lấy từ "Thông tin chung"); "bài liên quan" cuối trang; ảnh 03_diem_tham_quan_1440.png, 06_chi_tiet_dai_noi_1440.png. Làm SAU khi User chọn hướng.
+**Mẫu Khám phá H1 XONG (11:06 14/11/2026):** `data/ui_mau_2026-11-14/h1/kham_pha.html` + `kham_pha_bai.html` (tools/dung_kham_pha.py) — tương phản 0 trượt, CLS ≤ 0,0025, giảm chuyển động 0 animation. Công cụ `tools/kiem_hieu_ung.py` (CLS + reduced-motion) + `kiem_tuong_phan.py --khung-cuoi-ken-burns`. Giới thiệu H1 gắn lớp hiệu ứng chung của E. Đo Lên kế hoạch H1 của E: sau sửa 0 trượt.
+**Review nhánh B `p9-lich-truong-gd` XONG (11:06 14/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_review_lich_truong_gd.md` — ready 0/0/2; worktree /tmp/c_rv đã gỡ.
+**Đo Trợ lý H1 + Lên kế hoạch H1 (E) XONG (11:15 14/11/2026):** cả 5 trang H1 qua 3 phép đo ở 1440 + 390.
+**Review nhánh B `p9-anh-lich` XONG (11:15 14/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_review_anh_lich.md` — ready 0/0/3 (ghi công thiếu "đã thu nhỏ" + link giấy phép; chữ 12 px; test đọc data/). Worktree /tmp/c_rv2 đã gỡ.
+**Hiệu ứng bản 2 (E) áp cho trang C + đo 6 trang H1 XONG (11:28 14/11/2026):** 0 trượt (390 sau khi E dời dải báo), CLS ≤ 0,034, giảm chuyển động 0 animation.
+**Tra framework hiệu ứng XONG (11:28 14/11/2026):** `report_agent/2026-11-12_ra_khoang_cach/c_framework_hieu_ung.md` — CSS đủ; GSAP + ScrollTrigger chỉ cho màn cuộn kể chuyện; số gzip C đo + thử CSP thật (0 vi phạm). Kết quả Codex `data/tra_cuu_cli/2026-11-14_fw-hieu-ung/`. /tmp/c_fw đã xoá. **Lỗi của C:** gõ giờ ước (11:40) vào report ⇒ hook bắt, sửa bằng `date`.
+**Việc kế (User "làm đi", A giao):** chờ E xong đợt chung trên nhánh `p9-gd-h1` ⇒ C làm Khám phá + trang bài + Giới thiệu từ mẫu, review chéo với E, đo 3 phép trên bản build thật. Khai báo file trước khi sửa.
+**Chờ việc** (11:28 14/11/2026). Còn mở: review bài lưu trú khi E viết xong.
+**Câu nhiều ý — code XONG (nhánh `p9-cau-nhieu-y` 5bc07b1, đã push, cờ tắt):** chờ E "dựng xong" ⇒ đo có phí (hỏi kèm 10, an toàn 32 ×2, Golden 176; ≈ 0,15 USD) ⇒ E review.
+**Ảnh Khám phá v2 XONG (13:30 14/11/2026):** nhánh `p9-anh-kp` 3c5350f (từ main cfb5d99) — 167 bài có ảnh, 29 "Ảnh minh hoạ", ghi công ở `public/anh/kp/ghi_cong.json` (tải khi mở trang bài / Giới thiệu), 31 link trùng kho về trang chủ tên miền (hook không vượt). Sửa thêm CLS Giới thiệu #nguon-anh 390 (0,17–0,66 trên main ⇒ ≤ 0,03). E review ⇒ ready; chờ A merge. Server 8897 (bản nhánh ảnh) còn chạy — merge xong tắt.
+**Nhãn bộ sửa lịch theo lịch bản 2 XONG (13:23 14/11/2026, 0 USD):** `data/phase_9/bo_do_sua_lich/` — đã thấy 2923d432da9b, kín 1165ecfa6367; mô phỏng code B 2bc020d 4/10 ⇒ 10/10, kín 1/5 ⇒ 5/5; cơ cấu giữ nguyên; báo B lỗi harness `q3_sua_lich.py` thiếu luật `khong_doi` (A chốt 06/11).
+**Review nhẹ ghi kho 2 của E XONG (13:29):** `report_agent/2026-11-12_ra_khoang_cach/c_review_e_ghi_kho_2.md` — ready 0/0/0, mọi số khớp.
+**Câu nhiều ý — đo XONG, KHÔNG ĐẠT (13:37 14/11/2026, 0,1601 USD):** `report_agent/2026-11-12_ra_khoang_cach/c_cau_nhieu_y_do.md` — hỏi kèm 4 ⇒ 10/10 đạt; an toàn máy đếm đạt; Golden trượt (ngoài kho bị trả lời 3/18, lỗi trích dẫn mới 2) ⇒ cờ giữ tắt, không merge; đề xuất vòng 2 chờ A. Mở: X01 TypeError chập chờn (đường web cũ). Nhánh rebase 31d38f3 chưa push. 8897 đã tắt; /tmp/c_anh đã gỡ (nhánh ảnh A merge ef8bc46).
+**Câu nhiều ý VÒNG 2 — đo XONG (14:03 14/11/2026, ≈ 0,19 USD):** nhánh 2c99534 (đã push); `report_agent/2026-11-12_ra_khoang_cach/c_cau_nhieu_y_do_v2.md` — mọi sàn đạt trừ Golden ngoài kho 1/18 (câu 161, đường không đổi: yêu cầu gửi model giống byte bật/tắt ⇒ nhiễu). Golden 0/176 đi vào luật mới. CHỜ A quyết (i) đóng / (ii) S-AT 2 judge ⇒ E review. NK06/NK07 của E: không do cờ (đường cũ).
+**Bẫy 14/11:** review kho 3 ngày 13/11 không grep chỗ khác nhắc cùng sự kiện (sót dòng 15A) ⇒ sửa một sự kiện trong kho thì grep mọi chỗ nhắc nó.
+
+## (Phiên 13/11 — giữ để tra)
 
 ## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên, 22:39 13/11/2026 `date`)
 
