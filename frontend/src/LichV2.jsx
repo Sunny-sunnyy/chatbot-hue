@@ -189,11 +189,12 @@ export function LichV2({ turn, onEditPlan }) {
 const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
 // Quán ăn gợi ý (cờ `quan_lich`, code chọn ≤ 2 quán cùng cụm ≤ 2 km): quán kho ⇒ "Đọc bài"; nguồn mở ⇒ nhãn "chưa kiểm" + link bản đồ.
 // Link chỉ nhận đúng gốc bản đồ của lịch (như link điểm); không giờ / giá / điện thoại.
-// Ảnh nhỏ cạnh tên quán (C 14/11 tối): quán kho ⇒ ảnh Khám phá của bài (`anhBai.js`); quán ngoài kho ⇒ ảnh tự host `anh/quan/<mã>` do server gửi
+// Ảnh nhỏ cạnh tên quán (C 14/11 tối): quán kho ⇒ ảnh Khám phá của bài (`anhBai.js`, bỏ ảnh `kc`); quán ngoài kho ⇒ ảnh tự host `anh/quan/<mã>` do server gửi
 // (chỉ nhận đúng mẫu tên đó). Không ảnh ⇒ không vẽ gì; không ghi công (User 14/11).
 const ANH_QUAN = /^quan\/[a-z0-9_]{1,40}$/;
 function anhQuan(q) {
-  if (typeof q.bai_id === "string") return anhCuaBai(q.bai_id)?.anh ?? null;
+  // ảnh cạnh tên quán = "đây là quán đó" ⇒ ảnh kho `kc` (người nhìn không chắc đúng quán) không hiện ở đây (review E m-1), như cạnh câu trả lời
+  if (typeof q.bai_id === "string") { const a = anhCuaBai(q.bai_id); return a && !a.kc ? a.anh : null; }
   return typeof q.anh === "string" && ANH_QUAN.test(q.anh) ? q.anh : null;
 }
 
