@@ -1,7 +1,7 @@
 # STATUS A — MỞ LẠI CHIỀU 14/11 (cập nhật 14:58 14/11/2026 `date`)
 
 - Terminal: A `hue-rag-ad` · B `hue-rag-6b` · C `hue-rag-c1` · E `hue-rag-14`. User: quyền giữ như sáng. Giao theo handoff mục "MỞ LẠI 14/11".
-- **Bẫy A (15:39 14/11/2026):** (1) lệnh dựng bản xem trước ghép `git worktree add … && cd /tmp/a_xem && …` — worktree lỗi (main đang dùng) nhưng các lệnh sau vẫn chạy trên cây chung ⇒ 2 merge chưa review vào `main` trên máy (chưa push) + 2 symlink lồng trong `data/`, `knowledge-base-hue/` ⇒ `git reset --keep` + `unlink`, không mất file của ai. Bài học: lệnh đổi thư mục dùng `cd X || exit`, worktree luôn từ nhánh mới (`-b`). (2) RAM về 0 GB: 2 bộ test rộng + 3 server cùng lúc ⇒ luật nhóm: một bộ test rộng một lúc (A lúc merge), mỗi người ≤ 1 server tạm.
+- **Bẫy A (15:39 14/11/2026):** (0) 16:23 14/11/2026: lại báo E "đã commit" trước khi đọc kết quả commit (hook chặn) — lần 3 trong ngày ⇒ đọc dòng cuối kết quả commit TRƯỚC khi nhắn. (1) lệnh dựng bản xem trước ghép `git worktree add … && cd /tmp/a_xem && …` — worktree lỗi (main đang dùng) nhưng các lệnh sau vẫn chạy trên cây chung ⇒ 2 merge chưa review vào `main` trên máy (chưa push) + 2 symlink lồng trong `data/`, `knowledge-base-hue/` ⇒ `git reset --keep` + `unlink`, không mất file của ai. Bài học: lệnh đổi thư mục dùng `cd X || exit`, worktree luôn từ nhánh mới (`-b`). (2) RAM về 0 GB: 2 bộ test rộng + 3 server cùng lúc ⇒ luật nhóm: một bộ test rộng một lúc (A lúc merge), mỗi người ≤ 1 server tạm.
 - Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; merge `p9-sua-lich-tre`, `p9-cau-nhieu-y`, nhánh giao diện; kết phiên: `Project_Status.md` §4 (số 8.435 cũ ⇒ 8.522, 1 collection).
 
 # STATUS A — MỞ LẠI 14/11 (viết 14:44 14/11/2026 `date`, trước khi User mở lại 4 session)

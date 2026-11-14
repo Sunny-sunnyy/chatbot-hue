@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 15:57, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang.*
+*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -96,12 +96,17 @@ bản mẫu HTML lúc chọn hướng:
 **Cái giá:** gói JS tăng **+10,5 KB** (112 ⇒ 122,6 KB sau nén), vượt mức 8 KB của kế hoạch. Phần lớn nhất là trang Khám phá (bảng ghi công ảnh). Mình
 không thêm thư viện nào. Mức 8 KB là mức "phải ghi lý do"; lý do đã ghi, người điều phối nhận.
 
-**Ảnh cho trang Khám phá (xong chiều 14/11).** Nay **167 / 207 bài** có ảnh: 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
+**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 184 / 216, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
 từng ảnh. 29 ảnh từng có nhãn **"Ảnh minh hoạ"**, vì người xem không chắc ảnh chụp đúng chính nơi đó. Bài không có ảnh vẫn là ô màu, không mượn ảnh bài
 khác. **Từ chiều 14/11** trang không hiện dòng ghi công hay nhãn nào dưới ảnh nữa (anh yêu cầu); nguồn ảnh vẫn giữ trong bảng dữ liệu.
 Lúc đó bảng ghi công 167 ảnh được tách ra một file riêng, chỉ tải khi mở trang bài hoặc Giới thiệu, nên gói JS chỉ còn **123,5 KB**. Chiều 14/11 bảng này
 bỏ hẳn khỏi trang (nguồn ảnh giữ trong thư mục dữ liệu riêng). Bảng vốn đã ở file riêng nên bỏ nó không làm gói nhỏ đi. Lần đo gần nhất (bản gộp thử chiều
 14/11, đã có "Huế qua các thời kỳ") là **124,44 KB**; sau đó thêm sông ba bến, điểm nhấn lịch, ảnh dưới câu trả lời — chưa đo lại.
+
+**Thêm ảnh chiều 14/11: 167 ⇒ 184 / 216 bài.** Thêm 13 ảnh cho những bài về một nơi hoặc một quán còn trống: hai agent con chọn ảnh **độc lập**, chỉ giữ ảnh
+mà cả hai cùng chọn; 7 ảnh trong số đó bị đánh "không chắc". Rồi thêm ảnh cho ba trong bốn bài kho mới (bài 22): cầu, nhà ga, nhà vườn (nhà vườn "không chắc").
+Bài chùa thì hai người chọn hai ảnh khác nhau, cả hai đều là cổng chùa thật; người làm chọn ảnh rõ hơn theo luật người điều phối đặt và đánh "không chắc".
+Nay có **38 ảnh "không chắc"**: chúng vẫn hiện ở Khám phá, nhưng **không hiện cạnh câu trả lời** của trợ lý (bài 25).
 
 ## Một chuyện thật: thẻ "Thông tin nhanh" lặng lẽ xoá mất giờ mở cửa
 
@@ -153,6 +158,7 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 - Hiệu ứng, lớp `html.hieu-ung`, dòng sông (`frontend/src/lkh.css`, `gt.css`), ẩn ≤ 980 / ≤ 760 px, View Transitions (`frontend/src/route.js`): [code]
 - Tương phản bản mẫu 1,83–2,71 ⇒ thấp nhất 6,07: `data/ui_mau_2026-11-14/c/BIEN_BAN_GIOI_THIEU.md`; code thật 0 / 12: `report_agent/…/c_review_gd_h1_dot0.md` [đã chạy]; CLS danh sách 0,23 / 0,34: `c_review_gd_h1_dot0.md`, sau sửa ≤ 0,045: commit `d72e7f0` ("CLS 0.23 -> 0.03", "CLS <= 0.045") [đã chạy]; CLS 390 trang chủ 0,148, Lên kế hoạch 0,226 ⇒ ≤ 0,040: `data/ui_mau_2026-11-14/do_cls_390_lan_sua_1411.md` (ghi lại từ tin nhắn đo của C và E) [đã chạy]; Giới thiệu 390 0,17–0,66 ⇒ ≤ 0,03: `session_prompt/sessions/STATUS_C.md`, merge `ef8bc46`, `report_agent/…/e_review_anh_kham_pha.md` (E đo 0,027) [đã chạy]; Chromium: `data/ui_mau_2026-11-14/tools/kiem_tuong_phan.py`, `kiem_hieu_ung.py` [code]
 - Ảnh Khám phá 167 / 207, 35 Commons + 132 web, 29 minh hoạ, JS 123,48 KB: merge `ef8bc46`, `report_agent/…/e_review_anh_kham_pha.md` [đã chạy]
+- Ảnh chiều 14/11: +13 (hai người chọn độc lập, 7 `kc`) ⇒ 180 / 212, merge `970951c`; 3 bài kho mới ⇒ 183 / 216 (`94aadc9`); chùa Từ Hiếu (hai người chọn khác, `kc`) ⇒ 184 / 216 (`c038167`); 38 dòng `kc` đếm trong `frontend/src/anhBai.js` [đã chạy]
 - **Sửa 13:40 14/11/2026 theo kiểm độc lập** (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_24.md`): tỉ lệ thư viện tính trên 112 KB (bản trước dùng ~106 KB); 57–60 FPS chỉ là 3 trang nhẹ nhất; tương phản tách bản mẫu ↔ code thật; thêm dòng CLS Giới thiệu; số CLS 390 nay có file nguồn; bảng ghi công đã ra file riêng; thêm phần ảnh Khám phá.
 - Gói JS 112,08 ⇒ 122,61 KB, theo từng trang: `report_agent/…/e_giao_dien_h1_implementation.md` [đã chạy]
 - Thông tin nhanh 51 / 207, 29 bài bị cắt ⇒ 28 bài có thẻ, 0 mất dòng; trang hứa không theo cờ: `report_agent/…/e_review_gd_h1_dot1_c.md`, `e_review_gd_h1_tro_ly_b.md` [đã chạy]

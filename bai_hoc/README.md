@@ -1,6 +1,6 @@
 # Bài học hue_rag — đọc theo thứ tự
 
-*Cập nhật lần cuối: 15:57, ngày 14/11/2026 · đủ 26 bài (0–25); thêm bài 25 cho bốn việc xong chiều 14/11 (sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở trong lịch, ảnh dưới câu trả lời); sửa bài 23, 24 theo giao diện chiều 14/11 (lịch mẫu, sông qua từng điểm, "Huế qua các thời kỳ", bỏ ghi công). Bài 22–24 đã sửa theo một lượt kiểm độc lập (5 câu sai, 14 chỗ dễ hiểu nhầm — ghi ở Nguồn từng bài).*
+*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · bài 22 thêm lần ghi kho 3, bài 24 / 25 thêm ảnh chiều 14/11 (184 / 216) · đủ 26 bài (0–25); thêm bài 25 cho bốn việc xong chiều 14/11 (sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở trong lịch, ảnh dưới câu trả lời); sửa bài 23, 24 theo giao diện chiều 14/11 (lịch mẫu, sông qua từng điểm, "Huế qua các thời kỳ", bỏ ghi công). Bài 22–24 đã sửa theo một lượt kiểm độc lập (5 câu sai, 14 chỗ dễ hiểu nhầm — ghi ở Nguồn từng bài).*
 
 Thư mục này là **bài học** để anh hiểu và kể lại được đồ án: chatbot làm gì, vì sao làm cách này, đo ra sao, còn yếu ở đâu. Bài viết theo kiểu: dễ hiểu, đủ nội dung, mỗi bài
 một ý, nói "vì sao" trước, đi theo đúng hai giai đoạn của RAG, giữ đủ chi tiết kỹ thuật quan trọng. Mỗi bài chỉ dựa vào bài trước nó. Gần cuối mỗi bài
@@ -16,7 +16,7 @@ chỉ có ở bài cần.
 | Bài | Nội dung | Trạng thái |
 |---|---|---|
 | [0](00_HUE_RAG_TRONG_3_PHUT.md) | hue_rag trong 3 phút: người hướng dẫn viên tra sổ tay; hai giai đoạn; đoạn kể 3 phút | đã sửa 13/11 — số từ chối nhầm mới, câu "0 câu ngoài kho bị trả lời" nói đúng 3 chỗ phạm sàn |
-| [1](01_KHO_DU_LIEU.md) | Cuốn sổ tay: kho dữ liệu | thêm ghi chú 14/11 — kho nay 212 bài (bài 22) |
+| [1](01_KHO_DU_LIEU.md) | Cuốn sổ tay: kho dữ liệu | thêm ghi chú 14/11 — kho nay 216 bài (bài 22) |
 | [2](02_CHUNKING.md) | Cắt sổ thành thẻ ghi chú: chunking | đã viết, chờ anh đọc |
 | [3](03_METADATA.md) | Ghi tên lên góc thẻ: metadata | đã viết, chờ anh đọc |
 | [4](04_EMBEDDING_VA_TU_KHOA.md) | Biến thẻ thành thứ tìm được: embedding và từ khoá | đã viết, chờ anh đọc |
@@ -57,9 +57,9 @@ chỉ có ở bài cần.
 
 | Bài | Nội dung | Trạng thái |
 |---|---|---|
-| [22](22_BO_SUNG_SO_TAY.md) | Viết thêm vào sổ tay mà không làm hỏng trang cũ: hai lần ghi kho 14/11, đo trước ↔ sau | bài mới, đã sửa theo kiểm độc lập |
+| [22](22_BO_SUNG_SO_TAY.md) | Viết thêm vào sổ tay mà không làm hỏng trang cũ: ba lần ghi kho 14/11, đo trước ↔ sau, chỉ đo câu bị chạm | thêm lần 3 (cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên, giờ Đại Nội theo mùa) |
 | [23](23_LEN_KE_HOACH_BAN_2.md) | "Lên kế hoạch" bản 2: code xếp theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ | đã sửa theo kiểm độc lập; thêm ghi chú chiều 14/11 (sửa lịch, chỗ ở ở bài 25; lịch mẫu; bỏ ghi công) |
-| [24](24_GIAO_DIEN_H1.md) | Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được; ảnh cho 167 / 207 bài ở Khám phá | đã sửa theo kiểm độc lập; thêm chiều 14/11 (sông qua từng điểm, ba bến, "Huế qua các thời kỳ", bỏ ghi công) |
+| [24](24_GIAO_DIEN_H1.md) | Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được; ảnh cho 184 / 216 bài ở Khám phá | đã sửa theo kiểm độc lập; thêm chiều 14/11 (sông qua từng điểm, ba bến, "Huế qua các thời kỳ", bỏ ghi công) |
 | [25](25_TRO_LY_LAM_VIEC_THAT.md) | Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở trong lịch, ảnh dưới câu trả lời | bài mới, đã sửa theo kiểm độc lập (1 sai, 9 dễ hiểu nhầm) |
 
 Nhịp: đã viết đủ 17 bài (sáng 11/11), thêm bài 17–21 (chiều 11/11) theo yêu cầu của anh: bộ bài kể **mọi việc đã làm xong** (xây, triển khai, so sánh, tối ưu, đóng gói, cách làm); phần đang làm dở chưa đưa vào, xong sẽ viết bổ sung. Đã sửa các câu sai / chưa rõ ở bài 4, 8, 11, 14 (ghi ở Nguồn từng bài); bài 17–19 đã qua một lượt kiểm độc lập. Anh đọc dần theo số, góp ý lúc nào thì mình sửa lúc đó; thấy câu nào sai thì mình sửa ngay và ghi ở mục Nguồn của bài.

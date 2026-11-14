@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 15:57, ngày 14/11/2026 · bài mới; nối tiếp bài 23 và 15.*
+*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · bài mới; nối tiếp bài 23 và 15. Sửa chiều 14/11: số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -123,13 +123,13 @@ Tiền ≈ 0,0025 USD (4 lượt xếp lịch thật cho trình duyệt).
 ## 4. Ảnh dưới câu trả lời
 
 Hỏi trợ lý về một nơi hay một món, câu trả lời giờ có **một ảnh** ở dưới. Bấm vào ảnh thì mở bài trong Khám phá. Ảnh lấy từ bộ ảnh đã có của Khám phá
-(167 / 207 bài có ảnh, bài 24).
+(nay 184 / 216 bài có ảnh, bài 24).
 
 **Code quyết có hiện ảnh không,** model không chọn ảnh. Chỉ hiện khi đủ các điều kiện:
 - trợ lý trả lời bằng kho, không phải câu từ chối, không có mục web, không phải lịch;
 - **mọi nguồn được trích thuộc đúng một bài**, và bài đó nói về một thứ cụ thể (một nơi, một món, một lễ hội hay một loại hình nghệ thuật), không phải
   bài tổng quan;
-- ảnh không thuộc 29 ảnh mà người kiểm ghi "không chắc đúng nơi". Ở Khám phá, 29 ảnh này từng có nhãn "Ảnh minh hoạ". Đặt cạnh câu trả lời, ảnh sai nơi
+- ảnh không thuộc nhóm ảnh mà người kiểm ghi "không chắc đúng nơi" (29 ảnh lúc làm, nay 38 sau đợt thêm ảnh chiều 14/11). Ở Khám phá, 29 ảnh đầu từng có nhãn "Ảnh minh hoạ". Đặt cạnh câu trả lời, ảnh sai nơi
   sẽ thành một lời khẳng định sai, nên ở đây không hiện.
 
 Không đổi gì ở máy chủ, không đổi câu gửi model, 0 USD.
@@ -185,7 +185,7 @@ Bài học: **qua phép đo đúng sai chưa phải là xong**, độ trễ cũn
 - Sửa lịch bằng lời: 6 hành động, mô phỏng ~15.000 lần áp 0 vi phạm, 2 lỗi (240 khung; 4 / 1.920), Q3 7 / 10 ⇒ 9 / 10, kín 4 / 5, Q5 0 / 64, Q5b 0 / 16, tiền ≈ 0,25 USD, độ trễ 4,17 ⇒ 2,37 (n = 20 gộp, "đo thêm tới khi đạt") ⇒ đo lại n = 20 chốt trước 2,58 / 2,65 s, đệm 1.244 token 0,00024 ⇒ 0,0001 USD, phần huỷ ≈ 0,0001 USD: `report_agent/2026-11-12_ra_khoang_cach/b_sua_lich_v2_implementation.md` [đã chạy]; lỗi chặn câu trộn khẩn cấp: `e_review_sua_lich_v2.md` + mục "Sau review E" của report trên [đã chạy]; giới hạn chỉ bỏ được buổi tối: `session_prompt/CURRENT_HANDOFF.md` mục "Giới hạn đã nhận" [tài liệu]; câu ví dụ "bỏ điểm chiều nay, mình vừa bị ngã…" là **ví dụ tự đặt** (câu thật do E viết, không chép).
 - Câu nhiều ý vòng 1 (4 / 10 ⇒ 10 / 10; 3 / 18; 2 lỗi trích dẫn; 0,16 USD): `report_agent/…/c_cau_nhieu_y_do.md` [đã chạy]; vòng 2 (10 / 10; kín 0 / 10; 1 / 18 câu 161 đường không đổi; 0 / 176 đi vào luật; ≈ 0,19 USD; cộng ≈ 0,35): `c_cau_nhieu_y_do_v2.md` [đã chạy]; anh chọn bật: `CURRENT_HANDOFF.md` 14:44 14/11 [tài liệu]; sửa "và" (0 câu đổi vế; 10 / 10; 0,0151 USD): `c_so_y_va_implementation.md`, review `b_review_so_y_va.md` [đã chạy]; mục web 4 / 4 ⇒ 0 / 11, 0,0349 USD, Serper vẫn cả câu: `c_web_y_thieu_implementation.md`, review `b_review_web_y_thieu.md` [đã chạy]; bỏ từ đã có ở phần trả lời khi chọn vế (sửa m-1 của review): commit `0b7ef90`, `backend/llm/assistant.py` [code]. Ví dụ "bún bò và bánh khoái" là ca test trong code [code].
 - Chỗ ở: luật khu (50 % / 60 %, trẻ em ⇒ trung tâm), 2 / 2 / 1 theo hạng, 140 cơ sở danh mục Cục Du lịch Quốc gia, 3.840 khung (3.072 / 3.072), người xem 9 / 10 ⇒ 10 / 10, hai lỗi sửa, ≈ 0,0025 USD: `report_agent/…/b_luu_tru_lich_implementation.md` [đã chạy]; E review ready: `e_review_luu_tru_lich.md`; cờ bật: `backend/config/settings.yaml` `luu_tru_lich: true` [code].
-- Ảnh dưới câu trả lời: điều kiện, 29 ảnh `kc`, backend không đổi: `report_agent/…/c_review_anh_tra_loi.md`, merge `4be483e` [code]; 167 / 207: bài 24.
+- Ảnh dưới câu trả lời: điều kiện, 29 ảnh `kc` (nay 38), backend không đổi: `report_agent/…/c_review_anh_tra_loi.md`, merge `4be483e` [code]; 184 / 216: bài 24.
 - Câu "Đại Nội … và gần đó có quán karaoke…" là câu người điều phối thử thật, có trong report sửa "và" và ca test [đã chạy].
 - Giờ bật / tắt / bật lại sửa lịch (14:04 · 14:14 · 15:08): commit `e0cb02e`, `3985816`, `69def87` [code]. Tiền đệm 0,00007 / lần: `e_review_sua_lich_v2.md` [đã chạy]. 139 + 1 cơ sở: trường `nguon` của bảng lưu trú [đã chạy]. 7 loại bài có ảnh: `frontend/src/anhTraLoi.js` [code].
 - **Sửa 16:05 14/11/2026 theo kiểm độc lập** (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25.md`, 135 khẳng định: 1 sai, 9 dễ hiểu nhầm): sửa câu "hoà điểm" của mục web (lỗi đã sửa trước khi merge); loại hành động thứ 6; 8 kiểu thử; 0 / 16 không đo số khẩn cấp; 139 + 1 cơ sở; thứ tự khách sạn; loại bài có ảnh; giờ bật.

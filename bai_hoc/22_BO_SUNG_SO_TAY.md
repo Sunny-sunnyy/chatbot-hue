@@ -1,6 +1,6 @@
-# Bài 22 — Viết thêm vào sổ tay mà không làm hỏng trang cũ: hai lần ghi kho ngày 14/11
+# Bài 22 — Viết thêm vào sổ tay mà không làm hỏng trang cũ: ba lần ghi kho ngày 14/11
 
-*Cập nhật lần cuối: 13:40, ngày 14/11/2026 · bài mới; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
+*Cập nhật lần cuối: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -13,10 +13,11 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Tiêu chí ghi trước | **pre-registered criteria** | Mức đạt viết ra **trước** khi xem kết quả, để không "dời cột gôn" sau khi thấy số. |
 | Nhiễu sinh câu — **mới** | **generation noise** | Cùng một câu, cùng ngữ cảnh, model vẫn có lúc trả lời, có lúc từ chối. Khác biệt kiểu này không do kho. |
 | Dòng "có thể đã thay đổi" | **may-have-changed notice** (`NOTICE_SOURCE_PREFIXES`) | Dòng nhắc code tự thêm khi câu trả lời trích bài có số dễ cũ (vé, giờ, hạng sao). |
+| Câu chạm — **mới** | **touched cases** | Câu đo mà 10 đoạn tìm được có đoạn của bài mới hoặc của bài vừa sửa. Câu không chạm thì bài mới không có mặt trong ngữ cảnh của nó. |
 
 ---
 
-*Bài 1 kể cuốn sổ tay gồm những gì và được giữ đúng ra sao. Bài này kể hai lần mình **viết thêm** vào sổ trong cùng một ngày, và cách mình chắc chắn
+*Bài 1 kể cuốn sổ tay gồm những gì và được giữ đúng ra sao. Bài này kể ba lần mình **viết thêm** vào sổ trong cùng một ngày, và cách mình chắc chắn
 trang mới không làm hỏng những câu trả lời đang tốt.*
 
 ## Quay lại người hướng dẫn viên
@@ -79,8 +80,42 @@ Còn bốn chỗ chưa tốt, đều là cách model chọn ý từ ngữ cảnh
 
 Mình ghi lại để theo dõi.
 
-**Phần cố ý chưa ghi: giờ Đại Nội theo mùa.** Theo trích dẫn đọc được trên trang anh tìm, hai khung giờ anh chép có thể là **giờ bán vé**, không phải giờ mở cửa.
-Mình không tự mở được trang đó, và không thấy trang chính thức nào ghi giờ theo mùa. Vì vậy mình giữ lại, chờ anh xem trang gốc.
+**Phần cố ý chưa ghi ở lần 2: giờ Đại Nội theo mùa.** Theo trích dẫn đọc được trên trang anh tìm, hai khung giờ anh chép có thể là **giờ bán vé**, không phải giờ mở cửa.
+Mình không tự mở được trang đó, và không thấy trang chính thức nào ghi giờ theo mùa, nên giữ lại. Lần 3 đã ghi, theo cách đọc đã thống nhất (xem dưới).
+
+## Lần 3 (chiều 14/11): bốn nơi nổi tiếng mà sổ chưa có trang riêng
+
+**Vì sao chọn bốn nơi này — đếm trước rồi mới viết.** Mình tự liệt kê 50 địa danh nổi tiếng mà khách dễ hỏi (theo hiểu biết chung, không lấy từ câu hỏi thật — log không lưu chữ câu hỏi), rồi đếm xem kho đã có bài riêng chưa: **26 nơi chưa có**. Nhiều
+nơi trong đó là một phần của bài lớn (ví dụ các công trình trong Kinh thành), nên không cần bài riêng. Mình hỏi thử trợ lý 6 câu về những nơi còn lại:
+cầu Trường Tiền và Ga Huế **bị từ chối**, chùa Từ Hiếu, nhà vườn An Hiên và Cồn Hến chỉ được một hai câu mỏng, làng hương Thủy Xuân thì trả lời được.
+Vì vậy mình viết bốn bài: **cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên**. Lượt hỏi thử này tốn chưa tới 0,01 USD.
+
+**Viết bài ra sao.** Hai agent con tra trang công khai (báo, trang du lịch của thành phố, Cục Văn thư và Lưu trữ…), mỗi ý ghi nguồn và ngày, rồi tự mở lại vài
+trang chính để đối chiếu. Nhiều chỗ các nguồn **ghi khác nhau**: năm xây cầu (1897–1900), chiều dài cầu (khoảng 400 m, tư liệu lưu trữ ghi 402,6 m), năm xây
+nhà ga (1906 hay 1908), năm vua ban tên chùa (1848 hay 1849). Gặp chỗ như vậy, bài ghi khoảng hoặc "nguồn ghi A hoặc B", không tự chọn một bên. Ý không có
+nguồn thì bỏ. Một người kiểm khác đọc bốn bài và chỗ sửa giờ Đại Nội trước khi ghi, bắt bốn chỗ cần sửa: chỗ lớn nhất là khung giờ tham quan đêm của Đại Nội chưa có nguồn chắc; các chỗ còn lại như đợt sửa cầu năm 2026 chưa có tin là đã xong, hay ghi thêm "một số nguồn ghi số 1" cho số nhà của nhà ga.
+
+**Giờ Đại Nội theo mùa.** Bài Đại Nội nay chia hai mùa. Từ giữa tháng 3 tới giữa tháng 10 là mùa hè: cửa mở lúc 6 giờ 30, đóng lúc 18 giờ, quầy vé
+thôi bán khoảng nửa tiếng trước đó. Phần còn lại của năm là mùa đông: cửa mở lúc 7 giờ, đóng lúc 17 giờ 30, quầy vé thôi bán sớm hơn nửa tiếng. Như vậy hai khung anh chép được đọc là **giờ ngừng bán vé**, còn giờ mở cửa thì dài hơn nửa tiếng. Nguồn là một trang hướng dẫn
+du lịch, không phải trang của chính cơ quan quản lý di tích, nên bài **viết nhẹ**: với tham quan buổi tối, bài chỉ nói là có theo
+từng đợt, trang hướng dẫn ghi chừng 7 giờ tới 10 giờ tối, và khuyên khách xem lịch trước. Mười một bài lăng, điện khác vẫn ghi khung 07h00 – 17h30 chung, vì nguồn chỉ
+nói giờ của Đại Nội.
+
+- Kho: **212 ⇒ 216 bài, 8.522 ⇒ 8.603 đoạn** (bốn bài mới thêm 81 đoạn).
+
+**Đo ra sao — chỉ đo câu bị chạm.** Hai lần trước mình chạy lại cả 176 câu Golden. Lần này mình đếm trước, không tốn tiền: so 10 đoạn tìm được của từng câu
+trên kho cũ và kho mới. Có **9 / 158 câu** đổi top 10, nhưng chỉ **2 câu** thật sự gặp đoạn của bài mới hoặc bài Đại Nội. 7 câu còn lại chỉ đổi thứ tự hoặc đổi một đoạn cũ lấy một đoạn cũ khác, không có đoạn nào của bài mới; câu trả lời của
+chúng có thể lệch đôi chút do ngữ cảnh khác, nhưng không phải do nội dung mới, nên mình không chạy lại. Vì vậy mình chạy lại 2 câu đó, thêm 18 câu "ngoài kho" (bước tìm đo
+riêng không có các câu này, mà bài mới có thể làm trợ lý trả lời nhầm), và bộ an toàn 32 câu.
+
+| Đo gì | Kết quả | Vì sao ổn |
+|---|---|---|
+| 2 câu chạm | Cả hai vẫn trả lời, **cùng ý**, chỉ đổi cách viết | Tiêu chí ghi trước nói "câu trả lời đổi thì một agent con chấm mù"; hai cặp quá ngắn và cùng ý nên mình đọc tay thay vì chấm mù — lệch nhỏ so với tiêu chí, ghi ra ở đây. |
+| 18 câu ngoài kho | **0 câu bị trả lời** | Sàn "0 câu ngoài kho bị trả lời" giữ nguyên. |
+| Bộ an toàn, 32 câu | 0 câu đổi lớp; 0 câu gặp đoạn bài mới | Một câu gặp dòng giờ Đại Nội mới, câu trả lời vẫn cùng lớp. |
+| 7 câu hỏi thử (6 câu hỏi trước khi ghi + 1 câu giờ Đại Nội) | Cầu và nhà ga **hết bị từ chối**, trích đúng bài mới; câu năm xây nhà ga trả lời "các nguồn không thống nhất" rồi nêu cả hai; chùa và nhà vườn đủ ý hơn; giờ Đại Nội trả lời theo mùa | Mình tự đọc: không con số nào trái với bài. |
+
+Cả lần 3 tốn khoảng **0,03 USD**, khoảng một phần bảy mỗi lần trước (0,22–0,23 USD), vì chỉ đo câu bị chạm.
 
 ## Một chuyện thật: hai lần "trượt chữ" mà vẫn giữ
 
@@ -105,14 +140,17 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 - **Bài mới chen vào câu nhiều nguồn**: đoạn mới hợp chữ có thể đẩy đoạn đúng của bài khác ra khỏi top 10. Lần này may là cùng ý; lần sau có thể không.
 - **Nhãn đoạn đúng đi sau kho**: bộ nhãn chưa có bài mới, nên câu được trả lời bằng bài mới có thể bị bước tìm chấm là "trượt".
 - **Số liệu khách sạn có hạn**: hạng sao công nhận có thời hạn. Danh mục lấy một ngày cụ thể; vì vậy mới có dòng "có thể đã thay đổi".
-- **Nguồn không rõ thì không ghi**: giờ theo mùa chờ anh xác nhận, kho vẫn ghi một khung giờ chung kèm câu "giờ có thể đổi".
+- **Nguồn không rõ thì viết nhẹ, không viết chắc**: giờ Đại Nội lấy từ trang hướng dẫn du lịch nên ghi kèm "kiểm lịch trước khi đi"; giờ quầy vé nhà ga, lịch
+  bật đèn cầu không có nguồn mới nên bài nói rõ là có thể đã đổi.
+- **Đếm câu chạm chỉ dựa trên bước tìm**: nếu đoạn mới chen vào lần tìm thêm của trợ lý (không phải lần tìm đầu), cách đếm này không thấy.
 
 ## Ba điều chính
 
 1. Mỗi lần ghi kho là một thí nghiệm nhỏ: **đo trước ↔ sau trên cùng bộ câu, tiêu chí ghi trước**. Script làm cả chuỗi ghi và tự lùi nếu lỗi.
-2. Hai lần ghi ngày 14/11 thêm **8 bài**: kho 204 ⇒ 212 bài, 8.435 ⇒ 8.522 đoạn. Điểm trung bình câu cũ không tụt; vài câu lệch nằm trong mức cho phép.
-   Câu đi lại trả lời được nhiều hơn (2 ⇒ 4 / 6, mình tự đọc), câu khách sạn cũng vậy (được trả lời 4 ⇒ 11 / 12, chấm mù). Tổng tiền đo khoảng 0,45 USD.
-3. Số trượt chữ thì xem **ngữ cảnh của câu đó có đổi không** rồi mới kết luận. Nhãn câu cũng phải đổi theo khi kho đã có câu trả lời.
+2. Ba lần ghi ngày 14/11 thêm **12 bài**: kho 204 ⇒ 216 bài, 8.435 ⇒ 8.603 đoạn. Điểm trung bình câu cũ không tụt; vài câu lệch nằm trong mức cho phép.
+   Câu đi lại trả lời được nhiều hơn (2 ⇒ 4 / 6, mình tự đọc), câu khách sạn cũng vậy (4 ⇒ 11 / 12, chấm mù), câu về cầu và nhà ga hết bị từ chối.
+   Tổng tiền đo khoảng 0,48 USD; lần 3 chỉ 0,03 USD nhờ đếm câu chạm trước.
+3. Số trượt chữ thì xem **ngữ cảnh của câu đó có đổi không** rồi mới kết luận. Cùng ý đó, trước khi đo hãy đếm câu nào bị chạm: không chạm thì không cần chạy lại.
 
 **Bài sau:** Bài 23 — "Lên kế hoạch" bản 2: code xếp lịch theo luật, nghiệm thu lần đầu trượt rồi đạt.
 
@@ -126,6 +164,10 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 - Lần 2, bài lưu trú, gộp cặp trùng 141 ⇒ 139, thêm 1 khách sạn theo tin thành phố, dòng "có thể đã thay đổi" (`backend/llm/assistant.py` `NOTICE_SOURCE_PREFIXES`), đo T1 / K1 / K2 / K4, homestay, giờ Đại Nội giữ lại, tiền 0,2249 USD: `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_luu_tru_implementation.md`; tiêu chí ghi trước: `data/sua_kho_2026-11-14_ghi_kho_2/TIEU_CHI.md`; cặp trùng: `data/sua_kho_2026-11-13_luu_tru/BIEN_BAN.md`, `report_agent/…/c_review_bai_luu_tru.md` [đã chạy]
 - "23 ⇒ 23" là tổng số câu có câu trả lời từ chối trong 176 câu Golden (trường `refusal`), gồm cả câu ngoài kho từ chối đúng; khác với "từ chối nhầm" của lần 1: `data/sua_kho_2026-11-14_ghi_kho_2/truoc|sau/golden.jsonl` [đã chạy]
 - Tổng tiền đo hai lần ≈ 0,2288 + 0,2249 = 0,45 USD.
+- Lần 3: 50 địa danh / 26 chưa có bài / 6 câu hỏi thử trước (`data/bai_kho_moi_2026-11-14/dia_danh_dem.json`, `hoi_thu_truoc.json`); nguồn từng ý, chỗ mâu thuẫn (`…/*_tom_tat.md`); người kiểm 1 major + 3 minor (`data/sua_kho_2026-11-14_ghi_kho_3/c_review_kho_3.md`); 216 bài / 8.603 đoạn, T1 9 / 158 đổi, 2 câu chạm (46, 154), 18 ngoài kho 0 bị trả lời, an toàn 0 đổi lớp, 7 câu thử, 0,030 USD: `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_3_implementation.md`; tiêu chí ghi trước: `data/sua_kho_2026-11-14_ghi_kho_3/TIEU_CHI.md` [đã chạy]
+- Giờ Đại Nội theo mùa: trang Vinpearl hướng dẫn tham quan Đại Nội (10/06/2025), anh tra 14/11 [tài liệu]; cách đọc "ghi cả hai, theo mùa: mở 6:30 / 7:00, ngừng bán vé ~17:30 / ~17:00" là anh chọn lúc 14:58 14/11 (`session_prompt/CURRENT_HANDOFF.md`).
+- Kiểm độc lập lần 3 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan3.md`): 40 mục — 31 đúng, 1 sai (tỉ lệ tiền), 7 dễ hiểu nhầm, 1 không kiểm được; đã sửa cả 8.
+- Cập nhật 16:17, ngày 14/11/2026: thêm lần 3, sửa tiêu đề, bảng từ, Khi nào hỏng, Ba điều chính.
 - **Sửa 13:40 14/11/2026 theo kiểm độc lập** (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_24.md`): chỉ các sửa ở bài vé có dòng nguồn (bản trước ghi "chỗ nào cũng"); Đủ / Đúng là "không tụt, trong nhiễu" (bản trước ghi "nhích lên"); 139 là sau gộp 2 cặp; "giống hệt" chỉ lần tìm đầu; 4 chỗ chưa tốt thay vì 1, kèm 9 / 2 / 1; Ba điều chính nói rõ số nào tự đọc; bỏ số nhà.
 
 </details>

@@ -81,6 +81,8 @@
 
 - 16:15 14/11/2026 — **Ghi kho lần 3 XONG, ĐẠT**: 4 bài (cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên) + giờ Đại Nội theo mùa (chỉ bài Đại Nội). 216 file / **8.603 đoạn**, record `82abd97169cd`, sparse `3404406926f2`, T1 `652da5944fe7`; sao lưu `meta/backup_ghi_kho_2026-11-14_lan_3/`. Đo: Golden câu chạm 2 + ngoài kho 18 (0 bị trả lời), an toàn 32 (0 đổi lớp), 7 câu thử đạt. Report `e_ghi_kho_3_implementation.md`. Main có p9-lkh-nhan + p9-anh-tra-loi (A merge). Tiền từ mở lại ≈ 0,065 USD. Không server nào của E chạy. Worktree `/tmp/e_anh` (p9-lkh-nhan, đã merge), `/tmp/e_atl` (p9-anh-tra-loi, đã merge) — xoá được.
 
+- 16:23 14/11/2026 — bai_hoc 01/22/24/25/README (lần ghi kho 3 + ảnh 184/216) đã commit (A). Kiểm độc lập 40 mục ⇒ sửa 8 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan3.md`). Nợ (A ghi handoff): dòng nguồn giờ Đại Nội trong kho bỏ cụm "dẫn quy định của Trung tâm" ở lần ghi kho kế. **Rảnh — chờ**: phản biện khi B / C có số đếm (web ý thiếu, quán trong lịch, tiền chặn nhầm). Không server / lượt đo nào của E chạy.
+
 ### Bẫy / đã học phiên 14/11
 - **Kiểm cổng trống trước khi mở server** (`ss -ltn | grep :<cổng>`; sau khi mở, `readlink /proc/<pid>/cwd` phải là worktree của mình): 14/11 E mở server cổng 8873 trùng server của C ⇒ server E chết, 18 lượt đo có phí chạy vào server C (≈ 0,009 USD phí oan, số bỏ).
 - **Không grep cả thư mục có file `*sealed*`** (14/11: grep `data/phase_9/dinh_tuyen_2/*.jsonl` để xem khuôn bộ câu ⇒ lỡ in 2 dòng bị cắt của `a_ranh_gioi_sealed.jsonl`; không dùng, đã báo A). Tìm trong kho: `scripts/grep_kb.sh`; thư mục khác: `ls` xem tên file trước, loại `*sealed*` rồi mới đọc.
