@@ -15,6 +15,7 @@
 .gt-dan { margin-top: 16px; font-size: 19px; color: #E4F1EE; }
 
 .gt-than { padding-bottom: 24px; }
+.gt-cho { min-height: 100vh; }  /* giữ chỗ tới khi biết cờ tính năng */
 .gt-khoi { padding-top: 64px; }
 .gt-khoi > .khoi-h { margin-bottom: 24px; }
 .gt-lam { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
