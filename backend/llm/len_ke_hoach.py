@@ -17,6 +17,7 @@ from openai import OpenAIError
 
 from llm import lich_trinh_v2 as lt2
 from llm import luu_tru_lich as ltl
+from llm import quan_lich as ql
 from llm import sua_lich_v2 as sl
 from llm import thoi_tiet as tt
 from llm.citations import CITATION_PATTERN
@@ -99,6 +100,8 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
         ts_k = khung["tham_so"]
         lich["o_dau"] = ltl.o_dau(flags.luu_tru_bang, [bang.theo_id[j]["cum"] for j in lt2.diem_ban_ngay(khung)], len(khung["ngay"]),
                                   bool(ts_k["tre_em"] or ts_k["lon_tuoi"]))
+    if flags.quan_lich:  # quán mỗi bữa do code chọn theo cụm + toạ độ (không vào tin nhắn gửi model — `tin_nhan_model` không đọc `an`)
+        lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
     giu_cau: dict[str, str] = {}
     if sua:
         lich["thay_doi"] = sua["thay_doi"]  # giao diện H1: khối "Đã đổi / Không đổi được" đầu thẻ (câu do code)

@@ -19,6 +19,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from llm import luu_tru_lich as ltl
+from llm import quan_lich as ql
 
 from llm.citations import CITATION_PATTERN
 from llm.lich_trinh import BUOI, CAU_CO_THE_DOI, CAU_KHONG_XEP, CUM_KE, CUM_XA, LOAI_DIEM, MAP_BASE, TIEU_DE_GHI_CHU, _cum_hop, chuan_ten
@@ -671,6 +672,8 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
     if lich.get("o_dau"):  # cờ `luu_tru_lich` (cờ tắt ⇒ None ⇒ chữ giống bản trước)
         dong += ltl.dong_chu(lich["o_dau"])
+    if lich.get("an"):  # cờ `quan_lich` (cờ tắt ⇒ không có khoá ⇒ chữ giống bản trước)
+        dong += ql.dong_chu(lich["an"])
     return "\n".join(dong)
 
 

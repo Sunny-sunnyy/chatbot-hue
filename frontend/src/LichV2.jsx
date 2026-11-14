@@ -3,6 +3,7 @@ import { boMaTrichDan } from "./markdown.js";
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
 import { dungIcs } from "./lich_ics.js";
+import { baiHref } from "./route.js";
 
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 
@@ -49,7 +50,7 @@ function SongNgay({ dongRef, khoa }) {
   return <svg className="lkh-song-ngay" aria-hidden="true"><path d={d} pathLength="1" /></svg>;
 }
 
-function NgayLich({ ng, turnKey, cau, xong, theoNgay, i }) {
+function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
   const dongRef = useRef(null);
   const muc = ng.muc.filter(m => LOAI_MUC_V2.has(m.loai));
   return (
@@ -85,6 +86,7 @@ function NgayLich({ ng, turnKey, cau, xong, theoNgay, i }) {
           })}
         </ul>
       </div>
+      {an?.length > 0 && <AnUong an={an} />}
       {theoNgay(ng.ngay).length > 0 && <ul className="lkh-du-bao">{theoNgay(ng.ngay).map((g, j) => <li key={j}>{g.cau}</li>)}</ul>}
     </section>
   );
@@ -158,7 +160,8 @@ export function LichV2({ turn, onEditPlan }) {
         ))}</ol>
       </section>
       <div className="lkh-ngay-ds">
-        {lich.ngay.map((ng, i) => <NgayLich key={ng.ngay} ng={ng} turnKey={turn.key} cau={cau} xong={xong} theoNgay={theoNgay} i={i} />)}
+        {lich.ngay.map((ng, i) => <NgayLich key={ng.ngay} ng={ng} turnKey={turn.key} cau={cau} xong={xong} theoNgay={theoNgay} i={i}
+                                              an={(lich.an || []).filter(a => a.ngay === ng.ngay)} />)}
       </div>
       {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} /></Suspense>}
       {chung.length > 0 && (
@@ -184,6 +187,28 @@ export function LichV2({ turn, onEditPlan }) {
 // Gợi ý nơi ở (B, cờ `luu_tru_lich`): khối do CODE chọn (khu cả chuyến, ≤ 5 cơ sở, lý do, nhãn "chưa kiểm giá"). Link tìm phòng chỉ nhận đúng gốc
 // LINK_TIM_PHONG (kiểm cả phía trình duyệt như link bản đồ), mở tab mới khi bấm; không giá, không "còn phòng".
 const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
+// Quán ăn gợi ý (cờ `quan_lich`, code chọn ≤ 2 quán cùng cụm ≤ 2 km): quán kho ⇒ "Đọc bài"; nguồn mở ⇒ nhãn "chưa kiểm" + link bản đồ.
+// Link chỉ nhận đúng gốc bản đồ của lịch (như link điểm); không giờ / giá / điện thoại.
+function AnUong({ an }) {
+  return (
+    <ul className="lkh-an" aria-label="Ăn uống gợi ý">
+      {an.map(a => (
+        <li key={a.bua}>
+          <span className="lkh-an-h">{a.bua === "trua" ? "Ăn trưa" : "Ăn tối"} gần {a.gan}</span>
+          {a.quan.map(q => (
+            <span key={q.ten} className="lkh-an-q">
+              {typeof q.bai_id === "string" ? <a href={baiHref(q.bai_id)}>{q.ten}</a>
+                : typeof q.map_url === "string" && q.map_url.startsWith(MAP_PREFIX)
+                  ? <a href={q.map_url} target="_blank" rel="noopener noreferrer">{q.ten}</a> : q.ten}
+              <small>{q.loai}{q.nhan ? ` · ${q.nhan}` : ""}</small>
+            </span>
+          ))}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function NoiO({ o }) {
   const ds = (o.co_so || []).filter(c => c.ten);
   if (!ds.length) return null;
