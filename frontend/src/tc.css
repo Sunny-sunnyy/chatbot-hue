@@ -64,8 +64,6 @@ html:not(.hieu-ung) .tc-dung-nut { display: none; }   /* giảm chuyển động
           border-radius: 20px; }
 .tc-the figure { margin: 0; }
 .tc-the img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #D7E8E4; }
-.tc-the figcaption { padding: 6px 12px 0; font-size: 13px; line-height: 1.35; color: var(--color-muted); }
-.tc-the figcaption a { color: var(--color-muted); text-decoration: underline; }
 .tc-the-than { display: flex; flex-direction: column; gap: 6px; flex: 1; padding: 12px 18px 18px; }
 .tc-nhan { display: flex; flex-wrap: wrap; gap: 6px; }
 .tc-nhan span { font-size: 13px; font-weight: 600; color: var(--color-accent-deep); background: var(--color-accent-soft); border-radius: 999px; padding: 2px 10px; }
@@ -98,7 +96,7 @@ html:not(.hieu-ung) .tc-dung-nut { display: none; }   /* giảm chuyển động
   .tc-hero-in { padding: 24px 16px 104px; }
   /* ô thời tiết về sau trang ⇒ đặt nổi ở góc trên, chừa sẵn chỗ (không đẩy khối chữ — C đo CLS 0,137) */
   .tc-hero .tt-hop { position: absolute; top: 12px; left: 16px; right: 16px; width: auto; padding: 8px 12px; }
-  .tc-hero .tt-chu { font-size: 12.5px; margin-top: 2px; }   /* ghi công Open-Meteo (CC BY 4.0) — bắt buộc, không ẩn */
+  .tc-hero .tt-chu { font-size: 12.5px; margin-top: 2px; }   /* giờ cập nhật số liệu */
   .tc-hero .tc-hero-in { padding-top: 156px; }
   .tc-hero .goi-y { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
   .tc-hero .goi-y .chip { flex: none; scroll-snap-align: start; }

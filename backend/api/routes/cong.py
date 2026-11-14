@@ -1,5 +1,5 @@
 """API chỉ đọc của cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` D6): danh sách bài kho cho trang
-Khám phá, một bài, ô thời tiết trang chủ, cờ tính năng. Không gọi model, không ghi gì.
+Khám phá, một bài, ô thời tiết trang chủ, cờ tính năng, lịch mẫu của trang Lên kế hoạch. Không gọi model, không ghi gì.
 
 Bài kho = đúng các file runtime của chỉ mục: lúc khởi động `build_full_corpus_retrieval_service` đã kiểm danh sách + hash file khớp build record
 (`corpus.sources`), rồi `api/app.py` mới nạp danh sách này. `id` bài từ trình duyệt chỉ được **so nguyên chuỗi** với danh sách đó — không ghép
@@ -10,6 +10,7 @@ from fastapi import APIRouter, Query, Request
 
 from api.routes.chat import _flags, error_response
 from ingestion.source_state import read_source_lf
+from llm import lich_trinh_v2 as lt2
 from llm import thoi_tiet as tt
 from llm.hoi_lai import SO_NGAY_TOI_DA, SO_THICH_TOI_DA
 
@@ -122,3 +123,31 @@ async def tinh_nang(request: Request):
         co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA,
                                  "so_thich_hien": list(flags.so_thich_hien)}  # loại < 4 điểm hoặc dưới sàn mô phỏng ⇒ không hiện
     return co
+
+
+# Lịch mẫu "Ví dụ" (User 14/11: trang Lên kế hoạch lúc chưa xếp quá trống). Tổ hợp cố định A chốt: 2 ngày · 2 người lớn · cân bằng · thích di
+# tích; không ngày đi (không dự báo, không đoán thứ). Do CHÍNH bộ xếp đang chạy dựng (`xep_v2` + `dung_lich`) ⇒ ví dụ không hứa điều bộ xếp không
+# làm. Câu mỗi điểm do code (loại điểm), không gọi model, không nguồn — câu tả từ kho chỉ có ở lịch thật. Bảng nạp một lần lúc khởi động ⇒ dựng một
+# lần rồi giữ (khoá theo id bảng).
+TRUONG_MAU = {"so_ngay": "2", "nguoi_lon": 2, "kieu_di": "can_bang", "so_thich": ["di_tich"]}
+_mau: dict[int, dict] = {}
+
+
+def dung_lich_mau(bang, anh: dict | None) -> dict:
+    khung = lt2.xep_v2(bang, lt2.tu_truong(TRUONG_MAU))
+    lich = lt2.dung_lich(bang, khung, {}, None, (), None, anh)
+    cau = {m["id_muc"]: f"Điểm {', '.join(lt2.NHAN_LOAI[x] for x in bang.theo_id[m['id_diem']]['loai'])}."
+           for m in lt2.moi_muc(lich)}
+    return {"lich": lich, "cau": cau}
+
+
+@router.get("/api/lich_mau")
+async def lich_mau(request: Request):
+    """Lịch mẫu cho trang Lên kế hoạch lúc chưa xếp. Cờ `len_ke_hoach_v2` tắt ⇒ 404."""
+    flags = _flags(request.app.state)
+    if not flags.len_ke_hoach_v2:
+        return _khong_thay()
+    bang = flags.bang_lich_v2
+    if id(bang) not in _mau:
+        _mau[id(bang)] = dung_lich_mau(bang, flags.anh_lich_bang if flags.anh_lich else None)
+    return _mau[id(bang)]

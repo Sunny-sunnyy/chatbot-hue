@@ -35,15 +35,16 @@
 .lkh-thich[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-accent); }
 .lkh-thich[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; display: grid; place-items: center;
                                          border-radius: 50%; background: var(--color-accent); color: #fff; font-weight: 700; font-size: 14px; }
-.lkh-cong { margin-top: 10px; font-size: 14px; color: var(--color-muted); }
-.lkh-cong summary { cursor: pointer; }
-.lkh-cong ul { margin: 6px 0 0; padding-left: 18px; }
-.lkh-cong a { text-decoration: underline; }
 
 /* Cột phải */
 .lkh-trong { padding: 28px; border: 2px dashed var(--color-line); border-radius: 22px; color: var(--color-muted); background: var(--color-surface); }
 .lkh-trong-h { font-family: var(--font-serif); font-size: 24px; color: var(--color-ink); margin-bottom: 8px; }
 .lkh-trong ul { padding-left: 20px; }
+/* Lịch mẫu "Ví dụ": nhãn rõ + lịch mờ nhẹ để không bị nhầm là lịch của người dùng */
+.lkh-mau-dau { margin: 0 0 12px; font-size: 15px; color: var(--color-muted); }
+.lkh-mau-nhan { display: inline-block; margin-right: 8px; padding: 2px 10px; border-radius: 999px; background: var(--color-ink); color: var(--color-surface);
+  font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.lkh-mau .lich-v2 { opacity: .92; }
 .lkh-lich { display: flex; flex-direction: column; gap: 16px; }
 .lkh-go { display: inline-flex; gap: 5px; padding: 6px 2px; }
 .lkh-go i { width: 9px; height: 9px; border-radius: 50%; background: var(--color-accent); opacity: .35; }
@@ -75,11 +76,10 @@
                  border: 3px solid var(--color-surface); background: #FFF4DB; color: #7A5212; }
 .lkh-chieu .lkh-cham-buoi { background: #FBE7DC; color: #9A3412; }
 .lkh-toi .lkh-cham-buoi { background: #E9E6F7; color: #3B2F7A; }
-/* figure.lich-anh giữ nguyên (B đọc ảnh + ghi công qua lớp này); `display: contents` để ảnh vào cột 2, ghi công vào cột chữ dưới câu */
+/* figure.lich-anh giữ nguyên (B đọc ảnh qua lớp này); `display: contents` để ảnh vào cột 2 (không còn dòng ghi công — User 14/11) */
 .lich-v2 .lkh-muc .lich-anh { display: contents; }
 .lich-v2 .lkh-muc .lich-anh img { grid-column: 2; grid-row: 1 / span 2; }
 .lich-v2 .lich-anh img { width: 96px; height: 96px; aspect-ratio: auto; border-radius: 16px; margin: 0; }
-.lich-v2 .lkh-muc .lich-anh figcaption { grid-column: 3; grid-row: 2; margin: 0; max-width: none; font-size: 13px; line-height: 1.4; }
 .lkh-khong-anh { grid-row: 1 / span 2; grid-column: 2; width: 96px; height: 96px; border-radius: 16px; background: var(--color-accent-soft); }
 .lkh-than { grid-column: 3; grid-row: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .lich-v2 .lich-buoi { align-self: flex-start; font-size: 14px; font-weight: 600; color: var(--color-accent-deep); background: var(--color-accent-soft);
@@ -110,7 +110,7 @@
   .lich-v2 .lkh-muc { grid-template-columns: 64px 1fr; gap: 4px 12px; }
   .lkh-cham-buoi, .lkh-dong::before { display: none; }
   .lich-v2 .lkh-muc .lich-anh img, .lkh-khong-anh { grid-column: 1; width: 64px; height: 64px; }
-  .lkh-than, .lich-v2 .lkh-muc .lich-anh figcaption { grid-column: 2; }
+  .lkh-than { grid-column: 2; }
   .lkh-di { margin-left: 76px; }
   .lich-v2 .lich-ngay { padding: 16px; }
 }
@@ -118,7 +118,7 @@
 .chat .lich-v2 .lkh-muc { grid-template-columns: 64px 1fr; gap: 4px 12px; }
 .chat .lkh-cham-buoi, .chat .lkh-dong::before { display: none; }
 .chat .lich-v2 .lkh-muc .lich-anh img, .chat .lkh-khong-anh { grid-column: 1; width: 64px; height: 64px; }
-.chat .lkh-than, .chat .lich-v2 .lkh-muc .lich-anh figcaption { grid-column: 2; }
+.chat .lkh-than { grid-column: 2; }
 .chat .lkh-di { margin-left: 76px; }
 
 /* Sửa lịch bằng lời (B, đợt sau): khối "Đã đổi / Không đổi được" ở đầu thẻ */
