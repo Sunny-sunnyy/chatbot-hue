@@ -128,6 +128,11 @@ CAU_HAI_Y = "Vé lẻ vào Đại Nội giá bao nhiêu, dịp Tết năm tới 
     ("Vé vào Đại Nội giá bao nhiêu?", 1),
     ("Con mình 14 tuổi nhưng cao hơn 1 mét 3, vào Bạch Mã mua vé trẻ em cần mang gì?", 1),  # dấu phẩy nhưng chỉ một vế hỏi
     ("Mình không cần hướng dẫn viên, chỉ muốn đi bộ quanh Kinh thành.", 0),                  # "không" giữa câu không phải tiểu từ hỏi
+    # 14/11 chiều: hai vế nối bằng "và / còn" (không dấu phẩy) — câu thật bị từ chối cả câu vì đếm 1
+    ("Đại Nội Huế mở cửa mấy giờ và gần đó có quán karaoke nào giá rẻ không?", 2),
+    ("Vé Đại Nội bao nhiêu còn vé lăng Minh Mạng bao nhiêu?", 2),
+    ("Bún bò và bánh khoái giá bao nhiêu?", 1),                                               # "và" nối hai món của MỘT câu hỏi
+    ("Đi với trẻ nhỏ thì nên tham quan đâu?", 1),
 ])
 def test_so_y_counts_question_clauses(cau, n):
     assert so_y(cau) == n
