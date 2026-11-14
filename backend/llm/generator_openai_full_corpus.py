@@ -368,6 +368,8 @@ class OpenAIFullCorpusGenerator:
             model_settings=ModelSettings(max_tokens=WEB_MAX_OUTPUT_TOKENS, include_usage=True, store=False),
             output_type=AnswerOutput,
         )
+        self.web_agent_thap = self.web_agent.clone(
+            model_settings=dataclasses.replace(self.web_agent.model_settings, reasoning=Reasoning(effort=BIEU_MAU_REASONING)))
 
     @classmethod
     def from_environment(
@@ -542,9 +544,10 @@ class OpenAIFullCorpusGenerator:
         """Trò chuyện (B1 D4): lời dặn riêng, không ngữ cảnh kho."""
         return await self._execute_agent(self.chat_agent, with_history(query.strip(), history), AnswerOutput, call_log)
 
-    async def generate_web_section(self, user_prompt: str, call_log: "CallLog | None" = None) -> GeneratedText:
-        """B6 D4: mục "Từ web" từ câu hỏi + đoạn trích (`tra_web.dau_vao_model`). Một lần gọi, không lịch sử; lỗi ⇒ `GenerationError`."""
-        return await self._execute_agent(self.web_agent, user_prompt, AnswerOutput, call_log)
+    async def generate_web_section(self, user_prompt: str, call_log: "CallLog | None" = None, thap: bool = False) -> GeneratedText:
+        """B6 D4: mục "Từ web" từ câu hỏi + đoạn trích (`tra_web.dau_vao_model`). Một lần gọi, không lịch sử; lỗi ⇒ `GenerationError`.
+        `thap` (cờ `web_suy_luan_thap`): cùng agent, mức suy luận "low" — chỉ đổi đúng một tham số gửi model."""
+        return await self._execute_agent(self.web_agent_thap if thap else self.web_agent, user_prompt, AnswerOutput, call_log)
 
     def start_chat_stream(self, query: str, history=()) -> tuple[RunResultStreaming, "CallLog"]:
         return self._start_stream(self.chat_agent, with_history(query.strip(), history))

@@ -112,6 +112,9 @@ class AssistantFlags:
     # Sửa lịch bằng lời trên lịch bản 2 (plan `2026-11-14-sua-lich-v2-plan.md`): cuộc có lịch đã lưu + câu có từ sửa ⇒ một lần gọi hiểu ý ⇒ code áp.
     # TẮT tới khi đạt Q3 + Q5; cần cờ bản 2. Tắt ⇒ không chạm (chuỗi gửi model giống byte).
     sua_lich_v2: bool = False
+    # Mức suy luận "low" cho lần viết mục web (plan `2026-11-14-web-suy-luan-thap-plan.md`): chỉ đổi `reasoning.effort` của agent mục web; lời dặn,
+    # tin nhắn, Serper, kiểm cuối bằng code giữ nguyên. TẮT tới khi đạt; tắt ⇒ chuỗi gửi model giống byte.
+    web_suy_luan_thap: bool = False
     # Gợi ý nơi ở trong lịch bản 2 (plan `2026-11-14-luu-tru-trong-lich-plan.md`): khu cả chuyến + ≤ 5 cơ sở do code chọn, `lich["o_dau"]`
     # (không vào tin nhắn gửi model). TẮT tới khi đạt; cần cờ bản 2 + bảng lưu trú (`assistant.lich_trinh_bang_luu_tru`, kiểm lúc khởi động)
     luu_tru_lich: bool = False
@@ -1004,7 +1007,7 @@ def so_y(cau: str) -> int:
     return sum(_la_ve_hoi(p) for v in re.split(r"[,;?]", cau) if v.strip() for p in _LIEN_TU.split(v))
 
 
-async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
+async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, thap: bool = False) -> None:
     """Sau khi cổng mở: truy vấn do code dựng từ câu hỏi lượt này (D2) ⇒ một lần tra (D3) ⇒ một lần gọi model riêng viết mục web (D4) ⇒ kiểm
     cuối (D5). Kết quả vào `trace.web`; câu trả lời kho (`trace.answer`) giữ nguyên. Tra lỗi / 0 kết quả / model lỗi / kiểm hỏng ⇒ câu cố định
     (không đoán, không thử lại). Lần tra ghi một mục `tools` (ms, trạng thái, số kết quả, USD — không chữ)."""
@@ -1026,7 +1029,7 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
     ve = ve_y_thieu(query, trace.answer or "") if trace.nhieu_y else ""
     hoi_web = f"{query} (chỉ viết cho phần: {ve} — phần còn lại đã có câu trả lời từ kho)" if ve else query
     try:
-        generated = await generator.generate_web_section(tw.dau_vao_model(hoi_web, kq.so_web), call_log)
+        generated = await generator.generate_web_section(tw.dau_vao_model(hoi_web, kq.so_web), call_log, thap=thap)
     except GenerationError:
         web["kiem"] = ["model_loi"]
         return
@@ -1050,7 +1053,7 @@ async def _web_stream(query: str, generator, trace: AnswerTrace, flags: Assistan
     gửi cả mục một sự kiện `web` sau `sources`."""
     if web_gate_open(trace, flags, tim_web):
         yield "status", {"stage": "tra_web"}
-        await cong_web(query, generator, trace, tim_web)
+        await cong_web(query, generator, trace, tim_web, flags.web_suy_luan_thap)
 
 
 async def answer_turn(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
@@ -1076,7 +1079,7 @@ async def answer_turn(query: str, retrieval_service, context_builder, generator,
     await answer_query(query, retrieval_service, context_builder, generator, trace, recorder, _today(flags, trace), flags)
     set_notice(trace, flags)
     if web_gate_open(trace, flags, tim_web):
-        await cong_web(query, generator, trace, tim_web)
+        await cong_web(query, generator, trace, tim_web, flags.web_suy_luan_thap)
 
 
 async def answer_turn_stream(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
