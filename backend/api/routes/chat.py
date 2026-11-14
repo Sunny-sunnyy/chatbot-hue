@@ -398,6 +398,9 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
         thoi_tiet=_thoi_tiet_metrics(trace),
     )
+    if trace.nhieu_y:  # cờ `cau_nhieu_y` + câu ≥ 2 vế hỏi ⇒ luật theo ý đã chạy; chi_y_thieu = chỉ còn dòng ý thiếu ⇒ đổi thành câu từ chối.
+        # Khoá chỉ có khi luật chạy (câu một ý / cờ tắt ⇒ dòng log như cũ) — đọc log là biết câu có đi luật mới không (review E m-3).
+        metrics.update(nhieu_y=True, chi_y_thieu=trace.chi_y_thieu)
     if trace.lich_v2 is not None:  # "Lên kế hoạch" bản 2: khoá chỉ có ở lượt bản 2 (cờ tắt ⇒ dòng log như cũ); chỉ số đếm, không chữ
         v = trace.lich_v2
         metrics.update(lich_trinh_ok=not v["loi_khung"] and trace.citation_error is None, lich_trinh_so_diem=len(lt2.moi_muc(v["lich"])),

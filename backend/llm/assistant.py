@@ -961,12 +961,18 @@ def _con_la_y_thieu(giu: str) -> bool:
 
 _VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao)(?!\w)", re.IGNORECASE)
 _CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả)\s*$", re.IGNORECASE)
+_LIEN_TU = re.compile(r"\s+(?:và|còn|với)\s+", re.IGNORECASE)
+
+
+def _la_ve_hoi(v: str) -> bool:
+    return bool(_VE_HOI.search(v) or _CUOI_HOI.search(v))
 
 
 def so_y(cau: str) -> int:
-    """Vòng 2 (b): số vế hỏi của câu người dùng — tách theo , ; ?; một vế là ý hỏi khi có từ hỏi hoặc kết thúc bằng tiểu từ hỏi. Luật ghi trước
-    (plan `2026-11-14-cau-nhieu-y-v2-plan.md`), chỉ thử trên 10 câu hỏi kèm. Đếm thiếu ⇒ về luật cũ (an toàn)."""
-    return sum(bool(_VE_HOI.search(v) or _CUOI_HOI.search(v)) for v in re.split(r"[,;?]", cau) if v.strip())
+    """Vòng 2 (b): số vế hỏi của câu người dùng — tách theo , ; ? rồi theo "và / còn / với"; một vế là ý hỏi khi có từ hỏi hoặc kết thúc bằng
+    tiểu từ hỏi. Tách theo liên từ (14/11 chiều: câu "… mấy giờ và gần đó có … nào không?" đếm 1 ⇒ bị từ chối cả câu) chỉ thêm vế khi chính
+    phần đó có từ hỏi ⇒ "bún bò và bánh khoái giá bao nhiêu" vẫn là 1. Đếm thiếu ⇒ về luật cũ (an toàn)."""
+    return sum(_la_ve_hoi(p) for v in re.split(r"[,;?]", cau) if v.strip() for p in _LIEN_TU.split(v))
 
 
 async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
