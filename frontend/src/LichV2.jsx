@@ -74,10 +74,11 @@ export function LichV2({ turn, onEditPlan }) {
         <div><small>Thời gian</small><b>{lich.ngay.length} ngày{KIEU_V2[ts.kieu_di] ? ` · ${KIEU_V2[ts.kieu_di]}` : ""}</b></div>
       </div>
       <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
-      {/* Chỗ dành cho "sửa lịch bằng lời" (B, việc agent đợt sau): `lich.thay_doi` = [{cau, duoc}] do code dựng — chưa có ⇒ không vẽ gì */}
+      {/* Sửa lịch bằng lời (B, cờ `sua_lich_v2`): `lich.thay_doi` = [{cau, duoc}] — câu do CODE viết đã có sẵn động từ ("Đã bỏ…", "Chưa làm…")
+          ⇒ vẽ nguyên câu, màu theo `duoc`; lượt không sửa ⇒ không có khối này */}
       {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && (
         <ul className="lkh-doi" aria-label="Thay đổi của lịch">
-          {lich.thay_doi.map((d, i) => <li key={i} className={d.duoc ? "lkh-doi-duoc" : "lkh-doi-khong"}>{d.duoc ? "Đã đổi: " : "Không đổi được: "}{d.cau}</li>)}
+          {lich.thay_doi.map((d, i) => <li key={i} className={d.duoc ? "lkh-doi-duoc" : "lkh-doi-khong"}>{d.duoc ? "" : "Không đổi được: "}{d.cau.replace(/^Không đổi được: /, "")}</li>)}
         </ul>
       )}
       <section className="lkh-tong" aria-label="Tổng quan">

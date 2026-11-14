@@ -21,6 +21,7 @@ const STATUS_TEXT = {
   lich_trinh: "Đang xếp lịch…",  // Phase 9 B5 D14: code đang xếp lịch
   tra_web: "Kho chưa có — đang tra web…",  // Phase 9 B6 D6: cổng web mở sau câu từ chối của kho
   thoi_tiet: "Đang xem dự báo thời tiết…",  // Phase 9 B5b: công cụ thời tiết đang chạy
+  sua_lich: "Đang hiểu yêu cầu sửa lịch…",  // sửa lịch bản 2: cuộc có lịch ⇒ một lần hiểu ý trước khi trả lời
 };
 const WEB_LINK = /^https?:\/\//;  // B6: link nguồn web do server dựng từ sổ — trình duyệt kiểm lại gốc trước khi vẽ
 // B5 D14 (c): nhãn cố định của từng bước code đã làm (sự kiện `status` stage `lich_trinh`); tên điểm + lý do lấy từ dữ liệu sự kiện, không chữ model.
@@ -41,6 +42,7 @@ const BUOC_XONG = {
   lich_trinh: () => "xếp lịch",
   tra_web: () => "tra web (kho chưa có)",
   thoi_tiet: () => "xem dự báo thời tiết",
+  sua_lich: () => "hiểu yêu cầu sửa lịch",
 };
 // nhãn từng bước theo thứ tự: lần tìm thứ 2 trở đi ⇒ "tìm thêm"; `n_sources` của server là số cộng dồn ⇒ "có tổng N đoạn"
 function nhanBuoc(buoc) {
@@ -98,7 +100,7 @@ export function useChat() {
   }
 
   // `truong` (B4 / biểu mẫu) + `summary` (tóm tắt lựa chọn hiện cạnh câu hỏi) + `bieuMau` (cổng D3). Trả false khi đang bận (không gửi).
-  async function ask(value, { retryKey = null, truong = null, summary = "", bieuMau = false } = {}) {
+  async function ask(value, { retryKey = null, truong = null, summary = "", bieuMau = false, suaChon = null } = {}) {
     const query = value.trim();
     if (!query || pending || resetting) return false;
     abortRef.current?.abort();
@@ -125,6 +127,7 @@ export function useChat() {
         signal: controller.signal,
         truong,
         bieuMau,
+        suaChon,
         onEvent(name, data) {
           if (name === "status" && data.stage === "lich_trinh") {
             const text = LICH_BUOC[data.buoc]?.(data);  // "dang_xep" chỉ là nhãn trạng thái, không vào danh sách bước (C191 m-1)
@@ -151,6 +154,8 @@ export function useChat() {
             update({ text: bufferRef.current, sources: data, numbers: displayNumbers(bufferRef.current, data) });
           } else if (name === "notice") {
             update({ notice: data.text });
+          } else if (name === "sua_the") {
+            update({ suaThe: data });  // sửa lịch: thẻ chọn điểm thay — nút chỉ chứa id code đưa
           } else if (name === "clarify") {
             update({ clarify: data });  // B4 D8: thẻ hỏi lại — code dựng nút từ danh sách trường
           } else if (name === "lich_khung") {
@@ -415,6 +420,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
+      {turn.phase === "done" && turn.suaThe && <SuaTheCard the={turn.suaThe} onAsk={onAsk} />}
       {turn.phase === "done" && turn.lich && !turn.lichV2 && (
         <LichExtras lich={turn.lich} truong={turn.truong} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
                     getText={() => vanBanLich(turn, answerRef.current?.innerText ?? "", turn.lich.ban_do || [])} />
@@ -544,6 +550,26 @@ function MapLinks({ links }) {
 }
 
 // B4 D10: thẻ hỏi lại — mỗi trường một nhóm nút (chọn một), "Gửi" bật khi đủ trường bắt buộc, "Trả lời luôn" gửi `truong: {}`.
+// Sửa lịch bằng lời: "thay X" mà không nói thay bằng gì ⇒ thẻ 2–3 điểm đặt được vào đúng chỗ cũ (code chọn, đúng luật) + "Bỏ điểm này".
+// Bấm nút ⇒ lượt mới mang `sua_chon` {cu, moi} — server áp đúng lựa chọn, không hỏi lại lần hai.
+function SuaTheCard({ the, onAsk }) {
+  const khong = (the.thay_doi || []).filter(d => !d.duoc);
+  return (
+    <div className="clarify bubble sua-the">
+      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className="lkh-doi-khong">{d.cau}</li>)}</ul>}
+      <p className="mb-2">Bạn muốn thay <b>{the.ten_cu}</b> bằng điểm nào?</p>
+      <div className="flex flex-wrap gap-2">
+        {the.lua_chon.map(c => (
+          <button key={c.gia_tri} type="button" className={c.gia_tri === "bo" ? "retry" : "send"}
+                  onClick={() => onAsk(c.gia_tri === "bo" ? `Bỏ ${the.ten_cu}` : `Thay ${the.ten_cu} bằng ${c.nhan}`, { suaChon: { cu: the.cu, moi: c.gia_tri } })}>
+            {c.nhan}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ClarifyCard({ clarify, onAsk, initial = {} }) {
   const [chosen, setChosen] = useState(initial);
   const ready = clarify.bat_buoc.every(ten => chosen[ten]);
