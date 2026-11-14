@@ -11,7 +11,7 @@ Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (b�
   sau lần tìm đầu bằng câu gốc, trợ lý được **tự tìm thêm ≤ 2 lần** bằng câu tìm nó tự viết, mỗi lần đi đúng cách tìm dưới đây.
 - **Đang chạy cách nào:** câu hỏi đổi về dạng Unicode NFC (một cách viết chuẩn của chữ có dấu) → e5-small (model biến câu thành vector, chạy trên
   máy) lấy 30 đoạn gần nghĩa nhất trong Qdrant (cơ sở dữ liệu vector) → BM25 (chấm theo khớp từ khóa) chấm lại 30 đoạn đó → RRF (cách trộn hai
-  bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 12:50 14/11 sau lần ghi kho 2 thêm 5 bài lưu trú (212 file, 8.522 đoạn) — **cách tìm
+  bảng xếp hạng) → 10 đoạn đầu. Không có bước xếp hạng lại. Chỉ mục dựng lại 16:09 14/11 sau lần ghi kho 3 thêm 4 bài nơi mới + giờ Đại Nội (216 file, 8.603 đoạn) — **cách tìm
   không đổi**.
 - **Đo được trên kho hiện tại** (30/10, nhãn "đoạn đúng" bản 5 — vị trí đáp án trong file nguồn, gắn tay cho 40 câu thử + 15 câu kiểm):
   - **24 / 40** câu thử có đủ đoạn đúng trong 10 đoạn đưa model; **33 / 40** có đủ trong 30 ứng viên ⇒ 9 câu có đoạn đúng trong ứng viên nhưng bị xếp
@@ -140,7 +140,7 @@ Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại); dòng chỉ m
 | Chuẩn hóa NFC câu hỏi trước khi tìm | **còn dùng** (từ 28/10) | `backend/retrieval/full_corpus.py:97–102`, `:420` |
 | Không xếp hạng lại | **còn dùng** (MiniLM đã gỡ khỏi chatbot 26/10) | `backend/config/settings.yaml:44` |
 | Model vector e5-small | **còn dùng**; Qwen3-8B đã thử 30/10 — kém hơn, chỉ mục thử đã xoá | `backend/embedding/full_corpus.py:41–66` |
-| Chỉ mục tìm trên 212 file / 8.522 đoạn | **còn dùng** (dựng lại 12:50 14/11; mốc tìm 158 câu `356a742f09a1`: MRR 0,7203 ⇒ 0,7188, nDCG 0,7545 ⇒ 0,7534, độ phủ từ khoá 92,04 không đổi; 13 câu đổi top 10, 2 câu (hỏi chi phí ở) có đoạn lưu trú, 1 câu bài chi phí hạng 2 ⇒ 4 vẫn trong top 10. Lần 1 `a105229f1902`: 150 câu giữ nguyên 10 đoạn đầu; 5 câu có đoạn bài mới chen vào (đúng ngưỡng ≤ 5 ghi trước); 1 câu mất 1 / 2 đoạn đúng theo nhãn, nhưng ý đó có trong đoạn bài mới được tìm ra và câu trả lời vẫn đạt điểm tối đa ⇒ bạn chọn giữ; MRR 0,7216 ⇒ 0,7203, nDCG 0,7554 ⇒ 0,7545) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
+| Chỉ mục tìm trên 216 file / 8.603 đoạn | **còn dùng** (dựng lại 16:09 14/11; mốc tìm 158 câu `652da5944fe7`: 9 / 158 câu đổi top 10, 2 câu có đoạn bài mới / bài Đại Nội — MRR / nDCG lần này chưa tính lại. Lần 2 `356a742f09a1`: MRR 0,7203 ⇒ 0,7188, nDCG 0,7545 ⇒ 0,7534, độ phủ từ khoá 92,04 không đổi; 13 câu đổi top 10, 2 câu (hỏi chi phí ở) có đoạn lưu trú, 1 câu bài chi phí hạng 2 ⇒ 4 vẫn trong top 10. Lần 1 `a105229f1902`: 150 câu giữ nguyên 10 đoạn đầu; 5 câu có đoạn bài mới chen vào (đúng ngưỡng ≤ 5 ghi trước); 1 câu mất 1 / 2 đoạn đúng theo nhãn, nhưng ý đó có trong đoạn bài mới được tìm ra và câu trả lời vẫn đạt điểm tối đa ⇒ bạn chọn giữ; MRR 0,7216 ⇒ 0,7203, nDCG 0,7554 ⇒ 0,7545) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
 | "BM25 chỉ chấm lại 30 đoạn vector" là cách tốt nhất đã thử | **còn đúng** — nhưng chỉ vì các cách khác không chắc hơn; đoạn đúng hay bị xếp thấp | §3, §4 |
 | Cho `gpt-6-luna` chọn 10 trong 30 ứng viên | **gác làm hồ sơ** (bạn chốt 27/10) | §4 27/10 |
 | Định tuyến 4 tuyến trước khi tìm; trợ lý tìm thêm ≤ 2 lần sau lần tìm đầu | **còn dùng** (từ 03/11) | `backend/config/settings.yaml:60`, `:66`; `backend/llm/assistant.py:52` |

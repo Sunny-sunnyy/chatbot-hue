@@ -2,13 +2,13 @@
 
 > **Đây là sổ ghi việc (quá khứ) của các agent, không phải bài học.** Muốn hiểu hệ thống: đọc [bai_hoc/](../bai_hoc/) theo số, bắt đầu từ bài 0.
 
-Cập nhật 14:05 14/11/2026 (kho sau lần ghi kho 2; "Lên kế hoạch" bản 2 + sửa lịch bằng lời + giao diện mới đang chạy; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
+Cập nhật 16:19 14/11/2026 (kho sau lần ghi kho 3; chiều 14/11 thêm câu hỏi nhiều ý, nơi ở gợi ý trong lịch, lịch mẫu, ảnh dưới câu trả lời, bỏ chữ ghi công ảnh; "Lên kế hoạch" bản 2 + sửa lịch bằng lời + giao diện mới đang chạy; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
 của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "Đọc chi tiết" trỏ sang đó. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## Chatbot này là gì
 
 Trợ lý du lịch – văn hoá Huế trên một trang web (gọi là "chatbot" hay "trợ lý" đều là một hệ thống). Người dùng hỏi bằng tiếng Việt có dấu; chatbot
-**trả lời từ kho bài viết đã biên soạn** (212 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch, lưu trú) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
+**trả lời từ kho bài viết đã biên soạn** (216 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch, lưu trú) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
 chỉ có ba thứ: ngày tháng và dự báo thời tiết (code tính / lấy), và mục "Từ web (chưa kiểm)" tách riêng khi kho không có. Kho không có ⇒ nói "không đủ thông
 tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng một câu cố định.
 
@@ -20,13 +20,16 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 - Dự báo thời tiết Huế 7 ngày (số lấy từ Open-Meteo, code dựng câu).
 - Kho không có ⇒ tra web một lần, hiện riêng mục "Từ web (chưa kiểm)".
 - "Lên kế hoạch" bản 2 (từ 14/11): biểu mẫu 4 nhóm (ai đi · bao lâu, ngày đi · kiểu đi · thích gì) ⇒ **code xếp lịch** theo luật (an toàn, giờ mở cửa, mùa, cụm gần, mưa theo dự báo) kèm giờ gợi ý, phút đi, ảnh từng điểm; model chỉ viết câu tả từng điểm; tải lịch `.ics` cho lịch điện thoại.
-- Sửa lịch bằng lời (từ 14/11): khi đã có lịch, nhắn "bỏ lăng X", "dời Y sang chiều", "thay Z" ⇒ model chỉ hiểu ý, **code** sửa và kiểm luật; đầu lịch ghi "Đã đổi / Không đổi được"; câu khẩn cấp vẫn đi đường khẩn cấp.
-- Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 167 bài ở Khám phá.
+- Sửa lịch bằng lời (từ 14/11): khi đã có lịch, nhắn "bỏ lăng X", "dời Y sang chiều", "thay Z" ⇒ model chỉ hiểu ý, **code** sửa và kiểm luật; đầu lịch ghi "Đã đổi / Không đổi được"; câu khẩn cấp vẫn đi đường khẩn cấp; câu thường trong cuộc có lịch không phải chờ thêm (bản sửa tốc độ chiều 14/11).
+- Nơi ở gợi ý trong lịch (14/11 chiều): lịch ≥ 2 ngày có thẻ "Nơi ở gợi ý" — **code** chọn một khu cho cả chuyến + ≤ 5 cơ sở theo hạng + link tìm phòng; không nêu giá. Chưa xếp lịch ⇒ trang hiện lịch mẫu "Ví dụ" do bộ xếp dựng.
+- Câu hỏi nhiều ý (14/11 chiều): câu có ≥ 2 vế hỏi ⇒ trả lời vế kho có, vế thiếu ghi "Tư liệu chưa có thông tin về: …" và tra web riêng cho vế đó (trước: từ chối cả câu).
+- Ảnh dưới câu trả lời (14/11 chiều): câu trả lời từ một bài về một nơi / món ⇒ code hiện một ảnh của bài, bấm mở bài.
+- Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 184 / 216 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.
 - Hỏi bằng ảnh: chụp ảnh ⇒ chatbot gợi ≤ 3 tên điểm / món ⇒ người dùng bấm xác nhận mới trả lời.
-- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 212 bài (ảnh 167 bài), nút 👍 / 👎 dưới câu trả lời.
+- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 216 bài (ảnh 184 bài), nút 👍 / 👎 dưới câu trả lời.
 
 **Chưa làm được / chưa bật:** lịch trình từ câu gõ tự do (chỉ qua biểu mẫu) · bản đồ vẽ cả lịch trình (có code, chờ bạn duyệt toạ độ) · giọng nói (chờ 40 câu
-thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · khách sạn / quán ăn **trong lịch**, quán gần đây, sự kiện theo ngày (kho đã có 5 bài lưu trú từ 14/11) · số gọi khẩn cấp trong câu trả lời khẩn cấp (giới hạn bạn đã nhận) · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
+thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · quán ăn **trong lịch** (nơi ở đã có từ 14/11), quán gần đây, sự kiện theo ngày · câu hai ý mà code chỉ đếm được một vế (vẫn từ chối cả câu) · số gọi khẩn cấp trong câu trả lời khẩn cấp (giới hạn bạn đã nhận) · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
 chưa đưa lên mạng (đã chạy thử bản đóng gói Docker trên máy; đưa lên máy chủ AWS chờ bạn quyết + tài khoản).
 
 **Bước cuối Phase 9:** đo lại cả hệ thống hiện tại so với bản cuối Phase 8 trên cùng các bộ câu (kế hoạch đang nháp).
@@ -38,7 +41,7 @@ nặng → nhẹ:** sai cảnh báo an toàn > nói chắc sai > trả lời câ
 
 | Đo gì | Kết quả | Đo lúc nào, trên gì |
 |---|---|---|
-| Kho | 212 bài → 8.522 đoạn | chỉ mục dựng lại 12:50 14/11 (lần ghi kho 2) |
+| Kho | 216 bài → 8.603 đoạn | chỉ mục dựng lại 16:09 14/11 (lần ghi kho 3) |
 | Điểm chất lượng (thang 1–5) | Đúng **4,71** · Đủ ý **4,58** · Trúng ý **4,72** | **bản cuối Phase 8** (01/11), 129 câu Golden có đáp án trong kho (đã bỏ 29 câu ít giống cách người thật hỏi) |
 | … loại câu yếu nhất | câu cần ghép nhiều nguồn: Đủ ý **3,50** (Phase 9 thêm "tìm thêm" để sửa — chưa đo lại trên cả bộ) | như trên |
 | Từ chối nhầm (kho có đáp án mà nói "không đủ thông tin") | **4–6 / 158** câu (mỗi lần chạy lại ra 4–6 vì model viết hơi khác mỗi lần); trước khi có "tìm thêm": 12 / 158 | 158 câu Golden có đáp án trong kho, 03/11 |
@@ -55,7 +58,7 @@ thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riên
 
 | Từ | Nghĩa |
 |---|---|
-| kho | 212 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
+| kho | 216 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
 | đoạn | một mẩu của bài (một đoạn văn, một mục danh sách, một dòng bảng) — đơn vị để tìm và trích nguồn |
 | vector nghĩa | dãy 384 con số đại diện cho *ý nghĩa* một đoạn; hai đoạn cùng ý thì gần nhau (tính bằng model nhỏ e5-small, chạy ngay trên máy) |
 | BM25 | cách chấm theo **từ trùng** giữa câu hỏi và đoạn |

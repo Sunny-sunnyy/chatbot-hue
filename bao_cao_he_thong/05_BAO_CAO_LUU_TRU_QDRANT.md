@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Lưu đoạn vào Qdrant (Phase 4)
 
-**Cập nhật lần cuối: 14:05 14/11/2026 — bản 7: dựng lại sau lần ghi kho 2 (8.522 điểm, phiếu `38b3ca3eb323`).** Bản 6 (10:30 14/11): 8.474 điểm; collection thử ảnh đã xoá (Qdrant còn 1 collection). Bản 5 (19:28 10/11/2026): sửa số cũ — Qdrant có 2 collection (thêm collection thử ảnh), lần build mới nhất là 05/11 tối, đã build lại 3 lần. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 16:18 14/11/2026 — bản 8: dựng lại sau lần ghi kho 3 (8.603 điểm, phiếu `82abd97169cd`).** Bản 7 (14:05 14/11): 8.522 điểm sau lần ghi kho 2. Bản 6 (10:30 14/11): 8.474 điểm; collection thử ảnh đã xoá (Qdrant còn 1 collection). Bản 5 (19:28 10/11/2026): sửa số cũ — Qdrant có 2 collection (thêm collection thử ảnh), lần build mới nhất là 05/11 tối, đã build lại 3 lần. Các bản trước: xem lịch sử git.**
 Người viết: agent con của A (bản 31/10; bản trước: B) · Review: agent con ngữ cảnh mới. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -8,11 +8,11 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 - **Khâu này làm gì:** đưa các đoạn (kèm vector nghĩa và từ khoá) vào cơ sở dữ liệu vector Qdrant để chatbot tìm được, và giữ một
   "phiếu build" ghi chỉ mục được tạo từ đúng bản corpus nào. Đã đóng (Phase 4, 09/2026); đường build hiện nay có từ Phase 7A2 (24/10).
 - **Đang chạy cách nào:** Qdrant chạy trong **Docker Desktop** (Windows) ở `127.0.0.1:6335`, có **1 collection**: `hue_full_corpus_7a2_e5_small_384` — chỉ mục chatbot dùng,
-  **8.522 điểm** (dựng lại 12:50 14/11 sau lần ghi kho 2 — 5 bài lưu trú; lần 1 8.474; 05/11: 8.435), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
+  **8.603 điểm** (dựng lại 16:09 14/11 sau lần ghi kho 3 — 4 bài nơi mới + giờ Đại Nội; lần 2 8.522; lần 1 8.474; 05/11: 8.435), mỗi điểm có vector nghĩa (384 số) + từ khoá + 7
   trường thông tin. Collection thử ảnh `hue_anh_siglip2` (thử nghiệm đã bỏ) **đã xoá** — Qdrant hôm nay chỉ còn chỉ mục chatbot. Khi khởi động, chatbot so lại từng file corpus với phiếu build; lệch một file là từ chối chạy.
 - **Đo được:** mỗi lần build, code tự kiểm số điểm, thông tin từng điểm và 5 vector mẫu (đoạn đầu mỗi chủ đề). Lần build mới nhất (14/11):
-  212 file, 8.522 điểm, phiếu `38b3ca3eb323` (lần 1: `efbf748c2195`); kiểm Qdrant thật 10:30 14/11/2026: 1 collection, 8.474 điểm.
-- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 4 lần: 28/10, 30/10, 05/11, 14/11; mỗi lần vài phút trên máy). Tắt Docker Desktop
+  216 file, 8.603 điểm, phiếu `82abd97169cd` (lần 2: `38b3ca3eb323`; lần 1: `efbf748c2195`); kiểm Qdrant thật 16:18 14/11/2026: 1 collection, 8.603 điểm.
+- **Giới hạn chính:** sửa corpus thì phải build lại mới chạy được (đã làm 6 lần: 28/10, 30/10, 05/11, ba lần 14/11; mỗi lần vài phút trên máy). Tắt Docker Desktop
   thì chatbot không tìm được (gặp 31/10).
 - **Chi phí / tốc độ:** không tốn tiền (Qdrant chạy trên máy).
 - **Bạn cần quyết gì:** không có.
@@ -20,7 +20,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 ## 2. Hoạt động thế nào (bản đang chạy)
 
 ```text
-212 file Markdown -> chia đoạn -> 8.522 đoạn
+216 file Markdown -> chia đoạn -> 8.603 đoạn
   -> vector nghĩa (e5-small, 384 số) + từ khoá (BM25)
   -> mỗi đoạn một điểm: ID suy từ ID đoạn, 7 trường thông tin
   -> ghi từng lô 64 điểm vào collection mới
@@ -41,7 +41,7 @@ Người viết: agent con của A (bản 31/10; bản trước: B) · Review: a
 
 | Tình huống / loại nội dung | Trạng thái | Ghi chú (số đo, file:dòng) |
 |---|---|---|
-| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.522 điểm (build 12:50 14/11, phiếu `38b3ca3eb323`); chatbot đang dùng |
+| Nạp toàn kho bằng e5-small | **Đã xử lý, đóng gói** | 8.603 điểm (build 16:09 14/11, phiếu `82abd97169cd`); chatbot đang dùng |
 | Phiếu build ghi chỉ mục khớp corpus nào | **Đã xử lý, đóng gói** | `source_state.py:95`, `:99-150` (tạo), `:159-176` (ghi, không ghi đè) |
 | Chatbot từ chối chạy khi corpus đổi mà chưa build lại | **Đã xử lý, đóng gói** | `source_state.py:179-196`; `retrieval/full_corpus.py:383-385`, `:685` |
 | Kiểm cấu trúc collection và số điểm khi khởi động | **Đã xử lý, đóng gói** | `retrieval/full_corpus.py:707-720`; `vectorstore/qdrant.py:75-80` |

@@ -1,25 +1,25 @@
 # 02 — Kho dữ liệu: chatbot biết những gì
 
-Cập nhật 10:30 14/11/2026: thêm lần ghi kho 14/11 (3 bài mới, 4 chỗ sửa theo nguồn). Bản cũ xem trong lịch sử phiên bản — git. Tả kho **đang dùng**. Số chung (số đoạn, điểm chất lượng, từ chối nhầm)
+Cập nhật 16:18 14/11/2026: ba lần ghi kho ngày 14/11 (lần 3: 4 bài nơi chưa có bài + giờ Đại Nội theo mùa ⇒ 216 bài / 8.603 đoạn). Bản cũ xem trong lịch sử phiên bản — git. Tả kho **đang dùng**. Số chung (số đoạn, điểm chất lượng, từ chối nhầm)
 ở bảng "Số chính" của [README](README.md); từ khó (chỉ mục, sàn, Golden…) ở "Từ hay gặp" cùng chỗ. Bước trước: [01 — luồng chạy](01_LUONG_HOAT_DONG_HE_THONG.md) ·
 bước sau: [03 — chia đoạn](03_BAO_CAO_CHIA_DOAN.md).
 
 ## Kho gồm gì
 
-**212 bài Markdown tiếng Việt** (từ 14:05 14/11/2026: thêm 5 bài lưu trú — lần ghi kho 2 (12:45–12:50 14/11): +5 bài lưu trú ở `travel/services/` (danh mục Cục Du lịch Quốc gia 139 cơ sở + 1 theo tin thành phố) + 1 câu ở bài Bảo tàng Cổ vật; report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_luu_tru_implementation.md`) — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
+**216 bài Markdown tiếng Việt** (lần ghi kho 3, 16:05 14/11/2026: +4 bài cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên + giờ Đại Nội theo mùa; lần 2 sáng cùng ngày: +5 bài lưu trú; report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_3_implementation.md`, `e_ghi_kho_luu_tru_implementation.md`) — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
 
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
 | Món ăn | 91 | đặc sản Huế, nhà hàng / quán, quán cà phê, một bài hướng dẫn chung |
-| Di tích | 30 | Đại Nội, Kinh thành, các lăng, chùa, đàn tế, di sản (Nhã nhạc, Mộc bản…) |
+| Di tích | 31 | Đại Nội, Kinh thành, các lăng, chùa (có chùa Từ Hiếu từ 14/11), đàn tế, di sản (Nhã nhạc, Mộc bản…) |
 | Lễ hội | 27 | lễ hội, ngày hội, lễ tế theo năm |
 | Nghệ thuật biểu diễn | 12 | chương trình biểu diễn, ca Huế, đêm nhạc |
-| Du lịch | 47 | địa điểm (biển, đầm phá, chợ, phố đi bộ, suối, đèo, không gian nghệ thuật), lịch trình mẫu, chi phí, vé, đi lại |
+| Du lịch | 55 | địa điểm (biển, đầm phá, chợ, phố đi bộ, suối, đèo, không gian nghệ thuật; từ 14/11 cầu Trường Tiền, Ga Huế, nhà vườn An Hiên), lịch trình mẫu, chi phí, vé, đi lại, 5 bài lưu trú (140 cơ sở 3–5 sao và khác theo khu) |
 
 - Mỗi bài viết theo **mẫu riêng của chủ đề** (vd bài món ăn có mô tả, nơi ăn, giá, giờ), câu văn tự nhiên, đọc riêng một bài vẫn hiểu.
 - Phần lớn bài có mục "Nguồn dữ liệu" ghi nơi lấy thông tin — trang công khai: cổng thông tin của tỉnh, báo, trang du lịch, văn bản pháp luật… (khoảng 76 trang web khác nhau).
 - Kho **không** đưa lên kho mã công khai (GitHub) — nội dung giữ riêng trên máy; vì vậy sửa bài nào cũng phải sao lưu bản gốc trước.
-- Ngoài 212 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
+- Ngoài 216 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
   vd câu lưu ý chung đầu một bài vé được gắn kèm vào mọi đoạn giá của bài đó, để đoạn nào được tìm ra cũng mang theo lưu ý.
 
 ## Chatbot chỉ chạy khi chỉ mục khớp kho
@@ -39,6 +39,9 @@ Mỗi điểm có thể phải sửa ở nhiều chỗ (vd một tên phường 
 | Giờ mở cửa (05/11) | thêm một dòng giờ chung + "có thể thay đổi theo mùa" vào 11 bài điểm tham quan của Quần thể Cố đô | câu "mấy giờ mở cửa" hay bị hỏi mà kho thiếu; giờ lấy từ bài vé **đã có trong kho** | trả đúng giờ có nguồn; 1 câu Golden lần đầu từ chối, chạy lại 2 lần đều đúng ⇒ bạn chọn giữ, theo dõi |
 | Ghi kho (14/11) | thêm **3 bài**: bảo tàng cổ vật cung đình, không gian lưu niệm họa sĩ Lê Bá Đảng, "Đi lại ở Huế" (sân bay, ga, bến xe, đi trong nội thành, đi lăng, bằng lái xe máy, tàu Huế – Đà Nẵng, mùa mưa); **sửa 4 chỗ** theo nguồn ở 3 bài cũ (người lập không gian lưu niệm; số nhà khu trưng bày trên đường Lê Lợi — sửa ở cả hai bài nhắc tới, để kho không tự mâu thuẫn; bảo tàng nằm bờ Bắc, không thuộc "Nam sông Hương") | 2 điểm trong lịch trình có bài quá mỏng; câu hỏi đi lại hay gặp mà kho thiếu | không làm hỏng ⇒ bạn chọn giữ: Đủ ý +0,03, Đúng +0,04; từ chối nhầm 3 ⇒ 5, nhưng hai câu thêm có lần tìm giống hệt trước và chạy lại gần như luôn trả lời (do model viết khác mỗi lần); bộ an toàn không tệ đi; 6 câu đi lại đếm 12/11 dùng được 2 ⇒ 4 |
 
+| Ghi kho lần 2 (14/11 sáng) | **5 bài lưu trú** theo khu (danh mục Cục Du lịch Quốc gia 139 cơ sở + 1 theo tin thành phố); câu trả lời trích bài lưu trú kèm dòng "có thể đã thay đổi" | câu hỏi chỗ ở trước chỉ có mục web | lưu trú 11 / 12 câu đạt, 0 câu nêu giá; ngoài kho bị trả lời 0 |
+| Ghi kho lần 3 (14/11 chiều) | **4 bài** nơi hay được nhắc mà chưa có bài riêng (cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên) + dòng giờ Đại Nội theo mùa (hè / đông, giờ ngừng bán vé; tham quan đêm chỉ theo chương trình riêng). Nguồn mâu thuẫn ⇒ ghi "nguồn ghi A hoặc B"; review C 1 major + 3 minor đã sửa trước khi dựng | đếm trước: nơi được nhắc ở nhiều bài mà không có bài riêng | đo câu chạm (2 câu Golden + 18 ngoài kho + an toàn 32 + 7 câu thử): ngoài kho bị trả lời 0 / 18, an toàn 0 đổi lớp, 4 nơi mới hết từ chối; ≈ 0,030 USD |
+
 (Hai đợt trùng con số 123 chỗ là ngẫu nhiên — đếm riêng từng đợt.) Kho **đúng hơn, thận trọng hơn**, nhưng điểm chấm **không tăng**: chỉ khoảng 1 / 6 câu Golden chạm chỗ
 sửa, và đáp án mẫu hầu như không hỏi đúng tên phường hay chi tiết đã bỏ.
 
@@ -47,7 +50,8 @@ sửa, và đáp án mẫu hầu như không hỏi đúng tên phường hay chi
 - **Kho có, nhưng tìm không ra** mới là lỗi chính: rà 18 câu Golden bị từ chối / thiếu ý (01/11, trước khi trợ lý được "tìm thêm") ⇒ cả 18 do đoạn đúng có trong kho nhưng không
   lọt vào 10 đoạn đưa model. Sau khi có "tìm thêm", số từ chối nhầm đã giảm — xem README; cách tìm ở [06](06_BAO_CAO_TIM_KIEM.md).
 - **Kho thiếu thật** (đếm trên 15 câu "về Huế mà kho không có" của bộ đo tra web): ăn uống theo nhu cầu cụ thể, giờ / vé / giá của điểm ngoài Quần thể (chợ, phố, chùa),
-  lễ hội theo ngày cụ thể, lưu trú. Hiện bù bằng mục web "chưa kiểm"; thêm vào kho cần nguồn ngoài + bạn duyệt.
+  lễ hội theo ngày cụ thể (lưu trú đã có 5 bài từ 14/11). Hiện bù bằng mục web "chưa kiểm"; thêm vào kho cần nguồn ngoài + bạn duyệt.
+- **Giờ Đại Nội theo mùa** lấy từ trang du lịch (Vinpearl, 10/06/2025), chưa thấy văn bản của Trung tâm Bảo tồn; 11 bài lăng / điện khác vẫn ghi khung giờ chung.
 - Vài chỗ còn "chờ tra ngoài" (bài đã tự ghi là chưa chắc). Giá, giờ, lịch có thể cũ dần — câu trả lời trích bài vé, địa điểm, lễ hội có kèm dòng "thông tin có thể đã thay đổi".
 - **Dữ liệu mở của tỉnh** (bộ số liệu tỉnh công bố, tải về 05/08; giờ ghi năm 2024): có 180 di tích (nhiều hơn kho) — 179 có toạ độ, dùng cho bản đồ; danh sách quán ăn
   (tên, địa chỉ); giờ của một số điểm. Có file chứa thông tin cá nhân ⇒ **không** đưa vào kho / báo cáo. Giờ 2024 của bộ này lệch bài vé trong kho ⇒ đợt 05/11 không dùng.
@@ -61,7 +65,7 @@ sửa, và đáp án mẫu hầu như không hỏi đúng tên phường hay chi
 5. Đo lại "trước ↔ sau", ghi kết quả — kể cả kết quả xấu.
 6. Đáp án mẫu Golden nào nhắc chỗ vừa sửa ⇒ sửa theo, bạn duyệt phần đổi.
 
-**Bạn cần quyết (không gấp):** giữ hay xoá bản sao lưu của các đợt sửa · xoá collection thử ảnh trong Qdrant (xem [05](05_BAO_CAO_LUU_TRU_QDRANT.md)).
+**Bạn cần quyết (không gấp):** giữ hay xoá bản sao lưu của các đợt sửa.
 
 ## Đã thử, không dùng
 
