@@ -23,7 +23,8 @@ NGAY = (None, v2.dt.date(2027, 4, 7), v2.dt.date(2026, 11, 21), v2.dt.date(2026,
 
 def _o_dau(khung):
     ts = khung["tham_so"]
-    co_toi = any(j in BANG_V2.theo_id for ng in khung["ngay"] for j in ng["buoi"]["toi"])
+    co_toi = (lambda toi: bool(toi) and all(BANG_LT["cum_ve_khu"][BANG_V2.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi))(
+        [j for ng in khung["ngay"] for j in ng["buoi"]["toi"] if j in BANG_V2.theo_id])
     return ltl.o_dau(BANG_LT, [BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)], len(khung["ngay"]),
                      bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi)
 
@@ -51,7 +52,8 @@ def test_simulation_always_rules(mo_phong):
         khu = [None if BANG_V2.theo_id[j]["cum"] in ltl.CUM_DI_TRONG_NGAY else BANG_LT["cum_ve_khu"][BANG_V2.theo_id[j]["cum"]]
                for j in v2.diem_ban_ngay(khung)]
         n, dem, han_che = len(khu), Counter(khu), bool(key[1] or key[2])
-        co_toi = any(j in BANG_V2.theo_id for ng in khung["ngay"] for j in ng["buoi"]["toi"])
+        co_toi = (lambda toi: bool(toi) and all(BANG_LT["cum_ve_khu"][BANG_V2.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi))(
+        [j for ng in khung["ngay"] for j in ng["buoi"]["toi"] if j in BANG_V2.theo_id])
         mong = ltl.KHU_LOI if co_toi else ltl.KHU_BIEN if dem[ltl.KHU_BIEN] >= 0.6 * n else ltl.KHU_TAY if dem[ltl.KHU_TAY] > 0.5 * n and not han_che \
             else ltl.KHU_LOI
         assert o["khu"] == mong or (mong == ltl.KHU_BIEN and o["ly_do"].startswith("Khu trung tâm — ven biển")), key
