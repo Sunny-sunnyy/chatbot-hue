@@ -105,6 +105,9 @@ class AssistantFlags:
     # "Lên kế hoạch" đợt 2 (B) (plan `2026-11-13-len-ke-hoach-dot-2-plan.md`): ảnh tự host cho từng điểm của lịch bản 2 (không vào chuỗi gửi model);
     # cần cờ bản 2 + bảng ảnh (`assistant.lich_trinh_bang_anh`, nạp + kiểm lúc khởi động)
     anh_lich: bool = False
+    # Sửa lịch bằng lời trên lịch bản 2 (plan `2026-11-14-sua-lich-v2-plan.md`): cuộc có lịch đã lưu + câu có từ sửa ⇒ một lần gọi hiểu ý ⇒ code áp.
+    # TẮT tới khi đạt Q3 + Q5; cần cờ bản 2. Tắt ⇒ không chạm (chuỗi gửi model giống byte).
+    sua_lich_v2: bool = False
     anh_lich_bang: "dict | None" = field(default=None, compare=False, repr=False)
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
 
@@ -127,6 +130,8 @@ class AssistantFlags:
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
             raise ValueError("assistant.len_ke_hoach_v2 needs assistant.lich_trinh_bieu_mau: true and the v2 table (assistant.lich_trinh_bang_v2)")
+        if self.sua_lich_v2 and not self.len_ke_hoach_v2:
+            raise ValueError("assistant.sua_lich_v2 needs assistant.len_ke_hoach_v2: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
             raise ValueError("assistant.anh_lich needs assistant.len_ke_hoach_v2: true and the photo table (assistant.lich_trinh_bang_anh)")
         if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
@@ -232,6 +237,11 @@ class AnswerTrace:
     lich_kiem: list[str] | None = None
     # "Lên kế hoạch" bản 2 (`llm/len_ke_hoach.py`): {"lich", "loi_khung", "cau", "loi_cau", "so_cau_du_phong", "loi_model"?}; None = không phải lượt bản 2
     lich_v2: dict | None = None
+    # Sửa lịch bản 2: `lich_luu` = lịch đã lưu của cuộc (route nạp khi cờ bật); `sua_chon` = {cu, moi} khi người dùng bấm nút thẻ chọn;
+    # `sua` = kết quả áp của lượt (số đếm cho log — không chữ)
+    lich_luu: dict | None = None
+    sua_chon: dict | None = None
+    sua: dict | None = None
     # #6 (plan D2): phần `tro_ly_hue` chạy trước định tuyến rồi bị bỏ vì tuyến khác — số lần, USD (lần gọi xong = usage thật; lần bị huỷ
     # giữa chừng không có usage ⇒ cộng token vào bộ dựng đếm × giá vào = cận dưới), cờ bị huỷ giữa chừng. Chỉ số đếm, không chữ.
     n_tra_loi_bo: int = 0
@@ -1165,6 +1175,16 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     đầu vào hai lần gọi model không phụ thuộc tuyến). Sự kiện của (ii) giữ trong hàng đợi tới khi có tuyến:
     `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
+    if flags.sua_lich_v2 and trace.lich_luu is not None and not trace.bieu_mau and generator is not None:
+        from llm import len_ke_hoach  # import muộn: module đó import lõi này
+        from llm.sua_lich_v2 import co_tu_sua
+        if trace.sua_chon is not None or co_tu_sua(query):
+            yield "status", {"stage": "sua_lich"}
+            kq = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags)
+            if kq is not None:  # có hành động áp được / thẻ chọn ⇒ lượt sửa; không ⇒ đường trả lời thường (gồm định tuyến khẩn cấp)
+                async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
+                    yield event
+                return
     if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
         # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):

@@ -16,7 +16,9 @@ from agents.exceptions import AgentsException
 from openai import OpenAIError
 
 from llm import lich_trinh_v2 as lt2
+from llm import sua_lich_v2 as sl
 from llm import thoi_tiet as tt
+from llm.citations import CITATION_PATTERN
 from llm.assistant import (STREAM_DRAIN_SECONDS, AnswerTrace, AssistantFlags, CallLog, GenerationError, GeneratorNotReadyError, ROUTE_TRO_LY_HUE,
                            _lay_nguon_lich, check_citations, elapsed_ms, record_llm_calls)
 
@@ -70,25 +72,40 @@ def dong_neu_mua(bang, khung: dict, ng: dict) -> str:
     return f"Nếu mưa ngày {ng['ngay']}: các điểm trong ngày đều trong nhà hoặc có phần trong nhà, vẫn đi được — nhớ mang áo mưa."
 
 
-async def chuan_bi(query: str, retrieval_service, context_builder, trace: AnswerTrace, flags: AssistantFlags, today: str | None) -> str:
-    """Xếp + lấy nguồn + dựng `lich` (lưu ở `trace.lich_v2`); trả tin nhắn gửi model. Lỗi tìm / ngữ cảnh đi ra nguyên kiểu như đường cũ."""
+async def chuan_bi(query: str, retrieval_service, context_builder, trace: AnswerTrace, flags: AssistantFlags, today: str | None,
+                   sua: dict | None = None) -> str:
+    """Xếp + lấy nguồn + dựng `lich` (lưu ở `trace.lich_v2`); trả tin nhắn gửi model. Lỗi tìm / ngữ cảnh đi ra nguyên kiểu như đường cũ.
+    Sửa lịch (plan 2026-11-14-sua-lich-v2): `sua` = {khung, ngay_di, thay_doi, cau_cu} ⇒ KHÔNG xếp lại (khung code đã áp), lịch mang `thay_doi`;
+    mục có câu cũ (`cau_cu` theo id điểm) giữ câu cũ (đánh lại số nguồn), tin nhắn gửi model chỉ còn mục mới."""
     bang = flags.bang_lich_v2
-    ts = lt2.tu_truong(trace.truong)
-    bat_dau = dt.date.fromisoformat(trace.truong["ngay_di"]) if trace.truong.get("ngay_di") else None
-    db = await du_bao_lich(flags, bat_dau, ts.so_ngay, trace, tt.hom_nay_vn())
+    ngay_di = sua["ngay_di"] if sua else trace.truong.get("ngay_di")
+    bat_dau = dt.date.fromisoformat(ngay_di) if ngay_di else None
+    khung = sua["khung"] if sua else None
+    ts = lt2.tu_truong(trace.truong) if khung is None else None
+    db = await du_bao_lich(flags, bat_dau, (ts.so_ngay if ts else khung["tham_so"]["so_ngay"]), trace, tt.hom_nay_vn())
     mua = None if db is None else {k: v["xs"] for k, v in db["ngay"].items() if v["xs"] is not None}
-    khung = lt2.xep_v2(bang, ts, ngay_bat_dau=bat_dau, mua=mua)
+    if khung is None:
+        khung = lt2.xep_v2(bang, ts, ngay_bat_dau=bat_dau, mua=mua)
     nhap = lt2.tin_nhan_model(lt2.dung_lich(bang, khung, dict.fromkeys(lt2.diem_v2(khung), 0)), "")  # đếm ngân sách bằng bản nháp
     chon = {j: bang.theo_id[j]["doan_mo_ta"] for j in dict.fromkeys(lt2.diem_v2(khung)) if bang.theo_id[j].get("doan_mo_ta")}
     co = await asyncio.to_thread(retrieval_service.lay_doan, list(chon.values())) if chon else {}
     doan_chon = {j: co[c] for j, c in chon.items() if c in co}  # khởi động đã kiểm đủ; vắng (không nên xảy ra) ⇒ luật tìm
     packed, nguon, _ = await _lay_nguon_lich(bang, khung, query, retrieval_service, context_builder, trace, today, None, nhap=nhap, lay_ve=False,
                                              max_doan=MAX_DOAN, tim_mo_ta=TIM_MO_TA, doan_chon=doan_chon)
-    lich = lt2.dung_lich(bang, khung, nguon, trace.truong.get("ngay_di"), dong_du_bao(bang, khung, db),
+    lich = lt2.dung_lich(bang, khung, nguon, ngay_di, dong_du_bao(bang, khung, db),
                          flags.toa_do_lich if flags.ban_do_lich else None, flags.anh_lich_bang if flags.anh_lich else None)
-    trace.lich_v2 = {"lich": lich, "loi_khung": lt2.kiem_khung_v2(bang, khung), "cau": None, "loi_cau": None}
+    giu_cau: dict[str, str] = {}
+    if sua:
+        lich["thay_doi"] = sua["thay_doi"]  # giao diện H1: khối "Đã đổi / Không đổi được" đầu thẻ (câu do code)
+        for m in lt2.moi_muc(lich):  # câu cũ đã kiểm của cùng điểm ⇒ giữ, chỉ đổi mã nguồn sang số mới của điểm đó
+            cu = sua["cau_cu"].get(m["id_diem"])
+            if cu and m["nguon"] is not None:
+                giu_cau[m["id_muc"]] = CITATION_PATTERN.sub(f"[{m['nguon']}]", cu)
+    trace.lich_v2 = {"lich": lich, "loi_khung": lt2.kiem_khung_v2(bang, khung), "cau": None, "loi_cau": None, "khung": khung,
+                     "ngay_di": ngay_di, "mua": mua, "giu_cau": giu_cau}
     trace.buoc_lich += [{"buoc": "xep_xong", "n_diem": len(lt2.diem_v2(khung))}, {"buoc": "lay_nguon", "n_doan": len(packed.sources)}]
-    return lt2.tin_nhan_model(lich, packed.text)
+    moi = {**lich, "ngay": [{**ng, "muc": [m for m in ng["muc"] if m["id_muc"] not in giu_cau]} for ng in lich["ngay"]]}
+    return lt2.tin_nhan_model(moi, packed.text)
 
 
 def hoan_tat(trace: AnswerTrace, flags: AssistantFlags, cau: dict[str, str], loi: dict[str, str]) -> None:
@@ -115,22 +132,34 @@ async def answer_v2(query: str, retrieval_service, context_builder, generator, t
     hoan_tat(trace, flags, *lt2.chon_cau(flags.bang_lich_v2, trace.lich_v2["lich"], tu_model))
 
 
-async def stream_v2(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None):
+async def stream_v2(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None,
+                    sua: dict | None = None):
     """`POST /api/chat/stream`: sự kiện `("lich_khung", lich)` ngay sau khi code xếp xong (trước lần gọi model) ⇒ `("lich_cau", {id_muc, cau})`
     mỗi khi model đóng một phần tử (câu đã qua kiểm, hoặc câu dự phòng) ⇒ câu dự phòng cho mục còn thiếu ⇒ `("lich_xong", {so_cau_du_phong})`
     ⇒ một `("delta", answer)` chữ thuần. Huỷ / đọc nốt lần gọi model như đường cũ (spec streaming §4.5)."""
     if generator is None:
         raise GeneratorNotReadyError("generator is not ready")
     yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
-    prompt = await chuan_bi(query, retrieval_service, context_builder, trace, flags, today)
+    prompt = await chuan_bi(query, retrieval_service, context_builder, trace, flags, today, sua)
     bang, lich = flags.bang_lich_v2, trace.lich_v2["lich"]
-    muc = {m["id_muc"]: m for m in lt2.moi_muc(lich)}
+    giu_cau = trace.lich_v2["giu_cau"]
+    muc = {m["id_muc"]: m for m in lt2.moi_muc(lich) if m["id_muc"] not in giu_cau}
     yield "lich_khung", lich
+    da_phat: dict[str, str] = {}
+    loi: dict[str, str] = {}
+    for id_muc, cau in giu_cau.items():  # sửa lịch: mục không đổi ⇒ câu cũ ngay (không gọi model cho mục này)
+        ma = lt2.kiem_cau(bang, next(m for m in lt2.moi_muc(lich) if m["id_muc"] == id_muc), cau)
+        da_phat[id_muc] = cau if not ma else lt2.cau_du_phong(bang, next(m for m in lt2.moi_muc(lich) if m["id_muc"] == id_muc))
+        yield "lich_cau", {"id_muc": id_muc, "cau": da_phat[id_muc]}
+    if not muc:  # không còn mục mới (vd chỉ dời buổi) ⇒ không gọi model
+        trace.lich_v2["loi_model"] = None
+        yield "lich_xong", {"so_cau_du_phong": 0}
+        hoan_tat(trace, flags, da_phat, loi)
+        yield "delta", trace.answer
+        return
     yield "status", {"stage": "generating"}
     result, call_log = generator.start_lich_v2_stream(prompt)
     started, generator_started = time.perf_counter(), time.monotonic()
-    da_phat: dict[str, str] = {}
-    loi: dict[str, str] = {}
     extractor = lt2.CauStream()
     stream_live = True
     try:
@@ -173,6 +202,66 @@ async def stream_v2(query: str, retrieval_service, context_builder, generator, t
         if id_muc not in da_phat:
             da_phat[id_muc], loi[id_muc] = lt2.cau_du_phong(bang, m), "thieu"
             yield "lich_cau", {"id_muc": id_muc, "cau": da_phat[id_muc]}
-    hoan_tat(trace, flags, {k: da_phat[k] for k in muc}, loi)
+    hoan_tat(trace, flags, dict(da_phat), loi)  # gồm cả câu cũ giữ lại của lượt sửa
     yield "lich_xong", {"so_cau_du_phong": len(loi)}
     yield "delta", trace.answer
+
+
+# ---------- Sửa lịch bằng lời (plan 2026-11-14-sua-lich-v2) ----------
+
+async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: AssistantFlags) -> dict | None:
+    """Câu người dùng ⇒ (một lần gọi hiểu ý) hành động có tên ⇒ code áp trên lịch đã lưu. Bấm nút thẻ chọn ⇒ không gọi model.
+    Trả None khi không có gì để làm (danh sách rỗng, model lỗi, hoặc mọi hành động trượt vì tên lạ / không có trong lịch) ⇒ lõi đi đường thường."""
+    bang, luu = flags.bang_lich_v2, trace.lich_luu
+    if trace.sua_chon is not None:
+        kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon)
+    else:
+        call_log = CallLog()
+        try:
+            hanh_dong = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log)
+        except GenerationError:
+            hanh_dong = []
+        finally:
+            record_llm_calls(trace, call_log.calls, "sua_lich")
+        if not hanh_dong:
+            trace.sua = {"n_hanh_dong": 0}
+            return None
+        kq = sl.ap(bang, luu, hanh_dong)
+    trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
+                 "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None}
+    if not kq["da_ap"] and kq["the"] is None and all(k["ma_luat"] in ("ngoai_bang", "khong_co_trong_lich") for k in kq["khong_doi"]):
+        return None  # không chạm được gì trong lịch ⇒ có thể không phải câu sửa lịch
+    return kq
+
+
+async def stream_sua(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags, kq: dict):
+    """Lượt sửa: thẻ chọn ⇒ một sự kiện `sua_the` (khung không đổi); còn lại ⇒ đúng luồng sự kiện lịch bản 2 trên khung code đã áp."""
+    bang = flags.bang_lich_v2
+    if kq["the"] is not None:
+        trace.answer = f"Bạn muốn thay {kq['the']['ten_cu']} bằng điểm nào?"
+        trace.fixed_outcome = "sua_the"
+        yield "sua_the", {**kq["the"], "thay_doi": sl.thay_doi(bang, kq)}
+        yield "delta", trace.answer
+        return
+    luu = trace.lich_luu
+    sua = {"khung": kq["khung"], "ngay_di": luu["ngay_di"], "thay_doi": sl.thay_doi(bang, kq), "cau_cu": dict(luu.get("cau") or {})}
+    async for event in stream_v2(query, retrieval_service, context_builder, generator, trace, flags, _today_v2(flags, trace), sua):
+        yield event
+    trace.lich_v2["loai"] = kq["luu"]["loai"]
+
+
+def _today_v2(flags: AssistantFlags, trace: AnswerTrace) -> str | None:
+    from llm.assistant import _today
+    return _today(flags, trace)
+
+
+def luu_sau_luot(trace: AnswerTrace, flags: AssistantFlags) -> dict | None:
+    """Sau lượt lịch bản 2 đạt (biểu mẫu hoặc sửa): trạng thái lưu của cuộc = khung + ngày đi + mưa + điểm đã bỏ + câu đã kiểm theo id điểm."""
+    v = trace.lich_v2
+    if v is None or v.get("cau") is None or v.get("loi_khung"):
+        return None
+    luu = sl.luu_tu_lich(v["khung"], v["ngay_di"], v["mua"])
+    luu["loai"] = list(v.get("loai") or [])
+    muc = {m["id_muc"]: m["id_diem"] for m in lt2.moi_muc(v["lich"]) if m.get("id_diem")}
+    luu["cau"] = {muc[k]: c for k, c in v["cau"].items() if k in muc}
+    return luu

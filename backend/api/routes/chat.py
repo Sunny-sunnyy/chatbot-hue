@@ -78,11 +78,19 @@ CONTEXT_BUDGET_MESSAGE = "Không thể đóng gói ngữ cảnh trong giới h�
 CAU_BIEU_MAU = "Lên kế hoạch tham quan Huế"
 
 
+class SuaChon(BaseModel):
+    """Sửa lịch bản 2: nút của thẻ chọn điểm thay — id điểm cũ + id điểm mới (hoặc "bo"); code kiểm lại trên lịch đã lưu (id lạ ⇒ không đổi)."""
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    cu: str = Field(min_length=1, max_length=80)
+    moi: str = Field(min_length=1, max_length=80)
+
+
 class ChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     query: str = Field(min_length=1, max_length=500)
     truong: TruongInput | None = None  # B4 D4: giá trị chọn ở nút hỏi lại; `{}` = "Trả lời luôn"
     bieu_mau: bool = False  # cổng đợt 1 D3: lượt từ biểu mẫu — cần `truong` có `so_ngay` (thiếu ⇒ 422)
+    sua_chon: SuaChon | None = None  # sửa lịch bản 2: lượt bấm nút thẻ chọn (cờ `sua_lich_v2` tắt ⇒ bỏ qua)
 
     @model_validator(mode="after")
     def _bieu_mau_can_so_ngay(self):
@@ -120,7 +128,7 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 # `HUE_COOKIE_SECURE=1` (bản https — spec §7); không đặt ⇒ tắt vì máy User chạy http://127.0.0.1 (trình duyệt không gửi cookie Secure qua http).
 CONVERSATION_COOKIE = "conversation_id"
 COOKIE_SECURE_ENV = "HUE_COOKIE_SECURE"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai"}  # phương án B G: bỏ "emergency"
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai", "sua_the"}  # phương án B G: bỏ "emergency"
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
@@ -371,6 +379,8 @@ def _thoi_tiet_metrics(trace: AnswerTrace) -> dict | None:
 
 
 def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
+    if trace.sua is not None:  # sửa lịch bản 2: chỉ số đếm (số hành động, áp được, không đổi được, có thẻ chọn) — không chữ
+        metrics["sua_lich"] = trace.sua
     metrics.update(
         search_ms=trace.search_ms, dense_ms=trace.dense_ms, context_ms=trace.context_ms,
         n_context_sources=None if trace.packed is None else len(trace.packed.sources),
@@ -436,12 +446,21 @@ async def chat_stream(body: ChatRequest, request: Request):
         trace = AnswerTrace()
         conversation_id = _start_conversation(request, trace, metrics)
         query = _model_query(body, query, trace, metrics, state)
+        if _flags(state).sua_lich_v2 and conversation_id is not None:  # sửa lịch bản 2: lịch đã lưu của cuộc + lựa chọn của thẻ
+            trace.lich_luu = request.app.state.conversations.lay_lich(conversation_id)
+            trace.sua_chon = None if body.sua_chon is None or trace.lich_luu is None else body.sua_chon.model_dump()
         turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder,
                                            _tim_web(state))
         cau_goc = trace.search_query or query
 
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
             _remember(request, conversation_id, query, trace, metrics["outcome"])
+            if _flags(state).sua_lich_v2 and conversation_id is not None and metrics["outcome"] == "success":
+                from llm.len_ke_hoach import luu_sau_luot
+                luu = luu_sau_luot(trace, _flags(state))
+                if luu is not None:
+                    request.app.state.conversations.luu_lich(conversation_id, luu)
+
 
         response = StreamingResponse(
             _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"]),

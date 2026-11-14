@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from core.schema import GenerationError
 from llm.pricing import cost_usd
+from llm.sua_lich_v2 import MAX_HANH_DONG, HanhDong
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     ASSISTANT_TOOL_NOTE,
@@ -38,6 +39,7 @@ from llm.full_corpus_prompt import (
     ROUTER_INSTRUCTIONS,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
+    SUA_LICH_LOI_DAN,
     ROUTER_HISTORY_NOTE,
     ASSISTANT_HISTORY_NOTE,
     TU_WEB_LUAT,
@@ -103,6 +105,11 @@ ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lầ
 def max_turns_for(ngay_lich_fn) -> int:
     """T1 (A chọn 08/11, sau lượt đo: 1 câu chạm trần vì `ngay_lich` ăn một vòng): lượt có đưa công cụ ngày ⇒ thêm 1 vòng; lượt khác giữ B2 D5."""
     return ASSISTANT_MAX_TURNS + (1 if ngay_lich_fn is not None else 0)
+
+
+class SuaLichOutput(BaseModel):
+    """Sửa lịch bản 2: tối đa `MAX_HANH_DONG` hành động có tên; rỗng = câu không phải sửa lịch."""
+    hanh_dong: list[HanhDong] = Field(default_factory=list, max_length=MAX_HANH_DONG)
 
 
 ROUTER_MAX_OUTPUT_TOKENS = 512  # gồm cả token suy luận của model
@@ -334,6 +341,15 @@ class OpenAIFullCorpusGenerator:
             model_settings=ModelSettings(max_tokens=self.answer_max_output_tokens, include_usage=True, store=False,
                                          reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
             output_type=CauLichOutput,
+        )
+        # Sửa lịch bản 2: lần gọi riêng chỉ hiểu ý ⇒ hành động có tên (code áp); không công cụ, không lịch sử, suy luận thấp
+        self.sua_lich_agent = Agent(
+            name="hue_sua_lich",
+            instructions=SUA_LICH_LOI_DAN,
+            model=self.responses_model,
+            model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False,
+                                         reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
+            output_type=SuaLichOutput,
         )
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.
         self.web_agent = Agent(
@@ -616,6 +632,16 @@ class OpenAIFullCorpusGenerator:
         call_log = call_log if call_log is not None else CallLog()
         result = await self._run(self.lich_v2_agent, prompt, call_log, self.timeout)
         return self._generated_text(result, "", started, call_log), parse_cau_lich(getattr(result, "final_output", None))
+
+    async def hieu_sua(self, prompt: str, call_log: "CallLog") -> list:
+        """Sửa lịch bản 2: câu người dùng + lịch hiện tại ⇒ danh sách `HanhDong` (rỗng = không phải câu sửa lịch). Lỗi ⇒ `GenerationError`."""
+        result = await self._run(self.sua_lich_agent, prompt, call_log, self.router_timeout)
+        output = getattr(result, "final_output", None)
+        try:
+            parsed = output if isinstance(output, SuaLichOutput) else SuaLichOutput.model_validate(output)
+        except Exception as exc:
+            raise GenerationError("Invalid edit-itinerary output") from exc
+        return list(parsed.hanh_dong)
 
     def start_lich_v2_stream(self, prompt: str) -> tuple[RunResultStreaming, CallLog]:
         return self._start_stream(self.lich_v2_agent, prompt)
