@@ -115,7 +115,7 @@ export default function App() {
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} anh={tinhNang.anh} muc={route.muc} />}
-        {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} anh={tinhNang.anh} />}
+        {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 
       {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.

@@ -226,7 +226,8 @@ const CHU_DE = [
   { mau: ["#E1ECF7", "#1E4E8C"], d: "M5 17h14M7 17l1-6h8l1 6M9 11V7h6v4" },          // đi lại
 ];
 
-export function TrangTroLy({ chat, onEditPlan, anh }) {
+export function TrangTroLy({ chat, onEditPlan, tinhNang = {} }) {
+  const anh = !!tinhNang.anh;
   return (
     <div className="khung tro-ly-trang">
       <h1 className="sr-only">Trợ lý Huế</h1>
@@ -249,11 +250,12 @@ export function TrangTroLy({ chat, onEditPlan, anh }) {
           <section className="tl-hop">
             <h2>Trợ lý làm được gì</h2>
             <ul className="tl-lam">
+              {/* review E M-1: mỗi dòng theo đúng cờ server (`/api/tinh_nang`) — tính năng tắt thì không hứa */}
               <li>Trả lời từ kho tư liệu, ghi nguồn để bạn xem lại.</li>
-              <li><a href="#/len-ke-hoach">Xếp lịch</a> theo số ngày và sở thích.</li>
-              <li>Xem dự báo thời tiết Huế 7 ngày tới.</li>
+              {(tinhNang.lich_trinh_bieu_mau || tinhNang.len_ke_hoach_v2) && <li><a href="#/len-ke-hoach">Xếp lịch</a> theo số ngày và sở thích.</li>}
+              {tinhNang.thoi_tiet && <li>Xem dự báo thời tiết Huế 7 ngày tới.</li>}
               {anh && <li>Đoán tên món / công trình từ ảnh — bạn bấm xác nhận.</li>}
-              <li>Kho chưa có ⇒ tra web, tách riêng "chưa kiểm".</li>
+              {tinhNang.tra_web && <li>Kho chưa có ⇒ tra web, tách riêng "chưa kiểm".</li>}
             </ul>
           </section>
           <p className="tl-hop" style={{ fontSize: 14, color: "var(--color-muted)" }}>
@@ -368,12 +370,13 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
       <div className="tra-noi">
       {pending && !turn.text && (
         <div className="searching" role="status">
-          <BuocCongCu buoc={turn.buoc} phase={turn.phase} />
+          {turn.progress.length > 0 ? <div className="font-semibold text-accent">{STATUS_TEXT[turn.phase]}</div>
+            : <BuocCongCu buoc={turn.buoc} phase={turn.phase} />}
           <span className="go" aria-hidden="true"><i /><i /><i /></span>
           <span className="sr-only">{STATUS_TEXT[turn.phase]}</span>
         </div>
       )}
-      {!pending && turn.buoc.length > 1 && turn.phase === "done" && (
+      {!pending && turn.buoc.length > 1 && turn.phase === "done" && turn.progress.length === 0 && (
         <p className="buoc-gon">Các bước: {nhanBuoc(turn.buoc).join(" · ")}</p>
       )}
       {turn.phase === "error" && (
@@ -439,10 +442,6 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   );
 }
 
-// Cổng D1: dưới câu trả lời một dòng "Nguồn: <tên> · <tên>" (thứ tự xuất hiện trong câu); bấm tên ⇒ mở đoạn gốc ngay dưới; nguồn là bài kho
-// (`bai_id`) ⇒ link sang trang bài Khám phá. Việc nhỏ 08/11: nhiều đoạn của CÙNG một bài ⇒ một tên (trước: một câu ra 8 lần cùng tên bài);
-// bấm tên ⇒ hiện mọi đoạn được trích của bài đó.
-// B6 D6: khối riêng sau câu từ chối của kho. Nhãn "chưa kiểm" cố định; chữ + nguồn từ sự kiện `web` (server đã kiểm mã, link, số tiền).
 // H1: danh sách bước công cụ thật — bước đã qua có ✓, bước đang chạy ở cuối (nhãn đang làm của STATUS_TEXT).
 function BuocCongCu({ buoc, phase }) {
   if (buoc.length === 0) return <div className="font-semibold text-accent">{STATUS_TEXT[phase]}</div>;
@@ -456,6 +455,7 @@ function BuocCongCu({ buoc, phase }) {
   );
 }
 
+// B6 D6: khối riêng sau câu từ chối của kho. Nhãn "chưa kiểm" cố định; chữ + nguồn từ sự kiện `web` (server đã kiểm mã, link, số tiền).
 function WebSection({ web, turnKey }) {
   const sources = web.sources.filter(source => WEB_LINK.test(source.link));
   const html = useMemo(() => renderWebHtml(web.text), [web.text]);

@@ -2,7 +2,8 @@
    Tên lớp cũ (.turn .ask .bubble .answer .composer .send .searching .feedback .notice .clarify .web .nguon-ten) GIỮ — bộ đo / Playwright bám vào.
    Lớp mới tiền tố tl- (trang) hoặc tên ngắn trong khung lượt (.tra, .buoc, .go). Chuyển động chỉ dưới .hieu-ung (hieu_ung.css). */
 
-/* Bố cục trang: cột gợi ý trái + khung chat */
+/* Bố cục trang: cột gợi ý trái + khung chat. Ghi đè bề rộng cũ của index.css (.tro-ly-trang 900 px) theo mẫu 1280 (review E m-1) */
+.tro-ly-trang.khung { max-width: 1280px; padding-top: 0; }
 .tl-cot { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; padding-top: 28px; }
 .tl-ben { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 14px; }
 .tl-hop { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 20px; padding: 18px 20px; }
