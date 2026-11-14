@@ -10,7 +10,7 @@ import pytest
 from openai.types.responses import Response
 
 from llm.assistant import (AnswerTrace, AssistantFlags, _con_la_y_thieu, answer_turn, answer_turn_stream, answer_turn_stream_parallel,
-                           chi_y_thieu, co_y_thieu, so_y, web_gate_open)
+                           chi_y_thieu, co_y_thieu, so_y, ve_y_thieu, web_gate_open)
 from llm.full_corpus_prompt import (ANSWER_SYSTEM_INSTRUCTIONS, ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y, CAU_Y_THIEU, INSUFFICIENT_ANSWER,
                                     _LUAT_NHIEU_Y, _LUAT_TU_CHOI)
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
@@ -201,3 +201,18 @@ def test_stream_never_shows_missing_only_text(deps, parallel):
     events = _events(path, CAU_HAI_Y, *deps, generator(script), trace, flags, None, serper())
     assert "".join(d for k, d in events if k == "delta") == INSUFFICIENT_ANSWER
     assert trace.answer == INSUFFICIENT_ANSWER and trace.citation_error is None and trace.web is not None
+
+
+# 14/11 chiều: mục web của câu nhiều ý chỉ viết cho vế ý thiếu (plan 2026-11-14-web-y-thieu-plan.md) — vế do code chọn từ chữ người dùng
+@pytest.mark.parametrize("cau, tra_loi, ve", [
+    ("Đại Nội Huế mở cửa mấy giờ và gần đó có quán karaoke nào giá rẻ không?",
+     f"Đại Nội mở từ 7 giờ [1].\n{CAU_Y_THIEU} quán karaoke giá rẻ gần Đại Nội Huế.", "gần đó có quán karaoke nào giá rẻ không"),
+    (CAU_HAI_Y, TRA_LOI, "dịp Tết năm tới có chương trình gì"),
+    ("Chùa Thiên Mụ ở đâu và có chỗ gửi xe máy không?",                                         # tên nơi ở cả hai vế (review B m-1)
+     f"Chùa Thiên Mụ nằm trên đồi Hà Khê [1].\n{CAU_Y_THIEU} chỗ gửi xe máy ở chùa Thiên Mụ.", "có chỗ gửi xe máy không"),
+    (CAU_HAI_Y, "Vé lẻ người lớn 200.000 đồng [1].", ""),                                    # không có dòng ý thiếu ⇒ cả câu như cũ
+    ("Vé vào Đại Nội giá bao nhiêu?", f"{CAU_Y_THIEU} giá vé", ""),                            # một vế ⇒ cả câu
+    (CAU_HAI_Y, f"{CAU_Y_THIEU} vé lẻ Đại Nội.\n{CAU_Y_THIEU} chương trình Tết.", ""),         # thiếu cả hai vế ⇒ cả câu
+])
+def test_web_section_targets_the_missing_clause(cau, tra_loi, ve):
+    assert ve_y_thieu(cau, tra_loi) == ve
