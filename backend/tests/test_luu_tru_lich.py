@@ -159,3 +159,11 @@ def test_evening_outside_center_falls_back_to_day_rule(mo_phong):
     lich = {}
     lkh.gan_o_an(lich, BANG_V2, khung, flags)
     assert "buổi tối" not in lich["o_dau"]["ly_do"]  # ⇒ về luật cũ theo điểm ngày
+
+
+def test_every_lodging_photo_path_has_a_file():
+    """14/11 (C review m-1): bảng `data/` sửa trước merge ⇒ main trỏ ảnh chưa có file. Mọi `anh` của bảng đang cấu hình phải có file dưới
+    `frontend/public` (bảng và ảnh vào cùng lượt merge)."""
+    public = BACKEND.parent / "frontend" / "public"
+    thieu = [c["ten"] for c in BANG_LT["co_so"] if c.get("anh") and not (public / c["anh"].lstrip("/")).is_file()]
+    assert not thieu, thieu
