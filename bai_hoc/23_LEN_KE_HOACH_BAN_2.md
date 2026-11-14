@@ -1,6 +1,6 @@
 # Bài 23 — "Lên kế hoạch" bản 2: code xếp lịch theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ
 
-*Cập nhật lần cuối: 13:40, ngày 14/11/2026 · bài mới; thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
+*Cập nhật lần cuối: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -53,7 +53,7 @@ chính là số bộ xếp đã dùng để giãn giờ, nên giờ in ra và ph
 - Khung lịch hiện ngay trên màn hình, câu tả hiện dần sau.
 
 **Phần phụ:**
-- **Ảnh cho 24 / 34 điểm**, lấy từ Wikimedia Commons, giấy phép mở, dòng ghi công đủ tác giả và giấy phép. Một người xem mù kiểm 10 lịch: ảnh đúng điểm 10 / 10; có một ảnh lăng người xem ghi "đúng loại, không chắc đúng lăng".
+- **Ảnh cho 24 / 34 điểm**, lấy từ Wikimedia Commons, giấy phép mở. Tác giả và giấy phép giữ trong bảng dữ liệu; từ chiều 14/11 trang không hiện dòng ghi công nữa (anh yêu cầu). Một người xem mù kiểm 10 lịch: ảnh đúng điểm 10 / 10; có một ảnh lăng người xem ghi "đúng loại, không chắc đúng lăng".
 - **Nút "Thêm vào lịch (.ics)":** code trong trình duyệt dựng file lịch điện thoại từ khung lịch, không gửi gì ra ngoài.
   - Kiểm trên 44 lịch đã lưu: 33 lịch có ngày đi, cho ra 288 sự kiện. Một trình đọc độc lập báo 0 lỗi.
   - Chưa thử mở trên Google Calendar, vì cần đăng nhập.
@@ -112,7 +112,7 @@ Bài học: **mô phỏng bắt lỗi luật, người chấm mù bắt lỗi "k
 - **Khung lịch có lúc hiện quá 1 giây**, ở lượt đầu có dự báo khi bộ nhớ đệm thời tiết còn trống. Anh đã nhận đây là giới hạn.
 - **Một nhãn được gắn sau khi thấy sàn trượt.** Sở thích "lễ hội – nghệ thuật" chỉ đạt 43 %, dưới sàn 50 %. Một điểm được gắn thêm nhãn này (có căn cứ trong
   kho) và sàn lên đúng 50 %, không còn biên. Việc này đã đưa anh duyệt, nhưng là chỗ mỏng.
-- **Lịch chưa có ăn uống và lưu trú.** Bản đồ trong lịch có code nhưng chưa bật.
+- **Lịch chưa có ăn uống.** Chỗ ở đã có từ chiều 14/11 (bài 25). Bản đồ trong lịch có code nhưng chưa bật.
 - **File .ics:** khung giờ qua nửa đêm sẽ mất sự kiện (bảng hiện chưa có điểm như vậy). Hai lịch cùng ngày bắt đầu có thể ghi đè nhau trong ứng dụng lịch.
 - **Bảng điểm chỉ có 34 điểm.** Điểm ngoài bảng thì lịch không xếp được.
 

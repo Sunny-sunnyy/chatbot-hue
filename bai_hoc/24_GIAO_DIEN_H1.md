@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 13:40, ngày 14/11/2026 · bài mới; nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn).*
+*Cập nhật lần cuối: 15:57, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -56,10 +56,19 @@ khung hình mỗi giây; các trang CSS nặng hơn chậm hơn (khoảng 31–4
 
 Vì vậy mình chọn **CSS + chút JS**. Nghiên cứu "vì sao một trang gây ấn tượng" cũng cho cùng kết luận: ấn tượng đến từ **một khoảnh khắc chính được dàn
 dựng**, không phải từ nhiều hiệu ứng rải khắp nơi. Khoảnh khắc chính của mình là **dòng sông vẽ dần khi cuộn**:
-- trên lịch trình: đường nối các ngày;
-- ở trang Giới thiệu: dải "ba bước".
+- trên lịch trình: mỗi ngày một dòng sông **đi qua từng điểm** theo thứ tự trong ngày (bản đầu chỉ là một đường nối các ngày);
+- ở trang Giới thiệu: sông chảy dọc qua **ba bến** (hỏi ⇒ tìm trong kho ⇒ trả lời kèm nguồn). Ba bến cùng kể **một** câu hỏi thật ("Ăn sáng ở Huế nên
+  thử món gì?"): bến 1 là câu hỏi, bến 2 là số đoạn tìm được, bến 3 là câu trả lời (rút gọn) kèm nút "Hỏi thử câu này".
 
-Đường sông ẩn trên màn hẹp, nên điện thoại không thấy.
+Bản đầu ẩn đường sông trên điện thoại; từ chiều 14/11 cả hai chỗ đều có sông trên điện thoại.
+
+Thêm chiều 14/11:
+- **"Huế qua các thời kỳ"** ở trang Giới thiệu: sáu mốc từ 1306 tới nay. Chữ viết lại từ bài trong kho. Trên máy tính, ảnh đứng yên bên trái và đổi theo mốc
+  đang đọc; trên điện thoại, mỗi mốc có ảnh riêng.
+- **Lịch:** tên chặng mỗi ngày (vd "Kinh thành → Đầm phá và biển") và nhãn loại điểm có màu. Màu luôn đi kèm chữ, nên không phải đoán màu.
+- **Trang chưa xếp lịch:** hiện một lịch "Ví dụ" do chính bộ xếp dựng, kèm nút "Xếp lịch như ví dụ".
+- Người review bắt một lỗi trước khi vào bản chạy: hiệu ứng ảnh lộ dần trên khung ảnh đứng yên làm số năm "1306" bị cắt thành "306" ở mốc đầu tiên.
+  Hiệu ứng theo cuộn chỉ chạy trước khi khung đứng yên, nên tới mốc 1 vẫn chưa mở hết. Sửa: bỏ hiệu ứng đó cho khung ảnh trên máy tính.
 
 Các hiệu ứng khác:
 - ảnh đầu trang chủ đổi qua lại giữa 3 ảnh, có nút **Dừng ảnh**;
@@ -88,8 +97,11 @@ bản mẫu HTML lúc chọn hướng:
 không thêm thư viện nào. Mức 8 KB là mức "phải ghi lý do"; lý do đã ghi, người điều phối nhận.
 
 **Ảnh cho trang Khám phá (xong chiều 14/11).** Nay **167 / 207 bài** có ảnh: 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
-từng ảnh. 29 ảnh có nhãn **"Ảnh minh hoạ"**, vì người xem không chắc ảnh chụp đúng chính nơi đó. Bài không có ảnh vẫn là ô màu, không mượn ảnh bài khác.
-Bảng ghi công 167 ảnh được tách ra một file riêng, chỉ tải khi mở trang bài hoặc Giới thiệu, nên gói JS chỉ còn **123,5 KB**.
+từng ảnh. 29 ảnh từng có nhãn **"Ảnh minh hoạ"**, vì người xem không chắc ảnh chụp đúng chính nơi đó. Bài không có ảnh vẫn là ô màu, không mượn ảnh bài
+khác. **Từ chiều 14/11** trang không hiện dòng ghi công hay nhãn nào dưới ảnh nữa (anh yêu cầu); nguồn ảnh vẫn giữ trong bảng dữ liệu.
+Lúc đó bảng ghi công 167 ảnh được tách ra một file riêng, chỉ tải khi mở trang bài hoặc Giới thiệu, nên gói JS chỉ còn **123,5 KB**. Chiều 14/11 bảng này
+bỏ hẳn khỏi trang (nguồn ảnh giữ trong thư mục dữ liệu riêng). Bảng vốn đã ở file riêng nên bỏ nó không làm gói nhỏ đi. Lần đo gần nhất (bản gộp thử chiều
+14/11, đã có "Huế qua các thời kỳ") là **124,44 KB**; sau đó thêm sông ba bến, điểm nhấn lịch, ảnh dưới câu trả lời — chưa đo lại.
 
 ## Một chuyện thật: thẻ "Thông tin nhanh" lặng lẽ xoá mất giờ mở cửa
 
@@ -114,8 +126,8 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 ## Khi nào hỏng
 
 - **Trình duyệt cũ** không có hiệu ứng theo cuộn hay chuyển trang mượt: trang vẫn chạy, chỉ đứng yên.
-- **Gói JS đã to hơn mức kế hoạch** (123,5 KB so với 112 KB lúc đầu). Bảng ghi công đã ra file riêng; thêm trang mới thì nên tách mỗi trang thành gói riêng.
-- **Dòng sông không có trên điện thoại.**
+- **Gói JS đã to hơn mức kế hoạch** (≈ 124,4 KB ở lần đo gần nhất, so với 112 KB lúc đầu). Bảng ghi công nay đã bỏ khỏi trang; thêm trang mới thì nên tách mỗi trang thành gói riêng.
+- **Máy tính không có hiệu ứng ảnh lộ dần ở "Huế qua các thời kỳ"**: đã bỏ vì làm cắt số năm (xem trên).
 - **Mọi phép đo chạy trên Chromium**, chưa đo Safari.
 - **Ảnh lấy từ web** không có giấy phép mở; dùng trong đồ án không thương mại theo quyết định của anh.
 
@@ -127,7 +139,7 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 3. Mỗi đợt đều **đo tương phản, độ xô lệch, giảm chuyển động** trên bản thật, hai khổ màn hình. Chuyện thật: thẻ "Thông tin nhanh" làm mất dòng ở 51 / 207 bài,
    chỉ lộ ra khi đo cả 207 bài.
 
-**Bài sau:** chưa có. Các việc đang làm (sửa lịch bằng lời, câu hỏi nhiều ý, khách sạn trong lịch) sẽ có bài khi xong.
+**Bài sau:** Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở trong lịch, ảnh dưới câu trả lời.
 
 ---
 
