@@ -208,10 +208,14 @@ def _chuoi_so(text: str) -> set[str]:
     return {re.sub(r"\D", "", m) for m in _CHUOI_SO.findall(text)}
 
 
-def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: bool = False) -> list[str]:
+_NAM = re.compile(r"(?<!\d)(?:19|20)\d\d(?!\d)")
+
+
+def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: bool = False, cau_hoi: str = "") -> list[str]:
     """D5: mã lỗi của mục web model viết (rỗng = đạt). (i) mỗi mã `[w n]` ∈ sổ, mỗi đoạn văn ≥ 1 mã, không mã kho `[n]`; (ii) 0 URL / tên miền /
     link Markdown; (iii) số tiền ⊂ số tiền trong đoạn trích; câu lưu trú ⇒ 0 số tiền; (vòng chỉnh 1) câu thời gian thực ⇒ 0 chữ số / thứ trong tuần
-    (ngoài mã `[w n]`); câu khác ⇒ mọi chuỗi số (số nhà, điện thoại, giờ) ⊂ chuỗi số trong tiêu đề + đoạn trích."""
+    (ngoài mã `[w n]`); câu khác ⇒ mọi chuỗi số (số nhà, điện thoại, giờ) ⊂ chuỗi số trong tiêu đề + đoạn trích, trừ **năm** (19xx / 20xx đứng riêng) người dùng gõ trong câu hỏi; giờ / ngày / số nhà / tiền
+    người dùng gõ vẫn phải có trong đoạn trích (tiền đề sai không thành "nói chắc sai")."""
     loi = []
     co = {s["id"] for s in so_web}
     doan = [p for p in re.split(r"\n\s*\n", text.strip()) if p.strip()]
@@ -233,7 +237,9 @@ def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: b
     if thoi_gian_thuc:
         if _SO_HOAC_THU.search(_WEB_CODE.sub("", text)):
             loi.append("so_thoi_gian_thuc")
-    elif _chuoi_so(text) - set().union(*(_chuoi_so(s[k]) for s in so_web for k in ("title", "snippet"))):
+    elif _chuoi_so(text) - set(_NAM.findall(cau_hoi)) - set().union(*(_chuoi_so(s[k]) for s in so_web for k in ("title", "snippet"))):
+        # (A 14/11 tối) năm có trong câu hỏi được qua: E đếm 16 / 21 mục bị thay là năm người dùng gõ, model nhắc lại trong câu "chưa xác minh được";
+        # C review: cả 11 mục cứu được chỉ nhờ năm ⇒ không miễn giờ / ngày / số nhà.
         # (A 08/11, việc nhỏ 11) mọi chuỗi số ⊂ chuỗi số của tiêu đề + đoạn trích (model thấy cả hai — `dau_vao_model`; tên như "… 24/7" nằm ở tiêu
         # đề) — như luật tiền: một số không có ⇒ cả mục bị bỏ. Câu thời gian thực đã cấm mọi chữ số ở trên (giữ đường "chưa xác minh") ⇒ không kiểm thêm.
         loi.append("so_ngoai_trich")

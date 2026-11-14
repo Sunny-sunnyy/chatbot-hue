@@ -1042,7 +1042,7 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
         return
     finally:
         record_llm_calls(trace, call_log.calls, "tra_web")
-    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(query), tw.la_cau_thoi_gian_thuc(query))
+    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(query), tw.la_cau_thoi_gian_thuc(query), cau_hoi=query)
     web["kiem"] = loi
     if loi == ["so_thoi_gian_thuc"]:  # vòng chỉnh 1: câu thời gian thực có số / ngày giờ ⇒ câu cố định "chưa xác minh" + link nguồn
         web.update(outcome="chua_xac_minh", text=tw.CHUA_XAC_MINH_TEXT, nguon=list(kq.so_web))
