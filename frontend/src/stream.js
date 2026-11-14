@@ -34,13 +34,13 @@ export function createSseParser(onEvent) {
 // `signal` (AbortController) huỷ `fetch` ⇒ server thấy ngắt kết nối, dừng model (yêu cầu 17); khi đó hàm ném `AbortError`.
 // B4: `truong` (giá trị chọn ở thẻ hỏi lại, `{}` = "Trả lời luôn") gửi kèm câu gốc; server ghép câu đủ ý.
 // Cổng D3: `bieuMau` = lượt từ biểu mẫu "Lên kế hoạch" (server dựng câu từ `truong`, không dùng chữ `query`).
-export async function streamAnswer(query, { signal, onEvent, truong = null, bieuMau = false }) {
+export async function streamAnswer(query, { signal, onEvent, truong = null, bieuMau = false, suaChon = null }) {
   let response;
   try {
     response = await fetch("/api/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, ...(truong !== null && { truong }), ...(bieuMau && { bieu_mau: true }) }),
+      body: JSON.stringify({ query, ...(truong !== null && { truong }), ...(bieuMau && { bieu_mau: true }), ...(suaChon && { sua_chon: suaChon }) }),
       signal,
     });
   } catch (error) {

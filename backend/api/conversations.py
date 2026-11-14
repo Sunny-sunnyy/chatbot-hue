@@ -32,6 +32,7 @@ def stored_answer(answer: str) -> str:
 class Conversation:
     turns: list[tuple[str, str]] = field(default_factory=list)  # (câu hỏi, câu trả lời đã cắt) — câu trả lời "" khi chỉ nhớ câu hỏi
     expires_at: float = 0.0
+    lich: dict | None = None  # sửa lịch bản 2: lịch đã lưu của cuộc (chỉ dữ liệu code dựng — khung, ngày đi, điểm đã bỏ, câu đã kiểm)
 
 
 class ConversationStore:
@@ -80,6 +81,16 @@ class ConversationStore:
             conversation.turns.pop(0)
         conversation.expires_at = self._clock() + self._ttl
         self._items.move_to_end(conversation_id)
+
+    def lay_lich(self, conversation_id: str | None) -> dict | None:
+        conversation = self._items.get(conversation_id)
+        return None if conversation is None else conversation.lich
+
+    def luu_lich(self, conversation_id: str | None, lich: dict) -> None:
+        """Ghi lịch mới nhất của cuộc (thay lịch cũ); cuộc hết hạn ⇒ không ghi. Cùng hạn với lịch sử (30 phút từ lượt cuối)."""
+        conversation = self._items.get(conversation_id)
+        if conversation is not None:
+            conversation.lich = lich
 
     def reset(self, conversation_id: str | None) -> str:
         """"Cuộc trò chuyện mới": xoá cuộc hiện tại khỏi RAM, trả mã mới."""

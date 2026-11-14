@@ -175,20 +175,24 @@ def dung_thu(d: dict, ngay: dt.date | None) -> bool:
 
 
 def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_dau: dt.date | None = None,
-           mua: dict | None = None) -> dict:
+           mua: dict | None = None, giu: dict[str, tuple[int, str]] | None = None, loai: frozenset[str] = frozenset()) -> dict:
     """Khung tham quan sáng / chiều theo luật ở đầu module. `ngay_1_khong_xa=False` chỉ để mô phỏng so "có / không luật cụm xa ngày 1".
     Bước (d): `ngay_bat_dau` (ngày đi) ⇒ mỗi ngày lịch có ngày thật ⇒ luật mùa + thứ xét theo NGÀY (lịch vắt hai tháng xét từng ngày);
-    `mua` = {ngày: khả năng mưa %} (chỉ các ngày có dự báo) ⇒ ngày ≥ `NGUONG_MUA` đổi thứ tự xét của điểm không ưu tiên."""
+    `mua` = {ngày: khả năng mưa %} (chỉ các ngày có dự báo) ⇒ ngày ≥ `NGUONG_MUA` đổi thứ tự xét của điểm không ưu tiên.
+    Sửa lịch (plan 2026-11-14-sua-lich-v2): `giu` = điểm giữ nguyên chỗ {id: (ngày, buổi sáng / chiều)}, đặt trước rồi buổi đó không lấp thêm;
+    `loai` = điểm người dùng đã bỏ — không bao giờ được chọn lại (cả buổi tối). Mặc định (None, rỗng) ⇒ đúng như trước (test 3.840 khung giống byte)."""
     n = ts.so_ngay
+    giu = {i: v for i, v in (giu or {}).items() if v[0] <= n and v[1] in BUOI_NGAY and i not in loai}
     ngay_cua = (lambda i: None) if ngay_bat_dau is None else (lambda i: ngay_bat_dau + dt.timedelta(days=i - 1))
     kieu = ts.kieu_di or KIEU_DI_MAC_DINH
     quy = None if ts.han_che else QUY[kieu]  # nhóm hạn chế: trần là "nhẹ nhàng" (spec 3.1)
-    bo = {d["id"] for d in bang.diem if d["cum"] == CUM_XA} if n < 3 else set()
+    bo = ({d["id"] for d in bang.diem if d["cum"] == CUM_XA} if n < 3 else set()) | set(loai)
     pool, lap, uu = thu_tu_xet(bang, ts.so_thich, bo)
+    lap = [j for j in lap if j not in loai]  # sửa lịch: danh sách lấp không giữ `bo` (cụm xa tự lọc ở `dung_duoc`) ⇒ loại điểm đã bỏ riêng ở đây
     hop_so_thich = set(pool) - uu if ts.so_thich else set()
-    thien_nhien = [d["id"] for d in bang.diem if not ts.so_thich and "thien_nhien" in d["loai"]]
+    thien_nhien = [d["id"] for d in bang.diem if not ts.so_thich and "thien_nhien" in d["loai"] and d["id"] not in loai]
     T = bang.theo_id
-    used: set[str] = set()
+    used: set[str] = set(giu)
     bi_thay: dict[str, str] = {}  # điểm ưu tiên bị thay vì bậc thang ⇒ điểm thay (ghi chú do code nếu cuối cùng vẫn không xếp)
 
     bat_dau = GIO_BAT_DAU["kham_pha" if kieu == "kham_pha" and not ts.han_che else "khac"]
@@ -246,7 +250,20 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
         cums: list[str] = []
         slots: dict[str, list[str]] = {b: [] for b in BUOI}
         tn_hom_nay = False
+        giu_buoi: set[str] = set()
+        for id_, (ng_g, b_g) in giu.items():  # sửa lịch: điểm giữ chỗ đặt trước, tính vào cụm của ngày; giờ nối tiếp như điểm thêm
+            if ng_g != i:
+                continue
+            truoc = slots[b_g][-1] if slots[b_g] else None
+            t = bat_dau[b_g] if truoc is None else gio[truoc][1] + (_phut_di(T[truoc], T[id_]) or DI_CUM_KE)
+            them([id_], cums)
+            slots[b_g].append(id_)
+            gio[id_] = dat_gio(T[id_], t) or (t, t + PHUT[T[id_]["thoi_luong"]])  # vượt giờ đóng ⇒ kiểm khung bắt (ngoai_gio_mo)
+            tn_hom_nay = tn_hom_nay or "thien_nhien" in T[id_]["loai"]
+            giu_buoi.add(b_g)
         for buoi in BUOI_NGAY:  # điểm đầu của sáng rồi chiều trước (bậc 4–6), điểm thêm theo kiểu đi sau (bậc 7) — điểm thêm không được chiếm suất cụm
+            if buoi in giu_buoi:
+                continue
             dau = diem_dau(i, buoi, cums, tn_hom_nay)  # của điểm ưu tiên buổi chiều (mô phỏng lần đầu: 2 / 960 khung thiếu ưu tiên số 1 vì vậy)
             if dau is None:
                 continue
@@ -255,7 +272,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             slots[buoi].append(dau)
             gio[dau] = dat_gio(T[dau], bat_dau[buoi])
         for buoi in BUOI_NGAY:
-            if not slots[buoi]:
+            if not slots[buoi] or buoi in giu_buoi:
                 continue
             tong = PHUT[T[slots[buoi][0]]["thoi_luong"]]
             # review 14/11 M-1: quỹ phút không tính thời gian chờ giờ suất / mở cửa ⇒ điểm thêm buổi sáng phải xong trước giờ đầu buổi chiều
@@ -274,7 +291,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
                 slots[buoi].append(tiep)
         ngay.append({"ngay": i, "buoi": slots})
 
-    toi_nghi = _xep_toi(bang, ts, ngay, [ngay_cua(i) for i in range(1, n + 1)], set(used))
+    toi_nghi = _xep_toi(bang, ts, ngay, [ngay_cua(i) for i in range(1, n + 1)], set(used) | set(loai))
     da_xep = [j for ng in ngay for b in BUOI for j in ng["buoi"][b]]
     ngoai = [j for j in da_xep if ts.so_thich and not set(ts.so_thich) & set(T[j]["loai"]) and j not in
              [x for ng in ngay for x in ng["buoi"]["toi"]]]  # hoạt động tối không phải "điểm lấp ngoài sở thích"
