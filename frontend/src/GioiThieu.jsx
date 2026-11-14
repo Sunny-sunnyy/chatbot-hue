@@ -44,7 +44,7 @@ export function GioiThieu({ tinhNang, daCo, bai, muc }) {
       // .ics nằm trong lịch bản 2 (`LichV2.jsx`) ⇒ chỉ hứa khi server bật lịch bản 2
       + (tinhNang?.len_ke_hoach_v2 ? " Đã chọn ngày đi thì tải lịch về lịch điện thoại (.ics)." : "")]] : []),
     ...(tinhNang?.tra_web ? [[IC.web, "Tra thêm trên web", "Khi kho không có, trợ lý tra web một lần và để riêng phần đó dưới nhãn “Từ web (chưa kiểm)”."]] : []),
-    ...(tinhNang?.thoi_tiet ? [[IC.troi, "Thời tiết Huế", "Dự báo 7 ngày tới ở trang chủ; hỏi trợ lý “mai trời thế nào” để có số liệu kèm nguồn."]] : []),
+    ...(tinhNang?.thoi_tiet ? [[IC.troi, "Thời tiết Huế", "Thời tiết hôm nay ở trang chủ; hỏi trợ lý “mai trời thế nào” để có dự báo tới 7 ngày, kèm nguồn."]] : []),
     ...(anh ? [[IC.anh, "Hỏi bằng ảnh", "Gửi ảnh, trợ lý gợi ý tên nơi hoặc món (có thể sai); bạn bấm chọn đúng tên rồi mới hỏi."]] : []),
   ];
   const buoc = [
