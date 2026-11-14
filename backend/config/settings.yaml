@@ -76,6 +76,7 @@ assistant:
   thoi_tiet: true                # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — BẬT 07/11/2026 (User Q-U4 spec cổng đợt 1: bật khi merge đợt 1; B5b đạt luật ghi trước); cần tim_them
   ngay_lich: true                # Phase 9 T1 (plan 2026-11-08-phase-9-t1-ngay-plan.md): công cụ ngày + âm lịch Việt Nam (code tính) — chỉ đưa khi câu có từ chỉ ngày; TẮT tới khi đạt §1; cần tim_them
   het_luot_bo_cong_cu: true      # 12/11 (plan 2026-11-12-het-luot-tim-plan.md): hết 2 lần tìm thật ⇒ lượt gọi model kế không còn công cụ tim_kho — BẬT 13/11 (User: bật kèm theo dõi câu kho thiếu bị trả lời)
+  cau_nhieu_y: false             # 14/11 (plan 2026-11-14-cau-nhieu-y-plan.md): câu nhiều ý — trả lời ý kho có, ý thiếu ghi dòng CAU_Y_THIEU ⇒ mở cổng web; TẮT tới khi đo đạt
   len_ke_hoach_v2: true          # "Lên kế hoạch" đợt 1 (plan 2026-11-12-len-ke-hoach-dot-1-plan.md): biểu mẫu bốn nhóm + hợp đồng truong mới — BẬT 14/11/2026 (User D4; nghiệm thu đợt 1 đạt, E review ready); cần lich_trinh_bieu_mau
   len_ke_hoach_o_hien: [so_ngay, nguoi_lon, tre_em, lon_tuoi, kieu_di, so_thich, ngay_di]  # ô biểu mẫu hiện khi cờ bật (ô dưới sàn mô phỏng ⇒ bỏ khỏi đây)
   lich_trinh_bang_v2: ../data/phase_9/lich_trinh/diem_v8.json  # bảng v8 (private) cho bộ xếp mới; chỉ nạp khi len_ke_hoach_v2 bật — thiếu file / cột ⇒ không khởi động

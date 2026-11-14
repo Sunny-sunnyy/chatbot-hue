@@ -28,6 +28,7 @@ from llm.pricing import cost_usd
 from llm.sua_lich_v2 import MAX_HANH_DONG, HanhDong
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
+    ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y,
     ASSISTANT_TOOL_NOTE,
     LICH_TRINH_MO_TA,
     NGAY_LICH_MO_TA,
@@ -327,6 +328,12 @@ class OpenAIFullCorpusGenerator:
         self.router_history_agent = self.router_agent.clone(instructions=f"{ROUTER_INSTRUCTIONS}\n\n{ROUTER_HISTORY_NOTE}")
         self.assistant_history_instructions = f"{self.assistant_instructions}\n\n{ASSISTANT_HISTORY_NOTE}"
         self.assistant_history_agent = self.assistant_agent.clone(instructions=self.assistant_history_instructions)
+        # Việc agent (3) 14/11 (cờ `cau_nhieu_y`): cùng hai bản trợ lý, chỉ thay đoạn luật từ chối của lời dặn trả lời bằng luật theo ý.
+        # Chỉ dựng khi lời dặn là bản runtime (harness 8.1 truyền lời dặn khác ⇒ không có biến thể này). Cờ tắt ⇒ không dùng tới.
+        if answer_instructions == ANSWER_SYSTEM_INSTRUCTIONS:
+            ny = f"{ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{ASSISTANT_TOOL_NOTE}"
+            self.assistant_agent_nhieu_y = self.assistant_agent.clone(instructions=ny)
+            self.assistant_history_agent_nhieu_y = self.assistant_agent.clone(instructions=f"{ny}\n\n{ASSISTANT_HISTORY_NOTE}")
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
         # mẫu dùng; mọi lượt khác gọi `answer_agent` như cũ (Q1). Luật vẫn nằm cả trong khung ngữ cảnh — giữ đúng cấu hình C đã đo.
         self.bieu_mau_agent = self.answer_agent.clone(
@@ -449,7 +456,7 @@ class OpenAIFullCorpusGenerator:
         return parsed.route, queries
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                       con_luot_fn=None) -> tuple[Agent, dict, dict]:
+                       con_luot_fn=None, nhieu_y: bool = False) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -464,7 +471,10 @@ class OpenAIFullCorpusGenerator:
         con_tim = {} if con_luot_fn is None else {"is_enabled": lambda _context, _agent: con_luot_fn()}
         tools = [function_tool(tool_fn, name_override="tim_kho", failure_error_function=None, **con_tim)]
         extra = {"tool_use_behavior": "stop_on_first_tool"} if stop_on_first_tool else {}
-        base = self.assistant_history_agent if history else self.assistant_agent
+        if nhieu_y:  # cờ `cau_nhieu_y`: lời dặn theo ý; không truyền ⇒ hai bản cũ (chuỗi gửi model giống byte)
+            base = self.assistant_history_agent_nhieu_y if history else self.assistant_agent_nhieu_y
+        else:
+            base = self.assistant_history_agent if history else self.assistant_agent
         if lich_trinh_fn is not None:  # B5 D1: công cụ thứ hai; mô tả ngắn, không đổi lời dặn (D7); dừng lượt chỉ khi code trả thẻ hỏi lại (D15)
             tools.append(function_tool(lich_trinh_fn, name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None))
             extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
@@ -475,12 +485,12 @@ class OpenAIFullCorpusGenerator:
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
-                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None) -> GeneratedText:
+                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn)
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y)
         try:
             result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn),
                                      error_handlers=handlers)
@@ -513,11 +523,11 @@ class OpenAIFullCorpusGenerator:
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                           con_luot_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
+                           con_luot_fn=None, nhieu_y: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn)
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn), run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state

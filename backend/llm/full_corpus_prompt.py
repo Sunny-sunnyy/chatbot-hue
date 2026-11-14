@@ -20,6 +20,20 @@ Nếu bằng chứng không đủ, trả đúng duy nhất câu sau, không thê
 {INSUFFICIENT_ANSWER}
 """.strip()
 
+# Việc agent (3) 14/11 (plan `docs/superpowers/plans/2026-11-14-cau-nhieu-y-plan.md`, cờ `cau_nhieu_y`): câu nhiều ý — ý có Bằng chứng thì trả lời,
+# ý thiếu đánh dấu bằng một dòng mở đầu đúng hằng dưới (code dò hằng này để mở cổng web — `assistant.co_y_thieu`); không ý nào có ⇒ câu từ chối như cũ.
+# Chỉ thay đúng đoạn luật từ chối của lời dặn trả lời; cờ tắt ⇒ dùng `ANSWER_SYSTEM_INSTRUCTIONS` nguyên văn (chuỗi gửi model giống byte).
+CAU_Y_THIEU = "Tư liệu chưa có thông tin về:"
+_LUAT_TU_CHOI = f"""Nếu bằng chứng không đủ, trả đúng duy nhất câu sau, không thêm citation:
+{INSUFFICIENT_ANSWER}"""
+_LUAT_NHIEU_Y = f"""Câu hỏi có nhiều ý: ý nào có Bằng chứng thì trả lời ý đó; mỗi ý Bằng chứng không nêu thì viết một dòng riêng mở đầu đúng bằng
+"{CAU_Y_THIEU}" rồi nêu ngắn ý đó — dòng này không có citation, không đoán nội dung ý thiếu.
+Nếu không ý nào có Bằng chứng, trả đúng duy nhất câu sau, không thêm citation:
+{INSUFFICIENT_ANSWER}"""
+
+assert ANSWER_SYSTEM_INSTRUCTIONS.count(_LUAT_TU_CHOI) == 1  # đổi lời dặn gốc mà quên đoạn này ⇒ lỗi ngay lúc import, không lặng lẽ gửi lời dặn sai
+ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y = ANSWER_SYSTEM_INSTRUCTIONS.replace(_LUAT_TU_CHOI, _LUAT_NHIEU_Y)
+
 def build_answer_input(query: str, context: str, today: str | None = None) -> str:
     """Nội dung tin nhắn user gửi model trả lời — một nơi dựng duy nhất, để chuỗi đếm token context đúng là chuỗi gửi đi (C-03).
     `today` (dòng ngày do code dựng, Phase 9 B1 D7) đứng đầu tin nhắn; None ⇒ đúng chuỗi như B0."""

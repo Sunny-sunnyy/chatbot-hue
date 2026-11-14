@@ -20,6 +20,7 @@ from pathlib import Path
 
 import json
 import logging
+import re
 from typing import Literal
 
 import anyio
@@ -35,7 +36,7 @@ from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.full_corpus_prompt import (CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
@@ -94,6 +95,8 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
+    cau_nhieu_y: bool = False
     # "Lên kế hoạch" đợt 1 (plan `2026-11-12-len-ke-hoach-dot-1-plan.md`, spec bản 3.3 §5c.8): biểu mẫu bốn nhóm + hợp đồng `truong` mới — một cờ cho
     # cả đợt, TẮT tới khi đạt nghiệm thu; cần `lich_trinh_bieu_mau`. `len_ke_hoach_o_hien` = các ô biểu mẫu hiện (`/api/tinh_nang`): ô chưa có tác
     # dụng với bộ xếp đang dùng thì chưa hiện (spec N1)
@@ -250,6 +253,9 @@ class AnswerTrace:
     # B6: kết quả cổng web — {"outcome", "text", "nguon", "n_ket_qua", "n_ma", "kiem", "usd_serper"}; None = cổng không mở. Chữ web chỉ ở đây
     # (không vào `answer`) ⇒ lịch sử nhớ (`answer`) không bao giờ chứa chữ web (D7). KHÔNG log chữ.
     web: dict | None = None
+    # câu nhiều ý vòng 2 (plan 2026-11-14-cau-nhieu-y-v2): cờ bật VÀ câu người dùng có ≥ 2 vế hỏi (`so_y`) ⇒ luật theo ý; khác ⇒ y như cờ tắt
+    nhieu_y: bool = False
+    chi_y_thieu: bool = False  # chốt (a): câu trả lời chỉ còn dòng CAU_Y_THIEU ⇒ code đã đổi thành INSUFFICIENT_ANSWER
     # B5b: ngữ cảnh code dò ở câu này (bão / lũ, ngoài 7 ngày, có buổi, có đưa công cụ) · kết quả công cụ `thoi_tiet` (trạng thái, khối số liệu code
     # in) · phần code nối sau chữ model · số thời tiết ngoài tập cho phép (D8). KHÔNG log chữ.
     thoi_tiet_ctx: dict | None = None
@@ -352,9 +358,12 @@ def _history_kwargs(trace: AnswerTrace) -> dict:
     return {"history": trace.history} if trace.history else {}
 
 
-def _assistant_instructions(generator, trace: AnswerTrace) -> str:
+def _assistant_instructions(generator, trace: AnswerTrace, nhieu_y: bool = False) -> str:
     """Lời dặn trợ lý thật sự gửi ở lượt này (có câu dặn lịch sử khi có lịch sử — B3 D3) — để đếm ngân sách đúng chuỗi gửi (D5).
-    B5: công cụ `lich_trinh` không đổi lời dặn (D7). Không lịch sử ⇒ đọc thẳng thuộc tính (generator thay thế trong test không cần hàm)."""
+    B5: công cụ `lich_trinh` không đổi lời dặn (D7). Không lịch sử ⇒ đọc thẳng thuộc tính (generator thay thế trong test không cần hàm).
+    Cờ `cau_nhieu_y` (việc agent (3) 14/11): lời dặn theo ý của đúng bản agent sẽ gửi."""
+    if nhieu_y:
+        return (generator.assistant_history_agent_nhieu_y if trace.history else generator.assistant_agent_nhieu_y).instructions
     return generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
 
 
@@ -711,12 +720,13 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
                         flags: AssistantFlags) -> str | None:
     """Phần trước lần gọi model của tuyến `tro_ly_hue`. Trả tin nhắn user cho trợ lý có công cụ (None = đường sinh một lần như B1).
     V2: không tìm trước (chỉ cần generator). Còn lại: `prepare_answer` (có thể đặt câu từ chối khi ngữ cảnh rỗng ⇒ `fixed_outcome`)."""
+    trace.nhieu_y = flags.cau_nhieu_y and so_y(query) >= 2
     if flags.lan_tim_dau == "v2":
         if generator is None:
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
-    instructions = _assistant_instructions(generator, trace) if (flags.tim_them and generator is not None) else None
+    instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
     if not flags.tim_them:
         return None
@@ -739,6 +749,8 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         _set_fixed(trace, INSUFFICIENT_ANSWER, "max_turns")
         return
     text = trace.generated.text
+    if trace.nhieu_y and chi_y_thieu(text):  # chốt (a) vòng 2: không ý nào có Bằng chứng ⇒ đúng câu từ chối cũ (đi đường từ chối + cổng web cũ)
+        text, trace.chi_y_thieu = INSUFFICIENT_ANSWER, True
     if trace.lich is not None:
         bang, khung, nguon = flags.bang_lich, trace.lich["khung"], trace.lich["nguon"]
         if text.strip() == INSUFFICIENT_ANSWER:  # B171 T3 (b): có khung mà model từ chối ⇒ code dựng lời lịch tối thiểu (stream: `_chu_giu_lai`)
@@ -789,7 +801,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     call_log = CallLog()
     try:
         if flags.uses_tools:
-            instructions = _assistant_instructions(generator, trace)
+            instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
             tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
@@ -828,6 +840,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
         extra["con_luot_fn"] = lambda: trace.model_searches < MODEL_SEARCH_LIMIT
+    if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
+        extra["nhieu_y"] = True
     return extra
 
 
@@ -913,7 +927,46 @@ def web_gate_open(trace: AnswerTrace, flags: AssistantFlags, tim_web) -> bool:
     return (flags.tra_web and tim_web is not None and trace.web is None and trace.route == ROUTE_TRO_LY_HUE
             and trace.fixed_outcome in (None, "refusal_no_sources") and trace.citation_error is None and trace.tool_error is None
             and trace.clarify is None and trace.lich is None and trace.truong is None
-            and (trace.answer or "").strip() == INSUFFICIENT_ANSWER)
+            and ((trace.answer or "").strip() == INSUFFICIENT_ANSWER or (trace.nhieu_y and co_y_thieu(trace.answer or ""))))
+
+
+_CO_TRICH = re.compile(r"\[(?:Nguồn\s*)?\d+\]")
+
+
+def co_y_thieu(answer: str) -> bool:
+    """Cờ `cau_nhieu_y`: câu trả lời có ít nhất một dòng mở đầu ĐÚNG hằng `CAU_Y_THIEU` (sau khoảng trắng / gạch đầu dòng) và dòng đó KHÔNG có
+    trích dẫn [n] / [Nguồn n] — model đánh dấu ý kho không có ⇒ mở cổng web cho phần thiếu (truy vấn vẫn từ câu người dùng, D2)."""
+    for dong in answer.splitlines():
+        d = dong.strip().lstrip("-*•").strip()
+        if d.startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d):
+            return True
+    return False
+
+
+def _dong_y_thieu(d: str) -> str:
+    return d.strip().lstrip("-*•").strip()
+
+
+def chi_y_thieu(answer: str) -> bool:
+    """Chốt (a) vòng 2: mọi dòng có chữ đều mở đầu bằng `CAU_Y_THIEU` (không ý nào có Bằng chứng) ⇒ True. Câu rỗng ⇒ False."""
+    dong = [_dong_y_thieu(d) for d in answer.splitlines() if d.strip()]
+    return bool(dong) and all(d.startswith(CAU_Y_THIEU) for d in dong)
+
+
+def _con_la_y_thieu(giu: str) -> bool:
+    """Stream: chữ giữ lại tới giờ VẪN có thể thành câu chỉ-dòng-ý-thiếu (mọi dòng đủ đã là dòng thiếu; dòng đang dở là khúc đầu / dòng thiếu)."""
+    *du, do = [_dong_y_thieu(d) for d in giu.splitlines()] or [""]
+    return all(not d or d.startswith(CAU_Y_THIEU) for d in du) and (do.startswith(CAU_Y_THIEU) or CAU_Y_THIEU.startswith(do))
+
+
+_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao)(?!\w)", re.IGNORECASE)
+_CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả)\s*$", re.IGNORECASE)
+
+
+def so_y(cau: str) -> int:
+    """Vòng 2 (b): số vế hỏi của câu người dùng — tách theo , ; ?; một vế là ý hỏi khi có từ hỏi hoặc kết thúc bằng tiểu từ hỏi. Luật ghi trước
+    (plan `2026-11-14-cau-nhieu-y-v2-plan.md`), chỉ thử trên 10 câu hỏi kèm. Đếm thiếu ⇒ về luật cũ (an toàn)."""
+    return sum(bool(_VE_HOI.search(v) or _CUOI_HOI.search(v)) for v in re.split(r"[,;?]", cau) if v.strip())
 
 
 async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
@@ -1048,7 +1101,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             if flags.uses_tools:
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
-                instructions = _assistant_instructions(generator, trace)
+                instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
                 tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
@@ -1081,10 +1134,11 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             pending_generating = False
                             yield "status", {"stage": "generating"}
                         if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
-                            giu_chu = "" if (flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None else False
+                            giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
+                                             or trace.nhieu_y) else False
                         if giu_chu is not False:
                             giu_chu += text
-                            if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()):
+                            if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu)):
                                 continue
                             text, giu_chu = giu_chu, False
                         if trace.lich is not None and not da_noi_dau:
@@ -1157,6 +1211,8 @@ def _chu_giu_lai(trace: AnswerTrace, giu: str, da_noi_dau: bool) -> str:
         chu = trace.lich["chu_thay"]
     elif trace.thoi_tiet and trace.thoi_tiet.get("thay_tu_choi"):
         chu = tt.CAU_DAN_DU_BAO
+    elif trace.chi_y_thieu:  # chốt (a) vòng 2: chữ giữ lại chỉ gồm dòng ý thiếu ⇒ câu từ chối chuẩn
+        chu = INSUFFICIENT_ANSWER
     else:
         chu = giu
     return f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{chu}" if trace.lich is not None and not da_noi_dau else chu
