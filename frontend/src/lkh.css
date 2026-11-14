@@ -179,7 +179,11 @@
 .lkh-o-ten { font-weight: 600; }
 .lkh-o li small { color: var(--color-muted); }
 .lkh-o-dc { flex-basis: 100%; color: var(--color-muted); font-size: 14.5px; }
-.lkh-o li a { margin-left: auto; color: var(--color-accent-deep); font-weight: 600; }
+.lkh-o li a { color: var(--color-accent-deep); font-weight: 600; }
+.lkh-o-link { margin-left: auto; display: inline-flex; gap: 14px; }
+/* ảnh cơ sở (14/11): ô vuông nhỏ bên trái, chữ chạy bên phải; không ảnh ⇒ dòng như cũ */
+.lkh-o li.lkh-o-co-anh { position: relative; padding-left: 112px; min-height: 84px; }
+.lkh-o-anh { position: absolute; left: 10px; top: 10px; width: 88px; height: 72px; object-fit: cover; border-radius: 10px; }
 /* quán ăn gợi ý trong từng ngày (cờ quan_lich) */
 .lich-v2 .lkh-an { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; font-size: 15px; }
 .lkh-an li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 8px 14px; border-radius: 14px; background: var(--color-accent-soft); }

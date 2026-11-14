@@ -2,13 +2,15 @@
 
 Mọi thứ do code: chọn MỘT khu cho cả chuyến theo cụm của các điểm ban ngày, chọn ≤ 5 cơ sở trải theo hạng trong khu đó, viết lý do,
 dựng link tìm phòng. Model không chọn, không viết tên cơ sở; khối này không vào tin nhắn gửi model. Không giá, không "còn phòng".
-Bảng: `bang_luu_tru_lich.json` của E (danh mục công khai, có nguồn + ngày; khu theo `cum_ve_khu` của C).
+Bảng: `bang_luu_tru_lich_v2.json` = bảng E (danh mục công khai, có nguồn + ngày; khu theo `cum_ve_khu` của C) + toạ độ Places + ảnh đã duyệt (B 14/11).
 """
 import itertools
 import json
 from collections import Counter
 from pathlib import Path
 from urllib.parse import quote
+
+from llm.lich_trinh import MAP_BASE
 
 KHU_LOI = "loi_do_thi_hai_bo_song_huong"
 KHU_TAY = "phia_tay_yen_tinh"
@@ -24,6 +26,7 @@ SO_THEO_MUC = (2, 2, 1)
 CUM_DI_TRONG_NGAY = {"nam_xa"}
 PHIA_BIEN = {"dong_bien": ("Phú Vang", "Thuận An"), "nam_xa": ("Phú Lộc", "Lăng Cô")}
 LINK_TIM = "https://www.booking.com/searchresults.html?ss="  # link tìm (không đặt chỗ), chỉ mở khi người dùng bấm
+ANH_GOC = "/anh/khach_san/"  # ảnh tự host (1 agent con chọn + B nhìn lại 14/11); bảng ghi đường khác gốc này ⇒ không khởi động
 NHAN = "Gợi ý theo vị trí và hạng — chưa kiểm giá, phòng trống."
 
 
@@ -39,6 +42,8 @@ def nap_bang_luu_tru(path: str | Path, cum_diem) -> dict:
     for c in bang["co_so"]:
         if not (c.get("ten") and c.get("xep_hang") in MUC_HANG and c.get("nguon") and c.get("khu")):
             raise ValueError(f"bảng lưu trú: cơ sở thiếu tên / hạng / nguồn / khu: {c.get('ten')!r}")
+        if c.get("anh") and not (c["anh"].startswith(ANH_GOC) and c["anh"].endswith(".jpg")):
+            raise ValueError(f"bảng lưu trú: ảnh ngoài {ANH_GOC}: {c.get('ten')!r}")
     return bang
 
 
@@ -74,7 +79,8 @@ def chon_co_so(bang_luu_tru: dict, khu: str, cum_dau: str | None) -> list[dict]:
         lay = [c for vong in itertools.zip_longest(*nhom.values()) for c in vong if c]  # vòng 1: đầu mỗi hạng; vòng 2: thứ hai…
         out += lay[:so]
     return [{"ten": c["ten"], "xep_hang": c["xep_hang"], "dia_chi": c.get("dia_chi"), "link": LINK_TIM + quote(f"{c['ten']}, Huế"),
-             "nguon": c["nguon"]} for c in out]
+             "map_url": MAP_BASE + quote(", ".join(x for x in (c["ten"], c.get("dia_chi"), "Huế") if x)),
+             "anh": c.get("anh"), "nguon": c["nguon"]} for c in out]  # `anh` chỉ có khi ảnh chắc (ảnh kc không vào bảng — dễ tưởng là đúng nơi)
 
 
 def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bool, co_toi: bool = False) -> dict | None:
@@ -94,7 +100,7 @@ def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bo
     if not co_so:
         return None
     return {"khu": khu, "ten_khu": TEN_KHU[khu], "ly_do": ly_do,
-            "co_so": [{k: c[k] for k in ("ten", "xep_hang", "dia_chi", "link")} for c in co_so],
+            "co_so": [{k: c[k] for k in ("ten", "xep_hang", "dia_chi", "link", "map_url", "anh")} for c in co_so],
             "nhan": NHAN, "nguon": " · ".join(dict.fromkeys(c["nguon"] for c in co_so))}
 
 
