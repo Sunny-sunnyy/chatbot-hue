@@ -187,6 +187,9 @@ export function LichV2({ turn, onEditPlan }) {
 // Gợi ý nơi ở (B, cờ `luu_tru_lich`): khối do CODE chọn (khu cả chuyến, ≤ 5 cơ sở, lý do, nhãn "chưa kiểm giá"). Link tìm phòng chỉ nhận đúng gốc
 // LINK_TIM_PHONG (kiểm cả phía trình duyệt như link bản đồ), mở tab mới khi bấm; không giá, không "còn phòng".
 const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
+// Ảnh cơ sở lưu trú (14/11): chỉ file tự host dưới /anh/khach_san/ (server kiểm lúc khởi động; ảnh "không chắc" không có trong bảng); 0 chữ ghi công.
+const ANH_KS = "/anh/khach_san/";
+const anhKsHopLe = a => typeof a === "string" && a.startsWith(ANH_KS) && a.endsWith(".jpg") && !a.includes("..");
 // Quán ăn gợi ý (cờ `quan_lich`, code chọn ≤ 2 quán cùng cụm ≤ 2 km): quán kho ⇒ "Đọc bài"; nguồn mở ⇒ nhãn "chưa kiểm" + link bản đồ.
 // Link chỉ nhận đúng gốc bản đồ của lịch (như link điểm); không giờ / giá / điện thoại.
 // Ảnh nhỏ cạnh tên quán (C 14/11 tối): quán kho ⇒ ảnh Khám phá của bài (`anhBai.js`, bỏ ảnh `kc`); quán ngoài kho ⇒ ảnh tự host `anh/quan/<mã>` do server gửi
@@ -227,11 +230,17 @@ function NoiO({ o }) {
       <p className="lkh-o-h">Nơi ở gợi ý: khu {o.ten_khu}</p>
       <p className="lkh-o-ly">{o.ly_do}</p>
       <ul>{ds.map(c => (
-        <li key={c.ten}>
+        <li key={c.ten} className={anhKsHopLe(c.anh) ? "lkh-o-co-anh" : undefined}>
+          {anhKsHopLe(c.anh) &&
+            <img className="lkh-o-anh" src={`${import.meta.env.BASE_URL}${c.anh.slice(1)}`} alt={c.ten} loading="lazy" decoding="async" />}
           <span className="lkh-o-ten">{c.ten}</span> <small>{c.xep_hang}</small>
           {c.dia_chi && <span className="lkh-o-dc">{c.dia_chi}</span>}
-          {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) &&
-            <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+          <span className="lkh-o-link">
+            {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) &&
+              <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
+            {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) &&
+              <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+          </span>
         </li>
       ))}</ul>
       <p className="lkh-o-nhan">{o.nhan} Nguồn: {o.nguon}.</p>

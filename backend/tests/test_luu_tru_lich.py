@@ -107,7 +107,11 @@ def test_rule_spread_by_rank_and_near_cluster_first():
              [("B5", "5 sao", None), ("A4", "4 sao", None), ("C5", "5 sao", "bo_nam"), ("D3", "3 sao", None), ("E2", "2 sao", None),
               ("F2", "2 sao", None), ("G1", "1 sao", None), ("H", "Đạt chuẩn phục vụ khách du lịch", "bo_nam")]]
     ten = [c["ten"] for c in ltl.chon_co_so(_bang(co_so=co_so), ltl.KHU_LOI, "bo_nam")]
-    assert ten == ["C5", "A4", "D3", "E2", "H"]
+    assert ten == ["C5", "A4", "D3", "E2", "G1"]  # mỗi mức: lần lượt từng hạng, hạng cao trước; cùng hạng: gần cụm trước
+    # lỗi 14/11: xếp theo tên trong cả mức ⇒ hai 4 sao tên "A…" đẩy mọi 5 sao ra ngoài; cùng hạng + cùng cụm: có ảnh trước
+    co_so = [{"ten": t, "xep_hang": h, "khu": ltl.KHU_LOI, "nguon": "n", "cum_gan": None, **({"anh": "x.jpg"} if a else {})}
+             for t, h, a in [("A4", "4 sao", False), ("A4b", "4 sao", False), ("Z5", "5 sao", False), ("Y5", "5 sao", True)]]
+    assert [c["ten"] for c in ltl.chon_co_so(_bang(co_so=co_so), ltl.KHU_LOI, None)] == ["Y5", "A4"]
 
 
 def test_table_load_checks(tmp_path):
