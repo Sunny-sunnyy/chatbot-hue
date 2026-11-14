@@ -396,3 +396,36 @@ def test_numbers_must_come_from_snippets(text, loi):
 def test_number_rule_keeps_money_and_realtime_codes_single():
     assert tw.kiem_muc_web("Vé tháng 250.000đ [w1].", SO, luu_tru=False) == ["tien_ngoai_trich"]   # tiền bịa: chỉ mã tiền
     assert tw.kiem_muc_web("Hôm nay mở 9h [w1].", SO_SO, luu_tru=False, thoi_gian_thuc=True) == ["so_thoi_gian_thuc"]  # giữ đường "chưa xác minh"
+
+
+# ---------- kiểm tiền theo giá trị (plan 2026-11-14-tien-web-chuan-hoa-plan.md) ----------
+def _so(snippet: str) -> list[dict]:
+    return [{"id": 1, "title": "Bảng giá", "snippet": snippet, "link": "https://vi.example.org/gia", "domain": "vi.example.org"}]
+
+
+@pytest.mark.parametrize("trich, viet", [
+    ("Vé 100.000 VNĐ một người.", "Vé khoảng 100.000 đồng một người [w1]."),
+    ("Suất ăn 65k.", "Suất ăn 65.000đ [w1]."),
+    ("Giá 594,000 đồng.", "Giá 594.000 đồng [w1]."),
+    ("Tour 1,5 triệu.", "Tour 1.500.000 đồng [w1]."),
+    ("Phí 300 nghìn.", "Phí 300.000 VND [w1]."),
+])
+def test_money_same_value_different_writing_passes(trich, viet):
+    assert "tien_ngoai_trich" not in tw.kiem_muc_web(viet, _so(trich), luu_tru=False)
+
+
+@pytest.mark.parametrize("trich, viet", [
+    ("Vé 170.000đ, vé 250.000đ.", "Taxi khoảng 220.000 đồng [w1]."),          # (c) số bịa: không có trong đoạn trích
+    ("Vé 15.000 đồng.", "Vé 150.000 đồng [w1]."),                             # (a) khác đúng 10 lần — so bằng đúng, không làm tròn
+    ("Tour 1,5 triệu.", "Tour 15 triệu [w1]."),
+    ("Tour 1,5 triệu.", "Tour 1.500.001 đồng [w1]."),
+    ("Vé 1.500 triệu.", "Vé 1,5 triệu [w1]."),                                # (b) mơ hồ "1.500 triệu" ⇒ không đoán, giữ so nguyên dạng ⇒ chặn
+    ("Không có giá nào.", "Vé 50.000 đồng [w1]."),                            # (d) đoạn trích không có tiền
+])
+def test_money_not_in_snippet_is_still_blocked(trich, viet):
+    assert "tien_ngoai_trich" in tw.kiem_muc_web(viet, _so(trich), luu_tru=False)
+
+
+def test_money_value_parser_does_not_guess():
+    assert tw.gia_tri_tien("1,5 triệu") == 1_500_000 and tw.gia_tri_tien("594,000 đồng") == 594_000
+    assert tw.gia_tri_tien("1,5 đ") is None and tw.gia_tri_tien("1.500 triệu") is None
