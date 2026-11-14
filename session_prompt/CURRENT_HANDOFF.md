@@ -1,7 +1,21 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 22:40 13/11/2026 (A, kết phiên 13/11). Trước: 22:23 12/11/2026 (A, kết phiên 12/11).
+Cập nhật: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11). Trước: 22:23 12/11/2026 (A, kết phiên 12/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
+
+## PHIÊN 14/11 (mở 09:42 theo `date` lúc A đọc — A ghi 09:45 14/11/2026)
+
+- **Terminal:** A `hue-rag-7b` · B `hue-rag-22` · C `hue-rag-b4` · E `hue-rag-c4` — cả bốn Claude Code, trực tiếp (B / C / E tự báo).
+- **Quyền phiên (User chọn "như 13/11", A ghi nhận 09:45 14/11/2026):** A tự điều phối, giao ngay việc có sẵn trong handoff, A tự commit / push, B / C / E push nhánh riêng, **trần Phase 9 6,0 USD** (đã ≈ 4,66; dự phóng phiên ≈ 0,2). Hết hạn cuối phiên.
+- **Giao lúc mở:** E gói ghi kho (mục 2 dưới) — **A chốt: không chờ bài lưu trú**, để lần ghi sau; C review diff kho **trước** khi E dựng chỉ mục, trong lúc chờ rà lời dặn bản 2 + ảnh đợt 2 (phiếu 24 / 34 đã chốt 13/11); B dựng lại worktree + rebase trước khi E dựng, rà harness (0 USD) rồi nghiệm thu lại khi E báo dựng xong. W69: bàn nhóm vòng 1.
+- **User (09:51 14/11/2026):** "vẫn duyệt chi phí API nếu vượt trần; vẫn ở đây" ⇒ việc đã giao cần thêm tiền thì làm tiếp, A ghi tiền thật từ log và báo User sau; User có mặt ⇒ hỏi được khi cần.
+- **W69 (09:56 14/11/2026): User BỎ** — "không quan trọng, chỉ là commit, dự án cá nhân nên commit dính private data cũng không sao" ⇒ không làm hook tên cơ sở; luật / hook hiện có giữ nguyên (A không tự nới). Nhóm B / C / E đã đa số "hook chỉ cảnh báo".
+- **Rà lời dặn bản 2 (C, 09:56 14/11/2026):** không sửa lời dặn đang chạy (log 1.152 dòng không thấy lỗi mới); bỏ Đ3 (sai giả định); không Đ4; Đ2 theo mục 6; **Đ5 A đã ghi** 3 luật vào `skills/agent-design-review/SKILL.md` §5.
+- **Giờ Đại Nội (User tra, 09:56 14/11/2026; nguồn trang Vinpearl hướng dẫn tham quan Đại Nội, theo quy định Trung tâm BTDT):** hè 16/03–15/10 06h30–17h30 · đông 16/10–15/03 07h00–17h00 · đêm 19h00–22h00 chỉ theo chương trình; quầy vé ngừng ~30 phút trước đóng cửa. Kho đang ghi một khung 07h00–17h30 (bài Đại Nội + Bảo tàng Cổ vật) ⇒ **sửa ở lần ghi kho kế** (cùng bài lưu trú), không chèn vào lần dựng 14/11.
+- **User dọn (09:53 14/11/2026):** xoá nhánh `p9-het-luot-tim` + `p9-tra-web-exa` (máy + origin; tag `hoso/p9-tra-web-exa` còn) và collection `hue_anh_siglip2` (Qdrant còn 1 collection chatbot, 8.435 điểm). + 2 ảnh docker `hue-rag-app:nhap2`, `:dep10`. Còn: dòng `EXA_API_KEY`.
+- **B rà harness xong (09:51 14/11/2026, 0 USD; `report_agent/2026-11-12_ra_khoang_cach/b_ra_harness_tro_ly.md`):** không xây thêm cho harness; đếm lại cờ hết lượt tìm sau ~1 tuần (`data/ra_harness_2026-11-13/dem2.py`, ~21/11); 2 lệch nhỏ (ngõ cụt khi hết lượt — 2 lượt log, ≥ 5 mới bàn; hạn 45 s cả vòng — 0 lần hết giờ). Worktree B dựng lại, rebase `505b53d`.
+- **Tiền gói ghi kho (09:49 14/11/2026, A chốt):** trần gói **0,22 USD** (E ước theo số B7 thật: K1 + K2 trước + sau ≈ 0,19, đếm "ăn gì gần" 0,01); con số 0,15 ở mục 2 dưới là A ghi thiếu — spec kho đợt 3 User duyệt ghi ≈ 0,26, trần đợt 0,35. K1 giữ nguyên thước (176 câu, chấm cùng lượt mù).
+- Kiểm nhanh: `main` `a400f7f` = origin, sạch; hooksPath `.githooks`; Qdrant 2 collection, 8.435 điểm; RAM trống ~12 GB; `/tmp/b_lkh` prunable. Lệnh dọn của User 13/11 **chưa chạy** (2 nhánh, collection ảnh còn).
 
 ## PHIÊN SAU ĐỌC TRƯỚC (viết 22:40 13/11/2026, kết phiên 13/11)
 
@@ -79,7 +93,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C / E lúc mở phiên 
 
 ## Quyền
 
-**Trần tiền HIỆN HÀNH (đọc dòng này, các con số 4,0 / 4,2 / 4,3 bên dưới là lịch sử):** Phase 9 đã dùng ≈ 4,61 USD; trần A ghi tạm trong phiên 12/11 là 4,6 (đã chạm) ⇒ **không chạy lượt có phí nào ở phiên sau trước khi User cho trần mới** (viết 22:31 12/11/2026).
+**Trần tiền HIỆN HÀNH (đọc dòng này, các con số 4,0 / 4,2 / 4,3 / 4,6 bên dưới là lịch sử):** trần Phase 9 **6,0 USD** (User 13/11, giữ ở 14/11); đã dùng ≈ 4,66 (sửa 09:45 14/11/2026).
 
 - **Quyền phiên 12/11 HẾT HẠN (22:23 12/11/2026, kết phiên).** Trần Phase 9 A ghi tạm 4,6 trong phiên (User "vẫn duyệt chi phí API"); Phase 9 ≈ 4,61 ⇒ phiên sau xin trần mới.
 - **Phiên 12/11 (User chọn "như 10/11", A ghi nhận 18:45 12/11/2026):** A tự điều phối, giao ngay việc có sẵn trong handoff, A tự commit / push, B / C / E push nhánh riêng, trần Phase 9 4,2 (≈ 3,88 đã dùng), việc cần User duyệt thì gác. Hết hạn cuối phiên.

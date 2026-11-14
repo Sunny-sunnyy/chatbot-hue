@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN 14/11 (mở 09:42; cập nhật 09:45 14/11/2026 `date`)
+
+- Terminal: A `hue-rag-7b` · B `hue-rag-22` · C `hue-rag-b4` · E `hue-rag-c4` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).
+- Kiểm nhanh: `main` `a400f7f` = origin, sạch; hooksPath `.githooks`; Qdrant 2 collection, 8.435 điểm; RAM trống ~12 GB; `/tmp/b_lkh` prunable; lệnh dọn User 13/11 chưa chạy.
+- User: quyền "như 13/11" + trần Phase 9 6,0 (A ghi 09:45 14/11/2026).
+- Giao (handoff "PHIÊN 14/11"): E ghi kho (không chờ bài lưu trú) · C review diff kho trước dựng + rà lời dặn + ảnh đợt 2 · B dựng worktree + rà harness ⇒ nghiệm thu lại sau khi E dựng xong.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; sau: `bai_hoc/`, `bao_cao_he_thong/` khi kho + lịch trình xong.
+- Bẫy (14/11): (1) báo User giờ ước "09:4x" và ghi vào handoff ⇒ hook bắt ⇒ sửa bằng giờ `date`.
+
 # STATUS A — KẾT PHIÊN 13/11 (mở 19:46; cập nhật 22:41 13/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên ⇒ cùng lượt giao E ghi kho + dựng + đo (gói User duyệt), B chờ dựng xong ⇒ điền mã đoạn ⇒ nghiệm thu lại; đưa User lệnh dọn chưa chạy. **Luật mới:** bàn nhóm trước mọi khuyến nghị (đáp án = đa số), dòng đầu tin ghi "vòng 1 / 2".

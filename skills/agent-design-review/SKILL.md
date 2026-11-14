@@ -38,6 +38,9 @@ Nguồn: khung_fde, nguyên tắc mục 2 (mã bài `W1D2·17` = tuần 1, ngày
 - Một agent trước; agent con chỉ với 1 trong 5 lý do (cô lập ngữ cảnh, kiểm độc lập, rẻ hơn, nhanh hơn, khoanh quyền) + đo thấy hơn (W2D1·46–47).
 - Trí nhớ: một loại trước, thêm khi đo thấy lợi; tắt khi đánh giá; namespace do code; không lưu chữ tự do của người dùng (W2D2·61, W3D3·104–106).
 - Lời dặn: mục tiêu · có gì để dựa · xong trông thế nào; input gọn; viết lại cả lời dặn thì đo lại (W1D4·33–34, W1D5·42).
+- Việc mới cho trợ lý ⇒ một lần gọi hẹp riêng, hoặc công cụ có luật nằm **trong kết quả công cụ** — không gộp thêm vào lời dặn vai chính (hue_rag: 4 lần gộp ⇒ 4 lần tụt sàn).
+- Luật kiểm được bằng máy (số, thứ tự, trường bắt buộc) ⇒ code; sửa một câu dặn = một bậc đo, có bộ an toàn + câu ngoài phạm vi.
+- Trước khi ước lợi / tiền của một mô tả công cụ ⇒ đọc **điều kiện đưa công cụ** cho model (có thể chỉ đưa khi câu có từ khoá, không phải mọi lượt).
 
 ## 6. Đầu ra
 Bảng: mục · hiện trạng (`file:dòng`) · khớp / lệch · đề xuất. Mỗi sửa đề xuất là **một bậc đo** (skill `run-experiment`), User duyệt trước khi làm. Chưa duyệt thì không sửa code.
