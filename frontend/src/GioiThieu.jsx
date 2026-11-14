@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ANH_DAU_TRANG } from "./anh.js";
 import { Anh, LINH_VUC, soBai } from "./chung.jsx";
 import { HueQuaCacThoiKy } from "./HueQuaCacThoiKy.jsx";
+import { baiHref } from "./route.js";
 import "./gt.css";
 
 // Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026; mẫu `data/ui_mau_2026-11-14/h1/gioi_thieu.html`, bàn nhóm C / E vòng 1).
@@ -25,7 +26,16 @@ function Ic({ d }) {
   );
 }
 
-export function GioiThieu({ tinhNang, daCo, bai, muc }) {
+// Ví dụ ở ba bến (G3): MỘT lần chạy thật trên hệ thống (14/11/2026, câu gợi ý của trang chủ; bản ghi `data/gt_vi_du_2026-11-14/vi_du_1.json`) —
+// kho tìm 10 đoạn, câu trả lời trích 4 đoạn của cùng một bài. Chữ chép từ lần chạy đó, rút gọn một câu; không gọi model khi mở trang. Kho / lời dặn
+// đổi thì câu trả lời thật có thể khác ⇒ nhãn "Ví dụ" + nút hỏi thử để người xem thấy bản đang chạy.
+const VI_DU = {
+  hoi: "Ăn sáng ở Huế nên thử món gì?",
+  bai: "Cẩm nang ẩm thực Huế", n_doan: 10, n_trich: 4,
+  tra_loi: "Ăn sáng ở Huế, bạn có thể thử bún bò Huế, cơm hến hoặc bún hến, và bánh mì thập cẩm.",
+};
+
+export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
   const banDo = !!tinhNang?.ban_do_lich, anh = !!tinhNang?.anh;
   // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục có id đó (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash).
   // chưa biết cờ ⇒ chưa vẽ thân trang (thẻ "làm được gì" theo cờ nở ra lúc cờ về ⇒ đẩy cả trang: CLS 0,17–0,66 đo ở 390, 14/11) và chưa cuộn
@@ -94,15 +104,22 @@ export function GioiThieu({ tinhNang, daCo, bai, muc }) {
 
         <section className="gt-khoi gt-buoc-khoi" aria-labelledby="gt-buoc">
           <h2 id="gt-buoc" className="khoi-h">Một câu hỏi đi qua ba bước</h2>
-          {/* đường sông Hương nối ba bước: vẽ dần theo cuộn (gt.css); trang trí, trình đọc màn hình bỏ qua */}
-          <svg className="gt-song" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
-            <path pathLength="1" d="M0 34 C 120 6, 240 6, 360 30 S 600 58, 720 30 S 960 2, 1080 26 S 1170 44, 1200 34" />
-          </svg>
-          <ol className="gt-buoc">
-            {buoc.map(([t, m], i) => (
-              <li key={t} className="hien" style={{ "--n": i }}><span className="gt-so">{i + 1}</span><h3>{t}</h3><p>{m}</p></li>
-            ))}
-          </ol>
+          <p className="gt-buoc-dan">Theo một câu hỏi thật chảy qua ba bến của trợ lý.</p>
+          <div className="gt-dong">
+            {/* sông Hương chảy dọc qua ba bến: vẽ dần theo cuộn (gt.css); trang trí, trình đọc màn hình bỏ qua */}
+            <svg className="gt-song-doc" viewBox="0 0 60 1000" preserveAspectRatio="none" aria-hidden="true">
+              <path pathLength="1" d="M30 0 C 58 110, 2 220, 30 333 S 58 556, 30 666 S 2 888, 30 1000" />
+            </svg>
+            <ol className="gt-buoc">
+              {buoc.map(([t, m], i) => (
+                <li key={t} className="gt-ben hien">
+                  <span className="gt-so" aria-hidden="true">{i + 1}</span>
+                  <div className="gt-ben-chu"><h3>{t}</h3><p>{m}</p></div>
+                  <ViDu buoc={i} bai={bai} onAsk={onAsk} />
+                </li>
+              ))}
+            </ol>
+          </div>
         </section>
 
         <section className="gt-khoi gt-doi">
@@ -128,5 +145,26 @@ export function GioiThieu({ tinhNang, daCo, bai, muc }) {
         </section>
       </div>}
     </>
+  );
+}
+
+function ViDu({ buoc, bai, onAsk }) {
+  const baiVd = bai?.find(b => b.tieu_de === VI_DU.bai);  // link "đọc bài" chỉ khi bài còn trong kho (không ghi mã bài vào repo public)
+  return (
+    <div className={`gt-vd gt-vd-${buoc}`}>
+      <span className="gt-vd-nhan">Ví dụ</span>
+      {buoc === 0 && <p className="gt-vd-hoi">{VI_DU.hoi}</p>}
+      {buoc === 1 && (
+        <p>Tìm được <b>{VI_DU.n_doan} đoạn</b> liên quan; câu trả lời dùng {VI_DU.n_trich} đoạn của bài{" "}
+          {baiVd ? <a href={baiHref(baiVd.id)}>{VI_DU.bai}</a> : <b>{VI_DU.bai}</b>}.</p>
+      )}
+      {buoc === 2 && (
+        <>
+          <p>{VI_DU.tra_loi} <sup className="gt-vd-so">[1]</sup></p>
+          <p className="gt-vd-nguon">Nguồn: {VI_DU.bai}</p>
+          {onAsk && <button type="button" className="nut nut-phu gt-vd-nut" onClick={() => onAsk(VI_DU.hoi)}>Hỏi thử câu này</button>}
+        </>
+      )}
+    </div>
   );
 }

@@ -116,7 +116,7 @@ export default function App() {
                             lichTurn={lichTurn} onEditPlan={editPlan} />
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
-        {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} daCo={daCoTinhNang && (bai !== null || !!baiLoi)} bai={bai} muc={route.muc} />}
+        {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} daCo={daCoTinhNang && (bai !== null || !!baiLoi)} bai={bai} muc={route.muc} onAsk={askAnywhere} />}
         {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 
