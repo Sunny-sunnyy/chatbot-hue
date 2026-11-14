@@ -1,25 +1,25 @@
 # 02 — Kho dữ liệu: chatbot biết những gì
 
-Cập nhật 18:06 14/11/2026: bốn lần ghi kho ngày 14/11 (lần 4: 8 quán ăn ở Thủy Xuân / Kim Long / Đầm Chuồn ⇒ **224 bài / 8.644 đoạn**; trước: 16:18 — lần 3: 4 bài nơi chưa có bài + giờ Đại Nội theo mùa ⇒ 216 bài / 8.603 đoạn). Bản cũ xem trong lịch sử phiên bản — git. Tả kho **đang dùng**. Số chung (số đoạn, điểm chất lượng, từ chối nhầm)
+Cập nhật 19:41 14/11/2026: năm lần ghi kho ngày 14/11 (lần 5: 10 món + 13 địa điểm / di tích trợ lý từng từ chối / trả lời mỏng ⇒ **247 bài / 9.032 đoạn**). Trước — 18:06 14/11/2026: bốn lần ghi kho ngày 14/11 (lần 4: 8 quán ăn ở Thủy Xuân / Kim Long / Đầm Chuồn ⇒ **224 bài / 8.644 đoạn**; trước: 16:18 — lần 3: 4 bài nơi chưa có bài + giờ Đại Nội theo mùa ⇒ 216 bài / 8.603 đoạn). Bản cũ xem trong lịch sử phiên bản — git. Tả kho **đang dùng**. Số chung (số đoạn, điểm chất lượng, từ chối nhầm)
 ở bảng "Số chính" của [README](README.md); từ khó (chỉ mục, sàn, Golden…) ở "Từ hay gặp" cùng chỗ. Bước trước: [01 — luồng chạy](01_LUONG_HOAT_DONG_HE_THONG.md) ·
 bước sau: [03 — chia đoạn](03_BAO_CAO_CHIA_DOAN.md).
 
 ## Kho gồm gì
 
-**224 bài Markdown tiếng Việt** (lần ghi kho 4, 17:51 14/11/2026: +8 bài quán — Thủy Xuân 3, Kim Long 2, Đầm Chuồn 3 nhà chòi; không giá; record `944858b9972a`; report `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_4_implementation.md`; lần ghi kho 3, 16:05 14/11/2026: +4 bài cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên + giờ Đại Nội theo mùa; lần 2 sáng cùng ngày: +5 bài lưu trú; report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_3_implementation.md`, `e_ghi_kho_luu_tru_implementation.md`) — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
+**247 bài Markdown tiếng Việt** (lần ghi kho 5, 19:34 14/11/2026: +10 món / đặc sản (tré, vả trộn, tôm chua, mít trộn, bánh in, rượu Minh Mạng, cháo hến, cơm sen, nem công chả phượng, bánh su sê) + 8 di tích + 5 địa điểm; record `106fe0842b8e`; report `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_5_implementation.md`; lần ghi kho 4, 17:51 14/11/2026: +8 bài quán — Thủy Xuân 3, Kim Long 2, Đầm Chuồn 3 nhà chòi; không giá; record `944858b9972a`; report `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_4_implementation.md`; lần ghi kho 3, 16:05 14/11/2026: +4 bài cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên + giờ Đại Nội theo mùa; lần 2 sáng cùng ngày: +5 bài lưu trú; report `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_3_implementation.md`, `e_ghi_kho_luu_tru_implementation.md`) — toàn bộ những gì chatbot "biết" (ngoài ngày, thời tiết và mục web ghi riêng):
 
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
-| Món ăn | 99 | đặc sản Huế, nhà hàng / quán (từ 14/11 tối thêm 8 quán cho vùng lịch thiếu quán), quán cà phê, một bài hướng dẫn chung |
-| Di tích | 31 | Đại Nội, Kinh thành, các lăng, chùa (có chùa Từ Hiếu từ 14/11), đàn tế, di sản (Nhã nhạc, Mộc bản…) |
+| Món ăn | 109 | đặc sản Huế (14/11 tối thêm 10 món trợ lý từng từ chối / trả lời mỏng), nhà hàng / quán (từ 14/11 tối thêm 8 quán cho vùng lịch thiếu quán), quán cà phê, một bài hướng dẫn chung |
+| Di tích | 39 | Đại Nội, (14/11 tối thêm 8 chùa / phủ / di tích trong Kinh thành) Kinh thành, các lăng, chùa (có chùa Từ Hiếu từ 14/11), đàn tế, di sản (Nhã nhạc, Mộc bản…) |
 | Lễ hội | 27 | lễ hội, ngày hội, lễ tế theo năm |
 | Nghệ thuật biểu diễn | 12 | chương trình biểu diễn, ca Huế, đêm nhạc |
-| Du lịch | 55 | địa điểm (biển, đầm phá, chợ, phố đi bộ, suối, đèo, không gian nghệ thuật; từ 14/11 cầu Trường Tiền, Ga Huế, nhà vườn An Hiên), lịch trình mẫu, chi phí, vé, đi lại, 5 bài lưu trú (140 cơ sở 3–5 sao và khác theo khu) |
+| Du lịch | 60 | địa điểm (14/11 tối thêm 5: cồn, làng, cầu; biển, đầm phá, chợ, phố đi bộ, suối, đèo, không gian nghệ thuật; từ 14/11 cầu Trường Tiền, Ga Huế, nhà vườn An Hiên), lịch trình mẫu, chi phí, vé, đi lại, 5 bài lưu trú (140 cơ sở 3–5 sao và khác theo khu) |
 
 - Mỗi bài viết theo **mẫu riêng của chủ đề** (vd bài món ăn có mô tả, nơi ăn, giá, giờ), câu văn tự nhiên, đọc riêng một bài vẫn hiểu.
 - Phần lớn bài có mục "Nguồn dữ liệu" ghi nơi lấy thông tin — trang công khai: cổng thông tin của tỉnh, báo, trang du lịch, văn bản pháp luật… (khoảng 76 trang web khác nhau).
 - Kho **không** đưa lên kho mã công khai (GitHub) — nội dung giữ riêng trên máy; vì vậy sửa bài nào cũng phải sao lưu bản gốc trước.
-- Ngoài 224 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
+- Ngoài 247 bài: 3 file "danh mục biên soạn" (danh sách tên dùng lúc soạn bài) bị **loại khỏi** chatbot vì không phải bài để trả lời; và một file nhỏ 3 quy tắc —
   vd câu lưu ý chung đầu một bài vé được gắn kèm vào mọi đoạn giá của bài đó, để đoạn nào được tìm ra cũng mang theo lưu ý.
 
 ## Chatbot chỉ chạy khi chỉ mục khớp kho

@@ -6,7 +6,7 @@ Cập nhật 16:19 14/11/2026 (thêm chiều 14/11: kho 216 bài, câu hỏi nhi
 Hệ thống có hai phần: **chuẩn bị kho** (chạy một lần, mỗi khi kho đổi) và **trả lời** (mỗi câu hỏi).
 
 ```text
-CHUẨN BỊ (một lần):  224 bài ─► cắt thành đoạn ─► mỗi đoạn: vector nghĩa + từ khoá ─► cất vào Qdrant (kèm "phiếu" ghi dấu từng bài)
+CHUẨN BỊ (một lần):  247 bài ─► cắt thành đoạn ─► mỗi đoạn: vector nghĩa + từ khoá ─► cất vào Qdrant (kèm "phiếu" ghi dấu từng bài)
 
 TRẢ LỜI (mỗi câu):
   [cuộc đã có lịch "Lên kế hoạch"] ─► cùng lúc với phân loại: model đọc xem câu có phải yêu cầu sửa lịch ─► có (và không khẩn cấp) ⇒ code sửa lịch
@@ -27,7 +27,7 @@ TRẢ LỜI (mỗi câu):
 
 ## Chuẩn bị kho
 
-1. **Kho** là 224 bài Markdown tiếng Việt (5 chủ đề, 8.644 đoạn) đã được biên soạn và sửa qua nhiều đợt (14/11: 5 bài lưu trú theo danh mục Cục Du lịch Quốc gia; 4 bài cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên + giờ Đại Nội theo mùa); chatbot không đọc gì ngoài kho (trừ web, thời tiết — dưới).
+1. **Kho** là 247 bài Markdown tiếng Việt (5 chủ đề, 9.032 đoạn) đã được biên soạn và sửa qua nhiều đợt (14/11: 5 bài lưu trú theo danh mục Cục Du lịch Quốc gia; 4 bài cầu Trường Tiền, Ga Huế, chùa Từ Hiếu, nhà vườn An Hiên + giờ Đại Nội theo mùa); chatbot không đọc gì ngoài kho (trừ web, thời tiết — dưới).
 2. **Cắt đoạn** theo cấu trúc bài: mỗi đoạn văn, mỗi mục danh sách, mỗi dòng bảng (kèm hàng tiêu đề) là một đoạn. Đoạn mang theo tên bài và đường tiêu đề
    (vd "Bún bò Huế > Quán nổi tiếng") để dễ tìm.
 3. Mỗi đoạn được tính **vector nghĩa** (model e5-small chạy ngay trên máy, không tốn tiền) và **từ khoá** (BM25), rồi cất vào **Qdrant**.
