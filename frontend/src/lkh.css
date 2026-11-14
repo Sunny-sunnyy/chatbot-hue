@@ -139,3 +139,5 @@
 @media (max-width: 980px) { .lkh-ngay-ds { padding-left: 0; } .lkh-song-ve { display: none; } }
 .chat .lkh-ngay-ds { padding-left: 0; }
 .chat .lkh-song-ve { display: none; }
+.lkh-ics { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lkh-ics-nhac { font-size: 14px; color: var(--color-muted); }

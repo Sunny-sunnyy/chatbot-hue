@@ -3,6 +3,7 @@ import { boMaTrichDan } from "./markdown.js";
 import { toaDoHopLe } from "./toaDo.js";
 import { GP } from "./anh.js";
 import { SourceLine } from "./SourceLine.jsx";
+import { dungIcs } from "./lich_ics.js";
 
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 
@@ -132,10 +133,37 @@ export function LichV2({ turn, onEditPlan }) {
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
+          <NutIcs lich={lich} cau={cau} />
           {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
         </div>
       )}
     </div>
+  );
+}
+
+// Việc agent (4) 14/11: thêm lịch vào lịch điện thoại / máy tính — tệp .ics do code dựng từ khung (lich_ics.js), tải về bằng Blob (không gửi đi).
+// Lịch không có ngày đi ⇒ không đoán ngày: thay nút bằng dòng nhắc.
+function NutIcs({ lich, cau }) {
+  const [bao, setBao] = useState("");
+  const coNgay = lich.ngay.every(ng => ng.ngay_thang);
+  if (!coNgay) return <p className="lkh-ics-nhac">Chọn ngày đi ở biểu mẫu để thêm lịch vào lịch điện thoại.</p>;
+  function taiIcs() {
+    const sach = Object.fromEntries(Object.entries(cau || {}).map(([k, v]) => [k, boMaTrichDan(v)]));
+    const kq = dungIcs(lich, sach);
+    if (!kq) return;
+    const url = URL.createObjectURL(new Blob([kq.ics], { type: "text/calendar;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lich-trinh-hue.ics";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setBao(`Đã tạo ${kq.soSuKien} sự kiện${kq.soBo ? ` (${kq.soBo} điểm không có giờ cụ thể nên không thêm)` : ""}.`);
+  }
+  return (
+    <span className="lkh-ics">
+      <button type="button" className="retry" onClick={taiIcs}>Thêm vào lịch (.ics)</button>
+      <span className="text-sm text-muted" role="status">{bao}</span>
+    </span>
   );
 }
 
