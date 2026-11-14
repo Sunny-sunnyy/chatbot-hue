@@ -350,7 +350,8 @@ FRONTEND_PUBLIC = Path(__file__).resolve().parents[2] / "frontend" / "public"
 
 def nap_bang_anh(path: str | Path, bang: BangV2) -> dict[str, dict]:
     """Bảng ảnh lịch (đợt 2 B0 của C, `bang_anh_v1.json`) ⇒ {id_diem: {src, tac_gia, giay_phep, trang[, chu_thich]}}. Lúc khởi động (cờ `anh_lich`):
-    id phải có trong bảng điểm, `src` dưới `/anh/lich/` và file có thật, `trang` là trang Wikimedia Commons, đủ tác giả + giấy phép; sai ⇒ `ValueError`."""
+    id phải có trong bảng điểm, `src` dưới `/anh/lich/` và file có thật; ảnh Commons đủ tác giả + giấy phép, ảnh web có `nguon: "web"` + trang https;
+    sai ⇒ `ValueError`."""
     out = {}
     for a in json.loads(Path(path).read_text(encoding="utf-8"))["anh"]:
         id_, src = a.get("id_diem"), a.get("src") or ""
@@ -358,9 +359,13 @@ def nap_bang_anh(path: str | Path, bang: BangV2) -> dict[str, dict]:
             raise ValueError(f"bảng ảnh: {id_} không có trong bảng điểm hoặc lặp")
         if not (src.startswith(ANH_SRC) and "/" not in src[len(ANH_SRC):] and src.endswith(".jpg") and (FRONTEND_PUBLIC / src.lstrip("/")).is_file()):
             raise ValueError(f"bảng ảnh: {id_} src phải là file có thật dưới {ANH_SRC}")
-        if not (a.get("tac_gia") and a.get("giay_phep") and str(a.get("trang", "")).startswith(ANH_TRANG)):
-            raise ValueError(f"bảng ảnh: {id_} thiếu tác giả / giấy phép / trang ảnh Commons")
-        out[id_] = {k: a[k] for k in ("src", "tac_gia", "giay_phep", "trang", "chu_thich", "doi") if a.get(k)}  # `doi`: chỉnh khác thu nhỏ (vd cắt)
+        trang = str(a.get("trang", ""))
+        # ảnh Commons ⇒ đủ tác giả + giấy phép (như đợt 2); ảnh web (14/11: User nới luật ảnh, giao diện không hiện ghi công) ⇒ `nguon: "web"` + trang
+        # https chứa ảnh (giữ để gỡ khi cần). Hai loại đều chỉ là file tự host dưới /anh/lich/ — trình duyệt không tải gì từ trang nguồn.
+        hop_le = (a.get("tac_gia") and a.get("giay_phep")) if trang.startswith(ANH_TRANG) else (a.get("nguon") == "web" and trang.startswith("https://"))
+        if not hop_le:
+            raise ValueError(f"bảng ảnh: {id_} thiếu tác giả / giấy phép (ảnh Commons) hoặc nguồn web + trang https (ảnh web)")
+        out[id_] = {k: a[k] for k in ("src", "tac_gia", "giay_phep", "trang", "chu_thich", "doi", "nguon") if a.get(k)}  # `doi`: chỉnh khác thu nhỏ
     return out
 
 
