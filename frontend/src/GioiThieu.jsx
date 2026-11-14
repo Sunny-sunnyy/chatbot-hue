@@ -26,7 +26,8 @@ function Ic({ d }) {
   );
 }
 
-// Ví dụ ở ba bến (G3): MỘT lần chạy thật trên hệ thống (14/11/2026, câu gợi ý của trang chủ; bản ghi `data/gt_vi_du_2026-11-14/vi_du_1.json`) —
+// Ví dụ ở ba bến (G3): MỘT lần chạy thật trên hệ thống (14/11/2026, câu gợi ý của trang chủ; bản ghi `data/gt_vi_du_2026-11-14/vi_du_1.json` + dòng `chat_metrics` cùng turn_id
+// `vi_du_1_chat_metrics.json`: n_context_sources 10, n_cited_sources 4) —
 // kho tìm 10 đoạn, câu trả lời trích 4 đoạn của cùng một bài. Chữ chép từ lần chạy đó, rút gọn một câu; không gọi model khi mở trang. Kho / lời dặn
 // đổi thì câu trả lời thật có thể khác ⇒ nhãn "Ví dụ" + nút hỏi thử để người xem thấy bản đang chạy.
 const VI_DU = {

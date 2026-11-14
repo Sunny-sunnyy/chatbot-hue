@@ -92,9 +92,10 @@
 @keyframes gt-ve { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
 /* Ảnh "Huế qua các thời kỳ" lộ dần qua mặt nạ khi cuộn tới (mẫu 4 của nghiên cứu "wow"; A duyệt 14/11). Đặt ở trang Giới thiệu vì là hiệu ứng của
-   trang, không đổi thành phần của B. Giảm chuyển động / trình duyệt chưa hỗ trợ ⇒ ảnh hiện đủ ngay. */
+   trang, không đổi thành phần của B; chỉ ảnh từng mốc ở khổ hẹp. Giảm chuyển động / trình duyệt chưa hỗ trợ ⇒ ảnh hiện đủ ngay. */
 @supports (animation-timeline: view()) {
-  .hieu-ung .gt-than .tk-khung-anh, .hieu-ung .gt-than .tk-anh-nho {
+  /* chỉ ảnh từng mốc ở khổ hẹp: khung ảnh ghim (sticky) ở khổ rộng dừng timeline khi ghim ⇒ mặt nạ kẹt giữa chừng, cắt số năm (review B M-1) */
+  .hieu-ung .gt-than .tk-anh-nho {
     animation: gt-lo linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
 }
 @keyframes gt-lo { from { clip-path: inset(14% 14% 14% 14% round 28px); } to { clip-path: inset(0 round 20px); } }
