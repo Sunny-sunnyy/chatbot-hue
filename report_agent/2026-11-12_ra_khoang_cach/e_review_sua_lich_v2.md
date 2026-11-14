@@ -96,3 +96,18 @@ Ngoài lề nhỏ: `dời buổi` cho điểm không có trong lịch không áp
 - **m-1 (theo dõi):** ở một lượt sửa, đường thường bị huỷ vẫn có thể đã tới cổng tra web và gửi chữ người dùng tới Serper, nếu cổng web tới trước khi biết kết quả hiểu ý. Theo thời gian đo (hiểu ý ~1,2 s; cổng web chỉ chạy sau khi viết xong câu trả lời từ kho, ~3 s) thì hiếm. Sửa nhẹ: bọc `tim_web` của trace phụ để chờ kết quả hiểu ý; là lượt sửa ⇒ không gọi.
 - **m-2 (đo):** sau khi có lịch, mỗi câu thường có 2 lần định tuyến (một để xét khẩn cấp, một trong #6) + 1 lần hiểu ý. Tiền / câu chưa đo ⇒ B đo p50 `usd` trên nhóm câu thường có lịch, sàn ≤ 0,0005 USD.
 - **Kết luận: `ready_for_user_confirmation`** (2 minor). Bật lại cờ = A chốt sau khi có số tiền / câu.
+
+## Kiểm `3aef0ca` + `c59e090` (nhánh `p9-sua-lich-tre`, 15:05 14/11/2026)
+- **m-1 (tra web ở lượt sửa):** đường thường của lượt có lịch dùng `tim_web_cho` — chờ `da_quyet`; lượt sửa ⇒ huỷ đường thường trong lúc chờ ⇒ chữ người dùng không ra Serper. `da_quyet` chỉ bật sau khi biết không phải lượt sửa. Không treo: định tuyến luôn chạy trước cổng web ở cả hai đường (`_answer_core` song song và `answer_turn_stream`); cờ `router` tắt ⇒ vòng chờ thoát ngay. Test mới (đường thường giả) khoá 3 ca: lượt sửa 0 lần tra · câu thường 1 lần · câu trộn khẩn cấp không thành lượt sửa. **Đóng.**
+- **m-2 (định tuyến 2 lần):** khẩn cấp đọc từ chính lần định tuyến của đường thường (`phu.emergency_by`). Không có đua: `_pick_route` ghi `routing_ms` ở `finally` rồi gán `emergency_by` ngay sau, không có `await` xen giữa ⇒ vòng chờ không thể thấy `routing_ms` mà chưa có `emergency_by`. Log thật: **mỗi lượt đúng 1 lần gọi `router`** (12 / 12 lượt có lịch). **Đóng.**
+- **Danh sách điểm ngắn hơn** trong tin hiểu ý: chỉ liệt kê điểm chưa có trong lịch (điểm trong lịch đã có tên ở khối trên) — hợp lý, test đã sửa theo.
+- **Khoá đệm cố định** `prompt_cache_key: hue_sua_lich_v1`: log thật 6 / 6 lần hiểu ý trúng đệm 1.244 / ~1.625 token ⇒ **0,0000675 USD / lần** (B ước ~0,0001). Phần đệm chung chỉ là lời dặn + khuôn đầu ra; chữ người dùng ở cuối.
+- **Đo tiền thật** (worktree tạm ở `c59e090`, cờ `sua_lich_v2` bật chỉ trong worktree, server riêng; 9 cuộc biểu mẫu 2 ngày ⇒ 1 câu; `data/len_ke_hoach_v2_2026-11-13/e_do_tien_c59e090_1411.jsonl`, script `tools/e_do_tien_c59e090.py`):
+  - Câu thường trong cuộc có lịch (n = 6): USD / câu 0,000487 · 0,000491 · 0,000525 · 0,000571 · 0,000593 · 0,000704 ⇒ **p50 ≈ 0,00055** — vượt nhẹ mức 0,0005 / câu (tiền Phase 9 chỉ theo dõi; khớp ước của B). Gồm: hiểu ý 0,00007 + định tuyến 0,0001 + trả lời ~0,0003–0,0004.
+  - Lượt biểu mẫu (không lịch trước, n = 9): ~0,00042 / lượt.
+  - Lượt sửa (n = 3): 0,00047–0,00049, trong đó phần đường thường bị huỷ `usd_bo` 0,00011–0,00012.
+  - Ghi chú ngoài nhánh: lần gọi trả lời của trợ lý ghi đệm ~2.100 token mỗi câu (giá ghi đệm 0,125 > giá vào 0,10 / 1M) ⇒ ~0,00026 / câu là phần lớn nhất — mục "ghi đệm OpenAI giữ như cũ" A đang nợ; không do nhánh này.
+- Test: 113 đạt có khoá (`test_sua_lich_v2`, `test_assistant`, `test_openai_full_corpus_generator`, `test_len_ke_hoach_v2`); không khoá 23 đạt + 2 lỗi đúng là test cần khoá. Chạy trong worktree sạch, cờ bật.
+- Nit (không chặn): vòng chờ hỏi lại mỗi 30 ms — chậm tối đa 30 ms, chấp nhận được; nếu muốn gọn có thể dùng một `asyncio.Event` đặt trong `_pick_route`.
+- **Kết luận: `ready_for_user_confirmation`** — A merge + bật `sua_lich_v2` được. Tiền / câu thường có lịch p50 ≈ 0,00055 (vượt 0,0005 khoảng 10 %) ⇒ A ghi theo dõi.
+- Bẫy của E lần này: lượt đo đầu lỡ gửi 18 lượt vào server của C trùng cổng 8873 (server E không khởi động được, E không kiểm cổng) ⇒ bỏ số đó, đã báo C; ≈ 0,009 USD phí oan.
