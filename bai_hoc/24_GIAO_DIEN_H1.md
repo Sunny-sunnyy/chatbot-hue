@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 18:50, ngày 14/11/2026 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
+*Cập nhật lần cuối: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -96,7 +96,7 @@ bản mẫu HTML lúc chọn hướng:
 **Cái giá:** gói JS tăng **+10,5 KB** (112 ⇒ 122,6 KB sau nén), vượt mức 8 KB của kế hoạch. Phần lớn nhất là trang Khám phá (bảng ghi công ảnh). Mình
 không thêm thư viện nào. Mức 8 KB là mức "phải ghi lý do"; lý do đã ghi, người điều phối nhận.
 
-**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 218 / 224, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
+**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 249 / 263, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
 từng ảnh. 29 ảnh từng có nhãn **"Ảnh minh hoạ"**, vì người xem không chắc ảnh chụp đúng chính nơi đó. Bài không có ảnh vẫn là ô màu, không mượn ảnh bài
 khác. **Từ chiều 14/11** trang không hiện dòng ghi công hay nhãn nào dưới ảnh nữa (anh yêu cầu); nguồn ảnh vẫn giữ trong bảng dữ liệu.
 Lúc đó bảng ghi công 167 ảnh được tách ra một file riêng, chỉ tải khi mở trang bài hoặc Giới thiệu, nên gói JS chỉ còn **123,5 KB**. Chiều 14/11 bảng này
@@ -118,6 +118,10 @@ Lúc đó có **38 ảnh "không chắc"**: chúng vẫn hiện ở Khám phá, 
 
 Số ảnh **hiện được cạnh câu trả lời** (có ảnh, không "không chắc"): **146 ⇒ 169**. Ảnh "không chắc" nay là 49 (38 lúc chiều): 20 ảnh bài chủ đề, 29 ảnh bài một nơi. Tốn khoảng 0,1 USD tiền tìm ảnh (Serper — dịch vụ tìm trên Google, trả
 tiền theo lượt); tra trang bằng Codex (một trợ lý AI khác, tự mở trang công khai) tính vào gói ChatGPT.
+
+**Ảnh cho bài kho mới (cuối tối 14/11).** Kho lớn lên 263 bài (bài 22) ⇒ tìm ảnh cho 39 bài mới theo cùng luật: 20 / 23 bài của lần ghi kho 5 và 11 / 16 bài lễ hội của
+lần 6 có ảnh; 8 bài để trống vì ảnh tìm được không nhận ra được nơi, là lễ cùng tên ở tỉnh khác, chỉ là poster, hoặc có người rõ mặt. Ảnh lễ Ariêu Ping được cắt bỏ
+tiền cảnh có người trẻ nhìn rõ mặt. Nay **249 / 263 bài** có ảnh; ảnh hiện được cạnh câu trả lời **196**; ảnh "không chắc" 53.
 
 **Người làm nhìn trước, người review nhìn lại mọi ảnh sẽ hiện** — bước này bắt nhiều lỗi nhất. Ba ảnh mà **cả hai** agent con đều chấm "chắc" vẫn bị người làm bác khi nhìn lại: múa lân
 không rõ làng nào, hai quán cà phê không thấy biển tên. Ảnh duy nhất trên kho ảnh mở ghi đúng tên biển Thuận An có trẻ nhỏ mặc đồ bơi ở giữa khung, trái luật chọn ảnh ⇒ người
@@ -181,5 +185,6 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 - Thông tin nhanh 51 / 207, 29 bài bị cắt ⇒ 28 bài có thẻ, 0 mất dòng; trang hứa không theo cờ: `report_agent/…/e_review_gd_h1_dot1_c.md`, `e_review_gd_h1_tro_ly_b.md` [đã chạy]
 
 - Ảnh tối 14/11: lượt chính 184 ⇒ 212 / 224, hiện được 146 ⇒ 162, 19 ảnh chủ đề, người xem lại bác 3 / 19, Serper ≈ 0,095 USD: `report_agent/2026-11-12_ra_khoang_cach/e_anh_v4_implementation.md`, review `c_review_anh_v4.md`; lượt bổ sung 218 / 224, Thuận An bị bác (trẻ em), lịch 33 / 34: `e_anh_v4b_implementation.md`, `c_review_anh_v4b.md`; nâng kc 8 / 37, hiện được 161 ⇒ 169, 10 ảnh "luật nguồn" trả lại: `e_anh_nang_kc_implementation.md`, `c_review_anh_kc.md` [đã chạy]
+- Ảnh bài kho mới: kho 5 218 ⇒ 238 / 247, hiện được 169 ⇒ 188: `report_agent/2026-11-12_ra_khoang_cach/e_anh_kho5_implementation.md`, review `a_review_anh_kho5.md`, `c_review_anh_kho5.md`; kho 6 238 ⇒ 249 / 263, hiện được 188 ⇒ 196, kc 53, Ariêu Ping cắt: `e_anh_kho6_implementation.md`, `c_review_anh_kho6.md` [đã chạy]; người viết tự đối chiếu số với report (luật W75 — chỉ thêm vài số).
 - Kiểm độc lập phần tối 14/11 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_24_25_toi_1411.md`): 77 ý — 58 đúng, 6 sai, 10 dễ hiểu nhầm, 3 không kiểm được; đã sửa cả 16 + bỏ ngoặc kép câu dặn không nguyên văn.
 </details>

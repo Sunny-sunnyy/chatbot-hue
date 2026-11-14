@@ -59,7 +59,7 @@ chỉ có ở bài cần.
 |---|---|---|
 | [22](22_BO_SUNG_SO_TAY.md) | Viết thêm vào sổ tay mà không làm hỏng trang cũ: sáu lần ghi kho 14/11, đo trước ↔ sau, chỉ đo câu bị chạm | thêm lần 4 (tám quán ăn), lần 5 (10 món, 13 địa điểm / di tích), lần 6 (16 lễ hội / nghệ thuật) |
 | [23](23_LEN_KE_HOACH_BAN_2.md) | "Lên kế hoạch" bản 2: code xếp theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ | đã sửa theo kiểm độc lập; thêm ghi chú chiều 14/11 (sửa lịch, chỗ ở ở bài 25; lịch mẫu; bỏ ghi công) |
-| [24](24_GIAO_DIEN_H1.md) | Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được; ảnh cho 238 / 247 bài ở Khám phá | đã sửa theo kiểm độc lập; thêm chiều 14/11 (sông qua từng điểm, ba bến, "Huế qua các thời kỳ", bỏ ghi công) |
+| [24](24_GIAO_DIEN_H1.md) | Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được; ảnh cho 249 / 263 bài ở Khám phá | đã sửa theo kiểm độc lập; thêm chiều 14/11 (sông qua từng điểm, ba bến, "Huế qua các thời kỳ", bỏ ghi công) |
 | [25](25_TRO_LY_LAM_VIEC_THAT.md) | Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, lịch mẫu đủ đi – ăn – ở, so tiền mục web, ảnh dưới câu trả lời | thêm chiều 14/11: mục 4–7 + chuyện thật thứ hai |
 
 Nhịp: đã viết đủ 17 bài (sáng 11/11), thêm bài 17–21 (chiều 11/11) theo yêu cầu của anh: bộ bài kể **mọi việc đã làm xong** (xây, triển khai, so sánh, tối ưu, đóng gói, cách làm); phần đang làm dở chưa đưa vào, xong sẽ viết bổ sung. Đã sửa các câu sai / chưa rõ ở bài 4, 8, 11, 14 (ghi ở Nguồn từng bài); bài 17–19 đã qua một lượt kiểm độc lập. Anh đọc dần theo số, góp ý lúc nào thì mình sửa lúc đó; thấy câu nào sai thì mình sửa ngay và ghi ở mục Nguồn của bài.

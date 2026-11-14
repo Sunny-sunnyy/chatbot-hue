@@ -209,7 +209,7 @@ bị chặn vì model tóm "01/5/2026" thành "tháng 5/2026" — chặn về ph
 ## 8. Ảnh dưới câu trả lời
 
 Hỏi trợ lý về một nơi hay một món, câu trả lời giờ có **một ảnh** ở dưới. Bấm vào ảnh thì mở bài trong Khám phá. Ảnh lấy từ bộ ảnh đã có của Khám phá
-(nay 218 / 224 bài có ảnh, bài 24).
+(nay 249 / 263 bài có ảnh, bài 24).
 
 **Code quyết có hiện ảnh không,** model không chọn ảnh. Chỉ hiện khi đủ các điều kiện:
 - trợ lý trả lời bằng kho, không phải câu từ chối, không có mục web, không phải lịch;
