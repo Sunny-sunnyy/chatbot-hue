@@ -2,7 +2,7 @@
 
 > **Đây là sổ ghi việc (quá khứ) của các agent, không phải bài học.** Muốn hiểu hệ thống: đọc [bai_hoc/](../bai_hoc/) theo số, bắt đầu từ bài 0.
 
-Cập nhật 16:19 14/11/2026 (kho sau lần ghi kho 3; chiều 14/11 thêm câu hỏi nhiều ý, nơi ở gợi ý trong lịch, lịch mẫu, ảnh dưới câu trả lời, bỏ chữ ghi công ảnh; "Lên kế hoạch" bản 2 + sửa lịch bằng lời + giao diện mới đang chạy; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
+Cập nhật 17:50 14/11/2026 (cuối chiều 14/11: quán ăn trong lịch, nơi ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, mục web so tiền theo giá trị, ảnh lịch 33 / 34; trước: 16:19 14/11/2026 — kho sau lần ghi kho 3; chiều 14/11 thêm câu hỏi nhiều ý, nơi ở gợi ý trong lịch, lịch mẫu, ảnh dưới câu trả lời, bỏ chữ ghi công ảnh; "Lên kế hoạch" bản 2 + sửa lịch bằng lời + giao diện mới đang chạy; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
 của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "Đọc chi tiết" trỏ sang đó. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## Chatbot này là gì
@@ -22,6 +22,7 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 - "Lên kế hoạch" bản 2 (từ 14/11): biểu mẫu 4 nhóm (ai đi · bao lâu, ngày đi · kiểu đi · thích gì) ⇒ **code xếp lịch** theo luật (an toàn, giờ mở cửa, mùa, cụm gần, mưa theo dự báo) kèm giờ gợi ý, phút đi, ảnh từng điểm; model chỉ viết câu tả từng điểm; tải lịch `.ics` cho lịch điện thoại.
 - Sửa lịch bằng lời (từ 14/11): khi đã có lịch, nhắn "bỏ lăng X", "dời Y sang chiều", "thay Z" ⇒ model chỉ hiểu ý, **code** sửa và kiểm luật; đầu lịch ghi "Đã đổi / Không đổi được"; câu khẩn cấp vẫn đi đường khẩn cấp; câu thường trong cuộc có lịch không phải chờ thêm (bản sửa tốc độ chiều 14/11).
 - Nơi ở gợi ý trong lịch (14/11 chiều): lịch ≥ 2 ngày có thẻ "Nơi ở gợi ý" — **code** chọn một khu cho cả chuyến + ≤ 5 cơ sở theo hạng + link tìm phòng; không nêu giá. Chưa xếp lịch ⇒ trang hiện lịch mẫu "Ví dụ" do bộ xếp dựng.
+- Quán ăn trong lịch (cuối chiều 14/11): mỗi bữa **code** gợi ≤ 2 quán ăn trong 2 km (quán có bài kho trước, quán bản đồ mở ghi "chưa kiểm"; cà phê chỉ khi không có quán ăn); không giá / giờ; bữa có quán kho 49,3 %. Nơi ở: lịch có buổi tối ở trung tâm ⇒ ở trung tâm. Lịch mẫu cũng có nơi ở + quán.
 - Câu hỏi nhiều ý (14/11 chiều): câu có ≥ 2 vế hỏi ⇒ trả lời vế kho có, vế thiếu ghi "Tư liệu chưa có thông tin về: …" và tra web riêng cho vế đó (trước: từ chối cả câu).
 - Ảnh dưới câu trả lời (14/11 chiều): câu trả lời từ một bài về một nơi / món ⇒ code hiện một ảnh của bài, bấm mở bài.
 - Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 184 / 216 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.

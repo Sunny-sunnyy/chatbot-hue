@@ -1,9 +1,17 @@
 # Báo cáo cho bạn: Sinh câu trả lời, API và giao diện (Phase 6, cải tiến ở Phase 8 và 9)
 
-**Cập nhật lần cuối: 16:17 14/11/2026 — bản 51:** chiều 14/11: câu nhiều ý trả lời phần kho có; sửa lịch bằng lời bật lại sau bản sửa tốc độ; nơi ở gợi ý trong lịch; lịch mẫu "Ví dụ"; ảnh dưới câu trả lời; giao diện không còn chữ ghi công ảnh. **Bản 50 (14:05):** "Lên kế hoạch" bản 2 bật (code xếp theo chuỗi luật, ảnh, phút đi, `.ics`); **sửa lịch bằng lời bật** (hiểu ý chạy song song với phân loại, code áp); giao diện mới 5 trang. Bản 49: câu chỉ hỏi ngày tháng được trả lời.
+**Cập nhật lần cuối: 17:50 14/11/2026 — bản 52:** cuối chiều 14/11: quán ăn trong lịch; nơi ở theo buổi tối; lịch mẫu đủ đi – ăn – ở; mục web so tiền theo giá trị; ảnh lịch 33 / 34. **Bản 51 (16:17):** chiều 14/11: câu nhiều ý trả lời phần kho có; sửa lịch bằng lời bật lại sau bản sửa tốc độ; nơi ở gợi ý trong lịch; lịch mẫu "Ví dụ"; ảnh dưới câu trả lời; giao diện không còn chữ ghi công ảnh. **Bản 50 (14:05):** "Lên kế hoạch" bản 2 bật (code xếp theo chuỗi luật, ảnh, phút đi, `.ics`); **sửa lịch bằng lời bật** (hiểu ý chạy song song với phân loại, code áp); giao diện mới 5 trang. Bản 49: câu chỉ hỏi ngày tháng được trả lời.
 Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 14/11/2026)
+
+- **Mới cuối chiều 14/11 (16:20–17:40) — người dùng thấy:**
+  - **Quán ăn trong lịch BẬT** (`quan_lich: true`, merge `7e3d849`, bật `401e073`): mỗi bữa **code** chọn ≤ 2 quán trong 2 km quanh điểm gần bữa đó; quán có bài trong kho trước, quán từ bản đồ mở (OSM) ghi "từ bản đồ mở, chưa kiểm"; không giá / giờ / điện thoại; tên quán không gửi model (an toàn vì `nho_cau_tra_loi: false` — bật nhớ câu trả lời thì phải xem lại). Bữa chính chỉ gợi quán ăn, quán cà phê chỉ khi 2 km không có quán ăn (merge `c6ea855`). Tên OSM lọc ký tự ẩn / cú pháp link (`6c72345`). Đo 3.840 khung mô phỏng sạch, người xem 10 / 10. Thêm 7 quán kho vào bảng (merge `98b20f8`): bữa có quán kho 38,3 ⇒ **49,3 %**, khu Thủy Xuân 0 ⇒ 33,6 %; kho + OSM 74,7 %. Report `c_quan_lich_implementation.md`, `c_dem_truoc_khi_xay.md`.
+  - **Nơi ở theo buổi tối** (merge `e86a710` + `ae06f8c`): lịch có buổi tối mà mọi điểm tối thuộc khu trung tâm (kiểm bằng bảng khu, không giả định) ⇒ ở trung tâm; không có buổi tối ⇒ luật cũ theo đa số điểm ban ngày. Hệ quả: 0 / 3.840 lịch chọn khu phía tây (bạn nhận). Review E ready.
+  - **Lịch mẫu "Ví dụ" đủ đi – ăn – ở** (merge `71ef81a` + `b3c10f7`): `/api/lich_mau` chạy cùng bước gắn nơi ở + quán như lịch thật (`gan_o_an`), chỉ hiện quán có bài kho; không gọi model.
+  - **Mục "Từ web" so tiền theo giá trị** (merge `1039c7a` + `c2a55b0`): luật giữ nguyên (số tiền phải có trong đoạn trích web), nhưng so theo giá trị — "100.000 đồng" = "100.000 VNĐ" = "100k"; "2 triệu rưỡi" = 2.500.000 (trước đọc 2.000.000); "150K" là tiền. Mục web được hiện 43 ⇒ **51 / 76** (E đếm lại độc lập); số bịa vẫn bị chặn; giới hạn: "10K bước" cũng bị coi là tiền (chặn thừa, an toàn). Report `b_tien_web_chuan_hoa_implementation.md`, review `e_review_tien_web.md`.
+  - **Ảnh lịch 24 ⇒ 33 / 34 điểm** (merge `4cc52a5`, thiếu biển Thuận An): dùng lại ảnh Khám phá đã kiểm + 3 ảnh mới; ảnh "đồi Thiên An" chú thích là hồ Thủy Tiên dưới chân đồi (`4a1ccf7`).
+  - **Thử rồi bỏ:** mức suy luận "low" cho mục web (−0,87 s, dưới sàn 1,5 s ⇒ không vào; `b_web_suy_luan_thap_implementation.md`).
 
 - **Mới 14/11 chiều — người dùng thấy:**
   - **Câu hỏi nhiều ý BẬT** (`cau_nhieu_y: true`, merge `f13d083`, bạn chọn bật). Trước: một ý kho không có ⇒ từ chối cả câu. Nay khi code đếm được ≥ 2 vế hỏi (`so_y`: tách theo dấu `, ; ?` và theo "và / còn / với" khi chính phần đó có từ hỏi — merge `6a9701d`), lời dặn đổi sang "trả lời ý có bằng chứng, ý thiếu ghi đúng một dòng `Tư liệu chưa có thông tin về: …`"; chỉ còn dòng ý thiếu ⇒ code đổi về câu từ chối chuẩn; dòng ý thiếu mở cổng web, và **mục web chỉ viết cho vế thiếu** (merge `5f9c9ae`; vế do code chọn từ chữ người dùng, Serper vẫn nhận cả câu).
@@ -187,6 +195,10 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (mới ở trên)
+
+### 14/11/2026 cuối chiều — quán ăn trong lịch, nơi ở theo buổi tối, so tiền mục web theo giá trị
+- Đếm trước khi xây (C, 0 USD): quán trong lịch đáng làm; viết mục web cho ý thiếu bằng câu tìm mới thì không (3 / 16 mục có ích). Số đầu C báo sai (95 %) ⇒ sửa 74,7 % trước khi plan duyệt.
+- `quan_lich` (C, review B ready, 2 minor sửa) ⇒ bữa chính chỉ quán ăn (B review) ⇒ +7 quán kho (E review, m-1 chép độ tin toạ độ). Nơi ở theo buổi tối (B, E review m-1: bỏ giả định ngầm "buổi tối luôn ở trung tâm"). So tiền theo giá trị + "rưỡi" (B, E review). Ảnh lịch 33 / 34 (C, E review). Mức suy luận low cho mục web: ÂM, nhánh hồ sơ `p9-web-suy-luan`.
 
 ### 14/11/2026 — "Lên kế hoạch" bản 2 bật; sửa lịch bằng lời bật; giao diện mới + ảnh Khám phá
 - **Bản 2** (merge `86c093d`, bật 11:00): nghiệm thu lần đầu trượt (bộ 20 16 / 20) ⇒ sửa dữ liệu ⇒ 20 / 20; người chấm mù bắt 3 lỗi (dòng mưa, sáng chồng chiều, câu nội bộ) ⇒ sửa code ⇒ 12 / 12 × 2. Report `b_len_ke_hoach_dot_1_implementation.md`, review `e_review_len_ke_hoach_nhanh_1411.md`.
