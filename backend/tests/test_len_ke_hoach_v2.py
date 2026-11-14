@@ -605,7 +605,7 @@ def test_rule_rain_day_prefers_indoor_but_keeps_priority(tmp_path):
     ua = v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich",)), ngay_bat_dau=hom, mua={hom: 60})
     assert v2.diem_v2(kho) == ["uu", "ngoai"] and v2.diem_v2(ua) == ["uu", "trong"]
     db = {"ngay": {hom: {"ngay": hom, "tmax": 25, "tmin": 20, "xs": 60, "mua": 5.0}}, "nguon": "nguồn"}
-    dong = lkh.dong_du_bao(b, ua, db)
+    dong = [x["cau"] for x in lkh.dong_du_bao(b, ua, db)]
     assert dong[0].startswith("Ngày 1 — ") and dong[1] == "Nếu mưa ngày 1: có thể thay uu bằng ca (trong nhà)." and dong[-1] == "nguồn"
     assert lkh.dong_du_bao(b, ua, None) == []
     # ngày mưa không có điểm ngoài trời / ngoài trời không có điểm thay ⇒ vẫn đúng một dòng (review 14/11)
@@ -634,11 +634,17 @@ def test_forecast_scenarios_and_no_call_outside_7_days(kich_ban):
     b = V2.bang_lich_v2
     k = v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua={d: v["xs"] for d, v in db["ngay"].items()})
     assert v2.kiem_khung_v2(b, k) == []
-    dong = lkh.dong_du_bao(b, k, db)
+    dong = [x["cau"] for x in lkh.dong_du_bao(b, k, db)]
     assert sum(x.startswith("Ngày ") for x in dong) == 3 and dong[-1].startswith(tt.GHI_CONG)
     so_ngay_mua = sum(x >= v2.NGUONG_MUA for x in xs[:3])  # thước ý 6: mỗi ngày mưa đúng một dòng "Nếu mưa", kể cả khi không có điểm để thay
     assert [x.split(":")[0] for x in dong if x.startswith("Nếu mưa")] == [f"Nếu mưa ngày {i}" for i in range(1, 4) if xs[i - 1] >= v2.NGUONG_MUA]
     assert sum(x.startswith("Nếu mưa") for x in dong) == so_ngay_mua
+    # giao diện mới: mỗi dòng theo ngày mang đúng `ngay`; dòng nguồn không có
+    goc = lkh.dong_du_bao(b, k, db)
+    assert all(x["ngay"] == int(x["cau"].split(":")[0].split()[-1]) for x in goc if x["cau"].startswith("Nếu mưa"))
+    assert all(x["ngay"] == int(x["cau"].split()[1]) for x in goc if x["cau"].startswith("Ngày ")) and "ngay" not in goc[-1]
+    lich = v2.dung_lich(b, k, {i: n for n, i in enumerate(v2.diem_v2(k), start=1)}, hom.isoformat(), goc)
+    assert [g for g in lich["ghi_chu"] if g["ma"] == "du_bao"] == [{"ma": "du_bao", **x} for x in goc]
     assert asyncio.run(lkh.du_bao_lich(flags, hom + dt.timedelta(days=7), 5, AnswerTrace(), hom)) is None and len(goi) == 1
     assert asyncio.run(lkh.du_bao_lich(flags, None, 5, AnswerTrace(), hom)) is None and len(goi) == 1
 
@@ -896,3 +902,25 @@ def test_map_flag_on_turn_sends_same_model_text(app_client):
     assert sent["tat"][:2] == sent["bat"][:2]
     muc = [m for ng in sent["bat"][2]["ngay"] for m in ng["muc"] if m["loai"] != "nghi"]
     assert any(m["toa_do"] for m in muc) and all(m["toa_do"] is None for ng in sent["tat"][2]["ngay"] for m in ng["muc"])
+
+
+def test_v2_travel_minutes_only_between_items_of_the_same_daytime_slot():
+    """Giao diện mới 14/11: `phut_di` = số bộ xếp đã dùng để giãn giờ giữa hai điểm liền nhau trong cùng buổi; mục đầu buổi / tối ⇒ không
+    có trường; chuỗi gửi model và chữ ghép không đổi (trường mới chỉ cho giao diện)."""
+    b = V2.bang_lich_v2
+    k = v2.xep_v2(b, v2.ThamSoV2(3, kieu_di="kham_pha", so_thich=("di_tich",)))
+    lich = v2.dung_lich(b, k, {i: n for n, i in enumerate(v2.diem_v2(k), start=1)})
+    co = 0
+    for ng in lich["ngay"]:
+        for a, c in zip([None, *ng["muc"]], ng["muc"]):
+            dau_buoi = a is None or a["buoi"] != c["buoi"] or c["buoi"] == "toi"
+            if dau_buoi:
+                assert "phut_di" not in c
+            elif "phut_di" in c:
+                co += 1
+                assert c["phut_di"] in (v2.DI_CUNG_CUM, v2.DI_CUM_KE)
+                assert v2.ra_phut(c["gio"].split("–")[0].strip()) >= v2.ra_phut(a["gio"].split("–")[1].strip()) + c["phut_di"]
+    assert co > 0
+    tin = v2.tin_nhan_model(lich, "tài liệu")
+    assert "phut_di" not in tin and "ngay\"" not in tin
+    assert "phut_di" not in v2.ghep_chu(lich, {m["id_muc"]: "x" for m in v2.moi_muc(lich)})

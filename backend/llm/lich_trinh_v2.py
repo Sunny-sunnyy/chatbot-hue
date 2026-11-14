@@ -467,7 +467,7 @@ def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
 
-def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[str] = (),
+def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[dict] = (),
               toa_do: dict | None = None) -> dict:
     """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `toa_do` (cờ `ban_do_lich`, đợt 2): {id: (vĩ, kinh)} của bảng toạ độ ⇒ mỗi mục mang đúng
     dòng bảng theo `id_diem`; điểm thiếu ⇒ null (không ghim đoán); None ⇒ mọi mục null như đợt 1. Toạ độ không vào tin nhắn gửi model. `id_muc` = `n<ngày>-<buổi>-<thứ tự>` (khoá ổn định cho câu của model). Giờ gợi ý,
@@ -491,6 +491,13 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
+        # giao diện mới 14/11: phút đi tới mục ngay trước TRONG CÙNG BUỔI = đúng số bộ xếp đã dùng để giãn giờ (ước theo cụm, 5c.3);
+        # mục đầu buổi / hoạt động tối / tối nghỉ ⇒ không có trường (không đoán)
+        for a, c in zip(muc, muc[1:]):
+            if a["buoi"] == c["buoi"] != "toi" and a["id_diem"] and c["id_diem"]:
+                phut = _phut_di(bang.theo_id[a["id_diem"]], bang.theo_id[c["id_diem"]])
+                if phut is not None:
+                    c["phut_di"] = phut
         ngay.append({"ngay": ng["ngay"], "ngay_thang": ngay_that,
                      "thu": None if ngay_that is None else dt.date.fromisoformat(ngay_that).weekday(), "muc": muc})
     ts = khung["tham_so"]
@@ -500,7 +507,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]
     ghi_chu += [{"ma": "tam_dung_mua", "cau": CAU_GHI_CHU["tam_dung_mua"].format(diem=bang.theo_id[j]["ten"])} for j in khung.get("tam_dung_mua", [])]
-    ghi_chu += [{"ma": "du_bao", "cau": c} for c in them_ghi_chu]
+    ghi_chu += [{"ma": "du_bao", **c} for c in them_ghi_chu]  # `{"cau", "ngay"?}` từ `len_ke_hoach.dong_du_bao`
     ghi_chu += [{"ma": "thay_bac_thang", "cau": CAU_GHI_CHU["thay_bac_thang"].format(diem=bang.theo_id[x["diem"]]["ten"],
                                                                                         thay=bang.theo_id[x["thay"]]["ten"])}
                 for x in khung["thay_bac_thang"]]

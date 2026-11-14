@@ -39,8 +39,9 @@ async def du_bao_lich(flags: AssistantFlags, bat_dau: dt.date | None, n: int, tr
     return {"ngay": {d["ngay"]: d for d in kq.ngay}, "nguon": tt.dong_nguon(kq)}
 
 
-def dong_du_bao(bang, khung: dict, db: dict | None) -> list[str]:
-    """Dòng dự báo theo ngày của lịch (số do code in) + "Nếu mưa" cho điểm ưu tiên ngoài trời đã giữ chỗ (5c.2) + dòng nguồn."""
+def dong_du_bao(bang, khung: dict, db: dict | None) -> list[dict]:
+    """Dòng dự báo theo ngày của lịch (số do code in) + "Nếu mưa" cho điểm ưu tiên ngoài trời đã giữ chỗ (5c.2) + dòng nguồn.
+    Mỗi dòng `{"cau", "ngay"}` — `ngay` = số ngày của lịch để giao diện đặt dòng đúng chỗ, không bóc chữ (giao diện mới 14/11); dòng nguồn không có `ngay`."""
     if db is None:
         return []
     dong, T = [], bang.theo_id
@@ -48,10 +49,10 @@ def dong_du_bao(bang, khung: dict, db: dict | None) -> list[str]:
         d = db["ngay"].get(dt.date.fromisoformat(ngay)) if ngay else None
         if d is None:
             continue
-        dong.append(f"Ngày {ng['ngay']} — {tt.dong_ngay(d)}.")
+        dong.append({"cau": f"Ngày {ng['ngay']} — {tt.dong_ngay(d)}.", "ngay": ng["ngay"]})
         if d["xs"] is not None and d["xs"] >= lt2.NGUONG_MUA:
-            dong.append(dong_neu_mua(bang, khung, ng))
-    return dong + [db["nguon"]] if dong else []
+            dong.append({"cau": dong_neu_mua(bang, khung, ng), "ngay": ng["ngay"]})
+    return dong + [{"cau": db["nguon"]}] if dong else []
 
 
 def dong_neu_mua(bang, khung: dict, ng: dict) -> str:
