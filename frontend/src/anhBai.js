@@ -188,6 +188,9 @@ const ANH = {
   k5dqnyw: {"anh": "kp/k5dqnyw"},
   kf1k74x: {"anh": "kp/kf1k74x", "kc": 1},
   kmv6xvm: {"anh": "kp/kmv6xvm"},
+  kf86z0k: {"anh": "kp/kf86z0k"},
+  k1jkmeq3: {"anh": "kp/k1jkmeq3"},
+  k1f6qcze: {"anh": "kp/k1f6qcze", "kc": 1},
 };
 
 export function anhCuaBai(id) {
