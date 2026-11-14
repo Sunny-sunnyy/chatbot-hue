@@ -8,7 +8,7 @@ của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "�
 ## Chatbot này là gì
 
 Trợ lý du lịch – văn hoá Huế trên một trang web (gọi là "chatbot" hay "trợ lý" đều là một hệ thống). Người dùng hỏi bằng tiếng Việt có dấu; chatbot
-**trả lời từ kho bài viết đã biên soạn** (247 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch, lưu trú) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
+**trả lời từ kho bài viết đã biên soạn** (263 bài về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch, lưu trú) và ghi nguồn dưới mỗi câu trả lời. Ngoài kho
 chỉ có ba thứ: ngày tháng và dự báo thời tiết (code tính / lấy), và mục "Từ web (chưa kiểm)" tách riêng khi kho không có. Kho không có ⇒ nói "không đủ thông
 tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng một câu cố định.
 
@@ -25,9 +25,9 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 - Quán ăn trong lịch (cuối chiều 14/11): mỗi bữa **code** gợi ≤ 2 quán ăn trong 2 km (quán có bài kho trước, quán bản đồ mở ghi "chưa kiểm"; cà phê chỉ khi không có quán ăn); không giá / giờ; bữa có quán kho 49,3 %. Nơi ở: lịch có buổi tối ở trung tâm ⇒ ở trung tâm. Lịch mẫu cũng có nơi ở + quán.
 - Câu hỏi nhiều ý (14/11 chiều): câu có ≥ 2 vế hỏi ⇒ trả lời vế kho có, vế thiếu ghi "Tư liệu chưa có thông tin về: …" và tra web riêng cho vế đó (trước: từ chối cả câu).
 - Ảnh dưới câu trả lời (14/11 chiều): câu trả lời từ một bài về một nơi / món ⇒ code hiện một ảnh của bài, bấm mở bài.
-- Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 218 / 224 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.
+- Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 238 / 247 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.
 - Hỏi bằng ảnh: chụp ảnh ⇒ chatbot gợi ≤ 3 tên điểm / món ⇒ người dùng bấm xác nhận mới trả lời.
-- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 247 bài (ảnh 218 bài), nút 👍 / 👎 dưới câu trả lời.
+- Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 263 bài (ảnh 238 bài), nút 👍 / 👎 dưới câu trả lời.
 
 **Chưa làm được / chưa bật:** lịch trình từ câu gõ tự do (chỉ qua biểu mẫu) · bản đồ vẽ cả lịch trình (có code, chờ bạn duyệt toạ độ) · giọng nói (chờ 40 câu
 thu âm) · câu gõ không dấu (ngoài phạm vi — bạn quyết 25/10) · quán ăn **trong lịch** (nơi ở đã có từ 14/11), quán gần đây, sự kiện theo ngày · câu hai ý mà code chỉ đếm được một vế (vẫn từ chối cả câu) · số gọi khẩn cấp trong câu trả lời khẩn cấp (giới hạn bạn đã nhận) · hiểu câu nhắc tới câu trả lời trước ("quán đó") ·
@@ -42,7 +42,7 @@ nặng → nhẹ:** sai cảnh báo an toàn > nói chắc sai > trả lời câ
 
 | Đo gì | Kết quả | Đo lúc nào, trên gì |
 |---|---|---|
-| Kho | 247 bài → 9.032 đoạn | chỉ mục dựng lại 19:34 14/11 (lần ghi kho 5: 10 món + 13 địa điểm / di tích) |
+| Kho | 263 bài → 9.425 đoạn | chỉ mục dựng lại 20:21 14/11 (lần ghi kho 6: 16 lễ hội / nghệ thuật) |
 | Điểm chất lượng (thang 1–5) | Đúng **4,71** · Đủ ý **4,58** · Trúng ý **4,72** | **bản cuối Phase 8** (01/11), 129 câu Golden có đáp án trong kho (đã bỏ 29 câu ít giống cách người thật hỏi) |
 | … loại câu yếu nhất | câu cần ghép nhiều nguồn: Đủ ý **3,50** (Phase 9 thêm "tìm thêm" để sửa — chưa đo lại trên cả bộ) | như trên |
 | Từ chối nhầm (kho có đáp án mà nói "không đủ thông tin") | **4–6 / 158** câu (mỗi lần chạy lại ra 4–6 vì model viết hơi khác mỗi lần); trước khi có "tìm thêm": 12 / 158 | 158 câu Golden có đáp án trong kho, 03/11 |
@@ -59,7 +59,7 @@ thời tiết, ngày, biểu mẫu, ảnh. Mỗi phần mới được đo riên
 
 | Từ | Nghĩa |
 |---|---|
-| kho | 247 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
+| kho | 263 bài Markdown đã biên soạn — nguồn sự thật của câu trả lời |
 | đoạn | một mẩu của bài (một đoạn văn, một mục danh sách, một dòng bảng) — đơn vị để tìm và trích nguồn |
 | vector nghĩa | dãy 384 con số đại diện cho *ý nghĩa* một đoạn; hai đoạn cùng ý thì gần nhau (tính bằng model nhỏ e5-small, chạy ngay trên máy) |
 | BM25 | cách chấm theo **từ trùng** giữa câu hỏi và đoạn |
