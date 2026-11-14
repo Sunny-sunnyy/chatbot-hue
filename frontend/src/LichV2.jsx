@@ -93,14 +93,13 @@ function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
 }
 const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
 
-// Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ và trang ảnh là Wikimedia Commons (kiểm cả phía trình
+// Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ (ảnh Commons hoặc ảnh web tự host — server kiểm nguồn; trình
 // duyệt như link bản đồ); điểm không có ảnh ⇒ không vẽ gì (không ảnh thay). Không hiện dòng ghi công (User 14/11: nguồn chỉ còn trong bảng
 // dữ liệu). `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`).
 const ANH_LICH = "/anh/lich/";
-const TRANG_COMMONS = "https://commons.wikimedia.org/";
 function anhHopLe(a) {
-  return !!a && typeof a.src === "string" && a.src.startsWith(ANH_LICH) && !a.src.slice(ANH_LICH.length).includes("/")
-    && typeof a.trang === "string" && a.trang.startsWith(TRANG_COMMONS) && !!a.tac_gia && !!a.giay_phep;
+  // chỉ file tự host dưới /anh/lich/ (server đã kiểm nguồn lúc khởi động; giao diện không hiện ghi công — User 14/11)
+  return !!a && typeof a.src === "string" && a.src.startsWith(ANH_LICH) && !a.src.slice(ANH_LICH.length).includes("/");
 }
 
 function AnhLich({ anh, ten }) {
