@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { renderArticleHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
 import { ANH_DAU_TRANG, GP } from "./anh.js";
-import { anhCuaBai, khoaBai } from "./anhBai.js";
+import { anhCuaBai, khoaBai, taiGhiCong } from "./anhBai.js";
 import { Anh, LINH_VUC, LOAI_CON, TRANG, loaiCua } from "./chung.jsx";
 import "./kp.css";
 
@@ -109,7 +109,7 @@ function DanhSach({ bai, loi, linhVuc }) {
             <button className="nut nut-phu nhan-nut" type="button" onClick={() => setSoHien(n => n + TRANG)}>Xem thêm {Math.min(TRANG, loc.length - soHien)} bài</button>
           </p>
         )}
-        <p className="ds-ghi">Thẻ chỉ hiện điều kho có. Không có sao đánh giá hay giá chung chung vì không có dữ liệu thật. Ảnh chỉ có ở bài đã có ảnh giấy phép mở.</p>
+        <p className="ds-ghi">Thẻ chỉ hiện điều kho có. Không có sao đánh giá hay giá chung chung vì không có dữ liệu thật. Ảnh lấy từ Wikimedia Commons và các trang web, ghi nguồn từng ảnh ở trang bài và ở Giới thiệu.</p>
       </div>
     </>
   );
@@ -168,20 +168,20 @@ function tachThongTin(md) {
 }
 
 export function Bai({ baiId, bai, onAskAbout }) {
-  const [trang, setTrang] = useState({ id: null, data: null, loi: "" });
+  const [trang, setTrang] = useState({ id: null, data: null, gc: {}, loi: "" });
   const coTrongDs = bai === null ? null : bai.some(b => b.id === baiId);  // null = danh sách chưa tải
   useEffect(() => {
     let huy = false;
-    setTrang({ id: baiId, data: null, loi: "" });
+    setTrang({ id: baiId, data: null, gc: {}, loi: "" });
     if (coTrongDs === null) return undefined;
     if (!coTrongDs) {  // mã không có trong danh sách ⇒ báo ngay, không gọi server (server cũng trả 404 — `api/routes/cong.py`)
-      setTrang({ id: baiId, data: null, loi: "Không tìm thấy bài này." });
+      setTrang({ id: baiId, data: null, gc: {}, loi: "Không tìm thấy bài này." });
       return undefined;
     }
-    fetch(`/api/kham_pha/bai?id=${encodeURIComponent(baiId)}`)
-      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(data => !huy && setTrang({ id: baiId, data, loi: "" }))
-      .catch(status => !huy && setTrang({ id: baiId, data: null, loi: status === 404 ? "Không tìm thấy bài này." : "Chưa tải được bài — thử lại sau." }));
+    // ghi công ảnh (JSON tĩnh, tải một lần) cùng lúc với bài ⇒ chú thích ảnh có ngay khi vẽ bài, không đẩy cột bên (CLS)
+    Promise.all([fetch(`/api/kham_pha/bai?id=${encodeURIComponent(baiId)}`).then(r => (r.ok ? r.json() : Promise.reject(r.status))), taiGhiCong()])
+      .then(([data, gc]) => !huy && setTrang({ id: baiId, data, gc, loi: "" }))
+      .catch(status => !huy && setTrang({ id: baiId, data: null, gc: {}, loi: status === 404 ? "Không tìm thấy bài này." : "Chưa tải được bài — thử lại sau." }));
     return () => { huy = true; };
   }, [baiId, coTrongDs]);
   const data = trang.id === baiId ? trang.data : null;
@@ -191,7 +191,8 @@ export function Bai({ baiId, bai, onAskAbout }) {
   const khac = data && bai ? bai.filter(b => b.linh_vuc === data.linh_vuc && b.loai_con === data.loai_con && b.id !== data.id) : [];
   // bài liên quan: bài cùng loại có ảnh trước (thẻ đẹp hơn), tối đa 3
   const lienQuan = [...khac.filter(b => anhCuaBai(b.id)), ...khac.filter(b => !anhCuaBai(b.id))].slice(0, 3);
-  const a = data ? anhCuaBai(data.id) : null;
+  const the = data ? anhCuaBai(data.id) : null;
+  const a = the && trang.gc[the.khoa] ? { ...the, ...trang.gc[the.khoa] } : null;  // không tải được ghi công ⇒ không hiện ảnh (ảnh nào cũng phải ghi nguồn)
   const diaDiem = tach.nhanh.find(([k]) => /^(Địa điểm|Địa chỉ)/i.test(k))?.[1];
   if (trang.loi) {
     return (

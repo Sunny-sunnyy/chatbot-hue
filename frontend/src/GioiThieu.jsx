@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ANH_DAU_TRANG, GP, MOI_ANH } from "./anh.js";
-import { MOI_ANH_BAI, khoaBai } from "./anhBai.js";
+import { khoaBai, taiGhiCong } from "./anhBai.js";
 import { Anh } from "./chung.jsx";
 import "./gt.css";
 
@@ -24,13 +24,16 @@ function Ic({ d }) {
   );
 }
 
-export function GioiThieu({ tinhNang, daCo, bai, muc }) {
+export function GioiThieu({ tinhNang, daCo: daCoCo, bai, muc }) {
   const banDo = !!tinhNang?.ban_do_lich, anh = !!tinhNang?.anh;
   // tên bài cho dòng ghi công ảnh: lấy từ /api/kham_pha (anhBai.js không chứa tên bài — repo public); daCo chờ cả danh sách bài
+  const [ghiCong, setGhiCong] = useState(null);  // ghi công ảnh Khám phá: JSON tĩnh tải khi mở trang (không nằm trong JS mọi trang)
+  useEffect(() => { let huy = false; taiGhiCong().then(gc => !huy && setGhiCong(gc)); return () => { huy = true; }; }, []);
+  const daCo = daCoCo && ghiCong !== null;
   const tenBai = Object.fromEntries((bai ?? []).map(b => [khoaBai(b.id), b.tieu_de]));
   // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash). Mục "Nguồn ảnh" thu gọn ⇒ mở sẵn ngay lần vẽ đầu
   // (thuộc tính open ở dưới): mở bằng code sau khi vẽ thì danh sách ~167 dòng bung ra cùng khung hình với lần cuộn ⇒ chân trang bị tính là xô lệch (CLS 0,24)
-  // chưa biết cờ / chưa có danh sách bài ⇒ chưa vẽ thân trang (thẻ "làm được gì" theo cờ nở ra lúc cờ về ⇒ đẩy cả trang: CLS 0,17–0,66 đo ở 390, 14/11) và chưa cuộn
+  // chưa biết cờ / chưa có danh sách bài / ghi công ⇒ chưa vẽ thân trang (thẻ "làm được gì" theo cờ nở ra lúc cờ về ⇒ đẩy cả trang: CLS 0,17–0,66 đo ở 390, 14/11) và chưa cuộn
   useEffect(() => {
     if (!muc || !daCo) return;
     const el = document.getElementById(muc);
@@ -116,8 +119,8 @@ export function GioiThieu({ tinhNang, daCo, bai, muc }) {
           <ul>{MOI_ANH.map(a => <li key={a.src}><GhiCong a={a} /></li>)}</ul>
           {/* ảnh thẻ Khám phá: thẻ không có chỗ ghi công ⇒ ghi đủ ở đây (trang bài cũng ghi dưới ảnh) */}
           <h3 className="gt-nguon-h">Ảnh các bài ở Khám phá</h3>
-          <ul>{MOI_ANH_BAI.map(a => (
-            <li key={a.anh}>{tenBai[a.khoa] ? `${tenBai[a.khoa]}. ` : ""}{a.nguon
+          <ul>{Object.entries(ghiCong ?? {}).map(([khoa, a]) => ({ khoa, ...a })).map(a => (
+            <li key={a.khoa}>{tenBai[a.khoa] ? `${tenBai[a.khoa]}. ` : ""}{a.nguon
               ? <>{a.minhHoa && "Ảnh minh hoạ · "}Nguồn ảnh: <a href={a.trang} target="_blank" rel="noopener noreferrer">{a.nguon}</a></>
               : <>Ảnh: {a.tacGia} ·{" "}
                 {GP[a.giayPhep] ? <a href={GP[a.giayPhep]} target="_blank" rel="noopener noreferrer">{a.giayPhep}</a> : a.giayPhep} ·{" "}
