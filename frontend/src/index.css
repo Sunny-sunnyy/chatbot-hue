@@ -164,9 +164,12 @@ picture { display: contents; }
 .lich-ngay li { display: grid; grid-template-columns: 120px 1fr; gap: 2px 12px; }
 .lich-buoi { grid-row: span 2; color: var(--color-muted, inherit); font-size: 14px; }
 .lich-ten { font-weight: 600; }
+.lich-anh { grid-column: 2; margin: 4px 0 0; max-width: 360px; }
+.lich-anh img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
+.lich-anh figcaption { margin-top: 4px; font-size: 12px; color: var(--color-muted, inherit); }
 .lich-ghi-chu { margin-top: 12px; font-size: 14px; }
 .lich-ghi-chu ul { margin: 4px 0 0; padding-left: 18px; }
-@media (max-width: 760px) { .lich-ngay li { grid-template-columns: 1fr; } .lich-buoi { grid-row: auto; } }
+@media (max-width: 760px) { .lich-ngay li { grid-template-columns: 1fr; } .lich-buoi { grid-row: auto; } .lich-anh { grid-column: 1; max-width: none; } }
 
 .gioi-thieu h2 { margin-top: 28px; font-size: 22px; font-weight: 700; }
 .gioi-thieu p, .gioi-thieu ul { margin-top: 8px; max-width: 68ch; }

@@ -323,6 +323,27 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
     return nghi
 
 
+ANH_SRC = "/anh/lich/"  # ảnh lịch tự host (frontend/public/anh/lich/) — CSP img-src 'self' không đổi
+ANH_TRANG = "https://commons.wikimedia.org/"
+FRONTEND_PUBLIC = Path(__file__).resolve().parents[2] / "frontend" / "public"
+
+
+def nap_bang_anh(path: str | Path, bang: BangV2) -> dict[str, dict]:
+    """Bảng ảnh lịch (đợt 2 B0 của C, `bang_anh_v1.json`) ⇒ {id_diem: {src, tac_gia, giay_phep, trang[, chu_thich]}}. Lúc khởi động (cờ `anh_lich`):
+    id phải có trong bảng điểm, `src` dưới `/anh/lich/` và file có thật, `trang` là trang Wikimedia Commons, đủ tác giả + giấy phép; sai ⇒ `ValueError`."""
+    out = {}
+    for a in json.loads(Path(path).read_text(encoding="utf-8"))["anh"]:
+        id_, src = a.get("id_diem"), a.get("src") or ""
+        if id_ not in bang.theo_id or id_ in out:
+            raise ValueError(f"bảng ảnh: {id_} không có trong bảng điểm hoặc lặp")
+        if not (src.startswith(ANH_SRC) and "/" not in src[len(ANH_SRC):] and src.endswith(".jpg") and (FRONTEND_PUBLIC / src.lstrip("/")).is_file()):
+            raise ValueError(f"bảng ảnh: {id_} src phải là file có thật dưới {ANH_SRC}")
+        if not (a.get("tac_gia") and a.get("giay_phep") and str(a.get("trang", "")).startswith(ANH_TRANG)):
+            raise ValueError(f"bảng ảnh: {id_} thiếu tác giả / giấy phép / trang ảnh Commons")
+        out[id_] = {k: a[k] for k in ("src", "tac_gia", "giay_phep", "trang", "chu_thich") if a.get(k)}
+    return out
+
+
 def kiem_doan_mo_ta(bang: BangV2, lay_doan) -> None:
     """Lúc khởi động (cờ bản 2 bật): mọi `doan_mo_ta` của bảng phải có trong chỉ mục đang chạy — chunk_id đổi khi dựng lại chỉ mục / sửa kho.
     Thiếu ⇒ `ValueError` nêu rõ mã thiếu (server không khởi động; không lặng lẽ quay về đoạn kém). `lay_doan` = `retrieval_service.lay_doan`."""
@@ -474,7 +495,7 @@ def ten_cua(diem: dict) -> list[str]:
 
 
 def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | None = None, them_ghi_chu: list[dict] = (),
-              toa_do: dict | None = None) -> dict:
+              toa_do: dict | None = None, anh: dict | None = None) -> dict:
     """Khung đã có nguồn ⇒ `lich` phiên bản 2 (spec 5c.5). `toa_do` (cờ `ban_do_lich`, đợt 2): {id: (vĩ, kinh)} của bảng toạ độ ⇒ mỗi mục mang đúng
     dòng bảng theo `id_diem`; điểm thiếu ⇒ null (không ghim đoán); None ⇒ mọi mục null như đợt 1. Toạ độ không vào tin nhắn gửi model. `id_muc` = `n<ngày>-<buổi>-<thứ tự>` (khoá ổn định cho câu của model). Giờ gợi ý,
     ảnh, toạ độ, ngày tháng / thứ: các bước sau (d), (e), đợt 2 — ở đây để null."""
@@ -489,7 +510,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 lap_lai = toi and id_ in [x for ng0 in khung["ngay"] if ng0["ngay"] < ng["ngay"] for x in ng0["buoi"]["toi"]]
                 muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
                             "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
-                            "nguon": nguon.get(id_), "anh": None,
+                            "nguon": nguon.get(id_), "anh": dict(anh[id_]) if anh and id_ in anh else None,  # đợt 2 (B): cờ `anh_lich`
                             "toa_do": list(toa_do[id_]) if toa_do and id_ in toa_do else None,
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
                                     + (["kiem_lich_dien"] if toi and ngay_that is None and co_suat_dien(d) else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó

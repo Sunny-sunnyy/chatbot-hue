@@ -475,6 +475,28 @@ const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
 const NHAN_MUC_V2 = { co_the_di_lai: "có thể đi lại", kiem_lich_dien: "kiểm lịch diễn trước khi đi" };  // cùng chữ với server (`NHAN_MUC`)
 const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
 
+// Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ và trang ảnh là Wikimedia Commons (kiểm cả phía trình
+// duyệt như link bản đồ); điểm không có ảnh ⇒ không vẽ gì (không ảnh thay). Dòng ghi công: tác giả · giấy phép · trang ảnh (điều kiện CC BY).
+// `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`).
+const ANH_LICH = "/anh/lich/";
+const TRANG_COMMONS = "https://commons.wikimedia.org/";
+function anhHopLe(a) {
+  return !!a && typeof a.src === "string" && a.src.startsWith(ANH_LICH) && !a.src.slice(ANH_LICH.length).includes("/")
+    && typeof a.trang === "string" && a.trang.startsWith(TRANG_COMMONS) && !!a.tac_gia && !!a.giay_phep;
+}
+
+function AnhLich({ anh, ten }) {
+  return (
+    <figure className="lich-anh">
+      <img src={`${import.meta.env.BASE_URL}${anh.src.slice(1)}`} alt={anh.chu_thich ? `${ten} — ${anh.chu_thich}` : ten} loading="lazy" decoding="async" />
+      <figcaption>
+        {anh.chu_thich && <>{anh.chu_thich}. </>}Ảnh: {anh.tac_gia} · {anh.giay_phep} ·{" "}
+        <a href={anh.trang} target="_blank" rel="noopener noreferrer">trang ảnh trên Wikimedia Commons</a>
+      </figcaption>
+    </figure>
+  );
+}
+
 function LichV2({ turn, onEditPlan }) {
   const lich = turn.lichV2;
   const cau = turn.cauV2 || {};
@@ -500,6 +522,7 @@ function LichV2({ turn, onEditPlan }) {
                 {m.loai !== "nghi" && (
                   <span className="lich-cau">{cau[m.id_muc] != null ? boMaTrichDan(cau[m.id_muc]) : (xong ? "" : "đang viết…")}</span>
                 )}
+                {anhHopLe(m.anh) && <AnhLich anh={m.anh} ten={m.ten} />}
               </li>
             ))}
           </ul>

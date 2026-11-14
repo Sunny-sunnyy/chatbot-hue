@@ -79,6 +79,8 @@ assistant:
   len_ke_hoach_v2: true          # "Lên kế hoạch" đợt 1 (plan 2026-11-12-len-ke-hoach-dot-1-plan.md): biểu mẫu bốn nhóm + hợp đồng truong mới — BẬT 14/11/2026 (User D4; nghiệm thu đợt 1 đạt, E review ready); cần lich_trinh_bieu_mau
   len_ke_hoach_o_hien: [so_ngay, nguoi_lon, tre_em, lon_tuoi, kieu_di, so_thich, ngay_di]  # ô biểu mẫu hiện khi cờ bật (ô dưới sàn mô phỏng ⇒ bỏ khỏi đây)
   lich_trinh_bang_v2: ../data/phase_9/lich_trinh/diem_v8.json  # bảng v8 (private) cho bộ xếp mới; chỉ nạp khi len_ke_hoach_v2 bật — thiếu file / cột ⇒ không khởi động
+  anh_lich: false                # "Lên kế hoạch" đợt 2 (B): ảnh tự host từng điểm của lịch bản 2 (plan 2026-11-13-len-ke-hoach-dot-2-plan.md); cần len_ke_hoach_v2 — TẮT tới khi đạt tiêu chí (B)
+  lich_trinh_bang_anh: ../data/phase_9/lich_trinh/bang_anh_v1.json  # bảng ảnh C (24 / 34 điểm, md5 a5e210e5a1f0; private); chỉ nạp khi anh_lich bật — ảnh ở frontend/public/anh/lich/
   len_ke_hoach_so_thich_an: []  # sở thích dưới sàn "≥ 50 % suất của từng lịch 2 ngày" của mô phỏng ⇒ ẩn. 13/11: lễ hội 43 % ⇒ A quyết gắn nhãn Cung An Định (căn cứ kho) ⇒ 50 % đạt ⇒ rỗng
 
 # Phase 10 A1 (plan `2026-11-05-phase-10-a1-plan.md` bản 2 D2): hỏi bằng ảnh — `POST /api/anh/ung_vien`. TẮT tới khi đạt A2 (spec Phase 10 §5).

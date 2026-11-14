@@ -930,3 +930,46 @@ def test_v2_travel_minutes_only_between_items_of_the_same_daytime_slot():
     tin = v2.tin_nhan_model(lich, "tài liệu")
     assert "phut_di" not in tin and "ngay\"" not in tin
     assert "phut_di" not in v2.ghep_chu(lich, {m["id_muc"]: "x" for m in v2.moi_muc(lich)})
+
+
+# ---------- Đợt 2 (B): ảnh từng điểm (cờ `anh_lich`) ----------
+
+BANG_ANH = Path(__file__).resolve().parents[2] / "data" / "phase_9" / "lich_trinh" / "bang_anh_v1.json"
+
+
+def test_photo_table_loads_and_maps_by_point_id():
+    """Bảng ảnh thật (B0 của C): ≥ 24 / 34 điểm (sàn plan) · mỗi ảnh đúng `id_diem`, `src` dưới /anh/lich/ + file có thật, đủ ghi công. Cờ bật ⇒
+    mục có ảnh khi điểm có dòng, không ảnh thay; cờ tắt ⇒ mọi `anh` null; chuỗi gửi model không đổi."""
+    b = V2.bang_lich_v2
+    anh = v2.nap_bang_anh(BANG_ANH, b)
+    assert len(anh) >= 24 and all(a["src"] == f"/anh/lich/{i}.jpg" for i, a in anh.items())
+    k = v2.xep_v2(b, v2.ThamSoV2(3, kieu_di="kham_pha", so_thich=("di_tich",)))
+    nguon = {i: n for n, i in enumerate(v2.diem_v2(k), start=1)}
+    tat, bat = v2.dung_lich(b, k, nguon), v2.dung_lich(b, k, nguon, anh=anh)
+    muc = [m for ng in bat["ngay"] for m in ng["muc"] if m["id_diem"]]
+    assert all(m["anh"] == (anh.get(m["id_diem"])) for m in muc) and any(m["anh"] for m in muc)
+    assert all(m["anh"] is None for ng in tat["ngay"] for m in ng["muc"])
+    assert v2.tin_nhan_model(tat, "x") == v2.tin_nhan_model(bat, "x")
+
+
+def test_photo_table_rejects_bad_rows(tmp_path):
+    b = V2.bang_lich_v2
+    goc = json.loads(BANG_ANH.read_text(encoding="utf-8"))["anh"][0]
+
+    def nap(**doi):
+        p = tmp_path / "a.json"
+        p.write_text(json.dumps({"anh": [{**goc, **doi}]}), encoding="utf-8")
+        return v2.nap_bang_anh(p, b)
+    assert nap()  # dòng thật hợp lệ
+    for doi in ({"id_diem": "khong_co"}, {"src": "https://x.vn/a.jpg"}, {"src": "/anh/lich/../anh.jpg"}, {"src": "/anh/lich/khong_co.jpg"},
+                {"tac_gia": ""}, {"giay_phep": None}, {"trang": "https://example.com/a"}):
+        with pytest.raises(ValueError):
+            nap(**doi)
+
+
+def test_photo_flag_needs_v2_and_table():
+    with pytest.raises(ValueError):
+        AssistantFlags(anh_lich=True)
+    with pytest.raises(ValueError):
+        dataclasses.replace(V2, anh_lich=True)  # thiếu bảng ảnh
+    assert dataclasses.replace(V2, anh_lich=True, anh_lich_bang=v2.nap_bang_anh(BANG_ANH, V2.bang_lich_v2)).anh_lich
