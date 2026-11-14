@@ -20,3 +20,12 @@ Plan `docs/superpowers/plans/2026-11-14-tien-web-chuan-hoa-plan.md` (sha `e34fa9
 
 ## Tiền
 0 USD.
+
+## Kiểm phần sửa `p9-tien-ruoi` `716af4e` (m-1 / m-2) · 16:36 14/11/2026
+- **m-1 đóng:** "2 triệu rưỡi" ⇒ 2.500.000, "1 nghìn rưỡi" ⇒ 1.500; số ≥ 10 ("300 nghìn rưỡi") ⇒ không đoán. Ca cố tình: trích "2 triệu" ↔ viết "2 triệu rưỡi" ⇒ **chặn** (trước: lọt); trích "2.500.000 đồng" ↔ "2 triệu rưỡi" ⇒ qua.
+- **m-2 đóng:** "150K" ⇒ 150.000; "4K", "150 K" (có cách) không phải tiền; "video 4K, giá 150K" ⇒ chỉ nhận 150K.
+- **m-3:** giữ, đã ghi giới hạn.
+- Tính lại V trên 76 mục đã lưu: vẫn **51**; 4 ca 220.000 vẫn chặn.
+- Bộ nhận tiền dùng chung với kiểm câu lịch (`lich_trinh.py`, `lich_trinh_v2.py` — "câu có tiền ⇒ câu dự phòng") ⇒ chỉ chặt hơn. Test cả 3 file dùng: 433 đạt (worktree sạch, không khoá).
+- **minor mới (theo dõi, an toàn):** "10K bước" giờ bị nhận là tiền ⇒ ở mục web bị chặn nếu trích không có (hướng an toàn); ở câu lịch ⇒ dùng câu dự phòng. Hiếm.
+- **Kết luận: `ready_for_user_confirmation`** — A merge được.
