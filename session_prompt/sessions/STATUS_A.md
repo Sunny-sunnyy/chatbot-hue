@@ -1,3 +1,10 @@
+# STATUS A — MỞ LẠI 14/11 (viết 14:44 14/11/2026 `date`, trước khi User mở lại 4 session)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` mục "MỞ LẠI 14/11 — ĐỌC TRƯỚC" (việc kế theo thứ tự + câu hỏi User + tiền). Quyền phiên giữ trong ngày — xác nhận bằng một câu.
+- Xong (A) 14/11: điều phối cả buổi; merge + cổng ổn định 6 lần (lịch bản 2 bật, 2 trường giao diện + nhãn chợ, ảnh lịch, giao diện H1, ảnh Khám phá, sửa lịch bật rồi tắt tạm); sửa 2 test đọc cờ thật; duyệt 8 plan (giao diện H1, .ics, sửa lịch v2, câu nhiều ý v1 / v2, lưu trú trong lịch, …); 4 lượt Codex (nguồn ảnh ×2, gợi ý lưu trú, trợ lý agentic); 2 agent con kiểm độc lập (ảnh v2, bài học 22–24); dọn tài liệu tên dự án khác; vòng tự soi 1.
+- **Bẫy A (14/11):** (1) báo User giờ ước "09:4x"; (2) hứa E "đã commit" trước khi thấy hook chặn — đọc kết quả commit trước khi báo; (3) bật sua_lich_v2 khi chưa có số độ trễ chính (luật: đo tốc độ trước khi bật) ⇒ phải tắt tạm; (4) đặt ngưỡng phụ +0,3 s tại chỗ ⇒ B đo thêm tới khi đạt — ngưỡng phải ghi trước cùng cỡ mẫu; (5) mở vòng tự soi 1 muộn (~14:05).
+- Server: A mở 8010 cho User (mất khi đóng A).
+
 # STATUS A — PHIÊN 14/11 (mở 09:42; cập nhật 09:45 14/11/2026 `date`)
 
 - Terminal: A `hue-rag-7b` · B `hue-rag-22` · C `hue-rag-b4` · E `hue-rag-c4` (cả bốn Claude Code, trực tiếp; B / C / E tự báo).

@@ -3,6 +3,22 @@
 Cập nhật: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11). Trước: 22:23 12/11/2026 (A, kết phiên 12/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
 
+## MỞ LẠI 14/11 — ĐỌC TRƯỚC (A viết 14:44 14/11/2026; User mở lại 4 session để làm mới ngữ cảnh, CÙNG PHIÊN 14/11)
+
+**Quyền phiên 14/11 (User, giữ khi mở lại trong ngày — A mới xác nhận bằng một câu ngắn):** A tự điều phối, A commit / push, B / C / E push nhánh riêng; **tiền không trần cứng** ("dùng tới khi API báo hết tiền thì User nạp"; gặp lỗi quota ⇒ dừng phần có phí, ghi câu hỏi); tự nghiên cứu bằng Codex (tìm tiếng Việt + trang VN khi hợp) ⇒ đề xuất ⇒ bàn nhóm ⇒ áp dụng; hướng sản phẩm: **trợ lý / agent, không phải chatbot thường**. Mỗi session đọc `sessions/STATUS_<X>.md` mục đầu.
+
+**main `3985816`+ (đã push):** giao diện H1 5 trang + hiệu ứng + ảnh Khám phá 167 / 207 · lịch "Lên kế hoạch" bản 2 BẬT + ảnh lịch + phút đi + .ics · kho 212 file / 8.522 đoạn (bài lưu trú) · sửa lịch bằng lời đã merge nhưng cờ `sua_lich_v2` **TẮT TẠM** (chờ nhánh tốc độ) · bài học 22–24 · sổ ghi việc 14/11. Server User xem: A mở cổng 8010 (mất khi A đóng).
+
+**Việc kế — theo thứ tự:**
+1. **E:** kiểm nhanh nhánh `p9-sua-lich-tre` (`3aef0ca` m-1 / m-2 + `c59e090` khoá đệm cố định; B đo n = 20 chốt trước: câu thường có lịch chữ đầu p50 2,65 / p95 4,01 s ↔ không lịch 2,58 / 4,14; lượt sửa 2,30 / 2,59; tiền / câu có lịch ~0,0007 ⇒ ước ~0,00055 sau đệm — tiền Phase 9 chỉ theo dõi) ⇒ **A merge + BẬT `sua_lich_v2`** (test file chạm có / không khoá + server thật).
+2. **E:** review nhánh câu nhiều ý `p9-cau-nhieu-y` `2c99534` — **User chọn BẬT (14:44 14/11/2026)**: lệch Golden 161 là nhiễu (yêu cầu gửi model giống byte), sàn tính trên câu đi qua luật mới ⇒ A merge + bật cờ `cau_nhieu_y`.
+3. **B:** (c) khách sạn trong lịch, plan duyệt sha `15529d97b6c7` (bảng 140 cơ sở của E `data/luu_tru_2026-11-14_lich/`; một khu cả chuyến; cờ `luu_tru_lich` tắt tới khi đạt).
+4. **Hỏi User (mỗi lần một câu):** (a) giờ Đại Nội User chép (hè 06:30–17:30 / đông 07:00–17:00) là giờ MỞ CỬA hay BÁN VÉ (Codex trích Vinpearl: mở hè 6h30–18h00 / đông 7h00–17h30) ⇒ rồi ghi kho; (b) màn "Huế qua các thời kỳ" cuộn kể chuyện có muốn không; (c) BÁO: 132 ảnh web nằm trong repo public (A chốt theo lời User), gỡ được bằng 1 commit.
+5. **Kết phiên (A, improve-workflow):** trình User đề xuất luật từ vòng tự soi 1 (mục "Vòng tự soi 1" dưới): đếm câu chạm đường đổi trước lượt có phí, sàn tính trên câu chạm, harness có phí qua mô phỏng 0 USD trước, grep archive trước khi đo "lỗi", grep_kb trước khi gắn "ngoài kho", BAO_CAO khâu chỉ Tóm tắt + checklist. Vòng tự soi 2 trước kết phiên.
+6. **Giới hạn đã nhận (không hỏi lại):** câu khẩn cấp không có số 112–115 (User 12/11) — E đo lại 14/11 0/12; sửa lịch bản 2 chỉ BỎ được buổi tối, chưa thêm / đổi.
+
+**Tiền 14/11 (ước từ tin báo, chưa cộng log):** ghi kho 0,229 + 0,225 · nghiệm thu lịch ≈ 0,09 · sửa lịch ≈ 0,33 (đúng sai 0,25 + độ trễ 0,08) · câu nhiều ý ≈ 0,35 · ảnh Serper ≈ 0,16 · khác (khẩn cấp 0,027, cổng ổn định, Playwright) ≈ 0,05 ⇒ **≈ 1,45 USD**; Phase 9 ≈ 6,1. A mới cộng lại từ log / report khi kết phiên.
+
 ## PHIÊN 14/11 (mở 09:42 theo `date` lúc A đọc — A ghi 09:45 14/11/2026)
 
 - **Terminal:** A `hue-rag-7b` · B `hue-rag-22` · C `hue-rag-b4` · E `hue-rag-c4` — cả bốn Claude Code, trực tiếp (B / C / E tự báo).
