@@ -1176,23 +1176,83 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     `tro_ly_hue` ⇒ xả hàng đợi, gộp trace phụ vào trace chính (D1); tuyến khác ⇒ huỷ (ii), bỏ trace phụ, đi đường của tuyến đó (D2, D3).
     B6: (ii) **không** tra web (chưa biết tuyến — câu trò chuyện không được ra Serper); cổng web chạy trên trace chính **sau khi gộp**."""
     if flags.sua_lich_v2 and trace.lich_luu is not None and not trace.bieu_mau and generator is not None:
-        from llm import len_ke_hoach  # import muộn: module đó import lõi này
-        # cuộc có lịch đã lưu ⇒ mọi lượt qua lần "hiểu ý sửa" (cổng từ khoá đã thử và bỏ — `sua_lich_v2.py`), chạy SONG SONG với định tuyến
-        # (review E B-1): định tuyến thấy khẩn cấp ⇒ khẩn cấp thắng, đi đường thường (định tuyến lại ở đó — chỉ tốn thêm ở câu khẩn cấp).
-        # Lượt bấm nút thẻ chọn không cần định tuyến.
-        if trace.sua_chon is not None:
-            kq, khan_cap = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags), False
-        else:
-            dinh_tuyen = AnswerTrace(history=trace.history)
-            kq, _ = await asyncio.gather(len_ke_hoach.hieu_va_ap(query, generator, trace, flags), _pick_route(query, generator, dinh_tuyen, flags))
-            trace.llm_calls += dinh_tuyen.llm_calls
-            khan_cap = dinh_tuyen.emergency_by == "router"
-        if kq is not None and not khan_cap:  # lượt sửa; không ⇒ đường trả lời thường (giữ nguyên, gồm định tuyến khẩn cấp)
-            yield "status", {"stage": "sua_lich"}  # review E m-1: chỉ hiện khi đúng là lượt sửa
-            async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
-                yield event
-            return
-        trace.sua = {**(trace.sua or {}), "khan_cap": khan_cap} if trace.sua is not None or khan_cap else None
+        async for event in _sua_song_song(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
+            yield event
+        return
+    async for event in _answer_core(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
+        yield event
+
+
+async def _sua_song_song(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
+                         recorder=None, tim_web=None):
+    """Sửa lịch bản 2 — cuộc có lịch đã lưu. Lần "hiểu ý" + định tuyến chạy SONG SONG với CẢ đường trả lời thường (đo 14/11: chờ hiểu ý trước
+    làm chữ đầu câu thường +1,9 s, phạm sàn p50 ≤ 3 s). Sự kiện của đường thường giữ trong hàng đợi tới khi biết kết quả:
+    câu sửa (không khẩn cấp) ⇒ huỷ đường thường (tiền phần bị huỷ ghi vào `llm_calls` + `usd_bo`), phát lượt sửa; còn lại ⇒ xả hàng đợi, gộp
+    trace phụ. Khẩn cấp thắng (review E B-1). Lượt bấm nút thẻ chọn ⇒ không chạy đường thường."""
+    from llm import len_ke_hoach  # import muộn: module đó import lõi này
+    if trace.sua_chon is not None:
+        kq = await len_ke_hoach.hieu_va_ap(query, generator, trace, flags)
+        yield "status", {"stage": "sua_lich"}
+        async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
+            yield event
+        return
+    phu = AnswerTrace(**{k: getattr(trace, k) for k in ROUTE_INPUTS})
+    hang: asyncio.Queue = asyncio.Queue()
+
+    async def chay_thuong() -> None:
+        try:
+            async for event in _answer_core(query, retrieval_service, context_builder, generator, phu, flags, recorder, tim_web):
+                hang.put_nowait(("su_kien", event))
+            hang.put_nowait(("xong", None))
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:  # lỗi của đường thường đi ra đúng chỗ người đọc hàng đợi (nếu đó không phải lượt sửa)
+            hang.put_nowait(("loi", exc))
+
+    viec = asyncio.create_task(chay_thuong())
+
+    async def huy() -> None:
+        if not viec.done():
+            viec.cancel()
+        await asyncio.gather(viec, return_exceptions=True)
+
+    dinh_tuyen = AnswerTrace(history=trace.history)
+    try:
+        kq, _ = await asyncio.gather(len_ke_hoach.hieu_va_ap(query, generator, trace, flags), _pick_route(query, generator, dinh_tuyen, flags))
+    except BaseException:
+        await huy()
+        raise
+    trace.llm_calls += dinh_tuyen.llm_calls
+    khan_cap = dinh_tuyen.emergency_by == "router"
+    if kq is not None and not khan_cap:  # lượt sửa ⇒ bỏ phần đường thường đã chạy
+        await huy()
+        trace.llm_calls += phu.llm_calls
+        trace.usd_bo = round(sum(c.get("usd") or 0 for c in phu.llm_calls), 6) or None
+        yield "status", {"stage": "sua_lich"}  # review E m-1: chỉ hiện khi đúng là lượt sửa
+        async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
+            yield event
+        return
+    sua, goi_truoc = trace.sua, list(trace.llm_calls)
+    try:
+        while True:
+            loai, x = await hang.get()
+            if loai == "xong":
+                break
+            if loai == "loi":
+                raise x
+            yield x
+    finally:
+        await huy()
+        for item in dataclasses.fields(AnswerTrace):  # trace chính nhận mọi thứ đường thường đã làm; giữ phần của lượt sửa
+            if item.name not in ("llm_calls", "sua", "lich_luu", "sua_chon"):
+                setattr(trace, item.name, getattr(phu, item.name))
+        trace.llm_calls = goi_truoc + phu.llm_calls
+        trace.sua = {**(sua or {}), "khan_cap": khan_cap} if sua is not None or khan_cap else None
+
+
+async def _answer_core(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
+                       recorder=None, tim_web=None):
+    """Thân của `answer_turn_stream_parallel` (đường trả lời thường, có / không chạy song song định tuyến — #6)."""
     if trace.bieu_mau or not (flags.song_song_tra_loi and flags.router and generator is not None and flags.lan_tim_dau == "v0"):
         # lượt biểu mẫu (cổng D3): không định tuyến ⇒ không có gì để chạy song song
         async for event in answer_turn_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
