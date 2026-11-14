@@ -183,7 +183,7 @@ function ThoiTiet({ tt }) {
     <aside className="tt-hop vao" style={{ "--n": 3 }} aria-label="Thời tiết Huế hôm nay">
       <p className="tt-h">Huế hôm nay</p>
       <p className="tt-so">{tmin}–{tmax} °C{xs_mua != null && <span className="tt-mo"> · khả năng mưa {xs_mua} %</span>}</p>
-      <p className="tt-chu">{tt.ghi_cong} — số liệu lúc {tt.cap_nhat}.</p>
+      <p className="tt-chu">Số liệu lúc {tt.cap_nhat}.</p>{/* không hiện dòng ghi công Open-Meteo (User 14/11); nguồn ghi ở `llm/thoi_tiet.py` */}
     </aside>
   );
 }
