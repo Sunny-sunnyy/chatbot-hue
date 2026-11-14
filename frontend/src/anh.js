@@ -35,7 +35,7 @@ export const ANH_DAU_TRANG = {
               "cắt ngang 16:7, phủ màu"),
 };
 
-// Khoá = mã lĩnh vực (`LINH_VUC` ở `pages.jsx`).
+// Khoá = mã lĩnh vực (`LINH_VUC` ở `chung.jsx`).
 export const ANH_LINH_VUC = {
   foods: anh("lv_foods.jpg", "Ẩm thực — bún bò Huế", "Kham Tran - www.khamtran.com", "CC BY 3.0", commons("Bun-Bo-Hue-from-Huong-Giang-2011.jpg")),
   heritages: anh("lv_heritages.jpg", "Di tích — điện Thái Hòa", "Lưu Ly", "Phạm vi công cộng", commons("Dien_Thai_Hoa.jpg")),

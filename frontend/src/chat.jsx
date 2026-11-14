@@ -1,12 +1,14 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
-import { boMaTrichDan, displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
-import { baiHref } from "./route.js";
+import { displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
 import { streamAnswer } from "./stream.js";
 import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
 // Bản đồ lịch trình (plan 2026-11-08): chunk riêng — chỉ tải khi lịch có ≥ 1 toạ độ hợp lệ (server chỉ gửi `toa_do` khi cờ `ban_do_lich` bật)
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
-import { GP } from "./anh.js";
+import { SourceLine } from "./SourceLine.jsx";
+import "./tl.css";
+import { GOI_Y } from "./chung.jsx";
+import { LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -29,8 +31,22 @@ const LICH_BUOC = {
   bo_diem: d => d.ly_do,
   lay_nguon: d => `Đã lấy tài liệu cho từng điểm (${d.n_doan} đoạn mới)`,
 };
-const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ nhận link bản đồ đúng gốc này (kiểm cả phía trình duyệt)
 const PENDING = new Set(Object.keys(STATUS_TEXT));
+// Giao diện H1 (đợt 1): bước công cụ THẬT của lượt — chỉ những sự kiện `status` server đã gửi, đúng thứ tự; bước cũ hiện "đã xong" (không đoán thêm bước).
+const BUOC_XONG = {
+  routing: () => "hiểu câu hỏi",
+  searching: lan => (lan > 1 ? "tìm thêm trong kho" : "tìm trong kho tư liệu"),
+  searched: (lan, n) => (n > 0 ? (lan > 1 ? `có tổng ${n} đoạn tư liệu` : `tìm thấy ${n} đoạn tư liệu`) : "tìm trong kho"),
+  generating: () => "viết câu trả lời",
+  lich_trinh: () => "xếp lịch",
+  tra_web: () => "tra web (kho chưa có)",
+  thoi_tiet: () => "xem dự báo thời tiết",
+};
+// nhãn từng bước theo thứ tự: lần tìm thứ 2 trở đi ⇒ "tìm thêm"; `n_sources` của server là số cộng dồn ⇒ "có tổng N đoạn"
+function nhanBuoc(buoc) {
+  const lan = {};
+  return buoc.map(b => { lan[b.stage] = (lan[b.stage] || 0) + 1; return BUOC_XONG[b.stage]?.(lan[b.stage], b.n) ?? STATUS_TEXT[b.stage]; });
+}
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
 // B142: câu ngoài phạm vi kèm 3 câu gợi ý cố định (đã kiểm có trong kho bằng `scripts/grep_kb.sh`) — bấm là hỏi luôn.
 const OUT_OF_SCOPE_SUGGESTIONS = ["Vào Đại Nội nên mặc thế nào?", "Lễ hội Điện Huệ Nam diễn ra khi nào?", "Nhã nhạc cung đình diễn lúc nào?"];
@@ -50,7 +66,7 @@ function reducedMotion() {
 function newTurn(key, question, truong, summary, bieuMau) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false };
+           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
 export function useChat() {
@@ -94,6 +110,12 @@ export function useChat() {
     const key = ++keyRef.current;
     const update = patch => setTurns(all => all.map(turn => (turn.key === key ? { ...turn, ...patch } : turn)));
     const progress = [];  // B5 D14: các bước lịch đã nhận của lượt này, đúng thứ tự server gửi
+    const buoc = [];  // H1: bước công cụ thật (`status`), gộp bước lặp liền nhau
+    const themBuoc = (stage, n) => {
+      const cuoi = buoc[buoc.length - 1];
+      if (cuoi && cuoi.stage === stage) { if (n != null) cuoi.n = n; } else buoc.push({ stage, n });
+      return buoc.map(b => ({ ...b }));
+    };
     const cauV2 = {};  // "Lên kế hoạch" bản 2: câu theo id_muc của lượt này
     // "Thử lại" thay lượt lỗi (server không nhớ lượt lỗi — plan B3 D2) bằng lượt mới cùng câu hỏi.
     setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary, bieuMau)]);
@@ -107,10 +129,11 @@ export function useChat() {
           if (name === "status" && data.stage === "lich_trinh") {
             const text = LICH_BUOC[data.buoc]?.(data);  // "dang_xep" chỉ là nhãn trạng thái, không vào danh sách bước (C191 m-1)
             if (text) progress.push(text);
-            update({ phase: "lich_trinh", progress: [...progress] });
+            update({ phase: "lich_trinh", progress: [...progress], buoc: themBuoc("lich_trinh") });
           } else if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
-            update({ phase: data.stage in STATUS_TEXT ? data.stage : "searched", ...(data.n_sources != null && { nSources: data.n_sources }) });
+            const stage = data.stage in STATUS_TEXT ? data.stage : "searched";
+            update({ phase: stage, ...(data.n_sources != null && { nSources: data.n_sources }), buoc: themBuoc(stage, data.n_sources) });
           } else if (name === "delta") {
             // Chữ hiện dần: gom mảnh vào buffer, vẽ lại CẢ buffer tối đa một lần mỗi khung hình (yêu cầu 8); chỉ nối mảnh có `seq` mới (yêu cầu 4).
             if (data.seq <= lastSeqRef.current) return;
@@ -191,6 +214,66 @@ export function useChat() {
   }
 
   return { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation };
+}
+
+// Trang `#/tro-ly` (H1, đợt 1): cột trái = câu gợi ý theo chủ đề + trợ lý làm được gì + lưu ý; phải = khung chat (cùng `ChatView` với khung nổi).
+// Câu gợi ý = `GOI_Y` (chung.jsx) — mỗi câu một biểu tượng / màu theo chủ đề; điện thoại ẩn cột trái (lời chào trong khung vẫn có gợi ý).
+const CHU_DE = [
+  { mau: ["#FBE7DC", "#9A3412"], d: "M3 11h18M5 11a7 7 0 0 0 14 0M12 4v3" },        // ăn uống
+  { mau: ["#E3F0ED", "#0A4E4A"], d: "M3 21h18M5 21V10l7-5 7 5v11" },                 // di tích
+  { mau: ["#F6E3EA", "#7E1F3E"], d: "M8 2v4M16 2v4M3 9h18M5 5h14v16H5z" },           // lễ hội
+  { mau: ["#E9E6F7", "#3B2F7A"], d: "M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0" },  // ca Huế
+  { mau: ["#E1ECF7", "#1E4E8C"], d: "M5 17h14M7 17l1-6h8l1 6M9 11V7h6v4" },          // đi lại
+];
+
+export function TrangTroLy({ chat, onEditPlan, tinhNang = {} }) {
+  const anh = !!tinhNang.anh;
+  return (
+    <div className="khung tro-ly-trang">
+      <h1 className="sr-only">Trợ lý Huế</h1>
+      <div className="tl-cot">
+        <aside className="tl-ben" aria-label="Gợi ý">
+          <section className="tl-hop">
+            <h2>Hỏi gì cũng được về Huế</h2>
+            <div className="tl-chu-de" aria-label="Câu gợi ý">
+              {GOI_Y.map((cau, i) => (
+                <button key={cau} type="button" className="nhan-nut" disabled={chat.pending || chat.resetting} onClick={() => chat.ask(cau)}>
+                  <span className="bt" style={{ background: CHU_DE[i % CHU_DE.length].mau[0], color: CHU_DE[i % CHU_DE.length].mau[1] }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                         strokeLinejoin="round" aria-hidden="true"><path d={CHU_DE[i % CHU_DE.length].d} /></svg>
+                  </span>
+                  {cau}
+                </button>
+              ))}
+            </div>
+          </section>
+          <section className="tl-hop">
+            <h2>Trợ lý làm được gì</h2>
+            <ul className="tl-lam">
+              {/* review E M-1: mỗi dòng theo đúng cờ server (`/api/tinh_nang`) — tính năng tắt thì không hứa */}
+              <li>Trả lời từ kho tư liệu, ghi nguồn để bạn xem lại.</li>
+              {(tinhNang.lich_trinh_bieu_mau || tinhNang.len_ke_hoach_v2) && <li><a href="#/len-ke-hoach">Xếp lịch</a> theo số ngày và sở thích.</li>}
+              {tinhNang.thoi_tiet && <li>Xem dự báo thời tiết Huế 7 ngày tới.</li>}
+              {anh && <li>Đoán tên món / công trình từ ảnh — bạn bấm xác nhận.</li>}
+              {tinhNang.tra_web && <li>Kho chưa có ⇒ tra web, tách riêng "chưa kiểm".</li>}
+            </ul>
+          </section>
+          <p className="tl-hop" style={{ fontSize: 14, color: "var(--color-muted)" }}>
+            Trợ lý có thể sai. Đừng gõ thông tin cá nhân (số điện thoại, địa chỉ nhà).
+          </p>
+        </aside>
+        <section className="tl-chat" aria-label="Khung trò chuyện">
+          <div className="tl-chat-dau">
+            <span className="tra-av" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 34 34"><path d="M6 19c3-3 6-3 9 0s6 3 9 0 4-2 4-2M6 24c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /></svg>
+            </span>
+            <span><b>Trợ lý Huế</b><small>Trả lời từ kho tư liệu về Huế, có nguồn</small></span>
+          </div>
+          <ChatView chat={chat} idPrefix="trang" suggestions={GOI_Y} onEditPlan={onEditPlan} anh={anh} />
+        </section>
+      </div>
+    </div>
+  );
 }
 
 // Khung trò chuyện (dùng ở khung nổi và trang trợ lý). `onEditPlan(chon)`: "Sửa" của lịch từ biểu mẫu ⇒ quay lại biểu mẫu (D3: sửa lịch bằng chat
@@ -280,14 +363,21 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   return (
     <article className="turn" ref={turnRef} data-turn={turn.key}>
       <h2 className="ask">{turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
+      <div className="tra">
+      <span className="tra-av" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 34 34"><path d="M6 19c3-3 6-3 9 0s6 3 9 0 4-2 4-2M6 24c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /></svg>
+      </span>
+      <div className="tra-noi">
       {pending && !turn.text && (
         <div className="searching" role="status">
-          <svg className="wave" viewBox="0 0 46 24" aria-hidden="true"><path d="M2 12c6-8 10 8 16 0s10 8 16 0 8-6 10-2" /></svg>
-          <div>
-            <div className="font-semibold text-accent">{STATUS_TEXT[turn.phase]}</div>
-            {turn.nSources > 0 && <div className="text-sm text-muted">{turn.nSources} đoạn tư liệu đã tìm được</div>}
-          </div>
+          {turn.progress.length > 0 ? <div className="font-semibold text-accent">{STATUS_TEXT[turn.phase]}</div>
+            : <BuocCongCu buoc={turn.buoc} phase={turn.phase} />}
+          <span className="go" aria-hidden="true"><i /><i /><i /></span>
+          <span className="sr-only">{STATUS_TEXT[turn.phase]}</span>
         </div>
+      )}
+      {!pending && turn.buoc.length > 1 && turn.phase === "done" && turn.progress.length === 0 && (
+        <p className="buoc-gon">Các bước: {nhanBuoc(turn.buoc).join(" · ")}</p>
       )}
       {turn.phase === "error" && (
         <div className="bubble bubble-error" role="alert">
@@ -346,49 +436,22 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         </div>
       )}
       {turn.phase === "done" && turn.turnId && <Feedback turnId={turn.turnId} />}
+      </div>
+      </div>
     </article>
   );
 }
 
-// Cổng D1: dưới câu trả lời một dòng "Nguồn: <tên> · <tên>" (thứ tự xuất hiện trong câu); bấm tên ⇒ mở đoạn gốc ngay dưới; nguồn là bài kho
-// (`bai_id`) ⇒ link sang trang bài Khám phá. Việc nhỏ 08/11: nhiều đoạn của CÙNG một bài ⇒ một tên (trước: một câu ra 8 lần cùng tên bài);
-// bấm tên ⇒ hiện mọi đoạn được trích của bài đó.
-function SourceLine({ turn }) {
-  const [open, setOpen] = useState(null);
-  const sources = [...turn.sources].sort((a, b) => turn.numbers.get(String(a.id)) - turn.numbers.get(String(b.id)));
-  const groups = [];
-  for (const source of sources) {
-    const key = source.bai_id != null ? `b:${source.bai_id}` : `t:${source.title}`;
-    const group = groups.find(item => item.key === key);
-    if (group) group.parts.push(source);
-    else groups.push({ key, title: source.title, bai_id: source.bai_id, parts: [source] });
-  }
-  const shown = groups.find(group => group.key === open);
-  const panelId = `nguon-${turn.key}`;
+// H1: danh sách bước công cụ thật — bước đã qua có ✓, bước đang chạy ở cuối (nhãn đang làm của STATUS_TEXT).
+function BuocCongCu({ buoc, phase }) {
+  if (buoc.length === 0) return <div className="font-semibold text-accent">{STATUS_TEXT[phase]}</div>;
+  const nhan = nhanBuoc(buoc);
   return (
-    <div className="nguon">
-      <p className="nguon-dong">
-        <span className="nguon-nhan">Nguồn:</span>{" "}
-        {groups.map((group, index) => (
-          <span key={group.key}>
-            {index > 0 && <span aria-hidden="true"> · </span>}
-            <button type="button" className="nguon-ten" aria-expanded={open === group.key} aria-controls={panelId}
-                    onClick={() => setOpen(open === group.key ? null : group.key)}>{group.title}</button>
-          </span>
-        ))}
-      </p>
-      {shown && (
-        <div className="nguon-doan" id={panelId}>
-          {shown.parts.map(part => (
-            <div key={part.id} className="nguon-phan">
-              {part.heading_path.length > 0 && <p className="text-sm text-muted">{part.heading_path.join(" › ")}</p>}
-              {part.excerpts.map((excerpt, index) => <blockquote key={index} className="whitespace-pre-line">{excerpt}</blockquote>)}
-            </div>
-          ))}
-          {shown.bai_id && <a className="nguon-bai" href={baiHref(shown.bai_id)}>Đọc cả bài “{shown.title}”</a>}
-        </div>
-      )}
-    </div>
+    <ol className="buoc" aria-label="Các bước trợ lý đang làm">
+      {buoc.map((b, i) => (i < buoc.length - 1
+        ? <li key={i} className="xong">{nhan[i]}</li>
+        : <li key={i} className="dang">{STATUS_TEXT[b.stage]}{b.n > 0 ? ` (${b.n} đoạn)` : ""}</li>))}
+    </ol>
   );
 }
 
@@ -415,7 +478,7 @@ function WebSection({ web, turnKey }) {
 }
 
 // B142: 👍 / 👎 dưới câu trả lời — server chỉ lưu đánh giá + số đếm của lượt. Đổi ý được (bấm nút kia); lỗi ⇒ báo nhẹ, giữ lựa chọn cũ.
-function Feedback({ turnId }) {
+export function Feedback({ turnId }) {
   const [rating, setRating] = useState(null);
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -465,126 +528,6 @@ function LichExtras({ lich, truong, onAsk, onEditPlan, getText }) {
       )}
       {lich.sua && !onEditPlan && !editing && <button type="button" className="retry" onClick={() => setEditing(true)}>Sửa</button>}
       {lich.sua && !onEditPlan && editing && <ClarifyCard clarify={lich.sua} initial={lich.sua.chon} onAsk={onAsk} />}
-    </div>
-  );
-}
-
-// "Lên kế hoạch" bản 2 (spec 5c.5): thẻ lịch vẽ TỪ KHUNG do code dựng (tên, buổi, giờ, ghi chú); câu model đổ vào theo `id_muc`, chưa tới ⇒
-// "đang viết…". Loại mục chưa biết (đợt sau: ăn uống…) ⇒ bỏ qua, không lỗi. Nút "Sửa" điền lại biểu mẫu bằng đúng giá trị đã gửi.
-const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
-const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
-const NHAN_MUC_V2 = { co_the_di_lai: "có thể đi lại", kiem_lich_dien: "kiểm lịch diễn trước khi đi" };  // cùng chữ với server (`NHAN_MUC`)
-const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
-
-// Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ và trang ảnh là Wikimedia Commons (kiểm cả phía trình
-// duyệt như link bản đồ); điểm không có ảnh ⇒ không vẽ gì (không ảnh thay). Dòng ghi công: tác giả · giấy phép · trang ảnh (điều kiện CC BY).
-// `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`). Ghi công như ảnh cổng: link giấy phép + "đã thu
-// nhỏ" (CC BY / BY-SA đòi ghi thay đổi; `doi` của bảng khi có chỉnh khác, vd cắt).
-const ANH_LICH = "/anh/lich/";
-const TRANG_COMMONS = "https://commons.wikimedia.org/";
-function anhHopLe(a) {
-  return !!a && typeof a.src === "string" && a.src.startsWith(ANH_LICH) && !a.src.slice(ANH_LICH.length).includes("/")
-    && typeof a.trang === "string" && a.trang.startsWith(TRANG_COMMONS) && !!a.tac_gia && !!a.giay_phep;
-}
-
-function AnhLich({ anh, ten }) {
-  return (
-    <figure className="lich-anh">
-      <img src={`${import.meta.env.BASE_URL}${anh.src.slice(1)}`} alt={anh.chu_thich ? `${ten} — ${anh.chu_thich}` : ten} loading="lazy" decoding="async" />
-      <figcaption>
-        {anh.chu_thich && <>{anh.chu_thich}. </>}Ảnh: {anh.tac_gia} ·{" "}
-        {GP[anh.giay_phep] ? <a href={GP[anh.giay_phep]} target="_blank" rel="noopener noreferrer">{anh.giay_phep}</a> : anh.giay_phep} ·{" "}
-        <a href={anh.trang} target="_blank" rel="noopener noreferrer">trang ảnh trên Wikimedia Commons</a> · đã {anh.doi || "thu nhỏ"}
-      </figcaption>
-    </figure>
-  );
-}
-
-function LichV2({ turn, onEditPlan }) {
-  const lich = turn.lichV2;
-  const cau = turn.cauV2 || {};
-  const xong = turn.phase === "done";
-  // đợt 2: bản đồ chỉ khi server gắn toạ độ (cờ `ban_do_lich`); thứ tự ghim = thứ tự mục trong ngày, mục "nghỉ" không ghim; thiếu toạ độ ⇒ danh sách
-  // ghi "chưa có trên bản đồ" (BanDoLich), không ghim đoán
-  const banDo = lich.ngay.some(ng => ng.muc.some(m => toaDoHopLe(m.toa_do)))
-    ? lich.ngay.flatMap(ng => ng.muc.filter(m => m.loai === "tham_quan" || m.loai === "hoat_dong_toi")
-        .filter(m => typeof m.map_url === "string" && m.map_url.startsWith(MAP_PREFIX))
-        .map((m, i) => ({ ten: m.ten, map_url: m.map_url, ngay: ng.ngay, buoi: m.buoi, thu_tu: i + 1, toa_do: m.toa_do })))
-    : [];
-  return (
-    <div className="bubble lich-v2">
-      <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
-      {lich.ngay.map(ng => (
-        <section key={ng.ngay} className="lich-ngay" aria-label={`Ngày ${ng.ngay}`}>
-          <h3>Ngày {ng.ngay}{ng.ngay_thang ? ` · ${THU_V2[ng.thu]} ${ng.ngay_thang.split("-").reverse().join("/")}` : ""}</h3>
-          <ul>
-            {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => (
-              <li key={m.id_muc}>
-                <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
-                <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}> · {NHAN_MUC_V2[x]}</small>)}</span>
-                {m.loai !== "nghi" && (
-                  <span className="lich-cau">{cau[m.id_muc] != null ? boMaTrichDan(cau[m.id_muc]) : (xong ? "" : "đang viết…")}</span>
-                )}
-                {anhHopLe(m.anh) && <AnhLich anh={m.anh} ten={m.ten} />}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-      {lich.ghi_chu.length > 0 && (
-        <div className="lich-ghi-chu">
-          <p className="font-semibold">Ghi chú của lịch</p>
-          <ul>{lich.ghi_chu.map((g, i) => <li key={i}>{g.cau}</li>)}</ul>
-        </div>
-      )}
-      {turn.sources?.length > 0 && <SourceLine turn={turn} />}
-      {turn.notice && <p className="notice">{turn.notice}</p>}
-      {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} /></Suspense>}
-      {xong && (
-        <div className="lich">
-          <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
-          {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Việc nhỏ (1) 08/11: lưu lịch ra chữ thường — chữ lấy từ phần đang hiện (không gọi server, không gửi đi đâu).
-const TEN_FILE_LICH = "lich-trinh-hue.txt";
-const DONG_CUOI_LICH = "Từ Trợ lý Huế — có thể sai; giờ mở cửa, giá vé có thể đã thay đổi, hãy kiểm lại trước khi đi.";
-
-export function vanBanLich(turn, answerText, items) {
-  const links = items.filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
-  const diem = links.map(i => (i.ngay ? `Ngày ${i.ngay} · ${i.thu_tu}. ${i.ten}: ${i.map_url}` : `- ${i.ten}: ${i.map_url}`));
-  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), "", answerText.trim(),
-          ...(diem.length ? ["", "Bản đồ từng điểm:", ...diem] : []), "", DONG_CUOI_LICH, ""].join("\n");
-}
-
-function LuuLich({ getText }) {
-  const [bao, setBao] = useState("");
-  async function saoChep() {
-    try {
-      await navigator.clipboard.writeText(getText());  // chỉ có ở trang https / localhost
-      setBao("Đã sao chép lịch.");
-    } catch {
-      setBao("Trình duyệt không cho sao chép — dùng nút Tải về.");
-    }
-  }
-  function taiVe() {
-    const url = URL.createObjectURL(new Blob([getText()], { type: "text/plain;charset=utf-8" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = TEN_FILE_LICH;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setBao("Đã tải về " + TEN_FILE_LICH + ".");
-  }
-  return (
-    <div className="luu-lich">
-      <button type="button" className="retry" onClick={saoChep}>Sao chép lịch</button>
-      <button type="button" className="retry" onClick={taiVe}>Tải về (.txt)</button>
-      <span className="text-sm text-muted" role="status">{bao}</span>
     </div>
   );
 }

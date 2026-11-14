@@ -1,0 +1,63 @@
+/* Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026). Tiền tố gt-.
+   Hiệu ứng riêng: đường sông Hương vẽ dần khi cuộn qua dải "ba bước" — chỉ dưới html.hieu-ung; không có thì đường hiện sẵn. */
+
+.gt-dau { position: relative; isolation: isolate; overflow: hidden; background: var(--color-river); color: #fff; min-height: 420px;
+  display: flex; align-items: flex-end; }
+.gt-nen { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
+.gt-nen img { width: 100%; height: 100%; object-fit: cover; }
+.gt-dau::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, rgba(10, 61, 64, .96) 0, rgba(10, 61, 64, .88) 42%, rgba(10, 61, 64, .3) 78%, rgba(10, 61, 64, .1) 100%); }
+.gt-dau-in { width: 100%; padding-top: 72px; padding-bottom: 56px; }
+.gt-dau-in > * { max-width: 560px; }
+.gt-dau .vet { color: var(--color-river-muted); }
+.gt-dau .vet a { color: #fff; }
+.gt-h { font-family: var(--font-serif); font-weight: 600; font-size: clamp(40px, 5vw, 60px); line-height: 1.08; margin-top: 10px; }
+.gt-dan { margin-top: 16px; font-size: 19px; color: #E4F1EE; }
+
+.gt-than { padding-bottom: 24px; }
+.gt-khoi { padding-top: 64px; }
+.gt-khoi > .khoi-h { margin-bottom: 24px; }
+.gt-lam { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.gt-the { background: var(--color-surface); border-radius: 18px; padding: 24px 26px; display: grid; grid-template-columns: 52px 1fr; column-gap: 18px; }
+.gt-ic { grid-row: span 2; width: 52px; height: 52px; border-radius: 50%; background: var(--color-accent-soft); color: var(--color-accent-deep);
+  display: grid; place-items: center; }
+.gt-ic svg { width: 26px; height: 26px; }
+.gt-the h3 { font-size: 19px; font-weight: 600; line-height: 1.35; }
+.gt-the p { margin-top: 6px; color: var(--color-muted); }
+
+.gt-song { display: block; width: 100%; height: 56px; margin: -6px 0 -10px; overflow: visible; }
+.gt-song path { fill: none; stroke: var(--color-accent); stroke-width: 3; stroke-linecap: round; opacity: .6; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.gt-buoc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.gt-so { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-river); color: #fff;
+  font-weight: 600; margin-bottom: 14px; }
+.gt-buoc h3 { font-size: 19px; font-weight: 600; }
+.gt-buoc p { margin-top: 6px; color: var(--color-muted); }
+
+.gt-doi { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.gt-h2 { font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 1.2; margin-bottom: 12px; }
+.gt-gioi-han { background: var(--color-surface); border-left: 5px solid var(--color-accent); border-radius: 4px 18px 18px 4px; padding: 24px 26px; }
+.gt-gioi-han ul { padding-left: 20px; list-style: disc; }
+.gt-gioi-han li + li { margin-top: 8px; }
+.gt-du-lieu { padding: 24px 4px; }
+.gt-du-lieu p + p { margin-top: 10px; }
+
+.gt-nguon { margin-top: 56px; border-top: 1px solid var(--color-line); padding-top: 16px; font-size: 15px; color: var(--color-muted); }
+.gt-nguon summary { cursor: pointer; font-weight: 600; color: var(--color-ink); }
+.gt-nguon ul { margin-top: 10px; padding-left: 20px; list-style: disc; }
+.gt-nguon li + li { margin-top: 6px; }
+.gt-nguon a { text-decoration: underline; text-underline-offset: 3px; }
+.gt-nguon-h { margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--color-ink); }
+
+@media (max-width: 760px) {
+  .gt-dau { min-height: 360px; }
+  .gt-dau::before { background: linear-gradient(0deg, rgba(10, 61, 64, .97) 0, rgba(10, 61, 64, .9) 55%, rgba(10, 61, 64, .4) 100%); }
+  .gt-lam, .gt-buoc, .gt-doi { grid-template-columns: 1fr; }
+  .gt-song { display: none; }
+  .gt-khoi { padding-top: 48px; }
+}
+
+/* Đường sông vẽ dần khi dải ba bước cuộn vào (CSS theo cuộn; trình duyệt chưa hỗ trợ ⇒ đường hiện sẵn) */
+@supports (animation-timeline: view()) {
+  .hieu-ung .gt-song path { animation: gt-ve linear both; animation-timeline: view(); animation-range: entry 10% cover 45%; }
+}
+@keyframes gt-ve { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }

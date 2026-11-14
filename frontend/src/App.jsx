@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChatView, useChat } from "./chat.jsx";
-import { Bai, CAU_BIEU_MAU, GioiThieu, GOI_Y, KhamPha, LenKeHoach, LenKeHoachV2, LinhVuc, TrangChu } from "./pages.jsx";
+import { ChatView, TrangTroLy, useChat } from "./chat.jsx";
+import { CAU_BIEU_MAU, GOI_Y } from "./chung.jsx";
+import { TrangChu } from "./TrangChu.jsx";
+import { Bai, KhamPha, LinhVuc } from "./KhamPha.jsx";
+import { LenKeHoach, LenKeHoachV2 } from "./LenKeHoach.jsx";
+import { GioiThieu } from "./GioiThieu.jsx";
 import { useRoute } from "./route.js";
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
@@ -20,6 +24,7 @@ export default function App() {
   const route = useRoute();
   const chat = useChat();
   const [tinhNang, setTinhNang] = useState(TINH_NANG_TAT);
+  const [daCoTinhNang, setDaCoTinhNang] = useState(false);  // H1: chưa biết cờ ⇒ trang Lên kế hoạch giữ chỗ (không vẽ biểu mẫu cũ rồi đổi — C đo CLS 0,22)
   const [bai, setBai] = useState(null);
   const [baiLoi, setBaiLoi] = useState("");
   const [thoiTiet, setThoiTiet] = useState(null);
@@ -28,7 +33,7 @@ export default function App() {
   const onTroLy = route.page === "tro-ly";
 
   useEffect(() => {
-    getJson("/api/tinh_nang").then(setTinhNang).catch(() => setTinhNang(TINH_NANG_TAT));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
+    getJson("/api/tinh_nang").then(setTinhNang).catch(() => setTinhNang(TINH_NANG_TAT)).finally(() => setDaCoTinhNang(true));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
     getJson("/api/kham_pha").then(data => setBai(data.bai)).catch(() => setBaiLoi("Chưa tải được danh sách bài — thử tải lại trang."));
   }, []);
   useEffect(() => {
@@ -55,10 +60,13 @@ export default function App() {
     if (!onTroLy) setPanelOpen(true);
   }
 
+  // H1 (14/11, A chốt): biểu mẫu bản 2 ⇒ lịch hiện ngay cột phải trang Lên kế hoạch (cùng lượt trong cuộc trò chuyện) — không chuyển trang;
+  // biểu mẫu cũ (cờ bản 2 tắt) giữ đường cũ sang trang trợ lý
   function submitPlan(truong, summary) {
     chat.ask(CAU_BIEU_MAU, { truong, summary, bieuMau: true });
-    window.location.hash = "#/tro-ly";
+    if (!tinhNang.len_ke_hoach_v2) window.location.hash = "#/tro-ly";
   }
+  const lichTurn = [...chat.turns].reverse().find(t => t.bieuMau) || null;
 
   // `chon` = lựa chọn bộ xếp đã dùng (biểu mẫu cũ); `truong` = giá trị đã gửi — biểu mẫu bản 2 điền lại từ đây (server đổi giá trị mới về trường cũ)
   function editPlan(chon, truong) {
@@ -77,13 +85,13 @@ export default function App() {
 
   return (
     <div className={`cong ${panelOpen ? "chat-mo" : ""}`}>
-      <header className="hd">
+      <header className="hd hd-cuon">
         <div className="hd-in">
           <a className="brand" href="#/">
             <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
-              <circle cx="16" cy="16" r="15" fill="#0A3D40" />
-              <path d="M5 19c4-3 7 3 11 0s7 3 11 0" fill="none" stroke="#CFE7E2" strokeWidth="2" strokeLinecap="round" />
-              <path d="M9 14l7-6 7 6" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="16" cy="16" r="15" fill="#FFFFFF" />
+              <path d="M5 19c4-3 7 3 11 0s7 3 11 0" fill="none" stroke="#0E6B66" strokeWidth="2" strokeLinecap="round" />
+              <path d="M9 14l7-6 7 6" fill="none" stroke="#0A3D40" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className="brand-dai">{TEN_DAY_DU}</span>
             <span className="brand-ngan">{TEN_NGAN}</span>
@@ -97,22 +105,19 @@ export default function App() {
       </header>
 
       <main className="noi-dung">
-        {route.page === "trang-chu" && <TrangChu bai={bai} tinhNang={tinhNang} thoiTiet={thoiTiet} onAsk={askAnywhere} />}
-        {route.page === "kham-pha" && <KhamPha bai={bai} />}
+        {route.page === "trang-chu" && <TrangChu bai={bai} tinhNang={tinhNang} thoiTiet={thoiTiet} onAsk={askAnywhere} onAskAbout={askAbout} />}
+        {route.page === "kham-pha" && <KhamPha bai={bai} loi={baiLoi} />}
         {route.page === "linh-vuc" && <LinhVuc linhVuc={route.linhVuc} bai={bai} loi={baiLoi} />}
         {route.page === "bai" && <Bai baiId={route.baiId} bai={bai} onAskAbout={askAbout} />}
-        {route.page === "len-ke-hoach" && (
+        {route.page === "len-ke-hoach" && !daCoTinhNang && <div className="lkh-cho" aria-busy="true" />}
+        {route.page === "len-ke-hoach" && daCoTinhNang && (
           tinhNang.len_ke_hoach_v2
-            ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
+            ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan}
+                            lichTurn={lichTurn} onEditPlan={editPlan} />
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
-        {route.page === "gioi-thieu" && <GioiThieu banDo={tinhNang.ban_do_lich} anh={tinhNang.anh} muc={route.muc} />}
-        {onTroLy && (
-          <div className="khung tro-ly-trang">
-            <h1 className="trang-h">{TEN_TRO_LY}</h1>
-            <ChatView chat={chat} idPrefix="trang" suggestions={GOI_Y} onEditPlan={editPlan} anh={tinhNang.anh} />
-          </div>
-        )}
+        {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} muc={route.muc} />}
+        {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 
       {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.

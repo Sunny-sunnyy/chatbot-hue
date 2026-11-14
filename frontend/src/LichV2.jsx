@@ -1,0 +1,207 @@
+import { Suspense, lazy, useState } from "react";
+import { boMaTrichDan } from "./markdown.js";
+import { toaDoHopLe } from "./toaDo.js";
+import { GP } from "./anh.js";
+import { SourceLine } from "./SourceLine.jsx";
+import { dungIcs } from "./lich_ics.js";
+
+const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
+
+// Thẻ lịch "Lên kế hoạch" bản 2 + lưu lịch (tách từ chat.jsx, đợt 0 giao diện H1; hành vi giữ nguyên).
+export const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ nhận link bản đồ đúng gốc này (kiểm cả phía trình duyệt)
+
+// "Lên kế hoạch" bản 2 (spec 5c.5): thẻ lịch vẽ TỪ KHUNG do code dựng (tên, buổi, giờ, ghi chú); câu model đổ vào theo `id_muc`, chưa tới ⇒
+// "đang viết…". Loại mục chưa biết (đợt sau: ăn uống…) ⇒ bỏ qua, không lỗi. Nút "Sửa" điền lại biểu mẫu bằng đúng giá trị đã gửi.
+const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
+const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
+const NHAN_MUC_V2 = { co_the_di_lai: "có thể đi lại", kiem_lich_dien: "kiểm lịch diễn trước khi đi" };  // cùng chữ với server (`NHAN_MUC`)
+const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ nhật"];  // `thu` của server: thứ Hai = 0
+
+// Đợt 2 (B): ảnh tự host của điểm (cờ `anh_lich`) — chỉ vẽ khi `src` dưới /anh/lich/ và trang ảnh là Wikimedia Commons (kiểm cả phía trình
+// duyệt như link bản đồ); điểm không có ảnh ⇒ không vẽ gì (không ảnh thay). Dòng ghi công: tác giả · giấy phép · trang ảnh (điều kiện CC BY).
+// `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`). Ghi công như ảnh cổng: link giấy phép + "đã thu
+// nhỏ" (CC BY / BY-SA đòi ghi thay đổi; `doi` của bảng khi có chỉnh khác, vd cắt).
+const ANH_LICH = "/anh/lich/";
+const TRANG_COMMONS = "https://commons.wikimedia.org/";
+function anhHopLe(a) {
+  return !!a && typeof a.src === "string" && a.src.startsWith(ANH_LICH) && !a.src.slice(ANH_LICH.length).includes("/")
+    && typeof a.trang === "string" && a.trang.startsWith(TRANG_COMMONS) && !!a.tac_gia && !!a.giay_phep;
+}
+
+function AnhLich({ anh, ten }) {
+  return (
+    <figure className="lich-anh">
+      <img src={`${import.meta.env.BASE_URL}${anh.src.slice(1)}`} alt={anh.chu_thich ? `${ten} — ${anh.chu_thich}` : ten} loading="lazy" decoding="async" />
+      <figcaption>
+        {anh.chu_thich && <>{anh.chu_thich}. </>}Ảnh: {anh.tac_gia} ·{" "}
+        {GP[anh.giay_phep] ? <a href={GP[anh.giay_phep]} target="_blank" rel="noopener noreferrer">{anh.giay_phep}</a> : anh.giay_phep} ·{" "}
+        <a href={anh.trang} target="_blank" rel="noopener noreferrer">trang ảnh trên Wikimedia Commons</a> · đã {anh.doi || "thu nhỏ"}
+      </figcaption>
+    </figure>
+  );
+}
+
+const KIEU_V2 = { nhe_nhang: "nhẹ nhàng", can_bang: "cân bằng", kham_pha: "khám phá nhiều" };
+const MAU_BUOI = { sang: "sang", trua: "sang", chieu: "chieu", toi: "toi" };
+const IC_BUOI = { sang: "M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z",
+                  chieu: "M17 18a5 5 0 0 0-10 0M12 9V3M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1",
+                  toi: "M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" };
+IC_BUOI.trua = IC_BUOI.sang;
+
+// H1 (14/11): thẻ lịch kiểu dòng thời gian (bản mẫu `data/ui_mau_2026-11-14/h1/len_ke_hoach.html`). Giữ lớp bộ đo bám: .lich-v2 .lich-hieu
+// .lich-ngay (aria-label "Ngày N") .lich-ten .lich-cau .lich-anh .lich-ghi-chu .lich. Ghi chú dự báo có `ngay` ⇒ đặt dưới đúng ngày (B, trường mới).
+// Phút đi `phut_di` (B) chỉ có giữa hai mục cùng buổi ⇒ chỉ vẽ khi có trường, không đoán.
+export function LichV2({ turn, onEditPlan }) {
+  const lich = turn.lichV2;
+  const cau = turn.cauV2 || {};
+  const xong = turn.phase === "done";
+  const ts = lich.tham_so || {};
+  const banDo = lich.ngay.some(ng => ng.muc.some(m => toaDoHopLe(m.toa_do)))
+    ? lich.ngay.flatMap(ng => ng.muc.filter(m => m.loai === "tham_quan" || m.loai === "hoat_dong_toi")
+        .filter(m => typeof m.map_url === "string" && m.map_url.startsWith(MAP_PREFIX))
+        .map((m, i) => ({ ten: m.ten, map_url: m.map_url, ngay: ng.ngay, buoi: m.buoi, thu_tu: i + 1, toa_do: m.toa_do })))
+    : [];
+  const theoNgay = n => lich.ghi_chu.filter(g => g.ngay === n);
+  const chung = lich.ghi_chu.filter(g => g.ngay == null);
+  const ngayDau = lich.ngay[0];
+  const diCung = [ts.nguoi_lon ? `${ts.nguoi_lon} người lớn` : null, ts.tre_em ? `${ts.tre_em} trẻ em` : null, ts.lon_tuoi ? "có người lớn tuổi" : null]
+    .filter(Boolean).join(" · ");
+  return (
+    <div className="bubble lich-v2">
+      <div className="lkh-thanh">
+        {ngayDau?.ngay_thang && <div><small>Bắt đầu</small><b>{THU_V2[ngayDau.thu]} {ngayDau.ngay_thang.split("-").reverse().join("/")}</b></div>}
+        {diCung && <div><small>Đi cùng</small><b>{diCung}</b></div>}
+        <div><small>Thời gian</small><b>{lich.ngay.length} ngày{KIEU_V2[ts.kieu_di] ? ` · ${KIEU_V2[ts.kieu_di]}` : ""}</b></div>
+      </div>
+      <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
+      {/* Chỗ dành cho "sửa lịch bằng lời" (B, việc agent đợt sau): `lich.thay_doi` = [{cau, duoc}] do code dựng — chưa có ⇒ không vẽ gì */}
+      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && (
+        <ul className="lkh-doi" aria-label="Thay đổi của lịch">
+          {lich.thay_doi.map((d, i) => <li key={i} className={d.duoc ? "lkh-doi-duoc" : "lkh-doi-khong"}>{d.duoc ? "Đã đổi: " : "Không đổi được: "}{d.cau}</li>)}
+        </ul>
+      )}
+      <section className="lkh-tong" aria-label="Tổng quan">
+        <p className="lkh-tong-h">Tổng quan</p>
+        <ol>{lich.ngay.map(ng => (
+          <li key={ng.ngay}><a href={`#ngay-${turn.key}-${ng.ngay}`} onClick={e => { e.preventDefault();
+            document.getElementById(`ngay-${turn.key}-${ng.ngay}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Ngày {ng.ngay}</a>{" "}
+            {ng.muc.filter(m => m.loai !== "nghi").map(m => m.ten).join(" → ")}</li>
+        ))}</ol>
+      </section>
+      <div className="lkh-ngay-ds">
+      {/* Khoảnh khắc chính (C, c_nghien_cuu_wow.md): dòng sông vẽ dần theo cuộn nối các ngày — chỉ CSS trên SVG có sẵn, không làm trễ khung */}
+      <svg className="lkh-song-ve" viewBox="0 0 40 1000" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M20 0 C 36 80, 4 160, 20 250 S 36 420, 20 500 S 4 670, 20 750 S 36 920, 20 1000" pathLength="1" />
+      </svg>
+      {lich.ngay.map(ng => (
+        <section key={ng.ngay} id={`ngay-${turn.key}-${ng.ngay}`} className="lich-ngay hien" aria-label={`Ngày ${ng.ngay}`}>
+          <h3>Ngày {ng.ngay}{ng.ngay_thang ? ` · ${THU_V2[ng.thu]} ${ng.ngay_thang.split("-").reverse().join("/")}` : ""}</h3>
+          <ul className="lkh-dong">
+            {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => [
+              m.phut_di != null && <li key={`${m.id_muc}-di`} className="lkh-di">khoảng {m.phut_di} phút đi</li>,
+              <li key={m.id_muc} className={`lkh-muc lkh-${MAU_BUOI[m.buoi] || "sang"} ${m.loai === "nghi" ? "lkh-nghi" : ""}`}>
+                <span className="lkh-cham-buoi" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={IC_BUOI[m.buoi] || IC_BUOI.sang} /></svg>
+                </span>
+                {anhHopLe(m.anh) ? <AnhLich anh={m.anh} ten={m.ten} /> : <span className="lkh-khong-anh" aria-hidden="true" />}
+                <div className="lkh-than">
+                  <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
+                  <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
+                  {m.loai !== "nghi" && (
+                    <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
+                      : !xong && <><span className="sr-only">đang viết…</span><span className="lkh-xuong" aria-hidden="true" /><span className="lkh-xuong lkh-ngan" aria-hidden="true" /></>}
+                    </span>
+                  )}
+                </div>
+              </li>,
+            ])}
+          </ul>
+          {theoNgay(ng.ngay).length > 0 && <ul className="lkh-du-bao">{theoNgay(ng.ngay).map((g, i) => <li key={i}>{g.cau}</li>)}</ul>}
+        </section>
+      ))}
+      </div>
+      {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} /></Suspense>}
+      {chung.length > 0 && (
+        <div className="lich-ghi-chu">
+          <p className="font-semibold">Ghi chú của lịch</p>
+          <ul>{chung.map((g, i) => <li key={i} className={`lkh-gc-${g.ma || "khac"}`}>{g.cau}</li>)}</ul>
+        </div>
+      )}
+      {turn.sources?.length > 0 && <SourceLine turn={turn} />}
+      {turn.notice && <p className="notice">{turn.notice}</p>}
+      {xong && (
+        <div className="lich">
+          <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
+          <NutIcs lich={lich} cau={cau} />
+          {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Việc agent (4) 14/11: thêm lịch vào lịch điện thoại / máy tính — tệp .ics do code dựng từ khung (lich_ics.js), tải về bằng Blob (không gửi đi).
+// Lịch không có ngày đi ⇒ không đoán ngày: thay nút bằng dòng nhắc.
+function NutIcs({ lich, cau }) {
+  const [bao, setBao] = useState("");
+  const coNgay = lich.ngay.every(ng => ng.ngay_thang);
+  if (!coNgay) return <p className="lkh-ics-nhac">Chọn ngày đi ở biểu mẫu để thêm lịch vào lịch điện thoại.</p>;
+  function taiIcs() {
+    const sach = Object.fromEntries(Object.entries(cau || {}).map(([k, v]) => [k, boMaTrichDan(v)]));
+    const kq = dungIcs(lich, sach);
+    if (!kq) return;
+    const url = URL.createObjectURL(new Blob([kq.ics], { type: "text/calendar;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lich-trinh-hue.ics";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setBao(`Đã tạo ${kq.soSuKien} sự kiện${kq.soBo ? ` (${kq.soBo} điểm không có giờ cụ thể nên không thêm)` : ""}.`);
+  }
+  return (
+    <span className="lkh-ics">
+      <button type="button" className="retry" onClick={taiIcs}>Thêm vào lịch (.ics)</button>
+      <span className="text-sm text-muted" role="status">{bao}</span>
+    </span>
+  );
+}
+
+// Việc nhỏ (1) 08/11: lưu lịch ra chữ thường — chữ lấy từ phần đang hiện (không gọi server, không gửi đi đâu).
+const TEN_FILE_LICH = "lich-trinh-hue.txt";
+const DONG_CUOI_LICH = "Từ Trợ lý Huế — có thể sai; giờ mở cửa, giá vé có thể đã thay đổi, hãy kiểm lại trước khi đi.";
+
+export function vanBanLich(turn, answerText, items) {
+  const links = items.filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
+  const diem = links.map(i => (i.ngay ? `Ngày ${i.ngay} · ${i.thu_tu}. ${i.ten}: ${i.map_url}` : `- ${i.ten}: ${i.map_url}`));
+  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), "", answerText.trim(),
+          ...(diem.length ? ["", "Bản đồ từng điểm:", ...diem] : []), "", DONG_CUOI_LICH, ""].join("\n");
+}
+
+export function LuuLich({ getText }) {
+  const [bao, setBao] = useState("");
+  async function saoChep() {
+    try {
+      await navigator.clipboard.writeText(getText());  // chỉ có ở trang https / localhost
+      setBao("Đã sao chép lịch.");
+    } catch {
+      setBao("Trình duyệt không cho sao chép — dùng nút Tải về.");
+    }
+  }
+  function taiVe() {
+    const url = URL.createObjectURL(new Blob([getText()], { type: "text/plain;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = TEN_FILE_LICH;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setBao("Đã tải về " + TEN_FILE_LICH + ".");
+  }
+  return (
+    <div className="luu-lich">
+      <button type="button" className="retry" onClick={saoChep}>Sao chép lịch</button>
+      <button type="button" className="retry" onClick={taiVe}>Tải về (.txt)</button>
+      <span className="text-sm text-muted" role="status">{bao}</span>
+    </div>
+  );
+}

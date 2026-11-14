@@ -1,0 +1,72 @@
+/* Trang Trợ lý Huế — H1 "Sông Hương" (bản mẫu data/ui_mau_2026-11-14/h1/tro_ly.html, User duyệt 14/11). B, đợt 1 giao diện.
+   Tên lớp cũ (.turn .ask .bubble .answer .composer .send .searching .feedback .notice .clarify .web .nguon-ten) GIỮ — bộ đo / Playwright bám vào.
+   Lớp mới tiền tố tl- (trang) hoặc tên ngắn trong khung lượt (.tra, .buoc, .go). Chuyển động chỉ dưới .hieu-ung (hieu_ung.css). */
+
+/* Bố cục trang: cột gợi ý trái + khung chat. Ghi đè bề rộng cũ của index.css (.tro-ly-trang 900 px) theo mẫu 1280 (review E m-1) */
+.tro-ly-trang.khung { max-width: 1280px; padding-top: 0; }
+.tl-cot { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; padding-top: 28px; }
+.tl-ben { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 14px; }
+.tl-hop { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 20px; padding: 18px 20px; }
+.tl-hop h2 { margin: 0 0 10px; font-family: var(--font-serif); font-weight: 600; font-size: 21px; color: var(--color-ink); }
+.tl-hop p { margin: 0; color: var(--color-muted); font-size: 15px; }
+.tl-chu-de { display: flex; flex-direction: column; gap: 8px; }
+.tl-chu-de button { display: flex; gap: 12px; align-items: center; text-align: left; border: 1px solid var(--color-line); background: var(--color-surface);
+  border-radius: 14px; padding: 10px 12px; cursor: pointer; font-size: 15px; color: var(--color-ink); }
+.tl-chu-de button:hover { border-color: var(--color-accent); }
+.tl-chu-de button:disabled { opacity: .6; cursor: not-allowed; }
+.tl-chu-de .bt { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; }
+.tl-lam { margin: 0; padding-left: 18px; font-size: 15px; color: var(--color-muted); display: grid; gap: 4px; }
+.tl-lam a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+.tl-chat { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column;
+  min-height: calc(100vh - 120px); }
+.tl-chat-dau { display: flex; align-items: center; gap: 12px; padding: 16px 22px; background: linear-gradient(90deg, var(--color-river), var(--color-accent)); color: #fff; }
+.tl-chat-dau .tra-av { background: #fff; color: var(--color-river); width: 42px; height: 42px; }
+.tl-chat-dau b { display: block; font-size: 17px; }
+.tl-chat-dau small { color: var(--color-river-muted); font-size: 14px; }
+.tl-chat .chat-view { flex: 1; display: flex; flex-direction: column; }
+.tl-chat .chat-turns { flex: 1; padding: 24px 22px; background: var(--color-page); }
+.tro-ly-trang .tl-chat .chat-form { position: sticky; bottom: 0; background: var(--color-surface); border-top: 1px solid var(--color-line); padding: 14px 18px; }
+.tro-ly-trang .tl-chat .chat-turns { margin-top: 0; }
+.tro-ly-trang .turn { scroll-margin-top: 96px; }  /* tự cuộn tới lượt mới: không để thanh menu dính che câu hỏi */
+.buoc-gon::first-letter { text-transform: uppercase; }
+/* desktop: câu gợi ý đã ở cột trái ⇒ ẩn bản lặp trong lời chào */
+@media (min-width: 981px) { .tl-cot .chat-chao .suggest { display: none; } }
+
+/* Một lượt: câu hỏi phải, trả lời trái có ảnh đại diện (dùng cả ở khung nổi) */
+.tra { display: flex; gap: 12px; align-items: flex-start; }
+.tra-noi { flex: 1; min-width: 0; }
+.tra-av { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--color-river); color: #fff; display: grid; place-items: center; }
+.bubble { box-shadow: 0 6px 18px rgba(10, 61, 64, .06); }
+.chat .tra-av { display: none; }  /* khung nổi hẹp: bỏ ảnh đại diện */
+
+/* Bước công cụ thật + "đang gõ" */
+.searching { flex-wrap: wrap; }
+.buoc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.buoc li { color: var(--color-muted); }
+.buoc li.xong::before { content: "✓"; color: var(--color-accent); font-weight: 700; margin-right: 8px; }
+.buoc li.dang { color: var(--color-accent-deep); font-weight: 600; }
+.buoc li.dang::before { content: "•"; color: var(--color-accent); margin-right: 8px; }
+.buoc-gon { margin: 0 0 6px; font-size: 14px; color: var(--color-muted); }
+.go { display: inline-flex; gap: 5px; padding: 6px 2px; }
+.go i { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); opacity: .35; }
+.hieu-ung .go i { animation: tl-go 1.2s ease-in-out infinite; }
+.hieu-ung .go i:nth-child(2) { animation-delay: .15s; }
+.hieu-ung .go i:nth-child(3) { animation-delay: .3s; }
+@keyframes tl-go { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+/* tin mới trượt vào (chỉ opacity / transform — không làm trễ lúc phần tử vào DOM) */
+.hieu-ung .turn > .ask, .hieu-ung .turn > .tra { animation: tl-tin .32s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes tl-tin { from { opacity: 0; transform: translateY(8px); } }
+
+/* Mục web tách riêng, màu khác câu kho */
+.web { background: #FFF4DB; border-color: #EAD7A6; }
+.web h3 { color: #7A5212 !important; }
+
+@media (max-width: 980px) {
+  .tl-cot { grid-template-columns: 1fr; padding-top: 0; gap: 0; }
+  .tl-ben { display: none; }
+  .tl-chat { border-radius: 0; border: 0; min-height: calc(100vh - 68px); }
+  .tro-ly-trang.khung { padding: 0; }
+  .tl-chat .chat-turns { padding: 18px 14px; }
+  .tra-av { display: none; }
+}
