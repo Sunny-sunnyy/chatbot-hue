@@ -50,14 +50,23 @@ def dong_du_bao(bang, khung: dict, db: dict | None) -> list[str]:
             continue
         dong.append(f"Ngày {ng['ngay']} — {tt.dong_ngay(d)}.")
         if d["xs"] is not None and d["xs"] >= lt2.NGUONG_MUA:
-            ids = [j for b in lt2.BUOI_NGAY for j in ng["buoi"][b]]
-            for j in (x for x in ids if T[x]["trong_nha"] == "ngoai_troi"):
-                thay = next((x["id"] for x in bang.diem if x["trong_nha"] in ("trong_nha", "ca_hai") and x["cum"] == T[j]["cum"]
-                             and x["id"] not in lt2.diem_v2(khung) and set(x["buoi"]) & set(lt2.BUOI_NGAY)), None)
-                if thay is not None:
-                    dong.append(f"Nếu mưa ngày {ng['ngay']}: có thể thay {T[j]['ten']} bằng {T[thay]['ten']} (trong nhà).")
-                    break
+            dong.append(dong_neu_mua(bang, khung, ng))
     return dong + [db["nguon"]] if dong else []
+
+
+def dong_neu_mua(bang, khung: dict, ng: dict) -> str:
+    """Ngày dự báo mưa ≥ ngưỡng ⇒ LUÔN đúng một dòng "Nếu mưa" (review 14/11, thước ý 6): có điểm ngoài trời thay được ⇒ gợi ý thay; ngoài trời
+    không có điểm thay ⇒ nói thẳng; không điểm ngoài trời ⇒ nói các điểm có chỗ trong nhà."""
+    T = bang.theo_id
+    ngoai = [j for b in lt2.BUOI_NGAY for j in ng["buoi"][b] if T[j]["trong_nha"] == "ngoai_troi"]
+    for j in ngoai:
+        thay = next((x["id"] for x in bang.diem if x["trong_nha"] in ("trong_nha", "ca_hai") and x["cum"] == T[j]["cum"]
+                     and x["id"] not in lt2.diem_v2(khung) and set(x["buoi"]) & set(lt2.BUOI_NGAY)), None)
+        if thay is not None:
+            return f"Nếu mưa ngày {ng['ngay']}: có thể thay {T[j]['ten']} bằng {T[thay]['ten']} (trong nhà)."
+    if ngoai:
+        return f"Nếu mưa ngày {ng['ngay']}: {T[ngoai[0]]['ten']} ở ngoài trời và gần đó chưa có điểm trong nhà để thay — mang áo mưa hoặc đổi ngày."
+    return f"Nếu mưa ngày {ng['ngay']}: các điểm trong ngày đều trong nhà hoặc có phần trong nhà, vẫn đi được — nhớ mang áo mưa."
 
 
 async def chuan_bi(query: str, retrieval_service, context_builder, trace: AnswerTrace, flags: AssistantFlags, today: str | None) -> str:

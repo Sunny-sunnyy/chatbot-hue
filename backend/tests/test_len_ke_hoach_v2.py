@@ -313,6 +313,12 @@ def test_kiem_khung_v2_catches_violations(tmp_path):
     assert "qua_day_buoi" in sai(["a", "t"], tre_em=1)
     assert "trung_diem" in sai(["a"], ["a"])
     assert "ngay_rong" in sai([])
+    chong = copy.deepcopy(good)  # review 14/11 M-1: sáng kết thúc sau giờ đầu buổi chiều
+    chong["ngay"][0]["buoi"].update(sang=["a"], chieu=["c"])
+    chong["gio"] = {"a": "11:45 – 13:00", "c": "13:00 – 14:15"}
+    assert "sang_chong_chieu" not in v2.kiem_khung_v2(b, chong)
+    chong["gio"]["a"] = "11:50 – 13:05"
+    assert "sang_chong_chieu" in v2.kiem_khung_v2(b, chong)
     assert "lap_khong_nhan" in v2.kiem_khung_v2(b, dict(good, tham_so=dict(good["tham_so"], so_thich=["thien_nhien"])))
 
 
@@ -599,6 +605,12 @@ def test_rule_rain_day_prefers_indoor_but_keeps_priority(tmp_path):
     dong = lkh.dong_du_bao(b, ua, db)
     assert dong[0].startswith("Ngày 1 — ") and dong[1] == "Nếu mưa ngày 1: có thể thay uu bằng ca (trong nhà)." and dong[-1] == "nguồn"
     assert lkh.dong_du_bao(b, ua, None) == []
+    # ngày mưa không có điểm ngoài trời / ngoài trời không có điểm thay ⇒ vẫn đúng một dòng (review 14/11)
+    ng = {"ngay": 1, "buoi": {"sang": ["trong"], "chieu": [], "toi": []}}
+    assert lkh.dong_neu_mua(b, ua, ng).startswith("Nếu mưa ngày 1: các điểm trong ngày đều trong nhà")
+    chi_ngoai = _bang(tmp_path, [_diem("ngoai", "bo_nam")], {"chung": ["ngoai"]}, ten="c.json")
+    k1 = {"ngay": [{"ngay": 1, "buoi": {"sang": ["ngoai"], "chieu": [], "toi": []}}]}
+    assert lkh.dong_neu_mua(chi_ngoai, k1, k1["ngay"][0]).startswith("Nếu mưa ngày 1: ngoai ở ngoài trời")
 
 
 @pytest.mark.parametrize("kich_ban", ["khong_mua", "mua_ngay_1", "mua_moi_ngay"])
@@ -621,6 +633,9 @@ def test_forecast_scenarios_and_no_call_outside_7_days(kich_ban):
     assert v2.kiem_khung_v2(b, k) == []
     dong = lkh.dong_du_bao(b, k, db)
     assert sum(x.startswith("Ngày ") for x in dong) == 3 and dong[-1].startswith(tt.GHI_CONG)
+    so_ngay_mua = sum(x >= v2.NGUONG_MUA for x in xs[:3])  # thước ý 6: mỗi ngày mưa đúng một dòng "Nếu mưa", kể cả khi không có điểm để thay
+    assert [x.split(":")[0] for x in dong if x.startswith("Nếu mưa")] == [f"Nếu mưa ngày {i}" for i in range(1, 4) if xs[i - 1] >= v2.NGUONG_MUA]
+    assert sum(x.startswith("Nếu mưa") for x in dong) == so_ngay_mua
     assert asyncio.run(lkh.du_bao_lich(flags, hom + dt.timedelta(days=7), 5, AnswerTrace(), hom)) is None and len(goi) == 1
     assert asyncio.run(lkh.du_bao_lich(flags, None, 5, AnswerTrace(), hom)) is None and len(goi) == 1
 

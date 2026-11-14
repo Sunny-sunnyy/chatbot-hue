@@ -257,11 +257,14 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             if not slots[buoi]:
                 continue
             tong = PHUT[T[slots[buoi][0]]["thoi_luong"]]
+            # review 14/11 M-1: quỹ phút không tính thời gian chờ giờ suất / mở cửa ⇒ điểm thêm buổi sáng phải xong trước giờ đầu buổi chiều
+            het_sang = gio[slots["chieu"][0]][0] if slots["chieu"] else bat_dau["chieu"]
             while quy is not None and len(slots[buoi]) < TOI_DA_BUOI:  # 5c.3: điểm thêm cùng cụm / cụm kề với điểm ngay trước, vừa quỹ phút
                 truoc = T[slots[buoi][-1]]
                 t_den = gio[slots[buoi][-1]][1]  # điểm thêm bắt đầu sau điểm trước + phút đi (5c.3); phải vừa giờ mở cửa của nó
                 tiep = next((j for j in pool + lap if _phut_di(truoc, T[j]) is not None and dung_duoc(j, i, buoi, cums, t_den + _phut_di(truoc, T[j]))
-                             and tong + _phut_di(truoc, T[j]) + PHUT[T[j]["thoi_luong"]] <= quy), None)
+                             and tong + _phut_di(truoc, T[j]) + PHUT[T[j]["thoi_luong"]] <= quy
+                             and (buoi != "sang" or dat_gio(T[j], t_den + _phut_di(truoc, T[j]))[1] <= het_sang)), None)
                 if tiep is None:
                     break
                 tong += _phut_di(truoc, T[tiep]) + PHUT[T[tiep]["thoi_luong"]]
@@ -371,6 +374,10 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                 if truoc is not None and s < truoc[1] + (_phut_di(T[truoc[0]], T[j]) or 0):
                     loi.append("gio_chong")
                 truoc = (j, e)
+        sang, chieu = ng["buoi"]["sang"], ng["buoi"]["chieu"]
+        if sang and chieu and sang[-1] in gio_k and chieu[0] in gio_k and \
+                ra_phut(gio_k[sang[-1]].split("–")[1].strip()) > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
+            loi.append("sang_chong_chieu")  # review 14/11 M-1: hai buổi liền nhau không được chồng giờ
         for b in BUOI_NGAY:
             ids = ng["buoi"][b]
             so += len(ids)
