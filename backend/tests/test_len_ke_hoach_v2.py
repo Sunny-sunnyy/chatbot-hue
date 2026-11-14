@@ -1003,5 +1003,9 @@ def test_sample_itinerary_gets_lodging_and_food_by_the_same_step_as_real_plans()
     assert lich["o_dau"] and lich["o_dau"]["co_so"] and lich["an"]
     khung = v2.xep_v2(bat.bang_lich_v2, v2.tu_truong(cong.TRUONG_MAU))
     mau = v2.dung_lich(bat.bang_lich_v2, khung, {}, None, (), None, None)
-    lkh.gan_o_an(mau, bat.bang_lich_v2, khung, bat)
+    import dataclasses
+    kho = dataclasses.replace(bat, quan_bang={c: [q for q in ds if q["nguon"] == "kho"] for c, ds in bat.quan_bang.items()})
+    lkh.gan_o_an(mau, bat.bang_lich_v2, khung, kho)
     assert lich["o_dau"] == mau["o_dau"] and lich["an"] == mau["an"]
+    # lịch mẫu chỉ quán có bài trong kho (không nhãn nguồn mở, có bai_id); lịch thật vẫn dùng đủ nguồn
+    assert all(q["nhan"] is None and q["bai_id"] for a in lich["an"] for q in a["quan"])

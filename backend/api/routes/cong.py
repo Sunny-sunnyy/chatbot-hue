@@ -4,6 +4,7 @@ Khám phá, một bài, ô thời tiết trang chủ, cờ tính năng, lịch m
 Bài kho = đúng các file runtime của chỉ mục: lúc khởi động `build_full_corpus_retrieval_service` đã kiểm danh sách + hash file khớp build record
 (`corpus.sources`), rồi `api/app.py` mới nạp danh sách này. `id` bài từ trình duyệt chỉ được **so nguyên chuỗi** với danh sách đó — không ghép
 đường dẫn từ chữ người dùng (không đọc được file ngoài danh sách)."""
+import dataclasses
 from pathlib import Path
 
 from fastapi import APIRouter, Query, Request
@@ -139,6 +140,8 @@ def dung_lich_mau(flags) -> dict:
     bang = flags.bang_lich_v2
     khung = lt2.xep_v2(bang, lt2.tu_truong(TRUONG_MAU))
     lich = lt2.dung_lich(bang, khung, {}, None, (), None, flags.anh_lich_bang if flags.anh_lich else None)
+    if flags.quan_lich:  # lịch mẫu là "mặt tiền" trang ⇒ chỉ quán có bài trong kho (review B m-2: tên quán bản đồ mở hay mỏng); lịch thật giữ đủ nguồn
+        flags = dataclasses.replace(flags, quan_bang={c: [q for q in ds if q["nguon"] == "kho"] for c, ds in flags.quan_bang.items()})
     gan_o_an(lich, bang, khung, flags)
     cau = {m["id_muc"]: "" for m in lt2.moi_muc(lich)}  # nhãn loại điểm đã hiện trên thẻ ⇒ không câu lặp; "" = đã xong (không vẽ "đang viết…")
     return {"lich": lich, "cau": cau, "truong": TRUONG_MAU}  # `truong`: nút "Xếp lịch như ví dụ" gửi đúng tổ hợp này
