@@ -13,7 +13,7 @@ A giao (User cấp quyền "như 14/11": ghi kho / ingest được). Tiêu chí 
 | T1 (0 USD) | 9 / 158 câu đổi top 10; **3 câu chạm** (top 10 có đoạn bài mới; 0 câu chạm đoạn Đại Nội) |
 | Golden: 3 câu chạm + 18 câu ngoài kho ×1 | 0 lỗi kỹ thuật, 0 lỗi trích dẫn; **ngoài kho bị trả lời 0 / 18**; từ chối nhầm 0 / 3. Đọc tay 3 cặp trước / sau (mốc: lượt đủ 176 câu sau ghi kho 2 — ghi kho 3 không chạm 3 câu này): 2 câu giống hệt; 1 câu nhiều nguồn bỏ một ý phụ câu hỏi không hỏi, còn lại sát đáp án mẫu hơn ⇒ không tụt |
 | An toàn 32 ×1 | 0 lỗi, 0 lỗi định tuyến, 0 câu ngoài kho bị trả lời, 0 lỗi trích dẫn; 0 câu đổi lớp so với lần 3; **0 câu có đoạn bài mới trong ngữ cảnh** |
-| 4 câu hỏi thử (B viết, không phải Golden) | Trước: 2 / 4 từ chối, 0 / 4 trích bài mới. Sau: **4 / 4 trả lời, mỗi câu có quán từ bài mới, trích đúng bài**; 0 giá; giờ chỉ "trưa tới chiều" — đúng câu trong bài (tiêu chí ghi "bài không có giờ" là viết thiếu). **Chưa đạt:** câu Đầm Chuồn không nhắc "nên hỏi trước" dù 3 bài đều có câu đó |
+| 4 câu hỏi thử (B viết, không phải Golden) | Trước: 3 / 4 từ chối, 0 / 4 trích bài mới. Sau: **4 / 4 trả lời, mỗi câu có quán từ bài mới, trích đúng bài**; 0 giá; giờ chỉ "trưa tới chiều" — đúng câu trong bài (tiêu chí ghi "bài không có giờ" là viết thiếu). **Chưa đạt:** câu Đầm Chuồn không nhắc "nên hỏi trước" dù 3 bài đều có câu đó |
 
 ## Tiền (từ log)
 ≈ **0,030 USD**: Golden 21 câu 0,0055 · an toàn 32 0,0226 · 4 câu thử sau 0,0020 (trước 0,0033, phiên trước). Dựng chỉ mục + T1: 0 USD (CPU).
