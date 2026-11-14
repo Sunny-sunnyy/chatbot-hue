@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ANH_DAU_TRANG, ANH_LINH_VUC, GP, MAN_NHO } from "./anh.js";
+import { ANH_DAU_TRANG, ANH_LINH_VUC, MAN_NHO } from "./anh.js";
 import { GOI_Y, LINH_VUC, soBai } from "./chung.jsx";
 import { baiHref } from "./route.js";
 import "./tc.css";
@@ -25,24 +25,21 @@ const NHANH = [
   { href: "#/kham-pha/travel", ten: "Đi lại", mo: "Sân bay, ga, bến xe, trong phố", mau: "la", d: "M5 17h14M7 17l1.5-6h7l1.5 6M9 11l1-4h4l1 4" },
 ];
 
-// Điểm nên đến: ảnh tự host `public/anh/lich/` (bảng ảnh của C, Wikimedia Commons) + bài kho có thật — `bai` = đuôi tên file, tìm mã bài
-// trong danh sách `/api/kham_pha` lúc chạy (không có ⇒ ẩn nút "Đọc bài").
-const COMMONS = "https://commons.wikimedia.org/wiki/File:";
+// Điểm nên đến: ảnh tự host `public/anh/lich/` (bảng ảnh của C; nguồn chỉ ghi trong bảng dữ liệu, không hiện — User 14/11) + bài kho có thật —
+// `bai` = đuôi tên file, tìm mã bài trong danh sách `/api/kham_pha` lúc chạy (không có ⇒ ẩn nút "Đọc bài").
 const DIEM = [
   { anh: "dai_noi", bai: "Đại Nội Huế.md", ten: "Đại Nội Huế", nhan: ["Di tích", "Kinh thành"],
-    mo: "Quần thể cung điện, miếu thờ trong lòng Kinh thành.", tg: "Lưu Ly", gp: "Phạm vi công cộng", f: "Dien_Thai_Hoa.jpg" },
+    mo: "Quần thể cung điện, miếu thờ trong lòng Kinh thành." },
   { anh: "chua_thien_mu", bai: "Chùa Thiên Mụ.md", ten: "Chùa Thiên Mụ", nhan: ["Di tích", "Kim Long"],
-    mo: "Tháp Phước Duyên bên bờ bắc sông Hương.", tg: "CEphoto, Uwe Aranas", gp: "CC BY-SA 3.0", f: "Hue_Vietnam_Thien-Mu-Temple-and-Pagoda-01.jpg" },
+    mo: "Tháp Phước Duyên bên bờ bắc sông Hương." },
   { anh: "lang_tu_duc", bai: "Lăng Tự Đức.md", ten: "Lăng Tự Đức", nhan: ["Di tích", "Thủy Xuân"],
-    mo: "Hồ nước, đồi thông và nhà tạ giữa thung lũng.", tg: "CEphoto, Uwe Aranas", gp: "CC BY-SA 3.0", f: "Hue_Vietnam_Tomb-of-Emperor-Tu-Duc-03.jpg" },
+    mo: "Hồ nước, đồi thông và nhà tạ giữa thung lũng." },
   { anh: "pha_tam_giang", bai: "Phá Tam Giang.md", ten: "Phá Tam Giang", nhan: ["Thiên nhiên", "Phía đông"],
-    mo: "Mặt nước rộng, bãi bồi và hoàng hôn trên phá.", tg: "Christophe95", gp: "CC BY-SA 4.0", f: "Aerial_view_of_the_Tam_Giang_Lagoon.jpg" },
+    mo: "Mặt nước rộng, bãi bồi và hoàng hôn trên phá." },
   { anh: "duyet_thi_duong", bai: "tại Duyệt Thị Đường.md", ten: "Duyệt Thị Đường",
-    nhan: ["Nghệ thuật", "Kinh thành"], mo: "Nhà hát cung đình, nơi diễn nhã nhạc.", tg: "Francisco Anzola", gp: "CC BY 2.0",
-    f: "Duy%E1%BB%87t_Th%E1%BB%8B_%C4%90%C6%B0%E1%BB%9Dng_(ho%C3%A0ng_th%C3%A0nh_Hu%E1%BA%BF).jpg" },
+    nhan: ["Nghệ thuật", "Kinh thành"], mo: "Nhà hát cung đình, nơi diễn nhã nhạc." },
   { anh: "cho_dong_ba", bai: "Chợ Đông Ba.md", ten: "Chợ Đông Ba", nhan: ["Ẩm thực", "Kinh thành"],
-    mo: "Chợ truyền thống, gian ẩm thực ở tầng trệt.", tg: "Chainwit", gp: "CC BY 4.0",
-    f: "Dong_Ba_Market_(Hue)_-_Ch%E1%BB%A3_%C4%90%C3%B4ng_Ba_Hu%E1%BA%BF_(July_2024)_-_img_02.jpg" },
+    mo: "Chợ truyền thống, gian ẩm thực ở tầng trệt." },
 ];
 const ANH_LICH = `${import.meta.env.BASE_URL}anh/lich/`;
 
@@ -135,8 +132,6 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
                 <article key={d.anh} className="tc-the nang hien" style={{ "--n": i }}>
                   <figure>
                     <img src={`${ANH_LICH}${d.anh}.jpg`} alt="" loading="lazy" decoding="async" />
-                    <figcaption>Ảnh: {d.tg} · {GP[d.gp] ? <a href={GP[d.gp]} target="_blank" rel="noopener noreferrer">{d.gp}</a> : d.gp} ·{" "}
-                      <a href={COMMONS + d.f} target="_blank" rel="noopener noreferrer">Commons</a> · đã thu nhỏ</figcaption>
                   </figure>
                   <div className="tc-the-than">
                     <div className="tc-nhan">{d.nhan.map(x => <span key={x}>{x}</span>)}</div>

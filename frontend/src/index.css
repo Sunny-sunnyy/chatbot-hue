@@ -168,7 +168,6 @@ picture { display: contents; }
 .lich-ten { font-weight: 600; }
 .lich-anh { grid-column: 2; margin: 4px 0 0; max-width: 360px; }
 .lich-anh img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
-.lich-anh figcaption { margin-top: 4px; font-size: 14px; color: var(--color-muted, inherit); }
 .lich-ghi-chu { margin-top: 12px; font-size: 14px; }
 .lich-ghi-chu ul { margin: 4px 0 0; padding-left: 18px; }
 @media (max-width: 760px) { .lich-ngay li { grid-template-columns: 1fr; } .lich-buoi { grid-row: auto; } .lich-anh { grid-column: 1; max-width: none; } }

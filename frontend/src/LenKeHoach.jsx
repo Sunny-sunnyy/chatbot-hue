@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { BIEU_MAU } from "./chung.jsx";
-import { GP } from "./anh.js";
 import { LichV2 } from "./LichV2.jsx";
 import { Feedback } from "./chat.jsx";
 import "./lkh.css";
@@ -75,13 +74,8 @@ function SoDem({ id, nhan, giaTri, min, max, onDoi }) {
   );
 }
 
-// H1 (14/11): ô "Thích gì" có ảnh (bảng ảnh của C, Wikimedia Commons; ghi công ở mục thu gọn dưới ô).
+// H1 (14/11): ô "Thích gì" có ảnh (bảng ảnh của C; nguồn chỉ ghi trong bảng dữ liệu, không hiện — User 14/11).
 const ANH_THICH = { di_tich: "dai_noi", am_thuc: "cho_dong_ba", thien_nhien: "bach_ma", le_hoi_nghe_thuat: "duyet_thi_duong", chup_anh: "pha_tam_giang" };
-const CONG_THICH = [["Di tích", "Lưu Ly", "Phạm vi công cộng", "Dien_Thai_Hoa.jpg"],
-  ["Ẩm thực", "Chainwit", "CC BY 4.0", "Dong_Ba_Market_(Hue)_-_Ch%E1%BB%A3_%C4%90%C3%B4ng_Ba_Hu%E1%BA%BF_(July_2024)_-_img_02.jpg"],
-  ["Thiên nhiên", "Andre Hospers", "CC BY 4.0", "Bach_Ma_Natinal_Park_Franse_villa.jpg"],
-  ["Lễ hội, nghệ thuật", "Francisco Anzola", "CC BY 2.0", "Duy%E1%BB%87t_Th%E1%BB%8B_%C4%90%C6%B0%E1%BB%9Dng_(ho%C3%A0ng_th%C3%A0nh_Hu%E1%BA%BF).jpg"],
-  ["Chụp ảnh", "Christophe95", "CC BY-SA 4.0", "Aerial_view_of_the_Tam_Giang_Lagoon.jpg"]];
 const ANH_LICH = `${import.meta.env.BASE_URL}anh/lich/`;
 const SO_CHAM = { nhe_nhang: 2, can_bang: 3, kham_pha: 4 };
 
@@ -205,13 +199,6 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
                 </button>
               ))}
             </div>
-            <details className="lkh-cong">
-              <summary>Nguồn ảnh của các ô</summary>
-              <ul>{CONG_THICH.map(([o, tg, gp, f]) => (
-                <li key={o}>{o}: {tg} · {GP[gp] ? <a href={GP[gp]} target="_blank" rel="noopener noreferrer">{gp}</a> : gp} ·{" "}
-                  <a href={`https://commons.wikimedia.org/wiki/File:${f}`} target="_blank" rel="noopener noreferrer">Commons</a> · đã thu nhỏ</li>
-              ))}</ul>
-            </details>
           </fieldset>
         )}
         <p className="lc-tom" aria-live="polite">{tomTat}</p>
