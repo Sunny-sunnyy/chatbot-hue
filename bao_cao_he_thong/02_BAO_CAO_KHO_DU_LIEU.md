@@ -11,7 +11,7 @@ bước sau: [03 — chia đoạn](03_BAO_CAO_CHIA_DOAN.md).
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
 | Món ăn | 109 | đặc sản Huế (14/11 tối thêm 10 món trợ lý từng từ chối / trả lời mỏng), nhà hàng / quán (từ 14/11 tối thêm 8 quán cho vùng lịch thiếu quán), quán cà phê, một bài hướng dẫn chung |
-| Di tích | 39 | Đại Nội, (14/11 tối thêm 8 chùa / phủ / di tích trong Kinh thành) Kinh thành, các lăng, chùa (có chùa Từ Hiếu từ 14/11), đàn tế, di sản (Nhã nhạc, Mộc bản…) |
+| Di tích | 39 | Đại Nội, Kinh thành (14/11 tối thêm 8 bài: chùa, phủ, nhà thờ, di tích), các lăng, chùa (có chùa Từ Hiếu từ 14/11), đàn tế, di sản (Nhã nhạc, Mộc bản…) |
 | Lễ hội | 27 | lễ hội, ngày hội, lễ tế theo năm |
 | Nghệ thuật biểu diễn | 12 | chương trình biểu diễn, ca Huế, đêm nhạc |
 | Du lịch | 60 | địa điểm (14/11 tối thêm 5: cồn, làng, cầu; biển, đầm phá, chợ, phố đi bộ, suối, đèo, không gian nghệ thuật; từ 14/11 cầu Trường Tiền, Ga Huế, nhà vườn An Hiên), lịch trình mẫu, chi phí, vé, đi lại, 5 bài lưu trú (140 cơ sở 3–5 sao và khác theo khu) |
