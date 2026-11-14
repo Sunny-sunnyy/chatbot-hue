@@ -49,7 +49,7 @@ ROUTE_TRO_CHUYEN = "tro_chuyen"
 ROUTE_NGOAI_PHAM_VI = "ngoai_pham_vi"
 ROUTE_KHAN_CAP = "khan_cap"
 # H4c (B1 D8): nguồn trích thuộc vé / điểm đến / lễ hội ⇒ dòng "có thể đã thay đổi".
-NOTICE_SOURCE_PREFIXES = ("travel/tickets/", "travel/places/", "festivals/")
+NOTICE_SOURCE_PREFIXES = ("travel/tickets/", "travel/places/", "festivals/", "travel/services/Lưu trú ở Huế")  # bài lưu trú: hạng có thể đã đổi (ghi kho 14/11)
 MODEL_SEARCH_LIMIT = 2  # B2 D5: số lần MODEL gọi `tim_kho` được tìm thật (lần tìm đầu của code không tính); lần 3 ⇒ TOOL_LIMIT_TEXT
 SEARCH_VARIANTS = ("v0", "v1", "v2", "v3")  # B2a: lần tìm đầu (plan D1)
 STREAM_DRAIN_SECONDS = 0.5  # ngắt giữa chừng: sau `result.cancel()` đọc nốt tối đa chừng này giây (spec streaming §4.5 bước 3)

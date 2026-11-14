@@ -33,7 +33,7 @@ from types import SimpleNamespace
 import pytest
 
 from core.schema import GenerationError
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn
+from llm.assistant import NOTICE_SOURCE_PREFIXES, AnswerTrace, AssistantFlags, answer_turn
 from llm.full_corpus_prompt import OUT_OF_SCOPE_ANSWER
 
 ALL_ON = AssistantFlags(router=True, today_line=True, may_have_changed_notice=True)
@@ -125,6 +125,15 @@ def test_calls_already_made_are_logged_when_answer_fails(deps):
         asyncio.run(answer_turn("Giá vé Đại Nội?", *deps, gen, trace, ALL_ON))
     assert [c["route"] for c in trace.llm_calls] == ["router", "tro_ly_hue"]  # cả lần định tuyến lẫn lần trả lời đã có phản hồi
 
+
+
+def test_notice_for_cited_lodging_article(deps):
+    """Bài lưu trú (travel/services/Lưu trú ở Huế — …, ghi kho 14/11): trích ⇒ có dòng "có thể đã thay đổi"; bài "Đi lại ở Huế" cùng thư mục thì không."""
+    trace = run(deps, "Ở Huế có những khách sạn 5 sao nào?", FakeGenerator())
+    luu_tru = next((s for s in trace.so_nguon if s.source.startswith("travel/services/Lưu trú ở Huế")), None)
+    assert luu_tru is not None, "câu thử phải lấy được đoạn của bài lưu trú"
+    assert run(deps, "Ở Huế có những khách sạn 5 sao nào?", FakeGenerator(answer=f"Có [{luu_tru.id}].")).notice is not None
+    assert not "travel/services/Đi lại ở Huế.md".startswith(NOTICE_SOURCE_PREFIXES)
 
 def test_notice_only_for_cited_target_folders(deps):
     gen = FakeGenerator()
