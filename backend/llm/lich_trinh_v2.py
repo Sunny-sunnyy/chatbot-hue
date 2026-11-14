@@ -13,6 +13,7 @@ Số người lớn không vào bộ xếp (spec 3.1: ngoại lệ có chủ ý 
 import datetime as dt
 import json
 import re
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote
@@ -455,6 +456,12 @@ _THOI_LUONG = re.compile(r"(?<!\w)(?:\d+|một|hai|ba|nửa)\s*(?:giờ|tiếng|
 _LINK = re.compile(r"https?://|www\.|\.(?:vn|com|net|org)(?!\w)", re.IGNORECASE)
 
 
+# review 14/11 M-2: câu nói về tài liệu / nguồn thay vì tả điểm ("tài liệu không cung cấp thông tin về …") ⇒ câu dự phòng. Thử trên 1.068 câu
+# model đã lưu của nghiệm thu: trúng đúng 1 câu lỗi, 0 câu tốt bị chặn.
+_NOI_VE_TAI_LIEU = re.compile(r"tài liệu|đoạn trích|văn bản|nguồn (?:này |trên )?(?:không|chưa)|không (?:cung cấp|đề cập|nhắc(?: đến| tới)?|có thông tin|nêu)"
+                              r"|nội dung (?:chỉ|không)|chỉ (?:mô tả|nói về)|thông tin (?:về .{0,40} )?(?:không|chưa) có", re.IGNORECASE)
+
+
 def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
@@ -539,6 +546,8 @@ def kiem_cau(bang: BangV2, muc: dict, cau: str) -> str | None:
     cau = cau.strip()
     if not cau:
         return "rong"
+    if _NOI_VE_TAI_LIEU.search(unicodedata.normalize("NFC", cau)):
+        return "noi_ve_tai_lieu"
     ma = [int(x) for x in CITATION_PATTERN.findall(cau)]
     if not ma:
         return "khong_ma"

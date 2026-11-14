@@ -472,7 +472,8 @@ def test_v2_sentence_checks(app_client):
     hong = {m[0]["id_muc"]: f"Mở cửa lúc 8:00 [{m[0]['nguon']}].", m[1]["id_muc"]: f"Vé 50.000 đồng [{m[1]['nguon']}].",
             m[2]["id_muc"]: f"Gần {khac} [{m[2]['nguon']}]."}
     for sai, ma in ((f"Nên ở đây 2 tiếng [{m[0]['nguon']}].", "gio"), (f"Xem tại https://x.vn [{m[0]['nguon']}].", "link"),
-                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong")):
+                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong"),
+                    (f"Tài liệu không cung cấp thông tin về điểm này; nội dung chỉ mô tả nơi khác. [{m[0]['nguon']}]", "noi_ve_tai_lieu")):
         assert v2.kiem_cau(b, m[0], sai) == ma
     tu_model = [{"id_muc": i, "cau": c} for i, c in hong.items()] + [{"id_muc": m[0]["id_muc"], "cau": f"Câu sau bị bỏ [{m[0]['nguon']}]."},
                                                                      {"id_muc": "n9-sang-1", "cau": "id lạ [1]."}]
