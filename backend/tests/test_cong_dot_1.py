@@ -262,7 +262,8 @@ def test_explore_lists_exactly_the_build_record_sources(app_client):
     _, client = app_client
     record = set(json.loads(BUILD_RECORD.read_text(encoding="utf-8"))["corpus"]["sources"])
     bai = client.get("/api/kham_pha").json()["bai"]
-    assert len(bai) == len(record) == 204 and {b["id"] for b in bai} == record  # Q-K 204 / 204, 0 bài ngoài danh sách
+    # Q-K: đủ mọi bài của build record, 0 bài ngoài danh sách (không ghi cứng số bài — kho đổi theo mỗi lần ghi kho)
+    assert len(bai) == len(record) and {b["id"] for b in bai} == record
     assert {b["linh_vuc"] for b in bai} == {"foods", "heritages", "festivals", "performing_arts", "travel"}
     assert all(b["tieu_de"] and len(b["tom_tat"]) <= 201 and "markdown" not in b for b in bai)
     assert all(b["loai_con"] == (b["id"].split("/")[1] if b["id"].count("/") == 2 else None) for b in bai)
