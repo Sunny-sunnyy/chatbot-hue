@@ -8,7 +8,7 @@ import { giamChuyenDong } from "./hieuUng.js";
 //   #/kham-pha/<linh_vuc>    danh sách bài một lĩnh vực (mã = tên thư mục kho)
 //   #/kham-pha/bai/<id>      một bài (id = đường dẫn bài trong kho, có dấu `/`)
 //   #/len-ke-hoach · #/tro-ly · #/gioi-thieu
-//   #/gioi-thieu/<mục>       trang Giới thiệu, cuộn tới mục có id đó (vd `nguon-anh` — link "Nguồn ảnh" ở chân trang)
+//   #/gioi-thieu/<mục>       trang Giới thiệu, cuộn tới mục có id đó (vd `gt-lam`)
 // Hash lạ ⇒ trang chủ.
 export function parseHash(hash) {
   let path;

@@ -42,12 +42,6 @@
 .gt-du-lieu { padding: 24px 4px; }
 .gt-du-lieu p + p { margin-top: 10px; }
 
-.gt-nguon { margin-top: 56px; border-top: 1px solid var(--color-line); padding-top: 16px; font-size: 15px; color: var(--color-muted); }
-.gt-nguon summary { cursor: pointer; font-weight: 600; color: var(--color-ink); }
-.gt-nguon ul { margin-top: 10px; padding-left: 20px; list-style: disc; }
-.gt-nguon li + li { margin-top: 6px; }
-.gt-nguon a { text-decoration: underline; text-underline-offset: 3px; }
-.gt-nguon-h { margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--color-ink); }
 
 @media (max-width: 760px) {
   .gt-dau { min-height: 360px; }
