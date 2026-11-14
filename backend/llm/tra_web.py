@@ -159,7 +159,7 @@ def dau_vao_model(cau_hoi: str, so_web: list[dict]) -> str:
 # chuỗi thì chặn nhầm (đọc tay 14/11: 5 / 6 ca chặn chỉ khác cách viết). Luật không nới: giá trị trong mục web phải ⊂ giá trị trong đoạn trích.
 # Ca mơ hồ không đoán ⇒ giữ khoá chuỗi như trước (chỉ khớp đúng nguyên dạng): số lẻ với đơn vị đồng ("1,5 đ"), số nhóm nghìn kèm hệ số
 # ("1.500 triệu" — 1,5 hay 1.500?), giá trị không nguyên.
-_DON_VI_TIEN = re.compile(r"(?i:đồng|vnđ|vnd|triệu|nghìn|ngàn|đ|k)$")
+_DON_VI_TIEN = re.compile(r"(?i:đồng|vnđ|vnd|triệu|nghìn|ngàn|đ|k)(?:\s+(?i:rưỡi))?$")
 _HE_SO = {"triệu": 1_000_000, "nghìn": 1_000, "ngàn": 1_000, "k": 1_000}
 
 
@@ -169,7 +169,11 @@ def gia_tri_tien(chuoi: str) -> int | None:
     m = _DON_VI_TIEN.search(s)
     if not m:
         return None
-    he_so, so = _HE_SO.get(m.group(0).casefold(), 1), s[:m.start()].strip()
+    don_vi = m.group(0).casefold().split()
+    he_so, so = _HE_SO.get(don_vi[0], 1), s[:m.start()].strip()
+    if len(don_vi) == 2:  # "rưỡi" = thêm nửa đơn vị, chỉ sau số nguyên 1–9 có hệ số: "2 triệu rưỡi" = 2.500.000. Số lớn hơn mơ hồ ("300 nghìn rưỡi"
+        # hay nói là 350.000, không phải 300.500) ⇒ không đoán
+        return int(so) * he_so + he_so // 2 if he_so > 1 and re.fullmatch(r"[1-9]", so) else None
     if re.fullmatch(r"\d+", so):
         return int(so) * he_so
     if re.fullmatch(r"\d{1,3}(?:\.\d{3})+|\d{1,3}(?:,\d{3})+", so):  # nhóm nghìn, một kiểu dấu: "594.000" · "594,000"

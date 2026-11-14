@@ -6,10 +6,13 @@ ngày), "nghìn năm" / "nghìn người" / "nghìn lượt" / "nghìn bậc" (s
 import re
 import unicodedata
 
-# số: 50.000 · 1,5 · 200 ; đơn vị: đồng / VNĐ / vnd / triệu / nghìn / ngàn (không phân biệt hoa thường) hoặc "đ" / "k" chữ thường đứng riêng
+# số: 50.000 · 1,5 · 200 ; đơn vị: đồng / VNĐ / vnd / triệu / nghìn / ngàn (không phân biệt hoa thường; "triệu / nghìn rưỡi" bắt cả chữ "rưỡi"
+# để không đọc "2 triệu rưỡi" thành 2 triệu — 14/11, review E) hoặc "đ" chữ thường / "k" đứng riêng / "K" hoa sau số ≥ 2 chữ số ("150K" hay gặp
+# trên trang bán hàng; "4K" thường là độ phân giải, không phải tiền)
 _SO_TIEN = re.compile(
     r"(?<![\w.,])\d{1,3}(?:[.,]\d{3})*(?:[.,]\d+)?\s*"
-    r"(?:(?i:đồng|vnđ|vnd|triệu)(?![\w])|(?i:nghìn|ngàn)(?!\s+(?:năm|người|lượt|bậc))(?![\w])|(?:đ|k)(?![\w]))"
+    r"(?:(?i:đồng|vnđ|vnd)(?![\w])|(?i:triệu)(?:\s+(?i:rưỡi))?(?![\w])"
+    r"|(?i:nghìn|ngàn)(?:\s+(?i:rưỡi))?(?!\s+(?:năm|người|lượt|bậc))(?![\w])|(?:đ|k|(?<=\d\d)K)(?![\w]))"
 )
 
 

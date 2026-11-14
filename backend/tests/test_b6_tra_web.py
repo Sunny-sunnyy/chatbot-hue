@@ -429,3 +429,19 @@ def test_money_not_in_snippet_is_still_blocked(trich, viet):
 def test_money_value_parser_does_not_guess():
     assert tw.gia_tri_tien("1,5 triệu") == 1_500_000 and tw.gia_tri_tien("594,000 đồng") == 594_000
     assert tw.gia_tri_tien("1,5 đ") is None and tw.gia_tri_tien("1.500 triệu") is None
+
+
+# ---------- "rưỡi" và "K" hoa (review E m-1 / m-2, 14/11) ----------
+def test_ruoi_is_half_unit_and_blocks_wrong_amount():
+    assert tw.gia_tri_tien("2 triệu rưỡi") == 2_500_000 and tw.gia_tri_tien("1 nghìn rưỡi") == 1_500
+    assert tw.gia_tri_tien("300 nghìn rưỡi") is None  # mơ hồ (hay nói là 350.000) ⇒ không đoán
+    # cố tình vi phạm: đoạn trích có 2.000.000, mục web viết "2 triệu rưỡi" ⇒ phải chặn (trước đây đọc thành 2 triệu nên lọt)
+    assert "tien_ngoai_trich" in tw.kiem_muc_web("Tour khoảng 2 triệu rưỡi [w1].", _so("Tour 2.000.000 đồng."), luu_tru=False)
+    assert "tien_ngoai_trich" not in tw.kiem_muc_web("Tour khoảng 2 triệu rưỡi [w1].", _so("Tour 2.500.000 đồng."), luu_tru=False)
+
+
+def test_uppercase_k_is_money_but_not_4k():
+    from llm.so_tien import tim_so_tien
+    assert tim_so_tien("Vé 150K một người") == ["150K"] and tw.gia_tri_tien("150K") == 150_000
+    assert tim_so_tien("Màn hình 4K") == []
+    assert "tien_ngoai_trich" in tw.kiem_muc_web("Vé 180K [w1].", _so("Vé 150.000 đồng."), luu_tru=False)
