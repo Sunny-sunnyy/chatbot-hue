@@ -255,7 +255,6 @@ const ANH = {
   k122h56l: {"anh": "kp/k122h56l"},
   k3ggi8q: {"anh": "kp/k3ggi8q"},
   k10uiurj: {"anh": "kp/k10uiurj"},
-  k1cwlo22: {"anh": "kp/k1cwlo22", "kc": 1},
   ki14c3y: {"anh": "kp/ki14c3y"},
 };
 
