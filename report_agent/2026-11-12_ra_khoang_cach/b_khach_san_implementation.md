@@ -19,10 +19,10 @@ A giao theo ưu tiên mới của User (17:50 14/11/2026: dữ liệu, ảnh kh�
 
 ## Dữ liệu
 - **Toạ độ Serper Places:** nhận **82 / 140** (sàn ghi trước ≥ 100 — **TRƯỢT**, A nhận). Luật nhận siết sau khi soát tay các ca tên không trùng hẳn bắt nhận nhầm (một nhà hàng cùng tên; chi nhánh "2" ↔ bản gốc): tên khớp (bỏ dấu, bỏ dấu cách) + loại hình lưu trú + đúng số chi nhánh + đúng tên đường trong địa chỉ + ≤ 3 km toạ độ ước. 81 vào bảng; 1 bị giữ toạ độ cũ vì cụm gần mới thuộc khu khác khu đã duyệt (0 cơ sở đổi khu). 58 còn lại giữ toạ độ ước. Toạ độ chỉ dùng để chọn cụm gần; link Bản đồ tìm theo tên + địa chỉ nên có cho cả 140.
-- **Ảnh (cách v3, A chốt vòng tự soi: 1 agent con chọn + B nhìn lại mọi ảnh nhận):** Serper Images 140 lượt; 131 cơ sở có ứng viên. 4 agent con (13 cơ sở từng hiện trước, rồi 3 nhóm ~40). Lượt chọn: 106 có ảnh (68 "cao", 38 "vừa"). B nhìn lại 68 ảnh "cao": 66 nhận, 2 hạ `kc` (một ảnh vẽ phối cảnh, một biển có số điện thoại). "Vừa" ⇒ `kc`, không vào bảng (ảnh không chắc cạnh tên khách sạn dễ khiến khách tưởng đúng nơi).
+- **Ảnh (cách v3, A chốt vòng tự soi: 1 agent con chọn + B nhìn lại mọi ảnh nhận):** Serper Images 140 lượt; 131 cơ sở có ứng viên. 4 agent con (13 cơ sở từng hiện trước, rồi 3 nhóm ~40). Lượt chọn: 106 có ảnh (68 "cao", 38 "vừa"). B nhìn lại **100 %** 68 ảnh "cao" (thay tiêu chí plan "B mở xem 10 ảnh ngẫu nhiên" — chặt hơn, theo chốt vòng tự soi): 66 nhận, 2 hạ `kc` (một ảnh vẽ phối cảnh, một biển có số điện thoại). "Vừa" ⇒ `kc`, không vào bảng (ảnh không chắc cạnh tên khách sạn dễ khiến khách tưởng đúng nơi).
   - **Kết quả: 66 / 140 cơ sở có ảnh hiện được** (5 sao 8 / 10 · 4 sao 12 / 14 · 3 sao 5 / 7 · 2 sao 14 / 30 · 1 sao 11 / 49 · đạt chuẩn 16 / 30); 40 `kc`; 34 không ảnh đáng tin (9 không ứng viên).
   - Trên 3.840 khung: **14.924 / 15.288 ô cơ sở hiện ra có ảnh (97,6 %)**; ô thiếu ảnh chủ yếu là một cơ sở 1 sao hay hiện.
-- Bảng có dòng trùng (cùng tên + địa chỉ, hai dòng — vd La Perle, Như Phú; Villa Louise hai địa chỉ thôn / xã): giữ như bảng E, ghi để lần sau gộp.
+- Bảng có dòng trùng (cùng tên + địa chỉ, hai dòng — vd La Perle, Như Phú; Villa Louise hai địa chỉ thôn / xã): giữ như bảng E, ghi để lần sau gộp. Hệ quả thấy được (C review m-1): hai dòng "Villa Louise" cùng hiện trong 36 lịch ven biển — kiểm khi gộp trùng.
 
 ## Đo — ĐẠT (trừ sàn Places)
 | Bộ | Kết quả |
@@ -31,6 +31,12 @@ A giao theo ưu tiên mới của User (17:50 14/11/2026: dữ liệu, ảnh kh�
 | Q1 | khối nơi ở không vào tin nhắn gửi model — test sẵn có đạt; không đổi chuỗi gửi model |
 | UI (Playwright 1440 + 390, server nhánh, xếp lịch thật) | **ĐẠT**: thẻ 5 cơ sở, 4 ảnh tải được (480 px), 10 / 10 link đúng gốc + `_blank` + `noopener`, 0 chữ ghi công, 0 lỗi console, 0 yêu cầu ra ngoài lúc tải. Ảnh `data/khach_san_2026-11-14/anh_pw/`, script `tools/pw_khach_san.py` |
 | Test rộng `backend/tests` (3 phút 48) | 1.039 đạt; 5 hỏng / lỗi chỉ vì chạy không `--env-file` (cần khoá OpenAI) ⇒ chạy lại 5 test đó có `--env-file`: 5 / 5 đạt |
+
+## Lượt 2 ảnh (A giao 18:4x 14/11/2026 — User "đầy đủ"; C phản biện "phần lớn không ai thấy", A chọn làm đủ, trần 30 phút)
+- 74 cơ sở chưa có ảnh chắc (40 `kc` + 34 trống). Codex (gói ChatGPT, 0 USD API) 3 lô song song, 7–9 phút / lô, 0 lệnh shell: tìm trang công khai có ảnh (không mở trang đặt phòng). Script mở trang Codex nêu, lấy `<img>` có tên cơ sở trong alt / tên file + URL ảnh Codex ghi ⇒ **27 / 74 cơ sở có ứng viên** (nhiều trang Tripadvisor chặn tải tự động).
+- 1 agent con chọn: 20 / 27 có ảnh (6 "cao", 14 "vừa" ⇒ `kc`). B nhìn lại 6 "cao": 5 nhận (4 biển tên + 1 trang chính thức), 1 hạ `kc` (ảnh sảnh trông như ảnh dựng máy tính).
+- **Sau lượt 2: 71 / 140 cơ sở có ảnh** (bảng md5 `039c3adebb9b`); ô hiện ra có ảnh không đổi 14.924 / 15.288 (5 ảnh mới đều là cơ sở chưa từng hiện — đúng như C dự báo). Dừng: không còn nguồn ảnh mới cho 69 cơ sở còn lại trong 30 phút.
+- Kiểm: test lưu trú 8 / 8; code / giao diện không đổi ⇒ không chạy lại Playwright.
 
 ## Tiền (từ log)
 ≈ **0,283 USD**: Places 140 lượt 0,140 · Images 140 lượt 0,140 · Playwright 4 lần xếp lịch 0,0025. Agent con: quota Claude. Trần đợt 0,40.
