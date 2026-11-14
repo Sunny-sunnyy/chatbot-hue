@@ -65,7 +65,7 @@ def test_intent_message_and_name_matching():
     assert tin.endswith("Câu người dùng: bỏ điểm đầu") and "Ngày 1" in tin
     assert s.khop_ten(B, "Đại Nội Huế") == "dai_noi" and s.khop_ten(B, "đại nội") == "dai_noi" and s.khop_ten(B, "Đại") is None
     assert s.khop_ten(B, "Quốc Học") == "quoc_hoc" and s.khop_ten(B, "Lăng") is None  # tên ngắn chỉ nhận khi nằm trong đúng một điểm
-    assert "Các điểm có thể xếp" in tin
+    assert "Điểm khác có thể thêm" in tin
 
 
 def test_flag_needs_v2():
@@ -83,3 +83,48 @@ def test_card_turn_applies_nothing_else_and_lists_the_rest_as_not_done():
         kq = s.ap(B, luu, thu_tu)
         assert kq["the"]["cu"] == b and kq["da_ap"] == [] and kq["chua_lam"] == ["bo_diem"] and kq["khung"] == k
         assert not any(d["duoc"] for d in s.thay_doi(B, kq)) and any(d["cau"].startswith("Chưa làm") for d in s.thay_doi(B, kq))
+
+
+def test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins(monkeypatch):
+    """Review E m-1 / B-1 trên đường song song (`assistant._sua_song_song`): đường thường chạy ngay nhưng tra web CHỜ kết quả hiểu ý — lượt sửa
+    ⇒ không gọi tra web (chữ người dùng không ra Serper); lượt thường ⇒ có; định tuyến của đường thường thấy khẩn cấp ⇒ không thành lượt sửa."""
+    import asyncio
+    import dataclasses
+    from llm import assistant as a, len_ke_hoach as lkh
+    goi_web = []
+
+    def lam(hieu_ra, khan_cap=False):
+        async def core(query, rs, cb, gen, tr, flags, recorder, tim_web):
+            tr.routing_ms, tr.emergency_by = 1.0, ("router" if khan_cap else None)
+            yield "status", {"stage": "routing"}
+            if tim_web is not None:
+                await tim_web(query)
+            yield "delta", "trả lời thường"
+
+        async def hieu(query, gen, tr, flags):
+            await asyncio.sleep(0.05)
+            return hieu_ra
+
+        async def sua(query, rs, cb, gen, tr, flags, kq):
+            yield "lich_khung", {"sua": True}
+
+        async def web(cau):
+            goi_web.append(cau)
+
+        monkeypatch.setattr(a, "_answer_core", core)
+        monkeypatch.setattr(lkh, "hieu_va_ap", hieu)
+        monkeypatch.setattr(lkh, "stream_sua", sua)
+        tr = a.AnswerTrace(); tr.lich_luu = {"x": 1}
+        fl = dataclasses.replace(V2, router=True)
+
+        async def chay():
+            return [e async for e in a._sua_song_song("q", None, None, object(), tr, fl, None, web)]
+        return asyncio.run(chay())
+
+    ev = lam({"the": None})  # lượt sửa
+    assert ev[-1][0] == "lich_khung" and goi_web == []
+    ev = lam(None)  # câu thường
+    assert ("delta", "trả lời thường") in ev and goi_web == ["q"]
+    goi_web.clear()
+    ev = lam({"the": None}, khan_cap=True)  # câu trộn khẩn cấp
+    assert ("delta", "trả lời thường") in ev and not any(e[0] == "lich_khung" for e in ev)

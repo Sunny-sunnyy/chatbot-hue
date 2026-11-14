@@ -1198,10 +1198,18 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
         return
     phu = AnswerTrace(**{k: getattr(trace, k) for k in ROUTE_INPUTS})
     hang: asyncio.Queue = asyncio.Queue()
+    da_quyet = asyncio.Event()
+
+    async def tim_web_cho(cau: str):
+        """Review E m-1: tra web của đường thường CHỜ biết không phải lượt sửa — lượt sửa huỷ đường thường trong lúc chờ ⇒ chữ người dùng
+        không ra Serper ở lượt sửa."""
+        await da_quyet.wait()
+        return await tim_web(cau)
 
     async def chay_thuong() -> None:
         try:
-            async for event in _answer_core(query, retrieval_service, context_builder, generator, phu, flags, recorder, tim_web):
+            async for event in _answer_core(query, retrieval_service, context_builder, generator, phu, flags, recorder,
+                                            tim_web_cho if tim_web is not None else None):
                 hang.put_nowait(("su_kien", event))
             hang.put_nowait(("xong", None))
         except asyncio.CancelledError:
@@ -1216,14 +1224,18 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
             viec.cancel()
         await asyncio.gather(viec, return_exceptions=True)
 
-    dinh_tuyen = AnswerTrace(history=trace.history)
+    async def cho_dinh_tuyen() -> None:
+        """Khẩn cấp lấy từ CHÍNH lần định tuyến của đường thường (trace phụ) — không gọi định tuyến lần hai (đo 14/11: lần thứ hai
+        +0,0001 USD / câu). `_pick_route` ghi `routing_ms` ở `finally` ⇒ chờ mốc đó (hoặc đường thường xong / lỗi)."""
+        while flags.router and phu.routing_ms is None and not viec.done():
+            await asyncio.sleep(0.03)
+
     try:
-        kq, _ = await asyncio.gather(len_ke_hoach.hieu_va_ap(query, generator, trace, flags), _pick_route(query, generator, dinh_tuyen, flags))
+        kq, _ = await asyncio.gather(len_ke_hoach.hieu_va_ap(query, generator, trace, flags), cho_dinh_tuyen())
     except BaseException:
         await huy()
         raise
-    trace.llm_calls += dinh_tuyen.llm_calls
-    khan_cap = dinh_tuyen.emergency_by == "router"
+    khan_cap = phu.emergency_by == "router"
     if kq is not None and not khan_cap:  # lượt sửa ⇒ bỏ phần đường thường đã chạy
         await huy()
         trace.llm_calls += phu.llm_calls
@@ -1232,6 +1244,7 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
         async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
             yield event
         return
+    da_quyet.set()  # không phải lượt sửa ⇒ đường thường được tra web (nếu cổng mở)
     sua, goi_truoc = trace.sua, list(trace.llm_calls)
     try:
         while True:
