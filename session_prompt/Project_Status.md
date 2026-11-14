@@ -335,7 +335,7 @@ handoff_prompt/README.md               contract lịch sử (reference-only)
   Từ 26/10 (W16) hook còn quét **dòng thêm mới** trùng ≥ 40 ký tự với Golden / kho (`.githooks/overlap_scan.py`, ~0,4 s; kho đọc từ working
   tree chính nên commit từ worktree `/tmp` không symlink vẫn quét; báo "quét LỖI" khi thiếu `uv`). Câu kín: từ 26/10 tối (User duyệt) quét `question` + `reference_answer` của `*sealed*.jsonl` (nhãn
   `sealed`; không quét `sources` và ghi chú `*sealed*.md` vì báo nhầm). `_source-dumps/` không quét.
-- **Codex CLI (31/10):** `--search` phải đứng **trước** `exec`; model mặc định trong `~/.codex/config.toml` (`gpt-6.1-sol`) không dùng được với tài khoản ChatGPT ⇒ `-m gpt-6-luna`;
+- **Codex CLI (31/10):** `--search` phải đứng **trước** `exec`; 31/10 `gpt-6.1-sol` không dùng được với tài khoản ChatGPT ⇒ `-m gpt-6-luna`; **từ 14/11 chạy được** ⇒ script mặc định `gpt-6.1-sol` mức `medium` (User chọn; thử 1 câu: 76 s, 10 trang mở, 0 lệnh shell; đổi bằng `CODEX_MODEL` / `CODEX_EFFORT`);
   `-s read-only` **không** chặn đọc file ngoài thư mục làm việc ⇒ **từ 01/11 script bỏ `-s`**, tắt `shell_tool` / `view_image`, dùng permission profile chỉ đọc thư mục làm việc, `--ignore-user-config`; còn `command_execution` ⇒ lỗi (thử thật 01/11: tìm web chạy, 0 lệnh shell, "không có công cụ đọc file"). Vẫn chỉ gửi thông tin công khai. `url_da_mo.txt` thường ít hơn nhiều so với URL trong báo cáo (31/10: 1 / 15) ⇒ URL còn lại là tự khai, kiểm kỹ.
 - **Qdrant chạy bằng Docker Desktop (Windows):** WSL không có lệnh `docker` khi Docker Desktop tắt (31/10 mở phiên) ⇒ User bật rồi `docker compose up -d qdrant`.
 - `rm` / `cp` với đường dẫn ghép từ biến (`$X/*`) bị tầng an toàn Claude Code chặn ⇒ `"${X:?}"/…` hoặc đường dẫn tuyệt đối (31/10, A + B).
