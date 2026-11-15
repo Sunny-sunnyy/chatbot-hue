@@ -4,16 +4,26 @@
 // "Khách sạn nghỉ dưỡng Laguna Lăng Cô", đếm 15/11: tên đầy đủ chỉ 4 / 12 câu), ranh giới từ như ảnh chat; tên chồng nhau ⇒ lấy tên dài nhất
 // ("Villa Louise" lọt trong "Villa Louise Beach"); tối đa 3, theo thứ tự xuất hiện trong chữ.
 import { tenKhop } from "./anhTraLoi.js";
+import { CAN_TIEN_TO } from "./theKhachSanTrung.js";
 
 const BAI_LUU_TRU = "travel/services/Lưu trú ở Huế";
 const TIEN_TO = /^(khu nghỉ dưỡng và spa|khu nghỉ dưỡng sinh thái|khách sạn nghỉ dưỡng|khách sạn nghĩ dưỡng|khu nghỉ dưỡng|khách sạn|biệt thự du lịch)\s+/iu;
 const SO_THE_TOI_DA = 3;
 
-// tên lõi (bỏ tiền tố loại hình), thêm bản bỏ chữ "Huế" / "Hue" cuối nếu vẫn ≥ 2 chữ ("Silk Path Grand Huế" ↔ "Silk Path Grand")
+// tên lõi (bỏ tiền tố loại hình), thêm bản bỏ chữ "Huế" / "Hue" cuối ("Silk Path Grand Huế" ↔ "Silk Path Grand"). Mỗi tên kèm `tienTo`: tên 1 chữ
+// ("Cherish", "Eldora") hoặc trùng địa danh / sự kiện / tên đường (`CAN_TIEN_TO`, sinh bằng script — "trong Thành Nội", "dịp Festival Huế") ⇒ chỉ khớp
+// khi ngay trước có chữ loại hình (review E m-1).
 export function tenLoi(ten) {
   const loi = String(ten || "").normalize("NFC").trim().replace(TIEN_TO, "");
   const bo = loi.replace(/\s+(Huế|Hue)$/u, "");
-  return [...new Set([loi, bo])].filter(t => t.split(/\s+/).length >= 2);
+  return [...new Set([loi, bo])].filter(Boolean).map(t => ({ t, tienTo: t.split(/\s+/).length < 2 || CAN_TIEN_TO.has(t) }));
+}
+
+const LOAI_HINH = "(?:[Kk]hách [Ss]ạn(?: [Nn]ghỉ [Dd]ưỡng)?|[Kk]hu [Nn]ghỉ [Dd]ưỡng|[Rr]esort|[Hh]otel)\\s+";
+function mauKhop({ t, tienTo }) {
+  if (!tienTo) return tenKhop(t);
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?<![\\p{L}\\p{N}])${LOAI_HINH}${esc(t)}(?![\\p{L}\\p{N}])`, "u");  // tên giữ đúng hoa / thường khi đi sau chữ loại hình
 }
 
 export function phangCoSo(choO) {  // `/api/cho_o` ⇒ danh sách cơ sở phẳng
@@ -28,7 +38,7 @@ export function theKhachSan(turn, coSo) {
   const khop = [];
   for (const c of coSo) {
     for (const t of tenLoi(c.ten)) {
-      const re = tenKhop(t);
+      const re = mauKhop(t);
       if (!re) continue;
       const m = new RegExp(re.source, "gu");
       for (let x; (x = m.exec(chu));) khop.push({ c, dau: x.index, cuoi: x.index + x[0].length });

@@ -29,10 +29,14 @@ def test_hotel_cards_only_for_lodging_answers_by_core_name_longest_match():
         {**goc, "text": "Laguna Lăng Cô và Silk Path Grand đều 5 sao."},                            # tên lõi; bỏ "Huế" cuối
         {**goc, "text": "Khách sạn nghỉ dưỡng Hương Giang ở số 51 Lê Lợi, gần sông Hương Giang."},   # một thẻ, không lặp
         {**goc, "text": "C D, A B, Laguna Lăng Cô, Silk Path Grand Huế"},                           # ≤ 3, theo thứ tự xuất hiện
-        {**goc, "text": "Khách sạn Một ở trung tâm."},                                              # tên lõi 1 chữ ⇒ bỏ
+        {**goc, "text": "Một ở trung tâm, gần Khách sạn Một."},                                     # tên lõi 1 chữ ⇒ chỉ khớp khi có chữ loại hình trước
         {**goc, "text": "Laguna Lăng Cô", "sources": [{"bai_id": "travel/places/Vịnh Lăng Cô.md", "title": "Vịnh"}]},  # không trích bài lưu trú ⇒ 0 (T1)
         {**goc, "text": "Laguna Lăng Cô", "web": {"outcome": "co_muc"}},                             # có mục web ⇒ 0
         {**goc, "text": "Ba Villa Louisea"},                                                          # không theo ranh giới từ ⇒ 0
     ]
+    trung = [{"ten": "Khách sạn Thành Nội", "xep_hang": "2 sao"}, {"ten": "Khách sạn Eldora", "xep_hang": "4 sao"}]  # review E m-1
+    ca2 = [{**goc, "text": "Khách sạn này nằm trong Thành Nội."}, {**goc, "text": "Có khách sạn Thành Nội ở gần."},
+           {**goc, "text": "Bạn thử khách sạn Eldora."}, {**goc, "text": "Eldora ở Bến Nghé."}]
+    assert chay(ca2, trung) == [[], ["Khách sạn Thành Nội"], ["Khách sạn Eldora"], []]
     assert chay(ca, cs) == [["Khu nghỉ dưỡng Villa Louise Beach"], ["Khách sạn nghỉ dưỡng Laguna Lăng Cô", "Khách sạn Silk Path Grand Huế"],
-                            ["Khách sạn nghỉ dưỡng Hương Giang"], ["Khách sạn C D", "Khách sạn A B", "Khách sạn nghỉ dưỡng Laguna Lăng Cô"], [], [], [], []]
+                            ["Khách sạn nghỉ dưỡng Hương Giang"], ["Khách sạn C D", "Khách sạn A B", "Khách sạn nghỉ dưỡng Laguna Lăng Cô"], ["Khách sạn Một"], [], [], []]
