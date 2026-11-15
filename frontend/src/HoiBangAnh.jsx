@@ -36,7 +36,7 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     if (state && rootRef.current?.closest(".tro-ly-trang")) window.scrollTo({ top: document.documentElement.scrollHeight });
   }, [state?.phase]);
 
-  if (!bat) return { nut: null, kem: null, the: null, onPaste: undefined, gui: () => false };
+  if (!bat) return { nut: null, kem: null, the: null, onPaste: undefined, gui: () => false, xoa: () => {} };
 
   function dong(goTen) {
     setState(null);
@@ -71,7 +71,11 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
       nhanAnh(state.file, state.preview);
       return true;
     }
-    if (state?.phase === "dang" || state?.phase === "xong") return true;  // đang chờ / đang chờ người dùng chọn tên ⇒ không gửi câu trần
+    if (state?.phase === "dang") return true;  // đang xem ảnh ⇒ chờ, không gửi câu trần
+    if (state?.phase === "xong") {  // thẻ tên đang mở mà bấm Hỏi ⇒ không gửi câu trần, nhắc chọn tên (không nhắc thì trông như bị treo)
+      setState({ ...state, nhac: true });
+      return true;
+    }
     if (state) setState(null);  // thẻ lời báo còn mở ⇒ đóng, câu gõ đi như câu thường
     return false;
   }
@@ -122,6 +126,7 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
             </div>
           </>
         )}
+        {state.nhac && <p role="alert" className="pt-2 font-semibold text-accent-deep">Chọn một tên ở trên để mình trả lời.</p>}
         {state.phase !== "dang" && (
           <div className="flex flex-wrap gap-2 pt-2">
             {state.phase === "xong" && <button type="button" className="retry" onClick={() => dong(true)}>Không phải các tên này — tôi gõ tên</button>}
@@ -131,5 +136,5 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
       </div>
     </div>
   );
-  return { nut, kem, the, onPaste, gui };
+  return { nut, kem, the, onPaste, gui, xoa: () => setState(null) };  // `xoa`: "Cuộc trò chuyện mới" gỡ ảnh đính kèm + đóng thẻ
 }

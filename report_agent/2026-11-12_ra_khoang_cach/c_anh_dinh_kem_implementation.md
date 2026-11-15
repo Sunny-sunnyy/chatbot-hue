@@ -33,3 +33,10 @@ Giao: A, tối 15/11, theo lời User: "khi tải ảnh lên hệ thống không
 - Thời gian: build < 1 s; Playwright ~60 s.
 - **Chưa kiểm / giới hạn:** cờ ảnh tắt không chạy lại (nhánh không chạm đường đó; đã kiểm ở nhánh nút dấu cộng); dán ảnh bằng sự kiện do script dựng (E đã thử dán PNG thật ở nhánh trước); Safari / Firefox chưa thử; nhận diện mất vài giây tới ~12 giây (E đo) và nay người dùng chờ SAU khi bấm Hỏi — hệ quả của lựa chọn "không xử lý lúc tải lên".
 - Ảnh chụp (private): `data/anh_dinh_kem_2026-11-15/anh/dinh_kem_1440.png` (ảnh nhỏ trong ô nhập), `the_ten_1440.png` (thẻ tên sau khi bấm Hỏi), `dinh_kem_390.png`, `trang_1440.png`; script `pw_dinh_kem.py`, `pw_khong_nhan_ra.py`.
+
+## Sau review của B — hai minor (nhánh `p9-anh-dinh-kem-2`, C 20:49 15/11/2026, 0 USD)
+
+- **m-1:** thẻ tên đang mở mà bấm Hỏi / Enter ⇒ trước không có gì xảy ra (dễ tưởng treo) ⇒ nay thẻ hiện thêm dòng "Chọn một tên ở trên để mình trả lời."; vẫn không gửi câu trần, chữ đang gõ giữ nguyên.
+- **m-2:** nút "Cuộc trò chuyện mới" gỡ ảnh đang đính kèm và đóng thẻ đang mở.
+- **Giới hạn giữ (A chốt không làm tối nay):** chưa có nút huỷ lúc "Đang xem ảnh…".
+- **Kiểm [đã chạy]** (Playwright 1440, chặn route ảnh + chat trong trình duyệt nên 0 USD; `data/anh_dinh_kem_2026-11-15/pw_hai_minor.py`): trước khi bấm Hỏi không có dòng nhắc ⇒ sau khi gõ câu khác + Enter có dòng nhắc, 0 câu gửi đi, chữ còn; bấm tên ⇒ gửi "<câu vừa gõ> (Trong ảnh: <tên>)"; "Cuộc trò chuyện mới" khi có ảnh đính kèm ⇒ 0 ảnh nhỏ, 0 thẻ; khi thẻ đang mở ⇒ 0 ảnh nhỏ, 0 thẻ; 0 lỗi console; build + `test_static_ui.py` 4 passed. Diff 9 dòng thêm / 4 dòng bớt, 2 file.
