@@ -1,5 +1,29 @@
 # Đếm trước — sửa lịch bằng lời đổi ngày đi / hạng sao (C, 12:51 15/11/2026)
 
+## Bảng hiện hành — trường nào của biểu mẫu sửa được bằng lời (C cập nhật 19:34 15/11/2026; phần đếm 12:51 15/11 bên dưới là lịch sử)
+
+Biểu mẫu "Lên kế hoạch" có 8 trường; sửa được bằng lời **7 / 8** [code: `backend/llm/sua_lich_v2.py` `HanhDong`].
+
+| Trường biểu mẫu | Sửa bằng lời | Hành động | Ai tính | Câu báo khi không đổi được |
+|---|---|---|---|---|
+| Số ngày | có | `doi_so_ngay` | model nêu số, code chỉ nhận khi số có trong chữ người dùng (rào số ngày) | "Chưa làm: đổi số ngày" · "Lịch đang đúng như vậy rồi (số ngày: …)" |
+| Kiểu đi | có | `doi_tham_so` | model chọn 1 / 3 mức, code xếp lại | "Lịch đang đúng như vậy rồi (…)" · "Mình chưa rõ bạn muốn đổi kiểu lịch thành gì" |
+| Sở thích | có | `doi_tham_so` | như trên | như trên |
+| Trẻ em | có | `doi_tham_so` | như trên | như trên |
+| Người lớn tuổi | có | `doi_tham_so` | như trên | như trên |
+| Hạng chỗ ở | có (từ chiều 15/11) | `doi_hang_o` | model chọn 1 / 3 mức, code áp, không xếp lại | không nêu hạng ⇒ hỏi lại · khu không có hạng đó · đang dùng hạng đó · lịch 1 ngày |
+| Ngày đi | có (từ chiều 15/11) | `doi_ngay_di` | **code** đọc ngày từ chữ người dùng; model không viết ngày | chưa rõ ngày · ngoài 180 ngày · đang dùng ngày đó · phạm luật xếp |
+| Số người lớn | **chưa** | — | chỉ vào lời văn, không vào bộ xếp; chưa ai đếm nhu cầu | — |
+
+Thêm 4 hành động theo điểm (bỏ / thêm / thay / dời buổi) ⇒ 8 loại hành động; code nhận tối đa 3, áp tối đa 2 mỗi lượt, phần còn lại ra dòng "Chưa làm".
+
+**Đổi tối 15/11 (nhánh `p9-sua-lich-no-nho`, 0 USD, không đổi chuỗi gửi model):**
+- Hành động đổi số ngày / kiểu lịch mà **không đổi được gì** (không trường nào, hoặc mọi trường trùng giá trị đang dùng) trước đây làm lượt sửa không có dòng nào ⇒ nay có một dòng "Không đổi được" nói rõ.
+- Đổi kiểu đi / sở thích / trẻ em / người lớn tuổi ⇒ sau dòng "Đã đổi …" có thêm một dòng: "Lịch xếp lại theo lựa chọn mới: k điểm đổi ngày hoặc buổi; bớt …; thêm …" hoặc "Các điểm trong lịch giữ nguyên chỗ." (cùng khuôn với đổi ngày đi). Đổi số ngày không thêm dòng này.
+- Chưa làm (giới hạn giữ): ngày tương đối, ngày âm; xin chỗ ở không nêu hạng ⇒ hiện mọi hạng; nút trên biểu mẫu không tự đồng bộ theo lời.
+
+## (Lịch sử) Đếm trước khi làm hai bậc — 12:51 15/11/2026
+
 A nhận làm ứng viên 15/11. Đếm 10 câu **tự đặt** (không đo nhu cầu thật: log không lưu chữ — B nói đúng) trên một lịch thật 3 ngày có ngày đi + hạng sao "vừa". Gọi đúng lần "hiểu ý sửa" của hệ thống đang chạy + `sl.ap` (`data/sua_lich_truong_2026-11-15/tools/dem.py`, `dem_2012.py`). Tiền **0,0012 USD**.
 
 | Loại câu | Lượt | Lần hiểu ý trả | Người dùng thấy |
