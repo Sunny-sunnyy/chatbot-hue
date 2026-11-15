@@ -99,6 +99,9 @@ class AssistantFlags:
     het_luot_bo_cong_cu: bool = False
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
+    # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
+    # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
+    web_cau_noi_tiep: bool = False
     # "Lên kế hoạch" đợt 1 (plan `2026-11-12-len-ke-hoach-dot-1-plan.md`, spec bản 3.3 §5c.8): biểu mẫu bốn nhóm + hợp đồng `truong` mới — một cờ cho
     # cả đợt, TẮT tới khi đạt nghiệm thu; cần `lich_trinh_bieu_mau`. `len_ke_hoach_o_hien` = các ô biểu mẫu hiện (`/api/tinh_nang`): ô chưa có tác
     # dụng với bộ xếp đang dùng thì chưa hiện (spec N1)
@@ -960,7 +963,7 @@ _CO_TRICH = re.compile(r"\[(?:Nguồn\s*)?\d+\]")
 
 def co_y_thieu(answer: str) -> bool:
     """Cờ `cau_nhieu_y`: câu trả lời có ít nhất một dòng mở đầu ĐÚNG hằng `CAU_Y_THIEU` (sau khoảng trắng / gạch đầu dòng) và dòng đó KHÔNG có
-    trích dẫn [n] / [Nguồn n] — model đánh dấu ý kho không có ⇒ mở cổng web cho phần thiếu (truy vấn vẫn từ câu người dùng, D2)."""
+    trích dẫn [n] / [Nguồn n] — model đánh dấu ý kho không có ⇒ mở cổng web cho phần thiếu (truy vấn vẫn từ câu người dùng, D2 — lượt nhiều ý luôn dùng câu gõ, kể cả khi cờ `web_cau_noi_tiep` bật)."""
     for dong in answer.splitlines():
         d = dong.strip().lstrip("-*•").strip()
         if d.startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d):
@@ -1020,13 +1023,29 @@ def so_y(cau: str) -> int:
     return sum(_la_ve_hoi(p) for v in re.split(r"[,;?]", cau) if v.strip() for p in _LIEN_TU.split(v))
 
 
-async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
-    """Sau khi cổng mở: truy vấn do code dựng từ câu hỏi lượt này (D2) ⇒ một lần tra (D3) ⇒ một lần gọi model riêng viết mục web (D4) ⇒ kiểm
+def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) -> str:
+    """Câu dùng cho phần web. Mặc định: câu người dùng gõ ở lượt này (D2). Cờ `web_cau_noi_tiep` + lượt có lịch sử + model đã tự tìm kho ⇒ câu tìm kho
+    CUỐI model viết: model đã ghép chủ thể của lượt trước vào đó (đo 15/11: 9 / 9 lần nêu đúng tên), còn câu gõ thì cụt. Lượt đầu / model không tìm /
+    câu tìm rỗng / lượt nhiều ý ⇒ như cũ."""
+    # Lượt nhiều ý giữ câu gõ: câu tìm cuối của model có thể thuộc vế kho ĐÃ trả lời, còn mục web phải viết cho vế thiếu (review E M-1; chưa đo)
+    if flags is not None and flags.web_cau_noi_tiep and trace.history and not trace.nhieu_y and trace.model_queries:
+        cau = trace.model_queries[-1]
+        if tw.cau_tim_web(cau).strip().casefold() != "huế":  # rỗng SAU bộ lọc (chỉ có dấu cách / số điện thoại / email) ⇒ không tra web bằng mỗi chữ "Huế"
+            return cau
+    return query
+
+
+async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: AssistantFlags | None = None) -> None:
+    """Sau khi cổng mở: truy vấn do code dựng từ câu hỏi lượt này (D2; cờ `web_cau_noi_tiep` + lượt có lịch sử ⇒ từ câu tìm kho cuối model viết —
+    `cau_cho_web`, chữ model có chi tiết của lượt trước đi ra ngoài) ⇒ một lần tra (D3) ⇒ một lần gọi model riêng viết mục web (D4) ⇒ kiểm
     cuối (D5). Kết quả vào `trace.web`; câu trả lời kho (`trace.answer`) giữ nguyên. Tra lỗi / 0 kết quả / model lỗi / kiểm hỏng ⇒ câu cố định
     (không đoán, không thử lại). Lần tra ghi một mục `tools` (ms, trạng thái, số kết quả, USD — không chữ)."""
-    kq = await tim_web(tw.cau_tim_web(query))
+    cau_web = cau_cho_web(query, trace, flags)
+    tu_model = cau_web != query
+    xet = f"{cau_web} {query}" if tu_model else query  # luật chặn theo câu hỏi (thiên tai, thời gian thực, lưu trú) xét CẢ hai câu ⇒ chỉ chặt hơn
+    kq = await tim_web(tw.cau_tim_web(cau_web))
     trace.tools.append({"name": "tra_web", "ms": kq.ms, "trang_thai": kq.trang_thai, "loi": kq.loi, "n_ket_qua": len(kq.so_web),
-                        "usd": kq.usd})
+                        "usd": kq.usd, **({"cau_tu_model": True} if tu_model else {})})  # chỉ cờ, không chữ
     web = {"outcome": "web_loi", "text": tw.WEB_LOI_TEXT, "nguon": [], "n_ket_qua": len(kq.so_web), "n_ma": 0, "kiem": None,
            "usd_serper": kq.usd}
     trace.web = web
@@ -1034,13 +1053,13 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
         web.update(outcome="web_rong", text=tw.WEB_RONG_TEXT)
     if kq.trang_thai != "ok":
         return
-    if tw.la_cau_thien_tai(query):  # vòng chỉnh 1: câu thiên tai ⇒ không gọi model; câu cố định (NCHMF / chính quyền / 112) + link nguồn do code
+    if tw.la_cau_thien_tai(xet):  # vòng chỉnh 1: câu thiên tai ⇒ không gọi model; câu cố định (NCHMF / chính quyền / 112) + link nguồn do code
         web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=list(kq.so_web))
         return
     call_log = CallLog()
     # câu nhiều ý: model viết mục web cho đúng vế ý thiếu (không viết lại ý kho đã trả lời — 14/11: số giờ web khác kho); Serper vẫn nhận cả câu
     ve = ve_y_thieu(query, trace.answer or "") if trace.nhieu_y else ""
-    hoi_web = f"{query} (chỉ viết cho phần: {ve} — phần còn lại đã có câu trả lời từ kho)" if ve else query
+    hoi_web = f"{cau_web} (chỉ viết cho phần: {ve} — phần còn lại đã có câu trả lời từ kho)" if ve else cau_web
     try:
         generated = await generator.generate_web_section(tw.dau_vao_model(hoi_web, kq.so_web), call_log)
     except GenerationError:
@@ -1048,7 +1067,7 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web) -> None:
         return
     finally:
         record_llm_calls(trace, call_log.calls, "tra_web")
-    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(query), tw.la_cau_thoi_gian_thuc(query), cau_hoi=query)
+    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(xet), tw.la_cau_thoi_gian_thuc(xet), cau_hoi=query)
     web["kiem"] = loi
     if loi == ["so_thoi_gian_thuc"]:  # vòng chỉnh 1: câu thời gian thực có số / ngày giờ ⇒ câu cố định "chưa xác minh" + link nguồn
         web.update(outcome="chua_xac_minh", text=tw.CHUA_XAC_MINH_TEXT, nguon=list(kq.so_web))
@@ -1066,7 +1085,7 @@ async def _web_stream(query: str, generator, trace: AnswerTrace, flags: Assistan
     gửi cả mục một sự kiện `web` sau `sources`."""
     if web_gate_open(trace, flags, tim_web):
         yield "status", {"stage": "tra_web"}
-        await cong_web(query, generator, trace, tim_web)
+        await cong_web(query, generator, trace, tim_web, flags)
 
 
 async def answer_turn(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
@@ -1092,7 +1111,7 @@ async def answer_turn(query: str, retrieval_service, context_builder, generator,
     await answer_query(query, retrieval_service, context_builder, generator, trace, recorder, _today(flags, trace), flags)
     set_notice(trace, flags)
     if web_gate_open(trace, flags, tim_web):
-        await cong_web(query, generator, trace, tim_web)
+        await cong_web(query, generator, trace, tim_web, flags)
 
 
 async def answer_turn_stream(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
