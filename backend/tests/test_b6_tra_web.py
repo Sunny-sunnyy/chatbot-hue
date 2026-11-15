@@ -182,6 +182,20 @@ def test_lodging_price_is_caught():
     assert trace.web["outcome"] == "khong_tin_cay" and trace.web["kiem"] == ["gia_luu_tru"]
 
 
+@pytest.mark.parametrize("text, khong_co", [("KHONG_CO", True), (" khong_co. ", True), ("Không có.", False),
+                                            ("Các thông tin không đề cập loại thuốc nào. KHONG_CO", True),
+                                            ("KHONG_CO, nhưng phòng tập A mở từ 5h sáng [w1].", False)])
+def test_model_saying_no_snippet_answers_gives_one_fixed_line_without_sources(text, khong_co):
+    # 15/11 tối: không đoạn trích nào trả lời được ⇒ model viết đúng từ khoá ⇒ code hiện một dòng cố định, không nguồn (không kể thứ không tìm thấy);
+    # từ khoá lẫn trong một mục thật thì KHÔNG nuốt mục (mục đi tiếp qua kiểm cuối như thường)
+    trace, _ = run_web(text)
+    web = trace.web
+    if khong_co:
+        assert (web["outcome"], web["text"], web["nguon"], web["n_ma"], web["kiem"]) == ("web_rong", tw.WEB_RONG_TEXT, [], 0, ["model_khong_co"])
+    else:
+        assert web["outcome"] != "web_rong" and web["kiem"] != ["model_khong_co"]
+
+
 @pytest.mark.parametrize("tim, outcome, text", [
     (serper(status=403), "web_loi", tw.WEB_LOI_TEXT),
     (serper(body={"organic": []}), "web_rong", tw.WEB_RONG_TEXT),
