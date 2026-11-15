@@ -56,7 +56,8 @@ Người review tìm ra một **lỗi chặn**: câu kiểu "bỏ điểm chiề
 hiểu ý chạy **trước** bộ định tuyến, mà bộ định tuyến là nơi duy nhất nhận ra câu khẩn cấp. Sửa: cho hai lần gọi chạy **song song**; định tuyến báo khẩn
 cấp thì đi đường khẩn cấp như cũ. Mình không bắt model tự khai "khẩn cấp", vì luật an toàn nên nằm ở chỗ đã được đo.
 Lưu ý: 0 / 16 chỉ đo là câu không bị biến thành lượt sửa. Câu trả lời khẩn cấp vẫn chưa có số 112–115, đây là giới hạn anh đã
-nhận từ 12/11.
+nhận từ 12/11. Phần "không mất phần khẩn cấp" tới 15/11 **chưa từng được đo** (cột đếm số điện thoại trong bộ đo gần như không thể ra khác 0, chưa từng thấy một lần); từ chiều 15/11 đo
+bằng việc bước xếp loại có nhận ra câu khẩn cấp không: lần chạy đầu **16 / 16**.
 
 **Tiền.** Đo đúng sai ≈ 0,25 USD (cao hơn ước 0,07 vì mỗi chuỗi phải xếp cả lịch trước). Mỗi câu trong cuộc có lịch tốn thêm một lần hiểu ý: phần lời
 dặn ~1.244 token giống hệt nhau mọi lượt, nên mình gắn một khoá đệm cố định ⇒ lần hiểu ý từ 0,00024 xuống ≈ 0,00007–0,0001 USD (người review đo trên log thật 6 lần: 0,00007).

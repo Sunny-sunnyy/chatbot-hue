@@ -24,7 +24,7 @@ Bộ: 2 cặp đã thấy (B) + 12 cặp A viết (`bo_quyet_A.jsonl`, B không 
 | **Quyết 2:** mục web nói về nơi khác (B đọc tay cả 8; cần 0) | 2 / 2 (ca của User) | **0 / 8** — 5 mục nói đúng chủ thể (trong đó **chỉ 2 mục có thông tin dùng được**, 3 mục là "đoạn trích không cho biết…"), 3 mục là câu cố định an toàn | ĐẠT |
 | S1: câu gửi tra web chứa tên người dùng | 0 | **0 / 4** lượt chạm (3 chuỗi cũ + 1 cặp mới; cặp mới còn lại kho trả lời được ⇒ "không chạm") | ĐẠT (n nhỏ) |
 | S2: cờ tắt / lượt đầu / model không tìm ⇒ như cũ | — | test (4 ca) | ĐẠT |
-| S3: cặp đổi chủ đề — câu web chứa chủ thể lượt 1 | — | **0 / 1** lượt chạm (cặp kia kho trả lời được) | ĐẠT (n = 1) |
+| S3: cặp đổi chủ đề — câu web chứa chủ thể lượt 1 | — | **0 / 1** lượt chạm (cặp kia kho trả lời được) — nhưng ở cặp chạm này câu model viết TRÙNG câu gõ ⇒ **rủi ro chưa thật sự được thử** | không phạm; chưa có bằng chứng (n = 1, thay đổi không áp) |
 | S4: kiểm cuối mục web giữ nguyên | — | không sửa code kiểm; 109 test file cổng web đạt | ĐẠT |
 
 Ghi thêm: cặp "nêu tên mình" có cổng web mở thực ra cũng là câu hỏi tiếp ("trong đó…") — cờ tắt mục web nói chung chung về cả thành phố, cờ bật nói đúng nơi của lượt 1.
@@ -37,7 +37,7 @@ Ghi thêm: cặp "nêu tên mình" có cổng web mở thực ra cũng là câu 
 1. **Ca gốc của User hết lạc đề nhưng chưa có câu trả lời:** 2 / 2 lần cờ bật ra câu cố định "chưa tra được thông tin đáng tin" — mục model viết bị bộ kiểm số chặn (mã `so_ngoai_trich`: có con số không nằm nguyên dạng trong đoạn trích). Đây là luật kiểm cũ, không do bản sửa; cả lượt: 5 / 13 mục web cờ bật là câu cố định (3 do bộ kiểm số, 1 do bộ kiểm số + tiền, 1 do luật thời gian thực) (cờ tắt, mẫu khác: 1 / 4). Muốn ra được giờ mở cửa thật ⇒ việc riêng về bộ kiểm số (đếm trước).
 2. **Câu model viết dài hơn câu gõ:** 1 / 13 câu bị cắt ở 120 ký tự (cắt giữa từ); model có khi thêm ngày cụ thể suy từ "cuối tuần này" ⇒ luật thời gian thực chặn (đúng hướng an toàn).
 3. **Thứ ra ngoài đã đổi** (User đã nhận): chữ model viết, có tên nơi của lượt trước. Tên người dùng: 0 / 4 lượt chạm — mẫu nhỏ, **không loại trừ được rủi ro**; không có rào bằng code cho tên riêng.
-   **Ngoài tên, chi tiết khác của lượt trước cũng có thể ra ngoài:** ở một cặp, model tự thêm ngày cụ thể (suy từ "cuối tuần này" + ngày hôm nay) vào câu gửi tra web. Và nếu sau này bật nhớ cả câu trả lời (`nho_cau_tra_loi`) thì **phải xét lại cờ này** — khi đó lịch sử model thấy rộng hơn nhiều so với lúc đo.
+   **Bằng chứng "chi tiết lượt trước ra web" trong mẫu đo chỉ là TÊN NƠI — đúng mục đích bản sửa.** Một điều khác cùng loại rủi ro "chữ model viết": ở một cặp, model tự đổi chữ "cuối tuần này" của CHÍNH lượt 2 thành ngày cụ thể (tính từ ngày hôm nay) trong câu gửi tra web — đó là điều người dùng không gõ, không phải chi tiết lấy từ lượt trước. Và nếu sau này bật nhớ cả câu trả lời (`nho_cau_tra_loi`) thì **phải xét lại cờ này** — khi đó lịch sử model thấy rộng hơn nhiều so với lúc đo.
 4. Lượt hỏi tiếp mà model không tìm kho lần nào rồi kho từ chối ⇒ vẫn như cũ (0 lần gặp trong 17 cặp).
 
 ## Test, thời gian, tiền
@@ -67,3 +67,8 @@ Tiền (log lọc `git_sha 16a6715`): **0,0556 USD** (trần 0,15); cộng phầ
 M-1 + câu tìm rỗng trùng review E (đã sửa ở `281ff98`). Phần còn lại, 0 USD: m-1 câu tìm của model rỗng **sau** bộ lọc (chỉ có số điện thoại / email) ⇒ câu gõ (+ 1 ca test) ·
 m-2 ba chú thích (`cau_tim_web`, `cong_web`, `co_y_thieu`) nói đúng đường dữ liệu ra ngoài khi cờ bật · m-3 bốn câu trong report này sửa cho khớp bằng chứng (các dòng trên) ·
 m-4 test "như cũ" nay so **bằng nhau toàn phần** với đường cũ (thân yêu cầu tra web, tin nhắn gửi model, mục `tools` trừ ms, kết quả web) trên 6 ca.
+
+## Sửa sau kiểm độc lập 15/11 (18:34 15/11/2026; biên bản private `data/kiem_bai_hoc_2026-11-15/b_kiem_doc_lap.md`)
+
+Hai câu trong report này nói chưa chuẩn, đã sửa tại chỗ (số đo không đổi): (i) mục "Điều người quyết cần biết" điểm 3 — bản trước tả "ngày cụ thể suy từ 'cuối tuần này'" như một chi tiết của lượt trước đi ra ngoài; thật ra chữ đó nằm ở chính lượt 2 và model tự đổi thành ngày. Chi tiết lượt trước ra web trong mẫu đo chỉ có tên nơi.
+(ii) dòng S3 của bảng — "0 / 1 ĐẠT (n = 1)" ⇒ ghi rõ ở cặp đó câu model trùng câu gõ nên rủi ro "đổi chủ đề còn dính nơi cũ" chưa thật sự được thử.

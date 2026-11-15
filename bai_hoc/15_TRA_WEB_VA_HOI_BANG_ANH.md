@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
+*Cập nhật lần cuối: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -14,7 +14,8 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Sổ link — **mới** | mã **`[w n]`** | Mỗi kết quả web có một số; model chỉ được trích các số có trong sổ. |
 | Hỏi bằng ảnh | **`nhan_anh`** (cờ `anh.bat: true`) | Người dùng gửi ảnh; model gợi tối đa 3 tên trong một danh sách 42 mục; người dùng bấm xác nhận rồi mới trả lời (đã gặp ở bài 12). |
 | Rào chắn | **guardrail** | Chỗ code chặn trước khi chữ tới người dùng. |
-| Exa — **mới** | dịch vụ tìm web **Exa** (`highlights`) | Một dịch vụ tìm web khác, trả **đoạn trích nguyên văn trong trang**, chọn theo câu hỏi. Đã thử 12/11, không dùng. |
+| Câu hỏi nối tiếp — **mới** | cờ **`web_cau_noi_tiep`** (bật 15/11) | Câu hỏi sau không nhắc lại tên nơi / món của câu trước ("mở cửa lúc mấy giờ"). Ở lượt này câu tra web lấy từ câu tìm trong sổ mà model vừa viết. |
+| Exa | dịch vụ tìm web **Exa** (`highlights`) | Một dịch vụ tìm web khác, trả **đoạn trích nguyên văn trong trang**, chọn theo câu hỏi. Đã thử 12/11, không dùng. |
 
 ---
 
@@ -43,6 +44,7 @@ Kho trả lời được thì **không tra**. Câu ngoài chủ đề thì **kh�
 
 **Code làm gì:**
 - **Dựng câu tìm**: từ câu hỏi, bỏ số điện thoại và email nếu có, cắt còn tối đa 120 ký tự, thêm chữ "Huế". Chỉ câu tìm này được gửi ra Serper.
+  Từ 15/11, ở **lượt hỏi tiếp** câu tìm được dựng từ câu tìm trong sổ mà model vừa viết thay cho câu người dùng gõ (chuyện thật thứ ba bên dưới).
 - Gọi Serper **một lần**, hạn **5 giây**, không thử lại, lấy tối đa **5 kết quả**. Mỗi kết quả vào **sổ link** với một số `[w 1]`, `[w 2]`…
 - Model viết một mục riêng **"Từ web (chưa kiểm)"** từ các đoạn trích đó, trích bằng `[w n]`.
 - **Code kiểm trước khi hiện:**
@@ -61,7 +63,8 @@ Kho trả lời được thì **không tra**. Câu ngoài chủ đề thì **kh�
 - Tiền: khoảng **0,0018 USD** một câu có tra web, gồm Serper và model.
 
 **Đường ra mới.** Tra web là lần đầu chatbot gửi chữ của người dùng (đã dựng thành câu tìm) ra một dịch vụ ngoài OpenAI. Anh đã chấp nhận điều này khi duyệt
-thiết kế Phase 9.
+thiết kế Phase 9. Từ 15/11, ở lượt hỏi tiếp thứ đi ra là **chữ model viết** (có tên nơi lấy từ câu trước), không còn là nguyên chữ người dùng gõ; anh đã nghe rõ
+điều này và rủi ro kèm theo trước khi chọn bật.
 
 ## Hỏi bằng ảnh: gợi ý, chờ xác nhận
 
@@ -121,12 +124,68 @@ thuyết, chưa tách được vì mỗi bên chỉ chạy một lượt.
 **Bài học:** **đo trên đường người dùng thật trước.** Đo riêng một bước bỏ qua cổng web và luật kiểm phía sau, nên thấy lợi mà người dùng không nhận được.
 Tiền cả việc: khoảng **0,195 USD** thật (khoảng 4.900 đồng), cộng khoảng 0,82 USD tín dụng dùng thử miễn phí của Exa.
 
+## Chuyện thật thứ ba: hỏi tiếp "mở cửa lúc mấy giờ" mà ra nơi khác (15/11)
+
+**Lỗi anh gặp.** Chiều 15/11 anh tự thử: câu đầu hỏi về một ngôi chùa, trả lời tốt. Câu sau anh gõ đúng năm chữ *"mở cửa lúc mấy giờ"*. Trợ lý nói sổ
+không có, còn phần "Từ web" bên dưới lại nói về **nơi khác**. Lúc mình dựng lại đúng ca này thì thấy rõ hơn: trợ lý tìm thêm trong sổ hai lần rồi mới từ
+chối, và mục web kể giờ mở cửa của một trung tâm thương mại và Đại Nội, kèm câu "bạn chưa nêu rõ địa điểm". Người hướng dẫn viên thật sẽ hiểu ngay khách đang
+hỏi tiếp về ngôi chùa vừa nói.
+
+**Tìm nguyên nhân: ghi lại câu ở từng khâu, không đoán.** Mình cho chạy lại đúng đường anh dùng (cùng một cuộc trò chuyện, hai lượt) và ghi lại mọi câu
+mà hệ thống tự viết ra ở ba chỗ: lần tìm đầu trong sổ, các lần model tìm thêm, và câu gửi đi tra web.
+- Dựng lại lỗi: **2 / 2 lần** đều ra đúng như anh thấy, kể cả khi câu sau có chữ "nó" ("nó mở cửa mấy giờ").
+- **Phần sổ không mất mạch chuyện.** Trong 9 lần model tự tìm thêm ở các câu hỏi tiếp, **cả 9 lần** câu tìm đều có đúng tên nơi của câu trước. Với 7 cặp
+  câu mà sổ *có* điều được hỏi, **7 / 7** câu hỏi tiếp được trả lời đúng nơi.
+- **Phần web thì mất.** Câu gửi đi tra web được dựng từ **đúng câu của lượt này** — tức là "mở cửa lúc mấy giờ" thêm chữ "Huế", không có tên chùa. Đây là
+  thiết kế cũ có chủ ý: không đưa các câu trước vào câu tra web, để tên người dùng lỡ nói ở lượt trước không lọt ra ngoài.
+- Vậy lỗi chỉ lộ khi gặp đủ hai điều: **câu hỏi tiếp không nhắc lại tên**, và **sổ không có** điều được hỏi. Bộ câu đo cũ không có loại này.
+- Một điều bị nghi đầu tiên (người điều phối đoán) nhưng không phải thủ phạm: lần tìm đầu trong sổ cũng dùng câu cụt và trượt **6 / 7** cặp. Nhưng model tự bù bằng một lần tìm thêm,
+  nên câu trả lời vẫn đúng, chỉ chậm hơn một nhịp.
+
+**Hai cách sửa đã đếm thử rồi bỏ** (cách đầu không tốn tiền; cách sau đếm trên 9 lượt tra web thật, khoảng 0,016 USD ≈ 400 đồng):
+- *Ghép câu trước với câu sau bằng code.* Thử trên 10 cặp: cứu được câu hỏi tiếp, nhưng **phá 2 / 3 cặp đổi chủ đề thật** (người dùng hỏi sang chuyện khác
+  mà câu tìm vẫn dính nơi cũ). Bỏ.
+- *Cho bộ kiểm số hiểu các cách viết giờ ("7h", "7:00", "7 giờ").* Mình nghi mục web hay bị thay bằng câu "chưa tra được" vì giờ viết khác kiểu. Đếm trên
+  85 mục web có lưu chữ (76 mục cũ + 9 mục mới: 8 câu hỏi giờ và 1 lượt đầu của ca anh): **0 mục** bị chặn vì lý do đó. Không đủ lỗi thì không xây.
+
+**Cách sửa được chọn.** Ở lượt **có câu trước** và model **đã tự tìm thêm trong sổ**, code lấy luôn **câu tìm cuối cùng model vừa viết** (câu này đã có tên
+nơi) làm câu tra web, và làm câu đưa cho lần viết mục web. Không thêm lần gọi model nào. Câu đó vẫn đi qua bộ lọc cũ: bỏ email, số điện thoại, cắt 120 ký tự.
+Lượt đầu của cuộc trò chuyện, lượt model không tìm thêm, và **lượt hỏi nhiều ý** thì giữ nguyên như trước.
+
+**Đo trước khi bật** (đường thật, tra web thật, một lượt; tiêu chí ghi trước khi chạy; khoảng 0,056 USD ≈ 1.400 đồng):
+
+| Đo gì | Bộ câu | Trước khi sửa | Sau khi sửa | Đọc thế nào |
+|---|---|---|---|---|
+| Câu tra web có đúng tên nơi đang nói tới | sau: 8 cặp hỏi tiếp mà sổ thiếu (2 cặp dựng lại lỗi + 6 cặp do người điều phối viết; mình không viết, không sửa). Trước: tính bằng code trên 10 cặp hỏi tiếp, gồm cả 2 cặp bị loại | **0 / 10** (chưa sửa thì câu tra web chính là câu gõ) | **8 / 8** (cần ít nhất 7) | lỗi gốc hết |
+| Mục web nói lạc sang nơi khác | sau: cùng 8 cặp, mình đọc tay từng mục. Trước: chỉ 2 lượt dựng lại ca của anh | **2 / 2** | **0 / 8** | hết lạc đề |
+| Trong 8 mục đó, bao nhiêu mục **dùng được** | cùng 8 cặp | — | **2** có thông tin · 3 nói "đoạn trích không cho biết" · 3 là câu cố định "chưa tra được" | đúng nơi chưa có nghĩa là có câu trả lời |
+| Tên người dùng lọt vào câu tra web | 4 lượt có nêu tên mình ở câu trước rồi hỏi câu cần web | 0 | **0 / 4** | **mẫu nhỏ**, chưa loại hẳn được rủi ro |
+| Đổi chủ đề thật mà câu tra web còn dính nơi cũ | 1 cặp có mở tra web | — | **0 / 1** | ở cặp này câu model viết trùng câu gõ, nên rủi ro này **thực ra chưa được thử** |
+
+Hai cặp trong bộ của người điều phối bị loại khỏi mẫu theo luật ghi trước: một cặp sổ trả lời được, một cặp cổng web không mở.
+
+**Hai lượt review bắt được gì.** Người review thứ nhất viết một ca thử không tốn tiền và thấy: với **câu hỏi tiếp nhiều ý**, câu tìm cuối của model có thể
+thuộc ý mà sổ đã trả lời, trong khi mục web phải viết cho ý còn thiếu — tra web sẽ lệch ý. Bộ đo có phí của mình không có cặp nhiều ý nào nên không lộ. Vì
+chưa đo, mình để lượt nhiều ý dùng câu gõ như cũ. Người review thứ hai bắt thêm: câu tìm của model nếu chỉ còn số điện thoại thì sau bộ lọc chỉ còn chữ
+"Huế" (đã cho quay về câu gõ), và báo cáo của mình có bốn chỗ nói rộng hơn bằng chứng (đã sửa, ví dụ phải ghi rõ "0 / 4 là mẫu nhỏ").
+
+**Bật.** Anh cho bật lúc **17:50 ngày 15/11**. Người điều phối thử lại đúng ca của anh trên máy chủ: mục web nói **đúng ngôi chùa, kèm giờ**.
+
+**Điều nên nhớ:** khi một câu trả lời sai, hãy ghi lại *chữ thật* đi qua từng khâu rồi mới kết luận khâu nào hỏng. Ở đây phần đáng ngờ nhất (trí nhớ hội
+thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn cũ ở khâu tra web.
+
 ## Khi nào hỏng
 
 - **Mục web có thể sai hoặc cũ** dù đã ghi "chưa kiểm". Địa chỉ, số điện thoại trong mục web chưa được kiểm là có trong đoạn trích hay không.
 - **Mục web chậm**: khoảng 13 giây tới mục web (bộ kín, 05/11); trên 42 câu tự viết qua máy chủ 12/11, khoảng 18 giây ở trung vị.
 - **Một con số không khớp là mất cả mục.** Khoảng 1 / 3 lượt tra mất mục web vì luật kiểm số (đo 12/11, cả với Serper lẫn Exa). Luật này cố ý chặt; chưa thử
   cách chỉ bỏ câu có số sai.
+- **Câu hỏi tiếp nhiều ý** (hai ý trong một câu, sổ thiếu một ý) vẫn tra web bằng câu người dùng gõ, nên vẫn có thể cụt như trước 15/11. Chưa đo, chưa sửa.
+- **Cùng một câu, mục web mỗi lần một khác.** Đúng ca của anh: ở lượt đo, cả hai cách hỏi (có và không có chữ "nó") đều ra câu cố định "chưa tra được";
+  lượt sau hỏi lại câu không có chữ "nó" thì ra đúng ngôi chùa kèm giờ. Kết quả tìm của Serper và chữ model viết đổi giữa các lần; tỉ lệ thật chưa biết.
+- **Thứ đi ra web giờ là chữ model viết.** Tên nơi của câu trước đi ra web (đó là chủ đích). Chữ model viết còn có thể thêm điều người dùng không gõ: ở một
+  cặp đo, model tự đổi "cuối tuần này" thành ngày cụ thể. Tên người dùng: 0 / 4 lượt đo, mẫu nhỏ, không có rào bằng code cho tên riêng. Nếu sau này bật nhớ
+  cả câu trả lời thì phải xét lại cờ này.
 - **Luật "ngay lúc này" có thể chặn nhầm** nếu dò quá rộng (ví dụ chữ "đang").
 - **Ảnh:** các lăng, các điện trông giống nhau dễ nhầm; ảnh có chữ lừa có thể đánh lừa model; chưa giới hạn số ảnh mỗi người; câu chậm chưa đạt 5 giây.
 - Bản đóng gói để đưa lên mạng (bài 18) đặt tra web **tắt**.
@@ -138,7 +197,8 @@ Tiền cả việc: khoảng **0,195 USD** thật (khoảng 4.900 đồng), cộ
 2. **Hỏi bằng ảnh = gợi ý tối đa 3 tên, chờ người dùng bấm xác nhận.** Đúng trong 3 gợi ý 22 / 25 ảnh, nhưng gán nhầm tên Huế cho ảnh ngoài, nên phải xác nhận.
    Ảnh không lưu, đã xoá thông tin kèm theo.
 3. Chuyện thật: những lỗi nguy hiểm nhất (khẳng định lũ, cúp điện) được chặn bằng **luật trong code**, không bằng lời dặn. Thử đổi Serper sang Exa: đo riêng
-   bước tra thì đạt (25 so với 17) nhưng nhạy, qua máy chủ thật thì không (14 so với 13) ⇒ giữ Serper.
+   bước tra thì đạt (25 so với 17) nhưng nhạy, qua máy chủ thật thì không (14 so với 13) ⇒ giữ Serper. Câu hỏi tiếp "mở cửa lúc mấy giờ" từng tra web bằng
+   câu cụt nên lạc sang nơi khác; từ 15/11 dùng câu tìm model vừa viết: câu tra web đúng nơi 8 / 8 (trước 0 / 10), nhưng chỉ 2 / 8 mục có thông tin dùng được.
 
 **Bài sau:** Bài 16 — Kể đồ án trong 2–3 phút (bản đủ), cùng chỗ còn yếu và hướng sửa.
 
@@ -154,6 +214,7 @@ Tiền cả việc: khoảng **0,195 USD** thật (khoảng 4.900 đồng), cộ
 - Hỏi bằng ảnh: `backend/api/routes/anh.py` (kiểu ảnh, 10 MB `max_bytes`, kiểm trước khi đọc, Origin), `backend/llm/nhan_anh.py` (danh sách tên, ≤ 3 mã / `khong_nhan_ra`, kiểm lại mã, thu nhỏ `canh_dai`, xoá EXIF) [code, xem 11/11]; danh sách 42 mục: `data/phase_10/anh/danh_sach_ten.json` (riêng tư; đếm 11/11) [đã chạy]
 - Ảnh: 22 / 25 trong 3 gợi ý, ảnh ngoài Huế 2 / 5; SigLIP 2 20 / 25 và 5 / 5; ảnh chữ lừa 1 / 3; khoảng 3 s, câu chậm 6–9 s; khoảng 0,0004 USD / ảnh: `bao_cao_he_thong/08_BAO_CAO_HOI_BANG_ANH.md` (05/11) [đã chạy]
 - "Khách sạn gần cầu Trường Tiền" là câu tự đặt.
+- Câu hỏi nối tiếp (15/11): dựng lại 2 / 2, câu tìm kho nêu tên 9 / 9, kho có ⇒ 7 / 7, lần tìm đầu trượt 6 / 7, ghép câu phá 2 / 3 cặp đổi chủ đề: `report_agent/2026-11-12_ra_khoang_cach/b_cau_noi_tiep_dem.md` [đã chạy]; 0 / 85 mục bị chặn vì cách viết giờ, ca gốc dao động 2 / 2 ⇒ 1 / 1: `…/b_web_kiem_so_dem.md` [đã chạy]; cách sửa, 8 / 8 ↔ 0 / 10, 0 / 8 ↔ 2 / 2, 2 + 3 + 3, tên 0 / 4, đổi chủ đề 0 / 1, loại 2 cặp, 0,0556 USD, sửa theo hai review: `…/b_web_noi_tiep_implementation.md`, `…/e_review_web_noi_tiep.md`, review thứ hai `data/review_web_noi_tiep_2026-11-15/review.md` (riêng tư) [đã chạy]; kiểm độc lập mục này trước khi ghi: `data/kiem_bai_hoc_2026-11-15/b_kiem_doc_lap.md` (riêng tư; 60 khẳng định: 2 sai, 11 dễ hiểu nhầm — đã sửa); code `backend/llm/assistant.py` `cau_cho_web`, `cong_web`; cờ `web_cau_noi_tiep: true` (bật 17:50 15/11/2026, anh chọn; người điều phối thử ca gốc qua máy chủ) `backend/config/settings.yaml` [code]
 - Exa (12/11): 73 lượt log, 44 / 13 / 14, 0 lỗi Serper, 147 ký tự, 32 % mạng xã hội, giá 0,007 ↔ 0,001, điều khoản dùng dữ liệu: `report_agent/2026-11-12_ra_khoang_cach/e_tim_web_serper_exa.md` §1–2; thí nghiệm 17 / 25 / 20, p95 3,1 / 2,2, mạng xã hội 24 / 91 ↔ 0 / 109, độ nhạy 25 ⇒ 20 khi loại trang tổng hợp của Exa: cùng file §5, §6, §6b; server thật 13 / 14 (cần ≥ 16), không tin cậy 10 / 13, tra p95 2,82 / 2,26, tới sự kiện web 17,9 / 16,9 s, ≈ 30 / 42 câu được tra, 13 / 30 và 10 / 29 lượt mất mục do luật kiểm, ≈ 0,195 USD + ≈ 0,82 tín dụng: §7 [đã chạy]; kiểm thí nghiệm: `…/e_exa_review.md`; kiểm code (Exa trước 3 s, Serper dự phòng, 40 lượt / ngày): `…/e_exa_code_review.md`; nhánh `p9-tra-web-exa` không merge (`tra_web.py` trên `main` không có Exa), tag `hoso/p9-tra-web-exa` [code, theo bản ghi số liệu 13/11]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
 - **Sửa 20:22 13/11/2026:** số "khoảng 13 giây" ghi rõ là bộ kín 05/11, thêm số 12/11 qua máy chủ (khác bộ câu, khác cách đo).
 
