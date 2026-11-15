@@ -72,11 +72,12 @@ def do_ngay_di(text: str, hom_nay) -> int | None:
 # không viết ngày). Khác `do_ngay_di`: không giới hạn 0–6 ngày, đọc thêm "dd/mm/yyyy", "ngày d tháng m", "tuần sau"; trả ngày thật.
 # Review E M-1 (15/11): chữ GIỐNG ngày không phải ngày ⇒ không đọc (thà hỏi lại còn hơn đổi sai): phân số / "24/7" / "1/2 ngày" · "2 tháng 3 ngày" ·
 # "điểm thứ hai" (thứ tự, không phải thứ Hai) · "Mai" là tên người / tên đường.
-_DON_VI = r"(?:ngày|giờ|buổi|tiếng|nhóm|phần|chặng|số|người|quãng|đoạn|tuần|tháng)"
-_DMY = re.compile(r"(?<![\d/])(?<!tỉ lệ )(?<!khoảng )(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])(?!\s*" + _DON_VI + r"(?![\w]))")
-_D_THANG_M = re.compile(r"(?<![\w/])(\d{1,2})\s+tháng\s+(\d{1,2})(?:\s+năm\s+(\d{4}))?(?![\w/])(?!\s+(?:ngày|tuần)(?![\w]))")
+_DON_VI = re.compile(r"\s*(?:ngày|giờ|buổi|tiếng|nhóm|phần|chặng|số|người|quãng|đoạn|tuần|tháng|giá)(?![\w])")
+_SAU_THANG = re.compile(r"\s+(?:ngày|tuần)(?![\w])")
+_DMY = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])")
+_D_THANG_M = re.compile(r"(?<![\w/])(\d{1,2})\s+tháng\s+(\d{1,2})(?:\s+năm\s+(\d{4}))?(?![\w/])")
 _THU_CN = re.compile(r"(?<![\w])(?:(\w+)\s+)?(?:thứ\s+(hai|ba|tư|năm|sáu|bảy|[2-7])|(chủ\s+nhật|cn))(?![\w])")  # như `_THU` + "thứ 3", "CN"
-_TRUOC_THU_TU = {"ngày", "điểm", "nơi", "chỗ", "lần", "mục", "người", "cái", "món", "quán", "bước", "ý", "phần", "chặng", "hạng", "câu", "lượt", "bữa"}
+_TRUOC_THU_TU = {"ngày", "tuần", "tháng", "điểm", "nơi", "chỗ", "lần", "mục", "người", "cái", "món", "quán", "bước", "ý", "phần", "chặng", "hạng", "câu", "lượt", "bữa"}
 _MAI_CHU = re.compile(r"(?<![\w])(?:(\w+)\s+)?(mai)(?![\w])(?:\s+(\w))?", re.IGNORECASE)  # chạy trên chữ GỐC (còn hoa / thường)
 _TRUOC_TEN = {"chị", "anh", "cô", "bà", "ông", "em", "bạn", "bé", "chú", "bác", "dì", "đường", "phố", "hoa", "chợ", "cây", "cành", "tên"}
 
@@ -105,13 +106,24 @@ def ngay_tu_cau(text: str, hom_nay):
     (lần tới gần nhất; kèm "tuần sau / tuần tới" ⇒ đúng thứ đó của tuần sau) · cuối tuần [này / sau] (thứ Bảy)."""
     import datetime as _dt
     goc = unicodedata.normalize("NFC", text)
+    if goc == goc.upper():  # cả câu viết HOA ⇒ không dùng được dấu hiệu "viết hoa = tên riêng"
+        goc = goc.lower()
     t = goc.casefold()
     if _AM_LICH.search(t):
         return NGAY_CHUA_RO
     found, sai = set(), False
-    for d, mo, y in _DMY.findall(t) + _D_THANG_M.findall(t):
-        if (d, mo, y) == ("24", "7", ""):  # "mở 24/7"
-            continue
+    for m in list(_DMY.finditer(t)) + list(_D_THANG_M.finditer(t)):
+        d, mo, y = m.group(1), m.group(2), m.group(3)
+        truoc, sau = t[:m.start()].rstrip(), t[m.end():]
+        if "/" in m.group(0):
+            if (d, mo, y) == ("24", "7", None):  # "mở 24/7"
+                continue
+            # phân số: "tỉ lệ 3/4", "1/2 ngày", "vé 1/2 giá" (tử < mẫu + đơn vị đi sau); "20/12 ngày đẹp" vẫn là ngày
+            mo_ho = truoc.endswith(("tỉ lệ", "tỷ lệ", "khoảng")) or (not y and int(d) < int(mo) and bool(_DON_VI.match(sau)))
+        else:
+            mo_ho = not y and bool(_SAU_THANG.match(sau))  # "2 tháng 3 ngày nghỉ" = hai tháng ba ngày
+        if mo_ho:  # một cụm số có thể là ngày mà cũng có thể không ⇒ cả câu "chưa rõ" (không lấy ngày khác trong câu rồi đổi)
+            return NGAY_CHUA_RO
         try:
             ngay = _dt.date(int(y) if y else hom_nay.year, int(mo), int(d))
             if not y and ngay < hom_nay:

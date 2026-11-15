@@ -41,6 +41,11 @@ CA_NGAY = [
     ("đổi sang 20/12 và bỏ điểm thứ hai", D(2026, 12, 20)), ("mai đi luôn, chị Mai cũng đi", D(2026, 11, 16)),
     ("Mai đi luôn nhé", D(2026, 11, 16)), ("Ok. Mai mình đi", D(2026, 11, 16)), ("tối mai tới Huế, đổi ngày đi", D(2026, 11, 16)),
     ("sáng thứ hai mình tới, bỏ điểm thứ hai", D(2026, 11, 16)), ("đi 24/7 nhé", NGAY_CHUA_RO), ("đi từ 24/12, quán mở 24/7", D(2026, 12, 24)),
+    # E kiểm phần sửa (19 câu mới, 7 lệch): 4 câu còn ra SAI ngày ⇒ nay "chưa rõ"; 2 câu từ chối nhầm ⇒ nay đúng ngày
+    ("dời ngày, tuần thứ hai của tháng bận", NGAY_CHUA_RO), ("đổi ngày đi, tỷ lệ 1/2", NGAY_CHUA_RO), ("dời chuyến, vé 1/2 giá", NGAY_CHUA_RO),
+    ("đi vào hôm 20 tháng 12 ngày chủ nhật", NGAY_CHUA_RO),  # "20 tháng 12 ngày" mơ hồ ⇒ không lấy "chủ nhật" còn lại
+    ("đổi ngày đi sang 20/12 ngày đẹp", D(2026, 12, 20)), ("MAI ĐI LUÔN", D(2026, 11, 16)),
+    ("đi ngày 3/12 giờ nào cũng được", NGAY_CHUA_RO),  # giới hạn đã nhận: tử < mẫu + "giờ" ⇒ coi như phân số, hỏi lại (an toàn)
 ]
 
 
