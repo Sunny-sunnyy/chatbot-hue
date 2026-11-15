@@ -73,6 +73,13 @@ export default function App() {
   function editPlan(chon, truong) {
     setPlanPrefill({ ...(tinhNang.len_ke_hoach_v2 && truong ? truong : chon) });
     setPanelOpen(false);
+    // đang ở chính trang Lên kế hoạch ⇒ hash không đổi, trang không tự cuộn: nút nằm cuối lịch, biểu mẫu ở trên ngoài màn hình ⇒ bấm mà "không thấy
+    // gì" (User 15/11) ⇒ cuộn tới biểu mẫu. Từ trang khác: đổi hash đã đưa về đầu trang (có biểu mẫu).
+    if (route.page === "len-ke-hoach") {
+      const form = document.querySelector("form.lc");
+      form?.scrollIntoView({ behavior: "smooth", block: "start" });
+      form?.querySelector("button, input")?.focus({ preventScroll: true });  // bàn phím / trình đọc màn hình cũng về biểu mẫu
+    }
     window.location.hash = "#/len-ke-hoach";
   }
 
