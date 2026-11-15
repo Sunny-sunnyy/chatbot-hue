@@ -1,4 +1,60 @@
-# STATUS E — PHIÊN CHIỀU 15/11 (mở 15:08 15/11/2026, `date`) · terminal `hue-rag-ab` · Claude Fable 5.2 · vai thực thi
+# STATUS E — KẾT PHIÊN CHIỀU 15/11 (ghi 18:26 15/11/2026, `date`) · terminal `hue-rag-ab` · Claude Fable 5.2 · vai thực thi
+
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 15/11)
+
+**Quyền phiên chiều 15/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A (chờ A nhắn tên terminal trước, đừng gửi cả 3) ⇒ chờ A giao.
+
+### Trạng thái máy lúc kết phiên
+- Server tạm của E: 0. Tiến trình nền / agent con: 0 (xem dòng TÀI LIỆU dưới nếu còn ghi "đang chờ"). File tạm `/tmp/e_*`: đã xoá.
+- Worktree: `/tmp/e_gd3`, `/tmp/e_ks`, `/tmp/e_kp` ĐÃ GỠ. Còn `/tmp/e_v9` (nhánh tài liệu kết phiên) — xem dòng TÀI LIỆU; đã merge thì gỡ: `rm /tmp/e_v9/data /tmp/e_v9/knowledge-base-hue` rồi `git worktree remove --force /tmp/e_v9`.
+- Dòng log số đo của các server tạm đã chép ra `data/log_e_2026-11-15_chieu/` (129 + 23 dòng `chat_metrics`, không có chữ câu hỏi).
+
+### TÀI LIỆU kết phiên (A giao lúc User yêu cầu kết phiên) — TRẠNG THÁI: ĐÃ PUSH `57bf6de` origin/`p9-tai-lieu-ket-phien-chieu` (ghi 18:35 15/11/2026; trên origin/main `c78e6c2`) — **chờ A merge**
+- 4 file: `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` (viết lại theo trạng thái cuối), `bao_cao_he_thong/README.md`, `bai_hoc/24` (1 số), `bai_hoc/25` (1 dòng). Sổ 07 + bài 15 / 20 do B giữ (nhánh `p9-tai-lieu-web-noi-tiep`).
+- Agent con ngữ cảnh mới đối chiếu 72 mục với code / bảng: 55 đúng · 2 sai · 14 dễ hiểu nhầm · 1 không kiểm được ⇒ E đã sửa 2 sai + các câu dễ hiểu nhầm; biên bản `data/tai_lieu_v9_nhap_2026-11-15/kiem_doc_lap_01_ket_phien.md`.
+- **Chưa sửa (ngoài phạm vi tài liệu, báo A):** `frontend/src/GioiThieu.jsx` ~dòng 140 còn viết "khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm" — từ khi bật cờ câu nối tiếp, lượt hỏi tiếp gửi câu do model viết; "bữa có quán kho 49,3 %" trong README sổ là số đo trên bảng 34 điểm, chưa đo lại.
+- A merge xong ⇒ gỡ worktree `/tmp/e_v9` (lệnh ở mục "Trạng thái máy").
+
+### Việc đã xong chiều 15/11 (đều đã vào `main`; report trong `report_agent/2026-11-12_ra_khoang_cach/`)
+| Việc | Nhánh ⇒ merge | Report |
+|---|---|---|
+| Bảng điểm lịch v9 (41 điểm), khung toạ độ 108,25, 3 ghi chú ăn, câu chỉ có mã nguồn ⇒ dự phòng | `p9-diem-v9` `023f647` ⇒ `eee5781` | `e_diem_v9_implementation.md` (review `b_review_diem_v9.md`) |
+| 3 sửa giao diện (bỏ dòng báo ảnh · bỏ dòng "Các bước" · nút Sửa cuộn tới biểu mẫu) | `p9-gd-3-sua` `1aa6a6f` ⇒ `2d76096` | `e_gd_3_sua_implementation.md` |
+| Ảnh khách sạn User (10 ảnh, 1 che số) ⇒ 67 / 136, bảng lưu trú v6 `44d7b14d8fce` | `p9-anh-ks-user` `ba23979` ⇒ `0d3f547` | `e_anh_ks_user_implementation.md` |
+| Ảnh Khám phá User ⇒ 260 / 263; ảnh lịch 40 / 41 (bảng ảnh v5 `5ed8f32903a9`; loader nhận `nguon: "user"`) | `p9-anh-kp-user` ⇒ `11740dd`; `p9-anh-tay-ho` `f28f7d0` ⇒ `808a06f` | `e_anh_kp_user_implementation.md` |
+| Buổi để trống không hiện (giao diện + chữ chép / tải) | `p9-bo-buoi-trong` `53f07dd` ⇒ `c2bd9fc` | `e_bo_buoi_trong_implementation.md` |
+| Tài liệu v9 (bài 14 / 23 / 24 / 25, sổ 07, nhật ký) | `p9-tai-lieu-v9` `e9d6b7b` ⇒ `808a06f` | biên bản kiểm độc lập `data/tai_lieu_v9_nhap_2026-11-15/kiem_doc_lap_bai_23_chieu_1511.md` |
+| Review cho B / C | — | `e_review_web_noi_tiep.md` · `e_review_noi_o_khi_hoi.md` · `e_review_sua_ngay_di.md` (3 vòng, ready trên `b7b47f1`) |
+
+### Việc còn mở liên quan E (không gấp; chờ A / User)
+- **Deploy nháp** (`data/phase_12/deploy_nhap/`, private, chưa build image): `Dockerfile` + `dung_dockerignore.py` đang trỏ `diem_v9.json`, `diem_toa_do_v9.json`, `bang_anh_v5.json`, `data/anh_user_2026-11-15_ghep/bang_luu_tru_lich_v6.json`, `bang_quan_lich_v1.json`; đối chiếu 7 / 7 đường bảng `.json` của `settings.yaml` (origin/main sau khi merge bảng ảnh lịch v5). Không chép riêng settings ⇒ cờ `web_cau_noi_tiep: true` của main đi theo `backend/`. Sao lưu: `sao_luu_2026-11-15/`, `sao_luu_2026-11-15_chieu/`. Lần đổi bảng kế: sửa cả hai file + chạy lại `dung_dockerignore.py`.
+- **Ảnh còn thiếu:** đèo Hải Vân (ảnh lịch + Khám phá đang là đoàn tàu trên sườn đèo — cần ảnh cửa ải / cung đèo); biển Thuận An (ảnh lịch, 1 / 41 còn trống); 3 bài Khám phá User chọn ĐỂ TRỐNG 18:01 15/11 (ca kịch, lễ Kỳ yên, lễ Tiến Xuân ngưu — ảnh User đưa bị loại, lý do ở `e_anh_kp_user_implementation.md`); khách sạn: 69 / 136 chưa ảnh, cơ sở thứ 11 User không tìm được.
+- **Bữa chưa có quán / ghi chú:** làng nón Tây Hồ (144 bữa mô phỏng) + đèo Hải Vân bữa tối (72) — kho không nói gì về ăn uống ở đó (`data/diem_lich_moi_2026-11-15/an_o_v9.json`, script `tools/an_o_v9.py`).
+- **Theo dõi sau merge đổi ngày đi:** đếm trong log lượt `doi_ngay_di` mà người dùng đổi lại ngay lượt sau (tín hiệu đọc sai ngày). Hai bộ câu dò hàm đọc ngày: `data/review_sua_ngay_di_2026-11-15/do_34.py` (35 câu) + `do_19.py` (19 câu) — chạy lại MỖI KHI sửa `do_so.ngay_tu_cau` (cd `<worktree>/backend`, `PYTHONPATH=$PWD`); trạng thái trên `b7b47f1`: 35 / 35 và 18 đúng · 0 sai ngày · 1 từ chối nhầm.
+- **Theo dõi cờ `web_cau_noi_tiep`:** đếm lượt có `cau_tu_model` trong log + đọc tay câu tra web ở lượt có người dùng nêu tên (A giữ ở checklist deploy).
+- **Đổi bảng dữ liệu lần sau (luật mới W84):** trước merge quét id / tên mới trong nhãn mọi bộ đo + chạy mô phỏng nhãn không model (`data/nhan_cu_v9_2026-11-15/mo_phong_bang.py`, của C; `BANG_FILE=…`) và chạy `test_len_ke_hoach_v2.py` trên bảng ghép.
+- Thêm điểm vào bảng lịch: `data/diem_lich_moi_2026-11-15/tools/dung_v9.py` là mẫu (có bảng `DOAN_MO_TA`); đoạn mô tả lấy ở mục "Tổng quan / xem gì", đọc tay.
+
+### Bẫy chiều 15/11 (đầu vào vòng cải tiến)
+- Bảng nháp "nạp đúng khuôn + 0 lỗi khung" không bắt được: sàn đơn điệu kiểu đi (phải chạy test sàn của repo) và đoạn mô tả nghèo ý (phải chạy lượt thật nhỏ, đọc từng câu).
+- Rebase SAU khi đã push ⇒ `commit_push.sh` báo CHƯA PUSH ⇒ phải `--force-with-lease`; nhánh mới: rebase trước lần push đầu.
+- `assert` "thư mục đúng N file" vỡ khi User bỏ thêm file vào cùng thư mục ⇒ kiểm tập con.
+- `str(None)` thành chữ "None" trong loader bảng ảnh (đã sửa) — đọc trường tuỳ chọn bằng `a.get(k) or ""`.
+- Đổi bảng điểm mà không quét nhãn bộ chuỗi sửa lịch ⇒ C dính một chuỗi trượt do nhãn cũ.
+- Report ghi số dòng diff trước khi đếm lại (lệch 1); sửa tài liệu thành 3 đợt thay vì gom một lần cuối chuỗi việc.
+- Ảnh User đưa: phải nhìn chữ trong ảnh (biển tên đình ở tỉnh khác, số điện thoại trên biển hiệu) — nhìn lướt cảnh là sót.
+
+### Tiền E chiều 15/11 (theo sha, `scripts/dem_chat_metrics.py` trên log đã chép)
+`a124771` 0,0089 + `29a9121` 0,0062 + `6e3331b` 0,0041 + `febef97` 0,0007 = **0,0199 USD**. Cả ngày 15/11 của E ≈ 0,22 USD (sáng ≈ 0,20, số cộng tay). Agent con: 2 lượt (quota Claude). Serper / Codex: 0.
+
+### Câu hỏi / thắc mắc cho A phiên sau
+- m-1 của review nơi ở: dòng link "Cần chỗ ở? Xem gợi ý theo khu" chưa nói còn cách nhắn hạng sao — có thêm nửa câu không (User chưa được hỏi).
+- Ảnh Hải Vân: A có đưa vào danh sách ảnh nhờ User tìm không.
+- Ba luật E đề xuất ở vòng tự soi 1 (đoạn mô tả lấy ở "Tổng quan", rebase trước lần push đầu, A báo tên terminal trước): cái nào đã vào luật — W82–W84 không gồm ba ý này; User không chọn sửa `START_SESSION.md`.
+
+---
+
+# (nhật ký trong phiên) STATUS E — PHIÊN CHIỀU 15/11 (mở 15:08 15/11/2026, `date`) · terminal `hue-rag-ab` · Claude Fable 5.2 · vai thực thi
 
 - 15:08 15/11/2026 — mở phiên, kiểm nhanh khớp handoff (main `97aa88e`, sạch, hooksPath `.githooks`, Qdrant 1 collection 9.425 điểm, không worktree phụ). Ba terminal khác: `hue-rag-cb`, `hue-rag-60`, `hue-rag-51` (chưa biết ai là A). Lệnh dọn 14 + 3 nhánh của User chưa chạy. **Chờ A giao việc** (handoff mục 2: dựng `diem_v9` + 7 điểm, nới `KHUNG_HUE` kinh độ tới 108,25). Chưa sửa file nào khác, 0 USD.
 - 15:11 15/11/2026 — A (`hue-rag-60`) giao việc 7 điểm lịch (User cấp quyền "như sáng 15/11"); B `hue-rag-cb`, C `hue-rag-51`. **Đang làm** trên worktree `/tmp/e_v9` nhánh `p9-diem-v9` (2 symlink `data`, `knowledge-base-hue` — gỡ khi xong). File SẼ ghi: `backend/llm/lich_trinh.py` (KHUNG_HUE kinh độ ⇒ 108,25), `backend/tests/test_ban_do_lich.py` (test 2 điểm), `backend/config/settings.yaml` (3 đường bảng), `frontend/public/anh/lich/` (+6 ảnh), private: `data/phase_9/lich_trinh/diem_v9.json`, `diem_toa_do_v9.json`, `bang_anh_v4.json` (v3 đã có tên, không dùng), `data/diem_lich_moi_2026-11-15/tools/dung_v9.py`, `data/phase_12/deploy_nhap/` (CHUA + COPY), report `report_agent/2026-11-12_ra_khoang_cach/e_diem_v9_implementation.md`.
