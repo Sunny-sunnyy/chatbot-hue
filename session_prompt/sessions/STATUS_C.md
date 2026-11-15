@@ -20,6 +20,7 @@
 **Đếm ảnh trong chat XONG:** `c_dem_anh_chat.md` (77 ⇒ ~118 / 154 ước; khách sạn 0 câu Golden) — đã gửi nhóm bàn.
 **Tây Sơn: 2 câu thử xong (PARTIAL so tiêu chí — đúng, khớp, chỉ nêu 1788).** Report `c_sua_kho_tay_son_implementation.md`; bài 22 + sổ 02 + README sửa trên main working tree; agent con kiểm độc lập bài 22 đang chạy ⇒ `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_tay_son.md`. Tiền việc ≈ 0,003 USD.
 **Tây Sơn XONG (đo + tài liệu):** kiểm độc lập bắt C bỏ sót an toàn 32 + 18 ngoài kho ⇒ chạy bù: 0 đổi lớp, 0 / 18 — đạt. Bài 22 + sổ 02 + README sửa theo biên bản — chờ A commit. Tiền ≈ 0,029 USD. Rảnh — chờ (B đang chạy lượt đo có phí: không server / pytest / dựng).
+**Review Docker nháp E: ready 0/0/1** (`c_review_docker_nhap.md`). **Plan ảnh trong chat bản 1** `docs/superpowers/plans/2026-11-15-anh-trong-chat-plan.md` — chờ A duyệt. Khai báo sửa (khi duyệt): `frontend/src/anhTraLoi.js`, `chat.jsx`, css, `backend/tests/test_anh_tra_loi.py`, `data/anh_chat_2026-11-15/`.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

@@ -26,6 +26,9 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 - **User (11:36 15/11/2026):** ảnh trong chat = **món + nơi trước, khách sạn sau**; chỗ lưu ảnh **giữ file + bảng mã bài** (không collection / không embed lại — B, C đồng ý; mô tả ảnh vào kho đổi top 10 mà không thêm ảnh). Thiết kế: khớp tên ≥ 2 chữ VÀ bài nằm trong nguồn trích, ≤ 3 ảnh, code chọn, người xem nhìn lại 100 % ảnh mới, đo mô phỏng 154 câu 0 USD.
 - E: Docker nháp ĐẠT (thêm lỗi thật: image thiếu `frontend/public` ⇒ uvicorn thoát mã 3; sửa 1 dòng symlink; dockerignore 204 ⇒ 263 bài) — C review diff với `data/phase_12/deploy_nhap/sao_luu_2026-11-15/`. **Cho User:** `.env` có 1 dòng tên biến kèm khoảng trắng ⇒ `docker --env-file` từ chối (User tự sửa; kèm việc gỡ dòng `EXA_API_KEY` từ 13/11).
 
+- **User đi nghỉ tới ~14:30 (11:42 15/11/2026) — KHÔNG hỏi trong lúc vắng:** "A tự điều phối, cùng trao đổi / thảo luận để phát triển, tối ưu; thiếu dữ liệu thì tự nghiên cứu, tự viết code cào". Chốt trước khi đi: (1) **tốc độ: đạt tiêu chí ghi trước ⇒ bật** (review chéo, report; không đạt ⇒ gỡ, ghi âm) · (2) **ảnh trong chat: A duyệt plan, làm, đạt ⇒ bật** · (3) **ảnh khách sạn không đạt W78 ⇒ gỡ**, lập danh sách cho User · (4) **trần tiền lúc vắng ≈ 1 USD**, "quá thì tôi vẫn duyệt, miễn dùng hiệu quả". Câu cần User ⇒ ghi "Câu hỏi cho User", hỏi lúc User về.
+- **A duyệt (11:42 15/11/2026):** plan ảnh trong chat bản 1 sha `bf43cc57f6ea` (C) — C code, E review, đạt T1–T5 ⇒ bật. Docker nháp: C review ready (0/0/1; m-1 test so settings ↔ danh sách CHUA — làm lúc deploy).
+
 ### Vòng tự soi 1 — phiên 15/11 (A chốt 10:55 15/11/2026; B, C, E đều gửi)
 **Áp ngay trong phiên** (làm nhẹ, không hạ sàn; kết phiên A đề xuất thành luật qua `improve-workflow`):
 1. Cổng server thật sau merge **chỉ khi nhánh chạm đường chat / model, route API, hoặc cấu hình nạp lúc khởi động**; nhánh chỉ đổi ảnh / chữ / hằng số thuần / giao diện tĩnh ⇒ build + test file chạm (C, E).
