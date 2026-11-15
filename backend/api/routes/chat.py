@@ -21,6 +21,7 @@ from fastapi.sse import format_sse_event
 from openai import OpenAIError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from core import so_vet
 from core.schema import (
     ContextBudgetError,
     GenerationError,
@@ -236,8 +237,9 @@ async def chat(body: ChatRequest, request: Request, response: Response):
     _kiem_truong_v2(body, request.app.state)
     started = time.perf_counter()
     metrics = _so_do_moi(METRIC_FIELDS)
+    vet: dict = {}  # sổ vết debug: `_answer` đặt `trace` + câu gửi model vào đây
     try:
-        result, conversation_id = await _answer(body, request, metrics)
+        result, conversation_id = await _answer(body, request, metrics, vet)
         _set_outcome(result, metrics)
         # cookie đi theo cả phản hồi lỗi (review C145 m-2): lượt đầu lỗi không để lại cuộc mồ côi, đồng nhất với đường stream
         _set_cookie(result if isinstance(result, JSONResponse) else response, conversation_id)
@@ -248,6 +250,7 @@ async def chat(body: ChatRequest, request: Request, response: Response):
     finally:
         metrics["total_ms"] = elapsed_ms(started)
         logger.info("chat_metrics %s", json.dumps(metrics))
+        so_vet.ghi(_flags(request.app.state).so_vet, "chat", metrics, vet.get("trace"), body.query, vet.get("query"))
 
 
 def _set_outcome(response, metrics: dict) -> None:
@@ -264,7 +267,7 @@ def _set_outcome(response, metrics: dict) -> None:
             metrics["outcome"] = "success"
 
 
-async def _answer(body: ChatRequest, request: Request, metrics: dict):
+async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict):
     """Trả (phản hồi, mã cuộc trò chuyện hoặc None). Lỗi trước khi vào cuộc ⇒ không mã."""
     query = body.query.strip()
     if not query:
@@ -281,10 +284,12 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict):
     trace = AnswerTrace()
     conversation_id = _start_conversation(request, trace, metrics)
     query = _model_query(body, query, trace, metrics, state)
+    vet.update(trace=trace, query=query)
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
     except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
+        trace.vet["loi"] = repr(exc)[:500]
         return _error_response_for(exc, recorder, metrics), conversation_id
     finally:
         _copy_trace_metrics(trace, metrics)  # cả khi lỗi: bước nào đã chạy thì có số đo của bước đó
@@ -487,7 +492,8 @@ async def chat_stream(body: ChatRequest, request: Request):
 
         response = StreamingResponse(
             _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"]),
-                           lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state)),
+                           lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state),
+                           ghi_vet=lambda: so_vet.ghi(_flags(state).so_vet, "chat_stream", metrics, trace, body.query, query)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -601,7 +607,8 @@ class StreamEvents:
         return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
 
 
-async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None, bai_ids=()):
+async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None, bai_ids=(),
+                         ghi_vet=None):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
@@ -618,6 +625,7 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
         metrics["outcome"] = "client_disconnected"  # token để None: lần hủy không có usage (spec §4.5)
         raise
     except Exception as exc:
+        trace.vet["loi"] = repr(exc)[:500]  # sổ vết debug (RAM); `chat_metrics` vẫn chỉ ghi tên lớp lỗi
         for event in stream.failure(exc):
             yield event
     finally:
@@ -629,5 +637,7 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
             _copy_trace_metrics(trace, metrics)  # sau `aclose` để có `llm_calls` lõi vừa ghi (C132 m-1)
             metrics.update(n_tra_loi_bo=trace.n_tra_loi_bo, usd_bo=trace.usd_bo, bo_huy_giua=trace.bo_huy_giua)  # #6, chỉ đường stream
             logger.info("chat_metrics %s", json.dumps(metrics))
+            if ghi_vet is not None:
+                ghi_vet()
             if remember is not None:  # B3: ghi lượt vào cuộc trò chuyện (chỉ outcome đã xong — `_remember` lọc)
                 remember()

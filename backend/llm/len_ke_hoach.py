@@ -250,6 +250,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             hanh_dong, bi_chan = [], 0
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
+        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan}  # sổ vết debug (RAM)
         if not hanh_dong and not bi_chan:
             trace.sua = {"n_hanh_dong": 0}
             return None
@@ -263,6 +264,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi)
         if bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
+    trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
                  "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None}
     # model đã hiểu là câu sửa ⇒ luôn là lượt sửa, kể cả khi mọi hành động trượt (báo "Không đổi được: X không có trong lịch" thay vì trả lời

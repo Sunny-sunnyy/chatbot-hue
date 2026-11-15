@@ -35,6 +35,11 @@ def apply_env_overrides(settings: dict, env) -> None:
         if tra_web not in ("true", "false"):
             raise ValueError("HUE_TRA_WEB must be 'true' or 'false'")
         settings["assistant"]["tra_web"] = tra_web == "true"
+    so_vet = env.get("HUE_SO_VET")  # sổ vết debug có nội dung (`core/so_vet.py`) — chỉ bật ở máy local
+    if so_vet is not None:
+        if so_vet not in ("true", "false"):
+            raise ValueError("HUE_SO_VET must be 'true' or 'false'")
+        settings["assistant"]["so_vet"] = so_vet == "true"
 
 
 def validate_phase6_settings(settings: dict) -> None:

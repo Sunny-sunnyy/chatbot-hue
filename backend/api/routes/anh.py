@@ -12,6 +12,7 @@ import time
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from core import so_vet
 from core.schema import GenerationError
 from llm.generator_openai_full_corpus import CallLog
 from llm.nhan_anh import AnhKhongHopLe, chuan_bi_anh, doan_ten
@@ -113,4 +114,7 @@ async def ung_vien(request: Request):
     for key in ("input_tokens", "output_tokens", "reasoning_tokens", "usd"):
         values = [c.get(key) for c in calls if c.get(key) is not None]
         metrics[key] = round(sum(values), 8) if values else None
+    flags = getattr(request.app.state, "assistant_flags", None)  # sổ vết debug: tên gợi ý + kết quả + lần gọi model — KHÔNG ghi ảnh
+    so_vet.ghi(bool(flags and flags.so_vet), "anh", {k: metrics.get(k) for k in ANH_FIELDS} | {"status_code": 200},
+               them={"anh": {"ten_goi_y": ten, "goi_model": calls}})
     return _tra(metrics, 200, body)
