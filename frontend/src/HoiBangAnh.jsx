@@ -33,6 +33,11 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   const [state, setState] = useState(null);
   const inputRef = useRef(null);
   const rootRef = useRef(null);
+  // Lượt nhận ảnh chạy qua `await` ⇒ lúc tên về, mọi thứ lấy từ lần vẽ lúc bấm Hỏi đã cũ (review C M-1). `luot` tăng mỗi khi người dùng bỏ / thay
+  // ảnh hoặc mở cuộc mới ⇒ kết quả của lượt cũ bị bỏ; `moi` luôn giữ `disabled` / `onAsk` / `draft` của lần vẽ MỚI NHẤT.
+  const luot = useRef(0);
+  const moi = useRef({});
+  moi.current = { disabled, onAsk, draft };
 
   useEffect(() => () => { if (state?.preview) URL.revokeObjectURL(state.preview); }, [state?.preview]);
   // Trang trợ lý: khung nhập dính đáy màn hình (sticky) và thẻ nằm trong khung ⇒ thẻ hiện là đè lên cuối câu trả lời đang đọc
@@ -44,6 +49,7 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   if (!bat) return { nut: null, kem: null, the: null, onPaste: undefined, gui: () => false, xoa: () => {} };
 
   function dong(goTen) {
+    luot.current += 1;
     setState(null);
     if (goTen) onGoTen();
   }
@@ -68,12 +74,13 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     // Kiểu / cỡ sai báo NGAY, kiểm ở trình duyệt. Hợp lệ ⇒ chỉ giữ ảnh ở trình duyệt (một ảnh mỗi câu — ảnh mới thay ảnh cũ), chưa gọi API.
     if (!KIEU.includes(file.type)) return setState({ phase: "loi", text: "Chọn ảnh JPEG, PNG hoặc WEBP." });
     if (file.size > MAX_BYTES) return setState({ phase: "loi", text: "Ảnh lớn hơn 10 MB — chọn ảnh nhỏ hơn." });
+    luot.current += 1;
     setState({ phase: "kem", file, preview: URL.createObjectURL(file) });
   }
 
   function gui() {
     if (state?.phase === "kem") {
-      nhanAnh(state.file, state.preview, draft);
+      nhanAnh(state.file, state.preview);
       return true;
     }
     if (state?.phase === "dang") return true;  // đang xem ảnh ⇒ chờ, không gửi câu trần
@@ -85,26 +92,30 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     return false;
   }
 
-  async function nhanAnh(file, preview, chu) {
+  async function nhanAnh(file, preview) {
+    const toi = ++luot.current;
     setState({ preview, phase: "dang" });
     let ungVien = [];
     try {
       const r = await fetch("/api/anh/ung_vien", { method: "POST", headers: { "Content-Type": file.type }, body: file });
       ungVien = (r.ok ? await r.json() : null)?.ung_vien ?? [];
     } catch { /* lỗi mạng ⇒ như chưa nhận ra */ }
+    if (toi !== luot.current) return;  // trong lúc chờ người dùng đã bỏ ảnh / mở cuộc mới ⇒ không làm gì với kết quả cũ
     if (!ungVien.length) return setState({ preview, phase: "loi", text: KHONG_NHAN_RA });
     // URL riêng cho bong bóng câu hỏi (sống theo cuộc trò chuyện); `preview` của ô nhập được thu hồi khi state đổi
     const anh = URL.createObjectURL(file);
-    if (ungVien.length > 1) return setState({ preview, phase: "xong", ungVien, anh });  // 2–3 tên ⇒ người dùng chọn (chữ đang gõ giữ trong ô)
+    // 2–3 tên ⇒ người dùng chọn (chữ đang gõ giữ trong ô). Một tên mà lúc này đang có lượt khác chạy (bấm câu gợi ý / "Hỏi lại" trong lúc chờ)
+    // ⇒ KHÔNG tự hỏi chen ngang: hiện thẻ chọn với một tên, người dùng bấm khi lượt kia xong.
+    if (ungVien.length > 1 || moi.current.disabled) return setState({ preview, phase: "xong", ungVien, anh });
     setState({ phase: "doan", chon: ungVien[0].ten });
-    hoiVoiTen(ungVien[0].ten, chu, anh, true);
+    hoiVoiTen(ungVien[0].ten, moi.current.draft, anh, true);  // chữ trong ô LÚC TÊN VỀ (gõ thêm trong lúc chờ không bị mất)
   }
 
   // `doan` = tên do hệ thống TỰ chọn (một tên) ⇒ lượt đó có dòng "Mình đoán trong ảnh là … — có thể sai" ngay đầu câu trả lời (giao diện chèn,
   // không vào chuỗi gửi model); tên người dùng tự bấm chọn (2–3 tên) thì không cần dòng này
   function hoiVoiTen(ten, chu, anh, doan = false) {
     // bong bóng câu hỏi hiện ảnh + đúng chữ người dùng gõ (không đuôi "(Trong ảnh: …)"); ô rỗng ⇒ hiện câu mặc định
-    onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh, doan: doan ? ten : null });
+    moi.current.onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh, doan: doan ? ten : null });
   }
 
   const nut = (
@@ -157,5 +168,5 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
       </div>
     </div>
   );
-  return { nut, kem, the, onPaste, gui, xoa: () => setState(null) };  // `xoa`: "Cuộc trò chuyện mới" gỡ ảnh đính kèm + đóng thẻ
+  return { nut, kem, the, onPaste, gui, xoa: () => { luot.current += 1; setState(null); } };  // `xoa`: "Cuộc trò chuyện mới" gỡ ảnh đính kèm + đóng thẻ
 }

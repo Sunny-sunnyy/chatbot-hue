@@ -34,6 +34,6 @@ Lượt ảnh thật duy nhất của bộ thử: ảnh thu nhỏ một cổng t
 
 ## Giới hạn
 
-- Đang "Đang xem ảnh…" mà người dùng bấm một câu gợi ý ⇒ lượt gợi ý chạy, lượt ảnh tự hỏi bị bỏ lặng (không gặp trong bộ thử).
+- **Sau review C (M-1, đã sửa):** bản `f724f7c` gọi hàm hỏi của lần vẽ CŨ sau khi chờ nhận ảnh ⇒ bấm "Cuộc trò chuyện mới" lúc đang chờ thì câu ghép tự gửi vào cuộc mới; có lượt khác bắt đầu lúc đang chờ thì lượt đó bị huỷ và câu ảnh chen vào (câu E ghi trước đây "bị bỏ lặng" là SAI). Nay: bỏ / thay ảnh, mở cuộc mới ⇒ kết quả lượt nhận ảnh cũ bị bỏ; tên về lúc đang có lượt khác chạy ⇒ không tự hỏi, hiện thẻ chọn (một tên); chữ gõ thêm trong lúc chờ được dùng làm câu hỏi (không mất).
 - URL ảnh của bong bóng câu hỏi sống tới khi tải lại trang (không thu hồi) — vài trăm KB mỗi ảnh.
 - Mới chụp khổ 1440.
