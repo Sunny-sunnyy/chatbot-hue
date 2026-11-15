@@ -34,6 +34,11 @@ TEN_TOI_DA = 80
 GHI_CHU_AN = {
     ("bach_ma", "trua"): "Mang theo đồ ăn trưa khô và nước uống — khu Ngũ Hồ và đỉnh núi không có hàng quán bán đồ ăn.",
     ("thac_nhi_ho", "toi"): "Điểm thường mở cửa tới 17:30 — ăn tối sau khi về nơi nghỉ.",
+    # 15/11 (bảng v9): Hải Vân / Lập An cách quán gần nhất trong bảng hàng chục km (mô phỏng: 1.364 bữa không quán). Chữ theo kho:
+    # `travel/places/Đầm Lập An.md:137` (nhà hàng hải sản dọc đường ven đầm), `travel/places/Đèo Hải Vân.md:11` (chân đèo phía bắc là Lăng Cô)
+    ("dam_lap_an", "trua"): "Dọc đường ven đầm có nhiều nhà hàng hải sản, hàu là đặc sản của đầm — có thể ăn ngay tại đây.",
+    ("dam_lap_an", "toi"): "Dọc đường ven đầm có nhiều nhà hàng hải sản, hàu là đặc sản của đầm — có thể ăn ngay tại đây.",
+    ("deo_hai_van", "trua"): "Chân đèo phía bắc là khu Lăng Cô — ven đầm Lập An có nhiều nhà hàng hải sản.",
 }
 _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")

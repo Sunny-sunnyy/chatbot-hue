@@ -620,7 +620,7 @@ def tin_nhan_model(lich: dict, tai_lieu: str) -> str:
 def kiem_cau(bang: BangV2, muc: dict, cau: str) -> str | None:
     """Kiểm cuối MỘT câu (5c.6) ⇒ mã lỗi hoặc None. Lỗi ⇒ câu dự phòng cho riêng mục đó (không rút cả lịch)."""
     cau = cau.strip()
-    if not cau:
+    if not any(ch.isalnum() for ch in CITATION_PATTERN.sub("", cau)):  # rỗng, hoặc chỉ có mã nguồn "[3]" (lượt thật 15/11: 2 mục hiện mỗi "[3]")
         return "rong"
     if _NOI_VE_TAI_LIEU.search(unicodedata.normalize("NFC", cau)):
         return "noi_ve_tai_lieu"
