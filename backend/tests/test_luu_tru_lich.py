@@ -167,3 +167,62 @@ def test_every_lodging_photo_path_has_a_file():
     public = BACKEND.parent / "frontend" / "public"
     thieu = [c["ten"] for c in BANG_LT["co_so"] if c.get("anh") and not (public / c["anh"].lstrip("/")).is_file()]
     assert not thieu, thieu
+
+
+# ---------- ngân sách chỗ ở (plan `2026-11-15-khach-san-trang-va-ngan-sach.md` bản 2 §2, T1–T4, T7) ----------
+
+def test_budget_off_same_khung_and_on_only_that_tier(mo_phong):
+    """T1: không chọn ⇒ khung không có khoá mới (trạng thái lưu / ô Nơi ở như cũ). T2: chọn mức ⇒ mọi cơ sở đúng mức, ≤ 5, cùng khu như không chọn."""
+    for key, khung in mo_phong.items():
+        assert "ngan_sach" not in khung["tham_so"], key
+        goc = _o_dau(khung)
+        if goc is None:
+            continue
+        cum = [BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)]
+        han_che = bool(key[1] or key[2])
+        co_toi = (lambda toi: bool(toi) and all(BANG_LT["cum_ve_khu"][BANG_V2.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi))(
+            [j for ng in khung["ngay"] for j in ng["buoi"]["toi"] if j in BANG_V2.theo_id])
+        for ns, muc in ltl.MUC_NGAN_SACH.items():
+            o = ltl.o_dau(BANG_LT, cum, len(khung["ngay"]), han_che, co_toi, ns)
+            assert o["khu"] == goc["khu"] and 1 <= len(o["co_so"]) <= 5, (key, ns)
+            assert all(ltl.MUC_HANG[c["xep_hang"]] == muc for c in o["co_so"]), (key, ns)  # bảng hiện tại: 0 khu trống mức
+
+
+def test_budget_empty_tier_falls_back_silently():
+    co_so = [{"ten": t, "xep_hang": h, "khu": ltl.KHU_LOI, "nguon": "n"} for t, h in [("A5", "5 sao"), ("B3", "3 sao")]]
+    b = _bang(co_so=co_so)
+    assert [c["ten"] for c in ltl.chon_co_so(b, ltl.KHU_LOI, None, "binh_dan")] == [c["ten"] for c in ltl.chon_co_so(b, ltl.KHU_LOI, None)]
+    assert [c["ten"] for c in ltl.chon_co_so(b, ltl.KHU_LOI, None, "cao")] == ["A5"]
+
+
+def test_budget_kept_through_text_edit_and_not_in_model_messages():
+    """T4: sửa lịch bằng lời xếp lại qua `sua_lich_v2._xep` ⇒ mức còn trong khung ⇒ `gan_o_an` chỉ ra mức đó. T3: chuỗi gửi model như không chọn."""
+    from llm import hoi_lai
+    from llm import sua_lich_v2 as sl
+    from llm.len_ke_hoach import gan_o_an
+    flags = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, anh_lich=False, luu_tru_lich=True)
+    truong = {"so_ngay": "3", "nguoi_lon": 2, "kieu_di": "can_bang", "so_thich": ["di_tich"]}
+    k0 = v2.xep_v2(BANG_V2, v2.tu_truong(truong))
+    k = v2.xep_v2(BANG_V2, v2.tu_truong({**truong, "ngan_sach": "cao"}))
+    assert k["tham_so"].pop("ngan_sach") == "cao" and k == k0  # ngân sách không vào bộ xếp
+    k["tham_so"]["ngan_sach"] = "cao"
+    kq = sl.ap(BANG_V2, sl.luu_tu_lich(k, None, None), [sl.HanhDong(loai="doi_so_ngay", so_ngay=2)])
+    assert len(kq["khung"]["ngay"]) == 2 and kq["khung"]["tham_so"]["ngan_sach"] == "cao"
+    lich = v2.dung_lich(BANG_V2, kq["khung"], {j: i for i, j in enumerate(v2.diem_v2(kq["khung"]), start=1)})
+    gan_o_an(lich, BANG_V2, kq["khung"], flags)
+    assert lich["o_dau"]["co_so"] and all(c["xep_hang"] in ("4 sao", "5 sao") for c in lich["o_dau"]["co_so"])
+    # T3: tin nhắn viết câu, tin nhắn hiểu ý sửa, câu người dùng vào lịch sử — giống byte có / không ngân sách
+    l0 = v2.dung_lich(BANG_V2, k0, {j: i for i, j in enumerate(v2.diem_v2(k0), start=1)})
+    l1 = v2.dung_lich(BANG_V2, k, {j: i for i, j in enumerate(v2.diem_v2(k), start=1)})
+    assert v2.tin_nhan_model(l1, "TL") == v2.tin_nhan_model(l0, "TL") and l1["minh_hieu"] == l0["minh_hieu"]
+    assert sl.tin_nhan_hieu(BANG_V2, sl.luu_tu_lich(k, None, None), "bỏ một điểm") == sl.tin_nhan_hieu(BANG_V2, sl.luu_tu_lich(k0, None, None), "bỏ một điểm")
+    assert hoi_lai.ghep_cau_v2("Lên kế hoạch", {**truong, "ngan_sach": "cao"}) == hoi_lai.ghep_cau_v2("Lên kế hoạch", truong)
+
+
+def test_budget_value_from_browser_is_checked():
+    """T7: chỉ đúng ba giá trị; lạ ⇒ lỗi khuôn (route trả 422)."""
+    from pydantic import ValidationError
+    from llm.hoi_lai import TruongInput, co_gia_tri_moi
+    assert co_gia_tri_moi(TruongInput(so_ngay="2", ngan_sach="vua"))  # giá trị mới ⇒ chỉ nhận ở lượt biểu mẫu bản 2
+    with pytest.raises(ValidationError):
+        TruongInput(so_ngay="2", ngan_sach="re")

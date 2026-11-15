@@ -21,6 +21,8 @@ NGUONG_BIEN = 0.6  # ven biển chỉ khi ≥ 60 % điểm ban ngày ở ven bi�
 # Trải theo hạng để khách tự chọn: tối đa 2 cơ sở 4–5 sao · 2 cơ sở 2–3 sao · 1 cơ sở 1 sao / đạt chuẩn
 MUC_HANG = {"5 sao": 0, "4 sao": 0, "3 sao": 1, "2 sao": 1, "1 sao": 2, "Đạt chuẩn phục vụ khách du lịch": 2}
 SO_THEO_MUC = (2, 2, 1)
+# Người dùng chọn mức chỗ ở (biểu mẫu, nhãn kèm hạng sao — hạng ≠ giá) ⇒ ≤ 5 cơ sở của riêng mức đó; khu không có mức đó ⇒ im lặng về SO_THEO_MUC
+MUC_NGAN_SACH = {"cao": 0, "vua": 1, "binh_dan": 2}
 # Khu ven biển gộp hai phía cách nhau ~40 km (Thuận An / Tam Giang ↔ Lăng Cô); bảng không có cụm gần cho phần lớn cơ sở ven biển ⇒ tách theo
 # chữ trong địa chỉ, chỉ gợi ý cơ sở cùng phía với cụm có nhiều điểm nhất (địa chỉ không khớp phía nào ⇒ không gợi ý — không đoán).
 CUM_DI_TRONG_NGAY = {"nam_xa"}
@@ -65,12 +67,19 @@ def chon_khu(bang_luu_tru: dict, cum_cac_diem: list[str], han_che: bool) -> tupl
     return chon, f"Cùng khu với {dem[chon]} / {n} điểm tham quan ban ngày của lịch."
 
 
-def chon_co_so(bang_luu_tru: dict, khu: str, cum_dau: str | None) -> list[dict]:
+def chon_co_so(bang_luu_tru: dict, khu: str, cum_dau: str | None, ngan_sach: str | None = None) -> list[dict]:
     """≤ 5 cơ sở trong khu, trải theo mức hạng (SO_THEO_MUC). Trong một mức lấy lần lượt từng hạng, hạng cao trước (vd 1 × 5 sao + 1 × 4 sao) —
     xếp theo tên trong cả mức từng làm 5 sao không bao giờ hiện (mô phỏng 3.840 khung 14/11: 0 / 6.108). Cùng hạng: gần cụm có nhiều điểm
-    nhất trước ⇒ có ảnh trước ⇒ theo tên (tất định)."""
+    nhất trước ⇒ có ảnh trước ⇒ theo tên (tất định). `ngan_sach` ⇒ chỉ mức đó, tối đa 5 (trống ⇒ như không chọn)."""
+    if ngan_sach is not None:
+        so_muc = tuple(sum(SO_THEO_MUC) if m == MUC_NGAN_SACH[ngan_sach] else 0 for m in range(len(SO_THEO_MUC)))
+        return _chon(bang_luu_tru, khu, cum_dau, so_muc) or _chon(bang_luu_tru, khu, cum_dau, SO_THEO_MUC)
+    return _chon(bang_luu_tru, khu, cum_dau, SO_THEO_MUC)
+
+
+def _chon(bang_luu_tru: dict, khu: str, cum_dau: str | None, so_muc: tuple[int, ...]) -> list[dict]:
     out = []
-    for muc, so in enumerate(SO_THEO_MUC):
+    for muc, so in enumerate(so_muc):
         nhom = {}  # hạng ⇒ cơ sở, theo thứ tự hạng của MUC_HANG (cao trước)
         for hang in (h for h, m in MUC_HANG.items() if m == muc):
             ds = [c for c in bang_luu_tru["co_so"] if c["khu"] == khu and c["xep_hang"] == hang
@@ -83,7 +92,8 @@ def chon_co_so(bang_luu_tru: dict, khu: str, cum_dau: str | None) -> list[dict]:
              "anh": c.get("anh"), "nguon": c["nguon"]} for c in out]  # `anh` chỉ có khi ảnh chắc (ảnh kc không vào bảng — dễ tưởng là đúng nơi)
 
 
-def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bool, co_toi: bool = False) -> dict | None:
+def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bool, co_toi: bool = False,
+          ngan_sach: str | None = None) -> dict | None:
     """Khối `lich["o_dau"]`; lịch 1 ngày ⇒ None (không có đêm nào). `co_toi`: lịch có hoạt động buổi tối — bộ xếp chỉ đặt buổi tối ở trung tâm, nên
     khách về trung tâm mỗi tối ⇒ ở trung tâm (người xem 14/11: "3 / 5 điểm ngày ở phía tây + mọi tối ở trung tâm" mà gợi ý phía tây là sai)."""
     if so_ngay < 2 or not cum_cac_diem:
@@ -92,11 +102,11 @@ def o_dau(bang_luu_tru: dict, cum_cac_diem: list[str], so_ngay: int, han_che: bo
         else chon_khu(bang_luu_tru, cum_cac_diem, han_che)
     cum_trong_khu = [c for c in cum_cac_diem if bang_luu_tru["cum_ve_khu"][c] == khu]
     cum_dau = Counter(cum_trong_khu).most_common(1)[0][0] if cum_trong_khu else None
-    co_so = chon_co_so(bang_luu_tru, khu, cum_dau)
+    co_so = chon_co_so(bang_luu_tru, khu, cum_dau, ngan_sach)
     if not co_so:  # (ven biển không có cơ sở cùng phía) ⇒ về khu trung tâm, nói thẳng lý do
         khu, ly_do = KHU_LOI, "Khu trung tâm — ven biển phía này chưa có cơ sở trong danh mục."
         cum_dau = None
-        co_so = chon_co_so(bang_luu_tru, khu, None)
+        co_so = chon_co_so(bang_luu_tru, khu, None, ngan_sach)
     if not co_so:
         return None
     return {"khu": khu, "ten_khu": TEN_KHU[khu], "ly_do": ly_do,

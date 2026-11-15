@@ -58,6 +58,7 @@ class TruongInput(BaseModel):
     tre_em: Annotated[int, Field(strict=True, ge=0, le=6)] | None = None
     lon_tuoi: Annotated[bool, Field(strict=True)] | None = None
     ngay_di: Annotated[dt.date, BeforeValidator(_ngay_iso)] | None = None
+    ngan_sach: Literal["binh_dan", "vua", "cao"] | None = None  # chỗ ở theo hạng sao (1 sao · 2–3 sao · 4–5 sao), plan khách sạn bản 2 §2
 
     @model_validator(mode="after")
     def _khong_mau_thuan(self):
@@ -75,7 +76,7 @@ KIEU_DI_CU = {"nhe_nhang": "thong_tha", "kham_pha": "day_lich", "can_bang": None
 # `di_cung` cũ ⇒ số người (spec §5: "code đổi sang trường mới"); chiều ngược dùng ở bước (a) để bộ xếp cũ chạy với biểu mẫu mới
 DI_CUNG_MOI = {"mot_minh": {"nguoi_lon": 1}, "cap_doi": {"nguoi_lon": 2}, "gia_dinh_tre_em": {"nguoi_lon": 2, "tre_em": 1},
                "nguoi_lon_tuoi": {"nguoi_lon": 2, "lon_tuoi": True}, "nhom_ban": {"nguoi_lon": 4}}
-TRUONG_CHI_MOI = ("nguoi_lon", "tre_em", "lon_tuoi", "ngay_di")
+TRUONG_CHI_MOI = ("nguoi_lon", "tre_em", "lon_tuoi", "ngay_di", "ngan_sach")
 NGAY_DI_TOI_DA = 180  # spec §5: ngày đi từ hôm nay tới + 180 ngày
 # Giới hạn biểu mẫu báo ở `/api/tinh_nang` (bước (a) là 4 / 1 cho bộ xếp cũ; từ bước (c) bộ xếp mới nhận đủ khuôn trường: 5 ngày / 2 sở thích)
 SO_NGAY_TOI_DA = 5

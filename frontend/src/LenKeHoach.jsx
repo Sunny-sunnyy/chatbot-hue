@@ -47,7 +47,9 @@ export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
 const KIEU_DI = [["nhe_nhang", "Nhẹ nhàng", "khoảng 2 điểm một ngày"], ["can_bang", "Cân bằng", "khoảng 3 điểm một ngày"],
                  ["kham_pha", "Khám phá nhiều", "tới 4 điểm một ngày"]];
 const SO_THICH = BIEU_MAU.find(t => t.ten === "so_thich").chon;
-const MAC_DINH_V2 = { so_ngay: 2, nguoi_lon: 2, tre_em: 0, lon_tuoi: false, kieu_di: null, so_thich: [], ngay_di: "" };
+const MAC_DINH_V2 = { so_ngay: 2, nguoi_lon: 2, tre_em: 0, lon_tuoi: false, kieu_di: null, so_thich: [], ngay_di: "", ngan_sach: null };
+// Chỗ ở theo hạng sao (plan khách sạn bản 2 §2): nhãn ghi sao, không ghi "rẻ / đắt" — hạng ≠ giá, hệ thống không có giá phòng
+const NGAN_SACH = [["binh_dan", "1 sao / đạt chuẩn"], ["vua", "2–3 sao"], ["cao", "4–5 sao"]];
 
 function ngayIso(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -146,6 +148,7 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
   if (hien.has("kieu_di") && chon.kieu_di) truong.kieu_di = chon.kieu_di;
   if (hien.has("so_thich") && chon.so_thich.length) truong.so_thich = chon.so_thich.slice(0, cauHinh.so_thich_toi_da);
   if (hien.has("ngay_di") && chon.ngay_di) truong.ngay_di = chon.ngay_di;
+  if (hien.has("ngan_sach") && chon.ngan_sach) truong.ngan_sach = chon.ngan_sach;
 
   const tomTat = [`${soNgay} ngày`,
     hien.has("nguoi_lon") && `${chon.nguoi_lon} người lớn`,
@@ -153,7 +156,8 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
     hien.has("lon_tuoi") && chon.lon_tuoi && "có người lớn tuổi",
     truong.kieu_di && KIEU_DI.find(([v]) => v === truong.kieu_di)[1].toLowerCase(),
     truong.so_thich && `thích ${truong.so_thich.map(v => SO_THICH.find(([k]) => k === v)[1].toLowerCase()).join(", ")}`,
-    truong.ngay_di && `đi ngày ${truong.ngay_di.split("-").reverse().join("/")}`].filter(Boolean).join(" · ");
+    truong.ngay_di && `đi ngày ${truong.ngay_di.split("-").reverse().join("/")}`,
+    truong.ngan_sach && `chỗ ở ${NGAN_SACH.find(([v]) => v === truong.ngan_sach)[1]}`].filter(Boolean).join(" · ");
 
   function bamSoThich(v) {
     setChon(old => {
@@ -225,6 +229,17 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
                 <button key={v} type="button" className="chip chip-sm lkh-thich" aria-pressed={chon.so_thich.includes(v)} onClick={() => bamSoThich(v)}>
                   {ANH_THICH[v] && <img src={`${ANH_LICH}${ANH_THICH[v]}.jpg`} alt="" loading="lazy" />}<span>{nhan}</span>
                 </button>
+              ))}
+            </div>
+          </fieldset>
+        )}
+        {hien.has("ngan_sach") && (
+          <fieldset className="lc-nhom">
+            <legend className="lc-ten">Chỗ ở theo hạng sao (không bắt buộc)</legend>
+            <div className="lc-chip">
+              {NGAN_SACH.map(([v, nhan]) => (
+                <button key={v} type="button" className="chip chip-sm" aria-pressed={chon.ngan_sach === v}
+                        onClick={() => doi("ngan_sach", chon.ngan_sach === v ? null : v)}>{nhan}</button>
               ))}
             </div>
           </fieldset>

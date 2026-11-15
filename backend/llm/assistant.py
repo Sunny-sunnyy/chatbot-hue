@@ -59,7 +59,7 @@ STREAM_DRAIN_SECONDS = 0.5  # ngắt giữa chừng: sau `result.cancel()` đọ
 
 
 # Các ô của biểu mẫu "Lên kế hoạch" bản 2 (spec §3.1); thứ tự = thứ tự trên biểu mẫu
-O_BIEU_MAU_V2 = ("so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di")
+O_BIEU_MAU_V2 = ("so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di", "ngan_sach")
 
 
 @dataclass(frozen=True)

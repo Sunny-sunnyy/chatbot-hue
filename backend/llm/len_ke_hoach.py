@@ -130,7 +130,7 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         # kiểm giả định "buổi tối ở trung tâm" bằng chính bảng khu (review E m-1), không tin ngầm vào bộ xếp
         co_toi = bool(toi) and all(flags.luu_tru_bang["cum_ve_khu"][bang.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi)
         lich["o_dau"] = ltl.o_dau(flags.luu_tru_bang, [bang.theo_id[j]["cum"] for j in lt2.diem_ban_ngay(khung)], len(khung["ngay"]),
-                                  bool(ts_k["tre_em"] or ts_k["lon_tuoi"]), co_toi)
+                                  bool(ts_k["tre_em"] or ts_k["lon_tuoi"]), co_toi, ts_k.get("ngan_sach"))
     if flags.quan_lich:
         lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
 
