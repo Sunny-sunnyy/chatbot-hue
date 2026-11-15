@@ -184,10 +184,11 @@ def test_lodging_price_is_caught():
 
 @pytest.mark.parametrize("text, khong_co", [("KHONG_CO", True), (" khong_co. ", True), ("Không có.", False),
                                             ("Các thông tin không đề cập loại thuốc nào. KHONG_CO", True),
-                                            ("KHONG_CO, nhưng phòng tập A mở từ 5h sáng [w1].", False)])
+                                            ("KHONG_CO [w1]", True), ("KHONG_CO, nhưng phòng tập A mở từ 5h sáng [w1].", True),
+                                            ("Phòng tập A mở từ 5h sáng [w1].", False)])
 def test_model_saying_no_snippet_answers_gives_one_fixed_line_without_sources(text, khong_co):
     # 15/11 tối: không đoạn trích nào trả lời được ⇒ model viết đúng từ khoá ⇒ code hiện một dòng cố định, không nguồn (không kể thứ không tìm thấy);
-    # từ khoá lẫn trong một mục thật thì KHÔNG nuốt mục (mục đi tiếp qua kiểm cuối như thường)
+    # từ khoá ở bất kỳ đâu (kể cả kèm mã nguồn) ⇒ vẫn là "không có": chữ từ khoá không bao giờ hiện cho người dùng
     trace, _ = run_web(text)
     web = trace.web
     if khong_co:

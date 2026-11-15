@@ -42,5 +42,10 @@ Test file chạm (`test_b6_tra_web.py` + file nào khoá chữ lời dặn) cả
 ## 6. Rủi ro đã cân
 Bỏ câu rào "chưa xác minh" làm mục web nghe chắc hơn ⇒ giữ nhãn "chưa kiểm" + mọi rào số / tiền bằng code + sàn đọc tay "0 khẳng định ngoài đoạn trích". Model có thể dùng `KHONG_CO` quá tay ⇒ có mức tụt ≤ 2. Căn cứ review: `backend/llm/full_corpus_prompt.py` (`TU_WEB_LUAT`), `backend/llm/assistant.py` (`cong_web`), `backend/llm/tra_web.py` (`kiem_muc_web`).
 
-## Chỗ đổi sau duyệt (không đổi tiêu chí / tiền / phạm vi)
-A duyệt bản `0c71bb06c4ba`. Sau lượt đo 1 dùng đúng một vòng chỉnh đã ghi ở §4: thêm hai câu vào lời dặn (nguồn nói khác nhau ⇒ nêu ngắn cả hai; điều nói về nơi / thứ khác với câu hỏi không phải câu trả lời), siết câu `KHONG_CO`; code nhận `KHONG_CO` cả khi model viết kèm một câu không mã. Kết quả: report `b_web_gon_implementation.md`.
+## Chỗ đổi sau duyệt (không đổi tiêu chí / ngưỡng §4 / tiền / phạm vi)
+A duyệt bản `0c71bb06c4ba` = toàn bộ file phía trên mục này (cắt từ dòng trống ngay trước tiêu đề mục này thì sha256 12 ký tự đầu ra đúng số đó). Mọi chỗ đổi sau duyệt:
+1. **Vòng chỉnh duy nhất (đã dùng, §4)** sau lượt đo 1 — lời dặn `TU_WEB_LUAT` thêm hai câu: "các đoạn trích nói khác nhau về cùng một điều ⇒ nêu ngắn cả hai, không tự chọn một" và "điều đoạn trích nói về một nơi hay một thứ khác với câu hỏi không phải là câu trả lời"; câu về `KHONG_CO` viết chặt hơn ("toàn bộ câu trả lời chỉ là đúng một từ…").
+2. **Cùng vòng chỉnh, có đổi CODE nhận từ khoá** (`tra_web.la_khong_co`): bản đầu chỉ nhận khi cả mục là từ khoá ⇒ đổi thành nhận cả khi model viết kèm một câu (lượt 1: 1 / 28 mục viết một câu rồi mới viết từ khoá).
+3. **Sau review độc lập** (không phải chỉnh lời dặn): mục có từ khoá ở BẤT KỲ đâu, kể cả kèm mã nguồn, đều coi là "không có" ⇒ chữ `KHONG_CO` không bao giờ hiện ra cho người dùng; test thêm ca từ khoá kèm mã.
+4. §2 ghi "~4 dòng code" ⇒ thực tế 3 dòng ở `assistant.cong_web` + hàm 4 dòng ở `tra_web.py`.
+Trạng thái: review độc lập đếm ở sàn đọc tay 1 mục rõ + 3 ranh giới (B báo 1 ranh giới) ⇒ **chưa merge**; A trình User; không chỉnh lời dặn thêm trong plan này.
