@@ -10,3 +10,4 @@ Nháp `data/diem_lich_moi_2026-11-15/diem_moi_nhap.json` (chưa vào bảng main
 - **m-3 Hải Vân Quan giờ mở:** chỉ 1 nguồn web (đã kiểm) ⇒ ghi "1 nguồn" ở can_cu. Thời lượng "ngắn" không tính đường ~70 km: bộ xếp không cho ngày có cụm `nam_xa` trộn cụm khác
   (`backend/llm/lich_trinh_v2.py:460`) và không đặt cụm xa ngày 1 (`:217`) ⇒ không thành lịch phi lý.
 - Đã đúng như E báo: Từ Hiếu `ngoai_troi` cùng cách nhãn với Chùa Thiên Mụ trong v8; mô phỏng 3.840 khung 0 lỗi `kiem_khung` (`mo_phong.json`).
+- **Kiểm lại 13:33 15/11/2026:** E sửa chữ căn cứ (giá trị bảng không đổi) — m-1 cờ "1 nguồn, chưa tự đọc (403)" ⇒ User quyết; m-2 ghi khoảng cách cụm; m-3 ghi "1 nguồn" ⇒ **đóng cả 3**.

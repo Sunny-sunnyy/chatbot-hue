@@ -22,6 +22,7 @@
 - 12:55 15/11/2026: chạy lại 2 ca ảnh chat (có ảnh; thấy 1 từ Kirin — hiếm 0 / 3.571). Đề xuất việc tiếp: mở rộng bảng điểm lịch (41 nơi thật ngoài lịch; thời lượng kho 1 / 41 ⇒ cần tra web) — `e_mo_rong_diem_lich.md`. Tiền thêm ≈ 0,01 USD. Không còn server / worktree. Rảnh — chờ A / User 14:30.
 - **Bẫy (15/11):** (1) đếm tốc độ phải cắt theo mốc commit, không chỉ theo ngày (số p95 5,92 s gộp lượt trước sửa — B đính chính). (2) `POST /api/chat` không stream KHÔNG vào luồng sửa lịch ⇒ dò sửa lịch phải qua giao diện / đường stream (suýt báo lỗi sai). (3) Playwright: CSP chặn `wait_for_function` chuỗi ⇒ chờ bằng locator.
 - 13:28 15/11/2026: review vòng 2 `p9-rao-so-ngay` ⇒ ready. Bảng NHÁP điểm lịch mới `data/diem_lich_moi_2026-11-15/` (7 / 10 nơi đủ căn cứ; bỏ Cồn Hến, Tây Lộc — thiếu thời lượng; Suối Voi — kho cảnh báo) ⇒ nạp đúng khuôn, mô phỏng 0 lỗi; report `e_diem_lich_moi_nhap.md` (chưa commit); chờ B review + User chọn xây. ≈ 0,05 USD. Tiền phiên E ≈ 0,23 USD. Rảnh.
+- 13:33 15/11/2026: B review bảng nháp điểm lịch ⇒ ready, 3 minor đã đóng (B kiểm lại). Nháp sẵn sàng chờ User chọn xây (Bến Ngự: User quyết giữ / bỏ). Vòng tự soi 2 đã gửi. Rảnh.
 
 ### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
 Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).

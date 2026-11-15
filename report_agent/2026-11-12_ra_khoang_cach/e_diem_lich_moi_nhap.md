@@ -34,3 +34,9 @@ Main vẫn trỏ `diem_v8` (34 điểm). Tiền ≈ 0,05 USD (Serper tìm 32 + P
 1. B review nháp xong ⇒ dựng `diem_v9` = v8 + nháp, toạ độ v8 + ảnh lịch v3 (chép 6 ảnh), `settings.yaml` trỏ bảng mới; nhánh riêng.
 2. Đo: mô phỏng 3.840 khung đủ sàn hiện có + bộ lịch 20 / 12 đã thấy (có phí nhỏ; lịch đổi ở mọi khung chạm điểm mới).
 3. Không bộ kín (code xếp, không đổi lời dặn).
+
+## Sau review B (`b_review_diem_lich_moi.md`: ready, 3 minor) — 13:32 15/11/2026 (`date`)
+- m-1 Bến Ngự: căn cứ sửa đúng sự thật — **1 nguồn, Codex mở được, E và B đều bị 403 ⇒ chưa tự đọc**. Tìm nguồn thứ hai (Serper 2 câu, đọc nội dung trang) không ra. Giữ "nửa buổi" kèm cờ; **User quyết giữ / bỏ điểm này** khi duyệt xây (bỏ ⇒ 6 điểm).
+- m-2 Tây Hồ: `vi_tri_can_cu` ghi rõ cụm `an_cuu` là tâm gần nhất (~3,5–4 km) nhưng điểm gần nhất của cụm ~6 km, làng ở phía đông.
+- m-3 Hải Vân: giờ Hải Vân Quan ghi "1 nguồn".
+- Chỉ đổi chữ căn cứ; giá trị bảng không đổi; nạp lại `nap_bang_v2` đúng khuôn (41 điểm).
