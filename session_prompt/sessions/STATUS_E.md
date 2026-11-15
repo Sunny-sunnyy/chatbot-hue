@@ -5,8 +5,10 @@
 **Quyền phiên tối 15/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A (B / C thường tự báo trước ⇒ A = terminal còn lại) ⇒ chờ A giao.
 
 ### Trạng thái máy lúc kết phiên
-- E không còn worktree `/tmp/e_*`, server tạm (8896 đã tắt), tiến trình nền hay agent con nào. File tạm đã xoá.
+- E còn MỘT worktree `/tmp/e_tl` (nhánh tài liệu `p9-tai-lieu-anh-toi-15-11`, chờ A merge — xem dòng "Cập nhật" dưới); không còn server tạm (8896 đã tắt), tiến trình nền hay agent con nào. File tạm đã xoá.
 - Năm nhánh của E tối nay đều ĐÃ MERGE vào main: `p9-chu-gioi-thieu`, `p9-lich-ho`, `p9-gd-nguon-danh-gia`, `p9-so-vet`, `p9-anh-tra-loi-thang` (A đưa vào lệnh dọn nhánh).
+
+- **Cập nhật 21:37 15/11/2026:** tài liệu kết phiên (A giao) ĐÃ PUSH `598115f` origin/`p9-tai-lieu-anh-toi-15-11` — `bai_hoc/15` + `bao_cao_he_thong/08` theo luồng ảnh mới; **chờ A merge**. Worktree `/tmp/e_tl` còn (không symlink) ⇒ sau merge: `git worktree remove --force /tmp/e_tl`. B chốt nhóm hay nhầm của plan so ảnh = 20 tên (18 của E + `banh_canh_nam_pho` + `che_heo_quay`; plan bản 2 `origin/p10-so-anh` `f57b981`) ⇒ sửa `HAY_NHAM` trong `data/so_anh_buoc0_2026-11-15/dem.py` rồi chạy lại (ước thiếu ~286); plan đề nghị E gom bộ đo ảnh mới — A quyết.
 
 ### Việc đầu phiên sau (ứng viên — chờ A giao)
 1. **Thí nghiệm so ảnh bằng embedding** (plan nháp của B trên `origin/p10-so-anh`, B sửa vòng 2; CHỈ làm sau khi plan được duyệt): (a) nhìn lại **100 %** 172 ảnh mẫu cũ `data/phase_10/anh/e9/mau_anh/` — đã thấy 5 cặp file giống byte nằm ở HAI tên (ảnh sai tên); (b) loại 6 ảnh lịch cùng file Commons với bộ đo cũ; (c) gom ảnh mẫu còn thiếu (~272 theo mốc ≥ 8 / ≥ 15; số tính lại bằng `uv run python -I data/so_anh_buoc0_2026-11-15/dem.py` khi B chốt danh sách nhóm hay nhầm). Kết quả bước 0: `data/so_anh_buoc0_2026-11-15/KET_QUA.md`. Tin A: phép dò DINOv2 trên bộ mẫu cũ ra tên số 1 đúng 17 / 25 (SigLIP 15, luna 21); User đã xin quyền DINOv3 (chờ duyệt), không có ảnh tự chụp.
