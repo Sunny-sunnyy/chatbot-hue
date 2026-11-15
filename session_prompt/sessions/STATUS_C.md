@@ -30,6 +30,7 @@
 **Đề xuất việc tiếp (A gom cho User):** sửa lịch bằng lời đổi ngày đi + hạng sao — đếm `c_dem_sua_lich_truong.md` (hạng sao 5 / 5 không sửa được, không báo; ngày đi 1 / 5 bị hiểu thành đổi số ngày 3 ⇒ 1, báo 'Đã đổi'); 2 bậc theo phản biện B. Nhớ sở thích: User đã bỏ. Chữ Kirin 1 / 6.254 ⇒ không xây. Tiền ≈ 0,0012 USD. Rảnh — chờ.
 **Rào số ngày (A giao sửa ngay):** nhánh `p9-rao-so-ngay` @ `d5dfec8` — sau review E vòng 1 (M-1 + 2 minor đã sửa), chờ E vòng 2. Test 20, suite 1085, Q3 16 đúng chặn 0, 3 sai chặn 3. Worktree `/tmp/c_rs`.
 **Rào số ngày merge (`78dd6b9`); tài liệu bài 25 §1 + sổ 07 (1 dòng mỗi chỗ) — chờ A commit. Đã gỡ mọi worktree `/tmp/c_*`. Rảnh.**
+**Chọn 10 nơi thêm vào bảng điểm lịch (chuẩn bị, chưa sửa bảng):** `data/diem_lich_moi_2026-11-15/c_chon_10.md` — thiếu điểm: ẩm thực 56,4 %, chụp ảnh 51,7 %, lễ hội 39 %, thiên nhiên 24,4 % (+72 buổi trống), di tích 0 %. Đã gửi E gom căn cứ. Rảnh.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

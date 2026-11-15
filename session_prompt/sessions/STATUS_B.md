@@ -19,6 +19,7 @@
 - 12:30 15/11/2026 — Sửa (1) web số 0: làm xong nhưng cứu 0/76 ⇒ A **BỎ** (nhánh `p9-web-so-0`, worktree `/tmp/b_w0` — xoá cuối phiên). Sửa (2) **"tuần sau" XONG, CHỜ E review**: `p9-tuan-sau` `b38f5ad` (push), worktree `/tmp/b_ts`; X01 ×3 đạt, an toàn 0 đổi lớp, test rộng 1.064 đạt, 0,024 USD. 0 server.
 - 12:34 15/11/2026 — "tuần sau" E ready ⇒ A merge `5738e8d`; nhãn X01 bộ B5b sửa (md5 `65c6d4bc33f2`, sao lưu); worktree `/tmp/b_ts` gỡ. Bài 14 (sửa câu sai "tuần sau") + sổ 07 bản 59 — chưa commit (A). Còn `/tmp/b_w0` (bỏ, xoá cuối phiên). **Rảnh — chờ A.**
 - 12:50 15/11/2026 — Chuẩn bị "việc tiếp": 2 đề xuất tốc độ của B **rút lại** (cả hai đã sửa trước: `1633c18`, `3aef0ca` — log cũ trộn lượt trước sửa). Câu thường sau mốc merge p50 2,10 / p95 4,32 s ⇒ đạt sàn; đính chính cuối `b_dem_toc_do.md` (chưa commit). Phản biện C (sửa lịch thêm trường) + E (bảng điểm) đã gửi. Bài học: đếm log phải cắt theo mốc merge. **Rảnh — chờ A.**
+- 13:31 15/11/2026 — Sửa số tốc độ cũ ở plan song song / sổ 06 / 07 (chưa commit, A). **Review bảng nháp 7 điểm lịch (E): ready, 3 minor** — `report_agent/2026-11-12_ra_khoang_cach/b_review_diem_lich_moi.md` (chưa commit). 0 USD. **Rảnh — chờ A.**
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**
