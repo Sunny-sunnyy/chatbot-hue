@@ -6,6 +6,7 @@
 **Ghi chú ăn uống nam xa (A duyệt) XONG (09:50 15/11/2026):** nhánh `p9-ghi-chu-an` @ `81e3aff` (worktree `/tmp/c_ga`) — chờ E review. `quan_lich.py` `GHI_CHU_AN` 3 câu theo kho + `LichV2.jsx` / `lkh.css`; test file 16 passed, cả suite 1048 passed (265 s), Playwright DAT. Khai báo sửa: 4 file trên (nhánh riêng). Tiền ≈ 0,001 USD.
 **Tài liệu ghi chú nam xa (09:51 15/11/2026):** `bai_hoc/25` + sổ `07` (bản 54) trên cùng nhánh @ `8d0280b` — E review cùng code. Nhật ký + README sổ: A ghi lúc merge.
 **Sửa 2 minor review E (m-1, m-2) — nhánh @ `e001cb2`:** chờ A grep + merge. Rảnh.
+**p9-ghi-chu-an đã merge (main `2e50789`, sổ `214a502`).** Đã gỡ worktree `/tmp/c_ga`; nhánh vào danh sách dọn. **Rảnh — chờ** (PA3 ngưỡng mưa khi User chốt).
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

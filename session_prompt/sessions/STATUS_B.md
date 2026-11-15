@@ -2,6 +2,7 @@
 - 09:34 15/11/2026 — Kiểm nhanh khớp handoff: main 6c7c01b sạch, hooksPath .githooks, Qdrant 1 collection 9.425 điểm, 0 server; `bu_doi.json` 65 câu, mốc `ghi_kho_2/sau/golden.jsonl` có; `data/sua_kho_2026-11-14_do_bu/` chưa có (đúng). Đã báo A. Chờ A giao việc đo bù (mục 0 handoff).
 - 09:42 15/11/2026 — **Đo bù ghi kho 4/5/6 XONG, ĐẠT**: 65 câu ×1 — 0 lỗi, từ chối 2 ⇒ 1 (0 mới), 0 lỗi trích dẫn; 57 chữ khác mốc ⇒ chấm mù 56 cùng ý + 1 khác ý (bản sau tốt lên: hết từ chối). ≈ 0,029 USD. Report `report_agent/2026-11-12_ra_khoang_cach/b_do_bu_implementation.md` (chưa commit); dữ liệu `data/sua_kho_2026-11-14_do_bu/`. 0 server. Chờ A.
 - 09:44 15/11/2026 — A kiểm lại khớp, commit + push `6a51f89`; mục 0 đóng. Đề xuất `cham = doi` A nhận ⇒ B sửa `cau_cham.py` ở lần ghi kho kế. **Rảnh — chờ A giao.**
+- 10:01 15/11/2026 — **A giao (User 15/11): tra ngưỡng mưa + so 3 model Codex** (0 USD API, lượt ChatGPT). Yêu cầu `data/nguong_mua_2026-11-15/yeu_cau.md`; chạy lần lượt sol / terra / luna medium ⇒ `data/tra_cuu_cli/2026-11-15_mua-{sol,terra,luna}/`. Tiếp: agent con chấm mù X/Y/Z ⇒ report `report_agent/2026-11-12_ra_khoang_cach/b_nguong_mua_3_model.md` ⇒ gửi phần (a) cả nhóm.
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**

@@ -3,6 +3,7 @@
 ## PHIÊN 15/11 (tiến độ)
 - 09:38 15/11/2026: mở phiên, kiểm nhanh khớp handoff (main `6c7c01b`, Qdrant 9.425). User cấp quyền "như tối 14/11" (A báo). **Rảnh — chờ A:** (1) User trả lời câu 14 bài trống ảnh (ô màu / tìm tay) ⇒ giao 3(i); (2) User đồng ý câu (a) ngưỡng mưa ⇒ E review nhánh C.
 - 09:53 15/11/2026: review `p9-ghi-chu-an` (C, `81e3aff` + `8d0280b`) xong ⇒ ready, 2 minor (câu Bạch Mã rộng hơn kho; trưa Nhị Hồ 0 / 3.840). Biên bản `report_agent/2026-11-12_ra_khoang_cach/e_review_ghi_chu_an.md` (chưa commit). 0 USD. Worktree `/tmp/e_rv` đã gỡ. Rảnh — chờ A.
+- 09:57 15/11/2026: A merge `p9-ghi-chu-an` (`2e50789`, sổ `214a502`); m-1 + m-2 đã sửa ở `e001cb2` (E kiểm: câu Bạch Mã ghi "khu Ngũ Hồ và đỉnh núi", bỏ mục trưa Nhị Hồ). **Rảnh — chờ A.**
 
 # STATUS E — KẾT PHIÊN TỐI 14/11 (mở 17:45, kết 22:35 14/11/2026, `date`) · terminal `hue-rag-1f` · Claude Opus 5.5 · vai thực thi
 

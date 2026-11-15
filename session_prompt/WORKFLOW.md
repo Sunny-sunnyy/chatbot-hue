@@ -62,7 +62,10 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    việc; dừng khi gặp điều kiện dừng.
 5. Thay đổi có đo trước–sau: ghi tiêu chí → đo hiện tại → sửa một thứ → đo lại
    cùng cách → kết luận tốt hơn / không đổi / kém hơn / chưa rõ.
-6. Bị chặn bởi permission của chính session: dừng, nhờ User chạy bằng `!` trong
+6. **Chọn ảnh sẽ hiện cho người dùng** (User duyệt 10:15 15/11/2026): ảnh phải tự nhận ra được nơi (biển tên, công trình đặc trưng, chú thích tác giả ghi đúng tên) —
+   "nguồn chính thức" không đủ; bài món: đúng món là đủ; không trẻ em, không người rõ mặt làm trọng tâm, không số điện thoại. ≤ 10 ảnh ⇒ người giao tự
+   chọn + một người khác review; > 10 ảnh ⇒ một agent con chọn + người giao nhìn lại 100 % ảnh sẽ hiện.
+7. Bị chặn bởi permission của chính session: dừng, nhờ User chạy bằng `!` trong
    terminal đó; session khác không chạy hộ.
 
 ## 4. Tự kiểm trước khi bàn giao
@@ -93,7 +96,7 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 - Mỗi finding: vị trí, yêu cầu bị ảnh hưởng, bằng chứng, tác động, tiêu chí đóng.
   Người làm được phản biện bằng bằng chứng.
 - **Review dừng ngay** khi A biết hướng / phụ thuộc sắp đổi (05/11: một lượt review plan B5 bản 5 bị bỏ).
-- **Tối đa 2 vòng review** cho plan / spec (User 05/11 — `Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt; vẫn còn blocker / major sau vòng 2 ⇒ A xem lại thiết kế (với User nếu đổi phạm vi). Code: một review cả nhánh; nhánh chỉ đổi test ⇒ A merge thẳng, không review.
+- **Tối đa 2 vòng review** cho plan / spec (User 05/11 — `Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt; vẫn còn blocker / major sau vòng 2 ⇒ A xem lại thiết kế (với User nếu đổi phạm vi). Code: một review cả nhánh; nhánh chỉ đổi test ⇒ A merge thẳng, không review; sửa ≤ 2 dòng theo minor đã nêu rõ cách đóng ⇒ A kiểm bằng grep / diff rồi merge, không review vòng 2 (User duyệt 10:15 15/11/2026).
 
 ## 6. Report
 

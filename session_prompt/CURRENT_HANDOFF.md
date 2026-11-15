@@ -12,6 +12,7 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 - **Xong 09:41 — B đo bù 65 câu: ĐẠT** (từ chối 2 ⇒ 1, 0 lỗi trích dẫn, 56 cùng ý + 1 tốt lên; 0,029 USD; A tính lại khớp). Kết luận "không tụt" của ghi kho 4–6 giờ đúng trên mọi câu đổi top 10 ⇒ mục 0 "Việc đầu phiên sau" ĐÓNG. Mẫu TIEU_CHI ghi kho: câu chạm = mọi câu đổi top 10 (B sửa `cau_cham.py` ở lần ghi kho kế).
 - **C 3(iii) đếm nam xa: không cào quán** (4,8 % bữa; kho: không quán). A duyệt ghi chú ăn uống 2 điểm ở thẻ bữa (0 USD) ⇒ E review.
 - **(a) ngưỡng mưa:** User chọn PA3 nhưng hỏi "số nghĩa là gì / nhóm bàn chưa / sao không dùng API thời tiết Huế" ⇒ A giải thích (đã dùng Open-Meteo), chờ User xác nhận lại rồi mới giao C.
+- **User trả lời (A ghi 10:15 15/11/2026):** (a) ngưỡng mưa: chưa chốt — "trao đổi nhóm / Codex tra xem đâu là ngưỡng" ⇒ B tra + so 3 model Codex (sol / terra / luna, chấm mù) ⇒ C, E phản biện ⇒ A trình một khuyến nghị · (c) Codex: User muốn mặc định terra hoặc luna, sol chỉ cho nghiên cứu sâu ⇒ chờ kết quả so 3 model · (b) **bàn thiết kế trang khách sạn theo khu + hỏi ngân sách chỗ ở** (C viết plan 1 trang, B / E phản biện, trình User trước khi code) · (g) 14 bài trống ảnh: **E tìm thêm một lượt** (dừng 30 phút không thêm), còn thiếu ⇒ danh sách cho User tự tìm · (d) **W76–W78 duyệt ⇒ áp** · (f) **dọn nhánh + 4 worktree AGY: xoá** (lệnh `/tmp/don_nhanh_15_11.sh`, User `!`) · (e) nhớ sở thích: User chưa chọn bàn.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 22:35 14/11/2026, KẾT PHIÊN TỐI 14/11 — User: "để các nhiệm vụ, câu hỏi cho session tiếp theo")
 

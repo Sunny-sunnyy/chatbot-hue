@@ -88,7 +88,8 @@ report.
   và xóa khi xong (script dùng lại để `data/<đợt>/tools/`; `rm` bị chặn ⇒ nhờ User `!`). User hỏi về câu kín ⇒ A nhắc
   User mô tả chung, không dán nguyên câu.
 - Corpus không có Git: backup file gốc vào `knowledge-base-hue/meta/` trước khi
-  sửa, review bằng diff với backup.
+  sửa, review bằng diff với backup. Bài nháp trước khi ghi kho: `uv run python .githooks/overlap_scan.py <nháp…>` phải ra 0 dòng trùng
+  Golden / câu kín (hook commit không quét kho vì kho không tracked) (User duyệt 10:15 15/11/2026).
 - Curated Markdown: không YAML frontmatter, file bắt đầu bằng `#`; không ghi
   field/section rỗng; không thêm "Liên kết nội bộ"; nguồn tối giản ở
   `## Nguồn dữ liệu`; nội dung tự nhiên, độc lập, answer-facing. Chi tiết foods:
@@ -148,7 +149,7 @@ report.
 
 ## 8. Test và verification
 
-- **Giảm thời gian test (User duyệt 11:29 08/11/2026):** trong lúc sửa chỉ chạy file test bị chạm; **test rộng (cả `backend/tests`) một lần trước khi bàn giao / merge**; Q1 "chuỗi gửi model giống byte" chỉ khi code chạm phần dựng chuỗi gửi model / lời dặn / công cụ; Playwright chỉ khi sửa giao diện (một khổ màn nếu thay đổi không theo cỡ màn); chạy test nền song song việc khác (trừ lúc đo độ trễ); việc nhỏ đo 1 lượt. Report ghi **thời gian từng bước** (pytest, Q1, Playwright, lượt có phí) bằng số đo thật.
+- **Giảm thời gian test (User duyệt 11:29 08/11/2026):** trong lúc sửa chỉ chạy file test bị chạm; **test rộng (cả `backend/tests`) một lần trước khi bàn giao / merge**; Q1 "chuỗi gửi model giống byte" chỉ khi code chạm phần dựng chuỗi gửi model / lời dặn / công cụ; Playwright chỉ khi sửa giao diện (một khổ màn nếu thay đổi không theo cỡ màn); chạy test nền song song việc khác (trừ lúc đo độ trễ); việc nhỏ đo 1 lượt. **Bớt thêm (User duyệt 10:15 15/11/2026):** nhánh chỉ đổi ảnh / cờ ảnh / dữ liệu bảng ⇒ không Playwright (test + đếm file có / thiếu), trừ lần đầu thêm một loại ảnh mới vào giao diện; nhánh chỉ đổi một hàm thuần + test của nó ⇒ test file chạm, không cần test rộng. Report ghi **thời gian từng bước** (pytest, Q1, Playwright, lượt có phí) bằng số đo thật.
 - **Đổi cờ trong `settings.yaml`** (User duyệt 19:12 10/11/2026): trước commit chạy test các file chạm cờ **cả có lẫn không** `--env-file`; test khoá hành vi theo cờ tự đặt cờ trong test, không đọc `settings.yaml` thật.
 - Test chỉ khi bảo vệ behavior cần thiết, contract quan trọng hoặc bug thật có
   nguy cơ tái diễn; không đặt mục tiêu số test/coverage.
