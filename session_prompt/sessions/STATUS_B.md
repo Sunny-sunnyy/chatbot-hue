@@ -1,47 +1,65 @@
-# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11) — B viết 21:34 15/11/2026, terminal `hue-rag-7d` (A `hue-rag-ef` · C `hue-rag-10` · E `hue-rag-f0`; cả bốn Claude Code, Fable 5.2)
+# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11) — B viết 22:07 15/11/2026, terminal `hue-rag-7d` (A `hue-rag-ef` · C `hue-rag-10` · E `hue-rag-f0`; cả bốn Claude Code, Fable 5.2)
 
-## Trạng thái máy lúc kết phiên
-- 0 worktree `/tmp` của B (đã gỡ `/tmp/b_wg`, `/tmp/b_sa`, các worktree review), 0 server, 0 tiến trình nền, 0 file tạm của B trong `/tmp`. Model `facebook/dinov2-base` có trong cache Hugging Face (331 MB).
-- 21:54 15/11/2026 — **PHÉP DÒ DINOv3 ViT-B XONG** (0 USD; cùng công cụ + dữ liệu như DINOv2; ghi thêm vào `data/so_anh_2026-11-15/KET_QUA_DO_DINO.md`; chạy: `do_dino.py dino3_cls`): tên số 1 đúng 19 / 25 · top 3 20 · top 5 22 (DINOv2 17 · 22 · 22; SigLIP 15 · 20 · 22; luna 21 · 22); khoảng cách nhất − nhì: 6 ảnh sai đều ≤ 0,055, 16 / 19 ảnh đúng ≥ 0,094, nhưng MỘT ảnh ngoài danh sách 0,193; 205 ms / ảnh, RSS 1,3 GB. Trọng số DINOv3 (343 MB) đã ở cache Hugging Face; transformers 5.14.1 có sẵn lớp model; tiền xử lý DINOv3 = ép 224 × 224 không cắt giữa. ±2 ảnh trên 25 là nhiễu — không dùng để quyết.
-- Nhánh của B còn trên origin, CHƯA merge lúc B viết: `p9-web-gon` `9778d29` (mục web gọn — chờ User quyết sàn / làm bản 2) · `p9-bai-hoc-toi-15-11` (bài học tối 15/11 — chờ A merge; sha ở dòng cuối mục này). Đã merge: `p9-tai-lieu-w84`, `p10-so-anh` (plan so ảnh bản 2 `3b9a1894a195` — A DUYỆT sau review vòng 2 của C, vào main `82dd96b`).
-- 21:40 15/11/2026 — **Bài học tối 15/11 XONG, chờ A merge** (nhánh `p9-bai-hoc-toi-15-11`): bài 21 thêm mục sổ ghi debug (+ nút 👍 / 👎 đã gỡ), bài 13 thêm "tải lại trang là cuộc mới", bài 24 thêm khung nguồn sạch + bỏ dòng hỏi đánh giá, README. B tự đối chiếu từng khẳng định với code + 3 report gốc (không agent con — chỉ thêm đoạn ngắn). Không viết việc chưa xong (mục web gọn, so ảnh, lỗi hỏi lại câu cũ trong cùng cuộc).
+Mục này tự đủ nghĩa cho người mở phiên mới. Nhật ký từng bước của tối nay nằm ngay dưới ("STATUS B — PHIÊN TỐI 15/11").
 
-## Việc đầu phiên sau của B (theo thứ tự; chờ A giao)
-1. **Plan so ảnh bằng embedding** (`docs/superpowers/plans/2026-11-15-so-anh-embedding-plan.md` trên `p10-so-anh`): **C review vòng 2 (21:37 15/11/2026): READY, 0 major, 5 minor** (biên bản `origin/p10-so-anh-review` `30a63b1`, mục "Vòng 2"; không cần vòng 3) — 5 minor sửa LÚC VIẾT FILE NGƯỠNG: (1) Quyết 1 "≤ 2 ảnh sai" theo cỡ nhóm tự tin (≤ 2 khi < 40 ảnh, ≤ 3 khi ≥ 40) + dòng đối chiếu với nhóm "luna trả một tên" trên cùng ảnh; (2) câu chọn t ghi rõ mẫu số, tách "> 20 % … hoặc < 30 %" thành hai điều kiện; (3) "< 30 % ảnh mẫu tự tin" lệch với "phủ ≥ 50 %" ⇒ nâng 50 % hoặc ghi là mức "vô vọng"; (4) chọn m ở ≤ 3 % ảnh âm (hoặc ghi trước 3 / 20 là "sát ngưỡng"); (5) báo riêng ảnh lạ rơi vào "nhiều tên" ⇒ A duyệt ⇒ gom dữ liệu (đề nghị E gom bộ đo mới, C kiểm nhãn, B chạy) ⇒ đo M1 / D2 / D3 / G. Đã có: phép dò `data/so_anh_2026-11-15/KET_QUA_DO_DINO.md` + `do_dino.py` (chạy: `cd backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/so_anh_2026-11-15/do_dino.py <siglip|dino_cls|dino_patch>`; `LOAI_TRUNG=1` loại ảnh mẫu trùng ở hai tên); tra cứu `data/tra_cuu_cli/2026-11-15_so-anh-embedding/ket_qua.md`; đếm ảnh mẫu của E `data/so_anh_buoc0_2026-11-15/KET_QUA.md` (B đã chốt 20 tên nhóm hay nhầm trong plan mục 4 ⇒ E chạy lại `dem.py` ra số thiếu mới). DINOv3: User đã xin quyền, chờ Meta duyệt. Biến thể Gemini: bước đầu là gọi thử 1 ảnh (khuôn gửi ảnh qua OpenRouter chưa có ví dụ xác nhận).
-2. **Mục "Từ web" gọn — bản 2** (nếu User chọn làm): ý ở mục "Ý cho plan bản 2" bên dưới (dòng ghi lúc review độc lập trả về): giữ điều kiện / phạm vi mà đoạn trích nêu; bối cảnh khác ⇒ từ khoá "không có"; đo lại đúng 28 đầu vào (`data/web_gon_2026-11-15/tools/do.py`); sàn đọc tay do người KHÔNG viết lời dặn đọc. Nhánh `p9-web-gon` sẽ xung đột 2–3 dòng với `cong_web` sau khi `p9-so-vet` vào main ⇒ rebase.
-3. Còn mở từ trước, chưa ai giao: lệnh `!` đếm bộ kín sửa lịch + `kiem_bo.py --ca-kin` (User); theo dõi cờ `web_cau_noi_tiep`; ứng viên tốc độ câu hỏi tiếp (chưa có hướng không tốn thêm lần gọi model).
+## 1. Việc đầu phiên sau của B — theo thứ tự (chờ A giao; quyền phiên tối 15/11 đã hết hạn)
 
-## Việc đã xong tối 15/11 (chi tiết từng dòng ở mục "STATUS B — PHIÊN TỐI 15/11" ngay dưới)
-| Việc | Kết quả | File |
+**Việc 1 — thí nghiệm "nhận diện nơi / món bằng so ảnh với ảnh mẫu".** Plan ĐÃ DUYỆT, trên main: `docs/superpowers/plans/2026-11-15-so-anh-embedding-plan.md` (sha256 đầu `3b9a1894a195`); review của C cùng thư mục (`…-plan_review.md`, vòng 2 READY). User đã đồng ý: tải DINOv2, DINOv3 (đã có quyền, trọng số đã ở cache), dùng tiền API cho embedding ảnh; User KHÔNG có ảnh tự chụp. Trần tiền của plan 0,5 USD. Thứ tự:
+  a. **Viết file ngưỡng + luật gộp điểm trước khi mở bộ đo**, sửa luôn 5 minor vòng 2 của C: (1) Quyết 1 "số ảnh trong danh sách bị gán sai tên ở nhóm tự tin" theo cỡ nhóm — ≤ 2 khi nhóm < 40 ảnh, ≤ 3 khi ≥ 40 — và thêm dòng đối chiếu với nhóm "luna trả đúng một tên" trên cùng ảnh; (2) câu chọn ngưỡng từ chối t ghi rõ mẫu số; tách "> 20 % … hoặc < 30 %" thành hai điều kiện riêng; (3) "< 30 % ảnh mẫu được tự tin" lệch với "phủ ≥ 50 %" ⇒ nâng 50 % hoặc ghi rõ đó là mức "vô vọng"; (4) chọn m ở mức ≤ 3 % ảnh âm lọt (hoặc ghi trước 3 / 20 là "sát ngưỡng"); (5) báo riêng số ảnh lạ rơi vào nhóm "nhiều tên".
+  b. **Dữ liệu (đóng băng trước khi chạy model nào):** bộ mẫu ~480 ảnh — 190 đã dùng được, gom thêm ~290; MỘT người nhìn 100 % ảnh mẫu; loại 6 ảnh lịch trùng file với bộ đo và mọi bản của 5 nội dung nằm ở hai tên (số đếm của E: `data/so_anh_buoc0_2026-11-15/KET_QUA.md` + `dem.py`; plan mục 4 đã chốt 20 tên nhóm hay nhầm ⇒ E chạy lại `dem.py` ra số thiếu mới). Tập ảnh ÂM ~100 (không phải Huế, một nửa dễ nhầm) — CHƯA có. Bộ đo mới ≥ 30 ảnh trong danh sách + ≥ 15 ngoài danh sách, kiểu người thường chụp, lấy từ nguồn khác kho ảnh mẫu; người gom ≠ người chạy; người thứ hai kiểm 100 % nhãn. Plan đề nghị E gom, C kiểm nhãn, B chạy — A quyết.
+  c. **Chạy, mỗi biến thể hai dòng (không / có luật từ chối):** SigLIP 2 trên bộ mẫu mới (mốc) ⇒ DINOv2 ViT-B ⇒ DINOv3 ViT-B ⇒ Gemini Embedding 2 (768 chiều, qua OpenRouter). Gemini: bước đầu là GỌI THỬ 1 ẢNH — khuôn gửi ảnh qua `/api/v1/embeddings` của OpenRouter chưa có ví dụ xác nhận; đọc `usage` để biết giá thật (trang Google: 0,00012 USD / ảnh); đặt không cho provider thu thập dữ liệu; **khoá OpenRouter CHƯA kiểm còn dùng được** (không đọc `.env` — kiểm bằng chính lần gọi thử). luna v1 chạy 2 lượt trên bộ đo mới (≈ 0,04 USD).
+  d. Công cụ đã có: `data/so_anh_2026-11-15/do_dino.py` (so bằng numpy, không Qdrant; tự tiền xử lý vì `AutoImageProcessor` đòi gói torchvision chưa cài) — chạy: `cd backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/so_anh_2026-11-15/do_dino.py <siglip|dino_cls|dino_patch|dino3_cls>`; `LOAI_TRUNG=1` loại ảnh mẫu trùng ở hai tên. Hiện ghim bộ mẫu CŨ `data/phase_10/anh/e9/mau_anh` + bộ đo cũ ⇒ phải thêm tham số thư mục mẫu / bộ đo / ảnh âm + luật m, t cho lượt thật.
+
+**Việc 2 — mục "Từ web (chưa kiểm)" gọn, BẢN 2 (chỉ khi User chọn làm; A đã khuyên làm).** Bản 1 nằm trên nhánh `p9-web-gon` `9778d29` — CHƯA merge, KHÔNG xoá. Ý cho bản 2 (một thay đổi ở lời dặn): (1) vẫn trả lời thẳng 1–2 câu nhưng GIỮ điều kiện / phạm vi mà chính đoạn trích nêu ("tuỳ…", "chỉ áp dụng…", ngày nào, loại nào); (2) đoạn trích nói về bối cảnh khác câu hỏi (nơi khác, dịp khác, đối tượng khác) ⇒ từ khoá "không có"; (3) đo lại đúng 28 đầu vào đã lưu, mốc = lượt 2 hiện tại; (4) **sàn đọc tay do người KHÔNG viết lời dặn đọc 28 / 28 (luật W86)**; (5) cân nhắc đếm theo dõi: mục web có số mà câu nguồn chứa "tuỳ / từ … đến / khoảng". Khi rebase: nhánh sẽ xung đột 2–3 dòng ở `cong_web` (`backend/llm/assistant.py`) vì sổ ghi debug đã vào main.
+
+**Việc 3 — còn mở từ trước, chưa ai giao:** User chạy lệnh `!` đếm bộ kín sửa lịch + `kiem_bo.py --ca-kin` (handoff "User tự làm"); theo dõi cờ `web_cau_noi_tiep`; tốc độ câu hỏi tiếp (lần tìm đầu trượt 6 / 7 — chưa có hướng không tốn thêm lần gọi model).
+
+## 2. Nhánh và máy
+- Nhánh của B trên origin: **`p9-web-gon` `9778d29` — CHƯA merge, giữ** · `p9-bai-hoc-toi-15-11` `18f9b2d` (bài học 13 / 21 / 24 + README — xem `git branch -r --merged origin/main` để biết A đã merge chưa) · đã merge: `p9-tai-lieu-w84`, `p10-so-anh`.
+- Máy lúc kết phiên: 0 worktree `/tmp` của B, 0 server, 0 tiến trình nền, 0 file tạm của B. Cache Hugging Face có `facebook/dinov2-base` (331 MB) và `facebook/dinov3-vitb16-pretrain-lvd1689m` (343 MB); transformers 5.14.1 có sẵn lớp DINOv3. `STATUS_B.md` do A commit.
+
+## 3. Công cụ / kết quả trong `data/` (private) và lệnh chạy lại
+| Việc | Đường dẫn | Lệnh chạy lại (0 USD trừ khi ghi) |
 |---|---|---|
-| Harness Q3 tự mô phỏng nhãn trước lượt có phí + `kiem_bo.py` không mở file kín | đạt; report đã merge | `report_agent/2026-11-12_ra_khoang_cach/b_w84_harness_implementation.md` |
-| Review nhánh dòng báo đổi tham số lịch (C) | bắt lỗi "vừa bớt vừa thêm" bằng quét 540 lượt ⇒ C sửa ⇒ ready | `data/review_no_nho_2026-11-15/quet.py` |
-| Review nhánh ghi chú ăn + ảnh Hải Vân (E) | ready | tin nhắn |
-| Đếm `loi_model` bước nhận ảnh | 2 / 149 = 1,3 %, do chạm trần token ⇒ giới hạn đã nhận | `data/dem_nhan_anh_2026-11-15/KET_QUA.md` |
-| Mục web gọn | đo đạt 3 tiêu chí quyết; review độc lập: sàn đọc tay 1 rõ + 3 ranh giới ⇒ CHƯA merge | `report_agent/…/b_web_gon_implementation.md` (trên nhánh), `data/web_gon_2026-11-15/cap_truoc_sau.md` |
-| Review ảnh đính kèm (C, 2 nhánh) | ready | `data/review_anh_dinh_kem_2026-11-15/hoi_that.py` |
-| Review sổ vết debug (E, 3 bản) | bắt lỗ "thu vết đè lỗi gốc" ⇒ sửa ⇒ ready | `data/review_so_vet_2026-11-15/do.py` |
-| Tên số 1 của bước nhận ảnh | 21 / 25 (84 %); trả lời thẳng sai nơi 21–27 %; 1 tên ⇒ 94 %, 2–3 tên ⇒ 65 % | `data/dem_ten_so_1_2026-11-15/KET_QUA.md` |
-| Tra cứu embedding ảnh + plan + phép dò DINOv2 | plan bản 2 trên nhánh; DINOv2 17 / 25 · top 3 22 | xem mục 1 ở trên |
+| Phép dò so ảnh (SigLIP / DINOv2 / DINOv3) | `data/so_anh_2026-11-15/` — `do_dino.py`, `KET_QUA_DO_DINO.md`, `do/*.jsonl`, yêu cầu tra `yeu_cau.md` | lệnh ở mục 1.d |
+| Tra cứu model embedding ảnh | `data/tra_cuu_cli/2026-11-15_so-anh-embedding/ket_qua.md` | `scripts/tra_web_codex.sh data/so_anh_2026-11-15/yeu_cau.md <tên>` (1 lượt Codex) |
+| Tên số 1 của bước nhận ảnh đang chạy | `data/dem_ten_so_1_2026-11-15/` — `dem.py`, `KET_QUA.md` | `python3 -I data/dem_ten_so_1_2026-11-15/dem.py v1 v2` |
+| Lượt nhận ảnh lỗi do chạm trần token | `data/dem_nhan_anh_2026-11-15/` — `dem.py`, `KET_QUA.md` | `python3 -I data/dem_nhan_anh_2026-11-15/dem.py <log…>` |
+| Quét 540 lượt đổi tham số lịch (dòng báo "xếp lại") | `data/review_no_nho_2026-11-15/quet.py` | `cd backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/review_no_nho_2026-11-15/quet.py` (mã thoát 0 = 0 câu sai) |
+| Ca dò sổ ghi debug (thu vết không đè lỗi gốc; gộp vết) | `data/review_so_vet_2026-11-15/do.py` | `cd backend && PYTHONPATH=$PWD uv run python ../data/review_so_vet_2026-11-15/do.py` (in "KẾT QUẢ: ĐẠT") |
+| Mục web gọn | `data/web_gon_2026-11-15/` — `tools/dem.py` (đếm kể lể), `tools/do.py kho|chay|doc`, `tools/cap_that.py`, `do/` + `do2/` (lượt 1, 2; `doc_tay.md`), `cap_truoc_sau.md` (8 cặp cho User) | `python3 -I data/web_gon_2026-11-15/tools/dem.py`; `cd <worktree>/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python …/tools/do.py kho <thư mục ra>` (0 USD); `chay` có phí ≈ 0,004 USD / lượt 28 đầu vào (thêm `--env-file /home/minhhieu/hue_rag/.env`) |
+| 3 câu đúng khuôn ảnh đính kèm qua đường kho | `data/review_anh_dinh_kem_2026-11-15/hoi_that.py` | có phí ≈ 0,0014 USD |
+| Harness chuỗi sửa lịch tự mô phỏng nhãn + kiểm khuôn bộ | `data/len_ke_hoach_v2_2026-11-13/tools/q3_sua_lich.py` (`--backend`), `data/phase_9/bo_do_sua_lich/tools/kiem_bo.py` (`--pha`, `--ca-kin` chỉ User) | xem `report_agent/2026-11-12_ra_khoang_cach/b_w84_harness_implementation.md` |
 
-## Bẫy tối 15/11 (để khỏi lặp)
-1. Ca dò / script của REVIEW viết trong `/tmp` rồi xoá cùng worktree ⇒ phải viết lại 2 lần ⇒ ghi thẳng vào `data/review_<việc>_<ngày>/`.
-2. Tự đọc sàn "đọc tay" cho lời dặn do chính mình viết ⇒ đọc lỏng (B 1 ranh giới ↔ reviewer 1 rõ + 3 ranh giới) ⇒ ghi người đọc khác ngay trong plan.
-3. `Write` bị từ chối (file vừa sửa bằng script) mà lệnh chạy thử kế tiếp vẫn chạy ⇒ kết quả là của bản CŨ; đọc đầu ra trước khi tin.
-4. Viết Markdown bằng heredoc Python mà gõ gạch chéo ngược trước dấu backtick ⇒ ký tự gạch chéo lọt nguyên vào file (hook không bắt; đã lọt 1 lần vào report) ⇒ trước khi commit đếm bằng grep chuỗi gạch-chéo-ngược + backtick; heredoc bash không dấu nháy thì không sao.
-5. Nối thêm mục vào plan đã duyệt làm sha lệch ⇒ ghi rõ "cắt từ dòng nào thì ra sha bản duyệt" + liệt kê đủ chỗ đổi.
-6. Trích số từ paper trước khi biết cỡ model đứng sau số đó (bảng so bản 7B / ViT-g) ⇒ phải đính chính; ghi cỡ model cạnh mọi số benchmark.
-7. Script ngoài `backend/` cần `PYTHONPATH=$PWD`; `AutoImageProcessor` của DINO đòi `torchvision` (chưa cài) ⇒ tự tiền xử lý theo `preprocessor_config.json`.
-8. File mẫu có hai dòng cùng id ⇒ khoá theo id bị đè; `rev-parse --short a b` lỗi làm đứt chuỗi `&&` (mất dòng `--stat`).
-9. Điểm buổi tối có thể lặp ở nhiều ngày trong một khung lịch ⇒ vị trí là TẬP (ngày, buổi), không phải một cặp.
+## 4. Số đã đo tối nay (nhãn độ tin)
+- **[PHÉP DÒ — bộ đã thấy, mẫu cũ bẩn, n = 25, không dùng để quyết; chưa ai tính lại]** so ảnh 172 ảnh mẫu cũ: tên số 1 đúng / top 3 / top 5 — SigLIP 2 base 15 · 20 · 22 (chạy lại ra đúng số 05/11) · DINOv2 ViT-B 17 · 22 · 22 · DINOv3 ViT-B 19 · 20 · 22 · luna v1 đang chạy 21 · 22. Điểm giống nhau KHÔNG tách ảnh ngoài danh sách ở cả ba. Khoảng cách tên nhất − nhì: DINOv2 đúng 13 / 17 ảnh ≥ 0,179, sai ≤ 0,132, ngoài ≤ 0,114; DINOv3 đúng 16 / 19 ảnh ≥ 0,094, sai ≤ 0,055, ngoài ≤ 0,060 trừ MỘT ảnh 0,193. ~205–230 ms / ảnh, RSS ~1,3 GB.
+- **[đếm trên kết quả đã lưu, chưa review]** bước nhận ảnh đang chạy (lời dặn v1, 33 ảnh × 2 lượt): tên số 1 đúng 21 / 25 (84 %) cả hai lượt; ảnh ngoài danh sách bị gán tên 0 và 2 / 5; trả lời thẳng theo tên số 1 ⇒ sai nơi 6 / 28 và 8 / 30; model trả 1 tên ⇒ đúng 31 / 33, trả 2–3 tên ⇒ số 1 đúng 11 / 17. `loi_model` 2 / 149 lượt (1,3 %), cả hai do chạm trần 1.024 token ⇒ A chốt giới hạn đã nhận.
+- **[đã đo, review độc lập: CHƯA đạt sàn đọc tay]** mục web gọn bản 1, n = 28 cùng đoạn trích: kể lể 25 ⇒ 1; dài trung vị 189 ⇒ 103 ký tự; > 2 mã nguồn 7 ⇒ 0; 11 mục thành dòng cố định; sàn đọc tay theo người đọc thứ hai: 1 mục rõ + 3 ranh giới (B chỉ thấy 1).
+- **[review, đã đóng]** quét 540 lượt đổi tham số lịch: trước sửa 85 / 495 lượt có điểm vừa "bớt" vừa "thêm" ⇒ sau sửa 0 câu sai; sổ ghi debug: lỗ "thu vết đè lỗi gốc" ⇒ đã sửa, ca dò đạt.
 
-## Tiền paid B tối 15/11
-Mục web gọn ≈ 0,012 (lượt 1 0,00342 · lượt 2 0,00446 · 2 câu đường thật ≈ 0,0042 gồm Serper 0,002) · review ảnh đính kèm 0,0014 ⇒ **≈ 0,0135 USD**; mọi việc khác 0. Cả ngày 15/11 của B ≈ 0,42 USD. Codex: 1 lượt (gói ChatGPT của User). Không dùng agent con.
+## 5. Câu hỏi / thắc mắc cho A hoặc User
+- Mục web gọn: User nhận mức bản 1 hay làm bản 2? (bản 2 cần A chỉ định người đọc sàn.)
+- Thí nghiệm so ảnh: ai gom bộ đo mới + ảnh âm, ai kiểm nhãn; nguồn ảnh "người thường chụp" cụ thể lấy ở đâu; khoá OpenRouter còn dùng được không.
+- Luồng ảnh: nếu User chọn phương án lai (1 tên ⇒ trả lời thẳng; nhiều tên ⇒ hỏi chọn) thì lời dặn v1 đang chạy (viết cho luồng có xác nhận: "thêm id dễ nhầm") có cần đổi không — đổi thì phải đo lại bộ 33 ảnh.
 
-## Câu hỏi cho A phiên sau
-- Mục web gọn: User chọn nhận mức hiện tại hay làm bản 2?
-- Plan so ảnh: ai gom bộ đo mới (nguồn khác kho ảnh mẫu) và ai kiểm 100 % nhãn; có chờ DINOv3 không hay chạy trước phần còn lại.
-- Phương án lai cho luồng ảnh (1 tên ⇒ trả lời thẳng; nhiều tên ⇒ hỏi chọn) — nếu User chọn, số nền ở `data/dem_ten_so_1_2026-11-15/KET_QUA.md`.
+## 6. Bẫy tối 15/11
+1. Ca dò / script của review viết trong `/tmp` rồi xoá cùng worktree ⇒ viết lại 2 lần ⇒ ghi thẳng `data/review_<việc>_<ngày>/`.
+2. Tự đọc sàn đọc tay cho lời dặn do chính mình viết ⇒ đọc lỏng (1 ↔ 4 mục) — nay là luật W86.
+3. `Write` bị từ chối (file vừa sửa bằng script) mà lệnh chạy thử kế vẫn chạy ⇒ kết quả của bản CŨ.
+4. Viết Markdown bằng heredoc Python có gạch chéo ngược trước dấu backtick ⇒ ký tự thừa lọt vào file (đã lọt 1 lần vào report); heredoc bash không dấu nháy thì không sao.
+5. Nối thêm mục vào plan đã duyệt làm sha lệch ⇒ ghi "cắt từ dòng nào thì ra sha bản duyệt" + liệt kê đủ chỗ đổi.
+6. Trích số paper trước khi biết cỡ model đứng sau (bảng so bản 7B / ViT-g, không phải cỡ B) ⇒ phải đính chính; ghi cỡ model cạnh mọi số benchmark.
+7. Script ngoài `backend/` cần `PYTHONPATH=$PWD`; DINOv2 và DINOv3 tiền xử lý KHÁC nhau (v2: cạnh ngắn 256 rồi cắt giữa 224; v3: ép vuông 224 không cắt).
+8. File mẫu có hai dòng cùng id ⇒ khoá theo id bị đè; `git rev-parse --short a b` lỗi làm đứt chuỗi `&&`.
+9. Điểm buổi tối có thể lặp ở nhiều ngày trong một khung lịch ⇒ vị trí một điểm là TẬP (ngày, buổi).
+10. Hook cảnh báo giờ ước bắt cả chữ dạng "giờ:phút có chữ x" trong STATUS — đừng dùng để trỏ tới một dòng.
+Luật mới User duyệt tối nay (A ghi): W85 hỏi lại bằng hộp chọn trước khi code giao diện còn mơ hồ · W86 sàn đọc tay do người không viết lời dặn đọc · W87 tái tạo lỗi User báo trên đúng cấu hình đang chạy, thử 1 lượt trước khi chạy cả bộ.
+
+## 7. Tiền paid B tối 15/11 (từ file kết quả)
+Mục web gọn ≈ 0,012 USD (lượt 1 0,00342 · lượt 2 0,00446 · 2 câu đường thật ≈ 0,0042 gồm Serper 0,002) · review ảnh đính kèm 0,0014 ⇒ **≈ 0,0135 USD**; mọi việc khác 0 USD. Cả ngày 15/11 của B ≈ 0,42 USD. Codex: 1 lượt (gói ChatGPT của User). Không dùng agent con.
+
+## 8. Đã xong tối 15/11 (để khỏi làm lại)
+Harness chuỗi sửa lịch tự mô phỏng nhãn + `kiem_bo.py` không mở file kín (đã merge) · review: dòng báo đổi tham số lịch (C), ghi chú ăn + ảnh Hải Vân (E), ảnh đính kèm 2 nhánh (C), sổ ghi debug 3 bản (E / C) — đều ready sau sửa · đếm `loi_model` nhận ảnh · đếm tên số 1 + lát cắt theo số tên · tra cứu embedding ảnh + plan bản 1, bản 2 (đã duyệt) · phép dò DINOv2 + DINOv3 · bài học 13 / 21 / 24.
 
 # STATUS B — PHIÊN TỐI 15/11 (mở 19:30 15/11/2026, terminal `hue-rag-7d`; A `hue-rag-ef` · C `hue-rag-10` · E `hue-rag-f0`; quyền phiên "như chiều 15/11")
 - 19:30 15/11/2026 — **W84 phần code BẮT ĐẦU** (A giao; handoff "Việc đầu phiên sau" mục 2; 0 USD, không lượt có phí). Khai báo sửa (đều trong `data/`, private): `data/len_ke_hoach_v2_2026-11-13/tools/q3_sua_lich.py` (tự chạy mô phỏng nhãn trước lượt có phí + bỏ đường dẫn cứng `/tmp/b_lkh`), `data/phase_9/bo_do_sua_lich/tools/kiem_bo.py` (tách phần bộ đã thấy khỏi file kín); bản cũ giữ dạng `*.truoc_2026-11-15_toi.py`. Report: `report_agent/2026-11-12_ra_khoang_cach/b_w84_harness_implementation.md` trên nhánh `p9-tai-lieu-w84`. B không mở / không chạy trên file kín.
