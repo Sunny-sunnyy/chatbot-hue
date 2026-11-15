@@ -74,7 +74,9 @@ def test_several_images_only_for_cited_places_named_in_the_answer():
          "sources": [{"id": 1, "bai_id": a, "title": "Chùa Anpha"}, {"id": 2, "bai_id": b, "title": "Quán Bê Ta"}]},
         {**goc, "text": "Chùa Anpha và Quán Bê Tai", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"))},  # tên lọt giữa một chữ dài hơn ⇒ bỏ (ranh giới từ, review E)
         {**goc, "text": "một quán nhỏ ven đường gần Chùa Anpha", "sources": S((a, "Chùa Anpha"), (b, "Quán Nhỏ"))},  # khác hoa / thường sau chữ đầu ⇒ bỏ
+        {**goc, "question": "Quán Bê Ta mở mấy giờ?", "text": "Quán mở từ 6 giờ. Chùa Anpha ở gần.", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"))},  # tên chỉ trong câu hỏi (bản 2)
+        {**goc, "question": "Quán Ka và Chùa Anpha?", "text": "Chùa Anpha đẹp.", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"))},  # tên trong câu hỏi nhưng bài không được trích ⇒ không
     ]
     kq = chay(ca)
-    assert [[x["baiId"] for x in k] for k in kq] == [[a, b], [a], [a], [a], [a, b, c], [a], [], [b, a], [a], [a]]
+    assert [[x["baiId"] for x in k] for k in kq] == [[a, b], [a], [a], [a], [a, b, c], [a], [], [b, a], [a], [a], [a, b], [a]]
     assert kq[0][1]["ten"] == "Quán Bê Ta" and all(x["anh"] for k in kq for x in k)

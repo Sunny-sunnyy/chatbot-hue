@@ -27,7 +27,7 @@ const SO_ANH_TOI_DA = 3;
 
 // Danh sách ảnh dưới câu trả lời (plan 2026-11-15-anh-trong-chat, sha bf43cc57f6ea): `[{anh, baiId, ten}]`, rỗng ⇒ không ảnh.
 // - Mọi nguồn trích thuộc MỘT bài ⇒ như luật cũ: 1 ảnh (không cần tên trong chữ).
-// - Nguồn thuộc ≥ 2 bài ⇒ theo thứ tự ở dòng Nguồn, bài "một nơi / món", ảnh chắc, tên ≥ 2 chữ CÓ trong chữ trả lời (ranh giới từ); tối đa 3.
+// - Nguồn thuộc ≥ 2 bài ⇒ theo thứ tự ở dòng Nguồn, bài "một nơi / món", ảnh chắc, tên ≥ 2 chữ CÓ trong chữ trả lời hoặc câu hỏi (ranh giới từ); tối đa 3.
 //   `turn.sources` = nguồn ĐƯỢC TRÍCH do server gửi (api/routes/chat.py `_source_responses(trace.cited)`) ⇒ ảnh chỉ của bài câu trả lời dựa vào.
 export function anhTraLoi(turn) {
   if (!turn || turn.phase !== "done" || turn.outcome !== "success" || turn.tuChoiKho || turn.web || turn.lich || turn.lichV2
@@ -41,6 +41,8 @@ export function anhTraLoi(turn) {
   const dung = id => id != null && LOAI_MOT_NOI.has(loaiCuaMa(id)) && anhCuaBai(id) && !anhCuaBai(id).kc;
   const ra = id => ({ anh: anhCuaBai(id).anh, baiId: id, ten: ten.get(id) });
   if (bai.length === 1) return dung(bai[0]) ? [ra(bai[0])] : [];
-  const chu = String(turn.text || "").normalize("NFC");
-  return bai.filter(id => dung(id) && tenKhop(ten.get(id))?.test(chu)).slice(0, SO_ANH_TOI_DA).map(ra);
+  // tên có trong chữ trả lời HOẶC trong câu người dùng hỏi (plan bản 2, sha 6c8973b89ebd: hỏi đích danh một nơi mà câu trả lời không nhắc lại tên);
+  // bài vẫn phải là nguồn được trích
+  const chu = String(turn.text || "").normalize("NFC"), hoi = String(turn.question || "").normalize("NFC");
+  return bai.filter(id => { const re = dung(id) && tenKhop(ten.get(id)); return re && (re.test(chu) || re.test(hoi)); }).slice(0, SO_ANH_TOI_DA).map(ra);
 }
