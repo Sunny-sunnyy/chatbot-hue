@@ -54,10 +54,10 @@ function reducedMotion() {
 
 // Một lượt: { key, question, phase (routing / searching / searched / generating / done / error), text, sources (null = chưa có sự kiện
 // `sources`; [] = không nguồn), numbers (thứ tự nguồn ở dòng Nguồn), nSources, notice, outcome (từ `done`), error, … }.
-function newTurn(key, question, truong, summary, bieuMau) {
+function newTurn(key, question, truong, summary, bieuMau, hienThi = null) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
+           error: "", clarify: null, truong, summary, bieuMau, hienThi, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
 export function useChat() {
@@ -90,7 +90,8 @@ export function useChat() {
   }
 
   // `truong` (B4 / biểu mẫu) + `summary` (tóm tắt lựa chọn hiện cạnh câu hỏi) + `bieuMau` (cổng D3). Trả false khi đang bận (không gửi).
-  async function ask(value, { retryKey = null, truong = null, summary = "", bieuMau = false, suaChon = null } = {}) {
+  // `hienThi` = {chu, anh}: lượt hỏi bằng ảnh — bong bóng câu hỏi hiện ảnh + chữ người dùng gõ; câu gửi đi (`value`) vẫn là câu ghép có tên
+  async function ask(value, { retryKey = null, truong = null, summary = "", bieuMau = false, suaChon = null, hienThi = null } = {}) {
     const query = value.trim();
     if (!query || pending || resetting) return false;
     abortRef.current?.abort();
@@ -110,7 +111,7 @@ export function useChat() {
     };
     const cauV2 = {};  // "Lên kế hoạch" bản 2: câu theo id_muc của lượt này
     // "Thử lại" thay lượt lỗi (server không nhớ lượt lỗi — plan B3 D2) bằng lượt mới cùng câu hỏi.
-    setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary, bieuMau)]);
+    setTurns(all => [...all.filter(turn => turn.key !== retryKey), newTurn(key, query, truong, summary, bieuMau, hienThi)]);
     setResetError("");
     try {
       await streamAnswer(query, {
@@ -294,7 +295,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
   function submit(event) {
     event.preventDefault();
     if (pending || resetting) return;
-    if (hoiAnhRef.current.gui()) return;  // có ảnh đính kèm ⇒ bấm Hỏi mới gửi ảnh đi nhận diện; câu đang gõ giữ trong ô tới khi chọn tên
+    if (hoiAnhRef.current.gui()) return;  // có ảnh đính kèm ⇒ bấm Hỏi mới gửi ảnh đi nhận diện; có tên thì hook tự hỏi (câu đang gõ + tên số 1)
     if (!draft.trim()) return;
     ask(draft);
     setDraft("");  // câu đã in lại trong khung trò chuyện; "Thử lại" gửi lại đúng câu đó
@@ -305,7 +306,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) submit(event);
   }
 
-  const hoiAnh = useHoiBangAnh({ bat: anh, draft, disabled: pending || resetting, onAsk: query => { ask(query); setDraft(""); },
+  const hoiAnh = useHoiBangAnh({ bat: anh, draft, disabled: pending || resetting, onAsk: (query, hienThi) => { ask(query, { hienThi }); setDraft(""); },
                                  onGoTen: () => queryRef.current?.focus() });
   hoiAnhRef.current = hoiAnh;  // `submit` khai báo phía trên dùng bản mới nhất của hook
 
@@ -327,7 +328,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
           <section aria-label="Cuộc trò chuyện">
             {turns.map((turn, index) => (
               <Turn key={turn.key} turn={turn} turnRef={index === turns.length - 1 ? lastTurnRef : null}
-                    onRetry={() => ask(turn.question, { retryKey: turn.key, truong: turn.truong, summary: turn.summary, bieuMau: turn.bieuMau })}
+                    onRetry={() => ask(turn.question, { retryKey: turn.key, truong: turn.truong, summary: turn.summary, bieuMau: turn.bieuMau, hienThi: turn.hienThi })}
                     onAsk={(q, opts) => ask(q, opts)} onEditPlan={onEditPlan} />
             ))}
           </section>
@@ -371,7 +372,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
   return (
     <article className="turn" ref={turnRef} data-turn={turn.key} data-phase={turn.phase}>
-      <h2 className="ask">{turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
+      <h2 className="ask">{turn.hienThi?.anh && <img src={turn.hienThi.anh} alt="Ảnh bạn gửi" className="ask-anh" />}{turn.hienThi?.chu ?? turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
       <div className="tra">
       <span className="tra-av" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 34 34"><path d="M6 19c3-3 6-3 9 0s6 3 9 0 4-2 4-2M6 24c3-3 6-3 9 0s6 3 9 0" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /></svg>
