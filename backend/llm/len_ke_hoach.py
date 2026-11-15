@@ -245,7 +245,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     else:
         call_log = CallLog()
         try:
-            hanh_dong = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log)
+            hanh_dong = sl.loc_hanh_dong(await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log), query, luu)
         except GenerationError:
             hanh_dong = []
         finally:

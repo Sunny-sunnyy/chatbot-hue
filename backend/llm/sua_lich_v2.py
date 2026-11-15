@@ -6,6 +6,8 @@ Model chọn **hành động có tên** (`HanhDong`); **code** áp tối đa `MA
 không SDK. Trạng thái lưu của cuộc (`luu`): {tham_so, ngay_di, mua, khung, loai} — chỉ dữ liệu code dựng (không chữ người dùng).
 """
 import copy
+import re
+import unicodedata
 import datetime as dt
 from typing import Literal
 
@@ -68,6 +70,37 @@ def khop_ten(bang: v2.BangV2, ten: str | None) -> str | None:
     # tên ngắn ("Quốc Học" ⇒ "Trường Quốc Học Huế"): nhận khi nằm trong ĐÚNG MỘT điểm của bảng (≥ 2 chữ — Q3 pilot 14/11); nhiều điểm ⇒ không đoán
     gan = {d["id"] for d in bang.diem for x in v2.ten_cua(d) if f" {t} " in f" {chuan_ten(x)} "}
     return gan.pop() if len(gan) == 1 else None
+
+
+# Rào sau lần hiểu ý (C 15/11, lỗi thứ hạng 2 "nói chắc sai"): "đi từ ngày 20/12" từng ra hành động đổi số ngày 3 ⇒ 1 và báo "Đã đổi" (đếm
+# `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`). Code chỉ nhận đổi số ngày khi CON SỐ có trong chữ người dùng gõ, đứng TRƯỚC chữ
+# "ngày" (số trong một ngày tháng như "ngày 20/12" không tính), hoặc là số tương đối "thêm / bớt k ngày" khớp số ngày hiện tại ± k. Thiếu số ⇒ không nhận.
+_SO_CHU = {"một": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "năm": 5, "sáu": 6}
+_SO = r"(\d+|một|hai|ba|bốn|tư|năm|sáu)"
+_N_NGAY = re.compile(rf"(?<![\w/.-]){_SO}\s*(?:ngày|n(?=\s*\d+\s*đ))", re.I)  # "3 ngày", "hai ngày", "4N3Đ"
+_THEM = re.compile(rf"(thêm|tăng|kéo dài|nối)\s+(?:thêm\s+)?{_SO}\s*ngày", re.I)
+_BOT = re.compile(rf"(bớt|giảm|rút|cắt|bỏ)\s+(?:bớt\s+|đi\s+)?{_SO}\s*ngày", re.I)
+
+
+def _so(x: str) -> int:
+    return int(x) if x.isdigit() else _SO_CHU[x.lower()]
+
+
+def so_ngay_co_trong_cau(cau: str, so_ngay: int | None, hien_tai: int) -> bool:
+    """Hành động đổi số ngày ⇒ `so_ngay` mới có căn cứ trong chữ người dùng (tuyệt đối "còn 2 ngày" hoặc tương đối "thêm một ngày")?"""
+    if so_ngay is None:
+        return False
+    t = unicodedata.normalize("NFC", cau)
+    if any(_so(m.group(2)) + hien_tai == so_ngay for m in _THEM.finditer(t)) or any(hien_tai - _so(m.group(2)) == so_ngay for m in _BOT.finditer(t)):
+        return True
+    tuong_doi = {m.start(2) for r in (_THEM, _BOT) for m in r.finditer(t)}  # số sau "thêm / bớt" là số tương đối, không phải tổng số ngày
+    return any(_so(m.group(1)) == so_ngay for m in _N_NGAY.finditer(t) if m.start(1) not in tuong_doi)
+
+
+def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> list:
+    """Bỏ hành động đổi số ngày không có căn cứ trong câu (rào trên). Hành động khác giữ nguyên."""
+    hien_tai = luu["khung"]["tham_so"]["so_ngay"]
+    return [h for h in hanh_dong if h.loai != "doi_so_ngay" or so_ngay_co_trong_cau(cau, h.so_ngay, hien_tai)]
 
 
 def luu_tu_lich(khung: dict, ngay_di: str | None, mua: dict | None) -> dict:
