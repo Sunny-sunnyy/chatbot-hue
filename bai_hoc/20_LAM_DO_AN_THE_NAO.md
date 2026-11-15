@@ -1,6 +1,6 @@
 # Bài 20 — Làm đồ án thế nào: dòng thời gian, nhiều agent, rào bằng máy
 
-*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm ví dụ thật của "đếm lỗi trước khi xây" (12/11), dòng thời gian 12–13/11, tiền tới hết 12/11.*
+*Cập nhật lần cuối: 18:24, ngày 15/11/2026 · thêm hai rào nhỏ của 15/11: mã bản code trong sổ số đo, phép kiểm phải có ca đối chứng. Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm ví dụ thật của "đếm lỗi trước khi xây" (12/11), dòng thời gian 12–13/11, tiền tới hết 12/11.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -99,6 +99,15 @@ chỉ dặn bằng chữ:
 | Script tìm trong kho | agent tìm trong kho chỉ bằng script đã loại sẵn bộ câu mẫu, câu kín, ghi chép nội bộ và bản thô của nguồn |
 
 Hook git áp cho **mọi** agent và cả người, vì nó nằm trong repo chứ không trong một công cụ riêng.
+
+**Hai rào nhỏ thêm ngày 15/11, cùng sinh ra từ số đo sai:**
+- *Mỗi dòng số đo mang mã của bản code đã chạy.* Sổ số đo của máy chủ dùng chung cho mọi bản code và cả lúc chạy test. Sáng 15/11 hai lần đếm tốc độ lấy lẫn
+  dòng của bản cũ, ra số sai ("20,6 % lượt chậm") đã tới tay anh rồi mới đính chính. Từ chiều 15/11 mỗi dòng có thêm mã bản code, và có một script đếm chỉ
+  lấy dòng của đúng một bản.
+- *Một phép kiểm phải từng "bật" một lần thì số 0 của nó mới có nghĩa.* Từ 14/11 bộ đo câu "vừa sửa lịch vừa khẩn cấp" có một cột đếm số điện thoại khẩn cấp
+  trong câu trả lời, lần nào cũng ra 0 / 16. Chiều 15/11 mới thấy cột đó **chưa từng đo được gì**: từ 09/11 trợ lý không còn câu soạn sẵn có số, nên gần như
+  không thể ra khác 0 (chưa từng thấy một lần). Đã thay bằng thứ đo được (bước xếp loại có nhận ra câu khẩn cấp không: 16 / 16 ở lần chạy đầu). Thành luật: phép kiểm mới phải thử trên
+  một ca biết chắc ra "có"; chưa có ca đó thì ghi "chưa đo".
 
 ## Một chuyện thật: "nhớ quét trước khi commit" là không đủ
 
@@ -201,5 +210,7 @@ vẫn ghi tiền thật từ log.
 
 - **Sửa 15:17 11/11/2026** (người kiểm độc lập bắt, mình đối chiếu nguồn; biên bản `data/hoc_cung_user_2026-11-10/review_bai_20_21.md`, riêng tư): "[Nguồn 2]" là kiểu model viết (bản trước ghi ngược); 8.1 đo 10 quyết định quan trọng nhất, không phải cả 56 (`report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g5_synthesis.md`); 4 lần chặn = 1 quét trùng + 3 tên dự án khác; mô tả câu quá cụ thể đã lọt ≥ 4 lần (sổ cải tiến S40); giờ ước vẫn lọt sau rào (W37, S119); đổi model 23/10 và 7A–7B do Claude; hỏi bằng ảnh là Phase 10; 24/10 ≈ 0,087 USD (`session_prompt/PROJECT_HISTORY.md`); 80 báo cáo cũ còn trích kho (`94_…` §2); `scripts/grep_kb.sh` loại `evaluation/`, `meta/`, `_source-dumps/`, `*sealed*`.
 - **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): bộ kiểm số: 11 câu có số ngoài 10 đoạn đầu, 7 xem tay giải thích được, 4 không kiểm được (CPO §3b (c)); "4 tính năng đều âm" ⇒ "một loạt tính năng thử 09/11 ra âm hoặc quay về phương án cũ" (S110), sửa ở cả hai chỗ; tổng 5,38 USD tới hết 12/11; bảng từ bỏ đường dẫn.
+
+- Hai rào 15/11: mã bản code trong sổ số đo (`git_sha` trong `chat_metrics`, `scripts/dem_chat_metrics.py`): `report_agent/2026-11-12_ra_khoang_cach/b_w79_git_sha_implementation.md`; số tốc độ sai sáng 15/11: `…/b_dem_toc_do.md` mục Đính chính; cột số khẩn cấp 0 / 16 chưa từng đo được + thay bằng `khan_cap_dinh_tuyen` 16 / 16: `session_prompt/sessions/STATUS_B.md` (15/11), `…/c_sua_ngay_di_implementation.md`; luật: `session_prompt/Session_Prompt.md` §8 [đã chạy]
 
 </details>

@@ -40,7 +40,7 @@ chỉ có ở bài cần.
 | [12](12_VI_SAO_CAN_TRO_LY.md) | Từ chatbot thành trợ lý: xếp loại câu và công cụ | đã viết, chờ anh đọc |
 | [13](13_TIM_THEM_VA_NHO_CAU_HOI.md) | Rút thêm thẻ và nhớ câu hỏi | đã sửa 13/11 — thêm "hết lượt tìm thì dừng" (bật 13/11) |
 | [14](14_VIEC_DE_NHAM_THI_CODE_LAM.md) | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình | thêm ghi chú 14/11 — biểu mẫu nay là bản 2 (bài 23) |
-| [15](15_TRA_WEB_VA_HOI_BANG_ANH.md) | Khi sổ không có: tra web, và hỏi bằng ảnh | đã sửa 13/11 — thêm chuyện thật thử Exa, giữ Serper |
+| [15](15_TRA_WEB_VA_HOI_BANG_ANH.md) | Khi sổ không có: tra web, và hỏi bằng ảnh | đã sửa 15/11 — thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (đã sửa, bật 15/11). Trước: 13/11 thêm thử Exa, giữ Serper |
 | [16](16_KE_DO_AN_VA_CHO_CON_YEU.md) | Kể đồ án trong 2–3 phút, và chỗ còn yếu | đã sửa 13/11 — thêm kết quả lượt đo giữa kỳ; sửa bảng chỗ yếu |
 
 **Phần 4 — Phần người dùng thấy, đóng gói, tra cứu, cách làm, bảo mật** (bù phần đã làm mà bài 0–16 chỉ nhắc qua; thêm 11/11 chiều)
@@ -50,7 +50,7 @@ chỉ có ở bài cần.
 | [17](17_GIAO_DIEN_VA_TOC_DO.md) | Trang người dùng thấy, và chờ bao lâu: giao diện và tốc độ | thêm ghi chú 14/11 — giao diện mới ở bài 24 |
 | [18](18_DONG_GOI_DOCKER.md) | Mang cả chatbot sang máy khác: đóng gói Docker | đã viết, chờ anh đọc |
 | [19](19_BANG_TONG_CAC_LAN_SO_SANH.md) | Bảng tổng các lần so sánh (trang tra cứu) | thêm dòng 38–42 (chiều 14/11) |
-| [20](20_LAM_DO_AN_THE_NAO.md) | Làm đồ án thế nào: dòng thời gian, nhiều agent, rào bằng máy, tiền | đã sửa 13/11 — thêm ví dụ "đếm lỗi trước khi xây", tiền tới hết 12/11 |
+| [20](20_LAM_DO_AN_THE_NAO.md) | Làm đồ án thế nào: dòng thời gian, nhiều agent, rào bằng máy, tiền | đã sửa 15/11 — thêm hai rào nhỏ: mã bản code trong sổ số đo, phép kiểm phải có ca đối chứng. Trước: 13/11 thêm ví dụ "đếm lỗi trước khi xây", tiền tới hết 12/11 |
 | [21](21_DU_LIEU_NGUOI_DUNG_VA_BAO_MAT.md) | Dữ liệu người dùng đi đâu, và bảo mật | đã viết, chờ anh đọc |
 
 **Phần 5 — Việc xong ngày 14/11** (viết sau khi xong; việc đang làm chưa đưa vào)
