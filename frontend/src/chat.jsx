@@ -65,7 +65,8 @@ export function useChat() {
   const [turns, setTurns] = useState([]);
   const [draft, setDraft] = useState("");
   const [resetError, setResetError] = useState("");
-  const [resetting, setResetting] = useState(false);
+  // Bắt đầu ở trạng thái "đang đặt lại": xem effect ngay dưới (tải trang ⇒ cuộc mới ở server); nút Hỏi mở khi lệnh đó xong (vài chục ms).
+  const [resetting, setResetting] = useState(true);
   const keyRef = useRef(0);
   const bufferRef = useRef("");
   const lastSeqRef = useRef(0);
@@ -189,6 +190,12 @@ export function useChat() {
     stoppedRef.current = abortRef.current;
     abortRef.current?.abort();
   }
+
+  // Tải (lại) trang ⇒ màn hình trống ⇒ server cũng phải quên cuộc cũ. Lịch sử nằm ở server theo cookie 30 phút, nên trước đây F5 xong hỏi lại
+  // câu đầu thì model vẫn đọc nó như câu hỏi tiếp của cuộc cũ (User gặp 15/11: câu vừa trả lời đúng bị từ chối). Lỗi mạng ⇒ bỏ qua, vẫn cho hỏi.
+  useEffect(() => {
+    fetch("/api/conversation/new", { method: "POST" }).catch(() => {}).finally(() => setResetting(false));
+  }, []);
 
   // "Cuộc trò chuyện mới": server xoá lịch sử trước rồi trang mới xoá màn hình — lỗi ⇒ giữ nguyên màn hình, để thứ người dùng thấy khớp thứ
   // trợ lý còn nhớ.
