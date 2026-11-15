@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 16:10, ngày 15/11/2026 · thêm chiều 15/11: 5 ảnh anh tự tìm (260 / 263). Trước: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
+*Cập nhật lần cuối: 21:40, ngày 15/11/2026 · thêm tối 15/11: khung nguồn hiện đoạn trích sạch, bỏ dòng hỏi đánh giá. Trước: 16:10, ngày 15/11/2026 · thêm chiều 15/11: 5 ảnh anh tự tìm (260 / 263). Trước: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -133,6 +133,19 @@ review bắt, bài Thuận An giữ ảnh "không chắc" cũ và lịch vẫn *
 9 ảnh món hay ly nước chung chung, không nhìn ra quán nào, và 1 ảnh múa lân không rõ làng. Luật rút ra: nguồn chính thức chỉ đủ khi **chính tấm ảnh** nhận ra được nơi đó; bài về một món thì đúng
 món là đủ.
 
+## Khung nguồn hiện đoạn trích sạch, và bỏ dòng hỏi đánh giá (tối 15/11)
+
+Hai nhận xét của anh lúc thử trang Trợ lý, cả hai chỉ sửa ở giao diện, máy chủ không đổi.
+
+**Đoạn trích trong khung nguồn còn ký hiệu thô.** Bấm vào một nguồn dưới câu trả lời thì hiện đoạn kho đã dùng. Trước đây đoạn đó hiện **nguyên chữ thô** của
+bài kho, nên lộ ra dấu sao in đậm, gạch đầu dòng, dấu kẻ bảng. Nay đoạn trích đi qua đúng bộ dựng chữ và **bộ lọc không cho link** mà mục web đang dùng (không
+thêm thư viện, rào an toàn của trình duyệt không đổi): chữ đậm ra chữ đậm, gạch đầu dòng ra danh sách. Bảng thì khó hơn: kho cắt bảng thành từng hàng, mỗi hàng
+một lát, nên phải ghép các lát của cùng một bảng lại mới thành bảng thật. Kiểm trên bản chạy thật: 5 câu hỏi, mở từng nguồn, **22 đoạn trích, 0 đoạn còn ký
+hiệu thô**, 0 link trong đoạn trích, 0 lỗi trên trình duyệt; phần ghép bảng có 11 ca thử riêng, đạt cả 11.
+
+**Dòng "Câu trả lời có hữu ích không?" và hai nút 👍 / 👎.** Anh thấy vướng và không cần, nên đã gỡ khỏi dưới mỗi câu trả lời và dưới lịch ở trang Lên kế hoạch
+(cùng một thành phần). Đường nhận đánh giá phía máy chủ vẫn để đó; bản công khai muốn bật lại thì chỉ thêm lại nút.
+
 ## Một chuyện thật: thẻ "Thông tin nhanh" lặng lẽ xoá mất giờ mở cửa
 
 Trang bài mới có một thẻ bên phải tên "Thông tin nhanh". Code tách mục "Thông tin chung" của bài ra thẻ đó, rồi **xoá mục đó khỏi thân bài** cho khỏi lặp.
@@ -175,6 +188,8 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
+
+- **Thêm 21:40, ngày 15/11/2026 — khung nguồn + bỏ đánh giá:** `frontend/src/markdown.js` (`renderExcerptHtml`, `hangBangLe`, `gopLatBang`), `frontend/src/SourceLine.jsx`, `frontend/src/chat.jsx`, `frontend/src/LenKeHoach.jsx` [code]; 11 / 11 ca hàm thuần; Playwright 5 câu thật, 22 đoạn trích, 0 ký hiệu thô, 0 link, 0 lỗi console, 0,0048 USD; `POST /api/feedback` giữ: `report_agent/2026-11-12_ra_khoang_cach/e_gd_nguon_danh_gia_implementation.md` [đã chạy].
 
 - Nhận xét của anh ("chỉ có văn bản", "đơn giản quá", "ít nhất phải được như Huế TRIPO", "ổn hơn nhưng không có hiệu ứng gì đặc biệt", "đã ổn hơn"): `session_prompt/CURRENT_HANDOFF.md` mục 10:37, 10:42, 11:20, 11:27 ngày 14/11 [tài liệu]
 - TRIPO: 5 yếu tố, 3 chuyển động, không học luật xếp lịch: `report_agent/2026-11-12_ra_khoang_cach/b_tripo_v7_giao_dien.md` [đã chạy]

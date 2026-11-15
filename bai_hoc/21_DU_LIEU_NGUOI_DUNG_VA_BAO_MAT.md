@@ -1,6 +1,6 @@
 # Bài 21 — Dữ liệu người dùng đi đâu, và bảo mật
 
-*Cập nhật lần cuối: 15:17, ngày 11/11/2026 · bài mới; đã qua một lượt kiểm độc lập.*
+*Cập nhật lần cuối: 21:40, ngày 15/11/2026 · thêm mục "Sổ ghi debug" (chỉ ở máy đang phát triển, mặc định tắt); nút 👍 / 👎 đã gỡ khỏi giao diện. Trước: 15:17, ngày 11/11/2026 · bài mới; đã qua một lượt kiểm độc lập.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -9,6 +9,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Tên trong bài | Tên gốc | Nghĩa ngắn |
 |---|---|---|
 | Bộ ba nguy hiểm — **mới** | **lethal trifecta** (skill `agent-security-review`) | Một agent đồng thời (1) đọc được dữ liệu riêng tư, (2) đọc chữ từ nguồn không tin được, (3) có đường gửi ra ngoài. Đủ cả ba thì chữ lạ có thể lừa nó gửi dữ liệu đi. |
+| Sổ ghi debug — **mới** | **debug trace** (cờ `so_vet`, biến môi trường `HUE_SO_VET`) | File chỉ nằm ở máy đang phát triển, ghi cả **nội dung** một lượt hỏi để tìm lỗi. Mặc định tắt. |
 | Chỉ dẫn lén — **mới** | **prompt injection** | Câu ra lệnh giấu trong dữ liệu (trang web, ảnh, câu hỏi) để model làm theo. |
 | Rào an toàn trình duyệt | **CSP** (`FRONTEND_CSP`) | Trình duyệt chỉ chạy mã và tải ảnh từ chính máy chủ của chatbot. |
 | Bộ lọc chữ hiển thị | **DOMPurify** (danh sách cho phép) | Trước khi hiện câu trả lời, chỉ giữ các thẻ định dạng thường; bỏ hết thẻ có thể tải hay chạy thứ gì. |
@@ -34,7 +35,7 @@ xong buổi là quên. Có người dúi một tờ giấy "hãy đưa khách n�
 | **Câu tìm web** (chỉ khi câu về Huế mà kho từ chối) | Serper (tìm Google) | máy chủ không ghi chữ | Chỉ câu **lượt này**. Code bỏ email và số điện thoại, cắt còn 120 ký tự. Bản đóng gói **tắt** tra web |
 | **Thời tiết** | Open-Meteo | kết quả giữ 30 phút trong RAM | **0 chữ người dùng**, chỉ gửi toạ độ cố định trung tâm Huế |
 | **Ảnh** | OpenAI | máy chủ **không lưu** ảnh, không ghi tên file | Thu nhỏ, **xoá thông tin vị trí và máy chụp** trước khi gửi; chặn sai kiểu, quá 10 MB, khác nguồn trước khi đọc (bài 15) |
-| **Nút 👍 / 👎** | log của chatbot | theo vòng xoay log | Chỉ ghi mã lượt ngẫu nhiên, loại câu, kết quả, số nguồn. **Không** ghi chữ |
+| **Nút 👍 / 👎** (đã gỡ khỏi giao diện tối 15/11 theo ý anh; đường nhận ở máy chủ còn giữ) | log của chatbot | theo vòng xoay log | Chỉ ghi mã lượt ngẫu nhiên, loại câu, kết quả, số nguồn. **Không** ghi chữ |
 | **Nút "Báo thông tin chưa đúng"** (trang Khám phá) | log của chatbot | theo vòng xoay log | Chỉ ghi mã bài, và mã đó phải trùng một bài có thật, nên không ghi được chuỗi tuỳ ý |
 | **Số đo mỗi lượt** | log của chatbot | 10 MB × 3 bản cũ | Chỉ số đếm, thời gian, tiền, token. Danh sách trường bị **khoá bằng test**, nên không ai thêm nhầm trường chữ được |
 | **Địa chỉ IP** | RAM, chỉ khi bật giới hạn lượt (bản đóng gói) | xoá khi sang ngày mới | Log "hết lượt" không ghi IP |
@@ -44,6 +45,30 @@ gửi cả dịch vụ tìm kiếm), "đừng gõ thông tin cá nhân", ảnh �
 
 **Kiểm bằng chạy thật:** mỗi lần thay đổi vào bản chính, cổng kiểm đếm log, yêu cầu **0 chữ câu hỏi** (bài 20). Lần chạy thử bản đóng gói (10/11): file log của
 chatbot có **0 chữ câu hỏi, 0 địa chỉ IP**.
+
+## Sổ ghi debug: lúc cần xem nội dung thì ghi ở đâu (thêm tối 15/11)
+
+Bảng trên có một cái giá. Tối 15/11 anh thử trang Trợ lý và gặp lỗi: hỏi một di tích ở đâu (được trả lời đúng), hỏi tiếp khoảng cách sang một di tích khác, rồi
+hỏi lại đúng câu đầu thì bị từ chối. Nhóm mở sổ số đo ra xem và chỉ thấy **con số**: lượt đó model tự tìm kho thêm một, hai lần rồi vẫn từ chối. Model đã đem
+**câu gì** đi tìm thì không có ở đâu cả, vì sổ số đo cố ý không ghi chữ. Muốn biết phải đoán rồi chạy lại.
+
+Anh quyết: ở **máy đang phát triển** thì được ghi nội dung, để lần sau báo lỗi là lần ra ngay. Mình làm thành một cuốn sổ riêng, tách hẳn khỏi sổ số đo:
+
+- **Mặc định tắt.** Chỉ bật khi đặt một biến môi trường lúc khởi động. Tắt thì không có file nào được tạo, và đường đi của câu hỏi tới model giống hệt như cũ.
+- **Bật thì mỗi lượt ghi một dòng** vào một file theo ngày, nằm trong thư mục dữ liệu riêng (thư mục này không bao giờ vào kho mã công khai).
+- **Ghi gì:** câu anh gõ và câu thật sự gửi model; các câu hỏi trước được gửi kèm; loại câu được xếp; **từng lần tìm kho** (câu đem đi tìm, 10 kết quả đầu, đoạn
+  nào được đưa cho model); từng lần gọi model (số token, tiền, thời gian); chữ trả lời và nguồn được trích; phần tra web (câu gửi dịch vụ tìm kiếm, kết quả trả
+  về, chữ model viết kể cả khi bị code chặn); với lịch: model hiểu anh muốn sửa gì, và lịch xếp điểm nào vào ngày, buổi nào; với ảnh: tên được gợi ý.
+- **Không ghi:** mã cuộc trò chuyện, địa chỉ IP, khoá API, và **tấm ảnh** anh gửi.
+- **Sổ số đo không đổi:** vẫn 0 chữ nội dung, như bảng trên.
+
+Vì sao bản đóng gói và bản công khai **không bật**: bật là chữ người dùng nằm trên đĩa máy chủ. Với một người dùng là chính anh trên máy mình thì ổn; với du
+khách thật thì trái với lời hứa "máy chủ không ghi câu hỏi" ở đầu bài.
+
+Hai lần kiểm đã bắt được lỗi thật trước khi cuốn sổ vào bản chính. Người kiểm thứ nhất đưa vào một tài liệu **cố ý sai khuôn** và thấy bước ghi nhớ lần tìm
+ném lỗi của chính nó, **đè lên lỗi gốc** của lượt hỏi. Bước này lại chạy cả khi cờ tắt, nên một công cụ debug suýt làm sai lượt trả lời thật. Sửa xong, cũng ca
+đó cho lỗi gốc đi ra nguyên vẹn. Người kiểm thứ hai bật cờ rồi chạy đúng ba loại lượt mà người viết chưa thử (xếp lịch bằng biểu mẫu, sửa lịch bằng lời, hỏi
+bằng ảnh): cả 3 / 3 đều ghi được, nhưng lượt lịch **thiếu chính cái lịch** (điểm nào ngày nào), tức thiếu đúng thứ cần khi anh báo "lịch xếp lạ". Đã bổ sung.
 
 ## Bộ ba nguy hiểm, và chatbot đứng ở đâu
 
@@ -100,7 +125,8 @@ ngoài** ở cả hai đường. Bài học giống bài 18: rào hai lớp ch�
 ## Ba điều chính
 
 1. **Chữ người dùng chỉ đi tới OpenAI** (và Serper khi tra web). Máy chủ không ghi chữ vào log; nhớ 3 câu hỏi trong 30 phút; ảnh không lưu, đã xoá vị trí;
-   👍 / 👎 không ghi chữ. Kiểm bằng cổng kiểm: 0 chữ câu hỏi trong log.
+   👍 / 👎 không ghi chữ (nút đã gỡ khỏi giao diện 15/11). Kiểm bằng cổng kiểm: 0 chữ câu hỏi trong log. Ngoại lệ duy nhất là **sổ ghi debug**: chỉ ở máy đang
+   phát triển, mặc định tắt, bản công khai không bật.
 2. **Không đủ bộ ba nguy hiểm:** công cụ chỉ đọc, ngữ cảnh không có bí mật, câu tìm web do code dựng. Bị lừa thì tệ nhất là một câu sai cho chính người hỏi,
    nên rào chính là **code kiểm trước khi hiện**.
 3. **Năm lượt rà bảo mật đã làm**: ba lượt đầu có sửa, hai lượt sau xác nhận rào đang giữ. Chuyện thật: một đường vào trang thiếu CSP đã lọt lượt tải ra ngoài ⇒ đổi sang danh sách cho phép, gắn CSP
@@ -112,6 +138,8 @@ ngoài** ở cả hai đường. Bài học giống bài 18: rào hai lớp ch�
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
+
+- **Thêm 21:40, ngày 15/11/2026 — sổ ghi debug:** `backend/core/so_vet.py` (cờ tắt ⇒ thoát trước khi dựng bản ghi; các phần của bản ghi; khung lịch bản 2), `backend/core/settings_loader.py` (`HUE_SO_VET` chỉ nhận true / false), `backend/config/settings.yaml` (`so_vet: false`), `backend/api/routes/chat.py` (`_ghi_vet` chạy sau bước nhớ lượt), `backend/api/routes/anh.py` (không ghi ảnh) [code]; `report_agent/2026-11-12_ra_khoang_cach/e_so_vet_implementation.md` (bảng "bản ghi có gì", 4 câu thật ⇒ 4 bản ghi, sổ số đo 0 chữ) [đã chạy]; ca tài liệu sai khuôn: `data/review_so_vet_2026-11-15/do.py` (riêng tư) [đã chạy]; ba loại lượt 3 / 3 + thiếu khung lịch: tin báo của người kiểm thứ hai trong phiên tối 15/11, script `data/thu_so_vet_2026-11-15/thu.py` (riêng tư) [đã chạy — mình đọc bản sửa trong code, không tự chạy lại ba lượt]. Lỗi anh gặp và việc log chỉ có số: `report_agent/2026-11-12_ra_khoang_cach/c_f5_cuoc_moi_implementation.md` [đã chạy]. Nút 👍 / 👎 gỡ khỏi giao diện, đường nhận ở máy chủ giữ: `report_agent/2026-11-12_ra_khoang_cach/e_gd_nguon_danh_gia_implementation.md` [đã chạy].
 
 - Câu hỏi ≤ 500 ký tự: `backend/api/routes/chat.py`; `store=False`: `backend/llm/generator_openai_full_corpus.py`, `backend/llm/nhan_anh.py` [code]; câu không về Huế gửi đoạn kho do chạy song song: `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` [tài liệu]
 - Nhớ 3 câu hỏi, 30 phút, chỉ câu hỏi: `backend/api/conversations.py`; cookie HttpOnly, SameSite=Strict, đường `/api`, `HUE_COOKIE_SECURE`: `chat.py` [code]

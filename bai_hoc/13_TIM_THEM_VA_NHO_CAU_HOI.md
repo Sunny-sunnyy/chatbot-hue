@@ -1,6 +1,6 @@
 # Bài 13 — Rút thêm thẻ và nhớ câu hỏi
 
-*Cập nhật lần cuối: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm phần "hết lượt tìm thì dừng" (bật 13/11) và số từ chối nhầm mới nhất (ghi ở Nguồn).*
+*Cập nhật lần cuối: 21:40, ngày 15/11/2026 · thêm mục "Tải lại trang là cuộc trò chuyện mới" (sửa tối 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm phần "hết lượt tìm thì dừng" (bật 13/11) và số từ chối nhầm mới nhất (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -126,6 +126,20 @@ bịa** là tắt cờ. Code không đổi từ lúc đo nên dùng lại số �
 Bật từ tối 03/11. Hồ sơ đợt đó cũng tự ghi rõ một giới hạn: chưa chứng minh được "chỉ nhớ câu hỏi" **tốt hơn** "nhớ cả câu trả lời". Chỉ biết bản chỉ nhớ câu
 hỏi **qua được luật**, còn bản kia thì chưa.
 
+## Tải lại trang là cuộc trò chuyện mới (sửa tối 15/11)
+
+Trí nhớ 3 câu hỏi nằm ở **máy chủ**, gắn với mã cuộc trò chuyện mà trình duyệt giữ trong 30 phút. Màn hình thì khác: tải lại trang là trống trơn. Hai thứ đó
+lệch nhau, và tối 15/11 anh gặp đúng chỗ lệch: hỏi một di tích ở đâu (đúng), hỏi tiếp một câu khác, **tải lại trang**, rồi hỏi lại câu đầu trên màn hình trống thì
+bị từ chối. Với anh đó là câu đầu tiên của một cuộc mới; với máy chủ đó là lượt thứ ba của cuộc cũ, vẫn mang theo hai câu trước.
+
+Mình tái tạo lại đúng đường người dùng đi, giữ nguyên mã cuộc: **3 / 3 lần** lượt thứ ba mang theo 2 lượt cũ và bị từ chối. Bản sửa nằm gọn ở giao diện (8
+dòng): lúc trang vừa nạp, nó gọi một lần đúng cái lệnh mà nút "Cuộc trò chuyện mới" vẫn dùng, nên máy chủ quên cuộc cũ cùng lúc màn hình trống. Trong vài chục
+mili giây chờ lệnh đó, nút Hỏi bị khoá để câu đầu không rơi nhầm vào cuộc sắp bị xoá. Chạy lại kịch bản của anh sau khi sửa: lượt hỏi lại có **0 lượt cũ đi kèm**
+và được trả lời.
+
+Cái giá đã biết trước: lịch anh vừa xếp (để sửa bằng lời, bài 25) cũng sống trong cuộc trò chuyện đó, nên tải lại trang là mất luôn. Như vậy khớp với màn hình
+trống. Bản sửa này chỉ lo phần "tải lại trang"; nó không đổi cách trợ lý dùng các câu trước **trong cùng một cuộc**.
+
 ## Một chuyện thật: thử tắt "lưu tạm" để tiết kiệm, hoá ra lại đắt hơn
 
 OpenAI có cơ chế **lưu tạm** phần đầu chuỗi gửi đi (lời dặn, công cụ). Lần gọi sau trong vòng 30 phút đọc lại phần đó với giá rẻ hơn 10 lần, nhưng lần ghi đầu
@@ -162,6 +176,8 @@ quyết, không quyết theo số đo của bản cũ.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
+
+- **Thêm 21:40, ngày 15/11/2026 — tải lại trang là cuộc mới:** `frontend/src/chat.jsx` (`useChat` gọi `POST /api/conversation/new` một lần lúc nạp; trạng thái "đang đặt lại" khoá nút Hỏi) [code]; tái tạo 3 / 3 (lượt 3 có `n_history_turns = 2`, bị từ chối), sau sửa lịch sử 0 và được trả lời, 0,0159 USD: `report_agent/2026-11-12_ra_khoang_cach/c_f5_cuoc_moi_implementation.md` [đã chạy]. Thay đổi nhỏ một file ⇒ người điều phối đọc diff rồi đưa vào bản chính, không review riêng.
 
 - `MODEL_SEARCH_LIMIT = 2`: `backend/llm/assistant.py:52`; cờ `het_luot_bo_cong_cu` (`AssistantFlags`, `_lich_extra` thêm `con_luot_fn`): `assistant.py`; công cụ `tim_kho` dựng với `is_enabled`, ca xin công cụ đã ẩn `xin_cong_cu_da_an` ⇒ từ chối cố định: `backend/llm/generator_openai_full_corpus.py`; `het_luot_bo_cong_cu: true` (bật 13/11): `backend/config/settings.yaml:78` [code, theo bản ghi số liệu 13/11]; câu "hết lượt" chỉ còn là đường dự phòng; `ASSISTANT_MAX_TURNS = 4`: `backend/llm/generator_openai_full_corpus.py`; chạm trần ⇒ từ chối cố định: `assistant.py` `_finish_generated` [code]
 - Cờ `tim_them`, `lan_tim_dau: v0`, `nho_hoi_thoai: true`, `nho_cau_tra_loi: false`: `backend/config/settings.yaml` [code, xem 11/11]
