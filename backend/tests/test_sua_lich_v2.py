@@ -128,3 +128,51 @@ def test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins(mon
     goi_web.clear()
     ev = lam({"the": None}, khan_cap=True)  # câu trộn khẩn cấp
     assert ("delta", "trả lời thường") in ev and not any(e[0] == "lich_khung" for e in ev)
+
+
+def test_param_change_that_changes_nothing_is_reported_not_silent():
+    # trước: `doi_tham_so` rỗng / trùng giá trị đang dùng ⇒ lượt sửa không có dòng nào
+    _, luu = _lich(kieu="nhe_nhang")
+    rong = s.ap(B, luu, [s.HanhDong(loai="doi_tham_so")])
+    assert rong["khong_doi"] == [{"diem": "đổi kiểu lịch", "ma_luat": "tham_so_chua_ro"}] and rong["khung"] == luu["khung"]
+    assert s.thay_doi(B, rong) == [{"cau": "Mình chưa rõ bạn muốn đổi kiểu lịch thành gì — bạn nói cụ thể hơn nhé.", "duoc": False}]
+    trung = s.ap(B, luu, [s.HanhDong(loai="doi_tham_so", kieu_di="nhe_nhang", tre_em=0), s.HanhDong(loai="doi_so_ngay", so_ngay=3)])
+    assert [d["cau"] for d in s.thay_doi(B, trung)] == ["Lịch đang đúng như vậy rồi (kiểu đi: nhẹ nhàng; số trẻ em: 0 trẻ em).",
+                                                        "Lịch đang đúng như vậy rồi (số ngày: 3 ngày)."]
+    assert trung["da_ap"] == [] and trung["khung"] == luu["khung"]
+
+
+def test_param_change_says_whether_the_plan_was_rearranged():
+    # "Đã đổi số trẻ em" một mình không cho biết lịch có xếp lại không; câu báo lấy từ hiệu hai khung (tính lại độc lập ở đây)
+    def dat(k):
+        return {(j, ng["ngay"], b) for ng in k["ngay"] for b in v2.BUOI for j in ng["buoi"][b]}
+    k, luu = _lich(kieu="can_bang", so_thich=("thien_nhien",))
+    kq = s.ap(B, luu, [s.HanhDong(loai="doi_tham_so", tre_em=1)])
+    cu, moi = {j for j, *_ in dat(k)}, {j for j, *_ in dat(kq["khung"])}
+    assert cu - moi and dat(k) != dat(kq["khung"])  # ca này lịch THẬT sự đổi (nhóm có trẻ em không xếp buổi tối)
+    cau = [d["cau"] for d in s.thay_doi(B, kq)]
+    assert cau[0] == "Đã đổi số trẻ em: 0 trẻ em → 1 trẻ em." and cau[1].startswith("Lịch xếp lại theo lựa chọn mới: ") and len(cau) == 2
+    assert all(B.theo_id[j]["ten"] in cau[1] for j in (cu - moi) | (moi - cu))
+    assert sorted(kq["xep_lai"]["ra"]) == sorted(cu - moi) and sorted(kq["xep_lai"]["vao"]) == sorted(moi - cu)
+    # review B M-1: điểm dời giữa ban ngày ↔ buổi tối là "đổi ngày hoặc buổi", không được vừa "bớt" vừa "thêm" — quét mọi lượt đổi một tham số
+    n_doi_toi = 0
+    for n, kieu, st in [(n, kieu, st) for n in (2, 3, 5) for kieu in ("nhe_nhang", "can_bang", "kham_pha") for st in ((), ("am_thuc",), ("di_tich",))]:
+        k0, luu0 = _lich(n, kieu, st)
+        for hd in ({"tre_em": 1}, {"kieu_di": "nhe_nhang"}, {"kieu_di": "kham_pha"}, {"so_thich": ["thien_nhien"]}, {"so_thich": ["am_thuc"]}):
+            x = s.ap(B, luu0, [s.HanhDong(loai="doi_tham_so", **hd)])["xep_lai"]
+            if x is None:
+                continue
+            assert not set(x["ra"]) & set(x["vao"]) and not set(x["doi_cho"]) & (set(x["ra"]) | set(x["vao"]))
+            toi0 = {j for ng in k0["ngay"] for j in ng["buoi"]["toi"]}
+            n_doi_toi += bool(set(x["doi_cho"]) & toi0)
+    assert n_doi_toi  # đối chứng: bộ quét có chạm ca điểm buổi tối đổi chỗ
+    # nhiều hơn 6 tên ⇒ chỉ nêu số điểm
+    dai = {"da_ap": [], "doi_truong": [], "khong_doi": [], "chua_lam": [], "xep_lai": {"doi_cho": [], "ra": sorted(cu)[:5], "vao": sorted(moi)[:2]}}
+    assert [d["cau"] for d in s.thay_doi(B, dai)] == ["Lịch xếp lại theo lựa chọn mới: bớt 5 điểm; thêm 2 điểm."]
+    # đổi mà không điểm nào dời (sở thích đang lọc đúng các điểm đã có) ⇒ nói "giữ nguyên chỗ"
+    giu = {"da_ap": [{"loai": "doi_tham_so"}], "doi_truong": [("tre_em", 1, 2)], "khong_doi": [], "chua_lam": [],
+           "xep_lai": {"doi_cho": [], "ra": [], "vao": []}}
+    assert [d["cau"] for d in s.thay_doi(B, giu)] == ["Đã đổi số trẻ em: 1 trẻ em → 2 trẻ em.", "Các điểm trong lịch giữ nguyên chỗ."]
+    # đổi số ngày: không thêm dòng xếp lại (dòng "số ngày" đã tự nói)
+    ngay = s.ap(B, luu, [s.HanhDong(loai="doi_so_ngay", so_ngay=2)])
+    assert ngay["xep_lai"] is None and [d["cau"] for d in s.thay_doi(B, ngay)] == ["Đã đổi số ngày: 3 ngày → 2 ngày."]
