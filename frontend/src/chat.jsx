@@ -7,10 +7,11 @@ const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
 import { anhTraLoi } from "./anhTraLoi.js";
+import { phangCoSo, theKhachSan } from "./theKhachSan.js";
 import { baiHref } from "./route.js";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
-import { LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
+import { LINK_TIM_PHONG, LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -406,6 +407,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
           <AnhTraLoi turn={turn} />
+          <TheKhachSan turn={turn} />
           {turn.sources?.length > 0 && <SourceLine turn={turn} />}
           {turn.notice && (
             <p className="notice">
@@ -611,6 +613,45 @@ function Thumb({ down = false }) {
         <path d="M6.5 10.5 10.5 3c1.6 0 2.6 1.1 2.4 2.7L12.4 9.5h6.1a2 2 0 0 1 2 2.4l-1.5 7a2 2 0 0 1-2 1.6H6.5" />
       </g>
     </svg>
+  );
+}
+
+// Thẻ khách sạn dưới câu trả lời (luật ở `theKhachSan.js`, code quyết). Bảng cơ sở tải MỘT lần từ `/api/cho_o` (cờ `luu_tru_lich` tắt ⇒ 404 ⇒ không thẻ).
+// Ảnh chỉ gốc tự host, link chỉ 2 gốc như ô Nơi ở; không giá, không "còn phòng".
+let coSoHua = null;
+function useCoSo(can) {
+  const [ds, setDs] = useState(null);
+  useEffect(() => {
+    if (!can) return;
+    coSoHua ??= fetch("/api/cho_o").then(r => (r.ok ? r.json() : null)).then(phangCoSo).catch(() => []);
+    let con = true;
+    coSoHua.then(x => con && setDs(x));
+    return () => { con = false; };
+  }, [can]);
+  return ds;
+}
+const ANH_KS = "/anh/khach_san/";
+const anhKsHopLe = a => typeof a === "string" && a.startsWith(ANH_KS) && a.endsWith(".jpg") && !a.includes("..");
+function TheKhachSan({ turn }) {
+  const coLuuTru = turn.phase === "done" && Array.isArray(turn.sources) && turn.sources.some(s => typeof s.bai_id === "string" && s.bai_id.startsWith("travel/services/"));
+  const coSo = useCoSo(coLuuTru);
+  const ds = coSo ? theKhachSan(turn, coSo) : [];
+  if (!ds.length) return null;
+  return (
+    <div className="the-ks-hang" aria-label="Chỗ ở được nhắc">
+      {ds.map(c => (
+        <div key={`${c.ten}|${c.dia_chi}`} className="the-ks">
+          {anhKsHopLe(c.anh) ? <img src={`${import.meta.env.BASE_URL}${c.anh.slice(1)}`} alt={c.ten} loading="lazy" decoding="async" />
+            : <span className="the-ks-khong-anh" aria-hidden="true" />}
+          <span className="the-ks-ten">{c.ten}</span> <small>{c.xep_hang}</small>
+          <span className="the-ks-link">
+            {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) && <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
+            {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+          </span>
+        </div>
+      ))}
+      <p className="the-ks-nhan">Theo danh mục, chưa kiểm giá / phòng trống.</p>
+    </div>
   );
 }
 

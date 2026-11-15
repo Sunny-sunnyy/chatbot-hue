@@ -82,3 +82,14 @@
 .anh-tra-loi-khung img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.16,1,.3,1); }
 .hieu-ung .anh-tra-loi-o:hover img, .hieu-ung .anh-tra-loi-o:focus-visible img { transform: scale(1.05); }
 .anh-tra-loi-ten { display: block; margin-top: 4px; font-size: 14px; line-height: 1.3; color: var(--color-muted); }
+
+/* Thẻ khách sạn dưới câu trả lời (C 15/11) — cùng kiểu ô với trang Chỗ ở */
+.the-ks-hang { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin: 10px 0 6px; }
+.the-ks { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-height: 76px; padding: 8px 12px 8px 96px; border-radius: 14px; background: var(--color-accent-soft); font-size: 14.5px; }
+.the-ks img, .the-ks-khong-anh { position: absolute; left: 8px; top: 8px; width: 78px; height: 60px; object-fit: cover; border-radius: 10px; }
+.the-ks-khong-anh { background: var(--color-line); }
+.the-ks-ten { font-weight: 600; }
+.the-ks small { color: var(--color-muted); }
+.the-ks-link { flex-basis: 100%; display: inline-flex; gap: 12px; }
+.the-ks-link a { color: var(--color-accent-deep); font-weight: 600; }
+.the-ks-nhan { grid-column: 1 / -1; margin: 0; color: var(--color-muted); font-size: 13px; }
