@@ -102,6 +102,7 @@ git branch -D p9-web-suy-luan p9-hue-thoi-ky && git push origin --delete p9-web-
 
 ## Câu hỏi cho User (hỏi mỗi lần một câu — đáp án = đa số nhóm; cập nhật 22:35 14/11/2026)
 
+**Hỏi khi User về (15/11 ~14:30):** (1) **Câu ngoài kho "giá vé đi lại từ tỉnh khác"** — main (cờ mới tắt) trả lời 3 / 5 lần dạng "nguồn không nêu giá… tra kênh chính thức" kèm 2 trích dẫn, thay câu từ chối chuẩn (B, A/A ×5, 0,005 USD, `data/tim_song_song_2026-11-15/aa_160/`). Không nói chắc sai nhưng trái sàn "0 câu ngoài kho bị trả lời". A ghi: so biến thể với mốc nhiễu 3 / 5 ở câu này (không hạ sàn 17 câu còn lại); có sửa hành vi không (vd gom câu "nguồn không nêu…" về đường từ chối / mục web) = User quyết.
 **Đầu phiên sau:** xem "Việc đầu phiên sau" mục 1 (quyền ⇒ ngưỡng mưa ⇒ trang khách sạn ⇒ giới hạn Codex ⇒ vòng cải tiến 31 ⇒ nhớ sở thích ⇒ dọn nhánh + worktree AGY).
 **Đã trả lời tối 14/11 (không hỏi lại):** quyền "như 14/11" · W73–W75 áp · ưu tiên ảnh + khách sạn + dữ liệu đầy đủ (đảo "khách sạn không cào điểm / ảnh"; giữ không giá phòng) · Qdrant / collection mới được nếu cần.
 **Đã trả lời 14/11 (không hỏi lại):** câu nhiều ý v2 bật · 132 ảnh web giữ trong repo, gỡ mọi chữ ghi công · giờ Đại Nội ghi cả hai theo mùa · màn "Huế qua các thời kỳ" làm · W70–W72 áp · ảnh dưới câu trả lời + gói dữ liệu đa số nhóm · Codex `gpt-6.1-sol` medium · ghi kho khi User vắng · không dòng © OSM · khu ở giữ luật buổi tối · dọn nhánh: tag + xoá · "giao diện ổn rồi".
