@@ -90,7 +90,7 @@ export function useChat() {
   }
 
   // `truong` (B4 / biểu mẫu) + `summary` (tóm tắt lựa chọn hiện cạnh câu hỏi) + `bieuMau` (cổng D3). Trả false khi đang bận (không gửi).
-  // `hienThi` = {chu, anh}: lượt hỏi bằng ảnh — bong bóng câu hỏi hiện ảnh + chữ người dùng gõ; câu gửi đi (`value`) vẫn là câu ghép có tên
+  // `hienThi` = {chu, anh, doan}: lượt hỏi bằng ảnh (`doan` = tên hệ thống tự chọn ⇒ dòng "Mình đoán…" đầu câu trả lời) — bong bóng câu hỏi hiện ảnh + chữ người dùng gõ; câu gửi đi (`value`) vẫn là câu ghép có tên
   async function ask(value, { retryKey = null, truong = null, summary = "", bieuMau = false, suaChon = null, hienThi = null } = {}) {
     const query = value.trim();
     if (!query || pending || resetting) return false;
@@ -256,7 +256,7 @@ export function TrangTroLy({ chat, onEditPlan, tinhNang = {} }) {
               <li>Trả lời từ kho tư liệu, ghi nguồn để bạn xem lại.</li>
               {(tinhNang.lich_trinh_bieu_mau || tinhNang.len_ke_hoach_v2) && <li><a href="#/len-ke-hoach">Xếp lịch</a> theo số ngày và sở thích.</li>}
               {tinhNang.thoi_tiet && <li>Xem dự báo thời tiết Huế 7 ngày tới.</li>}
-              {anh && <li>Đoán tên món / công trình từ ảnh — bạn bấm xác nhận.</li>}
+              {anh && <li>Gửi ảnh kèm câu hỏi — trợ lý đoán nơi / món trong ảnh (có thể sai) rồi trả lời.</li>}
               {tinhNang.tra_web && <li>Kho chưa có ⇒ tra web, tách riêng "chưa kiểm".</li>}
             </ul>
           </section>
@@ -403,6 +403,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
         <div className="bubble">
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
+          {turn.hienThi?.doan && <p className="anh-doan">Mình đoán trong ảnh là <b>{turn.hienThi.doan}</b> — có thể sai.</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
           <AnhTraLoi turn={turn} />
           <TheKhachSan turn={turn} />

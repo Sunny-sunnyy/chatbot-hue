@@ -97,12 +97,14 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     const anh = URL.createObjectURL(file);
     if (ungVien.length > 1) return setState({ preview, phase: "xong", ungVien, anh });  // 2–3 tên ⇒ người dùng chọn (chữ đang gõ giữ trong ô)
     setState({ phase: "doan", chon: ungVien[0].ten });
-    hoiVoiTen(ungVien[0].ten, chu, anh);
+    hoiVoiTen(ungVien[0].ten, chu, anh, true);
   }
 
-  function hoiVoiTen(ten, chu, anh) {
+  // `doan` = tên do hệ thống TỰ chọn (một tên) ⇒ lượt đó có dòng "Mình đoán trong ảnh là … — có thể sai" ngay đầu câu trả lời (giao diện chèn,
+  // không vào chuỗi gửi model); tên người dùng tự bấm chọn (2–3 tên) thì không cần dòng này
+  function hoiVoiTen(ten, chu, anh, doan = false) {
     // bong bóng câu hỏi hiện ảnh + đúng chữ người dùng gõ (không đuôi "(Trong ảnh: …)"); ô rỗng ⇒ hiện câu mặc định
-    onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh });
+    onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh, doan: doan ? ten : null });
   }
 
   const nut = (
