@@ -51,6 +51,7 @@ _BAO_LU = re.compile(r"\b(?:bão|lũ|ngập)\b", re.IGNORECASE)
 _CANH_BAO = re.compile(r"\bcảnh\s+báo\b", re.IGNORECASE)
 _BUOI = re.compile(r"\b(?:sáng|trưa|chiều|tối|đêm)\s+(?:nay|mai)\b|\bbuổi\s+(?:sáng|trưa|chiều|tối)\b", re.IGNORECASE)
 _XA = re.compile(r"\b(?:tuần\s+sau|tháng\s+sau|tháng\s+tới|năm\s+sau|năm\s+tới)\b", re.IGNORECASE)
+_TUAN_SAU = re.compile(r"\btuần\s+sau\b(?!\s+nữa)", re.IGNORECASE)  # "tuần sau nữa" ⇒ vẫn ngoài 7 ngày
 _NGAY_THANG = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?![\d/])")
 _TEN_THANG = {"giêng": 1, "một": 1, "hai": 2, "ba": 3, "tư": 4, "bốn": 4, "năm": 5, "sáu": 6, "bảy": 7, "tám": 8, "chín": 9, "mười": 10,
               "mười một": 11, "mười hai": 12, "chạp": 12}
@@ -80,10 +81,20 @@ def co_buoi(text: str) -> bool:
     return bool(_BUOI.search(_nfc(text)))
 
 
+def ngay_tuan_sau(text: str, hom_nay: date | None) -> tuple[int, int] | None:
+    """Rà nợ 15/11: "tuần sau" = thứ Hai…Chủ nhật tuần kế ⇒ (ngày đầu, ngày cuối) tính từ hôm nay, **phần nằm trong 7 ngày dự báo**; không ngày nào có
+    dự báo (hôm nay thứ Hai) hoặc câu không nói "tuần sau" ⇒ None. Code tính, model không tự đếm ngày."""
+    if hom_nay is None or not _TUAN_SAU.search(_nfc(text)):
+        return None
+    dau = 7 - hom_nay.weekday()  # thứ Hai tuần sau, tính từ hôm nay (1–7)
+    return (dau, SO_NGAY - 1) if dau <= SO_NGAY - 1 else None
+
+
 def ngoai_7_ngay(text: str, hom_nay: date | None) -> bool:
-    """D3: "tuần sau / tháng sau…" hoặc ngày dd/mm cách hôm nay ≥ 7 ngày (hoặc đã qua) ⇒ câu cố định "chỉ có dự báo 7 ngày"."""
+    """D3: "tuần sau / tháng sau…" hoặc ngày dd/mm cách hôm nay ≥ 7 ngày (hoặc đã qua) ⇒ câu cố định "chỉ có dự báo 7 ngày".
+    "tuần sau" chỉ ngoài 7 ngày khi không ngày nào của tuần sau có dự báo (rà nợ 15/11: trước đây luôn ngoài ⇒ chủ nhật hỏi "thứ hai tuần sau" bị từ chối)."""
     t = _nfc(text)
-    if _XA.search(t):
+    if _XA.search(_TUAN_SAU.sub(" ", t) if ngay_tuan_sau(t, hom_nay) else t):
         return True
     if hom_nay is None:
         return False
@@ -205,12 +216,15 @@ def dong_nguon(du_bao: DuBao) -> str:
     return f"{GHI_CONG} — số liệu lúc {du_bao.cap_nhat}. {CAU_CO_THE_DOI}"
 
 
-def khoi_du_bao(du_bao: DuBao, tu: int, den: int, buoi: bool = False) -> str:
+def khoi_du_bao(du_bao: DuBao, tu: int, den: int, buoi: bool = False, tuan_sau: bool = False) -> str:
     """D5: khối số liệu cho ngày `tu`…`den` (0 = hôm nay theo giờ Việt Nam của API); luôn có dòng nguồn + giờ."""
     tu, den = sorted((max(0, min(tu, SO_NGAY - 1)), max(0, min(den, SO_NGAY - 1))))
     dong = [f"- {dong_ngay(d)}" for d in du_bao.ngay[tu:den + 1]]
     if buoi:
         dong.append(f"- {CAU_THEO_CA_NGAY}")
+    if tuan_sau and du_bao.ngay[tu:den + 1]:  # tuần sau chỉ có một phần trong 7 ngày dự báo ⇒ nói rõ tới ngày nào (code viết, cả model lẫn người dùng thấy)
+        cuoi = du_bao.ngay[den]["ngay"]
+        dong.append(f"- Dự báo chỉ có tới {THU[cuoi.weekday()]} {cuoi:%d/%m}; những ngày sau đó của tuần sau chưa có dự báo.")
     # dòng trống trước dòng ghi công: không có thì Markdown nối nó vào gạch đầu dòng cuối (thấy ở ảnh Q8)
     return "\n".join([TIEU_DE, *dong, "", dong_nguon(du_bao)])
 

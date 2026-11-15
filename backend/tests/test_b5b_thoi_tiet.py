@@ -81,7 +81,9 @@ def test_storm_flood(cau, bao_lu):
 
 
 def test_beyond_seven_days_and_part_of_day():
-    assert tt.ngoai_7_ngay("Tuần sau Huế mưa không?", NGAY0) and tt.ngoai_7_ngay("Ngày 20/11 trời thế nào?", NGAY0)
+    thu_hai = NGAY0 + timedelta(days=3)  # 09/11: tuần sau = 16–22/11, không ngày nào trong 7 ngày dự báo ⇒ ngoài (NGAY0 thứ Sáu: một phần trong ⇒ không)
+    assert tt.ngoai_7_ngay("Tuần sau Huế mưa không?", thu_hai) and tt.ngoai_7_ngay("Ngày 20/11 trời thế nào?", NGAY0)
+    assert not tt.ngoai_7_ngay("Tuần sau Huế mưa không?", NGAY0)
     assert not tt.ngoai_7_ngay("Ngày 8/11 trời thế nào?", NGAY0) and not tt.ngoai_7_ngay("Mai thế nào?", NGAY0)
     assert tt.co_buoi("Chiều nay có mưa không?") and tt.co_buoi("buổi tối mai") and not tt.co_buoi("Mai có mưa không?")
 
@@ -372,7 +374,7 @@ def test_beyond_seven_days_offers_no_tool_and_appends_new_fixed_sentence(deps, m
     monkeypatch.setattr("llm.assistant.hom_nay_vn", lambda: NGAY0)
     seen = []
     gen = generator(lambda n, kw: (seen.append(tool_names(kw)), [answer("Mình chưa có dự báo cho tuần sau.")])[1])
-    trace, _ = run(deps, "Tuần sau Huế có mưa không?", gen, dataclasses.replace(WEATHER, du_bao=nguon()))
+    trace, _ = run(deps, "Tuần sau nữa Huế có mưa không?", gen, dataclasses.replace(WEATHER, du_bao=nguon()))  # rà nợ 15/11: "tuần sau" thứ Sáu có dự báo một phần
     assert seen == [["tim_kho"]] and trace.thoi_tiet is None and not trace.thoi_tiet_ctx["co_cong_cu"] and trace.thoi_tiet_ctx["tu_khoa"]
     assert trace.answer.endswith(tt.CAU_NGOAI_7_NGAY) and "không phải dự báo" in tt.CAU_NGOAI_7_NGAY and not tt.so_thoi_tiet(trace.thoi_tiet_noi)
 
@@ -381,3 +383,34 @@ def test_beyond_seven_days_kho_climate_number_with_citation_still_allowed():
     t = _trace(text_cited="Tháng 12 ở Huế nhiệt độ trung bình khoảng 20 °C.", ngoai_7=True, tu_khoa=True)
     _thoi_tiet_cuoi(t, "Tháng 12 thường khoảng 20 °C [1].")
     assert t.citation_error is None and t.answer.endswith(tt.CAU_NGOAI_7_NGAY)
+
+
+# ---------- rà nợ 15/11: "tuần sau" — code tính phần nằm trong 7 ngày dự báo ----------
+
+@pytest.mark.parametrize("lui, mong", [(0, None), (1, (6, 6)), (2, (5, 6)), (3, (4, 6)), (4, (3, 6)), (5, (2, 6)), (6, (1, 6))])
+def test_next_week_days_for_each_weekday(lui, mong):
+    """Đủ 7 ngày trong tuần: hôm nay thứ Hai ⇒ tuần sau không ngày nào có dự báo; thứ Ba ⇒ chỉ thứ Hai tuần sau (+6); … Chủ nhật ⇒ +1…+6."""
+    hom_nay = date(2026, 11, 9) + timedelta(days=lui)  # 09/11/2026 là thứ Hai
+    assert tt.ngay_tuan_sau("Tuần sau Huế có mưa không?", hom_nay) == mong
+    assert tt.ngoai_7_ngay("Tuần sau Huế có mưa không?", hom_nay) is (mong is None)
+    assert tt.ngay_tuan_sau("Tuần sau nữa trời ra sao?", hom_nay) is None and tt.ngoai_7_ngay("Tuần sau nữa trời ra sao?", hom_nay)
+    assert tt.ngay_tuan_sau("Mai Huế có mưa không?", hom_nay) is None
+
+
+def test_next_week_turn_offers_tool_code_sets_days_and_says_until_when(deps, monkeypatch):
+    """Câu "tuần sau" có phần trong 7 ngày ⇒ có công cụ; khoảng ngày do code đặt (bỏ số model gửi); khối có dòng "chỉ có tới <ngày>" (chuỗi mới gửi model)."""
+    monkeypatch.setattr("llm.assistant.hom_nay_vn", lambda: NGAY0)  # thứ Sáu 06/11 ⇒ tuần sau trong dự báo: thứ Hai 09 … thứ Năm 12/11 (+3…+6)
+    seen = []
+
+    def kich_ban(n, kw):
+        seen.append(tool_names(kw))
+        if n == 1:
+            return [{"type": "function_call", "id": "fc_ts", "call_id": "call_ts", "name": "thoi_tiet",
+                     "arguments": json.dumps({"tu_ngay": 0, "den_ngay": 1}), "status": "completed"}]
+        return [answer("Tuần sau mình chỉ có dự báo vài ngày đầu.")]
+    trace, _ = run(deps, "Tuần sau Huế có mưa không?", generator(kich_ban), dataclasses.replace(WEATHER, du_bao=nguon()))
+    assert "thoi_tiet" in seen[0] and trace.thoi_tiet_ctx["co_cong_cu"] and trace.thoi_tiet_ctx["tuan_sau"] == (3, 6)
+    khoi = trace.thoi_tiet["khoi"]
+    assert [l.split(":")[0] for l in khoi.splitlines() if re.match(r"- Thứ|- Chủ", l)] == ["- Thứ Hai 09/11", "- Thứ Ba 10/11", "- Thứ Tư 11/11", "- Thứ Năm 12/11"]
+    assert "Dự báo chỉ có tới Thứ Năm 12/11; những ngày sau đó của tuần sau chưa có dự báo." in khoi
+    assert not trace.answer.endswith(tt.CAU_NGOAI_7_NGAY)
