@@ -78,6 +78,14 @@ def test_bad_coordinates_stop_startup(tmp_path, vi_do, kinh_do):
         lt.nap_toa_do(path, BANG)
 
 
+@pytest.mark.parametrize("vi_do, kinh_do", [(16.187738, 108.131294), (16.221422, 108.06156)])  # Hải Vân Quan, đầm Lập An: phía đông kinh tuyến 108
+def test_far_south_east_points_of_hue_load(tmp_path, vi_do, kinh_do):
+    id_ = BANG.diem[0]["id"]
+    path = tmp_path / "toa_do.json"
+    path.write_text(json.dumps({"diem": [{"id": id_, "vi_do": vi_do, "kinh_do": kinh_do}]}), encoding="utf-8")
+    assert lt.nap_toa_do(path, BANG) == {id_: (vi_do, kinh_do)}
+
+
 def test_csp_adds_tile_host_and_data_images_only_when_flag_on():
     assert frontend_csp(SimpleNamespace()) == FRONTEND_CSP  # trước lifespan
     assert frontend_csp(SimpleNamespace(assistant_flags=AssistantFlags())) == FRONTEND_CSP

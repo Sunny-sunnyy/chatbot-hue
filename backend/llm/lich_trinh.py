@@ -427,7 +427,8 @@ def map_url(ten: str) -> str:
 
 
 # Bản đồ lịch trình (plan `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` §3): khung Huế để kiểm toạ độ lúc nạp (trình duyệt kiểm lại)
-KHUNG_HUE = ((16.0, 16.8), (107.0, 108.0))
+# Kinh độ tối đa 108,25 (15/11): đèo Hải Vân (108,13) và đầm Lập An (108,06) thuộc TP Huế nhưng nằm phía đông kinh tuyến 108
+KHUNG_HUE = ((16.0, 16.8), (107.0, 108.25))
 
 
 def nap_toa_do(path: str | Path, bang: Bang) -> dict[str, tuple[float, float]]:
