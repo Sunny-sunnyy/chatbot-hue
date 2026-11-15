@@ -21,6 +21,10 @@
 - **Bậc 2** (plan A duyệt `f36fe8bb5b6a`): nhánh `p9-sua-ngay-di` @ `7369fba` (tách từ nhánh bậc 1; worktree `/tmp/c_nd`, còn symlink `data/`, `knowledge-base-hue/`) — XONG phần code 0 USD (`do_so.ngay_tu_cau`, `sua_lich_v2.ngay_di_moi` + `ap(ngay_moi=)`, nối ở `len_ke_hoach.hieu_va_ap`, `test_sua_ngay_di.py` 40 đạt). CÒN: sửa lời dặn (1 gạch `doi_ngay_di` + 1 câu ở khối cách nói) ⇒ viết bộ D1–D3 (ngày sinh theo hôm chạy) ⇒ hỏi B ⇒ lượt có phí D1–D3 ⇒ Q3 ngay ⇒ chốt ⇒ nhắn A viết D4 ⇒ H1 ×1, Q5, Q5b. Chỉ chạy có phí SAU khi bậc 1 merge và sau việc "Nơi ở chỉ khi hỏi".
 - **Nơi ở chỉ hiện khi hỏi** (User qua A): plan `docs/superpowers/plans/2026-11-15-noi-o-chi-khi-hoi-plan.md` `d99fb6ec4a5c` (chưa commit) chờ A duyệt + quyết lịch mẫu; code trên nhánh mới từ main sau khi bậc 1 merge. E báo đang chạm `LichV2.jsx` (mục "nghỉ"), `ghep_chu` — không chạm khối NoiO.
 - Review nhờ: B `p9-web-noi-tiep` — C đã nhắn để E nhận.
+**(16:20 15/11/2026) Cập nhật:**
+- **Nơi ở chỉ khi hỏi XONG — chờ E review:** nhánh `p9-o-khi-hoi` @ `16e7d08` (code `2456c2f`, đứng trên bậc 1; worktree `/tmp/c_ok`, đã build `frontend/dist`). Test file 18 đạt · test rộng 1.087 đạt (5 ca cần khoá) · Playwright DAT · 0,0012 USD. Report trên nhánh `c_noi_o_khi_hoi_implementation.md`; dữ liệu `data/noi_o_khi_hoi_2026-11-15/`.
+- **Bậc 2 sẵn cho lượt có phí:** `p9-sua-ngay-di` @ `6460385` (đã có lời dặn). Bộ D1–D3: `data/sua_lich_ngay_2026-11-15/cau_d.jsonl` md5 `7b5b22cbda07`, `tools/do_d.py` (`--mo-phong` 0 USD), `tools/cham_d.py`. Bước kế khi A báo bậc 1 + nhánh nơi ở đã vào main: rebase ⇒ hỏi B ⇒ server tạm ⇒ D1–D3 ×2 ⇒ Q3 ×2 ngay ⇒ (≤ 1 vòng chỉnh) ⇒ nhắn A "đã chốt" + khuôn D4 + ngày đang dùng ⇒ H1 ×1, Q5, Q5b, D4. Lưu ý: chữ câu "hỏi lại hạng" đổi ở nhánh nơi ở ⇒ `cham_h.py` vẫn chấm theo mã `hang_chua_ro`, không theo chữ.
+- Tiền C phiên chiều tới giờ ≈ 0,21 USD (bậc 1) + 0,0012.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11 — C viết 14:43 15/11/2026 `date`)
 
