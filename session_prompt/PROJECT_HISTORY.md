@@ -4,6 +4,10 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-11-15 (21:35 15/11/2026) — Phiên tối: User thử trang Trợ lý ⇒ 7 góp ý; ảnh đính kèm tin nhắn (phương án lai); sổ vết debug; thử lại so ảnh bằng embedding (mở)
+
+Phiên tối 15/11 (A `hue-rag-ef` · B `hue-rag-7d` · C `hue-rag-10` · E `hue-rag-f0`): xem `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11)", `archive/CURRENT_HANDOFF_LICH_SU_2026-11-15_toi.md`, `bao_cao_he_thong/nhat_ky/2026-11-15_do_bu_mua.md`. User chốt hướng "thử + sửa lỗi là chính". ≈ 0,11 USD. (Các phiên 14/11 chiều – 15/11 chiều: xem archive handoff cùng ngày.)
+
 ## 2026-11-14 (14:50 14/11/2026) — Giao diện H1 + ảnh; lịch bản 2 bật; 2 lần ghi kho; sửa lịch bằng lời (cờ tắt tạm); hướng "trợ lý / agent"
 
 Phiên 14/11 (A `hue-rag-7b` · B `hue-rag-22` · C `hue-rag-b4` · E `hue-rag-c4`): xem `CURRENT_HANDOFF.md` mục "MỞ LẠI 14/11" + "PHIÊN 14/11", `bao_cao_he_thong/nhat_ky/2026-11-14_ghi_kho_3_bai.md`, `bai_hoc/22–24`. ≈ 1,45 USD.
