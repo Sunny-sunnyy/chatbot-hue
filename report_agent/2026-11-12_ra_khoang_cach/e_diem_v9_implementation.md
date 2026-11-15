@@ -90,3 +90,9 @@ Vì sao tụt: Hải Vân, Lập An cách quán gần nhất trong bảng hàng 
 - Trường `luu_y` của 7 điểm mới viết kiểu ghi chú nội bộ (có số dòng kho) — bản 2 không hiện trường này cho người dùng; nếu sau này hiện thì phải viết lại.
 
 **Giải thích ngắn:** lịch "Lên kế hoạch" có thêm 7 nơi để người chọn ẩm thực / chụp ảnh / thiên nhiên ít bị xếp điểm ngoài sở thích hơn (vd chụp ảnh 51,7 ⇒ 36,8 %). Lượt chạy thật bắt được một lỗi của bảng nháp (4 nơi gắn nhầm đoạn kho nghèo ý nên lịch chỉ in tên) và đã sửa bằng dữ liệu; một sàn test được A nới đúng một điều kiện vì ngày đi xa vốn ít điểm.
+
+## 8. Sau review B (`b_review_diem_v9.md`: ready, 0 blocker / 0 major / 3 minor)
+- m-1 đóng: `frontend/src/toaDo.js` khung kinh độ phía trình duyệt 108 ⇒ 108,25 (khớp `KHUNG_HUE`; cờ bản đồ đang tắt nên chưa lộ).
+- m-2 đóng: ghi chú trưa Hải Vân bỏ "Gần nhất là" (kho không nói gì về chỗ ăn trên đèo ⇒ là suy luận); nay chỉ nói điều kho có: chân đèo phía bắc là Lăng Cô, ven đầm Lập An có nhà hàng hải sản.
+- m-3 giữ: ảnh Hải Vân là đoàn tàu trên sườn đèo — đạt luật nhờ tên file tác giả nhưng không phải cảnh người dùng sẽ tới ⇒ thêm vào danh sách ảnh cần tìm (cửa ải / cung đèo).
+- Test sau sửa: `test_quan_lich.py` + `test_ban_do_lich.py` đạt; `npm run build` đạt.

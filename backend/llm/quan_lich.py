@@ -38,7 +38,7 @@ GHI_CHU_AN = {
     # `travel/places/Đầm Lập An.md:137` (nhà hàng hải sản dọc đường ven đầm), `travel/places/Đèo Hải Vân.md:11` (chân đèo phía bắc là Lăng Cô)
     ("dam_lap_an", "trua"): "Dọc đường ven đầm có nhiều nhà hàng hải sản, hàu là đặc sản của đầm — có thể ăn ngay tại đây.",
     ("dam_lap_an", "toi"): "Dọc đường ven đầm có nhiều nhà hàng hải sản, hàu là đặc sản của đầm — có thể ăn ngay tại đây.",
-    ("deo_hai_van", "trua"): "Gần nhất là khu Lăng Cô dưới chân đèo: ven đầm Lập An có nhiều nhà hàng hải sản.",
+    ("deo_hai_van", "trua"): "Chân đèo phía bắc là khu Lăng Cô — ven đầm Lập An có nhiều nhà hàng hải sản.",
 }
 _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
