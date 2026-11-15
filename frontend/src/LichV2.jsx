@@ -186,7 +186,7 @@ export function LichV2({ turn, onEditPlan }) {
 
 // Gợi ý nơi ở (B, cờ `luu_tru_lich`): khối do CODE chọn (khu cả chuyến, ≤ 5 cơ sở, lý do, nhãn "chưa kiểm giá"). Link tìm phòng chỉ nhận đúng gốc
 // LINK_TIM_PHONG (kiểm cả phía trình duyệt như link bản đồ), mở tab mới khi bấm; không giá, không "còn phòng".
-const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
+export const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
 // Ảnh cơ sở lưu trú (14/11): chỉ file tự host dưới /anh/khach_san/ (server kiểm lúc khởi động; ảnh "không chắc" không có trong bảng); 0 chữ ghi công.
 const ANH_KS = "/anh/khach_san/";
 const anhKsHopLe = a => typeof a === "string" && a.startsWith(ANH_KS) && a.endsWith(".jpg") && !a.includes("..");
@@ -245,6 +245,7 @@ function NoiO({ o }) {
         </li>
       ))}</ul>
       <p className="lkh-o-nhan">{o.nhan} Nguồn: {o.nguon}.</p>
+      {typeof o.khu === "string" && /^[a-z_]+$/.test(o.khu) && <p className="lkh-o-them"><a href={`#/cho-o/${o.khu}`}>Xem thêm chỗ ở khu này</a></p>}
     </section>
   );
 }

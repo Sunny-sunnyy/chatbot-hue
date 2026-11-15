@@ -193,4 +193,6 @@
 .lkh-an-q small { margin-left: 6px; color: var(--color-muted); }
 .lkh-an-q { display: inline-flex; align-items: center; gap: 8px; }
 .lkh-an-anh { width: 44px; height: 44px; flex: none; border-radius: 10px; object-fit: cover; background: var(--color-accent-soft); }
+.lkh-o-them { margin: 8px 0 0; }
+.lkh-o-them a { color: var(--color-accent-deep); font-weight: 600; }
 .lkh-o-nhan { margin: 10px 0 0; color: var(--color-muted); font-size: 14px; }

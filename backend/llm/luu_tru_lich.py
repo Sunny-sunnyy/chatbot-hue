@@ -44,6 +44,8 @@ def nap_bang_luu_tru(path: str | Path, cum_diem) -> dict:
     for c in bang["co_so"]:
         if not (c.get("ten") and c.get("xep_hang") in MUC_HANG and c.get("nguon") and c.get("khu")):
             raise ValueError(f"bảng lưu trú: cơ sở thiếu tên / hạng / nguồn / khu: {c.get('ten')!r}")
+        if c.get("phia_bien") not in (None, "bac", "nam") or (c["khu"] == KHU_BIEN) != (c.get("phia_bien") is not None):
+            raise ValueError(f"bảng lưu trú: phia_bien sai (chỉ bac / nam, đúng cho cơ sở ven biển): {c.get('ten')!r}")
         if c.get("anh") and not (c["anh"].startswith(ANH_GOC) and c["anh"].endswith(".jpg")):
             raise ValueError(f"bảng lưu trú: ảnh ngoài {ANH_GOC}: {c.get('ten')!r}")
     return bang
@@ -119,3 +121,25 @@ def dong_chu(o: dict) -> list[str]:
     return ["", f"**Nơi ở gợi ý: khu {o['ten_khu']}** — {o['ly_do']}",
             *(f"- {c['ten']} ({c['xep_hang']})" + (f", {c['dia_chi']}" if c.get("dia_chi") else "") for c in o["co_so"]),
             f"{o['nhan']} Nguồn: {o['nguon']}."]
+
+
+# Trang "Chỗ ở" (plan `2026-11-15-khach-san-trang-va-ngan-sach.md` §1, sha b5d8bc184090): mọi cơ sở của bảng theo khu ⇒ mức hạng; chỉ mở từ ô "Nơi ở".
+# Ven biển tách hai phía theo `phia_bien` (bảng v3) — hai phía cách nhau ~40 km. Không giá, không điện thoại, không toạ độ (link Bản đồ do code dựng).
+NHOM_TRANG = ((KHU_LOI, None, "Trung tâm, hai bờ sông Hương"), (KHU_TAY, None, "Phía tây yên tĩnh (Kim Long, Thủy Xuân)"),
+              (KHU_BIEN, "bac", "Ven biển phía bắc (Thuận An, Phú Vang)"), (KHU_BIEN, "nam", "Phía nam (Phú Lộc – Lăng Cô)"))
+TEN_MUC = ("4–5 sao", "2–3 sao", "1 sao, đạt chuẩn")
+HANG = list(MUC_HANG)
+
+
+def trang_cho_o(bang_luu_tru: dict) -> dict:
+    """`{nhom: [{khu, ten, muc: [{ten, co_so: [...]}]}], nhan, nguon}`. Trong mức: có ảnh trước ⇒ hạng cao ⇒ tên (review E: ảnh trước như lịch)."""
+    nhom = []
+    for khu, phia, ten in NHOM_TRANG:
+        ds = [c for c in bang_luu_tru["co_so"] if c["khu"] == khu and c.get("phia_bien") == phia]
+        muc = [{"ten": TEN_MUC[m], "co_so": [
+            {"ten": c["ten"], "xep_hang": c["xep_hang"], "dia_chi": c.get("dia_chi"), "anh": c.get("anh"),
+             "map_url": MAP_BASE + quote(", ".join(x for x in (c["ten"], c.get("dia_chi"), "Huế") if x)), "link": LINK_TIM + quote(f"{c['ten']}, Huế")}
+            for c in sorted((c for c in ds if MUC_HANG[c["xep_hang"]] == m), key=lambda c: (not c.get("anh"), HANG.index(c["xep_hang"]), c["ten"]))]}
+            for m in range(3)]
+        nhom.append({"khu": f"{khu}:{phia}" if phia else khu, "ten": ten, "muc": [x for x in muc if x["co_so"]]})
+    return {"nhom": nhom, "nhan": NHAN, "nguon": " · ".join(dict.fromkeys(c["nguon"] for c in bang_luu_tru["co_so"]))}

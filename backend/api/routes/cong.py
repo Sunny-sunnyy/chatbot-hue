@@ -12,6 +12,7 @@ from fastapi import APIRouter, Query, Request
 from api.routes.chat import _flags, error_response
 from ingestion.source_state import read_source_lf
 from llm import lich_trinh_v2 as lt2
+from llm import luu_tru_lich as ltl
 from llm import thoi_tiet as tt
 from llm.hoi_lai import SO_NGAY_TOI_DA, SO_THICH_TOI_DA
 
@@ -156,3 +157,17 @@ async def lich_mau(request: Request):
     if id(flags) not in _mau:  # cờ + bảng nạp một lần lúc khởi động ⇒ dựng một lần cho bộ cờ đó
         _mau[id(flags)] = dung_lich_mau(flags)
     return _mau[id(flags)]
+
+
+_cho_o: dict[int, dict] = {}
+
+
+@router.get("/api/cho_o")
+async def cho_o(request: Request):
+    """Trang "Chỗ ở" (plan 2026-11-15 §1): mọi cơ sở của bảng lưu trú theo khu ⇒ mức hạng. Cờ `luu_tru_lich` tắt ⇒ 404. Dựng một lần mỗi bộ cờ."""
+    flags = _flags(request.app.state)
+    if not flags.luu_tru_lich:
+        return _khong_thay()
+    if id(flags) not in _cho_o:
+        _cho_o[id(flags)] = ltl.trang_cho_o(flags.luu_tru_bang)
+    return _cho_o[id(flags)]

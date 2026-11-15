@@ -5,6 +5,7 @@ import { TrangChu } from "./TrangChu.jsx";
 import { Bai, KhamPha, LinhVuc } from "./KhamPha.jsx";
 import { LenKeHoach, LenKeHoachV2 } from "./LenKeHoach.jsx";
 import { GioiThieu } from "./GioiThieu.jsx";
+import { ChoO } from "./ChoO.jsx";
 import { useRoute } from "./route.js";
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
@@ -116,6 +117,7 @@ export default function App() {
                             lichTurn={lichTurn} onEditPlan={editPlan} />
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
+        {route.page === "cho-o" && <ChoO khu={route.khu} />}
         {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} daCo={daCoTinhNang && (bai !== null || !!baiLoi)} bai={bai} muc={route.muc} onAsk={askAnywhere} />}
         {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>

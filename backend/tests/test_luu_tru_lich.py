@@ -75,7 +75,7 @@ def test_simulation_always_rules(mo_phong):
 def _bang(cum_ve_khu=None, co_so=None):
     return {"cum_ve_khu": cum_ve_khu or {"kinh_thanh": ltl.KHU_LOI, "kim_long": ltl.KHU_TAY, "dong_bien": ltl.KHU_BIEN},
             "co_so": co_so if co_so is not None else
-            [{"ten": f"{k}-{h}-{i}", "xep_hang": h, "khu": k, "nguon": "danh mục thử", "cum_gan": None}
+            [{"ten": f"{k}-{h}-{i}", "xep_hang": h, "khu": k, "nguon": "danh mục thử", "cum_gan": None, **({"phia_bien": "bac"} if k == ltl.KHU_BIEN else {})}
              for k in (ltl.KHU_LOI, ltl.KHU_TAY, ltl.KHU_BIEN) for h in ("5 sao", "3 sao", "1 sao") for i in range(3)]}
 
 
@@ -226,3 +226,35 @@ def test_budget_value_from_browser_is_checked():
     assert co_gia_tri_moi(TruongInput(so_ngay="2", ngan_sach="vua"))  # giá trị mới ⇒ chỉ nhận ở lượt biểu mẫu bản 2
     with pytest.raises(ValidationError):
         TruongInput(so_ngay="2", ngan_sach="re")
+
+
+def test_lodging_page_lists_every_listing_once_with_safe_fields():
+    """Trang "Chỗ ở" (plan 2026-11-15 §1, T5): mọi cơ sở của bảng đúng một lần, đúng nhóm khu / mức; chỉ các trường đã duyệt (không giá, điện
+    thoại, toạ độ); 0 dòng trùng tên + địa chỉ; ảnh chỉ gốc tự host; link chỉ 2 gốc; trong mức có ảnh trước."""
+    t = ltl.trang_cho_o(BANG_LT)
+    ds = [(n, m, c) for n in t["nhom"] for m in n["muc"] for c in m["co_so"]]
+    assert len(ds) == len(BANG_LT["co_so"]) and len({(c["ten"], c["dia_chi"]) for *_, c in ds}) == len(ds)
+    goc = {(c["ten"], c.get("dia_chi")): c for c in BANG_LT["co_so"]}
+    for n, m, c in ds:
+        assert set(c) == {"ten", "xep_hang", "dia_chi", "anh", "map_url", "link"}
+        g = goc[(c["ten"], c["dia_chi"])]
+        assert n["khu"].split(":")[0] == g["khu"] and m["ten"] == ltl.TEN_MUC[ltl.MUC_HANG[g["xep_hang"]]]
+        assert c["anh"] is None or (c["anh"].startswith(ltl.ANH_GOC) and c["anh"].endswith(".jpg"))
+        assert c["map_url"].startswith(ltl.MAP_BASE) and c["link"].startswith(ltl.LINK_TIM)
+    for n in t["nhom"]:
+        for m in n["muc"]:
+            co_anh = [bool(c["anh"]) for c in m["co_so"]]
+            assert co_anh == sorted(co_anh, reverse=True)
+    assert [n["khu"] for n in t["nhom"]] == [ltl.KHU_LOI, ltl.KHU_TAY, f"{ltl.KHU_BIEN}:bac", f"{ltl.KHU_BIEN}:nam"]
+
+
+def test_table_load_checks_coast_side(tmp_path):
+    p = tmp_path / "lt.json"
+    p.write_text(json.dumps(_bang()), encoding="utf-8")
+    assert ltl.nap_bang_luu_tru(p, ["kinh_thanh"])  # bảng mẫu (ven biển có phía) nạp được ⇒ các ca dưới hỏng đúng vì phần sửa
+    for sua in ({"khu": ltl.KHU_BIEN}, {"phia_bien": "dong"}, {"phia_bien": "bac"}):  # ven biển thiếu phía · phía lạ · phía ở cơ sở không ven biển
+        hong = _bang()
+        hong["co_so"][0].update(sua)
+        p.write_text(json.dumps(hong), encoding="utf-8")
+        with pytest.raises(ValueError, match="phia_bien"):
+            ltl.nap_bang_luu_tru(p, ["kinh_thanh"])
