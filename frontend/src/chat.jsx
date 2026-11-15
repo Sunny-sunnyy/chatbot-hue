@@ -357,7 +357,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
         <div className="chat-chan">
           <p>Trợ lý AI trả lời từ kho tư liệu, có thể sai — xem nguồn trước khi dùng thông tin quan trọng.</p>
           {turns.length > 0 && (
-            <button type="button" onClick={startNewConversation} disabled={pending || resetting} className="new-chat">Cuộc trò chuyện mới</button>
+            <button type="button" onClick={() => { hoiAnh.xoa(); startNewConversation(); }} disabled={pending || resetting} className="new-chat">Cuộc trò chuyện mới</button>
           )}
         </div>
       </form>
