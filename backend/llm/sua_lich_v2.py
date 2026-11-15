@@ -220,6 +220,20 @@ def ly_do_giu_hang(bang: v2.BangV2, luu_tru: dict | None, khung: dict, moi: str 
     return None
 
 
+def _hang_o_sau_cung(hanh_dong: list[HanhDong]) -> list[HanhDong]:
+    """Review bậc 1 (m-1, m-2): hạng chỗ ở model đặt nhầm vào hành động khác ⇒ tách thành một `doi_hang_o` (không thì lượt sửa im lặng);
+    mọi `doi_hang_o` xét SAU CÙNG, trên khung cuối lượt (không thì "khách sạn 4 sao, rút còn 1 ngày" báo đã thêm chỗ ở cho lịch 1 ngày)."""
+    khac, hang = [], []
+    for h in hanh_dong:
+        if h.loai != "doi_hang_o" and h.ngan_sach is not None:
+            hang.append(HanhDong(loai="doi_hang_o", ngan_sach=h.ngan_sach))
+            h = h.model_copy(update={"ngan_sach": None})
+            if h.loai == "doi_tham_so" and all(getattr(h, f) is None for f in ("kieu_di", "so_thich", "tre_em", "lon_tuoi")):
+                continue
+        (hang if h.loai == "doi_hang_o" else khac).append(h)
+    return khac + hang
+
+
 def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None,
        ngay_moi: dict | None = None) -> dict:
     """Áp hành động trên **bản sao** khung đã lưu ⇒ {khung, luu, da_ap, khong_doi, chua_lam, doi_truong, the}.
@@ -235,7 +249,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
     if sua_chon is not None:
         hanh_dong = [HanhDong(loai="bo_diem", ten=sua_chon["cu"])] if sua_chon["moi"] == "bo" else \
             [HanhDong(loai="thay_diem", ten=sua_chon["cu"], ten_moi=sua_chon["moi"])]
-    hanh_dong = list(hanh_dong)[:MAX_HANH_DONG]
+    hanh_dong = _hang_o_sau_cung(list(hanh_dong)[:MAX_HANH_DONG])
     # review E M-1: "thay" không nói thay bằng gì ⇒ lượt chỉ dừng ở thẻ chọn; mọi hành động khác của lượt vào "Chưa làm" (không áp nửa chừng
     # rồi mất khi thẻ trả khung cũ). Không có điểm thay ⇒ "Không đổi được" và các hành động khác đi tiếp như thường.
     if sua_chon is None:
