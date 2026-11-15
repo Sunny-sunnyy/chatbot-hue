@@ -21,12 +21,12 @@ KIEU = ("nhe_nhang", "can_bang", "kham_pha")
 NGAY = (None, v2.dt.date(2027, 4, 7), v2.dt.date(2026, 11, 21), v2.dt.date(2026, 11, 13))  # như mô phỏng 3.840 của bản 2
 
 
-def _o_dau(khung):
+def _o_dau(khung, ngan_sach=None):
     ts = khung["tham_so"]
     co_toi = (lambda toi: bool(toi) and all(BANG_LT["cum_ve_khu"][BANG_V2.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi))(
         [j for ng in khung["ngay"] for j in ng["buoi"]["toi"] if j in BANG_V2.theo_id])
     return ltl.o_dau(BANG_LT, [BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)], len(khung["ngay"]),
-                     bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi)
+                     bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi, ngan_sach)
 
 
 @pytest.fixture(scope="module")
@@ -259,3 +259,50 @@ def test_table_load_checks_coast_side(tmp_path):
         p.write_text(json.dumps(hong), encoding="utf-8")
         with pytest.raises(ValueError, match="phia_bien"):
             ltl.nap_bang_luu_tru(p, ["kinh_thanh"])
+
+
+def test_change_lodging_tier_by_words_only_touches_the_lodging_box(mo_phong):
+    """Sửa lịch bằng lời "đổi hạng chỗ ở" (plan 2026-11-15-sua-lich-hang-cho-o, tiêu chí "Luôn") trên 3.840 khung × 3 mức: đổi được ⇒ điểm / ngày /
+    buổi giống hệt, ô Nơi ở = ô của biểu mẫu cùng mức, mọi cơ sở đúng mức; không đổi được ⇒ khung giữ nguyên + đúng mã lý do."""
+    from llm import sua_lich_v2 as sl
+    dem = Counter()
+    for key, khung in mo_phong.items():
+        luu = sl.luu_tu_lich(khung, None, None)
+        for moi in ltl.MUC_NGAN_SACH:
+            kq = sl.ap(BANG_V2, luu, [sl.HanhDong(loai="doi_hang_o", ngan_sach=moi)], luu_tru=BANG_LT)
+            ma = [k["ma_luat"] for k in kq["khong_doi"]]
+            dem[ma[0] if ma else "doi"] += 1
+            assert kq["khung"]["ngay"] == khung["ngay"] and kq["khung"]["khong_xep"] == khung["khong_xep"], key
+            if ma:
+                assert kq["khung"] == khung and not kq["doi_truong"] and ma[0] in ("khong_muc_o", "hang_khong_co"), (key, moi, ma)
+                assert (ma[0] == "khong_muc_o") == (_o_dau(khung) is None), (key, moi)
+                continue
+            assert kq["doi_truong"] == [("ngan_sach", None, moi)] and kq["khung"]["tham_so"] == {**khung["tham_so"], "ngan_sach": moi}
+            o = v2.o_dau_khung(BANG_LT, BANG_V2, kq["khung"], moi)
+            assert o == _o_dau(khung, ngan_sach=moi) and all(ltl.MUC_HANG[c["xep_hang"]] == ltl.MUC_NGAN_SACH[moi] for c in o["co_so"]), (key, moi)
+            assert kq["luu"]["tham_so"]["ngan_sach"] == moi  # mức được giữ cho các lượt sửa sau
+    assert dem["doi"] > 0 and dem["khong_muc_o"] > 0 and set(dem) <= {"doi", "khong_muc_o", "hang_khong_co"}, dem
+
+
+def test_lodging_tier_reasons_are_stated_not_silent():
+    from llm import sua_lich_v2 as sl
+    khung = v2.xep_v2(BANG_V2, v2.tu_truong({"so_ngay": "3", "kieu_di": "can_bang", "so_thich": ["di_tich"], "ngan_sach": "vua"}))
+    luu = sl.luu_tu_lich(khung, None, None)
+
+    def ma(hd, bang_lt=BANG_LT, luu=luu):
+        kq = sl.ap(BANG_V2, luu, [hd], luu_tru=bang_lt)
+        assert kq["khung"] == luu["khung"] and not kq["doi_truong"]
+        return [(k["ma_luat"], d["cau"], d["duoc"]) for k, d in zip(kq["khong_doi"], sl.thay_doi(BANG_V2, kq))]
+
+    assert ma(sl.HanhDong(loai="doi_hang_o")) == [("hang_chua_ro", sl.CAU_KHONG_DOI["hang_chua_ro"], False)]  # "rẻ hơn" ⇒ hỏi rõ hạng, không đoán
+    assert ma(sl.HanhDong(loai="doi_hang_o", ngan_sach="vua")) == [("hang_dang_dung", "Lịch đang gợi ý chỗ ở hạng 2–3 sao rồi.", False)]
+    assert ma(sl.HanhDong(loai="doi_hang_o", ngan_sach="cao"), bang_lt=None)[0][0] == "khong_muc_o"  # cờ nơi ở tắt
+    mot_ngay = sl.luu_tu_lich(v2.xep_v2(BANG_V2, v2.tu_truong({"so_ngay": "1"})), None, None)
+    assert ma(sl.HanhDong(loai="doi_hang_o", ngan_sach="cao"), luu=mot_ngay)[0][0] == "khong_muc_o"
+    # bảng nhỏ tự đặt: bỏ mọi cơ sở 4–5 sao ⇒ `chon_co_so` sẽ lùi về mọi hạng; lượt sửa phải nói "chưa có hạng đó", không báo "Đã đổi"
+    thieu = {**BANG_LT, "co_so": [c for c in BANG_LT["co_so"] if ltl.MUC_HANG[c["xep_hang"]] != 0]}
+    assert ma(sl.HanhDong(loai="doi_hang_o", ngan_sach="cao"), bang_lt=thieu)[0][:2] == ("hang_khong_co", sl.CAU_KHONG_DOI["hang_khong_co"].format(diem="4–5 sao"))
+    kq = sl.ap(BANG_V2, luu, [sl.HanhDong(loai="doi_hang_o", ngan_sach="cao")], luu_tru=BANG_LT)
+    assert [d for d in sl.thay_doi(BANG_V2, kq)] == [{"cau": "Đã đổi hạng chỗ ở: 2–3 sao → 4–5 sao.", "duoc": True}]
+    with pytest.raises(ValueError):
+        sl.HanhDong(loai="doi_hang_o", ngan_sach="6 sao")  # mức ngoài 3 giá trị ⇒ schema từ chối

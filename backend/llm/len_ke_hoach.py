@@ -16,7 +16,6 @@ from agents.exceptions import AgentsException
 from openai import OpenAIError
 
 from llm import lich_trinh_v2 as lt2
-from llm import luu_tru_lich as ltl
 from llm import quan_lich as ql
 from llm import sua_lich_v2 as sl
 from llm import thoi_tiet as tt
@@ -124,13 +123,7 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
     """Theo cờ: nơi ở (`o_dau`, khu cả chuyến + cơ sở) và quán mỗi bữa (`an`) — đều do code chọn, không vào tin nhắn gửi model (`tin_nhan_model`
     không đọc hai khoá này). Dùng chung cho lịch thật (`chuan_bi`) và lịch mẫu "Ví dụ" (`api/routes/cong.py`)."""
     if flags.luu_tru_lich:
-        ts_k = khung["tham_so"]
-        # có hoạt động buổi tối (bộ xếp chỉ đặt buổi tối ở trung tâm) ⇒ khách về trung tâm mỗi tối ⇒ ở trung tâm (review B 14/11, người xem v3)
-        toi = [j for ng in khung["ngay"] for j in ng["buoi"]["toi"] if j in bang.theo_id]
-        # kiểm giả định "buổi tối ở trung tâm" bằng chính bảng khu (review E m-1), không tin ngầm vào bộ xếp
-        co_toi = bool(toi) and all(flags.luu_tru_bang["cum_ve_khu"][bang.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi)
-        lich["o_dau"] = ltl.o_dau(flags.luu_tru_bang, [bang.theo_id[j]["cum"] for j in lt2.diem_ban_ngay(khung)], len(khung["ngay"]),
-                                  bool(ts_k["tre_em"] or ts_k["lon_tuoi"]), co_toi, ts_k.get("ngan_sach"))
+        lich["o_dau"] = lt2.o_dau_khung(flags.luu_tru_bang, bang, khung, khung["tham_so"].get("ngan_sach"))
     if flags.quan_lich:
         lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
 
@@ -240,8 +233,9 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     """Câu người dùng ⇒ (một lần gọi hiểu ý) hành động có tên ⇒ code áp trên lịch đã lưu. Bấm nút thẻ chọn ⇒ không gọi model.
     Trả None khi model trả danh sách rỗng / lỗi ⇒ lõi đi đường thường."""
     bang, luu = flags.bang_lich_v2, trace.lich_luu
+    luu_tru = flags.luu_tru_bang if flags.luu_tru_lich else None  # cờ nơi ở tắt ⇒ "đổi hạng chỗ ở" báo không có mục chỗ ở
     if trace.sua_chon is not None:
-        kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon)
+        kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon, luu_tru=luu_tru)
     else:
         call_log = CallLog()
         try:
@@ -253,7 +247,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         if not hanh_dong and not bi_chan:
             trace.sua = {"n_hanh_dong": 0}
             return None
-        kq = sl.ap(bang, luu, hanh_dong)
+        kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru)
         if bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),

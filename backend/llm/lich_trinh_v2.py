@@ -398,6 +398,18 @@ def diem_ban_ngay(khung: dict) -> list[str]:
     return [j for ng in khung["ngay"] for b in BUOI_NGAY for j in ng["buoi"][b]]
 
 
+def o_dau_khung(bang_luu_tru: dict, bang: BangV2, khung: dict, ngan_sach: str | None) -> dict | None:
+    """Ô "Nơi ở" của một khung với mức hạng `ngan_sach` (`luu_tru_lich.o_dau`). Dùng chung: lịch thật (`len_ke_hoach.gan_o_an`) và lượt sửa
+    "đổi hạng chỗ ở" (`sua_lich_v2.ap` — thử mức mới trước khi nhận)."""
+    ts = khung["tham_so"]
+    # có hoạt động buổi tối (bộ xếp chỉ đặt buổi tối ở trung tâm) ⇒ khách về trung tâm mỗi tối ⇒ ở trung tâm (review B 14/11, người xem v3)
+    toi = [j for ng in khung["ngay"] for j in ng["buoi"]["toi"] if j in bang.theo_id]
+    # kiểm giả định "buổi tối ở trung tâm" bằng chính bảng khu (review E m-1), không tin ngầm vào bộ xếp
+    co_toi = bool(toi) and all(bang_luu_tru["cum_ve_khu"][bang.theo_id[j]["cum"]] == ltl.KHU_LOI for j in toi)
+    return ltl.o_dau(bang_luu_tru, [bang.theo_id[j]["cum"] for j in diem_ban_ngay(khung)], len(khung["ngay"]),
+                     bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi, ngan_sach)
+
+
 def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
     """Luật xếp kiểm **độc lập** với `xep_v2` (mỗi lỗi một mã; khung đúng ⇒ []): dùng cho mô phỏng toàn tổ hợp + test cố tình vi phạm."""
     T, ts = bang.theo_id, khung["tham_so"]
