@@ -1,3 +1,10 @@
+# STATUS A — KẾT PHIÊN 15/11 (viết 14:44 15/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11)" ⇒ hỏi quyền phiên (một câu) ⇒ cùng lượt giao: E 7 điểm lịch (`diem_v9`) · B W79 (sha vào `chat_metrics`) · C W81 `scripts/commit_push.sh` + bảng lưu trú v5 gộp Như Phú ⇒ rồi hỏi User các câu ở "Câu hỏi cho User" (Bến Ngự, sửa lịch hạng sao / ngày đi, tốc độ còn lại, ảnh User tìm phụ), mỗi lần một câu. Khi C xong W81: A sửa câu `WORKFLOW.md` §5 cho khớp tên / cách dùng script thật.
+- Xong 15/11 (A): điều phối; ~20 lần merge + cổng (server thật cho nhánh chạm chat / route); review 7 + 3 + 8 + 1 ảnh; tự kiểm nguồn QCVN 84:2024 (pdftotext Phụ lục B) + Open-Meteo + khamphahue; viết lại handoff + archive `CURRENT_HANDOFF_LICH_SU_2026-11-15.md`; Project_Status; PROJECT_HISTORY; nhật ký; W76–W81 vào luật (W79 / W81 phần code chờ B / C); bẫy `Project_Status.md` §8; vòng tự soi 1 + 2; 2 lượt máy cho A `docker-images-src`.
+- Bẫy A (15/11): (1) chuyển số tốc độ 20,6 % / 5,9 s cho User trước khi có người hỏi "lượt đo hay lượt thật" — sai do log trộn ⇒ đính chính; (2) duyệt sửa rào số 0 đầu trước khi đếm (0 / 76 ⇒ bỏ); (3) gõ giờ tay "12:20", "12:5x", "10:4x", "14:4x" (hook bắt hết, đã sửa bằng `date`); (4) gọi TaskStop song song với lệnh gửi câu ⇒ tắt server trước khi gửi; (5) gửi câu thử sai tên trường (`question` thay `query`); (6) report tracked chép tên + địa chỉ / câu kho bị hook chặn 3 lần lúc A commit.
+- Server / worktree của A: không còn (8020 đã tắt). Tiền A ≈ 0,01 USD (cổng ổn định).
+
 # STATUS A — PHIÊN 15/11 (mở 09:33; cập nhật 09:38 15/11/2026 `date`)
 
 - Terminal: A `hue-rag-26` · B `hue-rag-b2` · C `hue-rag-f9` · E `hue-rag-3e` (Claude Code, trực tiếp).

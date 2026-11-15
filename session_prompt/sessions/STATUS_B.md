@@ -1,3 +1,48 @@
+# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11) — B viết 14:42 15/11/2026, terminal `hue-rag-b2` (A `hue-rag-26` · C `hue-rag-f9` · E `hue-rag-3e`)
+
+## Việc phiên sau (A đã định, User chốt khi kết phiên)
+- **W79 — ghi git sha vào mỗi dòng `chat_metrics` + script đếm lọc theo sha** (vòng cải tiến 32, `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; chờ / đã User duyệt — đọc handoff).
+  - Vì sao: 15/11 B + E đếm log từ 10/11 trộn lượt **trước** bản sửa đã merge ⇒ số tốc độ sai (20,6 % / 5,9 s) đã tới User (đính chính cuối `report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md`).
+  - Gợi ý làm: lấy sha một lần lúc khởi động (`git rev-parse --short HEAD` trong thư mục repo; không có git ⇒ `null`), thêm trường `git_sha` vào dict metrics ở `backend/api/routes/chat.py` (3 chỗ `logger.info("chat_metrics …")`: :230, :483, :611 — gom về một chỗ dựng dict nếu có sẵn). Worktree / server tạm tự mang sha của nhánh.
+  - **Bẫy:** `test_api_chat.py::test_real_first_chunk_budget_error_has_no_partial_answer` KHOÁ tập trường `chat_metrics` (Project_Status §8) ⇒ sửa test cùng nhánh; kiểm dòng log thật qua server (cổng ổn định), không chỉ test.
+  - Script đếm: `scripts/` hoặc `data/…/tools/dem_log.py --sha <sha>` (lọc `git_sha`, bỏ model `probe`, chỉ lượt có `llm_calls` tính tiền) — mẫu lọc ở `data/dem_toc_do_2026-11-15/dem.py`, `tach_ms.py`.
+  - Đo: 0 USD (không đổi chuỗi gửi model). Nhánh nhỏ, có thể merge thẳng nếu W80 được duyệt (≤ 10 dòng + test tất định + không đổi câu người dùng thấy) — nhưng chạm test khoá trường ⇒ cứ nhờ review 5 dòng.
+
+## Đã làm 15/11 (đều xong; merge / tag / commit do A)
+- Đo bù ghi kho 4/5/6 (65 câu): ĐẠT, 0 tụt — `b_do_bu_implementation.md`.
+- Tra ngưỡng mưa + so 3 model Codex (0 USD API): khuyến nghị 6 mm (User chốt, C làm) · Codex mặc định đổi `gpt-6.1-terra` (User) — `b_nguong_mua_3_model.md`.
+- **Chọn chỗ ở theo hạng sao** (`p9-ngan-sach-o`, merge `418a585`) — `b_ngan_sach_o_implementation.md`.
+- **Lọc ven biển theo `phia_bien`** (`p9-phia-bien`, merge `f980853`/`087a1d4`) — `b_phia_bien_implementation.md`.
+- **Nhãn "khả năng mưa cao nhất trong ngày"** (`p9-nhan-mua`, merge `b52dc66`) — `b_nhan_mua_implementation.md`.
+- **Thời tiết "tuần sau"** (`p9-tuan-sau`, merge `5738e8d`) + nhãn X01 bộ B5b sửa (md5 `65c6d4bc33f2`, sao lưu `data/phase_9/bo_do_b5b/cau_da_thay.truoc_tuan_sau_2026-11-15.jsonl`) — `b_tuan_sau_implementation.md`.
+- Tốc độ — **2 bậc ÂM, tốc độ GÁC** (A + User): tìm song song (tag `hoso/p9-tim-song-song`) · trần tìm thêm 1 (tag `hoso/p9-tran-tim-1`). Câu thường đã đạt sàn sau mốc merge (p50 2,10 / p95 4,32 s). Report `b_tim_song_song_implementation.md`, `b_tran_tim_1_implementation.md`, `b_dem_toc_do.md`.
+- Rà nợ cũ (`b_ra_no_cu.md`): sửa số 0 đầu mục web làm xong nhưng **BỎ** (0 / 76, nới rào — `b_web_so_0_implementation.md`); còn lại A xoá khỏi danh sách nợ.
+- Review: plan khách sạn C (có 1 finding SAI của B về `minh_hieu`, đã rút) · bảng nháp 7 điểm lịch E (ready, 3 minor đóng — `b_review_diem_lich_moi.md`) · ảnh trong chat C · đề xuất sửa lịch thêm trường C.
+- Tài liệu: bài 19 dòng 43–44, bài 14 (sửa câu sai "tuần sau"), sổ 06 bản 15, sổ 07 bản 57 / 59.
+
+## Bẫy gặp 15/11 (để khỏi lặp)
+1. **Đếm log phải cắt theo mốc merge / sha** — B 2 lần đề xuất sửa lỗi đã sửa rồi (lich_san `1633c18`, định tuyến 2 lần `3aef0ca`).
+2. **Ghi sha / "đã push" chỉ sau khi đọc output** — B gửi sha đoán 2 lần (379605b, 0980abb).
+3. `evaluation generate --flags …` KHÔNG dựng hàm dự báo thời tiết ⇒ lỗi khởi tạo; muốn đổi một cờ ⇒ sửa tạm `settings.yaml` trong worktree rồi trả lại (mẫu `data/tim_song_song_2026-11-15/tools/do.sh`).
+4. Lệnh có phí luôn chạy `DRY=1` trước — 11:29 B lỡ gọi thẳng (may lỗi trước API, 0 USD).
+5. Sửa dòng đầu sổ `bao_cao_he_thong/*` ⇒ đọc lại ngay trước khi sửa (người khác vừa thêm bản mới ⇒ B ghép hỏng 1 lần, đã sửa).
+6. `sed` với giờ có "/" ⇒ hỏng biểu thức; dùng python thay chuỗi. Giờ trong file luôn từ `date` (B gõ 12:03 tay, hook bắt).
+7. Model cho phép `parallel_tool_calls` gần như không gọi song song (1 / 176) mà còn **tìm ít đi** ⇒ đừng thử lại không có lý do mới.
+8. Câu Golden giá vé đi lại từ tỉnh khác: main tự trượt "ngoài kho" 3 / 5 (A/A `data/tim_song_song_2026-11-15/aa_160/`) — đã vào Câu hỏi cho User; mọi lượt đo có câu này so với mốc nhiễu đó.
+
+## Câu hỏi / thắc mắc còn mở
+- Chợ Bến Ngự "nửa buổi" chỉ 1 nguồn chưa tự đọc (403) — câu hỏi User (A giữ).
+- Tốc độ còn trượt: câu tìm thêm (~7,8 % lượt sau 13/11, p50 ~5,8 s, n = 5) + mục web — hướng còn lại cần User (Serper sớm = đường dữ liệu mới; lời dặn gộp câu tìm).
+
+## Tiền paid B 15/11 (cộng `usd` từ file kết quả + log server tạm)
+đo bù 0,0291 · nhãn mưa 0,0323 · tìm song song 0,1677 · A/A giá vé 0,0051 · trần 1 0,0536 · tuần sau 0,0236 · Playwright 0,0006 ⇒ **≈ 0,312 USD**. Codex: 3 lượt gói ChatGPT; agent con: quota Claude.
+
+## Worktree / server / nhánh
+- 0 worktree `/tmp` của B, 0 server, 0 tiến trình nền.
+- Nhánh đã merge (A đưa vào lệnh dọn): `p9-ngan-sach-o`, `p9-phia-bien`, `p9-nhan-mua`, `p9-tuan-sau`.
+- Nhánh không merge: `p9-tim-song-song`, `p9-tran-tim-1` (đã tag `hoso/…` ⇒ xoá được) · `p9-web-so-0` (bỏ, không tag ⇒ xoá).
+- Chưa commit (A): `report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md` (sửa 1 chữ "13:xx").
+
 # STATUS B — PHIÊN 15/11 (mở 09:34 15/11/2026, terminal `hue-rag-b2`; C `hue-rag-f9`; E `hue-rag-3e` · A `hue-rag-26` (suy ra: C, E đã tự báo))
 - 09:34 15/11/2026 — Kiểm nhanh khớp handoff: main 6c7c01b sạch, hooksPath .githooks, Qdrant 1 collection 9.425 điểm, 0 server; `bu_doi.json` 65 câu, mốc `ghi_kho_2/sau/golden.jsonl` có; `data/sua_kho_2026-11-14_do_bu/` chưa có (đúng). Đã báo A. Chờ A giao việc đo bù (mục 0 handoff).
 - 09:42 15/11/2026 — **Đo bù ghi kho 4/5/6 XONG, ĐẠT**: 65 câu ×1 — 0 lỗi, từ chối 2 ⇒ 1 (0 mới), 0 lỗi trích dẫn; 57 chữ khác mốc ⇒ chấm mù 56 cùng ý + 1 khác ý (bản sau tốt lên: hết từ chối). ≈ 0,029 USD. Report `report_agent/2026-11-12_ra_khoang_cach/b_do_bu_implementation.md` (chưa commit); dữ liệu `data/sua_kho_2026-11-14_do_bu/`. 0 server. Chờ A.

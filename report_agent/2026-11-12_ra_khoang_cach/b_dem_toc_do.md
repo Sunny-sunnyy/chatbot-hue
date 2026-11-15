@@ -55,4 +55,4 @@ Bảng trên gộp mọi lượt **từ 10/11**, nên trộn cả lượt **trư
 - **Cuộc đã có lịch, hỏi câu thường:** "định tuyến 2 lần" chỉ có ở 10 lượt 14:08–14:10 14/11, **trước** `3aef0ca` (14:27 14/11 — dùng lại định tuyến của đường thường); mọi lượt sau: 1 lần.
 - **Tìm thêm / mục web, sau khi bật "hết lượt tìm thì dừng"** (`9d6a0f7`, 20:07 13/11): 243 lượt gọi model thật ⇒ tìm thêm **7,8 %**, chữ đầu p50 **5,78 s** (n = 5 stream);
   mục web 3,7 % (n = 1 stream). Vẫn trượt sàn p50 3 s, nhưng phần lượt nhỏ hơn bảng trên (20,6 % ⇒ ~11,5 %), n chữ đầu rất nhỏ.
-- ⇒ Hai đề xuất tốc độ B gửi 13:xx 15/11 (lịch tính sẵn bị thiếu; định tuyến 2 lần) **rút lại**: cả hai đã được sửa trước đó.
+- ⇒ Hai đề xuất tốc độ B gửi lúc chuẩn bị "việc tiếp" chiều 15/11 (lịch tính sẵn bị thiếu; định tuyến 2 lần) **rút lại**: cả hai đã được sửa trước đó.

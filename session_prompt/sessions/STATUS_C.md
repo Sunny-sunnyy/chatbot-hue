@@ -1,4 +1,50 @@
-# STATUS C — phiên 15/11 (C `hue-rag-f9` · A `hue-rag-26` · B `hue-rag-b2` · E `hue-rag-3e`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên 15/11 (C `hue-rag-f9` · A `hue-rag-26` · B `hue-rag-b2` · E `hue-rag-3e`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11 — C viết 14:43 15/11/2026 `date`)
+
+- **Trạng thái máy:** 0 worktree `/tmp/c_*`, 0 server tạm (cổng 8037–8040 đã tắt), 0 tiến trình nền của C. Mọi nhánh của C hôm nay đã merge.
+- **Việc phiên sau đã định (A giao lúc kết phiên):**
+  1. **Bảng lưu trú v5 — gộp "Như Phú":** bảng v4 (`data/anh_khach_san_2026-11-15/bang_luu_tru_lich_v4.json`, md5 `c98ca8c19889`, 137 cơ sở, 58 có ảnh) có 2 dòng "Khách sạn Như Phú" (16 và 14b Chu Văn An) ⇒ trang Chỗ ở + thẻ khách sạn có thể ra 2 thẻ. User chốt gộp (hỏi A cách gộp nếu chưa rõ: giữ dòng nào, địa chỉ nào).
+     - Cách làm như v3: script mới trong `data/` (mẫu `data/khach_san_2026-11-15/tools/dung_bang_v3.py`), ra **file v5 mới**, KHÔNG sửa tại chỗ file main đang trỏ.
+     - Đổi `settings.yaml` `lich_trinh_bang_luu_tru` trên nhánh riêng.
+     - Chạy lại `dung_trung.py` (danh sách tên trùng sinh từ bảng) + `so_v2_v3.py` kiểu so trước / sau (đổi đường dẫn) ⇒ báo số lịch đổi.
+     - Test file chạm: `test_luu_tru_lich.py`, `test_the_khach_san.py`. Theo W80 (nếu User duyệt): nhánh nhỏ, tất định ⇒ A merge thẳng.
+  2. **`scripts/commit_push.sh` (W81):** commit theo đường dẫn truyền vào ⇒ nếu hook chặn thì in "CHƯA PUSH" và thoát ≠ 0 ⇒ push ⇒ in sha của origin (`git ls-remote`). Lý do: hôm nay C (×1) và B (×2) báo "đã push" khi commit bị hook chặn. Governance / scripts: hỏi A ai sửa (`scripts/` không thuộc vùng governance, nhưng là công cụ chung ⇒ A review).
+- **Đã làm hôm nay (đều đã merge, report ở `report_agent/2026-11-12_ra_khoang_cach/`):**
+  - Ghi chú ăn uống Bạch Mã / Nhị Hồ (`p9-ghi-chu-an`) — `c_dem_quan_nam_xa.md`.
+  - Ngưỡng mưa 6 mm (`p9-mua-6mm`, `fe895c1`) — `c_dem_mua.md` phần 5 (thước cố định QCVN).
+  - Trang Chỗ ở + bảng v3 (`p9-cho-o`, `60f556b`) — `c_cho_o_implementation.md`.
+  - Ảnh nhiều nơi trong chat (`p9-anh-chat`, `e801c83`) + khớp tên cả trên câu hỏi (`p9-anh-chat-hoi`, `688bad8`) — `c_anh_chat_implementation.md`, `c_dem_anh_chat.md`, `c_dem_anh_chat_b2.md`.
+  - Thẻ khách sạn trong chat (`p9-the-ks-chat`, `aecde1d`) — `c_dem_ks_chat.md`, `c_the_ks_chat_implementation.md`.
+  - Rào "ngày tháng ⇒ đổi số ngày" (`p9-rao-so-ngay`, `78dd6b9`) — `c_dem_sua_lich_truong.md`.
+  - Sửa kho Tây Sơn 1786 / 1788 (chỉ mục dựng lại 11:22, record `1b53af26b662`) — `c_kho_mau_thuan.md`, `c_sua_kho_tay_son_implementation.md`.
+  - Plan: `docs/superpowers/plans/2026-11-15-{khach-san-trang-va-ngan-sach,anh-trong-chat,the-khach-san-chat}-plan.md`.
+  - Review: Docker nháp E (`c_review_docker_nhap.md`).
+  - Chuẩn bị: 10 nơi cho bảng điểm lịch (`data/diem_lich_moi_2026-11-15/c_chon_10.md`; E làm tiếp diem_v9 với 7 nơi).
+  - Tài liệu: bài 22, 23, 24, 25 + sổ 02, 07 + README — mỗi lần sửa nhiều có agent con kiểm độc lập (biên bản `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_*`).
+- **Nhánh đã merge (cho lệnh dọn của A):** `p9-ghi-chu-an` (nhánh remote đã không còn), `p9-mua-6mm`, `p9-cho-o`, `p9-anh-chat`, `p9-the-ks-chat`, `p9-anh-chat-hoi`, `p9-rao-so-ngay`. C không tự xoá.
+- **Việc dở / ý chờ User:**
+  - Sửa lịch bằng lời đổi thêm **hạng sao** (bậc 1) và **ngày đi** (bậc 2) — đếm `c_dem_sua_lich_truong.md`; theo phản biện B: mỗi bậc đo Q3 + Q5 0 / 64 + bộ trộn khẩn cấp 0 / 16 ≈ 0,1–0,25 USD.
+  - Giới hạn đã nhận:
+    - ảnh chat "Lý Huế" ↔ "quản lý Huế";
+    - thẻ khách sạn "Meliá" ↔ "Meliã" (tên khác dấu ⇒ không thẻ);
+    - lễ hội / nghệ thuật trong lịch vẫn 39 % ngoài sở thích (kho không có nơi biểu diễn mới).
+- **Bẫy gặp hôm nay:**
+  - Hook pre-commit chặn commit (test chép tiêu đề bài kho ≥ 40 ký tự) mà C đã báo "đã push" ⇒ luôn `git ls-remote` trước khi báo (W81 sẽ máy hoá).
+  - Worktree mới chưa build `frontend/dist` ⇒ 3 test giao diện fail giả ⇒ build trước khi chạy suite (E: nếu đổi thành skip thì phải in "SKIP vì chưa build").
+  - `uv run` trong worktree tạo `.venv` mới ⇒ dùng `--project /home/minhhieu/hue_rag` hoặc `/home/minhhieu/hue_rag/.venv/bin/python` + `PYTHONPATH=<worktree>/backend`; worktree thiếu `data/`, `knowledge-base-hue/` ⇒ symlink tạm, gỡ trước commit.
+  - `pkill -f "<chuỗi>"` có thể giết chính shell đang chạy (chuỗi có trong lệnh) ⇒ tắt server bằng pid từ `ss -ltnp`.
+  - Đo "mưa thật" bằng thước trùng ngưỡng đang thử ⇒ thiên vị; luôn thước cố định.
+  - Mô phỏng lịch phải dùng cùng 4 ngày đi (None, 28/11, 7/4, 16/11) — E lệch số vì chạy không ngày đi.
+  - Số trong plan phải đếm trên khung thật, không liệt kê tổ hợp (ước 36 ⇒ thật 32 / 33).
+  - Hai session gửi chéo nhau khi bàn thứ tự ⇒ để A chốt.
+  - Dò hành vi phải qua đúng đường người dùng đi: `POST /api/chat` không stream không vào luồng sửa lịch.
+- **Câu hỏi còn mở:** không có câu mới của C. Các câu chờ User (W79–W81, sửa lịch hạng sao / ngày đi) A đã giữ.
+- **Tiền C hôm nay ≈ 0,05 USD** (cộng từ log / file từng việc):
+  - Tây Sơn 0,029 (Serper 0,002 · 2 câu thử 0,0009 · chạy bù an toàn 0,0218 + ngoài kho 0,0046);
+  - khách sạn chat 0,0134 (12 câu 0,0083 · Vedana ×5 0,0041 · Playwright ≈ 0,001);
+  - ảnh chat Playwright ≈ 0,002; trang chỗ ở Playwright ≈ 0,002; ghi chú ăn ≈ 0,0007; sửa lịch đếm 0,0012.
+  - Chưa tính: các lượt gọi thật trong 6 lần chạy cả `backend/tests` (`--env-file`), chưa tách số.
 
 ## PHIÊN 15/11 — nhật ký
 **Mở phiên 15/11:** kiểm nhanh khớp handoff (main `6c7c01b`, Qdrant 9.425). Chờ A.
@@ -31,6 +77,7 @@
 **Rào số ngày (A giao sửa ngay):** nhánh `p9-rao-so-ngay` @ `d5dfec8` — sau review E vòng 1 (M-1 + 2 minor đã sửa), chờ E vòng 2. Test 20, suite 1085, Q3 16 đúng chặn 0, 3 sai chặn 3. Worktree `/tmp/c_rs`.
 **Rào số ngày merge (`78dd6b9`); tài liệu bài 25 §1 + sổ 07 (1 dòng mỗi chỗ) — chờ A commit. Đã gỡ mọi worktree `/tmp/c_*`. Rảnh.**
 **Chọn 10 nơi thêm vào bảng điểm lịch (chuẩn bị, chưa sửa bảng):** `data/diem_lich_moi_2026-11-15/c_chon_10.md` — thiếu điểm: ẩm thực 56,4 %, chụp ảnh 51,7 %, lễ hội 39 %, thiên nhiên 24,4 % (+72 buổi trống), di tích 0 %. Đã gửi E gom căn cứ. Rảnh.
+**Vòng tự soi 2 đã chốt (W79–W81, chờ User).** Rảnh — chờ User về ~14:30. 0 worktree / server / tiến trình nền của C.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 
