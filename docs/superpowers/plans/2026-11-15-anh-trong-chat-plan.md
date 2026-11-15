@@ -44,3 +44,14 @@ Test rộng `backend/tests` 1 lần trước bàn giao. Không bộ kín (code q
 | Nguồn / đường ra mới | Không: ảnh tự host sẵn có, bảng mã bài sẵn có | khớp |
 | Chữ không tin cậy | Chữ model chỉ dùng để **so** tên; không dựng URL từ chữ; ảnh chỉ lấy từ `anhBai.js` theo `bai_id` của server | khớp |
 | Rào đo hai chiều | T1 (một bài giống hệt) + T4 (0 ảnh sai) | khớp |
+
+## Bản 2 (C, 12:30 15/11/2026) — thêm khớp tên trên câu hỏi
+Đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_anh_chat_b2.md`: câu có ảnh 103 ⇒ 106 / 154 (mô phỏng), 3 / 3 ảnh mới đúng nơi. Hướng "một bài một nơi trong nguồn" **bỏ** (2 / 5 lạc đề).
+- **Đổi:** `anhTraLoi(turn)` nhận thêm `turn.question` (câu người dùng gõ — giao diện đã có trong lượt). Bài được trích, đủ 3 rào cũ (`LOAI_MOT_NOI`, ảnh chắc, tên ≥ 2 chữ), khớp `tenKhop` trên **chữ trả lời HOẶC câu hỏi** ⇒ được hiện. Thứ tự, trần 3, tên dưới ảnh như cũ. Một bài ⇒ như cũ.
+- **Tiêu chí:**
+  - T1 các test hiện có giữ nguyên;
+  - T2 thêm 2 ca: tên chỉ có trong câu hỏi ⇒ có ảnh; tên có trong câu hỏi nhưng bài không được trích ⇒ không;
+  - T3 mô phỏng ≥ 106 / 154, 0 ảnh cũ mất;
+  - T4 đã nhìn lại 3 ảnh mới (đúng);
+  - T5 không Playwright: không có kiểu hiển thị mới (luật W76).
+- 0 USD, ~30 phút. Chỉ chạm `anhTraLoi.js` + test (`turn.question` đã có trong lượt, `chat.jsx` không đổi) ⇒ không chồng file với `p9-the-ks-chat`.
