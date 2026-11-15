@@ -1,6 +1,6 @@
 # Bài 23 — "Lên kế hoạch" bản 2: code xếp lịch theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ
 
-*Cập nhật lần cuối: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
+*Cập nhật lần cuối: 10:36, ngày 15/11/2026 · thêm sáng 15/11: lịch chỉ đổi điểm khi dự báo mưa đủ lớn (≥ 6 mm). Trước: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -45,7 +45,19 @@ cân bằng / khám phá nhiều), thích gì (tối đa 2). Ô nào không làm
 "khám phá" 240 phút, "nhẹ nhàng" 1 điểm. Từ quỹ phút ra **giờ gợi ý** cho từng điểm, và dòng "khoảng N phút đi" giữa hai điểm liền nhau. Số phút đi này
 chính là số bộ xếp đã dùng để giãn giờ, nên giờ in ra và phút đi không thể lệch nhau.
 
-**Mưa:** chỉ xét khi ngày đi nằm trong 7 ngày tới (có dự báo thật) và khả năng mưa từ 60 % trở lên. Ngày đó ưu tiên điểm trong nhà, và có một dòng "Nếu mưa".
+**Mưa:** chỉ xét khi ngày đi nằm trong 7 ngày tới (có dự báo thật). Từ 15/11 có hai mức:
+- khả năng mưa từ 60 % trở lên ⇒ có một dòng "Nếu mưa" như trước;
+- **đổi điểm sang trong nhà** chỉ khi thêm điều kiện lượng mưa dự báo từ **6 mm / ngày** trở lên. 6 mm là đầu cấp "Mưa" theo quy chuẩn khí tượng Việt Nam; dưới đó là "mưa nhỏ".
+
+Vì sao đổi: con số "khả năng mưa" của dịch vụ dự báo là giờ có khả năng cao nhất trong ngày, nên chỉ cần một giờ có thể lấm tấm là đủ 60 %. Một năm có
+222 / 365 ngày như vậy.
+
+Cách đo: lấy một năm dự báo ở Huế, so với lượng mưa đo lại từ quan trắc (bộ dữ liệu ERA5). Thước "mưa thật" giữ cố định là từ 6 mm trở lên, cho cả luật cũ lẫn luật mới.
+- Ngày lịch coi là mưa mà thật ra mưa dưới 6 mm (chỉ lấm tấm hoặc không mưa): **106 ⇒ 15**.
+- Đổi lại, có 32 ngày mưa thật mà lịch không đổi điểm (luật cũ chỉ sót 2). Nhưng **30 / 32** ngày đó vẫn có dòng "Nếu mưa" nhắc.
+- Chuyến 2–5 ngày có ít nhất một ngày bị xếp kiểu ngày mưa: **80 % ⇒ 50 %**.
+
+Giới hạn: số trên dùng bản dự báo tầm ngắn nhất. Khách xếp lịch trước 1–7 ngày thì dự báo kém hơn.
 
 **Model chỉ viết câu tả:**
 - Một lần gọi, trả về mỗi điểm một câu ≤ 30 từ, dựa trên một đoạn kho của chính điểm đó.
@@ -133,6 +145,7 @@ Bài học: **mô phỏng bắt lỗi luật, người chấm mù bắt lỗi "k
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Bản cũ 7 / 28 điểm không xếp, "đi dày" 0 / 120: `report_agent/2026-11-12_ra_khoang_cach/c_lich_trinh_khoang_cach.md` §2, §3.1 [đã chạy]
+- Ngưỡng mưa 6 mm (User 15/11): số so ERA5 ≥ 6 mm (106 ⇒ 15 báo thừa, sót 32 với 30 / 32 có dòng nhắc, chuyến 80,4 ⇒ 50,0 %): `report_agent/2026-11-12_ra_khoang_cach/c_dem_mua.md` phần 5, script `data/dem_mua_2026-11-14/so_mua_that_qcvn.py` [đã chạy]; mốc QCVN 84:2024 `b_nguong_mua_3_model.md`; code `MM_MUA_XEP`, `len_ke_hoach.ngay_mua_xep` [code].
 - Biểu mẫu 4 nhóm, thứ tự luật, quỹ phút 75 / 150, phút đi 15 / 30, quỹ 210 / 240, mưa ≥ 60 % trong 7 ngày, câu ≤ 30 từ, kiểm câu, câu dự phòng: `docs/superpowers/specs/2026-11-12-len-ke-hoach-ban-2-design.md` §3.1, §5, §5b, §5c; `backend/llm/lich_trinh_v2.py` [code]
 - Nghiệm thu, 16 / 20 – 17 / 20, gốc lỗi bài mỏng, 20 / 20, 4,06 ↔ 5,12 s, 10 điểm có đoạn mô tả, bật 10:46 / 11:00 ngày 14/11: `report_agent/…/b_len_ke_hoach_dot_1_implementation.md` §0, §4.2, §9, §12; `report_agent/…/e_review_len_ke_hoach_dot_1.md` [đã chạy]
 - Ba lỗi người chấm mù, 9.600 khung, 52 / 3.840 ⇒ 0, 1.068 câu, 12 / 12 × 2, 6 / 6: `report_agent/…/e_review_len_ke_hoach_nhanh_1411.md` (M-1, M-2, "Kiểm phần sửa"); `b_len_ke_hoach_dot_1_implementation.md` §10, §11 [đã chạy]

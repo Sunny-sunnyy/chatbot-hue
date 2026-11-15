@@ -5,6 +5,7 @@
 - 09:53 15/11/2026: review `p9-ghi-chu-an` (C, `81e3aff` + `8d0280b`) xong ⇒ ready, 2 minor (câu Bạch Mã rộng hơn kho; trưa Nhị Hồ 0 / 3.840). Biên bản `report_agent/2026-11-12_ra_khoang_cach/e_review_ghi_chu_an.md` (chưa commit). 0 USD. Worktree `/tmp/e_rv` đã gỡ. Rảnh — chờ A.
 - 09:57 15/11/2026: A merge `p9-ghi-chu-an` (`2e50789`, sổ `214a502`); m-1 + m-2 đã sửa ở `e001cb2` (E kiểm: câu Bạch Mã ghi "khu Ngũ Hồ và đỉnh núi", bỏ mục trưa Nhị Hồ). **Rảnh — chờ A.**
 - 10:30 15/11/2026: phản biện plan khách sạn (gửi C, B) + ngưỡng mưa (gửi B, C, A). Ảnh 14 bài: nhánh `p9-anh-14-bai` @ `2842102` (đã push), 249 ⇒ 256 / 263, kc 53 ⇒ 55, 7 bài vẫn trống; report `report_agent/2026-11-12_ra_khoang_cach/e_anh_14_bai.md` (chưa commit). Serper 0,057 USD. **Chờ review** (người khác, ≤ 10 ảnh). Worktree `/tmp/e_anh14` còn (gỡ sau merge). Dữ liệu: `data/anh_14_bai_2026-11-15/` (v8, ung_vien, tools/tim.py); script dựng thêm v8.
+- 10:34 15/11/2026: A review ảnh ⇒ bỏ Kỳ yên ⇒ `p9-anh-14-bai` @ `20cc7a6` (255 / 263, kc 54, trống 8), report sửa theo; chờ A merge. Review `p9-mua-6mm` (C, `0a6333e`) ⇒ ready, 1 minor docstring; biên bản `e_review_mua_6mm.md` (chưa commit). Rảnh — chờ nhánh ngân sách (B) / trang chỗ ở (C).
 
 # STATUS E — KẾT PHIÊN TỐI 14/11 (mở 17:45, kết 22:35 14/11/2026, `date`) · terminal `hue-rag-1f` · Claude Opus 5.5 · vai thực thi
 
