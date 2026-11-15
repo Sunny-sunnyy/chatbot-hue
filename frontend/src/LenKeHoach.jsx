@@ -49,7 +49,7 @@ const KIEU_DI = [["nhe_nhang", "Nhẹ nhàng", "khoảng 2 điểm một ngày"]
 const SO_THICH = BIEU_MAU.find(t => t.ten === "so_thich").chon;
 const MAC_DINH_V2 = { so_ngay: 2, nguoi_lon: 2, tre_em: 0, lon_tuoi: false, kieu_di: null, so_thich: [], ngay_di: "", ngan_sach: null };
 // Chỗ ở theo hạng sao (plan khách sạn bản 2 §2): nhãn ghi sao, không ghi "rẻ / đắt" — hạng ≠ giá, hệ thống không có giá phòng
-const NGAN_SACH = [["binh_dan", "1 sao"], ["vua", "2–3 sao"], ["cao", "4–5 sao"]];
+const NGAN_SACH = [["binh_dan", "1 sao / đạt chuẩn"], ["vua", "2–3 sao"], ["cao", "4–5 sao"]];
 
 function ngayIso(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
