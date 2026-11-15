@@ -107,7 +107,7 @@ function LichMau({ onXep, pending }) {
         Lịch của bạn có thêm câu tả từng điểm lấy từ kho, kèm nguồn.</p>
       {mau.truong && onXep && (
         <button type="button" className="nut nut-phu nhan-nut lkh-mau-nut" disabled={pending}
-                onClick={() => onXep(mau.truong, "2 ngày · 2 người lớn · cân bằng · thích di tích")}>Xếp lịch như ví dụ</button>
+                onClick={() => onXep(mau.truong, "2 ngày · 2 người lớn · cân bằng · thích di tích · chỗ ở 2–3 sao")}>Xếp lịch như ví dụ</button>
       )}
       {/* ví dụ không có nút Sửa ⇒ bỏ đuôi "sai thì bấm Sửa" của dòng "Mình hiểu" */}
       <LichV2 turn={{ key: "mau", lichV2: { ...mau.lich, minh_hieu: mau.lich.minh_hieu.replace(/\s*—\s*sai thì bấm \*{0,2}Sửa\*{0,2}\.?$/, ".") }, cauV2: mau.cau, phase: "mau" }} />
