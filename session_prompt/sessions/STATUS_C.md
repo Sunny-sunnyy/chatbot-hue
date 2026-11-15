@@ -14,6 +14,7 @@
 **Trang chỗ ở XONG:** nhánh `p9-cho-o` @ `86acfb1` (worktree `/tmp/c_co`) — chờ E review. Bảng v3 `data/khach_san_2026-11-15/` (137 cơ sở; lịch đổi 364 / 3.840: La Vela thay Indochine ở cụm An Cựu). Test 11 + suite 1050 passed, Playwright DAT. Report `c_cho_o_implementation.md`. Worktree `/tmp/c_mua` gỡ sau khi A dọn.
 **p9-cho-o sau review E (ready, 3 minor đã sửa) + rebase lên 418a585 @ `366fac8`:** test file chạm 128 passed, Playwright DAT — chờ A merge. Việc kế: nhánh nhỏ lịch lọc phía biển bằng `phia_bien`.
 **p9-cho-o merge (60f556b).** Đang: tài liệu hai tính năng khách sạn — `bai_hoc/25`, sổ `07` (bản 56), README (main working tree, chưa commit); số thật `data/khach_san_2026-11-15/dem_sau.json` (13 ⇒ 32 / 137). Agent con kiểm độc lập đang chạy ⇒ biên bản `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_cho_o.md`. Vòng tự soi 1 đã gửi.
+**Tài liệu khách sạn XONG (11:00 15/11/2026):** bài 25 + sổ 07 + README sửa theo kiểm độc lập (57 khẳng định, 10 sai chủ yếu do main đổi giữa chừng ⇒ số mới 14 ⇒ 33 / 137) — chờ A commit. Rảnh — chờ.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

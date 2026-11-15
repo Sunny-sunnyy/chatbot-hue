@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 09:51, ngày 15/11/2026 · thêm sáng 15/11: ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -136,6 +136,47 @@ thì gần cụm có nhiều điểm nhất của lịch trước, rồi có ả
   sau khi soát tay thấy nhận nhầm một nhà hàng cùng tên và lẫn chi nhánh "2" với cơ sở gốc; sai toạ độ còn tệ hơn giữ toạ độ ước (~1 km).
 - Tiền ≈ 0,28 USD (tra toạ độ + tìm ảnh). Giới hạn: chỉ khoảng 12 / 140 cơ sở từng hiện trong lịch, nên phần lớn ảnh khách sạn chưa có chỗ hiện.
 
+**Sáng 15/11 — khách tự chọn hạng sao, và một trang để xem hết.** Chỗ yếu ở trên ("12 / 140 cơ sở từng hiện") có hai cách gỡ. Anh chọn làm cả hai,
+chọn hạng sao trước.
+
+*Chọn hạng sao.* Biểu mẫu Lên kế hoạch có thêm nhóm nút không bắt buộc **"Chỗ ở theo hạng sao": 1 sao / đạt chuẩn · 2–3 sao · 4–5 sao**.
+- Nút ghi sao chứ không ghi "bình dân / cao cấp", vì hạng sao không phải giá: khách sạn 1 sao vẫn có thể đắt hơn 2 sao.
+- Chọn một mức ⇒ thẻ Nơi ở chỉ có tới 5 cơ sở của đúng mức đó, cùng khu và cùng luật xếp như trước. Không chọn ⇒ thẻ như cũ.
+- Mức đã chọn được giữ khi khách sửa lịch bằng lời. Model không thấy mức này.
+- Đo (0 USD):
+  - mô phỏng 3.840 khung × 3 mức: mọi cơ sở hiện ra đúng mức, không khu nào trống mức;
+  - khi không chọn mức: so từng ký tự ô Nơi ở của 3.840 khung với bản trước ⇒ giống hệt;
+  - trình duyệt thật: bấm "4–5 sao" thì thẻ chỉ có khách sạn 4–5 sao.
+- Lợi: đếm trên 3.840 lịch mô phỏng, số cơ sở có lần hiện, cộng cả ba mức, lên **33 / 137**; không chọn mức chỉ có 14 / 137.
+  - Không chọn mức từ 12 lên 14 là nhờ bảng dọn lại (xem dưới), không phải nhờ nút.
+  - Bản thiết kế ước 36 mà không ghi cách tính; đếm thật ra 33.
+  - Vẫn ít, vì luật xếp tất định: cùng một mức, cả khu trung tâm chỉ có 3–4 bộ 5 cơ sở (tuỳ cụm chính của lịch), và khoảng 2.200–2.500 / 3.036 lịch trung tâm ra cùng một bộ.
+
+*Trang "Chỗ ở".* Thẻ Nơi ở có thêm link **"Xem thêm chỗ ở khu này"**, mở trang liệt kê mọi cơ sở theo khu.
+- 4 nhóm: trung tâm · phía tây · ven biển phía bắc · phía nam Phú Lộc – Lăng Cô. Ven biển tách hai phía vì cách nhau khoảng 40 km.
+- Trong mỗi khu chia 3 mức sao, lọc được theo khu và theo mức.
+- Mỗi cơ sở có ảnh nếu có, hạng, địa chỉ, "Bản đồ", "Tìm phòng". Không giá, không báo còn phòng.
+- Trang chỉ mở từ thẻ Nơi ở, không có trên thanh trên cùng.
+- Trước khi lên trang, danh mục được dọn lại từ 140 còn **137** cơ sở:
+  - 1 khách sạn ghi hai lần (cùng số nhà, viết khác) ⇒ gộp;
+  - 2 cơ sở ở A Lưới, Phong Điền ⇒ bỏ, vì lịch không có điểm nào ở đó;
+  - tra toạ độ cho 2 cơ sở để xếp lại khu: một khách sạn 5 sao vốn bị để "ngoài khu" hoá ra cách An Cựu 2,5 km ⇒ vào khu trung tâm; một khách sạn 4 sao ven biển
+    chỉ ghi tên xã ⇒ xếp vào ven biển phía bắc.
+  - Việc dọn này làm **364 / 3.840** lịch đổi một khách sạn: khách sạn 5 sao vừa vào khu trung tâm được gắn với cụm An Cựu, nên đứng trước một khách sạn 5 sao
+    khác ở các lịch có nhiều điểm quanh An Cựu nhất. Đây là luật "gần cụm có nhiều điểm nhất trước" sẵn có, không phải luật mới.
+  - Lịch ven biển cũng chọn phía bắc / nam theo cùng nhãn phía của trang (trước đây dò chữ trong địa chỉ) ⇒ khách sạn 4 sao kia vào thêm 36 lịch ven biển phía bắc,
+    không lịch nào mất cơ sở.
+- Đo: trình duyệt thật ở khổ máy tính và điện thoại:
+  - trang hiện đủ 137 cơ sở;
+  - lọc "phía nam" ra 5, thêm "4–5 sao" ra 3;
+  - 0 lỗi, 0 tải gì từ ngoài, link chỉ mở hai trang tìm (bản đồ, tìm phòng);
+  - bấm link từ một lịch trung tâm thì mở đúng nhóm trung tâm.
+- Người kiểm bắt được hai khách sạn cùng tên "Như Phú" ở hai số nhà: trang vẫn hiện hai dòng, nhưng hai dòng mang cùng một nhãn nội bộ nên có thể vẽ lẫn
+  nhau khi lọc. Nay nhãn gồm cả địa chỉ.
+- 69 / 137 cơ sở có ảnh, phần còn lại hiện ô màu. Tính theo lần hiện trong lịch thì ô có ảnh là 97,6 % khi không chọn mức; chọn mức 1 sao chỉ còn 79,5 %.
+
+Tiền hai việc ≈ 0,002 USD: vài lượt xếp lịch thật cho trình duyệt. Toạ độ dùng lại kết quả tra hôm trước.
+
 ## 4. Quán ăn trong lịch
 
 Mỗi ngày của lịch có tối đa hai dòng **"Ăn trưa gần …"** và **"Ăn tối gần …"**, mỗi dòng 1–2 quán. Quán có bài trong kho thì bấm mở bài; quán lấy từ bản
@@ -270,7 +311,8 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - **Mục web** chọn vế theo số từ chung với dòng ý thiếu, sau khi bỏ các từ đã có ở phần trả lời (vd tên nơi). Nếu vẫn hoà hoặc không có từ chung ⇒ mục
   web viết cho cả câu như trước.
 - **Chỗ ở:** lịch có buổi tối luôn ra trung tâm; trong 3.840 khung mô phỏng không lịch nào còn ra khu phía tây. Trong cùng mức, hạng cao đứng trước (tối 14/11), rồi cơ sở
-  gần cụm có nhiều điểm nhất, rồi có ảnh, rồi theo tên — nên nhiều lịch trung tâm vẫn ra cùng 5 khách sạn; chỉ khoảng 12 / 140 cơ sở từng hiện. Không có giá, không có điểm đánh giá.
+  gần cụm có nhiều điểm nhất, rồi có ảnh, rồi theo tên — nên nhiều lịch trung tâm vẫn ra cùng 5 khách sạn. Không chọn mức: 14 / 137 cơ sở từng hiện; cộng
+  cả ba mức sao: 33 / 137. Phần còn lại chỉ thấy ở trang "Chỗ ở". Không có giá, không có điểm đánh giá; hạng sao là hạng trong danh mục (lấy 12/11/2026), không phải giá.
 - **Quán ăn:** sau tối 14/11 Thủy Xuân, Kim Long, biển / đầm phá đã có quán kho ở hơn một nửa số bữa; phần còn lại là quán bản đồ mở, chưa kiểm. Vùng xa phía
   nam (Bạch Mã, Nhị Hồ) không có quán, chỉ có câu nhắc theo sổ tay (từ 15/11). Dòng đầu vẫn ghi "Ăn tối gần Thác Nhị Hồ" dù câu nhắc bảo về nơi nghỉ mới ăn.
 - **So tiền mục web:** "1,500 đ" được đọc là 1.500 đồng (dấu phẩy ngăn nghìn kiểu tiếng Anh); "10K bước" bị nhận là tiền, nên có thể bị chặn nhầm (hướng
@@ -284,7 +326,8 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 2. Mỗi việc **đo đúng chỗ đổi** rồi mới bật:
    - sửa lịch: ~15.000 lần áp 0 vi phạm, hiểu ý 9 / 10 + kín 4 / 5, an toàn 0 / 64;
    - câu nhiều ý: vòng 1 trượt ⇒ vòng 2 bằng code đạt, sửa "và", mục web nhắc lại ý kho 4 / 4 ⇒ 0 / 11;
-   - chỗ ở: 3.840 khung + người xem 9 / 10 ⇒ sửa 2 lỗi ⇒ 10 / 10; thêm luật buổi tối (thử 1 bỏ 8 / 10, thử 2 giữ 10 / 10);
+   - chỗ ở: 3.840 khung + người xem 9 / 10 ⇒ sửa 2 lỗi ⇒ 10 / 10; thêm luật buổi tối (thử 1 bỏ 8 / 10, thử 2 giữ 10 / 10); chọn hạng sao: không chọn
+     ⇒ giống hệt bản trước, chọn ⇒ 100 % đúng mức, cơ sở có lần hiện 14 ⇒ 33 / 137;
    - quán ăn: đếm trước (sửa 95,2 ⇒ 74,7 %) rồi mới xây; mục web: so tiền theo giá trị, 43 ⇒ 51 / 76, số bịa vẫn chặn.
 3. Hai chuyện thật: sửa lịch qua đo đúng sai nhưng **phạm sàn tốc độ** ⇒ tắt, sửa, đo lại với cỡ mẫu chốt trước; người xem chấm 10 / 10 mà vẫn sai vì bảng
    thiếu buổi tối. Cùng ngày có hai việc **thử rồi bỏ / đếm rồi không làm** (suy luận low −0,87 s < 1,5 s; đổi cách tìm web 6 / 16 vừa chạm mức).
@@ -305,6 +348,7 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - Quán ăn: đếm 22.680 bữa, 28 quán kho, 33,5 / 74,7 % (bản đầu 74,7 / 95,2 sai), 16 lượt Serper 0,016 USD (đếm web ý thiếu 3 / 16, tốt nhất 6 / 16): `report_agent/2026-11-12_ra_khoang_cach/c_dem_truoc_khi_xay.md` [đã chạy]; 2 km (p95 9,3 km), bữa tối gần điểm tối, cà phê, 80,7 %, 0,78 / 1,94 / 1,99 km, người xem 10 / 10, 0,0013 USD, giới hạn: `c_quan_lich_implementation.md`, review `b_review_quan_lich.md` [đã chạy]
 - Khu ở theo buổi tối (thử 1 8 / 10, thử 2 10 / 10, phía tây 0 / 3.840): mục cuối `b_luu_tru_lich_implementation.md`; review `e_review_o_toi.md` (m-1 kiểm bằng bảng khu, đã sửa) [đã chạy]
 - Vùng xa phía nam (720 / 3.840 lịch, 1.080 / 22.680 bữa, quán gần nhất 36–38 km, chỉ khi "Thiên nhiên" + ≥ 3 ngày; câu nhắc theo kho; Playwright 2 câu nhắc ngày 2): `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`, script `data/dem_quan_nam_xa_2026-11-15/` [đã chạy]; code `GHI_CHU_AN` trong `backend/llm/quan_lich.py` [code].
+- Chọn hạng sao + trang Chỗ ở (15/11): plan `docs/superpowers/plans/2026-11-15-khach-san-trang-va-ngan-sach.md` (sha b5d8bc184090); ngân sách `report_agent/2026-11-12_ra_khoang_cach/b_ngan_sach_o_implementation.md` (T1 băm 3.840 khung giống byte, T2–T4, T7) + review `e_review_ngan_sach_o.md` [đã chạy]; trang `c_cho_o_implementation.md` + `e_review_cho_o.md` (Như Phú) [đã chạy]; bảng v3 137 cơ sở, 69 có ảnh, 364 / 3.840 lịch đổi (`data/khach_san_2026-11-15/so_v2_v3.json`); lọc ven biển bằng `phia_bien` (merge `f980853`, B): Gloria +36 lịch phía bắc, 0 mất; số trên main sau `f980853`: 14 / 8 / 10 / 15, gộp 33, ô có ảnh 97,6 / 100 / 83,8 / 79,5 % (`data/khach_san_2026-11-15/dem_sau.json`, `tools/dem_sau.py`), 3–4 bộ / mức ở trung tâm, bộ lớn nhất 2.220–2.472 / 3.036 (đếm 11:00 15/11) [đã chạy]; ước 36 của plan không ghi cách tính. Kiểm độc lập: `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_cho_o.md` (57 khẳng định, 10 sai do main đổi + nhãn, 7 dễ hiểu nhầm — đã sửa).
 - Lịch mẫu đi – ăn – ở, chỉ quán kho, 3 bữa, khu trung tâm: `b_review_lich_mau_an_o.md`, `b_review_lich_mau_quan_kho.md`; ảnh `data/ui_mau_2026-11-14/anh_chup/lich_mau_cuoi_1411/` [đã chạy]
 - So tiền theo giá trị (16 ⇒ 4 chặn vì tiền, 43 ⇒ 51 / 76, 220.000 4 / 4, 8 mục mới qua, "2 triệu rưỡi", "150K"): `b_tien_web_chuan_hoa_implementation.md`, `e_review_tien_web.md` [đã chạy]
 - Suy luận low (2,95 ⇒ 2,08 s, sàn 1,5 s, −32 % tiền lần viết, log 4,94 s): `b_web_suy_luan_thap_implementation.md` [đã chạy]
