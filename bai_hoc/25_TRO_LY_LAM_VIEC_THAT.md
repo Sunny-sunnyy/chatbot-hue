@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -60,6 +60,11 @@ nhận từ 12/11.
 
 **Tiền.** Đo đúng sai ≈ 0,25 USD (cao hơn ước 0,07 vì mỗi chuỗi phải xếp cả lịch trước). Mỗi câu trong cuộc có lịch tốn thêm một lần hiểu ý: phần lời
 dặn ~1.244 token giống hệt nhau mọi lượt, nên mình gắn một khoá đệm cố định ⇒ lần hiểu ý từ 0,00024 xuống ≈ 0,00007–0,0001 USD (người review đo trên log thật 6 lần: 0,00007).
+
+**Chiều 15/11 — một lỗi "nói chắc sai" đã chặn.** Câu "mình đi từ ngày 20/12" từng bị hiểu thành đổi số ngày: lịch rút từ 3 ngày xuống 1, kèm dòng "Đã đổi"
+(1 lần trong 18 lượt mình thử). Nay code kiểm lại sau lần hiểu ý: chỉ đổi số ngày khi câu có số ngày thật ("còn 2 ngày", "2 hôm", "thêm một ngày",
+"bỏ ngày cuối"), không lấy số trong ngày tháng hay "thứ hai". Bị chặn thì lịch giữ nguyên và có dòng "Chưa làm: đổi số ngày". Trên các lượt đã lưu:
+16 / 16 lần đổi số ngày đúng vẫn qua, 3 / 3 lần sai bị chặn; 0 USD vì không đổi lời dặn.
 
 ## 2. Câu hỏi nhiều ý
 
