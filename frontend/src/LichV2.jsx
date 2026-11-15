@@ -170,7 +170,10 @@ export function LichV2({ turn, onEditPlan }) {
           <ul>{chung.map((g, i) => <li key={i} className={`lkh-gc-${g.ma || "khac"}`}>{g.cau}</li>)}</ul>
         </div>
       )}
-      {lich.o_dau && <NoiO o={lich.o_dau} />}
+      {/* User 15/11: khối nơi ở chỉ khi người dùng đã chọn / nói hạng chỗ ở; chưa hỏi ⇒ server gửi `cho_o_link` ⇒ một dòng link sang trang Chỗ ở */}
+      {lich.o_dau ? <NoiO o={lich.o_dau} /> : lich.cho_o_link === true && (
+        <p className="lkh-o-them"><a href="#/cho-o">Cần chỗ ở? Xem gợi ý theo khu</a></p>
+      )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
       {turn.notice && <p className="notice">{turn.notice}</p>}
       {xong && (
