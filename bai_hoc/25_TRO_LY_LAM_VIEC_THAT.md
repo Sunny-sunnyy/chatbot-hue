@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 16:28, ngày 15/11/2026 · thêm chiều 15/11: đổi hạng chỗ ở bằng lời; thẻ Nơi ở chỉ hiện khi người dùng hỏi. Trước: 16:01, ngày 15/11/2026 · thêm chiều 15/11: 10 ảnh khách sạn anh tự tìm (67 / 136 cơ sở có ảnh). Trước: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 16:48, ngày 15/11/2026 · thêm chiều 15/11: đổi ngày đi bằng lời. Trước: 16:28, ngày 15/11/2026 · thêm chiều 15/11: đổi hạng chỗ ở bằng lời; thẻ Nơi ở chỉ hiện khi người dùng hỏi. Trước: 16:01, ngày 15/11/2026 · thêm chiều 15/11: 10 ảnh khách sạn anh tự tìm (67 / 136 cơ sở có ảnh). Trước: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -100,6 +100,65 @@ Sau review có thêm hai sửa nhỏ, 0 USD: model lỡ đặt hạng vào một
 và hạng luôn được xét **sau cùng** trong một lượt, nên câu "khách sạn 4 sao, rút còn 1 ngày" không còn báo đã thêm chỗ ở cho một lịch 1 ngày.
 Hệ quả đã nhận: code chỉ áp tối đa 2 ý một lượt, nên câu có 3 ý mà có đổi hạng thì đổi hạng thành ý thứ 3 và hiện "Chưa làm: đổi hạng chỗ ở".
 
+**Chiều 15/11 — đổi ngày đi bằng lời.** Trước đó câu "mình đi từ 20/12" sau khi đã có lịch thì hoặc bị trả lời như câu thường (4 / 5 câu
+mình thử), hoặc bị hiểu thành đổi số ngày (1 / 5 — lỗi đã chặn ở đoạn trên). Nay có loại hành động thứ 8, **đổi ngày đi**, và nó khác các loại
+trước ở một điểm: **model không được viết ngày**.
+- **Model** chỉ báo "người dùng muốn đổi ngày đi". Hành động này không có ô riêng để viết ngày; model có điền các ô chung (như "ngày thứ mấy
+  của lịch") thì code cũng bỏ qua.
+- **Code đọc ngày từ chính chữ người dùng gõ.** Đọc được: 20/12, 20/12/2026, "ngày 20 tháng 12", hôm nay, mai, ngày kia, thứ Bảy (hoặc "thứ 7"),
+  chủ nhật, cuối tuần, và các dạng đó kèm "tuần sau". Vì ngày chỉ có thể đến từ chữ người dùng, model không tự đặt ra ngày được. Code thì vẫn
+  có thể đọc nhầm một cụm chữ trông giống ngày — chuyện ở cuối mục này.
+- **Không đọc ra đúng một ngày thì không đoán**, và có dòng lý do: câu không có ngày, câu có hai ngày khác nhau ("thay vì 20/12 thì đi 27/12"), nói
+  tương đối ("dời 2 hôm", "lùi một tuần"), ngày âm lịch ⇒ "bạn nói một ngày cụ thể". Ngày đã qua hoặc xa hơn 180 ngày (giới hạn của biểu mẫu)
+  chung một câu; ngày không có thật (30/2) và ngày trùng ngày đang dùng mỗi loại một câu riêng.
+- **Đổi ngày có thể làm lịch đổi**, khác với đổi hạng chỗ ở. Ngày mới kéo theo thứ trong tuần (có điểm đóng cửa theo thứ, có hoạt động chỉ diễn
+  ra vài tối trong tuần) và dự báo mưa. Code lấy dự báo cho ngày mới, giữ các điểm sáng / chiều ở chỗ cũ nếu vẫn đúng luật (không thì xếp lại cả
+  lịch); hoạt động buổi tối được chọn lại theo thứ của ngày mới. Lịch y như cũ thì báo "Các điểm trong lịch giữ nguyên chỗ."; khác chỗ nào thì
+  báo "Lịch xếp lại theo ngày mới…" và **nói rõ** bớt điểm nào, thêm điểm nào, mấy điểm đổi ngày hoặc buổi. Ngày mới nằm ngoài 7 ngày có
+  dự báo thì thêm dòng "Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa."
+
+| Đo gì | Cách đo | Kết quả | Vì sao ổn |
+|---|---|---|---|
+| Code đọc ngày có đúng không | 37 câu mình tự đặt lúc đo; sau review thêm 28 câu có chữ giống ngày; đều có sẵn đáp án, 0 USD | 37 / 37 ⇒ 65 / 65 | phép tính ngày phải đúng tuyệt đối, nên giao cho code và kiểm bằng bảng ca |
+| Đổi ngày có làm lịch phạm luật không | mọi tổ hợp lịch (3.840 khung) × 3 ngày mới, 0 USD | 0 lỗi luật; điểm người dùng đã bỏ không quay lại; con số trong dòng báo khớp với đếm lại | lịch sau khi đổi ngày vẫn phải đúng như một lịch xếp mới |
+| Câu nêu một ngày rõ | 12 câu viết trước, 2 lượt qua trợ lý thật (ngày trong câu tính theo hôm chạy) | đúng cả hai lượt **12 / 12** (ngưỡng ≥ 10); đổi **sai** ngày: **0 / 24** | lỗi tệ nhất là đổi sai ngày mà báo đã đổi ⇒ sàn 0 |
+| Câu không nên đổi ngày (không đọc ra một ngày, hoặc ngày đã qua) | 6 câu × 2 | bị đổi ngày 0 / 12; có dòng lý do 5 / 6 (ngưỡng ≥ 4) | câu còn lại xem "chỗ còn hở" bên dưới |
+| Câu có chữ chỉ ngày nhưng không xin đổi ngày đi | 8 câu × 2 (hỏi "thứ hai có mở cửa không", "ngày 2 bỏ một điểm", "thêm 1 ngày"…) | bị đổi ngày đi 0 / 16 | hành động mới không hút các câu có chữ "ngày" |
+| Có câu nào bị đổi nhầm SỐ ngày không | mọi câu của hai nhóm đầu | 0 | lỗi cũ không quay lại |
+| Câu lạ do người điều phối viết riêng | 8 câu, 1 lượt | đúng 8 / 8 (ngưỡng ≥ 6) | chống lời dặn chỉ hợp với câu của mình |
+| Các kiểu sửa cũ + đổi hạng chỗ ở có hỏng không | 10 chuỗi cũ đạt cả hai lần · 12 câu đổi hạng 1 lượt | 8 / 10 (ngưỡng ≥ 8), chuỗi từng hỏng ở lần trước 2 / 2 · 12 / 12 | chạy **ngay sau** bộ câu chính để bắt hồi quy sớm — bài học của lần đổi hạng |
+| Câu an toàn · câu trộn khẩn cấp | 32 câu × 2 · 8 câu × 2 | 0 / 64 · 0 / 16 thành lượt sửa | đo lại vì lời dặn đổi |
+
+Lần này không phải chỉnh lời dặn vòng nào. Trong 32 lượt đổi ngày thật của lượt đo, 30 lượt lịch y như cũ; 2 lượt (cùng một câu, chạy hai lần)
+lịch đổi ở buổi tối: bớt Ca Huế trên sông Hương (diễn mọi tối), thêm Phố đi bộ Hai Bà Trưng (chỉ mở tối thứ Sáu – Chủ nhật, nay rơi vào chuyến);
+các điểm sáng / chiều giữ nguyên, và dòng báo nêu đúng hai tên đó. Khung lịch mới hiện sau khoảng 2 giây (trung
+vị). Tiền cả việc ≈ 0,12 USD.
+
+Trong 10 chuỗi cũ có hai chuỗi trượt, mình không quy cho việc này: một chuỗi trượt 1 trong 2 lần ở bước thẻ chọn (chập chờn đã biết từ 14/11); một
+chuỗi trượt vì **đáp án của bộ đo đã cũ** — đáp án ghi "điểm này chưa có trong danh sách", nhưng cùng chiều đó bảng điểm vừa thêm đúng điểm ấy, nên
+trợ lý trả một lý do khác. Mình không sửa đáp án sau khi đã thấy số; việc rà lại đáp án giao cho người khác.
+
+*Chuyện người review bắt được: chữ giống ngày.* Lượt đo có phí đạt hết, nhưng người review không tin bảng 37 câu của mình mà tự viết 34 câu khác
+để thử thẳng hàm đọc ngày. 8 câu ra **một ngày cụ thể** trong khi câu không hề nêu ngày: "mình đi với chị Mai" ⇒ ngày mai; "bỏ điểm thứ hai trong
+lịch" ⇒ thứ Hai tới; "mỗi nơi chỉ ở 1/2 ngày", "quán mở 24/7" ⇒ ngày 1/2, 24/7 năm sau; "nhóm có 2 tháng 3 ngày nghỉ" ⇒ 2/3. Bộ câu đo của mình
+không có kiểu câu này nên không lộ. Đây đúng là loại lỗi tệ nhất của việc này (đổi sai ngày mà báo đã đổi), nên mình sửa trước khi cho vào bản
+chạy, theo một nguyên tắc: **mơ hồ thì không coi là ngày, thà hỏi lại còn hơn đổi sai**. "Mai" viết hoa giữa câu hoặc đứng sau "chị / đường / hoa…"
+là tên; "thứ hai" đứng sau "điểm / nơi / lần / tuần…" là thứ tự; phân số có đơn vị đi sau và "24/7" không phải ngày; một cụm số mơ hồ thì cả câu
+được hỏi lại. Bảng câu kiểm tăng lên 65, người review thử lại hai bộ (35 + 19 câu): 0 câu đổi sai ngày, còn 1 câu bị hỏi lại thừa ("đi ngày 3/12 giờ
+nào cũng được"). Mình chạy lại hàm mới trên đúng 34 câu đã đo thật: không câu nào lệch, nên không phải đo có phí lần nữa (lời dặn không đổi).
+Giữa chừng, một lần sửa của mình lại làm hỏng một câu khác ("hẹn 5/5 người") và chính người review bắt được — thêm một lý do để việc sửa
+luôn có người khác thử lại. Luật kiểu này dựa trên danh sách từ đứng trước / sau, nên **vẫn có thể sót** kiểu chữ giống ngày mình chưa nghĩ ra;
+vì vậy dòng báo luôn in ngày kèm thứ đã đổi để người dùng thấy ngay.
+
+*Chỗ còn hở, anh nên biết:*
+- **"Tuần sau" tính theo tuần lịch, thứ Hai tới Chủ nhật.** Nói vào Chủ nhật thì "thứ Bảy tuần sau" là thứ Bảy 6 ngày nữa, có người lại ngụ ý tuần
+  kế nữa. Vì vậy dòng báo luôn in cả ngày lẫn thứ ("→ 21/11 (thứ Bảy)") để người dùng thấy ngay và nói lại nếu lệch.
+- **Ngày kiểu "10/11" đã qua mà không nêu năm** được hiểu là 10/11 năm sau, nên thường nhận câu "Mình chỉ xếp được ngày đi từ hôm nay tới 180
+  ngày nữa nên chưa đổi sang 10/11/2027."
+- **Câu "đi dịp Tết âm lịch"** model không coi là câu sửa lịch, nên nó đi đường trả lời thường và không có dòng "nói một ngày cụ thể" (đây là 1 / 6 câu
+  thiếu dòng lý do ở bảng trên).
+- Chưa làm: "dời 2 hôm" kiểu tương đối, ngày âm, bỏ ngày đi. Nút ngày trên biểu mẫu không tự đổi theo lời.
+
 ## 2. Câu hỏi nhiều ý
 
 **Vấn đề.** Luật trả lời cũ (bài 8) rất chặt: thiếu căn cứ cho **một** ý ⇒ từ chối **cả** câu. Hỏi "vé Đại Nội bao nhiêu, dịp Tết có chương trình gì",
@@ -145,7 +204,7 @@ từ 2 ngày chỉ có một dòng link nhỏ "Cần chỗ ở? Xem gợi ý the
 (Phần code của hai đường này đã có test. Phần model hiểu câu thì mới đo ở câu đổi hạng trên lịch đã có sẵn hạng — 12 / 12 và 6 / 6 ở mục 1; chưa đo
 riêng câu xin chỗ ở trên lịch chưa có thẻ.)
 Cách làm chỉ là một điều kiện trong code (có mức hạng mới dựng thẻ), không đổi lời dặn nên không tốn lượt đo có phí nào ngoài lượt chạy thử giao
-diện bằng trình duyệt tự động (2 lịch thật, 0,0012 USD; chạy lại một lần sau khi gộp bản mới, lần đó mình không ghi tiền): mọi tổ hợp lịch không chọn
+diện bằng trình duyệt tự động (2 lịch thật mỗi lần, chạy hai lần — trước và sau khi gộp bản mới — mỗi lần 0,0013 USD theo log): mọi tổ hợp lịch không chọn
 hạng ⇒ 0 thẻ; chọn hạng ⇒ thẻ giống hệt trước. Lịch mẫu "Ví dụ" được thêm sẵn mức 2–3 sao nên vẫn có thẻ.
 **Lưu ý khi đọc các số bên dưới:** "lịch ≥ 2 ngày có thẻ 3.072 / 3.072", số lượt đổi ô Nơi ở và tỉ lệ ô có ảnh đều đo lúc thẻ còn luôn hiện; nay
 chúng chỉ đúng cho lịch đã chọn hạng.
@@ -442,8 +501,9 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
+- Đổi ngày đi bằng lời (chiều 15/11): 4 / 5 + 1 / 5 trước khi làm `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`; plan `docs/superpowers/plans/2026-11-15-sua-lich-ngay-di-plan.md`; mọi số của bảng (37 / 37 lúc đo ⇒ 65 / 65 sau review, 3.840 × 3, 12 / 12, 0 / 24, 0 / 12 + 5 / 6, 0 / 16, 0, 8 / 8, 8 / 10 + 2 / 2, 12 / 12, 0 / 64, 0 / 16), 30 + 2 trong 32 lượt, p50 1,99 s, ≈ 0,123 USD, hai chuỗi trượt: `report_agent/2026-11-12_ra_khoang_cach/c_sua_ngay_di_implementation.md` [đã chạy]; hàm đọc ngày `backend/llm/do_so.py` `ngay_tu_cau`, test `backend/tests/test_sua_ngay_di.py` [code + đã chạy]; review bắt 8 câu chữ giống ngày + hai bộ dò 35 + 19 câu: `report_agent/2026-11-12_ra_khoang_cach/e_review_sua_ngay_di.md` [đã chạy]; hai lượt lịch đổi buổi tối: bản đầu của bài và report ghi ngược (bớt / thêm), đã sửa theo kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_ngay_di.md`. Câu ví dụ trong bài là ví dụ tự đặt.
 - Đổi hạng chỗ ở bằng lời (chiều 15/11): 5 / 5 câu im lặng trước khi làm `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`; plan `docs/superpowers/plans/2026-11-15-sua-lich-hang-cho-o-plan.md`; mọi số của bảng (12 / 12, 0 / 24, 0 / 12 + 6 / 6, 0 / 12, 8 / 8, 10 / 10, 0 / 64, 0 / 16), chuỗi hồi quy 4 / 4 ↔ 0 / 2 ⇒ 2 / 2, p50 1,83 s theo report (32 lượt; trung vị tính lại 1,81 s), ≈ 0,21 USD: `report_agent/2026-11-12_ra_khoang_cach/c_sua_hang_o_implementation.md` [đã chạy]; hai sửa nhỏ sau review: nhánh `p9-hang-o-m12`, test `test_luu_tru_lich.py` [code + đã chạy]. Câu ví dụ trong bài là ví dụ tự đặt.
-- Thẻ Nơi ở chỉ hiện khi hỏi (chiều 15/11): plan `docs/superpowers/plans/2026-11-15-noi-o-chi-khi-hoi-plan.md`; 3.840 khung không mức ⇒ 0 thẻ, có mức ⇒ giống hàm chọn nơi ở, 0,0012 USD cho một lần chạy Playwright (2 lịch thật); lần chạy lại sau gộp main không ghi tiền: `report_agent/2026-11-12_ra_khoang_cach/c_noi_o_khi_hoi_implementation.md`, review `e_review_noi_o_khi_hoi.md` [đã chạy].
+- Thẻ Nơi ở chỉ hiện khi hỏi (chiều 15/11): plan `docs/superpowers/plans/2026-11-15-noi-o-chi-khi-hoi-plan.md`; 3.840 khung không mức ⇒ 0 thẻ, có mức ⇒ giống hàm chọn nơi ở, 0,0013 USD mỗi lần chạy Playwright (2 lần; đếm lại từ log theo mã bản `2456c2f`, `6058298` — report ghi 0,0012 lúc đếm sớm): `report_agent/2026-11-12_ra_khoang_cach/c_noi_o_khi_hoi_implementation.md`, review `e_review_noi_o_khi_hoi.md` [đã chạy].
 - Sửa lịch bằng lời: 6 hành động, mô phỏng ~15.000 lần áp 0 vi phạm, 2 lỗi (240 khung; 4 / 1.920), Q3 7 / 10 ⇒ 9 / 10, kín 4 / 5, Q5 0 / 64, Q5b 0 / 16, tiền ≈ 0,25 USD, độ trễ 4,17 ⇒ 2,37 (n = 20 gộp, "đo thêm tới khi đạt") ⇒ đo lại n = 20 chốt trước 2,58 / 2,65 s, đệm 1.244 token 0,00024 ⇒ 0,0001 USD, phần huỷ ≈ 0,0001 USD: `report_agent/2026-11-12_ra_khoang_cach/b_sua_lich_v2_implementation.md` [đã chạy]; lỗi chặn câu trộn khẩn cấp: `e_review_sua_lich_v2.md` + mục "Sau review E" của report trên [đã chạy]; giới hạn chỉ bỏ được buổi tối: `session_prompt/CURRENT_HANDOFF.md` mục "Giới hạn đã nhận" [tài liệu]; câu ví dụ "bỏ điểm chiều nay, mình vừa bị ngã…" là **ví dụ tự đặt** (câu thật do E viết, không chép).
 - Câu nhiều ý vòng 1 (4 / 10 ⇒ 10 / 10; 3 / 18; 2 lỗi trích dẫn; 0,16 USD): `report_agent/…/c_cau_nhieu_y_do.md` [đã chạy]; vòng 2 (10 / 10; kín 0 / 10; 1 / 18 câu 161 đường không đổi; 0 / 176 đi vào luật; ≈ 0,19 USD; cộng ≈ 0,35): `c_cau_nhieu_y_do_v2.md` [đã chạy]; anh chọn bật: `CURRENT_HANDOFF.md` 14:44 14/11 [tài liệu]; sửa "và" (0 câu đổi vế; 10 / 10; 0,0151 USD): `c_so_y_va_implementation.md`, review `b_review_so_y_va.md` [đã chạy]; mục web 4 / 4 ⇒ 0 / 11, 0,0349 USD, Serper vẫn cả câu: `c_web_y_thieu_implementation.md`, review `b_review_web_y_thieu.md` [đã chạy]; bỏ từ đã có ở phần trả lời khi chọn vế (sửa m-1 của review): commit `0b7ef90`, `backend/llm/assistant.py` [code]. Ví dụ "bún bò và bánh khoái" là ca test trong code [code].
 - Chỗ ở: luật khu (50 % / 60 %, trẻ em ⇒ trung tâm), 2 / 2 / 1 theo hạng, 140 cơ sở danh mục Cục Du lịch Quốc gia, 3.840 khung (3.072 / 3.072), người xem 9 / 10 ⇒ 10 / 10, hai lỗi sửa, ≈ 0,0025 USD: `report_agent/…/b_luu_tru_lich_implementation.md` [đã chạy]; E review ready: `e_review_luu_tru_lich.md`; cờ bật: `backend/config/settings.yaml` `luu_tru_lich: true` [code].
