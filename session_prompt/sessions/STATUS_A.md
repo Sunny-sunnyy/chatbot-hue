@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN CHIỀU 15/11 (mở 15:08; cập nhật 15:09 15/11/2026 `date`)
+
+- Terminal: A `hue-rag-60` · B `hue-rag-cb` · C `hue-rag-51` · E `hue-rag-ab` (Claude Code, trực tiếp).
+- Kiểm nhanh: `main` `97aa88e` = origin, sạch; hooksPath `.githooks`; Qdrant 1 collection 9.425; RAM trống ~12 GB; 0 server 80xx; 0 worktree `/tmp`; lệnh dọn nhánh của User chưa chạy.
+- User: quyền "như sáng 15/11" (A ghi 15:09 15/11/2026).
+- Giao: E 7 điểm lịch · B W79 rồi review nhánh E · C lưu trú v5 rồi W81.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; sau: `WORKFLOW.md` §5 (khi W81 xong), `bai_hoc/` + `bao_cao_he_thong/` khi 7 điểm merge.
+- Tiếp: hỏi User 4 câu còn mở, mỗi lần một câu; vòng tự soi 1 khi mỗi session có kết quả đầu.
+
 # STATUS A — KẾT PHIÊN 15/11 (viết 14:44 15/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11)" ⇒ hỏi quyền phiên (một câu) ⇒ cùng lượt giao: E 7 điểm lịch (`diem_v9`) · B W79 (sha vào `chat_metrics`) · C W81 `scripts/commit_push.sh` + bảng lưu trú v5 gộp Như Phú ⇒ rồi hỏi User các câu ở "Câu hỏi cho User" (Bến Ngự, sửa lịch hạng sao / ngày đi, tốc độ còn lại, ảnh User tìm phụ), mỗi lần một câu. Khi C xong W81: A sửa câu `WORKFLOW.md` §5 cho khớp tên / cách dùng script thật.

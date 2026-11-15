@@ -1,3 +1,8 @@
+# STATUS B — PHIÊN CHIỀU 15/11 (mở 15:08 15/11/2026, terminal `hue-rag-cb`; A `hue-rag-60` · C `hue-rag-51` · E `hue-rag-ab`; quyền phiên "như sáng 15/11")
+- 15:11 15/11/2026 — **W79 BẮT ĐẦU** (A giao): nhánh `p9-w79-sha`, worktree `/tmp/b_w79` (từ origin/main `97aa88e`). Khai báo sửa: `backend/api/routes/chat.py` (trường `git_sha` trong `chat_metrics`), `backend/tests/test_api_chat.py`, script mới `scripts/dem_chat_metrics.py`, report `report_agent/2026-11-12_ra_khoang_cach/b_w79_git_sha_implementation.md`. 0 USD. Sau đó: review nhánh 7 điểm lịch của E.
+- 15:15 15/11/2026 — **W79 XONG, CHỜ C review**: `p9-w79-sha` origin `7b1ba00` (push), worktree `/tmp/b_w79` (symlink data/kho — gỡ khi merge). Test file chạm đạt (1 lỗi = test cần khoá, có sẵn); script chạy thử trên log thật; 0 USD. Report trên nhánh `b_w79_git_sha_implementation.md`. 0 server. **Rảnh — chờ nhánh 7 điểm lịch của E để review.**
+- Sửa dòng cũ: `b_dem_toc_do.md` ghi "chưa commit" ở mục kết phiên dưới — A đã commit (cây git sạch lúc mở phiên).
+
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11) — B viết 14:42 15/11/2026, terminal `hue-rag-b2` (A `hue-rag-26` · C `hue-rag-f9` · E `hue-rag-3e`)
 
 ## Việc phiên sau (A đã định, User chốt khi kết phiên)

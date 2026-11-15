@@ -1,5 +1,13 @@
 # STATUS C — kết phiên 15/11 (C `hue-rag-f9` · A `hue-rag-26` · B `hue-rag-b2` · E `hue-rag-3e`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+## PHIÊN CHIỀU 15/11 (mở 15:08) — C `hue-rag-51` · A `hue-rag-60` · B `hue-rag-cb` · E `hue-rag-ab`
+**A giao (15:11 15/11/2026; quyền phiên "như sáng 15/11"):** (1) bảng lưu trú v5 gộp Như Phú — giữ dòng 1 sao / số 16, bỏ dòng 14b ⇒ 136 cơ sở, 57 có ảnh; (2) `scripts/commit_push.sh` (W81). Hai nhánh riêng từ origin/main.
+**Khai báo sửa:** (1) `data/luu_tru_v5_2026-11-15/` (script + bảng v5 + so v4 ↔ v5, private) · nhánh `p9-luu-tru-v5`: `backend/config/settings.yaml` dòng `lich_trinh_bang_luu_tru` (+ `frontend/src/theKhachSanTrung.js` nếu danh sách sinh lại đổi) — worktree `/tmp/c_v5`. (2) nhánh `p9-commit-push`: `scripts/commit_push.sh` (mới) — worktree `/tmp/c_cp`. File này.
+**Hai việc XONG — chờ A (15:14 15/11/2026, 0 USD):** report `report_agent/2026-11-12_ra_khoang_cach/c_v5_commit_push_implementation.md` (chưa commit — A commit).
+- v5: nhánh `p9-luu-tru-v5` @ `ea0e82c` (đã push; diff 1 dòng `settings.yaml` ⇒ A merge thẳng). Bảng `data/luu_tru_v5_2026-11-15/bang_luu_tru_lich_v5.json` md5 `34836e7c1438`; 136 cơ sở, 57 có ảnh; lịch đổi 0 / 15.360; test 16 passed có / không env.
+- `scripts/commit_push.sh`: nhánh `p9-commit-push` @ `609c7ac` (đã push bằng chính script; chờ A review). Chạy thử `data/commit_push_2026-11-15/thu.sh` ĐÚNG 15 / 15.
+- Worktree còn: `/tmp/c_v5`, `/tmp/c_cp` — gỡ sau khi A merge. 0 server / tiến trình nền.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11 — C viết 14:43 15/11/2026 `date`)
 
 - **Trạng thái máy:** 0 worktree `/tmp/c_*`, 0 server tạm (cổng 8037–8040 đã tắt), 0 tiến trình nền của C. Mọi nhánh của C hôm nay đã merge.
