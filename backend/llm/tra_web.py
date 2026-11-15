@@ -205,7 +205,9 @@ def _chuoi_so(text: str) -> set[str]:
     text = _KHO_CODE.sub(" ", _WEB_CODE.sub(" ", text))
     for tien in tim_so_tien(text):
         text = text.replace(tien, " ")
-    return {re.sub(r"\D", "", m) for m in _CHUOI_SO.findall(text)}
+    # nhóm 2 chữ số có số 0 đầu (ngày / tháng / giờ / phút: "08/11", "08:00") bỏ số 0 ⇒ "08/11" ↔ "8/11", "08:00" ↔ "8:00" (rà nợ 15/11: chặn nhầm);
+    # nhóm dài hơn (mã vùng "0234", số điện thoại "0905") giữ nguyên
+    return {"".join(g[1:] if len(g) == 2 and g[0] == "0" else g for g in re.findall(r"\d+", m)) for m in _CHUOI_SO.findall(text)}
 
 
 _NAM = re.compile(r"(?<!\d)(?:19|20)\d\d(?!\d)")

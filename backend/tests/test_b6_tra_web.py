@@ -388,6 +388,8 @@ SO_SO = tw.doc_ket_qua({"organic": [
     ("ĐT 0905 123 456 [w1].", ["so_ngoai_trich"]),                                # số điện thoại bịa
     ("Mở từ năm 2019 [w1] [3].", ["ma_kho"]),                                     # mã kho chỉ ra một lỗi
     ("Quán B 24/7 ở Lê Lợi [w1].", []),                                           # số ở tiêu đề (lượt thật 08/11: "SV GYM 24/7" bị bỏ nhầm)
+    ("Mở 06:30 tới 21:00 [w1].", []),                                             # rà nợ 15/11: số 0 đầu ngày / giờ ("06:30" ↔ "6:30") không chặn nhầm
+    ("Mở 6:03 tới 21:00 [w1].", ["so_ngoai_trich"]),                              # "6:03" ≠ "6:30" vẫn chặn
 ])
 def test_numbers_must_come_from_snippets(text, loi):
     assert tw.kiem_muc_web(text, SO_SO, luu_tru=False) == loi
@@ -455,3 +457,10 @@ def test_uppercase_k_is_money_but_not_4k():
     assert tim_so_tien("Vé 150K một người") == ["150K"] and tw.gia_tri_tien("150K") == 150_000
     assert tim_so_tien("Màn hình 4K") == []
     assert "tien_ngoai_trich" in tw.kiem_muc_web("Vé 180K [w1].", _so("Vé 150.000 đồng."), luu_tru=False)
+
+
+def test_leading_zero_date_matches_rà_nợ_15_11():
+    """Rà nợ 15/11: mục "8/11" với đoạn trích "08/11" từng bị thay câu cố định (so dãy chữ số "811" ≠ "0811")."""
+    so = tw.doc_ket_qua({"organic": [{"title": "Lễ hội", "link": "https://x.example.vn/a", "snippet": "Khai mạc 08/11, kết thúc 9/11."}]})
+    assert tw.kiem_muc_web("Khai mạc 8/11, kết thúc 09/11 [w1].", so, luu_tru=False) == []
+    assert tw.kiem_muc_web("Khai mạc 18/11 [w1].", so, luu_tru=False) == ["so_ngoai_trich"]
