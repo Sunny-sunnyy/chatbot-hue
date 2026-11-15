@@ -240,11 +240,18 @@ def _hang_o_sau_cung(hanh_dong: list[HanhDong]) -> list[HanhDong]:
 
 
 def _so_cho(cu: dict, moi: dict) -> dict:
-    """Hai khung ⇒ điểm đổi ngày / buổi (`doi_cho`), điểm rời lịch (`ra`), điểm mới vào (`vao`) — tính cả buổi tối. Cho câu báo "lịch xếp lại"."""
-    vt, vt_moi = _vi_tri(cu), _vi_tri(moi)
-    toi = lambda kh: {j for ng in kh["ngay"] for j in ng["buoi"]["toi"]}  # noqa: E731
+    """Hai khung ⇒ điểm đổi ngày / buổi (`doi_cho`), điểm rời lịch (`ra`), điểm mới vào (`vao`). Vị trí lấy trên CẢ BA buổi (review B: tính
+    ban ngày riêng, buổi tối riêng làm điểm dời ngày ↔ tối nằm ở cả "bớt" lẫn "thêm"). Cho câu báo "lịch xếp lại"."""
+    def cho(k: dict) -> dict[str, set]:  # điểm ⇒ TẬP (ngày, buổi): một điểm buổi tối có thể nằm ở nhiều ngày
+        out: dict[str, set] = {}
+        for ng in k["ngay"]:
+            for bu in v2.BUOI:
+                for j in ng["buoi"][bu]:
+                    out.setdefault(j, set()).add((ng["ngay"], bu))
+        return out
+    vt, vt_moi = cho(cu), cho(moi)
     return {"doi_cho": sorted(j for j in vt if j in vt_moi and vt_moi[j] != vt[j]),
-            "ra": sorted((set(vt) - set(vt_moi)) | (toi(cu) - toi(moi))), "vao": sorted((set(vt_moi) - set(vt)) | (toi(moi) - toi(cu)))}
+            "ra": sorted(set(vt) - set(vt_moi)), "vao": sorted(set(vt_moi) - set(vt))}
 
 
 def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None,
@@ -281,6 +288,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
     def khong(ten: str | None, ma: str) -> None:
         kq["khong_doi"].append({"diem": ten or "?", "ma_luat": ma})
 
+    truoc_doi = None
+
     for h in hanh_dong[:MAX_AP]:
         vt = _vi_tri(khung)
         i = khop_ten(bang, h.ten)
@@ -302,7 +311,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 continue
             kq["doi_truong"] += [(f, getattr(ts, f), v) for f, v in doi.items()]
             if h.loai == "doi_tham_so":  # đổi kiểu lịch có thể xếp lại điểm ⇒ câu báo nói rõ (đổi số ngày thì dòng "số ngày" đã tự nói)
-                kq["xep_lai"] = {f: sorted(set(v) | set((kq["xep_lai"] or {}).get(f, ()))) for f, v in _so_cho(khung, k).items()}
+                truoc_doi = truoc_doi or khung  # hai lần đổi kiểu lịch trong một lượt ⇒ so khung trước lần đầu với khung sau lần cuối
+                kq["xep_lai"] = _so_cho(truoc_doi, k)
             khung, ts = k, ts_moi
             kq["da_ap"].append({"loai": h.loai})
         elif h.loai == "doi_ngay_di":
@@ -427,10 +437,14 @@ def _gia_tri(f: str, v) -> str:
     return ", ".join(v2.NHAN_LOAI.get(x, x) for x in v) or "không chọn"
 
 
+MAX_TEN_XEP_LAI = 6  # quá số tên này ⇒ câu báo chỉ nêu số điểm (review B: đổi sở thích ở lịch 5 ngày ra tới 27 tên / 528 ký tự)
+
+
 def _phan_xep_lai(bang: v2.BangV2, x: dict) -> str:
+    gon = len(x["ra"]) + len(x["vao"]) > MAX_TEN_XEP_LAI
+    ten = lambda ds: f"{len(ds)} điểm" if gon else ", ".join(ten_cua_diem(bang, j) for j in ds)  # noqa: E731
     phan = [f"{len(x['doi_cho'])} điểm đổi ngày hoặc buổi" if x["doi_cho"] else "",
-            "bớt " + ", ".join(ten_cua_diem(bang, j) for j in x["ra"]) if x["ra"] else "",
-            "thêm " + ", ".join(ten_cua_diem(bang, j) for j in x["vao"]) if x["vao"] else ""]
+            "bớt " + ten(x["ra"]) if x["ra"] else "", "thêm " + ten(x["vao"]) if x["vao"] else ""]
     return "; ".join(p for p in phan if p)
 
 

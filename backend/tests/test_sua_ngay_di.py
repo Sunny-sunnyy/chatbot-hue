@@ -100,14 +100,20 @@ def test_change_start_date_keeps_rules_and_reports_what_moved(khung_3840):
             if bo:
                 assert bo not in vt1 and bo not in toi1, (key, nm["ngay"])  # điểm đã bỏ không quay lại
             # số trong câu báo = đếm lại độc lập từ hai khung
-            doi_cho = sorted(j for j in vt0 if j in vt1 and vt1[j] != vt0[j])
-            ra, vao = sorted((set(vt0) - set(vt1)) | (toi0 - toi1)), sorted((set(vt1) - set(vt0)) | (toi1 - toi0))
-            assert (nd["doi_cho"], nd["ra"], nd["vao"]) == (doi_cho, ra, vao)
+            # (review B 15/11 tối: vị trí trên cả ba buổi — điểm dời ban ngày ↔ tối là "đổi buổi", không vừa "bớt" vừa "thêm")
+            ca0, ca1 = ({j: {(ng["ngay"], bu) for ng in k["ngay"] for bu in v2.BUOI if j in ng["buoi"][bu]}
+                         for ng0 in k["ngay"] for bu0 in v2.BUOI for j in ng0["buoi"][bu0]} for k in (luu["khung"], kq["khung"]))
+            doi_cho = sorted(j for j in ca0 if j in ca1 and ca1[j] != ca0[j])
+            ra, vao = sorted(set(ca0) - set(ca1)), sorted(set(ca1) - set(ca0))
+            assert (nd["doi_cho"], nd["ra"], nd["vao"]) == (doi_cho, ra, vao) and not set(ra) & set(vao)
             assert dong[0].startswith("Đã đổi ngày đi: ") and f"→ {nm['ngay'].day}/{nm['ngay'].month} (" in dong[0]
             if doi_cho or ra or vao:
                 dem["xep_lai"] += 1
                 assert dong[1].startswith("Lịch xếp lại theo ngày mới") and (not doi_cho or f"{len(doi_cho)} điểm đổi ngày hoặc buổi" in dong[1])
-                assert all(B.theo_id[j]["ten"] in dong[1] for j in ra + vao)
+                if len(ra + vao) <= sl.MAX_TEN_XEP_LAI:
+                    assert all(B.theo_id[j]["ten"] in dong[1] for j in ra + vao)
+                else:  # nhiều tên ⇒ chỉ nêu số điểm
+                    assert (not ra or f"bớt {len(ra)} điểm" in dong[1]) and (not vao or f"thêm {len(vao)} điểm" in dong[1])
             else:
                 dem["giu"] += 1
                 assert dong[1] == "Các điểm trong lịch giữ nguyên chỗ."

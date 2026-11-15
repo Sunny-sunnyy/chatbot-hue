@@ -45,3 +45,10 @@ Giao: A, tối 15/11 (handoff mục 4 và 4b(c)). Tiền: **0 USD** cho hai vi�
 | Playwright | không chạy — không sửa giao diện (dòng mới đi qua khối "Đã đổi / Không đổi được" sẵn có) | — |
 
 Bộ kín: không mở, không chạy.
+
+## Sau review của B (changes_requested 0 / 1 / 2) — C sửa 19:43 15/11/2026
+
+- **M-1 (lỗi thật, có sẵn ở câu đổi ngày đi trên main):** hàm so hai khung tính ban ngày và buổi tối riêng ⇒ điểm chỉ dời ban ngày ↔ tối bị ghi vừa "bớt" vừa "thêm" (B quét 540 lượt đổi tham số: 230 câu sai ở bản đầu). Sửa: mỗi điểm mang **tập** (ngày, buổi) trên cả ba buổi (một điểm buổi tối có thể nằm ở nhiều ngày); "bớt" = không còn ở chỗ nào, "thêm" = trước không có, "đổi ngày hoặc buổi" = có ở cả hai mà tập chỗ khác. Áp chung cho câu đổi ngày đi.
+- **m-1 (A quyết):** tổng tên bớt + thêm > 6 ⇒ câu chỉ nêu số ("bớt 9 điểm; thêm 3 điểm"); ≤ 6 giữ đủ tên. Áp cả câu đổi ngày đi. Dòng dài nhất trong bộ quét: 187 ký tự (trước 528).
+- **m-2:** hai lần đổi kiểu lịch trong một lượt ⇒ so khung trước lần đầu với khung sau lần cuối (một lần tính, 2 dòng).
+- **Kiểm [đã chạy]:** bộ quét của B (`data/review_no_nho_2026-11-15/quet.py`, 540 lượt, 0 USD): **0 câu sai** (495 lượt xếp lại, 45 giữ nguyên, 200 câu chỉ nêu số); 6 file test import module 384 passed (77 s); test mới khẳng định "bớt ∩ thêm rỗng" trên 135 lượt và có ca đối chứng điểm buổi tối đổi chỗ; `test_sua_ngay_di.py` đổi phép đếm lại độc lập sang cùng định nghĩa; mô phỏng nhãn bộ đã thấy 10 / 10.
