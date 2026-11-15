@@ -33,6 +33,7 @@
 - **Tài liệu bậc 1 + nơi ở:** `p9-tai-lieu-hang-o` @ `11f37f9` (worktree `/tmp/c_tl`) chờ A merge; agent con kiểm 53 khẳng định (0 sai, 8 chỗ đã sửa), biên bản `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_hang_o.md`.
 - Còn: sau khi bậc 2 merge ⇒ viết tài liệu bậc 2 (bài 25 mục 1 + sổ 07 + nhật ký; có agent con kiểm) ⇒ gỡ worktree `/tmp/c_nd`, `/tmp/c_ok`, `/tmp/c_tl`.
 - **Tiền C phiên chiều ≈ 0,34 USD** (bậc 1 ≈ 0,21 · nơi ở ≈ 0,0024 · bậc 2 ≈ 0,123). 0 server tạm.
+**(16:58 15/11/2026) Cập nhật bậc 2:** E review vòng 1 changes_requested (M-1: hàm đọc ngày nhận chữ GIỐNG ngày — "chị Mai", "điểm thứ hai", "24/7", phân số… 8 / 34 câu dò) ⇒ C sửa `do_so.ngay_tu_cau` qua 3 commit: `0463bf2` (E ready, 35 / 35; test rộng 1.160 đạt trên bản này) ⇒ `add3186` (đóng thêm ca E tìm sau; E bắt 1 hồi quy "5/5 người") ⇒ **`b7b47f1`** (A cho đúng một commit: tử ≤ mẫu; bảng ca 65 / 65; hai bộ dò của E C tự chạy 35 / 35 và 18 · 0 · 1; ngoại tuyến 34 câu đã đo 0 lệch). Chờ E xác nhận trên `b7b47f1` ⇒ A merge (luật dừng của A: còn câu sai ngày / hồi quy ⇒ merge `0463bf2`, phần sau thành nhánh riêng). KHÔNG thêm commit code nào nữa. Tài liệu bậc 2: nhánh `p9-tai-lieu-ngay-di` trong `/tmp/c_tl` (CHƯA commit; đã sửa theo kiểm độc lập 51 khẳng định: 1 sai + 10 dễ hiểu nhầm, biên bản `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_ngay_di.md`; đã thêm chuyện review) — commit + push + báo A SAU khi nhánh code vào main (nếu A merge `0463bf2` thì sửa số 65 ⇒ 57 và bỏ đoạn "5/5 người").
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11 — C viết 14:43 15/11/2026 `date`)
 

@@ -39,3 +39,26 @@ Bản review: origin `40d97e5` (C báo sau đó gộp thêm `main` chỉ có tà
 
 ## Bất biến (E đọc code, không chạy)
 Lượt không có hành động đổi ngày: `ngay_moi` là None, `ap` đi đúng các nhánh cũ; `stream_sua` lấy ngày từ `kq["luu"]` — bằng ngày cũ khi không đổi. Phần lời dặn đổi (+1 hành động, +1 câu) đã được C đo trên Q3 / H1 / Q5 / Q5b.
+
+## Kiểm phần sửa — 16:52 15/11/2026 (`date`), bản origin `0463bf2` (so `276e328`: 3 file — `do_so.py`, test, report)
+**M-1 ĐÓNG ⇒ kết luận: `ready_for_user_confirmation`** (còn 3 minor ghi nhận dưới; không mở vòng 3).
+- Chạy lại đúng bộ câu dò của vòng 1 (`data/review_sua_ngay_di_2026-11-15/do_34.py`, 34 câu + câu ghép "đổi sang 20/12 và bỏ điểm thứ hai"): **35 / 35 đúng kỳ vọng** — 8 câu sai trước nay trả "chưa rõ", câu ghép trả 20/12.
+- C báo [Chạy]: hàm mới trên 34 câu đã đo thật (D1–D3 + D4) 0 lệch nhãn ⇒ không đo có phí lại; E không chạy lại phần này. Test rộng trên bản sửa: C đang chạy — A xem số của C trước khi merge.
+- E thử thêm 19 câu MỚI (0 USD): 12 đúng, 7 lệch:
+  - **Vẫn ra sai ngày (4)** — n-1: "tuần thứ hai của tháng" ⇒ thứ Hai tới; "tỷ lệ 1/2" (chữ "tỷ") và "vé 1/2 giá" ⇒ 1/2 năm sau; "hôm 20 tháng 12 ngày chủ nhật" ⇒ luật mới bỏ "20 tháng 12" (vì theo sau là "ngày") nhưng giữ "chủ nhật" ⇒ ra Chủ nhật gần nhất thay vì 20/12.
+  - **Từ chối nhầm, an toàn (3)** — n-2: "20/12 ngày đẹp", "3/12 giờ nào cũng được" (đơn vị đứng sau ngày thật), "MAI ĐI LUÔN" (viết hoa cả câu) ⇒ "chưa rõ".
+- Nhận định: đúng như C ghi — luật theo danh sách từ không bao giờ kín; phần còn lại là câu hiếm, người dùng vẫn thấy ngày + thứ trong câu báo và sửa lại được bằng một câu. E **không** yêu cầu vòng sửa nữa (đã 2 vòng). n-1 có 3 ca rẻ nếu C tiện tay: thêm "tuần" vào nhóm từ đứng trước "thứ …", "tỷ lệ" cạnh "tỉ lệ", d/m ngay trước "giá". Ca "20 tháng 12 ngày chủ nhật": đề xuất khi một ngày tháng bị loại vì mơ hồ mà câu còn một ngày khác ⇒ trả "chưa rõ" thay vì lấy ngày còn lại — C / A quyết, không chặn.
+- n-3 (theo dõi sau merge): đếm trong log số lượt đổi ngày đi và lượt người dùng đổi lại ngay sau đó — tín hiệu rẻ nhất cho "đọc sai ngày" ngoài đời.
+
+### Kiểm commit thêm `add3186` (= `0463bf2` + sửa các ca vòng 2) — 16:55 15/11/2026 (`date`), A nhờ, 0 USD
+- Diff `0463bf2..add3186`: `do_so.py` +19 / −7 (luật phân số chuyển từ regex sang code: "tử < mẫu + đơn vị đi sau"; cụm mơ hồ ⇒ cả câu "chưa rõ"; cả câu viết hoa ⇒ hạ thường; thêm "tuần / tháng" trước "thứ …", "tỷ lệ", "giá"), test +5 dòng, report +1.
+- Bộ vòng 1 (`do_34.py`, 35 câu): **35 / 35 đúng** — không hồi quy.
+- Bộ vòng 2 (`do_19.py`, 19 câu): **17 đúng · 1 ra SAI ngày · 1 từ chối nhầm** (trên `0463bf2`: 12 · 4 · 3).
+  - 4 câu sai ngày cũ ⇒ cả 4 nay "chưa rõ"; 2 / 3 câu từ chối nhầm cũ ⇒ nay đúng ngày; còn "3/12 giờ nào cũng được" bị từ chối (3 < 12 + đơn vị đi sau — an toàn).
+  - **HỒI QUY 1 câu:** "lùi ngày đi, hẹn 5/5 người" — trên `0463bf2` trả "chưa rõ" (đúng), trên `add3186` trả 5/5 năm sau. Gốc: điều kiện phân số mới đòi tử **nhỏ hơn** mẫu, nên "5/5 + đơn vị" (kiểu "đủ 5/5 người") không còn bị coi là mơ hồ.
+- **Chưa đạt điều kiện A đặt (0 câu sai ngày, không hồi quy).** Đóng: đổi "tử < mẫu" thành "tử ≤ mẫu" (1 ký tự) + 1 ca test ⇒ kỳ vọng 35 / 35 và 18 đúng · 0 sai ngày · 1 từ chối nhầm; E chạy lại hai file dò (10 giây).
+
+### Kiểm commit `b7b47f1` (= `add3186` + `<` ⇒ `<=`, 1 ca test, 1 câu report) — 16:57 15/11/2026 (`date`), 0 USD
+- E tự chạy lại hai bộ dò trên `b7b47f1`: vòng 1 **35 / 35**; vòng 2 **18 đúng · 0 ra sai ngày · 1 từ chối nhầm** ("3/12 giờ nào cũng được" — an toàn). Câu hồi quy "hẹn 5/5 người" nay trả "chưa rõ". Không câu nào trước đúng nay hỏng.
+- Diff `add3186..b7b47f1` phần code đúng 1 dòng điều kiện (E đọc).
+- **Đạt điều kiện A đặt (0 câu sai ngày trên 54 câu dò, không hồi quy) ⇒ `ready_for_user_confirmation` trên `b7b47f1`.** Còn lại là giới hạn đã ghi: luật theo danh sách từ không kín; theo dõi lượt đổi ngày bị người dùng đổi lại ngay.
