@@ -247,6 +247,12 @@ def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: b
     return loi
 
 
+def la_khong_co(text: str) -> bool:
+    """Model báo "không đoạn trích nào trả lời được": mục có từ khoá và KHÔNG có mã `[w n]` nào (kể cả khi model viết thêm một câu giải thích trước
+    từ khoá — đo 15/11: 1 / 28). Mục có mã nguồn mà lẫn từ khoá thì không nuốt: đi tiếp qua kiểm cuối như thường."""
+    return bool(re.search(r"(?<![A-Za-z])KHONG[_ ]?CO(?![A-Za-z])", text, re.IGNORECASE)) and not _WEB_CODE.search(text)
+
+
 def ma_da_dung(text: str) -> list[int]:
     """Mã `[w n]` theo thứ tự xuất hiện đầu (không trùng) — giao diện chỉ hiện nguồn web được trích."""
     seen: list[int] = []
