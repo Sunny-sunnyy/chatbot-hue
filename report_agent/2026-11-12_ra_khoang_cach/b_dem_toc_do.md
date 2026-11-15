@@ -46,3 +46,13 @@ Lượt "lẻ" (138, gần với người bấm thử nhất): tìm thêm 9,4 %,
 2. **Web: gọi Serper sớm** — khi lần gọi trợ lý đầu đã có tín hiệu kho không đủ, chạy Serper song song lần gọi kế thay vì sau cùng. Ước lợi ≈ −2 s chữ đầu mục web. Sai khi: gọi Serper cho câu
    cuối cùng kho trả lời được ⇒ tốn 0,001 USD / lượt thừa + câu hỏi ra ngoài nhiều hơn (đường ra đã chấp nhận, nhưng phải đếm).
 - (Không tính là đạt sàn) dòng "đang tìm thêm trong kho…" hiện ngay: người dùng thấy có phản hồi, nhưng không phải chữ trả lời — sàn đo chữ trả lời.
+
+## Đính chính — 12:50 15/11/2026 (B, đọc code + đếm lại 0 USD theo mốc merge)
+
+Bảng trên gộp mọi lượt **từ 10/11**, nên trộn cả lượt **trước** các bản sửa tốc độ đã merge. Tách theo mốc merge:
+- **Câu thường:** chỉ lấy lượt sau `1633c18` (câu ngày tính sẵn "Lịch hệ thống", 20:47 10/11) ⇒ chữ đầu **p50 2,10 s · p95 4,32 s** (n = 55 stream) — **đạt sàn 3 / 5 s**.
+  Số 5,87–5,92 s cũ do 10 lượt đo "trước" của chính bản sửa đó (19:20–19:22 10/11, model gọi công cụ `ngay_lich` khi chưa có lịch tính sẵn).
+- **Cuộc đã có lịch, hỏi câu thường:** "định tuyến 2 lần" chỉ có ở 10 lượt 14:08–14:10 14/11, **trước** `3aef0ca` (14:27 14/11 — dùng lại định tuyến của đường thường); mọi lượt sau: 1 lần.
+- **Tìm thêm / mục web, sau khi bật "hết lượt tìm thì dừng"** (`9d6a0f7`, 20:07 13/11): 243 lượt gọi model thật ⇒ tìm thêm **7,8 %**, chữ đầu p50 **5,78 s** (n = 5 stream);
+  mục web 3,7 % (n = 1 stream). Vẫn trượt sàn p50 3 s, nhưng phần lượt nhỏ hơn bảng trên (20,6 % ⇒ ~11,5 %), n chữ đầu rất nhỏ.
+- ⇒ Hai đề xuất tốc độ B gửi 13:xx 15/11 (lịch tính sẵn bị thiếu; định tuyến 2 lần) **rút lại**: cả hai đã được sửa trước đó.
