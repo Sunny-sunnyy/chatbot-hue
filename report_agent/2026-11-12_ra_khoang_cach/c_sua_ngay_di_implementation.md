@@ -15,7 +15,7 @@ Plan `docs/superpowers/plans/2026-11-15-sua-lich-ngay-di-plan.md` (A duyệt b�
 ## Kết quả (mọi dòng [Chạy]; lượt có phí qua `/api/chat/stream` trên server của nhánh, cuộc đã có lịch có ngày đi; ngày trong câu + nhãn sinh theo hôm chạy)
 | Tiêu chí ghi trước | Ngưỡng | Kết quả |
 |---|---|---|
-| Luôn-a — hàm đọc ngày, bảng ca tự đặt | 100 % (≥ 30 ca) | **37 / 37** + 5 ca hạn ngày |
+| Luôn-a — hàm đọc ngày, bảng ca tự đặt | 100 % (≥ 30 ca) | **37 / 37** lúc đo; **57 / 57** sau review (mục "Sau review E") + 5 ca hạn ngày |
 | Luôn-b — áp ngày mới trên 3.840 khung × 3 ngày (một thứ Hai · một thứ Bảy có mưa lớn ngày 2 · một ngày mùa khác) | 0 lệch | **đạt**: 0 lỗi luật, điểm đã bỏ không quay lại, số trong câu báo = đếm lại độc lập |
 | Q1 — 25 hằng lời dặn so `main` | chỉ lời dặn hiểu ý khác | đạt |
 | **D1** — 12 câu nêu một ngày rõ × 2 lượt | ≥ 10 / 12 đúng cả 2 | **12 / 12** |
@@ -45,6 +45,13 @@ Plan `docs/superpowers/plans/2026-11-15-sua-lich-ngay-di-plan.md` (A duyệt b�
 - Nút ngày trên biểu mẫu không tự đồng bộ theo lời (như các trường khác).
 - Một lượt có cả đổi ngày đi và hành động khác: áp theo thứ tự người nói, tối đa 2 hành động / lượt (đổi hạng chỗ ở luôn xét sau cùng).
 
+## Sau review E (changes_requested 0 / 1 / 3 — `e_review_sua_ngay_di.md`)
+- **M-1 (đóng bằng code + test, 0 USD):** E gọi thẳng hàm đọc ngày với 34 câu dò, 8 câu có chữ GIỐNG ngày bị đọc thành một ngày cụ thể: tên người / tên đường có chữ "Mai" ⇒ ngày mai · "điểm thứ hai / thứ 3" ⇒ thứ Hai / thứ Ba · phân số và "24/7", "1/2 ngày" ⇒ ngày tháng năm sau · "2 tháng 3 ngày nghỉ" ⇒ 2/3. Hệ quả ngược: câu ghép "đổi sang <ngày> và bỏ điểm thứ hai" thấy hai ngày ⇒ từ chối nhầm. Lượt đo có phí không lộ vì bộ D không có câu kiểu này.
+  - Sửa trong `do_so.ngay_tu_cau` (nguyên tắc: mơ hồ ⇒ không coi là ngày): "mai" xét trên chữ gốc — bỏ khi viết hoa giữa câu, đứng sau từ xưng hô / đường / phố / hoa…, hoặc theo sau là chữ viết hoa; "thứ …" bỏ khi ngay trước là điểm / nơi / chỗ / lần / mục / quán…; d/m bỏ khi ngay sau là đơn vị (ngày, giờ, buổi, nhóm, phần…), đứng sau "tỉ lệ / khoảng", hoặc đúng "24/7"; "d tháng m" bỏ khi ngay sau là "ngày / tuần".
+  - [Chạy] bảng ca 37 ⇒ **57 / 57** (8 ca của E + 4 ca cùng họ ⇒ "chưa rõ"; 8 ca câu ghép / "Mai" đầu câu ⇒ đúng ngày thật). [Chạy] ngoại tuyến hàm mới trên **34 câu đã đo thật** (26 câu D1–D3 + 8 câu D4): 20 câu có nhãn ra đúng ngày nhãn, 5 câu D2 "chưa rõ" vẫn không ra ngày, câu D2 ngày đã qua vẫn ra đúng ngày đó (bị chặn ở kiểm hạn) ⇒ **0 lệch** ⇒ không đo có phí lại (lời dặn + khuôn đầu ra không đổi).
+  - Còn hở đã biết: luật theo danh sách từ đứng trước / sau nên chữ giống ngày kiểu khác (chưa nghĩ ra) vẫn có thể lọt; hàm chỉ chạy khi model đã coi câu là "đổi ngày đi", và dòng báo luôn in ngày + thứ.
+- **m-1** ("tuần sau" theo tuần lịch): E nhận, không sửa. **m-2:** câu "Giải thích ngắn" nói quá — đã sửa ở trên. **m-3:** lượt đổi ngày có hai mục thời tiết trong danh sách công cụ của log (dự báo lấy một lần trước khi áp, một lần khi dựng lịch — lần hai đọc đệm); không bộ đếm nào dựa vào "đúng một".
+
 ## Bảng rà AI FDE (sau khi làm)
 | Mục | Hiện trạng | Khớp / lệch |
 |---|---|---|
@@ -57,4 +64,4 @@ Plan `docs/superpowers/plans/2026-11-15-sua-lich-ngay-di-plan.md` (A duyệt b�
 
 **Dữ liệu (private):** `data/sua_lich_ngay_2026-11-15/` — `cau_d.jsonl` (md5 `7b5b22cbda07`, C ghi trước), `cau_d4.jsonl` (A), `tools/do_d.py` (`--mo-phong` 0 USD), `tools/cham_d.py`, kết quả `do/`.
 
-**Giải thích ngắn:** người dùng nay nói được "đổi ngày đi sang 20/12" hay "dời sang thứ Bảy tuần sau"; trợ lý chỉ nhận ra ý, còn ngày do code đọc từ đúng chữ người dùng gõ, nên không thể đổi sang một ngày họ không nói. Đổi ngày có thể làm lịch xếp lại (điểm đóng cửa theo thứ, mưa) — khi đó dòng "Đã đổi" nói rõ đổi gì.
+**Giải thích ngắn:** người dùng nay nói được "đổi ngày đi sang 20/12" hay "dời sang thứ Bảy tuần sau"; trợ lý chỉ nhận ra ý, còn ngày do code đọc từ đúng chữ người dùng gõ — model không tự đặt ra ngày được. Code vẫn có thể đọc nhầm một cụm chữ GIỐNG ngày (review đã bắt 8 kiểu, đã sửa — mục dưới); gặp câu mơ hồ thì không đổi và hỏi lại. Đổi ngày có thể làm lịch xếp lại (điểm đóng cửa theo thứ, mưa) — khi đó dòng "Đã đổi" nói rõ đổi gì.

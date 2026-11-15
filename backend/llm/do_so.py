@@ -70,9 +70,27 @@ def do_ngay_di(text: str, hom_nay) -> int | None:
 
 # Sửa lịch bằng lời — đổi ngày đi (plan 2026-11-15-sua-lich-ngay-di): NGÀY do code đọc từ chính chữ người dùng (model chỉ nhận ra ý "đổi ngày đi",
 # không viết ngày). Khác `do_ngay_di`: không giới hạn 0–6 ngày, đọc thêm "dd/mm/yyyy", "ngày d tháng m", "tuần sau"; trả ngày thật.
-_DMY = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])")
-_D_THANG_M = re.compile(r"(?<![\w/])(\d{1,2})\s+tháng\s+(\d{1,2})(?:\s+năm\s+(\d{4}))?(?![\w/])")
-_THU_CN = re.compile(r"(?<![\w])(?<!ngày )(?:thứ\s+(hai|ba|tư|năm|sáu|bảy|[2-7])|(chủ\s+nhật|cn))(?![\w])")  # như `_THU` + "thứ 3", "CN"
+# Review E M-1 (15/11): chữ GIỐNG ngày không phải ngày ⇒ không đọc (thà hỏi lại còn hơn đổi sai): phân số / "24/7" / "1/2 ngày" · "2 tháng 3 ngày" ·
+# "điểm thứ hai" (thứ tự, không phải thứ Hai) · "Mai" là tên người / tên đường.
+_DON_VI = r"(?:ngày|giờ|buổi|tiếng|nhóm|phần|chặng|số|người|quãng|đoạn|tuần|tháng)"
+_DMY = re.compile(r"(?<![\d/])(?<!tỉ lệ )(?<!khoảng )(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])(?!\s*" + _DON_VI + r"(?![\w]))")
+_D_THANG_M = re.compile(r"(?<![\w/])(\d{1,2})\s+tháng\s+(\d{1,2})(?:\s+năm\s+(\d{4}))?(?![\w/])(?!\s+(?:ngày|tuần)(?![\w]))")
+_THU_CN = re.compile(r"(?<![\w])(?:(\w+)\s+)?(?:thứ\s+(hai|ba|tư|năm|sáu|bảy|[2-7])|(chủ\s+nhật|cn))(?![\w])")  # như `_THU` + "thứ 3", "CN"
+_TRUOC_THU_TU = {"ngày", "điểm", "nơi", "chỗ", "lần", "mục", "người", "cái", "món", "quán", "bước", "ý", "phần", "chặng", "hạng", "câu", "lượt", "bữa"}
+_MAI_CHU = re.compile(r"(?<![\w])(?:(\w+)\s+)?(mai)(?![\w])(?:\s+(\w))?", re.IGNORECASE)  # chạy trên chữ GỐC (còn hoa / thường)
+_TRUOC_TEN = {"chị", "anh", "cô", "bà", "ông", "em", "bạn", "bé", "chú", "bác", "dì", "đường", "phố", "hoa", "chợ", "cây", "cành", "tên"}
+
+
+def _co_mai(goc: str) -> bool:
+    """"mai" = ngày mai? Không tính khi là tên: viết hoa giữa câu ("chị Mai"), đứng sau từ xưng hô / đường / phố / hoa…, hoặc theo sau là một
+    chữ viết hoa ("Mai Thúc Loan")."""
+    for m in _MAI_CHU.finditer(goc):
+        truoc, chu, sau = m.group(1), m.group(2), m.group(3)
+        dau_cau = not goc[:m.start(2)].strip() or goc[:m.start(2)].rstrip()[-1] in ".!?…;:"
+        if (truoc or "").casefold() in _TRUOC_TEN or (chu[0].isupper() and not dau_cau) or (sau is not None and sau.isupper()):
+            continue
+        return True
+    return False
 _TUAN_SAU = re.compile(r"(?<![\w])tuần\s+(?:sau|tới)(?![\w])")
 _CUOI_TUAN_SAU = re.compile(r"(?<![\w])cuối\s+tuần(?:\s+(này|sau|tới))?(?![\w])")
 _HOM_NAY = re.compile(r"(?<![\w])hôm\s+nay(?![\w])")
@@ -86,11 +104,14 @@ def ngay_tu_cau(text: str, hom_nay):
     Đọc: dd/mm[/yyyy] · "d tháng m [năm yyyy]" (không năm ⇒ lần tới gần nhất, kể cả hôm nay) · hôm nay · mai · ngày kia / mốt · thứ X / chủ nhật
     (lần tới gần nhất; kèm "tuần sau / tuần tới" ⇒ đúng thứ đó của tuần sau) · cuối tuần [này / sau] (thứ Bảy)."""
     import datetime as _dt
-    t = unicodedata.normalize("NFC", text).casefold()
+    goc = unicodedata.normalize("NFC", text)
+    t = goc.casefold()
     if _AM_LICH.search(t):
         return NGAY_CHUA_RO
     found, sai = set(), False
     for d, mo, y in _DMY.findall(t) + _D_THANG_M.findall(t):
+        if (d, mo, y) == ("24", "7", ""):  # "mở 24/7"
+            continue
         try:
             ngay = _dt.date(int(y) if y else hom_nay.year, int(mo), int(d))
             if not y and ngay < hom_nay:
@@ -101,14 +122,16 @@ def ngay_tu_cau(text: str, hom_nay):
         found.add(ngay)
     if _HOM_NAY.search(t):
         found.add(hom_nay)
-    if _MAI.search(t):
+    if _co_mai(goc):
         found.add(hom_nay + _dt.timedelta(days=1))
     if _NGAY_KIA.search(t):
         found.add(hom_nay + _dt.timedelta(days=2))
     tuan_sau = bool(_TUAN_SAU.search(t))
     dau_tuan_sau = hom_nay + _dt.timedelta(days=7 - hom_nay.weekday())  # thứ Hai tuần sau
     for m in _THU_CN.finditer(t):
-        thu = 6 if m.group(2) else (int(m.group(1)) - 2 if m.group(1).isdigit() else _THU_SO[m.group(1)])
+        if m.group(2) and m.group(1) in _TRUOC_THU_TU:  # "điểm thứ hai", "ngày thứ ba" = thứ tự, không phải thứ trong tuần
+            continue
+        thu = 6 if m.group(3) else (int(m.group(2)) - 2 if m.group(2).isdigit() else _THU_SO[m.group(2)])
         found.add(dau_tuan_sau + _dt.timedelta(days=thu) if tuan_sau else hom_nay + _dt.timedelta(days=(thu - hom_nay.weekday()) % 7))
     for m in _CUOI_TUAN_SAU.finditer(t):
         found.add(dau_tuan_sau + _dt.timedelta(days=5) if m.group(1) in ("sau", "tới") else hom_nay + _dt.timedelta(days=(5 - hom_nay.weekday()) % 7))

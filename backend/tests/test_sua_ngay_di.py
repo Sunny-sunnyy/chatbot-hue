@@ -30,6 +30,17 @@ CA_NGAY = [
     ("tuần sau mới đi", NGAY_CHUA_RO), ("ngày 2 chỉ đi buổi sáng", NGAY_CHUA_RO), ("ngày thứ ba bỏ lăng Tự Đức", NGAY_CHUA_RO),
     ("lịch 3 ngày thôi", NGAY_CHUA_RO), ("mai hay ngày kia đều được", NGAY_CHUA_RO),
     ("đi ngày 30/2", NGAY_KHONG_CO), ("31 tháng 11", NGAY_KHONG_CO),
+    # review E M-1: chữ GIỐNG ngày không phải ngày ⇒ không đọc ra ngày (8 ca dò của E + ca cùng họ)
+    ("dời ngày đi giúp, mình đi với chị Mai", NGAY_CHUA_RO), ("đổi ngày khởi hành, mình ở đường Mai Thúc Loan", NGAY_CHUA_RO),
+    ("đổi ngày đi, bỏ điểm thứ hai trong lịch", NGAY_CHUA_RO), ("dời ngày, điểm thứ 3 bỏ đi", NGAY_CHUA_RO),
+    ("lùi chuyến lại, mỗi nơi chỉ ở 1/2 ngày thôi", NGAY_CHUA_RO), ("dời chuyến, quán mở 24/7 mà", NGAY_CHUA_RO),
+    ("đổi ngày đi, tỉ lệ 3/4 nhóm bận", NGAY_CHUA_RO), ("đổi ngày đi, nhóm có 2 tháng 3 ngày nghỉ", NGAY_CHUA_RO),
+    ("dời ngày đi, bạn Mai Anh chưa xin nghỉ được", NGAY_CHUA_RO), ("đổi ngày đi, mình thích ngắm hoa mai", NGAY_CHUA_RO),
+    ("đổi ngày đi, bỏ quán thứ hai với lần thứ ba ghé chợ", NGAY_CHUA_RO), ("dời chuyến, đi khoảng 2/3 quãng đường thì nghỉ", NGAY_CHUA_RO),
+    # … nhưng một ngày thật trong cùng câu vẫn đọc đúng (không từ chối nhầm)
+    ("đổi sang 20/12 và bỏ điểm thứ hai", D(2026, 12, 20)), ("mai đi luôn, chị Mai cũng đi", D(2026, 11, 16)),
+    ("Mai đi luôn nhé", D(2026, 11, 16)), ("Ok. Mai mình đi", D(2026, 11, 16)), ("tối mai tới Huế, đổi ngày đi", D(2026, 11, 16)),
+    ("sáng thứ hai mình tới, bỏ điểm thứ hai", D(2026, 11, 16)), ("đi 24/7 nhé", NGAY_CHUA_RO), ("đi từ 24/12, quán mở 24/7", D(2026, 12, 24)),
 ]
 
 
