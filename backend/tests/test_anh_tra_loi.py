@@ -65,14 +65,16 @@ def test_several_images_only_for_cited_places_named_in_the_answer():
     ca = [
         {**goc, "text": "Quán Bê Ta mở muộn hơn Chùa Anpha.", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"), (a, "Chùa Anpha"))},  # 2 ảnh, thứ tự trích
         {**goc, "text": "Chùa Anpha đẹp. [2]", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"))},  # tên B không có trong chữ
-        {**goc, "text": "chè ngon, chùa anpha gần đó", "sources": S((c, "Chè"), (a, "Chùa Anpha (Kim Long)"))},  # tên 1 chữ ⇒ bỏ; ngoặc bỏ khi khớp
+        {**goc, "text": "chè ngon, chùa Anpha gần đó", "sources": S((c, "Chè"), (a, "Chùa Anpha (Kim Long)"))},  # tên 1 chữ ⇒ bỏ; ngoặc bỏ khi khớp
         {**goc, "text": "Chùa Anpha và Quán Ka", "sources": S((a, "Chùa Anpha"), (kc, "Quán Ka"))},  # ảnh không chắc ⇒ bỏ
         {**goc, "text": "Một Hai, Ba Bốn, Năm Sáu, Bảy Tám", "sources": S((a, "Một Hai"), (b, "Ba Bốn"), (c, "Năm Sáu"), (d, "Bảy Tám"))},  # ≤ 3
         {**goc, "text": "Chùa Anpha và Vé Tham Quan", "sources": S((a, "Chùa Anpha"), ("travel/tickets/ve.md", "Vé Tham Quan"))},  # loại không phải một nơi
         {**goc, "web": {"outcome": "co_muc"}, "text": "Chùa Anpha, Quán Bê Ta", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"))},  # có mục web ⇒ không ảnh
         {**goc, "text": "Quán Bê Ta [1] rồi Chùa Anpha [2]", "numbers": [["2", 1], ["1", 2]],  # thứ tự như dòng Nguồn (numbers), không theo id
          "sources": [{"id": 1, "bai_id": a, "title": "Chùa Anpha"}, {"id": 2, "bai_id": b, "title": "Quán Bê Ta"}]},
+        {**goc, "text": "Chùa Anpha và Quán Bê Tai", "sources": S((a, "Chùa Anpha"), (b, "Quán Bê Ta"))},  # tên lọt giữa một chữ dài hơn ⇒ bỏ (ranh giới từ, review E)
+        {**goc, "text": "một quán nhỏ ven đường gần Chùa Anpha", "sources": S((a, "Chùa Anpha"), (b, "Quán Nhỏ"))},  # khác hoa / thường sau chữ đầu ⇒ bỏ
     ]
     kq = chay(ca)
-    assert [[x["baiId"] for x in k] for k in kq] == [[a, b], [a], [a], [a], [a, b, c], [a], [], [b, a]]
+    assert [[x["baiId"] for x in k] for k in kq] == [[a, b], [a], [a], [a], [a, b, c], [a], [], [b, a], [a], [a]]
     assert kq[0][1]["ten"] == "Quán Bê Ta" and all(x["anh"] for k in kq for x in k)
