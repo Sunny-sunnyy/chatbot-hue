@@ -1,4 +1,4 @@
-// Ảnh dưới câu trả lời của trợ lý (E 14/11, plan A duyệt): CODE quyết, không model. Một ảnh của bài nguồn khi câu trả lời là về MỘT nơi / món:
+// Ảnh dưới câu trả lời của trợ lý (E 14/11, plan A duyệt; C 15/11 thêm nhiều ảnh theo tên): CODE quyết, không model. Một ảnh của bài nguồn khi câu trả lời là về MỘT nơi / món:
 // lượt xong, trả lời bằng kho (không từ chối / ngoài phạm vi / hỏi lại / lịch / có mục web), mọi nguồn được trích thuộc đúng MỘT bài, bài đó là
 // loại "một nơi / món" (không bài gốc lĩnh vực, vé tham quan, dịch vụ / lưu trú), có ảnh và ảnh không bị đánh "không chắc" (`kc`).
 // Hàm thuần (test bằng node: `backend/tests/test_anh_tra_loi.py`).
@@ -12,12 +12,30 @@ export function loaiCuaMa(id) {
   return p.length >= 3 ? p[1] : null;  // như `loai_con` của `/api/kham_pha` (api/routes/cong.py)
 }
 
+// Tên bài dùng để khớp trong chữ trả lời: bỏ phần trong ngoặc, chữ thường, NFC; tên < 2 chữ ("Ga Huế" đủ, "Chè" không) ⇒ không khớp (dễ trùng lời thường).
+export function tenKhop(title) {
+  const t = String(title || "").replace(/\s*\([^)]*\)\s*/g, " ").trim().normalize("NFC").toLowerCase();
+  return t.split(/\s+/).length >= 2 ? t : null;
+}
+
+const SO_ANH_TOI_DA = 3;
+
+// Danh sách ảnh dưới câu trả lời (plan 2026-11-15-anh-trong-chat, sha bf43cc57f6ea): `[{anh, baiId, ten}]`, rỗng ⇒ không ảnh.
+// - Mọi nguồn trích thuộc MỘT bài ⇒ như luật cũ: 1 ảnh (không cần tên trong chữ).
+// - Nguồn thuộc ≥ 2 bài ⇒ theo thứ tự ở dòng Nguồn, bài "một nơi / món", ảnh chắc, tên ≥ 2 chữ CÓ trong chữ trả lời; tối đa 3.
+//   `turn.sources` = nguồn ĐƯỢC TRÍCH do server gửi (api/routes/chat.py `_source_responses(trace.cited)`) ⇒ ảnh chỉ của bài câu trả lời dựa vào.
 export function anhTraLoi(turn) {
   if (!turn || turn.phase !== "done" || turn.outcome !== "success" || turn.tuChoiKho || turn.web || turn.lich || turn.lichV2
-      || turn.clarify || turn.suaThe || !Array.isArray(turn.sources) || turn.sources.length === 0) return null;
-  const bai = [...new Set(turn.sources.map(s => s.bai_id))];
-  if (bai.length !== 1 || bai[0] == null || !LOAI_MOT_NOI.has(loaiCuaMa(bai[0]))) return null;
-  const a = anhCuaBai(bai[0]);
-  if (!a || a.kc) return null;
-  return { anh: a.anh, baiId: bai[0], ten: turn.sources[0].title };
+      || turn.clarify || turn.suaThe || !Array.isArray(turn.sources) || turn.sources.length === 0) return [];
+  // thứ tự như dòng "Nguồn" (SourceLine.jsx: theo `turn.numbers` = số trích hiện trong chữ) ⇒ ảnh đứng cùng thứ tự người đọc thấy tên nguồn
+  const nguon = turn.numbers instanceof Map
+    ? [...turn.sources].sort((a, b) => (turn.numbers.get(String(a.id)) ?? Infinity) - (turn.numbers.get(String(b.id)) ?? Infinity)) : turn.sources;
+  const ten = new Map();
+  for (const s of nguon) if (s.bai_id != null && !ten.has(s.bai_id)) ten.set(s.bai_id, s.title);
+  const bai = [...new Set(nguon.map(s => s.bai_id))];
+  const dung = id => id != null && LOAI_MOT_NOI.has(loaiCuaMa(id)) && anhCuaBai(id) && !anhCuaBai(id).kc;
+  const ra = id => ({ anh: anhCuaBai(id).anh, baiId: id, ten: ten.get(id) });
+  if (bai.length === 1) return dung(bai[0]) ? [ra(bai[0])] : [];
+  const chu = String(turn.text || "").normalize("NFC").toLowerCase();
+  return bai.filter(id => dung(id) && tenKhop(ten.get(id)) && chu.includes(tenKhop(ten.get(id)))).slice(0, SO_ANH_TOI_DA).map(ra);
 }

@@ -76,3 +76,9 @@
 .anh-tra-loi img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.16,1,.3,1); }
 .hieu-ung .anh-tra-loi:hover img, .hieu-ung .anh-tra-loi:focus-visible img { transform: scale(1.05); }
 .chat .anh-tra-loi { max-width: 100%; }
+.anh-tra-loi-hang { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 12px 0 6px; max-width: 540px; }
+.anh-tra-loi-o { display: block; color: var(--color-ink); text-decoration: none; }
+.anh-tra-loi-khung { display: block; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: var(--color-accent-soft); }
+.anh-tra-loi-khung img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .anh-tra-loi-o:hover img, .hieu-ung .anh-tra-loi-o:focus-visible img { transform: scale(1.05); }
+.anh-tra-loi-ten { display: block; margin-top: 4px; font-size: 14px; line-height: 1.3; color: var(--color-muted); }
