@@ -1,4 +1,50 @@
-# STATUS E — PHIÊN TỐI 15/11 (mở 19:27 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
+# STATUS E — KẾT PHIÊN TỐI 15/11 (ghi 21:33 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
+
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11)
+
+**Quyền phiên tối 15/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A (B / C thường tự báo trước ⇒ A = terminal còn lại) ⇒ chờ A giao.
+
+### Trạng thái máy lúc kết phiên
+- E không còn worktree `/tmp/e_*`, server tạm (8896 đã tắt), tiến trình nền hay agent con nào. File tạm đã xoá.
+- Năm nhánh của E tối nay đều ĐÃ MERGE vào main: `p9-chu-gioi-thieu`, `p9-lich-ho`, `p9-gd-nguon-danh-gia`, `p9-so-vet`, `p9-anh-tra-loi-thang` (A đưa vào lệnh dọn nhánh).
+
+### Việc đầu phiên sau (ứng viên — chờ A giao)
+1. **Thí nghiệm so ảnh bằng embedding** (plan nháp của B trên `origin/p10-so-anh`, B sửa vòng 2; CHỈ làm sau khi plan được duyệt): (a) nhìn lại **100 %** 172 ảnh mẫu cũ `data/phase_10/anh/e9/mau_anh/` — đã thấy 5 cặp file giống byte nằm ở HAI tên (ảnh sai tên); (b) loại 6 ảnh lịch cùng file Commons với bộ đo cũ; (c) gom ảnh mẫu còn thiếu (~272 theo mốc ≥ 8 / ≥ 15; số tính lại bằng `uv run python -I data/so_anh_buoc0_2026-11-15/dem.py` khi B chốt danh sách nhóm hay nhầm). Kết quả bước 0: `data/so_anh_buoc0_2026-11-15/KET_QUA.md`. Tin A: phép dò DINOv2 trên bộ mẫu cũ ra tên số 1 đúng 17 / 25 (SigLIP 15, luna 21); User đã xin quyền DINOv3 (chờ duyệt), không có ảnh tự chụp.
+2. **Sổ vết debug còn thiếu** (`backend/core/so_vet.py`, đang BẬT trên server 8010 bằng `HUE_SO_VET=true`): tham số model truyền cho công cụ lịch / thời tiết / ngày; đầu ra thô của bước định tuyến; chưa chạy thật với cờ bật ở lượt biểu mẫu, sửa lịch, ảnh ⇒ chạy mỗi loại một lượt, xem `uv run python scripts/xem_so_vet.py`, vá chỗ thiếu.
+3. **Hỏi kèm ảnh (phương án lai, main `d649b50`):** bước nhận ảnh dao động — cùng một ảnh thử qua 7 lượt: 1 tên đúng 1 · 1 tên sai 2 · 2 tên 2 · lỗi model 2 ⇒ "ra một tên thì đáng tin" cần đếm lại trên ảnh thật khi User thử; lỗi model do phần suy luận chạm trần 1.024 token đầu ra (quan sát, chưa chứng minh).
+4. Dữ liệu lịch còn trống bữa (chưa ai giao): phá Tam Giang 1.824 bữa, điện Hòn Chén 688, không gian Lê Bá Đảng 481; 2–4 bài quán ven đầm Lập An sẽ đưa "bữa có quán kho" 63,9 ⇒ ~66,8 % (A ghi handoff, hỏi User). Nguồn thứ hai chợ Bến Ngự nằm ở `data/lich_ho_2026-11-15/can_cu_bo_sung.json` — ghép khi dựng bảng điểm bản kế.
+
+### Đã xong tối 15/11 (đều trong main; report ở `report_agent/2026-11-12_ra_khoang_cach/`)
+| Việc | Report |
+|---|---|
+| Đo lại bữa có quán kho trên bảng 41 điểm: 63,9 % (34 điểm 69,1 %) | (số trong `e_lich_ho_implementation.md`; công cụ `data/do_lai_quan_kho_v9_2026-11-15/`) |
+| Hai câu chữ: Giới thiệu (câu tra web lượt hỏi tiếp) + dòng link Nơi ở | — (3 dòng) |
+| Dữ liệu lịch hở: 3 ghi chú ăn, ảnh Hải Vân ⇒ cửa ải, bảng ảnh lịch v6 `eb99b39803f9`, bảng Khám phá v10 | `e_lich_ho_implementation.md` |
+| Review nút dấu cộng của C (dán ảnh thật qua clipboard) | `e_review_nut_anh_cong.md` |
+| Khung nguồn hiện Markdown sạch + ghép lát bảng; bỏ khối đánh giá; `data-phase` trên `.turn` / `.lkh-lich` | `e_gd_nguon_danh_gia_implementation.md` |
+| Sổ vết debug có nội dung (cờ `so_vet`, `HUE_SO_VET=true`, `scripts/xem_so_vet.py`) | `e_so_vet_implementation.md` |
+| Hỏi kèm ảnh phương án lai (1 tên ⇒ trả lời thẳng + dòng "Mình đoán…" đầu câu trả lời; 2–3 tên ⇒ thẻ chọn) | `e_anh_tra_loi_thang_implementation.md` |
+| Bước 0 plan so ảnh (đếm ảnh mẫu) | `data/so_anh_buoc0_2026-11-15/KET_QUA.md` (private) |
+
+### Bẫy tối 15/11 (đầu vào vòng cải tiến)
+- Report ghi một hành vi CHƯA chạy thử như sự thật ("lượt ảnh bị bỏ lặng") — sai, C bắt ⇒ chưa chạy thì ghi "chưa thử".
+- Hàm `async` trong hook React gọi callback sau `await` = callback + cờ của lần vẽ CŨ ⇒ mọi luồng giao diện có chờ mạng phải có ca dò "người dùng làm việc khác trong lúc chờ" (bấm cuộc mới, bấm câu gợi ý, bỏ ảnh).
+- Ca thử dựa vào bước nhận ảnh thật (dao động) ⇒ treo 120 s ⇒ dựng số tên bằng chặn route trong trình duyệt, chỉ giữ 1 lượt thật.
+- Regex Python có cờ `(?m)` giữa mẫu ⇒ script hỏng trước khi gửi câu nào.
+- Script Playwright cũ chờ lớp `.feedback` làm dấu "lượt xong" — lớp này đã gỡ ⇒ dùng `.turn[data-phase="done"]` / `.lkh-lich[data-phase="done"]`.
+- Tin A giao người khác sửa nhánh của mình tới sau khi mình đã sửa ⇒ push + báo cả ba ngay.
+- Ước tiền thấp hơn thật khi phải chạy lại sau chỉnh (khung nguồn ước 0,002 ⇒ 0,0048).
+
+### Tiền E tối 15/11 ≈ 0,028 USD
+Serper 6 lượt 0,006 · review nút cộng (3 lượt nhận ảnh) 0,0021 · khung nguồn 0,0048 · sổ vết 0,0032 · hỏi kèm ảnh ≈ 0,012 (3 lần chạy bộ ca + lượt nhận ảnh thật). Số cộng tay từ `scripts/dem_chat_metrics.py --sha` + dòng `anh_metrics`; chưa ai tính lại. Agent con: 0. Codex: 0.
+
+### Câu hỏi cho A phiên sau
+- Danh sách "nhóm hay nhầm" của plan so ảnh (E tự xếp 18 tên) — B chốt id nào.
+- Trần 1.024 token đầu ra của bước nhận ảnh có nâng không (đếm `loi_model` trong `anh_metrics` trước).
+
+---
+
+# (nhật ký trong phiên) STATUS E — PHIÊN TỐI 15/11 (mở 19:27 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
 
 - 19:27 15/11/2026 — mở phiên, kiểm nhanh khớp handoff: main `54265a5`, sạch (chỉ `.wslconfig` chưa tracked — đúng như handoff), hooksPath `.githooks`, Qdrant 1 collection 9.425 điểm. Khác tài liệu: nhánh `p9-tai-lieu-ket-phien-chieu` ĐÃ merge (`a37ed63`), worktree `/tmp/e_v9` không còn (chỉ còn cây chính) ⇒ không phải gỡ gì; WSL nay 19 GB (handoff ghi 15,9 GB, "User chưa làm"). Ba terminal khác: `hue-rag-10`, `hue-rag-7d`, `hue-rag-ef` (B = `hue-rag-7d`, C = `hue-rag-10` tự báo ⇒ A = `hue-rag-ef` theo loại trừ; đã gửi báo cáo mở phiên cho A). **Rảnh — chờ A giao** (việc theo handoff: mục 3 dữ liệu lịch còn hở + mục 4b (a) câu chữ `GioiThieu.jsx`, (b) đo lại "bữa có quán kho" trên 41 điểm). Chưa sửa file nào khác, 0 USD.
 - 19:33 15/11/2026 — A (`hue-rag-ef`) giao 3 việc (quyền phiên "như chiều 15/11"). **Việc 1 XONG:** bữa có quán kho trên bảng 41 điểm = 63,9 % (đối chứng 34 điểm 69,1 % khớp); công cụ + kết quả `data/do_lai_quan_kho_v9_2026-11-15/`; đã báo A (A sửa README sổ). **Việc 2 CHỜ REVIEW:** `p9-chu-gioi-thieu` @ origin `833f83d` (worktree `/tmp/e_chu`, 2 symlink — gỡ sau merge): 1 câu `GioiThieu.jsx` + nửa câu dòng link Nơi ở `LichV2.jsx`; build + `test_static_ui` 4 / 4. Vòng tự soi 1 đã gửi cả nhóm. **ĐANG LÀM việc 3** (dữ liệu lịch hở). File SẼ ghi: private `data/lich_ho_2026-11-15/` (tra nguồn, bảng mới nếu có căn cứ), có thể `data/phase_9/lich_trinh/diem_v10.json` + `bang_anh_v6.json` + `backend/config/settings.yaml` + `frontend/public/anh/lich/`, `frontend/public/anh/kp/` (ảnh Hải Vân) trên nhánh mới `p9-lich-ho`; report `report_agent/2026-11-12_ra_khoang_cach/e_lich_ho_implementation.md`. Tiền: 0 USD tới giờ.
