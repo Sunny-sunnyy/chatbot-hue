@@ -514,7 +514,10 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
             entry.update(ms=kq.ms, trang_thai=kq.trang_thai, loi=kq.loi)
             if kq.trang_thai != "ok":
                 return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON_LOI, (tt.CAU_LOI,))
-            khoi = tt.khoi_du_bao(kq, tu_ngay, den_ngay, bool(trace.thoi_tiet_ctx and trace.thoi_tiet_ctx["buoi"]))
+            tuan_sau = (trace.thoi_tiet_ctx or {}).get("tuan_sau")
+            if tuan_sau:  # câu "tuần sau": khoảng ngày do code tính, bỏ số ngày model gửi
+                tu_ngay, den_ngay = tuan_sau
+            khoi = tt.khoi_du_bao(kq, tu_ngay, den_ngay, bool(trace.thoi_tiet_ctx and trace.thoi_tiet_ctx["buoi"]), tuan_sau=bool(tuan_sau))
             trace.thoi_tiet.update(khoi=khoi, n_ngay=abs(den_ngay - tu_ngay) + 1)
             return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON, tuple(x for x in khoi.splitlines()[1:] if x))  # bỏ dòng tiêu đề; còn dòng ngày + dòng ghi công / giờ
         finally:
@@ -853,6 +856,9 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         # vòng chỉnh 1 (A duyệt, sửa D3): câu ngoài 7 ngày ⇒ KHÔNG đưa công cụ (không số dự báo nào để model chép) — code nối câu cố định
         trace.thoi_tiet_ctx = {"bao_lu": tt.la_cau_bao_lu(query), "ngoai_7": ngoai_7, "buoi": tt.co_buoi(query), "tu_khoa": tu_khoa,
                                "co_cong_cu": tu_khoa and not ngoai_7}
+        tuan_sau = tt.ngay_tuan_sau(query, hom_nay_vn())
+        if tuan_sau and not ngoai_7:  # rà nợ 15/11: "tuần sau" có phần trong 7 ngày ⇒ code đặt khoảng ngày (không có ⇒ khoá vắng, như trước)
+            trace.thoi_tiet_ctx["tuan_sau"] = tuan_sau
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
