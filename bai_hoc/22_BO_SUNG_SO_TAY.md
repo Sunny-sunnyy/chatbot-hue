@@ -1,6 +1,6 @@
 # Bài 22 — Viết thêm vào sổ tay mà không làm hỏng trang cũ: sáu lần ghi kho ngày 14/11
 
-*Cập nhật lần cuối: 20:31, ngày 14/11/2026 · thêm lần ghi kho thứ sáu (16 bài lễ hội / nghệ thuật). Trước: 19:41, ngày 14/11/2026 · thêm lần ghi kho thứ năm (10 món, 13 địa điểm / di tích mà trợ lý từng từ chối hoặc trả lời mỏng). Trước: 17:59, ngày 14/11/2026 · thêm lần ghi kho thứ tư (tám quán ăn cho những vùng lịch còn thiếu quán). Trước: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
+*Cập nhật lần cuối: 09:43, ngày 15/11/2026 · thêm lượt đo bù 65 câu cho lần 4–6 (không câu nào tụt). Trước: 20:31, ngày 14/11/2026 · thêm lần ghi kho thứ sáu (16 bài lễ hội / nghệ thuật). Trước: 19:41, ngày 14/11/2026 · thêm lần ghi kho thứ năm (10 món, 13 địa điểm / di tích mà trợ lý từng từ chối hoặc trả lời mỏng). Trước: 17:59, ngày 14/11/2026 · thêm lần ghi kho thứ tư (tám quán ăn cho những vùng lịch còn thiếu quán). Trước: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -13,7 +13,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Tiêu chí ghi trước | **pre-registered criteria** | Mức đạt viết ra **trước** khi xem kết quả, để không "dời cột gôn" sau khi thấy số. |
 | Nhiễu sinh câu — **mới** | **generation noise** | Cùng một câu, cùng ngữ cảnh, model vẫn có lúc trả lời, có lúc từ chối. Khác biệt kiểu này không do kho. |
 | Dòng "có thể đã thay đổi" | **may-have-changed notice** (`NOTICE_SOURCE_PREFIXES`) | Dòng nhắc code tự thêm khi câu trả lời trích bài có số dễ cũ (vé, giờ, hạng sao). |
-| Câu chạm — **mới** | **touched cases** | Câu đo mà 10 đoạn tìm được có đoạn của bài mới hoặc của bài vừa sửa. Câu không chạm thì bài mới không có mặt trong ngữ cảnh của nó. |
+| Câu chạm — **mới** | **touched cases** | Câu đo mà 10 đoạn tìm được **thay đổi** sau khi ghi kho (có đoạn bài mới, hoặc chỉ đổi thứ tự / đổi đoạn cũ). Câu không chạm thì ngữ cảnh gửi model giống hệt lần trước. (Lần 3–6 mình đếm hẹp hơn — chỉ câu có đoạn bài mới — rồi đo bù sáng 15/11, xem cuối lần 6.) |
 
 ---
 
@@ -167,7 +167,7 @@ thành" trong khi chính kho cho thấy nó nằm **trong** Kinh thành. Cả ha
 
 - Kho: **224 ⇒ 247 bài, 8.644 ⇒ 9.032 đoạn** (+388 đoạn). Không sửa bài cũ nào.
 
-**Đo.** (Giới hạn, ghi lúc kết phiên: các câu đổi top 10 mà không có đoạn bài mới ở lần 4, 5, 6 chưa được chạy lại — ngữ cảnh gửi model của chúng có khác, nên kết luận "không tụt" dưới đây mới đúng trên câu có đoạn bài mới; lượt đo bù làm ở phiên sau.) 35 / 158 câu đổi top 10 — nhiều hơn các lần trước, phần lớn vì thêm 388 đoạn làm đổi độ "hiếm" của từng chữ trong cả kho (chữ càng hiếm, điểm từ khoá càng cao — bài 04) — nhưng chỉ **3 câu** thật sự gặp đoạn bài mới.
+**Đo.** (Câu đổi top 10 mà không có đoạn bài mới được đo bù sáng 15/11 — xem cuối lần 6.) 35 / 158 câu đổi top 10 — nhiều hơn các lần trước, phần lớn vì thêm 388 đoạn làm đổi độ "hiếm" của từng chữ trong cả kho (chữ càng hiếm, điểm từ khoá càng cao — bài 04) — nhưng chỉ **3 câu** thật sự gặp đoạn bài mới.
 
 | Đo gì | Kết quả | Vì sao ổn |
 |---|---|---|
@@ -202,6 +202,20 @@ quét lại 47 bài kho có thay đổi trong ngày (43 bài mới + 4 bài sử
 
 Lần đo tốn khoảng **0,045 USD**; hỏi thử để chọn khoảng 0,018 USD, tra web để viết khoảng 0,04 USD.
 
+**Đo bù cho lần 4, 5, 6 (sáng 15/11).** Ba lần ghi tối 14/11 chỉ chạy lại câu có **đoạn bài mới** trong top 10 (3 + 3 + 2 câu). Nhưng thêm vài trăm đoạn làm
+đổi độ "hiếm" của chữ (bài 04), nên nhiều câu khác cũng đổi top 10 dù không gặp bài mới — ngữ cảnh gửi model của chúng khác, nên vẫn có thể trả lời khác. Mình
+đếm lại: **65 / 158 câu** có top 10 hiện nay khác lần đo đủ bộ gần nhất (sau lần 2). Chạy lại đúng 65 câu đó một lượt, so với câu trả lời của lần đo đủ bộ ấy:
+
+| Đo gì | Mốc (sau lần 2) | Bây giờ (sau lần 6) | Vì sao ổn |
+|---|---|---|---|
+| Câu bị từ chối | 2 | 1 | Không câu nào mới bị từ chối; một câu trước từ chối nay trả lời đúng như đáp án mẫu. Sàn cho phép là ≤ mốc + 1. |
+| Lỗi trích dẫn | 0 | 0 | Sàn là 0 lỗi mới. |
+| Chữ trả lời khác mốc | — | 57 / 65 | Model viết lại mỗi lần một khác (bài 11), nên khác chữ là bình thường. Một agent con chấm mù từng cặp: **56 cùng ý**, 1 khác ý — chính là câu hết bị từ chối, tức tốt lên. |
+
+Kết luận: ba lần ghi tối 14/11 **không làm câu cũ nào tụt**, giờ trên mọi câu có top 10 đổi, không chỉ câu gặp bài mới. Lượt đo mất 1 phút 33 giây, khoảng
+**0,03 USD**. Từ nay "câu chạm" của mỗi lần ghi kho đếm theo nghĩa rộng này. Giới hạn: mốc là lần đo sau lần 2, nên 65 câu gồm cả tác động của lần 3 và vài sửa ở
+mục web cùng ngày; chạy một lượt nên không tách được nhiễu với thay đổi thật ở mức từng chữ.
+
 ## Một chuyện thật: hai lần "trượt chữ" mà vẫn giữ
 
 **Từ chối nhầm 3 ⇒ 5 (lần 1).** Theo luật ghi trước, đây là trượt. Nhưng trước khi kết luận "bài mới làm hỏng", mình xem hai câu thêm vào:
@@ -234,7 +248,7 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 ## Ba điều chính
 
 1. Mỗi lần ghi kho là một thí nghiệm nhỏ: **đo trước ↔ sau trên cùng bộ câu, tiêu chí ghi trước**. Script làm cả chuỗi ghi và tự lùi nếu lỗi.
-2. Sáu lần ghi ngày 14/11 thêm **59 bài**: kho 204 ⇒ 263 bài, 8.435 ⇒ 9.425 đoạn. Câu cũ không tụt: lần 1–2 chấm điểm trung bình cả bộ, lần 3–6 đọc tay từng câu bị chạm; vài câu lệch nằm trong mức cho phép.
+2. Sáu lần ghi ngày 14/11 thêm **59 bài**: kho 204 ⇒ 263 bài, 8.435 ⇒ 9.425 đoạn. Câu cũ không tụt: lần 1–2 chấm điểm trung bình cả bộ, lần 3–6 đọc tay từng câu có đoạn bài mới, rồi đo bù 65 câu đổi top 10 (56 cùng ý, 1 tốt lên); vài câu lệch nằm trong mức cho phép.
    Câu đi lại trả lời được nhiều hơn (2 ⇒ 4 / 6, mình tự đọc), câu khách sạn cũng vậy (4 ⇒ 11 / 12, chấm mù), câu về cầu và nhà ga hết bị từ chối.
    Tám quán mới (bảy quán có vị trí vào lịch) đưa bữa có quán trong sổ ở lịch từ 49,3 lên 69,1 %.
    Lần 5 và 6: 23 + 16 thứ trợ lý từng từ chối hoặc trả lời mỏng nay đều trả lời bằng bài mới.
@@ -266,4 +280,5 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 - Cập nhật 16:17, ngày 14/11/2026: thêm lần 3, sửa tiêu đề, bảng từ, Khi nào hỏng, Ba điều chính.
 - **Sửa 13:40 14/11/2026 theo kiểm độc lập** (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_24.md`): chỉ các sửa ở bài vé có dòng nguồn (bản trước ghi "chỗ nào cũng"); Đủ / Đúng là "không tụt, trong nhiễu" (bản trước ghi "nhích lên"); 139 là sau gộp 2 cặp; "giống hệt" chỉ lần tìm đầu; 4 chỗ chưa tốt thay vì 1, kèm 9 / 2 / 1; Ba điều chính nói rõ số nào tự đọc; bỏ số nhà.
 
+- Đo bù lần 4–6 (65 câu, 15/11): `report_agent/2026-11-12_ra_khoang_cach/b_do_bu_implementation.md`; dữ liệu `data/sua_kho_2026-11-14_do_bu/` (`tom_tat.json`, `cham/ket_qua.jsonl`); A tính lại 65 câu / 8 giống chữ / từ chối 2 ⇒ 1 / 56 + 1 / 0,0291 USD [đã chạy]
 </details>

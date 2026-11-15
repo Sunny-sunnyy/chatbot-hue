@@ -3,6 +3,16 @@
 Cập nhật: 22:35 14/11/2026 (A, kết phiên tối 14/11). Trước: 17:40 14/11/2026 (A, kết phiên chiều 14/11). Trước: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
 
+## PHIÊN 15/11 (mở 09:33 15/11/2026)
+
+- Terminal: A `hue-rag-26` · B `hue-rag-b2` · C `hue-rag-f9` · E `hue-rag-3e` — cả bốn Claude Code, trực tiếp; D không mở. Kiểm nhanh khớp (main `6c7c01b`, hooks, Qdrant 1 collection 9.425).
+- **Quyền phiên 15/11 (User chọn "như tối 14/11", A ghi nhận 09:38 15/11/2026):** A tự điều phối, A commit / push, B / C / E push nhánh riêng, tự tra / cào / ghi kho / ingest, không hỏi khi User vắng, tiền không trần cứng nhưng dùng hiệu quả. Hết hạn cuối phiên.
+- Giao 09:38: **B** mục 0 đo bù 65 câu · **C** việc 3(iii) đếm bữa vùng nam xa (0 USD) · **E** rảnh, chờ câu User về 14 bài trống ảnh / câu (a).
+- Câu User thêm (từ E): 14 bài trống ảnh — chấp nhận ô màu hay tìm tay; có ghi luật chọn ảnh vào luật chung không.
+- **Xong 09:41 — B đo bù 65 câu: ĐẠT** (từ chối 2 ⇒ 1, 0 lỗi trích dẫn, 56 cùng ý + 1 tốt lên; 0,029 USD; A tính lại khớp). Kết luận "không tụt" của ghi kho 4–6 giờ đúng trên mọi câu đổi top 10 ⇒ mục 0 "Việc đầu phiên sau" ĐÓNG. Mẫu TIEU_CHI ghi kho: câu chạm = mọi câu đổi top 10 (B sửa `cau_cham.py` ở lần ghi kho kế).
+- **C 3(iii) đếm nam xa: không cào quán** (4,8 % bữa; kho: không quán). A duyệt ghi chú ăn uống 2 điểm ở thẻ bữa (0 USD) ⇒ E review.
+- **(a) ngưỡng mưa:** User chọn PA3 nhưng hỏi "số nghĩa là gì / nhóm bàn chưa / sao không dùng API thời tiết Huế" ⇒ A giải thích (đã dùng Open-Meteo), chờ User xác nhận lại rồi mới giao C.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 22:35 14/11/2026, KẾT PHIÊN TỐI 14/11 — User: "để các nhiệm vụ, câu hỏi cho session tiếp theo")
 
 **Phiên tối 14/11 đã kết** (mở 17:45, User vắng từ 17:49, về lúc kết phiên). A `hue-rag-fb` · B `hue-rag-62` · C `hue-rag-eb` · E `hue-rag-1f`, cả bốn Claude Code (Opus 5.5), trực tiếp; D không mở. **Quyền phiên HẾT HẠN** ⇒ A mới hỏi lại User một câu (tối 14/11 có: "như 14/11" = A tự điều phối, A commit / push, B / C / E push nhánh riêng, tự tra / cào / ghi kho / ingest, không hỏi khi User vắng, tiền không trần cứng nhưng dùng hiệu quả). Mỗi session đọc mục đầu `sessions/STATUS_<X>.md` "PHIÊN SAU ĐỌC TRƯỚC". **D** (học cùng User, chưa mở 14/11): gợi ý bài để giảng khi User muốn — `bai_hoc/22` (6 lần ghi kho, hỏi thử trước khi viết), `25` (khách sạn chọn theo hạng, quán, mục web), `24` (ảnh: người giao nhìn lại 100 %); không có STATUS_D — tạo từ mẫu `sessions/README.md` khi mở. Nguyên văn phiên tối (quyết định theo giờ, tiến độ, vòng tự soi 1): `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-14_toi.md`; phiên sáng + chiều: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-14.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-14_ghi_kho_3_bai.md`.

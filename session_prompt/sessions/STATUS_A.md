@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN 15/11 (mở 09:33; cập nhật 09:38 15/11/2026 `date`)
+
+- Terminal: A `hue-rag-26` · B `hue-rag-b2` · C `hue-rag-f9` · E `hue-rag-3e` (Claude Code, trực tiếp).
+- Kiểm nhanh: `main` `6c7c01b` = origin, sạch; hooksPath `.githooks`; Qdrant 1 collection 9.425; RAM trống ~11 GB; 0 server 80xx; 4 worktree AGY.
+- User: quyền "như tối 14/11" (A ghi 09:38 15/11/2026).
+- Giao: B đo bù 65 câu · C đếm bữa nam xa · E rảnh.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`.
+- Tiếp: hỏi User (a)–(f) + 2 câu của E, mỗi lần một câu; vòng tự soi 1 khi mọi session có kết quả đầu.
+
 # STATUS A — KẾT PHIÊN TỐI 14/11 (viết 22:38 14/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC" ⇒ hỏi quyền phiên (một câu) ⇒ cùng lượt giao **B đo bù 65 câu** (mục 0, không cần User) ⇒ hỏi User các câu (a)–(f) mỗi lần một câu ⇒ theo câu trả lời giao C (ngưỡng mưa) / bàn nhóm (trang khách sạn).

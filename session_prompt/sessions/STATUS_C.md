@@ -1,6 +1,10 @@
-# STATUS C — kết phiên tối 14/11 (C `hue-rag-eb` · A `hue-rag-fb` · B `hue-rag-62` · E `hue-rag-1f`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên 15/11 (C `hue-rag-f9` · A `hue-rag-26` · B `hue-rag-b2` · E `hue-rag-3e`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
+## PHIÊN 15/11 — nhật ký
+**Mở phiên 15/11:** kiểm nhanh khớp handoff (main `6c7c01b`, Qdrant 9.425). Chờ A.
+**Đếm quán vùng nam xa XONG (09:39 15/11/2026, 0 USD):** 720 / 3.840 khung (18,8 %), 1.080 / 22.680 bữa (4,8 %); chỉ khi chọn "thiên nhiên" và chuyến ≥ 3 ngày. Kho nói Bạch Mã không có quán trong vùng lõi (mang đồ ăn), Nhị Hồ có chòi ăn tại chỗ, đóng 17:30 ⇒ **đếm rồi không làm (không cào quán)**. Đề xuất tuỳ chọn: ghi chú ăn uống cho 2 điểm (0 USD, ~1 giờ), chờ nhóm. Report `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`; script `data/dem_quan_nam_xa_2026-11-15/`.
+
+## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 
 - **Trạng thái:** mọi việc C nhận tối 14/11 đã xong và merge. Máy: 0 worktree `/tmp/c_*`, 0 server, 0 tiến trình nền của C.
 - **Đã làm tối 14/11 (file / dữ liệu ở đâu):**
