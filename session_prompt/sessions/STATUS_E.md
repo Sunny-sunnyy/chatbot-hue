@@ -1,48 +1,75 @@
-# STATUS E — KẾT PHIÊN TỐI 15/11 (ghi 21:33 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
+# STATUS E — KẾT PHIÊN TỐI 15/11 (chốt lần cuối 22:07 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11)
 
-**Quyền phiên tối 15/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A (B / C thường tự báo trước ⇒ A = terminal còn lại) ⇒ chờ A giao.
+Viết cho người **chưa biết gì về phiên tối 15/11**. Quyền phiên tối đã hết hạn. Phiên sau: đọc mục này ⇒ kiểm nhanh (`WORKFLOW.md` §2) ⇒ báo A (B / C thường tự báo trước ⇒ A là terminal còn lại; không gửi cả ba) ⇒ chờ A giao. Luật mới User duyệt tối 15/11 (sổ cải tiến W85–W87) nằm ở `WORKFLOW.md` §9.1 và `Session_Prompt.md` §8 — đọc lại hai mục đó.
 
-### Trạng thái máy lúc kết phiên
-- (ghi 21:42 15/11/2026) Hai nhánh tài liệu (`p9-tai-lieu-anh-toi-15-11`, `p9-tai-lieu-luong-toi-15-11`) ĐÃ MERGE; E **không còn worktree nào** (`/tmp/e_tl`, `/tmp/e_tl2` đã gỡ), không server tạm (8896 đã tắt), tiến trình nền hay agent con nào. File tạm đã xoá. Luật mới W85–W87 User đã duyệt (đọc `WORKFLOW.md` §9.1, `Session_Prompt.md` §8 đầu phiên sau).
-- Năm nhánh của E tối nay đều ĐÃ MERGE vào main: `p9-chu-gioi-thieu`, `p9-lich-ho`, `p9-gd-nguon-danh-gia`, `p9-so-vet`, `p9-anh-tra-loi-thang` (A đưa vào lệnh dọn nhánh).
+### (9) Máy lúc kết phiên
+- E **không còn** worktree `/tmp/e_*`, server tạm (cổng E dùng: 8896, đã tắt), tiến trình nền, agent con, file tạm.
+- Bảy nhánh của E tối nay đều ĐÃ MERGE vào `main`: `p9-chu-gioi-thieu`, `p9-lich-ho`, `p9-gd-nguon-danh-gia`, `p9-so-vet`, `p9-anh-tra-loi-thang`, `p9-tai-lieu-anh-toi-15-11`, `p9-tai-lieu-luong-toi-15-11` (A đưa vào lệnh dọn nhánh). File này là thay đổi duy nhất của E chưa commit (A commit).
 
-- **Cập nhật 21:37 15/11/2026:** tài liệu kết phiên (A giao) ĐÃ PUSH `598115f` origin/`p9-tai-lieu-anh-toi-15-11` — `bai_hoc/15` + `bao_cao_he_thong/08` theo luồng ảnh mới; **chờ A merge**. Worktree `/tmp/e_tl` còn (không symlink) ⇒ sau merge: `git worktree remove --force /tmp/e_tl`. B chốt nhóm hay nhầm của plan so ảnh = 20 tên (18 của E + `banh_canh_nam_pho` + `che_heo_quay`; plan bản 2 `origin/p10-so-anh` `f57b981`) ⇒ sửa `HAY_NHAM` trong `data/so_anh_buoc0_2026-11-15/dem.py` rồi chạy lại (ước thiếu ~286); plan đề nghị E gom bộ đo ảnh mới — A quyết.
+### (1) Việc đầu phiên sau — thí nghiệm SO ẢNH bằng embedding (chờ A giao; plan ĐÃ DUYỆT)
+Plan: `docs/superpowers/plans/2026-11-15-so-anh-embedding-plan.md` (trên `main`, sha256 12 ký tự đầu `3b9a1894a195`) — đọc đủ trước khi làm. Ý: thay / bổ trợ bước "model nhìn ảnh đoán tên" bằng so vector ảnh người dùng với ảnh mẫu của 42 tên (`data/phase_10/anh/danh_sach_ten.json`). Tin A lúc kết phiên: User đã có quyền DINOv3 + đã đăng nhập Hugging Face trên máy; phép dò trên bộ mẫu cũ: DINOv3 ViT-B tên đầu đúng 19 / 25, top 3 20 (DINOv2 17 · 22; SigLIP 2 15; model đang chạy 21), 205 ms / ảnh — số của B / A, E chưa tính lại.
+Phần việc plan đề nghị cho E (A quyết giao):
+1. **Nhìn lại 100 % 172 ảnh mẫu cũ** `data/phase_10/anh/e9/mau_anh/<id>/` (tìm theo tên 05/11, chưa ai nhìn hết). Đã biết sai: 5 cặp file giống byte nằm ở HAI tên khác nhau — danh sách đủ ở mục "Lỗi trong bộ mẫu cũ" của `data/so_anh_buoc0_2026-11-15/KET_QUA.md` (vd ảnh Kinh thành nằm ở cả `pho_tay` lẫn `dien_hon_chen`; ảnh vườn trong Tử Cấm thành ở cả `nui_ngu_binh` lẫn `bien_thuan_an`; 2 ảnh lăng Tự Đức trong `lang_duc_duc`). B thử: loại 5 nội dung này không đổi số đo, nhưng plan vẫn bắt nhìn hết.
+2. **Loại 6 ảnh lịch rò bộ đo:** ảnh `frontend/public/anh/lich/` của `chua_thien_mu`, `dam_chuon`, `dien_hon_chen`, `lang_gia_long`, `lang_tu_duc`, `quoc_hoc` cùng file Commons với ảnh bộ đo cũ `data/phase_10/bo_do_anh/da_thay/` (khoá `bo_do.ro_voi_anh_mau` trong `dem.json`) ⇒ không dùng làm mẫu.
+3. **Gom ~290 ảnh mẫu** cho 42 tên: mốc ≥ 15 ảnh / tên cho **20 tên nhóm hay nhầm** (mọi `lang_*`, `dien_*`, `chua_*` + `dai_noi`, `kinh_thanh`, `hai_van_quan`, `cuu_dinh_hue`, `dan_nam_giao`, `dan_xa_tac`, `ho_quyen`, `cung_an_dinh` + `banh_canh_nam_pho`, `che_heo_quay`), ≥ 8 cho 22 tên còn lại. **Việc đầu tiên:** sửa hàm `HAY_NHAM` trong `data/so_anh_buoc0_2026-11-15/dem.py` (đang là 18 tên E tự xếp — thiếu hai món cuối) rồi chạy lại để có số thiếu từng tên. Hiện có 221 file mẫu, dùng được ~190 sau khi trừ trùng / rò / sai tên; mỗi bài Khám phá / lịch chỉ có 1 ảnh nên phải tìm ngoài (Commons + web).
+4. **~100 ảnh ÂM** (không phải Huế nhưng dễ nhầm + ảnh linh tinh) để đặt ngưỡng từ chối.
+5. **Bộ đo mới 30–40 ảnh du khách công khai**: nguồn KHÁC kho ảnh mẫu (khác tác giả / khác trang), người thứ hai kiểm nhãn 100 %, **đóng băng trước khi chạy** bất kỳ model nào (User không có ảnh tự chụp).
+6. Luật chọn ảnh: `WORKFLOW.md` §3.6 (ảnh tự nhận ra được nơi; không trẻ em, không người rõ mặt làm trọng tâm, không số điện thoại; > 10 ảnh ⇒ agent con chọn + người giao nhìn lại 100 %). Công cụ tìm ảnh dùng lại được: `data/anh_kho6_2026-11-14/tools/tim.py` (Commons + Serper, chờ khi gặp 429), `data/lich_ho_2026-11-15/tools/tai_ung_vien.py` (tải ảnh nhỏ Commons + dựng tấm ghép có số để nhìn), `data/lich_ho_2026-11-15/tools/tra.py` (Serper; 0,001 USD / lượt). Kiểm trùng mẫu ↔ đo: md5 + tên file Commons chuẩn hoá như `dem.py`, cộng bước cosine > 0,98 của plan.
 
-### Việc đầu phiên sau (ứng viên — chờ A giao)
-1. **Thí nghiệm so ảnh bằng embedding** (plan nháp của B trên `origin/p10-so-anh`, B sửa vòng 2; CHỈ làm sau khi plan được duyệt): (a) nhìn lại **100 %** 172 ảnh mẫu cũ `data/phase_10/anh/e9/mau_anh/` — đã thấy 5 cặp file giống byte nằm ở HAI tên (ảnh sai tên); (b) loại 6 ảnh lịch cùng file Commons với bộ đo cũ; (c) gom ảnh mẫu còn thiếu (~272 theo mốc ≥ 8 / ≥ 15; số tính lại bằng `uv run python -I data/so_anh_buoc0_2026-11-15/dem.py` khi B chốt danh sách nhóm hay nhầm). Kết quả bước 0: `data/so_anh_buoc0_2026-11-15/KET_QUA.md`. Tin A: phép dò DINOv2 trên bộ mẫu cũ ra tên số 1 đúng 17 / 25 (SigLIP 15, luna 21); User đã xin quyền DINOv3 (chờ duyệt), không có ảnh tự chụp.
-2. **Sổ vết debug còn thiếu** (`backend/core/so_vet.py`, đang BẬT trên server 8010 bằng `HUE_SO_VET=true`): tham số model truyền cho công cụ lịch / thời tiết / ngày; đầu ra thô của bước định tuyến; chưa chạy thật với cờ bật ở lượt biểu mẫu, sửa lịch, ảnh ⇒ chạy mỗi loại một lượt, xem `uv run python scripts/xem_so_vet.py`, vá chỗ thiếu.
-3. **Hỏi kèm ảnh (phương án lai, main `d649b50`):** bước nhận ảnh dao động — cùng một ảnh thử qua 7 lượt: 1 tên đúng 1 · 1 tên sai 2 · 2 tên 2 · lỗi model 2 ⇒ "ra một tên thì đáng tin" cần đếm lại trên ảnh thật khi User thử; lỗi model do phần suy luận chạm trần 1.024 token đầu ra (quan sát, chưa chứng minh).
-4. Dữ liệu lịch còn trống bữa (chưa ai giao): phá Tam Giang 1.824 bữa, điện Hòn Chén 688, không gian Lê Bá Đảng 481; 2–4 bài quán ven đầm Lập An sẽ đưa "bữa có quán kho" 63,9 ⇒ ~66,8 % (A ghi handoff, hỏi User). Nguồn thứ hai chợ Bến Ngự nằm ở `data/lich_ho_2026-11-15/can_cu_bo_sung.json` — ghép khi dựng bảng điểm bản kế.
+### (2) Sổ vết debug có nội dung — đang BẬT trên server của A cho User thử
+- Là gì: `backend/core/so_vet.py`; cờ `assistant.so_vet` mặc định TẮT; bật bằng biến môi trường `HUE_SO_VET=true` trước lệnh uvicorn (chỉ nhận `true` / `false`; giá trị khác ⇒ server không khởi động). Bật ⇒ mỗi lượt một dòng JSON vào `data/debug_trace/<YYYY-MM-DD>.jsonl` (private). `chat_metrics` không đổi. Bản Docker / công khai KHÔNG bật.
+- Xem: `uv run python scripts/xem_so_vet.py -n 3` · `--ma <turn_id>` · `--ngay YYYY-MM-DD` · `--day` (in cả ngữ cảnh). Khi User báo lỗi: tìm lượt theo giờ / mã rồi đọc câu tìm của model, 10 đoạn tìm được, câu gửi tra web, rào nào chặn — không phải tái tạo.
+- **Còn thiếu (chưa làm):** tham số model truyền cho công cụ lịch / thời tiết / ngày (chỉ có mục số đo + kết quả); đầu ra thô của bước định tuyến (chỉ có tuyến đã chọn); lời dặn gửi model (tra theo `git_sha`); lượt lỗi trước khi vào lõi chỉ có số đo + câu gõ; lượt ảnh bị từ chối ở rào đầu vào không ghi. **Chưa chạy thật với cờ bật:** lượt biểu mẫu "Lên kế hoạch", sửa lịch bằng lời, hỏi bằng ảnh (C đã vá một chỗ thiếu khung lịch bản 2) ⇒ chạy mỗi loại một lượt rồi đọc bản ghi.
+- Report: `report_agent/2026-11-12_ra_khoang_cach/e_so_vet_implementation.md`; test `backend/tests/test_so_vet.py`.
 
-### Đã xong tối 15/11 (đều trong main; report ở `report_agent/2026-11-12_ra_khoang_cach/`)
-| Việc | Report |
-|---|---|
-| Đo lại bữa có quán kho trên bảng 41 điểm: 63,9 % (34 điểm 69,1 %) | (số trong `e_lich_ho_implementation.md`; công cụ `data/do_lai_quan_kho_v9_2026-11-15/`) |
-| Hai câu chữ: Giới thiệu (câu tra web lượt hỏi tiếp) + dòng link Nơi ở | — (3 dòng) |
-| Dữ liệu lịch hở: 3 ghi chú ăn, ảnh Hải Vân ⇒ cửa ải, bảng ảnh lịch v6 `eb99b39803f9`, bảng Khám phá v10 | `e_lich_ho_implementation.md` |
-| Review nút dấu cộng của C (dán ảnh thật qua clipboard) | `e_review_nut_anh_cong.md` |
-| Khung nguồn hiện Markdown sạch + ghép lát bảng; bỏ khối đánh giá; `data-phase` trên `.turn` / `.lkh-lich` | `e_gd_nguon_danh_gia_implementation.md` |
-| Sổ vết debug có nội dung (cờ `so_vet`, `HUE_SO_VET=true`, `scripts/xem_so_vet.py`) | `e_so_vet_implementation.md` |
-| Hỏi kèm ảnh phương án lai (1 tên ⇒ trả lời thẳng + dòng "Mình đoán…" đầu câu trả lời; 2–3 tên ⇒ thẻ chọn) | `e_anh_tra_loi_thang_implementation.md` |
-| Bước 0 plan so ảnh (đếm ảnh mẫu) | `data/so_anh_buoc0_2026-11-15/KET_QUA.md` (private) |
+### (3) Hỏi kèm ảnh — luồng LAI đang chạy trên `main`
+- Người dùng bấm dấu cộng trong ô nhập (hoặc dán ảnh) ⇒ ảnh đính kèm, chưa gửi gì ⇒ bấm Hỏi ⇒ bước nhận ảnh (`POST /api/anh/ung_vien`, `backend/llm/nhan_anh.py` — KHÔNG đổi tối nay) trả tên: **1 tên ⇒ giao diện tự hỏi ngay** câu ghép "<chữ đã gõ> (Trong ảnh: <tên>)", đầu câu trả lời có dòng "Mình đoán trong ảnh là <tên> — có thể sai."; **2–3 tên ⇒ thẻ chọn tên**; 0 tên / lỗi ⇒ lời báo. Model trả lời không nhìn ảnh. Code: `frontend/src/HoiBangAnh.jsx` (hook `useHoiBangAnh`), `frontend/src/chat.jsx` (`hienThi`).
+- **Ca đoán sai đã gặp thật:** ảnh thử `frontend/public/anh/lich/dai_noi.jpg` (ảnh nhỏ 480 px một cổng trong Hoàng thành) ⇒ bước nhận ảnh trả đúng MỘT tên nhưng là Lăng Tự Đức ⇒ trợ lý trả lời thẳng về lăng. Ảnh chụp màn hình: `data/anh_tra_loi_thang_2026-11-15/ra_cuoi/E_luot_anh_that.png` (và `ra_lai/E_anh_that.png`).
+- **Bước nhận ảnh dao động:** cùng ảnh đó qua 7 lượt tối nay: 1 tên đúng 1 · 1 tên sai 2 · 2 tên 2 · lỗi model 2. Lỗi model = phần suy luận chạm trần 1.024 token đầu ra (quan sát từ `anh_metrics`: 994 / 1.024; chưa chứng minh). Số nền của phương án lai (B đếm lại kết quả đã lưu, `data/dem_ten_so_1_2026-11-15/KET_QUA.md`): một tên đúng 31 / 33 lượt; lai còn 6 / 66 lượt trả lời sai nơi (trả lời thẳng mọi lượt: 14 / 66) — trên ảnh công khai, chưa có số ảnh người dùng chụp.
+- Chưa làm: nút huỷ lúc "Đang xem ảnh…"; lời dặn bước nhận ảnh vẫn viết cho luồng có xác nhận; URL ảnh của bong bóng câu hỏi không thu hồi tới khi tải lại trang.
+- Bộ ca thử chạy lại được (server tạm của nhánh, ≈ 0,004 USD): `uv run python -I data/anh_tra_loi_thang_2026-11-15/pw_lai.py http://127.0.0.1:<cổng>/ frontend/public/anh/lich/dai_noi.jpg <thư mục ra>` (số tên dựng bằng chặn route ảnh; 1 lượt ảnh thật). Ca dò của C "làm việc khác trong lúc chờ" (0 USD): `uv run python data/review_anh_tra_loi_thang_2026-11-15/pw_do2.py http://127.0.0.1:<cổng>/ frontend/public/anh/dau_trang_ngo_mon.jpg`.
 
-### Bẫy tối 15/11 (đầu vào vòng cải tiến)
+### (4) Dữ liệu lịch + giao diện — còn mở
+- **Bữa còn trống trong lịch** (đếm 3.840 khung mô phỏng, sau khi thêm ghi chú ăn tối nay: trống 3.085 / 22.752): phá Tam Giang 1.824 bữa · điện Hòn Chén 688 · không gian Lê Bá Đảng 481 · biển Thuận An 88. Cụm nam xa: 100 % bữa có ghi chú nhưng 0 quán kho; 2–4 bài quán ven đầm Lập An ⇒ "bữa có quán kho" 63,9 ⇒ ~66,8 %. **Chưa ai giao — A ghi handoff để hỏi User.** Đếm lại: `cd backend && HF_HUB_OFFLINE=1 uv run python ../data/lich_ho_2026-11-15/tools/dem_bua.py $PWD` (theo cụm, có chọn bảng: `../data/do_lai_quan_kho_v9_2026-11-15/dem_theo_cum_bang.py $PWD /tmp/x.json diem_v9.json diem_toa_do_v9.json`).
+- Ghi chú ăn nằm trong code: `backend/llm/quan_lich.py` `GHI_CHU_AN` (7 khoá; Tây Hồ không nêu tên quán vì chưa có nguồn).
+- **Nguồn thứ hai cho thời lượng chợ Bến Ngự** (90 phút, E đã đọc trang): `data/lich_ho_2026-11-15/can_cu_bo_sung.json` — CHƯA ghép vào bảng điểm (không đổi nhãn); ghép + gỡ cờ "1 nguồn" khi dựng bảng điểm bản kế (`diem_v10`).
+- Bảng đang chạy: điểm `diem_v9.json` · toạ độ v9 · **ảnh lịch `bang_anh_v6.json` md5 `eb99b39803f9`** (đổi tối nay: ảnh đèo Hải Vân ⇒ cửa ải Hải Vân Quan) · ảnh Khám phá bảng v10 `data/lich_ho_2026-11-15/bang_anh_kham_pha_v10.json` (script dựng `data/anh_kham_pha_2026-11-14/tools/dung_anh_bai_js.py` đã đọc v10). Docker nháp `data/phase_12/deploy_nhap/` đã trỏ bảng ảnh v6 (sao lưu `sao_luu_2026-11-15_toi/`), chưa build.
+- **Script Playwright cũ trong `data/` chờ lớp `.feedback`** làm dấu "lượt xong" (8 file) — khối đánh giá đã gỡ ⇒ đổi sang `.turn[data-phase="done"]` (Trợ lý) / `.lkh-lich[data-phase="done"]` (Lên kế hoạch).
+- Khung nguồn: đoạn trích dựng qua `renderExcerptHtml` (`frontend/src/markdown.js`, kèm `hangBangLe`, `gopLatBang`); ca thử hàm thuần: `cd frontend && node ../data/gd_nguon_danh_gia_2026-11-15/thu_hang_bang.mjs` (đường import trong file trỏ `/tmp/e_gd` đã gỡ ⇒ sửa thành đường `frontend/src/markdown.js` của cây đang đứng trước khi chạy). Chưa chụp khổ 390.
+
+### (5) Công cụ / kết quả E tạo tối nay (private, `data/`)
+| Thư mục | Có gì | Chạy lại |
+|---|---|---|
+| `do_lai_quan_kho_v9_2026-11-15/` | đếm bữa có quán kho theo bảng chọn được | lệnh ở mục (4) |
+| `lich_ho_2026-11-15/` | tra Serper (`tra_*.json`), 26 ứng viên ảnh Hải Vân + tấm ghép, bảng Khám phá v10, `can_cu_bo_sung.json`, `tools/dem_bua.py`, `tools/tra.py`, `tools/tai_ung_vien.py` | — |
+| `review_nut_anh_cong_2026-11-15/` | `pw_dan_that.py` — dán ảnh THẬT qua clipboard rồi Ctrl+V | `uv run python -I … <url> <ảnh> <thư mục ra>` |
+| `gd_nguon_danh_gia_2026-11-15/` | `pw_nguon.py` (hỏi câu thật, mở từng nguồn, dò ký hiệu thô), `thu_hang_bang.mjs`, ảnh | `uv run python -I pw_nguon.py <url> <thư mục> "<câu>" …` |
+| `anh_tra_loi_thang_2026-11-15/` | `pw_lai.py`, ảnh các ca (`ra_cuoi/`) | mục (3) |
+| `so_anh_buoc0_2026-11-15/` | `dem.py`, `dem.json`, `KET_QUA.md` — đếm ảnh mẫu 42 tên, trùng, rò | `uv run python -I data/so_anh_buoc0_2026-11-15/dem.py` |
+| `debug_trace/2026-11-15.jsonl` | bản ghi sổ vết thật (của E lúc thử + của User trên server A) | `scripts/xem_so_vet.py` |
+Report tối nay (tracked, `report_agent/2026-11-12_ra_khoang_cach/`): `e_lich_ho_implementation.md` · `e_review_nut_anh_cong.md` · `e_gd_nguon_danh_gia_implementation.md` · `e_so_vet_implementation.md` · `e_anh_tra_loi_thang_implementation.md`. Tài liệu đã cập nhật: `bai_hoc/15`, `bao_cao_he_thong/08`, `01`, `README.md`.
+
+### (6) Câu hỏi / thắc mắc
+- Cho A: việc so ảnh chia ai làm gì (plan đề nghị E gom ảnh + bộ đo, C kiểm nhãn, B chạy); trần tiền Serper cho gom ~290 + ~100 + ~40 ảnh; có nâng trần 1.024 token đầu ra của bước nhận ảnh không (đếm `loi_model` trong `anh_metrics` trước).
+- Cho User (qua A): có bổ sung quán cho vùng phá Tam Giang / ven đầm Lập An không; khi thử ảnh thật, lượt nào trả lời sai nơi thì cho biết ảnh nào (sổ vết ghi tên đoán, không ghi ảnh).
+
+### (7) Bẫy tối 15/11 (đầu vào vòng cải tiến)
 - Report ghi một hành vi CHƯA chạy thử như sự thật ("lượt ảnh bị bỏ lặng") — sai, C bắt ⇒ chưa chạy thì ghi "chưa thử".
-- Hàm `async` trong hook React gọi callback sau `await` = callback + cờ của lần vẽ CŨ ⇒ mọi luồng giao diện có chờ mạng phải có ca dò "người dùng làm việc khác trong lúc chờ" (bấm cuộc mới, bấm câu gợi ý, bỏ ảnh).
+- Hàm `async` trong hook React gọi callback sau `await` = callback + cờ của lần vẽ CŨ ⇒ mọi luồng giao diện có chờ mạng phải có ca dò "người dùng làm việc khác trong lúc chờ" (cuộc mới, câu gợi ý, bỏ ảnh). Cách sửa đã dùng: ref đếm lượt + ref giữ giá trị mới nhất.
 - Ca thử dựa vào bước nhận ảnh thật (dao động) ⇒ treo 120 s ⇒ dựng số tên bằng chặn route trong trình duyệt, chỉ giữ 1 lượt thật.
 - Regex Python có cờ `(?m)` giữa mẫu ⇒ script hỏng trước khi gửi câu nào.
-- Script Playwright cũ chờ lớp `.feedback` làm dấu "lượt xong" — lớp này đã gỡ ⇒ dùng `.turn[data-phase="done"]` / `.lkh-lich[data-phase="done"]`.
-- Tin A giao người khác sửa nhánh của mình tới sau khi mình đã sửa ⇒ push + báo cả ba ngay.
-- Ước tiền thấp hơn thật khi phải chạy lại sau chỉnh (khung nguồn ước 0,002 ⇒ 0,0048).
+- Tin A giao người khác sửa nhánh của mình tới sau khi mình đã sửa ⇒ push + báo cả ba ngay (C vẫn mất ~10 phút làm trùng).
+- Ước tiền thấp hơn thật khi phải chạy lại sau chỉnh (khung nguồn ước 0,002 ⇒ 0,0048); chỉnh chữ / CSS thì chỉ chạy ca chạm, không chạy cả bộ có phí.
+- Tính năng ảnh đi 4 bản một tối (nút cộng ⇒ đính kèm ⇒ trả lời thẳng ⇒ lai) ⇒ lần sau dựng ảnh mẫu luồng / hỏi User một câu có đáp án trước khi code bản đầu.
+- Khám phá của 21 tên dùng chính ảnh lịch (`anhBai.js` trỏ `lich/<id>`) ⇒ đếm ảnh theo file `kp/<khoá>.jpg` sẽ tưởng thiếu.
 
-### Tiền E tối 15/11 ≈ 0,028 USD
-Serper 6 lượt 0,006 · review nút cộng (3 lượt nhận ảnh) 0,0021 · khung nguồn 0,0048 · sổ vết 0,0032 · hỏi kèm ảnh ≈ 0,012 (3 lần chạy bộ ca + lượt nhận ảnh thật). Số cộng tay từ `scripts/dem_chat_metrics.py --sha` + dòng `anh_metrics`; chưa ai tính lại. Agent con: 0. Codex: 0.
+### (8) Tiền E tối 15/11 ≈ 0,028 USD
+Serper 6 lượt 0,006 · review nút cộng (3 lượt nhận ảnh) 0,0021 · khung nguồn 0,0048 · sổ vết 0,0032 · hỏi kèm ảnh ≈ 0,012. Cộng tay từ `scripts/dem_chat_metrics.py --sha` + dòng `anh_metrics`; chưa ai tính lại. Agent con 0, Codex 0.
 
-### Câu hỏi cho A phiên sau
-- Danh sách "nhóm hay nhầm" của plan so ảnh (E tự xếp 18 tên) — B chốt id nào.
-- Trần 1.024 token đầu ra của bước nhận ảnh có nâng không (đếm `loi_model` trong `anh_metrics` trước).
+### Đã xong tối 15/11 (đều trong `main`)
+Đo lại bữa có quán kho trên bảng 41 điểm (63,9 %) · hai câu chữ giao diện · ghi chú ăn Tây Hồ + Hải Vân tối, ảnh Hải Vân, bảng ảnh lịch v6 · review nút dấu cộng của C · khung nguồn sạch + bỏ khối đánh giá + `data-phase` · sổ vết debug · hỏi kèm ảnh phương án lai (kèm sửa lỗi C bắt) · bước 0 plan so ảnh · tài liệu bài 15, sổ 08, 01, README.
 
 ---
 

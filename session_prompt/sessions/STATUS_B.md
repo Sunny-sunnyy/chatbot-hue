@@ -15,7 +15,7 @@ Mục này tự đủ nghĩa cho người mở phiên mới. Nhật ký từng b
 **Việc 3 — còn mở từ trước, chưa ai giao:** User chạy lệnh `!` đếm bộ kín sửa lịch + `kiem_bo.py --ca-kin` (handoff "User tự làm"); theo dõi cờ `web_cau_noi_tiep`; tốc độ câu hỏi tiếp (lần tìm đầu trượt 6 / 7 — chưa có hướng không tốn thêm lần gọi model).
 
 ## 2. Nhánh và máy
-- Nhánh của B trên origin: **`p9-web-gon` `9778d29` — CHƯA merge, giữ** · `p9-bai-hoc-toi-15-11` `18f9b2d` (bài học 13 / 21 / 24 + README — xem `git branch -r --merged origin/main` để biết A đã merge chưa) · đã merge: `p9-tai-lieu-w84`, `p10-so-anh`.
+- Nhánh của B trên origin: **`p9-web-gon` `9778d29` — CHƯA merge, giữ** · đã merge vào main (nhánh còn trên origin, xoá được): `p9-tai-lieu-w84`, `p10-so-anh`, `p9-bai-hoc-toi-15-11` `18f9b2d` (bài học 13 / 21 / 24 + README).
 - Máy lúc kết phiên: 0 worktree `/tmp` của B, 0 server, 0 tiến trình nền, 0 file tạm của B. Cache Hugging Face có `facebook/dinov2-base` (331 MB) và `facebook/dinov3-vitb16-pretrain-lvd1689m` (343 MB); transformers 5.14.1 có sẵn lớp DINOv3. `STATUS_B.md` do A commit.
 
 ## 3. Công cụ / kết quả trong `data/` (private) và lệnh chạy lại
