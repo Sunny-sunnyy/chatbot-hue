@@ -25,3 +25,10 @@ Bộ chọn chỗ ở ưu tiên cơ sở có ảnh trong cùng hạng ⇒ thêm 
 Tấm ghép để A nhìn lại 100 % (private): `data/anh_user_2026-11-15_ghep/ghep_anh_se_hien.jpg` (9 ảnh sẽ hiện + ô 10 bản thử che số); ảnh gốc ghép: `ghep_10_goc.jpg`; biên bản tên file ⇒ cơ sở: `bien_ban_ghep.json`; dựng lại: `tools/dung_bang_v6.py <frontend>`.
 
 **Sau merge:** deploy nháp đổi đường bảng lưu trú v5 ⇒ v6 (E làm). **Giải thích ngắn:** 9 khách sạn có thêm ảnh do chính User chọn; một ảnh giữ lại vì trong ảnh có số điện thoại — chờ User chọn cách xử lý.
+
+## 4. Cập nhật 15:55 15/11/2026 (`date`) — ảnh thứ 10 (số ở mục 1–3 là bản 9 ảnh; số hiện hành ở đây)
+- A quyết phương án (a): dùng **bản đã che số điện thoại trên biển** cho ảnh mặt tiền khách sạn 1 sao ở trung tâm (tên + địa chỉ trên biển giữ nguyên; vùng che ghi trong `tools/dung_bang_v6.py`, `anh_nguon` của dòng ghi "đã che số điện thoại trên biển"). E nhìn lại ảnh ra (480 × 330): không còn số.
+- **Bảng v6 hiện hành: 10 ảnh ⇒ 57 ⇒ 67 / 136, md5 `44d7b14d8fce`** (bản 9 ảnh `e10140f4c4a9` đã bị ghi đè). `settings.yaml` ghi md5 mới. 67 ảnh trong bảng = 67 file.
+- Ô "Nơi ở" v5 ↔ v6 (15.360 lượt, 0 USD): đổi ở **8.962 lượt**. Vào: khách sạn 5 sao trung tâm 5.782 · khách sạn 1 sao vừa thêm ảnh 3.575 · một khách sạn 5 sao khác 179. Ra khỏi ô gợi ý (vẫn ở trang Chỗ ở): 3.036 · 2.746 · 2.567 · 539 · 290 · 179 · 179 lượt (bảy cơ sở).
+- Kiểm lại: `test_luu_tru_lich.py` + `test_the_khach_san.py` 16 đạt không khoá / 16 đạt có khoá; build đạt (`dist/anh/khach_san` 67 file).
+- Giới hạn giữ (A đồng ý): một ảnh gốc nhỏ 299 × 168 (thẻ hơi mờ), một ảnh rất dẹt 480 × 162.
