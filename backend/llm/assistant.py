@@ -25,6 +25,7 @@ from typing import Literal
 
 import anyio
 
+from core import so_vet
 from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
@@ -97,6 +98,7 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
@@ -284,6 +286,9 @@ class AnswerTrace:
     thoi_tiet: dict | None = None
     thoi_tiet_noi: str | None = None
     thoi_tiet_kiem: list[str] | None = None
+    # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
+    # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
+    vet: dict = field(default_factory=dict)
 
 
 async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
@@ -294,7 +299,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
     Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `ContextBudgetError` (ngữ cảnh)."""
     tool_started = time.perf_counter()
     first = trace.packed is None
-    packed = None
+    packed = result = None
     try:
         started = time.perf_counter()
         if len(queries) == 1:
@@ -330,6 +335,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
         if not first or by == "model" or len(queries) > 1:  # B2: thêm số đo cho lần tìm thêm / do model / nhiều câu; lần tìm đầu một câu giữ như B1
             entry.update(by=by, n_queries=len(queries), n_new=None if packed is None else len(packed.sources))
         trace.tools.append(entry)
+        trace.vet.setdefault("tim", []).append(so_vet.vet_tim(queries, by, None if result is None else result.documents, packed))
 
 
 async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: AnswerTrace, today: str | None = None,
@@ -1043,7 +1049,9 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: As
     cau_web = cau_cho_web(query, trace, flags)
     tu_model = cau_web != query
     xet = f"{cau_web} {query}" if tu_model else query  # luật chặn theo câu hỏi (thiên tai, thời gian thực, lưu trú) xét CẢ hai câu ⇒ chỉ chặt hơn
-    kq = await tim_web(tw.cau_tim_web(cau_web))
+    cau_serper = tw.cau_tim_web(cau_web)
+    kq = await tim_web(cau_serper)
+    trace.vet["web"] = {"cau_gui_tra_web": cau_serper, "so_web": list(kq.so_web)}
     trace.tools.append({"name": "tra_web", "ms": kq.ms, "trang_thai": kq.trang_thai, "loi": kq.loi, "n_ket_qua": len(kq.so_web),
                         "usd": kq.usd, **({"cau_tu_model": True} if tu_model else {})})  # chỉ cờ, không chữ
     web = {"outcome": "web_loi", "text": tw.WEB_LOI_TEXT, "nguon": [], "n_ket_qua": len(kq.so_web), "n_ma": 0, "kiem": None,
@@ -1068,6 +1076,7 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: As
     finally:
         record_llm_calls(trace, call_log.calls, "tra_web")
     loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(xet), tw.la_cau_thoi_gian_thuc(xet), cau_hoi=query)
+    trace.vet["web"]["chu_model"] = generated.text  # cả khi rào chặn (mục bị thay câu cố định) — để biết model đã viết gì
     web["kiem"] = loi
     if loi == ["so_thoi_gian_thuc"]:  # vòng chỉnh 1: câu thời gian thực có số / ngày giờ ⇒ câu cố định "chưa xác minh" + link nguồn
         web.update(outcome="chua_xac_minh", text=tw.CHUA_XAC_MINH_TEXT, nguon=list(kq.so_web))
@@ -1459,9 +1468,13 @@ async def _answer_core(query: str, retrieval_service, context_builder, generator
 def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
     """Tuyến `tro_ly_hue` ⇒ trace chính nhận mọi thứ (ii) đã làm; giữ phần định tuyến của trace chính; `llm_calls` = định tuyến rồi trả lời."""
     keep_own = {"route", "route_error", "routing_ms", "emergency_by", "llm_calls", "sua", *ROUTE_INPUTS}  # `sua`: số đếm lần hiểu ý sửa lịch
+    vet_rieng = trace.vet
     for item in dataclasses.fields(AnswerTrace):
         if item.name not in keep_own:
             setattr(trace, item.name, getattr(spec, item.name))
+    trace.vet = {**spec.vet, **vet_rieng}
+    if "tim" in spec.vet and "tim" in vet_rieng:  # hai nhánh đều có lần tìm ⇒ nối, không ghi đè (review B m-1)
+        trace.vet["tim"] = vet_rieng["tim"] + spec.vet["tim"]
     trace.llm_calls = trace.llm_calls + spec.llm_calls
     if recorder and trace.packed is not None:  # như `prepare_answer` của đường cũ (recorder chỉ route truyền)
         recorder.record_packed_context(trace.packed)
