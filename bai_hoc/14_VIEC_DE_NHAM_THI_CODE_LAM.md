@@ -1,6 +1,6 @@
 # Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình
 
-*Cập nhật lần cuối: 13:45, ngày 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
+*Cập nhật lần cuối: 12:33, ngày 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -62,6 +62,9 @@ Trước đó (09/11), khi mới thêm công cụ ngày: **bớt 9 câu từ ch�
 - Hạn **3 giây**, không thử lại. Lưu tạm kết quả **30 phút**, vì dự báo không đổi từng phút và đỡ gọi lại.
 - **Code dựng sẵn các con số** (nhiệt độ, mưa…) ghi kèm nguồn và giờ lấy. Số nào model viết ra phải nằm trong tập số code đã đưa.
 - Hỏi ngày **ngoài 7 ngày tới** ⇒ câu cố định: "mình chỉ có dự báo 7 ngày tới…"; số nào model nêu thêm (nếu có) chỉ là khí hậu chung theo tài liệu.
+- Hỏi **"tuần sau"** (từ 15/11): **code** tính những ngày của tuần sau còn nằm trong 7 ngày dự báo, đưa đúng các ngày đó kèm dòng "dự báo chỉ có tới <thứ, ngày>".
+  Chỉ khi hôm nay là thứ Hai (cả tuần sau đều quá 7 ngày) hoặc hỏi "tuần sau nữa" mới ra câu cố định. Trước 15/11, mọi câu "tuần sau" đều ra câu cố định —
+  kể cả Chủ nhật hỏi "thứ hai tuần sau", tức ngày mai.
 - Câu về **bão, lũ, ngập** ⇒ câu cố định trỏ tới Trung tâm Dự báo khí tượng thủy văn quốc gia, cổng cảnh báo lũ quét, và **gọi 112** khi nguy hiểm. Model không
   được tự viết về thiên tai.
 - Công cụ thời tiết **chỉ được đưa** khi câu có từ khoá thời tiết (bài 12).
@@ -105,7 +108,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 
 - **Dạng ngày ít gặp** ("tháng tới", "ngày kia của tuần sau"…) vẫn đi đường cũ, model tự cộng ngày.
 - **Câu có ngày đúng nhưng thiếu `[n]`** thì bị rút lại (1 / 9 câu lịch ngày 10/11, bài 8).
-- **Thời tiết "tuần sau"** không có số dự báo (ngoài 7 ngày), chỉ có câu cố định.
+- **Thời tiết "tuần sau"**: chỉ có số cho phần nằm trong 7 ngày (đầu tuần); cuối tuần sau vẫn chưa có dự báo. Câu "thứ hai tuần sau" nhận cả các ngày có dự báo của tuần sau, không riêng thứ Hai.
 - **Biểu mẫu bản đầu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng; không xét mưa. Bản 2 (bài 23) đã sửa hai chỗ này.
   Cả hai bản đều **chưa có ô giờ tới / giờ về**.
 - **Lịch trình từ câu gõ tự do chưa bật.**
@@ -125,6 +128,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
+- "Tuần sau" từ 15/11: `backend/llm/thoi_tiet.py` `ngay_tuan_sau`, `ngoai_7_ngay`; đo: câu thời tiết "tuần sau" ×3 gọi công cụ 3 / 3, 0 số lạ; bộ an toàn 32 không đổi; `report_agent/2026-11-12_ra_khoang_cach/b_tuan_sau_implementation.md` [code + đã chạy 15/11]
 - lunar-vn 1.4.0 (thuật toán Hồ Ngọc Đức, UTC+7), năm 1976–2100, câu cố định ngoài khoảng, không dùng lịch Trung Quốc: `backend/llm/ngay_lich.py` (đầu file, `NAM_MIN`, `NAM_MAX`, `CAU_NGOAI_KHOANG`); `pyproject.toml` [code, xem 11/11]. Ví dụ Tết 1985 (21/01 ↔ 20/02): chú thích đầu `ngay_lich.py` [code, xem 11/11]
 - Lịch tính sẵn: `ngay_lich.py` `lich_san`, gọi trong `backend/llm/assistant.py` khi dò thấy từ chỉ ngày [code]
 - Câu ngày nhanh (10/11, 19 câu): 5,60 → 2,35 s; 10,14 → 4,56 s; 0,00049 → 0,00036 USD; 52 → 31 lần gọi; 0 lần gọi công cụ dự phòng: `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md`, `session_prompt/Project_Status.md` §4 [đã chạy]. T1 (09/11): bớt 9 câu từ chối nhầm, 0 sai ngày [đã chạy]

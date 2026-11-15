@@ -17,6 +17,7 @@
 - 12:03 15/11/2026 — Gỡ worktree `/tmp/b_ss`, `/tmp/b_t1` (A đã tag). Chép 2 report tốc độ vào main working tree; viết bài 19 dòng 43–44 + sổ 06 (bản 15) + 07 (bản 57) — chưa commit, A commit. **Rảnh — chờ A.**
 - 12:16 15/11/2026 — **Rà nợ cũ XONG** (0 USD): `report_agent/2026-11-12_ra_khoang_cach/b_ra_no_cu.md` (chưa commit). Còn 3: mục web "8/11"≠"08/11" chặn nhầm · thời tiết "tuần sau" luôn ngoài 7 ngày · sổ S41–S44 thiếu cột; còn lại đề xuất xoá. Gửi cả nhóm bàn. **Chờ A.**
 - 12:30 15/11/2026 — Sửa (1) web số 0: làm xong nhưng cứu 0/76 ⇒ A **BỎ** (nhánh `p9-web-so-0`, worktree `/tmp/b_w0` — xoá cuối phiên). Sửa (2) **"tuần sau" XONG, CHỜ E review**: `p9-tuan-sau` `b38f5ad` (push), worktree `/tmp/b_ts`; X01 ×3 đạt, an toàn 0 đổi lớp, test rộng 1.064 đạt, 0,024 USD. 0 server.
+- 12:34 15/11/2026 — "tuần sau" E ready ⇒ A merge `5738e8d`; nhãn X01 bộ B5b sửa (md5 `65c6d4bc33f2`, sao lưu); worktree `/tmp/b_ts` gỡ. Bài 14 (sửa câu sai "tuần sau") + sổ 07 bản 59 — chưa commit (A). Còn `/tmp/b_w0` (bỏ, xoá cuối phiên). **Rảnh — chờ A.**
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**
