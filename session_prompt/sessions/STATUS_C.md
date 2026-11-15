@@ -22,6 +22,8 @@
 **Tây Sơn XONG (đo + tài liệu):** kiểm độc lập bắt C bỏ sót an toàn 32 + 18 ngoài kho ⇒ chạy bù: 0 đổi lớp, 0 / 18 — đạt. Bài 22 + sổ 02 + README sửa theo biên bản — chờ A commit. Tiền ≈ 0,029 USD. Rảnh — chờ (B đang chạy lượt đo có phí: không server / pytest / dựng).
 **Review Docker nháp E: ready 0/0/1** (`c_review_docker_nhap.md`). **Plan ảnh trong chat bản 1** `docs/superpowers/plans/2026-11-15-anh-trong-chat-plan.md` — chờ A duyệt. Khai báo sửa (khi duyệt): `frontend/src/anhTraLoi.js`, `chat.jsx`, css, `backend/tests/test_anh_tra_loi.py`, `data/anh_chat_2026-11-15/`.
 **Ảnh trong chat (plan bf43cc57f6ea A duyệt):** nhánh `p9-anh-chat` (worktree `/tmp/c_ac`, chưa commit) — `anhTraLoi.js` trả danh sách, `chat.jsx` hàng ảnh có tên, `tl.css`, test 2 passed. T3 mô phỏng: câu có ảnh 77 ⇒ 103 / 154 (26 câu mới, 39 ảnh). T4 agent con nhìn lại 39 ảnh đang chạy. Còn: build, test rộng, Playwright (sau khi B đo xong độ trễ).
+**Ảnh trong chat XONG T1–T5:** nhánh `p9-anh-chat` đã push — chờ E review. 77 ⇒ 103 / 154 câu có ảnh; 39 ảnh mới 0 sai nơi (3 ảnh quảng cáo báo E sửa gốc); Playwright DAT; suite 1056 passed. Report `c_anh_chat_implementation.md`.
+**12 câu khách sạn soạn sẵn (chưa chạy):** `data/anh_chat_2026-11-15/cau_khach_san.json` — gồm bẫy tên viết khác, tên lồng nhau, tên trùng sông, cơ sở không ảnh, cơ sở không có trong danh mục. Việc sau merge ảnh chat: bài 24 + sổ 08 / 07.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

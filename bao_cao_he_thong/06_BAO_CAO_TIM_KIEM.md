@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 14:05 14/11/2026 — bản 14: dựng lại sau lần ghi kho 2 (5 bài lưu trú); mốc tìm mới `356a742f09a1`.** Bản 13 (10:30 14/11): lần ghi kho 1, mốc `a105229f1902`, nhãn đoạn đúng bản 6. Bản 12 (19:28 10/11/2026): thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 12:03 15/11/2026 — bản 15: hai lần thử làm tìm thêm nhanh hơn (tìm song song; trần 1 lần) — đều không đưa vào.** Bản 14 (14:05 14/11/2026): dựng lại sau lần ghi kho 2 (5 bài lưu trú); mốc tìm mới `356a742f09a1`. Bản 13 (10:30 14/11): lần ghi kho 1, mốc `a105229f1902`, nhãn đoạn đúng bản 6. Bản 12 (19:28 10/11/2026): thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
 Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -78,6 +78,12 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
+### 15/11/2026 — tốc độ: tìm thêm song song; trần tìm thêm 1 lần (cả hai không đưa vào)
+- Đếm trước (0 USD): câu có tìm thêm chiếm ~20 % lượt gọi model thật từ 10/11, chữ đầu p50 8,6 s (sàn 3 s); chậm vì 2–4 lần gọi model nối tiếp, mỗi lần tìm chỉ 0,03 s (`report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md`).
+- **Tìm song song** (cờ `tim_song_song`, plan `86d295b16017`): model chỉ gọi song song 1 / 176 câu; lợi −2,3 s ở 7 câu đến từ bớt tìm ⇒ **bỏ**, tag `hoso/p9-tim-song-song` (`b_tim_song_song_implementation.md`).
+- **Trần tìm thêm 1** (setting `tim_them_toi_da`, plan `611e5ee3c1df`): −2,4 s ở câu tìm 2 lần, nhưng từ chối trong kho 5 ⇒ 7 / 30 câu chạm (sàn +1) ⇒ **bỏ**, tag `hoso/p9-tran-tim-1` (`b_tran_tim_1_implementation.md`). Hai lượt ≈ 0,22 USD.
+- Kèm (A/A, 0,005 USD): câu hỏi giá vé đi lại từ tỉnh khác ở main bị "trả lời" 3 / 5 lần ("nguồn không nêu giá…" thay câu từ chối chuẩn) — câu hỏi cho User.
+
 ### 03/11/2026 — Phase 9 B2a: model viết lại câu tìm cho câu nhiều nguồn / so sánh (không đưa vào)
 - **Vì sao:** 38 câu nhiều nguồn + so sánh trong Golden là chỗ yếu nhất (Đủ ý 3,50 ở câu nhiều nguồn); 12 / 38 câu chưa đủ keyword trong 10 đoạn ⇒ thử để model viết câu tìm thay câu gốc.
 - **Luật ghi trước** (A 08:56 03/11/2026, bộ đo C viết, người code B không chỉnh trên nhóm kiểm): qua khi thêm **≥ 3 / 12** câu đủ keyword ở **cả hai lượt**, **0** câu mất đoạn đúng trên 55 câu có nhãn, nhóm kiểm không ngược chiều.
@@ -143,7 +149,7 @@ Số dòng code kiểm lúc 17:14 31/10/2026 (chưa kiểm lại); dòng chỉ m
 | Chỉ mục tìm trên 216 file / 8.603 đoạn | **còn dùng** (dựng lại 16:09 14/11; mốc tìm 158 câu `652da5944fe7`: 9 / 158 câu đổi top 10, 2 câu có đoạn bài mới / bài Đại Nội — MRR / nDCG lần này chưa tính lại. Lần 2 `356a742f09a1`: MRR 0,7203 ⇒ 0,7188, nDCG 0,7545 ⇒ 0,7534, độ phủ từ khoá 92,04 không đổi; 13 câu đổi top 10, 2 câu (hỏi chi phí ở) có đoạn lưu trú, 1 câu bài chi phí hạng 2 ⇒ 4 vẫn trong top 10. Lần 1 `a105229f1902`: 150 câu giữ nguyên 10 đoạn đầu; 5 câu có đoạn bài mới chen vào (đúng ngưỡng ≤ 5 ghi trước); 1 câu mất 1 / 2 đoạn đúng theo nhãn, nhưng ý đó có trong đoạn bài mới được tìm ra và câu trả lời vẫn đạt điểm tối đa ⇒ bạn chọn giữ; MRR 0,7216 ⇒ 0,7203, nDCG 0,7554 ⇒ 0,7545) | `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (private) |
 | "BM25 chỉ chấm lại 30 đoạn vector" là cách tốt nhất đã thử | **còn đúng** — nhưng chỉ vì các cách khác không chắc hơn; đoạn đúng hay bị xếp thấp | §3, §4 |
 | Cho `gpt-6-luna` chọn 10 trong 30 ứng viên | **gác làm hồ sơ** (bạn chốt 27/10) | §4 27/10 |
-| Định tuyến 4 tuyến trước khi tìm; trợ lý tìm thêm ≤ 2 lần sau lần tìm đầu | **còn dùng** (từ 03/11) | `backend/config/settings.yaml:60`, `:66`; `backend/llm/assistant.py:52` |
+| Định tuyến 4 tuyến trước khi tìm; trợ lý tìm thêm ≤ 2 lần sau lần tìm đầu | **còn dùng** (từ 03/11; 15/11 thử song song và trần 1 lần — đều bỏ, §4) | `backend/config/settings.yaml:60`, `:66`; `backend/llm/assistant.py:52` |
 
 ## 6. Việc còn lại / cần quyết
 
