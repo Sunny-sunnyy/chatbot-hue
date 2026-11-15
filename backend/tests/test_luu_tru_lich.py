@@ -58,8 +58,9 @@ def test_simulation_always_rules(mo_phong):
             else ltl.KHU_LOI
         assert o["khu"] == mong or (mong == ltl.KHU_BIEN and o["ly_do"].startswith("Khu trung tâm — ven biển")), key
         if o["khu"] == ltl.KHU_BIEN:  # cơ sở cùng phía với cụm ven biển nhiều điểm nhất (không gợi ý Lăng Cô cho lịch Thuận An)
-            cum = Counter(c for c in (BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)) if c in ltl.PHIA_BIEN).most_common(1)[0][0]
-            assert all(any(t in (c["dia_chi"] or "") for t in ltl.PHIA_BIEN[cum]) for c in o["co_so"]), key
+            phia = {"dong_bien": "bac", "nam_xa": "nam"}  # viết lại độc lập với `ltl.PHIA_CUM`
+            cum = Counter(c for c in (BANG_V2.theo_id[j]["cum"] for j in v2.diem_ban_ngay(khung)) if c in phia).most_common(1)[0][0]
+            assert all(theo_ten[c["ten"]]["phia_bien"] == phia[cum] for c in o["co_so"]), key
         assert 1 <= len(o["co_so"]) <= 5 and o["nhan"].startswith("Gợi ý theo vị trí và hạng — chưa kiểm giá")
         for c in o["co_so"]:
             assert c["ten"] in theo_ten and theo_ten[c["ten"]]["khu"] == o["khu"] and c["xep_hang"] == theo_ten[c["ten"]]["xep_hang"]
