@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
+*Cập nhật lần cuối: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -121,7 +121,9 @@ tiền theo lượt); tra trang bằng Codex (một trợ lý AI khác, tự m�
 
 **Ảnh cho bài kho mới (cuối tối 14/11).** Kho lớn lên 263 bài (bài 22) ⇒ tìm ảnh cho 39 bài mới theo cùng luật: 20 / 23 bài của lần ghi kho 5 và 11 / 16 bài lễ hội của
 lần 6 có ảnh; 8 bài để trống vì ảnh tìm được không nhận ra được nơi, là lễ cùng tên ở tỉnh khác, chỉ là poster, hoặc có người rõ mặt. Ảnh lễ Ariêu Ping được cắt bỏ
-tiền cảnh có người trẻ nhìn rõ mặt. Nay **249 / 263 bài** có ảnh; ảnh hiện được cạnh câu trả lời **196**; ảnh "không chắc" 53.
+tiền cảnh có người trẻ nhìn rõ mặt. Tối 14/11: 249 / 263 bài có ảnh.
+
+**Tìm thêm một lượt (sáng 15/11).** 14 bài còn trống được tìm lại bằng tìm kiếm web (57 lượt, khoảng 0,06 USD): thêm được 7 ảnh, người review bỏ 1 (ảnh của một lễ khác cùng loại, lại có người rõ mặt làm trọng tâm) ⇒ thêm 6. Một ảnh quán có số điện thoại trên biển được che mờ tới mức không đọc được — lần đầu dùng cách che thay vì bỏ ảnh. Nay **255 / 263 bài** có ảnh; ảnh hiện được cạnh câu trả lời **201**; ảnh "không chắc" (chỉ ở Khám phá) 54; **8 bài** vẫn trống — danh sách để anh tự tìm.
 
 **Người làm nhìn trước, người review nhìn lại mọi ảnh sẽ hiện** — bước này bắt nhiều lỗi nhất. Ba ảnh mà **cả hai** agent con đều chấm "chắc" vẫn bị người làm bác khi nhìn lại: múa lân
 không rõ làng nào, hai quán cà phê không thấy biển tên. Ảnh duy nhất trên kho ảnh mở ghi đúng tên biển Thuận An có trẻ nhỏ mặc đồ bơi ở giữa khung, trái luật chọn ảnh ⇒ người
@@ -185,6 +187,7 @@ Bài học: **thứ gì rút gọn nội dung thì phải đo trên toàn bộ d
 - Thông tin nhanh 51 / 207, 29 bài bị cắt ⇒ 28 bài có thẻ, 0 mất dòng; trang hứa không theo cờ: `report_agent/…/e_review_gd_h1_dot1_c.md`, `e_review_gd_h1_tro_ly_b.md` [đã chạy]
 
 - Ảnh tối 14/11: lượt chính 184 ⇒ 212 / 224, hiện được 146 ⇒ 162, 19 ảnh chủ đề, người xem lại bác 3 / 19, Serper ≈ 0,095 USD: `report_agent/2026-11-12_ra_khoang_cach/e_anh_v4_implementation.md`, review `c_review_anh_v4.md`; lượt bổ sung 218 / 224, Thuận An bị bác (trẻ em), lịch 33 / 34: `e_anh_v4b_implementation.md`, `c_review_anh_v4b.md`; nâng kc 8 / 37, hiện được 161 ⇒ 169, 10 ảnh "luật nguồn" trả lại: `e_anh_nang_kc_implementation.md`, `c_review_anh_kc.md` [đã chạy]
+- Tìm thêm 14 bài trống (15/11): `report_agent/2026-11-12_ra_khoang_cach/e_anh_14_bai.md`; A đếm `frontend/src/anhBai.js` 255 mục / 54 `kc` sau merge [đã chạy]
 - Ảnh bài kho mới: kho 5 218 ⇒ 238 / 247, hiện được 169 ⇒ 188: `report_agent/2026-11-12_ra_khoang_cach/e_anh_kho5_implementation.md`, review `a_review_anh_kho5.md`, `c_review_anh_kho5.md`; kho 6 238 ⇒ 249 / 263, hiện được 188 ⇒ 196, kc 53, Ariêu Ping cắt: `e_anh_kho6_implementation.md`, `c_review_anh_kho6.md` [đã chạy]; người viết tự đối chiếu số với report (luật W75 — chỉ thêm vài số).
 - Kiểm độc lập phần tối 14/11 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_24_25_toi_1411.md`): 77 ý — 58 đúng, 6 sai, 10 dễ hiểu nhầm, 3 không kiểm được; đã sửa cả 16 + bỏ ngoặc kép câu dặn không nguyên văn.
 </details>
