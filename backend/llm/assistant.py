@@ -97,6 +97,8 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    # plan 2026-11-15 trần tìm 2 ⇒ 1 (611e5ee3c1df): số lần MODEL được tìm thật; mặc định = MODEL_SEARCH_LIMIT ⇒ hành vi + chuỗi gửi model như trước
+    tim_them_toi_da: int = MODEL_SEARCH_LIMIT
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
     # "Lên kế hoạch" đợt 1 (plan `2026-11-12-len-ke-hoach-dot-1-plan.md`, spec bản 3.3 §5c.8): biểu mẫu bốn nhóm + hợp đồng `truong` mới — một cờ cho
@@ -128,6 +130,8 @@ class AssistantFlags:
     def __post_init__(self) -> None:
         if self.lan_tim_dau not in SEARCH_VARIANTS:
             raise ValueError(f"assistant.lan_tim_dau must be one of {SEARCH_VARIANTS}")
+        if self.tim_them_toi_da not in (1, MODEL_SEARCH_LIMIT):
+            raise ValueError(f"assistant.tim_them_toi_da must be 1 or {MODEL_SEARCH_LIMIT}")
         if self.lan_tim_dau in ("v1", "v3") and not self.router:
             raise ValueError("assistant.lan_tim_dau v1 / v3 needs assistant.router: true (search text is written by the router)")
         if self.lich_trinh and (not self.tim_them or self.bang_lich is None):
@@ -165,7 +169,8 @@ class AssistantFlags:
         # toạ độ nạp theo bảng rộng nhất đang dùng: bảng v8 (bản 2, chứa mọi id của v3) khi cờ bản 2 bật, không thì bảng v3 — một dict theo id
         bang_toa_do = bang_v2 or bang
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_toa_do) if values["ban_do_lich"] and bang_toa_do is not None else None
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), tim_them_toi_da=int(config.get("tim_them_toi_da", MODEL_SEARCH_LIMIT)),
+                   bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
@@ -198,7 +203,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                    if name not in ("lan_tim_dau", "tim_them_toi_da", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do"))
 
 
@@ -338,7 +343,8 @@ async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: An
                             context_builder=context_builder, trace=trace, today=today)
 
 
-def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str):
+def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
+                  tran: int = MODEL_SEARCH_LIMIT):
     """Hàm `tim_kho` của **một lượt** cho trợ lý có công cụ (B2 D5): generator bọc thành công cụ SDK (lõi không import SDK — T-3).
     Model chỉ thấy `cau_tim`; trần `MODEL_SEARCH_LIMIT` đếm ở đây; lần vượt ⇒ chữ "đã hết lượt", không tìm. Lỗi tìm / ngữ cảnh: ghi
     `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model)."""
@@ -354,7 +360,7 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         if trace.lich is not None:  # B5 vòng chỉnh 1 (a): đã có khung lịch + đoạn từng điểm ⇒ không tìm thật, bảo model viết ngay (chặn bằng code)
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "sau_lich": True})
             return TOOL_DA_DU_LICH
-        if trace.model_searches > MODEL_SEARCH_LIMIT:
+        if trace.model_searches > tran:
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "het_luot": True})
             return TOOL_LIMIT_TEXT
         try:
@@ -821,7 +827,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     try:
         if flags.uses_tools:
             instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.tim_them_toi_da)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
@@ -858,7 +864,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
-        extra["con_luot_fn"] = lambda: trace.model_searches < MODEL_SEARCH_LIMIT
+        extra["con_luot_fn"] = lambda: trace.model_searches < flags.tim_them_toi_da
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
     return extra
@@ -1150,7 +1156,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
                 instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.tim_them_toi_da)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
             else:

@@ -120,3 +120,19 @@ def test_form_turn_is_unchanged_by_the_flag(deps):
         assert tools_sent(gen) == [[]] and trace.clarify is None
         sent[name] = sent_requests(gen)
     assert sent["on"] == sent["off"]
+
+
+def test_search_cap_1_hides_tool_after_one_search_and_default_unchanged(deps):
+    """Plan trần tìm 2 ⇒ 1 (611e5ee3c1df): `tim_them_toi_da: 1` ⇒ sau 1 lần tìm thật, lượt gọi kế không còn `tim_kho` (2 lần gọi thay vì 3).
+    Mặc định (2) ⇒ yêu cầu gửi model giống byte bản trước; giá trị khác 1 / 2 ⇒ không khởi động."""
+    one = AssistantFlags(tim_them=True, het_luot_bo_cong_cu=True, tim_them_toi_da=1)
+    trace, gen = turn(deps, searches_then_answer(2), one)
+    assert [("tim_kho" in names) for names in tools_sent(gen)] == [True, False]
+    assert trace.model_searches == 1 and len(trace.llm_calls) == 2
+    _, g_mac = turn(deps, searches_then_answer(2), ON)
+    _, g_hai = turn(deps, searches_then_answer(2), AssistantFlags(tim_them=True, het_luot_bo_cong_cu=True, tim_them_toi_da=2))
+    assert sent_requests(g_hai) == sent_requests(g_mac)
+    with pytest.raises(ValueError, match="tim_them_toi_da"):
+        AssistantFlags(tim_them=True, tim_them_toi_da=3)
+    s = copy.deepcopy(SETTINGS)
+    assert AssistantFlags.from_settings(s).tim_them_toi_da == 2  # settings.yaml thật (main): 2
