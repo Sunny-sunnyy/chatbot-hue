@@ -1,9 +1,8 @@
-# Plan NHÁP — nhận diện nơi / món bằng SO ẢNH với ảnh mẫu (embedding ảnh, image-to-image)
+# Plan NHÁP bản 2 — nhận diện nơi / món bằng SO ẢNH với ảnh mẫu (embedding ảnh, image-to-image)
 
-B viết 21:18 15/11/2026 · A giao theo câu hỏi của User ("tưởng hệ thống embed ảnh rồi so tương đồng với ảnh trong dữ liệu; đã thử Gemini Embedding 2, DINOv2 / v3 chưa?") · **NHÁP — chưa review, chưa duyệt, CHƯA chạy lượt nào** · model / provider mới ⇒ A trình User trước khi chạy. Phạm vi ảnh User đã chốt: chỉ nhận diện nơi / món rồi tìm thông tin trong kho (không hỏi đáp nội dung ảnh).
-
+B viết bản 1 21:20 15/11/2026, **bản 2 21:33 15/11/2026** sau review của C (`2026-11-15-so-anh-embedding-plan_review.md` trên nhánh `p10-so-anh-review`: 3 major, 6 minor) + số đếm bước 0 của E + phép dò DINOv2 của B · A giao theo câu hỏi của User · **NHÁP — chờ C review vòng 2, chưa duyệt; mới chạy phép dò 0 USD (mục 2)**. Phạm vi ảnh User đã chốt: chỉ nhận diện nơi / món rồi tìm thông tin trong kho. User đã đồng ý: tải DINOv2; DINOv3 (đang chờ Meta duyệt quyền tải); dùng tiền API cho embedding ảnh. User không có ảnh tự chụp.
 ## Căn cứ để review
-`report_agent/2026-11-05_phase_10_anh/e9_siglip_implementation.md` (thử SigLIP 2, âm) · `report_agent/2026-11-05_phase_10_anh/e8_a1_implementation.md` (luna v0–v2, tiêu chí gốc) · `backend/llm/nhan_anh.py` (bản đang chạy) · mục 1 dưới đây (nguồn ngoài, có link).
+`report_agent/2026-11-05_phase_10_anh/e9_siglip_implementation.md` (thử SigLIP 2, âm) · `report_agent/2026-11-05_phase_10_anh/e8_a1_implementation.md` (luna v0–v2, tiêu chí gốc) · `backend/llm/nhan_anh.py` (bản đang chạy) · mục 1 dưới đây (nguồn ngoài, có link) · private: `data/so_anh_2026-11-15/KET_QUA_DO_DINO.md` (phép dò), `data/so_anh_buoc0_2026-11-15/KET_QUA.md` (đếm ảnh mẫu), `data/dem_ten_so_1_2026-11-15/KET_QUA.md` (tên số 1 của luna).
 
 ## 1. Tra cứu (15/11/2026; B tự mở từng trang — nhãn [nguồn] = trang nói, [suy ra] = B suy)
 | Model | Nhận ảnh | Chiều | Chạy ở đâu | Giá / giấy phép | Số truy hồi công trình công bố |
@@ -19,55 +18,67 @@ B viết 21:18 15/11/2026 · A giao theo câu hỏi của User ("tưởng hệ t
 - Khoá OpenRouter: code đã gọi OpenRouter cho embedding chữ (`backend/embedding/full_corpus.py`, thí nghiệm 30/10) ⇒ khoá từng có trong môi trường; **chưa kiểm còn dùng được** (kiểm bằng một lần gọi 1 ảnh, không đọc file khoá).
 - Link: https://openrouter.ai/google/gemini-embedding-2 · https://aistudio.google.com/docs/embeddings · https://aistudio.google.com/docs/pricing · https://huggingface.co/facebook/dinov2-base · https://huggingface.co/facebook/dinov3-vitb16-pretrain-lvd1689m · https://raw.githubusercontent.com/facebookresearch/dinov3/refs/heads/main/MODEL_CARD.md · https://arxiv.org/abs/2508.10104
 
-## 2. Vì sao thử lại (khác gì 05/11)
-05/11 chỉ thử SigLIP 2 base: so ảnh với 172 ảnh mẫu đạt 20 / 25, nhưng 5 / 5 ảnh ngoài Huế vẫn bị gán tên và các lăng / điện lẫn nhau. Hai thứ đổi lần này, **tách riêng để biết cái nào có tác dụng**: (a) model — họ DINO được công bố mạnh hơn hẳn ở "đúng công trình này" thay vì "loại công trình này"; (b) dữ liệu — bộ ảnh mẫu to hơn + có tập ảnh ÂM để đặt ngưỡng từ chối (05/11 không có ảnh âm ⇒ ngưỡng vô dụng).
+## 2. Đã biết trước khi dựng dữ liệu
+- **05/11:** SigLIP 2 base so ảnh với 172 ảnh mẫu: top 3 có tên đúng 20 / 25, tên số 1 đúng 15 / 25, 5 / 5 ảnh ngoài Huế bị gán tên.
+- **Phép dò 15/11 (0 USD; bộ đã thấy, n = 25 — KHÔNG dùng để quyết), chỉ đổi model, cùng 172 ảnh mẫu cũ, cùng cách gộp điểm:** công cụ mới chạy lại SigLIP ra đúng số 05/11. DINOv2 ViT-B (CLS): tên số 1 đúng 17 · top 3 22 · top 5 22 (luna đang chạy: 21 · 22). Điểm giống nhau **không** tách được ảnh ngoài danh sách (0,147–0,680 nằm trong 0,195–0,969). **Khoảng cách "tên nhất − tên nhì" có tín hiệu** mà SigLIP không có: đoán đúng 13 / 17 ảnh ≥ 0,179; ảnh ngoài danh sách ≤ 0,114; đoán sai ≤ 0,132 [chẩn đoán trên bộ đo — không dùng để chọn ngưỡng]. Trung bình patch kém CLS (14 · 20 · 22). 229 ms / ảnh, RSS 1,3 GB trên CPU.
+- **Đếm ảnh mẫu (E, 0 USD):** 42 tên, 0 tên đạt mốc; dùng được 190 ảnh; bộ 172 ảnh cũ có ảnh SAI TÊN (5 nội dung file giống byte nằm ở hai tên) và chưa ai nhìn hết; 6 ảnh lịch cùng file gốc với ảnh bộ đo ⇒ phải loại khỏi mẫu.
+- ⇒ **Giả thuyết chính cần đo:** embedding ảnh (họ DINO) + luật "cách tên nhì đủ xa" làm được CỔNG: tự tin thì trả một tên, không thì đưa nhiều tên cho người dùng / luna chọn, ảnh lạ thì từ chối. Hướng đọc kết quả chính là "embedding lọc + luna / người chọn", không phải "thay hẳn luna".
 
-## 3. Biến thể (mỗi biến thể đổi đúng một thứ so với hàng trên nó)
-| Mã | Model | Ảnh mẫu | Ghi chú |
-|---|---|---|---|
-| M0 | SigLIP 2 base (như 05/11) | 172 ảnh cũ | mốc — dùng lại số 05/11 nếu chạy lại ra giống byte |
-| M1 | SigLIP 2 base | bộ mẫu MỚI + ngưỡng từ ảnh âm | chỉ đổi dữ liệu ⇒ biết dữ liệu cứu được bao nhiêu (0 USD) |
-| D2 | DINOv2 ViT-B (CLS, ảnh 224) | bộ mẫu mới | chỉ đổi model so với M1; không cần quyền gì ngoài tải ~350 MB |
-| D2p | DINOv2 ViT-B, trung bình các patch thay CLS | bộ mẫu mới | chỉ đổi cách lấy vector so với D2 (0 USD, cùng model) — chạy khi D2 chưa đạt |
-| D3 | DINOv3 ViT-B | bộ mẫu mới | chỉ khi User đồng ý điều khoản trên Hugging Face |
-| G | Gemini Embedding 2 (768 chiều) | bộ mẫu mới | có phí; ảnh gửi ra Google qua OpenRouter |
-| mốc ngoài | luna v1 đang chạy | — | 22 / 25 · ngoài danh sách bị gán 0 và 2 / 5 · tên số 1 đúng 21 / 25 (đếm 15/11) |
+## 3. Biến thể — mỗi biến thể chỉ đổi MODEL; mọi thứ khác giống nhau
+Cách gộp điểm DUY NHẤT cho mọi biến thể (kể cả số 05/11 đã chạy lại ở phép dò): điểm của một tên = cosine với ảnh mẫu giống nhất của tên đó; vector chuẩn hoá L2; so bằng numpy. Mỗi biến thể báo **hai dòng từ cùng bộ vector**: (a) không luật từ chối — xếp hạng thuần; (b) có luật từ chối / "nhiều tên" (mục 5).
 
-## 4. Dữ liệu
-- **Ảnh mẫu (bước 0, 0 USD — đếm trước khi làm gì khác):** với 42 tên trong danh sách nhận ảnh, đếm số ảnh đã có theo từng tên từ ba nguồn: ảnh Khám phá (260 bài), ảnh lịch (40 điểm), 172 ảnh Commons cũ. Mục tiêu ≥ 8 ảnh / tên, riêng nhóm hay nhầm (các lăng, điện, cổng thành; hai món 05/11 sai lặp lại) ≥ 15 ảnh / tên, nhiều góc. Thiếu ⇒ tải thêm từ Commons theo công cụ cũ; **một người nhìn tận mắt 100 % ảnh mẫu** (05/11 chưa ai xem).
-- **Ảnh ÂM (~100):** không phải Huế nhưng dễ nhầm — cổng / cung điện Á Đông nơi khác, chùa và lăng tỉnh khác, món nước / bánh vùng khác, cộng ảnh linh tinh (người, phố, con vật). Chỉ dùng để đặt ngưỡng.
-- **Ngưỡng từ chối:** chọn trên ảnh mẫu (bỏ-một-ra) + ảnh âm, **không nhìn bộ đo**: ngưỡng = mức mà ≤ 5 % ảnh âm vượt qua; ghi kèm bao nhiêu % ảnh mẫu rơi dưới ngưỡng. Luật nhận tên: điểm cao nhất theo TÊN ≥ ngưỡng **và** cách tên đứng nhì ≥ một khoảng (khoảng này cũng chọn trên ảnh mẫu + ảnh âm; tên đứng nhì gần quá ⇒ coi là "nhiều tên", đưa cả hai). Các mức đó ghi vào file trước khi mở bộ đo.
-- **Bộ đo:** 33 ảnh cũ (25 trong danh sách · 5 ngoài · 3 có chữ ra lệnh) giữ nguyên để so với 05/11 + **bộ mới 30–40 ảnh "người thường chụp"** (điện thoại, góc lệch, có người, trời xấu): xin User 15–20 ảnh tự chụp / bạn bè chụp nếu có; phần còn lại lấy ảnh du khách có giấy phép mở, khác tác giả với ảnh mẫu; người gắn nhãn không phải người chạy. Bộ mới có ≥ 8 ảnh ngoài danh sách.
-- **Chống lẫn mẫu ↔ đo:** sha256 + tên file như 05/11, thêm bước mới: cặp mẫu–đo có cosine > 0,98 theo chính model đang đo ⇒ loại ảnh mẫu đó.
-
-## 5. Tiêu chí ghi trước (giữ như 05/11; k-NN tất định ⇒ một lượt)
-| Vai | Chỉ số | Ngưỡng |
+| Mã | Model | Ghi chú |
 |---|---|---|
-| Sàn | Q-c: ảnh ngoài danh sách bị gán tên (bộ cũ) | ≤ 1 / 5 |
-| Sàn | Ảnh có chữ ra lệnh làm theo chữ | 0 / 3 (model chỉ-ảnh không đọc lệnh — kiểm lại) |
-| Quyết | Q-a: tên đúng trong top 3 (bộ cũ) | ≥ 22 / 25 |
-| Quyết | Tên số 1 đúng (bộ cũ) — vì User muốn trả lời thẳng | ≥ 22 / 25 (mốc luna 21) |
-| Xác nhận | Bộ mới "người thường chụp": cùng bốn chỉ số, báo riêng | không tệ hơn luna v1 chạy trên cùng bộ (≈ 0,02 USD) quá 2 ảnh |
-| Theo dõi | ms / ảnh p50 · p95, RSS, USD / ảnh, số ảnh rời máy | báo |
+| M1 | SigLIP 2 base | mốc trên bộ mẫu MỚI — cho biết riêng dữ liệu sạch + nhiều hơn cứu được bao nhiêu (so với phép dò trên bộ cũ) |
+| D2 | DINOv2 ViT-B, CLS, ảnh 224 | model đã có trên máy |
+| D3 | DINOv3 ViT-B | chạy khi Meta duyệt quyền tải; chưa có thì báo "chưa chạy", không chờ |
+| G | Gemini Embedding 2, 768 chiều, qua OpenRouter | có phí; lời gọi đặt không cho provider thu thập dữ liệu (như thí nghiệm embedding chữ 30/10); bước đầu = gọi thử 1 ảnh để biết khuôn yêu cầu + giá thật |
+| mốc ngoài | luna v1 đang chạy | chạy **2 lượt** trên bộ đo mới (bộ cũ đã có 2 lượt) |
 
-**Đọc kết quả:** (i) một biến thể đạt cả sàn + hai chỉ số quyết + xác nhận ⇒ đề xuất User THAY luna ở bước nhận diện (plan riêng để đưa vào chatbot); (ii) đạt sàn và top 5 chứa tên đúng ≥ 24 / 25 nhưng tên số 1 chưa đạt ⇒ đề xuất GHÉP: embedding từ chối ảnh lạ + đưa top 5 cho luna chọn (05/11 ghép âm vì top 5 chỉ 22 / 25) — đo như một bậc riêng; (iii) còn lại ⇒ BỎ, ghi hồ sơ. M1 ↔ D2 cho biết phần nào do dữ liệu, phần nào do model. Không chỉnh ngưỡng sau khi thấy số bộ đo.
+Bỏ khỏi lượt đầu: trung bình patch (phép dò: kém CLS) — chỉ chạy lại nếu D2 thiếu đúng 1–2 ảnh so với luật ở mục 6.
 
-## 6. Tiền · thời gian · máy
-- D2 / D2p / D3 / M1: 0 USD. G: (ảnh mẫu ~700 + âm ~100 + đo ~70) × 0,00012 ≈ **0,1 USD** [giá Google trực tiếp; qua OpenRouter đọc `usage` của lần gọi thử rồi ước lại, quá 0,3 USD thì dừng hỏi A]. luna v1 trên bộ mới ≈ 0,02. Trần đề nghị **0,5 USD**.
-- Thời gian ước: bước 0 + gom ảnh + nhìn ảnh 1,5–2 giờ; nạp + đo mỗi model ~20 phút; report 30 phút.
-- Máy 19 GB: **một model một lúc** (ước ~1,5–2 GB RSS mỗi model), không chạy khi nhóm đang đo tốc độ; vector lưu file `.npy` trong `data/` (không dựng collection Qdrant mới — ~900 vector thì so bằng numpy là đủ).
+## 4. Dữ liệu (đóng băng TRƯỚC khi chạy bất kỳ model nào)
+- **Ảnh mẫu — mục tiêu ~480:** nhóm hay nhầm ≥ 15 ảnh / tên, còn lại ≥ 8. Nhóm hay nhầm (20 tên): mọi tên lăng, điện, chùa trong danh sách + `dai_noi`, `kinh_thanh`, `hai_van_quan`, `cuu_dinh_hue`, `dan_nam_giao`, `dan_xa_tac`, `ho_quyen`, `cung_an_dinh` + hai món sai lặp lại ở 05/11 `banh_canh_nam_pho`, `che_heo_quay`. Có 190 ảnh dùng được ⇒ gom thêm ~290 (kho ảnh giấy phép mở, nhiều góc). **Một người nhìn 100 % ảnh mẫu** (kể cả 172 ảnh cũ), bỏ ảnh sai nơi; loại 6 ảnh lịch trùng file với bộ đo và mọi bản của 5 nội dung nằm ở hai tên. Số ảnh mỗi tên không đều ⇒ tên nhiều ảnh có lợi thế khi lấy điểm cao nhất: báo kết quả tách "nhóm hay nhầm" ↔ "còn lại" và ghi là giới hạn.
+- **Ảnh ÂM (~100, chỉ để đặt ngưỡng):** không phải Huế — một nửa dễ nhầm (cổng / cung điện / chùa / lăng Á Đông nơi khác, món nước và bánh vùng khác), một nửa linh tinh.
+- **Bộ đo:** 33 ảnh cũ (25 trong danh sách · 5 ngoài · 3 có chữ ra lệnh) **+ bộ mới: ≥ 30 ảnh trong danh sách + ≥ 15 ảnh ngoài danh sách** (ít nhất một nửa là loại dễ nhầm), kiểu "người thường chụp" (điện thoại, góc lệch, có người, trời xấu). User không có ảnh tự chụp ⇒ lấy từ **nguồn khác kho ảnh dùng làm mẫu** (ảnh du khách đăng công khai trên trang đánh giá / mạng ảnh; dữ liệu công khai cho học tập). Người gom ≠ người chạy model; **người thứ hai kiểm 100 % nhãn**; ghi danh sách + sha256 rồi mới chạy.
+- **Tách ba tập:** ảnh mẫu, ảnh âm, ảnh đo khác nguồn tải và khác tác giả theo từng cặp tập; kiểm trùng byte + tên file; thêm với mỗi model: cặp có cosine > 0,98 giữa hai tập bất kỳ ⇒ loại khỏi tập mẫu / âm; và **nhìn tay** ảnh mẫu giống nhất của từng ảnh đo (~80 cặp).
 
-## 7. Cần User / A quyết trước khi chạy
-1. Cho tải DINOv2 ViT-B (~350 MB, Apache-2.0) — model mới.
-2. DINOv3: User có đồng ý điều khoản trên Hugging Face (đăng nhập, chia sẻ thông tin tài khoản) không; không ⇒ bỏ D3.
-3. Gemini Embedding 2 qua OpenRouter: provider + **đường dữ liệu mới** — ảnh mẫu (công khai) gửi Google khi đo; nếu sau này dùng lúc chạy thật thì **ảnh người dùng gửi sang Google** (hiện ảnh đang gửi OpenAI) ⇒ ghi checklist deploy. Model chạy máy thì ảnh không rời máy.
-4. User có 15–20 ảnh tự chụp ở Huế để làm bộ "người thường chụp" không.
+## 5. Luật từ chối và "nhiều tên" (chọn trên ảnh mẫu + ảnh âm, KHÔNG nhìn bộ đo; ghi vào file trước khi mở bộ đo)
+- Với mỗi ảnh: s1 = điểm tên cao nhất, s2 = điểm tên đứng nhì. **Tự tin một tên** khi s1 − s2 ≥ m; **ảnh lạ (từ chối)** khi s1 < t; còn lại = **nhiều tên** (đưa top 3).
+- m = mức nhỏ nhất mà ≤ 5 % ảnh âm được "tự tin một tên"; t = mức mà ≤ 5 % ảnh âm không bị từ chối **trong số ảnh không tự tin**. Tính trên ảnh mẫu bằng cách bỏ-một-ra. Nếu với m hoặc t đó > 20 % ảnh mẫu bị xử sai (ảnh mẫu bị từ chối, hoặc < 30 % ảnh mẫu được "tự tin") ⇒ ghi "biến thể này không đặt được ngưỡng dùng được", **không nới**.
+- Cách tính điểm khi "nhiều tên": KHÔNG tính là đúng ở chỉ số "tên số 1"; tính ở chỉ số top 3; báo riêng số ảnh rơi vào từng nhóm.
 
-## 8. Bảng rà khung AI FDE (rút gọn — nguồn dữ liệu / đường ra mới)
+## 6. Tiêu chí ghi trước
+**Giới hạn nói thẳng:** 25 ảnh cũ không phân biệt được 22 với 20 (khoảng tin cậy chồng nhau) và đã được nhìn qua nhiều vòng chỉnh ⇒ mọi chỉ số QUYẾT tính trên **bộ gộp** (≥ 55 ảnh trong danh sách, ≥ 20 ảnh ngoài danh sách), so **theo cặp** với luna v1 lượt 1 trên đúng các ảnh đó; bộ cũ báo riêng chỉ để nối với 05/11. k-NN tất định ⇒ một lượt mỗi biến thể.
+
+| Vai | Chỉ số (bộ gộp) | Ngưỡng |
+|---|---|---|
+| Sàn | Ảnh ngoài danh sách được "tự tin một tên" (dòng b) | ≤ 2 / 20 |
+| Sàn | 3 ảnh có chữ ra lệnh: tên số 1 theo chữ dán trên ảnh | 0 |
+| Quyết 1 (cổng) | Nhóm "tự tin một tên": số ảnh trong danh sách bị gán SAI tên | ≤ 2, và nhóm này phủ ≥ 50 % ảnh trong danh sách |
+| Quyết 2 | Top 3 có tên đúng (dòng a) so với luna theo cặp | không kém quá 2 ảnh |
+| Quyết 3 | Tên số 1 đúng (dòng a) so với luna theo cặp | báo hơn / kém bao nhiêu ảnh; "hơn luna" chỉ nói khi hơn ≥ 6 ảnh |
+| Theo dõi | luna lượt 1 ↔ lượt 2 đổi bao nhiêu ảnh; ms / ảnh, RSS, USD / ảnh; kết quả tách nhóm hay nhầm ↔ còn lại; bộ cũ 25 + 5 + 3 báo riêng | báo |
+
+**Đọc kết quả:** (i) sàn + Quyết 1 + Quyết 2 đạt ⇒ đề xuất luồng LAI dùng embedding làm cổng (tự tin ⇒ trả lời thẳng kèm "có thể sai"; nhiều tên ⇒ người dùng hoặc luna chọn trong top 3; ảnh lạ ⇒ từ chối) — plan riêng để đưa vào chatbot, ở đó mới quyết tốc độ / RAM thêm vào server (phép dò: ~230 ms, ~1,3 GB); (ii) thêm Quyết 3 không kém luna quá 2 ảnh ⇒ ghi là ứng viên THAY bước nhận diện của luna, vẫn cần plan riêng; (iii) sàn trượt hoặc Quyết 1 trượt ⇒ BỎ biến thể đó, ghi hồ sơ. So M1 ↔ D2 ↔ D3 ↔ G cho biết phần của model; so M1 với phép dò trên bộ cũ cho biết phần của dữ liệu. Không chỉnh m, t sau khi thấy số bộ đo.
+
+## 7. Tiền · thời gian · máy
+- M1 / D2 / D3: 0 USD. G: (~480 mẫu + ~100 âm + ~80 đo) × 0,00012 ≈ **0,08 USD** [giá trang Google; đọc `usage` của lần gọi thử rồi ước lại; quá 0,3 thì dừng hỏi A]. luna v1 2 lượt trên bộ mới ~45 ảnh ≈ **0,04 USD**. Trần **0,5 USD**.
+- Thời gian ước: gom + nhìn ~290 ảnh mẫu, ~100 ảnh âm, ~45 ảnh đo mới: 2,5–3 giờ (chia hai người); nạp + đo mỗi model ~15 phút; report 30 phút.
+- Máy 19 GB: một model một lúc; vector lưu `.npy` trong `data/`, không dựng collection Qdrant mới. `AutoImageProcessor` của DINO đòi gói `torchvision` (chưa cài) ⇒ tự tiền xử lý đúng `preprocessor_config.json` như phép dò, không thêm gói.
+
+## 8. Còn cần quyết
+1. (A / User) Ai gom bộ đo mới và ai kiểm nhãn — đề nghị E gom, C kiểm, B chạy.
+2. (User, khi tới plan đưa vào chatbot — không phải bây giờ) nếu Gemini thắng: ảnh NGƯỜI DÙNG sẽ gửi sang Google qua OpenRouter (hiện gửi OpenAI) ⇒ ghi checklist deploy. Trong thí nghiệm chỉ ảnh công khai được gửi.
+3. DINOv3 chưa được Meta duyệt lúc chạy ⇒ chạy phần còn lại, D3 bổ sung sau bằng cùng bộ đã đóng băng.
+
+## 9. Bảng rà khung AI FDE (rút gọn)
 | Mục | Hiện trạng | Đề xuất |
 |---|---|---|
-| Có cần model không | bước nhận diện đang là một lần gọi model ngôn ngữ có ảnh | so vector = phép tính tất định, rẻ, lặp lại được ⇒ đúng hướng "việc tính được thì để code" |
-| Dữ liệu ngoài là dữ liệu | chữ trong ảnh từng điều khiển tên (1 / 3) | model chỉ-ảnh không đọc lệnh; với G (đa phương thức) phải đo 3 ảnh chữ ra lệnh |
-| Đường ra mới | ảnh ⇒ OpenAI | G: ảnh ⇒ OpenRouter ⇒ Google (mục 7.3) |
-| Quyền hẹp | — | khoá OpenRouter chỉ dùng cho embedding; không ghi ảnh người dùng xuống đĩa |
-| Rào đo hai chiều | 05/11 không có ảnh âm | tập âm + sàn Q-c + bộ "người thường chụp" |
+| Có cần model ngôn ngữ không | nhận diện = một lần gọi model có ảnh (~3 s, có phí, dao động giữa hai lượt) | so vector = phép tính tất định, rẻ, lặp lại được; model ngôn ngữ chỉ còn chọn trong top 3 khi không tự tin |
+| Chữ trong ảnh là dữ liệu | luna làm theo chữ dán trên ảnh 1 / 3 | model chỉ-ảnh: phép dò 0 / 3; G đa phương thức ⇒ sàn riêng |
+| Đường ra mới | ảnh ⇒ OpenAI | G: ảnh ⇒ OpenRouter ⇒ Google (mục 8.2); model chạy máy: ảnh không rời máy |
+| Rào đo hai chiều | 05/11 không có ảnh âm, 5 ảnh ngoài danh sách | tập âm riêng + ≥ 20 ảnh ngoài danh sách + bộ "người thường chụp" |
+
+## Chỗ đổi so với bản 1 (theo review C + số mới)
+M-1: quyết trên bộ gộp ≥ 55 ảnh, so cặp với luna 2 lượt, luật đọc theo số ảnh hơn / kém. M-2: ≥ 20 ảnh ngoài danh sách, tách nguồn với tập âm. M-3: một cách gộp điểm, mỗi biến thể hai dòng, phép dò đã chạy trước khi gom dữ liệu. m-1…m-6: nguồn bộ đo mới + người kiểm nhãn + đóng băng; cách tính khi "nhiều tên"; luật khi ngưỡng làm rơi quá nhiều ảnh mẫu; nhìn tay cặp gần nhất; tốc độ / RAM để plan đưa vào chatbot; lời gọi Gemini không cho thu thập dữ liệu. Bỏ biến thể trung bình patch và bước chạy lại SigLIP trên bộ cũ (đã làm ở phép dò). Bộ mẫu ~700 ⇒ ~480. Hướng đọc chính đổi từ "thay luna" sang "embedding làm cổng".
