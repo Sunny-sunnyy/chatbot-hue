@@ -18,7 +18,10 @@ export function cauGhep(chu, ten) {
 
 // Chỉ hiện nút khi server bật tính năng (cờ `anh.bat`): cổng đợt 1 đọc cờ một lần ở `/api/tinh_nang` (App) thay vì dò `GET /api/anh/ung_vien` —
 // dò ra 404 thành lỗi console mỗi lần mở trợ lý (Q-G đòi 0 lỗi console).
-export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
+// User 15/11: nút chữ nằm riêng một hàng tốn chỗ ⇒ nút dấu cộng TRONG ô nhập + dán ảnh thẳng vào ô. Vì nút và thẻ gợi ý nằm ở hai chỗ khác nhau
+// của khung nhập nên đây là hook trả ba mảnh: `nut` (đặt trong ô nhập), `the` (thẻ gợi ý, đặt trên ô nhập), `onPaste` (gắn vào ô gõ).
+// Cờ tắt ⇒ cả ba rỗng: không nút, dán ảnh không làm gì.
+export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   const [state, setState] = useState(null);  // null · {preview, phase: "dang" | "xong" | "loi", ungVien, text}
   const inputRef = useRef(null);
   const rootRef = useRef(null);
@@ -30,17 +33,30 @@ export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     if (state && rootRef.current?.closest(".tro-ly-trang")) window.scrollTo({ top: document.documentElement.scrollHeight });
   }, [state?.phase]);
 
-  if (!bat) return null;
+  if (!bat) return { nut: null, the: null, onPaste: undefined };
 
   function dong(goTen) {
     setState(null);
     if (goTen) onGoTen();
   }
 
-  async function chonAnh(event) {
+  function chonAnh(event) {
     const file = event.target.files?.[0];
     event.target.value = "";  // chọn lại cùng file vẫn chạy
-    if (!file) return;
+    if (file) nhanAnh(file);
+  }
+
+  function onPaste(event) {
+    // Dán ẢNH (chụp màn hình, "sao chép hình ảnh") ⇒ cùng luồng với chọn file. Clipboard có chữ (kể cả khi kèm ảnh — bảng tính, trình soạn văn bản
+    // chép chữ kèm một ảnh chụp) ⇒ để trình duyệt dán chữ như thường.
+    const cb = event.clipboardData;
+    const file = [...(cb?.files ?? [])].find(f => f.type.startsWith("image/"));
+    if (!file || cb.getData("text/plain")) return;
+    event.preventDefault();
+    if (!disabled && state?.phase !== "dang") nhanAnh(file);
+  }
+
+  async function nhanAnh(file) {
     if (!KIEU.includes(file.type)) return setState({ phase: "loi", text: "Chọn ảnh JPEG, PNG hoặc WEBP." });
     if (file.size > MAX_BYTES) return setState({ phase: "loi", text: "Ảnh lớn hơn 10 MB — chọn ảnh nhỏ hơn." });
     const preview = URL.createObjectURL(file);
@@ -55,38 +71,42 @@ export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     }
   }
 
-  return (
+  const nut = (
+    <>
+      <button type="button" className="nut-anh" aria-label="Hỏi bằng ảnh" title="Hỏi bằng ảnh" disabled={disabled || state?.phase === "dang"}
+              onClick={() => inputRef.current?.click()}>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+      <input ref={inputRef} type="file" accept={KIEU.join(",")} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={chonAnh} />
+    </>
+  );
+  const the = state && (
     <div className="hoi-anh" ref={rootRef}>
-      <div className="flex flex-wrap items-center gap-3">
-        <button type="button" className="retry hoi-anh-nut" disabled={disabled || state?.phase === "dang"} onClick={() => inputRef.current?.click()}>
-          Hỏi bằng ảnh
-        </button>
-        <input ref={inputRef} type="file" accept={KIEU.join(",")} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={chonAnh} />
-      </div>
-      {state && (
-        <div className="bubble hoi-anh-the" role="status">
-          {state.preview && <img src={state.preview} alt="Ảnh bạn vừa chọn" className="hoi-anh-xem" />}
-          {state.phase === "dang" && <p>Đang nhận diện ảnh…</p>}
-          {state.phase === "loi" && <p>{state.text}</p>}
-          {state.phase === "xong" && (
-            <>
-              <p className="mb-2 font-semibold text-accent-deep">Gợi ý từ ảnh, có thể sai — chọn đúng tên:</p>
-              <div className="flex flex-wrap gap-2">
-                {state.ungVien.map(u => (
-                  <button key={u.id} type="button" className="send" disabled={disabled}
-                          onClick={() => { dong(false); onAsk(cauGhep(draft, u.ten)); }}>{u.ten}</button>
-                ))}
-              </div>
-            </>
-          )}
-          {state.phase !== "dang" && (
-            <div className="flex flex-wrap gap-2 pt-2">
-              {state.phase === "xong" && <button type="button" className="retry" onClick={() => dong(true)}>Không phải các tên này — tôi gõ tên</button>}
-              {state.phase === "loi" && <button type="button" className="retry" onClick={() => dong(true)}>Gõ tên</button>}
+      <div className="bubble hoi-anh-the" role="status">
+        {state.preview && <img src={state.preview} alt="Ảnh bạn vừa chọn" className="hoi-anh-xem" />}
+        {state.phase === "dang" && <p>Đang nhận diện ảnh…</p>}
+        {state.phase === "loi" && <p>{state.text}</p>}
+        {state.phase === "xong" && (
+          <>
+            <p className="mb-2 font-semibold text-accent-deep">Gợi ý từ ảnh, có thể sai — chọn đúng tên:</p>
+            <div className="flex flex-wrap gap-2">
+              {state.ungVien.map(u => (
+                <button key={u.id} type="button" className="send" disabled={disabled}
+                        onClick={() => { dong(false); onAsk(cauGhep(draft, u.ten)); }}>{u.ten}</button>
+              ))}
             </div>
-          )}
-        </div>
-      )}
+          </>
+        )}
+        {state.phase !== "dang" && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {state.phase === "xong" && <button type="button" className="retry" onClick={() => dong(true)}>Không phải các tên này — tôi gõ tên</button>}
+            {state.phase === "loi" && <button type="button" className="retry" onClick={() => dong(true)}>Gõ tên</button>}
+          </div>
+        )}
+      </div>
     </div>
   );
+  return { nut, the, onPaste };
 }
