@@ -4,7 +4,7 @@
 Log `backend/logs/application.log` dùng chung cho mọi bản đã chạy + pytest ⇒ đếm không lọc sẽ trộn lượt của bản cũ.
     python3 -I scripts/dem_chat_metrics.py                 # liệt kê các git_sha có trong log + số dòng
     python3 -I scripts/dem_chat_metrics.py --sha <sha>     # chỉ bản đó: số lượt theo tuyến, tốc độ, tiền
-    python3 -I scripts/dem_chat_metrics.py --sha HEAD      # bản của thư mục đang đứng
+    python3 -I scripts/dem_chat_metrics.py --sha HEAD      # bản của thư mục chứa script này
     … --jsonl  ⇒ in các dòng đã lọc (JSON) để script khác đọc tiếp
 Mặc định bỏ lượt không tốn tiền (pytest dùng model giả); `--ca-luot-0-dong` để giữ.
 """
@@ -38,7 +38,7 @@ def phan_vi(xs, p):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--log", type=Path, default=GOC / "backend/logs/application.log")
-    ap.add_argument("--sha", help="git_sha cần lọc; HEAD = bản của thư mục đang đứng")
+    ap.add_argument("--sha", help="git_sha cần lọc; HEAD = bản của thư mục chứa script này")
     ap.add_argument("--ca-luot-0-dong", action="store_true", help="giữ cả lượt không tốn tiền (pytest, lỗi trước model)")
     ap.add_argument("--jsonl", action="store_true")
     a = ap.parse_args()
@@ -50,13 +50,14 @@ def main():
         return
     sha = a.sha
     if sha == "HEAD":
-        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-    rows = [m for m in rows if m.get("git_sha") == sha and (a.ca_luot_0_dong or co_tien(m))]
+        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=GOC, capture_output=True, text=True, check=True).stdout.strip()
+    cung_sha = [m for m in rows if m.get("git_sha") == sha]
+    rows = [m for m in cung_sha if a.ca_luot_0_dong or co_tien(m)]
     if a.jsonl:
         for m in rows:
             print(json.dumps(m, ensure_ascii=False))
         return
-    print(f"git_sha {sha}: {len(rows)} lượt · {sum(m.get('usd') or 0 for m in rows):.4f} USD")
+    print(f"git_sha {sha}: {len(rows)} lượt · {sum(m.get('usd') or 0 for m in rows):.4f} USD (bỏ {len(cung_sha) - len(rows)} lượt 0 đồng)")
     nhom = defaultdict(list)
     for m in rows:
         nhom[m.get("route")].append(m)
