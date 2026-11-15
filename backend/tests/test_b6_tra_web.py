@@ -481,11 +481,15 @@ def _web_noi_tiep(flags, history=(), model_queries=(), query=CAU_CUT, text="Mở
     (NOI_TIEP, (), [CAU_MODEL]),                  # lượt đầu (không lịch sử): model có tìm cũng không đổi
     (NOI_TIEP, LICH_SU, []),                      # có lịch sử nhưng model không tìm lần nào
     (NOI_TIEP, LICH_SU, [CAU_MODEL, "   "]),       # câu tìm cuối của model rỗng (review E m-1) ⇒ không tra web bằng mỗi chữ "Huế"
+    (NOI_TIEP, LICH_SU, [CAU_MODEL, "0905 123 456 a@b.vn"]),  # rỗng SAU bộ lọc số điện thoại / email (review 2 m-1)
 ])
 def test_follow_up_flag_off_or_not_applicable_sends_typed_question_as_before(flags, history, model_queries):
-    q, sent, trace = _web_noi_tiep(flags, history, model_queries)
-    assert q == tw.cau_tim_web(CAU_CUT) and f"Câu hỏi: {CAU_CUT}" in sent and CAU_MODEL not in sent
-    assert "cau_tu_model" not in trace.tools[-1]
+    """Giống byte đường cũ (S2): thân yêu cầu Serper, toàn bộ tin nhắn gửi model viết mục web, mục `tools` (trừ ms) và kết quả web bằng nhau toàn phần."""
+    def chay(*a):
+        q, sent, trace = _web_noi_tiep(*a)
+        return q, sent, [{k: v for k, v in t.items() if k != "ms"} for t in trace.tools], trace.web
+    assert chay(flags, history, model_queries) == chay(None)
+    assert chay(None)[0] == tw.cau_tim_web(CAU_CUT)
 
 
 def test_follow_up_with_history_uses_last_model_search_query_for_serper_and_web_writer():

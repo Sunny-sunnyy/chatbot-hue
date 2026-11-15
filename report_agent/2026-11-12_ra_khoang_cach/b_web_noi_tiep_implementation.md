@@ -19,9 +19,9 @@ Bộ: 2 cặp đã thấy (B) + 12 cặp A viết (`bo_quyet_A.jsonl`, B không 
 
 | Tiêu chí | Mốc (cờ tắt) | Cờ bật | |
 |---|---|---|---|
-| Mẫu chỉ số quyết: cặp hỏi tiếp mà cổng web mở | — | n = **8** (2 đã thấy + 6 / 8 cặp N của A; **loại 2** cặp vì kho trả lời được — theo luật A ghi trước; cần n ≥ 6) | đủ mẫu |
+| Mẫu chỉ số quyết: cặp hỏi tiếp mà cổng web mở | — | n = **8** (2 đã thấy + 6 / 8 cặp N của A; **loại 2**: một cặp kho trả lời được, một cặp cổng web không mở (kho trả lời một phần kiểu "nguồn không cho biết…", không phải câu từ chối chuẩn) — theo luật A ghi trước; cần n ≥ 6) | đủ mẫu |
 | **Quyết 1:** câu gửi tra web nêu đúng chủ thể (so chữ bằng code; cần ≥ n − 1) | 0 / 10 (tất định, tính 0 USD trên cả 10 cặp) | **8 / 8** | ĐẠT |
-| **Quyết 2:** mục web nói về nơi khác (B đọc tay cả 8; cần 0) | 2 / 2 (ca của User) | **0 / 8** — 5 mục nói đúng chủ thể, 3 mục là câu cố định an toàn | ĐẠT |
+| **Quyết 2:** mục web nói về nơi khác (B đọc tay cả 8; cần 0) | 2 / 2 (ca của User) | **0 / 8** — 5 mục nói đúng chủ thể (trong đó **chỉ 2 mục có thông tin dùng được**, 3 mục là "đoạn trích không cho biết…"), 3 mục là câu cố định an toàn | ĐẠT |
 | S1: câu gửi tra web chứa tên người dùng | 0 | **0 / 4** lượt chạm (3 chuỗi cũ + 1 cặp mới; cặp mới còn lại kho trả lời được ⇒ "không chạm") | ĐẠT (n nhỏ) |
 | S2: cờ tắt / lượt đầu / model không tìm ⇒ như cũ | — | test (4 ca) | ĐẠT |
 | S3: cặp đổi chủ đề — câu web chứa chủ thể lượt 1 | — | **0 / 1** lượt chạm (cặp kia kho trả lời được) | ĐẠT (n = 1) |
@@ -30,13 +30,14 @@ Bộ: 2 cặp đã thấy (B) + 12 cặp A viết (`bo_quyet_A.jsonl`, B không 
 Ghi thêm: cặp "nêu tên mình" có cổng web mở thực ra cũng là câu hỏi tiếp ("trong đó…") — cờ tắt mục web nói chung chung về cả thành phố, cờ bật nói đúng nơi của lượt 1.
 
 **Lượt đối chứng ngoài tiêu chí** (B thêm sau khi thấy rủi ro: cờ bật đổi câu web của MỌI lượt ≥ 2 có tìm kho, kể cả câu vốn đứng một mình; ghi rõ là không ghi trước; cờ tắt, 5 cặp, 1 lượt, `quyet_doi_chung_co_tat.jsonl`):
-3 cặp câu đứng một mình so được — 1 cặp mục web giống nhau, 1 cặp đều ra câu cố định, 1 cặp "trích không cho biết" (tắt) ↔ câu cố định "chưa xác minh" (bật): không cặp nào kém đi rõ. n = 3, một lượt, kết quả web tự trôi ⇒ chỉ là "chưa thấy tụt".
+3 cặp câu đứng một mình so được, nhưng ở cặp đổi chủ đề câu model viết trùng câu gõ (thay đổi không áp) ⇒ **chỉ 2 cặp cho thông tin**: 1 cặp đều ra câu cố định, 1 cặp "trích không cho biết" (tắt) ↔ câu cố định "chưa xác minh" (bật): không cặp nào kém đi rõ. n = 2, một lượt, kết quả web tự trôi ⇒ chỉ là "chưa thấy tụt".
 
 ## Điều người quyết cần biết (không che)
 
 1. **Ca gốc của User hết lạc đề nhưng chưa có câu trả lời:** 2 / 2 lần cờ bật ra câu cố định "chưa tra được thông tin đáng tin" — mục model viết bị bộ kiểm số chặn (mã `so_ngoai_trich`: có con số không nằm nguyên dạng trong đoạn trích). Đây là luật kiểm cũ, không do bản sửa; cả lượt: 5 / 13 mục web cờ bật là câu cố định (3 do bộ kiểm số, 1 do bộ kiểm số + tiền, 1 do luật thời gian thực) (cờ tắt, mẫu khác: 1 / 4). Muốn ra được giờ mở cửa thật ⇒ việc riêng về bộ kiểm số (đếm trước).
 2. **Câu model viết dài hơn câu gõ:** 1 / 13 câu bị cắt ở 120 ký tự (cắt giữa từ); model có khi thêm ngày cụ thể suy từ "cuối tuần này" ⇒ luật thời gian thực chặn (đúng hướng an toàn).
-3. **Thứ ra ngoài đã đổi** (User đã nhận): chữ model viết, có tên nơi của lượt trước. Tên người dùng: 0 / 4 — mẫu nhỏ, rủi ro chưa loại hẳn.
+3. **Thứ ra ngoài đã đổi** (User đã nhận): chữ model viết, có tên nơi của lượt trước. Tên người dùng: 0 / 4 lượt chạm — mẫu nhỏ, **không loại trừ được rủi ro**; không có rào bằng code cho tên riêng.
+   **Ngoài tên, chi tiết khác của lượt trước cũng có thể ra ngoài:** ở một cặp, model tự thêm ngày cụ thể (suy từ "cuối tuần này" + ngày hôm nay) vào câu gửi tra web. Và nếu sau này bật nhớ cả câu trả lời (`nho_cau_tra_loi`) thì **phải xét lại cờ này** — khi đó lịch sử model thấy rộng hơn nhiều so với lúc đo.
 4. Lượt hỏi tiếp mà model không tìm kho lần nào rồi kho từ chối ⇒ vẫn như cũ (0 lần gặp trong 17 cặp).
 
 ## Test, thời gian, tiền
@@ -51,7 +52,7 @@ Ghi thêm: cặp "nêu tên mình" có cổng web mở thực ra cũng là câu 
 
 Tiền (log lọc `git_sha 16a6715`): **0,0556 USD** (trần 0,15); cộng phần đếm trước 0,0201 ⇒ cả việc 0,076 USD.
 
-**Giải thích ngắn:** khi hỏi tiếp kiểu "mở cửa mấy giờ" mà kho không có, trợ lý trước đây đem nguyên câu cụt đó đi tra web nên trả lời lạc sang nơi khác. Bản sửa dùng luôn câu tìm kho mà model vừa tự viết (đã có tên nơi) để tra web. Đo 8 cặp: 8 / 8 câu tra web đúng nơi, không còn mục web lạc đề, tên người dùng không lọt ra. Còn hạn chế: nhiều mục web vẫn bị bộ kiểm số thay bằng câu "chưa tra được".
+**Giải thích ngắn:** khi hỏi tiếp kiểu "mở cửa mấy giờ" mà kho không có, trợ lý trước đây đem nguyên câu cụt đó đi tra web nên trả lời lạc sang nơi khác. Bản sửa dùng luôn câu tìm kho mà model vừa tự viết (đã có tên nơi) để tra web. Đo 8 cặp: 8 / 8 câu tra web đúng nơi, không còn mục web lạc đề; nhưng chỉ 2 / 8 lượt có thông tin web dùng được, 3 / 8 là câu cố định. Tên người dùng: 0 lần lọt trên 4 lượt chạm — mẫu nhỏ, không loại trừ được rủi ro. Còn hạn chế: nhiều mục web vẫn bị bộ kiểm số thay bằng câu "chưa tra được".
 
 ## Sửa theo review E (16:18 15/11/2026) — `e_review_web_noi_tiep.md`: 0 blocker / 1 major (chỉ chặn bật cờ) / 2 minor
 
@@ -60,3 +61,9 @@ Tiền (log lọc `git_sha 16a6715`): **0,0556 USD** (trần 0,15); cộng phầ
 - **m-2 (theo dõi khi bật, A ghi checklist):** tên người dùng mới đo 0 / 4 lượt chạm; không thêm bộ lọc đoán.
 - `test_b6_tra_web.py` 111 đạt (18 s). Không chạy lại lượt có phí: 17 lượt thứ hai đã đo không có lượt nhiều ý nào và không có câu tìm rỗng ⇒ hai sửa này không chạm lượt nào đã đo.
 - Giới hạn mới: **câu hỏi tiếp nhiều ý mà kho thiếu vẫn tra web bằng câu gõ (có thể cụt)** — chưa sửa, chưa đo.
+
+## Sửa theo review độc lập thứ hai (16:23 15/11/2026) — agent con của A, bản `2b0be16`; biên bản private `data/review_web_noi_tiep_2026-11-15/review.md`
+
+M-1 + câu tìm rỗng trùng review E (đã sửa ở `281ff98`). Phần còn lại, 0 USD: m-1 câu tìm của model rỗng **sau** bộ lọc (chỉ có số điện thoại / email) ⇒ câu gõ (+ 1 ca test) ·
+m-2 ba chú thích (`cau_tim_web`, `cong_web`, `co_y_thieu`) nói đúng đường dữ liệu ra ngoài khi cờ bật · m-3 bốn câu trong report này sửa cho khớp bằng chứng (các dòng trên) ·
+m-4 test "như cũ" nay so **bằng nhau toàn phần** với đường cũ (thân yêu cầu tra web, tin nhắn gửi model, mục `tools` trừ ms, kết quả web) trên 6 ca.

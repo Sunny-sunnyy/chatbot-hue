@@ -963,7 +963,7 @@ _CO_TRICH = re.compile(r"\[(?:Nguồn\s*)?\d+\]")
 
 def co_y_thieu(answer: str) -> bool:
     """Cờ `cau_nhieu_y`: câu trả lời có ít nhất một dòng mở đầu ĐÚNG hằng `CAU_Y_THIEU` (sau khoảng trắng / gạch đầu dòng) và dòng đó KHÔNG có
-    trích dẫn [n] / [Nguồn n] — model đánh dấu ý kho không có ⇒ mở cổng web cho phần thiếu (truy vấn vẫn từ câu người dùng, D2)."""
+    trích dẫn [n] / [Nguồn n] — model đánh dấu ý kho không có ⇒ mở cổng web cho phần thiếu (truy vấn vẫn từ câu người dùng, D2 — lượt nhiều ý luôn dùng câu gõ, kể cả khi cờ `web_cau_noi_tiep` bật)."""
     for dong in answer.splitlines():
         d = dong.strip().lstrip("-*•").strip()
         if d.startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d):
@@ -1028,13 +1028,16 @@ def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) ->
     CUỐI model viết: model đã ghép chủ thể của lượt trước vào đó (đo 15/11: 9 / 9 lần nêu đúng tên), còn câu gõ thì cụt. Lượt đầu / model không tìm /
     câu tìm rỗng / lượt nhiều ý ⇒ như cũ."""
     # Lượt nhiều ý giữ câu gõ: câu tìm cuối của model có thể thuộc vế kho ĐÃ trả lời, còn mục web phải viết cho vế thiếu (review E M-1; chưa đo)
-    if flags is not None and flags.web_cau_noi_tiep and trace.history and not trace.nhieu_y and trace.model_queries and trace.model_queries[-1].strip():
-        return trace.model_queries[-1]
+    if flags is not None and flags.web_cau_noi_tiep and trace.history and not trace.nhieu_y and trace.model_queries:
+        cau = trace.model_queries[-1]
+        if tw.cau_tim_web(cau).strip().casefold() != "huế":  # rỗng SAU bộ lọc (chỉ có dấu cách / số điện thoại / email) ⇒ không tra web bằng mỗi chữ "Huế"
+            return cau
     return query
 
 
 async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: AssistantFlags | None = None) -> None:
-    """Sau khi cổng mở: truy vấn do code dựng từ câu hỏi lượt này (D2) ⇒ một lần tra (D3) ⇒ một lần gọi model riêng viết mục web (D4) ⇒ kiểm
+    """Sau khi cổng mở: truy vấn do code dựng từ câu hỏi lượt này (D2; cờ `web_cau_noi_tiep` + lượt có lịch sử ⇒ từ câu tìm kho cuối model viết —
+    `cau_cho_web`, chữ model có chi tiết của lượt trước đi ra ngoài) ⇒ một lần tra (D3) ⇒ một lần gọi model riêng viết mục web (D4) ⇒ kiểm
     cuối (D5). Kết quả vào `trace.web`; câu trả lời kho (`trace.answer`) giữ nguyên. Tra lỗi / 0 kết quả / model lỗi / kiểm hỏng ⇒ câu cố định
     (không đoán, không thử lại). Lần tra ghi một mục `tools` (ms, trạng thái, số kết quả, USD — không chữ)."""
     cau_web = cau_cho_web(query, trace, flags)

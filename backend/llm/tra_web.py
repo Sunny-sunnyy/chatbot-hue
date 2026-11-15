@@ -57,8 +57,9 @@ def _nfc(text: str) -> str:
 
 
 def cau_tim_web(cau_hoi: str) -> str:
-    """D2: truy vấn Serper = câu hỏi lượt này (không câu ghép, không lịch sử) ⇒ bỏ email / số điện thoại, gộp khoảng trắng, cắt
-    ≤ `MAX_QUERY_CHARS`, thêm " Huế" nếu chưa có."""
+    """D2: truy vấn Serper từ MỘT câu ⇒ bỏ email / số điện thoại, gộp khoảng trắng, cắt ≤ `MAX_QUERY_CHARS`, thêm " Huế" nếu chưa có.
+    Câu đó mặc định là câu người dùng gõ ở lượt này (không câu ghép, không lịch sử). Cờ `web_cau_noi_tiep` bật ⇒ ở lượt có lịch sử nó là câu tìm
+    kho cuối MODEL viết (`assistant.cau_cho_web`) — có thể mang tên nơi và chi tiết khác lấy từ các lượt trước ra ngoài."""
     text = _PHONE.sub(" ", _EMAIL.sub(" ", _nfc(cau_hoi)))
     text = " ".join(text.split())[:MAX_QUERY_CHARS].rstrip()
     return text if "huế" in text.casefold() else f"{text} Huế"
