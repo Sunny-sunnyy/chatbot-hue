@@ -25,7 +25,8 @@ Plan `docs/superpowers/plans/2026-11-15-toc-do-tim-song-song-plan.md` bản 2 (`
 - **Vì sao 7 / 7 giảm:** cả 7 câu ở biến thể chỉ **tìm 1 lần** (mốc 2 lần) — model tìm ít hơn, **không** phải gọi song song. Bật `parallel_tool_calls` làm model đổi cách dùng công cụ
   (tìm ít đi) thay vì gộp hai lần tìm. Cả câu trên 7 câu: trung vị −2,3 s; trên mọi câu có tìm thêm −0,9 s — lợi đến từ bớt tìm, cùng loại với "hạ trần 2 ⇒ 1" mà plan đã gác vì rủi ro thiếu ý.
 - **Câu ngoài kho bị trả lời** (loại câu hỏi giá vé đi lại từ tỉnh khác): mốc từ chối chuẩn; biến thể viết "nguồn không nêu giá… tra trên kênh chính thức" kèm 2 trích dẫn —
-  không nói chắc sai, nhưng không phải câu từ chối chuẩn ⇒ theo sàn là "bị trả lời". Có thể là nhiễu sinh (×1), nhưng sàn không có mức nhiễu.
+  không nói chắc sai, nhưng không phải câu từ chối chuẩn ⇒ theo sàn là "bị trả lời". **Tra sau (0 USD):** 6 lượt Golden đủ đã lưu đều cờ tắt; câu này bị "trả lời" ở
+  `ghi_kho_2/truoc`, từ chối ở 5 lượt còn lại ⇒ cờ tắt cũng trượt 1 / 6 ⇒ nhiều khả năng là **nhiễu**, không do biến thể. Sàn ghi trước không có mức nhiễu ⇒ kết luận giữ nguyên.
 - Chấm mù 140 câu đổi chữ: **NOT RUN** — kết luận đã âm theo sàn + cơ chế không xảy ra; chấm không đổi quyết định.
 
 ## Kết luận
