@@ -1,18 +1,20 @@
 # STATUS C — phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN TỐI 15/11 — đang chạy (C cập nhật 19:46 15/11/2026 `date`)
+## PHIÊN TỐI 15/11 — đang chạy (C cập nhật 20:36 15/11/2026 `date`)
 
-- **Trạng thái máy của C:** worktree `/tmp/c_no` (nhánh `p9-sua-lich-no-nho`; symlink `data/`, `knowledge-base-hue/`, `frontend/dist`) và `/tmp/c_anh` (nhánh `p9-nut-anh-cong`; symlink `data/`, `knowledge-base-hue/`, `frontend/node_modules`, có `frontend/dist` build riêng) — gỡ khi nhánh đã merge; 0 server tạm (cổng 8041 đã tắt); 0 tiến trình nền.
+- **Trạng thái máy của C:** worktree `/tmp/c_f5` (nhánh `p9-f5-cuoc-moi`; symlink `data/`, `knowledge-base-hue/`, `frontend/node_modules`, `frontend/dist` build riêng) — gỡ khi nhánh đã merge; `/tmp/c_no`, `/tmp/c_anh` đã gỡ; 0 server tạm (cổng 8041 đã tắt); 0 tiến trình nền.
 - **File C khai báo sửa:** `backend/llm/sua_lich_v2.py`, `backend/tests/test_sua_lich_v2.py`, `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`, `…/c_no_nho_sua_lich_implementation.md`, `backend/tests/test_sua_ngay_di.py`; nhánh ảnh: `frontend/src/HoiBangAnh.jsx`, `chat.jsx`, `index.css`, `…/c_nut_anh_cong_implementation.md`.
 
 | Việc (A giao tối 15/11) | Trạng thái | Số chính | Tiền |
 |---|---|---|---|
 | Đếm 4b(c): biểu mẫu đưa cơ sở khác hạng không kèm lý do | **xong — A quyết không sửa** | 0 / 9.216 ô (3.840 khung × 3 mức; đối chứng W83 đúng); công cụ `data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py` — chạy lại khi đổi bảng điểm / bảng lưu trú | 0 |
-| Việc 1 (handoff mục 4): lượt đổi tham số không đổi được gì có dòng báo · dòng "lịch xếp lại / giữ nguyên chỗ" sau đổi trẻ em / kiểu đi / sở thích / người lớn tuổi · bảng 7 / 8 trường | **đã sửa theo review B (1 major + 2 minor), chờ B quét lại ⇒ A merge** — `origin/p9-sua-lich-no-nho` `8059e29` | B bắt lỗi thật: điểm dời ban ngày ↔ tối bị ghi vừa "bớt" vừa "thêm" (có sẵn ở câu đổi ngày đi trên main) ⇒ mỗi điểm mang tập chỗ trên cả ba buổi; > 6 tên ⇒ chỉ nêu số (A quyết); bộ quét của B 0 câu sai / 540 lượt; 6 file test 384 passed; mô phỏng nhãn 10 / 10; không test rộng (A đồng ý), không lượt có phí | 0 |
-| Nút dấu cộng trong ô nhập + dán ảnh (User báo khi thử; A giao) | **chờ review (E)** — `origin/p9-nut-anh-cong` `caccfb7` | Playwright 1440 + chụp 390: bấm + ⇒ gợi ý · dán ảnh ⇒ gợi ý · dán chữ như thường · cờ tắt ⇒ 0 nút · 0 lỗi console; ảnh `data/nut_anh_cong_2026-11-15/anh/`; chưa thử dán ảnh chụp màn hình thật, Safari / Firefox | 0,0007 |
+| Việc 1 (handoff mục 4): lượt đổi tham số không đổi được gì có dòng báo · dòng "lịch xếp lại / giữ nguyên chỗ" · bảng 7 / 8 trường | **đã merge** (main `e5b076e`; nhánh `8059e29`) | B review bắt lỗi thật (điểm dời ban ngày ↔ tối ghi vừa "bớt" vừa "thêm", có sẵn ở câu đổi ngày đi) ⇒ sửa chung; > 6 tên ⇒ chỉ nêu số; bộ quét B 0 câu sai / 540 lượt | 0 |
+| Nút dấu cộng trong ô nhập + dán ảnh (User báo khi thử) | **đã merge** (nhánh `caccfb7`; E review ready, E đã thử dán PNG thật 3 / 3) | ảnh `data/nut_anh_cong_2026-11-15/anh/`; chưa thử Safari / Firefox | 0,0007 |
+| Tải lại trang ⇒ cuộc mới ở server (LỖI User báo: F5 xong hỏi lại câu đầu bị từ chối) | **chờ review (B)** — `origin/p9-f5-cuoc-moi` `ddf3dbe` | tái tạo 3 / 3; sau sửa Playwright: reload ⇒ hỏi lại ⇒ lịch sử 0, được trả lời. **Lỗi riêng CHƯA sửa:** cùng một cuộc A ⇒ hỏi tiếp B ⇒ hỏi lại A bị từ chối 3 / 3 (chưa biết câu tìm model viết; A quyết có đếm thêm ≈ 0,02 USD) | 0,0159 |
+| Nháp thiết kế "ảnh đính kèm tin nhắn" (0 USD) | **đã gửi nhóm, chờ B / E phản biện ⇒ A hỏi User** | `data/anh_dinh_kem_2026-11-15/nhap_thiet_ke.md`; C khuyên A (đính kèm ⇒ Hỏi ⇒ xác nhận tên; chỉ giao diện) | 0 |
 | Review nhánh `p9-chu-gioi-thieu` của E (A nhờ) | **ready, A đã merge** | câu ví dụ "ở khách sạn 3 sao" chạy thật 6 / 6 ra đổi hạng 2–3 sao (`data/review_chu_gioi_thieu_2026-11-15/`) | 0,00075 |
 
-- **Tổng tiền C tối 15/11 tới lúc này ≈ 0,0015 USD** (review câu ví dụ 0,00075 + 2 lượt nhận ảnh 0,00072).
+- **Tổng tiền C tối 15/11 tới lúc này ≈ 0,0174 USD** (câu ví dụ 0,00075 · 2 lượt nhận ảnh 0,00072 · tái tạo + kiểm F5 0,0159).
 - **Vòng tự soi 1:** đã gửi cả nhóm; hướng làm tiếp C xếp (d) User thử + sửa lỗi ⇒ (c) B7 ⇒ nửa sau (a) (đếm 6–8 câu trước) ⇒ (b).
 - **Ghi nhận:** `q3_sua_lich.py` nay cần `--backend <backend worktree>` (B sửa, không còn `PYTHONPATH` cứng); `kiem_bo.py` của bộ sửa lịch là bản tĩnh của B.
 
