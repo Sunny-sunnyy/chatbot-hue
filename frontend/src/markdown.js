@@ -74,3 +74,39 @@ export function renderWebHtml(raw) {
   const text = raw.replace(WEB_CITATION_SHOWN, "").replace(WEB_CITATION_TAIL, "");
   return DOMPurify.sanitize(marked.parse(text), WEB_SANITIZE_OPTIONS);
 }
+
+// Đoạn trích nguồn (khung mở từ dòng "Nguồn: …") là một LÁT Markdown của bài kho — trước 15/11 hiện chữ thô nên lộ `**`, `- `, `#`, `|`.
+// Hàng bảng bị cắt rời khỏi dòng tiêu đề + dòng gạch (`| a | b |` đứng một mình) thì Markdown không coi là bảng ⇒ đổi thành "a · b" trước khi dựng.
+export function hangBangLe(text) {
+  const lines = text.split("\n");
+  const laHang = line => /^\s*\|.*\|\s*$/.test(line);
+  const laGach = line => /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(line) && line.includes("-") && line.includes("|");
+  return lines.map((line, i) => {
+    if (!laHang(line)) return line;
+    let dau = i;
+    while (dau > 0 && laHang(lines[dau - 1])) dau -= 1;  // khối hàng liền nhau: là bảng thật khi hàng thứ hai của khối là dòng gạch
+    if (dau + 1 < lines.length && laHang(lines[dau + 1]) && laGach(lines[dau + 1]) && !laGach(lines[dau])) return line;
+    if (laGach(line)) return "";
+    // hai dấu cách cuối = xuống dòng cứng của Markdown: nhiều hàng mồ côi liền nhau không bị nối thành một dòng (review m-1)
+    return `${line.trim().replace(/^\|\s*|\s*\|$/g, "").split(/\s*\|\s*/).join(" · ")}  `;
+  }).join("\n");
+}
+
+// Một đoạn kho là bảng thường về thành NHIỀU lát: lát "tiêu đề + dòng gạch" rồi từng lát một hàng ⇒ ghép lát bắt đầu bằng hàng bảng vào lát đứng
+// trước nếu lát trước kết thúc bằng hàng bảng — thành một bảng thật thay vì bảng chỉ có tiêu đề + các dòng rời.
+export function gopLatBang(excerpts) {
+  const laHang = line => /^\s*\|.*\|\s*$/.test(line);
+  const ra = [];
+  for (const lat of excerpts) {
+    const truoc = ra[ra.length - 1];
+    if (truoc !== undefined && laHang(truoc.split("\n").pop()) && laHang(lat.split("\n")[0])) ra[ra.length - 1] = `${truoc}\n${lat}`;
+    else ra.push(lat);
+  }
+  return ra;
+}
+
+// Cùng bộ lọc KHÔNG link của mục web (chữ kho có thể chứa link ở mục nguồn — khung trích không mở đường link mới; link duy nhất là "Đọc cả bài"
+// do code dựng). Xuống dòng đơn trong bài kho là ngắt dòng của file (80 cột), không phải ý tác giả ⇒ để Markdown nối lại như trang bài ở Khám phá.
+export function renderExcerptHtml(raw) {
+  return DOMPurify.sanitize(marked.parse(hangBangLe(raw)), WEB_SANITIZE_OPTIONS);
+}

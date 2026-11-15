@@ -42,7 +42,6 @@ const HIEN_BUOC_LUC_CHO = true;
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
 // B142: câu ngoài phạm vi kèm 3 câu gợi ý cố định (đã kiểm có trong kho bằng `scripts/grep_kb.sh`) — bấm là hỏi luôn.
 const OUT_OF_SCOPE_SUGGESTIONS = ["Vào Đại Nội nên mặc thế nào?", "Lễ hội Điện Huệ Nam diễn ra khi nào?", "Nhã nhạc cung đình diễn lúc nào?"];
-const FEEDBACK_ERROR = "Chưa gửi được đánh giá — bạn thử lại sau nhé.";
 const MAX_QUERY = 500;  // khớp `ChatRequest.query` max_length (server: quá ⇒ 422 "Yêu cầu không hợp lệ")
 const DEM_KY_TU_TU = 450;  // từ đây hiện bộ đếm ký tự
 // Việc nhỏ (5) 08/11: dưới câu từ chối của kho — gợi ý cách hỏi cố định do code viết (không gọi model). Mục cuối là link sang Khám phá.
@@ -58,7 +57,7 @@ function reducedMotion() {
 function newTurn(key, question, truong, summary, bieuMau) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
+           error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
 export function useChat() {
@@ -162,7 +161,7 @@ export function useChat() {
             update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
             // B142: mã lượt chỉ có ở lượt có câu trả lời cuối; (5) `tu_choi_kho`: kho không đủ ⇒ gợi ý cách hỏi
-            update({ outcome: data.outcome, turnId: data.turn_id ?? null, tuChoiKho: data.tu_choi_kho === true });
+            update({ outcome: data.outcome, tuChoiKho: data.tu_choi_kho === true });
           }
         },
       });
@@ -366,7 +365,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
   return (
-    <article className="turn" ref={turnRef} data-turn={turn.key}>
+    <article className="turn" ref={turnRef} data-turn={turn.key} data-phase={turn.phase}>
       <h2 className="ask">{turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
       <div className="tra">
       <span className="tra-av" aria-hidden="true">
@@ -439,7 +438,6 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
           </ul>
         </div>
       )}
-      {turn.phase === "done" && turn.turnId && <Feedback turnId={turn.turnId} />}
       </div>
       </div>
     </article>
@@ -471,41 +469,6 @@ function WebSection({ web, turnKey }) {
         </ul>
       )}
     </section>
-  );
-}
-
-// B142: 👍 / 👎 dưới câu trả lời — server chỉ lưu đánh giá + số đếm của lượt. Đổi ý được (bấm nút kia); lỗi ⇒ báo nhẹ, giữ lựa chọn cũ.
-export function Feedback({ turnId }) {
-  const [rating, setRating] = useState(null);
-  const [sending, setSending] = useState(false);
-  const [failed, setFailed] = useState(false);
-
-  async function send(value) {
-    if (sending || value === rating) return;
-    setSending(true);
-    setFailed(false);
-    try {
-      const response = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ turn_id: turnId, rating: value }),
-      });
-      if (!response.ok) throw new Error(String(response.status));
-      setRating(value);
-    } catch {
-      setFailed(true);
-    } finally {
-      setSending(false);
-    }
-  }
-
-  return (
-    <div className="feedback">
-      <span className="text-sm text-muted">{rating ? "Cảm ơn bạn đã đánh giá." : "Câu trả lời có hữu ích không?"}</span>
-      <button type="button" onClick={() => send("up")} disabled={sending} aria-pressed={rating === "up"} aria-label="Hữu ích"><Thumb /></button>
-      <button type="button" onClick={() => send("down")} disabled={sending} aria-pressed={rating === "down"} aria-label="Chưa hữu ích"><Thumb down /></button>
-      {failed && <span className="text-sm text-error" role="status">{FEEDBACK_ERROR}</span>}
-    </div>
   );
 }
 
@@ -587,18 +550,6 @@ function ClarifyCard({ clarify, onAsk, initial = {} }) {
         <button type="button" className="retry" onClick={() => onAsk(clarify.cau_goc, { truong: {}, summary: "trả lời luôn" })}>Trả lời luôn</button>
       </div>
     </div>
-  );
-}
-
-// Ngón cái vẽ bằng SVG (không dùng emoji: máy thiếu font emoji thì nút trống — thấy ở ảnh Playwright B142); xuống = lật dọc.
-function Thumb({ down = false }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-      <g transform={down ? "rotate(180 12 12)" : undefined} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
-        <path d="M3 10h3.5v10.5H3z" />
-        <path d="M6.5 10.5 10.5 3c1.6 0 2.6 1.1 2.4 2.7L12.4 9.5h6.1a2 2 0 0 1 2 2.4l-1.5 7a2 2 0 0 1-2 1.6H6.5" />
-      </g>
-    </svg>
   );
 }
 
