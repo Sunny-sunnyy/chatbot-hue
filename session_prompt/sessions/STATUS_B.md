@@ -16,6 +16,7 @@
 - 12:02 15/11/2026 — Nhãn mưa: E ready ⇒ A merge `b52dc66`; worktree `/tmp/b_mua` đã gỡ. Tìm song song: KHÔNG ĐẠT (A tag `hoso/p9-tim-song-song`). A/A câu giá vé ×5 main: 3/5 bị "trả lời" (A đưa vào Câu hỏi cho User). **Trần tìm 2 ⇒ 1: KHÔNG ĐẠT** (`p9-tran-tim-1` `9107c65` push, setting mặc định 2): từ chối 5 ⇒ 7 trên 30 câu chạm (sàn +1); −2,42 s ở câu tìm 2 lần; ≈ 0,052 USD ⇒ gác tốc độ. Worktree còn `/tmp/b_ss`, `/tmp/b_t1` (hồ sơ). 0 server. **Rảnh — chờ A.**
 - 12:03 15/11/2026 — Gỡ worktree `/tmp/b_ss`, `/tmp/b_t1` (A đã tag). Chép 2 report tốc độ vào main working tree; viết bài 19 dòng 43–44 + sổ 06 (bản 15) + 07 (bản 57) — chưa commit, A commit. **Rảnh — chờ A.**
 - 12:16 15/11/2026 — **Rà nợ cũ XONG** (0 USD): `report_agent/2026-11-12_ra_khoang_cach/b_ra_no_cu.md` (chưa commit). Còn 3: mục web "8/11"≠"08/11" chặn nhầm · thời tiết "tuần sau" luôn ngoài 7 ngày · sổ S41–S44 thiếu cột; còn lại đề xuất xoá. Gửi cả nhóm bàn. **Chờ A.**
+- 12:30 15/11/2026 — Sửa (1) web số 0: làm xong nhưng cứu 0/76 ⇒ A **BỎ** (nhánh `p9-web-so-0`, worktree `/tmp/b_w0` — xoá cuối phiên). Sửa (2) **"tuần sau" XONG, CHỜ E review**: `p9-tuan-sau` `b38f5ad` (push), worktree `/tmp/b_ts`; X01 ×3 đạt, an toàn 0 đổi lớp, test rộng 1.064 đạt, 0,024 USD. 0 server.
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**

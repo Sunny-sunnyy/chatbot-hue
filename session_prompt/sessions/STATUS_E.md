@@ -18,6 +18,7 @@
 - 11:59 15/11/2026: `p9-anh-lavela` merged (`97b4fb2`); report ảnh khách sạn A commit (`abe8d3a`). E không còn worktree / container / image. Rảnh — chờ nhánh ảnh chat (C).
 - **Bẫy (15/11):** report tracked ghi tên + địa chỉ cơ sở lưu trú ⇒ trùng nguyên văn bài kho ⇒ hook chặn 4 dòng (A sửa). Lần sau: report tracked chỉ ghi tên ngắn, địa chỉ để ở `data/`. Chạy `uv run python .githooks/overlap_scan.py <report>` trước khi giao.
 - 12:07 15/11/2026: review `p9-anh-chat` ⇒ ready, m-1 (khớp tên theo ranh giới từ) C sửa; A merge `e801c83`. Rảnh — chờ A.
+- 12:32 15/11/2026: dò hệ thống 5 luồng (`e_do_he_thong.md`, ≈ 0,0026 USD, server tắt) ⇒ lỗi thật: ảnh chat hụt ở câu so sánh / hỏi đích danh. Đếm tên khách sạn (`e_dem_ten_ks.md`, ≈ 0,02 USD): 0 / 18 từ chối, bước tìm đúng. Review `p9-the-ks-chat` (m-1 tên lõi trùng địa danh + tên 1 chữ), `p9-tuan-sau` (0 finding). Phản biện rà nợ cũ (B). Biên bản chưa commit: e_do_he_thong, e_dem_ten_ks, e_review_the_ks_chat, e_review_tuan_sau. Rảnh.
 
 ### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
 Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).
