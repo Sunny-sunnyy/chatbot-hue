@@ -118,8 +118,8 @@ def ngay_tu_cau(text: str, hom_nay):
         if "/" in m.group(0):
             if (d, mo, y) == ("24", "7", None):  # "mở 24/7"
                 continue
-            # phân số: "tỉ lệ 3/4", "1/2 ngày", "vé 1/2 giá" (tử < mẫu + đơn vị đi sau); "20/12 ngày đẹp" vẫn là ngày
-            mo_ho = truoc.endswith(("tỉ lệ", "tỷ lệ", "khoảng")) or (not y and int(d) < int(mo) and bool(_DON_VI.match(sau)))
+            # phân số: "tỉ lệ 3/4", "1/2 ngày", "vé 1/2 giá" (tử ≤ mẫu + đơn vị đi sau); "20/12 ngày đẹp" vẫn là ngày
+            mo_ho = truoc.endswith(("tỉ lệ", "tỷ lệ", "khoảng")) or (not y and int(d) <= int(mo) and bool(_DON_VI.match(sau)))
         else:
             mo_ho = not y and bool(_SAU_THANG.match(sau))  # "2 tháng 3 ngày nghỉ" = hai tháng ba ngày
         if mo_ho:  # một cụm số có thể là ngày mà cũng có thể không ⇒ cả câu "chưa rõ" (không lấy ngày khác trong câu rồi đổi)

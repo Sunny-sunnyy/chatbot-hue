@@ -45,6 +45,7 @@ CA_NGAY = [
     ("dời ngày, tuần thứ hai của tháng bận", NGAY_CHUA_RO), ("đổi ngày đi, tỷ lệ 1/2", NGAY_CHUA_RO), ("dời chuyến, vé 1/2 giá", NGAY_CHUA_RO),
     ("đi vào hôm 20 tháng 12 ngày chủ nhật", NGAY_CHUA_RO),  # "20 tháng 12 ngày" mơ hồ ⇒ không lấy "chủ nhật" còn lại
     ("đổi ngày đi sang 20/12 ngày đẹp", D(2026, 12, 20)), ("MAI ĐI LUÔN", D(2026, 11, 16)),
+    ("lùi ngày đi, hẹn 5/5 người", NGAY_CHUA_RO),  # E: "5/5 người" (tử = mẫu) cũng là phân số
     ("đi ngày 3/12 giờ nào cũng được", NGAY_CHUA_RO),  # giới hạn đã nhận: tử < mẫu + "giờ" ⇒ coi như phân số, hỏi lại (an toàn)
 ]
 
