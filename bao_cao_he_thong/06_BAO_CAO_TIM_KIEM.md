@@ -79,7 +79,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
 
 ### 15/11/2026 — tốc độ: tìm thêm song song; trần tìm thêm 1 lần (cả hai không đưa vào)
-- Đếm trước (0 USD): câu có tìm thêm chiếm ~20 % lượt gọi model thật từ 10/11, chữ đầu p50 8,6 s (sàn 3 s); chậm vì 2–4 lần gọi model nối tiếp, mỗi lần tìm chỉ 0,03 s (`report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md`).
+- Đếm trước (0 USD): câu có tìm thêm chiếm ~20 % lượt gọi model thật từ 10/11, chữ đầu p50 8,6 s (sàn 3 s) — **đính chính:** số này trộn lượt trước "hết lượt tìm thì dừng" (13/11); sau mốc đó 7,8 % lượt, p50 5,78 s (n = 5); chậm vì 2–4 lần gọi model nối tiếp, mỗi lần tìm chỉ 0,03 s (`report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md`).
 - **Tìm song song** (cờ `tim_song_song`, plan `86d295b16017`): model chỉ gọi song song 1 / 176 câu; lợi −2,3 s ở 7 câu đến từ bớt tìm ⇒ **bỏ**, tag `hoso/p9-tim-song-song` (`b_tim_song_song_implementation.md`).
 - **Trần tìm thêm 1** (setting `tim_them_toi_da`, plan `611e5ee3c1df`): −2,4 s ở câu tìm 2 lần, nhưng từ chối trong kho 5 ⇒ 7 / 30 câu chạm (sàn +1) ⇒ **bỏ**, tag `hoso/p9-tran-tim-1` (`b_tran_tim_1_implementation.md`). Hai lượt ≈ 0,22 USD.
 - Kèm (A/A, 0,005 USD): câu hỏi giá vé đi lại từ tỉnh khác ở main bị "trả lời" 3 / 5 lần ("nguồn không nêu giá…" thay câu từ chối chuẩn) — câu hỏi cho User.

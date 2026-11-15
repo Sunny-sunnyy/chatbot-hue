@@ -13,6 +13,8 @@ Căn cứ đếm: `report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md` (E t�
 | Câu tìm mỗi lần gọi | **1 câu ở 135 / 135 lần** | `n_queries` |
 | Golden 176 (lượt đủ sau ghi kho 2) | 14 câu model tìm 2 lần · 29 câu 1 lần · 122 câu không tìm thêm | `ghi_kho_2/sau/golden.jsonl` |
 
+**Đính chính (B, sau khi đo):** số 20,6 % / 8,57 s trộn lượt trước "hết lượt tìm thì dừng" (`9d6a0f7`, 13/11); sau mốc đó tìm thêm 7,8 % lượt, p50 5,78 s (n = 5) — `report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md` mục Đính chính. Plan không viết lại.
+
 ⇒ Chậm vì lần tìm thứ hai **chờ** lần gọi model trước. `parallel_tool_calls=False` đang ép mỗi lượt gọi model chỉ một công cụ (`backend/llm/generator_openai_full_corpus.py:325`, B2 D5).
 
 ## 1. Biến thể — đổi MỘT thứ
