@@ -1,6 +1,65 @@
-# STATUS C — kết phiên 15/11 (C `hue-rag-f9` · A `hue-rag-26` · B `hue-rag-b2` · E `hue-rag-3e`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên chiều 15/11 (C `hue-rag-51` · A `hue-rag-60` · B `hue-rag-cb` · E `hue-rag-ab`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN CHIỀU 15/11 (mở 15:08) — C `hue-rag-51` · A `hue-rag-60` · B `hue-rag-cb` · E `hue-rag-ab`
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 15/11 — C viết 18:23 15/11/2026 `date`)
+
+- **Trạng thái máy:** 0 worktree `/tmp/c_*`, 0 server tạm, 0 tiến trình nền, 0 file tạm của C. Mọi nhánh của C đã vào `main` (origin `a11e601` lúc viết). Nhánh cho User xoá (A đã ghi vào danh sách): `p9-luu-tru-v5 p9-commit-push p9-sua-hang-o p9-hang-o-m12 p9-o-khi-hoi p9-sua-ngay-di p9-tai-lieu-hang-o p9-tai-lieu-ngay-di`. C không tự xoá nhánh.
+- **Việc phiên sau:** KHÔNG có việc đã giao. Chờ A. Ứng viên của vùng "sửa lịch bằng lời" ở mục "Còn mở" dưới.
+
+### Đã xong chiều 15/11 (đều đã merge; report ở `report_agent/2026-11-12_ra_khoang_cach/`)
+| Việc | Nhánh ⇒ merge | Plan (sha256 12) | Report | Số chính | Tiền (theo sha) |
+|---|---|---|---|---|---|
+| Bảng lưu trú v5 (gộp cơ sở lặp) | `p9-luu-tru-v5` ⇒ `2189c96` | giao trong handoff | `c_v5_commit_push_implementation.md` | 137 ⇒ 136 cơ sở; ô Nơi ở đổi 0 / 15.360; bảng `data/luu_tru_v5_2026-11-15/` md5 `34836e7c1438` (main nay dùng **v6** của E) | 0 |
+| `scripts/commit_push.sh` (W81) | `p9-commit-push` ⇒ `f21eb88` | — | cùng file trên | thử 15 / 15 ca (`data/commit_push_2026-11-15/thu.sh`); in `ĐÃ PUSH <sha> origin/<nhánh>` / `CHƯA PUSH — …` | 0 |
+| Đổi hạng chỗ ở bằng lời (bậc 1) | `p9-sua-hang-o` ⇒ `42e0c5b` | `…-sua-lich-hang-cho-o-plan.md` `8b10ccd50d37` (+ mục "Chỗ đổi") | `c_sua_hang_o_implementation.md`; review độc lập `data/review_sua_hang_o_2026-11-15/review.md` | bản đầu `c48ccf8` đạt ngưỡng nhưng chuỗi S08 hồi quy (main 4 / 4 ↔ nhánh 0 / 2) ⇒ A cho MỘT vòng chỉnh (chi tiết hạng dời xuống khối "cách nói thường gặp") ⇒ bản `32c129f`: H1 12 / 12 · sai mức 0 / 24 · H2 0 / 12, hỏi lại 6 / 6 · H3 0 / 12 · H4b 8 / 8 · Q3 10 / 10 · Q5 0 / 64 · Q5b 0 / 16 | 0,1017 + 0,0960 + Q5 0,0070 + mốc main 0,0054 = **0,2101** |
+| m-1 / m-2 của review bậc 1 | `p9-hang-o-m12` ⇒ `609f13f` | A giao miệng | trong tin nhắn; test `test_luu_tru_lich.py` | hạng đặt nhầm hành động vẫn áp; `doi_hang_o` xét sau cùng (`sua_lich_v2._hang_o_sau_cung`); B review ready | 0 |
+| Khối Nơi ở chỉ hiện khi hỏi | `p9-o-khi-hoi` ⇒ `ac03e0a` | `…-noi-o-chi-khi-hoi-plan.md` `d99fb6ec4a5c` | `c_noi_o_khi_hoi_implementation.md`; `e_review_noi_o_khi_hoi.md` | không mức hạng ⇒ 0 khối + khoá `cho_o_link` (dòng link); có mức ⇒ như cũ; lịch mẫu thêm mức 2–3 sao; test rộng 1.087; Playwright DAT | 0,0013 × 2 = **0,0026** |
+| Đổi ngày đi bằng lời (bậc 2) | `p9-sua-ngay-di` ⇒ `a52ffd6` (bản `b7b47f1`) | `…-sua-lich-ngay-di-plan.md` `f36fe8bb5b6a` | `c_sua_ngay_di_implementation.md`; `e_review_sua_ngay_di.md` | đo trên `ad81cc0`, không vòng chỉnh: D1 12 / 12 · sai ngày 0 / 24 · D2 0 / 12, lý do 5 / 6 · D3 0 / 16 · đổi nhầm số ngày 0 · D4 8 / 8 · Q3 8 / 10 + S08 2 / 2 · H1 12 / 12 · Q5 0 / 64 · Q5b 0 / 16. **Review E M-1:** hàm đọc ngày nhận chữ GIỐNG ngày (8 / 34 câu dò) ⇒ sửa `0463bf2` (E ready; test rộng 1.160) ⇒ C sửa thêm `add3186` ⇒ E bắt hồi quy "5/5 người" ⇒ A cho đúng một commit `b7b47f1`; bảng ca 65 / 65; bộ dò E 35 / 35 và 18 · 0 · 1; ngoại tuyến 34 câu đã đo 0 lệch | 0,1189 + Q5 0,0037 = **0,1226** |
+| Tài liệu (bài 25, sổ 07, nhật ký) | `p9-tai-lieu-hang-o` ⇒ `2f7cf33`; `p9-tai-lieu-ngay-di` ⇒ `f276894` | — | biên bản kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_hang_o.md`, `…_ngay_di.md` | agent con: 53 khẳng định (0 sai, 8 sửa) · 51 khẳng định (1 sai — C ghi ngược bớt / thêm —, 10 sửa) | 0 |
+
+- **Tổng tiền C chiều 15/11 ≈ 0,335 USD** (cộng theo sha; chưa ai tính lại). Review C làm: W79 của B (ready, 2 minor), `p9-gd-3-sua` của E (ready, 2 minor).
+- **Dữ liệu đo (private):** `data/sua_lich_hang_2026-11-15/` (bộ H `cau_h.jsonl` md5 `f048c0e67761`, `tools/do_h.py`, `tools/cham_h.py`, `do/`) · `data/sua_lich_ngay_2026-11-15/` (bộ D `cau_d.jsonl` md5 `7b5b22cbda07`, `cau_d4.jsonl`, `tools/do_d.py --mo-phong`, `tools/cham_d.py`, `do/`, `log/`) · `data/noi_o_khi_hoi_2026-11-15/` (`tools/pw_noi_o.py`, ảnh, `log/`) · bộ dò của E `data/review_sua_ngay_di_2026-11-15/do_34.py`, `do_19.py`.
+
+### Sửa lịch bằng lời — trường nào sửa được (sau chiều 15/11)
+Biểu mẫu có 8 trường. Sửa được bằng lời **7 / 8**: số ngày (`doi_so_ngay`, có rào số ngày) · kiểu đi, sở thích, trẻ em, người lớn tuổi (`doi_tham_so`) · hạng chỗ ở (`doi_hang_o`) · ngày đi (`doi_ngay_di`). Chưa: **số người lớn** (chỉ vào lời văn, không vào bộ xếp — chưa ai đếm nhu cầu). Cộng 4 hành động theo điểm (bỏ / thêm / thay / dời buổi) ⇒ `HanhDong.loai` có 8 loại; code áp tối đa 2 / lượt, nhận tối đa 3.
+
+### Còn mở / ứng viên (chưa ai giao; mỗi mục kèm chỗ trong code)
+- (i) **Ngày tương đối** ("dời 2 hôm", "lùi một tuần") + **ngày âm / "dịp Tết"**: chưa làm — `backend/llm/do_so.py` `ngay_tu_cau` trả `ngay_chua_ro` (âm lịch chặn bằng `_AM_LICH`); tính tương đối cần ngày đang dùng (`luu["ngay_di"]`) ⇒ làm ở `sua_lich_v2.ngay_di_moi`. Câu "dịp Tết âm lịch" model còn không coi là câu sửa (D2-06).
+- (ii) **Xin chỗ ở không nêu hạng ⇒ hiện mọi hạng**: chưa làm — hiện `sua_lich_v2.ly_do_giu_hang` trả `hang_chua_ro` (hỏi lại). Cần trạng thái "đã hỏi, không hạng" đi qua `ThamSoV2` / `tham_so` + `len_ke_hoach.gan_o_an`; chưa đếm model có xếp câu "gợi ý chỗ ở đi" vào `doi_hang_o` không (đếm 6–8 câu ≈ 0,002 USD trước).
+- (iii) **`doi_tham_so` rỗng hẳn vẫn im lặng** (lượt sửa không dòng báo): `sua_lich_v2.ap`, nhánh `doi_so_ngay / doi_tham_so`, `if not doi: continue` (B ghi nhận khi review m12).
+- (iv) **Lượt 3 ý có đổi hạng ⇒ "Chưa làm: đổi hạng chỗ ở"** (do `_hang_o_sau_cung` + `MAX_AP = 2`): A đã nhận.
+- (v) **Dòng "Đã đổi số trẻ em: 0 → 1" không nói lịch đã xếp lại** (H4b câu 7; ghi nhận của review bậc 1): `sua_lich_v2.thay_doi` — bậc 2 đã có khuôn đếm điểm đổi chỗ (`kq["ngay_di"]`: `doi_cho` / `ra` / `vao`) dùng lại được cho `doi_tham_so`.
+- (vi) **Giới hạn hàm đọc ngày** (`do_so.ngay_tu_cau`): 1 câu từ chối nhầm ("đi ngày 3/12 giờ nào cũng được"); luật theo danh sách từ đứng trước / sau (`_TRUOC_THU_TU`, `_TRUOC_TEN`, `_DON_VI`) không kín; "tuần sau" theo tuần lịch (Chủ nhật nói "thứ Bảy tuần sau" = 6 ngày nữa); dd/mm đã qua không năm ⇒ năm sau ⇒ thường `ngay_ngoai_han`. A + User đã nhận; W82 cấm mở vòng sửa nữa trên các bộ đã ghi.
+- (vii) **S06 chập chờn ở bước thẻ chọn** (Q3: 1 / 2 ở 2 trong 3 lần đo hôm nay; có từ 14/11) — `sua_lich_v2.ap` nhánh `thay_diem` không `ten_moi` + model; chưa ai tìm gốc.
+- (viii) **Nhãn bộ chuỗi sửa lịch sau bảng điểm v9:** S07 (đã thấy) lệch nhãn; B đã sửa `data/phase_9/bo_do_sua_lich/tools/mo_phong_v2.py` nhận bảng đang cấu hình (B báo v9 + bộ mới 10 / 10 — C chưa chạy lại); **bộ kín có thể dính tương tự — lệnh đếm chờ User `!`** (A / B giữ). C là người đo ⇒ không sửa nhãn.
+- (ix) Nút hạng / ngày trên **biểu mẫu không tự đồng bộ** theo lời (mọi trường đều vậy): `frontend/src/LenKeHoach.jsx` giữ `chon` riêng.
+
+### Luật mới phải nhớ (User duyệt 18:01 15/11/2026)
+- **W82** (`Session_Prompt.md` §8): code đọc chữ người dùng ⇒ TRƯỚC lượt có phí, người **không viết code đó** soạn ≥ 20 câu dò (đúng + "giống mà không phải" + câu ghép + ngoài phạm vi), chạy thẳng hàm thuần; sau bản sửa thêm **đúng một** bộ ≤ 20 câu; dừng khi 0 câu ra SAI (từ chối nhầm được phép); review đã ready ⇒ commit code thêm phải được A cho trước + reviewer dò lại, còn lỗi ⇒ merge bản đã ready.
+- **W83** (§8): phép kiểm mới trong harness phải có ca đối chứng biết chắc ra "có" trước khi số 0 được ghi "đạt"; cột 0 % / 100 % mọi lượt ⇒ report ghi "chưa từng thấy giá trị ngược lại".
+- **W84** (`WORKFLOW.md` §3.4): đổi bảng dữ liệu mà bộ đo phụ thuộc ⇒ người đổi quét nhãn + chạy mô phỏng nhãn không model trước merge.
+- `scripts/commit_push.sh "<lời>" <file>…` — báo sha chỉ bằng dòng nó in; commit merge (không file riêng) thì `git push` + `git ls-remote`.
+
+### Thứ tự đo khuyên dùng khi đổi lời dặn "hiểu ý sửa" (`SUA_LICH_LOI_DAN`)
+test 0 USD (kể cả bộ dò W82) ⇒ commit + push (log mang `git_sha`) ⇒ hỏi B / E một dòng ⇒ server tạm cổng 8041 từ worktree (kiểm `readlink /proc/<pid>/cwd`) ⇒ **bộ câu chính ×2 ⇒ Q3 ×2 NGAY** (bắt hồi quy trước khi tốn bộ khác) ⇒ (≤ 1 vòng chỉnh, A ghi tiêu chí trước) ⇒ nhắn A "đã chốt" để A viết bộ câu lạ ⇒ bộ hồi quy bậc trước ×1, Q5 (`q5_sua_lich.py`, chạy từ `backend/` của worktree), Q5b (`q5b_tron.py … --log <worktree>/backend/logs/application.log`), câu lạ ×1 ⇒ tắt server bằng pid của cổng ⇒ đếm tiền `scripts/dem_chat_metrics.py --log … --sha <sha>` SAU khi tắt. Chi tiết cách nói đặt ở khối "cách nói thường gặp", không chèn chữ dài vào danh sách hành động.
+
+### Bẫy gặp chiều 15/11
+- Thêm vài dòng vào danh sách hành động của lời dặn làm hỏng một kiểu câu KHÔNG liên quan (S08).
+- Bộ câu đo tự viết không có "chữ giống ngày" ⇒ lượt có phí đạt hết mà hàm vẫn sai 8 / 34 câu dò của reviewer (nay là W82).
+- Tự sửa thêm sau khi A đã nhận giới hạn ⇒ tự gây hồi quy ("5/5 người").
+- Chuỗi Q3 trượt có thể do **nhãn cũ** (bảng điểm đổi) — chạy lại chuỗi đó trên server bản main + xem `sua_ap` trước khi quy cho nhánh.
+- Tả kết quả từ trí nhớ ⇒ ghi NGƯỢC bớt / thêm trong bài + report (agent con bắt) — đọc dữ liệu (`ngay_hoat_dong`) rồi mới viết.
+- Đếm tiền khi server còn chạy ra thiếu (0,0012 ↔ 0,0013).
+- `git merge -q … | tail` nuốt thông báo ⇒ tưởng đã gộp; sau xung đột phải `git add` rồi mới `git commit`; kiểm `git merge-base --is-ancestor origin/main HEAD`.
+- Sửa file trong worktree đang chạy test rộng (số vẫn của bản cũ, nhưng phải giải thích) — dùng worktree khác.
+- Harness cũ `q3_sua_lich.py` / `q5_sua_lich.py` chèn `/tmp/b_lkh/backend` vào đường import (không còn) ⇒ đặt `PYTHONPATH=<worktree>/backend`.
+- `commit_push.sh` báo `CHƯA PUSH` khi nhánh thiếu file của main (đúng thiết kế) ⇒ gộp main trước.
+
+### Câu hỏi / thắc mắc cho A phiên sau
+1. Có làm tiếp ứng viên nào ở mục "Còn mở" không — C nghiêng (v) (dòng báo khi `doi_tham_so` làm lịch xếp lại, 0 USD, dùng lại khuôn bậc 2) và (iii) (hết im lặng), vì cùng loại "nói rõ đã làm gì"; (i) và (ii) cần đếm nhu cầu trước.
+2. Bộ kín sửa lịch sau v9: ai chạy lệnh đếm của User và ai sửa nhãn (không phải C).
+3. Tổng tiền 0,335 USD của C chưa có người thứ hai tính lại.
+
+## PHIÊN CHIỀU 15/11 — nhật ký (mở 15:08; giữ để tra) — C `hue-rag-51` · A `hue-rag-60` · B `hue-rag-cb` · E `hue-rag-ab`
 **A giao (15:11 15/11/2026; quyền phiên "như sáng 15/11"):** (1) bảng lưu trú v5 gộp Như Phú — giữ dòng 1 sao / số 16, bỏ dòng 14b ⇒ 136 cơ sở, 57 có ảnh; (2) `scripts/commit_push.sh` (W81). Hai nhánh riêng từ origin/main.
 **Khai báo sửa:** (1) `data/luu_tru_v5_2026-11-15/` (script + bảng v5 + so v4 ↔ v5, private) · nhánh `p9-luu-tru-v5`: `backend/config/settings.yaml` dòng `lich_trinh_bang_luu_tru` (+ `frontend/src/theKhachSanTrung.js` nếu danh sách sinh lại đổi) — worktree `/tmp/c_v5`. (2) nhánh `p9-commit-push`: `scripts/commit_push.sh` (mới) — worktree `/tmp/c_cp`. File này.
 **Hai việc XONG — chờ A (15:14 15/11/2026, 0 USD):** report `report_agent/2026-11-12_ra_khoang_cach/c_v5_commit_push_implementation.md` (chưa commit — A commit).
@@ -38,8 +97,9 @@
 **Tiền C phiên chiều ≈ 0,335 USD** (theo sha): bậc 1 0,2101 · nơi ở khi hỏi 0,0026 · bậc 2 0,1226. **Rảnh — chờ A.** 0 server / tiến trình nền.
 **Bẫy phiên chiều (cho vòng cải tiến):** (1) thêm vài dòng vào danh sách hành động của lời dặn làm hỏng một kiểu câu KHÔNG liên quan ⇒ chạy bộ hồi quy ngay sau bộ câu chính, chi tiết cách nói để ở khối "cách nói thường gặp"; (2) bộ câu đo do mình viết không có "chữ giống ngày" ⇒ lượt có phí đạt hết mà hàm đọc ngày vẫn sai 8 / 34 câu dò của reviewer ⇒ hàm thuần đọc chữ người dùng phải có ca "chữ giống mà không phải" TRƯỚC khi đo có phí; (3) sửa thêm sau review tự gây hồi quy ("5/5 người") ⇒ mọi lần sửa luật chữ đều chạy lại bộ dò của reviewer; (4) nhãn bộ đo cũ lệch khi bảng điểm đổi (S07) ⇒ đổi bảng điểm thì rà nhãn các bộ chuỗi; (5) report ghi ngược "bớt / thêm" vì tả từ trí nhớ thay vì đọc `ngay_hoat_dong` — agent con kiểm bắt; (6) đếm tiền sớm khi server còn chạy ra thiếu 1 lượt (0,0012 ↔ 0,0013) ⇒ đếm sau khi tắt server.
 **(17:02 15/11/2026) KẾT QUẢ CHIỀU 15/11 CỦA C — mọi việc đã vào main (origin `f276894` lúc ghi):** bảng lưu trú v5 · `scripts/commit_push.sh` · sửa lịch bằng lời đổi hạng chỗ ở (bậc 1) + nhánh nhỏ m-1 / m-2 · khối Nơi ở chỉ hiện khi hỏi · sửa lịch bằng lời đổi ngày đi (bậc 2, `b7b47f1`) · tài liệu bài 25 + sổ 07 + nhật ký cho cả ba. Review C làm: W79 (B), `p9-gd-3-sua` (E). Vòng tự soi 2 đã gửi cả nhóm (đề xuất: câu PHÁ ngoại tuyến trước lượt có phí; md5 bảng điểm trong bộ chuỗi; ca đối chứng cho mỗi phép kiểm; luật hẹp "sau ready không tự thêm commit code"). Mọi worktree `/tmp/c_*` + file tạm đã gỡ. **Rảnh — chờ A** (User vắng, chưa kết phiên).
+**(18:02 15/11/2026) Rảnh — chờ A.** User đã về 18:01: W82–W84 duyệt, đã vào luật (`Session_Prompt.md` §8: bộ câu dò ≥ 20 do người không viết code soạn TRƯỚC lượt có phí, thêm đúng một bộ sau bản sửa, dừng khi 0 câu ra sai, sau ready commit thêm phải được A cho; phép kiểm harness có ca đối chứng ra "có" · `WORKFLOW.md` §3.4: đổi bảng dữ liệu ⇒ quét nhãn + mô phỏng không model trước merge) — C đã đọc lại. Không có việc mới.
 
-## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11 — C viết 14:43 15/11/2026 `date`)
+## (Kết phiên trưa 15/11 — CŨ, giữ để tra) PHIÊN SAU ĐỌC TRƯỚC (C viết 14:43 15/11/2026 `date`)
 
 - **Trạng thái máy:** 0 worktree `/tmp/c_*`, 0 server tạm (cổng 8037–8040 đã tắt), 0 tiến trình nền của C. Mọi nhánh của C hôm nay đã merge.
 - **Việc phiên sau đã định (A giao lúc kết phiên):**

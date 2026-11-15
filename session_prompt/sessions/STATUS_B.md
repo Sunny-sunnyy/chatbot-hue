@@ -30,6 +30,13 @@
 - Đề xuất chờ A (việc mới, chưa làm): harness Q3 tự chạy mô phỏng nhãn 0 USD trước lượt có phí, dừng nếu < n / n.
 - **Rảnh — chờ A / User (chưa kết phiên).**
 
+## User về (18:02 15/11/2026; A báo, User trả lời 18:01 15/11/2026)
+- Cờ `web_cau_noi_tiep` **ĐÃ BẬT** trên main (A thử ca gốc qua stream: mục web đúng nơi kèm giờ). Theo dõi khi dùng: tên người dùng / chi tiết lượt trước trong câu tra web (đo mới 0 / 4), lượt hỏi tiếp nhiều ý vẫn dùng câu gõ.
+- Tốc độ: **BỎ** tra web sớm, **GÁC** gộp câu tìm — plan `a4cfbf608a6b` thành hồ sơ, không làm.
+- Luật mới đã đọc (W82–W84): `Session_Prompt.md` §8 — code đọc chữ người dùng cần ≥ 20 câu dò do người không viết code soạn, chạy hàm thuần trước lượt có phí; phép kiểm mới trong harness phải có ca đối chứng ra "có", chưa có ⇒ "chưa đo". `WORKFLOW.md` §3.4 — đổi bảng dữ liệu ⇒ quét nhãn + mô phỏng nhãn không model trước merge.
+- Mục "Còn mở" ở trên: hai ý đầu đã xong; còn 2 lệnh đếm bộ kín sửa lịch cho User.
+- **Rảnh — chờ A.**
+
 ## Worktree / server
 0 worktree `/tmp` của B, 0 server, 0 tiến trình nền. Chưa commit (A): `STATUS_B.md`.
 

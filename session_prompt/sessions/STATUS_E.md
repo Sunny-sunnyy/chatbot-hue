@@ -37,6 +37,7 @@
 - **Bẫy chiều 15/11:** bảng nháp phải chạy cả test sàn của repo, không chỉ `kiem_khung_v2` · `doan_mo_ta` lấy ở mục "Tổng quan / xem gì", đọc tay · rebase TRƯỚC lần push đầu · `assert` "thư mục đúng N file" vỡ khi User thêm file · `str(None)` thành "None" · đổi bảng dữ liệu ⇒ grep nhãn mọi bộ đo (đã sót bộ chuỗi sửa lịch) · report ghi số dòng diff trước khi đếm lại.
 - **Tiền E chiều 15/11 (theo sha, `scripts/dem_chat_metrics.py`):** `a124771` 0,0089 + `29a9121` 0,0062 + `6e3331b` 0,0041 + `febef97` 0,0007 = **0,0199 USD**. Cả ngày 15/11 của E ≈ 0,22 USD (sáng ≈ 0,20 — số cũ, cộng tay).
 - **Worktree của E còn (gỡ lúc kết phiên; mỗi cái 2 symlink `data`, `knowledge-base-hue`):** `/tmp/e_v9`, `/tmp/e_gd3`, `/tmp/e_ks`, `/tmp/e_kp`. Không server nào chạy. Vòng tự soi 2 đã gửi cả nhóm.
+- 18:02 15/11/2026 — User về, A báo (main `a11e601`): 3 ảnh Khám phá ĐỂ TRỐNG (dừng 260 / 263) · ngày đi xa KHÔNG thêm ghi chú buổi tối · cờ `web_cau_noi_tiep` đã bật · W82–W84 vào luật (E đã đọc lại: bộ câu dò ≥ 20 cho code đọc chữ người dùng; phép kiểm phải có ca đối chứng; đổi bảng dữ liệu ⇒ người đổi quét nhãn + mô phỏng không model trước merge). Deploy nháp không chép riêng settings (lấy `backend/` của main) ⇒ không phải đổi gì. **Rảnh — chờ.**
 
 ---
 
