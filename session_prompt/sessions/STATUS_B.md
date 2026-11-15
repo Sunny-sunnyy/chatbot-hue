@@ -20,6 +20,7 @@
 - 12:34 15/11/2026 — "tuần sau" E ready ⇒ A merge `5738e8d`; nhãn X01 bộ B5b sửa (md5 `65c6d4bc33f2`, sao lưu); worktree `/tmp/b_ts` gỡ. Bài 14 (sửa câu sai "tuần sau") + sổ 07 bản 59 — chưa commit (A). Còn `/tmp/b_w0` (bỏ, xoá cuối phiên). **Rảnh — chờ A.**
 - 12:50 15/11/2026 — Chuẩn bị "việc tiếp": 2 đề xuất tốc độ của B **rút lại** (cả hai đã sửa trước: `1633c18`, `3aef0ca` — log cũ trộn lượt trước sửa). Câu thường sau mốc merge p50 2,10 / p95 4,32 s ⇒ đạt sàn; đính chính cuối `b_dem_toc_do.md` (chưa commit). Phản biện C (sửa lịch thêm trường) + E (bảng điểm) đã gửi. Bài học: đếm log phải cắt theo mốc merge. **Rảnh — chờ A.**
 - 13:31 15/11/2026 — Sửa số tốc độ cũ ở plan song song / sổ 06 / 07 (chưa commit, A). **Review bảng nháp 7 điểm lịch (E): ready, 3 minor** — `report_agent/2026-11-12_ra_khoang_cach/b_review_diem_lich_moi.md` (chưa commit). 0 USD. **Rảnh — chờ A.**
+- 13:33 15/11/2026 — Tự soi 2 gửi cả nhóm (B, C thống nhất: sha vào chat_metrics · bỏ an toàn 32 khi 0 câu chạm · merge thẳng nhánh ≤ 10 dòng không đổi câu người dùng thấy). E sửa 3 minor bảng điểm ⇒ B đóng. **Rảnh — chờ A.**
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**
