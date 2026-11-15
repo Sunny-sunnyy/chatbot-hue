@@ -1,4 +1,24 @@
-# STATUS C — kết phiên chiều 15/11 (C `hue-rag-51` · A `hue-rag-60` · B `hue-rag-cb` · E `hue-rag-ab`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN TỐI 15/11 — đang chạy (C cập nhật 19:46 15/11/2026 `date`)
+
+- **Trạng thái máy của C:** worktree `/tmp/c_no` (nhánh `p9-sua-lich-no-nho`; symlink `data/`, `knowledge-base-hue/`, `frontend/dist`) và `/tmp/c_anh` (nhánh `p9-nut-anh-cong`; symlink `data/`, `knowledge-base-hue/`, `frontend/node_modules`, có `frontend/dist` build riêng) — gỡ khi nhánh đã merge; 0 server tạm (cổng 8041 đã tắt); 0 tiến trình nền.
+- **File C khai báo sửa:** `backend/llm/sua_lich_v2.py`, `backend/tests/test_sua_lich_v2.py`, `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`, `…/c_no_nho_sua_lich_implementation.md`, `backend/tests/test_sua_ngay_di.py`; nhánh ảnh: `frontend/src/HoiBangAnh.jsx`, `chat.jsx`, `index.css`, `…/c_nut_anh_cong_implementation.md`.
+
+| Việc (A giao tối 15/11) | Trạng thái | Số chính | Tiền |
+|---|---|---|---|
+| Đếm 4b(c): biểu mẫu đưa cơ sở khác hạng không kèm lý do | **xong — A quyết không sửa** | 0 / 9.216 ô (3.840 khung × 3 mức; đối chứng W83 đúng); công cụ `data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py` — chạy lại khi đổi bảng điểm / bảng lưu trú | 0 |
+| Việc 1 (handoff mục 4): lượt đổi tham số không đổi được gì có dòng báo · dòng "lịch xếp lại / giữ nguyên chỗ" sau đổi trẻ em / kiểu đi / sở thích / người lớn tuổi · bảng 7 / 8 trường | **đã sửa theo review B (1 major + 2 minor), chờ B quét lại ⇒ A merge** — `origin/p9-sua-lich-no-nho` `8059e29` | B bắt lỗi thật: điểm dời ban ngày ↔ tối bị ghi vừa "bớt" vừa "thêm" (có sẵn ở câu đổi ngày đi trên main) ⇒ mỗi điểm mang tập chỗ trên cả ba buổi; > 6 tên ⇒ chỉ nêu số (A quyết); bộ quét của B 0 câu sai / 540 lượt; 6 file test 384 passed; mô phỏng nhãn 10 / 10; không test rộng (A đồng ý), không lượt có phí | 0 |
+| Nút dấu cộng trong ô nhập + dán ảnh (User báo khi thử; A giao) | **chờ review (E)** — `origin/p9-nut-anh-cong` `caccfb7` | Playwright 1440 + chụp 390: bấm + ⇒ gợi ý · dán ảnh ⇒ gợi ý · dán chữ như thường · cờ tắt ⇒ 0 nút · 0 lỗi console; ảnh `data/nut_anh_cong_2026-11-15/anh/`; chưa thử dán ảnh chụp màn hình thật, Safari / Firefox | 0,0007 |
+| Review nhánh `p9-chu-gioi-thieu` của E (A nhờ) | **ready, A đã merge** | câu ví dụ "ở khách sạn 3 sao" chạy thật 6 / 6 ra đổi hạng 2–3 sao (`data/review_chu_gioi_thieu_2026-11-15/`) | 0,00075 |
+
+- **Tổng tiền C tối 15/11 tới lúc này ≈ 0,0015 USD** (review câu ví dụ 0,00075 + 2 lượt nhận ảnh 0,00072).
+- **Vòng tự soi 1:** đã gửi cả nhóm; hướng làm tiếp C xếp (d) User thử + sửa lỗi ⇒ (c) B7 ⇒ nửa sau (a) (đếm 6–8 câu trước) ⇒ (b).
+- **Ghi nhận:** `q3_sua_lich.py` nay cần `--backend <backend worktree>` (B sửa, không còn `PYTHONPATH` cứng); `kiem_bo.py` của bộ sửa lịch là bản tĩnh của B.
+
+---
+
+## (Kết phiên chiều 15/11 — CŨ, giữ để tra)
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 15/11 — C viết 18:23 15/11/2026 `date`)
 
