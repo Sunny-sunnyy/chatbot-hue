@@ -159,6 +159,9 @@ def dat_gio(d: dict, t: int) -> tuple[int, int] | None:
 
 
 NGUONG_MUA = 60  # = `thoi_tiet.NGUONG_MUA` (không thêm ngưỡng mới — spec 5c.2); giữ ở đây để module thuần không import phần gọi mạng
+# Xếp lại lịch khi mưa cần THÊM lượng mưa dự báo ≥ 6 mm / ngày (User 15/11: đầu cấp "Mưa" QCVN 84:2024; ≥ 60 % một mình chỉ là "có một giờ
+# có thể lấm tấm" ⇒ 222 / 365 ngày; đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_mua.md` phần 5). Dòng "Nếu mưa" vẫn chỉ cần ≥ NGUONG_MUA.
+MM_MUA_XEP = 6
 THU_TU_MUA = {"trong_nha": 0, "ca_hai": 1, "ngoai_troi": 2}  # ngày mưa: điểm không ưu tiên xét trong nhà ⇒ cả hai ⇒ ngoài trời
 
 
@@ -181,7 +184,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
            mua: dict | None = None, giu: dict[str, tuple[int, str]] | None = None, loai: frozenset[str] = frozenset()) -> dict:
     """Khung tham quan sáng / chiều theo luật ở đầu module. `ngay_1_khong_xa=False` chỉ để mô phỏng so "có / không luật cụm xa ngày 1".
     Bước (d): `ngay_bat_dau` (ngày đi) ⇒ mỗi ngày lịch có ngày thật ⇒ luật mùa + thứ xét theo NGÀY (lịch vắt hai tháng xét từng ngày);
-    `mua` = {ngày: khả năng mưa %} (chỉ các ngày có dự báo) ⇒ ngày ≥ `NGUONG_MUA` đổi thứ tự xét của điểm không ưu tiên.
+    `mua` = {ngày: khả năng mưa %}, chỉ ngày dự báo ≥ `MM_MUA_XEP` mm (lọc ở `len_ke_hoach.ngay_mua_xep`) ⇒ ngày ≥ `NGUONG_MUA` đổi thứ tự xét của điểm không ưu tiên.
     Sửa lịch (plan 2026-11-14-sua-lich-v2): `giu` = điểm giữ nguyên chỗ {id: (ngày, buổi sáng / chiều)}, đặt trước rồi buổi đó không lấp thêm;
     `loai` = điểm người dùng đã bỏ — không bao giờ được chọn lại (cả buổi tối). Mặc định (None, rỗng) ⇒ đúng như trước (test 3.840 khung giống byte)."""
     n = ts.so_ngay

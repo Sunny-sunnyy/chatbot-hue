@@ -59,6 +59,14 @@ def dong_du_bao(bang, khung: dict, db: dict | None) -> list[dict]:
     return dong + [{"cau": db["nguon"]}] if dong else []
 
 
+def ngay_mua_xep(db: dict | None) -> dict | None:
+    """Dict `mua` cho bộ xếp: chỉ ngày có lượng mưa dự báo ≥ `MM_MUA_XEP` mm (User 15/11); bộ xếp tự xét thêm ≥ `NGUONG_MUA` %.
+    Ngày mưa nhỏ (< 6 mm) không đổi thứ tự xếp, nhưng vẫn có dòng "Nếu mưa" nếu ≥ 60 % (`dong_du_bao` đọc `db`, không đọc dict này)."""
+    if db is None:
+        return None
+    return {k: v["xs"] for k, v in db["ngay"].items() if v["xs"] is not None and v["mua"] >= lt2.MM_MUA_XEP}
+
+
 def dong_neu_mua(bang, khung: dict, ng: dict) -> str:
     """Ngày dự báo mưa ≥ ngưỡng ⇒ LUÔN đúng một dòng "Nếu mưa" (review 14/11, thước ý 6): có điểm ngoài trời thay được ⇒ gợi ý thay; ngoài trời
     không có điểm thay ⇒ nói thẳng; không điểm ngoài trời ⇒ nói các điểm có chỗ trong nhà."""
@@ -85,7 +93,7 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
     khung = sua["khung"] if sua else None
     ts = lt2.tu_truong(trace.truong) if khung is None else None
     db = await du_bao_lich(flags, bat_dau, (ts.so_ngay if ts else khung["tham_so"]["so_ngay"]), trace, tt.hom_nay_vn())
-    mua = None if db is None else {k: v["xs"] for k, v in db["ngay"].items() if v["xs"] is not None}
+    mua = ngay_mua_xep(db)
     if khung is None:
         khung = lt2.xep_v2(bang, ts, ngay_bat_dau=bat_dau, mua=mua)
     nhap = lt2.tin_nhan_model(lt2.dung_lich(bang, khung, dict.fromkeys(lt2.diem_v2(khung), 0)), "")  # đếm ngân sách bằng bản nháp
