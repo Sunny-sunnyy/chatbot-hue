@@ -23,10 +23,10 @@ MUC_HANG = {"5 sao": 0, "4 sao": 0, "3 sao": 1, "2 sao": 1, "1 sao": 2, "Đạt 
 SO_THEO_MUC = (2, 2, 1)
 # Người dùng chọn mức chỗ ở (biểu mẫu, nhãn kèm hạng sao — hạng ≠ giá) ⇒ ≤ 5 cơ sở của riêng mức đó; khu không có mức đó ⇒ im lặng về SO_THEO_MUC
 MUC_NGAN_SACH = {"cao": 0, "vua": 1, "binh_dan": 2}
-# Khu ven biển gộp hai phía cách nhau ~40 km (Thuận An / Tam Giang ↔ Lăng Cô); bảng không có cụm gần cho phần lớn cơ sở ven biển ⇒ tách theo
-# chữ trong địa chỉ, chỉ gợi ý cơ sở cùng phía với cụm có nhiều điểm nhất (địa chỉ không khớp phía nào ⇒ không gợi ý — không đoán).
+# Khu ven biển gộp hai phía cách nhau ~40 km (Thuận An / Tam Giang ↔ Lăng Cô) ⇒ chỉ gợi ý cơ sở cùng phía (`phia_bien` của bảng v3, cùng trường trang
+# "Chỗ ở" dùng) với cụm có nhiều điểm nhất. Trước 15/11 tách theo chữ trong địa chỉ — cơ sở có địa chỉ không ghi tên huyện bị bỏ sót.
 CUM_DI_TRONG_NGAY = {"nam_xa"}
-PHIA_BIEN = {"dong_bien": ("Phú Vang", "Thuận An"), "nam_xa": ("Phú Lộc", "Lăng Cô")}
+PHIA_CUM = {"dong_bien": "bac", "nam_xa": "nam"}
 LINK_TIM = "https://www.booking.com/searchresults.html?ss="  # link tìm (không đặt chỗ), chỉ mở khi người dùng bấm
 ANH_GOC = "/anh/khach_san/"  # ảnh tự host (1 agent con chọn + B nhìn lại 14/11); bảng ghi đường khác gốc này ⇒ không khởi động
 NHAN = "Gợi ý theo vị trí và hạng — chưa kiểm giá, phòng trống."
@@ -85,7 +85,7 @@ def _chon(bang_luu_tru: dict, khu: str, cum_dau: str | None, so_muc: tuple[int, 
         nhom = {}  # hạng ⇒ cơ sở, theo thứ tự hạng của MUC_HANG (cao trước)
         for hang in (h for h, m in MUC_HANG.items() if m == muc):
             ds = [c for c in bang_luu_tru["co_so"] if c["khu"] == khu and c["xep_hang"] == hang
-                  and (khu != KHU_BIEN or any(t in (c.get("dia_chi") or "") for t in PHIA_BIEN.get(cum_dau, ())))]
+                  and (khu != KHU_BIEN or c.get("phia_bien") == PHIA_CUM.get(cum_dau))]
             nhom[hang] = sorted(ds, key=lambda c: (c.get("cum_gan") != cum_dau, not c.get("anh"), c["ten"]))
         lay = [c for vong in itertools.zip_longest(*nhom.values()) for c in vong if c]  # vòng 1: đầu mỗi hạng; vòng 2: thứ hai…
         out += lay[:so]

@@ -46,7 +46,7 @@ Tiền: Playwright 1 lượt xếp lịch **0,00064 USD** (dòng `chat_metrics` 
 
 ## 4. Giới hạn
 
-- Vẫn tất định: chọn cùng mức ⇒ cùng ≤ 5 cơ sở ở mọi lịch trung tâm (12 ⇒ 36 cơ sở có thể hiện, số của C). Trang "Chỗ ở" là chỗ xem thêm.
+- Vẫn tất định: chọn cùng mức ⇒ cùng ≤ 5 cơ sở ở mọi lịch trung tâm (13 ⇒ 32 cơ sở có thể hiện — C đếm trên khung thật sau merge, `data/khach_san_2026-11-15/dem_sau.json`; ước trong plan 12 ⇒ 36). Trang "Chỗ ở" là chỗ xem thêm.
 - "1 sao / 2–3 sao / 4–5 sao" là hạng trong danh mục, không phải giá.
 - Nếu nhánh `p9-cho-o` của C (bảng v3) merge trước ⇒ B rebase, chạy lại test file chạm trên bảng v3 (T2 kiểm lại "0 khu trống mức").
 - **Ý chờ (không làm ở nhánh này):** chữ "khả năng mưa X %" (`thoi_tiet.py:199` `dong_ngay`, `TrangChu.jsx:185`) nên ghi rõ "lúc cao nhất trong ngày"
