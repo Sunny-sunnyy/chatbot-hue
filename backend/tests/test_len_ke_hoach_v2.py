@@ -480,7 +480,7 @@ def test_v2_sentence_checks(app_client):
     hong = {m[0]["id_muc"]: f"Mở cửa lúc 8:00 [{m[0]['nguon']}].", m[1]["id_muc"]: f"Vé 50.000 đồng [{m[1]['nguon']}].",
             m[2]["id_muc"]: f"Gần {khac} [{m[2]['nguon']}]."}
     for sai, ma in ((f"Nên ở đây 2 tiếng [{m[0]['nguon']}].", "gio"), (f"Xem tại https://x.vn [{m[0]['nguon']}].", "link"),
-                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong"),
+                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong"), (f"[{m[0]['nguon']}].", "rong"),
                     (f"Tài liệu không cung cấp thông tin về điểm này; nội dung chỉ mô tả nơi khác. [{m[0]['nguon']}]", "noi_ve_tai_lieu")):
         assert v2.kiem_cau(b, m[0], sai) == ma
     for tot in ("Trưng bày nhiều tài liệu, hiện vật quý", "Xem văn bản cổ và châu bản"):  # m-3: câu tả bảo tàng không bị chặn nhầm
