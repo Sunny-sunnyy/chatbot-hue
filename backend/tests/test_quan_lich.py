@@ -74,6 +74,9 @@ def test_meal_note_for_points_without_restaurants():
     assert [(a["bua"], a["quan"], a["ghi_chu"]) for a in an] == [("trua", [], ql.GHI_CHU_AN[("bach_ma", "trua")]),
                                                                   ("toi", [], ql.GHI_CHU_AN[("thac_nhi_ho", "toi")])]
     assert ql.GHI_CHU_AN[("bach_ma", "trua")] in "\n".join(ql.dong_chu(an))
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["lang_non_tay_ho"], "chieu": ["deo_hai_van"]}}]}  # 15/11 tối: hai bữa từng trống
+    assert [(a["bua"], a["quan"], a["ghi_chu"]) for a in ql.an_uong(QUAN, BANG_V2, khung, TOA)] == [
+        ("trua", [], ql.GHI_CHU_AN[("lang_non_tay_ho", "trua")]), ("toi", [], ql.GHI_CHU_AN[("deo_hai_van", "toi")])]
 
 
 @pytest.mark.parametrize("sua, loi", [

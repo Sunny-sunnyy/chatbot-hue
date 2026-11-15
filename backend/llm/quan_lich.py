@@ -39,6 +39,12 @@ GHI_CHU_AN = {
     ("dam_lap_an", "trua"): "Dọc đường ven đầm có nhiều nhà hàng hải sản, hàu là đặc sản của đầm — có thể ăn ngay tại đây.",
     ("dam_lap_an", "toi"): "Dọc đường ven đầm có nhiều nhà hàng hải sản, hàu là đặc sản của đầm — có thể ăn ngay tại đây.",
     ("deo_hai_van", "trua"): "Chân đèo phía bắc là khu Lăng Cô — ven đầm Lập An có nhiều nhà hàng hải sản.",
+    # 15/11 tối: bữa tối sau Hải Vân (72 bữa mô phỏng) dùng cùng căn cứ kho với bữa trưa. Làng nón Tây Hồ (144 bữa): kho không nói gì về ăn uống ở
+    # làng, quán gần nhất trong bảng cách ~6 km, tra web 3 lượt không ra nguồn nào nêu quán tại làng ⇒ câu chỉ nói điều hệ thống biết (chưa có gợi ý)
+    # + khoảng cách theo kho `travel/places/Làng nón Tây Hồ.md:8` — không nêu tên quán.
+    ("deo_hai_van", "toi"): "Chân đèo phía bắc là khu Lăng Cô — ven đầm Lập An có nhiều nhà hàng hải sản.",
+    ("lang_non_tay_ho", "trua"): "Chưa có gợi ý quán gần làng (cách trung tâm khoảng 12 km) — nên ăn ở trung tâm trước hoặc sau khi ghé làng.",
+    ("lang_non_tay_ho", "toi"): "Chưa có gợi ý quán gần làng (cách trung tâm khoảng 12 km) — nên ăn ở trung tâm trước hoặc sau khi ghé làng.",
 }
 _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
