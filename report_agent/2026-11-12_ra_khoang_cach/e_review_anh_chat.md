@@ -1,0 +1,6 @@
+# Review — `p9-anh-chat` (C, `41da66b`) · E · 12:04 15/11/2026 (`date`)
+
+- **Kết luận: `ready_for_user_confirmation`, 1 minor tuỳ chọn.** Nhánh giao diện (luật 15/11): đọc diff, không chạy lại test; `git diff --check` sạch. Dựng trên `d6e1aea` ⇒ rebase khi merge. Đúng plan `bf43cc57f6ea`: một bài ⇒ y luật cũ. Nhiều bài ⇒ chỉ bài được trích (`turn.sources`), loại "một nơi / món", ảnh chắc, tên ≥ 2 chữ có trong chữ trả lời, ≤ 3, theo thứ tự dòng Nguồn. Tên dưới mỗi ảnh, không ghi công.
+- Ảnh 390 (`chat_390.png`): 2 ảnh một hàng, tên dưới ảnh, khớp thứ tự Nguồn ⇒ ổn. 3 ảnh ⇒ ảnh thứ 3 xuống hàng (minmax 140 px) ⇒ chấp nhận.
+- **m-1 (tuỳ chọn) — lỗ của `tenKhop`:** so chuỗi con, chữ thường, không theo ranh giới từ. Kho có 27 tên bài ≤ 2 chữ. Hai ca thật: **"Quán Nhỏ"** cũng là cụm từ thường ("một quán nhỏ…"); **"Lý Huế"** nằm lọt trong "quản lý Huế". Chỉ sai khi bài đó CŨNG được trích, nên hiếm. Sửa rẻ: khớp có ranh giới từ (`(?<![\p{L}])…(?![\p{L}])`, cờ `u`) + so phân biệt hoa thường trừ chữ đầu ("chợ Xép" vẫn khớp "Chợ Xép"; "quán nhỏ" không khớp "Quán Nhỏ"), thêm 2 ca test.
+- Đã kiểm: `key` = `baiId` (duy nhất); `turn.numbers` thiếu ⇒ giữ thứ tự server; `alt` + tên hiện đều là tên bài (không chữ người dùng).

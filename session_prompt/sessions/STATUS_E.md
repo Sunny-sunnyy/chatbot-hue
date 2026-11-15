@@ -17,6 +17,7 @@
 - 11:58 15/11/2026: rà 69 ảnh khách sạn W78 ⇒ giữ 50 / thay 8 / bỏ 11 ⇒ 58 / 137 (`p9-anh-ks-w78`, merged); La Vela cắt lại (`p9-anh-lavela` @ `3df7bfb`, chờ A). 3 ảnh quảng cáo (An Cựu, Tây Lộc, Hai Bà Trưng) sửa ở nguồn (`p9-anh-sua-qc`, merged). Review `p9-nhan-mua` ⇒ ready. Report `e_anh_khach_san.md` (11 ảnh bỏ + 2 câu trùng Như Phú / Villa Louise cho User). Deploy nháp trỏ v4. Tiền phiên E ≈ 0,15 USD (Serper 0,057 + 0,015 + 0,038 + lịch 0,0014 + …).
 - 11:59 15/11/2026: `p9-anh-lavela` merged (`97b4fb2`); report ảnh khách sạn A commit (`abe8d3a`). E không còn worktree / container / image. Rảnh — chờ nhánh ảnh chat (C).
 - **Bẫy (15/11):** report tracked ghi tên + địa chỉ cơ sở lưu trú ⇒ trùng nguyên văn bài kho ⇒ hook chặn 4 dòng (A sửa). Lần sau: report tracked chỉ ghi tên ngắn, địa chỉ để ở `data/`. Chạy `uv run python .githooks/overlap_scan.py <report>` trước khi giao.
+- 12:07 15/11/2026: review `p9-anh-chat` ⇒ ready, m-1 (khớp tên theo ranh giới từ) C sửa; A merge `e801c83`. Rảnh — chờ A.
 
 ### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
 Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).

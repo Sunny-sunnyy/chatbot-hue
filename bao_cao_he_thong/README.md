@@ -24,7 +24,7 @@ tin" chứ không bịa; câu ngoài chủ đề Huế ⇒ từ chối bằng m�
 - Nơi ở gợi ý trong lịch (14/11 chiều): lịch ≥ 2 ngày có thẻ "Nơi ở gợi ý" — **code** chọn một khu cho cả chuyến + ≤ 5 cơ sở theo hạng + link tìm phòng; không nêu giá. Từ 15/11: khách chọn được hạng sao (1 sao / đạt chuẩn · 2–3 · 4–5) ở biểu mẫu; link "Xem thêm chỗ ở khu này" mở trang "Chỗ ở" (137 cơ sở theo khu và hạng). Chưa xếp lịch ⇒ trang hiện lịch mẫu "Ví dụ" do bộ xếp dựng.
 - Quán ăn trong lịch (cuối chiều 14/11): mỗi bữa **code** gợi ≤ 2 quán ăn trong 2 km (quán có bài kho trước, quán bản đồ mở ghi "chưa kiểm"; cà phê chỉ khi không có quán ăn); không giá / giờ; bữa có quán kho 49,3 %. Nơi ở: lịch có buổi tối ở trung tâm ⇒ ở trung tâm. Lịch mẫu cũng có nơi ở + quán.
 - Câu hỏi nhiều ý (14/11 chiều): câu có ≥ 2 vế hỏi ⇒ trả lời vế kho có, vế thiếu ghi "Tư liệu chưa có thông tin về: …" và tra web riêng cho vế đó (trước: từ chối cả câu).
-- Ảnh dưới câu trả lời (14/11 chiều): câu trả lời từ một bài về một nơi / món ⇒ code hiện một ảnh của bài, bấm mở bài.
+- Ảnh dưới câu trả lời (14/11 chiều): câu trả lời từ một bài về một nơi / món ⇒ code hiện một ảnh của bài, bấm mở bài. Từ 15/11: câu nhắc nhiều nơi / món được trích ⇒ tới 3 ảnh (từ 2 ảnh trở lên thì có tên nơi dưới mỗi ảnh).
 - Giao diện mới "Sông Hương" 5 trang (14/11): hiệu ứng nhẹ (tắt khi máy bật giảm chuyển động), ảnh cho 255 / 263 bài ở Khám phá; không hiện chữ ghi công ảnh (bạn yêu cầu, nguồn giữ trong bảng dữ liệu); trang Giới thiệu có dải "Kho tư liệu", màn "Huế qua các thời kỳ", ba bước trên dòng sông.
 - Hỏi bằng ảnh: chụp ảnh ⇒ chatbot gợi ≤ 3 tên điểm / món ⇒ người dùng bấm xác nhận mới trả lời.
 - Cổng du lịch: trang chủ, "Khám phá" đọc thẳng 263 bài (ảnh 255 bài), nút 👍 / 👎 dưới câu trả lời.

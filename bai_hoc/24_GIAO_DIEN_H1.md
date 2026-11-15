@@ -116,7 +116,7 @@ Lúc đó có **38 ảnh "không chắc"**: chúng vẫn hiện ở Khám phá, 
   không tìm ra trang nào, hay ảnh tìm được không chắc là đúng quán.
 - **Lượt nâng "không chắc":** 8 / 37 bài một nơi được nâng lên "chắc".
 
-Số ảnh **hiện được cạnh câu trả lời** (có ảnh, không "không chắc"): **146 ⇒ 169**. Ảnh "không chắc" nay là 49 (38 lúc chiều): 20 ảnh bài chủ đề, 29 ảnh bài một nơi. Tốn khoảng 0,1 USD tiền tìm ảnh (Serper — dịch vụ tìm trên Google, trả
+Số ảnh **hiện được cạnh câu trả lời** (có ảnh, không "không chắc"): **146 ⇒ 169**. (Từ trưa 15/11 câu nhắc nhiều nơi có tới 3 ảnh — bài 25, mục 8.) Ảnh "không chắc" nay là 49 (38 lúc chiều): 20 ảnh bài chủ đề, 29 ảnh bài một nơi. Tốn khoảng 0,1 USD tiền tìm ảnh (Serper — dịch vụ tìm trên Google, trả
 tiền theo lượt); tra trang bằng Codex (một trợ lý AI khác, tự mở trang công khai) tính vào gói ChatGPT.
 
 **Ảnh cho bài kho mới (cuối tối 14/11).** Kho lớn lên 263 bài (bài 22) ⇒ tìm ảnh cho 39 bài mới theo cùng luật: 20 / 23 bài của lần ghi kho 5 và 11 / 16 bài lễ hội của

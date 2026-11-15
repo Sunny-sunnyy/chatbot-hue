@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -256,7 +256,7 @@ bị chặn vì model tóm "01/5/2026" thành "tháng 5/2026" — chặn về ph
 
 ## 8. Ảnh dưới câu trả lời
 
-Hỏi trợ lý về một nơi hay một món, câu trả lời giờ có **một ảnh** ở dưới. Bấm vào ảnh thì mở bài trong Khám phá. Ảnh lấy từ bộ ảnh đã có của Khám phá
+Hỏi trợ lý về một nơi hay một món, câu trả lời giờ có **một ảnh** ở dưới (luật 14/11; trưa 15/11 mở rộng cho câu nhắc nhiều nơi, xem dưới). Bấm vào ảnh thì mở bài trong Khám phá. Ảnh lấy từ bộ ảnh đã có của Khám phá
 (nay 255 / 263 bài có ảnh, bài 24).
 
 **Code quyết có hiện ảnh không,** model không chọn ảnh. Chỉ hiện khi đủ các điều kiện:
@@ -267,6 +267,28 @@ Hỏi trợ lý về một nơi hay một món, câu trả lời giờ có **m�
   sẽ thành một lời khẳng định sai, nên ở đây không hiện.
 
 Không đổi gì ở máy chủ, không đổi câu gửi model, 0 USD.
+
+**Trưa 15/11 — câu nhắc nhiều nơi.** Anh muốn: nhắc bún bò thì có ảnh bún bò, nhắc Kinh thành thì có ảnh Kinh thành. Luật trên bỏ qua mọi câu trích
+từ hai bài trở lên, kể cả câu so sánh hai quán. Mình đếm trước trên 154 câu trả lời đã lưu: 77 câu có ảnh; 41 câu nhắc tên một nơi có ảnh mà vẫn
+không ảnh, phần lớn (32) vì trích từ hai bài trở lên.
+- **Luật mới, vẫn do code quyết:**
+  - câu trích một bài thì như cũ;
+  - câu trích nhiều bài thì xét từng bài được trích, theo thứ tự ở dòng "Nguồn". Lấy bài nói về một nơi / món, có ảnh chắc, có tên dài từ 2 chữ, và tên
+    đó **có trong chữ trả lời** đứng thành từ riêng (không tính khi nằm lọt trong một chữ dài hơn);
+  - tối đa **3 ảnh**; khi có từ 2 ảnh trở lên, tên nơi in dưới mỗi ảnh. Nhờ tên dưới ảnh, người đọc biết ảnh nào của quán nào.
+- **Ảnh vẫn chỉ của bài được trích**: tên một quán mà model nhắc nhưng không trích thì không có ảnh.
+- **Đo (0 USD):** chạy chính đoạn code của giao diện trên 154 câu trả lời **đã lưu** (mô phỏng, chưa phải lượt hỏi trực tiếp).
+  - Câu có ảnh **77 ⇒ 103 / 154**; 26 câu mới có ảnh với 39 ảnh, 13 câu có 2 ảnh.
+  - Lúc đếm trước mình ước khoảng 118. Số mô phỏng thấp hơn vì hai lẽ: 9 / 41 câu luật cố ý không cho ảnh (bài không được trích, sai loại bài, ảnh
+    chưa chắc), nên trần là khoảng 109; phần còn lại vì luật khớp chặt hơn lúc đếm: chỉ đúng tên bài, không tính tên gọi khác, không tính tên 1 chữ.
+- **Một agent con xem cả 39 ảnh mới, mình xem lại những ảnh bị đánh dấu:**
+  - 0 ảnh sai nơi. Không có nghĩa cả 39 đều chắc chắn đúng: 23 ảnh có dấu hiệu rõ (biển tên, công trình nhận ra được), 14 ảnh chỉ "hợp, không thấy mâu
+    thuẫn", 2 ảnh người xem chưa chắc. Mình tra nguồn hai ảnh đó: một là ảnh cổng lăng, đúng lăng được nhắc; một lấy từ bài báo viết về chính phố đó.
+  - 3 ảnh đúng nơi nhưng có quảng cáo / số điện thoại (hai chợ, một phố đi bộ). Cả ba cũng đang hiện ở Khám phá (ảnh phố đi bộ còn ở lịch), nên được
+    **sửa tận gốc** (làm mờ số, cắt biển) thay vì chặn riêng ở chỗ này.
+- Trình duyệt thật ở hai khổ màn hình với câu tự đặt so sánh hai quán bún bò:
+  - hai ảnh có tên, đúng thứ tự dòng Nguồn, 0 lỗi;
+  - lượt đầu ảnh xếp ngược thứ tự dòng Nguồn ⇒ đã sửa.
 
 ## Một chuyện thật: bật rồi mới thấy chậm, và lần đo "thêm cho tới khi đạt"
 
@@ -313,11 +335,14 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - **Chỗ ở:** lịch có buổi tối luôn ra trung tâm; trong 3.840 khung mô phỏng không lịch nào còn ra khu phía tây. Trong cùng mức, hạng cao đứng trước (tối 14/11), rồi cơ sở
   gần cụm có nhiều điểm nhất, rồi có ảnh, rồi theo tên — nên nhiều lịch trung tâm vẫn ra cùng 5 khách sạn. Không chọn mức: 14 / 137 cơ sở từng hiện; cộng
   cả ba mức sao: 33 / 137. Phần còn lại chỉ thấy ở trang "Chỗ ở". Không có giá, không có điểm đánh giá; hạng sao là hạng trong danh mục (lấy 12/11/2026), không phải giá.
+- **Ảnh nhiều nơi:** chỉ khớp đúng tên bài. Model viết tên khác (tên gọi khác, viết tắt) ⇒ không ảnh — thiếu ảnh chứ không sai ảnh. Tên mà chữ sau
+  cũng là chữ thường bình thường vẫn có thể khớp nhầm: "Lý Huế" khớp được trong "quản lý Huế", vì "lý" là một từ đứng riêng. Chặn được bằng cách giữ
+  cả chữ hoa đầu, nhưng mất 14 / 39 ảnh không sai nơi (model hay viết "chợ …", "lăng …") nên không chọn; chỉ sai khi bài đó cũng được trích. Khách sạn chưa có.
 - **Quán ăn:** sau tối 14/11 Thủy Xuân, Kim Long, biển / đầm phá đã có quán kho ở hơn một nửa số bữa; phần còn lại là quán bản đồ mở, chưa kiểm. Vùng xa phía
   nam (Bạch Mã, Nhị Hồ) không có quán, chỉ có câu nhắc theo sổ tay (từ 15/11). Dòng đầu vẫn ghi "Ăn tối gần Thác Nhị Hồ" dù câu nhắc bảo về nơi nghỉ mới ăn.
 - **So tiền mục web:** "1,500 đ" được đọc là 1.500 đồng (dấu phẩy ngăn nghìn kiểu tiếng Anh); "10K bước" bị nhận là tiền, nên có thể bị chặn nhầm (hướng
   an toàn).
-- **Ảnh** chỉ hiện khi mọi nguồn thuộc một bài, nên câu so sánh hai nơi không có ảnh. 6 bài chưa có ảnh nào, đều là quán.
+- **Ảnh:** câu so sánh nhiều nơi chỉ có ảnh khi tên bài nằm nguyên trong chữ trả lời (xem "Ảnh nhiều nơi" ngay dưới). 6 bài chưa có ảnh nào, đều là quán.
 
 ## Ba điều chính
 
@@ -342,6 +367,7 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - Sửa lịch bằng lời: 6 hành động, mô phỏng ~15.000 lần áp 0 vi phạm, 2 lỗi (240 khung; 4 / 1.920), Q3 7 / 10 ⇒ 9 / 10, kín 4 / 5, Q5 0 / 64, Q5b 0 / 16, tiền ≈ 0,25 USD, độ trễ 4,17 ⇒ 2,37 (n = 20 gộp, "đo thêm tới khi đạt") ⇒ đo lại n = 20 chốt trước 2,58 / 2,65 s, đệm 1.244 token 0,00024 ⇒ 0,0001 USD, phần huỷ ≈ 0,0001 USD: `report_agent/2026-11-12_ra_khoang_cach/b_sua_lich_v2_implementation.md` [đã chạy]; lỗi chặn câu trộn khẩn cấp: `e_review_sua_lich_v2.md` + mục "Sau review E" của report trên [đã chạy]; giới hạn chỉ bỏ được buổi tối: `session_prompt/CURRENT_HANDOFF.md` mục "Giới hạn đã nhận" [tài liệu]; câu ví dụ "bỏ điểm chiều nay, mình vừa bị ngã…" là **ví dụ tự đặt** (câu thật do E viết, không chép).
 - Câu nhiều ý vòng 1 (4 / 10 ⇒ 10 / 10; 3 / 18; 2 lỗi trích dẫn; 0,16 USD): `report_agent/…/c_cau_nhieu_y_do.md` [đã chạy]; vòng 2 (10 / 10; kín 0 / 10; 1 / 18 câu 161 đường không đổi; 0 / 176 đi vào luật; ≈ 0,19 USD; cộng ≈ 0,35): `c_cau_nhieu_y_do_v2.md` [đã chạy]; anh chọn bật: `CURRENT_HANDOFF.md` 14:44 14/11 [tài liệu]; sửa "và" (0 câu đổi vế; 10 / 10; 0,0151 USD): `c_so_y_va_implementation.md`, review `b_review_so_y_va.md` [đã chạy]; mục web 4 / 4 ⇒ 0 / 11, 0,0349 USD, Serper vẫn cả câu: `c_web_y_thieu_implementation.md`, review `b_review_web_y_thieu.md` [đã chạy]; bỏ từ đã có ở phần trả lời khi chọn vế (sửa m-1 của review): commit `0b7ef90`, `backend/llm/assistant.py` [code]. Ví dụ "bún bò và bánh khoái" là ca test trong code [code].
 - Chỗ ở: luật khu (50 % / 60 %, trẻ em ⇒ trung tâm), 2 / 2 / 1 theo hạng, 140 cơ sở danh mục Cục Du lịch Quốc gia, 3.840 khung (3.072 / 3.072), người xem 9 / 10 ⇒ 10 / 10, hai lỗi sửa, ≈ 0,0025 USD: `report_agent/…/b_luu_tru_lich_implementation.md` [đã chạy]; E review ready: `e_review_luu_tru_lich.md`; cờ bật: `backend/config/settings.yaml` `luu_tru_lich: true` [code].
+- Ảnh nhiều nơi (15/11): plan `docs/superpowers/plans/2026-11-15-anh-trong-chat-plan.md` (sha bf43cc57f6ea); đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_anh_chat.md`; làm `c_anh_chat_implementation.md`, review `e_review_anh_chat.md`; mô phỏng 77 ⇒ 103 / 154, 26 câu / 39 ảnh / 13 câu 2 ảnh, (`data/anh_chat_2026-11-15/mo_phong.json`) [đã chạy]; ranh giới từ không đổi bộ ảnh, giữ cả chữ đầu ⇒ 25 ảnh: mục "Sau review E" của `c_anh_chat_implementation.md` [đã chạy]; trần 109 = 77 + 41 − 9 (`c_dem_anh_chat.md`); 2 ảnh người xem chưa chắc: lăng Dục Đức (Commons "Cổng An Lăng"), phố Hai Bà Trưng (tuoitre.vn, bài đêm khai trương phố); kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_anh_chat.md` (8 chỗ — đã sửa); nhìn lại 39 ảnh `data/anh_chat_2026-11-15/nhin_lai_anh_moi.md`; 3 ảnh sửa gốc commit `133d29e` (E); Playwright `data/anh_chat_2026-11-15/anh/` [đã chạy]; merge `e801c83`.
 - Ảnh dưới câu trả lời: điều kiện, 29 ảnh `kc` (nay 49: 20 chủ đề + 29 một nơi), backend không đổi: `report_agent/…/c_review_anh_tra_loi.md`, merge `4be483e` [code]; 184 / 216: bài 24.
 - Câu "Đại Nội … và gần đó có quán karaoke…" là câu người điều phối thử thật, có trong report sửa "và" và ca test [đã chạy].
 - Giờ bật / tắt / bật lại sửa lịch (14:04 · 14:14 · 15:08): commit `e0cb02e`, `3985816`, `69def87` [code]. Tiền đệm 0,00007 / lần: `e_review_sua_lich_v2.md` [đã chạy]. 139 + 1 cơ sở: trường `nguon` của bảng lưu trú [đã chạy]. 7 loại bài có ảnh: `frontend/src/anhTraLoi.js` [code].
