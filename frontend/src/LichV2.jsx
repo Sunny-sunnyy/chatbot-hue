@@ -172,7 +172,7 @@ export function LichV2({ turn, onEditPlan }) {
       )}
       {/* User 15/11: khối nơi ở chỉ khi người dùng đã chọn / nói hạng chỗ ở; chưa hỏi ⇒ server gửi `cho_o_link` ⇒ một dòng link sang trang Chỗ ở */}
       {lich.o_dau ? <NoiO o={lich.o_dau} /> : lich.cho_o_link === true && (
-        <p className="lkh-o-them"><a href="#/cho-o">Cần chỗ ở? Xem gợi ý theo khu</a></p>
+        <p className="lkh-o-them"><a href="#/cho-o">Cần chỗ ở? Xem gợi ý theo khu</a>, hoặc nhắn trợ lý hạng sao bạn muốn (ví dụ “ở khách sạn 3 sao”).</p>
       )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
       {turn.notice && <p className="notice">{turn.notice}</p>}
