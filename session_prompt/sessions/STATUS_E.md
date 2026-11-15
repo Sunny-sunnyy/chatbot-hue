@@ -1,4 +1,45 @@
-# STATUS E — PHIÊN 15/11 · terminal `hue-rag-3e` · Claude Opus 5.5 · vai thực thi
+# STATUS E — KẾT PHIÊN 15/11 (ghi 14:44 15/11/2026, `date`) · terminal `hue-rag-3e` · Claude Opus 5.5 · vai thực thi
+
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11)
+
+**Quyền phiên 15/11 hết hạn.** Phiên sau: đọc mục này ⇒ kiểm nhanh ⇒ báo A ⇒ chờ A giao. E **không còn** worktree `/tmp/e_*`, server tạm (8893), container / image Docker, agent con nào.
+
+### Việc phiên sau đã định cho E (User chọn 15/11 — handoff mục 2)
+**Dựng `diem_v9` = v8 + 7 điểm nháp** (Từ Hiếu, Trường Tiền, Hải Vân, Bến Ngự, làng nón Tây Hồ, An Hiên, Lập An) — bảng MỚI, không sửa tại chỗ `diem_v8`.
+1. Nguồn nháp: `data/diem_lich_moi_2026-11-15/diem_moi_nhap.json` (khuôn v8; bỏ trường phụ `anh_kham_pha` khi ghép), `toa_do_moi_nhap.json`, `bo_ra.json` (3 nơi bỏ + lý do). Script dựng nháp `tools/dung_nhap.py` (nạp thử bằng `nap_bang_v2` ⇒ 41 điểm đúng khuôn). Review B ready (`b_review_diem_lich_moi.md`, 3 minor đã đóng).
+2. **⚠ BẪY phải xử lý trước:** toạ độ **Hải Vân (108,131) và Lập An (108,062) NGOÀI `KHUNG_HUE` = ((16,0, 16,8), (107,0, 108,0))** (`backend/llm/lich_trinh.py:430`) ⇒ `nap_toa_do` raise ⇒ **server không khởi động** (cờ `quan_lich` nạp toạ độ). Chọn: (a) nới kinh độ tới ~108,2 (căn cứ: Lăng Cô / Hải Vân thuộc TP Huế — kho) + test; hoặc (b) `vi_do: null` cho 2 điểm ⇒ không quán / bản đồ ở 2 điểm đó. Báo A chọn (đổi hằng số code ⇒ A quyết).
+3. Bảng toạ độ mới = `diem_toa_do_v7.json` + 7 dòng (khuôn `diem`: id, ten, vi_do, kinh_do, nguon…); bảng ảnh lịch mới = `bang_anh_v2.json` + 6 ảnh (chép ảnh Khám phá chắc từ `frontend/public/anh/kp/<khoa>.jpg` sang `frontend/public/anh/lich/<id>.jpg`; mã khoá trong trường `anh_kham_pha` của nháp; `nap_bang_anh` cần `nguon: "web"` + `trang` https hoặc tác giả + giấy phép Commons — lấy từ `data/anh_*/bang_anh_kham_pha_v*.json` theo bài). Tây Hồ không ảnh (OK — lịch cho phép thiếu).
+4. `settings.yaml`: `lich_trinh_bang_v2`, `lich_trinh_toa_do`, `lich_trinh_bang_anh` trỏ bản mới ⇒ chạy test file chạm **cả có lẫn không** `--env-file` (luật đổi cờ). **Deploy nháp** (`data/phase_12/deploy_nhap/`): đổi `CHUA` + `COPY` sang 3 file mới (luật ghi trong Dockerfile).
+5. Đo: `data/diem_lich_moi_2026-11-15/tools/mo_phong.py` (cùng 4 ngày đi như C) — mốc đã có: ẩm thực 56,4 ⇒ 44,0 % · chụp ảnh 51,7 ⇒ 36,8 · thiên nhiên 24,4 ⇒ 17,6 (buổi trống 72 ⇒ 64) · di tích 0 % · 0 lỗi kiểm khung. Rồi bộ lịch 20 / 12 (`data/phase_9/lich_trinh/bo_do_v2/` — `yeu_cau_20.jsonl`, `bo_quyet_12.jsonl`; cách chạy: `report_agent/2026-11-12_ra_khoang_cach/e_bo_do_len_ke_hoach.md`) — có phí nhỏ; harness chạy bản 0 USD trước (luật đo đúng chỗ đổi).
+6. Kiểm khởi động: `kiem_doan_mo_ta` cần 7 `doan_mo_ta` (chunk id) có trong chỉ mục đang chạy — nếu kho / chỉ mục được dựng lại trước đó ⇒ tìm lại chunk (script `tools/gom_kho.py`).
+7. Review B ⇒ A merge. Câu User còn mở: **chợ Bến Ngự** thời lượng 1 nguồn (trang 403 — E và B chưa tự đọc) — giữ với cờ hay bỏ.
+
+### Đã làm 15/11 (đều đã merge / commit — report trong `report_agent/2026-11-12_ra_khoang_cach/`)
+- **Nhánh của E (đã merge, A đưa vào lệnh dọn):** `p9-anh-14-bai` (Khám phá 249 ⇒ 255 / 263), `p9-anh-ks-w78` (ảnh khách sạn rà W78: giữ 50 / thay 8 / bỏ 11 ⇒ 58 / 137; bảng lưu trú v4), `p9-anh-sua-qc` (3 ảnh quảng cáo An Cựu / Tây Lộc / Hai Bà Trưng sửa ở nguồn), `p9-anh-lavela` (La Vela cắt lại).
+- **Report / biên bản E:** `e_anh_14_bai`, `e_anh_khach_san` (danh sách ảnh cho User), `e_docker_nhap` (Docker nháp: +5 file bảng, `ln -s dist public`, chạy thử đạt), `e_do_he_thong` (dò 5 luồng + chạy lại ảnh chat), `e_dem_ten_ks` (0 / 18 từ chối), `e_mo_rong_diem_lich`, `e_diem_lich_moi_nhap`; review: `e_review_ghi_chu_an`, `_mua_6mm`, `_ngan_sach_o`, `_cho_o`, `_phia_bien`, `_tay_son`, `_nhan_mua`, `_anh_chat`, `_anh_chat_hoi`, `_the_ks_chat`, `_tuan_sau`, `_rao_so_ngay` (vòng 2 ready). Mọi file đã tracked (E kiểm lúc kết phiên); chỉ `STATUS_E.md` này chưa commit.
+- Phản biện: plan khách sạn, ngưỡng mưa (6 mm, thước chung), plan tốc độ (phép thử search đồng thời), ảnh chat (tên dưới ảnh), rà nợ cũ, việc tiếp, tự soi 1 + 2.
+
+### Dữ liệu private E tạo (data/)
+`anh_14_bai_2026-11-15/` (v8 ảnh Khám phá, tools/tim.py) · `anh_khach_san_2026-11-15/` (bảng lưu trú **v4**, rà W78, tools/dem_hien.py, dung_bang_v4.py — chạy lại được) · `phase_12/deploy_nhap/` (đã sửa; sao lưu `sao_luu_2026-11-15/`) · `do_he_thong_2026-11-15/` (ảnh dò + pw_5_luong.py, pw_sau.py) · `dem_ten_ks_2026-11-15/` · `mo_rong_diem_lich_2026-11-15/` (dem_can_cu.py, pw_them.py) · `diem_lich_moi_2026-11-15/` (nháp + tools) · `dem_toc_do_2026-11-15/e_kiem/` · `anh_kham_pha_2026-11-14/anh/sao_luu_2026-11-15/` (3 ảnh gốc trước khi che).
+
+### Bẫy đã gặp 15/11
+- `POST /api/chat` (không stream) **không vào luồng sửa lịch** ⇒ dò hành vi phải qua giao diện / đường stream + ca đối chứng (suýt báo lỗi sai; A ghi Project_Status §8).
+- Đếm log tốc độ trộn lượt trước mốc commit (p95 5,92 s sai — B đính chính) ⇒ W79 (sha vào chat_metrics) đã duyệt.
+- Report tracked ghi tên + địa chỉ cơ sở ⇒ trùng kho ⇒ hook chặn (A sửa) ⇒ chạy `.githooks/overlap_scan.py <file>` trước khi giao.
+- Mô phỏng phải cùng ngày đi với người đo trước (lệch mốc thiên nhiên 23,2 ↔ 24,4 — C bắt).
+- Playwright: CSP chặn `wait_for_function` chuỗi ⇒ chờ bằng locator. `docker --env-file .env` lỗi (một dòng `.env` có tên biến kèm khoảng trắng) ⇒ truyền khoá qua `uv run --env-file` + `-e TÊN`. Docker Desktop: cổng mạng host không ra WSL ⇒ kiểm bằng `docker exec`.
+- Script dựng ảnh không xoá file cũ ⇒ đếm file mồ côi (2 ảnh khách sạn); `dung_bang_v4.py` sửa `unlink(missing_ok=True)` để chạy lại được.
+- Ảnh khách sạn: bỏ ảnh ⇒ bộ xếp tự ưu tiên cơ sở có ảnh (Indochine bị đẩy khỏi lịch phổ biến). Ô Nơi ở có ảnh 89,1 % (không chọn mức 95,3 %).
+
+### Câu hỏi còn mở (đã ở handoff, A trình)
+- Bến Ngự giữ / bỏ (trên). Ảnh 8 bài Khám phá + 11 + 7 cơ sở lưu trú: chờ User tự chụp / gửi (danh sách ở `e_anh_14_bai.md`, `e_anh_khach_san.md`). Lỗi chữ Kirin trong câu trả lời: 1 / 6.254 (C đếm) ⇒ chưa xây rào.
+
+### Tiền E phiên 15/11 ≈ 0,20 USD (API thật, cộng từ log / số lượt)
+- Serper: ảnh 14 bài 57 lượt 0,057 · ảnh khách sạn 15 + 38 = 0,053 · thời lượng 32 + 2 = 0,034 · Places 15 = 0,015.
+- Model (OpenAI): Docker 2 lịch ≈ 0,0014 · dò hệ thống 0,0026 + 0,001 · đếm tên khách sạn 0,016 + 0,0039 · thử "thêm nơi" 0,0088.
+- Codex: 1 lượt (gói ChatGPT User). Agent con: 3 lượt (quota Claude). WebFetch: miễn phí.
+
+---
 
 ## PHIÊN 15/11 (tiến độ)
 - 09:38 15/11/2026: mở phiên, kiểm nhanh khớp handoff (main `6c7c01b`, Qdrant 9.425). User cấp quyền "như tối 14/11" (A báo). **Rảnh — chờ A:** (1) User trả lời câu 14 bài trống ảnh (ô màu / tìm tay) ⇒ giao 3(i); (2) User đồng ý câu (a) ngưỡng mưa ⇒ E review nhánh C.
@@ -23,6 +64,7 @@
 - **Bẫy (15/11):** (1) đếm tốc độ phải cắt theo mốc commit, không chỉ theo ngày (số p95 5,92 s gộp lượt trước sửa — B đính chính). (2) `POST /api/chat` không stream KHÔNG vào luồng sửa lịch ⇒ dò sửa lịch phải qua giao diện / đường stream (suýt báo lỗi sai). (3) Playwright: CSP chặn `wait_for_function` chuỗi ⇒ chờ bằng locator.
 - 13:28 15/11/2026: review vòng 2 `p9-rao-so-ngay` ⇒ ready. Bảng NHÁP điểm lịch mới `data/diem_lich_moi_2026-11-15/` (7 / 10 nơi đủ căn cứ; bỏ Cồn Hến, Tây Lộc — thiếu thời lượng; Suối Voi — kho cảnh báo) ⇒ nạp đúng khuôn, mô phỏng 0 lỗi; report `e_diem_lich_moi_nhap.md` (chưa commit); chờ B review + User chọn xây. ≈ 0,05 USD. Tiền phiên E ≈ 0,23 USD. Rảnh.
 - 13:33 15/11/2026: B review bảng nháp điểm lịch ⇒ ready, 3 minor đã đóng (B kiểm lại). Nháp sẵn sàng chờ User chọn xây (Bến Ngự: User quyết giữ / bỏ). Vòng tự soi 2 đã gửi. Rảnh.
+- 13:33 15/11/2026: A chốt vòng tự soi 2 (W79–W81 chờ User; bẫy đường stream ghi Project_Status §8). **Rảnh — chờ User (~14:30).** Không server / worktree / container.
 
 ### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
 Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).
