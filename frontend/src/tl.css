@@ -29,7 +29,6 @@
 .tro-ly-trang .tl-chat .chat-form { position: sticky; bottom: 0; background: var(--color-surface); border-top: 1px solid var(--color-line); padding: 14px 18px; }
 .tro-ly-trang .tl-chat .chat-turns { margin-top: 0; }
 .tro-ly-trang .turn { scroll-margin-top: 96px; }  /* tự cuộn tới lượt mới: không để thanh menu dính che câu hỏi */
-.buoc-gon::first-letter { text-transform: uppercase; }
 /* desktop: câu gợi ý đã ở cột trái ⇒ ẩn bản lặp trong lời chào */
 @media (min-width: 981px) { .tl-cot .chat-chao .suggest { display: none; } }
 
@@ -42,12 +41,7 @@
 
 /* Bước công cụ thật + "đang gõ" */
 .searching { flex-wrap: wrap; }
-.buoc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
-.buoc li { color: var(--color-muted); }
-.buoc li.xong::before { content: "✓"; color: var(--color-accent); font-weight: 700; margin-right: 8px; }
-.buoc li.dang { color: var(--color-accent-deep); font-weight: 600; }
-.buoc li.dang::before { content: "•"; color: var(--color-accent); margin-right: 8px; }
-.buoc-gon { margin: 0 0 6px; font-size: 14px; color: var(--color-muted); }
+.buoc-dang { font-size: 15px; font-weight: 600; color: var(--color-accent-deep); }
 .go { display: inline-flex; gap: 5px; padding: 6px 2px; }
 .go i { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); opacity: .35; }
 .hieu-ung .go i { animation: tl-go 1.2s ease-in-out infinite; }

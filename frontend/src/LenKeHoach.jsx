@@ -121,9 +121,7 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
   const dangChay = !["done", "error", "stopped"].includes(t.phase);
   return (
     <div className="lkh-lich">
-      {!t.lichV2 && t.progress?.length > 0 && (
-        <ul className="progress" aria-label="Các bước xếp lịch">{t.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
-      )}
+      {!t.lichV2 && dangChay && t.progress?.length > 0 && <p className="progress" role="status">{t.progress[t.progress.length - 1]}</p>}
       {!t.lichV2 && dangChay && <span className="lkh-go" role="status" aria-label="đang xếp lịch"><i /><i /><i /></span>}
       {t.error && <p className="loi" role="alert">{t.error}</p>}
       {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} />}
