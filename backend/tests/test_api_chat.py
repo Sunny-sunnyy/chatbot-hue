@@ -2,6 +2,8 @@
 import importlib
 import json
 import logging
+import subprocess
+from pathlib import Path
 from contextlib import contextmanager
 from types import SimpleNamespace
 
@@ -9,6 +11,7 @@ from fastapi.testclient import TestClient
 
 from api.app import create_app
 from api.routes.chat import METRIC_FIELDS
+from core.logging_setup import LOG_FILE_NAME, LOGS_DIR
 from core.settings_loader import load_settings
 
 
@@ -70,7 +73,9 @@ def test_real_first_chunk_budget_error_has_no_partial_answer(caplog):
     settings["full_corpus_generation"]["context_limit"] = 2561
     app = create_app(settings)
     query = "Giá vé Đại Nội?"
+    log_file = LOGS_DIR / LOG_FILE_NAME
     with TestClient(app) as client, chat_log_records(caplog) as records:
+        moc = len(log_file.read_text(encoding="utf-8", errors="replace").splitlines())  # sau lifespan: file log đã có
         response = client.post("/api/chat", json={"query": query})
         chat_messages = [r.getMessage() for r in records if r.name == "chat"]
         lines = metric_lines(records)
@@ -91,6 +96,21 @@ def test_real_first_chunk_budget_error_has_no_partial_answer(caplog):
     assert lines[0]["dense_ms"] == round(lines[0]["dense_ms"], 1)  # làm tròn 1 chữ số như các trường *_ms (B70 m-2)
     assert lines[0]["input_tokens"] is None and lines[0]["output_tokens"] is None
     assert not any(query in message for message in chat_messages)
+    # Dòng thật trong file log (thứ script đếm đọc) mang mã commit của đúng thư mục code đang chạy.
+    moi = [line for line in log_file.read_text(encoding="utf-8", errors="replace").splitlines()[moc:] if "chat_metrics " in line]
+    sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=Path(__file__).parent, capture_output=True, text=True).stdout.strip()
+    assert len(moi) == 1 and sha
+    assert json.loads(moi[0].split("chat_metrics ", 1)[1])["git_sha"] == sha == lines[0]["git_sha"]
+
+
+def test_git_sha_khong_co_git_thi_khong_chet(monkeypatch):
+    from api.routes import chat
+
+    def khong_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(chat.subprocess, "run", khong_git)
+    assert chat._doc_git_sha() == "khong_ro"
 
 
 def test_chat_metrics_logged_when_retrieval_not_ready(caplog):
@@ -101,6 +121,17 @@ def test_chat_metrics_logged_when_retrieval_not_ready(caplog):
     assert response.status_code == 503
     assert len(lines) == 1
     assert lines[0]["outcome"] == "retrieval_unavailable" and lines[0]["status_code"] == 503
+
+
+def test_git_sha_co_o_ca_hai_route(caplog):
+    from api.routes.chat import GIT_SHA
+
+    app = create_app(load_settings())  # không lifespan ⇒ 503 trước model ở cả hai route, 0 USD
+    with chat_log_records(caplog) as records:
+        for path in ("/api/chat", "/api/chat/stream"):
+            assert TestClient(app).post(path, json={"query": "Huế có gì?"}).status_code == 503
+        lines = metric_lines(records)
+    assert [line["git_sha"] for line in lines] == [GIT_SHA, GIT_SHA] and GIT_SHA != "khong_ro"
 
 
 def test_clean_subprocess_import_production_command():

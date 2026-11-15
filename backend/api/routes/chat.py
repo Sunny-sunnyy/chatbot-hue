@@ -8,7 +8,9 @@ import asyncio
 import json
 import logging
 import os
+import subprocess
 import time
+from pathlib import Path
 
 import anyio
 from agents.exceptions import AgentsException
@@ -60,7 +62,25 @@ METRIC_FIELDS = (
     "thoi_tiet",
     # việc nhỏ 13 (A 08/11): mã lượt ngẫu nhiên của 👍 / 👎 (`api/feedback.py`) ⇒ nối dòng `chat_feedback` với số đo của đúng lượt; không nội dung
     "turn_id",
+    # mã bản code đang chạy ⇒ script đếm log chỉ lấy lượt của đúng bản (`scripts/dem_chat_metrics.py --sha`); log dùng chung cho mọi bản + pytest
+    "git_sha",
 )
+
+
+def _doc_git_sha() -> str:
+    """Mã commit ngắn của thư mục code này (worktree / server tạm tự mang mã của nhánh). Không có git (vd trong Docker) ⇒ "khong_ro"."""
+    try:
+        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=Path(__file__).parent, capture_output=True, text=True, timeout=5)
+    except (OSError, subprocess.SubprocessError):
+        return "khong_ro"
+    return out.stdout.strip() if out.returncode == 0 and out.stdout.strip() else "khong_ro"
+
+
+GIT_SHA = _doc_git_sha()  # đọc một lần lúc nạp module (= lúc server khởi động)
+
+
+def _so_do_moi(fields) -> dict:
+    return dict.fromkeys(fields) | {"git_sha": GIT_SHA}
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
 STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delta_matches_final",
@@ -215,7 +235,7 @@ async def chat(body: ChatRequest, request: Request, response: Response):
     Phần suy `outcome` chỉ đọc giá trị kiểu thường; log không được đổi phản hồi."""
     _kiem_truong_v2(body, request.app.state)
     started = time.perf_counter()
-    metrics = dict.fromkeys(METRIC_FIELDS)
+    metrics = _so_do_moi(METRIC_FIELDS)
     try:
         result, conversation_id = await _answer(body, request, metrics)
         _set_outcome(result, metrics)
@@ -421,7 +441,7 @@ async def chat_stream(body: ChatRequest, request: Request):
     `_answer_events` tự ghi dòng log ở `finally` của nó ⇒ vẫn đúng một dòng mỗi lần gọi."""
     _kiem_truong_v2(body, request.app.state)
     started = time.perf_counter()
-    metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
+    metrics = _so_do_moi(STREAM_METRIC_FIELDS)
     stream_opened = False
     try:
         query = body.query.strip()
