@@ -7,6 +7,9 @@
 - v5: nhánh `p9-luu-tru-v5` @ `ea0e82c` (đã push; diff 1 dòng `settings.yaml` ⇒ A merge thẳng). Bảng `data/luu_tru_v5_2026-11-15/bang_luu_tru_lich_v5.json` md5 `34836e7c1438`; 136 cơ sở, 57 có ảnh; lịch đổi 0 / 15.360; test 16 passed có / không env.
 - `scripts/commit_push.sh`: nhánh `p9-commit-push` @ `609c7ac` (đã push bằng chính script; chờ A review). Chạy thử `data/commit_push_2026-11-15/thu.sh` ĐÚNG 15 / 15.
 - Worktree còn: `/tmp/c_v5`, `/tmp/c_cp` — gỡ sau khi A merge. 0 server / tiến trình nền.
+**Review W79 của B XONG (15:16 15/11/2026, 0 USD):** nhánh `p9-w79-sha` @ `7b1ba00` — ready, 0 blocker / 0 major / 2 minor (`--sha HEAD` chạy git ở thư mục đang đứng, không phải thư mục của log mặc định; mặc định bỏ lượt 0 đồng mà không in số lượt đã bỏ). Chạy lại `test_api_chat.py` 11 passed + 1 lỗi cần khoá (có sẵn); dò script bằng log tự viết 5 dòng. Kết luận gửi B + A bằng tin nhắn (review ≤ 5 dòng, không file riêng). Worktree `/tmp/c_rv` đã gỡ.
+**v5 + `commit_push.sh` đã vào main (`e54c19d`); worktree `/tmp/c_v5`, `/tmp/c_cp` đã gỡ.**
+**Plan bậc 1 "đổi hạng chỗ ở bằng lời" NHÁP XONG (15:19 15/11/2026, 0 USD, chưa code):** `docs/superpowers/plans/2026-11-15-sua-lich-hang-cho-o-plan.md` (chưa commit) — hành động mới `doi_hang_o`, 4 câu "không đổi" có lý do, không bộ kín, ≈ 0,19 USD (trần 0,25). Chờ A duyệt rồi mới code. Khai báo sửa khi được duyệt: `backend/llm/sua_lich_v2.py`, `full_corpus_prompt.py` (`SUA_LICH_LOI_DAN`), `len_ke_hoach.py`, test `test_sua_lich_v2.py`, bộ câu `data/sua_lich_hang_2026-11-15/`.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11 — C viết 14:43 15/11/2026 `date`)
 
