@@ -1,7 +1,16 @@
 # CURRENT_HANDOFF — việc đang mở của A/B/C/E
 
-Cập nhật: 18:24 15/11/2026 (A, kết phiên chiều 15/11). Trước: 14:42 15/11/2026 (A, kết phiên 15/11). Trước: 22:35 14/11/2026 (A, kết phiên tối 14/11). Trước: 17:40 14/11/2026 (A, kết phiên chiều 14/11). Trước: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11).
+Cập nhật: 19:29 15/11/2026 (A, mở phiên tối 15/11). Trước: 18:24 15/11/2026 (A, kết phiên chiều 15/11). Trước: 14:42 15/11/2026 (A, kết phiên 15/11). Trước: 22:35 14/11/2026 (A, kết phiên tối 14/11). Trước: 17:40 14/11/2026 (A, kết phiên chiều 14/11). Trước: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
+
+## PHIÊN TỐI 15/11 — ĐANG CHẠY (A viết 19:29 15/11/2026)
+
+- **Terminal:** A `hue-rag-ef` · B `hue-rag-7d` · C `hue-rag-10` · E `hue-rag-f0` — cả bốn Claude Code, trực tiếp; D không mở.
+- **Quyền phiên (User chọn "như chiều 15/11", A ghi nhận 19:29 15/11/2026):** A tự điều phối, giao ngay việc có trong handoff; A tự commit / push `main`; B / C / E push nhánh riêng; tự tra / cào / ghi kho khi việc cần; tiền không trần cứng, dùng hiệu quả, lúc User vắng ≈ 1 USD; User nói "đi vắng" ⇒ câu hỏi gác. Hết hạn cuối phiên.
+- **Kiểm nhanh:** `main` `54265a5` = origin; hooksPath `.githooks`; Qdrant 1 collection 9.425; 0 worktree `/tmp`; **RAM WSL đã lên 19 GB, swap 8 GB — User đã áp `.wslconfig` 20 GB** (dòng "User chưa làm" ở mục RAM dưới là cũ). Luật nhóm "mỗi người ≤ 1 server tạm, một bộ test rộng một lúc" giữ.
+- **Đã giao (19:29 15/11/2026):** B — mục 2 (harness Q3 tự mô phỏng nhãn + tách `kiem_bo.py`; phần kín do User `!`) · C — 4b(c) phép đếm trước, rồi mục 4 trên nhánh `p9-sua-lich-no-nho` (tách hai việc) · E — 4b(b) đo lại bữa có quán kho ⇒ 4b(a) + nửa câu cách nhắn hạng sao ở dòng link Nơi ở (nhánh `p9-chu-gioi-thieu`) ⇒ mục 3 (E tự tìm ảnh Hải Vân, A nhìn lại). Mỗi tin kèm vòng tự soi 1 + xin ý kiến "hướng làm tiếp" (bàn nhóm trước khi A khuyến nghị User).
+- **A:** server cổng 8010 mở cho User thử.
+- **Lệnh dọn nhánh:** thêm `p9-tai-lieu-web-noi-tiep`, `p9-tai-lieu-ket-phien-chieu` (đã trong `main` — B, E báo) vào danh sách ở mục "User tự làm (2)".
 
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 18:24 15/11/2026, KẾT PHIÊN CHIỀU 15/11 — User: "kết phiên để reset context, tôi bật lại 4 phiên mới để tiếp tục hoàn thiện dự án; nhiệm vụ, câu hỏi để ở session tiếp theo; cập nhật các file .md đầy đủ để A, B, C, D, E nắm ngữ cảnh")
 
@@ -56,7 +65,7 @@ Cách đọc: lệnh 1 = số dòng nhắc 7 nơi mới; lệnh 2 in "k / n chu�
 **(2) Xoá nhánh đã merge** (A liệt kê bằng `git branch -r --merged origin/main` lúc kết phiên chiều; gồm cả 14 nhánh của phiên trưa chưa xoá):
 ```
 git worktree prune
-git push origin --delete p9-anh-14-bai p9-anh-chat p9-anh-chat-hoi p9-anh-kp-user p9-anh-ks-user p9-anh-ks-w78 p9-anh-lavela p9-anh-sua-qc p9-anh-tay-ho p9-bo-buoi-trong p9-cho-o p9-commit-push p9-diem-v9 p9-gd-3-sua p9-hang-o-m12 p9-luu-tru-v5 p9-mua-6mm p9-ngan-sach-o p9-nhan-mua p9-o-khi-hoi p9-phia-bien p9-rao-so-ngay p9-sua-hang-o p9-sua-ngay-di p9-tai-lieu-hang-o p9-tai-lieu-ngay-di p9-tai-lieu-v9 p9-the-ks-chat p9-tuan-sau p9-w79-sha p9-web-noi-tiep
+git push origin --delete p9-anh-14-bai p9-anh-chat p9-anh-chat-hoi p9-anh-kp-user p9-anh-ks-user p9-anh-ks-w78 p9-anh-lavela p9-anh-sua-qc p9-anh-tay-ho p9-bo-buoi-trong p9-cho-o p9-commit-push p9-diem-v9 p9-gd-3-sua p9-hang-o-m12 p9-luu-tru-v5 p9-mua-6mm p9-ngan-sach-o p9-nhan-mua p9-o-khi-hoi p9-phia-bien p9-rao-so-ngay p9-sua-hang-o p9-sua-ngay-di p9-tai-lieu-hang-o p9-tai-lieu-ngay-di p9-tai-lieu-v9 p9-the-ks-chat p9-tuan-sau p9-w79-sha p9-web-noi-tiep p9-tai-lieu-web-noi-tiep p9-tai-lieu-ket-phien-chieu
 git branch -d p9-anh-14-bai p9-anh-chat p9-anh-chat-hoi p9-anh-kp-user p9-anh-ks-user p9-anh-ks-w78 p9-anh-lavela p9-anh-sua-qc p9-anh-tay-ho p9-bo-buoi-trong p9-cho-o p9-commit-push p9-diem-v9 p9-gd-3-sua p9-hang-o-m12 p9-luu-tru-v5 p9-mua-6mm p9-ngan-sach-o p9-nhan-mua p9-o-khi-hoi p9-phia-bien p9-rao-so-ngay p9-sua-hang-o p9-sua-ngay-di p9-tai-lieu-hang-o p9-tai-lieu-ngay-di p9-tai-lieu-v9 p9-the-ks-chat p9-tuan-sau p9-w79-sha p9-web-noi-tiep
 git branch -D p9-tim-song-song p9-tran-tim-1 p9-web-so-0 && git push origin --delete p9-tim-song-song p9-tran-tim-1 p9-web-so-0
 ```
@@ -125,6 +134,7 @@ Tên terminal đổi mỗi lần mở: `ListAgents`. B / C / E lúc mở phiên 
 
 ## Quyền
 
+- **Phiên tối 15/11 (User chọn "như chiều 15/11", A ghi nhận 19:29 15/11/2026):** chi tiết ở mục "PHIÊN TỐI 15/11" đầu file. Hết hạn cuối phiên.
 - **Quyền phiên chiều 15/11 HẾT HẠN (18:24 15/11/2026, kết phiên).** Phiên sau A hỏi lại. (Chiều 15/11: "như sáng 15/11"; lúc vắng không hỏi, ≈ 1 USD; dùng ≈ 0,45.)
 - **Quyền phiên 15/11 HẾT HẠN (14:42 15/11/2026, kết phiên).** Phiên sau A hỏi lại. (15/11: "như tối 14/11"; lúc vắng trần ≈ 1 USD, "quá thì vẫn duyệt, miễn hiệu quả"; đạt tiêu chí ghi trước ⇒ bật.)
 - **Quyền phiên tối 14/11 HẾT HẠN (22:35 14/11/2026, kết phiên).** Phiên sau A hỏi lại. (Tối 14/11: "như 14/11"; User vắng 17:49 ⇒ "tiếp tục phát triển; câu cần User gác lại".)

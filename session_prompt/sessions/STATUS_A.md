@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN TỐI 15/11 (mở 19:27; cập nhật 19:29 15/11/2026 `date`)
+
+- Terminal: A `hue-rag-ef` · B `hue-rag-7d` · C `hue-rag-10` · E `hue-rag-f0` (Claude Code, trực tiếp).
+- Kiểm nhanh: `main` `54265a5` = origin, chỉ `.wslconfig` untracked; hooksPath `.githooks`; Qdrant 1 collection 9.425; RAM 19 GB / swap 8 GB (User đã áp `.wslconfig`); 0 server 80xx; 0 worktree `/tmp`; lệnh dọn nhánh của User chưa chạy (origin 41 nhánh).
+- User: quyền "như chiều 15/11" (A ghi 19:29 15/11/2026).
+- Giao: B mục 2 (W84 + tách `kiem_bo.py`) · C 4b(c) rồi mục 4 · E 4b(b) ⇒ 4b(a) ⇒ mục 3. Server 8010 A mở cho User.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; sau: `bao_cao_he_thong/README.md` (số bữa có quán kho khi E đo lại), nhật ký ngày.
+- Tiếp: vòng tự soi 1 + bàn nhóm "hướng làm tiếp" khi B / C / E có kết quả đầu ⇒ hỏi User câu (1), rồi kết quả 2 lệnh đếm bộ kín, mỗi lần một câu.
+
 # STATUS A — KẾT PHIÊN CHIỀU 15/11 (viết 18:25 15/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 15/11)" ⇒ kiểm nhanh + `ListAgents` ⇒ hỏi quyền phiên (một câu, hộp chọn có đáp án khuyến nghị) ⇒ cùng lượt giao B (phần code W84: harness Q3 tự mô phỏng + tách `kiem_bo.py` khỏi file kín), E (bữa Tây Hồ / Hải Vân tối, ảnh Hải Vân, nguồn thứ hai chợ Bến Ngự), C (nợ nhỏ sửa lịch bằng lời: `doi_tham_so` rỗng im lặng, dòng báo đổi số trẻ em) ⇒ mở server 8010 cho User thử tiếp (lệnh + danh sách 26 mục: `data/huong_dan_test_user_2026-11-15.md`) ⇒ bàn nhóm rồi hỏi User câu (1) "hướng làm tiếp" ⇒ hỏi kết quả 2 lệnh đếm bộ kín.
