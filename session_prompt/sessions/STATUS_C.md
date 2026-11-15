@@ -1,9 +1,9 @@
 # STATUS C — kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 20:50 15/11/2026 `date`)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 21:00 15/11/2026 `date`)
 
-- **Trạng thái máy của C:** còn worktree `/tmp/c_dk2` (nhánh `p9-anh-dinh-kem-2`; symlink `data/`, `knowledge-base-hue/`, `frontend/node_modules` + `frontend/dist` build riêng) ⇒ **gỡ khi nhánh đã merge**: xoá 3 symlink rồi `git worktree remove --force /tmp/c_dk2` (`/tmp` mất sau khởi động lại máy ⇒ `git worktree prune`). 0 server tạm (cổng 8041 đã tắt), 0 tiến trình nền. Nhánh của C đã merge, User xoá được: `p9-sua-lich-no-nho p9-nut-anh-cong p9-f5-cuoc-moi p9-anh-dinh-kem` (+ `p9-anh-dinh-kem-2` sau khi merge). C không tự xoá nhánh.
-- **VIỆC ĐẦU PHIÊN SAU (A đã nêu):** chạy lại cho SẠCH lượt đếm "cùng một cuộc: hỏi A ⇒ hỏi tiếp B ⇒ hỏi lại A" (≈ 0,015 USD): công cụ `data/hoi_lai_cau_cu_2026-11-15/dem.py` (chạy từ `backend/`, lệnh ở đầu file; tra web tắt bằng `HUE_TRA_WEB=false`); **thay bộ "giờ mở cửa một di tích"** (trượt đối chứng 2 / 2) bằng một bộ có câu A kho trả lời được; lượt lỗi kết nối ⇒ chạy lại đúng cuộc đó, không tính; tiêu chí đã ghi `tieu_chi.md` (≥ 2 / 8 ⇒ lỗi rộng ⇒ đề xuất một hướng sửa). Hướng sửa C đề xuất (chưa duyệt): đưa lịch sử cho model thành một khối ghi rõ "các câu đã hỏi trước, đã xử lý xong" thay vì các tin người dùng trần — đổi chuỗi gửi model ở mọi lượt có lịch sử ⇒ plan mức nhẹ + đo bộ câu hỏi tiếp + bộ an toàn. Report quan sát tối nay: `report_agent/2026-11-12_ra_khoang_cach/c_dem_hoi_lai_cau_cu.md`.
+- **Trạng thái máy của C:** 0 worktree `/tmp/c_*` (đã gỡ hết), 0 server tạm (cổng 8041 đã tắt), 0 tiến trình nền, 0 file tạm. Nhánh của C đã merge, User xoá được: `p9-sua-lich-no-nho p9-nut-anh-cong p9-f5-cuoc-moi p9-anh-dinh-kem p9-anh-dinh-kem-2` (+ `p9-tai-lieu-dem-hoi-lai` sau khi A merge report). C không tự xoá nhánh.
+- **VIỆC ĐẦU PHIÊN SAU: không có việc đã giao — chờ A.** Lượt đếm "A ⇒ hỏi tiếp B ⇒ hỏi lại A" ĐÃ chạy lại sạch tối nay: lượt 3 bị từ chối **0 / 8** (đối chứng 8 / 8, tra web tắt) ⇒ không phải lỗi rộng. **Chỗ chưa khớp:** bộ "vị trí ⇒ khoảng cách" từ chối 3 / 3 trên server thật có tra web nhưng 0 / 2 ở lượt sạch ⇒ C đề xuất (A chưa quyết) thử đúng cấu hình đang chạy: bộ đó × 3 cuộc qua server thật (≈ 0,013 USD, `data/f5_cuoc_moi_2026-11-15/tai_tao.py <url> <log> 3`). Report `report_agent/2026-11-12_ra_khoang_cach/c_dem_hoi_lai_cau_cu.md` (nhánh `p9-tai-lieu-dem-hoi-lai` `d5747d8`, chờ A merge); công cụ `data/hoi_lai_cau_cu_2026-11-15/dem2.py`.
 
 | Việc (A giao tối 15/11) | Trạng thái | Số chính | Tiền |
 |---|---|---|---|
@@ -11,16 +11,18 @@
 | Việc 1 (handoff mục 4): lượt đổi tham số không đổi được gì có dòng báo · dòng "lịch xếp lại / giữ nguyên chỗ" · bảng 7 / 8 trường | **đã merge** (main `e5b076e`; nhánh `8059e29`) | B review bắt lỗi thật (điểm dời ban ngày ↔ tối ghi vừa "bớt" vừa "thêm", có sẵn ở câu đổi ngày đi) ⇒ sửa chung; > 6 tên ⇒ chỉ nêu số; bộ quét B 0 câu sai / 540 lượt | 0 |
 | Nút dấu cộng trong ô nhập + dán ảnh (User báo khi thử) | **đã merge** (nhánh `caccfb7`; E review ready, E đã thử dán PNG thật 3 / 3) | ảnh `data/nut_anh_cong_2026-11-15/anh/`; chưa thử Safari / Firefox | 0,0007 |
 | Tải lại trang ⇒ cuộc mới ở server (LỗI User báo: F5 xong hỏi lại câu đầu bị từ chối) | **đã merge** (main `b833c7b`; A đọc diff, merge thẳng) | tái tạo 3 / 3; sau sửa Playwright: reload ⇒ hỏi lại ⇒ lịch sử 0, được trả lời | 0,0159 |
-| Đếm lỗi riêng "cùng một cuộc: A ⇒ hỏi tiếp B ⇒ hỏi lại A" (A duyệt) | **xong — lượt đếm KHÔNG sạch, A quyết bước kế** | 5 / 24 lượt lỗi kết nối + 1 / 4 bộ trượt đối chứng ⇒ không đọc "x / 8"; quan sát: ở lượt 3 model tìm kho cho câu B (2 / 3 cuộc sạch), bộ "vị trí ⇒ khoảng cách" từ chối 4 / 4 khi B trong lịch sử; giả thuyết: lịch sử chỉ có câu hỏi trần. Report `c_dem_hoi_lai_cau_cu.md` (đang nằm trên nhánh `p9-anh-dinh-kem`); công cụ `data/hoi_lai_cau_cu_2026-11-15/dem.py` — chạy lại cho sạch ≈ 0,015 USD (thay bộ "giờ mở cửa") | 0,0149 |
+| Đếm lỗi riêng "cùng một cuộc: A ⇒ hỏi tiếp B ⇒ hỏi lại A" (A duyệt 2 lượt) | **xong** — lượt sạch 0 / 8 ⇒ không phải lỗi rộng; còn chỗ chưa khớp với server thật (web bật) | lượt đầu không sạch (lỗi "kết nối" thật ra do công cụ của C: mỗi cuộc một TestClient); lượt sạch: đối chứng 8 / 8, model tìm kho cho câu B ở lượt 3: 3 / 8 nhưng vẫn trả lời đúng A; nhánh chẩn đoán "lịch sử kèm câu trả lời" CHƯA ĐO | 0,0149 + **0,0298** (vượt mức duyệt ≈ 0,02 vì 32 lượt hỏng của bản công cụ lỗi vẫn tốn phần định tuyến) |
+| Thử sổ vết debug của E (`p9-so-vet` `8493624`, `HUE_SO_VET=true`) trên 3 loại lượt | **xong, đã báo A + B** | biểu mẫu xếp lịch · sửa lịch bằng lời · ảnh: 3 / 3 ra dòng; THIẾU `lich.khung` cho lịch bản 2 (bản ghi đọc `trace.lich`, khung v2 ở `trace.lich_v2`) — chưa ai sửa; `data/thu_so_vet_2026-11-15/thu.py`. Phần sửa 3 điểm review A giao cho C: E đã tự sửa trước ⇒ C bỏ, không push | 0,0014 |
 | Ảnh đính kèm tin nhắn — bấm Hỏi mới xử lý (User chốt: tải ảnh lên không làm gì) | **đã merge** (main `67dd28d`; B review ready) + **2 minor chờ A đọc diff / B liếc**: `origin/p9-anh-dinh-kem-2` `cb00fa4` (dòng nhắc "Chọn một tên ở trên…" khi bấm Hỏi lúc thẻ mở; "Cuộc trò chuyện mới" gỡ ảnh + thẻ) | Playwright mọi ca đạt; ảnh `data/anh_dinh_kem_2026-11-15/anh/`; giới hạn: chưa có nút huỷ lúc "Đang xem ảnh…", Safari / Firefox chưa thử | 0,0019 |
 | Review nhánh `p9-chu-gioi-thieu` của E (A nhờ) | **ready, A đã merge** | câu ví dụ "ở khách sạn 3 sao" chạy thật 6 / 6 ra đổi hạng 2–3 sao (`data/review_chu_gioi_thieu_2026-11-15/`) | 0,00075 |
 
 
-- **Tổng tiền C tối 15/11 ≈ 0,034 USD** (câu ví dụ 0,00075 · nút dấu cộng 0,00072 · F5 0,0159 · đếm A ⇒ B ⇒ A 0,0149 · ảnh đính kèm 0,0019); chưa ai tính lại.
+- **Tổng tiền C tối 15/11 ≈ 0,066 USD** (câu ví dụ 0,00075 · nút dấu cộng 0,00072 · F5 0,0159 · đếm A ⇒ B ⇒ A 0,0149 + 0,0298 · ảnh đính kèm 0,0019 · thử sổ vết 0,0014); chưa ai tính lại.
 - **Review C làm tối nay:** `p9-chu-gioi-thieu` của E (ready).
 
 ### Còn mở / ứng viên vùng của C (chưa ai giao)
-- Lỗi "hỏi lại câu cũ trong một cuộc" (việc đầu phiên sau, ở trên).
+- Lỗi "hỏi lại câu cũ trong một cuộc": lượt sạch 0 / 8; còn phép thử có tra web (ở trên) — chờ A.
+- Hỏi bằng ảnh, giới hạn B nêu: bấm "Cuộc trò chuyện mới" đúng lúc "Đang xem ảnh…" ⇒ thẻ tên vẫn hiện lại ở cuộc mới (chưa sửa).
 - Hỏi bằng ảnh: nút huỷ lúc "Đang xem ảnh…"; nút × 24 px; 1 / 3 lượt PNG nhỏ của E ra lỗi model vì suy luận ăn gần hết 1.024 token đầu ra (`nhan_anh.MAX_OUTPUT_TOKENS`) — chưa đếm trên `anh_metrics`.
 - Sửa lịch bằng lời: các mục (i) ngày tương đối / ngày âm, (ii) xin chỗ ở không nêu hạng ⇒ hiện mọi hạng (đếm 6–8 câu trước), (vii) S06 chập chờn — vẫn như mục "Còn mở" của kết phiên chiều bên dưới; (iii) và (v) ĐÃ XONG tối nay.
 - Đếm 4b(c) (biểu mẫu đưa cơ sở khác hạng): 0 / 9.216, A quyết không sửa; **chạy lại `data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py` khi đổi bảng điểm hoặc bảng lưu trú** (2 giây, 0 USD).
@@ -28,6 +30,8 @@
 ### Bẫy gặp tối 15/11
 - So hai khung lịch bằng dict `{id: (ngày, buổi)}` ghi đè điểm buổi tối nằm ở nhiều ngày ⇒ dùng TẬP chỗ của mỗi id (B bắt khi review; lỗi có sẵn ở câu đổi ngày đi).
 - Lượt đếm có phí chạy trong tiến trình gặp 5 lượt lỗi kết nối nhà cung cấp ⇒ cuộc thiếu lượt lịch sử, số không đọc được ⇒ công cụ đếm phải nhận ra lượt lỗi (chữ trả lời rỗng ≠ "không từ chối") và chạy lại cuộc đó.
+- Công cụ đếm chạy ứng dụng trong tiến trình: **một `TestClient` cho mọi cuộc** (xoá cookie giữa các cuộc) — mỗi cuộc một client ⇒ lỗi kết nối model 32 / 32 và vẫn tốn tiền định tuyến; thử 1 cuộc trước khi chạy cả bộ.
+- Log `backend/logs/application.log` của cây chung nhận cả lượt đo trong tiến trình ⇒ đếm tiền theo mốc dòng + nhìn giờ.
 - Bộ câu tự viết chưa thử đối chứng trước (câu A bị kho từ chối ngay ở cuộc mới) ⇒ chạy riêng lượt 1 của mọi bộ (rẻ) trước khi chạy cả bộ ba.
 - `event: done` của luồng SSE đến SAU `event: web` ⇒ script đọc luồng đừng gán lại biến web ở `done`.
 - Worktree cho việc giao diện: symlink `frontend/node_modules` từ cây chung rồi `npm run build` (< 1 giây), không cần `npm ci`; server tạm từ worktree đọc bản build của chính worktree.
