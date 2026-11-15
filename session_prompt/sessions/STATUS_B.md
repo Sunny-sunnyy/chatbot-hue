@@ -3,6 +3,8 @@
 - 09:42 15/11/2026 — **Đo bù ghi kho 4/5/6 XONG, ĐẠT**: 65 câu ×1 — 0 lỗi, từ chối 2 ⇒ 1 (0 mới), 0 lỗi trích dẫn; 57 chữ khác mốc ⇒ chấm mù 56 cùng ý + 1 khác ý (bản sau tốt lên: hết từ chối). ≈ 0,029 USD. Report `report_agent/2026-11-12_ra_khoang_cach/b_do_bu_implementation.md` (chưa commit); dữ liệu `data/sua_kho_2026-11-14_do_bu/`. 0 server. Chờ A.
 - 09:44 15/11/2026 — A kiểm lại khớp, commit + push `6a51f89`; mục 0 đóng. Đề xuất `cham = doi` A nhận ⇒ B sửa `cau_cham.py` ở lần ghi kho kế. **Rảnh — chờ A giao.**
 - 10:01 15/11/2026 — **A giao (User 15/11): tra ngưỡng mưa + so 3 model Codex** (0 USD API, lượt ChatGPT). Yêu cầu `data/nguong_mua_2026-11-15/yeu_cau.md`; chạy lần lượt sol / terra / luna medium ⇒ `data/tra_cuu_cli/2026-11-15_mua-{sol,terra,luna}/`. Tiếp: agent con chấm mù X/Y/Z ⇒ report `report_agent/2026-11-12_ra_khoang_cach/b_nguong_mua_3_model.md` ⇒ gửi phần (a) cả nhóm.
+- 10:22 15/11/2026 — **Ngưỡng mưa + 3 model XONG** (0 USD API, 3 lượt ChatGPT): report `report_agent/2026-11-12_ra_khoang_cach/b_nguong_mua_3_model.md` (chưa commit). Đề xuất: phương án 3, cân 5 ⇒ 6 mm (QCVN 84 cấp "Mưa"). Model: terra tốt nhất lượt này (151 s, 13/0), sol 12/0 chậm, luna 2 lỗi dẫn nguồn. Đã gửi (a) cho C, E bàn; báo A. Phản biện plan khách sạn của C đã gửi (rút 1 finding sai về minh_hieu). Chờ C/E.
+- 10:23 15/11/2026 — Ngưỡng mưa: C, E phản biện xong ⇒ khuyến nghị chốt (B/C/E): phương án 3 với **6 mm** (đếm lại C: đúng 85 %, chuyến bị xếp lại 80,4 ⇒ 50,0 %); ghi mục (c) report; gửi A để hỏi User. **Rảnh — chờ A.**
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**

@@ -92,8 +92,8 @@ cat "$req"
 
 start="$(date '+%H:%M:%S %d/%m/%Y')"; s=$(date +%s)
 set +e
-# --search phải đứng TRƯỚC exec; chỉ định model (User 14/11/2026: gpt-6.1-sol mức medium chạy được với tài khoản ChatGPT; đổi bằng CODEX_MODEL / CODEX_EFFORT, vd gpt-6-luna, gpt-6.1-terra).
-timeout "${TRA_WEB_TIMEOUT:-1800}" codex --search exec -m "${CODEX_MODEL:-gpt-6.1-sol}" -c model_reasoning_effort="\"${CODEX_EFFORT:-medium}\"" \
+# --search phải đứng TRƯỚC exec; chỉ định model (User 10:28 15/11/2026: mặc định gpt-6.1-terra medium — so 3 model 15/11 terra nhanh + đúng nhất; sol cho nghiên cứu sâu: CODEX_MODEL=gpt-6.1-sol; đổi bằng CODEX_MODEL / CODEX_EFFORT, vd gpt-6-luna, gpt-6.1-terra).
+timeout "${TRA_WEB_TIMEOUT:-1800}" codex --search exec -m "${CODEX_MODEL:-gpt-6.1-terra}" -c model_reasoning_effort="\"${CODEX_EFFORT:-medium}\"" \
   --ignore-user-config --disable shell_tool --disable view_image --disable browser_use --disable browser_use_external \
   --disable computer_use --disable apps --disable plugins --disable multi_agent \
   -c 'permissions.webonly.filesystem={":root"="deny",":minimal"="read",":workspace_roots"="read","'"$HOME"'/.codex/packages"="read"}' \

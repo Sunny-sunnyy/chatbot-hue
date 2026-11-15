@@ -56,3 +56,27 @@ Script `data/dem_mua_2026-11-14/dem_nguong.py` ⇒ `dem_nguong.json`; cùng dữ
 - Giới hạn: historical forecast ghép các bản dự báo tầm ngắn nhất; người dùng xếp lịch trước 1–7 ngày ⇒ dự báo thật kém hơn bảng này. ERA5 thô ⇒ mưa cục bộ có thể lệch.
 - Đọc: hiện hành gần như không bỏ sót nhưng gần 1 / 2 lần báo là thừa; ≥ 5 mm: báo đúng 86 %, bỏ sót ~1 / 4 ngày mưa vừa.
 - **Phương án 3** (B, C, E đồng ý — chờ User): xếp lại lịch khi ≥ 60 % VÀ ≥ 5 mm; dòng "Nếu mưa" vẫn hiện từ ≥ 60 %. Kiểm [Chạy]: 29 ngày mưa thật (ERA5 ≥ 5 mm) mà ngưỡng 5 mm bỏ sót ⇒ **27 / 29 vẫn có dòng "Nếu mưa"**; còn 2 ngày không nhắc (= mức bỏ sót của luật hiện hành).
+
+## Phần 5 — đo lại theo cấp QCVN 84:2024 (10:23 15/11/2026; 0 USD; `so_mua_that_qcvn.py` ⇒ `.json`)
+- **Sửa lỗi đo của phần 4:** "mưa thật" = ERA5 ≥ 5 mm trùng đúng ngưỡng đang thử ⇒ thiên vị 5 mm. Nay dùng **một thước cố định** cho mọi luật: ERA5 ≥ 6 mm (đầu cấp "Mưa", QCVN — nguồn B `b_nguong_mua_3_model.md`) và ≥ 16 mm (mưa vừa).
+
+| Luật | Báo / năm | Mốc ≥ 6 mm (114 ngày): đúng · sót | Mốc ≥ 16 mm (56 ngày): báo thừa · sót | Chuyến 2–5 ngày có ngày xếp lại |
+|---|---|---|---|---|
+| ≥ 60 % (hiện hành) | 218 | 51 % · 2 % | 162 · 0 / 56 | 80,4 % |
+| ≥ 60 % và ≥ 5 mm | 111 | 80 % · 22 % | 59 · 4 / 56 | 52,8 % |
+| ≥ 60 % và ≥ 6 mm | 97 | 85 % · 28 % | 45 · 4 / 56 | 50,0 % |
+| ≥ 60 % và ≥ 10 mm | 66 | 91 % · 47 % | 22 · 12 / 56 | 38,3 % |
+
+- **Bảng A yêu cầu — 5 ↔ 6 mm trên hai thước cố định** (mỗi thước dùng chung cho cả hai ngưỡng):
+
+| Thước "mưa thật" | Luật | Báo | Đúng | Thừa | Sót | Ngày sót vẫn có dòng "Nếu mưa" |
+|---|---|---|---|---|---|---|
+| ERA5 ≥ 5 mm (124 ngày, như phần 4) | ≥ 60 % và ≥ 5 mm | 111 | 95 (86 %) | 16 | 29 (23 %) | 27 / 29 |
+| ERA5 ≥ 5 mm | ≥ 60 % và ≥ 6 mm | 97 | 85 (88 %) | 12 | 39 (31 %) | 37 / 39 |
+| ERA5 ≥ 6 mm (114 ngày) | ≥ 60 % và ≥ 5 mm | 111 | 89 (80 %) | 22 | 25 (22 %) | 23 / 25 |
+| ERA5 ≥ 6 mm | ≥ 60 % và ≥ 6 mm | 97 | 82 (85 %) | 15 | 32 (28 %) | 30 / 32 |
+
+  Trên cả hai thước, 6 mm đổi khoảng 4–10 ngày sót để bớt 4–7 ngày báo thừa. Ngày sót vẫn có nhắc ở mọi dòng, chỉ trừ 2 ngày.
+- Ngày mưa thật mà luật 6 mm bỏ sót vẫn có dòng "Nếu mưa" (≥ 60 %): 30 / 32 ngày ≥ 6 mm; 4 / 4 ngày ≥ 16 mm.
+- **Đề xuất (B, C, E):** phương án 3 với **6 mm** thay 5 mm. Khác 5 mm rất ít, nhưng có mốc chính thức và ít báo thừa hơn. Không lên 10 mm (sót 21 % ngày mưa vừa). Chờ User.
+- Giới hạn như phần 4: dự báo lịch sử là bản tầm ngắn nhất, dự báo thật 1–7 ngày kém hơn; ERA5 có ô ~25 km, không phải trạm đo.
