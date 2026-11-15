@@ -21,6 +21,8 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 - **User chốt thêm (11:12 15/11/2026):** **nhớ sở thích: KHÔNG làm** ("mỗi lần mở là một người mới") · tốc độ: đồng ý · **ảnh khách sạn: tìm thêm**, không ra ⇒ danh sách cho User tìm phụ · **sửa Docker nháp: làm** (5 file bảng thiếu ở `dung_dockerignore.py` + `Dockerfile`) · sửa chỗ mâu thuẫn: làm · **nhãn "khả năng mưa X %" ghi rõ là lúc cao nhất trong ngày: làm** (đổi chuỗi gửi model ⇒ test Q1 + đo câu có gọi thời tiết + an toàn 32).
 - Giao 11:12 15/11/2026: **C** ghi kho Tây Sơn + dựng lại chỉ mục (việc nặng) · **E** sửa Docker nháp (sửa file ngay; build image chỉ SAU khi C dựng xong) ⇒ rồi ảnh khách sạn · **B** nhánh nhãn mưa ⇒ rồi plan tốc độ (đo mốc sau khi C dựng + E build xong — không đo latency chồng việc nặng).
 
+- **User (11:23 15/11/2026):** **plan tốc độ bản 2 DUYỆT sha `86d295b16017`** (B code; lượt có phí sau khi E build Docker xong) · **ảnh trong chat: mở rộng** — User: "ngoài ảnh khách sạn còn phải trả ảnh món ăn, địa điểm, di tích… người dùng nhắc bún bò ⇒ ảnh bún bò; Kinh thành ⇒ ảnh Kinh thành" ⇒ nhóm đếm 0 USD (câu trả lời về nơi / món hiện có bao nhiêu không ảnh vì luật "một bài") ⇒ bàn ⇒ trình User thiết kế (code khớp tên thực thể, không model chọn ảnh) · 71 ảnh khách sạn chọn trước luật W78 ⇒ A quyết: E rà lại theo W78 (sau việc trên).
+
 ### Vòng tự soi 1 — phiên 15/11 (A chốt 10:55 15/11/2026; B, C, E đều gửi)
 **Áp ngay trong phiên** (làm nhẹ, không hạ sàn; kết phiên A đề xuất thành luật qua `improve-workflow`):
 1. Cổng server thật sau merge **chỉ khi nhánh chạm đường chat / model, route API, hoặc cấu hình nạp lúc khởi động**; nhánh chỉ đổi ảnh / chữ / hằng số thuần / giao diện tĩnh ⇒ build + test file chạm (C, E).
