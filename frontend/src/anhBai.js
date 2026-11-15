@@ -263,6 +263,10 @@ const ANH = {
   k14al8f2: {"anh": "kp/k14al8f2"},
   k1eul6xp: {"anh": "kp/k1eul6xp"},
   k1p0646v: {"anh": "kp/k1p0646v", "kc": 1},
+  k13lzzvk: {"anh": "kp/k13lzzvk"},
+  k1q36jvd: {"anh": "kp/k1q36jvd"},
+  kf43rlp: {"anh": "kp/kf43rlp"},
+  k11p3dlu: {"anh": "kp/k11p3dlu"},
 };
 
 export function anhCuaBai(id) {
