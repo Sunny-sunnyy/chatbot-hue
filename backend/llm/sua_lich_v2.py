@@ -14,6 +14,8 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from llm import lich_trinh_v2 as v2
+from llm.do_so import ngay_tu_cau
+from llm.hoi_lai import NGAY_DI_TOI_DA
 from llm.lich_trinh import chuan_ten
 
 MAX_AP = 2
@@ -25,9 +27,10 @@ SoThich = Literal["di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chu
 class HanhDong(BaseModel):
     """Một hành động sửa. `ten` = điểm bị chạm (bỏ / thêm / thay / dời); `ten_moi` = điểm thay vào; `ngay` / `buoi` = chỗ muốn đặt.
     `doi_tham_so` chỉ mang trường người dùng nói muốn đổi. `doi_hang_o` (plan 2026-11-15-sua-lich-hang-cho-o): `ngan_sach` = mức hạng chỗ ở
-    người dùng NÊU RÕ; xin đổi hạng mà không nêu hạng ⇒ để trống ⇒ code nói "bạn nói rõ hạng" (không đoán mức)."""
+    người dùng NÊU RÕ; xin đổi hạng mà không nêu hạng ⇒ để trống ⇒ code nói "bạn nói rõ hạng" (không đoán mức).
+    `doi_ngay_di` (plan 2026-11-15-sua-lich-ngay-di) KHÔNG có trường: ngày do code đọc từ chữ người dùng (`ngay_di_moi`) — model không viết ngày."""
     model_config = ConfigDict(extra="forbid")
-    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o"]
+    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o", "doi_ngay_di"]
     ten: str | None = Field(default=None, max_length=80)
     ten_moi: str | None = Field(default=None, max_length=80)
     ngay: int | None = Field(default=None, ge=1, le=5)
@@ -41,7 +44,7 @@ class HanhDong(BaseModel):
 
 
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
-                  "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở"}
+                  "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở", "doi_ngay_di": "đổi ngày đi"}
 NHAN_BUOI = {"sang": "sáng", "chieu": "chiều"}
 CAU_KHONG_DOI = {
     "ngoai_bang": "«{diem}» chưa có trong danh sách điểm của lịch.",
@@ -56,6 +59,12 @@ CAU_KHONG_DOI = {
     "hang_dang_dung": "Lịch đang gợi ý chỗ ở hạng {diem} rồi.",
     "hang_khong_co": "Khu chỗ ở của lịch này chưa có cơ sở hạng {diem} trong danh mục nên mình giữ nguyên.",
     "khong_muc_o": "Lịch này không có mục gợi ý chỗ ở (lịch 1 ngày) nên không có hạng để đổi.",
+    # đổi ngày đi: {diem} = ngày dd/mm
+    "ngay_chua_ro": "ngày đi — bạn nói một ngày cụ thể (ví dụ 20/12, hoặc thứ Bảy tuần sau) thì mình đổi.",
+    "ngay_khong_co": "Ngày bạn nêu không có trong lịch nên mình chưa đổi ngày đi.",
+    "ngay_ngoai_han": "Mình chỉ xếp được ngày đi từ hôm nay tới 180 ngày nữa nên chưa đổi sang {diem}.",
+    "ngay_dang_dung": "Lịch đang đi từ ngày {diem} rồi.",
+    "ngay_pham_luat": "Đi từ {diem} thì lịch không xếp được đúng luật (giờ mở cửa / cụm xa) nên mình giữ ngày cũ.",
 }
 
 
@@ -174,6 +183,24 @@ def _lua_chon_thay(bang, luu: dict, ts, khung: dict, loai: list[str], cu: str) -
     return out
 
 
+THU = ("thứ Hai", "thứ Ba", "thứ Tư", "thứ Năm", "thứ Sáu", "thứ Bảy", "Chủ nhật")
+
+
+def _dd_mm(ngay: dt.date, hom_nay: dt.date | None = None) -> str:
+    return f"{ngay.day}/{ngay.month}" + (f"/{ngay.year}" if hom_nay is not None and ngay.year != hom_nay.year else "")
+
+
+def ngay_di_moi(cau: str, hom_nay: dt.date) -> dict:
+    """Ngày đi mới đọc từ CHỮ NGƯỜI DÙNG (`do_so.ngay_tu_cau`) + hạn của biểu mẫu (hôm nay … +180 ngày) ⇒ {"ngay": date} hoặc {"ma", "diem"}
+    (khoá + chữ điền của `CAU_KHONG_DOI`). Nơi gọi (`len_ke_hoach.hieu_va_ap`) lấy dự báo cho ngày đó rồi đưa cả gói vào `ap(ngay_moi=…)`."""
+    ngay = ngay_tu_cau(cau, hom_nay)
+    if isinstance(ngay, str):
+        return {"ma": ngay, "diem": None}
+    if not hom_nay <= ngay <= hom_nay + dt.timedelta(days=NGAY_DI_TOI_DA):
+        return {"ma": "ngay_ngoai_han", "diem": _dd_mm(ngay, hom_nay)}
+    return {"ngay": ngay}
+
+
 def ten_muc_o(ngan_sach: str) -> str:
     return v2.ltl.TEN_MUC[v2.ltl.MUC_NGAN_SACH[ngan_sach]]
 
@@ -207,15 +234,18 @@ def _hang_o_sau_cung(hanh_dong: list[HanhDong]) -> list[HanhDong]:
     return khac + hang
 
 
-def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None) -> dict:
+def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None,
+       ngay_moi: dict | None = None) -> dict:
     """Áp hành động trên **bản sao** khung đã lưu ⇒ {khung, luu, da_ap, khong_doi, chua_lam, doi_truong, the}.
     `the` khác None ⇒ lượt dừng ở thẻ chọn, khung KHÔNG đổi. `sua_chon` {cu, moi} (bấm nút của thẻ) ⇒ bỏ qua hành động model.
-    `luu_tru` = bảng lưu trú đang dùng (None khi cờ nơi ở tắt) — chỉ hành động `doi_hang_o` cần."""
+    `luu_tru` = bảng lưu trú đang dùng (None khi cờ nơi ở tắt) — chỉ hành động `doi_hang_o` cần.
+    `ngay_moi` = gói của `ngay_di_moi` (+ `mua` {ngày ISO: %} dự báo cho ngày mới, `co_du_bao`) — chỉ `doi_ngay_di` cần; thiếu ⇒ "chưa rõ ngày".
+    Đổi ngày đi: thử GIỮ mọi điểm ở chỗ cũ với ngày mới; phạm luật ⇒ xếp lại (điểm đã bỏ không quay lại); kết quả `kq["ngay_di"]`."""
     luu = copy.deepcopy(luu)
     khung = copy.deepcopy(luu["khung"])
     loai = list(luu["loai"])
     ts = _ts(khung["tham_so"])
-    kq = {"da_ap": [], "khong_doi": [], "chua_lam": [], "doi_truong": [], "the": None}
+    kq = {"da_ap": [], "khong_doi": [], "chua_lam": [], "doi_truong": [], "the": None, "ngay_di": None}
     if sua_chon is not None:
         hanh_dong = [HanhDong(loai="bo_diem", ten=sua_chon["cu"])] if sua_chon["moi"] == "bo" else \
             [HanhDong(loai="thay_diem", ten=sua_chon["cu"], ten_moi=sua_chon["moi"])]
@@ -257,6 +287,27 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             kq["doi_truong"] += [(f, getattr(ts, f), v) for f, v in doi.items()]
             khung, ts = k, ts_moi
             kq["da_ap"].append({"loai": h.loai})
+        elif h.loai == "doi_ngay_di":
+            nm = ngay_moi or {"ma": "ngay_chua_ro", "diem": None}
+            if "ma" in nm:
+                khong(nm["diem"], nm["ma"])
+                continue
+            moi, cu = nm["ngay"], luu["ngay_di"]
+            if moi.isoformat() == cu:
+                khong(_dd_mm(moi), "ngay_dang_dung")
+                continue
+            luu_moi = {**luu, "ngay_di": moi.isoformat(), "mua": dict(nm.get("mua") or {})}
+            k = _thu_giu(bang, luu_moi, ts, vt, loai) or _xep(bang, luu_moi, ts, None, loai)  # giữ chỗ phạm luật (thứ đóng cửa…) ⇒ xếp lại
+            if not _dung_luat(bang, k):
+                khong(_dd_mm(moi), "ngay_pham_luat")
+                continue
+            vt_moi = _vi_tri(k)
+            toi = lambda kh: {j for ng in kh["ngay"] for j in ng["buoi"]["toi"]}  # noqa: E731
+            kq["ngay_di"] = {"cu": cu, "moi": moi.isoformat(), "co_du_bao": bool(nm.get("co_du_bao")),
+                             "doi_cho": sorted(j for j in vt if j in vt_moi and vt_moi[j] != vt[j]),
+                             "ra": sorted((set(vt) - set(vt_moi)) | (toi(khung) - toi(k))), "vao": sorted((set(vt_moi) - set(vt)) | (toi(k) - toi(khung)))}
+            luu, khung = luu_moi, k
+            kq["da_ap"].append({"loai": "doi_ngay_di"})
         elif h.loai == "doi_hang_o":  # hạng không vào bộ xếp ⇒ KHÔNG xếp lại: điểm, ngày, buổi giữ nguyên; chỉ ô "Nơi ở" đổi
             ma = ly_do_giu_hang(bang, luu_tru, khung, h.ngan_sach)
             if ma is not None:
@@ -381,6 +432,19 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
     out += [f"Đã đổi {({'so_ngay': 'số ngày', 'kieu_di': 'kiểu đi', 'so_thich': 'sở thích', 'tre_em': 'số trẻ em', 'lon_tuoi': 'người lớn tuổi', 'ngan_sach': 'hạng chỗ ở'})[f]}: "
             f"{_gia_tri(f, cu)} → {_gia_tri(f, moi)}."
             for f, cu, moi in kq["doi_truong"] if not (f == "ngan_sach" and cu is None)]
+    nd = kq.get("ngay_di")
+    if nd:
+        moi = dt.date.fromisoformat(nd["moi"])
+        out.append(f"Đã đổi ngày đi: {_dd_mm(dt.date.fromisoformat(nd['cu'])) if nd['cu'] else 'chưa chọn'} → {_dd_mm(moi)} ({THU[moi.weekday()]}).")
+        if nd["doi_cho"] or nd["ra"] or nd["vao"]:
+            phan = [f"{len(nd['doi_cho'])} điểm đổi ngày hoặc buổi" if nd["doi_cho"] else "",
+                    "bớt " + ", ".join(ten_cua_diem(bang, j) for j in nd["ra"]) if nd["ra"] else "",
+                    "thêm " + ", ".join(ten_cua_diem(bang, j) for j in nd["vao"]) if nd["vao"] else ""]
+            out.append("Lịch xếp lại theo ngày mới (thứ trong tuần, mùa, dự báo): " + "; ".join(p for p in phan if p) + ".")
+        else:
+            out.append("Các điểm trong lịch giữ nguyên chỗ.")
+        if not nd["co_du_bao"]:
+            out.append("Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa.")
     dong = [{"cau": c, "duoc": True} for c in out]
     dong += [{"cau": CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"]), "duoc": False} for k in kq["khong_doi"]]
     dong += [{"cau": f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False} for t in kq["chua_lam"]]
@@ -408,5 +472,5 @@ def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
 
 def sua_ap(kq: dict) -> dict:
     """Dữ liệu code của lượt sửa (id điểm, mã luật — không chữ): cho bộ đo so với nhãn và cho log."""
-    return {"da_ap": kq["da_ap"], "doi_truong": [[f, cu, moi] for f, cu, moi in kq["doi_truong"]],
+    return {"da_ap": kq["da_ap"], "doi_truong": [[f, cu, moi] for f, cu, moi in kq["doi_truong"]], "ngay_di": kq.get("ngay_di"),
             "khong_doi": kq["khong_doi"], "chua_lam": kq["chua_lam"], "the": None if kq["the"] is None else kq["the"]["cu"]}

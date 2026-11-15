@@ -253,7 +253,14 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         if not hanh_dong and not bi_chan:
             trace.sua = {"n_hanh_dong": 0}
             return None
-        kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru)
+        ngay_moi = None
+        if any(h.loai == "doi_ngay_di" for h in hanh_dong):  # ngày đọc từ chữ người dùng (code); dự báo cho ngày mới lấy TRƯỚC khi áp
+            hom = tt.hom_nay_vn()
+            ngay_moi = sl.ngay_di_moi(query, hom)
+            if "ngay" in ngay_moi:
+                db = await du_bao_lich(flags, ngay_moi["ngay"], lt2.SO_NGAY_TOI_DA, trace, hom)
+                ngay_moi.update(mua={k.isoformat(): v for k, v in (ngay_mua_xep(db) or {}).items()}, co_du_bao=db is not None)
+        kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi)
         if bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
@@ -273,7 +280,7 @@ async def stream_sua(query: str, retrieval_service, context_builder, generator, 
         yield "delta", trace.answer
         return
     luu = trace.lich_luu
-    sua = {"khung": kq["khung"], "ngay_di": luu["ngay_di"], "thay_doi": sl.thay_doi(bang, kq), "cau_cu": dict(luu.get("cau") or {}),
+    sua = {"khung": kq["khung"], "ngay_di": kq["luu"]["ngay_di"], "thay_doi": sl.thay_doi(bang, kq), "cau_cu": dict(luu.get("cau") or {}),
            "sua_ap": sl.sua_ap(kq)}
     async for event in stream_v2(query, retrieval_service, context_builder, generator, trace, flags, _today_v2(flags, trace), sua):
         yield event
