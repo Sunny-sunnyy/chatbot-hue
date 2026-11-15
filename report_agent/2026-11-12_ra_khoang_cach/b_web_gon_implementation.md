@@ -9,7 +9,7 @@ B · viết 20:42 15/11/2026 · A giao theo góp ý User khi thử trang Trợ l
 
 ## Cập nhật 20:48 15/11/2026 — sau review độc lập (agent con của A): CHƯA merge
 - **Sàn đọc tay không đạt theo người đọc thứ hai:** reviewer đọc 28 / 28 và đếm **1 mục rõ + 3 ranh giới** (B chỉ báo 1 ranh giới ⇒ B đọc lỏng hơn): một mục giá vé (thêm chữ "một chiều" + bỏ điều kiện đi kèm của hai giá khứ hồi), một mục giờ dịp lễ (ghép giờ đóng với một ngày mà đoạn trích không nối rõ, bỏ giờ ngày thường), một mục giá một món (nêu một giá như sự thật, bỏ ý "tuỳ cỡ / chi nhánh"), một mục sức khoẻ (đưa lời khuyên cho bối cảnh khác vào chuyến đi Huế). Gốc chung: bỏ câu rào làm mục web nghe chắc hơn nguồn cho phép / rơi mất điều kiện nguồn nêu. A trình User; không chỉnh lời dặn thêm trong plan này.
-- **Đã sửa theo review (code, không phải lời dặn):** từ khoá "không có" ở bất kỳ đâu trong mục — kể cả kèm mã nguồn — đều thành dòng cố định (trước: từ khoá kèm mã lọt thành mục thường, hiện nguyên chữ từ khoá); thêm ca test; \`test_b6_tra_web.py\` 119 đạt. Plan liệt kê đủ chỗ đổi sau duyệt.
+- **Đã sửa theo review (code, không phải lời dặn):** từ khoá "không có" ở bất kỳ đâu trong mục — kể cả kèm mã nguồn — đều thành dòng cố định (trước: từ khoá kèm mã lọt thành mục thường, hiện nguyên chữ từ khoá); thêm ca test; `test_b6_tra_web.py` 119 đạt. Plan liệt kê đủ chỗ đổi sau duyệt.
 - **Hướng kế nếu User không nhận mức hiện tại (chưa làm):** plan bản 2, một thay đổi — "ngắn, thẳng NHƯNG giữ điều kiện / phạm vi mà chính đoạn trích nêu; nguồn nói về bối cảnh khác ⇒ không có" — đo lại đúng 28 đầu vào, sàn đọc tay do người không viết lời dặn đọc.
 
 ## Số đo [đã chạy] — n = 28 (19 tin nhắn gửi model lưu 14/11: 9 hỏi kèm, 7 ngoài kho, 3 an toàn có mở web; + 9 mẫu giờ mở cửa 15/11)
