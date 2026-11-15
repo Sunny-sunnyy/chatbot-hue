@@ -14,7 +14,9 @@ export const MAP_PREFIX = "https://www.google.com/maps/search/";  // D11: chỉ 
 // "Lên kế hoạch" bản 2 (spec 5c.5): thẻ lịch vẽ TỪ KHUNG do code dựng (tên, buổi, giờ, ghi chú); câu model đổ vào theo `id_muc`, chưa tới ⇒
 // "đang viết…". Loại mục chưa biết (đợt sau: ăn uống…) ⇒ bỏ qua, không lỗi. Nút "Sửa" điền lại biểu mẫu bằng đúng giá trị đã gửi.
 const NHAN_BUOI_V2 = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
-const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi", "nghi"]);
+// User 15/11: buổi để trống không hiện trong lịch ⇒ mục "nghi" của server (tối nghỉ / để trống / tối tự do) bị bỏ qua như loại chưa biết;
+// lý do "không xếp buổi tối" của nhóm có trẻ em / người lớn tuổi vẫn có một dòng ở "Ghi chú của lịch".
+const LOAI_MUC_V2 = new Set(["tham_quan", "hoat_dong_toi"]);
 const NHAN_MUC_V2 = { co_the_di_lai: "có thể đi lại", kiem_lich_dien: "kiểm lịch diễn trước khi đi" };  // cùng chữ với server (`NHAN_MUC`)
 // Điểm nhấn 14/11 (User: Lên kế hoạch "đơn điệu"): nhãn + màu theo loại điểm (`loai_diem` của server, lấy từ bảng điểm) — màu luôn đi kèm chữ.
 const NHAN_LOAI_DIEM = { di_tich: "Di tích", am_thuc: "Ẩm thực", thien_nhien: "Thiên nhiên", le_hoi_nghe_thuat: "Lễ hội, nghệ thuật", chup_anh: "Chụp ảnh" };
@@ -65,7 +67,7 @@ function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
             const loai = (m.loai_diem || []).filter(x => NHAN_LOAI_DIEM[x]);
             return [
               m.phut_di != null && <li key={`${m.id_muc}-di`} className="lkh-di">khoảng {m.phut_di} phút đi</li>,
-              <li key={m.id_muc} className={`lkh-muc lkh-${MAU_BUOI[m.buoi] || "sang"} ${m.loai === "nghi" ? "lkh-nghi" : ""} ${loai[0] ? `lkh-l-${loai[0]}` : ""}`}
+              <li key={m.id_muc} className={`lkh-muc lkh-${MAU_BUOI[m.buoi] || "sang"} ${loai[0] ? `lkh-l-${loai[0]}` : ""}`}
                   style={{ "--k": k }}>
                 <span className="lkh-cham-buoi" aria-hidden="true">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -76,11 +78,9 @@ function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
                   <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
                   <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
                   {loai.length > 0 && <span className="lkh-loai">{loai.map(x => <small key={x} className={`lkh-loai-${x}`}>{NHAN_LOAI_DIEM[x]}</small>)}</span>}
-                  {m.loai !== "nghi" && (
-                    <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
-                      : !xong && <><span className="sr-only">đang viết…</span><span className="lkh-xuong" aria-hidden="true" /><span className="lkh-xuong lkh-ngan" aria-hidden="true" /></>}
-                    </span>
-                  )}
+                  <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
+                    : !xong && <><span className="sr-only">đang viết…</span><span className="lkh-xuong" aria-hidden="true" /><span className="lkh-xuong lkh-ngan" aria-hidden="true" /></>}
+                  </span>
                 </div>
               </li>,
             ];
@@ -156,7 +156,7 @@ export function LichV2({ turn, onEditPlan }) {
         <ol>{lich.ngay.map(ng => (
           <li key={ng.ngay}><a href={`#ngay-${turn.key}-${ng.ngay}`} onClick={e => { e.preventDefault();
             document.getElementById(`ngay-${turn.key}-${ng.ngay}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Ngày {ng.ngay}</a>{" "}
-            {ng.muc.filter(m => m.loai !== "nghi").map(m => m.ten).join(" → ")}</li>
+            {ng.muc.filter(m => LOAI_MUC_V2.has(m.loai)).map(m => m.ten).join(" → ")}</li>
         ))}</ol>
       </section>
       <div className="lkh-ngay-ds">
