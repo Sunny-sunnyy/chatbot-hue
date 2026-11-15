@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
+*Cập nhật lần cuối: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -12,7 +12,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Cổng web — **mới** | **`web_gate_open`** | Điều kiện để được tra web: câu về Huế, kho đã trả câu từ chối, không lỗi gì khác. |
 | Mục web | **"Từ web (chưa kiểm)"** | Phần trả lời từ web, tách riêng khỏi phần trả lời từ kho. |
 | Sổ link — **mới** | mã **`[w n]`** | Mỗi kết quả web có một số; model chỉ được trích các số có trong sổ. |
-| Hỏi bằng ảnh | **`nhan_anh`** (cờ `anh.bat: true`) | Người dùng gửi ảnh; model gợi tối đa 3 tên trong một danh sách 42 mục; người dùng bấm xác nhận rồi mới trả lời (đã gặp ở bài 12). |
+| Hỏi bằng ảnh | **`nhan_anh`** (cờ `anh.bat: true`) | Người dùng gửi ảnh kèm câu hỏi; model đoán tối đa 3 tên trong một danh sách 42 mục; ra đúng một tên thì trợ lý trả lời luôn từ kho, ra 2–3 tên thì hỏi người dùng chọn (đã gặp ở bài 12). |
 | Rào chắn | **guardrail** | Chỗ code chặn trước khi chữ tới người dùng. |
 | Câu hỏi nối tiếp — **mới** | cờ **`web_cau_noi_tiep`** (bật 15/11) | Câu hỏi sau không nhắc lại tên nơi / món của câu trước ("mở cửa lúc mấy giờ"). Ở lượt này câu tra web lấy từ câu tìm trong sổ mà model vừa viết. |
 | Exa | dịch vụ tìm web **Exa** (`highlights`) | Một dịch vụ tìm web khác, trả **đoạn trích nguyên văn trong trang**, chọn theo câu hỏi. Đã thử 12/11, không dùng. |
@@ -29,8 +29,9 @@ Khách hỏi một chuyện cuốn sổ không có: *"Khách sạn nào gần c�
 2. rồi **mở điện thoại tra giúp**, nhưng nói rõ: "đây là mình vừa tra trên mạng, **chưa kiểm**, anh xem kỹ lại nhé". Họ không đọc lại link lạ, không đọc giá
    tiền không thấy trên trang, và với chuyện bão lũ thì chỉ khách tới nguồn chính thức.
 
-Khách đưa điện thoại có một tấm ảnh: *"Đây là chỗ nào vậy?"*. Họ nhìn ảnh, đoán **vài tên có thể**, rồi hỏi lại: "có phải là chỗ này không?". Khách gật đầu, họ
-mới mở sổ ra kể. Họ không kể ngay theo đoán của mình.
+Khách đưa điện thoại có một tấm ảnh: *"Đây là chỗ nào vậy?"*. Họ nhìn ảnh. Nhận ra **một nơi** thì mở sổ kể luôn, nhưng mở đầu bằng câu "mình đoán đây
+là chỗ này, có thể sai". Còn **phân vân giữa vài nơi** thì hỏi lại: "là chỗ này hay chỗ kia?", khách chọn rồi họ mới kể. Lúc nào họ cũng kể từ sổ, không kể theo
+trí nhớ về tấm ảnh.
 
 ## Tra web: chỉ khi kho không có, và tách riêng
 
@@ -66,20 +67,32 @@ Kho trả lời được thì **không tra**. Câu ngoài chủ đề thì **kh�
 thiết kế Phase 9. Từ 15/11, ở lượt hỏi tiếp thứ đi ra là **chữ model viết** (có tên nơi lấy từ câu trước), không còn là nguyên chữ người dùng gõ; anh đã nghe rõ
 điều này và rủi ro kèm theo trước khi chọn bật.
 
-## Hỏi bằng ảnh: gợi ý, chờ xác nhận
+## Hỏi bằng ảnh: một tên thì trả lời luôn, phân vân thì hỏi lại
 
 **Cách chạy:**
-1. Người dùng chụp hoặc chọn ảnh. Máy chủ kiểm trước khi đọc: chỉ nhận **JPEG, PNG, WEBP**, tối đa **10 MB**, không quá 40 triệu điểm ảnh, phải gửi từ đúng trang
+1. Người dùng bấm **dấu cộng trong ô nhập** để chọn ảnh, hoặc **dán ảnh** thẳng vào ô. Ảnh nằm trong ô như một tệp đính kèm của câu hỏi; lúc này hệ thống **chưa
+   gửi gì đi**. Gõ câu hỏi (hoặc để trống) rồi bấm **Hỏi** thì ảnh mới được gửi. Máy chủ kiểm trước khi đọc: chỉ nhận **JPEG, PNG, WEBP**, tối đa **10 MB**, không quá 40 triệu điểm ảnh, phải gửi từ đúng trang
    web của chatbot. Sai thì trả lỗi ngay.
 2. Ảnh được **xoá thông tin kèm theo** (vị trí chụp, máy chụp), **thu nhỏ** còn cạnh dài 1.024 điểm ảnh, rồi gửi cho gpt-6-luna kèm **danh sách 42 điểm / món dễ
    nhận ra bằng ảnh**. Danh sách do code lập từ kho. Không kèm chữ của người dùng, không kèm lịch sử. Máy chủ **không lưu ảnh**.
 3. Model chỉ được trả **tối đa 3 mã trong danh sách**, hoặc "không nhận ra". Code kiểm lại mã có trong danh sách thật.
-4. Giao diện hiện **gợi ý (có thể sai)** với các nút tên. Người dùng **bấm đúng tên** ⇒ thành một câu hỏi thường, đi đường trả lời từ kho. **Không bấm thì không
-   trả lời gì.**
+4. Model trả **đúng một tên** ⇒ code ghép tên đó vào câu người dùng gõ và hỏi luôn như một câu thường, đi đường trả lời từ kho; đầu câu trả lời có dòng **"Mình
+   đoán trong ảnh là … — có thể sai"** và một nút để gõ lại tên nếu đoán nhầm. Model trả **2–3 tên** ⇒ giao diện hiện các nút tên, người dùng **bấm đúng tên** rồi
+   mới có câu trả lời. Model **không nhận ra** ⇒ lời báo, người dùng gõ tên. Ở cả ba trường hợp, model viết câu trả lời **không nhìn ảnh**: nó chỉ nhận cái tên
+   và trả lời từ sổ, có nguồn như mọi câu khác.
 
 **Vì sao phải chờ xác nhận.** Đo trên bộ ảnh (05/11): tên đúng nằm trong 3 gợi ý ở **22 / 25 ảnh**, đạt ngưỡng đặt trước (22). Nhưng với **ảnh không phải ở Huế**,
 model vẫn gán một tên Huế cho **2 / 5 ảnh**, vượt ngưỡng cho phép (tối đa 1). Theo thước đặt trước thì kết quả **âm**. Anh quyết giữ tính năng nhưng ở dạng
-**gợi ý có xác nhận**: model đoán nhầm thì người dùng không bấm, không có câu trả lời sai nào được viết ra.
+**gợi ý có xác nhận**: model đoán nhầm thì người dùng không bấm, không có câu trả lời sai nào được viết ra. Bản đó chạy từ 08/11 tới 15/11.
+
+**Vì sao tối 15/11 đổi sang "một tên thì trả lời luôn".** Khi thử, anh thấy bước bấm tên là thừa: hỏi "đây là đâu?" kèm ảnh thì phải có câu trả lời, như hỏi
+ảnh ở các trợ lý quen dùng. Trước khi đổi, nhóm đếm lại kết quả đã lưu của bộ 33 ảnh, mỗi ảnh chạy 2 lượt (66 lượt): nếu **lượt nào cũng trả lời luôn theo tên
+đầu tiên** thì **14 / 66 lượt** ra câu trả lời về **sai nơi**. Nhưng lỗi không rải đều: khi model chỉ đưa **một tên**, tên đó đúng ở **31 / 33 lượt** (xét các
+ảnh có trong danh sách); khi model đưa 2–3 tên, tên đầu chỉ đúng 11 / 17. Tức là chính lúc model phân vân mới hay sai. Từ đó có cách **lai**: một tên thì
+trả lời luôn, 2–3 tên thì hỏi chọn. Tính trên cùng 66 lượt, số lượt trả lời sai nơi còn **6 / 66**, đổi lại **19 / 66 lượt (29 %)** người dùng vẫn phải bấm
+chọn. So với mốc cũ (luôn bấm tên, không lượt nào tự trả lời sai), cách lai **chấp nhận một ít câu sai nơi** để phần lớn lượt không phải bấm; vì vậy mới có
+dòng "Mình đoán… có thể sai" ngay đầu câu trả lời. Mẫu nhỏ (33 ảnh, phần lớn là ảnh công khai chụp đẹp), nên các số này chỉ cho biết hướng, chưa phải tỉ lệ
+với ảnh người dùng tự chụp.
 
 **Tốc độ và tiền:** đoán mất khoảng **3 giây** ở trung vị, nhưng câu chậm 6–9 giây (chưa đạt mức 5 giây); khoảng 0,0004 USD một ảnh.
 
@@ -187,15 +200,18 @@ thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn c�
   cặp đo, model tự đổi "cuối tuần này" thành ngày cụ thể. Tên người dùng: 0 / 4 lượt đo, mẫu nhỏ, không có rào bằng code cho tên riêng. Nếu sau này bật nhớ
   cả câu trả lời thì phải xét lại cờ này.
 - **Luật "ngay lúc này" có thể chặn nhầm** nếu dò quá rộng (ví dụ chữ "đang").
-- **Ảnh:** các lăng, các điện trông giống nhau dễ nhầm; ảnh có chữ lừa có thể đánh lừa model; chưa giới hạn số ảnh mỗi người; câu chậm chưa đạt 5 giây.
+- **Ảnh:** các lăng, các điện trông giống nhau dễ nhầm; ảnh có chữ lừa có thể đánh lừa model; chưa giới hạn số ảnh mỗi người; câu chậm chưa đạt 5 giây. Từ
+  15/11: model đưa **một tên mà sai** thì trợ lý trả lời luôn về sai nơi, chỉ còn dòng "có thể sai" nhắc người dùng (đã gặp thật khi thử: ảnh một cổng trong
+  Hoàng thành bị đoán thành một lăng); cùng một ảnh gửi nhiều lần có thể ra kết quả khác nhau.
 - Bản đóng gói để đưa lên mạng (bài 18) đặt tra web **tắt**.
 
 ## Ba điều chính
 
 1. **Tra web chỉ khi kho đã từ chối**, một lần, 5 giây. Mục **"Từ web (chưa kiểm)"** tách riêng. **Code chặn** link lạ, số tiền không có trong đoạn trích, câu
    "ngay lúc này", và thay câu thiên tai bằng câu cố định. Bộ kín: 0 / 7 câu khẳng định thông tin chưa kiểm.
-2. **Hỏi bằng ảnh = gợi ý tối đa 3 tên, chờ người dùng bấm xác nhận.** Đúng trong 3 gợi ý 22 / 25 ảnh, nhưng gán nhầm tên Huế cho ảnh ngoài, nên phải xác nhận.
-   Ảnh không lưu, đã xoá thông tin kèm theo.
+2. **Hỏi bằng ảnh = model đoán tên, câu trả lời vẫn từ kho.** Đoán ra một tên thì trả lời luôn kèm dòng "có thể sai" (một tên đúng 31 / 33 lượt); phân vân
+   2–3 tên thì hỏi người dùng chọn. Cách này còn 6 / 66 lượt trả lời sai nơi, so với 14 / 66 nếu lượt nào cũng trả lời luôn. Ảnh không lưu, đã xoá thông tin
+   kèm theo.
 3. Chuyện thật: những lỗi nguy hiểm nhất (khẳng định lũ, cúp điện) được chặn bằng **luật trong code**, không bằng lời dặn. Thử đổi Serper sang Exa: đo riêng
    bước tra thì đạt (25 so với 17) nhưng nhạy, qua máy chủ thật thì không (14 so với 13) ⇒ giữ Serper. Câu hỏi tiếp "mở cửa lúc mấy giờ" từng tra web bằng
    câu cụt nên lạc sang nơi khác; từ 15/11 dùng câu tìm model vừa viết: câu tra web đúng nơi 8 / 8 (trước 0 / 10), nhưng chỉ 2 / 8 mục có thông tin dùng được.
@@ -219,6 +235,7 @@ thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn c�
 - **Sửa 20:22 13/11/2026:** số "khoảng 13 giây" ghi rõ là bộ kín 05/11, thêm số 12/11 qua máy chủ (khác bộ câu, khác cách đo).
 
 - **Sửa 14:48 11/11/2026:** theo luật anh chốt ("phần chưa xong thì không đưa vào bài học"), gỡ đoạn tả việc chưa làm xong: câu "đang chờ anh quyết lúc deploy" → tả đúng bản đóng gói đã dựng (`HUE_TRA_WEB` "false" trong `data/phase_12/deploy_nhap/compose.yml`).
+- **Sửa 21:34 15/11/2026** (luồng hỏi bằng ảnh đổi tối 15/11): viết lại dòng "Hỏi bằng ảnh" ở bảng từ, đoạn ví dụ người hướng dẫn nhìn ảnh, tiêu đề + bước 1 và bước 4 của mục "Hỏi bằng ảnh", mục 2 của "Ba điều chính", thêm đoạn "Vì sao tối 15/11 đổi…" và một ý ở phần giới hạn. Số 14 / 66, 6 / 66, 19 / 66, 31 / 33, 11 / 17: phép đếm lại kết quả đã lưu của bộ 33 ảnh × 2 lượt `data/dem_ten_so_1_2026-11-15/KET_QUA.md` (riêng tư) [đã chạy, không gọi model]; luồng mới + ca đoán sai khi thử: `report_agent/2026-11-12_ra_khoang_cach/e_anh_tra_loi_thang_implementation.md`, `c_anh_dinh_kem_implementation.md`, `c_nut_anh_cong_implementation.md`; code `frontend/src/HoiBangAnh.jsx` [code, xem 15/11].
 - **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): bảng từ còn 3 từ mới: "Tra web", "Hỏi bằng ảnh" đã gặp ở bài 12.
 
 </details>
