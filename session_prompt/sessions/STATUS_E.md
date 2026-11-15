@@ -29,6 +29,15 @@
 - 16:53 15/11/2026 — Kiểm phần sửa `p9-sua-ngay-di` @ `0463bf2`: M-1 đóng (bộ dò 35 / 35) ⇒ **ready**; 19 câu thử mới còn 4 câu hiếm ra sai ngày + 3 từ chối nhầm ⇒ ghi minor, không vòng 3 (mục cuối `e_review_sua_ngay_di.md`). Worktree tạm đã gỡ. **Rảnh — chờ A.**
 - 16:57 15/11/2026 — `p9-sua-ngay-di`: `add3186` có 1 hồi quy ("5/5 người") ⇒ C sửa `b7b47f1` ⇒ E chạy lại hai bộ dò (`data/review_sua_ngay_di_2026-11-15/do_34.py`, `do_19.py`): 35 / 35 và 18 · 0 sai ngày · 1 từ chối nhầm ⇒ **ready trên `b7b47f1`**, đã báo A. **Rảnh — chờ A.**
 
+## KẾT QUẢ CHIỀU 15/11 (ghi 17:02 15/11/2026, `date`; phiên CHƯA kết — User vắng; main origin `f276894` theo A)
+- **Việc E làm, đều đã vào main:** bảng điểm lịch v9 (41 điểm) + khung toạ độ 108,25 + 3 ghi chú ăn + câu chỉ có mã nguồn ⇒ dự phòng · 3 sửa giao diện (bỏ dòng báo ảnh, bỏ dòng "Các bước", nút Sửa cuộn tới biểu mẫu) · ảnh khách sạn User 10 ⇒ 67 / 136 (bảng lưu trú v6) · ảnh Khám phá User 5 ⇒ 260 / 263, ảnh lịch 40 / 41 (bảng ảnh v5, loader nhận `nguon: "user"`) · buổi để trống không hiện · tài liệu bài 14 / 23 / 24 / 25, sổ 07, nhật ký.
+- **Review E làm:** `p9-web-noi-tiep` (B; M-1 nhiều ý, m-1 câu rỗng) · `p9-o-khi-hoi` (C; ready) · `p9-sua-ngay-di` (C; M-1 đọc sai ngày ⇒ 3 commit sửa ⇒ ready trên `b7b47f1`). Bộ dò lưu `data/review_sua_ngay_di_2026-11-15/`.
+- **Private E tạo chiều nay:** `data/diem_lich_moi_2026-11-15/` (tools `dung_v9.py`, `mo_phong_v9.py`, `an_o_v9.py`, `dem_cham.py`, `nghiem_thu_v9.py`, `luot_that/`) · `data/gd_3_sua_2026-11-15/` · `data/anh_user_2026-11-15_ghep/` (bảng lưu trú v6, tấm ghép) · `data/anh_kp_user_2026-11-15/` (bảng ảnh Khám phá v9, tấm ghép) · `data/bo_buoi_trong_2026-11-15/` · `data/tai_lieu_v9_nhap_2026-11-15/` (nháp + biên bản kiểm độc lập) · `data/phase_12/deploy_nhap/` (đã trỏ bảng mới; sao lưu `sao_luu_2026-11-15_chieu/`).
+- **Còn mở (A giữ):** 3 ảnh User không ghép (ca kịch, lễ Kỳ yên, lễ Tiến Xuân ngưu) + khách sạn thứ 11 · dòng ghi chú ngày đi xa (E khuyến nghị không thêm; A hỏi User) · m-1 dòng link nơi ở chưa nói cách nhắn hạng · theo dõi lượt đổi ngày bị đổi lại.
+- **Bẫy chiều 15/11:** bảng nháp phải chạy cả test sàn của repo, không chỉ `kiem_khung_v2` · `doan_mo_ta` lấy ở mục "Tổng quan / xem gì", đọc tay · rebase TRƯỚC lần push đầu · `assert` "thư mục đúng N file" vỡ khi User thêm file · `str(None)` thành "None" · đổi bảng dữ liệu ⇒ grep nhãn mọi bộ đo (đã sót bộ chuỗi sửa lịch) · report ghi số dòng diff trước khi đếm lại.
+- **Tiền E chiều 15/11 (theo sha, `scripts/dem_chat_metrics.py`):** `a124771` 0,0089 + `29a9121` 0,0062 + `6e3331b` 0,0041 + `febef97` 0,0007 = **0,0199 USD**. Cả ngày 15/11 của E ≈ 0,22 USD (sáng ≈ 0,20 — số cũ, cộng tay).
+- **Worktree của E còn (gỡ lúc kết phiên; mỗi cái 2 symlink `data`, `knowledge-base-hue`):** `/tmp/e_v9`, `/tmp/e_gd3`, `/tmp/e_ks`, `/tmp/e_kp`. Không server nào chạy. Vòng tự soi 2 đã gửi cả nhóm.
+
 ---
 
 # (trước) STATUS E — KẾT PHIÊN 15/11 (ghi 14:44 15/11/2026, `date`) · terminal `hue-rag-3e` · Claude Opus 5.5 · vai thực thi

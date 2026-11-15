@@ -1,3 +1,33 @@
+# KẾT QUẢ CHIỀU 15/11 — B viết 17:02 15/11/2026 (terminal `hue-rag-cb`; A `hue-rag-60` · C `hue-rag-51` · E `hue-rag-ab`). CHƯA kết phiên (User vắng); nhật ký từng bước ở mục "PHIÊN CHIỀU 15/11" ngay dưới
+
+## Đã xong (mọi nhánh đã vào main)
+- **W79** — `git_sha` trong mỗi dòng `chat_metrics` + `scripts/dem_chat_metrics.py` (`--sha`). Report `b_w79_git_sha_implementation.md`.
+- **Review nhánh bảng điểm v9 (E)**: ready, 3 minor (`b_review_diem_v9.md`) — B tìm thêm khung toạ độ phía trình duyệt còn ≤ 108.
+- **Lỗi câu hỏi nối tiếp (User gặp)**: nguyên nhân gốc = bước tra web dùng câu cụt của lượt hiện tại (`b_cau_noi_tiep_dem.md`) ⇒ nhánh `p9-web-noi-tiep` đã merge, **cờ `web_cau_noi_tiep` TẮT — chờ User quyết bật** (`b_web_noi_tiep_implementation.md`; 2 review: E + agent con của A, đã đóng). Đo: câu web đúng chủ thể 8 / 8 (mốc 0 / 10), mục web lạc đề 0 / 8, tên người dùng 0 / 4 lượt chạm (mẫu nhỏ).
+- **Đếm bộ kiểm số mục web**: 0 / 85 mục bị chặn vì cách viết giờ ⇒ không xây (`b_web_kiem_so_dem.md`).
+- **Q5 an toàn sửa lịch chạy lại trên main**: 0 / 64 (`data/q5_chay_lai_2026-11-15/q5_main.json`, có sha). **Harness Q5b** sửa: bỏ phép đếm số khẩn cấp (chưa từng đo được), thêm `khan_cap_dinh_tuyen` — C chạy lần đầu 16 / 16.
+- **Review `p9-hang-o-m12` (C)**: ready, 0 finding. **Nhãn S07** bộ chuỗi sửa lịch đổi sau bảng v9 (md5 `eacb8ebdcb91`; `data/nhan_cu_v9_2026-11-15/DE_XUAT.md`).
+- Plan viết, chưa chạy: **tốc độ S-A / S-B** `docs/superpowers/plans/2026-11-15-toc-do-web-som-gop-tim-plan.md` (`a4cfbf608a6b`) — B đề xuất bỏ S-A, gác S-B; chờ User.
+
+## Còn mở (chờ User qua A)
+- Bật cờ `web_cau_noi_tiep` hay không (rủi ro: chữ model viết + chi tiết lượt trước ra Serper; lượt hỏi tiếp NHIỀU Ý vẫn dùng câu gõ — chưa đo).
+- Plan tốc độ: chạy / bỏ. Bộ kín sửa lịch: 2 lệnh đếm cho User (handoff + `DE_XUAT.md`), chưa ai chạy.
+
+## Bẫy chiều 15/11
+1. Harness đo không lưu chữ model TRƯỚC kiểm cuối ⇒ mục bị thay câu cố định không phân loại lại được (đã thêm vào `do_quyet.py`).
+2. `pytest -x` trên test rộng dừng ngay ở test cần khoá ⇒ phải chạy lại; không dùng `-x` cho test rộng.
+3. Phép kiểm "luôn ra 0" (Q5b `co_so_khan_cap` từ 14/11): chưa từng có ca dương tính ⇒ số 0 vô nghĩa. Phép kiểm mới phải thử thấy nó bật một lần.
+4. Công cụ chạy trên bộ kín với cờ "chỉ in số đếm" vẫn lộ giá trị qua traceback khi nhãn sai khuôn ⇒ luôn `2>/dev/null | tail -1`; thử trên file giả trước.
+5. Worktree tách để review cần cả hai symlink `data/` + `knowledge-base-hue/`; gỡ symlink trước khi `git worktree remove`.
+6. `main` đổi sha giữa lúc chạy lượt trong tiến trình ⇒ file ghi sha cuối; so `git diff <sha đầu> <sha cuối> -- backend` để chắc code không đổi.
+7. Sửa dữ liệu bảng ⇒ nhãn bộ đo phụ thuộc bảng có thể cũ (S07); mô phỏng nhãn không model bắt được trong 10 giây.
+
+## Tiền paid B chiều 15/11 (log lọc `git_sha` + file kết quả)
+đếm câu nối tiếp 0,0201 (`eee5781` + `f6d0540`) · đo nhánh web nối tiếp 0,0556 (`16a6715`) · mẫu giờ mở cửa 0,0159 (`2b0be16`) · Q5 0,0036 (file) ⇒ **≈ 0,095 USD**. Cả ngày 15/11: sáng 0,312 + chiều 0,095 ≈ 0,41 USD.
+
+## Worktree / server
+0 worktree `/tmp` của B, 0 server, 0 tiến trình nền. Chưa commit (A): `STATUS_B.md`.
+
 # STATUS B — PHIÊN CHIỀU 15/11 (mở 15:08 15/11/2026, terminal `hue-rag-cb`; A `hue-rag-60` · C `hue-rag-51` · E `hue-rag-ab`; quyền phiên "như sáng 15/11")
 - 15:11 15/11/2026 — **W79 BẮT ĐẦU** (A giao): nhánh `p9-w79-sha`, worktree `/tmp/b_w79` (từ origin/main `97aa88e`). Khai báo sửa: `backend/api/routes/chat.py` (trường `git_sha` trong `chat_metrics`), `backend/tests/test_api_chat.py`, script mới `scripts/dem_chat_metrics.py`, report `report_agent/2026-11-12_ra_khoang_cach/b_w79_git_sha_implementation.md`. 0 USD. Sau đó: review nhánh 7 điểm lịch của E.
 - 15:15 15/11/2026 — **W79 XONG, CHỜ C review**: `p9-w79-sha` origin `7b1ba00` (push), worktree `/tmp/b_w79` (symlink data/kho — gỡ khi merge). Test file chạm đạt (1 lỗi = test cần khoá, có sẵn); script chạy thử trên log thật; 0 USD. Report trên nhánh `b_w79_git_sha_implementation.md`. 0 server. **Rảnh — chờ nhánh 7 điểm lịch của E để review.**
@@ -19,6 +49,7 @@
 - 16:40 15/11/2026 — **Rà nhãn cũ sau bảng v9 XONG** (0 USD, chưa áp): `data/nhan_cu_v9_2026-11-15/DE_XUAT.md`. Chỉ 1 nhãn cũ: chuỗi đã thấy S07 lượt 2 (điểm "ngoài bảng" nay có trong v9) ⇒ đề xuất đổi sang chùa Báo Quốc, file `chuoi_da_thay.de_xuat_v9.jsonl` (mô phỏng v8 / v9 10 / 10). Bộ kín: không mở, đã ghi 2 lệnh đếm cho người A giao. **Rảnh — chờ A.**
 - 16:41 15/11/2026 — A duyệt nhãn S07 (bản `eacb8ebdcb91`) — **CHƯA áp, chờ A nhắn "nhánh ngày đi đã merge"** rồi: sao lưu gốc `chuoi_da_thay.truoc_v9.jsonl` + chép bản đề xuất + sửa md5 README bộ. Cờ `--kin` đã thử trên file giả trong /tmp [Chạy]: bình thường chỉ in 1 dòng đếm; khi nhãn hỏng stderr lộ giá trị ⇒ lệnh cho User có `2>/dev/null | tail -1` (ghi `DE_XUAT.md`, đã gửi A 2 lệnh). **Rảnh — chờ A.**
 - 16:46 15/11/2026 — C báo: harness Q5b mới chạy thật lần đầu (bậc ngày đi, sha `ad81cc0`) không lỗi — thành lượt sửa 0 / 16 · định tuyến nhận khẩn cấp 16 / 16 (nối log 16 / 16) ⇒ dòng "cả lượt qua server [chưa chạy]" ở trên nay là [C đã chạy]. Vẫn **rảnh — chờ A** (áp nhãn S07 sau khi nhánh ngày đi merge).
+- 17:00 15/11/2026 — **Nhãn S07 ĐÃ ÁP** (A báo nhánh ngày đi đã merge): `bo_do_sua_lich/chuoi_da_thay.jsonl` md5 `eacb8ebdcb91`, sao lưu `chuoi_da_thay.truoc_v9.jsonl` (`2923d432da9b`), README bộ sửa; mô phỏng v9 10 / 10. Không chạy `kiem_bo.py` (mở file kín). `mo_phong_v2.py` gốc còn ghim v8 — dùng `data/nhan_cu_v9_2026-11-15/mo_phong_bang.py`. Còn worktree `/tmp/b_wnt` (chờ A merge `p9-web-noi-tiep`). **Rảnh — chờ A.**
 - Sửa dòng cũ: `b_dem_toc_do.md` ghi "chưa commit" ở mục kết phiên dưới — A đã commit (cây git sạch lúc mở phiên).
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11) — B viết 14:42 15/11/2026, terminal `hue-rag-b2` (A `hue-rag-26` · C `hue-rag-f9` · E `hue-rag-3e`)
