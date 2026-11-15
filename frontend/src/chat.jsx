@@ -57,7 +57,7 @@ function reducedMotion() {
 function newTurn(key, question, truong, summary, bieuMau) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           turnId: null, error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
+           error: "", clarify: null, truong, summary, bieuMau, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
 export function useChat() {
@@ -160,7 +160,7 @@ export function useChat() {
             update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
             // B142: mã lượt chỉ có ở lượt có câu trả lời cuối; (5) `tu_choi_kho`: kho không đủ ⇒ gợi ý cách hỏi
-            update({ outcome: data.outcome, turnId: data.turn_id ?? null, tuChoiKho: data.tu_choi_kho === true });
+            update({ outcome: data.outcome, tuChoiKho: data.tu_choi_kho === true });
           }
         },
       });

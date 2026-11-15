@@ -87,7 +87,8 @@ export function hangBangLe(text) {
     while (dau > 0 && laHang(lines[dau - 1])) dau -= 1;  // khối hàng liền nhau: là bảng thật khi hàng thứ hai của khối là dòng gạch
     if (dau + 1 < lines.length && laHang(lines[dau + 1]) && laGach(lines[dau + 1]) && !laGach(lines[dau])) return line;
     if (laGach(line)) return "";
-    return line.trim().replace(/^\|\s*|\s*\|$/g, "").split(/\s*\|\s*/).join(" · ");
+    // hai dấu cách cuối = xuống dòng cứng của Markdown: nhiều hàng mồ côi liền nhau không bị nối thành một dòng (review m-1)
+    return `${line.trim().replace(/^\|\s*|\s*\|$/g, "").split(/\s*\|\s*/).join(" · ")}  `;
   }).join("\n");
 }
 

@@ -36,5 +36,6 @@ Không có bộ chạy test JS trong repo ⇒ ca thử hàm thuần để ở `d
 ## Giới hạn
 
 - Xuống dòng đơn trong đoạn trích nay được nối lại như trang bài ở Khám phá (trước: giữ ngắt dòng 80 cột của file). Đoạn trích nào cố ý mỗi dòng một ý mà không phải danh sách sẽ thành một đoạn liền — chưa gặp trong 22 đoạn đã xem.
+- **Sau review (3 minor):** nhiều hàng bảng mồ côi liền nhau nay mỗi hàng một dòng (xuống dòng cứng; thêm ca thử: 2 hàng ⇒ 2 dòng); gỡ trường mã lượt không còn ai đọc ở `chat.jsx`. Giới hạn "nối xuống dòng đơn" A nhận; đếm kho (0 USD, `scripts/grep_kb.sh`): 0 cặp dòng ngắn liền nhau kiểu thơ / lời ca ở cả 5 lĩnh vực; 36 dòng trích dẫn `>` trong 12 bài (18 cặp liền nhau, phần lớn ở bài địa điểm / vé — sẽ hiện thành một đoạn liền); 16 dòng dùng thẻ xuống dòng `<br>` vẫn được giữ ⇒ ít, không báo động.
 - Lát bảng chỉ ghép khi đứng liền nhau trong cùng một nguồn; hai lát hàng của hai bảng khác nhau mà cùng số cột, đứng liền, sẽ bị ghép thành một bảng (chưa gặp).
 - Mới chụp khổ 1440; bảng rộng ở khổ hẹp cuộn ngang trong khung (kiểu CSS), chưa chụp 390.
