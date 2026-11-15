@@ -16,6 +16,19 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 - **User chốt (A ghi 10:28 15/11/2026):** (a) **ngưỡng mưa = xếp lại lịch khi ≥ 60 % VÀ ≥ 6 mm** (đầu cấp "Mưa" QCVN 84:2024 Phụ lục B — A mở văn bản gốc kiểm); dòng "Nếu mưa" giữ ≥ 60 % · (c) **Codex mặc định `gpt-6.1-terra` medium**, sol chỉ khi sâu (script + `Session_Prompt.md` §9 đã sửa) · (b) **plan khách sạn bản 2 DUYỆT sha `b5d8bc184090`**: cả hai, ngân sách trước; trang chỉ mở từ ô "Nơi ở".
 - Giao 10:28: **C** ngưỡng 6 mm (nhánh nhỏ) ⇒ rồi trang chỗ ở (bảng v3: gộp La Perle, Places 2 cơ sở) · **B** nhánh ngân sách (5 chỗ chạm B đã liệt kê) · **E** review cả hai + ảnh 14 bài. **Máy:** A docker-images-src bật bộ Capitol (~5–6 GB, 15–20 phút) từ 10:27 ⇒ nhóm không chạy test rộng / server / Playwright tới khi A báo xong.
 
+### Vòng tự soi 1 — phiên 15/11 (A chốt 10:55 15/11/2026; B, C, E đều gửi)
+**Áp ngay trong phiên** (làm nhẹ, không hạ sàn; kết phiên A đề xuất thành luật qua `improve-workflow`):
+1. Cổng server thật sau merge **chỉ khi nhánh chạm đường chat / model, route API, hoặc cấu hình nạp lúc khởi động**; nhánh chỉ đổi ảnh / chữ / hằng số thuần / giao diện tĩnh ⇒ build + test file chạm (C, E).
+2. Người review **không chạy lại test** người làm đã chạy, trừ nhánh đổi cờ `settings.yaml` (luật có / không env) (E, B). Nhánh hàm thuần ≤ ~30–50 dòng có mô phỏng 3.840 khung ⇒ đọc diff + dữ liệu.
+3. Biên bản review nhánh ≤ ~50 dòng code: **≤ 5 dòng** (kết luận · đã đọc gì · finding) (E).
+4. Plan nhẹ (≤ 0,2 USD): **một** người phản biện (C).
+5. Playwright: tác giả chạy một lần; không chạy cho thay đổi chỉ một đoạn chữ (B, C).
+6. So nhiều model / chấm mù: **chỉ khi đổi mặc định**, không lặp cho mỗi đề (cả nhóm).
+7. Finding về "chuỗi gửi model" phải chỉ ra hàm dựng chuỗi đó (B — 1 major sai lượt plan).
+8. Số trong plan **đếm trên khung thật**, không ước bằng tổ hợp (C: "12 ⇒ 36 cơ sở" thật ra 13 ⇒ 32 — A đã chuyển số chưa kiểm cho User, đính chính).
+**A tự nhận:** xin thêm bảng 5 ↔ 6 mm trên 2 thước sau khi nhóm đã chốt — không đổi kết luận (C); mở vòng tự soi muộn (~10:53).
+**GIỮ (bắt lỗi thật):** review đọc DỮ LIỆU (câu Bạch Mã rộng hơn kho, nhãn "1 sao" gồm Đạt chuẩn, trưa Nhị Hồ 0 / 3.840, La Perle trùng, key "Như Phú") · người thứ hai nhìn ảnh (Kỳ yên) · mở trang nguồn đọc chú thích ảnh · liệt kê mọi chỗ chạm khi thêm trường qua sửa lịch · thước so cố định, không trùng ngưỡng đang thử · đếm trước khi xây (nam xa) · băm 3.840 khung "không chọn ⇒ như cũ" · đo bù câu đổi top 10.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 22:35 14/11/2026, KẾT PHIÊN TỐI 14/11 — User: "để các nhiệm vụ, câu hỏi cho session tiếp theo")
 
 **Phiên tối 14/11 đã kết** (mở 17:45, User vắng từ 17:49, về lúc kết phiên). A `hue-rag-fb` · B `hue-rag-62` · C `hue-rag-eb` · E `hue-rag-1f`, cả bốn Claude Code (Opus 5.5), trực tiếp; D không mở. **Quyền phiên HẾT HẠN** ⇒ A mới hỏi lại User một câu (tối 14/11 có: "như 14/11" = A tự điều phối, A commit / push, B / C / E push nhánh riêng, tự tra / cào / ghi kho / ingest, không hỏi khi User vắng, tiền không trần cứng nhưng dùng hiệu quả). Mỗi session đọc mục đầu `sessions/STATUS_<X>.md` "PHIÊN SAU ĐỌC TRƯỚC". **D** (học cùng User, chưa mở 14/11): gợi ý bài để giảng khi User muốn — `bai_hoc/22` (6 lần ghi kho, hỏi thử trước khi viết), `25` (khách sạn chọn theo hạng, quán, mục web), `24` (ảnh: người giao nhìn lại 100 %); không có STATUS_D — tạo từ mẫu `sessions/README.md` khi mở. Nguyên văn phiên tối (quyết định theo giờ, tiến độ, vòng tự soi 1): `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-14_toi.md`; phiên sáng + chiều: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-14.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-14_ghi_kho_3_bai.md`.
