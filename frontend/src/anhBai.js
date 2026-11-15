@@ -257,6 +257,13 @@ const ANH = {
   k10uiurj: {"anh": "kp/k10uiurj"},
   ki14c3y: {"anh": "kp/ki14c3y"},
   k1cwlo22: {"anh": "kp/k1cwlo22", "kc": 1},
+  k1ismzpb: {"anh": "kp/k1ismzpb"},
+  kgvvlia: {"anh": "kp/kgvvlia"},
+  k10nl54i: {"anh": "kp/k10nl54i"},
+  k14al8f2: {"anh": "kp/k14al8f2"},
+  k1eul6xp: {"anh": "kp/k1eul6xp"},
+  k1p0646v: {"anh": "kp/k1p0646v", "kc": 1},
+  k1fycqz6: {"anh": "kp/k1fycqz6", "kc": 1},
 };
 
 export function anhCuaBai(id) {
