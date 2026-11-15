@@ -57,3 +57,9 @@ Không có cờ: merge = bật. User cho bật khi đạt T1–T5 — cả 5 đ�
 - 3 ảnh quảng cáo / số điện thoại: E đã sửa tận gốc (commit `133d29e`). C xem lại ảnh Chợ An Cựu: hai bảng số đã được làm mờ.
 - Ảnh phố Hai Bà Trưng (người xem ghi chưa chắc): nguồn là bài tuoitre.vn về đêm khai trương chính phố đi bộ đó ⇒ có căn cứ đúng nơi.
 - Bài học 25 §8 + bài 24 + sổ 07 + README đã viết; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_anh_chat.md` (8 chỗ sai / dễ hiểu nhầm — đã sửa).
+
+## Bản 2 — khớp tên cả trên câu hỏi (plan sha `6c8973b89ebd`, nhánh `p9-anh-chat-hoi` @ `4993b06`)
+- `anhTraLoi.js`: bài được trích, đủ 3 rào cũ, tên khớp `tenKhop` trên **chữ trả lời HOẶC `turn.question`** ⇒ hiện. Một bài ⇒ như cũ. Hướng "một bài một nơi trong nguồn" bỏ (đếm `c_dem_anh_chat_b2.md`: lạc đề 2 / 5).
+- Test: 2 ca mới (tên chỉ có trong câu hỏi ⇒ có ảnh; tên có trong câu hỏi nhưng bài không được trích ⇒ không). `test_anh_tra_loi.py` 2 passed.
+- **T3 mô phỏng** (`mo_phong.py` nay truyền câu hỏi Golden, private): 103 ⇒ **106 / 154**, **0 ảnh cũ mất**, 3 ảnh thêm = đúng 3 ảnh C đã nhìn lại (`xem_lai_b.jpg`, đúng nơi). Không Playwright (không có kiểu hiển thị mới).
+- **Test rộng** sau rebase lên main có thẻ khách sạn: lượt đầu 1062 passed / **3 failed**. Cả 3 là test cần bản build giao diện (`frontend/dist`), mà worktree mới chưa build. Build rồi chạy lại 3 test ⇒ passed. Không phải lỗi code.

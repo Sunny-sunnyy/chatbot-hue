@@ -19,3 +19,5 @@ A giao 15/11 (bước "khách sạn sau" của ảnh chat). 12 câu tự đặt 
 
 ## Kết luận
 **Đáng làm.** Câu hỏi khách sạn gần như luôn nêu tên cơ sở; 7 / 12 có ít nhất một cơ sở có ảnh. Plan: `docs/superpowers/plans/2026-11-15-the-khach-san-chat-plan.md`.
+
+**Câu khu nghỉ dưỡng ven đầm ×5 trên main** (`data/ks_chat_2026-11-15/vedana_x5.jsonl`, 0,0041 USD): kho từ chối **5 / 5**, cả 5 sang mục web ⇒ **không phải nhiễu**. Nhưng E hỏi 15 khách sạn đích danh + 3 cách hỏi ngắn cho cơ sở này đều 0 từ chối (`e_dem_ten_ks.md`). Khác nhau ở câu hỏi: câu của C hỏi "có gì đặc biệt", mà bài lưu trú chỉ có tên / hạng / địa chỉ ⇒ kho không có thông tin đó ⇒ sang web là **đúng hành vi**, không phải lỗi tìm. Đóng.

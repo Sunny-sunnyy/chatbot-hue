@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -173,9 +173,31 @@ chọn hạng sao trước.
   - bấm link từ một lịch trung tâm thì mở đúng nhóm trung tâm.
 - Người kiểm bắt được hai khách sạn cùng tên "Như Phú" ở hai số nhà: trang vẫn hiện hai dòng, nhưng hai dòng mang cùng một nhãn nội bộ nên có thể vẽ lẫn
   nhau khi lọc. Nay nhãn gồm cả địa chỉ.
-- 69 / 137 cơ sở có ảnh, phần còn lại hiện ô màu. Tính theo lần hiện trong lịch thì ô có ảnh là 97,6 % khi không chọn mức; chọn mức 1 sao chỉ còn 79,5 %.
+- **58 / 137** cơ sở có ảnh, phần còn lại hiện ô màu. Lúc trang Chỗ ở mới làm (sáng 15/11) là 69. Trưa 15/11 rà lại theo luật chọn ảnh: loại 19 ảnh không đủ rõ là đúng cơ sở (không thấy biển / chữ tên), tìm được ảnh thay cho 8 ⇒ 11 cơ sở thành ô màu. Tính theo lần hiện trong lịch, ô có ảnh là **95,3 %** khi không chọn mức (trước gỡ 97,6 %); chọn mức 1 sao **79,3 %**.
 
 Tiền hai việc ≈ 0,002 USD: vài lượt xếp lịch thật cho trình duyệt. Toạ độ dùng lại kết quả tra hôm trước.
+
+*Thẻ khách sạn trong trò chuyện (trưa 15/11).* Hỏi trợ lý "gần biển Thuận An có khách sạn nào?" thì câu trả lời nhắc tên vài cơ sở. Nay dưới câu
+trả lời có tới **3 thẻ**: ảnh (không có thì ô màu), tên, hạng sao, nút "Bản đồ" và "Tìm phòng", kèm dòng "chưa kiểm giá / phòng trống". Dữ liệu là đúng bảng
+của trang Chỗ ở; code chọn thẻ, model không chọn.
+- **Đếm trước:** 12 câu mình tự đặt (một khách sạn, so sánh hai khách sạn, liệt kê theo khu, vài câu "bẫy"), hỏi qua trợ lý thật.
+  - 10 / 12 trả lời bằng bài lưu trú và đều nêu tên cơ sở có trong bảng; 7 / 12 có ít nhất một cơ sở có ảnh.
+  - Chỉ 4 / 12 câu ghi đúng tên đầy đủ như bảng: model hay bỏ phần đầu "Khách sạn …", "Khu nghỉ dưỡng …". Vì vậy code khớp **tên lõi** (bỏ phần chỉ loại
+    hình), và chỉ khi câu trả lời có trích một bài lưu trú.
+- **Hai kiểu khớp nhầm phải chặn:**
+  - tên ngắn nằm lọt trong tên dài ("Villa Louise" trong "Villa Louise Beach") ⇒ lấy tên dài nhất;
+  - tên lõi trùng địa danh, sự kiện, tên đường hay cụm từ thường (vd "Thành Nội", "Hương Giang", "Festival Huế", "Ngự Bình", một tên đường trong địa chỉ). Câu "ở trong
+    Thành Nội" mà hiện thẻ một khách sạn tên Thành Nội là sai. Code tự dò ra **10 tên** như vậy: tên xuất hiện từ 10 lần trở lên ở các bài không phải bài
+    lưu trú (địa danh ít nhất 12 lần, tên khách sạn thật nhiều nhất 7), hoặc trùng tên đường. Thêm vào đó là các tên chỉ có **1 chữ**: 12 cơ sở có tên lõi
+    1 chữ (vd Eldora, Cherish), và 7 cơ sở còn 1 chữ khi bỏ chữ "Huế" cuối (vd "Moonlight"). Tất cả chỉ được khớp khi đứng ngay sau chữ "khách sạn /
+    khu nghỉ dưỡng / resort".
+- **Đo:**
+  - chạy chính đoạn code của giao diện trên 12 câu trả lời thật: 10 câu có thẻ, 18 thẻ, mình đọc từng thẻ cạnh câu trả lời ⇒ **18 / 18 đúng cơ sở**;
+  - sau khi thêm luật chặn tên trùng, 12 câu ra đúng 18 thẻ như trước;
+  - mình nhìn lại cả 7 ảnh thẻ sẽ hiện: đều có biển tên đúng cơ sở;
+  - trình duyệt thật ở hai khổ màn hình: 3 thẻ, link đúng, 0 lỗi.
+  - Tiền ≈ 0,009 USD.
+- **Lỡ:** model viết "Meliá" (dấu sắc) trong khi bảng ghi "Meliã" (dấu ngã) ⇒ không có thẻ cho cơ sở đó. Thiếu thẻ, không sai thẻ.
 
 ## 4. Quán ăn trong lịch
 
@@ -289,6 +311,10 @@ không ảnh, phần lớn (32) vì trích từ hai bài trở lên.
 - Trình duyệt thật ở hai khổ màn hình với câu tự đặt so sánh hai quán bún bò:
   - hai ảnh có tên, đúng thứ tự dòng Nguồn, 0 lỗi;
   - lượt đầu ảnh xếp ngược thứ tự dòng Nguồn ⇒ đã sửa.
+- **Chiều 15/11, thêm một cách khớp:** tên nơi có trong **câu người dùng hỏi** cũng tính (bài vẫn phải được trích). Lý do: hỏi đích danh một di tích thì
+  câu trả lời hay không nhắc lại tên. Trên 154 câu đã lưu: **103 ⇒ 106** câu có ảnh, không ảnh nào cũ mất; 3 ảnh thêm mình đã nhìn lại, đúng nơi.
+  Một cách khác bị bỏ: "trong các nguồn chỉ có một bài về một nơi thì lấy ảnh bài đó". Cách này thêm 5 câu nhưng 2 ảnh lạc đề, ví dụ câu hỏi xe máy
+  qua hầm đèo lại ra ảnh vịnh biển.
 
 ## Một chuyện thật: bật rồi mới thấy chậm, và lần đo "thêm cho tới khi đạt"
 
@@ -335,6 +361,7 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - **Chỗ ở:** lịch có buổi tối luôn ra trung tâm; trong 3.840 khung mô phỏng không lịch nào còn ra khu phía tây. Trong cùng mức, hạng cao đứng trước (tối 14/11), rồi cơ sở
   gần cụm có nhiều điểm nhất, rồi có ảnh, rồi theo tên — nên nhiều lịch trung tâm vẫn ra cùng 5 khách sạn. Không chọn mức: 14 / 137 cơ sở từng hiện; cộng
   cả ba mức sao: 33 / 137. Phần còn lại chỉ thấy ở trang "Chỗ ở". Không có giá, không có điểm đánh giá; hạng sao là hạng trong danh mục (lấy 12/11/2026), không phải giá.
+- **Thẻ khách sạn:** chỉ khớp tên lõi đúng chữ như bảng; tên viết khác dấu hay khác chính tả ("Meliá" ↔ "Meliã", "Saigon" ↔ "Sài Gòn") ⇒ không thẻ. 10 tên trùng địa danh / tên đường / cụm từ thường và các tên 1 chữ (12 tên lõi + 7 tên khi bỏ "Huế") cần chữ loại hình đứng trước. Hai cơ sở cùng tên ở hai địa chỉ có thể ra 2 thẻ (chờ anh quyết). 79 / 137 cơ sở chưa có ảnh.
 - **Ảnh nhiều nơi:** chỉ khớp đúng tên bài. Model viết tên khác (tên gọi khác, viết tắt) ⇒ không ảnh — thiếu ảnh chứ không sai ảnh. Tên mà chữ sau
   cũng là chữ thường bình thường vẫn có thể khớp nhầm: "Lý Huế" khớp được trong "quản lý Huế", vì "lý" là một từ đứng riêng. Chặn được bằng cách giữ
   cả chữ hoa đầu, nhưng mất 14 / 39 ảnh không sai nơi (model hay viết "chợ …", "lăng …") nên không chọn; chỉ sai khi bài đó cũng được trích. Khách sạn chưa có.
@@ -374,6 +401,7 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - Quán ăn: đếm 22.680 bữa, 28 quán kho, 33,5 / 74,7 % (bản đầu 74,7 / 95,2 sai), 16 lượt Serper 0,016 USD (đếm web ý thiếu 3 / 16, tốt nhất 6 / 16): `report_agent/2026-11-12_ra_khoang_cach/c_dem_truoc_khi_xay.md` [đã chạy]; 2 km (p95 9,3 km), bữa tối gần điểm tối, cà phê, 80,7 %, 0,78 / 1,94 / 1,99 km, người xem 10 / 10, 0,0013 USD, giới hạn: `c_quan_lich_implementation.md`, review `b_review_quan_lich.md` [đã chạy]
 - Khu ở theo buổi tối (thử 1 8 / 10, thử 2 10 / 10, phía tây 0 / 3.840): mục cuối `b_luu_tru_lich_implementation.md`; review `e_review_o_toi.md` (m-1 kiểm bằng bảng khu, đã sửa) [đã chạy]
 - Vùng xa phía nam (720 / 3.840 lịch, 1.080 / 22.680 bữa, quán gần nhất 36–38 km, chỉ khi "Thiên nhiên" + ≥ 3 ngày; câu nhắc theo kho; Playwright 2 câu nhắc ngày 2): `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`, script `data/dem_quan_nam_xa_2026-11-15/` [đã chạy]; code `GHI_CHU_AN` trong `backend/llm/quan_lich.py` [code].
+- Thẻ khách sạn (15/11): plan `docs/superpowers/plans/2026-11-15-the-khach-san-chat-plan.md` (sha 1952c39cfc46); đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_ks_chat.md` (12 câu, 0,0083 USD, `data/ks_chat_2026-11-15/hoi.jsonl`); làm `c_the_ks_chat_implementation.md` (18 / 18, 7 / 7 ảnh, Playwright `data/ks_chat_2026-11-15/anh/`), review `e_review_the_ks_chat.md`; 10 tên `frontend/src/theKhachSanTrung.js` sinh bằng `data/ks_chat_2026-11-15/tools/dung_trung.py` (ngưỡng 10: 12 ↔ 7) [đã chạy]; ảnh 69 ⇒ 58 (loại 19, thay 8) `e_anh_khach_san.md`; "0 lỗi" của Playwright là kết quả in ra lúc chạy (`tools/pw_the_ks.py`), không lưu file log; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_the_ks.md` (31 khẳng định: 0 sai, 6 dễ hiểu nhầm — đã sửa); tỉ lệ ô có ảnh trên v4 `data/khach_san_2026-11-15/dem_sau_v4.json` [đã chạy].
 - Chọn hạng sao + trang Chỗ ở (15/11): plan `docs/superpowers/plans/2026-11-15-khach-san-trang-va-ngan-sach.md` (sha b5d8bc184090); ngân sách `report_agent/2026-11-12_ra_khoang_cach/b_ngan_sach_o_implementation.md` (T1 băm 3.840 khung giống byte, T2–T4, T7) + review `e_review_ngan_sach_o.md` [đã chạy]; trang `c_cho_o_implementation.md` + `e_review_cho_o.md` (Như Phú) [đã chạy]; bảng v3 137 cơ sở, 69 có ảnh, 364 / 3.840 lịch đổi (`data/khach_san_2026-11-15/so_v2_v3.json`); lọc ven biển bằng `phia_bien` (merge `f980853`, B): Gloria +36 lịch phía bắc, 0 mất; số trên main sau `f980853`: 14 / 8 / 10 / 15, gộp 33, ô có ảnh 97,6 / 100 / 83,8 / 79,5 % (`data/khach_san_2026-11-15/dem_sau.json`, `tools/dem_sau.py`), 3–4 bộ / mức ở trung tâm, bộ lớn nhất 2.220–2.472 / 3.036 (đếm 11:00 15/11) [đã chạy]; ước 36 của plan không ghi cách tính. Kiểm độc lập: `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_cho_o.md` (57 khẳng định, 10 sai do main đổi + nhãn, 7 dễ hiểu nhầm — đã sửa).
 - Lịch mẫu đi – ăn – ở, chỉ quán kho, 3 bữa, khu trung tâm: `b_review_lich_mau_an_o.md`, `b_review_lich_mau_quan_kho.md`; ảnh `data/ui_mau_2026-11-14/anh_chup/lich_mau_cuoi_1411/` [đã chạy]
 - So tiền theo giá trị (16 ⇒ 4 chặn vì tiền, 43 ⇒ 51 / 76, 220.000 4 / 4, 8 mục mới qua, "2 triệu rưỡi", "150K"): `b_tien_web_chuan_hoa_implementation.md`, `e_review_tien_web.md` [đã chạy]

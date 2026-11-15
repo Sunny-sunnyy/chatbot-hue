@@ -26,6 +26,7 @@
 **12 câu khách sạn soạn sẵn (chưa chạy):** `data/anh_chat_2026-11-15/cau_khach_san.json` — gồm bẫy tên viết khác, tên lồng nhau, tên trùng sông, cơ sở không ảnh, cơ sở không có trong danh mục. Việc sau merge ảnh chat: bài 24 + sổ 08 / 07.
 **Ảnh chat merge (`e801c83`) + tài liệu XONG:** bài 25 §8, bài 24, sổ 07 (bản 58), README — sửa theo kiểm độc lập (8 chỗ); chờ A commit. Rảnh — chờ.
 **Đếm KS trong chat XONG (0,0083 USD):** `c_dem_ks_chat.md` — 10 / 12 câu nêu tên cơ sở, 7 / 12 có ảnh, khớp tên lõi + tên dài nhất. Plan thẻ khách sạn bản 1 `docs/superpowers/plans/2026-11-15-the-khach-san-chat-plan.md` — chờ A duyệt. Phản biện rà nợ cũ của B đã gửi.
+**Thẻ KS (`aecde1d`) + ảnh chat bản 2 (`688bad8`) đã merge; tài liệu XONG:** bài 25 + sổ 07 (bản 60) + README, kiểm độc lập (31: 0 sai, 6 dễ hiểu nhầm — đã sửa); số ảnh KS 58 / 137 cập nhật (ô có ảnh 95,3 %). Chờ A commit.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 
