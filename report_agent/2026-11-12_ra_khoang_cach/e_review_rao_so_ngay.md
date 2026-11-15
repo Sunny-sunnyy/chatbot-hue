@@ -1,0 +1,11 @@
+# Review — `p9-rao-so-ngay` (C, `62afeb7`) · E · 13:00 15/11/2026 (`date`)
+
+- **Kết luận: `changes_requested` (1 major, 2 minor).** Đọc diff + chạy hàm `so_ngay_co_trong_cau` trên 9 câu tự đặt (0 USD, hàm thuần, file tạm đã xoá). `git diff --check` sạch; dựng trên `d3ff731` ⇒ rebase. Hướng đúng: phép kiểm do code, đặt sau lần hiểu ý, không đổi lời dặn.
+- **M-1 — rào chặn xong thì lượt rơi về đường trả lời thường.** `hieu_va_ap` (`len_ke_hoach.py` ~dòng 252): danh sách hành động rỗng sau `loc_hanh_dong` ⇒ `return None` ⇒ lõi trả lời như câu thường. E đã thấy đường thường viết lời tự do kiểu "Được, rút còn 2 ngày…" trong khi lịch không đổi (e_mo_rong_diem_lich.md mục 2, quan sát trên đường API). ⇒ Câu sửa hợp lệ bị rào chặn nhầm (m-3) có thể nhận đúng kiểu "nói chắc sai" mà nhánh muốn chặn. **[suy từ code + quan sát đường API, chưa chạy riêng]**. Đóng khi: rào đã bỏ ≥ 1 hành động `doi_so_ngay` ⇒ vẫn là lượt sửa, báo câu cố định (vd "Chưa rõ số ngày mới — bạn gõ giúp 'còn N ngày'"), không về đường thường; + 1 test.
+- **m-2 — lỗ ngày tháng có thứ:** "đi từ **thứ hai** ngày 20/12" và "đi **thứ ba** ngày 18/11" ⇒ `_N_NGAY` bắt "hai ngày" / "ba ngày" ⇒ hành động đổi số ngày sai (2 / 3) **được nhận**. Đây là đúng loại lỗi nhánh này sửa, chỉ khác có chữ thứ trong tuần. Đóng khi: thêm `(?<!thứ\s)` trước số (hoặc bỏ cụm "thứ + số" trước khi dò) + 2 ca test.
+- **m-3 — chặn nhầm câu hợp lệ:** "đi **2 hôm** thôi" (từ "hôm" = ngày) và "**bỏ ngày cuối** / bỏ ngày 3" (giảm 1; không có hành động "bỏ ngày" riêng nên phải qua `doi_so_ngay`) ⇒ bị chặn. Đóng khi: `_N_NGAY` nhận "hôm"; "bỏ ngày cuối / bỏ ngày <N = số ngày hiện tại>" ⇒ hiện tại − 1. Thêm ca test. Đã chạy đúng: "rút còn 2 ngày", "thêm một ngày", "4N3Đ", "đi từ ngày 20/12" (chặn đúng).
+
+## Vòng 2 (`d5dfec8`) — 13:08 15/11/2026 (`date`)
+- **Kết luận: `ready_for_user_confirmation`, 0 finding.** Cả 3 điểm đã đóng.
+- **M-1:** rào đã bỏ ≥ 1 `doi_so_ngay` ⇒ không `return None`; `kq["chua_lam"]` thêm `"doi_so_ngay"` ⇒ câu cố định "Chưa làm: đổi số ngày — bạn nhắn tiếp nhé." Đúng kiểu dữ liệu: `chua_lam` vốn là danh sách tên loại (`sua_lich_v2.py` 192 / 195), dựng câu bằng `NHAN_HANH_DONG[t]` (332).
+- **m-2, m-3:** E chạy lại hàm trên 12 câu (9 câu vòng 1 + "bỏ ngày 2" giữa · "bớt 1 hôm" · "thứ hai đi 2 ngày thôi") ⇒ **12 / 12 đúng**. Lookbehind `(?<!thứ\s)` có `re.I` ⇒ "Thứ Ba" cũng chặn.

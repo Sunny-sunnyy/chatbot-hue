@@ -28,6 +28,7 @@
 **Đếm KS trong chat XONG (0,0083 USD):** `c_dem_ks_chat.md` — 10 / 12 câu nêu tên cơ sở, 7 / 12 có ảnh, khớp tên lõi + tên dài nhất. Plan thẻ khách sạn bản 1 `docs/superpowers/plans/2026-11-15-the-khach-san-chat-plan.md` — chờ A duyệt. Phản biện rà nợ cũ của B đã gửi.
 **Thẻ KS (`aecde1d`) + ảnh chat bản 2 (`688bad8`) đã merge; tài liệu XONG:** bài 25 + sổ 07 (bản 60) + README, kiểm độc lập (31: 0 sai, 6 dễ hiểu nhầm — đã sửa); số ảnh KS 58 / 137 cập nhật (ô có ảnh 95,3 %). Chờ A commit.
 **Đề xuất việc tiếp (A gom cho User):** sửa lịch bằng lời đổi ngày đi + hạng sao — đếm `c_dem_sua_lich_truong.md` (hạng sao 5 / 5 không sửa được, không báo; ngày đi 1 / 5 bị hiểu thành đổi số ngày 3 ⇒ 1, báo 'Đã đổi'); 2 bậc theo phản biện B. Nhớ sở thích: User đã bỏ. Chữ Kirin 1 / 6.254 ⇒ không xây. Tiền ≈ 0,0012 USD. Rảnh — chờ.
+**Rào số ngày (A giao sửa ngay):** nhánh `p9-rao-so-ngay` @ `d5dfec8` — sau review E vòng 1 (M-1 + 2 minor đã sửa), chờ E vòng 2. Test 20, suite 1085, Q3 16 đúng chặn 0, 3 sai chặn 3. Worktree `/tmp/c_rs`.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 
