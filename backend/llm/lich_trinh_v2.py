@@ -159,6 +159,9 @@ def dat_gio(d: dict, t: int) -> tuple[int, int] | None:
 
 
 NGUONG_MUA = 60  # = `thoi_tiet.NGUONG_MUA` (không thêm ngưỡng mới — spec 5c.2); giữ ở đây để module thuần không import phần gọi mạng
+# Xếp lại lịch khi mưa cần THÊM lượng mưa dự báo ≥ 6 mm / ngày (User 15/11: đầu cấp "Mưa" QCVN 84:2024; ≥ 60 % một mình chỉ là "có một giờ
+# có thể lấm tấm" ⇒ 222 / 365 ngày; đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_mua.md` phần 5). Dòng "Nếu mưa" vẫn chỉ cần ≥ NGUONG_MUA.
+MM_MUA_XEP = 6
 THU_TU_MUA = {"trong_nha": 0, "ca_hai": 1, "ngoai_troi": 2}  # ngày mưa: điểm không ưu tiên xét trong nhà ⇒ cả hai ⇒ ngoài trời
 
 

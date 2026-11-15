@@ -616,6 +616,22 @@ def test_rule_rain_day_prefers_indoor_but_keeps_priority(tmp_path):
     assert lkh.dong_neu_mua(chi_ngoai, k1, k1["ngay"][0]).startswith("Nếu mưa ngày 1: ngoai ở ngoài trời")
 
 
+def test_rain_reorder_needs_6mm_but_rain_line_stays_at_60_percent():
+    """User 15/11: xếp lại khi ≥ 60 % VÀ ≥ 6 mm; dòng "Nếu mưa" vẫn từ ≥ 60 % (cả ngày mưa nhỏ)."""
+    hom = D(2026, 11, 13)
+    ngay = [(80, 5.9), (80, 6.0), (59, 30.0), (None, 20.0)]
+    db = {"ngay": {hom + dt.timedelta(days=k): {"ngay": hom + dt.timedelta(days=k), "tmax": 25, "tmin": 20, "xs": x, "mua": m}
+                   for k, (x, m) in enumerate(ngay)}, "nguon": tt.GHI_CONG}
+    assert lkh.ngay_mua_xep(db) == {hom + dt.timedelta(days=1): 80, hom + dt.timedelta(days=2): 59} and lkh.ngay_mua_xep(None) is None
+    b = V2.bang_lich_v2
+    k = v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua=lkh.ngay_mua_xep(db))
+    assert [x["cau"].split(":")[0] for x in lkh.dong_du_bao(b, k, db) if x["cau"].startswith("Nếu mưa")] == ["Nếu mưa ngày 1", "Nếu mưa ngày 2"]
+    # ngày 1 (80 %, 5,9 mm) xếp như không mưa
+    khong = v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua={})
+    assert k["ngay"][0]["buoi"] == khong["ngay"][0]["buoi"]
+    assert v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua={hom: 80})["ngay"][0]["buoi"] != khong["ngay"][0]["buoi"]  # ca có nghĩa: ≥ 6 mm thì đổi
+
+
 @pytest.mark.parametrize("kich_ban", ["khong_mua", "mua_ngay_1", "mua_moi_ngay"])
 def test_forecast_scenarios_and_no_call_outside_7_days(kich_ban):
     """Ba kịch bản dự báo ghi sẵn (cách đo của E): chỉ ngày mưa đổi thứ tự xét; ngày ngoài 7 ngày ⇒ 0 lần gọi, 0 dòng dự báo; lỗi ⇒ như không có."""
@@ -625,14 +641,14 @@ def test_forecast_scenarios_and_no_call_outside_7_days(kich_ban):
 
     async def du_bao():
         goi.append(1)
-        return tt.DuBao(trang_thai="ok", ngay=[{"ngay": hom + dt.timedelta(days=k), "tmax": 25, "tmin": 20, "xs": x, "mua": 1.0}
+        return tt.DuBao(trang_thai="ok", ngay=[{"ngay": hom + dt.timedelta(days=k), "tmax": 25, "tmin": 20, "xs": x, "mua": 12.0}
                                                for k, x in enumerate(xs)], cap_nhat="09:00 13/11")
     flags = dataclasses.replace(V2, thoi_tiet=True, du_bao=du_bao)
     trace = AnswerTrace()
     db = asyncio.run(lkh.du_bao_lich(flags, hom, 3, trace, hom))
     assert len(goi) == 1 and db is not None and trace.tools[-1]["name"] == "thoi_tiet"
     b = V2.bang_lich_v2
-    k = v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua={d: v["xs"] for d, v in db["ngay"].items()})
+    k = v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua=lkh.ngay_mua_xep(db))
     assert v2.kiem_khung_v2(b, k) == []
     dong = [x["cau"] for x in lkh.dong_du_bao(b, k, db)]
     assert sum(x.startswith("Ngày ") for x in dong) == 3 and dong[-1].startswith(tt.GHI_CONG)
