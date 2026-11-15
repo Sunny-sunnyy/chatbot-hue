@@ -23,6 +23,8 @@
   - Worktree của E còn: `/tmp/e_v9` (nhánh tài liệu, đã merge), `/tmp/e_gd3` (đang ở `p9-bo-buoi-trong`), `/tmp/e_ks`, `/tmp/e_kp` — gỡ khi kết phiên (mỗi cái có 2 symlink `data`, `knowledge-base-hue`). Không server nào của E chạy.
   - Tiền E phiên chiều ≈ 0,022 USD (v9 0,0151 · giao diện ≈ 0,005 · buổi trống ≈ 0,001; ảnh + tài liệu + review 0).
   - Bẫy thêm: script có `assert` "thư mục đúng N file" hỏng khi User bỏ thêm file vào cùng thư mục ⇒ kiểm tập con; `str(None)` thành chữ "None" trong loader bảng ảnh (đã sửa).
+- 16:17 15/11/2026 — **Rảnh — chờ nhánh C** "khối Nơi ở chỉ hiện khi người dùng hỏi" (plan `docs/superpowers/plans/2026-11-15-noi-o-chi-khi-hoi-plan.md`, A duyệt) để review cả nhánh; soi chỗ giao với phần bỏ buổi trống ở `LichV2.jsx`. Đã gửi A đề xuất về dòng ghi chú ngày đi xa (đếm: 236 / 3.840 lịch có tối nghỉ vì đi xa; E khuyến nghị không thêm).
+- 16:24 15/11/2026 — Review `p9-o-khi-hoi` (C, `6058298`) ⇒ ready, 0 / 0 / 2 minor: `report_agent/2026-11-12_ra_khoang_cach/e_review_noi_o_khi_hoi.md` (chưa commit — A). Ca dò 7.680 lượt 0 vi phạm; merge thử vào main sạch. Worktree tạm `/tmp/e_rv` đã gỡ. **Rảnh — chờ A.**
 
 ---
 
