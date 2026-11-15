@@ -16,6 +16,9 @@
 **p9-cho-o merge (60f556b).** Đang: tài liệu hai tính năng khách sạn — `bai_hoc/25`, sổ `07` (bản 56), README (main working tree, chưa commit); số thật `data/khach_san_2026-11-15/dem_sau.json` (13 ⇒ 32 / 137). Agent con kiểm độc lập đang chạy ⇒ biên bản `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_cho_o.md`. Vòng tự soi 1 đã gửi.
 **Tài liệu khách sạn XONG (11:00 15/11/2026):** bài 25 + sổ 07 + README sửa theo kiểm độc lập (57 khẳng định, 10 sai chủ yếu do main đổi giữa chừng ⇒ số mới 14 ⇒ 33 / 137) — chờ A commit. Rảnh — chờ.
 **Kho mâu thuẫn — đếm + tra XONG:** `report_agent/2026-11-12_ra_khoang_cach/c_kho_mau_thuan.md` — vị trí bảo tàng đã khớp; năm đóng đô 1786 ↔ 1788 còn lệch (nguồn: 1786 chiếm thành, 1788 lên ngôi ⇒ gợi ý câu gộp), chờ User; quét thêm 0 lệch mới. Tiền ≈ 0,002 USD.
+**Sửa kho Tây Sơn (User duyệt):** 2 câu ở 2 bài (E review, m-1 sửa), sao lưu `meta/backup_sua_kho_2026-11-15_tay_son`, dựng 11:15–11:22 ⇒ 9.425 point, record `1b53af26b662`, sparse `ccd1d3ae36ec`; T1 giống mốc (`aa34d4215f15`), 0 câu có đoạn sửa trong top 10 ⇒ không đo Golden có phí. Còn: 2 câu hỏi thử (chờ E build Docker xong) + report + bài học / sổ 02. Hồ sơ `data/sua_kho_2026-11-15_tay_son/`.
+**Đếm ảnh trong chat XONG:** `c_dem_anh_chat.md` (77 ⇒ ~118 / 154 ước; khách sạn 0 câu Golden) — đã gửi nhóm bàn.
+**Tây Sơn: 2 câu thử xong (PARTIAL so tiêu chí — đúng, khớp, chỉ nêu 1788).** Report `c_sua_kho_tay_son_implementation.md`; bài 22 + sổ 02 + README sửa trên main working tree; agent con kiểm độc lập bài 22 đang chạy ⇒ `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_tay_son.md`. Tiền việc ≈ 0,003 USD.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

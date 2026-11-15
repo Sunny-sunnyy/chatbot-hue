@@ -23,6 +23,9 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 
 - **User (11:23 15/11/2026):** **plan tốc độ bản 2 DUYỆT sha `86d295b16017`** (B code; lượt có phí sau khi E build Docker xong) · **ảnh trong chat: mở rộng** — User: "ngoài ảnh khách sạn còn phải trả ảnh món ăn, địa điểm, di tích… người dùng nhắc bún bò ⇒ ảnh bún bò; Kinh thành ⇒ ảnh Kinh thành" ⇒ nhóm đếm 0 USD (câu trả lời về nơi / món hiện có bao nhiêu không ảnh vì luật "một bài") ⇒ bàn ⇒ trình User thiết kế (code khớp tên thực thể, không model chọn ảnh) · 71 ảnh khách sạn chọn trước luật W78 ⇒ A quyết: E rà lại theo W78 (sau việc trên).
 
+- **User (11:36 15/11/2026):** ảnh trong chat = **món + nơi trước, khách sạn sau**; chỗ lưu ảnh **giữ file + bảng mã bài** (không collection / không embed lại — B, C đồng ý; mô tả ảnh vào kho đổi top 10 mà không thêm ảnh). Thiết kế: khớp tên ≥ 2 chữ VÀ bài nằm trong nguồn trích, ≤ 3 ảnh, code chọn, người xem nhìn lại 100 % ảnh mới, đo mô phỏng 154 câu 0 USD.
+- E: Docker nháp ĐẠT (thêm lỗi thật: image thiếu `frontend/public` ⇒ uvicorn thoát mã 3; sửa 1 dòng symlink; dockerignore 204 ⇒ 263 bài) — C review diff với `data/phase_12/deploy_nhap/sao_luu_2026-11-15/`. **Cho User:** `.env` có 1 dòng tên biến kèm khoảng trắng ⇒ `docker --env-file` từ chối (User tự sửa; kèm việc gỡ dòng `EXA_API_KEY` từ 13/11).
+
 ### Vòng tự soi 1 — phiên 15/11 (A chốt 10:55 15/11/2026; B, C, E đều gửi)
 **Áp ngay trong phiên** (làm nhẹ, không hạ sàn; kết phiên A đề xuất thành luật qua `improve-workflow`):
 1. Cổng server thật sau merge **chỉ khi nhánh chạm đường chat / model, route API, hoặc cấu hình nạp lúc khởi động**; nhánh chỉ đổi ảnh / chữ / hằng số thuần / giao diện tĩnh ⇒ build + test file chạm (C, E).

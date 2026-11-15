@@ -13,6 +13,7 @@
 - 10:57 15/11/2026: review `p9-phia-bien` (B, `3023894`) ⇒ ready, 0 finding; biên bản 5 dòng `e_review_phia_bien.md` (chưa commit). Rảnh — chờ A.
 - 11:08 15/11/2026: kiểm lại số tốc độ của B (độc lập, `data/dem_toc_do_2026-11-15/e_kiem/dem.py`): khớp; 11,4 % = tìm thêm không kèm web ⇒ đường chậm 20,6 %; n chữ đầu nhỏ (12 / 5); lượt thường p95 5,92 s cũng trượt sàn. Đã báo A, B. 0 USD. Rảnh — chờ A.
 - 11:20 15/11/2026: phản biện plan tìm song song (B) — thêm phép thử 2 search đồng thời (tokenizer), bỏ "giống byte" số nguồn. Ảnh khách sạn: 7 cơ sở hiện trong lịch thiếu ảnh ⇒ tìm 15 câu (0,015 USD) ⇒ **0 đạt W78** ⇒ danh sách cho User `e_anh_khach_san.md` (chưa commit). Docker nháp: đã sửa `CHUA` + 5 `COPY` (sao lưu `data/phase_12/deploy_nhap/sao_luu_2026-11-15/`), dockerignore dựng lại (204 ⇒ 263 bài); build chờ C dựng chỉ mục xong.
+- 11:35 15/11/2026: Docker nháp: build + chạy thử ĐẠT sau khi sửa thêm `ln -s dist public` (lỗi thật: bảng ảnh lịch kiểm file ở public/). Report `e_docker_nhap.md` (chưa commit). Container đã tắt + xoá; image `hue-rag-app:e1511` còn. ~0,0014 USD. Chờ B / C review diff với sao lưu.
 
 ### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
 Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).
