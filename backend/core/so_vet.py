@@ -49,7 +49,10 @@ def ban_ghi(duong: str, metrics: dict, trace=None, cau_go: str | None = None, ca
             sua_lich=None if lay("sua") is None and "sua" not in vet else {"so_dem": lay("sua"), **(vet.get("sua") or {})},
             lich={"bieu_mau": lay("bieu_mau"), "truong": lay("truong"), "buoc": lay("buoc_lich"), "kiem": lay("lich_kiem"),
                   "khung": (lay("lich") or {}).get("khung"), "v2_loi_khung": (lay("lich_v2") or {}).get("loi_khung"),
-                  "v2_so_cau_du_phong": (lay("lich_v2") or {}).get("so_cau_du_phong")} if lay("lich") or lay("lich_v2") or lay("bieu_mau") else None,
+                  "v2_so_cau_du_phong": (lay("lich_v2") or {}).get("so_cau_du_phong"),
+                  # lịch bản 2 giữ khung ở `trace.lich_v2` (điểm nào ngày / buổi nào — thứ cần khi "lịch xếp lạ"); khoá của `mua` là ngày ⇒ đổi ra chữ
+                  "v2_khung": (lay("lich_v2") or {}).get("khung"), "v2_ngay_di": (lay("lich_v2") or {}).get("ngay_di"),
+                  "v2_mua": {str(k): v for k, v in ((lay("lich_v2") or {}).get("mua") or {}).items()} or None} if lay("lich") or lay("lich_v2") or lay("bieu_mau") else None,
             thoi_tiet=lay("thoi_tiet"),
             loi=vet.get("loi") or (None if lay("tool_error") is None else repr(lay("tool_error"))[:500]),
         )

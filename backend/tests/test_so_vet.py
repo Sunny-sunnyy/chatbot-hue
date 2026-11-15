@@ -77,3 +77,15 @@ def test_env_override():
     assert settings["assistant"]["so_vet"] is True and AssistantFlags.from_settings({"assistant": {"so_vet": True}}).so_vet is True
     with pytest.raises(ValueError):
         apply_env_overrides(settings, {"HUE_SO_VET": "1"})
+
+
+def test_plan_v2_frame_is_recorded(tmp_path):
+    # lịch bản 2: khung nằm ở `trace.lich_v2` (không phải `trace.lich`); khoá của `mua` là ngày — phải ghi được ra JSON
+    import datetime as dt
+    trace = _trace()
+    khung = {"tham_so": {"so_ngay": 2}, "ngay": [{"ngay": 1, "buoi": {"sang": ["dai_noi"], "chieu": [], "toi": []}}]}
+    trace.lich_v2 = {"khung": khung, "ngay_di": "2026-11-20", "mua": {dt.date(2026, 11, 20): 70}, "loi_khung": []}
+    so_vet.ghi(True, "chat_stream", {"outcome": "success"}, trace, "a", "b", thu_muc=tmp_path)
+    (tep,) = tmp_path.iterdir()
+    lich = json.loads(tep.read_text(encoding="utf-8"))["lich"]
+    assert lich["v2_khung"] == khung and lich["v2_ngay_di"] == "2026-11-20" and lich["v2_mua"] == {"2026-11-20": 70}
