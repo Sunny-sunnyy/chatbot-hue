@@ -24,9 +24,10 @@ SoThich = Literal["di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chu
 
 class HanhDong(BaseModel):
     """Một hành động sửa. `ten` = điểm bị chạm (bỏ / thêm / thay / dời); `ten_moi` = điểm thay vào; `ngay` / `buoi` = chỗ muốn đặt.
-    `doi_tham_so` chỉ mang trường người dùng nói muốn đổi."""
+    `doi_tham_so` chỉ mang trường người dùng nói muốn đổi. `doi_hang_o` (plan 2026-11-15-sua-lich-hang-cho-o): `ngan_sach` = mức hạng chỗ ở
+    người dùng NÊU RÕ; xin đổi hạng mà không nêu hạng ⇒ để trống ⇒ code nói "bạn nói rõ hạng" (không đoán mức)."""
     model_config = ConfigDict(extra="forbid")
-    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so"]
+    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o"]
     ten: str | None = Field(default=None, max_length=80)
     ten_moi: str | None = Field(default=None, max_length=80)
     ngay: int | None = Field(default=None, ge=1, le=5)
@@ -36,10 +37,11 @@ class HanhDong(BaseModel):
     so_thich: list[SoThich] | None = Field(default=None, max_length=2)
     tre_em: int | None = Field(default=None, ge=0, le=6)  # "đi cùng trẻ nhỏ" ⇒ ≥ 1; "không có trẻ em" ⇒ 0
     lon_tuoi: bool | None = None  # "có người lớn tuổi"
+    ngan_sach: Literal["binh_dan", "vua", "cao"] | None = None  # khoá của `luu_tru_lich.MUC_NGAN_SACH`
 
 
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
-                  "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch"}
+                  "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở"}
 NHAN_BUOI = {"sang": "sáng", "chieu": "chiều"}
 CAU_KHONG_DOI = {
     "ngoai_bang": "«{diem}» chưa có trong danh sách điểm của lịch.",
@@ -49,6 +51,11 @@ CAU_KHONG_DOI = {
     "khong_hop_luat": "{diem} đặt ở chỗ đó sẽ làm lịch phạm luật xếp (giờ mở cửa / cụm xa / quá dày) nên mình chưa đổi.",
     "thieu_cho": "Chưa rõ ngày / buổi để dời {diem}.",
     "het_diem_thay": "Không còn điểm phù hợp để thay {diem} (đặt được vào đúng chỗ đó) nên mình giữ nguyên.",
+    # đổi hạng chỗ ở: {diem} = tên mức ("2–3 sao"…)
+    "hang_chua_ro": "hạng chỗ ở — bạn nói rõ 1 sao / đạt chuẩn, 2–3 sao hay 4–5 sao thì mình đổi.",
+    "hang_dang_dung": "Lịch đang gợi ý chỗ ở hạng {diem} rồi.",
+    "hang_khong_co": "Khu chỗ ở của lịch này chưa có cơ sở hạng {diem} trong danh mục nên mình giữ nguyên.",
+    "khong_muc_o": "Lịch này không có mục gợi ý chỗ ở (lịch 1 ngày) nên không có hạng để đổi.",
 }
 
 
@@ -167,9 +174,29 @@ def _lua_chon_thay(bang, luu: dict, ts, khung: dict, loai: list[str], cu: str) -
     return out
 
 
-def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None) -> dict:
+def ten_muc_o(ngan_sach: str) -> str:
+    return v2.ltl.TEN_MUC[v2.ltl.MUC_NGAN_SACH[ngan_sach]]
+
+
+def ly_do_giu_hang(bang: v2.BangV2, luu_tru: dict | None, khung: dict, moi: str | None) -> str | None:
+    """Mã lý do KHÔNG đổi hạng chỗ ở (khoá của `CAU_KHONG_DOI`), None = đổi được. Thử bằng đúng hàm dựng ô "Nơi ở" của lịch: mức mới phải ra
+    cơ sở THUỘC mức đó — `chon_co_so` tự lùi về mọi hạng khi mức trống, lùi lặng lẽ ở đây thành "nói đã đổi mà hạng không đổi"."""
+    if moi is None:
+        return "hang_chua_ro"
+    o = v2.o_dau_khung(luu_tru, bang, khung, moi) if luu_tru is not None else None
+    if o is None:
+        return "khong_muc_o"
+    if moi == khung["tham_so"].get("ngan_sach"):
+        return "hang_dang_dung"
+    if any(v2.ltl.MUC_HANG[c["xep_hang"]] != v2.ltl.MUC_NGAN_SACH[moi] for c in o["co_so"]):
+        return "hang_khong_co"
+    return None
+
+
+def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None) -> dict:
     """Áp hành động trên **bản sao** khung đã lưu ⇒ {khung, luu, da_ap, khong_doi, chua_lam, doi_truong, the}.
-    `the` khác None ⇒ lượt dừng ở thẻ chọn, khung KHÔNG đổi. `sua_chon` {cu, moi} (bấm nút của thẻ) ⇒ bỏ qua hành động model."""
+    `the` khác None ⇒ lượt dừng ở thẻ chọn, khung KHÔNG đổi. `sua_chon` {cu, moi} (bấm nút của thẻ) ⇒ bỏ qua hành động model.
+    `luu_tru` = bảng lưu trú đang dùng (None khi cờ nơi ở tắt) — chỉ hành động `doi_hang_o` cần."""
     luu = copy.deepcopy(luu)
     khung = copy.deepcopy(luu["khung"])
     loai = list(luu["loai"])
@@ -216,6 +243,15 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             kq["doi_truong"] += [(f, getattr(ts, f), v) for f, v in doi.items()]
             khung, ts = k, ts_moi
             kq["da_ap"].append({"loai": h.loai})
+        elif h.loai == "doi_hang_o":  # hạng không vào bộ xếp ⇒ KHÔNG xếp lại: điểm, ngày, buổi giữ nguyên; chỉ ô "Nơi ở" đổi
+            ma = ly_do_giu_hang(bang, luu_tru, khung, h.ngan_sach)
+            if ma is not None:
+                khong(None if h.ngan_sach is None else ten_muc_o(h.ngan_sach), ma)
+                continue
+            kq["doi_truong"].append(("ngan_sach", ts.ngan_sach, h.ngan_sach))
+            ts = v2.ThamSoV2(**{**ts.__dict__, "ngan_sach": h.ngan_sach})
+            khung = {**khung, "tham_so": {**khung["tham_so"], "ngan_sach": h.ngan_sach}}
+            kq["da_ap"].append({"loai": "doi_hang_o"})
         elif h.loai == "bo_diem":
             toi = {j for ng in khung["ngay"] for j in ng["buoi"]["toi"]}
             if i is None or (i not in vt and i not in toi):
@@ -305,6 +341,8 @@ def _gia_tri(f: str, v) -> str:
         return "có" if v else "không"
     if f == "so_ngay":
         return f"{v} ngày"
+    if f == "ngan_sach":
+        return "chưa chọn" if v is None else ten_muc_o(v)
     if f == "kieu_di":
         return {"nhe_nhang": "nhẹ nhàng", "can_bang": "cân bằng", "kham_pha": "khám phá nhiều"}.get(v, str(v))
     return ", ".join(v2.NHAN_LOAI.get(x, x) for x in v) or "không chọn"
@@ -324,7 +362,7 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}.")
         elif t == "thay_diem":
             out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}.")
-    out += [f"Đã đổi {({'so_ngay': 'số ngày', 'kieu_di': 'kiểu đi', 'so_thich': 'sở thích', 'tre_em': 'số trẻ em', 'lon_tuoi': 'người lớn tuổi'})[f]}: "
+    out += [f"Đã đổi {({'so_ngay': 'số ngày', 'kieu_di': 'kiểu đi', 'so_thich': 'sở thích', 'tre_em': 'số trẻ em', 'lon_tuoi': 'người lớn tuổi', 'ngan_sach': 'hạng chỗ ở'})[f]}: "
             f"{_gia_tri(f, cu)} → {_gia_tri(f, moi)}."
             for f, cu, moi in kq["doi_truong"]]
     dong = [{"cau": c, "duoc": True} for c in out]
