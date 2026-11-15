@@ -18,7 +18,9 @@ Giao: A, tối 15/11 (handoff mục 4 và 4b(c)). Tiền: **0 USD** cho hai vi�
 
 - **Vì sao 0 [code + bảng]:** ô duy nhất của bảng lưu trú v6 trống là "ven biển phía nam × mức vừa" (phía nam có 3 cơ sở mức cao, 2 mức bình dân, 0 mức vừa); nhưng với bảng điểm 41 điểm không khung nào của biểu mẫu chọn khu ven biển phía nam (cụm nam xa là "đi trong ngày", không tính cho khu nào), cũng không khung nào chọn phía tây.
 - **Đọc theo tiêu chí:** không sửa. Đường lùi lặng lẽ vẫn còn trong code — nó chỉ lộ nếu bảng điểm hoặc bảng lưu trú đổi ⇒ chạy lại công cụ này (2 giây) khi đổi một trong hai bảng. Tỉ lệ trên tổ hợp mô phỏng không phải tần suất người dùng thật.
-- Công cụ: `data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py`; kết quả `ket_qua.json` cùng thư mục. **A quyết** (C không tự sửa).
+- Công cụ: `data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py`; kết quả `ket_qua.json` cùng thư mục. **A quyết: không sửa** (tối 15/11).
+- **Chạy lại khi đổi bảng điểm hoặc bảng lưu trú** (0 USD, ~2 giây; sửa hai đường dẫn bảng ở đầu vòng lặp của công cụ cho khớp `settings.yaml`):
+  `cd /home/minhhieu/hue_rag/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py` — đọc dòng `tong_o_lech` (khác 0 ⇒ báo A).
 
 ## Việc 1 — hai chỗ nợ + bảng trường
 
