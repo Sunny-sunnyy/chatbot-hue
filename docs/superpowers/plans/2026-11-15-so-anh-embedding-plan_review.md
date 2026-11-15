@@ -36,3 +36,22 @@ Plan: `docs/superpowers/plans/2026-11-15-so-anh-embedding-plan.md` trên `origin
 
 ## Đã kiểm thấy ổn
 Tiêu chí có ghi trước và phần lớn đo được · ngưỡng chọn trên ảnh mẫu + ảnh âm, không nhìn bộ đo · D2 / D3 / G mỗi cái chỉ đổi model so với M1 · tiền ≈ 0,1–0,15 USD, trần 0,5, có điểm dừng 0,3 · đường dữ liệu mới (ảnh ⇒ OpenRouter ⇒ Google) và việc User phải tự chấp nhận điều khoản DINOv3 đã nêu · giới hạn của số công bố (bảng so các bản rất lớn, không phải cỡ B) plan đã tự nói thẳng · một model một lúc trên máy 19 GB.
+
+---
+
+# Vòng 2 — C, 21:36 15/11/2026
+
+Plan bản 2: `origin/p10-so-anh` `f57b981`, sha256 đầu `3b9a1894a195` (đã kiểm). 0 USD, chỉ đọc.
+
+**Kết luận: ready_for_user_confirmation — 0 blocker · 0 major · 5 minor** (sửa lúc viết file ngưỡng, không cần vòng 3).
+
+**Ba major vòng 1 đã đóng:** M-1 — mọi chỉ số quyết tính trên bộ gộp (≥ 55 ảnh trong danh sách), so theo cặp với luna lượt 1, luna chạy 2 lượt, giới hạn của 25 ảnh cũ được nói thẳng. M-2 — ≥ 20 ảnh ngoài danh sách, sàn ≤ 2 / 20, ba tập tách nguồn + tác giả + kiểm gần trùng + nhìn tay. M-3 — một cách gộp điểm, mỗi biến thể hai dòng (không / có luật), mọi biến thể chỉ đổi model, phép dò đã chạy trước khi gom dữ liệu. Sáu minor vòng 1 đều có trong bản 2.
+
+## Minor (chỗ B nhờ soi: luật chọn m, t và Quyết 1)
+- **m-1 Quyết 1 dùng số tuyệt đối "≤ 2 ảnh sai":** phủ 50 % (~28 ảnh) hay phủ 90 % (~50 ảnh) đều cùng trần 2 ⇒ biến thể phủ rộng bị phạt. Ghi theo tỉ lệ có làm tròn (ví dụ ≤ 2 khi nhóm tự tin < 40 ảnh, ≤ 3 khi ≥ 40). Và nói thẳng giới hạn: 2 sai / 28 ảnh vẫn tương thích với tỉ lệ sai thật tới khoảng 23 % — đây là loại lỗi "trả lời thẳng sai nơi", nên thêm một dòng đối chiếu miễn phí: trên đúng các ảnh đó, nhóm "luna trả đúng một tên" sai bao nhiêu (đã có từ 2 lượt luna).
+- **m-2 Luật chọn m, t — hai chỗ chữ mơ hồ:** (a) "t = mức mà ≤ 5 % ảnh âm không bị từ chối trong số ảnh không tự tin" — ghi rõ mẫu số (5 % của MỌI ảnh âm hay của ảnh âm không tự tin); (b) câu "> 20 % ảnh mẫu bị xử sai (ảnh mẫu bị từ chối, hoặc < 30 % ảnh mẫu được tự tin)" gộp hai điều kiện khác nhau ⇒ tách thành hai dòng.
+- **m-3 Mức "< 30 % ảnh mẫu tự tin" lệch với Quyết 1 "phủ ≥ 50 %":** số trên ảnh mẫu (bỏ-một-ra, ảnh cùng tên thường cùng người chụp) lạc quan hơn bộ đo ⇒ biến thể chỉ đạt 30–50 % trên mẫu gần như chắc trượt Quyết 1. Nâng mức kiểm sớm lên 50 % hoặc ghi rõ đây chỉ là mức "vô vọng", không phải dự báo đạt.
+- **m-4 "≤ 5 % ảnh âm" đo trên ~100 ảnh:** 5 / 100 có khoảng tin cậy rộng; nếu tỉ lệ thật khoảng 8 % thì sàn ≤ 2 / 20 trượt với xác suất khoảng 21 %. Hoặc chọn m ở mức ≤ 3 % ảnh âm, hoặc chấp nhận và ghi trước rằng trượt sàn 3 / 20 là "sát ngưỡng, không kết luận".
+- **m-5 Ảnh ngoài danh sách rơi vào "nhiều tên":** sàn chỉ đếm ảnh ngoài danh sách được "tự tin một tên"; ảnh lạ được đưa top 3 không bị đếm. Chấp nhận được trong luồng lai (người dùng chọn / bấm "không phải"), nhưng báo riêng số này ở dòng theo dõi.
+
+Đã thấy ổn thêm ở bản 2: hướng đọc đổi sang "embedding làm cổng" khớp số phép dò (khoảng cách tên nhất − nhì có tín hiệu, điểm tuyệt đối thì không); tốc độ / RAM đẩy sang plan đưa vào chatbot có ghi số dò; phân vai gom / kiểm / chạy; tiền ≈ 0,12 USD, trần 0,5.
