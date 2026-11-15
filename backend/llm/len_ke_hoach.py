@@ -245,15 +245,17 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     else:
         call_log = CallLog()
         try:
-            hanh_dong = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log)
+            hanh_dong, bi_chan = sl.loc_hanh_dong(await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log), query, luu)
         except GenerationError:
-            hanh_dong = []
+            hanh_dong, bi_chan = [], 0
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
-        if not hanh_dong:
+        if not hanh_dong and not bi_chan:
             trace.sua = {"n_hanh_dong": 0}
             return None
         kq = sl.ap(bang, luu, hanh_dong)
+        if bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
+            kq["chua_lam"].append("doi_so_ngay")
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
                  "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None}
     # model đã hiểu là câu sửa ⇒ luôn là lượt sửa, kể cả khi mọi hành động trượt (báo "Không đổi được: X không có trong lịch" thay vì trả lời
