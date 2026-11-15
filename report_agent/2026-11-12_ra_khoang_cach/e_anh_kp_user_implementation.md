@@ -34,3 +34,12 @@ Bốn ảnh chưa ghép: chờ User / A quyết (ghép kèm cờ "không chắc"
 Tấm ghép để A nhìn lại 100 % (private): `data/anh_kp_user_2026-11-15/ghep_8_anh.jpg` (ô 1–4 ảnh sẽ hiện; ô 5–8 chưa ghép; ô 9 bản thử cắt).
 
 **Giải thích ngắn:** 4 quán có thêm ảnh do User chọn. 4 ảnh còn lại phạm đúng những điều luật ảnh cấm (mặt người là trọng tâm, hoặc ảnh chụp ở nơi khác) nên E giữ lại chờ quyết, không tự thay.
+
+## 4. Cập nhật 16:06 15/11/2026 (`date`) — sau khi A nhìn tấm ghép (nhánh `p9-anh-tay-ho`)
+- A quyết: ảnh quán cà phê có dấu nước to — **giữ** (ảnh User chọn, không phạm 3 điều cấm; ghi là giới hạn thẩm mỹ). Ba ảnh bài ca kịch + hai bài lễ — **không ghép**, không dùng cờ "không chắc" cho ảnh nghi sai nơi; User đưa ảnh khác thì làm tiếp.
+- **Làng nón:** A chấp nhận bản cắt không người (phần chồng nón, 235 × 375) ⇒ ghép vào Khám phá **và** ảnh lịch.
+  - Khám phá **259 ⇒ 260 / 263** (đếm bằng code; 3 bài trống đúng là 3 bài trên).
+  - Ảnh lịch **39 ⇒ 40 / 41** (còn thiếu một bãi biển): bảng ảnh lịch v5 (private, md5 `5ed8f32903a9`) = v4 + 1 dòng; `settings.yaml` 1 dòng.
+  - **Đổi code nhỏ (cần review):** ảnh User không có trang nguồn, mà loader bảng ảnh lịch chỉ nhận ảnh Commons (tác giả + giấy phép) hoặc ảnh web (trang https) ⇒ thêm loại thứ ba `nguon: "user"` (không được kèm trang); và sửa một dòng đọc trường trang (giá trị rỗng không còn bị đổi thành chữ). Test thêm 3 ca (2 ca phải bị từ chối, 1 ca hợp lệ).
+- Kiểm: `test_len_ke_hoach_v2` + `test_anh_tra_loi` + `test_static_ui` + `test_cong_dot_1` 119 đạt không khoá / 119 đạt có khoá (72 s / 52 s); build đạt; nạp bảng ảnh v5 bằng loader thật: 40 dòng.
+- Giới hạn: ảnh làng nón là ảnh nón chung (không nhận ra được làng) và khổ dọc hẹp; ảnh gốc của User có người rõ mặt nên không dùng nguyên.

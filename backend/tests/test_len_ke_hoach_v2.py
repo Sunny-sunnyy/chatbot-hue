@@ -989,9 +989,11 @@ def test_photo_table_rejects_bad_rows(tmp_path):
     assert nap()  # dòng thật hợp lệ
     for doi in ({"id_diem": "khong_co"}, {"src": "https://x.vn/a.jpg"}, {"src": "/anh/lich/../anh.jpg"}, {"src": "/anh/lich/khong_co.jpg"},
                 {"tac_gia": ""}, {"giay_phep": None}, {"trang": "https://example.com/a"}, {"trang": "http://x.vn/a", "nguon": "web"},
-                {"trang": "javascript:x", "nguon": "web"}):
+                {"trang": "javascript:x", "nguon": "web"}, {"trang": "https://x.vn/bai", "nguon": "user", "tac_gia": None, "giay_phep": None},
+                {"trang": None, "nguon": None, "tac_gia": None, "giay_phep": None}):
         with pytest.raises(ValueError):
             nap(**doi)
+    assert nap(trang=None, nguon="user", tac_gia=None, giay_phep=None)  # ảnh User tự đưa (15/11): nguồn user, không trang
     assert nap(trang="https://x.vn/bai", nguon="web", tac_gia=None, giay_phep=None)  # ảnh web (14/11): nguồn web + trang https, không cần tác giả
 
 
