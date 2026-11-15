@@ -556,7 +556,7 @@ def test_v2_plain_answer_is_built_from_frame():
                                                                       {"id_muc": "n1-toi-1", "buoi": "toi", "loai": "nghi", "ten": "Tối nghỉ.", "gio": None}]}],
             "ghi_chu": [{"ma": "kieu_di", "cau": "Chưa chọn kiểu đi."}]}
     assert v2.ghep_chu(lich, {"n1-sang-1": "câu a [1].", "n1-chieu-1": "câu b [2]."}) == (
-        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n- Tối: Tối nghỉ.\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
+        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
 
 
 def test_cau_stream_emits_each_closed_item():

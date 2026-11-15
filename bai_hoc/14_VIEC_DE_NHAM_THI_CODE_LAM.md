@@ -78,7 +78,7 @@ Trang chủ của cổng du lịch cũng có một ô thời tiết đọc thẳ
 Người dùng điền biểu mẫu bằng nút: **số ngày**, **đi cùng ai** (một mình, bạn bè, gia đình có trẻ em, người lớn tuổi…), **sở thích**. Rồi:
 1. Lượt này **không qua bước xếp loại**. Code gọi thẳng phần xếp lịch với **đúng giá trị các nút**.
 2. **Code xếp lịch theo buổi** (sáng, chiều, tối) từ **một bảng điểm anh đã duyệt**. Bảng ghi điểm nào hợp buổi nào, hợp ai, có trong nhà không. Buổi sáng ưu
-   tiên điểm hợp sở thích. Nhóm có trẻ em hoặc người lớn tuổi thì **không xếp buổi tối**, và dòng buổi tối ghi rõ lý do để trống.
+   tiên điểm hợp sở thích. Nhóm có trẻ em hoặc người lớn tuổi thì **không xếp buổi tối**, và lý do được ghi rõ (ở bản 2 từ 15/11: một dòng trong phần ghi chú của lịch, buổi để trống không còn hiện thành mục riêng — bài 23).
 3. Code **kiểm khung**: đủ số buổi, không trùng điểm, đúng luật bảng.
 4. Model viết lời theo khung, **một lần, không công cụ**, với mức suy luận thấp cho nhanh.
 5. Code **kiểm cuối** (lời có nói ngược khung không), rồi nối thêm **link mở Google Maps** cho từng điểm. Link do code dựng từ tên điểm, model không tự viết link.

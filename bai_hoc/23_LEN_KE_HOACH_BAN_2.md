@@ -37,7 +37,7 @@ buổi sáng đủ thời gian cho hai điểm hay chỉ một. Gặp ngày mưa
 cân bằng / khám phá nhiều), thích gì (tối đa 2). Ô nào không làm lịch đổi được thì không hiện.
 
 **Code xếp theo luật, ưu tiên từ trên xuống:**
-1. **An toàn cho trẻ em và người lớn tuổi:** không xếp buổi tối (lịch ghi "tối nghỉ"), mỗi buổi tối đa 1 điểm, tránh điểm nhiều bậc thang.
+1. **An toàn cho trẻ em và người lớn tuổi:** không xếp buổi tối (từ chiều 15/11 buổi để trống không hiện thành một mục trong lịch nữa — anh yêu cầu; lý do nằm ở một dòng trong phần ghi chú của lịch), mỗi buổi tối đa 1 điểm, tránh điểm nhiều bậc thang.
 2. **Giờ mở cửa, ngày hoạt động, mùa:** điểm tạm dừng theo mùa thì không xếp vào tháng đó.
 3. **Cụm gần nhau:** một ngày tối đa 2 cụm, và hai cụm phải kề nhau. Cụm xa chỉ xếp khi đi từ 3 ngày.
 4. Điểm ưu tiên của từng sở thích, rồi **mưa**, rồi sở thích, rồi kiểu đi.
@@ -66,7 +66,7 @@ Giới hạn: số trên dùng bản dự báo tầm ngắn nhất. Khách xếp
 - Khung lịch hiện ngay trên màn hình, câu tả hiện dần sau.
 
 **Phần phụ:**
-- **Ảnh cho 24 / 34 điểm**, lấy từ Wikimedia Commons, giấy phép mở. Tác giả và giấy phép giữ trong bảng dữ liệu; từ chiều 14/11 trang không hiện dòng ghi công nữa (anh yêu cầu). Một người xem mù kiểm 10 lịch: ảnh đúng điểm 10 / 10; có một ảnh lăng người xem ghi "đúng loại, không chắc đúng lăng". Từ chiều 15/11: 39 / 41 điểm có ảnh (tối 14/11: 33 / 34; thiếu biển Thuận An và làng nón Tây Hồ) — 26 ảnh từ Wikimedia Commons, 13 ảnh lấy lại từ trang web đã dùng ở mục Khám phá (đã có người nhìn kiểm đúng nơi).
+- **Ảnh cho 24 / 34 điểm**, lấy từ Wikimedia Commons, giấy phép mở. Tác giả và giấy phép giữ trong bảng dữ liệu; từ chiều 14/11 trang không hiện dòng ghi công nữa (anh yêu cầu). Một người xem mù kiểm 10 lịch: ảnh đúng điểm 10 / 10; có một ảnh lăng người xem ghi "đúng loại, không chắc đúng lăng". Từ chiều 15/11: 40 / 41 điểm có ảnh (tối 14/11: 33 / 34; chỉ còn thiếu biển Thuận An) — 26 ảnh từ Wikimedia Commons, 13 ảnh lấy lại từ trang web đã dùng ở mục Khám phá (đã có người nhìn kiểm đúng nơi), 1 ảnh làng nón Tây Hồ do anh tự tìm (bài 24).
 - **Nút "Thêm vào lịch (.ics)":** code trong trình duyệt dựng file lịch điện thoại từ khung lịch, không gửi gì ra ngoài.
   - Kiểm trên 44 lịch đã lưu: 33 lịch có ngày đi, cho ra 288 sự kiện. Một trình đọc độc lập báo 0 lỗi.
   - Chưa thử mở trên Google Calendar, vì cần đăng nhập.

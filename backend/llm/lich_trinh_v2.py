@@ -691,10 +691,11 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
     for ng in lich["ngay"]:
         dong += ["", f"**Ngày {ng['ngay']}**"]
         for m in ng["muc"]:
+            if m["loai"] == "nghi":  # User 15/11: buổi để trống không in vào lịch (giao diện cũng bỏ mục này); lý do nhóm hạn chế ở ghi chú `han_che`
+                continue
             gio = f" ({m['gio']})" if m["gio"] else ""
             them = "".join(f" ({NHAN_MUC[x]})" for x in m.get("nhan", ()) if x in NHAN_MUC)
-            dong.append(f"- {NHAN_BUOI[m['buoi']]}: {m['ten']}" if m["loai"] == "nghi" else
-                        f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
+            dong.append(f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
     if lich["ghi_chu"]:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
     if lich.get("o_dau"):  # cờ `luu_tru_lich` (cờ tắt ⇒ None ⇒ chữ giống bản trước)
