@@ -77,9 +77,10 @@ def khop_ten(bang: v2.BangV2, ten: str | None) -> str | None:
 # "ngày" (số trong một ngày tháng như "ngày 20/12" không tính), hoặc là số tương đối "thêm / bớt k ngày" khớp số ngày hiện tại ± k. Thiếu số ⇒ không nhận.
 _SO_CHU = {"một": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "năm": 5, "sáu": 6}
 _SO = r"(\d+|một|hai|ba|bốn|tư|năm|sáu)"
-_N_NGAY = re.compile(rf"(?<![\w/.-]){_SO}\s*(?:ngày|n(?=\s*\d+\s*đ))", re.I)  # "3 ngày", "hai ngày", "4N3Đ"
+_N_NGAY = re.compile(rf"(?<![\w/.-])(?<!thứ\s){_SO}\s*(?:ngày|hôm|n(?=\s*\d+\s*đ))", re.I)  # "3 ngày", "2 hôm", "4N3Đ"; "thứ hai ngày 20/12" không tính
 _THEM = re.compile(rf"(thêm|tăng|kéo dài|nối)\s+(?:thêm\s+)?{_SO}\s*ngày", re.I)
-_BOT = re.compile(rf"(bớt|giảm|rút|cắt|bỏ)\s+(?:bớt\s+|đi\s+)?{_SO}\s*ngày", re.I)
+_BOT = re.compile(rf"(bớt|giảm|rút|cắt|bỏ)\s+(?:bớt\s+|đi\s+)?{_SO}\s*(?:ngày|hôm)", re.I)
+_BO_NGAY = re.compile(r"bỏ\s+(?:bớt\s+|đi\s+)?ngày\s+(cuối|\d+)", re.I)  # "bỏ ngày cuối", "bỏ ngày 3" (= ngày cuối) ⇒ bớt 1
 
 
 def _so(x: str) -> int:
@@ -93,14 +94,17 @@ def so_ngay_co_trong_cau(cau: str, so_ngay: int | None, hien_tai: int) -> bool:
     t = unicodedata.normalize("NFC", cau)
     if any(_so(m.group(2)) + hien_tai == so_ngay for m in _THEM.finditer(t)) or any(hien_tai - _so(m.group(2)) == so_ngay for m in _BOT.finditer(t)):
         return True
+    if so_ngay == hien_tai - 1 and any(m.group(1).lower() == "cuối" or int(m.group(1)) == hien_tai for m in _BO_NGAY.finditer(t)):
+        return True
     tuong_doi = {m.start(2) for r in (_THEM, _BOT) for m in r.finditer(t)}  # số sau "thêm / bớt" là số tương đối, không phải tổng số ngày
     return any(_so(m.group(1)) == so_ngay for m in _N_NGAY.finditer(t) if m.start(1) not in tuong_doi)
 
 
-def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> list:
-    """Bỏ hành động đổi số ngày không có căn cứ trong câu (rào trên). Hành động khác giữ nguyên."""
+def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> tuple[list, int]:
+    """(hành động giữ, số hành động đổi số ngày bị bỏ vì không có căn cứ trong câu). Hành động khác giữ nguyên."""
     hien_tai = luu["khung"]["tham_so"]["so_ngay"]
-    return [h for h in hanh_dong if h.loai != "doi_so_ngay" or so_ngay_co_trong_cau(cau, h.so_ngay, hien_tai)]
+    giu = [h for h in hanh_dong if h.loai != "doi_so_ngay" or so_ngay_co_trong_cau(cau, h.so_ngay, hien_tai)]
+    return giu, len(hanh_dong) - len(giu)
 
 
 def luu_tu_lich(khung: dict, ngay_di: str | None, mua: dict | None) -> dict:
