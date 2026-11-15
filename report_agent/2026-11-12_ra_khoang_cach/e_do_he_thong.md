@@ -27,3 +27,11 @@ Kịch bản `data/do_he_thong_2026-11-15/tools/pw_5_luong.py`; ảnh toàn tran
   - (a) đếm "bài một nơi / món có ảnh chắc" TRƯỚC: chỉ có 1 ⇒ dùng luật một bài (không cần tên trong chữ);
   - (b) khớp tên trên cả **câu hỏi của người dùng** lẫn chữ trả lời. Câu hỏi là chữ người dùng, nhưng chỉ dùng để khớp với tên bài trong kho, không hiện ra, không gửi đi.
 - Ghi chú phụ: ở ảnh toàn trang, thanh đầu trang (cố định) đè lên dòng tiêu đề khung trợ lý. Nhiều khả năng do cách chụp `full_page` với phần tử cố định, không phải lỗi giao diện. Chưa kiểm bằng ảnh cửa sổ thường.
+
+## Chạy lại sau nhánh `p9-anh-chat-hoi` (main `3a9fe88`) — 12:43 15/11/2026 (`date`)
+Kịch bản `data/do_he_thong_2026-11-15/tools/pw_sau.py`, server tạm 8893 (đã tắt), 2 lần gọi model (≈ 0,001 USD). Ảnh `anh/sau_chat_so_sanh.png`, `anh/sau_chat_di_tich.png`.
+- **So sánh hai quán: 2 ảnh** (đúng 2 quán, tên dưới mỗi ảnh, đúng thứ tự dòng Nguồn).
+- **Hỏi đích danh di tích: 1 ảnh** (ảnh của bài di tích; bài cẩm nang không ảnh — đúng luật loại "một nơi").
+- 0 lỗi console, 0 yêu cầu ra ngoài.
+- **Phát hiện mới (lỗi model, chưa sửa):** câu trả lời di tích có **một từ tiếng Nga (chữ Kirin)** chen giữa câu tiếng Việt ("đáng xem … hết"). Bộ lọc chữ lạ của lượt dò không bắt kiểu này. Chưa biết tần suất. Hướng đếm rẻ: quét `answer` của các lượt Golden / an toàn đã lưu tìm ký tự ngoài bảng chữ Latin + dấu tiếng Việt (0 USD).
+- Đếm ngay (0 USD): quét `answer` của 3.571 câu trả lời đã lưu (92 file Golden / an toàn trong `data/`) tìm chữ Kirin / Hy Lạp / Ả Rập / Thái / CJK / Hàn ⇒ **0 / 3.571**. ⇒ Lỗi hiếm (lần đầu thấy). Chưa đáng xây rào; nếu gặp lại ⇒ cân nhắc kiểm bằng code (câu có chữ ngoài bảng ⇒ viết lại một lần).
