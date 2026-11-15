@@ -357,7 +357,8 @@ FRONTEND_PUBLIC = Path(__file__).resolve().parents[2] / "frontend" / "public"
 
 def nap_bang_anh(path: str | Path, bang: BangV2) -> dict[str, dict]:
     """Bảng ảnh lịch (đợt 2 B0 của C, `bang_anh_v1.json`) ⇒ {id_diem: {src, tac_gia, giay_phep, trang[, chu_thich]}}. Lúc khởi động (cờ `anh_lich`):
-    id phải có trong bảng điểm, `src` dưới `/anh/lich/` và file có thật; ảnh Commons đủ tác giả + giấy phép, ảnh web có `nguon: "web"` + trang https;
+    id phải có trong bảng điểm, `src` dưới `/anh/lich/` và file có thật; ảnh Commons đủ tác giả + giấy phép, ảnh web có `nguon: "web"` + trang https,
+    ảnh User đưa có `nguon: "user"` (không trang);
     sai ⇒ `ValueError`."""
     out = {}
     for a in json.loads(Path(path).read_text(encoding="utf-8"))["anh"]:
@@ -366,12 +367,14 @@ def nap_bang_anh(path: str | Path, bang: BangV2) -> dict[str, dict]:
             raise ValueError(f"bảng ảnh: {id_} không có trong bảng điểm hoặc lặp")
         if not (src.startswith(ANH_SRC) and "/" not in src[len(ANH_SRC):] and src.endswith(".jpg") and (FRONTEND_PUBLIC / src.lstrip("/")).is_file()):
             raise ValueError(f"bảng ảnh: {id_} src phải là file có thật dưới {ANH_SRC}")
-        trang = str(a.get("trang", ""))
+        trang = str(a.get("trang") or "")
         # ảnh Commons ⇒ đủ tác giả + giấy phép (như đợt 2); ảnh web (14/11: User nới luật ảnh, giao diện không hiện ghi công) ⇒ `nguon: "web"` + trang
         # https chứa ảnh (giữ để gỡ khi cần). Hai loại đều chỉ là file tự host dưới /anh/lich/ — trình duyệt không tải gì từ trang nguồn.
-        hop_le = (a.get("tac_gia") and a.get("giay_phep")) if trang.startswith(ANH_TRANG) else (a.get("nguon") == "web" and trang.startswith("https://"))
+        # Ảnh User tự đưa (15/11): `nguon: "user"`, không có trang nguồn để ghi ⇒ không được kèm `trang` (có trang thì phải khai là web / Commons)
+        hop_le = (a.get("tac_gia") and a.get("giay_phep")) if trang.startswith(ANH_TRANG) else (
+            (a.get("nguon") == "web" and trang.startswith("https://")) or (a.get("nguon") == "user" and not trang))
         if not hop_le:
-            raise ValueError(f"bảng ảnh: {id_} thiếu tác giả / giấy phép (ảnh Commons) hoặc nguồn web + trang https (ảnh web)")
+            raise ValueError(f"bảng ảnh: {id_} thiếu tác giả / giấy phép (ảnh Commons), nguồn web + trang https (ảnh web) hoặc nguồn user không kèm trang")
         out[id_] = {k: a[k] for k in ("src", "tac_gia", "giay_phep", "trang", "chu_thich", "doi", "nguon") if a.get(k)}  # `doi`: chỉnh khác thu nhỏ
     return out
 
@@ -688,10 +691,11 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
     for ng in lich["ngay"]:
         dong += ["", f"**Ngày {ng['ngay']}**"]
         for m in ng["muc"]:
+            if m["loai"] == "nghi":  # User 15/11: buổi để trống không in vào lịch (giao diện cũng bỏ mục này); lý do nhóm hạn chế ở ghi chú `han_che`
+                continue
             gio = f" ({m['gio']})" if m["gio"] else ""
             them = "".join(f" ({NHAN_MUC[x]})" for x in m.get("nhan", ()) if x in NHAN_MUC)
-            dong.append(f"- {NHAN_BUOI[m['buoi']]}: {m['ten']}" if m["loai"] == "nghi" else
-                        f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
+            dong.append(f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
     if lich["ghi_chu"]:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
     if lich.get("o_dau"):  # cờ `luu_tru_lich` (cờ tắt ⇒ None ⇒ chữ giống bản trước)

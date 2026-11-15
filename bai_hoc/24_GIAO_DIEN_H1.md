@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
+*Cập nhật lần cuối: 16:10, ngày 15/11/2026 · thêm chiều 15/11: 5 ảnh anh tự tìm (260 / 263). Trước: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -122,6 +122,8 @@ tiền theo lượt); tra trang bằng Codex (một trợ lý AI khác, tự m�
 **Ảnh cho bài kho mới (cuối tối 14/11).** Kho lớn lên 263 bài (bài 22) ⇒ tìm ảnh cho 39 bài mới theo cùng luật: 20 / 23 bài của lần ghi kho 5 và 11 / 16 bài lễ hội của
 lần 6 có ảnh; 8 bài để trống vì ảnh tìm được không nhận ra được nơi, là lễ cùng tên ở tỉnh khác, chỉ là poster, hoặc có người rõ mặt. Ảnh lễ Ariêu Ping được cắt bỏ
 tiền cảnh có người trẻ nhìn rõ mặt. Tối 14/11: 249 / 263 bài có ảnh.
+
+**Ảnh anh tự tìm (chiều 15/11).** Anh gửi 8 ảnh cho 8 bài còn trống. Ghép được 5 ⇒ **260 / 263 bài** có ảnh: bốn quán dùng nguyên ảnh (một ảnh có dấu nước to của một trang tin — giữ vì là ảnh anh chọn, chỉ kém đẹp); bài làng nón dùng bản cắt chỉ còn chồng nón, vì ảnh gốc có một người rõ mặt là trọng tâm. Ba ảnh không ghép: một ảnh diễn viên rõ mặt là trọng tâm, một ảnh có biển tên một ngôi đình ở tỉnh khác, một ảnh cảnh nền giống nơi tái hiện ở Hà Nội đã bị loại lần trước. Ảnh làng nón cũng dùng cho lịch "Lên kế hoạch" ⇒ 40 / 41 điểm của lịch có ảnh.
 
 **Tìm thêm một lượt (sáng 15/11).** 14 bài còn trống được tìm lại bằng tìm kiếm web (57 lượt, khoảng 0,06 USD): thêm được 7 ảnh, người review bỏ 1 (ảnh của một lễ khác cùng loại, lại có người rõ mặt làm trọng tâm) ⇒ thêm 6. Một ảnh quán có số điện thoại trên biển được che mờ tới mức không đọc được — lần đầu dùng cách che thay vì bỏ ảnh. Nay **255 / 263 bài** có ảnh; ảnh hiện được cạnh câu trả lời **201**; ảnh "không chắc" (chỉ ở Khám phá) 54; **8 bài** vẫn trống — danh sách để anh tự tìm.
 

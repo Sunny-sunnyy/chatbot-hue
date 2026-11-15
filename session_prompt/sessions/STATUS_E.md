@@ -14,6 +14,15 @@
   - Tài liệu v9: đã áp vào nhánh `p9-tai-lieu-v9` (CHƯA commit) — bai_hoc/23 + README, sổ khâu 07 + README, nhật ký; **chờ agent con đối chiếu số** (biên bản sẽ ở `data/tai_lieu_v9_nhap_2026-11-15/kiem_doc_lap_bai_23_chieu_1511.md`) ⇒ sửa theo ⇒ commit_push ⇒ báo A.
   - Ảnh khách sạn User: `p9-anh-ks-user` @ origin `e881476`, 9 / 10 ghép (57 ⇒ 66 / 136), bảng v6 `e10140f4c4a9`; **chờ A nhìn lại + merge**; ảnh Bình Dương 4 chưa ghép (số điện thoại trên biển) — chờ User chọn (bản thử che số ở `data/anh_user_2026-11-15_ghep/thu_binh_duong_4_che_so.jpg`). Worktree `/tmp/e_ks`.
   - Còn: review `p9-sua-hang-o` của C nếu B bận (A dặn). Không server nào của E đang chạy. Tiền E phiên chiều ≈ 0,020 USD.
+- 16:16 15/11/2026 — **Trạng thái (thay dòng trạng thái trước):**
+  - ĐÃ MERGE: 7 điểm lịch (`eee5781`) · ảnh khách sạn User 10 ảnh ⇒ 67 / 136, bảng lưu trú v6 `44d7b14d8fce` (`0d3f547`) · ảnh Khám phá User 4 ảnh ⇒ 259 (`11740dd`) · ảnh làng nón Tây Hồ (bản cắt) ⇒ Khám phá 260 / 263, ảnh lịch 40 / 41, bảng ảnh lịch v5 `5ed8f32903a9`, loader nhận `nguon: "user"` · tài liệu v9 (bài 23 / 25, sổ 07; kiểm độc lập 82 mục, 10 câu sửa).
+  - ĐÃ MERGE (E kiểm bằng `git branch -r --merged origin/main` sau khi ghi dòng trên): `p9-gd-3-sua` (3 sửa giao diện; C review ready) · `p9-bo-buoi-trong` (buổi để trống không hiện + vài dòng số tài liệu). Cả 7 nhánh của E chiều nay đều đã trong origin/main.
+  - Review cho B: `p9-web-noi-tiep` ⇒ changes_requested nhẹ (`e_review_web_noi_tiep.md`, chưa commit): M-1 câu hỏi tiếp nhiều ý, m-1 câu tìm rỗng.
+  - Deploy nháp: đã trỏ diem_v9, diem_toa_do_v9, bang_anh_v5, lưu trú v6 (7 / 7 đường bảng của settings main khớp). Chưa build image.
+  - Ảnh User KHÔNG ghép (A báo User): bài ca kịch (mặt người là trọng tâm), lễ Kỳ yên (biển đình tỉnh khác), lễ Tiến Xuân ngưu (cảnh giống Hà Nội). Khách sạn thứ 11 User không tìm được.
+  - Worktree của E còn: `/tmp/e_v9` (nhánh tài liệu, đã merge), `/tmp/e_gd3` (đang ở `p9-bo-buoi-trong`), `/tmp/e_ks`, `/tmp/e_kp` — gỡ khi kết phiên (mỗi cái có 2 symlink `data`, `knowledge-base-hue`). Không server nào của E chạy.
+  - Tiền E phiên chiều ≈ 0,022 USD (v9 0,0151 · giao diện ≈ 0,005 · buổi trống ≈ 0,001; ảnh + tài liệu + review 0).
+  - Bẫy thêm: script có `assert` "thư mục đúng N file" hỏng khi User bỏ thêm file vào cùng thư mục ⇒ kiểm tập con; `str(None)` thành chữ "None" trong loader bảng ảnh (đã sửa).
 
 ---
 
