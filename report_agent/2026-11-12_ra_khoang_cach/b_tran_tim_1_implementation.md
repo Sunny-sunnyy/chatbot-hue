@@ -1,4 +1,4 @@
-# Trần tìm thêm 2 ⇒ 1 (tốc độ, bậc 2) — KHÔNG ĐẠT, không bật · B · 12:03 15/11/2026
+# Trần tìm thêm 2 ⇒ 1 (tốc độ, bậc 2) — KHÔNG ĐẠT, không bật · B · 12:02 15/11/2026
 
 Plan `docs/superpowers/plans/2026-11-15-toc-do-tran-tim-1-plan.md` (`611e5ee3c1df`, A duyệt). Nhánh `p9-tran-tim-1` `655d292`: setting `assistant.tim_them_toi_da`
 (1 hoặc 2, **mặc định 2 = như cũ**, test khẳng định yêu cầu gửi model giống byte; 1 ⇒ ẩn `tim_kho` sau 1 lần tìm thật). Số: `data/tran_tim_1_2026-11-15/` (`tom_tat.json`, `tools/so.py`).
