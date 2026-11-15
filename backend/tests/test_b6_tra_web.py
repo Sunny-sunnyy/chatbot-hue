@@ -4,6 +4,7 @@ Serper là phản hồi ghi sẵn qua `httpx.MockTransport` (đúng khuôn tài 
 Phần dùng Qdrant (3 đường + route) đọc Qdrant thật, chỉ đọc. Câu / đoạn trích tự viết, không chép kho.
 """
 import asyncio
+import dataclasses
 import functools
 import json
 
@@ -455,3 +456,55 @@ def test_uppercase_k_is_money_but_not_4k():
     assert tim_so_tien("Vé 150K một người") == ["150K"] and tw.gia_tri_tien("150K") == 150_000
     assert tim_so_tien("Màn hình 4K") == []
     assert "tien_ngoai_trich" in tw.kiem_muc_web("Vé 180K [w1].", _so("Vé 150.000 đồng."), luu_tru=False)
+
+
+# ---------- 15/11 câu nối tiếp (plan `2026-11-15-cau-noi-tiep-web-plan.md`): câu web = câu tìm kho cuối model viết, chỉ khi cờ bật + có lịch sử + model đã tìm ----------
+
+NOI_TIEP = dataclasses.replace(WEB, web_cau_noi_tiep=True)
+CAU_CUT = "mở cửa lúc mấy giờ"
+CAU_MODEL = "Phòng tập Sông Hương mở cửa lúc mấy giờ?"
+LICH_SU = (("Phòng tập Sông Hương ở đâu?", ""),)
+
+
+def _web_noi_tiep(flags, history=(), model_queries=(), query=CAU_CUT, text="Mở từ 5h sáng [w1]."):
+    """⇒ (câu Serper nhận, tin nhắn gửi model viết mục web, trace)."""
+    reqs, calls = [], []
+    gen = generator(lambda n, kw: (calls.append(kw), [answer(text)])[1])
+    trace = refused(history=tuple(history), model_queries=list(model_queries))
+    asyncio.run(cong_web(query, gen, trace, serper(calls=reqs), flags))
+    return json.loads(reqs[0].content)["q"], json.dumps(calls[0]["input"], ensure_ascii=False) if calls else "", trace
+
+
+@pytest.mark.parametrize("flags, history, model_queries", [
+    (WEB, LICH_SU, ["câu khác", CAU_MODEL]),      # cờ tắt
+    (None, LICH_SU, [CAU_MODEL]),                 # nơi gọi cũ không truyền cờ
+    (NOI_TIEP, (), [CAU_MODEL]),                  # lượt đầu (không lịch sử): model có tìm cũng không đổi
+    (NOI_TIEP, LICH_SU, []),                      # có lịch sử nhưng model không tìm lần nào
+])
+def test_follow_up_flag_off_or_not_applicable_sends_typed_question_as_before(flags, history, model_queries):
+    q, sent, trace = _web_noi_tiep(flags, history, model_queries)
+    assert q == tw.cau_tim_web(CAU_CUT) and f"Câu hỏi: {CAU_CUT}" in sent and CAU_MODEL not in sent
+    assert "cau_tu_model" not in trace.tools[-1]
+
+
+def test_follow_up_with_history_uses_last_model_search_query_for_serper_and_web_writer():
+    q, sent, trace = _web_noi_tiep(NOI_TIEP, LICH_SU, ["câu tìm đầu của model", CAU_MODEL])
+    assert q == tw.cau_tim_web(CAU_MODEL) and "Sông Hương" in q and "câu tìm đầu" not in q
+    assert f"Câu hỏi: {CAU_MODEL}" in sent
+    assert trace.tools[-1]["cau_tu_model"] is True and CAU_MODEL not in json.dumps(trace.tools, ensure_ascii=False)  # log chỉ có cờ, không chữ
+    assert trace.web["outcome"] == "co_muc"
+
+
+def test_follow_up_model_query_still_goes_through_query_cleaner():
+    q, _, _ = _web_noi_tiep(NOI_TIEP, LICH_SU, ["Phòng tập Sông Hương 0905 123 456 a@b.vn " + "x" * 300])
+    assert "0905" not in q and "@" not in q and len(q) <= tw.MAX_QUERY_CHARS + len(" Huế")
+
+
+@pytest.mark.parametrize("typed, model_q, outcome", [
+    ("ở đó có ngập không", "Phòng tập Sông Hương có bị ảnh hưởng không?", "thien_tai"),   # từ khoá chỉ ở câu người dùng gõ
+    ("giờ thế nào", "Phòng tập Sông Hương có bị ngập lụt không?", "thien_tai"),            # từ khoá chỉ ở câu model viết
+    ("hôm nay mở tới mấy giờ", "Phòng tập Sông Hương mở tới mấy giờ?", "chua_xac_minh"),    # thời gian thực ở câu gõ + mục web có số
+])
+def test_follow_up_safety_rules_look_at_both_questions(typed, model_q, outcome):
+    _, _, trace = _web_noi_tiep(NOI_TIEP, LICH_SU, [model_q], query=typed)
+    assert trace.web["outcome"] == outcome
