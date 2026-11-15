@@ -277,7 +277,7 @@ chọn hạng sao trước.
   - Lịch ven biển cũng chọn phía bắc / nam theo cùng nhãn phía của trang (trước đây dò chữ trong địa chỉ) ⇒ khách sạn 4 sao kia vào thêm 36 lịch ven biển phía bắc,
     không lịch nào mất cơ sở.
 - Đo: trình duyệt thật ở khổ máy tính và điện thoại:
-  - trang hiện đủ 137 cơ sở;
+  - trang hiện đủ 137 cơ sở (số lúc đo sáng 15/11; nay 136 sau khi gộp một dòng trùng);
   - lọc "phía nam" ra 5, thêm "4–5 sao" ra 3;
   - 0 lỗi, 0 tải gì từ ngoài, link chỉ mở hai trang tìm (bản đồ, tìm phòng);
   - bấm link từ một lịch trung tâm thì mở đúng nhóm trung tâm.
