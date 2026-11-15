@@ -341,3 +341,22 @@ def test_lodging_block_only_when_the_user_asked(mo_phong):
     # xin chỗ ở không nêu hạng ⇒ hỏi lại hạng, lịch không đổi, khối vẫn chưa hiện
     kq = sl.ap(BANG_V2, sl.luu_tu_lich(khung, None, None), [sl.HanhDong(loai="doi_hang_o")], luu_tru=BANG_LT)
     assert kq["khung"] == khung and [d["cau"] for d in sl.thay_doi(BANG_V2, kq)] == [sl.CAU_KHONG_DOI["hang_chua_ro"]]
+
+
+def test_tier_put_in_wrong_action_still_applies_and_tier_is_judged_on_the_final_plan():
+    """Review bậc 1 m-1 / m-2: hạng nằm nhầm trong `doi_tham_so` ⇒ vẫn áp như đổi hạng (không im lặng); "4–5 sao" + "còn 1 ngày" trong một lượt,
+    thứ tự nào cũng ra cùng kết quả: lịch 1 ngày, KHÔNG báo đã thêm chỗ ở."""
+    from llm import sua_lich_v2 as sl
+    khung = v2.xep_v2(BANG_V2, v2.tu_truong({"so_ngay": "3", "kieu_di": "can_bang", "so_thich": ["di_tich"]}))
+    luu = sl.luu_tu_lich(khung, None, None)
+    kq = sl.ap(BANG_V2, luu, [sl.HanhDong(loai="doi_tham_so", ngan_sach="cao")], luu_tru=BANG_LT)
+    assert [d["cau"] for d in sl.thay_doi(BANG_V2, kq)] == ["Đã thêm gợi ý chỗ ở hạng 4–5 sao."] and kq["khung"]["tham_so"]["ngan_sach"] == "cao"
+    kq = sl.ap(BANG_V2, luu, [sl.HanhDong(loai="doi_tham_so", kieu_di="nhe_nhang", ngan_sach="vua")], luu_tru=BANG_LT)
+    assert {f for f, *_ in kq["doi_truong"]} == {"kieu_di", "ngan_sach"}  # cả hai ý đều được làm
+    ket = []
+    for thu_tu in ([sl.HanhDong(loai="doi_hang_o", ngan_sach="cao"), sl.HanhDong(loai="doi_so_ngay", so_ngay=1)],
+                   [sl.HanhDong(loai="doi_so_ngay", so_ngay=1), sl.HanhDong(loai="doi_hang_o", ngan_sach="cao")]):
+        kq = sl.ap(BANG_V2, luu, thu_tu, luu_tru=BANG_LT)
+        ket.append(([d["cau"] for d in sl.thay_doi(BANG_V2, kq)], len(kq["khung"]["ngay"]), kq["khung"]["tham_so"].get("ngan_sach")))
+    assert ket[0] == ket[1] and ket[0][1:] == (1, None) and sl.CAU_KHONG_DOI["khong_muc_o"] in ket[0][0]
+    assert not any("chỗ ở hạng" in c for c in ket[0][0])
