@@ -10,6 +10,10 @@
 **Plan khách sạn (A giao, 10:17 15/11/2026):** nháp `docs/superpowers/plans/2026-11-15-khach-san-trang-va-ngan-sach.md` (đếm `data/khach_san_2026-11-15/`: 12 / 140 từng hiện; ngân sách ⇒ 36; 0 khung trống mức) — chờ B / E phản biện rồi chốt, nhắn A. Khai báo sửa: file plan này.
 **Plan khách sạn bản 2 (10:22 15/11/2026)** — đã sửa theo phản biện của B + E, gửi A trình User. Chờ User duyệt rồi mới code.
 **Ngưỡng mưa đo lại theo QCVN (0 USD):** `c_dem_mua.md` phần 5 — đề xuất phương án 3 với 6 mm; đã gửi cả nhóm. Rảnh — chờ User (ngưỡng mưa, plan khách sạn).
+**p9-mua-6mm merge (fe895c1).** Sổ 07 (bản 55) + bài 23 đã ghi trên main working tree, A gộp.
+**Trang chỗ ở XONG:** nhánh `p9-cho-o` @ `86acfb1` (worktree `/tmp/c_co`) — chờ E review. Bảng v3 `data/khach_san_2026-11-15/` (137 cơ sở; lịch đổi 364 / 3.840: La Vela thay Indochine ở cụm An Cựu). Test 11 + suite 1050 passed, Playwright DAT. Report `c_cho_o_implementation.md`. Worktree `/tmp/c_mua` gỡ sau khi A dọn.
+**p9-cho-o sau review E (ready, 3 minor đã sửa) + rebase lên 418a585 @ `366fac8`:** test file chạm 128 passed, Playwright DAT — chờ A merge. Việc kế: nhánh nhỏ lịch lọc phía biển bằng `phia_bien`.
+**p9-cho-o merge (60f556b).** Đang: tài liệu hai tính năng khách sạn — `bai_hoc/25`, sổ `07` (bản 56), README (main working tree, chưa commit); số thật `data/khach_san_2026-11-15/dem_sau.json` (13 ⇒ 32 / 137). Agent con kiểm độc lập đang chạy ⇒ biên bản `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_25_cho_o.md`. Vòng tự soi 1 đã gửi.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

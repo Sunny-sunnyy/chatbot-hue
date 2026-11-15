@@ -6,6 +6,27 @@
 - 09:57 15/11/2026: A merge `p9-ghi-chu-an` (`2e50789`, sổ `214a502`); m-1 + m-2 đã sửa ở `e001cb2` (E kiểm: câu Bạch Mã ghi "khu Ngũ Hồ và đỉnh núi", bỏ mục trưa Nhị Hồ). **Rảnh — chờ A.**
 - 10:30 15/11/2026: phản biện plan khách sạn (gửi C, B) + ngưỡng mưa (gửi B, C, A). Ảnh 14 bài: nhánh `p9-anh-14-bai` @ `2842102` (đã push), 249 ⇒ 256 / 263, kc 53 ⇒ 55, 7 bài vẫn trống; report `report_agent/2026-11-12_ra_khoang_cach/e_anh_14_bai.md` (chưa commit). Serper 0,057 USD. **Chờ review** (người khác, ≤ 10 ảnh). Worktree `/tmp/e_anh14` còn (gỡ sau merge). Dữ liệu: `data/anh_14_bai_2026-11-15/` (v8, ung_vien, tools/tim.py); script dựng thêm v8.
 - 10:34 15/11/2026: A review ảnh ⇒ bỏ Kỳ yên ⇒ `p9-anh-14-bai` @ `20cc7a6` (255 / 263, kc 54, trống 8), report sửa theo; chờ A merge. Review `p9-mua-6mm` (C, `0a6333e`) ⇒ ready, 1 minor docstring; biên bản `e_review_mua_6mm.md` (chưa commit). Rảnh — chờ nhánh ngân sách (B) / trang chỗ ở (C).
+- 10:42 15/11/2026: review `p9-ngan-sach-o` (B, `855a535`) ⇒ ready, 1 minor (nhãn "1 sao" gồm cả Đạt chuẩn — ven biển Thuận An); biên bản `e_review_ngan_sach_o.md` (chưa commit). 0 USD. Rảnh — chờ nhánh trang chỗ ở (C).
+- 10:45 15/11/2026: review `p9-cho-o` (C, `86acfb1`) ⇒ ready, m-1 key React trùng (Như Phú) nên sửa, m-2/m-3 tuỳ; biên bản `e_review_cho_o.md` (chưa commit). 0 USD. Rảnh — chờ A.
+- 10:50 15/11/2026: main `418a585` có đủ `p9-anh-14-bai`, `p9-mua-6mm`, `p9-ngan-sach-o` (nhãn "1 sao / đạt chuẩn" đã sửa). Gỡ worktree `/tmp/e_anh14`. `p9-cho-o` chưa merge. E không còn worktree / server. Rảnh — chờ A.
+- 10:56 15/11/2026: gom **checklist deploy** (A giao; A chép vào handoff lúc kết phiên) — mục dưới. E đã đọc, CHƯA sửa file deploy nào.
+- 10:57 15/11/2026: review `p9-phia-bien` (B, `3023894`) ⇒ ready, 0 finding; biên bản 5 dòng `e_review_phia_bien.md` (chưa commit). Rảnh — chờ A.
+
+### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
+Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).
+
+| File (settings.yaml) | Cờ cần | md5 | Trong `CHUA` | `COPY` trong Dockerfile |
+|---|---|---|---|---|
+| `data/phase_9/lich_trinh/diem_v8.json` (`lich_trinh_bang_v2`) | `len_ke_hoach_v2` | — | có | **thiếu** |
+| `data/phase_9/lich_trinh/diem_toa_do_v7.json` (`lich_trinh_toa_do`) | `quan_lich` (toạ độ cho quán, `assistant.py:177`) | `158e184154de` | **thiếu** | **thiếu** |
+| `data/phase_9/lich_trinh/bang_anh_v2.json` (`lich_trinh_bang_anh`) | `anh_lich` | `6fe592114d2b` | **ghi v1** (`4e924b717c16`) ⇒ đổi sang v2 | **thiếu** |
+| `data/khach_san_2026-11-15/bang_luu_tru_lich_v3.json` (`lich_trinh_bang_luu_tru`) | `luu_tru_lich` (lịch + trang Chỗ ở) | `97eedb0cc2ab` | **thiếu** (handoff cũ ghi v2) | **thiếu** |
+| `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (`lich_trinh_bang_quan`) | `quan_lich` | `ab481586d46f` | **thiếu** | **thiếu** |
+| `data/phase_9/lich_trinh/diem_v3.json` (`lich_trinh_bang`) | `lich_trinh` (đang tắt) | — | có | có |
+
+- **Ảnh** (tracked trong `frontend/public/anh/`, vào qua `COPY frontend/` ⇒ `npm run build` ⇒ `dist`): `kp/` 231 (Khám phá 255 / 263, sau `p9-anh-14-bai`), `khach_san/` 71 (bảng lưu trú chỉ trỏ `/anh/khach_san/*.jpg`, loader kiểm gốc), `lich/` 33, `quan/` 5. `anh/rieng` (ảnh #5) đã bị loại trong `LOAI_TRONG_CHUA` — giữ. Handoff cũ: build cần `dong_anh.py` + `anh_nho.py` trước `npm run build`.
+- **Cách kiểm lúc deploy (0 USD):** sửa `CHUA` + thêm `COPY` ⇒ chạy lại `dung_dockerignore.py` ⇒ build image ⇒ container khởi động được + `/api/cho_o` trả 200 + một lịch 3 ngày có ô Nơi ở / Ăn uống. Không làm bây giờ (deploy chưa tới — User 12/11).
+- Mục cũ vẫn đúng (handoff "Checklist trước deploy"): 4 chốt biến môi trường, `--proxy-headers`, hạn mức OpenAI / Serper, `tra_web` tắt trên AWS, ảnh #5 không lên bản công khai.
 
 # STATUS E — KẾT PHIÊN TỐI 14/11 (mở 17:45, kết 22:35 14/11/2026, `date`) · terminal `hue-rag-1f` · Claude Opus 5.5 · vai thực thi
 
