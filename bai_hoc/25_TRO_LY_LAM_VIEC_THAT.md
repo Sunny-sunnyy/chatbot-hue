@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 16:01, ngày 15/11/2026 · thêm chiều 15/11: 10 ảnh khách sạn anh tự tìm (67 / 136 cơ sở có ảnh). Trước: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 16:28, ngày 15/11/2026 · thêm chiều 15/11: đổi hạng chỗ ở bằng lời; thẻ Nơi ở chỉ hiện khi người dùng hỏi. Trước: 16:01, ngày 15/11/2026 · thêm chiều 15/11: 10 ảnh khách sạn anh tự tìm (67 / 136 cơ sở có ảnh). Trước: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -66,6 +66,40 @@ dặn ~1.244 token giống hệt nhau mọi lượt, nên mình gắn một kho�
 "bỏ ngày cuối"), không lấy số trong ngày tháng hay "thứ hai". Bị chặn thì lịch giữ nguyên và có dòng "Chưa làm: đổi số ngày". Trên các lượt đã lưu:
 16 / 16 lần đổi số ngày đúng vẫn qua, 3 / 3 lần sai bị chặn; 0 USD vì không đổi lời dặn.
 
+**Chiều 15/11 — đổi hạng chỗ ở bằng lời.** Trước đó, lịch đã xếp xong mà gõ "đổi sang khách sạn 4–5 sao" thì trợ lý trả lời như một câu hỏi thường:
+lịch không đổi, cũng không báo gì (mình thử 5 câu, cả 5 đều vậy). Nay có thêm loại hành động thứ 7, **đổi hạng chỗ ở**:
+- **Model** chỉ chọn một trong ba mức (1 sao / đạt chuẩn · 2–3 sao · 4–5 sao), hoặc để trống khi người dùng không nêu hạng. Nó không viết tên
+  khách sạn, giá hay link.
+- **Code** ghi mức vào lịch, **không chạy lại bộ xếp** (hạng chỗ ở không liên quan điểm tham quan), rồi dựng lại ô Nơi ở bằng đúng hàm của biểu mẫu.
+  Vì không điểm nào đổi nên không phải gọi model viết lại câu nào ⇒ khung lịch mới hiện sau khoảng 1,8 giây (trung vị của 32 lượt).
+- **Không đổi được thì luôn có một dòng lý do**: chưa nêu hạng ("rẻ hơn", "sang hơn" ⇒ trợ lý hỏi lại muốn hạng nào, không tự đoán) · lịch đang
+  ở đúng hạng đó · khu chỗ ở của lịch không có cơ sở hạng đó · lịch 1 ngày không có mục chỗ ở.
+
+| Đo gì | Cách đo | Kết quả | Vì sao ổn |
+|---|---|---|---|
+| Code đổi hạng có đụng lịch tham quan không | mọi tổ hợp lịch (3.840 khung) × 3 mức, 0 USD | 0 lệch: điểm, ngày, buổi giữ nguyên; ô Nơi ở giống hệt ô của biểu mẫu cùng mức | hạng chỉ được phép đổi ô Nơi ở |
+| Câu nêu rõ hạng có đổi đúng không | 12 câu mình viết trước, chạy 2 lượt qua trợ lý thật | đúng cả hai lượt **12 / 12** (ngưỡng ≥ 10); đổi **sai** hạng mà vẫn báo "đã đổi": **0 / 24** | lỗi tệ nhất ở đây là làm sai mà nói đã làm ⇒ sàn là 0 |
+| Câu không nêu hạng | 6 câu × 2 | bị đổi hạng 0 / 12; có dòng hỏi lại hạng 6 / 6 (ngưỡng ≥ 4) | không đoán thay người dùng, cũng không im lặng |
+| Câu chỉ hỏi thông tin về khách sạn | 6 câu × 2 | thành lượt sửa 0 / 12 | hành động mới không "hút" câu hỏi thường |
+| Câu lạ do người điều phối viết riêng (mình chưa mở khi chỉnh lời dặn) | 8 câu, 1 lượt | đúng 8 / 8 (ngưỡng ≥ 6) | chống việc lời dặn chỉ hợp với 12 câu của mình |
+| Các kiểu sửa cũ có hỏng không | 10 chuỗi câu sửa đã thấy, đạt cả hai lần | **10 / 10** (ngưỡng ≥ 8) | xem chuyện ngay dưới |
+| Câu an toàn · câu trộn khẩn cấp | 32 câu × 2 · 8 câu × 2, trong cuộc có lịch | 0 / 64 · 0 / 16 thành lượt sửa | như bảng trên, đo lại vì lời dặn đổi |
+
+*Chuyện ở lần đo đầu.* Bản lời dặn đầu tiên đạt mọi ngưỡng, kể cả 10 chuỗi cũ (8 / 10, ngưỡng ≥ 8). Nhưng trong hai chuỗi trượt có một chuỗi
+trước đây vẫn đạt: câu kiểu "ngày 3 chỉ đi buổi sáng thôi" nay bị hiểu thành "đổi số ngày", bị rào chặn, người dùng nhận "Chưa làm". Mình chạy
+đúng chuỗi đó trên bản đang chạy: 4 / 4 đạt; trên bản mới: 0 / 2. Tức là sau khi thêm hành động mới (vài dòng lời dặn và một loại mới trong
+khuôn đầu ra), một kiểu câu không liên quan bắt đầu trượt. Mẫu rất nhỏ nên chưa chắc chắn, nhưng một kiểu câu đang chạy được mà hỏng thì vẫn
+đáng sửa dù tổng vẫn đạt ngưỡng. Kế hoạch cho phép tối đa **một** vòng chỉnh lời dặn (ghi trước, cho trường hợp câu đổi hạng trượt); người điều
+phối quyết dùng vòng đó cho lỗi này và ghi tiêu chí cho bản chỉnh **trước khi** chạy lại: mọi ngưỡng cũ giữ nguyên, chuỗi đó phải đạt 2 / 2, trượt
+thì dừng hẳn. Mình đổi đúng một thứ: dời phần chi tiết về hạng chỗ ở ra khỏi danh sách hành động, xuống khối "cách nói thường gặp", để danh sách
+hành động ngắn như cũ. Đo lại toàn bộ: chuỗi đó 2 / 2, 10 chuỗi cũ 10 / 10 (bảng trên
+là số của bản chỉnh). Vì sao vị trí của vài dòng chữ lại đổi cách model hiểu một câu khác thì mình chưa chứng minh được (mẫu nhỏ: 2 so với 4).
+Tiền cả việc ≈ 0,21 USD (đo hai bản lời dặn).
+
+Sau review có thêm hai sửa nhỏ, 0 USD: model lỡ đặt hạng vào một hành động khác thì hạng vẫn được áp (trước đó lượt sửa không có dòng báo nào);
+và hạng luôn được xét **sau cùng** trong một lượt, nên câu "khách sạn 4 sao, rút còn 1 ngày" không còn báo đã thêm chỗ ở cho một lịch 1 ngày.
+Hệ quả đã nhận: code chỉ áp tối đa 2 ý một lượt, nên câu có 3 ý mà có đổi hạng thì đổi hạng thành ý thứ 3 và hiện "Chưa làm: đổi hạng chỗ ở".
+
 ## 2. Câu hỏi nhiều ý
 
 **Vấn đề.** Luật trả lời cũ (bài 8) rất chặt: thiếu căn cứ cho **một** ý ⇒ từ chối **cả** câu. Hỏi "vé Đại Nội bao nhiêu, dịp Tết có chương trình gì",
@@ -103,6 +137,18 @@ lời. Có lần kho ghi Đại Nội mở cửa 7:00, ngay bên dưới web ghi
 **Tiền cả việc** ≈ 0,40 USD: vòng 1 + vòng 2 ≈ 0,35, sửa "và" ≈ 0,015, mục web ≈ 0,035.
 
 ## 3. Chỗ ở trong lịch
+
+**Từ chiều 15/11: thẻ này chỉ hiện khi người dùng hỏi.** Anh thử bản đang chạy và thấy lịch tự đưa danh sách khách sạn khi người dùng không
+hỏi là không hợp. Nay "đã hỏi" nghĩa là lịch có một mức hạng chỗ ở: chọn ở ô hạng sao của biểu mẫu, hoặc nói bằng lời (mục 1). Chưa hỏi thì lịch
+từ 2 ngày chỉ có một dòng link nhỏ "Cần chỗ ở? Xem gợi ý theo khu" sang trang Chỗ ở; chữ khi sao chép / tải lịch cũng không có dòng nơi ở. Gõ
+"cho mình khách sạn 4 sao" thì thẻ bật ở hạng đó, kèm dòng "Đã thêm gợi ý chỗ ở hạng 4–5 sao."; xin chỗ ở mà không nêu hạng thì trợ lý hỏi lại hạng.
+(Phần code của hai đường này đã có test. Phần model hiểu câu thì mới đo ở câu đổi hạng trên lịch đã có sẵn hạng — 12 / 12 và 6 / 6 ở mục 1; chưa đo
+riêng câu xin chỗ ở trên lịch chưa có thẻ.)
+Cách làm chỉ là một điều kiện trong code (có mức hạng mới dựng thẻ), không đổi lời dặn nên không tốn lượt đo có phí nào ngoài lượt chạy thử giao
+diện bằng trình duyệt tự động (2 lịch thật, 0,0012 USD; chạy lại một lần sau khi gộp bản mới, lần đó mình không ghi tiền): mọi tổ hợp lịch không chọn
+hạng ⇒ 0 thẻ; chọn hạng ⇒ thẻ giống hệt trước. Lịch mẫu "Ví dụ" được thêm sẵn mức 2–3 sao nên vẫn có thẻ.
+**Lưu ý khi đọc các số bên dưới:** "lịch ≥ 2 ngày có thẻ 3.072 / 3.072", số lượt đổi ô Nơi ở và tỉ lệ ô có ảnh đều đo lúc thẻ còn luôn hiện; nay
+chúng chỉ đúng cho lịch đã chọn hạng.
 
 Lịch từ 2 ngày có thêm thẻ **"Nơi ở gợi ý"** ở cuối: một khu cho cả chuyến, một câu lý do, và 3–5 khách sạn trải từ cao tới bình dân. Mỗi khách sạn có
 nút "Tìm phòng" mở trang tìm kiếm của Booking. Thẻ **không có giá, không báo còn phòng**, và ghi rõ "chưa kiểm giá, phòng trống" cùng nguồn danh mục.
@@ -396,6 +442,8 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
+- Đổi hạng chỗ ở bằng lời (chiều 15/11): 5 / 5 câu im lặng trước khi làm `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`; plan `docs/superpowers/plans/2026-11-15-sua-lich-hang-cho-o-plan.md`; mọi số của bảng (12 / 12, 0 / 24, 0 / 12 + 6 / 6, 0 / 12, 8 / 8, 10 / 10, 0 / 64, 0 / 16), chuỗi hồi quy 4 / 4 ↔ 0 / 2 ⇒ 2 / 2, p50 1,83 s theo report (32 lượt; trung vị tính lại 1,81 s), ≈ 0,21 USD: `report_agent/2026-11-12_ra_khoang_cach/c_sua_hang_o_implementation.md` [đã chạy]; hai sửa nhỏ sau review: nhánh `p9-hang-o-m12`, test `test_luu_tru_lich.py` [code + đã chạy]. Câu ví dụ trong bài là ví dụ tự đặt.
+- Thẻ Nơi ở chỉ hiện khi hỏi (chiều 15/11): plan `docs/superpowers/plans/2026-11-15-noi-o-chi-khi-hoi-plan.md`; 3.840 khung không mức ⇒ 0 thẻ, có mức ⇒ giống hàm chọn nơi ở, 0,0012 USD cho một lần chạy Playwright (2 lịch thật); lần chạy lại sau gộp main không ghi tiền: `report_agent/2026-11-12_ra_khoang_cach/c_noi_o_khi_hoi_implementation.md`, review `e_review_noi_o_khi_hoi.md` [đã chạy].
 - Sửa lịch bằng lời: 6 hành động, mô phỏng ~15.000 lần áp 0 vi phạm, 2 lỗi (240 khung; 4 / 1.920), Q3 7 / 10 ⇒ 9 / 10, kín 4 / 5, Q5 0 / 64, Q5b 0 / 16, tiền ≈ 0,25 USD, độ trễ 4,17 ⇒ 2,37 (n = 20 gộp, "đo thêm tới khi đạt") ⇒ đo lại n = 20 chốt trước 2,58 / 2,65 s, đệm 1.244 token 0,00024 ⇒ 0,0001 USD, phần huỷ ≈ 0,0001 USD: `report_agent/2026-11-12_ra_khoang_cach/b_sua_lich_v2_implementation.md` [đã chạy]; lỗi chặn câu trộn khẩn cấp: `e_review_sua_lich_v2.md` + mục "Sau review E" của report trên [đã chạy]; giới hạn chỉ bỏ được buổi tối: `session_prompt/CURRENT_HANDOFF.md` mục "Giới hạn đã nhận" [tài liệu]; câu ví dụ "bỏ điểm chiều nay, mình vừa bị ngã…" là **ví dụ tự đặt** (câu thật do E viết, không chép).
 - Câu nhiều ý vòng 1 (4 / 10 ⇒ 10 / 10; 3 / 18; 2 lỗi trích dẫn; 0,16 USD): `report_agent/…/c_cau_nhieu_y_do.md` [đã chạy]; vòng 2 (10 / 10; kín 0 / 10; 1 / 18 câu 161 đường không đổi; 0 / 176 đi vào luật; ≈ 0,19 USD; cộng ≈ 0,35): `c_cau_nhieu_y_do_v2.md` [đã chạy]; anh chọn bật: `CURRENT_HANDOFF.md` 14:44 14/11 [tài liệu]; sửa "và" (0 câu đổi vế; 10 / 10; 0,0151 USD): `c_so_y_va_implementation.md`, review `b_review_so_y_va.md` [đã chạy]; mục web 4 / 4 ⇒ 0 / 11, 0,0349 USD, Serper vẫn cả câu: `c_web_y_thieu_implementation.md`, review `b_review_web_y_thieu.md` [đã chạy]; bỏ từ đã có ở phần trả lời khi chọn vế (sửa m-1 của review): commit `0b7ef90`, `backend/llm/assistant.py` [code]. Ví dụ "bún bò và bánh khoái" là ca test trong code [code].
 - Chỗ ở: luật khu (50 % / 60 %, trẻ em ⇒ trung tâm), 2 / 2 / 1 theo hạng, 140 cơ sở danh mục Cục Du lịch Quốc gia, 3.840 khung (3.072 / 3.072), người xem 9 / 10 ⇒ 10 / 10, hai lỗi sửa, ≈ 0,0025 USD: `report_agent/…/b_luu_tru_lich_implementation.md` [đã chạy]; E review ready: `e_review_luu_tru_lich.md`; cờ bật: `backend/config/settings.yaml` `luu_tru_lich: true` [code].
