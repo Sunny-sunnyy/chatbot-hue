@@ -70,7 +70,7 @@ git branch -d p9-anh-14-bai p9-anh-chat p9-anh-chat-hoi p9-anh-kp-user p9-anh-ks
 git branch -D p9-tim-song-song p9-tran-tim-1 p9-web-so-0 && git push origin --delete p9-tim-song-song p9-tran-tim-1 p9-web-so-0
 ```
 (`p9-tim-song-song`, `p9-tran-tim-1` đã có tag `hoso/…`; `p9-web-so-0` bỏ, kết quả ở report. Giữ: `p10-giong-noi`, `p9-b5c`, `p9-sua-lich`, `p9-toc-do-6`. Nhánh nào `git branch -d` báo không có ở máy thì bỏ qua.)
-**(3) `.env`:** sửa 1 dòng tên biến có khoảng trắng (`docker --env-file` từ chối) + gỡ dòng `EXA_API_KEY` (từ 13/11).
+**(3) `.env`:** ~~gỡ dòng `EXA_API_KEY`~~ — **User (A ghi nhận 19:31 15/11/2026): không dùng thì để đó, không cần xoá ⇒ không nhắc lại.** Còn 1 dòng tên biến có khoảng trắng (`docker --env-file` từ chối): chỉ cần sửa khi tới bước Docker / deploy ⇒ nằm trong checklist deploy, không phải việc bây giờ.
 
 ## Ý TƯỞNG TỪ NGHIÊN CỨU 04/11 — trạng thái (nguồn `bao_cao_he_thong/92_BAO_CAO_NGHIEN_CUU_PHASE_9.md` mục 000; hồ sơ `data/nghien_cuu_tinh_nang_2026-11-04/`)
 
