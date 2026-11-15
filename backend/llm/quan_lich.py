@@ -30,10 +30,9 @@ TEN_TOI_DA = 80
 # Ảnh quán ngoài kho (C 14/11 tối): tên file tự host dưới `frontend/public/anh/quan/` (quán kho dùng ảnh Khám phá theo mã bài ở giao diện).
 # Ghi chú ăn uống cho điểm mà kho nói rõ không có quán để gợi ý (C 15/11, đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`:
 # 1.080 / 22.680 bữa mô phỏng rơi vào 2 điểm này, quán gần nhất trong bảng 36–38 km). Chỉ hiện khi bữa đó không chọn được quán; chữ theo kho:
-# Bạch Mã `travel/places/Vườn quốc gia Bạch Mã.md:207`; Nhị Hồ `travel/places/Thác Nhị Hồ.md:54–56, :69` (chòi sạp, ăn uống dân dã), `:167` (07:30–17:30).
+# Bạch Mã `travel/places/Vườn quốc gia Bạch Mã.md:207`; Nhị Hồ `travel/places/Thác Nhị Hồ.md:167` (07:30–17:30). Trưa ở Nhị Hồ 0 / 3.840 khung ⇒ không có câu (review E m-2).
 GHI_CHU_AN = {
-    ("bach_ma", "trua"): "Mang theo đồ ăn trưa khô và nước uống — trong vùng lõi và trên đỉnh núi không có hàng quán.",
-    ("thac_nhi_ho", "trua"): "Có chòi sạp ăn uống dân dã ven hồ ngay tại điểm (chưa có quán cụ thể để gợi ý).",
+    ("bach_ma", "trua"): "Mang theo đồ ăn trưa khô và nước uống — khu Ngũ Hồ và đỉnh núi không có hàng quán bán đồ ăn.",
     ("thac_nhi_ho", "toi"): "Điểm thường mở cửa tới 17:30 — ăn tối sau khi về nơi nghỉ.",
 }
 _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")

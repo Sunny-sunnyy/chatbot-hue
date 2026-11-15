@@ -167,9 +167,9 @@ vẫn còn tên) ⇒ bỏ khỏi bảng.
 
 **Sáng 15/11 — vùng xa phía nam.** Trước khi đi tìm quán cho Bạch Mã, Nhị Hồ, mình đếm xem khách gặp vùng này bao nhiêu. Trong 3.840 lịch mô phỏng có **720 lịch**
 (18,8 %) với **1.080 / 22.680 bữa** (4,8 %) rơi vào đây. Chỉ gặp khi khách chọn "Thiên nhiên" và đi từ 3 ngày; lịch 1–2 ngày không lần nào. So với biển / đầm phá
-(khoảng 2.040 bữa chưa có quán), vùng này chỉ bằng một nửa. Lý do chính để **không** tìm quán lại nằm ngay trong sổ tay: bài Bạch Mã dặn mang đồ ăn trưa vì trong
-vùng lõi không có hàng quán; Nhị Hồ chỉ có chòi ăn ven hồ, không có quán cụ thể, và mở tới 17:30. Quán gần nhất trong bảng cách 36–38 km. Vì vậy thay vì bịa quán,
-thẻ bữa ở đó giờ hiện **một câu nhắc chép theo sổ tay** (mang đồ ăn trưa; chòi ăn tại chỗ; ăn tối khi về nơi nghỉ), chỉ khi bữa đó không có quán nào trong 2 km.
+(khoảng 2.040 bữa chưa có quán), vùng này chỉ bằng một nửa. Lý do chính để **không** tìm quán lại nằm ngay trong sổ tay: bài Bạch Mã dặn mang đồ ăn trưa vì khu
+Ngũ Hồ và đỉnh núi không có hàng quán bán đồ ăn; Nhị Hồ chỉ có chòi ăn ven hồ, không có quán cụ thể, và mở tới 17:30. Quán gần nhất trong bảng cách 36–38 km. Vì vậy thay vì bịa quán,
+thẻ bữa ở đó giờ hiện **một câu nhắc chép theo sổ tay** (trưa ở Bạch Mã: mang đồ ăn; tối sau Nhị Hồ: ăn khi về nơi nghỉ), chỉ khi bữa đó không có quán nào trong 2 km.
 Đo: thử một lịch thật 3 ngày "Thiên nhiên" ⇒ ngày 2 hiện đúng 2 câu nhắc, các bữa khác vẫn 2 quán như cũ.
 
 ## 5. Lịch mẫu "Ví dụ" đủ đi – ăn – ở
