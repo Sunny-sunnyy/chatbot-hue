@@ -59,7 +59,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
 4. **Giảm rủi ro:** đích mới rồi mới cutover; sao lưu trước khi sửa/xóa (corpus
    copy, Qdrant snapshot cho collection còn giá trị, commit trước sửa lớn); liệt kê
    đích thật trước khi xóa, khác danh sách duyệt thì dừng; giới hạn tiền ghi trong
-   việc; dừng khi gặp điều kiện dừng.
+   việc; dừng khi gặp điều kiện dừng. Đổi bảng dữ liệu mà bộ đo phụ thuộc (điểm lịch, lưu trú, quán…) ⇒ trước merge người đổi quét tên / id mới trong nhãn mọi bộ đo đó và chạy mô phỏng nhãn không model (0 USD), ghi nhãn lệch vào report (User duyệt 18:01 15/11/2026).
 5. Thay đổi có đo trước–sau: ghi tiêu chí → đo hiện tại → sửa một thứ → đo lại
    cùng cách → kết luận tốt hơn / không đổi / kém hơn / chưa rõ.
 6. **Chọn ảnh sẽ hiện cho người dùng** (User duyệt 10:15 15/11/2026): ảnh phải tự nhận ra được nơi (biển tên, công trình đặc trưng, chú thích tác giả ghi đúng tên) —
