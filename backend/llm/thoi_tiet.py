@@ -196,7 +196,7 @@ def dong_ngay(d: dict) -> str:
     """D5: một ngày ⇒ một dòng cố định (số đã làm tròn)."""
     phan = [f"{d['tmin']}–{d['tmax']} °C"]
     if d["xs"] is not None:
-        phan.append(f"khả năng mưa {d['xs']} %")
+        phan.append(f"khả năng mưa cao nhất trong ngày {d['xs']} %")  # biến Open-Meteo = giờ có xác suất cao nhất, không phải cả ngày (tra cứu 15/11)
     phan.append(f"lượng mưa {_so_chu(d['mua'])} mm")
     return f"{THU[d['ngay'].weekday()]} {d['ngay']:%d/%m}: " + ", ".join(phan)
 
