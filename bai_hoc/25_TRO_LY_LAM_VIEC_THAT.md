@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 09:51, ngày 15/11/2026 · thêm sáng 15/11: ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -165,6 +165,13 @@ thì không hiện); quán bản đồ mở chỉ tìm ảnh cho đúng **15 qu�
 nhờ đếm "quán nào thật sự hiện", người làm thấy một quán chay **đã đóng cửa** vẫn được gợi ý ở **324 / 3.840** lịch (kho đã loại quán này, nhưng bảng bản đồ mở
 vẫn còn tên) ⇒ bỏ khỏi bảng.
 
+**Sáng 15/11 — vùng xa phía nam.** Trước khi đi tìm quán cho Bạch Mã, Nhị Hồ, mình đếm xem khách gặp vùng này bao nhiêu. Trong 3.840 lịch mô phỏng có **720 lịch**
+(18,8 %) với **1.080 / 22.680 bữa** (4,8 %) rơi vào đây. Chỉ gặp khi khách chọn "Thiên nhiên" và đi từ 3 ngày; lịch 1–2 ngày không lần nào. So với biển / đầm phá
+(khoảng 2.040 bữa chưa có quán), vùng này chỉ bằng một nửa. Lý do chính để **không** tìm quán lại nằm ngay trong sổ tay: bài Bạch Mã dặn mang đồ ăn trưa vì khu
+Ngũ Hồ và đỉnh núi không có hàng quán bán đồ ăn; Nhị Hồ chỉ có chòi ăn ven hồ, không có quán cụ thể, và mở tới 17:30. Quán gần nhất trong bảng cách 36–38 km. Vì vậy thay vì bịa quán,
+thẻ bữa ở đó giờ hiện **một câu nhắc chép theo sổ tay** (trưa ở Bạch Mã: mang đồ ăn; tối sau Nhị Hồ: ăn khi về nơi nghỉ), chỉ khi bữa đó không có quán nào trong 2 km.
+Đo: thử một lịch thật 3 ngày "Thiên nhiên" ⇒ ngày 2 hiện đúng 2 câu nhắc, các bữa khác vẫn 2 quán như cũ.
+
 ## 5. Lịch mẫu "Ví dụ" đủ đi – ăn – ở
 
 Trang Lên kế hoạch lúc chưa xếp có một lịch mẫu 2 ngày (bài 23). Khi bật chỗ ở và quán ăn, lịch mẫu vẫn chỉ có điểm tham quan, vì nó không đi qua bước gắn
@@ -265,7 +272,7 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - **Chỗ ở:** lịch có buổi tối luôn ra trung tâm; trong 3.840 khung mô phỏng không lịch nào còn ra khu phía tây. Trong cùng mức, hạng cao đứng trước (tối 14/11), rồi cơ sở
   gần cụm có nhiều điểm nhất, rồi có ảnh, rồi theo tên — nên nhiều lịch trung tâm vẫn ra cùng 5 khách sạn; chỉ khoảng 12 / 140 cơ sở từng hiện. Không có giá, không có điểm đánh giá.
 - **Quán ăn:** sau tối 14/11 Thủy Xuân, Kim Long, biển / đầm phá đã có quán kho ở hơn một nửa số bữa; phần còn lại là quán bản đồ mở, chưa kiểm. Vùng xa phía
-  nam (Bạch Mã, Nhị Hồ) không có dòng ăn.
+  nam (Bạch Mã, Nhị Hồ) không có quán, chỉ có câu nhắc theo sổ tay (từ 15/11). Dòng đầu vẫn ghi "Ăn tối gần Thác Nhị Hồ" dù câu nhắc bảo về nơi nghỉ mới ăn.
 - **So tiền mục web:** "1,500 đ" được đọc là 1.500 đồng (dấu phẩy ngăn nghìn kiểu tiếng Anh); "10K bước" bị nhận là tiền, nên có thể bị chặn nhầm (hướng
   an toàn).
 - **Ảnh** chỉ hiện khi mọi nguồn thuộc một bài, nên câu so sánh hai nơi không có ảnh. 6 bài chưa có ảnh nào, đều là quán.
@@ -297,6 +304,7 @@ Bài học: **bảng đưa người chấm phải có đủ thứ ảnh hưởng
 - Giờ bật / tắt / bật lại sửa lịch (14:04 · 14:14 · 15:08): commit `e0cb02e`, `3985816`, `69def87` [code]. Tiền đệm 0,00007 / lần: `e_review_sua_lich_v2.md` [đã chạy]. 139 + 1 cơ sở: trường `nguon` của bảng lưu trú [đã chạy]. 7 loại bài có ảnh: `frontend/src/anhTraLoi.js` [code].
 - Quán ăn: đếm 22.680 bữa, 28 quán kho, 33,5 / 74,7 % (bản đầu 74,7 / 95,2 sai), 16 lượt Serper 0,016 USD (đếm web ý thiếu 3 / 16, tốt nhất 6 / 16): `report_agent/2026-11-12_ra_khoang_cach/c_dem_truoc_khi_xay.md` [đã chạy]; 2 km (p95 9,3 km), bữa tối gần điểm tối, cà phê, 80,7 %, 0,78 / 1,94 / 1,99 km, người xem 10 / 10, 0,0013 USD, giới hạn: `c_quan_lich_implementation.md`, review `b_review_quan_lich.md` [đã chạy]
 - Khu ở theo buổi tối (thử 1 8 / 10, thử 2 10 / 10, phía tây 0 / 3.840): mục cuối `b_luu_tru_lich_implementation.md`; review `e_review_o_toi.md` (m-1 kiểm bằng bảng khu, đã sửa) [đã chạy]
+- Vùng xa phía nam (720 / 3.840 lịch, 1.080 / 22.680 bữa, quán gần nhất 36–38 km, chỉ khi "Thiên nhiên" + ≥ 3 ngày; câu nhắc theo kho; Playwright 2 câu nhắc ngày 2): `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`, script `data/dem_quan_nam_xa_2026-11-15/` [đã chạy]; code `GHI_CHU_AN` trong `backend/llm/quan_lich.py` [code].
 - Lịch mẫu đi – ăn – ở, chỉ quán kho, 3 bữa, khu trung tâm: `b_review_lich_mau_an_o.md`, `b_review_lich_mau_quan_kho.md`; ảnh `data/ui_mau_2026-11-14/anh_chup/lich_mau_cuoi_1411/` [đã chạy]
 - So tiền theo giá trị (16 ⇒ 4 chặn vì tiền, 43 ⇒ 51 / 76, 220.000 4 / 4, 8 mục mới qua, "2 triệu rưỡi", "150K"): `b_tien_web_chuan_hoa_implementation.md`, `e_review_tien_web.md` [đã chạy]
 - Suy luận low (2,95 ⇒ 2,08 s, sàn 1,5 s, −32 % tiền lần viết, log 4,94 s): `b_web_suy_luan_thap_implementation.md` [đã chạy]
