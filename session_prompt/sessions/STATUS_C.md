@@ -1,9 +1,9 @@
-# STATUS C — phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN TỐI 15/11 — đang chạy (C cập nhật 20:45 15/11/2026 `date`)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 20:50 15/11/2026 `date`)
 
-- **Trạng thái máy của C:** worktree `/tmp/c_dk` (nhánh `p9-anh-dinh-kem`; symlink `data/`, `knowledge-base-hue/`, `frontend/node_modules`, `frontend/dist` build riêng) — gỡ khi nhánh đã merge; `/tmp/c_no`, `/tmp/c_anh`, `/tmp/c_f5` đã gỡ; 0 server tạm (cổng 8041 đã tắt); 0 tiến trình nền.
-- **File C khai báo sửa:** `backend/llm/sua_lich_v2.py`, `backend/tests/test_sua_lich_v2.py`, `report_agent/2026-11-12_ra_khoang_cach/c_dem_sua_lich_truong.md`, `…/c_no_nho_sua_lich_implementation.md`, `backend/tests/test_sua_ngay_di.py`; nhánh ảnh: `frontend/src/HoiBangAnh.jsx`, `chat.jsx`, `index.css`, `…/c_nut_anh_cong_implementation.md`.
+- **Trạng thái máy của C:** còn worktree `/tmp/c_dk2` (nhánh `p9-anh-dinh-kem-2`; symlink `data/`, `knowledge-base-hue/`, `frontend/node_modules` + `frontend/dist` build riêng) ⇒ **gỡ khi nhánh đã merge**: xoá 3 symlink rồi `git worktree remove --force /tmp/c_dk2` (`/tmp` mất sau khởi động lại máy ⇒ `git worktree prune`). 0 server tạm (cổng 8041 đã tắt), 0 tiến trình nền. Nhánh của C đã merge, User xoá được: `p9-sua-lich-no-nho p9-nut-anh-cong p9-f5-cuoc-moi p9-anh-dinh-kem` (+ `p9-anh-dinh-kem-2` sau khi merge). C không tự xoá nhánh.
+- **VIỆC ĐẦU PHIÊN SAU (A đã nêu):** chạy lại cho SẠCH lượt đếm "cùng một cuộc: hỏi A ⇒ hỏi tiếp B ⇒ hỏi lại A" (≈ 0,015 USD): công cụ `data/hoi_lai_cau_cu_2026-11-15/dem.py` (chạy từ `backend/`, lệnh ở đầu file; tra web tắt bằng `HUE_TRA_WEB=false`); **thay bộ "giờ mở cửa một di tích"** (trượt đối chứng 2 / 2) bằng một bộ có câu A kho trả lời được; lượt lỗi kết nối ⇒ chạy lại đúng cuộc đó, không tính; tiêu chí đã ghi `tieu_chi.md` (≥ 2 / 8 ⇒ lỗi rộng ⇒ đề xuất một hướng sửa). Hướng sửa C đề xuất (chưa duyệt): đưa lịch sử cho model thành một khối ghi rõ "các câu đã hỏi trước, đã xử lý xong" thay vì các tin người dùng trần — đổi chuỗi gửi model ở mọi lượt có lịch sử ⇒ plan mức nhẹ + đo bộ câu hỏi tiếp + bộ an toàn. Report quan sát tối nay: `report_agent/2026-11-12_ra_khoang_cach/c_dem_hoi_lai_cau_cu.md`.
 
 | Việc (A giao tối 15/11) | Trạng thái | Số chính | Tiền |
 |---|---|---|---|
@@ -12,14 +12,29 @@
 | Nút dấu cộng trong ô nhập + dán ảnh (User báo khi thử) | **đã merge** (nhánh `caccfb7`; E review ready, E đã thử dán PNG thật 3 / 3) | ảnh `data/nut_anh_cong_2026-11-15/anh/`; chưa thử Safari / Firefox | 0,0007 |
 | Tải lại trang ⇒ cuộc mới ở server (LỗI User báo: F5 xong hỏi lại câu đầu bị từ chối) | **đã merge** (main `b833c7b`; A đọc diff, merge thẳng) | tái tạo 3 / 3; sau sửa Playwright: reload ⇒ hỏi lại ⇒ lịch sử 0, được trả lời | 0,0159 |
 | Đếm lỗi riêng "cùng một cuộc: A ⇒ hỏi tiếp B ⇒ hỏi lại A" (A duyệt) | **xong — lượt đếm KHÔNG sạch, A quyết bước kế** | 5 / 24 lượt lỗi kết nối + 1 / 4 bộ trượt đối chứng ⇒ không đọc "x / 8"; quan sát: ở lượt 3 model tìm kho cho câu B (2 / 3 cuộc sạch), bộ "vị trí ⇒ khoảng cách" từ chối 4 / 4 khi B trong lịch sử; giả thuyết: lịch sử chỉ có câu hỏi trần. Report `c_dem_hoi_lai_cau_cu.md` (đang nằm trên nhánh `p9-anh-dinh-kem`); công cụ `data/hoi_lai_cau_cu_2026-11-15/dem.py` — chạy lại cho sạch ≈ 0,015 USD (thay bộ "giờ mở cửa") | 0,0149 |
-| Ảnh đính kèm tin nhắn — bấm Hỏi mới xử lý (User chốt: tải ảnh lên không làm gì) | **chờ review (E)** — `origin/p9-anh-dinh-kem` `fcb4b6b` | nháp 3 phương án `data/anh_dinh_kem_2026-11-15/nhap_thiet_ke.md`; Playwright: chọn / dán ảnh 0 gọi API · Hỏi ⇒ 1 gọi ⇒ thẻ tên ⇒ câu đã gõ kèm tên · ô rỗng ⇒ "Giới thiệu về <tên>" · chưa nhận ra ⇒ giữ chữ; ảnh `…/anh/`; phiên sau: nếu E yêu cầu sửa thì làm tiếp trên nhánh này, sau merge build lại frontend cây chung | 0,0019 |
+| Ảnh đính kèm tin nhắn — bấm Hỏi mới xử lý (User chốt: tải ảnh lên không làm gì) | **đã merge** (main `67dd28d`; B review ready) + **2 minor chờ A đọc diff / B liếc**: `origin/p9-anh-dinh-kem-2` `cb00fa4` (dòng nhắc "Chọn một tên ở trên…" khi bấm Hỏi lúc thẻ mở; "Cuộc trò chuyện mới" gỡ ảnh + thẻ) | Playwright mọi ca đạt; ảnh `data/anh_dinh_kem_2026-11-15/anh/`; giới hạn: chưa có nút huỷ lúc "Đang xem ảnh…", Safari / Firefox chưa thử | 0,0019 |
 | Review nhánh `p9-chu-gioi-thieu` của E (A nhờ) | **ready, A đã merge** | câu ví dụ "ở khách sạn 3 sao" chạy thật 6 / 6 ra đổi hạng 2–3 sao (`data/review_chu_gioi_thieu_2026-11-15/`) | 0,00075 |
 
-- **Tổng tiền C tối 15/11 tới lúc này ≈ 0,034 USD** (câu ví dụ 0,00075 · nút dấu cộng 0,00072 · F5 0,0159 · đếm A ⇒ B ⇒ A 0,0149 · ảnh đính kèm 0,0019); chưa ai tính lại.
-- **Vòng tự soi 1:** đã gửi cả nhóm; hướng làm tiếp C xếp (d) User thử + sửa lỗi ⇒ (c) B7 ⇒ nửa sau (a) (đếm 6–8 câu trước) ⇒ (b).
-- **Ghi nhận:** `q3_sua_lich.py` nay cần `--backend <backend worktree>` (B sửa, không còn `PYTHONPATH` cứng); `kiem_bo.py` của bộ sửa lịch là bản tĩnh của B.
+
+- **Tổng tiền C tối 15/11 ≈ 0,034 USD** (câu ví dụ 0,00075 · nút dấu cộng 0,00072 · F5 0,0159 · đếm A ⇒ B ⇒ A 0,0149 · ảnh đính kèm 0,0019); chưa ai tính lại.
+- **Review C làm tối nay:** `p9-chu-gioi-thieu` của E (ready).
+
+### Còn mở / ứng viên vùng của C (chưa ai giao)
+- Lỗi "hỏi lại câu cũ trong một cuộc" (việc đầu phiên sau, ở trên).
+- Hỏi bằng ảnh: nút huỷ lúc "Đang xem ảnh…"; nút × 24 px; 1 / 3 lượt PNG nhỏ của E ra lỗi model vì suy luận ăn gần hết 1.024 token đầu ra (`nhan_anh.MAX_OUTPUT_TOKENS`) — chưa đếm trên `anh_metrics`.
+- Sửa lịch bằng lời: các mục (i) ngày tương đối / ngày âm, (ii) xin chỗ ở không nêu hạng ⇒ hiện mọi hạng (đếm 6–8 câu trước), (vii) S06 chập chờn — vẫn như mục "Còn mở" của kết phiên chiều bên dưới; (iii) và (v) ĐÃ XONG tối nay.
+- Đếm 4b(c) (biểu mẫu đưa cơ sở khác hạng): 0 / 9.216, A quyết không sửa; **chạy lại `data/dem_lech_hang_bieu_mau_2026-11-15/tools/dem_lech_hang.py` khi đổi bảng điểm hoặc bảng lưu trú** (2 giây, 0 USD).
+
+### Bẫy gặp tối 15/11
+- So hai khung lịch bằng dict `{id: (ngày, buổi)}` ghi đè điểm buổi tối nằm ở nhiều ngày ⇒ dùng TẬP chỗ của mỗi id (B bắt khi review; lỗi có sẵn ở câu đổi ngày đi).
+- Lượt đếm có phí chạy trong tiến trình gặp 5 lượt lỗi kết nối nhà cung cấp ⇒ cuộc thiếu lượt lịch sử, số không đọc được ⇒ công cụ đếm phải nhận ra lượt lỗi (chữ trả lời rỗng ≠ "không từ chối") và chạy lại cuộc đó.
+- Bộ câu tự viết chưa thử đối chứng trước (câu A bị kho từ chối ngay ở cuộc mới) ⇒ chạy riêng lượt 1 của mọi bộ (rẻ) trước khi chạy cả bộ ba.
+- `event: done` của luồng SSE đến SAU `event: web` ⇒ script đọc luồng đừng gán lại biến web ở `done`.
+- Worktree cho việc giao diện: symlink `frontend/node_modules` từ cây chung rồi `npm run build` (< 1 giây), không cần `npm ci`; server tạm từ worktree đọc bản build của chính worktree.
+- Kiểm ca lỗi / ca không tốn tiền của giao diện bằng cách chặn route trong Playwright (`page.route`) — 0 USD, vẫn chạy code giao diện thật.
 
 ---
+
 
 ## (Kết phiên chiều 15/11 — CŨ, giữ để tra)
 
