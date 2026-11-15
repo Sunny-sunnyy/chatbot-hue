@@ -137,8 +137,8 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
             <h2 className="gt-h2">Dữ liệu của bạn</h2>
             <p>Trợ lý nhớ các câu hỏi trong một cuộc trò chuyện để hiểu câu hỏi tiếp theo: nhớ trong bộ nhớ máy chủ, tối đa 30 phút, qua một cookie chỉ dùng
               cho trò chuyện. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký. Nút “Cuộc trò chuyện mới” xoá phần đã nhớ.</p>
-            <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI (OpenAI); khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm. Đừng gõ thông tin cá nhân
-              vào câu hỏi.</p>
+            <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI (OpenAI); khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm — ở lượt
+              hỏi tiếp, đó có thể là câu trợ lý viết lại từ cuộc trò chuyện. Đừng gõ thông tin cá nhân vào câu hỏi.</p>
             {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ OpenStreetMap — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
               đang xem (không nhận câu hỏi của bạn).</p>}
             {anh && <p>Ảnh bạn gửi được thu nhỏ, bỏ thông tin vị trí, gửi tới OpenAI để đoán tên, không lưu.</p>}
