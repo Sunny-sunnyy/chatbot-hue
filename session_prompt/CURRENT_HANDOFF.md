@@ -18,6 +18,9 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 
 - **Việc tiếp (bàn nhóm, User chốt 11:12 15/11/2026):** đếm 0 USD xong — kho tự mâu thuẫn: Bảo tàng Cổ vật đã khớp; **Tây Sơn 1786 ↔ 1788 còn lệch ⇒ User duyệt "ghi cả hai mốc"** (C sửa 2 câu / 2 bài, sao lưu `meta/`, E review diff trước dựng, dựng lại, đo câu đổi top 10) · tốc độ: đường tìm thêm 20,6 % lượt (83 / 402, chữ đầu p50 ~7–9 s), câu thường p95 5,9 s (B đếm, E tính lại khớp) ⇒ **User duyệt "viết plan, đo mốc trước"** (B viết plan; đo mốc chỉ SAU khi dựng chỉ mục xong — không đo latency chồng việc nặng).
 
+- **User chốt thêm (11:12 15/11/2026):** **nhớ sở thích: KHÔNG làm** ("mỗi lần mở là một người mới") · tốc độ: đồng ý · **ảnh khách sạn: tìm thêm**, không ra ⇒ danh sách cho User tìm phụ · **sửa Docker nháp: làm** (5 file bảng thiếu ở `dung_dockerignore.py` + `Dockerfile`) · sửa chỗ mâu thuẫn: làm · **nhãn "khả năng mưa X %" ghi rõ là lúc cao nhất trong ngày: làm** (đổi chuỗi gửi model ⇒ test Q1 + đo câu có gọi thời tiết + an toàn 32).
+- Giao 11:12 15/11/2026: **C** ghi kho Tây Sơn + dựng lại chỉ mục (việc nặng) · **E** sửa Docker nháp (sửa file ngay; build image chỉ SAU khi C dựng xong) ⇒ rồi ảnh khách sạn · **B** nhánh nhãn mưa ⇒ rồi plan tốc độ (đo mốc sau khi C dựng + E build xong — không đo latency chồng việc nặng).
+
 ### Vòng tự soi 1 — phiên 15/11 (A chốt 10:55 15/11/2026; B, C, E đều gửi)
 **Áp ngay trong phiên** (làm nhẹ, không hạ sàn; kết phiên A đề xuất thành luật qua `improve-workflow`):
 1. Cổng server thật sau merge **chỉ khi nhánh chạm đường chat / model, route API, hoặc cấu hình nạp lúc khởi động**; nhánh chỉ đổi ảnh / chữ / hằng số thuần / giao diện tĩnh ⇒ build + test file chạm (C, E).
