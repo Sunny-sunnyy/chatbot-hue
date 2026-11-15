@@ -66,3 +66,52 @@ def do_ngay_di(text: str, hom_nay) -> int | None:
         return None
     n = found.pop()
     return n if 0 <= n <= 6 else None
+
+
+# Sửa lịch bằng lời — đổi ngày đi (plan 2026-11-15-sua-lich-ngay-di): NGÀY do code đọc từ chính chữ người dùng (model chỉ nhận ra ý "đổi ngày đi",
+# không viết ngày). Khác `do_ngay_di`: không giới hạn 0–6 ngày, đọc thêm "dd/mm/yyyy", "ngày d tháng m", "tuần sau"; trả ngày thật.
+_DMY = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])")
+_D_THANG_M = re.compile(r"(?<![\w/])(\d{1,2})\s+tháng\s+(\d{1,2})(?:\s+năm\s+(\d{4}))?(?![\w/])")
+_THU_CN = re.compile(r"(?<![\w])(?<!ngày )(?:thứ\s+(hai|ba|tư|năm|sáu|bảy|[2-7])|(chủ\s+nhật|cn))(?![\w])")  # như `_THU` + "thứ 3", "CN"
+_TUAN_SAU = re.compile(r"(?<![\w])tuần\s+(?:sau|tới)(?![\w])")
+_CUOI_TUAN_SAU = re.compile(r"(?<![\w])cuối\s+tuần(?:\s+(này|sau|tới))?(?![\w])")
+_HOM_NAY = re.compile(r"(?<![\w])hôm\s+nay(?![\w])")
+_AM_LICH = re.compile(r"(?<![\w])(âm(?:\s+lịch)?|tết|rằm|mùng|mồng)(?![\w])")
+NGAY_CHUA_RO, NGAY_KHONG_CO = "ngay_chua_ro", "ngay_khong_co"
+
+
+def ngay_tu_cau(text: str, hom_nay):
+    """Ngày đi người dùng nêu trong câu ⇒ `datetime.date`; không đọc được MỘT ngày ⇒ mã lý do (chuỗi): `ngay_chua_ro` (không thấy ngày, thấy
+    ≥ 2 ngày khác nhau, ngày âm / dịp Tết, chỉ nói tương đối "dời 2 hôm") · `ngay_khong_co` (30/2). Không kiểm quá khứ / quá xa — việc của nơi gọi.
+    Đọc: dd/mm[/yyyy] · "d tháng m [năm yyyy]" (không năm ⇒ lần tới gần nhất, kể cả hôm nay) · hôm nay · mai · ngày kia / mốt · thứ X / chủ nhật
+    (lần tới gần nhất; kèm "tuần sau / tuần tới" ⇒ đúng thứ đó của tuần sau) · cuối tuần [này / sau] (thứ Bảy)."""
+    import datetime as _dt
+    t = unicodedata.normalize("NFC", text).casefold()
+    if _AM_LICH.search(t):
+        return NGAY_CHUA_RO
+    found, sai = set(), False
+    for d, mo, y in _DMY.findall(t) + _D_THANG_M.findall(t):
+        try:
+            ngay = _dt.date(int(y) if y else hom_nay.year, int(mo), int(d))
+            if not y and ngay < hom_nay:
+                ngay = _dt.date(hom_nay.year + 1, int(mo), int(d))
+        except ValueError:
+            sai = True
+            continue
+        found.add(ngay)
+    if _HOM_NAY.search(t):
+        found.add(hom_nay)
+    if _MAI.search(t):
+        found.add(hom_nay + _dt.timedelta(days=1))
+    if _NGAY_KIA.search(t):
+        found.add(hom_nay + _dt.timedelta(days=2))
+    tuan_sau = bool(_TUAN_SAU.search(t))
+    dau_tuan_sau = hom_nay + _dt.timedelta(days=7 - hom_nay.weekday())  # thứ Hai tuần sau
+    for m in _THU_CN.finditer(t):
+        thu = 6 if m.group(2) else (int(m.group(1)) - 2 if m.group(1).isdigit() else _THU_SO[m.group(1)])
+        found.add(dau_tuan_sau + _dt.timedelta(days=thu) if tuan_sau else hom_nay + _dt.timedelta(days=(thu - hom_nay.weekday()) % 7))
+    for m in _CUOI_TUAN_SAU.finditer(t):
+        found.add(dau_tuan_sau + _dt.timedelta(days=5) if m.group(1) in ("sau", "tới") else hom_nay + _dt.timedelta(days=(5 - hom_nay.weekday()) % 7))
+    if len(found) == 1:
+        return found.pop()
+    return NGAY_KHONG_CO if sai and not found else NGAY_CHUA_RO
