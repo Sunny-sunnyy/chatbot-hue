@@ -97,6 +97,7 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    tim_song_song: bool = False  # plan 2026-11-15 tìm song song (86d295b16017): cho model gọi 2 `tim_kho` trong một lượt; TẮT tới khi đạt
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
     # "Lên kế hoạch" đợt 1 (plan `2026-11-12-len-ke-hoach-dot-1-plan.md`, spec bản 3.3 §5c.8): biểu mẫu bốn nhóm + hợp đồng `truong` mới — một cờ cho
@@ -861,6 +862,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         extra["con_luot_fn"] = lambda: trace.model_searches < MODEL_SEARCH_LIMIT
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
+    if flags.tim_song_song:  # cờ tắt ⇒ không truyền ⇒ model setting như cũ (chuỗi gửi model giống byte)
+        extra["song_song"] = True
     return extra
 
 

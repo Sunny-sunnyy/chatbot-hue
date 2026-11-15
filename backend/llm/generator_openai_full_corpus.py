@@ -456,7 +456,7 @@ class OpenAIFullCorpusGenerator:
         return parsed.route, queries
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                       con_luot_fn=None, nhieu_y: bool = False) -> tuple[Agent, dict, dict]:
+                       con_luot_fn=None, nhieu_y: bool = False, song_song: bool = False) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -482,15 +482,17 @@ class OpenAIFullCorpusGenerator:
             tools.append(function_tool(thoi_tiet_fn, name_override="thoi_tiet", description_override=THOI_TIET_MO_TA, failure_error_function=None))
         if ngay_lich_fn is not None:  # Phase 9 T1: chỉ khi code thấy từ chỉ ngày (lượt khác ⇒ danh sách công cụ như trước)
             tools.append(function_tool(ngay_lich_fn, name_override="ngay_lich", description_override=NGAY_LICH_MO_TA, failure_error_function=None))
+        if song_song:  # cờ `tim_song_song` (plan 2026-11-15 tìm song song): model được gọi ≤ 2 công cụ trong MỘT lượt; không truyền ⇒ như cũ (một công cụ / lượt)
+            extra = {**extra, "model_settings": dataclasses.replace(base.model_settings, parallel_tool_calls=True)}
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
-                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False) -> GeneratedText:
+                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, song_song: bool = False) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y)
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, song_song=song_song)
         try:
             result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn),
                                      error_handlers=handlers)
@@ -523,11 +525,11 @@ class OpenAIFullCorpusGenerator:
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                           con_luot_fn=None, nhieu_y: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
+                           con_luot_fn=None, nhieu_y: bool = False, song_song: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y)
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, song_song=song_song)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn), run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
