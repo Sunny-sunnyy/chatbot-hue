@@ -173,7 +173,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 ## 9. Việc thêm của A
 
 1. **Với User:** brainstorm/đưa lựa chọn theo skill `propose-options` (mỗi lần một
-   câu có đáp án, kèm đổi gì, tốn gì, khi nào sai). Việc rủi ro cao: viết **một**
+   câu có đáp án, kèm đổi gì, tốn gì, khi nào sai). **Góp ý của User về luồng / giao diện mà có hơn một cách hiểu** ⇒ trước khi giao code bản đầu, A hỏi lại MỘT câu bằng hộp chọn, mỗi phương án tả người dùng thấy gì theo từng bước; góp ý chỉ có một nghĩa ("bỏ dòng này") thì làm luôn (User duyệt 21:40 15/11/2026). Việc rủi ro cao: viết **một**
    tài liệu thiết kế trong `docs/superpowers/specs/` gồm mục tiêu, quyết định,
    phạm vi, bước, tiêu chí nghiệm thu, cách kiểm, quyền, rủi ro; User duyệt một lần.
    Spec / plan có agent, công cụ, dữ liệu hay đường ra mới phải có **bảng rà khung AI FDE** (`Session_Prompt.md` §7; User 05/11). Viết plan chi tiết bằng skill `writing-plans` khi cần. **Duyệt gắn với đúng bản:** chỉ **bản trình duyệt** cần sha
