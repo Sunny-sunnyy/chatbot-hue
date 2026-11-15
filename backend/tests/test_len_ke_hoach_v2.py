@@ -114,9 +114,9 @@ def test_flag_needs_form_flag_and_known_cells():
     with pytest.raises(ValueError, match="len_ke_hoach_v2 needs"):
         flags_from(lich_trinh_bieu_mau=False, len_ke_hoach_v2=True)
     with pytest.raises(ValueError, match="len_ke_hoach_o_hien"):
-        dataclasses.replace(V2, len_ke_hoach_o_hien=("so_ngay", "ngan_sach"))
+        dataclasses.replace(V2, len_ke_hoach_o_hien=("so_ngay", "gia_phong"))  # ô không có thật (ngan_sach có từ 15/11)
     assert V2.len_ke_hoach_v2 and V2.len_ke_hoach_o_hien and set(V2.len_ke_hoach_o_hien) <= {
-        "so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di"}
+        "so_ngay", "nguoi_lon", "tre_em", "lon_tuoi", "kieu_di", "so_thich", "ngay_di", "ngan_sach"}
     assert not FORM.len_ke_hoach_v2 and AssistantFlags().len_ke_hoach_o_hien == ()
 
 

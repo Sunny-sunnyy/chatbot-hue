@@ -87,6 +87,7 @@ class ThamSoV2:
     kieu_di: str | None = None  # None ⇒ `KIEU_DI_MAC_DINH`, có dòng giả định
     so_thich: tuple[str, ...] = ()
     nguoi_lon: int | None = None  # chỉ vào lời văn / dòng "Mình hiểu"; không vào bộ xếp
+    ngan_sach: str | None = None  # mức chỗ ở (`luu_tru_lich.MUC_NGAN_SACH`): chỉ đổi ô "Nơi ở"; không vào bộ xếp, không vào "Mình hiểu"
 
     @property
     def han_che(self) -> bool:
@@ -97,7 +98,8 @@ def tu_truong(moi: dict) -> ThamSoV2:
     """Giá trị biểu mẫu khuôn mới (`hoi_lai.doi_sang_moi` đã áp cho giá trị cũ) ⇒ tham số bộ xếp."""
     so_thich = moi.get("so_thich") or ()
     return ThamSoV2(so_ngay=int(moi["so_ngay"]), tre_em=moi.get("tre_em") or 0, lon_tuoi=bool(moi.get("lon_tuoi")), kieu_di=moi.get("kieu_di"),
-                    so_thich=tuple([so_thich] if isinstance(so_thich, str) else so_thich), nguoi_lon=moi.get("nguoi_lon"))
+                    so_thich=tuple([so_thich] if isinstance(so_thich, str) else so_thich), nguoi_lon=moi.get("nguoi_lon"),
+                    ngan_sach=moi.get("ngan_sach"))
 
 
 def _xen_ke(ds: list[list[str]]) -> list[str]:
@@ -309,7 +311,9 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     tam_dung_uu = [j for j in uu if j not in da_xep and any(tam_dung(T[j], x) for x in ngays)]
     return {"phien_ban": 2,
             "tham_so": {"so_ngay": n, "nguoi_lon": ts.nguoi_lon, "tre_em": ts.tre_em, "lon_tuoi": ts.lon_tuoi, "kieu_di": kieu,
-                        "so_thich": list(ts.so_thich)},
+                        "so_thich": list(ts.so_thich),
+                        # chỉ khi có chọn ⇒ không chọn thì khung / trạng thái lưu giống byte bản trước; sửa lịch xếp lại qua đây ⇒ giữ mức
+                        **({"ngan_sach": ts.ngan_sach} if ts.ngan_sach else {})},
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
             "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
             "ngay_thang": [None if x is None else x.isoformat() for x in ngays], "tam_dung_mua": tam_dung_uu,

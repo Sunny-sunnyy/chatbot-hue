@@ -79,7 +79,8 @@ def luu_tu_lich(khung: dict, ngay_di: str | None, mua: dict | None) -> dict:
 
 def _ts(tham_so: dict) -> v2.ThamSoV2:
     return v2.ThamSoV2(so_ngay=tham_so["so_ngay"], tre_em=tham_so["tre_em"], lon_tuoi=tham_so["lon_tuoi"], kieu_di=tham_so["kieu_di"],
-                       so_thich=tuple(tham_so["so_thich"]), nguoi_lon=tham_so.get("nguoi_lon"))
+                       so_thich=tuple(tham_so["so_thich"]), nguoi_lon=tham_so.get("nguoi_lon"),
+                       ngan_sach=tham_so.get("ngan_sach"))
 
 
 def _vi_tri(khung: dict) -> dict[str, tuple[int, str]]:
