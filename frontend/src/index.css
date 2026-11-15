@@ -292,6 +292,12 @@ picture { display: contents; }
 /* Ô hỏi của trợ lý: viên bo tròn, viền đủ tương phản (field-line), focus quanh cả khung. */
 .composer { display: flex; gap: 10px; align-items: flex-end; padding: 6px 6px 6px 16px; border: 1px solid var(--color-field-line); border-radius: 22px;
             background: var(--color-surface); }
+.composer-co-nut { padding-left: 6px; gap: 6px; }
+/* nút dấu cộng trong ô nhập (hỏi bằng ảnh): tròn 44 px (đủ cỡ chạm), nền trong, cùng màu nhấn với nút Hỏi */
+.nut-anh { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px;
+  color: var(--color-accent-deep); cursor: pointer; }
+.nut-anh:hover { background: var(--color-accent-soft); }
+.nut-anh:disabled { opacity: .5; cursor: not-allowed; }
 .composer:focus-within { outline: 3px solid var(--color-focus); outline-offset: 2px; }
 .composer textarea:focus-visible { outline: none; }
 .send { min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--color-accent); color: var(--color-on-accent); font-weight: 600; cursor: pointer;
@@ -326,7 +332,6 @@ picture { display: contents; }
 
 /* Phase 10 — hỏi bằng ảnh (HoiBangAnh.jsx) */
 .hoi-anh { margin-bottom: 10px; }
-.hoi-anh-nut { margin-top: 0; }
 .hoi-anh-the { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .hoi-anh-xem { max-width: 220px; max-height: 160px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-line); }
 

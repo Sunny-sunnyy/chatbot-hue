@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { displayNumbers, renderAnswerHtml, renderWebHtml } from "./markdown.js";
 import { streamAnswer } from "./stream.js";
-import HoiBangAnh from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
+import { useHoiBangAnh } from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ảnh (gợi ý có xác nhận) — chỉ hiện khi server bật cờ `anh.bat`
 // Bản đồ lịch trình (plan 2026-11-08): chunk riêng — chỉ tải khi lịch có ≥ 1 toạ độ hợp lệ (server chỉ gửi `toa_do` khi cờ `ban_do_lich` bật)
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
@@ -296,6 +296,9 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) submit(event);
   }
 
+  const hoiAnh = useHoiBangAnh({ bat: anh, draft, disabled: pending || resetting, onAsk: query => { ask(query); setDraft(""); },
+                                 onGoTen: () => queryRef.current?.focus() });
+
   return (
     <div className="chat-view">
       <div className="chat-turns">
@@ -322,13 +325,13 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
       </div>
 
       <form onSubmit={submit} className="chat-form">
-        <HoiBangAnh bat={anh} draft={draft} disabled={pending || resetting} onAsk={query => { ask(query); setDraft(""); }}
-                    onGoTen={() => queryRef.current?.focus()} />
-        <div className="composer">
+        {hoiAnh.the}
+        <div className={hoiAnh.nut ? "composer composer-co-nut" : "composer"}>
+          {hoiAnh.nut}
           <label htmlFor={queryId} className="sr-only">Câu hỏi về Huế</label>
           <textarea ref={queryRef} id={queryId} rows={1} value={draft} disabled={pending} maxLength={MAX_QUERY}
                     aria-describedby={draft.length >= DEM_KY_TU_TU ? `${queryId}-dem` : undefined}
-                    onChange={event => setDraft(event.target.value)} onKeyDown={onQueryKeyDown}
+                    onChange={event => setDraft(event.target.value)} onKeyDown={onQueryKeyDown} onPaste={hoiAnh.onPaste}
                     placeholder={turns.length > 0 ? "Hỏi tiếp…" : "Hỏi gì về Huế…"}
                     className="min-h-11 flex-1 resize-none bg-transparent py-2 text-[16px] leading-[1.5] outline-none disabled:opacity-60" />
           {pending
