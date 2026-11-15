@@ -189,6 +189,7 @@
 .lkh-an li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 8px 14px; border-radius: 14px; background: var(--color-accent-soft); }
 .lkh-an-h { font-weight: 600; color: var(--color-accent-deep); }
 .lkh-an-q a { color: var(--color-ink); text-decoration: underline; text-underline-offset: 3px; }
+.lkh-an-gc { color: var(--color-ink); }
 .lkh-an-q small { margin-left: 6px; color: var(--color-muted); }
 .lkh-an-q { display: inline-flex; align-items: center; gap: 8px; }
 .lkh-an-anh { width: 44px; height: 44px; flex: none; border-radius: 10px; object-fit: cover; background: var(--color-accent-soft); }

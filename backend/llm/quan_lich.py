@@ -28,6 +28,14 @@ TEN_TOI_DA = 80
 # tên từ nguồn mở là dữ liệu người khác viết: chặn ký tự điều khiển / ký tự định dạng vô hình (Cf: đảo chiều U+202E, U+200B…) / link / thẻ / cú pháp
 # link Markdown (review B m-1)
 # Ảnh quán ngoài kho (C 14/11 tối): tên file tự host dưới `frontend/public/anh/quan/` (quán kho dùng ảnh Khám phá theo mã bài ở giao diện).
+# Ghi chú ăn uống cho điểm mà kho nói rõ không có quán để gợi ý (C 15/11, đếm `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`:
+# 1.080 / 22.680 bữa mô phỏng rơi vào 2 điểm này, quán gần nhất trong bảng 36–38 km). Chỉ hiện khi bữa đó không chọn được quán; chữ theo kho:
+# Bạch Mã `travel/places/Vườn quốc gia Bạch Mã.md:207`; Nhị Hồ `travel/places/Thác Nhị Hồ.md:54–56, :69` (chòi sạp, ăn uống dân dã), `:167` (07:30–17:30).
+GHI_CHU_AN = {
+    ("bach_ma", "trua"): "Mang theo đồ ăn trưa khô và nước uống — trong vùng lõi và trên đỉnh núi không có hàng quán.",
+    ("thac_nhi_ho", "trua"): "Có chòi sạp ăn uống dân dã ven hồ ngay tại điểm (chưa có quán cụ thể để gợi ý).",
+    ("thac_nhi_ho", "toi"): "Điểm thường mở cửa tới 17:30 — ăn tối sau khi về nơi nghỉ.",
+}
 _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
 
@@ -78,7 +86,8 @@ def _hien(q: dict) -> dict:
 
 
 def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict]:
-    """`[{ngay, bua: "trua" | "toi", gan: tên điểm, quan: [...]}]` theo khung của bộ xếp; bữa không có quán cùng cụm ⇒ không có mục."""
+    """`[{ngay, bua: "trua" | "toi", gan: tên điểm, quan: [...]}]` theo khung của bộ xếp; bữa không có quán cùng cụm ⇒ không có mục,
+    trừ điểm có `GHI_CHU_AN` ⇒ mục `quan: []` kèm `ghi_chu`."""
     da_dung: set = set()
     ra = []
     for ng in khung["ngay"]:
@@ -93,6 +102,8 @@ def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict
             if chon:
                 da_dung |= {(q["ten"], tuple(q["toa"])) for q in chon}
                 ra.append({"ngay": ng["ngay"], "bua": bua, "gan": d["ten"], "quan": [_hien(q) for q in chon]})
+            elif (diem, bua) in GHI_CHU_AN:
+                ra.append({"ngay": ng["ngay"], "bua": bua, "gan": d["ten"], "quan": [], "ghi_chu": GHI_CHU_AN[(diem, bua)]})
     return ra
 
 
@@ -102,7 +113,7 @@ def dong_chu(an: list[dict]) -> list[str]:
         return []
     dong = ["", "**Ăn uống gợi ý (gần điểm tham quan)**"]
     for a in an:
-        ds = " · ".join(q["ten"] + (f" ({q['nhan']})" if q["nhan"] else "") for q in a["quan"])
+        ds = a.get("ghi_chu") or " · ".join(q["ten"] + (f" ({q['nhan']})" if q["nhan"] else "") for q in a["quan"])
         dong.append(f"- Ngày {a['ngay']}, ăn {'trưa' if a['bua'] == 'trua' else 'tối'} gần {a['gan']}: {ds}")
     dong.append("Gợi ý theo vị trí — chưa kiểm giờ mở cửa, giá; quán có thể đã đổi.")
     return dong

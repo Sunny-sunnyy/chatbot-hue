@@ -36,6 +36,9 @@ def test_simulation_floor():
         bua += sum(bool(n["buoi"].get("sang") or n["buoi"].get("chieu")) + bool(n["buoi"].get("chieu") or [j for j in n["buoi"].get("toi", []) if j in BANG_V2.theo_id]) for n in k["ngay"])
         thay = set()
         for a in an:
+            if "ghi_chu" in a:  # điểm kho nói không có quán ⇒ chỉ ghi chú, không quán (test_meal_note_…)
+                assert a["quan"] == [] and (next(j for j, d in BANG_V2.theo_id.items() if d["ten"] == a["gan"]), a["bua"]) in ql.GHI_CHU_AN
+                continue
             co += 1
             diem = next(d for d in BANG_V2.theo_id.values() if d["ten"] == a["gan"])
             assert 1 <= len(a["quan"]) <= ql.SO_QUAN
@@ -60,6 +63,17 @@ def test_far_or_unknown_point_gets_no_row():
     assert ql.an_uong(QUAN, BANG_V2, khung, TOA) == []
     co_quan = next(j for j, d in BANG_V2.theo_id.items() if j in TOA and len(QUAN.get(d["cum"], [])) > 10)
     assert ql.an_uong(QUAN, BANG_V2, {"ngay": [{"ngay": 1, "buoi": {"sang": [co_quan]}}]}, {}) == []
+
+
+def test_meal_note_for_points_without_restaurants():
+    """Bạch Mã / Nhị Hồ: không quán trong 2 km ⇒ bữa có ghi chú theo kho (không bịa quán), vào cả chữ chép / tải."""
+    for diem, _ in ql.GHI_CHU_AN:
+        assert diem in BANG_V2.theo_id and not any(ql._km(TOA[diem], q["toa"]) <= ql.KM_TOI_DA for q in QUAN.get(BANG_V2.theo_id[diem]["cum"], []))
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["bach_ma"], "chieu": ["thac_nhi_ho"]}}]}
+    an = ql.an_uong(QUAN, BANG_V2, khung, TOA)
+    assert [(a["bua"], a["quan"], a["ghi_chu"]) for a in an] == [("trua", [], ql.GHI_CHU_AN[("bach_ma", "trua")]),
+                                                                  ("toi", [], ql.GHI_CHU_AN[("thac_nhi_ho", "toi")])]
+    assert ql.GHI_CHU_AN[("bach_ma", "trua")] in "\n".join(ql.dong_chu(an))
 
 
 @pytest.mark.parametrize("sua, loi", [

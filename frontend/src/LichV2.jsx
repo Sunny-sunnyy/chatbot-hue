@@ -207,6 +207,7 @@ function AnUong({ an }) {
       {an.map(a => (
         <li key={a.bua}>
           <span className="lkh-an-h">{a.bua === "trua" ? "Ăn trưa" : "Ăn tối"} gần {a.gan}</span>
+          {typeof a.ghi_chu === "string" && <span className="lkh-an-gc">{a.ghi_chu}</span>}
           {a.quan.map(q => (
             <span key={q.ten} className="lkh-an-q">
               {anhQuan(q) && <img className="lkh-an-anh" src={`${import.meta.env.BASE_URL}anh/${anhQuan(q)}.jpg`} alt="" loading="lazy" decoding="async" />}
