@@ -61,7 +61,6 @@ export default function HoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
         <button type="button" className="retry hoi-anh-nut" disabled={disabled || state?.phase === "dang"} onClick={() => inputRef.current?.click()}>
           Hỏi bằng ảnh
         </button>
-        <span className="text-[13px] text-muted">Ảnh được gửi tới OpenAI để đoán tên nơi / món; máy chủ này không lưu ảnh. Tránh chụp mặt người lạ.</span>
         <input ref={inputRef} type="file" accept={KIEU.join(",")} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={chonAnh} />
       </div>
       {state && (

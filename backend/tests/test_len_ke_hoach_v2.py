@@ -358,11 +358,19 @@ def test_simulation_always_rules(mo_phong):
             assert all(len(v2.diem_v2({"ngay": [ng]})) <= 2 and not ng["buoi"]["toi"] for ng in k["ngay"])
         if len(st) == 2 and n >= 2:
             assert all(any(s in T[i]["loai"] for i in ids) for s in st)
+    ngoai_le = []
     for n, te, lt_, st in itertools.product(range(1, 6), (0, 1), (False, True), ST_16):
         so = [len(v2.diem_v2(kq[(n, te, lt_, k, st)])) for k in KIEU]
-        assert so[0] <= so[1] <= so[2]
+        # A duyệt 15/11 (đổi tiêu chí, bảng v9): ngày đi cụm xa ít điểm theo thiết kế (không điểm thêm ngoài cụm, tối nghỉ) ⇒ "khám phá" được ít
+        # điểm hơn "cân bằng" CHỈ KHI nó có nhiều ngày cụm xa hơn hẳn (3 ngày · chụp ảnh: khám phá đi Hải Vân + Lập An ngày 3 — 10 điểm ↔ cân bằng 12)
+        xa = [sum(any(T[i]["cum"] == v2.CUM_XA for i in v2.diem_v2({"ngay": [ng]})) for ng in kq[(n, te, lt_, k, st)]["ngay"]) for k in KIEU]
+        assert so[0] <= so[1] and (so[1] <= so[2] or xa[2] > xa[1])
+        if so[1] > so[2]:
+            ngoai_le.append((n, te, lt_, st, so, xa))
         if te or lt_:  # nhóm hạn chế: ba mức cho cùng một khung
             assert kq[(n, te, lt_, "nhe_nhang", st)]["ngay"] == kq[(n, te, lt_, "kham_pha", st)]["ngay"]
+    print(f"ngoại lệ cụm xa: {len(ngoai_le)} / 320 tổ hợp {ngoai_le}")  # pytest -s để xem; bảng v9: 1 (3 ngày · chụp ảnh: 9 / 12 / 10)
+    assert len(ngoai_le) <= 6  # A 15/11: > ~2 % tổ hợp ⇒ không còn là ngoại lệ mà là vấn đề của bộ xếp
     assert {json.dumps(v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",), nguoi_lon=a))["ngay"]) for a in range(1, 11)} == {
         json.dumps(kq[(3, 0, False, "can_bang", ("di_tich",))]["ngay"])}  # đổi số người lớn ⇒ khung giống hệt (kiểu đi mặc định = cân bằng)
 
@@ -472,7 +480,7 @@ def test_v2_sentence_checks(app_client):
     hong = {m[0]["id_muc"]: f"Mở cửa lúc 8:00 [{m[0]['nguon']}].", m[1]["id_muc"]: f"Vé 50.000 đồng [{m[1]['nguon']}].",
             m[2]["id_muc"]: f"Gần {khac} [{m[2]['nguon']}]."}
     for sai, ma in ((f"Nên ở đây 2 tiếng [{m[0]['nguon']}].", "gio"), (f"Xem tại https://x.vn [{m[0]['nguon']}].", "link"),
-                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong"),
+                    (f"Đẹp [{m[0]['nguon'] + 1}].", "ma_ngoai_nguon"), ("Đẹp lắm.", "khong_ma"), ("  ", "rong"), (f"[{m[0]['nguon']}].", "rong"),
                     (f"Tài liệu không cung cấp thông tin về điểm này; nội dung chỉ mô tả nơi khác. [{m[0]['nguon']}]", "noi_ve_tai_lieu")):
         assert v2.kiem_cau(b, m[0], sai) == ma
     for tot in ("Trưng bày nhiều tài liệu, hiện vật quý", "Xem văn bản cổ và châu bản"):  # m-3: câu tả bảo tàng không bị chặn nhầm

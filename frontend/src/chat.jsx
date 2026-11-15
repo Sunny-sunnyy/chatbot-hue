@@ -36,22 +36,9 @@ const LICH_BUOC = {
   lay_nguon: d => `Đã lấy tài liệu cho từng điểm (${d.n_doan} đoạn mới)`,
 };
 const PENDING = new Set(Object.keys(STATUS_TEXT));
-// Giao diện H1 (đợt 1): bước công cụ THẬT của lượt — chỉ những sự kiện `status` server đã gửi, đúng thứ tự; bước cũ hiện "đã xong" (không đoán thêm bước).
-const BUOC_XONG = {
-  routing: () => "hiểu câu hỏi",
-  searching: lan => (lan > 1 ? "tìm thêm trong kho" : "tìm trong kho tư liệu"),
-  searched: (lan, n) => (n > 0 ? (lan > 1 ? `có tổng ${n} đoạn tư liệu` : `tìm thấy ${n} đoạn tư liệu`) : "tìm trong kho"),
-  generating: () => "viết câu trả lời",
-  lich_trinh: () => "xếp lịch",
-  tra_web: () => "tra web (kho chưa có)",
-  thoi_tiet: () => "xem dự báo thời tiết",
-  sua_lich: () => "hiểu yêu cầu sửa lịch",
-};
-// nhãn từng bước theo thứ tự: lần tìm thứ 2 trở đi ⇒ "tìm thêm"; `n_sources` của server là số cộng dồn ⇒ "có tổng N đoạn"
-function nhanBuoc(buoc) {
-  const lan = {};
-  return buoc.map(b => { lan[b.stage] = (lan[b.stage] || 0) + 1; return BUOC_XONG[b.stage]?.(lan[b.stage], b.n) ?? STATUS_TEXT[b.stage]; });
-}
+// User 15/11: trong lúc chờ chỉ hiện MỘT dòng — bước đang chạy (sự kiện `status` thật của server); có chữ trả lời ⇒ dòng biến mất, không để lại
+// danh sách "Các bước". Đổi thành false ⇒ lúc chờ chỉ còn ba chấm "đang gõ" (nhãn trạng thái vẫn có cho trình đọc màn hình).
+const HIEN_BUOC_LUC_CHO = true;
 const NEW_CONVERSATION_ERROR = "Chưa bắt đầu được cuộc trò chuyện mới. Vui lòng thử lại.";
 // B142: câu ngoài phạm vi kèm 3 câu gợi ý cố định (đã kiểm có trong kho bằng `scripts/grep_kb.sh`) — bấm là hỏi luôn.
 const OUT_OF_SCOPE_SUGGESTIONS = ["Vào Đại Nội nên mặc thế nào?", "Lễ hội Điện Huệ Nam diễn ra khi nào?", "Nhã nhạc cung đình diễn lúc nào?"];
@@ -378,14 +365,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
       <div className="tra-noi">
       {pending && !turn.text && (
         <div className="searching" role="status">
-          {turn.progress.length > 0 ? <div className="font-semibold text-accent">{STATUS_TEXT[turn.phase]}</div>
-            : <BuocCongCu buoc={turn.buoc} phase={turn.phase} />}
+          {HIEN_BUOC_LUC_CHO && <BuocDangChay buoc={turn.buoc} phase={turn.phase} />}
           <span className="go" aria-hidden="true"><i /><i /><i /></span>
           <span className="sr-only">{STATUS_TEXT[turn.phase]}</span>
         </div>
-      )}
-      {!pending && turn.buoc.length > 1 && turn.phase === "done" && turn.progress.length === 0 && (
-        <p className="buoc-gon">Các bước: {nhanBuoc(turn.buoc).join(" · ")}</p>
       )}
       {turn.phase === "error" && (
         <div className="bubble bubble-error" role="alert">
@@ -421,8 +404,8 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         </div>
       )}
       {turn.web && turn.phase !== "error" && <WebSection web={turn.web} turnKey={turn.key} />}
-      {turn.progress.length > 0 && (
-        <ul className="progress" aria-label="Các bước xếp lịch">{turn.progress.map((line, i) => <li key={i}>{line}</li>)}</ul>
+      {HIEN_BUOC_LUC_CHO && pending && turn.progress.length > 0 && (
+        <p className="progress" role="status">{turn.progress[turn.progress.length - 1]}</p>
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
       {turn.phase === "done" && turn.suaThe && <SuaTheCard the={turn.suaThe} onAsk={onAsk} />}
@@ -453,17 +436,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
   );
 }
 
-// H1: danh sách bước công cụ thật — bước đã qua có ✓, bước đang chạy ở cuối (nhãn đang làm của STATUS_TEXT).
-function BuocCongCu({ buoc, phase }) {
-  if (buoc.length === 0) return <div className="font-semibold text-accent">{STATUS_TEXT[phase]}</div>;
-  const nhan = nhanBuoc(buoc);
-  return (
-    <ol className="buoc" aria-label="Các bước trợ lý đang làm">
-      {buoc.map((b, i) => (i < buoc.length - 1
-        ? <li key={i} className="xong">{nhan[i]}</li>
-        : <li key={i} className="dang">{STATUS_TEXT[b.stage]}{b.n > 0 ? ` (${b.n} đoạn)` : ""}</li>))}
-    </ol>
-  );
+// Bước đang chạy của lượt (bước cuối trong các sự kiện `status` thật; chưa có sự kiện nào ⇒ nhãn của pha hiện tại).
+function BuocDangChay({ buoc, phase }) {
+  const b = buoc[buoc.length - 1];
+  return <div className="buoc-dang">{b ? `${STATUS_TEXT[b.stage]}${b.n > 0 ? ` (${b.n} đoạn)` : ""}` : STATUS_TEXT[phase]}</div>;
 }
 
 // B6 D6: khối riêng sau câu từ chối của kho. Nhãn "chưa kiểm" cố định; chữ + nguồn từ sự kiện `web` (server đã kiểm mã, link, số tiền).
