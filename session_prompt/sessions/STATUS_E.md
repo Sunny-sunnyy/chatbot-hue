@@ -11,6 +11,7 @@
 - 10:50 15/11/2026: main `418a585` có đủ `p9-anh-14-bai`, `p9-mua-6mm`, `p9-ngan-sach-o` (nhãn "1 sao / đạt chuẩn" đã sửa). Gỡ worktree `/tmp/e_anh14`. `p9-cho-o` chưa merge. E không còn worktree / server. Rảnh — chờ A.
 - 10:56 15/11/2026: gom **checklist deploy** (A giao; A chép vào handoff lúc kết phiên) — mục dưới. E đã đọc, CHƯA sửa file deploy nào.
 - 10:57 15/11/2026: review `p9-phia-bien` (B, `3023894`) ⇒ ready, 0 finding; biên bản 5 dòng `e_review_phia_bien.md` (chưa commit). Rảnh — chờ A.
+- 11:08 15/11/2026: kiểm lại số tốc độ của B (độc lập, `data/dem_toc_do_2026-11-15/e_kiem/dem.py`): khớp; 11,4 % = tìm thêm không kèm web ⇒ đường chậm 20,6 %; n chữ đầu nhỏ (12 / 5); lượt thường p95 5,92 s cũng trượt sàn. Đã báo A, B. 0 USD. Rảnh — chờ A.
 
 ### Checklist deploy — file bảng runtime (E, 10:56 15/11/2026, đối chiếu `settings.yaml` ↔ `data/phase_12/deploy_nhap/`)
 Cờ đang bật mà thiếu file ⇒ server **không khởi động** (loader raise). Hiện bản deploy nháp thiếu ở **hai chỗ**: (a) `CHUA` trong `dung_dockerignore.py` (allow-list); (b) dòng `COPY` trong `Dockerfile` (chỉ chép `diem_v3.json` + `danh_sach_ten.json`, dòng 51 / 53).

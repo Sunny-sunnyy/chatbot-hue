@@ -10,6 +10,7 @@
 - 10:45 15/11/2026 — E review ready (m-1 nhãn "1 sao / đạt chuẩn" đã sửa, rebase lên 8188161, 112 đạt) ⇒ A merge `418a585` (push sau cổng ổn định). Worktree `/tmp/b_ns` đã gỡ (symlink gỡ trước). 0 server. **Rảnh — chờ A.**
 - 10:56 15/11/2026 — Tự soi 1 đã gửi cả nhóm; A chốt (handoff "Vòng tự soi 1 — phiên 15/11"). **p9-phia-bien XONG, CHỜ E review**: `3023894` (push), worktree `/tmp/b_pb` (symlink data/kho). Lọc ven biển theo `phia_bien`; mô phỏng 15.360 ô: 72 đổi = thêm SBH Gloria ở 36 lịch ven biển bắc. Test file chạm 15 đạt. Sửa số 13 ⇒ 32 trong report ngân sách. 0 USD, 0 server.
 - 10:57 15/11/2026 — p9-phia-bien E ready (0 finding) ⇒ A merge + push `f980853` / `087a1d4`. Worktree `/tmp/b_pb` đã gỡ. 0 server, 0 worktree. **Rảnh — chờ A.**
+- 11:07 15/11/2026 — **Đếm tốc độ XONG** (0 USD, không sửa code): report `report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md` (chưa commit); script `data/dem_toc_do_2026-11-15/`. 402 lượt thật từ 10/11 (không người dùng thật): tìm thêm 11,4 % chữ đầu p50 8,57 s · web 9,2 % p50 6,78 s ⇒ ~20 % trượt sàn; chậm do 2–4 lần gọi model nối tiếp. Gửi A; E tính lại. **Rảnh — chờ.**
 
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 14/11) — B viết 22:35 14/11/2026, terminal `hue-rag-62`
 - **Đã làm tối 14/11 (đều xong; nhánh đã merge, A commit report):**
