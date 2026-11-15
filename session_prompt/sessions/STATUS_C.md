@@ -1,6 +1,6 @@
 # STATUS C — kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 21:00 15/11/2026 `date`)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 21:12 15/11/2026 `date`)
 
 - **Trạng thái máy của C:** 0 worktree `/tmp/c_*` (đã gỡ hết), 0 server tạm (cổng 8041 đã tắt), 0 tiến trình nền, 0 file tạm. Nhánh của C đã merge, User xoá được: `p9-sua-lich-no-nho p9-nut-anh-cong p9-f5-cuoc-moi p9-anh-dinh-kem p9-anh-dinh-kem-2` (+ `p9-tai-lieu-dem-hoi-lai` sau khi A merge report). C không tự xoá nhánh.
 - **VIỆC ĐẦU PHIÊN SAU: không có việc đã giao — chờ A.** Lượt đếm "A ⇒ hỏi tiếp B ⇒ hỏi lại A" ĐÃ chạy lại sạch tối nay: lượt 3 bị từ chối **0 / 8** (đối chứng 8 / 8, tra web tắt) ⇒ không phải lỗi rộng. **Chỗ chưa khớp:** bộ "vị trí ⇒ khoảng cách" từ chối 3 / 3 trên server thật có tra web nhưng 0 / 2 ở lượt sạch ⇒ C đề xuất (A chưa quyết) thử đúng cấu hình đang chạy: bộ đó × 3 cuộc qua server thật (≈ 0,013 USD, `data/f5_cuoc_moi_2026-11-15/tai_tao.py <url> <log> 3`). Report `report_agent/2026-11-12_ra_khoang_cach/c_dem_hoi_lai_cau_cu.md` (nhánh `p9-tai-lieu-dem-hoi-lai` `d5747d8`, chờ A merge); công cụ `data/hoi_lai_cau_cu_2026-11-15/dem2.py`.
@@ -13,6 +13,8 @@
 | Tải lại trang ⇒ cuộc mới ở server (LỗI User báo: F5 xong hỏi lại câu đầu bị từ chối) | **đã merge** (main `b833c7b`; A đọc diff, merge thẳng) | tái tạo 3 / 3; sau sửa Playwright: reload ⇒ hỏi lại ⇒ lịch sử 0, được trả lời | 0,0159 |
 | Đếm lỗi riêng "cùng một cuộc: A ⇒ hỏi tiếp B ⇒ hỏi lại A" (A duyệt 2 lượt) | **xong** — lượt sạch 0 / 8 ⇒ không phải lỗi rộng; còn chỗ chưa khớp với server thật (web bật) | lượt đầu không sạch (lỗi "kết nối" thật ra do công cụ của C: mỗi cuộc một TestClient); lượt sạch: đối chứng 8 / 8, model tìm kho cho câu B ở lượt 3: 3 / 8 nhưng vẫn trả lời đúng A; nhánh chẩn đoán "lịch sử kèm câu trả lời" CHƯA ĐO | 0,0149 + **0,0298** (vượt mức duyệt ≈ 0,02 vì 32 lượt hỏng của bản công cụ lỗi vẫn tốn phần định tuyến) |
 | Thử sổ vết debug của E (`p9-so-vet` `8493624`, `HUE_SO_VET=true`) trên 3 loại lượt | **xong, đã báo A + B** | biểu mẫu xếp lịch · sửa lịch bằng lời · ảnh: 3 / 3 ra dòng; THIẾU `lich.khung` cho lịch bản 2 (bản ghi đọc `trace.lich`, khung v2 ở `trace.lich_v2`) — chưa ai sửa; `data/thu_so_vet_2026-11-15/thu.py`. Phần sửa 3 điểm review A giao cho C: E đã tự sửa trước ⇒ C bỏ, không push | 0,0014 |
+| Sổ vết: thêm khung lịch bản 2 (`v2_khung`, `v2_ngay_di`, `v2_mua`) | **B ready, chờ A merge** — `origin/p9-so-vet` `dc4f392` | khoá ngày của `mua` đổi ra chữ (không thì mất cả dòng); test_so_vet 7 passed; thử khung thật 0 USD | 0 |
+| Review `p9-anh-tra-loi-thang` `f724f7c` của E (ảnh 1 tên ⇒ trả lời thẳng) | **READY ở `6c183cf`** (vòng 1 `f724f7c` changes_requested 1 major ⇒ E sửa ⇒ C chạy lại 2 ca đạt), chờ A merge | lúc "Đang xem ảnh…": bấm "Cuộc trò chuyện mới" ⇒ câu ảnh tự gửi vào cuộc mới; lượt khác đang chạy ⇒ bị huỷ. Công cụ `data/review_anh_tra_loi_thang_2026-11-15/pw_do2.py` (0 USD; đạt khi ca1 không thêm request bị huỷ + không câu "(Trong ảnh: …)", ca2 rỗng, đối chứng 1 câu / 1 lượt) | 0 |
 | Ảnh đính kèm tin nhắn — bấm Hỏi mới xử lý (User chốt: tải ảnh lên không làm gì) | **đã merge** (main `67dd28d`; B review ready) + **2 minor chờ A đọc diff / B liếc**: `origin/p9-anh-dinh-kem-2` `cb00fa4` (dòng nhắc "Chọn một tên ở trên…" khi bấm Hỏi lúc thẻ mở; "Cuộc trò chuyện mới" gỡ ảnh + thẻ) | Playwright mọi ca đạt; ảnh `data/anh_dinh_kem_2026-11-15/anh/`; giới hạn: chưa có nút huỷ lúc "Đang xem ảnh…", Safari / Firefox chưa thử | 0,0019 |
 | Review nhánh `p9-chu-gioi-thieu` của E (A nhờ) | **ready, A đã merge** | câu ví dụ "ở khách sạn 3 sao" chạy thật 6 / 6 ra đổi hạng 2–3 sao (`data/review_chu_gioi_thieu_2026-11-15/`) | 0,00075 |
 
@@ -35,6 +37,7 @@
 - Bộ câu tự viết chưa thử đối chứng trước (câu A bị kho từ chối ngay ở cuộc mới) ⇒ chạy riêng lượt 1 của mọi bộ (rẻ) trước khi chạy cả bộ ba.
 - `event: done` của luồng SSE đến SAU `event: web` ⇒ script đọc luồng đừng gán lại biến web ở `done`.
 - Worktree cho việc giao diện: symlink `frontend/node_modules` từ cây chung rồi `npm run build` (< 1 giây), không cần `npm ci`; server tạm từ worktree đọc bản build của chính worktree.
+- Muốn làm trễ một route trong Playwright: bọc `fetch` ngay trong trang (`add_init_script`), KHÔNG dùng `threading.Timer` / `time.sleep` trong hàm chặn route — gọi Playwright từ luồng khác làm ca đối chứng hỏng (0 câu gửi) và suýt báo sai; luôn chạy ca đối chứng.
 - Kiểm ca lỗi / ca không tốn tiền của giao diện bằng cách chặn route trong Playwright (`page.route`) — 0 USD, vẫn chạy code giao diện thật.
 
 ---
