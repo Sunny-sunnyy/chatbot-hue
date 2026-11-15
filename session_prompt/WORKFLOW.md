@@ -96,7 +96,7 @@ Theo skill `risk-gated-agent-review`. Tóm tắt:
 - Mỗi finding: vị trí, yêu cầu bị ảnh hưởng, bằng chứng, tác động, tiêu chí đóng.
   Người làm được phản biện bằng bằng chứng.
 - **Review dừng ngay** khi A biết hướng / phụ thuộc sắp đổi (05/11: một lượt review plan B5 bản 5 bị bỏ).
-- **Tối đa 2 vòng review** cho plan / spec (User 05/11 — `Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt; vẫn còn blocker / major sau vòng 2 ⇒ A xem lại thiết kế (với User nếu đổi phạm vi). Code: một review cả nhánh; nhánh chỉ đổi test ⇒ A merge thẳng, không review; sửa ≤ 2 dòng theo minor đã nêu rõ cách đóng ⇒ A kiểm bằng grep / diff rồi merge, không review vòng 2 (User duyệt 10:15 15/11/2026).
+- **Tối đa 2 vòng review** cho plan / spec (User 05/11 — `Session_Prompt.md` §7): vòng 2 chỉ còn minor ⇒ A duyệt; vẫn còn blocker / major sau vòng 2 ⇒ A xem lại thiết kế (với User nếu đổi phạm vi). Code: một review cả nhánh; nhánh chỉ đổi test ⇒ A merge thẳng, không review; sửa ≤ 2 dòng theo minor đã nêu rõ cách đóng ⇒ A kiểm bằng grep / diff rồi merge, không review vòng 2 (User duyệt 10:15 15/11/2026); nhánh ≤ 10 dòng, test tất định, **không** đổi câu người dùng thấy và **không** xử lý chữ người dùng / chuỗi gửi model ⇒ A đọc diff rồi merge thẳng, có một trong các thứ đó ⇒ review ≤ 5 dòng (User duyệt 14:41 15/11/2026). Báo sha / "đã push" chỉ bằng dòng `scripts/commit_push.sh` in ra (sha của origin).
 
 ## 6. Report
 
