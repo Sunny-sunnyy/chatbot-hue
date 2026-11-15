@@ -53,3 +53,6 @@ User chọn 15:14 15/11/2026 "làm cả hai, từng bậc": bậc 1 hạng chỗ
 | Trí nhớ | Chỉ `tham_so.ngan_sach` trong khung đã lưu của cuộc (đường có sẵn) | khớp |
 | Chữ người dùng là dữ liệu | Câu ⇒ enum; Q5 / Q5b giữ 0 câu an toàn / khẩn cấp lạc sang sửa | khớp |
 | Đường ra mới · dữ liệu mới | Không (bảng lưu trú v5 đã dùng; link tìm phòng do code dựng như cũ) | khớp |
+
+## Chỗ đổi (15:56 15/11/2026)
+- A quyết dùng vòng chỉnh duy nhất vì một chuỗi Q3 hồi quy trên nhánh (main 4 / 4 ↔ nhánh 0 / 2) dù Q3 đạt ngưỡng: tiêu chí thêm cho bản chỉnh = mọi ngưỡng trên giữ nguyên **và** chuỗi đó đạt 2 / 2; H4 chạy bộ mới (bộ đầu thành "đã thấy"); trượt ⇒ dừng hẳn. Kết quả: `report_agent/2026-11-12_ra_khoang_cach/c_sua_hang_o_implementation.md`.
