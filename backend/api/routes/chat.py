@@ -250,7 +250,15 @@ async def chat(body: ChatRequest, request: Request, response: Response):
     finally:
         metrics["total_ms"] = elapsed_ms(started)
         logger.info("chat_metrics %s", json.dumps(metrics))
-        so_vet.ghi(_flags(request.app.state).so_vet, "chat", metrics, vet.get("trace"), body.query, vet.get("query"))
+        _ghi_vet(request.app.state, "chat", metrics, vet.get("trace"), body.query, vet.get("query"))
+
+
+def _ghi_vet(state, duong: str, metrics: dict, trace, cau_go: str, cau_model) -> None:
+    """Sổ vết debug (`core/so_vet.py`, chỉ khi cờ `so_vet` bật). Bọc cả bước đọc cờ: không lỗi nào ở đây được đi ra route."""
+    try:
+        so_vet.ghi(_flags(state).so_vet, duong, metrics, trace, cau_go, cau_model)
+    except Exception as exc:
+        logger.warning("so_vet failed: %s", type(exc).__name__)
 
 
 def _set_outcome(response, metrics: dict) -> None:
@@ -493,7 +501,7 @@ async def chat_stream(body: ChatRequest, request: Request):
         response = StreamingResponse(
             _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"]),
                            lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state),
-                           ghi_vet=lambda: so_vet.ghi(_flags(state).so_vet, "chat_stream", metrics, trace, body.query, query)),
+                           ghi_vet=lambda: _ghi_vet(state, "chat_stream", metrics, trace, body.query, query)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -637,7 +645,9 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
             _copy_trace_metrics(trace, metrics)  # sau `aclose` để có `llm_calls` lõi vừa ghi (C132 m-1)
             metrics.update(n_tra_loi_bo=trace.n_tra_loi_bo, usd_bo=trace.usd_bo, bo_huy_giua=trace.bo_huy_giua)  # #6, chỉ đường stream
             logger.info("chat_metrics %s", json.dumps(metrics))
-            if ghi_vet is not None:
-                ghi_vet()
-            if remember is not None:  # B3: ghi lượt vào cuộc trò chuyện (chỉ outcome đã xong — `_remember` lọc)
-                remember()
+            try:
+                if remember is not None:  # B3: ghi lượt vào cuộc trò chuyện (chỉ outcome đã xong — `_remember` lọc)
+                    remember()
+            finally:
+                if ghi_vet is not None:  # sổ vết debug SAU việc nhớ lượt (review B m-2): công cụ debug không đứng trước việc của lượt
+                    ghi_vet()

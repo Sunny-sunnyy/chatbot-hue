@@ -54,6 +54,21 @@ def test_write_failure_never_raises(tmp_path, caplog):
     assert "so_vet failed" in caplog.text and "câu" not in caplog.text  # cảnh báo chỉ có tên lớp lỗi, không nội dung
 
 
+def test_collecting_never_raises_on_odd_documents():
+    """`vet_tim` chạy trong `finally` của lần tìm (cả khi cờ tắt): tài liệu khác khuôn không được ném lỗi đè lỗi gốc của lần tìm (review B M-1)."""
+    le = [SimpleNamespace(id="a#1", score=None, metadata=None)]
+    assert so_vet.vet_tim(["câu"], "code", le, None) == {"cau": ["câu"], "by": "code", "loi": "AttributeError"}
+    assert so_vet.vet_tim(["câu"], "model", None, None)["ket_qua"] == []
+
+
+def test_merge_keeps_both_search_lists():
+    from llm.assistant import _merge_spec
+    chinh, phu = AnswerTrace(), AnswerTrace()
+    chinh.vet["tim"], phu.vet["tim"], phu.vet["web"] = [{"cau": ["a"]}], [{"cau": ["b"]}], {"cau_gui_tra_web": "w"}
+    _merge_spec(chinh, phu, None)
+    assert [t["cau"] for t in chinh.vet["tim"]] == [["a"], ["b"]] and chinh.vet["web"] == {"cau_gui_tra_web": "w"}
+
+
 def test_env_override():
     settings = {"assistant": {"tra_web": False}, "vector_database": {"url": "x"}}
     apply_env_overrides(settings, {})

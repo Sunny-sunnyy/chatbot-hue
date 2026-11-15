@@ -17,9 +17,12 @@ TOP_TIM = 10  # số kết quả mỗi lần tìm được ghi (= số đoạn t
 
 def vet_tim(queries: list[str], by: str, documents, packed) -> dict:
     """Một lần tìm kho (lõi gọi ở `search_into_trace`; chỉ giữ trong RAM của lượt): câu tìm, top kết quả (mã đoạn, file, điểm), đoạn vào ngữ cảnh."""
-    return {"cau": list(queries), "by": by,
-            "ket_qua": [{"chunk_id": d.id, "source": d.metadata.get("source"), "diem": round(float(d.score), 4)} for d in (documents or [])[:TOP_TIM]],
-            "vao_ngu_canh": None if packed is None else list(packed.document_ids)}
+    try:  # gọi trong `finally` của lần tìm, cả khi cờ tắt ⇒ không bao giờ được ném (lỗi ở đây sẽ đè lỗi gốc của lần tìm — review B M-1)
+        return {"cau": list(queries), "by": by,
+                "ket_qua": [{"chunk_id": d.id, "source": d.metadata.get("source"), "diem": round(float(d.score), 4)} for d in (documents or [])[:TOP_TIM]],
+                "vao_ngu_canh": None if packed is None else list(packed.document_ids)}
+    except Exception as exc:
+        return {"cau": list(queries), "by": by, "loi": type(exc).__name__}
 
 
 def ban_ghi(duong: str, metrics: dict, trace=None, cau_go: str | None = None, cau_model: str | None = None, them: dict | None = None) -> dict:
@@ -57,9 +60,9 @@ def ban_ghi(duong: str, metrics: dict, trace=None, cau_go: str | None = None, ca
 
 def ghi(bat: bool, duong: str, metrics: dict, trace=None, cau_go: str | None = None, cau_model: str | None = None, them: dict | None = None,
         thu_muc: Path = THU_MUC) -> None:
-    if not bat:
-        return
     try:
+        if not bat:
+            return
         dong = json.dumps(ban_ghi(duong, metrics, trace, cau_go, cau_model, them), ensure_ascii=False, default=str)
         thu_muc.mkdir(parents=True, exist_ok=True)
         with open(thu_muc / f"{dt.date.today().isoformat()}.jsonl", "a", encoding="utf-8") as f:

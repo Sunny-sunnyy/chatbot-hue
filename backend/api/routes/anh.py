@@ -115,6 +115,6 @@ async def ung_vien(request: Request):
         values = [c.get(key) for c in calls if c.get(key) is not None]
         metrics[key] = round(sum(values), 8) if values else None
     flags = getattr(request.app.state, "assistant_flags", None)  # sổ vết debug: tên gợi ý + kết quả + lần gọi model — KHÔNG ghi ảnh
-    so_vet.ghi(bool(flags and flags.so_vet), "anh", {k: metrics.get(k) for k in ANH_FIELDS} | {"status_code": 200},
+    so_vet.ghi(getattr(flags, "so_vet", False) is True, "anh", {k: metrics.get(k) for k in ANH_FIELDS} | {"status_code": 200},
                them={"anh": {"ten_goi_y": ten, "goi_model": calls}})
     return _tra(metrics, 200, body)

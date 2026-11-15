@@ -1473,6 +1473,8 @@ def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
         if item.name not in keep_own:
             setattr(trace, item.name, getattr(spec, item.name))
     trace.vet = {**spec.vet, **vet_rieng}
+    if "tim" in spec.vet and "tim" in vet_rieng:  # hai nhánh đều có lần tìm ⇒ nối, không ghi đè (review B m-1)
+        trace.vet["tim"] = vet_rieng["tim"] + spec.vet["tim"]
     trace.llm_calls = trace.llm_calls + spec.llm_calls
     if recorder and trace.packed is not None:  # như `prepare_answer` của đường cũ (recorder chỉ route truyền)
         recorder.record_packed_context(trace.packed)
