@@ -131,7 +131,7 @@ async def tinh_nang(request: Request):
 # tích; không ngày đi (không dự báo, không đoán thứ). Do CHÍNH bộ xếp đang chạy dựng (`xep_v2` + `dung_lich`) ⇒ ví dụ không hứa điều bộ xếp không
 # làm. Không câu tả (thẻ đã có nhãn loại điểm), không gọi model, không nguồn — câu tả từ kho chỉ có ở lịch thật. Bảng nạp một lần lúc khởi động ⇒ dựng một
 # lần rồi giữ (khoá theo id bảng).
-TRUONG_MAU = {"so_ngay": "2", "nguoi_lon": 2, "kieu_di": "can_bang", "so_thich": ["di_tich"]}
+TRUONG_MAU = {"so_ngay": "2", "nguoi_lon": 2, "kieu_di": "can_bang", "so_thich": ["di_tich"], "ngan_sach": "vua"}  # có hạng ⇒ ví dụ có khối nơi ở
 _mau: dict[int, dict] = {}
 
 

@@ -556,7 +556,7 @@ def test_v2_plain_answer_is_built_from_frame():
                                                                       {"id_muc": "n1-toi-1", "buoi": "toi", "loai": "nghi", "ten": "Tối nghỉ.", "gio": None}]}],
             "ghi_chu": [{"ma": "kieu_di", "cau": "Chưa chọn kiểu đi."}]}
     assert v2.ghep_chu(lich, {"n1-sang-1": "câu a [1].", "n1-chieu-1": "câu b [2]."}) == (
-        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n- Tối: Tối nghỉ.\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
+        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
 
 
 def test_cau_stream_emits_each_closed_item():
@@ -989,9 +989,11 @@ def test_photo_table_rejects_bad_rows(tmp_path):
     assert nap()  # dòng thật hợp lệ
     for doi in ({"id_diem": "khong_co"}, {"src": "https://x.vn/a.jpg"}, {"src": "/anh/lich/../anh.jpg"}, {"src": "/anh/lich/khong_co.jpg"},
                 {"tac_gia": ""}, {"giay_phep": None}, {"trang": "https://example.com/a"}, {"trang": "http://x.vn/a", "nguon": "web"},
-                {"trang": "javascript:x", "nguon": "web"}):
+                {"trang": "javascript:x", "nguon": "web"}, {"trang": "https://x.vn/bai", "nguon": "user", "tac_gia": None, "giay_phep": None},
+                {"trang": None, "nguon": None, "tac_gia": None, "giay_phep": None}):
         with pytest.raises(ValueError):
             nap(**doi)
+    assert nap(trang=None, nguon="user", tac_gia=None, giay_phep=None)  # ảnh User tự đưa (15/11): nguồn user, không trang
     assert nap(trang="https://x.vn/bai", nguon="web", tac_gia=None, giay_phep=None)  # ảnh web (14/11): nguồn web + trang https, không cần tác giả
 
 

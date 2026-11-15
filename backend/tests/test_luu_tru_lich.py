@@ -152,6 +152,7 @@ def test_evening_outside_center_falls_back_to_day_rule(mo_phong):
     from llm import len_ke_hoach as lkh
     flags = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, anh_lich=False, luu_tru_lich=True)
     khung = copy.deepcopy(next(k for key, k in mo_phong.items() if key[0] >= 2 and any(ng["buoi"]["toi"] for ng in k["ngay"])))
+    khung["tham_so"]["ngan_sach"] = "vua"  # khối nơi ở chỉ dựng khi lịch có mức hạng (User 15/11)
     lich = {}
     lkh.gan_o_an(lich, BANG_V2, khung, flags)
     assert "buổi tối" in lich["o_dau"]["ly_do"]  # mọi điểm tối ở trung tâm ⇒ luật buổi tối
@@ -306,3 +307,37 @@ def test_lodging_tier_reasons_are_stated_not_silent():
     assert [d for d in sl.thay_doi(BANG_V2, kq)] == [{"cau": "Đã đổi hạng chỗ ở: 2–3 sao → 4–5 sao.", "duoc": True}]
     with pytest.raises(ValueError):
         sl.HanhDong(loai="doi_hang_o", ngan_sach="6 sao")  # mức ngoài 3 giá trị ⇒ schema từ chối
+
+
+def test_lodging_block_only_when_the_user_asked(mo_phong):
+    """User 15/11 (plan 2026-11-15-noi-o-chi-khi-hoi, T1–T3): lịch KHÔNG có mức hạng ⇒ không khối nơi ở, chỉ khoá link (lịch ≥ 2 ngày);
+    có mức ⇒ khối đúng như hàm chọn nơi ở cho mức đó; nói bằng lời trên lịch chưa có khối ⇒ khối bật + câu "Đã thêm…"."""
+    from llm import len_ke_hoach as lkh
+    from llm import sua_lich_v2 as sl
+    flags = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, anh_lich=False, luu_tru_lich=True)
+    for key, khung in mo_phong.items():
+        lich = {}
+        lkh.gan_o_an(lich, BANG_V2, khung, flags)
+        assert lich == ({"cho_o_link": True} if key[0] >= 2 else {}), key
+    for key, khung in itertools.islice(mo_phong.items(), 0, None, 7):  # mỗi 7 khung một (549 khung) × 3 mức — đủ mọi số ngày / kiểu đi
+        for muc in ltl.MUC_NGAN_SACH:
+            lich = {}
+            lkh.gan_o_an(lich, BANG_V2, {**khung, "tham_so": {**khung["tham_so"], "ngan_sach": muc}}, flags)
+            assert "cho_o_link" not in lich and lich.get("o_dau") == _o_dau(khung, muc), (key, muc)
+    # chữ chép / tải / lịch sử: chưa hỏi ⇒ không dòng nơi ở; hỏi rồi ⇒ có
+    khung = v2.xep_v2(BANG_V2, v2.tu_truong({"so_ngay": "3", "kieu_di": "can_bang", "so_thich": ["di_tich"]}))
+    nguon = {j: i for i, j in enumerate(v2.diem_v2(khung), start=1)}
+    chua, roi = v2.dung_lich(BANG_V2, khung, nguon), None
+    lkh.gan_o_an(chua, BANG_V2, khung, flags)
+    cau = {m["id_muc"]: "x" for m in v2.moi_muc(chua)}
+    assert "Nơi ở gợi ý" not in v2.ghep_chu(chua, cau)
+    # nói bằng lời trên lịch chưa có khối: bật khối đúng mức, câu báo "Đã thêm"
+    kq = sl.ap(BANG_V2, sl.luu_tu_lich(khung, None, None), [sl.HanhDong(loai="doi_hang_o", ngan_sach="cao")], luu_tru=BANG_LT)
+    assert sl.thay_doi(BANG_V2, kq) == [{"cau": "Đã thêm gợi ý chỗ ở hạng 4–5 sao.", "duoc": True}]
+    roi = v2.dung_lich(BANG_V2, kq["khung"], nguon)
+    lkh.gan_o_an(roi, BANG_V2, kq["khung"], flags)
+    assert roi["o_dau"]["co_so"] and all(c["xep_hang"] in ("4 sao", "5 sao") for c in roi["o_dau"]["co_so"]) and "cho_o_link" not in roi
+    assert "Nơi ở gợi ý" in v2.ghep_chu(roi, cau)
+    # xin chỗ ở không nêu hạng ⇒ hỏi lại hạng, lịch không đổi, khối vẫn chưa hiện
+    kq = sl.ap(BANG_V2, sl.luu_tu_lich(khung, None, None), [sl.HanhDong(loai="doi_hang_o")], luu_tru=BANG_LT)
+    assert kq["khung"] == khung and [d["cau"] for d in sl.thay_doi(BANG_V2, kq)] == [sl.CAU_KHONG_DOI["hang_chua_ro"]]

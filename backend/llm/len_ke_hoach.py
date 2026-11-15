@@ -123,7 +123,13 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
     """Theo cờ: nơi ở (`o_dau`, khu cả chuyến + cơ sở) và quán mỗi bữa (`an`) — đều do code chọn, không vào tin nhắn gửi model (`tin_nhan_model`
     không đọc hai khoá này). Dùng chung cho lịch thật (`chuan_bi`) và lịch mẫu "Ví dụ" (`api/routes/cong.py`)."""
     if flags.luu_tru_lich:
-        lich["o_dau"] = lt2.o_dau_khung(flags.luu_tru_bang, bang, khung, khung["tham_so"].get("ngan_sach"))
+        # User 15/11: khối nơi ở CHỈ khi người dùng hỏi = lịch có mức hạng (ô hạng sao của biểu mẫu, hoặc nói bằng lời — `doi_hang_o`; mức được
+        # giữ qua mọi lượt sửa). Chưa hỏi ⇒ không khối, giao diện chỉ hiện một dòng link sang trang Chỗ ở (lịch 1 ngày: không có đêm ⇒ không link).
+        muc = khung["tham_so"].get("ngan_sach")
+        if muc:
+            lich["o_dau"] = lt2.o_dau_khung(flags.luu_tru_bang, bang, khung, muc)
+        elif len(khung["ngay"]) >= 2:
+            lich["cho_o_link"] = True
     if flags.quan_lich:
         lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
 

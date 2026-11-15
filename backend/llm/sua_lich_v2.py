@@ -55,7 +55,7 @@ CAU_KHONG_DOI = {
     "thieu_cho": "Chưa rõ ngày / buổi để dời {diem}.",
     "het_diem_thay": "Không còn điểm phù hợp để thay {diem} (đặt được vào đúng chỗ đó) nên mình giữ nguyên.",
     # đổi hạng chỗ ở: {diem} = tên mức ("2–3 sao"…)
-    "hang_chua_ro": "hạng chỗ ở — bạn nói rõ 1 sao / đạt chuẩn, 2–3 sao hay 4–5 sao thì mình đổi.",
+    "hang_chua_ro": "chỗ ở — bạn muốn hạng nào: 1 sao / đạt chuẩn, 2–3 sao hay 4–5 sao? Nói hạng thì mình đưa gợi ý chỗ ở hạng đó vào lịch.",
     "hang_dang_dung": "Lịch đang gợi ý chỗ ở hạng {diem} rồi.",
     "hang_khong_co": "Khu chỗ ở của lịch này chưa có cơ sở hạng {diem} trong danh mục nên mình giữ nguyên.",
     "khong_muc_o": "Lịch này không có mục gợi ý chỗ ở (lịch 1 ngày) nên không có hạng để đổi.",
@@ -393,7 +393,7 @@ def _gia_tri(f: str, v) -> str:
     if f == "so_ngay":
         return f"{v} ngày"
     if f == "ngan_sach":
-        return "chưa chọn" if v is None else ten_muc_o(v)
+        return ten_muc_o(v)
     if f == "kieu_di":
         return {"nhe_nhang": "nhẹ nhàng", "can_bang": "cân bằng", "kham_pha": "khám phá nhiều"}.get(v, str(v))
     return ", ".join(v2.NHAN_LOAI.get(x, x) for x in v) or "không chọn"
@@ -413,9 +413,11 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}.")
         elif t == "thay_diem":
             out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}.")
+    # lịch chưa có mức hạng (khối nơi ở chưa hiện) ⇒ lượt này BẬT khối: nói "đã thêm", không nói "đổi … chưa chọn → …"
+    out += [f"Đã thêm gợi ý chỗ ở hạng {ten_muc_o(moi)}." for f, cu, moi in kq["doi_truong"] if f == "ngan_sach" and cu is None]
     out += [f"Đã đổi {({'so_ngay': 'số ngày', 'kieu_di': 'kiểu đi', 'so_thich': 'sở thích', 'tre_em': 'số trẻ em', 'lon_tuoi': 'người lớn tuổi', 'ngan_sach': 'hạng chỗ ở'})[f]}: "
             f"{_gia_tri(f, cu)} → {_gia_tri(f, moi)}."
-            for f, cu, moi in kq["doi_truong"]]
+            for f, cu, moi in kq["doi_truong"] if not (f == "ngan_sach" and cu is None)]
     nd = kq.get("ngay_di")
     if nd:
         moi = dt.date.fromisoformat(nd["moi"])

@@ -88,7 +88,6 @@
 .lich-v2 .lich-ten small { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #F6E3EA; color: var(--color-lotus-deep); font-size: 14px;
                            font-weight: 600; vertical-align: 2px; }
 .lich-v2 .lich-cau { color: var(--color-muted); font-size: 15.5px; line-height: 1.55; }
-.lkh-nghi .lkh-than .lich-ten { font-weight: 500; font-size: 15.5px; color: var(--color-muted); }
 .lkh-xuong { display: block; height: 12px; margin: 8px 0; border-radius: 6px; background: linear-gradient(90deg, #E3F0ED 0%, #F4FAF8 50%, #E3F0ED 100%);
              background-size: 200% 100%; }
 .lkh-ngan { width: 62%; }
