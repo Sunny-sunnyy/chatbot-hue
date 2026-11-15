@@ -3,6 +3,9 @@
 ## PHIÊN 15/11 — nhật ký
 **Mở phiên 15/11:** kiểm nhanh khớp handoff (main `6c7c01b`, Qdrant 9.425). Chờ A.
 **Đếm quán vùng nam xa XONG (09:39 15/11/2026, 0 USD):** 720 / 3.840 khung (18,8 %), 1.080 / 22.680 bữa (4,8 %); chỉ khi chọn "thiên nhiên" và chuyến ≥ 3 ngày. Kho nói Bạch Mã không có quán trong vùng lõi (mang đồ ăn), Nhị Hồ có chòi ăn tại chỗ, đóng 17:30 ⇒ **đếm rồi không làm (không cào quán)**. Đề xuất tuỳ chọn: ghi chú ăn uống cho 2 điểm (0 USD, ~1 giờ), chờ nhóm. Report `report_agent/2026-11-12_ra_khoang_cach/c_dem_quan_nam_xa.md`; script `data/dem_quan_nam_xa_2026-11-15/`.
+**Ghi chú ăn uống nam xa (A duyệt) XONG (09:50 15/11/2026):** nhánh `p9-ghi-chu-an` @ `81e3aff` (worktree `/tmp/c_ga`) — chờ E review. `quan_lich.py` `GHI_CHU_AN` 3 câu theo kho + `LichV2.jsx` / `lkh.css`; test file 16 passed, cả suite 1048 passed (265 s), Playwright DAT. Khai báo sửa: 4 file trên (nhánh riêng). Tiền ≈ 0,001 USD.
+**Tài liệu ghi chú nam xa (09:51 15/11/2026):** `bai_hoc/25` + sổ `07` (bản 54) trên cùng nhánh @ `8d0280b` — E review cùng code. Nhật ký + README sổ: A ghi lúc merge.
+**Sửa 2 minor review E (m-1, m-2) — nhánh @ `e001cb2`:** chờ A grep + merge. Rảnh.
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 

@@ -2,7 +2,7 @@
 
 > **Đây là sổ ghi việc (quá khứ) của các agent, không phải bài học.** Muốn hiểu hệ thống: đọc [bai_hoc/](../bai_hoc/) theo số, bắt đầu từ bài 0.
 
-Cập nhật 17:50 14/11/2026 (cuối chiều 14/11: quán ăn trong lịch, nơi ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, mục web so tiền theo giá trị, ảnh lịch 33 / 34; trước: 16:19 14/11/2026 — kho sau lần ghi kho 3; chiều 14/11 thêm câu hỏi nhiều ý, nơi ở gợi ý trong lịch, lịch mẫu, ảnh dưới câu trả lời, bỏ chữ ghi công ảnh; "Lên kế hoạch" bản 2 + sửa lịch bằng lời + giao diện mới đang chạy; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
+Cập nhật 09:56 15/11/2026 (sáng 15/11: đo bù ghi kho 4–6 trên 65 câu đổi top 10 — không tụt; lịch có dòng ghi chú ăn uống cho bữa ở Bạch Mã / Nhị Hồ khi không có quán; trước: 17:50 14/11/2026 — cuối chiều 14/11: quán ăn trong lịch, nơi ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, mục web so tiền theo giá trị, ảnh lịch 33 / 34; trước: 16:19 14/11/2026 — kho sau lần ghi kho 3; chiều 14/11 thêm câu hỏi nhiều ý, nơi ở gợi ý trong lịch, lịch mẫu, ảnh dưới câu trả lời, bỏ chữ ghi công ảnh; "Lên kế hoạch" bản 2 + sửa lịch bằng lời + giao diện mới đang chạy; các bản cũ xem trong lịch sử phiên bản — git). Thư mục này viết cho người **không đọc code**. Báo cáo kỹ thuật
 của các agent nằm ở `report_agent/` — mỗi file ở đây có mục "Đọc chi tiết" trỏ sang đó. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## Chatbot này là gì

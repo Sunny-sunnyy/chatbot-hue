@@ -38,3 +38,27 @@ Mốc so sánh: vùng biển / đầm có 2.040 bữa không quán (3.960 − 1.
   - Giữ sàn: không bịa quán.
   - Nếu không làm: thẻ bữa ở đó vẫn trống như hiện nay (không sai, chỉ thiếu lời nhắc).
 - Bữa tối sau Nhị Hồ: bộ xếp đang gắn bữa tối với điểm cuối buổi chiều. Thấy ở đây nhưng chưa đếm ở chỗ khác. Không đề xuất sửa (hiện không hiện gì nên không gây sai).
+
+## Đã làm: ghi chú ăn uống (nhánh `p9-ghi-chu-an` @ `81e3aff`, A duyệt 15/11) — chờ E review
+
+Viết 09:50 15/11/2026 (`date`).
+
+**Đổi gì.** Bữa không chọn được quán và (điểm, bữa) có trong `GHI_CHU_AN` ⇒ server trả mục `quan: []` kèm `ghi_chu`. Thẻ bữa hiện câu đó; chữ chép / tải cũng có.
+- `backend/llm/quan_lich.py`: `GHI_CHU_AN` có 3 câu, chữ theo kho (dò bằng `scripts/grep_kb.sh`): Bạch Mã trưa · Nhị Hồ trưa · Nhị Hồ tối. `an_uong` và `dong_chu` đọc từ đây.
+- `frontend/src/LichV2.jsx` + `lkh.css`: thêm một `span.lkh-an-gc`. Chữ do server gửi, React tự thoát ký tự đặc biệt.
+- Không đổi dữ liệu `data/`, cờ hay chuỗi gửi model: khối `an` không vào tin nhắn gửi model, test Q1 hiện có vẫn qua.
+
+**Kiểm [đã chạy].**
+- `tests/test_quan_lich.py`: 16 passed, 13 s. Có test mới: 2 điểm không có quán trong 2 km ⇒ ghi chú đúng bữa và vào chữ chép. Test sàn mô phỏng bỏ qua mục ghi chú và kiểm rằng mục đó thuộc `GHI_CHU_AN`.
+- Cả `backend/tests` (có `--env-file`): **1048 passed, 265 s**.
+- `vite build` qua.
+- Playwright khổ 1440 trên server tạm cổng 8037 (cwd `/tmp/c_ga/backend`, đã tắt). Lịch 3 ngày + Thiên nhiên, 1 lần gọi model ≈ 0,0007 USD:
+  - ngày 2 có 2 dòng ghi chú, 0 quán, các bữa khác vẫn 2 quán;
+  - 0 lỗi console, 0 yêu cầu ra ngoài ⇒ DAT.
+  - Ảnh `data/dem_quan_nam_xa_2026-11-15/anh/`, script `tools/pw_ghi_chu.py`.
+
+**Điểm để reviewer xét.** Dòng tiêu đề vẫn là "Ăn tối gần Thác Nhị Hồ" trong khi ghi chú bảo về nơi nghỉ ăn tối, hơi ngược nghĩa. C giữ tiêu đề chung cho mọi thẻ; nếu E thấy cần, có thể đổi tiêu đề riêng cho mục có ghi chú.
+
+**Tiền:** 1 lượt Playwright ≈ 0,0007 USD; bộ test đủ có vài lượt gọi thật (chưa tách số).
+
+**Sau review E (`e_review_ghi_chu_an.md`, ready 0/0/2) — nhánh @ `e001cb2`:** m-1 câu Bạch Mã thu về "khu Ngũ Hồ và đỉnh núi" như kho; m-2 bỏ câu trưa Nhị Hồ (0 / 3.840 khung) ⇒ còn 2 câu. Test file 16 passed.
