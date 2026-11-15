@@ -20,5 +20,5 @@ A chọn làm vì đây sửa từ chối nhầm, **không nới rào**: ngày k
 | An toàn 32 ×1 | 0 lỗi · **0 đổi lớp** (29 / 3) — **đạt**; 0,0215 USD |
 | Test rộng (`backend/tests`, có key, sau build giao diện) | **1.064 đạt** / 0 trượt — 4 phút 47 |
 
-Tiền: **≈ 0,024 USD**. Bộ B5b: nhãn X01 nên đổi theo hành vi mới khi dùng bộ này lần sau (`cong_cu` True, `ngoai_7` False khi hôm nay không phải thứ Hai) — chưa sửa bộ (private, ngoài phạm vi nhánh).
+Tiền: **≈ 0,024 USD**. **Bộ B5b (A giao):** nhãn X01 `cong_cu` False / `ngoai_7` True ⇒ **True / False** (luật mới: "tuần sau" chỉ ngoài 7 ngày khi hôm nay thứ Hai; nhãn đúng khi chạy ngày khác thứ Hai); md5 `7e1bc3da2e44` ⇒ `65c6d4bc33f2`, sao lưu `data/phase_9/bo_do_b5b/cau_da_thay.truoc_tuan_sau_2026-11-15.jsonl`; `kiem_bo.py` trên nhánh: OK.
 Giới hạn: câu "thứ hai tuần sau" nhận cả các ngày có dự báo của tuần sau (không chỉ thứ Hai); "tuần tới" không thuộc bộ dò "ngoài 7 ngày" từ trước (không đổi).
