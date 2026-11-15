@@ -1,6 +1,6 @@
 # Ba sửa giao diện theo lượt thử của User (E · 15:46 15/11/2026, `date`)
 
-Người làm: E. A giao (User tự thử trên bản đang chạy, A ghi nhận 15:38 15/11/2026). Nhánh `p9-gd-3-sua`. Chỉ đổi `frontend/src/` (6 file, +19 / −46 dòng); không đổi server, lời dặn, dữ liệu.
+Người làm: E. A giao (User tự thử trên bản đang chạy, A ghi nhận 15:38 15/11/2026). Nhánh `p9-gd-3-sua`. Chỉ đổi `frontend/src/` (6 file, +20 / −46 dòng); không đổi server, lời dặn, dữ liệu.
 
 ## 1. Đã đổi gì
 | # | User báo | Sửa | File |
@@ -31,3 +31,7 @@ Tiền: 4 lượt Playwright × (1 lịch + 1 câu) ≈ 0,005 USD (3 lượt đ�
 - Cột trái trang Trợ lý vẫn có dòng mô tả tính năng đoán tên từ ảnh (không phải dòng User yêu cầu bỏ) — giữ.
 
 **Giải thích ngắn:** nút Sửa vốn vẫn điền lại biểu mẫu nhưng người dùng đang đứng ở cuối lịch nên không nhìn thấy — giờ trang tự cuộn về biểu mẫu. Hai dòng chữ User thấy thừa đã bỏ; lúc chờ vẫn còn một dòng báo trợ lý đang làm gì để màn hình không "đứng".
+
+## 5. Sau review C (ready, 0 blocker / 0 major / 2 minor; C đọc diff + grep, không chạy lại Playwright)
+- m-1 đóng: lớp `.progress` nay là một dòng chữ ⇒ bỏ `padding-left` + `list-style` của danh sách cũ (dòng bước không còn thụt vào so với ba chấm).
+- m-2 (tài liệu, A sửa khi merge): `Project_Status.md` §6 ghi ảnh gửi đi "kèm dòng báo trên giao diện" — nay dòng báo chỉ còn ở trang Giới thiệu.
