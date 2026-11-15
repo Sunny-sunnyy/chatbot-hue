@@ -25,6 +25,11 @@
 ## Tiền paid B chiều 15/11 (log lọc `git_sha` + file kết quả)
 đếm câu nối tiếp 0,0201 (`eee5781` + `f6d0540`) · đo nhánh web nối tiếp 0,0556 (`16a6715`) · mẫu giờ mở cửa 0,0159 (`2b0be16`) · Q5 0,0036 (file) ⇒ **≈ 0,095 USD**. Cả ngày 15/11: sáng 0,312 + chiều 0,095 ≈ 0,41 USD.
 
+## Sau vòng tự soi 2 (17:03 15/11/2026)
+- Tự soi 2 đã gửi cả nhóm + phản biện C / E gửi A. `bo_do_sua_lich/tools/mo_phong_v2.py` không còn ghim bảng v8 (mặc định theo settings; `BANG_FILE` để so; bản cũ `mo_phong_v2.truoc_2026-11-15.py`) [Chạy 10 / 10 hai chiều].
+- Đề xuất chờ A (việc mới, chưa làm): harness Q3 tự chạy mô phỏng nhãn 0 USD trước lượt có phí, dừng nếu < n / n.
+- **Rảnh — chờ A / User (chưa kết phiên).**
+
 ## Worktree / server
 0 worktree `/tmp` của B, 0 server, 0 tiến trình nền. Chưa commit (A): `STATUS_B.md`.
 
