@@ -9,7 +9,10 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 - **Quyền phiên (User chọn "như chiều 15/11", A ghi nhận 19:29 15/11/2026):** A tự điều phối, giao ngay việc có trong handoff; A tự commit / push `main`; B / C / E push nhánh riêng; tự tra / cào / ghi kho khi việc cần; tiền không trần cứng, dùng hiệu quả, lúc User vắng ≈ 1 USD; User nói "đi vắng" ⇒ câu hỏi gác. Hết hạn cuối phiên.
 - **Kiểm nhanh:** `main` `54265a5` = origin; hooksPath `.githooks`; Qdrant 1 collection 9.425; 0 worktree `/tmp`; **RAM WSL đã lên 19 GB, swap 8 GB — User đã áp `.wslconfig` 20 GB** (dòng "User chưa làm" ở mục RAM dưới là cũ). Luật nhóm "mỗi người ≤ 1 server tạm, một bộ test rộng một lúc" giữ.
 - **Đã giao (19:29 15/11/2026):** B — mục 2 (harness Q3 tự mô phỏng nhãn + tách `kiem_bo.py`; phần kín do User `!`) · C — 4b(c) phép đếm trước, rồi mục 4 trên nhánh `p9-sua-lich-no-nho` (tách hai việc) · E — 4b(b) đo lại bữa có quán kho ⇒ 4b(a) + nửa câu cách nhắn hạng sao ở dòng link Nơi ở (nhánh `p9-chu-gioi-thieu`) ⇒ mục 3 (E tự tìm ảnh Hải Vân, A nhìn lại). Mỗi tin kèm vòng tự soi 1 + xin ý kiến "hướng làm tiếp" (bàn nhóm trước khi A khuyến nghị User).
+- **B xong mục 2 (19:35 15/11/2026, 0 USD):** harness Q3 tự mô phỏng nhãn (10 / 10 ⇒ chạy; nhãn cũ 9 / 10 ⇒ dừng mã 2); `kiem_bo.py` bản cũ hỏng từ 14/11 ⇒ viết gọn, mặc định không mở file kín — `report_agent/2026-11-12_ra_khoang_cach/b_w84_harness_implementation.md`. E xong 4b(b) (63,9 %, A chạy lại khớp) + nhánh `p9-chu-gioi-thieu` `833f83d` chờ C review.
+- **Bàn nhóm "hướng làm tiếp" (đang gom):** E và B cùng xếp (d) User thử + sửa lỗi ⇒ (c) B7 lượt cuối (chạy sau khi code đứng yên) ⇒ nửa sau (a) "xin chỗ ở không nêu hạng" ⇒ (b) tốc độ câu hỏi tiếp (chưa có ý sửa mới); chờ C.
 - **A:** server cổng 8010 mở cho User thử.
+- **User (A ghi nhận 19:34 15/11/2026):** đang có mặt, cần quyết gì thì nhắn; **đóng phiên khoảng 22:10–22:20** ⇒ làm việc tới ~21:50, rồi vòng tự soi 2 + tài liệu kết phiên (không dừng sớm hơn).
 - **Lệnh dọn nhánh:** thêm `p9-tai-lieu-web-noi-tiep`, `p9-tai-lieu-ket-phien-chieu` (đã trong `main` — B, E báo) vào danh sách ở mục "User tự làm (2)".
 
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 18:24 15/11/2026, KẾT PHIÊN CHIỀU 15/11 — User: "kết phiên để reset context, tôi bật lại 4 phiên mới để tiếp tục hoàn thiện dự án; nhiệm vụ, câu hỏi để ở session tiếp theo; cập nhật các file .md đầy đủ để A, B, C, D, E nắm ngữ cảnh")
@@ -62,6 +65,11 @@ grep -c -i -E "từ hiếu|trường tiền|tràng tiền|hải vân|bến ngự
 cd /home/minhhieu/hue_rag/backend && BANG_FILE=diem_v9.json PYTHONPATH=/home/minhhieu/hue_rag/backend uv run python /home/minhhieu/hue_rag/data/nhan_cu_v9_2026-11-15/mo_phong_bang.py /home/minhhieu/hue_rag/backend /home/minhhieu/hue_rag/data/phase_9/bo_do_sua_lich/chuoi_sealed.jsonl --kin 2>/dev/null | tail -1; echo "ma thoat: ${PIPESTATUS[0]}"
 ```
 Cách đọc: lệnh 1 = số dòng nhắc 7 nơi mới; lệnh 2 in "k / n chuỗi khớp" + "ma thoat: 0" — k < n ⇒ có nhãn kín cũ (báo A; A xếp người được phép sửa); không có dòng đếm + "ma thoat: 1" ⇒ công cụ lỗi, không lộ gì.
+**(1b) Kiểm khuôn bộ kín sau khi B viết lại `kiem_bo.py`** (A thêm 19:35 15/11/2026; B thử trên file kín giả; chỉ in số đếm, giữ nguyên đuôi):
+```
+cd /home/minhhieu/hue_rag/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/phase_9/bo_do_sua_lich/tools/kiem_bo.py --ca-kin 2>/dev/null | tail -1; echo "ma thoat: ${PIPESTATUS[0]}"
+```
+Cách đọc: "lỗi thêm khi gộp bộ kín: 0" + "ma thoat: 0" ⇒ ổn; số > 0 ⇒ báo A; không có dòng đếm + "ma thoat: 1" ⇒ file kín sai khuôn / công cụ lỗi, không lộ gì. **Ba lệnh (1) + (1b) cần chạy xong trước lượt đo cuối B7.**
 **(2) Xoá nhánh đã merge** (A liệt kê bằng `git branch -r --merged origin/main` lúc kết phiên chiều; gồm cả 14 nhánh của phiên trưa chưa xoá):
 ```
 git worktree prune
