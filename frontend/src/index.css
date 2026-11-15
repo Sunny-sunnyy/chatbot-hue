@@ -238,6 +238,14 @@ picture { display: contents; }
 .nguon-ten[aria-expanded="true"] { font-weight: 600; }
 .nguon-doan { margin-top: 8px; padding: 8px 12px; border-left: 3px solid var(--color-accent); background: var(--color-page); border-radius: 0 8px 8px 0; }
 .nguon-doan blockquote + blockquote { margin-top: 6px; }
+/* đoạn trích là Markdown của bài kho, hiện qua bộ lọc (markdown.js `renderExcerptHtml`): giữ cỡ chữ của khung, không để tiêu đề / bảng phình to */
+.nguon-doan blockquote > * + * { margin-top: 4px; }
+.nguon-doan blockquote :is(h1, h2, h3, h4, h5, h6) { font-size: 1em; font-weight: 600; }
+.nguon-doan blockquote :is(ul, ol) { padding-left: 1.2em; }
+.nguon-doan blockquote ul { list-style: disc; }
+.nguon-doan blockquote ol { list-style: decimal; }
+.nguon-doan blockquote table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 0.95em; }
+.nguon-doan blockquote :is(th, td) { padding: 2px 8px; border: 1px solid var(--color-line); text-align: left; vertical-align: top; }
 .nguon-phan + .nguon-phan { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--color-line); }
 /* Việc nhỏ 08/11: gợi ý dưới câu từ chối của kho (5), bộ đếm ký tự (2) */
 .goi-y-hoi { margin-top: 10px; font-size: 15px; }
@@ -246,12 +254,6 @@ picture { display: contents; }
 .dem-ky-tu { margin-top: 4px; font-size: 13px; color: var(--color-muted); }
 .nguon-bai { display: inline-block; margin-top: 6px; color: var(--color-accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
-.feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 68ch; margin-top: 8px; padding-left: 4px; }
-.feedback button { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; border: 1px solid var(--color-field-line);
-                   border-radius: 999px; background: var(--color-surface); color: var(--color-muted); cursor: pointer; }
-.feedback button:hover { background: var(--color-accent-soft); }
-.feedback button[aria-pressed="true"] { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent); }
-.feedback button:disabled { cursor: wait; }
 .progress { max-width: 68ch; margin: 6px 0 0; font-size: 0.875rem; color: var(--color-muted); }  /* một dòng bước đang chạy (15/11: không còn là danh sách) */
 .lich { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; max-width: 68ch; margin-top: 10px; }
 .map-links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 0; padding: 0; list-style: none; }

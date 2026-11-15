@@ -101,7 +101,6 @@
                          border-radius: 22px; }
 .lich-v2 .lich-ghi-chu ul { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; }
 .lich-v2 .nguon, .lich-v2 .notice, .lich-v2 .lich { margin-top: 14px; }
-.lkh-lich .feedback { margin-top: 4px; }
 
 @media (max-width: 980px) {
   .lkh-cot { grid-template-columns: 1fr; gap: 24px; padding-top: 20px; }

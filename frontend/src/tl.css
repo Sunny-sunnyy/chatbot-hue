@@ -1,5 +1,5 @@
 /* Trang Trợ lý Huế — H1 "Sông Hương" (bản mẫu data/ui_mau_2026-11-14/h1/tro_ly.html, User duyệt 14/11). B, đợt 1 giao diện.
-   Tên lớp cũ (.turn .ask .bubble .answer .composer .send .searching .feedback .notice .clarify .web .nguon-ten) GIỮ — bộ đo / Playwright bám vào.
+   Tên lớp cũ (.turn .ask .bubble .answer .composer .send .searching .notice .clarify .web .nguon-ten) GIỮ — bộ đo / Playwright bám vào.
    Lớp mới tiền tố tl- (trang) hoặc tên ngắn trong khung lượt (.tra, .buoc, .go). Chuyển động chỉ dưới .hieu-ung (hieu_ung.css). */
 
 /* Bố cục trang: cột gợi ý trái + khung chat. Ghi đè bề rộng cũ của index.css (.tro-ly-trang 900 px) theo mẫu 1280 (review E m-1) */

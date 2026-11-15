@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { BIEU_MAU } from "./chung.jsx";
 import { LichV2 } from "./LichV2.jsx";
-import { Feedback } from "./chat.jsx";
 import "./lkh.css";
 
 export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
@@ -120,12 +119,11 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
   const t = lichTurn;
   const dangChay = !["done", "error", "stopped"].includes(t.phase);
   return (
-    <div className="lkh-lich">
+    <div className="lkh-lich" data-phase={t.phase}>
       {!t.lichV2 && dangChay && t.progress?.length > 0 && <p className="progress" role="status">{t.progress[t.progress.length - 1]}</p>}
       {!t.lichV2 && dangChay && <span className="lkh-go" role="status" aria-label="đang xếp lịch"><i /><i /><i /></span>}
       {t.error && <p className="loi" role="alert">{t.error}</p>}
       {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} />}
-      {t.phase === "done" && t.turnId && <Feedback turnId={t.turnId} />}
     </div>
   );
 }

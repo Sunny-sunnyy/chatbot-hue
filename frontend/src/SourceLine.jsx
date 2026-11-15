@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { baiHref } from "./route.js";
+import { gopLatBang, renderExcerptHtml } from "./markdown.js";
 
 // Dòng "Nguồn" bấm mở đoạn gốc — dùng chung cho trợ lý và thẻ lịch (tách từ chat.jsx, đợt 0 giao diện H1; hành vi giữ nguyên).
 export function SourceLine({ turn }) {
@@ -31,7 +32,7 @@ export function SourceLine({ turn }) {
           {shown.parts.map(part => (
             <div key={part.id} className="nguon-phan">
               {part.heading_path.length > 0 && <p className="text-sm text-muted">{part.heading_path.join(" › ")}</p>}
-              {part.excerpts.map((excerpt, index) => <blockquote key={index} className="whitespace-pre-line">{excerpt}</blockquote>)}
+              {gopLatBang(part.excerpts).map((excerpt, index) => <blockquote key={index} dangerouslySetInnerHTML={{ __html: renderExcerptHtml(excerpt) }} />)}
             </div>
           ))}
           {shown.bai_id && <a className="nguon-bai" href={baiHref(shown.bai_id)}>Đọc cả bài “{shown.title}”</a>}
