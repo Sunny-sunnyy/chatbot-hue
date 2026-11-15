@@ -52,3 +52,11 @@ Ghi thêm: cặp "nêu tên mình" có cổng web mở thực ra cũng là câu 
 Tiền (log lọc `git_sha 16a6715`): **0,0556 USD** (trần 0,15); cộng phần đếm trước 0,0201 ⇒ cả việc 0,076 USD.
 
 **Giải thích ngắn:** khi hỏi tiếp kiểu "mở cửa mấy giờ" mà kho không có, trợ lý trước đây đem nguyên câu cụt đó đi tra web nên trả lời lạc sang nơi khác. Bản sửa dùng luôn câu tìm kho mà model vừa tự viết (đã có tên nơi) để tra web. Đo 8 cặp: 8 / 8 câu tra web đúng nơi, không còn mục web lạc đề, tên người dùng không lọt ra. Còn hạn chế: nhiều mục web vẫn bị bộ kiểm số thay bằng câu "chưa tra được".
+
+## Sửa theo review E (16:18 15/11/2026) — `e_review_web_noi_tiep.md`: 0 blocker / 1 major (chỉ chặn bật cờ) / 2 minor
+
+- **M-1 (đóng theo cách A chọn):** lượt **nhiều ý** giữ câu người dùng gõ như cũ — câu tìm cuối của model có thể thuộc vế kho đã trả lời, còn mục web phải viết cho vế thiếu; đường này chưa đo nên không đổi. 1 điều kiện trong `cau_cho_web` + 1 ca test.
+- **m-1:** câu tìm cuối của model rỗng / toàn dấu cách ⇒ rơi về câu gõ (không tra web bằng mỗi chữ "Huế"). + 1 ca test.
+- **m-2 (theo dõi khi bật, A ghi checklist):** tên người dùng mới đo 0 / 4 lượt chạm; không thêm bộ lọc đoán.
+- `test_b6_tra_web.py` 111 đạt (18 s). Không chạy lại lượt có phí: 17 lượt thứ hai đã đo không có lượt nhiều ý nào và không có câu tìm rỗng ⇒ hai sửa này không chạm lượt nào đã đo.
+- Giới hạn mới: **câu hỏi tiếp nhiều ý mà kho thiếu vẫn tra web bằng câu gõ (có thể cụt)** — chưa sửa, chưa đo.

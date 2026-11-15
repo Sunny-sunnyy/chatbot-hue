@@ -1025,8 +1025,10 @@ def so_y(cau: str) -> int:
 
 def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) -> str:
     """Câu dùng cho phần web. Mặc định: câu người dùng gõ ở lượt này (D2). Cờ `web_cau_noi_tiep` + lượt có lịch sử + model đã tự tìm kho ⇒ câu tìm kho
-    CUỐI model viết: model đã ghép chủ thể của lượt trước vào đó (đo 15/11: 9 / 9 lần nêu đúng tên), còn câu gõ thì cụt. Lượt đầu / model không tìm ⇒ như cũ."""
-    if flags is not None and flags.web_cau_noi_tiep and trace.history and trace.model_queries:
+    CUỐI model viết: model đã ghép chủ thể của lượt trước vào đó (đo 15/11: 9 / 9 lần nêu đúng tên), còn câu gõ thì cụt. Lượt đầu / model không tìm /
+    câu tìm rỗng / lượt nhiều ý ⇒ như cũ."""
+    # Lượt nhiều ý giữ câu gõ: câu tìm cuối của model có thể thuộc vế kho ĐÃ trả lời, còn mục web phải viết cho vế thiếu (review E M-1; chưa đo)
+    if flags is not None and flags.web_cau_noi_tiep and trace.history and not trace.nhieu_y and trace.model_queries and trace.model_queries[-1].strip():
         return trace.model_queries[-1]
     return query
 

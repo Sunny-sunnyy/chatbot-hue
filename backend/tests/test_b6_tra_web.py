@@ -466,11 +466,11 @@ CAU_MODEL = "Phòng tập Sông Hương mở cửa lúc mấy giờ?"
 LICH_SU = (("Phòng tập Sông Hương ở đâu?", ""),)
 
 
-def _web_noi_tiep(flags, history=(), model_queries=(), query=CAU_CUT, text="Mở từ 5h sáng [w1]."):
+def _web_noi_tiep(flags, history=(), model_queries=(), query=CAU_CUT, text="Mở từ 5h sáng [w1].", **trace_kw):
     """⇒ (câu Serper nhận, tin nhắn gửi model viết mục web, trace)."""
     reqs, calls = [], []
     gen = generator(lambda n, kw: (calls.append(kw), [answer(text)])[1])
-    trace = refused(history=tuple(history), model_queries=list(model_queries))
+    trace = refused(history=tuple(history), model_queries=list(model_queries), **trace_kw)
     asyncio.run(cong_web(query, gen, trace, serper(calls=reqs), flags))
     return json.loads(reqs[0].content)["q"], json.dumps(calls[0]["input"], ensure_ascii=False) if calls else "", trace
 
@@ -480,6 +480,7 @@ def _web_noi_tiep(flags, history=(), model_queries=(), query=CAU_CUT, text="Mở
     (None, LICH_SU, [CAU_MODEL]),                 # nơi gọi cũ không truyền cờ
     (NOI_TIEP, (), [CAU_MODEL]),                  # lượt đầu (không lịch sử): model có tìm cũng không đổi
     (NOI_TIEP, LICH_SU, []),                      # có lịch sử nhưng model không tìm lần nào
+    (NOI_TIEP, LICH_SU, [CAU_MODEL, "   "]),       # câu tìm cuối của model rỗng (review E m-1) ⇒ không tra web bằng mỗi chữ "Huế"
 ])
 def test_follow_up_flag_off_or_not_applicable_sends_typed_question_as_before(flags, history, model_queries):
     q, sent, trace = _web_noi_tiep(flags, history, model_queries)
@@ -508,3 +509,8 @@ def test_follow_up_model_query_still_goes_through_query_cleaner():
 def test_follow_up_safety_rules_look_at_both_questions(typed, model_q, outcome):
     _, _, trace = _web_noi_tiep(NOI_TIEP, LICH_SU, [model_q], query=typed)
     assert trace.web["outcome"] == outcome
+
+
+def test_follow_up_multi_part_turn_keeps_typed_question():  # review E M-1: câu tìm cuối của model có thể thuộc vế kho đã có ⇒ lượt nhiều ý không đổi
+    q, sent, trace = _web_noi_tiep(NOI_TIEP, LICH_SU, [CAU_MODEL], nhieu_y=True)
+    assert q == tw.cau_tim_web(CAU_CUT) and CAU_MODEL not in sent and "cau_tu_model" not in trace.tools[-1]
