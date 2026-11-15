@@ -1,6 +1,6 @@
 # Bài 22 — Viết thêm vào sổ tay mà không làm hỏng trang cũ: sáu lần ghi kho ngày 14/11
 
-*Cập nhật lần cuối: 09:43, ngày 15/11/2026 · thêm lượt đo bù 65 câu cho lần 4–6 (không câu nào tụt). Trước: 20:31, ngày 14/11/2026 · thêm lần ghi kho thứ sáu (16 bài lễ hội / nghệ thuật). Trước: 19:41, ngày 14/11/2026 · thêm lần ghi kho thứ năm (10 món, 13 địa điểm / di tích mà trợ lý từng từ chối hoặc trả lời mỏng). Trước: 17:59, ngày 14/11/2026 · thêm lần ghi kho thứ tư (tám quán ăn cho những vùng lịch còn thiếu quán). Trước: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
+*Cập nhật lần cuối: 11:30, ngày 15/11/2026 · thêm sửa hai bài nói khác nhau về năm Tây Sơn đóng đô. Trước: 09:43, ngày 15/11/2026 · thêm lượt đo bù 65 câu cho lần 4–6 (không câu nào tụt). Trước: 20:31, ngày 14/11/2026 · thêm lần ghi kho thứ sáu (16 bài lễ hội / nghệ thuật). Trước: 19:41, ngày 14/11/2026 · thêm lần ghi kho thứ năm (10 món, 13 địa điểm / di tích mà trợ lý từng từ chối hoặc trả lời mỏng). Trước: 17:59, ngày 14/11/2026 · thêm lần ghi kho thứ tư (tám quán ăn cho những vùng lịch còn thiếu quán). Trước: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -216,6 +216,36 @@ Kết luận: ba lần ghi tối 14/11 **không làm câu cũ nào tụt**, gi�
 **0,03 USD**. Từ nay "câu chạm" của mỗi lần ghi kho đếm theo nghĩa rộng này. Giới hạn: mốc là lần đo sau lần 2, nên 65 câu gồm cả tác động của lần 3 và vài sửa ở
 mục web cùng ngày; chạy một lượt nên không tách được nhiễu với thay đổi thật ở mức từng chữ.
 
+## Sáng 15/11: hai trang sổ tay nói khác nhau về một năm
+
+Không phải lúc nào cũng thêm bài. Có khi phải sửa chỗ **hai trang tự cãi nhau**: người hướng dẫn viên mở hai trang, mỗi trang ghi một năm.
+
+**Tìm.** Một người làm màn hình "Huế qua các thời kỳ" thấy bài Kinh thành ghi Tây Sơn đóng đô ở Phú Xuân 1786–1801, còn bài Quần thể di tích ghi 1788–1801.
+Mình quét thêm toàn kho (0 USD):
+- năm xây / dựng / ghi danh của một nơi ở bài khác so với bài riêng của nơi đó;
+- năm UNESCO của 7 di sản;
+- giá vé một điểm chính.
+
+Kết quả: không thấy chỗ lệch mới. Một chỗ lệch cũ về vị trí một bảo tàng nay đã khớp — mình đoán đã được sửa trong một lần ghi kho ngày 14/11.
+
+**Tra.** Nguồn công khai không trái nhau mà nói **hai sự kiện**: 1786 là năm quân Tây Sơn chiếm Phú Xuân; 1788 là năm Nguyễn Huệ lên ngôi (Quang Trung) ở đó,
+và từ đấy Phú Xuân mới là kinh đô. Khi phải chọn giữa hai cách ghi, mình không tự chọn mà hỏi anh. Anh chọn "ghi cả hai mốc".
+
+**Sửa.** Hai câu ở hai bài, nay cùng ghi hai mốc: năm 1786 quân Tây Sơn chiếm thành Phú Xuân, còn giai đoạn kinh đô tính từ lúc Quang Trung lên ngôi năm 1788 đến 1801.
+- Người thứ hai đọc trước khi ghi, và bắt một câu gãy ngữ pháp.
+- Bản nháp qua bước quét trùng câu đo.
+- Dựng lại chỉ mục: vẫn 9.425 đoạn.
+
+**Đo.**
+- Bước tìm của cả 158 câu đo ra **đúng 10 đoạn như trước**, và không câu nào có đoạn vừa sửa trong 10 đoạn đó. Tức là ngữ cảnh gửi model của mọi câu đo giống
+  hệt (ở lần tìm đầu; lần "tìm thêm" không kiểm), nên không chạy lại bộ câu đo có đáp án.
+- Bộ an toàn 32 câu và 18 câu ngoài kho thì tiêu chí ghi trước vẫn đòi chạy. Mình suýt bỏ qua; người kiểm độc lập bắt được, nên chạy bù:
+  0 / 18 câu ngoài kho bị trả lời, 32 câu an toàn không câu nào đổi lớp, 0 lỗi.
+- Hai câu hỏi thử về năm đó ⇒ trả lời "kinh đô từ 1788, khi Quang Trung lên ngôi" và "Tây Sơn 1788–1801", trích đúng bài. Không còn năm nào trái nhau.
+- Tiêu chí ghi trước đòi câu trả lời nêu **cả hai mốc**; câu trả lời chỉ nêu 1788, vì câu hỏi hỏi năm kinh đô. Mình ghi là đạt **một phần**, không sửa tiêu
+  chí cho khớp. Không có lượt hỏi trước khi sửa để so.
+- Tiền ≈ 0,03 USD (phần lớn là lượt chạy bù an toàn + ngoài kho).
+
 ## Một chuyện thật: hai lần "trượt chữ" mà vẫn giữ
 
 **Từ chối nhầm 3 ⇒ 5 (lần 1).** Theo luật ghi trước, đây là trượt. Nhưng trước khi kết luận "bài mới làm hỏng", mình xem hai câu thêm vào:
@@ -243,6 +273,7 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
   bật đèn cầu không có nguồn mới nên bài nói rõ là có thể đã đổi.
 - **Nguồn web sai hoặc lời kể chép thành tư liệu**: lần 5 người kiểm bắt bài Lục Bộ ghi sai vị trí và một lời kể của nghệ nhân bị viết như tư liệu — bài
   viết từ web vẫn cần người thứ hai đọc trước khi ghi.
+- **Hai trang tự cãi nhau**: mỗi bài viết riêng, nên cùng một mốc có thể ghi khác ở hai bài. Mới quét có giới hạn (năm xây, năm UNESCO, giá vé); số đo, tên người xây và giờ mở cửa chưa quét.
 - **Đếm câu chạm chỉ dựa trên bước tìm**: nếu đoạn mới chen vào lần tìm thêm của trợ lý (không phải lần tìm đầu), cách đếm này không thấy.
 
 ## Ba điều chính
@@ -274,6 +305,7 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 - Lần 4: tiêu chí ghi trước `data/sua_kho_2026-11-14_ghi_kho_4/TIEU_CHI.md`; nguồn tra quán `data/tra_cuu_cli/2026-11-14_quan-thuy-xuan-dam-chuon/`, `…_quan-kim-long-thuan-an/`; 224 bài / 8.644 đoạn, T1 9 / 158 đổi, 3 câu chạm, ngoài kho 0 / 18, an toàn 0 đổi lớp, 4 câu thử, 0,030 USD: `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_4_implementation.md` [đã chạy]; bảng quán + 69,1 % + số theo vùng: `data/quan_lich_2026-11-14/bien_ban_quan_kho_them.md`, `dem_theo_cum_kho4.json` (nhánh `p9-quan-kho4-bang`, review `e_review_quan_kho4_bang.md`); câu thử "trước" 3 / 4 đọc từ `data/sua_kho_2026-11-14_ghi_kho_4/hoi_thu_truoc.jsonl` (report B ghi 2 / 4 — sai); mốc 49,3 %: `p9-quan-kho-cum` [đã chạy].
 - Lần 6: đếm `data/bai_kho_6_le_hoi/BUOC_1_DEM.md` (39 mục, 24 hỏi thử: 9 / 7 / 8); kiểm chéo `data/bai_kho_6_le_hoi/b_kiem_8_bai_c.md` (0 / 14 / 42), `c_review_8_bai_b.md`; quét trùng `data/sua_kho_2026-11-14_ghi_kho_6/overlap.txt`; 263 / 9.425, T1 42 / 158 đổi, 2 câu chạm, ngoài kho 0 / 18, an toàn 0 đổi lớp, 24 câu thử 9 (+ 1 "chưa có thông tin") ⇒ 0 từ chối, 0,045 USD (report B ghi "10" và "~13 / ~43" — biên bản gốc 14 / 42): `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_6_implementation.md` [đã chạy].
 - Lần 5: tiêu chí `data/sua_kho_2026-11-14_ghi_kho_5/TIEU_CHI.md`; đếm món `data/mon_an_2026-11-14/BUOC_1_DEM.md` (46 tên, 21 hỏi thử, 10 hỏng, ≈ 0,014 USD); đếm nơi `data/bai_kho_5_dia_danh/ket_qua_buoc1.json`, `BAN_GIAO.md` (92 nơi, 42 hỏi thử, 14 hỏng, 0,0244 USD + Serper ≈ 0,025); review `data/mon_an_2026-11-14/c_review_10_bai.md` + biên bản C cho 13 bài (301 số); 247 / 9.032, T1 35 / 158 đổi, 3 câu chạm, ngoài kho 0 / 18, an toàn 0 đổi lớp, 23 câu thử, 0,039 USD: `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_5_implementation.md` [đã chạy].
+- Sửa năm Tây Sơn (15/11): `report_agent/2026-11-12_ra_khoang_cach/c_kho_mau_thuan.md` (quét, nguồn khamphahue 29/07/2018 + Tạp chí Đông Nam Á 29/11/2024), `c_sua_kho_tay_son_implementation.md`, review `e_review_tay_son.md`; dựng 9.425 point, record `1b53af26b662`, T1 `aa34d4215f15` giống mốc, 0 câu có đoạn sửa, 2 câu thử PARTIAL so tiêu chí (`data/sua_kho_2026-11-15_tay_son/TIEU_CHI.md`), chạy bù an toàn 32 (0 đổi lớp, 0,0218 USD) + 18 ngoài kho (0 / 18, 0,0046 USD) `sau/` [đã chạy]; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_tay_son.md` (25 khẳng định: 1 sai — bỏ sót an toàn / ngoài kho, 4 dễ hiểu nhầm — đã sửa).
 - Kiểm độc lập lần 6 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan6.md`): 39 mục — 31 đúng, 1 sai (tiền 0,03–0,04 ⇒ 0,03–0,05), 6 dễ hiểu nhầm, 1 không kiểm được; đã sửa cả 7.
 - Kiểm độc lập lần 5 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan5.md`): 50 mục — 39 đúng, 2 sai (câu "ba lần" sót, giờ bài 01), 6 dễ hiểu nhầm, 3 không kiểm được (lý do tiền đắt là suy luận — đã ghi "mình đoán"); đã sửa cả 8.
 - Kiểm độc lập lần 4 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan4.md`): 49 mục — 35 đúng, 2 sai (câu thử trước 3 / 4; 7 quán vào bảng), 10 dễ hiểu nhầm, 2 không kiểm được; đã sửa cả 12. Tiền lần 3 cộng từng khoản ra ~0,037 (report ghi 0,030) ⇒ tổng có thể ~0,52.

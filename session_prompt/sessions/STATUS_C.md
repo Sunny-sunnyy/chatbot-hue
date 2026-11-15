@@ -19,6 +19,7 @@
 **Sửa kho Tây Sơn (User duyệt):** 2 câu ở 2 bài (E review, m-1 sửa), sao lưu `meta/backup_sua_kho_2026-11-15_tay_son`, dựng 11:15–11:22 ⇒ 9.425 point, record `1b53af26b662`, sparse `ccd1d3ae36ec`; T1 giống mốc (`aa34d4215f15`), 0 câu có đoạn sửa trong top 10 ⇒ không đo Golden có phí. Còn: 2 câu hỏi thử (chờ E build Docker xong) + report + bài học / sổ 02. Hồ sơ `data/sua_kho_2026-11-15_tay_son/`.
 **Đếm ảnh trong chat XONG:** `c_dem_anh_chat.md` (77 ⇒ ~118 / 154 ước; khách sạn 0 câu Golden) — đã gửi nhóm bàn.
 **Tây Sơn: 2 câu thử xong (PARTIAL so tiêu chí — đúng, khớp, chỉ nêu 1788).** Report `c_sua_kho_tay_son_implementation.md`; bài 22 + sổ 02 + README sửa trên main working tree; agent con kiểm độc lập bài 22 đang chạy ⇒ `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_tay_son.md`. Tiền việc ≈ 0,003 USD.
+**Tây Sơn XONG (đo + tài liệu):** kiểm độc lập bắt C bỏ sót an toàn 32 + 18 ngoài kho ⇒ chạy bù: 0 đổi lớp, 0 / 18 — đạt. Bài 22 + sổ 02 + README sửa theo biên bản — chờ A commit. Tiền ≈ 0,029 USD. Rảnh — chờ (B đang chạy lượt đo có phí: không server / pytest / dựng).
 
 ## (Kết phiên tối 14/11 — CŨ) PHIÊN SAU ĐỌC TRƯỚC (C viết lúc kết phiên tối 14/11, 22:35 14/11/2026 `date`)
 
