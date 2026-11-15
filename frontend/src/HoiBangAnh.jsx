@@ -18,22 +18,25 @@ export function cauGhep(chu, ten) {
 
 // Chỉ hiện nút khi server bật tính năng (cờ `anh.bat`): cổng đợt 1 đọc cờ một lần ở `/api/tinh_nang` (App) thay vì dò `GET /api/anh/ung_vien` —
 // dò ra 404 thành lỗi console mỗi lần mở trợ lý (Q-G đòi 0 lỗi console).
-// User 15/11: nút chữ nằm riêng một hàng tốn chỗ ⇒ nút dấu cộng TRONG ô nhập + dán ảnh thẳng vào ô. Vì nút và thẻ gợi ý nằm ở hai chỗ khác nhau
-// của khung nhập nên đây là hook trả ba mảnh: `nut` (đặt trong ô nhập), `the` (thẻ gợi ý, đặt trên ô nhập), `onPaste` (gắn vào ô gõ).
-// Cờ tắt ⇒ cả ba rỗng: không nút, dán ảnh không làm gì.
+// User 15/11: nút chữ nằm riêng một hàng tốn chỗ ⇒ nút dấu cộng TRONG ô nhập + dán ảnh thẳng vào ô.
+// User 15/11 (tối): ảnh là tệp ĐÍNH KÈM của tin nhắn — chọn / dán ảnh thì hệ thống CHƯA làm gì (0 lần gọi API), ảnh nhỏ nằm trong ô nhập;
+// người dùng gõ câu (hoặc để trống) rồi bấm Hỏi ⇒ lúc đó mới gửi ảnh đi nhận diện ⇒ thẻ xác nhận tên ⇒ bấm tên ⇒ gửi câu đã gõ kèm tên.
+// Hook trả: `nut` (dấu cộng) + `kem` (ảnh nhỏ có nút ×) đặt trong ô nhập, `the` (thẻ chờ / xác nhận / lời báo) đặt trên ô nhập, `onPaste`
+// gắn vào ô gõ, `gui()` gọi khi bấm Hỏi — trả true nếu lượt này do ảnh xử lý (ô nhập không gửi câu trần). Cờ tắt ⇒ tất cả rỗng.
 export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
-  const [state, setState] = useState(null);  // null · {preview, phase: "dang" | "xong" | "loi", ungVien, text}
+  // null · {phase: "kem", file, preview} (đã đính kèm, chưa gửi gì) · {phase: "dang" | "xong" | "loi", preview, ungVien, text}
+  const [state, setState] = useState(null);
   const inputRef = useRef(null);
   const rootRef = useRef(null);
 
-  useEffect(() => () => state?.preview && URL.revokeObjectURL(state.preview), [state?.preview]);
+  useEffect(() => () => { if (state?.preview) URL.revokeObjectURL(state.preview); }, [state?.preview]);
   // Trang trợ lý: khung nhập dính đáy màn hình (sticky) và thẻ nằm trong khung ⇒ thẻ hiện là đè lên cuối câu trả lời đang đọc
   // (E bật ảnh 08/11, Playwright 1440 + 390). Cuộn trang xuống đáy ⇒ khung về đúng chỗ của nó, cuối cuộc trò chuyện nằm ngay trên thẻ.
   useEffect(() => {
     if (state && rootRef.current?.closest(".tro-ly-trang")) window.scrollTo({ top: document.documentElement.scrollHeight });
   }, [state?.phase]);
 
-  if (!bat) return { nut: null, the: null, onPaste: undefined };
+  if (!bat) return { nut: null, kem: null, the: null, onPaste: undefined, gui: () => false };
 
   function dong(goTen) {
     setState(null);
@@ -43,7 +46,7 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   function chonAnh(event) {
     const file = event.target.files?.[0];
     event.target.value = "";  // chọn lại cùng file vẫn chạy
-    if (file) nhanAnh(file);
+    if (file) dinhKem(file);
   }
 
   function onPaste(event) {
@@ -53,13 +56,27 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     const file = [...(cb?.files ?? [])].find(f => f.type.startsWith("image/"));
     if (!file || cb.getData("text/plain")) return;
     event.preventDefault();
-    if (!disabled && state?.phase !== "dang") nhanAnh(file);
+    if (!disabled && state?.phase !== "dang") dinhKem(file);
   }
 
-  async function nhanAnh(file) {
+  function dinhKem(file) {
+    // Kiểu / cỡ sai báo NGAY, kiểm ở trình duyệt. Hợp lệ ⇒ chỉ giữ ảnh ở trình duyệt (một ảnh mỗi câu — ảnh mới thay ảnh cũ), chưa gọi API.
     if (!KIEU.includes(file.type)) return setState({ phase: "loi", text: "Chọn ảnh JPEG, PNG hoặc WEBP." });
     if (file.size > MAX_BYTES) return setState({ phase: "loi", text: "Ảnh lớn hơn 10 MB — chọn ảnh nhỏ hơn." });
-    const preview = URL.createObjectURL(file);
+    setState({ phase: "kem", file, preview: URL.createObjectURL(file) });
+  }
+
+  function gui() {
+    if (state?.phase === "kem") {
+      nhanAnh(state.file, state.preview);
+      return true;
+    }
+    if (state?.phase === "dang" || state?.phase === "xong") return true;  // đang chờ / đang chờ người dùng chọn tên ⇒ không gửi câu trần
+    if (state) setState(null);  // thẻ lời báo còn mở ⇒ đóng, câu gõ đi như câu thường
+    return false;
+  }
+
+  async function nhanAnh(file, preview) {
     setState({ preview, phase: "dang" });
     try {
       const r = await fetch("/api/anh/ung_vien", { method: "POST", headers: { "Content-Type": file.type }, body: file });
@@ -82,15 +99,21 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
       <input ref={inputRef} type="file" accept={KIEU.join(",")} className="sr-only" tabIndex={-1} aria-hidden="true" onChange={chonAnh} />
     </>
   );
-  const the = state && (
+  const kem = state?.phase === "kem" && (
+    <span className="anh-kem">
+      <img src={state.preview} alt="Ảnh đính kèm" />
+      <button type="button" aria-label="Bỏ ảnh" title="Bỏ ảnh" onClick={() => setState(null)}>×</button>
+    </span>
+  );
+  const the = state && state.phase !== "kem" && (
     <div className="hoi-anh" ref={rootRef}>
       <div className="bubble hoi-anh-the" role="status">
         {state.preview && <img src={state.preview} alt="Ảnh bạn vừa chọn" className="hoi-anh-xem" />}
-        {state.phase === "dang" && <p>Đang nhận diện ảnh…</p>}
+        {state.phase === "dang" && <p>Đang xem ảnh…</p>}
         {state.phase === "loi" && <p>{state.text}</p>}
         {state.phase === "xong" && (
           <>
-            <p className="mb-2 font-semibold text-accent-deep">Gợi ý từ ảnh, có thể sai — chọn đúng tên:</p>
+            <p className="mb-2 font-semibold text-accent-deep">Trong ảnh là (có thể sai) — chọn đúng tên:</p>
             <div className="flex flex-wrap gap-2">
               {state.ungVien.map(u => (
                 <button key={u.id} type="button" className="send" disabled={disabled}
@@ -108,5 +131,5 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
       </div>
     </div>
   );
-  return { nut, the, onPaste };
+  return { nut, kem, the, onPaste, gui };
 }
