@@ -1,13 +1,14 @@
 # Báo cáo cho bạn: Hỏi bằng ảnh (Phase 10)
 
-**Cập nhật lần cuối: 19:28 10/11/2026 — bản 4: sửa các chỗ còn ghi "cờ tắt / chờ bật" — đã bật 08/11; sửa giao diện điện thoại đã vào `main` 08/11. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 21:36 15/11/2026 — bản 5: luồng người dùng thấy đổi tối 15/11 (nút dấu cộng trong ô nhập + dán ảnh; ảnh đính kèm câu hỏi, bấm Hỏi mới xử lý; ra một tên thì trả lời luôn, 2–3 tên thì hỏi chọn). Bản 4 (19:28 10/11/2026): sửa các chỗ còn ghi "cờ tắt / chờ bật". Các bản trước: xem lịch sử git.**
 Người viết: E · Review: A. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (luôn đúng hiện trạng)
 
-- **Làm gì:** người dùng chụp / chọn một ảnh (món ăn, công trình, cảnh ở Huế) ⇒ hệ thống đoán **1–3 tên** trong một danh sách 42 tên lấy từ kho (bạn đã duyệt) ⇒ người dùng **bấm tên đúng** ⇒ chatbot trả lời như khi gõ câu "Giới thiệu về <tên>", có nguồn như thường. Trợ lý **không bao giờ trả lời thẳng từ ảnh** — chỉ gợi tên để bấm.
-- **Đang chạy thế nào:** **đang bật** từ 08/11 (`anh.bat: true`) ⇒ người dùng thấy nút "Hỏi bằng ảnh" ở trang Trợ lý (máy tính: cả khung nổi). Khi bật, ảnh được gửi tới OpenAI (`gpt-6-luna`) để đoán tên.
+- **Làm gì:** người dùng đính kèm một ảnh (món ăn, công trình, cảnh ở Huế) vào câu hỏi rồi bấm Hỏi ⇒ hệ thống đoán **1–3 tên** trong danh sách 42 tên lấy từ kho (bạn đã duyệt) ⇒ **ra đúng một tên: trả lời luôn** (câu ghép "<câu đã gõ> (Trong ảnh: <tên>)", ô rỗng ⇒ "Giới thiệu về <tên>"), đầu câu trả lời có dòng "Mình đoán trong ảnh là <tên> — có thể sai"; **ra 2–3 tên: người dùng bấm tên đúng** rồi mới trả lời; không nhận ra ⇒ lời báo, gõ tên. Câu trả lời luôn từ kho, có nguồn — model trả lời **không nhìn ảnh**, chỉ nhận cái tên.
+- **Đang chạy thế nào:** **đang bật** từ 08/11 (`anh.bat: true`). Từ tối 15/11: **nút dấu cộng trong ô nhập** (thay nút chữ "Hỏi bằng ảnh") hoặc **dán ảnh** vào ô ⇒ ảnh nhỏ nằm trong ô như tệp đính kèm, **chưa gửi gì đi**; bấm Hỏi mới gửi ảnh tới OpenAI (`gpt-6-luna`) để đoán tên. Tải lại trang hoặc "Cuộc trò chuyện mới" ⇒ ảnh đính kèm bị gỡ. Bong bóng câu hỏi hiện ảnh nhỏ + đúng chữ người dùng gõ.
 - **Chất lượng (bộ 33 ảnh đã thấy):** đoán đúng tên trong 3 gợi ý ở **22 / 25** ảnh Huế (đạt ngưỡng 22), nhưng có lượt gán nhầm tên Huế cho **2 / 5** ảnh không phải Huế (ngưỡng ≤ 1) ⇒ **âm theo thước gốc**. Bạn chọn (11:42 05/11) **giữ dạng gợi ý có xác nhận**: nhãn "có thể sai", luôn có nút "Không phải các tên này — tôi gõ tên"; lỗi đoán nhầm không thành câu trả lời sai vì người dùng phải bấm tên.
+- **Vì sao đổi sang "lai" (15/11, bạn chọn sau khi thử + xem số):** đếm lại kết quả đã lưu của bộ 33 ảnh × 2 lượt (66 lượt, không gọi model): lượt nào cũng trả lời luôn theo tên đầu ⇒ **14 / 66** lượt trả lời về sai nơi; model đưa **một tên** thì tên đó đúng **31 / 33** lượt (ảnh trong danh sách), đưa 2–3 tên thì tên đầu chỉ đúng 11 / 17 ⇒ cách lai còn **6 / 66** lượt sai nơi, **19 / 66 (29 %)** lượt vẫn phải bấm chọn. Đổi có chủ ý so với quyết định 05/11 (luôn xác nhận): chấp nhận một ít câu sai nơi có dòng cảnh báo. Mẫu nhỏ, ảnh công khai — chưa có số trên ảnh người dùng tự chụp. Nguồn: `data/dem_ten_so_1_2026-11-15/KET_QUA.md` (riêng tư).
 - **Thử thay bằng model chạy trên máy (SigLIP 2, miễn phí):** 3 cách đều **âm** — cách tốt nhất đoán đúng 20 / 25 nhưng **không biết nói "không nhận ra"** (ảnh con mèo cũng được gợi tên Huế). Không đưa vào chatbot.
 - **Tiền / tốc độ:** ≈ **0,0004 USD / ảnh** (≈ 10 đồng) cộng câu trả lời sau khi bấm (≈ 0,0005 USD). Đoán tên mất trung vị ≈ 3 s (bộ 33 ảnh, 05/11; thử 5 ảnh lúc bật 08/11: 3,5 s), chậm nhất (p95) 6,3–9,1 s — **chưa đạt** mục tiêu ≤ 5 s. Tổng tiền Phase 10 tới nay **0,0984 USD** (≈ 2.500 đồng) / trần 0,15.
 - **Bạn cần quyết:** xem §6.
@@ -15,7 +16,7 @@ Người viết: E · Review: A. Bản 10/11: agent con của A, chưa review. T
 ## 2. Hoạt động thế nào (bản trong `main`, khi cờ bật)
 
 ```text
-Người dùng chọn ảnh (trình duyệt: chỉ JPEG / PNG / WEBP, ≤ 10 MB; xem trước ảnh ngay trên máy, không tải lên chỗ khác)
+Người dùng bấm dấu cộng trong ô nhập hoặc dán ảnh (trình duyệt: chỉ JPEG / PNG / WEBP, ≤ 10 MB; ảnh nhỏ nằm trong ô, CHƯA gửi gì) ⇒ gõ câu ⇒ bấm Hỏi
   ⇒ POST /api/anh/ung_vien  (backend/api/routes/anh.py)
      rào trước khi đọc ảnh: yêu cầu phải từ chính trang chatbot, đúng kiểu ảnh, ≤ 10 MB  — sai ⇒ từ chối, không gọi model
   ⇒ xử lý ảnh trên máy (backend/llm/nhan_anh.py chuan_bi_anh): chặn ảnh "bom" quá 40 triệu điểm ảnh, xoay đúng chiều,
@@ -23,8 +24,11 @@ Người dùng chọn ảnh (trình duyệt: chỉ JPEG / PNG / WEBP, ≤ 10 MB;
   ⇒ một lần gọi gpt-6-luna: ảnh + danh sách 42 tên; model CHỈ được trả ≤ 3 mã tên trong danh sách hoặc "không nhận ra"
      (chữ viết trong ảnh là dữ liệu, không phải lệnh)
   ⇒ code kiểm lại: mã phải có trong danh sách ⇒ trả tên chuẩn
-  ⇒ giao diện (frontend/src/HoiBangAnh.jsx): "Gợi ý từ ảnh, có thể sai — chọn đúng tên:" + nút tên + "Không phải các tên này — tôi gõ tên"
-  ⇒ bấm tên ⇒ code ghép câu "Giới thiệu về <tên>" (hoặc "<chữ bạn đã gõ> (Trong ảnh: <tên>)") ⇒ chatbot trả lời như câu gõ
+  ⇒ giao diện (frontend/src/HoiBangAnh.jsx), từ tối 15/11:
+       1 tên   ⇒ code ghép câu "<chữ bạn đã gõ> (Trong ảnh: <tên>)" (ô rỗng: "Giới thiệu về <tên>") và HỎI LUÔN ⇒ chatbot trả lời như câu gõ;
+                 đầu câu trả lời: "Mình đoán trong ảnh là <tên> — có thể sai." + thẻ gọn trên ô nhập có nút "Không đúng — tôi gõ tên"
+       2–3 tên ⇒ "Trong ảnh là (có thể sai) — chọn đúng tên:" + nút tên + "Không phải các tên này — tôi gõ tên" ⇒ bấm tên ⇒ ghép câu như trên
+       0 tên / lỗi ⇒ lời báo "chưa nhận ra", gỡ ảnh, giữ chữ đã gõ
 Log: một dòng `anh_metrics` / ảnh — chỉ số đếm, mã kết quả, ms, USD; không ghi ảnh, tên file hay tên đoán ra.
 ```
 
@@ -35,8 +39,8 @@ Danh sách 42 tên (28 điểm · 9 món · 5 di sản) do code dựng từ kho,
 | Tình huống | Trạng thái | Ghi chú |
 |---|---|---|
 | Ảnh công trình / cảnh / món Huế có trong danh sách | **Đã xử lý** (bật 08/11) | đúng trong 3 gợi ý 22 / 25 (cả hai lượt đo); nhầm hay gặp: các lăng / điện giống nhau, vài món ít ảnh |
-| Ảnh không phải Huế (Bắc Kinh, Hà Nội, mèo, nội thất) | **Xử lý một phần** | 0–2 / 5 bị gán tên Huế tuỳ lượt; giao diện bắt người dùng xác nhận |
-| Ảnh có chữ "ra lệnh" dán thêm (đòi trả tên khác) | **Xử lý một phần** | 1 / 3 ảnh bị lừa ở mọi lượt (bảng chữ in kiểu biển chính thức) — trong ngưỡng ≤ 1 |
+| Ảnh không phải Huế (Bắc Kinh, Hà Nội, mèo, nội thất) | **Xử lý một phần** | 0–2 / 5 bị gán tên Huế tuỳ lượt. Từ 15/11: bị gán MỘT tên ⇒ trợ lý trả lời luôn về nơi đó kèm dòng "có thể sai" (2 lượt trong bộ đếm); bị gán 2–3 tên ⇒ người dùng phải chọn / gõ tên |
+| Ảnh có chữ "ra lệnh" dán thêm (đòi trả tên khác) | **Xử lý một phần** | 1 / 3 ảnh bị lừa ở mọi lượt (bảng chữ in kiểu biển chính thức) — trong ngưỡng ≤ 1. Từ 15/11 luồng trả lời luôn làm ca này nặng hơn: chữ trên ảnh có thể quyết định câu trả lời nói về nơi nào (2 lượt trong bộ đếm) |
 | Ảnh có biển tên thật (chợ, trường) | **Đã xử lý** (bật 08/11) | 2 / 2 |
 | File không phải ảnh / quá 10 MB / ảnh "bom" | **Đã xử lý, đã kiểm** | trình duyệt báo lỗi trước khi gửi; server từ chối trước khi đọc ảnh, không gọi model (7 ca thử trên server thật) |
 | Trang web lạ gửi ảnh thay người dùng | **Đã xử lý, đã kiểm** | từ chối 403; khi deploy cần thêm (xem §6) |
@@ -45,8 +49,21 @@ Danh sách 42 tên (28 điểm · 9 món · 5 di sản) do code dựng từ kho,
 | Giao diện trên điện thoại | **Đã xử lý** (sửa đã vào `main` 08/11, merge `3da1cb1`) | thử thật 360×740 và 390×844: không tràn ngang, đủ các bước; bản cũ thẻ ảnh che gần hết câu trả lời (còn 191 px để đọc ở 360×740) ⇒ sửa: ảnh xem trước nhỏ đặt cạnh chữ ⇒ còn 322 px (§4); chưa thử trên máy điện thoại thật / Safari |
 | Đoán tên bằng model chạy trên máy (SigLIP 2) | **Đã thử, chưa áp dụng** | âm (§4) |
 | Giới hạn số ảnh / người, nhiều ảnh cùng lúc | **Chưa thực hiện** | để Phase 12 (deploy) |
+| Model đưa MỘT tên nhưng sai (15/11) | **Xử lý một phần** | trợ lý trả lời luôn về sai nơi; lưới còn lại là dòng "Mình đoán… có thể sai" đầu câu trả lời + nút gõ tên. Đã gặp thật khi thử: ảnh nhỏ một cổng trong Hoàng thành ⇒ một tên lăng (2 lượt) |
+| Cùng một ảnh, kết quả khác nhau giữa các lượt (15/11) | **Chưa xử lý** | một ảnh thử qua 7 lượt: 1 tên đúng 1 · 1 tên sai 2 · 2 tên 2 · lỗi model 2 ⇒ ảnh khó thì "một tên" không ổn định |
+| Bước đoán tên báo lỗi model (15/11) | **Giới hạn đã nhận** | phần suy luận chạm trần 1.024 token đầu ra ⇒ hiện "chưa nhận ra"; A đếm trong log 2 / 149 lượt (E chưa tính lại) — quan sát nguyên nhân, chưa chứng minh |
+| Đang "Đang xem ảnh…" mà người dùng làm việc khác (15/11) | **Đã xử lý, đã kiểm** | bỏ / thay ảnh, mở cuộc mới ⇒ kết quả cũ bị bỏ; có lượt khác đang chạy ⇒ không tự hỏi chen ngang, hiện thẻ chọn (ca dò của reviewer). Chưa có nút huỷ lúc đang xem ảnh |
+| Dán ảnh vào ô nhập (15/11) | **Đã xử lý, đã kiểm** | dán ảnh thật qua clipboard 3 / 3 đúng luồng; clipboard có cả chữ lẫn ảnh ⇒ dán chữ; ảnh GIF ⇒ lời báo, không gọi model |
 
 ## 4. Thử nghiệm và lịch sử (mới ở trên)
+
+### 15/11/2026 tối — đổi luồng người dùng thấy (bốn bước trong một tối, theo góp ý của bạn khi thử)
+1. Nút chữ "Hỏi bằng ảnh" ⇒ **nút dấu cộng trong ô nhập** + dán ảnh (`report_agent/2026-11-12_ra_khoang_cach/c_nut_anh_cong_implementation.md`, review `e_review_nut_anh_cong.md`).
+2. Ảnh thành **tệp đính kèm** của câu hỏi: chọn / dán ảnh 0 lần gọi máy chủ, bấm Hỏi mới nhận diện (`c_anh_dinh_kem_implementation.md`).
+3. Bạn thử và coi bước bắt bấm tên là lỗi ⇒ **phương án lai**: một tên trả lời luôn, 2–3 tên hỏi chọn; dòng "Mình đoán… có thể sai" đầu câu trả lời (`e_anh_tra_loi_thang_implementation.md`; kiểm bằng Playwright: số tên dựng bằng chặn route ảnh trong trình duyệt, câu hỏi đi máy chủ thật; ≈ 0,012 USD).
+4. Review bắt một lỗi thật trước khi vào `main`: kết quả nhận ảnh về trễ tự gửi câu vào cuộc mới / huỷ lượt đang chạy ⇒ đã sửa.
+
+**Đang mở (chưa quyết, chưa đưa vào chatbot):** thử lại cách **so ảnh với ảnh mẫu bằng vector** (plan nháp trên nhánh `p10-so-anh`); phép dò đầu với DINOv2 trên bộ mẫu cũ: tên đầu đúng 17 / 25 (SigLIP 2: 15; model đang chạy: 21) — số A chuyển, chưa review. Bước đếm ảnh mẫu: 42 tên có 221 ảnh, thiếu khoảng 272 so với mốc của plan; bộ mẫu cũ có ảnh gắn sai tên (`data/so_anh_buoc0_2026-11-15/KET_QUA.md`, riêng tư).
 
 ### 05/11/2026 tối — thử giao diện ở khung điện thoại (Playwright, server thật)
 Hai khung màn điện thoại phổ biến 390×844 và 360×740, cờ bật tạm. Đo "vùng đọc" = phần màn hình phía trên khung gõ dính đáy (chỗ còn thấy câu trả lời).
@@ -103,6 +120,8 @@ Rào, xử lý ảnh, một lần gọi model, test; thử một ảnh thật: �
 3. ~~Xoá collection thử `hue_anh_siglip2`?~~ **Đã xoá** (kiểm Qdrant 14/11).
 4. Trước khi deploy (Phase 12): danh sách địa chỉ trang hợp lệ cố định, xử lý HTTPS sau proxy, giới hạn số ảnh xử lý cùng lúc.
 5. Giọng nói (cũng thuộc Phase 10): nghiên cứu đang tạm dừng theo bạn.
+6. (15/11) Sau khi đổi sang "một tên thì trả lời luôn": theo dõi khi bạn thử bằng ảnh thật — lượt nào câu trả lời nói về sai nơi; lời dặn của bước đoán tên vẫn là bản viết cho luồng có xác nhận ("người dùng sẽ tự bấm chọn") — chưa đổi; chưa có nút huỷ lúc "Đang xem ảnh…"; trần 1.024 token đầu ra của bước đoán tên (xem checklist).
+7. (15/11) Thí nghiệm so ảnh bằng vector: chờ plan được duyệt + quyền tải model (mục "Đang mở" ở §4).
 
 ## Phụ lục — hồ sơ kỹ thuật
 
