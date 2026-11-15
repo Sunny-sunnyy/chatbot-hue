@@ -614,13 +614,27 @@ function Thumb({ down = false }) {
   );
 }
 
-// Ảnh dưới câu trả lời (luật ở `anhTraLoi.js`, code quyết): một ảnh của bài nguồn, bấm mở bài; khung tỉ lệ cố định ⇒ không xô lệch khi ảnh tải.
+// Ảnh dưới câu trả lời (luật ở `anhTraLoi.js`, code quyết): ảnh của bài nguồn, bấm mở bài; khung tỉ lệ cố định ⇒ không xô lệch khi ảnh tải.
+// 2–3 ảnh ⇒ một hàng ảnh nhỏ, tên nơi dưới mỗi ảnh (review E: câu so sánh 2 nơi không thành ảnh nơi A cạnh chữ nơi B); không chữ ghi công.
 function AnhTraLoi({ turn }) {
-  const a = anhTraLoi(turn);
-  if (!a) return null;
+  const ds = anhTraLoi(turn);
+  if (!ds.length) return null;
+  if (ds.length === 1) {
+    const a = ds[0];
+    return (
+      <a className="anh-tra-loi" href={baiHref(a.baiId)} aria-label={`Đọc bài “${a.ten}”`}>
+        <img src={`${import.meta.env.BASE_URL}anh/${a.anh}.jpg`} alt={a.ten} loading="lazy" decoding="async" />
+      </a>
+    );
+  }
   return (
-    <a className="anh-tra-loi" href={baiHref(a.baiId)} aria-label={`Đọc bài “${a.ten}”`}>
-      <img src={`${import.meta.env.BASE_URL}anh/${a.anh}.jpg`} alt={a.ten} loading="lazy" decoding="async" />
-    </a>
+    <div className="anh-tra-loi-hang">
+      {ds.map(a => (
+        <a key={a.baiId} className="anh-tra-loi-o" href={baiHref(a.baiId)} aria-label={`Đọc bài “${a.ten}”`}>
+          <span className="anh-tra-loi-khung"><img src={`${import.meta.env.BASE_URL}anh/${a.anh}.jpg`} alt={a.ten} loading="lazy" decoding="async" /></span>
+          <span className="anh-tra-loi-ten">{a.ten}</span>
+        </a>
+      ))}
+    </div>
   );
 }
