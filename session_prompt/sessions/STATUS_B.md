@@ -1,4 +1,54 @@
-# KẾT QUẢ CHIỀU 15/11 — B viết 17:02 15/11/2026 (terminal `hue-rag-cb`; A `hue-rag-60` · C `hue-rag-51` · E `hue-rag-ab`). CHƯA kết phiên (User vắng); nhật ký từng bước ở mục "PHIÊN CHIỀU 15/11" ngay dưới
+# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 15/11) — B viết 18:27 15/11/2026, terminal `hue-rag-cb` (A `hue-rag-60` · C `hue-rag-51` · E `hue-rag-ab`; cả bốn Claude Code, Fable 5.2)
+
+## Trạng thái máy lúc kết phiên
+- 0 worktree `/tmp` của B (`/tmp/b_tl` đã gỡ 18:34 15/11/2026), 0 server, 0 tiến trình nền, 0 file tạm trong `/tmp`. Nhánh tài liệu `p9-tai-lieu-web-noi-tiep` đã push `eff4f9b` (18:35 15/11/2026: thêm 1 commit sửa 2 câu trong report gốc `b_web_noi_tiep_implementation.md` theo kiểm độc lập) — chờ A merge (nếu phiên sau chưa thấy trong main thì nhắc A).
+- `main` lúc B viết: `a11e601` (+ các commit kết phiên của A). Cờ `web_cau_noi_tiep: true` trên main (`aca513b`, User chọn 17:50 15/11/2026).
+
+## Việc đã xong chiều 15/11 (nhánh · sha trên main · report)
+| Việc | Nhánh / sha | Report / file |
+|---|---|---|
+| W79: `git_sha` trong mỗi dòng `chat_metrics` + script đếm | `p9-w79-sha`, merge `3efa28b` | `report_agent/2026-11-12_ra_khoang_cach/b_w79_git_sha_implementation.md`; `scripts/dem_chat_metrics.py` |
+| Review bảng điểm lịch v9 (E): ready, 3 minor | — | `report_agent/2026-11-12_ra_khoang_cach/b_review_diem_v9.md` |
+| Câu hỏi nối tiếp: tái tạo + nguyên nhân gốc | — | `report_agent/2026-11-12_ra_khoang_cach/b_cau_noi_tiep_dem.md`; `data/cau_noi_tiep_2026-11-15/` |
+| Câu hỏi nối tiếp: sửa (câu tra web = câu tìm kho cuối model viết) | `p9-web-noi-tiep` (`16a6715` ⇒ `281ff98` ⇒ `efd0587`), merge `0f55f90`, **bật `aca513b`** | plan `docs/superpowers/plans/2026-11-15-cau-noi-tiep-web-plan.md` (`236cc3b89b28`); `report_agent/2026-11-12_ra_khoang_cach/b_web_noi_tiep_implementation.md`; review `report_agent/2026-11-12_ra_khoang_cach/e_review_web_noi_tiep.md` + `data/review_web_noi_tiep_2026-11-15/review.md` |
+| Đếm bộ kiểm số mục web ⇒ không xây chuẩn hoá giờ | — | `report_agent/2026-11-12_ra_khoang_cach/b_web_kiem_so_dem.md`; `data/web_kiem_so_2026-11-15/` |
+| Q5 an toàn sửa lịch chạy lại trên main: 0 / 64 | — | `data/q5_chay_lai_2026-11-15/q5_main.json` (+ script có ghi sha) |
+| Harness Q5b: bỏ cột "số khẩn cấp", thêm `khan_cap_dinh_tuyen` (C chạy lần đầu 16 / 16) | data/ | `data/len_ke_hoach_v2_2026-11-13/tools/q5b_tron.py` (bản cũ `…truoc_2026-11-15.py`) |
+| Review `p9-hang-o-m12` (C): ready, 0 finding | — | tin nhắn (không file) |
+| Nhãn S07 bộ chuỗi sửa lịch đổi sau bảng v9 | data/ | `data/nhan_cu_v9_2026-11-15/DE_XUAT.md`; bộ `data/phase_9/bo_do_sua_lich/chuoi_da_thay.jsonl` md5 `eacb8ebdcb91` (trước `…truoc_v9.jsonl`) |
+| Plan tốc độ S-A / S-B — **hồ sơ, không làm** (User: bỏ tra web sớm, gác gộp câu tìm) | — | `docs/superpowers/plans/2026-11-15-toc-do-web-som-gop-tim-plan.md` (`a4cfbf608a6b`) |
+| Tài liệu kết phiên: bài 15 (chuyện thật thứ ba), bài 20, bài 25 (2 dòng), sổ 07 bản 64 (+ số cũ E chỉ), nhật ký | `p9-tai-lieu-web-noi-tiep` origin `eff4f9b` (chờ A merge) | biên bản kiểm độc lập `data/kiem_bai_hoc_2026-11-15/b_kiem_doc_lap.md` — 60 khẳng định: 46 đúng · 2 sai · 11 dễ hiểu nhầm · 1 không kiểm được; B đã sửa hết trước khi commit |
+
+## Việc còn mở của B (chưa ai giao lại — A phiên sau quyết)
+1. **Harness Q3 tự chạy mô phỏng nhãn 0 USD trước lượt có phí** (luật W84; ~10 dòng trong data/): `data/len_ke_hoach_v2_2026-11-13/tools/q3_sua_lich.py` gọi `data/phase_9/bo_do_sua_lich/tools/mo_phong_v2.py` (đã nhận bảng theo settings / `BANG_FILE`), dừng + in chuỗi lệch nếu < n / n. **CHƯA làm.** Lưu ý: `q3_sua_lich.py` còn chèn cứng `sys.path` `/tmp/b_lkh/backend` ⇒ chạy cần `PYTHONPATH=<backend>`; nên sửa cùng lúc.
+2. **`data/phase_9/bo_do_sua_lich/tools/kiem_bo.py` mở cả file kín** ⇒ sau khi đổi nhãn S07 chưa ai chạy kiểm khuôn bộ; cần người được phép (hoặc tách phần đã thấy khỏi phần kín trong công cụ).
+3. **Lệnh đếm bộ kín sửa lịch chờ User `!`** (2 lệnh ở `data/nhan_cu_v9_2026-11-15/DE_XUAT.md` + handoff "User tự làm"; bắt buộc giữ đuôi `2>/dev/null | tail -1`). Ra k < n ⇒ cần người được phép sửa nhãn kín (B không mở).
+4. **Ứng viên tốc độ, chưa có plan:** lần tìm ĐẦU của câu hỏi tiếp dùng câu cụt (trượt 6 / 7 cặp) ⇒ gần như luôn tốn thêm một lần gọi model. Số ở `report_agent/2026-11-12_ra_khoang_cach/b_cau_noi_tiep_dem.md`. Hướng đã loại: ghép câu bằng code (phá 2 / 3 cặp đổi chủ đề).
+5. **Theo dõi cờ `web_cau_noi_tiep`:** đếm lượt có `cau_tu_model: true` trong mục `tools` của `chat_metrics` (`scripts/dem_chat_metrics.py --sha <sha> --jsonl` rồi lọc); log KHÔNG có chữ ⇒ muốn đọc câu tra web thật phải chạy harness `data/cau_noi_tiep_2026-11-15/tools/do_quyet.py` (đã ghi cả chữ trước kiểm — phần này [chưa chạy thật]). Chưa đo: câu hỏi tiếp NHIỀU Ý (đang giữ câu gõ); tên người dùng mới 0 / 4 lượt chạm.
+6. Hồ sơ: plan tốc độ `a4cfbf608a6b` không làm; mẫu "vì sao 4 mục web lượt `quyet_r1` bị chặn" không chạy lại (A quyết: không đổi quyết định nào).
+
+## Bẫy đã gặp chiều 15/11 (để khỏi lặp)
+1. Harness đo không lưu chữ model TRƯỚC kiểm cuối ⇒ mục bị thay câu cố định không phân loại lại được ⇒ luôn lưu chữ + đoạn trích trước kiểm (vào data/, không vào log).
+2. `pytest -x` trên test rộng dừng ngay ở test cần khoá ⇒ không dùng `-x` cho test rộng.
+3. Phép kiểm "luôn ra 0" (Q5b từ 14/11) ⇒ luật mới §8: phải có ca đối chứng ra "có".
+4. Cờ "chỉ in số đếm" của công cụ chạy trên bộ kín vẫn lộ giá trị nhãn qua traceback ⇒ `2>/dev/null | tail -1`; thử trên file giả trong /tmp trước.
+5. Worktree tách để review / đo cần cả hai symlink `data/` + `knowledge-base-hue/`; gỡ symlink trước khi `git worktree remove`.
+6. `main` đổi sha giữa lúc chạy lượt trong tiến trình ⇒ so `git diff <sha đầu> <sha cuối> -- backend`.
+7. Đổi bảng dữ liệu làm cũ nhãn bộ đo (S07) ⇒ luật mới WORKFLOW §3.4.
+8. Ghi giờ ước (dạng giờ có chữ x ở phút) vào sổ 07 (tự bắt, sửa bằng `date` trước khi commit) — giờ luôn lấy từ `date`.
+9. Đếm kho bằng `grep -c` thẳng vào file kho một lần (đếm dòng, không in) — lẽ ra dùng `scripts/grep_kb.sh`.
+10. Bộ quyết do người khác viết thiếu loại lượt "hỏi tiếp nhiều ý" ⇒ người code đưa danh sách loại lượt cho người viết bộ.
+
+## Tiền paid B chiều 15/11 (log lọc `git_sha` + file kết quả)
+đếm câu nối tiếp 0,0201 (`eee5781` + `f6d0540`) · đo nhánh web nối tiếp 0,0556 (`16a6715`) · mẫu giờ mở cửa 0,0159 (`2b0be16`) · Q5 0,0036 (file) ⇒ **≈ 0,095 USD**. Cả ngày 15/11 của B ≈ 0,41 USD. Agent con (1, kiểm bài học): quota Claude.
+
+## Câu hỏi / thắc mắc cho A phiên sau
+- (đã xong) 2 câu chưa chuẩn trong report gốc `b_web_noi_tiep_implementation.md` đã sửa trên nhánh tài liệu (`eff4f9b`); A đính chính với User ý "chi tiết lượt trước ra web" (mẫu đo chỉ có TÊN NƠI; ngày cụ thể là model tự đổi chữ của chính lượt 2).
+- Mục 1 và 2 ở "Việc còn mở": có giao không, cho ai (2 cần quyền với bộ kín).
+- Có cần một bộ đo nhỏ cho "câu hỏi tiếp nhiều ý + kho thiếu" (≥ 4 cặp, người khác viết) để quyết bỏ ngoại lệ nhiều ý của cờ `web_cau_noi_tiep` không?
+- `bo_do_b5` L1 dùng một điểm nay đã có trong bảng v9 — chỉ cũ nếu bộ đó được đem đo trên bảng v9 (hiện chạy bảng v3, cờ tắt).
+
+# (chi tiết, viết trước khi kết phiên) KẾT QUẢ CHIỀU 15/11 — B viết 17:02 15/11/2026 (terminal `hue-rag-cb`; A `hue-rag-60` · C `hue-rag-51` · E `hue-rag-ab`). CHƯA kết phiên (User vắng); nhật ký từng bước ở mục "PHIÊN CHIỀU 15/11" ngay dưới
 
 ## Đã xong (mọi nhánh đã vào main)
 - **W79** — `git_sha` trong mỗi dòng `chat_metrics` + `scripts/dem_chat_metrics.py` (`--sha`). Report `b_w79_git_sha_implementation.md`.
