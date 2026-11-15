@@ -18,7 +18,10 @@ export function ChoO({ khu }) {
   useEffect(() => setChon(khu || null), [khu]);
   if (loi) return <div className="khung co-than"><p>Chưa tải được danh sách chỗ ở. Thử tải lại trang.</p></div>;
   if (!du) return <div className="khung co-than co-cho" aria-busy="true" />;
-  const nhom = du.nhom.filter(n => !chon || n.khu.startsWith(chon));
+  // khu từ link lịch có thể là cả khu ven biển (hai phía) ⇒ khớp đầu mã; mã lạ ⇒ như "Mọi khu" (review E m-2, m-3)
+  const khop = n => !!chon && (n.khu === chon || n.khu.startsWith(chon + ":"));
+  const coKhop = du.nhom.some(khop);
+  const nhom = coKhop ? du.nhom.filter(khop) : du.nhom;
   const tenMuc = [...new Set(du.nhom.flatMap(n => n.muc.map(m => m.ten)))];
   return (
     <div className="khung co-than">
@@ -26,8 +29,8 @@ export function ChoO({ khu }) {
       <h1 className="co-h">Chỗ ở theo khu</h1>
       <p className="co-p">Cơ sở lưu trú đã xếp hạng trong danh mục công khai, nhóm theo khu và hạng sao. {du.nhan}</p>
       <div className="co-loc" role="group" aria-label="Khu">
-        <button type="button" aria-pressed={!chon} onClick={() => setChon(null)}>Mọi khu</button>
-        {du.nhom.map(n => <button key={n.khu} type="button" aria-pressed={chon === n.khu} onClick={() => setChon(n.khu)}>{n.ten}</button>)}
+        <button type="button" aria-pressed={!coKhop} onClick={() => setChon(null)}>Mọi khu</button>
+        {du.nhom.map(n => <button key={n.khu} type="button" aria-pressed={khop(n)} onClick={() => setChon(n.khu)}>{n.ten}</button>)}
       </div>
       <div className="co-loc" role="group" aria-label="Hạng sao">
         <button type="button" aria-pressed={!muc} onClick={() => setMuc(null)}>Mọi hạng</button>
@@ -40,7 +43,7 @@ export function ChoO({ khu }) {
             <div key={m.ten} className="co-muc">
               <h3>{m.ten} <small>· {m.co_so.length} cơ sở</small></h3>
               <ul>{m.co_so.map(c => (
-                <li key={c.ten}>
+                <li key={`${c.ten}|${c.dia_chi}`}>
                   {anhHopLe(c.anh) ? <img src={`${import.meta.env.BASE_URL}${c.anh.slice(1)}`} alt={c.ten} loading="lazy" decoding="async" />
                     : <span className="co-khong-anh" aria-hidden="true" />}
                   <span className="co-ten">{c.ten}</span>
