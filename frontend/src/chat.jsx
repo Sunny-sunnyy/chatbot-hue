@@ -284,6 +284,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
   const { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation } = chat;
   const lastTurnRef = useRef(null);
   const queryRef = useRef(null);
+  const hoiAnhRef = useRef(null);
   const queryId = `${idPrefix}-query`;
 
   // Lượt mới ⇒ cuộn tới câu vừa hỏi (trong khung chứa).
@@ -293,7 +294,9 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
 
   function submit(event) {
     event.preventDefault();
-    if (pending || resetting || !draft.trim()) return;
+    if (pending || resetting) return;
+    if (hoiAnhRef.current.gui()) return;  // có ảnh đính kèm ⇒ bấm Hỏi mới gửi ảnh đi nhận diện; câu đang gõ giữ trong ô tới khi chọn tên
+    if (!draft.trim()) return;
     ask(draft);
     setDraft("");  // câu đã in lại trong khung trò chuyện; "Thử lại" gửi lại đúng câu đó
   }
@@ -305,6 +308,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
 
   const hoiAnh = useHoiBangAnh({ bat: anh, draft, disabled: pending || resetting, onAsk: query => { ask(query); setDraft(""); },
                                  onGoTen: () => queryRef.current?.focus() });
+  hoiAnhRef.current = hoiAnh;  // `submit` khai báo phía trên dùng bản mới nhất của hook
 
   return (
     <div className="chat-view">
@@ -335,6 +339,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
         {hoiAnh.the}
         <div className={hoiAnh.nut ? "composer composer-co-nut" : "composer"}>
           {hoiAnh.nut}
+          {hoiAnh.kem}
           <label htmlFor={queryId} className="sr-only">Câu hỏi về Huế</label>
           <textarea ref={queryRef} id={queryId} rows={1} value={draft} disabled={pending} maxLength={MAX_QUERY}
                     aria-describedby={draft.length >= DEM_KY_TU_TU ? `${queryId}-dem` : undefined}
