@@ -39,7 +39,7 @@ chỉ có ở bài cần.
 |---|---|---|
 | [12](12_VI_SAO_CAN_TRO_LY.md) | Từ chatbot thành trợ lý: xếp loại câu và công cụ | đã viết, chờ anh đọc |
 | [13](13_TIM_THEM_VA_NHO_CAU_HOI.md) | Rút thêm thẻ và nhớ câu hỏi | thêm 15/11 tối — tải lại trang là cuộc trò chuyện mới. Trước: đã sửa 13/11 — thêm "hết lượt tìm thì dừng" (bật 13/11) |
-| [14](14_VIEC_DE_NHAM_THI_CODE_LAM.md) | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình | thêm ghi chú 14/11 — biểu mẫu nay là bản 2 (bài 23) |
+| [14](14_VIEC_DE_NHAM_THI_CODE_LAM.md) | Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, khoảng cách, lịch trình | 16/11: thêm mục khoảng cách giữa hai điểm (công cụ bật 16/11); ghi chú 14/11 — biểu mẫu nay là bản 2 (bài 23) |
 | [15](15_TRA_WEB_VA_HOI_BANG_ANH.md) | Khi sổ không có: tra web, và hỏi bằng ảnh | đã sửa 15/11 — thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (đã sửa, bật 15/11). Trước: 13/11 thêm thử Exa, giữ Serper |
 | [16](16_KE_DO_AN_VA_CHO_CON_YEU.md) | Kể đồ án trong 2–3 phút, và chỗ còn yếu | đã sửa 13/11 — thêm kết quả lượt đo giữa kỳ; sửa bảng chỗ yếu |
 
