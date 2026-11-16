@@ -1,3 +1,10 @@
+# STATUS A — KẾT PHIÊN TỐI 16/11 (viết 22:17 16/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11)" ⇒ kiểm nhanh ⇒ hỏi quyền ⇒ mở 8010 có sổ vết ⇒ User thử sáng 17/11 ⇒ trình `data/tu_thu_2026-11-16/TONG_HOP.md` từng câu một (câu bão trước) ⇒ giao sửa. KHÔNG trình lại chuyện khẩn cấp (memory `emergency-questions-out-of-scope`).
+- **Xong tối 16/11 (A):** điều phối; ~16 merge (cờ bản đồ, ghi kho Lập An + tài liệu, số giữa ghim, ảnh Lập An, khoảng cách tính sẵn + bật + đo lại + tài liệu, ghi chú kẹt xe + tài liệu, ghim mép dưới, cột lịch + ghim chồng + nếu mưa gộp một lần build, tài liệu bản đồ / cột lịch) — mỗi lần đọc diff, test file chạm, build khi chạm giao diện; sửa 3 test tự đặt cờ bản đồ; 8010 mở / khởi động lại 3 lần; server 8011 cho nhóm tự thử; Codex tra thước đánh giá + kiểm 3 nguồn; `THUOC_CHAM.md`, `TONG_HOP.md`; quét 41 điểm tìm buổi ngoài giờ mở; nhìn 5 ảnh (ghim trước / sau, dự báo, giật túi, lịch 1 ngày); agent con chạy lượt tự thử của A; vòng tự soi 1 chốt; memory khẩn cấp.
+- **Bẫy A:** xem handoff "Bẫy A tối 16/11".
+- **Server / worktree của A:** 8010 (sổ vết) + 8011 tắt khi phiên đóng; Qdrant giữ chạy; không worktree; file tạm `/tmp/a_req/`, `/tmp/a_kc*.sse`.
+
 # STATUS A — PHIÊN TỐI 16/11 (mở; cập nhật 18:08 16/11/2026 `date`)
 
 - Terminal: A `hue-rag-cb` · B `hue-rag-b2` · C `hue-rag-e9` · E `hue-rag-4a` (Claude Code, trực tiếp).

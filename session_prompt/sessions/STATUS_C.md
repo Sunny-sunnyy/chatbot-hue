@@ -1,6 +1,47 @@
-# STATUS C — phiên 16/11 (C `hue-rag-80` · A `hue-rag-db` · B `hue-rag-83` · E `hue-rag-af`); mục dưới là kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — kết phiên tối 16/11 (C `hue-rag-e9` · A `hue-rag-cb` · B `hue-rag-b2` · E `hue-rag-4a`); các mục dưới là nhật ký tối 16/11, kết phiên chiều 16/11, tối 15/11. Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN TỐI 16/11 (C `hue-rag-e9` · A `hue-rag-cb` · B `hue-rag-b2` · E `hue-rag-4a`; C ghi 18:10 16/11/2026 `date`)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11 — C viết 22:15 16/11/2026 `date`; máy: 0 worktree, 0 server tạm, 0 tiến trình nền của C)
+
+Tối 16/11: C `hue-rag-e9` · A `hue-rag-cb` · B `hue-rag-b2` · E `hue-rag-4a`. Mọi nhánh code / tài liệu của C tối nay ĐÃ VÀO `main`. Nhật ký theo giờ: mục ngay dưới.
+
+**Đã vào `main` tối 16/11 (C):**
+- **Khoảng cách tính sẵn — cờ `khoang_cach_tinh_san` BẬT** (code merge `5901520`, bật `3ccdada`, User chọn): câu đang gõ có từ khoá + đúng dạng "[từ] A <từ nối> B <từ hỏi>" ⇒ code tra bảng, nối nguồn trước lần gọi model đầu, không đưa công cụ. Report `report_agent/2026-11-12_ra_khoang_cach/c_kc_tinh_san_implementation.md` (mục 3, 3b, 3c, 3d).
+- **Ghi chú "chưa tính kẹt xe" do code nối** (merge `bc785ae`): `assistant.set_notice`.
+- Tài liệu: bài 14 (mục "code tra sẵn" + gạch đầu dòng ghi chú), sổ 07, README sổ, nhật ký tối; hướng dẫn thử 2.11e.
+
+**Số đã đo (nhãn):**
+- [đã chạy, bản cuối `1e45a78`, 16 câu một lượt] đường nhanh 13 câu, chữ đầu p50 1,87 s (bản đầu 1,80 s; đường công cụ 16/11 chiều 3,7 s), 2 / 13 câu > 3 s; đúng cặp 14 / 14; 0 số lạ; ngoài bảng ra số 0 / 2; 0,0122 USD theo sha.
+- [đã chạy, 0 USD] bộ dò tên 32 câu: 29 đúng · 0 sai · 3 về đường cũ; câu phá của E 21 câu: 20 · 0 · 1 (bản đầu 15 / 21 SAI); bộ thêm của E 16 / 0; an toàn 32: 0 câu chạm.
+- [đã chạy] test rộng: 1277 passed (nhánh code + nhánh bật cờ), 1290 passed (nhánh ghi chú).
+- [đếm từ file kết quả] ghi chú kẹt xe trong chữ model: đường nhanh 16 / 26, đường công cụ 17 / 26; sau sửa, 4 câu thật trên 8010: 3 có dòng lưu ý, 1 không lặp.
+
+**VIỆC ĐẦU PHIÊN SAU — theo xếp ưu tiên của C; TẤT CẢ CHỜ A / User GIAO, CHƯA LÀM:**
+1. **Câu bão / lũ: model tự viết nhận định** ("chưa xác nhận có bão vào Huế" — 3 / 5 lượt cả nhóm; câu cố định NCHMF + 112 có 5 / 5). [đọc] plan B5b D6 chỉ buộc code nối câu cố định; lời dặn + `THOI_TIET_MO_TA` không có chữ nào về bão; `_thoi_tiet_cuoi` chỉ kiểm SỐ; công cụ `thoi_tiet` vẫn được đưa ở câu bão. Đề nghị (plan mức nhẹ): câu `tt.la_cau_bao_lu` ⇒ chữ trả lời = câu cố định + khối số 7 ngày do code, không chữ tự do của model (như đường web `assistant.py` ~dòng 1137). Đo: 2 câu bão / lũ của bộ B5b + câu "Sắp có bão vào Huế không?" × 5 + đếm an toàn 32 chạm (≈ 0,005 USD).
+2. **Sửa lịch bằng lời (vùng C), mỗi mục một nhánh nhỏ có bộ dò:** (a) "Đổi chỗ ngày 1 với ngày 2" ⇒ nay báo "Không đổi được: Chưa làm: đổi số ngày" (C + E thấy) — hoặc thêm hành động hoán đổi hai ngày, hoặc ít nhất báo đúng việc; (b) "đổi thành N ngày" khi lịch đã N ngày ⇒ rơi sang hỏi đáp thường + mục web dựng lịch khác (C: 5 ngày, E: 2 ngày) — phải ở lại luồng sửa lịch, ra dòng "Lịch đang đúng như vậy rồi"; (c) chữ "Sao chép lịch" / .txt còn `**Sửa**`, `**Ngày 1**` (C + E; `data/tu_thu_2026-11-16/C_p3.json` khoá `3.19_chep`); (d) tiền tố chồng "Không đổi được: Chưa làm: …"; (e) khung trợ lý nổi vẽ lại CẢ lịch mỗi lượt sửa, khối "Đã đổi" dưới mép khung — đề nghị khung chỉ hiện khối "Đã đổi" (giao diện — E, C review).
+3. **Hỏi tiếp "Mở cửa lúc mấy giờ?" sau câu chùa Thiên Mụ ⇒ từ chối + web trắng** (B + C thấy; hỏi thẳng thì ra giờ — B). Việc: tái tạo ĐÚNG ca trên server có sổ vết, thử MỘT cuộc trước, đọc bản ghi (`cau_tim_model`, `web.cau_gui_tra_web`) rồi mới quyết — cờ `web_cau_noi_tiep` đang bật, 15/11 đo 8 / 8.
+4. Lịch (không phải vùng C, ghi để biết): ngày mưa đạt ngưỡng vẫn giữ cụm toàn-ngoài-trời ([đọc] `lich_trinh_v2.py` 163–167, 253–255 chỉ đổi thứ tự xét; cụm `dong_bien` 3 / 3 ngoài trời; giới hạn đã nhận 14/11 — `c_dem_mua.md`); chợ Đông Ba buổi tối là CHỦ Ý (phố ẩm thực đêm), lỗi là thiếu giờ + ghi chú tối (A đã tra); lịch mặc định 1 ngày có Đầm Chuồn.
+5. Nhỏ, chưa ai giao: "tuần sau thời tiết" khi cả tuần sau nằm ngoài 7 ngày — bỏ câu từ chối kho + 3 gợi ý lạc đề, chỉ giữ câu "ngoài 7 ngày"; "khách sạn rẻ nhất" ⇒ chỉ sang hạng sao / trang Chỗ ở; tên nguồn giá vé Đại Nội dẫn bài vé biểu diễn (B 2 / 2 + C 1).
+
+**Lượt tự thử như người dùng (User yêu cầu cả nhóm):** file `data/tu_thu_2026-11-16/C.md` (bảng chấm, lỗi theo mức, "đánh giá như người dùng thật", bảng theo thước chấm, cập nhật sau phản biện B / E); ảnh `anh/C_*.png`; kịch bản chạy lại `uv run python -I data/tu_thu_2026-11-16/tools/{c_p4,c_chat,c_tinh,c_p3}.py http://127.0.0.1:<cổng> …` (xem docstring). Phủ: Phần 4 (21 câu) · 2A–2H (36 câu) · Phần 3 mục chính · phần máy quan sát của 1 / 5 / 6 / 7 / 8. CHƯA phủ: 2I–2J ảnh, 2.3, 2.37, 2.39, 2.40, 5.2–5.5, 6.4–6.10, 8.3 / 8.4 / 8.8.
+
+**User đã chốt — KHÔNG nêu lại:** câu khẩn cấp (giật túi, mất ví, mất giấy tờ, số khẩn cấp) bị từ chối = NGOÀI PHẠM VI (09/11, 12/11, 16/11).
+
+**Bẫy tối 16/11:**
+- Hàm đọc chữ người dùng viết theo "đếm tên" (đủ hai tên là nhận) ⇒ reviewer phá 15 / 21. Viết từ danh sách ĐÓNG các dạng được nhận, mặc định từ chối.
+- Chạy test rộng TRƯỚC khi review xong ⇒ phải chạy lại. Thứ tự đúng: review READY ⇒ test rộng một lần ở commit cuối.
+- Viết nháp tài liệu trước khi review xong ⇒ sửa lại hai lần.
+- Lượt tự thử: gọi "lỗi thật" trước khi tra quyết định cũ ⇒ nêu lại chuyện khẩn cấp User đã chốt 2 lần, và gọi nhầm "tuần sau thời tiết" là lỗi (đúng thiết kế). Tra `Project_Status.md` §5 + mục 9 hướng dẫn thử TRƯỚC khi xếp mức.
+- Mỗi câu chỉ gõ một lần ⇒ lỗi phụ thuộc model là "chưa xác nhận"; câu bão ra 3 kiểu trong 5 lượt.
+- `do_san.py` ghi đè `do_san_r1.json` ⇒ đã đổi tên theo bản (`…_ban_dau_50fbf4e.json`, `…_ban_cuoi_1e45a78.json`); lần sau đặt tên file ra theo sha ngay trong script.
+- Kịch bản `c_chat.py`: bộ đếm dòng báo bước dùng sai lớp CSS ⇒ mục 2.38 không đo được.
+
+**Câu hỏi cho A / User:** (1) câu bão: A / User có đồng ý hướng "code trả câu cố định + bảng số, không chữ model" không; (2) "đổi chỗ hai ngày": thêm hành động mới hay chỉ sửa câu báo; (3) tiền C chưa ai tính lại; phần tự thử trên 8011 chưa tách được theo người.
+
+**Tiền C tối 16/11:** 0,0131 (đo bản đầu) + 0,0122 (đo lại bản cuối) + 0,0017 (4 câu kiểm ghi chú trên 8010) = **0,0270 USD** [đếm theo sha / log]; cộng lượt tự thử trên 8011 ≈ 0,05–0,06 USD [ƯỚC, log chung 4 người] ⇒ ≈ 0,08 USD. Chưa ai tính lại.
+
+**Máy lúc kết:** 0 worktree `/tmp/c_*`, 0 server tạm (8041 đã tắt; 8010 + 8011 là của A), 0 tiến trình nền. Nhánh của C xoá được (A gom lệnh cho User): `p9-kc-tinh-san p9-kc-tinh-san-plan p9-bat-kc-tinh-san p9-tai-lieu-kc-tinh-san p9-tai-lieu-kc-do-lai p9-kc-ghi-chu p9-tai-lieu-kc-ghi-chu`.
+
+## NHẬT KÝ TỐI 16/11 — giữ để tra (C `hue-rag-e9` · A `hue-rag-cb` · B `hue-rag-b2` · E `hue-rag-4a`; C ghi 18:10 16/11/2026 `date`)
 
 - A giao (quyền phiên "như chiều 16/11"): làm ngay phần 0 USD của "khoảng cách tính sẵn" (plan `8f45c14cf9e2`); không test rộng / server / lượt có phí tới khi B dựng xong chỉ mục; đo 16 câu để sau.
 - **Khai báo sửa** (worktree `/tmp/c_kcs`, nhánh `p9-kc-tinh-san` từ origin/main + nhánh plan): `backend/llm/khoang_cach.py`, `backend/llm/assistant.py`, `backend/config/settings.yaml` (cờ `khoang_cach_tinh_san: false`), `backend/tests/test_khoang_cach.py`; `data/khoang_cach_2026-11-16/` (script chạy bộ dò). File này.
@@ -36,6 +77,16 @@
 - **(21:09 16/11/2026) "Ghi chú kẹt xe do code nối" ĐÃ MERGE main `bc785ae`** (B review READY; test rộng 1290 passed trên `7f3cecd`). Kiểm trên 8010: 3 câu model bỏ ghi chú ⇒ 3 / 3 có `notice`; 1 câu model viết ⇒ không lặp (0,0017 USD). Tài liệu `ĐÃ PUSH c04afa7 origin/p9-tai-lieu-kc-ghi-chu` (bài 14, sổ 07, nhật ký; worktree `/tmp/c_tl2`) — chờ A merge. Hướng dẫn thử 2.11e đã sửa. `/tmp/c_gc` đã gỡ. **Tiền C tối 16/11: 0,0270 USD** (0,0131 + 0,0122 + 0,0017). **Đang làm:** review nhánh E `origin/p9-cot-lich-theo-sua` `051e679` (cột lịch theo bản sửa bằng lời).
 
 - **(21:10 16/11/2026) A chuyển review `p9-cot-lich-theo-sua` cho B ⇒ C DỪNG** (đã gửi B + E vài ghi nhận đọc dở, không viết review). **Việc hiện tại: TRỰC LỖI User báo** khi thử trên 8010 (vùng trợ lý / khoảng cách / sửa lịch bằng lời): A chuyển lỗi ⇒ C đọc sổ vết (`scripts/xem_so_vet.py`, `data/debug_trace/2026-11-16.jsonl`) TRƯỚC khi sửa; KHÔNG khởi động lại 8010, KHÔNG chạy lượt có phí trên 8010. Tài liệu `p9-tai-lieu-kc-ghi-chu` A đang merge ⇒ gỡ `/tmp/c_tl2` khi thấy đã vào main.
+
+- **(21:53 16/11/2026) TỰ THỬ NHƯ NGƯỜI DÙNG (User yêu cầu cả nhóm) — C XONG phần phủ được, đã gửi cả nhóm.** File `data/tu_thu_2026-11-16/C.md` (bảng chấm từng mục + lỗi thật theo mức nặng + "đánh giá như người dùng thật"), ảnh `anh/C_*.png`, kịch bản `tools/c_p4.py` · `c_chat.py` · `c_tinh.py` · `c_p3.py` (chạy lại: `uv run python -I data/tu_thu_2026-11-16/tools/<file> http://127.0.0.1:8011 …`). Phủ: Phần 4 (21 câu) · 2A–2H (36 câu) · Phần 3 mục chính · phần máy quan sát của 1 / 5 / 6 / 7 / 8. CHƯA: 2I–2J ảnh, 2.3, 2.37, 2.39, 2.40, 3.6–3.14 đọc kỹ, 5.2–5.5, 6.4–6.10, 8.3 / 8.4 / 8.8. **Lỗi thật nặng nhất:** câu "vừa bị giật túi xách" từ chối + web không có bước nào; câu bão model tự nói "chưa xác nhận có bão"; "đổi chỗ ngày 1 với ngày 2" hiểu thành đổi số ngày; "đổi thành 5 ngày" khi đã 5 ngày rơi sang hỏi đáp; "tuần sau thời tiết" từ chối. Tiền tự thử ≈ 0,05–0,06 USD (ước, log 8011 chung, chưa tách). Chờ A tổng hợp + chốt; C phản biện khi nhận kết quả B / E.
+
+- **(21:57 16/11/2026) `C.md` thêm mục "BỔ SUNG THEO THƯỚC CHẤM"** (nguyên tắc bị phạm · mức 0–4 · số lần tái hiện · quyết định User đã có) + đã phản biện bản của B, gửi cả nhóm. Sau khi tra: khẩn cấp (giật túi / mất ví) + câu mở đầu "Tôi không tìm thấy…" = giới hạn / thiết kế User đã nhận, nay có bằng chứng mới ⇒ A trình User; "tuần sau thời tiết" C RÚT chữ lỗi (thứ Hai ⇒ tuần sau nằm trọn ngoài 7 ngày, đúng thiết kế); câu bão dao động 1 / 2 (B không thấy) ⇒ cần đếm. Lỗi mới chỉ C thấy, chưa xác nhận: "Đổi chỗ ngày 1 với ngày 2" báo sai việc; "đổi thành 5 ngày" khi đã 5 ngày rơi sang hỏi đáp; chữ "Sao chép lịch" còn `**`; "Không đổi được: Chưa làm:"; khối "Đã đổi" bị che trong khung nổi. Chờ A tổng hợp + chốt, chưa sửa code gì.
+
+- **(22:03 16/11/2026) Đã đọc bản B + E, phản biện xong, ghi cập nhật cuối `C.md`.** Đã tái hiện ≥ 2 người: khẩn cấp từ chối (B 2 / 2, C, E) · "đổi chỗ ngày 1 với ngày 2" ⇒ đổi số ngày (C, E) · "đổi thành N ngày" khi đã N ngày ⇒ rơi sang hỏi đáp (C, E) · `**` trong chữ chép (C, E) · khách sạn rẻ nhất cụt · chợ Đông Ba buổi tối (gốc: một ô bảng điểm — E) · câu bão model tự nhận định 3 / 5 lượt. C xác nhận bằng dữ liệu mình: ngày mưa 100 % / 37 mm lịch vẫn Đầm Chuồn ngoài trời ⇒ hạ Lên kế hoạch 3,5. Ưu tiên C đề nghị: khẩn cấp (trình User) ⇒ lịch (chợ tối, mưa to, lịch 1 ngày) ⇒ câu đầu khi kho thiếu ⇒ nhóm sửa lịch bằng lời (vùng của C: "đổi chỗ hai ngày", "đổi thành đúng số đang có", `**` chữ chép, khung nổi chỉ hiện khối "Đã đổi"). **Chờ A tổng hợp + chốt + giao; chưa sửa code.**
+
+- **(22:06 16/11/2026) A giao tra 0 USD — ĐÃ TRẢ A:** (1) câu bão: plan B5b D6 chỉ buộc code nối câu cố định NCHMF + 112; lời dặn / mô tả công cụ không có chữ nào về bão, công cụ `thoi_tiet` vẫn được đưa ở câu bão, bước kiểm chỉ xét SỐ ⇒ câu model "chưa xác nhận có bão" không bị cấm, không bị bắt = lỗi mới mức 3 (3 / 5 lượt cả nhóm); đề nghị: câu bão / lũ ⇒ chữ trả lời = câu cố định + khối số do code, như đường web (`assistant.py` ~1137). (2) ngày mưa to vẫn ngoài trời: `lich_trinh_v2.py` 163–167, 253–255 chỉ đổi THỨ TỰ XÉT điểm không ưu tiên; cụm `dong_bien` 3 / 3 ngoài trời ⇒ vô hiệu; đã đếm 14/11 (`c_dem_mua.md`: 33 % ngày mưa không thay được) và nhóm quyết không xây ⇒ giới hạn đã nhận, nay có bằng chứng người dùng. A đính chính: chợ Đông Ba buổi tối là CHỦ Ý (phố ẩm thực đêm trước chợ), lỗi là trình bày (thiếu giờ + ghi chú tối). Chưa sửa code.
+
+- **(22:14 16/11/2026) User CHỐT LẠI (qua A): câu khẩn cấp (giật túi, mất ví, mất giấy tờ…) bị từ chối là NGOÀI PHẠM VI — đã chốt 09/11, 12/11, nay 16/11; KHÔNG nêu lại ở lượt thử / review sau.** C đã gỡ khỏi danh sách lỗi + "ba thứ sửa trước" trong `C.md`. Ba thứ sửa trước của nhóm nay: câu bão model tự nhận định · hỏi tiếp giờ mở cửa · lịch (ngày mưa, mục tối chợ Đông Ba, mặc định 1 ngày) · sửa lịch bằng lời ("đổi chỗ hai ngày", "đổi thành đúng số đang có" — vùng C).
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 16/11 — C viết 15:26, chốt 16:00 16/11/2026 `date`; máy: 0 worktree, 0 server của C)
 

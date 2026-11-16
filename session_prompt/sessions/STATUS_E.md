@@ -1,4 +1,62 @@
-# STATUS E — PHIÊN TỐI 16/11 (mở 18:06 16/11/2026) · terminal `hue-rag-4a` · Claude Fable 5.2 · vai thực thi
+# STATUS E — KẾT PHIÊN TỐI 16/11 (ghi 22:16 16/11/2026, `date`) · terminal `hue-rag-4a` · Claude Fable 5.2 · vai thực thi
+
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11)
+
+Viết cho người **chưa biết gì về phiên tối 16/11**. Quyền phiên tối ("như chiều 16/11") đã hết hạn. Phiên sau: đọc mục này ⇒ kiểm nhanh (`WORKFLOW.md` §2) ⇒ báo A (B, C thường tự báo trước ⇒ A là terminal còn lại) ⇒ chờ A giao. Nhật ký theo giờ của tối nay nằm ngay dưới mục này.
+
+### (1) Máy lúc kết phiên
+E: **0 worktree** (`/tmp/e_*` đã gỡ / xoá hết), **0 server tạm** (cổng E dùng: 8043, đã tắt), 0 tiến trình nền, 0 agent con. Mọi nhánh của E tối nay ĐÃ MERGE vào `main` (`4631884`): `p11-ghim-giua`, `p9-anh-lap-an`, `p9-tai-lieu-anh-lap-an`, `p11-ghim-mep-duoi`, `p9-cot-lich-theo-sua`, `p11-ghim-chong`, `p9-neu-mua-hep`, `p9-tai-lieu-cot-lich`. Chưa commit (A commit): file này. Ảnh Docker `hue-rag-app:a9d1674` (3,6 GB) vẫn trên máy — A đã ghi "giữ, xoá là việc của User".
+
+### (2) Việc đầu phiên sau — ỨNG VIÊN, CHỜ A / User giao (không tự làm)
+1. **Mục tối "Chợ Đông Ba" trong lịch** (lỗi TRÌNH BÀY, không phải lỗi dữ liệu): bảng `data/phase_9/lich_trinh/diem_v9.json` dòng `cho_dong_ba` có buổi `toi` là CHỦ Ý (căn cứ trong bảng: nhà lồng đóng ~18:00, phố ẩm thực đêm trước chợ 18:00–23:00; User duyệt cột buổi 04/11) nhưng `gio_toi` + `ghi_chu_toi` rỗng ⇒ lịch in "Tối | Chợ Đông Ba" không giờ, câu tả nói về chợ. Hướng: điền `gio_toi` 18:00–23:00 (0 dòng code; bảng mới ⇒ quét nhãn bộ đo + mô phỏng 0 USD trước merge — `WORKFLOW.md` §3.4) + cho lịch hiện `ghi_chu_toi` (code CHƯA đọc trường này ở đâu: `backend/llm/lich_trinh_v2.py` hàm dựng mục chỉ lấy `gio_toi`; ước 8–12 dòng server + `frontend/src/LichV2.jsx` + chữ chép / .ics); xem thêm đoạn kho dùng cho câu tả buổi tối.
+2. **Tìm kiếm Khám phá khớp dấu trước** (gõ "lăng" ra 12 bài "làng…" trước; "chè" ra "Điện Hòn Chén") — `frontend/src/KhamPha.jsx`; ca đối chứng: `data/tu_thu_2026-11-16/tools/E_trang.py` mục 6.3.
+3. **Bản đồ điện thoại kéo được sau khi phóng to** — hiện `dragging: !L.Browser.mobile` (`frontend/src/BanDoLich.jsx`); mô phỏng cảm ứng: phóng 2 nấc ⇒ 3 ghim còn 1 trong khung, một ngón không kéo; hai ngón trong mô phỏng cũng không dịch (CHƯA chắc do mô phỏng) ⇒ **cần User thử trên điện thoại thật** trước khi sửa.
+4. **Ngày mưa nặng lịch vẫn ngoài trời cả ngày** (ngày 96–100 %, 16–41 mm: Đầm Chuồn, Thiên Mụ, Hòn Chén, đồi Vọng Cảnh, phố đi bộ; chỉ 1 dòng "Nếu mưa… thay một điểm") — là luật xếp ⇒ việc có đo (`run-experiment`), không phải sửa nhỏ.
+5. **9 chỗ sai của `data/HUONG_DAN_TEST_USER.md`** (liệt kê ở `data/tu_thu_2026-11-16/E.md` mục C) + **chữ cũ trang Giới thiệu** ("Chưa có quán ăn theo vị trí", `frontend/src/GioiThieu.jsx` mục Giới hạn; chưa nhắc sửa lịch bằng lời, khoảng cách).
+6. Nhỏ, đã thấy: chữ "Sao chép lịch" / .txt còn `**Sửa**`; "Không đổi được: Chưa làm:" chồng tiền tố; lịch 1 ngày chọn hạng sao không ra khối Nơi ở và không giải thích; trang lịch khổ 390 có 13 vùng bấm thấp < 24 px, ảnh điểm `alt` rỗng; câu dài bị cắt ở 500 ký tự không báo.
+7. **Spec deploy AWS** (`docs/superpowers/specs/2026-11-16-deploy-aws-design.md`, bản nháp `e847b47ad995`): CHỜ tài liệu khoá học User gửi ~18–19/11 rồi mới viết bản chính. Lúc viết: tính lại md5 Dockerfile ở §4 (file nháp `data/phase_12/deploy_nhap/Dockerfile` hiện md5 `68a871655df2` — KHÔNG đổi tối nay; nhưng ảnh Docker `a9d1674` đã cũ vì `frontend/` đổi nhiều tối nay ⇒ build lại khi cần chạy thử).
+8. Cần đếm lại trước khi gọi là lỗi (mới 1 lần): câu 3 ý — bỏ một điểm thì cột có thêm Bảo tàng Cổ vật không báo (4.18); "Gợi ý chỗ ở đi" ra giá phòng 200–500 nghìn (4.11); lịch "khám phá nhiều" 15 phút từ Kinh thành ra phá Tam Giang gồm ăn trưa (3.8).
+
+### (3) Đã vào `main` tối nay (E làm) — số đã đo kèm nhãn
+| Việc | Số đo (nguồn) | Nhãn |
+|---|---|---|
+| Kiểm 2 bài nháp quán Lập An trước khi B ghi kho (bắt tên đơn vị hành chính cũ) | md5 nháp sau sửa `a0506b9575ad` · `23744675b84d` | E tự tính |
+| Bản đồ lịch sau khi bật cờ `ban_do_lich`: 4 mục đạt | `data/ban_do_bat_2026-11-16/toi/luot_2/kq.json` | E đo, A nhìn ảnh |
+| Số nằm giữa ghim (1 dòng CSS) | ảnh `toi/ghim/ghim_sau_sua.png`; bản build thật: `data/thu_huong_dan_2026-11-16/ban_do/` | E nhìn |
+| Ghim không bị dòng ghi công che (lề dưới `fitBounds` 60) | khổ 390 ngày 2: 1 ⇒ 0 ghim bị che (`toi/mep_{truoc,sau}_3/kq.json`) | E đo trên bản build nhánh |
+| Ghim trùng chỗ vẽ lệch ngang | cặp che quá nửa 1 ⇒ 0 ở 390 + 1440 (`data/ghim_chong_2026-11-16/{truoc,sau}/kq.json`); bản gộp trên 8010: 0 | E đo; chưa thử > 3 điểm trùng |
+| Khối dự báo / "Nếu mưa" hết bó hẹp | khổ 1440 chữ 119 ⇒ 470–499 / 532 px (`mua_{truoc,sau}/kq.json`) | E đo |
+| Cột lịch trang Lên kế hoạch theo bản đã sửa bằng lời + nhãn + dòng chỉ dẫn | `pw_cot.py` 21 / 21 (phát lại SSE thật, 5 phép dùng đầu vào dựng tay); 1 lần chạy thật: .ics 6 sự kiện không còn điểm đã bỏ; B review READY + 9 phép kiểm của B | E đo, B chạy lại; trên bản gộp 8010: 21 / 21 |
+| Ảnh Khám phá 2 bài quán Lập An | 262 / 265 bài có ảnh (script dựng in ra; 265 = `/api/kham_pha`) | B + C nhìn ảnh |
+| Review `p9-kc-tinh-san` của C | vòng 1: câu phá 15 / 21 SAI ⇒ vòng 2 READY: 20 / 0 / 1, bộ 32 câu 29 / 0 / 3, bộ thêm 16 / 0 | E chạy; số của C khớp |
+| Chạy thử mục mới của hướng dẫn | 3 câu khoảng cách chữ đầu 1,51 / 1,39 / 1,56 s (`first_text_ms` log 8010) | E đọc log; n = 3 |
+| Tự thử như người dùng | `data/tu_thu_2026-11-16/E.md` (đã gỡ mục khẩn cấp, đã đính chính chợ Đông Ba) | chưa ai tính lại; mức nặng do E chấm |
+Tài liệu đã cập nhật: bài 23 (mục "bản đồ dưới lịch"), bài 24, 25 (cột lịch), `bai_hoc/README`, sổ 01 / 07 / README, nhật ký tối; agent con đối chiếu 72 khẳng định (0 sai, 9 chỗ đã sửa — `data/kiem_bai_hoc_2026-11-16/kiem_cot_lich_ban_do.md`). `data/HUONG_DAN_TEST_USER.md`: E sửa 2.11d / 2.11e / 3.0 / Phần 4 (trước lượt tự thử; 9 chỗ sai mới CHƯA sửa — A gom).
+
+### (4) Công cụ để dùng lại (private, `data/`)
+- Phát lại 0 USD: `data/cot_lich_theo_sua_2026-11-16/sse/*.sse` (biểu mẫu 2 ngày · sửa được · 2 lượt không sửa được), `data/ghim_chong_2026-11-16/bieu_mau_co_ngay.sse`; kịch bản `pw_cot.py`, `pw_chong.py`, `pw_mua.py` — chạy lại trên bản build bất kỳ: `uv run python -I <kịch bản> <url> <thư mục ảnh>`.
+- Tự thử: `data/tu_thu_2026-11-16/tools/E_*.py` (Phần 3, 3C + cảm ứng, 2I, Phần 4, 2A–2H, 2K, các trang, tiếp cận). `E_2I_b.py` cần ảnh `/tmp/e_khong_hue.png` — chạy `E_2I.py` trước (nó tự dựng) hoặc tự tạo một ảnh không liên quan Huế.
+- Hỏi qua trang Trợ lý có câu hỏi tiếp: `tools/E_hoi.py <url> <thư mục> <file [[mã, câu, (1 = hỏi tiếp)]]>`.
+
+### (5) Bẫy tối nay (đầu vào vòng cải tiến)
+- **Gọi là "lỗi dữ liệu" + đề xuất cách sửa khi chưa tra `*_can_cu` và quyết định cũ** (chợ Đông Ba buổi tối — A đính chính).
+- **Nêu lại việc User đã đóng** (câu khẩn cấp) trong danh sách lỗi — nay có memory `emergency-questions-out-of-scope`; trước khi xếp "lỗi", tra `Project_Status.md` §5 + mục 9 hướng dẫn thử.
+- Đồng hồ WSL nhảy giữa lượt đo ⇒ `time.monotonic()` hoặc `first_text_ms` của log, không `time.time()`.
+- Phép kiểm "khớp / 0 lỗi" không thấy lỗi hiển thị (số lệch ghim, khung xám, ghim chồng, khối chữ bó hẹp) ⇒ phải NHÌN ảnh; ca thử đầu không tái hiện lỗi ở bản cũ ⇒ luôn chạy bản cũ trước để có đối chứng ra "có".
+- Viết con số vào bài học khi chưa lưu file kết quả ("1 giây một ô") ⇒ agent con bắt.
+- Kịch bản ảnh chụp sớm khi lượt chưa xong (2I lần đầu) ⇒ chờ theo `data-phase`, không theo thời gian; đoán vị trí ô chat theo hướng dẫn thay vì đọc `App.jsx`.
+- STATUS ghi sai số lượt (4 ⇒ 3 lượt biểu mẫu) — đếm từ log trước khi ghi.
+
+### (6) Câu hỏi cho A / User
+- Cho User (qua A): thử bản đồ lịch trên **điện thoại thật** — phóng to rồi kéo bằng một ngón / hai ngón có được không; thấy khó ⇒ có cho một ngón kéo bản đồ (đổi lại vuốt qua khung không cuộn trang) không.
+- Cho A: mục tối chợ Đông Ba — chỉ điền `gio_toi` (nhanh) hay làm cả hiện `ghi_chu_toi`; ngày mưa nặng có mở thành một bậc đo không; 9 chỗ sai của hướng dẫn thử A sửa hay giao E.
+
+### (7) Tiền E tối 16/11 ≈ 0,08 USD (ƯỚC — chưa ai tính lại)
+OpenAI ≈ 0,019 trước lượt tự thử (đếm từ `chat_metrics`: kiểm bản đồ, chạy thử hướng dẫn 10 lượt 0,0075, các nhánh giao diện) + lượt tự thử ≈ 0,06 (ước theo số lượt: ~34 lịch / câu sửa, 36 câu hỏi, 12 lượt ảnh — log 8011 chung cả nhóm, chưa tách) · Serper 4 lượt 0,004 · agent con 1 lượt (0 USD API) · Codex 0.
+
+---
+
+# (nhật ký trong phiên) STATUS E — PHIÊN TỐI 16/11 (mở 18:06 16/11/2026) · terminal `hue-rag-4a` · Claude Fable 5.2 · vai thực thi
 
 - 18:06 16/11/2026 — mở phiên, kiểm nhanh: main `6b90bbf`, sạch (chỉ `.wslconfig` chưa tracked — đã biết), hooksPath `.githooks`, 0 worktree phụ, WSL 19 GB (khả dụng 16). **Lệch handoff:** handoff ghi Qdrant ĐÃ TẮT, A phải bật trước — thực tế Qdrant đang chạy, 1 collection 9.425 điểm; cổng 8010 chưa có server (đúng). Ba terminal khác: `hue-rag-b2`, `hue-rag-cb`, `hue-rag-e9` (B = `hue-rag-b2`, C = `hue-rag-e9` tự báo ⇒ A = `hue-rag-cb` theo loại trừ; đã gửi báo cáo mở phiên cho A). Handoff "Việc phiên tối" không có mục riêng cho E. **Rảnh — chờ A giao.** Chưa sửa file nào khác, 0 USD.
 - 18:08 16/11/2026 — A (`hue-rag-cb`) giao (quyền phiên "như chiều 16/11"): (1) người kiểm thứ hai cho ghi kho Lập An của B — khi B nhắn "đã ghi 2 bài", so 2 file kho với nháp `data/sua_kho_2026-11-16_lap_an/nhap/` (md5 nháp `53d9fde30a9f` Bé Thân · `7bcfec967b58` Làng Chài; cả hai bắt đầu bằng `#`, không frontmatter, có `## Nguồn dữ liệu`) + sao lưu, trả B + A ≤ 5 dòng; chỉ đọc, 0 USD; (2) từ 20:30 trực lỗi giao diện / lịch User báo (đọc sổ vết trước khi sửa); (3) lúc B dựng chỉ mục không việc nặng / server / lượt có phí. Ảnh Docker `hue-rag-app:a9d1674` GIỮ. **Rảnh — chờ B nhắn đã ghi kho.**
@@ -16,6 +74,9 @@
 - 21:20 16/11/2026 — **BA nhánh CHỜ A GOM MERGE (đã báo A; User đang thử trên 8010 ⇒ không gửi lượt nào lên 8010):** (1) `p9-cot-lich-theo-sua` `a8ee726` — B review READY, 3 minor đã sửa; `pw_cot.py` 21 / 21 + ca phá của B 9 / 9. (2) `p11-ghim-chong` `a67e860` — ghim trùng chỗ vẽ lệch ngang (`BanDoLich.jsx`); `data/ghim_chong_2026-11-16/pw_chong.py`: cặp che quá nửa 1 ⇒ 0 ở 390 + 1440; ảnh `truoc/` ↔ `sau/`. (3) `p9-neu-mua-hep` `f454f41` — `.lkh-du-bao li { display: block }`; `pw_mua.py`: chữ 119 ⇒ ~480 / 532 px ở 1440; ảnh `mua_truoc/` ↔ `mua_sau/`. Đầu vào phát lại 0 USD: `data/cot_lich_theo_sua_2026-11-16/sse/*.sse`, `data/ghim_chong_2026-11-16/bieu_mau_co_ngay.sse`. Server tạm 8043 ĐÃ TẮT. Worktree chờ gỡ sau merge: `/tmp/e_cot`, `/tmp/e_chong`, `/tmp/e_mua` (mỗi cái 3 symlink: data, knowledge-base-hue, frontend/node_modules). **Nợ sau merge:** sửa `data/HUONG_DAN_TEST_USER.md` (3.0: bỏ "ghim bị dòng ghi công che", thêm ghim trùng vẽ lệch; Phần 4: lịch đã sửa hiện cả ở cột trang + nhãn) + 1 đoạn `bai_hoc/25` + sổ khâu / nhật ký. Tiền E tối nay ≈ 0,019 USD. **Rảnh — chờ A merge / lỗi User báo.**
 - 21:26 16/11/2026 — A ĐÃ MERGE cả ba nhánh + build một lần ⇒ main `d01171b`; E chạy lại 3 kịch bản phát lại trên bản gộp ở 8010 (0 lượt thật): `pw_cot.py` 21 / 21, `pw_chong.py` 0 cặp che, `pw_mua.py` đạt; 3 worktree đã gỡ. `data/HUONG_DAN_TEST_USER.md` mục 3.0 + lưu ý Phần 4 + 4.1 ĐÃ SỬA theo bản mới. **ĐANG LÀM nhánh tài liệu `p9-tai-lieu-cot-lich`** (worktree `/tmp/e_tl`, CHƯA commit): bài 23 mục mới "bản đồ dưới lịch" + 2 dòng bảng từ, bài 25 đoạn "lịch đã sửa hiện ở đâu", `bai_hoc/README.md`, sổ 07 (bản 65) + `bao_cao_he_thong/README.md` + 1 dòng nhật ký tối. **Agent con đang đối chiếu** ⇒ biên bản `data/kiem_bai_hoc_2026-11-16/kiem_cot_lich_ban_do.md` ⇒ E sửa theo ⇒ `scripts/commit_push.sh` 6 file ⇒ báo A sha.
 - 21:36 16/11/2026 — **Nhánh tài liệu `p9-tai-lieu-cot-lich` CHỜ A MERGE:** ĐÃ PUSH `a27ec48` (7 file: bài 23 mục bản đồ dưới lịch, bài 25 đoạn cột lịch, `bai_hoc/README`, sổ 07 bản 65, `bao_cao_he_thong/README`, nhật ký tối, report cột lịch thêm dòng 21 / 21). Agent con đối chiếu 72 khẳng định (62 đúng · 0 sai · 8 dễ hiểu nhầm · 2 không kiểm được; `data/kiem_bai_hoc_2026-11-16/kiem_cot_lich_ban_do.md`) ⇒ đã sửa 9 mục. Worktree `/tmp/e_tl` gỡ sau merge (không symlink). E: 0 server, 0 tiến trình nền. Tiền E tối nay ≈ 0,019 USD. **Bẫy tối nay (đầu vào vòng cải tiến):** đồng hồ WSL nhảy giữa lượt đo ⇒ đo giây bằng `time.monotonic()` hoặc lấy `first_text_ms` từ log, không dùng `time.time()`; phép kiểm chỉ đếm "khớp" không thấy lỗi hiển thị (số lệch ghim, khung xám, ghim chồng) ⇒ phải NHÌN ảnh; ca thử đầu cho lỗi "ghim bị che" không tái hiện lỗi ở bản cũ ⇒ luôn chạy bản cũ trước để có đối chứng ra "có"; viết con số vào bài ("1 giây một ô") khi chưa lưu file kết quả ⇒ agent con bắt. **Rảnh — chờ A merge / lỗi User báo.**
+- 22:02 16/11/2026 — **TỰ THỬ NHƯ NGƯỜI DÙNG (User yêu cầu cả nhóm) XONG phần E, đã gửi cả nhóm:** `data/tu_thu_2026-11-16/E.md` (bảng từng mục + lỗi theo mức nặng + chữ hướng dẫn cần sửa + đánh giá như người dùng thật), ảnh `anh/E_*.png`, kịch bản `tools/E_*.py`, dữ liệu thô `E_*.json`; server riêng 8011 của A; ≈ 0,06 USD (ước, log chung chưa tách) ⇒ **tiền E tối nay ≈ 0,08 USD**. Lỗi chỉ E thấy: bảng `diem_v9.json` cho_dong_ba có buổi `toi` dù đóng 18:00 (gốc "chợ Đông Ba buổi tối"); ngày mưa nặng lịch vẫn ngoài trời; điện thoại phóng to bản đồ rồi không kéo được; Khám phá tìm "lăng" ra "làng"; vài ca sửa lịch (đổi thành đúng số ngày đang có, tự thêm / thế điểm không báo, "gợi ý chỗ ở đi" ra giá phòng); Giới thiệu ghi "chưa có quán ăn theo vị trí". Chưa thử: 2.3, 2.33, 2.35b, 3.12, 4.9, 6.6–6.10, 7.4–7.5, 8.4, 8.7, 8.8, phóng chữ 200 %. KHÔNG sửa code / hướng dẫn trong lúc thử (A gom). Nhánh tài liệu `p9-tai-lieu-cot-lich` `a27ec48`: A nhận, merge sau khi có kết quả tự thử; worktree `/tmp/e_tl` còn. **Rảnh — chờ A tổng hợp + chốt.**
+- 22:05 16/11/2026 — **ĐÍNH CHÍNH (A tra, E nhận):** "chợ Đông Ba buổi tối" KHÔNG phải lỗi dữ liệu — bảng có căn cứ "phố ẩm thực đêm trước chợ 18:00–23:00", User duyệt cột buổi 04/11; lỗi thật là trình bày (`gio_toi`, `ghi_chu_toi` rỗng). E đã sửa `E.md` (bảng 3.7 + mục F) và trả lời A: code chỉ hiện `gio_toi`, `ghi_chu_toi` chưa hiện ở đâu. **Bẫy của E:** gọi là "lỗi dữ liệu" + đề xuất cách sửa khi chưa tra `*_can_cu` và quyết định cũ. **Rảnh — chờ A chốt danh sách trình User.**
+- 22:14 16/11/2026 — **User chốt lần nữa (A báo): câu khẩn cấp (giật túi, mất ví, mất giấy tờ…) bị từ chối là NGOÀI PHẠM VI** (09/11, 12/11, 16/11) ⇒ E đã gỡ khỏi "lỗi thật" / "ba thứ sửa trước" trong `data/tu_thu_2026-11-16/E.md`; KHÔNG nêu lại ở các lượt thử / review sau. Ba thứ sửa trước của nhóm nay: câu bão model tự nhận định · hỏi tiếp giờ mở cửa · lịch (ngày mưa, mục tối chợ Đông Ba, lịch 1 ngày) · sửa lịch (đổi chỗ hai ngày, đổi thành đúng số đang có). **Rảnh — chờ A giao.**
 
 ---
 

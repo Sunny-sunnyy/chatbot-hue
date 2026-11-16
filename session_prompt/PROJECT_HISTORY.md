@@ -4,6 +4,10 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-11-16 (22:17 16/11/2026) — Phiên tối: kho 265 bài, bản đồ lịch bật, khoảng cách tính sẵn bật, cột lịch theo bản sửa, cả nhóm tự thử như người dùng
+
+Phiên tối 16/11 (A `hue-rag-cb` · B `hue-rag-b2` · C `hue-rag-e9` · E `hue-rag-4a`): xem `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11)" + mục "PHIÊN TỐI 16/11"; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-16_toi.md`; report `report_agent/2026-11-12_ra_khoang_cach/` (`b_ghi_kho_lap_an_…`, `c_kc_tinh_san_…`, `e_review_kc_tinh_san`, `e_cot_lich_theo_sua_…`); lượt tự thử + tổng hợp ở `data/tu_thu_2026-11-16/` (private). Phiên chiều 16/11: mục "PHIÊN CHIỀU 16/11" của handoff.
+
 ## 2026-11-15 (21:35 15/11/2026) — Phiên tối: User thử trang Trợ lý ⇒ 7 góp ý; ảnh đính kèm tin nhắn (phương án lai); sổ vết debug; thử lại so ảnh bằng embedding (mở)
 
 Phiên tối 15/11 (A `hue-rag-ef` · B `hue-rag-7d` · C `hue-rag-10` · E `hue-rag-f0`): xem `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11)", `archive/CURRENT_HANDOFF_LICH_SU_2026-11-15_toi.md`, `bao_cao_he_thong/nhat_ky/2026-11-15_do_bu_mua.md`. User chốt hướng "thử + sửa lỗi là chính". ≈ 0,11 USD. (Các phiên 14/11 chiều – 15/11 chiều: xem archive handoff cùng ngày.)

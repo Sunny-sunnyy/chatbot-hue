@@ -1,3 +1,44 @@
+# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11) — B viết 22:15 16/11/2026, terminal `hue-rag-b2` (A `hue-rag-cb` · C `hue-rag-e9` · E `hue-rag-4a`; cả bốn Claude Code)
+
+Mục này tự đủ nghĩa. Nhật ký từng bước tối 16/11 nằm ngay dưới ("PHIÊN TỐI 16/11 — B").
+
+## 1. Việc đầu phiên sau của B — theo thứ tự (chờ A giao; quyền phiên tối 16/11 hết hạn)
+1. **Đo giọng nói G2 khi User thu xong 40 câu** (User nghỉ tối 16/11, sáng 17/11 mới thử / thu): lệnh ở mục "ĐO GIỌNG NÓI G2" bên dưới (G1 đổi WAV ⇒ vòng 0 cả 3 model một dòng ⇒ vòng 1 chỉ model trượt; `free -g` ≥ 5 GB; ban ngày xin A lượt máy). Chưa thấy file thu nào lúc kết phiên.
+2. **B7 lượt đo cuối — CN 23/11, người chạy B, trần 0,45 USD:** đọc **`data/phase_9/b7/tools/RUNBOOK_CUOI.md`** trước (thứ tự lệnh, lệnh `!` cho User, nhãn [Chạy] / [Chưa chạy]). Ước tiền mới ≈ 0,375–0,42 USD (A đã nhận, không cắt bộ nào). Kết quả ghi vào `data/phase_9/b7_cuoi/` (không đụng `data/phase_9/b7/`).
+   - **Còn dở (0 USD, làm phiên ban ngày):** (a) viết lệnh nguyên văn cho bộ quyết 12 biểu mẫu bản 2 (`nghiem_thu.py v2` ⇒ `xuat_mu.py` ⇒ 2 agent con chấm mù + 2–3 lịch cố ý hỏng làm ca đối chứng ⇒ `ghep_cham.py`) và thử `nghiem_thu.py cham_lai` trên kết quả 14/11; (b) kiểm lượt "web 10" nằm trong bộ `s2c` cho ra đủ hai số bằng `do_g.py dem`; (c) `an_toan_b7.py` mới chỉ `py_compile` sau khi cho đọc `B7_OUT` — chạy một bước 0 USD trên bản sao; (d) T đã thấy: nếu bước 0 nói dùng lại thì xoá dòng `a_da_thay` khỏi `chay_khong_server.sh` trước khi chạy.
+   - **Cần User trước 23/11:** 3 lệnh đếm bộ kín sửa lịch (plan B7 cuối §4; handoff "User tự làm (1) + (1b)"); ngày 23/11: 4 lệnh `!` phần kín (S + T kín, C kín, K, L kín — ghi trong RUNBOOK).
+   - S2b ở 2 câu đã thấy (b_dt_12, b_dt_20 mở cổng web) = giới hạn User đã nhận ⇒ lượt cuối ghi "phạm S2b — giới hạn đã nhận".
+3. **Sau tự thử tối 16/11** (A tổng hợp ở `data/tu_thu_2026-11-16/TONG_HOP.md`; phần của B: `data/tu_thu_2026-11-16/B.md`, mục 7 là bản cuối): việc sửa do A giao — B chưa nhận việc nào. Phần B CHƯA thử: hỏi bằng ảnh (2I), 2K, phần lớn Phần 3 / 4, kiểm tiếp cận.
+
+## 2. Số đã đo tối 16/11 (nhãn độ tin)
+- **[đã đo, E + A đã nhìn; chưa ai tính lại tiền]** Ghi kho Lập An: 263 ⇒ **265 bài / 9.436 đoạn**, record `3622a573e28e`, sparse `ea442226257d`, T1 `5d344d6d1bbf`; câu chạm Golden 2 / 158 + an toàn 2 / 32; 0 lỗi, ngoài kho 0 / 18, 2 câu thử từ chối ⇒ trả lời; 0,0104 USD. Report `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_lap_an_implementation.md`.
+- **[chạy thử trên bộ ĐÃ THẤY, một lượt]** `chay_kin.sh` (S 20 + T 56 câu): 0 lỗi; 2 câu ngoài phạm vi mở cổng web; xã giao được đáp 16 / 16; **0,0447 USD model + 11 Serper ≈ 0,056 USD** (vượt trần thử 0,03 — đã báo, A nhận).
+- **[chạy thử, một lượt]** 3 chuỗi nêu tên qua server thật: 6 lượt 0 lỗi, cổng web mở 2 / 3, **0 truy vấn chứa tên**; 0,0063 USD + 2 Serper.
+- **[ca đối chứng 0 USD]** `nhan_loi.py` trên giữa kỳ: agent an toàn 1 · ngoài kho 2 (S2b) · thiếu ý 4 · từ chối nhầm 3 — khớp plan + `analyze.json`.
+- **[tự thử qua giao diện, phần lớn một lượt; mẫu nhỏ]** 47 lượt Trợ lý + 1 lịch + 4 câu sửa: chi tiết + mức + trạng thái tái hiện ở `data/tu_thu_2026-11-16/B.md` mục 6–7 (câu bão: 3 lượt 3 kiểu, 1 kiểu model tự nhận định — cả nhóm 3 / 5; hỏi tiếp giờ mở cửa web trắng 1 / 1; câu "Tôi không tìm thấy…" 9 / 42 lượt; nguồn vé Đại Nội lạc bài 2 / 2).
+- **[review]** `p9-kc-ghi-chu` READY (12 ca phá) · `p9-cot-lich-theo-sua` READY (pw_cot 20 / 20 + 9 ca phá) · 2 ảnh quán Lập An ổn.
+
+## 3. Tiền B tối 16/11
+Đo từ file / log: ghi kho 0,0104 · chạy thử `chay_kin` 0,0447 + Serper ≈ 0,011 · nêu tên 0,0063 + Serper 0,002 ⇒ **≈ 0,075 USD**. ƯỚC (server 8011 chung, không tách được theo sha): tự thử ≈ 0,055 USD. **Tổng ≈ 0,13 USD** (chưa ai tính lại).
+
+## 4. Bẫy tối 16/11
+1. Gửi lệnh dựng chỉ mục CÙNG LƯỢT với lệnh quét trùng ⇒ dựng chạy trước khi đọc kết quả quét ⇒ nay `chay.sh` mẫu tự quét ở bước 0.
+2. Ước tiền một đơn giá cho mọi bộ ⇒ vượt trần gần gấp đôi: câu mở cổng web tốn 0,002–0,003 + Serper ⇒ đếm câu mở web từ lượt cũ cùng bộ trước khi ước.
+3. Ca đối chứng phải chọn đầu vào CHẮC dương tính (dòng Golden đầu quá ngắn ⇒ "0 trùng" giả).
+4. `uvicorn --app-dir` cần `PYTHONPATH=$PWD` (không thì `No module named api`); heredoc Python có `\$` ⇒ ký tự thừa lọt vào file Markdown (lọt 1 lần vào runbook, đã gỡ).
+5. Playwright trên trang này: CSP chặn `wait_for_function` dạng chuỗi ⇒ dò bằng `locator.count()`; nút "Cuộc trò chuyện mới" không có khi cuộc trống.
+6. Chấm theo cột "Đúng là" mà không tự tính ⇒ chấm oan ("tuần sau" hôm thứ Hai nằm ngoài 7 ngày dự báo); kết luận "vô lý" về dữ liệu trước khi tra căn cứ ghi trong bảng (chợ Đông Ba buổi tối là chủ ý).
+7. Commit tài liệu `b0f4b4b` thiếu dòng Co-Authored-By (quên; không đẩy đè).
+8. **Câu khẩn cấp bị từ chối = NGOÀI PHẠM VI (User 09/11, 12/11, 16/11) — không nêu lại.**
+
+## 5. Câu hỏi cho A / User
+- G2: User thu 40 câu lúc nào (B cần `free -g` ≥ 5 GB, ~10 phút máy).
+- B7: `$C_DONG` chốt ngày nào (C còn nhánh khoảng cách tính sẵn); ai là 2 agent con chấm bộ quyết 12 (B đề nghị agent con mới của A, không phải B).
+- Câu bão model tự nhận định: ai đếm 5–6 lượt + tra spec (B làm được, ≈ 0,005 USD).
+
+## 6. Máy lúc kết phiên
+0 worktree của B, 0 server tạm, 0 tiến trình nền. Thư mục thử giữ lại (private): `data/phase_9/b7_thu_2026-11-16/`, `data/tu_thu_2026-11-16/`, `data/review_kc_ghi_chu_2026-11-16/`, `data/review_cot_lich_2026-11-16/`. `STATUS_B.md`, `B.md` chưa commit (A commit).
+
 # PHIÊN TỐI 16/11 — B `hue-rag-b2` (A `hue-rag-cb` · C `hue-rag-e9` · E `hue-rag-4a`; cả bốn Claude Code, trực tiếp) — mở 18:06 16/11/2026
 - 18:08 16/11/2026 — **GHI KHO LẬP AN BẮT ĐẦU** (A giao, làm ngay không chờ 19:00; quyền phiên "như chiều 16/11"; trần 0,05 USD). Khai báo ghi: `knowledge-base-hue/foods/restaurants/be than lang co.md`, `…/lang chai lang co.md` (bài mới), Qdrant collection chatbot + build record + sparse state (dựng lại), `data/sua_kho_2026-11-16_lap_an/` (kết quả), report `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_lap_an_implementation.md`. Lúc mở: Qdrant chạy sẵn 9.425 point (lệch handoff), 8010 tắt. E kiểm 2 bài trước bước dựng.
 - 18:19 16/11/2026 — **GHI KHO LẬP AN XONG, ĐẠT** (chờ A đọc report + commit): kho **265 bài / 9.436 đoạn**, record `3622a573e28e`, sparse `ea442226257d`, T1 `5d344d6d1bbf`. Câu chạm Golden 2 / 158, an toàn 2 / 32 (S01, S21); lượt có phí: 0 lỗi, ngoài kho 0 / 18 bị trả lời, 2 câu chạm cùng ý, an toàn 0 đổi lớp, 2 câu thử từ chối ⇒ trả lời có nguồn bài mới. Tiền ≈ **0,0104 USD**. Report `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_lap_an_implementation.md` (chưa commit). E kiểm nháp ⇒ sửa đơn vị hành chính theo cách kho gọi (md5 `a0506b9575ad` · `23744675b84d`; bản trước ở `nhap_truoc_E/`). **Mục "GHI KHO LẬP AN" bên dưới là lịch sử — không chạy lại.** Bẫy: gửi lệnh dựng cùng lượt với lệnh quét trùng ⇒ dựng chạy trước khi đọc kết quả quét (quét ra 1 dòng trùng `corpus`, không phải Golden / kín) — việc có thứ tự thì gửi từng lệnh. 0 worktree, 0 server, 0 tiến trình nền của B.
@@ -22,6 +63,10 @@
 - 21:00 16/11/2026 — **Review `p9-kc-ghi-chu` @ `d8d1549` (C): READY, 0 / 0 / 2 minor** (gửi A + C qua tin nhắn, không file): `test_khoang_cach.py` 101 đạt; 12 ca phá 0 USD `data/review_kc_ghi_chu_2026-11-16/do.py`; m-1 chữ "kẹt xe" ở ý khác nuốt ghi chú (giới hạn), m-2 "tắc đường" / NFD ⇒ lặp ý nhẹ. Worktree `/tmp/b_rv` đã gỡ.
 - 21:00 16/11/2026 — **Tiền B tối 16/11 (từ file / log; chưa ai tính lại): ghi kho Lập An 0,0104 · chạy thử `chay_kin` 0,0447 + 11 Serper ≈ 0,011 · 3 chuỗi nêu tên 0,0063 + 2 Serper 0,002 ⇒ ≈ 0,075 USD.** 0 worktree, 0 server, 0 tiến trình nền của B. **Rảnh — chờ A.**
 - 21:13 16/11/2026 — **Review `p9-cot-lich-theo-sua` @ `eb7517b` (E; cột lịch trang Lên kế hoạch đổi theo lịch sửa bằng lời): READY, 0 / 0 / 3 minor** (gửi A + E qua tin nhắn, không file). Bản build của đúng sha, server tạm 8044 (đã tắt), 0 USD: `pw_cot.py` của E 20 / 20; ca phá của B `data/review_cot_lich_2026-11-16/pha.py` 9 / 9 (ảnh ở `…/anh/`). m-1 chép lịch / .txt lấy dòng đầu là câu chat của lượt sửa (khuyên mượn `question` + `summary` lượt biểu mẫu) · m-2 chữ "bên cạnh" sai ở khổ 390 · m-3 giới hạn (biểu mẫu lỗi sau bản đã sửa; `findLast` ES2023). Worktree `/tmp/b_rv` đã gỡ (kèm `node_modules` + `dist` của nó). 0 worktree, 0 server của B. **Rảnh — chờ A.**
+- 21:58 16/11/2026 — **TỰ THỬ NHƯ NGƯỜI DÙNG (User yêu cầu, A giao; server 8011, qua giao diện bằng Playwright): XONG phần kịp trước 22:10** — kết quả `data/tu_thu_2026-11-16/B.md` (bảng chấm 40+ mục, lỗi theo mức, chữ hướng dẫn cần sửa, đánh giá như người dùng thật, mục 7 = bản sửa sau khi chạy lại + phản biện của C), ảnh `data/tu_thu_2026-11-16/anh/B_*.png` (60+), công cụ `tools/b_chat.py` + `tools/b_trang.py` (chạy lại: `uv run python -I data/tu_thu_2026-11-16/tools/b_chat.py <kế hoạch .json>`; file kết quả đã có ⇒ từ chối ghi đè). Phủ: 2A–2H 47 lượt · một lịch mặc định · 4 câu sửa bằng lời · 6 trang × 2 khổ (phần máy). CHƯA: hỏi bằng ảnh (2I), 2K, phần lớn Phần 3 / 4, kiểm tiếp cận. Tiền ƯỚC ≈ 0,055 USD (server chung, không tách được theo sha). Đã gửi cả nhóm.
+  - Kết luận chính: giật túi xách ⇒ từ chối 2 / 2 (giới hạn User đã nhận — A trình lại) · câu bão dao động 3 kiểu / 3 lượt, 1 kiểu model tự kết luận "không xác nhận có bão" (cần đếm) · hỏi tiếp "Mở cửa lúc mấy giờ?" web trắng, hỏi thẳng ra giờ · lịch mặc định "Tối: Chợ Đông Ba" · câu "Tôi không tìm thấy…" 9 / 42 lượt · nguồn vé Đại Nội lạc bài 2 / 2. B RÚT "tuần sau thời tiết = lỗi" (đúng thiết kế; chỉ còn lỗi trình bày) — C phản biện đúng.
+  - Bẫy kịch bản: trang có CSP chặn `wait_for_function` dạng chuỗi (dò bằng `locator.count()`); nút "Cuộc trò chuyện mới" không có khi cuộc trống; chấm theo cột "Đúng là" mà không tự tính ngày ("tuần sau" hôm thứ Hai nằm ngoài 7 ngày) ⇒ chấm oan.
+- 22:13 16/11/2026 — Sau bàn nhóm + User chốt: câu khẩn cấp bị từ chối = **NGOÀI PHẠM VI (User 09/11, 12/11, 16/11) — không nêu lại ở lượt thử / review sau**; "Tối: Chợ Đông Ba" là chủ ý (phố ẩm thực đêm), lỗi chỉ là thiếu giờ + ghi chú buổi tối; B hạ "Lên kế hoạch" 4 ⇒ 3,5 theo bằng chứng của E. `B.md` đã sửa (mục 2 có dòng gỡ, mục 7 bản cuối). **Rảnh — chờ A.**
 - Việc kế (A giao): G2 giọng nói khi User thu 40 câu; chưa có ⇒ sửa 5 script B7 ghim sha + hàm nhãn lỗi §3 (0 USD, trong `data/phase_9/b7/tools/`).
 
 # PHIÊN 16/11 — B `hue-rag-83` (A `hue-rag-db` · C `hue-rag-80`; cả nhóm Claude Code, trực tiếp) — cập nhật 16:00 16/11/2026 (KẾT PHIÊN CHIỀU 16/11)
