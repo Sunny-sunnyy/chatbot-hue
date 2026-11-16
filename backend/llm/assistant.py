@@ -795,9 +795,16 @@ def check_citations(trace: AnswerTrace) -> None:
 
 
 def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
-    """H4c (D8): câu trả lời kho có nguồn được trích thuộc vé / điểm đến / lễ hội ⇒ dòng cố định. Chữ câu trả lời không đổi."""
+    """H4c (D8): câu trả lời kho có nguồn được trích thuộc vé / điểm đến / lễ hội ⇒ dòng cố định. Chữ câu trả lời không đổi.
+    Khoảng cách (16/11): câu trả lời TRÍCH nguồn khoảng cách mà chữ model không nhắc "kẹt xe" ⇒ code nối câu ghi chú của nguồn vào dòng cố định —
+    ghi chú là phần bắt buộc đi cùng số ước, model bỏ nó ở ~35 % câu (đếm 4 lượt đo: 33 / 52 câu có), cả đường công cụ lẫn đường tính sẵn."""
+    dong = []
+    if trace.cited and any(src.source == kc.NGUON_SOURCE for src in trace.cited) and "kẹt xe" not in (trace.answer or "").casefold():
+        dong.append(kc.CAU_GHI_CHU)
     if flags.may_have_changed_notice and trace.cited and any(src.source.startswith(NOTICE_SOURCE_PREFIXES) for src in trace.cited):
-        trace.notice = MAY_HAVE_CHANGED_NOTICE
+        dong.append(MAY_HAVE_CHANGED_NOTICE)
+    if dong:
+        trace.notice = " ".join(dong)
 
 
 async def _before_model(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder, today: str | None,

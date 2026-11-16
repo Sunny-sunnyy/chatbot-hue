@@ -270,3 +270,32 @@ def test_precomputed_turn_keeps_default_max_turns(deps):
 def test_precompute_flag_needs_distance_flag():
     with pytest.raises(ValueError, match="khoang_cach_tinh_san"):
         AssistantFlags(tim_them=True, khoang_cach_tinh_san=True)
+
+
+# ---------- Ghi chú "chưa tính kẹt xe" do code nối (16/11 tối) ----------
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("flags", [BAT, SAN])  # đường công cụ và đường tính sẵn
+@pytest.mark.parametrize("chu_model, notice", [
+    ("Từ Điểm A đến Điểm B khoảng 4,0 km, đi xe khoảng 10 phút [{n}].", kc.CAU_GHI_CHU),                       # model bỏ ghi chú ⇒ code nối
+    ("Từ Điểm A đến Điểm B khoảng 4,0 km, khoảng 10 phút đi xe, chưa tính kẹt xe hay dừng nghỉ [{n}].", None),  # model đã ghi ⇒ không lặp
+    ("Nơi này có nhiều công trình [1].", None),                                                                 # chỉ trích đoạn kho, không trích nguồn khoảng cách ⇒ không nối
+])
+def test_code_adds_traffic_note_when_answer_cites_distance_source_without_it(deps, flags, chu_model, notice, stream):
+    def kich_ban(n, kw):
+        so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Khoảng cách", json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n"))
+        if not so:
+            return [kc_call("a", "b")]
+        return [answer(chu_model.format(n=so[-1]))]
+
+    trace, events = chay(deps, CAU_SAN, generator(kich_ban), flags, stream=stream)
+    assert trace.notice == notice and trace.citation_error is None
+
+
+def test_traffic_note_comes_before_may_have_changed_notice():
+    from llm.assistant import MAY_HAVE_CHANGED_NOTICE, PackedSource, set_notice
+    trace = AnswerTrace()
+    trace.answer = "Khoảng 4,0 km [1]. Vé vào cửa xem ở quầy [2]."
+    trace.cited = [PackedSource(id=1, title=kc.TIEU_DE_NGUON, heading_path=(kc.MUC_NGUON,), excerpts=("x",), source=kc.NGUON_SOURCE),
+                   PackedSource(id=2, title="Vé", heading_path=("Vé",), excerpts=("y",), source="travel/tickets/ve.md")]
+    set_notice(trace, dataclasses.replace(TAT, may_have_changed_notice=True))
+    assert trace.notice == f"{kc.CAU_GHI_CHU} {MAY_HAVE_CHANGED_NOTICE}"
