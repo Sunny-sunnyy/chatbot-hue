@@ -45,6 +45,11 @@ GHI_CHU_AN = {
     ("deo_hai_van", "toi"): "Chân đèo phía bắc là khu Lăng Cô — ven đầm Lập An có nhiều nhà hàng hải sản.",
     ("lang_non_tay_ho", "trua"): "Chưa có gợi ý quán gần làng (cách trung tâm khoảng 12 km) — nên ăn ở trung tâm trước hoặc sau khi ghé làng.",
     ("lang_non_tay_ho", "toi"): "Chưa có gợi ý quán gần làng (cách trung tâm khoảng 12 km) — nên ăn ở trung tâm trước hoặc sau khi ghé làng.",
+    # 16/11 (A giao): điểm phá Tam Giang đặt ở cầu Tam Giang, quán kho gần nhất (Đầm Chuồn) ~9 km; tra web 16/11 không ra quán đủ nguồn trong 2 km
+    # (`data/tra_cuu_cli/2026-11-16_quan-tam-giang-lap-an/`). Chữ theo kho `travel/places/Phá Tam Giang.md:149` (bánh khoái cá kình ở quán ven đầm
+    # Đan Điền, Thuận An) và `:192` (bữa tối hải sản trên sàn bè ven phá) — không nêu tên quán.
+    ("pha_tam_giang", "trua"): "Quán ăn dân dã ven đầm ở Đan Điền và Thuận An có bánh khoái cá kình — món đặc trưng của phá.",
+    ("pha_tam_giang", "toi"): "Bữa tối: ven phá có sàn bè phục vụ hải sản tươi; quán dân dã ở Đan Điền, Thuận An có bánh khoái cá kình.",
 }
 _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
