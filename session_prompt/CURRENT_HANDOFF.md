@@ -49,6 +49,8 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 
 - **(18:42 16/11/2026) MERGE main `5901520`:** khoảng cách tính sẵn, cờ `khoang_cach_tinh_san` **TẮT** (E review vòng 2 READY trên `a5562d2`: câu phá 20 · 0 sai · 1 đường cũ, bộ 32: 29 · 0 · 3, bộ kề bên 16 · 0 — E chạy lại khớp C; test rộng 1277 đạt trên `6e0803c`); giới hạn: nơi thứ ba đứng SAU từ hỏi vẫn ra cặp hai nơi đầu; chữ đầu p50 1,80 s là số của bản trước khi siết (bản siết: mô phỏng vẫn 13 / 16 đường nhanh). **CHỜ User: có bật cờ không** (A khuyên bật; bật = commit riêng + test rộng một lần trước commit + khởi động lại 8010 + C đẩy tài liệu `p9-tai-lieu-kc-tinh-san`: bài 14, sổ 07, README, nhật ký). Cũng đã merge: ảnh 2 bài Lập An (`0f973b2`, Khám phá 262 / 265; B + C nhìn) + tài liệu ảnh / bản đồ (`8ed63f1`). Server 8010 đang chạy code `a575119` + bản build mới (backend từ đó chỉ thêm code sau cờ tắt).
 
+- **(19:33 16/11/2026) User chọn BẬT cờ `khoang_cach_tinh_san`** ⇒ main `3ccdada` (nhánh một dòng cờ; test rộng 1277 đạt trên bản bật cờ — số của C); **8010 khởi động lại trên `3ccdada`** (sổ vết bật); A thử 1 câu: 4,4 km, `tools` có `khoang_cach_san`, 2 lần gọi model, 0,0004 USD (câu đầu sau khởi động 4,18 s cả câu — không phải số tốc độ; chữ đầu trên bản siết CHƯA đo thật). C đẩy tài liệu (bài 14, sổ 07, README, nhật ký) + mục thử cho User.
+
 ## PHIÊN CHIỀU 16/11 (thứ Hai; A mở, cập nhật 14:06 16/11/2026)
 
 - Terminal: A `hue-rag-db` · B `hue-rag-83` · C `hue-rag-80` · E `hue-rag-af` — cả bốn Claude Code, trực tiếp; D không mở. Ban ngày: máy chia với hai dự án khác (User có mặt).
