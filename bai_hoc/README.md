@@ -16,7 +16,7 @@ chỉ có ở bài cần.
 | Bài | Nội dung | Trạng thái |
 |---|---|---|
 | [0](00_HUE_RAG_TRONG_3_PHUT.md) | hue_rag trong 3 phút: người hướng dẫn viên tra sổ tay; hai giai đoạn; đoạn kể 3 phút | đã sửa 13/11 — số từ chối nhầm mới, câu "0 câu ngoài kho bị trả lời" nói đúng 3 chỗ phạm sàn |
-| [1](01_KHO_DU_LIEU.md) | Cuốn sổ tay: kho dữ liệu | thêm ghi chú 14/11 — kho nay 263 bài (bài 22) |
+| [1](01_KHO_DU_LIEU.md) | Cuốn sổ tay: kho dữ liệu | thêm ghi chú 16/11 — kho nay 265 bài (bài 22) |
 | [2](02_CHUNKING.md) | Cắt sổ thành thẻ ghi chú: chunking | đã viết, chờ anh đọc |
 | [3](03_METADATA.md) | Ghi tên lên góc thẻ: metadata | đã viết, chờ anh đọc |
 | [4](04_EMBEDDING_VA_TU_KHOA.md) | Biến thẻ thành thứ tìm được: embedding và từ khoá | đã viết, chờ anh đọc |
@@ -57,7 +57,7 @@ chỉ có ở bài cần.
 
 | Bài | Nội dung | Trạng thái |
 |---|---|---|
-| [22](22_BO_SUNG_SO_TAY.md) | Viết thêm vào sổ tay mà không làm hỏng trang cũ: sáu lần ghi kho 14/11, đo trước ↔ sau, chỉ đo câu bị chạm | thêm lần 4 (tám quán ăn), lần 5 (10 món, 13 địa điểm / di tích), lần 6 (16 lễ hội / nghệ thuật) |
+| [22](22_BO_SUNG_SO_TAY.md) | Viết thêm vào sổ tay mà không làm hỏng trang cũ: sáu lần ghi kho 14/11, đo trước ↔ sau, chỉ đo câu bị chạm | thêm lần 4 (tám quán ăn), lần 5 (10 món, 13 địa điểm / di tích), lần 6 (16 lễ hội / nghệ thuật); thêm 16/11 — hai quán ven đầm Lập An |
 | [23](23_LEN_KE_HOACH_BAN_2.md) | "Lên kế hoạch" bản 2: code xếp theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ | đã sửa theo kiểm độc lập; thêm ghi chú chiều 14/11 (sửa lịch, chỗ ở ở bài 25; lịch mẫu; bỏ ghi công); thêm chiều 15/11: bảng điểm 41 nơi + chuyện lượt thật bắt bốn nơi chỉ in tên |
 | [24](24_GIAO_DIEN_H1.md) | Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được; ảnh cho 260 / 263 bài ở Khám phá | thêm 15/11 tối — khung nguồn hiện đoạn trích sạch, bỏ dòng hỏi đánh giá. Trước: đã sửa theo kiểm độc lập; thêm chiều 14/11 (sông qua từng điểm, ba bến, "Huế qua các thời kỳ", bỏ ghi công) |
 | [25](25_TRO_LY_LAM_VIEC_THAT.md) | Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, lịch mẫu đủ đi – ăn – ở, so tiền mục web, ảnh dưới câu trả lời | thêm chiều 14/11: mục 4–7 + chuyện thật thứ hai; chiều 15/11: ảnh khách sạn 67 / 136; đổi hạng chỗ ở bằng lời; thẻ Nơi ở chỉ hiện khi hỏi; đổi ngày đi bằng lời |
