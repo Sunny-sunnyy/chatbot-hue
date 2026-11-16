@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 15:02, ngày 16/11/2026 · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
+*Cập nhật lần cuối: 15:51, ngày 16/11/2026 · thêm chiều 16/11: chuyện thật thứ năm (thử nhận ảnh bằng so ảnh với ảnh mẫu, rồi cắt khỏi mốc 30/11) · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -15,6 +15,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Hỏi bằng ảnh | **`nhan_anh`** (cờ `anh.bat: true`) | Người dùng gửi ảnh kèm câu hỏi; model đoán tối đa 3 tên trong một danh sách 42 mục; ra đúng một tên thì trợ lý trả lời luôn từ kho, ra 2–3 tên thì hỏi người dùng chọn (đã gặp ở bài 12). |
 | Rào chắn | **guardrail** | Chỗ code chặn trước khi chữ tới người dùng. |
 | Câu hỏi nối tiếp — **mới** | cờ **`web_cau_noi_tiep`** (bật 15/11) | Câu hỏi sau không nhắc lại tên nơi / món của câu trước ("mở cửa lúc mấy giờ"). Ở lượt này câu tra web lấy từ câu tìm trong sổ mà model vừa viết. |
+| So ảnh với ảnh mẫu — **mới** | **embedding ảnh** (model **SigLIP 2**, **DINOv2**, **DINOv3**) | Biến mỗi ảnh thành một dãy số; ảnh giống nhau thì dãy số gần nhau. Đoán tên = tìm ảnh mẫu gần nhất. Đã thử 05/11 và 15–16/11, không dùng. |
 | Exa | dịch vụ tìm web **Exa** (`highlights`) | Một dịch vụ tìm web khác, trả **đoạn trích nguyên văn trong trang**, chọn theo câu hỏi. Đã thử 12/11, không dùng. |
 
 ---
@@ -224,6 +225,38 @@ model **chỉ chọn số câu** trong đoạn trích, code hiện nguyên văn 
 **Điều nên nhớ:** sàn "không nói chắc điều nguồn không nói" chỉ đo được bằng **người đọc tay**, và người đọc phải là người **không viết lời dặn** — ở lượt
 đo bản một, chính người viết đọc lại chỉ thấy 1 ca, người đọc độc lập thấy 4.
 
+## Chuyện thật thứ năm: thử nhận ảnh bằng cách so với ảnh mẫu, rồi cắt (05/11 và 15–16/11)
+
+**Ý tưởng.** Thay vì nhờ model đọc ảnh rồi đoán tên (mỗi ảnh khoảng 3 giây, có phí, cùng ảnh gửi hai lần có thể ra hai kết quả), mình thử cách của người
+hướng dẫn viên có album ảnh: đặt ảnh khách đưa cạnh album, tìm ảnh **giống nhất** rồi đọc tên dưới ảnh đó. Máy làm việc này bằng **so ảnh với ảnh mẫu**:
+mỗi ảnh biến thành một dãy số, ảnh giống nhau thì dãy số gần nhau. Phép so chạy ngay trên máy chủ, không tốn tiền, cùng ảnh luôn ra cùng kết quả.
+
+**Đã đo gì.** Album là **172 ảnh mẫu** tải từ kho ảnh mở (Wikimedia Commons) cho 40 trong 42 tên nơi / món (2 tên chưa có ảnh mẫu). Bộ đo là bộ ảnh cũ: **25 ảnh trong danh sách + 5 ảnh không
+phải Huế**. Chỉ đổi model so ảnh, mọi thứ khác giữ nguyên; mốc so là bước đoán tên đang chạy (gpt-6-luna):
+
+| Cách đoán | Tên đoán đầu tiên đúng (/ 25) | Tên đúng nằm trong 3 gợi ý (/ 25) | Thời gian / ảnh |
+|---|---|---|---|
+| gpt-6-luna (đang chạy) | **21** | **22** | khoảng 3 giây, có phí |
+| SigLIP 2 (thử 05/11) | 15 | 20 | khoảng 0,2 giây, 0 USD |
+| DINOv2 (15/11) | 17 | 22 | khoảng 0,2 giây, 0 USD |
+| DINOv3 (15/11) | 19 | 20 | khoảng 0,2 giây, 0 USD |
+
+Không cách so ảnh nào bằng model đang chạy ở "tên đầu tiên đúng" (DINOv3 kém 2 ảnh — trên 25 ảnh, chênh 2 ảnh còn nằm trong nhiễu, xem dưới). Cả ba đều **không tách được ảnh lạ**: điểm giống của ảnh không phải Huế cao ngang ảnh thật,
+nên không đặt được ngưỡng "không nhận ra". Riêng hai model DINO có một tín hiệu đáng thử thêm: khi đoán đúng, tên nhất thường bỏ xa tên nhì — nhưng tín hiệu này đọc ngay trên bộ đo, và vẫn có một ảnh lạ cũng bỏ xa như vậy, nên chưa dùng làm cổng được.
+
+**Vì sao các số đó chưa nói được gì.** Trước khi đo kỹ hơn, mình nhìn lại **từng ảnh** trong album (trước đó chưa ai nhìn hết). Trong 172 ảnh mẫu chỉ **76 ảnh dùng
+được**: 38 ảnh là **văn bản, tranh vẽ, tem thư, chân dung** (tải về vì tên file có chữ đúng); 27 ảnh **sai nơi** (ví dụ cả 5 ảnh của một thác nước là ảnh một ngôi chùa
+ở Trung Quốc; ảnh Kinh thành nằm trong mục một ngôi điện); số còn lại trùng nhau, ảnh đen trắng thời Pháp, ảnh không nhìn ra nơi, ảnh người làm trọng tâm. Tức là
+**hơn một nửa album không dùng được làm mẫu** (riêng ảnh sai nơi, văn bản, không nhìn ra nơi đã là 75 / 172), nên điểm thấp có thể do album chứ không do model. Thêm nữa, bộ đo chỉ 25 + 5 ảnh, lại đã được nhìn qua nhiều vòng: chênh 2 ảnh giữa hai
+model nằm trong nhiễu. Plan đã ghi trước rằng muốn quyết phải thêm một bộ đo **mới**, khác nguồn với album (ít nhất 30 ảnh trong danh sách + 15 ảnh lạ), để bộ gộp cũ + mới có **ít nhất 55 ảnh trong danh sách + 20 ảnh lạ**.
+
+**Đã làm đến đâu rồi dừng.** Mình gom lại album sạch: **341 ảnh mẫu**, nhìn từng tấm ghép rồi mới chọn — gồm 111 ảnh cũ giữ lại, 44 ảnh mới từ kho ảnh mở (lấy theo danh mục ảnh của nơi;
+tìm theo chữ ra rác) và 186 ảnh tìm trên web (trang du lịch, báo) cho các món và nơi ít ảnh mở — 21 / 42 tên đã đủ số ảnh đặt trước (15 ảnh cho nhóm dễ nhầm, 8 cho phần còn lại); còn thiếu 156 ảnh, chưa gom ảnh lạ, chưa có bộ đo mới. Tốn khoảng 0,02 USD (tìm ảnh web cho các món, nơi ít ảnh mở).
+Đến đây nhóm xét lại so với mốc 30/11: còn phải gom tiếp, gom ảnh lạ và dựng bộ đo mới, trong khi luồng đang chạy đã dùng được (trả lời sai nơi **6 / 66
+lượt** trên cùng bộ ảnh cũ — phần "Hỏi bằng ảnh" ở trên). Anh chốt **cắt** thí nghiệm khỏi mốc 30/11 (16/11); album 341 ảnh giữ lại nếu sau này làm tiếp. Bước đoán tên vẫn là gpt-6-luna.
+
+**Điều nên nhớ:** trước khi so model, nhìn tận mắt dữ liệu mẫu. Ở đây ba lượt đo trên album bẩn đã chạy trước khi ai mở album ra xem từng ảnh.
+
 ## Khi nào hỏng
 
 - **Mục web có thể sai hoặc cũ** dù đã ghi "chưa kiểm". Địa chỉ, số điện thoại trong mục web chưa được kiểm là có trong đoạn trích hay không.
@@ -257,6 +290,8 @@ model **chỉ chọn số câu** trong đoạn trích, code hiện nguyên văn 
    bước tra thì đạt (25 so với 17) nhưng nhạy, qua máy chủ thật thì không (14 so với 13) ⇒ giữ Serper. Câu hỏi tiếp "mở cửa lúc mấy giờ" từng tra web bằng
    câu cụt nên lạc sang nơi khác; từ 15/11 dùng câu tìm model vừa viết: câu tra web đúng nơi 8 / 8 (trước 0 / 10), nhưng chỉ 2 / 8 mục có thông tin dùng được.
    Thử mục web gọn: hết kể lể (25 / 28 mục ⇒ 0 / 15 mục có viết) nhưng nói chắc sai nhiều hơn (người đọc độc lập: 2 lỗi rõ + 4 ranh giới, so với 1 nhẹ + 1) ⇒ giữ bản dài.
+   Thử đoán ảnh bằng so với ảnh mẫu: tên đầu đúng 15–19 / 25, chưa bằng model đang chạy (21), nhưng album mẫu chỉ 76 / 172 ảnh dùng được và bộ đo quá
+   nhỏ ⇒ chưa kết luận được; đã cắt khỏi mốc 30/11.
 
 **Bài sau:** Bài 16 — Kể đồ án trong 2–3 phút (bản đủ), cùng chỗ còn yếu và hướng sửa.
 
@@ -275,6 +310,7 @@ model **chỉ chọn số câu** trong đoạn trích, code hiện nguyên văn 
 - Câu hỏi nối tiếp (15/11): dựng lại 2 / 2, câu tìm kho nêu tên 9 / 9, kho có ⇒ 7 / 7, lần tìm đầu trượt 6 / 7, ghép câu phá 2 / 3 cặp đổi chủ đề: `report_agent/2026-11-12_ra_khoang_cach/b_cau_noi_tiep_dem.md` [đã chạy]; 0 / 85 mục bị chặn vì cách viết giờ, ca gốc dao động 2 / 2 ⇒ 1 / 1: `…/b_web_kiem_so_dem.md` [đã chạy]; cách sửa, 8 / 8 ↔ 0 / 10, 0 / 8 ↔ 2 / 2, 2 + 3 + 3, tên 0 / 4, đổi chủ đề 0 / 1, loại 2 cặp, 0,0556 USD, sửa theo hai review: `…/b_web_noi_tiep_implementation.md`, `…/e_review_web_noi_tiep.md`, review thứ hai `data/review_web_noi_tiep_2026-11-15/review.md` (riêng tư) [đã chạy]; kiểm độc lập mục này trước khi ghi: `data/kiem_bai_hoc_2026-11-15/b_kiem_doc_lap.md` (riêng tư; 60 khẳng định: 2 sai, 11 dễ hiểu nhầm — đã sửa); code `backend/llm/assistant.py` `cau_cho_web`, `cong_web`; cờ `web_cau_noi_tiep: true` (bật 17:50 15/11/2026, anh chọn; người điều phối thử ca gốc qua máy chủ) `backend/config/settings.yaml` [code]
 - Exa (12/11): 73 lượt log, 44 / 13 / 14, 0 lỗi Serper, 147 ký tự, 32 % mạng xã hội, giá 0,007 ↔ 0,001, điều khoản dùng dữ liệu: `report_agent/2026-11-12_ra_khoang_cach/e_tim_web_serper_exa.md` §1–2; thí nghiệm 17 / 25 / 20, p95 3,1 / 2,2, mạng xã hội 24 / 91 ↔ 0 / 109, độ nhạy 25 ⇒ 20 khi loại trang tổng hợp của Exa: cùng file §5, §6, §6b; server thật 13 / 14 (cần ≥ 16), không tin cậy 10 / 13, tra p95 2,82 / 2,26, tới sự kiện web 17,9 / 16,9 s, ≈ 30 / 42 câu được tra, 13 / 30 và 10 / 29 lượt mất mục do luật kiểm, ≈ 0,195 USD + ≈ 0,82 tín dụng: §7 [đã chạy]; kiểm thí nghiệm: `…/e_exa_review.md`; kiểm code (Exa trước 3 s, Serper dự phòng, 40 lượt / ngày): `…/e_exa_code_review.md`; nhánh `p9-tra-web-exa` không merge (`tra_web.py` trên `main` không có Exa), tag `hoso/p9-tra-web-exa` [code, theo bản ghi số liệu 13/11]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
 - **Thêm 15:02 16/11/2026** (việc 16/11): câu nhắc sức khoẻ — `backend/llm/tra_web.py` `SUC_KHOE_TEXT`, `tach_suc_khoe`; `backend/llm/assistant.py` `cong_web`; lời dặn `TU_WEB_LUAT` (`backend/llm/full_corpus_prompt.py`) [code, merge `3a4d5db`]; bộ dò 27 câu 12 / 12, 3 / 3, 3 / 9, 0,0342 USD: `report_agent/2026-11-12_ra_khoang_cach/b_suc_khoe_web_implementation.md`, `data/web_gon_2026-11-16/do_suc_khoe_loi_dan_cu/ket_qua.jsonl` (riêng tư) [đã chạy]. Mục web gọn: đếm 25 / 28, ~190 ký tự (mốc tính lại bằng hàm hiện hành, trung vị 189): `docs/superpowers/plans/2026-11-15-muc-web-gon-plan.md` + `data/web_gon_2026-11-16/do/` (`do.py kho`) [đã chạy]; bản hai kể lể 0, 99 ký tự, 28 đầu vào 0,00463 USD: `report_agent/2026-11-12_ra_khoang_cach/b_web_gon_2_implementation.md` (nhánh hồ sơ `p9-web-gon-2`, không merge) [đã chạy]; đọc tay bản hai 2 rõ + 5 ranh giới (1 trong 5 đạt nhờ câu sức khoẻ do code nối ⇒ bài ghi 4): `data/web_gon_2026-11-16/do/doc_tay_ket_qua.md`; bản dài 1 nhẹ + 1 ranh giới: `…/doc_tay_ban_cu_ket_qua.md` (riêng tư; người đọc là agent con ngữ cảnh mới) [đã chạy]; bản một: người viết thấy 1, người đọc độc lập thấy 1 rõ + 3 ranh giới: `docs/superpowers/plans/2026-11-15-muc-web-gon-plan.md` mục "Chỗ đổi sau duyệt" [đã chạy]; anh chọn giữ bản dài: handoff 16/11. Nút Huỷ: `frontend/src/HoiBangAnh.jsx` `huy` [code, merge `3a0afc5`]. Kiểm độc lập trước khi ghi: `data/kiem_bai_hoc_2026-11-16/kiem_doc_lap.md` (riêng tư; 66 khẳng định: 3 sai — mã merge, chỗ câu nhắc được nối, "một kiểu lỗi" — và 7 dễ hiểu nhầm, đã sửa).
+- **Thêm 15:51 16/11/2026** (chuyện thật thứ năm — so ảnh với ảnh mẫu): bảng SigLIP 2 / DINOv2 / DINOv3 / luna 15 · 20, 17 · 22, 19 · 20, 21 · 22; 0,2 giây (205–229 ms / ảnh); điểm ảnh lạ không tách; tín hiệu "tên nhất − nhì": `data/so_anh_2026-11-15/KET_QUA_DO_DINO.md` (riêng tư) [đã chạy, 0 USD]; 172 ảnh ⇒ 76 dùng được, 38 / 27 / 10 / 10 / 8 / 3 theo loại, ví dụ thác nước = 5 ảnh "Jiedai Temple" (biển đá trong ảnh ghi Ninh Ba, Trung Quốc), ảnh Citadel trong mục điện Hòn Chén: `data/so_anh_gom_2026-11-16/mau_cu_da_loc.json` + tấm ghép `tam_mau_cu/` (riêng tư; E nhìn 100 %) [đã chạy]; bộ mới ≥ 30 + ≥ 15 (§4), bộ gộp ≥ 55 + ≥ 20 (§6): `docs/superpowers/plans/2026-11-15-so-anh-embedding-plan.md` [plan]; kiểm độc lập trước khi ghi: `data/kiem_bai_hoc_2026-11-16/kiem_so_anh.md` (riêng tư; 43 khẳng định: 1 sai — 40 / 42 tên; 1 không nguồn — "vài giờ"; 8 dễ hiểu nhầm — đã sửa); 341 ảnh mẫu, thiếu 156, 21 / 42 tên đủ mốc, Serper 21 lượt ≈ 0,021 USD: `data/so_anh_gom_2026-11-16/mau.jsonl`, `data/so_anh_gom_2026-11-16/tools/dung_bo_mau.py` (111 cũ + 44 Commons + 186 web) [đã chạy]; anh chốt cắt: handoff 16/11 "User chốt chiều 16/11".
 - **Sửa 20:22 13/11/2026:** số "khoảng 13 giây" ghi rõ là bộ kín 05/11, thêm số 12/11 qua máy chủ (khác bộ câu, khác cách đo).
 
 - **Sửa 14:48 11/11/2026:** theo luật anh chốt ("phần chưa xong thì không đưa vào bài học"), gỡ đoạn tả việc chưa làm xong: câu "đang chờ anh quyết lúc deploy" → tả đúng bản đóng gói đã dựng (`HUE_TRA_WEB` "false" trong `data/phase_12/deploy_nhap/compose.yml`).
