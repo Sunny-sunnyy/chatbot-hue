@@ -1,6 +1,6 @@
 # Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, khoảng cách, lịch trình
 
-*Cập nhật lần cuối: 20:49, ngày 16/11/2026 · số đo của mục "code tra sẵn" nay là số đo lại trên bản đang chạy. Trước: 19:34 16/11/2026 · thêm mục "code tra sẵn khi câu nêu rõ hai nơi" (bật tối 16/11). Trước: 15:17 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
+*Cập nhật lần cuối: 21:08, ngày 16/11/2026 · câu ghi chú "chưa tính kẹt xe" nay do code nối. Trước: 20:49, ngày 16/11/2026 · số đo của mục "code tra sẵn" nay là số đo lại trên bản đang chạy. Trước: 19:34 16/11/2026 · thêm mục "code tra sẵn khi câu nêu rõ hai nơi" (bật tối 16/11). Trước: 15:17 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -90,6 +90,11 @@ server đang chạy: **4 / 6 câu bị từ chối** rồi mới ra mục "Từ 
   nguồn có mã [n] như mọi nguồn khác.
 - **Code kiểm số model viết:** số km và số phút trong câu trả lời phải nằm trong số của nguồn khoảng cách (km so với km, phút so với phút) hoặc trong đoạn kho
   được trích. Lệch ⇒ rút câu trả lời lại, như khi trích nguồn sai.
+- **Code nối câu ghi chú (từ tối 16/11):** câu "chưa tính kẹt xe hay dừng nghỉ" phải luôn đi cùng số ước. Lúc đầu mình để model tự chép câu này từ nguồn;
+  đếm lại 52 câu của bốn lượt đo thì model chỉ chép ở **33 câu** (khoảng 65 %), bỏ ở phần còn lại — đường model gọi công cụ và đường code tra sẵn bỏ như
+  nhau (17 / 26 và 16 / 26). Nay khi câu trả lời có trích nguồn khoảng cách mà chữ model không nhắc "kẹt xe", code tự đặt câu ghi chú vào dòng lưu ý cố định
+  dưới câu trả lời; model đã viết rồi thì code không lặp. Thử trên bản đang chạy: 3 câu model bỏ ghi chú ⇒ cả 3 có dòng lưu ý; 1 câu model tự viết ⇒ không
+  lặp. Chỗ còn hở: nếu chữ "kẹt xe" xuất hiện ở một ý khác của câu trả lời thì code tưởng đã có và không thêm.
 - Công cụ **chỉ được đưa** khi câu có từ khoá kiểu "bao xa", "mấy km", "có gần không", hay "mất bao lâu" đi kèm từ di chuyển ("đi", "từ", "sang"…). Câu như
   "nấu nồi bún bò mất bao lâu" không có từ di chuyển ⇒ không đưa công cụ.
 
@@ -242,6 +247,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - B4 (dặn không cộng tổng: 1 / 2 câu kín tự ghi dòng "Tổng") và B5c (code tính tiền 8 / 8; miễn vé bỏ điều kiện 3 / 3 ↔ 1 / 3), 05/11: `07_…`, `session_prompt/Session_Prompt.md` §7 [đã chạy]
 - Giới hạn "đi dày", không ô mưa / giờ tới về: `session_prompt/CURRENT_HANDOFF.md` [tài liệu]
 - Khoảng cách (16/11): `backend/llm/khoang_cach.py` (`HE_SO_OSRM`, `PHUT_CONG`, `_TU_KM`, `_TU_THOI_GIAN`, `kiem_so`), `assistant.py` `khoang_cach_for_turn`; cờ `khoang_cach: true` (`6a53680`, bạn bật); bảng `data/phase_9/lich_trinh/khoang_cach_v1.json` md5 `cb76ab72199c` (private) [code]. Đếm trước 4 / 6 từ chối; đo 16 câu: 13 / 14 đúng cặp, 0 số sai, 0 / 2 ngoài bảng ra số, ≈ 0,00081 USD / câu, chữ đầu p50 3,7 s / p95 ≈ 6,2 s (nội suy; 14 câu có công cụ, lượt sau sửa — 17 dòng `chat_metrics` cuối của `data/khoang_cach_2026-11-16/application_8041_r2.log`, private); bộ dò 27 câu 0 bỏ sót; an toàn 32 chạm 0: `report_agent/2026-11-12_ra_khoang_cach/c_khoang_cach_implementation.md` [đã chạy 16/11]. Review bắt sàn 40 km/h (1.082 / 1.560 cặp): `data/review_khoang_cach_2026-11-16/review.md`; đối chiếu 6 cặp 3 / 6 ⇒ 6 / 6: report trên, mục "Sửa theo review" M1; nguồn công khai: `data/tra_cuu_cli/2026-11-16_quang-duong-hue/` (private) [đã chạy]. Tiền câu từ chối + web ≈ 0,0023 (trung bình 4 câu): lượt đếm trước [đã chạy]. Đối chiếu bài: `data/khoang_cach_2026-11-16/doi_chieu_bai_hoc.md` (agent con, 70 khẳng định, sửa 12 chỗ).
+- Ghi chú kẹt xe do code nối (16/11 tối): `backend/llm/assistant.py` `set_notice`; [đã chạy] đếm 33 / 52 từ 4 file kết quả lượt đo (`data/khoang_cach_2026-11-16/`), 4 câu thật trên bản `bc785ae` (3 có dòng lưu ý, 1 không lặp); review B 12 ca phá; `c_kc_tinh_san_implementation.md` mục 3d.
 - Khoảng cách tính sẵn (16/11): `backend/llm/khoang_cach.py` (`tim_hai_diem`, `cap_tinh_san`, `TEN_NGAN`), `assistant.py` `_nguon_khoang_cach_san`; cờ `khoang_cach_tinh_san: true` (`3ccdada`, bạn bật tối 16/11); [đã chạy] bộ dò 32 câu 29 / 0 / 3 và 21 câu phá của review 20 / 0 / 1 (bản đầu 31 / 0 / 1 và 15 / 21 sai), lượt đo 16 câu trên bản cuối `1e45a78` (13 đường nhanh, chữ đầu trung vị 1,87 s đo ở phía gọi, 0,0122 USD cả lượt; lượt trên bản đầu `50fbf4e`: 1,80 s, 0,0131 USD); `report_agent/2026-11-12_ra_khoang_cach/c_kc_tinh_san_implementation.md`.
 - Các câu ví dụ là câu tự đặt.
 - **Sửa 14:03 11/11/2026:** (1) bản trước ghi code tính sẵn cả "ngày kia" — sai: "ngày kia" chỉ được dò thấy, rồi model vẫn gọi công cụ (`lich_san`, chú thích đầu hàm); (2) bản trước ghi dòng "Tổng" có "con số không đúng" — sai: phép nhân khớp luật kho, bị tính là lỗi vì luật đo cấm con số tổng (`07_…` mục B4 vòng 1).
