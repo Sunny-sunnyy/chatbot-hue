@@ -37,14 +37,26 @@ Câu đường cũ duy nhất trong bảng (câu hỏi tiếp "từ đó sang…
 - Câu 3,65 s: 2 lần gọi model như các câu khác ⇒ dao động phía model / mạng (chưa chứng minh). Lúc đo, E có một lượt Playwright trên 8010 (A báo trước).
 - 13 điểm ⇒ không báo p95 (không đủ mẫu); báo số câu vượt 3 s: 2 / 13.
 
+## 3b. Sau review E (changes_requested: 1 major + 2 minor) — bản siết (C, 18:32 16/11/2026; A chọn hướng (a) và cho commit thêm)
+- **M-1 (đúng):** bộ câu phá của E (21 câu, 0 USD) trên bản `50fbf4e`: **15 / 21 ra SAI** — có đủ hai tên bảng nhưng khoảng cách được hỏi là tới / từ nơi thứ ba
+  không có tên bảng; tên điểm nằm trong tên riêng khác; so sánh viết kiểu khác. Bộ dò 32 câu soạn trước không có ba họ này.
+- **Sửa:** `tim_hai_diem` chỉ nhận câu **đúng dạng** — đúng hai lần nhắc tên; chữ TRƯỚC tên thứ nhất ∈ danh sách đóng (rỗng, "từ", "đi từ"); chữ GIỮA hai tên ∈
+  danh sách từ nối đóng; ngay SAU tên thứ hai phải là từ hỏi khoảng cách (với "và / với": phải là "cách nhau / gần nhau…"). Câu viết kiểu khác ⇒ None ⇒ đường cũ.
+  m-1: "Đến B từ A" ⇒ None (không đoán chiều). m-2: thêm test khoá tên gõ tắt không vào mô tả công cụ. Code đường nhanh không đổi, chỉ đổi điều kiện vào.
+- **Kết quả bản siết (0 USD):** câu phá của E **20 đúng · 0 SAI · 1 về đường cũ** (câu "Đến B từ A"); bộ dò 32 câu **29 đúng · 0 SAI · 3 về đường cũ** (thêm 2 câu có
+  mệnh đề dẫn trước tên); bộ đo 16 câu: mô phỏng **vẫn 13 câu đường nhanh**, đúng cặp ⇒ không chạy lại lượt có phí (số tốc độ ở mục 3 là của `50fbf4e`, cùng
+  code đường nhanh). `test_khoang_cach.py` 88 passed; `test_b5_lich_trinh.py` + file này 322 passed sau khi gộp main `6cf7935` (trước bản siết).
+- Luật dừng (`Session_Prompt.md` §8): 0 câu ra sai trên hai bộ đã ghi ⇒ dừng, không mở vòng nữa.
+- Test rộng trên `f2322fd`: 1265 passed · 1 failed — test đọc `settings.yaml` thật không tự tắt cờ bản đồ (main vừa bật), A đã sửa trên main `6cf7935`.
+
 ## 4. Tiền + thời gian (số đo thật)
 - Tiền: **0,0131 USD** (`scripts/dem_chat_metrics.py --log <log 8041> --sha 50fbf4e`: 18 lượt = 1 câu thử + 16 câu + 1 câu "trước"). Trần 0,05. Chưa ai tính lại.
 - Mỗi câu đường nhanh ≈ 0,0004 USD (đường công cụ 16/11 ≈ 0,0006–0,0008).
 - Thời gian: pytest file chạm 14,3 s; bộ dò < 5 s; lượt đo 16 câu ≈ 2 phút. Test rộng: NOT RUN (làm một lần ở commit cuối trước merge).
 
 ## 5. Giới hạn đã biết
-- **Nơi thứ ba gõ bằng tên bảng không có** (tên trần của một lăng, một bãi biển…): code không thấy ⇒ có thể ra cặp của hai nơi còn lại (nguồn khoảng cách đúng
-  cho cặp đó nhưng không trả lời hết câu). Bộ dò có loại câu này với 3 tên đọc được ⇒ None đúng; tên trần cố ý không thêm vì trùng nghĩa khác (khách sạn, vua, núi).
+- **Dạng câu ngoài danh sách đóng** (có mệnh đề dẫn trước tên, từ nối lạ, "Đến B từ A", "khoảng cách giữa A và B là bao nhiêu") ⇒ về đường cũ: đúng nhưng chậm như trước. Đếm trên các bộ: 3 / 19 câu có nhãn cặp của bộ dò, 1 / 5 của bộ câu phá, 0 / 13 của bộ đo.
+- Nơi thứ ba nằm SAU từ hỏi ("Từ A đến B bao xa, rồi sang C nữa?") ⇒ vẫn ra cặp (A, B): số đúng cho chặng đầu, chưa trả lời hết câu.
 - Câu hỏi tiếp không nêu đủ hai tên ("từ đó sang…") và mọi câu ngoài bảng vẫn đi đường cũ (chậm như trước).
 - Câu nhắc 2 nơi, có từ khoá, mà hỏi thêm việc khác ⇒ nguồn khoảng cách đúng cặp; model có thể tìm kho thêm cho ý kia (chậm hơn, như câu 6,61 s).
 - Tên điểm viết không dấu / sai chính tả ⇒ không khớp ⇒ đường cũ.

@@ -173,7 +173,18 @@ BANG_TEN = kc.BangKhoangCach(
     ("chùa linh mụ cách  đại nội mấy km", ("tm", "dn")),                      # tên khác, chữ thường, thừa khoảng trắng, bỏ " Huế", theo thứ tự câu
     ("Từ Hoàng thành Huế ra Thành Huế bao xa?", ("dn", "kt")),                  # cụm dài trước: "Hoàng thành Huế" không bị "Thành Huế" ăn mất
     ("Kinh thành cách chùa Thiên Mụ bao xa?", ("kt", "tm")),
-    ("Từ Đại Nội đi chùa Thiên Mụ rồi về lại Đại Nội bao xa?", ("dn", "tm")),  # một điểm nhắc hai lần vẫn là hai điểm
+    ("Đại Nội-chùa Thiên Mụ đi xe máy mất mấy phút?", ("dn", "tm")),
+    ("Đại Nội có gần chùa Thiên Mụ không?", ("dn", "tm")),
+    ("Đại Nội với chùa Thiên Mụ cách nhau bao xa?", ("dn", "tm")),
+    ("Từ Đại Nội đi chùa Thiên Mụ rồi về lại Đại Nội bao xa?", None),          # ba lần nhắc tên ⇒ không phải dạng "A … B"
+    # review E 16/11 M-1 — hai tên bảng có mặt nhưng khoảng cách được hỏi là tới / từ nơi thứ ba, hoặc tên nằm trong tên riêng khác
+    ("Đại Nội và chùa Thiên Mụ cách trung tâm bao xa?", None),
+    ("Từ ga Huế đến Đại Nội và chùa Thiên Mụ bao xa?", None),
+    ("Từ Đại Nội đến chùa Thiên Mụ rồi qua lăng kia bao xa?", None),
+    ("Từ khách sạn Đại Nội đến chùa Thiên Mụ bao xa?", None),
+    ("Từ Đại Nội Plaza đến chùa Thiên Mụ bao xa?", None),
+    ("Đại Nội có xa trung tâm hơn chùa Thiên Mụ không?", None),
+    ("Đến chùa Thiên Mụ từ Đại Nội thì bao xa?", None),                         # m-1: không đoán chiều đi ⇒ đường cũ
     ("Đại Nội cách trung tâm bao xa?", None),                                   # một điểm
     ("Từ Đại Nội qua Kinh thành rồi tới chùa Thiên Mụ bao xa?", None),         # ba điểm
     ("Từ Lê Văn đến Đại Nội bao xa?", None),                                    # "Lê Văn" trỏ hai mã ⇒ không đọc ⇒ còn một điểm
@@ -185,6 +196,14 @@ BANG_TEN = kc.BangKhoangCach(
 ])
 def test_precomputed_pair_reads_exactly_two_table_places(cau, cap):
     assert kc.cap_tinh_san(cau, BANG_TEN) == cap
+
+
+def test_short_names_for_reading_user_text_stay_out_of_tool_description():
+    # review E m-2: tên gõ tắt chỉ để CODE đọc câu; mô tả công cụ (chuỗi gửi model) vẫn chỉ có tên + tên khác của bảng
+    bang = kc.BangKhoangCach(ten={"cho_dong_ba": "Chợ Đông Ba", "dn": "Đại Nội Huế"}, ten_khac={"cho_dong_ba": (), "dn": ()},
+                             cap={"cho_dong_ba|dn": {"km": 2.0, "phut": 5}})
+    assert kc.cap_tinh_san("Đông Ba cách Đại Nội bao xa?", bang) == ("cho_dong_ba", "dn")
+    assert kc.mo_ta_cong_cu(bang).endswith("Danh sách:\ncho_dong_ba: Chợ Đông Ba\ndn: Đại Nội Huế")
 
 
 SAN = dataclasses.replace(BAT, khoang_cach_tinh_san=True)
