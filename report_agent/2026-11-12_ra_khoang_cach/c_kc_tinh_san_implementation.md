@@ -63,7 +63,7 @@ Server tạm 8041 từ worktree main `1e45a78` (cờ bật), cùng 16 câu, mộ
   là phần bắt buộc đi cùng số ước ⇒ chuyển cho code (A quyết). **Sửa (nhánh `p9-kc-ghi-chu`):** `assistant.set_notice` — câu trả lời trích nguồn khoảng cách mà chữ
   không có "kẹt xe" ⇒ nối `kc.CAU_GHI_CHU` vào dòng cố định dưới câu trả lời (sự kiện `notice` sẵn có; đứng trước dòng "có thể đã thay đổi" nếu có cả hai,
   cùng một đoạn). Không đổi chuỗi gửi model, không đổi chữ model. Test tất định (đường công cụ + đường tính sẵn, stream / không; model đã ghi ⇒ không lặp;
-  không trích nguồn khoảng cách ⇒ không nối): `test_khoang_cach.py` 101 passed. Giới hạn: model viết ý đó bằng chữ khác ("chưa tính tắc đường") ⇒ có thể lặp ý.
+  không trích nguồn khoảng cách ⇒ không nối): `test_khoang_cach.py` 101 passed. Giới hạn: model viết ý đó bằng chữ khác ("chưa tính tắc đường") ⇒ có thể lặp ý. Review B (READY, 12 ca phá 0 USD đều đúng) thêm: chữ "kẹt xe" nằm ở ý KHÁC của câu trả lời (đoạn kho nói đường hay kẹt xe) trong khi model bỏ ghi chú ⇒ code tưởng đã có, không nối.
 - **Câu "…bao xa, rồi ghé <khách sạn> nữa?" từ chối 1 / 2 lần.** Đọc sổ vết hai lượt: trình tự giống hệt tới lần viết cuối (nguồn tính sẵn của chặng đầu có trong
   ngữ cảnh; model tự tìm kho 2 lần cho chặng sau, không thấy); lượt từ chối là do chính model viết câu từ chối chuẩn (không phải bước kiểm số rút câu, không
   phải xin công cụ đã ẩn). Gốc: bộ dò "câu nhiều ý" không tách dạng câu này ⇒ lời dặn thường "thiếu ⇒ từ chối cả câu" — **giới hạn câu hai ý đã ghi 14/11**,
