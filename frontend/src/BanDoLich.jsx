@@ -52,7 +52,8 @@ export default function BanDoLich({ items }) {
       const icon = L.divIcon({ className: `ghim ghim-ngay-${(item.ngay - 1) % 5}`, html: String(item.thu_tu), iconSize: [30, 30] });  // màu theo ngày (đợt 2)
       L.marker(item.toa_do, { icon, title: item.ten, alt: item.ten, keyboard: true }).bindPopup(oGhim(item)).addTo(map);
     }
-    map.fitBounds(L.latLngBounds(coToaDo.map(i => i.toa_do)), { padding: [28, 28], maxZoom: 15 });
+    // Lề dưới rộng hơn: dòng ghi công nằm đè lên mép dưới khung (màn hẹp xuống 2 dòng ≈ 36 px) ⇒ ghim ở mép dưới bị che một phần
+    map.fitBounds(L.latLngBounds(coToaDo.map(i => i.toa_do)), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 60], maxZoom: 15 });
     return () => map.remove();
   }, [ngay, khoa]);  // eslint-disable-line react-hooks/exhaustive-deps
 
