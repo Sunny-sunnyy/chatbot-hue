@@ -175,7 +175,7 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
       <div className="khung">
         <p className="vet"><a href="#/">Trang chủ</a> / Lên kế hoạch</p>
         <h1 className="trang-h vao" style={{ "--n": 0 }}>Lên kế hoạch đi Huế</h1>
-        <p className="khoi-p vao" style={{ "--n": 1 }}>Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch thì điền lại biểu mẫu.</p>
+        <p className="khoi-p vao" style={{ "--n": 1 }}>Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch: điền lại biểu mẫu, hoặc bấm Trợ lý Huế để sửa bằng lời.</p>
       </div>
     </section>
     <div className="khung lkh-cot">
