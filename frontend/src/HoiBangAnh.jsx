@@ -48,6 +48,13 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
 
   if (!bat) return { nut: null, kem: null, the: null, onPaste: undefined, gui: () => false, xoa: () => {} };
 
+  // Huỷ lúc "Đang xem ảnh…" (User 16/11): lượt đang chạy bị bỏ qua khi kết quả về (luot tăng), ảnh quay lại thành tệp đính kèm
+  // để người dùng sửa câu rồi bấm Hỏi gửi lại, hoặc bấm × bỏ ảnh. Server vẫn chạy xong lượt cũ — chỉ giao diện bỏ kết quả.
+  function huy() {
+    luot.current += 1;
+    setState({ phase: "kem", file: state.file, preview: state.preview });
+  }
+
   function dong(goTen) {
     luot.current += 1;
     setState(null);
@@ -94,7 +101,7 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
 
   async function nhanAnh(file, preview) {
     const toi = ++luot.current;
-    setState({ preview, phase: "dang" });
+    setState({ file, preview, phase: "dang" });  // giữ `file` để nút Huỷ trả ảnh về ô nhập
     let ungVien = [];
     try {
       const r = await fetch("/api/anh/ung_vien", { method: "POST", headers: { "Content-Type": file.type }, body: file });
@@ -139,7 +146,12 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     <div className="hoi-anh" ref={rootRef}>
       <div className="bubble hoi-anh-the" role="status">
         {state.preview && <img src={state.preview} alt="Ảnh bạn vừa chọn" className="hoi-anh-xem" />}
-        {state.phase === "dang" && <p>Đang xem ảnh…</p>}
+        {state.phase === "dang" && (
+          <div className="flex flex-wrap items-center gap-2">
+            <p>Đang xem ảnh…</p>
+            <button type="button" className="retry" onClick={huy}>Huỷ</button>
+          </div>
+        )}
         {state.phase === "loi" && <p>{state.text}</p>}
         {state.phase === "doan" && (
           <div className="hoi-anh-doan">
