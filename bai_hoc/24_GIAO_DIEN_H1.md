@@ -1,6 +1,6 @@
 # Bài 24 — Giao diện "Sông Hương": đẹp hơn mà không chậm hơn, và đo được
 
-*Cập nhật lần cuối: 21:40, ngày 15/11/2026 · thêm tối 15/11: khung nguồn hiện đoạn trích sạch, bỏ dòng hỏi đánh giá. Trước: 16:10, ngày 15/11/2026 · thêm chiều 15/11: 5 ảnh anh tự tìm (260 / 263). Trước: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
+*Cập nhật lần cuối: 18:36, ngày 16/11/2026 · thêm tối 16/11: ảnh cho 2 bài quán Lập An mới (262 / 265). Trước: 21:40, ngày 15/11/2026 · thêm tối 15/11: khung nguồn hiện đoạn trích sạch, bỏ dòng hỏi đánh giá. Trước: 16:10, ngày 15/11/2026 · thêm chiều 15/11: 5 ảnh anh tự tìm (260 / 263). Trước: 10:33, ngày 15/11/2026 · tìm thêm một lượt cho bài còn trống (255 / 263). Trước: 20:46, ngày 14/11/2026 · ảnh cho bài kho mới (249 / 263). Trước: 18:50 · thêm ảnh tối 14/11 (184 ⇒ 218 / 224 bài; ảnh hiện được cạnh câu trả lời 146 ⇒ 169). Trước: 16:17, ngày 14/11/2026 · nối tiếp bài 17; đã sửa theo một lượt kiểm độc lập và thêm ảnh Khám phá (ghi ở Nguồn). Thêm chiều 14/11: dòng sông đi qua từng điểm của lịch (cả trên điện thoại), trang Giới thiệu có ba bến dọc sông và màn "Huế qua các thời kỳ", bỏ mọi dòng ghi công trên trang. Thêm ảnh chiều 14/11: 184 / 216 bài.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -96,7 +96,7 @@ bản mẫu HTML lúc chọn hướng:
 **Cái giá:** gói JS tăng **+10,5 KB** (112 ⇒ 122,6 KB sau nén), vượt mức 8 KB của kế hoạch. Phần lớn nhất là trang Khám phá (bảng ghi công ảnh). Mình
 không thêm thư viện nào. Mức 8 KB là mức "phải ghi lý do"; lý do đã ghi, người điều phối nhận.
 
-**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 260 / 263, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
+**Ảnh cho trang Khám phá (đợt đầu, chiều 14/11).** Đợt này **167 / 207 bài** có ảnh (nay 262 / 265, xem dưới): 35 ảnh Wikimedia Commons (giấy phép mở) và 132 ảnh lấy từ trang web, ghi nguồn
 từng ảnh. 29 ảnh từng có nhãn **"Ảnh minh hoạ"**, vì người xem không chắc ảnh chụp đúng chính nơi đó. Bài không có ảnh vẫn là ô màu, không mượn ảnh bài
 khác. **Từ chiều 14/11** trang không hiện dòng ghi công hay nhãn nào dưới ảnh nữa (anh yêu cầu); nguồn ảnh vẫn giữ trong bảng dữ liệu.
 Lúc đó bảng ghi công 167 ảnh được tách ra một file riêng, chỉ tải khi mở trang bài hoặc Giới thiệu, nên gói JS chỉ còn **123,5 KB**. Chiều 14/11 bảng này
@@ -123,7 +123,7 @@ tiền theo lượt); tra trang bằng Codex (một trợ lý AI khác, tự m�
 lần 6 có ảnh; 8 bài để trống vì ảnh tìm được không nhận ra được nơi, là lễ cùng tên ở tỉnh khác, chỉ là poster, hoặc có người rõ mặt. Ảnh lễ Ariêu Ping được cắt bỏ
 tiền cảnh có người trẻ nhìn rõ mặt. Tối 14/11: 249 / 263 bài có ảnh.
 
-**Ảnh anh tự tìm (chiều 15/11).** Anh gửi 8 ảnh cho 8 bài còn trống. Ghép được 5 ⇒ **260 / 263 bài** có ảnh: bốn quán dùng nguyên ảnh (một ảnh có dấu nước to của một trang tin — giữ vì là ảnh anh chọn, chỉ kém đẹp); bài làng nón dùng bản cắt chỉ còn chồng nón, vì ảnh gốc có một người rõ mặt là trọng tâm. Ba ảnh không ghép: một ảnh diễn viên rõ mặt là trọng tâm, một ảnh có biển tên một ngôi đình ở tỉnh khác, một ảnh cảnh nền giống nơi tái hiện ở Hà Nội đã bị loại lần trước. Ảnh làng nón cũng dùng cho lịch "Lên kế hoạch" ⇒ 40 / 41 điểm của lịch có ảnh.
+**Ảnh anh tự tìm (chiều 15/11).** Anh gửi 8 ảnh cho 8 bài còn trống. Ghép được 5 ⇒ **260 / 263 bài** có ảnh (tối 16/11 kho thêm 2 bài quán ven đầm Lập An, thêm ảnh cho cả hai ⇒ nay **262 / 265**; 3 bài vẫn để trống theo lựa chọn của anh): bốn quán dùng nguyên ảnh (một ảnh có dấu nước to của một trang tin — giữ vì là ảnh anh chọn, chỉ kém đẹp); bài làng nón dùng bản cắt chỉ còn chồng nón, vì ảnh gốc có một người rõ mặt là trọng tâm. Ba ảnh không ghép: một ảnh diễn viên rõ mặt là trọng tâm, một ảnh có biển tên một ngôi đình ở tỉnh khác, một ảnh cảnh nền giống nơi tái hiện ở Hà Nội đã bị loại lần trước. Ảnh làng nón cũng dùng cho lịch "Lên kế hoạch" ⇒ 40 / 41 điểm của lịch có ảnh.
 
 **Tìm thêm một lượt (sáng 15/11).** 14 bài còn trống được tìm lại bằng tìm kiếm web (57 lượt, khoảng 0,06 USD): thêm được 7 ảnh, người review bỏ 1 (ảnh của một lễ khác cùng loại, lại có người rõ mặt làm trọng tâm) ⇒ thêm 6. Một ảnh quán có số điện thoại trên biển được che mờ tới mức không đọc được — lần đầu dùng cách che thay vì bỏ ảnh. Nay **255 / 263 bài** có ảnh; ảnh hiện được cạnh câu trả lời **201**; ảnh "không chắc" (chỉ ở Khám phá) 54; **8 bài** vẫn trống — danh sách để anh tự tìm.
 
