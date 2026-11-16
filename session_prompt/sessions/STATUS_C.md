@@ -1,6 +1,6 @@
 # STATUS C — phiên 16/11 (C `hue-rag-80` · A `hue-rag-db` · B `hue-rag-83` · E `hue-rag-af`); mục dưới là kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
-## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 16/11 — C viết 15:26 16/11/2026 `date`)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 16/11 — C viết 15:26, chốt 16:00 16/11/2026 `date`; máy: 0 worktree, 0 server của C)
 
 **Đã vào `main` hôm nay (C):** công cụ khoảng cách (`5980f6c`, cờ BẬT `6a53680`) + tài liệu (`95c1972`: bài 14, sổ 07, README, nhật ký) · plan lượt đo cuối B7 (A duyệt sha `031eaf56705b`, trần 0,45 USD, có lượt L sửa lịch; chạy CN 23/11, người chạy B) · review spec deploy AWS 2 vòng (READY, đã merge `d757d8c`). Lỗi "hỏi lại câu cũ bị từ chối": 0 / 3 ⇒ giới hạn, không sửa.
 

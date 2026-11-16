@@ -23,6 +23,7 @@
 - 15:44 16/11/2026 — **KẾT PHIÊN CHIỀU 16/11 (E).** Ảnh Thiệu Trị ĐÃ MERGE (`3f1f3ae`), `/tmp/e_tt` đã gỡ. Worktree: 0 (spec deploy đã merge `c3dbc94`, `/tmp/e_dep` đã gỡ). Ảnh Docker `hue-rag-app:a9d1674` để lại trên máy. 0 server / tiến trình nền của E.
   · **TIỀN E chiều 16/11:** Serper 21 lượt (tìm ảnh web) ≈ **0,021 USD** · OpenAI: chạy thử deploy 1 câu ≈ 0,00045 + đo bản đồ (server tạm 8041, cộng từ `chat_metrics`) ≈ 0,0018 ⇒ **tổng ≈ 0,023 USD**. Codex tra web 1 lượt (lượt ChatGPT của User, không tính USD).
   · Việc dở cho phiên sau: spec deploy — sửa md5 Dockerfile ở §4 khi viết bản chính (v7 đổi Dockerfile: md5 mới `68a871655df2`); so ảnh: chờ User chốt cắt.
+- 15:56 16/11/2026 — **Bài học so ảnh ĐÃ MERGE** (bài 15 "chuyện thật thứ năm"; `/tmp/e_bh` đã gỡ, 0 worktree); kiểm độc lập `data/kiem_bai_hoc_2026-11-16/kiem_so_anh.md` (43 khẳng định: 1 sai, 1 không nguồn, 8 dễ hiểu nhầm — đã sửa). 0 USD.
 ---
 
 # STATUS E — KẾT PHIÊN TỐI 15/11 (chốt lần cuối 22:07 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
