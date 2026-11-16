@@ -16,11 +16,11 @@ BANG = kc.BangKhoangCach(ten={"a": "Điểm A", "b": "Điểm B", "c": "Điểm 
                          cap={"a|b": {"km": 4.0, "phut": 4}, "b|a": {"km": 4.2, "phut": 5}, "a|c": {"km": 79.3, "phut": 75}, "c|a": {"km": 0.3, "phut": 1}})
 
 
-def test_result_uses_table_numbers_and_speed_floor():
-    # 4 km OSRM ghi 4 phút (60 km/h) ⇒ sàn 40 km/h ra 6 phút; 79,3 km / 75 phút ⇒ 119 phút = 1 giờ 59 phút; < 0,5 km ⇒ "dưới 0,5 km"
-    assert kc.ket_qua(BANG, "a", "b")[0] == "Từ Điểm A đến Điểm B: khoảng 4,0 km đường đi, khoảng 6 phút đi xe (ước theo đường)."
-    assert "khoảng 79 km đường đi, khoảng 1 giờ 59 phút đi xe" in kc.ket_qua(BANG, "a", "c")[0]
-    assert "dưới 0,5 km đường đi, chưa tới 2 phút đi xe" in kc.ket_qua(BANG, "c", "a")[0]
+def test_result_uses_table_numbers_and_travel_time_rule():
+    # phút = 1,25 × phút OSRM + 5: 4 ⇒ 10; 75 ⇒ 99 = 1 giờ 39 phút; 1 ⇒ 6 (1,25 làm tròn nửa lên); < 0,5 km ⇒ "dưới 0,5 km"
+    assert kc.ket_qua(BANG, "a", "b")[0] == "Từ Điểm A đến Điểm B: khoảng 4,0 km đường đi, khoảng 10 phút đi xe (ước theo đường)."
+    assert "khoảng 79 km đường đi, khoảng 1 giờ 39 phút đi xe" in kc.ket_qua(BANG, "a", "c")[0]
+    assert "dưới 0,5 km đường đi, khoảng 6 phút đi xe" in kc.ket_qua(BANG, "c", "a")[0]
 
 
 @pytest.mark.parametrize("a, b", [("a", "khac"), ("khac", "b"), ("a", "a")])
@@ -39,19 +39,26 @@ def test_pair_missing_from_table_gets_no_number():
     ("Lăng cách trung tâm bao nhiêu km", True),
     ("Chùa mở cửa bao lâu mỗi ngày?", False), ("Nên ở Huế bao lâu?", False), ("Vé tham quan cách tính thế nào?", False),
     ("Cột km 0 ở đâu?", False), ("Chùa mở cửa mấy giờ?", False),
+    # review 16/11 m1: "cách làm / nấu / đây", thời lượng nấu / xem không có từ di chuyển ⇒ không bật
+    ("Cách làm bún cần bao nhiêu nguyên liệu?", False), ("Cách nấu chè cần mấy loại đậu?", False), ("Bánh luộc mấy tiếng thì chín?", False),
+    ("Nấu nồi bún mất bao lâu?", False), ("Buổi diễn kéo dài mấy tiếng?", False), ("Vé này cách đây mấy năm?", False),
+    ("Từ chợ đi xe máy mấy phút?", True), ("Ra biển mất bao lâu?", True),
 ])
 def test_keyword_detector(cau, co):
     assert kc.co_tu_khoa(cau) is co
 
 
 def test_number_check_catches_numbers_not_in_sources():
-    cho_phep = kc.tap_so(" ".join(kc.ket_qua(BANG, "a", "b")))
-    assert kc.kiem_so("Khoảng 4,0 km, đi xe khoảng 6 phút [3].", cho_phep) == []
-    assert kc.kiem_so("Khoảng 4.0 km, đi xe khoảng 6 phút.", cho_phep) == []  # chấm thập phân ⇒ chuẩn về phẩy
-    assert kc.kiem_so("Khoảng 4 km, đi xe khoảng 6 phút.", cho_phep) == []    # model làm tròn 4,0 ⇒ 4 (lượt đo 16/11: rút lại oan)
-    assert kc.kiem_so("Khoảng 8 km.", kc.tap_so("khoảng 8,3 km")) == [] and kc.kiem_so("Khoảng 9 km.", kc.tap_so("khoảng 8,3 km")) == ["9"]
-    assert kc.kiem_so("Khoảng 5 km, đi xe 10 phút.", cho_phep) == ["5", "10"]     # ca đối chứng: số tự ước ⇒ bắt được
+    cho_phep = kc.tap_so_theo_loai(" ".join(kc.ket_qua(BANG, "a", "b")))  # "khoảng 4,0 km …, khoảng 10 phút"
+    assert kc.kiem_so("Khoảng 4,0 km, đi xe khoảng 10 phút [3].", cho_phep) == []
+    assert kc.kiem_so("Khoảng 4.0 km, đi xe khoảng 10 phút.", cho_phep) == []  # chấm thập phân ⇒ chuẩn về phẩy
+    assert kc.kiem_so("Khoảng 4 km, đi xe khoảng 10 phút.", cho_phep) == []    # model làm tròn 4,0 ⇒ 4 (lượt đo 16/11: rút lại oan)
+    assert kc.kiem_so("Khoảng 5 km, đi xe 12 phút.", cho_phep) == ["5", "12"]     # ca đối chứng: số tự ước ⇒ bắt được
+    assert kc.kiem_so("Khoảng 10 km, đi xe 4 phút.", cho_phep) == ["10", "4"]     # đảo đơn vị (review m2) ⇒ bắt được
+    assert kc.kiem_so("Đi xe 15p, hoặc 1h nếu kẹt.", cho_phep) == ["15", "1"]    # viết tắt cũng xét
     assert kc.kiem_so("Lăng xây năm 1840, có 3 cổng.", cho_phep) == []            # số không kèm đơn vị khoảng cách / thời gian ⇒ không xét
+    assert kc.kiem_so("Khoảng 8 km.", kc.tap_so_theo_loai("khoảng 8,3 km")) == []
+    assert kc.kiem_so("Khoảng 9 km.", kc.tap_so_theo_loai("khoảng 8,3 km")) == ["9"]
 
 
 def test_load_rejects_table_with_unknown_ids(tmp_path):
@@ -97,6 +104,20 @@ def test_distance_tool_offered_only_with_keywords(deps, cau, history, flags, co_
     assert seen and all(("khoang_cach" in names) is co_cong_cu and "tim_kho" in names for names in seen)
 
 
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("cau, history", [("Đại Nội có những công trình gì?", ()),
+                                          ("Còn chùa Thiên Mụ thì sao?", (("Đại Nội có những công trình gì?", ""),))])
+def test_flag_on_without_keyword_sends_same_model_input_as_flag_off(deps, cau, history, stream):
+    # review m3: câu không có từ khoá ⇒ chuỗi gửi model (mọi kwargs của mọi lần gọi) giống hệt cờ tắt
+    def ghi(dich):
+        return generator(lambda n, kw: (dich.append(json.dumps(kw, ensure_ascii=False, sort_keys=True, default=lambda o: type(o).__name__)),
+                                        [answer("Mình chưa rõ.")])[1])
+    tat, bat = [], []
+    chay(deps, cau, ghi(tat), TAT, history, stream)
+    chay(deps, cau, ghi(bat), BAT, history, stream)
+    assert tat and tat == bat
+
+
 def test_tool_schema_is_enum_of_table_ids_plus_other(deps):
     seen = []
     gen = generator(lambda n, kw: (seen.append(kw), [answer("Mình chưa rõ.")])[1])
@@ -112,7 +133,7 @@ def test_answer_citing_distance_source_passes_checks(deps, stream):
         if n == 1:
             return [kc_call("a", "b")]
         so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Khoảng cách", json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n"))
-        return [answer(f"Từ Điểm A đến Điểm B khoảng 4,0 km, đi xe khoảng 6 phút [{so[-1]}].")]
+        return [answer(f"Từ Điểm A đến Điểm B khoảng 4,0 km, đi xe khoảng 10 phút [{so[-1]}].")]
 
     trace, events = chay(deps, "Từ A sang B bao xa?", generator(kich_ban), BAT, stream=stream)
     assert trace.citation_error is None and trace.khoang_cach_kiem == [] and trace.cited[-1].title == kc.TIEU_DE_NGUON
@@ -125,10 +146,10 @@ def test_model_number_not_in_source_is_withdrawn(deps):
         if n == 1:
             return [kc_call("a", "b")]
         so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Khoảng cách", json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n"))
-        return [answer(f"Khoảng 5 km, đi xe 10 phút [{so[-1]}].")]
+        return [answer(f"Khoảng 5 km, đi xe 12 phút [{so[-1]}].")]
 
     trace, _ = chay(deps, "Từ A sang B bao xa?", generator(kich_ban), BAT)
-    assert trace.khoang_cach_kiem == ["5", "10"] and trace.citation_error is not None
+    assert trace.khoang_cach_kiem == ["5", "12"] and trace.citation_error is not None
 
 
 @pytest.mark.parametrize("cau, flags, so_vong", [("Từ A sang B bao xa?", BAT, 5), ("Đại Nội có những công trình gì?", BAT, 4),

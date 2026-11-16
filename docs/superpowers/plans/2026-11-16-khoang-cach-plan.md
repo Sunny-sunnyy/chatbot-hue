@@ -33,8 +33,8 @@ Dựng bảng 0 USD. Đo ≈ 16 câu × ~0,0007 ≈ **0,012 USD** (câu có kh�
 3. Bộ dò từ khoá ≥ 20 câu: agent con của A soạn (`data/khoang_cach_2026-11-16/bo_do_tu_khoa.jsonl`, 27 câu). "Ra sai" = câu khoảng cách không bật / công cụ ra số cho cặp sai nơi; bật thừa ghi riêng.
 
 ## 6. Chi tiết C tự quyết trong phạm vi (ghi lúc code)
-- **Sàn tốc độ 40 km/h:** kiểm bảng thấy OSRM (hồ sơ ô tô) ước quá nhanh cho đường Huế (4 km = 4 phút, 15 km = 14 phút) ⇒ phút hiện = max(phút OSRM, km / 40 km/h). 35 km/h làm đường dài quá chậm (79 km ⇒ 2 giờ 16).
+- **Phút hiện = 1,25 × phút OSRM + 5** (sửa theo review M1, 15:01 16/11/2026; bản đầu dùng sàn 40 km/h — chọn từ 2 cặp nội thành, đổi số ở 1.082 / 1.560 cặp, chặng dài chậm quá). Đối chiếu 6 cặp có nguồn công khai ở report.
 - Cặp < 0,5 km (4 cặp OSRM ra 0 km vì cùng điểm bám đường) ⇒ "dưới 0,5 km".
 - Bảng không đối xứng ở 62 cặp nội thành (đường một chiều) ⇒ dùng đúng chiều người hỏi; bỏ tiêu chí "đối xứng ±15 %" của mục 2.
-- Kiểm số chấp nhận số làm tròn của số thập phân trong nguồn (lượt đo: "4,0 km" ⇒ model viết "4 km" bị rút lại oan 2 / 14).
+- Kiểm số chấp nhận số làm tròn của số thập phân trong nguồn (lượt đo: "4,0 km" ⇒ model viết "4 km" bị rút lại oan 2 / 14); tách km ↔ thời gian (review m2); viết riêng `kc.tap_so` / `kc.kiem_so` thay vì dùng lại của thời tiết (khác đơn vị — review m4).
 - Công cụ ăn một vòng ⇒ `max_turns` + 1 khi có đưa công cụ (như `ngay_lich`).

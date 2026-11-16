@@ -837,8 +837,9 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     if flags is not None and flags.thoi_tiet:
         _thoi_tiet_cuoi(trace, text)
     if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích; hỏng ⇒ rút lại như citation hỏng
-        cho_phep = kc.tap_so(" ".join(d for k in trace.khoang_cach for d in k["dong"]))
-        cho_phep |= kc.tap_so(" ".join(e for src in (trace.cited or ()) for e in src.excerpts))
+        cho_phep = kc.tap_so_theo_loai(" ".join(d for k in trace.khoang_cach for d in k["dong"]))  # số code dựng: km ↔ thời gian tách riêng
+        chung = kc.tap_so(" ".join(e for src in (trace.cited or ()) if src.source != kc.NGUON_SOURCE for e in src.excerpts))  # đoạn kho: mọi số
+        cho_phep = {loai: tap | chung for loai, tap in cho_phep.items()}
         trace.khoang_cach_kiem = kc.kiem_so(text, cho_phep)
         if trace.khoang_cach_kiem and trace.citation_error is None:
             trace.citation_error = CitationIntegrityError(f"distance numbers without source: {len(trace.khoang_cach_kiem)}")
