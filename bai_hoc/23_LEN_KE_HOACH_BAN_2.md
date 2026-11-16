@@ -1,6 +1,6 @@
 # Bài 23 — "Lên kế hoạch" bản 2: code xếp lịch theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ
 
-*Cập nhật lần cuối: 15:02, ngày 16/11/2026 · ghi chú ăn ở phá Tam Giang (bữa có gợi ý 86,4 ⇒ 94,5 %); sửa dòng giới hạn ăn uống đã cũ. Trước: 15:48, ngày 15/11/2026 · thêm chiều 15/11: bảng điểm có thêm 7 nơi (41 điểm) và chuyện lượt chạy thật bắt bốn nơi "chỉ in tên". Trước: 10:36, ngày 15/11/2026 · thêm sáng 15/11: lịch chỉ đổi điểm khi dự báo mưa đủ lớn (≥ 6 mm). Trước: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
+*Cập nhật lần cuối: 21:25, ngày 16/11/2026 · thêm tối 16/11: bản đồ dưới lịch (bật, và ba lỗi hiển thị chỉ lộ khi nhìn ảnh). Trước: 15:02, ngày 16/11/2026 · ghi chú ăn ở phá Tam Giang (bữa có gợi ý 86,4 ⇒ 94,5 %); sửa dòng giới hạn ăn uống đã cũ. Trước: 15:48, ngày 15/11/2026 · thêm chiều 15/11: bảng điểm có thêm 7 nơi (41 điểm) và chuyện lượt chạy thật bắt bốn nơi "chỉ in tên". Trước: 10:36, ngày 15/11/2026 · thêm sáng 15/11: lịch chỉ đổi điểm khi dự báo mưa đủ lớn (≥ 6 mm). Trước: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -16,6 +16,8 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Khung lịch | **khung** (`kiem_khung_v2` kiểm) | Phần do code dựng: ngày, buổi, giờ, tên điểm. Model không được đổi phần này. |
 | Bộ 20 yêu cầu mẫu — **mới** | **bộ 20** | 20 yêu cầu lên lịch mẫu dùng trong lúc chỉnh, để đếm câu dự phòng. |
 | Bộ để dành — **mới** | **bộ quyết** (12 tổ hợp) | 12 tổ hợp yêu cầu chưa ai xem khi chỉnh, để dành cho lần quyết bật hay không. |
+| Ghim — **mới** | **marker** (thư viện Leaflet; `frontend/src/BanDoLich.jsx`), cờ **`ban_do_lich`** | Dấu tròn có số đánh dấu vị trí một điểm trên bản đồ (nhìn xa, ghim sát nhau có thể vẽ lệch một chút để khỏi che nhau). |
+| Ô bản đồ — **mới** | **tile** | Các mảnh ảnh nền ghép lại thành bản đồ, tải từ một máy chủ bản đồ mở. |
 | Phép dò toàn bộ — **mới** | **ca dò** | Code chạy mọi tổ hợp biểu mẫu để tìm đúng một loại lỗi (vd buổi sáng tràn sang chiều). |
 
 ---
@@ -173,8 +175,37 @@ trích nguồn nay bị coi là câu rỗng và được thay bằng câu dự p
 Bài học giống lần người chấm mù ở trên, thêm một ý: **mô phỏng kiểm được phần code viết, không kiểm được phần model viết.** Thêm dữ liệu cho phần model
 đọc thì phải chạy thật một lượt nhỏ và đọc từng câu.
 
+## Tối 16/11: bản đồ dưới lịch
+
+**Làm gì.** Dưới lịch nay có một khung bản đồ. Mỗi ngày là một bộ **ghim** có số, số trên ghim là thứ tự đi trong ngày và khớp với danh sách đánh số
+ngay dưới bản đồ; bấm nút "Ngày 1 / Ngày 2…" thì ghim đổi theo, bấm một ghim thì hiện tên điểm và link mở Google Maps. Bản đồ chỉ ghim điểm tham quan
+và hoạt động buổi tối, chưa ghim quán ăn hay khách sạn.
+
+**Vì sao làm vậy.** Lịch xếp theo "cụm gần nhau", nhưng đọc chữ thì khó thấy ngày nào đi gọn, ngày nào đi xa; nhìn ghim là thấy. Toạ độ từng điểm lấy
+từ bảng do code giữ, **model không tạo toạ độ** — cùng nguyên tắc với giờ và tên điểm trong khung lịch. Phần vẽ bản đồ là một thư viện mã nguồn mở
+chạy trong trình duyệt và được tải riêng: câu hỏi thường ở trang Trợ lý không tải nó và không gọi máy chủ bản đồ lần nào (đã đếm: 0 yêu cầu).
+**Ô bản đồ** (các mảnh ảnh nền) lấy từ một máy chủ của cộng đồng OpenStreetMap ở Đức, vì máy chủ chính không nối được từ máy lúc thử; trang chỉ cho
+phép tải ảnh từ đúng một máy chủ đó, và trang Giới thiệu nói rõ máy chủ ấy nhận địa chỉ IP của người xem.
+
+**Đo thế nào trước khi bật (chiều 16/11).** Ba lịch thật 1, 2 và 3 ngày: ngày nào số ghim cũng bằng số điểm có toạ độ, và số trên ghim đúng thứ tự
+1, 2, 3… của danh sách (3 ghim; 3 và 5; 3, 5 và 4). Trên điện thoại có một lỗi thật: vuốt một ngón qua khung thì bản đồ trượt đi 144 điểm ảnh còn
+trang đứng yên, tức người dùng kẹt lại ở bản đồ. Sửa: trên điện thoại một ngón là cuộn trang (đo lại: trang cuộn, bản đồ đứng yên), muốn xem gần thì
+dùng nút cộng / trừ hoặc hai ngón. Mốc để so là chính bản trước khi sửa, đo cùng một cách.
+
+**Chuyện thật: số đo đạt hết, nhìn ảnh mới thấy ba lỗi.** Ngay sau khi bật, mình cho trình duyệt tự động xếp một lịch 2 ngày trên bản đang chạy rồi
+mở ảnh chụp ra nhìn. Bảng số báo "ghim khớp, không lỗi", nhưng ảnh cho thấy ba chỗ mà phép đếm không biết để đo:
+- **Số nằm lệch lên góc ghim**, không ở giữa. Gốc: bộ kiểu dáng của thư viện bản đồ được tải sau và đè lên kiểu của mình. Sửa một dòng.
+- **Màn hẹp, ghim thấp nhất bị dòng ghi công che nửa.** Dòng ghi công nằm đè lên mép dưới khung, màn hẹp nó xuống hai dòng. Sửa: khi căn bản đồ cho vừa
+  các ghim thì chừa lề dưới rộng hơn. Đo ở màn 390 điểm ảnh, ngày có 5 ghim: 1 ghim bị che ⇒ 0. Cái giá: bản đồ lùi ra một mức.
+- **Hai điểm nằm gần nhau thì ghim này che số ghim kia** (trong lịch thử là Lăng Đồng Khánh và Đồi Vọng Cảnh, cách nhau vài trăm mét). Sửa: ghim nào rơi sát một ghim đã vẽ thì vẽ lệch sang
+  phải một chút; vị trí thật của điểm không đổi, phóng gần thì tự hết lệch. Đo "số cặp ghim che nhau quá nửa" trên cùng lịch: 1 ⇒ 0, ở cả màn hẹp lẫn
+  màn rộng. Mỗi phép đếm mới đều được chạy trên bản cũ trước để chắc nó ra "có lỗi" — một phép đếm lúc nào cũng ra 0 thì không chứng minh được gì.
+
 ## Khi nào hỏng
 
+- **Bản đồ cần mạng tới máy chủ ô bản đồ**, và máy chủ đang dùng có lúc chậm: vừa đổi ngày, khung có thể xám vài giây rồi mới
+  hiện (tối 16/11 có lần chụp trúng lúc khung còn xám, có lần ô hiện gần như ngay; chưa đo thành con số). Mất mạng tới máy chủ đó thì chỉ còn ghim trên nền xám; danh sách đánh số dưới bản đồ vẫn đủ. Ghim vẽ lệch để khỏi che nhau nên ở mức nhìn xa có
+  thể cách vị trí thật vài chục điểm ảnh.
 - **Khung lịch có lúc hiện quá 1 giây**, ở lượt đầu có dự báo khi bộ nhớ đệm thời tiết còn trống. Anh đã nhận đây là giới hạn.
 - **Một nhãn được gắn sau khi thấy sàn trượt.** Sở thích "lễ hội – nghệ thuật" chỉ đạt 43 %, dưới sàn 50 %. Một điểm được gắn thêm nhãn này (có căn cứ trong
   kho) và sàn lên đúng 50 %, không còn biên. Việc này đã đưa anh duyệt, nhưng là chỗ mỏng.
