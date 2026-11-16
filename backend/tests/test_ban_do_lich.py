@@ -4,6 +4,7 @@ Bảng điểm + bảng toạ độ thật (`data/phase_9/lich_trinh/`, private)
 T4 (chuỗi gửi model giống byte) chạy bằng `capture_all.py`, không ở đây.
 """
 import json
+import re
 from types import SimpleNamespace
 
 import pytest
@@ -94,6 +95,8 @@ def test_csp_adds_tile_host_and_data_images_only_when_flag_on():
     # chỉ `img-src` đổi: thêm `data:` (GIF rỗng Leaflet dùng để huỷ tile) + đúng một host ngoài; phần còn lại giống byte
     assert FRONTEND_CSP_BAN_DO.replace(f" data: {TILE_HOST}", "", 1) == FRONTEND_CSP
     assert FRONTEND_CSP_BAN_DO.count("https://") == 1 and f"img-src 'self' blob: data: {TILE_HOST};" in FRONTEND_CSP_BAN_DO
+    # host lấy từ `cong.BAN_DO` ⇒ phải là đúng một tên máy https, không đường dẫn / ký tự đại diện (đổi host sai không được nới CSP)
+    assert re.fullmatch(r"https://[a-z0-9.-]+", TILE_HOST) and "*" not in FRONTEND_CSP_BAN_DO
 
     assert (FRONTEND_DIR / "index.html").is_file(), "chưa có bản build giao diện — chạy `cd frontend && npm ci && npm run build`"
     app = create_app(SETTINGS)  # không chạy lifespan ⇒ gắn cờ tay

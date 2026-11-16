@@ -15,7 +15,7 @@ Từ máy User 16/11: `tile.openstreetmap.org` và `www.openstreetmap.org` nối
   | OSM Đức (FOSSGIS) | chỉ phi thương mại, cho "ứng dụng web nhỏ"; giới hạn tốc độ theo IP, không công bố số | không | © OpenStreetMap contributors |
   | OSM Pháp (HOT / osmfr) | theo Codex: miễn phí nếu công khai, phi lợi nhuận, lưu lượng vừa phải; **C chưa tự mở được** (wiki ở openstreetmap.org — bị chặn ở đây) | không | theo wiki |
   C khuyên **OSM Đức** nếu User không muốn xin khoá (không đăng ký, điều khoản khớp "ứng dụng web nhỏ phi thương mại"); **CARTO** nếu xin được khoá trước buổi chấm (hạn mức rõ bằng số). Chọn host là quyết định đường ra ⇒ User chọn.
-- **(b) Kéo trên điện thoại:** `L.map(…, { dragging: !L.Browser.mobile, tap: !L.Browser.mobile, scrollWheelZoom: false })` — trên điện thoại vuốt qua khung là cuộn trang; vẫn phóng to / thu nhỏ bằng nút, bấm ghim mở ô tên. Một khổ 390 thử bằng tay (Playwright chạm + vuốt) trước khi sửa, để biết lỗi có thật.
+- **(b) Kéo trên điện thoại:** `L.map(…, { dragging: !L.Browser.mobile, scrollWheelZoom: false })` (E 16/11 lúc code: **không** đặt `tap` — iOS cần handler tap để bấm ghim mở ô tên) — trên điện thoại vuốt qua khung là cuộn trang; vẫn phóng to / thu nhỏ bằng nút, bấm ghim mở ô tên. Một khổ 390 thử bằng tay (Playwright chạm + vuốt) trước khi sửa, để biết lỗi có thật.
 - **(c) Kiểm "0 lỗi console" + ô bản đồ 200** (Q-M2 của plan gốc) — lần đầu kiểm được trên máy này.
 - Không đổi: dữ liệu toạ độ v9, server, chữ gửi model (cờ tắt / bật đều giống byte — test sẵn có), ghim quán / khách sạn (để sau 30/11 — A chốt).
 
