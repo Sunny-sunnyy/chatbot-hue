@@ -159,3 +159,95 @@ def test_max_turns_plus_one_only_when_distance_tool_offered(deps, cau, flags, so
     gen = generator(lambda n, kw: (vong.append(n), [tool_call(f"nơi {n}")])[1])
     trace, _ = chay(deps, cau, gen, flags)
     assert len(vong) == so_vong and trace.fixed_outcome == "max_turns"
+
+
+# ---------- Khoảng cách tính sẵn (plan `2026-11-17-khoang-cach-tinh-san-plan.md`) ----------
+BANG_TEN = kc.BangKhoangCach(
+    ten={"dn": "Đại Nội Huế", "kt": "Kinh thành Huế (Ngọ Môn – Kỳ Đài)", "tm": "Chùa Thiên Mụ", "kg": "Không gian Lê Văn", "tt": "Trung tâm Lê Văn"},
+    ten_khac={"dn": ("Hoàng thành Huế",), "kt": ("Kinh thành Huế", "Thành Huế"), "tm": ("Chùa Linh Mụ",), "kg": ("Lê Văn",), "tt": ("Lê Văn",)},
+    cap={f"{a}|{b}": {"km": 3.0, "phut": 8} for a in ("dn", "kt", "tm") for b in ("dn", "kt", "tm") if a != b})
+
+
+@pytest.mark.parametrize("cau, cap", [
+    ("Từ Đại Nội Huế đến Chùa Thiên Mụ bao xa?", ("dn", "tm")),
+    ("chùa linh mụ cách  đại nội mấy km", ("tm", "dn")),                      # tên khác, chữ thường, thừa khoảng trắng, bỏ " Huế", theo thứ tự câu
+    ("Từ Hoàng thành Huế ra Thành Huế bao xa?", ("dn", "kt")),                  # cụm dài trước: "Hoàng thành Huế" không bị "Thành Huế" ăn mất
+    ("Kinh thành cách chùa Thiên Mụ bao xa?", ("kt", "tm")),
+    ("Từ Đại Nội đi chùa Thiên Mụ rồi về lại Đại Nội bao xa?", ("dn", "tm")),  # một điểm nhắc hai lần vẫn là hai điểm
+    ("Đại Nội cách trung tâm bao xa?", None),                                   # một điểm
+    ("Từ Đại Nội qua Kinh thành rồi tới chùa Thiên Mụ bao xa?", None),         # ba điểm
+    ("Từ Lê Văn đến Đại Nội bao xa?", None),                                    # "Lê Văn" trỏ hai mã ⇒ không đọc ⇒ còn một điểm
+    ("Khách sạn Đại Nộib cách chùaThiên Mụ bao xa?", None),                     # không khớp giữa chữ (ranh giới chữ)
+    ("Đi Đại Nội hay chùa Thiên Mụ thì bao xa?", None),                         # hai lựa chọn
+    ("Đại Nội với chùa Thiên Mụ, nơi nào gần hơn?", None),                      # câu so sánh
+    ("Đại Nội mở cửa mấy giờ, còn chùa Thiên Mụ thì sao?", None),               # hai điểm nhưng không hỏi khoảng cách
+    ("Từ Đại Nội đến Không gian Lê Văn bao xa?", None),                         # đủ hai điểm nhưng bảng không có số cho cặp ⇒ đường cũ
+])
+def test_precomputed_pair_reads_exactly_two_table_places(cau, cap):
+    assert kc.cap_tinh_san(cau, BANG_TEN) == cap
+
+
+SAN = dataclasses.replace(BAT, khoang_cach_tinh_san=True)
+CAU_SAN = "Từ Điểm A đến Điểm B bao xa?"
+
+
+def _ghi(dich):
+    return generator(lambda n, kw: (dich.append(json.dumps(kw, ensure_ascii=False, sort_keys=True, default=lambda o: type(o).__name__)),
+                                    [answer("Mình chưa rõ.")])[1])
+
+
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("history", [(), (("Điểm C có gì hay?", ""),)])
+def test_precomputed_distance_is_in_first_model_input_without_distance_tool(deps, history, stream):
+    seen = []
+    gen = generator(lambda n, kw: (seen.append(kw), [answer("Mình chưa rõ.")])[1])
+    trace, _ = chay(deps, CAU_SAN, gen, SAN, history, stream)
+    chu = json.dumps(seen[0], ensure_ascii=False, default=str)
+    assert len(seen) == 1 and "khoang_cach" not in tool_names(seen[0]) and "tim_kho" in tool_names(seen[0])
+    assert kc.TIEU_DE_NGUON in chu and "khoảng 4,0 km đường đi, khoảng 10 phút đi xe" in chu
+    assert trace.khoang_cach == [{"diem_a": "a", "diem_b": "b", "dong": kc.ket_qua(BANG, "a", "b")}]
+    assert [t for t in trace.tools if t["name"] == "khoang_cach_san"] == [{"name": "khoang_cach_san", "ms": 0.0, "diem_a": "a", "diem_b": "b"}]
+    # ca đối chứng: cùng câu, cờ tính sẵn tắt ⇒ có công cụ, ngữ cảnh chưa có nguồn khoảng cách
+    seen.clear()
+    chay(deps, CAU_SAN, gen, BAT, history, stream)
+    assert "khoang_cach" in tool_names(seen[0]) and kc.TIEU_DE_NGUON not in json.dumps(seen[0]["input"], ensure_ascii=False, default=str)
+
+
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("cau, history", [
+    ("Từ A sang B bao xa?", ()),                                       # có từ khoá, không đọc được hai tên ⇒ đường cũ
+    ("Điểm A cách trung tâm bao xa?", ()),                             # một điểm
+    ("Điểm A và Điểm B mở cửa mấy giờ?", ()),                          # hai điểm, không từ khoá
+    ("Còn Điểm A với Điểm B thì sao?", ((CAU_SAN, ""),)),              # từ khoá chỉ ở câu liền trước ⇒ đường cũ (model gọi công cụ)
+])
+def test_precompute_flag_on_but_no_pair_sends_same_model_input_as_flag_off(deps, cau, history, stream):
+    cu, moi = [], []
+    chay(deps, cau, _ghi(cu), BAT, history, stream)
+    chay(deps, cau, _ghi(moi), SAN, history, stream)
+    assert cu and cu == moi
+
+
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("chu_model, loi", [("Từ Điểm A đến Điểm B khoảng 4,0 km, đi xe khoảng 10 phút [{n}].", []),
+                                            ("Khoảng 5 km, đi xe 12 phút [{n}].", ["5", "12"])])
+def test_number_check_still_runs_on_precomputed_distance(deps, chu_model, loi, stream):
+    def kich_ban(n, kw):
+        so = re.findall(r"\[Nguồn (\d+)\]\nTiêu đề: Khoảng cách", json.dumps(kw, ensure_ascii=False, default=str).replace("\\n", "\n"))
+        return [answer(chu_model.format(n=so[-1]))]
+
+    trace, _ = chay(deps, CAU_SAN, generator(kich_ban), SAN, stream=stream)
+    assert trace.khoang_cach_kiem == loi and (trace.citation_error is None) is (not loi)
+    if not loi:
+        assert trace.cited[-1].title == kc.TIEU_DE_NGUON
+
+
+def test_precomputed_turn_keeps_default_max_turns(deps):
+    vong = []
+    gen = generator(lambda n, kw: (vong.append(n), [tool_call(f"nơi {n}")])[1])
+    trace, _ = chay(deps, CAU_SAN, gen, SAN)
+    assert len(vong) == 4 and trace.fixed_outcome == "max_turns"
+
+
+def test_precompute_flag_needs_distance_flag():
+    with pytest.raises(ValueError, match="khoang_cach_tinh_san"):
+        AssistantFlags(tim_them=True, khoang_cach_tinh_san=True)

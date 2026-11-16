@@ -76,6 +76,65 @@ def nap_bang(path_khoang_cach: str | Path, path_diem: str | Path) -> BangKhoangC
     return BangKhoangCach(ten=ten, ten_khac=ten_khac, cap=cap)
 
 
+# ---------- Khoảng cách tính sẵn (plan `2026-11-17-khoang-cach-tinh-san-plan.md`) ----------
+# Tên ngắn người dùng hay gõ mà bảng không có. Để ở đây, KHÔNG thêm vào `ten_khac` của bảng điểm: `ten_khac` còn vào mô tả công cụ (chuỗi gửi
+# model) và vào bước kiểm câu mô tả của lịch (`lich_trinh_v2`: câu nhắc tên điểm khác ⇒ bỏ) — hai chỗ đó không được đổi theo việc này.
+# Chỉ thêm tên không trùng nghĩa khác ("Thuận An", "Bạch Mã", "Tự Đức" đứng một mình có thể là khách sạn / núi / vua ⇒ không thêm).
+TEN_NGAN = {"cho_dong_ba": ("Đông Ba",), "chua_thien_mu": ("Thiên Mụ",), "cau_truong_tien": ("Cầu Tràng Tiền", "Trường Tiền", "Tràng Tiền")}
+# "A hay B gần hơn?", "nơi nào xa nhất?" = so hai lựa chọn từ một nơi khác, không phải khoảng cách GIỮA hai nơi ⇒ không tính sẵn
+_SO_SANH = re.compile(r"\b(?:gần|xa)\s+(?:hơn|nhất)\b|\bnào\s+(?:gần|xa)\b", re.IGNORECASE)
+_NOI_LUA_CHON = {"hay", "hoặc", "hay là"}
+
+
+def _chuan_ten(text: str) -> str:
+    return " ".join(_nfc(text).casefold().split())
+
+
+def _khoa_ten(bang: BangKhoangCach) -> list[tuple[str, str]]:
+    """(cụm chữ đã chuẩn hoá, mã) của mọi tên đọc được từ chữ người dùng, cụm dài trước. Tên kết thúc bằng " Huế" có thêm dạng bỏ " Huế" khi
+    phần còn lại ≥ 2 chữ ("Đại Nội Huế" ⇒ "đại nội", "Phố Tây Huế" ⇒ "phố tây") — cùng luật với `lich_trinh.chuan_ten`."""
+    khoa = {}
+    for i in bang.ids:
+        for ten in (bang.ten[i], *bang.ten_khac[i], *TEN_NGAN.get(i, ())):
+            k = _chuan_ten(ten)
+            dang = [k] + ([k[: -len(" huế")]] if k.endswith(" huế") and len(k.split()) >= 3 else [])
+            for d in dang:
+                khoa[d] = None if khoa.get(d, i) != i else i  # một cụm trỏ hai mã ⇒ mập mờ, bỏ cụm đó
+    return sorted(((k, i) for k, i in khoa.items() if i is not None), key=lambda x: -len(x[0]))
+
+
+def tim_hai_diem(cau: str, bang: BangKhoangCach) -> tuple[str, str] | None:
+    """Câu nhắc ĐÚNG HAI điểm khác nhau của bảng ⇒ (mã, mã) theo thứ tự xuất hiện; 0 / 1 / ≥ 3 điểm, hoặc hai tên chỉ nối bằng "hay / hoặc"
+    (hai lựa chọn) ⇒ None. So nguyên cụm theo ranh giới chữ, cụm dài trước, không chồng nhau. Chỉ đọc tên có trong bảng: nơi thứ ba gõ bằng tên
+    bảng không có thì hàm không thấy (giới hạn đã biết — bộ dò `bo_do_ten.jsonl`)."""
+    chu = _chuan_ten(cau)
+    da_dung = [False] * len(chu)
+    thay: list[tuple[int, int, str]] = []  # (đầu, cuối, mã)
+    for khoa, ma in _khoa_ten(bang):
+        for m in re.finditer(rf"(?<!\w){re.escape(khoa)}(?!\w)", chu):
+            if not any(da_dung[m.start():m.end()]):
+                da_dung[m.start():m.end()] = [True] * (m.end() - m.start())
+                thay.append((m.start(), m.end(), ma))
+    thay.sort()
+    ma = list(dict.fromkeys(x[2] for x in thay))
+    if len(ma) != 2:
+        return None
+    cuoi_a = max(c for _, c, i in thay if i == ma[0] and c <= min(d for d, _, j in thay if j == ma[1]))
+    dau_b = min(d for d, _, j in thay if j == ma[1])
+    if chu[cuoi_a:dau_b].strip(" ,") in _NOI_LUA_CHON:
+        return None
+    return ma[0], ma[1]
+
+
+def cap_tinh_san(cau: str, bang: BangKhoangCach) -> tuple[str, str] | None:
+    """Cặp điểm để code tra bảng TRƯỚC lần gọi model đầu: câu đang gõ (không lịch sử) có từ khoá khoảng cách, không phải câu so sánh, nhắc đúng
+    hai điểm của bảng và bảng có số cho cặp đó. None ⇒ đi đường cũ (model gọi công cụ)."""
+    if not co_tu_khoa(cau) or _SO_SANH.search(_nfc(cau)):
+        return None
+    cap = tim_hai_diem(cau, bang)
+    return cap if cap and f"{cap[0]}|{cap[1]}" in bang.cap else None
+
+
 def mo_ta_cong_cu(bang: BangKhoangCach) -> str:
     """Mô tả công cụ: luật ngắn + danh sách `mã: tên (tên khác)` để model ánh xạ tên người dùng gõ ⇒ mã."""
     dong = [f"{i}: {bang.ten[i]}" + (f" ({', '.join(bang.ten_khac[i])})" if bang.ten_khac[i] else "") for i in bang.ids]

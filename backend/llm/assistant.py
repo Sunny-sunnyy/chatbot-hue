@@ -134,6 +134,9 @@ class AssistantFlags:
     # mã); chỉ đưa khi câu có từ khoá khoảng cách. TẮT tới khi đo đạt; cần `tim_them` + bảng (`assistant.khoang_cach_bang`, nạp ở rìa)
     khoang_cach: bool = False
     khoang_cach_bang: "kc.BangKhoangCach | None" = field(default=None, compare=False, repr=False)
+    # 17/11 (plan `2026-11-17-khoang-cach-tinh-san-plan.md`): câu đang gõ có từ khoá + đúng hai tên điểm của bảng ⇒ code tra bảng và nối nguồn khoảng
+    # cách TRƯỚC lần gọi model đầu, lượt đó không đưa công cụ `khoang_cach` (bớt một lần gọi model ≈ 1,8 s trên đường chữ đầu). TẮT tới khi đo đạt
+    khoang_cach_tinh_san: bool = False
 
     def __post_init__(self) -> None:
         if self.lan_tim_dau not in SEARCH_VARIANTS:
@@ -152,6 +155,8 @@ class AssistantFlags:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.khoang_cach and (not self.tim_them or self.khoang_cach_bang is None):
             raise ValueError("assistant.khoang_cach needs assistant.tim_them: true and the distance table (assistant.khoang_cach_bang)")
+        if self.khoang_cach_tinh_san and not self.khoang_cach:
+            raise ValueError("assistant.khoang_cach_tinh_san needs assistant.khoang_cach: true")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
@@ -604,6 +609,19 @@ def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
     return khoang_cach
 
 
+def _nguon_khoang_cach_san(trace: AnswerTrace, bang: "kc.BangKhoangCach", cap: tuple[str, str]) -> str:
+    """Khoảng cách tính sẵn: cặp điểm do CODE đọc từ câu đang gõ (`kc.cap_tinh_san`) ⇒ tra bảng, đăng thành một nguồn y như kết quả công cụ
+    `khoang_cach` (`trace.khoang_cach` có dòng ⇒ bước kiểm số sau khi sinh chạy như cũ). Log chỉ ghi mã điểm, không chữ người dùng."""
+    dong = kc.ket_qua(bang, *cap)
+    trace.khoang_cach = [{"diem_a": cap[0], "diem_b": cap[1], "dong": dong}]
+    src = PackedSource(id=len(trace.so_nguon) + 1, title=kc.TIEU_DE_NGUON, heading_path=(kc.MUC_NGUON,), excerpts=dong, source=kc.NGUON_SOURCE)
+    trace.so_nguon.append(src)
+    chu = FullCorpusContextBuilder._block(src)
+    trace.context_parts.append(chu)
+    trace.tools.append({"name": "khoang_cach_san", "ms": 0.0, "diem_a": cap[0], "diem_b": cap[1]})
+    return chu
+
+
 def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
     """T1 nhanh (plan `2026-11-10-phase-9-t1-nhanh-plan.md` D2): S5 09/11 câu ngày gọi model 2–4 lần vì model phải gọi `ngay_lich` rồi mới viết ⇒
     code tính sẵn hôm nay / mai / tuần / ngày âm nêu trong câu và trong đoạn kho lần tìm đầu, đăng thành **một nguồn** (như kết quả `ngay_lich`), nối
@@ -799,6 +817,9 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     context = trace.packed.text
     if flags.ngay_lich and trace.fixed_outcome is None and nl.co_tu_ngay_luot(query, trace.history):
         context = f"{context}\n\n{_nguon_lich_san(trace, query)}"  # T1 nhanh D2: lượt có từ chỉ ngày ⇒ lịch code tính trước lần gọi model đầu
+    cap = kc.cap_tinh_san(query, flags.khoang_cach_bang) if flags.khoang_cach_tinh_san and trace.fixed_outcome is None else None
+    if cap:
+        context = f"{context}\n\n{_nguon_khoang_cach_san(trace, flags.khoang_cach_bang, cap)}"
     return build_assistant_input(query, context, today)
 
 
@@ -912,7 +933,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             trace.thoi_tiet_ctx["tuan_sau"] = tuan_sau
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
-    if flags.khoang_cach and kc.co_tu_khoa_luot(query, trace.history):  # như thời tiết — lượt không có từ khoá ⇒ danh sách công cụ như cũ (Q1)
+    # như thời tiết — lượt không có từ khoá ⇒ danh sách công cụ như cũ (Q1); số đã tính sẵn trước lần gọi đầu (`trace.khoang_cach`) ⇒ không đưa công cụ
+    if flags.khoang_cach and trace.khoang_cach is None and kc.co_tu_khoa_luot(query, trace.history):
         extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)

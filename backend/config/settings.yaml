@@ -76,6 +76,7 @@ assistant:
   thoi_tiet: true                # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — BẬT 07/11/2026 (User Q-U4 spec cổng đợt 1: bật khi merge đợt 1; B5b đạt luật ghi trước); cần tim_them
   khoang_cach: true              # 16/11 (plan 2026-11-16-khoang-cach-plan.md): công cụ km / phút giữa hai điểm bảng lịch (tra bảng dựng sẵn từ OSRM, runtime không gọi mạng) — BẬT 16/11 (User chọn bật cho lượt thử tối; đo đạt + review 2 vòng); cần tim_them
   khoang_cach_bang: ../data/phase_9/lich_trinh/khoang_cach_v1.json  # C 16/11, md5 cb76ab72199c (private); 40 điểm có toạ độ × 39 chiều; tên điểm lấy từ lich_trinh_bang_v2
+  khoang_cach_tinh_san: false    # 17/11 (plan 2026-11-17-khoang-cach-tinh-san-plan.md): câu có từ khoá + đúng hai tên điểm của bảng ⇒ code tra sẵn, nối nguồn trước lần gọi model đầu, không đưa công cụ ở lượt đó — TẮT tới khi đo đạt; cần khoang_cach
   ngay_lich: true                # Phase 9 T1 (plan 2026-11-08-phase-9-t1-ngay-plan.md): công cụ ngày + âm lịch Việt Nam (code tính) — chỉ đưa khi câu có từ chỉ ngày; TẮT tới khi đạt §1; cần tim_them
   so_vet: false                 # sổ vết debug CÓ NỘI DUNG (core/so_vet.py ⇒ data/debug_trace/<ngày>.jsonl) — chỉ máy local, bật bằng HUE_SO_VET=true; bản Docker / công khai: KHÔNG bật
   het_luot_bo_cong_cu: true      # 12/11 (plan 2026-11-12-het-luot-tim-plan.md): hết 2 lần tìm thật ⇒ lượt gọi model kế không còn công cụ tim_kho — BẬT 13/11 (User: bật kèm theo dõi câu kho thiếu bị trả lời)
