@@ -113,6 +113,14 @@ async def thoi_tiet(request: Request):
             "ghi_cong": tt.GHI_CONG}
 
 
+# Nguồn ô bản đồ lịch (cờ `ban_do_lich`) — chỗ DUY NHẤT ghi host: CSP `img-src` (`app.py` `TILE_HOST`), URL ô + dòng ghi công (`BanDoLich.jsx`) và câu
+# đường ra ở trang Giới thiệu đều lấy từ đây qua `/api/tinh_nang`. Đổi nhà cung cấp ⇒ chỉ sửa khối này (một tên con cố định ⇒ CSP chỉ một host).
+# Tạm (16/11): OSM Đức (FOSSGIS — không khoá, cho ứng dụng web nhỏ phi thương mại); `tile.openstreetmap.org` bắt tay TLS lỗi ở mạng đã thử.
+# Host cuối do User chọn (plan `2026-11-16-ban-do-bat-plan.md` mục 2a).
+BAN_DO = {"tile": "https://tile.openstreetmap.de/{z}/{x}/{y}.png", "nha_cung_cap": "OpenStreetMap Đức (FOSSGIS)", "ten_ngan": "OSM Đức",  # tên ngắn: dòng ghi công trên khung 220 px
+          "trang_nha_cung_cap": "https://www.openstreetmap.de/"}
+
+
 @router.get("/api/tinh_nang")
 async def tinh_nang(request: Request):
     """Cờ tính năng giao diện cần để ẩn / hiện mục (một lần gọi lúc tải trang). Chỉ boolean — trừ khoá `len_ke_hoach_v2`: **chỉ có khi cờ bật**
@@ -121,6 +129,8 @@ async def tinh_nang(request: Request):
     flags = _flags(state)
     co = {"lich_trinh_bieu_mau": flags.lich_trinh_bieu_mau, "thoi_tiet": flags.thoi_tiet, "anh": getattr(state, "anh", None) is not None,
           "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}
+    if flags.ban_do_lich:  # như `len_ke_hoach_v2`: khoá chỉ có khi cờ bật ⇒ cờ tắt phản hồi giống hôm nay
+        co["ban_do"] = BAN_DO
     if flags.len_ke_hoach_v2:
         co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA,
                                  "so_thich_hien": list(flags.so_thich_hien)}  # loại < 4 điểm hoặc dưới sàn mô phỏng ⇒ không hiện

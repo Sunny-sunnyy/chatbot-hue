@@ -7,6 +7,7 @@ import { LenKeHoach, LenKeHoachV2 } from "./LenKeHoach.jsx";
 import { GioiThieu } from "./GioiThieu.jsx";
 import { ChoO } from "./ChoO.jsx";
 import { useRoute } from "./route.js";
+import { datNguonBanDo } from "./nguonBanDo.js";
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
 // điều hướng bằng hash (D5), trợ lý nổi trên mọi trang + trang `#/tro-ly`, MỘT cuộc trò chuyện qua các trang (D8), điện thoại có thanh dưới.
@@ -34,7 +35,7 @@ export default function App() {
   const onTroLy = route.page === "tro-ly";
 
   useEffect(() => {
-    getJson("/api/tinh_nang").then(setTinhNang).catch(() => setTinhNang(TINH_NANG_TAT)).finally(() => setDaCoTinhNang(true));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
+    getJson("/api/tinh_nang").then(t => { datNguonBanDo(t.ban_do); setTinhNang(t); }).catch(() => setTinhNang(TINH_NANG_TAT)).finally(() => setDaCoTinhNang(true));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
     getJson("/api/kham_pha").then(data => setBai(data.bai)).catch(() => setBaiLoi("Chưa tải được danh sách bài — thử tải lại trang."));
   }, []);
   useEffect(() => {

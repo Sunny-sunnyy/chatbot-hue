@@ -18,7 +18,7 @@ from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
 from api.routes.chat import router as chat_router
-from api.routes.cong import nap_kham_pha
+from api.routes.cong import BAN_DO, nap_kham_pha
 from api.routes.cong import router as cong_router
 from core.logging_setup import setup_logging
 from core.schema import (
@@ -53,7 +53,7 @@ FRONTEND_CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-sr
 # Bản đồ lịch trình (plan 2026-11-08 §5): cờ `ban_do_lich` bật ⇒ `img-src` thêm host ảnh tile + `data:`. Leaflet tải tile bằng `<img>` ⇒ không đổi
 # connect-src. `data:` (A chọn 08/11): Leaflet huỷ tile đang tải bằng cách gán GIF rỗng `data:` (`_removeTile` / `_abortLoading`); không mở mạng, và chữ
 # model không chèn được ảnh vì DOMPurify không cho thẻ `img` (`tests/test_static_ui.py::test_answer_sanitizer_is_an_allowlist_without_fetching_tags`)
-TILE_HOST = "https://tile.openstreetmap.org"
+TILE_HOST = "/".join(BAN_DO["tile"].split("/")[:3])  # "https://<host>" — cùng nguồn với URL ô gửi xuống giao diện
 FRONTEND_CSP_BAN_DO = FRONTEND_CSP.replace("img-src 'self' blob:;", f"img-src 'self' blob: data: {TILE_HOST};")
 
 

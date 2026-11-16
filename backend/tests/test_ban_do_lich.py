@@ -101,3 +101,6 @@ def test_csp_adds_tile_host_and_data_images_only_when_flag_on():
     client = TestClient(app)
     for path in ("/", "/static/index.html"):
         assert client.get(path).headers["content-security-policy"] == FRONTEND_CSP_BAN_DO
+    # host ghi MỘT chỗ (`cong.BAN_DO`): URL ô gửi xuống giao diện cùng host với CSP; cờ tắt ⇒ không có khoá `ban_do` (test_cong_dot_1 khoá phản hồi)
+    ban_do = client.get("/api/tinh_nang").json()["ban_do"]
+    assert ban_do["tile"].startswith(TILE_HOST + "/") and ban_do["nha_cung_cap"]
