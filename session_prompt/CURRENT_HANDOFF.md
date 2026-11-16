@@ -51,6 +51,9 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 
 - **(19:33 16/11/2026) User chọn BẬT cờ `khoang_cach_tinh_san`** ⇒ main `3ccdada` (nhánh một dòng cờ; test rộng 1277 đạt trên bản bật cờ — số của C); **8010 khởi động lại trên `3ccdada`** (sổ vết bật); A thử 1 câu: 4,4 km, `tools` có `khoang_cach_san`, 2 lần gọi model, 0,0004 USD (câu đầu sau khởi động 4,18 s cả câu — không phải số tốc độ; chữ đầu trên bản siết CHƯA đo thật). C đẩy tài liệu (bài 14, sổ 07, README, nhật ký) + mục thử cho User.
 
+- **(20:53 16/11/2026)** User chưa rảnh thử ⇒ nhóm làm tiếp: **khoảng cách tính sẵn đo lại trên bản cuối `1e45a78`** (C): chữ đầu p50 1,87 s (13 câu đường nhanh; 2 / 13 > 3 s), đúng cặp 14 / 14, 0 sai, 0,0122 USD (số của C) — bài 14 + sổ 07 đã sửa, main `9897732`. E chạy thử mục mới của hướng dẫn trên 8010 (10 lượt, 0,0075 USD): 2.11d, 3.0, Phần 4 đúng; **2 điều ở khoảng cách tính sẵn giao C đếm / đọc sổ vết:** 3 / 3 câu đường nhanh không có ghi chú "chưa tính kẹt xe"; câu giới hạn "…rồi ghé khách sạn … nữa" từ chối cả câu 1 / 2 lần (lượt 20:48:33 trong sổ vết). B làm 2 lệnh B7 cần server tạm. E sửa ghim khổ hẹp.
+- **User chọn (20:53 16/11/2026): lịch sửa bằng lời ⇒ CỘT LỊCH của trang Lên kế hoạch đổi theo** (+ dòng nhãn "Đã sửa theo lời bạn" + dòng chỉ dẫn; KHÔNG làm ô gõ dưới lịch, KHÔNG đồng bộ nút biểu mẫu) — B, C, E đều nghiêng phương án này; gốc: `frontend/src/App.jsx` `lichTurn` lấy lượt biểu mẫu cuối. Giao E (nhánh `p9-cot-lich-theo-sua`, 7 tiêu chí trong tin giao, 0 USD + 1 lượt thật), C review.
+
 ## PHIÊN CHIỀU 16/11 (thứ Hai; A mở, cập nhật 14:06 16/11/2026)
 
 - Terminal: A `hue-rag-db` · B `hue-rag-83` · C `hue-rag-80` · E `hue-rag-af` — cả bốn Claude Code, trực tiếp; D không mở. Ban ngày: máy chia với hai dự án khác (User có mặt).
