@@ -48,12 +48,26 @@ export default function BanDoLich({ items }) {
     // vẫn phóng to / thu nhỏ bằng nút hoặc hai ngón, bấm ghim mở ô tên.
     const map = L.map(khung.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile });
     L.tileLayer(nguon.tile, { maxZoom: 18, attribution: ghiCong(nguon) }).addTo(map);
-    for (const item of coToaDo) {
-      const icon = L.divIcon({ className: `ghim ghim-ngay-${(item.ngay - 1) % 5}`, html: String(item.thu_tu), iconSize: [30, 30] });  // màu theo ngày (đợt 2)
-      L.marker(item.toa_do, { icon, title: item.ten, alt: item.ten, keyboard: true }).bindPopup(oGhim(item)).addTo(map);
+    // `lech` = số điểm ảnh vẽ ghim lệch sang phải (đổi điểm neo của biểu tượng; toạ độ thật của ghim không đổi)
+    const bieuTuong = (item, lech = 0) => L.divIcon({ className: `ghim ghim-ngay-${(item.ngay - 1) % 5}`, html: String(item.thu_tu),  // màu theo ngày (đợt 2)
+                                                     iconSize: [30, 30], iconAnchor: [15 - lech, 15] });
+    const ghim = coToaDo.map(item => L.marker(item.toa_do, { icon: bieuTuong(item), title: item.ten, alt: item.ten, keyboard: true }).bindPopup(oGhim(item)).addTo(map));
+    // Hai điểm cách nhau vài trăm mét (cụm lăng) ở mức phóng xa rơi vào cùng chỗ ⇒ ghim này che số ghim kia. Ghim cách một ghim đã vẽ < 24 px
+    // ⇒ vẽ lệch sang phải từng nấc 16 px cho tới khi hết đè; tính lại mỗi lần đổi mức phóng (phóng gần thì tự hết lệch).
+    function tachGhim() {
+      const daVe = [];
+      coToaDo.forEach((item, i) => {
+        const p = map.latLngToContainerPoint(item.toa_do);
+        let lech = 0;
+        while (lech < 96 && daVe.some(q => Math.abs(q.x - (p.x + lech)) < 24 && Math.abs(q.y - p.y) < 24)) lech += 16;
+        daVe.push({ x: p.x + lech, y: p.y });
+        ghim[i].setIcon(bieuTuong(item, lech));
+      });
     }
+    map.on("zoomend", tachGhim);
     // Lề dưới rộng hơn: dòng ghi công nằm đè lên mép dưới khung (màn hẹp xuống 2 dòng ≈ 36 px) ⇒ ghim ở mép dưới bị che một phần
     map.fitBounds(L.latLngBounds(coToaDo.map(i => i.toa_do)), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 60], maxZoom: 15 });
+    tachGhim();
     return () => map.remove();
   }, [ngay, khoa]);  // eslint-disable-line react-hooks/exhaustive-deps
 
