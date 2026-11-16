@@ -40,3 +40,12 @@ A duyệt ≈ 0,02 USD; dùng **0,0149 USD** (24 lượt hỏi, tra web tắt b�
 - Trước khi làm plan nên chạy lại lượt đếm này một lần cho sạch (≈ 0,015 USD) — tối nay không đo thêm (luật không đo thêm sau khi thấy số).
 
 Dữ liệu (private): `data/hoi_lai_cau_cu_2026-11-15/` — `dem.py`, `ket_qua.json` (có chữ câu tìm + lịch sử), `chat_metrics.log`.
+
+## Lượt tái tạo trên đúng cấu hình đang chạy (C, 14:08 16/11/2026 `date`) — [đã chạy]
+
+- **Cấu hình:** server 8010 của A (cây chung, `main` `6012208`, tra web bật theo `settings.yaml`, `HUE_SO_VET=true`), đường `POST /api/chat/stream` giữ cookie, bộ ba câu "vị trí ⇒ khoảng cách ⇒ hỏi lại vị trí" (câu ở file private `data/f5_cuoc_moi_2026-11-15/tai_tao.py`). Thử 1 cuộc trước, rồi 2 cuộc nữa.
+- **Số:** lượt 3 bị từ chối **0 / 3** (cả 3 lượt 2 đều từ chối kho + có mục web, như lúc User gặp). Tiền 0,00307 + 0,00615 ≈ **0,0092 USD**.
+- **Sổ vết lượt 3 (cả 3 cuộc):** lịch sử gửi model = hai câu hỏi trước, không có câu trả lời (đúng với `nho_cau_tra_loi: false`); chỉ có lần tìm đầu do code (bằng câu vừa gõ), model **không** tự tìm thêm; 3 đoạn đầu đều của đúng bài; câu trả lời trích đúng bài; không có mục web. ⇒ Ở 3 cuộc này, hai thứ cần đọc (model có tìm cho câu A không; đoạn của câu A có vào ngữ cảnh không) đều ổn.
+- **So với lần lỗi:** 3 / 3 hôm 15/11 chạy trên code `e5b076e`..; từ đó tới `6012208` phần `backend/` chỉ thêm sổ vết (đọc diff `llm/assistant.py`: chỉ ghi vết, không đổi chuỗi gửi model / luồng). Lần lỗi chưa có sổ vết ⇒ không có bản ghi để so.
+- **Kết luận theo tiêu chí ghi trước (≤ 1 / 3 ⇒ ghi giới hạn, không xây):** không xây. Giới hạn: *khi câu hỏi tiếp bị kho từ chối, lượt hỏi lại câu cũ ngay sau đó có lúc bị từ chối theo (15/11: 3 / 3 trên server thật; 16/11: 0 / 3 cùng code, cùng cấu hình; lượt đếm web tắt 0 / 8) — không ổn định, nguyên nhân chưa chứng minh; giả thuyết: model ở lượt đó tự tìm cho câu trước (đã thấy 3 / 8 ở lượt đếm sạch).* Sổ vết đang bật trên 8010 ⇒ User gặp lại thì đọc bản ghi lượt đó (`scripts/xem_so_vet.py`) trước khi đo thêm.
+- Bản kết quả cũ giữ ở `data/f5_cuoc_moi_2026-11-15/tai_tao_2026-11-15.json`; cuộc 1 hôm nay `tai_tao_2026-11-16_cuoc1.json`; cuộc 2–3 `tai_tao.json`.

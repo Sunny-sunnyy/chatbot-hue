@@ -1,4 +1,13 @@
-# STATUS C — kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+# STATUS C — phiên 16/11 (C `hue-rag-80` · A `hue-rag-db` · B `hue-rag-83` · E `hue-rag-af`); mục dưới là kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
+
+## PHIÊN 16/11 (C ghi 14:03 16/11/2026 `date`)
+
+- A giao (User duyệt quyền "như tối 15/11 + xin lượt máy"): **việc 1 mục dưới** — chạy trên server 8010 của A (web bật + sổ vết), CHỜ Qdrant + lượt máy; tiêu chí giữ nguyên. C cũng kiểm 100 % nhãn bộ ảnh đo mới khi E gom xong. Tiền tối 15/11: A tự cộng bằng `dem_chat_metrics.py --sha`.
+- Chuẩn bị (chỉ đọc code, 0 USD) — chỗ cần đọc trong bản ghi lượt 3:
+  - Lịch sử gửi model: `llm/generator_openai_full_corpus.py` `with_history` — cờ `nho_cau_tra_loi: false` ⇒ chỉ có các tin user trần (câu A, câu B), không tin assistant; lời dặn thêm `ASSISTANT_HISTORY_NOTE` (`llm/full_corpus_prompt.py:121`) bảo câu tìm phải nêu tên đối tượng của lượt trước.
+  - Mục web: `llm/assistant.py` `cau_cho_web` — lượt có lịch sử + model đã tìm kho ⇒ câu web = câu tìm kho **CUỐI** model viết (`trace.model_queries[-1]`). Lượt đếm sạch thấy model tìm cho câu B ở lượt 3 (3 / 8) ⇒ **giả thuyết (chưa đo):** mục web nói khoảng cách là vì câu tìm cuối thuộc câu B, không phải vì web làm lượt 3 từ chối; lượt từ chối có thể do model chỉ tìm cho câu B rồi thấy kho không có.
+  - Đọc trong sổ vết lượt 3: `tim_kho[].cau` (thứ tự câu tìm), `tim_kho[].ket_qua` / `vao_ngu_canh` (có đoạn của câu A không), `tra_loi.chu` / `ket_qua_co_dinh`, `web.cau_gui_tra_web`, `lich_su`.
+- **Việc 1 XONG (14:08 16/11/2026):** server 8010, web bật + sổ vết: lượt 3 từ chối **0 / 3** ⇒ theo tiêu chí: ghi giới hạn, không xây. Sổ vết lượt 3: model không tự tìm thêm, đoạn đúng bài vào ngữ cảnh. ≈ 0,0092 USD. Report: `report_agent/2026-11-12_ra_khoang_cach/c_dem_hoi_lai_cau_cu.md` mục cuối. Đã báo A.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 22:07 15/11/2026 `date`; User kết phiên, phiên sau là 4 phiên mới không còn ngữ cảnh)
 

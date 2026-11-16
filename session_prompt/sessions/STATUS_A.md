@@ -1,3 +1,10 @@
+# STATUS A — PHIÊN CHIỀU 16/11 (thứ Hai; mở; cập nhật 14:01 16/11/2026 `date`)
+
+- Terminal: A `hue-rag-db`; ba terminal hue_rag khác vừa mở (`hue-rag-af`, `hue-rag-80`, `hue-rag-83`) — chờ tự báo là B / C / E.
+- Kiểm nhanh: `main` `6012208` = origin, chỉ `.wslconfig` untracked; hooksPath `.githooks`; **Qdrant KHÔNG chạy** (không container, cổng 6335 không trả lời); RAM WSL 19 GB, dùng 12, khả dụng ~6 GB; 10 container của dự án capitol đang chạy; 0 worktree; 0 server 8010.
+- Ban ngày thứ Hai: máy chia với hai dự án khác (User báo lúc mở) ⇒ hue_rag chỉ việc nhẹ; bật Qdrant + server 8010 (nạp e5) hoặc việc nặng ⇒ xin lượt hai phiên điều phối kia trước (nghi thức ở handoff "Lịch dùng máy").
+- Chưa có quyền phiên ⇒ chưa giao việc, chưa sửa file nào ngoài file này.
+
 # STATUS A — KẾT PHIÊN TỐI 15/11 (viết 21:35 15/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11)" ⇒ kiểm nhanh + `ListAgents` ⇒ hỏi quyền phiên (hộp chọn) ⇒ mở server 8010 CÓ `HUE_SO_VET=true` ⇒ hỏi User câu còn treo "mục Từ web gọn: làm bản 2 hay merge bản hiện tại" ⇒ cùng lượt giao: C tái tạo lỗi "hỏi lại câu cũ" trên server thật có web + sổ vết rồi review vòng 2 plan so ảnh · B bản 2 mục web (nếu User chọn) · E nhìn lại 172 ảnh mẫu + gom ảnh (sau khi plan so ảnh được duyệt) ⇒ soạn vòng cải tiến 34 (≤ 3 đề xuất) trình User.

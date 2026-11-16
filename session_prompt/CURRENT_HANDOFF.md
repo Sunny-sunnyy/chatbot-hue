@@ -3,6 +3,20 @@
 Cập nhật: 22:08 15/11/2026 (A, chốt lần cuối kết phiên tối 15/11). Trước: 21:34 15/11/2026 (A, kết phiên tối 15/11). Trước: 19:29 15/11/2026 (A, mở phiên tối 15/11). Trước: 18:24 15/11/2026 (A, kết phiên chiều 15/11). Trước: 14:42 15/11/2026 (A, kết phiên 15/11). Trước: 22:35 14/11/2026 (A, kết phiên tối 14/11). Trước: 17:40 14/11/2026 (A, kết phiên chiều 14/11). Trước: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
 
+## PHIÊN CHIỀU 16/11 (thứ Hai; A mở, cập nhật 14:06 16/11/2026)
+
+- Terminal: A `hue-rag-db` · B `hue-rag-83` · C `hue-rag-80` · E `hue-rag-af` — cả bốn Claude Code, trực tiếp; D không mở. Ban ngày: máy chia với hai dự án khác (User có mặt).
+- **Quyền phiên (User, A ghi nhận 14:06 16/11/2026):** "như tối 15/11 + xin lượt máy" — việc nặng (Qdrant + server, đo so ảnh / CPU) chỉ chạy sau khi phiên điều phối hai dự án kia trả "bật được". Hết hạn cuối phiên.
+- Lúc mở Qdrant tắt ⇒ hai bên cho lượt ⇒ A bật Qdrant (9.425 điểm) + server 8010 có `HUE_SO_VET=true` (/health 5/5); RAM khả dụng ~6 GB sau khi bật.
+- **User chọn (A ghi nhận 14:06 16/11/2026): mục "Từ web" gọn ⇒ BẢN 2 + câu sức khoẻ cố định do code nối** ("nên hỏi dược sĩ / bác sĩ"); giao B (plan mức nhẹ, ≈ 0,01 USD; người đọc sàn = agent con của A).
+- Giao: C tái tạo lỗi "hỏi lại câu cũ" trên 8010 (mục 2 bên dưới) · E rà 172 ảnh mẫu + gom ảnh bộ đo so ảnh (C kiểm 100 % nhãn, B đo) · B mục web bản 2 + file ngưỡng so ảnh.
+- **User (14:11 16/11/2026):** có mặt cả chiều để duyệt (không vắng, chỉ không thử được — tối thử); **"đẩy nhanh tiến độ"**; duyệt cả 4 ứng viên nhỏ: công cụ khoảng cách 2 điểm (C) · chỗ ở không nêu hạng ⇒ hiện mọi hạng (B, sau web bản 2) · nút huỷ lúc xem ảnh (E) · viết bài quán phá Tam Giang / ven đầm Lập An vào kho (xếp sau; cần lượt máy để dựng lại chỉ mục). Ba lệnh đếm bộ kín: để sau.
+- **C xong mục 2 (14:11 16/11/2026):** 8010 web bật + sổ vết, lượt 3 từ chối **0 / 3** ⇒ theo tiêu chí ghi trước: ghi giới hạn, không xây (≈ 0,0092 USD; report `c_dem_hoi_lai_cau_cu.md` mục cuối).
+- Web bản 2: dấu `SUC_KHOE` ở lần gọi viết mục web, code nối câu cố định (A chọn PA1 của B; trần 0,03 USD); bộ dò câu sức khoẻ do agent con của A soạn. E: không ảnh sai nơi nào đang hiện; ảnh lịch lăng Thiệu Trị yếu ⇒ thay (v7).
+- **Plan so ảnh: A DUYỆT bản sha `9e300d047cb5` (14:17 16/11/2026; = bản `3b9a1894a195` + mục "Sửa đổi 16/11"; C kiểm READY, 1 minor: `tran_sai_quyet_1` nhận số ảnh TRONG danh sách của nhóm "một tên" — sửa lúc viết bộ đếm).**
+- **Lịch làm việc mới (User, A ghi nhận 14:17 16/11/2026):** thứ 2–6 08:00–16:30 A / B / C / E bật, dùng chung máy với hai dự án khác ⇒ việc nhẹ + xin lượt việc nặng với hai phiên điều phối kia; thứ 2–6 18:30/19:00–22:20 chỉ hue_rag; thứ 7 + CN 08:00–23:00 chỉ hue_rag (User kết / mở phiên nhiều lần). ⇒ việc nặng (dựng chỉ mục, đo so ảnh CPU, B7, Playwright dài) xếp vào tối / cuối tuần.
+- **A quyết (so ảnh, trước khi mở bộ đo):** điểm tuyệt đối không đặt được ngưỡng từ chối ⇒ bỏ từ chối, ảnh không tự tin ⇒ "nhiều tên"; sàn ảnh lạ tính theo nhóm "một tên"; báo riêng tỉ lệ ảnh lạ rơi vào "nhiều tên". B ghi "Sửa đổi 16/11" trong plan, C kiểm đoạn đó, A ghi sha mới.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (A viết 21:34 15/11/2026, KẾT PHIÊN TỐI 15/11)
 
 **Phiên tối 15/11** (mở 19:27, User có mặt cả phiên; User hẹn đóng sau 22 giờ): A `hue-rag-ef` · B `hue-rag-7d` · C `hue-rag-10` · E `hue-rag-f0`, cả bốn Claude Code, trực tiếp; D không mở. **Quyền phiên HẾT HẠN** ⇒ A mới hỏi lại một câu (tối 15/11: "như chiều 15/11"). Nguyên văn phiên tối (mọi quyết định theo giờ, số đo, review): `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-15_toi.md`. Mỗi session đọc mục đầu `sessions/STATUS_<X>.md`. Khối "NỀN TỪ KẾT PHIÊN CHIỀU" bên dưới vẫn đúng trừ chỗ ghi ở đây.

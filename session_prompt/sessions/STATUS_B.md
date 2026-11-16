@@ -1,3 +1,10 @@
+# PHIÊN 16/11 — B `hue-rag-83` (A `hue-rag-db` · C `hue-rag-80`; cả nhóm Claude Code, trực tiếp) — cập nhật 14:08 16/11/2026
+
+**XONG (14:05 16/11/2026), chờ A đọc:** file ngưỡng + luật cổng so ảnh — `data/so_anh_2026-11-15/NGUONG_VA_LUAT.md` + `luat_cong.py` (sha256 đầu `1f89c132ff30`) + `thu_luat_cong.py` (`5c2bb9da82c5`, chạy đạt, 0 USD). 5 minor vòng 2: (1) Quyết 1 ≤ 2 / ≤ 3 theo cỡ nhóm + dòng đối chiếu luna "một tên"; (2) t mẫu số = mọi ảnh âm, hai điều kiện kiểm mẫu tách riêng; (3) mức tự tin trên mẫu 30 % ⇒ 50 %; (4) m ở ≤ 3 % ảnh âm; (5) ảnh lạ rơi "nhiều tên" báo riêng. Thêm chi tiết: thứ tự phân loại (tự tin ⇒ từ chối ⇒ nhiều tên); sàn bộ ≠ 20 ảnh ⇒ ≤ floor(10 %); ghi số cặp hơn / kém. Câu hỏi cho A: t có thể trượt ở mọi biến thể (phép dò: điểm tuyệt đối không tách) ⇒ dòng (b) "không đặt được" dù m tốt — giữ đúng plan hay cho luật "t trượt ⇒ không từ chối, nhiều tên"?
+**File khai báo (mới, private):** `data/so_anh_2026-11-15/NGUONG_VA_LUAT.md`, `data/so_anh_2026-11-15/luat_cong.py`, `data/so_anh_2026-11-15/thu_luat_cong.py`.
+**Việc 2 A giao (User chọn): web gọn BẢN 2 + câu sức khoẻ cố định do code nối.** 14:08 16/11/2026: mục "Sửa đổi 16/11" đã nối vào plan so ảnh (sha `9e300d047cb5`, cắt ra `3b9a1894a195`; chưa commit — A commit; C kiểm ≤ 5 dòng); `luat_cong.py` ⇒ `0b5c2b2f1567`, `thu_luat_cong.py` ⇒ `005319538e6e`. Web bản 2: code CHƯA có tín hiệu câu sức khoẻ (2 / 28 đầu vào chạm) ⇒ đã báo A 3 phương án (B khuyên: lần gọi viết mục web gắn từ `SUC_KHOE`, code nối câu cố định) — chờ A chọn rồi viết plan 1 trang. File sẽ khai báo khi code: `backend/llm/full_corpus_prompt.py`, `backend/llm/tra_web.py`, `backend/llm/assistant.py`, `backend/tests/test_b6_tra_web.py` (worktree riêng từ `p9-web-gon`).
+**Chờ:** đo DINOv2 ⇒ DINOv3 chờ E gom bộ + C kiểm nhãn + lượt máy; web gọn bản 2 chờ User qua A. Qdrant 6335 tắt lúc mở phiên.
+
 # PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11) — B viết 22:07 15/11/2026, terminal `hue-rag-7d` (A `hue-rag-ef` · C `hue-rag-10` · E `hue-rag-f0`; cả bốn Claude Code, Fable 5.2)
 
 Mục này tự đủ nghĩa cho người mở phiên mới. Nhật ký từng bước của tối nay nằm ngay dưới ("STATUS B — PHIÊN TỐI 15/11").
