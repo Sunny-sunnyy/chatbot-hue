@@ -66,3 +66,17 @@ Worktree tách `origin/p9-kc-tinh-san` ở `/tmp/e_rvkc` (đã gỡ sau review),
 | Câu phá của E (21 câu) | 6 đúng · **15 SAI** · 0 `None` nhầm | bằng chứng mới của M-1 |
 
 Chưa kiểm: test rộng (report ghi NOT RUN — làm ở commit cuối trước merge); lượt có phí; hành vi model trên các câu SAI.
+
+## Vòng 2 — bản siết `a5562d2` (E, 18:35 16/11/2026): **ready_for_user_confirmation** (để merge với cờ TẮT; bật cờ là quyết định của A / User)
+
+- Đọc diff `f2322fd..a5562d2` phần `backend/llm/khoang_cach.py` + test: hàm chỉ nhận dạng đóng "[từ / đi từ] A <từ nối trong danh sách> B <từ hỏi khoảng cách>"
+  (và "A và / với B cách nhau…", "A có gần / xa B không"), đúng hai lần nhắc tên, câu có "hơn" ⇒ `None`. `assistant.py` không đổi so với vòng 1. `git diff --check` sạch.
+  Các file khác trong diff là do gộp `main`.
+- **M-1 đóng:** `cau_pha.py` 20 đúng · **0 SAI** · 1 về đường cũ (D4); bộ dò 32 câu của A 29 đúng · **0 SAI** · 3 về đường cũ — khớp số C báo.
+- **m-1 đóng:** "Đến B từ A" ⇒ `None`. **m-2 đóng:** có test tên ngắn không vào mô tả công cụ.
+- Bộ thêm DUY NHẤT sau bản sửa (luật bộ dò cho phép một bộ ≤ 20 câu; E chạy trước khi nhận tin "không soạn bộ mới" của A): `data/review_kc_tinh_san_2026-11-16/cau_pha_2.py`
+  — 12 câu họ kề bên (tên trong tên riêng ở vị trí thứ hai, nơi thứ ba đứng đầu / ngay sau tên thứ hai) + 4 đối chứng dương: **16 đúng · 0 SAI**. E không soạn thêm.
+- Test: `test_khoang_cach.py` + `test_b5_lich_trinh.py` 333 passed (không khoá, 26 s). Test rộng: E không chạy (C chạy một lần ở commit cuối trước merge).
+- Giới hạn còn, đã ghi ở report §5 và E đồng ý ghi nhận: nơi thứ ba đứng SAU từ hỏi ("… bao xa, rồi sang … nữa?") vẫn ra cặp hai nơi đầu — nguồn đúng cho cặp đó,
+  câu trả lời có thể thiếu chặng sau; số tốc độ (p50 1,80 s) đo trên `50fbf4e`, bản siết chỉ có mô phỏng 0 USD "vẫn 13 / 16 câu đi đường nhanh" (E không tính lại số này);
+  hành vi model trên câu về đường cũ = như trước khi có nhánh.
