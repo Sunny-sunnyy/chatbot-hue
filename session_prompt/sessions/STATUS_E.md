@@ -4,6 +4,8 @@
 - A (`hue-rag-db`) giao: gom dữ liệu cho plan so ảnh `3b9a1894a195` — nhìn lại 100 % 172 ảnh mẫu cũ (sửa sai tên) ⇒ gom ~270 ảnh mẫu thiếu + ~100 ảnh âm + 30–40 ảnh đo du khách; C kiểm 100 % nhãn bộ đo; B chạy đo. Serper trần 0,5 USD (báo số lượt). Không chạy nặng CPU / RAM (máy chia 2 dự án khác).
 - **Khai báo file sẽ sửa:** `data/so_anh_buoc0_2026-11-15/dem.py` (+ `dem.json`, `KET_QUA.md`), thư mục mới `data/so_anh_gom_2026-11-16/`, file này. Không đụng code / kho / governance.
 
+- 14:28 16/11/2026 — (0) Ảnh mẫu cũ: nhìn 100 % 221 ảnh ⇒ giữ 111, thiếu ~365 (`data/so_anh_gom_2026-11-16/mau_cu_da_loc.json`); 0 ảnh sai nơi đang hiện (`anh_dang_hien_bi_bo.md`). (1) **Nút Huỷ "Đang xem ảnh…" CHỜ REVIEW:** `p9-huy-xem-anh` @ origin `49b99a8`, worktree `/tmp/e_huy` (2 symlink data / kb + node_modules — gỡ sau merge), server tạm 8896 đang chạy cho reviewer; ca dò `data/huy_xem_anh_2026-11-16/`. (2) kc ở Khám phá: không lọc — thiết kế, không sửa. (3) ĐANG LÀM: spec deploy AWS `docs/superpowers/specs/2026-11-16-deploy-aws-design.md` (A giao; review C). Gom ảnh so ảnh để sau; ảnh lịch Thiệu Trị khi rảnh.
+
 ---
 
 # STATUS E — KẾT PHIÊN TỐI 15/11 (chốt lần cuối 22:07 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
