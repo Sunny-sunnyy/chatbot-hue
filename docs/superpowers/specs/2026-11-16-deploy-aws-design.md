@@ -370,7 +370,7 @@ là bản sao lưu đủ (giữ thư mục này tới khi xoá máy). Log: `/srv
 
 **10.3 Quay lại bản cũ.**
 - Lệnh: `cd /srv/hue && cat hue_image_cu.txt && sed -i "s|^HUE_IMAGE=.*|$(cat hue_image_cu.txt)|" hue.env && docker compose -p hue -f compose.yml --env-file hue.env up -d app`
-  (kho đã nạp lại ở 10.2 ⇒ nạp lại bản chụp cũ trong `~/hue_deploy_<TAG cũ>/` như D3 trước lệnh `up`).
+  (kho đã nạp lại ở 10.2 ⇒ `qdrant.snapshot` trên máy AWS đã bị bản mới đè ⇒ từ máy User `scp -i <KEY> ~/hue_deploy_<TAG cũ>/qdrant.snapshot ubuntu@<IP>:/srv/hue/` rồi nạp như D3, trước lệnh `up`).
 - Kiểm: `docker compose -p hue -f compose.yml --env-file hue.env ps app --format '{{.Image}}'` + 4 dòng đầu §9.
 - Mong đợi: ảnh = nhãn trong `hue_image_cu.txt`; 4 dòng đạt.
 - Dừng khi: app không lên ⇒ báo User (còn đường cuối: khôi phục máy từ snapshot tự động của đêm trước — bảng điều khiển Lightsail ⇒ Snapshots ⇒ Create new instance).
