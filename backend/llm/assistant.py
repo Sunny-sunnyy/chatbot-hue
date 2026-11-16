@@ -1075,21 +1075,21 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: As
         return
     finally:
         record_llm_calls(trace, call_log.calls, "tra_web")
-    if tw.la_khong_co(generated.text):  # model: không đoạn trích nào trả lời được ⇒ một dòng cố định, không nguồn (không kể thứ không tìm thấy)
+    trace.vet["web"]["chu_model"] = generated.text  # cả khi rào chặn / "không có" (mục bị thay câu cố định) — để biết model đã viết gì
+    text, suc_khoe = tw.tach_suc_khoe(generated.text)  # bỏ dấu sức khoẻ TRƯỚC mọi kiểm; câu cố định nối ở cuối, sau mọi nhánh
+    loi = None if tw.la_khong_co(text) else tw.kiem_muc_web(text, kq.so_web, tw.la_cau_luu_tru(xet), tw.la_cau_thoi_gian_thuc(xet), cau_hoi=query)
+    if loi is None:  # model: không đoạn trích nào trả lời được ⇒ một dòng cố định, không nguồn (không kể thứ không tìm thấy)
         web.update(outcome="web_rong", text=tw.WEB_RONG_TEXT, kiem=["model_khong_co"])
-        return
-    loi = tw.kiem_muc_web(generated.text, kq.so_web, tw.la_cau_luu_tru(xet), tw.la_cau_thoi_gian_thuc(xet), cau_hoi=query)
-    trace.vet["web"]["chu_model"] = generated.text  # cả khi rào chặn (mục bị thay câu cố định) — để biết model đã viết gì
-    web["kiem"] = loi
-    if loi == ["so_thoi_gian_thuc"]:  # vòng chỉnh 1: câu thời gian thực có số / ngày giờ ⇒ câu cố định "chưa xác minh" + link nguồn
-        web.update(outcome="chua_xac_minh", text=tw.CHUA_XAC_MINH_TEXT, nguon=list(kq.so_web))
-        return
-    if loi:  # D5 (iv): bỏ mục model viết, giữ câu từ chối của kho + câu cố định
-        web.update(outcome="khong_tin_cay", text=tw.WEB_KHONG_TIN_CAY_TEXT)
-        return
-    ma = tw.ma_da_dung(generated.text)
-    web.update(outcome="co_muc", text=generated.text.strip(), n_ma=len(ma),
-               nguon=[s for s in kq.so_web if s["id"] in ma])  # chỉ nguồn được trích, đúng số w n của sổ
+    elif loi == ["so_thoi_gian_thuc"]:  # vòng chỉnh 1: câu thời gian thực có số / ngày giờ ⇒ câu cố định "chưa xác minh" + link nguồn
+        web.update(outcome="chua_xac_minh", text=tw.CHUA_XAC_MINH_TEXT, nguon=list(kq.so_web), kiem=loi)
+    elif loi:  # D5 (iv): bỏ mục model viết, giữ câu từ chối của kho + câu cố định
+        web.update(outcome="khong_tin_cay", text=tw.WEB_KHONG_TIN_CAY_TEXT, kiem=loi)
+    else:
+        ma = tw.ma_da_dung(text)
+        web.update(outcome="co_muc", text=text.strip(), n_ma=len(ma), kiem=loi,
+                   nguon=[s for s in kq.so_web if s["id"] in ma])  # chỉ nguồn được trích, đúng số w n của sổ
+    if suc_khoe:
+        web.update(text=f"{web['text']}\n\n{tw.SUC_KHOE_TEXT}", suc_khoe=True)
 
 
 async def _web_stream(query: str, generator, trace: AnswerTrace, flags: AssistantFlags, tim_web):
