@@ -27,3 +27,16 @@ Plan: `docs/superpowers/plans/2026-11-23-phase-9-b7-cuoi-plan.md` trên `origin/
 - §3 nhãn lỗi tự động + luật ba: 0 USD, có ca đối chứng biết chắc ra "có" (file giữa kỳ) — đúng luật phép kiểm harness. Giữ.
 - §3 bỏ thử mất mạng — đúng §8. §4 ba lệnh đếm kín giữ đuôi chỉ in số đếm. §6 câu 2 (đưa L vào (ii)): đồng ý **có**, với điều kiện M-1.
 - Không thấy bộ nào không giữ sàn ngoài M-1 / m-4.
+
+---
+
+# Vòng 2 — B, 15:14 16/11/2026
+
+Plan bản 2: `origin/p9-b7-cuoi-plan` `aca7217`, sha256 đầu `67a721c25600` (đã kiểm). 0 USD, chỉ đọc.
+
+**Kết luận: ready_for_user_confirmation — 0 blocker · 0 major · 1 minor** (sửa lúc chạy bước 0, không cần vòng 3).
+
+**Vòng 1 đã đóng:** M-1 (L đã thấy + biểu mẫu dùng lại có điều kiện: `git diff` 4 file + `SUA_LICH_LOI_DAN` giống byte — hằng có thật ở `backend/llm/full_corpus_prompt.py:209`, dùng ở `generator_openai_full_corpus.py:356`; L kín luôn chạy, đưa vào nhóm không cắt) · m-1 (bỏ sha record cứng, bước 0 ghi) · m-2 (lý do W: `TU_WEB_LUAT` đổi + cờ cổng web) · m-3 (phép nhân lượt A ⇒ 0,06) · m-4 (S đã thấy ×1, kín ×2) · m-5 (bước 0 so `lan_tim_dau` / `model` / `router_timeout_seconds`). Tổng 0,34–0,38, thứ tự cắt cập nhật khớp.
+
+## Minor
+- **n-1 Danh sách file của điều kiện dùng lại L.** Bộ "biểu mẫu bản 2 bộ quyết" nếu chấm cả phần ăn / ở của lịch thì phải thêm `backend/llm/quan_lich.py` (đổi 16/11: ghi chú ăn Tam Giang `9ac14cf`) và `backend/llm/luu_tru_lich.py` vào `git diff`; nếu chỉ chấm khung điểm thì ghi rõ "chỉ khung" trong report. Người chạy quyết ở bước 0 theo đúng chỉ số của bộ đó.
