@@ -68,7 +68,16 @@ export default function App() {
     chat.ask(CAU_BIEU_MAU, { truong, summary, bieuMau: true });
     if (!tinhNang.len_ke_hoach_v2) window.location.hash = "#/tro-ly";
   }
-  const lichTurn = [...chat.turns].reverse().find(t => t.bieuMau) || null;
+  // Cột lịch của trang = lịch MỚI NHẤT của cuộc (User 16/11): lượt biểu mẫu cuối, hoặc lượt sửa bằng lời ĐÃ XONG sau nó có ít nhất một thay đổi làm được
+  // (`lichV2.thay_doi[].duoc`). Lượt sửa đang chạy / bị dừng / lỗi / ra thẻ chọn / không đổi được gì ⇒ không đủ điều kiện ⇒ cột giữ lịch tốt gần nhất.
+  // `truong` lấy của lượt biểu mẫu: nút "Sửa — điền lại biểu mẫu" điền theo biểu mẫu gốc (không đồng bộ nút theo lời); khoá riêng để id trong cột
+  // không trùng id của cùng lượt đang vẽ trong khung trợ lý.
+  const viTriGoc = chat.turns.findLastIndex(t => t.bieuMau);
+  const gocTurn = viTriGoc >= 0 ? chat.turns[viTriGoc] : null;
+  const suaTurn = gocTurn && chat.turns.slice(viTriGoc + 1).findLast(t => t.phase === "done" && t.lichV2 && (t.lichV2.thay_doi || []).some(d => d.duoc));
+  // `question` + `summary` cũng của lượt biểu mẫu: dòng đầu của "Sao chép lịch" / "Tải về (.txt)" là tóm tắt biểu mẫu, không phải câu chat của lượt sửa
+  const lichTurn = suaTurn
+    ? { ...suaTurn, key: `${suaTurn.key}-cot`, truong: gocTurn.truong, question: gocTurn.question, summary: gocTurn.summary, daSua: true } : gocTurn;
 
   // `chon` = lựa chọn bộ xếp đã dùng (biểu mẫu cũ); `truong` = giá trị đã gửi — biểu mẫu bản 2 điền lại từ đây (server đổi giá trị mới về trường cũ)
   function editPlan(chon, truong) {

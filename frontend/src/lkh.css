@@ -194,3 +194,10 @@
 .lkh-o-them { margin: 8px 0 0; }
 .lkh-o-them a { color: var(--color-accent-deep); font-weight: 600; }
 .lkh-o-nhan { margin: 10px 0 0; color: var(--color-muted); font-size: 14px; }
+
+/* Cột lịch hiện bản đã sửa bằng lời (App.jsx `lichTurn`): nhãn đầu cột + dòng chỉ dẫn dưới lịch. Dòng "Đã …" đã nằm trong nhãn ⇒ không vẽ lần hai
+   trong khung lịch của cột (dòng "Không đổi được" vẫn hiện). */
+.lkh-da-sua { max-width: 68ch; margin: 0; padding: 10px 14px; border-radius: 14px; font-size: 15px; background: var(--color-accent-soft); color: var(--color-accent-deep); }
+.lkh-da-sua span { display: block; margin-top: 2px; font-size: 13px; opacity: .85; }
+.lkh-da-sua ~ .lich-v2 .lkh-doi-duoc { display: none; }
+.lkh-chi-dan { max-width: 68ch; margin: 0; font-size: 14px; color: var(--color-muted); }

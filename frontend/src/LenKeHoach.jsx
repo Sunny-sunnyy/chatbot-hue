@@ -123,7 +123,13 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
       {!t.lichV2 && dangChay && t.progress?.length > 0 && <p className="progress" role="status">{t.progress[t.progress.length - 1]}</p>}
       {!t.lichV2 && dangChay && <span className="lkh-go" role="status" aria-label="đang xếp lịch"><i /><i /><i /></span>}
       {t.error && <p className="loi" role="alert">{t.error}</p>}
+      {/* lịch đã sửa bằng lời trong khung trợ lý (App.jsx `lichTurn`): nhãn nói rõ đây là bản đã sửa và biểu mẫu vẫn là bản gốc */}
+      {t.daSua && (
+        <p className="lkh-da-sua" role="status">Đã sửa theo lời bạn: {t.lichV2.thay_doi.filter(d => d.duoc).map(d => d.cau).join(" ")}{" "}
+          <span>Biểu mẫu vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa.</span></p>
+      )}
       {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} />}
+      {t.lichV2 && t.phase === "done" && <p className="lkh-chi-dan">Muốn sửa lịch bằng lời (ví dụ “bỏ điểm đầu ngày 2”): bấm <b>Trợ lý Huế</b> rồi nhắn — lịch ở đây đổi theo.</p>}
     </div>
   );
 }
@@ -169,7 +175,7 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
       <div className="khung">
         <p className="vet"><a href="#/">Trang chủ</a> / Lên kế hoạch</p>
         <h1 className="trang-h vao" style={{ "--n": 0 }}>Lên kế hoạch đi Huế</h1>
-        <p className="khoi-p vao" style={{ "--n": 1 }}>Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch thì điền lại biểu mẫu.</p>
+        <p className="khoi-p vao" style={{ "--n": 1 }}>Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch: điền lại biểu mẫu, hoặc bấm Trợ lý Huế để sửa bằng lời.</p>
       </div>
     </section>
     <div className="khung lkh-cot">
