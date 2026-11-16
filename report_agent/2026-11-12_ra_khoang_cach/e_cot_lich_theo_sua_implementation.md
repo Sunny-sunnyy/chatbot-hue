@@ -5,7 +5,7 @@ Việc: User chọn 16/11 tối (A giao, mức nhẹ, chỉ giao diện). Nhánh
 ## 1. Đổi gì (3 file, +21 −1)
 - `frontend/src/App.jsx`: `lichTurn` (lượt mà cột lịch của trang vẽ) = lượt biểu mẫu cuối, **hoặc** lượt sửa bằng lời đã XONG sau nó có ít nhất một thay đổi làm
   được (`lichV2.thay_doi[].duoc`). Lượt sửa đang chạy / bị dừng / lỗi / chỉ có chữ / không đổi được gì ⇒ không đủ điều kiện ⇒ cột giữ lịch tốt gần nhất.
-- `frontend/src/LenKeHoach.jsx` (`CotLich`): đầu cột có nhãn "Đã sửa theo lời bạn: <các câu Đã …>" + dòng nhỏ "Biểu mẫu bên cạnh vẫn là bản gốc — xếp lại từ
+- `frontend/src/LenKeHoach.jsx` (`CotLich`): đầu cột có nhãn "Đã sửa theo lời bạn: <các câu Đã …>" + dòng nhỏ "Biểu mẫu vẫn là bản gốc — xếp lại từ
   biểu mẫu sẽ thay bản đã sửa."; dưới lịch (khi xong) một dòng chỉ dẫn "Muốn sửa lịch bằng lời … bấm Trợ lý Huế rồi nhắn — lịch ở đây đổi theo."
 - `frontend/src/lkh.css`: kiểu cho hai dòng trên; câu "Đã …" đã nằm trong nhãn nên không vẽ lần hai trong khung lịch của cột (câu "Không đổi được" vẫn hiện).
 
@@ -42,6 +42,10 @@ che, mức phóng không khó coi.
 - Sửa hai lần liền: nhãn chỉ nêu thay đổi của lượt sửa GẦN NHẤT (lịch thì đã gồm mọi thay đổi trước đó).
 - Câu đầu trang "Muốn đổi lịch thì điền lại biểu mẫu." chưa sửa (không nằm trong việc giao) — nay có thêm đường sửa bằng lời; A quyết có đổi chữ không.
 - Dòng chỉ dẫn hiện cả khi cờ `sua_lich_v2` tắt (giao diện không nhận cờ này từ `/api/tinh_nang`); hiện cờ đang bật.
+- Sau review B (READY, 3 minor — đã sửa m-1, m-2 trên nhánh): cột mượn thêm `question` + `summary` của lượt biểu mẫu ⇒ dòng đầu của chữ sao chép / .txt là tóm tắt biểu mẫu;
+  nhãn bỏ chữ "bên cạnh" (khổ 390 biểu mẫu nằm phía trên). Ca phá của B: `data/review_cot_lich_2026-11-16/pha.py` (9 / 9).
+- Biểu mẫu mới bị LỖI sau một bản đã sửa ⇒ cột chỉ còn dòng lỗi (hành vi sẵn có của lượt biểu mẫu lỗi), bản đã sửa không còn trên cột.
+- **Checklist bản công khai:** `Array.prototype.findLast` / `findLastIndex` (ES2023) không được hạ cấp khi build ⇒ trình duyệt rất cũ (Safari < 15.4, Chrome < 97) lỗi ở trang này — thêm polyfill hoặc viết lại bằng vòng lặp trước khi công khai nếu cần hỗ trợ các bản đó.
 - Quan sát ngoài phạm vi: ở khổ 1440 khối "Nếu mưa ngày N: …" trong thẻ ngày bị bó thành cột chữ rất hẹp (`anh/that_1440_ban_do_ngay_2.png`, góc trên) — có từ trước, chưa sửa.
 
 **Giải thích ngắn:** trước đây sửa lịch bằng lời trong khung trợ lý thì chỉ khung đó có lịch mới, cột lịch của trang vẫn là bản cũ. Nay cột lịch luôn vẽ bản mới

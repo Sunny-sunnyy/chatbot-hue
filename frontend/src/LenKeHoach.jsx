@@ -126,7 +126,7 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
       {/* lịch đã sửa bằng lời trong khung trợ lý (App.jsx `lichTurn`): nhãn nói rõ đây là bản đã sửa và biểu mẫu vẫn là bản gốc */}
       {t.daSua && (
         <p className="lkh-da-sua" role="status">Đã sửa theo lời bạn: {t.lichV2.thay_doi.filter(d => d.duoc).map(d => d.cau).join(" ")}{" "}
-          <span>Biểu mẫu bên cạnh vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa.</span></p>
+          <span>Biểu mẫu vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa.</span></p>
       )}
       {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} />}
       {t.lichV2 && t.phase === "done" && <p className="lkh-chi-dan">Muốn sửa lịch bằng lời (ví dụ “bỏ điểm đầu ngày 2”): bấm <b>Trợ lý Huế</b> rồi nhắn — lịch ở đây đổi theo.</p>}

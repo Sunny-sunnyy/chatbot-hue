@@ -75,7 +75,9 @@ export default function App() {
   const viTriGoc = chat.turns.findLastIndex(t => t.bieuMau);
   const gocTurn = viTriGoc >= 0 ? chat.turns[viTriGoc] : null;
   const suaTurn = gocTurn && chat.turns.slice(viTriGoc + 1).findLast(t => t.phase === "done" && t.lichV2 && (t.lichV2.thay_doi || []).some(d => d.duoc));
-  const lichTurn = suaTurn ? { ...suaTurn, key: `${suaTurn.key}-cot`, truong: gocTurn.truong, daSua: true } : gocTurn;
+  // `question` + `summary` cũng của lượt biểu mẫu: dòng đầu của "Sao chép lịch" / "Tải về (.txt)" là tóm tắt biểu mẫu, không phải câu chat của lượt sửa
+  const lichTurn = suaTurn
+    ? { ...suaTurn, key: `${suaTurn.key}-cot`, truong: gocTurn.truong, question: gocTurn.question, summary: gocTurn.summary, daSua: true } : gocTurn;
 
   // `chon` = lựa chọn bộ xếp đã dùng (biểu mẫu cũ); `truong` = giá trị đã gửi — biểu mẫu bản 2 điền lại từ đây (server đổi giá trị mới về trường cũ)
   function editPlan(chon, truong) {
