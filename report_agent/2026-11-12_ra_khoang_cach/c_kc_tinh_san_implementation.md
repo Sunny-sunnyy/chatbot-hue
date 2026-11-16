@@ -56,7 +56,7 @@ Câu đường cũ duy nhất trong bảng (câu hỏi tiếp "từ đó sang…
 
 ## 5. Giới hạn đã biết
 - **Dạng câu ngoài danh sách đóng** (có mệnh đề dẫn trước tên, từ nối lạ, "Đến B từ A", "khoảng cách giữa A và B là bao nhiêu") ⇒ về đường cũ: đúng nhưng chậm như trước. Đếm trên các bộ: 3 / 19 câu có nhãn cặp của bộ dò, 1 / 5 của bộ câu phá, 0 / 13 của bộ đo.
-- Nơi thứ ba nằm SAU từ hỏi ("Từ A đến B bao xa, rồi sang C nữa?") ⇒ vẫn ra cặp (A, B): số đúng cho chặng đầu, chưa trả lời hết câu.
+- Nơi thứ ba nằm SAU từ hỏi ("Từ A đến B bao xa, rồi sang C nữa?") mà C không phải tên code đọc được (C là tên trong bảng ⇒ ba tên ⇒ None; sửa theo kiểm độc lập bài 14) ⇒ vẫn ra cặp (A, B): số đúng cho chặng đầu, chưa trả lời hết câu.
 - Câu hỏi tiếp không nêu đủ hai tên ("từ đó sang…") và mọi câu ngoài bảng vẫn đi đường cũ (chậm như trước).
 - Câu nhắc 2 nơi, có từ khoá, mà hỏi thêm việc khác ⇒ nguồn khoảng cách đúng cặp; model có thể tìm kho thêm cho ý kia (chậm hơn, như câu 6,61 s).
 - Tên điểm viết không dấu / sai chính tả ⇒ không khớp ⇒ đường cũ.

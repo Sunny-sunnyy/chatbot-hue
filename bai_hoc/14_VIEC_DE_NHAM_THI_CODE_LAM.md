@@ -1,6 +1,6 @@
 # Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, khoảng cách, lịch trình
 
-*Cập nhật lần cuối: 15:17, ngày 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
+*Cập nhật lần cuối: 19:34, ngày 16/11/2026 · thêm mục "code tra sẵn khi câu nêu rõ hai nơi" (bật tối 16/11). Trước: 15:17 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -12,6 +12,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Lịch tính sẵn — **mới** | **`lich_san`** → nguồn **"Lịch hệ thống"** | Khi câu có từ chỉ ngày, code tính sẵn các ngày liên quan và đưa vào ngữ cảnh **trước** lần gọi model đầu. |
 | Công cụ thời tiết — **mới** | **`thoi_tiet`** (dịch vụ **Open-Meteo**) | Code lấy dự báo 7 ngày cho Huế, dựng sẵn các con số. |
 | Công cụ khoảng cách — **mới** | **`khoang_cach`** | Code tra số km đường đi và số phút đi xe giữa hai điểm trong bảng lịch; model chỉ chọn mã hai điểm. |
+| Khoảng cách tính sẵn — **mới** | **`khoang_cach_tinh_san`** | Khi câu nêu rõ hai nơi trong bảng, code tra số **trước** lần gọi model đầu, model khỏi phải gọi công cụ. |
 | Bảng tìm đường — **mới** | **OSRM** (Open Source Routing Machine) | Dịch vụ tìm đường trên bản đồ mở; mình chỉ gọi **một lần** để dựng sẵn bảng km / phút. |
 | Biểu mẫu lên kế hoạch — **mới** | **`lich_trinh_bieu_mau`** + **`lich_trinh`** | Người dùng chọn số ngày, người đi cùng, sở thích bằng nút; code xếp lịch theo buổi; model chỉ viết lời. |
 | Câu cố định | ví dụ **`CAU_BAO_LU`**, **`CAU_NGOAI_7_NGAY`** | Câu viết sẵn trong code cho trường hợp đặc biệt; model không được tự viết. |
@@ -105,6 +106,53 @@ server đang chạy: **4 / 6 câu bị từ chối** rồi mới ra mục "Từ 
 Trước khi bật còn có bộ 27 câu dò từ khoá do một người khác soạn: **0 câu khoảng cách bị bỏ sót**. Bộ 32 câu an toàn: không câu nào có từ khoá ⇒ chuỗi gửi
 model của bộ an toàn không đổi, không cần chạy lại.
 
+### Làm cho nhanh hơn: code tra sẵn khi câu nêu rõ hai nơi (làm và đo tối 16/11)
+
+Dòng cuối của bảng trên là chỗ chưa ổn: chữ đầu tiên 3,7 s, vượt mức 3 s anh chốt. Mình đọc log từng câu thì thấy chỗ tốn nhất là **lần gọi model chỉ để nói
+"gọi công cụ với hai mã này"** — khoảng 1,8 s, rồi mới tới lần gọi thứ hai để viết. Giống người hướng dẫn viên phải hỏi lại "anh muốn tra cặp nào?" dù câu
+hỏi đã nêu rõ hai nơi.
+
+**Code làm gì:** cùng cách với "lịch tính sẵn" ở phần ngày tháng. Khi câu **đang gõ** có từ khoá khoảng cách **và** code đọc được **đúng hai** tên điểm của
+bảng, code tra bảng ngay, đưa dòng có số vào ngữ cảnh trước lần gọi model đầu, và lượt đó không đưa công cụ nữa. Model chỉ còn việc viết. Bước kiểm số sau
+khi viết vẫn chạy như cũ.
+
+Đọc tên nơi từ chữ người dùng là việc dễ nhầm, nên luật đặt dè dặt — **không chắc thì về đường cũ** (model gọi công cụ, chậm hơn nhưng đúng). Code chỉ
+nhận câu **đúng một dạng quen**: "[từ] A, một từ nối, B, rồi tới ngay từ hỏi khoảng cách" — như "Từ A đến B bao xa?", "A cách B mấy km?", "A với B cách
+nhau bao xa?", "A có gần B không?".
+- Tên phải khớp nguyên cụm với tên hoặc tên khác trong bảng, cụm dài xét trước. Hai chỗ nới: tên trong bảng kết thúc bằng "Huế" thì đọc được cả khi bỏ chữ
+  "Huế" ("Đại Nội Huế" ⇒ "Đại Nội"); và một danh sách nhỏ tên gõ tắt chỉ dùng cho việc đọc câu ("Đông Ba", "Thiên Mụ", "Tràng Tiền").
+- Trước tên thứ nhất chỉ được là "từ" / "đi từ" hoặc không có gì; giữa hai tên chỉ được là một từ nối trong danh sách ngắn ("đến", "sang", "ra", "cách",
+  "với"…). Có chữ khác chen vào ⇒ đường cũ.
+- Một nơi, ba nơi trở lên, một tên nhắc hai lần, hay một cụm tên trỏ tới hai điểm ⇒ đường cũ.
+- Câu so sánh ("nơi nào gần hơn") và câu hỏi tiếp kiểu "từ đó sang lăng kia bao xa" ⇒ đường cũ.
+
+**Đo ra sao:** trước khi tốn tiền, một người khác (không viết code này) soạn 32 câu dò, có cả câu bẫy: tên trùng một phần, tên nằm trong tên khách sạn, câu
+ba nơi, câu nhắc hai nơi mà hỏi việc khác. Luật dừng ghi trước: **0 câu ra sai cặp**. Hai dòng đầu của bảng dưới (không tốn tiền) là số của **bản cuối**, sau khi review. Các dòng còn lại đo có phí **một lần trên bản đầu**; bản cuối chỉ đổi
+điều kiện "câu nào được tra sẵn", và mình kiểm lại không tốn tiền rằng vẫn đúng 13 câu đó được tra sẵn, nên không đo có phí lần hai (chuyện kể ngay sau bảng).
+
+| Đo gì | Kết quả | So với đâu · nghĩa là |
+|---|---|---|
+| Bộ dò 32 câu (không tốn tiền) | **29 đúng · 0 sai cặp · 3 về đường cũ** | luật dừng là 0 sai cặp ⇒ đạt. Ba câu về đường cũ: một câu nhắc điểm chưa có toạ độ, hai câu có mệnh đề dẫn trước tên ("Mình ở A, muốn qua B…") — chậm như cũ nhưng không sai |
+| 21 câu phá của người review (không tốn tiền) | **20 đúng · 0 sai cặp · 1 về đường cũ** | bản đầu: **15 / 21 ra sai** ⇒ phải sửa (xem dưới) |
+| 16 câu đo lại qua server tạm: đi đường nào | **13 nhanh · 3 cũ** | 3 câu đường cũ: một câu hỏi tiếp "từ đó sang…", hai câu có nơi ngoài bảng |
+| Đúng cặp điểm | **14 / 14** | lần đo công cụ 16/11 là 13 / 14 |
+| Số sai tới tay người dùng · nơi ngoài bảng ra số | **0 · 0 / 2** | sàn đều là 0 ⇒ giữ nguyên |
+| Chữ đầu tiên, trung vị của 13 câu đường nhanh | **1,8 s** | đường công cụ 3,7 s; mức anh chốt 3 s ⇒ **ổn**. Còn 2 / 13 câu trên 3 s: một câu hỏi thêm "nên đi buổi nào" nên model tìm kho thêm (6,6 s), một câu 3,7 s chưa rõ vì sao |
+| Tiền một câu đường nhanh | khoảng **0,0004 USD** (trung vị) | đường công cụ khoảng 0,0008 ⇒ rẻ bằng nửa. **12 / 13 câu** dưới trần chung 0,0005; câu hỏi thêm "nên đi buổi nào" tốn 0,0011 vì model tìm kho thêm |
+
+Mẫu mới 13 câu nên mình chưa nói được gì về "câu chậm nhất trong 20 câu"; chỉ nói được trung vị và đếm số câu vượt 3 s.
+
+**Bản đầu sai ở đâu, review bắt thế nào.** Bản đầu chỉ **đếm tên**: câu có đúng hai tên điểm là tra. Bộ 32 câu soạn trước cho 31 đúng, 0 sai, mình tưởng đã
+ổn. Người review (không viết code này) tự soạn 21 câu phá và **15 câu ra sai cặp**. 14 câu thuộc ba kiểu: câu có đủ hai tên nhưng hỏi khoảng cách tới một nơi thứ ba
+("A và B cách trung tâm bao xa?", "từ ga đến A và B…"); tên điểm nằm trong một tên riêng khác (khách sạn, nhà hàng, cây cầu mang tên đó); câu so sánh viết
+kiểu khác. Câu thứ 15 viết ngược chiều ("đến B từ A"), code đọc thành đi từ B. Ở các câu đó code sẽ đưa cho model số của **cặp không được hỏi**, và bước kiểm số vẫn cho qua vì số "có nguồn". Cách sửa không phải thêm danh sách
+từ cấm, mà đổi hướng: **chỉ nhận dạng câu quen, còn lại từ chối**. Sau sửa: 0 câu ra sai trên cả hai bộ. Cái giá của việc siết: trên bộ 32 câu, số câu được tra sẵn giảm 2 (hai câu có mệnh đề
+dẫn trước tên, nay về đường cũ); còn 16 câu đo thì kiểm lại không tốn tiền vẫn đủ 13 câu được tra sẵn. Bài học: với code đọc chữ người dùng, "có đủ hai tên" chưa nói được câu đang hỏi gì.
+
+**Khi nào hỏng:** câu viết khác dạng quen thì về đường cũ — đúng nhưng chậm như trước. Và câu có nơi thứ ba nằm **sau** từ hỏi ("Từ A đến B bao xa, rồi sang
+C nữa?") mà C **không** phải tên code đọc được (một khách sạn, hay tên gõ trần của một lăng) thì code vẫn trả khoảng cách A–B: số đúng cho chặng đầu,
+chưa trả lời hết câu. Nếu C là tên có trong bảng thì câu có ba tên, về đường cũ.
+
 ### Chuyện thật: hằng số "40 km/h" chọn bằng mắt, review bắt
 
 OSRM tính theo tốc độ cho phép của con đường, nên ra nhanh hơn thực tế: 4 km chỉ 4 phút. Bản đầu, mình đặt luật "đi không nhanh hơn 40 km/h". Hằng số này mình
@@ -174,7 +222,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 1. **Ngày âm lịch:** code tính bằng lunar-vn theo giờ Việt Nam, chỉ năm 1976–2100. Từ 10/11, **tính sẵn trước** lần gọi model đầu, nên câu có ngày nhanh hơn
    hẳn (chữ đầu 5,60 → 2,35 s) và rẻ hơn.
 2. **Thời tiết:** code lấy dự báo 7 ngày bằng toạ độ cố định, dựng sẵn số. Bão lũ và ngoài 7 ngày thì dùng **câu cố định**. **Khoảng cách:** bảng km / phút
-   dựng sẵn một lần từ OSRM, model chỉ chọn mã hai nơi. **Lịch trình:** code xếp theo buổi từ bảng anh duyệt, model chỉ viết lời, link do code dựng.
+   dựng sẵn một lần từ OSRM, model chỉ chọn mã hai nơi; từ 16/11 câu nêu rõ hai nơi thì code tra sẵn, chữ đầu 3,7 → 1,8 s. **Lịch trình:** code xếp theo buổi từ bảng anh duyệt, model chỉ viết lời, link do code dựng.
 3. Chuyện thật: **dặn model "đừng cộng tổng" không đủ**, model vẫn tự viết dòng "Tổng". Phép tính phải ở code, và thêm công cụ cũng đổi hành vi câu khác.
    Và hằng số trong code (như "40 km/h") cũng phải đối chiếu nguồn trước khi dùng.
 
@@ -194,6 +242,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - B4 (dặn không cộng tổng: 1 / 2 câu kín tự ghi dòng "Tổng") và B5c (code tính tiền 8 / 8; miễn vé bỏ điều kiện 3 / 3 ↔ 1 / 3), 05/11: `07_…`, `session_prompt/Session_Prompt.md` §7 [đã chạy]
 - Giới hạn "đi dày", không ô mưa / giờ tới về: `session_prompt/CURRENT_HANDOFF.md` [tài liệu]
 - Khoảng cách (16/11): `backend/llm/khoang_cach.py` (`HE_SO_OSRM`, `PHUT_CONG`, `_TU_KM`, `_TU_THOI_GIAN`, `kiem_so`), `assistant.py` `khoang_cach_for_turn`; cờ `khoang_cach: true` (`6a53680`, bạn bật); bảng `data/phase_9/lich_trinh/khoang_cach_v1.json` md5 `cb76ab72199c` (private) [code]. Đếm trước 4 / 6 từ chối; đo 16 câu: 13 / 14 đúng cặp, 0 số sai, 0 / 2 ngoài bảng ra số, ≈ 0,00081 USD / câu, chữ đầu p50 3,7 s / p95 ≈ 6,2 s (nội suy; 14 câu có công cụ, lượt sau sửa — 17 dòng `chat_metrics` cuối của `data/khoang_cach_2026-11-16/application_8041_r2.log`, private); bộ dò 27 câu 0 bỏ sót; an toàn 32 chạm 0: `report_agent/2026-11-12_ra_khoang_cach/c_khoang_cach_implementation.md` [đã chạy 16/11]. Review bắt sàn 40 km/h (1.082 / 1.560 cặp): `data/review_khoang_cach_2026-11-16/review.md`; đối chiếu 6 cặp 3 / 6 ⇒ 6 / 6: report trên, mục "Sửa theo review" M1; nguồn công khai: `data/tra_cuu_cli/2026-11-16_quang-duong-hue/` (private) [đã chạy]. Tiền câu từ chối + web ≈ 0,0023 (trung bình 4 câu): lượt đếm trước [đã chạy]. Đối chiếu bài: `data/khoang_cach_2026-11-16/doi_chieu_bai_hoc.md` (agent con, 70 khẳng định, sửa 12 chỗ).
+- Khoảng cách tính sẵn (16/11; đo có phí trên bản đầu, bản cuối kiểm lại không tốn tiền): `backend/llm/khoang_cach.py` (`tim_hai_diem`, `cap_tinh_san`, `TEN_NGAN`), `assistant.py` `_nguon_khoang_cach_san`; cờ `khoang_cach_tinh_san: true` (`3ccdada`, bạn bật tối 16/11); [đã chạy] bộ dò 32 câu 29 / 0 / 3 và 21 câu phá của review 20 / 0 / 1 (bản đầu 31 / 0 / 1 và 15 / 21 sai), lượt đo 16 câu (13 đường nhanh, chữ đầu trung vị 1,80 s đo ở phía gọi, 0,0131 USD cả lượt); `report_agent/2026-11-12_ra_khoang_cach/c_kc_tinh_san_implementation.md`.
 - Các câu ví dụ là câu tự đặt.
 - **Sửa 14:03 11/11/2026:** (1) bản trước ghi code tính sẵn cả "ngày kia" — sai: "ngày kia" chỉ được dò thấy, rồi model vẫn gọi công cụ (`lich_san`, chú thích đầu hàm); (2) bản trước ghi dòng "Tổng" có "con số không đúng" — sai: phép nhân khớp luật kho, bị tính là lỗi vì luật đo cấm con số tổng (`07_…` mục B4 vòng 1).
 
