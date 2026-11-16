@@ -1,6 +1,6 @@
 # Bài 25 — Trợ lý làm việc thật: sửa lịch bằng lời, câu hỏi nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời
 
-*Cập nhật lần cuối: 16:48, ngày 15/11/2026 · thêm chiều 15/11: đổi ngày đi bằng lời. Trước: 16:28, ngày 15/11/2026 · thêm chiều 15/11: đổi hạng chỗ ở bằng lời; thẻ Nơi ở chỉ hiện khi người dùng hỏi. Trước: 16:01, ngày 15/11/2026 · thêm chiều 15/11: 10 ảnh khách sạn anh tự tìm (67 / 136 cơ sở có ảnh). Trước: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
+*Cập nhật lần cuối: 21:25, ngày 16/11/2026 · thêm tối 16/11: cột lịch của trang đổi theo bản đã sửa bằng lời. Trước: 16:48, ngày 15/11/2026 · thêm chiều 15/11: đổi ngày đi bằng lời. Trước: 16:28, ngày 15/11/2026 · thêm chiều 15/11: đổi hạng chỗ ở bằng lời; thẻ Nơi ở chỉ hiện khi người dùng hỏi. Trước: 16:01, ngày 15/11/2026 · thêm chiều 15/11: 10 ảnh khách sạn anh tự tìm (67 / 136 cơ sở có ảnh). Trước: 13:09, ngày 15/11/2026 · thêm chiều 15/11: chặn lỗi ngày tháng bị hiểu thành số ngày khi sửa lịch. Trước: 12:41, ngày 15/11/2026 · thêm trưa 15/11: thẻ khách sạn dưới câu trả lời; số ảnh khách sạn sau lượt rà ảnh. Trước: 12:08, ngày 15/11/2026 · thêm trưa 15/11: câu trả lời nhắc nhiều nơi / món thì có tới 3 ảnh. Trước: 11:01, ngày 15/11/2026 · thêm sáng 15/11: chọn chỗ ở theo hạng sao, trang "Chỗ ở" theo khu. Trước: 09:51, ngày 15/11/2026 · ghi chú ăn uống cho Bạch Mã, Nhị Hồ. Trước: 18:50, ngày 14/11/2026 · thêm tối 14/11: chọn khách sạn theo hạng cao trước + ảnh khách sạn, ảnh quán ở thẻ bữa, bỏ quán đã đóng, năm trong câu hỏi không làm mất mục web. Trước: 17:13, ngày 14/11/2026 · nối tiếp bài 23 và 15. Thêm chiều 14/11: quán ăn trong lịch, khu ở theo buổi tối, lịch mẫu đủ đi – ăn – ở, so tiền mục web theo giá trị, hai lần thử / đếm rồi không làm. Số ảnh 184 / 216, 38 ảnh "không chắc".*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -159,6 +159,27 @@ vì vậy dòng báo luôn in ngày kèm thứ đã đổi để người dùng 
 - **Câu "đi dịp Tết âm lịch"** model không coi là câu sửa lịch, nên nó đi đường trả lời thường và không có dòng "nói một ngày cụ thể" (đây là 1 / 6 câu
   thiếu dòng lý do ở bảng trên).
 - Chưa làm: "dời 2 hôm" kiểu tương đối, ngày âm, bỏ ngày đi. Nút ngày trên biểu mẫu không tự đổi theo lời.
+
+**Tối 16/11 — lịch đã sửa hiện ở đâu.** Lúc kiểm bản đồ trên bản đang chạy, mình thấy một chỗ lệch (bản hướng dẫn thử cho anh cũng đang tả sai chỗ
+này): người dùng sửa lịch bằng lời trong
+khung Trợ lý thì lịch mới (và bản đồ mới) chỉ hiện **trong khung đó**, còn cột lịch của trang "Lên kế hoạch" vẫn là bản cũ — dễ tưởng là sửa không ăn.
+Anh chọn cách: **cột lịch của trang luôn vẽ bản mới nhất đã sửa xong.** Đầu cột có một dòng nhãn "Đã sửa theo lời bạn: …" chép đúng câu "Đã …" do code
+viết, kèm câu nhắc rằng biểu mẫu vẫn là bản gốc và xếp lại từ biểu mẫu sẽ thay bản đã sửa; dưới lịch có một dòng chỉ cách sửa bằng lời. Cột chỉ đổi khi
+lượt sửa **đã xong và có ít nhất một thay đổi làm được**: lượt đang chạy, bị dừng, bị lỗi, hay trả "không đổi được" thì cột giữ bản tốt gần nhất,
+không nhảy về trạng thái chờ. Phần này chỉ đổi ở giao diện; code xếp lịch và lời dặn không đổi.
+
+*Đo thế nào.* Mình thu một lần dữ liệu thật của bốn lượt (một lượt biểu mẫu, một lượt sửa được, hai lượt không sửa được) rồi cho trình duyệt tự động
+**phát lại** chúng, không gọi model nên không tốn tiền (vài ca không thu được từ lượt thật — lượt bị treo, lượt lỗi, lượt chỉ có chữ — thì dựng tay). 21 phép kiểm đều đạt: cột đổi theo, bản đồ còn đúng số ghim, chữ "Sao chép lịch" là bản đã sửa,
+lượt dở dang không làm cột đổi, biểu mẫu mới thì cột về lịch mới và nhãn mất, màn hẹp và màn rộng không vỡ. Trong cùng kịch bản có cả trạng thái "lịch
+gốc" lẫn "đã sửa", nên phép kiểm phân biệt được hai bên. Tệp lịch .ics không kiểm được bằng cách phát lại (lịch đã thu không có ngày đi nên không có
+nút), nên mình chạy thêm đúng một lần thật có ngày đi (một lượt biểu mẫu và một câu sửa): tệp có 6 sự kiện và không còn điểm đã bỏ.
+
+*Người review bắt được gì.* Người review chạy lại bộ kiểm của mình, tự viết thêm 9 phép kiểm khác, và chỉ ra một chỗ mình sót: bấm "Sao chép lịch" ở cột thì
+**dòng đầu là câu chat của lượt sửa** (ví dụ "Bỏ điểm đầu tiên…") thay vì dòng tóm tắt biểu mẫu — vì cột đang mượn dữ liệu của lượt sửa. Sửa một dòng: dòng đầu
+lấy lại từ lượt biểu mẫu gốc, và bộ kiểm thêm một phép cho đúng chỗ đó. Bộ kiểm của mình có kiểm chữ sao chép, nhưng chỉ kiểm tên điểm, không nhìn dòng đầu.
+
+*Chỗ còn hở:* nhãn chỉ nêu thay đổi của lượt sửa gần nhất (lịch thì đã gồm mọi lần sửa trước); nếu xếp lại từ biểu mẫu mà lượt đó lỗi thì cột chỉ còn
+dòng báo lỗi; tải lại trang là cuộc mới nên cả lịch gốc lẫn bản đã sửa đều mất, như trước.
 
 ## 2. Câu hỏi nhiều ý
 

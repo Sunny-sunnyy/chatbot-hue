@@ -42,6 +42,7 @@ che, mức phóng không khó coi.
 - Sửa hai lần liền: nhãn chỉ nêu thay đổi của lượt sửa GẦN NHẤT (lịch thì đã gồm mọi thay đổi trước đó).
 - Câu đầu trang "Muốn đổi lịch thì điền lại biểu mẫu." chưa sửa (không nằm trong việc giao) — nay có thêm đường sửa bằng lời; A quyết có đổi chữ không.
 - Dòng chỉ dẫn hiện cả khi cờ `sua_lich_v2` tắt (giao diện không nhận cờ này từ `/api/tinh_nang`); hiện cờ đang bật.
+- Sau khi sửa m-1 bộ kiểm có thêm một phép (dòng đầu chữ sao chép) ⇒ `pw_cot.py` **21 / 21** trên bản build của nhánh và trên bản gộp `d01171b` (mục 2 ghi 20 / 20 là số trước review).
 - Sau review B (READY, 3 minor — đã sửa m-1, m-2 trên nhánh): cột mượn thêm `question` + `summary` của lượt biểu mẫu ⇒ dòng đầu của chữ sao chép / .txt là tóm tắt biểu mẫu;
   nhãn bỏ chữ "bên cạnh" (khổ 390 biểu mẫu nằm phía trên). Ca phá của B: `data/review_cot_lich_2026-11-16/pha.py` (9 / 9).
 - Biểu mẫu mới bị LỖI sau một bản đã sửa ⇒ cột chỉ còn dòng lỗi (hành vi sẵn có của lượt biểu mẫu lỗi), bản đã sửa không còn trên cột.
