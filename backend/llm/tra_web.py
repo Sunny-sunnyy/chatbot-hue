@@ -249,7 +249,7 @@ def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: b
     return loi
 
 
-_SUC_KHOE = re.compile(r"(?<![A-Za-z])SUC[_ ]?KHOE(?![A-Za-z])")  # chữ HOA, không dấu: không khớp "sức khoẻ" người viết thường
+_SUC_KHOE = re.compile(r"(?<![A-Za-z])(?:(?i:suc_khoe)|SUC ?KHOE)(?![A-Za-z])")  # có gạch dưới ⇒ mọi kiểu hoa / thường (review); không gạch ⇒ chỉ chữ HOA
 
 
 def tach_suc_khoe(text: str) -> tuple[str, bool]:

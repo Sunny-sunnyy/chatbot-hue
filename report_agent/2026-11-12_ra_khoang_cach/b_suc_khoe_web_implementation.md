@@ -5,7 +5,7 @@ B viết 14:42 16/11/2026 · A giao (User chọn giữ mục web bản dài + c�
 ## Tóm tắt
 - Câu hỏi sức khoẻ ⇒ lần gọi viết mục web gắn dòng `SUC_KHOE` ⇒ **code** bỏ dấu trước mọi kiểm và nối câu cố định "Thông tin sức khoẻ, thuốc men trên web chỉ để tham khảo — bạn nên hỏi dược sĩ hoặc bác sĩ trước khi dùng." dưới mọi kết quả sau lần gọi model. Phần rút gọn mục web KHÔNG vào nhánh này.
 - Bộ dò 27 câu (agent con của A soạn) qua `cong_web` thật + Serper: **sức khoẻ gắn 12 / 12** · cấp cứu 3 / 3 · ranh giới 2 / 3 · **sàn gắn nhầm 3 / 9 — TRƯỢT** (S11 giờ khám bệnh viện, S12 giờ nhà thuốc, S13 món "tốt cho sức khoẻ"). Trên lời dặn bản 2 cùng bộ: 1 / 9 (chỉ S13) ⇒ lời dặn cũ (dài, cho phép kể) gắn rộng hơn.
-- Hệ quả của gắn nhầm: thêm câu nhắc thận trọng thừa dưới mục web của câu sát chủ đề sức khoẻ (bệnh viện, nhà thuốc, món "tốt cho sức khoẻ"); chữ mục web không đổi. **Chờ A quyết:** ghi giới hạn hay một vòng chỉnh.
+- Hệ quả của gắn nhầm: thêm câu nhắc thận trọng thừa dưới mục web của câu sát chủ đề sức khoẻ (bệnh viện, nhà thuốc, món "tốt cho sức khoẻ"); chữ mục web không đổi. **A chọn ghi giới hạn + merge, không vòng chỉnh** (câu nhắc thừa ở câu giờ bệnh viện / nhà thuốc / món "tốt cho sức khoẻ" vô hại).
 
 ## Đổi gì
 | File | Đổi |
