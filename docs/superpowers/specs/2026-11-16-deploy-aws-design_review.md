@@ -44,3 +44,24 @@ Cách kiểm: đọc hết spec; đối chiếu với `data/phase_12/deploy_nhap
 - Đường ra: OpenAI, Serper (Q4, mặc định tắt), Open-Meteo. Bảng §11 khớp với code đã đọc.
 - Cổng: app không có `ports` (`compose.yml`), chỉ Caddy mở 80 / 443; 22 mở, rào chính là khoá SSH (ghi rõ [Suy]).
 - Chi phí theo tháng: 24 USD (E tự mở trang giá 16/11); cảnh báo ngân sách 30 USD, đã ghi rõ không phải trần cứng.
+
+## Vòng 2 (C, 14:50 16/11/2026 `date`) — bản 2 `origin/p12-deploy-aws-spec` `7634117`, sha256 đầu `fa5b42fdcb96` (C tính lại, khớp)
+
+**Kết luận: `ready_for_user_confirmation` — 0 blocker · 0 major · 1 minor.** Chỉ đọc lại các mục của vòng 1 + phần E thêm từ lần chạy thử.
+
+| Mục vòng 1 | Đóng? | Chỗ trong bản 2 |
+|---|---|---|
+| M-1 xoá máy | **đóng** | §10.5: nhãn [User]; vòng chờ `available` có trần (60 × 20 s); chỉ xoá khi in `available`; mọi lệnh có `--region`; có kiểm sau khi xoá (máy, IP, bản chụp) |
+| M-2 khuôn 4 phần | **đóng** | A6, A7, B2, B3, C2 (thêm `test ! -e` chặn ghi đè khoá), C3, C4, D1, D2, D3, 10.2, 10.3 đều có Kiểm / Mong đợi / Dừng khi; 10.2 hỏng ⇒ 10.3 ngay |
+| M-3 câu User | **đóng** | §3: tổng tiền ~90–105 USD / 3 tháng (trước credit), Q9 (agent chỉ chạy lệnh chỉ đọc; [Tiền] / xoá User tự gõ), Q10 (ngày tạo máy, nhắc dặn "không deploy sớm"), Q11 (giữ file deploy) |
+| m-1 bản chụp 6335 | đóng | A5, A6 xoá ngay sau khi tải + kiểm danh sách rỗng; §13 đo: 6335 vẫn 9.425 điểm |
+| m-2 A2 `THIEU` | đóng | ghi lại rồi đi tiếp; phán quyết ở A5 (app không lên) |
+| m-3 `TAG` | đóng | §4 + dòng đầu D3 |
+| m-4 vòng chờ C3 | đóng | trần 60 × 10 s, in trạng thái |
+| m-5 §9 | đóng | thêm dòng hết lượt (3 ⇒ 4 lượt ⇒ trả về 50) + dòng ảnh qua https |
+| m-6 file deploy | đóng | §4 md5 — C chạy `md5sum`: 4 / 4 khớp (`bd887103b463` · `942d3527c413` · `da85ebea1915` · `98e0edaecfee`); Q11 |
+
+**Minor mới (sửa khi tiện, không chặn):**
+- **n-1 (10.3, khi kho đổi ở 10.2):** 10.2 chép `qdrant.snapshot` mới đè lên file cùng tên ở `/srv/hue`. Quay lại bản cũ thì cần **chép lại** bản chụp cũ từ `~/hue_deploy_<TAG cũ>/` (máy User) bằng `scp` rồi mới nạp như D3. Bản 2 chỉ ghi "nạp lại bản chụp cũ trong `~/hue_deploy_<TAG cũ>/`" ⇒ agent có thể nạp nhầm file mới đang nằm trên máy AWS. Đóng khi: thêm một dòng `scp` vào 10.3, hoặc 10.2 lưu bản chụp theo tên `qdrant_$TAG.snapshot`.
+
+Ghi nhận phần thêm từ chạy thử (§13, [Đo] 16/11): A4 bỏ qua `backend/` (bản 1 bắt nhầm 2 file code) đúng; lệnh dọn thư mục Qdrant thuộc root qua `docker run` hợp lý; số đo (8 s build có cache, 0,90 GB ảnh nén, app 1.021 MiB, 429 cả khi giả `X-Forwarded-For`) có nhãn. Phần AWS (B–E, 10.x) vẫn NOT RUN như spec ghi.
