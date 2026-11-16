@@ -1,3 +1,12 @@
+# STATUS E — PHIÊN TỐI 16/11 (mở 18:06 16/11/2026) · terminal `hue-rag-4a` · Claude Fable 5.2 · vai thực thi
+
+- 18:06 16/11/2026 — mở phiên, kiểm nhanh: main `6b90bbf`, sạch (chỉ `.wslconfig` chưa tracked — đã biết), hooksPath `.githooks`, 0 worktree phụ, WSL 19 GB (khả dụng 16). **Lệch handoff:** handoff ghi Qdrant ĐÃ TẮT, A phải bật trước — thực tế Qdrant đang chạy, 1 collection 9.425 điểm; cổng 8010 chưa có server (đúng). Ba terminal khác: `hue-rag-b2`, `hue-rag-cb`, `hue-rag-e9` (B = `hue-rag-b2`, C = `hue-rag-e9` tự báo ⇒ A = `hue-rag-cb` theo loại trừ; đã gửi báo cáo mở phiên cho A). Handoff "Việc phiên tối" không có mục riêng cho E. **Rảnh — chờ A giao.** Chưa sửa file nào khác, 0 USD.
+- 18:08 16/11/2026 — A (`hue-rag-cb`) giao (quyền phiên "như chiều 16/11"): (1) người kiểm thứ hai cho ghi kho Lập An của B — khi B nhắn "đã ghi 2 bài", so 2 file kho với nháp `data/sua_kho_2026-11-16_lap_an/nhap/` (md5 nháp `53d9fde30a9f` Bé Thân · `7bcfec967b58` Làng Chài; cả hai bắt đầu bằng `#`, không frontmatter, có `## Nguồn dữ liệu`) + sao lưu, trả B + A ≤ 5 dòng; chỉ đọc, 0 USD; (2) từ 20:30 trực lỗi giao diện / lịch User báo (đọc sổ vết trước khi sửa); (3) lúc B dựng chỉ mục không việc nặng / server / lượt có phí. Ảnh Docker `hue-rag-app:a9d1674` GIỮ. **Rảnh — chờ B nhắn đã ghi kho.**
+- 18:09 16/11/2026 — **Kiểm 2 bài nháp Lập An XONG, đã trả B + A:** khuôn + nội dung ổn (md5 khớp, hai chỗ `doc_nhap.md` yêu cầu đã sửa, không giá); 1 chỗ nên sửa trước khi ghi: cả hai bài ghi "thị trấn Lăng Cô, Phú Lộc" như hiện hành, kho gọi "xã Chân Mây – Lăng Cô, thành phố Huế" (24 lần) ⇒ đề xuất ghi tên mới kèm ngoặc tên cũ; B / A quyết. Chưa mở lại 2 URL nguồn (dựa biên bản đọc độc lập). 0 USD. **Rảnh — chờ B (nhìn lại nếu sửa) / lỗi User báo từ 20:30.**
+- 18:10 16/11/2026 — B sửa 2 bài Lập An theo đề xuất của E (bản trước ở `data/sua_kho_2026-11-16_lap_an/nhap_truoc_E/`); E liếc diff: đúng 2 dòng / bài, ổn; md5 nháp mới `a0506b9575ad` (Bé Thân) · `23744675b84d` (Làng Chài). B đang ghi kho + dựng chỉ mục ⇒ E không chạy việc nặng / server / lượt có phí. **Rảnh — chờ lỗi User báo từ 20:30 (A chuyển).**
+
+---
+
 # STATUS E — PHIÊN 16/11 (mở 14:03 16/11/2026) · terminal `hue-rag-af` · Claude Opus 5.5 · vai thực thi
 
 ## PHIÊN 16/11 — đang làm

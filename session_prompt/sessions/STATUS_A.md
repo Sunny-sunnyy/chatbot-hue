@@ -1,3 +1,13 @@
+# STATUS A — PHIÊN TỐI 16/11 (mở; cập nhật 18:08 16/11/2026 `date`)
+
+- Terminal: A `hue-rag-cb` · B `hue-rag-b2` · C `hue-rag-e9` · E `hue-rag-4a` (Claude Code, trực tiếp).
+- Kiểm nhanh: `main` `6b90bbf` = origin, chỉ `.wslconfig` untracked; hooksPath `.githooks`; Qdrant chạy sẵn 9.425 điểm (handoff ghi đã tắt — lệch); RAM 19 GB / khả dụng 16; 0 server 80xx; 0 worktree.
+- User: quyền "như chiều 16/11" (A ghi 18:08 16/11/2026).
+- Giao: B ghi kho Lập An ngay · C phần 0 USD khoảng cách tính sẵn · E kiểm diff kho + trực lỗi User từ 20:30.
+- Ô bản đồ: `.org` không phân giải được từ máy, `.de` 200 ⇒ giữ `.de`; hỏi User bật cờ `ban_do_lich`.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; nếu User chọn bật bản đồ: `backend/config/settings.yaml` (một dòng cờ, commit riêng).
+- Tiếp: B xong ⇒ mở 8010 có `HUE_SO_VET=true` + thử 1 câu khoảng cách trước 20:30 ⇒ User thử Phần 3 + 4 ⇒ vòng tự soi 1 khi mỗi session có kết quả đầu.
+
 # STATUS A — KẾT PHIÊN CHIỀU 16/11 (viết 15:44 16/11/2026 `date`)
 
 **A tối đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN TỐI 16/11 ĐỌC TRƯỚC" (việc 1: hỏi quyền + curl ô OSM mạng nhà ⇒ host bản đồ; 2: B ghi kho Lập An 19:00–20:15, A tắt 8010 trước dựng chỉ mục; 3: mở lại 8010 trước 20:30; 4: User thử từ 20:30).

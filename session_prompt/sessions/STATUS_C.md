@@ -1,5 +1,12 @@
 # STATUS C — phiên 16/11 (C `hue-rag-80` · A `hue-rag-db` · B `hue-rag-83` · E `hue-rag-af`); mục dưới là kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+## PHIÊN TỐI 16/11 (C `hue-rag-e9` · A `hue-rag-cb` · B `hue-rag-b2` · E `hue-rag-4a`; C ghi 18:10 16/11/2026 `date`)
+
+- A giao (quyền phiên "như chiều 16/11"): làm ngay phần 0 USD của "khoảng cách tính sẵn" (plan `8f45c14cf9e2`); không test rộng / server / lượt có phí tới khi B dựng xong chỉ mục; đo 16 câu để sau.
+- **Khai báo sửa** (worktree `/tmp/c_kcs`, nhánh `p9-kc-tinh-san` từ origin/main + nhánh plan): `backend/llm/khoang_cach.py`, `backend/llm/assistant.py`, `backend/config/settings.yaml` (cờ `khoang_cach_tinh_san: false`), `backend/tests/test_khoang_cach.py`; `data/khoang_cach_2026-11-16/` (script chạy bộ dò). File này.
+
+- **(18:13 16/11/2026) Hàm thuần + nối trợ lý + test ĐÃ VIẾT, CHƯA commit** (worktree `/tmp/c_kcs`, có symlink `data` — gỡ trước commit): `kc.tim_hai_diem`, `kc.cap_tinh_san`, `TEN_NGAN`; `assistant._nguon_khoang_cach_san`; cờ `khoang_cach_tinh_san: false`. Bộ dò tên 32 câu: 31 đúng · 0 sai cặp · 1 về đường cũ (lệnh: từ `/tmp/c_kcs/backend`, `PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag python /home/minhhieu/hue_rag/data/khoang_cach_2026-11-16/chay_bo_do_ten.py $PWD <bộ .jsonl>`). Bộ đo 16 câu: 13 đường nhanh, 0 sai cặp; an toàn 32: 0 câu chạm. Test thuần 35 passed. **Lệch plan (đã báo A):** không sửa bảng điểm — tên ngắn để trong code. **CÒN:** chạy test nối trợ lý (cần Qdrant ⇒ chờ B dựng xong chỉ mục) ⇒ commit + push ⇒ đo 16 câu có phí trên 8041 (sau khi B xong, tránh giờ User thử) ⇒ report + review.
+
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 16/11 — C viết 15:26, chốt 16:00 16/11/2026 `date`; máy: 0 worktree, 0 server của C)
 
 **Đã vào `main` hôm nay (C):** công cụ khoảng cách (`5980f6c`, cờ BẬT `6a53680`) + tài liệu (`95c1972`: bài 14, sổ 07, README, nhật ký) · plan lượt đo cuối B7 (A duyệt sha `031eaf56705b`, trần 0,45 USD, có lượt L sửa lịch; chạy CN 23/11, người chạy B) · review spec deploy AWS 2 vòng (READY, đã merge `d757d8c`). Lỗi "hỏi lại câu cũ bị từ chối": 0 / 3 ⇒ giới hạn, không sửa.
