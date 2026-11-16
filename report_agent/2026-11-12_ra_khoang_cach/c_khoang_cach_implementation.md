@@ -65,6 +65,7 @@ Bản đầu **bỏ sót** bước "đối chiếu 5 cặp với nguồn" của 
 | Câu bị rút lại | 2 / 14 (oan) ⇒ 0 | **0 / 16** |
 | Nơi ngoài bảng ra số | 0 / 2 | **0 / 2** |
 | Tiền lượt | 0,01664 + 0,00137 USD | **0,01544 USD** |
+| Tốc độ (câu có gọi công cụ, `chat_metrics`) | chữ đầu p50 4,4 / p95 8,9 s (n = 17) | **chữ đầu p50 3,7 / p95 ≈ 6,2 s** (n = 14, nội suy); ≈ 0,00081 USD / câu (17 dòng cuối `application_8041_r2.log`) |
 
 Test `tests/test_khoang_cach.py`: **46 passed** (16 s). Test rộng: xem dòng cuối mục này.
 **Tiền cả việc ≈ 0,0103 + 0,0180 + 0,0154 ≈ 0,044 USD** (trần 0,15).

@@ -1,6 +1,6 @@
-# Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, lịch trình
+# Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, khoảng cách, lịch trình
 
-*Cập nhật lần cuối: 12:33, ngày 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
+*Cập nhật lần cuối: 15:17, ngày 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -11,13 +11,15 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Công cụ ngày — **mới** | **`ngay_lich`** (thư viện **lunar-vn** 1.4.0) | Code tính hôm nay, đổi ngày dương ↔ âm theo lịch Việt Nam. |
 | Lịch tính sẵn — **mới** | **`lich_san`** → nguồn **"Lịch hệ thống"** | Khi câu có từ chỉ ngày, code tính sẵn các ngày liên quan và đưa vào ngữ cảnh **trước** lần gọi model đầu. |
 | Công cụ thời tiết — **mới** | **`thoi_tiet`** (dịch vụ **Open-Meteo**) | Code lấy dự báo 7 ngày cho Huế, dựng sẵn các con số. |
+| Công cụ khoảng cách — **mới** | **`khoang_cach`** | Code tra số km đường đi và số phút đi xe giữa hai điểm trong bảng lịch; model chỉ chọn mã hai điểm. |
+| Bảng tìm đường — **mới** | **OSRM** (Open Source Routing Machine) | Dịch vụ tìm đường trên bản đồ mở; mình chỉ gọi **một lần** để dựng sẵn bảng km / phút. |
 | Biểu mẫu lên kế hoạch — **mới** | **`lich_trinh_bieu_mau`** + **`lich_trinh`** | Người dùng chọn số ngày, người đi cùng, sở thích bằng nút; code xếp lịch theo buổi; model chỉ viết lời. |
 | Câu cố định | ví dụ **`CAU_BAO_LU`**, **`CAU_NGOAI_7_NGAY`** | Câu viết sẵn trong code cho trường hợp đặc biệt; model không được tự viết. |
 
 ---
 
-*Bài 12 nêu nguyên tắc chia việc: phép tính, luật, thứ tự bắt buộc thì code làm; model chỉ chọn và diễn đạt. Bài này kể ba chỗ áp nguyên tắc đó rõ nhất:
-ngày tháng, thời tiết, và lịch trình.*
+*Bài 12 nêu nguyên tắc chia việc: phép tính, luật, thứ tự bắt buộc thì code làm; model chỉ chọn và diễn đạt. Bài này kể bốn chỗ áp nguyên tắc đó rõ nhất:
+ngày tháng, thời tiết, khoảng cách, và lịch trình.*
 
 ## Quay lại người hướng dẫn viên
 
@@ -25,9 +27,10 @@ Khách hỏi: *"Rằm tháng Giêng năm nay là thứ mấy?"* Một người h
 thì khách lỡ cả lễ hội. Họ **mở cuốn lịch ra xem**. Khách hỏi *"mai Huế mưa không?"*, họ **mở dự báo** ra đọc, không đoán theo mùa.
 
 Khách nhờ *"lên giúp lịch đi Huế 2 ngày, đi cùng ba mẹ"*, họ cũng không ứng khẩu. Họ có sẵn **một bảng các điểm** ghi điểm nào hợp buổi sáng, buổi chiều hay
-buổi tối, có hợp người lớn tuổi không. Họ xếp theo bảng đó, rồi mới **kể lại bằng lời** cho khách.
+buổi tối, có hợp người lớn tuổi không. Họ xếp theo bảng đó, rồi mới **kể lại bằng lời** cho khách. Khách hỏi *"từ đây sang lăng kia bao xa?"*, họ
+**nhìn bản đồ**, không nói đại "chắc tầm 5 cây".
 
-Trong cả ba trường hợp, phần **con số và thứ tự** đến từ dụng cụ (lịch, dự báo, bảng điểm). Phần người làm là **chọn dụng cụ** và **nói cho dễ nghe**.
+Trong mọi trường hợp, phần **con số và thứ tự** đến từ dụng cụ (lịch, dự báo, bảng điểm). Phần người làm là **chọn dụng cụ** và **nói cho dễ nghe**.
 
 ## Ngày tháng và âm lịch
 
@@ -71,6 +74,55 @@ Trước đó (09/11), khi mới thêm công cụ ngày: **bớt 9 câu từ ch�
 
 Trang chủ của cổng du lịch cũng có một ô thời tiết đọc thẳng từ đây, không gọi model.
 
+## Khoảng cách giữa hai điểm
+
+**Vì sao cần (đếm trước khi xây, 16/11):** kho có bài về từng nơi, nhưng hầu như không ghi "từ nơi này sang nơi kia bao xa". Mình hỏi 6 câu kiểu đó trên
+server đang chạy: **4 / 6 câu bị từ chối** rồi mới ra mục "Từ web". 2 câu còn lại được ước từ câu "cách trung tâm … km" trong bài. Một lỗi có thật, đủ lớn để làm.
+
+**Code làm gì:**
+- **Dựng bảng sẵn một lần:** lấy toạ độ của 40 / 41 điểm trong bảng lịch (một điểm chưa có toạ độ), gửi **một lần** cho OSRM để lấy số km đường đi và số phút
+  đi ô tô giữa mọi cặp: **1.560 cặp**, đủ cả. Chỉ toạ độ công khai đi ra ngoài, không chữ nào của người dùng. Lúc chatbot chạy **không gọi mạng**, chỉ tra bảng.
+- **Model chỉ chọn mã:** công cụ có danh sách cố định 41 mã điểm (kèm tên khác, như "Hiếu Lăng" là lăng Minh Mạng) và một mã "khác". Model đọc câu hỏi, chọn mã
+  hai nơi. Nơi không có trong bảng (khách sạn, sân bay, "trung tâm", nơi ngoài Huế) ⇒ chọn "khác" ⇒ code trả câu cố định "Mình chưa có số khoảng cách cho nơi
+  này". Code không tự đoán tên nơi từ chữ người dùng.
+- **Code viết dòng có số:** "Từ A đến B: khoảng X km đường đi, khoảng Y phút đi xe (ước theo đường)", kèm "chưa tính kẹt xe hay dừng nghỉ". Dòng này là một
+  nguồn có mã [n] như mọi nguồn khác.
+- **Code kiểm số model viết:** số km và số phút trong câu trả lời phải nằm trong số của nguồn khoảng cách (km so với km, phút so với phút) hoặc trong đoạn kho
+  được trích. Lệch ⇒ rút câu trả lời lại, như khi trích nguồn sai.
+- Công cụ **chỉ được đưa** khi câu có từ khoá kiểu "bao xa", "mấy km", "có gần không", hay "mất bao lâu" đi kèm từ di chuyển ("đi", "từ", "sang"…). Câu như
+  "nấu nồi bún bò mất bao lâu" không có từ di chuyển ⇒ không đưa công cụ.
+
+**Đo ra sao (16 câu qua server tạm, 16/11):** 14 câu có hai nơi trong bảng, 2 câu có nơi ngoài bảng.
+
+| Đo gì | Kết quả | So với đâu · nghĩa là |
+|---|---|---|
+| Model chọn đúng cặp điểm | **13 / 14** | luật ghi trước là ≥ 12 / 14 ⇒ đạt. Câu còn lại hỏi "có gần nhau không"; model trả lời từ bài kho (có trích nguồn), không gọi công cụ |
+| Số sai tới tay người dùng | **0** | sàn là 0. Không câu nào có số km / phút lệch nguồn, không câu nào bị rút lại |
+| Nơi ngoài bảng mà ra số | **0 / 2** | sàn là 0. Một câu model chọn "khác", một câu model không gọi công cụ; cả hai bị từ chối rồi ra mục "Từ web" như trước (số trong mục web là của web, có ghi nguồn) |
+| Tiền một câu có công cụ | khoảng **0,0008 USD** | trước đây câu loại này bị từ chối rồi tra web, khoảng 0,0023 USD ⇒ rẻ hơn; nhưng vẫn trên trần chung 0,0005 USD một câu |
+| Chữ đầu tiên, trung vị / câu chậm (95 %) | **3,7 s / khoảng 6,2 s** | mức anh chốt là 3 s / 5 s ⇒ **chưa ổn**: câu loại này thường gọi model 3 lần (phân loại, gọi công cụ, viết) |
+
+Trước khi bật còn có bộ 27 câu dò từ khoá do một người khác soạn: **0 câu khoảng cách bị bỏ sót**. Bộ 32 câu an toàn: không câu nào có từ khoá ⇒ chuỗi gửi
+model của bộ an toàn không đổi, không cần chạy lại.
+
+### Chuyện thật: hằng số "40 km/h" chọn bằng mắt, review bắt
+
+OSRM tính theo tốc độ cho phép của con đường, nên ra nhanh hơn thực tế: 4 km chỉ 4 phút. Bản đầu, mình đặt luật "đi không nhanh hơn 40 km/h". Hằng số này mình
+chọn sau khi **nhìn 2 cặp** (4 km / 4 phút và 15 km / 14 phút), và quên mất bước plan đã ghi: "đối chiếu 5 cặp với nguồn công khai".
+
+Người review (một agent khác) chạy lại cả bảng và thấy hằng số đó **đổi số phút ở 1.082 / 1.560 cặp**, tức phần lớn con số người dùng thấy do một con số mình
+chọn bằng mắt. Mình tra 8 cặp trên các bài du lịch công khai (có km và / hoặc số phút, phần lớn tính "từ trung tâm"), rồi tự mở lại 3 nguồn để kiểm:
+
+| Cặp (loại đường) | Số phút nguồn ghi | Luật cũ (sàn 40 km/h) | Luật mới (1,25 × OSRM + 5) |
+|---|---|---|---|
+| Đại Nội → lăng Tự Đức (nội thành, ~6 km) | 20 (xe máy) / 20–25 (taxi) | 12 — quá nhanh | **20** |
+| Huế → đầm Lập An (đường dài, ~65 km) | ~75 (xe riêng) | 105 — quá chậm | **84** |
+| Cả 6 cặp so được | — | **3 / 6** trong khoảng nguồn | **6 / 6** trong hoặc sát khoảng nguồn |
+
+Số km của OSRM thì khớp nguồn, lệch khoảng 10 % (lớn nhất 12 %); chỉ số phút cần sửa. Luật mới **1,25 × phút OSRM + 5**: đi thật mất thêm khoảng một phần tư
+thời gian so với OSRM, cộng 5 phút ra vào chỗ đỗ xe. Đây vẫn là **luật ước** khớp 6 điểm đối chiếu, không phải số đo thật trên đường. Bài học: một hằng số quyết con số người dùng
+thấy thì phải đối chiếu với nguồn trước, không chọn bằng cảm giác.
+
 ## Biểu mẫu "Lên kế hoạch"
 
 *Mục này tả **bản đầu** (07/11). Từ 14/11, chatbot chạy **bản 2**: biểu mẫu bốn nhóm, code xếp theo chuỗi luật có giờ gợi ý, quỹ phút, mưa, ảnh từng điểm. Xem bài 23.*
@@ -112,14 +164,19 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - **Biểu mẫu bản đầu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng; không xét mưa. Bản 2 (bài 23) đã sửa hai chỗ này.
   Cả hai bản đều **chưa có ô giờ tới / giờ về**.
 - **Lịch trình từ câu gõ tự do chưa bật.**
+- **Khoảng cách:** chỉ giữa hai điểm trong bảng lịch. "Cách trung tâm bao xa", khách sạn, sân bay ⇒ chưa có số. Số phút là luật ước (6 cặp đối chiếu),
+  không tính kẹt xe; không có đi bộ hay đi thuyền. Câu hỏi nhiều cặp cùng lúc: bước kiểm số không tách theo cặp nên số của cặp này dùng cho cặp kia vẫn lọt.
+  Câu viết không dấu ("dai noi cach thien mu may km") không bật công cụ. "Bao lâu" có kèm từ di chuyển ở bất kỳ đâu trong câu thì bật thừa (vd "đi Huế nên ở
+  bao lâu?") — vô hại: model không gọi công cụ, hoặc công cụ trả "chưa có số".
 
 ## Ba điều chính
 
 1. **Ngày âm lịch:** code tính bằng lunar-vn theo giờ Việt Nam, chỉ năm 1976–2100. Từ 10/11, **tính sẵn trước** lần gọi model đầu, nên câu có ngày nhanh hơn
    hẳn (chữ đầu 5,60 → 2,35 s) và rẻ hơn.
-2. **Thời tiết:** code lấy dự báo 7 ngày bằng toạ độ cố định, dựng sẵn số. Bão lũ và ngoài 7 ngày thì dùng **câu cố định**. **Lịch trình:** code xếp theo buổi
-   từ bảng anh duyệt, model chỉ viết lời, link do code dựng.
+2. **Thời tiết:** code lấy dự báo 7 ngày bằng toạ độ cố định, dựng sẵn số. Bão lũ và ngoài 7 ngày thì dùng **câu cố định**. **Khoảng cách:** bảng km / phút
+   dựng sẵn một lần từ OSRM, model chỉ chọn mã hai nơi. **Lịch trình:** code xếp theo buổi từ bảng anh duyệt, model chỉ viết lời, link do code dựng.
 3. Chuyện thật: **dặn model "đừng cộng tổng" không đủ**, model vẫn tự viết dòng "Tổng". Phép tính phải ở code, và thêm công cụ cũng đổi hành vi câu khác.
+   Và hằng số trong code (như "40 km/h") cũng phải đối chiếu nguồn trước khi dùng.
 
 **Bài sau:** Bài 15 — Khi sổ không có: tra web một lần (có rào chắn bằng code) và hỏi bằng ảnh (gợi ý, chờ người dùng xác nhận).
 
@@ -136,6 +193,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - Biểu mẫu: `assistant.py` `answer_bieu_mau`; xếp lịch, không buổi tối cho nhóm hạn chế: `backend/llm/lich_trinh.py`; cờ `lich_trinh_bieu_mau: true`, `lich_trinh: false`: `settings.yaml` [code, xem 11/11]; 24 / 24, 12 / 12 × 2, p95 4,25 s (07/11): `07_…` [đã chạy]
 - B4 (dặn không cộng tổng: 1 / 2 câu kín tự ghi dòng "Tổng") và B5c (code tính tiền 8 / 8; miễn vé bỏ điều kiện 3 / 3 ↔ 1 / 3), 05/11: `07_…`, `session_prompt/Session_Prompt.md` §7 [đã chạy]
 - Giới hạn "đi dày", không ô mưa / giờ tới về: `session_prompt/CURRENT_HANDOFF.md` [tài liệu]
+- Khoảng cách (16/11): `backend/llm/khoang_cach.py` (`HE_SO_OSRM`, `PHUT_CONG`, `_TU_KM`, `_TU_THOI_GIAN`, `kiem_so`), `assistant.py` `khoang_cach_for_turn`; cờ `khoang_cach: true` (`6a53680`, bạn bật); bảng `data/phase_9/lich_trinh/khoang_cach_v1.json` md5 `cb76ab72199c` (private) [code]. Đếm trước 4 / 6 từ chối; đo 16 câu: 13 / 14 đúng cặp, 0 số sai, 0 / 2 ngoài bảng ra số, ≈ 0,00081 USD / câu, chữ đầu p50 3,7 s / p95 ≈ 6,2 s (nội suy; 14 câu có công cụ, lượt sau sửa — 17 dòng `chat_metrics` cuối của `data/khoang_cach_2026-11-16/application_8041_r2.log`, private); bộ dò 27 câu 0 bỏ sót; an toàn 32 chạm 0: `report_agent/2026-11-12_ra_khoang_cach/c_khoang_cach_implementation.md` [đã chạy 16/11]. Review bắt sàn 40 km/h (1.082 / 1.560 cặp): `data/review_khoang_cach_2026-11-16/review.md`; đối chiếu 6 cặp 3 / 6 ⇒ 6 / 6: report trên, mục "Sửa theo review" M1; nguồn công khai: `data/tra_cuu_cli/2026-11-16_quang-duong-hue/` (private) [đã chạy]. Tiền câu từ chối + web ≈ 0,0023 (trung bình 4 câu): lượt đếm trước [đã chạy]. Đối chiếu bài: `data/khoang_cach_2026-11-16/doi_chieu_bai_hoc.md` (agent con, 70 khẳng định, sửa 12 chỗ).
 - Các câu ví dụ là câu tự đặt.
 - **Sửa 14:03 11/11/2026:** (1) bản trước ghi code tính sẵn cả "ngày kia" — sai: "ngày kia" chỉ được dò thấy, rồi model vẫn gọi công cụ (`lich_san`, chú thích đầu hàm); (2) bản trước ghi dòng "Tổng" có "con số không đúng" — sai: phép nhân khớp luật kho, bị tính là lỗi vì luật đo cấm con số tổng (`07_…` mục B4 vòng 1).
 
