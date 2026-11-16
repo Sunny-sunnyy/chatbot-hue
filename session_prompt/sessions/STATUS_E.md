@@ -6,6 +6,8 @@
 
 - 14:28 16/11/2026 — (0) Ảnh mẫu cũ: nhìn 100 % 221 ảnh ⇒ giữ 111, thiếu ~365 (`data/so_anh_gom_2026-11-16/mau_cu_da_loc.json`); 0 ảnh sai nơi đang hiện (`anh_dang_hien_bi_bo.md`). (1) **Nút Huỷ "Đang xem ảnh…" CHỜ REVIEW:** `p9-huy-xem-anh` @ origin `49b99a8`, worktree `/tmp/e_huy` (2 symlink data / kb + node_modules — gỡ sau merge), server tạm 8896 đang chạy cho reviewer; ca dò `data/huy_xem_anh_2026-11-16/`. (2) kc ở Khám phá: không lọc — thiết kế, không sửa. (3) ĐANG LÀM: spec deploy AWS `docs/superpowers/specs/2026-11-16-deploy-aws-design.md` (A giao; review C). Gom ảnh so ảnh để sau; ảnh lịch Thiệu Trị khi rảnh.
 
+- 14:37 16/11/2026 — **Spec deploy AWS bản 1 CHỜ REVIEW (C):** `p12-deploy-aws-spec` @ origin `2900115` (worktree `/tmp/e_dep`), sha256 `caa023a1958e`; §13 (chạy thử A2–A6 trên máy) chờ A cho lượt máy. Tra Codex `data/tra_cuu_cli/2026-11-16_deploy-aws-2/`. Đang làm tiếp: gom ảnh mẫu (Commons theo danh mục).
+- 14:48 16/11/2026 — Nút Huỷ ĐÃ MERGE (`a9d1674`); worktree `/tmp/e_huy` + server 8896 đã gỡ. Chạy thử deploy A2–A6 trên máy XONG (0,00045 USD; ảnh `hue-rag-app:a9d1674` giữ trên máy; 0 container thử; bản chụp 6335 đã xoá). **Spec AWS bản 2 CHỜ C vòng 2:** `p12-deploy-aws-spec` @ `7634117`, sha256 `fa5b42fdcb96`. Tiếp: gom ảnh mẫu (`data/so_anh_gom_2026-11-16/danh_muc_tim.json` xong) + ảnh lịch Thiệu Trị.
 ---
 
 # STATUS E — KẾT PHIÊN TỐI 15/11 (chốt lần cuối 22:07 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
