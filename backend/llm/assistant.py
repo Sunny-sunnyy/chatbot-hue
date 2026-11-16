@@ -37,6 +37,7 @@ from llm import quan_lich as ql
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
+from llm import khoang_cach as kc
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
@@ -129,6 +130,10 @@ class AssistantFlags:
     quan_toa_do: "dict | None" = field(default=None, compare=False, repr=False)
     anh_lich_bang: "dict | None" = field(default=None, compare=False, repr=False)
     du_bao: "object | None" = field(default=None, compare=False, repr=False)
+    # 16/11 (plan `2026-11-16-khoang-cach-plan.md`): công cụ `khoang_cach` — km / phút giữa hai điểm bảng lịch, tra bảng dựng sẵn (code tính, model chọn
+    # mã); chỉ đưa khi câu có từ khoá khoảng cách. TẮT tới khi đo đạt; cần `tim_them` + bảng (`assistant.khoang_cach_bang`, nạp ở rìa)
+    khoang_cach: bool = False
+    khoang_cach_bang: "kc.BangKhoangCach | None" = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.lan_tim_dau not in SEARCH_VARIANTS:
@@ -145,6 +150,8 @@ class AssistantFlags:
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
         if self.ngay_lich and not self.tim_them:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
+        if self.khoang_cach and (not self.tim_them or self.khoang_cach_bang is None):
+            raise ValueError("assistant.khoang_cach needs assistant.tim_them: true and the distance table (assistant.khoang_cach_bang)")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
@@ -172,6 +179,8 @@ class AssistantFlags:
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_toa_do) if values["ban_do_lich"] and bang_toa_do is not None else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
+                   khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
+                   if values["khoang_cach"] else None,
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
                    bang_lich_v2=bang_v2,
@@ -204,7 +213,8 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
                     if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
-                                     "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do"))
+                                     "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
+                                     "khoang_cach_bang"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -286,6 +296,8 @@ class AnswerTrace:
     thoi_tiet: dict | None = None
     thoi_tiet_noi: str | None = None
     thoi_tiet_kiem: list[str] | None = None
+    khoang_cach: list[dict] | None = None  # mỗi lần gọi `khoang_cach`: mã hai điểm + các dòng code dựng (chỉ RAM; log chỉ ghi mã)
+    khoang_cach_kiem: list[str] | None = None
     # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
     # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
     vet: dict = field(default_factory=dict)
@@ -569,6 +581,29 @@ def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
     return ngay_lich
 
 
+def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
+    """Hàm `khoang_cach` của **một lượt** (plan 16/11): model chỉ gửi MÃ hai điểm (enum, `khac` = nơi ngoài danh sách); code tra bảng, dựng dòng,
+    đăng thành **một nguồn** trong sổ nguồn (như `ngay_lich_for_turn`). ≤ 3 lần / câu (câu hỏi nhiều cặp); lần thứ 4 ⇒ câu nhắc."""
+    Ma = Literal[tuple(bang.ids) + (kc.KHAC,)]
+
+    async def khoang_cach(diem_a: Ma, diem_b: Ma) -> str:
+        entry = {"name": "khoang_cach", "ms": 0.0, "diem_a": diem_a, "diem_b": diem_b}  # mã điểm do model chọn (không chữ người dùng)
+        trace.tools.append(entry)
+        if trace.khoang_cach is not None and len(trace.khoang_cach) >= 3:
+            entry["het_luot"] = True
+            return "Đã tra khoảng cách ở các lần gọi trước trong lượt này; hãy viết câu trả lời."
+        dong = kc.ket_qua(bang, diem_a, diem_b)
+        trace.khoang_cach = (trace.khoang_cach or []) + [{"diem_a": diem_a, "diem_b": diem_b, "dong": dong}]
+        src = PackedSource(id=len(trace.so_nguon) + 1, title=kc.TIEU_DE_NGUON, heading_path=(kc.MUC_NGUON,), excerpts=dong, source=kc.NGUON_SOURCE)
+        trace.so_nguon.append(src)
+        chu = FullCorpusContextBuilder._block(src)
+        trace.context_parts.append(chu)
+        return chu
+
+    khoang_cach.__doc__ = kc.mo_ta_cong_cu(bang)
+    return khoang_cach
+
+
 def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
     """T1 nhanh (plan `2026-11-10-phase-9-t1-nhanh-plan.md` D2): S5 09/11 câu ngày gọi model 2–4 lần vì model phải gọi `ngay_lich` rồi mới viết ⇒
     code tính sẵn hôm nay / mai / tuần / ngày âm nêu trong câu và trong đoạn kho lần tìm đầu, đăng thành **một nguồn** (như kết quả `ngay_lich`), nối
@@ -801,6 +836,13 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         trace.citation_error = CitationIntegrityError("itinerary check failed: " + ",".join(loi))
     if flags is not None and flags.thoi_tiet:
         _thoi_tiet_cuoi(trace, text)
+    if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích; hỏng ⇒ rút lại như citation hỏng
+        cho_phep = kc.tap_so_theo_loai(" ".join(d for k in trace.khoang_cach for d in k["dong"]))  # số code dựng: km ↔ thời gian tách riêng
+        chung = kc.tap_so(" ".join(e for src in (trace.cited or ()) if src.source != kc.NGUON_SOURCE for e in src.excerpts))  # đoạn kho: mọi số
+        cho_phep = {loai: tap | chung for loai, tap in cho_phep.items()}
+        trace.khoang_cach_kiem = kc.kiem_so(text, cho_phep)
+        if trace.khoang_cach_kiem and trace.citation_error is None:
+            trace.citation_error = CitationIntegrityError(f"distance numbers without source: {len(trace.khoang_cach_kiem)}")
 
 
 def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) -> dict | None:
@@ -870,6 +912,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             trace.thoi_tiet_ctx["tuan_sau"] = tuan_sau
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
+    if flags.khoang_cach and kc.co_tu_khoa_luot(query, trace.history):  # như thời tiết — lượt không có từ khoá ⇒ danh sách công cụ như cũ (Q1)
+        extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
@@ -1235,7 +1279,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         yield "status", {"stage": "lich_trinh", "buoc": "dang_xep"}
                     elif cong_cu == "thoi_tiet":  # B5b: "đang xem dự báo…" (không phải "đang tìm kho")
                         yield "status", {"stage": "thoi_tiet"}
-                    elif cong_cu == "ngay_lich":  # T1: tính ngày ở code, tức thì — không báo "đang tìm kho" (giữ trạng thái đang có)
+                    elif cong_cu in ("ngay_lich", "khoang_cach"):  # T1 / khoảng cách: code tra tức thì — không báo "đang tìm kho"
                         pass
                     else:
                         yield "status", {"stage": "searching"}
@@ -1244,7 +1288,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         for buoc in trace.buoc_lich[da_phat_buoc:]:
                             yield "status", {"stage": "lich_trinh", **buoc}
                         da_phat_buoc = len(trace.buoc_lich)
-                    elif cong_cu not in ("thoi_tiet", "ngay_lich"):  # B5b / T1: kết quả dự báo / ngày không phải "đã tìm kho"
+                    elif cong_cu not in ("thoi_tiet", "ngay_lich", "khoang_cach"):  # B5b / T1: kết quả dự báo / ngày không phải "đã tìm kho"
                         yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
         except Exception as exc:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)
