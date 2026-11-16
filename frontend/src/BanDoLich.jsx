@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { toaDoHopLe } from "./toaDo.js";
+import { nguonBanDo } from "./nguonBanDo.js";
 
 // Bản đồ lịch trình (plan `docs/superpowers/plans/2026-11-08-ban-do-lich-trinh-plan.md` §2, §4): ghim có số theo thứ tự trong ngày, dữ liệu do server
 // dựng từ bảng (model không tạo toạ độ). File này tải riêng (`lazy` ở `chat.jsx`) ⇒ câu thường không tải Leaflet, không gọi máy chủ tile.
 // Không vẽ đường nối (không có đường đi thật); không tải trước vùng / lưu offline (luật dùng tile OSMF).
 
-const TILE = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";  // khớp `TILE_HOST` trong CSP (`backend/api/app.py`)
-const GHI_CONG = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+// URL ô + tên nhà cung cấp do server gửi (`nguonBanDo.js`) — cùng một hằng số với CSP `img-src`, nên đổi host không phải sửa file này.
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const ghiCong = n => '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+  + ` · Ô bản đồ: <a href="${esc(n.trang_nha_cung_cap)}" target="_blank" rel="noopener noreferrer">${esc(n.ten_ngan)}</a>`
   + " · Toạ độ: dữ liệu mở thành phố Huế";
 const NHAN_BUOI = { sang: "Sáng", chieu: "Chiều", toi: "Tối" };
 
@@ -36,11 +39,15 @@ export default function BanDoLich({ items }) {
   const coToaDo = cuaNgay.filter(i => toaDoHopLe(i.toa_do) && Number.isInteger(i.thu_tu) && i.thu_tu > 0);
   const khoa = coToaDo.map(i => `${i.thu_tu}:${i.toa_do}`).join("|");
   const khung = useRef(null);
+  const nguon = nguonBanDo();  // chưa có (tải cờ lỗi) ⇒ chỉ danh sách, không khung xám
+  const coKhung = coToaDo.length > 0 && !!nguon;
 
   useEffect(() => {
-    if (!coToaDo.length || !khung.current) return undefined;
-    const map = L.map(khung.current, { scrollWheelZoom: false });
-    L.tileLayer(TILE, { maxZoom: 18, attribution: GHI_CONG }).addTo(map);
+    if (!coKhung || !khung.current) return undefined;
+    // Điện thoại: một ngón vuốt qua khung là CUỘN TRANG (không kéo bản đồ — đo 16/11 khổ 390: vuốt dọc kéo bản đồ 144 px, trang đứng yên);
+    // vẫn phóng to / thu nhỏ bằng nút hoặc hai ngón, bấm ghim mở ô tên.
+    const map = L.map(khung.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile });
+    L.tileLayer(nguon.tile, { maxZoom: 18, attribution: ghiCong(nguon) }).addTo(map);
     for (const item of coToaDo) {
       const icon = L.divIcon({ className: `ghim ghim-ngay-${(item.ngay - 1) % 5}`, html: String(item.thu_tu), iconSize: [30, 30] });  // màu theo ngày (đợt 2)
       L.marker(item.toa_do, { icon, title: item.ten, alt: item.ten, keyboard: true }).bindPopup(oGhim(item)).addTo(map);
@@ -59,7 +66,7 @@ export default function BanDoLich({ items }) {
           ))}
         </div>
       )}
-      {coToaDo.length > 0
+      {coKhung
         ? <div ref={khung} className="bd-khung" role="region" aria-label={`Bản đồ các điểm ngày ${ngay}`} />
         : <p className="text-sm text-muted">Các điểm ngày này chưa có vị trí trên bản đồ.</p>}
       <ol className="bd-ds">
