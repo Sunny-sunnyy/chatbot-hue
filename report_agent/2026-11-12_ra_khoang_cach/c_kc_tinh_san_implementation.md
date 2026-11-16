@@ -49,6 +49,14 @@ Câu đường cũ duy nhất trong bảng (câu hỏi tiếp "từ đó sang…
 - Luật dừng (`Session_Prompt.md` §8): 0 câu ra sai trên hai bộ đã ghi ⇒ dừng, không mở vòng nữa.
 - Test rộng trên `f2322fd`: 1265 passed · 1 failed — test đọc `settings.yaml` thật không tự tắt cờ bản đồ (main vừa bật), A đã sửa trên main `6cf7935`.
 
+## 3c. Đo lại trên bản cuối đang chạy (C, 20:49 16/11/2026; A giao sau khi bật cờ — số ở mục 3 là của bản đầu)
+Server tạm 8041 từ worktree main `1e45a78` (cờ bật), cùng 16 câu, một lượt, thử 1 câu trước (câu đầu sau khởi động 4,38 s — không tính).
+- Đường nhanh 13 câu: chữ đầu (phía gọi) **p50 1,87 s**; 2 / 13 câu > 3 s (3,93 s — 2 lần gọi model; 4,03 s — câu hai ý, 3 lần gọi). Đường cũ trong bảng: 3,98 s.
+- Đúng cặp 14 / 14 · số lạ 0 · 13 / 13 câu đường nhanh có số · ngoài bảng ra số 0 / 2 ⇒ **PASS** mọi tiêu chí của mục 3 trên bản cuối.
+- Tiền 0,0122 USD (`dem_chat_metrics.py --sha 1e45a78`, 18 lượt); trung vị 0,00041 USD / câu đường nhanh, 12 / 13 câu < 0,0005 (câu còn lại 0,00054).
+- Kết quả: `data/khoang_cach_2026-11-16/do_san_r1_ban_cuoi_1e45a78.json` (bản đầu: `do_san_r1_ban_dau_50fbf4e.json`), log `application_8041_san_ban_cuoi.log`.
+- Tổng tiền cả việc: 0,0131 + 0,0122 = **0,0253 USD** (trần plan 0,05).
+
 ## 4. Tiền + thời gian (số đo thật)
 - Tiền: **0,0131 USD** (`scripts/dem_chat_metrics.py --log <log 8041> --sha 50fbf4e`: 18 lượt = 1 câu thử + 16 câu + 1 câu "trước"). Trần 0,05. Chưa ai tính lại.
 - Mỗi câu đường nhanh ≈ 0,0004 USD (đường công cụ 16/11 ≈ 0,0006–0,0008).
