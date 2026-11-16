@@ -76,6 +76,83 @@ def nap_bang(path_khoang_cach: str | Path, path_diem: str | Path) -> BangKhoangC
     return BangKhoangCach(ten=ten, ten_khac=ten_khac, cap=cap)
 
 
+# ---------- Khoảng cách tính sẵn (plan `2026-11-17-khoang-cach-tinh-san-plan.md`) ----------
+# Tên ngắn người dùng hay gõ mà bảng không có. Để ở đây, KHÔNG thêm vào `ten_khac` của bảng điểm: `ten_khac` còn vào mô tả công cụ (chuỗi gửi
+# model) và vào bước kiểm câu mô tả của lịch (`lich_trinh_v2`: câu nhắc tên điểm khác ⇒ bỏ) — hai chỗ đó không được đổi theo việc này.
+# Chỉ thêm tên không trùng nghĩa khác ("Thuận An", "Bạch Mã", "Tự Đức" đứng một mình có thể là khách sạn / núi / vua ⇒ không thêm).
+TEN_NGAN = {"cho_dong_ba": ("Đông Ba",), "chua_thien_mu": ("Thiên Mụ",), "cau_truong_tien": ("Cầu Tràng Tiền", "Trường Tiền", "Tràng Tiền")}
+# "A hay B gần hơn?", "nơi nào xa nhất?" = so hai lựa chọn từ một nơi khác, không phải khoảng cách GIỮA hai nơi ⇒ không tính sẵn
+_SO_SANH = re.compile(r"\b(?:gần|xa)\s+(?:hơn|nhất)\b|\bnào\s+(?:gần|xa)\b|\bhơn\b", re.IGNORECASE)
+# DẠNG CÂU được tính sẵn (review E 16/11 M-1: có đủ hai tên bảng chưa đủ — câu có thể hỏi khoảng cách tới nơi thứ ba "cách trung tâm", "từ ga…",
+# hoặc tên điểm nằm trong tên riêng khác "khách sạn Đông Ba", "Trường Tiền Plaza"): chữ TRƯỚC tên thứ nhất, GIỮA hai tên và SAU tên thứ hai đều phải
+# thuộc danh sách đóng dưới đây. Câu viết kiểu khác ⇒ None ⇒ đường cũ (model gọi công cụ) — chậm hơn nhưng không nối nhầm số.
+_TRUOC = {"", "từ", "đi từ"}
+_GIUA_HUONG = {"đến", "tới", "sang", "ra", "về", "đi", "qua", "vào", "lên", "xuống", "đi đến", "đi tới", "đi sang", "đi ra", "đi về", "đi qua",
+               "-", "–", "cách"}
+_GIUA_CAP = {"và", "với"}
+_GIUA_HOI = {"có gần", "có xa"}
+_SAU_HOI = re.compile(r"(?:lắm\s+)?(?:không|ko|k|hông|hok|hem)?\W*")  # "A có gần B không?"
+_SAU_CAP = re.compile(r"(?:thì\s+|là\s+)?(?:cách\s+nhau|có\s+gần\s+nhau|gần\s+nhau|có\s+xa\s+nhau|xa\s+nhau)\b")  # "A với B cách nhau bao xa?"
+_SAU_DEM = re.compile(r"(?:thì\s+|là\s+)?(?:đi\s+bộ\s+|đi\s+xe\s+máy\s+|đi\s+xe\s+|đi\s+ô\s+tô\s+|chạy\s+xe\s+)?(?:mất\s+|hết\s+|khoảng\s+|tầm\s+)*")
+
+
+def _chuan_ten(text: str) -> str:
+    return " ".join(_nfc(text).casefold().split())
+
+
+def _khoa_ten(bang: BangKhoangCach) -> list[tuple[str, str]]:
+    """(cụm chữ đã chuẩn hoá, mã) của mọi tên đọc được từ chữ người dùng, cụm dài trước. Tên kết thúc bằng " Huế" có thêm dạng bỏ " Huế" khi
+    phần còn lại ≥ 2 chữ ("Đại Nội Huế" ⇒ "đại nội", "Phố Tây Huế" ⇒ "phố tây") — cùng luật với `lich_trinh.chuan_ten`."""
+    khoa = {}
+    for i in bang.ids:
+        for ten in (bang.ten[i], *bang.ten_khac[i], *TEN_NGAN.get(i, ())):
+            k = _chuan_ten(ten)
+            dang = [k] + ([k[: -len(" huế")]] if k.endswith(" huế") and len(k.split()) >= 3 else [])
+            for d in dang:
+                khoa[d] = None if khoa.get(d, i) != i else i  # một cụm trỏ hai mã ⇒ mập mờ, bỏ cụm đó
+    return sorted(((k, i) for k, i in khoa.items() if i is not None), key=lambda x: -len(x[0]))
+
+
+def _sau_dat(giua: str, sau: str) -> bool:
+    if giua in _GIUA_HOI:
+        return bool(_SAU_HOI.fullmatch(sau))
+    if giua in _GIUA_CAP:
+        return bool(_SAU_CAP.match(sau))
+    if giua in _GIUA_HUONG:  # "Từ A đến B bao xa / mất bao lâu…": ngay sau tên thứ hai phải là từ hỏi khoảng cách, không phải "cách <nơi khác>…"
+        con = sau[_SAU_DEM.match(sau).end():]
+        return not con.startswith("cách") and bool(_TU_KM.match(con) or _TU_THOI_GIAN.match(con))
+    return False
+
+
+def tim_hai_diem(cau: str, bang: BangKhoangCach) -> tuple[str, str] | None:
+    """Câu có ĐÚNG HAI tên điểm của bảng (hai mã khác nhau, mỗi tên một lần) và đúng dạng "[từ] A <từ nối> B <hỏi khoảng cách>" ⇒ (mã A, mã B)
+    theo thứ tự trong câu; còn lại ⇒ None. So tên nguyên cụm theo ranh giới chữ, cụm dài trước, không chồng nhau. "Đến B từ A" ⇒ None (bảng hai
+    chiều có thể lệch, không đoán chiều — review E m-1)."""
+    chu = _chuan_ten(cau)
+    da_dung = [False] * len(chu)
+    thay: list[tuple[int, int, str]] = []  # (đầu, cuối, mã)
+    for khoa, ma in _khoa_ten(bang):
+        for m in re.finditer(rf"(?<!\w){re.escape(khoa)}(?!\w)", chu):
+            if not any(da_dung[m.start():m.end()]):
+                da_dung[m.start():m.end()] = [True] * (m.end() - m.start())
+                thay.append((m.start(), m.end(), ma))
+    thay.sort()
+    if len(thay) != 2 or thay[0][2] == thay[1][2]:
+        return None
+    (dau_a, cuoi_a, a), (dau_b, cuoi_b, b) = thay
+    truoc, giua, sau = chu[:dau_a].strip(" ,"), chu[cuoi_a:dau_b].strip(" ,"), chu[cuoi_b:].strip(" ,")
+    return (a, b) if truoc in _TRUOC and _sau_dat(giua, sau) else None
+
+
+def cap_tinh_san(cau: str, bang: BangKhoangCach) -> tuple[str, str] | None:
+    """Cặp điểm để code tra bảng TRƯỚC lần gọi model đầu: câu đang gõ (không lịch sử) có từ khoá khoảng cách, không phải câu so sánh, đúng dạng
+    hai điểm của bảng (`tim_hai_diem`) và bảng có số cho cặp đó. None ⇒ đi đường cũ (model gọi công cụ)."""
+    if not co_tu_khoa(cau) or _SO_SANH.search(_nfc(cau)):
+        return None
+    cap = tim_hai_diem(cau, bang)
+    return cap if cap and f"{cap[0]}|{cap[1]}" in bang.cap else None
+
+
 def mo_ta_cong_cu(bang: BangKhoangCach) -> str:
     """Mô tả công cụ: luật ngắn + danh sách `mã: tên (tên khác)` để model ánh xạ tên người dùng gõ ⇒ mã."""
     dong = [f"{i}: {bang.ten[i]}" + (f" ({', '.join(bang.ten_khac[i])})" if bang.ten_khac[i] else "") for i in bang.ids]
