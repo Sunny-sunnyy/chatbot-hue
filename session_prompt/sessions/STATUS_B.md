@@ -1,4 +1,4 @@
-# PHIÊN 16/11 — B `hue-rag-83` (A `hue-rag-db` · C `hue-rag-80`; cả nhóm Claude Code, trực tiếp) — cập nhật 15:16 16/11/2026
+# PHIÊN 16/11 — B `hue-rag-83` (A `hue-rag-db` · C `hue-rag-80`; cả nhóm Claude Code, trực tiếp) — cập nhật 15:51 16/11/2026
 
 ## PHIÊN SAU ĐỌC TRƯỚC (B viết 15:16 16/11/2026, kết phiên chiều 16/11) — việc của B theo thứ tự
 1. **Tối 16/11 19:00–20:15 — ghi kho Lập An** (2 bài quán, cho hỏi đáp; bảng quán lịch KHÔNG dựng lại): làm đúng mục "GHI KHO LẬP AN" dưới (5 lệnh; A tắt 8010 trước bước 2; trần 0,05 USD).
@@ -14,6 +14,18 @@
 **14:50 16/11/2026:** câu sức khoẻ `p9-suc-khoe-web` `9379e65` — review READY + 2 minor đã sửa, test rộng 1178 đạt (8 hỏng đều môi trường: khoá / bản build) ⇒ chờ A merge. Quán Lập An: nháp 2 bài `data/sua_kho_2026-11-16_lap_an/nhap/` (Bé Thân, Làng Chài; overlap 0), CHƯA ghi kho, chưa đo ≤ 2 km; Tam Giang không có quán đủ nguồn ⇒ không viết. Chờ A: ai đọc nháp, lượt máy dựng bảng quán.
 **Chờ:** đo DINOv2 ⇒ DINOv3 chờ E gom bộ + C kiểm nhãn + lượt máy; web gọn bản 2 chờ User qua A. Qdrant 6335 tắt lúc mở phiên.
 
+
+
+## B7 CUỐI — BƯỚC 0 ĐÃ CHẠY KHÔ (15:51 16/11/2026, 0 USD, không mở file kín) — CN 23/11 chỉ việc chạy
+Script mới: `data/phase_9/b7/tools/buoc0_cuoi.sh` — chạy `C_DONG=<sha A ghi> bash data/phase_9/b7/tools/buoc0_cuoi.sh` (in hết các điều kiện dưới). Kết quả thử trên HEAD `4a6f97a`:
+- Chỉ mục: record `1b53af26b662`, sparse `ccd1d3ae36ec`, 9.425 point (sẽ đổi sau ghi kho Lập An tối 16/11 ⇒ 23/11 ghi số lúc chạy).
+- **T đã thấy dùng lại: ĐỦ ĐIỀU KIỆN** — ROUTER `8cd30cbb359a` · CHAT `df921574c362` · `lan_tim_dau v0` · `gpt-6-luna` · timeout 10 giống giữa kỳ `dfd0c96`. (WEB `e5f516aa383e` ⇒ `7180f74a00e6` ⇒ W chạy lại, đúng plan.)
+- **L đã thấy dùng lại: KHÔNG đủ điều kiện hiện tại** — lượt Q3 gần nhất `f113ccd` (16:36 15/11) ↔ HEAD khác ở `do_so.py`, `len_ke_hoach.py`, `sua_lich_v2.py` (dòng báo sửa lịch tối 15/11) + `quan_lich.py` ⇒ 23/11 chạy L đã thấy (+≈ 0,035 USD, tổng ≈ 0,38). Có lượt Q3 mới đạt trước 23/11 ⇒ đặt `Q3_GAN=<sha>` khi chạy script.
+- Mô phỏng nhãn Q3 bộ đã thấy (W84) trên main: **10 / 10 chuỗi khớp** — `cd backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/phase_9/bo_do_sua_lich/tools/mo_phong_v2.py $PWD ../data/phase_9/bo_do_sua_lich/chuoi_da_thay.jsonl`.
+- Đầu vào khớp plan: an toàn 32 · s2 44 · s2c 17 · a 16 · golden 176 · chuỗi nhớ 25 · chuỗi sửa lịch 10. RAM trống 8 GB lúc thử.
+- Mốc RAG 1–8: tag `p9-moc` ⇒ `18e8f42` đúng; **worktree `/tmp/b7_moc` CHƯA có** ⇒ 23/11 dựng: `git worktree add /tmp/b7_moc p9-moc && ln -s /home/minhhieu/hue_rag/data /tmp/b7_moc/data && ln -s /home/minhhieu/hue_rag/knowledge-base-hue /tmp/b7_moc/knowledge-base-hue`.
+- **Phải sửa trước khi chạy:** 5 script còn ghim `dfd0c96` (`chay_khong_server.sh`, `chay_kin.sh`, `chay_kin_chuoi.sh`, `chay_ngay.sh`, `chay_sat.sh`) ⇒ đổi sang `$C_DONG`; `chay_khong_server.sh` chạy S đã thấy ×2 ⇒ bỏ dòng `s2_r2` (plan bản 2: S đã thấy ×1); `chay_kin.sh` bỏ phần C kín (chạy trong lượt C), thêm S kín ×2; thêm lượt L (Q3 đã thấy + kín 5 chuỗi) và K (ngày kín).
+- **DỞ (15:52 16/11/2026): hàm nhãn lỗi §3** — chưa viết (không viết vội: cần đúng file cuối của thủ tục S-AT giữa kỳ). Đã dò nguồn trường: an toàn `data/phase_9/b7/an_toan/cham/compare.json` (+ `compare_regen*.json` sau S-AT) — mỗi bên `g1`/`g2` có `P0_sai` / `H` / `H_trai` / `P0_thieu` với `new_in_g` (lượt đầu: g1 thiếu mới S10, S12 ⇒ sau S-AT còn 1 câu theo plan — kiểm bằng `compare_regen*.out`); ngoài phạm vi `s2/s2_r*.jsonl` (trường `cong_web`, `outcome`, `refusal`, `lop`) ⇒ S2b = câu ngoài phạm vi mở cổng web; Golden `golden/analyze.json` (`F1_oos_answered_sau`, `F2_*`, `T1_completeness.drops`, `T3_inscope_refusals`); chuỗi `cham_chuoi_b7.py may`. Thứ tự gắn nhãn: an_toan > noi_chac_sai (F2) > ngoai_kho_tra_loi (F1, S2/S2b, chuỗi) > thieu_y (câu tụt) > tu_choi_nham. Ca đối chứng: file giữa kỳ phải ra đúng 2 câu S2b + 1 câu thiếu cảnh báo.
 
 ## ĐO GIỌNG NÓI G2 — sẵn sàng chạy khi User thu xong 40 câu (B chuẩn bị 15:05 16/11/2026)
 - Plan `data/phase_10/giong_noi/plan_g2.md` (A duyệt 06/11). Thêm model thứ 3 **Gipformer 1.5 68M INT8** (A duyệt 16/11): `data/phase_10/giong_noi/models/gipformer15_68m/` (HF `g-group-ai-lab/gipformer1.5-68M-rnnt`, MIT; chỉ tải bản INT8 + tokens / bpe.model / config / README; trọng số KHÁC v1 — sha encoder `b528768939c7` ↔ v1 `3cc1a719f04d`; tokens + bpe.model giống hệt v1 ⇒ `bpe.vocab` chép từ v1 cho hotwords). `tools/g2_do.py` thêm khoá `gipformer15` (2 dòng). `sherpa-onnx` 2.0.1 có trong `.venv` (dependency chỉ ở nhánh `origin/p10-giong-noi`, chưa trên main — G3 cần merge).

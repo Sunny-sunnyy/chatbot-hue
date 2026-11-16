@@ -6,7 +6,8 @@
 
 **Việc còn mở của C:**
 1. **Bản đồ lịch — chuyển cho E** (A chốt 16/11: E code tiếp trên `p11-ban-do-bat-e`, review READY); plan của C `origin/p11-ban-do-bat` `0823fe1` chỉ để tra; worktree `/tmp/c_bd` đã gỡ. C không còn việc mở.
-2. Ứng viên (chưa giao): "cách trung tâm bao xa" cho công cụ khoảng cách — tự soi đề xuất KHÔNG xây trước 30/11.
+2. **Tốc độ câu khoảng cách — phân tích xong, chờ A / User quyết** (`data/khoang_cach_2026-11-16/toc_do.md`): lần gọi model chỉ để gọi công cụ tốn 1,8 / 3,1 s; đề xuất "khoảng cách tính sẵn" khi code thấy đúng 2 tên điểm (8 / 16 câu bắt đúng, 0 sai; +2 tên ngắn ⇒ ~12 / 14) ⇒ chữ đầu ước 1,9–2,2 s; cần bộ dò tên ≥ 20 câu do người khác soạn; ~2–3 giờ, ≈ 0,015 USD.
+3. Ứng viên (chưa giao): "cách trung tâm bao xa" cho công cụ khoảng cách — tự soi đề xuất KHÔNG xây trước 30/11.
 
 **Công cụ / lệnh (data/, private):** đếm lại câu khoảng cách `uv run python data/khoang_cach_2026-11-16/do.py <url> <application.log> [--mo-phong] [--chi i,j]`; dựng lại bảng (khi toạ độ v9 đổi) `uv run python data/khoang_cach_2026-11-16/tools/dung_bang.py data/phase_9/lich_trinh/diem_toa_do_v9.json data/phase_9/lich_trinh/khoang_cach_v1.json data/khoang_cach_2026-11-16/osrm_tho.json` (1 lần gọi OSRM công khai) — đổi bảng ⇒ đổi md5 trong `settings.yaml`.
 **Bẫy:** `tile.openstreetmap.org` / `www.openstreetmap.org` TLS thất bại từ mạng máy này (CARTO, Esri, OSM Pháp / Đức vào được); harness đổi kiểu dữ liệu hàm kiểm (`so_khoang_cach` nay trả cặp (loại, số)) ⇒ cột in lúc chạy có thể sai, tính lại từ file; ước tiền lượt đếm phải cộng phần tra web của câu bị từ chối.

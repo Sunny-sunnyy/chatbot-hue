@@ -19,6 +19,8 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 3. **A trước 20:30:** mở lại 8010 `cd backend && HF_HUB_OFFLINE=1 HUE_SO_VET=true uv run --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8010`; thử 1 câu khoảng cách.
 4. **User từ 20:30:** thử Phần 3 + 4 của `data/HUONG_DAN_TEST_USER.md` (+ mục mới 2.11b, 2.11c, 2.35c, 3.16b) rồi thu 40 câu giọng nói (`data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`) ⇒ lỗi User báo = ưu tiên số một (sổ vết bật).
 5. **B khi có 40 câu:** chạy G2 (lệnh một dòng ở STATUS_B; plan_g2 có "Sửa đổi 16/11": luật §5 áp cho 3 model).
+6a. **User (15:52 16/11/2026): LÀM TRONG TUẦN "khoảng cách tính sẵn"** (C; phân tích `data/khoang_cach_2026-11-16/toc_do.md`: lần gọi model chỉ để gọi công cụ p50 1,8 s nằm trên đường chữ đầu ⇒ code thấy đúng 2 tên điểm + từ khoá ⇒ đăng nguồn trước lần gọi đầu, không đưa công cụ; ước p50 ~2 s); **xong trước 22/11** (B7 code đứng yên); plan mức nhẹ + bộ dò ≥ 20 câu do agent con soạn.
+6b. **B7 bước 0 chạy khô XONG** (B, STATUS_B "B7 CUỐI — BƯỚC 0", `data/phase_9/b7/tools/buoc0_cuoi.sh`): T đã thấy dùng lại đủ điều kiện; L đã thấy PHẢI chạy lại (code sửa lịch đổi tối 15/11) ⇒ ≈ 0,38 USD; phải sửa trước 23/11: 5 script ghim sha cũ ⇒ `$C_DONG`, bỏ s2_r2, chay_kin bỏ C thêm S kín ×2, thêm L + K; hàm nhãn lỗi §3 chưa viết.
 6. Còn mở nhỏ: tốc độ câu khoảng cách (p50 3,7 / p95 ≈ 6,2 s > sàn — 3 lần gọi model) — chỉ xem nếu User phàn nàn; `Project_Status.md` sửa ở kết phiên tối.
 
 **Vòng tự soi chiều 16/11 (B, C, E đều gửi; A chốt):** BỎ / NHẸ — test rộng chỉ ở commit cuối trước merge (không chạy trước review; nhánh chỉ 1 hàm / giao diện ⇒ file chạm đủ); làm phép đo rẻ nhất TRƯỚC việc tốn (đọc tay bản đang chạy trước khi làm bản 2; đo 2 km trước khi viết bài kho); ước tiền gồm cả phần web / lượt biểu mẫu; nhánh chỉ tài liệu ⇒ A đọc diff. GIỮ — review độc lập cho nhánh có số người dùng thấy (bắt sàn 40 km/h), người đọc tay không viết lời dặn (bắt bản gọn sai), agent con đối chiếu bài học (12 + 3 chỗ sai), chạy thử runbook trên máy (bắt 3 bẫy deploy), nhìn 100 % ảnh mẫu (một nửa rác), thử tay trước khi sửa (lỗi vuốt có thật). CẮT — so ảnh, TTS, ghim quán / khách sạn trên bản đồ, "trích nguyên văn" mục web, khoảng cách "cách trung tâm".
@@ -143,6 +145,7 @@ Cách đọc: lệnh 1 = số dòng nhắc 7 nơi mới; lệnh 2 in "k / n chu�
 cd /home/minhhieu/hue_rag/backend && PYTHONPATH=$PWD HF_HUB_OFFLINE=1 uv run python ../data/phase_9/bo_do_sua_lich/tools/kiem_bo.py --ca-kin 2>/dev/null | tail -1; echo "ma thoat: ${PIPESTATUS[0]}"
 ```
 Cách đọc: "lỗi thêm khi gộp bộ kín: 0" + "ma thoat: 0" ⇒ ổn; số > 0 ⇒ báo A; không có dòng đếm + "ma thoat: 1" ⇒ file kín sai khuôn / công cụ lỗi, không lộ gì. **Ba lệnh (1) + (1b) cần chạy xong trước lượt đo cuối B7.**
+**(2) MỚI (15:52 16/11/2026) — thay danh sách bên dưới:** `bash data/xoa_nhanh_2026-11-16.sh` (A lập: 63 nhánh `git branch -r --merged origin/main` trừ `p10-giong-noi`, `p9-b5c`, `p9-sua-lich`, `p9-toc-do-6`; cộng `p9-web-gon`, `p9-web-gon-2` đã gắn tag `hoso/…` và push). Trước khi chạy: gỡ worktree `/tmp/b_*`, `/tmp/c_bd`, `/tmp/e_dep` (session của chúng gỡ).
 **(2) Xoá nhánh đã merge** (A liệt kê bằng `git branch -r --merged origin/main` lúc kết phiên chiều; gồm cả 14 nhánh của phiên trưa chưa xoá):
 ```
 git worktree prune
