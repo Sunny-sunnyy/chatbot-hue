@@ -53,3 +53,8 @@ Không Q1 / Playwright: không đổi chuỗi gửi model ngoài lời dặn m�
 
 ## Tiền
 0,00463 (28 đầu vào) + 0,0328 (bộ dò) = **0,0374 USD** / trần 0,05. Không agent con của B.
+
+## Kết (B ghi 14:42 16/11/2026) — KHÔNG merge, nhánh thành hồ sơ
+- **Sàn đọc tay** (agent con của A, `data/web_gon_2026-11-16/do/doc_tay_ket_qua.md`): bản 2 = **2 vi phạm rõ + 4 ranh giới** (bỏ ca / lưu ý khi rút gọn; lấy giờ của thứ khác; mất câu "không xác nhận cho Huế"; giờ ngày đặc biệt thay giờ thường) ↔ **bản dài đang chạy: 1 nhẹ + 1 ranh giới** (`doc_tay_ban_cu_ket_qua.md`) ⇒ bản 2 trượt sàn, tệ hơn bản đang chạy.
+- 6 câu hỏi-kèm bị người đọc đếm là "`KHONG_CO` mà đoạn trích có câu trả lời": B kiểm cả 6 tin nhắn gửi model đều có "chỉ viết cho phần: …" (mục web chỉ viết cho vế kho thiếu) ⇒ đoạn trích trả lời vế kho ĐÃ trả lời ⇒ nhiều khả năng **không phải lỗi** (người đọc chấm theo cả câu).
+- **User chọn giữ bản dài + câu sức khoẻ** ⇒ phần sức khoẻ tách sang nhánh `p9-suc-khoe-web` (lời dặn cũ + dòng `SUC_KHOE`); nhánh này không merge. Hướng nếu mở lại: trích nguyên văn (code đánh số câu đoạn trích, model chỉ chọn số câu) — trị bỏ điều kiện, không trị "câu đúng chữ nhưng nói về nơi khác" (C).
