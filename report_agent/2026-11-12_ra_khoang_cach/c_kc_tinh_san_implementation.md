@@ -57,7 +57,19 @@ Server tạm 8041 từ worktree main `1e45a78` (cờ bật), cùng 16 câu, mộ
 - Kết quả: `data/khoang_cach_2026-11-16/do_san_r1_ban_cuoi_1e45a78.json` (bản đầu: `do_san_r1_ban_dau_50fbf4e.json`), log `application_8041_san_ban_cuoi.log`.
 - Tổng tiền cả việc: 0,0131 + 0,0122 = **0,0253 USD** (trần plan 0,05).
 
-## 4. Tiền + thời gian (số đo thật)
+## 3d. Hai điều E thấy khi chạy thử hướng dẫn trên server đang chạy (C, 20:56 16/11/2026; 0 USD)
+- **Ghi chú "chưa tính kẹt xe" vắng ở câu trả lời.** Đếm từ 4 lượt đo đã có (chữ "kẹt xe / dừng nghỉ" trong câu trả lời): đường tính sẵn 9 / 13 (bản cuối) + 7 / 13
+  (bản đầu) = 16 / 26; đường công cụ 16/11 chiều 9 / 13 + 8 / 13 = 17 / 26 ⇒ hai đường như nhau, model bỏ ghi chú ở ~35 % câu — không do đường mới, nhưng ghi chú
+  là phần bắt buộc đi cùng số ước ⇒ chuyển cho code (A quyết). **Sửa (nhánh `p9-kc-ghi-chu`):** `assistant.set_notice` — câu trả lời trích nguồn khoảng cách mà chữ
+  không có "kẹt xe" ⇒ nối `kc.CAU_GHI_CHU` vào dòng cố định dưới câu trả lời (sự kiện `notice` sẵn có; đứng trước dòng "có thể đã thay đổi" nếu có cả hai,
+  cùng một đoạn). Không đổi chuỗi gửi model, không đổi chữ model. Test tất định (đường công cụ + đường tính sẵn, stream / không; model đã ghi ⇒ không lặp;
+  không trích nguồn khoảng cách ⇒ không nối): `test_khoang_cach.py` 101 passed. Giới hạn: model viết ý đó bằng chữ khác ("chưa tính tắc đường") ⇒ có thể lặp ý.
+- **Câu "…bao xa, rồi ghé <khách sạn> nữa?" từ chối 1 / 2 lần.** Đọc sổ vết hai lượt: trình tự giống hệt tới lần viết cuối (nguồn tính sẵn của chặng đầu có trong
+  ngữ cảnh; model tự tìm kho 2 lần cho chặng sau, không thấy); lượt từ chối là do chính model viết câu từ chối chuẩn (không phải bước kiểm số rút câu, không
+  phải xin công cụ đã ẩn). Gốc: bộ dò "câu nhiều ý" không tách dạng câu này ⇒ lời dặn thường "thiếu ⇒ từ chối cả câu" — **giới hạn câu hai ý đã ghi 14/11**,
+  không do đường tính sẵn (suy từ code + bản ghi; đường công cụ tới cùng lần viết đó với cùng nguồn). A quyết: ghi giới hạn, không mở rộng bộ dò câu nhiều ý.
+
+ (số đo thật)
 - Tiền: **0,0131 USD** (`scripts/dem_chat_metrics.py --log <log 8041> --sha 50fbf4e`: 18 lượt = 1 câu thử + 16 câu + 1 câu "trước"). Trần 0,05. Chưa ai tính lại.
 - Mỗi câu đường nhanh ≈ 0,0004 USD (đường công cụ 16/11 ≈ 0,0006–0,0008).
 - Thời gian: pytest file chạm 14,3 s; bộ dò < 5 s; lượt đo 16 câu ≈ 2 phút. Test rộng: NOT RUN (làm một lần ở commit cuối trước merge).
