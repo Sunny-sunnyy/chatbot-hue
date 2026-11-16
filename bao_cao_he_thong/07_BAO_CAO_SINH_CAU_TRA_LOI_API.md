@@ -4,6 +4,9 @@
 Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (đúng hiện trạng 14/11/2026)
+- Chiều 16/11 (B): **câu sức khoẻ ở mục web có câu nhắc cố định** "…nên hỏi dược sĩ hoặc bác sĩ trước khi dùng." do **code** nối (merge `3a4d5db`): lần gọi viết mục web chỉ gắn dấu `SUC_KHOE`, code bỏ dấu trước mọi kiểm. Bộ dò 27 câu (người khác soạn, đường thật): sức khoẻ 12 / 12, cấp cứu 3 / 3; **gắn thừa 3 / 9** câu sát chủ đề (giờ bệnh viện, nhà thuốc, món "tốt cho sức khoẻ") — ghi giới hạn. `report_agent/2026-11-12_ra_khoang_cach/b_suc_khoe_web_implementation.md`.
+- Chiều 16/11 (B): **mục web gọn — thử 2 bản, KHÔNG áp dụng** (bạn giữ bản dài): bản 2 hết kể lể (25 / 28 ⇒ 0 / 15 mục có viết, dài trung vị ~190 ⇒ 99 ký tự; 13 / 28 ra "chưa tìm thấy") nhưng sàn đọc tay "0 khẳng định ngoài đoạn trích" trượt (2 rõ + 4 ranh giới ↔ bản đang chạy 1 nhẹ + 1). Nhánh hồ sơ `p9-web-gon-2`; `…/b_web_gon_2_implementation.md`.
+- Chiều 16/11 (B): **ghi chú ăn phá Tam Giang** (trưa + tối, theo kho `Phá Tam Giang.md`, merge `9ac14cf`): bữa có quán hoặc ghi chú **86,4 ⇒ 94,5 %** (mô phỏng 22.752 bữa; bữa có quán giữ 75,2 %). **Xin chỗ ở không nêu hạng:** đếm 9 câu (0,019 USD) — 0 / 9 hỏi lại hạng, 8 / 9 trả lời được từ kho, 1 / 9 câu "thêm chỗ ở vào lịch" bị từ chối ⇒ **không xây**, ghi giới hạn.
 - Chiều 15/11 (B): **câu hỏi nối tiếp không còn tra web bằng câu cụt** — cờ `web_cau_noi_tiep` **BẬT 17:50 15/11/2026** (bạn chọn; A thử ca gốc qua stream: mục web đúng nơi kèm giờ). Lượt có lịch sử + model đã tìm kho ⇒ câu gửi Serper và câu đưa lần viết mục web = **câu tìm kho cuối model viết** (vẫn qua bộ lọc email / số điện thoại / 120 ký tự); lượt đầu, lượt model không tìm, lượt nhiều ý, câu tìm rỗng sau lọc ⇒ như cũ. Đo: câu tra web đúng chủ thể 8 / 8 (trước 0 / 10), mục web lạc đề 0 / 8 (trước 2 / 2), nhưng chỉ 2 / 8 mục có thông tin dùng được; tên người dùng 0 / 4 lượt chạm (mẫu nhỏ). Chi tiết: mục 4.
 - Chiều 15/11 (B): mỗi dòng `chat_metrics` có **`git_sha`** của bản code đang chạy; `scripts/dem_chat_metrics.py --sha` đếm đúng một bản (sáng 15/11 hai lần đếm tốc độ trộn dòng của bản cũ). **Tốc độ:** bạn chọn BỎ "tra web sớm", GÁC "gộp câu tìm" (đếm trước: tra web sớm không đổi chữ đầu, chỉ ~−2 s trên ~15 s; gộp câu tìm chạm ~5 % lượt) — plan thành hồ sơ.
 - Chiều 15/11 (C): **sửa lịch bằng lời đổi được ngày đi** (hành động thứ 8, không tham số; ngày do code đọc từ chữ người dùng; lịch có thể xếp lại và dòng báo nêu rõ). Chi tiết + số đo: mục 4.
@@ -229,6 +232,9 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (mới ở trên)
+
+### 16/11/2026 chiều — câu nhắc sức khoẻ ở mục web (merge `3a4d5db`); mục web gọn thử 2 bản rồi bỏ; ghi chú ăn Tam Giang (merge `9ac14cf`); đếm "chỗ ở không nêu hạng" (không xây)
+- B; số + giới hạn ở mục Tóm tắt. Đã thử và bỏ: mục web gọn bản 1 (đọc tay độc lập 1 rõ + 3 ranh giới), bản 2 (2 rõ + 4 ranh giới; hai họ lỗi: bỏ điều kiện khi rút gọn, lấy điều của thứ khác) — hướng để ngỏ: trích nguyên văn (model chọn số câu). Câu sức khoẻ trên lời dặn bản 2 gắn thừa 1 / 9, trên lời dặn dài 3 / 9. Tiền B chiều 16/11 ≈ 0,091 USD. Report `…/b_web_gon_2_implementation.md`, `…/b_suc_khoe_web_implementation.md`.
 
 ### 15/11/2026 chiều — câu hỏi nối tiếp: câu tra web lấy từ câu tìm kho cuối model viết (merge `p9-web-noi-tiep`, cờ BẬT 17:50 15/11/2026)
 - B; lỗi bạn gặp khi tự thử (hỏi một ngôi chùa, rồi "mở cửa lúc mấy giờ" ⇒ mục web nói về nơi khác). Tái tạo 2 / 2 trên đường stream, có và không đại từ. Nguyên nhân gốc (ghi lại câu thật ở từng khâu): kho không mất ngữ cảnh; `cong_web` gửi `cau_tim_web(câu lượt này)` — thiết kế cũ "không lịch sử" (sàn 0 tên người dùng ra web). `report_agent/2026-11-12_ra_khoang_cach/b_cau_noi_tiep_dem.md`.
