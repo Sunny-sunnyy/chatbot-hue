@@ -1,6 +1,6 @@
 # Bài 22 — Viết thêm vào sổ tay mà không làm hỏng trang cũ: sáu lần ghi kho ngày 14/11
 
-*Cập nhật lần cuối: 11:30, ngày 15/11/2026 · thêm sửa hai bài nói khác nhau về năm Tây Sơn đóng đô. Trước: 09:43, ngày 15/11/2026 · thêm lượt đo bù 65 câu cho lần 4–6 (không câu nào tụt). Trước: 20:31, ngày 14/11/2026 · thêm lần ghi kho thứ sáu (16 bài lễ hội / nghệ thuật). Trước: 19:41, ngày 14/11/2026 · thêm lần ghi kho thứ năm (10 món, 13 địa điểm / di tích mà trợ lý từng từ chối hoặc trả lời mỏng). Trước: 17:59, ngày 14/11/2026 · thêm lần ghi kho thứ tư (tám quán ăn cho những vùng lịch còn thiếu quán). Trước: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
+*Cập nhật lần cuối: 18:21, ngày 16/11/2026 · thêm hai bài quán ven đầm Lập An (kho 265 bài). Trước: 11:30, ngày 15/11/2026 · thêm sửa hai bài nói khác nhau về năm Tây Sơn đóng đô. Trước: 09:43, ngày 15/11/2026 · thêm lượt đo bù 65 câu cho lần 4–6 (không câu nào tụt). Trước: 20:31, ngày 14/11/2026 · thêm lần ghi kho thứ sáu (16 bài lễ hội / nghệ thuật). Trước: 19:41, ngày 14/11/2026 · thêm lần ghi kho thứ năm (10 món, 13 địa điểm / di tích mà trợ lý từng từ chối hoặc trả lời mỏng). Trước: 17:59, ngày 14/11/2026 · thêm lần ghi kho thứ tư (tám quán ăn cho những vùng lịch còn thiếu quán). Trước: 16:17, ngày 14/11/2026 · thêm lần ghi kho thứ ba (bốn nơi chưa có bài + giờ Đại Nội theo mùa); bản đầu đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -246,6 +246,22 @@ và từ đấy Phú Xuân mới là kinh đô. Khi phải chọn giữa hai cá
   chí cho khớp. Không có lượt hỏi trước khi sửa để so.
 - Tiền ≈ 0,03 USD (phần lớn là lượt chạy bù an toàn + ngoài kho).
 
+## Thêm ngày 16/11: hai quán ven đầm Lập An
+
+**Vì sao.** Khi rà các bữa ăn còn trống trong lịch, nhóm tìm quán quanh đầm Lập An và có hai quán hải sản ở Lăng Cô đủ nguồn. Cả hai cách điểm tham quan
+trong lịch khoảng 2,5–2,75 km, mà lịch chỉ gợi ý quán trong 2 km, nên hai quán **không vào lịch**. Mình viết thành hai bài kho để trợ lý trả lời được khi
+ai đó hỏi ăn hải sản ở khu này.
+
+**Ghi.** Kho 263 ⇒ **265 bài**, 9.425 ⇒ **9.436 đoạn** (+11). Không sửa bài cũ. Trước khi dựng chỉ mục, một người khác đọc bản nháp: nguồn ghi địa chỉ theo
+tên đơn vị hành chính cũ, còn các bài khác trong kho gọi theo tên mới ⇒ sửa hai dòng mỗi bài theo cách kho đang gọi, ghi chú tên cũ theo nguồn.
+
+**Đo.**
+- Đếm bằng code trước: trong 158 câu đo có đáp án chỉ **2 câu** đổi 10 đoạn đầu, trong 32 câu an toàn có **2 câu**. Chỉ chạy lại 4 câu đó và 18 câu ngoài kho.
+- Kết quả: 0 lỗi; **0 / 18** câu ngoài kho bị trả lời (sàn là 0); hai câu đo trả lời cùng ý với lần trước; hai câu an toàn vẫn được trả lời, ý không đổi so với lần trước.
+- Hai câu hỏi thử về quán hải sản ở khu này: trước khi ghi trợ lý **từ chối cả hai**; sau khi ghi **trả lời cả hai**, nêu quán mới, trích đúng bài mới,
+  không nêu giờ hay giá ngoài bài. Hai câu là mẫu rất nhỏ — đủ để thấy bài mới được tìm ra, chưa đủ để nói mọi cách hỏi đều ra.
+- Tiền ≈ 0,01 USD — thấp hơn các lần 3–6 (0,03–0,05 USD) vì chỉ 4 câu bị chạm.
+
 ## Một chuyện thật: hai lần "trượt chữ" mà vẫn giữ
 
 **Từ chối nhầm 3 ⇒ 5 (lần 1).** Theo luật ghi trước, đây là trượt. Nhưng trước khi kết luận "bài mới làm hỏng", mình xem hai câu thêm vào:
@@ -279,7 +295,7 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 ## Ba điều chính
 
 1. Mỗi lần ghi kho là một thí nghiệm nhỏ: **đo trước ↔ sau trên cùng bộ câu, tiêu chí ghi trước**. Script làm cả chuỗi ghi và tự lùi nếu lỗi.
-2. Sáu lần ghi ngày 14/11 thêm **59 bài**: kho 204 ⇒ 263 bài, 8.435 ⇒ 9.425 đoạn. Câu cũ không tụt: lần 1–2 chấm điểm trung bình cả bộ, lần 3–6 đọc tay từng câu có đoạn bài mới, rồi đo bù 65 câu đổi top 10 (56 cùng ý, 1 tốt lên); vài câu lệch nằm trong mức cho phép.
+2. Sáu lần ghi ngày 14/11 thêm **59 bài**: kho 204 ⇒ 263 bài, 8.435 ⇒ 9.425 đoạn (ngày 16/11 thêm 2 bài quán ⇒ nay 265 bài, 9.436 đoạn). Câu cũ không tụt: lần 1–2 chấm điểm trung bình cả bộ, lần 3–6 đọc tay từng câu có đoạn bài mới, rồi đo bù 65 câu đổi top 10 (56 cùng ý, 1 tốt lên); vài câu lệch nằm trong mức cho phép.
    Câu đi lại trả lời được nhiều hơn (2 ⇒ 4 / 6, mình tự đọc), câu khách sạn cũng vậy (4 ⇒ 11 / 12, chấm mù), câu về cầu và nhà ga hết bị từ chối.
    Tám quán mới (bảy quán có vị trí vào lịch) đưa bữa có quán trong sổ ở lịch từ 49,3 lên 69,1 %.
    Lần 5 và 6: 23 + 16 thứ trợ lý từng từ chối hoặc trả lời mỏng nay đều trả lời bằng bài mới.
@@ -305,6 +321,7 @@ nhiễu của model. Ngữ cảnh có đoạn mới thì mới cần đọc kỹ
 - Lần 4: tiêu chí ghi trước `data/sua_kho_2026-11-14_ghi_kho_4/TIEU_CHI.md`; nguồn tra quán `data/tra_cuu_cli/2026-11-14_quan-thuy-xuan-dam-chuon/`, `…_quan-kim-long-thuan-an/`; 224 bài / 8.644 đoạn, T1 9 / 158 đổi, 3 câu chạm, ngoài kho 0 / 18, an toàn 0 đổi lớp, 4 câu thử, 0,030 USD: `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_4_implementation.md` [đã chạy]; bảng quán + 69,1 % + số theo vùng: `data/quan_lich_2026-11-14/bien_ban_quan_kho_them.md`, `dem_theo_cum_kho4.json` (nhánh `p9-quan-kho4-bang`, review `e_review_quan_kho4_bang.md`); câu thử "trước" 3 / 4 đọc từ `data/sua_kho_2026-11-14_ghi_kho_4/hoi_thu_truoc.jsonl` (report B ghi 2 / 4 — sai); mốc 49,3 %: `p9-quan-kho-cum` [đã chạy].
 - Lần 6: đếm `data/bai_kho_6_le_hoi/BUOC_1_DEM.md` (39 mục, 24 hỏi thử: 9 / 7 / 8); kiểm chéo `data/bai_kho_6_le_hoi/b_kiem_8_bai_c.md` (0 / 14 / 42), `c_review_8_bai_b.md`; quét trùng `data/sua_kho_2026-11-14_ghi_kho_6/overlap.txt`; 263 / 9.425, T1 42 / 158 đổi, 2 câu chạm, ngoài kho 0 / 18, an toàn 0 đổi lớp, 24 câu thử 9 (+ 1 "chưa có thông tin") ⇒ 0 từ chối, 0,045 USD (report B ghi "10" và "~13 / ~43" — biên bản gốc 14 / 42): `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_6_implementation.md` [đã chạy].
 - Lần 5: tiêu chí `data/sua_kho_2026-11-14_ghi_kho_5/TIEU_CHI.md`; đếm món `data/mon_an_2026-11-14/BUOC_1_DEM.md` (46 tên, 21 hỏi thử, 10 hỏng, ≈ 0,014 USD); đếm nơi `data/bai_kho_5_dia_danh/ket_qua_buoc1.json`, `BAN_GIAO.md` (92 nơi, 42 hỏi thử, 14 hỏng, 0,0244 USD + Serper ≈ 0,025); review `data/mon_an_2026-11-14/c_review_10_bai.md` + biên bản C cho 13 bài (301 số); 247 / 9.032, T1 35 / 158 đổi, 3 câu chạm, ngoài kho 0 / 18, an toàn 0 đổi lớp, 23 câu thử, 0,039 USD: `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_5_implementation.md` [đã chạy].
+- Hai quán ven đầm Lập An (16/11): số bài / đoạn, câu chạm 2 / 158 + 2 / 32, 0 / 18, hai câu thử trước ↔ sau, tiền 0,0104 USD, người thứ hai đọc nháp: `report_agent/2026-11-12_ra_khoang_cach/b_ghi_kho_lap_an_implementation.md`; tiêu chí ghi trước `data/sua_kho_2026-11-16_lap_an/TIEU_CHI.md`; khoảng cách 2,5–2,75 km tới điểm lịch: `session_prompt/CURRENT_HANDOFF.md` (A, 16/11) [đã chạy]
 - Sửa năm Tây Sơn (15/11): `report_agent/2026-11-12_ra_khoang_cach/c_kho_mau_thuan.md` (quét, nguồn khamphahue 29/07/2018 + Tạp chí Đông Nam Á 29/11/2024), `c_sua_kho_tay_son_implementation.md`, review `e_review_tay_son.md`; dựng 9.425 point, record `1b53af26b662`, T1 `aa34d4215f15` giống mốc, 0 câu có đoạn sửa, 2 câu thử PARTIAL so tiêu chí (`data/sua_kho_2026-11-15_tay_son/TIEU_CHI.md`), chạy bù an toàn 32 (0 đổi lớp, 0,0218 USD) + 18 ngoài kho (0 / 18, 0,0046 USD) `sau/` [đã chạy]; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_tay_son.md` (25 khẳng định: 1 sai — bỏ sót an toàn / ngoài kho, 4 dễ hiểu nhầm — đã sửa).
 - Kiểm độc lập lần 6 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan6.md`): 39 mục — 31 đúng, 1 sai (tiền 0,03–0,04 ⇒ 0,03–0,05), 6 dễ hiểu nhầm, 1 không kiểm được; đã sửa cả 7.
 - Kiểm độc lập lần 5 (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_22_lan5.md`): 50 mục — 39 đúng, 2 sai (câu "ba lần" sót, giờ bài 01), 6 dễ hiểu nhầm, 3 không kiểm được (lý do tiền đắt là suy luận — đã ghi "mình đoán"); đã sửa cả 8.

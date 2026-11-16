@@ -46,7 +46,7 @@ nặng → nhẹ:** sai cảnh báo an toàn > nói chắc sai > trả lời câ
 
 | Đo gì | Kết quả | Đo lúc nào, trên gì |
 |---|---|---|
-| Kho | 263 bài → 9.425 đoạn | chỉ mục dựng lại 11:22 15/11 (sửa 2 câu năm Tây Sơn); trước 20:21 14/11 (lần ghi kho 6: 16 lễ hội / nghệ thuật) |
+| Kho | 265 bài → 9.436 đoạn | chỉ mục dựng lại 18:15 16/11 (thêm 2 bài quán ven đầm Lập An); trước 11:22 15/11 (sửa 2 câu năm Tây Sơn); trước 20:21 14/11 (lần ghi kho 6: 16 lễ hội / nghệ thuật) |
 | Điểm chất lượng (thang 1–5) | Đúng **4,71** · Đủ ý **4,58** · Trúng ý **4,72** | **bản cuối Phase 8** (01/11), 129 câu Golden có đáp án trong kho (đã bỏ 29 câu ít giống cách người thật hỏi) |
 | … loại câu yếu nhất | câu cần ghép nhiều nguồn: Đủ ý **3,50** (Phase 9 thêm "tìm thêm" để sửa — chưa đo lại trên cả bộ) | như trên |
 | Từ chối nhầm (kho có đáp án mà nói "không đủ thông tin") | **4–6 / 158** câu (mỗi lần chạy lại ra 4–6 vì model viết hơi khác mỗi lần); trước khi có "tìm thêm": 12 / 158 | 158 câu Golden có đáp án trong kho, 03/11 |
