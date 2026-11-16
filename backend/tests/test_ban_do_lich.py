@@ -62,7 +62,8 @@ def test_maps_link_by_name_and_coordinates_only_loaded_for_map_flag():
     # không cần file toạ độ
     for i in lt.ban_do(BANG, KHUNG, TOA_DO):
         assert i["map_url"] == lt.MAP_BASE + lt.quote(f"{i['ten']}, Huế")
-    assert not SETTINGS["assistant"].get("ban_do_lich") and AssistantFlags.from_settings(SETTINGS).toa_do_lich is None
+    tat = {**SETTINGS, "assistant": {**SETTINGS["assistant"], "ban_do_lich": False}}  # test tự đặt cờ, không dựa cờ thật trong settings.yaml
+    assert AssistantFlags.from_settings(tat).toa_do_lich is None
 
 
 def test_flag_needs_coordinates():
