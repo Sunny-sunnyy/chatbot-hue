@@ -182,6 +182,27 @@ def test_lodging_price_is_caught():
     assert trace.web["outcome"] == "khong_tin_cay" and trace.web["kiem"] == ["gia_luu_tru"]
 
 
+@pytest.mark.parametrize("text, outcome, giu", [
+    ("Phòng tập A mở từ 5h sáng [w1].\nSUC_KHOE", "co_muc", "Phòng tập A mở từ 5h sáng [w1]."),
+    ("Phòng tập A mở từ 5h sáng [w1]. SUC_KHOE", "co_muc", "Phòng tập A mở từ 5h sáng [w1]."),
+    ("Vé vào cửa 20.000 đồng [w1].\nSUC_KHOE", "khong_tin_cay", tw.WEB_KHONG_TIN_CAY_TEXT),  # tiền ngoài đoạn trích ⇒ rào vẫn chặn
+    ("Phòng tập A mở từ 5h sáng [w1].\nsuc_khoe", "co_muc", "Phòng tập A mở từ 5h sáng [w1]."),  # review: model viết thường
+    ("Phòng tập A mở từ 5h sáng [w1].\nSuc_Khoe", "co_muc", "Phòng tập A mở từ 5h sáng [w1]."),
+    ("SUC_KHOE", "khong_tin_cay", tw.WEB_KHONG_TIN_CAY_TEXT),  # model chỉ trả mỗi dấu ⇒ chữ rỗng ⇒ rào "rong" chặn, câu cố định vẫn nối
+])
+def test_health_marker_is_removed_and_code_adds_the_fixed_line_on_every_outcome(text, outcome, giu):
+    # 16/11: model chỉ gắn dấu; dấu bỏ TRƯỚC mọi kiểm (dòng dấu riêng không làm hỏng luật "mỗi đoạn ≥ 1 mã"); câu cố định do code nối
+    web = run_web(text)[0].web
+    assert (web["outcome"], web["text"], web.get("suc_khoe")) == (outcome, f"{giu}\n\n{tw.SUC_KHOE_TEXT}", True)
+    assert "SUC" not in web["text"].replace(tw.SUC_KHOE_TEXT, "")
+
+
+def test_no_health_marker_no_fixed_line_and_lowercase_vietnamese_is_not_a_marker():
+    for text in ("Phòng tập A mở từ 5h sáng [w1].", "Món chè này được cho là tốt cho sức khoẻ [w1].", "Quán ghi suc khoe la vang [w1]."):
+        web = run_web(text)[0].web
+        assert web["outcome"] == "co_muc" and tw.SUC_KHOE_TEXT not in web["text"] and "suc_khoe" not in web
+
+
 @pytest.mark.parametrize("tim, outcome, text", [
     (serper(status=403), "web_loi", tw.WEB_LOI_TEXT),
     (serper(body={"organic": []}), "web_rong", tw.WEB_RONG_TEXT),
