@@ -29,6 +29,8 @@ MAX_SNIPPET_CHARS = 400
 
 WEB_LOI_TEXT = "Mình chưa tra được web lúc này."  # D3: lỗi / hết giờ / hết hạn mức / thiếu khoá
 WEB_RONG_TEXT = "Mình chưa tìm thấy thông tin phù hợp trên web."  # Serper trả 0 kết quả
+# 16/11 (User chọn): câu sức khoẻ ⇒ CODE nối câu này dưới mục web (model chỉ gắn dấu `SUC_KHOE`, không tự viết lời khuyên)
+SUC_KHOE_TEXT = "Thông tin sức khoẻ, thuốc men trên web chỉ để tham khảo — bạn nên hỏi dược sĩ hoặc bác sĩ trước khi dùng."
 WEB_KHONG_TIN_CAY_TEXT = "Mình chưa tra được thông tin đáng tin trên web."  # D5 (iv): kiểm cuối hỏng ⇒ bỏ mục model viết
 
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
@@ -245,6 +247,15 @@ def kiem_muc_web(text: str, so_web: list[dict], luu_tru: bool, thoi_gian_thuc: b
         # đề) — như luật tiền: một số không có ⇒ cả mục bị bỏ. Câu thời gian thực đã cấm mọi chữ số ở trên (giữ đường "chưa xác minh") ⇒ không kiểm thêm.
         loi.append("so_ngoai_trich")
     return loi
+
+
+_SUC_KHOE = re.compile(r"(?<![A-Za-z])SUC[_ ]?KHOE(?![A-Za-z])")  # chữ HOA, không dấu: không khớp "sức khoẻ" người viết thường
+
+
+def tach_suc_khoe(text: str) -> tuple[str, bool]:
+    """Dấu `SUC_KHOE` model gắn cho câu sức khoẻ ⇒ (chữ đã bỏ dấu, có dấu không). Chữ dấu không bao giờ hiện cho người dùng."""
+    sach = _SUC_KHOE.sub("", text)
+    return (sach.strip(), True) if sach != text else (text, False)
 
 
 def ma_da_dung(text: str) -> list[int]:
