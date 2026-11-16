@@ -22,7 +22,7 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
 6. Còn mở nhỏ: tốc độ câu khoảng cách (p50 3,7 / p95 ≈ 6,2 s > sàn — 3 lần gọi model) — chỉ xem nếu User phàn nàn; `Project_Status.md` sửa ở kết phiên tối.
 
 **Vòng tự soi chiều 16/11 (B, C, E đều gửi; A chốt):** BỎ / NHẸ — test rộng chỉ ở commit cuối trước merge (không chạy trước review; nhánh chỉ 1 hàm / giao diện ⇒ file chạm đủ); làm phép đo rẻ nhất TRƯỚC việc tốn (đọc tay bản đang chạy trước khi làm bản 2; đo 2 km trước khi viết bài kho); ước tiền gồm cả phần web / lượt biểu mẫu; nhánh chỉ tài liệu ⇒ A đọc diff. GIỮ — review độc lập cho nhánh có số người dùng thấy (bắt sàn 40 km/h), người đọc tay không viết lời dặn (bắt bản gọn sai), agent con đối chiếu bài học (12 + 3 chỗ sai), chạy thử runbook trên máy (bắt 3 bẫy deploy), nhìn 100 % ảnh mẫu (một nửa rác), thử tay trước khi sửa (lỗi vuốt có thật). CẮT — so ảnh, TTS, ghim quán / khách sạn trên bản đồ, "trích nguyên văn" mục web, khoảng cách "cách trung tâm".
-**Tiền chiều 16/11 (theo tin báo, CHƯA ai tính lại):** B ≈ 0,091 · C ≈ 0,053 · E ≈ 0,002 phần đã báo (chạy thử deploy 0,00045 + bản đồ 0,0018; Serper gom ảnh chưa báo — xem STATUS_E) · A ≈ 0,002 · agent con 0 ⇒ ≈ 0,15 USD + phần E chưa báo.
+**Tiền chiều 16/11 (theo tin báo, CHƯA ai tính lại):** B ≈ 0,091 · C ≈ 0,053 · E ≈ 0,023 (Serper gom ảnh 21 lượt 0,021 + chạy thử deploy 0,00045 + bản đồ 0,0018) · A ≈ 0,002 · agent con 0 ⇒ ≈ 0,17 USD. md5 Dockerfile mới (bảng ảnh v7) `68a871655df2` — sửa spec deploy §4 khi viết bản chính; spec đã merge main (worktree `/tmp/e_dep` gỡ được).
 
 ## PHIÊN CHIỀU 16/11 (thứ Hai; A mở, cập nhật 14:06 16/11/2026)
 

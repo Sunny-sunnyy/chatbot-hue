@@ -20,6 +20,9 @@
   · **So ảnh:** tạm dừng; E đề xuất ở vòng tự soi: thu nhỏ về DINOv3 trên 341 ảnh mẫu sạch + bộ đo cũ, hoặc cắt — chờ A chốt. Chỗ dở ở dòng "Gom ảnh so ảnh TẠM DỪNG" bên dưới.
   · Ảnh lịch Thiệu Trị: chưa làm. Tiền phiên chiều E: Serper 21 lượt ≈ 0,021 + OpenAI ≈ 0,0018 (bản đồ) + 0,00045 (deploy thử) ≈ **0,023 USD**.
 - 15:40 16/11/2026 — Bản đồ ĐÃ MERGE (`b886b53`), `/tmp/e_bando` đã gỡ. **Ảnh lịch Thiệu Trị CHỜ một người nhìn + merge:** `p9-anh-thieu-tri` @ `71f7864` (worktree `/tmp/e_tt`, 2 symlink — gỡ sau merge); bảng ảnh v7 md5 `4c4158648085`; Docker nháp đã trỏ v7 (md5 Dockerfile trong spec deploy §4 lệch — sửa khi spec merge). So ảnh: nhóm đồng thuận CẮT (A trình User).
+- 15:44 16/11/2026 — **KẾT PHIÊN CHIỀU 16/11 (E).** Ảnh Thiệu Trị ĐÃ MERGE (`3f1f3ae`), `/tmp/e_tt` đã gỡ. Worktree còn: `/tmp/e_dep` (spec deploy, chờ A merge). Ảnh Docker `hue-rag-app:a9d1674` để lại trên máy. 0 server / tiến trình nền của E.
+  · **TIỀN E chiều 16/11:** Serper 21 lượt (tìm ảnh web) ≈ **0,021 USD** · OpenAI: chạy thử deploy 1 câu ≈ 0,00045 + đo bản đồ (server tạm 8041, cộng từ `chat_metrics`) ≈ 0,0018 ⇒ **tổng ≈ 0,023 USD**. Codex tra web 1 lượt (lượt ChatGPT của User, không tính USD).
+  · Việc dở cho phiên sau: spec deploy — sửa md5 Dockerfile ở §4 khi viết bản chính (v7 đổi Dockerfile: md5 mới `68a871655df2`); so ảnh: chờ User chốt cắt.
 ---
 
 # STATUS E — KẾT PHIÊN TỐI 15/11 (chốt lần cuối 22:07 15/11/2026, `date`) · terminal `hue-rag-f0` · Claude Fable 5.2 · vai thực thi
