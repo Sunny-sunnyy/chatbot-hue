@@ -3,6 +3,27 @@
 Cập nhật: 22:08 15/11/2026 (A, chốt lần cuối kết phiên tối 15/11). Trước: 21:34 15/11/2026 (A, kết phiên tối 15/11). Trước: 19:29 15/11/2026 (A, mở phiên tối 15/11). Trước: 18:24 15/11/2026 (A, kết phiên chiều 15/11). Trước: 14:42 15/11/2026 (A, kết phiên 15/11). Trước: 22:35 14/11/2026 (A, kết phiên tối 14/11). Trước: 17:40 14/11/2026 (A, kết phiên chiều 14/11). Trước: 09:45 14/11/2026 (A, mở phiên 14/11). Trước: 22:40 13/11/2026 (A, kết phiên 13/11).
 Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn nhóm, vòng tự soi 1): `archive/CURRENT_HANDOFF_LICH_SU_2026-11-13.md`; 12/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-12.md`. Nhật ký: `bao_cao_he_thong/nhat_ky/2026-11-13_lich_trinh_kho_3.md`.
 
+## PHIÊN TỐI 16/11 ĐỌC TRƯỚC (A viết 15:43 16/11/2026, KẾT PHIÊN CHIỀU 16/11)
+
+**Phiên chiều 16/11 (14:00–~16:30, User có mặt cả phiên):** A `hue-rag-db` · B `hue-rag-83` · C `hue-rag-80` · E `hue-rag-af`, cả bốn Claude Code. Quyền phiên "như tối 15/11 + xin lượt máy" HẾT HẠN ⇒ A tối hỏi lại. Chi tiết theo giờ: mục "PHIÊN CHIỀU 16/11" ngay dưới. Mỗi session đọc mục đầu `sessions/STATUS_<X>.md`.
+
+**MỐC CỨNG: xong mọi việc local + kế hoạch deploy AWS trước 30/11/2026** (từ tháng 12 User không còn Claude Code; Codex / Gemini làm tiếp ⇒ tài liệu dạng runbook).
+
+**Đã vào main chiều 16/11:** câu khuyên sức khoẻ dưới mục web (bản dài giữ; bản gọn = hồ sơ `p9-web-gon`, `p9-web-gon-2`) · nút Huỷ lúc xem ảnh · ghi chú ăn phá Tam Giang · **công cụ khoảng cách 2 điểm — cờ `khoang_cach` BẬT** · bản đồ lịch sẵn sàng (cờ `ban_do_lich` TẮT, host tạm `tile.openstreetmap.de` ở `BAN_DO` trong `api/routes/cong.py`) · ảnh lịch Thiệu Trị (bảng ảnh v7) · spec deploy AWS bản nháp `e847b47ad995` (User nhận 11 mặc định §3; bản chính viết SAU khi đọc tài liệu khoá học User gửi ~18–19/11) · plan B7 cuối `031eaf56705b` (trần 0,45, chạy CN 23/11, người chạy B) · bài học 14 / 15 / 23 + sổ khâu.
+
+**User chốt chiều 16/11:** TTS (đọc thành tiếng, VieNeu) KHÔNG trước 30/11 · **thí nghiệm so ảnh CẮT khỏi 30/11** (341 ảnh mẫu sạch giữ ở `data/so_anh_gom_2026-11-16/`) · giọng nói: G2 đo ngay khi User thu 40 câu; **G3 (xây) chỉ khi G2 đạt RÕ mọi ngưỡng** (không sát) · chỗ ở không nêu hạng: không xây · lỗi "hỏi lại câu cũ": giới hạn (0 / 3) · ba lệnh đếm bộ kín: để sau (trước 23/11).
+
+**Việc phiên tối — THEO THỨ TỰ:**
+1. **A (18:30–19:00):** hỏi quyền phiên ⇒ `curl -sI -m 10 https://tile.openstreetmap.org/12/3250/1874.png` (mạng nhà): được ⇒ hỏi User giữ .org hay .de; không ⇒ hỏi User chọn OSM Đức / CARTO (CARTO cần khoá) ⇒ sửa `BAN_DO` + hỏi bật cờ `ban_do_lich` cho lượt thử 20:30 (commit bật cờ riêng; test có / không `--env-file`).
+2. **B (19:00–20:15):** ghi kho 2 bài quán Lập An (cho hỏi đáp; lịch không đổi) theo `chay.sh` trong STATUS_B — A TẮT 8010 trước bước dựng chỉ mục, đo câu chạm theo "đo đúng chỗ đổi".
+3. **A trước 20:30:** mở lại 8010 `cd backend && HF_HUB_OFFLINE=1 HUE_SO_VET=true uv run --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8010`; thử 1 câu khoảng cách.
+4. **User từ 20:30:** thử Phần 3 + 4 của `data/HUONG_DAN_TEST_USER.md` (+ mục mới 2.11b, 2.11c, 2.35c, 3.16b) rồi thu 40 câu giọng nói (`data/phase_10/giong_noi/bo_40_cau/huong_dan_thu_cho_user.md`) ⇒ lỗi User báo = ưu tiên số một (sổ vết bật).
+5. **B khi có 40 câu:** chạy G2 (lệnh một dòng ở STATUS_B; plan_g2 có "Sửa đổi 16/11": luật §5 áp cho 3 model).
+6. Còn mở nhỏ: tốc độ câu khoảng cách (p50 3,7 / p95 ≈ 6,2 s > sàn — 3 lần gọi model) — chỉ xem nếu User phàn nàn; `Project_Status.md` sửa ở kết phiên tối.
+
+**Vòng tự soi chiều 16/11 (B, C, E đều gửi; A chốt):** BỎ / NHẸ — test rộng chỉ ở commit cuối trước merge (không chạy trước review; nhánh chỉ 1 hàm / giao diện ⇒ file chạm đủ); làm phép đo rẻ nhất TRƯỚC việc tốn (đọc tay bản đang chạy trước khi làm bản 2; đo 2 km trước khi viết bài kho); ước tiền gồm cả phần web / lượt biểu mẫu; nhánh chỉ tài liệu ⇒ A đọc diff. GIỮ — review độc lập cho nhánh có số người dùng thấy (bắt sàn 40 km/h), người đọc tay không viết lời dặn (bắt bản gọn sai), agent con đối chiếu bài học (12 + 3 chỗ sai), chạy thử runbook trên máy (bắt 3 bẫy deploy), nhìn 100 % ảnh mẫu (một nửa rác), thử tay trước khi sửa (lỗi vuốt có thật). CẮT — so ảnh, TTS, ghim quán / khách sạn trên bản đồ, "trích nguyên văn" mục web, khoảng cách "cách trung tâm".
+**Tiền chiều 16/11 (theo tin báo, CHƯA ai tính lại):** B ≈ 0,091 · C ≈ 0,053 · E ≈ 0,002 phần đã báo (chạy thử deploy 0,00045 + bản đồ 0,0018; Serper gom ảnh chưa báo — xem STATUS_E) · A ≈ 0,002 · agent con 0 ⇒ ≈ 0,15 USD + phần E chưa báo.
+
 ## PHIÊN CHIỀU 16/11 (thứ Hai; A mở, cập nhật 14:06 16/11/2026)
 
 - Terminal: A `hue-rag-db` · B `hue-rag-83` · C `hue-rag-80` · E `hue-rag-af` — cả bốn Claude Code, trực tiếp; D không mở. Ban ngày: máy chia với hai dự án khác (User có mặt).

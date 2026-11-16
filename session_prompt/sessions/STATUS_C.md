@@ -1,5 +1,17 @@
 # STATUS C — phiên 16/11 (C `hue-rag-80` · A `hue-rag-db` · B `hue-rag-83` · E `hue-rag-af`); mục dưới là kết phiên tối 15/11 (C `hue-rag-10` · A `hue-rag-ef` · B `hue-rag-7d` · E `hue-rag-f0`). Lịch sử: `git log -p session_prompt/sessions/STATUS_C.md`
 
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 16/11 — C viết 15:26 16/11/2026 `date`)
+
+**Đã vào `main` hôm nay (C):** công cụ khoảng cách (`5980f6c`, cờ BẬT `6a53680`) + tài liệu (`95c1972`: bài 14, sổ 07, README, nhật ký) · plan lượt đo cuối B7 (A duyệt sha `031eaf56705b`, trần 0,45 USD, có lượt L sửa lịch; chạy CN 23/11, người chạy B) · review spec deploy AWS 2 vòng (READY, đã merge `d757d8c`). Lỗi "hỏi lại câu cũ bị từ chối": 0 / 3 ⇒ giới hạn, không sửa.
+
+**Việc còn mở của C:**
+1. **Bản đồ lịch — chuyển cho E** (A chốt 16/11: E code tiếp trên `p11-ban-do-bat-e`, review READY); plan của C `origin/p11-ban-do-bat` `0823fe1` chỉ để tra; worktree `/tmp/c_bd` đã gỡ. C không còn việc mở.
+2. Ứng viên (chưa giao): "cách trung tâm bao xa" cho công cụ khoảng cách — tự soi đề xuất KHÔNG xây trước 30/11.
+
+**Công cụ / lệnh (data/, private):** đếm lại câu khoảng cách `uv run python data/khoang_cach_2026-11-16/do.py <url> <application.log> [--mo-phong] [--chi i,j]`; dựng lại bảng (khi toạ độ v9 đổi) `uv run python data/khoang_cach_2026-11-16/tools/dung_bang.py data/phase_9/lich_trinh/diem_toa_do_v9.json data/phase_9/lich_trinh/khoang_cach_v1.json data/khoang_cach_2026-11-16/osrm_tho.json` (1 lần gọi OSRM công khai) — đổi bảng ⇒ đổi md5 trong `settings.yaml`.
+**Bẫy:** `tile.openstreetmap.org` / `www.openstreetmap.org` TLS thất bại từ mạng máy này (CARTO, Esri, OSM Pháp / Đức vào được); harness đổi kiểu dữ liệu hàm kiểm (`so_khoang_cach` nay trả cặp (loại, số)) ⇒ cột in lúc chạy có thể sai, tính lại từ file; ước tiền lượt đếm phải cộng phần tra web của câu bị từ chối.
+**Tiền C hôm nay ≈ 0,053 USD** = tái tạo lỗi 0,0092 + khoảng cách 0,0437 (đếm trước 0,0103 + lượt đo 1 0,0180 + lượt đo sau review 0,0154); 3 lượt tra Codex không tính USD API.
+
 ## PHIÊN 16/11 (C ghi 14:03 16/11/2026 `date`)
 
 - A giao (User duyệt quyền "như tối 15/11 + xin lượt máy"): **việc 1 mục dưới** — chạy trên server 8010 của A (web bật + sổ vết), CHỜ Qdrant + lượt máy; tiêu chí giữ nguyên. C cũng kiểm 100 % nhãn bộ ảnh đo mới khi E gom xong. Tiền tối 15/11: A tự cộng bằng `dem_chat_metrics.py --sha`.
@@ -15,6 +27,9 @@
 - **Đánh giá bản đồ lịch XONG (14:45 16/11/2026, 0 USD):** `data/ban_do_lich_2026-11-16/danh_gia.md`. Phát hiện: `tile.openstreetmap.org` TLS thất bại từ mạng này (CARTO / Esri / OSM Pháp / Đức 200) ⇒ cần User thử link ô trên điện thoại + chọn host (Q-BĐ1); còn thiếu: kéo trên điện thoại, 0 lỗi console, User xem ảnh ghim. Ước 3,5–4,5 giờ; plan mức nhẹ. Đã báo A.
 - **Plan bật bản đồ (14:51 16/11/2026):** `ĐÃ PUSH 0823fe1 origin/p11-ban-do-bat` (chỗ chọn host trống; tra điều khoản `data/tra_cuu_cli/2026-11-16_o-ban-do/`: CARTO cần khoá, 5 triệu ô / tháng phi thương mại; OSM Đức phi thương mại, không đăng ký) — chờ User thử link + chọn host. Worktree `/tmp/c_bd`.
 - **Review spec deploy vòng 2 — READY** (`77a7d6c` trên `origin/p12-deploy-aws-spec-review`; 1 minor n-1 rollback bản chụp).
+- **Khoảng cách — sửa theo review XONG (15:10 16/11/2026):** `ĐÃ PUSH d4ed3f6 origin/p9-khoang-cach`, chờ agent con của A review lại. Phút = 1,25 × OSRM + 5 (6 / 6 cặp có nguồn công khai trong khoảng); bộ dò bỏ câu nấu / thời lượng (câu phá 7 / 8 ⇒ 1 / 8); kiểm số tách km ↔ thời gian; đo lại 16 câu: đúng cặp 13 / 14, 0 số lạ, 0 rút lại; test rộng 1228 passed. Tiền cả việc ≈ 0,044 USD. Lệnh đo lại: server tạm 8041 (cờ bật tạm trong worktree `/tmp/c_kc`) + `uv run python data/khoang_cach_2026-11-16/do.py http://127.0.0.1:8041 /tmp/c_kc/backend/logs/application.log` (`--mo-phong` 0 USD).
+- **Plan lượt đo cuối B7 — B review vòng 2 READY (15:15 16/11/2026):** `ĐÃ PUSH c4ef479 origin/p9-b7-cuoi-plan` (sha256 `031eaf56705b`, đã sửa minor vòng 2); biên bản `origin/p9-b7-cuoi-plan-review` `cd6c504`. Chờ A duyệt sha + User: trần 0,45 USD, đưa L vào B7, `$C_DONG`. Người chạy ngày 23/11: B.
+- **Tài liệu công cụ khoảng cách XONG (15:25 16/11/2026):** `ĐÃ PUSH 08fe5a9 origin/p9-tai-lieu-khoang-cach` (bài 14 + sổ 07 + README + nhật ký + report); agent con đối chiếu 70 khẳng định, sửa 12 (`data/khoang_cach_2026-11-16/doi_chieu_bai_hoc.md`). Chờ A đọc + merge. Công cụ đã merge `5980f6c`, cờ BẬT `6a53680`. Worktree `/tmp/c_kc`, `/tmp/c_tl` gỡ khi A merge xong.
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 15/11 — C viết 22:07 15/11/2026 `date`; User kết phiên, phiên sau là 4 phiên mới không còn ngữ cảnh)
 
