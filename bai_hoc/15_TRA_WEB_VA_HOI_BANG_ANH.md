@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
+*Cập nhật lần cuối: 15:02, ngày 16/11/2026 · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -55,6 +55,10 @@ Kho trả lời được thì **không tra**. Câu ngoài chủ đề thì **kh�
   - câu về **chỗ ở** thì không được nêu số tiền nào;
   - câu cần thông tin **"ngay lúc này"** (giá hôm nay, đang mở cửa không…) mà có con số thì thay bằng câu "chưa xác minh";
   - câu về **thiên tai** thì thay hẳn bằng câu cố định trỏ tới nguồn chính thức và 112. Model không được viết.
+- **Câu hỏi về sức khoẻ** (thuốc, bệnh, triệu chứng, chấn thương; từ 16/11): model vẫn viết mục web như thường, và **thêm một dấu** ở dòng cuối; **code** bỏ
+  dấu đó rồi nối một câu cố định *"Thông tin sức khoẻ, thuốc men trên web chỉ để tham khảo — bạn nên hỏi dược sĩ hoặc bác sĩ trước khi dùng."* dưới mục web —
+  kể cả khi mục web bị luật kiểm thay bằng câu "chưa tra được thông tin đáng tin" hay "chưa xác minh". (Khi tra web không ra kết quả nào thì không có lần gọi
+  model, nên cũng không có câu nhắc.) Model không tự viết câu nhắc này; chữ đó là luật cố định nên viết bằng code, giống câu thiên tai.
 - Giao diện hiện mục web **tách khỏi** phần trả lời từ kho, dưới nhãn "Từ web (chưa kiểm)". Link trong mục web lấy từ sổ link, trang web **không bao giờ tạo
   link từ chữ của model**.
 
@@ -72,7 +76,8 @@ thiết kế Phase 9. Từ 15/11, ở lượt hỏi tiếp thứ đi ra là **ch
 **Cách chạy:**
 1. Người dùng bấm **dấu cộng trong ô nhập** để chọn ảnh, hoặc **dán ảnh** thẳng vào ô. Ảnh nằm trong ô như một tệp đính kèm của câu hỏi; lúc này hệ thống **chưa
    gửi gì đi**. Gõ câu hỏi (hoặc để trống) rồi bấm **Hỏi** thì ảnh mới được gửi. Máy chủ kiểm trước khi đọc: chỉ nhận **JPEG, PNG, WEBP**, tối đa **10 MB**, không quá 40 triệu điểm ảnh, phải gửi từ đúng trang
-   web của chatbot. Sai thì trả lỗi ngay.
+   web của chatbot. Sai thì trả lỗi ngay. Lúc màn hình hiện "Đang xem ảnh…" có nút **Huỷ** (từ 16/11): bấm thì giao diện bỏ kết quả sắp về và trả ảnh lại ô
+   nhập để sửa câu rồi hỏi lại (máy chủ vẫn chạy xong lượt cũ, chỉ là người dùng không phải chờ).
 2. Ảnh được **xoá thông tin kèm theo** (vị trí chụp, máy chụp), **thu nhỏ** còn cạnh dài 1.024 điểm ảnh, rồi gửi cho gpt-6-luna kèm **danh sách 42 điểm / món dễ
    nhận ra bằng ảnh**. Danh sách do code lập từ kho. Không kèm chữ của người dùng, không kèm lịch sử. Máy chủ **không lưu ảnh**.
 3. Model chỉ được trả **tối đa 3 mã trong danh sách**, hoặc "không nhận ra". Code kiểm lại mã có trong danh sách thật.
@@ -187,6 +192,38 @@ chưa đo, mình để lượt nhiều ý dùng câu gõ như cũ. Người revi
 **Điều nên nhớ:** khi một câu trả lời sai, hãy ghi lại *chữ thật* đi qua từng khâu rồi mới kết luận khâu nào hỏng. Ở đây phần đáng ngờ nhất (trí nhớ hội
 thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn cũ ở khâu tra web.
 
+## Chuyện thật thứ tư: thử làm mục web gọn hơn, rồi giữ bản dài (15–16/11)
+
+**Lỗi anh gặp.** Thử trang Trợ lý, anh thấy mục "Từ web" dài dòng và hay **kể về đoạn trích** ("một đoạn trích khác nói…", "chưa xác minh được…") thay vì trả
+lời. Mình đếm bằng code trên 28 mục web đã lưu (chữ model thật, lời dặn đang chạy): **25 / 28** mục có kiểu kể lể đó, độ dài trung vị khoảng **190 ký tự**.
+Lỗi có thật, đủ lớn để sửa.
+
+**Đã thử hai bản lời dặn "gọn".** Cả hai bảo model trả lời thẳng 1–2 câu, chỉ trích tối đa 2 nguồn; không đoạn trích nào trả lời được thì viết một từ khoá,
+code thay bằng câu cố định "chưa tìm thấy". Bản hai dặn thêm: giữ nguyên điều kiện mà đoạn trích nêu ("tuỳ loại", "chỉ áp dụng…"), và điều nói về nơi / dịp
+khác thì không phải câu trả lời. Đo lại **đúng 28 đầu vào đã lưu** (cùng câu, cùng đoạn trích, chỉ đổi lời dặn; khoảng 0,005 USD một lượt):
+
+| Đo gì | Bản dài đang chạy | Bản gọn (bản hai) | Đọc thế nào |
+|---|---|---|---|
+| Mục có kiểu kể lể (đếm bằng code) | 25 / 28 mục | **0** / 15 mục (13 / 28 đầu vào bản gọn không viết gì, hiện câu "chưa tìm thấy") | hết dài dòng — đạt ngưỡng ghi trước (tối đa 2) |
+| Độ dài trung vị | khoảng 190 ký tự | **99** (trên 15 mục có viết) | đạt (tối đa 120) |
+| **Lỗi so với đoạn trích** (nói chắc điều đoạn trích không nói, kể cả bỏ mất điều kiện; ca ranh giới) — một người **không viết lời dặn** đọc tay cả 28 mục | **1 lỗi nhẹ + 1 ca ranh giới** (ca ranh giới là từ chối quá tay: nói "chưa xác minh" dù đoạn trích có giờ) | **2 lỗi rõ + 4 ca ranh giới** | **trượt sàn** (sàn là 0 lỗi) — và tệ hơn bản đang chạy |
+
+Lỗi của bản gọn có **hai kiểu**: **rút gọn thì rơi mất điều kiện**, và **lấy điều đoạn trích nói về thứ khác làm câu trả lời**. Ví dụ (mô tả theo loại): đoạn trích ghi giờ theo từng ca kèm lưu ý, bản gọn chỉ còn
+một giờ mở cửa; đoạn trích nói giá "tuỳ loại chỗ", bản gọn đưa một con số như giá chung; đoạn trích ghi giờ của một thứ khác, bản gọn lấy làm giờ của nơi
+được hỏi. Bản dài thì có những câu rào ("chưa xác minh…") đúng là nhàm, nhưng chính các câu rào đó giữ cho mục web **ít nói chắc hơn nguồn** (vẫn còn 1 lỗi nhẹ).
+
+**Anh chọn giữ bản dài** (16/11). Thứ tự ưu tiên ở đây: mục web **nói chắc mà sai** tệ hơn mục web **dài dòng** — người dùng đọc câu gọn sẽ tin nó. Phần
+câu nhắc sức khoẻ thì tách ra làm riêng trên lời dặn dài và đã vào hệ thống (đoạn "Code làm gì" ở trên). Hướng còn để ngỏ nếu muốn gọn mà vẫn đúng: cho
+model **chỉ chọn số câu** trong đoạn trích, code hiện nguyên văn câu đó — chưa làm.
+
+**Đo câu nhắc sức khoẻ.** Một bộ 27 câu (12 câu sức khoẻ · 9 câu giống mà không phải · 3 câu cấp cứu · 3 câu ranh giới, chấm riêng) do người khác soạn (mình không viết), đi đúng đường thật: tra web thật rồi model viết mục web thật (khoảng 0,034 USD):
+- **12 / 12** câu hỏi sức khoẻ có câu nhắc; 3 / 3 câu cấp cứu cũng có (ngoài đời các câu này đi đường khẩn cấp, không tới mục web).
+- **3 / 9** câu **không** phải sức khoẻ cũng bị thêm câu nhắc: hỏi giờ khám của bệnh viện, giờ mở cửa nhà thuốc, món ăn "tốt cho sức khoẻ". Sàn đặt trước là
+  0 ⇒ trượt. Anh và nhóm nhận đây là **giới hạn**, không chỉnh thêm: hệ quả chỉ là một câu nhắc thận trọng thừa, chữ mục web không đổi, không có thông tin sai.
+
+**Điều nên nhớ:** sàn "không nói chắc điều nguồn không nói" chỉ đo được bằng **người đọc tay**, và người đọc phải là người **không viết lời dặn** — ở lượt
+đo bản một, chính người viết đọc lại chỉ thấy 1 ca, người đọc độc lập thấy 4.
+
 ## Khi nào hỏng
 
 - **Mục web có thể sai hoặc cũ** dù đã ghi "chưa kiểm". Địa chỉ, số điện thoại trong mục web chưa được kiểm là có trong đoạn trích hay không.
@@ -200,6 +237,9 @@ thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn c�
   cặp đo, model tự đổi "cuối tuần này" thành ngày cụ thể. Tên người dùng: 0 / 4 lượt đo, mẫu nhỏ, không có rào bằng code cho tên riêng. Nếu sau này bật nhớ
   cả câu trả lời thì phải xét lại cờ này.
 - **Luật "ngay lúc này" có thể chặn nhầm** nếu dò quá rộng (ví dụ chữ "đang").
+- **Câu nhắc sức khoẻ có thể thừa** ở câu chỉ sát chủ đề sức khoẻ (giờ bệnh viện, nhà thuốc, món "tốt cho sức khoẻ"): 3 / 9 câu đo. Và chỉ có khi mục web
+  được viết (kho đã từ chối, tra web có kết quả, không phải câu thiên tai).
+- **Mục web vẫn dài và hay rào** ("chưa xác minh…") vì giữ bản dài — đổi lại ít nói chắc sai hơn bản gọn.
 - **Ảnh:** các lăng, các điện trông giống nhau dễ nhầm; ảnh có chữ lừa có thể đánh lừa model; chưa giới hạn số ảnh mỗi người; câu chậm chưa đạt 5 giây. Từ
   15/11: model đưa **một tên mà sai** thì trợ lý trả lời luôn về sai nơi, chỉ còn dòng "có thể sai" nhắc người dùng (đã gặp thật khi thử: ảnh một cổng trong
   Hoàng thành bị đoán thành một lăng); cùng một ảnh gửi nhiều lần có thể ra kết quả khác nhau.
@@ -208,13 +248,15 @@ thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn c�
 ## Ba điều chính
 
 1. **Tra web chỉ khi kho đã từ chối**, một lần, 5 giây. Mục **"Từ web (chưa kiểm)"** tách riêng. **Code chặn** link lạ, số tiền không có trong đoạn trích, câu
-   "ngay lúc này", và thay câu thiên tai bằng câu cố định. Bộ kín: 0 / 7 câu khẳng định thông tin chưa kiểm.
+   "ngay lúc này", và thay câu thiên tai bằng câu cố định; câu sức khoẻ có câu nhắc hỏi dược sĩ / bác sĩ do code nối. Bộ kín: 0 / 7 câu khẳng định thông tin
+   chưa kiểm.
 2. **Hỏi bằng ảnh = model đoán tên, câu trả lời vẫn từ kho.** Đoán ra một tên thì trả lời luôn kèm dòng "có thể sai" (một tên đúng 31 / 33 lượt); phân vân
    2–3 tên thì hỏi người dùng chọn. Cách này còn 6 / 66 lượt trả lời sai nơi, so với 14 / 66 nếu lượt nào cũng trả lời luôn. Ảnh không lưu, đã xoá thông tin
    kèm theo.
 3. Chuyện thật: những lỗi nguy hiểm nhất (khẳng định lũ, cúp điện) được chặn bằng **luật trong code**, không bằng lời dặn. Thử đổi Serper sang Exa: đo riêng
    bước tra thì đạt (25 so với 17) nhưng nhạy, qua máy chủ thật thì không (14 so với 13) ⇒ giữ Serper. Câu hỏi tiếp "mở cửa lúc mấy giờ" từng tra web bằng
    câu cụt nên lạc sang nơi khác; từ 15/11 dùng câu tìm model vừa viết: câu tra web đúng nơi 8 / 8 (trước 0 / 10), nhưng chỉ 2 / 8 mục có thông tin dùng được.
+   Thử mục web gọn: hết kể lể (25 / 28 mục ⇒ 0 / 15 mục có viết) nhưng nói chắc sai nhiều hơn (người đọc độc lập: 2 lỗi rõ + 4 ranh giới, so với 1 nhẹ + 1) ⇒ giữ bản dài.
 
 **Bài sau:** Bài 16 — Kể đồ án trong 2–3 phút (bản đủ), cùng chỗ còn yếu và hướng sửa.
 
@@ -232,6 +274,7 @@ thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn c�
 - "Khách sạn gần cầu Trường Tiền" là câu tự đặt.
 - Câu hỏi nối tiếp (15/11): dựng lại 2 / 2, câu tìm kho nêu tên 9 / 9, kho có ⇒ 7 / 7, lần tìm đầu trượt 6 / 7, ghép câu phá 2 / 3 cặp đổi chủ đề: `report_agent/2026-11-12_ra_khoang_cach/b_cau_noi_tiep_dem.md` [đã chạy]; 0 / 85 mục bị chặn vì cách viết giờ, ca gốc dao động 2 / 2 ⇒ 1 / 1: `…/b_web_kiem_so_dem.md` [đã chạy]; cách sửa, 8 / 8 ↔ 0 / 10, 0 / 8 ↔ 2 / 2, 2 + 3 + 3, tên 0 / 4, đổi chủ đề 0 / 1, loại 2 cặp, 0,0556 USD, sửa theo hai review: `…/b_web_noi_tiep_implementation.md`, `…/e_review_web_noi_tiep.md`, review thứ hai `data/review_web_noi_tiep_2026-11-15/review.md` (riêng tư) [đã chạy]; kiểm độc lập mục này trước khi ghi: `data/kiem_bai_hoc_2026-11-15/b_kiem_doc_lap.md` (riêng tư; 60 khẳng định: 2 sai, 11 dễ hiểu nhầm — đã sửa); code `backend/llm/assistant.py` `cau_cho_web`, `cong_web`; cờ `web_cau_noi_tiep: true` (bật 17:50 15/11/2026, anh chọn; người điều phối thử ca gốc qua máy chủ) `backend/config/settings.yaml` [code]
 - Exa (12/11): 73 lượt log, 44 / 13 / 14, 0 lỗi Serper, 147 ký tự, 32 % mạng xã hội, giá 0,007 ↔ 0,001, điều khoản dùng dữ liệu: `report_agent/2026-11-12_ra_khoang_cach/e_tim_web_serper_exa.md` §1–2; thí nghiệm 17 / 25 / 20, p95 3,1 / 2,2, mạng xã hội 24 / 91 ↔ 0 / 109, độ nhạy 25 ⇒ 20 khi loại trang tổng hợp của Exa: cùng file §5, §6, §6b; server thật 13 / 14 (cần ≥ 16), không tin cậy 10 / 13, tra p95 2,82 / 2,26, tới sự kiện web 17,9 / 16,9 s, ≈ 30 / 42 câu được tra, 13 / 30 và 10 / 29 lượt mất mục do luật kiểm, ≈ 0,195 USD + ≈ 0,82 tín dụng: §7 [đã chạy]; kiểm thí nghiệm: `…/e_exa_review.md`; kiểm code (Exa trước 3 s, Serper dự phòng, 40 lượt / ngày): `…/e_exa_code_review.md`; nhánh `p9-tra-web-exa` không merge (`tra_web.py` trên `main` không có Exa), tag `hoso/p9-tra-web-exa` [code, theo bản ghi số liệu 13/11]. Bản ghi số liệu: `data/hoc_cung_user_2026-11-10/fact_viec_12_11.md` (riêng tư)
+- **Thêm 15:02 16/11/2026** (việc 16/11): câu nhắc sức khoẻ — `backend/llm/tra_web.py` `SUC_KHOE_TEXT`, `tach_suc_khoe`; `backend/llm/assistant.py` `cong_web`; lời dặn `TU_WEB_LUAT` (`backend/llm/full_corpus_prompt.py`) [code, merge `3a4d5db`]; bộ dò 27 câu 12 / 12, 3 / 3, 3 / 9, 0,0342 USD: `report_agent/2026-11-12_ra_khoang_cach/b_suc_khoe_web_implementation.md`, `data/web_gon_2026-11-16/do_suc_khoe_loi_dan_cu/ket_qua.jsonl` (riêng tư) [đã chạy]. Mục web gọn: đếm 25 / 28, ~190 ký tự (mốc tính lại bằng hàm hiện hành, trung vị 189): `docs/superpowers/plans/2026-11-15-muc-web-gon-plan.md` + `data/web_gon_2026-11-16/do/` (`do.py kho`) [đã chạy]; bản hai kể lể 0, 99 ký tự, 28 đầu vào 0,00463 USD: `report_agent/2026-11-12_ra_khoang_cach/b_web_gon_2_implementation.md` (nhánh hồ sơ `p9-web-gon-2`, không merge) [đã chạy]; đọc tay bản hai 2 rõ + 5 ranh giới (1 trong 5 đạt nhờ câu sức khoẻ do code nối ⇒ bài ghi 4): `data/web_gon_2026-11-16/do/doc_tay_ket_qua.md`; bản dài 1 nhẹ + 1 ranh giới: `…/doc_tay_ban_cu_ket_qua.md` (riêng tư; người đọc là agent con ngữ cảnh mới) [đã chạy]; bản một: người viết thấy 1, người đọc độc lập thấy 1 rõ + 3 ranh giới: `docs/superpowers/plans/2026-11-15-muc-web-gon-plan.md` mục "Chỗ đổi sau duyệt" [đã chạy]; anh chọn giữ bản dài: handoff 16/11. Nút Huỷ: `frontend/src/HoiBangAnh.jsx` `huy` [code, merge `3a0afc5`]. Kiểm độc lập trước khi ghi: `data/kiem_bai_hoc_2026-11-16/kiem_doc_lap.md` (riêng tư; 66 khẳng định: 3 sai — mã merge, chỗ câu nhắc được nối, "một kiểu lỗi" — và 7 dễ hiểu nhầm, đã sửa).
 - **Sửa 20:22 13/11/2026:** số "khoảng 13 giây" ghi rõ là bộ kín 05/11, thêm số 12/11 qua máy chủ (khác bộ câu, khác cách đo).
 
 - **Sửa 14:48 11/11/2026:** theo luật anh chốt ("phần chưa xong thì không đưa vào bài học"), gỡ đoạn tả việc chưa làm xong: câu "đang chờ anh quyết lúc deploy" → tả đúng bản đóng gói đã dựng (`HUE_TRA_WEB` "false" trong `data/phase_12/deploy_nhap/compose.yml`).
