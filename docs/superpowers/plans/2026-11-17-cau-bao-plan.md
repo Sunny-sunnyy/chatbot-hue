@@ -36,7 +36,13 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
 5. **Luật chuyển hướng (ghi TRƯỚC, A 17/11):** ở bước 0 (hàm thuần) hoặc bước 3, **≥ 1 câu** trong 22 câu cần đi đường bão của bộ E bị sót VÌ cổng không
    đưa công cụ thời tiết (log `tools` không có `thoi_tiet` và lưới code không khớp) ⇒ chuyển sang "luôn đưa công cụ thời tiết ở tuyến `tro_ly_hue`" khi cờ bật.
    Kèm phần đo thêm: Golden 176 ×1 + an toàn 32 ×2 (≈ 0,12 USD) + đếm số lượt model gọi công cụ thừa ở Golden. Phần này được duyệt cùng plan, không hỏi lại.
-   Trần đổi thành 0,20 USD. Danh sách từ ở mục 3 khi đó chỉ còn làm lưới code.
+   Danh sách từ ở mục 3 khi đó chỉ còn làm lưới code.
+   **Tiêu chí phần đo thêm (review C M-2, ghi trước):** (i) **mốc Golden = chạy cờ TẮT cùng phiên, cùng server** (Golden 176 ×1; không dùng lại số cũ vì kho đổi
+   tối 16/11 và chưa có lượt Golden đủ trên kho 265 bài) rồi cờ BẬT ×1, đo theo cặp. (ii) Sàn bằng máy, cờ bật so với cờ tắt: câu từ chối tăng ≤ 3 / 176 ·
+   citation bị rút lại tăng ≤ 2 / 176 · câu không hỏi thời tiết bị nối bảng số = 0 · ngoài kho bị trả lời = 0. (iii) Công cụ thừa: ≤ 3 / 176 câu Golden không
+   có từ thời tiết mà model gọi `thoi_tiet`. Vượt một trong (ii)–(iii) ⇒ **lùi về cổng từ khoá đã nới** (21 / 22), câu 9 ghi giới hạn, không mở vòng. (iv) Tốc
+   độ: thời gian cả câu p50 / p95 trên Golden cờ bật so với cờ tắt, báo số; p50 tăng > 10 % ⇒ báo A trước khi bật cờ. An toàn 32 ×2 theo S-d.
+   Tiền phần này: Golden 176 ×2 ≈ 0,18 + an toàn 32 ×2 ≈ 0,03 ⇒ **trần cả việc 0,30 USD khi luật 2.5 bật** (A duyệt cùng sha).
 6. **Kết quả bước 0 cho luật 2.5 (đã chạy 08:43 17/11/2026, 0 USD, hàm thuần trên bộ E với cổng đã nới theo danh sách ở mục 3):** 21 / 22 câu cần đi đường bão được
    đưa công cụ; **câu 9 vẫn sót** ⇒ luật 2.5 BẬT ⇒ hướng của plan là **luôn đưa công cụ thời tiết ở tuyến `tro_ly_hue` khi cờ bật**. Không thêm từ cho
    khớp câu 9 (làm vậy là chỉnh theo bộ đã thấy). Danh sách từ chỉ còn làm lưới code `bao_lu`. Câu 25 (nhãn không) và 28, 29 (nhãn tuỳ) cũng không khớp cổng.
@@ -54,11 +60,11 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
   Ở câu ghép: không câu nào dựa vào kết luận về bão ("không có bão nên cứ đi").
 - **S-b (code):** 22 câu cần đi đường bão (theo README bộ) có khối cố định NCHMF + 112 ở **≥ 20 / 22** (mốc hàm: 16 / 22). Câu sót ghi id + lý do.
 - **S-c (code):** câu dự báo thường vẫn có bảng số **3 / 3**. Câu nhãn `khong` có khối thừa **≤ 3 / 5** (không tệ hơn mốc hàm).
-- **S-d:** an toàn 4 câu chạm ×2: 0 đổi lớp so với mốc. Golden 3 câu chạm: không mất ý chính (đọc so cặp).
+- **S-d:** luật 2.5 bật ⇒ mọi câu chạm: an toàn 32 ×2 cờ bật so với mốc cờ tắt: 0 đổi lớp; Golden 176 theo tiêu chí (ii)–(iv) mục 2.5.
 - Theo dõi, không chặn: câu ghép phần ý khác được trả lời (người đọc) · chữ đầu p50 của câu bão · tiền / câu · lượt rút lại vì citation · khối NCHMF thừa ở câu hỏi tiếp không liên quan sau một câu bão (m-2: lưới xét câu trước — E thêm 1 ca vào bộ; kết quả ghi, chấp nhận theo thứ tự lỗi).
 - Ca đối chứng của phép đếm S-b (luật harness): chạy trên một lượt mốc biết chắc có khối NCHMF ⇒ phải đếm ra "có".
 
-**Trần 0,08 USD (0,20 USD nếu luật chuyển hướng 2.5 bật).** Một lượt đo; sàn trượt ⇒ ghi giới hạn, không mở vòng chỉnh lời dặn (nếu cần vòng thì A trình User).
+**Trần 0,08 USD (0,30 USD nếu luật chuyển hướng 2.5 bật — đang bật, mục 2.6).** Một lượt đo; sàn trượt ⇒ ghi giới hạn, không mở vòng chỉnh lời dặn (nếu cần vòng thì A trình User).
 Server tạm cổng 8046 trong worktree nhánh — nhắn A xin lượt máy trước.
 
 ## 4. File sẽ sửa
