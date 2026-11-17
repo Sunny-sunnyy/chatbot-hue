@@ -1,6 +1,6 @@
 # Bài 23 — "Lên kế hoạch" bản 2: code xếp lịch theo luật, nghiệm thu trượt rồi đạt nhờ dữ liệu và ba sửa nhỏ
 
-*Cập nhật lần cuối: 21:25, ngày 16/11/2026 · thêm tối 16/11: bản đồ dưới lịch (bật, và ba lỗi hiển thị chỉ lộ khi nhìn ảnh). Trước: 15:02, ngày 16/11/2026 · ghi chú ăn ở phá Tam Giang (bữa có gợi ý 86,4 ⇒ 94,5 %); sửa dòng giới hạn ăn uống đã cũ. Trước: 15:48, ngày 15/11/2026 · thêm chiều 15/11: bảng điểm có thêm 7 nơi (41 điểm) và chuyện lượt chạy thật bắt bốn nơi "chỉ in tên". Trước: 10:36, ngày 15/11/2026 · thêm sáng 15/11: lịch chỉ đổi điểm khi dự báo mưa đủ lớn (≥ 6 mm). Trước: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
+*Cập nhật lần cuối: 11:56, ngày 17/11/2026 · thêm trưa 17/11: giới hạn "đi rồi quay lại cùng khu trong một ngày". Trước: 21:25, ngày 16/11/2026 · thêm tối 16/11: bản đồ dưới lịch (bật, và ba lỗi hiển thị chỉ lộ khi nhìn ảnh). Trước: 15:02, ngày 16/11/2026 · ghi chú ăn ở phá Tam Giang (bữa có gợi ý 86,4 ⇒ 94,5 %); sửa dòng giới hạn ăn uống đã cũ. Trước: 15:48, ngày 15/11/2026 · thêm chiều 15/11: bảng điểm có thêm 7 nơi (41 điểm) và chuyện lượt chạy thật bắt bốn nơi "chỉ in tên". Trước: 10:36, ngày 15/11/2026 · thêm sáng 15/11: lịch chỉ đổi điểm khi dự báo mưa đủ lớn (≥ 6 mm). Trước: 15:57, ngày 14/11/2026 · thay phần biểu mẫu bản cũ ở bài 14; đã sửa theo một lượt kiểm độc lập (ghi ở Nguồn). Thêm ghi chú chiều 14/11: lịch nay sửa được bằng lời và có gợi ý chỗ ở (bài 25); trang chưa xếp lịch hiện một lịch "Ví dụ" do chính bộ xếp dựng; không còn dòng ghi công dưới ảnh.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -203,6 +203,11 @@ mở ảnh chụp ra nhìn. Bảng số báo "ghim khớp, không lỗi", nhưng
 
 ## Khi nào hỏng
 
+- **Đi rồi quay lại cùng khu trong một ngày** (đếm 17/11, mô phỏng 0 USD, 960 cách điền biểu mẫu): một ngày có thể đi khu A → khu khác → quay lại khu
+  A — **104 / 960** lịch có ít nhất một ngày như vậy. Ca dễ thấy nhất: lịch "cân bằng + di tích" (cả lịch ví dụ) đi Đại Nội → chùa Thiên Mụ → quay lại Ngọ
+  Môn – Kỳ Đài — **8 / 960**; Ngọ Môn lại chính là cổng của Đại Nội. Lý do: bộ xếp chọn điểm đầu buổi sáng và điểm đầu buổi chiều trước, rồi mới chèn điểm
+  thêm sau mỗi điểm đầu theo khu của điểm ngay trước; không bước nào sắp thứ tự đi của cả ngày. Đã thử một bản sửa hẹp (điểm thêm không quay về khu đã rời):
+  ca dễ thấy về 0, ca rộng còn khoảng 1 / 3, nhưng làm đổi một ca mưa và một chuỗi sửa lịch ⇒ **để sau lượt đo cuối B7**, chưa vào bản chạy.
 - **Bản đồ cần mạng tới máy chủ ô bản đồ**, và máy chủ đang dùng có lúc chậm: vừa đổi ngày, khung có thể xám vài giây rồi mới
   hiện (tối 16/11 có lần chụp trúng lúc khung còn xám, có lần ô hiện gần như ngay; chưa đo thành con số). Mất mạng tới máy chủ đó thì chỉ còn ghim trên nền xám; danh sách đánh số dưới bản đồ vẫn đủ. Ghim vẽ lệch để khỏi che nhau nên ở mức nhìn xa có
   thể cách vị trí thật vài chục điểm ảnh.
@@ -230,6 +235,7 @@ mở ảnh chụp ra nhìn. Bảng số báo "ghim khớp, không lỗi", nhưng
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
+- Đi rồi quay lại cùng khu (17/11): 104 / 960, 8 / 960 `data/dem_lich_2026-11-17/dem_quay_lai.py` (C) [đã chạy]; bản sửa hẹp WIP `p9-khong-quay-lai-cum` của E, 960 + 3.840 khung, hẹp 8 / 24 ⇒ 0 / 0, rộng 65 / 258 ⇒ 20 / 76, điểm ban ngày −0,47 % / −0,42 %, ca mưa + chuỗi S01: `data/di_lai_2026-11-17/README.md` [đã chạy, chưa merge].
 - Bản cũ 7 / 28 điểm không xếp, "đi dày" 0 / 120: `report_agent/2026-11-12_ra_khoang_cach/c_lich_trinh_khoang_cach.md` §2, §3.1 [đã chạy]
 - Ngưỡng mưa 6 mm (User 15/11): số so ERA5 ≥ 6 mm (106 ⇒ 15 báo thừa, sót 32 với 30 / 32 có dòng nhắc, chuyến 80,4 ⇒ 50,0 %): `report_agent/2026-11-12_ra_khoang_cach/c_dem_mua.md` phần 5, script `data/dem_mua_2026-11-14/so_mua_that_qcvn.py` [đã chạy]; mốc QCVN 84:2024 `b_nguong_mua_3_model.md`; code `MM_MUA_XEP`, `len_ke_hoach.ngay_mua_xep` [code].
 - Biểu mẫu 4 nhóm, thứ tự luật, quỹ phút 75 / 150, phút đi 15 / 30, quỹ 210 / 240, mưa ≥ 60 % trong 7 ngày, câu ≤ 30 từ, kiểm câu, câu dự phòng: `docs/superpowers/specs/2026-11-12-len-ke-hoach-ban-2-design.md` §3.1, §5, §5b, §5c; `backend/llm/lich_trinh_v2.py` [code]
