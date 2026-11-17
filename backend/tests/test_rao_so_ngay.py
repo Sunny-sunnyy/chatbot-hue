@@ -99,3 +99,10 @@ def test_swap_next_to_a_doable_action_is_reported_not_dropped():
 def test_model_empty_stays_normal_path():  # lưới ở đường "model trả rỗng" đã thử và bỏ (bộ kề bên E 10 / 20) ⇒ việc của `chua_ho_tro`
     _, kq = _hieu("Đổi chỗ ngày 1 với ngày 2", [])
     assert kq is None
+
+
+def test_merge_read_as_day_count_change_has_no_contradicting_line():  # review E m-1: "Đã đổi số ngày" + "Chưa làm: gộp…" cùng hiện
+    from test_len_ke_hoach_v2 import V2
+    _, kq = _hieu("Gộp ngày 2 với ngày 3 cho còn 2 ngày thôi", [sl.HanhDong(loai="doi_so_ngay", so_ngay=2)])  # câu có "2 ngày" ⇒ rào cho qua
+    cau = [d["cau"] for d in sl.thay_doi(V2.bang_lich_v2, kq)]
+    assert any(c.startswith("Đã đổi số ngày") for c in cau) and sl.CAU_VIEC_KHAC not in cau
