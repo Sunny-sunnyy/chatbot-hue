@@ -41,7 +41,8 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
    tối 16/11 và chưa có lượt Golden đủ trên kho 265 bài) rồi cờ BẬT ×1, đo theo cặp. (ii) Sàn bằng máy, cờ bật so với cờ tắt: câu từ chối tăng ≤ 3 / 176 ·
    citation bị rút lại tăng ≤ 2 / 176 · câu không hỏi thời tiết bị nối bảng số = 0 · ngoài kho bị trả lời = 0. (iii) Công cụ thừa: ≤ 3 / 176 câu Golden không
    có từ thời tiết mà model gọi `thoi_tiet`. Vượt một trong (ii)–(iii) ⇒ **lùi về cổng từ khoá đã nới** (21 / 22), câu 9 ghi giới hạn, không mở vòng. (iv) Tốc
-   độ: thời gian cả câu p50 / p95 trên Golden cờ bật so với cờ tắt, báo số; p50 tăng > 10 % ⇒ báo A trước khi bật cờ. An toàn 32 ×2 theo S-d.
+   độ: chữ đầu p50 ≤ 3 s / p95 ≤ 5 s (sàn đang dùng) trên lượt stream bộ 31 câu, so với 5 lượt mốc; Golden (chạy trong tiến trình, không có chữ đầu) báo
+   thời gian cả câu p50 / p95 cờ bật ↔ cờ tắt; p50 tăng > 10 % ⇒ báo A trước khi bật cờ. An toàn 32 ×2 theo S-d.
    Tiền phần này: Golden 176 ×2 ≈ 0,18 + an toàn 32 ×2 ≈ 0,03 ⇒ **trần cả việc 0,30 USD khi luật 2.5 bật** (A duyệt cùng sha).
 6. **Kết quả bước 0 cho luật 2.5 (đã chạy 08:43 17/11/2026, 0 USD, hàm thuần trên bộ E với cổng đã nới theo danh sách ở mục 3):** 21 / 22 câu cần đi đường bão được
    đưa công cụ; **câu 9 vẫn sót** ⇒ luật 2.5 BẬT ⇒ hướng của plan là **luôn đưa công cụ thời tiết ở tuyến `tro_ly_hue` khi cờ bật**. Không thêm từ cho
