@@ -513,7 +513,7 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
         else:
             out.append("Các điểm trong lịch giữ nguyên chỗ.")
         if not nd["co_du_bao"]:
-            out.append("Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa.")
+            out.append(v2.CAU_CHUA_DU_BAO)
     dong = [{"cau": c, "duoc": True} for c in out]
     dong += [{"cau": CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"]), "duoc": False} for k in kq["khong_doi"]]
     co_dinh = {VIEC_KHAC: CAU_VIEC_KHAC, CHUA_HO_TRO: CAU_CHUA_HO_TRO}

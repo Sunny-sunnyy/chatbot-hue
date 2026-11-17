@@ -324,6 +324,7 @@ def test_lodging_block_only_when_the_user_asked(mo_phong):
             lich = {}
             lkh.gan_o_an(lich, BANG_V2, {**khung, "tham_so": {**khung["tham_so"], "ngan_sach": muc}}, flags)
             assert "cho_o_link" not in lich and lich.get("o_dau") == _o_dau(khung, muc), (key, muc)
+            assert ("ghi_chu" in lich) == (key[0] < 2), (key, muc)  # lịch 1 ngày đã chọn hạng ⇒ một dòng lý do (tự thử 16/11: im lặng bỏ khối)
     # chữ chép / tải / lịch sử: chưa hỏi ⇒ không dòng nơi ở; hỏi rồi ⇒ có
     khung = v2.xep_v2(BANG_V2, v2.tu_truong({"so_ngay": "3", "kieu_di": "can_bang", "so_thich": ["di_tich"]}))
     nguon = {j: i for i, j in enumerate(v2.diem_v2(khung), start=1)}

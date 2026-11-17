@@ -42,11 +42,14 @@ async def du_bao_lich(flags: AssistantFlags, bat_dau: dt.date | None, n: int, tr
     return {"ngay": {d["ngay"]: d for d in kq.ngay}, "nguon": tt.dong_nguon(kq)}
 
 
+CAU_O_MOT_NGAY = "Lịch đi trong ngày (không có đêm nào) nên mình chưa gợi ý chỗ ở."
+
+
 def dong_du_bao(bang, khung: dict, db: dict | None) -> list[dict]:
     """Dòng dự báo theo ngày của lịch (số do code in) + "Nếu mưa" cho điểm ưu tiên ngoài trời đã giữ chỗ (5c.2) + dòng nguồn.
     Mỗi dòng `{"cau", "ngay"}` — `ngay` = số ngày của lịch để giao diện đặt dòng đúng chỗ, không bóc chữ (giao diện mới 14/11); dòng nguồn không có `ngay`."""
-    if db is None:
-        return []
+    if db is None:  # có ngày đi mà không có dự báo (quá 7 ngày / lỗi / tắt) ⇒ nói thẳng, như đường sửa ngày đi (`sua_lich_v2`)
+        return [{"cau": lt2.CAU_CHUA_DU_BAO}] if any(khung.get("ngay_thang") or ()) else []
     dong, T = [], bang.theo_id
     for ng, ngay in zip(khung["ngay"], khung["ngay_thang"]):
         d = db["ngay"].get(dt.date.fromisoformat(ngay)) if ngay else None
@@ -128,6 +131,8 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         muc = khung["tham_so"].get("ngan_sach")
         if muc:
             lich["o_dau"] = lt2.o_dau_khung(flags.luu_tru_bang, bang, khung, muc)
+            if len(khung["ngay"]) < 2:  # đã chọn hạng mà lịch 1 ngày (không có đêm) ⇒ nói lý do thay vì im lặng bỏ khối
+                lich.setdefault("ghi_chu", []).append({"ma": "o_dau_mot_ngay", "cau": CAU_O_MOT_NGAY})
         elif len(khung["ngay"]) >= 2:
             lich["cho_o_link"] = True
     if flags.quan_lich:

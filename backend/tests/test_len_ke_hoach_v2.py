@@ -358,6 +358,10 @@ def test_simulation_always_rules(mo_phong):
             assert all(len(v2.diem_v2({"ngay": [ng]})) <= 2 and not ng["buoi"]["toi"] for ng in k["ngay"])
         if len(st) == 2 and n >= 2:
             assert all(any(s in T[i]["loai"] for i in ids) for s in st)
+        for ng in k["ngay"]:  # sáng có điểm thêm ⇒ còn ≥ NGHI_TRUA phút ăn trưa + đi trước giờ đầu chiều (tự thử 16/11: 15 phút ra phá)
+            sa, ch = ng["buoi"]["sang"], ng["buoi"]["chieu"]
+            if len(sa) > 1 and ch:
+                assert v2.ra_phut(k["gio"][ch[0]].split(" – ")[0]) - v2.ra_phut(k["gio"][sa[-1]].split(" – ")[1]) >= v2.NGHI_TRUA, (n, te, lt_, kieu, st)
     ngoai_le = []
     for n, te, lt_, st in itertools.product(range(1, 6), (0, 1), (False, True), ST_16):
         so = [len(v2.diem_v2(kq[(n, te, lt_, k, st)])) for k in KIEU]
@@ -617,7 +621,9 @@ def test_rule_rain_day_prefers_indoor_but_keeps_priority(tmp_path):
     db = {"ngay": {hom: {"ngay": hom, "tmax": 25, "tmin": 20, "xs": 60, "mua": 5.0}}, "nguon": "nguồn"}
     dong = [x["cau"] for x in lkh.dong_du_bao(b, ua, db)]
     assert dong[0].startswith("Ngày 1 — ") and dong[1] == "Nếu mưa ngày 1: có thể thay uu bằng ca (trong nhà)." and dong[-1] == "nguồn"
-    assert lkh.dong_du_bao(b, ua, None) == []
+    # có ngày đi mà không có dự báo ⇒ một dòng chung "chưa xét mưa" (như đường sửa ngày đi); không ngày đi ⇒ không dòng nào
+    assert lkh.dong_du_bao(b, ua, None) == [{"cau": v2.CAU_CHUA_DU_BAO}]
+    assert lkh.dong_du_bao(b, v2.xep_v2(b, ts(1, kieu_di="nhe_nhang", so_thich=("di_tich",))), None) == []
     # ngày mưa không có điểm ngoài trời / ngoài trời không có điểm thay ⇒ vẫn đúng một dòng (review 14/11)
     ng = {"ngay": 1, "buoi": {"sang": ["trong"], "chieu": [], "toi": []}}
     assert lkh.dong_neu_mua(b, ua, ng).startswith("Nếu mưa ngày 1: các điểm trong ngày đều trong nhà")
