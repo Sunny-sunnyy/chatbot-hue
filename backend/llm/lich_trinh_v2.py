@@ -288,7 +288,11 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             while quy is not None and len(slots[buoi]) < TOI_DA_BUOI:  # 5c.3: điểm thêm cùng cụm / cụm kề với điểm ngay trước, vừa quỹ phút
                 truoc = T[slots[buoi][-1]]
                 t_den = gio[slots[buoi][-1]][1]  # điểm thêm bắt đầu sau điểm trước + phút đi (5c.3); phải vừa giờ mở cửa của nó
-                tiep = next((j for j in pool + lap if _phut_di(truoc, T[j]) is not None and dung_duoc(j, i, buoi, cums, t_den + _phut_di(truoc, T[j]))
+                # tự thử 16/11: Đại Nội (sáng) → Thiên Mụ → quay lại Kinh thành — điểm thêm không kéo lịch về một cụm đã rời trong ngày
+                da_di = slots[buoi] + (slots["sang"] if buoi == "chieu" else [])  # chỉ các điểm đi TRƯỚC (không tính buổi chiều khi lấp sáng)
+                roi = {T[x]["cum"] for x in da_di} - {truoc["cum"]}
+                tiep = next((j for j in pool + lap if T[j]["cum"] not in roi
+                             and _phut_di(truoc, T[j]) is not None and dung_duoc(j, i, buoi, cums, t_den + _phut_di(truoc, T[j]))
                              and tong + _phut_di(truoc, T[j]) + PHUT[T[j]["thoi_luong"]] <= quy
                              and (buoi != "sang" or dat_gio(T[j], t_den + _phut_di(truoc, T[j]))[1] <= het_sang)), None)
                 if tiep is None:
