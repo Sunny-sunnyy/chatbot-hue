@@ -43,10 +43,19 @@ class HanhDong(BaseModel):
     ngan_sach: Literal["binh_dan", "vua", "cao"] | None = None  # khoá của `luu_tru_lich.MUC_NGAN_SACH`
 
 
+class HanhDongCHT(HanhDong):
+    """Cờ `sua_lich_chua_ho_tro` (plan 2026-11-17-chua-ho-tro-plan.md): thêm `chua_ho_tro` — MODEL nhận "câu sửa lịch mà bộ hành động chưa làm
+    được" (đổi chỗ / gộp / tách ngày, dời giờ cả lịch…). Không trường nào: câu hiện ra do code viết. Cờ tắt ⇒ khuôn `HanhDong` cũ (giống byte)."""
+    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o", "doi_ngay_di", "chua_ho_tro"]
+
+
+CHUA_HO_TRO = "chua_ho_tro"
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
                   "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở", "doi_ngay_di": "đổi ngày đi"}
 CAU_VIEC_KHAC = ("Chưa làm: đổi chỗ, gộp hay tách các ngày — mình chưa sửa được kiểu này trên lịch. Mình sửa được từng điểm (bỏ, thêm, thay, "
                  "dời sang buổi / ngày khác); bạn nói cụ thể điểm muốn đổi nhé.")
+CAU_CHUA_HO_TRO = ("Chưa làm: việc này mình chưa sửa được trên lịch — lịch giữ nguyên. Mình sửa được từng điểm (bỏ, thêm, thay, dời sang "
+                   "buổi / ngày khác) hoặc đổi số ngày, kiểu đi, sở thích, ngày đi, hạng chỗ ở; bạn nói cụ thể nhé.")
 NHAN_BUOI = {"sang": "sáng", "chieu": "chiều"}
 NHAN_TRUONG = {"so_ngay": "số ngày", "kieu_di": "kiểu đi", "so_thich": "sở thích", "tre_em": "số trẻ em", "lon_tuoi": "người lớn tuổi",
                "ngan_sach": "hạng chỗ ở"}
@@ -502,8 +511,8 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             out.append("Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa.")
     dong = [{"cau": c, "duoc": True} for c in out]
     dong += [{"cau": CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"]), "duoc": False} for k in kq["khong_doi"]]
-    dong += [{"cau": CAU_VIEC_KHAC if t == VIEC_KHAC else f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False}
-             for t in kq["chua_lam"]]
+    co_dinh = {VIEC_KHAC: CAU_VIEC_KHAC, CHUA_HO_TRO: CAU_CHUA_HO_TRO}
+    dong += [{"cau": co_dinh.get(t) or f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False} for t in kq["chua_lam"]]
     return dong
 
 

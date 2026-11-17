@@ -240,3 +240,14 @@ SUA_LICH_LOI_DAN = (
     "Câu KHÔNG yêu cầu sửa lịch (hỏi thông tin, chào, cảm ơn, hỏi về một điểm, việc khẩn cấp, an toàn) ⇒ trả danh sách rỗng. "
     "Không thêm hành động người dùng không nói."
 )
+
+# Cờ `sua_lich_chua_ho_tro` (plan 2026-11-17-chua-ho-tro-plan.md): thêm hành động `chua_ho_tro` + `doi_so_ngay` cả khi bằng số đang có. Cờ tắt ⇒ bản trên.
+SUA_LICH_LOI_DAN_CHT = SUA_LICH_LOI_DAN.replace(
+    "- doi_so_ngay: so_ngay mới (1–5).\n",
+    "- doi_so_ngay: so_ngay mới (1–5), kể cả khi bằng số ngày lịch đang có.\n",
+).replace(
+    "- doi_ngay_di: đổi ngày bắt đầu chuyến đi; không điền gì thêm (hệ thống tự đọc ngày từ câu).\n",
+    "- doi_ngay_di: đổi ngày bắt đầu chuyến đi; không điền gì thêm (hệ thống tự đọc ngày từ câu).\n"
+    "- chua_ho_tro: người dùng muốn sửa LỊCH NÀY theo cách không có ở trên (đổi chỗ / gộp / tách các ngày, dời giờ cả lịch, thêm giờ nghỉ…) "
+    "⇒ một hành động chua_ho_tro, không điền gì.\n",
+)  # vòng 2 (thêm "dời một ĐIỂM … là doi_buoi") đã đo và BỎ: Q3 7 / 10 ↔ vòng 1 8 / 10, thêm ca S02 mới (Sửa đổi 17/11 của plan)

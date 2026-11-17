@@ -245,13 +245,17 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     else:
         call_log = CallLog()
         try:
-            hanh_dong, bi_chan = sl.loc_hanh_dong(await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log), query, luu)
+            ra = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log,
+                                          **({"chua_ho_tro": True} if flags.sua_lich_chua_ho_tro else {}))  # cờ tắt ⇒ lời gọi như cũ
+            hanh_dong, bi_chan = sl.loc_hanh_dong([h for h in ra if h.loai != sl.CHUA_HO_TRO], query, luu)
+            cht = len(ra) - len([h for h in ra if h.loai != sl.CHUA_HO_TRO])
         except GenerationError:
-            hanh_dong, bi_chan = [], 0
+            ra, hanh_dong, bi_chan, cht = [], [], 0, 0
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
-        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan}  # sổ vết debug (RAM)
-        if not hanh_dong and not bi_chan:
+        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht,
+                           "model_ra": [h.model_dump(exclude_none=True) for h in ra]}  # sổ vết (RAM): `model_ra` = trước khi lọc (review E)
+        if not hanh_dong and not bi_chan and not cht:
             trace.sua = {"n_hanh_dong": 0}
             return None
         ngay_moi = None
@@ -265,6 +269,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược
             kq["chua_lam"].append(sl.VIEC_KHAC)
+        elif cht:  # cờ `sua_lich_chua_ho_tro`: model nhận câu sửa chưa làm được ⇒ lượt sửa, lịch giữ nguyên, câu cố định (không đường thường)
+            kq["chua_lam"].append(sl.CHUA_HO_TRO)
         elif bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
     trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
