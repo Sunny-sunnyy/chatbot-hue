@@ -50,3 +50,52 @@ def test_blocked_day_count_stays_an_edit_turn_with_not_done_line(monkeypatch):
     kq = asyncio.run(lkh.hieu_va_ap("Mình đi từ ngày 20/12 nhé", Gen(), tr, V2))
     assert kq is not None and kq["khung"]["tham_so"]["so_ngay"] == 3
     assert [d["cau"] for d in sl.thay_doi(V2.bang_lich_v2, kq)] == ["Chưa làm: đổi số ngày — bạn nhắn tiếp nhé."]
+
+
+# ---------- (C 17/11) ý đổi chỗ ngày khi model ĐÃ nhận câu là câu sửa (tự thử 16/11: "Chưa làm: đổi số ngày" sai việc) ----------
+
+@pytest.mark.parametrize("cau, la", [
+    ("Đổi chỗ ngày 1 với ngày 2", True),                     # tự thử 16/11 (A, C, E)
+    ("Hoán đổi ngày 2 và ngày 3 giúp mình", True),
+    ("Đảo thứ tự hai ngày nhé", True),
+    ("Ngày 1 và ngày 3 đổi chỗ cho nhau", True),
+    ("Gộp ngày 2 với ngày 3", True),
+    ("Đổi chỗ ở sang khách sạn khác ngày 2 và ngày 3", False),  # "chỗ ở" = lưu trú
+    ("Đổi ngày đi sang 20/12", False),                       # hành động có sẵn (đổi ngày đi)
+    ("Dời Đại Nội từ ngày 1 sang ngày 2", False),            # dời buổi — làm được
+    ("Ngày 2 nên ăn gì ở đâu?", False),
+])
+def test_day_reorder_requests_are_recognised(cau, la):
+    assert sl.la_viec_ngay_chua_lam(cau) is la
+
+
+def _hieu(cau, ra):
+    import asyncio
+    from test_len_ke_hoach_v2 import V2
+    from llm import len_ke_hoach as lkh, lich_trinh_v2 as v2
+    from llm.assistant import AnswerTrace
+    k = v2.xep_v2(V2.bang_lich_v2, v2.ThamSoV2(3, so_thich=("di_tich",)))
+    tr = AnswerTrace(); tr.lich_luu = sl.luu_tu_lich(k, None, None); tr.sua_chon = None
+
+    class Gen:
+        async def hieu_sua(self, prompt, call_log):
+            return list(ra)
+    return k, asyncio.run(lkh.hieu_va_ap(cau, Gen(), tr, V2))
+
+
+def test_blocked_day_count_on_a_swap_request_says_the_right_thing():
+    k, kq = _hieu("Đổi chỗ ngày 1 với ngày 2", [sl.HanhDong(loai="doi_so_ngay")])  # model đoán "đổi số ngày" ⇒ rào chặn
+    from test_len_ke_hoach_v2 import V2
+    assert kq["khung"] == k and [d["cau"] for d in sl.thay_doi(V2.bang_lich_v2, kq)] == [sl.CAU_VIEC_KHAC]
+
+
+def test_swap_next_to_a_doable_action_is_reported_not_dropped():
+    from test_len_ke_hoach_v2 import V2
+    k, kq = _hieu("Đổi chỗ ngày 1 với ngày 2, và đổi sang kiểu đi nhẹ nhàng", [sl.HanhDong(loai="doi_tham_so", kieu_di="nhe_nhang")])
+    cau = [d["cau"] for d in sl.thay_doi(V2.bang_lich_v2, kq)]
+    assert cau[-1] == sl.CAU_VIEC_KHAC and any(c.startswith("Đã đổi") for c in cau)
+
+
+def test_model_empty_stays_normal_path():  # lưới ở đường "model trả rỗng" đã thử và bỏ (bộ kề bên E 10 / 20) ⇒ việc của `chua_ho_tro`
+    _, kq = _hieu("Đổi chỗ ngày 1 với ngày 2", [])
+    assert kq is None

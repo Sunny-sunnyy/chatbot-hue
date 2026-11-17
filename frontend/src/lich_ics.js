@@ -58,7 +58,7 @@ export function dungIcs(lich, cau, dauThoiGian = new Date()) {
       const moTa = [m.ghi_chu, cau?.[m.id_muc], NHAC, suat ? "Có nhiều suất — chọn suất khác nếu cần." : null, m.map_url].filter(Boolean).join("\n");
       dong.push("BEGIN:VEVENT", `UID:${lich.ngay[0].ngay_thang}-${m.id_muc}@tro-ly-hue`, `DTSTAMP:${stamp}`,
         `DTSTART:${utc(ng.ngay_thang, bd)}`, `DTEND:${utc(ng.ngay_thang, kt)}`, `SUMMARY:${thoat(m.ten)}`,
-        `LOCATION:${thoat(`${m.ten}, Huế`)}`, `DESCRIPTION:${thoat(moTa)}`, "END:VEVENT");
+        `LOCATION:${thoat(`${m.ten}, Huế`)}`, `DESCRIPTION:${thoat(moTa.replaceAll("**", ""))}`, "END:VEVENT");
       soSuKien += 1;
     }
   }

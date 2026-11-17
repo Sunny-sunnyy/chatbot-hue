@@ -287,7 +287,8 @@ const DONG_CUOI_LICH = "Từ Trợ lý Huế — có thể sai; giờ mở cửa
 export function vanBanLich(turn, answerText, items) {
   const links = items.filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
   const diem = links.map(i => (i.ngay ? `Ngày ${i.ngay} · ${i.thu_tu}. ${i.ten}: ${i.map_url}` : `- ${i.ten}: ${i.map_url}`));
-  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), "", answerText.trim(),
+  // chữ thường (dán vào tin nhắn / ghi chú): bỏ dấu đậm Markdown "**" của câu trả lời ("**Ngày 1**", "bấm **Sửa**") — tự thử 16/11
+  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), "", answerText.replaceAll("**", "").trim(),
           ...(diem.length ? ["", "Bản đồ từng điểm:", ...diem] : []), "", DONG_CUOI_LICH, ""].join("\n");
 }
 
