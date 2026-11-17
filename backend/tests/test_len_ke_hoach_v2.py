@@ -642,6 +642,23 @@ def test_rain_reorder_needs_6mm_but_rain_line_stays_at_60_percent():
     assert v2.xep_v2(b, v2.ThamSoV2(3, so_thich=("di_tich",)), ngay_bat_dau=hom, mua={hom: 80})["ngay"][0]["buoi"] != khong["ngay"][0]["buoi"]  # ca có nghĩa: ≥ 6 mm thì đổi
 
 
+def test_rain_day_drops_afternoon_nature_rule_when_no_interest():
+    """User 17/11: không chọn sở thích + ngày mưa ⇒ bỏ luật "chiều một điểm thiên nhiên" (điểm thiên nhiên đều ngoài trời, luật chạy trước
+    thứ tự mưa ⇒ lịch ra đầm / phá giữa mưa). Ngày khô giữ luật (ca đối chứng biết chắc có điểm thiên nhiên); có sở thích không đổi."""
+    b, hom = V2.bang_lich_v2, D(2026, 11, 21)
+    T = b.theo_id
+    chieu_tn = lambda k: [j for ng in k["ngay"] for j in ng["buoi"]["chieu"] if "thien_nhien" in T[j]["loai"]]
+    for n in (1, 2, 3):
+        kho = v2.xep_v2(b, ts(n), ngay_bat_dau=hom, mua={})
+        ua = v2.xep_v2(b, ts(n), ngay_bat_dau=hom, mua={hom + dt.timedelta(days=k): 80 for k in range(n)})
+        assert len(chieu_tn(kho)) == n and chieu_tn(ua) == [] and v2.kiem_khung_v2(b, ua) == []
+    mot = {hom + dt.timedelta(days=1): 80}  # chỉ ngày 2 mưa ⇒ ngày 1 và 3 giữ luật
+    k = v2.xep_v2(b, ts(3), ngay_bat_dau=hom, mua=mot)
+    assert [bool(chieu_tn({"ngay": [ng]})) for ng in k["ngay"]] == [True, False, True]
+    co_st = ts(2, so_thich=("thien_nhien",))
+    assert chieu_tn(v2.xep_v2(b, co_st, ngay_bat_dau=hom, mua={hom: 80, hom + dt.timedelta(days=1): 80}))  # có sở thích: ưu tiên giữ chỗ
+
+
 @pytest.mark.parametrize("kich_ban", ["khong_mua", "mua_ngay_1", "mua_moi_ngay"])
 def test_forecast_scenarios_and_no_call_outside_7_days(kich_ban):
     """Ba kịch bản dự báo ghi sẵn (cách đo của E): chỉ ngày mưa đổi thứ tự xét; ngày ngoài 7 ngày ⇒ 0 lần gọi, 0 dòng dự báo; lỗi ⇒ như không có."""
