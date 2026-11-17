@@ -1,12 +1,74 @@
 # STATUS E — PHIÊN CHIỀU 17/11 (mở 13:34, ghi 14:31 17/11/2026, `date`) · terminal `hue-rag-55` · Claude Opus 5.5 · vai thực thi
 
-## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11, ghi 16:50 17/11/2026)
-- **Máy:** 0 worktree, 0 server tạm, `/tmp/hr_e_*` không còn (agent con đọc nhánh đã xoá clone). Tiền E chiều: 0,0135 USD (lượt thử 8011) + 0 USD đọc khoá.
-- **Việc khoá học (BRIEF `data/khoa_hoc_2026-11-17/BRIEF.md`):** `VONG1_E.md` **XONG** (3 khoá, đã nhắn A; mục 9 bảng 18 nhánh undercover đã đọc đủ theo origin). Chờ A mở **vòng 2** (mỗi người ≤ 20 dòng gửi cả nhóm) rồi **vòng 3**: E giữ bộ FDE.
-- **AI_FDE_E còn phải làm:** (1) agent con FDE W3D3–5 (`e_tam/part_5.md`) còn chạy lúc kết phiên — nếu file chưa có / dở thì chạy lại đúng phần đó (brief giống part_1–4, nguồn `week 3/day3–5_summary.md`); (2) ghép bộ `AI_FDE_E.md` (mục lục + toàn cảnh + đối chiếu + đề xuất + 5 câu tự kiểm, lấy từ VONG1_E §1) + `AI_FDE_E_phan_<n>.md` từ `e_tam/part_1..8`; (3) dời `e_tam/` ⇒ `nhap/AI_FDE/` (CHƯA dời — part_5 đang ghi vào đó); (4) ghi cảnh báo nhánh local = bản cũ của Ed, code giống origin (VONG1_E §8–9).
-- **Ghi chép hai khoá kia (E đọc độc lập):** `nhap/E_vong1/PROD_1..6`, `SDLC_1..4` + `BRIEF_AGENT.md`.
-- **3 điểm E tự kiểm, nên trình nhóm:** AGENTS.md không trỏ `guides/RUNBOOK_BAN_GIAO.md`; spec deploy B2 ngưỡng 80 % của 30 USD + credit; skill `agent-design-review:10` ghi "chưa có agent"; `max_turns` bị tính "từ chối đúng" (`full_corpus_eval.py:165`).
-- Lượt thử thay User (dừng giữa chừng): `data/tu_thu_2026-11-17/E.md` — 3 điểm nhỏ A đã ghi handoff (sau B7).
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11, ghi 16:55 17/11/2026, `date`)
+
+Viết cho người chưa biết gì về phiên chiều 17/11. Quyền phiên chiều ("như sáng 17/11", việc nặng xin A) **hết hạn** — A hỏi lại User.
+Chiều 17/11 User đổi hướng: dừng test, tập trung **đọc 3 khoá học Ed Donner** (AI FDE · AI Production · AI SDLC) để rút toàn bộ điều đáng học;
+thư mục `data/khoa_hoc_2026-11-17/` là **kho ghi chép lâu dài** (User: "ghi đầy đủ để sau này không cần tìm lại, đọc lại"; không commit — private). Luật đọc khoá:
+`data/khoa_hoc_2026-11-17/BRIEF.md` (đọc hết, nhất là các mục "Bổ sung User" + "ĐỔI CÁCH LÀM" + "Trả lời của A dự án khác thứ nhất" cuối file) và hướng dẫn của A dự án khác thứ nhất
+`/home/minhhieu/dự án khác thứ nhất_Project/dự án khác thứ nhất/thu_nghiem_agent/ghi chú khoá học agent/HUONG_DAN_DOC_3_KHOA.md`.
+
+### (1) Việc của E phiên sau — theo thứ tự (chờ A giao / xác nhận; không tự mở việc ngoài danh sách)
+1. **FDE W3D3–5 chạy lại:** agent con đọc `week 3/day3,4,5_summary.md` **HỎNG** lúc kết phiên (lỗi API timeout) ⇒ `data/khoa_hoc_2026-11-17/e_tam/part_5.md` **không có**.
+   Chạy lại một agent con, brief như part_1–4 (mục A–F: toàn cảnh 3 ngày, điều đáng học theo chủ đề, bảng đối chiếu 4 skill `agent-design-review` /
+   `agent-security-review` / `run-experiment` / `risk-gated-agent-review`, cách điều phối, chỗ chưa chắc, **F = ghi chép đầy đủ từng bài** W3D3·103 … W3D5·122);
+   kèm luật nguồn: code / notebook / `.md` hiện hành > slide > lời giảng; số không kiểm được ghi "theo bài giảng"; bỏ `*_v1` / `*_OLD`.
+2. **Ghép bộ AI FDE** (E là người giữ bộ FDE): `data/khoa_hoc_2026-11-17/AI_FDE_E.md` = mục lục + toàn cảnh khoá (viết để User CHƯA học vẫn học được) + điều đáng học
+   + đối chiếu hue_rag + đề xuất + cách điều phối / đánh giá + 5 câu tự kiểm + nguồn (lấy khung từ `VONG1_E.md` §1); `AI_FDE_E_phan_<n>.md` từ
+   `e_tam/part_1..8` (part_1 W1D1–3 · part_2 W1D4–W2D1 · part_3 W2D2–4 · part_4 W2D5–W3D2 · part_5 W3D3–5 · part_6 slide + handout · part_7 code
+   đọc sâu `week3day5-end` · part_8 cả 18 nhánh `origin/`). Ghi rõ nhãn: phần nào agent con viết, E đã tự kiểm gì.
+3. **Dời `data/khoa_hoc_2026-11-17/e_tam/` ⇒ `data/khoa_hoc_2026-11-17/nhap/AI_FDE/`** (A yêu cầu; chưa dời vì part_5 đang chạy).
+4. **Vòng 2 (A mở khi cả 4 xong vòng 1):** gửi cả nhóm ≤ 20 dòng. Câu E muốn bàn (`VONG1_E.md` §6): (a) deploy thử thật một lượt trên AWS trước 30/11
+   có trái quyết định 12/11 "không deploy sớm" không; (b) giảm ≈ 300 KB tài liệu mở phiên trước hay sau 30/11; (c) `max_retries=0` — bản công khai có nên
+   1–2; (d) ai đã thấy lỗi thật ở chỗ hai tính năng gặp nhau sau merge; (e) chạy "lạnh" runbook bằng Codex chỉ đọc — Codex có chặn đọc `.env` không.
+   Chỉ mở `*_B.md` / `*_C.md` sau khi đã gửi ý của mình.
+5. **Vòng 3:** viết bản AI FDE cuối (E giữ; Production = B, SDLC = C; `TONG_HOP.md` + `README.md` = A), bổ sung điều nhóm tìm thêm.
+6. **3 điểm nhỏ của lượt thử giao diện 17/11** (A đã ghi handoff, **sau B7**, không tự làm): (i) câu ghép bão + giờ Đại Nội trả "giờ mùa đông 07h00–17h30",
+   bảng lịch ghi 07:00–17:00 (User tra 14/11) ⇒ đối chiếu bài kho trước khi gọi là lỗi; (ii) câu "nước sông Hương có lên cao không": mục web là câu
+   cố định "chưa xác minh" nên câu đầu vẫn là câu từ chối + khối "Bạn có thể thử: gõ đúng tên nơi…" — lạc; (iii) "Nếu mưa ngày 2: thay Chùa Thiên Mụ bằng
+   Nhà vườn An Hiên (trong nhà)" — nhà vườn ghi "trong nhà" dễ hiểu nhầm.
+
+### (2) File đã viết (đều private, không commit)
+- `data/khoa_hoc_2026-11-17/VONG1_E.md` — vòng 1 cả 3 khoá: mạch ý, 15–18 điều / khoá, bảng đối chiếu hue_rag (`file:dòng`), đề xuất xếp hạng (§5), câu bàn (§6), 5 câu
+  tự kiểm (§7), chỗ chưa chắc (§8), bảng 18 nhánh undercover (§9).
+- `data/khoa_hoc_2026-11-17/e_tam/part_1,2,3,4,6_slide,7_code,8_nhanh.md` — ghi chép FDE chi tiết (agent con; F = từng bài).
+- `data/khoa_hoc_2026-11-17/nhap/E_vong1/PROD_1..6_*.md`, `SDLC_1..4_*.md` — ghi chép AI Production / AI SDLC E đọc độc lập; `BRIEF_AGENT.md` = brief chung agent con.
+- `data/tu_thu_2026-11-17/E.md` + `anh/` + `tools/E_chat.py`, `E_lich.py`, `E_tim.py` + `server_8011.log` — lượt thử thay User (dừng giữa chừng).
+- `data/lich_nho_2026-11-17/` (README + `tools/so_khung.py` so 4.800 khung, `dem_trua.py`) · `data/mua_lich_2026-11-17/` (`bo_do/` 16 ca khung mưa,
+  `tools/dem.py`, `dem2.py`, `v2_patch.py`) — bộ dò để chạy lại khi sửa bộ xếp.
+
+### (3) Phát hiện từ đọc khoá — nhãn [E kiểm] = E tự mở file / code xác nhận
+- [E kiểm] `AGENTS.md`, `README.md`, `session_prompt/START_SESSION.md`, `guides/README.md` **không trỏ** `guides/RUNBOOK_BAN_GIAO.md` — Codex / Gemini tháng 12 có thể không thấy runbook ⇒ 1 dòng, trước 30/11.
+- [E kiểm] spec deploy `docs/superpowers/specs/2026-11-16-deploy-aws-design.md:205-209` B2: một ngưỡng 80 % của 30 USD (= 24 USD ≈ tiền máy `:62`), không xử lý credit 100 USD (`:64`) ⇒ cảnh báo kêu mọi tháng hoặc không bao giờ; khoá FDE + Production dạy 50 / 80 / 100 % + loại credit. **Chưa tra tài liệu AWS** cách tính credit. Spec chưa có dòng "tắt Auto Recharge OpenAI" (hỏi User).
+- [E kiểm] `skills/agent-design-review/SKILL.md:10` ghi "hue_rag hiện là RAG hỏi đáp, **chưa có agent / công cụ**" — sai hiện trạng (trợ lý có tìm kho, lịch trình, thời tiết, ngày âm, khoảng cách — `backend/llm/assistant.py:363,446,545,619,642`).
+- [E kiểm] `run-experiment` của hue_rag thiếu mục "2b. Riêng cho agent" + mốc ngây thơ / kappa mà khung `/home/minhhieu/khung_fde/mau_skill/run-experiment/SKILL.md:34-45` (v2.2) có.
+- [E kiểm] chạm `max_turns` ⇒ câu từ chối chuẩn (`assistant.py:900-901`); `is_refusal` so chữ (`backend/evaluation/full_corpus_eval.py:165-167`) ⇒ trên câu ngoài kho được tính "từ chối đúng" (sàn); dòng có `fixed_outcome` để tách. Chưa kiểm report cũ đã tách chưa.
+- [E kiểm] `AsyncOpenAI(max_retries=0)` (`backend/llm/generator_openai_full_corpus.py:405`); mọi lỗi OpenAI ⇒ "Không thể tạo câu trả lời vào lúc này." (`:436-437`, `backend/api/routes/chat.py:91`) ⇒ hết hạn mức không có câu riêng.
+- [E kiểm] `_doc_git_sha()` trong Docker ⇒ `"khong_ro"` (`backend/api/routes/chat.py:71-72`) ⇒ log server không tách theo bản; sửa `--build-arg GIT_SHA`.
+- [E kiểm] 5 file mở phiên ≈ 300 KB (`CURRENT_HANDOFF.md` 135 KB, `Project_Status.md` 100 KB) — khoá: ngữ cảnh coding agent gọn, file gốc chỉ trỏ đường.
+- [E kiểm code khoá] luật giữ / gỡ của khoá chạy bằng code `origin/week3day5-end:backend/verdict.py:72` (`keep_or_roll_back`).
+- [E kiểm] nhánh local undercover tuần 1–2 khác `origin/` nhưng **phần code giống hệt** (chỉ khác README / notebook / guides / bài nộp) — đọc code khoá luôn `origin/<nhánh>`.
+- [agent con, E chưa kiểm] rào `.claude/` chỉ có hiệu lực với Claude Code (Codex chỉ còn `.githooks/`); spec chưa có "xem hằng ngày" / cảnh báo app chết; 10.5 thiếu xoá key pair + xem Billing trễ; giai đoạn B–E của spec chưa chạy lần nào; deploy thử thật < 0,5 USD (ước).
+
+### (4) Câu hỏi cho A / User
+- User: tài khoản OpenAI có dùng chung việc khác không (để biết nên tắt Auto Recharge); khoá OpenAI dev agent dùng sau 30/11 đã có trần cứng chưa.
+- User (qua A): có cho deploy thử thật một lượt trước 30/11 không (vướng quyết định 12/11); có cho Codex đọc runbook chỉ đọc (hiện Codex chỉ dùng tra web) không.
+- A: quyết định `max_retries=0` gốc ở đâu (agent con nói spec Phase 6 — E chưa tra).
+
+### (5) Bẫy phiên chiều
+- Repo undercover có nhánh local cùng tên khác `origin/` ⇒ lần đầu đọc tuần 1–2 bằng tên local; nay biết code giống, nhưng luôn ghi `origin/`.
+- `git diff` ba chấm ra số sai trên nhánh gộp `main` nhiều lần ⇒ dùng hai chấm.
+- `ls` một file `.env` (chỉ kiểm tồn tại) bị luật chặn — không đụng `.env` cả bằng `ls`.
+- Worktree tạm thiếu `data/`, `knowledge-base-hue/`, `frontend/node_modules` ⇒ symlink vào bản gốc; gỡ worktree: **`unlink` symlink trước** rồi mới `git worktree remove --force` (tránh xoá theo link).
+- Agent con dài (~10 phút) có thể chết vì timeout API ⇒ kiểm file đầu ra tồn tại trước khi ghép.
+- Tên thư mục tạm theo luật máy chung mới: `/tmp/hr_e_<việc>`; cổng: `ss -ltn | grep <cổng>` trước; việc ≥ 2 GB RAM / ≥ 10 phút CPU ⇒ xin A.
+
+### (6) Tiền E chiều 17/11
+0,0135 USD (17 lượt `chat_metrics` của lượt thử 8011, cộng từ `data/tu_thu_2026-11-17/server_8011.log`) + 0 USD còn lại (đọc khoá, bộ dò, sửa lịch nhỏ, tài liệu).
+
+### (7) Máy
+0 worktree của E, 0 server tạm (8011 đã tắt), `/tmp/hr_e_*` và `/tmp/e_*` không còn, 0 tiến trình nền, 0 agent con đang chạy (agent part_5 đã hỏng / dừng). **Chỗ dừng chính xác:** mọi agent con khác đã XONG và có file (part_1–4, 6, 7, 8 · PROD_1–6 · SDLC_1–4); chỉ còn part_5 (FDE W3D3–5) chưa có — tối đọc tiếp từ đúng phần đó.
+`STATUS_E.md` chưa commit (A commit). Nhánh E đã merge hôm nay, xoá được: `p9-lich-nho-1711`, `p9-tai-lieu-1711-chieu`.
 
 ## Nhật ký chiều
 - Kiểm nhanh 13:34: main `c1e8180`; Qdrant + 8010 tắt (máy khởi động lại) — A bật Qdrant. A `hue-rag-c6`, B `hue-rag-00`, C `hue-rag-33`.

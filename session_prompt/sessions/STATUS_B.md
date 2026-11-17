@@ -1,41 +1,59 @@
-# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11) — B viết 16:50 17/11/2026, terminal `hue-rag-00` (A `hue-rag-c6` · C `hue-rag-33` · E `hue-rag-55`)
+# PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11) — B viết 16:55 17/11/2026, terminal `hue-rag-00` (A `hue-rag-c6` · C `hue-rag-33` · E `hue-rag-55`; cả bốn Claude Code, trực tiếp)
 
-Mục này tự đủ nghĩa; mục "PHIÊN SAU ĐỌC TRƯỚC — B viết 15:13" ngay dưới vẫn đúng cho phần B7 / G2 / luật mới; nhật ký từng bước ở "PHIÊN CHIỀU 17/11".
+Mục này **tự đủ nghĩa** — đọc xong là làm được. Nhật ký từng bước chiều 17/11 ở "PHIÊN CHIỀU 17/11" ngay dưới; sáng 17/11 ở "PHIÊN SÁNG 17/11";
+lệnh G2 ở "ĐO GIỌNG NÓI G2" (phiên chiều 16/11, xa bên dưới). Quyền phiên chiều 17/11 ("như sáng 17/11", việc nặng xin A) **HẾT HẠN** ⇒ chờ A giao.
 
-## 1. Việc khoá học (User 17/11 chiều) — đang ở đâu
-- **Bản chi tiết AI Production của B XONG:** `data/khoa_hoc_2026-11-17/AI_PRODUCTION_B.md` (chính + mục lục) + `nhap/AI_PRODUCTION/n1…n6` (chi tiết theo từng bài, 4.415 dòng).
-- **Vòng 1 XONG:** `data/khoa_hoc_2026-11-17/VONG1_B.md` — cả 3 khoá (SDLC 4 + FDE 5 agent con đọc từ nguồn, theo thứ tự ngày; nháp `nhap/VONG1_B/`; brief `nhap/VONG1_B/BRIEF.md`). Mục 6b bảng nhánh: đủ mọi nhánh 5 repo (phần thiếu lấy từ `nhap/A/NHANH_*.md`). Chưa mở bản của C / E.
-- **CHỜ A mở vòng 2** (mỗi người gửi cả nhóm ≤ 20 dòng: điều người khác có thể bỏ sót · chỗ không đồng ý · đề xuất xếp hạng) ⇒ **vòng 3** B viết bản cuối AI Production (bổ sung điều nhóm tìm thêm). Brief chung: `data/khoa_hoc_2026-11-17/BRIEF.md` (đọc mọi mục "Bổ sung" ở cuối).
-- 7 câu B muốn bàn: `VONG1_B.md` mục 5. 9 đề xuất trước 30/11: mục 4 (i) — nổi nhất: dòng `AGENTS.md` trỏ runbook; spec B2 budget loại credit (MỨC CAO); `git_sha` + bản model thật vào log (trước 22/11); đo 5–10 câu đồng thời trên Lightsail; review tích hợp `dfd0c96..HEAD` trước `$C_DONG`.
+## 1. Việc của B phiên sau — THEO THỨ TỰ (chờ A giao)
 
-## 2. Bẫy / luật nhận chiều 17/11 (thêm vào mục dưới)
-- Code khoá: đọc `origin/<nhánh>`; repo `undercover` có nhánh local khác origin (bản cũ của Ed); `alex main` = 54 commit **của User**, không phải code khoá. Được tự clone vào `/tmp/hr_b_<khoá>` (`git clone --no-hardlinks`) rồi checkout trong bản clone; không checkout thư mục gốc.
-- `git diff` hai chấm (ba chấm ra số sai vì nhánh gộp main nhiều lần). AI Production: guide `.md` hiện hành > video; mục 7 BAN_DO_TUAN_1/2 + mục 0 BAN_DO_ALEX thắng mục khác.
-- Báo User đã làm (qua A): `aiengineer_credentials.csv` trong thư mục khoá AI Production `week1/` (không ai mở); agent con thấy `~/.claude/settings.json` đặt `bypassPermissions` (B chưa mở; cấu hình của User).
+1. **Vòng 2 bàn khoá học** (A mở khi A / B / C / E xong vòng 1). Brief chung: `data/khoa_hoc_2026-11-17/BRIEF.md` — đọc HẾT các mục "Bổ sung" / "ĐỔI CÁCH LÀM" ở cuối.
+   - B gửi **cả nhóm** ≤ 20 dòng: điều người khác có thể bỏ sót · chỗ không đồng ý (với ghi chú khoá / với người khác) · đề xuất xếp hạng. Phản biện thẳng.
+   - Lúc này **mới được mở** bản của C (`AI_SDLC_C*`, `nhap/AI_SDLC/`, `VONG1_C*`) và E (`AI_FDE_E*`, `nhap/AI_FDE/`, `VONG1_E*`) để so.
+   - **7 câu B muốn bàn** (`data/khoa_hoc_2026-11-17/VONG1_B.md` mục 5): (1) agent tháng 12 vào bằng `AGENTS.md` ⇒ runbook hay `START_SESSION.md` (~300 KB)? (2) ghi bản model thật (`response.model`) vào log trước 22/11 hay chỉ ghi giới hạn; OpenAI có bản ghim ngày cho `gpt-6-luna`? (3) `skills/agent-design-review/SKILL.md:39` "tắt trí nhớ khi đánh giá" — bài W2D2·61 là "chỉ đọc, cấm ghi"; sửa hay giữ? (4) review tích hợp `dfd0c96..HEAD` bằng agent con Claude kèm "Chưa đọc:" hay xin lượt Codex? trùng B7 không? (5) lỗi "đổi chỗ ngày" — nguyên tắc "khẳng định đã làm phải từ bản ghi hệ thống" đã là tiêu chí chưa? (6) `bypassPermissions` trên máy dùng chung — chỉ báo User như rủi ro đã biết? (7) test với model đứng thay ↔ luật "không mock làm PASS" — ghi rõ cho agent sau 30/11?
+   - **9 đề xuất trước 30/11** (`VONG1_B.md` mục 4 (i)), nổi nhất: (1) 1–2 dòng `AGENTS.md` trỏ `guides/RUNBOOK_BAN_GIAO.md`; (2) `GIT_SHA` qua build-arg ⇒ ENV + ghi `response.model` vào `chat_metrics` (~10 dòng, trước 22/11); (3) spec B2 budget **loại credit / refund** (MỨC CAO); (5) đo 5 rồi 10 câu đồng thời trên Lightsail (~0,006 USD); (7) review tích hợp trước `$C_DONG`; (8) B7 tách sàn ngoài kho theo nguyên nhân.
+2. **Vòng 3 — bản cuối AI Production (B là người giữ khoá này):** bổ sung vào `data/khoa_hoc_2026-11-17/AI_PRODUCTION_B.md` (+ phần chi tiết `nhap/AI_PRODUCTION/n1…n6`) điều nhóm tìm thêm ở vòng 2, điều nhánh code `nhap/A/NHANH_PROD_alex_twin_saas.md` thêm (twin 10 commit, saas 2, alex `week3` / `week4` / `e2966a9`; **alex `main` = 54 commit của User**, ghi riêng nếu dùng), và đối chiếu deploy với file thật (`VONG1_B.md` cuối mục 6b). A viết `TONG_HOP.md` + `README.md` mục lục.
+3. **B7 lượt đo CUỐI — code đứng yên tối 22/11, chạy CN 23/11, người chạy B, trần 0,45 USD.** Làm đúng `data/phase_9/b7/tools/RUNBOOK_CUOI.md` (private) từ mục 0; plan `docs/superpowers/plans/2026-11-23-phase-9-b7-cuoi-plan.md` (sha `031eaf56705b`).
+   - **Bước 0 (0 USD):** A ghi `C_DONG` (sha `main` lúc đóng code) vào RUNBOOK mục 0.1 ⇒ `export C_DONG=<sha> B7_OUT=/home/minhhieu/hue_rag/data/phase_9/b7_cuoi DO_CUOI_DIR=$B7_OUT` ⇒ `C_DONG=<sha> bash data/phase_9/b7/tools/buoc0_cuoi.sh` (in record / sparse / point + **mọi hằng lời dặn khác giữa kỳ `dfd0c96`** + mọi cờ khác + điều kiện dùng lại L) ⇒ `export B7_EXPECT="<record>,<sparse>,<point>"` đúng số nó in ⇒ dựng worktree mốc RAG 1–8 `/tmp/b7_moc` từ tag `p9-moc` (lệnh ở RUNBOOK 0.3 — thư mục tạm của B nay đặt tên `/tmp/hr_b_*`, riêng `b7_moc` là tên script đã ghim, kiểm trước khi dựng) ⇒ `free -g` ≥ 5 GB, không session nào khác mở server / pytest / lượt có phí, 8010 tắt ⇒ `do_cuoi_b7.py preflight`.
+   - **Bộ T đã thấy CHẠY LẠI** (A chốt 14:26 17/11/2026, RUNBOOK 0.8: luật mục web `TU_WEB_LUAT` đổi + 8 hằng mới + cờ `cau_nhieu_y` / `het_luot_bo_cong_cu` / `web_cau_noi_tiep` / `khoang_cach_tinh_san` / `bao_lu_cong_cu` / `sua_lich_chua_ho_tro` bật sau giữa kỳ ⇒ không dùng lại số cũ; ≈ +0,01–0,02 USD) ⇒ **giữ** dòng `a_da_thay` trong `chay_khong_server.sh`. **L đã thấy** chạy lại (4 file xếp / sửa lịch khác lượt Q3 gần nhất).
+   - **Lượt có phí theo thứ tự RUNBOOK mục 1:** G (pilot 10 ⇒ đủ 176, hai bên agent ↔ RAG mốc; dừng nếu vượt ước > 50 % sau pilot) · A, S đã thấy ×1, W (`s2c` sàn S2c ≥ 15 / 17), T đã thấy, C đã thấy (`chay_khong_server.sh`) · chấm an toàn `an_toan_b7.py` export ⇒ 2 người chấm ⇒ check / accept ⇒ compare · S-AT (`chay_sat.sh`) · N (`chay_ngay.sh` + `cap_mu_ngay.py`) · L đã thấy (`chay_l.sh da_thay`) · **L bộ quyết 12 ×2** (`chay_l_quyet.sh`, cổng 8887 — `ss -ltn | grep 8887` trước) ⇒ 2 agent con chấm mù theo `brief_cham_mu_L.md` (A đã duyệt nguyên văn; không nói có lịch hỏng) ⇒ `ghep_cham_b7.py` (in "người chấm tin được: CẢ HAI / SÓT" — SÓT ⇒ báo A, không tự chấm).
+   - **Phần kín — User chạy bằng `!`** (B đưa lệnh, không mở file kín): trước 23/11 **3 lệnh đếm bộ kín sửa lịch** (plan B7 cuối §4 — k < n ⇒ L kín NOT RUN); ngày 23/11: `! C_DONG=<sha> bash …/chay_ngay_kin.sh` (K, ngay sau N) · `! … chay_kin.sh` (S kín ×2 + T kín) · `! … chay_kin_chuoi.sh` (C kín) · `! … chay_l.sh kin` (L kín).
+   - **Sau kết quả (0 USD):** `holm.py` 3 nhóm · `nhan_loi.py $B7_OUT --out $B7_OUT/nhan_loi.json` · mọi sàn "0 / n" ghi kèm "tỉ lệ thật ≤ 3 / n (95 %)" · S2b ở 2 câu đã thấy (`b_dt_12`, `b_dt_20`) ghi "phạm S2b — giới hạn đã nhận".
+   - **Test rộng một lượt** (`cd backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests -q`, ~4,4 GB RSS) trên `$C_DONG` trước lượt đo — **xin A lượt máy** (máy chung 2 dự án khác).
+   - **Đề xuất của B cho B7 (chờ nhóm / A):** tách sàn ngoài kho "từ chối do model" ↔ "câu cố định do hết lượt / lỗi" (khoá FDE W2D4·76: bản hỏng-luôn-từ-chối vẫn qua sàn) — grep `data/phase_9/b7/tools/` xem đã tách chưa.
+4. **G2 giọng nói** khi User thu xong 40 câu (chưa thu tới 17/11) — lệnh ở mục "ĐO GIỌNG NÓI G2" bên dưới; `free -g` ≥ 5 GB; xin A lượt máy.
+5. Runbook bàn giao `guides/RUNBOOK_BAN_GIAO.md` mục 4 / 5 / 7 (B đã viết, main `0ec3a5e`) — sửa khi cờ / kho / cách đo đổi; nếu nhóm chốt đề xuất 6 (`VONG1_B.md`) thì B viết phần §3 / §8 của mình.
 
-## 3. Máy lúc kết phiên
-0 worktree của B, 0 server, 0 tiến trình nền, 0 thư mục `/tmp/hr_b_*` / `/tmp/b_*` của B. Tiền B cả chiều 17/11: **0,001 USD** (1 lượt Serper thật). Không chạy gì mới sau khi A báo kết phiên.
+## 2. File B đã viết chiều 17/11 (đường dẫn)
+- **Code (đã vào main):** `backend/llm/lich_trinh_v2.py` (ngày mưa bỏ luật chiều-thiên-nhiên, merge `830984f`) + test `backend/tests/test_len_ke_hoach_v2.py`; `backend/llm/tra_web.py` + `backend/api/routes/chat.py` (ngày đăng cạnh tiêu đề nguồn web, merge `dc9805c`) + test `backend/tests/test_b6_tra_web.py`.
+- **Report (tracked):** `report_agent/2026-11-12_ra_khoang_cach/b_mua_bo_thien_nhien_implementation.md`, `b_ngay_nguon_web_implementation.md`.
+- **Tài liệu (tracked, đã merge):** `bai_hoc/23_LEN_KE_HOACH_BAN_2.md` (khối ngày mưa), `bao_cao_he_thong/README.md`, `bao_cao_he_thong/nhat_ky/2026-11-17_chieu.md`, `guides/RUNBOOK_BAN_GIAO.md` mục 4 / 5 / 7.
+- **Private (`data/`):** `data/mua_bo_thien_nhien_2026-11-17/` (tools `xuat_khung.py`, `so_khung.py`, bản đầu `dem_ban_dau.py`, `dem2_ban_dau.py`, `so_an_review_bua_trua.py`; `so_khung.txt`, `bo_do_E_nhanh.txt`, `sua_lich_*.txt`) · `data/ngay_web_2026-11-17/` (`goi_serper.py`, `serper_lu.json`, `chay_ca.py`, `ket_qua_ca.txt`; `ca.json` do C soạn) · `data/phase_9/b7/tools/buoc0_cuoi.sh` (bản cũ `buoc0_cuoi.truoc_2026-11-17_chieu.sh`) + `RUNBOOK_CUOI.md` mục 0.8 · `data/khoa_hoc_2026-11-17/AI_PRODUCTION_B.md`, `VONG1_B.md`, `nhap/AI_PRODUCTION/` (n1…n6 + `BRIEF_AGENT_CON.md`), `nhap/VONG1_B/` (SDLC s1…s4, FDE f1…f5, `BRIEF.md`).
 
-# PHIÊN SAU ĐỌC TRƯỚC — B viết 15:13 17/11/2026 (phiên chiều 17/11, terminal `hue-rag-00`)
+## 3. Số đã đo chiều 17/11 (nhãn)
+- **[Chạy, hàm thuần, 0 USD] Ngày mưa:** 3.880 khung main ↔ nhánh: chỉ 100 đổi, cả 100 = mưa + không sở thích; 300 ngày mưa không sở thích: ra biển–đầm phá 109 ⇒ 0, chiều có điểm thiên nhiên 207 ⇒ 0, ngày toàn ngoài trời 253 ⇒ 181; `kiem_khung_v2` 0 lỗi; bộ dò E 16 ca: main 10 SAI ⇒ nhánh 0; mô phỏng sửa lịch `chuoi_da_thay` 10 / 10 giống byte; `test_len_ke_hoach_v2` 92 đạt (46 s, ~2 GB RSS). C review READY 0 finding.
+- **[Chạy] Ngày nguồn web:** 1 lượt Serper thật câu mực nước sông Hương: 1 / 5 kết quả có `date` ("17 thg 11, 2025" — tin lũ năm trước), 4 / 5 không; 3 file Serper thô cũ: 10 / 25 có `date`, một dạng "N thg N, NNNN"; bộ ca C 23: 0 SAI, 6 từ chối (dạng tương đối — chưa thấy ở Serper thật); `test_b6_tra_web` + `test_mo_dau_web` 135 đạt. C READY, 1 minor = giới hạn.
+- **[Chạy] Review bữa trưa (C):** `dem.py` main 52 ngày thiếu trưa (42 Lê Bá Đảng, 6 Hòn Chén, 4 Thuận An) ⇒ nhánh 0; 960 khung: 137 khác, 101 đổi ngoài "bữa trưa từng thiếu" = bữa tối đổi quán dây chuyền (đúng luật không lặp quán).
+- **[Chạy] `buoc0_cuoi.sh` mới trên HEAD `dc9805c`:** 4 hằng plan giống; 9 / 27 hằng khác (`TU_WEB_LUAT` `e5f516aa383e` ⇒ `7180f74a00e6` + 8 mới); 22 cờ / đường dẫn khác.
+- **[Đã kiểm, đọc code] khoá học:** `chat.py:71-77` git_sha Docker = `khong_ro` · `AGENTS.md` / `START_SESSION.md` / `README.md` 0 dòng nhắc runbook · spec deploy dòng 204–212 budget không loại credit · `Dockerfile:68-70` một tiến trình (cố ý), `:31` `uv export --frozen`, không HEALTHCHECK app, không USER · `generator_openai_full_corpus.py:83-86` `RouteOutput` chỉ `route`, `:405` `max_retries=0`, `:436` gộp mọi lỗi ⇒ `app.py:273` câu chung · `agent-design-review/SKILL.md:39` · `compose.yml:2-3` ghi chú `.env` cũ · `App.jsx:142` chân trang demo.
+- **[Đếm] nhánh code khoá:** undercover 18 / 18, accountable 13 / 13, twin 10 / 10, saas 2 / 2 (phần B thiếu lấy từ `nhap/A/NHANH_*.md`); local undercover `-end` khác origin 42 file / −10.665 dòng; 3 trích `nhánh:file` không `origin/` trong nháp FDE giống hệt origin.
 
-Mục này tự đủ nghĩa; nhật ký từng bước ngay dưới ("PHIÊN CHIỀU 17/11").
+## 4. Câu hỏi cho A / User
+- **A (vòng 2):** 7 câu ở mục 1.1. Thêm: đề xuất (i) nào vào trước 22/11 (code đứng yên) — B nghiêng chỉ (2) `GIT_SHA` + `response.model` là code; còn lại là chữ / đo.
+- **User (qua A):** (a) có vô hiệu hoá khoá AWS trong `aiengineer_credentials.csv` (thư mục khoá AI Production `week1/`) không; (b) giữ `defaultMode: bypassPermissions` trong `~/.claude/settings.json` trên máy dùng chung (agent con báo; B chưa mở); (c) G2: khi nào thu 40 câu; (d) B7: chạy 3 lệnh đếm bộ kín trước 23/11; (e) tiền tặng AWS có trừ vào Lightsail không — ảnh hưởng spec B2.
 
-## Việc của B còn mở — theo thứ tự (chờ A giao; quyền phiên chiều hết hạn)
-1. **B7 lượt đo CUỐI — CN 23/11, người chạy B, trần 0,45 USD.** Đọc `data/phase_9/b7/tools/RUNBOOK_CUOI.md` từ mục 0. Mới chiều 17/11: mục 0.8 — `buoc0_cuoi.sh` in mọi hằng lời dặn + cờ khác giữa kỳ (`dfd0c96`) ↔ `$C_DONG`; **A chốt T đã thấy CHẠY LẠI** (luật web + nhiều ý đổi sau giữa kỳ; ≈ 0,01–0,02 USD) ⇒ giữ dòng `a_da_thay` trong `chay_khong_server.sh`; L đã thấy chạy lại (4 file lịch khác). `$C_DONG` A ghi tối 22/11. Cần User trước 23/11: 3 lệnh đếm bộ kín sửa lịch; ngày 23/11: 4 lệnh `!` phần kín.
-2. **G2 giọng nói** khi User thu 40 câu (chưa thu tới 17/11 chiều) — lệnh ở mục "ĐO GIỌNG NÓI G2" phiên tối 16/11 bên dưới; xin A lượt máy.
-3. Runbook bàn giao (`guides/RUNBOOK_BAN_GIAO.md`): mục 4 / 5 / 7 của B ĐÃ VIẾT (main `0ec3a5e`); khi có thay đổi lớn ở cờ / kho / đo thì sửa mục đó.
+## 5. Bẫy đã gặp chiều 17/11
+1. **`/tmp/b_*` trùng tiền tố với dự án khác** (một dự án lỡ xoá worktree của dự án kia) ⇒ thư mục tạm B nay là `/tmp/hr_b_<việc>`; **không xoá thứ mình không tạo** — `/tmp/b_ae06` là worktree dự án khác thứ nhất có WIP, `/tmp/b_bac2*`, `/tmp/b_out` của dự án khác (A từng liệt kê nhầm là của B — B kiểm remote / python trước khi xoá).
+2. Số của các nhóm chồng nhau: ghi "số đổi / tổng" (100 / 3.880), không cộng nhóm (2.880 + 3.600 > 3.880 — A sửa bài 23).
+3. Script trong repo chạy bằng `uv run python …` (§10) dù docstring ghi `python3 -I` (A sửa runbook mục 7).
+4. Ghi chú STATUS bằng heredoc Python: `\$` lọt thành ký tự thừa (đã sửa bằng sed) — dùng heredoc `<<'EOF'` hoặc truyền chuỗi qua argv.
+5. Code khoá: `origin/<nhánh>`; nhánh local `undercover` = bản cũ của Ed (A đính chính: không phải bài User); `alex main` = 54 commit **của User** (B từng ghi sai "đọc qua e2966a9" — đã sửa `VONG1_B.md` 6b); `git diff` hai chấm; AI Production: guide `.md` hiện hành > video. Được clone code khoá vào `/tmp/hr_b_<khoá>` (`git clone --no-hardlinks`) rồi checkout trong bản clone — không checkout thư mục gốc.
+6. Agent con có thể đọc ngoài phạm vi brief (một agent đọc `~/.claude/settings.json`) — brief sau ghi rõ thêm "không đọc cấu hình máy / thư mục home ngoài danh sách".
+7. Nhánh chỉ đổi một hàm thuần + test ⇒ **không** test rộng (A nhắc, luật §8 15/11); test rộng / Playwright / server tạm = việc nặng ⇒ xin A trước.
 
-## Đã vào main chiều 17/11 (phần B; 0,001 USD tổng)
-- Ngày mưa + không chọn sở thích ⇒ bỏ luật "chiều một điểm thiên nhiên" (`830984f`): 3.880 khung, chỉ 100 đổi; biển–đầm phá 109 ⇒ 0 / 300 ngày mưa; giới hạn: 181 / 300 ngày vẫn toàn ngoài trời (dữ liệu). Report `report_agent/2026-11-12_ra_khoang_cach/b_mua_bo_thien_nhien_implementation.md`.
-- Ngày đăng cạnh tiêu đề nguồn web (`dc9805c`): Serper `date` "N thg N, NNNN" ⇒ "(dd/mm/yyyy)" chỉ ở tiêu đề hiện cho người dùng; bộ ca C 0 / 23 SAI; dạng tương đối không đọc (chưa thấy ở Serper thật). Report `b_ngay_nguon_web_implementation.md`.
-- Review READY: `p9-bua-trua-gan` (C, 52 ⇒ 0 ngày thiếu trưa).
+## 6. Tiền
+B cả chiều 17/11: **0,001 USD** (1 lượt Serper thật, A duyệt). Mọi việc khác 0 USD (hàm thuần, đọc file, agent con chỉ đọc). Sáng 17/11 (B): câu bão ≈ 0,33 USD (số của B, chưa ai tính lại) — ghi ở "PHIÊN SÁNG 17/11".
 
-## Bẫy / luật mới chiều 17/11
-- **Thư mục tạm: `/tmp/hr_b_<việc>`** (không còn `/tmp/b_*` — dự án khác trùng tiền tố, đã lỡ xoá một worktree); không xoá thứ mình không tạo; mở cổng ⇒ `ss -ltn | grep <cổng>` trước; việc ≥ 2 GB RAM / ≥ 10 phút CPU ⇒ xin A.
-- `/tmp/b_ae06` (worktree dự án khác thứ nhất, có WIP), `/tmp/b_bac2*`, `/tmp/b_out` KHÔNG phải của B — đừng xoá.
-- Số của các nhóm chồng nhau: ghi "số đổi / tổng", không cộng các nhóm (A sửa bài 23).
-- Script trong repo: chạy bằng `uv run python …` (§10) dù docstring ghi `python3 -I`.
-- Máy lúc viết: 0 worktree của B, 0 server, 0 tiến trình nền.
+## 7. Máy lúc kết phiên
+0 worktree của B (`git worktree list` chỉ còn cây chính), 0 server, 0 tiến trình nền, 0 thư mục `/tmp/hr_b_*` / `/tmp/b_*` của B (trừ file nháp mục này, xoá ngay sau khi ghi). Agent con của B: 15 agent (6 AI Production + 9 vòng 1) đều đã xong. `STATUS_B.md` chưa commit — A commit.
 
 # PHIÊN CHIỀU 17/11 — B `hue-rag-00` (C `hue-rag-33` · E `hue-rag-55` theo tin của C, E · A `hue-rag-c6` (A xác nhận)) — mở 13:34 17/11/2026
 - 13:34 17/11/2026 — Kiểm nhanh: main `c1e8180` = origin, hooksPath `.githooks`, 0 worktree, 0 server 80xx / 88xx; **Qdrant 6335 KHÔNG trả lời** (curl rỗng); RAM available 13 GB. STATUS_B / C / E còn thay đổi chưa commit từ phiên sáng. Chờ A giao việc.

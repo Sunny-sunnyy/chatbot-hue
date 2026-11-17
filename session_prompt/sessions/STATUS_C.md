@@ -1,13 +1,111 @@
 # STATUS C — phiên chiều 17/11 (C `hue-rag-33` · A `hue-rag-c6` · B `hue-rag-00` · E `hue-rag-55`); dưới là nhật ký phiên sáng 17/11
 
-## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11 — C viết 16:50 17/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11 — C viết 16:55 17/11/2026, viết cho người chưa biết gì về phiên chiều)
 
-- **Việc dở: đọc 3 khoá (vòng 1).** Brief `data/khoa_hoc_2026-11-17/BRIEF.md` (đọc cả các mục "Bổ sung" / "ĐỔI CÁCH LÀM" cuối file). Bản nháp vòng 1: `data/khoa_hoc_2026-11-17/VONG1_C.md` — §0, §1 Production, §2 FDE, §4 chéo, §5 câu bàn, §6 lỗi agent con: XONG; **§3 AI SDLC còn thiếu W1D4–W1D5 + W2D1–W2D3**.
-- **Hai agent con lúc kết phiên vẫn chạy** (có thể đã ghi xong file, có thể dở): kết quả về `data/khoa_hoc_2026-11-17/AI_SDLC_C_phan_2.md` (W1D4–W1D5, bài 24–37, nhánh `week1day4-end` @59300c7, `week1day5-end` @4cd5cf8) và `AI_SDLC_C_phan_3.md` (W2D1–W2D3, nhánh `week2day2-intents/-end`, `week2day3-intents/-merged/-end`). Nháp ở `nhap/AI_SDLC/`.
-- **Phiên sau làm tiếp:** (1) `ls` hai file trên; thiếu / dở ⇒ chạy lại agent con cho đúng phần đó (brief mẫu: đầu `AI_SDLC_C_phan_1.md` + luật: git diff HAI chấm; đọc code bằng `git show origin/<nhánh>:<file>` hoặc clone sang `/tmp/hr_c_<khoá>`; bản đồ ngày là nháp, tin summary; lệch nguồn: code / `.md` hiện hành > slide > lời giảng). (2) Cập nhật §3 của `VONG1_C.md` + bảng 13 nhánh accountable đã đọc / chưa đọc (đếm tên nhánh trong `AI_SDLC_C_phan_*.md`; đối chiếu `nhap/A/NHANH_SDLC_accountable.md` của A). (3) Nhắn A "xong vòng 1" ⇒ vòng 2 bàn nhóm ⇒ vòng 3 C viết bản AI SDLC cuối (đọc bổ sung file chưa đọc theo bảng §6.10 của `NHANH_SDLC_accountable.md`).
-- **Ranh giới:** chưa mở bản của A / B / E (`AI_PRODUCTION_B.md`, `CHEO_3_KHOA_A_agent.md`, `e_tam/`, `b_tam/`) — giữ tới khi vòng 1 xong. Chỉ đọc, 0 USD. Không thư mục tạm nào của C (`/tmp/hr_c_*` chưa tạo).
-- Nháp vòng 1 Production / FDE của C: `data/khoa_hoc_2026-11-17/nhap/VONG1_C/` (13 file + `BRIEF_AGENT_CON.md`).
-- Máy: 0 worktree C, 0 server, 0 tiến trình nền (ngoài 2 agent con nói trên).
+Phiên chiều 17/11 của C có hai nửa: (a) 13:34–15:00 sửa / review lô lỗi nhỏ của lịch + runbook — **mọi nhánh đã merge, không việc dở**;
+(b) từ ~15:50 User DỪNG test, giao cả nhóm **đọc 3 khoá học** (AI Production, AI FDE, AI SDLC — Ed Donner) — **việc dở duy nhất của C**.
+Quyền phiên ("như sáng 17/11", việc nặng xin A) đã hết hạn.
+
+### (0) CHỖ DỪNG CHÍNH XÁC (16:56 17/11/2026, User: dừng ngay, tối nay đọc tiếp từ đúng chỗ này)
+- **Agent phan_2 (W1D4–W1D5, bài 24–37)**: DỪNG vì lỗi API "Request timed out" (server_error) lúc đang đọc phần đối chiếu hue_rag (skill + sổ cải
+  tiến) — tức đã đọc summary / slide / code nhánh nhưng **CHƯA ghi file nào** (`AI_SDLC_C_phan_2.md` không có; không có `tmp_C_phan2_*`).
+- **Agent phan_3 (W2D1–W2D3, bài 38–54)**: C DỪNG (TaskStop) lúc đang đọc handout Anthropic + repo accountable — **CHƯA ghi file nào**
+  (`AI_SDLC_C_phan_3.md` không có; không có `tmp_C_phan3_*`).
+- Đã có: `AI_SDLC_C_phan_1.md` (bài 1–23, W1D1–W1D3, XONG) · `AI_SDLC_C_phan_4.md` (bài 55–62 W2D4–W2D5 + phụ lục bài 53–54, XONG) ·
+  `VONG1_C.md` (§1 Production, §2 FDE, §4, §5, §6 XONG; §3 SDLC thiếu W1D4–W2D3).
+- **Phiên tối bắt đầu từ:** chạy lại HAI agent con TỪ ĐẦU (không có gì để nối): (a) W1D4–W1D5 bài 24–37 ⇒ `AI_SDLC_C_phan_2.md`;
+  (b) W2D1–W2D3 bài 38–54 ⇒ `AI_SDLC_C_phan_3.md` (bài 53–54 đã có phụ lục ở phan_4 — agent ghi đủ, C gộp phần trùng). Brief = mục (1) bước 2
+  dưới đây. Rồi bước 3 trở đi.
+- **Lưu ý độc lập:** trong `data/khoa_hoc_2026-11-17/nhap/` đã có bản SDLC của người khác (`nhap/A/SDLC_W*.md`, `nhap/VONG1_B/SDLC_s*.md`,
+  `nhap/E_vong1/SDLC_*.md`) — KHÔNG mở trước khi C xong vòng 1 (trừ `nhap/A/NHANH_SDLC_accountable.md` A cho dùng chung). Brief agent con
+  phải ghi rõ "không mở `nhap/A/`, `nhap/VONG1_B/`, `nhap/E_vong1/`, `AI_PRODUCTION_B.md`, `CHEO_3_KHOA_A_agent.md`".
+- 0 agent con C còn chạy.
+
+### (1) Việc của C phiên sau — THEO THỨ TỰ
+1. **Đọc brief:** `data/khoa_hoc_2026-11-17/BRIEF.md` — đọc HẾT, nhất là các mục cuối: "Bổ sung User — ĐỌC SÂU", "ĐỔI CÁCH LÀM" (mỗi người đọc
+   cả 3 khoá ⇒ vòng 1 độc lập ⇒ vòng 2 bàn nhóm ⇒ vòng 3 viết kho cuối), và các ghi chú A thêm sau (luật lệch nguồn, đọc mọi nhánh, clone).
+   Đọc thêm `/home/minhhieu/dự án khác thứ nhất_Project/dự án khác thứ nhất/thu_nghiem_agent/ghi chú khoá học agent/HUONG_DAN_DOC_3_KHOA.md` mục 0 + 6.3.
+2. **Chạy lại 2 agent con AI SDLC** (cả hai dừng, CHƯA ghi file — xem (0)): đích `data/khoa_hoc_2026-11-17/AI_SDLC_C_phan_2.md`
+   (W1D4–W1D5, bài 24–37: harness engineering, gitleaks, linter, hook, CI, IMPROVE.md, dark mode, subagent, agent team, Codex review, deploy
+   Render; nhánh `week1day4-end` @59300c7, `week1day5-end` @4cd5cf8) và `AI_SDLC_C_phan_3.md` (W2D1–W2D3: 5 vòng đời, worktree, Prepare main,
+   thứ tự gộp, conflict ẩn, codebase lớn, bảo mật bài 53–54; nhánh `week2day2-intents`, `week2day2-end` @c1fdfaf, `week2day3-intents`,
+   `week2day3-merged`, `week2day3-end` @34dd9a2). Agent cũng có thể đã để nháp tên cũ `tmp_C_phan2_W1D4-5.md` / `tmp_C_phan3_W2D1-3.md` ở gốc
+   thư mục hoặc ở `nhap/AI_SDLC/`. **Thiếu hoặc dở ⇒ chạy lại agent con cho đúng phần đó** (≤ 3 summary / agent). Brief mẫu = brief đã dùng
+   (khuôn mục A–G + "Ghi chép theo ngày / bài" đặt TRƯỚC: khái niệm, cơ chế, prompt / cấu hình / lệnh nguyên văn, code kèm `nhánh:file`, số
+   "theo bài giảng", bẫy, quyết định của Ed — không giới hạn độ dài; xem đầu `AI_SDLC_C_phan_1.md` làm mẫu). Luật kèm: `git diff` HAI chấm
+   (ba chấm ra số sai); đọc code bằng `git -C /mnt/d/MinhHieuWin/AI_SDLC_2026_Win/accountable show origin/<nhánh>:<file>` hoặc clone sang
+   `/tmp/hr_c_<khoá>` (`git clone --no-hardlinks`, checkout TRONG bản clone, không chạy code cần khoá, dọn khi xong); bản đồ ngày là nháp — tin
+   summary; SDLC không có `DIEM_CHUA_XAC_MINH` riêng (cuối từng summary); `W2D3_ban_do.md` mục 7 "không có commit Plan" là SAI (có 3: e1b188b,
+   34249d0, 210b523 rồi merge 33edb29); lệch nguồn: code / `.md` hiện hành > slide > lời giảng; không mở `.env`, `*sealed*`.
+3. **Hoàn `data/khoa_hoc_2026-11-17/VONG1_C.md` §3** (AI SDLC): thay mạch + điều quan trọng + bảng đối chiếu phần W1D4–W2D3 bằng số / mã bài từ
+   phan_2 / phan_3; thêm **bảng 13 nhánh accountable đã đọc / chưa đọc** — lúc kết phiên đếm tên nhánh trong phan_1 + phan_4: ĐÃ có `main`,
+   `week1day2-end`, `week1day3-end`, `week2day3-end`, `week2day4-books`, `week2day4-end`, `week2day5-end` (bản cuối @693a7f3); CHƯA có
+   `week1day4-end`, `week1day5-end`, `week2day2-intents`, `week2day2-end`, `week2day3-intents`, `week2day3-merged` (là phần của phan_2 / phan_3).
+   Đối chiếu bảng với `data/khoa_hoc_2026-11-17/nhap/A/NHANH_SDLC_accountable.md` (A đã đọc đủ 13 nhánh phần harness + app). Xoá câu "phần
+   W1D4–W2D3 điền khi hai phần chi tiết xong" ở §3 và dòng tương ứng ở §6. Xong ⇒ nhắn A "xong vòng 1".
+4. **Sau khi xong vòng 1 mới được mở** bản của người khác: `AI_PRODUCTION_B.md`, `CHEO_3_KHOA_A_agent.md`, `e_tam/`, `b_tam/`, `nhap/A/` (riêng
+   `nhap/A/NHANH_*.md` A cho dùng chung ngay).
+5. **Vòng 2 (A mở khi cả 4 xong vòng 1):** gửi CẢ NHÓM ≤ 20 dòng: điều mình thấy người khác có thể bỏ sót · chỗ không đồng ý · đề xuất xếp
+   hạng. Câu C muốn bàn = `VONG1_C.md` §5: (a) điểm vào sau 30/11 — `AGENTS.md` trỏ thẳng `guides/RUNBOOK_BAN_GIAO.md` cho chế độ một agent, ai
+   viết runbook §9 + dời luật trong memory Claude vào repo; (b) tập bàn giao với Codex một lượt trước 30/11 (gộp với "Codex review spec deploy");
+   (c) chạy thử deploy B–E một lần (tạo rồi xoá, < 0,5 USD ước) có trái lời User 12/11 "không deploy sớm" không; (d) cảnh báo khi app chết + trần
+   5 USD OpenAI khi hội đồng dùng chung một IP (~200 lượt); (e) `bypassPermissions` trên máy dùng chung — chỉ nêu cho User.
+6. **Vòng 3: C GIỮ bản AI SDLC cuối** (Production = B, FDE = E, `TONG_HOP.md` + `README.md` = A). Bộ cuối = `AI_SDLC_C_phan_1..4.md` (+ mục lục
+   `AI_SDLC_C.md` C viết) bổ sung điều nhóm tìm thêm ở vòng 2, và **đọc bổ sung file app chưa ai đọc** theo `nhap/A/NHANH_SDLC_accountable.md`
+   §6.10 (thân phần lớn component UI, dựng PDF, `lookups.py`, `books/router.py`, dữ liệu mẫu) — User: "xem hết các nhánh để đủ thông tin".
+   Kho này là **ghi chép lâu dài**: đọc xong không cần mở lại nguồn; toàn cảnh + 5 câu tự kiểm viết để User (chưa học SDLC) tự học được.
+
+### (2) File C đã viết (tất cả private, `data/` không commit)
+- `data/khoa_hoc_2026-11-17/VONG1_C.md` — nháp vòng 1 (§0 bảy điều · §1 Production · §2 FDE · §3 SDLC (dở) · §4 chéo 3 khoá · §5 câu bàn · §6 lỗi
+  agent con · §7 nguồn).
+- `data/khoa_hoc_2026-11-17/AI_SDLC_C_phan_1.md` (~810 dòng, bài 1–23, W1D1–W1D3) · `AI_SDLC_C_phan_4.md` (~1.100 dòng, bài 55–62 + phụ lục bảo
+  mật 53–54). Nháp: `nhap/AI_SDLC/` (`C_phan1_ghi_chep.md`, `phan1_ghi_chep_theo_bai.md`, `tmp_C_phan1_W1D1-3.md`, `tmp_C_phan4_W2D4-5_ban1.md`).
+- Vòng 1 Production + FDE (đọc nguồn gốc, 13 agent con): `data/khoa_hoc_2026-11-17/nhap/VONG1_C/PROD_W1D1-3, W1D4-5, W2D1-3, W2D4-5, W3D3-5,
+  W4D1-3, W4D4-5.md`, `FDE_W1D1-3, W1D4-5, W2D1-3, W2D4-5, W3D1-3, W3D4-5.md`; brief chung `nhap/VONG1_C/BRIEF_AGENT_CON.md`.
+- Công cụ lịch chiều nay: `data/mua_lich_2026-11-17/c_tools/` (mô phỏng mưa), `data/bua_trua_2026-11-17/tools/dem.py`, `data/ngay_web_2026-11-17/ca.json`.
+
+### (3) Số / phát hiện (nhãn: [C kiểm] = C mở file hue_rag xác nhận · [nguồn nói] · [suy ra])
+- **Điểm vào sau 30/11 sai chỗ** [C kiểm]: `AGENTS.md` / `START_SESSION.md` không trỏ `guides/RUNBOOK_BAN_GIAO.md`; `AGENTS.md` không có lệnh test;
+  bộ đọc mở phiên ~300 KB. Khoá SDLC W1D2·12, W1D3·22: `AGENTS.md` là bản đồ ngắn + lệnh kiểm.
+- **Rào chỉ-Claude mất từ 12/2026** [C kiểm `.claude/settings.json:3-7`]: `deny Read(./.env)`, `Bash(agy)` chỉ áp Claude Code; `deny Read` cũng
+  không chặn `cat .env` (SDLC W1D4·27, W2D3·54). Rào chung còn lại: `.githooks/pre-commit`.
+- **Luật chỉ ở memory Claude** (trần ~1 USD / phiên, "User chỉ vắng khi nói 'đi vắng'") [C kiểm `MEMORY.md`]; `session_prompt/WORKFLOW.md:201`
+  ghi "> 10 phút không trả lời ⇒ có thể vắng" — **lệch** với memory.
+- **Skill cũ** [C kiểm]: `skills/agent-design-review/SKILL.md:10` "chưa có agent / công cụ" — code có 5 công cụ
+  (`backend/llm/generator_openai_full_corpus.py:483-498`).
+- **Spec deploy** (`docs/superpowers/specs/2026-11-16-deploy-aws-design.md`) [C kiểm]: B2 cảnh báo 80 % × 30 USD = 24 USD ≈ chi tháng thường
+  (~24 + 1 USD, :69) ⇒ báo mỗi tháng; chỉ có cảnh báo tiền, không cảnh báo app chết; B3 `AmazonLightsailFullAccess` (:215) ⇒ Q9 "agent chỉ đọc"
+  chỉ là chữ; 4 file deploy chỉ ở `data/phase_12/deploy_nhap/` (`git ls-files` 0) — Q11 chờ User; §2 thiếu hàng Lambda.
+- **Bẫy ngược nghĩa** [C kiểm `backend/api/gioi_han.py:21-26`]: `HUE_LUOT_MOI_NGAY=0` = TẮT giới hạn (khoá dạy "đặt 0 để chặn hết").
+- `max_retries=0` [C kiểm `generator_openai_full_corpus.py:405`] — chủ ý Phase 6; agent con đếm 350 / 351 dòng lỗi sinh không phải lượt gọi thật
+  (đoán pytest, CHƯA lọc sha) ⇒ chưa có bằng chứng 429 thật.
+- Judge `backend/evaluation/full_corpus_judge_prompt.md` [C kiểm]: JSON điểm trước, `feedback` sau — đúng bẫy "đáp án trước lý do" (Production W4D4·110–111).
+- Không review khác họ model [C kiểm: grep skill / WORKFLOW / Session_Prompt 0 dòng].
+- `~/.claude/settings.json` `defaultMode: bypassPermissions` [C kiểm] — khoá: chỉ trong container / VM.
+- **Lỗi agent con đã bắt**: đề xuất đọc 👍 / 👎 dựa thông tin cũ — giao diện gỡ khối đánh giá 15/11 [C kiểm `frontend/src` 0 chỗ]; còn nút
+  "Báo thông tin chưa đúng" ở `frontend/src/KhamPha.jsx:266`.
+- Chéo [suy ra]: ba khoá cùng nói "phần phải luôn đúng ⇒ code / API / hạ tầng"; bàn giao = chứng minh bằng số trên bản deploy; mô hình 4 phiên
+  song song là kiểu tốn nhất (FDE W2D4·75–76 song song không đúng hơn; SDLC slide S3: 16 % ↔ 62 %) — sau 30/11 một agent + agent con là mặc định đúng.
+
+### (4) Câu hỏi / thắc mắc
+- Cho A: vòng 2 có gộp (b) "tập bàn giao với Codex" với "Codex review spec deploy" không; ai viết runbook §9; luật nào trong memory Claude phải dời vào repo.
+- Cho User (qua A): chạy thử deploy B–E trước 30/11?; cảnh báo app chết?; Q11 đưa file deploy vào git?; kiểm trần chi khoá OpenAI + Serper máy
+  dev; `bypassPermissions` trên máy dùng chung — giữ hay Auto.
+- Chưa tra: credit AWS có bị trừ trước khi Budgets tính không; App Runner ngừng nhận khách mới 30/04/2026 (theo guide khoá); Codex đọc `.agents/skills/`.
+
+### (5) Bẫy
+- Agent con dừng khi phiên đóng có thể để file dở hoặc tên cũ (`tmp_C_*`) — luôn `ls -la` + xem cuối file trước khi tin.
+- `git diff` ba chấm trên repo khoá ra số sai (nhánh gộp main nhiều lần).
+- Repo undercover (FDE) có nhánh LOCAL khác origin ⇒ luôn `origin/<nhánh>`.
+- `/tmp/c_ca6_*`, `/tmp/c_kb_thu_nhat_ky.txt`, `/tmp/c_truoc_sua_tc_*.tsx` KHÔNG phải của C (gần chắc của dự án khác) — không xoá. Thư mục tạm
+  của C từ nay: `/tmp/hr_c_<việc>` (luật mới WORKFLOW §3.2).
+- Bản đồ ngày khoá học là nháp; tin summary + `danh_gia/` cột "Đã sửa".
+
+### (6) Tiền
+- Việc khoá học: 0 USD API (agent con là phiên Claude, chỉ đọc file). Lô lỗi nhỏ chiều nay: 0 USD (mọi đo là hàm thuần / mô phỏng).
+
+### (7) Máy
+- 0 worktree C, 0 server tạm, 0 thư mục `/tmp/hr_c_*`; `/tmp/c_ce` đã xoá. 0 agent con C còn chạy (phan_2 lỗi API, phan_3 C dừng — xem (0)).
 
 ## (cũ) PHIÊN SAU ĐỌC TRƯỚC (C viết 14:31 17/11/2026, phiên chiều 17/11)
 
