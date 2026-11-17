@@ -3,6 +3,7 @@ import { renderArticleHtml } from "./markdown.js";
 import { baiHref } from "./route.js";
 import { ANH_DAU_TRANG } from "./anh.js";
 import { anhCuaBai, khoaBai } from "./anhBai.js";
+import { timBai } from "./timBai.js";
 import { Anh, LINH_VUC, LOAI_CON, TRANG, loaiCua } from "./chung.jsx";
 import "./kp.css";
 
@@ -31,10 +32,6 @@ function IconLv({ lv, lon }) {
 // tên chuyển cảnh: cùng một tên ở thẻ và ở ảnh đầu bài ⇒ trình duyệt "bay" ảnh sang trang mới (phải là tên CSS hợp lệ, duy nhất trên trang)
 const tenChuyenCanh = id => `kp-anh-${khoaBai(id)}`;
 
-function bo(s) {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
-}
-
 function DanhSach({ bai, loi, linhVuc }) {
   const [lv, setLv] = useState(linhVuc ?? null);
   const [loai, setLoai] = useState(null);
@@ -43,8 +40,7 @@ function DanhSach({ bai, loi, linhVuc }) {
   useEffect(() => { setLv(linhVuc ?? null); setLoai(null); setSoHien(TRANG); }, [linhVuc]);
   const theoLv = useMemo(() => (bai || []).filter(b => !lv || b.linh_vuc === lv), [bai, lv]);
   const cacLoai = useMemo(() => (lv ? [...new Set(theoLv.map(loaiCua))] : []), [theoLv, lv]);
-  const q = bo(tim.trim());
-  const loc = theoLv.filter(b => (loai === null || loaiCua(b) === loai) && (!q || bo(b.tieu_de).includes(q)));
+  const loc = timBai(theoLv.filter(b => loai === null || loaiCua(b) === loai), tim);
   const chonLv = id => { setLv(id); setLoai(null); setSoHien(TRANG); };
   const thongTin = LINH_VUC.find(x => x.id === lv);
   return (
