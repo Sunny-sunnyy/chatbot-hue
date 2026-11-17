@@ -1,7 +1,7 @@
-# Plan — sửa lịch: model nhận "câu sửa chưa làm được" (`chua_ho_tro`) (C, 09:21 17/11/2026)
+# Plan — sửa lịch: model nhận "câu sửa chưa làm được" (`chua_ho_tro`) (C, 09:21 17/11/2026; sửa theo review E 3 minor 09:27 17/11/2026)
 
 User chọn 17/11 (A ghi): không bắt câu người dùng bằng rào code ⇒ MODEL của lần hiểu ý nhận ý. Mức nhẹ (≤ 0,30 USD, không đổi kiến trúc): E review
-một vòng ⇒ A duyệt sha ⇒ code. Nền: nhánh `p9-chan-lich-gia` (`56d98f8`; dòng "Chưa làm" đúng việc khi model đã nhận là câu sửa, bỏ `**`).
+một vòng ⇒ A duyệt sha ⇒ code. Nền: `main` `216c821` (nhánh `p9-chan-lich-gia`; dòng "Chưa làm" đúng việc khi model đã nhận là câu sửa, bỏ `**`).
 
 ## 1. Lỗi và số đã có
 - Tự thử 16/11: "đổi chỗ ngày 1 với ngày 2" ⇒ lần hiểu ý trả RỖNG ⇒ đường thường tự viết lịch chữ như thể đã đổi (A, ảnh `A_4.3`); "đổi thành N
@@ -25,14 +25,14 @@ một vòng ⇒ A duyệt sha ⇒ code. Nền: nhánh `p9-chan-lich-gia` (`56d98
 | Bước | Gì | Tiền |
 |---|---|---|
 | 0 | test file chạm (`test_sua_lich_v2.py`, `test_rao_so_ngay.py`): `ap` với `chua_ho_tro` (một mình / kèm hành động làm được / ≥ 3 hành động), lượt chỉ `chua_ho_tro` là lượt sửa; cờ tắt ⇒ tin nhắn + schema hiểu ý giống byte; harness chạy khô | 0 |
-| 1 | cờ bật, server tạm của nhánh (A cho lượt máy), `/api/chat/stream`: bộ E 25 chuỗi + bộ kề bên 20 câu (mỗi câu sau một lượt xếp lịch) ×1 · Q5 64 + Q5b 16 (`data/len_ke_hoach_v2_2026-11-13/tools/q5_sua_lich.py`, `q5b_tron.py`) · Q3 `chuoi_da_thay` ×2 (`q3_sua_lich.py`) | ≈ 0,10–0,15 |
+| 1 | cờ bật, server tạm của nhánh (A cho lượt máy), `/api/chat/stream`: bộ E 25 chuỗi + bộ kề bên 20 câu (mỗi câu sau lượt xếp lịch 3 ngày di tích — câu L3 của bộ E; review E m-2) ×1 · Q5 64 + Q5b 16 (`data/len_ke_hoach_v2_2026-11-13/tools/q5_sua_lich.py`, `q5b_tron.py`) · Q3 `chuoi_da_thay` ×2 (`q3_sua_lich.py`) | ≈ 0,10–0,15 |
 
 **Sàn (hỏng một ⇒ không bật cờ, báo A):**
-- **S1 chặn nhầm = 0:** Q5 0 / 64 · Q5b 0 / 16 · câu thường bộ E (nhóm `xen_giua` + `giong_ma_khong`, 9) · bộ kề bên K01–K09 + K14–K18 (14) — không lượt nào thành lượt sửa / "Chưa làm".
+- **S1 chặn nhầm = 0:** Q5 0 / 64 · Q5b 0 / 16 · câu thường bộ E (nhóm `xen_giua` + `giong_ma_khong`, 9) · bộ kề bên K01–K09 + K14, K15, K17 (12) — không lượt nào thành lượt sửa / "Chưa làm". (review E m-1: K16, K18 — "N ngày thôi" bằng số đang có — sang theo dõi: dòng lời dặn mới có thể ra `doi_so_ngay` ⇒ "Lịch đang đúng…", vô hại.)
 - **S2 lịch chữ giả = 0** trên bộ E nhóm `chan` (10) + K10–K13: lượt 2 có khung, khung giữ nguyên, có dòng "Chưa làm"; chữ trả lời không liệt kê
-  "Ngày N + điểm" như đã đổi. Người đọc tay 100 %: **E** (không viết code / lời dặn).
+  "Ngày N + điểm" như đã đổi; câu đổi chỗ ngày KHÔNG ra "Chưa làm: đổi số ngày" (review E m-3). Người đọc tay 100 %: **E** (không viết code / lời dặn).
 - **S3 Q3 pass^2 ≥ 8 / 10** (mốc 9 / 10; trượt 1 câu so mốc ⇒ ghi, không chặn; ≤ 7 ⇒ chặn).
-- Theo dõi, không chặn: `dang_dung` (G11–G13, K19–K20) ra "Lịch đang đúng…" · đối chứng G23–G25 đúng nhãn · lần hiểu ý p50 / p95 (lời dặn
+- Theo dõi, không chặn: `dang_dung` (G11–G13, K19–K20) ra "Lịch đang đúng…" · K16, K18 · G10 ("gộp": chặn hoặc đổi số ngày, không hai dòng ngược) · đối chứng G23–G25 đúng nhãn · lần hiểu ý p50 / p95 (lời dặn
   +~90 token) · USD / lượt.
 - Ca đối chứng của phép đếm S2 (luật harness): chạy trên một lượt sửa thật đã biết có "Chưa làm" ⇒ phép đếm phải ra "có".
 
