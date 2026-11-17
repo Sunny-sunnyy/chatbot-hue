@@ -204,15 +204,14 @@ def _so_tien_chuan(text: str) -> set:
 _CHUOI_SO = re.compile(r"\d+(?:(?:\) ?|[ .:/,h])\d+)*")
 
 
-# (C 17/11) giờ "H:MM" / "HhMM" ⇒ một dạng trước khi so: phút "00" ⇒ giờ trần ("8:00", "08:00", "8h00" ⇒ "8" — như "8h", "8 giờ" vốn đã ra "8");
-# phút khác ⇒ bỏ số 0 đầu ("07:30", "7 giờ 30" ⇒ "7:30"). Áp cho cả chữ model lẫn đoạn trích ⇒ chỉ gộp các cách viết của CÙNG một giờ (đếm 15–17/11: giờ đúng
-# khác cách viết làm mất cả mục web ở câu hỏi tiếp giờ mở cửa); giờ khác vẫn là số ngoài trích.
-_GIO = re.compile(r"(?<![\d.,:/])([01]?\d|2[0-4]) ?(?:h|:|giờ) ?([0-5]\d)(?!\d)")  # "8 giờ 30" = "8h30"; "24:00" = "24h"
+# (C 17/11) mọi dạng giờ ⇒ "H:MM" trước khi so: "8h", "8 giờ", "8:00", "08:00", "8h00" ⇒ "8:00"; "7 giờ 30", "07:30" ⇒ "7:30". Áp cho cả chữ model
+# lẫn đoạn trích ⇒ gộp các cách viết của CÙNG một giờ (đếm 15–17/11: giờ đúng khác cách viết làm mất cả mục web ở câu hỏi tiếp giờ mở cửa); giờ không
+# ra số trần ⇒ "Mở 2:00" không khớp "2 km" trong trích (review E m-1). Giá: thời lượng "8h" ↔ "8 tiếng" bị gạt nhầm (phía an toàn).
+_GIO = re.compile(r"(?<![\d.,:/])([01]?\d|2[0-4]) ?(?:h|giờ|:(?=[0-5]\d)) ?([0-5]\d)?(?!\d)")
 
 
 def _gio_gon(m: re.Match) -> str:
-    gio, phut = int(m.group(1)), m.group(2)
-    return f"{gio}" if phut == "00" else f"{gio}:{phut}"
+    return f"{int(m.group(1))}:{m.group(2) or '00'}"
 
 
 def _chuoi_so(text: str) -> set[str]:

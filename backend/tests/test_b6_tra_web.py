@@ -434,6 +434,13 @@ def test_same_hour_written_differently_passes(text, loi):
     assert tw.kiem_muc_web(text, GIO_SO, luu_tru=False) == loi
 
 
+def test_hour_does_not_match_a_bare_number_in_snippet():  # review E m-1: giờ không ra số trần
+    so = tw.doc_ket_qua({"organic": [{"title": "Chùa", "link": "https://c.example.vn/x", "snippet": "Cách trung tâm 2 km, có 8 cổng."}]})
+    assert tw.kiem_muc_web("Mở 2:00 sáng [w1].", so, luu_tru=False) == ["so_ngoai_trich"]
+    assert tw.kiem_muc_web("Mở lúc 8h [w1].", so, luu_tru=False) == ["so_ngoai_trich"]
+    assert tw.kiem_muc_web("Cách 2 km, có 8 cổng [w1].", so, luu_tru=False) == []
+
+
 def test_numbers_typed_in_question_pass_but_money_stays_strict():
     # (A 14/11 tối, C review M-1) chỉ NĂM người dùng gõ được nhắc lại; giờ / ngày người dùng gõ, số model tự thêm, tiền vẫn chặn
     hoi = "Lễ hội năm 2026 ở Huế mở 19:30 phải không, vé 300.000đ?"
