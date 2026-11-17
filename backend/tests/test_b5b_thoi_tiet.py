@@ -515,6 +515,16 @@ def test_net_matches_model_refuses_no_lead_sentence(deps, stream):
         assert "".join(d for k, d in events if k == "delta") == trace.answer
 
 
+@pytest.mark.parametrize("stream", [False, True])
+def test_unrelated_follow_up_after_storm_question_gets_no_lead_sentence(deps, stream):
+    # review E M-1: câu hỏi tiếp không liên quan chỉ khớp lưới nhờ câu liền trước ⇒ chỉ khối NCHMF cuối (thừa, đã nhận), KHÔNG câu đầu
+    trace, events = run(deps, "Ở Huế nên ăn món gì?", generator(lambda n, kw: [answer("Bún bò là món nổi tiếng [1].")]), BAO,
+                        history=(("Sắp có bão vào Huế không?", ""),), stream=stream)
+    assert trace.thoi_tiet_dau is None and trace.answer == f"Bún bò là món nổi tiếng [1].\n\n{tt.CAU_BAO_LU}"
+    if stream:
+        assert "".join(d for k, d in events if k == "delta") == trace.answer
+
+
 def test_lead_sentence_never_on_turn_without_storm_or_with_flag_off(deps):
     gen = lambda: generator(lambda n, kw: [answer("Lăng nằm ở ngoại ô [1].")])
     for cau, flags in (("Lăng Tự Đức ở đâu?", BAO), ("Mùa bão ở Huế thường tháng mấy?", WEATHER)):

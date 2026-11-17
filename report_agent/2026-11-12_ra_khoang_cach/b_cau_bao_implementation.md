@@ -32,6 +32,7 @@ Tổng ≈ **0,33 USD** (log `chat_metrics` của server tạm + trường `usd`
 ## Giới hạn
 - Câu bão nói vòng không chứa từ thời tiết / nguy hiểm nào (1 / 22 câu của bộ) ⇒ không công cụ, không khối.
 - Câu "giống mà không phải" có từ bão / lũ (tên phim, "bão giá", "lũ trẻ") ⇒ khối NCHMF thừa (3 / 5); có lượt model chọn `bao_lu` ở câu loại này ⇒ thêm bảng số thừa.
-- Câu hỏi tiếp không liên quan ngay sau câu bão ⇒ khối thừa (lưới xét câu liền trước).
-- Câu ghép bão + ý khác: phần ý khác có thể ngắn / mất (đọc tay).
+- Câu hỏi tiếp không liên quan ngay sau câu bão ⇒ khối NCHMF thừa ở cuối (lưới xét câu liền trước). Câu đặt TRƯỚC chữ model chỉ khi chính câu đang hỏi khớp lưới (review E M-1 — đã sửa; câu "giống mà không phải" tự chứa từ bão / lũ vẫn nhận câu đầu, như khối thừa).
+- Lượt model đã chọn `bao_lu` vẫn có thể tự viết một câu khí hậu chung có "có thể ảnh hưởng" (review E m-2) — sàn đọc tay S-a quyết.
+- Câu ghép bão + hỏi đường / giờ: ý còn lại có lượt không được trả lời (review E m-1).
 - Lỗi mới thấy ở Golden là lý do lùi; nếu sau này muốn "luôn đưa công cụ" thì phải sửa riêng đường "gọi công cụ rồi từ chối ⇒ câu dẫn + bảng số".

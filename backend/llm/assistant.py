@@ -686,9 +686,10 @@ def chu_cua_model(trace: AnswerTrace) -> str:
 
 
 def _can_dau_bao_lu(trace: AnswerTrace) -> bool:
-    """Cờ `bao_lu_cong_cu`: lưới bão / lũ khớp nhưng model không gọi `thoi_tiet` (trả lời từ kho) và lượt không có lịch ⇒ cần câu `CAU_DAU_BAO_LU` trước."""
+    """Cờ `bao_lu_cong_cu`: CHÍNH câu đang hỏi khớp lưới bão / lũ nhưng model không gọi `thoi_tiet` (trả lời từ kho) và lượt không có lịch ⇒ cần
+    câu `CAU_DAU_BAO_LU` trước. Câu hỏi tiếp chỉ khớp nhờ câu liền trước ⇒ không (review E M-1: câu hỏi tiếp không liên quan bị đặt câu đầu)."""
     ctx = trace.thoi_tiet_ctx or {}
-    return bool(ctx.get("bao_lu_cong_cu") and ctx["bao_lu"]) and trace.thoi_tiet is None and trace.lich is None
+    return bool(ctx.get("bao_lu_cong_cu") and ctx.get("bao_lu_cau")) and trace.thoi_tiet is None and trace.lich is None
 
 
 def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
@@ -988,7 +989,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
                                "co_cong_cu": tu_khoa and not ngoai_7}
         if flags.bao_lu_cong_cu:  # plan 17/11 (đã lùi theo luật 2.5): cổng = từ thời tiết + từ nguy hiểm thời tiết (câu cuối / câu liền trước); lưới rộng
             tu_khoa = tt.co_tu_khoa_luot_rong(query, trace.history)
-            trace.thoi_tiet_ctx.update(bao_lu=tt.la_luot_bao_lu(query, trace.history), bao_lu_cong_cu=True, bao_lu_model=False,
+            trace.thoi_tiet_ctx.update(bao_lu=tt.la_luot_bao_lu(query, trace.history), bao_lu_cau=tt.la_cau_bao_lu_rong(query),
+                                       bao_lu_cong_cu=True, bao_lu_model=False,
                                        tu_khoa=tu_khoa, co_cong_cu=tu_khoa and not ngoai_7)
         tuan_sau = tt.ngay_tuan_sau(query, hom_nay_vn())
         if tuan_sau and not ngoai_7:  # rà nợ 15/11: "tuần sau" có phần trong 7 ngày ⇒ code đặt khoảng ngày (không có ⇒ khoá vắng, như trước)
