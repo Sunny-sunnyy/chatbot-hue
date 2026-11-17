@@ -19,6 +19,7 @@ Nguyên văn handoff trong phiên 13/11 (mọi quyết định theo giờ, bàn 
   - **A:** khung handoff cuối dạng runbook cho Codex / Gemini (hạn 30/11); mỗi session viết phần mình.
 - **(14:25 17/11/2026) MERGE:** ngày đăng nguồn web (`dc9805c`, B; C ready, m-1 = giới hạn: 4 / 5 kết quả Serper không có ngày ⇒ vẫn không ngày; lượt Serper thật 0,001 USD) · bữa trưa xét điểm sáng khác + điểm đầu chiều (`ddead61`, C; B ready; 52 ⇒ 0 / 1.890 ngày; bữa tối đổi quán 101 / 960 khung do luật không lặp quán). #29 = LỖI TÌM thật (kho có bài quán ghi gần chùa Thiên Mụ) ⇒ sau B7. #26 = giới hạn chữ model (bài kho có "nên hỏi trước"). Khung `guides/RUNBOOK_BAN_GIAO.md` (`c1fd6c9`; mục 0–3 A viết, 4–10 ghi người viết).
 - **A chốt B7:** bộ T đã thấy CHẠY LẠI ở lượt cuối (9 / 27 hằng lời dặn + 6 cờ đổi sau giữa kỳ — §6 không cho dùng lại; ≈ 0,01–0,02 USD trong trần 0,45; B ghi RUNBOOK_CUOI 0.8). **Test rộng:** các nhánh nhỏ hôm nay chỉ chạy file chạm; **gom MỘT lượt test rộng trên main trước khi chốt `$C_DONG` (tối 22/11)** — việc nặng, A xin lượt máy.
+- **(14:45 17/11/2026) MERGE** runbook mục 4/5/7 (B) + mục 6 (C) + tài liệu chiều (E: bài 15 / 22 / 23, README, nhật ký) ⇒ main `a3e18c2`. **User chọn (A ghi nhận 14:45 17/11/2026): GIỌNG NÓI DẸP — không thu 40 câu, không G2 trước 30/11** ("để sau, chưa có thời gian"); tài liệu AWS User đang soạn (chờ, ~18–19/11).
 
 ## PHIÊN SÁNG 17/11 (thứ Ba; A mở, cập nhật 08:29 17/11/2026)
 

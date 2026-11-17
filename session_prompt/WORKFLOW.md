@@ -46,7 +46,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
 2. **Khai báo trước khi sửa:** ghi file sắp sửa vào `sessions/STATUS_<X>.md`.
    Không sửa file session khác đang khai báo. Governance (`session_prompt/`,
    `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) chỉ A sửa — trừ mục việc/trạng thái của chính mình trong
-   `CURRENT_HANDOFF.md` và `sessions/STATUS_<X>.md`. Code song song dài ngày: `git worktree` riêng — luôn nhánh mới và dừng khi lỗi: `git worktree add -b <nhánh mới> /tmp/x origin/main && cd /tmp/x || exit 1` (kiểm tên nhánh chưa có); không ghép `;` sau `cd`.
+   `CURRENT_HANDOFF.md` và `sessions/STATUS_<X>.md`. Code song song dài ngày: `git worktree` riêng — luôn nhánh mới và dừng khi lỗi: `git worktree add -b <nhánh mới> /tmp/x origin/main && cd /tmp/x || exit 1` (kiểm tên nhánh chưa có); không ghép `;` sau `cd`. **Máy dùng chung với dự án khác (thoả thuận 17/11/2026):** worktree / thư mục tạm của hue_rag đặt tên `/tmp/hr_<X>_<việc>` (X = a / b / c / e); không xoá thứ mình không tạo; cổng hue_rag: Qdrant 6335 / 6336, server 8010 + cổng tạm 8011–8099 / 8887 (`ss -ltn | grep <cổng>` trước khi mở); việc ≥ ~2 GB RAM hoặc ≥ 10 phút CPU ⇒ A nhắn phiên điều phối dự án kia trước; RAM khả dụng < 4 GB ⇒ không bật thêm; chỉ bật / tắt container của mình, không `down -v` / `prune`.
    File nhiều session cùng ghi (`CURRENT_HANDOFF.md`): đọc lại ngay trước khi sửa, sửa từng đoạn, không ghi đè
    cả file (2026-10-24: B/C sửa song song với A).
 3. Làm theo mức rủi ro:
@@ -218,7 +218,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    `git diff --cached --stat` trước khi commit; không commit dữ liệu private; push `origin`.
    **Nhánh xong việc** (đã merge, hoặc chỉ còn là hồ sơ phương án bị bỏ): A **đề xuất xóa** trong báo cáo đóng đợt / kết phiên kèm danh sách nhánh + còn gì
    chỉ nằm trên nhánh; nhánh hồ sơ ⇒ gắn tag `hoso/<tên>` trước khi xóa để không mất report / code (User 30/10). Xóa chỉ khi User duyệt (User `!`).
-7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/a_…`), không trong
+7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/hr_a_…`), không trong
    working tree chung đang có B/C làm; việc A tự làm vẫn để B/C kiểm.
 7b. **Vòng tự soi mỗi phiên** (`Session_Prompt.md` §7): A mở vòng 1 khi mỗi session đã có kết quả đầu tiên, vòng 2 ngắn trước kết phiên; ghi chốt vào `CURRENT_HANDOFF.md`. Phiên không có vòng ⇒ ghi lý do ở `STATUS_A.md`.
 8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)
