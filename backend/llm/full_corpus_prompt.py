@@ -166,7 +166,7 @@ THOI_TIET_MO_TA = (
     "do hệ thống dựng (một nguồn có mã [n]), sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về dự báo ghi "
     "mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
 )
-# 17/11 (plan `2026-11-17-cau-bao-plan.md`): bản mô tả khi cờ `bao_lu_cong_cu` bật — công cụ được đưa ở mọi lượt trợ lý Huế, thêm `loai`
+# 17/11 (plan `2026-11-17-cau-bao-plan.md`): bản mô tả khi cờ `bao_lu_cong_cu` bật — công cụ đưa theo cổng từ khoá nới (`tt.co_tu_khoa_luot_rong`), thêm `loai`
 THOI_TIET_BAO_LU_MO_TA = (
     "Lấy dự báo thời tiết Huế (nhiệt độ, khả năng mưa, lượng mưa theo ngày) cho 7 ngày tới. Chỉ gọi khi người dùng hỏi thời tiết sắp tới hoặc hỏi "
     "có nguy hiểm thời tiết không; không gọi cho câu không hỏi thời tiết. Câu hỏi về khí hậu chung (mùa mưa, mùa bão tháng mấy…) ⇒ dùng tim_kho. "

@@ -1,6 +1,6 @@
 # Bài 14 — Việc dễ nhầm thì code làm: ngày âm lịch, thời tiết, khoảng cách, lịch trình
 
-*Cập nhật lần cuối: 21:08, ngày 16/11/2026 · câu ghi chú "chưa tính kẹt xe" nay do code nối. Trước: 20:49, ngày 16/11/2026 · số đo của mục "code tra sẵn" nay là số đo lại trên bản đang chạy. Trước: 19:34 16/11/2026 · thêm mục "code tra sẵn khi câu nêu rõ hai nơi" (bật tối 16/11). Trước: 15:17 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
+*Cập nhật lần cuối: 10:39, ngày 17/11/2026 · thêm mục "Câu hỏi bão, lũ" (bật 17/11). Trước: 21:08, ngày 16/11/2026 · câu ghi chú "chưa tính kẹt xe" nay do code nối. Trước: 20:49, ngày 16/11/2026 · số đo của mục "code tra sẵn" nay là số đo lại trên bản đang chạy. Trước: 19:34 16/11/2026 · thêm mục "code tra sẵn khi câu nêu rõ hai nơi" (bật tối 16/11). Trước: 15:17 16/11/2026 · thêm mục "Khoảng cách giữa hai điểm" (bật 16/11). Trước: 12:33 15/11/2026 · thời tiết "tuần sau" có số cho phần nằm trong 7 ngày dự báo (sửa câu cũ ở "Khi nào hỏng"). Trước: 13:45 14/11/2026 · mục biểu mẫu là bản đầu; từ 14/11 chạy bản 2 (bài 23).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -16,6 +16,8 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Bảng tìm đường — **mới** | **OSRM** (Open Source Routing Machine) | Dịch vụ tìm đường trên bản đồ mở; mình chỉ gọi **một lần** để dựng sẵn bảng km / phút. |
 | Biểu mẫu lên kế hoạch — **mới** | **`lich_trinh_bieu_mau`** + **`lich_trinh`** | Người dùng chọn số ngày, người đi cùng, sở thích bằng nút; code xếp lịch theo buổi; model chỉ viết lời. |
 | Câu cố định | ví dụ **`CAU_BAO_LU`**, **`CAU_NGOAI_7_NGAY`** | Câu viết sẵn trong code cho trường hợp đặc biệt; model không được tự viết. |
+| Loại câu thời tiết — **mới** | tham số **`loai`** của `thoi_tiet` (`du_bao` / `bao_lu`) | Model chọn: hỏi dự báo thường hay hỏi bão / lũ. |
+| Lưới từ khoá — **mới** | **`la_luot_bao_lu`**, cờ **`bao_lu_cong_cu`** | Danh sách đóng các từ nguy hiểm thời tiết; code dùng để bắt câu bão khi model không chọn. |
 
 ---
 
@@ -69,9 +71,46 @@ Trước đó (09/11), khi mới thêm công cụ ngày: **bớt 9 câu từ ch�
 - Hỏi **"tuần sau"** (từ 15/11): **code** tính những ngày của tuần sau còn nằm trong 7 ngày dự báo, đưa đúng các ngày đó kèm dòng "dự báo chỉ có tới <thứ, ngày>".
   Chỉ khi hôm nay là thứ Hai (cả tuần sau đều quá 7 ngày) hoặc hỏi "tuần sau nữa" mới ra câu cố định. Trước 15/11, mọi câu "tuần sau" đều ra câu cố định —
   kể cả Chủ nhật hỏi "thứ hai tuần sau", tức ngày mai.
-- Câu về **bão, lũ, ngập** ⇒ câu cố định trỏ tới Trung tâm Dự báo khí tượng thủy văn quốc gia, cổng cảnh báo lũ quét, và **gọi 112** khi nguy hiểm. Model không
-  được tự viết về thiên tai.
-- Công cụ thời tiết **chỉ được đưa** khi câu có từ khoá thời tiết (bài 12).
+- Câu về **bão, lũ, ngập** ⇒ câu cố định trỏ tới Trung tâm Dự báo khí tượng thủy văn quốc gia, cổng cảnh báo lũ quét, và **gọi 112** khi nguy hiểm. Từ 17/11
+  model còn không thấy con số nào ở câu loại này — xem mục ngay dưới.
+- Công cụ thời tiết **chỉ được đưa** khi câu có từ khoá thời tiết (bài 12); từ 17/11 danh sách có thêm các từ nguy hiểm thời tiết.
+
+### Câu hỏi bão, lũ (17/11)
+
+**Vì sao sửa:** tối 16/11 cả nhóm tự thử câu "sắp có bão không" và thấy model tự viết "chưa xác nhận có bão" ngay trên bảng mưa — tức là tự trấn an, trong khi
+bảng mưa không hề có tin bão. Sáng 17/11 mình chạy lại đúng câu đó **5 lượt** trên bản đang chạy: **3 / 5 lượt** model viết câu kiểu đó. Câu cố định NCHMF
++ 112 có đủ 5 / 5, nhưng chữ tự do của model đứng ngay trên nó. Đây là lỗi nhóm an toàn (nói ngoài nguồn), loại tệ nhất theo thứ tự anh đã chốt.
+
+**Code làm gì (cờ `bao_lu_cong_cu`, bật 17/11):**
+- Công cụ thời tiết có thêm ô **loại câu**: model chọn "dự báo thường" hay "bão / lũ". Model đọc cả câu lẫn lịch sử nên nhận ra câu hỏi tiếp ("còn mai thì
+  sao?") là chuyện bão. Công cụ chỉ được đưa khi câu có từ thời tiết hoặc từ nguy hiểm thời tiết — "áp thấp", "sạt lở" bắt được là nhờ danh sách có thêm các
+  từ đó.
+- Câu bão / lũ ⇒ **model không nhận số nào**, chỉ nhận lời "phần thời tiết do hệ thống tự nối; không viết có hay không có bão". Code nối: một câu nhãn
+  "Dự báo dưới đây chỉ có nhiệt độ và mưa, không có thông tin bão hay áp thấp", rồi bảng mưa, rồi câu NCHMF + 112.
+- Model từ chối ⇒ code thay bằng câu dẫn "Mình không theo dõi được tin bão / lũ — bạn xem bản tin chính thức dưới đây." Bản đầu viết "Mình không có tin
+  bão / lũ"; người đọc tay chỉ ra câu đó đọc được thành "không có bão", nên đã đổi.
+- **Lưới từ khoá** (lớp phụ): câu có từ bão, lũ, lụt, ngập, sạt lở, triều cường, áp thấp, giông, lốc, mưa đá, nước dâng — ở câu đang hỏi hoặc câu liền trước —
+  vẫn được nối câu NCHMF dù model không chọn. Model trả lời bằng tài liệu kho (không gọi công cụ) mà chính câu đang hỏi có từ đó ⇒ code đặt trước một câu
+  "Mình không theo dõi được tin bão / lũ hiện tại — dưới đây là thông tin chung từ tài liệu."
+
+**Đã thử rồi bỏ:** "luôn đưa công cụ thời tiết ở mọi câu về Huế" (để không phụ thuộc danh sách từ). Trên bộ câu bão thì tốt hơn, nhưng đo Golden 176 câu
+có **một câu** hỏi giá một dịch vụ đi lại (ngoài kho, không có chữ nào về thời tiết): model tự gọi công cụ thời tiết rồi từ chối, và code (luật cũ "có dự
+báo mà model từ chối ⇒ câu dẫn + bảng") thay câu từ chối bằng **bảng mưa**. Luật ghi trước nói "câu không hỏi thời tiết bị nối bảng số phải là 0" ⇒ lùi về
+danh sách từ, anh chọn lùi theo luật.
+
+**Đo ra sao** (bộ 31 câu do E soạn — người không viết code; cột "Sau" chạy thật trên server sáng 17/11; cột "Trước" ghi rõ cách đo từng dòng):
+
+| Đo gì | Trước (cờ tắt) | Sau (bản đang chạy) | Nghĩa |
+|---|---|---|---|
+| Lượt model tự nhận định có / không có bão | 3 / 5 lượt câu gốc (chạy thật, cờ tắt) | câu gốc chạy lại 1 lượt: không tự nhận định. Cả bộ: người đọc tay (agent con của A, không viết code) thấy 2 lượt khó nếu đọc chặt, 1 nếu đọc lỏng — một câu khí hậu chung nghe như "đợt hiện tại", một câu nói vòng không có câu NCHMF; ghi giới hạn | lỗi chính giảm rõ, chưa hết hẳn |
+| Câu cần đi đường bão có câu NCHMF + 112 | 15 / 22 (hàm dò cũ bắt được — đếm 0 USD, chưa gọi model) | **21 / 22** = 18 / 19 câu hỏi bão + 3 / 3 câu hỏi mùa bão / lũ năm xưa | sàn ghi trước ≥ 20; câu sót là câu nói vòng không chứa từ nào trong danh sách |
+| Câu dự báo thường vẫn có bảng số | — | 3 / 3 | không làm hỏng câu thường |
+| Câu "giống mà không phải" (tên phim, "bão giá", "lũ trẻ") bị nối câu NCHMF thừa | 3 / 5 (hàm dò cũ, 0 USD) | 3 / 5, không câu nào có bảng mưa | đúng ngưỡng ≤ 3 — thừa còn hơn sót |
+| Câu khác bị chạm (an toàn 4 câu × 2 lượt, Golden 3 câu có từ thời tiết) | cờ tắt cùng sáng | 0 câu đổi lớp, 0 câu bị rút lại; 173 câu Golden còn lại không có từ khoá nên chuỗi gửi model y như cờ tắt | không lan sang câu khác |
+
+Tiền cả việc ≈ **0,33 USD** (≈ 8.000 đồng) cho mọi lượt đo, hơn một nửa là hai lượt Golden. Chữ đầu tiên trên cả bộ 31 câu p50 4,4 s / p95 7,4 s; riêng 19
+câu hỏi bão p50 5,7 s / p95 7,1 s — trên mức 3 / 5 s. Câu gốc trước khi sửa cũng chậm như vậy (p50 6,9 s qua 5 lượt; sau sửa 6,8 s, một lượt) ⇒ chậm là do
+câu thời tiết vốn phải chờ lần lấy dự báo và thêm lần gọi model, không do bản sửa.
 
 Trang chủ của cổng du lịch cũng có một ô thời tiết đọc thẳng từ đây, không gọi model.
 
@@ -217,6 +256,9 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - **Biểu mẫu bản đầu:** nút "đi dày" gần như không tác dụng, vì bảng điểm còn thiếu cột thời lượng; không xét mưa. Bản 2 (bài 23) đã sửa hai chỗ này.
   Cả hai bản đều **chưa có ô giờ tới / giờ về**.
 - **Lịch trình từ câu gõ tự do chưa bật.**
+- **Câu bão, lũ:** câu nói vòng không chứa từ nào trong danh sách ⇒ không có câu NCHMF. Câu "giống mà không phải" có chữ bão / lũ (tên phim, "bão giá") ⇒ có
+  câu NCHMF thừa (bản thử "luôn đưa công cụ" còn thêm cả bảng mưa; bản đang chạy thì không). Câu hỏi tiếp không liên quan ngay sau câu bão ⇒ câu NCHMF thừa ở cuối. Câu ghép "có bão không, rồi đi X mấy giờ"
+  ⇒ ý thứ hai có lượt không được trả lời. Model vẫn có thể viết một câu khí hậu chung ("áp thấp có thể ảnh hưởng…") nghe như tin hiện tại.
 - **Khoảng cách:** chỉ giữa hai điểm trong bảng lịch. "Cách trung tâm bao xa", khách sạn, sân bay ⇒ chưa có số. Số phút là luật ước (6 cặp đối chiếu),
   không tính kẹt xe; không có đi bộ hay đi thuyền. Câu hỏi nhiều cặp cùng lúc: bước kiểm số không tách theo cặp nên số của cặp này dùng cho cặp kia vẫn lọt.
   Câu viết không dấu ("dai noi cach thien mu may km") không bật công cụ. "Bao lâu" có kèm từ di chuyển ở bất kỳ đâu trong câu thì bật thừa (vd "đi Huế nên ở
@@ -226,7 +268,8 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 
 1. **Ngày âm lịch:** code tính bằng lunar-vn theo giờ Việt Nam, chỉ năm 1976–2100. Từ 10/11, **tính sẵn trước** lần gọi model đầu, nên câu có ngày nhanh hơn
    hẳn (chữ đầu 5,60 → 2,35 s) và rẻ hơn.
-2. **Thời tiết:** code lấy dự báo 7 ngày bằng toạ độ cố định, dựng sẵn số. Bão lũ và ngoài 7 ngày thì dùng **câu cố định**. **Khoảng cách:** bảng km / phút
+2. **Thời tiết:** code lấy dự báo 7 ngày bằng toạ độ cố định, dựng sẵn số. Bão lũ và ngoài 7 ngày thì dùng **câu cố định**; từ 17/11 câu bão / lũ
+   **model không thấy số nào**, nên lỗi tự viết "chưa xác nhận có bão" giảm rõ (câu gốc 3 / 5 lượt; sau sửa người đọc tay chỉ còn thấy 1–2 lượt khó trên cả bộ). **Khoảng cách:** bảng km / phút
    dựng sẵn một lần từ OSRM, model chỉ chọn mã hai nơi; từ 16/11 câu nêu rõ hai nơi thì code tra sẵn, chữ đầu 3,7 → 1,9 s. **Lịch trình:** code xếp theo buổi từ bảng anh duyệt, model chỉ viết lời, link do code dựng.
 3. Chuyện thật: **dặn model "đừng cộng tổng" không đủ**, model vẫn tự viết dòng "Tổng". Phép tính phải ở code, và thêm công cụ cũng đổi hành vi câu khác.
    Và hằng số trong code (như "40 km/h") cũng phải đối chiếu nguồn trước khi dùng.
@@ -249,6 +292,7 @@ Một chuyện nhỏ cùng tinh thần: lượt đo đầu của câu ngày, mod
 - Khoảng cách (16/11): `backend/llm/khoang_cach.py` (`HE_SO_OSRM`, `PHUT_CONG`, `_TU_KM`, `_TU_THOI_GIAN`, `kiem_so`), `assistant.py` `khoang_cach_for_turn`; cờ `khoang_cach: true` (`6a53680`, bạn bật); bảng `data/phase_9/lich_trinh/khoang_cach_v1.json` md5 `cb76ab72199c` (private) [code]. Đếm trước 4 / 6 từ chối; đo 16 câu: 13 / 14 đúng cặp, 0 số sai, 0 / 2 ngoài bảng ra số, ≈ 0,00081 USD / câu, chữ đầu p50 3,7 s / p95 ≈ 6,2 s (nội suy; 14 câu có công cụ, lượt sau sửa — 17 dòng `chat_metrics` cuối của `data/khoang_cach_2026-11-16/application_8041_r2.log`, private); bộ dò 27 câu 0 bỏ sót; an toàn 32 chạm 0: `report_agent/2026-11-12_ra_khoang_cach/c_khoang_cach_implementation.md` [đã chạy 16/11]. Review bắt sàn 40 km/h (1.082 / 1.560 cặp): `data/review_khoang_cach_2026-11-16/review.md`; đối chiếu 6 cặp 3 / 6 ⇒ 6 / 6: report trên, mục "Sửa theo review" M1; nguồn công khai: `data/tra_cuu_cli/2026-11-16_quang-duong-hue/` (private) [đã chạy]. Tiền câu từ chối + web ≈ 0,0023 (trung bình 4 câu): lượt đếm trước [đã chạy]. Đối chiếu bài: `data/khoang_cach_2026-11-16/doi_chieu_bai_hoc.md` (agent con, 70 khẳng định, sửa 12 chỗ).
 - Ghi chú kẹt xe do code nối (16/11 tối): `backend/llm/assistant.py` `set_notice`; [đã chạy] đếm 33 / 52 từ 4 file kết quả lượt đo (`data/khoang_cach_2026-11-16/`), 4 câu thật trên bản `bc785ae` (3 có dòng lưu ý, 1 không lặp); review B 12 ca phá; `c_kc_tinh_san_implementation.md` mục 3d.
 - Khoảng cách tính sẵn (16/11): `backend/llm/khoang_cach.py` (`tim_hai_diem`, `cap_tinh_san`, `TEN_NGAN`), `assistant.py` `_nguon_khoang_cach_san`; cờ `khoang_cach_tinh_san: true` (`3ccdada`, bạn bật tối 16/11); [đã chạy] bộ dò 32 câu 29 / 0 / 3 và 21 câu phá của review 20 / 0 / 1 (bản đầu 31 / 0 / 1 và 15 / 21 sai), lượt đo 16 câu trên bản cuối `1e45a78` (13 đường nhanh, chữ đầu trung vị 1,87 s đo ở phía gọi, 0,0122 USD cả lượt; lượt trên bản đầu `50fbf4e`: 1,80 s, 0,0131 USD); `report_agent/2026-11-12_ra_khoang_cach/c_kc_tinh_san_implementation.md`.
+- Câu bão, lũ (17/11): `backend/llm/thoi_tiet.py` (`_BAO_LU_RONG`, `co_tu_khoa_luot_rong`, `la_luot_bao_lu`, `CAU_KHONG_PHAI_TIN_BAO`, `CAU_DAN_BAO_LU`, `CAU_DAU_BAO_LU`, `KET_QUA_BAO_LU`), `backend/llm/assistant.py` (`_thoi_tiet_bao_lu`, `_can_dau_bao_lu`, `_thoi_tiet_cuoi`), `backend/llm/full_corpus_prompt.py` `THOI_TIET_BAO_LU_MO_TA`; cờ `bao_lu_cong_cu: true` (main `a6c18c6`) [code]. Plan `docs/superpowers/plans/2026-11-17-cau-bao-plan.md`; report `report_agent/2026-11-12_ra_khoang_cach/b_cau_bao_implementation.md`; số đo `data/cau_bao_2026-11-17/do/` (private): mốc `moc_tat_ca1x5` 3 / 5, bản cuối `lui_bo31` (code `383f055`; sửa sau `ba71776` chỉ bỏ câu đặt trước ở câu hỏi tiếp không liên quan, không đổi số nào của bảng) 18 / 19 nhãn "có" + 3 / 3 câu mùa / lịch sử = 21 / 22, thừa 3 / 5, `lui_thuong3` 3 / 3, `g/` an toàn + Golden; đọc tay `doc_tay_A_ket_qua.md`, `doc_tay_A_ket_qua_lui.md`; 15 / 22 của hàm cũ: chạy lại `tools/ham_hien_tai.py` (README bộ và plan ghi 16 / 22 — sót câu "lụt"); câu chạm Golden 3 / 176 đếm lại bằng `co_tu_khoa_luot_rong` của code đang chạy; đối chiếu bài: `data/cau_bao_2026-11-17/doi_chieu_bai_hoc.md` (agent con, 64 khẳng định, sửa 2 sai + các chỗ dễ hiểu nhầm) [đã chạy 17/11].
 - Các câu ví dụ là câu tự đặt.
 - **Sửa 14:03 11/11/2026:** (1) bản trước ghi code tính sẵn cả "ngày kia" — sai: "ngày kia" chỉ được dò thấy, rồi model vẫn gọi công cụ (`lich_san`, chú thích đầu hàm); (2) bản trước ghi dòng "Tổng" có "con số không đúng" — sai: phép nhân khớp luật kho, bị tính là lỗi vì luật đo cấm con số tổng (`07_…` mục B4 vòng 1).
 
