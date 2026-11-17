@@ -25,7 +25,7 @@ Câu hỏi bão / lũ: công cụ thời tiết trả bảng mưa cho model ⇒ 
 Tổng ≈ **0,33 USD** (log `chat_metrics` của server tạm + trường `usd` của file kết quả). Chữ đầu trên bộ bão (sau lùi) p50 4,38 s / p95 7,42 s — trên sàn 3 / 5 s, nhưng mốc cờ tắt của câu gốc p50 6,9 s (câu thời tiết vốn có 2 lần gọi model + gọi Open-Meteo); câu dự báo thường p50 ≈ 2,5–3,0 s.
 
 ## Kiểm tất định
-- `tests/test_b5b_thoi_tiet.py` 115 đạt (17 test mới: từng loại lượt §4c — lượt đầu, hỏi tiếp có lịch sử, stream, song song định tuyến, câu từ chối, câu đầu, cổng nới, cờ tắt giữ schema).
+- `tests/test_b5b_thoi_tiet.py` 115 đạt (trước nhánh 92; 23 ca mới tính cả tham số: từng loại lượt §4c — lượt đầu, hỏi tiếp có lịch sử, stream, song song định tuyến, câu từ chối, câu đầu, cổng nới, cờ tắt giữ schema).
 - Q1: cờ tắt ⇒ chuỗi gửi model giống byte main 228 / 228.
 - Test rộng (trên `2a2e940`): 1310 đạt; 8 hỏng môi trường (khoá API 4, bản build giao diện 4). Commit sau chỉ chạm 3 file đã chạy test file.
 
