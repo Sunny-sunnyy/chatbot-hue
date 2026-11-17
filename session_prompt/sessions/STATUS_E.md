@@ -1,3 +1,44 @@
+# STATUS E — PHIÊN CHIỀU 17/11 (mở 13:34 17/11/2026, `date`) · terminal `hue-rag-55` · Claude Opus 5.5 · vai thực thi
+
+- Đã đọc tài liệu mở phiên + kiểm nhanh: `main` `c1e8180` = origin, hooksPath `.githooks`, 0 worktree (`/tmp/e_md` đã gỡ; `p9-mo-dau-web` đã merge `c1e8180`).
+- **Lệch:** Qdrant `6335` và 8010 KHÔNG trả lời (HTTP 000), `docker ps` rỗng ⇒ máy có vẻ khởi động lại; handoff ghi 8010 chạy `cfe700c`. Handoff chưa có mục sau 11:58 (merge `c1e8180` chỉ có trong git).
+- A = `hue-rag-c6`, B `hue-rag-00`, C `hue-rag-33`. Quyền phiên "như sáng 17/11" (việc nặng xin A).
+- Việc A giao (bàn nhóm, chỉ đọc): ý kiến (c) mưa + (e) lịch 1 ngày ĐÃ GỬI A + B + C. (c) không mở trước 22/11 — ngày toàn ngoài trời khô 1766/2880 ⇒ mưa 1554/2880; gốc chủ yếu dữ liệu (29/41 ngoài trời); sửa thử 1 dòng `lich_trinh_v2.py:232` ⇒ 1513. (e) chủ ý (luật 6 + quỹ 210); Đầm Chuồn 13:30–16:00 ↔ hoàng hôn 16:30–18:00 (thấy 1 lần). Script `data/mua_lich_2026-11-17/tools/` (dem2.py cần bản vá ở `/tmp/e_mua/v2_patch.py`).
+- Sau phản biện của B: E ĐỔI Ý (c) ⇒ sửa 1 dòng `:232` làm được trước 22/11 nếu User chọn (đường không sở thích = mặc định: 160/180 ⇒ 119/180 ngày toàn ngoài trời; trời khô giống hệt). Đã báo A, B, C. Nếu A giao: E soạn bộ dò ~10 khung mưa cho B.
+- User chọn (c) sửa 1 dòng (B code `p9-mua-bo-thien-nhien`). **Bộ dò khung mưa XONG:** `data/mua_lich_2026-11-17/bo_do/` 16 ca; main `c1e8180` 10/16 SAI ↔ bản vá 1 dòng E thử 0/16. Đã gửi B + C + A.
+- E rảnh, chờ A. 0 server tạm, 0 worktree, tiền 0 USD.
+
+---
+
+# STATUS E — PHIÊN SÁNG 17/11 (mở 08:25 17/11/2026, `date`) · terminal `hue-rag-41` · Claude Opus 5.5 · vai thực thi
+
+- Đã đọc tài liệu mở phiên + kiểm nhanh: `main` `95f105b`, sạch (chỉ `?? .wslconfig`), hooksPath `.githooks`, 0 worktree, cổng 8010 / 8011 chưa mở.
+- **Lệch:** Qdrant `127.0.0.1:6335` KHÔNG trả lời (HTTP 000), `docker ps` rỗng ⇒ chưa có container nào chạy (handoff ghi "Qdrant GIỮ CHẠY 9.436 điểm"). Cần User bật Docker Desktop + `docker compose up -d qdrant`.
+- A giao mục 3 (User cấp quyền "như tối 16/11 + xin lượt máy"). **XONG 08:32 17/11/2026:** `data/HUONG_DAN_TEST_USER.md` sửa 34 chỗ (md5 `8f2eb759a2a9` ⇒ `b40d09d73bd5`; bản trước `data/tu_thu_2026-11-16/HUONG_DAN_TEST_USER.truoc_sua_17-11.md`). Mục: 1.2, 1.4, 1.9 mới (#28), mở đầu Phần 2, 2.1, 2.3, 2.9, 2.10 (câu mới: giờ chùa Thiên Mụ ở cuộc mới — kho không ghi giờ chùa, kiểm bằng `grep_kb.sh`), 2.10b, 2.11, 2.21, 2.22, 2.23, 2G (bỏ 2.24), 2.28, 2.30b, 3.1, 3.3, 3.7, 3.10, 3.14, 4.3, 4.11, bỏ 4.19, 4.20, Phần 6 (265), 6.3, 6.5, 6.6, 7.1, 7.2, 7.4, 7.5, mục 9. Ghi "(đã biết …)" cho lỗi nhóm đã ghi để User không báo lại. 0 USD, không chạy câu nào.
+- Chưa làm (ngoài phạm vi chữ hướng dẫn): chữ cũ "[n]" trên trang thật (`frontend/src/GioiThieu.jsx:64, 97, 164`, `TrangChu.jsx:170`) + "Chưa có quán ăn theo vị trí" ⇒ đề nghị A một nhánh nhỏ.
+- Phản biện câu bão (vòng 1 + 2) đã gửi nhóm; User chọn hướng ghép (B làm).
+- **Bộ dò giờ web** cho nhánh `p9-gio-web` của C: `data/gio_web_2026-11-17/` (41 ca; mốc `main`: 16 SAI bắt buộc = đúng lỗi cần sửa). Đã gửi C + A.
+- **Nhánh `p9-chu-trang-nguon`** (worktree `/tmp/e_chu`): `ĐÃ PUSH 313a0bc origin/p9-chu-trang-nguon` — bỏ "[n]" trên trang chủ / Giới thiệu, sửa dòng quán ăn ở mục Giới hạn; build + test_static_ui 4 passed; CHỜ A review. Mốc 1786 không sửa (trang đúng sử).
+- **Bộ dò câu bão** cho B: `data/cau_bao_2026-11-17/` (29 câu; mốc hàm hiện tại sót 6 / 22, bắt nhầm 3 / 5). Đã gửi B + A.
+- Review `p9-gio-web` (C): ready + m-1 (giờ "H:00" khớp số trần) — A merge `5df995b`, m-1 ghi giới hạn; `a935c58` không merge.
+- Bộ câu bão: thêm ca 30, 31 theo B (31 câu).
+- **#13 `p9-tim-co-dau`** `f6a9bd7`: `frontend/src/timBai.js` + `test_tim_bai.py`; B READY, A merge.
+- **#5 `p9-toi-dong-ba`** `ca4dd22` (worktree `/tmp/e_toi`): bảng `diem_v10.json` (md5 `6c8caf60100a`) + ghi chú buổi tối hiện ở lịch / chữ chép / .ics; 488 test passed; mô phỏng chuoi_da_thay 10/10 cả v9 + v10; CHỜ review.
+- #5 MERGE `301a185` (C READY, m-1 câu NHAC .ics dính mục tối — có sẵn, để sau). Worktree `/tmp/e_toi` đã gỡ.
+- Bộ dò chặn lịch giả cho C: `data/sua_lich_gia_2026-11-17/` (25 chuỗi). Đã gửi C + A.
+- **Nhánh `p9-khung-noi-sua`** `9c1bced` (worktree `/tmp/e_noi`): Playwright cũ 5/8 ↔ nhánh 8/8; C READY (m-1 nút "Xem cả lịch" sát mép dưới — A quyết; m-2 phép không phân biệt đã bỏ). Server tạm 8044 đã tắt.
+- Review p9-chan-lich-gia 56d98f8 READY; plan chua_ho_tro 3 minor; p9-cau-bao 333afea M-1 ⇒ ba71776 READY; đọc tay chua_ho_tro vòng 1 (sàn đạt, Q3 8/10) + vòng 2 (kém hơn ⇒ bật vòng 1).
+- Bộ dò: kề bên lưới sửa lịch `data/sua_lich_gia_2026-11-17/bo_ke_ben.jsonl` (20; 10 SAI trên ec25d34); câu bão +2 ca (31); tiền ₫ `data/tien_dong_2026-11-17/` (24; mốc main 10 SAI = T01–T06, T21–T24).
+- Tự soi 1 + ý kiến 3 câu (giá phòng sửa kho; báo "đã thêm Y"; sửa hẹp cùng quần thể) đã gửi nhóm.
+- Khung nổi MERGE `9a255d7` (m-1 nút cùng dòng câu dẫn `cfd1c2a`, Playwright 8/8 có phép 2b; m-2 đã bỏ).
+- (3) Lịch đi lại sửa hẹp: DỪNG ở trần 1 giờ — A chốt để sau B7, ghi giới hạn. Hồ sơ `data/di_lai_2026-11-17/README.md` + `tools/dem.py`; nhánh WIP `p9-khong-quay-lai-cum` `f744870` (KHÔNG merge): hẹp 8/24 ⇒ 0/0, rộng 65/258 ⇒ 20/76, điểm −0,47 %; còn mở test mưa + nhãn S01.
+- `p9-bao-lap-cho` (C): A merge `cfe700c` sau review B — E không review.
+- **Câu mở đầu khi kho thiếu mà web có nội dung** (User chọn): `ĐÃ PUSH 6a4dab4 origin/p9-mo-dau-web` (worktree `/tmp/e_md`) — `frontend/src/moDauWeb.js` + test node; Playwright SSE dựng tay cũ 2/3 ↔ nhánh 3/3; chờ C review. Server tạm 8044 đã tắt.
+- (còn worktree /tmp/e_md tới khi merge), 0 server tạm. E rảnh, chờ A.
+- Tiền E sáng 17/11: 0 USD (mọi việc chạy hàm thuần / build).
+
+---
+
 # STATUS E — KẾT PHIÊN TỐI 16/11 (ghi 22:16 16/11/2026, `date`) · terminal `hue-rag-4a` · Claude Fable 5.2 · vai thực thi
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11)
