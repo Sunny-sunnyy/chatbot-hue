@@ -415,6 +415,25 @@ def test_numbers_must_come_from_snippets(text, loi):
     assert tw.kiem_muc_web(text, SO_SO, luu_tru=False) == loi
 
 
+GIO_SO = tw.doc_ket_qua({"organic": [
+    {"title": "Chùa Thiên Mụ", "link": "https://c.example.vn/x", "snippet": "Chùa mở cửa từ 8h - 18h hằng ngày; vé xe 07:30."},
+]})
+
+
+@pytest.mark.parametrize("text, loi", [
+    ("Chùa mở cửa từ 8h00 đến 18h00 [w1].", []),          # (C 17/11) cùng giờ, khác cách viết ⇒ đạt (trước: 800 / 1800 ⇒ bỏ cả mục)
+    ("Chùa mở 8:00–18:00 [w1].", []),
+    ("Chùa mở 08:00 tới 18 giờ [w1].", []),
+    ("Xe chạy lúc 7:30 [w1].", []),                         # số 0 đầu của giờ có phút
+    ("Xe chạy lúc 7 giờ 30 [w1].", []),                     # "giờ" nối giờ–phút (bộ dò E ca 8 / 9)
+    ("Chùa mở 7h00 đến 18h00 [w1].", ["so_ngoai_trich"]),  # giờ khác vẫn bị bỏ
+    ("Chùa mở 8h30 đến 18h00 [w1].", ["so_ngoai_trich"]),  # 8h30 ≠ 8h
+    ("Chùa mở đến 17:30 [w1].", ["so_ngoai_trich"]),
+])
+def test_same_hour_written_differently_passes(text, loi):
+    assert tw.kiem_muc_web(text, GIO_SO, luu_tru=False) == loi
+
+
 def test_numbers_typed_in_question_pass_but_money_stays_strict():
     # (A 14/11 tối, C review M-1) chỉ NĂM người dùng gõ được nhắc lại; giờ / ngày người dùng gõ, số model tự thêm, tiền vẫn chặn
     hoi = "Lễ hội năm 2026 ở Huế mở 19:30 phải không, vé 300.000đ?"
