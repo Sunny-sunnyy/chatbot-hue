@@ -50,12 +50,42 @@ cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run python -m pytest te
 
 - Nguồn sự thật: `backend/config/settings.yaml` khối `assistant:` — mỗi cờ có chú thích: bật từ khi nào, vì sao, cần cờ nào khác.
 - Tắt / bật một cờ = sửa đúng một dòng ⇒ test file chạm (có / không khoá) ⇒ khởi động lại server ⇒ thử một câu đi đúng tính năng.
-- (CHƯA VIẾT — B) bảng cờ + sha chốt cho lượt đo cuối B7 (từ `data/phase_9/b7/tools/RUNBOOK_CUOI.md` mục 0.7).
+- **Cờ đang khác so với lượt đo giữa kỳ B7** (sha `dfd0c96`, 12/11) và lời dặn đã đổi — in bằng máy, không chép tay:
+  ```bash
+  cd /home/minhhieu/hue_rag && C_DONG=<sha cần so> bash data/phase_9/b7/tools/buoc0_cuoi.sh   # 0 USD; không đặt C_DONG ⇒ dùng HEAD
+  ```
+  Dòng "hằng lời dặn khác" = mọi hằng chữ IN HOA của `backend/llm/full_corpus_prompt.py` có mã băm khác giữa hai sha; dòng "cờ / đường dẫn
+  khác" = mọi `tên: giá trị` khác trong `settings.yaml`. Chạy thử 17/11 trên `dc9805c`: 9 / 27 hằng khác (luật mục web `TU_WEB_LUAT` + 8 hằng
+  mới), 22 cờ / đường dẫn khác.
+- Luật đọc kết quả: hằng hoặc cờ nào khác thì **bộ đo nào đi qua nó phải chạy lại**, không dùng lại số cũ (`Session_Prompt.md` §6).
+- **sha chốt của lượt đo cuối (`C_DONG`)** = sha `main` lúc code đứng yên — A ghi tối 22/11/2026 vào `data/phase_9/b7/tools/RUNBOOK_CUOI.md`
+  mục 0.1. Lượt cuối chạy CN 23/11 (người chạy B; trần 0,45 USD). Sau ngày đó, bản chạy để deploy phải có `git diff <C_DONG> HEAD -- backend`
+  rỗng, hoặc mọi khác biệt đã có số đo riêng.
+- Dừng nếu: `buoc0_cuoi.sh` in "DỪNG: backend HEAD khác C_DONG" lúc định chạy lượt cuối ⇒ có commit code sau khi đóng ⇒ hỏi User.
 
 ## 5. Sửa kho tri thức + dựng lại chỉ mục
 
-(CHƯA VIẾT — B) lệnh nguyên văn theo `chay.sh` mẫu (sao lưu ⇒ `overlap_scan` ⇒ xoá sparse state ⇒ build ⇒ kiểm số điểm ⇒ đo câu chạm);
-quy trình gốc: `guides/full_corpus_rag.md` mục "Build lại index khi corpus đổi".
+Sửa kho là việc **mức cao** (`WORKFLOW.md` §3): User duyệt phạm vi trước. Quy trình gốc: `guides/full_corpus_rag.md` mục "Build lại index
+khi corpus đổi". Cách làm đang dùng = một script `chay.sh` cho mỗi lần ghi, chép từ mẫu mới nhất rồi sửa hằng:
+
+```bash
+mkdir -p data/sua_kho_<YYYY-MM-DD>_<chủ đề>/{tools,nhap}
+cp data/sua_kho_2026-11-16_lap_an/tools/chay.sh data/sua_kho_<…>/tools/chay.sh   # mẫu: 2 bài mới; cùng thư mục có ghi_kho.py, tim_an_toan.py, cau_cham.py
+```
+- Sửa trong bản chép: `W=` (thư mục mới), mã băm record / sparse + số điểm **đang chạy** ở bước 0 (lấy bằng
+  `sha256sum data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json data/full_corpus_builds/full_corpus_sparse_state.json | cut -c1-12`
+  và lệnh `curl` ở mục 1 — 17/11: `3622a573e28e`, `ea442226257d`, 9436), tên file nháp, danh sách file trong `ghi_kho.py`.
+- Thứ tự script tự làm: bước 0 (không còn server / pytest; record, sparse, số điểm đúng; **quét trùng nháp với Golden / câu kín**
+  `.githooks/overlap_scan.py` — trùng ⇒ dừng) ⇒ top 10 câu an toàn TRƯỚC ⇒ sao lưu record + sparse + file kho ⇒ ghi bài ⇒ chia đoạn thử ⇒ xoá
+  collection + record + sparse state ⇒ build ⇒ T1 (158 câu, 0 USD) + top 10 an toàn SAU ⇒ đếm câu chạm. Lỗi ở chia đoạn / build ⇒ script **tự
+  lùi** (gỡ bài mới, build lại từ kho cũ).
+- Chạy: tắt server 8010 trước (xoá collection làm server đang chạy hỏng), rồi `DRY=1 bash data/sua_kho_<…>/tools/chay.sh` (chỉ bước 0) ⇒
+  đọc kết quả ⇒ `bash data/sua_kho_<…>/tools/chay.sh`. Build e5 trên CPU, 0 USD, vài phút; một việc nặng một lúc.
+- Kiểm: dòng `point: <số> · record <mã> · sparse <mã>` sau build; số điểm mới = cũ + số đoạn của bài mới (dòng "đoạn bài mới" ở bước 4).
+  Thử chạy 17/11: mẫu cũ với `DRY=1` dừng đúng ở "DỪNG: build record khác 1b53af26b662" (mã bước 0 là của lần ghi trước).
+- Sau build: cập nhật số điểm / record ở `session_prompt/Project_Status.md` §4 và mục 1 runbook này; câu chạm có phí (Golden / an toàn) chỉ
+  chạy câu có đoạn mới trong top 10 (`Session_Prompt.md` §7 "Đo đúng chỗ đổi").
+- Dừng nếu: bước 0 DỪNG mà không hiểu vì sao; quét trùng ra `golden` / `sealed`; lùi tự động in "LÙI LỖI" ⇒ không thử lại, báo User.
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
 
@@ -64,8 +94,23 @@ md5 từng bảng, cách thêm một điểm, và luật: đổi bảng ⇒ qué
 
 ## 7. Đo và đọc log
 
-(CHƯA VIẾT — B) `scripts/dem_chat_metrics.py --sha <mã>`, `scripts/xem_so_vet.py`, lượt đo cuối B7 (`data/phase_9/b7/tools/RUNBOOK_CUOI.md`),
-bộ an toàn 32 câu luôn báo đủ 4 số.
+- **Log số đo** `backend/logs/application.log` (không commit): mỗi lượt chat một dòng `chat_metrics` (tuyến, token, USD, ms từng bước, công cụ,
+  `git_sha`; **không** có nội dung câu). Log dùng chung cho mọi bản đã chạy + pytest ⇒ luôn lọc theo sha:
+  ```bash
+  python3 -I scripts/dem_chat_metrics.py               # các git_sha có trong log + số dòng
+  python3 -I scripts/dem_chat_metrics.py --sha HEAD    # một bản: số lượt theo tuyến, tốc độ, tiền (bỏ lượt 0 đồng của pytest)
+  ```
+  Thử 17/11: chạy được; bản chưa có lượt thật in "0 lượt · 0.0000 USD" — đúng, không phải lỗi.
+- **Sổ vết có nội dung** (chỉ máy local, server bật `HUE_SO_VET=true`): `data/debug_trace/<ngày>.jsonl` (private) — câu, tuyến, lần tìm,
+  lần gọi model, mục web, sửa lịch. Xem: `uv run python scripts/xem_so_vet.py -n 3` · `--ngay 2026-11-17` · `--ma <turn_id>` · `--day`.
+  Dùng khi tái hiện một lỗi User báo (thử MỘT lượt trước khi chạy cả bộ — `Session_Prompt.md` §8).
+- **Bộ an toàn 32 câu**: mọi thay đổi chạm câu trả lời phải báo **đủ 4 số**, kể cả số 0: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu
+  cảnh báo (mới / hết) · câu ngoài kho bị trả lời. Chạy hai lượt cho bản mới, một lượt mốc; chấm mù bằng hai người chấm
+  (`data/phase_9/g_cong/tools/an_toan_g.py` export ⇒ chấm ⇒ check / accept ⇒ compare; sinh câu trả lời bằng `do_g.py ca_cau <out> an_toan`).
+  0 câu an toàn chạm đường đổi (đếm bằng code) ⇒ không chạy lượt có phí.
+- **Lượt đo cuối B7** (CN 23/11/2026): làm đúng `data/phase_9/b7/tools/RUNBOOK_CUOI.md` từ mục 0 (bước 0 không tốn tiền, rồi bảng lượt có
+  phí theo thứ tự, các lệnh `!` phần kín do User chạy). Kết quả ở `data/phase_9/b7_cuoi/`.
+- Dừng nếu: một lượt có phí vượt ước > 50 % sau pilot; lỗi provider / mạng lặp lại (ghi là kết quả quan sát, không chạy lại đè).
 
 ## 8. Deploy AWS
 
