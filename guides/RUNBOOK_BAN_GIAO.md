@@ -89,8 +89,73 @@ cp data/sua_kho_2026-11-16_lap_an/tools/chay.sh data/sua_kho_<…>/tools/chay.sh
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
 
-(CHƯA VIẾT — C + E) bảng đang chạy (điểm v10, toạ độ v9, ảnh v7, lưu trú v6, quán v1, khoảng cách v1 — đường dẫn ở `settings.yaml`),
-md5 từng bảng, cách thêm một điểm, và luật: đổi bảng ⇒ quét nhãn mọi bộ đo + mô phỏng không model trước merge (`WORKFLOW.md` §3.4).
+(C viết chiều 17/11/2026; mọi lệnh dưới đã chạy thử 0 USD trên `main` `0ec3a5e`.)
+
+Lịch "Lên kế hoạch" do **code** xếp từ các bảng JSON private trong `data/` (không commit); model chỉ viết câu tả từng điểm. Đường dẫn
+duy nhất là khối `assistant:` của `backend/config/settings.yaml` — chú thích mỗi dòng ghi phiên bản + md5 + ai dựng.
+
+**Bảng đang chạy** (17/11/2026; md5 12 ký tự đầu — riêng `lich_trinh_bang` chú thích ghi 12 ký tự đầu **sha256** `e94b7f4263f2`):
+
+| Khoá `settings.yaml` | File (từ `backend/`) | md5 | Cờ cần | Thiếu một điểm trong bảng này ⇒ |
+|---|---|---|---|---|
+| `lich_trinh_bang_v2` | `../data/phase_9/lich_trinh/diem_v10.json` (41 điểm) | `6c8caf60100a` | `len_ke_hoach_v2` | — (bảng gốc) |
+| `lich_trinh_bang` | `../data/phase_9/lich_trinh/diem_v3.json` (bộ xếp cũ, câu tự do) | `dbf5b22715e4` | `lich_trinh` / `lich_trinh_bieu_mau` | — |
+| `lich_trinh_toa_do` | `../data/phase_9/lich_trinh/diem_toa_do_v9.json` | `f6068ff37d61` | `ban_do_lich`, `quan_lich` | điểm không có ghim; bữa ăn gần điểm đó không có quán |
+| `lich_trinh_bang_anh` | `../data/phase_9/lich_trinh/bang_anh_v7.json` | `4c4158648085` | `anh_lich` | điểm không có ảnh |
+| `lich_trinh_bang_luu_tru` | `../data/anh_user_2026-11-15_ghep/bang_luu_tru_lich_v6.json` | `44d7b14d8fce` | `luu_tru_lich` | — (theo cụm) |
+| `lich_trinh_bang_quan` | `../data/phase_9/lich_trinh/bang_quan_lich_v1.json` (468 quán) | `ab481586d46f` | `quan_lich` | — (theo cụm + toạ độ) |
+| `khoang_cach_bang` | `../data/phase_9/lich_trinh/khoang_cach_v1.json` | `cb76ab72199c` | `khoang_cach` | không trả lời khoảng cách tới điểm đó |
+
+In lại md5 các bảng đang trỏ (so với bảng trên; khác ⇒ có người đổi bảng mà chưa cập nhật mục này):
+```bash
+cd /home/minhhieu/hue_rag/backend/config
+for k in lich_trinh_bang_v2 lich_trinh_bang lich_trinh_toa_do lich_trinh_bang_anh lich_trinh_bang_luu_tru lich_trinh_bang_quan khoang_cach_bang; do
+  f=$(grep -o "^  $k: [^ ]*" settings.yaml | awk '{print $2}'); printf "%-26s %s %s\n" "$k" "$(md5sum "../$f" | cut -c1-12)" "$f"; done
+```
+
+**Kiểm nạp mọi bảng như lúc server khởi động** (~4 s, không cần Qdrant; chỉ không kiểm `doan_mo_ta` — cái đó cần chỉ mục, xem bước 5):
+```bash
+cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run python -c "
+from core.settings_loader import load_settings
+from llm.assistant import AssistantFlags
+f = AssistantFlags.from_settings(load_settings())
+print('diem', len(f.bang_lich_v2.diem), 'toa_do', len(f.toa_do_lich or {}), 'cum_quan', len(f.quan_bang or {}), 'anh', len(f.anh_lich_bang or {}), 'cap_kc', len(f.khoang_cach_bang.cap))"
+```
+- Mong đợi (17/11): `diem 41 toa_do 40 cum_quan 7 anh 40 cap_kc 1560`. Sai một dòng bảng ⇒ `ValueError` nêu đúng mã điểm / dòng ⇒ sửa bảng, không sửa code kiểm.
+
+**Thêm một điểm** (ví dụ thêm `x` vào bảng điểm; không bao giờ sửa đè file đang chạy — luôn file phiên bản mới):
+1. `cp diem_v10.json diem_v11.json` trong `data/phase_9/lich_trinh/`; thêm một dòng vào `diem`. Cột bắt buộc (`lich_trinh_v2.nap_bang_v2`):
+   `id ten cum loai gio_mo_cua nguon buoi quan_the luu_y ten_khac thoi_luong trong_nha bac_thang uu_tien`. Giá trị hợp lệ: `cum` có trong khối
+   `cum` của bảng; `loai` ⊂ các loại sở thích; `thoi_luong` ∈ `ngan` (75 phút) / `nua_buoi` (150 phút); `trong_nha` ∈ `trong_nha` / `ngoai_troi` /
+   `ca_hai`; `bac_thang` ∈ `nhieu` / `null`; `buoi` ⊂ `sang chieu toi`. Mỗi giá trị kèm cột `<tên>_can_cu` ghi căn cứ (file kho + dòng, hoặc "C ước") —
+   không có căn cứ trong kho ⇒ ghi "ước", không bịa. `nguon` = đường file kho của điểm (điểm phải có bài trong kho; chưa có ⇒ sửa kho trước — mục 5).
+   `doan_mo_ta` (tuỳ chọn) = `chunk_id` của chính file nguồn (`<nguon>#<số>`) có trong chỉ mục đang chạy.
+2. Muốn điểm có ghim / quán theo bữa: thêm toạ độ vào bản mới của bảng toạ độ (`vi_do`, `kinh_do` trong khung Huế). Muốn có ảnh: bảng ảnh mới
+   (file thật dưới `frontend/public/anh/lich/`, luật chọn ảnh `WORKFLOW.md` §3.6). Muốn trả lời khoảng cách: dựng lại bảng khoảng cách bằng
+   `data/khoang_cach_2026-11-16/tools/dung_bang.py` (gọi OSRM công khai một lần — có mạng; **không** chạy lúc server chạy). Xoá một điểm ⇒ phải xoá cả
+   dòng của nó ở bảng ảnh / khoảng cách (còn sót ⇒ server không khởi động — đúng thiết kế).
+3. Sửa đúng dòng `lich_trinh_bang_v2:` trong `settings.yaml` trỏ file mới + chú thích (phiên bản, md5 mới, đổi gì). Chạy lệnh kiểm nạp ở trên.
+4. **Quét nhãn bộ đo** (`WORKFLOW.md` §3.4 — bảng đổi làm nhãn cũ trượt oan; 0 USD, < 1 s):
+   ```bash
+   cd /home/minhhieu/hue_rag/data/phase_9/bo_do_sua_lich/tools
+   HF_HUB_OFFLINE=1 uv run --project /home/minhhieu/hue_rag python mo_phong_v2.py /home/minhhieu/hue_rag/backend ../chuoi_da_thay.jsonl | tail -1
+   ```
+   Mong đợi: `chuoi_da_thay.jsonl: 10 / 10 chuỗi khớp mô phỏng lịch bản 2`. Ít hơn ⇒ đọc chuỗi lệch (bỏ `| tail -1`): lỗi bảng thì sửa bảng; nhãn hết
+   hợp với bảng mới thì ghi lại nhãn **kèm lý do** vào report — không sửa nhãn cho khớp mà không giải thích. Thêm: `grep` id mới / tên mới trong các
+   file nhãn `data/phase_9/bo_do_sua_lich/*.jsonl` và `data/phase_9/b7/` (ca "điểm không có trong bảng" có thể thành sai). Bộ có `sealed` trong tên:
+   chỉ người được giao chạy, lệnh thêm `--kin` (chỉ in số đếm).
+5. Test file đọc bảng thật (~2,5 phút, không cần khoá API):
+   ```bash
+   cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests/test_len_ke_hoach_v2.py tests/test_sua_lich_v2.py \
+     tests/test_quan_lich.py tests/test_luu_tru_lich.py tests/test_khoang_cach.py -q
+   ```
+   17/11 trên `main`: 4 file đầu 138 passed (67 s), `test_khoang_cach.py` 101 passed (39 s). Test hỏng sau khi thêm điểm ⇒ đọc test khoá điều gì:
+   lỗi bảng thì sửa bảng; test khoá đúng dữ liệu cũ thì sửa test, ghi lý do trong commit — không tắt / bỏ test.
+6. Khởi động lại server (mục 2) ⇒ `/health` đủ 5 mục (khởi động cũng chạy `kiem_doan_mo_ta`: `doan_mo_ta` sai ⇒ không lên, lỗi nêu mã) ⇒ trên trang
+   Lên kế hoạch xếp một lịch có sở thích hợp điểm mới và nhìn điểm đó hiện đúng buổi.
+
+**Dừng và hỏi User** khi: điểm mới không có bài trong kho; muốn đổi luật xếp (ưu tiên, cụm kề, phút đi) thay vì chỉ thêm dữ liệu; quét nhãn lệch
+mà không giải thích được; ảnh có người rõ mặt / trẻ em (`WORKFLOW.md` §3.6).
 
 ## 7. Đo và đọc log
 
