@@ -558,3 +558,20 @@ def test_follow_up_safety_rules_look_at_both_questions(typed, model_q, outcome):
 def test_follow_up_multi_part_turn_keeps_typed_question():  # review E M-1: câu tìm cuối của model có thể thuộc vế kho đã có ⇒ lượt nhiều ý không đổi
     q, sent, trace = _web_noi_tiep(NOI_TIEP, LICH_SU, [CAU_MODEL], nhieu_y=True)
     assert q == tw.cau_tim_web(CAU_CUT) and CAU_MODEL not in sent and "cau_tu_model" not in trace.tools[-1]
+
+
+@pytest.mark.parametrize("text, gia_tri", [
+    ("Nhà nghỉ giá từ 230.000 ₫/đêm", [230_000]),   # (C 17/11) lượt thật: giá phòng lọt qua luật lưu trú vì "₫" không được đọc
+    ("Phòng 450.000₫", [450_000]),
+    ("₫ 1.250.000 / đêm", [1_250_000]),              # ký hiệu đứng trước (trang đặt phòng)
+    ("VND 230.000", [230_000]),
+    ("vndirect 230.000", []),                        # chữ dính liền không phải mã tiền
+])
+def test_dong_symbol_and_prefix_are_money(text, gia_tri):
+    from llm.so_tien import tim_so_tien
+    assert [tw.gia_tri_tien(x) for x in tim_so_tien(text)] == gia_tri
+
+
+def test_lodging_web_section_with_dong_symbol_is_blocked():
+    so = tw.doc_ket_qua({"organic": [{"title": "Nhà nghỉ Huế", "link": "https://n.example.vn/x", "snippet": "Nhà nghỉ ở Huế có giá từ 230.000 ₫/đêm."}]})
+    assert tw.kiem_muc_web("Nhà nghỉ ở Huế có giá từ 230.000 ₫/đêm [w1].", so, luu_tru=True) == ["gia_luu_tru"]
