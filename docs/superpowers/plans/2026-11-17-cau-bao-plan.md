@@ -20,6 +20,12 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
    câu nhãn `CAU_KHONG_PHAI_TIN_BAO` = "Dự báo dưới đây chỉ có nhiệt độ và mưa, không có thông tin bão hay áp thấp." + bảng số + `CAU_BAO_LU`.
    Model trả đúng câu từ chối ⇒ code thay bằng câu dẫn cố định "Mình không có tin bão / lũ — bạn xem nguồn chính thức dưới đây." (như `CAU_DAN_DU_BAO`).
    Quyết định `bao_lu` có trước lần gọi model viết chữ: lưới code tính lúc dựng lượt; `loai` có ngay khi model gọi công cụ, trước câu viết cuối.
+   **Nguồn, citation, stream (review C M-1):** (i) chữ không số vẫn đăng là **một nguồn** trong sổ (như `_nguon_thoi_tiet`; tiêu đề "Tin bão / lũ chính thức")
+   ⇒ model trích [k] khi nhắc tới nó. Câu trả lời không có [n] chỉ hợp lệ khi model trả đúng câu từ chối: code thay bằng câu dẫn SAU bước kiểm citation, như
+   `CAU_DAN_DU_BAO` hôm nay. Chữ tự do không trích ⇒ citation hỏng ⇒ rút lại như mọi câu (đếm riêng ở bước 3). (ii) Bảng số (đã gắn nhãn) được ghi vào
+   `trace.thoi_tiet["khoi"]` **ngay trong lần gọi công cụ** ⇒ `giu_chu` của đường stream (assistant.py ~1294) vẫn giữ chữ khi câu có thể là câu từ chối.
+   **Quy tắc (m-4):** `loai` bắt buộc (Literal, không mặc định); một lần `bao_lu` thì cả lượt là `bao_lu`; lần gọi thứ hai trả câu "đã lấy" như nay.
+   **Lưới khớp mà model không gọi công cụ (m-3):** chỉ nối `CAU_BAO_LU` như hôm nay — không gọi Open-Meteo thêm, không bảng số.
 3. **Cổng đưa công cụ + lưới code** (chỉ khi cờ bật): `_TU_KHOA` và `_BAO_LU` thêm **danh sách ĐÓNG các từ nguy hiểm thời tiết**, viết theo nhóm cảnh báo
    của trang khí tượng, không theo câu trong bộ: lụt, ngập, sạt lở, triều cường, áp thấp, giông, lốc, mưa đá, nước dâng (khớp `tra_web._THIEN_TAI` + 4 từ).
    Lưới `bao_lu` xét câu cuối **hoặc câu hỏi liền trước** (như `co_tu_khoa_luot`). Bắt nhầm của lưới ("bão giá") chỉ thêm một khối NCHMF thừa. Theo thứ tự
@@ -38,7 +44,7 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
 ## 3. Đo — tiêu chí ghi TRƯỚC (đổi một thứ: cờ `bao_lu_cong_cu`)
 | Bước | Gì | Tiền |
 |---|---|---|
-| 0 | hàm thuần trên bộ 29 câu (cổng + lưới), test file chạm; test §4c: mỗi loại lượt (lượt đầu, hỏi tiếp có lịch sử, stream, song song định tuyến) khẳng định lượt `bao_lu` ⇒ công cụ trả chữ không số + khối cố định được nối; cờ tắt ⇒ giống byte | 0 |
+| 0 | hàm thuần trên bộ 29 câu (cổng + lưới); báo riêng S-b của **chỉ lưới đã nới, không `loai`** (m-1: biết `loai` thêm được bao nhiêu câu); test file chạm; test §4c: mỗi loại lượt (lượt đầu, hỏi tiếp có lịch sử, stream, song song định tuyến) khẳng định lượt `bao_lu` ⇒ công cụ trả chữ không số + khối cố định được nối; thêm test **stream, lượt `bao_lu`, model trả câu từ chối ⇒ chữ hiện ra không bắt đầu bằng câu từ chối** (M-1); cờ tắt ⇒ giống byte | 0 |
 | 1 | mốc: 5 lượt câu gốc, bản đang chạy (server tạm) | ≈ 0,004 |
 | 2 | đếm câu chạm bằng code (`data/cau_bao_2026-11-17/tools_b/dem_cham.py`, đã chạy): an toàn 32 ⇒ 4 câu được đưa công cụ (mô tả đổi) · 0 câu bão; Golden 176 ⇒ 3 câu có công cụ khi nới (1 hiện nay) · 2 câu bão | 0 |
 | 3 | nhánh, cờ bật, server tạm qua `/api/chat/stream` (cookie riêng mỗi chuỗi): bộ 29 câu ×1 + 3 câu dự báo thường từ bộ B5b đã thấy + an toàn 4 câu chạm ×2 + Golden 3 câu chạm ×1 | ≈ 0,04 |
@@ -49,7 +55,7 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
 - **S-b (code):** 22 câu cần đi đường bão (theo README bộ) có khối cố định NCHMF + 112 ở **≥ 20 / 22** (mốc hàm: 16 / 22). Câu sót ghi id + lý do.
 - **S-c (code):** câu dự báo thường vẫn có bảng số **3 / 3**. Câu nhãn `khong` có khối thừa **≤ 3 / 5** (không tệ hơn mốc hàm).
 - **S-d:** an toàn 4 câu chạm ×2: 0 đổi lớp so với mốc. Golden 3 câu chạm: không mất ý chính (đọc so cặp).
-- Theo dõi, không chặn: câu ghép phần ý khác được trả lời (người đọc) · chữ đầu p50 của câu bão · tiền / câu.
+- Theo dõi, không chặn: câu ghép phần ý khác được trả lời (người đọc) · chữ đầu p50 của câu bão · tiền / câu · lượt rút lại vì citation · khối NCHMF thừa ở câu hỏi tiếp không liên quan sau một câu bão (m-2: lưới xét câu trước — E thêm 1 ca vào bộ; kết quả ghi, chấp nhận theo thứ tự lỗi).
 - Ca đối chứng của phép đếm S-b (luật harness): chạy trên một lượt mốc biết chắc có khối NCHMF ⇒ phải đếm ra "có".
 
 **Trần 0,08 USD (0,20 USD nếu luật chuyển hướng 2.5 bật).** Một lượt đo; sàn trượt ⇒ ghi giới hạn, không mở vòng chỉnh lời dặn (nếu cần vòng thì A trình User).
