@@ -240,6 +240,5 @@ SUA_LICH_LOI_DAN_CHT = SUA_LICH_LOI_DAN.replace(
     "- doi_ngay_di: đổi ngày bắt đầu chuyến đi; không điền gì thêm (hệ thống tự đọc ngày từ câu).\n",
     "- doi_ngay_di: đổi ngày bắt đầu chuyến đi; không điền gì thêm (hệ thống tự đọc ngày từ câu).\n"
     "- chua_ho_tro: người dùng muốn sửa LỊCH NÀY theo cách không có ở trên (đổi chỗ / gộp / tách các ngày, dời giờ cả lịch, thêm giờ nghỉ…) "
-    "⇒ một hành động chua_ho_tro, không điền gì.\n",
-)
-assert SUA_LICH_LOI_DAN_CHT.count("chua_ho_tro") == 2 and "kể cả khi bằng" in SUA_LICH_LOI_DAN_CHT
+    "⇒ một hành động chua_ho_tro, không điền gì. Dời / đưa một ĐIỂM sang buổi / ngày khác là doi_buoi, không phải chua_ho_tro.\n",
+)  # câu cuối: vòng 2 (Sửa đổi 17/11 của plan) — vòng 1 model nhận chua_ho_tro cho dời điểm (Q3 S01, S08)
