@@ -8,7 +8,7 @@ Lỗi tự thử 16/11 (TONG_HOP #24): lịch đi 18/11, ngày 2 không có bữ
 - Script: `data/bua_trua_2026-11-17/tools/dem.py` (chạy từ `backend`).
 
 ## Sửa
-`backend/llm/quan_lich.py` `an_uong`: bữa trưa xét lần lượt điểm sáng (từ cuối về đầu) rồi điểm đầu buổi chiều; dừng ở điểm đầu tiên có quán **hoặc** có ghi chú ăn của kho (Bạch Mã… vẫn giữ ghi chú). Điểm đầu có quán ⇒ y như trước. Bữa tối không đổi. Khối `an` không vào tin nhắn gửi model ⇒ chuỗi gửi model không đổi.
+`backend/llm/quan_lich.py` `an_uong`: bữa trưa xét lần lượt điểm sáng (từ cuối về đầu) rồi điểm đầu buổi chiều; dừng ở điểm đầu tiên có quán **hoặc** có ghi chú ăn của kho (Bạch Mã… vẫn giữ ghi chú). Điểm đầu có quán ⇒ y như trước. Cách chọn điểm cho bữa tối không đổi; quán bữa tối có thể đổi khi bữa trưa mới đã dùng quán gần đó (không lặp quán trong chuyến — B đếm 101 / 960 khung, đọc 2 ca: đúng ý). Khối `an` không vào tin nhắn gửi model ⇒ chuỗi gửi model không đổi.
 
 ## Kết quả [Chạy]
 | Tiêu chí | Kết quả |
