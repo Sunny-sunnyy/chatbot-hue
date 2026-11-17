@@ -79,6 +79,16 @@ def test_meal_note_for_points_without_restaurants():
         ("trua", [], ql.GHI_CHU_AN[("lang_non_tay_ho", "trua")]), ("toi", [], ql.GHI_CHU_AN[("deo_hai_van", "toi")])]
 
 
+def test_lunch_falls_back_to_other_points_of_the_day():
+    """Tự thử 16/11: điểm cuối buổi sáng cách mọi quán > 2 km (Điện Hòn Chén) ⇒ trước đây cả ngày không bữa trưa; nay xét điểm sáng còn lại
+    rồi điểm đầu buổi chiều. Điểm kho có ghi chú ăn (Bạch Mã) vẫn giữ ghi chú, không nhảy sang điểm khác."""
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["chua_thien_mu", "dien_hon_chen"], "chieu": ["doi_vong_canh"]}}]}
+    trua = [a for a in ql.an_uong(QUAN, BANG_V2, khung, TOA) if a["bua"] == "trua"]
+    assert len(trua) == 1 and trua[0]["gan"] == BANG_V2.theo_id["chua_thien_mu"]["ten"] and trua[0]["quan"]
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["chua_thien_mu", "bach_ma"], "chieu": []}}]}
+    assert [a.get("ghi_chu") for a in ql.an_uong(QUAN, BANG_V2, khung, TOA) if a["bua"] == "trua"] == [ql.GHI_CHU_AN[("bach_ma", "trua")]]
+
+
 @pytest.mark.parametrize("sua, loi", [
     ({"ten": "Quán <b>x</b>"}, "không hợp lệ"), ({"ten": "x" * 81}, "không hợp lệ"), ({"ten": "Ăn ở https://a.vn"}, "không hợp lệ"),
     ({"ten": "a\u0007b"}, "không hợp lệ"), ({"ten": "Qu\u202eán"}, "không hợp lệ"), ({"ten": "Quán\u200bA"}, "không hợp lệ"),

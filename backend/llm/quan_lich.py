@@ -108,12 +108,20 @@ def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict
     for ng in khung["ngay"]:
         sang, chieu = ng["buoi"].get("sang", []), ng["buoi"].get("chieu", [])
         toi = [j for j in ng["buoi"].get("toi", []) if j in bang.theo_id]  # có điểm buổi tối ⇒ ăn tối gần đó (người đi đã ở đó)
-        for bua, diem in (("trua", sang[-1] if sang else (chieu[0] if chieu else None)), ("toi", toi[0] if toi else (chieu[-1] if chieu else None))):
-            if diem is None:
+        # bữa trưa: người đi đang ở giữa sáng và chiều ⇒ điểm cuối buổi sáng không có quán trong 2 km (và kho không có ghi chú ăn) thì xét các điểm
+        # sáng còn lại rồi điểm đầu buổi chiều (lỗi tự thử 16/11: Lê Bá Đảng / Điện Hòn Chén cuối buổi sáng ⇒ cả ngày không có bữa trưa)
+        trua = list(dict.fromkeys(sang[::-1] + chieu[:1]))
+        for bua, ung_vien in (("trua", trua), ("toi", [toi[0]] if toi else chieu[-1:])):
+            if not ung_vien:
                 continue
+            diem, chon = ung_vien[0], []
+            for j in ung_vien:
+                toa = (toa_do or {}).get(j)
+                chon = _chon(theo_cum.get(bang.theo_id[j]["cum"], []), toa, da_dung) if toa else []
+                if chon or (j, bua) in GHI_CHU_AN:
+                    diem = j
+                    break
             d = bang.theo_id[diem]
-            toa = (toa_do or {}).get(diem)
-            chon = _chon(theo_cum.get(d["cum"], []), toa, da_dung) if toa else []
             if chon:
                 da_dung |= {(q["ten"], tuple(q["toa"])) for q in chon}
                 ra.append({"ngay": ng["ngay"], "bua": bua, "gan": d["ten"], "quan": [_hien(q) for q in chon]})
