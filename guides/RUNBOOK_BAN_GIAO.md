@@ -97,8 +97,8 @@ md5 từng bảng, cách thêm một điểm, và luật: đổi bảng ⇒ qué
 - **Log số đo** `backend/logs/application.log` (không commit): mỗi lượt chat một dòng `chat_metrics` (tuyến, token, USD, ms từng bước, công cụ,
   `git_sha`; **không** có nội dung câu). Log dùng chung cho mọi bản đã chạy + pytest ⇒ luôn lọc theo sha:
   ```bash
-  python3 -I scripts/dem_chat_metrics.py               # các git_sha có trong log + số dòng
-  python3 -I scripts/dem_chat_metrics.py --sha HEAD    # một bản: số lượt theo tuyến, tốc độ, tiền (bỏ lượt 0 đồng của pytest)
+  uv run python scripts/dem_chat_metrics.py               # các git_sha có trong log + số dòng
+  uv run python scripts/dem_chat_metrics.py --sha HEAD    # một bản: số lượt theo tuyến, tốc độ, tiền (bỏ lượt 0 đồng của pytest)
   ```
   Thử 17/11: chạy được; bản chưa có lượt thật in "0 lượt · 0.0000 USD" — đúng, không phải lỗi.
 - **Sổ vết có nội dung** (chỉ máy local, server bật `HUE_SO_VET=true`): `data/debug_trace/<ngày>.jsonl` (private) — câu, tuyến, lần tìm,
