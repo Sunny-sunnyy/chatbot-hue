@@ -31,8 +31,13 @@ def test_remove_replace_move_and_card():
     vt = s._vi_tri(k)
     x = sorted(vt)[0]
     kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=B.theo_id[x]["ten"])])
-    assert kq["da_ap"] == [{"loai": "bo_diem", "diem": x}] and x in kq["luu"]["loai"] and v2.kiem_khung_v2(B, kq["khung"]) == []
-    assert s.thay_doi(B, kq)[0] == {"cau": f"Đã bỏ {B.theo_id[x]['ten']}.", "duoc": True}
+    assert [(a["loai"], a["diem"]) for a in kq["da_ap"]] == [("bo_diem", x)] and x in kq["luu"]["loai"] and v2.kiem_khung_v2(B, kq["khung"]) == []
+    # (C 17/11) bộ xếp lấp chỗ trống ⇒ điểm lấp nằm trong mục đã áp và trong câu báo
+    moi_vao = {j for ng in kq["khung"]["ngay"] for b in v2.BUOI for j in ng["buoi"][b]} - {j for ng in k["ngay"] for b in v2.BUOI for j in ng["buoi"][b]}
+    assert {x2["diem"] for x2 in kq["da_ap"][0].get("lap", ())} == moi_vao
+    cau = s.thay_doi(B, kq)[0]["cau"]
+    assert cau.startswith(f"Đã bỏ {B.theo_id[x]['ten']}") and all(B.theo_id[j]["ten"] in cau for j in moi_vao)
+    assert cau.endswith("vào chỗ trống.") if moi_vao else cau == f"Đã bỏ {B.theo_id[x]['ten']}."
     the = s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten=x)])  # không nói thay bằng gì ⇒ thẻ, khung không đổi
     assert the["the"]["cu"] == x and the["khung"] == k and the["the"]["lua_chon"][-1]["gia_tri"] == "bo"
     moi = the["the"]["lua_chon"][0]["gia_tri"]
@@ -176,3 +181,17 @@ def test_param_change_says_whether_the_plan_was_rearranged():
     # đổi số ngày: không thêm dòng xếp lại (dòng "số ngày" đã tự nói)
     ngay = s.ap(B, luu, [s.HanhDong(loai="doi_so_ngay", so_ngay=2)])
     assert ngay["xep_lai"] is None and [d["cau"] for d in s.thay_doi(B, ngay)] == ["Đã đổi số ngày: 3 ngày → 2 ngày."]
+
+
+
+def test_every_new_stop_after_removal_is_named_in_the_note():  # (C 17/11) tự thử 16/11: "Đã bỏ X." mà lịch có thêm điểm khác (910 / 960 khung)
+    for n, kieu, st in ((2, "can_bang", ("am_thuc",)), (3, "kham_pha", ("di_tich",)), (1, "nhe_nhang", ())):
+        k, luu = _lich(n, kieu, st)
+        truoc = {j for ng in k["ngay"] for b in v2.BUOI for j in ng["buoi"][b]}
+        for x in sorted(truoc):
+            kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=B.theo_id[x]["ten"])])
+            if not kq["da_ap"]:
+                continue
+            moi = {j for ng in kq["khung"]["ngay"] for b in v2.BUOI for j in ng["buoi"][b]} - truoc
+            bao = " ".join(d["cau"] for d in s.thay_doi(B, kq))
+            assert all(B.theo_id[j]["ten"] in bao for j in moi), (x, moi, bao)
