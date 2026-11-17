@@ -250,10 +250,11 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             hanh_dong, bi_chan = sl.loc_hanh_dong([h for h in ra if h.loai != sl.CHUA_HO_TRO], query, luu)
             cht = len(ra) - len([h for h in ra if h.loai != sl.CHUA_HO_TRO])
         except GenerationError:
-            hanh_dong, bi_chan, cht = [], 0, 0
+            ra, hanh_dong, bi_chan, cht = [], [], 0, 0
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
-        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht}  # sổ vết (RAM)
+        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht,
+                           "model_ra": [h.model_dump(exclude_none=True) for h in ra]}  # sổ vết (RAM): `model_ra` = trước khi lọc (review E)
         if not hanh_dong and not bi_chan and not cht:
             trace.sua = {"n_hanh_dong": 0}
             return None

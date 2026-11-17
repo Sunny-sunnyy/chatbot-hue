@@ -185,3 +185,18 @@ def test_flag_needs_edit_flag():
     from test_cong_dot_1 import flags_from
     with _p.raises(ValueError):
         flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=False, sua_lich_chua_ho_tro=True)
+
+
+def test_trace_keeps_what_the_model_returned_before_filtering():  # review E: sổ vết từng chỉ có hành động SAU lọc ([] ở lượt "Chưa làm")
+    import asyncio
+    from test_cong_dot_1 import flags_from
+    from llm import len_ke_hoach as lkh, lich_trinh_v2 as v2
+    from llm.assistant import AnswerTrace
+    f = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=True)
+    tr = AnswerTrace(); tr.lich_luu = sl.luu_tu_lich(v2.xep_v2(f.bang_lich_v2, v2.ThamSoV2(3, so_thich=("di_tich",))), None, None); tr.sua_chon = None
+
+    class Gen:
+        async def hieu_sua(self, prompt, call_log, **kw):
+            return [sl.HanhDongCHT(loai="chua_ho_tro")]
+    asyncio.run(lkh.hieu_va_ap("Dời cả lịch sớm lên 2 tiếng", Gen(), tr, f))
+    assert tr.vet["sua"]["hanh_dong"] == [] and tr.vet["sua"]["model_ra"] == [{"loai": "chua_ho_tro"}]
