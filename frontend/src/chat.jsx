@@ -11,6 +11,7 @@ import { phangCoSo, theKhachSan } from "./theKhachSan.js";
 import { baiHref } from "./route.js";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
+import { moDauWeb } from "./moDauWeb.js";
 import { LINK_TIM_PHONG, LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
@@ -367,7 +368,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
 }
 
 function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
-  const html = useMemo(() => renderAnswerHtml(turn.text), [turn.text]);
+  const html = useMemo(() => renderAnswerHtml(moDauWeb(turn.text, turn.web)), [turn.text, turn.web]);  // câu mở đầu khi mục web có nội dung
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
   return (
