@@ -4,6 +4,10 @@ Lịch sử dự án `hue_rag`, mục mới ở trên cùng. Chỉ thêm, không
 Hiện trạng nằm ở `Project_Status.md`; file này là tra cứu (`reference-only`),
 không cấp quyền và không tạo việc phải làm.
 
+## 2026-11-17 (22:17 17/11/2026) — Phiên tối: cả nhóm đọc 4 khoá học + một nguồn chia sẻ, bàn nhóm, User duyệt 8 điểm cách làm việc; hệ thống không đổi
+
+Phiên tối 17/11 (A `hue-rag-9c` · B `hue-rag-4e` · C `hue-rag-99` · E `hue-rag-62`): xem `CURRENT_HANDOFF.md` khối đầu "PHIÊN SAU ĐỌC TRƯỚC (… cuối PHIÊN TỐI 17/11)" + mục "PHIÊN TỐI 17/11"; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-17_toi.md`; kho ghi chép private `data/khoa_hoc_2026-11-17/` (`README.md`, `VONG2_CHOT.md`, `CAU_HOI_CAN_BAN_VOI_USER.md`). Sáng + chiều 17/11: xem các mục "PHIÊN SÁNG / CHIỀU 17/11" của handoff và hai nhật ký cùng ngày.
+
 ## 2026-11-16 (22:17 16/11/2026) — Phiên tối: kho 265 bài, bản đồ lịch bật, khoảng cách tính sẵn bật, cột lịch theo bản sửa, cả nhóm tự thử như người dùng
 
 Phiên tối 16/11 (A `hue-rag-cb` · B `hue-rag-b2` · C `hue-rag-e9` · E `hue-rag-4a`): xem `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11)" + mục "PHIÊN TỐI 16/11"; nhật ký `bao_cao_he_thong/nhat_ky/2026-11-16_toi.md`; report `report_agent/2026-11-12_ra_khoang_cach/` (`b_ghi_kho_lap_an_…`, `c_kc_tinh_san_…`, `e_review_kc_tinh_san`, `e_cot_lich_theo_sua_…`); lượt tự thử + tổng hợp ở `data/tu_thu_2026-11-16/` (private). Phiên chiều 16/11: mục "PHIÊN CHIỀU 16/11" của handoff.
