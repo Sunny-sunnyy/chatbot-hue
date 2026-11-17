@@ -106,3 +106,82 @@ def test_merge_read_as_day_count_change_has_no_contradicting_line():  # review E
     _, kq = _hieu("Gộp ngày 2 với ngày 3 cho còn 2 ngày thôi", [sl.HanhDong(loai="doi_so_ngay", so_ngay=2)])  # câu có "2 ngày" ⇒ rào cho qua
     cau = [d["cau"] for d in sl.thay_doi(V2.bang_lich_v2, kq)]
     assert any(c.startswith("Đã đổi số ngày") for c in cau) and sl.CAU_VIEC_KHAC not in cau
+
+
+# ---------- cờ `sua_lich_chua_ho_tro` (plan 2026-11-17-chua-ho-tro-plan.md): model nhận câu sửa chưa làm được ----------
+
+def _hieu_cht(cau, ra):
+    import asyncio
+    from test_cong_dot_1 import flags_from
+    from llm import len_ke_hoach as lkh, lich_trinh_v2 as v2
+    from llm.assistant import AnswerTrace
+    f = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=True)
+    k = v2.xep_v2(f.bang_lich_v2, v2.ThamSoV2(3, so_thich=("di_tich",)))
+    tr = AnswerTrace(); tr.lich_luu = sl.luu_tu_lich(k, None, None); tr.sua_chon = None
+    goi = []
+
+    class Gen:
+        async def hieu_sua(self, prompt, call_log, **kw):
+            goi.append(kw)
+            return list(ra)
+    return f, k, asyncio.run(lkh.hieu_va_ap(cau, Gen(), tr, f)), goi
+
+
+def test_unsupported_edit_flagged_by_model_keeps_plan_and_says_so():
+    f, k, kq, goi = _hieu_cht("Dời cả lịch sớm lên 2 tiếng", [sl.HanhDongCHT(loai="chua_ho_tro")])
+    assert goi == [{"chua_ho_tro": True}] and kq is not None and kq["khung"] == k and kq["da_ap"] == []
+    assert [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_CHUA_HO_TRO]
+
+
+def test_unsupported_swap_uses_the_swap_line():
+    f, k, kq, _ = _hieu_cht("Cho ngày 3 lên trước ngày 1", [sl.HanhDongCHT(loai="chua_ho_tro")])
+    assert kq["khung"] == k and [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_CHUA_HO_TRO]
+    f, k, kq, _ = _hieu_cht("Đổi chỗ ngày 1 với ngày 2", [sl.HanhDongCHT(loai="chua_ho_tro")])
+    assert [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_VIEC_KHAC]
+
+
+def test_unsupported_next_to_doable_action_applies_the_doable_one():
+    f, k, kq, _ = _hieu_cht("Đi nhẹ nhàng thôi, và nghỉ trưa lâu hơn mỗi ngày",
+                            [sl.HanhDongCHT(loai="doi_tham_so", kieu_di="nhe_nhang"), sl.HanhDongCHT(loai="chua_ho_tro")])
+    cau = [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)]
+    assert any(c.startswith("Đã đổi kiểu đi") for c in cau) and cau[-1] == sl.CAU_CHUA_HO_TRO
+
+
+def test_plain_question_still_goes_normal_with_flag_on():
+    _, _, kq, _ = _hieu_cht("Ngày 2 nên ăn gì ở đâu?", [])
+    assert kq is None
+
+
+def test_flag_off_calls_understanding_exactly_as_before():
+    goi = []
+
+    class Gen:
+        async def hieu_sua(self, prompt, call_log, **kw):
+            goi.append(kw)
+            return []
+    import asyncio
+    from test_len_ke_hoach_v2 import V2
+    from llm import len_ke_hoach as lkh, lich_trinh_v2 as v2
+    from llm.assistant import AnswerTrace
+    tr = AnswerTrace(); tr.lich_luu = sl.luu_tu_lich(v2.xep_v2(V2.bang_lich_v2, v2.ThamSoV2(3, so_thich=("di_tich",))), None, None); tr.sua_chon = None
+    assert asyncio.run(lkh.hieu_va_ap("Đổi chỗ ngày 1 với ngày 2", Gen(), tr, V2)) is None and goi == [{}]
+
+
+def test_flag_off_agent_and_schema_unchanged_flag_on_only_adds_two_lines():
+    import difflib
+    from openai import AsyncOpenAI
+    from llm.full_corpus_prompt import SUA_LICH_LOI_DAN, SUA_LICH_LOI_DAN_CHT
+    from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator, SuaLichOutput, SuaLichOutputCHT
+    g = OpenAIFullCorpusGenerator(client=AsyncOpenAI(api_key="x", base_url="http://127.0.0.1:9"), model="gpt-6-luna")
+    assert g.sua_lich_agent.instructions is SUA_LICH_LOI_DAN and g.sua_lich_agent.output_type is SuaLichOutput
+    assert "chua_ho_tro" not in str(SuaLichOutput.model_json_schema()) and "chua_ho_tro" in str(SuaLichOutputCHT.model_json_schema())
+    them = [d for d in difflib.ndiff(SUA_LICH_LOI_DAN.splitlines(), SUA_LICH_LOI_DAN_CHT.splitlines()) if d[:1] in "+-"]
+    assert len([d for d in them if d[0] == "+"]) == 2 and len([d for d in them if d[0] == "-"]) == 1
+    assert g.sua_lich_cht_agent.model_settings.max_tokens == g.sua_lich_agent.model_settings.max_tokens
+
+
+def test_flag_needs_edit_flag():
+    import pytest as _p
+    from test_cong_dot_1 import flags_from
+    with _p.raises(ValueError):
+        flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=False, sua_lich_chua_ho_tro=True)
