@@ -1,5 +1,23 @@
 # STATUS C — phiên chiều 17/11 (C `hue-rag-33` · A `hue-rag-c6` · B `hue-rag-00` · E `hue-rag-55`); dưới là nhật ký phiên sáng 17/11
 
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11 — C viết 16:50 17/11/2026)
+
+- **Việc dở: đọc 3 khoá (vòng 1).** Brief `data/khoa_hoc_2026-11-17/BRIEF.md` (đọc cả các mục "Bổ sung" / "ĐỔI CÁCH LÀM" cuối file). Bản nháp vòng 1: `data/khoa_hoc_2026-11-17/VONG1_C.md` — §0, §1 Production, §2 FDE, §4 chéo, §5 câu bàn, §6 lỗi agent con: XONG; **§3 AI SDLC còn thiếu W1D4–W1D5 + W2D1–W2D3**.
+- **Hai agent con lúc kết phiên vẫn chạy** (có thể đã ghi xong file, có thể dở): kết quả về `data/khoa_hoc_2026-11-17/AI_SDLC_C_phan_2.md` (W1D4–W1D5, bài 24–37, nhánh `week1day4-end` @59300c7, `week1day5-end` @4cd5cf8) và `AI_SDLC_C_phan_3.md` (W2D1–W2D3, nhánh `week2day2-intents/-end`, `week2day3-intents/-merged/-end`). Nháp ở `nhap/AI_SDLC/`.
+- **Phiên sau làm tiếp:** (1) `ls` hai file trên; thiếu / dở ⇒ chạy lại agent con cho đúng phần đó (brief mẫu: đầu `AI_SDLC_C_phan_1.md` + luật: git diff HAI chấm; đọc code bằng `git show origin/<nhánh>:<file>` hoặc clone sang `/tmp/hr_c_<khoá>`; bản đồ ngày là nháp, tin summary; lệch nguồn: code / `.md` hiện hành > slide > lời giảng). (2) Cập nhật §3 của `VONG1_C.md` + bảng 13 nhánh accountable đã đọc / chưa đọc (đếm tên nhánh trong `AI_SDLC_C_phan_*.md`; đối chiếu `nhap/A/NHANH_SDLC_accountable.md` của A). (3) Nhắn A "xong vòng 1" ⇒ vòng 2 bàn nhóm ⇒ vòng 3 C viết bản AI SDLC cuối (đọc bổ sung file chưa đọc theo bảng §6.10 của `NHANH_SDLC_accountable.md`).
+- **Ranh giới:** chưa mở bản của A / B / E (`AI_PRODUCTION_B.md`, `CHEO_3_KHOA_A_agent.md`, `e_tam/`, `b_tam/`) — giữ tới khi vòng 1 xong. Chỉ đọc, 0 USD. Không thư mục tạm nào của C (`/tmp/hr_c_*` chưa tạo).
+- Nháp vòng 1 Production / FDE của C: `data/khoa_hoc_2026-11-17/nhap/VONG1_C/` (13 file + `BRIEF_AGENT_CON.md`).
+- Máy: 0 worktree C, 0 server, 0 tiến trình nền (ngoài 2 agent con nói trên).
+
+## (cũ) PHIÊN SAU ĐỌC TRƯỚC (C viết 14:31 17/11/2026, phiên chiều 17/11)
+
+- **Máy:** 0 worktree C, 0 server tạm, 0 tiến trình nền. Mọi nhánh C chiều nay ĐÃ MERGE: `p9-bua-trua-gan` (`ddead61`), `p9-runbook-muc6` (`a3e18c2`). Nhánh xoá được: `p9-bua-trua-gan`, `p9-runbook-muc6`.
+- **Việc dở của C:** không.
+- **Giới hạn ghi (để sau B7, không sửa trước 22/11):** #29 hỏi "ăn gì gần Thiên Mụ" ⇒ chatbot nói kho không có quán, nhưng kho CÓ bài quán ghi "gần chùa Thiên Mụ" (`foods/restaurants/`, ghi kho 14/11) ⇒ LỖI TÌM (retrieval), chưa tái hiện trên server. (c) bản mạnh "điểm ưu tiên nhường chỗ ngày mưa": 640 ⇒ 440 / 945 ngày toàn ngoài trời nhưng lịch 1 ngày mưa mất Đại Nội ⇒ câu hướng cho User, sau B7. (e) lịch 1 ngày mặc định có Đầm Chuồn, không Thiên Mụ: chủ ý theo luật, hỏi User bằng hai lịch cạnh nhau nếu muốn đổi.
+- **Công cụ để lại (private):** `data/mua_lich_2026-11-17/c_tools/` (mô phỏng mưa 945 ngày), `data/bua_trua_2026-11-17/tools/dem.py` (đếm bữa trưa thiếu, chạy từ `backend`), `data/ngay_web_2026-11-17/ca.json` (23 ca ngày nguồn web).
+- (14:31 17/11/2026) rảnh — sau đó A giao đọc 3 khoá (mục trên).
+- **(16:11 17/11/2026) ĐANG LÀM — đọc 3 khoá (A giao, User 17/11 chiều; chỉ đọc, 0 USD).** Brief `data/khoa_hoc_2026-11-17/BRIEF.md` (mục ĐỔI CÁCH LÀM). C giữ bản chi tiết AI SDLC: 4 agent con ⇒ `data/khoa_hoc_2026-11-17/AI_SDLC_C_phan_{1..4}.md`. Vòng 1 thêm AI Production (7 agent con) + AI FDE (6 agent con) đọc nguồn gốc ⇒ `nhap/VONG1_C/*.md` (brief chung `nhap/VONG1_C/BRIEF_AGENT_CON.md`) ⇒ C viết `VONG1_C.md` ⇒ nhắn A. Chưa mở bản của B / E / A.
+
 ## PHIÊN CHIỀU 17/11 (C viết 13:39 17/11/2026 `date`)
 
 - Mở phiên 13:34: main `c1e8180` = origin, hooksPath `.githooks`, 0 worktree; máy vừa khởi động lại (Qdrant A bật lại, 8010 chưa mở).
@@ -7,6 +25,10 @@
 - **(13:40 17/11/2026) Đổi ý (c) sau phản biện B** (số theo tổ hợp pha loãng lợi; đường mặc định không sở thích: ngày ra đầm / phá giữa mưa to ⇒ 0, khô giống hệt): C + E nay đồng ý sửa 1 dòng trước 22/11 nếu User chọn; bản ưu tiên nhường chỗ sau B7. (e) giữ: chủ ý, hỏi User bằng hai lịch 1 ngày cạnh nhau. Đã báo A. RẢNH.
 - **(13:43 17/11/2026) User chọn (c) sửa 1 dòng** (A): B code `p9-mua-bo-thien-nhien`, E bộ dò ~10 khung mưa ⇒ **C review ≤ 5 dòng khi B báo** (chạy bộ dò E + mô phỏng; script đã chép `data/mua_lich_2026-11-17/c_tools/` — sim2 so module nhánh ↔ main, đổi đường `lt2_thu.py` sang file của nhánh khi review). RẢNH tới lúc đó.
 - **(13:55 17/11/2026) Review `p9-mua-bo-thien-nhien` 41c8ea7 (B): READY, 0 finding**, đã gửi A + B. Test file 92 passed; bộ dò E 0 / 16 SAI (main 10); mô phỏng C: không mưa 0 / 315 khác, toàn ngoài trời 640 ⇒ 608 / 945, kiem_khung 0. Worktree `/tmp/c_rv_mua` đã gỡ. RẢNH.
+- **(14:18 17/11/2026) #24 `ĐÃ PUSH b9dff75 origin/p9-bua-trua-gan` — CHỜ B review ≤ 5 dòng** (khai báo sửa: `backend/llm/quan_lich.py` `an_uong`, `backend/tests/test_quan_lich.py`, report `c_bua_trua_implementation.md`; worktree `/tmp/c_bua`, 0 symlink). Bữa trưa thử điểm sáng còn lại rồi điểm đầu chiều: 52 ⇒ 0 / 1.890 ngày thiếu trưa; test file 17 passed. **#29:** kho CÓ bài quán "gần chùa Thiên Mụ" ⇒ lỗi tìm, sau B7. **Bộ ca ngày web** cho nhánh B: `data/ngay_web_2026-11-17/ca.json` (23 ca) — C review nhánh B khi B báo. Còn: review nhánh E (#18 + #25).
+- **(14:22 17/11/2026) Review `p9-ngay-nguon-web` 0d5b931 (B): READY, 1 minor** (mục không có ngày — 4 / 5 ở lượt Serper thật, tin "N giờ trước" — vẫn hiện như trước ⇒ ghi giới hạn). Bộ ca C 0 / 23 SAI, 6 từ chối; 135 passed. Worktree tạm đã gỡ. Còn: B review `p9-bua-trua-gan`; review nhánh E (#18 + #25).
+- #24 MERGE main `ddead61` (B ready). Review `p9-lich-nho-1711` 19f676a (E #17 + #18 + #25): READY, 1 minor (câu "chưa xét mưa" lặp khi đổi ngày đi — giữ) ⇒ MERGE `0ec3a5e`.
+- **(14:30 17/11/2026) Runbook mục 6 `ĐÃ PUSH 94e2575 origin/p9-runbook-muc6` — CHỜ A** (khai báo sửa: `guides/RUNBOOK_BAN_GIAO.md` chỉ mục 6; worktree `/tmp/c_rb`). Mọi lệnh chạy thử 0 USD trên `0ec3a5e`. Lệch ghi: chú thích bảng v3 trong settings là sha256, không md5. RẢNH.
 
 
 ## PHIÊN SÁNG 17/11 (C viết 08:33 17/11/2026 `date`)

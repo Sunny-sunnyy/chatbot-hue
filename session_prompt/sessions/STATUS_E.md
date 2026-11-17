@@ -1,12 +1,20 @@
-# STATUS E — PHIÊN CHIỀU 17/11 (mở 13:34 17/11/2026, `date`) · terminal `hue-rag-55` · Claude Opus 5.5 · vai thực thi
+# STATUS E — PHIÊN CHIỀU 17/11 (mở 13:34, ghi 14:31 17/11/2026, `date`) · terminal `hue-rag-55` · Claude Opus 5.5 · vai thực thi
 
-- Đã đọc tài liệu mở phiên + kiểm nhanh: `main` `c1e8180` = origin, hooksPath `.githooks`, 0 worktree (`/tmp/e_md` đã gỡ; `p9-mo-dau-web` đã merge `c1e8180`).
-- **Lệch:** Qdrant `6335` và 8010 KHÔNG trả lời (HTTP 000), `docker ps` rỗng ⇒ máy có vẻ khởi động lại; handoff ghi 8010 chạy `cfe700c`. Handoff chưa có mục sau 11:58 (merge `c1e8180` chỉ có trong git).
-- A = `hue-rag-c6`, B `hue-rag-00`, C `hue-rag-33`. Quyền phiên "như sáng 17/11" (việc nặng xin A).
-- Việc A giao (bàn nhóm, chỉ đọc): ý kiến (c) mưa + (e) lịch 1 ngày ĐÃ GỬI A + B + C. (c) không mở trước 22/11 — ngày toàn ngoài trời khô 1766/2880 ⇒ mưa 1554/2880; gốc chủ yếu dữ liệu (29/41 ngoài trời); sửa thử 1 dòng `lich_trinh_v2.py:232` ⇒ 1513. (e) chủ ý (luật 6 + quỹ 210); Đầm Chuồn 13:30–16:00 ↔ hoàng hôn 16:30–18:00 (thấy 1 lần). Script `data/mua_lich_2026-11-17/tools/` (dem2.py cần bản vá ở `/tmp/e_mua/v2_patch.py`).
-- Sau phản biện của B: E ĐỔI Ý (c) ⇒ sửa 1 dòng `:232` làm được trước 22/11 nếu User chọn (đường không sở thích = mặc định: 160/180 ⇒ 119/180 ngày toàn ngoài trời; trời khô giống hệt). Đã báo A, B, C. Nếu A giao: E soạn bộ dò ~10 khung mưa cho B.
-- User chọn (c) sửa 1 dòng (B code `p9-mua-bo-thien-nhien`). **Bộ dò khung mưa XONG:** `data/mua_lich_2026-11-17/bo_do/` 16 ca; main `c1e8180` 10/16 SAI ↔ bản vá 1 dòng E thử 0/16. Đã gửi B + C + A.
-- E rảnh, chờ A. 0 server tạm, 0 worktree, tiền 0 USD.
+## PHIÊN SAU ĐỌC TRƯỚC
+- **Máy:** E 0 worktree (`/tmp/e_nho`, `/tmp/e_tl` đã gỡ), 0 server tạm, 0 tiến trình nền, 0 agent con. Mọi nhánh của E chiều nay ĐÃ MERGE (`0ec3a5e`, `a3e18c2`). `/tmp/e_mua/` đã dọn (bản vá thử chép sang `data/mua_lich_2026-11-17/tools/v2_patch.py`). Luật mới: thư mục tạm `/tmp/hr_e_<việc>`.
+- **Tiền E chiều 17/11: 0 USD** (mọi việc là hàm thuần / tài liệu).
+- **Nhánh xoá được (thêm vào script xoá của User):** `p9-lich-nho-1711`, `p9-tai-lieu-1711-chieu`.
+- **Bộ dò để chạy lại khi sửa vùng đó:** khung mưa `data/mua_lich_2026-11-17/bo_do/` (16 ca; main trước sửa 10/16 SAI) · so khung bộ xếp `data/lich_nho_2026-11-17/tools/so_khung.py` (ghi / so 4.800 khung).
+- **Ứng viên sau B7 (không tự làm):** ngày mưa có sở thích vẫn toàn ngoài trời — gốc dữ liệu (29/41 điểm ngoài trời), hướng "ưu tiên nhường chỗ ngày mưa" làm lịch 1 ngày mất Đại Nội ⇒ User chọn · Đầm Chuồn xếp 13:30–16:00 ↔ bảng ghi hoàng hôn 16:30–18:00 · lịch 1 ngày mặc định không có Thiên Mụ (luật "một điểm thiên nhiên mỗi ngày") · lịch đi lại cùng quần thể (`p9-khong-quay-lai-cum`).
+
+## Nhật ký chiều
+- Kiểm nhanh 13:34: main `c1e8180`; Qdrant + 8010 tắt (máy khởi động lại) — A bật Qdrant. A `hue-rag-c6`, B `hue-rag-00`, C `hue-rag-33`.
+- Bàn (c) mưa / (e) lịch 1 ngày: đếm 0 USD; nhận phản biện B ⇒ (c) sửa 1 dòng (User chọn, B làm, merge `830984f`); (e) chủ ý.
+- Bộ dò khung mưa 16 ca cho B (main 10/16 SAI ↔ nhánh 0/16).
+- Lô lỗi nhỏ: E làm #17 (60 phút ăn trưa), #18 (lý do không chỗ ở lịch 1 ngày), #25 ("chưa xét mưa" biểu mẫu) — `p9-lich-nho-1711` C READY, merge `0ec3a5e`; #26 ghi giới hạn (kho có "nên hỏi trước", model bỏ).
+- Tài liệu chiều (3 merge của B, C, E): nhật ký, README sổ ghi việc, bài 23 / 15 / 22 + bai_hoc/README — merge `a3e18c2`.
+- Thử thay User trên server tạm 8011 (DỪNG theo A): `data/tu_thu_2026-11-17/E.md`, 0,0135 USD, mọi mục đã thử đạt, 3 điểm nhỏ; server đã tắt, worktree `/tmp/hr_e_thu` đã gỡ.
+- ĐANG: đọc khoá (BRIEF `data/khoa_hoc_2026-11-17/BRIEF.md`). AI FDE: 7 agent con, 6/7 xong (`e_tam/part_*.md`). Vòng 1 cả 3 khoá: 10 agent con AI Production + AI SDLC đang chạy (`nhap/E_vong1/`). Đầu ra: `AI_FDE_E*.md`, `VONG1_E.md`. 0 USD.
 
 ---
 

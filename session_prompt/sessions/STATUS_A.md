@@ -1,3 +1,10 @@
+# STATUS A — KẾT PHIÊN CHIỀU 17/11 (viết 16:50 17/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11)" ⇒ hỏi quyền ⇒ chờ C xong vòng 1 khoá học ⇒ mở vòng 2 bàn nhóm (`data/khoa_hoc_2026-11-17/BRIEF.md`).
+- **Xong chiều 17/11 (A):** bàn nhóm (c) mưa + (e) lịch 1 ngày ⇒ User chọn; 7 merge (mưa, tài liệu mưa, ngày nguồn web, bữa trưa, lịch nhỏ, runbook 4/5/7 + 6, tài liệu chiều) — đọc diff, test file chạm; khung runbook; thoả thuận máy chung vào `WORKFLOW.md` §3.2; brief đọc 3 khoá + 13 agent con theo ngày + 3 agent con đọc hết nhánh + agent con gom `VONG1_A.md`; nối A dự án khác thứ nhất (sơ đồ khoá).
+- **Bẫy A:** (1) giao 13 agent con đọc khoá TRƯỚC khi hỏi người dựng bản đồ khoá (A dự án khác thứ nhất) ⇒ brief ghi sai "SDLC tuần 2 không có bản đồ ngày" — User hỏi "sao không hỏi A dự án khác thứ nhất" ⇒ hỏi người dựng nguồn trước khi giao đọc; (2) báo dự án khác "/tmp/b_* là của hue_rag" khi chưa kiểm ⇒ có worktree của dự án khác thứ nhất trong đó — đính chính; (3) kết luận "nhánh local = bài User" theo E mà chưa hỏi User ⇒ User chưa chạy FDE ⇒ đính chính; (4) hiểu "4 khoá" thành thêm AI Coding ⇒ User sửa "chỉ 3 khoá"; (5) chia mỗi người một khoá trong khi User muốn mỗi người đọc cả 3 rồi bàn.
+- **Máy:** 0 server, Qdrant down, 0 worktree hue_rag; `/tmp/hr_a_trich.md` tạm (xoá được). Tiền A ≈ 0 USD (agent con không gọi API trả phí).
+
 # STATUS A — PHIÊN CHIỀU 17/11 (thứ Ba; mở; cập nhật 13:37 17/11/2026 `date`)
 
 - Terminal: A `hue-rag-c6` · B `hue-rag-00` · C `hue-rag-33` · E `hue-rag-55` (Claude Code, trực tiếp; cả ba đã tự báo).
