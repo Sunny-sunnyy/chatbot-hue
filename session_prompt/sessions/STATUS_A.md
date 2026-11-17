@@ -1,3 +1,11 @@
+# STATUS A — PHIÊN SÁNG 17/11 (thứ Ba; mở; cập nhật 08:27 17/11/2026 `date`)
+
+- Terminal: A `hue-rag-10` · B `hue-rag-96` · C `hue-rag-3f` · E `hue-rag-41` (Claude Code, trực tiếp; cả ba đã tự báo).
+- Kiểm nhanh: `main` `95f105b` = origin; chỉ `.wslconfig` untracked + `STATUS_E.md` đang sửa (của E); hooksPath `.githooks`; **Qdrant KHÔNG chạy** (máy khởi động lại 08:08; Docker chạy, 0 container — lệch handoff "Qdrant giữ chạy"); RAM 19 GB, khả dụng 13; 0 server 80xx; 0 worktree.
+- Ban ngày thứ Ba: máy chia với hai dự án khác của User (mỗi dự án 4–5 phiên). A đã nhắn xin lượt: phiên điều phối dự án khác thứ nhất, phiên điều phối dự án khác thứ hai (đoán là phiên điều phối — chờ trả lời).
+- Quyền: "như tối 16/11 + xin lượt máy". Việc sáng–trưa ghi ở `CURRENT_HANDOFF.md` mục "PHIÊN SÁNG 17/11" (cập nhật 11:58 17/11/2026). Server 8010 của A chạy (sổ vết). User đi ăn tới ~13:00 — không hỏi.
+- Bẫy A: gắn nhãn khuyến nghị câu bão trước khi bàn nhóm (User nhắc); ghi tên chủ đề câu Golden vào handoff (sửa trước commit); báo dự án khác thứ nhất "đã trả" trước khi E chạy lại Playwright lần 2.
+
 # STATUS A — KẾT PHIÊN TỐI 16/11 (viết 22:17 16/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 16/11)" ⇒ kiểm nhanh ⇒ hỏi quyền ⇒ mở 8010 có sổ vết ⇒ User thử sáng 17/11 ⇒ trình `data/tu_thu_2026-11-16/TONG_HOP.md` từng câu một (câu bão trước) ⇒ giao sửa. KHÔNG trình lại chuyện khẩn cấp (memory `emergency-questions-out-of-scope`).
@@ -68,7 +76,7 @@
 # STATUS A — KẾT PHIÊN 15/11 (viết 14:44 15/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN 15/11)" ⇒ hỏi quyền phiên (một câu) ⇒ cùng lượt giao: E 7 điểm lịch (`diem_v9`) · B W79 (sha vào `chat_metrics`) · C W81 `scripts/commit_push.sh` + bảng lưu trú v5 gộp Như Phú ⇒ rồi hỏi User các câu ở "Câu hỏi cho User" (Bến Ngự, sửa lịch hạng sao / ngày đi, tốc độ còn lại, ảnh User tìm phụ), mỗi lần một câu. Khi C xong W81: A sửa câu `WORKFLOW.md` §5 cho khớp tên / cách dùng script thật.
-- Xong 15/11 (A): điều phối; ~20 lần merge + cổng (server thật cho nhánh chạm chat / route); review 7 + 3 + 8 + 1 ảnh; tự kiểm nguồn QCVN 84:2024 (pdftotext Phụ lục B) + Open-Meteo + khamphahue; viết lại handoff + archive `CURRENT_HANDOFF_LICH_SU_2026-11-15.md`; Project_Status; PROJECT_HISTORY; nhật ký; W76–W81 vào luật (W79 / W81 phần code chờ B / C); bẫy `Project_Status.md` §8; vòng tự soi 1 + 2; 2 lượt máy cho A `docker-images-src`.
+- Xong 15/11 (A): điều phối; ~20 lần merge + cổng (server thật cho nhánh chạm chat / route); review 7 + 3 + 8 + 1 ảnh; tự kiểm nguồn QCVN 84:2024 (pdftotext Phụ lục B) + Open-Meteo + khamphahue; viết lại handoff + archive `CURRENT_HANDOFF_LICH_SU_2026-11-15.md`; Project_Status; PROJECT_HISTORY; nhật ký; W76–W81 vào luật (W79 / W81 phần code chờ B / C); bẫy `Project_Status.md` §8; vòng tự soi 1 + 2; 2 lượt máy cho A `dự án khác thứ nhất`.
 - Bẫy A (15/11): (1) chuyển số tốc độ 20,6 % / 5,9 s cho User trước khi có người hỏi "lượt đo hay lượt thật" — sai do log trộn ⇒ đính chính; (2) duyệt sửa rào số 0 đầu trước khi đếm (0 / 76 ⇒ bỏ); (3) gõ giờ tay "12:20", "12:5x", "10:4x", "14:4x" (hook bắt hết, đã sửa bằng `date`); (4) gọi TaskStop song song với lệnh gửi câu ⇒ tắt server trước khi gửi; (5) gửi câu thử sai tên trường (`question` thay `query`); (6) report tracked chép tên + địa chỉ / câu kho bị hook chặn 3 lần lúc A commit.
 - Server / worktree của A: không còn (8020 đã tắt). Tiền A ≈ 0,01 USD (cổng ổn định).
 
