@@ -5,7 +5,7 @@ Cập nhật: 08:40 17/11/2026 (C). Việc A giao sáng 17/11: lỗi #3 `data/tu
 ## 1. Tái tạo (8010, sổ vết, sha `95f105b`, đường stream)
 
 - 3 / 3 cuộc "câu nhiều ý về một ngôi chùa ⇒ Mở cửa lúc mấy giờ?": model hiểu đúng nơi (câu tìm kho do model viết có tên nơi; câu gửi web có tên nơi); kho từ chối ĐÚNG (`scripts/grep_kb.sh`: bài của nơi đó 0 dòng giờ mở cửa); mục web 3 / 3 đạt ⇒ hôm nay không tái hiện web trắng. [đã chạy]
-- Web trắng tối 16/11 (8011, không sổ vết) = `WEB_KHONG_TIN_CAY_TEXT` (kiểm cuối gạt mục model viết). Đếm `chat_metrics` 15–17/11 (`web_outcome`, `web_kiem`): đường câu-từ-model (lượt hỏi tiếp) 7 / 26 `khong_tin_cay` ↔ đường câu gõ 3 / 54. Mã: `so_ngoai_trich` 5 (4 + 1), `gia_luu_tru` 4 (2 + 2), `tien_ngoai_trich` 1. [đếm từ log]
+- Web trắng tối 16/11 (8011, không sổ vết) = `WEB_KHONG_TIN_CAY_TEXT` (kiểm cuối gạt mục model viết). Đếm `chat_metrics` 15–17/11 (`web_outcome`, `web_kiem`): đường câu-từ-model (lượt hỏi tiếp) 7 / 26 `khong_tin_cay` ↔ đường câu gõ 3 / 54 (**đính chính 11:26 17/11/2026:** đúng là **3 / 40** lượt thật — 14 trong 54 lượt là lượt test dùng model giả `model: "probe"`; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_15_25_1711.md`). Mã: `so_ngoai_trich` 5 (4 + 1), `gia_luu_tru` 4 (2 + 2), `tien_ngoai_trich` 1. [đếm từ log]
 - Gốc [chạy hàm thuần]: `tra_web._chuoi_so` so số theo cách viết — trích "8h - 18h" ⇒ {8, 18}, model "8h00–18h00" ⇒ {800, 1800} ⇒ `so_ngoai_trich` dù cùng giờ. Chưa chứng minh đúng ca tối 16/11 (không còn chữ model) — cơ chế đã chạy + số đếm khớp.
 
 ## 2. Sửa (`backend/llm/tra_web.py`)
