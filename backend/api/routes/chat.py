@@ -201,7 +201,8 @@ def _web_payload(trace: AnswerTrace) -> dict | None:
     if trace.web is None:
         return None
     return {"outcome": trace.web["outcome"], "text": trace.web["text"],
-            "sources": [{k: s[k] for k in ("id", "title", "domain", "link")} for s in trace.web["nguon"]]}
+            "sources": [{"id": s["id"], "title": s["title"] + (f" ({s['ngay']})" if s.get("ngay") else ""), "domain": s["domain"], "link": s["link"]}
+                        for s in trace.web["nguon"]]}  # ngày đăng chỉ ở tiêu đề hiện cho người dùng — chuỗi gửi model không đổi
 
 
 def _tim_web(state):
