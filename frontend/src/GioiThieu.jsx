@@ -61,7 +61,7 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
   const buoc = [
     ["Bạn hỏi", "Gõ câu hỏi như nói chuyện, hoặc bấm một câu gợi ý."],
     ["Trợ lý tìm trong kho", "Tìm các đoạn liên quan trong kho tư liệu về Huế đã biên soạn; chưa đủ thì tìm thêm."],
-    ["Trả lời kèm nguồn", "Mỗi ý có số [n]; bấm tên ở dòng “Nguồn” để xem đoạn gốc hoặc đọc cả bài ở Khám phá."],
+    ["Trả lời kèm nguồn", "Dưới câu trả lời có dòng “Nguồn”; bấm tên bài để xem đoạn gốc hoặc đọc cả bài ở Khám phá."],
   ];
   return (
     <>
@@ -94,7 +94,7 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
         {bai && (
           <section className="gt-kho hien" aria-labelledby="gt-kho-h">
             <p className="gt-kho-so"><span className="gt-kho-n">{bai.length}</span> <span id="gt-kho-h">bài trong kho tư liệu về Huế</span></p>
-            <p className="gt-kho-p">Trợ lý trả lời từ các bài này; mỗi ý có số [n] dẫn về đúng bài gốc. Bấm một chủ đề để đọc.</p>
+            <p className="gt-kho-p">Trợ lý trả lời từ các bài này; dòng “Nguồn” dưới câu trả lời dẫn về đúng bài gốc. Bấm một chủ đề để đọc.</p>
             <ul className="gt-kho-lv">
               {LINH_VUC.map(lv => (
                 <li key={lv.id}><a href={`#/kham-pha/${lv.id}`}>{lv.ten} <b>{soBai(bai, lv.id)}</b></a></li>
@@ -128,8 +128,10 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
             <h2 className="gt-h2">Giới hạn</h2>
             <ul>
               <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã đổi — kiểm lại trước khi đi.</li>
-              <li>{banDo ? "Chưa có quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau). Bản đồ lịch trình chỉ ghim các điểm đã có toạ độ."
-                : "Chưa có bản đồ, quán ăn theo vị trí và lịch sự kiện theo ngày (đợt sau)."}</li>
+              {/* quán gần từng điểm chỉ có trong lịch bản 2 (bảng quán từ bản đồ mở); hỏi đáp chỉ biết quán có trong kho */}
+              {tinhNang?.len_ke_hoach_v2 && <li>Quán ăn gần từng điểm chỉ có trong lịch ở trang Lên kế hoạch; khi hỏi đáp, trợ lý chỉ biết các quán có trong kho.</li>}
+              <li>{banDo ? "Chưa có lịch sự kiện theo ngày. Bản đồ lịch trình chỉ ghim các điểm tham quan đã có toạ độ."
+                : "Chưa có bản đồ và lịch sự kiện theo ngày."}</li>
               <li>Câu hỏi ngoài chủ đề Huế được báo là ngoài phạm vi.</li>
             </ul>
           </div>
@@ -161,7 +163,7 @@ function ViDu({ buoc, bai, onAsk }) {
       )}
       {buoc === 2 && (
         <>
-          <p>{VI_DU.tra_loi} <sup className="gt-vd-so">[1]</sup></p>
+          <p>{VI_DU.tra_loi}</p>
           <p className="gt-vd-nguon">Nguồn: {VI_DU.bai}</p>
           {onAsk && <button type="button" className="nut nut-phu gt-vd-nut" onClick={() => onAsk(VI_DU.hoi)}>Hỏi thử câu này</button>}
         </>

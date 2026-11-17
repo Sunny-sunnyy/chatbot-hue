@@ -57,7 +57,6 @@
 .gt-vd-hoi { display: inline-block; background: var(--color-accent); color: var(--color-on-accent); border-radius: 18px 18px 4px 18px;
   padding: 10px 16px; font-weight: 500; }
 .gt-vd a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
-.gt-vd-so { color: var(--color-accent); font-weight: 700; }
 .gt-vd-nguon { margin-top: 8px; font-size: 14px; color: var(--color-muted); }
 .gt-vd-nut { margin-top: 14px; }
 
