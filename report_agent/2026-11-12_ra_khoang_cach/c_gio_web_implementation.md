@@ -20,10 +20,11 @@ Cập nhật: 08:40 17/11/2026 (C). Việc A giao sáng 17/11: lỗi #3 `data/tu
 | 18 mục web thật trong sổ vết 16–17/11, kiểm bằng bản cũ ↔ mới | 0 khác | < 2 s |
 | `tests/test_b6_tra_web.py` (có / không `--env-file`, worktree có symlink tạm) | 127 passed / 127 passed | 23 s / 27 s |
 
-Không test rộng (§8: nhánh chỉ đổi một hàm thuần + test của nó). Không lượt có phí trên nhánh; một cuộc thật trên 8010 chỉ có nghĩa sau merge + A khởi động lại 8010.
+Không test rộng (§8: nhánh chỉ đổi một hàm thuần + test của nó). Không lượt có phí trên nhánh. Sau merge, 1 cuộc thật trên 8010 (`05ec2f5`, sổ vết): mục web `co_muc`, nêu giờ 8:00–18:00 của đúng nơi. [đã chạy]
 
 ## 4. Giới hạn
 
+- (review E m-1, A ghi giới hạn khi merge `05ec2f5`) giờ phút 00 rút về số trần ⇒ giờ model viết khớp cả số không phải giờ trong trích ("Mở 2:00" ↔ "2 km", "8:00" ↔ "8 phòng"); cùng loại lỗ đã có với "8h" / "8 giờ". Đã thử chuẩn hoá ngược (mọi giờ ⇒ "H:MM", commit `a935c58` trên `p9-gio-web`, test 128 passed): gạt nhầm ca 33 bộ E (thời lượng "tour 8h" ↔ "8 tiếng") ⇒ BỎ, không merge — thời lượng hay gặp trong trang du lịch, còn lỗ m-1 cần model bịa đúng số có sẵn trong trích.
 - Giờ viết bằng chữ buổi ("5 giờ chiều" ↔ "17h", "9h tối" ↔ "21:00") vẫn bị gạt (phía an toàn); "9h tối" ↔ "9:00" vẫn qua (như main).
 - Lỗi mở đầu "Tôi không tìm thấy đủ thông tin…" khi mục web có giờ = mục (f) `TONG_HOP.md`, không thuộc nhánh này.
 - `gia_luu_tru` ở đường hỏi tiếp (2 lượt): luật xét cả câu model viết ⇒ chặt hơn, đúng thiết kế; chưa xem kỹ.
