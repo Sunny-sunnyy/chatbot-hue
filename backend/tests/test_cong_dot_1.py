@@ -283,7 +283,7 @@ def test_explore_article_only_by_exact_id(app_client):
 
 def test_weather_and_feature_routes(app_client):
     app, client = app_client
-    original = _with(app, dataclasses.replace(OFF, thoi_tiet=False))  # cờ tắt đặt rõ: settings.yaml bật thoi_tiet + biểu mẫu từ 07/11
+    original = _with(app, dataclasses.replace(OFF, thoi_tiet=False, bao_lu_cong_cu=False))  # cờ tắt đặt rõ (bao_lu_cong_cu cần thoi_tiet): settings.yaml bật thoi_tiet + biểu mẫu từ 07/11
     # `anh` của /api/tinh_nang đọc `app.state.anh`, chỉ có khi có khoá OpenAI + `anh.bat` (bật 08/11) ⇒ đặt rõ "tắt", không phụ thuộc settings / --env-file
     anh_goc, app.state.anh = app.state.anh, None
     try:
