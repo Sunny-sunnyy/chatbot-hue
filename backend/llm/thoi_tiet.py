@@ -95,6 +95,14 @@ def la_cau_bao_lu_rong(text: str) -> bool:
     return bool(_BAO_LU_RONG.search(t) or (_CANH_BAO.search(t) and co_tu_khoa(_CANH_BAO.sub(" ", t))))
 
 
+# Lùi theo luật 2.5 của plan (Golden 17/11: câu taxi không từ thời tiết ⇒ model gọi công cụ rồi từ chối ⇒ bảng mưa thay câu từ chối): công cụ chỉ
+# đưa khi câu cuối / câu liền trước có từ thời tiết HOẶC từ nguy hiểm thời tiết (danh sách đóng `_BAO_LU_RONG`)
+def co_tu_khoa_luot_rong(query: str, history) -> bool:
+    def co(t: str) -> bool:
+        return co_tu_khoa(t) or bool(_BAO_LU_RONG.search(_nfc(t)))
+    return co(query) or bool(history and co(history[-1][0]))
+
+
 def la_luot_bao_lu(query: str, history) -> bool:
     """Lưới xét câu cuối **hoặc câu hỏi liền trước** (như `co_tu_khoa_luot`) — câu hỏi tiếp sau câu bão vẫn đi đường bão (thừa hơn sót)."""
     return la_cau_bao_lu_rong(query) or bool(history and la_cau_bao_lu_rong(history[-1][0]))

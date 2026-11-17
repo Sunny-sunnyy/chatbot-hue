@@ -446,11 +446,13 @@ def test_storm_net_closed_list_and_previous_question(cau, truoc, co):
     assert tt.la_luot_bao_lu(cau, ((truoc, ""),) if truoc else ()) is co
 
 
-def test_flag_off_tool_schema_and_description_unchanged_flag_on_offered_on_every_hue_turn(deps):
+def test_flag_off_tool_schema_unchanged_flag_on_gate_is_widened_keyword_list(deps):
     seen = []
     gen = generator(lambda n, kw: (seen.append(kw), [answer("Lăng nằm ở ngoại ô [1].")])[1])
     run(deps, "Mai Huế có mưa không?", gen, WEATHER)           # cờ tắt: bản cũ
-    run(deps, "Lăng Tự Đức ở đâu?", gen, BAO)                  # cờ bật: câu không từ khoá vẫn có công cụ
+    run(deps, "Đi Bạch Mã có sạt lở không?", gen, BAO)         # cờ bật: từ nguy hiểm thời tiết (ngoài `_TU_KHOA` cũ) ⇒ có công cụ
+    run(deps, "Đi taxi từ sân bay vào Huế bao nhiêu tiền?", gen, BAO)  # Golden 17/11: câu không từ thời tiết ⇒ KHÔNG có công cụ (lý do lùi)
+    assert "thoi_tiet" not in tool_names(seen[2])
     cu, moi = tool_schema(seen[0]), tool_schema(seen[1])
     assert set(cu["parameters"]["properties"]) == {"tu_ngay", "den_ngay"} and cu["description"] == THOI_TIET_MO_TA
     assert set(moi["parameters"]["properties"]) == {"loai", "tu_ngay", "den_ngay"} and "loai" in moi["parameters"]["required"]
@@ -531,7 +533,7 @@ def test_plain_forecast_turn_with_flag_on_still_gets_numbers(deps):
     assert trace.answer.endswith(trace.thoi_tiet["khoi"]) and tt.CAU_BAO_LU not in trace.answer
 
 
-def test_parallel_route_path_offers_weather_tool_with_loai_on_every_hue_turn(deps):
+def test_parallel_route_path_offers_weather_tool_with_loai(deps):
     from llm.assistant import answer_turn_stream_parallel
     from llm.full_corpus_prompt import ROUTER_INSTRUCTIONS
     from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
@@ -541,7 +543,7 @@ def test_parallel_route_path_offers_weather_tool_with_loai_on_every_hue_turn(dep
     gen = OpenAIFullCorpusGenerator(client=Client(responses), model="probe")
 
     async def go():
-        return [e async for e in answer_turn_stream_parallel("Đại Nội rộng bao nhiêu?", *deps, gen, AnswerTrace(),
+        return [e async for e in answer_turn_stream_parallel("Mai Huế có giông lốc không?", *deps, gen, AnswerTrace(),
                                                              dataclasses.replace(BAO, router=True, song_song_tra_loi=True))]
 
     asyncio.run(go())
