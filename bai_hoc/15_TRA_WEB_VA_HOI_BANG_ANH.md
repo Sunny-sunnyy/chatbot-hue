@@ -222,7 +222,8 @@ chỗ ở ⇒ mục web không có số tiền" không thấy số nào để ch
 Bộ dò 24 câu do người khác soạn: bản cũ **10** câu sai, bản sửa **0**; chạy lại bộ kiểm trên 39 mục web thật đã lưu: chỉ đúng lượt giá phòng đổi (nay
 bị chặn), 38 mục còn lại như cũ. Một cuộc thật sau khi bật: lần đó sổ trả lời được (không giá) nên không đi qua đường web — bản sửa mới được chứng
 minh bằng hàm và bằng chạy lại mục web cũ. Lần tự thử của người khác thì giá nằm ngay trong **câu trả lời từ sổ**, vì một bài trong sổ (chi phí du lịch)
-có ghi khoảng giá phòng; chỗ này là việc của sổ, đang chờ anh quyết.
+có ghi khoảng giá phòng. Anh đã chốt (trưa 17/11): "không nói giá phòng" chỉ áp cho phần **gợi ý chỗ ở** (khối Nơi ở trong lịch, trang Chỗ ở, mục web
+khi hỏi chỗ ở); câu hỏi về **chi phí chuyến đi nói chung** vẫn được nêu khoảng giá có nguồn từ sổ, nên sổ giữ nguyên.
 
 **Điều nên nhớ:** khi một câu trả lời sai, hãy ghi lại *chữ thật* đi qua từng khâu rồi mới kết luận khâu nào hỏng. Ở đây phần đáng ngờ nhất (trí nhớ hội
 thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn cũ ở khâu tra web.
