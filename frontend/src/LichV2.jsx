@@ -144,8 +144,9 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
     return (
       <div className="bubble lich-v2 lkh-gon">
         <ThayDoi thayDoi={lich.thay_doi} />
-        {coDuoc && <p className="lkh-gon-dan">Lịch đã cập nhật theo các thay đổi trên.</p>}
-        <button type="button" className="retry" onClick={() => setMoRong(true)}>Xem cả lịch</button>
+        {/* review C m-1: nút cùng dòng với câu dẫn — đặt riêng một dòng thì nút khuất dưới mép khung nổi */}
+        <p className="lkh-gon-dan">{coDuoc ? "Lịch đã cập nhật theo các thay đổi trên. " : ""}
+          <button type="button" className="lkh-gon-nut" onClick={() => setMoRong(true)}>Xem cả lịch</button></p>
       </div>
     );
   }
