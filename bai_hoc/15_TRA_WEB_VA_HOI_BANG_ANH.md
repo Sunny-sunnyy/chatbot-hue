@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 15:51, ngày 16/11/2026 · thêm chiều 16/11: chuyện thật thứ năm (thử nhận ảnh bằng so ảnh với ảnh mẫu, rồi cắt khỏi mốc 30/11) · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
+*Cập nhật lần cuối: 11:15, ngày 17/11/2026 · thêm sáng 17/11: mục web không còn bị bỏ chỉ vì cùng một giờ viết khác kiểu. Trước: 15:51, ngày 16/11/2026 · thêm chiều 16/11: chuyện thật thứ năm (thử nhận ảnh bằng so ảnh với ảnh mẫu, rồi cắt khỏi mốc 30/11) · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -190,6 +190,31 @@ chưa đo, mình để lượt nhiều ý dùng câu gõ như cũ. Người revi
 
 **Bật.** Anh cho bật lúc **17:50 ngày 15/11**. Người điều phối thử lại đúng ca của anh trên máy chủ: mục web nói **đúng ngôi chùa, kèm giờ**.
 
+**Sáng 17/11 — vẫn có lúc mục web trắng.** Tối 16/11 hai người trong nhóm thử lại đúng ca của anh và cả hai đều nhận câu cố định "chưa tra được
+thông tin đáng tin". Sáng 17/11 mình chạy lại 3 cuộc trên máy chủ có sổ vết: trợ lý hiểu đúng ngôi chùa (câu tìm sổ và câu tra web đều có tên chùa),
+sổ đúng là không có giờ mở cửa nên phần sổ từ chối là đúng, và mục web 3 / 3 lần nói đúng giờ. Tức là lỗi lúc có lúc không. Log số đo (không có chữ,
+chỉ có mã lý do) cho thấy từ 15/11, ở lượt hỏi tiếp dùng câu model viết, mục web bị bỏ **7 / 26** lần; ở lượt người dùng hỏi thẳng chỉ **3 / 40** lần (54 nếu tính cả 14 lượt thử của bộ test dùng model giả).
+Lý do hay gặp nhất là "có con số không thấy trong đoạn trích" (4 / 7).
+
+Mình gọi thẳng bộ kiểm số với vài cách viết giờ và thấy chỗ hở: đoạn trích ghi "8h - 18h" thì bộ kiểm hiểu là hai số 8 và 18, còn mục web model viết
+"8h00 đến 18h00" thì thành 800 và 1800, không khớp, cả mục bị bỏ dù giờ y hệt. Đây chính là cách sửa mình đã đếm rồi **không làm** hôm 15/11 (0 / 85
+mục bị chặn vì lý do này). Lần này khác ở chỗ đã thấy cơ chế chạy thật, nhưng **chưa chứng minh được** các lượt bị bỏ tối 16/11 là vì đúng lý do này:
+máy chủ hôm đó không bật sổ vết nên không còn chữ model đã viết.
+
+Cách sửa: trước khi so, code đưa mọi cách viết của **cùng một giờ** về một dạng ("8:00", "08:00", "8h00" thành "8", giống "8h", "8 giờ" vốn đã ra
+"8"; "7 giờ 30", "07:30" thành "7:30"), làm cho cả chữ model lẫn đoạn trích. Giờ khác nhau vẫn bị bỏ như cũ.
+
+| Đo gì | Cách đo | Kết quả | Vì sao ổn |
+|---|---|---|---|
+| Bộ kiểm còn bỏ oan giờ đúng không | 41 ca do một người **không viết** bản sửa soạn: 17 ca cùng giờ khác cách viết, 11 ca giờ sai thật, 9 ca số không phải giờ (năm, km, số nhà…), 4 câu ghép; gọi thẳng hàm, 0 USD | bản cũ **16** ca sai bắt buộc ⇒ bản sửa đầu 3 (dạng "8 giờ 30", "24:00") ⇒ sửa tiếp **0 ca bắt buộc**; 3 ca giờ viết theo buổi ("5 giờ chiều" ↔ "17h") vẫn bị bỏ, đúng luật ghi trước | giờ sai thật vẫn bị bỏ 10 / 11; ca "9h tối" ↔ "9:00" vẫn lọt như bản cũ (ghi ở Khi nào hỏng) |
+| Có làm hỏng mục web đang đạt không | 18 mục web thật đã lưu trong sổ vết 16–17/11, kiểm bằng bản cũ và bản mới | **18 / 18** cho cùng kết quả | không hỏng ca nào đang chạy |
+| Chạy thật sau khi bật | 1 cuộc đúng ca của anh | mục web nói đúng giờ của chùa | — |
+
+Người review chỉ ra một chỗ hở còn lại: vì "8:00" thành "8", giờ model viết có thể khớp nhầm với một **số 8 không phải giờ** trong đoạn trích ("có 8
+phòng"). Mình thử cách bịt ngược lại (mọi giờ thành "8:00", không bao giờ ra số trần) thì câu kiểu "tour 8h" so với "8 tiếng" lại bị bỏ oan; thời lượng
+hay gặp trong trang du lịch, còn lỗ kia cần model bịa đúng con số có sẵn trong đoạn trích ⇒ giữ bản đầu, ghi lỗ này là giới hạn. Tiền sáng 17/11
+≈ 0,015 USD (≈ 370 đồng).
+
 **Điều nên nhớ:** khi một câu trả lời sai, hãy ghi lại *chữ thật* đi qua từng khâu rồi mới kết luận khâu nào hỏng. Ở đây phần đáng ngờ nhất (trí nhớ hội
 thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn cũ ở khâu tra web.
 
@@ -270,6 +295,8 @@ lượt** trên cùng bộ ảnh cũ — phần "Hỏi bằng ảnh" ở trên).
   cặp đo, model tự đổi "cuối tuần này" thành ngày cụ thể. Tên người dùng: 0 / 4 lượt đo, mẫu nhỏ, không có rào bằng code cho tên riêng. Nếu sau này bật nhớ
   cả câu trả lời thì phải xét lại cờ này.
 - **Luật "ngay lúc này" có thể chặn nhầm** nếu dò quá rộng (ví dụ chữ "đang").
+- **Giờ khớp nhầm số khác** (từ 17/11): vì "8:00" được coi như "8", một giờ model tự viết có thể lọt qua nếu đoạn trích có số 8 không phải giờ
+  ("8 phòng", "2 km" ↔ "mở 2:00"). Giờ viết theo buổi ("5 giờ chiều" ↔ "17h", "9h tối" ↔ "21:00") vẫn bị bỏ oan; "9h tối" ↔ "9:00" vẫn lọt.
 - **Câu nhắc sức khoẻ có thể thừa** ở câu chỉ sát chủ đề sức khoẻ (giờ bệnh viện, nhà thuốc, món "tốt cho sức khoẻ"): 3 / 9 câu đo. Và chỉ có khi mục web
   được viết (kho đã từ chối, tra web có kết quả, không phải câu thiên tai).
 - **Mục web vẫn dài và hay rào** ("chưa xác minh…") vì giữ bản dài — đổi lại ít nói chắc sai hơn bản gọn.
@@ -300,6 +327,7 @@ lượt** trên cùng bộ ảnh cũ — phần "Hỏi bằng ảnh" ở trên).
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
+- Sáng 17/11 (C): 3 / 3 cuộc tái tạo, 7 / 26 ↔ 3 / 40 lượt thật (3 / 54 kể cả 14 lượt test `model: "probe"`; `web_outcome` + `web_kiem` + `tools[].cau_tu_model` của `chat_metrics` 15–17/11; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_15_25_1711.md`), 4 / 7 `so_ngoai_trich`, "8h - 18h" ⇒ {8, 18}, bộ dò E 41 ca 16 ⇒ 3 ⇒ 0, 18 / 18, bản ngược `a935c58` bỏ, ≈ 0,015 USD: `report_agent/2026-11-12_ra_khoang_cach/c_gio_web_implementation.md` [đã chạy]; bộ dò `data/gio_web_2026-11-17/` [đã chạy]; code `backend/llm/tra_web.py` `_gio_gon`, merge `05ec2f5` [code].
 - Cổng web: `backend/llm/assistant.py` `web_gate_open`; cờ `tra_web: true`: `backend/config/settings.yaml` [code]
 - Tra web: `backend/llm/tra_web.py` (dựng câu tìm, Serper một lần, `tra_web_timeout_seconds: 5`, ≤ 5 kết quả, kiểm `[w n]`, chặn link / HTML, số tiền ⊂ đoạn trích, lưu trú 0 tiền, `la_cau_thoi_gian_thuc`, `la_cau_thien_tai`) [code]; nhãn mục web: `frontend/src/pages.jsx` [code]
 - Bộ kín web 0 / 7, 7 / 7; khoảng 13 s; khoảng 0,0018 USD; hai câu cúp điện / lũ vòng đầu; review bắt link thô và thiếu "lụt / áp thấp" (05/11): `bao_cao_he_thong/07_BAO_CAO_SINH_CAU_TRA_LOI_API.md` [đã chạy]
