@@ -1,11 +1,12 @@
 # STATUS E — PHIÊN CHIỀU 17/11 (mở 13:34, ghi 14:31 17/11/2026, `date`) · terminal `hue-rag-55` · Claude Opus 5.5 · vai thực thi
 
-## PHIÊN SAU ĐỌC TRƯỚC
-- **Máy:** E 0 worktree (`/tmp/e_nho`, `/tmp/e_tl` đã gỡ), 0 server tạm, 0 tiến trình nền, 0 agent con. Mọi nhánh của E chiều nay ĐÃ MERGE (`0ec3a5e`, `a3e18c2`). `/tmp/e_mua/` đã dọn (bản vá thử chép sang `data/mua_lich_2026-11-17/tools/v2_patch.py`). Luật mới: thư mục tạm `/tmp/hr_e_<việc>`.
-- **Tiền E chiều 17/11: 0 USD** (mọi việc là hàm thuần / tài liệu).
-- **Nhánh xoá được (thêm vào script xoá của User):** `p9-lich-nho-1711`, `p9-tai-lieu-1711-chieu`.
-- **Bộ dò để chạy lại khi sửa vùng đó:** khung mưa `data/mua_lich_2026-11-17/bo_do/` (16 ca; main trước sửa 10/16 SAI) · so khung bộ xếp `data/lich_nho_2026-11-17/tools/so_khung.py` (ghi / so 4.800 khung).
-- **Ứng viên sau B7 (không tự làm):** ngày mưa có sở thích vẫn toàn ngoài trời — gốc dữ liệu (29/41 điểm ngoài trời), hướng "ưu tiên nhường chỗ ngày mưa" làm lịch 1 ngày mất Đại Nội ⇒ User chọn · Đầm Chuồn xếp 13:30–16:00 ↔ bảng ghi hoàng hôn 16:30–18:00 · lịch 1 ngày mặc định không có Thiên Mụ (luật "một điểm thiên nhiên mỗi ngày") · lịch đi lại cùng quần thể (`p9-khong-quay-lai-cum`).
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11, ghi 16:50 17/11/2026)
+- **Máy:** 0 worktree, 0 server tạm, `/tmp/hr_e_*` không còn (agent con đọc nhánh đã xoá clone). Tiền E chiều: 0,0135 USD (lượt thử 8011) + 0 USD đọc khoá.
+- **Việc khoá học (BRIEF `data/khoa_hoc_2026-11-17/BRIEF.md`):** `VONG1_E.md` **XONG** (3 khoá, đã nhắn A; mục 9 bảng 18 nhánh undercover đã đọc đủ theo origin). Chờ A mở **vòng 2** (mỗi người ≤ 20 dòng gửi cả nhóm) rồi **vòng 3**: E giữ bộ FDE.
+- **AI_FDE_E còn phải làm:** (1) agent con FDE W3D3–5 (`e_tam/part_5.md`) còn chạy lúc kết phiên — nếu file chưa có / dở thì chạy lại đúng phần đó (brief giống part_1–4, nguồn `week 3/day3–5_summary.md`); (2) ghép bộ `AI_FDE_E.md` (mục lục + toàn cảnh + đối chiếu + đề xuất + 5 câu tự kiểm, lấy từ VONG1_E §1) + `AI_FDE_E_phan_<n>.md` từ `e_tam/part_1..8`; (3) dời `e_tam/` ⇒ `nhap/AI_FDE/` (CHƯA dời — part_5 đang ghi vào đó); (4) ghi cảnh báo nhánh local = bản cũ của Ed, code giống origin (VONG1_E §8–9).
+- **Ghi chép hai khoá kia (E đọc độc lập):** `nhap/E_vong1/PROD_1..6`, `SDLC_1..4` + `BRIEF_AGENT.md`.
+- **3 điểm E tự kiểm, nên trình nhóm:** AGENTS.md không trỏ `guides/RUNBOOK_BAN_GIAO.md`; spec deploy B2 ngưỡng 80 % của 30 USD + credit; skill `agent-design-review:10` ghi "chưa có agent"; `max_turns` bị tính "từ chối đúng" (`full_corpus_eval.py:165`).
+- Lượt thử thay User (dừng giữa chừng): `data/tu_thu_2026-11-17/E.md` — 3 điểm nhỏ A đã ghi handoff (sau B7).
 
 ## Nhật ký chiều
 - Kiểm nhanh 13:34: main `c1e8180`; Qdrant + 8010 tắt (máy khởi động lại) — A bật Qdrant. A `hue-rag-c6`, B `hue-rag-00`, C `hue-rag-33`.
