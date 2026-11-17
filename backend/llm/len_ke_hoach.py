@@ -263,7 +263,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                 ngay_moi.update(mua={k.isoformat(): v for k, v in (ngay_mua_xep(db) or {}).items()}, co_du_bao=db is not None)
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi)
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
-        if sl.la_viec_ngay_chua_lam(query):
+        if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược
             kq["chua_lam"].append(sl.VIEC_KHAC)
         elif bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
