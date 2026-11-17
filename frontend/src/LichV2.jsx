@@ -77,6 +77,7 @@ function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
                 <div className="lkh-than">
                   <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
                   <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
+                  {m.ghi_chu && <span className="lkh-ghi-toi">{m.ghi_chu}</span>}
                   {loai.length > 0 && <span className="lkh-loai">{loai.map(x => <small key={x} className={`lkh-loai-${x}`}>{NHAN_LOAI_DIEM[x]}</small>)}</span>}
                   <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
                     : !xong && <><span className="sr-only">đang viết…</span><span className="lkh-xuong" aria-hidden="true" /><span className="lkh-xuong lkh-ngan" aria-hidden="true" /></>}
