@@ -6,7 +6,7 @@ Luật (thứ tự ưu tiên khi kéo ngược nhau, spec 5b — luật thấp c
 2. (bước d / e: thứ, mùa, giờ mở cửa);
 3. cụm: ≤ 2 cụm kề một ngày tính trên mọi điểm sáng + chiều; cụm xa cả ngày, chỉ khi lịch ≥ 3 ngày và **không ở ngày 1**;
 4. điểm ưu tiên của sở thích (cột `uu_tien_theo_so_thich` của bảng, thứ tự 1–4) đứng đầu thứ tự xét;
-6. sở thích (≤ 2, xen kẽ A1, B1, A2, B2…); không chọn ⇒ nhóm "chung" + một điểm thiên nhiên mỗi ngày (luật cũ);
+6. sở thích (≤ 2, xen kẽ A1, B1, A2, B2…); không chọn ⇒ nhóm "chung" + một điểm thiên nhiên mỗi ngày (luật cũ; ngày mưa bỏ);
 7. kiểu đi: số điểm mỗi buổi tính bằng phút (nhẹ nhàng 1 điểm; cân bằng quỹ 210; khám phá nhiều quỹ 240; tối đa 2 điểm / buổi).
 Số người lớn không vào bộ xếp (spec 3.1: ngoại lệ có chủ ý của N1). Buổi tối xếp ở bước (e), sau khi khung tham quan chốt.
 """
@@ -206,6 +206,9 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     bat_dau = GIO_BAT_DAU["kham_pha" if kieu == "kham_pha" and not ts.han_che else "khac"]
     gio: dict[str, tuple[int, int]] = {}
 
+    def la_ngay_mua(ngay_i: int) -> bool:
+        return bool(mua) and (mua.get(ngay_cua(ngay_i)) or 0) >= NGUONG_MUA
+
     def dung_duoc(id_: str, ngay_i: int, buoi: str, cums: list[str], t: int | None = None) -> bool:
         d = T[id_]
         if id_ in used or buoi not in d["buoi"] or not _cum_hop(d["cum"], cums):
@@ -229,7 +232,8 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
         return thay
 
     def diem_dau(ngay_i: int, buoi: str, cums: list[str], tn_hom_nay: bool) -> str | None:
-        if buoi == "chieu" and not ts.so_thich and not tn_hom_nay:
+        # ngày mưa: bỏ luật "chiều một điểm thiên nhiên" — mọi điểm thiên nhiên đều ngoài trời, luật này chạy trước thứ tự mưa (User 17/11)
+        if buoi == "chieu" and not ts.so_thich and not tn_hom_nay and not la_ngay_mua(ngay_i):
             id_ = next((j for j in thien_nhien if dung_duoc(j, ngay_i, buoi, cums)), None)
             if id_ is not None:
                 return tranh_bac_thang(id_, ngay_i, buoi, cums)
@@ -250,7 +254,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     pool_goc, lap_goc = pool, lap
     ngay = []
     for i in range(1, n + 1):
-        if mua and (mua.get(ngay_cua(i)) or 0) >= NGUONG_MUA:  # ngày mưa: điểm ưu tiên giữ chỗ, phần còn lại xét trong nhà trước (sort ổn định)
+        if la_ngay_mua(i):  # ngày mưa: điểm ưu tiên giữ chỗ, phần còn lại xét trong nhà trước (sort ổn định)
             pool = [j for j in pool_goc if j in uu] + sorted([j for j in pool_goc if j not in uu], key=lambda j: THU_TU_MUA[T[j]["trong_nha"]])
             lap = sorted(lap_goc, key=lambda j: THU_TU_MUA[T[j]["trong_nha"]])
         else:
