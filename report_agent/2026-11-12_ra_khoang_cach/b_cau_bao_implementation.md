@@ -29,7 +29,11 @@ Tổng ≈ **0,33 USD** (log `chat_metrics` của server tạm + trường `usd`
 - Q1: cờ tắt ⇒ chuỗi gửi model giống byte main 228 / 228.
 - Test rộng (trên `2a2e940`): 1310 đạt; 8 hỏng môi trường (khoá API 4, bản build giao diện 4). Commit sau chỉ chạm 3 file đã chạy test file.
 
+## Bật cờ (User chọn 17/11: bật bản mới, ghi giới hạn)
+Đọc tay lần 2 (agent con của A, trên bản sau lùi): sàn S-a1 đọc chặt 2 lượt / đọc lỏng 1 — một lượt model viết câu khí hậu chung nghe như nói về đợt hiện tại; một lượt là câu nói vòng không được đưa công cụ nên không có khối ⇒ theo luật ghi giới hạn, User chấp nhận. Nhánh bật cờ: `p9-cau-bao-bat` (`settings.yaml` + một test tự tắt cả `bao_lu_cong_cu` khi tắt `thoi_tiet`).
+
 ## Giới hạn
+- Lỗi có sẵn ở đường web, ngoài nhánh này: ở câu bão nói vòng không có khối, danh sách nguồn web có thể hiện tiêu đề một tin lũ cũ (năm trước) như tin hiện tại.
 - Câu bão nói vòng không chứa từ thời tiết / nguy hiểm nào (1 / 22 câu của bộ) ⇒ không công cụ, không khối.
 - Câu "giống mà không phải" có từ bão / lũ (tên phim, "bão giá", "lũ trẻ") ⇒ khối NCHMF thừa (3 / 5); có lượt model chọn `bao_lu` ở câu loại này ⇒ thêm bảng số thừa.
 - Câu hỏi tiếp không liên quan ngay sau câu bão ⇒ khối NCHMF thừa ở cuối (lưới xét câu liền trước). Câu đặt TRƯỚC chữ model chỉ khi chính câu đang hỏi khớp lưới (review E M-1 — đã sửa; câu "giống mà không phải" tự chứa từ bão / lũ vẫn nhận câu đầu, như khối thừa).
