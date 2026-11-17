@@ -26,7 +26,11 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
    lỗi đã chốt (sai cảnh báo an toàn tệ nhất), thừa còn hơn sót ⇒ giữ lưới.
 4. **Không chọn** "luôn đưa công cụ thời tiết ở mọi lượt `tro_ly_hue`" (A hỏi có số): mô tả công cụ 168 token (o200k) + tham số ≈ 250 token mỗi lần gọi
    × ~2 lần / câu ≈ +0,00006 USD / câu (≈ 12 % trần 0,0005). Chuỗi gửi model đổi ở MỌI câu ⇒ phải đo lại Golden 176 + an toàn 32 ×2 (≈ 0,12 USD) trước
-   B7 23/11. Model có thể gọi công cụ thừa (+1 lần gọi ≈ 1,5 s). Chỉ chuyển sang hướng này khi bước 3 thấy câu bão bị sót VÌ không được đưa công cụ.
+   B7 23/11. Model có thể gọi công cụ thừa (+1 lần gọi ≈ 1,5 s).
+5. **Luật chuyển hướng (ghi TRƯỚC, A 17/11):** ở bước 0 (hàm thuần) hoặc bước 3, **≥ 1 câu** trong 22 câu cần đi đường bão của bộ E bị sót VÌ cổng không
+   đưa công cụ thời tiết (log `tools` không có `thoi_tiet` và lưới code không khớp) ⇒ chuyển sang "luôn đưa công cụ thời tiết ở tuyến `tro_ly_hue`" khi cờ bật.
+   Kèm phần đo thêm: Golden 176 ×1 + an toàn 32 ×2 (≈ 0,12 USD) + đếm số lượt model gọi công cụ thừa ở Golden. Phần này được duyệt cùng plan, không hỏi lại.
+   Trần đổi thành 0,20 USD. Danh sách từ ở mục 3 khi đó chỉ còn làm lưới code.
 
 ## 3. Đo — tiêu chí ghi TRƯỚC (đổi một thứ: cờ `bao_lu_cong_cu`)
 | Bước | Gì | Tiền |
@@ -45,7 +49,7 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
 - Theo dõi, không chặn: câu ghép phần ý khác được trả lời (người đọc) · chữ đầu p50 của câu bão · tiền / câu.
 - Ca đối chứng của phép đếm S-b (luật harness): chạy trên một lượt mốc biết chắc có khối NCHMF ⇒ phải đếm ra "có".
 
-**Trần 0,08 USD.** Một lượt đo; sàn trượt ⇒ ghi giới hạn, không mở vòng chỉnh lời dặn (nếu cần vòng thì A trình User).
+**Trần 0,08 USD (0,20 USD nếu luật chuyển hướng 2.5 bật).** Một lượt đo; sàn trượt ⇒ ghi giới hạn, không mở vòng chỉnh lời dặn (nếu cần vòng thì A trình User).
 Server tạm cổng 8046 trong worktree nhánh — nhắn A xin lượt máy trước.
 
 ## 4. File sẽ sửa
