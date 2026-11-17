@@ -9,6 +9,7 @@ mở cổng (D1) và gọi model viết mục web; module này chỉ làm phần
 
 Chữ web là **dữ liệu không tin cậy**: không có công cụ nào để nó lái; mọi thứ hiện cho người dùng (link, nhãn) do code dựng từ sổ.
 """
+import datetime as dt
 import re
 import time
 import unicodedata
@@ -17,6 +18,7 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import httpx
 
+from llm import ngay_lich as nl
 from llm.so_tien import tim_so_tien
 
 SERPER_URL = "https://google.serper.dev/search"
@@ -104,6 +106,22 @@ class KetQuaWeb:
     usd: float = 0.0
 
 
+_NGAY_SERPER = re.compile(r"(\d{1,2}) thg (\d{1,2}), (\d{4})")
+
+
+def ngay_dang(chuoi, hom_nay: dt.date | None = None) -> str | None:
+    """Trường `date` của Serper (hl=vi, dạng duy nhất đã thấy: "17 thg 11, 2025") ⇒ "17/11/2025" để hiện cạnh tiêu đề nguồn (17/11: tin lũ năm
+    trước hiện như tin hôm nay). Dạng khác (kể cả "N ngày trước" — chưa thấy ở Serper thật) / ngày không có thật / sau hôm nay ⇒ None — không đoán."""
+    m = _NGAY_SERPER.fullmatch(chuoi.strip()) if isinstance(chuoi, str) else None
+    if m is None:
+        return None
+    try:
+        ngay = dt.date(int(m[3]), int(m[2]), int(m[1]))
+    except ValueError:
+        return None
+    return None if ngay > (hom_nay or nl.hom_nay()) else ngay.strftime("%d/%m/%Y")
+
+
 def doc_ket_qua(data) -> list[dict] | None:
     """Phản hồi Serper ⇒ sổ web (≤ 5, đánh số 1..k). Sai schema (không có danh sách `organic`) ⇒ None. Mục thiếu chuỗi / link không hợp lệ ⇒ bỏ mục."""
     organic = data.get("organic") if isinstance(data, dict) else None
@@ -119,7 +137,8 @@ def doc_ket_qua(data) -> list[dict] | None:
         if link is None:
             continue
         so_web.append({"id": len(so_web) + 1, "title": " ".join(item["title"].split())[:MAX_TITLE_CHARS],
-                       "snippet": " ".join(item["snippet"].split())[:MAX_SNIPPET_CHARS], "link": link, "domain": _ten_mien(link)})
+                       "snippet": " ".join(item["snippet"].split())[:MAX_SNIPPET_CHARS], "link": link, "domain": _ten_mien(link),
+                       "ngay": ngay_dang(item.get("date"))})
     return so_web
 
 

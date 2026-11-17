@@ -77,6 +77,22 @@ def test_parse_keeps_five_clean_links_and_rejects_wrong_schema():
     assert tw.doc_ket_qua({"knowledgeGraph": {}}) is None and tw.doc_ket_qua([]) is None
 
 
+def test_publish_date_shown_in_user_title_only():
+    """17/11: tin lũ năm trước từng hiện như tin hôm nay ⇒ ngày đăng Serper (dạng "N thg N, NNNN") nối vào tiêu đề hiện cho người dùng;
+    dạng khác / ngày không có thật / sau hôm nay ⇒ không ngày. Chuỗi gửi model không đổi (bộ dò 23 ca của C: `data/ngay_web_2026-11-17/`)."""
+    import datetime as dt
+    from api.routes.chat import _web_payload
+    hom = dt.date(2026, 11, 17)
+    assert tw.ngay_dang("17 thg 11, 2025", hom) == "17/11/2025" and tw.ngay_dang(" 4 thg 3, 2026 ", hom) == "04/03/2026"
+    assert [tw.ngay_dang(x, hom) for x in ("29 thg 2, 2025", "4 thg 3, 2027", "Mar 4, 2026", "3 ngày trước", "", None)] == [None] * 6
+    so_web = tw.doc_ket_qua({"organic": [{"title": "Lũ khẩn cấp", "link": "https://a.vn/x", "snippet": "s", "date": "17 thg 11, 2025"},
+                                         {"title": "Mực nước", "link": "https://b.vn/y", "snippet": "s"}]})
+    trace = AnswerTrace()
+    trace.web = {"outcome": "chua_xac_minh", "text": "t", "nguon": so_web}
+    assert [x["title"] for x in _web_payload(trace)["sources"]] == ["Lũ khẩn cấp (17/11/2025)", "Mực nước"]
+    assert "17/11/2025" not in tw.dau_vao_model("Nước sông có lên không?", so_web)
+
+
 def test_missing_key_is_error_without_opening_a_connection():
     calls = []
     kq = asyncio.run(functools.partial(tw.tim_web, api_key=None, timeout=5,
