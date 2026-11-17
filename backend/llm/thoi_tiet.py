@@ -52,7 +52,11 @@ _BAO_LU = re.compile(r"\b(?:bão|lũ|ngập)\b", re.IGNORECASE)
 # `tra_web._THIEN_TAI` + giông / lốc / mưa đá / nước dâng) — chỉ làm LƯỚI code; đường chính là model chọn `loai` của công cụ
 _BAO_LU_RONG = re.compile(r"\b(?:bão|lũ|lụt|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp|giông|lốc|mưa\s+đá|nước\s+dâng)\b", re.IGNORECASE)
 CAU_KHONG_PHAI_TIN_BAO = "Dự báo dưới đây chỉ có nhiệt độ và mưa, không có thông tin bão hay áp thấp."
-CAU_DAN_BAO_LU = "Mình không có tin bão / lũ — bạn xem nguồn chính thức dưới đây."  # như CAU_DAN_DU_BAO: thay câu từ chối ở lượt bão / lũ
+# như CAU_DAN_DU_BAO: thay câu từ chối ở lượt bão / lũ. Đọc tay 17/11: bản đầu "Mình không có tin bão / lũ" đọc được thành "không có bão" (tự trấn an)
+CAU_DAN_BAO_LU = "Mình không theo dõi được tin bão / lũ — bạn xem bản tin chính thức dưới đây."
+# lưới code khớp mà model không gọi công cụ (trả lời bằng tài liệu kho) ⇒ code đặt câu này LÊN TRƯỚC chữ model (đọc tay 17/11 ca 7: "Có. Áp thấp … có thể
+# ảnh hưởng" đọc thành tin hiện tại). Lớp phụ — đường chính vẫn là model chọn `loai`
+CAU_DAU_BAO_LU = "Mình không theo dõi được tin bão / lũ hiện tại — dưới đây là thông tin chung từ tài liệu."
 TIEU_DE_NGUON_BAO_LU = "Tin bão / lũ chính thức"
 KET_QUA_BAO_LU = ("Phần thời tiết do hệ thống tự nối dưới câu trả lời: nguồn tin bão / lũ chính thức, số 112 và dự báo mưa thường. Dự báo này không có "
                   "thông tin bão / áp thấp: không viết là có hay không có bão, lũ; không trấn an; chỉ trả lời phần khác của câu hỏi (nếu có).")

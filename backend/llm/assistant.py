@@ -305,6 +305,7 @@ class AnswerTrace:
     thoi_tiet_ctx: dict | None = None
     thoi_tiet: dict | None = None
     thoi_tiet_noi: str | None = None
+    thoi_tiet_dau: str | None = None  # cờ `bao_lu_cong_cu`: câu cố định code đặt TRƯỚC chữ model (lưới khớp, model không gọi công cụ)
     thoi_tiet_kiem: list[str] | None = None
     khoang_cach: list[dict] | None = None  # mỗi lần gọi `khoang_cach`: mã hai điểm + các dòng code dựng (chỉ RAM; log chỉ ghi mã)
     khoang_cach_kiem: list[str] | None = None
@@ -679,8 +680,15 @@ def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
 
 def chu_cua_model(trace: AnswerTrace) -> str:
     """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
-    answer, noi = trace.answer or "", trace.thoi_tiet_noi
-    return answer[: -len(noi) - 2] if noi and answer.endswith(f"\n\n{noi}") else answer
+    answer, noi, dau = trace.answer or "", trace.thoi_tiet_noi, trace.thoi_tiet_dau
+    answer = answer[: -len(noi) - 2] if noi and answer.endswith(f"\n\n{noi}") else answer
+    return answer[len(dau) + 2:] if dau and answer.startswith(f"{dau}\n\n") else answer
+
+
+def _can_dau_bao_lu(trace: AnswerTrace) -> bool:
+    """Cờ `bao_lu_cong_cu`: lưới bão / lũ khớp nhưng model không gọi `thoi_tiet` (trả lời từ kho) và lượt không có lịch ⇒ cần câu `CAU_DAU_BAO_LU` trước."""
+    ctx = trace.thoi_tiet_ctx or {}
+    return bool(ctx.get("bao_lu_cong_cu") and ctx["bao_lu"]) and trace.thoi_tiet is None and trace.lich is None
 
 
 def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
@@ -694,6 +702,9 @@ def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
     if tool is not None and tool["khoi"] and (trace.answer or "").strip() == INSUFFICIENT_ANSWER:
         trace.answer = tt.CAU_DAN_BAO_LU if tool.get("bao_lu") else tt.CAU_DAN_DU_BAO  # review C M-1: có dự báo mà model từ chối ⇒ không để câu từ chối đứng trước số liệu
         tool["thay_tu_choi"] = True
+    if _can_dau_bao_lu(trace) and (trace.answer or "").strip() != INSUFFICIENT_ANSWER:
+        trace.thoi_tiet_dau = tt.CAU_DAU_BAO_LU
+        trace.answer = f"{tt.CAU_DAU_BAO_LU}\n\n{trace.answer}"
     noi = []
     if tool is not None:
         noi.append(tool["khoi"] or tt.CAU_LOI)
@@ -1251,6 +1262,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     cong_cu = None  # tên công cụ của lần gọi đang chạy (gọi lần lượt, `parallel_tool_calls=False`) — B5 D14 (b): mỗi công cụ một loại trạng thái
     da_phat_buoc = 0  # số bước `trace.buoc_lich` đã phát
     da_noi_dau = False  # D12 (a): dòng "Mình hiểu" đi liền trước chữ đầu của model
+    dau_bao_lu = False  # cờ `bao_lu_cong_cu`: câu cố định trước chữ model (`_can_dau_bao_lu`)
     giu_chu: str | bool | None = None  # review C M-1: None = chưa có chữ; "" / chuỗi = đang giữ; False = không giữ
     call_route = None
     # Việc nhỏ (12) 08/11 — review streaming 31/10 m-1: huỷ theo "luồng model còn sống" thay vì liệt kê lỗi. Mọi cách rời vòng đọc khi luồng chưa
@@ -1335,12 +1347,15 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             yield "status", {"stage": "generating"}
                         if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
                             giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
-                                             or trace.nhieu_y) else False
+                                             or trace.nhieu_y or _can_dau_bao_lu(trace)) else False
+                            dau_bao_lu = _can_dau_bao_lu(trace)  # giữ chữ tới khi biết không phải câu từ chối rồi mới đặt câu đầu
                         if giu_chu is not False:
                             giu_chu += text
                             if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu)):
                                 continue
                             text, giu_chu = giu_chu, False
+                            if dau_bao_lu:
+                                text, dau_bao_lu = f"{tt.CAU_DAU_BAO_LU}\n\n{text}", False
                         if trace.lich is not None and not da_noi_dau:
                             da_noi_dau = True
                             text = f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{text}"

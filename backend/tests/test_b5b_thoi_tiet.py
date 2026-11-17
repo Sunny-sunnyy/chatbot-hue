@@ -493,9 +493,31 @@ def test_storm_turn_model_refusal_replaced_before_anything_is_shown(deps, stream
         assert shown == trace.answer and not shown.startswith(INSUFFICIENT_ANSWER[:20])
 
 
-def test_net_matches_but_model_calls_no_tool_only_fixed_sentence(deps):
-    trace, _ = run(deps, "Mùa bão ở Huế thường tháng mấy?", generator(lambda n, kw: [answer("Mùa mưa bão ở Huế thường từ tháng 9 [1].")]), BAO)
-    assert trace.thoi_tiet is None and trace.answer.endswith(f"\n\n{tt.CAU_BAO_LU}") and tt.CAU_KHONG_PHAI_TIN_BAO not in trace.answer
+@pytest.mark.parametrize("stream", [False, True])
+def test_net_matches_but_model_calls_no_tool_lead_sentence_first(deps, stream):
+    # lưới khớp, model trả lời từ kho (không gọi công cụ) ⇒ code đặt CAU_DAU_BAO_LU TRƯỚC chữ model (đọc tay 17/11 ca 7) + CAU_BAO_LU sau; không bảng số
+    trace, events = run(deps, "Áp thấp nhiệt đới có ảnh hưởng tới Huế không?",
+                        generator(lambda n, kw: [answer("Có. Áp thấp có thể gây mưa lớn trong mùa mưa bão [1].")]), BAO, stream=stream)
+    assert trace.thoi_tiet is None and trace.citation_error is None and tt.CAU_KHONG_PHAI_TIN_BAO not in trace.answer
+    assert trace.answer == f"{tt.CAU_DAU_BAO_LU}\n\nCó. Áp thấp có thể gây mưa lớn trong mùa mưa bão [1].\n\n{tt.CAU_BAO_LU}"
+    assert chu_cua_model(trace) == "Có. Áp thấp có thể gây mưa lớn trong mùa mưa bão [1]."
+    if stream:
+        assert "".join(d for k, d in events if k == "delta") == trace.answer
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_net_matches_model_refuses_no_lead_sentence(deps, stream):
+    trace, events = run(deps, "Mùa bão ở Huế thường tháng mấy?", generator(lambda n, kw: [answer(INSUFFICIENT_ANSWER)]), BAO, stream=stream)
+    assert trace.answer == f"{INSUFFICIENT_ANSWER}\n\n{tt.CAU_BAO_LU}" and trace.thoi_tiet_dau is None and chu_cua_model(trace) == INSUFFICIENT_ANSWER
+    if stream:
+        assert "".join(d for k, d in events if k == "delta") == trace.answer
+
+
+def test_lead_sentence_never_on_turn_without_storm_or_with_flag_off(deps):
+    gen = lambda: generator(lambda n, kw: [answer("Lăng nằm ở ngoại ô [1].")])
+    for cau, flags in (("Lăng Tự Đức ở đâu?", BAO), ("Mùa bão ở Huế thường tháng mấy?", WEATHER)):
+        trace, _ = run(deps, cau, gen(), flags)
+        assert tt.CAU_DAU_BAO_LU not in trace.answer and trace.thoi_tiet_dau is None
 
 
 def test_plain_forecast_turn_with_flag_on_still_gets_numbers(deps):
