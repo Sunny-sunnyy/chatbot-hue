@@ -329,7 +329,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
             {turns.map((turn, index) => (
               <Turn key={turn.key} turn={turn} turnRef={index === turns.length - 1 ? lastTurnRef : null}
                     onRetry={() => ask(turn.question, { retryKey: turn.key, truong: turn.truong, summary: turn.summary, bieuMau: turn.bieuMau, hienThi: turn.hienThi })}
-                    onAsk={(q, opts) => ask(q, opts)} onEditPlan={onEditPlan} />
+                    onAsk={(q, opts) => ask(q, opts)} onEditPlan={onEditPlan} gon={idPrefix === "noi"} />
             ))}
           </section>
         )}
@@ -366,7 +366,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
   );
 }
 
-function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
+function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
   const html = useMemo(() => renderAnswerHtml(turn.text), [turn.text]);
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
@@ -398,7 +398,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan }) {
         </div>
       )}
       {turn.lichV2 && turn.phase !== "error" && (
-        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} />
+        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} gon={gon} />
       )}
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
         <div className="bubble">

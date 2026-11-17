@@ -122,8 +122,33 @@ IC_BUOI.trua = IC_BUOI.sang;
 // H1 (14/11): thẻ lịch kiểu dòng thời gian (bản mẫu `data/ui_mau_2026-11-14/h1/len_ke_hoach.html`). Giữ lớp bộ đo bám: .lich-v2 .lich-hieu
 // .lich-ngay (aria-label "Ngày N") .lich-ten .lich-cau .lich-anh .lich-ghi-chu .lich. Ghi chú dự báo có `ngay` ⇒ đặt dưới đúng ngày (B, trường mới).
 // Phút đi `phut_di` (B) chỉ có giữa hai mục cùng buổi ⇒ chỉ vẽ khi có trường, không đoán.
-export function LichV2({ turn, onEditPlan }) {
+// Khối "Đã đổi / Chưa làm" của lượt sửa bằng lời — câu do CODE viết; dòng "Chưa làm…" đã tự nói ⇒ không chồng thêm "Không đổi được:" (tự thử 16/11)
+function ThayDoi({ thayDoi }) {
+  return (
+    <ul className="lkh-doi" aria-label="Thay đổi của lịch">
+      {thayDoi.map((d, i) => {
+        const cau = d.cau.replace(/^Không đổi được: /, "");
+        return <li key={i} className={d.duoc ? "lkh-doi-duoc" : "lkh-doi-khong"}>{d.duoc || /^Chưa làm/.test(cau) ? "" : "Không đổi được: "}{cau}</li>;
+      })}
+    </ul>
+  );
+}
+
+// `gon` (khung trợ lý nổi): lượt sửa bằng lời chỉ hiện khối thay đổi + nút mở cả lịch — khung nổi hẹp, vẽ lại cả lịch mỗi lượt đẩy khối
+// "Đã đổi" xuống dưới mép (tự thử 16/11); trang Lên kế hoạch đã có cột lịch theo bản sửa.
+export function LichV2({ turn, onEditPlan, gon = false }) {
+  const [moRong, setMoRong] = useState(false);
   const lich = turn.lichV2;
+  if (gon && !moRong && Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0) {
+    const coDuoc = lich.thay_doi.some(d => d.duoc);
+    return (
+      <div className="bubble lich-v2 lkh-gon">
+        <ThayDoi thayDoi={lich.thay_doi} />
+        {coDuoc && <p className="lkh-gon-dan">Lịch đã cập nhật theo các thay đổi trên.</p>}
+        <button type="button" className="retry" onClick={() => setMoRong(true)}>Xem cả lịch</button>
+      </div>
+    );
+  }
   const cau = turn.cauV2 || {};
   const xong = turn.phase === "done";
   const ts = lich.tham_so || {};
@@ -147,11 +172,7 @@ export function LichV2({ turn, onEditPlan }) {
       <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
       {/* Sửa lịch bằng lời (B, cờ `sua_lich_v2`): `lich.thay_doi` = [{cau, duoc}] — câu do CODE viết đã có sẵn động từ ("Đã bỏ…", "Chưa làm…")
           ⇒ vẽ nguyên câu, màu theo `duoc`; lượt không sửa ⇒ không có khối này */}
-      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && (
-        <ul className="lkh-doi" aria-label="Thay đổi của lịch">
-          {lich.thay_doi.map((d, i) => <li key={i} className={d.duoc ? "lkh-doi-duoc" : "lkh-doi-khong"}>{d.duoc ? "" : "Không đổi được: "}{d.cau.replace(/^Không đổi được: /, "")}</li>)}
-        </ul>
-      )}
+      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && <ThayDoi thayDoi={lich.thay_doi} />}
       <section className="lkh-tong" aria-label="Tổng quan">
         <p className="lkh-tong-h">Tổng quan</p>
         <ol>{lich.ngay.map(ng => (

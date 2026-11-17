@@ -126,6 +126,8 @@
 .lkh-doi li { padding: 10px 14px; border-radius: 14px; font-size: 15px; }
 .lkh-doi-duoc { background: var(--color-accent-soft); color: var(--color-accent-deep); }
 .lkh-doi-khong { background: #FBEDEE; color: var(--color-error); }
+.lkh-gon .lkh-doi { margin-bottom: 8px; }
+.lkh-gon-dan { margin: 0 0 8px; font-size: 14px; color: var(--color-muted); }
 
 /* Điểm nhấn 14/11 — khoảnh khắc chính: mỗi ngày một dòng sông vẽ dần QUA từng điểm (LichV2 `SongNgay` đo toạ độ). Hiện sẵn đủ khi giảm chuyển động. */
 .lkh-dong-khung { position: relative; }
