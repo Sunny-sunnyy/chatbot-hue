@@ -40,7 +40,7 @@ from llm import ngay_lich as nl
 from llm import khoang_cach as kc
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
@@ -94,6 +94,9 @@ class AssistantFlags:
     # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
     # phản hồi ghi sẵn)
     thoi_tiet: bool = False
+    # 17/11 (plan `2026-11-17-cau-bao-plan.md`): câu bão / lũ — công cụ `thoi_tiet` đưa ở MỌI lượt trợ lý Huế (luật chuyển hướng 2.5 của plan), thêm
+    # `loai` do model chọn; lượt `bao_lu` (model chọn hoặc lưới từ khoá rộng khớp) ⇒ model không nhận số, code nối khối cố định. TẮT tới khi đo đạt
+    bao_lu_cong_cu: bool = False
     # Phase 9 T1 (plan `2026-11-08-phase-9-t1-ngay-plan.md`): công cụ `ngay_lich` (code tính ngày + đổi âm ↔ dương) — chỉ đưa khi câu có từ chỉ ngày
     ngay_lich: bool = False
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
@@ -159,6 +162,8 @@ class AssistantFlags:
             raise ValueError("assistant.khoang_cach_tinh_san needs assistant.khoang_cach: true")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
+        if self.bao_lu_cong_cu and not self.thoi_tiet:
+            raise ValueError("assistant.bao_lu_cong_cu needs assistant.thoi_tiet: true")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
             raise ValueError("assistant.len_ke_hoach_v2 needs assistant.lich_trinh_bieu_mau: true and the v2 table (assistant.lich_trinh_bang_v2)")
         if self.sua_lich_v2 and not self.len_ke_hoach_v2:
@@ -300,6 +305,7 @@ class AnswerTrace:
     thoi_tiet_ctx: dict | None = None
     thoi_tiet: dict | None = None
     thoi_tiet_noi: str | None = None
+    thoi_tiet_dau: str | None = None  # cờ `bao_lu_cong_cu`: câu cố định code đặt TRƯỚC chữ model (lưới khớp, model không gọi công cụ)
     thoi_tiet_kiem: list[str] | None = None
     khoang_cach: list[dict] | None = None  # mỗi lần gọi `khoang_cach`: mã hai điểm + các dòng code dựng (chỉ RAM; log chỉ ghi mã)
     khoang_cach_kiem: list[str] | None = None
@@ -550,6 +556,41 @@ def thoi_tiet_for_turn(trace: AnswerTrace, du_bao):
             entry.setdefault("ms", 0.0)
             trace.tools.append(entry)
 
+    if (trace.thoi_tiet_ctx or {}).get("bao_lu_cong_cu"):
+        return _thoi_tiet_bao_lu(trace, du_bao, thoi_tiet)
+    return thoi_tiet
+
+
+def _thoi_tiet_bao_lu(trace: AnswerTrace, du_bao, cu):
+    """Bản công cụ của cờ `bao_lu_cong_cu` (plan 17/11 §2): thêm `loai` (bắt buộc). `du_bao` ⇒ y như bản cũ (`cu`). `bao_lu` (hoặc lưới code đã
+    khớp) ⇒ cả lượt là lượt bão / lũ: code lấy dự báo, ghi khối có nhãn "không phải tin bão" vào `trace.thoi_tiet["khoi"]` NGAY TRONG lần gọi này (đường
+    stream giữ chữ khi câu có thể là câu từ chối), model chỉ nhận một nguồn KHÔNG có số (`tt.KET_QUA_BAO_LU`)."""
+    Ngay = Literal[0, 1, 2, 3, 4, 5, 6]
+    Loai = Literal["du_bao", "bao_lu"]
+
+    async def thoi_tiet(loai: Loai, tu_ngay: Ngay, den_ngay: Ngay) -> str:
+        ctx = trace.thoi_tiet_ctx
+        if loai == "bao_lu":
+            ctx["bao_lu"] = ctx["bao_lu_model"] = True  # một lần bao_lu thì cả lượt là bao_lu (plan m-4)
+        if not ctx["bao_lu"] or trace.thoi_tiet is not None:
+            return await cu(tu_ngay, den_ngay)  # lần gọi thứ hai ⇒ câu "đã lấy" của bản cũ
+        entry = {"name": "thoi_tiet", "loai": "bao_lu"}
+        try:
+            kq = await du_bao()
+            trace.thoi_tiet = {"trang_thai": kq.trang_thai, "loi": kq.loi, "ms": kq.ms, "tu_cache": kq.tu_cache, "khoi": None, "bao_lu": True}
+            entry.update(ms=kq.ms, trang_thai=kq.trang_thai, loi=kq.loi)
+            if kq.trang_thai != "ok":
+                return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON_LOI, (tt.CAU_LOI,))
+            if ctx.get("tuan_sau"):  # như bản cũ: câu "tuần sau" ⇒ khoảng ngày do code tính
+                tu_ngay, den_ngay = ctx["tuan_sau"]
+            khoi = tt.khoi_du_bao(kq, tu_ngay, den_ngay, bool(ctx["buoi"]), tuan_sau=bool(ctx.get("tuan_sau")))
+            trace.thoi_tiet.update(khoi=f"{tt.CAU_KHONG_PHAI_TIN_BAO}\n\n{khoi}", n_ngay=abs(den_ngay - tu_ngay) + 1)
+            return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON_BAO_LU, (tt.KET_QUA_BAO_LU,))
+        finally:
+            entry.setdefault("ms", 0.0)
+            trace.tools.append(entry)
+
+    thoi_tiet.mo_ta = THOI_TIET_BAO_LU_MO_TA  # generator đọc mô tả này thay `THOI_TIET_MO_TA`
     return thoi_tiet
 
 
@@ -639,8 +680,16 @@ def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
 
 def chu_cua_model(trace: AnswerTrace) -> str:
     """Câu trả lời bỏ phần code nối sau chữ model (khối / câu thời tiết B5b) — cờ `refusal` của log tính trên phần này (review C m-1)."""
-    answer, noi = trace.answer or "", trace.thoi_tiet_noi
-    return answer[: -len(noi) - 2] if noi and answer.endswith(f"\n\n{noi}") else answer
+    answer, noi, dau = trace.answer or "", trace.thoi_tiet_noi, trace.thoi_tiet_dau
+    answer = answer[: -len(noi) - 2] if noi and answer.endswith(f"\n\n{noi}") else answer
+    return answer[len(dau) + 2:] if dau and answer.startswith(f"{dau}\n\n") else answer
+
+
+def _can_dau_bao_lu(trace: AnswerTrace) -> bool:
+    """Cờ `bao_lu_cong_cu`: CHÍNH câu đang hỏi khớp lưới bão / lũ nhưng model không gọi `thoi_tiet` (trả lời từ kho) và lượt không có lịch ⇒ cần
+    câu `CAU_DAU_BAO_LU` trước. Câu hỏi tiếp chỉ khớp nhờ câu liền trước ⇒ không (review E M-1: câu hỏi tiếp không liên quan bị đặt câu đầu)."""
+    ctx = trace.thoi_tiet_ctx or {}
+    return bool(ctx.get("bao_lu_cong_cu") and ctx.get("bao_lu_cau")) and trace.thoi_tiet is None and trace.lich is None
 
 
 def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
@@ -652,8 +701,11 @@ def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
     cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) for e in src.excerpts))
     trace.thoi_tiet_kiem = tt.kiem_so(text, cho_phep)
     if tool is not None and tool["khoi"] and (trace.answer or "").strip() == INSUFFICIENT_ANSWER:
-        trace.answer = tt.CAU_DAN_DU_BAO  # review C M-1: có dự báo mà model từ chối ⇒ không để câu từ chối đứng trước số liệu
+        trace.answer = tt.CAU_DAN_BAO_LU if tool.get("bao_lu") else tt.CAU_DAN_DU_BAO  # review C M-1: có dự báo mà model từ chối ⇒ không để câu từ chối đứng trước số liệu
         tool["thay_tu_choi"] = True
+    if _can_dau_bao_lu(trace) and (trace.answer or "").strip() != INSUFFICIENT_ANSWER:
+        trace.thoi_tiet_dau = tt.CAU_DAU_BAO_LU
+        trace.answer = f"{tt.CAU_DAU_BAO_LU}\n\n{trace.answer}"
     noi = []
     if tool is not None:
         noi.append(tool["khoi"] or tt.CAU_LOI)
@@ -935,6 +987,11 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         # vòng chỉnh 1 (A duyệt, sửa D3): câu ngoài 7 ngày ⇒ KHÔNG đưa công cụ (không số dự báo nào để model chép) — code nối câu cố định
         trace.thoi_tiet_ctx = {"bao_lu": tt.la_cau_bao_lu(query), "ngoai_7": ngoai_7, "buoi": tt.co_buoi(query), "tu_khoa": tu_khoa,
                                "co_cong_cu": tu_khoa and not ngoai_7}
+        if flags.bao_lu_cong_cu:  # plan 17/11 (đã lùi theo luật 2.5): cổng = từ thời tiết + từ nguy hiểm thời tiết (câu cuối / câu liền trước); lưới rộng
+            tu_khoa = tt.co_tu_khoa_luot_rong(query, trace.history)
+            trace.thoi_tiet_ctx.update(bao_lu=tt.la_luot_bao_lu(query, trace.history), bao_lu_cau=tt.la_cau_bao_lu_rong(query),
+                                       bao_lu_cong_cu=True, bao_lu_model=False,
+                                       tu_khoa=tu_khoa, co_cong_cu=tu_khoa and not ngoai_7)
         tuan_sau = tt.ngay_tuan_sau(query, hom_nay_vn())
         if tuan_sau and not ngoai_7:  # rà nợ 15/11: "tuần sau" có phần trong 7 ngày ⇒ code đặt khoảng ngày (không có ⇒ khoá vắng, như trước)
             trace.thoi_tiet_ctx["tuan_sau"] = tuan_sau
@@ -1208,6 +1265,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     cong_cu = None  # tên công cụ của lần gọi đang chạy (gọi lần lượt, `parallel_tool_calls=False`) — B5 D14 (b): mỗi công cụ một loại trạng thái
     da_phat_buoc = 0  # số bước `trace.buoc_lich` đã phát
     da_noi_dau = False  # D12 (a): dòng "Mình hiểu" đi liền trước chữ đầu của model
+    dau_bao_lu = False  # cờ `bao_lu_cong_cu`: câu cố định trước chữ model (`_can_dau_bao_lu`)
     giu_chu: str | bool | None = None  # review C M-1: None = chưa có chữ; "" / chuỗi = đang giữ; False = không giữ
     call_route = None
     # Việc nhỏ (12) 08/11 — review streaming 31/10 m-1: huỷ theo "luồng model còn sống" thay vì liệt kê lỗi. Mọi cách rời vòng đọc khi luồng chưa
@@ -1292,12 +1350,15 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             yield "status", {"stage": "generating"}
                         if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
                             giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
-                                             or trace.nhieu_y) else False
+                                             or trace.nhieu_y or _can_dau_bao_lu(trace)) else False
+                            dau_bao_lu = _can_dau_bao_lu(trace)  # giữ chữ tới khi biết không phải câu từ chối rồi mới đặt câu đầu
                         if giu_chu is not False:
                             giu_chu += text
                             if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu)):
                                 continue
                             text, giu_chu = giu_chu, False
+                            if dau_bao_lu:
+                                text, dau_bao_lu = f"{tt.CAU_DAU_BAO_LU}\n\n{text}", False
                         if trace.lich is not None and not da_noi_dau:
                             da_noi_dau = True
                             text = f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{text}"
@@ -1367,7 +1428,7 @@ def _chu_giu_lai(trace: AnswerTrace, giu: str, da_noi_dau: bool) -> str:
     if trace.lich is not None and trace.lich.get("chu_thay"):
         chu = trace.lich["chu_thay"]
     elif trace.thoi_tiet and trace.thoi_tiet.get("thay_tu_choi"):
-        chu = tt.CAU_DAN_DU_BAO
+        chu = tt.CAU_DAN_BAO_LU if trace.thoi_tiet.get("bao_lu") else tt.CAU_DAN_DU_BAO
     elif trace.chi_y_thieu:  # chốt (a) vòng 2: chữ giữ lại chỉ gồm dòng ý thiếu ⇒ câu từ chối chuẩn
         chu = INSUFFICIENT_ANSWER
     else:

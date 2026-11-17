@@ -48,6 +48,18 @@ THU = ("Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ 
 
 _TU_KHOA = re.compile(r"\b(?:thời\s+tiết|mưa|nắng|nhiệt\s+độ|bão|lũ|trời|nóng|lạnh|độ\s+ẩm|gió)\b", re.IGNORECASE)
 _BAO_LU = re.compile(r"\b(?:bão|lũ|ngập)\b", re.IGNORECASE)
+# 17/11 (plan `2026-11-17-cau-bao-plan.md`, cờ `bao_lu_cong_cu`): danh sách ĐÓNG các từ nguy hiểm thời tiết (nhóm cảnh báo của trang khí tượng, khớp
+# `tra_web._THIEN_TAI` + giông / lốc / mưa đá / nước dâng) — chỉ làm LƯỚI code; đường chính là model chọn `loai` của công cụ
+_BAO_LU_RONG = re.compile(r"\b(?:bão|lũ|lụt|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp|giông|lốc|mưa\s+đá|nước\s+dâng)\b", re.IGNORECASE)
+CAU_KHONG_PHAI_TIN_BAO = "Dự báo dưới đây chỉ có nhiệt độ và mưa, không có thông tin bão hay áp thấp."
+# như CAU_DAN_DU_BAO: thay câu từ chối ở lượt bão / lũ. Đọc tay 17/11: bản đầu "Mình không có tin bão / lũ" đọc được thành "không có bão" (tự trấn an)
+CAU_DAN_BAO_LU = "Mình không theo dõi được tin bão / lũ — bạn xem bản tin chính thức dưới đây."
+# lưới code khớp mà model không gọi công cụ (trả lời bằng tài liệu kho) ⇒ code đặt câu này LÊN TRƯỚC chữ model (đọc tay 17/11 ca 7: "Có. Áp thấp … có thể
+# ảnh hưởng" đọc thành tin hiện tại). Lớp phụ — đường chính vẫn là model chọn `loai`
+CAU_DAU_BAO_LU = "Mình không theo dõi được tin bão / lũ hiện tại — dưới đây là thông tin chung từ tài liệu."
+TIEU_DE_NGUON_BAO_LU = "Tin bão / lũ chính thức"
+KET_QUA_BAO_LU = ("Phần thời tiết do hệ thống tự nối dưới câu trả lời: nguồn tin bão / lũ chính thức, số 112 và dự báo mưa thường. Dự báo này không có "
+                  "thông tin bão / áp thấp: không viết là có hay không có bão, lũ; không trấn an; chỉ trả lời phần khác của câu hỏi (nếu có).")
 _CANH_BAO = re.compile(r"\bcảnh\s+báo\b", re.IGNORECASE)
 _BUOI = re.compile(r"\b(?:sáng|trưa|chiều|tối|đêm)\s+(?:nay|mai)\b|\bbuổi\s+(?:sáng|trưa|chiều|tối)\b", re.IGNORECASE)
 _XA = re.compile(r"\b(?:tuần\s+sau|tháng\s+sau|tháng\s+tới|năm\s+sau|năm\s+tới)\b", re.IGNORECASE)
@@ -75,6 +87,25 @@ def la_cau_bao_lu(text: str) -> bool:
     """D6 (+ m-3): bão / lũ / ngập; hoặc "cảnh báo" **cùng** một từ thời tiết khác ("cảnh báo bậc thang" ⇒ không)."""
     t = _nfc(text)
     return bool(_BAO_LU.search(t) or (_CANH_BAO.search(t) and co_tu_khoa(_CANH_BAO.sub(" ", t))))
+
+
+def la_cau_bao_lu_rong(text: str) -> bool:
+    """Lưới của cờ `bao_lu_cong_cu`: danh sách từ rộng, hoặc "cảnh báo" cùng một từ thời tiết (như `la_cau_bao_lu`)."""
+    t = _nfc(text)
+    return bool(_BAO_LU_RONG.search(t) or (_CANH_BAO.search(t) and co_tu_khoa(_CANH_BAO.sub(" ", t))))
+
+
+# Lùi theo luật 2.5 của plan (Golden 17/11: câu taxi không từ thời tiết ⇒ model gọi công cụ rồi từ chối ⇒ bảng mưa thay câu từ chối): công cụ chỉ
+# đưa khi câu cuối / câu liền trước có từ thời tiết HOẶC từ nguy hiểm thời tiết (danh sách đóng `_BAO_LU_RONG`)
+def co_tu_khoa_luot_rong(query: str, history) -> bool:
+    def co(t: str) -> bool:
+        return co_tu_khoa(t) or bool(_BAO_LU_RONG.search(_nfc(t)))
+    return co(query) or bool(history and co(history[-1][0]))
+
+
+def la_luot_bao_lu(query: str, history) -> bool:
+    """Lưới xét câu cuối **hoặc câu hỏi liền trước** (như `co_tu_khoa_luot`) — câu hỏi tiếp sau câu bão vẫn đi đường bão (thừa hơn sót)."""
+    return la_cau_bao_lu_rong(query) or bool(history and la_cau_bao_lu_rong(history[-1][0]))
 
 
 def co_buoi(text: str) -> bool:

@@ -166,6 +166,15 @@ THOI_TIET_MO_TA = (
     "do hệ thống dựng (một nguồn có mã [n]), sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về dự báo ghi "
     "mã [n] của nguồn dự báo. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
 )
+# 17/11 (plan `2026-11-17-cau-bao-plan.md`): bản mô tả khi cờ `bao_lu_cong_cu` bật — công cụ được đưa ở mọi lượt trợ lý Huế, thêm `loai`
+THOI_TIET_BAO_LU_MO_TA = (
+    "Lấy dự báo thời tiết Huế (nhiệt độ, khả năng mưa, lượng mưa theo ngày) cho 7 ngày tới. Chỉ gọi khi người dùng hỏi thời tiết sắp tới hoặc hỏi "
+    "có nguy hiểm thời tiết không; không gọi cho câu không hỏi thời tiết. Câu hỏi về khí hậu chung (mùa mưa, mùa bão tháng mấy…) ⇒ dùng tim_kho. "
+    "loai = \"bao_lu\" khi người dùng hỏi bão, lũ, lụt, ngập, áp thấp, giông lốc, sạt lở, triều cường, nước sông lên hay có nguy hiểm thời tiết "
+    "không (kể cả câu hỏi tiếp của chuyện đó); còn lại loai = \"du_bao\". tu_ngay / den_ngay = số ngày tính từ hôm nay (0 = hôm nay, 1 = mai, tối đa 6). "
+    "Kết quả là một nguồn có mã [n] do hệ thống dựng, sẽ được nối nguyên văn sau câu trả lời: không chép lại số, không thêm số nào khác; khi nói về "
+    "dự báo ghi mã [n] của nguồn đó. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
+)
 NGAY_LICH_MO_TA = (  # Phase 9 T1: code tính ngày + đổi âm ↔ dương (lịch Việt Nam UTC+7); model chỉ gửi số. T1 nhanh D3: lịch tính sẵn đã ở ngữ cảnh
     "Đổi một ngày giữa dương lịch và âm lịch Việt Nam (giờ Việt Nam). Hôm nay, ngày mai, các ngày trong tuần được hỏi và ngày âm có trong câu hỏi / "
     "tài liệu đã được hệ thống tính sẵn trong nguồn \"Lịch hệ thống\" của ngữ cảnh: dùng nguồn đó, không gọi công cụ cho các ngày ấy. Chỉ gọi khi cần "
