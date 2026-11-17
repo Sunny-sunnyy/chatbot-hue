@@ -31,6 +31,8 @@ DI_CUNG_CUM, DI_CUM_KE = 15, 30  # 5c.3: phút đi giữa hai điểm trong mộ
 QUY = {"nhe_nhang": None, "can_bang": 210, "kham_pha": 240}  # None = đúng 1 điểm / buổi
 KIEU_DI_MAC_DINH = "can_bang"
 TOI_DA_BUOI = 2
+NGHI_TRUA = 60  # phút ăn trưa + đi sang điểm chiều: điểm thêm buổi sáng phải xong trước giờ đầu chiều chừng này (tự thử 16/11: 15 phút từ Kinh thành ra phá)
+CAU_CHUA_DU_BAO = "Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa."
 SO_NGAY_TOI_DA = 5
 NGUONG_LOAI = 4  # spec §8 câu 4: loại có < 4 điểm trong bảng ⇒ ô sở thích đó không hiện
 TRONG_NHA = {"trong_nha", "ngoai_troi", "ca_hai"}
@@ -288,7 +290,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
                 continue
             tong = PHUT[T[slots[buoi][0]]["thoi_luong"]]
             # review 14/11 M-1: quỹ phút không tính thời gian chờ giờ suất / mở cửa ⇒ điểm thêm buổi sáng phải xong trước giờ đầu buổi chiều
-            het_sang = gio[slots["chieu"][0]][0] if slots["chieu"] else bat_dau["chieu"]
+            het_sang = (gio[slots["chieu"][0]][0] if slots["chieu"] else bat_dau["chieu"]) - NGHI_TRUA
             while quy is not None and len(slots[buoi]) < TOI_DA_BUOI:  # 5c.3: điểm thêm cùng cụm / cụm kề với điểm ngay trước, vừa quỹ phút
                 truoc = T[slots[buoi][-1]]
                 t_den = gio[slots[buoi][-1]][1]  # điểm thêm bắt đầu sau điểm trước + phút đi (5c.3); phải vừa giờ mở cửa của nó
