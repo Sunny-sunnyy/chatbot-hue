@@ -1,6 +1,6 @@
 # Bài 15 — Khi sổ không có: tra web, và hỏi bằng ảnh
 
-*Cập nhật lần cuối: 11:15, ngày 17/11/2026 · thêm sáng 17/11: mục web không còn bị bỏ chỉ vì cùng một giờ viết khác kiểu. Trước: 15:51, ngày 16/11/2026 · thêm chiều 16/11: chuyện thật thứ năm (thử nhận ảnh bằng so ảnh với ảnh mẫu, rồi cắt khỏi mốc 30/11) · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
+*Cập nhật lần cuối: 11:56, ngày 17/11/2026 · thêm trưa 17/11: ký hiệu "₫" được đọc là tiền. Trước: 11:15, ngày 17/11/2026 · thêm sáng 17/11: mục web không còn bị bỏ chỉ vì cùng một giờ viết khác kiểu. Trước: 15:51, ngày 16/11/2026 · thêm chiều 16/11: chuyện thật thứ năm (thử nhận ảnh bằng so ảnh với ảnh mẫu, rồi cắt khỏi mốc 30/11) · thêm 16/11: câu nhắc hỏi dược sĩ / bác sĩ dưới mục web của câu sức khoẻ; chuyện thật thứ tư (thử mục web gọn rồi giữ bản dài); nút Huỷ lúc đang xem ảnh. Trước: 21:34, ngày 15/11/2026 · phần hỏi bằng ảnh viết lại theo luồng mới tối 15/11 (ảnh đính kèm câu hỏi; nhận ra một tên thì trả lời luôn, phân vân thì hỏi chọn). Trước: 18:24, ngày 15/11/2026 · thêm chuyện thật thứ ba: câu hỏi nối tiếp ra web bằng câu cụt (bật 15/11). Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm chuyện thật thứ hai: thử Exa cho tra web rồi giữ Serper; ghi ngày cho số tốc độ mục web (ghi ở Nguồn).*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -215,6 +215,16 @@ phòng"). Mình thử cách bịt ngược lại (mọi giờ thành "8:00", kh�
 hay gặp trong trang du lịch, còn lỗ kia cần model bịa đúng con số có sẵn trong đoạn trích ⇒ giữ bản đầu, ghi lỗ này là giới hạn. Tiền sáng 17/11
 ≈ 0,015 USD (≈ 370 đồng).
 
+**Trưa 17/11 — giá phòng lọt vì ký hiệu "₫".** Lượt tự thử 16/11 có một lần trợ lý nêu giá phòng, trái quyết định "không nói giá phòng" của anh. Mình
+chạy lại đúng chuỗi câu (lịch 2 ngày ⇒ khách sạn 4 sao ⇒ "kiếm chỗ rẻ hơn" ⇒ "gợi ý chỗ ở đi") một cuộc: sổ từ chối, mục web viết "nhà nghỉ ở Huế có giá
+từ 230.000 ₫/đêm". Câu đã được nhận đúng là câu hỏi chỗ ở, nhưng bộ đọc tiền không biết ký hiệu **"₫"** (chỉ biết "đ", "đồng", "VNĐ"…), nên luật "câu
+chỗ ở ⇒ mục web không có số tiền" không thấy số nào để chặn. Sửa: bộ đọc tiền nhận "₫" đứng sau số và "₫" / "VND" đứng trước số (kiểu trang đặt phòng).
+Bộ dò 24 câu do người khác soạn: bản cũ **10** câu sai, bản sửa **0**; chạy lại bộ kiểm trên 39 mục web thật đã lưu: chỉ đúng lượt giá phòng đổi (nay
+bị chặn), 38 mục còn lại như cũ. Một cuộc thật sau khi bật: lần đó sổ trả lời được (không giá) nên không đi qua đường web — bản sửa mới được chứng
+minh bằng hàm và bằng chạy lại mục web cũ. Lần tự thử của người khác thì giá nằm ngay trong **câu trả lời từ sổ**, vì một bài trong sổ (chi phí du lịch)
+có ghi khoảng giá phòng. Anh đã chốt (trưa 17/11): "không nói giá phòng" chỉ áp cho phần **gợi ý chỗ ở** (khối Nơi ở trong lịch, trang Chỗ ở, mục web
+khi hỏi chỗ ở); câu hỏi về **chi phí chuyến đi nói chung** vẫn được nêu khoảng giá có nguồn từ sổ, nên sổ giữ nguyên.
+
 **Điều nên nhớ:** khi một câu trả lời sai, hãy ghi lại *chữ thật* đi qua từng khâu rồi mới kết luận khâu nào hỏng. Ở đây phần đáng ngờ nhất (trí nhớ hội
 thoại) lại chạy đúng; chỗ hỏng là một quyết định an toàn cũ ở khâu tra web.
 
@@ -327,6 +337,7 @@ lượt** trên cùng bộ ảnh cũ — phần "Hỏi bằng ảnh" ở trên).
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
+- Trưa 17/11 (C): giá phòng "230.000 ₫/đêm" ở mục web (lượt tái hiện, sổ vết 17/11) [đã chạy]; bộ đọc tiền `backend/llm/so_tien.py`, merge `cfe700c` [code]; bộ dò E 24 câu 10 ⇒ 0 `data/tien_dong_2026-11-17/` [đã chạy]; 39 mục web thật, 1 đổi [đã chạy]; cuộc thật sau bật `data/dem_lich_2026-11-17/c411_r2_cfe700c.json` [đã chạy]; khoảng giá phòng trong sổ: bài chi phí du lịch (`scripts/grep_kb.sh`) [đã chạy].
 - Sáng 17/11 (C): 3 / 3 cuộc tái tạo, 7 / 26 ↔ 3 / 40 lượt thật (3 / 54 kể cả 14 lượt test `model: "probe"`; `web_outcome` + `web_kiem` + `tools[].cau_tu_model` của `chat_metrics` 15–17/11; kiểm độc lập `data/hoc_cung_user_2026-11-10/kiem_doc_lap_bai_15_25_1711.md`), 4 / 7 `so_ngoai_trich`, "8h - 18h" ⇒ {8, 18}, bộ dò E 41 ca 16 ⇒ 3 ⇒ 0, 18 / 18, bản ngược `a935c58` bỏ, ≈ 0,015 USD: `report_agent/2026-11-12_ra_khoang_cach/c_gio_web_implementation.md` [đã chạy]; bộ dò `data/gio_web_2026-11-17/` [đã chạy]; code `backend/llm/tra_web.py` `_gio_gon`, merge `05ec2f5` [code].
 - Cổng web: `backend/llm/assistant.py` `web_gate_open`; cờ `tra_web: true`: `backend/config/settings.yaml` [code]
 - Tra web: `backend/llm/tra_web.py` (dựng câu tìm, Serper một lần, `tra_web_timeout_seconds: 5`, ≤ 5 kết quả, kiểm `[w n]`, chặn link / HTML, số tiền ⊂ đoạn trích, lưu trú 0 tiền, `la_cau_thoi_gian_thuc`, `la_cau_thien_tai`) [code]; nhãn mục web: `frontend/src/pages.jsx` [code]
