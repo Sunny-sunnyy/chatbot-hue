@@ -94,8 +94,9 @@ class AssistantFlags:
     # B5b (plan B5b bản 2 D11): thời tiết Huế (Open-Meteo) — TẮT tới khi đạt luật ghi trước; `du_bao` = hàm lấy dự báo (nạp ở rìa; test truyền
     # phản hồi ghi sẵn)
     thoi_tiet: bool = False
-    # 17/11 (plan `2026-11-17-cau-bao-plan.md`): câu bão / lũ — công cụ `thoi_tiet` đưa ở MỌI lượt trợ lý Huế (luật chuyển hướng 2.5 của plan), thêm
-    # `loai` do model chọn; lượt `bao_lu` (model chọn hoặc lưới từ khoá rộng khớp) ⇒ model không nhận số, code nối khối cố định. TẮT tới khi đo đạt
+    # 17/11 (plan `2026-11-17-cau-bao-plan.md`, BẬT 17/11): câu bão / lũ — công cụ `thoi_tiet` khi câu có từ thời tiết hoặc từ nguy hiểm thời tiết
+    # (`tt.co_tu_khoa_luot_rong`; bản "mọi lượt" đã lùi theo luật 2.5), thêm `loai` do model chọn; lượt `bao_lu` (model chọn hoặc lưới từ khoá rộng khớp)
+    # ⇒ model không nhận số, code nối khối cố định
     bao_lu_cong_cu: bool = False
     # Phase 9 T1 (plan `2026-11-08-phase-9-t1-ngay-plan.md`): công cụ `ngay_lich` (code tính ngày + đổi âm ↔ dương) — chỉ đưa khi câu có từ chỉ ngày
     ngay_lich: bool = False

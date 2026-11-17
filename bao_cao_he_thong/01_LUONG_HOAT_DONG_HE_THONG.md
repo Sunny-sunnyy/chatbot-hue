@@ -1,6 +1,6 @@
 # Chatbot Huế chạy thế nào — dòng chảy dữ liệu
 
-Cập nhật 21:40 15/11/2026 (tối 15/11: tải trang = cuộc trò chuyện mới; khung nguồn hiện đoạn trích sạch; bỏ khối đánh giá; hỏi bằng ảnh luồng mới — đính kèm, bấm Hỏi mới xử lý, một tên thì trả lời luôn; sửa lịch có thêm dòng báo; ghi chú ăn Tây Hồ + Hải Vân tối, ảnh Hải Vân; sổ vết debug chỉ ở máy local. Trước 18:23 15/11/2026 — viết lại theo trạng thái cuối phiên chiều 15/11: lịch 41 điểm; khối Nơi ở chỉ hiện khi người dùng hỏi; sửa lịch bằng lời thêm đổi hạng chỗ ở + đổi ngày đi; buổi để trống không hiện; quán ăn trong lịch; ảnh + thẻ khách sạn dưới câu trả lời; câu hỏi nối tiếp khi tra web; lúc chờ một dòng bước đang chạy; bỏ dòng báo cạnh nút gửi ảnh; log có mã bản code. Trước: 16:19 14/11/2026 — bản cũ xem trong lịch sử phiên bản, git). Tả bản **đang chạy**. Số đo (tốc độ, tiền, điểm) không ghi ở đây — xem bảng
+Cập nhật 10:39 17/11/2026 (sáng 17/11: câu hỏi bão / lũ — code dựng phần thời tiết, model không thấy số). Trước: 21:40 15/11/2026 (tối 15/11: tải trang = cuộc trò chuyện mới; khung nguồn hiện đoạn trích sạch; bỏ khối đánh giá; hỏi bằng ảnh luồng mới — đính kèm, bấm Hỏi mới xử lý, một tên thì trả lời luôn; sửa lịch có thêm dòng báo; ghi chú ăn Tây Hồ + Hải Vân tối, ảnh Hải Vân; sổ vết debug chỉ ở máy local. Trước 18:23 15/11/2026 — viết lại theo trạng thái cuối phiên chiều 15/11: lịch 41 điểm; khối Nơi ở chỉ hiện khi người dùng hỏi; sửa lịch bằng lời thêm đổi hạng chỗ ở + đổi ngày đi; buổi để trống không hiện; quán ăn trong lịch; ảnh + thẻ khách sạn dưới câu trả lời; câu hỏi nối tiếp khi tra web; lúc chờ một dòng bước đang chạy; bỏ dòng báo cạnh nút gửi ảnh; log có mã bản code. Trước: 16:19 14/11/2026 — bản cũ xem trong lịch sử phiên bản, git). Tả bản **đang chạy**. Số đo (tốc độ, tiền, điểm) không ghi ở đây — xem bảng
 "Số chính" và "Từ hay gặp" trong [README](README.md).
 
 Hệ thống có hai phần: **chuẩn bị kho** (chạy một lần, mỗi khi kho đổi) và **trả lời** (mỗi câu hỏi).
@@ -48,6 +48,8 @@ TRẢ LỜI (mỗi câu):
 4. **Viết câu trả lời** — model đọc lời dặn + ngữ cảnh, viết tiếng Việt, mỗi ý ghi số nguồn. Thiếu bằng chứng ⇒ phải trả đúng câu "Tôi không tìm thấy đủ thông tin
    trong nguồn dữ liệu để trả lời câu hỏi này." Trong lúc viết, model được nhờ **công cụ**: tìm thêm trong kho bằng câu tìm nó tự đặt (tối đa 2 lần), lấy dự báo thời
    tiết Huế, đổi một ngày chưa có trong nguồn "Lịch hệ thống". Mọi con số ngày / thời tiết do code tính, model chỉ chép.
+   **Câu hỏi bão, lũ (từ 17/11):** model chọn loại câu khi gọi công cụ thời tiết; câu bão / lũ ⇒ model không nhận số nào, code nối câu nhãn (dự báo chỉ có
+   nhiệt độ và mưa, không có tin bão) + bảng mưa + nguồn tin chính thức (NCHMF) + số 112; lỗi model tự viết "có / không có bão" giảm rõ (còn giới hạn, bài 14).
    **Câu hỏi nhiều ý (từ 14/11):** code đếm được ≥ 2 vế hỏi (tách theo dấu phẩy / chấm phẩy / chấm hỏi, và "và / còn / với" khi cả hai phần có từ hỏi) ⇒ model trả lời
    ý nào có bằng chứng, ý thiếu ghi đúng một dòng "Tư liệu chưa có thông tin về: …" (trước: thiếu một ý là từ chối cả câu). Chỉ còn dòng ý thiếu ⇒ code đổi về câu
    từ chối chuẩn. Câu đếm được một vế ⇒ như cũ.

@@ -32,6 +32,9 @@ Tổng ≈ **0,33 USD** (log `chat_metrics` của server tạm + trường `usd`
 ## Bật cờ (User chọn 17/11: bật bản mới, ghi giới hạn)
 Đọc tay lần 2 (agent con của A, trên bản sau lùi): sàn S-a1 đọc chặt 2 lượt / đọc lỏng 1 — một lượt model viết câu khí hậu chung nghe như nói về đợt hiện tại; một lượt là câu nói vòng không được đưa công cụ nên không có khối ⇒ theo luật ghi giới hạn, User chấp nhận. Nhánh bật cờ: `p9-cau-bao-bat` (`settings.yaml` + một test tự tắt cả `bao_lu_cong_cu` khi tắt `thoi_tiet`).
 
+## Đính chính (17/11, đối chiếu bài học)
+- Mốc hàm dò cũ là **15 / 22** (plan + README bộ ghi 16 / 22, sót câu "lụt"); "21 / 22" = 18 / 19 câu nhãn co + 3 / 3 câu mùa / lịch sử; chữ đầu 4,38 / 7,42 s là của cả 31 câu (19 câu bão: 5,7 / 7,1 s); câu gốc sau sửa chạy 1 lượt (6,8 s).
+
 ## Giới hạn
 - Lỗi có sẵn ở đường web, ngoài nhánh này: ở câu bão nói vòng không có khối, danh sách nguồn web có thể hiện tiêu đề một tin lũ cũ (năm trước) như tin hiện tại.
 - Câu bão nói vòng không chứa từ thời tiết / nguy hiểm nào (1 / 22 câu của bộ) ⇒ không công cụ, không khối.
