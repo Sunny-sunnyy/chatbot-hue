@@ -1,3 +1,19 @@
+# STATUS A — CUỐI PHIÊN TỐI 17/11 (viết 22:10 17/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` khối đầu "PHIÊN SAU ĐỌC TRƯỚC (… cuối PHIÊN TỐI 17/11)" — mục A (8 điểm cách làm việc User duyệt), mục B (việc theo thứ tự: trang bản đồ `bai_hoc/` ⇒ trò chuyện tiếp với User ⇒ giao việc N1–N9 ⇒ `TONG_HOP.md`).
+- **Xong tối 17/11 (A):** giao + theo dõi B, C, E; 4 agent con đọc nốt code app khoá SDLC; 5 agent con đọc AI Coding + 1 đọc bù slide (xem hình 152 / 152 trang) + 1 gom `VONG1_A_CODING.md`; 2 agent con đọc `lauran_tan/`; 1 agent con kiểm kê độ phủ ⇒ 6 gói đọc bù 3 khoá; kiểm lại ~30 khẳng định trên git của khoá / repo; mở + chốt vòng 2 (`VONG2_CHOT.md`); trò chuyện với User (7 câu); memory `done-report-table-spot-check`.
+- **Chưa làm:** `TONG_HOP.md` + `README.md` của kho ghi chép; trang bản đồ `bai_hoc/`; vòng `improve-workflow` (bẫy ghi ở handoff mục C); `Project_Status.md` không đổi (hệ thống không đổi tối nay).
+- **Máy:** 0 server, Qdrant tắt, 0 worktree; file tạm `/tmp/hr_a_vong2.txt` (xoá được). Tiền A 0 USD.
+
+# STATUS A — PHIÊN TỐI 17/11 (thứ Ba; mở; cập nhật 20:32 17/11/2026 `date`)
+
+- Terminal: A `hue-rag-9c` · B `hue-rag-4e` · C `hue-rag-99` · E `hue-rag-62` (Claude Code, trực tiếp; cả ba đã tự báo).
+- Kiểm nhanh: `main` `d71997d` = origin, chỉ `.wslconfig` untracked; hooksPath `.githooks`; Qdrant tắt (khớp handoff); 0 server, 0 worktree; RAM khả dụng 15 GB; một phiên dự án khác của User đang mở trên máy.
+- Quyền: "như chiều 17/11" (A ghi 20:32 17/11/2026).
+- Giao: C hoàn vòng 1 (AI SDLC phần 2 + 3) · E làm lại part_5 AI FDE + ghép bộ · B soạn sẵn vòng 2. Cả C và E có `notify_when_idle`.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; sau vòng 2 / 3: `data/khoa_hoc_2026-11-17/TONG_HOP.md`, `README.md` (private, không commit).
+- Tiếp: C + E xong ⇒ mở vòng 2 (mỗi người ≤ 20 dòng gửi cả nhóm) ⇒ gom đồng ý / bất đồng ⇒ vòng 3 ⇒ trình User đề xuất (a)–(l), mỗi lần một câu. Vòng tự soi 1 gộp vào lúc mở vòng 2.
+
 # STATUS A — KẾT PHIÊN CHIỀU 17/11 (viết 16:50 17/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` "PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11)" ⇒ hỏi quyền ⇒ chờ C xong vòng 1 khoá học ⇒ mở vòng 2 bàn nhóm (`data/khoa_hoc_2026-11-17/BRIEF.md`).

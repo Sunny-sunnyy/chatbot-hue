@@ -1,4 +1,120 @@
-# STATUS C — phiên chiều 17/11 (C `hue-rag-33` · A `hue-rag-c6` · B `hue-rag-00` · E `hue-rag-55`); dưới là nhật ký phiên sáng 17/11
+# STATUS C — KẾT PHIÊN TỐI 17/11 (C `hue-rag-99` · A `hue-rag-9c` · B `hue-rag-4e` · E `hue-rag-62`); dưới là nhật ký phiên tối, rồi kết phiên chiều 17/11
+
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN TỐI 17/11 — C viết 22:03 17/11/2026, viết cho người chưa biết gì về phiên tối)
+
+Phiên tối 17/11 (20:31–~22:15) C KHÔNG đụng code hue_rag. Cả tối là việc "đọc khoá học" do User giao qua A: đọc đủ 4 khoá của Ed Donner
+(AI Production, AI Coding, AI FDE, AI SDLC) + 5 file phiên âm của kỹ sư Lauren Tan, bàn nhóm (vòng 2), rồi viết kho ghi chép cuối (vòng 3).
+Mọi thứ nằm ở `data/khoa_hoc_2026-11-17/` (private, KHÔNG commit). Chỉ đọc, 0 USD API. Quyền phiên ("như chiều 17/11") đã hết hạn.
+
+### (0) Việc dở DUY NHẤT của C — vòng 3: bộ ghi chép CUỐI của khoá AI SDLC (hạn chung: xong trước 24/11)
+- File chính: `data/khoa_hoc_2026-11-17/AI_SDLC_C.md` — **NHÁP 3**, 697 dòng, 17 mục (mục lục · toàn cảnh · mạch 10 ngày · điều đáng học theo
+  chủ đề · đối chiếu hue_rag · đề xuất · điều phối · 5 câu tự kiểm · đính chính · độ phủ · việc còn lại · bảng "lời nhắc của từng bước" · tài liệu
+  sống · 13 nhánh · 16 đính chính có nguồn · chương code ứng dụng · bổ sung tuần 1 · bổ sung tuần 2). Chi tiết theo bài: `AI_SDLC_C_phan_1..4.md`
+  (mỗi phần đã có khối "ĐÍNH CHÍNH — ĐỌC TRƯỚC" ở đầu; 7 câu đổi kết luận đã gắn **[ĐÍNH CHÍNH …]** tại chỗ).
+- Đã gộp ghi chép của cả bốn phiên qua 4 file `nhap/C_SDLC_CUOI/GOP_1..4_*.md` (đều XONG).
+- **Còn lại — làm theo thứ tự (cũng ghi ở `AI_SDLC_C.md` §10):**
+  1. Sửa ≈ 18 chỗ sai mức chi tiết còn lại trong thân phần 1, 2, 4 (danh sách: `AI_SDLC_C.md` mục 14 số 6–16 + khối đầu mỗi phần; tìm theo
+     MÃ BÀI — số dòng trong mục 14 lệch ~10 dòng vì đã chèn khối đầu file).
+  2. Dệt mục 16–17 (bổ sung của A, B, E — hiện chép nguyên) vào mục 3 theo chủ đề; chọn lại 5 câu tự kiểm hay nhất từ ba nguồn (§7 là bản của C;
+     câu của A, B, E ở 16.4, 17.5).
+  3. Ghi "chưa kiểm màu" cho đính chính AI Coding số 4 (slide W2D3 tr.12 — A xem hình phiên sau); đính chính SDLC 6–16 chưa ai kiểm lần hai.
+  4. Bỏ chữ "NHÁP 3" ở đầu file + §0, nhắn A "bộ AI SDLC xong" kèm bảng đã làm / chưa làm / tự hoãn.
+
+### (1) Đã xong tối nay (để tra — không cần làm lại)
+- **Vòng 1:** `VONG1_C.md` (3 khoá; §3 AI SDLC đã hoàn, bảng 13 nhánh) · `VONG1_C_CODING.md` (AI Coding 15 ngày / 94 bài; §5 đề xuất 12 mặt; §8 tự rà
+  + bảng độ phủ + đính chính) · `VONG1_C_LAUREN.md` (5 / 5 file). Nháp chi tiết: `nhap/AI_SDLC/C_W*.md`, `nhap/C_CODING/C_W*.md` (6.583 dòng),
+  `nhap/C_CODING/BU_*.md` + `BU2_*.md` (đọc bù slide + code, 6.128 dòng), `nhap/C_LAUREN/` (1.272 dòng).
+- **Vòng 2:** đã bàn và A chốt ở `VONG2_CHOT.md` (N0–N8 + danh sách KHÔNG LÀM). Tin của C lưu ở `nhap/C_vong2_nhap.md`. Các việc N1–N8 CHƯA giao.
+- **Kiểm chéo đính chính:** B kiểm bộ SDLC của C 5 / 5 khớp · C kiểm bộ FDE của E 5 / 5 khớp · C kiểm bộ AI Coding của B 5 / 5 khớp (mục 4 chưa xem màu hình).
+
+### (2) Quyết định của User tối 17/11 (qua A — chi tiết ở `CURRENT_HANDOFF.md` mục PHIÊN TỐI 17/11)
+- **Mọi báo cáo "xong" kết bằng bảng cố định:** đã làm / chưa làm / tự hoãn + lý do · lệnh kiểm đã chạy + đầu ra; mỗi buổi User chọn một dòng để
+  chứng minh lại. Không độn cột "đã làm"; ghi thẳng phần chưa đọc / bỏ qua.
+- User nói hiện không nắm được dự án, `bai_hoc/` gần như chưa đọc ⇒ chọn "bản đồ 1 trang trong `bai_hoc/` + một buổi tự tay 45–60 phút cuối
+  tuần chạy runbook" (A viết trang bản đồ phiên sau).
+- Tháng 12: "tuỳ tiến độ"; công cụ làm tiếp = **Antigravity CLI (User tự lái — agent KHÔNG gọi `agy`) + Codex** ⇒ tài liệu phải đọc được bởi agent khác hãng.
+
+### (3) Việc C có thể được giao phiên sau (CHỜ A — chưa làm gì)
+- Review ≤ 5 dòng nhánh `HUE_GIT_SHA` của B (N6, trước 22/11). Review tích hợp Phase 9 do A hoặc B giao agent con (KHÔNG phải C — C viết nhiều phần
+  sửa lịch); C chỉ trả lời câu hỏi về vùng sửa lịch.
+- Mốc cũ không đổi: code đứng yên tối 22/11 ⇒ B7 cuối 23/11 ⇒ đóng Phase 9 ~24/11; xong local + kế hoạch deploy trước 30/11.
+
+### (4) Điều C đã tự mở code / file hue_rag kiểm tối nay [C kiểm] — đầu vào cho runbook §10 và trang "một agent"
+- `guides/RUNBOOK_BAN_GIAO.md`: 0 chữ "review" / "phiên mới" / "tự duyệt" / "CLAUDE.md"; `AGENTS.md` không trỏ runbook.
+- `WORKFLOW.md:179` trỏ skill `writing-plans` không có trong `skills/` (repo 8 skill); `.agents/` + `.codex/` rỗng; `.claude/skills/` đủ 8 symlink;
+  không `GEMINI.md` / `.agent/`; `.claude/settings.local.json` 8 dòng đường dẫn máy cũ + dòng 14 cho `git push *` ↔ skill bảo mật dòng 20 "hỏi trước".
+- `skills/practical-project-coding/SKILL.md:174` "không mock / fake / stub trong test" ↔ 9 / 50 file test dùng `monkeypatch` + `FakeGenerator`.
+- `backend/api/health.py:7-24` không gọi ra ngoài (khoá OpenAI hết hạn mức vẫn "ok") · `backend/api/gioi_han.py:15` danh sách đường tính lượt viết
+  tay · `backend/llm/len_ke_hoach.py:257-264` lỗi gọi model hiểu câu sửa lịch ghi log y như "không phải câu sửa" · `scripts/dem_chat_metrics.py`
+  không đếm theo `outcome` · không ruff / pyright · `git ls-files` 0 file test Playwright.
+
+### (5) Bẫy tối 17/11 (đầu vào vòng cải tiến)
+- **Agent con tự khai "đã đọc đủ" không đáng tin khi chưa grep lại:** vòng 1 C tưởng đã đọc slide + code của Production và FDE — grep trên chính nháp
+  ra 0 slide, 0 lệnh `git show` ⇒ phải đọc bù 19 gói. Brief nên bắt agent ghi "đã mở / chưa mở" cho TỪNG file được giao.
+- **Agent con chạy nhầm lệnh:** agent gộp `GOP_2` nối file bằng heredoc KHÔNG nháy ⇒ bash chạy các cụm trong backtick như lệnh (vài "not found", một
+  `diff` sai tham số, MỘT `claude -p` khởi rồi thoát ngay — theo lời nó khai). C kiểm sau: `git status` không gì lạ. ⇒ brief agent con ghi: "nối /
+  ghép file bằng Write / Edit hoặc heredoc CÓ nháy; không gọi công cụ đăng tải (Artifact)".
+- Agent con khẳng định SAI về hue_rag hai lần (`.claude/skills/` thiếu symlink; hue_rag "đã có Playwright riêng") ⇒ mọi khẳng định về repo mình phải
+  tự `ls` / grep trước khi chuyển.
+- Mẫu tìm quá hẹp làm C báo sai "khớp một phần" khi kiểm chéo cho E (đòi chữ "the notebook" trong khi câu là "a notebook") ⇒ khi báo "không thấy",
+  ghi luôn mẫu đã tìm.
+- Mục lục / số dòng ghép bằng script lệch vài dòng sau mỗi lần chèn ⇒ trỏ theo mã bài, không theo số dòng.
+
+### (6) Tiền · máy lúc kết
+- 0 USD API cả phiên (45 agent con là phiên Claude, chỉ đọc file). Không lượt có phí, không bật Qdrant / server.
+- 0 agent con C còn chạy · 0 worktree · 0 server · 0 thư mục `/tmp/hr_c_*` · `git status`: chỉ `session_prompt/` sửa (C chỉ sửa file này) +
+  `?? .wslconfig`, `?? lauran_tan/` (KHÔNG git add `lauran_tan/` — repo public). C không commit gì.
+
+## (nhật ký phiên tối 17/11) STATUS C — phiên tối 17/11 (C `hue-rag-99` · A `hue-rag-9c` · B `hue-rag-4e` · E `hue-rag-62`); dưới là kết phiên chiều 17/11
+
+## PHIÊN TỐI 17/11 (C ghi 20:33 17/11/2026)
+- A giao (20:33 17/11/2026, quyền phiên "như chiều 17/11"; User: việc A giao = "làm đi"): hoàn vòng 1 đọc 3 khoá — chạy lại agent con AI SDLC, hoàn `VONG1_C.md` §3 + bảng 13 nhánh. Chỉ đọc, 0 USD API.
+- **Khai báo sửa** (chỉ trong `data/khoa_hoc_2026-11-17/`, private): `nhap/AI_SDLC/BRIEF_AGENT_CON_SDLC_toi.md`, `nhap/AI_SDLC/C_W1D4.md`, `C_W1D5.md`, `C_W2D1.md`, `C_W2D2.md`, `C_W2D3.md` (mỗi ngày một agent con, ghi file dần theo bài — phòng API timeout như chiều), rồi ghép `AI_SDLC_C_phan_2.md` (W1D4–5) + `AI_SDLC_C_phan_3.md` (W2D1–3), sửa `VONG1_C.md` §3 + §6. File này.
+- **(20:48 17/11/2026) XONG VÒNG 1 — đã nhắn A.** 5 agent con đều xong, không cái nào dừng dở (W1D4 858 dòng · W1D5 871 · W2D1 620 · W2D2 759 · W2D3 580; nháp gốc `nhap/AI_SDLC/C_W*.md`). Đã ghép `AI_SDLC_C_phan_2.md` (1.752 dòng, bài 24–37) + `AI_SDLC_C_phan_3.md` (1.989 dòng, bài 38–54) ⇒ bộ SDLC đủ 62 bài ở phần 1–4. `VONG1_C.md`: §3.1 mạch W1D4–W2D3, §3.2 thêm điều 14–22, §3.2b bảng 13 nhánh (sha `git rev-parse`), §3.3 thêm 9 dòng đối chiếu, §3.4 đề xuất đã lọc, §5 câu 6, §6 lệch nguồn + phần tự kiểm.
+- [C kiểm] runbook `guides/RUNBOOK_BAN_GIAO.md` 0 chữ "review" / "phiên mới" / "tự duyệt" / "CLAUDE.md"; `.claude/settings.local.json:14` `Bash(git push *)` ↔ skill bảo mật dòng 20 "hỏi User trước". [chưa ai tính lại] số diff nhánh, số "theo bài giảng".
+- **Việc kế:** chờ A mở vòng 2 (≤ 20 dòng gửi cả nhóm; câu C muốn bàn = `VONG1_C.md` §5, nhất là câu 1 + 6). Sau khi xong vòng 1 C ĐƯỢC mở bản của người khác (`VONG1_A/B/E.md`, `nhap/A/`, …) — đọc trước khi viết tin vòng 2. Vòng 3: C giữ bộ AI SDLC cuối (viết mục lục `AI_SDLC_C.md`; phần app trỏ `nhap/A/APP_SDLC_{1..4}_*.md` — A báo C không cần đọc lại; còn sót docs: `bills/plan.md`, `invoices/plan.md`, 2 independent-review nhánh merged, `money/*`, `cash-flow/plan.md`).
+- Bẫy: mục lục ghép bằng script lệch 1–2 dòng (đã sửa bằng grep số dòng thật). Hai agent con có vẻ đã đọc `CURRENT_HANDOFF.md` (nhắc đề xuất (d), (e)) ⇒ brief lần sau ghi rõ có / không được đọc handoff.
+- (20:50 17/11/2026) Đã đọc `VONG1_A/B/E.md` (phần SDLC, đề xuất, câu bàn); **nháp tin vòng 2 của C sẵn ở `data/khoa_hoc_2026-11-17/nhap/AI_SDLC/C_vong2_nhap.md`** (9 điểm + xếp hạng) — gửi cả nhóm khi A mở vòng 2. RẢNH — chờ A mở vòng 2.
+- Tiền: 0 USD API. Máy: 0 worktree, 0 server, 0 `/tmp/hr_c_*`, 0 agent con còn chạy.
+
+### VIỆC MỚI (20:51 17/11/2026) — A giao theo User: đọc ĐỦ khoá thứ tư AI CODING + rà lại 3 khoá (mục cuối `data/khoa_hoc_2026-11-17/BRIEF.md`); vòng 2 dời tới khi cả bốn xong 4 khoá
+- **Khai báo sửa** (chỉ `data/khoa_hoc_2026-11-17/`): `nhap/C_CODING/BRIEF_AGENT_CON_CODING.md`, `nhap/C_CODING/C_W<n>D<m>.md` (15 file, mỗi ngày một agent con, ghi file dần), `nhap/C_CODING/BU_*.md` (đọc bù), `VONG1_C_CODING.md`. File này.
+- Kế hoạch 3 đợt (tránh nghẽn API vì 4 phiên cùng chạy agent con): đợt 1 = AI Coding W1D1–W2D5 (10 agent) · đợt 2 = W3D1–W3D5 (5) + đọc bù docs SDLC 2 nhánh W2D3 (1) · đợt 3 = đọc bù SLIDE + CODE của Production (4 tuần) và FDE (3 tuần).
+- **Tự rà thật thà:** vòng 1 Production + FDE của C chỉ đọc SUMMARY + bản đồ (13 file `nhap/VONG1_C/` — grep: 0 slide PDF, 0 lệnh `git show`); slide và nhánh code hai khoá đó C CHƯA đọc ⇒ đợt 3.
+- **(21:17 17/11/2026) XONG — đã nhắn A.** 31 agent con, không cái nào dừng dở, 0 USD API:
+  - **AI Coding:** 15 ngày / 94 bài ⇒ `nhap/C_CODING/C_W<n>D<m>.md` (6.583 dòng) ⇒ **`VONG1_C_CODING.md`** (§0 tám điều · §1 mạch · §2 hai mươi điều · §3 đối chiếu hue_rag · §4 nối 3 khoá · §5 đề xuất 12 mặt + §5.0 đối chiếu hồ sơ 30/10 · §6 câu bàn · §7 lệch nguồn · §8 tự rà + bảng độ phủ).
+  - **Đọc bù 3 khoá (12 agent):** `nhap/C_CODING/BU_*.md` (3.534 dòng) — slide + code Production tuần 1–4, FDE tuần 1–3; docs sót SDLC W2D3; slide SDLC tuần 1 + W2D4–5. Lỗ gốc: vòng 1 Production + FDE của C chỉ đọc summary + bản đồ. Đính chính ghi chép vòng 1: `VONG1_C_CODING.md` §8.3 (đáng kể nhất: FDE bài 43 — hue_rag KHỚP code khoá, không phải "lệch có chủ ý").
+  - **Lauren Tan (nguồn thứ năm, `lauran_tan/` — KHÔNG git add):** 5 / 5 file đọc từng dòng ⇒ `nhap/C_LAUREN/L_1..4_*.md` (1.272 dòng) ⇒ **`VONG1_C_LAUREN.md`**.
+- [C kiểm tối 17/11] `WORKFLOW.md:179` trỏ skill `writing-plans` không có trong `skills/` (repo 8 skill) · không `GEMINI.md` / `.agent/`; `.agents/` + `.codex/` rỗng · `.claude/skills/` đủ 8 symlink (agent con nói thiếu — SAI) · `.claude/settings.local.json` 8 dòng đường dẫn máy cũ · `backend/api/health.py` không gọi OpenAI · `dem_chat_metrics.py` không đếm `outcome` · `practical-project-coding` dòng 174 "không mock / fake / stub trong test" ↔ 9 / 50 file test dùng `monkeypatch` · không ruff / pyright · `TEMPLATE_REVIEW.md` dòng 11 + 46 đã tương đương "Not read".
+- **Còn hở (ghi ở bảng độ phủ §8.5):** FDE slide xem ảnh một phần; SDLC W2D2 / W2D3 slide xem ảnh một phần trang; code app SDLC C không đọc (dùng 4 file của A); một số file code Production / FDE chưa đọc (dashboard, e2e, test, `charter/*`). Đính chính §8.3 là của agent đọc bù — chưa ai kiểm lần hai trừ chỗ ghi [C kiểm].
+- **Việc kế:** chờ A mở vòng 2 trên cả 4 khoá + Lauren Tan (≤ 25 dòng gửi cả nhóm). Nháp vòng 2 cũ (`nhap/AI_SDLC/C_vong2_nhap.md`, chỉ SDLC) phải VIẾT LẠI gộp: `VONG1_C.md` §5 + `VONG1_C_CODING.md` §6 + `VONG1_C_LAUREN.md` §7. Trước khi viết: đọc `VONG1_<A/B/E>_CODING.md` + `_LAUREN.md` của người khác (nay được phép). Vòng 3: C giữ bộ AI SDLC cuối (gộp `BU_SDLC_*` + sửa theo §8.3).
+- Bẫy: agent con tự khai "đã đọc" phải grep lại (vòng 1 tưởng đã đọc slide / code Production + FDE — thật ra 0); 5 / 15 agent bỏ một file được dặn đọc (`THUAT_NGU_CHUNG.md`) ⇒ brief nên yêu cầu ghi "đã mở / chưa mở" cho TỪNG file được giao; một agent đọc bù khẳng định sai về hue_rag (symlink skill) ⇒ khẳng định về repo mình phải tự `ls` / grep trước khi chuyển.
+- Máy: 0 worktree, 0 server, 0 `/tmp/hr_c_*`, 0 agent con còn chạy.
+
+### VIỆC TIẾP (21:19 17/11/2026) — A giao: (1) bù nốt lỗ ở bảng độ phủ §8.5; (2) đọc bản của A / B / E rồi soạn nháp vòng 2 gộp (CHƯA gửi)
+- Khai báo sửa (chỉ `data/khoa_hoc_2026-11-17/`): `nhap/C_CODING/BU2_*.md` (7 agent con: xem HÌNH slide FDE tuần 1 / 2 / 3 + SDLC W2D2–3; repo undercover PLAN / docs / test, dashboard / e2e; alex charter + frontend/lib), `VONG1_C_CODING.md` §8, `nhap/C_vong2_nhap.md`. File này.
+- **(21:30 17/11/2026) XONG đợt bù 2** (7 / 7 agent, không dừng dở, 0 USD): `nhap/C_CODING/BU2_*.md` (2.594 dòng) — slide FDE xem HÌNH 332 / 332 trang; slide SDLC W2D2–3 xem hình đủ; repo undercover PLAN / docs / test (chọn lọc) + e2e 20 / 20 + dashboard lõi; alex charter + frontend/lib (là code khoá). Bảng độ phủ + đính chính thêm: `VONG1_C_CODING.md` §8.6.
+- **VÒNG 2 đã mở và C đã gửi đủ:** tin vòng 2 (≤ 25 dòng, bản lưu `nhap/C_vong2_nhap.md`) + phản biện 10 dòng — gửi cả A, B, E. Đã nhận tin vòng 2 của A, B, E và phản biện của B. Đồng thuận 4 / 4: trang một-agent ≤ 60 dòng + `AGENTS.md` trỏ runbook · một buổi Codex thật · spec deploy bản 3 · script kiểm nhanh + bản đồ tính năng · `HUE_GIT_SHA` trước 22/11 · không thêm luật / rào cho chế độ 4 phiên. B nhận ý C: review tích hợp Phase 9 trước 22/11 (một agent con chỉ đọc). Câu đầu tiên nên hỏi User (của E): tháng 12 hue_rag đóng băng / bảo trì / phát triển tiếp.
+- [C kiểm thêm] `backend/api/health.py:7-24` không gọi ra ngoài · `backend/api/gioi_han.py:15` danh sách đường tính lượt viết tay · `backend/llm/len_ke_hoach.py:257-264` lỗi gọi model hiểu câu sửa ghi log như "không phải câu sửa".
+- **Việc có thể được giao sau khi A chốt:** review ≤ 5 dòng nhánh `HUE_GIT_SHA` của B (B nêu); vòng 3 — C giữ bộ AI SDLC cuối (gộp `BU_SDLC_*`, `BU2_SDLC_*`, 4 file `nhap/A/APP_SDLC_*`, `nhap/A/BU_4`, `BU_5`; sửa theo §8.3 + §8.6).
+- **rảnh — chờ A chốt vòng 2.** Máy: 0 worktree, 0 server, 0 `/tmp/hr_c_*`, 0 agent con còn chạy.
+
+### VÒNG 3 (21:43 17/11/2026) — A giao sau khi chốt vòng 2 (`data/khoa_hoc_2026-11-17/VONG2_CHOT.md`): C viết BỘ CUỐI khoá AI SDLC, gộp ghi chép của cả bốn phiên; hạn xong trước 24/11
+- User đã trả lời A: tháng 12 "tuỳ tiến độ"; người làm tiếp = Antigravity CLI (User tự lái — agent KHÔNG gọi `agy`) + Codex ⇒ kho ghi chép phải đọc được bởi agent khác hãng. Các việc N1–N8 của vòng 2 CHƯA giao (chờ User chọn hướng).
+- **Đã có:** `data/khoa_hoc_2026-11-17/AI_SDLC_C.md` — file chính của bộ, **NHÁP 1** (mục lục · toàn cảnh · mạch 10 ngày · 8 chủ đề · đối chiếu · đề xuất · điều phối · 5 câu tự kiểm · 9 đính chính · bảng độ phủ · §10 việc còn lại). Phần chi tiết theo bài: `AI_SDLC_C_phan_1..4.md` (chưa sửa theo đính chính).
+- **ĐANG CHẠY lúc ghi:** 4 agent con gộp ghi chép của A, B, E so với bộ của C ⇒ `nhap/C_SDLC_CUOI/GOP_1_code_app.md` · `GOP_2_loi_nhac_spec_nhanh.md` · `GOP_3_tuan_1.md` · `GOP_4_tuan_2.md` (brief `nhap/C_SDLC_CUOI/BRIEF_GOP.md`; ghi file dần — phiên đóng thì xem dòng đầu mỗi file: "ĐANG VIẾT" = dở, chạy lại agent đó cho phần file nguồn chưa có mục).
+- **Chỗ dừng / việc còn lại (theo thứ tự — cũng ghi ở `AI_SDLC_C.md` §10):** (1) đọc 4 file GOP ⇒ đưa bổ sung vào §2, §3; thêm mục "ứng dụng Accountable được dựng thế nào" (GOP_1) + bảng "lời nhắc của từng bước" (GOP_2); (2) sửa câu sai trong phần 1–4 theo `AI_SDLC_C.md` §8 + GOP_2 mục 4; (3) gửi **B** 5 đính chính nặng nhất kèm `file:dòng` nguồn (B kiểm bộ SDLC); (4) bỏ chữ "NHÁP 1", nhắn A.
+- **Kiểm chéo C đã làm:** bộ AI FDE của E — 5 / 5 đính chính KHỚP (C tự chạy `git show` / `diff` trên `origin/week3day5-end` @ `485347f`; đã báo E). **Còn nợ:** kiểm 5 đính chính bộ AI Coding của B khi B gửi danh sách.
+- **(21:49 17/11/2026) Cập nhật:** `AI_SDLC_C.md` nay là **NHÁP 2** (425 dòng): đã gộp `GOP_2` (mục 11 lời nhắc từng bước · 12 tài liệu sống · 13 bảng 13 nhánh · 14 danh sách 16 đính chính), `GOP_3`, `GOP_4` (mục 3.6b an toàn bằng cấu trúc; sửa "hai lần" ⇒ "ít nhất 4 lần"). 3 / 4 agent gộp XONG; **`GOP_1_code_app.md` còn "ĐANG VIẾT"** lúc ghi. Đã gửi B 5 đính chính nặng nhất của bộ SDLC (21:49 17/11/2026) — chờ B báo khớp / lệch. Việc còn lại: `AI_SDLC_C.md` §10 (5 mục).
+- **Sự cố agent con (ghi để vòng cải tiến):** agent gộp `GOP_2` nối file bằng heredoc KHÔNG đặt nháy ⇒ bash chạy các cụm trong dấu backtick như lệnh: vài lệnh "not found", một `diff` sai tham số, và **một lệnh `claude -p` khởi rồi thoát ngay** ("Input must be provided"). Agent tự khai, đã cắt phần chữ hỏng. C kiểm sau đó: `git status` không có gì lạ, thư mục gộp chỉ có 5 file dự kiến. Bài học: brief agent con phải ghi "nối file bằng công cụ Edit / Write, hoặc heredoc có nháy `<<'EOF'`".
+- **(21:51 17/11/2026) `AI_SDLC_C.md` = NHÁP 3** (~570 dòng): 4 / 4 gói gộp đã vào (mục 15 = chương code ứng dụng từ `GOP_1`). 0 agent con còn chạy. **Còn lại (theo `AI_SDLC_C.md` §10):** sửa câu sai trong phần chi tiết 1–4 theo mục 14 (16 đính chính) + 4 chỗ ở §8 · đưa nốt bổ sung của `GOP_3`, `GOP_4` vào §3 + chọn lại 5 câu tự kiểm · nhận kết quả B kiểm lần hai · kiểm 5 đính chính bộ AI Coding khi B gửi · bỏ chữ NHÁP, nhắn A.
+- **(21:51 17/11/2026) Kiểm chéo XONG cả ba chiều liên quan C:** B kiểm bộ SDLC của C — 5 / 5 khớp (đã ghi vào `AI_SDLC_C.md` mục 14); C kiểm bộ FDE của E — 5 / 5 khớp; C kiểm bộ AI Coding của B — 5 / 5 khớp (mục 4 khớp theo tóm tắt đã chấm, C chưa tự xem màu trên HÌNH slide W2D3 tr.12 — đã báo B). Không còn nợ kiểm chéo.
+- **(21:52 17/11/2026) CHỖ DỪNG VÒNG 3 (đã báo A):** `AI_SDLC_C.md` NHÁP 3 — 15 mục, đã gộp 4 / 4 gói; 4 phần chi tiết đã có khối "ĐÍNH CHÍNH — ĐỌC TRƯỚC" ở đầu. **Phiên sau làm tiếp (theo `AI_SDLC_C.md` §10):** (a) sửa từng câu sai trong thân phần 1–4 (≈ 25 chỗ; tìm theo mã bài — số dòng trong mục 14 lệch vài dòng sau khi chèn khối); (b) đưa nốt "10 bổ sung" + bảng "điều ba người kia xếp quan trọng mà C không xếp" của `nhap/C_SDLC_CUOI/GOP_3_tuan_1.md`, `GOP_4_tuan_2.md` vào §3; (c) chọn lại 5 câu tự kiểm từ ba nguồn (§7 hiện là bản của C); (d) mục 14: đính chính 6–16 chưa ai kiểm lần hai; (e) bỏ chữ NHÁP, nhắn A. Hạn chung trước 24/11.
+- **(21:54 17/11/2026)** `AI_SDLC_C.md` 697 dòng, 17 mục: thêm mục 16 (bổ sung tuần 1) + 17 (bổ sung tuần 2) chép nguyên từ `GOP_3` / `GOP_4` — việc (b) ở dòng trên XONG dạng chép nguyên, CHƯA dệt vào §3; (c) có thêm câu tự kiểm của A, B, E ở 16.4, 17.5. Còn: (a) sửa từng câu trong thân 4 phần · dệt 16–17 vào §3 · (d) · (e).
+- **(21:54 17/11/2026)** Đã gắn **[ĐÍNH CHÍNH …]** tại chỗ cho 7 câu đổi kết luận (phần 3: dòng 830, 1604, 1920, 1931, 1950; phần 4: dòng 694, 862). Việc (a) còn ≈ 18 chỗ mức chi tiết ở phần 1, 2, 4 (danh sách: `AI_SDLC_C.md` mục 14 số 6–16 + khối đầu mỗi phần). **rảnh sau mốc này — chờ A / kết phiên.**
+- Việc khác có thể được giao: review ≤ 5 dòng nhánh `HUE_GIT_SHA` của B (N6).
+
+## (kết phiên chiều 17/11) STATUS C — phiên chiều 17/11 (C `hue-rag-33` · A `hue-rag-c6` · B `hue-rag-00` · E `hue-rag-55`); dưới là nhật ký phiên sáng 17/11
 
 ## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN CHIỀU 17/11 — C viết 16:55 17/11/2026, viết cho người chưa biết gì về phiên chiều)
 
