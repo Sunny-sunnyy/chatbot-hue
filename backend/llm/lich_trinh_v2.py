@@ -562,6 +562,8 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 lap_lai = toi and id_ in [x for ng0 in khung["ngay"] if ng0["ngay"] < ng["ngay"] for x in ng0["buoi"]["toi"]]
                 muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
                             "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
+                            # buổi tối của bảng (vd chợ Đông Ba = phố ẩm thực đêm trước chợ): không có dòng này người đọc tưởng vào chợ đã đóng
+                            "ghi_chu": d.get("ghi_chu_toi") if toi else None,
                             "nguon": nguon.get(id_), "anh": dict(anh[id_]) if anh and id_ in anh else None,  # đợt 2 (B): cờ `anh_lich`
                             "toa_do": list(toa_do[id_]) if toa_do and id_ in toa_do else None,
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
@@ -695,7 +697,8 @@ def ghep_chu(lich: dict, cau: dict[str, str]) -> str:
                 continue
             gio = f" ({m['gio']})" if m["gio"] else ""
             them = "".join(f" ({NHAN_MUC[x]})" for x in m.get("nhan", ()) if x in NHAN_MUC)
-            dong.append(f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them} — {cau[m['id_muc']]}")
+            ghi = f" ({m['ghi_chu']})" if m.get("ghi_chu") else ""
+            dong.append(f"- {NHAN_BUOI[m['buoi']]}{gio}: {m['ten']}{them}{ghi} — {cau[m['id_muc']]}")
     if lich["ghi_chu"]:
         dong += ["", TIEU_DE_GHI_CHU, *(f"- {g['cau']}" for g in lich["ghi_chu"])]
     if lich.get("o_dau"):  # cờ `luu_tru_lich` (cờ tắt ⇒ None ⇒ chữ giống bản trước)

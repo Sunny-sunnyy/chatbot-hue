@@ -553,10 +553,12 @@ def test_v2_plain_answer_is_built_from_frame():
     lich = {"minh_hieu": "Mình hiểu: x", "ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "loai": "tham_quan", "ten": "A", "gio": None},
                                                                       {"id_muc": "n1-chieu-1", "buoi": "chieu", "loai": "tham_quan", "ten": "B",
                                                                        "gio": "13:30 – 14:45"},
+                                                                      {"id_muc": "n1-toi-2", "buoi": "toi", "loai": "hoat_dong_toi", "ten": "C",
+                                                                       "gio": "18:00 – 23:00", "ghi_chu": "phố ẩm thực đêm"},
                                                                       {"id_muc": "n1-toi-1", "buoi": "toi", "loai": "nghi", "ten": "Tối nghỉ.", "gio": None}]}],
             "ghi_chu": [{"ma": "kieu_di", "cau": "Chưa chọn kiểu đi."}]}
-    assert v2.ghep_chu(lich, {"n1-sang-1": "câu a [1].", "n1-chieu-1": "câu b [2]."}) == (
-        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
+    assert v2.ghep_chu(lich, {"n1-sang-1": "câu a [1].", "n1-chieu-1": "câu b [2].", "n1-toi-2": "câu c [3]."}) == (
+        "Mình hiểu: x\n\n**Ngày 1**\n- Sáng: A — câu a [1].\n- Chiều (13:30 – 14:45): B — câu b [2].\n- Tối (18:00 – 23:00): C (phố ẩm thực đêm) — câu c [3].\n\n**Ghi chú của lịch**\n- Chưa chọn kiểu đi.")
 
 
 def test_cau_stream_emits_each_closed_item():
@@ -751,7 +753,7 @@ def test_time_table_cases(tmp_path):
 
 def _bang_toi(tmp_path):
     return _bang(tmp_path, [*[_diem(f"d{i}", "kinh_thanh") for i in range(10)], _diem("xa", "nam_xa"), _diem("xa2", "nam_xa"),
-                            dict(_diem("pho", "bo_nam", buoi=("toi",)), gio_toi="18:00 – 22:00"),
+                            dict(_diem("pho", "bo_nam", buoi=("toi",)), gio_toi="18:00 – 22:00", ghi_chu_toi="phố ẩm thực đêm"),
                             dict(_diem("cuoi_tuan", "bo_nam", buoi=("toi",)), ngay_hoat_dong=[4, 5, 6], gio_toi="19:30 – 22:30"),
                             dict(_diem("ngoai_tt", "thuy_xuan", buoi=("toi",)), gio_toi="19:00 – 20:00")],
                  {"chung": ["d0", "xa"], "di_tich": ["d0", "xa"]})
@@ -775,7 +777,8 @@ def test_evening_weekday_center_and_far_days(tmp_path):
     lich = v2.dung_lich(b, k, dict.fromkeys(v2.diem_v2(k), 1))
     toi = [m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi"]
     assert {m["id_diem"] for m in toi} == {"pho"} and [("co_the_di_lai" in m["nhan"]) for m in toi] == [False] + [True] * (len(toi) - 1)
-    assert toi[0]["gio"] == "18:00 – 22:00"
+    assert toi[0]["gio"] == "18:00 – 22:00" and toi[0]["ghi_chu"] == "phố ẩm thực đêm"  # ghi chú buổi tối của bảng đi theo mục (#5 tự thử 16/11)
+    assert all(m["ghi_chu"] is None for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "tham_quan")
     for te, lt_, ma in ((1, False, "tre_em"), (0, True, "lon_tuoi")):
         k = v2.xep_v2(b, ts(2, tre_em=te, lon_tuoi=lt_))
         assert all(not ng["buoi"]["toi"] for ng in k["ngay"]) and set(k["toi_nghi"].values()) == {ma}

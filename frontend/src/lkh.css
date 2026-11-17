@@ -153,6 +153,7 @@
 .lkh-l-chup_anh { --mau-loai: #1F5A8A; --mau-loai-nen: #E4EEF8; }
 .lkh-muc[class*="lkh-l-"] .lkh-cham-buoi { box-shadow: 0 0 0 3px var(--mau-loai); }
 .lkh-loai { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.lkh-ghi-toi { display: block; font-size: 14px; color: var(--color-muted); margin-top: 2px; }
 .lkh-loai small { padding: 1px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
 .lkh-loai-di_tich { background: #FBE9E7; color: #9B2C2C; }
 .lkh-loai-am_thuc { background: #FDF0DF; color: #9A4A07; }
