@@ -167,7 +167,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
           <ol className="tc-buoc hien">
             <li><b>Bạn hỏi</b><p>Gõ câu hỏi bằng tiếng Việt{tinhNang.anh ? ", hoặc gửi ảnh một món ăn, một công trình" : ""}.</p></li>
             <li><b>Tìm trong kho</b><p>Trợ lý tìm các đoạn liên quan trong kho tư liệu về Huế.</p></li>
-            <li><b>Trả lời có nguồn</b><p>Câu trả lời ghi số nguồn [1] [2] — bấm để xem đoạn gốc.</p></li>
+            <li><b>Trả lời có nguồn</b><p>Dưới câu trả lời có dòng Nguồn — bấm tên bài để xem đoạn gốc.</p></li>
           </ol>
         </section>
 
