@@ -19,7 +19,7 @@ from llm import thoi_tiet as tt
 from llm.assistant import (AnswerTrace, AssistantFlags, _dong_thoi_tiet_lich, _thoi_tiet_cuoi, answer_turn, answer_turn_stream, chu_cua_model,
                            ROUTE_TRO_LY_HUE, web_gate_open)
 
-from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, THOI_TIET_BAO_LU_MO_TA, THOI_TIET_MO_TA
 from llm.do_so import do_ngay_di
 from retrieval.full_corpus_context import PackedSource
 from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
@@ -414,3 +414,119 @@ def test_next_week_turn_offers_tool_code_sets_days_and_says_until_when(deps, mon
     assert [l.split(":")[0] for l in khoi.splitlines() if re.match(r"- Thứ|- Chủ", l)] == ["- Thứ Hai 09/11", "- Thứ Ba 10/11", "- Thứ Tư 11/11", "- Thứ Năm 12/11"]
     assert "Dự báo chỉ có tới Thứ Năm 12/11; những ngày sau đó của tuần sau chưa có dự báo." in khoi
     assert not trace.answer.endswith(tt.CAU_NGOAI_7_NGAY)
+
+
+# ---------- 17/11 câu bão / lũ (plan `2026-11-17-cau-bao-plan.md`, cờ `bao_lu_cong_cu`) ----------
+
+BAO = dataclasses.replace(WEATHER, bao_lu_cong_cu=True)
+
+
+def bao_call(loai="bao_lu", tu=0, den=1) -> dict:
+    n = next(_ids)
+    return {"type": "function_call", "id": f"fc_{n}", "call_id": f"call_{n}", "name": "thoi_tiet",
+            "arguments": json.dumps({"loai": loai, "tu_ngay": tu, "den_ngay": den}), "status": "completed"}
+
+
+def tool_schema(kw, name="thoi_tiet") -> dict:
+    return next(t for t in kw.get("tools", []) if t["name"] == name)
+
+
+def tool_output(kw) -> str:
+    return next(item["output"] for item in reversed(kw["input"]) if item.get("type") == "function_call_output")
+
+
+@pytest.mark.parametrize("cau, truoc, co", [
+    ("Mai Huế có áp thấp không?", None, True), ("Đi Bạch Mã có sạt lở không?", None, True), ("Tối nay có giông lốc không?", None, True),
+    ("Huế đang ngập không?", None, True), ("Có triều cường ở Thuận An không?", None, True),
+    ("Còn ngày mai thì sao?", "Sắp có bão vào Huế không?", True),   # câu hỏi tiếp: lưới xét câu liền trước
+    ("Lăng Tự Đức có gì đặc biệt?", None, False), ("Mai Huế có mưa không?", None, False),
+    ("Huế có cảnh báo lừa đảo khách du lịch không?", None, False),   # "cảnh báo" không kèm từ thời tiết khác
+])
+def test_storm_net_closed_list_and_previous_question(cau, truoc, co):
+    assert tt.la_luot_bao_lu(cau, ((truoc, ""),) if truoc else ()) is co
+
+
+def test_flag_off_tool_schema_and_description_unchanged_flag_on_offered_on_every_hue_turn(deps):
+    seen = []
+    gen = generator(lambda n, kw: (seen.append(kw), [answer("Lăng nằm ở ngoại ô [1].")])[1])
+    run(deps, "Mai Huế có mưa không?", gen, WEATHER)           # cờ tắt: bản cũ
+    run(deps, "Lăng Tự Đức ở đâu?", gen, BAO)                  # cờ bật: câu không từ khoá vẫn có công cụ
+    cu, moi = tool_schema(seen[0]), tool_schema(seen[1])
+    assert set(cu["parameters"]["properties"]) == {"tu_ngay", "den_ngay"} and cu["description"] == THOI_TIET_MO_TA
+    assert set(moi["parameters"]["properties"]) == {"loai", "tu_ngay", "den_ngay"} and "loai" in moi["parameters"]["required"]
+    assert moi["description"] == THOI_TIET_BAO_LU_MO_TA and moi["parameters"]["properties"]["loai"]["enum"] == ["du_bao", "bao_lu"]
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_model_picks_storm_gets_no_numbers_code_appends_fixed_block(deps, stream):
+    # câu không khớp lưới — model nhận ý, chọn `bao_lu` ⇒ model không thấy số; code nối nhãn + bảng + câu NCHMF / 112
+    seen = []
+
+    def kich_ban(n, kw):
+        seen.append(kw)
+        return [bao_call()] if n == 1 else [answer(f"Phần thời tiết có ở dưới [{ma_nguon_du_bao(kw)}].")]
+    trace, events = run(deps, "Mai đi Huế có an toàn không, trời có nguy hiểm gì không?", generator(kich_ban), BAO, stream=stream)
+    out = tool_output(seen[1])
+    assert not re.search(r"\d+\s*(?:°|%|mm)", out) and tt.KET_QUA_BAO_LU in out
+    assert trace.thoi_tiet_ctx["bao_lu"] and trace.thoi_tiet_ctx["bao_lu_model"] and trace.thoi_tiet["bao_lu"]
+    assert trace.citation_error is None and trace.thoi_tiet["khoi"].startswith(tt.CAU_KHONG_PHAI_TIN_BAO)
+    assert trace.answer.endswith(f"{trace.thoi_tiet['khoi']}\n\n{tt.CAU_BAO_LU}")
+    if stream:
+        assert "".join(d for k, d in events if k == "delta") == trace.answer
+
+
+def test_follow_up_turn_with_history_goes_storm_path_even_if_model_says_forecast(deps):
+    trace, _ = run(deps, "Còn ngày mai thì sao?", generator(lambda n, kw: [bao_call("du_bao")] if n == 1 else
+                                                          [answer(f"Xem phần dưới [{ma_nguon_du_bao(kw)}].")]),
+                   BAO, history=(("Sắp có bão vào Huế không?", ""),))
+    assert trace.thoi_tiet["bao_lu"] and trace.answer.endswith(tt.CAU_BAO_LU) and tt.CAU_KHONG_PHAI_TIN_BAO in trace.answer
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_storm_turn_model_refusal_replaced_before_anything_is_shown(deps, stream):
+    # review C M-1 của plan: stream, lượt bão / lũ, model trả câu từ chối ⇒ chữ hiện ra không bắt đầu bằng câu từ chối
+    trace, events = run(deps, "Sắp có bão vào Huế không?", generator(lambda n, kw: [bao_call()] if n == 1 else [answer(INSUFFICIENT_ANSWER)]),
+                        BAO, stream=stream)
+    assert trace.citation_error is None and trace.answer.startswith(tt.CAU_DAN_BAO_LU) and INSUFFICIENT_ANSWER not in trace.answer
+    if stream:
+        shown = "".join(d for k, d in events if k == "delta")
+        assert shown == trace.answer and not shown.startswith(INSUFFICIENT_ANSWER[:20])
+
+
+def test_net_matches_but_model_calls_no_tool_only_fixed_sentence(deps):
+    trace, _ = run(deps, "Mùa bão ở Huế thường tháng mấy?", generator(lambda n, kw: [answer("Mùa mưa bão ở Huế thường từ tháng 9 [1].")]), BAO)
+    assert trace.thoi_tiet is None and trace.answer.endswith(f"\n\n{tt.CAU_BAO_LU}") and tt.CAU_KHONG_PHAI_TIN_BAO not in trace.answer
+
+
+def test_plain_forecast_turn_with_flag_on_still_gets_numbers(deps):
+    seen = []
+
+    def kich_ban(n, kw):
+        seen.append(kw)
+        return [bao_call("du_bao", 1, 1)] if n == 1 else [answer(f"Mai có thể mưa [{ma_nguon_du_bao(kw)}].")]
+    trace, _ = run(deps, "Mai Huế có mưa không?", generator(kich_ban), BAO)
+    assert re.search(r"\d+\s*%", tool_output(seen[1])) and not trace.thoi_tiet_ctx["bao_lu"]
+    assert trace.answer.endswith(trace.thoi_tiet["khoi"]) and tt.CAU_BAO_LU not in trace.answer
+
+
+def test_parallel_route_path_offers_weather_tool_with_loai_on_every_hue_turn(deps):
+    from llm.assistant import answer_turn_stream_parallel
+    from llm.full_corpus_prompt import ROUTER_INSTRUCTIONS
+    from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+    from test_toc_do_song_song import Client, TimedResponses
+
+    responses = TimedResponses(route="tro_ly_hue", router_delay=0, answer_delay=0)
+    gen = OpenAIFullCorpusGenerator(client=Client(responses), model="probe")
+
+    async def go():
+        return [e async for e in answer_turn_stream_parallel("Đại Nội rộng bao nhiêu?", *deps, gen, AnswerTrace(),
+                                                             dataclasses.replace(BAO, router=True, song_song_tra_loi=True))]
+
+    asyncio.run(go())
+    tra_loi = [c for c in responses.calls if not str(c.get("instructions", "")).startswith(ROUTER_INSTRUCTIONS[:80])]
+    assert tra_loi and all("loai" in tool_schema(c)["parameters"]["properties"] for c in tra_loi)
+
+
+def test_flag_needs_weather():
+    with pytest.raises(ValueError, match="bao_lu_cong_cu"):
+        AssistantFlags(tim_them=True, bao_lu_cong_cu=True)

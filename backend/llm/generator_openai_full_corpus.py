@@ -480,7 +480,8 @@ class OpenAIFullCorpusGenerator:
             tools.append(function_tool(lich_trinh_fn, name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None))
             extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
         if thoi_tiet_fn is not None:  # B5b D4: chỉ khi code thấy từ khoá thời tiết (lượt khác ⇒ danh sách công cụ như trước)
-            tools.append(function_tool(thoi_tiet_fn, name_override="thoi_tiet", description_override=THOI_TIET_MO_TA, failure_error_function=None))
+            tools.append(function_tool(thoi_tiet_fn, name_override="thoi_tiet", description_override=getattr(thoi_tiet_fn, "mo_ta", THOI_TIET_MO_TA),
+                                       failure_error_function=None))  # bản cờ `bao_lu_cong_cu` gắn `mo_ta` riêng
         if ngay_lich_fn is not None:  # Phase 9 T1: chỉ khi code thấy từ chỉ ngày (lượt khác ⇒ danh sách công cụ như trước)
             tools.append(function_tool(ngay_lich_fn, name_override="ngay_lich", description_override=NGAY_LICH_MO_TA, failure_error_function=None))
         if khoang_cach_fn is not None:  # 16/11: chỉ khi code thấy từ khoá khoảng cách; mô tả (luật + danh sách mã) nằm ở docstring của hàm
