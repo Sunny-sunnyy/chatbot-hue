@@ -31,6 +31,9 @@ Việc A giao (User chọn hướng ghép, A ghi nhận 17/11). Chạm an toàn 
    đưa công cụ thời tiết (log `tools` không có `thoi_tiet` và lưới code không khớp) ⇒ chuyển sang "luôn đưa công cụ thời tiết ở tuyến `tro_ly_hue`" khi cờ bật.
    Kèm phần đo thêm: Golden 176 ×1 + an toàn 32 ×2 (≈ 0,12 USD) + đếm số lượt model gọi công cụ thừa ở Golden. Phần này được duyệt cùng plan, không hỏi lại.
    Trần đổi thành 0,20 USD. Danh sách từ ở mục 3 khi đó chỉ còn làm lưới code.
+6. **Kết quả bước 0 cho luật 2.5 (đã chạy 08:43 17/11/2026, 0 USD, hàm thuần trên bộ E với cổng đã nới theo danh sách ở mục 3):** 21 / 22 câu cần đi đường bão được
+   đưa công cụ; **câu 9 vẫn sót** ⇒ luật 2.5 BẬT ⇒ hướng của plan là **luôn đưa công cụ thời tiết ở tuyến `tro_ly_hue` khi cờ bật**. Không thêm từ cho
+   khớp câu 9 (làm vậy là chỉnh theo bộ đã thấy). Danh sách từ chỉ còn làm lưới code `bao_lu`. Câu 25 (nhãn không) và 28, 29 (nhãn tuỳ) cũng không khớp cổng.
 
 ## 3. Đo — tiêu chí ghi TRƯỚC (đổi một thứ: cờ `bao_lu_cong_cu`)
 | Bước | Gì | Tiền |
