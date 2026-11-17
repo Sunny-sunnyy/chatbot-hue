@@ -162,13 +162,16 @@ def dau_vao_model(cau_hoi: str, so_web: list[dict]) -> str:
 # chuỗi thì chặn nhầm (đọc tay 14/11: 5 / 6 ca chặn chỉ khác cách viết). Luật không nới: giá trị trong mục web phải ⊂ giá trị trong đoạn trích.
 # Ca mơ hồ không đoán ⇒ giữ khoá chuỗi như trước (chỉ khớp đúng nguyên dạng): số lẻ với đơn vị đồng ("1,5 đ"), số nhóm nghìn kèm hệ số
 # ("1.500 triệu" — 1,5 hay 1.500?), giá trị không nguyên.
-_DON_VI_TIEN = re.compile(r"(?i:đồng|vnđ|vnd|triệu|nghìn|ngàn|đ|k)(?:\s+(?i:rưỡi))?$")
+_DON_VI_TIEN = re.compile(r"(?i:đồng|vnđ|vnd|triệu|nghìn|ngàn|đ|k)(?:\s+(?i:rưỡi))?$|₫$")
+_TIEN_TRUOC = re.compile(r"^(?:₫|(?i:vnđ|vnd))\s?")  # "₫ 230.000" / "VND 230.000" (C 17/11)
 _HE_SO = {"triệu": 1_000_000, "nghìn": 1_000, "ngàn": 1_000, "k": 1_000}
 
 
 def gia_tri_tien(chuoi: str) -> int | None:
     """Một chuỗi của `tim_so_tien` ⇒ số đồng (nguyên, đúng tuyệt đối — không làm tròn); mơ hồ / không đọc được ⇒ None."""
     s = unicodedata.normalize("NFC", chuoi).strip()
+    if _TIEN_TRUOC.match(s):  # đơn vị đứng trước ⇒ đưa ra sau, đọc như "230.000 đồng"
+        s = _TIEN_TRUOC.sub("", s) + " đồng"
     m = _DON_VI_TIEN.search(s)
     if not m:
         return None
