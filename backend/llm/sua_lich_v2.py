@@ -45,6 +45,9 @@ class HanhDong(BaseModel):
 
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
                   "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở", "doi_ngay_di": "đổi ngày đi"}
+CAU_VIEC_KHAC = ("Chưa làm: việc này mình chưa sửa được trên lịch (đổi chỗ, gộp, tách ngày hay dời giờ cả lịch) — lịch giữ nguyên. Mình sửa "
+                 "được từng điểm (bỏ, thêm, thay, dời sang buổi / ngày khác) hoặc đổi số ngày, kiểu đi, sở thích, ngày đi, hạng chỗ ở; bạn nói cụ thể "
+                 "điểm muốn đổi nhé.")
 NHAN_BUOI = {"sang": "sáng", "chieu": "chiều"}
 NHAN_TRUONG = {"so_ngay": "số ngày", "kieu_di": "kiểu đi", "so_thich": "sở thích", "tre_em": "số trẻ em", "lon_tuoi": "người lớn tuổi",
                "ngan_sach": "hạng chỗ ở"}
@@ -119,6 +122,44 @@ def so_ngay_co_trong_cau(cau: str, so_ngay: int | None, hien_tai: int) -> bool:
         return True
     tuong_doi = {m.start(2) for r in (_THEM, _BOT) for m in r.finditer(t)}  # số sau "thêm / bớt" là số tương đối, không phải tổng số ngày
     return any(_so(m.group(1)) == so_ngay for m in _N_NGAY.finditer(t) if m.start(1) not in tuong_doi)
+
+
+# Lưới sau lần hiểu ý (C 17/11, tự thử 16/11: lỗi hạng 2 "nói chắc sai"): bộ hành động không có "đổi chỗ / gộp / tách ngày", "dời giờ cả lịch"
+# ⇒ model trả rỗng (lượt rơi sang đường thường, trợ lý tự viết một lịch CHỮ như thể đã đổi) hoặc trả "đổi số ngày" không căn cứ ("Chưa làm: đổi số
+# ngày" — sai việc). "Đổi thành N ngày" khi lịch đã N ngày ⇒ model cũng trả rỗng. Danh sách ĐÓNG các dạng câu, mặc định KHÔNG phải câu sửa (câu
+# hỏi xen giữa trong cuộc có lịch vẫn đi đường thường); dạng rộng chỉ xét khi model đã trả rỗng / bị rào số ngày chặn.
+_VIEC_NGAY = re.compile(r"(?<!\w)(?:đổi chỗ|hoán đổi|hoán vị|hoán|tráo|đảo|gộp|tách|sắp xếp lại|xếp lại|sắp lại|đổi thứ tự)\s+"
+                        r"(?:lại\s+)?(?:thứ tự\s+)?(?:của\s+)?(?:các\s+|hai\s+|2\s+)?(?:ngày|buổi của ngày)(?!\s+(?:đi|khởi hành|xuất phát|về))",
+                        re.I)
+_MOC_NGAY = re.compile(r"(?<!\w)ngày\s*(?:\d|đầu|cuối)", re.I)
+_DONG_TU_DOI_CHO = re.compile(r"(?<!\w)(?:đổi chỗ|hoán|tráo|đảo)(?!\w)", re.I)
+_THU_TU = re.compile(r"(?<!\w)(?:đổi|trước|sang|lên)(?!\w)", re.I)  # dạng rộng: hai mốc ngày + từ chỉ thứ tự ("ngày 3 lên trước ngày 1")
+_VIEC_GIO = re.compile(r"(?<!\w)(?:dời|lùi|đẩy|chuyển)\s+(?:cả\s+|toàn bộ\s+)?lịch\s+(?:sớm|muộn|trễ|lên|xuống|lại)(?!\w)"
+                       r"|(?<!\w)nghỉ\s+(?:trưa|ngơi)(?!\w)[^.?!\n]{0,30}(?:mỗi|hằng|các)\s+(?:ngày|buổi)", re.I)
+_THANH_N = re.compile(rf"(?<!\w)(?:đổi|chuyển|sửa|làm|rút|giảm|tăng|kéo dài)(?!\w)[^.?!\n]{{0,20}}?(?:thành|còn|xuống|lên|lại)\s+(?:lịch\s+)?{_SO}\s*(?:ngày|hôm)", re.I)
+_CUOI_NHAN = re.compile(r"(?<!\w)(?:nhé|nha|nhá|thôi|ạ|nhen)\W*$", re.I)  # câu dặn ("… 3 ngày nhé"), không phải câu hỏi
+_HOI = re.compile(r"\?|(?<!\w)(?:không|chưa|đủ|bao|mấy|nào|gì|sao|nên|nữa)(?!\w)", re.I)
+VIEC_KHAC = "viec_khac"  # mã "Chưa làm" của câu sửa mà bộ hành động chưa có
+
+
+def la_viec_ngay_chua_lam(cau: str, rong: bool = True) -> bool:
+    """Câu xin sửa lịch theo cách bộ hành động chưa có. Dạng chặt: đổi chỗ / gộp / tách / xếp lại CÁC NGÀY ("đổi chỗ ngày 1 với ngày 2", "đảo
+    thứ tự hai ngày", "ngày 1 và ngày 3 đổi chỗ cho nhau"). `rong` (chỉ khi model trả rỗng / bị rào chặn): thêm hai mốc ngày + từ chỉ thứ tự
+    ("cho ngày 3 lên trước ngày 1") và dời giờ cả lịch / nghỉ trưa mỗi ngày. Không: "đổi chỗ ở", "đổi ngày đi", "đảo Cồn Hến", câu chỉ nhắc "ngày 2"."""
+    t = unicodedata.normalize("NFC", cau)
+    hai_ngay = len(_MOC_NGAY.findall(t)) >= 2 and not re.search(r"đổi chỗ\s+ở", t, re.I)
+    if _VIEC_NGAY.search(t) or (hai_ngay and _DONG_TU_DOI_CHO.search(t)):
+        return True
+    return rong and bool((hai_ngay and _THU_TU.search(t)) or _VIEC_GIO.search(t))
+
+
+def so_ngay_dang_dung(cau: str, hien_tai: int) -> bool:
+    """N = số ngày lịch đang có, trong câu có động từ sửa ("đổi thành 2 ngày", "làm lại lịch 3 ngày") hoặc câu dặn ngắn không phải câu hỏi
+    ("Mình đi 2 ngày thôi", "Cho mình lịch 3 ngày nhé"). Không: "Còn 2 ngày nữa là đi", "Đi 2 ngày có đủ không?"."""
+    t = unicodedata.normalize("NFC", cau)
+    if any(_so(m.group(1)) == hien_tai for m in _THANH_N.finditer(t)):
+        return True
+    return bool(_CUOI_NHAN.search(t)) and not _HOI.search(t) and any(_so(m.group(1)) == hien_tai for m in _N_NGAY.finditer(t))
 
 
 def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> tuple[list, int]:
@@ -481,7 +522,8 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             out.append("Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa.")
     dong = [{"cau": c, "duoc": True} for c in out]
     dong += [{"cau": CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"]), "duoc": False} for k in kq["khong_doi"]]
-    dong += [{"cau": f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False} for t in kq["chua_lam"]]
+    dong += [{"cau": CAU_VIEC_KHAC if t == VIEC_KHAC else f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False}
+             for t in kq["chua_lam"]]
     return dong
 
 

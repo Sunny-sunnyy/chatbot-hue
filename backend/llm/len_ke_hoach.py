@@ -251,7 +251,13 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
         trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan}  # sổ vết debug (RAM)
-        if not hanh_dong and not bi_chan:
+        luoi = None  # (C 17/11) lưới sau hiểu ý — `sl.la_viec_ngay_chua_lam` / `sl.so_ngay_dang_dung`: code nhận câu sửa mà model trả rỗng
+        if not hanh_dong and sl.so_ngay_dang_dung(query, luu["khung"]["tham_so"]["so_ngay"]):
+            hanh_dong, luoi = [sl.HanhDong(loai="doi_so_ngay", so_ngay=luu["khung"]["tham_so"]["so_ngay"])], "dang_dung"  # ⇒ "Lịch đang đúng…"
+        elif not hanh_dong and sl.la_viec_ngay_chua_lam(query):
+            luoi = sl.VIEC_KHAC
+        trace.vet["sua"]["luoi"] = luoi
+        if not hanh_dong and not bi_chan and luoi is None:
             trace.sua = {"n_hanh_dong": 0}
             return None
         ngay_moi = None
@@ -262,7 +268,10 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                 db = await du_bao_lich(flags, ngay_moi["ngay"], lt2.SO_NGAY_TOI_DA, trace, hom)
                 ngay_moi.update(mua={k.isoformat(): v for k, v in (ngay_mua_xep(db) or {}).items()}, co_du_bao=db is not None)
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi)
-        if bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
+        # "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; câu có ý làm được + ý đổi chỗ ngày ⇒ ý sau từng bị bỏ lặng (chỉ dạng chặt)
+        if luoi == sl.VIEC_KHAC or (bi_chan and sl.la_viec_ngay_chua_lam(query)) or (hanh_dong and sl.la_viec_ngay_chua_lam(query, rong=False)):
+            kq["chua_lam"].append(sl.VIEC_KHAC)
+        elif bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
     trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
