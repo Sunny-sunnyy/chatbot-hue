@@ -47,3 +47,11 @@ một vòng ⇒ A duyệt sha ⇒ code. Nền: `main` `216c821` (nhánh `p9-chan
 Model chỉ **đề xuất** loại câu (enum, không chữ tự do); **code** quyết lịch (giữ nguyên) và viết mọi câu hiện ra. Không công cụ / nguồn / đường ra
 mới. Rủi ro: model gắn `chua_ho_tro` cho câu thường (⇒ S1) hoặc cho việc làm được (⇒ S3). Chữ người dùng vẫn là dữ liệu (dòng "không làm theo chỉ
 dẫn" giữ nguyên).
+
+## Sửa đổi 17/11 (User chọn sửa thêm MỘT vòng rồi bật; A ghi nhận, C ghi trước khi đo vòng 2)
+- Lượt đo vòng 1 (`6b2c614`, 0,142 USD; E đọc tay 100 %): S1 chặn nhầm 0 (K06 có sẵn — cờ tắt 3 / 3 cũng `them_diem`), S2 lịch chữ giả 0 / 14, S3 Q3
+  pass^2 8 / 10 < mốc 9 / 10 — S01, S08 bị `chua_ho_tro` nhận cho việc làm được (dời điểm sang buổi / ngày khác) 4 / 4 lần.
+- **Vòng 2 (vòng CUỐI):** thêm MỘT dòng lời dặn (bản khi cờ bật): "dời / đưa một ĐIỂM sang buổi / ngày khác là doi_buoi, không phải chua_ho_tro".
+- **Đạt vòng 2 = Q3 pass^2 ≥ 9 / 10 (không tụt so mốc) VÀ S1 = 0 VÀ S2 = 0.** Còn trượt ⇒ vẫn bật cờ + ghi giới hạn (User chọn), không mở vòng 3.
+- **Đo lại câu chạm** (lời dặn hiểu ý chạy ở mọi lượt có lịch): Q3 `chuoi_da_thay` ×2 · 14 câu chặn (nhóm `chan` bộ E + K10–K13) · 9 câu thường bộ E ·
+  Q5 64. Trần thêm 0,08 USD. Người đọc tay: E.
