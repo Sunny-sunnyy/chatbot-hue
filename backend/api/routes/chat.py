@@ -312,6 +312,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
 
     if trace.fixed_outcome is not None:
         metrics["outcome"] = trace.fixed_outcome  # câu cố định / từ chối trước model: không qua kiểm citation
+        metrics["refusal"] = chu_cua_model(trace).strip() in REFUSAL_ANSWERS  # như đường stream: không tính phần code nối sau câu từ chối
         _remember(request, conversation_id, query, trace, trace.fixed_outcome)
         if trace.clarify is not None:  # B4: lượt hỏi lại — không chữ, không mã đánh giá
             return ChatResponse(answer="", sources=[], clarify=trace.clarify), conversation_id
@@ -571,7 +572,7 @@ class StreamEvents:
     def fixed(self, trace: AnswerTrace) -> list[bytes]:
         """Câu cố định (khẩn cấp, ngoài phạm vi, từ chối khi ngữ cảnh không có nguồn) — chữ đã ra một `delta`; không kiểm citation."""
         self.metrics["outcome"] = trace.fixed_outcome
-        self.metrics["refusal"] = trace.answer.strip() in REFUSAL_ANSWERS
+        self.metrics["refusal"] = chu_cua_model(trace).strip() in REFUSAL_ANSWERS  # trên chữ trước phần code nối (lượt bão / lũ chạm trần có câu 112 nối sau)
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
         if trace.clarify is not None:  # B4 D8: lượt hỏi lại ⇒ thẻ nút, không chữ, không mã đánh giá
             return [sse_event("clarify", trace.clarify), self.done()]

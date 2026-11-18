@@ -167,6 +167,20 @@ def test_refusal_without_model_still_goes_through_stream():
     assert metrics["refusal"] is True and metrics["delta_matches_final"] is True
 
 
+def test_luot_bao_cham_tran_van_la_tu_choi_trong_so_do():
+    """Lượt bão / lũ chạm trần lượt: code nối câu chỉ bản tin chính thức + 112 SAU câu từ chối (sửa tích hợp 18/11) ⇒ cờ `refusal` của sổ số đo
+    và `tu_choi_kho` của sự kiện `done` phải tính trên chữ trước phần nối — không thì lượt này bị ghi là "đã trả lời" và giao diện mất gợi ý cách hỏi."""
+    from llm import thoi_tiet as tt
+
+    metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
+    stream = StreamEvents(metrics, time.perf_counter())
+    answer = f"{INSUFFICIENT_ANSWER}\n\n{tt.CAU_BAO_LU}"
+    trace = AnswerTrace(answer=answer, cited=(), fixed_outcome="max_turns", thoi_tiet_noi=tt.CAU_BAO_LU)
+    events = parse_sse([stream.delta(trace.answer), *stream.fixed(trace)])
+    assert events[-1] == ("done", {"outcome": "max_turns", "tu_choi_kho": True})
+    assert metrics["refusal"] is True and metrics["delta_matches_final"] is True  # chữ người dùng thấy vẫn là cả câu + phần nối
+
+
 def test_retrieval_error_inside_stream_keeps_old_503_message():
     """B1 D6 (đổi cố ý): lỗi Qdrant giữa luồng ⇒ sự kiện `error` mang đúng mã + câu của JSON 503 trước B1 (review C129 m-3)."""
     from core.schema import RetrievalDependencyError
