@@ -143,6 +143,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
     const coDuoc = lich.thay_doi.some(d => d.duoc);
     return (
       <div className="bubble lich-v2 lkh-gon">
+        {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
         <ThayDoi thayDoi={lich.thay_doi} />
         {/* review C m-1: nút cùng dòng với câu dẫn — đặt riêng một dòng thì nút khuất dưới mép khung nổi */}
         <p className="lkh-gon-dan">{coDuoc ? "Lịch đã cập nhật theo các thay đổi trên. " : ""}
@@ -165,6 +166,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
     .filter(Boolean).join(" · ");
   return (
     <div className="bubble lich-v2">
+      {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
       <div className="lkh-thanh">
         {ngayDau?.ngay_thang && <div><small>Bắt đầu</small><b>{THU_V2[ngayDau.thu]} {ngayDau.ngay_thang.split("-").reverse().join("/")}</b></div>}
         {diCung && <div><small>Đi cùng</small><b>{diCung}</b></div>}
@@ -198,7 +200,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
         <p className="lkh-o-them"><a href="#/cho-o">Cần chỗ ở? Xem gợi ý theo khu</a>, hoặc nhắn trợ lý hạng sao bạn muốn (ví dụ “ở khách sạn 3 sao”).</p>
       )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
-      {turn.notice && <p className={turn.noticeAnToan ? "notice notice-an-toan" : "notice"}>{turn.notice}</p>}
+      {turn.notice && <p className="notice">{turn.notice}</p>}
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />

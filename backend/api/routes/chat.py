@@ -534,8 +534,11 @@ async def chat_stream(body: ChatRequest, request: Request):
 
 
 def _notice_event(trace: AnswerTrace) -> bytes:
-    """Sự kiện `notice`. Ghi chú có câu bản tin chính thức + 112 mang cờ `an_toan` ⇒ giao diện vẽ nổi hơn dòng ghi chú thường."""
-    return sse_event("notice", {"text": trace.notice, **({"an_toan": True} if tt.CAU_BAO_LU in trace.notice else {})})
+    """Sự kiện `notice`. Ghi chú có câu bản tin chính thức + 112 (lưới cuối câu bão) được TÁCH riêng vào `an_toan`: giao diện vẽ nó đậm và, ở lượt có lịch,
+    đặt lên ĐẦU khung lịch (người hỏi "có cảnh báo gì không" phải thấy trước lịch); `text` chỉ còn ghi chú thường ("có thể đã thay đổi"…), có thể rỗng."""
+    if tt.CAU_BAO_LU not in trace.notice:
+        return sse_event("notice", {"text": trace.notice})
+    return sse_event("notice", {"text": trace.notice.replace(tt.CAU_BAO_LU, "", 1).strip(), "an_toan": tt.CAU_BAO_LU})
 
 
 def _loi_trich_dan(trace: AnswerTrace) -> str:
