@@ -1,3 +1,10 @@
+# STATUS A — PHIÊN TỐI 18/11 SAU KHI BẬT LẠI MÁY (mở; cập nhật 20:01 18/11/2026 `date`)
+
+- Terminal: A `hue-rag-31` · B `hue-rag-75` · C `hue-rag-b9` · E `hue-rag-51` (Claude Code, trực tiếp; cả ba trả lời một tin).
+- Kiểm nhanh: `main` `93b4268` = origin; chỉ `.wslconfig` untracked; hooksPath `.githooks`; Qdrant không tự lên ⇒ A bật (9.436 điểm); 0 server; RAM khả dụng 14,7 GB; không phiên dự án khác.
+- Giao: xem `CURRENT_HANDOFF.md` khối "PHIÊN TỐI 18/11, SAU KHI BẬT LẠI MÁY". Cả ba có `notify_when_idle`.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`. Tiền A 0 USD. Hộp hỏi User: 0.
+
 # STATUS A — KẾT PHIÊN NHẸ TỐI 18/11 (viết 19:48 18/11/2026 `date`; User tắt / bật lại WSL để đổi cấu hình RAM; terminal tối: A `hue-rag-64` · B `hue-rag-87` · C `hue-rag-f7` · E `hue-rag-08`)
 
 - **Việc dở:** bước 0, 1 ĐẠT; bước 2 xong phần soát (5 điểm, `data/review_tich_hop_2026-11-18/dot_2/ket_qua_dot_2.md`). Đang giữa chừng: B sửa P1 ("dông" ở mục web) + P2 (lời báo lỗi thiếu 112 khi model tự chọn loại bão) trên `origin/p9-p1p2-an-toan` ⇒ C review (chạy `dot_2/thu/t1…t5`, t5 = bộ dò 20 câu, sót phải = 0) ⇒ A gộp ⇒ B chạy lại cả `backend/tests` MỘT lượt ⇒ bước 3 (mã commit đứng yên + sao lưu ổ D) ⇒ bước 4. C viết nhánh runbook 10.3b cho P3–P5 sau khi nhánh B gộp. Việc kế + các chốt: khối "PHIÊN TỐI 18/11" đầu `CURRENT_HANDOFF.md`.
